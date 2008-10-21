@@ -1,7 +1,7 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-extern Evas_List *evas_modules;
+extern Eina_List *evas_modules;
 static int initcount = 0;
 
 EAPI int
@@ -139,19 +139,19 @@ evas_free(Evas *e)
    e->walking_list--;
 
    evas_font_path_clear(e);
-   e->pointer.object.in = evas_list_free(e->pointer.object.in);
+   e->pointer.object.in = eina_list_free(e->pointer.object.in);
 
    if (e->name_hash) evas_hash_free(e->name_hash);
 
    while (e->damages)
      {
 	free(e->damages->data);
-	e->damages = evas_list_remove(e->damages, e->damages->data);
+	e->damages = eina_list_remove(e->damages, e->damages->data);
      }
    while (e->obscures)
      {
 	free(e->obscures->data);
-	e->obscures = evas_list_remove(e->obscures, e->obscures->data);
+	e->obscures = eina_list_remove(e->obscures, e->obscures->data);
      }
 
    if (e->engine.func) 
@@ -225,7 +225,9 @@ evas_free(Evas *e)
 EAPI void
 evas_output_method_set(Evas *e, int render_method)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Evas_Module *em;
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
@@ -235,12 +237,10 @@ evas_output_method_set(Evas *e, int render_method)
    /* if the engine is already set up - abort */
    if (e->output.render_method != RENDER_METHOD_INVALID) return;
    /* iterate trough the list to find the id */
-   for (l = evas_modules; l; l = l->next)
+   EINA_LIST_FOREACH(evas_modules, l, em)
      {
-	Evas_Module *em;
 	Evas_Module_Engine *eme;
-	
-	em = l->data;
+
 	if (em->type != EVAS_MODULE_TYPE_ENGINE) continue;
 	if (!em->data) continue;
 	eme = (Evas_Module_Engine *)em->data;
@@ -700,7 +700,8 @@ evas_render_method_lookup(const char *name)
  *
  * Example:
  * @code
- * Evas_List *engine_list, *l;
+ * Eina_List *engine_list, *l;
+ * char *engine_name;
  *
  * engine_list = evas_render_method_list();
  * if (!engine_list)
@@ -709,75 +710,70 @@ evas_render_method_lookup(const char *name)
  *     exit(-1);
  *   }
  * printf("Availible Evas Engines:\n");
- * for (l = engine_list; l; l = l->next)
- *   {
- *     char *engine_name;
- *
- *     engine_name = l->data;
+ * EINA_LIST_FOREACH(engine_list, l, engine_name)
  *     printf("%s\n", engine_name);
- *   }
  * evas_render_method_list_free(engine_list);
  * @endcode
  */
-EAPI Evas_List *
+EAPI Eina_List *
 evas_render_method_list(void)
 {
-   Evas_List *methods = NULL;
+   Eina_List *methods = NULL;
 
    /* FIXME: get from modules - this is currently coded-in */
 #ifdef BUILD_ENGINE_SOFTWARE_DDRAW
-   methods = evas_list_append(methods, strdup("software_ddraw"));
+   methods = eina_list_append(methods, strdup("software_ddraw"));
 #endif
 #ifdef BUILD_ENGINE_SOFTWARE_16_DDRAW
-   methods = evas_list_append(methods, strdup("software_16_ddraw"));
+   methods = eina_list_append(methods, strdup("software_16_ddraw"));
 #endif
 #ifdef BUILD_ENGINE_DIRECT3D
-   methods = evas_list_append(methods, strdup("direct3d"));
+   methods = eina_list_append(methods, strdup("direct3d"));
 #endif
 #ifdef BUILD_ENGINE_SOFTWARE_16_WINCE
-   methods = evas_list_append(methods, strdup("software_16_wince"));
+   methods = eina_list_append(methods, strdup("software_16_wince"));
 #endif
 #ifdef BUILD_ENGINE_SOFTWARE_X11
-   methods = evas_list_append(methods, strdup("software_x11"));
+   methods = eina_list_append(methods, strdup("software_x11"));
 #endif
 #ifdef BUILD_ENGINE_XRENDER_X11
-   methods = evas_list_append(methods, strdup("xrender_x11"));
+   methods = eina_list_append(methods, strdup("xrender_x11"));
 #endif
 #ifdef BUILD_ENGINE_SOFTWARE_XCB
-   methods = evas_list_append(methods, strdup("software_xcb"));
+   methods = eina_list_append(methods, strdup("software_xcb"));
 #endif
 #ifdef BUILD_ENGINE_XRENDER_XCB
-   methods = evas_list_append(methods, strdup("xrender_xcb"));
+   methods = eina_list_append(methods, strdup("xrender_xcb"));
 #endif
 #ifdef BUILD_ENGINE_SOFTWARE_16_X11
-   methods = evas_list_append(methods, strdup("software_16_x11"));
+   methods = eina_list_append(methods, strdup("software_16_x11"));
 #endif
 #ifdef BUILD_ENGINE_GL_X11
-   methods = evas_list_append(methods, strdup("gl_x11"));
+   methods = eina_list_append(methods, strdup("gl_x11"));
 #endif
 #ifdef BUILD_ENGINE_GL_GLEW
-   methods = evas_list_append(methods, strdup("gl_glew"));
+   methods = eina_list_append(methods, strdup("gl_glew"));
 #endif
 #ifdef BUILD_ENGINE_CAIRO_X11
-   methods = evas_list_append(methods, strdup("cairo_x11"));
+   methods = eina_list_append(methods, strdup("cairo_x11"));
 #endif
 #ifdef BUILD_ENGINE_DIRECTFB
-   methods = evas_list_append(methods, strdup("directfb"));
+   methods = eina_list_append(methods, strdup("directfb"));
 #endif
 #ifdef BUILD_ENGINE_FB
-   methods = evas_list_append(methods, strdup("fb"));
+   methods = eina_list_append(methods, strdup("fb"));
 #endif
 #ifdef BUILD_ENGINE_BUFFER
-   methods = evas_list_append(methods, strdup("buffer"));
+   methods = eina_list_append(methods, strdup("buffer"));
 #endif
 #ifdef BUILD_ENGINE_SOFTWARE_WIN32_GDI
-   methods = evas_list_append(methods, strdup("software_win32_gdi"));
+   methods = eina_list_append(methods, strdup("software_win32_gdi"));
 #endif
 #ifdef BUILD_ENGINE_SOFTWARE_QTOPIA
-   methods = evas_list_append(methods, strdup("software_qtopia"));
+   methods = eina_list_append(methods, strdup("software_qtopia"));
 #endif
 #ifdef BUILD_ENGINE_SDL
-   methods = evas_list_append(methods, strdup("software_sdl"));
+   methods = eina_list_append(methods, strdup("software_sdl"));
 #endif
 
    return methods;
@@ -786,7 +782,7 @@ evas_render_method_list(void)
 /**
  * This function should be called to free a list of engine names
  *
- * @param list The Evas_List base pointer for the engine list to be freed
+ * @param list The Eina_List base pointer for the engine list to be freed
  * @ingroup Evas_Output_Method
  *
  * When this function is called it will free the engine list passed in as
@@ -795,7 +791,8 @@ evas_render_method_list(void)
  *
  * Example:
  * @code
- * Evas_List *engine_list, *l;
+ * Eina_List *engine_list, *l;
+ * char *engine_name;
  *
  * engine_list = evas_render_method_list();
  * if (!engine_list)
@@ -804,23 +801,18 @@ evas_render_method_list(void)
  *     exit(-1);
  *   }
  * printf("Availible Evas Engines:\n");
- * for (l = engine_list; l; l = l->next)
- *   {
- *     char *engine_name;
- *
- *     engine_name = l->data;
+ * EINA_LIST_FOREACH(engine_list, l, engine_name)
  *     printf("%s\n", engine_name);
- *   }
  * evas_render_method_list_free(engine_list);
  * @endcode
  */
 EAPI void
-evas_render_method_list_free(Evas_List *list)
+evas_render_method_list_free(Eina_List *list)
 {
    while (list)
      {
 	free(list->data);
-	list = evas_list_remove(list, list->data);
+	list = eina_list_remove(list, list->data);
      }
 }
 

@@ -218,18 +218,17 @@ evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface, RGBA_Draw_Context 
 static Evas_GL_Font_Texture_Pool_Allocation *
 _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
 {
-   Evas_List *l;
+   Eina_List *l;
    Evas_GL_Font_Texture_Pool_Allocation *fa;
    Evas_GL_Font_Texture_Pool *fp;
    int minw = 256;
    int minh = 256;
    int shift;
 
-   for (l = gc->tex_pool; l; l = l->next)
+   EINA_LIST_FOREACH(gc->tex_pool, l, fp)
      {
 	int x, y;
 
-	fp = l->data;
 	if (_evas_gl_font_texture_pool_rect_find(fp, w, h, &x, &y))
 	  {
 	     fa = calloc(1, sizeof(Evas_GL_Font_Texture_Pool_Allocation));
@@ -239,8 +238,8 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
 	     fa->y = y;
 	     fa->w = w;
 	     fa->h = h;
-	     fp->allocations = evas_list_prepend(fp->allocations, fa);
-	     if (evas_list_alloc_error())
+	     fp->allocations = eina_list_prepend(fp->allocations, fa);
+	     if (eina_error_get())
 	       {
 		  free(fa);
 		  return NULL;
@@ -264,8 +263,8 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
 
    fp = calloc(1, sizeof(Evas_GL_Font_Texture_Pool));
    if (!fp) return NULL;
-   gc->tex_pool = evas_list_append(gc->tex_pool, fp);
-   if (evas_list_alloc_error())
+   gc->tex_pool = eina_list_append(gc->tex_pool, fp);
+   if (eina_error_get())
      {
 	free(fp);
 	return NULL;
@@ -316,7 +315,7 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
    fa = calloc(1, sizeof(Evas_GL_Font_Texture_Pool_Allocation));
    if (!fa)
      {
-	gc->tex_pool = evas_list_remove(gc->tex_pool, fp);
+	gc->tex_pool = eina_list_remove(gc->tex_pool, fp);
 	glDeleteTextures(1, &(fp->texture));
 	free(fp);
 	return NULL;
@@ -326,11 +325,11 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
    fa->y = 0;
    fa->w = w;
    fa->h = h;
-   fp->allocations = evas_list_prepend(fp->allocations, fa);
-   if (evas_list_alloc_error())
+   fp->allocations = eina_list_prepend(fp->allocations, fa);
+   if (eina_error_get())
      {
 	printf("alloc prob\n");
-	gc->tex_pool = evas_list_remove(gc->tex_pool, fp);
+	gc->tex_pool = eina_list_remove(gc->tex_pool, fp);
 	glDeleteTextures(1, &(fp->texture));
 	free(fa);
 	free(fp);
@@ -343,12 +342,12 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
 static void
 _evas_gl_font_texture_pool_relinquish(Evas_GL_Font_Texture_Pool_Allocation *fa)
 {
-   fa->pool->allocations = evas_list_remove(fa->pool->allocations, fa);
+   fa->pool->allocations = eina_list_remove(fa->pool->allocations, fa);
    fa->pool->references--;
    if (fa->pool->references <= 0)
      {
 	fa->pool->gc->tex_pool =
-	  evas_list_remove(fa->pool->gc->tex_pool, fa->pool);
+	  eina_list_remove(fa->pool->gc->tex_pool, fa->pool);
 	glDeleteTextures(1, &(fa->pool->texture));
 	free(fa->pool);
      }
@@ -360,18 +359,18 @@ _evas_gl_font_texture_pool_rect_find(Evas_GL_Font_Texture_Pool *fp,
 				     int w, int h,
 				     int *x, int *y)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Evas_GL_Font_Texture_Pool_Allocation *fa;
 
    if ((w > fp->w) || (h > fp->h)) return 0;
-   for (l = fp->allocations; l; l = l->next)
+   EINA_LIST_FOREACH(fp->allocations, l, fa)
      {
-	Evas_GL_Font_Texture_Pool_Allocation *fa;
-	Evas_List *l2;
+	Eina_List *l2;
+	Evas_GL_Font_Texture_Pool_Allocation *fa2;
 	int tx, ty, tw, th;
 	int t1, t2;
 	int intersects;
 
-	fa = l->data;
 	t1 = t2 = 1;
 	if ((fa->x + fa->w + w) > fp->w) t1 = 0;
 	if ((fa->y + h) > fp->h) t1 = 0;
@@ -391,14 +390,12 @@ _evas_gl_font_texture_pool_rect_find(Evas_GL_Font_Texture_Pool *fp,
 	     ty = fa->y;
 	     tw = w;
 	     th = h;
-	     for (l2 = fp->allocations; l2; l2 = l2->next)
+	     EINA_LIST_FOREACH(fp->allocations, l2, fa2)
 	       {
-		  Evas_GL_Font_Texture_Pool_Allocation *fa2;
 		  int rx, ry, rw, rh;
 
 		  /* dont do the rect we are just using as our offset */
 		  if (l2 == l) continue;
-		  fa2 = l2->data;
 		  rx = fa2->x;
 		  ry = fa2->y;
 		  rw = fa2->w;
@@ -433,9 +430,8 @@ _evas_gl_font_texture_pool_rect_find(Evas_GL_Font_Texture_Pool *fp,
 	     ty = fa->y + fa->h;
 	     tw = w;
 	     th = h;
-	     for (l2 = fp->allocations; l2; l2 = l2->next)
+	     EINA_LIST_FOREACH(fp->allocations, l2, fa2)
 	       {
-		  Evas_GL_Font_Texture_Pool_Allocation *fa2;
 		  int rx, ry, rw, rh;
 
 		  /* dont do the rect we are just using as our offset */
@@ -444,7 +440,6 @@ _evas_gl_font_texture_pool_rect_find(Evas_GL_Font_Texture_Pool *fp,
 		  /* so far it looks like memory corruption, but i can't */
 		  /* use valgrind to inspect any further due to the dri */
 		  /* hardware stuff :( */
-		  fa2 = l2->data;
 
 		  rx = fa2->x;
 		  ry = fa2->y;

@@ -21,7 +21,7 @@ struct _Ximage_Info
    int                depth;
    Visual            *vis;
    int                pool_mem;
-   Evas_List         *pool;
+   Eina_List         *pool;
    unsigned char      can_do_shm;
    XRenderPictFormat *fmt32;
    XRenderPictFormat *fmt24;

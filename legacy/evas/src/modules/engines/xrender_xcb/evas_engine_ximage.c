@@ -3,7 +3,7 @@
 #include "evas_engine.h"
 #include "Evas_Engine_XRender_Xcb.h"
 
-static Evas_List *_image_info_list = NULL;
+static Eina_List *_image_info_list = NULL;
 
 static int _xcb_err = 0;
 
@@ -265,12 +265,11 @@ _xr_image_info_get(xcb_connection_t *conn, xcb_drawable_t draw, xcb_visualid_t v
    xcb_get_geometry_reply_t *rep;
    Xcb_Image_Info           *xcbinf;
    Xcb_Image_Info           *xcbinf2;
-   Evas_List                *l;
+   Eina_List                *l;
 
    xcbinf2 = NULL;
-   for (l = _image_info_list; l; l = l->next)
+   EINA_LIST_FOREACH(_image_info_list, l, xcbinf)
      {
-	xcbinf = l->data;
 	if (xcbinf->conn == conn)
 	  {
 	     xcbinf2 = xcbinf;
@@ -368,7 +367,7 @@ _xr_image_info_get(xcb_connection_t *conn, xcb_drawable_t draw, xcb_visualid_t v
            xcb_image_shm_destroy(xcbim);
         }
      }
-   _image_info_list = evas_list_prepend(_image_info_list, xcbinf);
+   _image_info_list = eina_list_prepend(_image_info_list, xcbinf);
    return xcbinf;
 }
 
@@ -400,14 +399,14 @@ _xr_image_info_free(Xcb_Image_Info *xcbinf)
    if (xcbinf->fmt32)
      free(xcbinf->fmt32);
    free(xcbinf);
-   _image_info_list = evas_list_remove(_image_info_list, xcbinf);
+   _image_info_list = eina_list_remove(_image_info_list, xcbinf);
 }
 
 void
 _xr_image_info_pool_flush(Xcb_Image_Info *xcbinf, int max_num, int max_mem)
 {
-   if ((xcbinf->pool_mem <= max_mem) && (evas_list_count(xcbinf->pool) <= max_num)) return;
-   while ((xcbinf->pool_mem > max_mem) || (evas_list_count(xcbinf->pool) > max_num))
+   if ((xcbinf->pool_mem <= max_mem) && (eina_list_count(xcbinf->pool) <= max_num)) return;
+   while ((xcbinf->pool_mem > max_mem) || (eina_list_count(xcbinf->pool) > max_num))
      {
 	Xcb_Image_Image *xcbim;
 
@@ -421,12 +420,11 @@ Xcb_Image_Image *
 _xr_image_new(Xcb_Image_Info *xcbinf, int w, int h, int depth)
 {
    Xcb_Image_Image *xcbim, *xcbim2;
-   Evas_List       *l;
+   Eina_List       *l;
 
    xcbim2 = NULL;
-   for (l = xcbinf->pool; l; l = l->next)
+   EINA_LIST_FOREACH(xcbinf->pool, l, xcbim)
      {
-	xcbim = l->data;
 	if ((xcbim->w >= w) && (xcbim->h >= h) && (xcbim->depth == depth) && (xcbim->available))
 	  {
 	     if (!xcbim2) xcbim2 = xcbim;
@@ -513,7 +511,7 @@ _xr_image_new(Xcb_Image_Info *xcbinf, int w, int h, int depth)
    xcbim->line_bytes = xcbim->xcbim->bytes_per_line;
    xcbim->data = (void *)(xcbim->xcbim->data);
    xcbinf->pool_mem += (xcbim->w * xcbim->h * xcbim->depth);
-   xcbinf->pool = evas_list_append(xcbinf->pool, xcbim);
+   xcbinf->pool = eina_list_append(xcbinf->pool, xcbim);
    return xcbim;
 }
 
@@ -544,7 +542,7 @@ _xr_image_free(Xcb_Image_Image *xcbim)
 	xcb_image_destroy(xcbim->xcbim);
      }
    xcbim->xcbinf->pool_mem -= (xcbim->w * xcbim->h * xcbim->depth);
-   xcbim->xcbinf->pool = evas_list_remove(xcbim->xcbinf->pool, xcbim);
+   xcbim->xcbinf->pool = eina_list_remove(xcbim->xcbinf->pool, xcbim);
    free(xcbim);
 }
 

@@ -3,7 +3,7 @@
 #include "evas_engine.h"
 #include "Evas_Engine_XRender_X11.h"
 
-static Evas_List *_image_info_list = NULL;
+static Eina_List *_image_info_list = NULL;
 
 static int _x_err = 0;
 static void
@@ -17,20 +17,17 @@ Ximage_Info *
 _xr_image_info_get(Display *disp, Drawable draw, Visual *vis)
 {
    Ximage_Info *xinf, *xinf2;
-   Evas_List *l;
+   Eina_List *l;
    int di;
    unsigned int dui;
    
    xinf2 = NULL;
-   for (l = _image_info_list; l; l = l->next)
-     {
-	xinf = l->data;
-	if (xinf->disp == disp)
-	  {
-	     xinf2 = xinf;
-	     break;
-	  }
-     }
+   EINA_LIST_FOREACH(_image_info_list, l, xinf)
+     if (xinf->disp == disp)
+       {
+	 xinf2 = xinf;
+	 break;
+       }
    xinf = calloc(1, sizeof(Ximage_Info));
    if (!xinf) return NULL;
    
@@ -99,7 +96,7 @@ _xr_image_info_get(Display *disp, Drawable draw, Visual *vis)
 	     XDestroyImage(xim);
 	  }
      }
-   _image_info_list = evas_list_prepend(_image_info_list, xinf);
+   _image_info_list = eina_list_prepend(_image_info_list, xinf);
    return xinf;
 }
 
@@ -112,14 +109,14 @@ _xr_image_info_free(Ximage_Info *xinf)
    if (xinf->references != 0) return;
    _xr_render_surface_free(xinf->mul);
    free(xinf);
-   _image_info_list = evas_list_remove(_image_info_list, xinf);
+   _image_info_list = eina_list_remove(_image_info_list, xinf);
 }
 
 void
 _xr_image_info_pool_flush(Ximage_Info *xinf, int max_num, int max_mem)
 {
-   if ((xinf->pool_mem <= max_mem) && (evas_list_count(xinf->pool) <= max_num)) return;
-   while ((xinf->pool_mem > max_mem) || (evas_list_count(xinf->pool) > max_num))
+   if ((xinf->pool_mem <= max_mem) && (eina_list_count(xinf->pool) <= max_num)) return;
+   while ((xinf->pool_mem > max_mem) || (eina_list_count(xinf->pool) > max_num))
      {
 	Ximage_Image *xim;
 	
@@ -133,12 +130,11 @@ Ximage_Image *
 _xr_image_new(Ximage_Info *xinf, int w, int h, int depth)
 {
    Ximage_Image *xim, *xim2;
-   Evas_List *l;
+   Eina_List *l;
 
    xim2 = NULL;
-   for (l = xinf->pool; l; l = l->next)
+   EINA_LIST_FOREACH(xinf->pool, l, xim)
      {
-	xim = l->data;
 	if ((xim->w >= w) && (xim->h >= h) && (xim->depth == depth) && (xim->available))
 	  {
 	     if (!xim2) xim2 = xim;
@@ -212,7 +208,7 @@ _xr_image_new(Ximage_Info *xinf, int w, int h, int depth)
    xim->line_bytes = xim->xim->bytes_per_line;
    xim->data = (void *)(xim->xim->data);
    xinf->pool_mem += (xim->w * xim->h * xim->depth);
-   xinf->pool = evas_list_append(xinf->pool, xim);
+   xinf->pool = eina_list_append(xinf->pool, xim);
    return xim;
 }
 
@@ -235,7 +231,7 @@ _xr_image_free(Ximage_Image *xim)
 	XDestroyImage(xim->xim);
      }
    xim->xinf->pool_mem -= (xim->w * xim->h * xim->depth);
-   xim->xinf->pool = evas_list_remove(xim->xinf->pool, xim);
+   xim->xinf->pool = eina_list_remove(xim->xinf->pool, xim);
    free(xim);
 }
 

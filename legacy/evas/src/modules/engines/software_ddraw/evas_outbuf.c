@@ -2,7 +2,7 @@
 #include "evas_engine.h"
 
 
-static Evas_List *ddpool = NULL;
+static Eina_List *ddpool = NULL;
 static int ddsize = 0;
 static int ddmemlimit = 10 * 1024 * 1024;
 static int ddcountlimit = 32;
@@ -10,9 +10,10 @@ static int ddcountlimit = 32;
 static DD_Output_Buffer *
 _find_ddob(int depth, int w, int h, void *data)
 {
-   Evas_List        *l;
-   Evas_List        *ddl;
+   Eina_List        *l;
+   Eina_List        *ddl;
    DD_Output_Buffer *ddob = NULL;
+   DD_Output_Buffer *ddob2;
    int               sz;
    int               lbytes;
    int               bpp;
@@ -21,11 +22,8 @@ _find_ddob(int depth, int w, int h, void *data)
    if (bpp == 3) bpp = 4;
    lbytes = (((w * bpp) + 3) / 4) * 4;
    sz = lbytes * h;
-   for (l = ddpool; l; l = l->next)
+   EINA_LIST_FOREACH(ddpool, l, ddob2)
      {
-	DD_Output_Buffer *ddob2;
-
-	ddob2 = l->data;
 	if (ddob2->depth != depth)
 	  continue;
 	if (ddob2->psize == sz)
@@ -39,7 +37,7 @@ _find_ddob(int depth, int w, int h, void *data)
      return evas_software_ddraw_output_buffer_new(depth, w, h, data);
 
    have_ddob:
-   ddpool = evas_list_remove_list(ddpool, ddl);
+   ddpool = eina_list_remove_list(ddpool, ddl);
    ddob->width = w;
    ddob->height = h;
    ddob->pitch = lbytes;
@@ -51,21 +49,21 @@ _find_ddob(int depth, int w, int h, void *data)
 static void
 _unfind_ddob(DD_Output_Buffer *ddob)
 {
-   ddpool = evas_list_prepend(ddpool, ddob);
+   ddpool = eina_list_prepend(ddpool, ddob);
    ddsize += ddob->psize * ddob->depth / 8;
    while ((ddsize > (ddmemlimit)) ||
-          (evas_list_count(ddpool) > ddcountlimit))
+          (eina_list_count(ddpool) > ddcountlimit))
      {
-        Evas_List *xl;
+        Eina_List *xl;
 
-        xl = evas_list_last(ddpool);
+        xl = eina_list_last(ddpool);
         if (!xl)
           {
              ddsize = 0;
              break;
           }
         ddob = xl->data;
-        ddpool = evas_list_remove_list(ddpool, xl);
+        ddpool = eina_list_remove_list(ddpool, xl);
         evas_software_ddraw_output_buffer_free(ddob);
      }
 }
@@ -78,7 +76,7 @@ _clear_ddob(int sync)
 	DD_Output_Buffer *ddob;
 
 	ddob = ddpool->data;
-	ddpool = evas_list_remove_list(ddpool, ddpool);
+	ddpool = eina_list_remove_list(ddpool, ddpool);
 	evas_software_ddraw_output_buffer_free(ddob);
      }
    ddsize = 0;
@@ -266,7 +264,7 @@ evas_software_ddraw_outbuf_new_region_for_update(Outbuf *buf,
  */
      }
 
-   buf->priv.pending_writes = evas_list_append(buf->priv.pending_writes, im);
+   buf->priv.pending_writes = eina_list_append(buf->priv.pending_writes, im);
    return im;
 }
 
@@ -358,7 +356,9 @@ evas_software_ddraw_outbuf_free_region_for_update(Outbuf     *buf,
 void
 evas_software_ddraw_outbuf_flush(Outbuf *buf)
 {
-   Evas_List *l;
+   Eina_List *l;
+   RGBA_Image       *im;
+   Outbuf_Region    *obr;
    void      *ddraw_data;
    int        ddraw_width;
    int        ddraw_height;
@@ -374,13 +374,10 @@ evas_software_ddraw_outbuf_flush(Outbuf *buf)
      goto free_images;
 
    /* copy safely the images that need to be drawn onto the back surface */
-   for (l = buf->priv.pending_writes; l; l = l->next)
+   EINA_LIST_FOREACH(buf->priv.pending_writes, l, im)
      {
-        RGBA_Image       *im;
-        Outbuf_Region    *obr;
 	DD_Output_Buffer *ddob;
 
-        im = l->data;
         obr = im->extended_info;
         ddob = obr->ddob;
         evas_software_ddraw_output_buffer_paste(ddob,
@@ -399,12 +396,9 @@ evas_software_ddraw_outbuf_flush(Outbuf *buf)
  free_images:
    while (buf->priv.prev_pending_writes)
      {
-        RGBA_Image    *im;
-        Outbuf_Region *obr;
-
         im = buf->priv.prev_pending_writes->data;
         buf->priv.prev_pending_writes =
-          evas_list_remove_list(buf->priv.prev_pending_writes,
+          eina_list_remove_list(buf->priv.prev_pending_writes,
                                 buf->priv.prev_pending_writes);
         obr = im->extended_info;
         evas_cache_image_drop((Image_Entry *)im);
@@ -430,7 +424,7 @@ evas_software_ddraw_outbuf_idle_flush(Outbuf *buf)
 
         im = buf->priv.prev_pending_writes->data;
         buf->priv.prev_pending_writes =
-          evas_list_remove_list(buf->priv.prev_pending_writes,
+          eina_list_remove_list(buf->priv.prev_pending_writes,
                                 buf->priv.prev_pending_writes);
         obr = im->extended_info;
         evas_cache_image_drop((Image_Entry *)im);

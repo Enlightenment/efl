@@ -5,19 +5,18 @@ evas_gl_common_image_load(Evas_GL_Context *gc, const char *file, const char *key
 {
    Evas_GL_Image        *im;
    RGBA_Image           *im_im;
-   Evas_List            *l;
+   Eina_List            *l;
 
    im_im = evas_common_load_image_from_file(file, key, lo);
    if (!im_im) return NULL;
 
-   for (l = gc->images; l; l = l->next)
+   EINA_LIST_FOREACH(gc->images, l, im)
      {
-	im = l->data;
 	if (im->im == im_im)
 	  {
              evas_cache_image_drop(&im_im->cache_entry);
-	     gc->images = evas_list_remove_list(gc->images, l);
-	     gc->images = evas_list_prepend(gc->images, im);
+	     gc->images = eina_list_remove_list(gc->images, l);
+	     gc->images = eina_list_prepend(gc->images, im);
 	     im->references++;
 	     return im;
 	  }
@@ -37,7 +36,7 @@ evas_gl_common_image_load(Evas_GL_Context *gc, const char *file, const char *key
    im->cached = 1;
    im->cs.space = EVAS_COLORSPACE_ARGB8888;
    if (lo) im->load_opts = *lo;
-   gc->images = evas_list_prepend(gc->images, im);
+   gc->images = eina_list_prepend(gc->images, im);
    return im;
 }
 
@@ -45,17 +44,16 @@ Evas_GL_Image *
 evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, DATA32 *data, int alpha, int cspace)
 {
    Evas_GL_Image *im;
-   Evas_List *l;
+   Eina_List *l;
 
-   for (l = gc->images; l; l = l->next)
+   EINA_LIST_FOREACH(gc->images, l, im)
      {
-	im = l->data;
 	if (((void *)(im->im->image.data) == (void *)data) &&
 	    (im->im->cache_entry.w == w) &&
 	    (im->im->cache_entry.h == h))
 	  {
-	     gc->images = evas_list_remove_list(gc->images, l);
-	     gc->images = evas_list_prepend(gc->images, im);
+	     gc->images = eina_list_remove_list(gc->images, l);
+	     gc->images = eina_list_prepend(gc->images, im);
 	     im->references++;
 	     return im;
 	  }
@@ -89,7 +87,7 @@ evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, DATA32 *da
      }
    /*
     im->cached = 1;
-    gc->images = evas_list_prepend(gc->images, im);
+    gc->images = eina_list_prepend(gc->images, im);
     */
    printf("new im cs = %i\n", im->cs.space);
    return im;
@@ -179,7 +177,7 @@ evas_gl_common_image_free(Evas_GL_Image *im)
      {
 	if (!im->cs.no_free) free(im->cs.data);
      }
-   if (im->cached) im->gc->images = evas_list_remove(im->gc->images, im);
+   if (im->cached) im->gc->images = eina_list_remove(im->gc->images, im);
    if (im->im) evas_cache_image_drop(&im->im->cache_entry);
    if (im->tex) evas_gl_common_texture_free(im->tex);
    free(im);

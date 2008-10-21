@@ -249,7 +249,7 @@ struct _Evas
 ////      Evas_Coord         canvas_x, canvas_y;
 
       struct {
-	 Evas_List *in;
+	 Eina_List *in;
       } object;
 
    } pointer;
@@ -265,8 +265,8 @@ struct _Evas
       unsigned char  changed : 1;
    } output;
 
-   Evas_List        *damages;
-   Evas_List        *obscures;
+   Eina_List        *damages;
+   Eina_List        *obscures;
 
    Evas_Layer       *layers;
 
@@ -301,9 +301,9 @@ struct _Evas
 
    int            delete_grabs;
    int            walking_grabs;
-   Evas_List     *grabs;
+   Eina_List     *grabs;
 
-   Evas_List     *font_path;
+   Eina_List     *font_path;
 
    Evas_Object   *focused;
    void          *attach_data;
@@ -412,16 +412,16 @@ struct _Evas_Object
    Evas_Intercept_Func *interceptors;
 
    struct {
-      Evas_List *elements;
+      Eina_List *elements;
    } data;
 
-   Evas_List *grabs;
+   Eina_List *grabs;
 
    Evas_Callbacks *callbacks;
 
    struct {
-      Evas_List   *clipees;
-      Evas_List   *changes;
+      Eina_List   *clipees;
+      Eina_List   *changes;
    } clip;
 
    const Evas_Object_Func *func;
@@ -480,8 +480,8 @@ struct _Evas_Data_Node
 struct _Evas_Font_Dir
 {
    Evas_Hash *lookup;
-   Evas_List *fonts;
-   Evas_List *aliases;
+   Eina_List *fonts;
+   Eina_List *aliases;
    DATA64     dir_mod_time;
    DATA64     fonts_dir_mod_time;
    DATA64     fonts_alias_mod_time;
@@ -720,7 +720,7 @@ int evas_object_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 int evas_object_was_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 int evas_object_clippers_was_visible(Evas_Object *obj);
 void evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void *event_info);
-Evas_List *evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y);
+Eina_List *evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y);
 int evas_mem_free(int mem_required);
 int evas_mem_degrade(int mem_required);
 void evas_debug_error(void);
@@ -765,8 +765,8 @@ void evas_object_grabs_cleanup(Evas_Object *obj);
 void evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
 void evas_font_dir_cache_free(void);
 const char *evas_font_dir_cache_find(char *dir, char *font);
-Evas_List *evas_font_dir_available_list(const Evas* evas);
-void evas_font_dir_available_list_free(Evas_List *available);
+Eina_List *evas_font_dir_available_list(const Evas* evas);
+void evas_font_dir_available_list_free(Eina_List *available);
 void evas_font_free(Evas *evas, void *font);
 void *evas_font_load(Evas *evas, const char *name, const char *source, int size);
 void evas_font_load_hinting_set(Evas *evas, void *font, int hinting);

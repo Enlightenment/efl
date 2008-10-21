@@ -48,7 +48,7 @@ struct _Outbuf
       } mask;
 
       /* a list of pending regions to write to the target */
-      Evas_List   *pending_writes;
+      Eina_List   *pending_writes;
    } priv;
 };
 

@@ -4,15 +4,16 @@
 #include <sys/time.h>
 #include <sys/utsname.h>
 
-static Evas_List *shmpool = NULL;
+static Eina_List *shmpool = NULL;
 static int shmsize = 0;
 static int shmmemlimit = 10 * 1024 * 1024;
 static int shmcountlimit = 32;
 static X_Output_Buffer *
 _find_xob(Display *d, Visual *v, int depth, int w, int h, int shm, void *data)
 {
-   Evas_List *l, *xl;
+   Eina_List *l, *xl;
    X_Output_Buffer *xob = NULL;
+   X_Output_Buffer *xob2;
    int fitness = 0x7fffffff;
    int sz, lbytes, bpp;
    
@@ -28,12 +29,10 @@ _find_xob(Display *d, Visual *v, int depth, int w, int h, int shm, void *data)
    else
      lbytes = ((w + 31) / 32) * 4;
    sz = lbytes * h;
-   for (l = shmpool; l; l = l->next)
+   EINA_LIST_FOREACH(shmpool, l, xob2)
      {
-	X_Output_Buffer *xob2;
 	int szdif;
-	
-	xob2 = l->data;
+
 	if ((xob2->xim->depth != depth) || (xob2->visual != v) ||
 	    (xob2->display != d))
 	  continue;
@@ -56,7 +55,7 @@ _find_xob(Display *d, Visual *v, int depth, int w, int h, int shm, void *data)
      return evas_software_x11_x_output_buffer_new(d, v, depth, w, h, shm, data);
    
    have_xob:
-   shmpool = evas_list_remove_list(shmpool, xl);
+   shmpool = eina_list_remove_list(shmpool, xl);
    xob->w = w;
    xob->h = h;
    xob->bpl = lbytes;
@@ -73,21 +72,21 @@ _unfind_xob(X_Output_Buffer *xob, int sync)
 //   evas_software_x11_x_output_buffer_free(xob, sync); return;
    if (xob->shm_info)
      {
-	shmpool = evas_list_prepend(shmpool, xob);
+	shmpool = eina_list_prepend(shmpool, xob);
 	shmsize += xob->psize * xob->xim->depth / 8;
 	while ((shmsize > (shmmemlimit)) ||
-	       (evas_list_count(shmpool) > shmcountlimit))
+	       (eina_list_count(shmpool) > shmcountlimit))
 	  {
-	     Evas_List *xl;
+	     Eina_List *xl;
 	     
-	     xl = evas_list_last(shmpool);
+	     xl = eina_list_last(shmpool);
 	     if (!xl)
 	       {
 		  shmsize = 0;
 		  break;
 	       }
 	     xob = xl->data;
-	     shmpool = evas_list_remove_list(shmpool, xl);
+	     shmpool = eina_list_remove_list(shmpool, xl);
 	     evas_software_x11_x_output_buffer_free(xob, sync);
 	  }
      }
@@ -103,7 +102,7 @@ _clear_xob(int sync)
 	X_Output_Buffer *xob;
 	
 	xob = shmpool->data;
-	shmpool = evas_list_remove_list(shmpool, shmpool);
+	shmpool = eina_list_remove_list(shmpool, shmpool);
 	evas_software_x11_x_output_buffer_free(xob, sync);
      }
    shmsize = 0;
@@ -123,7 +122,7 @@ evas_software_x11_outbuf_free(Outbuf *buf)
 	Outbuf_Region *obr;
 	
 	im = buf->priv.pending_writes->data;
-	buf->priv.pending_writes = evas_list_remove_list(buf->priv.pending_writes, buf->priv.pending_writes);
+	buf->priv.pending_writes = eina_list_remove_list(buf->priv.pending_writes, buf->priv.pending_writes);
 	obr = im->extended_info;
 	evas_cache_image_drop(&im->cache_entry);
 	if (obr->xob) _unfind_xob(obr->xob, 0);
@@ -342,7 +341,7 @@ evas_software_x11_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
 	rect->y = y;
 	rect->w = w;
 	rect->h = h;
-	buf->priv.onebuf_regions = evas_list_append(buf->priv.onebuf_regions, rect);
+	buf->priv.onebuf_regions = eina_list_append(buf->priv.onebuf_regions, rect);
 	if (buf->priv.onebuf)
 	  {
 	     *cx = x;
@@ -548,7 +547,7 @@ evas_software_x11_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
      /* FIXME: faster memset! */
      memset(im->image.data, 0, w * h * sizeof(DATA32));
 
-   buf->priv.pending_writes = evas_list_append(buf->priv.pending_writes, im);
+   buf->priv.pending_writes = eina_list_append(buf->priv.pending_writes, im);
    return im;
 }
 
@@ -561,14 +560,14 @@ evas_software_x11_outbuf_free_region_for_update(Outbuf *buf, RGBA_Image *update)
 void
 evas_software_x11_outbuf_flush(Outbuf *buf)
 {
-   Evas_List *l;
+   Eina_List *l;
+   RGBA_Image *im;
+   Outbuf_Region *obr;
 
    if ((buf->priv.onebuf) && (buf->priv.onebuf_regions))
      {
-	RGBA_Image *im;
-	Outbuf_Region *obr;
 	Region tmpr;
-	
+
 	im = buf->priv.onebuf;
 	obr = im->extended_info;
 	tmpr = XCreateRegion();
@@ -576,9 +575,9 @@ evas_software_x11_outbuf_flush(Outbuf *buf)
 	  {
 	     Evas_Rectangle *rect;
 	     XRectangle xr;
-	     
+
 	     rect = buf->priv.onebuf_regions->data;
-	     buf->priv.onebuf_regions = evas_list_remove_list(buf->priv.onebuf_regions, buf->priv.onebuf_regions);
+	     buf->priv.onebuf_regions = eina_list_remove_list(buf->priv.onebuf_regions, buf->priv.onebuf_regions);
 	     xr.x = rect->x;
 	     xr.y = rect->y;
 	     xr.width = rect->w;
@@ -607,13 +606,9 @@ evas_software_x11_outbuf_flush(Outbuf *buf)
    else
      {
 #if 1	
-	XSync(buf->priv.x.disp, False);
-	for (l = buf->priv.pending_writes; l; l = l->next)
+        XSync(buf->priv.x.disp, False);
+	EINA_LIST_FOREACH(buf->priv.pending_writes, l, im)
 	  {
-	     RGBA_Image *im;
-	     Outbuf_Region *obr;
-	     
-	     im = l->data;
 	     obr = im->extended_info;
 	     if (buf->priv.debug)
 	       evas_software_x11_outbuf_debug_show(buf, buf->priv.x.win,
@@ -629,12 +624,9 @@ evas_software_x11_outbuf_flush(Outbuf *buf)
 	  }
 	while (buf->priv.prev_pending_writes)
 	  {
-	     RGBA_Image *im;
-	     Outbuf_Region *obr;
-	     
 	     im = buf->priv.prev_pending_writes->data;
 	     buf->priv.prev_pending_writes = 
-	       evas_list_remove_list(buf->priv.prev_pending_writes, 
+	       eina_list_remove_list(buf->priv.prev_pending_writes, 
 				     buf->priv.prev_pending_writes);
 	     obr = im->extended_info;
 	     evas_cache_image_drop(&im->cache_entry);
@@ -652,12 +644,8 @@ evas_software_x11_outbuf_flush(Outbuf *buf)
 #else	
 	/* XX async push - disable */
 	/*
-	for (l = buf->priv.pending_writes; l; l = l->next)
+        EINA_LIST_FOREACH(buf->priv.pending_writes, l, im)
 	  {
-	     RGBA_Image *im;
-	     Outbuf_Region *obr;
-	     
-	     im = l->data;
 	     obr = im->extended_info;
 	     if (buf->priv.debug)
 	       evas_software_x11_outbuf_debug_show(buf, buf->priv.x.win,
@@ -679,8 +667,8 @@ evas_software_x11_outbuf_flush(Outbuf *buf)
 	     RGBA_Image *im;
 	     Outbuf_Region *obr;
 	     
-	     im = evas_list_data(buf->priv.pending_writes);
-	     buf->priv.pending_writes = evas_list_remove_list(buf->priv.pending_writes, buf->priv.pending_writes);
+	     im = eina_list_data_get(buf->priv.pending_writes);
+	     buf->priv.pending_writes = eina_list_remove_list(buf->priv.pending_writes, buf->priv.pending_writes);
 	     obr = im->extended_info;
 	     evas_cache_image_drop(&im->cache_entry);
 	     if (obr->xob) _unfind_xob(obr->xob, 0);
@@ -723,7 +711,7 @@ evas_software_x11_outbuf_idle_flush(Outbuf *buf)
 	     
 	     im = buf->priv.prev_pending_writes->data;
 	     buf->priv.prev_pending_writes = 
-	       evas_list_remove_list(buf->priv.prev_pending_writes, 
+	       eina_list_remove_list(buf->priv.prev_pending_writes, 
 				     buf->priv.prev_pending_writes);
 	     obr = im->extended_info;
 	     evas_cache_image_drop(&im->cache_entry);

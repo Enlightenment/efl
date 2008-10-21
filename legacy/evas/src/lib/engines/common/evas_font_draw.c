@@ -61,7 +61,7 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
 EAPI int
 evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 {
-   Evas_List *l;
+   Eina_List *l;
 
    for (l = fn->fonts; l; l = l->next)
      {

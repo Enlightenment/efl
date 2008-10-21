@@ -122,7 +122,7 @@ evas_common_font_source_free(RGBA_Font_Source *fs)
 EAPI void
 evas_common_font_size_use(RGBA_Font *fn)
 {
-   Evas_List *l;
+   Eina_List *l;
 
    for (l = fn->fonts; l; l = l->next)
      {
@@ -270,7 +270,7 @@ evas_common_font_memory_load(const char *name, int size, const void *data, int d
 	free(fi);
 	return NULL;
      }
-   fn->fonts = evas_list_append(fn->fonts, fi);
+   fn->fonts = eina_list_append(fn->fonts, fi);
    fn->hinting = FONT_BYTECODE_HINT;
    fi->hinting = fn->hinting;
    fn->references = 1;
@@ -317,7 +317,7 @@ evas_common_font_load(const char *name, int size)
 	  }
 	return NULL;
      }
-   fn->fonts = evas_list_append(fn->fonts, fi);
+   fn->fonts = eina_list_append(fn->fonts, fi);
    fn->hinting = FONT_BYTECODE_HINT;
    fi->hinting = fn->hinting;
    fn->references = 1;
@@ -335,7 +335,7 @@ evas_common_font_add(RGBA_Font *fn, const char *name, int size)
    fi = evas_common_font_int_load(name, size);
    if (fi)
      {
-	fn->fonts = evas_list_append(fn->fonts, fi);
+	fn->fonts = eina_list_append(fn->fonts, fi);
 	fi->hinting = fn->hinting;
 	return fn;
      }
@@ -352,7 +352,7 @@ evas_common_font_memory_add(RGBA_Font *fn, const char *name, int size, const voi
    fi = evas_common_font_int_memory_load(name, size, data, data_size);
    if (fi)
      {
-	fn->fonts = evas_list_append(fn->fonts, fi);
+	fn->fonts = eina_list_append(fn->fonts, fi);
 	fi->hinting = fn->hinting;
 	return fn;
      }
@@ -362,7 +362,7 @@ evas_common_font_memory_add(RGBA_Font *fn, const char *name, int size, const voi
 EAPI void
 evas_common_font_free(RGBA_Font *fn)
 {
-   Evas_List *l;
+   Eina_List *l;
 
    if (!fn)
       return;
@@ -380,7 +380,7 @@ evas_common_font_free(RGBA_Font *fn)
 	     evas_common_font_flush();
 	  }
      }
-   evas_list_free(fn->fonts);
+   eina_list_free(fn->fonts);
    LKD(fn->lock);
    free(fn);
 }
@@ -388,7 +388,7 @@ evas_common_font_free(RGBA_Font *fn)
 EAPI void
 evas_common_font_hinting_set(RGBA_Font *fn, Font_Hint_Flags hinting)
 {
-   Evas_List *l;
+   Eina_List *l;
 
    if (!fn)
      return;
@@ -483,7 +483,7 @@ font_modify_cache_cb(const Evas_Hash *hash, const char *key, void *data, void *f
    dir = fdata;
    font_cache_usage += (*dir) *
      ((fg->glyph_out->bitmap.width * fg->glyph_out->bitmap.rows) +
-      sizeof(RGBA_Font_Glyph) + sizeof(Evas_List) + 400); /* fudge values */
+      sizeof(RGBA_Font_Glyph) + sizeof(Eina_List) + 400); /* fudge values */
    return 1;
    hash = 0;
    key = 0;

@@ -48,7 +48,7 @@ struct _Evas_Cairo_Image
 
 struct _Evas_Cairo_Polygon
 {
-   Evas_List *points;
+   Eina_List *points;
 };
 
 struct _Evas_Cairo_Polygon_Point

@@ -432,7 +432,7 @@ eng_output_flush(void *data)
 {
    Render_Engine *re;
    Evas_Cairo_Context *ctxt;
-   Evas_List *l;
+   Eina_List *l;
 
    re = (Render_Engine *)data;
 }
@@ -717,7 +717,7 @@ eng_polygon_point_add(void *data, void *context, void *polygon, int x, int y)
      {
 	pt->x = x;
 	pt->y = y;
-	poly->points = evas_list_append(poly->points, pt);
+	poly->points = eina_list_append(poly->points, pt);
      }
    return poly;
 }
@@ -737,7 +737,7 @@ eng_polygon_points_clear(void *data, void *context, void *polygon)
    while (poly->points)
      {
 	free(poly->points->data);
-	poly->points = evas_list_remove_list(poly->points, poly->points);
+	poly->points = eina_list_remove_list(poly->points, poly->points);
      }
    free(poly);
 
@@ -760,13 +760,10 @@ eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
    pt = poly->points->data;
    if (pt)
      {
-	Evas_List *l;
+	Eina_List *l;
 	cairo_move_to(ctxt->cairo, pt->x, pt->y);
-	for (l = poly->points->next; l; l = l->next)
-	  {
-	     pt = l->data;
-	     cairo_line_to(ctxt->cairo, pt->x, pt->y);
-	  }
+	EINA_LIST_FOREACH(poly->points->next, l, pt)
+	  cairo_line_to(ctxt->cairo, pt->x, pt->y);
      }
    r = ctxt->col.r;
    g = ctxt->col.g;

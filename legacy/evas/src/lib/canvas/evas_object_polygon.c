@@ -11,7 +11,7 @@ typedef struct _Evas_Polygon_Point       Evas_Polygon_Point;
 struct _Evas_Object_Polygon
 {
    DATA32            magic;
-   Evas_List        *points;
+   Eina_List        *points;
    
    void             *engine_data;
 
@@ -147,7 +147,7 @@ evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 	obj->cur.geometry.w = max_x - min_x + 2.0;
 	obj->cur.geometry.h = max_y - min_y + 2.0;
      }
-   o->points = evas_list_append(o->points, p);
+   o->points = eina_list_append(o->points, p);
 
 ////   obj->cur.cache.geometry.validity = 0;
    o->changed = 1;
@@ -196,7 +196,7 @@ evas_object_polygon_points_clear(Evas_Object *obj)
    while (o->points)
      {
 	free(o->points->data);
-	o->points = evas_list_remove(o->points, o->points->data);
+	o->points = eina_list_remove(o->points, o->points->data);
      }
    obj->cur.geometry.w = 0;
    obj->cur.geometry.h = 0;
@@ -269,7 +269,7 @@ evas_object_polygon_free(Evas_Object *obj)
    while (o->points)
      {
 	free(o->points->data);
-	o->points = evas_list_remove(o->points, o->points->data);
+	o->points = eina_list_remove(o->points, o->points->data);
      }
    o->engine_data = obj->layer->evas->engine.func->polygon_points_clear(obj->layer->evas->engine.data.output,
 									obj->layer->evas->engine.data.context,
@@ -282,7 +282,8 @@ static void
 evas_object_polygon_render(Evas_Object *obj, void *output, void *context, void *surface, int x, int y)
 {
    Evas_Object_Polygon *o;
-   Evas_List *l;
+   Eina_List *l;
+   Evas_Polygon_Point *p;
 
    /* render object to surface with context, and offxet by x,y */
    o = (Evas_Object_Polygon *)(obj->object_data);
@@ -299,13 +300,9 @@ evas_object_polygon_render(Evas_Object *obj, void *output, void *context, void *
    o->engine_data = obj->layer->evas->engine.func->polygon_points_clear(obj->layer->evas->engine.data.output,
 									obj->layer->evas->engine.data.context,
 									o->engine_data);
-   for (l = o->points; l; l = l->next)
+   EINA_LIST_FOREACH(o->points, l, p)
      {
-	Evas_Polygon_Point *p;
 	//int px, py;
-
-        p = l->data;
-
         //px = evas_coord_world_x_to_screen(obj->layer->evas, p->x);
 	//py = evas_coord_world_y_to_screen(obj->layer->evas, p->y);
 	o->engine_data = obj->layer->evas->engine.func->polygon_point_add(obj->layer->evas->engine.data.output,
@@ -408,7 +405,7 @@ evas_object_polygon_render_post(Evas_Object *obj)
 	Evas_Rectangle *r;
 
 	r = (Evas_Rectangle *)obj->clip.changes->data;
-	obj->clip.changes = evas_list_remove(obj->clip.changes, r);
+	obj->clip.changes = eina_list_remove(obj->clip.changes, r);
 	free(r);
      }
    /* move cur to prev safely for object data */

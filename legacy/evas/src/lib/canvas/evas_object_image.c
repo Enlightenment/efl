@@ -40,7 +40,7 @@ struct _Evas_Object_Image
 
    int               pixels_checked_out;
    int               load_error;
-   Evas_List        *pixel_updates;
+   Eina_List        *pixel_updates;
 
    struct {
       unsigned char  scale_down_by;
@@ -1116,7 +1116,7 @@ evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h)
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, o->cur.image.w, o->cur.image.h);
    if ((w <= 0)  || (h <= 0)) return;
    NEW_RECT(r, x, y, w, h);
-   if (r) o->pixel_updates = evas_list_append(o->pixel_updates, r);
+   if (r) o->pixel_updates = eina_list_append(o->pixel_updates, r);
    o->changed = 1;
    evas_object_change(obj);
 }
@@ -2044,7 +2044,7 @@ evas_object_image_free(Evas_Object *obj)
 	Evas_Rectangle *r;
 
 	r = (Evas_Rectangle *)o->pixel_updates->data;
-	o->pixel_updates = evas_list_remove(o->pixel_updates, r);
+	o->pixel_updates = eina_list_remove(o->pixel_updates, r);
 	free(r);
      }
    free(o);
@@ -2395,7 +2395,7 @@ evas_object_image_render_pre(Evas_Object *obj)
 		  int x, y, w, h;
 
 		  rr = o->pixel_updates->data;
-		  o->pixel_updates = evas_list_remove(o->pixel_updates, rr);
+		  o->pixel_updates = eina_list_remove(o->pixel_updates, rr);
 		  obj->layer->evas->engine.func->image_dirty_region(obj->layer->evas->engine.data.output, o->engine_data, rr->x, rr->y, rr->w, rr->h);
 		  
 		  idx = evas_object_image_figure_x_fill(obj, o->cur.fill.x, o->cur.fill.w, &idw);
@@ -2444,7 +2444,7 @@ evas_object_image_render_pre(Evas_Object *obj)
 		       Evas_Rectangle *r;
 
 		       r = (Evas_Rectangle *)o->pixel_updates->data;
-		       o->pixel_updates = evas_list_remove(o->pixel_updates, r);
+		       o->pixel_updates = eina_list_remove(o->pixel_updates, r);
 		       free(r);
 		    }
 		  obj->layer->evas->engine.func->image_dirty_region(obj->layer->evas->engine.data.output, o->engine_data, 0, 0, o->cur.image.w, o->cur.image.h);
@@ -2482,7 +2482,7 @@ evas_object_image_render_post(Evas_Object *obj)
 	Evas_Rectangle *r;
 
 	r = (Evas_Rectangle *)obj->clip.changes->data;
-	obj->clip.changes = evas_list_remove(obj->clip.changes, r);
+	obj->clip.changes = eina_list_remove(obj->clip.changes, r);
 	free(r);
      }
    while (o->pixel_updates)
@@ -2490,7 +2490,7 @@ evas_object_image_render_post(Evas_Object *obj)
 	Evas_Rectangle *r;
 
 	r = (Evas_Rectangle *)o->pixel_updates->data;
-	o->pixel_updates = evas_list_remove(o->pixel_updates, r);
+	o->pixel_updates = eina_list_remove(o->pixel_updates, r);
 	free(r);
      }
    /* move cur to prev safely for object data */

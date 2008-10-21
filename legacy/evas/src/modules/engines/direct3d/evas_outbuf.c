@@ -149,7 +149,7 @@ evas_direct3d_outbuf_new_region_for_update(Outbuf *buf,
         im->extended_info = d3dob;
      }
 
-   buf->priv.pending_writes = evas_list_append(buf->priv.pending_writes, im);
+   buf->priv.pending_writes = eina_list_append(buf->priv.pending_writes, im);
 
    return im;
 }
@@ -164,11 +164,13 @@ evas_direct3d_outbuf_free_region_for_update(Outbuf     *buf,
 void
 evas_direct3d_outbuf_flush(Outbuf *buf)
 {
-   Evas_List *l;
+   Eina_List *l;
    void      *d3d_data;
    int        d3d_width;
    int        d3d_height;
    int        d3d_pitch;
+   RGBA_Image             *im;
+   Direct3D_Output_Buffer *d3dob;
 
    /* lock the texture */
    if (!(d3d_data = evas_direct3d_lock(buf,
@@ -176,12 +178,8 @@ evas_direct3d_outbuf_flush(Outbuf *buf)
      goto free_images;
 
    /* copy safely the images that need to be drawn onto the back surface */
-   for (l = buf->priv.pending_writes; l; l = l->next)
+   EINA_LIST_FOREACH(buf->priv.pending_writes, l, im)
      {
-	RGBA_Image             *im;
-	Direct3D_Output_Buffer *d3dob;
-
-	im = l->data;
 	d3dob = im->extended_info;
 	/* paste now */
 	evas_direct3d_output_buffer_paste(d3dob,
@@ -199,11 +197,8 @@ evas_direct3d_outbuf_flush(Outbuf *buf)
  free_images:
    while (buf->priv.pending_writes)
      {
-        RGBA_Image             *im;
-        Direct3D_Output_Buffer *d3dob;
-
         im = buf->priv.pending_writes->data;
-        buf->priv.pending_writes = evas_list_remove_list(buf->priv.pending_writes,
+        buf->priv.pending_writes = eina_list_remove_list(buf->priv.pending_writes,
                                                          buf->priv.pending_writes);
         d3dob = im->extended_info;
         evas_cache_image_drop(im);

@@ -1,7 +1,7 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-static Evas_List *
+static Eina_List *
 evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char do_draw);
 
 /**
@@ -21,7 +21,7 @@ evas_damage_rectangle_add(Evas *e, int x, int y, int w, int h)
    r = malloc(sizeof(Evas_Rectangle));
    if (!r) return;
    r->x = x; r->y = y; r->w = w; r->h = h;
-   e->damages = evas_list_append(e->damages, r);
+   e->damages = eina_list_append(e->damages, r);
    e->changed = 1;
 }
 
@@ -42,7 +42,7 @@ evas_obscured_rectangle_add(Evas *e, int x, int y, int w, int h)
    r = malloc(sizeof(Evas_Rectangle));
    if (!r) return;
    r->x = x; r->y = y; r->w = w; r->h = h;
-   e->obscures = evas_list_append(e->obscures, r);
+   e->obscures = eina_list_append(e->obscures, r);
 }
 
 /**
@@ -62,7 +62,7 @@ evas_obscured_clear(Evas *e)
 	Evas_Rectangle *r;
 
 	r = (Evas_Rectangle *)e->obscures->data;
-	e->obscures = evas_list_remove(e->obscures, r);
+	e->obscures = eina_list_remove(e->obscures, r);
 	free(r);
      }
 }
@@ -314,13 +314,14 @@ Eina_Bool pending_change(void *data, __UNUSED__ void *gdata)
    return obj->changed ? EINA_TRUE : EINA_FALSE;
 }
 
-static Evas_List *
+static Eina_List *
 evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char do_draw)
 {
-   Evas_List *updates = NULL;
-   Evas_List *ll;
+   Eina_List *updates = NULL;
+   Eina_List *ll;
    void *surface;
    Evas_Bool clean_them = 0;
+   Evas_Rectangle *r;
    int ux, uy, uw, uh;
    int cx, cy, cw, ch;
    unsigned int i, j;
@@ -364,10 +365,8 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
    /* phase 3. add exposes */
    while (e->damages)
      {
-	Evas_Rectangle *r;
-
 	r = e->damages->data;
-	e->damages = evas_list_remove(e->damages, r);
+	e->damages = eina_list_remove(e->damages, r);
 	e->engine.func->output_redraws_rect_add(e->engine.data.output,
 					       r->x, r->y, r->w, r->h);
 	free(r);
@@ -392,14 +391,9 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 	printf("EVAS: error: viewport size != output size!\n");
      }
    /* phase 5. add obscures */
-   for (ll = e->obscures; ll; ll = ll->next)
-     {
-	Evas_Rectangle *r;
-
-	r = ll->data;
-	e->engine.func->output_redraws_rect_del(e->engine.data.output,
+   EINA_LIST_FOREACH(e->obscures, ll, r)
+        e->engine.func->output_redraws_rect_del(e->engine.data.output,
 					       r->x, r->y, r->w, r->h);
-     }
    /* build obscure objects list of active objects that obscure */
    for (i = 0; i < e->active_objects.count; ++i)
      {
@@ -413,7 +407,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
                      (!obj->delete_me) &&
                      (obj->cur.cache.clip.visible) &&
                      (!obj->smart.smart)))
-/* 	  obscuring_objects = evas_list_append(obscuring_objects, obj); */
+/* 	  obscuring_objects = eina_list_append(obscuring_objects, obj); */
 	  eina_array_push(&e->obscuring_objects, obj);
      }
    /* save this list */
@@ -439,7 +433,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 		  if (rect)
 		    {
 		       rect->x = ux; rect->y = uy; rect->w = uw; rect->h = uh;
-		       updates = evas_list_append(updates, rect);
+		       updates = eina_list_append(updates, rect);
 		    }
 	       }
 	     off_x = cx - ux;
@@ -552,7 +546,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 /* moved to other pre-process phase 1
 	if (obj->delete_me == 2)
 	  {
-	     delete_objects = evas_list_append(delete_objects, obj);
+	     delete_objects = eina_list_append(delete_objects, obj);
 	  }
 	else if (obj->delete_me != 0) obj->delete_me++;
  */
@@ -600,12 +594,12 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
  *
  */
 EAPI void
-evas_render_updates_free(Evas_List *updates)
+evas_render_updates_free(Eina_List *updates)
 {
    while (updates)
      {
 	free(updates->data);
-	updates = evas_list_remove(updates, updates->data);
+	updates = eina_list_remove(updates, updates->data);
      }
 }
 
@@ -615,7 +609,7 @@ evas_render_updates_free(Evas_List *updates)
  * FIXME: To be fixed.
  *
  */
-EAPI Evas_List *
+EAPI Eina_List *
 evas_render_updates(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);

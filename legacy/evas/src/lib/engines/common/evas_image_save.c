@@ -12,7 +12,7 @@
 #include "evas_private.h"
 
 
-extern Evas_List *evas_modules;
+extern Eina_List *evas_modules;
 
 int
 evas_common_save_image_to_file(RGBA_Image *im, const char *file, const char *key, int quality, int compress)

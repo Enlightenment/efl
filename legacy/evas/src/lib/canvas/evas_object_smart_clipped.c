@@ -20,23 +20,22 @@
 EAPI void
 evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy)
 {
-   Evas_List *lst, *itr;
+   Eina_List *lst, *itr;
+   Evas_Object *child;
 
    if ((dx == 0) && (dy == 0))
      return;
 
    lst = evas_object_smart_members_get(obj);
-   for (itr = lst; itr != NULL; itr = itr->next)
+   EINA_LIST_FOREACH(lst, itr, child)
      {
-	Evas_Object *child;
 	Evas_Coord orig_x, orig_y;
 
-	child = itr->data;
 	evas_object_geometry_get(child, &orig_x, &orig_y, NULL, NULL);
 	evas_object_move(child, orig_x + dx, orig_y + dy);
      }
 
-   evas_list_free(lst);
+   eina_list_free(lst);
 }
 
 /**
@@ -82,12 +81,13 @@ static void
 evas_object_smart_clipped_smart_del(Evas_Object *obj)
 {
    CSO_DATA_GET_OR_RETURN(obj, cso);
-   Evas_List *lst, *itr;
+   Eina_List *lst, *itr;
+   Evas_Object *data;
 
    lst = evas_object_smart_members_get(obj);
-   for (itr = lst; itr != NULL; itr = itr->next)
-     evas_object_del(itr->data);
-   evas_list_free(lst);
+   EINA_LIST_FOREACH(lst, itr, data)
+     evas_object_del(data);
+   eina_list_free(lst);
 
    free(cso);
    evas_object_smart_data_set(obj, NULL);

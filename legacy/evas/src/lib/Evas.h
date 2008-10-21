@@ -404,8 +404,8 @@ extern "C" {
    EAPI void              evas_free                         (Evas *e);
 
    EAPI int               evas_render_method_lookup         (const char *name);
-   EAPI Evas_List        *evas_render_method_list           (void);
-   EAPI void              evas_render_method_list_free      (Evas_List *list);
+   EAPI Eina_List        *evas_render_method_list           (void);
+   EAPI void              evas_render_method_list_free      (Eina_List *list);
 
    EAPI void              evas_output_method_set            (Evas *e, int render_method);
    EAPI int               evas_output_method_get            (const Evas *e);
@@ -434,8 +434,8 @@ extern "C" {
    EAPI void              evas_damage_rectangle_add         (Evas *e, int x, int y, int w, int h);
    EAPI void              evas_obscured_rectangle_add       (Evas *e, int x, int y, int w, int h);
    EAPI void              evas_obscured_clear               (Evas *e);
-   EAPI Evas_List        *evas_render_updates               (Evas *e);
-   EAPI void              evas_render_updates_free          (Evas_List *updates);
+   EAPI Eina_List        *evas_render_updates               (Evas *e);
+   EAPI void              evas_render_updates_free          (Eina_List *updates);
    EAPI void              evas_render                       (Evas *e);
    EAPI void              evas_norender                     (Evas *e);
    EAPI void              evas_render_idle_flush            (Evas *e);
@@ -593,7 +593,7 @@ extern "C" {
    EAPI void              evas_font_path_clear              (Evas *e);
    EAPI void              evas_font_path_append             (Evas *e, const char *path);
    EAPI void              evas_font_path_prepend            (Evas *e, const char *path);
-   EAPI const Evas_List  *evas_font_path_list               (const Evas *e);
+   EAPI const Eina_List  *evas_font_path_list               (const Evas *e);
    
    EAPI void              evas_font_hinting_set             (Evas *e, Evas_Font_Hinting_Flags hinting);
    EAPI Evas_Font_Hinting_Flags evas_font_hinting_get       (const Evas *e);
@@ -603,8 +603,8 @@ extern "C" {
    EAPI void              evas_font_cache_set               (Evas *e, int size);
    EAPI int               evas_font_cache_get               (const Evas *e);
 
-   EAPI Evas_List	 *evas_font_available_list	    (const Evas *e);
-   EAPI void		  evas_font_available_list_free	    (Evas *e, Evas_List *available);
+   EAPI Eina_List	 *evas_font_available_list	    (const Evas *e);
+   EAPI void		  evas_font_available_list_free	    (Evas *e, Eina_List *available);
    
 /* textblock objects */
    typedef struct _Evas_Textblock_Style     Evas_Textblock_Style;
@@ -677,7 +677,7 @@ extern "C" {
    EAPI int                          evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
    EAPI Evas_Bool                    evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, Evas_Coord y);
    EAPI int                          evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y);
-   EAPI Evas_List                   *evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2);
+   EAPI Eina_List                   *evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2);
    
    EAPI Evas_Bool                    evas_object_textblock_line_number_geometry_get(const Evas_Object *obj, int line, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
    EAPI void                         evas_object_textblock_clear(Evas_Object *obj);
@@ -744,7 +744,7 @@ extern "C" {
    EAPI void              evas_object_clip_set              (Evas_Object *obj, Evas_Object *clip);
    EAPI Evas_Object      *evas_object_clip_get              (const Evas_Object *obj);
    EAPI void              evas_object_clip_unset            (Evas_Object *obj);
-   EAPI const Evas_List  *evas_object_clipees_get           (const Evas_Object *obj);
+   EAPI const Eina_List  *evas_object_clipees_get           (const Evas_Object *obj);
 
    EAPI void              evas_object_data_set              (Evas_Object *obj, const char *key, const void *data);
    EAPI void             *evas_object_data_get              (const Evas_Object *obj, const char *key);
@@ -760,8 +760,8 @@ extern "C" {
    EAPI Evas_Object      *evas_object_top_at_pointer_get    (const Evas *e);
    EAPI Evas_Object      *evas_object_top_in_rectangle_get  (const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects);
 
-   EAPI Evas_List        *evas_objects_at_xy_get            (const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects);
-   EAPI Evas_List        *evas_objects_in_rectangle_get     (const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects);
+   EAPI Eina_List        *evas_objects_at_xy_get            (const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects);
+   EAPI Eina_List        *evas_objects_in_rectangle_get     (const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects);
 
 /* smart objects */
    EAPI Evas_Smart       *evas_smart_new                    (const char *name, void (*func_add) (Evas_Object *obj), void (*func_del) (Evas_Object *obj), void (*func_layer_set) (Evas_Object *obj, int l), void (*func_raise) (Evas_Object *obj), void (*func_lower) (Evas_Object *obj), void (*func_stack_above) (Evas_Object *obj, Evas_Object *above), void (*func_stack_below) (Evas_Object *obj, Evas_Object *below), void (*func_move) (Evas_Object *obj, Evas_Coord x, Evas_Coord y), void (*func_resize) (Evas_Object *obj, Evas_Coord w, Evas_Coord h), void (*func_show) (Evas_Object *obj), void (*func_hide) (Evas_Object *obj), void (*func_color_set) (Evas_Object *obj, int r, int g, int b, int a), void (*func_clip_set) (Evas_Object *obj, Evas_Object *clip), void (*func_clip_unset) (Evas_Object *obj), const void *data);
@@ -775,7 +775,7 @@ extern "C" {
    EAPI void              evas_object_smart_member_add      (Evas_Object *obj, Evas_Object *smart_obj);
    EAPI void              evas_object_smart_member_del      (Evas_Object *obj);
    EAPI Evas_Object      *evas_object_smart_parent_get      (const Evas_Object *obj);
-   EAPI Evas_List        *evas_object_smart_members_get     (const Evas_Object *obj);
+   EAPI Eina_List        *evas_object_smart_members_get     (const Evas_Object *obj);
    EAPI Evas_Smart       *evas_object_smart_smart_get       (const Evas_Object *obj);
    EAPI void             *evas_object_smart_data_get        (const Evas_Object *obj);
    EAPI void              evas_object_smart_data_set        (Evas_Object *obj, void *data);

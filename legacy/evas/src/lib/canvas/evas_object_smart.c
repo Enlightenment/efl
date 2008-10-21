@@ -9,7 +9,7 @@ struct _Evas_Object_Smart
    DATA32            magic;
    void             *engine_data;
    void             *data;
-   Evas_List        *callbacks;
+   Eina_List        *callbacks;
    Eina_Inlist *contained;
    int               walking_list;
    Evas_Bool         deletions_waiting : 1;
@@ -249,13 +249,13 @@ evas_object_smart_parent_get(const Evas_Object *obj)
  * Gets the list of the member objects of an Evas_Object
  * @param obj the Evas_Object you want to get the list of member objects
  * @return Returns the list of the member objects of @a obj.
- * The returned list should be freed with evas_list_free() when you no longer need it
+ * The returned list should be freed with eina_list_free() when you no longer need it
  */
-EAPI Evas_List *
+EAPI Eina_List *
 evas_object_smart_members_get(const Evas_Object *obj)
 {
    Evas_Object_Smart *o;
-   Evas_List *members;
+   Eina_List *members;
    Eina_Inlist *member;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -268,7 +268,7 @@ evas_object_smart_members_get(const Evas_Object *obj)
 
    members = NULL;
    for (member = o->contained; member; member = member->next)
-      members = evas_list_append(members, member);
+      members = eina_list_append(members, member);
    
    return members;
 }
@@ -344,7 +344,7 @@ evas_object_smart_callback_add(Evas_Object *obj, const char *event, void (*func)
    cb->event = eina_stringshare_add(event);
    cb->func = func;
    cb->func_data = (void *)data;
-   o->callbacks = evas_list_prepend(o->callbacks, cb);
+   o->callbacks = eina_list_prepend(o->callbacks, cb);
 }
 
 /**
@@ -362,7 +362,8 @@ EAPI void *
 evas_object_smart_callback_del(Evas_Object *obj, const char *event, void (*func) (void *data, Evas_Object *obj, void *event_info))
 {
    Evas_Object_Smart *o;
-   Evas_List *l;
+   Eina_List *l;
+   Evas_Smart_Callback *cb;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
@@ -372,11 +373,8 @@ evas_object_smart_callback_del(Evas_Object *obj, const char *event, void (*func)
    return NULL;
    MAGIC_CHECK_END();
    if (!event) return NULL;
-   for (l = o->callbacks; l; l = l->next)
+   EINA_LIST_FOREACH(o->callbacks, l, cb)
      {
-	Evas_Smart_Callback *cb;
-
-	cb = l->data;
 	if ((!strcmp(cb->event, event)) && (cb->func == func))
 	  {
 	     void *data;
@@ -408,7 +406,8 @@ EAPI void
 evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event_info)
 {
    Evas_Object_Smart *o;
-   Evas_List *l;
+   Eina_List *l;
+   Evas_Smart_Callback *cb;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -420,11 +419,8 @@ evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event
    if (!event) return;
    if (obj->delete_me) return;
    o->walking_list++;
-   for (l = o->callbacks; l; l = l->next)
+   EINA_LIST_FOREACH(o->callbacks, l, cb)
      {
-	Evas_Smart_Callback *cb;
-
-	cb = l->data;
 	if (!cb->delete_me)
 	  {
 	     if (!strcmp(cb->event, event))
@@ -599,7 +595,8 @@ static void
 evas_object_smart_callbacks_clear(Evas_Object *obj)
 {
    Evas_Object_Smart *o;
-   Evas_List *l;
+   Eina_List *l;
+   Evas_Smart_Callback *cb;
 
    o = (Evas_Object_Smart *)(obj->object_data);
 
@@ -607,13 +604,11 @@ evas_object_smart_callbacks_clear(Evas_Object *obj)
    if (!o->deletions_waiting) return;
    for (l = o->callbacks; l;)
      {
-	Evas_Smart_Callback *cb;
-
-	cb = l->data;
-	l = l->next;
+	cb = eina_list_data_get(l);
+	l = eina_list_next(l);
 	if (cb->delete_me)
 	  {
-	     o->callbacks = evas_list_remove(o->callbacks, cb);
+	     o->callbacks = eina_list_remove(o->callbacks, cb);
 	     if (cb->event) eina_stringshare_del(cb->event);
 	     free(cb);
 	  }
@@ -651,7 +646,7 @@ evas_object_smart_cleanup(Evas_Object *obj)
 	     Evas_Smart_Callback *cb;
 
 	     cb = o->callbacks->data;
-	     o->callbacks = evas_list_remove(o->callbacks, cb);
+	     o->callbacks = eina_list_remove(o->callbacks, cb);
 	     if (cb->event) eina_stringshare_del(cb->event);
 	     free(cb);
 	  }

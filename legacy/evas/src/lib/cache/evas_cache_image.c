@@ -11,7 +11,7 @@
 #ifdef BUILD_ASYNC_PRELOAD
 #include <pthread.h>
 
-static Evas_List *preload = NULL;
+static Eina_List *preload = NULL;
 static Image_Entry *current = NULL;
 
 static pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
@@ -275,7 +275,7 @@ _evas_cache_image_entry_preload_add(Evas_Cache_Image *cache,
 
    if (!ie->flags.preload)
      {
-	preload = evas_list_append(preload, ie);
+	preload = eina_list_append(preload, ie);
 	ie->flags.preload = 1;
 	ie->target = target;
 
@@ -312,7 +312,7 @@ _evas_cache_image_entry_preload_remove(Evas_Cache_Image *cache,
 	       }
 	     else
 	       {
-		  preload = evas_list_remove(preload, ie);
+		  preload = eina_list_remove(preload, ie);
 		  ie->flags.preload = 0;
 		  ret = 1;
 	       }
@@ -1029,8 +1029,8 @@ _evas_cache_background_load(void *data)
      {
 	pthread_mutex_lock(&mutex);
 
-	current = evas_list_data(preload);
-	preload = evas_list_remove(preload, current);
+	current = eina_list_data_get(preload);
+	preload = eina_list_remove(preload, current);
 
 	pthread_mutex_unlock(&mutex);
 

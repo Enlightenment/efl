@@ -8,8 +8,8 @@
 #include <evas_common.h>
 #include <evas_private.h>
 
-Evas_List *evas_modules = NULL;
-static Evas_List *evas_module_paths = NULL;
+Eina_List *evas_modules = NULL;
+static Eina_List *evas_module_paths = NULL;
 
 static void
 _evas_module_path_append(Evas_Module_Type type, char *path, const char *subdir)
@@ -24,7 +24,7 @@ _evas_module_path_append(Evas_Module_Type type, char *path, const char *subdir)
 	mp = malloc(sizeof(Evas_Module_Path));
 	mp->type = type;
 	mp->path = buf;
-	evas_module_paths = evas_list_append(evas_module_paths, mp);
+	evas_module_paths = eina_list_append(evas_module_paths, mp);
      }
    else
      free(buf);
@@ -43,7 +43,7 @@ evas_module_paths_init(void)
 
    char *prefix;
    char *path;
-   Evas_List *paths = NULL;
+   Eina_List *paths = NULL;
 
    /* 1. ~/.evas/modules/ */
    prefix = getenv("HOME");
@@ -56,7 +56,7 @@ evas_module_paths_init(void)
 	     strcpy(path, prefix);
 	     strcat(path, "/.evas/modules");
 	     if (evas_file_path_exists(path))
-	       paths = evas_list_append(paths, path);
+	       paths = eina_list_append(paths, path);
 	     else
 	       free(path);
 	  }
@@ -73,7 +73,7 @@ evas_module_paths_init(void)
 	     strcpy(path, prefix);
 	     strcat(path, "/evas/modules");
 	     if (evas_file_path_exists(path))
-	       paths = evas_list_append(paths, path);
+	       paths = eina_list_append(paths, path);
 	     else
 	       free(path);
 	  }
@@ -99,7 +99,7 @@ evas_module_paths_init(void)
 		       path[strlen(evas_dl.dli_fname) - length] = 0;
 		       strcat(path, "/evas/modules");
 		       if (evas_file_path_exists(path))
-			 paths = evas_list_append(paths, path);
+			 paths = eina_list_append(paths, path);
 		       else
 			 free(path);
 		    }
@@ -115,7 +115,7 @@ evas_module_paths_init(void)
 	strcpy(path, prefix);
 	strcat(path, "/evas/modules");
 	if (evas_file_path_exists(path))
-	  paths = evas_list_append(paths, path);
+	  paths = eina_list_append(paths, path);
 	else
 	  free(path);
      }
@@ -132,7 +132,7 @@ evas_module_paths_init(void)
 	_evas_module_path_append(EVAS_MODULE_TYPE_IMAGE_SAVER, paths->data, "savers");
 	_evas_module_path_append(EVAS_MODULE_TYPE_OBJECT, paths->data, "objects");
 	free(paths->data);
-	paths = evas_list_remove_list(paths, paths);
+	paths = eina_list_remove_list(paths, paths);
      }
 }
 
@@ -141,18 +141,16 @@ evas_module_paths_init(void)
 void
 evas_module_init(void)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Evas_Module_Path *mp;
    int new_id_engine = 1;
 
 /*    printf("[init modules]\n"); */
    evas_module_paths_init();
-   for (l = evas_module_paths; l; l = l->next)
+   EINA_LIST_FOREACH(evas_module_paths, l, mp)
      {
-	Evas_Module_Path *mp;
 	DIR *dir;
 	struct dirent *de;
-
-	mp = l->data;
 
 	if (!(dir = opendir(mp->path))) break;
 /*	printf("[evas module] searching modules on %s\n", mp->path); */
@@ -195,7 +193,7 @@ evas_module_init(void)
 		    {
 		    }
 /*		  printf("[evas module] including module path %s/%s of type %d\n",em->path, em->name, em->type); */
-		  evas_modules = evas_list_append(evas_modules, em);
+		  evas_modules = eina_list_append(evas_modules, em);
 	       }
 	     free(buf);
 	  }
@@ -206,18 +204,16 @@ evas_module_init(void)
 Evas_Module *
 evas_module_find_type(Evas_Module_Type type, const char *name)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Evas_Module *em;
 
-   for (l = evas_modules; l; l = l->next)
+   EINA_LIST_FOREACH(evas_modules, l, em)
      {
-	Evas_Module *em;
-
-	em = (Evas_Module*)l->data;
 	if ((type == em->type) && (!strcmp(name,em->name)))
 	  {
              if (evas_modules != l)
 	       {
-		  evas_modules = evas_list_promote_list(evas_modules, l);
+		  evas_modules = eina_list_promote_list(evas_modules, l);
 	       }
 	     return em;
 	  }
@@ -340,7 +336,7 @@ evas_module_clean(void)
    static int call_count = 0;
    int ago;
    int noclean = -1;
-   Evas_List *l;
+   Eina_List *l;
    Evas_Module *em;
 
    /* only clean modules every 256 calls */
@@ -367,9 +363,8 @@ evas_module_clean(void)
 
    /* printf("CLEAN!\n"); */
    /* go through all modules */
-   for (l = evas_modules; l; l = l->next)
+   EINA_LIST_FOREACH(evas_modules, l, em)
      {
-	em = l->data;
         /* printf("M %s %i %i\n", em->name, em->ref, em->loaded); */
 	/* if the module is refernced - skip */
 	if ((em->ref > 0) || (!em->loaded)) continue;
@@ -409,14 +404,14 @@ evas_module_shutdown(void)
 	  {
 	  }
 	free(evas_modules->data);
-	evas_modules = evas_list_remove_list(evas_modules, evas_modules);
+	evas_modules = eina_list_remove_list(evas_modules, evas_modules);
      }
    while (evas_module_paths)
      {
 	Evas_Module_Path *mp;
 
 	mp = evas_module_paths->data;
-	evas_module_paths = evas_list_remove_list(evas_module_paths, evas_module_paths);
+	evas_module_paths = eina_list_remove_list(evas_module_paths, evas_module_paths);
 	free(mp->path);
 	free(mp);
      }

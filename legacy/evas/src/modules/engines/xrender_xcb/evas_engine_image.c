@@ -6,7 +6,7 @@
 static Evas_Hash *_xr_image_hash        = NULL;
 static int        _xr_image_cache_size  = 0;
 static int        _xr_image_cache_usage = 0;
-static Evas_List *_xr_image_cache       = NULL;
+static Eina_List *_xr_image_cache       = NULL;
 static Evas_Hash *_xr_image_dirty_hash  = NULL;
 
 static void
@@ -42,18 +42,17 @@ static XR_Image *
 __xre_image_find(char *fkey)
 {
    XR_Image *im;
-   
+
    im = evas_hash_find(_xr_image_hash, fkey);
    if (!im)
      {
-	Evas_List *l;
-	
-	for (l = _xr_image_cache; l; l = l->next)
+	Eina_List *l;
+
+	EINA_LIST_FOREACH(_xr_image_cache, l, im)
 	  {
-	     im = l->data;
 	     if (!strcmp(im->fkey, fkey))
 	       {
-		  _xr_image_cache = evas_list_remove_list(_xr_image_cache, l);
+		  _xr_image_cache = eina_list_remove_list(_xr_image_cache, l);
 		  _xr_image_hash = evas_hash_add(_xr_image_hash, im->fkey, im);
 		  _xr_image_cache_usage -= (im->w * im->h * 4);
 		  break;
@@ -219,7 +218,7 @@ _xre_image_free(XR_Image *im)
      {
 	if (im->fkey)
 	  _xr_image_hash = evas_hash_del(_xr_image_hash, im->fkey, im);
-	_xr_image_cache = evas_list_prepend(_xr_image_cache, im);
+	_xr_image_cache = eina_list_prepend(_xr_image_cache, im);
 	_xr_image_cache_usage += (im->w * im->h * 4);
 	_xre_image_cache_set(_xr_image_cache_size);
      }
@@ -592,15 +591,15 @@ _xre_image_cache_set(int size)
    _xr_image_cache_size = size;
    while (_xr_image_cache_usage > _xr_image_cache_size)
      {
-	Evas_List *l;
+	Eina_List *l;
 	
-	l = evas_list_last(_xr_image_cache);
+	l = eina_list_last(_xr_image_cache);
 	if (l)
 	  {
 	     XR_Image *im;
 	     
 	     im = l->data;
-	     _xr_image_cache = evas_list_remove_list(_xr_image_cache, l);
+	     _xr_image_cache = eina_list_remove_list(_xr_image_cache, l);
 	     _xr_image_cache_usage -= (im->w * im->h * 4);
 	     __xre_image_real_free(im);
 	  }

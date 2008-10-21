@@ -612,7 +612,7 @@ struct _RGBA_Polygon_Point
 
 struct _RGBA_Font
 {
-   Evas_List *fonts;
+   Eina_List *fonts;
    Font_Hint_Flags hinting;
    int references;
    LK(lock);

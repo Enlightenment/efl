@@ -56,7 +56,7 @@ evas_object_data_set(Evas_Object *obj, const char *key, const void *data)
    node->key = (char *)node + sizeof(Evas_Data_Node);
    strcpy(node->key, key);
    node->data = (void *)data;
-   obj->data.elements = evas_list_prepend(obj->data.elements, node);
+   obj->data.elements = eina_list_prepend(obj->data.elements, node);
 }
 
 /**
@@ -89,23 +89,21 @@ evas_object_data_set(Evas_Object *obj, const char *key, const void *data)
 EAPI void *
 evas_object_data_get(const Evas_Object *obj, const char *key)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Evas_Data_Node *node;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
    if (!key) return NULL;
 
-   for (l = obj->data.elements; l; l = l->next)
+   EINA_LIST_FOREACH(obj->data.elements, l, node)
      {
-	Evas_Data_Node *node;
-
-	node = l->data;
 	if (!strcmp(node->key, key))
 	  {
-	     Evas_List *lst;
+	     Eina_List *lst;
 	     lst = obj->data.elements;
-	     lst = evas_list_promote_list(lst, l);
+	     lst = eina_list_promote_list(lst, l);
 	     ((Evas_Object *)obj)->data.elements = lst;
 	     return node->data;
 	  }
@@ -136,23 +134,21 @@ evas_object_data_get(const Evas_Object *obj, const char *key)
 EAPI void *
 evas_object_data_del(Evas_Object *obj, const char *key)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Evas_Data_Node *node;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
    if (!key) return NULL;
-   for (l = obj->data.elements; l; l = l->next)
+   EINA_LIST_FOREACH(obj->data.elements, l, node)
      {
-	Evas_Data_Node *node;
-
-	node = l->data;
 	if (!strcmp(node->key, key))
 	  {
 	     void *data;
 
 	     data = node->data;
-	     obj->data.elements = evas_list_remove_list(obj->data.elements, l);
+	     obj->data.elements = eina_list_remove_list(obj->data.elements, l);
 	     free(node);
 	     return data;
 	  }

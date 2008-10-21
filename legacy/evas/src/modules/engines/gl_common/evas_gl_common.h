@@ -88,8 +88,8 @@ struct _Evas_GL_Context
 
    int             references;
 
-   Evas_List      *images;
-   Evas_List      *tex_pool;
+   Eina_List      *images;
+   Eina_List      *tex_pool;
 
    RGBA_Draw_Context  *dc;
    
@@ -137,7 +137,7 @@ struct _Evas_GL_Image
 
 struct _Evas_GL_Polygon
 {
-   Evas_List *points;
+   Eina_List *points;
    GLuint     dl;
    Evas_Bool  changed : 1;
 };
@@ -173,7 +173,7 @@ struct _Evas_GL_Font_Texture_Pool
    GLuint           texture;
    int              references;
    unsigned char    rectangle : 1;
-   Evas_List       *allocations;
+   Eina_List       *allocations;
 };
 
 struct _Evas_GL_Font_Texture_Pool_Allocation

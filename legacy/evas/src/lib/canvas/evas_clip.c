@@ -4,23 +4,25 @@
 void
 evas_object_clip_dirty(Evas_Object *obj)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Evas_Object *data;
 
    obj->cur.cache.clip.dirty = 1;
-   for (l = obj->clip.clipees; l; l = l->next)
-     evas_object_clip_dirty(l->data);
+   EINA_LIST_FOREACH(obj->clip.clipees, l, data)
+     evas_object_clip_dirty(data);
 }
 
 void
 evas_object_recalc_clippees(Evas_Object *obj)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Evas_Object *data;
 
    if (obj->cur.cache.clip.dirty)
      {
 	evas_object_clip_recalc(obj);
-	for (l = obj->clip.clipees; l; l = l->next)
-	  evas_object_recalc_clippees(l->data);
+	EINA_LIST_FOREACH(obj->clip.clipees, l, data)
+	  evas_object_recalc_clippees(data);
      }
 }
 
@@ -117,7 +119,7 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
    if (obj->cur.clipper)
      {
 	/* unclip */
-	obj->cur.clipper->clip.clipees = evas_list_remove(obj->cur.clipper->clip.clipees, obj);
+	obj->cur.clipper->clip.clipees = eina_list_remove(obj->cur.clipper->clip.clipees, obj);
 	if (!obj->cur.clipper->clip.clipees) obj->cur.clipper->cur.have_clipees = 0;
 	evas_object_change(obj->cur.clipper);
 	evas_object_change(obj);
@@ -134,7 +136,7 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
 				  clip->cur.geometry.w, clip->cur.geometry.h);
      }
    obj->cur.clipper = clip;
-   clip->clip.clipees = evas_list_append(clip->clip.clipees, obj);
+   clip->clip.clipees = eina_list_append(clip->clip.clipees, obj);
    if (clip->clip.clipees) clip->cur.have_clipees = 1;
    evas_object_change(clip);
    evas_object_change(obj);
@@ -226,7 +228,7 @@ evas_object_clip_unset(Evas_Object *obj)
      }
    if (obj->cur.clipper) 
      {
-        obj->cur.clipper->clip.clipees = evas_list_remove(obj->cur.clipper->clip.clipees, obj);
+        obj->cur.clipper->clip.clipees = eina_list_remove(obj->cur.clipper->clip.clipees, obj);
 	if (!obj->cur.clipper->clip.clipees) 
 	  obj->cur.clipper->cur.have_clipees = 0;
 	evas_object_change(obj->cur.clipper);
@@ -275,22 +277,18 @@ evas_object_clip_unset(Evas_Object *obj)
  * clipper = evas_object_clip_get(obj);
  * if (clipper)
  *   {
- *     Evas_List *clippees, *l;
+ *     Eina_List *clippees, *l;
+ *     Evas_Object *obj_tmp;
  *
  *     clippees = evas_object_clipees_get(clipper);
- *     printf("Clipper clips %i objects\n", evas_list_count(clippees));
- *     for (l = clippees; l; l = l->next)
- *       {
- *         Evas_Object *obj_tmp;
- *
- *         obj_tmp = l->data;
+ *     printf("Clipper clips %i objects\n", eina_list_count(clippees));
+ *     EINA_LIST_FOREACH(clippees, l, obj_tmp)
  *         evas_object_show(obj_tmp);
- *       }
  *   }
  * @endcode
  * @ingroup Evas_Clip_Group
  */
-EAPI const Evas_List *
+EAPI const Eina_List *
 evas_object_clipees_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);

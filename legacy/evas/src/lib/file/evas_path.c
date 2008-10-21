@@ -76,10 +76,10 @@ evas_file_path_is_dir(const char *path)
    return 0;
 }
 
-Evas_List *
+Eina_List *
 evas_file_path_list(char *path, const char *match, int match_case)
 {
-   Evas_List *files = NULL;
+   Eina_List *files = NULL;
    DIR *dir;
 
    dir = opendir(path);
@@ -102,10 +102,10 @@ evas_file_path_list(char *path, const char *match, int match_case)
 	     if (match)
 	       {
 		  if (fnmatch(match, dp->d_name, flags) == 0)
-		    files = evas_list_append(files, strdup(dp->d_name));
+		    files = eina_list_append(files, strdup(dp->d_name));
 	       }
 	     else
-	       files = evas_list_append(files, strdup(dp->d_name));
+	       files = eina_list_append(files, strdup(dp->d_name));
 	  }
 	closedir(dir);
      }
@@ -281,10 +281,10 @@ evas_file_path_is_dir(char *path)
    return 0;
 }
 
-Evas_List *
+Eina_List *
 evas_file_path_list(char *path, char *match, int match_case)
 {
-   Evas_List *files = NULL;
+   Eina_List *files = NULL;
    WIN32_FIND_DATAW find;
    HANDLE fh;
    int fullpathlen;
@@ -336,7 +336,7 @@ evas_file_path_list(char *path, char *match, int match_case)
    do
      {
 	if (!(find.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-	  files = evas_list_append(files,convert_unicode_utf(find.cFileName));
+	  files = eina_list_append(files,convert_unicode_utf(find.cFileName));
 
      }
    while (FindNextFileW(fh,&find));

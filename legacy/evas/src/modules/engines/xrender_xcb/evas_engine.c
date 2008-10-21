@@ -36,7 +36,7 @@ struct _Render_Engine
    Eina_Inlist           *cur_rect;
    int                    end : 1;
 
-   Evas_List             *updates;
+   Eina_List             *updates;
 };
 
 /* internal engine routines */
@@ -147,7 +147,7 @@ eng_output_free(void *data)
 	Render_Engine_Update *reu;
 
 	reu = re->updates->data;
-	re->updates = evas_list_remove_list(re->updates, re->updates);
+	re->updates = eina_list_remove_list(re->updates, re->updates);
 	_xr_render_surface_free(reu->surface);
 	free(reu);
      }
@@ -278,7 +278,7 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
    reu->w = w;
    reu->h = h;
    reu->surface = (Xcb_Render_Surface *)surface;
-   re->updates = evas_list_append(re->updates, reu);
+   re->updates = eina_list_append(re->updates, reu);
 }
 
 static void
@@ -293,7 +293,7 @@ eng_output_flush(void *data)
 	Render_Engine_Update *reu;
 
 	reu = re->updates->data;
-	re->updates = evas_list_remove_list(re->updates, re->updates);
+	re->updates = eina_list_remove_list(re->updates, re->updates);
 	if (re->mask_output)
 	  {
 	     Xcb_Render_Surface *tsurf;

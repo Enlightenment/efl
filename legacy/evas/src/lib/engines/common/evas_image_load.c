@@ -5,7 +5,7 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-extern Evas_List *evas_modules;
+extern Eina_List *evas_modules;
 
 struct ext_loader_s {
    const char*	extention;
@@ -38,7 +38,7 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 {
    Evas_Image_Load_Func *evas_image_load_func = NULL;
    const char           *loader = NULL;
-   Evas_List            *l;
+   Eina_List            *l;
    Evas_Module          *em;
    char                 *dot;
    int                   i;
@@ -71,9 +71,8 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 	  }
      }
 
-   for (l = evas_modules; l; l = l->next)
+   EINA_LIST_FOREACH(evas_modules, l, em)
      {
-	em = l->data;
 	if (em->type != EVAS_MODULE_TYPE_IMAGE_LOADER) continue;
 	if (!evas_module_load(em)) continue;
         evas_image_load_func = em->functions;
@@ -82,7 +81,7 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 	  {
 	     if (evas_modules != l)
 	       {
-		  evas_modules = evas_list_promote_list(evas_modules, l);
+		  evas_modules = eina_list_promote_list(evas_modules, l);
 	       }
 	     goto ok;
 	  }

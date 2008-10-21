@@ -283,7 +283,7 @@ evas_object_rectangle_render_post(Evas_Object *obj)
 	Evas_Rectangle *r;
 
 	r = (Evas_Rectangle *)obj->clip.changes->data;
-	obj->clip.changes = evas_list_remove(obj->clip.changes, r);
+	obj->clip.changes = eina_list_remove(obj->clip.changes, r);
 	free(r);
      }
    /* move cur to prev safely for object data */

@@ -960,7 +960,7 @@ evas_font_path_clear(Evas *e)
    while (e->font_path)
      {
 	eina_stringshare_del(e->font_path->data);
-	e->font_path = evas_list_remove(e->font_path, e->font_path->data);
+	e->font_path = eina_list_remove(e->font_path, e->font_path->data);
      }
 }
 
@@ -978,7 +978,7 @@ evas_font_path_append(Evas *e, const char *path)
    MAGIC_CHECK_END();
    if (!path) return;
 
-   e->font_path = evas_list_append(e->font_path, eina_stringshare_add(path));
+   e->font_path = eina_list_append(e->font_path, eina_stringshare_add(path));
 }
 
 /**
@@ -995,7 +995,7 @@ evas_font_path_prepend(Evas *e, const char *path)
    MAGIC_CHECK_END();
    
    if (!path) return;
-   e->font_path = evas_list_prepend(e->font_path, eina_stringshare_add(path));
+   e->font_path = eina_list_prepend(e->font_path, eina_stringshare_add(path));
 }
 
 /**
@@ -1004,7 +1004,7 @@ evas_font_path_prepend(Evas *e, const char *path)
  * @return  The list of font paths used.
  * @ingroup Evas_Font_Path_Group
  */
-EAPI const Evas_List *
+EAPI const Eina_List *
 evas_font_path_list(const Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -1129,7 +1129,7 @@ evas_font_cache_get(const Evas *e)
  * FIXME: To be fixed.
  *
  */
-EAPI Evas_List *
+EAPI Eina_List *
 evas_font_available_list(const Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -1146,7 +1146,7 @@ evas_font_available_list(const Evas *e)
  *
  */
 EAPI void
-evas_font_available_list_free(Evas *e, Evas_List *available)
+evas_font_available_list_free(Evas *e, Eina_List *available)
 { 
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -1656,7 +1656,7 @@ evas_object_text_render_post(Evas_Object *obj)
 	Evas_Rectangle *r;
 
 	r = (Evas_Rectangle *)obj->clip.changes->data;
-	obj->clip.changes = evas_list_remove(obj->clip.changes, r);
+	obj->clip.changes = eina_list_remove(obj->clip.changes, r);
 	free(r);
      }
    /* move cur to prev safely for object data */

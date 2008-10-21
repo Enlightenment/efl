@@ -13,7 +13,7 @@ evas_gl_common_poly_point_add(Evas_GL_Polygon *poly, int x, int y)
    if (!pt) return NULL;
    pt->x = x;
    pt->y = y;
-   poly->points = evas_list_append(poly->points, pt);
+   poly->points = eina_list_append(poly->points, pt);
    poly->changed = 1;
    return poly;
 }
@@ -27,7 +27,7 @@ evas_gl_common_poly_points_clear(Evas_GL_Polygon *poly)
 	Evas_GL_Polygon_Point *pt;
 
 	pt = poly->points->data;
-	poly->points = evas_list_remove(poly->points, pt);
+	poly->points = eina_list_remove(poly->points, pt);
 	free(pt);
      }
    if (poly->dl > 0) glDeleteLists(poly->dl, 1);
@@ -84,11 +84,12 @@ void
 evas_gl_common_poly_draw(Evas_GL_Context *gc, Evas_GL_Polygon *poly)
 {
    int r, g, b, a;
-   Evas_List *l;
+   Eina_List *l;
    static void *tess = NULL;
    GLdouble *glp = NULL;
    int i, num;
    RGBA_Draw_Context *dc = gc->dc;
+   Evas_GL_Polygon_Point *p;
 
    a = (dc->col.col >> 24) & 0xff;
    r = (dc->col.col >> 16) & 0xff;
@@ -126,18 +127,15 @@ evas_gl_common_poly_draw(Evas_GL_Context *gc, Evas_GL_Polygon *poly)
 	     gluTessCallback(tess, GLU_TESS_COMBINE, _evas_gl_tess_combine_cb);
 	  }
 	num = 0;
-	num = evas_list_count(poly->points);
+	num = eina_list_count(poly->points);
 	i = 0;
 	glp = malloc(num * 6 * sizeof(GLdouble));
 	gluTessNormal(tess, 0, 0, 1);
 	gluTessProperty(tess, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_ODD);
 	gluTessBeginPolygon(tess, NULL);
 	gluTessBeginContour(tess);
-	for (l = poly->points; l; l = l->next)
+	EINA_LIST_FOREACH(poly->points, l, p)
 	  {
-	     Evas_GL_Polygon_Point *p;
-
-	     p = l->data;
 	     glp[i++] = p->x;
 	     glp[i++] = p->y;
 	     glp[i++] = 0;
@@ -149,13 +147,8 @@ evas_gl_common_poly_draw(Evas_GL_Context *gc, Evas_GL_Polygon *poly)
 	free(glp);
 #else
 	glBegin(GL_POLYGON);
-	for (l = poly->points; l; l = l->next)
-	  {
-	     Evas_GL_Polygon_Point *p;
-
-	     p = l->data;
-	     glVertex2i(p->x, p->y);
-	  }
+	EINA_LIST_FOREACH(poly->points, l, p)
+	  glVertex2i(p->x, p->y);
 	glEnd();
 #endif
 	glEndList();

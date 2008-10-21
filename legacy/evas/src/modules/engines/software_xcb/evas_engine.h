@@ -54,12 +54,12 @@ struct _Outbuf
 
       /* 1 big buffer for updates - flush on idle_flush */
       RGBA_Image  *onebuf;
-      Evas_List   *onebuf_regions;
+      Eina_List   *onebuf_regions;
 
       /* a list of pending regions to write to the target */
-      Evas_List   *pending_writes;
+      Eina_List   *pending_writes;
       /* a list of previous frame pending regions to write to the target */
-      Evas_List   *prev_pending_writes;
+      Eina_List   *prev_pending_writes;
 
       unsigned char mask_dither       : 1;
       unsigned char destination_alpha : 1;

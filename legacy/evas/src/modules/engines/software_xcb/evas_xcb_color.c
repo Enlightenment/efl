@@ -16,7 +16,7 @@ typedef DATA8 * (*Xcb_Func_Alloc_Colors) (xcb_connection_t *conn, xcb_colormap_t
 
 static Xcb_Func_Alloc_Colors x_color_alloc[PAL_MODE_LAST + 1];
 static int                   x_color_count[PAL_MODE_LAST + 1];
-static Evas_List            *palettes = NULL;
+static Eina_List            *palettes = NULL;
 
 static DATA8 * x_color_alloc_rgb(int nr, int ng, int nb, xcb_connection_t *conn, xcb_colormap_t cmap, xcb_visualtype_t *v);
 static DATA8 * x_color_alloc_gray(int ng, xcb_connection_t *conn, xcb_colormap_t cmap, xcb_visualtype_t *v);
@@ -352,12 +352,11 @@ evas_software_xcb_x_color_allocate(xcb_connection_t   *conn,
    Convert_Pal_Priv *palpriv;
    Convert_Pal      *pal;
    Convert_Pal_Mode  c;
-   Evas_List        *l;
+   Eina_List        *l;
 
 /*   printf("ALLOC cmap=%i vis=%p\n", cmap, vis);*/
-   for (l = palettes; l; l = l->next)
+   EINA_LIST_FOREACH(palettes, l, pal)
      {
-	pal = l->data;
 	palpriv = pal->data;
 	if ((conn == palpriv->conn) &&
 	    (vis  == palpriv->vis)  &&
@@ -398,7 +397,7 @@ evas_software_xcb_x_color_allocate(xcb_connection_t   *conn,
 	free(pal);
 	return NULL;
      }
-   palettes = evas_list_append(palettes, pal);
+   palettes = eina_list_append(palettes, pal);
    return pal;
 }
 
@@ -421,6 +420,6 @@ evas_software_xcb_x_color_deallocate(xcb_connection_t *conn,
 	free(pal->lookup);
      }
    free(pal->data);
-   palettes = evas_list_remove(palettes, pal);
+   palettes = eina_list_remove(palettes, pal);
    free(pal);
 }

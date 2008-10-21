@@ -27,7 +27,7 @@ typedef struct _Evas_Quartz_Polygon Evas_Quartz_Polygon;
 
 struct _Evas_Quartz_Polygon
 {
-   Evas_List *points;
+   Eina_List *points;
 };
 
 typedef struct _Evas_Quartz_Polygon_Point Evas_Quartz_Polygon_Point;

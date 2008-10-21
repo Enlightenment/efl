@@ -20,7 +20,7 @@ struct _Xcb_Image_Info
    int                        depth;
    xcb_visualid_t             vis;
    int                        pool_mem;
-   Evas_List                 *pool;
+   Eina_List                 *pool;
    unsigned char              can_do_shm;
    xcb_render_pictforminfo_t *fmt32;
    xcb_render_pictforminfo_t *fmt24;
