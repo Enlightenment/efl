@@ -130,7 +130,6 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	     int dir;
 
 	     dir = _edje_part_dragable_calc(ed, rp, &dx, &dy);
-	     printf("calc down %3.3f %3.3f\n", dx, dy);
 	     
 	     if ((dx != rp->drag.val.x) || (dy != rp->drag.val.y))
 	       {
