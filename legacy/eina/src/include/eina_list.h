@@ -138,7 +138,7 @@ EAPI Eina_Accessor *eina_list_accessor_new(const Eina_List *list);
  *   free(data);
  * @endcode
  */
-#define EINA_LIST_ITER_NEXT(list, l, data) for (l = list, data = eina_list_data_get(l); l; l = eina_list_next(l), data = eina_list_data_get(l))
+#define EINA_LIST_FOREACH(list, l, data) for (l = list, data = eina_list_data_get(l); l; l = eina_list_next(l), data = eina_list_data_get(l))
 
 #include "eina_inline_list.x"
 

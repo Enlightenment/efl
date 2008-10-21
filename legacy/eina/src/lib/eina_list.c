@@ -630,7 +630,7 @@ eina_list_append_relative(Eina_List *list, const void *data, const void *relativ
    
    if (list) EINA_MAGIC_CHECK_LIST(list);
 
-   EINA_LIST_ITER_NEXT(list, l, list_data)
+   EINA_LIST_FOREACH(list, l, list_data)
      {
          if (list_data == relative)
              return eina_list_append_relative_list(list, data, l);
@@ -730,7 +730,7 @@ eina_list_prepend_relative(Eina_List *list, const void *data, const void *relati
    
    if (list) EINA_MAGIC_CHECK_LIST(list);
 
-   EINA_LIST_ITER_NEXT(list, l, list_data)
+   EINA_LIST_FOREACH(list, l, list_data)
      {
          if (list_data == relative)
              return eina_list_prepend_relative_list(list, data, l);
@@ -804,7 +804,7 @@ eina_list_remove(Eina_List *list, const void *data)
 
    if (list) EINA_MAGIC_CHECK_LIST(list);
 
-   EINA_LIST_ITER_NEXT(list, l, list_data)
+   EINA_LIST_FOREACH(list, l, list_data)
      {
          if (list_data == data)
              return eina_list_remove_list(list, l);
@@ -834,7 +834,7 @@ eina_list_remove(Eina_List *list, const void *data)
  * extern void *my_data;
  * void *data
  *
- * EINA_LIST_ITER_NEXT(list, l, data)
+ * EINA_LIST_FOREACH(list, l, data)
  *   {
  *     if (data == my_data)
  *       {
@@ -879,7 +879,7 @@ eina_list_remove_list(Eina_List *list, Eina_List *remove_list)
  * @return A NULL pointer
  *
  * This function frees all the nodes of @p list. It does not free the
- * data of the nodes. To free them, use #EINA_LIST_ITER_NEXT.
+ * data of the nodes. To free them, use #EINA_LIST_FOREACH.
  */
 EAPI Eina_List *
 eina_list_free(Eina_List *list)
@@ -920,7 +920,7 @@ eina_list_free(Eina_List *list)
  * extern void *my_data;
  * void *data;
  *
- * EINA_LIST_ITER_NEXT(list, l, data)
+ * EINA_LIST_FOREACH(list, l, data)
  *   {
  *     if (data == my_data)
  *       {
@@ -1007,7 +1007,7 @@ eina_list_data_find_list(const Eina_List *list, const void *data)
 
    if (list) EINA_MAGIC_CHECK_LIST(list);
 
-   EINA_LIST_ITER_NEXT(list, l, list_data)
+   EINA_LIST_FOREACH(list, l, list_data)
      {
 	if (list_data == data) return (Eina_List *)l;
      }
