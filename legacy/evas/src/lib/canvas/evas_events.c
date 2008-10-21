@@ -959,7 +959,7 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
 		       Evas_List *l;
 
 		       e->delete_grabs--;
-		       for (l = e->grabs; l; l= l->next)
+		       for (l = e->grabs; l;)
 			 {
 			    Evas_Key_Grab *g;
 
