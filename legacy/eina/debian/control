@@ -1,0 +1,70 @@
+Source: eina
+Section: libs
+Priority: optional
+Maintainer: Falko Schmidt <falko@alphagemini.org>
+Build-Depends: debhelper (>= 6), cdbs, automake1.7 | automaken, libtool, pkg-config
+Standards-Version: 3.7.3
+Homepage: http://www.enlightenment.org
+
+Package: libeina-dev
+Section: libdevel
+Architecture: any
+Depends: libeina0 (= ${Source-Version})
+Description: Enlightenment DR17 file chunk reading/writing library development files
+ Eina is a multi-platform library that provides optimized data types and a few
+ tools. It supports the following data types:
+ Containers:
+  o Array: an array
+  o Hash Table: a hash table
+  o Inlined List: an list with functions inlined
+  o List: a single-linked list
+  o Red-Black Tree: a tree
+  o Access Content types
+    + Accessor: can access items of a container randomly
+    + Iterator: can access items of a container sequentially 
+ Stringshare.
+ .
+ This package contains headers and static libraries for development with
+ libeina.
+
+Package: libeina0
+Architecture: any
+Depends: ${shlibs:Depends}
+Provides: libeina
+Description: Enlightenment DR17 file chunk reading/writing library
+ Eina is a multi-platform library that provides optimized data types and a few
+ tools. It supports the following data types:
+ Containers:
+  o Array: an array
+  o Hash Table: a hash table
+  o Inlined List: an list with functions inlined
+  o List: a single-linked list
+  o Red-Black Tree: a tree
+  o Access Content types
+    + Accessor: can access items of a container randomly
+    + Iterator: can access items of a container sequentially 
+ Stringshare.
+
+Package: libeina-dbg
+Architecture: any
+Section: libdevel
+Priority: extra
+Depends: libeina0 (= ${binary:Version})
+Description: Enlightenment DR17 file chunk reading/writing library - debug symbols
+ Eina is a multi-platform library that provides optimized data types and a few
+ tools. It supports the following data types:
+ Containers:
+  o Array: an array
+  o Hash Table: a hash table
+  o Inlined List: an list with functions inlined
+  o List: a single-linked list
+  o Red-Black Tree: a tree
+  o Access Content types
+    + Accessor: can access items of a container randomly
+    + Iterator: can access items of a container sequentially 
+ Stringshare.
+ .
+ This package contains unstripped shared libraries. It is provided primarily
+ to provide a backtrace with names in a debugger, this makes it somewhat easier
+ to interpret core dumps. The libraries are installed in /usr/lib/debug and
+ are automatically used by gdb.
