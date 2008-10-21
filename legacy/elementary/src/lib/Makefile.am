@@ -36,6 +36,8 @@ elm_entry.c \
 elm_contact.c \
 elm_contactlist.c \
 \
+elc_notepad.c \
+\
 els_pan.c \
 els_pan.h \
 els_scroller.c \

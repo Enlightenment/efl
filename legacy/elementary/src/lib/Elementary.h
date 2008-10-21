@@ -99,6 +99,7 @@ extern "C" {
 
    EAPI Evas_Object *elm_icon_add(Evas_Object *parent);
    EAPI void         elm_icon_file_set(Evas_Object *obj, const char *file, const char *group);
+   EAPI void         elm_icon_standard_set(Evas_Object *obj, const char *name);
    EAPI void         elm_icon_smooth_set(Evas_Object *obj, Evas_Bool smooth);
    EAPI void         elm_icon_no_scale_set(Evas_Object *obj, Evas_Bool no_scale);
    EAPI void         elm_icon_scale_set(Evas_Object *obj, Evas_Bool scale_up, Evas_Bool scale_down);
@@ -198,6 +199,20 @@ extern "C" {
     * "cursor,changed" - the cursor changed position
     * "anchor,X,clicked,N" - achor called 'X' was clicked with button 'N'
     */
+   
+   /* composite widgets - these basically put together basic widgets above
+    * in convenient packages that do more than basic stuff */
+
+   typedef enum _Elm_Text_Format
+     {
+	ELM_TEXT_FORMAT_PLAIN_UTF8,
+	ELM_TEXT_FORMAT_MARKUP_UTF8
+     } Elm_Text_Format;
+   EAPI Evas_Object *elm_notepad_add(Evas_Object *parent);
+   EAPI void         elm_notepad_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format);
+   /* smart callbacks called:
+    */
+   
        
 // FIXME: fixes to do
 // * current sizing tree inefficient
@@ -207,12 +222,6 @@ extern "C" {
 // * frame needs to be able to use custom frame style
 // * button needs to be able to use custom frame style
 // * toggle needs to be able to use custom frame style
-//    
-// FIXME: immediate hitlist for widgets:
-// ENTRY: 1 or more line text entry
-// 
-// POPSEL: a button that when pressed uses a hover to display a h/v box or
-//         a table of options surrounding the button with scroll butons at
-//         the end and the ability to drag and scroll
+
    
 #endif

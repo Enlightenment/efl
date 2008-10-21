@@ -327,6 +327,8 @@ collections {
 	    signal: "load";
 	    source: "";
 	    script {
+	       set_state(PART:"sb_hbar_clip", "hidden", 0.0);
+	       set_state(PART:"sb_vbar_clip", "hidden", 0.0);
 	       set_int(sbvis_h, 0);
 	       set_int(sbvis_v, 0);
 	       set_int(sbvis_timer, 0);
@@ -468,6 +470,15 @@ collections {
 	       aspect_preference: VERTICAL;
 	       rel2.offset: 4 -5;
 	    }
+	    description { state: "icononly" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
+	       align: 0.5 0.5;
+	       aspect: 1.0 1.0;
+	       rel2.offset: -5 -5;
+	       rel2.relative: 1.0 1.0;
+	       aspect_preference: VERTICAL;
+	    }
 	 }
          part {
 	    name:          "elm.text";
@@ -522,14 +533,14 @@ collections {
 	 program {
 	    name:   "button_click";
 	    signal: "mouse,down,1";
-	    source: "button_image";
+	    source: "over2";
 	    action: STATE_SET "clicked" 0.0;
 	    target: "button_image";
 	 }
 	 program {
 	    name:   "button_unclick";
 	    signal: "mouse,up,1";
-	    source: "button_image";
+	    source: "over2";
 	    action: STATE_SET "default" 0.0;
 	    target: "button_image";
 	 }
@@ -542,20 +553,39 @@ collections {
 	 program { name: "text_show";
 	    signal: "elm,state,text,visible";
 	    source: "elm";
-	    action:  STATE_SET "visible" 0.0;
-	    target: "elm.text";
+	    script {
+	       new st[31];
+	       new Float:vl;
+	       get_state(PART:"elm.swallow.content", st, 30, vl);
+	       if (!strcmp(st, "icononly"))
+		 set_state(PART:"elm.swallow.content", "visible", 0.0);
+	       set_state(PART:"elm.text", "visible", 0.0);
+	    }
 	 }
 	 program { name: "text_hide";
 	    signal: "elm,state,text,hidden";
 	    source: "elm";
-	    action:  STATE_SET "default" 0.0;
-	    target: "elm.text";
+	    script {
+	       new st[31];
+	       new Float:vl;
+	       get_state(PART:"elm.swallow.content", st, 30, vl);
+	       if (!strcmp(st, "visible"))
+		 set_state(PART:"elm.swallow.content", "icononly", 0.0);
+	       set_state(PART:"elm.text", "default", 0.0);
+	    }
 	 }
 	 program { name: "icon_show";
 	    signal: "elm,state,icon,visible";
 	    source: "elm";
-	    action:  STATE_SET "visible" 0.0;
-	    target: "elm.swallow.content";
+	    script {
+	       new st[31];
+	       new Float:vl;
+	       get_state(PART:"elm.text", st, 30, vl);
+	       if (!strcmp(st, "visible"))
+		 set_state(PART:"elm.swallow.content", "visible", 0.0);
+	       else
+		 set_state(PART:"elm.swallow.content", "icononly", 0.0);
+	    }
 	 }
 	 program { name: "icon_hide";
 	    signal: "elm,state,icon,hidden";
@@ -2881,10 +2911,34 @@ collections {
       }
    }
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "elm/icon/base/default"; min: 10 10;
-      images.image: "bt_base1.png" COMP; parts { part { name: "base";
+   group { name: "elm/icon/home/default"; min: 32 32;
+      images.image: "icon_home.png" COMP; parts { part { name: "base";
 	 description { state: "default" 0.0; aspect: 1.0 1.0;
-	    image.normal: "bt_base1.png"; } } } }
+	    image.normal: "icon_home.png"; } } } }
+   group { name: "elm/icon/close/default"; min: 32 32;
+      images.image: "icon_close.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	    image.normal: "icon_close.png"; } } } }
+   group { name: "elm/icon/apps/default"; min: 32 32;
+      images.image: "icon_apps.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	    image.normal: "icon_apps.png"; } } } }
+   group { name: "elm/icon/arrow_up/default"; min: 32 32;
+      images.image: "icon_arrow_up.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	    image.normal: "icon_arrow_up.png"; } } } }
+   group { name: "elm/icon/arrow_down/default"; min: 32 32;
+      images.image: "icon_arrow_down.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	    image.normal: "icon_arrow_down.png"; } } } }
+   group { name: "elm/icon/arrow_left/default"; min: 32 32;
+      images.image: "icon_arrow_left.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	    image.normal: "icon_arrow_left.png"; } } } }
+   group { name: "elm/icon/arrow_right/default"; min: 32 32;
+      images.image: "icon_arrow_right.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	    image.normal: "icon_arrow_right.png"; } } } }
    
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/contact/base/default";
