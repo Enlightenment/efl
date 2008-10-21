@@ -26,8 +26,7 @@ embryo_str.c \
 embryo_time.c
 
 libembryo_la_CFLAGS = @WIN32_CFLAGS@
-libembryo_la_LIBADD = -lm @fnmatch_libs@ @EINA_LIBS@
-libembryo_la_DEPENDENCIES = $(top_builddir)/config.h
-libembryo_la_LDFLAGS = @lt_no_undefined@ @lt_enable_auto_import@ -version-info @version_info@
+libembryo_la_LIBADD = -lm
+libembryo_la_LDFLAGS = -no-undefined@lt_enable_auto_import@ -version-info @version_info@
 
 EXTRA_DIST = embryo_private.h

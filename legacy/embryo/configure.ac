@@ -1,9 +1,9 @@
 # get rid of that stupid cache mechanism
 rm -f config.cache
 
-AC_INIT(embryo, 0.9.9.050, enlightenment-devel@lists.sourceforge.net)
-AC_PREREQ(2.52)
-AC_CONFIG_SRCDIR(configure.ac)
+AC_INIT([embryo], [0.9.9.050], [enlightenment-devel@lists.sourceforge.net])
+AC_PREREQ([2.52])
+AC_CONFIG_SRCDIR([configure.ac])
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 AC_ISC_POSIX
@@ -17,6 +17,7 @@ AM_PROG_CC_STDC
 AC_HEADER_STDC
 AC_C_CONST
 AM_PROG_CC_C_O
+AC_C___ATTRIBUTE__
 
 AC_LIBTOOL_WIN32_DLL
 define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
@@ -33,7 +34,6 @@ AC_SUBST(version_info)
 PKG_CHECK_MODULES([EINA], [eina-0])
 
 WIN32_CFLAGS=""
-lt_no_undefined=""
 lt_enable_auto_import=""
 case "$host_os" in
 	mingw*|cegcc)
@@ -46,50 +46,29 @@ case "$host_os" in
 			WIN32_CFLAGS="-mwin32"
 			lt_enable_auto_import="-Wl,--enable-auto-import"
 		fi
-		lt_no_undefined="-no-undefined"
 		;;
 	*)
 		AC_CHECK_FUNCS(gettimeofday)
 esac
 AC_SUBST(WIN32_CFLAGS)
-AC_SUBST(lt_no_undefined)
 AC_SUBST(lt_enable_auto_import)
-
-dnl Checking for __attribute__ support
-AC_MSG_CHECKING([for __attribute__])
-AC_CACHE_VAL(_cv_have___attribute__,
-  [
-    AC_TRY_COMPILE([#include <stdlib.h>],
-      [int func(int x); int foo(int x __attribute__ ((unused))) { exit(1); }],
-      [_cv_have___attribute__="yes"],
-      [_cv_have___attribute__="no"])
-  ]
-)
-
-if test "x${_cv_have___attribute__}" = "xyes" ; then
-   AC_DEFINE(HAVE___ATTRIBUTE__, 1, [Define to 1 if your compiler has __attribute__])
-fi
-AC_MSG_RESULT(${_cv_have___attribute__})
 
 AC_FUNC_ALLOCA
 
-AC_CHECK_HEADERS(fnmatch.h,, AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file]))
+AC_CHECK_HEADER([fnmatch.h],
+   [dummy="yes"],
+   [AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file. MinGW users: see the INSTALL file])])
 
-fnmatch_libs=""
-AC_CHECK_FUNCS(fnmatch, res=yes, res=no)
+AC_CHECK_FUNCS([fnmatch], [res="yes"], [res="no"])
 if test "x$res" = "xno"; then
-	AC_CHECK_LIB(fnmatch, fnmatch, res=yes fnmatch_libs="-lfnmatch", res=no)
-dnl Test for compilation with MinGW.
-dnl fnmatch function is in the libiberty library
-	if test "x$res" = "xno"; then
-		AC_CHECK_LIB(iberty, fnmatch, res=yes fnmatch_libs="-liberty", res=no)
-	fi
-	if test "x$res" = "xno"; then
-		AC_MSG_ERROR([Cannot find fnmatch() in neither libc nor libfnmatch, nor libiberty])
+   AC_SEARCH_LIBS([fnmatch],
+      [fnmatch iberty evil],
+      [res="yes"],
+      [res="no"])
+   if test "x$res" = "xno"; then
+      AC_MSG_ERROR([Cannot find fnmatch() in neither libc nor libfnmatch, nor libiberty, nor libevil])
 	fi
 fi
-
-AC_SUBST(fnmatch_libs)
 
 embryoincludedir='${datadir}/include'
 AC_SUBST(embryoincludedir)
