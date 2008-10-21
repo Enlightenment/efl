@@ -44,7 +44,7 @@ evas_object_event_callback_all_del(Evas_Object *obj)
    Evas_Func_Node *fn;
 
    if (!obj->callbacks) return;
-   EINA_INLIST_ITER_NEXT(obj->callbacks->callbacks, fn)
+   EINA_INLIST_FOREACH(obj->callbacks->callbacks, fn)
      fn->delete_me = 1;
 }
 
@@ -385,7 +385,7 @@ evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (
 
    if (!obj->callbacks) return NULL;
 
-   EINA_INLIST_ITER_NEXT(obj->callbacks->callbacks, fn)
+   EINA_INLIST_FOREACH(obj->callbacks->callbacks, fn)
      {
 	if ((fn->func == func) && (fn->type == type) && (!fn->delete_me))
 	  {
@@ -442,7 +442,7 @@ evas_object_event_callback_del_full(Evas_Object *obj, Evas_Callback_Type type, v
 
    if (!obj->callbacks) return NULL;
 
-   EINA_INLIST_ITER_NEXT(obj->callbacks->callbacks, fn)
+   EINA_INLIST_FOREACH(obj->callbacks->callbacks, fn)
      {
 	if ((fn->func == func) && (fn->type == type) && (fn->data == data) && (!fn->delete_me))
 	  {

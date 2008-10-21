@@ -95,7 +95,7 @@ eina_magic_string_get(Eina_Magic magic)
 {
    Eina_Magic_String *ems;
 
-   EINA_INLIST_ITER_NEXT(strings, ems)
+   EINA_INLIST_FOREACH(strings, ems)
      if (ems->magic == magic)
        return ems->string;
 
@@ -107,7 +107,7 @@ eina_magic_string_set(Eina_Magic magic, const char *magic_name)
 {
    Eina_Magic_String *ems;
 
-   EINA_INLIST_ITER_NEXT(strings, ems)
+   EINA_INLIST_FOREACH(strings, ems)
      if (ems->magic == magic)
        {
 	  free(ems->string);

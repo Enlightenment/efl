@@ -54,7 +54,7 @@ evas_layer_pre_free(Evas_Layer *lay)
 {
    Evas_Object *obj;
 
-   EINA_INLIST_ITER_NEXT(lay->objects, obj)
+   EINA_INLIST_FOREACH(lay->objects, obj)
      {
 	if ((!obj->smart.parent) && (!obj->delete_me))
 	  evas_object_del(obj);
@@ -79,7 +79,7 @@ evas_layer_find(Evas *e, short layer_num)
 {
    Evas_Layer *layer;
 
-   EINA_INLIST_ITER_NEXT(e->layers, layer)
+   EINA_INLIST_FOREACH(e->layers, layer)
      {
 	if (layer->layer == layer_num) return layer;
      }
@@ -91,7 +91,7 @@ evas_layer_add(Evas_Layer *lay)
 {
    Evas_Layer *layer;
 
-   EINA_INLIST_ITER_NEXT(lay->evas->layers, layer)
+   EINA_INLIST_FOREACH(lay->evas->layers, layer)
      {
 	if (layer->layer > lay->layer)
 	  {

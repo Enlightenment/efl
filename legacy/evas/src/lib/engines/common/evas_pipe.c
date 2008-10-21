@@ -87,7 +87,7 @@ evas_common_pipe_thread(void *data)
 //	  {
 //	     thinfo->info = NULL;
 //	     printf(" TH %i GO\n", thinfo->thread_num);
-	EINA_INLIST_ITER_NEXT(EINA_INLIST_GET(info->im->pipe), p)
+	EINA_INLIST_FOREACH(EINA_INLIST_GET(info->im->pipe), p)
 	       {
 		  int i;
 

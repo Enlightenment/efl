@@ -51,8 +51,8 @@ EAPI Eina_Inlist * eina_inlist_demote(Eina_Inlist *list, Eina_Inlist *item);
 EAPI Eina_Iterator *eina_inlist_iterator_new(const Eina_Inlist *in_list);
 EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list);
 
-#define EINA_INLIST_ITER_NEXT(list, l) for (l = (void*)list; l; l = (void*)(l->__in_list.next))
-#define EINA_INLIST_ITER_LAST(list, l) for (l = (void*)(list->last); l; l = (void*)(l->__in_list.prev))
+#define EINA_INLIST_FOREACH(list, l) for (l = (void*)list; l; l = (void*)(l->__in_list.next))
+#define EINA_INLIST_REVERSE_FOREACH(list, l) for (l = (void*)(list->last); l; l = (void*)(l->__in_list.prev))
 
 /** @} */
 

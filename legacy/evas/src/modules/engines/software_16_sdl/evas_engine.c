@@ -88,7 +88,7 @@ _tmp_out_alloc(Render_Engine *re)
    Tilebuf_Rect *r;
    int w = 0, h = 0;
 
-   EINA_INLIST_ITER_NEXT(re->rects, r)
+   EINA_INLIST_FOREACH(re->rects, r)
      {
 	if (r->w > w) w = r->w;
 	if (r->h > h) h = r->h;

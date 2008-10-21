@@ -1018,7 +1018,7 @@ evas_font_object_rehint(Evas_Object *obj)
 {
    if (obj->smart.smart)
      {
-	EINA_INLIST_ITER_NEXT(evas_object_smart_members_get_direct(obj), obj)
+	EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj)
 	  evas_font_object_rehint(obj);
      }
    else
@@ -1040,11 +1040,11 @@ evas_font_hinting_set(Evas *e, Evas_Font_Hinting_Flags hinting)
    MAGIC_CHECK_END();
    if (e->hinting == hinting) return;
    e->hinting = hinting;
-   EINA_INLIST_ITER_NEXT(e->layers, lay)
+   EINA_INLIST_FOREACH(e->layers, lay)
      {
 	Evas_Object *obj;
 
-	EINA_INLIST_ITER_NEXT(lay->objects, obj)
+	EINA_INLIST_FOREACH(lay->objects, obj)
 	  evas_font_object_rehint(obj);
      }
 }

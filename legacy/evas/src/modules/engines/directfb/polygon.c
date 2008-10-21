@@ -159,7 +159,7 @@ _dfb_polygon_draw(IDirectFBSurface *surface, RGBA_Draw_Context *dc, Eina_Inlist 
    if (!_dfb_surface_set_color_from_context(surface, dc))
      return;
 
-   n = 0; EINA_INLIST_ITER_NEXT(points, pt) n++;
+   n = 0; EINA_INLIST_FOREACH(points, pt) n++;
    if (n < 3) return;
    edges = malloc(sizeof(RGBA_Edge) * n);
    if (!edges) return;
@@ -178,7 +178,7 @@ _dfb_polygon_draw(IDirectFBSurface *surface, RGBA_Draw_Context *dc, Eina_Inlist 
      }
 
    k = 0;
-   EINA_INLIST_ITER_NEXT(points, pt)
+   EINA_INLIST_FOREACH(points, pt)
      {
 	point[k].x = pt->x;
 	point[k].y = pt->y;
@@ -188,7 +188,7 @@ _dfb_polygon_draw(IDirectFBSurface *surface, RGBA_Draw_Context *dc, Eina_Inlist 
    qsort(point, n, sizeof(RGBA_Vertex), polygon_point_sorter);
    for (k = 0; k < n; k++) sorted_index[k] = point[k].i;
    k = 0;
-   EINA_INLIST_ITER_NEXT(points, pt)
+   EINA_INLIST_FOREACH(points, pt)
      {
 	point[k].x = pt->x;
 	point[k].y = pt->y;

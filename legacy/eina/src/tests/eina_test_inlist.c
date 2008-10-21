@@ -82,7 +82,7 @@ START_TEST(eina_inlist_simple)
    tmp = _eina_test_inlist_build(81);
    lst = eina_inlist_append_relative(lst, EINA_INLIST_GET(tmp), NULL);
 
-   EINA_INLIST_ITER_NEXT(lst, tmp)
+   EINA_INLIST_FOREACH(lst, tmp)
      {
 	switch (i)
 	  {

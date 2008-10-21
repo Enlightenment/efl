@@ -86,7 +86,7 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
    void *mem;
 
    // look 4 pool from 2nd bucket on
-   EINA_INLIST_ITER_NEXT(pool->first, p)
+   EINA_INLIST_FOREACH(pool->first, p)
      {
 	// base is not NULL - has a free slot
 	if (p->base)
@@ -126,7 +126,7 @@ eina_chained_mempool_free(void *data, void *ptr)
    psize = item_alloc * pool->pool_size;
    // look 4 pool
 
-   EINA_INLIST_ITER_NEXT(pool->first, p)
+   EINA_INLIST_FOREACH(pool->first, p)
      {
 	// pool mem base
 	pmem = (void *)(((unsigned char *)p) + sizeof(Chained_Pool));

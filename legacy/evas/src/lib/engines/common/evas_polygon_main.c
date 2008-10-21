@@ -166,7 +166,7 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
 
    evas_common_cpu_end_opt();
 
-   n = 0; EINA_INLIST_ITER_NEXT(points, pt) n++;
+   n = 0; EINA_INLIST_FOREACH(points, pt) n++;
    if (n < 3) return;
    edges = malloc(sizeof(RGBA_Edge) * n);
    if (!edges) return;
@@ -185,7 +185,7 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
      }
 
    k = 0;
-   EINA_INLIST_ITER_NEXT(points, pt)
+   EINA_INLIST_FOREACH(points, pt)
      {
 	point[k].x = pt->x;
 	point[k].y = pt->y;
@@ -195,7 +195,7 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
    qsort(point, n, sizeof(RGBA_Vertex), polygon_point_sorter);
    for (k = 0; k < n; k++) sorted_index[k] = point[k].i;
    k = 0;
-   EINA_INLIST_ITER_NEXT(points, pt)
+   EINA_INLIST_FOREACH(points, pt)
      {
 	point[k].x = pt->x;
 	point[k].y = pt->y;
@@ -275,7 +275,7 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
      {
 	RGBA_Span *span;
 
-	EINA_INLIST_ITER_NEXT(spans, span)
+	EINA_INLIST_FOREACH(spans, span)
 	  {
 	     DATA32 *ptr;
 

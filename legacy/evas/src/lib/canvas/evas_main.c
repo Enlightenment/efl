@@ -110,13 +110,13 @@ evas_free(Evas *e)
    while (del)
      {
 	del = 0;
-	EINA_INLIST_ITER_NEXT(e->layers, lay)
+	EINA_INLIST_FOREACH(e->layers, lay)
 	  {
 	     Evas_Object *o;
 
 	     evas_layer_pre_free(lay);
 
-	     EINA_INLIST_ITER_NEXT(lay->objects, o)
+	     EINA_INLIST_FOREACH(lay->objects, o)
 	       {
 		  if ((o->callbacks) && (o->callbacks->walking_list))
 		    {

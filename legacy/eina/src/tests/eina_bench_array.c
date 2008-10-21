@@ -361,7 +361,7 @@ eina_bench_inlist_4evas_render(int request)
 	       }
 	  }
 
-	EINA_INLIST_ITER_NEXT(head, ebo)
+	EINA_INLIST_FOREACH(head, ebo)
 	  ebo->keep = rand() < (RAND_MAX / 2) ? ebo->keep : EINA_FALSE;
      }
 

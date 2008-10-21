@@ -332,7 +332,7 @@ eina_benchmark_run(Eina_Benchmark *bench)
 	   "set ylabel \"time\"\n"
 	   "plot ", bench->name, bench->run, bench->name, bench->run);
 
-   EINA_INLIST_ITER_NEXT(bench->runs, run)
+   EINA_INLIST_FOREACH(bench->runs, run)
      {
 	Eina_Counter *counter;
 	int i;

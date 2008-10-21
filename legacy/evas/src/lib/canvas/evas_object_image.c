@@ -1793,11 +1793,11 @@ evas_image_cache_reload(Evas *e)
    MAGIC_CHECK_END();
 
    evas_image_cache_flush(e);
-   EINA_INLIST_ITER_NEXT(e->layers, layer)
+   EINA_INLIST_FOREACH(e->layers, layer)
      {
 	Evas_Object *obj;
 
-	EINA_INLIST_ITER_NEXT(layer->objects, obj)
+	EINA_INLIST_FOREACH(layer->objects, obj)
 	  {
 	     Evas_Object_Image *o;
 
@@ -1809,11 +1809,11 @@ evas_image_cache_reload(Evas *e)
 	  }
      }
    evas_image_cache_flush(e);
-   EINA_INLIST_ITER_NEXT(e->layers, layer)
+   EINA_INLIST_FOREACH(e->layers, layer)
      {
 	Evas_Object *obj;
 
-	EINA_INLIST_ITER_NEXT(layer->objects, obj)
+	EINA_INLIST_FOREACH(layer->objects, obj)
 	  {
 	     Evas_Object_Image *o;
 

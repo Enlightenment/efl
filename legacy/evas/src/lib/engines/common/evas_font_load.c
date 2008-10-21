@@ -94,7 +94,7 @@ evas_common_font_source_find(const char *name)
    RGBA_Font_Source *fs;
 
    if (!name) return NULL;
-   EINA_INLIST_ITER_NEXT(fonts_src, fs)
+   EINA_INLIST_FOREACH(fonts_src, fs)
      {
 	if ((fs->name) && (!strcmp(name, fs->name)))
 	  {
@@ -549,7 +549,7 @@ evas_common_font_flush_last(void)
    RGBA_Font_Int *fi_tmp;
    RGBA_Font_Int *fi = NULL;
 
-   EINA_INLIST_ITER_NEXT(fonts, fi_tmp)
+   EINA_INLIST_FOREACH(fonts, fi_tmp)
      {
 	if (fi_tmp->references == 0) fi = fi_tmp;
      }
@@ -573,7 +573,7 @@ evas_common_font_int_find(const char *name, int size)
 {
    RGBA_Font_Int *fi;
 
-   EINA_INLIST_ITER_NEXT(fonts, fi)
+   EINA_INLIST_FOREACH(fonts, fi)
      {
 	if ((fi->size == size) && (!strcmp(name, fi->src->name)))
 	  {

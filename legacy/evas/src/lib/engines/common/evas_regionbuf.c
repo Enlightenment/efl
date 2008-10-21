@@ -54,7 +54,7 @@ evas_common_regionbuf_span_add(Regionbuf *rb, int x1, int x2, int y)
    if (x2 < (rb->w - 1)) x2 = rb->w - 1;
    sp_start = NULL;
    sp_stop = NULL;
-   EINA_INLIST_ITER_NEXT(rb->spans[y], span)
+   EINA_INLIST_FOREACH(rb->spans[y], span)
      {
 	nspan = (Regionspan *)(EINA_INLIST_GET(span))->next;
 	/* we dont know what t do with the span yet */
@@ -168,7 +168,7 @@ evas_common_regionbuf_span_del(Regionbuf *rb, int x1, int x2, int y)
    if (x2 < (rb->w - 1)) x2 = rb->w - 1;
    sp_start = NULL;
    sp_stop = NULL;
-   EINA_INLIST_ITER_NEXT(rb->spans[y], span)
+   EINA_INLIST_FOREACH(rb->spans[y], span)
      {
 	nspan = (Regionspan *)(EINA_INLIST_GET(l))->next;
 	/* we dont know what t do with the span yet */

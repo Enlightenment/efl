@@ -1413,11 +1413,11 @@ evas_object_top_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool i
    yy = y;
 ////   xx = evas_coord_world_x_to_screen(e, x);
 ////   yy = evas_coord_world_y_to_screen(e, y);
-   EINA_INLIST_ITER_LAST((EINA_INLIST_GET(e->layers)), lay)
+   EINA_INLIST_REVERSE_FOREACH((EINA_INLIST_GET(e->layers)), lay)
      {
 	Evas_Object *obj;
 
-	EINA_INLIST_ITER_LAST(get_layer_objects_last(lay), obj)
+	EINA_INLIST_REVERSE_FOREACH(get_layer_objects_last(lay), obj)
 	  {
 	     if (obj->delete_me) continue;
 	     if ((!include_pass_events_objects) && (evas_event_passes_through(obj))) continue;
@@ -1469,11 +1469,11 @@ evas_object_top_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas
 ////   hh = evas_coord_world_y_to_screen(e, h);
    if (ww < 1) ww = 1;
    if (hh < 1) hh = 1;
-   EINA_INLIST_ITER_LAST((EINA_INLIST_GET(e->layers)), lay)
+   EINA_INLIST_REVERSE_FOREACH((EINA_INLIST_GET(e->layers)), lay)
      {
 	Evas_Object *obj;
 
-	EINA_INLIST_ITER_LAST(get_layer_objects_last(lay), obj)
+	EINA_INLIST_REVERSE_FOREACH(get_layer_objects_last(lay), obj)
 	  {
 	     if (obj->delete_me) continue;
 	     if ((!include_pass_events_objects) && (evas_event_passes_through(obj))) continue;
@@ -1507,11 +1507,11 @@ evas_objects_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool incl
    yy = y;
 ////   xx = evas_coord_world_x_to_screen(e, x);
 ////   yy = evas_coord_world_y_to_screen(e, y);
-   EINA_INLIST_ITER_LAST((EINA_INLIST_GET(e->layers)), lay)
+   EINA_INLIST_REVERSE_FOREACH((EINA_INLIST_GET(e->layers)), lay)
      {
 	Evas_Object *obj;
 
-	EINA_INLIST_ITER_LAST(get_layer_objects_last(lay), obj)
+	EINA_INLIST_REVERSE_FOREACH(get_layer_objects_last(lay), obj)
 	  {
 	     if (obj->delete_me) continue;
 	     if ((!include_pass_events_objects) && (evas_event_passes_through(obj))) continue;
@@ -1551,11 +1551,11 @@ evas_objects_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Co
 ////   hh = evas_coord_world_y_to_screen(e, h);
    if (ww < 1) ww = 1;
    if (hh < 1) hh = 1;
-   EINA_INLIST_ITER_LAST((EINA_INLIST_GET(e->layers)), lay)
+   EINA_INLIST_REVERSE_FOREACH((EINA_INLIST_GET(e->layers)), lay)
      {
 	Evas_Object *obj;
 
-	EINA_INLIST_ITER_LAST(get_layer_objects_last(lay), obj)
+	EINA_INLIST_REVERSE_FOREACH(get_layer_objects_last(lay), obj)
 	  {
 	     if (obj->delete_me) continue;
 	     if ((!include_pass_events_objects) && (evas_event_passes_through(obj))) continue;

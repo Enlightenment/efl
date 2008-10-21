@@ -224,7 +224,7 @@ _style_match_replace(Evas_Textblock_Style *ts, char *s)
 {
    Evas_Object_Style_Tag *tag;
 
-   EINA_INLIST_ITER_NEXT(ts->tags, tag)
+   EINA_INLIST_FOREACH(ts->tags, tag)
      {
 	if (!strcmp(tag->replace, s)) return tag->tag;
      }
@@ -236,7 +236,7 @@ _style_match_tag(Evas_Textblock_Style *ts, char *s)
 {
    Evas_Object_Style_Tag *tag;
 
-   EINA_INLIST_ITER_NEXT(ts->tags, tag)
+   EINA_INLIST_FOREACH(ts->tags, tag)
      {
 	if (!strcmp(tag->tag, s)) return tag->replace;
      }
@@ -1491,7 +1491,7 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
    c->maxascent = c->maxdescent = 0;
    if (!c->ln->items)
      _layout_format_ascent_descent_adjust(c, fmt);
-   EINA_INLIST_ITER_NEXT(c->ln->items, it)
+   EINA_INLIST_FOREACH(c->ln->items, it)
      {
 	int endx;
 
@@ -1733,7 +1733,7 @@ _layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
    int index, tw, th, inset, adv;
 
    /* it is not appended yet */
-   EINA_INLIST_ITER_LAST((EINA_INLIST_GET(c->ln->items)), pit)
+   EINA_INLIST_REVERSE_FOREACH((EINA_INLIST_GET(c->ln->items)), pit)
      {
 	if (_layout_ends_with_space(pit->text))
 	  {
@@ -2079,7 +2079,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 	return;
      }
    /* run through all text and format nodes generating lines */
-   EINA_INLIST_ITER_NEXT(c->o->nodes, n)
+   EINA_INLIST_FOREACH(c->o->nodes, n)
      {
 	if (!c->ln) _layout_line_new(c, fmt);
 	if ((n->type == NODE_FORMAT) && (n->text))
@@ -2174,7 +2174,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 	c->format_stack = evas_list_remove_list(c->format_stack, c->format_stack);
 	_format_free(c->obj, fmt);
      }
-   EINA_INLIST_ITER_NEXT(c->lines, ln)
+   EINA_INLIST_FOREACH(c->lines, ln)
      {
 	if (ln->line_no == -1)
 	  {
@@ -2251,14 +2251,14 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, in
    Evas_Object_Textblock *o;
 
    o = (Evas_Object_Textblock *)(obj->object_data);
-/*    EINA_INLIST_ITER_NEXT(o->nodes, nn) */
+/*    EINA_INLIST_FOREACH(o->nodes, nn) */
 /*      ; */
-   EINA_INLIST_ITER_NEXT(o->lines, ln)
+   EINA_INLIST_FOREACH(o->lines, ln)
      {
 	Evas_Object_Textblock_Format_Item *fit;
 	Evas_Object_Textblock_Item *it;
 
-	EINA_INLIST_ITER_NEXT(ln->items, it)
+	EINA_INLIST_FOREACH(ln->items, it)
 	  {
 	     if (it->source_node == n)
 	       {
@@ -2270,7 +2270,7 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, in
 		    }
 	       }
 	  }
-	EINA_INLIST_ITER_NEXT(ln->format_items, fit)
+	EINA_INLIST_FOREACH(ln->format_items, fit)
 	  {
 	     if (fit->source_node == n)
 	       {
@@ -2290,11 +2290,11 @@ _find_layout_format_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node
    Evas_Object_Textblock *o;
 
    o = (Evas_Object_Textblock *)(obj->object_data);
-   EINA_INLIST_ITER_NEXT(o->lines, ln)
+   EINA_INLIST_FOREACH(o->lines, ln)
      {
 	Evas_Object_Textblock_Format_Item *fi;
 
-	EINA_INLIST_ITER_NEXT(ln->format_items, fi)
+	EINA_INLIST_FOREACH(ln->format_items, fi)
 	  {
 	     if (fi->source_node == n)
 	       {
@@ -2313,7 +2313,7 @@ _find_layout_line_num(const Evas_Object *obj, int line)
    Evas_Object_Textblock *o;
    
    o = (Evas_Object_Textblock *)(obj->object_data);
-   EINA_INLIST_ITER_NEXT(o->lines, ln)
+   EINA_INLIST_FOREACH(o->lines, ln)
      {
 	if (ln->line_no == line) return ln;
      }
@@ -2961,7 +2961,7 @@ evas_object_textblock_text_markup_get(const Evas_Object *obj)
    
    TB_HEAD_RETURN(NULL);
    if (o->markup_text) return(o->markup_text);
-   EINA_INLIST_ITER_NEXT(o->nodes, n)
+   EINA_INLIST_FOREACH(o->nodes, n)
      {
         if ((n->type == NODE_FORMAT) && (n->text))
 	  {
@@ -4309,7 +4309,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
    n2 = cur2->node;
    index = cur2->pos;
    chr = evas_common_font_utf8_get_next((unsigned char *)n2->text, &index);
-   EINA_INLIST_ITER_NEXT(n1, n)
+   EINA_INLIST_FOREACH(n1, n)
      {
 	if (n->type == NODE_TEXT)
 	  {
@@ -4569,12 +4569,12 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
    if (!o->formatted.valid) _relayout(cur->obj);
    x += o->style_pad.l;
    y += o->style_pad.t;
-   EINA_INLIST_ITER_NEXT(o->lines, ln)
+   EINA_INLIST_FOREACH(o->lines, ln)
      {
 	if (ln->y > y) break;
 	if ((ln->y <= y) && ((ln->y + ln->h) > y))
 	  {
-	     EINA_INLIST_ITER_NEXT(ln->items, it)
+	     EINA_INLIST_FOREACH(ln->items, it)
 	       {
 		  if ((it->x + ln->x) > x)
 		    {
@@ -4600,7 +4600,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
 		       return 1;
 		    }
 	       }
-	     EINA_INLIST_ITER_NEXT(ln->format_items, fi)
+	     EINA_INLIST_FOREACH(ln->format_items, fi)
 	       {
 		  if ((fi->x + ln->x) > x) break;
 		  if (((fi->x + ln->x) <= x) && (((fi->x + ln->x) + fi->w) > x))
@@ -4638,7 +4638,7 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
    y += o->style_pad.t;
-   EINA_INLIST_ITER_NEXT(o->lines, ln)
+   EINA_INLIST_FOREACH(o->lines, ln)
      {
 	if (ln->y > y) break;
 	if ((ln->y <= y) && ((ln->y + ln->h) > y))
@@ -4963,7 +4963,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    obj->layer->evas->engine.func->context_multiplier_unset(output,
 							   context);
 #define ITEM_WALK() \
-   EINA_INLIST_ITER_NEXT(o->lines, ln) \
+   EINA_INLIST_FOREACH(o->lines, ln) \
      { \
 	Evas_Object_Textblock_Item *it; \
 	\
@@ -4971,7 +4971,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
         pline = 0; \
         pline2 = 0; \
 	pstrike = 0; \
-	EINA_INLIST_ITER_NEXT(ln->items, it) \
+	EINA_INLIST_FOREACH(ln->items, it) \
 	  { \
 	     int yoff; \
 	     \
@@ -5549,11 +5549,11 @@ _evas_object_textblock_rehint(Evas_Object *obj)
    Evas_Object_Textblock_Line *ln;
 
    o = (Evas_Object_Textblock *)(obj->object_data);
-   EINA_INLIST_ITER_NEXT(o->lines, ln)
+   EINA_INLIST_FOREACH(o->lines, ln)
      {
 	Evas_Object_Textblock_Item *it;
 
-	EINA_INLIST_ITER_NEXT(ln->items, it)
+	EINA_INLIST_FOREACH(ln->items, it)
 	  {
 	     if (it->format->font.font)
 	       evas_font_load_hinting_set(obj->layer->evas,

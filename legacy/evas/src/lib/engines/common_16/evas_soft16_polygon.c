@@ -113,7 +113,7 @@ soft16_polygon_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point
      return;
 
    n = 0;
-   EINA_INLIST_ITER_NEXT(points, pt) n++;
+   EINA_INLIST_FOREACH(points, pt) n++;
 
    if (n < 3)
      return;
@@ -138,7 +138,7 @@ soft16_polygon_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point
      }
 
    k = 0;
-   EINA_INLIST_ITER_NEXT(points, pt)
+   EINA_INLIST_FOREACH(points, pt)
      {
 	point[k].x = pt->x;
 	point[k].y = pt->y;
@@ -151,7 +151,7 @@ soft16_polygon_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point
      sorted_index[k] = point[k].i;
 
    k = 0;
-   EINA_INLIST_ITER_NEXT(points, pt)
+   EINA_INLIST_FOREACH(points, pt)
      {
 	point[k].x = pt->x;
 	point[k].y = pt->y;

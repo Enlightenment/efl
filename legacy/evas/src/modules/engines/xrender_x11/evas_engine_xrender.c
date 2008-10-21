@@ -686,7 +686,7 @@ _xre_poly_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point *p
    int op;
    
    if ((!rs) || (!dc)) return;
-   num = 0; EINA_INLIST_ITER_NEXT(points, pt) num++;
+   num = 0; EINA_INLIST_FOREACH(points, pt) num++;
    if (num < 3) return;
    op = PictOpOver;
    if (dc->render_op == _EVAS_RENDER_BLEND)
@@ -725,7 +725,7 @@ _xre_poly_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point *p
    pts = malloc(num * sizeof(XPointDouble));
    if (!pts) return;
    i = 0;
-   EINA_INLIST_ITER_NEXT(points, pt)
+   EINA_INLIST_FOREACH(points, pt)
      {
 	if (i < num)
 	  {

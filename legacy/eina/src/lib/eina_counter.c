@@ -396,7 +396,7 @@ eina_counter_dump(Eina_Counter *counter, FILE *out)
 
    fprintf(out, "# specimen\texperiment time\tstarting time\tending time\n");
 
-   EINA_INLIST_ITER_LAST(counter->clocks, clk)
+   EINA_INLIST_REVERSE_FOREACH(counter->clocks, clk)
      {
         long int start;
         long int end;

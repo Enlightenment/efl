@@ -7,7 +7,7 @@ _evas_event_object_list_in_get(Evas *e, Evas_List *in, const Eina_Inlist *list, 
    Evas_Object *obj;
 
    if (!list) return in;
-   EINA_INLIST_ITER_LAST(list, obj)
+   EINA_INLIST_REVERSE_FOREACH(list, obj)
      {
 	if (obj == stop)
 	  {
@@ -62,7 +62,7 @@ evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y)
    Evas_List *in = NULL;
 
    if (!e->layers) return NULL;
-   EINA_INLIST_ITER_LAST((EINA_INLIST_GET(e->layers)), lay)
+   EINA_INLIST_REVERSE_FOREACH((EINA_INLIST_GET(e->layers)), lay)
      {
 	int norep;
 
@@ -145,11 +145,11 @@ evas_event_thaw(Evas *e)
      {
 	Evas_Layer *lay;
 
-	EINA_INLIST_ITER_NEXT((EINA_INLIST_GET(e->layers)), lay)
+	EINA_INLIST_FOREACH((EINA_INLIST_GET(e->layers)), lay)
 	  {
 	     Evas_Object *obj;
 
-	     EINA_INLIST_ITER_NEXT(lay->objects, obj)
+	     EINA_INLIST_FOREACH(lay->objects, obj)
 	       {
 		  evas_object_clip_recalc(obj);
 		  evas_object_recalc_clippees(obj);

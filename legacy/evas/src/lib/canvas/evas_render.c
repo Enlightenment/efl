@@ -136,7 +136,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Eina_Array *active
 
 	     eina_array_push(render_objects, obj);
 	     obj->render_pre = 1;
-	     EINA_INLIST_ITER_NEXT(evas_object_smart_members_get_direct(obj), obj2)
+	     EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2)
 	       {
 		  _evas_render_phase1_object_process(e, obj2,
 						     active_objects,
@@ -173,7 +173,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Eina_Array *active
 
 		  eina_array_push(render_objects, obj);
 		  obj->render_pre = 1;
-		  EINA_INLIST_ITER_NEXT(evas_object_smart_members_get_direct(obj), obj2)
+		  EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2)
 		    {
 		       _evas_render_phase1_object_process(e, obj2,
 							  active_objects,
@@ -204,11 +204,11 @@ _evas_render_phase1_process(Evas *e, Eina_Array *active_objects, Eina_Array *res
    Evas_Layer *lay;
    int clean_them = 0;
 
-   EINA_INLIST_ITER_NEXT(e->layers, lay)
+   EINA_INLIST_FOREACH(e->layers, lay)
      {
 	Evas_Object *obj;
 
-	EINA_INLIST_ITER_NEXT(lay->objects, obj)
+	EINA_INLIST_FOREACH(lay->objects, obj)
 	  {
 	     clean_them |= _evas_render_phase1_object_process(e, obj,
 							      active_objects, restack_objects,
