@@ -188,8 +188,78 @@ START_TEST(eina_test_simple)
 }
 END_TEST
 
+START_TEST(eina_test_merge)
+{
+   Eina_List *l1;
+   Eina_List *l2;
+   Eina_List *l3;
+   Eina_List *l4;
+   Eina_List *l5;
+   int data[] = { 6, 9, 42, 1, 7, 9, 81, 1664, 1337, 3, 21, 10, 0, 5, 2008 };
+   int *prev;
+   int *current;
+   int i;
+
+   eina_list_init();
+
+   l1 = eina_list_append(NULL, &data[0]);
+   l1 = eina_list_append(l1, &data[1]);
+   l1 = eina_list_append(l1, &data[2]);
+
+   l2 = eina_list_append(NULL, &data[3]);
+   l2 = eina_list_append(l2, &data[4]);
+   l2 = eina_list_append(l2, &data[5]);
+
+   l3 = eina_list_append(NULL, &data[6]);
+   l3 = eina_list_append(l3, &data[7]);
+   l3 = eina_list_append(l3, &data[8]);
+
+   l4 = eina_list_append(NULL, &data[9]);
+   l4 = eina_list_append(l4, &data[10]);
+   l4 = eina_list_append(l4, &data[11]);
+
+   l5 = eina_list_append(NULL, &data[12]);
+   l5 = eina_list_append(l5, &data[13]);
+   l5 = eina_list_append(l5, &data[14]);
+
+   l1 = eina_list_merge(l1, l2);
+   fail_if(l1 == NULL);
+   fail_if(eina_list_count(l1) != 6);
+   for (i = 0; i < 6; ++i)
+     fail_if(eina_list_nth(l1, i) != &data[i]);
+
+   l1 = eina_list_sort(l1, -1, eina_int_cmp);
+   l3 = eina_list_sort(l3, -1, eina_int_cmp);
+   l4 = eina_list_sort(l4, -1, eina_int_cmp);
+   l5 = eina_list_sort(l5, -1, eina_int_cmp);
+
+   l1 = eina_list_sorted_merge(l1, l3, eina_int_cmp);
+   fail_if(l1 == NULL);
+   fail_if(eina_list_count(l1) != 9);
+
+   l1 = eina_list_sorted_merge(l1, l4, eina_int_cmp);
+   fail_if(l1 == NULL);
+   fail_if(eina_list_count(l1) != 12);
+
+   l1 = eina_list_sorted_merge(l1, l5, eina_int_cmp);
+   fail_if(l1 == NULL);
+   fail_if(eina_list_count(l1) != 15);
+
+   prev = eina_list_data_get(l1);
+   for (i = 1; i < eina_list_count(l1); ++i)
+     {
+	current = eina_list_nth(l1, i);
+	fail_if (*prev > *current);
+	prev = current;
+     }
+
+   eina_list_shutdown();
+}
+END_TEST
+
 void
 eina_test_list(TCase *tc)
 {
    tcase_add_test(tc, eina_test_simple);
+   tcase_add_test(tc, eina_test_merge);
 }

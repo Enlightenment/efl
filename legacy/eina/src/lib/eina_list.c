@@ -1217,11 +1217,6 @@ eina_list_reverse(Eina_List *list)
  * extern Eina_List *list;
  *
  * list = eina_list_sort(list, eina_list_count(list), sort_cb);
- * if (eina_error_get())
- *   {
- *     fprintf(stderr, "ERROR: Memory is low. List Sorting failed.\n");
- *     exit(-1);
- *   }
  * @endcode
  */
 EAPI Eina_List *
@@ -1289,6 +1284,147 @@ eina_list_sort(Eina_List *list, unsigned int size, Eina_Compare_Cb func)
      list->accounting->last = tail;
 
    return list;
+}
+
+/**
+ * @brief Merge two list.
+ *
+ * @param left Head list to merge.
+ * @param right Tail list to merge.
+ * @return A new merged list.
+ *
+ * This function put right at the end of left and return the head.
+ *
+ * Both left and right does not exist anymore after the merge.
+ *
+ */
+EAPI Eina_List *
+eina_list_merge(Eina_List *left, Eina_List *right)
+{
+   if (!left) return right;
+   if (!right) return left;
+
+   left->accounting->last->next = right;
+   right->prev = left->accounting->last;
+
+   left->accounting->last = right->accounting->last;
+   left->accounting->count += right->accounting->count;
+
+   _eina_list_mempool_accounting_free(right->accounting);
+
+   while (right)
+     {
+	right->accounting = left->accounting;
+	right = right->next;
+     }
+
+   return left;
+}
+
+/**
+ * @brief Merge two sorted list according to the ordering func will return.
+ *
+ * @param left First list to merge.
+ * @param right Second list to merge.
+ * @param func A function pointer that can handle comparing the list data
+ * nodes.
+ * @return A new sorted list.
+ *
+ * This function compare the head of @p left and @p right, and choose the
+ * smallest one to be head of the returned list. It will continue this process
+ * for all entry of both list.
+ *
+ * Both left and right does not exist anymore after the merge.
+ * If @p func is NULL, it will return NULL.
+ *
+ * Example:
+ * @code
+ * int
+ * sort_cb(void *d1, void *d2)
+ * {
+ *   const char *txt = NULL;
+ *    const char *txt2 = NULL;
+ *
+ *    if(!d1) return(1);
+ *    if(!d2) return(-1);
+ *
+ *    return(strcmp((const char*)d1, (const char*)d2));
+ * }
+ * extern Eina_List *sorted1;
+ * extern Eina_List *sorted2;
+ *
+ * list = eina_list_sorted_merge(sorted1, sorted2, sort_cb);
+ * @endcode
+ */
+EAPI Eina_List *
+eina_list_sorted_merge(Eina_List *left, Eina_List *right, Eina_Compare_Cb func)
+{
+   Eina_List *ret;
+   Eina_List *current;
+
+   if (!left) return right;
+   if (!right) return left;
+   if (!func) return NULL;
+
+   if (func(left->data, right->data) < 0)
+     {
+	ret = left;
+	current = left;
+	left = left->next;
+	ret->accounting->count += right->accounting->count;
+
+	_eina_list_mempool_accounting_free(right->accounting);
+     }
+   else
+     {
+	ret = right;
+	current = right;
+	right = right->next;
+	ret->accounting->count += left->accounting->count;
+
+	_eina_list_mempool_accounting_free(left->accounting);
+     }
+
+   while (left && right)
+     {
+	if (func(left->data, right->data) < 0)
+	  {
+	     current->next = left;
+	     left->prev = current;
+	     left = left->next;
+	  }
+	else
+	  {
+	     current->next = right;
+	     right->prev = current;
+	     right = right->next;
+	  }
+
+	current = current->next;
+	current->accounting = ret->accounting;
+     }
+
+   if (left)
+     {
+	current->next = left;
+	left->prev = current;
+     }
+
+   if (right)
+     {
+	current->next = right;
+	right->prev = current;
+     }
+
+   while (current->next)
+     {
+	current->accounting = ret->accounting;
+	current = current->next;
+     }
+
+   ret->accounting->last = current;
+
+   return ret;
 }
 
 /**
