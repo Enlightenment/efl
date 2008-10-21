@@ -95,6 +95,7 @@ _load(Evas_Object *obj)
    switch (wd->format)
      {
       case ELM_TEXT_FORMAT_PLAIN_UTF8:
+	// FIXME: convert plaintext to markup
 	break;
       case ELM_TEXT_FORMAT_MARKUP_UTF8:
 	text = _load_markup_utf8(wd->file);
@@ -141,6 +142,7 @@ _save(Evas_Object *obj)
    switch (wd->format)
      {
       case ELM_TEXT_FORMAT_PLAIN_UTF8:
+	// FIXME: convert markup to plaintext
 	break;
       case ELM_TEXT_FORMAT_MARKUP_UTF8:
 	_save_markup_utf8(wd->file, elm_entry_entry_get(wd->entry));
