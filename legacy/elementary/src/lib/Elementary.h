@@ -189,14 +189,14 @@ extern "C" {
    EAPI void         elm_entry_line_wrap_set(Evas_Object *obj, Evas_Bool wrap);
    /* smart callbacks called:
     * "changed" - the text content changed
-    * "selection,start" -
-    * "selection,changed" -
-    * "selection,cleared" -
-    * "selection,paste" -
-    * "selection,copy" -
-    * "selection,cut" -
-    * "cursor,changed" -
-    * "anchor,X,clicked,N" - achor called X was clicked with button N
+    * "selection,start" - the user started selecting text
+    * "selection,changed" - the user modified the selection size/location
+    * "selection,cleared" - the user cleared the selection
+    * "selection,paste" - the user rrequested a paste of text
+    * "selection,copy" - the user copied the text
+    * "selection,cut" - the user cut the text
+    * "cursor,changed" - the cursor changed position
+    * "anchor,X,clicked,N" - achor called 'X' was clicked with button 'N'
     */
        
 // FIXME: fixes to do
