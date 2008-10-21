@@ -2,14 +2,14 @@ Source: eet
 Section: libs
 Priority: optional
 Maintainer: Falko Schmidt <falko@alphagemini.org>
-Build-Depends: debhelper (>= 6), cdbs, automake1.7 | automaken, libtool, pkg-config, zlib1g-dev, libjpeg62-dev, doxygen
+Build-Depends: debhelper (>= 6), cdbs, automake1.7 | automaken, libtool, pkg-config, zlib1g-dev, libjpeg62-dev, doxygen, libeina-dev
 Standards-Version: 3.7.3
 Homepage: http://www.enlightenment.org
 
 Package: libeet-dev
 Section: libdevel
 Architecture: any
-Depends: libeet1 (= ${Source-Version}), zlib1g-dev, libjpeg-dev
+Depends: libeet1 (= ${Source-Version}), zlib1g-dev, libjpeg-dev, libeina-dev
 Description: Enlightenment DR17 file chunk reading/writing library development files
  Eet is a tiny library designed to write an arbitary set of chunks of data to a
  file and optionally compress each chunk (very much like a zip file) and allow
