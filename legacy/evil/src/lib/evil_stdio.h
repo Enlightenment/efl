@@ -2,10 +2,10 @@
 #define __EVIL_STDIO_H__
 
 
-#include <stdio.h>
-
-
 #ifdef __MINGW32CE__
+
+
+#include <stdio.h>
 
 /*
  * Error related functions

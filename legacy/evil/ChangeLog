@@ -1,3 +1,13 @@
+2008-10-21  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/Makefile.am:
+	* src/lib/evil_time.c:
+	add tzset implementation ofr mingw32ce (does nothing...),
+	needed for embryo
+
+	* src/lib/evil_stdio.h:
+	formatting
+
 2008-10-20  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/bin/evil_suite.c:
