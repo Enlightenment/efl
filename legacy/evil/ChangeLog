@@ -1,5 +1,10 @@
 2008-10-21  Vincent Torri  <doursse at users dot sf dot net>
 
+	* src/lib/Evil.h:
+	use getcwd() from evil_unistd.c
+
+2008-10-21  Vincent Torri  <doursse at users dot sf dot net>
+
 	* src/lib/Makefile.am:
 	* src/lib/evil_time.c:
 	add tzset implementation ofr mingw32ce (does nothing...),

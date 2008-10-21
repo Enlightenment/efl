@@ -140,7 +140,7 @@ typedef unsigned long  gid_t;
 #  define write(fd,buffer,count) _write((fd),(buffer),(count))
 #  define unlink(filename) _unlink((filename))
 #  define mkdir(p,m) _mkdir(p)
-#  define getcwd(b,s) _getcwd((b),(s))
+#  define getcwd(b,s) evil_getcwd((b),(s))
 #  define lstat(f,s) _stat((f),(s))
 #  define strdup(s) _strdup(s)
 
