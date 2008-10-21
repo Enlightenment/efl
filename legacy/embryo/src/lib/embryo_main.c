@@ -2,8 +2,15 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
-#include "embryo_private.h"
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include <stdlib.h>
 #include <time.h>
+
+#include "Embryo.h"
+#include "embryo_private.h"
 
 static int _embryo_init_count = 0;
 

@@ -2,13 +2,19 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
-#include "embryo_private.h"
-#include <sys/time.h>
-#include <time.h>
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 
 #ifndef HAVE_GETTIMEOFDAY
 # error "Your platform isn't supported yet"
 #endif
+
+#include <sys/time.h>
+#include <time.h>
+
+#include "Embryo.h"
+#include "embryo_private.h"
 
 /* exported time api */
 

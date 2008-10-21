@@ -1,38 +1,9 @@
 #ifndef _EMBRYO_PRIVATE_H
 #define _EMBRYO_PRIVATE_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <limits.h>
-#include <stdarg.h>
-#include <string.h>
-
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
-#ifdef HAVE_ALLOCA_H
-# include <alloca.h>
-#elif defined __GNUC__
-# define alloca __builtin_alloca
-#elif defined _AIX
-# define alloca __alloca
-#elif defined _MSC_VER
-# include <malloc.h>
-# define alloca _alloca
-#else
-# include <stddef.h>
-# ifdef  __cplusplus
-extern "C"
-# endif
-void *alloca (size_t);
-#endif
 
 #include <eina_types.h>
 
-#include "Embryo.h"
 
 #ifdef __GNUC__
 # if __GNUC__ >= 4
