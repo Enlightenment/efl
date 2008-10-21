@@ -37,25 +37,26 @@ WIN32_CFLAGS=""
 WIN32_LIBS=""
 lt_enable_auto_import=""
 case "$host_os" in
-	mingw* | cegcc*)
-		PKG_CHECK_MODULES([EVIL], [evil])
-		AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
-		dnl needed for correct definition of EAPI
-		AC_DEFINE(EFL_EET_BUILD, 1, [Define to mention that eet is built])
-		lt_enable_auto_import="-Wl,--enable-auto-import"
-		;;
+   mingw* | cegcc*)
+      PKG_CHECK_MODULES([EVIL], [evil])
+      AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
+      dnl needed for correct definition of EAPI
+      AC_DEFINE(EFL_EET_BUILD, 1, [Define to mention that eet is built])
+      lt_enable_auto_import="-Wl,--enable-auto-import"
+      ;;
 esac
+
 case "$host_os" in
-	mingw32ce*)
-		WIN32_LIBS="-lws2"
-		;;
-	mingw*)
-		WIN32_LIBS="-lws2_32"
-		;;
-	cegcc*)
-		WIN32_CFLAGS="-mwin32"
-		WIN32_LIBS="-lws2"
-		;;
+   mingw32ce*)
+      WIN32_LIBS="-lws2"
+      ;;
+   mingw*)
+      WIN32_LIBS="-lws2_32"
+      ;;
+   cegcc*)
+      WIN32_CFLAGS="-mwin32"
+      WIN32_LIBS="-lws2"
+      ;;
 esac
 AC_SUBST(WIN32_CFLAGS)
 AC_SUBST(WIN32_LIBS)
@@ -80,7 +81,12 @@ AC_CHECK_HEADER([fnmatch.h],
 AC_CHECK_FUNCS([fnmatch], [res="yes"], [res="no"])
 if test "x$res" = "xno"; then
    AC_SEARCH_LIBS([fnmatch],
-      [fnmatch iberty evil])
+      [fnmatch iberty evil],
+      [res="yes"],
+      [res="no"])
+   if test "x$res" = "xno"; then
+      AC_MSG_ERROR([Cannot find fnmatch() in neither libc nor libfnmatch, nor libiberty, nor libevil])
+	fi
 fi
 
 dnl These are needed for fmemopen/open_memstream
