@@ -21,14 +21,12 @@ static Ecore_Idle_Enterer *ecore_evas_directfb_idle_enterer = NULL;
 static void
 _ecore_evas_directfb_render(Ecore_Evas *ee)
 {
-   Evas_List *updates, *ll;
-   
+   Eina_List *updates, *ll;
+   Ecore_Evas *ee2;
+
 #ifdef BUILD_ECORE_EVAS_BUFFER
-   for (ll = ee->sub_ecore_evas; ll; ll = ll->next)
+   EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
-	Ecore_Evas *ee2;
-	
-	ee2 = ll->data;
 	if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
 	_ecore_evas_buffer_render(ee2);
 	if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);

@@ -122,8 +122,8 @@ EAPI int         ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type eng
 EAPI int         ecore_evas_init(void);
 EAPI int         ecore_evas_shutdown(void);
 
-EAPI Evas_List  *ecore_evas_engines_get(void);
-EAPI void        ecore_evas_engines_free(Evas_List *engines);
+EAPI Eina_List  *ecore_evas_engines_get(void);
+EAPI void        ecore_evas_engines_free(Eina_List *engines);
 EAPI Ecore_Evas *ecore_evas_new(const char *engine_name, int x, int y, int w, int h, const char *extra_options);
 
 

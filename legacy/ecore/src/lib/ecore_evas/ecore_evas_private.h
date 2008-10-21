@@ -156,7 +156,7 @@ struct _Ecore_Evas_Engine
    struct {
       Ecore_X_Window win_root;
       Ecore_X_Window win;
-      Evas_List     *win_extra;
+      Eina_List     *win_extra;
       Ecore_X_Pixmap pmap;
       Ecore_X_Pixmap mask;
       Ecore_X_GC     gc;
@@ -291,7 +291,7 @@ struct _Ecore_Evas
    } func;
 
    Ecore_Evas_Engine engine;
-   Evas_List *sub_ecore_evas;
+   Eina_List *sub_ecore_evas;
 
    unsigned char ignore_events : 1;
 };

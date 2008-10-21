@@ -143,8 +143,8 @@ EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v);
 /* saves typing function headers */
 #define ECORE_IPC_DEC_STRUCT_PROTO(x) static int x(void *d, int s, void *pp)
 #define ECORE_IPC_ENC_STRUCT_PROTO(x) static void *x(void *pp, int *s)
-#define ECORE_IPC_DEC_EVAS_LIST_PROTO(x) static Evas_List *x(void *d, int s)
-#define ECORE_IPC_ENC_EVAS_LIST_PROTO(x) static void *x(Evas_List *lp, int *s)
+#define ECORE_IPC_DEC_EINA_LIST_PROTO(x) static Eina_List *x(void *d, int s)
+#define ECORE_IPC_ENC_EINA_LIST_PROTO(x) static void *x(Eina_List *lp, int *s)
 
 
 /* decoder setup - saves typing. requires data packet of exact size, or fail */
@@ -179,9 +179,9 @@ EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v);
 /* footer for the hell of it */
 #define ECORE_IPC_ENC_STRUCT_FOOT() return d
 
-#define ECORE_IPC_DEC_EVAS_LIST_HEAD(typ) \
+#define ECORE_IPC_DEC_EINA_LIST_HEAD(typ) \
     unsigned char *ptr; \
-    Evas_List *l; \
+    Eina_List *l; \
     typ *p; \
     l = NULL; \
     ptr = d; \
@@ -189,12 +189,12 @@ EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v);
         { \
             p = malloc(sizeof(typ));
 
-#define ECORE_IPC_DEC_EVAS_LIST_FOOT() \
-	    l = evas_list_append(l, p); \
+#define ECORE_IPC_DEC_EINA_LIST_FOOT() \
+	    l = eina_list_append(l, p); \
         } \
     return l
-#define ECORE_IPC_ENC_EVAS_LIST_HEAD_START(typ) \
-    Evas_List *l; \
+#define ECORE_IPC_ENC_EINA_LIST_HEAD_START(typ) \
+    Eina_List *l; \
     typ *p; \
     unsigned char *d, *ptr; \
     int len; \
@@ -203,7 +203,7 @@ EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v);
     for (l = lp; l; l = l->next) \
       { \
          p = l->data;
-#define ECORE_IPC_ENC_EVAS_LIST_HEAD_FINISH() \
+#define ECORE_IPC_ENC_EINA_LIST_HEAD_FINISH() \
       } \
     d = malloc(len); \
     if(!d) return NULL; \
@@ -213,7 +213,7 @@ EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v);
       { \
          p = l->data;
 
-#define ECORE_IPC_ENC_EVAS_LIST_FOOT() \
+#define ECORE_IPC_ENC_EINA_LIST_FOOT() \
       } \
    return d
 

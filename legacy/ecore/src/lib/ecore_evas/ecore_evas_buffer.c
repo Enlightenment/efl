@@ -44,7 +44,7 @@ _ecore_evas_buffer_free(Ecore_Evas *ee)
 
 	ee2 = evas_object_data_get(ee->engine.buffer.image, "Ecore_Evas_Parent");
 	evas_object_del(ee->engine.buffer.image);
-	ee2->sub_ecore_evas = evas_list_remove(ee2->sub_ecore_evas, ee);
+	ee2->sub_ecore_evas = eina_list_remove(ee2->sub_ecore_evas, ee);
      }
    else
      free(ee->engine.buffer.pixels);
@@ -108,13 +108,11 @@ _ecore_evas_buffer_shutdown(void)
 void
 _ecore_evas_buffer_render(Ecore_Evas *ee)
 {
-   Evas_List *updates, *l, *ll;
+   Eina_List *updates, *l, *ll;
+   Ecore_Evas *ee2;
 
-   for (ll = ee->sub_ecore_evas; ll; ll = ll->next)
+   EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
-	Ecore_Evas *ee2;
-
-	ee2 = ll->data;
 	if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
 	_ecore_evas_buffer_render(ee2);
 	if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
@@ -130,15 +128,12 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
    updates = evas_render_updates(ee->evas);
    if (ee->engine.buffer.image)
      {
-	for (l = updates; l; l = l->next)
-	  {
-	     Evas_Rectangle *r;
+        Evas_Rectangle *r;
 
-	     r = l->data;
-	     if (ee->engine.buffer.image)
-	       evas_object_image_data_update_add(ee->engine.buffer.image,
-						 r->x, r->y, r->w, r->h);
-	  }
+	EINA_LIST_FOREACH(updates, l, r)
+	  if (ee->engine.buffer.image)
+	    evas_object_image_data_update_add(ee->engine.buffer.image,
+					      r->x, r->y, r->w, r->h);
      }
    if (updates)
      {
@@ -645,7 +640,7 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    evas_key_lock_add(ee->evas, "Num_Lock");
    evas_key_lock_add(ee->evas, "Scroll_Lock");
 
-   ee_target->sub_ecore_evas = evas_list_append(ee_target->sub_ecore_evas, ee);
+   ee_target->sub_ecore_evas = eina_list_append(ee_target->sub_ecore_evas, ee);
    return o;
 #else
    return NULL;

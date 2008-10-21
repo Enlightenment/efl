@@ -534,14 +534,14 @@ static const struct ecore_evas_engine _engines[] = {
  * strings are internal and should be considered constants, do not
  * free them, to avoid problems use ecore_evas_engines_free()
  */
-EAPI Evas_List *
+EAPI Eina_List *
 ecore_evas_engines_get(void)
 {
    const struct ecore_evas_engine *itr;
-   Evas_List *lst = NULL;
+   Eina_List *lst = NULL;
 
    for (itr = _engines; itr->name != NULL; itr++)
-     lst = evas_list_append(lst, itr->name);
+     lst = eina_list_append(lst, itr->name);
 
    return lst;
 }
@@ -550,9 +550,9 @@ ecore_evas_engines_get(void)
  * Free list returned by ecore_evas_engines_get()
  */
 EAPI void
-ecore_evas_engines_free(Evas_List *engines)
+ecore_evas_engines_free(Eina_List *engines)
 {
-   evas_list_free(engines);
+   eina_list_free(engines);
 }
 
 static Ecore_Evas *

@@ -1160,13 +1160,13 @@ ecore_config_struct_create(const char *key)
 static int
 _ecore_config_struct_append(Ecore_Config_Prop *sct, Ecore_Config_Prop *add)
 {
-   Evas_List *l;
+   Eina_List *l;
 
    if (!sct || !add || sct->type != ECORE_CONFIG_SCT)
      return ECORE_CONFIG_ERR_IGNORED;
 
    l = sct->data;
-   sct->data = evas_list_append(l, add);
+   sct->data = eina_list_append(l, add);
    add->parent = sct;
 
    return ECORE_CONFIG_ERR_SUCC;
@@ -1301,7 +1301,7 @@ EAPI int
 ecore_config_struct_get(const char *key, void *data)
 {
    Ecore_Config_Prop *e, *f;
-   Evas_List *l;
+   Eina_List *l;
    unsigned char *ptr;
    long argb;
 
@@ -1347,7 +1347,7 @@ ecore_config_struct_get(const char *key, void *data)
 	     default:
 	       printf("ARGH - STRUCT coding not implemented yet\n");
 	  }
-	l = evas_list_next(l);
+	l = eina_list_next(l);
      }
    return ECORE_CONFIG_ERR_SUCC;
 }

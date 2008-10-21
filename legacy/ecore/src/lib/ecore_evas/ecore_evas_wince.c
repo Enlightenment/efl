@@ -63,16 +63,15 @@ static int _ecore_evas_wince_event_window_delete_request(void *data __UNUSED__, 
 static void
 _ecore_evas_wince_render(Ecore_Evas *ee)
 {
+   Eina_List *updates = NULL;
 #ifdef BUILD_ECORE_EVAS_BUFFER
-   Evas_List *ll;
+   Eina_List *ll;
+   Ecore_Evas *ee2;
 #endif
 
 #ifdef BUILD_ECORE_EVAS_BUFFER
-   for (ll = ee->sub_ecore_evas; ll; ll = ll->next)
+   EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
-	Ecore_Evas *ee2;
-
-	ee2 = ll->data;
 	if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
 	_ecore_evas_buffer_render(ee2);
 	if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
@@ -81,8 +80,6 @@ _ecore_evas_wince_render(Ecore_Evas *ee)
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
    if (ee->prop.avoid_damage)
      {
-        Evas_List *updates;
-
         updates = evas_render_updates(ee->evas);
         if (updates) evas_render_updates_free(updates);
      }
@@ -92,15 +89,11 @@ _ecore_evas_wince_render(Ecore_Evas *ee)
      {
         if (ee->shaped)
           {
-             Evas_List *updates;
-
              updates = evas_render_updates(ee->evas);
              if (updates) evas_render_updates_free(updates);
           }
         else
           {
-             Evas_List *updates;
-
              updates = evas_render_updates(ee->evas);
              if (updates) evas_render_updates_free(updates);
           }

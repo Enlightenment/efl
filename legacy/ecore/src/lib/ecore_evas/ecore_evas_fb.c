@@ -212,19 +212,16 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
 	ee = (Ecore_Evas *)l;
 	if (ee->visible)
 	  {
-	     Evas_List *updates;
+	     Eina_List *updates;
 	     
 #ifdef BUILD_ECORE_EVAS_BUFFER
-	     Evas_List *ll;
+	     Eina_List *ll;
+	     Ecore_Evas *ee2;
 #endif
-	     
 	     if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
 #ifdef BUILD_ECORE_EVAS_BUFFER
-	     for (ll = ee->sub_ecore_evas; ll; ll = ll->next)
+	     EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
 	       {
-		  Ecore_Evas *ee2;
-		  
-		  ee2 = ll->data;
 		  if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
 		  _ecore_evas_buffer_render(ee2);
 		  if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);

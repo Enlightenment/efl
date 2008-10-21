@@ -140,16 +140,16 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
 static void
 _ecore_evas_x_render(Ecore_Evas *ee)
 {
+  Evas_Rectangle *r;
+  Eina_List *updates, *l;
 #ifdef BUILD_ECORE_EVAS_BUFFER
-   Evas_List *ll;
+   Eina_List *ll;
+   Ecore_Evas *ee2;
 #endif
 
 #ifdef BUILD_ECORE_EVAS_BUFFER
-   for (ll = ee->sub_ecore_evas; ll; ll = ll->next)
+   EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
-	Ecore_Evas *ee2;
-
-	ee2 = ll->data;
 	if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
 	_ecore_evas_buffer_render(ee2);
 	if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
@@ -158,33 +158,21 @@ _ecore_evas_x_render(Ecore_Evas *ee)
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
    if (ee->prop.avoid_damage)
      {
-	Evas_List *updates, *l;
-
 	updates = evas_render_updates(ee->evas);
 #if 0
 //	if (ee->w == 640)
 	  {
-	     for (l = updates; l; l = l->next)
-	       {
-		  Evas_Rectangle *r;
-
-		  r = l->data;
-		  printf("  UP render [%p] %ix%i, [%i %i %ix%i]\n",
-			 ee, ee->w, ee->h, r->x, r->y, r->w, r->h);
-	       }
+	     EINA_LIST_FOREACH(updates, l, r)
+	       printf("  UP render [%p] %ix%i, [%i %i %ix%i]\n",
+		      ee, ee->w, ee->h, r->x, r->y, r->w, r->h);
 	  }
 #endif
 	if (ee->engine.x.using_bg_pixmap)
 	  {
 	     if (updates)
 	       {
-		  for (l = updates; l; l = l->next)
-		    {
-		       Evas_Rectangle *r;
-
-		       r = l->data;
-		       ecore_x_window_area_clear(ee->engine.x.win, r->x, r->y, r->w, r->h);
-		    }
+ 		  EINA_LIST_FOREACH(updates, l, r)
+		    ecore_x_window_area_clear(ee->engine.x.win, r->x, r->y, r->w, r->h);
 		  if ((ee->shaped) && (updates))
 		    ecore_x_window_shape_mask_set(ee->engine.x.win, ee->engine.x.mask);
 		  if ((ee->alpha) && (updates))
@@ -201,15 +189,13 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 #ifdef HAVE_ECORE_X_XCB
 #warning [XCB] No Region code
 #else
-	     for (l = updates; l; l = l->next)
+	     EINA_LIST_FOREACH(updates, l, r)
 	       {
-		  Evas_Rectangle *r;
 		  XRectangle xr;
 		  Region tmpr;
 
 		  if (!ee->engine.x.damages)
 		    ee->engine.x.damages = XCreateRegion();
-		  r = l->data;
 		  tmpr = XCreateRegion();
 		  if (ee->rotation == 0)
 		    {
@@ -313,8 +299,6 @@ _ecore_evas_x_render(Ecore_Evas *ee)
      {
 	if (ee->shaped)
 	  {
-	     Evas_List *updates;
-
 	     updates = evas_render_updates(ee->evas);
 	     if (updates)
 	       {
@@ -325,26 +309,17 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 	  }
 	else
 	  {
-	     Evas_List *updates;
-
 	     updates = evas_render_updates(ee->evas);
 	     if (updates)
 	       {
 #if 0
 //		  if (ee->w == 640)
 		    {
-		       Evas_List *l;
-
 		       printf("RENDER [%p] [%i] %ix%i\n",
 			      ee, ee->visible, ee->w, ee->h);
-		       for (l = updates; l; l = l->next)
-			 {
-			    Evas_Rectangle *r;
-
-			    r = l->data;
-			    printf("   render [%i %i %ix%i]\n",
-				   r->x, r->y, r->w, r->h);
-			 }
+		       EINA_LIST_FOREACH(updates, l, r)
+			 printf("   render [%i %i %ix%i]\n",
+				r->x, r->y, r->w, r->h);
 		    }
 #endif
 		  evas_render_updates_free(updates);
@@ -1383,7 +1358,7 @@ _ecore_evas_x_free(Ecore_Evas *ee)
 	Ecore_X_Window *winp;
 
 	winp = ee->engine.x.win_extra->data;
-	ee->engine.x.win_extra = evas_list_remove_list(ee->engine.x.win_extra, ee->engine.x.win_extra);
+	ee->engine.x.win_extra = eina_list_remove_list(ee->engine.x.win_extra, ee->engine.x.win_extra);
 	ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(*winp), ee);
 	free(winp);
      }
@@ -2979,7 +2954,7 @@ ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window wi
    if (winp)
      {
 	*winp = win;
-	ee->engine.x.win_extra = evas_list_append(ee->engine.x.win_extra, winp);
+	ee->engine.x.win_extra = eina_list_append(ee->engine.x.win_extra, winp);
 	ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(win), ee);
      }
 #else
@@ -3640,7 +3615,7 @@ ecore_evas_software_x11_16_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window
    if (winp)
      {
 	*winp = win;
-	ee->engine.x.win_extra = evas_list_append(ee->engine.x.win_extra, winp);
+	ee->engine.x.win_extra = eina_list_append(ee->engine.x.win_extra, winp);
 	ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(win), ee);
      }
 #else

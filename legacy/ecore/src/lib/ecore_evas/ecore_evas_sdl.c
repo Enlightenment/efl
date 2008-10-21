@@ -214,7 +214,7 @@ _ecore_evas_sdl_event_video_expose(void *data __UNUSED__, int type __UNUSED__, v
 static void
 _ecore_evas_render(Ecore_Evas *ee)
 {
-   Evas_List *updates;
+   Eina_List *updates;
 
    updates = evas_render_updates(ee->evas);
    if (updates)
