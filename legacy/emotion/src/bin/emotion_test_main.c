@@ -45,7 +45,7 @@ static Evas        *evas       = NULL;
 static int          startw     = 800;
 static int          starth     = 600;
 
-static Evas_List   *video_objs = NULL;
+static Eina_List   *video_objs = NULL;
 static Emotion_Vis  vis        = EMOTION_VIS_NONE;
 
 static int
@@ -162,7 +162,7 @@ main_signal_exit(void *data, int ev_type, void *ev)
      {
 	printf("del obj!\n");
 	evas_object_del(video_objs->data);
-	video_objs = evas_list_remove_list(video_objs, video_objs);
+	video_objs = eina_list_remove_list(video_objs, video_objs);
 	printf("done\n");
      }
    return 1;
@@ -199,21 +199,19 @@ bg_resize(Evas_Coord w, Evas_Coord h)
 static void
 broadcast_event(Emotion_Event ev)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Evas_Object *obj;
 
-   for (l = video_objs; l; l = l->next)
-     {
-	Evas_Object *obj;
-
-	obj = l->data;
-	emotion_object_event_simple_send(obj, ev);
-     }
+   EINA_LIST_FOREACH(video_objs, l, obj)
+     emotion_object_event_simple_send(obj, ev);
 }
 
 static void
 bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_info)
 {
    Evas_Event_Key_Down *ev;
+   Eina_List *l;
+   Evas_Object *o;
 
    ev = (Evas_Event_Key_Down *)event_info;
    if      (!strcmp(ev->keyname, "Escape"))
@@ -258,77 +256,48 @@ bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_info)
      broadcast_event(EMOTION_EVENT_10);
    else if (!strcmp(ev->keyname, "bracketleft"))
      {
-	Evas_List *l;
-
-	for (l = video_objs; l; l = l->next)
-	  {
-	     Evas_Object *obj;
-
-	     obj = l->data;
-	     emotion_object_audio_volume_set(obj, emotion_object_audio_volume_get(obj) - 0.1);
-	  }
+	EINA_LIST_FOREACH(video_objs, l, o)
+	  emotion_object_audio_volume_set(o, emotion_object_audio_volume_get(o) - 0.1);
      }
    else if (!strcmp(ev->keyname, "bracketright"))
      {
-	Evas_List *l;
-
-	for (l = video_objs; l; l = l->next)
-	  {
-	     Evas_Object *obj;
-
-	     obj = l->data;
-	     emotion_object_audio_volume_set(obj, emotion_object_audio_volume_get(obj) + 0.1);
-	  }
+        EINA_LIST_FOREACH(video_objs, l, o)
+	  emotion_object_audio_volume_set(o, emotion_object_audio_volume_get(o) + 0.1);
      }
    else if (!strcmp(ev->keyname, "v"))
      {
-	Evas_List *l;
-
-	for (l = video_objs; l; l = l->next)
+        EINA_LIST_FOREACH(video_objs, l, o)
 	  {
-	     Evas_Object *obj;
-
-	     obj = l->data;
-	     if (emotion_object_video_mute_get(obj))
-	       emotion_object_video_mute_set(obj, 0);
+	     if (emotion_object_video_mute_get(o))
+	       emotion_object_video_mute_set(o, 0);
 	     else
-	       emotion_object_video_mute_set(obj, 1);
+	       emotion_object_video_mute_set(o, 1);
 	  }
      }
    else if (!strcmp(ev->keyname, "a"))
      {
-	Evas_List *l;
-
-	for (l = video_objs; l; l = l->next)
+        EINA_LIST_FOREACH(video_objs, l, o)
 	  {
-	     Evas_Object *obj;
-
-	     obj = l->data;
-	     if (emotion_object_audio_mute_get(obj))
+	     if (emotion_object_audio_mute_get(o))
 	       {
-		  emotion_object_audio_mute_set(obj, 0);
+		  emotion_object_audio_mute_set(o, 0);
 		  printf("unmute\n");
 	       }
 	     else
 	       {
-		  emotion_object_audio_mute_set(obj, 1);
+		  emotion_object_audio_mute_set(o, 1);
 		  printf("mute\n");
 	       }
 	  }
      }
    else if (!strcmp(ev->keyname, "i"))
      {
-	Evas_List *l;
-
-	for (l = video_objs; l; l = l->next)
+	EINA_LIST_FOREACH(video_objs, l, o)
 	  {
-	     Evas_Object *obj;
-
-	     obj = l->data;
-	     printf("audio channels: %i\n", emotion_object_audio_channel_count(obj));
-	     printf("video channels: %i\n", emotion_object_video_channel_count(obj));
-	     printf("spu channels: %i\n", emotion_object_spu_channel_count(obj));
-	     printf("seekable: %i\n", emotion_object_seekable_get(obj));
+	     printf("audio channels: %i\n", emotion_object_audio_channel_count(o));
+	     printf("video channels: %i\n", emotion_object_video_channel_count(o));
+	     printf("spu channels: %i\n", emotion_object_spu_channel_count(o));
+	     printf("seekable: %i\n", emotion_object_seekable_get(o));
 	  }
      }
    else if (!strcmp(ev->keyname, "f"))
@@ -372,34 +341,29 @@ bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	  {
 	     printf("del obj!\n");
 	     evas_object_del(video_objs->data);
-	     video_objs = evas_list_remove_list(video_objs, video_objs);
+	     video_objs = eina_list_remove_list(video_objs, video_objs);
 	     printf("done\n");
 	  }
      }
    else if (!strcmp(ev->keyname, "z"))
      {
-	Evas_List *l;
-
 	vis = (vis + 1) % EMOTION_VIS_LAST;
 	printf("new visualization: %d\n", vis);
 
-
-	for (l = video_objs; l; l = l->next)
+	EINA_LIST_FOREACH(video_objs, l, o)
 	  {
-	     Evas_Object *obj;
 	     Evas_Bool supported;
 
-	     obj = l->data;
-	     supported = emotion_object_vis_supported(obj, vis);
+	     supported = emotion_object_vis_supported(o, vis);
 	     if (supported)
-	       emotion_object_vis_set(obj, vis);
+	       emotion_object_vis_set(o, vis);
 	     else
 	       {
 		  const char *file;
 
-		  file = emotion_object_file_get(obj);
+		  file = emotion_object_file_get(o);
 		  printf("object %p (%s) does not support visualization %d\n",
-			 obj, file, vis);
+			 o, file, vis);
 	       }
 	  }
      }
@@ -772,7 +736,7 @@ init_video_object(char *module_filename, char *filename)
 /* end basic video setup. all the rest here is just to be fancy */
 
 
-   video_objs = evas_list_append(video_objs, o);
+   video_objs = eina_list_append(video_objs, o);
 
    emotion_object_size_get(o, &iw, &ih);
    w = iw; h = ih;
@@ -845,10 +809,11 @@ enter_idle(void *data)
 static int
 check_positions(void *data)
 {
-   const Evas_List *lst;
+   const Eina_List *lst;
+   Evas_Object *o;
 
-   for (lst = video_objs; lst != NULL; lst = lst->next)
-     video_obj_time_changed(lst->data, evas_object_smart_parent_get(lst->data));
+   EINA_LIST_FOREACH(video_objs, lst, o)
+     video_obj_time_changed(data, evas_object_smart_parent_get(o));
 
    return !!video_objs;
 }

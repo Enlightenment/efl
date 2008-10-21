@@ -140,6 +140,7 @@ _emotion_module_close(Emotion_Video_Module *mod, void *video)
    void (*module_close) (Emotion_Video_Module *module, void *);
 
    plugin = mod->plugin;
+   fprintf(stderr, "%p\n", plugin);
    module_close = ecore_plugin_symbol_get(mod->plugin, "module_close");
    if ((module_close) && (video)) module_close(mod, video);
    /* FIXME: we can't go dlclosing here as a thread still may be running from
