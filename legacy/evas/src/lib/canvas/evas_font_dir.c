@@ -373,6 +373,7 @@ evas_font_dir_available_list(const Evas *evas)
    Eina_List *l;
    Eina_List *ll;
    Eina_List *available = NULL;
+   char *dir;
 
 #ifdef HAVE_FONTCONFIG
    /* Add font config fonts */
@@ -380,7 +381,6 @@ evas_font_dir_available_list(const Evas *evas)
    FcFontSet *set = NULL;
    FcObjectSet *os;
    int i;
-   char *dir;
 
    p = FcPatternCreate();
    os = FcObjectSetBuild(FC_FAMILY, FC_STYLE, NULL);
