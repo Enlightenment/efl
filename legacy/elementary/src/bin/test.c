@@ -894,21 +894,18 @@ my_bt_15(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
-   printf("win = %p, bx = %p\n", win, bx);
    np = elm_notepad_add(win);
    elm_notepad_file_set(np, "note.txt", ELM_TEXT_FORMAT_PLAIN_UTF8);
    evas_object_size_hint_weight_set(np, 1.0, 1.0);
    evas_object_size_hint_align_set(np, -1.0, -1.0);
    elm_box_pack_end(bx, np);
    evas_object_show(np);
-   printf("np = %p\n", np);
    
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
    elm_box_homogenous_set(bx2, 1);
    evas_object_size_hint_weight_set(bx2, 1.0, 0.0);
    evas_object_size_hint_align_set(bx2, -1.0, -1.0);
-   printf("bx2 = %p\n", bx2);
    
    bt = elm_button_add(win);
    ic = elm_icon_add(win);
@@ -921,7 +918,6 @@ my_bt_15(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   printf("bt = %p\n", bt);
    
    bt = elm_button_add(win);
    ic = elm_icon_add(win);
@@ -934,7 +930,6 @@ my_bt_15(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   printf("bt = %p\n", bt);
    
    bt = elm_button_add(win);
    ic = elm_icon_add(win);
@@ -947,7 +942,6 @@ my_bt_15(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   printf("bt = %p\n", bt);
    
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
