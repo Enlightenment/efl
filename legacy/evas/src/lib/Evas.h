@@ -624,6 +624,9 @@ extern "C" {
      } Evas_Textblock_Text_Type;
    
    EAPI Evas_Object                 *evas_object_textblock_add(Evas *e);
+
+   EAPI const char                  *evas_textblock_escape_string_get(const char *escape);
+   EAPI const char                  *evas_textblock_string_escape_get(const char *string, int *len_ret);
    
    EAPI Evas_Textblock_Style        *evas_textblock_style_new(void);
    EAPI void                         evas_textblock_style_free(Evas_Textblock_Style *ts);
