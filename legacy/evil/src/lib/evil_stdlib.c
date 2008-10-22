@@ -49,7 +49,6 @@ getenv(const char *name)
 {
    HKEY     key;
    wchar_t *wname;
-   char    *buffer;
    LONG     res;
    DWORD    type;
    DWORD    size = PATH_MAX;
@@ -76,7 +75,7 @@ getenv(const char *name)
 
    if ((res = RegQueryValueEx(key, wname,
                               NULL, &type,
-                              (LPBYTE)&buffer,
+                              (LPBYTE)&_evil_stdlib_getenv_buffer,
                               &size)) != ERROR_SUCCESS)
      {
         _evil_stdlib_error_display("getenv", res);
@@ -94,7 +93,7 @@ getenv(const char *name)
         return NULL;
      }
 
-   if (buffer[0] == '\0')
+   if (_evil_stdlib_getenv_buffer[0] == '\0')
      return NULL;
    else
      {
@@ -190,6 +189,7 @@ setenv(const char *name,
    HKEY     key;
    LONG     res;
    DWORD    disposition;
+   wchar_t *wname;
 
    if (!name || !*name)
      return -1;
@@ -214,21 +214,32 @@ setenv(const char *name,
    if (!overwrite && (disposition == REG_OPENED_EXISTING_KEY))
      return 0;
 
+   wname = evil_char_to_wchar(name);
+   if (!wname)
+     {
+        if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
+          _evil_stdlib_error_display("setenv", res);
+        return -1;
+     }
+
    if ((res = RegSetValueEx(key,
-                            (LPCWSTR)name,
+                            (LPCWSTR)wname,
                             0, REG_SZ,
                             (const BYTE *)value,
                             strlen(value) + 1)) != ERROR_SUCCESS)
      {
+        free(wname);
         _evil_stdlib_error_display("setenv", res);
         if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
-          _evil_stdlib_error_display("getenv", res);
+          _evil_stdlib_error_display("setenv", res);
         return -1;
      }
 
+   free(wname);
+
    if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
      {
-        _evil_stdlib_error_display("getenv", res);
+        _evil_stdlib_error_display("setenv", res);
         return -1;
      }
 

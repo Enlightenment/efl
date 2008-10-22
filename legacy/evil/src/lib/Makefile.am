@@ -38,18 +38,7 @@ evil_time.c \
 evil_unistd.c \
 evil_util.c
 
-libevil_la_CPPFLAGS = -DEFL_EVIL_BUILD
-
-if EVIL_HAVE_MINGW32CE
-
-libevil_la_CPPFLAGS += -D_WIN32_WCE=0x0420
-
-else
-
-libevil_la_CPPFLAGS += -D_WIN32_WINNT=0x0500
-
-endif
-
+libevil_la_CPPFLAGS = @win32_cppflags@
 libevil_la_CFLAGS = @win32_cflags@
 libevil_la_LIBADD = @win32_libs@ $(EFL_MPATROL_LIBS)
 libevil_la_LDFLAGS = -no-undefined -Wl,--enable-auto-import -version-info @version_info@

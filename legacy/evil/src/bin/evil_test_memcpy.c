@@ -36,8 +36,6 @@ getpagesize()
 static void
 test_memcpy_test_run(suite *s, memcpy_decl fct, char *dst, const char *src, size_t len)
 {
-   double start;
-   double end;
    double best;
    int    i;
 

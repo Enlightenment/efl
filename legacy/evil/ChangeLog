@@ -1,3 +1,19 @@
+2008-10-22  Vincent Torri  <doursse at users dot sf dot net>
+
+	* configure.ac:
+	* src/lib/Makefile.am:
+	store cpp flags in a variable instead of using an
+	automake conditional
+
+	* src/bin/Makefile.am:
+	* src/bin/evil_suite.c:
+	* src/bin/evil_test_memcpy.c:
+	add test for getenv / setenv. More tests on it will
+	come later
+
+	* src/lib/evil_stdlib.c:
+	fix getenv code and minor cleanup
+
 2008-10-21  Vincent Torri  <doursse at users dot sf dot net>
 
 	* m4/ac_attribute.m4:

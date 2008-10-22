@@ -6,6 +6,7 @@
 #undef WIN32_LEAN_AND_MEAN
 
 #include "evil_suite.h"
+#include "evil_test_environment.h"
 #include "evil_test_memcpy.h"
 
 
@@ -148,8 +149,9 @@ int
 main()
 {
    test tests[] = {
-     { "memcpy",  test_memcpy },
-     { NULL,      NULL },
+     { "environment",  test_environment },
+     { "memcpy     ",  test_memcpy },
+     { NULL,           NULL },
    };
    suite *s;
    int i;
