@@ -275,7 +275,7 @@ _ecore_con_info_readdata(CB_Data *cbdata)
 	    recv = (Ecore_Con_Info *)torecv;
 
 	    recv->info.ai_addr = torecv + sizeof(Ecore_Con_Info);
-	    if (torecv != (sizeof(Ecore_Con_Info) + recv->info.ai_addrlen))
+	    if (torecv_len != (sizeof(Ecore_Con_Info) + recv->info.ai_addrlen))
 	      recv->info.ai_canonname = torecv + sizeof(Ecore_Con_Info) + recv->info.ai_addrlen;
 	    else
 	      recv->info.ai_canonname = NULL;
