@@ -617,6 +617,7 @@ _smart_event_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
    
    sd = data;
    ev = event_info;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
    sd->pan_func.max_get(sd->pan_obj, &mx, &my);
    evas_object_geometry_get(sd->pan_obj, NULL, NULL, &vw, &vh);

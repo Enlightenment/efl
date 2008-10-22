@@ -61,8 +61,19 @@ static void
 _sub_obj_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Smart_Data *sd = data;
-   if (obj == sd->resize_obj)
-     elm_widget_focus_set(sd->obj, 1);
+   Evas_Object *op, *op2;
+	
+   op = elm_widget_parent_get(obj);
+   while (op)
+     {
+	op2 = elm_widget_parent_get(op);
+	if (!op2) break;
+	op = op2;
+     }
+   printf("focus off %p\n", op);
+   if (op) elm_widget_focused_object_clear(op);
+   printf("focus %p\n", sd->obj);
+   elm_widget_focus_set(sd->obj, 0);
 }
 
 /* externally accessible functions */

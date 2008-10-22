@@ -263,7 +263,6 @@ elm_entry_add(Evas_Object *parent)
    edje_object_signal_callback_add(wd->ent, "anchor,mouse,out,*", "elm.text", _signal_anchor_out, obj);
    edje_object_signal_callback_add(wd->ent, "entry,key,enter", "elm.text", _signal_key_enter, obj);
    elm_widget_resize_object_set(obj, wd->ent);
-   evas_object_propagate_events_set(obj, 0);
    return obj;
 }
 
