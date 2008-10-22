@@ -159,14 +159,6 @@ _ecore_evas_x_render(Ecore_Evas *ee)
    if (ee->prop.avoid_damage)
      {
 	updates = evas_render_updates(ee->evas);
-#if 0
-//	if (ee->w == 640)
-	  {
-	     EINA_LIST_FOREACH(updates, l, r)
-	       printf("  UP render [%p] %ix%i, [%i %i %ix%i]\n",
-		      ee, ee->w, ee->h, r->x, r->y, r->w, r->h);
-	  }
-#endif
 	if (ee->engine.x.using_bg_pixmap)
 	  {
 	     if (updates)
@@ -231,10 +223,6 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 	       }
 	     if (ee->engine.x.damages)
 	       {
-#if 0
-//		  if (ee->w == 640)
-		    printf("    --COPY PIXMAP\n");
-#endif
 		  /* if we have a damage pixmap - we can avoid exposures by
 		   * disabling them just for setting the mask */
 		  ecore_x_event_mask_set(ee->engine.x.win,
@@ -312,16 +300,6 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 	     updates = evas_render_updates(ee->evas);
 	     if (updates)
 	       {
-#if 0
-//		  if (ee->w == 640)
-		    {
-		       printf("RENDER [%p] [%i] %ix%i\n",
-			      ee, ee->visible, ee->w, ee->h);
-		       EINA_LIST_FOREACH(updates, l, r)
-			 printf("   render [%i %i %ix%i]\n",
-				r->x, r->y, r->w, r->h);
-		    }
-#endif
 		  evas_render_updates_free(updates);
 		  if (ee->alpha)
 		    ecore_x_window_shape_input_mask_set(ee->engine.x.win, ee->engine.x.mask);
