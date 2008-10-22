@@ -818,7 +818,7 @@ extern "C" {
     *    double floating_lots;
     *    char *string;
     *    Blah2 *blah2;
-    *    Evas_List *blah3;
+    *    Eina_List *blah3;
     * }
     * Blah;
     *
@@ -835,30 +835,30 @@ extern "C" {
     *    Blah *blah_in;
     *
     *    edd3 = eet_data_descriptor_new("blah3", sizeof(Blah3),
-    *                                   evas_list_next,
-    *                                   evas_list_append,
-    *                                   evas_list_data,
-    *                                   evas_list_free,
+    *                                   eina_list_next,
+    *                                   eina_list_append,
+    *                                   eina_list_data_get,
+    *                                   eina_list_free,
     *                                   evas_hash_foreach,
     *                                   evas_hash_add,
     *                                   evas_hash_free);
     *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd3, Blah3, "string3", string, EET_T_STRING);
     *
     *    edd2 = eet_data_descriptor_new("blah2", sizeof(Blah2),
-    *                                   evas_list_next,
-    *                                   evas_list_append,
-    *                                   evas_list_data,
-    *                                   evas_list_free,
+    *                                   eina_list_next,
+    *                                   eina_list_append,
+    *                                   eina_list_data_get,
+    *                                   eina_list_free,
     *                                   evas_hash_foreach,
     *                                   evas_hash_add,
     *                                   evas_hash_free);
     *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd2, Blah2, "string2", string, EET_T_STRING);
     *
     *    edd = eet_data_descriptor_new("blah", sizeof(Blah),
-    *                                   evas_list_next,
-    *                                   evas_list_append,
-    *                                   evas_list_data,
-    *                                   evas_list_free,
+    *                                   eina_list_next,
+    *                                   eina_list_append,
+    *                                   eina_list_data_get,
+    *                                   eina_list_free,
     *                                   evas_hash_foreach,
     *                                   evas_hash_add,
     *                                   evas_hash_free);
@@ -884,13 +884,13 @@ extern "C" {
     *    blah.floating_lots=0.777777777777777;
     *    blah.string="bite me like a turnip";
     *    blah.blah2 = &blah2;
-    *    blah.blah3 = evas_list_append(NULL, &blah3);
-    *    blah.blah3 = evas_list_append(blah.blah3, &blah3);
-    *    blah.blah3 = evas_list_append(blah.blah3, &blah3);
-    *    blah.blah3 = evas_list_append(blah.blah3, &blah3);
-    *    blah.blah3 = evas_list_append(blah.blah3, &blah3);
-    *    blah.blah3 = evas_list_append(blah.blah3, &blah3);
-    *    blah.blah3 = evas_list_append(blah.blah3, &blah3);
+    *    blah.blah3 = eina_list_append(NULL, &blah3);
+    *    blah.blah3 = eina_list_append(blah.blah3, &blah3);
+    *    blah.blah3 = eina_list_append(blah.blah3, &blah3);
+    *    blah.blah3 = eina_list_append(blah.blah3, &blah3);
+    *    blah.blah3 = eina_list_append(blah.blah3, &blah3);
+    *    blah.blah3 = eina_list_append(blah.blah3, &blah3);
+    *    blah.blah3 = eina_list_append(blah.blah3, &blah3);
     *
     *    data = eet_data_descriptor_encode(edd, &blah, &size);
     *    printf("-----DECODING\n");
@@ -907,13 +907,11 @@ extern "C" {
     *    printf("%p\n", blah_in->blah2);
     *    printf("  %s\n", blah_in->blah2->string);
     *      {
-    *         Evas_List *l;
+    *         Eina_List *l;
+    *         Blah3 *blah3_in;
     *
-    *         for (l = blah_in->blah3; l; l = l->next)
+    *         EINA_LIST_FOREACH(blah_in->blah3, l, blah3_in)
     *           {
-    *              Blah3 *blah3_in;
-    *
-    *              blah3_in = l->data;
     *              printf("%p\n", blah3_in);
     *              printf("  %s\n", blah3_in->string);
     *           }
