@@ -46,7 +46,7 @@ static void
 _on_focus_hook(void *data, Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   elm_widget_focus_set(wd->entry, 1);
+   elm_widget_focus_steal(wd->entry);
 }
 
 static char *

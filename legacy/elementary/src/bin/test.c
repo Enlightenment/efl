@@ -731,9 +731,8 @@ my_bt_13(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
-   // FIXME: HACK! not exposed! (should expose some later?)
-   elm_widget_focus_set(en, 1);
-   
+   // FIXME: not exported
+   elm_widget_focus_set(win, 1);
    evas_object_show(win);
 }
 
@@ -850,11 +849,10 @@ my_bt_14(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
-   // FIXME: HACK! not exposed! (should expose some later?)
-   elm_widget_focus_set(en, 1);
-
    evas_object_resize(win, 320, 300);
    
+   // FIXME: not exported
+   elm_widget_focus_set(win, 1);
    evas_object_show(win);
 }
 
@@ -948,11 +946,10 @@ my_bt_15(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
-   // FIXME: HACK! not exposed! (should expose some later?)
-   elm_widget_focus_set(np, 1);
-
    evas_object_resize(win, 320, 300);
    
+   // FIXME: not exported
+   elm_widget_focus_set(win, 1);
    evas_object_show(win);
 }
 
