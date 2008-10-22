@@ -7,8 +7,10 @@ struct _Widget_Data
 {
    Evas_Object *ent;
    Evas_Coord lastw;
-   Evas_Bool changed;
-   Evas_Bool linewrap;
+   Evas_Bool changed : 1;
+   Evas_Bool linewrap : 1;
+   Evas_Bool single_line : 1;
+   Evas_Bool password : 1;
    Ecore_Job *deferred_recalc_job;
 };
 
@@ -218,6 +220,13 @@ _signal_anchor_out(void *data, Evas_Object *obj, const char *emission, const cha
    printf("OUT %s\n", emission);
 }
 
+static void
+_signal_key_enter(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   evas_object_smart_callback_call(data, "activated", NULL);
+}
+
 EAPI Evas_Object *
 elm_entry_add(Evas_Object *parent)
 {
@@ -252,8 +261,45 @@ elm_entry_add(Evas_Object *parent)
    edje_object_signal_callback_add(wd->ent, "anchor,mouse,move,*", "elm.text", _signal_anchor_move, obj);
    edje_object_signal_callback_add(wd->ent, "anchor,mouse,in,*", "elm.text", _signal_anchor_in, obj);
    edje_object_signal_callback_add(wd->ent, "anchor,mouse,out,*", "elm.text", _signal_anchor_out, obj);
+   edje_object_signal_callback_add(wd->ent, "entry,key,enter", "elm.text", _signal_key_enter, obj);
    elm_widget_resize_object_set(obj, wd->ent);
+   evas_object_propagate_events_set(obj, 0);
    return obj;
+}
+
+EAPI void
+elm_entry_single_line_set(Evas_Object *obj, Evas_Bool single_line)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   char *t;
+   if (wd->single_line == single_line) return;
+   wd->single_line = single_line;
+   wd->linewrap = 0;
+   t = elm_entry_entry_get(obj);
+   if (t) t = strdup(t);
+   if (!wd->single_line) _elm_theme_set(wd->ent, "entry", "base", "default");
+   else _elm_theme_set(wd->ent, "entry", "base-single", "default");
+   elm_entry_entry_set(obj, t);
+   if (t) free(t);
+   _sizing_eval(obj);
+}
+
+EAPI void
+elm_entry_password_set(Evas_Object *obj, Evas_Bool password)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   char *t;
+   if (wd->password == password) return;
+   wd->password = password;
+   wd->single_line = 1;
+   wd->linewrap = 0;
+   t = elm_entry_entry_get(obj);
+   if (t) t = strdup(t);
+   if (!wd->password) _elm_theme_set(wd->ent, "entry", "base", "default");
+   else _elm_theme_set(wd->ent, "entry", "base-password", "default");
+   elm_entry_entry_set(obj, t);
+   if (t) free(t);
+   _sizing_eval(obj);
 }
 
 EAPI void

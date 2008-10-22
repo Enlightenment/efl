@@ -8,6 +8,7 @@ typedef struct _Smart_Data Smart_Data;
 
 struct _Smart_Data
 { 
+   Evas_Object   *obj;
    Evas_Object   *parent_obj;
    Evas_Coord     x, y, w, h;
    Evas_List     *subobjs;
@@ -54,6 +55,14 @@ _sub_obj_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
    if (obj == sd->resize_obj) sd->resize_obj = NULL;
    else if (obj == sd->hover_obj) sd->hover_obj = NULL;
    else sd->subobjs = evas_list_remove(sd->subobjs, obj);
+}
+
+static void
+_sub_obj_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Smart_Data *sd = data;
+   if (obj == sd->resize_obj)
+     elm_widget_focus_set(sd->obj, 1);
 }
 
 /* externally accessible functions */
@@ -170,6 +179,7 @@ elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
    if (sd->resize_obj)
      {
 	evas_object_event_callback_del(sd->resize_obj, EVAS_CALLBACK_DEL, _sub_obj_del);
+	evas_object_event_callback_del(sd->resize_obj, EVAS_CALLBACK_MOUSE_DOWN, _sub_obj_mouse_down);
 	evas_object_smart_member_del(sd->resize_obj);
      }
    sd->resize_obj = sobj;
@@ -177,6 +187,7 @@ elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
      {
 	evas_object_smart_member_add(sobj, obj);
 	evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
+	evas_object_event_callback_add(sobj, EVAS_CALLBACK_MOUSE_DOWN, _sub_obj_mouse_down, sd);
 	_smart_reconfigure(sd);
 	evas_object_smart_callback_call(obj, "sub-object-add", sobj);
      }
@@ -520,6 +531,7 @@ _smart_add(Evas_Object *obj)
    
    sd = calloc(1, sizeof(Smart_Data));
    if (!sd) return;
+   sd->obj = obj;
    sd->x = 0;
    sd->y = 0;
    sd->w = 0;

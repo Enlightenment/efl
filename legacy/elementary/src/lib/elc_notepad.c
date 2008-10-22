@@ -131,7 +131,6 @@ _load_plain_utf8(const char *file)
 		  char str[16];
 		  
 		  escape = evas_textblock_string_escape_get(buf + ppos, &stlen);
-		  printf("esc = %s\n", escape);
 		  if (escape)
 		    text = _buf_append(text, escape, &len, &alloc);
 		  else
@@ -198,7 +197,6 @@ _save_markup_utf8(const char *file, const char *text)
    fputs(text, f); // FIXME: catch error
    fputs("\n", f); // FIXME: catch error
    fclose(f);
-   printf(".. written\n");
 }
 
 static void
@@ -316,7 +314,6 @@ _save(Evas_Object *obj)
         _save_plain_utf8(wd->file, elm_entry_entry_get(wd->entry));
 	break;
       case ELM_TEXT_FORMAT_MARKUP_UTF8:
-	printf(".. save markup\n");
 	_save_markup_utf8(wd->file, elm_entry_entry_get(wd->entry));
 	break;
       default:
@@ -328,7 +325,6 @@ static int
 _delay_write(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   printf(".. save\n");
    _save(data);
    wd->delay_write = NULL;
    return 0;
@@ -338,7 +334,6 @@ static void
 _entry_changed(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   printf(".. changed\n");
    if (wd->delay_write)
      {
 	ecore_timer_del(wd->delay_write);

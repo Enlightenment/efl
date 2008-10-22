@@ -7,6 +7,8 @@ struct _Widget_Data
 {
    Evas_Object *scr;
    Evas_Object *content;
+   Evas_Bool min_w : 1;
+   Evas_Bool min_h : 1;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -34,7 +36,7 @@ static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord  vw, vh, minw, minh, maxw, maxh;
+   Evas_Coord  vw, vh, minw, minh, maxw, maxh, w, h, vmw, vmh;
    double xw, xy;
    
    evas_object_size_hint_min_get(wd->content, &minw, &minh);
@@ -54,6 +56,12 @@ _sizing_eval(Evas_Object *obj)
      }
    else if (minh > 0) vh = minh;
    evas_object_resize(wd->content, vw, vh);
+   w = -1;
+   h = -1;
+   edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), &vmw, &vmh);
+   if (wd->min_w) w = vmw + minw;
+   if (wd->min_h) h = vmh + minh;
+   evas_object_size_hint_min_set(obj, w, h);
 }
 
 static void
@@ -99,8 +107,8 @@ elm_scroller_add(Evas_Object *parent)
    
    wd->scr = elm_smart_scroller_add(e);
    elm_widget_resize_object_set(obj, wd->scr);
-   
-   edje_object_size_min_calc(wd->scr, &minw, &minh);
+
+   edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, obj);
 
@@ -126,4 +134,13 @@ elm_scroller_content_set(Evas_Object *obj, Evas_Object *content)
 				       _changed_size_hints, obj);
 	_sizing_eval(obj);
      }
+}
+
+EAPI void
+elm_scroller_content_min_limit(Evas_Object *obj, Evas_Bool w, Evas_Bool h)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   wd->min_w = w;
+   wd->min_h = h;
+   _sizing_eval(obj);
 }

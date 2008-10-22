@@ -758,6 +758,38 @@ my_bt_14(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bx);
 
    sc = elm_scroller_add(win);
+   elm_scroller_content_min_limit(sc, 0, 1);
+   evas_object_size_hint_weight_set(sc, 1.0, 0.0);
+   evas_object_size_hint_align_set(sc, -1.0, -1.0);
+   elm_box_pack_end(bx, sc);
+   
+   en = elm_entry_add(win);
+   elm_entry_single_line_set(en, 1);
+   elm_entry_entry_set(en, "This is a single line");
+   evas_object_size_hint_weight_set(en, 1.0, 1.0);
+   evas_object_size_hint_align_set(en, -1.0, -1.0);
+   elm_scroller_content_set(sc, en);
+   evas_object_show(en);
+
+   evas_object_show(sc);
+   
+   sc = elm_scroller_add(win);
+   elm_scroller_content_min_limit(sc, 0, 1);
+   evas_object_size_hint_weight_set(sc, 1.0, 0.0);
+   evas_object_size_hint_align_set(sc, -1.0, -1.0);
+   elm_box_pack_end(bx, sc);
+   
+   en = elm_entry_add(win);
+   elm_entry_password_set(en, 1);
+   elm_entry_entry_set(en, "Password here");
+   evas_object_size_hint_weight_set(en, 1.0, 1.0);
+   evas_object_size_hint_align_set(en, -1.0, -1.0);
+   elm_scroller_content_set(sc, en);
+   evas_object_show(en);
+
+   evas_object_show(sc);
+   
+   sc = elm_scroller_add(win);
    evas_object_size_hint_weight_set(sc, 1.0, 1.0);
    evas_object_size_hint_align_set(sc, -1.0, -1.0);
    elm_box_pack_end(bx, sc);
@@ -771,7 +803,7 @@ my_bt_14(void *data, Evas_Object *obj, void *event_info)
 		       "in here to edit it. By the way, links are<br>"
 		       "called <a href=anc-02>Anchors</a> so you will need<br>"
 		       "to refer to them this way. At the end here is a really long line to test line wrapping to see if it works. But just in case this line is not long enough I will add more here to really test it out, as Elementary really needs some good testing to see if entry widgets work as advertised.");
-   evas_object_size_hint_weight_set(en, 1.0, 0.0);
+   evas_object_size_hint_weight_set(en, 1.0, 1.0);
    evas_object_size_hint_align_set(en, -1.0, -1.0);
    elm_scroller_content_set(sc, en);
    evas_object_show(en);
@@ -865,7 +897,7 @@ my_bt_15(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bx);
 
    np = elm_notepad_add(win);
-   elm_notepad_file_set(np, "note.txt", ELM_TEXT_FORMAT_MARKUP_UTF8);
+   elm_notepad_file_set(np, "note.txt", ELM_TEXT_FORMAT_PLAIN_UTF8);
    evas_object_size_hint_weight_set(np, 1.0, 1.0);
    evas_object_size_hint_align_set(np, -1.0, -1.0);
    elm_box_pack_end(bx, np);

@@ -127,6 +127,7 @@ extern "C" {
    
    EAPI Evas_Object *elm_scroller_add(Evas_Object *parent);
    EAPI void         elm_scroller_content_set(Evas_Object *obj, Evas_Object *child);
+   EAPI void         elm_scroller_content_min_limit(Evas_Object *obj, Evas_Bool w, Evas_Bool h);
    /* smart callbacks called:
     */
 
@@ -183,6 +184,8 @@ extern "C" {
     */
 
    EAPI Evas_Object *elm_entry_add(Evas_Object *parent);
+   EAPI void         elm_entry_single_line_set(Evas_Object *obj, Evas_Bool single_line);
+   EAPI void         elm_entry_password_set(Evas_Object *obj, Evas_Bool password);
    EAPI void         elm_entry_entry_set(Evas_Object *obj, const char *entry);
    EAPI const char  *elm_entry_entry_get(Evas_Object *obj);
    EAPI const char  *elm_entry_selection_get(Evas_Object *obj);
@@ -198,6 +201,7 @@ extern "C" {
     * "selection,cut" - the user cut the text
     * "cursor,changed" - the cursor changed position
     * "anchor,X,clicked,N" - achor called 'X' was clicked with button 'N'
+    * "activated" - when the enter key is pressed (useful for single line)
     */
    
    /* composite widgets - these basically put together basic widgets above

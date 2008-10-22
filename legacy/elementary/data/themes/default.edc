@@ -146,6 +146,7 @@ collections {
 	    type: RECT;
 	    mouse_events: 0;
 	    description { state: "default" 0.0;
+	       fixed: 1 1;
 	       visible: 0;
 	       min: 17 17;
 	       align: 1.0 0.0;
@@ -184,6 +185,7 @@ collections {
 	       confine: "sb_vbar";
 	    }
 	    description { state: "default" 0.0;
+	       fixed: 1 1;
 	       min: 17 17;
 	       rel1 {
 		  relative: 0.5  0.5;
@@ -241,6 +243,7 @@ collections {
 	    type: RECT;
 	    mouse_events: 0;
 	    description { state: "default" 0.0;
+	       fixed: 1 1;
 	       visible: 0;
 	       min: 17 17;
 	       align: 0.0 1.0;
@@ -279,6 +282,7 @@ collections {
 	       confine: "sb_hbar";
 	    }
 	    description { state: "default" 0.0;
+	       fixed: 1 1;
 	       min: 17 17;
 	       rel1 {
 		  relative: 0.5  0.5;
@@ -2752,6 +2756,76 @@ collections {
 	    description { state: "default" 0.0;
 	       text {
 		  style: "entry_textblock_style";
+		  min: 1 1;
+	       }
+	    }
+	 }
+      }
+      programs {
+	 program { name: "focus";
+            signal: "load";
+	    source: "";
+	    action: FOCUS_SET;
+	    target: "elm.text";
+	 }
+      }
+   }
+
+   group { name: "elm/entry/base-single/default";
+      styles
+	{
+	   style { name: "entry_single_textblock_style";
+	      base: "font=Sans font_size=10 align=left color=#000 wrap=none";
+//	      tag:  "br" "\n";
+//	      tag:  "tab" "\t";
+	      tag:  "em" "+ font=Sans:style=Oblique";
+	      tag:  "b" "+ font=Sans:style=Bold";
+	      tag:  "link" "+ color=#800 underline=on underline_color=#8008";
+	      tag:  "hilight" "+ font=Sans:style=Bold";
+	   }
+	}
+      parts {
+	 part { name: "elm.text";
+	    type: TEXTBLOCK;
+	    mouse_events: 1;
+	    scale: 1;
+	    entry_mode: EDITABLE;
+	    multiline: 0;
+	    source: "elm/entry/selection/default"; // selection under
+	    source4: "elm/entry/cursor/default"; // cursorover
+	    source5: "elm/entry/anchor/default"; // anchor under
+	    description { state: "default" 0.0;
+	       text {
+		  style: "entry_single_textblock_style";
+		  min: 1 1;
+	       }
+	    }
+	 }
+      }
+      programs {
+	 program { name: "focus";
+            signal: "load";
+	    source: "";
+	    action: FOCUS_SET;
+	    target: "elm.text";
+	 }
+      }
+   }
+
+  group { name: "elm/entry/base-password/default";
+      parts {
+	 part { name: "elm.text";
+	    type: TEXTBLOCK;
+	    mouse_events: 1;
+	    scale: 1;
+	    entry_mode: PASSOWRD;
+	    multiline: 0;
+	    source: "elm/entry/selection/default"; // selection under
+	    source4: "elm/entry/cursor/default"; // cursorover
+	    source5: "elm/entry/anchor/default"; // anchor under
+	    description { state: "default" 0.0;
+	       text {
+		  style: "entry_single_textblock_style";
 		  min: 1 1;
 	       }
 	    }
