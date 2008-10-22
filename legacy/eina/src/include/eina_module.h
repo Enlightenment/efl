@@ -21,6 +21,7 @@
 
 #include "eina_types.h"
 #include "eina_array.h"
+#include "eina_error.h"
 
 /**
  * @defgroup Module_Group Module
@@ -35,6 +36,9 @@ typedef void (*Eina_Module_Shutdown)(void);
 
 #define EINA_MODULE_INIT(f) Eina_Module_Init __eina_module_init = &f;
 #define EINA_MODULE_SHUTDOWN(f) Eina_Module_Shutdown __eina_module_shutdown = &f;
+
+extern EAPI Eina_Error EINA_ERROR_WRONG_MODULE;
+extern EAPI Eina_Error EINA_ERROR_MODULE_INIT_FAILED;
 
 EAPI int eina_module_init(void);
 EAPI int eina_module_shutdown(void);

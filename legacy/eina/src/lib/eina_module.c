@@ -26,6 +26,7 @@
 #include <string.h>
 #include <dlfcn.h>
 
+#include "eina_error.h"
 #include "eina_module.h"
 #include "eina_file.h"
 #include "eina_private.h"
@@ -46,6 +47,9 @@
 
 #define EINA_MODULE_SYMBOL_INIT "__eina_module_init"
 #define EINA_MODULE_SYMBOL_SHUTDOWN "__eina_module_shutdown"
+
+EAPI Eina_Error EINA_ERROR_WRONG_MODULE = 0;
+EAPI Eina_Error EINA_ERROR_MODULE_INIT_FAILED = 0;
 
 struct _Eina_Module
 {
@@ -121,6 +125,11 @@ eina_module_init(void)
 	if (_eina_module_count != 1)
 		goto end_init;
 
+	eina_error_init();
+
+	EINA_ERROR_WRONG_MODULE = eina_error_msg_register("Wrong file format or no file module found");
+	EINA_ERROR_MODULE_INIT_FAILED = eina_error_msg_register("Module initialisation function failed");
+
 end_init:
 	return _eina_module_count;
 }
@@ -134,11 +143,12 @@ eina_module_shutdown(void)
 	_eina_module_count--;
 	if (_eina_module_count != 0)
 		goto end_shutdown;
+
+	eina_error_shutdown();
+
 	/* TODO should we store every module when "new" is called and
 	 * delete the list of modules here
 	 */
-	
-	
 
 end_shutdown:
 	return _eina_module_count;
@@ -154,8 +164,12 @@ EAPI Eina_Bool eina_module_load(Eina_Module *m)
 
 	if (m->handle) goto loaded;
 
+	eina_error_set(EINA_ERROR_WRONG_MODULE);
+
 	dl_handle = dlopen(m->file, RTLD_NOW);
 	if (!dl_handle) return EINA_FALSE;
+
+	eina_error_set(EINA_ERROR_MODULE_INIT_FAILED);
 
 	initcall = dlsym(dl_handle, EINA_MODULE_SYMBOL_INIT);
 	if ((!initcall) || (!(*initcall)))
@@ -169,6 +183,8 @@ ok:
 	m->handle = dl_handle;
 loaded:
 	m->ref++;
+
+	eina_error_set(0);
 	return EINA_TRUE;
 }
 /**
