@@ -717,6 +717,7 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
      {
 	// dead keys here. Escape for now (should emit these)
         _edje_emit(ed, "entry,key,escape", rp->part->name);
+	ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (!strcmp(ev->key, "Up"))
      {
@@ -726,6 +727,7 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	     else _sel_clear(en->cursor, rp->object, en);
 	     _curs_up(en->cursor, rp->object, en);
 	     if (shift) _sel_extend(en->cursor, rp->object, en);
+	     ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 	  }
         _edje_emit(ed, "entry,key,up", rp->part->name);
      }
@@ -737,6 +739,7 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	     else _sel_clear(en->cursor, rp->object, en);
 	     _curs_down(en->cursor, rp->object, en);
 	     if (shift) _sel_extend(en->cursor, rp->object, en);
+	     ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 	  }
         _edje_emit(ed, "entry,key,down", rp->part->name);
      }
@@ -747,6 +750,7 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	_curs_back(en->cursor, rp->object, en);
 	if (shift) _sel_extend(en->cursor, rp->object, en);
         _edje_emit(ed, "entry,key,left", rp->part->name);
+	ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (!strcmp(ev->key, "Right"))
      {
@@ -755,6 +759,7 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	_curs_next(en->cursor, rp->object, en);
 	if (shift) _sel_extend(en->cursor, rp->object, en);
         _edje_emit(ed, "entry,key,right", rp->part->name);
+	ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (!strcmp(ev->key, "BackSpace"))
      {
@@ -776,6 +781,7 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	_sel_clear(en->cursor, rp->object, en);
 	_curs_update_from_curs(en->cursor, rp->object, en);
         _edje_emit(ed, "entry,key,backspace", rp->part->name);
+	ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (!strcmp(ev->key, "Delete"))
      {
@@ -808,6 +814,7 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	_anchors_get(en->cursor, rp->object, en);
 	_edje_emit(ed, "entry,changed", rp->part->name);
         _edje_emit(ed, "entry,key,delete", rp->part->name);
+	ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (!strcmp(ev->key, "Home"))
      {
@@ -819,6 +826,7 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	  _curs_lin_start(en->cursor, rp->object, en);
 	if (shift) _sel_extend(en->cursor, rp->object, en);
         _edje_emit(ed, "entry,key,home", rp->part->name);
+	ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (!strcmp(ev->key, "End"))
      {
@@ -830,21 +838,25 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	  _curs_lin_end(en->cursor, rp->object, en);
 	if (shift) _sel_extend(en->cursor, rp->object, en);
         _edje_emit(ed, "entry,key,end", rp->part->name);
+	ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((control) && (!strcmp(ev->key, "v")))
      {
 	_edje_emit(ed, "entry,paste,request", rp->part->name);
+	ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((control) && ((!strcmp(ev->key, "c") || (!strcmp(ev->key, "Insert")))))
      {
 	// FIXME: copy - save selection
 	_edje_emit(ed, "entry,copy,notify", rp->part->name);
+	ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((control) && ((!strcmp(ev->key, "x") || (!strcmp(ev->key, "m")))))
      {
 	// FIXME: cut - save selection, delete seletion
 	_curs_update_from_curs(en->cursor, rp->object, en);
 	_edje_emit(ed, "entry,cut,notify", rp->part->name);
+	ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((control) && (!strcmp(ev->key, "z")))
      {
@@ -856,15 +868,18 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	  {
 	     // undo
 	  }
+	ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((control) && (!strcmp(ev->key, "y")))
      {
 	// redo
+	ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((control) && (!strcmp(ev->key, "w")))
      {
 	_sel_clear(en->cursor, rp->object, en);
 	// select current word
+	ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (!strcmp(ev->key, "Tab"))
      {
@@ -881,12 +896,14 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 		  _anchors_get(en->cursor, rp->object, en);
 		  _edje_emit(ed, "entry,changed", rp->part->name);
 	       }
+	     ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 	  }
         _edje_emit(ed, "entry,key,tab", rp->part->name);
      }
    else if ((!strcmp(ev->key, "ISO_Left_Tab")) && (multiline))
      { 
 	// remove a tab
+	ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (!strcmp(ev->key, "Prior"))
      {
@@ -895,6 +912,7 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	_curs_jump_line_by(en->cursor, rp->object, en, -10);
 	if (shift) _sel_extend(en->cursor, rp->object, en);
         _edje_emit(ed, "entry,key,pgup", rp->part->name);
+	ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (!strcmp(ev->key, "Next"))
      {
@@ -903,6 +921,7 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	_curs_jump_line_by(en->cursor, rp->object, en, 10);
 	if (shift) _sel_extend(en->cursor, rp->object, en);
         _edje_emit(ed, "entry,key,pgdn", rp->part->name);
+	ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((!strcmp(ev->key, "Return")) || (!strcmp(ev->key, "KP_Enter")))
      {
@@ -912,6 +931,7 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	     _curs_update_from_curs(en->cursor, rp->object, en);
 	     _anchors_get(en->cursor, rp->object, en);
 	     _edje_emit(ed, "entry,changed", rp->part->name);
+	     ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 	  }
         _edje_emit(ed, "entry,key,enter", rp->part->name);
      }
@@ -940,6 +960,7 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	     _edje_emit(ed, "entry,changed", rp->part->name);
 	     _edje_emit(ed, "cursor,changed", rp->part->name);
 	     cursor_changed = 1;
+	     ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 	  }
      }
    if ((evas_textblock_cursor_compare(tc, en->cursor)) && (!cursor_changed))
@@ -1117,7 +1138,7 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
    evas_object_event_callback_add(rp->object, EVAS_CALLBACK_MOUSE_UP, _edje_part_mouse_up_cb, rp);
    evas_object_event_callback_add(rp->object, EVAS_CALLBACK_MOUSE_MOVE, _edje_part_mouse_move_cb, rp);
    
-   if (rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD)
+   if (rp->part->entry_mode ==EDJE_ENTRY_EDIT_MODE_PASSWORD)
      evas_object_textblock_replace_char_set(rp->object, "*");
 
    en->cursor_bg = edje_object_add(rp->edje->evas);
