@@ -7,7 +7,7 @@ typedef struct _Subinfo     Subinfo;
 struct _Widget_Data
 {
    Evas_Object *lay;
-   Evas_List *subs;
+   Eina_List *subs;
 };
 
 struct _Subinfo
@@ -28,7 +28,7 @@ _del_hook(Evas_Object *obj)
    while (wd->subs)
      {
         Subinfo *si = wd->subs->data;
-	wd->subs = evas_list_remove_list(wd->subs, wd->subs);
+	wd->subs = eina_list_remove_list(wd->subs, wd->subs);
 	evas_stringshare_del(si->swallow);
 	free(si);
      }
@@ -50,7 +50,7 @@ static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   Evas_List *l;
+   Eina_List *l;
    for (l = wd->subs; l; l = l->next)
      {
 	Subinfo *si = l->data;
@@ -68,7 +68,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
-   Evas_List *l;
+   Eina_List *l;
    
    for (l = wd->subs; l; l = l->next)
      {
@@ -77,7 +77,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 	  {
 	     evas_object_event_callback_del
 	       (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
-	     wd->subs = evas_list_remove_list(wd->subs, l);
+	     wd->subs = eina_list_remove_list(wd->subs, l);
 	     evas_stringshare_del(si->swallow);
 	     free(si);
 	     break;
@@ -120,7 +120,7 @@ elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conte
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Subinfo *si;
-   Evas_List *l;
+   Eina_List *l;
    
    for (l = wd->subs; l; l = l->next)
      {
@@ -141,7 +141,7 @@ elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conte
 	si = ELM_NEW(Subinfo);
 	si->swallow = evas_stringshare_add(swallow);
 	si->obj = content;
-	wd->subs = evas_list_append(wd->subs, si);
+	wd->subs = eina_list_append(wd->subs, si);
 	_sizing_eval(obj);
      }
 }

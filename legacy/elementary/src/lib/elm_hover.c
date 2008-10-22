@@ -10,7 +10,7 @@ struct _Widget_Data
    Evas_Object *cov;
    Evas_Object *offset, *size;
    Evas_Object *parent, *target;
-   Evas_List *subs;
+   Eina_List *subs;
 };
 
 struct _Subinfo
@@ -33,7 +33,7 @@ _del_hook(Evas_Object *obj)
    while (wd->subs)
      {
         Subinfo *si = wd->subs->data;
-	wd->subs = evas_list_remove_list(wd->subs, wd->subs);
+	wd->subs = eina_list_remove_list(wd->subs, wd->subs);
 	evas_stringshare_del(si->swallow);
 	free(si);
      }
@@ -60,7 +60,7 @@ static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   Evas_List *l;
+   Eina_List *l;
    for (l = wd->subs; l; l = l->next)
      {
 	Subinfo *si = l->data;
@@ -77,7 +77,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
-   Evas_List *l;
+   Eina_List *l;
 
    for (l = wd->subs; l; l = l->next)
      {
@@ -86,7 +86,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 	  {
 	     evas_object_event_callback_del
 	       (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
-	     wd->subs = evas_list_remove_list(wd->subs, l);
+	     wd->subs = eina_list_remove_list(wd->subs, l);
 	     evas_stringshare_del(si->swallow);
 	     free(si);
 	     break;
@@ -110,7 +110,7 @@ static void
 _hov_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   Evas_List *l;
+   Eina_List *l;
    // FIXME: use signals for show for hov
    evas_object_show(wd->cov);
    edje_object_signal_emit(wd->cov, "elm,action,show", "elm");
@@ -131,7 +131,7 @@ static void
 _hov_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   Evas_List *l;
+   Eina_List *l;
    // FIXME: use signals for hide for hov
    edje_object_signal_emit(wd->cov, "elm,action,hide", "elm");
    evas_object_hide(wd->cov);
@@ -289,7 +289,7 @@ elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conten
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Subinfo *si;
-   Evas_List *l;
+   Eina_List *l;
    char buf[1024];
 
    snprintf(buf, sizeof(buf), "elm.swallow.slot.%s", swallow);
@@ -312,7 +312,7 @@ elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conten
 	si = ELM_NEW(Subinfo);
 	si->swallow = evas_stringshare_add(buf);
 	si->obj = content;
-	wd->subs = evas_list_append(wd->subs, si);
+	wd->subs = eina_list_append(wd->subs, si);
 	_sizing_eval(obj);
      }
 }

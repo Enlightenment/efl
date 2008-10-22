@@ -9,7 +9,7 @@ struct _Elm_Win
    Evas           *evas;
    Evas_Object    *parent;
    Evas_Object    *win_obj;
-   Evas_List      *subobjs;
+   Eina_List      *subobjs;
    Ecore_X_Window  xwin;
    Ecore_Job      *deferred_resize_job;
    Ecore_Job      *deferred_child_eval_job;
@@ -37,7 +37,7 @@ static void _elm_win_eval_subobjs(Evas_Object *obj);
 static void _elm_win_subobj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _elm_win_subobj_callback_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
-static Evas_List *_elm_win_list = NULL;
+static Eina_List *_elm_win_list = NULL;
 
 static void
 _elm_win_resize(Ecore_Evas *ee)
@@ -139,7 +139,7 @@ _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_inf
 {
    Elm_Win *win = data;
 
-   _elm_win_list = evas_list_remove(_elm_win_list, win->win_obj);
+   _elm_win_list = eina_list_remove(_elm_win_list, win->win_obj);
    while (win->subobjs) elm_win_resize_object_del(obj, win->subobjs->data);
    evas_object_intercept_show_callback_del(win->win_obj, _elm_win_obj_intercept_show);
    evas_object_intercept_hide_callback_del(win->win_obj, _elm_win_obj_intercept_hide);
@@ -185,7 +185,7 @@ static void
 _elm_win_resize_job(void *data)
 {
    Elm_Win *win = data;
-   Evas_List *l;
+   Eina_List *l;
    int w, h;
    
    win->deferred_resize_job = NULL;
@@ -257,7 +257,7 @@ _elm_win_xwin_update(Elm_Win *win)
 static void
 _elm_win_eval_subobjs(Evas_Object *obj)
 {
-   Evas_List *l;
+   Eina_List *l;
    Elm_Win *win = evas_object_data_get(obj, "__Elm");
    Evas_Coord w, h, minw = -1, minh = -1, maxw = -1, maxh = -1;
    int xx = 1, xy = 1;
@@ -401,7 +401,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 
    _elm_win_xwin_update(win);
 
-   _elm_win_list = evas_list_append(_elm_win_list, win->win_obj);
+   _elm_win_list = eina_list_append(_elm_win_list, win->win_obj);
    
    return win->win_obj;
 }
@@ -411,7 +411,7 @@ elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj)
 {
    Elm_Win *win = evas_object_data_get(obj, "__Elm");
    if (!win) return;
-   win->subobjs = evas_list_append(win->subobjs, subobj);
+   win->subobjs = eina_list_append(win->subobjs, subobj);
    elm_widget_sub_object_add(obj, subobj);
    evas_object_event_callback_add(subobj, EVAS_CALLBACK_DEL, _elm_win_subobj_callback_del, obj);
    evas_object_event_callback_add(subobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _elm_win_subobj_callback_changed_size_hints, obj);
@@ -425,7 +425,7 @@ elm_win_resize_object_del(Evas_Object *obj, Evas_Object *subobj)
    if (!win) return;
    evas_object_event_callback_del(subobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _elm_win_subobj_callback_changed_size_hints);
    evas_object_event_callback_del(subobj, EVAS_CALLBACK_DEL, _elm_win_subobj_callback_del);
-   win->subobjs = evas_list_remove(win->subobjs, subobj);
+   win->subobjs = eina_list_remove(win->subobjs, subobj);
    elm_widget_sub_object_del(obj, subobj);
    _elm_win_eval_subobjs(obj);
 }

@@ -309,7 +309,7 @@ elm_entry_entry_set(Evas_Object *obj, const char *entry)
    
    // debug
      {
-	Evas_List *l, *an;
+	Eina_List *l, *an;
 	an = edje_object_part_text_anchor_list_get(wd->ent, "elm.text");
 	for (l = an; l; l = l->next)
 	  printf("ANCHOR: %s\n", l->data);
