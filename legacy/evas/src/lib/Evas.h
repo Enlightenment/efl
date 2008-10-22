@@ -635,6 +635,8 @@ extern "C" {
    
    EAPI void                         evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts);
    EAPI const Evas_Textblock_Style  *evas_object_textblock_style_get(const Evas_Object *obj);
+   EAPI void                         evas_object_textblock_replace_char_set(Evas_Object *obj, const char *ch);
+   EAPI const char                  *evas_object_textblock_replace_char_get(Evas_Object *obj);
    
    EAPI void                         evas_object_textblock_text_markup_set(Evas_Object *obj, const char *text);
    EAPI void                         evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char *text);

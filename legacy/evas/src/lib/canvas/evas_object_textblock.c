@@ -127,6 +127,7 @@ struct _Evas_Object_Textblock
    } style_pad;
    char                        *markup_text;
    void                        *engine_data;
+   const char                  *repch;
    struct {
       int                       w, h;
       unsigned char             valid : 1;
@@ -1778,14 +1779,24 @@ _layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
 }
 
 static void
-_layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Node *n)
+_layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Node *n, const char *repch)
 {
    int adv, inset, tw, th, new_line, empty_item;
    int wrap, twrap, ch, index, white_stripped;
    char *str;
    Evas_Object_Textblock_Item *it;
-   
-   str = n->text;
+
+   if ((repch) && (n->text))
+     {
+	int i, len = strlen(n->text), chlen;
+
+	chlen = strlen(repch);
+	str = alloca((len * chlen) + 1);
+	for (i = 0; i < len; i += chlen)
+	  strcpy(&(str[i]), repch);
+     }
+   else
+     str = n->text;
    new_line = 0;
    empty_item = 0;
    while (str)
@@ -2095,7 +2106,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 				 c->o->style_pad.r - 
 				 c->marginl - c->marginr))
 			      {
-				 
 				 _layout_line_advance(c, fmt);
 				 x2 = (fmt->tabstops * ((c->x + fmt->tabstops) / fmt->tabstops));
 			      }
@@ -2124,7 +2134,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 	  }
 	else if ((n->type == NODE_TEXT) && (n->text))
 	  {
-	     _layout_text_append(c, fmt, n);
+	     _layout_text_append(c, fmt, n, o->repch);
 	     if ((c->have_underline2) || (c->have_underline))
 	       {
 		  if (style_pad_b < c->underline_extend)
@@ -2537,6 +2547,32 @@ evas_object_textblock_style_get(const Evas_Object *obj)
    TB_HEAD_RETURN(NULL);
    return o->style;
 }
+
+EAPI void
+evas_object_textblock_replace_char_set(Evas_Object *obj, const char *ch)
+{
+   TB_HEAD();
+   if (o->repch) eina_stringshare_del(o->repch);
+   if (ch) o->repch = eina_stringshare_add(ch);
+   else o->repch = NULL;
+   o->formatted.valid = 0;
+   o->native.valid = 0;
+   o->changed = 1;
+   if (o->markup_text)
+     {
+	free(o->markup_text);
+	o->markup_text = NULL;
+     }
+   evas_object_change(obj);
+}
+
+EAPI const char *
+evas_object_textblock_replace_char_get(Evas_Object *obj)
+{
+   TB_HEAD_RETURN(NULL);
+   return o->repch;
+}
+
 
 static inline void
 _advance_after_end_of_string(const char **p_buf)
@@ -4927,6 +4963,7 @@ evas_object_textblock_free(Evas_Object *obj)
 	o->cursors = eina_list_remove_list(o->cursors, o->cursors);
 	free(cur);
      }
+   if (o->repch) eina_stringshare_del(o->repch);
    o->magic = 0;
    free(o);
 }
