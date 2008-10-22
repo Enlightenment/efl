@@ -334,61 +334,62 @@ int
 _edje_timer_cb(void *data)
 {
    double t;
-   Evas_List *l;
-   Evas_List *animl = NULL;
+   Eina_List *l;
+   Eina_List *animl = NULL;
    Edje *ed;
 
    t = ecore_time_get();
-   for (l = _edje_animators; l; l = l->next)
+   EINA_LIST_FOREACH(_edje_animators, l, ed)
      {
-	ed = l->data;
 	_edje_ref(ed);
-	animl = evas_list_append(animl, l->data);
+	animl = eina_list_append(animl, ed);
      }
    while (animl)
      {
-	Evas_List *newl = NULL;
+	Eina_List *newl = NULL;
 
-	ed = animl->data;
+	ed = eina_list_data_get(animl);
 	_edje_block(ed);
 	_edje_freeze(ed);
-	animl = evas_list_remove(animl, animl->data);
+	animl = eina_list_remove(animl, eina_list_data_get(animl));
 	if ((!ed->paused) && (!ed->delete_me))
 	  {
+	     const void *tmp;
+
 	     ed->walking_actions = 1;
-	     for (l = ed->actions; l; l = l->next)
-	       newl = evas_list_append(newl, l->data);
+	     EINA_LIST_FOREACH(ed->actions, l, tmp)
+	       newl = eina_list_append(newl, tmp);
 	     while (newl)
 	       {
 		  Edje_Running_Program *runp;
 
-		  runp = newl->data;
-		  newl = evas_list_remove(newl, newl->data);
+		  runp = eina_list_data_get(newl);
+		  newl = eina_list_remove(newl, eina_list_data_get(newl));
 		  if (!runp->delete_me)
 		    _edje_program_run_iterate(runp, t);
 		  if (_edje_block_break(ed))
 		    {
-		       evas_list_free(newl);
+		       eina_list_free(newl);
 		       newl = NULL;
 		       goto break_prog;
 		    }
 	       }
-	     for (l = ed->actions; l; l = l->next)
-	       newl = evas_list_append(newl, l->data);
+	     EINA_LIST_FOREACH(ed->actions, l, tmp)
+	       newl = eina_list_append(newl, tmp);
 	     while (newl)
 	       {
 		  Edje_Running_Program *runp;
 
-		  runp = newl->data;
-		  newl = evas_list_remove(newl, newl->data);
+		  runp = eina_list_data_get(newl);
+		  newl = eina_list_remove(newl, eina_list_data_get(newl));
 		  if (runp->delete_me)
 		    {
 		       _edje_anim_count--;
 		       runp->edje->actions =
-			 evas_list_remove(runp->edje->actions, runp);
+			 eina_list_remove(runp->edje->actions, runp);
 		       if (!runp->edje->actions)
 			 _edje_animators =
-			 evas_list_remove(_edje_animators, runp->edje);
+			 eina_list_remove(_edje_animators, runp->edje);
 		       free(runp);
 		    }
 	       }
@@ -411,7 +412,7 @@ _edje_pending_timer_cb(void *data)
    Edje_Pending_Program *pp;
 
    pp = data;
-   pp->edje->pending_actions = evas_list_remove(pp->edje->pending_actions, pp);
+   pp->edje->pending_actions = eina_list_remove(pp->edje->pending_actions, pp);
    _edje_program_run(pp->edje, pp->program, 1, "", "");
    free(pp);
    return 0;

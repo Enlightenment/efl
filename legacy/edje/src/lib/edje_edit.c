@@ -116,7 +116,7 @@ static int
 _edje_image_id_find(Evas_Object *obj, const char *image_name)
 {
    Edje_Image_Directory_Entry *i;
-   Evas_List *l;
+   Eina_List *l;
 
    GET_ED_OR_RETURN(-1);
 
@@ -125,9 +125,8 @@ _edje_image_id_find(Evas_Object *obj, const char *image_name)
 
    //printf("SEARCH IMAGE %s\n", image_name);
 
-   for (l = ed->file->image_dir->entries; l; l = l->next)
+   EINA_LIST_FOREACH(ed->file->image_dir->entries, l, i)
      {
-	i = l->data;
 	if (strcmp(image_name, i->entry) == 0)
 	  {
 	     //printf("   Found id: %d \n", i->id);
@@ -142,7 +141,7 @@ static const char *
 _edje_image_name_find(Evas_Object *obj, int image_id)
 {
    Edje_Image_Directory_Entry *i;
-   Evas_List *l;
+   Eina_List *l;
 
    GET_ED_OR_RETURN(NULL);
 
@@ -151,12 +150,9 @@ _edje_image_name_find(Evas_Object *obj, int image_id)
 
    //printf("SEARCH IMAGE ID %d\n", image_id);
 
-   for (l = ed->file->image_dir->entries; l; l = l->next)
-     {
-	i = l->data;
-	if (image_id == i->id)
-	  return i->entry;
-     }
+   EINA_LIST_FOREACH(ed->file->image_dir->entries, l, i)
+     if (image_id == i->id)
+       return i->entry;
 
    return NULL;
 }
@@ -164,7 +160,7 @@ _edje_image_name_find(Evas_Object *obj, int image_id)
 static void
 _edje_real_part_free(Edje_Real_Part *rp)
 {
-   Evas_List *l;
+   Eina_List *l;
 
    if (!rp) return;
 
@@ -178,8 +174,8 @@ _edje_real_part_free(Edje_Real_Part *rp)
    l = rp->extra_objects;
    while (rp->extra_objects)
      {
-	evas_object_del(rp->extra_objects->data);
-	rp->extra_objects = evas_list_remove_list(rp->extra_objects,
+        evas_object_del(eina_list_data_get(rp->extra_objects));
+	rp->extra_objects = eina_list_remove_list(rp->extra_objects,
 						  rp->extra_objects);
      }
 
@@ -321,7 +317,9 @@ _edje_part_id_set(Edje *ed, Edje_Real_Part *rp, int new_id)
     */
    int old_id;
    Edje_Part *part;
-   Evas_List *l, *ll;
+   Eina_List *l, *ll;
+   Edje_Part *p;
+   Edje_Program *epr;
 
    part = rp->part;
 
@@ -336,12 +334,10 @@ _edje_part_id_set(Edje *ed, Edje_Real_Part *rp, int new_id)
    part->id = new_id;
 
    /* Fix all the dependecies in all parts... */
-   for (l = ed->collection->parts; l; l = l->next)
+   EINA_LIST_FOREACH(ed->collection->parts, l, p)
      {
-	Edje_Part *p;
 	Edje_Part_Description *d;
 
-	p = l->data;
 	//printf("   search id: %d in %s\n", old_id, p->name);
 	if (p->clip_to_id == old_id) p->clip_to_id = new_id;
 	if (p->dragable.confine_id == old_id) p->dragable.confine_id = new_id;
@@ -356,9 +352,8 @@ _edje_part_id_set(Edje *ed, Edje_Real_Part *rp, int new_id)
 	if (d->text.id_source == old_id) d->text.id_source = new_id;
 	if (d->text.id_text_source == old_id) d->text.id_text_source = new_id;
 	/* ...and in all other descriptions */
-	for (ll = p->other_desc; ll; ll = ll->next)
+	EINA_LIST_FOREACH(p->other_desc, ll, d)
 	  {
-	     d = ll->data;
 	     //printf("      search in %s (%s)\n", p->name, d->state.name);
 	     if (d->rel1.id_x == old_id) d->rel1.id_x = new_id;
 	     if (d->rel1.id_y == old_id) d->rel1.id_y = new_id;
@@ -370,23 +365,19 @@ _edje_part_id_set(Edje *ed, Edje_Real_Part *rp, int new_id)
      }
 
    /*...and also in programs targets */
-   for (l = ed->collection->programs; l; l = l->next)
+   EINA_LIST_FOREACH(ed->collection->programs, l, epr)
      {
-	Edje_Program *epr;
+       Edje_Program_Target *pt;
 
-	epr = l->data;
 	if (epr->action != EDJE_ACTION_TYPE_STATE_SET)
 	  continue;
 
-	for (ll = epr->targets; ll; ll = ll->next)
+	EINA_LIST_FOREACH(epr->targets, ll, pt)
 	  {
-	     Edje_Program_Target *pt;
-
-	     pt = ll->data;
 	     if (pt->id == old_id)
 	       {
 		  if (new_id == -1)
-		    epr->targets = evas_list_remove(epr->targets, pt);
+		    epr->targets = eina_list_remove(epr->targets, pt);
 		  else
 		    pt->id = new_id;
 	       }
@@ -408,7 +399,9 @@ _edje_parts_id_switch(Edje *ed, Edje_Real_Part *rp1, Edje_Real_Part *rp2)
     */
    int id1;
    int id2;
-   Evas_List *l, *ll;
+   Eina_List *l, *ll;
+   Edje_Part *p;
+   Edje_Program *epr;
 
    printf("SWITCH ID OF PART %d AND %d\n", rp1->part->id, rp2->part->id);
 
@@ -427,13 +420,11 @@ _edje_parts_id_switch(Edje *ed, Edje_Real_Part *rp1, Edje_Real_Part *rp2)
    ed->table_parts[id2] = rp1;
 
    // Fix all the dependecies in all parts...
-   for (l = ed->collection->parts; l; l = l->next)
+   EINA_LIST_FOREACH(ed->collection->parts, l, p)
      {
-	Edje_Part *p;
-	Evas_List *ll;
+	Eina_List *ll;
 	Edje_Part_Description *d;
 
-	p = l->data;
 	//printf("   search id: %d in %s\n", old_id, p->name);
 	if (p->clip_to_id == id1) p->clip_to_id = id2;
 	else if (p->clip_to_id == id2) p->clip_to_id = id1;
@@ -456,9 +447,8 @@ _edje_parts_id_switch(Edje *ed, Edje_Real_Part *rp1, Edje_Real_Part *rp2)
 	if (d->text.id_text_source == id1) d->text.id_text_source = id2;
 	else if (d->text.id_text_source == id2) d->text.id_text_source = id2;
 	// ...and in all other descriptions
-	for (ll = p->other_desc; ll; ll = ll->next)
+	EINA_LIST_FOREACH(p->other_desc, ll, d)
 	  {
-	     d = ll->data;
 	     //printf("      search in %s (%s)\n", p->name, d->state.name);
 	     if (d->rel1.id_x == id1) d->rel1.id_x = id2;
 	     else if (d->rel1.id_x == id2) d->rel1.id_x = id1;
@@ -475,19 +465,15 @@ _edje_parts_id_switch(Edje *ed, Edje_Real_Part *rp1, Edje_Real_Part *rp2)
 	  }
      }
    //...and also in programs targets
-   for (l = ed->collection->programs; l; l = l->next)
+   EINA_LIST_FOREACH(ed->collection->programs, l, epr)
      {
-	Edje_Program *epr;
+        Edje_Program_Target *pt;
 
-	epr = l->data;
 	if (epr->action != EDJE_ACTION_TYPE_STATE_SET)
 	  continue;
 
-	for (ll = epr->targets; ll; ll = ll->next)
+	EINA_LIST_FOREACH(epr->targets, ll, pt)
 	  {
-	     Edje_Program_Target *pt;
-
-	     pt = ll->data;
 	     if (pt->id == id1) pt->id = id2;
 	     else if (pt->id == id2) pt->id = id1;
 	  }
@@ -502,7 +488,8 @@ _edje_fix_parts_id(Edje *ed)
     * After the execution of this function all parts will have a right
     * (uniqe & ordered) id. The table_parts is also updated.
     */
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Part *p;
    int correct_id;
    int count;
 
@@ -512,11 +499,8 @@ _edje_fix_parts_id(Edje *ed)
 
    /* Give a correct id to all the parts */
    correct_id = 0;
-   for (l = ed->collection->parts; l; l = l->next)
+   EINA_LIST_FOREACH(ed->collection->parts, l, p)
      {
-	Edje_Part *p;
-
-	p = l->data;
 	//printf(" [%d]Checking part: %s id: %d\n", correct_id, p->name, p->id);
 	if (p->id != correct_id)
 	  _edje_part_id_set(ed, ed->table_parts[p->id], correct_id);
@@ -525,7 +509,7 @@ _edje_fix_parts_id(Edje *ed)
      }
 
    /* If we have removed some parts realloc table_parts */
-   count = evas_list_count(ed->collection->parts);
+   count = eina_list_count(ed->collection->parts);
    if (count != ed->table_parts_size)
      {
 	ed->table_parts = realloc(ed->table_parts, SZ(Edje_Real_Part *) * count);
@@ -552,19 +536,14 @@ Edje_Spectrum_Directory_Entry *
 _edje_edit_spectrum_entry_get(Edje *ed, const char* spectra)
 {
    Edje_Spectrum_Directory_Entry *s;
-   Evas_List *l;
+   Eina_List *l;
 
    if (!ed->file || !spectra || !ed->file->spectrum_dir)
       return NULL;
 
-   for (l = ed->file->spectrum_dir->entries; l; l = l->next)
-     {
-	Edje_Spectrum_Directory_Entry *s;
-
-	s = l->data;
-	if (!strcmp(s->entry, spectra))
-	   return s;
-     }
+   EINA_LIST_FOREACH(ed->file->spectrum_dir->entries, l, s)
+     if (!strcmp(s->entry, spectra))
+       return s;
 
    return NULL;
 }
@@ -572,19 +551,15 @@ _edje_edit_spectrum_entry_get(Edje *ed, const char* spectra)
 Edje_Spectrum_Directory_Entry *
 _edje_edit_spectrum_entry_get_by_id(Edje *ed, int spectra_id)
 {
-   Evas_List *l;
+   Edje_Spectrum_Directory_Entry *s;
+   Eina_List *l;
 
    if (!ed->file || !ed->file->spectrum_dir)
       return NULL;
 
-   for (l = ed->file->spectrum_dir->entries; l; l = l->next)
-     {
-	Edje_Spectrum_Directory_Entry *s;
-
-	s = l->data;
-	if (s->id == spectra_id)
-	   return s;
-     }
+   EINA_LIST_FOREACH(ed->file->spectrum_dir->entries, l, s)
+     if (s->id == spectra_id)
+       return s;
 
    return NULL;
 }
@@ -594,14 +569,14 @@ _edje_edit_spectrum_entry_get_by_id(Edje *ed, int spectra_id)
 /*****************/
 
 EAPI void
-edje_edit_string_list_free(Evas_List *lst)
+edje_edit_string_list_free(Eina_List *lst)
 {
    //printf("FREE LIST: \n");
    while (lst)
      {
-	if (lst->data) eina_stringshare_del(lst->data);
-	//printf("FREE: %s\n", lst->data);
-	lst = evas_list_remove(lst, lst->data);
+        if (eina_list_data_get(lst)) eina_stringshare_del(eina_list_data_get(lst));
+	//printf("FREE: %s\n", eina_list_data_get(lst));
+	lst = eina_list_remove(lst, eina_list_data_get(lst));
      }
 }
 
@@ -626,8 +601,9 @@ EAPI unsigned char
 edje_edit_group_add(Evas_Object *obj, const char *name)
 {
    Edje_Part_Collection_Directory_Entry *de;
+   Edje_Part_Collection_Directory_Entry *d;
    Edje_Part_Collection *pc;
-   Evas_List *l;
+   Eina_List *l;
    int id;
    int search;
    //Code *cd;
@@ -637,12 +613,9 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    printf("ADD GROUP: %s \n", name);
 
    /* check if a group with the same name already exists */
-   for (l = ed->file->collection_dir->entries; l; l = l->next)
-     {
-	Edje_Part_Collection_Directory_Entry *d = l->data;
-	if (!strcmp(d->entry, name))
-	  return 0;
-     }
+   EINA_LIST_FOREACH(ed->file->collection_dir->entries, l, d)
+     if (!strcmp(d->entry, name))
+       return 0;
 
    /* Create structs */
    de = mem_alloc(SZ(Edje_Part_Collection_Directory_Entry));
@@ -662,10 +635,8 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
      {
 	unsigned char found = 0;
 
-	for (l = ed->file->collection_dir->entries; l; l = l->next)
+	EINA_LIST_FOREACH(ed->file->collection_dir->entries, l, d)
 	  {
-	     Edje_Part_Collection_Directory_Entry *d = l->data;
-
 	     // printf("search if %d is free [id %d]\n", search, d->id);
 	     if (search == d->id)
 	       {
@@ -683,7 +654,7 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    printf(" new id: %d\n", id);
    de->id = id;
    de->entry = mem_strdup(name);
-   ed->file->collection_dir->entries = evas_list_append(ed->file->collection_dir->entries, de);
+   ed->file->collection_dir->entries = eina_list_append(ed->file->collection_dir->entries, de);
 
    /* Init Edje_Part_Collection */
    pc->id = id;
@@ -695,7 +666,7 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    pc->part = eina_stringshare_add(name);
 
    //cd = mem_alloc(SZ(Code));
-   //codes = evas_list_append(codes, cd);
+   //codes = eina_list_append(codes, cd);
 
    ed->file->collection_hash = evas_hash_add(ed->file->collection_hash, name, pc);
 
@@ -707,10 +678,11 @@ EAPI unsigned char
 edje_edit_group_del(Evas_Object *obj)
 {
    char buf[32];
-   Evas_List *l;
+   Eina_List *l;
    int i;
    Edje_Part_Collection *g;
    Eet_File *eetf;
+   Edje_Part_Collection_Directory_Entry *e;
 
    GET_ED_OR_RETURN(0);
 
@@ -718,7 +690,7 @@ edje_edit_group_del(Evas_Object *obj)
    printf("REMOVE GROUP: %s [id: %d]\n", g->part, g->id);
 
    /* Don't remove the last group */
-   if (evas_list_count(ed->file->collection_dir->entries) < 2)
+   if (eina_list_count(ed->file->collection_dir->entries) < 2)
      return 0;
 
    /* Remove collection/id from eet file */
@@ -744,16 +716,13 @@ edje_edit_group_del(Evas_Object *obj)
    _edje_collection_free(ed->file, g);
 
    /* Update collection_dir */
-   for (l = ed->file->collection_dir->entries; l; l = l->next)
+   EINA_LIST_FOREACH(ed->file->collection_dir->entries, l, e)
      {
-	Edje_Part_Collection_Directory_Entry *e;
-
-	e = l->data;
 	printf("  id: %d  entry: %s\n", e->id, e->entry);
 	if (e->id == g->id)
 	  {
 	     ed->file->collection_dir->entries =
-		evas_list_remove_list(ed->file->collection_dir->entries, l);
+		eina_list_remove_list(ed->file->collection_dir->entries, l);
 	     //         free(e->entry);  This should be right but cause a segv
 	     free(e);
 	     e = NULL;
@@ -776,26 +745,23 @@ edje_edit_group_del(Evas_Object *obj)
 EAPI unsigned char
 edje_edit_group_exist(Evas_Object *obj, const char *group)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Part_Collection_Directory_Entry *e;
 
    GET_ED_OR_RETURN(0);
 
-   for (l = ed->file->collection_dir->entries; l; l = l->next)
-     {
-	Edje_Part_Collection_Directory_Entry *e;
-
-	e = l->data;
-	if (e->entry && !strcmp(e->entry, group))
-	  return 1;
-     }
+   EINA_LIST_FOREACH(ed->file->collection_dir->entries, l, e)
+     if (e->entry && !strcmp(e->entry, group))
+       return 1;
    return 0;
 }
 
 EAPI unsigned char
 edje_edit_group_name_set(Evas_Object *obj, const char *new_name)
 {
-   Evas_List *l;
+   Eina_List *l;
    Edje_Part_Collection *pc;
+   Edje_Part_Collection_Directory_Entry *pce;
 
    GET_ED_OR_RETURN(0);
 
@@ -810,10 +776,8 @@ edje_edit_group_name_set(Evas_Object *obj, const char *new_name)
    //if (pc->part && ed->file->free_strings) eina_stringshare_del(pc->part); TODO FIXME
    pc->part = eina_stringshare_add(new_name);
 
-   for (l = ed->file->collection_dir->entries; l; l = l->next)
+   EINA_LIST_FOREACH(ed->file->collection_dir->entries, l, pce)
      {
-	Edje_Part_Collection_Directory_Entry *pce = l->data;
-
 	if (pc->id == pce->id)
 	  {
 	     ed->file->collection_hash = evas_hash_del(ed->file->collection_hash,
@@ -904,10 +868,11 @@ edje_edit_group_max_h_set(Evas_Object *obj, int h)
 /*  DATA API   */
 /***************/
 
-EAPI Evas_List *
+EAPI Eina_List *
 edje_edit_data_list_get(Evas_Object * obj)
 {
-   Evas_List *datas, *l;
+   Eina_List *datas, *l;
+   Edje_Data *d;
 
    GET_ED_OR_RETURN(NULL);
 
@@ -915,11 +880,8 @@ edje_edit_data_list_get(Evas_Object * obj)
      return NULL;
 
    datas = NULL;
-   for (l = ed->file->data; l; l = l->next)
-     {
-	Edje_Data *d = l->data;
-	datas = evas_list_append(datas, eina_stringshare_add(d->key));
-     }
+   EINA_LIST_FOREACH(ed->file->data, l, d)
+     datas = eina_list_append(datas, eina_stringshare_add(d->key));
 
    return datas;
 }
@@ -927,20 +889,18 @@ edje_edit_data_list_get(Evas_Object * obj)
 EAPI unsigned char
 edje_edit_data_add(Evas_Object *obj, const char *itemname, const char *value)
 {
-   Evas_List *l;
+   Eina_List *l;
    Edje_Data *d;
+   Edje_Data *dd;
 
    GET_ED_OR_RETURN(0);
 
    if (!itemname || !ed->file)
      return 0;
 
-   for (l = ed->file->data; l; l = l->next)
-     {
-	Edje_Data *dd = l->data;
-	if (strcmp(dd->key, itemname) == 0)
-	  return 0;
-     }
+   EINA_LIST_FOREACH(ed->file->data, l, dd)
+     if (strcmp(dd->key, itemname) == 0)
+       return 0;
 
    d = mem_alloc(sizeof(Edje_Data));
    if (!d) return 0;
@@ -949,7 +909,7 @@ edje_edit_data_add(Evas_Object *obj, const char *itemname, const char *value)
    if (value) d->value = (char*)eina_stringshare_add(value);
    else d->value = NULL;
 
-   ed->file->data = evas_list_append(ed->file->data, d);
+   ed->file->data = eina_list_append(ed->file->data, d);
 
    return 1;
 }
@@ -957,21 +917,21 @@ edje_edit_data_add(Evas_Object *obj, const char *itemname, const char *value)
 EAPI unsigned char
 edje_edit_data_del(Evas_Object *obj, const char *itemname)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Data *d;
 
    GET_ED_OR_RETURN(0);
 
    if (!itemname || !ed->file || !ed->file->data)
      return 0;
 
-   for (l = ed->file->data; l; l = l->next)
+   EINA_LIST_FOREACH(ed->file->data, l, d)
      {
-	Edje_Data *d = l->data;
 	if (strcmp(d->key, itemname) == 0)
           {
              _edje_if_string_free(ed, d->key);
              _edje_if_string_free(ed, d->value);
-             ed->file->data = evas_list_remove(ed->file->data, d);
+             ed->file->data = eina_list_remove(ed->file->data, d);
              free(d);
              return 1;
           }
@@ -982,19 +942,17 @@ edje_edit_data_del(Evas_Object *obj, const char *itemname)
 EAPI const char *
 edje_edit_data_value_get(Evas_Object * obj, char *itemname)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Data *d;
 
    GET_ED_OR_RETURN(NULL);
 
    if (!itemname || !ed->file || !ed->file->data)
      return NULL;
 
-   for (l = ed->file->data; l; l = l->next)
-     {
-	Edje_Data *d = l->data;
-	if (strcmp(d->key, itemname) == 0)
-	  return eina_stringshare_add(d->value);
-     }
+   EINA_LIST_FOREACH(ed->file->data, l, d)
+     if (strcmp(d->key, itemname) == 0)
+       return eina_stringshare_add(d->value);
 
    return NULL;
 }
@@ -1002,23 +960,21 @@ edje_edit_data_value_get(Evas_Object * obj, char *itemname)
 EAPI unsigned char
 edje_edit_data_value_set(Evas_Object *obj, const char *itemname, const char *value)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Data *d;
 
    GET_ED_OR_RETURN(0);
 
    if (!itemname || !value || !ed->file || !ed->file->data)
      return 0;
 
-   for (l = ed->file->data; l; l = l->next)
-     {
-	Edje_Data *d = l->data;
-	if (strcmp(d->key, itemname) == 0)
-	  {
-		_edje_if_string_free(ed, d->value);
-		d->value = (char*)eina_stringshare_add(value);
-		return 1;
-	  }
-     }
+   EINA_LIST_FOREACH(ed->file->data, l, d)
+     if (strcmp(d->key, itemname) == 0)
+       {
+	 _edje_if_string_free(ed, d->value);
+	 d->value = (char*)eina_stringshare_add(value);
+	 return 1;
+       }
 
    return 0;
 }
@@ -1026,23 +982,21 @@ edje_edit_data_value_set(Evas_Object *obj, const char *itemname, const char *val
 EAPI unsigned char
 edje_edit_data_name_set(Evas_Object *obj, const char *itemname,  const char *newname)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Data *d;
 
    GET_ED_OR_RETURN(0);
 
    if (!itemname || !newname || !ed->file || !ed->file->data)
      return 0;
 
-   for (l = ed->file->data; l; l = l->next)
-     {
-	Edje_Data *d = l->data;
-	if (strcmp(d->key, itemname) == 0)
-	  {
-		_edje_if_string_free(ed, d->key);
-		d->key = (char*)eina_stringshare_add(newname);
-		return 1;
-	  }
-     }
+   EINA_LIST_FOREACH(ed->file->data, l, d)
+     if (strcmp(d->key, itemname) == 0)
+       {
+	 _edje_if_string_free(ed, d->key);
+	 d->key = (char*)eina_stringshare_add(newname);
+	 return 1;
+       }
 
    return 0;
 }
@@ -1051,24 +1005,20 @@ edje_edit_data_name_set(Evas_Object *obj, const char *itemname,  const char *new
 /*  COLOR CLASSES API  */
 /***********************/
 
-EAPI Evas_List *
+EAPI Eina_List *
 edje_edit_color_classes_list_get(Evas_Object * obj)
 {
-   Evas_List *classes = NULL;
-   Evas_List *l;
+   Eina_List *classes = NULL;
+   Eina_List *l;
+   Edje_Color_Class *cc;
 
    GET_ED_OR_RETURN(NULL);
 
    if (!ed->file || !ed->file->color_classes)
       return NULL;
-printf("GET CLASSES LIST %d %d\n", evas_list_count(ed->color_classes), evas_list_count(ed->file->color_classes));
-   for (l = ed->file->color_classes; l; l = l->next)
-     {
-	Edje_Color_Class *cc;
-
-	cc = l->data;
-	classes = evas_list_append(classes, eina_stringshare_add(cc->name));
-     }
+   printf("GET CLASSES LIST %d %d\n", eina_list_count(ed->color_classes), eina_list_count(ed->file->color_classes));
+   EINA_LIST_FOREACH(ed->file->color_classes, l, cc)
+     classes = eina_list_append(classes, eina_stringshare_add(cc->name));
 
    return classes;
 }
@@ -1076,94 +1026,86 @@ printf("GET CLASSES LIST %d %d\n", evas_list_count(ed->color_classes), evas_list
 EAPI unsigned char
 edje_edit_color_class_colors_get(Evas_Object *obj, const char *class_name, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Color_Class *cc;
+
    GET_ED_OR_RETURN(0);
 
    if (!ed->file || !ed->file->color_classes)
       return 0;
 
-   for (l = ed->file->color_classes; l; l = l->next)
-     {
-	Edje_Color_Class *cc;
+   EINA_LIST_FOREACH(ed->file->color_classes, l, cc)
+     if (!strcmp(cc->name, class_name))
+       {
+	 if (r) *r = cc->r;
+	 if (g) *g = cc->g;
+	 if (b) *b = cc->b;
+	 if (a) *a = cc->a;
 
-	cc = l->data;
-	if (!strcmp(cc->name, class_name))
-	  {
-		if (r) *r = cc->r;
-		if (g) *g = cc->g;
-		if (b) *b = cc->b;
-		if (a) *a = cc->a;
+	 if (r2) *r2 = cc->r2;
+	 if (g2) *g2 = cc->g2;
+	 if (b2) *b2 = cc->b2;
+	 if (a2) *a2 = cc->a2;
 
-		if (r2) *r2 = cc->r2;
-		if (g2) *g2 = cc->g2;
-		if (b2) *b2 = cc->b2;
-		if (a2) *a2 = cc->a2;
+	 if (r3) *r3 = cc->r3;
+	 if (g3) *g3 = cc->g3;
+	 if (b3) *b3 = cc->b3;
+	 if (a3) *a3 = cc->a3;
 
-		if (r3) *r3 = cc->r3;
-		if (g3) *g3 = cc->g3;
-		if (b3) *b3 = cc->b3;
-		if (a3) *a3 = cc->a3;
-
-		return 1;
-	  }
-     }
+	 return 1;
+       }
    return 0;
 }
 
 EAPI unsigned char
 edje_edit_color_class_colors_set(Evas_Object *obj, const char *class_name, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Color_Class *cc;
+
    GET_ED_OR_RETURN(0);
 
    if (!ed->file || !ed->file->color_classes)
       return 0;
 
-   for (l = ed->file->color_classes; l; l = l->next)
-     {
-	Edje_Color_Class *cc;
+   EINA_LIST_FOREACH(ed->file->color_classes, l, cc)
+     if (!strcmp(cc->name, class_name))
+       {
+	 if (r > -1) cc->r = r;
+	 if (g > -1) cc->g = g;
+	 if (b > -1) cc->b = b;
+	 if (a > -1) cc->a = a;
 
-	cc = l->data;
-	if (!strcmp(cc->name, class_name))
-	  {
-		if (r > -1) cc->r = r;
-		if (g > -1) cc->g = g;
-		if (b > -1) cc->b = b;
-		if (a > -1) cc->a = a;
+	 if (r2 > -1) cc->r2 = r2;
+	 if (g2 > -1) cc->g2 = g2;
+	 if (b2 > -1) cc->b2 = b2;
+	 if (a2 > -1) cc->a2 = a2;
 
-		if (r2 > -1) cc->r2 = r2;
-		if (g2 > -1) cc->g2 = g2;
-		if (b2 > -1) cc->b2 = b2;
-		if (a2 > -1) cc->a2 = a2;
+	 if (r3 > -1) cc->r3 = r3;
+	 if (g3 > -1) cc->g3 = g3;
+	 if (b3 > -1) cc->b3 = b3;
+	 if (a3 > -1) cc->a3 = a3;
 
-		if (r3 > -1) cc->r3 = r3;
-		if (g3 > -1) cc->g3 = g3;
-		if (b3 > -1) cc->b3 = b3;
-		if (a3 > -1) cc->a3 = a3;
-
-		return 1;
-	  }
-     }
+	 return 1;
+       }
    return 0;
 }
 
 EAPI unsigned char
 edje_edit_color_class_add(Evas_Object *obj, const char *name)
 {
-   Evas_List *l;
+   Eina_List *l;
    Edje_Color_Class *c;
+   Edje_Color_Class *cc;
 
    GET_ED_OR_RETURN(0);
 
    if (!name || !ed->file)
      return 0;
 
-   for (l = ed->file->color_classes; l; l = l->next)
-     {
-	Edje_Color_Class *cc = l->data;
-	if (strcmp(cc->name, name) == 0)
-	  return 0;
-     }
+   EINA_LIST_FOREACH(ed->file->color_classes, l, cc)
+     if (strcmp(cc->name, name) == 0)
+       return 0;
 
    c = mem_alloc(sizeof(Edje_Color_Class));
    if (!c) return 0;
@@ -1173,7 +1115,7 @@ edje_edit_color_class_add(Evas_Object *obj, const char *name)
    c->r2 = c->g2 = c->b2 = c->a2 = 255;
    c->r3 = c->g3 = c->b3 = c->a3 = 255;
 
-   ed->file->color_classes = evas_list_append(ed->file->color_classes, c);
+   ed->file->color_classes = eina_list_append(ed->file->color_classes, c);
 
    return 1;
 }
@@ -1181,49 +1123,43 @@ edje_edit_color_class_add(Evas_Object *obj, const char *name)
 EAPI unsigned char
 edje_edit_color_class_del(Evas_Object *obj, const char *name)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Color_Class *cc;
 
    GET_ED_OR_RETURN(0);
 
    if (!name || !ed->file || !ed->file->color_classes)
      return 0;
 
-   for (l = ed->file->color_classes; l; l = l->next)
-     {
-	Edje_Color_Class *cc = l->data;
-	if (strcmp(cc->name, name) == 0)
-          {
-             _edje_if_string_free(ed, cc->name);
-             ed->file->color_classes = evas_list_remove(ed->file->color_classes, cc);
-             free(cc);
-             return 1;
-          }
-     }
+   EINA_LIST_FOREACH(ed->file->color_classes, l, cc)
+     if (strcmp(cc->name, name) == 0)
+       {
+	 _edje_if_string_free(ed, cc->name);
+	 ed->file->color_classes = eina_list_remove(ed->file->color_classes, cc);
+	 free(cc);
+	 return 1;
+       }
    return 0;
 }
 
 EAPI unsigned char
 edje_edit_color_class_name_set(Evas_Object *obj, const char *name, const char *newname)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Color_Class *cc;
 
    GET_ED_OR_RETURN(0);
 
    if (!ed->file || !ed->file->color_classes)
       return 0;
 
-   for (l = ed->file->color_classes; l; l = l->next)
-     {
-	Edje_Color_Class *cc;
-
-	cc = l->data;
-	if (!strcmp(cc->name, name))
-	  {
-		_edje_if_string_free(ed, cc->name);
-		cc->name = (char*)eina_stringshare_add(newname);
-		return 1;
-	  }
-     }
+   EINA_LIST_FOREACH(ed->file->color_classes, l, cc)
+     if (!strcmp(cc->name, name))
+       {
+	 _edje_if_string_free(ed, cc->name);
+	 cc->name = (char*)eina_stringshare_add(newname);
+	 return 1;
+       }
 
    return 0;
 }
@@ -1233,10 +1169,10 @@ edje_edit_color_class_name_set(Evas_Object *obj, const char *name, const char *n
 /*  PARTS API  */
 /***************/
 
-EAPI Evas_List *
+EAPI Eina_List *
 edje_edit_parts_list_get(Evas_Object *obj)
 {
-   Evas_List *parts;
+   Eina_List *parts;
    int i;
 
    GET_ED_OR_RETURN(NULL);
@@ -1249,7 +1185,7 @@ edje_edit_parts_list_get(Evas_Object *obj)
 	Edje_Real_Part *rp;
 
 	rp = ed->table_parts[i];
-	parts = evas_list_append(parts, eina_stringshare_add(rp->part->name));
+	parts = eina_list_append(parts, eina_stringshare_add(rp->part->name));
      }
 
    return parts;
@@ -1300,9 +1236,9 @@ edje_edit_part_add(Evas_Object *obj, const char* name, unsigned char type)
 
    /* Init Edje_Part */
    pc = ed->collection;
-   pc->parts = evas_list_append(pc->parts, ep);
+   pc->parts = eina_list_append(pc->parts, ep);
 
-   ep->id = evas_list_count(pc->parts) - 1;
+   ep->id = eina_list_count(pc->parts) - 1;
    ep->type = type;
    ep->name = eina_stringshare_add(name);
    ep->mouse_events = 1;
@@ -1452,7 +1388,7 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
 
    /* Remove part from parts list */
    pc = ed->collection;
-   pc->parts = evas_list_remove(pc->parts, ep);
+   pc->parts = eina_list_remove(pc->parts, ep);
    _edje_fix_parts_id(ed);
 
    /* Free Edje_Part and all descriptions */
@@ -1466,8 +1402,8 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
      {
 	Edje_Part_Description *desc;
 
-	desc = ep->other_desc->data;
-	ep->other_desc = evas_list_remove(ep->other_desc, desc);
+	desc = eina_list_data_get(ep->other_desc);
+	ep->other_desc = eina_list_remove(ep->other_desc, desc);
 	_edje_collection_free_part_description_free(desc, 0);
      }
    free(ep);
@@ -1502,8 +1438,8 @@ edje_edit_part_restack_below(Evas_Object *obj, const char* part)
 
    /* update parts list */
    prev = ed->table_parts[(rp->part->id - 1) % ed->table_parts_size];
-   group->parts = evas_list_remove(group->parts, rp->part);
-   group->parts = evas_list_prepend_relative(group->parts, rp->part, prev->part);
+   group->parts = eina_list_remove(group->parts, rp->part);
+   group->parts = eina_list_prepend_relative(group->parts, rp->part, prev->part);
 
    _edje_parts_id_switch(ed, rp, prev);
 
@@ -1528,8 +1464,8 @@ edje_edit_part_restack_above(Evas_Object *obj, const char* part)
 
    /* update parts list */
    next = ed->table_parts[(rp->part->id + 1) % ed->table_parts_size];
-   group->parts = evas_list_remove(group->parts, rp->part);
-   group->parts = evas_list_append_relative(group->parts, rp->part, next->part);
+   group->parts = eina_list_remove(group->parts, rp->part);
+   group->parts = eina_list_append_relative(group->parts, rp->part, next->part);
 
    /* update ids */
    _edje_parts_id_switch(ed, rp, next);
@@ -1907,12 +1843,12 @@ edje_edit_part_drag_event_set(Evas_Object *obj, const char *part, const char *ev
 /*********************/
 /*  PART STATES API  */
 /*********************/
-EAPI Evas_List *
+EAPI Eina_List *
 edje_edit_part_states_list_get(Evas_Object *obj, const char *part)
 {
    char state_name[PATH_MAX];
-   Evas_List *states;
-   Evas_List *l;
+   Eina_List *states;
+   Eina_List *l;
    Edje_Part_Description *state;
 
    GET_RP_OR_RETURN(NULL);
@@ -1926,16 +1862,15 @@ edje_edit_part_states_list_get(Evas_Object *obj, const char *part)
    state = rp->part->default_desc;
    snprintf(state_name, PATH_MAX,
             "%s %.2f", state->state.name, state->state.value);
-   states = evas_list_append(states, eina_stringshare_add(state_name));
+   states = eina_list_append(states, eina_stringshare_add(state_name));
    //printf("NEW STATE def: %s\n", state->state.name);
 
    //append other states
-   for (l = rp->part->other_desc; l; l = l->next)
+   EINA_LIST_FOREACH(rp->part->other_desc, l, state)
      {
-	state = l->data;
 	snprintf(state_name, sizeof(state_name),
 	         "%s %.2f", state->state.name, state->state.value);
-	states = evas_list_append(states, eina_stringshare_add(state_name));
+	states = eina_list_append(states, eina_stringshare_add(state_name));
 	//printf("NEW STATE: %s\n", state_name);
      }
    return states;
@@ -1969,9 +1904,9 @@ edje_edit_state_name_set(Evas_Object *obj, const char *part, const char *state, 
      {
 	Edje_Program *epr = ed->table_programs[i];
 
-	if (evas_list_count(epr->targets) == 1)
+	if (eina_list_count(epr->targets) == 1)
 	  {
-	     Edje_Program_Target *t = epr->targets->data;
+	     Edje_Program_Target *t = eina_list_data_get(epr->targets);
 
 	     if (t->id == part_id &&
 		 !strcmp(epr->state, pd->state.name) &&
@@ -2008,7 +1943,7 @@ edje_edit_state_del(Evas_Object *obj, const char *part, const char *state)
    pd = _edje_part_description_find_byname(ed, part, state);
    if (!pd) return;
 
-   rp->part->other_desc = evas_list_remove(rp->part->other_desc, pd);
+   rp->part->other_desc = eina_list_remove(rp->part->other_desc, pd);
 
    _edje_collection_free_part_description_free(pd, 0);
 }
@@ -2027,7 +1962,7 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name)
    if (!rp->part->default_desc)
      rp->part->default_desc = pd;
    else
-     rp->part->other_desc = evas_list_append(rp->part->other_desc, pd);
+     rp->part->other_desc = eina_list_append(rp->part->other_desc, pd);
 
    pd->state.name = eina_stringshare_add(name);
    pd->state.value = 0.0;
@@ -2993,12 +2928,12 @@ edje_edit_state_text_fit_y_set(Evas_Object *obj, const char *part, const char *s
    edje_object_calc_force(obj);
 }
 
-EAPI Evas_List *
+EAPI Eina_List *
 edje_edit_fonts_list_get(Evas_Object *obj)
 {
    Edje_Font_Directory_Entry *f;
-   Evas_List *fonts = NULL;
-   Evas_List *l;
+   Eina_List *fonts = NULL;
+   Eina_List *l;
 
    GET_ED_OR_RETURN(NULL);
 
@@ -3007,10 +2942,9 @@ edje_edit_fonts_list_get(Evas_Object *obj)
 
    printf("GET FONT LIST for %s\n", ed->file->path);
 
-   for (l = ed->file->font_dir->entries; l; l = l->next)
+   EINA_LIST_FOREACH(ed->file->font_dir->entries, l, f)
      {
-	f = l->data;
-	fonts = evas_list_append(fonts, eina_stringshare_add(f->entry));
+	fonts = eina_list_append(fonts, eina_stringshare_add(f->entry));
 	printf("   Font: %s (%s) \n", f->entry, f->path);
      }
 
@@ -3055,13 +2989,11 @@ edje_edit_font_add(Evas_Object *obj, const char* path)
    fn->name = mem_strdup(name);
 
    /*{
-      Evas_List *l;
+      Eina_List *l;
+      Font *lfn;
 
-      for (l = fonts; l; l = l->next)
+      EINA_LIST_FOREACH(fonts, l, lfn)
       {
-         Font *lfn;
-
-         lfn = l->data;
          if (!strcmp(lfn->name, fn->name))
          {
             free(fn->file);
@@ -3130,7 +3062,7 @@ edje_edit_font_add(Evas_Object *obj, const char* path)
 	fnt->entry = mem_strdup(fn->name);
 	fnt->path = mem_strdup(buf);
 
-	ed->file->font_dir->entries = evas_list_append(ed->file->font_dir->entries, fnt);
+	ed->file->font_dir->entries = eina_list_append(ed->file->font_dir->entries, fnt);
 	ed->file->font_hash = evas_hash_direct_add(ed->file->font_hash, fnt->entry, fnt);
      }
 
@@ -3184,12 +3116,12 @@ edje_edit_part_effect_set(Evas_Object *obj, const char *part, unsigned char effe
 /*  IMAGES API  */
 /****************/
 
-EAPI Evas_List *
+EAPI Eina_List *
 edje_edit_images_list_get(Evas_Object *obj)
 {
    Edje_Image_Directory_Entry *i;
-   Evas_List *images = NULL;
-   Evas_List *l;
+   Eina_List *images = NULL;
+   Eina_List *l;
 
    GET_ED_OR_RETURN(NULL);
 
@@ -3198,10 +3130,9 @@ edje_edit_images_list_get(Evas_Object *obj)
 
    printf("GET IMAGES LIST for %s\n", ed->file->path);
 
-   for (l = ed->file->image_dir->entries; l; l = l->next)
+   EINA_LIST_FOREACH(ed->file->image_dir->entries, l, i)
      {
-	i = l->data;
-	images = evas_list_append(images, eina_stringshare_add(i->entry));
+	images = eina_list_append(images, eina_stringshare_add(i->entry));
 	//printf("   Image: %s (type: %d param: %d id: %d) \n",
 	//       i->entry, i->source_type, i->source_param, i->id);
      }
@@ -3212,8 +3143,9 @@ edje_edit_images_list_get(Evas_Object *obj)
 EAPI unsigned char
 edje_edit_image_add(Evas_Object *obj, const char* path)
 {
-   Evas_List *l;
+   Eina_List *l;
    Edje_Image_Directory_Entry *de;
+   Edje_Image_Directory_Entry *i;
    int free_id = 0;
    char *name;
 
@@ -3229,12 +3161,9 @@ edje_edit_image_add(Evas_Object *obj, const char* path)
 
    /* Loop trough image directory to find if image exist */
    printf("Add Image '%s' (total %d)\n", path,
-          evas_list_count(ed->file->image_dir->entries));
-   for (l = ed->file->image_dir->entries; l; l = l->next)
+          eina_list_count(ed->file->image_dir->entries));
+   EINA_LIST_FOREACH(ed->file->image_dir->entries, l, i)
      {
-	Edje_Image_Directory_Entry *i;
-
-	i = l->data;
 	if (!i) return 0;
 	if (i->id >= free_id) free_id = i->id + 1; /*TODO search for free (hole) id*/
 	printf("IMG: %s [%d]\n", i->entry, i->id);
@@ -3256,7 +3185,7 @@ edje_edit_image_add(Evas_Object *obj, const char* path)
 
    /* Add image to Image Directory */
    ed->file->image_dir->entries =
-        evas_list_append(ed->file->image_dir->entries, de);
+        eina_list_append(ed->file->image_dir->entries, de);
 
    return 1;
 }
@@ -3271,16 +3200,15 @@ EAPI int
 edje_edit_image_compression_type_get(Evas_Object *obj, const char *image)
 {
    Edje_Image_Directory_Entry *i = NULL;
-   Evas_List *l;
+   Eina_List *l;
 
    GET_ED_OR_RETURN(-1);
 
    if (!ed->file) return -1;
    if (!ed->file->image_dir) return -1;
 
-   for (l = ed->file->image_dir->entries; l; l = l->next)
+   EINA_LIST_FOREACH(ed->file->image_dir->entries, l, i)
      {
-	i = l->data;
 	if (strcmp(i->entry, image) == 0)
 	  break;
 	i = NULL;
@@ -3310,15 +3238,14 @@ edje_edit_image_compression_type_get(Evas_Object *obj, const char *image)
 EAPI int
 edje_edit_image_compression_rate_get(Evas_Object *obj, const char *image)
 {
-   Evas_List *l;
+   Eina_List *l;
    Edje_Image_Directory_Entry *i;
 
    GET_ED_OR_RETURN(-1);
 
    // Gets the Image Entry
-   for (l = ed->file->image_dir->entries; l; l = l->next)
+   EINA_LIST_FOREACH(ed->file->image_dir->entries, l, i)
      {
-	i = l->data;
 	if (strcmp(i->entry, image) == 0) break;
 	i = NULL;
      }
@@ -3360,23 +3287,22 @@ edje_edit_state_image_set(Evas_Object *obj, const char *part, const char *state,
    edje_object_calc_force(obj);
 }
 
-EAPI Evas_List *
+EAPI Eina_List *
 edje_edit_state_tweens_list_get(Evas_Object *obj, const char *part, const char *state)
 {
    Edje_Part_Image_Id *i;
-   Evas_List *tweens = NULL, *l;
+   Eina_List *tweens = NULL, *l;
    const char *name;
 
    GET_PD_OR_RETURN(NULL);
 
    //printf("GET TWEEN LIST for %s\n", state);
 
-   for (l = pd->image.tween_list; l; l = l->next)
+   EINA_LIST_FOREACH(pd->image.tween_list, l, i)
      {
-	i = l->data;
 	name = _edje_image_name_find(obj, i->id);
 	//printf("   t: %s\n", name);
-	tweens = evas_list_append(tweens, eina_stringshare_add(name));
+	tweens = eina_list_append(tweens, eina_stringshare_add(name));
      }
 
    return tweens;
@@ -3399,7 +3325,7 @@ edje_edit_state_tween_add(Evas_Object *obj, const char *part, const char *state,
    i->id = id;
 
    /* add to tween list */
-   pd->image.tween_list = evas_list_append(pd->image.tween_list, i);
+   pd->image.tween_list = eina_list_append(pd->image.tween_list, i);
 
    return 1;
 }
@@ -3407,7 +3333,8 @@ edje_edit_state_tween_add(Evas_Object *obj, const char *part, const char *state,
 EAPI unsigned char
 edje_edit_state_tween_del(Evas_Object *obj, const char *part, const char *state, const char *tween)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Part_Image_Id *i;
    int id;
 
    GET_PD_OR_RETURN(0);
@@ -3417,14 +3344,11 @@ edje_edit_state_tween_del(Evas_Object *obj, const char *part, const char *state,
    id = _edje_image_id_find(obj, tween);
    if (id < 0) return 0;
 
-   for (l = pd->image.tween_list; l; l = l->next)
+   EINA_LIST_FOREACH(pd->image.tween_list, l, i)
      {
-	Edje_Part_Image_Id *i;
-
-	i = l->data;
 	if (i->id == id)
 	  {
-	     pd->image.tween_list = evas_list_remove_list(pd->image.tween_list, l);
+	     pd->image.tween_list = eina_list_remove_list(pd->image.tween_list, l);
 	     return 1;
 	  }
      }
@@ -3479,12 +3403,12 @@ edje_edit_state_image_border_fill_set(Evas_Object *obj, const char *part, const 
 /*  SPECTRUM API  */
 /******************/
 
-EAPI Evas_List *
+EAPI Eina_List *
 edje_edit_spectrum_list_get(Evas_Object *obj)
 {
    Edje_Spectrum_Directory_Entry *s;
-   Evas_List *spectrum = NULL;
-   Evas_List *l;
+   Eina_List *spectrum = NULL;
+   Eina_List *l;
 
    GET_ED_OR_RETURN(NULL);
 
@@ -3493,11 +3417,10 @@ edje_edit_spectrum_list_get(Evas_Object *obj)
 
    //printf("GET SPECTRUM LIST for %s\n", ed->file->path);
 
-   for (l = ed->file->spectrum_dir->entries; l; l = l->next)
+   EINA_LIST_FOREACH(ed->file->spectrum_dir->entries, l, s)
      {
-	s = l->data;
 	//printf("SPECTRUM: %s [id: %d]\n", s->entry, s->id);
-	spectrum = evas_list_append(spectrum, eina_stringshare_add(s->entry));
+	spectrum = eina_list_append(spectrum, eina_stringshare_add(s->entry));
      }
 
    return spectrum;
@@ -3513,7 +3436,7 @@ edje_edit_spectra_add(Evas_Object *obj, const char* name)
    printf("SPECTRA ADD [new name:%s]\n", name);
 
    Edje_Spectrum_Directory_Entry *s;
-   Evas_List *l;
+   Eina_List *l;
 
    if (!ed->file) return 0;
 
@@ -3523,8 +3446,8 @@ edje_edit_spectra_add(Evas_Object *obj, const char* name)
      ed->file->spectrum_dir = mem_alloc(SZ(Edje_Spectrum_Directory));
 
    s = mem_alloc(SZ(Edje_Spectrum_Directory_Entry));
-   ed->file->spectrum_dir->entries = evas_list_append(ed->file->spectrum_dir->entries, s);
-   s->id = evas_list_count(ed->file->spectrum_dir->entries) - 1; //TODO Search for id holes
+   ed->file->spectrum_dir->entries = eina_list_append(ed->file->spectrum_dir->entries, s);
+   s->id = eina_list_count(ed->file->spectrum_dir->entries) - 1; //TODO Search for id holes
    s->entry = (char*)eina_stringshare_add(name);
    s->filename = NULL;
    s->color_list = NULL;
@@ -3544,15 +3467,15 @@ edje_edit_spectra_del(Evas_Object *obj, const char* spectra)
 
    printf("SPECTRA DEL %s\n", spectra);
 
-   ed->file->spectrum_dir->entries = evas_list_remove(ed->file->spectrum_dir->entries, s);
+   ed->file->spectrum_dir->entries = eina_list_remove(ed->file->spectrum_dir->entries, s);
    _edje_if_string_free(ed, s->entry);
    _edje_if_string_free(ed, s->filename);
    while (s->color_list)
      {
         Edje_Spectrum_Color *color;
-        color = s->color_list->data;
+        color = eina_list_data_get(s->color_list);
         free(color);
-        s->color_list = evas_list_remove_list(s->color_list, s->color_list);
+        s->color_list = eina_list_remove_list(s->color_list, s->color_list);
      }
    free(s);
 
@@ -3589,7 +3512,7 @@ edje_edit_spectra_stop_num_get(Evas_Object *obj, const char* spectra)
    s = _edje_edit_spectrum_entry_get(ed, spectra);
    if (!s) return 0;
 
-   return evas_list_count(s->color_list);
+   return eina_list_count(s->color_list);
 }
 
 EAPI unsigned char
@@ -3604,21 +3527,21 @@ edje_edit_spectra_stop_num_set(Evas_Object *obj, const char* spectra, int num)
    s = _edje_edit_spectrum_entry_get(ed, spectra);
    if (!s) return 0;
 
-   if (num == evas_list_count(s->color_list)) return 1;
+   if (num == eina_list_count(s->color_list)) return 1;
 
    //destroy all colors
    while (s->color_list)
      {
-        color = s->color_list->data;
+        color = eina_list_data_get(s->color_list);
         free(color);
-        s->color_list = evas_list_remove_list(s->color_list, s->color_list);
+        s->color_list = eina_list_remove_list(s->color_list, s->color_list);
      }
 
    //... and recreate (TODO we should optimize this function)
    while (num)
      {
         color = mem_alloc(SZ(Edje_Spectrum_Color));
-        s->color_list = evas_list_append(s->color_list, color);
+        s->color_list = eina_list_append(s->color_list, color);
         color->r = 255;
         color->g = 255;
         color->b = 255;
@@ -3641,7 +3564,7 @@ edje_edit_spectra_stop_color_get(Evas_Object *obj, const char* spectra, int stop
    if (!s) return 0;
    //printf("GET SPECTRA STOP COLOR for spectra: %s stopn: %d\n", spectra, stop_number);
 
-   color = evas_list_nth(s->color_list, stop_number);
+   color = eina_list_nth(s->color_list, stop_number);
    if (!color) return 0;
    if (r) *r = color->r;
    if (g) *g = color->g;
@@ -3663,7 +3586,7 @@ edje_edit_spectra_stop_color_set(Evas_Object *obj, const char* spectra, int stop
    if (!s) return 0;
    printf("SET SPECTRA STOP COLOR for spectra: %s stopn: %d\n", spectra, stop_number);
 
-   color = evas_list_nth(s->color_list, stop_number);
+   color = eina_list_nth(s->color_list, stop_number);
    if (!color) return 0;
    color->r = r;
    color->g = g;
@@ -3947,10 +3870,10 @@ _edje_program_get_byname(Evas_Object *obj, const char *prog_name)
    return NULL;
 }
 
-EAPI Evas_List *
+EAPI Eina_List *
 edje_edit_programs_list_get(Evas_Object *obj)
 {
-   Evas_List *progs = NULL;
+   Eina_List *progs = NULL;
    int i;
 
    GET_ED_OR_RETURN(NULL);
@@ -3962,7 +3885,7 @@ edje_edit_programs_list_get(Evas_Object *obj)
 	Edje_Program *epr;
 
 	epr = ed->table_programs[i];
-	progs = evas_list_append(progs, eina_stringshare_add(epr->name));
+	progs = eina_list_append(progs, eina_stringshare_add(epr->name));
      }
 
    return progs;
@@ -3988,10 +3911,10 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
 
    //Add program to group
    pc = ed->collection;
-   pc->programs = evas_list_append(pc->programs, epr);
+   pc->programs = eina_list_append(pc->programs, epr);
 
    //Init Edje_Program
-   epr->id = evas_list_count(pc->programs) - 1;
+   epr->id = eina_list_count(pc->programs) - 1;
    epr->name = eina_stringshare_add(name);
    epr->signal = NULL;
    epr->source = NULL;
@@ -4029,7 +3952,7 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
 EAPI unsigned char
 edje_edit_program_del(Evas_Object *obj, const char *prog)
 {
-   Evas_List *l;
+   Eina_List *l;
    Edje_Part_Collection *pc;
    int id, i;
    int old_id;
@@ -4042,7 +3965,7 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
    //Remove program from programs list
    id = epr->id;
    pc = ed->collection;
-   pc->programs = evas_list_remove(pc->programs, epr);
+   pc->programs = eina_list_remove(pc->programs, epr);
 
    //Free Edje_Program
    _edje_if_string_free(ed, epr->name);
@@ -4055,16 +3978,16 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
      {
 	Edje_Program_Target *prt;
 
-	prt = epr->targets->data;
-	epr->targets = evas_list_remove_list(epr->targets, epr->targets);
+	prt = eina_list_data_get(epr->targets);
+	epr->targets = eina_list_remove_list(epr->targets, epr->targets);
 	free(prt);
      }
    while (epr->after)
      {
 	Edje_Program_After *pa;
 
-	pa = epr->after->data;
-	epr->after = evas_list_remove_list(epr->after, epr->after);
+	pa = eina_list_data_get(epr->after);
+	epr->after = eina_list_remove_list(epr->after, epr->after);
 	free(pa);
      }
    free(epr);
@@ -4105,7 +4028,7 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
 	  {
 	     Edje_Program_After *pa;
 
-	     pa = l->data;
+	     pa = eina_list_data_get(l);
 	     if (pa->id == old_id)
 	       {
 		  //    printf("   dep on after old_id\n");
@@ -4114,10 +4037,10 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
 	     else if (pa->id == id)
 	       {
 		  //  printf("   dep on after id\n");
-		  p->after = evas_list_remove(p->after, pa);
+		  p->after = eina_list_remove(p->after, pa);
 	       }
 
-	     if (l) l = l->next;
+	     if (l) l = eina_list_next(l);
 	  }
 	/* check in targets */
 	if (p->action == EDJE_ACTION_TYPE_ACTION_STOP)
@@ -4127,7 +4050,7 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
 	       {
 		  Edje_Program_Target *pt;
 
-		  pt = l->data;
+		  pt = eina_list_data_get(l);
 		  if (pt->id == old_id)
 		    {
 		       // printf("   dep on target old_id\n");
@@ -4136,9 +4059,9 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
 		  else if (pt->id == id)
 		    {
 		       // printf("   dep on target id\n");
-		       p->targets = evas_list_remove(p->targets, pt);
+		       p->targets = eina_list_remove(p->targets, pt);
 		    }
-		  if (l) l = l->next;
+		  if (l) l = eina_list_next(l);
 	       }
 	  }
      }
@@ -4427,22 +4350,18 @@ edje_edit_program_action_set(Evas_Object *obj, const char *prog, int action)
    return 1;
 }
 
-EAPI Evas_List *
+EAPI Eina_List *
 edje_edit_program_targets_get(Evas_Object *obj, const char *prog)
 {
-   Evas_List *l, *targets = NULL;
+   Eina_List *l, *targets = NULL;
+   Edje_Program_Target *t;
 
    GET_ED_OR_RETURN(NULL);
    GET_EPR_OR_RETURN(NULL);
 
-   //printf("GET TARGETS for program: %s [count: %d]\n", prog, evas_list_count(epr->targets));
-
-   for (l = epr->targets; l; l = l->next)
+   //printf("GET TARGETS for program: %s [count: %d]\n", prog, eina_list_count(epr->targets));
+   EINA_LIST_FOREACH(epr->targets, l, t)
      {
-	Edje_Program_Target *t;
-
-	t = l->data;
-
 	if (epr->action == EDJE_ACTION_TYPE_STATE_SET)
 	  {
 	     /* the target is a part */
@@ -4450,7 +4369,7 @@ edje_edit_program_targets_get(Evas_Object *obj, const char *prog)
 
 	     p = ed->table_parts[t->id % ed->table_parts_size];
 	     if (p && p->part && p->part->name)
-	       targets = evas_list_append(targets,
+	       targets = eina_list_append(targets,
 		     eina_stringshare_add(p->part->name));
 	  }
 	else if (epr->action == EDJE_ACTION_TYPE_ACTION_STOP)
@@ -4460,7 +4379,7 @@ edje_edit_program_targets_get(Evas_Object *obj, const char *prog)
 
 	     p = ed->table_programs[t->id % ed->table_programs_size];
 	     if (p && p->name)
-	       targets = evas_list_append(targets,
+	       targets = eina_list_append(targets,
 		     eina_stringshare_add(p->name));
 	  }
      }
@@ -4476,8 +4395,8 @@ edje_edit_program_targets_clear(Evas_Object *obj, const char *prog)
      {
 	Edje_Program_Target *prt;
 
-	prt = epr->targets->data;
-	epr->targets = evas_list_remove_list(epr->targets, epr->targets);
+	prt = eina_list_data_get(epr->targets);
+	epr->targets = eina_list_remove_list(epr->targets, epr->targets);
 	free(prt);
      }
 
@@ -4518,32 +4437,30 @@ edje_edit_program_target_add(Evas_Object *obj, const char *prog, const char *tar
    if (!t) return 0;
 
    t->id = id;
-   epr->targets = evas_list_append(epr->targets, t);
+   epr->targets = eina_list_append(epr->targets, t);
 
    return 1;
 }
 
-EAPI Evas_List *
+EAPI Eina_List *
 edje_edit_program_afters_get(Evas_Object *obj, const char *prog)
 {
-   Evas_List *l, *afters = NULL;
+   Eina_List *l, *afters = NULL;
+   Edje_Program_After *a;
 
    GET_ED_OR_RETURN(NULL);
    GET_EPR_OR_RETURN(NULL);
 
-  // printf("GET AFTERS for program: %s [count: %d]\n", prog, evas_list_count(epr->after));
-
-   for (l = epr->after; l; l = l->next)
+  // printf("GET AFTERS for program: %s [count: %d]\n", prog, eina_list_count(epr->after));
+   EINA_LIST_FOREACH(epr->after, l, a)
      {
-	Edje_Program_After *a;
 	Edje_Program *p = NULL;
 
-	a = l->data;
 	p = ed->table_programs[a->id % ed->table_programs_size];
 	if (p && p->name)
 	  {
 	     printf("   a: %d name: %s\n", a->id, p->name);
-	     afters = evas_list_append(afters, eina_stringshare_add(p->name));
+	     afters = eina_list_append(afters, eina_stringshare_add(p->name));
 	  }
      }
    return afters;
@@ -4558,8 +4475,8 @@ edje_edit_program_afters_clear(Evas_Object *obj, const char *prog)
      {
 	Edje_Program_After *pa;
 
-	pa = epr->after->data;
-	epr->after = evas_list_remove_list(epr->after, epr->after);
+	pa = eina_list_data_get(epr->after);
+	epr->after = eina_list_remove_list(epr->after, epr->after);
 	free(pa);
      }
 
@@ -4582,7 +4499,7 @@ edje_edit_program_after_add(Evas_Object *obj, const char *prog, const char *afte
 
    a->id = af->id;
 
-   epr->after = evas_list_append(epr->after, a);
+   epr->after = eina_list_append(epr->after, a);
 
    return 1;
 }
@@ -4628,7 +4545,7 @@ _edje_generate_source_of_spectra(Edje * ed, const char *name, FILE * f)
 {
    Edje_Spectrum_Directory_Entry *d;
    Edje_Spectrum_Color *color = NULL;
-   Evas_List *l;
+   Eina_List *l;
 
    if (!ed || !name || !f) return;
 
@@ -4637,13 +4554,10 @@ _edje_generate_source_of_spectra(Edje * ed, const char *name, FILE * f)
 	fprintf(f, I1 "spectrum {\n");
 	fprintf(f, I2 "name: \"%s\";\n", d->entry);
 
-	for (l = d->color_list; l; l = l->next)
-	  {
-		color = l->data;
-		if (color)
-		  fprintf(f, I2 "color: %d %d %d %d %d;\n", color->r, color->g,
-			  color->b, color->a, color->d);
-	  }
+	EINA_LIST_FOREACH(d->color_list, l, color)
+	  if (color)
+	    fprintf(f, I2 "color: %d %d %d %d %d;\n", color->r, color->g,
+		    color->b, color->a, color->d);
 
 	fprintf(f, I1 "}\n");
      }
@@ -4652,30 +4566,28 @@ _edje_generate_source_of_spectra(Edje * ed, const char *name, FILE * f)
  static void
 _edje_generate_source_of_colorclass(Edje * ed, const char *name, FILE * f)
 {
-   Evas_List *l;
+   Eina_List *l;
    Edje_Color_Class *cc;
 
-   for (l = ed->file->color_classes; l; l = l->next)
-     {
-	cc = l->data;
-	if (!strcmp(cc->name, name))
-	  {
-		fprintf(f, I1 "color_class {\n");
-		fprintf(f, I2 "name: \"%s\";\n", cc->name);
-		fprintf(f, I2 "color: %d %d %d %d;\n", cc->r, cc->g, cc->b, cc->a);
-		fprintf(f, I2 "color2: %d %d %d %d;\n", cc->r2, cc->g2, cc->b2, cc->a2);
-		fprintf(f, I2 "color3: %d %d %d %d;\n", cc->r3, cc->g3, cc->b3, cc->a3);
-		fprintf(f, I1 "}\n");
-	  }
-     }
+   EINA_LIST_FOREACH(ed->file->color_classes, l, cc)
+     if (!strcmp(cc->name, name))
+       {
+	 fprintf(f, I1 "color_class {\n");
+	 fprintf(f, I2 "name: \"%s\";\n", cc->name);
+	 fprintf(f, I2 "color: %d %d %d %d;\n", cc->r, cc->g, cc->b, cc->a);
+	 fprintf(f, I2 "color2: %d %d %d %d;\n", cc->r2, cc->g2, cc->b2, cc->a2);
+	 fprintf(f, I2 "color3: %d %d %d %d;\n", cc->r3, cc->g3, cc->b3, cc->a3);
+	 fprintf(f, I1 "}\n");
+       }
 }
 
 static void
 _edje_generate_source_of_program(Evas_Object *obj, const char *program, FILE *f)
 {
-   Evas_List *l, *ll;
+   Eina_List *l, *ll;
    const char *s, *s2;
    double db, db2;
+   char *data;
 
    GET_ED_OR_RETURN();
 
@@ -4759,16 +4671,16 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, FILE *f)
    /* Targets */
    if (ll = edje_edit_program_targets_get(obj, program))
      {
-	for (l = ll; l; l = l->next)
-	  fprintf(f, I4"target: \"%s\";\n", (char *)l->data);
+	EINA_LIST_FOREACH(ll, l, data)
+	  fprintf(f, I4"target: \"%s\";\n", data);
 	edje_edit_string_list_free(ll);
      }
 
    /* Afters */
    if (ll = edje_edit_program_afters_get(obj, program))
      {
-	for (l = ll; l; l = l->next)
-	  fprintf(f, I4"after: \"%s\";\n", (char *)l->data);
+        EINA_LIST_FOREACH(ll, l, data)
+	  fprintf(f, I4"after: \"%s\";\n", data);
 	edje_edit_string_list_free(ll);
      }
 
@@ -4781,7 +4693,7 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, FILE *f)
 static void
 _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *state, FILE *f)
 {
-   Evas_List *l, *ll;
+   Eina_List *l, *ll;
    Edje_Real_Part *rp;
    const char *str;
    
@@ -4876,12 +4788,14 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
    //Image
    if (rp->part->type == EDJE_PART_TYPE_IMAGE)
      {
+        char *data;
+
 	fprintf(f, I5"image {\n");
 	fprintf(f, I6"normal: \"%s\";\n", _edje_image_name_find(obj, pd->image.id));
 
 	ll = edje_edit_state_tweens_list_get(obj, part, state);
-	for (l = ll; l; l = l->next)
-	  fprintf(f, I6"tween: \"%s\";\n", (char *)l->data);
+	EINA_LIST_FOREACH(ll, l, data)
+	  fprintf(f, I6"tween: \"%s\";\n", data);
 	edje_edit_string_list_free(ll);
       
 	if (pd->border.l || pd->border.r || pd->border.t || pd->border.b)
@@ -4973,8 +4887,9 @@ static void
 _edje_generate_source_of_part(Evas_Object *obj, const char *part, FILE *f)
 {
    const char *str;
-   Evas_List *l, *ll;
-   
+   Eina_List *l, *ll;
+   char *data;
+
    fprintf(f, I3"part {\n");
    fprintf(f, I4"name: \"%s\";\n", part);
    fprintf(f, I4"type: %s;\n", types[edje_edit_part_type_get(obj, part)]);
@@ -5026,8 +4941,8 @@ _edje_generate_source_of_part(Evas_Object *obj, const char *part, FILE *f)
 
    //Descriptions
    ll = edje_edit_part_states_list_get(obj, part);
-   for (l = ll; l; l = l->next)
-     _edje_generate_source_of_state(obj, part, (char*)l->data, f);
+   EINA_LIST_FOREACH(ll, l, data)
+     _edje_generate_source_of_state(obj, part, data, f);
    edje_edit_string_list_free(ll);
    
    fprintf(f, I3"}\n");//part
@@ -5037,9 +4952,10 @@ static void
 _edje_generate_source_of_group(Edje *ed, const char *group, FILE *f)
 {
    Evas_Object *obj;
-   Evas_List *l, *ll;
+   Eina_List *l, *ll;
    int w, h;
-   
+   char *data;
+
    obj = edje_object_add(ed->evas);
    if (!edje_object_file_set(obj, ed->file->path, group)) return;
       
@@ -5056,10 +4972,8 @@ _edje_generate_source_of_group(Edje *ed, const char *group, FILE *f)
    /* Parts */
    fprintf(f, I2"parts {\n");
    ll = edje_edit_parts_list_get(obj);
-   for (l = ll; l; l = l->next)
-     {
-        _edje_generate_source_of_part(obj, (char*)l->data, f);
-     }
+   EINA_LIST_FOREACH(ll, l, data)
+     _edje_generate_source_of_part(obj, data, f);
    edje_edit_string_list_free(ll);
    fprintf(f, I2"}\n");//parts
 
@@ -5067,8 +4981,8 @@ _edje_generate_source_of_group(Edje *ed, const char *group, FILE *f)
    if (ll = edje_edit_programs_list_get(obj))
      {
 	fprintf(f, I2 "programs {\n");
-	for (l = ll; l; l = l->next)
-	  _edje_generate_source_of_program(obj, (char *)l->data, f);
+	EINA_LIST_FOREACH(ll, l, data)
+	  _edje_generate_source_of_program(obj, data, f);
 	fprintf(f, I2 "}\n");
 	edje_edit_string_list_free(ll);
      }
@@ -5088,8 +5002,8 @@ _edje_generate_source(Evas_Object *obj)
    int fd;
    FILE *f;
 
-
-   Evas_List *l, *ll;
+   Eina_List *l, *ll;
+   char *entry;
 
    GET_ED_OR_RETURN();
    
@@ -5107,9 +5021,9 @@ _edje_generate_source(Evas_Object *obj)
    if (ll = edje_edit_images_list_get(obj))
      {
 	fprintf(f, I0"images {\n");
-	for (l = ll; l; l = l->next)
+
+	EINA_LIST_FOREACH(ll, l, entry)
 	  {
-		char *entry = l->data;  // Name
 		int comp = edje_edit_image_compression_type_get(obj, entry);
 		if (comp < 0) continue;
 
@@ -5133,9 +5047,8 @@ _edje_generate_source(Evas_Object *obj)
      {
 	fprintf(f, I0"fonts {\n");
 
-	for (l = ll; l; l = l->next)
+	EINA_LIST_FOREACH(ll, l, entry)
 	  {
-		char *entry = l->data;
 		// TODO Fixme the filename is wrong
 		fprintf(f, I1"font: \"%s.ttf\" \"%s\";\n", entry, entry);
 	  }
@@ -5148,10 +5061,10 @@ _edje_generate_source(Evas_Object *obj)
      {
 	fprintf(f, I0 "data {\n");
 
-	for (l = ll; l; l = l->next)
+	EINA_LIST_FOREACH(ll, l, entry)
 	  {
-		fprintf(f, I1 "item: \"%s\" \"%s\";\n", (char *)l->data,
-			edje_edit_data_value_get(obj, (char *)l->data));
+		fprintf(f, I1 "item: \"%s\" \"%s\";\n", entry,
+			edje_edit_data_value_get(obj, entry));
 	  }
 
 	fprintf(f, I0 "}\n\n");
@@ -5162,8 +5075,8 @@ _edje_generate_source(Evas_Object *obj)
    if (ll = edje_edit_color_classes_list_get(obj))
      {
 	fprintf(f, I0 "color_classes {\n");
-	for (l = ll; l; l = l->next)
-	  _edje_generate_source_of_colorclass(ed, (char *)l->data, f);
+	EINA_LIST_FOREACH(ll, l, entry)
+	  _edje_generate_source_of_colorclass(ed, entry, f);
 	fprintf(f, I0 "}\n\n");
 	edje_edit_string_list_free(ll);
      }
@@ -5173,8 +5086,8 @@ _edje_generate_source(Evas_Object *obj)
      {
 	fprintf(f, I0 "spectra {\n");
 
-	for (l = ll; l; l = l->next)
-	  _edje_generate_source_of_spectra(ed, (char *)l->data, f);
+	EINA_LIST_FOREACH(ll, l, entry)
+	  _edje_generate_source_of_spectra(ed, entry, f);
 
 	fprintf(f, I0 "}\n\n");
 	edje_edit_string_list_free(ll);
@@ -5186,8 +5099,8 @@ _edje_generate_source(Evas_Object *obj)
    /* Collections */
    fprintf(f, "collections {\n");
    ll = edje_file_collection_list(ed->file->path);
-   for (l = ll; l; l = l->next)
-     _edje_generate_source_of_group(ed, (char*)l->data, f);
+   EINA_LIST_FOREACH(ll, l, entry)
+     _edje_generate_source_of_group(ed, entry, f);
    fprintf(f, "}\n\n");
    edje_file_collection_list_free(ll);
 
@@ -5226,10 +5139,10 @@ source_edd(void)
    eddc.func.mem_free = NULL;
    eddc.func.str_alloc = eina_stringshare_add;
    eddc.func.str_free = eina_stringshare_del;
-   eddc.func.list_next = evas_list_next;
-   eddc.func.list_append = evas_list_append;
-   eddc.func.list_data = evas_list_data;
-   eddc.func.list_free = evas_list_free;
+   eddc.func.list_next = eina_list_next;
+   eddc.func.list_append = eina_list_append;
+   eddc.func.list_data = eina_list_data_get;
+   eddc.func.list_free = eina_list_free;
    eddc.func.hash_foreach = evas_hash_foreach;
    eddc.func.hash_add = evas_hash_add;
    eddc.func.hash_free = evas_hash_free;
@@ -5353,7 +5266,7 @@ edje_edit_save(Evas_Object *obj)
    //create the needed list of source files (only one)
    sfl = mem_alloc(SZ(SrcFile_List));
    sfl->list = NULL;
-   sfl->list = evas_list_append(sfl->list, sf);
+   sfl->list = eina_list_append(sfl->list, sf);
 
    // write the sources list to the eet file
    source_edd();
@@ -5376,7 +5289,9 @@ edje_edit_save(Evas_Object *obj)
 EAPI void
 edje_edit_print_internal_status(Evas_Object *obj)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Part *p;
+   Edje_Program *epr;
 
    GET_ED_OR_RETURN();
 
@@ -5391,13 +5306,11 @@ edje_edit_print_internal_status(Evas_Object *obj)
    printf("    parent: '%s'\n", ed->parent);
 
    printf("\n*** Parts [table:%d list:%d]\n", ed->table_parts_size,
-          evas_list_count(ed->collection->parts));
-   for (l = ed->collection->parts; l; l = l->next)
+          eina_list_count(ed->collection->parts));
+   EINA_LIST_FOREACH(ed->collection->parts, l, p)
      {
-	Edje_Part *p;
 	Edje_Real_Part *rp;
 
-	p = l->data;
 	rp = ed->table_parts[p->id % ed->table_parts_size];
 	printf("    [%d]%s ", p->id, p->name);
 	if (p == rp->part)
@@ -5407,13 +5320,11 @@ edje_edit_print_internal_status(Evas_Object *obj)
      }
 
    printf("\n*** Programs [table:%d list:%d]\n", ed->table_programs_size,
-          evas_list_count(ed->collection->programs));
-   for (l = ed->collection->programs; l; l = l->next)
+          eina_list_count(ed->collection->programs));
+   EINA_LIST_FOREACH(ed->collection->programs, l, epr)
      {
-	Edje_Program *epr;
 	Edje_Program *epr2;
 
-	epr = l->data;
 	epr2 = ed->table_programs[epr->id % ed->table_programs_size];
 	printf("     [%d]%s ", epr->id, epr->name);
 	if (epr == epr2)

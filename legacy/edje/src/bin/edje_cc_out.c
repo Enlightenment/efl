@@ -53,11 +53,11 @@ struct _Code_Lookup
 static void data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char *ptr, int len));
 
 Edje_File *edje_file = NULL;
-Evas_List *edje_collections = NULL;
-Evas_List *fonts = NULL;
-Evas_List *codes = NULL;
-Evas_List *code_lookups = NULL;
-Evas_List *aliases = NULL;
+Eina_List *edje_collections = NULL;
+Eina_List *fonts = NULL;
+Eina_List *codes = NULL;
+Eina_List *code_lookups = NULL;
+Eina_List *aliases = NULL;
 
 static Eet_Data_Descriptor *edd_edje_file = NULL;
 static Eet_Data_Descriptor *edd_edje_image_directory = NULL;
@@ -74,14 +74,14 @@ static Eet_Data_Descriptor *edd_edje_part_description = NULL;
 static Eet_Data_Descriptor *edd_edje_part_image_id = NULL;
 static Eet_Data_Descriptor *edd_edje_spectrum_color = NULL;
 
-static Evas_List *part_lookups = NULL;
-static Evas_List *program_lookups = NULL;
-static Evas_List *group_lookups = NULL;
-static Evas_List *image_lookups = NULL;
-static Evas_List *spectrum_lookups = NULL;
-static Evas_List *part_slave_lookups = NULL;
-static Evas_List *image_slave_lookups= NULL;
-static Evas_List *spectrum_slave_lookups= NULL;
+static Eina_List *part_lookups = NULL;
+static Eina_List *program_lookups = NULL;
+static Eina_List *group_lookups = NULL;
+static Eina_List *image_lookups = NULL;
+static Eina_List *spectrum_lookups = NULL;
+static Eina_List *part_slave_lookups = NULL;
+static Eina_List *image_slave_lookups= NULL;
+static Eina_List *spectrum_slave_lookups= NULL;
 
 #define ABORT_WRITE(eet_file, file) \
    eet_close(eet_file); \
@@ -124,7 +124,8 @@ static void
 check_image_part_desc (Edje_Part_Collection *pc, Edje_Part *ep,
                        Edje_Part_Description *epd, Eet_File *ef)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Part_Image_Id *iid;
 
    return;
    if (epd->image.id == -1)
@@ -132,10 +133,8 @@ check_image_part_desc (Edje_Part_Collection *pc, Edje_Part *ep,
 		     "part \"%s\", description \"%s\" %f\n",
 		     pc->id, ep->name, epd->state.name, epd->state.value);
 
-   for (l = epd->image.tween_list; l; l = l->next)
+   EINA_LIST_FOREACH(epd->image.tween_list, l, iid)
      {
-	Edje_Part_Image_Id *iid = l->data;
-
 	if (iid->id == -1)
 	  error_and_abort(ef, "Collection %i: tween image id missing for "
 			  "part \"%s\", description \"%s\" %f\n",
@@ -147,7 +146,8 @@ static void
 check_part (Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 {
    Edje_Part_Description *epd = ep->default_desc;
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Part_Description *data;
 
    if (!epd)
      error_and_abort(ef, "Collection %i: default description missing "
@@ -157,8 +157,8 @@ check_part (Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
      {
 	check_image_part_desc (pc, ep, epd, ef);
 
-	for (l = ep->other_desc; l; l = l->next)
-	  check_image_part_desc (pc, ep, l->data, ef);
+	EINA_LIST_FOREACH(ep->other_desc, l, data)
+	  check_image_part_desc (pc, ep, data, ef);
      }
 }
 
@@ -204,8 +204,8 @@ data_write_header(Eet_File *ef)
 	     /* copy aliases into collection directory */
 	     while (aliases)
 	       {
-		  edje_file->collection_dir->entries = evas_list_append(edje_file->collection_dir->entries, aliases->data);
-		  aliases = evas_list_remove_list(aliases, aliases);
+		 edje_file->collection_dir->entries = eina_list_append(edje_file->collection_dir->entries, eina_list_data_get(aliases));
+		  aliases = eina_list_remove_list(aliases, aliases);
 	       }
 	  }
 	bytes = eet_data_write(ef, edd_edje_file, "edje_file", edje_file, 1);
@@ -226,19 +226,18 @@ data_write_header(Eet_File *ef)
 static int
 data_write_fonts(Eet_File *ef, int *font_num, int *input_bytes, int *input_raw_bytes)
 {
-   Evas_List *l;;
+   Eina_List *l;;
    int bytes = 0;
    int total_bytes = 0;
+   Font *fn;
 
-   for (l = fonts; l; l = l->next)
+   EINA_LIST_FOREACH(fonts, l, fn)
      {
-	Font *fn;
 	void *fdata = NULL;
 	int fsize = 0;
-	Evas_List *ll;
+	Eina_List *ll;
 	FILE *f;
 
-	fn = l->data;
 	f = fopen(fn->file, "rb");
 	if (f)
 	  {
@@ -259,11 +258,13 @@ data_write_fonts(Eet_File *ef, int *font_num, int *input_bytes, int *input_raw_b
 	  }
 	else
 	  {
-	     for (ll = fnt_dirs; ll; ll = ll->next)
+	     char *data;
+
+	     EINA_LIST_FOREACH(fnt_dirs, ll, data)
 	       {
 		  char buf[4096];
 
-		  snprintf(buf, sizeof(buf), "%s/%s", (char *)(ll->data), fn->file);
+		  snprintf(buf, sizeof(buf), "%s/%s", data, fn->file);
 		  f = fopen(buf, "rb");
 		  if (f)
 		    {
@@ -322,7 +323,7 @@ data_write_fonts(Eet_File *ef, int *font_num, int *input_bytes, int *input_raw_b
 static int
 data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw_bytes)
 {
-   Evas_List *l;
+   Eina_List *l;
    int bytes = 0;
    int total_bytes = 0;
 
@@ -330,6 +331,7 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
      {
 	Ecore_Evas *ee;
 	Evas *evas;
+	Edje_Image_Directory_Entry *img;
 
 	ecore_init();
 	ecore_evas_init();
@@ -340,26 +342,24 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 			  "load.\n");
 
 	evas = ecore_evas_get(ee);
-	for (l = edje_file->image_dir->entries; l; l = l->next)
+	EINA_LIST_FOREACH(edje_file->image_dir->entries, l, img)
 	  {
-	     Edje_Image_Directory_Entry *img;
-
-	     img = l->data;
 	     if (img->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
 	       {
 	       }
 	     else
 	       {
 		  Evas_Object *im;
-		  Evas_List *ll;
+		  Eina_List *ll;
+		  char *data;
 
 		  im = NULL;
-		  for (ll = img_dirs; ll; ll = ll->next)
+		  EINA_LIST_FOREACH(img_dirs, ll, data)
 		    {
 		       char buf[4096];
 
 		       snprintf(buf, sizeof(buf), "%s/%s",
-				(char *)(ll->data), img->entry);
+				data, img->entry);
 		       im = evas_object_image_add(evas);
 		       if (im)
 			 {
@@ -501,70 +501,64 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 static void
 check_groups_names(Eet_File *ef)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Part_Collection_Directory_Entry *de;
 
    if (!edje_file->collection_dir)
      return;
 
    /* check that all groups have names */
-   for (l = edje_file->collection_dir->entries; l; l = l->next)
-     {
-	Edje_Part_Collection_Directory_Entry *de;
-	de = l->data;
+   EINA_LIST_FOREACH(edje_file->collection_dir->entries, l, de)
 	if (!de->entry)
 	  error_and_abort(ef, "Collection %i: name missing.\n", de->id);
-     }
 }
 
 static void
 check_spectra(Eet_File *ef)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Spectrum_Directory_Entry *se;
 
    if (!edje_file->spectrum_dir)
      return;
 
    /* check that all spectra are valid */
-   for (l = edje_file->spectrum_dir->entries; l; l = l->next)
-     {
-	Edje_Spectrum_Directory_Entry *se;
-	se = l->data;
-	check_spectrum(se, ef);
-     }
+   EINA_LIST_FOREACH(edje_file->spectrum_dir->entries, l, se)
+     check_spectrum(se, ef);
 }
 
 static void
 check_groups(Eet_File *ef)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Part_Collection *pc;
 
    /* sanity checks for parts and programs */
-   for (l = edje_collections; l; l = l->next)
+   EINA_LIST_FOREACH(edje_collections, l, pc)
      {
-	Edje_Part_Collection *pc;
-	Evas_List *ll;
+	Eina_List *ll;
+	Edje_Part *part;
+	Edje_Program *prog;
 
-	pc = l->data;
-	for (ll = pc->parts; ll; ll = ll->next)
-	  check_part(pc, ll->data, ef);
-	for (ll = pc->programs; ll; ll = ll->next)
-	  check_program(pc, ll->data, ef);
+	EINA_LIST_FOREACH(pc->parts, ll, part)
+	  check_part(pc, part, ef);
+	EINA_LIST_FOREACH(pc->programs, ll, prog)
+	  check_program(pc, prog, ef);
      }
 }
 
 static int
 data_write_groups(Eet_File *ef, int *collection_num)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Part_Collection *pc;
    int bytes = 0;
    int total_bytes = 0;
 
-   for (l = edje_collections; l; l = l->next)
+   EINA_LIST_FOREACH(edje_collections, l, pc)
      {
-	Edje_Part_Collection *pc;
 	char buf[4096];
 
-	pc = l->data;
 	snprintf(buf, sizeof(buf), "collections/%i", pc->id);
 	bytes = eet_data_write(ef, edd_edje_part_collection, buf, pc, 1);
 	if (bytes <= 0)
@@ -592,7 +586,8 @@ create_script_file(Eet_File *ef, const char *filename, const Code *cd)
      error_and_abort(ef, "Unable to open temp file \"%s\" for script "
 		     "compilation.\n", filename);
 
-   Evas_List *ll;
+   Eina_List *ll;
+   Code_Program *cp;
 
    fprintf(f, "#include <edje>\n");
    int ln = 2;
@@ -624,11 +619,8 @@ create_script_file(Eet_File *ef, const char *filename, const Code *cd)
 	}
 	ln += cd->l2 - cd->l1 + 1;
      }
-   for (ll = cd->programs; ll; ll = ll->next)
+   EINA_LIST_FOREACH(cd->programs, ll, cp)
      {
-	Code_Program *cp;
-
-	cp = ll->data;
 	if (cp->script)
 	  {
 	     while (ln < (cp->l1 - 1))
@@ -713,7 +705,7 @@ compile_script_file(Eet_File *ef, const char *source, const char *output,
 static void
 data_write_scripts(Eet_File *ef)
 {
-   Evas_List *l;
+   Eina_List *l;
    int i;
 
 #ifdef HAVE_EVIL
@@ -722,10 +714,10 @@ data_write_scripts(Eet_File *ef)
    char *tmpdir = "/tmp";
 #endif
 
-   for (i = 0, l = codes; l; l = l->next, i++)
+   for (i = 0, l = codes; l; l = eina_list_next(l), i++)
      {
 	int fd;
-	Code *cd = l->data;
+	Code *cd = eina_list_data_get(l);
 
 	if ((!cd->shared) && (!cd->programs))
 	  continue;
@@ -846,7 +838,7 @@ data_queue_group_lookup(char *name)
    Group_Lookup *gl;
 
    gl = mem_alloc(SZ(Group_Lookup));
-   group_lookups = evas_list_append(group_lookups, gl);
+   group_lookups = eina_list_append(group_lookups, gl);
    gl->name = mem_strdup(name);
 }
 
@@ -856,7 +848,7 @@ data_queue_part_lookup(Edje_Part_Collection *pc, char *name, int *dest)
    Part_Lookup *pl;
 
    pl = mem_alloc(SZ(Part_Lookup));
-   part_lookups = evas_list_append(part_lookups, pl);
+   part_lookups = eina_list_append(part_lookups, pl);
    pl->pc = pc;
    pl->name = mem_strdup(name);
    pl->dest = dest;
@@ -868,7 +860,7 @@ data_queue_program_lookup(Edje_Part_Collection *pc, char *name, int *dest)
    Program_Lookup *pl;
 
    pl = mem_alloc(SZ(Program_Lookup));
-   program_lookups = evas_list_append(program_lookups, pl);
+   program_lookups = eina_list_append(program_lookups, pl);
    pl->pc = pc;
    pl->name = mem_strdup(name);
    pl->dest = dest;
@@ -880,7 +872,7 @@ data_queue_image_lookup(char *name, int *dest)
    Image_Lookup *il;
 
    il = mem_alloc(SZ(Image_Lookup));
-   image_lookups = evas_list_append(image_lookups, il);
+   image_lookups = eina_list_append(image_lookups, il);
    il->name = mem_strdup(name);
    il->dest = dest;
 }
@@ -891,7 +883,7 @@ data_queue_spectrum_lookup(char *name, int *dest)
    Spectrum_Lookup *sl;
 
    sl = mem_alloc(SZ(Spectrum_Lookup));
-   spectrum_lookups = evas_list_append(spectrum_lookups, sl);
+   spectrum_lookups = eina_list_append(spectrum_lookups, sl);
    sl->name = mem_strdup(name);
    sl->dest = dest;
 }
@@ -902,7 +894,7 @@ data_queue_part_slave_lookup(int *master, int *slave)
    Slave_Lookup *sl;
 
    sl = mem_alloc(SZ(Slave_Lookup));
-   part_slave_lookups = evas_list_append(part_slave_lookups, sl);
+   part_slave_lookups = eina_list_append(part_slave_lookups, sl);
    sl->master = master;
    sl->slave = slave;
 }
@@ -913,7 +905,7 @@ data_queue_image_slave_lookup(int *master, int *slave)
    Slave_Lookup *sl;
 
    sl = mem_alloc(SZ(Slave_Lookup));
-   image_slave_lookups = evas_list_append(image_slave_lookups, sl);
+   image_slave_lookups = eina_list_append(image_slave_lookups, sl);
    sl->master = master;
    sl->slave = slave;
 }
@@ -924,41 +916,36 @@ data_queue_spectrum_slave_lookup(int *master, int *slave)
    Slave_Lookup *sl;
 
    sl = mem_alloc(SZ(Slave_Lookup));
-   spectrum_slave_lookups = evas_list_append(spectrum_slave_lookups, sl);
+   spectrum_slave_lookups = eina_list_append(spectrum_slave_lookups, sl);
    sl->master = master;
    sl->slave = slave;
 }
 
 void
-handle_slave_lookup(Evas_List *list, int *master, int value)
+handle_slave_lookup(Eina_List *list, int *master, int value)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Slave_Lookup *sl;
 
-   for (l = list; l; l = l->next)
-   {
-      Slave_Lookup *sl = l->data;
-
-      if (sl->master == master)
-	 *sl->slave = value;
-   }
+   EINA_LIST_FOREACH(list, l, sl)
+     if (sl->master == master)
+       *sl->slave = value;
 }
 
 void
 data_process_lookups(void)
 {
-   Evas_List *l;
+   Eina_List *l;
 
    while (part_lookups)
      {
 	Part_Lookup *pl;
+	Edje_Part *ep;
 
-	pl = part_lookups->data;
+	pl = eina_list_data_get(part_lookups);
 
-	for (l = pl->pc->parts; l; l = l->next)
+	EINA_LIST_FOREACH(pl->pc->parts, l, ep)
 	  {
-	     Edje_Part *ep;
-
-	     ep = l->data;
 	     if ((ep->name) && (!strcmp(ep->name, pl->name)))
 	       {
 		  handle_slave_lookup(part_slave_lookups, pl->dest, ep->id);
@@ -972,7 +959,7 @@ data_process_lookups(void)
 		     progname, pl->name);
 	     exit(-1);
 	  }
-	part_lookups = evas_list_remove(part_lookups, pl);
+	part_lookups = eina_list_remove(part_lookups, pl);
 	free(pl->name);
 	free(pl);
      }
@@ -980,14 +967,12 @@ data_process_lookups(void)
    while (program_lookups)
      {
 	Program_Lookup *pl;
+	Edje_Program *ep;
 
-	pl = program_lookups->data;
+	pl = eina_list_data_get(program_lookups);
 
-	for (l = pl->pc->programs; l; l = l->next)
+	EINA_LIST_FOREACH(pl->pc->programs, l, ep)
 	  {
-	     Edje_Program *ep;
-
-	     ep = l->data;
 	     if ((ep->name) && (!strcmp(ep->name, pl->name)))
 	       {
 		  *(pl->dest) = ep->id;
@@ -1000,7 +985,7 @@ data_process_lookups(void)
 		     progname, pl->name);
 	     exit(-1);
 	  }
-	program_lookups = evas_list_remove(program_lookups, pl);
+	program_lookups = eina_list_remove(program_lookups, pl);
 	free(pl->name);
 	free(pl);
      }
@@ -1008,12 +993,12 @@ data_process_lookups(void)
    while (group_lookups)
      {
         Group_Lookup *gl;
+	Edje_Part_Collection_Directory_Entry *de;
 
-        gl = group_lookups->data;
-        for (l = edje_file->collection_dir->entries; l; l = l->next)
+        gl = eina_list_data_get(group_lookups);
+
+	EINA_LIST_FOREACH(edje_file->collection_dir->entries, l, de)
           {
-             Edje_Part_Collection_Directory_Entry *de;
-             de = l->data;
              if (!strcmp(de->entry, gl->name))
                {
                   break;
@@ -1025,7 +1010,7 @@ data_process_lookups(void)
                      progname, gl->name);
              exit(-1);
           }
-        group_lookups = evas_list_remove(group_lookups, gl);
+        group_lookups = eina_list_remove(group_lookups, gl);
         free(gl->name);
         free(gl);
      }
@@ -1033,18 +1018,16 @@ data_process_lookups(void)
    while (image_lookups)
      {
 	Image_Lookup *il;
+	Edje_Image_Directory_Entry *de;
 
-	il = image_lookups->data;
+	il = eina_list_data_get(image_lookups);
 
 	if (!edje_file->image_dir)
 	  l = NULL;
 	else
 	  {
-	     for (l = edje_file->image_dir->entries; l; l = l->next)
+	     EINA_LIST_FOREACH(edje_file->image_dir->entries, l, de)
 	       {
-		  Edje_Image_Directory_Entry *de;
-
-		  de = l->data;
 		  if ((de->entry) && (!strcmp(de->entry, il->name)))
 		    {
 		       handle_slave_lookup(image_slave_lookups, il->dest, de->id);
@@ -1063,7 +1046,7 @@ data_process_lookups(void)
 		     progname, il->name);
 	     exit(-1);
 	  }
-	image_lookups = evas_list_remove(image_lookups, il);
+	image_lookups = eina_list_remove(image_lookups, il);
 	free(il->name);
 	free(il);
      }
@@ -1071,18 +1054,16 @@ data_process_lookups(void)
    while (spectrum_lookups)
      {
 	Spectrum_Lookup *il;
+	Edje_Spectrum_Directory_Entry *de;
 
-	il = spectrum_lookups->data;
+	il = eina_list_data_get(spectrum_lookups);
 
 	if (!edje_file->spectrum_dir)
 	  l = NULL;
 	else
 	  {
-	     for (l = edje_file->spectrum_dir->entries; l; l = l->next)
+	     EINA_LIST_FOREACH(edje_file->spectrum_dir->entries, l, de)
 	       {
-		  Edje_Spectrum_Directory_Entry *de;
-
-		  de = l->data;
 		  *(il->dest) = 1;
 		  if ((de->entry) && (!strcmp(de->entry, il->name)))
 		    {
@@ -1099,27 +1080,27 @@ data_process_lookups(void)
 		     progname, il->name);
 	     exit(-1);
 	  }
-	spectrum_lookups = evas_list_remove(spectrum_lookups, il);
+	spectrum_lookups = eina_list_remove(spectrum_lookups, il);
 	free(il->name);
 	free(il);
      }
 
    while (part_slave_lookups)
      {
-	free(part_slave_lookups->data);
-	part_slave_lookups = evas_list_remove_list(part_slave_lookups, part_slave_lookups);
+        free(eina_list_data_get(part_slave_lookups));
+	part_slave_lookups = eina_list_remove_list(part_slave_lookups, part_slave_lookups);
      }
 
    while (image_slave_lookups)
      {
-	free(image_slave_lookups->data);
-	image_slave_lookups = evas_list_remove_list(image_slave_lookups, image_slave_lookups);
+        free(eina_list_data_get(image_slave_lookups));
+	image_slave_lookups = eina_list_remove_list(image_slave_lookups, image_slave_lookups);
      }
 
    while (spectrum_slave_lookups)
      {
-	free(spectrum_slave_lookups->data);
-	spectrum_slave_lookups = evas_list_remove_list(spectrum_slave_lookups, spectrum_slave_lookups);
+        free(eina_list_data_get(spectrum_slave_lookups));
+	spectrum_slave_lookups = eina_list_remove_list(spectrum_slave_lookups, spectrum_slave_lookups);
      }
 }
 
@@ -1244,7 +1225,7 @@ _data_queue_part_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int len
 
    data_queue_part_lookup(pc, name, &(cl->val));
 
-   code_lookups = evas_list_append(code_lookups, cl);
+   code_lookups = eina_list_append(code_lookups, cl);
 }
 static void
 _data_queue_program_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int len)
@@ -1256,7 +1237,7 @@ _data_queue_program_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int 
 
    data_queue_program_lookup(pc, name, &(cl->val));
 
-   code_lookups = evas_list_append(code_lookups, cl);
+   code_lookups = eina_list_append(code_lookups, cl);
 }
 static void
 _data_queue_group_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int len)
@@ -1273,24 +1254,25 @@ _data_queue_image_pc_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int
 
    data_queue_image_lookup(name, &(cl->val));
 
-   code_lookups = evas_list_append(code_lookups, cl);
+   code_lookups = eina_list_append(code_lookups, cl);
 }
 
 void
 data_process_scripts(void)
 {
-   Evas_List *l, *l2;
+   Eina_List *l, *l2;
 
-   for (l = codes, l2 = edje_collections; (l) && (l2); l = l->next, l2 = l2->next)
+   for (l = codes, l2 = edje_collections; (l) && (l2); l = eina_list_next(l), l2 = eina_list_next(l2))
      {
 	Code *cd;
 	Edje_Part_Collection *pc;
 
-	cd = l->data;
-	pc = l2->data;
+	cd = eina_list_data_get(l);
+	pc = eina_list_data_get(l2);
 	if ((cd->shared) || (cd->programs))
 	  {
-	     Evas_List *ll;
+	     Eina_List *ll;
+	     Code_Program *cp;
 
 	     if (cd->shared)
 	       {
@@ -1299,11 +1281,8 @@ data_process_scripts(void)
 		  data_process_string(pc, "IMAGE",   cd->shared, _data_queue_image_pc_lookup);
 		  data_process_string(pc, "GROUP",   cd->shared, _data_queue_group_lookup);
 	       }
-	     for (ll = cd->programs; ll; ll = ll->next)
+	     EINA_LIST_FOREACH(cd->programs, ll, cp)
 	       {
-		  Code_Program *cp;
-
-		  cp = ll->data;
 		  if (cp->script)
 		    {
 		       data_process_string(pc, "PART",    cp->script, _data_queue_part_lookup);
@@ -1319,15 +1298,14 @@ data_process_scripts(void)
 void
 data_process_script_lookups(void)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Code_Lookup *cl;
 
-   for (l = code_lookups; l; l = l->next)
+   EINA_LIST_FOREACH(code_lookups, l, cl)
      {
-	Code_Lookup *cl;
 	char buf[256];
 	int i, n;
 
-	cl = l->data;
 	snprintf(buf, sizeof(buf), "%i", cl->val);
 	n = strlen(buf);
 	if (n > cl->len)

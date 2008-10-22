@@ -53,7 +53,8 @@ _edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *name,
 {
    Edje_Part *ep = rp->part;
    Edje_Part_Description *ret = NULL;
-   Evas_List *l;
+   Edje_Part_Description *d;
+   Eina_List *l;
    double min_dst = 999.0;
 
    if (!strcmp(name, "default") && val == 0.0)
@@ -67,11 +68,8 @@ _edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *name,
 	ret = ep->default_desc;
 	min_dst = ABS(ep->default_desc->state.value - val);
      }
-
-   for (l = ep->other_desc; l; l = l->next)
+   EINA_LIST_FOREACH(ep->other_desc, l, d)
      {
-	Edje_Part_Description *d = l->data;
-
 	if (!strcmp(d->state.name, name))
 	  {
 	     double dst;
@@ -602,7 +600,7 @@ _edje_part_recalc_single(Edje *ed,
 	const char *text = "";
 	const char *style = "";
 	Edje_Style *stl  = NULL;
-	Evas_List *l;
+	Eina_List *l;
 
 	if (chosen_desc->text.id_source >= 0)
 	  {
@@ -630,9 +628,8 @@ _edje_part_recalc_single(Edje *ed,
 	     if (ep->text.text) text = ep->text.text;
 	  }
 
-	for (l = ed->file->styles; l; l = l->next)
+	EINA_LIST_FOREACH(ed->file->styles, l, stl)
 	  {
-	     stl = l->data;
 	     if ((stl->name) && (!strcmp(stl->name, style))) break;
 	     stl = NULL;
 	  }
@@ -1165,15 +1162,15 @@ _edje_gradient_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, 
        p3->gradient.id != ep->gradient_id)
      {
 	Edje_Spectrum_Directory_Entry *se;
-	Evas_List *l;
+	Edje_Spectrum_Color *sc;
+	Eina_List *l;
 
-	se = evas_list_nth(ed->file->spectrum_dir->entries, p3->gradient.id);
+	se = eina_list_nth(ed->file->spectrum_dir->entries, p3->gradient.id);
 	if (se)
 	  {
 	     evas_object_gradient_clear(ep->object);
-	     for (l = se->color_list; l; l = l->next)
+	     EINA_LIST_FOREACH(se->color_list, l, sc)
 	       {
-		  Edje_Spectrum_Color *sc = l->data;
 		  evas_object_gradient_color_stop_add(ep->object, sc->r,
 						      sc->g, sc->b, 255,
 						      sc->d);
@@ -1205,7 +1202,7 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 	Edje_Image_Directory_Entry *ie;
 
 	if (!ed->file->image_dir) ie = NULL;
-	else ie = evas_list_nth(ed->file->image_dir->entries, (-image_id) - 1);
+	else ie = eina_list_nth(ed->file->image_dir->entries, (-image_id) - 1);
 	if ((ie) &&
 	    (ie->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL) &&
 	    (ie->entry))
@@ -1217,7 +1214,7 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
      {
 	image_count = 2;
 	if (ep->param2.description)
-	  image_count += evas_list_count(ep->param2.description->image.tween_list);
+	  image_count += eina_list_count(ep->param2.description->image.tween_list);
 	image_num = (pos * ((double)image_count - 0.5));
 	if (image_num > (image_count - 1))
 	  image_num = image_count - 1;
@@ -1229,7 +1226,7 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 	  {
 	     Edje_Part_Image_Id *imid;
 
-	     imid = evas_list_nth(ep->param2.description->image.tween_list,
+	     imid = eina_list_nth(ep->param2.description->image.tween_list,
 				  image_num - 1);
 	     if (imid) image_id = imid->id;
 	  }

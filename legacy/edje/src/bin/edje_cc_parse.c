@@ -39,8 +39,8 @@ static int strstrip(const char *in, char *out, size_t size);
 
 
 int        line = 0;
-Evas_List *stack = NULL;
-Evas_List *params = NULL;
+Eina_List *stack = NULL;
+Eina_List *params = NULL;
 
 static char  file_buf[4096];
 static int   verbatim = 0;
@@ -83,7 +83,7 @@ new_object(void)
      {
 	fprintf(stderr, "%s: Error. %s:%i unhandled keyword %s\n",
 		progname, file_in, line - 1,
-		(char *)evas_list_data(evas_list_last(stack)));
+		(char *)eina_list_data_get(eina_list_last(stack)));
 	exit(-1);
      }
    free(id);
@@ -113,7 +113,7 @@ new_statement(void)
      {
 	fprintf(stderr, "%s: Error. %s:%i unhandled keyword %s\n",
 		progname, file_in, line - 1,
-		(char *)evas_list_data(evas_list_last(stack)));
+		(char *)eina_list_data_get(eina_list_last(stack)));
 	exit(-1);
      }
    free(id);
@@ -362,17 +362,18 @@ stack_id(void)
 {
    char *id;
    int len;
-   Evas_List *l;
+   Eina_List *l;
+   char *data;
 
    len = 0;
-   for (l = stack; l; l = l->next)
-     len += strlen(l->data) + 1;
+   EINA_LIST_FOREACH(stack, l, data)
+     len += strlen(data) + 1;
    id = mem_alloc(len);
    id[0] = 0;
-   for (l = stack; l; l = l->next)
+   EINA_LIST_FOREACH(stack, l, data)
      {
-	strcat(id, l->data);
-	if (l->next) strcat(id, ".");
+	strcat(id, data);
+	if (eina_list_next(l)) strcat(id, ".");
      }
    return id;
 }
@@ -383,11 +384,11 @@ stack_chop_top(void)
    char *top;
 
    /* remove top from stack */
-   top = evas_list_data(evas_list_last(stack));
+   top = eina_list_data_get(eina_list_last(stack));
    if (top)
      {
 	free(top);
-	stack = evas_list_remove(stack, top);
+	stack = eina_list_remove(stack, top);
      }
    else
      {
@@ -446,8 +447,8 @@ parse(char *data, off_t size)
 		       /* clear out params */
 		       while (params)
 			 {
-			    free(params->data);
-			    params = evas_list_remove(params, params->data);
+			    free(eina_list_data_get(params));
+			    params = eina_list_remove(params, eina_list_data_get(params));
 			 }
 		       /* remove top from stack */
 		       stack_chop_top();
@@ -467,10 +468,10 @@ parse(char *data, off_t size)
 	else
 	  {
 	     if (do_params)
-	       params = evas_list_append(params, token);
+	       params = eina_list_append(params, token);
 	     else
 	       {
-		  stack = evas_list_append(stack, token);
+		  stack = eina_list_append(stack, token);
 		  new_object();
 		  if ((verbatim == 1) && (p < (end - 2)))
 		    {
@@ -638,19 +639,18 @@ compile(void)
 	  def = mem_strdup("");
 	else
 	  {
-	     Evas_List *l;
+	     Eina_List *l;
 	     int len;
+	     char *data;
 
 	     len = 0;
-	     for (l = defines; l; l = l->next)
-	       {
-		  len += strlen(l->data) + 1;
-	       }
+	     EINA_LIST_FOREACH(defines, l, data)
+	       len += strlen(data) + 1;
 	     def = mem_alloc(len + 1);
 	     def[0] = 0;
-	     for (l = defines; l; l = l->next)
+	     EINA_LIST_FOREACH(defines, l, data)
 	       {
-		  strcat(def, l->data);
+		  strcat(def, data);
 		  strcat(def, " ");
 	       }
 	  }
@@ -726,7 +726,7 @@ is_param(int n)
 {
    char *str;
 
-   str = evas_list_nth(params, n);
+   str = eina_list_nth(params, n);
    if (str) return 1;
    return 0;
 }
@@ -738,7 +738,7 @@ is_num(int n)
    long int ret;
    char *end;
 
-   str = evas_list_nth(params, n);
+   str = eina_list_nth(params, n);
    if (!str)
      {
 	fprintf(stderr, "%s: Error. %s:%i no parameter supplied as argument %i\n",
@@ -758,7 +758,7 @@ parse_str(int n)
    char *str;
    char *s;
 
-   str = evas_list_nth(params, n);
+   str = eina_list_nth(params, n);
    if (!str)
      {
 	fprintf(stderr, "%s: Error. %s:%i no parameter supplied as argument %i\n",
@@ -821,7 +821,7 @@ parse_enum(int n, ...)
    int result;
    va_list va;
 
-   str = evas_list_nth(params, n);
+   str = eina_list_nth(params, n);
    if (!str)
      {
 	fprintf(stderr, "%s: Error. %s:%i no parameter supplied as argument %i\n",
@@ -839,13 +839,14 @@ parse_enum(int n, ...)
 int
 parse_flags(int n, ...)
 {
-   Evas_List *lst;
+   Eina_List *lst;
    int result = 0;
    va_list va;
+   char *data;
 
    va_start(va, n);
-   for (lst = evas_list_nth_list(params, n); lst != NULL; lst = lst->next)
-     result |= _parse_enum(lst->data, va);
+   EINA_LIST_FOREACH(eina_list_nth_list(params, n), lst, data)
+     result |= _parse_enum(data, va);
    va_end(va);
 
    return result;
@@ -857,7 +858,7 @@ parse_int(int n)
    char *str;
    int i;
 
-   str = evas_list_nth(params, n);
+   str = eina_list_nth(params, n);
    if (!str)
      {
 	fprintf(stderr, "%s: Error. %s:%i no parameter supplied as argument %i\n",
@@ -874,7 +875,7 @@ parse_int_range(int n, int f, int t)
    char *str;
    int i;
 
-   str = evas_list_nth(params, n);
+   str = eina_list_nth(params, n);
    if (!str)
      {
 	fprintf(stderr, "%s: Error. %s:%i no parameter supplied as argument %i\n",
@@ -897,7 +898,7 @@ parse_bool(int n)
    char *str, buf[4096];
    int i;
 
-   str = evas_list_nth(params, n);
+   str = eina_list_nth(params, n);
    if (!str)
      {
 	fprintf(stderr, "%s: Error. %s:%i no parameter supplied as argument %i\n",
@@ -933,7 +934,7 @@ parse_float(int n)
    char *str;
    double i;
 
-   str = evas_list_nth(params, n);
+   str = eina_list_nth(params, n);
    if (!str)
      {
 	fprintf(stderr, "%s: Error. %s:%i no parameter supplied as argument %i\n",
@@ -950,7 +951,7 @@ parse_float_range(int n, double f, double t)
    char *str;
    double i;
 
-   str = evas_list_nth(params, n);
+   str = eina_list_nth(params, n);
    if (!str)
      {
 	fprintf(stderr, "%s: Error. %s:%i no parameter supplied as argument %i\n",
@@ -970,7 +971,7 @@ parse_float_range(int n, double f, double t)
 void
 check_arg_count(int required_args)
 {
-   int num_args = evas_list_count (params);
+   int num_args = eina_list_count (params);
 
    if (num_args != required_args)
      {
@@ -983,7 +984,7 @@ check_arg_count(int required_args)
 void
 check_min_arg_count(int min_required_args)
 {
-   int num_args = evas_list_count (params);
+   int num_args = eina_list_count (params);
 
    if (num_args < min_required_args)
      {

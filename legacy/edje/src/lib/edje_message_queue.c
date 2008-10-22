@@ -7,8 +7,8 @@
 static Ecore_Job *job = NULL;
 static Ecore_Timer *job_loss_timer = NULL;
 
-static Evas_List *msgq = NULL;
-static Evas_List *tmp_msgq = NULL;
+static Eina_List *msgq = NULL;
+static Eina_List *tmp_msgq = NULL;
 
 EAPI void
 edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg)
@@ -41,30 +41,27 @@ edje_object_message_handler_set(Evas_Object *obj, void (*func) (void *data, Evas
 EAPI void
 edje_object_message_signal_process(Evas_Object *obj)
 {
-   Evas_List *l, *tmpq = NULL;
+   Eina_List *l, *tmpq = NULL;
    Edje *ed;
+   Edje_Message *em;
+   const void *data;
 
    ed = _edje_fetch(obj);
    if (!ed) return;
 
-   for (l = msgq; l; l = l->next)
-     {
-	Edje_Message *em;
-
-	em = l->data;
-	if (em->edje == ed)
-	  tmpq = evas_list_append(tmpq, em);
-     }
+   EINA_LIST_FOREACH(msgq, l, em)
+     if (em->edje == ed)
+       tmpq = eina_list_append(tmpq, em);
    /* now remove them from the old queue */
-   for (l = tmpq; l; l = l->next)
-     msgq = evas_list_remove(msgq, l->data);
+   EINA_LIST_FOREACH(tmpq, l, data)
+     msgq = eina_list_remove(msgq, data);
    /* a temporary message queue */
    if (tmp_msgq)
      {
 	while (tmpq)
 	  {
-	     tmp_msgq = evas_list_append(tmp_msgq, tmpq->data);
-	     tmpq = evas_list_remove_list(tmpq, tmpq);
+	     tmp_msgq = eina_list_append(tmp_msgq, tmpq->data);
+	     tmpq = eina_list_remove_list(tmpq, tmpq);
 	  }
      }
    else
@@ -78,7 +75,7 @@ edje_object_message_signal_process(Evas_Object *obj)
 	Edje_Message *em;
 
 	em = tmp_msgq->data;
-	tmp_msgq = evas_list_remove_list(tmp_msgq, tmp_msgq);
+	tmp_msgq = eina_list_remove_list(tmp_msgq, tmp_msgq);
 	em->edje->message.num--;
 	_edje_message_process(em);
 	_edje_message_free(em);
@@ -418,7 +415,7 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
      }
 
    em->msg = msg;
-   msgq = evas_list_append(msgq, em);
+   msgq = eina_list_append(msgq, em);
 }
 
 void
@@ -598,8 +595,8 @@ _edje_message_queue_process(void)
 	  {
 	     while (msgq)
 	       {
-		  tmp_msgq = evas_list_append(tmp_msgq, msgq->data);
-		  msgq = evas_list_remove_list(msgq, msgq);
+		  tmp_msgq = eina_list_append(tmp_msgq, msgq->data);
+		  msgq = eina_list_remove_list(msgq, msgq);
 	       }
 	  }
 	else
@@ -615,7 +612,7 @@ _edje_message_queue_process(void)
 
 	     em = tmp_msgq->data;
 	     ed = em->edje;
-	     tmp_msgq = evas_list_remove_list(tmp_msgq, tmp_msgq);
+	     tmp_msgq = eina_list_remove_list(tmp_msgq, tmp_msgq);
 	     em->edje->message.num--;
 	     if (!ed->delete_me)
 	       {
@@ -649,7 +646,7 @@ _edje_message_queue_clear(void)
 	Edje_Message *em;
 
 	em = msgq->data;
-	msgq = evas_list_remove_list(msgq, msgq);
+	msgq = eina_list_remove_list(msgq, msgq);
 	em->edje->message.num--;
 	_edje_message_free(em);
      }
@@ -658,7 +655,7 @@ _edje_message_queue_clear(void)
 	Edje_Message *em;
 
 	em = tmp_msgq->data;
-	tmp_msgq = evas_list_remove_list(tmp_msgq, tmp_msgq);
+	tmp_msgq = eina_list_remove_list(tmp_msgq, tmp_msgq);
 	em->edje->message.num--;
 	_edje_message_free(em);
      }
@@ -667,21 +664,21 @@ _edje_message_queue_clear(void)
 void
 _edje_message_del(Edje *ed)
 {
-   Evas_List *l;
+   Eina_List *l;
 
    if (ed->message.num <= 0) return;
    /* delete any messages on the main queue for this edje object */
    for (l = msgq; l; )
      {
 	Edje_Message *em;
-	Evas_List *lp;
+	Eina_List *lp;
 
-	em = l->data;
+	em = eina_list_data_get(l);
 	lp = l;
-	l = l->next;
+	l = eina_list_next(l);
 	if (em->edje == ed)
 	  {
-	     msgq = evas_list_remove_list(msgq, lp);
+	     msgq = eina_list_remove_list(msgq, lp);
 	     em->edje->message.num--;
 	     _edje_message_free(em);
 	  }
@@ -691,14 +688,14 @@ _edje_message_del(Edje *ed)
    for (l = tmp_msgq; l; )
      {
 	Edje_Message *em;
-	Evas_List *lp;
+	Eina_List *lp;
 
-	em = l->data;
+	em = eina_list_data_get(l);
 	lp = l;
-	l = l->next;
+	l = eina_list_next(l);
 	if (em->edje == ed)
 	  {
-	     tmp_msgq = evas_list_remove_list(tmp_msgq, lp);
+	     tmp_msgq = eina_list_remove_list(tmp_msgq, lp);
 	     em->edje->message.num--;
 	     _edje_message_free(em);
 	  }

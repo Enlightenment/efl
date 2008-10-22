@@ -228,13 +228,14 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
 void
 _edje_textblock_style_all_update(Edje *ed)
 {
-   Evas_List *l, *ll;
+   Eina_List *l, *ll;
+   Edje_Style *stl;
 
    if (!ed->file) return;
 
-   for (l = ed->file->styles; l; l = l->next)
+   EINA_LIST_FOREACH(ed->file->styles, l, stl)
      {
-	Edje_Style *stl;
+
 	Edje_Style_Tag *tag;
 	Edje_Text_Class *tc;
 	char *buf = NULL;
@@ -243,17 +244,13 @@ _edje_textblock_style_all_update(Edje *ed)
 	int found = 0;
 	char *fontset = NULL, *fontsource = NULL;
 
-	stl = l->data;
 	/* Make sure the style is already defined */
 	if (!stl->style) break;
 
 	/* Make sure the style contains a text_class */
-	for (ll = stl->tags; ll; ll = ll->next)
-	  {
-	     tag = ll->data;
-	     if (tag->text_class)
-	       found = 1;
-	  }
+	EINA_LIST_FOREACH(stl->tags, ll, tag)
+	  if (tag->text_class)
+	    found = 1;
 
 	/* No text classes , goto next style */
 	if (!found) continue;
@@ -264,9 +261,8 @@ _edje_textblock_style_all_update(Edje *ed)
 	fontsource = _edje_str_escape(ed->file->path);
 
 	/* Build the style from each tag */
-	for (ll = stl->tags; ll; ll = ll->next)
+	EINA_LIST_FOREACH(stl->tags, ll, tag)
 	  {
-	     tag = ll->data;
 	     if (!tag->key) continue;
 
 	     /* Add Tag Key */
@@ -335,23 +331,20 @@ _edje_textblock_style_all_update(Edje *ed)
 void
 _edje_textblock_styles_add(Edje *ed)
 {
-   Evas_List *l, *ll;
+   Eina_List *l, *ll;
+   Edje_Style *stl;
 
    if (!ed->file) return;
 
-   for (l = ed->file->styles; l; l = l->next)
+   EINA_LIST_FOREACH(ed->file->styles, l, stl)
      {
-	Edje_Style *stl;
 	Edje_Style_Tag *tag;
 
-	stl = l->data;
-
 	/* Make sure the style contains the text_class */
-	for (ll = stl->tags; ll; ll = ll->next)
+	EINA_LIST_FOREACH(stl->tags, ll, tag)
 	  {
-	     tag = ll->data;
-	     if (!tag->text_class) continue;
-	     _edje_text_class_member_add(ed, tag->text_class);
+	    if (!tag->text_class) continue;
+	    _edje_text_class_member_add(ed, tag->text_class);
 	  }
      }
 }
@@ -359,21 +352,18 @@ _edje_textblock_styles_add(Edje *ed)
 void
 _edje_textblock_styles_del(Edje *ed)
 {
-   Evas_List *l, *ll;
+   Eina_List *l, *ll;
+   Edje_Style *stl;
 
    if (!ed->file) return;
 
-   for (l = ed->file->styles; l; l = l->next)
+   EINA_LIST_FOREACH(ed->file->styles, l, stl)
      {
-	Edje_Style *stl;
 	Edje_Style_Tag *tag;
 
-	stl = l->data;
-
 	/* Make sure the style contains the text_class */
-	for (ll = stl->tags; ll; ll = ll->next)
+	EINA_LIST_FOREACH(stl->tags, ll, tag)
 	  {
-	     tag = ll->data;
 	     if (!tag->text_class) continue;
 	     _edje_text_class_member_del(ed, tag->text_class);
 	  }
@@ -389,18 +379,17 @@ _edje_textblock_styles_del(Edje *ed)
 void
 _edje_textblock_style_parse_and_fix(Edje_File *edf)
 {
-   Evas_List *l, *ll;
+   Eina_List *l, *ll;
+   Edje_Style *stl;
 
-   for (l = edf->styles; l; l = l->next)
+   EINA_LIST_FOREACH(edf->styles, l, stl)
      {
-	Edje_Style *stl;
 	Edje_Style_Tag *tag;
 	char *buf = NULL;
 	int bufalloc = 0;
 	int buflen = 0;
 	char *fontset = NULL, *fontsource = NULL, *ts;
 
-	stl = l->data;
 	if (stl->style) break;
 
 	stl->style = evas_textblock_style_new();
@@ -411,9 +400,8 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
 	fontsource = _edje_str_escape(edf->path);
 
 	/* Build the style from each tag */
-	for (ll = stl->tags; ll; ll = ll->next)
+	EINA_LIST_FOREACH(stl->tags, ll, tag)
 	  {
-	     tag = ll->data;
 	     if (!tag->key) continue;
 
 	     /* Add Tag Key */
@@ -479,13 +467,13 @@ _edje_textblock_style_cleanup(Edje_File *edf)
 	Edje_Style *stl;
 
 	stl = edf->styles->data;
-	edf->styles = evas_list_remove_list(edf->styles, edf->styles);
+	edf->styles = eina_list_remove_list(edf->styles, edf->styles);
 	while (stl->tags)
 	  {
 	     Edje_Style_Tag *tag;
 
 	     tag = stl->tags->data;
-	     stl->tags = evas_list_remove_list(stl->tags, stl->tags);
+	     stl->tags = eina_list_remove_list(stl->tags, stl->tags);
              if (edf->free_strings)
                {
                   if (tag->key) eina_stringshare_del(tag->key);

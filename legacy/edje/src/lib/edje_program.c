@@ -8,7 +8,7 @@ static void _edje_emit_cb(Edje *ed, const char *sig, const char *src);
 
 int             _edje_anim_count = 0;
 Ecore_Animator *_edje_timer = NULL;
-Evas_List      *_edje_animators = NULL;
+Eina_List      *_edje_animators = NULL;
 
 /************************** API Routines **************************/
 
@@ -99,7 +99,7 @@ edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const ch
      escb->source = eina_stringshare_add(source);
    escb->func = func;
    escb->data = data;
-   ed->callbacks = evas_list_append(ed->callbacks, escb);
+   ed->callbacks = eina_list_append(ed->callbacks, escb);
    if (ed->walking_callbacks)
      {
 	escb->just_added = 1;
@@ -125,17 +125,15 @@ EAPI void *
 edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source))
 {
    Edje *ed;
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Signal_Callback *escb;
 
    if ((!emission) || (!source) || (!func)) return NULL;
    ed = _edje_fetch(obj);
    if (!ed) return NULL;
    if (ed->delete_me) return NULL;
-   for (l = ed->callbacks; l; l = l->next)
+   EINA_LIST_FOREACH(ed->callbacks, l, escb)
      {
-	Edje_Signal_Callback *escb;
-
-	escb = l->data;
 	if ((escb->func == func) &&
 	    ((!escb->signal && !emission[0]) ||
              (escb->signal && !strcmp(escb->signal, emission))) &&
@@ -154,7 +152,7 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
 	       {
 		  _edje_callbacks_patterns_clean(ed);
 
-		  ed->callbacks = evas_list_remove_list(ed->callbacks, l);
+		  ed->callbacks = eina_list_remove_list(ed->callbacks, l);
 		  if (escb->signal) eina_stringshare_del(escb->signal);
 		  if (escb->source) eina_stringshare_del(escb->source);
 		  free(escb);
@@ -220,7 +218,8 @@ edje_object_play_set(Evas_Object *obj, int play)
 {
    Edje *ed;
    double t;
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Running_Program *runp;
    int i;
 
    ed = _edje_fetch(obj);
@@ -231,13 +230,8 @@ edje_object_play_set(Evas_Object *obj, int play)
 	if (!ed->paused) return;
 	ed->paused = 0;
 	t = ecore_time_get() - ed->paused_at;
-	for (l = ed->actions; l; l = l->next)
-	  {
-	     Edje_Running_Program *runp;
-
-	     runp = l->data;
-	     runp->start_time += t;
-	  }
+	EINA_LIST_FOREACH(ed->actions, l, runp)
+	  runp->start_time += t;
      }
    else
      {
@@ -284,7 +278,7 @@ EAPI void
 edje_object_animation_set(Evas_Object *obj, int on)
 {
    Edje *ed;
-   Evas_List *l;
+   Eina_List *l;
    int i;
 
    ed = _edje_fetch(obj);
@@ -295,20 +289,21 @@ edje_object_animation_set(Evas_Object *obj, int on)
    _edje_freeze(ed);
    if (!on)
      {
-	Evas_List *newl = NULL;
+	Eina_List *newl = NULL;
+	const void *data;
 
-	for (l = ed->actions; l; l = l->next)
-	  newl = evas_list_append(newl, l->data);
+	EINA_LIST_FOREACH(ed->actions, l, data)
+	  newl = eina_list_append(newl, data);
 	while (newl)
 	  {
 	     Edje_Running_Program *runp;
 
-	     runp = newl->data;
-	     newl = evas_list_remove(newl, newl->data);
+	     runp = eina_list_data_get(newl);
+	     newl = eina_list_remove(newl, eina_list_data_get(newl));
 	     _edje_program_run_iterate(runp, runp->start_time + runp->program->tween.time);
 	     if (_edje_block_break(ed))
 	       {
-		  evas_list_free(newl);
+		  eina_list_free(newl);
 		  goto break_prog;
 	       }
 	  }
@@ -360,8 +355,10 @@ int
 _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 {
    double t, total;
-   Evas_List *l;
+   Eina_List *l;
    Edje *ed;
+   Edje_Program_Target *pt;
+   Edje_Real_Part *rp;
 
    ed = runp->edje;
    if (ed->delete_me) return 0;
@@ -372,12 +369,8 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
    total = runp->program->tween.time;
    t /= total;
    if (t > 1.0) t = 1.0;
-   for (l = runp->program->targets; l; l = l->next)
+   EINA_LIST_FOREACH(runp->program->targets, l, pt)
      {
-	Edje_Real_Part *rp;
-	Edje_Program_Target *pt;
-
-	pt = l->data;
 	if (pt->id >= 0)
 	  {
 	     rp = ed->table_parts[pt->id % ed->table_parts_size];
@@ -387,12 +380,10 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
      }
    if (t >= 1.0)
      {
-	for (l = runp->program->targets; l; l = l->next)
-	  {
-	     Edje_Real_Part *rp;
-	     Edje_Program_Target *pt;
+        Edje_Program_After *pa;
 
-	     pt = l->data;
+        EINA_LIST_FOREACH(runp->program->targets, l, pt)
+	  {
 	     if (pt->id >= 0)
 	       {
 		  rp = ed->table_parts[pt->id % ed->table_parts_size];
@@ -414,9 +405,9 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	if (!ed->walking_actions)
 	  {
 	     _edje_anim_count--;
-	     ed->actions = evas_list_remove(ed->actions, runp);
+	     ed->actions = eina_list_remove(ed->actions, runp);
 	     if (!ed->actions)
-	       _edje_animators = evas_list_remove(_edje_animators, ed);
+	       _edje_animators = eina_list_remove(_edje_animators, ed);
 	  }
 //	_edje_emit(ed, "program,stop", runp->program->name);
 	if (_edje_block_break(ed))
@@ -424,10 +415,9 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	     if (!ed->walking_actions) free(runp);
 	     goto break_prog;
 	  }
-	for (l = runp->program->after; l; l = l->next)
+	EINA_LIST_FOREACH(runp->program->after, l, pa)
 	  {
 	     Edje_Program *pr;
-	     Edje_Program_After *pa = l->data;
 
 	     if (pa->id >= 0)
 	       {
@@ -457,19 +447,18 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 void
 _edje_program_end(Edje *ed, Edje_Running_Program *runp)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Program_Target *pt;
    const char *pname = NULL;
    int free_runp = 0;
 
    if (ed->delete_me) return;
    _edje_ref(ed);
    _edje_freeze(ed);
-   for (l = runp->program->targets; l; l = l->next)
+   EINA_LIST_FOREACH(runp->program->targets, l, pt)
      {
 	Edje_Real_Part *rp;
-	Edje_Program_Target *pt;
 
-	pt = l->data;
 	if (pt->id >= 0)
 	  {
 	     rp = ed->table_parts[pt->id % ed->table_parts_size];
@@ -492,11 +481,11 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
    if (!ed->walking_actions)
      {
 	_edje_anim_count--;
-	ed->actions = evas_list_remove(ed->actions, runp);
+	ed->actions = eina_list_remove(ed->actions, runp);
 	free_runp = 1;
 	if (!ed->actions)
 	  {
-	     _edje_animators = evas_list_remove(_edje_animators, ed);
+	     _edje_animators = eina_list_remove(_edje_animators, ed);
 	  }
      }
 //   _edje_emit(ed, "program,stop", pname);
@@ -508,7 +497,11 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
 void
 _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const char *ssrc)
 {
-   Evas_List *l;
+   Eina_List *l;
+   Edje_Real_Part *rp;
+   Edje_Program_Target *pt;
+   Edje_Program *pr2;
+   Edje_Program_After *pa;
    /* limit self-feeding loops in programs to 64 levels */
    static int recursions = 0;
    static int recursion_limit = 0;
@@ -531,7 +524,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 	  }
 	pp->edje = ed;
 	pp->program = pr;
-	ed->pending_actions = evas_list_append(ed->pending_actions, pp);
+	ed->pending_actions = eina_list_append(ed->pending_actions, pp);
 	return;
      }
    if ((recursions >= 64) || (recursion_limit))
@@ -552,12 +545,8 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 	     Edje_Running_Program *runp;
 
 	     runp = calloc(1, sizeof(Edje_Running_Program));
-	     for (l = pr->targets; l; l = l->next)
+	     EINA_LIST_FOREACH(pr->targets, l, pt)
 	       {
-		  Edje_Real_Part *rp;
-		  Edje_Program_Target *pt;
-
-		  pt = l->data;
 		  if (pt->id >= 0)
 		    {
 		       rp = ed->table_parts[pt->id % ed->table_parts_size];
@@ -578,12 +567,12 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 //	     _edje_emit(ed, "program,start", pr->name);
 	     if (_edje_block_break(ed))
 	       {
-		  ed->actions = evas_list_append(ed->actions, runp);
+		  ed->actions = eina_list_append(ed->actions, runp);
 		  goto break_prog;
 	       }
 	     if (!ed->actions)
-	       _edje_animators = evas_list_append(_edje_animators, ed);
-	     ed->actions = evas_list_append(ed->actions, runp);
+	       _edje_animators = eina_list_append(_edje_animators, ed);
+	     ed->actions = eina_list_append(ed->actions, runp);
 	     runp->start_time = ecore_time_get();
 	     runp->edje = ed;
 	     runp->program = pr;
@@ -593,12 +582,8 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 	  }
 	else
 	  {
-	     for (l = pr->targets; l; l = l->next)
+	     EINA_LIST_FOREACH(pr->targets, l, pt)
 	       {
-		  Edje_Real_Part *rp;
-		  Edje_Program_Target *pt;
-
-		  pt = l->data;
 		  if (pt->id >= 0)
 		    {
 		       rp = ed->table_parts[pt->id % ed->table_parts_size];
@@ -620,11 +605,8 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 //	     _edje_emit(ed, "program,stop", pr->name);
 	     if (_edje_block_break(ed)) goto break_prog;
 
-	     for (l = pr->after; l; l = l->next)
+	     EINA_LIST_FOREACH(pr->after, l, pa)
 	       {
-		  Edje_Program *pr2;
-		  Edje_Program_After *pa = l->data;
-
 		  if (pa->id >= 0)
 		    {
 		       pr2 = ed->table_programs[pa->id % ed->table_programs_size];
@@ -638,31 +620,25 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
    else if (pr->action == EDJE_ACTION_TYPE_ACTION_STOP)
      {
 //	_edje_emit(ed, "program,start", pr->name);
-	for (l = pr->targets; l; l = l->next)
+        EINA_LIST_FOREACH(pr->targets, l, pt)
 	  {
-	     Edje_Program_Target *pt;
-	     Evas_List *ll;
+	     Eina_List *ll;
+	     Edje_Running_Program *runp;
+	     Edje_Pending_Program *pp;
 
-	     pt = l->data;
-	     for (ll = ed->actions; ll; ll = ll->next)
+	     EINA_LIST_FOREACH(ed->actions, ll, runp)
 	       {
-		  Edje_Running_Program *runp;
-
-		  runp = ll->data;
 		  if (pt->id == runp->program->id)
 		    {
 		       _edje_program_end(ed, runp);
 		       goto done;
 		    }
 	       }
-	     for (ll = ed->pending_actions; ll; ll = ll->next)
+	     EINA_LIST_FOREACH(ed->pending_actions, ll, pp)
 	       {
-		  Edje_Pending_Program *pp;
-
-		  pp = ll->data;
 		  if (pt->id == pp->program->id)
 		    {
-		       ed->pending_actions = evas_list_remove(ed->pending_actions, pp);
+		       ed->pending_actions = eina_list_remove(ed->pending_actions, pp);
 		       ecore_timer_del(pp->timer);
 		       free(pp);
 		       goto done;
@@ -687,12 +663,8 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
      {
 //	_edje_emit(ed, "program,start", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
-	for (l = pr->targets; l; l = l->next)
+	EINA_LIST_FOREACH(pr->targets, l, pt)
 	  {
-	     Edje_Real_Part *rp;
-	     Edje_Program_Target *pt;
-
-	     pt = l->data;
 	     if (pt->id >= 0)
 	       {
 		  rp = ed->table_parts[pt->id % ed->table_parts_size];
@@ -717,12 +689,8 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
      {
 //	_edje_emit(ed, "program,start", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
-	for (l = pr->targets; l; l = l->next)
+	EINA_LIST_FOREACH(pr->targets, l, pt)
 	  {
-	     Edje_Real_Part *rp;
-	     Edje_Program_Target *pt;
-
-	     pt = l->data;
 	     if (pt->id >= 0)
 	       {
 		  rp = ed->table_parts[pt->id % ed->table_parts_size];
@@ -747,12 +715,8 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
      {
 //	_edje_emit(ed, "program,start", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
-	for (l = pr->targets; l; l = l->next)
+	EINA_LIST_FOREACH(pr->targets, l, pt)
 	  {
-	     Edje_Real_Part *rp;
-	     Edje_Program_Target *pt;
-
-	     pt = l->data;
 	     if (pt->id >= 0)
 	       {
 		  rp = ed->table_parts[pt->id % ed->table_parts_size];
@@ -793,12 +757,8 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 	  }
 	else
 	  {
-	     for (l = pr->targets; l; l = l->next)
+	    EINA_LIST_FOREACH(pr->targets, l, pt)
 	       {
-		  Edje_Real_Part *rp;
-		  Edje_Program_Target *pt;
-	     
-		  pt = l->data;
 		  if (pt->id >= 0)
 		    {
 		       rp = ed->table_parts[pt->id % ed->table_parts_size];
@@ -828,11 +788,8 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 	 /* && (pr->tween.time > 0.0) && (!ed->no_anim))) */
 	 ))
      {
-	for (l= pr->after; l; l = l->next)
+        EINA_LIST_FOREACH(pr->after, l, pa)
 	  {
-	     Edje_Program *pr2;
-	     Edje_Program_After *pa = l->data;
-
 	     if (pa->id >= 0)
 	       {
 		  pr2 = ed->table_programs[pa->id % ed->table_programs_size];
@@ -863,7 +820,7 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
 struct _Edje_Program_Data
 {
 #ifdef EDJE_PROGRAM_CACHE
-  Evas_List     *matches;
+  Eina_List     *matches;
   int            matched;
 #endif
   Edje          *ed;
@@ -883,14 +840,14 @@ static int _edje_glob_callback(Edje_Program *pr, void *dt)
    if (_edje_block_break(data->ed))
      {
 #ifdef EDJE_PROGRAM_CACHE
-        evas_list_free(data->matches);
+        eina_list_free(data->matches);
         data->matches = NULL;
 #endif
         return 1;
      }
 
 #ifdef EDJE_PROGRAM_CACHE
-   data->matches = evas_list_append(data->matches, pr);
+   data->matches = eina_list_append(data->matches, pr);
 #endif
 
    return 0;
@@ -948,8 +905,9 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src)
 
 #ifdef EDJE_PROGRAM_CACHE
 	  {
-	     Evas_List *matches;
-	     Evas_List *l;
+	     Eina_List *matches;
+	     Eina_List *l;
+	     Edje_Program *pr;
 
 	     if (evas_hash_find(ec->prog_cache.no_matches, tmps))
 	       {
@@ -957,11 +915,8 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src)
 	       }
 	     else if ((matches = evas_hash_find(ec->prog_cache.matches, tmps)))
 	       {
-		  for (l = matches; l; l = l->next)
+		 EINA_LIST_FOREACH(matches, l, pr)
 		    {
-		       Edje_Program *pr;
-
-		       pr = l->data;
 		       _edje_program_run(ed, pr, 0, sig, src);
 		       if (_edje_block_break(ed))
 			 {
@@ -1023,7 +978,7 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src)
 static void
 _edje_emit_cb(Edje *ed, const char *sig, const char *src)
 {
-   Evas_List            *l;
+   Eina_List            *l;
 
    if (ed->delete_me) return;
    _edje_ref(ed);
@@ -1054,20 +1009,20 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src)
    ed->walking_callbacks = 0;
    if ((ed->delete_callbacks) || (ed->just_added_callbacks))
      {
+        Edje_Signal_Callback *escb;
+
 	ed->delete_callbacks = 0;
 	ed->just_added_callbacks = 0;
-	for (l = ed->callbacks; l;)
+	EINA_LIST_FOREACH(ed->callbacks, l, escb)
 	  {
-	     Edje_Signal_Callback *escb;
-	     Evas_List *next_l;
+	     Eina_List *next_l;
 
-	     escb = l->data;
-	     next_l = l->next;
+	     next_l = eina_list_next(l);
 	     if (escb->just_added)
 	       escb->just_added = 0;
 	     if (escb->delete_me)
 	       {
-		  ed->callbacks = evas_list_remove_list(ed->callbacks, l);
+		  ed->callbacks = eina_list_remove_list(ed->callbacks, l);
 		  if (escb->signal) eina_stringshare_del(escb->signal);
 		  if (escb->source) eina_stringshare_del(escb->source);
 		  free(escb);

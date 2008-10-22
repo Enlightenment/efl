@@ -37,7 +37,7 @@ typedef struct _Smart_Data_Colinfo Smart_Data_Colinfo;
 struct _Smart_Data
 {
    Evas_Coord     x, y, w, h;
-   Evas_List     *children;
+   Eina_List     *children;
    Evas_Object   *smart_obj;
    int            cols, rows;
 

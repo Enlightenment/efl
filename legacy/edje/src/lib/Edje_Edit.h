@@ -59,12 +59,12 @@ enum {
  *
  * Example: print all the part in a loaded edje_object
  * @code
- *  Evas_List *parts, *l;
+ *  Eina_List *parts, *l;
  *
  *  parts = edje_edit_parts_list_get(edje_object);
- *  while(l = parts; l; l = l->next)
+ *  while(l = parts; l; l = eina_list_nexst(l))
  *  {
- *     printf("Part: %s\n", (char*)l->data);
+ *     printf("Part: %s\n", (char*)eina_list_data_get(l));
  *  }
  *  edje_edit_string_list_free(parts);
  * @endcode
@@ -93,10 +93,10 @@ extern "C" {
  *  General functions that don't fit in other cateories.
  */ //@{
 
-/** Free a generic Evas_List of (char *) allocated by an edje_edit_*_get() function.*/
+/** Free a generic Eina_List of (char *) allocated by an edje_edit_*_get() function.*/
 EAPI void
 edje_edit_string_list_free(
-   Evas_List *lst          ///< The list to free. Will also free all the strings.
+   Eina_List *lst          ///< The list to free. Will also free all the strings.
 );
 
 /** Free a generic string (char *) allocated by an edje_edit_*_get() function.*/
@@ -233,7 +233,7 @@ edje_edit_group_max_h_set(
  */ //@{
 
 /** Retrieves a list with the item names inside the data block **/
-EAPI Evas_List *          ///@return An Evas_List* of string (char *)containing all the data names.
+EAPI Eina_List *          ///@return An Eina_List* of string (char *)containing all the data names.
 edje_edit_data_list_get(
    Evas_Object *obj       ///< The edje object
 );
@@ -289,7 +289,7 @@ edje_edit_data_name_set(
 /** Get the list of all the Color Classes in the given edje object.
  *  Use edje_edit_string_list_free() when you don't need it anymore.
  */
-EAPI Evas_List *           ///@return An Evas_List* of string (char *)containing all the classes names.
+EAPI Eina_List *           ///@return An Eina_List* of string (char *)containing all the classes names.
 edje_edit_color_classes_list_get(
    Evas_Object * obj       ///< The edje object
 );
@@ -372,7 +372,7 @@ edje_edit_color_class_name_set(
 /**Get the list of all the parts in the given edje object.
  * Use edje_edit_string_list_free() when you don't need it anymore.
  */
-EAPI Evas_List *           ///@return An Evas_List* of string (char *)containing all the part names.
+EAPI Eina_List *           ///@return An Eina_List* of string (char *)containing all the part names.
 edje_edit_parts_list_get(
    Evas_Object *obj        ///< The edje object
 );
@@ -685,7 +685,7 @@ edje_edit_part_drag_event_set(
  */ //@{
 
 /**Get the list of all the states in the given part.*/
-EAPI Evas_List *           /**@return An Evas_List* of string (char *)containing all the states names found
+EAPI Eina_List *           /**@return An Eina_List* of string (char *)containing all the states names found
                             * in part, including the float value (ex: "default 0.00").
                             * Use edje_edit_string_list_free() when you don't need it anymore. */
 edje_edit_part_states_list_get(
@@ -1424,7 +1424,7 @@ edje_edit_state_text_fit_y_set(
 /**Get the list of all the fonts in the given edje.
  * Use edje_edit_string_list_free() when you don't need the list anymore.
  */
-EAPI Evas_List *          ///@return An Evas_List* of string (char *)containing all the fonts names found in the edje file.
+EAPI Eina_List *          ///@return An Eina_List* of string (char *)containing all the fonts names found in the edje file.
 edje_edit_fonts_list_get(
    Evas_Object *obj       ///< The edje object
 );
@@ -1467,7 +1467,7 @@ edje_edit_state_font_set(
 /**Get the list of all the images in the given edje.
  * Use edje_edit_string_list_free() when you don't need the list anymore.
  */
-EAPI Evas_List *          ///@return An Evas_List* of string (char *)containing all the images names found in the edje file.
+EAPI Eina_List *          ///@return An Eina_List* of string (char *)containing all the images names found in the edje file.
 edje_edit_images_list_get(
    Evas_Object *obj       ///< The edje object
 );
@@ -1571,7 +1571,7 @@ edje_edit_state_image_border_fill_set(
 /**Get the list of all the tweens images in the given part state.
  * Use edje_edit_string_list_free() when you don't need it anymore.
  */
-EAPI Evas_List *           ///@return A string list containing all the image name that form a tween animation in the given part state
+EAPI Eina_List *           ///@return A string list containing all the image name that form a tween animation in the given part state
 edje_edit_state_tweens_list_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -1612,7 +1612,7 @@ edje_edit_state_tween_del(
 /**Get the list of all the spectrum in the given edje object.
  * Use edje_edit_string_list_free() when you don't need it anymore.
  */
-EAPI Evas_List *           ///@return An Evas_List* of string(char *) containing all the spectra names.
+EAPI Eina_List *           ///@return An Eina_List* of string(char *) containing all the spectra names.
 edje_edit_spectrum_list_get(
    Evas_Object *obj        ///< The edje object
 );
@@ -1896,10 +1896,10 @@ edje_edit_state_gradient_rel2_offset_y_set(
 
 /**Get the list of all the programs in the given edje object.
  * @param obj The edje object
- * @return An Evas_List* of string (char *)containing all the program names.
+ * @return An Eina_List* of string (char *)containing all the program names.
  * Use edje_edit_string_list_free() when you don't need it anymore.
  */
-EAPI Evas_List *          ///@return A string list containing all the program names
+EAPI Eina_List *          ///@return A string list containing all the program names
 edje_edit_programs_list_get(
    Evas_Object *obj       ///< The edje object
 );
@@ -2027,7 +2027,7 @@ edje_edit_program_action_set(
  * Return a list of target name
  * Use edje_edit_string_list_free() when you don't need it anymore.
  */
-EAPI Evas_List*            ///@return An Evas_List of char*, or NULL on error
+EAPI Eina_List*            ///@return An Eina_List of char*, or NULL on error
 edje_edit_program_targets_get(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The program name
@@ -2055,7 +2055,7 @@ edje_edit_program_targets_clear(
  * Return a list of program name.
  * Use edje_edit_string_list_free() when you don't need it anymore.
  */
-EAPI Evas_List*            ///@return An Evas_List of char*, or NULL on error
+EAPI Eina_List*            ///@return An Eina_List of char*, or NULL on error
 edje_edit_program_afters_get(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The program name

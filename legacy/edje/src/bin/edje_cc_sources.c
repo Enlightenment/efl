@@ -36,10 +36,10 @@ source_edd(void)
    eddc.func.mem_free = NULL;
    eddc.func.str_alloc = eina_stringshare_add;
    eddc.func.str_free = eina_stringshare_del;
-   eddc.func.list_next = evas_list_next;
-   eddc.func.list_append = evas_list_append;
-   eddc.func.list_data = evas_list_data;
-   eddc.func.list_free = evas_list_free;
+   eddc.func.list_next = eina_list_next;
+   eddc.func.list_append = eina_list_append;
+   eddc.func.list_data = eina_list_data_get;
+   eddc.func.list_free = eina_list_free;
    eddc.func.hash_foreach = evas_hash_foreach;
    eddc.func.hash_add = evas_hash_add;
    eddc.func.hash_free = evas_hash_free;
@@ -93,7 +93,7 @@ source_fetch_file(const char *fil, const char *filname)
    fread(sf->file, sz, 1, f);
    sf->file[sz] = '\0';
    fseek(f, 0, SEEK_SET);
-   srcfiles.list = evas_list_append(srcfiles.list, sf);
+   srcfiles.list = eina_list_append(srcfiles.list, sf);
 
    while (fgets(buf, sizeof(buf), f))
      {
@@ -244,7 +244,7 @@ source_load(Eet_File *ef)
 }
 
 int
-source_fontmap_save(Eet_File *ef, Evas_List *fonts)
+source_fontmap_save(Eet_File *ef, Eina_List *fonts)
 {
    Font_List fl;
 

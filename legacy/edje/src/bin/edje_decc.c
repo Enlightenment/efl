@@ -94,9 +94,9 @@ decomp(void)
 	eet_close(ef);
 	return 0;
      }
-   if (!srcfiles->list->data || !root_filename_is_sane())
+   if (!eina_list_data_get(srcfiles->list) || !root_filename_is_sane())
      {
-	printf("ERROR: Invalid root filename: '%s'\n", (char *) srcfiles->list->data);
+        printf("ERROR: Invalid root filename: '%s'\n", (char *) eina_list_data_get(srcfiles->list));
 	eet_close(ef);
 	return 0;
      }
@@ -124,8 +124,9 @@ decomp(void)
 void
 output(void)
 {
-   Evas_List *l;
+   Eina_List *l;
    Eet_File *ef;
+   SrcFile *sf;
    char *outdir, *p;
 
    p = strrchr(file_in, '/');
@@ -142,11 +143,10 @@ output(void)
 
    if (edje_file->image_dir)
      {
-	for (l = edje_file->image_dir->entries; l; l = l->next)
-	  {
-	     Edje_Image_Directory_Entry *ei;
+        Edje_Image_Directory_Entry *ei;
 
-	     ei = l->data;
+	EINA_LIST_FOREACH(edje_file->image_dir->entries, l, ei)
+	  {
 	     if ((ei->source_type > EDJE_IMAGE_SOURCE_TYPE_NONE) &&
 		 (ei->source_type < EDJE_IMAGE_SOURCE_TYPE_LAST) &&
 		 (ei->source_type != EDJE_IMAGE_SOURCE_TYPE_EXTERNAL) &&
@@ -201,14 +201,12 @@ output(void)
 	  }
      }
 
-   for (l = srcfiles->list; l; l = l->next)
+   EINA_LIST_FOREACH(srcfiles->list, l, sf)
      {
-	SrcFile *sf;
 	char out[4096];
 	FILE *f;
 	char *pp;
 
-	sf = l->data;
 	snprintf(out, sizeof(out), "%s/%s", outdir, sf->name);
 	printf("Output Source File: %s\n", out);
 	pp = strdup(out);
@@ -241,14 +239,14 @@ output(void)
      }
    if (fontlist)
      {
-	for (l = fontlist->list; l; l = l->next)
+        Font *fn;
+
+	EINA_LIST_FOREACH(fontlist->list, l, fn)
 	  {
-	     Font *fn;
 	     void *font;
 	     int fontsize;
 	     char out[4096];
 
-	     fn = l->data;
 	     snprintf(out, sizeof(out), "fonts/%s", fn->name);
 	     font = eet_read(ef, out, &fontsize);
 	     if (font)
@@ -283,7 +281,7 @@ output(void)
      {
 	char out[4096];
 	FILE *f;
-	SrcFile *sf = srcfiles->list->data;
+	SrcFile *sf = eina_list_data_get(srcfiles->list);
 
 	snprintf(out, sizeof(out), "%s/build.sh", outdir);
 	printf("Output Build Script: %s\n", out);
@@ -337,7 +335,7 @@ compiler_cmd_is_sane()
 static int
 root_filename_is_sane()
 {
-   SrcFile *sf = srcfiles->list->data;
+   SrcFile *sf = eina_list_data_get(srcfiles->list);
    char *f = sf->name, *ptr;
 
    if (!f || !*f)

@@ -36,7 +36,7 @@ struct _New_Statement_Handler
 
 struct _Font_List
 {
-   Evas_List *list;
+   Eina_List *list;
 };
 
 struct _Font
@@ -49,7 +49,7 @@ struct _Code
 {
    int       l1, l2;
    char      *shared;
-   Evas_List *programs;
+   Eina_List *programs;
 };
 
 struct _Code_Program
@@ -67,7 +67,7 @@ struct _SrcFile
 
 struct _SrcFile_List
 {
-   Evas_List *list;
+   Eina_List *list;
 };
 
 /* global fn calls */
@@ -112,7 +112,7 @@ void    source_edd(void);
 void    source_fetch(void);
 int     source_append(Eet_File *ef);
 SrcFile_List *source_load(Eet_File *ef);
-int     source_fontmap_save(Eet_File *ef, Evas_List *fonts);
+int     source_fontmap_save(Eet_File *ef, Eina_List *fonts);
 Font_List *source_fontmap_load(Eet_File *ef);
 
 void   *mem_alloc(size_t size);
@@ -120,8 +120,8 @@ char   *mem_strdup(const char *s);
 #define SZ sizeof
 
 /* global vars */
-extern Evas_List             *img_dirs;
-extern Evas_List             *fnt_dirs;
+extern Eina_List             *img_dirs;
+extern Eina_List             *fnt_dirs;
 extern char                  *file_in;
 extern char                  *file_out;
 extern char                  *progname;
@@ -132,14 +132,14 @@ extern int                    no_raw;
 extern int                    min_quality;
 extern int                    max_quality;
 extern int                    line;
-extern Evas_List             *stack;
-extern Evas_List             *params;
+extern Eina_List             *stack;
+extern Eina_List             *params;
 extern Edje_File             *edje_file;
-extern Evas_List             *edje_collections;
-extern Evas_List             *fonts;
-extern Evas_List             *codes;
-extern Evas_List             *defines;
-extern Evas_List             *aliases;
+extern Eina_List             *edje_collections;
+extern Eina_List             *fonts;
+extern Eina_List             *codes;
+extern Eina_List             *defines;
+extern Eina_List             *aliases;
 extern New_Object_Handler     object_handlers[];
 extern New_Statement_Handler  statement_handlers[];
 

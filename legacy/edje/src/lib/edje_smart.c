@@ -16,7 +16,7 @@ static void _edje_smart_clip_unset(Evas_Object * obj);
 
 static Evas_Smart *_edje_smart = NULL;
 
-Evas_List *_edje_edjes = NULL;
+Eina_List *_edje_edjes = NULL;
 
 /************************** API Routines **************************/
 
@@ -64,19 +64,20 @@ _edje_smart_add(Evas_Object *obj)
    evas_object_smart_data_set(obj, ed);
    evas_object_geometry_get(obj, &(ed->x), &(ed->y), &(ed->w), &(ed->h));
    ed->obj = obj;
-   _edje_edjes = evas_list_append(_edje_edjes, obj);
+   _edje_edjes = eina_list_append(_edje_edjes, obj);
    _edje_entry_init(ed);
 /*
      {
-	Evas_List *l;
+	Eina_List *l;
+	const void *data;
 
-	printf("--- EDJE DUMP [%i]\n", evas_list_count(_edje_edjes));
-	for (l = _edje_edjes; l; l = l->next)
+	printf("--- EDJE DUMP [%i]\n", eina_list_count(_edje_edjes));
+	EINA_LIST_FOREACH(_edge_edges, l, data)
 	  {
-	     ed = _edje_fetch(l->data);
+	     ed = _edje_fetch(data);
 	     printf("EDJE: %80s | %80s\n", ed->path, ed->part);
 	  }
-	printf("--- EDJE DUMP [%i]\n", evas_list_count(_edje_edjes));
+	printf("--- EDJE DUMP [%i]\n", eina_list_count(_edje_edjes));
      }
  */
 }
@@ -92,7 +93,7 @@ _edje_smart_del(Evas_Object * obj)
    _edje_entry_shutdown(ed);
    ed->delete_me = 1;
    _edje_clean_objects(ed);
-   _edje_edjes = evas_list_remove(_edje_edjes, obj);
+   _edje_edjes = eina_list_remove(_edje_edjes, obj);
    evas_object_smart_data_set(obj, NULL);
    if (_edje_script_only(ed)) _edje_script_only_shutdown(ed);
    _edje_file_del(ed);
@@ -135,14 +136,13 @@ _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
 	  }
 	if (ep->extra_objects)
 	  {
-	     Evas_List *el;
+	     Eina_List *el;
+	     Evas_Object *o;
 
-	     for (el = ep->extra_objects; el; el = el->next)
+	     EINA_LIST_FOREACH(ep->extra_objects, el, o)
 	       {
-		  Evas_Object *o;
 		  Evas_Coord oox, ooy;
 
-		  o = el->data;
 		  evas_object_geometry_get(o, &oox, &ooy, NULL, NULL);
 		  evas_object_move(o, ed->x + ep->x + ep->offset.x + (oox - ox), ed->y + ep->y + ep->offset.y + (ooy - oy));
 	       }

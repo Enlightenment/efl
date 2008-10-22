@@ -250,21 +250,21 @@ _edje_match_patterns_exec_init_states(Edje_States       *states,
 
 #define EDJE_MATCH_INIT(Func, Type, Source, Show)               \
   Edje_Patterns*                                                \
-  Func(Evas_List *lst)                                          \
+  Func(Eina_List *lst)                                          \
   {                                                             \
      Edje_Patterns      *r;                                     \
      size_t              i;                                     \
                                                                 \
-     if (!lst || evas_list_count(lst) <= 0)                     \
+     if (!lst || eina_list_count(lst) <= 0)                     \
        return NULL;                                             \
                                                                 \
      r = malloc(sizeof (Edje_Patterns) +                        \
-                evas_list_count(lst)                            \
+                eina_list_count(lst)                            \
                 * sizeof (*r->finals)                           \
                 * sizeof(*r->patterns));                        \
      if (!r) return NULL;                                       \
                                                                 \
-     r->patterns_size = evas_list_count(lst);                   \
+     r->patterns_size = eina_list_count(lst);                   \
      r->max_length = 0;                                         \
      r->patterns = (const char **) r->finals + r->patterns_size + 1;    \
                                                                 \
@@ -274,7 +274,7 @@ _edje_match_patterns_exec_init_states(Edje_States       *states,
           Type          *data;                                  \
           size_t         j;                                     \
                                                                 \
-          data = evas_list_data(lst);                           \
+          data = eina_list_data_get(lst);                           \
           if (!data)                                            \
             {                                                   \
                free(r);                                         \
@@ -296,7 +296,7 @@ _edje_match_patterns_exec_init_states(Edje_States       *states,
           if (j > r->max_length)                                \
             r->max_length = j;                                  \
                                                                 \
-          lst = evas_list_next(lst);                            \
+          lst = eina_list_next(lst);                            \
        }                                                        \
                                                                 \
      if (!_edje_match_states_alloc(r, 2))                       \
@@ -341,7 +341,7 @@ edje_match_programs_exec_check_finals(const size_t      *signal_finals,
                                       const size_t      *source_finals,
                                       const Edje_States *signal_states,
                                       const Edje_States *source_states,
-                                      Evas_List         *programs,
+                                      Eina_List         *programs,
                                       int (*func)(Edje_Program *pr, void *data),
                                       void              *data)
 {
@@ -356,7 +356,7 @@ edje_match_programs_exec_check_finals(const size_t      *signal_finals,
            {
               Edje_Program  *pr;
 
-              pr = evas_list_nth(programs, signal_states->states[i].idx);
+              pr = eina_list_nth(programs, signal_states->states[i].idx);
               if (pr)
                 {
                    if (func(pr, data))
@@ -374,7 +374,7 @@ edje_match_callback_exec_check_finals(const size_t      *signal_finals,
                                       const Edje_States *source_states,
                                       const char        *signal,
                                       const char        *source,
-                                      Evas_List         *callbacks,
+                                      Eina_List         *callbacks,
                                       Edje              *ed)
 {
    size_t       i;
@@ -389,7 +389,7 @@ edje_match_callback_exec_check_finals(const size_t      *signal_finals,
            {
               Edje_Signal_Callback      *escb;
 
-              escb = evas_list_nth(callbacks, signal_states->states[i].idx);
+              escb = eina_list_nth(callbacks, signal_states->states[i].idx);
               if (escb)
                 {
                    if ((!escb->just_added)
@@ -479,7 +479,7 @@ edje_match_programs_exec(const Edje_Patterns    *ppat_signal,
                          const Edje_Patterns    *ppat_source,
                          const char             *signal,
                          const char             *source,
-                         Evas_List              *programs,
+                         Eina_List              *programs,
                          int (*func)(Edje_Program *pr, void *data),
                          void                   *data)
 {
@@ -513,7 +513,7 @@ edje_match_callback_exec(const Edje_Patterns    *ppat_signal,
                          const Edje_Patterns    *ppat_source,
                          const char             *signal,
                          const char             *source,
-                         Evas_List              *callbacks,
+                         Eina_List              *callbacks,
                          Edje                   *ed)
 {
    Edje_States  *signal_result;

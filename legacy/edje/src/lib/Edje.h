@@ -175,8 +175,8 @@ extern "C" {
    EAPI double       edje_scale_get                  (void);
 
    /* edje_load.c */
-   EAPI Evas_List   *edje_file_collection_list       (const char *file);
-   EAPI void         edje_file_collection_list_free  (Evas_List *lst);
+   EAPI Eina_List   *edje_file_collection_list       (const char *file);
+   EAPI void         edje_file_collection_list_free  (Eina_List *lst);
    EAPI int          edje_file_group_exists          (const char *file, const char *glob);
    EAPI char        *edje_file_data_get              (const char *file, const char *key);
    EAPI void         edje_file_cache_set             (int count);
@@ -190,10 +190,10 @@ extern "C" {
    /* edje_util.c */
    EAPI void         edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
    EAPI void         edje_color_class_del(const char *color_class);
-   EAPI Evas_List *  edje_color_class_list(void);
+   EAPI Eina_List *  edje_color_class_list(void);
    EAPI void         edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size size);
    EAPI void         edje_text_class_del(const char *text_class);
-   EAPI Evas_List *  edje_text_class_list(void);
+   EAPI Eina_List *  edje_text_class_list(void);
    EAPI void         edje_extern_object_min_size_set (Evas_Object *obj, Evas_Coord minw, Evas_Coord minh);
    EAPI void         edje_extern_object_max_size_set (Evas_Object *obj, Evas_Coord maxw, Evas_Coord maxh);
    EAPI void         edje_extern_object_aspect_set(Evas_Object *obj, Edje_Aspect_Control aspect, Evas_Coord aw, Evas_Coord ah);
@@ -237,7 +237,7 @@ extern "C" {
    EAPI const char  *edje_object_part_text_get       (const Evas_Object *obj, const char *part);
    EAPI const char  *edje_object_part_text_selection_get(const Evas_Object *obj, const char *part);
    EAPI void         edje_object_part_text_insert    (Evas_Object *obj, const char *part, const char *text);
-   EAPI Evas_List   *edje_object_part_text_anchor_list_get(const Evas_Object *obj, const char *part);
+   EAPI Eina_List   *edje_object_part_text_anchor_list_get(const Evas_Object *obj, const char *part);
    EAPI void         edje_object_part_text_cursor_geometry_get(const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
        
    EAPI void         edje_object_part_swallow        (Evas_Object *obj, const char *part, Evas_Object *obj_swallow);

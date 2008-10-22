@@ -83,10 +83,10 @@ _edje_edd_setup(void)
    eddc.func.mem_free = NULL;
    eddc.func.str_alloc = (char *(*)(const char *))eina_stringshare_add;
    eddc.func.str_free = eina_stringshare_del;
-   eddc.func.list_next = (void *(*)(void *))evas_list_next;
-   eddc.func.list_append = (void *(*)(void *, void *))evas_list_append;
-   eddc.func.list_data = (void *(*)(void *))evas_list_data;
-   eddc.func.list_free = (void *(*)(void *))evas_list_free;
+   eddc.func.list_next = (void *(*)(void *))eina_list_next;
+   eddc.func.list_append = (void *(*)(void *, void *))eina_list_append;
+   eddc.func.list_data = (void *(*)(void *))eina_list_data_get;
+   eddc.func.list_free = (void *(*)(void *))eina_list_free;
    eddc.func.hash_foreach = (void (*)(void *, int (*)(void *, const char *, void *, void *), void *))evas_hash_foreach;
    eddc.func.hash_add = (void *(*)(void *, const char *, void *))evas_hash_add;
    eddc.func.hash_free = (void (*)(void *))evas_hash_free;

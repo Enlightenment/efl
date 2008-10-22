@@ -279,9 +279,9 @@ struct _Edje_File
    Edje_Image_Directory           *image_dir;
    Edje_Spectrum_Directory        *spectrum_dir;
    Edje_Part_Collection_Directory *collection_dir;
-   Evas_List                      *data;
-   Evas_List                      *styles;
-   Evas_List                      *color_classes;
+   Eina_List                      *data;
+   Eina_List                      *styles;
+   Eina_List                      *color_classes;
 
    int                             references;
    char                           *compiler;
@@ -290,7 +290,7 @@ struct _Edje_File
 
    Evas_Hash                      *collection_hash;
    Evas_Hash			  *font_hash;
-   Evas_List                      *collection_cache;
+   Eina_List                      *collection_cache;
    Evas_Hash                      *data_cache;
 
    Eet_File                       *ef;
@@ -301,7 +301,7 @@ struct _Edje_File
 struct _Edje_Style
 {
    char                           *name;
-   Evas_List                      *tags;
+   Eina_List                      *tags;
    Evas_Textblock_Style           *style;
 };
 
@@ -326,7 +326,7 @@ struct _Edje_Data
 
 struct _Edje_Font_Directory
 {
-   Evas_List *entries; /* a list of Edje_Font_Directory_Entry */
+   Eina_List *entries; /* a list of Edje_Font_Directory_Entry */
 };
 
 struct _Edje_Font_Directory_Entry
@@ -340,7 +340,7 @@ struct _Edje_Font_Directory_Entry
 
 struct _Edje_Image_Directory
 {
-   Evas_List *entries; /* a list of Edje_Image_Directory_Entry */
+   Eina_List *entries; /* a list of Edje_Image_Directory_Entry */
 };
 
 struct _Edje_Image_Directory_Entry
@@ -355,7 +355,7 @@ struct _Edje_Image_Directory_Entry
 
 struct _Edje_Spectrum_Directory
 {
-   Evas_List *entries; /* a list of Edje_Spectrum_Directory_Entry */
+   Eina_List *entries; /* a list of Edje_Spectrum_Directory_Entry */
 };
 
 struct _Edje_Spectrum_Directory_Entry
@@ -363,7 +363,7 @@ struct _Edje_Spectrum_Directory_Entry
    char      *entry;
    /* only one of the following two should be included. filename takes precedence */
    char      *filename; /* filename of external spectrum. */
-   Evas_List *color_list; /* list of Edje_Spectrum_Color */
+   Eina_List *color_list; /* list of Edje_Spectrum_Color */
    int        id;
 };
 
@@ -400,9 +400,9 @@ struct _Edje_Program /* a conditional program to be run */
       double   time; /* time to graduate between current and new state */
    } tween;
 
-   Evas_List  *targets; /* list of target parts to apply the state to */
+   Eina_List  *targets; /* list of target parts to apply the state to */
 
-   Evas_List  *after; /* list of actions to run at the end of this, for looping */
+   Eina_List  *after; /* list of actions to run at the end of this, for looping */
 };
 
 struct _Edje_Program_Target /* the target of an action */
@@ -419,7 +419,7 @@ struct _Edje_Program_After /* the action to run after another action */
 
 struct _Edje_Part_Collection_Directory
 {
-   Evas_List *entries; /* a list of Edje_Part_Collection_Directory_Entry */
+   Eina_List *entries; /* a list of Edje_Part_Collection_Directory_Entry */
 
    int        references;
 };
@@ -434,9 +434,9 @@ struct _Edje_Part_Collection_Directory_Entry
 
 struct _Edje_Part_Collection
 {
-   Evas_List *programs; /* a list of Edje_Program */
-   Evas_List *parts; /* a list of Edje_Part */
-   Evas_List *data;
+   Eina_List *programs; /* a list of Edje_Program */
+   Eina_List *parts; /* a list of Edje_Part */
+   Eina_List *data;
 
    int        id; /* the collection id */
 
@@ -463,7 +463,7 @@ struct _Edje_Part
 {
    const char            *name; /* the name if any of the part */
    Edje_Part_Description *default_desc; /* the part descriptor for default */
-   Evas_List             *other_desc; /* other possible descriptors */
+   Eina_List             *other_desc; /* other possible descriptors */
    const char            *source, *source2, *source3, *source4, *source5, *source6;
    int                    id; /* its id number */
    int                    clip_to_id; /* the part id to clip this one to */
@@ -527,7 +527,7 @@ struct _Edje_Part_Description
    } rel1, rel2;
 
    struct {
-      Evas_List     *tween_list; /* list of Edje_Part_Image_Id */
+      Eina_List     *tween_list; /* list of Edje_Part_Image_Id */
       int            id; /* the image id to use */
    } image;
 
@@ -638,11 +638,11 @@ struct _Edje
    Evas_Object          *clipper; /* a big rect to clip this Edje to */
    Edje_File            *file; /* the file the data comes form */
    Edje_Part_Collection *collection; /* the description being used */
-   Evas_List            *actions; /* currently running actions */
-   Evas_List            *callbacks;
-   Evas_List            *pending_actions;
-   Evas_List            *color_classes;
-   Evas_List            *text_classes;
+   Eina_List            *actions; /* currently running actions */
+   Eina_List            *callbacks;
+   Eina_List            *pending_actions;
+   Eina_List            *color_classes;
+   Eina_List            *text_classes;
    /* variable pool for Edje Embryo scripts */
    Edje_Var_Pool        *var_pool;
    /* for faster lookups to avoid nth list walks */
@@ -693,7 +693,7 @@ struct _Edje_Real_Part
 {
    Edje                     *edje;
    Evas_Object              *object;
-   Evas_List                *extra_objects;
+   Eina_List                *extra_objects;
    Evas_Object              *swallowed_object;
    void                     *entry_data;
    Evas_Object              *cursorbg_object;
@@ -862,7 +862,7 @@ struct _Edje_Var_String
 
 struct _Edje_Var_List
 {
-   Evas_List *v;
+   Eina_List *v;
 };
 
 struct _Edje_Var_Hash
@@ -892,8 +892,8 @@ struct _Edje_Var_Animator
 struct _Edje_Var_Pool
 {
    int          id_count;
-   Evas_List   *timers;
-   Evas_List   *animators;
+   Eina_List   *timers;
+   Eina_List   *animators;
    int          size;
    Edje_Var    *vars;
    int          walking_list;
@@ -962,11 +962,11 @@ struct _Edje_Patterns
    size_t          finals[];
 };
 
-Edje_Patterns   *edje_match_collection_dir_init(Evas_List *lst);
-Edje_Patterns   *edje_match_programs_signal_init(Evas_List *lst);
-Edje_Patterns   *edje_match_programs_source_init(Evas_List *lst);
-Edje_Patterns   *edje_match_callback_signal_init(Evas_List *lst);
-Edje_Patterns   *edje_match_callback_source_init(Evas_List *lst);
+Edje_Patterns   *edje_match_collection_dir_init(Eina_List *lst);
+Edje_Patterns   *edje_match_programs_signal_init(Eina_List *lst);
+Edje_Patterns   *edje_match_programs_source_init(Eina_List *lst);
+Edje_Patterns   *edje_match_callback_signal_init(Eina_List *lst);
+Edje_Patterns   *edje_match_callback_source_init(Eina_List *lst);
 
 int              edje_match_collection_dir_exec(const Edje_Patterns      *ppat,
 						const char               *string);
@@ -974,14 +974,14 @@ int              edje_match_programs_exec(const Edje_Patterns    *ppat_signal,
 					  const Edje_Patterns    *ppat_source,
 					  const char             *signal,
 					  const char             *source,
-					  Evas_List              *programs,
+					  Eina_List              *programs,
 					  int (*func)(Edje_Program *pr, void *data),
 					  void                   *data);
 int              edje_match_callback_exec(const Edje_Patterns    *ppat_signal,
 					  const Edje_Patterns    *ppat_source,
 					  const char             *signal,
 					  const char             *source,
-					  Evas_List              *callbacks,
+					  Eina_List              *callbacks,
 					  Edje                   *ed);
 
 void             edje_match_patterns_free(Edje_Patterns *ppat);
@@ -1008,8 +1008,8 @@ EAPI extern Eet_Data_Descriptor *_edje_edd_edje_spectrum_color;
 
 extern int              _edje_anim_count;
 extern Ecore_Animator  *_edje_timer;
-extern Evas_List       *_edje_animators;
-extern Evas_List       *_edje_edjes;
+extern Eina_List       *_edje_animators;
+extern Eina_List       *_edje_edjes;
 
 extern char            *_edje_fontset_append;
 extern double           _edje_scale;
@@ -1244,7 +1244,7 @@ void _edje_entry_text_markup_set(Edje_Real_Part *rp, const char *text);
 void _edje_entry_text_markup_insert(Edje_Real_Part *rp, const char *text);
 void _edje_entry_set_cursor_start(Edje_Real_Part *rp);
 void _edje_entry_set_cursor_end(Edje_Real_Part *rp);
-const Evas_List *_edje_entry_anchors_list(Edje_Real_Part *rp);
+const Eina_List *_edje_entry_anchors_list(Edje_Real_Part *rp);
 void _edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
     
 #endif

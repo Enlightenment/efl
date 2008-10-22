@@ -6,9 +6,9 @@
 
 static void main_help(void);
 
-Evas_List *img_dirs = NULL;
-Evas_List *fnt_dirs = NULL;
-Evas_List *defines = NULL;
+Eina_List *img_dirs = NULL;
+Eina_List *fnt_dirs = NULL;
+Eina_List *defines = NULL;
 char      *file_in = NULL;
 char      *file_out = NULL;
 char      *progname = NULL;
@@ -79,12 +79,12 @@ main(int argc, char **argv)
 	else if ((!strcmp(argv[i], "-id") || !strcmp(argv[i], "--image_dir")) && (i < (argc - 1)))
 	  {
 	     i++;
-	     img_dirs = evas_list_append(img_dirs, argv[i]);
+	     img_dirs = eina_list_append(img_dirs, argv[i]);
 	  }
 	else if ((!strcmp(argv[i], "-fd") || !strcmp(argv[i], "--font_dir")) && (i < (argc - 1)))
 	  {
 	     i++;
-	     fnt_dirs = evas_list_append(fnt_dirs, argv[i]);
+	     fnt_dirs = eina_list_append(fnt_dirs, argv[i]);
 	  }
 	else if ((!strcmp(argv[i], "-min-quality")) && (i < (argc - 1)))
 	  {
@@ -102,7 +102,7 @@ main(int argc, char **argv)
 	  }
 	else if (!strncmp(argv[i], "-D", 2))
 	  {
-	     defines = evas_list_append(defines, mem_strdup(argv[i]));
+	     defines = eina_list_append(defines, mem_strdup(argv[i]));
 	  }
 	else if ((!strcmp(argv[i], "-o")) && (i < (argc - 1)))
 	  {
