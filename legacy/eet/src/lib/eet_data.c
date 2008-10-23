@@ -1124,7 +1124,7 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
     */
    if (group_type > EET_G_UNKNOWN
        && group_type < EET_G_LAST
-       && type != EET_T_UNKNOW
+       && type > EET_T_UNKNOW && type < EET_T_STRING
        && subtype == NULL)
      {
 	subtype = calloc(1, sizeof (Eet_Data_Descriptor));
@@ -2555,14 +2555,25 @@ eet_data_get_list(const Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_E
    void **ptr;
    void *data_ret;
 
-   EET_ASSERT(!IS_SIMPLE_TYPE(type), return 0);
+   EET_ASSERT(!((type > EET_T_UNKNOW) && (type < EET_T_STRING)), return 0);
 
    ptr = (void **)data;
    list = *ptr;
    data_ret = NULL;
 
-   data_ret = _eet_data_descriptor_decode(ed, ede->subtype, echnk->data, echnk->size, level + 2, dumpfunc, dumpdata);
-   if (!data_ret) return 0;
+   if (ede->type >= EET_T_STRING)
+     {
+	int ret;
+
+	ret = eet_data_get_unknown(ed, edd, ede, echnk, ede->type, EET_G_UNKNOWN,
+				   &data_ret, level, dumpfunc, dumpdata, p, size);
+	if (!ret) return 0;
+     }
+   else
+     {
+	data_ret = _eet_data_descriptor_decode(ed, ede->subtype, echnk->data, echnk->size, level + 2, dumpfunc, dumpdata);
+	if (!data_ret) return 0;
+     }
 
    list = edd->func.list_append(list, data_ret);
    *ptr = list;
@@ -2832,16 +2843,24 @@ eet_data_put_list(Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_Element
    void *l;
    int size;
 
-   EET_ASSERT(!IS_SIMPLE_TYPE(ede->type), return );
+   EET_ASSERT(!((ede->type > EET_T_UNKNOW) && (ede->type < EET_T_STRING)), return );
 
    l = *((void **)(((char *)data_in)));
    for (; l; l = edd->func.list_next(l))
      {
-	data = _eet_data_descriptor_encode(ed,
-					   ede->subtype,
-					   edd->func.list_data(l),
-					   &size);
-	if (data) eet_data_encode(ed, ds, data, ede->name, size, ede->type, ede->group_type);
+	if (ede->type >= EET_T_STRING)
+	  {
+	     const char *str = edd->func.list_data(l);
+	     eet_data_put_unknown(ed, NULL, ede, ds, &str);
+	  }
+	else
+	  {
+	     data = _eet_data_descriptor_encode(ed,
+						ede->subtype,
+						edd->func.list_data(l),
+						&size);
+	     if (data) eet_data_encode(ed, ds, data, ede->name, size, ede->type, ede->group_type);
+	  }
      }
 }
 

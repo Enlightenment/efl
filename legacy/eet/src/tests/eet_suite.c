@@ -280,6 +280,7 @@ struct _Eet_Test_Ex_Type
    Eina_List *list;
    Eina_Hash *hash;
    Eina_List *ilist;
+   Eina_List *slist;
    Eina_Hash *ihash;
    Eet_Test_Basic_Type sarray1[10];
    unsigned int sarray2[5];
@@ -346,6 +347,9 @@ _eet_build_ex_descriptor(Eet_Data_Descriptor *edd)
    eet_data_descriptor_element_add(edd, "ihash", EET_T_INT, EET_G_HASH,
 				   (char *)(&(etbt.ihash)) - (char *)(&(etbt)),
 				   0, /* 0,  */NULL, NULL);
+   eet_data_descriptor_element_add(edd, "slist", EET_T_STRING, EET_G_LIST,
+				   (char *)(&(etbt.slist)) - (char *)(&(etbt)),
+				   0, /* 0,  */NULL, NULL);
 }
 
 static Eet_Test_Ex_Type*
@@ -374,6 +378,7 @@ _eet_test_ex_set(Eet_Test_Ex_Type *res, int offset)
    res->hash = NULL;
    res->ilist = NULL;
    res->ihash = NULL;
+   res->slist = NULL;
 
    res->varray2 = malloc(sizeof (Eet_Test_Basic_Type) * 10);
    res->varray1 = malloc(sizeof (int) * 5);
@@ -490,6 +495,7 @@ START_TEST(eet_test_data_type_encoding_decoding)
    etbt.ilist = eina_list_prepend(etbt.ilist, &i42);
    etbt.ihash = eina_hash_string_superfast_new(NULL);
    eina_hash_add(etbt.ihash, EET_TEST_KEY1, &i7);
+   etbt.slist = eina_list_prepend(NULL, strdup("test"));
 
    eet_test_setup_eddc(&eddc);
    eddc.name = "Eet_Test_Ex_Type";
@@ -510,6 +516,8 @@ START_TEST(eet_test_data_type_encoding_decoding)
    fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1) != 0);
    fail_if(eina_list_data_get(result->ilist) == NULL);
    fail_if(*((int*)eina_list_data_get(result->ilist)) != 42);
+   fail_if(eina_list_data_get(result->slist) == NULL);
+   fail_if(strcmp(eina_list_data_get(result->slist), "test") != 0);
 
    test = 0;
    eina_hash_foreach(result->hash, func, &test);
@@ -564,6 +572,7 @@ START_TEST(eet_test_data_type_dump_undump)
    eina_hash_add(etbt.ihash, EET_TEST_KEY1, &i7);
    etbt.ihash = eina_hash_string_superfast_new(NULL);
    eina_hash_add(etbt.ihash, EET_TEST_KEY2, &i7);
+   etbt.slist = eina_list_prepend(NULL, strdup("test"));
 
    eet_test_setup_eddc(&eddc);
    eddc.name = "Eet_Test_Ex_Type";
@@ -598,6 +607,8 @@ START_TEST(eet_test_data_type_dump_undump)
    fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1) != 0);
    fail_if(eina_list_data_get(result->ilist) == NULL);
    fail_if(*((int*)eina_list_data_get(result->ilist)) != 42);
+   fail_if(eina_list_data_get(result->slist) == NULL);
+   fail_if(strcmp(eina_list_data_get(result->slist), "test") != 0);
 
    test = 0;
    eina_hash_foreach(result->hash, func, &test);
@@ -696,6 +707,7 @@ START_TEST(eet_file_data_test)
    eina_hash_add(etbt.ihash, EET_TEST_KEY1, &i7);
    etbt.ihash = eina_hash_string_superfast_new(NULL);
    eina_hash_add(etbt.ihash, EET_TEST_KEY2, &i7);
+   etbt.slist = eina_list_prepend(NULL, strdup("test"));
 
    eet_test_setup_eddc(&eddc);
    eddc.name = "Eet_Test_Ex_Type";
@@ -761,6 +773,8 @@ START_TEST(eet_file_data_test)
    fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1) != 0);
    fail_if(eina_list_data_get(result->ilist) == NULL);
    fail_if(*((int*)eina_list_data_get(result->ilist)) != 42);
+   fail_if(eina_list_data_get(result->slist) == NULL);
+   fail_if(strcmp(eina_list_data_get(result->slist), "test") != 0);
 
    test = 0;
    eina_hash_foreach(result->hash, func, &test);
@@ -826,6 +840,7 @@ START_TEST(eet_file_data_dump_test)
    eina_hash_add(etbt.ihash, EET_TEST_KEY1, &i7);
    etbt.ihash = eina_hash_string_superfast_new(NULL);
    eina_hash_add(etbt.ihash, EET_TEST_KEY2, &i7);
+   etbt.slist = eina_list_prepend(NULL, strdup("test"));
 
    eet_test_setup_eddc(&eddc);
    eddc.name = "Eet_Test_Ex_Type";
@@ -871,6 +886,8 @@ START_TEST(eet_file_data_dump_test)
    fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1) != 0);
    fail_if(eina_list_data_get(result->ilist) == NULL);
    fail_if(*((int*)eina_list_data_get(result->ilist)) != 42);
+   fail_if(eina_list_data_get(result->slist) == NULL);
+   fail_if(strcmp(eina_list_data_get(result->slist), "test") != 0);
 
    test = 0;
    eina_hash_foreach(result->hash, func, &test);
