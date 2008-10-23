@@ -82,6 +82,7 @@ Ecore_Evas.h
 
 libecore_evas_la_SOURCES = \
 ecore_evas.c \
+ecore_evas_util.c \
 ecore_evas_x.c \
 ecore_evas_fb.c \
 ecore_evas_buffer.c \

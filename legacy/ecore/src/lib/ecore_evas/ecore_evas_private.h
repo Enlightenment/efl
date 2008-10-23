@@ -288,6 +288,7 @@ struct _Ecore_Evas
       void          (*fn_mouse_out) (Ecore_Evas *ee);
       void          (*fn_pre_render) (Ecore_Evas *ee);
       void          (*fn_post_render) (Ecore_Evas *ee);
+      void          (*fn_pre_free) (Ecore_Evas *ee);
    } func;
 
    Ecore_Evas_Engine engine;

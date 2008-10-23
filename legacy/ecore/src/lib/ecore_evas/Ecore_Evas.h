@@ -92,6 +92,13 @@ typedef enum _Ecore_Evas_Avoid_Damage_Type
    ECORE_EVAS_AVOID_DAMAGE_BUILT_IN = 2
 } Ecore_Evas_Avoid_Damage_Type;
 
+typedef enum _Ecore_Evas_Object_Associate_Flags
+{
+  ECORE_EVAS_OBJECT_ASSOCIATE_BASE  = 0,
+  ECORE_EVAS_OBJECT_ASSOCIATE_STACK = 1 << 0,
+  ECORE_EVAS_OBJECT_ASSOCIATE_LAYER = 1 << 1
+} Ecore_Evas_Object_Associate_Flags;
+
 #ifndef _ECORE_X_H
 #define _ECORE_X_WINDOW_PREDEF
 typedef unsigned int Ecore_X_Window;
@@ -240,6 +247,7 @@ EAPI void        ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, void (*func) (
 EAPI void        ecore_evas_callback_mouse_out_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
 EAPI void        ecore_evas_callback_pre_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
 EAPI void        ecore_evas_callback_post_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+EAPI void        ecore_evas_callback_pre_free_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
 EAPI Evas       *ecore_evas_get(Ecore_Evas *ee);
 EAPI void        ecore_evas_move(Ecore_Evas *ee, int x, int y);
 EAPI void        ecore_evas_managed_move(Ecore_Evas *ee, int x, int y);
@@ -296,6 +304,10 @@ EAPI int         ecore_evas_sticky_get(Ecore_Evas *ee);
 EAPI void        ecore_evas_ignore_events_set(Ecore_Evas *ee, int ignore);
 EAPI int         ecore_evas_ignore_events_get(Ecore_Evas *ee);
 EAPI void       *ecore_evas_window_get(Ecore_Evas *ee);
+
+
+  EAPI int         ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object_Associate_Flags flags);
+EAPI int         ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj);
 
 #ifdef __cplusplus
 }

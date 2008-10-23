@@ -1011,6 +1011,26 @@ ecore_evas_callback_post_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee
 }
 
 /**
+ * Set a callback for Ecore_Evas pre-free event.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+ *
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called just before the instance @p ee is freed.
+ */
+EAPI void
+ecore_evas_callback_pre_free_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+			 "ecore_evas_callback_pre_free_set");
+	return;
+     }
+   ee->func.fn_pre_free = func;
+}
+
+/**
  * Get an Ecore_Evas's Evas
  * @param ee The Ecore_Evas whose Evas you wish to get
  * @return The Evas wrapped by @p ee
@@ -2361,6 +2381,7 @@ _ecore_evas_fps_debug_rendertime_add(double t)
 void
 _ecore_evas_free(Ecore_Evas *ee)
 {
+   if (ee->func.fn_pre_free) ee->func.fn_pre_free(ee);
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_NONE);
    while (ee->sub_ecore_evas)
      {
