@@ -571,6 +571,7 @@ struct _Edje_Part_Description
       char          *text_class; /* how to apply/modify the font */
       char          *style; /* the text style if a textblock */
       char          *font; /* if a specific font is asked for */
+      char          *repch; /* replacement char for password mode entry */
 
       Edje_Alignment align; /* text alignment within bounds */
 

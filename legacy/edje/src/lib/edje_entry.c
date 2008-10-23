@@ -1139,7 +1139,13 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
    evas_object_event_callback_add(rp->object, EVAS_CALLBACK_MOUSE_MOVE, _edje_part_mouse_move_cb, rp);
    
    if (rp->part->entry_mode ==EDJE_ENTRY_EDIT_MODE_PASSWORD)
-     evas_object_textblock_replace_char_set(rp->object, "*");
+     {
+	if ((rp->chosen_description) &&
+	    (rp->chosen_description->text.repch))
+	  evas_object_textblock_replace_char_set(rp->object, rp->chosen_description->text.repch);
+	else
+	  evas_object_textblock_replace_char_set(rp->object, "*");
+     }
 
    en->cursor_bg = edje_object_add(rp->edje->evas);
    edje_object_file_set(en->cursor_bg, rp->edje->path, rp->part->source3);

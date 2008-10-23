@@ -144,6 +144,7 @@ static void st_collections_group_parts_part_description_text_text(void);
 static void st_collections_group_parts_part_description_text_text_class(void);
 static void st_collections_group_parts_part_description_text_font(void);
 static void st_collections_group_parts_part_description_text_style(void);
+static void st_collections_group_parts_part_description_text_repch(void);
 static void st_collections_group_parts_part_description_text_size(void);
 static void st_collections_group_parts_part_description_text_fit(void);
 static void st_collections_group_parts_part_description_text_min(void);
@@ -304,6 +305,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.text.text_class", st_collections_group_parts_part_description_text_text_class},
      {"collections.group.parts.part.description.text.font", st_collections_group_parts_part_description_text_font},
      {"collections.group.parts.part.description.text.style", st_collections_group_parts_part_description_text_style},
+     {"collections.group.parts.part.description.text.repch", st_collections_group_parts_part_description_text_repch},
      {"collections.group.parts.part.description.text.size", st_collections_group_parts_part_description_text_size},
      {"collections.group.parts.part.description.text.fit", st_collections_group_parts_part_description_text_fit},
      {"collections.group.parts.part.description.text.min", st_collections_group_parts_part_description_text_min},
@@ -3836,6 +3838,44 @@ st_collections_group_parts_part_description_text_style(void)
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
    ed->text.style = parse_str(0);
+}
+
+/**
+    @page edcref
+
+    @property
+        repch
+    @parameters
+        [the replacement character string]
+    @effect
+        If this is a textblock and is in PASSWORD mode this string is used
+        to replace every character to hide the details of the entry. Normally
+        you would use a "*", but you can use anything you like.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_text_repch(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_TEXTBLOCK)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"text attributes in non-TEXTBLOCK part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->text.repch = parse_str(0);
 }
 
 /**
