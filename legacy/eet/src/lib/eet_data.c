@@ -1400,22 +1400,28 @@ eet_data_descriptor_encode_hash_cb(void *hash __UNUSED__, const char *key, void 
 	data = NULL;
      }
 
-   EET_ASSERT(!IS_SIMPLE_TYPE(ede->type), return 1);
+   EET_ASSERT(!((ede->type > EET_T_UNKNOW) && (ede->type < EET_T_STRING)), return );
 
    /* Store data */
-   if (ede->subtype)
-     data = _eet_data_descriptor_encode(ed,
-                                        ede->subtype,
-                                        hdata,
-                                        &size);
-   if (data)
+   if (ede->type >= EET_T_STRING)
+     eet_data_put_unknown(ed, NULL, ede, ds, &hdata);
+   else
      {
-	echnk = eet_data_chunk_new(data, size, ede->name, ede->type, ede->group_type);
-	eet_data_chunk_put(ed, echnk, ds);
-	eet_data_chunk_free(echnk);
-	free(data);
-	data = NULL;
+	if (ede->subtype)
+	  data = _eet_data_descriptor_encode(ed,
+					     ede->subtype,
+					     hdata,
+					     &size);
+	if (data)
+	  {
+	     echnk = eet_data_chunk_new(data, size, ede->name, ede->type, ede->group_type);
+	     eet_data_chunk_put(ed, echnk, ds);
+	     eet_data_chunk_free(echnk);
+	     free(data);
+	     data = NULL;
+	  }
      }
+
    return 1;
 }
 
@@ -2594,7 +2600,7 @@ eet_data_get_hash(const Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_E
    void *data_ret = NULL;
    int ret = 0;
 
-   EET_ASSERT(!IS_SIMPLE_TYPE(type), return 0);
+   EET_ASSERT(!((type > EET_T_UNKNOW) && (type < EET_T_STRING)), return 0);
 
    ptr = (void **)data;
    hash = *ptr;
@@ -2615,14 +2621,25 @@ eet_data_get_hash(const Eet_Dictionary *ed, Eet_Data_Descriptor *edd, Eet_Data_E
    eet_data_chunk_get(ed, echnk, *p, *size);
    if (!echnk->name) goto on_error;
 
-   data_ret = _eet_data_descriptor_decode(ed,
-					  ede->subtype,
-					  echnk->data,
-					  echnk->size,
-					  level + 2,
-					  dumpfunc,
-					  dumpdata);
-   if (!data_ret) goto on_error;
+   if (type >= EET_T_STRING)
+     {
+	int ret;
+
+	ret = eet_data_get_unknown(ed, edd, ede, echnk, ede->type, EET_G_UNKNOWN,
+				   &data_ret, level, dumpfunc, dumpdata, p, size);
+	if (!ret) return 0;
+     }
+   else
+     {
+	data_ret = _eet_data_descriptor_decode(ed,
+					       ede->subtype,
+					       echnk->data,
+					       echnk->size,
+					       level + 2,
+					       dumpfunc,
+					       dumpdata);
+	if (!data_ret) goto on_error;
+     }
 
    hash = edd->func.hash_add(hash, key, data_ret);
    *ptr = hash;
