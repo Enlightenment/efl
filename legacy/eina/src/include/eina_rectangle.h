@@ -53,7 +53,7 @@ eina_spans_intersect(int c1, int l1, int c2, int l2)
 static inline Eina_Bool
 eina_rectangle_is_empty(Eina_Rectangle *r)
 {
-	return ((r->w < 1) || (r->h < 1));
+	return ((r->w < 1) || (r->h < 1)) ? EINA_TRUE : EINA_FALSE;
 }
 
 /**
@@ -76,7 +76,7 @@ eina_rectangle_coords_from(Eina_Rectangle *r, int x, int y, int w, int h)
 static inline Eina_Bool
 eina_rectangles_intersect(Eina_Rectangle *r1, Eina_Rectangle *r2)
 {
-	return (eina_spans_intersect(r1->x, r1->w, r2->x, r2->w) && eina_spans_intersect(r1->y, r1->h, r2->y, r2->h));
+	return (eina_spans_intersect(r1->x, r1->w, r2->x, r2->w) && eina_spans_intersect(r1->y, r1->h, r2->y, r2->h)) ? EINA_TRUE : EINA_FALSE;
 }
 /**
  * To be documented
@@ -85,7 +85,7 @@ eina_rectangles_intersect(Eina_Rectangle *r1, Eina_Rectangle *r2)
 static inline Eina_Bool
 eina_rectangle_xcoord_inside(Eina_Rectangle *r, int x)
 {
-	return ((x >= r->x) && (x < (r->x + r->w)));
+	return ((x >= r->x) && (x < (r->x + r->w))) ? EINA_TRUE : EINA_FALSE;
 }
 /**
  * To be documented
@@ -94,7 +94,7 @@ eina_rectangle_xcoord_inside(Eina_Rectangle *r, int x)
 static inline Eina_Bool
 eina_rectangle_ycoord_inside(Eina_Rectangle *r, int y)
 {
-	return ((y >= r->y) && (y < (r->y + r->h)));
+	return ((y >= r->y) && (y < (r->y + r->h))) ? EINA_TRUE : EINA_FALSE;
 }
 /**
  * To be documented
@@ -103,7 +103,7 @@ eina_rectangle_ycoord_inside(Eina_Rectangle *r, int y)
 static inline Eina_Bool
 eina_rectangle_coords_inside(Eina_Rectangle *r, int x, int y)
 {
-	return (eina_rectangle_xcoord_inside(r, x) && eina_rectangle_ycoord_inside(r, y));
+	return (eina_rectangle_xcoord_inside(r, x) && eina_rectangle_ycoord_inside(r, y)) ? EINA_TRUE : EINA_FALSE;
 }
 /**
  * To be documented
