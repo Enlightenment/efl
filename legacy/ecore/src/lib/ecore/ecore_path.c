@@ -148,7 +148,7 @@ ecore_path_group_find(Ecore_Path_Group *group, const char *name)
  * @ingroup Ecore_Path_Group
  */
 EAPI Ecore_List *
-ecore_path_group_available(Ecore_Path_Group *group)
+ecore_path_group_available_get(Ecore_Path_Group *group)
 {
    Ecore_List *avail = NULL;
    char *path;
@@ -179,16 +179,10 @@ ecore_path_group_available(Ecore_Path_Group *group)
 	while ((d = readdir(dir)) != NULL)
 	  {
 	     char ppath[PATH_MAX];
-	     char *ext;
 /*	     char n[PATH_MAX];
 	     int l;
 */
 	     if (!strncmp(d->d_name, ".", 1))
-	       continue;
-
-	     ext = strrchr(d->d_name, '.');
-
-	     if (!ext || strncmp(ext, SHARED_LIB_SUFFIX, sizeof(SHARED_LIB_SUFFIX)))
 	       continue;
 
 	     snprintf(ppath, PATH_MAX, "%s/%s", path, d->d_name);

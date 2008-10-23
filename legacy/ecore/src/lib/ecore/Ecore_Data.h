@@ -331,7 +331,7 @@ extern "C" {
    /*
     * Get a list of all the available files in a path set
     */
-   EAPI Ecore_List * ecore_path_group_available(Ecore_Path_Group *group);
+   EAPI Ecore_List * ecore_path_group_available_get(Ecore_Path_Group *group);
    
    
    typedef struct _ecore_plugin Ecore_Plugin;
