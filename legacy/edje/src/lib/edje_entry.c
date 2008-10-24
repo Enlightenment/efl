@@ -1139,7 +1139,7 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
    evas_object_event_callback_add(rp->object, EVAS_CALLBACK_MOUSE_UP, _edje_part_mouse_up_cb, rp);
    evas_object_event_callback_add(rp->object, EVAS_CALLBACK_MOUSE_MOVE, _edje_part_mouse_move_cb, rp);
    
-   if (rp->part->entry_mode ==EDJE_ENTRY_EDIT_MODE_PASSWORD)
+   if (rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD)
      {
 	if ((rp->chosen_description) &&
 	    (rp->chosen_description->text.repch))
