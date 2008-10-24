@@ -35,7 +35,7 @@ EAPI const unsigned int ecore_prime_table[] =
      2097143, 4194301, 8388617, 16777213
 };
 
-inline void 
+EAPI inline void 
 ecore_print_warning(const char *function, const char *sparam)
 {
    fprintf(stderr, "***** Developer Warning ***** :\n"
