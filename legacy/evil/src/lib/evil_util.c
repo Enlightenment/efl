@@ -92,6 +92,16 @@ evil_format_message(long err)
    return disp;
 }
 
+void
+_evil_error_display(LONG res)
+{
+   char *error;
+
+   error = evil_format_message(res);
+   fprintf(stderr, "[Evil] [%s] ERROR: %s\n", __FUNCTION__, error);
+   free(error);
+}
+
 char *
 evil_last_error_get(void)
 {

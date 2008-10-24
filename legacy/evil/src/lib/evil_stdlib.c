@@ -16,19 +16,7 @@
 #undef WIN32_LEAN_AND_MEAN
 
 #include "Evil.h"
-
-/*** Local ***/
-
-static void
-_evil_stdlib_error_display(const char *fct,
-                           LONG        res)
-{
-   char *error;
-
-   error = evil_format_message(res);
-   fprintf(stderr, "[Evil] [%s] ERROR: %s\n", fct, error);
-   free(error);
-}
+#include "evil_private.h"
 
 /*
  * Environment variable related functions
@@ -61,7 +49,7 @@ getenv(const char *name)
                           0, 0,
                           &key)) != ERROR_SUCCESS)
      {
-        _evil_stdlib_error_display("getenv", res);
+        _evil_error_display(res);
         return NULL;
      }
 
@@ -69,7 +57,7 @@ getenv(const char *name)
    if (!wname)
      {
         if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
-          _evil_stdlib_error_display("getenv", res);
+          _evil_error_display(res);
         return NULL;
      }
 
@@ -78,9 +66,8 @@ getenv(const char *name)
                               (LPBYTE)&_evil_stdlib_getenv_buffer,
                               &size)) != ERROR_SUCCESS)
      {
-        _evil_stdlib_error_display("getenv", res);
         if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
-          _evil_stdlib_error_display("getenv", res);
+          _evil_error_display(res);
         free(wname);
         return NULL;
      }
@@ -89,7 +76,7 @@ getenv(const char *name)
 
    if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
      {
-        _evil_stdlib_error_display("getenv", res);
+        _evil_error_display(res);
         return NULL;
      }
 
@@ -206,7 +193,7 @@ setenv(const char *name,
                              &key,
                              &disposition)) != ERROR_SUCCESS)
      {
-        _evil_stdlib_error_display("setenv", res);
+        _evil_error_display(res);
         return -1;
      }
 
@@ -218,7 +205,7 @@ setenv(const char *name,
    if (!wname)
      {
         if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
-          _evil_stdlib_error_display("setenv", res);
+          _evil_error_display(res);
         return -1;
      }
 
@@ -229,9 +216,9 @@ setenv(const char *name,
                             strlen(value) + 1)) != ERROR_SUCCESS)
      {
         free(wname);
-        _evil_stdlib_error_display("setenv", res);
+        _evil_error_display(res);
         if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
-          _evil_stdlib_error_display("setenv", res);
+          _evil_error_display(res);
         return -1;
      }
 
@@ -239,7 +226,7 @@ setenv(const char *name,
 
    if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
      {
-        _evil_stdlib_error_display("setenv", res);
+        _evil_error_display(res);
         return -1;
      }
 

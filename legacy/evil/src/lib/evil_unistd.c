@@ -18,6 +18,7 @@
 #endif
 
 #include "Evil.h"
+#include "evil_private.h"
 
 /*
  * Process identifer related functions
@@ -251,7 +252,7 @@ evil_getcwd(char *buffer, size_t size)
    wchar_t wpath[PATH_MAX];
    char   *cpath;
    char   *delim;
-   int     ret = 0;
+   DWORD   ret = 0;
 
    if (size <= 0)
      return NULL;
@@ -259,7 +260,10 @@ evil_getcwd(char *buffer, size_t size)
    ret = GetModuleFileName(GetModuleHandle(NULL), (LPWSTR)&wpath, PATH_MAX);
 
    if (!ret)
-     return NULL;
+     {
+        _evil_error_display(ret);
+        return NULL;
+     }
 
    cpath = evil_wchar_to_char(wpath);
    if (!cpath)

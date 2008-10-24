@@ -43,4 +43,4 @@ libevil_la_CFLAGS = @win32_cflags@
 libevil_la_LIBADD = @win32_libs@ $(EFL_MPATROL_LIBS)
 libevil_la_LDFLAGS = -no-undefined -Wl,--enable-auto-import -version-info @version_info@
 
-EXTRA_DIST = evil_fnmatch_private.h
+EXTRA_DIST = evil_private.h evil_fnmatch_private.h

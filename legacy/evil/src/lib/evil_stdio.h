@@ -2,7 +2,7 @@
 #define __EVIL_STDIO_H__
 
 
-#ifdef __MINGW32CE__
+#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
 
 
 #include <stdio.h>
@@ -19,9 +19,11 @@ EAPI void perror (const char *s);
  *
  */
 
+EAPI FILE *evil_fopen(const char *path, const char *mode);
+
 EAPI void rewind(FILE *stream);
 
-#endif /* __MINGW32CE__ */
+#endif /* _WIN32_WCE && ! __CEGCC__ */
 
 
 #endif /* __EVIL_STDIO_H__ */
