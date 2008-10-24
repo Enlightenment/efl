@@ -2147,7 +2147,7 @@ st_collections_group_parts_part_dragable_events(void)
     @parameters
         Sets the edit mode for a textblock part to one of:
         @li NONE
-        @li SELECTABLE
+        @li PLAIN
         @li EDITABLE
         @li PASSWORD
     @effect
