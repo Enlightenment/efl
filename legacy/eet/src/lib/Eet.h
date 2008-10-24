@@ -57,7 +57,8 @@ extern "C" {
 #define EET_T_ULONG_LONG        10 /**< Data type: unsigned long long */
 #define EET_T_STRING            11 /**< Data type: char * */
 #define EET_T_INLINED_STRING    12 /**< Data type: char * (but compressed inside the resulting eet) */
-#define EET_T_LAST              13 /**< Last data type */
+#define EET_T_NULL              13 /**< Data type: (void *) (only use it if you know why) */
+#define EET_T_LAST              14 /**< Last data type */
 
 #define EET_G_UNKNOWN    100 /**< Unknown group data encoding type */
 #define EET_G_ARRAY      101 /**< Fixed size array group type */
