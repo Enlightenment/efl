@@ -8,9 +8,10 @@
 #include "evas_mmx.h"
 #endif
 
+#ifndef _WIN32
+#include <signal.h>
 #include <setjmp.h>
 
-#ifndef _WIN32
 static sigjmp_buf detect_buf;
 #endif
 
