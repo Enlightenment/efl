@@ -960,7 +960,7 @@ edje_object_part_text_insert(Evas_Object *obj, const char *part, const char *tex
 /** Returns a list of char * anchor names
  * @param obj A valid Evas_Object handle
  * @param part The part name
- * @return The list of anchors
+ * @return The list of anchors (const char *)
  */
 EAPI Eina_List *
 edje_object_part_text_anchor_list_get(const Evas_Object *obj, const char *part)
@@ -974,6 +974,27 @@ edje_object_part_text_anchor_list_get(const Evas_Object *obj, const char *part)
    if (!rp) return NULL;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      return _edje_entry_anchors_list(rp);
+   return NULL;
+}
+
+/** Returns a list of Evas_Textblock_Rectangle * anchor rectangles
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param anchor The anchor name
+ * @return The list of anchor rects (const Evas_Textblock_Rectangle *)
+ */
+EAPI Eina_List *
+edje_object_part_text_anchor_geometry_get(const Evas_Object *obj, const char *part, const char *anchor)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return NULL;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return NULL;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     return _edje_entry_anchor_geometry_get(rp, anchor);
    return NULL;
 }
 

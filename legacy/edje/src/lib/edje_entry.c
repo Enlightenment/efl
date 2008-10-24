@@ -34,7 +34,7 @@ struct _Entry
 struct _Sel
 {
    Evas_Textblock_Rectangle rect;
-   Evas_Object *obj_fg, *obj_bg, *obj;
+   Evas_Object *obj_fg, *obj_bg, *obj, *sobj;
 };
 
 struct _Anchor
@@ -517,6 +517,7 @@ _anchors_update(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 	     Evas_Textblock_Rectangle *r;
 
 	     r = range->data;
+	     *(&(sel->rect)) = *r;
 	     if (sel->obj_bg)
 	       {
 		  evas_object_move(sel->obj_bg, x + r->x, y + r->y);
@@ -1285,6 +1286,22 @@ _edje_entry_set_cursor_end(Edje_Real_Part *rp)
 }
 
 const Eina_List *
+_edje_entry_anchor_geometry_get(Edje_Real_Part *rp, const char *anchor)
+{
+   Entry *en = rp->entry_data;
+   Eina_List *l;
+   Anchor *an;
+   
+   if (!en) return;
+   EINA_LIST_FOREACH(en->anchors, l, an)
+     {
+	if (!strcmp(anchor, an->name))
+	  return an->sel;
+     }
+   return NULL;
+}
+
+const Eina_List *
 _edje_entry_anchors_list(Edje_Real_Part *rp)
 {
    Entry *en = rp->entry_data;
@@ -1296,9 +1313,7 @@ _edje_entry_anchors_list(Edje_Real_Part *rp)
      {
         EINA_LIST_FOREACH(en->anchors, l, an)
 	  {
-	     char *n;
-
-	     n = an->name;
+	     const char *n = an->name;
 	     if (!n) n = "";
 	     anchors = eina_list_append(anchors, strdup(n));
 	  }
