@@ -62,10 +62,8 @@
 #endif
 
 typedef unsigned char Eina_Bool;
-enum {
-	EINA_FALSE = 0,
-	EINA_TRUE = 1
-};
+#define EINA_FALSE ((Eina_Bool)0)
+#define EINA_TRUE ((Eina_Bool)1)
 
 EAPI extern const unsigned int eina_prime_table[];
 
