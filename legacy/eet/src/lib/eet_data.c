@@ -711,19 +711,22 @@ eet_data_chunk_get(const Eet_Dictionary *ed, Eet_Data_Chunk *chnk,
    const char *s;
    int ret1, ret2;
 
-   if (!src) {
-	     fprintf(stderr, "stiouf -3\n");
-      return;
-   }
-   if (size <= 8) {
-      fprintf(stderr, "stiouf -2 %i\n", size);
-      return;
-   }
+   if (!src)
+     {
+	fprintf(stderr, "stiouf -3\n");
+	return;
+     }
+   if (size <= 8)
+     {
+	fprintf(stderr, "stiouf -2 %i\n", size);
+	return;
+     }
 
-   if (!chnk) {
-	     fprintf(stderr, "stiouf -1\n");
-      return;
-   }
+   if (!chnk)
+     {
+	fprintf(stderr, "stiouf -1\n");
+	return;
+     }
 
    s = src;
    if (s[2] == 'K')
