@@ -1204,9 +1204,9 @@ eina_list_reverse(Eina_List *list)
  * Example:
  * @code
  * int
- * sort_cb(void *d1, void *d2)
+ * sort_cb(const void *d1, const void *d2)
  * {
- *   const char *txt = NULL;
+ *    const char *txt = NULL;
  *    const char *txt2 = NULL;
  *
  *    if(!d1) return(1);
