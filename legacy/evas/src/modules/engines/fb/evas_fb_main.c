@@ -7,7 +7,6 @@
 #include "evas_common.h"
 #include "evas_fb.h"
 
-#include <signal.h>
 #include <sys/ioctl.h>
 #include <sys/wait.h>
 #include <linux/kd.h>

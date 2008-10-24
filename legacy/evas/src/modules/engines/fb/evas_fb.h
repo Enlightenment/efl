@@ -14,9 +14,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <termios.h>
-#include <signal.h>
 #include <errno.h>
-#include <signal.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/wait.h>
