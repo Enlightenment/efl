@@ -34,8 +34,8 @@ typedef Eina_Bool (*Eina_Module_Cb)(Eina_Module *m, void *data);
 typedef Eina_Bool (*Eina_Module_Init)(void);
 typedef void (*Eina_Module_Shutdown)(void);
 
-#define EINA_MODULE_INIT(f) Eina_Module_Init __eina_module_init = &f;
-#define EINA_MODULE_SHUTDOWN(f) Eina_Module_Shutdown __eina_module_shutdown = &f;
+#define EINA_MODULE_INIT(f) EAPI Eina_Module_Init __eina_module_init = &f;
+#define EINA_MODULE_SHUTDOWN(f) EAPI Eina_Module_Shutdown __eina_module_shutdown = &f;
 
 extern EAPI Eina_Error EINA_ERROR_WRONG_MODULE;
 extern EAPI Eina_Error EINA_ERROR_MODULE_INIT_FAILED;
