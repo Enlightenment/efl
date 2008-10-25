@@ -562,6 +562,7 @@ _anchors_clear(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 	     free(sel);
 	     an->sel = eina_list_remove_list(an->sel, an->sel);
 	  }
+	free(an);
 	en->anchors = eina_list_remove_list(en->anchors, en->anchors);
      }
 }
