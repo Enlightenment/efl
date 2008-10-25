@@ -210,6 +210,7 @@ struct Efreet_Menu_Desktop
 static char *efreet_menu_prefix = NULL; /**< The $XDG_MENU_PREFIX env var */
 Ecore_List *efreet_menu_kde_legacy_dirs = NULL; /**< The directories to use for KDELegacy entries */
 static const char *efreet_tag_menu = NULL;
+static char *efreet_menu_file = NULL; /**< A menu file set explicityl as default */
 
 static Ecore_Hash *efreet_merged_menus = NULL;
 static Ecore_Hash *efreet_merged_dirs = NULL;
@@ -538,6 +539,7 @@ void
 efreet_menu_shutdown(void)
 {
     IF_FREE(efreet_menu_prefix);
+    IF_FREE(efreet_menu_file);
 
     IF_FREE_HASH(efreet_menu_handle_cbs);
     IF_FREE_HASH(efreet_menu_filter_cbs);
@@ -564,6 +566,14 @@ efreet_menu_new(void)
     return menu;
 }
 
+EAPI void
+efreet_menu_file_set(const char *file)
+{
+    IF_FREE(efreet_menu_file);
+    efreet_menu_file = NULL;
+    if (file) efreet_menu_file = strdup(file);
+}
+
 /**
  * @return Returns the Efreet_Menu_Internal representation of the default menu or
  * NULL if none found
@@ -581,6 +591,12 @@ efreet_menu_get(void)
                         efreet_config_home_get(), efreet_menu_prefix_get());
     if (ecore_file_exists(menu))
         return efreet_menu_parse(menu);
+
+    if (efreet_menu_file)
+    {
+        if (ecore_file_exists(efreet_menu_file))
+	  return efreet_menu_parse(efreet_menu_file);
+    }
 
     /* fallback to the XDG_CONFIG_DIRS */
     config_dirs = efreet_config_dirs_get();
