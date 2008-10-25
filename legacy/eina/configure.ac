@@ -311,6 +311,7 @@ AC_FUNC_ALLOCA
 AC_CONFIG_FILES([
 Makefile
 eina-0.pc
+eina.spec
 doc/Makefile
 src/Makefile
 src/include/Makefile
