@@ -181,8 +181,16 @@ extern "C" {
    EAPI void         elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
    EAPI void         elm_hover_style_set(Evas_Object *obj, const char *style);
    /* smart callbacks called:
+    * "clicked" - the user clicked the empty space in the hover to dismiss
     */
 
+   typedef struct _Elm_Entry_Anchor_Info Elm_Entry_Anchor_Info;
+   struct _Elm_Entry_Anchor_Info
+     {
+	const char *name;
+	int button;
+	Evas_Coord x, y, w, h;
+     };
    EAPI Evas_Object *elm_entry_add(Evas_Object *parent);
    EAPI void         elm_entry_single_line_set(Evas_Object *obj, Evas_Bool single_line);
    EAPI void         elm_entry_password_set(Evas_Object *obj, Evas_Bool password);
@@ -191,6 +199,7 @@ extern "C" {
    EAPI const char  *elm_entry_selection_get(Evas_Object *obj);
    EAPI void         elm_entry_entry_insert(Evas_Object *obj, const char *entry);
    EAPI void         elm_entry_line_wrap_set(Evas_Object *obj, Evas_Bool wrap);
+   EAPI void         elm_entry_editable_set(Evas_Object *obj, Evas_Bool editable);
    /* smart callbacks called:
     * "changed" - the text content changed
     * "selection,start" - the user started selecting text
@@ -200,7 +209,7 @@ extern "C" {
     * "selection,copy" - the user copied the text
     * "selection,cut" - the user cut the text
     * "cursor,changed" - the cursor changed position
-    * "anchor,X,clicked,N" - achor called 'X' was clicked with button 'N'
+    * "anchor,clicked" - achor called was clicked | event_info = Elm_Entry_Anchor_Info
     * "activated" - when the enter key is pressed (useful for single line)
     */
    
@@ -216,7 +225,51 @@ extern "C" {
    EAPI void         elm_notepad_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format);
    /* smart callbacks called:
     */
-   
+
+   typedef struct _Elm_Entry_Anchorview_Info Elm_Entry_Anchorview_Info;
+   struct _Elm_Entry_Anchorview_Info
+     {
+	const char *name;
+	int button;
+	Evas_Object *hover;
+	struct {
+	   Evas_Coord x, y, w, h;
+	} anchor, hover_parent;
+	Evas_Bool hover_left : 1;
+	Evas_Bool hover_right : 1;
+	Evas_Bool hover_top : 1;
+	Evas_Bool hover_bottom : 1;
+     };
+   EAPI Evas_Object *elm_anchorview_add(Evas_Object *parent);
+   EAPI void         elm_anchorview_text_set(Evas_Object *obj, const char *text);
+   EAPI void         elm_anchorview_hover_style_set(Evas_Object *obj, const char *style);
+   EAPI void         elm_anchorview_hover_end(Evas_Object *obj);
+   /* smart callbacks called:
+    * "anchor,clicked" - achor called was clicked | event_info = Elm_Entry_Anchorview_Info
+    */
+       
+   typedef struct _Elm_Entry_Anchorblock_Info Elm_Entry_Anchorblock_Info;
+   struct _Elm_Entry_Anchorblock_Info
+     {
+	const char *name;
+	int button;
+	Evas_Object *hover;
+	struct {
+	   Evas_Coord x, y, w, h;
+	} anchor, hover_parent;
+	Evas_Bool hover_left : 1;
+	Evas_Bool hover_right : 1;
+	Evas_Bool hover_top : 1;
+	Evas_Bool hover_bottom : 1;
+     };
+   EAPI Evas_Object *elm_anchorblock_add(Evas_Object *parent);
+   EAPI void         elm_anchorblock_text_set(Evas_Object *obj, const char *text);
+   EAPI void         elm_anchorblock_hover_style_set(Evas_Object *obj, const char *style);
+   EAPI void         elm_anchorblock_hover_end(Evas_Object *obj);
+   /* smart callbacks called:
+    * "anchor,clicked" - achor called was clicked | event_info = Elm_Entry_Anchorblock_Info
+    */
+       
        
 // FIXME: fixes to do
 // * current sizing tree inefficient

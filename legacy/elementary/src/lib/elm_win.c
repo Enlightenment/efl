@@ -43,6 +43,7 @@ static void
 _elm_win_resize(Ecore_Evas *ee)
 {
    Elm_Win *win = ecore_evas_data_get(ee, "__Elm");
+   if (!win) return;
    if (win->deferred_resize_job) ecore_job_del(win->deferred_resize_job);
    win->deferred_resize_job = ecore_job_add(_elm_win_resize_job, win);
 }
@@ -135,6 +136,12 @@ _elm_win_obj_intercept_color_set(void *data, Evas_Object *obj, int r, int g, int
 }
 
 static void
+_deferred_ecore_evas_free(void *data)
+{
+   ecore_evas_free(data);
+}
+
+static void
 _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Elm_Win *win = data;
@@ -153,9 +160,20 @@ _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_inf
    evas_object_intercept_color_set_callback_del(win->win_obj, _elm_win_obj_intercept_color_set);
    evas_object_event_callback_del(win->win_obj, EVAS_CALLBACK_DEL, _elm_win_obj_callback_del);
    evas_object_event_callback_del(win->win_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _elm_win_obj_callback_changed_size_hints);
-   ecore_evas_free(win->ee);
+   ecore_evas_callback_delete_request_set(win->ee, NULL);
+   ecore_evas_callback_resize_set(win->ee, NULL);
    if (win->deferred_resize_job) ecore_job_del(win->deferred_resize_job);
    if (win->deferred_child_eval_job) ecore_job_del(win->deferred_child_eval_job);
+   while (evas_object_bottom_get(win->evas) &&
+	  (evas_object_bottom_get(win->evas) != obj))
+     evas_object_del(evas_object_bottom_get(win->evas));
+   while (evas_object_top_get(win->evas) &&
+	  (evas_object_top_get(win->evas) != obj))
+     evas_object_del(evas_object_top_get(win->evas));
+// fixme - we are in the del handler for the object and delete the canvas
+// that lives under it from the handler... nasty. deferring doesnt help either
+   ecore_job_add(_deferred_ecore_evas_free, win->ee);
+//   ecore_evas_free(win->ee);
    free(win);
 }
 
@@ -177,6 +195,7 @@ static void
 _elm_win_delete_request(Ecore_Evas *ee)
 {
    Elm_Win *win = ecore_evas_data_get(ee, "__Elm");
+   if (!win) return;
    evas_object_smart_callback_call(win->win_obj, "delete-request", NULL);
    if (win->autodel) evas_object_del(win->win_obj);
 }

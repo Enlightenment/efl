@@ -11,6 +11,7 @@ struct _Widget_Data
    Evas_Bool linewrap : 1;
    Evas_Bool single_line : 1;
    Evas_Bool password : 1;
+   Evas_Bool editable : 1;
    Ecore_Job *deferred_recalc_job;
 };
 
@@ -90,6 +91,8 @@ _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (wd->linewrap) _sizing_eval(data);
+   Evas_Coord ww, hh;
+   evas_object_geometry_get(wd->ent, NULL, NULL, &ww, &hh);
 }
 
 static void
@@ -160,7 +163,7 @@ _signal_cursor_changed(void *data, Evas_Object *obj, const char *emission, const
    // FIXME: handle auto-scroll within parent (get cursor - if not visible
    // jump so it is)
    edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text", &cx, &cy, &cw, &ch);
-   printf("CURSOR: @%i+%i %ix%i\n", cx, cy, cw, ch);
+//   printf("CURSOR: @%i+%i %ix%i\n", cx, cy, cw, ch);
    elm_widget_show_region_set(data, cx, cy, cw, ch);
 }
 
@@ -168,22 +171,23 @@ static void
 _signal_anchor_down(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   printf("DOWN %s\n", emission);
+//   printf("DOWN %s\n", emission);
 }
 
 static void
 _signal_anchor_up(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   Elm_Entry_Anchor_Info ei;
    char *buf, *buf2, *p, *p2, *n;
    int buflen;
-   printf("UP %s\n", emission);
+//   printf("UP %s\n", emission);
    p = strrchr(emission, ',');
    if (p)
      {
+	Eina_List *geoms;
+	
 	n = p + 1;
-	buflen = 200 + strlen(n);
-	buf = alloca(buflen);
 	p2 = p -1;
 	while (p2 >= emission)
 	  {
@@ -194,8 +198,32 @@ _signal_anchor_up(void *data, Evas_Object *obj, const char *emission, const char
 	buf2 = alloca(5 + p - p2);
 	strncpy(buf2, p2, p - p2);
 	buf2[p - p2] = 0;
-	snprintf(buf, buflen, "anchor,%s,clicked,%s", buf2, n);
-	evas_object_smart_callback_call(data, buf, NULL);
+	ei.name = n;
+	ei.button = atoi(buf2);
+	ei.x = ei.y = ei.w = ei.h = 0;
+	geoms = edje_object_part_text_anchor_geometry_get(wd->ent, "elm.text", ei.name);
+	if (geoms)
+	  {
+	     Evas_Textblock_Rectangle *r;
+	     Eina_List *l;
+	     Evas_Coord px, py, x, y;
+
+	     evas_object_geometry_get(wd->ent, &x, &y, NULL, NULL);
+	     evas_pointer_output_xy_get(evas_object_evas_get(wd->ent), &px, &py);
+	     EINA_LIST_FOREACH(geoms, l, r)
+	       {
+		  if (((r->x + x) <= px) && ((r->y + y) <= py) && 
+		      ((r->x + x + r->w) > px) && ((r->y + y + r->h) > py))
+		    {
+		       ei.x = r->x + x;
+		       ei.y = r->y + y;
+		       ei.w = r->w;
+		       ei.h = r->h;
+		       break;
+		    }
+	       }
+	  }
+	evas_object_smart_callback_call(data, "anchor,clicked", &ei);
      }
 }
 
@@ -203,21 +231,21 @@ static void
 _signal_anchor_move(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   printf("MOVE %s\n", emission);
+//   printf("MOVE %s\n", emission);
 }
 
 static void
 _signal_anchor_in(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   printf("IN %s\n", emission);
+//   printf("IN %s\n", emission);
 }
 
 static void
 _signal_anchor_out(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   printf("OUT %s\n", emission);
+//   printf("OUT %s\n", emission);
 }
 
 static void
@@ -243,6 +271,7 @@ elm_entry_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, 1);
 
    wd->linewrap = 1;
+   wd->editable = 1;
    
    wd->ent = edje_object_add(e);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_RESIZE, _resize, obj);
@@ -266,6 +295,39 @@ elm_entry_add(Evas_Object *parent)
    return obj;
 }
 
+static const char *
+_getbase(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->editable)
+     {
+	if (wd->password) return "base-password";
+	else
+	  {
+	     if (wd->single_line) return "base-single";
+	     else
+	       {
+		  if (wd->linewrap) return "base";
+		  else  return "base-nowrap";
+	       }
+	  }
+     }
+   else
+     {
+	if (wd->password) return "base-password";
+	else
+	  {
+	     if (wd->single_line) return "base-single-noedit";
+	     else
+	       {
+		  if (wd->linewrap) return "base-noedit";
+		  else  return "base-nowrap-noedit";
+	       }
+	  }
+     }
+   return "base";
+}
+
 EAPI void
 elm_entry_single_line_set(Evas_Object *obj, Evas_Bool single_line)
 {
@@ -276,8 +338,7 @@ elm_entry_single_line_set(Evas_Object *obj, Evas_Bool single_line)
    wd->linewrap = 0;
    t = elm_entry_entry_get(obj);
    if (t) t = strdup(t);
-   if (!wd->single_line) _elm_theme_set(wd->ent, "entry", "base", "default");
-   else _elm_theme_set(wd->ent, "entry", "base-single", "default");
+   _elm_theme_set(wd->ent, "entry", _getbase(obj), "default");
    elm_entry_entry_set(obj, t);
    if (t) free(t);
    _sizing_eval(obj);
@@ -294,8 +355,7 @@ elm_entry_password_set(Evas_Object *obj, Evas_Bool password)
    wd->linewrap = 0;
    t = elm_entry_entry_get(obj);
    if (t) t = strdup(t);
-   if (!wd->password) _elm_theme_set(wd->ent, "entry", "base", "default");
-   else _elm_theme_set(wd->ent, "entry", "base-password", "default");
+   _elm_theme_set(wd->ent, "entry", _getbase(obj), "default");
    elm_entry_entry_set(obj, t);
    if (t) free(t);
    _sizing_eval(obj);
@@ -308,12 +368,14 @@ elm_entry_entry_set(Evas_Object *obj, const char *entry)
    edje_object_part_text_set(wd->ent, "elm.text", entry);
    
    // debug
+#if 0
      {
 	Eina_List *l, *an;
 	an = edje_object_part_text_anchor_list_get(wd->ent, "elm.text");
 	for (l = an; l; l = l->next)
 	  printf("ANCHOR: %s\n", l->data);
      }
+#endif   
    wd->changed = 1;
    _sizing_eval(obj);
 }
@@ -350,8 +412,22 @@ elm_entry_line_wrap_set(Evas_Object *obj, Evas_Bool wrap)
    wd->linewrap = wrap;
    t = elm_entry_entry_get(obj);
    if (t) t = strdup(t);
-   if (wd->linewrap) _elm_theme_set(wd->ent, "entry", "base", "default");
-   else _elm_theme_set(wd->ent, "entry", "base-nowrap", "default");
+   _elm_theme_set(wd->ent, "entry", _getbase(obj), "default");
+   elm_entry_entry_set(obj, t);
+   if (t) free(t);
+   _sizing_eval(obj);
+}
+
+EAPI void
+elm_entry_editable_set(Evas_Object *obj, Evas_Bool editable)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   char *t;
+   if (wd->editable == editable) return;
+   wd->editable = editable;
+   t = elm_entry_entry_get(obj);
+   if (t) t = strdup(t);
+   _elm_theme_set(wd->ent, "entry", _getbase(obj), "default");
    elm_entry_entry_set(obj, t);
    if (t) free(t);
    _sizing_eval(obj);

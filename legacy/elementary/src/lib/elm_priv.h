@@ -42,6 +42,7 @@ int _elm_theme_icon_set(Evas_Object *o, const char *group, const char *style);
 /* FIXME: should this be public? for now - private (but public symbols) */
 EAPI Evas_Object *elm_widget_add(Evas *evas);
 EAPI void         elm_widget_del_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
+EAPI void         elm_widget_del_pre_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
 EAPI void         elm_widget_focus_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
 EAPI void         elm_widget_activate_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
 EAPI void         elm_widget_disable_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));

@@ -9,7 +9,8 @@ struct _Smart_Data
    Evas_Coord       x, y, w, h;
    Evas_Object     *obj;
    Evas_Object     *clip;
-   unsigned char    homogenous : 1;
+   Evas_Bool        homogenous : 1;
+   Evas_Bool        deleting : 1;
    Eina_List       *items;
    struct {
       int           cols, rows;
@@ -97,7 +98,7 @@ _els_smart_table_unpack(Evas_Object *obj)
    sd = ti->sd;
    sd->items = eina_list_remove(sd->items, obj);
    _smart_disown(obj);
-   _smart_reconfigure(sd);
+   if (!sd->deleting) _smart_reconfigure(sd);
 }
 
 void
@@ -810,6 +811,7 @@ _smart_del(Evas_Object *obj)
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   sd->deleting = 1;
    while (sd->items)
      {
 	Evas_Object *child;

@@ -2812,6 +2812,93 @@ collections {
       }
    }
 
+   group { name: "elm/entry/base-single-noedit/default";
+      parts {
+	 part { name: "elm.text";
+	    type: TEXTBLOCK;
+	    mouse_events: 1;
+	    scale: 1;
+	    entry_mode: PLAIN;
+	    multiline: 0;
+	    source: "elm/entry/selection/default"; // selection under
+	    source4: "elm/entry/cursor/default"; // cursorover
+	    source5: "elm/entry/anchor/default"; // anchor under
+	    description { state: "default" 0.0;
+	       text {
+		  style: "entry_single_textblock_style";
+		  min: 1 1;
+	       }
+	    }
+	 }
+      }
+      programs {
+	 program { name: "focus";
+            signal: "load";
+	    source: "";
+	    action: FOCUS_SET;
+	    target: "elm.text";
+	 }
+      }
+   }
+
+   group { name: "elm/entry/base-noedit/default";
+      parts {
+	 part { name: "elm.text";
+	    type: TEXTBLOCK;
+	    mouse_events: 1;
+	    scale: 1;
+	    entry_mode: PLAIN;
+	    multiline: 1;
+	    source: "elm/entry/selection/default"; // selection under
+	    source4: "elm/entry/cursor/default"; // cursorover
+	    source5: "elm/entry/anchor/default"; // anchor under
+	    description { state: "default" 0.0;
+	       text {
+		  style: "entry_textblock_style";
+		  min: 0 1;
+	       }
+	    }
+	 }
+      }
+      programs {
+	 program { name: "focus";
+            signal: "load";
+	    source: "";
+	    action: FOCUS_SET;
+	    target: "elm.text";
+	 }
+      }
+   }
+
+   group { name: "elm/entry/base-nowrap-noedit/default";
+      parts {
+	 part { name: "elm.text";
+	    type: TEXTBLOCK;
+	    mouse_events: 1;
+	    scale: 1;
+	    entry_mode: PLAIN;
+	    multiline: 1;
+	    source: "elm/entry/selection/default"; // selection under
+	    source4: "elm/entry/cursor/default"; // cursorover
+	    source5: "elm/entry/anchor/default"; // anchor under
+	    description { state: "default" 0.0;
+	       text {
+		  style: "entry_textblock_style";
+		  min: 1 1;
+	       }
+	    }
+	 }
+      }
+      programs {
+	 program { name: "focus";
+            signal: "load";
+	    source: "";
+	    action: FOCUS_SET;
+	    target: "elm.text";
+	 }
+      }
+   }
+
   group { name: "elm/entry/base-password/default";
       parts {
 	 part { name: "elm.text";

@@ -19,17 +19,26 @@ struct _Subinfo
    Evas_Object *obj;
 };
 
+static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
+static void _hov_move(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _hov_resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _hov_show(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _hov_hide(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 static void
-_del_hook(Evas_Object *obj)
+_del_pre_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    elm_hover_target_set(obj, NULL);
    elm_hover_parent_set(obj, NULL);
+   evas_object_event_callback_del(wd->hov, EVAS_CALLBACK_MOVE, _hov_move);
+   evas_object_event_callback_del(wd->hov, EVAS_CALLBACK_RESIZE, _hov_resize);
+   evas_object_event_callback_del(wd->hov, EVAS_CALLBACK_SHOW, _hov_show);
+   evas_object_event_callback_del(wd->hov, EVAS_CALLBACK_HIDE, _hov_hide);
    while (wd->subs)
      {
         Subinfo *si = wd->subs->data;
@@ -37,6 +46,12 @@ _del_hook(Evas_Object *obj)
 	evas_stringshare_del(si->swallow);
 	free(si);
      }
+}
+
+static void
+_del_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
    free(wd);
 }
 
@@ -112,8 +127,11 @@ _hov_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Widget_Data *wd = elm_widget_data_get(data);
    Eina_List *l;
    // FIXME: use signals for show for hov
-   evas_object_show(wd->cov);
-   edje_object_signal_emit(wd->cov, "elm,action,show", "elm");
+   if (wd->cov)
+     {
+	evas_object_show(wd->cov);
+	edje_object_signal_emit(wd->cov, "elm,action,show", "elm");
+     }
    for (l = wd->subs; l; l = l->next)
      {
 	Subinfo *si = l->data;
@@ -133,8 +151,11 @@ _hov_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Widget_Data *wd = elm_widget_data_get(data);
    Eina_List *l;
    // FIXME: use signals for hide for hov
-   edje_object_signal_emit(wd->cov, "elm,action,hide", "elm");
-   evas_object_hide(wd->cov);
+   if (wd->cov)
+     {
+	edje_object_signal_emit(wd->cov, "elm,action,hide", "elm");
+	evas_object_hide(wd->cov);
+     }
    for (l = wd->subs; l; l = l->next)
      {
 	Subinfo *si = l->data;
@@ -207,6 +228,7 @@ elm_hover_add(Evas_Object *parent)
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
    elm_widget_data_set(obj, wd);
+   elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_del_hook_set(obj, _del_hook);
 
    wd->hov = evas_object_rectangle_add(e);
@@ -279,7 +301,7 @@ elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 	evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_SHOW, _parent_show, obj);
 	evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_HIDE, _parent_hide, obj);
 	evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_DEL, _parent_del, obj);
-	elm_widget_sub_object_add(parent, obj);
+//	elm_widget_sub_object_add(parent, obj);
      }
    _sizing_eval(obj);
 }
@@ -307,6 +329,7 @@ elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conten
      {
 	elm_widget_sub_object_add(obj, content);
 	edje_object_part_swallow(wd->cov, buf, content);
+	
 	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
 	si = ELM_NEW(Subinfo);

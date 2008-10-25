@@ -15,6 +15,7 @@ struct _Smart_Data
    Evas_Object   *resize_obj;
    Evas_Object   *hover_obj;
    void         (*del_func) (Evas_Object *obj);
+   void         (*del_pre_func) (Evas_Object *obj);
    void         (*focus_func) (Evas_Object *obj);
    void         (*activate_func) (Evas_Object *obj);
    void         (*disable_func) (Evas_Object *obj);
@@ -79,6 +80,13 @@ elm_widget_del_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
 {
    API_ENTRY return;
    sd->del_func = func;
+}
+
+EAPI void
+elm_widget_del_pre_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
+{
+   API_ENTRY return;
+   sd->del_pre_func = func;
 }
 
 EAPI void
@@ -170,6 +178,11 @@ elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj)
      {
 	if (elm_widget_can_focus_get(sobj)) sd->child_can_focus = 0;
      }
+   if (!strcmp(evas_object_type_get(sobj), SMART_NAME))
+     {
+	sd = evas_object_smart_data_get(sobj);
+	if (sd) sd->parent_obj = NULL;
+     }
    evas_object_smart_callback_call(obj, "sub-object-del", sobj);
 }
 
@@ -186,6 +199,7 @@ elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
    sd->resize_obj = sobj;
    if (sd->resize_obj)
      {
+	evas_object_clip_set(sobj, evas_object_clip_get(obj));
 	evas_object_smart_member_add(sobj, obj);
 	evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
 	evas_object_event_callback_add(sobj, EVAS_CALLBACK_MOUSE_DOWN, _sub_obj_mouse_down, sd);
@@ -547,7 +561,7 @@ _smart_del(Evas_Object *obj)
    Evas_Object *sobj;
    
    INTERNAL_ENTRY;
-   if (sd->del_func) sd->del_func(obj);
+   if (sd->del_pre_func) sd->del_pre_func(obj);
    if (sd->resize_obj)
      {
 	evas_object_event_callback_del(sd->resize_obj, EVAS_CALLBACK_DEL, _sub_obj_del);
@@ -567,6 +581,7 @@ _smart_del(Evas_Object *obj)
 	evas_object_event_callback_del(sobj, EVAS_CALLBACK_DEL, _sub_obj_del);
 	evas_object_del(sobj);
      }
+   if (sd->del_func) sd->del_func(obj);
    free(sd);
 }
 

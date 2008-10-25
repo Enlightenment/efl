@@ -37,6 +37,8 @@ elm_contact.c \
 elm_contactlist.c \
 \
 elc_notepad.c \
+elc_anchorview.c \
+elc_anchorblock.c \
 \
 els_pan.c \
 els_pan.h \
