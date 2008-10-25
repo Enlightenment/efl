@@ -274,6 +274,9 @@ case "${host_os}" in
       EINA_LIBS="${EINA_LIBS} ${EVIL_LIBS} -lm"
       lt_enable_auto_import="-Wl,--enable-auto-import"
    ;;
+   *bsd*)
+      EINA_LIBS="${EINA_LIBS} -lrt -lm"
+   ;;
    *)
       EINA_LIBS="${EINA_LIBS} -ldl -lrt -lm"
    ;;

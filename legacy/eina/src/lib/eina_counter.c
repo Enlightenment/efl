@@ -76,7 +76,11 @@ static int _eina_counter_init_count = 0;
 static inline int
 _eina_counter_time_get(Eina_Nano_Time *tp)
 {
+#ifdef __FreeBSD__
+   return clock_gettime(CLOCK_PROF, tp);
+#else
    return clock_gettime(CLOCK_PROCESS_CPUTIME_ID, tp);
+#endif
 }
 #else
 static int EINA_COUNTER_ERROR_WINDOWS = 0;
