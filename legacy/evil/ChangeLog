@@ -1,3 +1,10 @@
+2008-10-25  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_unistd.c:
+	* src/lib/evil_unistd.h:
+	add execvp stub function for ecore_app. Does nothing,
+	only here to make compilation working with mingw32ce.
+
 2008-10-24  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Makefile.am:

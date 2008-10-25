@@ -427,3 +427,18 @@ evil_pipe(int *fds)
 
    return -1;
 }
+
+
+/*
+ * Exec related functions
+ *
+ */
+
+#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
+
+int execvp( const char *file, char *const argv[])
+{
+   return 1;
+}
+
+#endif /* _WIN32_WCE && ! __CEGCC__ */

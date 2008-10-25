@@ -177,4 +177,29 @@ EAPI void evil_sockets_shutdown(void);
 EAPI int evil_pipe(int *fds);
 
 
+/*
+ * Exec related functions
+ *
+ */
+
+
+#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
+
+/**
+ * @brief Replace the current process image with a new process image.
+ *
+ * @param file The file name of the file being executed.
+ * @param argv A @c NULL terminated array of strings.
+ * @return Always 1.
+ *
+ * This function does nothing and returns always 1. It is defined for
+ * ecore_app only for native Windows CE code.
+ *
+ * @ingroup Evil
+ */
+int execvp( const char *file, char *const argv[]);
+
+#endif /* _WIN32_WCE && ! __CEGCC__ */
+
+
 #endif /* __EVIL_UNISTD_H__ */
