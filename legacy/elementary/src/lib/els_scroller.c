@@ -1045,6 +1045,8 @@ _smart_init(void)
 	       _smart_clip_set,
 	       _smart_clip_unset,
 	       NULL,
+	       NULL,
+	       NULL,
 	       NULL
 	  };
 	_smart = evas_smart_class_new(&sc);
