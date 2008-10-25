@@ -46,6 +46,8 @@ edje_object_add(Evas *evas)
 	       _edje_smart_clip_set,
 	       _edje_smart_clip_unset,
 	       NULL,
+	       NULL,
+	       NULL,
 	       NULL
 	  };
 	_edje_smart = evas_smart_class_new(&sc);
