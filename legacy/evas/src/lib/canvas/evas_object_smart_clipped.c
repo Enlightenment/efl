@@ -60,14 +60,17 @@ static void
 evas_object_smart_clipped_smart_add(Evas_Object *obj)
 {
    Evas_Object_Smart_Clipped_Data *cso;
+   Evas_Object *clipper;
 
    cso = evas_object_smart_data_get(obj);
    if (!cso)
      cso = malloc(sizeof(*cso)); /* users can provide it or realloc() later */
 
    cso->evas = evas_object_evas_get(obj);
-   cso->clipper = evas_object_rectangle_add(cso->evas);
-   evas_object_smart_member_add(cso->clipper, obj);
+   clipper = evas_object_rectangle_add(cso->evas);
+   cso->clipper = NULL;
+   evas_object_smart_member_add(clipper, obj);
+   cso->clipper = clipper;
    evas_object_color_set(cso->clipper, 255, 255, 255, 255);
    evas_object_move(cso->clipper, -10000, -10000);
    evas_object_resize(cso->clipper, 20000, 20000);
@@ -83,6 +86,13 @@ evas_object_smart_clipped_smart_del(Evas_Object *obj)
    CSO_DATA_GET_OR_RETURN(obj, cso);
    Eina_List *lst, *itr;
    Evas_Object *data;
+
+   if (cso->clipper)
+     {
+	Evas_Object *clipper = cso->clipper;
+	cso->clipper = NULL;
+	evas_object_del(clipper);
+     }
 
    lst = evas_object_smart_members_get(obj);
    EINA_LIST_FOREACH(lst, itr, data)
@@ -138,59 +148,26 @@ evas_object_smart_clipped_smart_clip_unset(Evas_Object *obj)
    evas_object_clip_unset(cso->clipper);
 }
 
-/**
- * Add the given member to clipped smart object.
- *
- * This method is equivalent to evas_object_smart_member_add(), but
- * will do extra work required to have clipped smart object to use the
- * clipper, also shows the clipper if this is the first object and
- * object is visible.
- *
- * @warning the parameter order is different from
- * evas_object_smart_member_add()
- *
- * @param obj the smart object to use.
- * @param member the child/member to add to @a obj
- *
- * @todo add member_add() callback to Evas_Smart_Class.
- */
-EAPI void
-evas_object_smart_clipped_member_add(Evas_Object *obj, Evas_Object *member)
+static void
+evas_object_smart_clipped_smart_member_add(Evas_Object *obj, Evas_Object *member)
 {
    CSO_DATA_GET_OR_RETURN(obj, cso);
-
-   evas_object_smart_member_add(member, obj);
-   /* begin: code that should be done from inside member_add() hook */
+   if (!cso->clipper)
+     return;
    evas_object_clip_set(member, cso->clipper);
    if (evas_object_visible_get(obj))
      evas_object_show(cso->clipper);
-   /* end */
 }
 
-/**
- * Remove the given member from clipped smart object.
- *
- * This method is equivalent to evas_object_smart_member_del(), but
- * will do extra work required to have clipped smart object to stop
- * using the clipper, also hide the clipper if this is the last
- * object.
- *
- * @param member the child/member to remove from its parent smart object.
- *
- * @todo add member_del() callback to Evas_Smart_Class.
- */
-EAPI void
-evas_object_smart_clipped_member_del(Evas_Object *member)
+static void
+evas_object_smart_clipped_smart_member_del(Evas_Object *obj, Evas_Object *member)
 {
-   Evas_Object *obj = evas_object_smart_parent_get(member);
    CSO_DATA_GET_OR_RETURN(obj, cso);
-
-   evas_object_smart_member_del(member);
-   /* begin: code that should be done from inside member_del() hook */
+   if (!cso->clipper)
+     return;
    evas_object_clip_unset(member);
    if (!evas_object_clipees_get(cso->clipper))
      evas_object_hide(cso->clipper);
-   /* end */
 }
 
 /**
@@ -249,6 +226,8 @@ evas_object_smart_clipped_smart_set(Evas_Smart_Class *sc)
    sc->color_set = evas_object_smart_clipped_smart_color_set;
    sc->clip_set = evas_object_smart_clipped_smart_clip_set;
    sc->clip_unset = evas_object_smart_clipped_smart_clip_unset;
+   sc->member_add = evas_object_smart_clipped_smart_member_add;
+   sc->member_del = evas_object_smart_clipped_smart_member_del;
 }
 
 /**

@@ -138,7 +138,7 @@ typedef enum _Evas_Aspect_Control
 } Evas_Aspect_Control;
 
 
-#define EVAS_SMART_CLASS_VERSION 2 /** the version you have to put into the version field in the smart class struct */
+#define EVAS_SMART_CLASS_VERSION 3 /** the version you have to put into the version field in the smart class struct */
 struct _Evas_Smart_Class /** a smart object class */
 {
    const char *name; /** the string name of the class */
@@ -155,6 +155,8 @@ struct _Evas_Smart_Class /** a smart object class */
    void  (*clip_set)    (Evas_Object *o, Evas_Object *clip); // FIXME: DELETE ME
    void  (*clip_unset)  (Evas_Object *o); // FIXME: DELETE ME
    void  (*calculate)   (Evas_Object *o);
+   void  (*member_add)  (Evas_Object *o, Evas_Object *child);
+   void  (*member_del)  (Evas_Object *o, Evas_Object *child);
 
    const void *data;
 };
@@ -960,8 +962,6 @@ extern "C" {
 
    EAPI Evas_Object *evas_object_smart_clipped_clipper_get(Evas_Object *obj);
    EAPI void evas_object_smart_clipped_smart_set(Evas_Smart_Class *sc);
-   EAPI void evas_object_smart_clipped_member_add(Evas_Object *obj, Evas_Object *member);
-   EAPI void evas_object_smart_clipped_member_del(Evas_Object *member);
 
    /* convenience */
    EAPI void evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy);

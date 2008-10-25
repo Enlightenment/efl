@@ -194,6 +194,8 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
    evas_object_smart_member_cache_invalidate(obj);
    obj->restack = 1;
    evas_object_change(obj);
+   if (smart_obj->smart.smart->smart_class->member_add)
+     smart_obj->smart.smart->smart_class->member_add(smart_obj, obj);
 }
 
 /**
@@ -211,12 +213,17 @@ EAPI void
 evas_object_smart_member_del(Evas_Object *obj)
 {
    Evas_Object_Smart *o;
+   Evas_Object *smart_obj;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
 
    if (!obj->smart.parent) return;
+
+   smart_obj = obj->smart.parent;
+   if (smart_obj->smart.smart->smart_class->member_del)
+     smart_obj->smart.smart->smart_class->member_del(smart_obj, obj);
 
    o = (Evas_Object_Smart *)(obj->smart.parent->object_data);
    o->contained = eina_inlist_remove(o->contained, EINA_INLIST_GET(obj));
@@ -526,11 +533,11 @@ evas_object_smart_calculate(Evas_Object *obj)
 {
    Evas_Object_Smart *o;
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return 0;
+   return;
    MAGIC_CHECK_END();
    o = obj->object_data;
    MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
-   return 0;
+   return;
    MAGIC_CHECK_END();
 
    if (obj->smart.smart->smart_class->calculate)
