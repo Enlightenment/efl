@@ -17,6 +17,7 @@
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
+#include <Eina.h>
 
 static const char *_ecore_magic_string_get(Ecore_Magic m);
 static int _ecore_init_count = 0;
