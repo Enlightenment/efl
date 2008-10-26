@@ -2,6 +2,8 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#include <string.h>
+
 #include "edje_private.h"
 
 static Evas_Hash *_edje_color_class_hash = NULL;

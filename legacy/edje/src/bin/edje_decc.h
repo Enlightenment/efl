@@ -1,7 +1,7 @@
 #ifndef EDJE_DECC_H
 #define EDJE_DECC_H
 
-#include "edje_main.h"
+#include <edje_private.h>
 
 /* types */
 typedef struct _Font                  Font;

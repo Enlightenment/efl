@@ -2,7 +2,13 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#include <string.h>
+#include <locale.h>
+#include <limits.h>
+#include <sys/stat.h>
+
 #include "edje_cc.h"
+#include "edje_prefix.h"
 
 static void main_help(void);
 

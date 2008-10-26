@@ -2,7 +2,15 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#include <string.h>
+#include <limits.h>
+#include <unistd.h>
+#include <sys/stat.h>
+
+#include <Ecore_Evas.h>
+
 #include "edje_cc.h"
+#include "edje_prefix.h"
 
 typedef struct _Part_Lookup Part_Lookup;
 typedef struct _Program_Lookup Program_Lookup;

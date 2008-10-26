@@ -8,7 +8,16 @@
 # include <config.h>
 #endif
 
+#include <string.h>
+#include <ctype.h>
+#include <unistd.h>
+#include <locale.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+
 #include <Ecore_File.h>
+#include <Ecore_Evas.h>
 
 #include "edje_decc.h"
 

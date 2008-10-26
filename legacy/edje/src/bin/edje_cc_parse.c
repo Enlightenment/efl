@@ -2,6 +2,14 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#include <string.h>
+#include <ctype.h>
+#include <limits.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <fcntl.h>
+
 #include "edje_cc.h"
 
 static void  new_object(void);

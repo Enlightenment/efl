@@ -41,6 +41,13 @@
  * <table class="edcref" border="0">
  */
 
+#include <string.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
+#include <unistd.h>
+
 #include "edje_cc.h"
 
 static void st_images_image(void);

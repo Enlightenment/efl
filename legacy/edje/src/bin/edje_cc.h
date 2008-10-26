@@ -1,7 +1,7 @@
 #ifndef EDJE_CC_H
 #define EDJE_CC_H
 
-#include "edje_main.h"
+#include <edje_private.h>
 
 /*
  * On Windows, if the file is not opened in binary mode,
