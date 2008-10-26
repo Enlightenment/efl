@@ -154,7 +154,7 @@ evas_object_gradient2_fill_transform_set (Evas_Object *obj, Evas_Transform *t)
 	og->cur.fill.transform.mzy = 0;
 	og->cur.fill.transform.mzz = 1;
 
-	og->gradient_changed;
+	og->gradient_changed = 1;
 	evas_object_change(obj);
 	return;
      }
@@ -179,7 +179,7 @@ evas_object_gradient2_fill_transform_set (Evas_Object *obj, Evas_Transform *t)
    og->cur.fill.transform.mzy = t->mzy;
    og->cur.fill.transform.mzz = t->mzz;
 
-   og->gradient_changed;
+   og->gradient_changed = 1;
    evas_object_change(obj);
 }
 
