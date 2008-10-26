@@ -1,23 +1,25 @@
 
-MAINTAINERCLEANFILES = Makefile.in eet.c
+MAINTAINERCLEANFILES = Makefile.in eet.dox
 
 .PHONY: doc
+
+PACKAGE_DOCNAME = $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-doc
 
 if EFL_BUILD_DOC
 
 doc-clean:
-	rm -rf html/ latex/ man/ xml/ $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar*
+	rm -rf html/ latex/ man/ xml/ $(PACKAGE_DOCNAME).tar*
 
 doc: all doc-clean
 	$(DOXYGEN)
-	cp img/*.png html/
-	rm -rf $(PACKAGE_TARNAME)-doc-$(PACKAGE_VERSION).tar*
-	mkdir -p $(PACKAGE_TARNAME)-doc-$(PACKAGE_VERSION)/doc
-	cp -R html/ latex/ man/ $(PACKAGE_TARNAME)-doc-$(PACKAGE_VERSION)/doc
-	tar cf $(PACKAGE_TARNAME)-doc-$(PACKAGE_VERSION).tar $(PACKAGE_TARNAME)-doc-$(PACKAGE_VERSION)
-	bzip2 -9 $(PACKAGE_TARNAME)-doc-$(PACKAGE_VERSION).tar
-	rm -rf $(PACKAGE_TARNAME)-doc-$(PACKAGE_VERSION)
-	mv $(PACKAGE_TARNAME)-doc-$(PACKAGE_VERSION).tar.bz2 $(top_srcdir)
+	cp img/* html/
+	rm -rf $(PACKAGE_DOCNAME).tar*
+	mkdir -p $(PACKAGE_DOCNAME)/doc
+	cp -R html/ latex/ man/ $(PACKAGE_DOCNAME)/doc
+	tar cf $(PACKAGE_DOCNAME).tar $(PACKAGE_DOCNAME)/
+	bzip2 -9 $(PACKAGE_DOCNAME).tar
+	rm -rf $(PACKAGE_DOCNAME)/
+	mv $(PACKAGE_DOCNAME).tar.bz2 $(top_srcdir)
 
 clean-local: doc-clean
 
@@ -28,5 +30,4 @@ doc:
 
 endif
 
-EXTRA_DIST = Doxyfile eet.css foot.html head.html img/ eet.c.in
-
+EXTRA_DIST = Doxyfile eet.css foot.html head.html img/ eet.dox.in

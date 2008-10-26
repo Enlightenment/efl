@@ -10,6 +10,8 @@ AM_CPPFLAGS = \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 @EVIL_CFLAGS@ \
 @EINA_CFLAGS@ \
+@EET_CPPFLAGS@ \
+@EFL_EET_BUILD@ \
 @EFL_COVERAGE_CFLAGS@ \
 @OPENSSL_CFLAGS@
 
@@ -25,8 +27,8 @@ eet_cypher.c \
 eet_dictionary.c \
 eet_utils.c
 
-libeet_la_CFLAGS = @WIN32_CFLAGS@
-libeet_la_LIBADD = @OPENSSL_LIBS@ @EFL_COVERAGE_LIBS@ @EVIL_LIBS@ @WIN32_LIBS@ @EINA_LIBS@ -lz -ljpeg -lm
+libeet_la_CFLAGS = @EET_CFLAGS@ @DEBUG_CFLAGS@
+libeet_la_LIBADD = @OPENSSL_LIBS@ @EFL_COVERAGE_LIBS@ @EET_LIBS@ @EINA_LIBS@ @EVIL_LIBS@ -lz -ljpeg -lm
 libeet_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
 
 EXTRA_DIST = Eet_private.h
