@@ -23,10 +23,10 @@ static int _ecore_hash_node_add(Ecore_Hash *hash, Ecore_Hash_Node *node);
 static Ecore_Hash_Node * _ecore_hash_node_get(Ecore_Hash *hash, const void *key);
 static int _ecore_hash_increase(Ecore_Hash *hash);
 static int _ecore_hash_decrease(Ecore_Hash *hash);
-inline int _ecore_hash_rehash(Ecore_Hash *hash, Ecore_Hash_Node **old_table, int old_size);
+static inline int _ecore_hash_rehash(Ecore_Hash *hash, Ecore_Hash_Node **old_table, int old_size);
 static int _ecore_hash_bucket_destroy(Ecore_Hash_Node *list, Ecore_Free_Cb keyd,
 				      Ecore_Free_Cb valued);
-inline Ecore_Hash_Node * _ecore_hash_bucket_get(Ecore_Hash *hash,
+static inline Ecore_Hash_Node * _ecore_hash_bucket_get(Ecore_Hash *hash,
 						Ecore_Hash_Node *bucket, const void *key);
 
 static Ecore_Hash_Node *_ecore_hash_node_new(void *key, void *value);
@@ -621,7 +621,7 @@ _ecore_hash_node_get(Ecore_Hash *hash, const void *key)
  * @param key: the key to search for in the list
  * @return Returns NULL on error or not found, the found node on success
  */
-inline Ecore_Hash_Node *
+static inline Ecore_Hash_Node *
 _ecore_hash_bucket_get(Ecore_Hash *hash, Ecore_Hash_Node *bucket, const void *key)
 {
    Ecore_Hash_Node *prev = NULL;
@@ -773,7 +773,7 @@ _ecore_hash_decrease(Ecore_Hash *hash)
  * @param table: the table to remove the nodes from and place in hash
  * @return Returns TRUE on success, FALSE on error
  */
-inline int
+static inline int
 _ecore_hash_rehash(Ecore_Hash *hash, Ecore_Hash_Node **old_table, int old_size)
 {
    unsigned int i;
