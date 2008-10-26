@@ -922,19 +922,13 @@ _ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, int on)
 /*      _ecore_evas_win32_state_update(ee); */
 }
 
-#endif /* BUILD_ECORE_EVAS_WIN32 */
 
 static void *
 _ecore_evas_win32_window_get(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_WIN32
    return ee->engine.win32.window;
-#else
-   return NULL;
-#endif /* BUILD_ECORE_EVAS_WIN32 */
 }
 
-#ifdef BUILD_ECORE_EVAS_WIN32
 static const Ecore_Evas_Engine_Func _ecore_win32_engine_func =
 {
    _ecore_evas_win32_free,
@@ -989,10 +983,10 @@ static const Ecore_Evas_Engine_Func _ecore_win32_engine_func =
 
 /* API */
 
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
 static int
 _ecore_evas_engine_software_ddraw_init(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
    Evas_Engine_Info_Software_DDraw *einfo;
    const char                      *driver;
    int                              rmethod;
@@ -1017,15 +1011,13 @@ _ecore_evas_engine_software_ddraw_init(Ecore_Evas *ee)
      }
 
    return 1;
-#else
-   return 0;
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_DDRAW */
 }
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_DDRAW */
 
+#ifdef BUILD_ECORE_EVAS_DIRECT3D
 static int
 _ecore_evas_engine_direct3d_init(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_DIRECT3D
    Evas_Engine_Info_Direct3D *einfo;
    const char                *driver;
    int                        rmethod;
@@ -1050,15 +1042,13 @@ _ecore_evas_engine_direct3d_init(Ecore_Evas *ee)
      }
 
    return 1;
-#else
-   return 0;
-#endif /* ! BUILD_ECORE_EVAS_DIRECT3D */
 }
+#endif /* ! BUILD_ECORE_EVAS_DIRECT3D */
 
+#ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
 static int
 _ecore_evas_engine_opengl_glew_init(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
    Evas_Engine_Info_GL_Glew *einfo;
    const char               *driver;
    int                       rmethod;
@@ -1082,15 +1072,13 @@ _ecore_evas_engine_opengl_glew_init(Ecore_Evas *ee)
      }
 
    return 1;
-#else
-   return 0;
-#endif /* ! BUILD_ECORE_EVAS_OPENGL_GLEW */
 }
+#endif /* ! BUILD_ECORE_EVAS_OPENGL_GLEW */
 
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DIRECTDRAW
 static int
 _ecore_evas_engine_software_16_ddraw_init(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DIRECTDRAW
    Evas_Engine_Info_Software_DDraw *einfo;
    const char                      *driver;
    int                              rmethod;
@@ -1116,11 +1104,10 @@ _ecore_evas_engine_software_16_ddraw_init(Ecore_Evas *ee)
         einfo->info.rotation = 0;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
-#else
-   return 0;
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_DIRECTDRAW */
 }
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_DIRECTDRAW */
 
+#ifdef BUILD_ECORE_EVAS_WIN32
 static Ecore_Evas *
 _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_init)(Ecore_Evas *ee),
                                Ecore_Win32_Window *parent,
@@ -1129,7 +1116,6 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_init)(Ecore_Evas *ee),
                                int                 width,
                                int                 height)
 {
-#ifdef BUILD_ECORE_EVAS_WIN32
    Ecore_Evas *ee;
 
    if (!ecore_win32_init())
@@ -1195,15 +1181,8 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_init)(Ecore_Evas *ee),
    ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_win32_winid_str_get(ee->engine.win32.window), ee);
 
    return ee;
-#else
-   return NULL;
-   parent = NULL;
-   x = 0;
-   y = 0;
-   width = 0;
-   height = 0;
-#endif /* ! BUILD_ECORE_EVAS_WIN32 */
 }
+#endif /* ! BUILD_ECORE_EVAS_WIN32 */
 
 EAPI Ecore_Evas *
 ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
