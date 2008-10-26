@@ -113,7 +113,7 @@ efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete)
     snprintf(dest, PATH_MAX, "%s/info/%s.trashinfo",
              efreet_trash_dir_get(), fname);
 
-    if (f = fopen(dest, "w"))
+    if ((f = fopen(dest, "w")))
     {
         fputs("[Trash Info]\n", f); //TODO is '\n' right?? (or \r\c??)
 
@@ -191,7 +191,7 @@ efreet_trash_ls(void)
     snprintf(buf, PATH_MAX, "%s/files", efreet_trash_dir_get());
     files = ecore_file_ls(buf);
 
-    while (infofile = ecore_list_next(files))
+    while ((infofile = ecore_list_next(files)))
         printf("FILE: %s\n", infofile);
 
     return files;
