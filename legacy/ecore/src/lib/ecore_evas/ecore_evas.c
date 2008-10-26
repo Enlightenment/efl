@@ -196,7 +196,7 @@ struct ecore_evas_engine {
 };
 
 /* inline is just to avoid need to ifdef around it */
-static inline void
+static inline const char *
 _ecore_evas_parse_extra_options_str(const char *extra_options, const char *key, char **value)
 {
    int len = strlen(key);
@@ -229,10 +229,11 @@ _ecore_evas_parse_extra_options_str(const char *extra_options, const char *key, 
 	     extra_options = NULL;
 	  }
      }
+   return extra_options;
 }
 
 /* inline is just to avoid need to ifdef around it */
-static inline void
+static inline const char *
 _ecore_evas_parse_extra_options_uint(const char *extra_options, const char *key, unsigned int *value)
 {
    int len = strlen(key);
@@ -258,6 +259,7 @@ _ecore_evas_parse_extra_options_uint(const char *extra_options, const char *key,
 	else
 	  extra_options = NULL;
      }
+   return extra_options;
 }
 
 /* inline is just to avoid need to ifdef around it */
