@@ -1293,7 +1293,7 @@ _edje_entry_anchor_geometry_get(Edje_Real_Part *rp, const char *anchor)
    Eina_List *l;
    Anchor *an;
    
-   if (!en) return;
+   if (!en) return NULL;
    EINA_LIST_FOREACH(en->anchors, l, an)
      {
 	if (!strcmp(anchor, an->name))
