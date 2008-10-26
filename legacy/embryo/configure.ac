@@ -11,14 +11,6 @@ AC_ISC_POSIX
 AM_INIT_AUTOMAKE(1.6 dist-bzip2)
 AM_CONFIG_HEADER(config.h)
 
-AC_C_BIGENDIAN
-AC_PROG_CC
-AM_PROG_CC_STDC
-AC_HEADER_STDC
-AC_C_CONST
-AM_PROG_CC_C_O
-AC_C___ATTRIBUTE__
-
 AC_LIBTOOL_WIN32_DLL
 define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
 define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
@@ -31,34 +23,103 @@ SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
-PKG_CHECK_MODULES([EINA], [eina-0])
 
-WIN32_CFLAGS=""
-lt_enable_auto_import=""
+### Default options with respect to host
+
+requirement_embryo=""
+embryoincludedir="${datadir}/include"
+
+
+### Additional options to configure
+
+
+### Checks for libraries
+
+PKG_PROG_PKG_CONFIG
+
+# Evil library for compilation on Windows
+
+EFL_EMBRYO_BUILD=""
 case "$host_os" in
-	mingw*|cegcc)
-		PKG_CHECK_MODULES([EVIL], evil)
-		AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
-		dnl needed for correct definition of EAPI
-		AC_DEFINE(EFL_EMBRYO_BUILD, 1, [Define to mention that embryo is built])
-		AC_DEFINE(HAVE_GETTIMEOFDAY, 1, [Defined to 1 (MinGW / CeGCC platform)])
-		if test "x$host_os" = "xcegcc" ; then
-			WIN32_CFLAGS="-mwin32"
-			lt_enable_auto_import="-Wl,--enable-auto-import"
-		fi
-		;;
-	*)
-		AC_CHECK_FUNCS(gettimeofday)
+   mingw* | cegcc*)
+   PKG_CHECK_MODULES([EVIL], [evil])
+   AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if Evil library is installed])
+   requirement_embryo="evil ${requirement_embryo}"
+   EFL_EMBRYO_BUILD="-DEFL_EMBRYO_BUILD"
+   ;;
 esac
-AC_SUBST(WIN32_CFLAGS)
-AC_SUBST(lt_enable_auto_import)
+AC_SUBST(EFL_EMBRYO_BUILD)
 
-AC_FUNC_ALLOCA
+
+### Checks for header files
 
 AC_CHECK_HEADER([fnmatch.h],
    [dummy="yes"],
    [AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file. MinGW users: see the INSTALL file])])
 
+
+### Checks for programs
+AC_PROG_CC
+
+# doxygen program for documentation building
+
+EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
+
+
+### Checks for types
+
+
+### Checks for structures
+
+
+### Checks for compiler characteristics
+AC_C_BIGENDIAN
+AM_PROG_CC_C_O
+AC_C_CONST
+AC_C_INLINE
+AC_PROG_CC_STDC
+AC_HEADER_STDC
+AC_C___ATTRIBUTE__
+
+EMBRYO_CPPFLAGS=""
+EMBRYO_CFLAGS=""
+case "$host_os" in
+   mingw32ce*)
+      EMBRYO_CPPFLAGS="-D_WIN32_WCE=0x0420"
+      ;;
+   cegcc*)
+      EMBRYO_CPPFLAGS="-D_WIN32_WCE=0x0420"
+      EMBRYO_CFLAGS="-mwin32"
+      ;;
+esac
+AC_SUBST(EMBRYO_CPPFLAGS)
+AC_SUBST(EMBRYO_CFLAGS)
+
+
+### Checks for linker characteristics
+
+lt_enable_auto_import=""
+case "$host_os" in
+   mingw* | cegcc*)
+      lt_enable_auto_import="-Wl,--enable-auto-import"
+      ;;
+esac
+AC_SUBST(lt_enable_auto_import)
+
+
+### Checks for library functions
+AC_FUNC_ALLOCA
+
+case "$host_os" in
+   mingw* | cegcc*)
+      AC_DEFINE(HAVE_GETTIMEOFDAY, 1, [Defined to 1 (MinGW / CeGCC platform)])
+      ;;
+   *)
+      AC_CHECK_FUNCS(gettimeofday)
+      ;;
+esac
+
+fnmatch_libs=""
 AC_CHECK_FUNCS([fnmatch], [res="yes"], [res="no"])
 if test "x$res" = "xno"; then
    AC_SEARCH_LIBS([fnmatch],
@@ -67,14 +128,19 @@ if test "x$res" = "xno"; then
       [res="no"])
    if test "x$res" = "xno"; then
       AC_MSG_ERROR([Cannot find fnmatch() in neither libc nor libfnmatch, nor libiberty, nor libevil])
-	fi
+   fi
+   fnmatch_libs="${ac_cv_search_fnmatch}"
 fi
+AC_SUBST(fnmatch_libs)
 
-embryoincludedir='${datadir}/include'
+
+AC_SUBST(requirement_embryo)
 AC_SUBST(embryoincludedir)
 
 AC_OUTPUT([
 Makefile
+doc/Makefile
+doc/embryo.dox
 embryo.pc
 include/Makefile
 src/Makefile

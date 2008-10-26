@@ -9,8 +9,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@EVIL_CFLAGS@ \
-@EINA_CFLAGS@
+@EVIL_CFLAGS@
 
 bin_PROGRAMS = embryo_cc
 
@@ -31,7 +30,7 @@ embryo_cc_scvars.c \
 embryo_cc_prefix.c \
 embryo_cc_prefix.h
 
-embryo_cc_CFLAGS = @WIN32_CFLAGS@
+embryo_cc_CFLAGS = @EMBRYO_CFLAGS@
 embryo_cc_LDADD = $(top_builddir)/src/lib/libembryo.la @EVIL_LIBS@ -lm
 embryo_cc_LDFLAGS = @lt_enable_auto_import@
 

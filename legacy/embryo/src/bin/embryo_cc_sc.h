@@ -36,8 +36,6 @@
 #include <stdio.h>
 #include <setjmp.h>
 
-#include <eina_types.h>
-
 #include "embryo_cc_osdefs.h"
 #include "embryo_cc_amx.h"
 

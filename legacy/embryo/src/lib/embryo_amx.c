@@ -32,6 +32,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "Embryo.h"
 #include "embryo_private.h"
 

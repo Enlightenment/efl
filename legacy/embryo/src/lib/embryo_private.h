@@ -2,9 +2,6 @@
 #define _EMBRYO_PRIVATE_H
 
 
-#include <eina_types.h>
-
-
 #ifdef __GNUC__
 # if __GNUC__ >= 4
 // BROKEN in gcc 4 on amd64

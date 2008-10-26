@@ -13,6 +13,10 @@
 #include <sys/time.h>
 #include <time.h>
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "Embryo.h"
 #include "embryo_private.h"
 
