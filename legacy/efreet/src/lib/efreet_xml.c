@@ -2,7 +2,9 @@
 #include "Efreet.h"
 #include "efreet_private.h"
 
+#if 0
 static void efreet_xml_dump(Efreet_Xml *xml, int level);
+#endif
 
 static Efreet_Xml *efreet_xml_parse(char **data, int *size);
 static int efreet_xml_tag_parse(char **data, int *size, const char **tag);
@@ -145,6 +147,7 @@ efreet_xml_cb_attribute_free(void *data)
     efreet_xml_del(data);
 }
 
+#if 0
 static void
 efreet_xml_dump(Efreet_Xml *xml, int level)
 {
@@ -180,6 +183,7 @@ efreet_xml_dump(Efreet_Xml *xml, int level)
     else
         printf("/>\n");
 }
+#endif
 
 static Efreet_Xml *
 efreet_xml_parse(char **data, int *size)
