@@ -28,9 +28,6 @@ endif
 bin_SCRIPTS = \
 @EDJE_RECC_PRG@
 
-EXTRA_DIST = @EDJE_RECC_PRG@
-EXTRA_SCRIPTS = edje_recc
-
 bin_PROGRAMS = $(EDJE_CC) $(EDJE_DECC)
 
 EXTRA_PROGRAMS = \
@@ -59,4 +56,5 @@ edje_cc_sources.c
 edje_decc_LDADD = $(top_builddir)/src/lib/libedje.la $(ECORE_EVAS_LIBS) $(ECORE_FILE_LIBS)
 edje_decc_LDFLAGS = @lt_enable_auto_import@
 
-EXTRA_DIST = edje_prefix.h edje_cc.h
+EXTRA_DIST = @EDJE_RECC_PRG@ edje_prefix.h edje_cc.h
+EXTRA_SCRIPTS = edje_recc
