@@ -1,5 +1,5 @@
 /**
-@file eet.c
+@file eet.dox
 @brief Eet Data Handling Library Public API Calls
 
 These routines are used for Eet Library interaction
