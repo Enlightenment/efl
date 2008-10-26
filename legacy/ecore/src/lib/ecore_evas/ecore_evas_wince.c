@@ -833,19 +833,13 @@ _ecore_evas_wince_fullscreen_set(Ecore_Evas *ee, int on)
 /*    else */
 /*      _ecore_evas_wince_state_update(ee); */
 }
-#endif /* BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
 
 static void *
 _ecore_evas_wince_window_get(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
    return ee->engine.wince.window;
-#else
-   return NULL;
-#endif /* BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
 }
 
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
 static const Ecore_Evas_Engine_Func _ecore_wince_engine_func =
 {
    _ecore_evas_wince_free,
@@ -896,12 +890,8 @@ static const Ecore_Evas_Engine_Func _ecore_wince_engine_func =
      _ecore_evas_wince_window_get
 };
 
-#endif /* BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
-
 /* API */
 
-
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
 static Ecore_Evas *
 ecore_evas_software_wince_new_internal(int                 backend,
                                        Ecore_WinCE_Window *parent,
