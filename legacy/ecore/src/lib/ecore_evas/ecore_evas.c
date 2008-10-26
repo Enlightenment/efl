@@ -232,7 +232,7 @@ _ecore_evas_parse_extra_options_str(const char *extra_options, const char *key, 
 }
 
 /* inline is just to avoid need to ifdef around it */
-static inline const char *
+static inline void
 _ecore_evas_parse_extra_options_uint(const char *extra_options, const char *key, unsigned int *value)
 {
    int len = strlen(key);
