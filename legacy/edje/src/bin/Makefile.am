@@ -11,8 +11,7 @@ AM_CPPFLAGS = \
 @EDJE_CFLAGS@ \
 @ECORE_EVAS_CFLAGS@ \
 @ECORE_FILE_CFLAGS@ \
-@EVIL_CFLAGS@ \
-@EINA_CFLAGS@
+@EVIL_CFLAGS@
 
 if BUILD_EDJE_CC
 EDJE_CC = edje_cc
@@ -50,10 +49,8 @@ edje_prefix.c \
 edje_prefix.h \
 edje_main.h
 
-edje_cc_CFLAGS = @WIN32_CFLAGS@
-edje_cc_LDADD = $(top_builddir)/src/lib/libedje.la $(EDJE_LIBS) $(ECORE_EVAS_LIBS) $(EVIL_LIBS) $(EINA_LIBS)
+edje_cc_LDADD = $(top_builddir)/src/lib/libedje.la $(ECORE_EVAS_LIBS) $(EVIL_LIBS)
 edje_cc_LDFLAGS = @lt_enable_auto_import@
-edje_cc_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 
 
 edje_decc_SOURCES = \
@@ -62,7 +59,5 @@ edje_decc.h \
 edje_cc_mem.c \
 edje_cc_sources.c
 
-edje_decc_CFLAGS = @WIN32_CFLAGS@
-edje_decc_LDADD = $(top_builddir)/src/lib/libedje.la $(EDJE_LIBS) $(ECORE_EVAS_LIBS) $(ECORE_FILE_LIBS) $(EVIL_LIBS) $(EINA_LIBS)
+edje_decc_LDADD = $(top_builddir)/src/lib/libedje.la $(ECORE_EVAS_LIBS) $(ECORE_FILE_LIBS)
 edje_decc_LDFLAGS = @lt_enable_auto_import@
-edje_decc_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la

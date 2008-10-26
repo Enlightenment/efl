@@ -1854,7 +1854,9 @@ edje_edit_part_states_list_get(Evas_Object *obj, const char *part)
    GET_RP_OR_RETURN(NULL);
 
    //Is there a better place to put this? maybe edje_edit_init() ?
+#ifdef HAVE_LOCALE_H
    setlocale(LC_NUMERIC, "C");
+#endif
 
    states = NULL;
 

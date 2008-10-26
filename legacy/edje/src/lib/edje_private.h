@@ -16,7 +16,9 @@
 #include <math.h>
 #include <time.h>
 #include <assert.h>
-#include <locale.h>
+#ifdef HAVE_LOCALE_H
+# include <locale.h>
+#endif
 #include <errno.h>
 
 #ifdef HAVE_STDINT_H

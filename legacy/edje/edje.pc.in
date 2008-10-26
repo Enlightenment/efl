@@ -6,9 +6,9 @@ datarootdir=@datarootdir@
 datadir=@datadir@/edje
 
 Name: edje
-Description: Enlightened graphical design and layout engine. 
-Requires: evas
+Description: Enlightened graphical design and layout engine.
+Requires: @requirement_edje@
 Version: @VERSION@
 Libs: -L${libdir} -ledje
-Libs.private: @EDJE_LIBS@
+Libs.private: @EDJE_LIBS@ @EVIL_LIBS@
 Cflags: -I${includedir}
