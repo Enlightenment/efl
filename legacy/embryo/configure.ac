@@ -163,6 +163,8 @@ echo "------------------------------------------------------------------------"
 echo
 echo "Configuration Options Summary:"
 echo
+echo "  Documentation........: ${enable_doc}"
+echo
 echo "  Compilation..........: make"
 echo
 echo "  Installation.........: make install"
