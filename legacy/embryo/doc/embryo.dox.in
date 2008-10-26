@@ -2,8 +2,8 @@
 
 @mainpage Embryo Library Documentation
 @image html  embryo.png
-@version 0.0.1
-@author Carsten Haitzler <raster@rasterman.com>
+@version @PACKAGE_VERSION@
+@author Carsten Haitzler <raster\@rasterman.com>
 @date 2004
 
 
@@ -74,7 +74,7 @@ for example: @code public testvar @endcode not:
 @subsection Small_Constants_Subsection Constants
 
 You can declare constants in two ways:
-@li Using the preprocessor macro @c #define.
+@li Using the preprocessor macro @c \#define.
 @li By inserting @c const between the keyword and variable name of a
     variable declaration.  For example, to declare the variable @c var1
     constant, you type @code new const var1 = 2 @endcode  Now @c var1
