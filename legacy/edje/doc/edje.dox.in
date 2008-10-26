@@ -1,5 +1,5 @@
 /** 
-@file
+@file edje.dox
 @brief Edje Graphical Design Library
  
 These routines are used for Edje.
@@ -9,9 +9,9 @@ These routines are used for Edje.
 
 @mainpage Edje Library Documentation
 @image html  edje.png
-@version 0.5.0
+@version @PACKAGE_VERSION@
 @author Carsten Haitzler <raster\@rasterman.com>
-@date 2003-2004
+@date 2003-2008
 
 
 
