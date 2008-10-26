@@ -112,6 +112,7 @@ int ecore_con_info_shutdown(void);
 int ecore_con_info_tcp_connect(Ecore_Con_Server *svr, Ecore_Con_Info_Cb done_cb, void *data);
 int ecore_con_info_tcp_listen(Ecore_Con_Server *svr, Ecore_Con_Info_Cb done_cb, void *data);
 int ecore_con_info_udp_connect(Ecore_Con_Server *svr, Ecore_Con_Info_Cb done_cb, void *data);
+int ecore_con_info_udp_listen(Ecore_Con_Server *svr, Ecore_Con_Info_Cb done_cb, void *data);
 int ecore_con_info_mcast_listen(Ecore_Con_Server *svr, Ecore_Con_Info_Cb done_cb, void *data);
 
 #endif

@@ -181,7 +181,6 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 {
    Ecore_Con_Server   *svr;
    Ecore_Con_Type      type;
-   struct sockaddr_in  socket_addr;
    struct sockaddr_un  socket_unix;
    struct linger       lin;
    char                buf[4096];
@@ -1183,9 +1182,7 @@ static void
 _ecore_con_cb_tcp_connect(void *data, Ecore_Con_Info *net_info)
 {
    Ecore_Con_Server   *svr;
-   struct sockaddr_in  socket_addr;
    int                 curstate = 0;
-   char                buf[64];
 
    svr = data;
 
@@ -1227,9 +1224,7 @@ static void
 _ecore_con_cb_udp_connect(void *data, Ecore_Con_Info *net_info)
 {
    Ecore_Con_Server   *svr;
-   struct sockaddr_in  socket_addr;
    int                 curstate = 0;
-   char                buf[64];
 
    svr = data;
 
@@ -1858,9 +1853,9 @@ _ecore_con_event_client_data_free(void *data __UNUSED__, void *ev)
    e = ev;
    e->client->event_count--;
    if (e->data) free(e->data);
-   if ((e->client->event_count == 0) && (e->client->delete_me) ||
-       (e->client->server && (e->client->server->type == ECORE_CON_REMOTE_UDP ||
-			      e->client->server->type == ECORE_CON_REMOTE_MCAST)))
+   if (((e->client->event_count == 0) && (e->client->delete_me)) ||
+       ((e->client->server && (e->client->server->type == ECORE_CON_REMOTE_UDP ||
+			       e->client->server->type == ECORE_CON_REMOTE_MCAST))))
      ecore_con_client_del(e->client);
    free(e);
 }
