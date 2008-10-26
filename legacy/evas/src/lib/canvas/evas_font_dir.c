@@ -24,7 +24,7 @@ struct _Fndat
 };
 
 /* private methods for font dir cache */
-static Evas_Bool font_cache_dir_free(const Evas_Hash *hash, const char *key, void *data, void *fdata);
+static Evas_Bool font_cache_dir_free(const Evas_Hash *hash, const void *key, void *data, void *fdata);
 static Evas_Font_Dir *object_text_font_cache_dir_update(char *dir, Evas_Font_Dir *fd);
 static Evas_Font *object_text_font_cache_font_find_x(Evas_Font_Dir *fd, char *font);
 static Evas_Font *object_text_font_cache_font_find_file(Evas_Font_Dir *fd, char *font);
@@ -438,8 +438,8 @@ evas_font_dir_available_list_free(Eina_List *available)
 }
 
 /* private stuff */
-static Evas_Bool
-font_cache_dir_free(const Evas_Hash *hash, const char *key, void *data, void *fdata)
+static Eina_Bool
+font_cache_dir_free(const Evas_Hash *hash, const void *key, void *data, void *fdata)
 {
    object_text_font_cache_dir_del((char *) key, data);
    return 1;
