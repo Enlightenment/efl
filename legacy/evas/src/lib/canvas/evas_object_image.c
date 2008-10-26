@@ -639,7 +639,7 @@ evas_object_image_fill_transform_set (Evas_Object *obj, Evas_Transform *t)
 	o->cur.transform.mzy = 0;
 	o->cur.transform.mzz = 1;
 
-	o->changed;
+	o->changed = 1;
 	evas_object_change(obj);
 	return;
      }
@@ -664,7 +664,7 @@ evas_object_image_fill_transform_set (Evas_Object *obj, Evas_Transform *t)
    o->cur.transform.mzy = t->mzy;
    o->cur.transform.mzz = t->mzz;
 
-   o->changed;
+   o->changed = 1;
    evas_object_change(obj);
 }
 
@@ -1013,7 +1013,6 @@ EAPI void
 evas_object_image_preload(const Evas_Object *obj, Evas_Bool cancel)
 {
    Evas_Object_Image *o;
-   DATA32 *data;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return ;
