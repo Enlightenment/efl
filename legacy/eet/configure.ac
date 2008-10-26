@@ -56,7 +56,7 @@ AC_ARG_ENABLE(old-eet-file-format,
    [old_eet_file_format=$enableval]
 )
 AC_MSG_CHECKING([whether to support old eet file format])
-AC_MSG_RESULT([${old_eet_file_format=$enableval}])
+AC_MSG_RESULT([${old_eet_file_format}])
 
 if test "x${old_eet_file_format}" = "xyes" ; then
    AC_DEFINE(EET_OLD_EET_FILE_FORMAT, 1, [support old eet file format])
