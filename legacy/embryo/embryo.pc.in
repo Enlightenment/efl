@@ -1,8 +1,9 @@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
-datadir=@datadir@/@PACKAGE@
 libdir=@libdir@
 includedir=@includedir@
+datarootdir=@datarootdir@
+datadir=@datadir@/@PACKAGE@
 embryoincludedir=@embryoincludedir@
 
 Name: embryo
