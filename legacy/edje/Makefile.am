@@ -26,7 +26,6 @@ autogen.sh \
 edje.pc.in \
 edje.spec \
 edje.spec.in \
-README.in \
 README
 
 pkgconfigdir = $(libdir)/pkgconfig
