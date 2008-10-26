@@ -15,6 +15,9 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <errno.h>
+#ifdef HAVE_LOCALE_H
+# include <locale.h>
+#endif
 
 #include "edje_private.h"
 #include "edje_cc.h"
