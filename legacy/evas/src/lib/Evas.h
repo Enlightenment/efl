@@ -966,6 +966,87 @@ extern "C" {
    /* convenience */
    EAPI void evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy);
 
+
+   typedef struct _Evas_Object_Box_Api        Evas_Object_Box_Api;
+   typedef struct _Evas_Object_Box_Data       Evas_Object_Box_Data;
+   typedef struct _Evas_Object_Box_Option     Evas_Object_Box_Option;
+   typedef void (*Evas_Object_Box_Layout)(Evas_Object *o, Evas_Object_Box_Data *priv);
+
+   struct _Evas_Object_Box_Api
+   {
+      Evas_Smart_Class base;
+      Evas_Object_Box_Option *(*append)(Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object *child);
+      Evas_Object_Box_Option *(*prepend)(Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object *child);
+      Evas_Object_Box_Option *(*insert_before)(Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object *child, const Evas_Object *reference);
+      Evas_Object_Box_Option *(*insert_at)(Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object *child, unsigned int pos);
+      Evas_Object            *(*remove)(Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object *child);
+      Evas_Object            *(*remove_at)(Evas_Object *o, Evas_Object_Box_Data *priv, unsigned int pos);
+      Evas_Bool               (*property_set)(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args);
+      Evas_Bool               (*property_get)(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args);
+      const char             *(*property_name_get)(Evas_Object *o, int property);
+      int                     (*property_id_get)(Evas_Object *o, const char *name);
+      Evas_Object_Box_Option *(*option_new)(Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object *child);
+      void                    (*option_free)(Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object_Box_Option *opt);
+   };
+
+   struct _Evas_Object_Box_Data
+   {
+      Evas_Object_Smart_Clipped_Data base;
+      const Evas_Object_Box_Api *api;
+      double align_h;
+      double align_v;
+      int padding_h;
+      int padding_v;
+      Eina_List *children;
+      Evas_Object_Box_Layout layout;
+   };
+
+   struct _Evas_Object_Box_Option
+   {
+      Evas_Object *obj;
+   };
+
+   EAPI void evas_object_box_smart_set(Evas_Object_Box_Api *api);
+   EAPI void evas_object_box_layout_set(Evas_Object *o, Evas_Object_Box_Layout cb);
+
+   EAPI Evas_Object *evas_object_box_add(Evas *evas);
+   EAPI Evas_Object *evas_object_box_add_to(Evas_Object *parent);
+
+   EAPI void evas_object_box_layout_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv);
+   EAPI void evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv);
+   EAPI void evas_object_box_layout_homogeneous_vertical(Evas_Object *o, Evas_Object_Box_Data *priv);
+   EAPI void evas_object_box_layout_homogeneous_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv);
+   EAPI void evas_object_box_layout_homogeneous_max_size_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv);
+   EAPI void evas_object_box_layout_homogeneous_max_size_vertical(Evas_Object *o, Evas_Object_Box_Data *priv);
+   EAPI void evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv);
+   EAPI void evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv);
+   EAPI void evas_object_box_layout_stack(Evas_Object *o, Evas_Object_Box_Data *priv);
+
+   EAPI double evas_object_box_align_h_get(Evas_Object *o);
+   EAPI double evas_object_box_align_v_get(Evas_Object *o);
+   EAPI void   evas_object_box_align_h_set(Evas_Object *o, double align_h);
+   EAPI void   evas_object_box_align_v_set(Evas_Object *o, double align_v);
+   EAPI int    evas_object_box_padding_h_get(Evas_Object *o);
+   EAPI int    evas_object_box_padding_v_get(Evas_Object *o);
+   EAPI void   evas_object_box_padding_h_set(Evas_Object *o, int padding_h);
+   EAPI void   evas_object_box_padding_v_set(Evas_Object *o, int padding_v);
+
+   EAPI Evas_Object_Box_Option *evas_object_box_append(Evas_Object *o, Evas_Object *child);
+   EAPI Evas_Object_Box_Option *evas_object_box_prepend(Evas_Object *o, Evas_Object *child);
+   EAPI Evas_Object_Box_Option *evas_object_box_insert_before(Evas_Object *o, Evas_Object *child, const Evas_Object *reference);
+   EAPI Evas_Object_Box_Option *evas_object_box_insert_at(Evas_Object *o, Evas_Object *child, unsigned int pos);
+   EAPI Evas_Bool               evas_object_box_remove(Evas_Object *o, Evas_Object *child);
+   EAPI Evas_Bool               evas_object_box_remove_at(Evas_Object *o, unsigned int pos);
+
+   EAPI const char *evas_object_box_option_property_name_get(Evas_Object *o, int property);
+   EAPI int         evas_object_box_option_property_id_get(Evas_Object *o, const char *name);
+   EAPI Evas_Bool   evas_object_box_option_property_set(Evas_Object *o, Evas_Object_Box_Option *opt, int property, ...);
+   EAPI Evas_Bool   evas_object_box_option_property_vset(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args);
+   EAPI Evas_Bool   evas_object_box_option_property_get(Evas_Object *o, Evas_Object_Box_Option *opt, int property, ...);
+   EAPI Evas_Bool   evas_object_box_option_property_vget(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args);
+
+
+
 #ifdef __cplusplus
 }
 #endif

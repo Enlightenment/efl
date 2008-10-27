@@ -33,6 +33,7 @@ evas_object_polygon.c \
 evas_object_rectangle.c \
 evas_object_smart.c \
 evas_object_smart_clipped.c \
+evas_object_box.c \
 evas_object_text.c \
 evas_object_textblock.c \
 evas_font_dir.c \
