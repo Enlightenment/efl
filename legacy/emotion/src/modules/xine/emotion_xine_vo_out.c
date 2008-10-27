@@ -116,7 +116,7 @@ _emotion_class_init(xine_t *xine, void *visual)
    Emotion_Class *cl;
    
 //   printf("emotion: _emotion_class_init()\n");
-   cl = (Emotion_Class *) xine_xmalloc(sizeof(Emotion_Class));
+   cl = (Emotion_Class *) malloc(sizeof(Emotion_Class));
    if (!cl) return NULL;
    cl->driver_class.open_plugin     = _emotion_open;
    cl->driver_class.get_identifier  = _emotion_class_identifier_get;
@@ -165,7 +165,7 @@ _emotion_open(video_driver_class_t *driver_class, const void *visual)
    cl = (Emotion_Class *)driver_class;
    /* visual here is the data ptr passed to xine_open_video_driver() */
 //   printf("emotion: _emotion_open()\n");
-   dv = (Emotion_Driver *)xine_xmalloc(sizeof(Emotion_Driver));
+   dv = (Emotion_Driver *)malloc(sizeof(Emotion_Driver));
    if (!dv) return NULL;
    
    dv->config                         = cl->config;
@@ -311,7 +311,7 @@ _emotion_frame_alloc(vo_driver_t *vo_driver)
    
    dv = (Emotion_Driver *)vo_driver;
 //   printf("emotion: _emotion_frame_alloc()\n");
-   fr = (Emotion_Frame *)xine_xmalloc(sizeof(Emotion_Frame));
+   fr = (Emotion_Frame *)malloc(sizeof(Emotion_Frame));
    if (!fr) return NULL;
    
    fr->vo_frame.base[0]    = NULL;
