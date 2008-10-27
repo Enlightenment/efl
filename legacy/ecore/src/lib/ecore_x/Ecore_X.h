@@ -1517,7 +1517,7 @@ EAPI void                ecore_x_netwm_desktop_request_send(Ecore_X_Window win, 
 
 EAPI void                ecore_x_e_init(void);
 EAPI void                ecore_x_e_frame_size_set(Ecore_X_Window win, int fl, int fr, int ft, int fb);
-EAPI void                ecore_x_e_virtual_keyboard_set(Ecore_X_Window win, int is_keyboard);
+EAPI void                ecore_x_e_virtual_keyboard_set(Ecore_X_Window win, unsigned int is_keyboard);
 EAPI int                 ecore_x_e_virtual_keyboard_get(Ecore_X_Window win);
 EAPI void                ecore_x_e_virtual_keyboard_state_set(Ecore_X_Window win, Ecore_X_Virtual_Keyboard_State state);
 EAPI Ecore_X_Virtual_Keyboard_State ecore_x_e_virtual_keyboard_state_get(Ecore_X_Window win);

@@ -28,7 +28,7 @@ ecore_x_e_frame_size_set(Ecore_X_Window win, int fl, int fr, int ft, int fb)
 }
 
 EAPI void
-ecore_x_e_virtual_keyboard_set(Ecore_X_Window win, int is_keyboard)
+ecore_x_e_virtual_keyboard_set(Ecore_X_Window win, unsigned int is_keyboard)
 {
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD,
 				  &is_keyboard, 1);
