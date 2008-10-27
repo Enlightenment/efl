@@ -2682,22 +2682,11 @@ static inline void
 _prepend_escaped_char(Evas_Textblock_Cursor *cur, const char *s,
 		     const char *s_end)
 {
-   const char *map_itr, *map_end;
-
-   map_itr = escape_strings;
-   map_end = map_itr + sizeof(escape_strings);
-
-   while (map_itr < map_end)
-     {
-	if (_is_eq_and_advance(s, s_end, &map_itr, map_end))
-	  {
-	     evas_textblock_cursor_text_prepend(cur, map_itr);
-	     return;
-	  }
-	
-	if (map_itr < map_end)
-	  _advance_after_end_of_string(&map_itr);
-     }
+   const char *escape;
+   
+   escape = _escaped_char_get(s, s_end);
+   if (escape)
+     evas_textblock_cursor_text_prepend(cur, escape);
 }
 
 /**
