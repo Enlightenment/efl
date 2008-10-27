@@ -997,8 +997,11 @@ eina_stringshare_dump(void)
    di.saved += population_group[1].count * sizeof(char) * 2;
 #endif
    printf("DDD:-------------------\n");
-   printf("DDD: usage (bytes) = %i, saved = %i (%i duplicates, %i unique)\n", 
-	  di.used, di.saved, di.dups, di.unique);
+   printf("DDD: usage (bytes) = %i, saved = %i (%3.0f%%)\n",
+	  di.used, di.saved, di.used ? (di.saved * 100.0 / di.used) : 0.0);
+   printf("DDD: unique: %d, duplicates: %d (%3.0f%%)\n",
+	  di.unique, di.dups, di.unique ? (di.dups * 100.0 / di.unique) : 0.0);
+
 #ifdef EINA_STRINGSHARE_USAGE
    printf("DDD: Allocated strings: %i\n", population.count);
    printf("DDD: Max allocated strings: %i\n", population.max);
