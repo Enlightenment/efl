@@ -478,6 +478,64 @@ eina_stringshare_del(const char *str)
    if (getenv("EINA_ERROR_ABORT")) abort();
 }
 
+struct dumpinfo
+{
+   int used, saved, dups, unique;
+};
+
+static Eina_Bool
+eina_iterator_array_check(const Eina_Rbtree *rbtree, Eina_Stringshare_Head *head, struct dumpinfo *fdata)
+{
+   Eina_Stringshare_Node *node;
+   
+   fdata->used += sizeof(Eina_Stringshare_Head);
+   for (node = head->head; node; node = node->next)
+     {
+	printf("DDD: %5i %5i ", node->length, node->references);
+	printf("'%s'\n", ((char *)node) + sizeof(Eina_Stringshare_Node));
+	fdata->used += sizeof(Eina_Stringshare_Node);
+	fdata->used += node->length;
+	fdata->saved += (node->references - 1) * node->length;
+	fdata->dups += node->references - 1;
+	fdata->unique++;
+     }
+   return EINA_TRUE;
+}
+
+/**
+ * @brief Dump the contents of the stringshare.
+ *
+ * This function dumps all strings in the stringshare to stdout with a
+ * DDD: prefix per line and a memory usage summary.
+ */
+EAPI void
+eina_stringshare_dump(void)
+{
+   Eina_Iterator *it;
+   int i;
+   struct dumpinfo di;
+   
+   if (!share) return;
+   di.used = 0;
+   di.saved = 0;
+   di.dups = 0;
+   di.unique = 0;
+   printf("DDD:   len   ref string\n");
+   printf("DDD:-------------------\n");
+   for (i = 0; i < EINA_STRINGSHARE_BUCKETS; i++)
+     {
+	if (!share->buckets[i]) continue;
+//	printf("DDD: BUCKET # %i (HEAD=%i, NODE=%i)\n", i,
+//	       sizeof(Eina_Stringshare_Head), sizeof(Eina_Stringshare_Node));
+	it = eina_rbtree_iterator_prefix((Eina_Rbtree *)share->buckets[i]);
+	eina_iterator_foreach(it, EINA_EACH(eina_iterator_array_check), &di);
+	eina_iterator_free(it);
+     }
+   printf("DDD:-------------------\n");
+   printf("DDD: usage (bytes) = %i, saved = %i (%i duplicates, %i unique)\n", 
+	  di.used, di.saved, di.dups, di.unique);
+}
+
 /**
  * @}
  */
