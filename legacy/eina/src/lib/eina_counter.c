@@ -76,12 +76,12 @@ static int _eina_counter_init_count = 0;
 static inline int
 _eina_counter_time_get(Eina_Nano_Time *tp)
 {
-#if defined (__linux__) && defined(CLOCK_PROCESS_CPUTIME_ID)
+#if defined(CLOCK_PROCESS_CPUTIME_ID)
    return clock_gettime(CLOCK_PROCESS_CPUTIME_ID, tp);
-#elif defined(__FreeBSD__) && defined(CLOCK_PROF)
+#elif defined(CLOCK_PROF)
    return clock_gettime(CLOCK_PROF, tp);
 #else
-   return clock_gettime(CLOCK, tp);
+   return clock_gettime(CLOCK_REALTIME, tp);
 #endif
 }
 #else
