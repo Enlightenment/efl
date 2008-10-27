@@ -92,8 +92,7 @@ EAPI Ecore_X_Virtual_Keyboard_State
 ecore_x_e_virtual_keyboard_state_get(Ecore_X_Window win)
 {
    Ecore_X_Atom atom;
-   int num;
-   
+ 
    if (!ecore_x_window_prop_atom_get(win, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_STATE,
 				     &atom, 1))
      return ECORE_X_VIRTUAL_KEYBOARD_STATE_UNKNOWN;
