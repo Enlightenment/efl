@@ -140,10 +140,45 @@ struct _Eina_Stringshare_Node
 
 static Eina_Stringshare *share = NULL;
 static int _eina_stringshare_init_count = 0;
+static const char _eina_stringshare_single[512] = {
+  0,0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8,0,9,0,10,0,11,0,12,0,13,0,14,0,15,0,
+  16,0,17,0,18,0,19,0,20,0,21,0,22,0,23,0,24,0,25,0,26,0,27,0,28,0,29,0,30,0,
+  31,0,32,0,33,0,34,0,35,0,36,0,37,0,38,0,39,0,40,0,41,0,42,0,43,0,44,0,45,0,
+  46,0,47,0,48,0,49,0,50,0,51,0,52,0,53,0,54,0,55,0,56,0,57,0,58,0,59,0,60,0,
+  61,0,62,0,63,0,64,0,65,0,66,0,67,0,68,0,69,0,70,0,71,0,72,0,73,0,74,0,75,0,
+  76,0,77,0,78,0,79,0,80,0,81,0,82,0,83,0,84,0,85,0,86,0,87,0,88,0,89,0,90,0,
+  91,0,92,0,93,0,94,0,95,0,96,0,97,0,98,0,99,0,100,0,101,0,102,0,103,0,104,0,105,0,
+  106,0,107,0,108,0,109,0,110,0,111,0,112,0,113,0,114,0,115,0,116,0,117,0,118,0,119,0,120,0,
+  121,0,122,0,123,0,124,0,125,0,126,0,127,0,128,0,129,0,130,0,131,0,132,0,133,0,134,0,135,0,
+  136,0,137,0,138,0,139,0,140,0,141,0,142,0,143,0,144,0,145,0,146,0,147,0,148,0,149,0,150,0,
+  151,0,152,0,153,0,154,0,155,0,156,0,157,0,158,0,159,0,160,0,161,0,162,0,163,0,164,0,165,0,
+  166,0,167,0,168,0,169,0,170,0,171,0,172,0,173,0,174,0,175,0,176,0,177,0,178,0,179,0,180,0,
+  181,0,182,0,183,0,184,0,185,0,186,0,187,0,188,0,189,0,190,0,191,0,192,0,193,0,194,0,195,0,
+  196,0,197,0,198,0,199,0,200,0,201,0,202,0,203,0,204,0,205,0,206,0,207,0,208,0,209,0,210,0,
+  211,0,212,0,213,0,214,0,215,0,216,0,217,0,218,0,219,0,220,0,221,0,222,0,223,0,224,0,225,0,
+  226,0,227,0,228,0,229,0,230,0,231,0,232,0,233,0,234,0,235,0,236,0,237,0,238,0,239,0,240,0,
+  241,0,242,0,243,0,244,0,245,0,246,0,247,0,248,0,249,0,250,0,251,0,252,0,253,0,254,0,255,0
+};
 
 #ifdef EINA_STRINGSHARE_USAGE
-static int population = 0;
-static int max_population = 0;
+typedef struct _Eina_Stringshare_Population Eina_Stringshare_Population;
+struct _Eina_Stringshare_Population
+{
+   int count;
+   int max;
+};
+
+static Eina_Stringshare_Population population = { 0, 0 };
+
+static Eina_Stringshare_Population population_group[5] =
+  {
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 }
+  };
+
 static int max_node_population = 0;
 #endif
 
@@ -244,6 +279,8 @@ eina_stringshare_init()
     */
    if (!_eina_stringshare_init_count)
      {
+	unsigned int i;
+
 	share = calloc(1, sizeof(Eina_Stringshare));
 	if (!share)
 	  return 0;
@@ -258,6 +295,12 @@ eina_stringshare_init()
 	eina_magic_string_set(EINA_MAGIC_STRINGSHARE_NODE,
 			      "Eina Stringshare Node");
        	EINA_MAGIC_SET(share, EINA_MAGIC_STRINGSHARE);
+
+	for (i = 0; i < sizeof (population_group) / sizeof (population_group[0]); ++i)
+	  {
+	     population_group[i].count = 0;
+	     population_group[i].max = 0;
+	  }
      }
 
    return ++_eina_stringshare_init_count;
@@ -277,16 +320,20 @@ eina_stringshare_init()
 EAPI int
 eina_stringshare_shutdown()
 {
+   unsigned int i;
+
 #ifdef EINA_STRINGSHARE_USAGE
    fprintf(stderr, "eina stringshare statistic:\n");
-   fprintf(stderr, " * maximum shared strings : %i\n", max_population);
+   fprintf(stderr, " * maximum shared strings : %i\n", population.max);
    fprintf(stderr, " * maximum shared strings per node : %i\n", max_node_population);
+
+   for (i = 0; i < sizeof (population_group) / sizeof (population_group[0]); ++i)
+     fprintf(stderr, "DDD: %i strings of length %i, max strings: %i\n", population_group[i].count, i, population_group[i].max);
 #endif
 
    --_eina_stringshare_init_count;
    if (!_eina_stringshare_init_count)
      {
-	int i;
 	/* remove any string still in the table */
 	for (i = 0; i < EINA_STRINGSHARE_BUCKETS; i++)
 	  {
@@ -296,9 +343,15 @@ eina_stringshare_shutdown()
 	MAGIC_FREE(share);
 
 #ifdef EINA_STRINGSHARE_USAGE
-	population = 0;
 	max_node_population = 0;
-	max_population = 0;
+	population.count = 0;
+	population.max = 0;
+
+	for (i = 0; i < sizeof (population_group) / sizeof (population_group[0]); ++i)
+	  {
+	     population_group[i].count = 0;
+	     population_group[i].max = 0;
+	  }
 #endif
 
 	eina_magic_string_shutdown();
@@ -332,7 +385,34 @@ eina_stringshare_add(const char *str)
    int hash_num, slen, hash;
 
    if (!str) return NULL;
-   hash = eina_hash_djb2_len(str, &slen);
+
+   slen = strlen(str) + 1;
+
+#ifdef EINA_STRINGSHARE_USAGE
+   population.count++;
+   if (population.count > population.max) population.max = population.count;
+
+   if (slen <= 5)
+     {
+	population_group[slen - 1].count++;
+	if (population_group[slen - 1].count > population_group[slen - 1].max)
+	  population_group[slen - 1].max = population_group[slen - 1].count;
+     }
+#endif
+
+   switch (slen)
+     {
+      case 1:
+	 return "";
+      case 2:
+	 return &(_eina_stringshare_single[(*str) << 1]);
+      case 3:
+      case 4:
+      default:
+	 break;
+     }
+
+   hash = eina_hash_superfast(str, slen);
    hash_num = hash & 0xFF;
    hash = (hash >> 8) & EINA_STRINGSHARE_MASK;
 
@@ -402,8 +482,6 @@ eina_stringshare_add(const char *str)
 
 #ifdef EINA_STRINGSHARE_USAGE
    ed->population++;
-   population++;
-   if (population > max_population) max_population = population;
    if (ed->population > max_node_population) max_node_population = ed->population;
 #endif
 
@@ -429,7 +507,27 @@ eina_stringshare_del(const char *str)
    int hash_num, slen, hash;
 
    if (!str) return;
-   hash = eina_hash_djb2_len(str, &slen);
+
+   slen = strlen(str) + 1;
+
+#ifdef EINA_STRINGSHARE_USAGE
+   population.count--;
+   if (slen <= 5)
+     population_group[slen - 1].count--;
+#endif
+
+   switch (slen)
+     {
+      case 1:
+      case 2:
+	 return ;
+      case 3:
+      case 4:
+      default:
+	 break;
+     }
+
+   hash = eina_hash_superfast(str, slen);
    hash_num = hash & 0xFF;
    hash = (hash >> 8) & EINA_STRINGSHARE_MASK;
 
@@ -459,7 +557,6 @@ eina_stringshare_del(const char *str)
 
 #ifdef EINA_STRINGSHARE_USAGE
 	ed->population--;
-	population--;
 #endif
 
 	if (ed->head == NULL)
@@ -512,11 +609,11 @@ EAPI void
 eina_stringshare_dump(void)
 {
    Eina_Iterator *it;
-   int i;
+   unsigned int i;
    struct dumpinfo di;
-   
+
    if (!share) return;
-   di.used = 0;
+   di.used = sizeof (_eina_stringshare_single);
    di.saved = 0;
    di.dups = 0;
    di.unique = 0;
@@ -531,9 +628,21 @@ eina_stringshare_dump(void)
 	eina_iterator_foreach(it, EINA_EACH(eina_iterator_array_check), &di);
 	eina_iterator_free(it);
      }
+#ifdef EINA_STRINGSHARE_USAGE
+   /* One character strings are not counted in the hash. */
+   di.saved += population_group[0].count * sizeof(char);
+   di.saved += population_group[1].count * sizeof(char) * 2;
+#endif
    printf("DDD:-------------------\n");
    printf("DDD: usage (bytes) = %i, saved = %i (%i duplicates, %i unique)\n", 
 	  di.used, di.saved, di.dups, di.unique);
+#ifdef EINA_STRINGSHARE_USAGE
+   printf("DDD: Allocated strings: %i\n", population.count);
+   printf("DDD: Max allocated strings: %i\n", population.max);
+
+   for (i = 0; i < sizeof (population_group) / sizeof (population_group[0]); ++i)
+     fprintf(stderr, "DDD: %i strings of length %i, max strings: %i\n", population_group[i].count, i, population_group[i].max);
+#endif
 }
 
 /**
