@@ -296,11 +296,13 @@ eina_stringshare_init()
 			      "Eina Stringshare Node");
        	EINA_MAGIC_SET(share, EINA_MAGIC_STRINGSHARE);
 
+#ifdef EINA_STRINGSHARE_USAGE
 	for (i = 0; i < sizeof (population_group) / sizeof (population_group[0]); ++i)
 	  {
 	     population_group[i].count = 0;
 	     population_group[i].max = 0;
 	  }
+#endif
      }
 
    return ++_eina_stringshare_init_count;
