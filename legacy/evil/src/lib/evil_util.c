@@ -93,12 +93,12 @@ evil_format_message(long err)
 }
 
 void
-_evil_error_display(LONG res)
+_evil_error_display(const char *fct, LONG res)
 {
    char *error;
 
    error = evil_format_message(res);
-   fprintf(stderr, "[Evil] [%s] ERROR: %s\n", __FUNCTION__, error);
+   fprintf(stderr, "[Evil] [%s] ERROR: %s\n", fct, error);
    free(error);
 }
 

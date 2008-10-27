@@ -49,7 +49,7 @@ getenv(const char *name)
                           0, 0,
                           &key)) != ERROR_SUCCESS)
      {
-        _evil_error_display(res);
+        _evil_error_display(__FILE__, res);
         return NULL;
      }
 
@@ -57,7 +57,7 @@ getenv(const char *name)
    if (!wname)
      {
         if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
-          _evil_error_display(res);
+          _evil_error_display(__FUNCTION__, res);
         return NULL;
      }
 
@@ -67,7 +67,7 @@ getenv(const char *name)
                               &size)) != ERROR_SUCCESS)
      {
         if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
-          _evil_error_display(res);
+          _evil_error_display(__FUNCTION__, res);
         free(wname);
         return NULL;
      }
@@ -76,7 +76,7 @@ getenv(const char *name)
 
    if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
      {
-        _evil_error_display(res);
+        _evil_error_display(__FUNCTION__, res);
         return NULL;
      }
 
@@ -193,7 +193,7 @@ setenv(const char *name,
                              &key,
                              &disposition)) != ERROR_SUCCESS)
      {
-        _evil_error_display(res);
+        _evil_error_display(__FUNCTION__, res);
         return -1;
      }
 
@@ -205,7 +205,7 @@ setenv(const char *name,
    if (!wname)
      {
         if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
-          _evil_error_display(res);
+          _evil_error_display(__FUNCTION__, res);
         return -1;
      }
 
@@ -216,9 +216,9 @@ setenv(const char *name,
                             strlen(value) + 1)) != ERROR_SUCCESS)
      {
         free(wname);
-        _evil_error_display(res);
+        _evil_error_display(__FUNCTION__, res);
         if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
-          _evil_error_display(res);
+          _evil_error_display(__FUNCTION__, res);
         return -1;
      }
 
@@ -226,7 +226,7 @@ setenv(const char *name,
 
    if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
      {
-        _evil_error_display(res);
+        _evil_error_display(__FUNCTION__, res);
         return -1;
      }
 

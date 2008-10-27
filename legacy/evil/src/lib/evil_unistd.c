@@ -261,7 +261,7 @@ evil_getcwd(char *buffer, size_t size)
 
    if (!ret)
      {
-        _evil_error_display(ret);
+        _evil_error_display(__FUNCTION__, ret);
         return NULL;
      }
 
