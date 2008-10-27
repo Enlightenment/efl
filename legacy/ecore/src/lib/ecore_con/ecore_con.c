@@ -1512,7 +1512,8 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
      {
        unsigned char buf[READBUFSIZ];
        struct sockaddr_in client_addr;
-       int num, client_addr_len = sizeof(client_addr);
+       unsigned int client_addr_len = sizeof(client_addr);
+       int num;
 
        errno = 0;
        num = recvfrom(svr->fd, buf, sizeof(buf), MSG_DONTWAIT, (struct sockaddr*) &client_addr, &client_addr_len);
