@@ -443,15 +443,20 @@ evas_object_box_smart_set(Evas_Object_Box_Api *api)
      return;
 
    if (!_parent_sc.name)
-     {
-	evas_object_smart_clipped_smart_set(&api->base);
-	_parent_sc = api->base;
-     }
+     evas_object_smart_clipped_smart_set(&_parent_sc);
 
    api->base.add = _evas_object_box_smart_add;
    api->base.del = _evas_object_box_smart_del;
+   api->base.move = _parent_sc.move;
    api->base.resize = _evas_object_box_smart_resize;
+   api->base.show = _parent_sc.show;
+   api->base.hide = _parent_sc.hide;
+   api->base.color_set = _parent_sc.color_set;
+   api->base.clip_set = _parent_sc.clip_set;
+   api->base.clip_unset = _parent_sc.clip_unset;
    api->base.calculate = _evas_object_box_smart_calculate;
+   api->base.member_add = _parent_sc.member_add;
+   api->base.member_del = _parent_sc.member_del;
 
    api->append = _evas_object_box_append_default;
    api->prepend = _evas_object_box_prepend_default;

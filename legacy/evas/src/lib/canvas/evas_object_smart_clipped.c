@@ -226,6 +226,7 @@ evas_object_smart_clipped_smart_set(Evas_Smart_Class *sc)
    sc->color_set = evas_object_smart_clipped_smart_color_set;
    sc->clip_set = evas_object_smart_clipped_smart_clip_set;
    sc->clip_unset = evas_object_smart_clipped_smart_clip_unset;
+   sc->calculate = NULL;
    sc->member_add = evas_object_smart_clipped_smart_member_add;
    sc->member_del = evas_object_smart_clipped_smart_member_del;
 }
