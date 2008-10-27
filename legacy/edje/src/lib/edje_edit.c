@@ -2908,7 +2908,7 @@ edje_edit_state_text_elipsis_set(Evas_Object *obj, const char *part, const char 
 EAPI unsigned char
 edje_edit_state_text_fit_x_get(Evas_Object *obj, const char *part, const char *state)
 {
-   GET_PD_OR_RETURN();
+   GET_PD_OR_RETURN(0);
    //printf("GET TEXT_FIT_VERT of state: %s \n", state);
    return pd->text.fit_x;
 }
@@ -2927,7 +2927,7 @@ edje_edit_state_text_fit_x_set(Evas_Object *obj, const char *part, const char *s
 EAPI unsigned char
 edje_edit_state_text_fit_y_get(Evas_Object *obj, const char *part, const char *state)
 {
-   GET_PD_OR_RETURN();
+   GET_PD_OR_RETURN(0);
    //printf("GET TEXT_FIT_VERT of state: %s \n", state);
    return pd->text.fit_y;
 }
@@ -3401,7 +3401,7 @@ edje_edit_state_image_border_set(Evas_Object *obj, const char *part, const char 
 EAPI unsigned char
 edje_edit_state_image_border_fill_get(Evas_Object *obj, const char *part, const char *state)
 {
-   GET_PD_OR_RETURN();
+   GET_PD_OR_RETURN(0);
    return pd->border.no_fill ? 0 : 1;
 }
 
@@ -3445,13 +3445,11 @@ edje_edit_spectrum_list_get(Evas_Object *obj)
 EAPI unsigned char
 edje_edit_spectra_add(Evas_Object *obj, const char* name)
 {
-   int id;
    GET_ED_OR_RETURN(0);
 
    printf("SPECTRA ADD [new name:%s]\n", name);
 
    Edje_Spectrum_Directory_Entry *s;
-   Eina_List *l;
 
    if (!ed->file) return 0;
 
@@ -4564,7 +4562,7 @@ _edje_generate_source_of_spectra(Edje * ed, const char *name, FILE * f)
 
    if (!ed || !name || !f) return;
 
-   if (d = _edje_edit_spectrum_entry_get(ed, name))
+   if ((d = _edje_edit_spectrum_entry_get(ed, name)))
      {
 	fprintf(f, I1 "spectrum {\n");
 	fprintf(f, I2 "name: \"%s\";\n", d->entry);
@@ -4610,14 +4608,14 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, FILE *f)
    fprintf(f, I4"name: \"%s\";\n", program);
 
    /* Signal */
-   if (s = edje_edit_program_signal_get(obj, program))
+   if ((s = edje_edit_program_signal_get(obj, program)))
      {
 	fprintf(f, I4"signal: \"%s\";\n", s);
 	edje_edit_string_free(s);
      }
 
    /* Source */
-   if (s = edje_edit_program_source_get(obj, program))
+   if ((s = edje_edit_program_source_get(obj, program)))
      {
 	fprintf(f, I4"source: \"%s\";\n", s);
 	edje_edit_string_free(s);
@@ -4630,7 +4628,7 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, FILE *f)
 	fprintf(f, I4"action: ACTION_STOP;\n");
 	break;
      case EDJE_ACTION_TYPE_STATE_SET:
-	if (s = edje_edit_program_state_get(obj, program))
+	if ((s = edje_edit_program_state_get(obj, program)))
 	  {
 		fprintf(f, I4"action: STATE_SET \"%s\" %.2f;\n", s,
 			edje_edit_program_value_get(obj, program));
@@ -4684,7 +4682,7 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, FILE *f)
      fprintf(f, I4"in: %.5f %.5f;\n", db, db2);
 
    /* Targets */
-   if (ll = edje_edit_program_targets_get(obj, program))
+   if ((ll = edje_edit_program_targets_get(obj, program)))
      {
 	EINA_LIST_FOREACH(ll, l, data)
 	  fprintf(f, I4"target: \"%s\";\n", data);
@@ -4692,7 +4690,7 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, FILE *f)
      }
 
    /* Afters */
-   if (ll = edje_edit_program_afters_get(obj, program))
+   if ((ll = edje_edit_program_afters_get(obj, program)))
      {
         EINA_LIST_FOREACH(ll, l, data)
 	  fprintf(f, I4"after: \"%s\";\n", data);
@@ -4941,12 +4939,12 @@ _edje_generate_source_of_part(Evas_Object *obj, const char *part, FILE *f)
 	fprintf(f, I5"y: %d %d %d;\n", edje_edit_part_drag_y_get(obj, part),
 	                               edje_edit_part_drag_step_y_get(obj, part),
 	                               edje_edit_part_drag_count_y_get(obj, part));
-	if (str = edje_edit_part_drag_confine_get(obj, part))
+	if ((str = edje_edit_part_drag_confine_get(obj, part)))
 	  {
 		fprintf(f, I5"confine: \"%s\";\n", str);
 		edje_edit_string_free(str);
 	  }
-	if (str = edje_edit_part_drag_event_get(obj, part))
+	if ((str = edje_edit_part_drag_event_get(obj, part)))
 	  {
 		fprintf(f, I5"events: \"%s\";\n", str);
 		edje_edit_string_free(str);
@@ -4993,7 +4991,7 @@ _edje_generate_source_of_group(Edje *ed, const char *group, FILE *f)
    fprintf(f, I2"}\n");//parts
 
    /* Programs */
-   if (ll = edje_edit_programs_list_get(obj))
+   if ((ll = edje_edit_programs_list_get(obj)))
      {
 	fprintf(f, I2 "programs {\n");
 	EINA_LIST_FOREACH(ll, l, data)
@@ -5020,7 +5018,7 @@ _edje_generate_source(Evas_Object *obj)
    Eina_List *l, *ll;
    char *entry;
 
-   GET_ED_OR_RETURN();
+   GET_ED_OR_RETURN(NULL);
    
    /* Open a temp file */
    //TODO this will not work on windows
@@ -5033,7 +5031,7 @@ _edje_generate_source(Evas_Object *obj)
    //TODO Probably we need to save the file before generation
    
    /* Images */
-   if (ll = edje_edit_images_list_get(obj))
+   if ((ll = edje_edit_images_list_get(obj)))
      {
 	fprintf(f, I0"images {\n");
 
@@ -5058,7 +5056,7 @@ _edje_generate_source(Evas_Object *obj)
      }
 
    /* Fonts */
-   if (ll = edje_edit_fonts_list_get(obj))
+   if ((ll = edje_edit_fonts_list_get(obj)))
      {
 	fprintf(f, I0"fonts {\n");
 
@@ -5072,7 +5070,7 @@ _edje_generate_source(Evas_Object *obj)
      }
 
    /* Data */
-   if (ll = edje_edit_data_list_get(obj))
+   if ((ll = edje_edit_data_list_get(obj)))
      {
 	fprintf(f, I0 "data {\n");
 
@@ -5087,7 +5085,7 @@ _edje_generate_source(Evas_Object *obj)
      }
 
    /* Color Classes */
-   if (ll = edje_edit_color_classes_list_get(obj))
+   if ((ll = edje_edit_color_classes_list_get(obj)))
      {
 	fprintf(f, I0 "color_classes {\n");
 	EINA_LIST_FOREACH(ll, l, entry)
@@ -5097,7 +5095,7 @@ _edje_generate_source(Evas_Object *obj)
      }
    
    /* Spectrum */
-   if (ll = edje_edit_spectrum_list_get(obj))
+   if ((ll = edje_edit_spectrum_list_get(obj)))
      {
 	fprintf(f, I0 "spectra {\n");
 
