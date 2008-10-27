@@ -248,6 +248,35 @@ _eina_stringshare_head_free(Eina_Stringshare_Head *ed, __UNUSED__ void *data)
 
 static Eina_Stringshare_Small _eina_small_share;
 
+static inline int
+_eina_stringshare_small_cmp(const Eina_Stringshare_Small_Bucket *bucket, int i, const char *pstr, unsigned char plength)
+{
+   const unsigned char cur_plength = bucket->lengths[i] - 1;
+   const char *cur_pstr;
+
+   if (cur_plength > plength)
+     return 1;
+   else if (cur_plength < plength)
+     return -1;
+
+   cur_pstr = bucket->strings[i] + 1;
+
+   if (cur_pstr[0] > pstr[0])
+     return 1;
+   else if (cur_pstr[0] < pstr[0])
+     return -1;
+
+   if (plength == 1)
+     return 0;
+
+   if (cur_pstr[1] > pstr[1])
+     return 1;
+   else if (cur_pstr[1] < pstr[1])
+     return -1;
+
+   return 0;
+}
+
 static const char *
 _eina_stringshare_small_bucket_find(const Eina_Stringshare_Small_Bucket *bucket, const char *str, unsigned char length, int *index)
 {
@@ -266,30 +295,23 @@ _eina_stringshare_small_bucket_find(const Eina_Stringshare_Small_Bucket *bucket,
 
    while (low < high)
      {
-	unsigned char cur_length;
+	int r;
 
 	i = (low + high - 1) / 2;
-	cur_length = bucket->lengths[i];
 
-	if (cur_length > length)
-	  high = i;
-	else if (cur_length < length)
-	  low = i + 1;
+	r = _eina_stringshare_small_cmp(bucket, i, pstr, plength);
+	if (r > 0)
+	  {
+	     high = i;
+	  }
+	else if (r < 0)
+	  {
+	     low = i + 1;
+	  }
 	else
 	  {
-	     const char *cur_pstr = bucket->strings[i] + 1;
-	     int r;
-
-	     r = memcmp(cur_pstr, pstr, plength);
-	     if (r > 0)
-	       high = i;
-	     else if (r < 0)
-	       low = i + 1;
-	     else
-	       {
-		  *index = i;
-		  return bucket->strings[i];
-	       }
+	     *index = i;
+	     return bucket->strings[i];
 	  }
      }
 
