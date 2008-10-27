@@ -25,6 +25,7 @@ eina_rbtree.h \
 eina_benchmark.h \
 eina_inline_rbtree.x \
 eina_inline_mempool.x \
+eina_inline_rectangle.x \
 eina_iterator.h
 
 installed_mainheaderdir = $(prefix)/include/eina-@VMAJ@

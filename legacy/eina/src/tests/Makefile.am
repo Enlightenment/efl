@@ -63,6 +63,7 @@ eina_test_rbtree.c	\
 eina_test_file.c	\
 eina_test_benchmark.c	\
 eina_test_mempool.c	\
+eina_test_rectangle.c	\
 eina_test_list.c
 
 eina_suite_LDADD = @CHECK_LIBS@ $(top_builddir)/src/lib/libeina.la

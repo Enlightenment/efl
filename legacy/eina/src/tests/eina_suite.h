@@ -43,5 +43,6 @@ void eina_test_rbtree(TCase *tc);
 void eina_test_file(TCase *tc);
 void eina_test_benchmark(TCase *tc);
 void eina_test_mempool(TCase *tc);
+void eina_test_rectangle(TCase *tc);
 
 #endif /* EINA_SUITE_H_ */

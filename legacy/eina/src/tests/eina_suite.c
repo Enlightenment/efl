@@ -45,6 +45,7 @@ static const Eina_Test_Case etc[] = {
   { "File", eina_test_file },
   { "Benchmark", eina_test_benchmark },
   { "Mempool", eina_test_mempool },
+  { "Rectangle", eina_test_rectangle },
   { NULL, NULL }
 };
 

@@ -27,10 +27,8 @@
 
 START_TEST(eina_simple)
 {
-   /* Eina_error as already been initialized by eina_hash
-      that was called by eina_mempool_init that's why we don't have 0 here */
-   fail_if(eina_init() != 2);
-   fail_if(eina_shutdown() != 1);
+   fail_if(eina_init() != 1);
+   fail_if(eina_shutdown() != 0);
 }
 END_TEST
 

@@ -30,12 +30,14 @@
  *                                   API                                      *
  *============================================================================*/
 
+static int _eina_main_count = 0;
+
 EAPI int
 eina_init(void)
 {
-   int r;
+   if (_eina_main_count) goto finish_init;
 
-   r = eina_error_init();
+   eina_error_init();
    eina_hash_init();
    eina_stringshare_init();
    eina_list_init();
@@ -44,13 +46,14 @@ eina_init(void)
    eina_benchmark_init();
    eina_magic_string_init();
 
-   return r;
+ finish_init:
+   return ++_eina_main_count;
 }
 
 EAPI int
 eina_shutdown(void)
 {
-   int r;
+   if (_eina_main_count != 1) goto finish_shutdown;
 
    eina_magic_string_shutdown();
    eina_benchmark_shutdown();
@@ -59,8 +62,9 @@ eina_shutdown(void)
    eina_list_shutdown();
    eina_stringshare_shutdown();
    eina_hash_shutdown();
-   r = eina_error_shutdown();
+   eina_error_shutdown();
 
-   return r;
+ finish_shutdown:
+   return --_eina_main_count;
 }
 
