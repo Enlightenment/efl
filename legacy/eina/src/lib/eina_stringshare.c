@@ -484,7 +484,7 @@ struct dumpinfo
 };
 
 static Eina_Bool
-eina_iterator_array_check(const Eina_Rbtree *rbtree, Eina_Stringshare_Head *head, struct dumpinfo *fdata)
+eina_iterator_array_check(const Eina_Rbtree *rbtree __UNUSED__, Eina_Stringshare_Head *head, struct dumpinfo *fdata)
 {
    Eina_Stringshare_Node *node;
    
