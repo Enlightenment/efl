@@ -931,7 +931,7 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
 			 {
 			    Evas_Key_Grab *g;
 
-			    g = eina_list_data_get(data);
+			    g = eina_list_data_get(l);
 			    l = eina_list_next(l);
 			    if (g->delete_me)
 			      evas_key_grab_free(g->object, g->keyname, g->modifiers, g->not_modifiers);
