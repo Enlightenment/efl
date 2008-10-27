@@ -2647,7 +2647,7 @@ _escaped_char_get(const char *s, const char *s_end)
      {
 	if (_is_eq_and_advance(s, s_end, &map_itr, map_end))
 	  return map_itr;
-	if (map_itr < map_itr)
+	if (map_itr < map_end)
 	  _advance_after_end_of_string(&map_itr);
      }
    return NULL;
@@ -2695,7 +2695,7 @@ _prepend_escaped_char(Evas_Textblock_Cursor *cur, const char *s,
 	     return;
 	  }
 	
-	if (map_itr < map_itr)
+	if (map_itr < map_end)
 	  _advance_after_end_of_string(&map_itr);
      }
 }
