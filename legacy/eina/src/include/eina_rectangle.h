@@ -53,6 +53,10 @@ static inline void eina_rectangle_rescale_in(Eina_Rectangle *out, Eina_Rectangle
 static inline void eina_rectangle_rescale_out(Eina_Rectangle *out, Eina_Rectangle *in, Eina_Rectangle *res);
 
 EAPI Eina_Rectangle_Pool *eina_rectangle_pool_add(int w, int h);
+EAPI Eina_Rectangle_Pool *eina_rectangle_pool_get(Eina_Rectangle *rect);
+EAPI Eina_Bool eina_rectangle_pool_geometry_get(Eina_Rectangle_Pool *pool, int *w, int *h);
+EAPI void *eina_rectangle_pool_data_get(Eina_Rectangle_Pool *pool);
+EAPI void eina_rectangle_pool_data_set(Eina_Rectangle_Pool *pool, const void *data);
 EAPI void eina_rectangle_pool_delete(Eina_Rectangle_Pool *pool);
 EAPI int eina_rectangle_pool_count(Eina_Rectangle_Pool *pool);
 EAPI Eina_Rectangle *eina_rectangle_pool_request(Eina_Rectangle_Pool *pool, int w, int h);

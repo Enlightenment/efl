@@ -32,9 +32,14 @@ START_TEST(eina_rectangle_pool)
    Eina_Rectangle *rct;
    int x;
    int y;
+   int w;
+   int h;
 
    pool = eina_rectangle_pool_add(256, 256);
    fail_if(pool == NULL);
+
+   eina_rectangle_pool_data_set(pool, rects);
+   fail_if(eina_rectangle_pool_data_get(pool) != rects);
 
    fail_if(eina_rectangle_pool_request(pool, 1024, 1024) != NULL);
 
@@ -46,6 +51,11 @@ START_TEST(eina_rectangle_pool)
        }
 
    fail_if(eina_rectangle_pool_count(pool) != 64);
+
+   fail_if(eina_rectangle_pool_get(rects[0][0]) != pool);
+
+   fail_if(eina_rectangle_pool_geometry_get(pool, &w, &h) != EINA_TRUE);
+   fail_if(w != 256 || h != 256);
 
    fail_if(eina_rectangle_pool_request(pool, 32, 32) != NULL);
    fail_if(eina_rectangle_pool_request(pool, 1024, 1024) != NULL);

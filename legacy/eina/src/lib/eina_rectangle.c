@@ -45,6 +45,7 @@ struct _Eina_Rectangle_Pool
    EINA_MAGIC;
 
    Eina_Inlist *head;
+   void *data;
 
    unsigned int references;
    int w;
@@ -285,6 +286,52 @@ eina_rectangle_pool_release(Eina_Rectangle *rect)
    era->pool->head = eina_inlist_remove(era->pool->head, EINA_INLIST_GET(era));
 
    MAGIC_FREE(era);
+}
+
+EAPI Eina_Rectangle_Pool *
+eina_rectangle_pool_get(Eina_Rectangle *rect)
+{
+   Eina_Rectangle_Alloc *era = ((Eina_Rectangle_Alloc *) rect) - 1;
+
+   if (!rect) return NULL;
+
+   EINA_MAGIC_CHECK_RECTANGLE_ALLOC(era);
+   EINA_MAGIC_CHECK_RECTANGLE_POOL(era->pool);
+
+   return era->pool;
+}
+
+EAPI void
+eina_rectangle_pool_data_set(Eina_Rectangle_Pool *pool, const void *data)
+{
+   if (!pool) return ;
+
+   EINA_MAGIC_CHECK_RECTANGLE_POOL(pool);
+
+   pool->data = (void*) data;
+}
+
+EAPI void *
+eina_rectangle_pool_data_get(Eina_Rectangle_Pool *pool)
+{
+   if (!pool) return NULL;
+
+   EINA_MAGIC_CHECK_RECTANGLE_POOL(pool);
+
+   return pool->data;
+}
+
+EAPI Eina_Bool
+eina_rectangle_pool_geometry_get(Eina_Rectangle_Pool *pool, int *w, int *h)
+{
+   if (!pool) return EINA_FALSE;
+
+   EINA_MAGIC_CHECK_RECTANGLE_POOL(pool);
+
+   if (w) *w = pool->w;
+   if (h) *h = pool->h;
+
+   return EINA_TRUE;
 }
 
 
