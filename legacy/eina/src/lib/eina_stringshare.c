@@ -814,6 +814,9 @@ eina_stringshare_add(const char *str)
  * if it exists. If that counter reaches 0, the memory associated to
  * @p str is freed. If @p str is NULL, the function returns
  * immediatly.
+ *
+ * Note that if the given pointer is not shared or NULL, bad things
+ * will happen, likely a segmentation fault.
  */
 EAPI void
 eina_stringshare_del(const char *str)
@@ -821,30 +824,42 @@ eina_stringshare_del(const char *str)
    Eina_Stringshare_Head *ed;
    Eina_Stringshare_Node *el;
    Eina_Stringshare_Node *prev;
+   Eina_Stringshare_Node *node;
    int hash_num, slen, hash;
 
    if (!str) return;
 
-   slen = strlen(str) + 1;
+   /* special cases */
+   if      (str[0] == '\0') slen = 0;
+   else if (str[1] == '\0') slen = 1;
+   else if (str[2] == '\0') slen = 2;
+   else if (str[3] == '\0') slen = 3;
+   else                     slen = 4; /* handled later */
 
 #ifdef EINA_STRINGSHARE_USAGE
    population.count--;
-   if (slen <= 5)
-     population_group[slen - 1].count--;
+   if (slen < 4)
+     population_group[slen].count--;
 #endif
 
-   switch (slen)
+   if (slen < 2)
+     return;
+   else if (slen < 4)
      {
-      case 1:
-      case 2:
-	 return ;
-      case 3:
-      case 4:
-	 _eina_stringshare_small_del(str, slen - 1);
-	 return;
-      default:
-	 break;
+	_eina_stringshare_small_del(str, slen);
+	return;
      }
+
+   node = (void *)(str - sizeof(Eina_Stringshare_Node));
+   EINA_MAGIC_CHECK_STRINGSHARE_NODE(node);
+   if (node->references > 1)
+     {
+	node->references--;
+	return;
+     }
+
+   node->references = 0;
+   slen = node->length; /* already includes '\0' */
 
    hash = eina_hash_superfast(str, slen);
    hash_num = hash & 0xFF;
@@ -857,39 +872,32 @@ eina_stringshare_del(const char *str)
 
    EINA_MAGIC_CHECK_STRINGSHARE_HEAD(ed);
 
-   for (prev = NULL, el = ed->head;
-	el && (const char*) (el + 1) != str;
-	prev = el, el = el->next)
+   for (prev = NULL, el = ed->head; el && el != node; prev = el, el = el->next)
      ;
 
    if (!el) goto on_error;
 
-   EINA_MAGIC_CHECK_STRINGSHARE_NODE(el);
-
-   el->references--;
-   if (el->references == 0)
-     {
-	if (prev) prev->next = el->next;
-	else ed->head = el->next;
-	if (el->begin == EINA_FALSE)
-	  MAGIC_FREE(el);
+   if (prev) prev->next = el->next;
+   else ed->head = el->next;
+   if (el->begin == EINA_FALSE)
+     MAGIC_FREE(el);
 
 #ifdef EINA_STRINGSHARE_USAGE
-	ed->population--;
+   ed->population--;
 #endif
 
-	if (ed->head == NULL)
-	  {
-	     share->buckets[hash_num] = (Eina_Stringshare_Head*) eina_rbtree_inline_remove(EINA_RBTREE_GET(share->buckets[hash_num]),
-											   EINA_RBTREE_GET(ed),
-											   EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node),
-											   NULL);
-	     MAGIC_FREE(ed);
-	  }
+   if (ed->head == NULL)
+     {
+	share->buckets[hash_num] = (Eina_Stringshare_Head*) eina_rbtree_inline_remove(EINA_RBTREE_GET(share->buckets[hash_num]),
+										      EINA_RBTREE_GET(ed),
+										      EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node),
+										      NULL);
+	MAGIC_FREE(ed);
      }
    return ;
 
  on_error:
+   /* possible segfault happened before here, but... */
    EINA_ERROR_PWARN("EEEK trying to del non-shared stringshare \"%s\"\n", str);
    if (getenv("EINA_ERROR_ABORT")) abort();
 }
