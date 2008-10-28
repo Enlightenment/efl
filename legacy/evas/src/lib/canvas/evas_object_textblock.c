@@ -4026,13 +4026,14 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 			 tcur.pos = evas_common_font_utf8_get_last((unsigned char *)tcur.node->text, tcur.node->len);
 		       else
 			 tcur.pos = 0;
-	    }
+		    }
 	       }
 	  }
 	n1->text = _strbuf_remove(n1->text, cur1->pos, n1->len, &(n1->len), &(n1->alloc));
 	removes = NULL;
 	for (l = (EINA_INLIST_GET(n1))->next; l != EINA_INLIST_GET(n2); l = l->next)
 	  removes = eina_list_append(removes, l);
+	format_hump = NULL;
 	if (n1->type == NODE_TEXT)
 	  {
 	     if (!n1->text)
@@ -4049,7 +4050,6 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 		  free(n1);
 	       }
 	  }
-	format_hump = NULL;
 	while (removes)
 	  {
 	     n = removes->data;
@@ -4339,47 +4339,50 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 	     if (format == EVAS_TEXTBLOCK_TEXT_MARKUP)
 	       {
 		  char *p, *ps, *pe;
-		  
-		  if ((n == n1) && (n == n2))
+	
+		  if (n->text)
 		    {
-		       ps = n->text + cur1->pos;
-		       pe = ps + index - cur1->pos + 1;
-		    }
-		  else if (n == n1)
-		    {
-		       ps = n->text + cur1->pos;
-		       pe = ps + strlen(ps);
-		    }
-		  else if (n == n2)
-		    {
-		       ps = n->text;
-		       pe = ps + cur1->pos + 1;
-		    }
-		  else
-		    {
-		       ps = n->text;
-		       pe = ps + strlen(ps);
-		    }
-		  p = ps;
-		  while (p < pe)
-		    {
-		       const char *escape;
-		       int adv;
-		       
-		       escape = _escaped_char_match(p, &adv);
-		       if (escape)
+		       if ((n == n1) && (n == n2))
 			 {
-			    p += adv;
-			    txt = _strbuf_append(txt, escape, &txt_len, &txt_alloc);
+			    ps = n->text + cur1->pos;
+			    pe = ps + index - cur1->pos + 1;
+			 }
+		       else if (n == n1)
+			 {
+			    ps = n->text + cur1->pos;
+			    pe = ps + strlen(ps);
+			 }
+		       else if (n == n2)
+			 {
+			    ps = n->text;
+			    pe = ps + cur1->pos + 1;
 			 }
 		       else
 			 {
-			    char str[2];
+			    ps = n->text;
+			    pe = ps + strlen(ps);
+			 }
+		       p = ps;
+		       while (p < pe)
+			 {
+			    const char *escape;
+			    int adv;
 			    
-			    str[0] = *p;
-			    str[1] = 0;
-			    txt = _strbuf_append(txt, str, &txt_len, &txt_alloc);
-			    p++;
+			    escape = _escaped_char_match(p, &adv);
+			    if (escape)
+			      {
+				 p += adv;
+				 txt = _strbuf_append(txt, escape, &txt_len, &txt_alloc);
+			      }
+			    else
+			      {
+				 char str[2];
+				 
+				 str[0] = *p;
+				 str[1] = 0;
+				 txt = _strbuf_append(txt, str, &txt_len, &txt_alloc);
+				 p++;
+			      }
 			 }
 		    }
 	       }
@@ -4389,7 +4392,6 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 		    {
 		       s += cur1->pos;
 		       txt = _strbuf_append_n(txt, s, index - cur1->pos, &txt_len, &txt_alloc);
-		       
 		    }
 		  else if (n == n1)
 		    {
@@ -4716,7 +4718,6 @@ evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, cons
 	line = evas_textblock_cursor_char_geometry_get(cur2, &cx, &cy, &cw, &ch);
 	if (line < 0)
 	  {
-	     free(tr);
 	     while (rects)
 	       {
 		  free(rects->data);
