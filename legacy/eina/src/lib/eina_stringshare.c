@@ -135,8 +135,8 @@ struct _Eina_Stringshare_Node
 
    Eina_Stringshare_Node *next;
 
-   int			  length;
-   int                    references;
+   unsigned short	  length;
+   unsigned short         references;
 
    Eina_Bool		  begin : 1;
 };
@@ -686,6 +686,9 @@ eina_stringshare_shutdown(void)
  * is just returned and its reference counter is increased. Otherwise
  * it is added to the strings to be searched and a duplicated string
  * of @p str is returned.
+ *
+ * @note it's not possible to have more than 65k references or strings
+ * bigger than 65k since we use 'unsigned short' to save space.
  */
 EAPI const char *
 eina_stringshare_add(const char *str)
