@@ -779,6 +779,19 @@ _eina_stringshare_add_head(Eina_Stringshare_Head **p_bucket, int hash, const cha
    return head->head->str;
 }
 
+static void
+_eina_stringshare_del_head(Eina_Stringshare_Head **p_bucket, Eina_Stringshare_Head *head)
+{
+   Eina_Rbtree **p_tree = (Eina_Rbtree **)p_bucket;
+
+   *p_tree = eina_rbtree_inline_remove
+     (*p_tree, EINA_RBTREE_GET(head),
+      EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node), NULL);
+
+   MAGIC_FREE(head);
+}
+
+
 static inline Eina_Bool
 _eina_stringshare_node_eq(const Eina_Stringshare_Node *node, const char *str, int slen)
 {
@@ -808,6 +821,37 @@ _eina_stringshare_head_find(Eina_Stringshare_Head *head, const char *str, int sl
        }
 
    return NULL;
+}
+
+static Eina_Bool
+_eina_stringshare_head_remove_node(Eina_Stringshare_Head *head, const Eina_Stringshare_Node *node)
+{
+   Eina_Stringshare_Node *cur, *prev;
+
+   if (head->head == node)
+     {
+	head->head = node->next;
+	return 1;
+     }
+
+   prev = head->head;
+   cur = head->head->next;
+   for (; cur != NULL; prev = cur, cur = cur->next)
+     if (cur == node)
+       {
+	  prev = cur->next;
+	  return 1;
+       }
+
+   return 0;
+}
+
+static Eina_Stringshare_Head *
+_eina_stringshare_find_hash(Eina_Stringshare_Head *bucket, int hash)
+{
+   return (Eina_Stringshare_Head*) eina_rbtree_inline_lookup
+     (EINA_RBTREE_GET(bucket), &hash, 0,
+      EINA_RBTREE_CMP_KEY_CB(_eina_stringshare_cmp), NULL);
 }
 
 /**
@@ -857,10 +901,7 @@ eina_stringshare_add(const char *str)
    hash = (hash >> 8) & EINA_STRINGSHARE_MASK;
 
    p_bucket = share->buckets + hash_num;
-   ed = (Eina_Stringshare_Head*) eina_rbtree_inline_lookup
-     (EINA_RBTREE_GET(*p_bucket), &hash, 0,
-      EINA_RBTREE_CMP_KEY_CB(_eina_stringshare_cmp), NULL);
-
+   ed = _eina_stringshare_find_hash(*p_bucket, hash);
    if (!ed)
      return _eina_stringshare_add_head(p_bucket, hash, str, slen);
 
@@ -906,8 +947,7 @@ EAPI void
 eina_stringshare_del(const char *str)
 {
    Eina_Stringshare_Head *ed;
-   Eina_Stringshare_Node *el;
-   Eina_Stringshare_Node *prev;
+   Eina_Stringshare_Head **p_bucket;
    Eina_Stringshare_Node *node;
    int hash_num, slen, hash;
 
@@ -945,34 +985,25 @@ eina_stringshare_del(const char *str)
    hash_num = hash & 0xFF;
    hash = (hash >> 8) & EINA_STRINGSHARE_MASK;
 
-   ed = (Eina_Stringshare_Head*) eina_rbtree_inline_lookup(EINA_RBTREE_GET(share->buckets[hash_num]),
-							   &hash, 0,
-							   EINA_RBTREE_CMP_KEY_CB(_eina_stringshare_cmp), NULL);
-   if (!ed) goto on_error;
+   p_bucket = share->buckets + hash_num;
+   ed = _eina_stringshare_find_hash(*p_bucket, hash);
+   if (!ed)
+     goto on_error;
 
    EINA_MAGIC_CHECK_STRINGSHARE_HEAD(ed);
 
-   for (prev = NULL, el = ed->head; el && el != node; prev = el, el = el->next)
-     ;
+   if (!_eina_stringshare_head_remove_node(ed, node))
+     goto on_error;
 
-   if (!el) goto on_error;
+   if (node != &ed->builtin_node)
+     MAGIC_FREE(node);
 
-   if (prev) prev->next = el->next;
-   else ed->head = el->next;
-   if (el != &ed->builtin_node)
-     MAGIC_FREE(el);
+   if (!ed->head)
+     _eina_stringshare_del_head(p_bucket, ed);
+   else
+     _eina_stringshare_population_head_del(ed);
 
-   _eina_stringshare_population_head_del(ed);
-
-   if (ed->head == NULL)
-     {
-	share->buckets[hash_num] = (Eina_Stringshare_Head*) eina_rbtree_inline_remove(EINA_RBTREE_GET(share->buckets[hash_num]),
-										      EINA_RBTREE_GET(ed),
-										      EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node),
-										      NULL);
-	MAGIC_FREE(ed);
-     }
-   return ;
+   return;
 
  on_error:
    /* possible segfault happened before here, but... */
