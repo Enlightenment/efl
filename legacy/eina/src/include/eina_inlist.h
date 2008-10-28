@@ -37,7 +37,7 @@ struct _Eina_Inlist
 };
 
 #define EINA_INLIST Eina_Inlist __in_list
-#define EINA_INLIST_GET(Inlist) &(Inlist->__in_list)
+#define EINA_INLIST_GET(Inlist) &((Inlist)->__in_list)
 
 EAPI Eina_Inlist * eina_inlist_append(Eina_Inlist *in_list, Eina_Inlist *in_item);
 EAPI Eina_Inlist * eina_inlist_prepend(Eina_Inlist *in_list, Eina_Inlist *in_item);
