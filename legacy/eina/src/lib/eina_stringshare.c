@@ -579,7 +579,7 @@ _eina_stringshare_small_shutdown(void)
  * returns the number of times it has already been called.
  */
 EAPI int
-eina_stringshare_init()
+eina_stringshare_init(void)
 {
    /*
     * No strings have been loaded at this point, so create the hash
@@ -630,7 +630,7 @@ eina_stringshare_init()
  * times than eina_stringshare_init().
  */
 EAPI int
-eina_stringshare_shutdown()
+eina_stringshare_shutdown(void)
 {
    unsigned int i;
 
