@@ -137,8 +137,6 @@ struct _Eina_Stringshare_Node
 
    unsigned short	  length;
    unsigned short         references;
-
-   Eina_Bool		  begin : 1;
 };
 
 static Eina_Stringshare *share = NULL;
@@ -228,13 +226,14 @@ static void
 _eina_stringshare_head_free(Eina_Stringshare_Head *ed, __UNUSED__ void *data)
 {
    EINA_MAGIC_CHECK_STRINGSHARE_HEAD(ed);
+   Eina_Stringshare_Node *first_node = (Eina_Stringshare_Node *)(ed + 1);
 
    while (ed->head)
      {
 	Eina_Stringshare_Node *el = ed->head;
 
 	ed->head = ed->head->next;
-	if (el->begin == EINA_FALSE)
+	if (el != first_node)
 	  MAGIC_FREE(el);
      }
    MAGIC_FREE(ed);
@@ -754,8 +753,6 @@ eina_stringshare_add(const char *str)
 
 	nel = (Eina_Stringshare_Node*) (ed + 1);
 	EINA_MAGIC_SET(nel, EINA_MAGIC_STRINGSHARE_NODE);
-
-	nel->begin = EINA_TRUE;
      }
 
    EINA_MAGIC_CHECK_STRINGSHARE_HEAD(ed);
@@ -783,8 +780,6 @@ eina_stringshare_add(const char *str)
 	nel = malloc(sizeof (Eina_Stringshare_Node) + slen);
 	if (!nel) return NULL;
 	EINA_MAGIC_SET(nel, EINA_MAGIC_STRINGSHARE_NODE);
-
-	nel->begin = EINA_FALSE;
      }
 
    nel->references = 1;
@@ -878,7 +873,7 @@ eina_stringshare_del(const char *str)
 
    if (prev) prev->next = el->next;
    else ed->head = el->next;
-   if (el->begin == EINA_FALSE)
+   if (el != (Eina_Stringshare_Node *)(ed + 1))
      MAGIC_FREE(el);
 
 #ifdef EINA_STRINGSHARE_USAGE
