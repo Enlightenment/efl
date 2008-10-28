@@ -150,17 +150,6 @@ START_TEST(eina_stringshare_collision)
 }
 END_TEST
 
-START_TEST(eina_stringshare_not_owned)
-{
-   eina_stringshare_init();
-
-   eina_stringshare_add(TEST0);
-   eina_stringshare_del(TEST0);
-
-   eina_stringshare_shutdown();
-}
-END_TEST
-
 void
 eina_test_stringshare(TCase *tc)
 {
@@ -168,6 +157,5 @@ eina_test_stringshare(TCase *tc)
    tcase_add_test(tc, eina_stringshare_simple);
    tcase_add_test(tc, eina_stringshare_test_share);
    tcase_add_test(tc, eina_stringshare_collision);
-   tcase_add_test(tc, eina_stringshare_not_owned);
    tcase_add_test(tc, eina_stringshare_putstuff);
 }
