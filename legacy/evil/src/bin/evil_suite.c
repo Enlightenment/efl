@@ -7,6 +7,7 @@
 
 #include "evil_suite.h"
 #include "evil_test_environment.h"
+#include "evil_test_link.h"
 #include "evil_test_memcpy.h"
 
 
@@ -150,6 +151,7 @@ main()
 {
    test tests[] = {
      { "environment",  test_environment },
+     { "link       ",  test_link },
      { "memcpy     ",  test_memcpy },
      { NULL,           NULL },
    };
@@ -160,10 +162,8 @@ main()
    if (!s)
      return EXIT_FAILURE;
 
-   for (i = 0; ; ++i)
+   for (i = 0; tests[i].name; ++i)
      {
-        if (!tests[i].name)
-          break;
 
         suite_test_add(s, tests[i].name, tests[i].fct);
      }

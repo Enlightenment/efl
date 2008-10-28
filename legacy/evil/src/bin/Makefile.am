@@ -14,6 +14,7 @@ bin_PROGRAMS = evil_suite test_dlfcn test_pipe test_evil
 evil_suite_SOURCES = \
 evil_suite.c \
 evil_test_environment.c \
+evil_test_link.c \
 evil_test_memcpy.c
 
 if EVIL_HAVE_WINCE
@@ -44,4 +45,5 @@ test_evil_LDFLAGS = -Wl,--enable-auto-import
 EXTRA_DIST = \
 evil_suite.h \
 evil_test_environment.h \
+evil_test_link.h \
 evil_test_memcpy.h

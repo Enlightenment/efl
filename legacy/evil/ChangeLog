@@ -1,3 +1,44 @@
+2008-10-28  Vincent Torri  <doursse at users dot sf dot net>
+
+	* configure.ac:
+	add c++ compiler checks
+	remove linking against libuid.a	as it's not an import lib.
+
+	* src/bin/Makefile.am:
+	* src/bin/evil_suite.c:
+	* src/bin/evil_test_link.c:
+	* src/bin/evil_test_link.h:
+	add unit test for links. Must be improved.
+
+	* src/lib/Makefile.am:
+	add unistd.cpp and uuid.c
+	use -fno-exceptions when compiling c++ code
+
+	* src/lib/evil_unistd.c:
+	* src/lib/evil_unistd.cpp:
+	use C++ api to manage links on Windows XP. Can be considered
+	as heavy but it's cleaner as the internals can change later.
+	I might consider to compile Windows CE code with only C compiler
+	as with mingw32ce, libstdc++ is statically linked to the
+	DLL / app (legacy of mingw stuff), to reduce a bit the DLL size.
+
+	* src/lib/evil_private.h:
+	declare _evil_error_display() as C function (otherwise linker
+	not happy)
+
+	* src/lib/evil_stdlib.c:
+	use RegCreateKeyEx() instead of RegOpenKeyEx in getenv().
+	fix an _evil_error_display() call.
+
+	* src/lib/evil_util.c:
+	add more error messages
+
+	* src/lib/evil_uuid.c:
+	define IID_IPersistFile (for links on Windows XP)
+
+	* src/lib/evil_unistd.h:
+	fix doc
+
 2008-10-25  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_unistd.c:

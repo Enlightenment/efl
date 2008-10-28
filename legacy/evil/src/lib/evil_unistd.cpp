@@ -17,6 +17,10 @@
 # include <objidl.h>
 #endif
 
+#ifdef _WIN32_WCE
+# include <shellapi.h>
+#endif
+
 #include "Evil.h"
 #include "evil_private.h"
 
@@ -36,19 +40,6 @@ getpid(void)
  * Symbolic links and directory related functions
  *
  */
-
-#if defined(__CEGCC__) || defined(__MINGW32CE__)
-
-DWORD SHCreateShortcutEx(LPTSTR lpszDir,
-                         LPTSTR lpszTarget,
-                         LPTSTR szShortcut,
-                         LPDWORD lpcbShortcut);
-
-BOOL SHGetShortcutTarget(LPTSTR szShortcut,
-                         LPTSTR szTarget,
-                         int cbMax );
-
-#endif /* __CEGCC__ || __MINGW32CE__ */
 
 
 /* REMARK: Windows has no symbolic link. */
@@ -79,9 +70,7 @@ symlink(const char *oldpath, const char *newpath)
 
    return res ? 0 : -1;
 #else
-# ifdef UNICODE
    wchar_t        new_path[MB_CUR_MAX];
-# endif /* UNICODE */
    IShellLink    *pISL;
    IShellLink   **shell_link;
    IPersistFile  *pIPF;
@@ -100,41 +89,36 @@ symlink(const char *oldpath, const char *newpath)
 
    /* Hack to cleanly remove a warning */
    shell_link = &pISL;
-   if (FAILED(CoCreateInstance(&CLSID_ShellLink,
+   if (FAILED(CoCreateInstance(CLSID_ShellLink,
                                NULL,
                                CLSCTX_INPROC_SERVER,
-                               &IID_IShellLink,
+                               IID_IShellLink,
                                (void **)shell_link)))
      goto no_instance;
 
-   if (FAILED(pISL->lpVtbl->SetPath(pISL, oldpath)))
+   if (FAILED(pISL->SetPath(oldpath)))
      goto no_setpath;
 
    /* Hack to cleanly remove a warning */
    persit_file = &pIPF;
-   if (FAILED(pISL->lpVtbl->QueryInterface(pISL, &IID_IPersistFile, (void **)persit_file)))
+   if (FAILED(pISL->QueryInterface(IID_IPersistFile, (void **)persit_file)))
      goto no_queryinterface;
 
-# ifdef UNICODE
    mbstowcs(new_path, newpath, MB_CUR_MAX);
-   if (FAILED(pIPF->lpVtbl->Save(pIPF, new_path, FALSE)))
+   if (FAILED(pIPF->Save(new_path, FALSE)))
      goto no_save;
-# else
-   if (FAILED(pIPF->lpVtbl->Save(pIPF, newpath, FALSE)))
-     goto no_save;
-# endif /* ! UNICODE */
 
-   pIPF->lpVtbl->Release(pIPF);
-   pISL->lpVtbl->Release(pISL);
+   pIPF->Release();
+   pISL->Release();
    CoUninitialize();
 
    return 0;
 
  no_save:
-   pIPF->lpVtbl->Release(pIPF);
+   pIPF->Release();
  no_queryinterface:
  no_setpath:
-   pISL->lpVtbl->Release(pISL);
+   pISL->Release();
  no_instance:
    CoUninitialize();
    return -1;
@@ -176,9 +160,7 @@ readlink(const char *path, char *buf, size_t bufsiz)
 
    return length;
 #else
-# ifdef UNICODE
    wchar_t        old_path[MB_CUR_MAX];
-# endif /* UNICODE */
    char           new_path[PATH_MAX];
    IShellLink    *pISL;
    IShellLink   **shell_link;
@@ -199,27 +181,22 @@ readlink(const char *path, char *buf, size_t bufsiz)
 
    /* Hack to cleanly remove a warning */
    persit_file = &pIPF;
-   if (FAILED(CoCreateInstance(&CLSID_ShellLink,
+   if (FAILED(CoCreateInstance(CLSID_ShellLink,
                                NULL,
                                CLSCTX_INPROC_SERVER,
-                               &IID_IPersistFile,
+                               IID_IPersistFile,
                                (void **)persit_file)))
      goto no_instance;
 
-# ifdef UNICODE
    mbstowcs(old_path, path, MB_CUR_MAX);
-   if (FAILED(pIPF->lpVtbl->Load(pIPF, old_path, STGM_READWRITE)))
+   if (FAILED(pIPF->Load(old_path, STGM_READWRITE)))
      goto no_load;
-# else
-   if (FAILED(pIPF->lpVtbl->Load(pIPF, path, STGM_READWRITE)))
-     goto no_load;
-# endif /* ! UNICODE */
 
    shell_link = &pISL;
-   if (FAILED(pIPF->lpVtbl->QueryInterface(pIPF, &IID_IShellLink, (void **)shell_link)))
+   if (FAILED(pIPF->QueryInterface(IID_IShellLink, (void **)shell_link)))
      goto no_queryinterface;
 
-   if (FAILED(pISL->lpVtbl->GetPath(pISL, new_path, PATH_MAX, NULL, 0)))
+   if (FAILED(pISL->GetPath(new_path, PATH_MAX, NULL, 0)))
      goto no_getpath;
 
    length = strlen(new_path);
@@ -228,17 +205,17 @@ readlink(const char *path, char *buf, size_t bufsiz)
 
    memcpy(buf, new_path, length);
 
-   pISL->lpVtbl->Release(pISL);
-   pIPF->lpVtbl->Release(pIPF);
+   pISL->Release();
+   pIPF->Release();
    CoUninitialize();
 
    return length;
 
  no_getpath:
-   pISL->lpVtbl->Release(pISL);
+   pISL->Release();
  no_queryinterface:
  no_load:
-   pIPF->lpVtbl->Release(pIPF);
+   pIPF->Release();
  no_instance:
    CoUninitialize();
    return -1;

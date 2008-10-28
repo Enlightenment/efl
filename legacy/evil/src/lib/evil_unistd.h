@@ -71,9 +71,8 @@ EAPI int symlink(const char *oldpath, const char *newpath);
  * Place the content of the shell link @p path in the buffer
  * @p buf, which has size @p bufzsiz.
  *
- * On success, this function returns the count of characters
- * placed in the buffer. Otherwise, it returns -1 and errno may
- * be set to the following value:
+ * On success, this function returns 0. Otherwise, it returns -1 and
+ * errno may be set to the following value:
  * - ENOMEM: Not enough memory.
  *
  * On Windows, the symbolic links do not exist. Nevertheless

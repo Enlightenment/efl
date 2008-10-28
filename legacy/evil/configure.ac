@@ -18,7 +18,6 @@ esac
 AM_INIT_AUTOMAKE(1.6 dist-bzip2)
 
 AC_LIBTOOL_WIN32_DLL
-define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
 define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
 AC_PROG_LIBTOOL
 
@@ -35,7 +34,7 @@ AC_SUBST(version_info)
 win32_libs=""
 case "$host_os" in
   mingw | mingw32 | mingw32msvc)
-    win32_libs="-lole32 -luuid -lws2_32 -lsecur32"
+    win32_libs="-lole32 -lws2_32 -lsecur32"
     ;;
   cegcc*)
     win32_libs="-lws2"
@@ -55,6 +54,7 @@ AC_CHECK_HEADERS_ONCE([errno.h])
 
 ### Checks for programs
 AM_PROG_AS
+AC_PROG_CXX
 AC_LANG(C)
 AC_PROG_CPP
 AC_PROG_CC

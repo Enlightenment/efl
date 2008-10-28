@@ -39,17 +39,20 @@ getenv(const char *name)
    wchar_t *wname;
    LONG     res;
    DWORD    type;
+   DWORD    disposition;
    DWORD    size = PATH_MAX;
 
    if (!name || !*name)
      return NULL;
 
-   if ((res = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-                          TEXT("Software\\Efl\\Environment"),
-                          0, 0,
-                          &key)) != ERROR_SUCCESS)
+   if ((res = RegCreateKeyEx(HKEY_LOCAL_MACHINE,
+                             TEXT("Software\\Efl\\Environment"),
+                             0, NULL,
+                             REG_OPTION_VOLATILE,
+                             0, NULL,
+                             &key, &disposition)) != ERROR_SUCCESS)
      {
-        _evil_error_display(__FILE__, res);
+        _evil_error_display(__FUNCTION__, res);
         return NULL;
      }
 

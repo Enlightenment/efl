@@ -35,11 +35,13 @@ evil_stdlib.c \
 evil_stdio.c \
 evil_string.c \
 evil_time.c \
-evil_unistd.c \
-evil_util.c
+evil_unistd.cpp \
+evil_util.c \
+evil_uuid.c
 
 libevil_la_CPPFLAGS = @win32_cppflags@
 libevil_la_CFLAGS = @win32_cflags@
+libevil_la_CXXFLAGS = -fno-exceptions
 libevil_la_LIBADD = @win32_libs@ $(EFL_MPATROL_LIBS)
 libevil_la_LDFLAGS = -no-undefined -Wl,--enable-auto-import -version-info @version_info@
 

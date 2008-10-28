@@ -70,7 +70,12 @@ evil_format_message(long err)
                       (LPTSTR)&msg,
                       0,
                       NULL))
-     return NULL;
+     {
+        char buf[4096];
+
+        snprintf(buf, 4096, "FormatMessage failed with error %ld\n", GetLastError());
+        return strdup(buf);
+     }
 
 #ifdef UNICODE
    str = evil_wchar_to_char(msg);
@@ -98,7 +103,7 @@ _evil_error_display(const char *fct, LONG res)
    char *error;
 
    error = evil_format_message(res);
-   fprintf(stderr, "[Evil] [%s] ERROR: %s\n", fct, error);
+   fprintf(stderr, "[Evil] [%s] ERROR (%ld): %s\n", fct, res, error);
    free(error);
 }
 
