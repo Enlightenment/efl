@@ -4345,7 +4345,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 		       if ((n == n1) && (n == n2))
 			 {
 			    ps = n->text + cur1->pos;
-			    pe = ps + index - cur1->pos + 1;
+			    pe = ps + index - cur1->pos;
 			 }
 		       else if (n == n1)
 			 {
@@ -4355,7 +4355,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 		       else if (n == n2)
 			 {
 			    ps = n->text;
-			    pe = ps + cur1->pos + 1;
+			    pe = ps + cur2->pos + 1;
 			 }
 		       else
 			 {
