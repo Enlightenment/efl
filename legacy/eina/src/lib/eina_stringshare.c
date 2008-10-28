@@ -115,6 +115,17 @@ struct _Eina_Stringshare
    EINA_MAGIC;
 };
 
+struct _Eina_Stringshare_Node
+{
+   EINA_MAGIC;
+
+   Eina_Stringshare_Node *next;
+
+   unsigned short         length;
+   unsigned short         references;
+   char                   str[];
+};
+
 struct _Eina_Stringshare_Head
 {
    EINA_RBTREE;
@@ -127,16 +138,7 @@ struct _Eina_Stringshare_Head
 #endif
 
    Eina_Stringshare_Node *head;
-};
-
-struct _Eina_Stringshare_Node
-{
-   EINA_MAGIC;
-
-   Eina_Stringshare_Node *next;
-
-   unsigned short	  length;
-   unsigned short         references;
+   Eina_Stringshare_Node  builtin_node;
 };
 
 static Eina_Stringshare *share = NULL;
@@ -226,14 +228,13 @@ static void
 _eina_stringshare_head_free(Eina_Stringshare_Head *ed, __UNUSED__ void *data)
 {
    EINA_MAGIC_CHECK_STRINGSHARE_HEAD(ed);
-   Eina_Stringshare_Node *first_node = (Eina_Stringshare_Node *)(ed + 1);
 
    while (ed->head)
      {
 	Eina_Stringshare_Node *el = ed->head;
 
 	ed->head = ed->head->next;
-	if (el != first_node)
+	if (el != &ed->builtin_node)
 	  MAGIC_FREE(el);
      }
    MAGIC_FREE(ed);
@@ -672,6 +673,76 @@ eina_stringshare_shutdown(void)
    return _eina_stringshare_init_count;
 }
 
+static void
+_eina_stringshare_node_init(Eina_Stringshare_Node *node, const char *str, int slen)
+{
+   EINA_MAGIC_SET(node, EINA_MAGIC_STRINGSHARE_NODE);
+   node->references = 1;
+   node->length = slen;
+   memcpy(node->str, str, slen);
+}
+
+static const char *
+_eina_stringshare_add_head(Eina_Stringshare_Head **p_bucket, int hash, const char *str, int slen)
+{
+   Eina_Rbtree **p_tree = (Eina_Rbtree **)p_bucket;
+   Eina_Stringshare_Head *head;
+
+   head = malloc(sizeof(Eina_Stringshare_Head) + slen);
+   if (!head)
+     {
+	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+	return NULL;
+     }
+
+   EINA_MAGIC_SET(head, EINA_MAGIC_STRINGSHARE_HEAD);
+   head->hash = hash;
+   head->head = &head->builtin_node;
+   _eina_stringshare_node_init(head->head, str, slen);
+   head->head->next = NULL;
+
+#ifdef EINA_STRINGSHARE_USAGE
+   head->population = 1;
+#endif
+
+   *p_tree = eina_rbtree_inline_insert
+     (*p_tree, EINA_RBTREE_GET(head),
+      EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node), NULL);
+
+   return head->head->str;
+}
+
+static inline Eina_Bool
+_eina_stringshare_node_eq(const Eina_Stringshare_Node *node, const char *str, int slen)
+{
+   return ((node->length == slen) &&
+	   (memcmp(node->str, str, slen) == 0));
+}
+
+static Eina_Stringshare_Node *
+_eina_stringshare_head_find(Eina_Stringshare_Head *head, const char *str, int slen)
+{
+   Eina_Stringshare_Node *node, *prev;
+
+   node = head->head;
+   if (_eina_stringshare_node_eq(node, str, slen))
+     return node;
+
+   prev = node;
+   node = node->next;
+   for (; node != NULL; prev = node, node = node->next)
+     if (_eina_stringshare_node_eq(node, str, slen))
+       {
+	  /* promote node, make hot items be at the beginning */
+	  prev->next = node->next;
+	  node->next = head->head;
+	  head->head = node;
+	  return node;
+       }
+
+   return NULL;
+}
+
 /**
  * @brief Retrieve an instance of a string for use in a program.
  *
@@ -691,11 +762,8 @@ eina_stringshare_shutdown(void)
 EAPI const char *
 eina_stringshare_add(const char *str)
 {
-   Eina_Stringshare_Node *nel = NULL;
-   Eina_Stringshare_Node *tmp;
-   Eina_Stringshare_Head *ed;
+   Eina_Stringshare_Head **p_bucket, *ed;
    Eina_Stringshare_Node *el;
-   char *el_str;
    int hash_num, slen, hash;
 
    if (!str) return NULL;
@@ -731,72 +799,40 @@ eina_stringshare_add(const char *str)
    hash_num = hash & 0xFF;
    hash = (hash >> 8) & EINA_STRINGSHARE_MASK;
 
-   ed = (Eina_Stringshare_Head*) eina_rbtree_inline_lookup((Eina_Rbtree*) share->buckets[hash_num],
-							   &hash, 0,
-							   EINA_RBTREE_CMP_KEY_CB(_eina_stringshare_cmp), NULL);
+   p_bucket = share->buckets + hash_num;
+   ed = (Eina_Stringshare_Head*) eina_rbtree_inline_lookup
+     (EINA_RBTREE_GET(*p_bucket), &hash, 0,
+      EINA_RBTREE_CMP_KEY_CB(_eina_stringshare_cmp), NULL);
+
    if (!ed)
-     {
-	ed = malloc(sizeof (Eina_Stringshare_Head) + sizeof (Eina_Stringshare_Node) + slen);
-	if (!ed) return NULL;
-	EINA_MAGIC_SET(ed, EINA_MAGIC_STRINGSHARE_HEAD);
-
-	ed->hash = hash;
-	ed->head = NULL;
-
-#ifdef EINA_STRINGSHARE_USAGE
-	ed->population = 0;
-#endif
-
-	share->buckets[hash_num] = (Eina_Stringshare_Head*) eina_rbtree_inline_insert((Eina_Rbtree*) share->buckets[hash_num],
-										      EINA_RBTREE_GET(ed),
-										      EINA_RBTREE_CMP_NODE_CB(_eina_stringshare_node), NULL);
-
-	nel = (Eina_Stringshare_Node*) (ed + 1);
-	EINA_MAGIC_SET(nel, EINA_MAGIC_STRINGSHARE_NODE);
-     }
+     return _eina_stringshare_add_head(p_bucket, hash, str, slen);
 
    EINA_MAGIC_CHECK_STRINGSHARE_HEAD(ed);
 
-   for (el = ed->head, tmp = NULL;
-	el && (slen != el->length || memcmp(str, (const char*) (el + 1), slen) != 0);
-	tmp = el, el = el->next)
-     ;
-
+   el = _eina_stringshare_head_find(ed, str, slen);
    if (el)
      {
-	if (tmp)
-	  {
-	     tmp->next = el->next;
-	     el->next = ed->head;
-	     ed->head = el;
-	  }
-
 	el->references++;
-	return (const char*) (el + 1);
+	return el->str;
      }
 
-   if (!nel)
+   el = malloc(sizeof(Eina_Stringshare_Node) + slen);
+   if (!el)
      {
-	nel = malloc(sizeof (Eina_Stringshare_Node) + slen);
-	if (!nel) return NULL;
-	EINA_MAGIC_SET(nel, EINA_MAGIC_STRINGSHARE_NODE);
+	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+	return NULL;
      }
 
-   nel->references = 1;
-   nel->length = slen;
-
-   el_str = (char*) (nel + 1);
-   memcpy(el_str, str, slen);
-
-   nel->next = ed->head;
-   ed->head = nel;
+   _eina_stringshare_node_init(el, str, slen);
+   el->next = ed->head;
+   ed->head = el;
 
 #ifdef EINA_STRINGSHARE_USAGE
    ed->population++;
    if (ed->population > max_node_population) max_node_population = ed->population;
 #endif
 
-   return el_str;
+   return el->str;
 }
 
 /**
@@ -873,7 +909,7 @@ eina_stringshare_del(const char *str)
 
    if (prev) prev->next = el->next;
    else ed->head = el->next;
-   if (el != (Eina_Stringshare_Node *)(ed + 1))
+   if (el != &ed->builtin_node)
      MAGIC_FREE(el);
 
 #ifdef EINA_STRINGSHARE_USAGE
