@@ -203,6 +203,102 @@ static Eina_Stringshare_Population population_group[4] =
   };
 
 static int max_node_population = 0;
+
+
+static void
+_eina_stringshare_population_init(void)
+{
+   unsigned int i;
+
+   for (i = 0; i < sizeof (population_group) / sizeof (population_group[0]); ++i)
+     {
+	population_group[i].count = 0;
+	population_group[i].max = 0;
+     }
+}
+
+static void
+_eina_stringshare_population_shutdown(void)
+{
+   unsigned int i;
+
+   max_node_population = 0;
+   population.count = 0;
+   population.max = 0;
+
+   for (i = 0; i < sizeof (population_group) / sizeof (population_group[0]); ++i)
+     {
+	population_group[i].count = 0;
+	population_group[i].max = 0;
+     }
+}
+
+static void
+_eina_stringshare_population_stats(void)
+{
+   unsigned int i;
+
+   fprintf(stderr, "eina stringshare statistic:\n");
+   fprintf(stderr, " * maximum shared strings : %i\n", population.max);
+   fprintf(stderr, " * maximum shared strings per node : %i\n", max_node_population);
+
+   for (i = 0; i < sizeof (population_group) / sizeof (population_group[0]); ++i)
+     fprintf(stderr, "DDD: %i strings of length %i, max strings: %i\n", population_group[i].count, i, population_group[i].max);
+}
+
+static void
+_eina_stringshare_population_add(int slen)
+{
+   population.count++;
+   if (population.count > population.max)
+     population.max = population.count;
+
+   if (slen < 4)
+     {
+	population_group[slen].count++;
+	if (population_group[slen].count > population_group[slen].max)
+	  population_group[slen].max = population_group[slen].count;
+     }
+}
+
+static void
+_eina_stringshare_population_del(int slen)
+{
+   population.count--;
+   if (slen < 4)
+     population_group[slen].count--;
+}
+
+static void
+_eina_stringshare_population_head_init(Eina_Stringshare_Head *head)
+{
+   head->population = 1;
+}
+
+static void
+_eina_stringshare_population_head_add(Eina_Stringshare_Head *head)
+{
+   head->population++;
+   if (head->population > max_node_population)
+     max_node_population = head->population;
+}
+
+static void
+_eina_stringshare_population_head_del(Eina_Stringshare_Head *head)
+{
+   head->population--;
+}
+
+#else /* EINA_STRINGSHARE_USAGE undefined */
+
+static void _eina_stringshare_population_init(void) {}
+static void _eina_stringshare_population_shutdown(void) {}
+static void _eina_stringshare_population_stats(void) {}
+static void _eina_stringshare_population_add(int slen) {}
+static void _eina_stringshare_population_del(int slen) {}
+static void _eina_stringshare_population_head_init(Eina_Stringshare_Head *head) {}
+static void _eina_stringshare_population_head_add(Eina_Stringshare_Head *head) {}
+static void _eina_stringshare_population_head_del(Eina_Stringshare_Head *head) {}
 #endif
 
 static int
@@ -602,16 +698,7 @@ eina_stringshare_init(void)
        	EINA_MAGIC_SET(share, EINA_MAGIC_STRINGSHARE);
 
 	_eina_stringshare_small_init();
-
-#ifdef EINA_STRINGSHARE_USAGE
-	unsigned int i;
-
-	for (i = 0; i < sizeof (population_group) / sizeof (population_group[0]); ++i)
-	  {
-	     population_group[i].count = 0;
-	     population_group[i].max = 0;
-	  }
-#endif
+	_eina_stringshare_population_init();
      }
 
    return ++_eina_stringshare_init_count;
@@ -633,14 +720,7 @@ eina_stringshare_shutdown(void)
 {
    unsigned int i;
 
-#ifdef EINA_STRINGSHARE_USAGE
-   fprintf(stderr, "eina stringshare statistic:\n");
-   fprintf(stderr, " * maximum shared strings : %i\n", population.max);
-   fprintf(stderr, " * maximum shared strings per node : %i\n", max_node_population);
-
-   for (i = 0; i < sizeof (population_group) / sizeof (population_group[0]); ++i)
-     fprintf(stderr, "DDD: %i strings of length %i, max strings: %i\n", population_group[i].count, i, population_group[i].max);
-#endif
+   _eina_stringshare_population_stats();
 
    --_eina_stringshare_init_count;
    if (!_eina_stringshare_init_count)
@@ -653,18 +733,7 @@ eina_stringshare_shutdown(void)
 	  }
 	MAGIC_FREE(share);
 
-#ifdef EINA_STRINGSHARE_USAGE
-	max_node_population = 0;
-	population.count = 0;
-	population.max = 0;
-
-	for (i = 0; i < sizeof (population_group) / sizeof (population_group[0]); ++i)
-	  {
-	     population_group[i].count = 0;
-	     population_group[i].max = 0;
-	  }
-#endif
-
+	_eina_stringshare_population_shutdown();
 	_eina_stringshare_small_shutdown();
 	eina_magic_string_shutdown();
 	eina_error_shutdown();
@@ -701,9 +770,7 @@ _eina_stringshare_add_head(Eina_Stringshare_Head **p_bucket, int hash, const cha
    _eina_stringshare_node_init(head->head, str, slen);
    head->head->next = NULL;
 
-#ifdef EINA_STRINGSHARE_USAGE
-   head->population = 1;
-#endif
+   _eina_stringshare_population_head_init(head);
 
    *p_tree = eina_rbtree_inline_insert
      (*p_tree, EINA_RBTREE_GET(head),
@@ -768,32 +835,22 @@ eina_stringshare_add(const char *str)
 
    if (!str) return NULL;
 
-   slen = strlen(str) + 1;
+   if      (str[0] == '\0') slen = 0;
+   else if (str[1] == '\0') slen = 1;
+   else if (str[2] == '\0') slen = 2;
+   else if (str[3] == '\0') slen = 3;
+   else                     slen = 3 + strlen(str + 3);
 
-#ifdef EINA_STRINGSHARE_USAGE
-   population.count++;
-   if (population.count > population.max) population.max = population.count;
+   _eina_stringshare_population_add(slen);
 
-   if (slen <= 4)
-     {
-	population_group[slen - 1].count++;
-	if (population_group[slen - 1].count > population_group[slen - 1].max)
-	  population_group[slen - 1].max = population_group[slen - 1].count;
-     }
-#endif
+   if (slen == 0)
+     return "";
+   else if (slen == 1)
+     return _eina_stringshare_single + ((*str) << 1);
+   else if (slen < 4)
+     return _eina_stringshare_small_add(str, slen);
 
-   switch (slen)
-     {
-      case 1:
-	 return "";
-      case 2:
-	 return &(_eina_stringshare_single[(*str) << 1]);
-      case 3:
-      case 4:
-	 return _eina_stringshare_small_add(str, slen - 1);
-      default:
-	 break;
-     }
+   slen++; /* everything else need to account '\0' */
 
    hash = eina_hash_superfast(str, slen);
    hash_num = hash & 0xFF;
@@ -827,11 +884,7 @@ eina_stringshare_add(const char *str)
    _eina_stringshare_node_init(el, str, slen);
    el->next = ed->head;
    ed->head = el;
-
-#ifdef EINA_STRINGSHARE_USAGE
-   ed->population++;
-   if (ed->population > max_node_population) max_node_population = ed->population;
-#endif
+   _eina_stringshare_population_head_add(ed);
 
    return el->str;
 }
@@ -867,11 +920,7 @@ eina_stringshare_del(const char *str)
    else if (str[3] == '\0') slen = 3;
    else                     slen = 4; /* handled later */
 
-#ifdef EINA_STRINGSHARE_USAGE
-   population.count--;
-   if (slen < 4)
-     population_group[slen].count--;
-#endif
+   _eina_stringshare_population_del(slen);
 
    if (slen < 2)
      return;
@@ -913,9 +962,7 @@ eina_stringshare_del(const char *str)
    if (el != &ed->builtin_node)
      MAGIC_FREE(el);
 
-#ifdef EINA_STRINGSHARE_USAGE
-   ed->population--;
-#endif
+   _eina_stringshare_population_head_del(ed);
 
    if (ed->head == NULL)
      {
