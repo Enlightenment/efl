@@ -891,6 +891,36 @@ eina_stringshare_del(const char *str)
    if (getenv("EINA_ERROR_ABORT")) abort();
 }
 
+/**
+ * @brief Note that the given string @b must be shared.
+ *
+ * @param str the shared string to know the length. It is safe to
+ *        give NULL, in that case -1 is returned.
+ *
+ * This function is a cheap way to known the length of a shared
+ * string. Note that if the given pointer is not shared or NULL, bad
+ * things will happen, likely a segmentation fault. If in doubt, try
+ * strlen().
+ */
+EAPI int
+eina_stringshare_strlen(const char *str)
+{
+   const Eina_Stringshare_Node *node;
+
+   if (!str)
+     return -1;
+
+   /* special cases */
+   if (str[0] == '\0') return 0;
+   if (str[1] == '\0') return 1;
+   if (str[2] == '\0') return 2;
+   if (str[3] == '\0') return 3;
+
+   node = (void *)(str - sizeof(Eina_Stringshare_Node));
+   EINA_MAGIC_CHECK_STRINGSHARE_NODE(node);
+   return node->length;
+}
+
 struct dumpinfo
 {
    int used, saved, dups, unique;
