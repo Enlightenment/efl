@@ -1006,7 +1006,8 @@ _edje_var_anim_add(Edje *ed, double len, const char *fname, int val)
    ea->edje = ed;
    ea->func = fn;
    ea->val = val;
-   _edje_anim_list = eina_list_append(_edje_anim_list, ed);
+   if (!ed->var_pool->animators)
+     _edje_anim_list = eina_list_append(_edje_anim_list, ed);
    ed->var_pool->animators = eina_list_prepend(ed->var_pool->animators, ea);
    if (!_edje_animator)
      _edje_animator = ecore_animator_add(_edje_var_anim_cb, NULL);

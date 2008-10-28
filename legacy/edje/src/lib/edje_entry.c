@@ -336,23 +336,34 @@ _sel_update(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
      }
    x = y = w = h = -1;
    evas_object_geometry_get(o, &x, &y, &w, &h);
-   EINA_LIST_FOREACH(en->sel, l, sel)
+   if (en->have_selection)
      {
-	Evas_Textblock_Rectangle *r;
-
-	r = range->data;
-	if (sel->obj_bg)
+	EINA_LIST_FOREACH(en->sel, l, sel)
 	  {
-	     evas_object_move(sel->obj_bg, x + r->x, y + r->y);
-	     evas_object_resize(sel->obj_bg, r->w, r->h);
+	     Evas_Textblock_Rectangle *r;
+	     
+	     r = range->data;
+	     if (sel->obj_bg)
+	       {
+		  evas_object_move(sel->obj_bg, x + r->x, y + r->y);
+		  evas_object_resize(sel->obj_bg, r->w, r->h);
+	       }
+	     if (sel->obj_fg)
+	       {
+		  evas_object_move(sel->obj_fg, x + r->x, y + r->y);
+		  evas_object_resize(sel->obj_fg, r->w, r->h);
+	       }
+	     range = eina_list_remove_list(range, range);
+	     free(r);
 	  }
-	if (sel->obj_fg)
+     }
+   else
+     {
+	while (range)
 	  {
-	     evas_object_move(sel->obj_fg, x + r->x, y + r->y);
-	     evas_object_resize(sel->obj_fg, r->w, r->h);
+	     free(range->data);
+	     range = eina_list_remove_list(range, range);
 	  }
-	range = eina_list_remove_list(range, range);
-	free(r);
      }
 }
 
