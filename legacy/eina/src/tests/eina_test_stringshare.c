@@ -68,6 +68,42 @@ START_TEST(eina_stringshare_simple)
 }
 END_TEST
 
+START_TEST(eina_stringshare_small)
+{
+   char buf[4];
+   int i;
+
+   eina_stringshare_init();
+
+   for (i = 0; i < 3; i++)
+     {
+	const char *t0, *t1;
+	int j;
+
+	for (j = 0; j < i; j++)
+	  {
+	     char c;
+	     for (c = 'a'; c <= 'z'; c++)
+	       buf[j] = c;
+	  }
+	buf[i] = '\0';
+	t0 = eina_stringshare_add(buf);
+	t1 = eina_stringshare_add(buf);
+
+	fail_if(t0 == NULL);
+	fail_if(t1 == NULL);
+	fail_if(t0 != t1);
+	fail_if(strcmp(t0, buf) != 0);
+
+	eina_stringshare_del(t0);
+	eina_stringshare_del(t1);
+     }
+
+   eina_stringshare_shutdown();
+}
+END_TEST
+
+
 START_TEST(eina_stringshare_test_share)
 {
    const char *t0;
@@ -155,6 +191,7 @@ eina_test_stringshare(TCase *tc)
 {
    tcase_add_test(tc, eina_stringshare_init_shutdown);
    tcase_add_test(tc, eina_stringshare_simple);
+   tcase_add_test(tc, eina_stringshare_small);
    tcase_add_test(tc, eina_stringshare_test_share);
    tcase_add_test(tc, eina_stringshare_collision);
    tcase_add_test(tc, eina_stringshare_putstuff);
