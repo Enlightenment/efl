@@ -3,8 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore \
-@iconv_cflags@ \
-@EINA_CFLAGS@
+@iconv_cflags@ 
 
 if BUILD_ECORE_TXT
 
