@@ -140,7 +140,7 @@ if test "x${want_openssl}" = "xyes" -o "x${want_openssl}" = "xauto" ; then
        have_openssl="yes"
        AC_DEFINE(HAVE_OPENSSL, 1, [Have Openssl support])
        requirement_eet="openssl ${requirement_eet}"
-      ])
+      ], [have_openssl="no"])
 fi
 
 have_cypher="no"
