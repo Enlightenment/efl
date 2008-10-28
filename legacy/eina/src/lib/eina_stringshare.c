@@ -197,7 +197,7 @@ static Eina_Stringshare_Population population_group[4] =
     { 0, 0 },
     { 0, 0 },
     { 0, 0 },
-    { 0, 0 },
+    { 0, 0 }
   };
 
 static int max_node_population = 0;
