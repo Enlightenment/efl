@@ -812,6 +812,7 @@ eina_stringshare_add(const char *str)
    el = _eina_stringshare_head_find(ed, str, slen);
    if (el)
      {
+	EINA_MAGIC_CHECK_STRINGSHARE_NODE(el);
 	el->references++;
 	return el->str;
      }
