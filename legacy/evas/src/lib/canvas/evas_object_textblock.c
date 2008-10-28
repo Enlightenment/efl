@@ -4360,6 +4360,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 		       ps = n->text;
 		       pe = ps + strlen(ps);
 		    }
+		  p = ps;
 		  while (p < pe)
 		    {
 		       const char *escape;
@@ -4715,6 +4716,7 @@ evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, cons
 	line = evas_textblock_cursor_char_geometry_get(cur2, &cx, &cy, &cw, &ch);
 	if (line < 0)
 	  {
+	     free(tr);
 	     while (rects)
 	       {
 		  free(rects->data);
