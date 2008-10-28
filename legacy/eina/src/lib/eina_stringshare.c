@@ -194,13 +194,12 @@ struct _Eina_Stringshare_Population
 
 static Eina_Stringshare_Population population = { 0, 0 };
 
-static Eina_Stringshare_Population population_group[5] =
+static Eina_Stringshare_Population population_group[4] =
   {
     { 0, 0 },
     { 0, 0 },
     { 0, 0 },
     { 0, 0 },
-    { 0, 0 }
   };
 
 static int max_node_population = 0;
@@ -708,7 +707,7 @@ eina_stringshare_add(const char *str)
    population.count++;
    if (population.count > population.max) population.max = population.count;
 
-   if (slen <= 5)
+   if (slen <= 4)
      {
 	population_group[slen - 1].count++;
 	if (population_group[slen - 1].count > population_group[slen - 1].max)
