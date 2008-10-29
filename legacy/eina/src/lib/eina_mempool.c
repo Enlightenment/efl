@@ -126,7 +126,7 @@ eina_mempool_init(void)
 		_modules = eina_module_list_get(PACKAGE_LIB_DIR "/eina/mp/", 0, NULL, NULL);
 		if (!_modules)
 		{
-			fprintf(stderr, "ERROR: no mempool modules able to be loaded.\n");
+			EINA_ERROR_PERR("ERROR: no mempool modules able to be loaded.\n");
 			abort();
 		}
 		eina_module_list_load(_modules);
