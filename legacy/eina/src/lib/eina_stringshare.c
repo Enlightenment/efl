@@ -123,11 +123,6 @@ struct _Eina_Stringshare_Node
 
    unsigned short         length;
    unsigned short         references;
-
-#if __WORDSIZE == 64
-   unsigned int           __padding;
-#endif
-
    char                   str[];
 };
 
@@ -756,18 +751,28 @@ _eina_stringshare_node_init(Eina_Stringshare_Node *node, const char *str, int sl
    memcpy(node->str, str, slen);
 }
 
+static Eina_Stringshare_Head *
+_eina_stringshare_head_alloc(int slen)
+{
+   Eina_Stringshare_Head *head;
+   const unsigned int head_size = (char *)head->builtin_node.str - (char *)head;
+
+   head = malloc(head_size + slen);
+   if (!head)
+     eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+
+   return head;
+}
+
 static const char *
 _eina_stringshare_add_head(Eina_Stringshare_Head **p_bucket, int hash, const char *str, int slen)
 {
    Eina_Rbtree **p_tree = (Eina_Rbtree **)p_bucket;
    Eina_Stringshare_Head *head;
 
-   head = malloc(sizeof(Eina_Stringshare_Head) + slen);
+   head = _eina_stringshare_head_alloc(slen);
    if (!head)
-     {
-	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-	return NULL;
-     }
+     return NULL;
 
    EINA_MAGIC_SET(head, EINA_MAGIC_STRINGSHARE_HEAD);
    head->hash = hash;
@@ -859,6 +864,19 @@ _eina_stringshare_find_hash(Eina_Stringshare_Head *bucket, int hash)
       EINA_RBTREE_CMP_KEY_CB(_eina_stringshare_cmp), NULL);
 }
 
+static Eina_Stringshare_Node *
+_eina_stringshare_node_alloc(int slen)
+{
+   Eina_Stringshare_Node *node;
+   const unsigned int node_size = (char *)node->str - (char *)node;
+
+   node = malloc(node_size + slen);
+   if (!node)
+     eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+
+   return node;
+}
+
 /**
  * @brief Retrieve an instance of a string for use in a program.
  *
@@ -920,12 +938,9 @@ eina_stringshare_add(const char *str)
 	return el->str;
      }
 
-   el = malloc(sizeof(Eina_Stringshare_Node) + slen);
+   el = _eina_stringshare_node_alloc(slen);
    if (!el)
-     {
-	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-	return NULL;
-     }
+     return NULL;
 
    _eina_stringshare_node_init(el, str, slen);
    el->next = ed->head;
@@ -933,6 +948,17 @@ eina_stringshare_add(const char *str)
    _eina_stringshare_population_head_add(ed);
 
    return el->str;
+}
+
+static Eina_Stringshare_Node *
+_eina_stringshare_node_from_str(const char *str)
+{
+   Eina_Stringshare_Node *node;
+   const unsigned int offset = (char *)node->str - (char *)node;
+
+   node = (Eina_Stringshare_Node *)(str - offset);
+   EINA_MAGIC_CHECK_STRINGSHARE_NODE(node);
+   return node;
 }
 
 /**
@@ -975,8 +1001,7 @@ eina_stringshare_del(const char *str)
 	return;
      }
 
-   node = (void *)(str - sizeof(Eina_Stringshare_Node));
-   EINA_MAGIC_CHECK_STRINGSHARE_NODE(node);
+   node = _eina_stringshare_node_from_str(str);
    if (node->references > 1)
      {
 	node->references--;
@@ -1041,8 +1066,7 @@ eina_stringshare_strlen(const char *str)
    if (str[2] == '\0') return 2;
    if (str[3] == '\0') return 3;
 
-   node = (void *)(str - sizeof(Eina_Stringshare_Node));
-   EINA_MAGIC_CHECK_STRINGSHARE_NODE(node);
+   node = _eina_stringshare_node_from_str(str);
    return node->length;
 }
 
