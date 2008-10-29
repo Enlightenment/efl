@@ -522,12 +522,15 @@ EAPI Ecore_Evas*
 ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha)
 {
 #ifdef BUILD_ECORE_EVAS_SDL
+   Ecore_Evas          *ee;
    int                  rmethod;
 
    rmethod = evas_render_method_lookup("software_sdl");
    if (!rmethod) return NULL;
 
-   return _ecore_evas_internal_sdl_new(rmethod, name, w, h, fullscreen, hwsurface, noframe, alpha);
+   ee = _ecore_evas_internal_sdl_new(rmethod, name, w, h, fullscreen, hwsurface, noframe, alpha);
+   ee->driver = "sdl";
+   return ee;
 #else
    fprintf(stderr, "OUTCH !\n");
    return NULL;
@@ -538,12 +541,15 @@ EAPI Ecore_Evas*
 ecore_evas_sdl16_new(const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha)
 {
 #ifdef BUILD_ECORE_EVAS_SDL
+   Ecore_Evas          *ee;
    int                  rmethod;
 
    rmethod = evas_render_method_lookup("software_16_sdl");
    if (!rmethod) return NULL;
 
-   return _ecore_evas_internal_sdl_new(rmethod, name, w, h, fullscreen, hwsurface, noframe, alpha);
+   ee = _ecore_evas_internal_sdl_new(rmethod, name, w, h, fullscreen, hwsurface, noframe, alpha);
+   ee->driver = "software_16_sdl";
+   return ee;
 #else
    fprintf(stderr, "OUTCH !\n");
    return NULL;

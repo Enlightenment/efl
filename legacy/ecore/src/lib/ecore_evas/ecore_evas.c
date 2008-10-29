@@ -611,6 +611,20 @@ ecore_evas_new(const char *engine_name, int x, int y, int w, int h, const char *
 }
 
 /**
+ * Get the engine name used by this engine.
+ *
+ * should return one of the values in ecore_evas_engines_get(), usually
+ * acceptable by ecore_evas_new().
+ */
+EAPI const char *
+ecore_evas_engine_name_get(const Ecore_Evas *ee)
+{
+   if (!ee)
+     return NULL;
+   return ee->driver;
+}
+
+/**
  * Return the Ecore_Evas for this Evas
  *
  * @param e The Evas to get the Ecore_Evas from

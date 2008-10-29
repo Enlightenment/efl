@@ -229,6 +229,7 @@ EAPI Ecore_Evas     *ecore_evas_software_wince_ddraw_new(Ecore_WinCE_Window *par
 EAPI Ecore_WinCE_Window *ecore_evas_software_wince_window_get(Ecore_Evas *ee);
 
 /* generic manipulation calls */
+EAPI const char *ecore_evas_engine_name_get(const Ecore_Evas *ee);
 EAPI Ecore_Evas *ecore_evas_ecore_evas_get(Evas *e);
 EAPI void        ecore_evas_free(Ecore_Evas *ee);
 EAPI void       *ecore_evas_data_get(Ecore_Evas *ee, const char *key);

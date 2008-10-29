@@ -1586,7 +1586,7 @@ static void
 _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation)
 {
    if (ee->rotation == rotation) return;
-   if (!strcmp(ee->driver, "gl_x11")) return;
+   if (!strcmp(ee->driver, "opengl_x11")) return;
    if (!strcmp(ee->driver, "xrender_x11")) return;
    if (!strcmp(ee->driver, "software_x11") || !strcmp(ee->driver, "software_xcb"))
      {
@@ -1625,7 +1625,7 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 {
    if (((ee->shaped) && (shaped)) || ((!ee->shaped) && (!shaped)))
      return;
-   if (!strcmp(ee->driver, "gl_x11")) return;
+   if (!strcmp(ee->driver, "opengl_x11")) return;
    if (!strcmp(ee->driver, "software_x11") || !strcmp(ee->driver, "software_xcb"))
      {
 #if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
@@ -2350,7 +2350,7 @@ _ecore_evas_x_reinit_win(Ecore_Evas *ee)
 	  }
 #endif
      }
-   else if (!strcmp(ee->driver, "gl_x11"))
+   else if (!strcmp(ee->driver, "opengl_x11"))
      {
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
 	Evas_Engine_Info_GL_X11 *einfo;
@@ -2398,7 +2398,7 @@ static void
 _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 {
    if (ee->prop.avoid_damage == on) return;
-   if (!strcmp(ee->driver, "gl_x11")) return;
+   if (!strcmp(ee->driver, "opengl_x11")) return;
    if (!strcmp(ee->driver, "xrender_x11")) return;
 
    if ((!strcmp(ee->driver, "software_x11")) || (!strcmp(ee->driver, "software_xcb")))
@@ -2968,7 +2968,7 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_x_engine_func;
 
-   ee->driver = "gl_x11";
+   ee->driver = "opengl_x11";
    if (disp_name) ee->name = strdup(disp_name);
 
    if (w < 1) w = 1;

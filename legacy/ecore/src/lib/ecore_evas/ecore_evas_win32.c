@@ -1059,7 +1059,7 @@ _ecore_evas_engine_opengl_glew_init(Ecore_Evas *ee)
    if (!rmethod)
      return 0;
 
-   ee->driver = driver;
+   ee->driver = "opengl_glew";
    evas_output_method_set(ee->evas, rmethod);
 
    einfo = (Evas_Engine_Info_GL_Glew *)evas_engine_info_get(ee->evas);
