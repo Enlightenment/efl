@@ -1788,12 +1788,16 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 
    if ((repch) && (n->text))
      {
-	int i, len = strlen(n->text), chlen;
+	int i = 0, len = 0, chlen;
+	char *ptr;
 
+	while (evas_common_font_utf8_get_next(n->text, &i))
+	  len++;
 	chlen = strlen(repch);
 	str = alloca((len * chlen) + 1);
-	for (i = 0; i < len; i += chlen)
-	  strcpy(&(str[i]), repch);
+	for (i = 0, ptr = str; i < len; ptr += chlen, i++)
+	  memcpy(ptr, repch, chlen);
+	*ptr = 0;
      }
    else
      str = n->text;
