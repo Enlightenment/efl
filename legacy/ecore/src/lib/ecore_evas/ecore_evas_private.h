@@ -145,7 +145,7 @@ struct _Ecore_Evas_Engine_Func
    void        (*fn_sticky_set) (Ecore_Evas *ee, int sticky);
    void        (*fn_ignore_events_set) (Ecore_Evas *ee, int ignore);
    void        (*fn_alpha_set) (Ecore_Evas *ee, int alpha);
-   void       *(*fn_window_get) (Ecore_Evas *ee);
+   void       *(*fn_window_get) (const Ecore_Evas *ee);
 };
 
 struct _Ecore_Evas_Engine

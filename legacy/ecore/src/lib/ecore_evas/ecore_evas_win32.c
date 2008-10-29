@@ -1281,7 +1281,7 @@ ecore_evas_gl_glew_new(Ecore_Win32_Window *parent,
 }
 
 EAPI Ecore_Win32_Window *
-ecore_evas_win32_window_get(Ecore_Evas *ee)
+ecore_evas_win32_window_get(const Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_EVAS_WIN32
    return (Ecore_Win32_Window *) _ecore_evas_win32_window_get(ee);

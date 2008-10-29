@@ -511,7 +511,7 @@ ecore_evas_buffer_new(int w, int h)
 #endif
 }
 
-EAPI const int *
+EAPI const void *
 ecore_evas_buffer_pixels_get(Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_EVAS_BUFFER

@@ -2032,7 +2032,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 #endif /* BUILD_ECORE_EVAS_X11 */
 
 static void *
-_ecore_evas_x_window_get(Ecore_Evas *ee)
+_ecore_evas_x_window_get(const Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_EVAS_X11
   return (void *) (long)ee->engine.x.win;
@@ -2845,7 +2845,7 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
  * FIXME: To be fixed.
  */
 EAPI Ecore_X_Window
-ecore_evas_software_x11_window_get(Ecore_Evas *ee)
+ecore_evas_software_x11_window_get(const Ecore_Evas *ee)
 {
 #if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
   return (Ecore_X_Window) (long)_ecore_evas_x_window_get(ee);
@@ -2860,7 +2860,7 @@ ecore_evas_software_x11_window_get(Ecore_Evas *ee)
  * FIXME: To be fixed.
  */
 EAPI Ecore_X_Window
-ecore_evas_software_x11_subwindow_get(Ecore_Evas *ee)
+ecore_evas_software_x11_subwindow_get(const Ecore_Evas *ee)
 {
 #if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
   return (Ecore_X_Window) (long)_ecore_evas_x_window_get(ee);
@@ -2908,7 +2908,7 @@ ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, int on)
  * FIXME: To be fixed.
  */
 EAPI int
-ecore_evas_software_x11_direct_resize_get(Ecore_Evas *ee)
+ecore_evas_software_x11_direct_resize_get(const Ecore_Evas *ee)
 {
 #if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
    return ee->engine.x.direct_resize;
@@ -3038,7 +3038,7 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
  * FIXME: To be fixed.
  */
 EAPI Ecore_X_Window
-ecore_evas_gl_x11_window_get(Ecore_Evas *ee)
+ecore_evas_gl_x11_window_get(const Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
    return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
@@ -3053,7 +3053,7 @@ ecore_evas_gl_x11_window_get(Ecore_Evas *ee)
  * FIXME: To be fixed.
  */
 EAPI Ecore_X_Window
-ecore_evas_gl_x11_subwindow_get(Ecore_Evas *ee)
+ecore_evas_gl_x11_subwindow_get(const Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
    return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
@@ -3083,7 +3083,7 @@ ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee, int on)
  * FIXME: To be fixed.
  */
 EAPI int
-ecore_evas_gl_x11_direct_resize_get(Ecore_Evas *ee)
+ecore_evas_gl_x11_direct_resize_get(const Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
    return ee->engine.x.direct_resize;
@@ -3292,7 +3292,7 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
  * FIXME: To be fixed.
  */
 EAPI Ecore_X_Window
-ecore_evas_xrender_x11_window_get(Ecore_Evas *ee)
+ecore_evas_xrender_x11_window_get(const Ecore_Evas *ee)
 {
 #if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
    return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
@@ -3307,7 +3307,7 @@ ecore_evas_xrender_x11_window_get(Ecore_Evas *ee)
  * FIXME: To be fixed.
  */
 EAPI Ecore_X_Window
-ecore_evas_xrender_x11_subwindow_get(Ecore_Evas *ee)
+ecore_evas_xrender_x11_subwindow_get(const Ecore_Evas *ee)
 {
 #if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
    return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
@@ -3337,7 +3337,7 @@ ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee, int on)
  * FIXME: To be fixed.
  */
 EAPI int
-ecore_evas_xrender_x11_direct_resize_get(Ecore_Evas *ee)
+ecore_evas_xrender_x11_direct_resize_get(const Ecore_Evas *ee)
 {
 #if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
    return ee->engine.x.direct_resize;
@@ -3506,7 +3506,7 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
  * FIXME: To be fixed.
  */
 EAPI Ecore_X_Window
-ecore_evas_software_x11_16_window_get(Ecore_Evas *ee)
+ecore_evas_software_x11_16_window_get(const Ecore_Evas *ee)
 {
 #if BUILD_ECORE_EVAS_SOFTWARE_16_X11
    return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
@@ -3521,7 +3521,7 @@ ecore_evas_software_x11_16_window_get(Ecore_Evas *ee)
  * FIXME: To be fixed.
  */
 EAPI Ecore_X_Window
-ecore_evas_software_x11_16_subwindow_get(Ecore_Evas *ee)
+ecore_evas_software_x11_16_subwindow_get(const Ecore_Evas *ee)
 {
 #if BUILD_ECORE_EVAS_SOFTWARE_16_X11
    return (Ecore_X_Window) _ecore_evas_x_window_get(ee);
@@ -3569,7 +3569,7 @@ ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee, int on)
  * FIXME: To be fixed.
  */
 EAPI int
-ecore_evas_software_x11_16_direct_resize_get(Ecore_Evas *ee)
+ecore_evas_software_x11_16_direct_resize_get(const Ecore_Evas *ee)
 {
 #if BUILD_ECORE_EVAS_SOFTWARE_16_X11
    return ee->engine.x.direct_resize;

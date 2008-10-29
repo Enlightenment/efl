@@ -15,7 +15,7 @@ static void _ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj);
 
 
 static Evas_Object *
-_ecore_evas_associate_get(Ecore_Evas *ee)
+_ecore_evas_associate_get(const Ecore_Evas *ee)
 {
    return ecore_evas_data_get(ee, ASSOCIATE_KEY);
 }
@@ -33,7 +33,7 @@ _ecore_evas_associate_del(Ecore_Evas *ee)
 }
 
 static Ecore_Evas *
-_evas_object_associate_get(Evas_Object *obj)
+_evas_object_associate_get(const Evas_Object *obj)
 {
    return evas_object_data_get(obj, ASSOCIATE_KEY);
 }
@@ -313,7 +313,7 @@ ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj)
 }
 
 EAPI Evas_Object *
-ecore_evas_object_associate_get(Ecore_Evas *ee)
+ecore_evas_object_associate_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
    {

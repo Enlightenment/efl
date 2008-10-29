@@ -480,7 +480,7 @@ _ecore_evas_directfb_fullscreen_set(Ecore_Evas *ee, int on)
 #endif
 
 static void *
-_ecore_evas_directfb_window_get(Ecore_Evas *ee)
+_ecore_evas_directfb_window_get(const Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
    return ee->engine.directfb.window;
@@ -545,7 +545,7 @@ static const Ecore_Evas_Engine_Func _ecore_directfb_engine_func =
 /*******/
 
 Ecore_DirectFB_Window *
-ecore_evas_directfb_window_get(Ecore_Evas *ee)
+ecore_evas_directfb_window_get(const Ecore_Evas *ee)
 {
    return (Ecore_DirectFB_Window *) _ecore_evas_directfb_window_get(ee);
 }

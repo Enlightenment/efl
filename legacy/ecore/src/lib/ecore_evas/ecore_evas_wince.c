@@ -1070,7 +1070,7 @@ ecore_evas_software_wince_ddraw_new(Ecore_WinCE_Window *parent,
 }
 
 EAPI Ecore_WinCE_Window *
-ecore_evas_software_wince_window_get(Ecore_Evas *ee)
+ecore_evas_software_wince_window_get(const Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
    return (Ecore_WinCE_Window *) _ecore_evas_wince_window_get(ee);

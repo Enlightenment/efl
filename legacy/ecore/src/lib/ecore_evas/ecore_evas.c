@@ -631,7 +631,7 @@ ecore_evas_engine_name_get(const Ecore_Evas *ee)
  * @return The Ecore_Evas that holds this Evas
  */
 EAPI Ecore_Evas *
-ecore_evas_ecore_evas_get(Evas *e)
+ecore_evas_ecore_evas_get(const Evas *e)
 {
    return evas_data_attach_get(e);
 }
@@ -669,7 +669,7 @@ ecore_evas_free(Ecore_Evas *ee)
  * @see ecore_evas_data_set
  */
 EAPI void *
-ecore_evas_data_get(Ecore_Evas *ee, const char *key)
+ecore_evas_data_get(const Ecore_Evas *ee, const char *key)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1054,7 +1054,7 @@ ecore_evas_callback_pre_free_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
  * This function returns the Evas contained within @p ee.
  */
 EAPI Evas *
-ecore_evas_get(Ecore_Evas *ee)
+ecore_evas_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1191,7 +1191,7 @@ ecore_evas_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
  *
  */
 EAPI void
-ecore_evas_geometry_get(Ecore_Evas *ee, int *x, int *y, int *w, int *h)
+ecore_evas_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1248,7 +1248,7 @@ ecore_evas_rotation_set(Ecore_Evas *ee, int rot)
  *
  */
 EAPI int
-ecore_evas_rotation_get(Ecore_Evas *ee)
+ecore_evas_rotation_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1292,7 +1292,7 @@ ecore_evas_shaped_set(Ecore_Evas *ee, int shaped)
  * This function returns 1 if @p ee is shaped, and 0 if not.
  */
 EAPI int
-ecore_evas_shaped_get(Ecore_Evas *ee)
+ecore_evas_shaped_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1337,7 +1337,7 @@ ecore_evas_alpha_set(Ecore_Evas *ee, int alpha)
  * it does not.
  */
 EAPI int
-ecore_evas_alpha_get(Ecore_Evas *ee)
+ecore_evas_alpha_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1394,7 +1394,7 @@ ecore_evas_hide(Ecore_Evas *ee)
  * This function queries @p ee and returns 1 if it is visible, and 0 if not.
  */
 EAPI int
-ecore_evas_visibility_get(Ecore_Evas *ee)
+ecore_evas_visibility_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1490,7 +1490,7 @@ ecore_evas_title_set(Ecore_Evas *ee, const char *t)
  * This function returns the title of @p ee.
  */
 EAPI const char *
-ecore_evas_title_get(Ecore_Evas *ee)
+ecore_evas_title_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1532,7 +1532,7 @@ ecore_evas_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
  * @p c.
  */
 EAPI void
-ecore_evas_name_class_get(Ecore_Evas *ee, const char **n, const char **c)
+ecore_evas_name_class_get(const Ecore_Evas *ee, const char **n, const char **c)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1584,7 +1584,7 @@ ecore_evas_size_min_set(Ecore_Evas *ee, int w, int h)
  * This function puts the minimum size of @p ee into @p w and @p h.
  */
 EAPI void
-ecore_evas_size_min_get(Ecore_Evas *ee, int *w, int *h)
+ecore_evas_size_min_get(const Ecore_Evas *ee, int *w, int *h)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1644,7 +1644,7 @@ ecore_evas_size_max_set(Ecore_Evas *ee, int w, int h)
  * This function puts the maximum size of @p ee into @p w and @p h.
  */
 EAPI void
-ecore_evas_size_max_get(Ecore_Evas *ee, int *w, int *h)
+ecore_evas_size_max_get(const Ecore_Evas *ee, int *w, int *h)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1704,7 +1704,7 @@ ecore_evas_size_base_set(Ecore_Evas *ee, int w, int h)
  * This function puts the base size of @p ee into @p w and @p h.
  */
 EAPI void
-ecore_evas_size_base_get(Ecore_Evas *ee, int *w, int *h)
+ecore_evas_size_base_get(const Ecore_Evas *ee, int *w, int *h)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1765,7 +1765,7 @@ ecore_evas_size_step_set(Ecore_Evas *ee, int w, int h)
  * This function puts the step size of @p ee into @p w and @p h.
  */
 EAPI void
-ecore_evas_size_step_get(Ecore_Evas *ee, int *w, int *h)
+ecore_evas_size_step_get(const Ecore_Evas *ee, int *w, int *h)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1862,7 +1862,7 @@ ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int ho
  * This function queries information about an Ecore_Evas' cursor.
  */
 EAPI void
-ecore_evas_cursor_get(Ecore_Evas *ee, Evas_Object **obj, int *layer, int *hot_x, int *hot_y)
+ecore_evas_cursor_get(const Ecore_Evas *ee, Evas_Object **obj, int *layer, int *hot_x, int *hot_y)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1903,7 +1903,7 @@ ecore_evas_layer_set(Ecore_Evas *ee, int layer)
  *
  */
 EAPI int
-ecore_evas_layer_get(Ecore_Evas *ee)
+ecore_evas_layer_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1941,7 +1941,7 @@ ecore_evas_focus_set(Ecore_Evas *ee, int on)
  *
  */
 EAPI int
-ecore_evas_focus_get(Ecore_Evas *ee)
+ecore_evas_focus_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1980,7 +1980,7 @@ ecore_evas_iconified_set(Ecore_Evas *ee, int on)
  *
  */
 EAPI int
-ecore_evas_iconified_get(Ecore_Evas *ee)
+ecore_evas_iconified_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2019,7 +2019,7 @@ ecore_evas_borderless_set(Ecore_Evas *ee, int on)
  *
  */
 EAPI int
-ecore_evas_borderless_get(Ecore_Evas *ee)
+ecore_evas_borderless_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2058,7 +2058,7 @@ ecore_evas_override_set(Ecore_Evas *ee, int on)
  *
  */
 EAPI int
-ecore_evas_override_get(Ecore_Evas *ee)
+ecore_evas_override_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2097,7 +2097,7 @@ ecore_evas_maximized_set(Ecore_Evas *ee, int on)
  *
  */
 EAPI int
-ecore_evas_maximized_get(Ecore_Evas *ee)
+ecore_evas_maximized_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2136,7 +2136,7 @@ ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
  *
  */
 EAPI int
-ecore_evas_fullscreen_get(Ecore_Evas *ee)
+ecore_evas_fullscreen_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2176,7 +2176,7 @@ ecore_evas_avoid_damage_set(Ecore_Evas *ee, Ecore_Evas_Avoid_Damage_Type on)
  *
  */
 EAPI Ecore_Evas_Avoid_Damage_Type
-ecore_evas_avoid_damage_get(Ecore_Evas *ee)
+ecore_evas_avoid_damage_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2214,7 +2214,7 @@ ecore_evas_withdrawn_set(Ecore_Evas *ee, int withdrawn)
  *
  */
 EAPI int
-ecore_evas_withdrawn_get(Ecore_Evas *ee)
+ecore_evas_withdrawn_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
    {
@@ -2254,7 +2254,7 @@ ecore_evas_sticky_set(Ecore_Evas *ee, int sticky)
  *
  */
 EAPI int
-ecore_evas_sticky_get(Ecore_Evas *ee)
+ecore_evas_sticky_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
    {
@@ -2294,7 +2294,7 @@ ecore_evas_ignore_events_set(Ecore_Evas *ee, int ignore)
  *
  */
 EAPI int
-ecore_evas_ignore_events_get(Ecore_Evas *ee)
+ecore_evas_ignore_events_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
    {
@@ -2306,7 +2306,7 @@ ecore_evas_ignore_events_get(Ecore_Evas *ee)
 }
 
 EAPI void *
-ecore_evas_window_get(Ecore_Evas *ee)
+ecore_evas_window_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
    {
