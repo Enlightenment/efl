@@ -31,7 +31,6 @@ file/libevas_file.la \
 cache/libevas_cache.la \
 imaging/libevas_imaging.la \
 engines/common/libevas_engine_common.la \
-@fnmatch_libs@ \
 @dlopen_libs@ \
 @FREETYPE_LIBS@ \
 @EET_LIBS@ \
