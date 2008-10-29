@@ -227,11 +227,11 @@ struct _Ecore_Evas
    char       *name;
    int         x, y, w, h;
    short       rotation;
-   char        shaped  : 1;
-   char        visible : 1;
-   char        draw_ok : 1;
-   char        should_be_visible : 1;
-   char        alpha  : 1;
+   Eina_Bool   shaped  : 1;
+   Eina_Bool   visible : 1;
+   Eina_Bool   draw_ok : 1;
+   Eina_Bool   should_be_visible : 1;
+   Eina_Bool   alpha  : 1;
 
    Evas_Hash  *data;
 
