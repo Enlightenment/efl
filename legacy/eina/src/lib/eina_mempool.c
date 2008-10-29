@@ -22,6 +22,8 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "eina_mempool.h"
 #include "eina_hash.h"
@@ -122,6 +124,11 @@ eina_mempool_init(void)
 		_backends = eina_hash_string_superfast_new(NULL);
 		/* dynamic backends */
 		_modules = eina_module_list_get(PACKAGE_LIB_DIR "/eina/mp/", 0, NULL, NULL);
+		if (!_modules)
+		{
+			fprintf(stderr, "ERROR: no mempool modules able to be loaded.\n");
+			abort();
+		}
 		eina_module_list_load(_modules);
 		/* builtin backends */
 #ifdef EINA_STATIC_BUILD_CHAINED_POOL

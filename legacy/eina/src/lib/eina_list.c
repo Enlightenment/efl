@@ -64,6 +64,10 @@
 # include "config.h"
 #endif
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
@@ -428,8 +432,18 @@ eina_list_init(void)
 
        _eina_list_mp = eina_mempool_new(choice, "list", NULL,
 					sizeof (Eina_List), 320);
+       if (!_eina_list_mp)
+         {
+           fprintf(stderr, "ERROR: Mempool for list cannot be allocated in list init.\n");
+           abort();
+         }
        _eina_list_accounting_mp = eina_mempool_new(choice, "list_accounting", NULL,
 						   sizeof (Eina_List_Accounting), 80);
+       if (!_eina_list_accounting_mp)
+         {
+           fprintf(stderr, "ERROR: Mempool for list accounting cannot be allocated in list init.\n");
+           abort();
+         }
 
        eina_magic_string_set(EINA_MAGIC_ITERATOR,
 			     "Eina Iterator");
