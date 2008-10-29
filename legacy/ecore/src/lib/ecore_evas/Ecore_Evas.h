@@ -307,8 +307,9 @@ EAPI int         ecore_evas_ignore_events_get(Ecore_Evas *ee);
 EAPI void       *ecore_evas_window_get(Ecore_Evas *ee);
 
 
-  EAPI int         ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object_Associate_Flags flags);
-EAPI int         ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj);
+EAPI int          ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object_Associate_Flags flags);
+EAPI int          ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj);
+EAPI Evas_Object *ecore_evas_object_associate_get(Ecore_Evas *ee);
 
 #ifdef __cplusplus
 }

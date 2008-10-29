@@ -312,6 +312,17 @@ ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj)
    return 1;
 }
 
+EAPI Evas_Object *
+ecore_evas_object_associate_get(Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+   {
+      ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS, __FUNCTION__);
+      return NULL;
+   }
+   return _ecore_evas_associate_get(ee);
+}
+
 static void
 _ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object_Associate_Flags flags)
 {
