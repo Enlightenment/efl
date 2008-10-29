@@ -117,9 +117,9 @@ struct _Eina_Stringshare
 
 struct _Eina_Stringshare_Node
 {
-   EINA_MAGIC;
-
    Eina_Stringshare_Node *next;
+
+   EINA_MAGIC;
 
    unsigned short         length;
    unsigned short         references;
