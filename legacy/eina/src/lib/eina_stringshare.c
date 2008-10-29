@@ -299,11 +299,11 @@ _eina_stringshare_population_head_del(Eina_Stringshare_Head *head)
 static void _eina_stringshare_population_init(void) {}
 static void _eina_stringshare_population_shutdown(void) {}
 static void _eina_stringshare_population_stats(void) {}
-static void _eina_stringshare_population_add(int slen) {}
-static void _eina_stringshare_population_del(int slen) {}
-static void _eina_stringshare_population_head_init(Eina_Stringshare_Head *head) {}
-static void _eina_stringshare_population_head_add(Eina_Stringshare_Head *head) {}
-static void _eina_stringshare_population_head_del(Eina_Stringshare_Head *head) {}
+static void _eina_stringshare_population_add(__UNUSED__ int slen) {}
+static void _eina_stringshare_population_del(__UNUSED__ int slen) {}
+static void _eina_stringshare_population_head_init(__UNUSED__ Eina_Stringshare_Head *head) {}
+static void _eina_stringshare_population_head_add(__UNUSED__ Eina_Stringshare_Head *head) {}
+static void _eina_stringshare_population_head_del(__UNUSED__ Eina_Stringshare_Head *head) {}
 #endif
 
 static int
