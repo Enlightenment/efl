@@ -49,7 +49,7 @@ EFL_CHECK_MPATROL([have_mpatrol="yes"], [have_mpatrol="no"])
 
 
 ### Checks for header files
-AC_CHECK_HEADERS_ONCE([errno.h])
+AC_CHECK_HEADERS([errno.h])
 
 
 ### Checks for programs

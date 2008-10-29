@@ -1,6 +1,15 @@
 2008-10-29  Vincent Torri  <doursse at users dot sf dot net>
 
 	* configure.ac:
+	use AC_CHECK_HEADERS instead of AC_CHECK_HEADERS_ONCE, because it
+	leads to more trouble than it improves configure speed...
+
+	* src/lib/Evil.h:
+	use __VA_ARGS__ instead of ##args to make gcc happy.
+
+2008-10-29  Vincent Torri  <doursse at users dot sf dot net>
+
+	* configure.ac:
 	define _WIN32_WCE with the cegcc compiler too
 	useless EVIL_HAVE_WINCE define
 
