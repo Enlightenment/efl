@@ -123,6 +123,11 @@ struct _Eina_Stringshare_Node
 
    unsigned short         length;
    unsigned short         references;
+
+#if __WORDSIZE == 64
+   unsigned int           __padding;
+#endif
+
    char                   str[];
 };
 
