@@ -8,6 +8,8 @@ extern "C" {
 
 void _evil_error_display(const char *fct, LONG res);
 
+void _evil_last_error_display(const char *fct);
+
 #ifdef __cplusplus
 }
 #endif

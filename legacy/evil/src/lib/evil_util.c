@@ -116,6 +116,16 @@ evil_last_error_get(void)
    return evil_format_message(err);
 }
 
+void
+_evil_last_error_display(const char *fct)
+{
+   char *error;
+
+   error = evil_last_error_get();
+   fprintf(stderr, "[Evil] [%s] ERROR: %s\n", fct, error);
+   free(error);
+}
+
 
 const char *
 evil_tmpdir_get(void)

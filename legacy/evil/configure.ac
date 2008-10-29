@@ -82,6 +82,7 @@ case "$host_os" in
   cegcc*)
     have_wince="yes"
     win32_cflags="-mwin32"
+    win32_cppflags="${win32_cppflags} -D_WIN32_WCE=0x0420"
     ;;
   mingw32ce*)
     have_wince="yes"
@@ -95,10 +96,6 @@ case "$host_os" in
 esac
 AC_SUBST(win32_cppflags)
 AC_SUBST(win32_cflags)
-
-if test "x${have_wince}" = "xyes" ; then
-  AC_DEFINE(EVIL_HAVE_WINCE, 1, [Define to mention that Windows CE is the target])
-fi
 
 AM_CONDITIONAL(EVIL_HAVE_WINCE, test "x${have_wince}" = "xyes")
 AM_CONDITIONAL(EVIL_HAVE_MINGW32CE, test "x${have_mingw32ce}" = "xyes")

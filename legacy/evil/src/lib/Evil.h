@@ -134,7 +134,7 @@ typedef unsigned long  gid_t;
 #  define S_IXGRP S_IXUSR
 #  define S_IXOTH S_IXUSR
 
-#  define open(path,...) _open((path),__VA_ARGS__)
+#  define open(path, flag, ...) _open((path), _O_BINARY | (flag), ##args)
 #  define close(fd) _close(fd)
 #  define read(fd,buffer,count) _read((fd),(buffer),(count))
 #  define write(fd,buffer,count) _write((fd),(buffer),(count))

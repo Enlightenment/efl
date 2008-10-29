@@ -80,9 +80,9 @@ test_memcpy_tests_run(suite *s, size_t align1, size_t align2, size_t len)
    printf ("length: %6d, align %2d/%2d:", (int)len, align1, align2);
 
    test_memcpy_test_run(s, memcpy, s2, s1, len);
-#ifdef EVIL_HAVE_WINCE
+#ifdef _WIN32_WCE
    test_memcpy_test_run(s, memcpy_glibc, s2, s1, len);
-#endif /* EVIL_HAVE_WINCE */
+#endif /* _WIN32_WCE */
 
    printf ("\n");
 }

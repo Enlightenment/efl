@@ -35,9 +35,19 @@ evil_stdlib.c \
 evil_stdio.c \
 evil_string.c \
 evil_time.c \
-evil_unistd.cpp \
+evil_unistd.c \
 evil_util.c \
 evil_uuid.c
+
+if EVIL_HAVE_WINCE
+
+libevil_la_SOURCES += evil_link_ce.c
+
+else
+
+libevil_la_SOURCES += evil_link_xp.cpp
+
+endif
 
 libevil_la_CPPFLAGS = @win32_cppflags@
 libevil_la_CFLAGS = @win32_cflags@

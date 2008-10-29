@@ -1,3 +1,31 @@
+2008-10-29  Vincent Torri  <doursse at users dot sf dot net>
+
+	* configure.ac:
+	define _WIN32_WCE with the cegcc compiler too
+	useless EVIL_HAVE_WINCE define
+
+	* src/bin/evil_test_memcpy.c:
+	use _WIN32_WCE insead of EVIL_HAVE_WINCE
+
+	* src/lib/Evil.h:
+	try another definition of open(). Need feedback.
+
+	* src/lib/evil_private.h:
+	* src/lib/evil_util.c:
+	add private error message when GetLastMessage must be called
+
+	* src/lib/Makefile.am:
+	* src/lib/evil_link_ce.c:
+	* src/lib/evil_link_xp.cpp:
+	* src/lib/evil_unistd.c:
+	* src/lib/evil_unistd.cpp:
+	move specific link code (readlink and symlink) outside
+	evil_unistd to evil_link_ce.c for Windows CE and
+	evil_link_xp.cpp for Windows XP. This allow the Windows CE
+	code not depend on c++ code anymore and above all, not
+	statically link libstdc++ on that platform.
+	I need feedback on Windows XP, btw :)
+
 2008-10-28  Vincent Torri  <doursse at users dot sf dot net>
 
 	* configure.ac:
