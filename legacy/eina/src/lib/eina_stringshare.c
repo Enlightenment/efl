@@ -839,7 +839,7 @@ _eina_stringshare_head_remove_node(Eina_Stringshare_Head *head, const Eina_Strin
    for (; cur != NULL; prev = cur, cur = cur->next)
      if (cur == node)
        {
-	  prev = cur->next;
+	  prev->next = cur->next;
 	  return 1;
        }
 
