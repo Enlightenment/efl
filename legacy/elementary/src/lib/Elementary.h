@@ -270,6 +270,13 @@ extern "C" {
     * "anchor,clicked" - achor called was clicked | event_info = Elm_Entry_Anchorblock_Info
     */
        
+   EAPI Evas_Object *elm_bubble_add(Evas_Object *parent);
+   EAPI void         elm_bubble_label_set(Evas_Object *obj, const char *label);
+   EAPI void         elm_bubble_info_set(Evas_Object *obj, const char *label);
+   EAPI void         elm_bubble_content_set(Evas_Object *obj, Evas_Object *content);
+   EAPI void         elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon);
+   /* smart callbacks called:
+    */
        
 // FIXME: fixes to do
 // * current sizing tree inefficient

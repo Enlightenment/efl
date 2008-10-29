@@ -1130,7 +1130,7 @@ my_anchorblock_anchor(void *data, Evas_Object *obj, void *event_info)
 static void
 my_bt_17(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *av, *sc, *bx, *fr;
+   Evas_Object *win, *bg, *av, *sc, *bx, *bb, *ic;
    char buf[PATH_MAX];
    
    win = elm_win_add(NULL, "anchorblock", ELM_WIN_BASIC);
@@ -1152,10 +1152,19 @@ my_bt_17(void *data, Evas_Object *obj, void *event_info)
    elm_scroller_content_set(sc, bx);
    evas_object_show(bx);
    
-   fr = elm_frame_add(win);
-   elm_frame_label_set(fr, "Message 3");
-   evas_object_size_hint_weight_set(fr, 1.0, 0.0);
-   evas_object_size_hint_align_set(fr, -1.0,-1.0);
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   
+   bb = elm_bubble_add(win);
+   elm_bubble_label_set(bb, "Message 3");
+   elm_bubble_info_set(bb, "10:32 4/11/2008");
+   elm_bubble_icon_set(bb, ic);
+   evas_object_show(ic);
+   evas_object_size_hint_weight_set(bb, 1.0, 0.0);
+   evas_object_size_hint_align_set(bb, -1.0,-1.0);
    av = elm_anchorblock_add(win);
    elm_anchorblock_hover_style_set(av, "popout");
    elm_anchorblock_hover_parent_set(av, win);
@@ -1164,15 +1173,23 @@ my_bt_17(void *data, Evas_Object *obj, void *event_info)
 			   "list of messages. It has one <a href=tel:+614321234>+61 432 1234</a> "
 			   "(phone number) to click on.");
    evas_object_smart_callback_add(av, "anchor,clicked", my_anchorblock_anchor, av);
-   elm_frame_content_set(fr, av);
+   elm_bubble_content_set(bb, av);
    evas_object_show(av);
-   elm_box_pack_end(bx, fr);
-   evas_object_show(fr);
+   elm_box_pack_end(bx, bb);
+   evas_object_show(bb);
    
-   fr = elm_frame_add(win);
-   elm_frame_label_set(fr, "Message 2");
-   evas_object_size_hint_weight_set(fr, 1.0, 0.0);
-   evas_object_size_hint_align_set(fr, -1.0,-1.0);
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   
+   bb = elm_bubble_add(win);
+   elm_bubble_label_set(bb, "Message 2");
+   elm_bubble_info_set(bb, "7:16 27/10/2008");
+   elm_bubble_icon_set(bb, ic);
+   evas_object_show(ic);
+   evas_object_size_hint_weight_set(bb, 1.0, 0.0);
+   evas_object_size_hint_align_set(bb, -1.0,-1.0);
    av = elm_anchorblock_add(win);
    elm_anchorblock_hover_style_set(av, "popout");
    elm_anchorblock_hover_parent_set(av, win);
@@ -1191,25 +1208,34 @@ my_bt_17(void *data, Evas_Object *obj, void *event_info)
 			   "web URL's too that launch the web browser and point it "
 			   "to that URL.");
    evas_object_smart_callback_add(av, "anchor,clicked", my_anchorblock_anchor, av);
-   elm_frame_content_set(fr, av);
+   elm_bubble_content_set(bb, av);
    evas_object_show(av);
-   elm_box_pack_end(bx, fr);
-   evas_object_show(fr);
+   elm_box_pack_end(bx, bb);
+   evas_object_show(bb);
    
-   fr = elm_frame_add(win);
-   elm_frame_label_set(fr, "Message 1");
-   evas_object_size_hint_weight_set(fr, 1.0, 0.0);
-   evas_object_size_hint_align_set(fr, -1.0,-1.0);
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   
+   bb = elm_bubble_add(win);
+   elm_bubble_label_set(bb, "Message 1");
+   elm_bubble_info_set(bb, "20:47 18/6/2008");
+   elm_bubble_icon_set(bb, ic);
+   evas_object_show(ic);
+   evas_object_size_hint_weight_set(bb, 1.0, 0.0);
+   evas_object_size_hint_align_set(bb, -1.0,-1.0);
    av = elm_anchorblock_add(win);
    elm_anchorblock_hover_style_set(av, "popout");
    elm_anchorblock_hover_parent_set(av, win);
    elm_anchorblock_text_set(av,
 			   "This is a short message");
    evas_object_smart_callback_add(av, "anchor,clicked", my_anchorblock_anchor, av);
-   elm_frame_content_set(fr, av);
+   elm_bubble_content_set(bb, av);
    evas_object_show(av);
-   elm_box_pack_end(bx, fr);
-   evas_object_show(fr);
+   elm_box_pack_end(bx, bb);
+   evas_object_show(bb);
    
    evas_object_show(sc);
 

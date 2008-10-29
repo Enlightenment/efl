@@ -33,6 +33,7 @@ elm_clock.c \
 elm_layout.c \
 elm_hover.c \
 elm_entry.c \
+elm_bubble.c \
 elm_contact.c \
 elm_contactlist.c \
 \
