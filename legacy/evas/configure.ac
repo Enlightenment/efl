@@ -161,23 +161,20 @@ dnl nothing on mingw platform
 esac
 AC_SUBST(dlopen_libs)
 
-AC_CHECK_HEADER(fnmatch.h, , AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file. MinGW users: see the INSTALL file]))
+AC_CHECK_HEADER([fnmatch.h],
+   [dummy="yes"],
+   [AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file. MinGW users: see the INSTALL file])])
 
-fnmatch_libs=""
-AC_CHECK_FUNCS(fnmatch, res=yes, res=no)
+AC_CHECK_FUNCS([fnmatch], [res="yes"], [res="no"])
 if test "x$res" = "xno"; then
-  AC_CHECK_LIB(fnmatch, fnmatch, res=yes fnmatch_libs="-lfnmatch", res=no)
-  dnl Test for compilation with MinGW.
-  dnl fnmatch function is in the libiberty library
-  if test "x$res" = "xno"; then
-    AC_CHECK_LIB(iberty, fnmatch, res=yes fnmatch_libs="-liberty", res=no)
-  fi
-  if test "x$res" = "xno"; then
-    AC_MSG_ERROR([Cannot find fnmatch() in neither libc nor libfnmatch, nor libiberty])
-  fi
+   AC_SEARCH_LIBS([fnmatch],
+      [fnmatch iberty evil],
+      [res="yes"],
+      [res="no"])
+   if test "x$res" = "xno"; then
+      AC_MSG_ERROR([Cannot find fnmatch() in neither libc nor libfnmatch, nor libiberty, nor libevil])
+	fi
 fi
-
-AC_SUBST(fnmatch_libs)
 
 #####################################################################
 ## Engines
