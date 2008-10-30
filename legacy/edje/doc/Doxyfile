@@ -1,7 +1,7 @@
 PROJECT_NAME           = Edje
 PROJECT_NUMBER         =
 OUTPUT_DIRECTORY       = .
-INPUT                  = edje.dox ./src/bin/edje_cc_handlers.c ./src/lib/Edje_Edit.h
+INPUT                  = edje.dox ../src/bin/edje_cc_handlers.c ../src/lib/Edje_Edit.h
 IMAGE_PATH             = img
 OUTPUT_LANGUAGE        = English
 GENERATE_HTML          = YES
