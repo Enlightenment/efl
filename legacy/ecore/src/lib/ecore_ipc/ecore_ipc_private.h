@@ -3,8 +3,10 @@
 
 #include "Ecore_Data.h"
 
-#if USE_OPENSSL
-#include <openssl/ssl.h>
+#if USE_GNUTLS_OPENSSL
+# include <gnutls/openssl.h>
+#elif USE_OPENSSL
+# include <openssl/ssl.h>
 #endif
 
 #define ECORE_MAGIC_IPC_SERVER             0x87786556

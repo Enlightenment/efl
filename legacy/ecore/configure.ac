@@ -111,6 +111,35 @@ dnl check common functions and headers
 AC_CHECK_FUNCS(gettimeofday)
 AC_CHECK_FUNCS(strlcpy)
 
+dnl gnutls
+want_gnutls="yes"
+have_gnutls="no"
+AC_ARG_ENABLE(gnutls,
+  AC_HELP_STRING(
+    [--disable-gnutls],
+    [disable gnutls support]
+  ),
+  [ want_gnutls=$enableval ]
+)
+
+if test "x$want_gnutls" = "xyes"; then
+    PKG_CHECK_MODULES([TLS2], [gnutls >= 2.0.0], [
+        AC_DEFINE(USE_GNUTLS2, 1, [Use GnuTLS 2 or higher])
+	have_gnutls2="yes"
+	], [
+	have_gnutls2="no"
+	])
+    PKG_CHECK_MODULES([TLS], [gnutls], [
+        AC_DEFINE(USE_GNUTLS, 1, [Use GnuTLS])
+        requirements_ecore_con="$requirements_ecore_con gnutls"
+        # no need to add it to req_ecore_ipc, since they
+        # depends on ecore_con anyway.
+        have_gnutls="yes"
+    ], [
+        have_gnutls="no"
+    ])
+fi
+
 dnl openssl
 want_openssl="yes"
 have_openssl="no"
@@ -940,12 +969,24 @@ fi
 echo "  Ecore_Desktop................: $have_ecore_desktop"
 echo "  Ecore_Con....................: $have_ecore_con"
 if test "x$have_ecore_con" = "xyes" ; then
-  echo "    OpenSSL....................: $have_openssl"
+  echo -n "    OpenSSL....................: $have_openssl"
+if test "x$have_gnutls" = "xyes" ; then
+  echo " (disabled)"
+else
+  echo
+fi
+  echo "    GnuTLS.....................: $have_gnutls"
   echo "    CURL.......................: $have_curl"
 fi
 echo "  Ecore_Ipc....................: $have_ecore_ipc"
 if test "x$have_ecore_con" = "xyes" ; then
-  echo "    OpenSSL....................: $have_openssl"
+  echo -n "    OpenSSL....................: $have_openssl"
+if test "x$have_gnutls" = "xyes" ; then
+  echo " (disabled)"
+else
+  echo
+fi
+  echo "    GnuTLS.....................: $have_gnutls"
 fi
 echo "  Ecore_Config.................: $have_ecore_config"
 echo "  Ecore_IMF....................: $have_ecore_imf"
