@@ -226,6 +226,7 @@ eina_rectangle_pool_delete(Eina_Rectangle_Pool *pool)
 {
    Eina_Rectangle_Alloc *del;
 
+   if (!pool) return ;
    while (pool->head)
      {
 	del = (Eina_Rectangle_Alloc*) pool->head;
@@ -241,6 +242,7 @@ eina_rectangle_pool_delete(Eina_Rectangle_Pool *pool)
 EAPI int
 eina_rectangle_pool_count(Eina_Rectangle_Pool *pool)
 {
+   if (!pool) return 0;
    return pool->references;
 }
 
@@ -253,6 +255,7 @@ eina_rectangle_pool_request(Eina_Rectangle_Pool *pool, int w, int h)
    int x;
    int y;
 
+   if (!pool) return NULL;
    if (w > pool->w || h > pool->h) return NULL;
 
    test = _eina_rectangle_pool_find((Eina_Rectangle_Alloc*) pool->head, pool->w, pool->h, w, h, &x, &y);
