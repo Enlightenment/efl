@@ -87,6 +87,13 @@ typedef enum _Evas_Colorspace
    EVAS_COLORSPACE_RGB565_A5P /**< 16bit rgb565 + Alpha plane at end - 5 bits of the 8 being used per alpha byte */
 } Evas_Colorspace; /**< Colorspaces for pixel data supported by Evas */
 
+typedef enum _Evas_Object_Table_Homogeneous_Mode
+{
+  EVAS_OBJECT_TABLE_HOMOGENEOUS_NONE = 0,
+  EVAS_OBJECT_TABLE_HOMOGENEOUS_TABLE = 1,
+  EVAS_OBJECT_TABLE_HOMOGENEOUS_ITEM = 2
+} Evas_Object_Table_Homogeneous_Mode;
+
 typedef struct _Evas_Transform Evas_Transform; /**< An Evas projective or affine transform */
 typedef struct _Evas_Rectangle        Evas_Rectangle; /**< A generic rectangle handle */
 typedef struct _Evas_Coord_Rectangle  Evas_Coord_Rectangle; /**< A generic rectangle handle */
@@ -791,7 +798,7 @@ extern "C" {
    EAPI void              evas_object_smart_callback_call   (Evas_Object *obj, const char *event, void *event_info);
    EAPI void              evas_object_smart_changed         (Evas_Object *obj);
    EAPI void              evas_object_smart_need_recalculate_set(Evas_Object *obj, Evas_Bool value);
-   EAPI Evas_Bool         evas_object_smart_need_recalculate_get(Evas_Object *obj);
+   EAPI Evas_Bool         evas_object_smart_need_recalculate_get(const Evas_Object *obj);
    EAPI void               evas_object_smart_calculate      (Evas_Object *obj);
 
 
@@ -993,10 +1000,12 @@ extern "C" {
    {
       Evas_Object_Smart_Clipped_Data base;
       const Evas_Object_Box_Api *api;
-      double align_h;
-      double align_v;
-      int padding_h;
-      int padding_v;
+      struct {
+	 double h, v;
+      } align;
+      struct {
+	 Evas_Coord h, v;
+      } pad;
       Eina_List *children;
       Evas_Object_Box_Layout layout;
    };
@@ -1022,14 +1031,10 @@ extern "C" {
    EAPI void evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv);
    EAPI void evas_object_box_layout_stack(Evas_Object *o, Evas_Object_Box_Data *priv);
 
-   EAPI double evas_object_box_align_h_get(Evas_Object *o);
-   EAPI double evas_object_box_align_v_get(Evas_Object *o);
-   EAPI void   evas_object_box_align_h_set(Evas_Object *o, double align_h);
-   EAPI void   evas_object_box_align_v_set(Evas_Object *o, double align_v);
-   EAPI int    evas_object_box_padding_h_get(Evas_Object *o);
-   EAPI int    evas_object_box_padding_v_get(Evas_Object *o);
-   EAPI void   evas_object_box_padding_h_set(Evas_Object *o, int padding_h);
-   EAPI void   evas_object_box_padding_v_set(Evas_Object *o, int padding_v);
+   EAPI void   evas_object_box_align_set(Evas_Object *o, double horizontal, double vertical);
+   EAPI void   evas_object_box_align_get(const Evas_Object *o, double *horizontal, double *vertical);
+   EAPI void   evas_object_box_padding_set(Evas_Object *o, Evas_Coord horizontal, Evas_Coord vertical);
+   EAPI void   evas_object_box_padding_get(const Evas_Object *o, Evas_Coord *horizontal, Evas_Coord *vertical);
 
    EAPI Evas_Object_Box_Option *evas_object_box_append(Evas_Object *o, Evas_Object *child);
    EAPI Evas_Object_Box_Option *evas_object_box_prepend(Evas_Object *o, Evas_Object *child);
@@ -1046,6 +1051,21 @@ extern "C" {
    EAPI Evas_Bool   evas_object_box_option_property_vget(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args);
 
 
+   EAPI void         evas_object_table_smart_set(Evas_Smart_Class *sc);
+   EAPI Evas_Object *evas_object_table_add(Evas *evas);
+   EAPI Evas_Object *evas_object_table_add_to(Evas_Object *parent);
+   EAPI void         evas_object_table_homogeneous_set(Evas_Object *o, Evas_Object_Table_Homogeneous_Mode homogeneous);
+   EAPI Evas_Object_Table_Homogeneous_Mode evas_object_table_homogeneous_get(const Evas_Object *o);
+   EAPI void         evas_object_table_padding_set(Evas_Object *o, Evas_Coord horizontal, Evas_Coord vertical);
+   EAPI void         evas_object_table_padding_get(const Evas_Object *o, Evas_Coord *horizontal, Evas_Coord *vertical);
+   EAPI void         evas_object_table_align_set(Evas_Object *o, double horizontal, double vertical);
+   EAPI void         evas_object_table_align_get(const Evas_Object *o, double *horizontal, double *vertical);
+
+   EAPI Evas_Bool    evas_object_table_pack(Evas_Object *o, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
+   EAPI Evas_Bool    evas_object_table_unpack(Evas_Object *o, Evas_Object *child);
+   EAPI void         evas_object_table_clear(Evas_Object *o, Evas_Bool delete);
+
+   EAPI void         evas_object_table_col_row_size_get(const Evas_Object *o, int *cols, int *rows);
 
 #ifdef __cplusplus
 }

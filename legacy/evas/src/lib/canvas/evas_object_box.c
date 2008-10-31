@@ -329,10 +329,10 @@ _evas_object_box_smart_add(Evas_Object *o)
    _parent_sc.add(o);
 
    priv->children = NULL;
-   priv->align_h = 0.5;
-   priv->align_v = 0.5;
-   priv->padding_h = 0;
-   priv->padding_v = 0;
+   priv->align.h = 0.5;
+   priv->align.v = 0.5;
+   priv->pad.h = 0;
+   priv->pad.v = 0;
    priv->layout = evas_object_box_layout_horizontal;
 }
 
@@ -672,7 +672,7 @@ evas_object_box_layout_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv)
    Evas_Object_Box_Option *objects[n_children];
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
-   global_pad = priv->padding_h;
+   global_pad = priv->pad.h;
    req_w = global_pad * (n_children - 1);
 
    EINA_LIST_FOREACH(priv->children, l, opt)
@@ -706,15 +706,15 @@ evas_object_box_layout_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv)
      remaining = _evas_object_box_layout_horizontal_weight_apply
        (priv, objects, weight_use, remaining, weight_total);
 
-   if (priv->align_h >= 0.0)
-     x += remaining * priv->align_h;
+   if (priv->align.h >= 0.0)
+     x += remaining * priv->align.h;
    else if (n_children == 1)
      x += remaining / 2;
    else
      { /* justified */
         _fixed_point_divide_and_decompose_integer
 	  (remaining, n_children - 1, &global_pad, &pad_inc);
-        global_pad += priv->padding_h;
+        global_pad += priv->pad.h;
      }
 
    EINA_LIST_FOREACH(priv->children, l, opt)
@@ -830,7 +830,7 @@ evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv)
    Evas_Object_Box_Option *objects[n_children];
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
-   global_pad = priv->padding_v;
+   global_pad = priv->pad.v;
    req_h = global_pad * (n_children - 1);
 
    EINA_LIST_FOREACH(priv->children, l, opt)
@@ -864,15 +864,15 @@ evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv)
      remaining = _evas_object_box_layout_vertical_weight_apply
        (priv, objects, weight_use, remaining, weight_total);
 
-   if (priv->align_v >= 0.0)
-     y += remaining * priv->align_v;
+   if (priv->align.v >= 0.0)
+     y += remaining * priv->align.v;
    else if (n_children == 1)
      y += remaining / 2;
    else
      { /* justified */
 	_fixed_point_divide_and_decompose_integer
 	  (remaining, n_children - 1, &global_pad, &pad_inc);
-	global_pad += priv->padding_v;
+	global_pad += priv->pad.v;
      }
 
    EINA_LIST_FOREACH(priv->children, l, opt)
@@ -956,7 +956,7 @@ evas_object_box_layout_homogeneous_horizontal(Evas_Object *o, Evas_Object_Box_Da
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
-   share = w - priv->padding_h * (n_children - 1);
+   share = w - priv->pad.h * (n_children - 1);
    _fixed_point_divide_and_decompose_integer
      (share, n_children, &cell_sz, &inc);
 
@@ -987,7 +987,7 @@ evas_object_box_layout_homogeneous_horizontal(Evas_Object *o, Evas_Object_Box_Da
         evas_object_resize(opt->obj, new_w, new_h);
         evas_object_move(opt->obj, x + off_x, y + off_y);
 
-        x += cell_sz + priv->padding_h;
+        x += cell_sz + priv->pad.h;
         sub_pixel += inc;
         if (sub_pixel >= 1 << 16)
 	  {
@@ -1021,7 +1021,7 @@ evas_object_box_layout_homogeneous_vertical(Evas_Object *o, Evas_Object_Box_Data
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
-   share = h - priv->padding_v * (n_children - 1);
+   share = h - priv->pad.v * (n_children - 1);
    _fixed_point_divide_and_decompose_integer
      (share, n_children, &cell_sz, &inc);
 
@@ -1051,7 +1051,7 @@ evas_object_box_layout_homogeneous_vertical(Evas_Object *o, Evas_Object_Box_Data
         evas_object_resize(opt->obj, new_w, new_h);
         evas_object_move(opt->obj, x + off_x, y + off_y);
 
-        y += cell_sz + priv->padding_v;
+        y += cell_sz + priv->pad.v;
         sub_pixel += inc;
         if (sub_pixel >= 1 << 16)
 	  {
@@ -1129,18 +1129,18 @@ evas_object_box_layout_homogeneous_max_size_horizontal(Evas_Object *o, Evas_Obje
 	  cell_sz = child_w + padding_l + padding_r;
      }
 
-   global_pad = priv->padding_h;
+   global_pad = priv->pad.h;
    remaining = w - n_children * cell_sz - global_pad * (n_children - 1);
 
-   if (priv->align_h >= 0.0)
-     x += remaining * priv->align_h;
+   if (priv->align.h >= 0.0)
+     x += remaining * priv->align.h;
    else if (n_children == 1)
      x += remaining / 2;
    else
      { /* justified */
         _fixed_point_divide_and_decompose_integer
 	  (remaining, n_children - 1, &global_pad, &pad_inc);
-        global_pad += priv->padding_h;
+        global_pad += priv->pad.h;
      }
 
    EINA_LIST_FOREACH(priv->children, l, opt)
@@ -1216,18 +1216,18 @@ evas_object_box_layout_homogeneous_max_size_vertical(Evas_Object *o, Evas_Object
 	  cell_sz = child_h + padding_t + padding_b;
      }
 
-   global_pad = priv->padding_v;
+   global_pad = priv->pad.v;
    remaining = h - n_children * cell_sz - global_pad * (n_children - 1);
 
-   if (priv->align_v >= 0.0)
-     y += remaining * priv->align_v;
+   if (priv->align.v >= 0.0)
+     y += remaining * priv->align.v;
    else if (n_children == 1)
      y += remaining / 2;
    else
      { /* justified */
 	_fixed_point_divide_and_decompose_integer
 	  (remaining, n_children - 1, &global_pad, &pad_inc);
-	global_pad += priv->padding_v;
+	global_pad += priv->pad.v;
      }
 
    EINA_LIST_FOREACH(priv->children, l, opt)
@@ -1286,7 +1286,7 @@ _evas_object_box_layout_flow_horizontal_row_info_collect(Evas_Object_Box_Data *p
 
         evas_object_geometry_get(opt->obj, NULL, NULL, &child_w, &child_h);
 
-        child_w += padding_l + padding_r + priv->padding_h;
+        child_w += padding_l + padding_r + priv->pad.h;
         child_h += padding_t + padding_b;
 
         remain_w -= child_w;
@@ -1398,8 +1398,8 @@ evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *pri
    v_justify = 0;
    remain_y = h - (off_y + max_h);
 
-   if (priv->align_v >= 0.0)
-     inc_y = priv->align_v * remain_y;
+   if (priv->align.v >= 0.0)
+     inc_y = priv->align.v * remain_y;
    else if (row_count == 0)
      y += remain_y / 2;
    else /* y-justified */
@@ -1413,7 +1413,7 @@ evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *pri
         row_size = row_break[r] - i;
         remain_x = (w - row_width[r]);
 
-        if (priv->align_h < 0.0)
+        if (priv->align.h < 0.0)
 	  {
 	     if (row_size == 0)
 	       x += remain_x / 2;
@@ -1440,8 +1440,8 @@ evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *pri
 	     y_remain = row_max_h[r] - child_h;
 
 	     off_x = padding_l;
-	     if (priv->align_h >= 0.0)
-	       off_x += remain_x * priv->align_h;
+	     if (priv->align.h >= 0.0)
+	       off_x += remain_x * priv->align.h;
 	     off_y = y_remain * align_y;
 
 	     evas_object_move(opt->obj, x + off_x, y + off_y);
@@ -1480,7 +1480,7 @@ _evas_object_box_layout_flow_vertical_col_info_collect(Evas_Object_Box_Data *pri
         evas_object_geometry_get(opt->obj, NULL, NULL, &child_w, &child_h);
 
         child_w += padding_l + padding_r;
-        child_h += padding_t + padding_b + priv->padding_v;
+        child_h += padding_t + padding_b + priv->pad.v;
 
         remain_h -= child_h;
         if (remain_h >= 0)
@@ -1565,8 +1565,8 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv)
    h_justify = 0;
    remain_x = w - (off_x + max_w);
 
-   if (priv->align_h >= 0)
-     inc_x = priv->align_h * remain_x;
+   if (priv->align.h >= 0)
+     inc_x = priv->align.h * remain_x;
    else if (col_count == 0)
      x += remain_x / 2;
    else /* x-justified */
@@ -1580,7 +1580,7 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv)
         col_size = col_break[c] - i;
         remain_y = (h - col_height[c]);
 
-        if (priv->align_v < 0.0)
+        if (priv->align.v < 0.0)
 	  {
 	     if (col_size == 0)
 	       y += remain_y / 2;
@@ -1608,8 +1608,8 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv)
 
 	     off_x = x_remain * align_x;
 	     off_y = padding_t;
-	     if (priv->align_v >= 0.0)
-	       off_y += remain_y * priv->align_v;
+	     if (priv->align.v >= 0.0)
+	       off_y += remain_y * priv->align.v;
 
 	     evas_object_move(opt->obj, x + off_x, y + off_y);
 
@@ -1691,87 +1691,69 @@ evas_object_box_layout_stack(Evas_Object *o, Evas_Object_Box_Data *priv)
 }
 
 /**
- * Get horizontal alignment of the box @a o.
- */
-double
-evas_object_box_align_h_get(Evas_Object *o)
-{
-   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, 0.0);
-   return priv->align_h;
-}
-
-/**
- * Get horizontal padding of the box @a o.
- */
-int
-evas_object_box_padding_h_get(Evas_Object *o)
-{
-   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, 0);
-   return priv->padding_h;
-}
-
-/**
- * Get vertical alignment of the box @a o.
- */
-double
-evas_object_box_align_v_get(Evas_Object *o)
-{
-   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, 0.0);
-   return priv->align_v;
-}
-
-/**
- * Get vertical padding of the box @a o.
- */
-int
-evas_object_box_padding_v_get(Evas_Object *o)
-{
-   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, 0);
-   return priv->padding_v;
-}
-
-/**
- * Set horizontal alignment of the box @a o.
+ * Set the alignment of the whole bounding box of contents.
  */
 void
-evas_object_box_align_h_set(Evas_Object *o, double align_h)
+evas_object_box_align_set(Evas_Object *o, double horizontal, double vertical)
 {
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(o, priv);
-   priv->align_h = align_h;
+   if (priv->align.h == horizontal && priv->align.v == vertical)
+     return;
+   priv->align.h = horizontal;
+   priv->align.v = vertical;
    evas_object_smart_changed(o);
 }
 
 /**
- * Set horizontal padding of the box @a o.
+ * Get alignment of the whole bounding box of contents.
  */
 void
-evas_object_box_padding_h_set(Evas_Object *o, int padding_h)
+evas_object_box_align_get(const Evas_Object *o, double *horizontal, double *vertical)
+{
+   EVAS_OBJECT_BOX_DATA_GET(o, priv);
+   if (priv)
+     {
+	if (horizontal) *horizontal = priv->align.h;
+	if (vertical) *vertical = priv->align.v;
+     }
+   else
+     {
+	if (horizontal) *horizontal = 0.5;
+	if (vertical) *vertical = 0.5;
+     }
+}
+
+/**
+ * Set the space (padding) between cells.
+ */
+void
+evas_object_box_padding_set(Evas_Object *o, Evas_Coord horizontal, Evas_Coord vertical)
 {
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(o, priv);
-   priv->padding_h = padding_h;
+   if (priv->pad.h == horizontal && priv->pad.v == vertical)
+     return;
+   priv->pad.h = horizontal;
+   priv->pad.v = vertical;
    evas_object_smart_changed(o);
 }
 
 /**
- * Set vertical alignment of the box @a o.
+ * Get the (space) padding between cells.
  */
 void
-evas_object_box_align_v_set(Evas_Object *o, double align_v)
+evas_object_box_padding_get(const Evas_Object *o, Evas_Coord *horizontal, Evas_Coord *vertical)
 {
-   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(o, priv);
-   priv->align_v = align_v;
-   evas_object_smart_changed(o);
-}
-
-/**
- * Set vertical padding of the box @a o.
- */
-void
-evas_object_box_padding_v_set(Evas_Object *o, int padding_v)
-{
-   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(o, priv);
-   priv->padding_v = padding_v;
-   evas_object_smart_changed(o);
+   EVAS_OBJECT_BOX_DATA_GET(o, priv);
+   if (priv)
+     {
+	if (horizontal) *horizontal = priv->pad.h;
+	if (vertical) *vertical = priv->pad.v;
+     }
+   else
+     {
+	if (horizontal) *horizontal = 0;
+	if (vertical) *vertical = 0;
+     }
 }
 
 /**

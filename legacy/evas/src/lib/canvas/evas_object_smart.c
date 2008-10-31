@@ -506,7 +506,7 @@ evas_object_smart_need_recalculate_set(Evas_Object *obj, Evas_Bool value)
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI Evas_Bool
-evas_object_smart_need_recalculate_get(Evas_Object *obj)
+evas_object_smart_need_recalculate_get(const Evas_Object *obj)
 {
    Evas_Object_Smart *o;
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
