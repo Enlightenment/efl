@@ -103,12 +103,12 @@ static void st_collections_group_parts_part_source3(void);
 static void st_collections_group_parts_part_source4(void);
 static void st_collections_group_parts_part_source5(void);
 static void st_collections_group_parts_part_source6(void);
+static void st_collections_group_parts_part_entry_mode(void);
+static void st_collections_group_parts_part_multiline(void);
 static void st_collections_group_parts_part_dragable_x(void);
 static void st_collections_group_parts_part_dragable_y(void);
 static void st_collections_group_parts_part_dragable_confine(void);
 static void st_collections_group_parts_part_dragable_events(void);
-static void st_collections_group_parts_part_entry_mode(void);
-static void st_collections_group_parts_part_multiline(void);
 
 static void ob_collections_group_parts_part_description(void);
 static void st_collections_group_parts_part_description_inherit(void);
@@ -2006,6 +2006,66 @@ st_collections_group_parts_part_effect(void)
 
 /**
     @page edcref
+    @property
+        entry_mode
+    @parameters
+        Sets the edit mode for a textblock part to one of:
+        @li NONE
+        @li PLAIN
+        @li EDITABLE
+        @li PASSWORD
+    @effect
+        It causes the part be editable if the edje object has the keyboard
+        focus AND the part has the edje focus (or selectable always
+        regardless of focus) and in the event of password mode, not
+        selectable and all text chars replaced with *'s but editable and
+        pastable.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_entry_mode(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+   ep->entry_mode = parse_enum(0,
+			       "NONE", EDJE_ENTRY_EDIT_MODE_NONE,
+			       "PLAIN", EDJE_ENTRY_EDIT_MODE_SELECTABLE,
+			       "EDITABLE", EDJE_ENTRY_EDIT_MODE_EDITABLE,
+			       "PASSOWRD", EDJE_ENTRY_EDIT_MODE_PASSWORD,
+			       NULL);
+}
+
+/**
+    @page edcref
+    @property
+        multiline
+    @parameters
+        0 or 1 (boolean) off/on
+    @effect
+        It causes a textblock that is editable to allow multiple lines for
+        editing.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_multiline(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+   ep->multiline = parse_bool(0);
+}
+
+/**
+    @page edcref
     @block
         dragable
     @context
@@ -2145,66 +2205,6 @@ st_collections_group_parts_part_dragable_events(void)
 	data_queue_part_lookup(pc, name, &(ep->dragable.events_id));
 	free(name);
      }
-}
-
-/**
-    @page edcref
-    @property
-        entry_mode
-    @parameters
-        Sets the edit mode for a textblock part to one of:
-        @li NONE
-        @li PLAIN
-        @li EDITABLE
-        @li PASSWORD
-    @effect
-        It causes the part be editable if the edje object has the keyboard
-        focus AND the part has the edje focus (or selectable always
-        regardless of focus) and in the event of password mode, not
-        selectable and all text chars replaced with *'s but editable and
-        pastable.
-    @endproperty
-*/
-static void
-st_collections_group_parts_part_entry_mode(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-
-   check_arg_count(1);
-
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   ep = eina_list_data_get(eina_list_last(pc->parts));
-   ep->entry_mode = parse_enum(0,
-			       "NONE", EDJE_ENTRY_EDIT_MODE_NONE,
-			       "PLAIN", EDJE_ENTRY_EDIT_MODE_SELECTABLE,
-			       "EDITABLE", EDJE_ENTRY_EDIT_MODE_EDITABLE,
-			       "PASSOWRD", EDJE_ENTRY_EDIT_MODE_PASSWORD,
-			       NULL);
-}
-
-/**
-    @page edcref
-    @property
-        multiline
-    @parameters
-        0 or 1 (boolean) off/on
-    @effect
-        It causes a textblock that is editable to allow multiple lines for
-        editing.
-    @endproperty
-*/
-static void
-st_collections_group_parts_part_multiline(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-
-   check_arg_count(1);
-
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   ep = eina_list_data_get(eina_list_last(pc->parts));
-   ep->multiline = parse_bool(0);
 }
 
 /**
