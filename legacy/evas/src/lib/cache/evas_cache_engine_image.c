@@ -239,12 +239,11 @@ evas_cache_engine_image_dup(const Evas_Cache_Engine_Image_Func *cb, Evas_Cache_E
 }
 
 static Evas_Bool
-_evas_cache_engine_image_free_cb(const Evas_Hash *hash, const char *key, void *data, void *fdata)
+_evas_cache_engine_image_free_cb(__UNUSED__ const Evas_Hash *hash, __UNUSED__ const void *key, void *data, void *fdata)
 {
-   Evas_Cache_Engine_Image     *cache = fdata;
-   Engine_Image_Entry           *eim = data;
+   Eina_List **delete_list = fdata;
 
-   _evas_cache_engine_image_dealloc(cache, eim);
+   *delete_list = eina_list_prepend(*delete_list, data);
 
    return 1;
 }
@@ -267,13 +266,23 @@ EAPI void
 evas_cache_engine_image_shutdown(Evas_Cache_Engine_Image *cache)
 {
    Engine_Image_Entry   *eim;
+   Eina_List *delete_list = NULL;
 
    assert(cache != NULL);
 
    if (cache->func.debug) cache->func.debug("shutdown-engine", NULL);
 
-   evas_hash_foreach(cache->inactiv, _evas_cache_engine_image_free_cb, cache);
+   evas_hash_foreach(cache->inactiv, _evas_cache_engine_image_free_cb, &delete_list);
+   evas_hash_foreach(cache->activ, _evas_cache_engine_image_free_cb, &delete_list);
+
+   while (delete_list)
+     {
+	_evas_cache_engine_image_dealloc(cache, eina_list_data_get(delete_list));
+	delete_list = eina_list_remove_list(delete_list, delete_list);
+     }
+
    evas_hash_free(cache->inactiv);
+   evas_hash_free(cache->activ);
 
    /* This is mad, I am about to destroy image still alive, but we need to prevent leak. */
    while (cache->dirty)
@@ -282,8 +291,6 @@ evas_cache_engine_image_shutdown(Evas_Cache_Engine_Image *cache)
         _evas_cache_engine_image_dealloc(cache, eim);
      }
 
-   evas_hash_foreach(cache->activ, _evas_cache_engine_image_free_cb, cache);
-   evas_hash_free(cache->activ);
 
    evas_cache_image_shutdown(cache->parent);
    if (cache->brother)
