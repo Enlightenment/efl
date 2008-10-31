@@ -96,6 +96,24 @@ evas_font_set_get(const char *name)
 }
 
 void
+evas_fonts_zero_free(Evas *evas)
+{
+   Fndat *fd;
+
+   while (fonts_zero)
+     {
+	fd = eina_list_data_get(fonts_zero);
+
+	if (fd->name) eina_stringshare_del(fd->name);
+	if (fd->source) eina_stringshare_del(fd->source);
+	evas->engine.func->font_free(evas->engine.data.output, fd->font);
+	free(fd);
+
+	fonts_zero = eina_list_remove_list(fonts_zero, fonts_zero);
+     }
+}
+
+void
 evas_font_free(Evas *evas, void *font)
 {
    Eina_List *l;
@@ -117,8 +135,6 @@ evas_font_free(Evas *evas, void *font)
    while ((fonts_zero) &&
 	  (eina_list_count(fonts_zero) > 4)) /* 4 is arbitrary */
      {
-	Fndat *fd;
-
 	fd = eina_list_data_get(fonts_zero);
 	if (fd->ref != 0) break;
 	fonts_zero = eina_list_remove_list(fonts_zero, fonts_zero);
@@ -177,7 +193,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
    fonts = evas_font_set_get(name);
    EINA_LIST_FOREACH(fonts, l, nm) /* Load each font in append */
      {
-	if ((l == fonts) || (!font)) /* First iteration OR no font */
+	if (l == fonts || !font) /* First iteration OR no font */
 	  {
 #ifdef BUILD_FONT_LOADER_EET
 	     if (source) /* Load Font from "eet" source */
@@ -301,10 +317,9 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 	  }
 	eina_stringshare_del(nm);
      }
-   eina_list_free(fonts);
+   fonts = eina_list_free(fonts);
 
 #ifdef HAVE_FONTCONFIG
-
    if (!font) /* Search using fontconfig */
      {
 	FcPattern *p_nm = NULL;

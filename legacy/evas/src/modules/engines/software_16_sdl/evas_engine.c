@@ -225,7 +225,7 @@ evas_engine_sdl16_output_free(void *data)
    if (re->soft16_engine_image) evas_cache_engine_image_drop(&re->soft16_engine_image->cache_entry);
    free(re);
 
-/*    evas_common_font_shutdown(); */
+   evas_common_font_shutdown();
    evas_common_image_shutdown();
    evas_common_soft16_image_shutdown();
 }

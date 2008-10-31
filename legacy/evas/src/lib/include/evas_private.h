@@ -768,6 +768,7 @@ const char *evas_font_dir_cache_find(char *dir, char *font);
 Eina_List *evas_font_dir_available_list(const Evas* evas);
 void evas_font_dir_available_list_free(Eina_List *available);
 void evas_font_free(Evas *evas, void *font);
+void evas_fonts_zero_free(Evas *evas);
 void *evas_font_load(Evas *evas, const char *name, const char *source, int size);
 void evas_font_load_hinting_set(Evas *evas, void *font, int hinting);
 void evas_object_smart_member_cache_invalidate(Evas_Object *obj);

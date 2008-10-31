@@ -133,7 +133,7 @@ evas_engine_sdl_output_free	(void *data)
      free(re->update_rects);
    free(re);
 
-/*    evas_common_font_shutdown(); */
+   evas_common_font_shutdown();
    evas_common_image_shutdown();
 
    SDL_QuitSubSystem(SDL_INIT_VIDEO);
