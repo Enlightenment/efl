@@ -133,6 +133,14 @@ EFL_CHECK_COVERAGE([${enable_tests}], [enable_coverage="yes"], [enable_coverage=
 EFL_CHECK_BENCHMARK([enable_benchmark="yes"], [enable_benchmark="no"])
 
 
+### Checks for programs
+AC_PROG_CC
+
+# doxygen program for documentation building
+
+EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
+
+
 ### Checks for libraries
 
 PKG_PROG_PKG_CONFIG
@@ -221,14 +229,6 @@ fi
 AC_HEADER_ASSERT
 AC_HEADER_DIRENT
 AC_HEADER_TIME
-
-
-### Checks for programs
-AC_PROG_CC
-
-# doxygen program for documentation building
-
-EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 
 ### Checks for types
