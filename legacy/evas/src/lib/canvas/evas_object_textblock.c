@@ -1783,7 +1783,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 {
    int adv, inset, tw, th, new_line, empty_item;
    int wrap, twrap, ch, index, white_stripped;
-   char *str;
+   char *str, *tbase;
    Evas_Object_Textblock_Item *it;
 
    if ((repch) && (n->text))
@@ -1795,12 +1795,16 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	  len++;
 	chlen = strlen(repch);
 	str = alloca((len * chlen) + 1);
+	tbase = str;
 	for (i = 0, ptr = str; i < len; ptr += chlen, i++)
 	  memcpy(ptr, repch, chlen);
 	*ptr = 0;
      }
    else
-     str = n->text;
+     {
+	str = n->text;
+	tbase = str;
+     }
    new_line = 0;
    empty_item = 0;
    while (str)
@@ -1823,7 +1827,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
  */
 	it = _layout_item_new(c, fmt, str);
 	it->source_node = n;
-	it->source_pos = str - n->text;
+	it->source_pos = str - tbase;
 	tw = th = 0;
 	if (fmt->font.font)
 	  c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, it->text, &tw, &th);
