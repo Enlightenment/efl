@@ -50,7 +50,10 @@ EAPI Eina_Bool eina_module_unload(Eina_Module *m);
 EAPI void *eina_module_symbol_get(Eina_Module *module, const char *symbol);
 EAPI const char * eina_module_file_get(Eina_Module *m);
 
-EAPI Eina_Array * eina_module_list_get(const char *path, unsigned int recursive, Eina_Module_Cb cb, void *data);
+EAPI char *eina_module_symbol_path_get(const void *symbol, const char *sub_dir);
+EAPI char *eina_module_environment_path_get(const char *env, const char *sub_dir);
+
+EAPI Eina_Array * eina_module_list_get(Eina_Array *array, const char *path, unsigned int recursive, Eina_Module_Cb cb, void *data);
 EAPI void eina_module_list_load(Eina_Array *list);
 EAPI void eina_module_list_unload(Eina_Array *list);
 EAPI void eina_module_list_delete(Eina_Array *list);

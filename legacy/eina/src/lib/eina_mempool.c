@@ -117,13 +117,29 @@ eina_mempool_init(void)
 {
 	if (!_init_count)
 	{
+		char *path;
+
 		eina_hash_init();
 		eina_module_init();
 
 		EINA_ERROR_NOT_MEMPOOL_MODULE = eina_error_msg_register("Not a memory pool module.");
 		_backends = eina_hash_string_superfast_new(NULL);
+
 		/* dynamic backends */
-		_modules = eina_module_list_get(PACKAGE_LIB_DIR "/eina/mp/", 0, NULL, NULL);
+		_modules = eina_module_list_get(NULL, PACKAGE_LIB_DIR "/eina/mp/", 0, NULL, NULL);
+
+		path = eina_module_environment_path_get("HOME", "/.eina/mp/");
+		_modules = eina_module_list_get(_modules, path, 0, NULL, NULL);
+		if (path) free(path);
+
+		path = eina_module_environment_path_get("EINA_MODULES_MEMPOOL_DIR", "/eina/mp/");
+		_modules = eina_module_list_get(_modules, path, 0, NULL, NULL);
+		if (path) free(path);
+
+		path = eina_module_symbol_path_get(eina_mempool_init, "/eina/mp/");
+		_modules = eina_module_list_get(_modules, path, 0, NULL, NULL);
+		if (path) free(path);
+
 		if (!_modules)
 		{
 			EINA_ERROR_PERR("ERROR: no mempool modules able to be loaded.\n");

@@ -56,7 +56,7 @@ libeina_la_SOURCES += $(top_srcdir)/src/modules/mp/pass_through/pass_through.c
 
 endif
 
-libeina_la_LIBADD = @EINA_LIBS@
+libeina_la_LIBADD = @EINA_LIBS@ @dlopen_libs@
 libeina_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
 
 clean-local:

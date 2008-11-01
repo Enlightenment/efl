@@ -20,11 +20,20 @@
 # include "config.h"
 #endif
 
+#ifdef HAVE_DLADDR
+#define _GNU_SOURCE
+#endif
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <dirent.h>
 #include <string.h>
+
 #include <dlfcn.h>
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
 
 #include "eina_error.h"
 #include "eina_module.h"
@@ -265,24 +274,88 @@ EAPI const char * eina_module_file_get(Eina_Module *m)
 	return m->file;
 }
 
+EAPI char *eina_module_symbol_path_get(const void *symbol, const char *sub_dir)
+{
+#ifdef HAVE_DLADDR
+	Dl_info eina_dl;
+
+	if (dladdr(symbol, &eina_dl))
+	{
+		if (strrchr(eina_dl.dli_fname, '/'))
+		{
+			char *path;
+			int l0;
+			int l1;
+			int l2 = 0;
+
+			l0 = strlen(eina_dl.dli_fname);
+			l1 = strlen(strrchr(eina_dl.dli_fname, '/'));
+			if (sub_dir && (*sub_dir != '\0'))
+				l2 = strlen(sub_dir);
+			path = malloc(l0 - l1 + l2 + 1);
+			if (path)
+			{
+				memcpy(path, eina_dl.dli_fname, l0 - l1);
+				if (sub_dir && (*sub_dir != '\0'))
+					memcpy(path + l0 - l1, sub_dir, l2);
+				path[l0 - l1 + l2] = '\0';
+				return path;
+			}
+		}
+	}
+#endif /* ! HAVE_DLADDR */
+
+	return NULL;
+}
+
+EAPI char *eina_module_environment_path_get(const char *env, const char *sub_dir)
+{
+	const char *env_dir;
+
+	env_dir = getenv(env);
+	if (env_dir)
+	{
+		char *path;
+		int   l1;
+		int   l2 = 0;
+
+		l1 = strlen(env_dir);
+		if (sub_dir && (*sub_dir != '\0'))
+			l2 = strlen(sub_dir);
+
+		path = (char *)malloc(l1 + l2 + 1);
+		if (path)
+		{
+			memcpy(path, env_dir, l1);
+			if (sub_dir && (*sub_dir != '\0'))
+				memcpy(path + l1, sub_dir, l2);
+			path[l1 + l2] = '\0';
+
+			return path;
+		}
+	}
+
+	return NULL;
+}
+
 /**
  * Gets a list of modules found on the directory path
- * 
+ *
  * @param path The directory's path to search for modules
  * @param recursive Iterate recursively on the path
  * @param cb Callback function to call, if the return value of the callback is zero
  * it won't be added to the list, if it is one, it will.
  * @param data Data passed to the callback function
  */
-EAPI Eina_Array * eina_module_list_get(const char *path, unsigned int recursive, Eina_Module_Cb cb, void *data)
+EAPI Eina_Array * eina_module_list_get(Eina_Array *array, const char *path, unsigned int recursive, Eina_Module_Cb cb, void *data)
 {
 	Dir_List_Get_Cb_Data list_get_cb_data;
 	Dir_List_Cb_Data list_cb_data;
 
 	if (!path)
-		return NULL;
+		return array;
 
-	list_get_cb_data.array = eina_array_new(4);
+	list_get_cb_data.array = array ? array : eina_array_new(4);
 	list_get_cb_data.cb = cb;
 	list_get_cb_data.data = data;
 
@@ -332,4 +405,3 @@ EAPI void eina_module_list_delete(Eina_Array *array)
 	EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
 		eina_module_delete(m);
 }
-
