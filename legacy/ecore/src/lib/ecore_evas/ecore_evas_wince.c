@@ -966,6 +966,8 @@ ecore_evas_software_wince_new_internal(int                 backend,
      {
         /* FIXME: REDRAW_DEBUG missing for now */
         einfo->info.window = ((struct _Ecore_WinCE_Window *)ee->engine.wince.window)->window;
+        einfo->info.width = width;
+        einfo->info.height = height;
         einfo->info.backend = backend;
         einfo->info.rotation = 0;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
