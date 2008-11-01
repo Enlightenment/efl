@@ -1063,7 +1063,7 @@ extern "C" {
 
    EAPI Evas_Bool    evas_object_table_pack(Evas_Object *o, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
    EAPI Evas_Bool    evas_object_table_unpack(Evas_Object *o, Evas_Object *child);
-   EAPI void         evas_object_table_clear(Evas_Object *o, Evas_Bool delete);
+   EAPI void         evas_object_table_clear(Evas_Object *o, Evas_Bool clear);
 
    EAPI void         evas_object_table_col_row_size_get(const Evas_Object *o, int *cols, int *rows);
 

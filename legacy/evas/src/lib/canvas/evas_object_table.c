@@ -1185,10 +1185,10 @@ evas_object_table_unpack(Evas_Object *o, Evas_Object *child)
 /**
  * Faster way to remove all child objects.
  *
- * @param delete if true, it will delete just removed children.
+ * @param clear if true, it will delete just removed children.
  */
 void
-evas_object_table_clear(Evas_Object *o, Evas_Bool delete)
+evas_object_table_clear(Evas_Object *o, Evas_Bool clear)
 {
    EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN(o, priv);
    Eina_List *l;
@@ -1200,7 +1200,7 @@ evas_object_table_clear(Evas_Object *o, Evas_Bool delete)
 	_evas_object_table_child_disconnect(o, opt->obj);
 	_evas_object_table_option_del(opt->obj);
 	evas_object_smart_member_del(opt->obj);
-	if (delete)
+	if (clear)
 	  evas_object_del(opt->obj);
 	free(opt);
 	l = eina_list_remove_list(l, l);
