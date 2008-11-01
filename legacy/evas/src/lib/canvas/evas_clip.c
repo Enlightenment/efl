@@ -47,6 +47,12 @@ evas_object_clippers_was_visible(Evas_Object *obj)
  */
 
 /**
+ * @addtogroup Evas_Clip_Group
+ * @{
+ * @ingroup Evas_Object_Group
+ */
+
+/**
  * Clip one object to another.
  * @param obj The object to be clipped
  * @param clip The object to clip @p obj by
@@ -92,7 +98,6 @@ evas_object_clippers_was_visible(Evas_Object *obj)
  * evas_object_show(clipper);
  * @endcode
  *
- * @ingroup Evas_Clip_Group
  */
 EAPI void
 evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
@@ -174,7 +179,6 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
  * if (clipper) evas_object_show(clipper);
  * @endcode
  *
- * @ingroup Evas_Clip_Group
  */
 EAPI Evas_Object *
 evas_object_clip_get(const Evas_Object *obj)
@@ -210,7 +214,6 @@ evas_object_clip_get(const Evas_Object *obj)
  *   }
  * @endcode
  *
- * @ingroup Evas_Clip_Group
  */
 EAPI void
 evas_object_clip_unset(Evas_Object *obj)
@@ -286,7 +289,6 @@ evas_object_clip_unset(Evas_Object *obj)
  *         evas_object_show(obj_tmp);
  *   }
  * @endcode
- * @ingroup Evas_Clip_Group
  */
 EAPI const Eina_List *
 evas_object_clipees_get(const Evas_Object *obj)
@@ -296,3 +298,7 @@ evas_object_clipees_get(const Evas_Object *obj)
    MAGIC_CHECK_END();
    return obj->clip.clipees;
 }
+
+/**
+ * @}
+ */

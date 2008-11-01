@@ -155,6 +155,12 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
  */
 
 /**
+ * @addtogroup Evas_Object_Callback_Group
+ * @{
+ * @ingroup Evas_Object_Group
+ */
+
+/**
  * @todo Move this next code example and most of the documentation for
  * this next function into the group documentation.
  */
@@ -316,7 +322,6 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
  *     exit(-1);
  *   }
  * @endcode
- * @ingroup Evas_Object_Callback_Group
  */
 EAPI void
 evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data)
@@ -369,7 +374,6 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (
  *
  * my_data = evas_object_event_callback_del(object, EVAS_CALLBACK_MOUSE_UP, up_callback);
  * @endcode
- * @ingroup Evas_Object_Callback_Group
  */
 EAPI void *
 evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info))
@@ -426,7 +430,6 @@ evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (
  *
  * my_data = evas_object_event_callback_del_full(object, EVAS_CALLBACK_MOUSE_UP, up_callback, data);
  * @endcode
- * @ingroup Evas_Object_Callback_Group
  */
 EAPI void *
 evas_object_event_callback_del_full(Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data)
@@ -458,3 +461,7 @@ evas_object_event_callback_del_full(Evas_Object *obj, Evas_Callback_Type type, v
      }
    return NULL;
 }
+
+/**
+ * @}
+ */

@@ -208,7 +208,7 @@ static const Evas_Object_Func object_func =
 /**
  * @addtogroup Evas_Object_Textblock
  * @{
- * @ingroup Evas_Object_Group
+ * @ingroup Evas_Object_Specific
  */
 
 /* styles */

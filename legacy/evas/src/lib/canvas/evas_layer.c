@@ -124,10 +124,15 @@ evas_layer_del(Evas_Layer *lay)
  */
 
 /**
+ * @addtogroup Evas_Object_Layer_Group
+ * @{
+ * @ingroup Evas_Object_Group
+ */
+
+/**
  * Sets the layer of the evas that the given object will be part of.
  * @param   obj The given evas object.
  * @param   l   The number of the layer to place the object on.
- * @ingroup Evas_Object_Layer_Group
  */
 EAPI void
 evas_object_layer_set(Evas_Object *obj, short l)
@@ -176,7 +181,6 @@ evas_object_layer_set(Evas_Object *obj, short l)
  * Retrieves the layer of the evas that the given object is part of.
  * @param   obj The given evas object.
  * @return  Number of the layer.
- * @ingroup Evas_Object_Layer_Group
  */
 EAPI short
 evas_object_layer_get(const Evas_Object *obj)
@@ -190,3 +194,7 @@ evas_object_layer_get(const Evas_Object *obj)
      }
    return obj->cur.layer;
 }
+
+/**
+ * @}
+ */

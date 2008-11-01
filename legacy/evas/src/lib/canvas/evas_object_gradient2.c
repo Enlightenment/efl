@@ -30,7 +30,7 @@ struct _Evas_Object_Gradient2
 /**
  * @addtogroup Evas_Object_Gradient2_Group
  * @{
- * @ingroup Evas_Object_Group
+ * @ingroup Evas_Object_Specific
  */
 
 /**

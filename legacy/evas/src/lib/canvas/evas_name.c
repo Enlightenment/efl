@@ -8,10 +8,15 @@
  */
 
 /**
+ * @addtogroup Evas_Object_Name_Group
+ * @{
+ * @ingroup Evas_Object_Group
+ */
+
+/**
  * Sets the name of the given evas object to the given name.
  * @param   obj  The given object.
  * @param   name The given name.
- * @ingroup Evas_Object_Name_Group
  */
 EAPI void
 evas_object_name_set(Evas_Object *obj, const char *name)
@@ -37,7 +42,6 @@ evas_object_name_set(Evas_Object *obj, const char *name)
  * @param   obj The given object.
  * @return  The name of the object.  @c NULL if no name has been given
  *          to the object.
- * @ingroup Evas_Object_Name_Group
  */
 EAPI const char *
 evas_object_name_get(const Evas_Object *obj)
@@ -54,7 +58,6 @@ evas_object_name_get(const Evas_Object *obj)
  * @param   name The given name.
  * @return  If successful, the evas object with the given name.  Otherwise,
  *          @c NULL.
- * @ingroup Evas_Object_Name_Group
  */
 EAPI Evas_Object *
 evas_object_name_find(const Evas *e, const char *name)
@@ -65,3 +68,7 @@ evas_object_name_find(const Evas *e, const char *name)
    if (!name) return NULL;
    return (Evas_Object *)evas_hash_find(e->name_hash, name);
 }
+
+/**
+ * @}
+ */

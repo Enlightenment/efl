@@ -11,6 +11,11 @@
  */
 
 /**
+ * @addtogroup Evas_Smart_Group
+ * @{
+ */
+
+/**
  * Create an Evas_Smart, which can be used to instantiate new smart objects.
  *
  * This function internally creates an Evas_Smart_Class and sets the
@@ -174,6 +179,10 @@ evas_smart_data_get(const Evas_Smart *s)
    MAGIC_CHECK_END();
    return (void *)s->smart_class->data;
 }
+
+/**
+ * @}
+ */
 
 /* internal funcs */
 void

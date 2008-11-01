@@ -580,10 +580,17 @@ evas_object_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, E
 }
 
 /**
- * @defgroup Evas_Object_Size_Hints_Group Generic Object Size Hints Functions
+ * @defgroup Evas_Object_Size_Hints_Group Object Size Hints Functions
  *
  * Functions that deals with hints about object size.
  */
+
+/**
+ * @addtogroup Evas_Object_Size_Hints_Group
+ * @{
+ * @ingroup Evas_Object_Group
+ */
+
 static void
 _evas_object_size_hint_alloc(Evas_Object *obj)
 {
@@ -608,7 +615,6 @@ _evas_object_size_hint_alloc(Evas_Object *obj)
  * @param obj The given evas object.
  * @param   w Pointer to an integer in which to store the minimum width.
  * @param   h Pointer to an integer in which to store the minimum height.
- * @ingroup Evas_Object_Size_Hints_Group
  */
 EAPI void
 evas_object_size_hint_min_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
@@ -635,7 +641,6 @@ evas_object_size_hint_min_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord 
  * @param obj The given evas object.
  * @param   w Integer to use as the minimum width hint.
  * @param   h Integer to use as the minimum height hint.
- * @ingroup Evas_Object_Size_Hints_Group
  */
 EAPI void
 evas_object_size_hint_min_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
@@ -665,7 +670,6 @@ evas_object_size_hint_min_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
  * @param obj The given evas object.
  * @param   w Pointer to an integer in which to store the maximum width.
  * @param   h Pointer to an integer in which to store the maximum height.
- * @ingroup Evas_Object_Size_Hints_Group
  */
 EAPI void
 evas_object_size_hint_max_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
@@ -692,7 +696,6 @@ evas_object_size_hint_max_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord 
  * @param obj The given evas object.
  * @param   w Integer to use as the maximum width hint.
  * @param   h Integer to use as the maximum height hint.
- * @ingroup Evas_Object_Size_Hints_Group
  */
 EAPI void
 evas_object_size_hint_max_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
@@ -722,7 +725,6 @@ evas_object_size_hint_max_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
  * @param obj The given evas object.
  * @param   w Pointer to an integer in which to store the requested width.
  * @param   h Pointer to an integer in which to store the requested height.
- * @ingroup Evas_Object_Size_Hints_Group
  */
 EAPI void
 evas_object_size_hint_request_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
@@ -749,7 +751,6 @@ evas_object_size_hint_request_get(const Evas_Object *obj, Evas_Coord *w, Evas_Co
  * @param obj The given evas object.
  * @param   w Integer to use as the preferred width hint.
  * @param   h Integer to use as the preferred height hint.
- * @ingroup Evas_Object_Size_Hints_Group
  */
 EAPI void
 evas_object_size_hint_request_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
@@ -780,7 +781,6 @@ evas_object_size_hint_request_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
  * @param aspect Returns the hint on how size should be calculated.
  * @param      w Pointer to an integer in which to store the aspect width.
  * @param      h Pointer to an integer in which to store the aspect height.
- * @ingroup Evas_Object_Size_Hints_Group
  */
 EAPI void
 evas_object_size_hint_aspect_get(const Evas_Object *obj, Evas_Aspect_Control *aspect, Evas_Coord *w, Evas_Coord *h)
@@ -811,7 +811,6 @@ evas_object_size_hint_aspect_get(const Evas_Object *obj, Evas_Aspect_Control *as
  * @param aspect Hint on how to calculate size.
  * @param      w Integer to use as aspect width hint.
  * @param      h Integer to use as aspect height hint.
- * @ingroup Evas_Object_Size_Hints_Group
  */
 EAPI void
 evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control aspect, Evas_Coord w, Evas_Coord h)
@@ -839,7 +838,6 @@ evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control aspect, E
  * @param    obj The given evas object.
  * @param      w Pointer to a double in which to store the align x.
  * @param      h Pointer to a double in which to store the align y.
- * @ingroup Evas_Object_Size_Hints_Group
  */
 EAPI void
 evas_object_size_hint_align_get(const Evas_Object *obj, double *x, double *y)
@@ -866,7 +864,6 @@ evas_object_size_hint_align_get(const Evas_Object *obj, double *x, double *y)
  * @param    obj The given evas object.
  * @param      x Double (0.0-1.0) to use as align x hint.
  * @param      y Double (0.0-1.0) to use as align y hint.
- * @ingroup Evas_Object_Size_Hints_Group
  */
 EAPI void
 evas_object_size_hint_align_set(Evas_Object *obj, double x, double y)
@@ -893,7 +890,6 @@ evas_object_size_hint_align_set(Evas_Object *obj, double x, double y)
  * @param    obj The given evas object.
  * @param      w Pointer to a double in which to store the weight x.
  * @param      h Pointer to a double in which to store the weight y.
- * @ingroup Evas_Object_Size_Hints_Group
  */
 EAPI void
 evas_object_size_hint_weight_get(const Evas_Object *obj, double *x, double *y)
@@ -920,7 +916,6 @@ evas_object_size_hint_weight_get(const Evas_Object *obj, double *x, double *y)
  * @param    obj The given evas object.
  * @param      x Double (0.0-1.0) to use as weight x hint.
  * @param      y Double (0.0-1.0) to use as weight y hint.
- * @ingroup Evas_Object_Size_Hints_Group
  */
 EAPI void
 evas_object_size_hint_weight_set(Evas_Object *obj, double x, double y)
@@ -947,7 +942,6 @@ evas_object_size_hint_weight_set(Evas_Object *obj, double x, double y)
  * @param    obj The given evas object.
  * @param      w Pointer to a double in which to store the padding x.
  * @param      h Pointer to a double in which to store the padding y.
- * @ingroup Evas_Object_Size_Hints_Group
  */
 EAPI void
 evas_object_size_hint_padding_get(const Evas_Object *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b)
@@ -978,7 +972,6 @@ evas_object_size_hint_padding_get(const Evas_Object *obj, Evas_Coord *l, Evas_Co
  * @param    obj The given evas object.
  * @param      x Double (0.0-1.0) to use as padding x hint.
  * @param      y Double (0.0-1.0) to use as padding y hint.
- * @ingroup Evas_Object_Size_Hints_Group
  */
 EAPI void
 evas_object_size_hint_padding_set(Evas_Object *obj, Evas_Coord l, Evas_Coord r, Evas_Coord t, Evas_Coord b)
@@ -997,6 +990,11 @@ evas_object_size_hint_padding_set(Evas_Object *obj, Evas_Coord l, Evas_Coord r, 
 
    evas_object_inform_call_changed_size_hints(obj);
 }
+
+
+/**
+ * @}
+ */
 
 /**
  * Makes the given evas object visible.
@@ -1389,10 +1387,15 @@ evas_object_evas_get(const Evas_Object *obj)
  */
 
 /**
+ * @addtogroup Evas_Object_Finders
+ * @{
+ * @ingroup Evas_Object_Group
+ */
+
+/**
  * To be documented.
  *
  * FIXME: To be fixed.
- * @ingroup Evas_Object_Finders
  */
 EAPI Evas_Object *
 evas_object_top_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
@@ -1429,7 +1432,6 @@ evas_object_top_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool i
  * To be documented.
  *
  * FIXME: To be fixed.
- * @ingroup Evas_Object_Finders
  */
 EAPI Evas_Object *
 evas_object_top_at_pointer_get(const Evas *e)
@@ -1442,7 +1444,6 @@ evas_object_top_at_pointer_get(const Evas *e)
  * To be documented.
  *
  * FIXME: To be fixed.
- * @ingroup Evas_Object_Finders
  */
 EAPI Evas_Object *
 evas_object_top_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
@@ -1485,7 +1486,6 @@ evas_object_top_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas
  * To be documented.
  *
  * FIXME: To be fixed.
- * @ingroup Evas_Object_Finders
  */
 EAPI Eina_List *
 evas_objects_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
@@ -1523,7 +1523,6 @@ evas_objects_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool incl
  * To be documented.
  *
  * FIXME: To be fixed.
- * @ingroup Evas_Object_Finders
  */
 EAPI Eina_List *
 evas_objects_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
@@ -1567,7 +1566,6 @@ evas_objects_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Co
  * Retrieves the name of the type of the given evas object.
  * @param   obj The given object.
  * @return  The name.
- * @ingroup Evas_Object_Group
  */
 EAPI const char *
 evas_object_type_get(const Evas_Object *obj)
@@ -1584,7 +1582,6 @@ evas_object_type_get(const Evas_Object *obj)
  * @param obj The given object.
  * @param precise wheter to use a precise point collision detection or not
  * The default value is false.
- * @ingroup Evas_Object_Group
  */
 EAPI void
 evas_object_precise_is_inside_set(Evas_Object *obj, Evas_Bool precise)
@@ -1598,7 +1595,6 @@ evas_object_precise_is_inside_set(Evas_Object *obj, Evas_Bool precise)
 /**
  * Determine whether an object is set to use a precise point collision detection.
  * @param obj The given object.
- * @ingroup Evas_Object_Group
  */
 EAPI Evas_Bool
 evas_object_precise_is_inside_get(const Evas_Object *obj)
@@ -1608,3 +1604,7 @@ evas_object_precise_is_inside_get(const Evas_Object *obj)
    MAGIC_CHECK_END();
    return obj->precise_is_inside;
 }
+
+/**
+ * @}
+ */

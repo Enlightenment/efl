@@ -89,9 +89,16 @@ static const Evas_Object_Func object_func =
  */
 
 /**
+ * @defgroup Evas_Object_Specific Specific Object Functions
+ *
+ * Functions that work on specific objects.
+ *
+ */
+
+/**
  * @addtogroup Evas_Object_Gradient_Group
  * @{
- * @ingroup Evas_Object_Group
+ * @ingroup Evas_Object_Specific
  */
 
 /**

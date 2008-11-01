@@ -84,7 +84,7 @@ static const Evas_Object_Func object_func =
 /**
  * @addtogroup Evas_Object_Text
  * @{
- * @ingroup Evas_Object_Group
+ * @ingroup Evas_Object_Specific
  */
 
 /**
@@ -957,7 +957,7 @@ evas_object_text_style_pad_get(const Evas_Object *obj, int *l, int *r, int *t, i
  */
 
 /**
- * @defgroup Evas_Font_Path_Group Font Path Functions
+ * @defgroup Evas_Font_Path_Group Evas Font Path Functions
  *
  * Functions that edit the paths being used to load fonts.
  */

@@ -992,6 +992,12 @@ evas_event_feed_hold(Evas *e, int hold, unsigned int timestamp, const void *data
  */
 
 /**
+ * @addtogroup Evas_Object_Event_Flags_Group
+ * @{
+ * @ingroup Evas_Object_Group
+ */
+
+/**
  * Set an object's pass events state.
  * @param obj the evas object
  * @param pass whether to pass events or not
@@ -1135,6 +1141,10 @@ evas_object_propagate_events_get(const Evas_Object *obj)
    MAGIC_CHECK_END();
    return !(obj->no_propagate);
 }
+
+/**
+ * @}
+ */
 
 /**
  * Set pointer behavior.
