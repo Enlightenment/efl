@@ -23,6 +23,12 @@ nobase_include_HEADERS += fnmatch.h errno.h
 
 endif
 
+if ! EVIL_HAVE_CEGCC
+
+nobase_include_HEADERS += dirent.h
+
+endif
+
 libevil_la_SOURCES = \
 evil_errno.c \
 evil_fcntl.c \
@@ -39,6 +45,12 @@ evil_unistd.c \
 evil_util.c \
 evil_uuid.c
 
+if ! EVIL_HAVE_CEGCC
+
+libevil_la_SOURCES += evil_dirent.c
+
+endif
+
 if EVIL_HAVE_WINCE
 
 libevil_la_SOURCES += evil_link_ce.c
@@ -51,7 +63,7 @@ endif
 
 libevil_la_CPPFLAGS = @win32_cppflags@
 libevil_la_CFLAGS = @win32_cflags@
-libevil_la_CXXFLAGS = -fno-exceptions
+libevil_la_CXXFLAGS = -fno-rtti -fno-exceptions
 libevil_la_LIBADD = @win32_libs@ $(EFL_MPATROL_LIBS)
 libevil_la_LDFLAGS = -no-undefined -Wl,--enable-auto-import -version-info @version_info@
 

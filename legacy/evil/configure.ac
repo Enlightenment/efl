@@ -78,9 +78,11 @@ win32_cppflags="-DEFL_EVIL_BUILD"
 win32_cflags=""
 have_wince="no"
 have_mingw32ce="no"
+have_cegcc="no"
 case "$host_os" in
   cegcc*)
     have_wince="yes"
+    have_cegcc="yes"
     win32_cflags="-mwin32"
     win32_cppflags="${win32_cppflags} -D_WIN32_WCE=0x0420"
     ;;
@@ -99,6 +101,7 @@ AC_SUBST(win32_cflags)
 
 AM_CONDITIONAL(EVIL_HAVE_WINCE, test "x${have_wince}" = "xyes")
 AM_CONDITIONAL(EVIL_HAVE_MINGW32CE, test "x${have_mingw32ce}" = "xyes")
+AM_CONDITIONAL(EVIL_HAVE_CEGCC, test "x${have_cegcc}" = "xyes")
 
 
 ### Checks for linker characteristics

@@ -1,5 +1,5 @@
-#ifndef	_FNMATCH_H
-#define	_FNMATCH_H
+#ifndef	__EVIL_FNMATCH_H__
+#define	__EVIL_FNMATCH_H__
 
 #ifdef EAPI
 # undef EAPI
@@ -51,4 +51,4 @@ EAPI int fnmatch(const char *__pattern, const char *__string, int __flags);
 }
 #endif
 
-#endif /* _FNMATCH_H */
+#endif /* __EVIL_FNMATCH_H__ */

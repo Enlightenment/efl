@@ -1,6 +1,21 @@
 2008-11-01  Vincent Torri  <doursse at users dot sf dot net>
 
 	* configure.ac:
+	add a flag to know if cegcc is used or not
+
+	* src/lib/Makefile.am:
+	* src/lib/dirent.h:
+	* src/lib/evil_dirent.c:
+	add opendir(), closedir() and readdir() implementations
+	for Windows XP and CE. Now, the evas engines are correctly
+	found.
+
+	* src/lib/fnmatch.h:
+	formatting
+
+2008-11-01  Vincent Torri  <doursse at users dot sf dot net>
+
+	* configure.ac:
 	formatting
 
 	* src/lib/dlfcn/dlfcn.c:
