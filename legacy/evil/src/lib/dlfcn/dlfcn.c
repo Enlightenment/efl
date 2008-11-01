@@ -135,7 +135,7 @@ dlsym(void *handle, const char *symbol)
 }
 
 int
-dladdr (void *addr __UNUSED__, Dl_info *info)
+dladdr (const void *addr __UNUSED__, Dl_info *info)
 {
    TCHAR tpath[PATH_MAX];
    char *path;

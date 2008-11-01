@@ -220,7 +220,7 @@ EAPI void *dlsym(void* handle, const char* symbol);
  *
  * @ingroup Dlfcn
  */
-EAPI int dladdr (void *addr, Dl_info *info);
+EAPI int dladdr (const void *addr, Dl_info *info);
 
 /**
  * Get diagnostic information

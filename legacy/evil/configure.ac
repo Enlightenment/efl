@@ -29,6 +29,18 @@ version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
 
+### Checks for programs
+AM_PROG_AS
+AC_PROG_CXX
+AC_LANG(C)
+AC_PROG_CPP
+AC_PROG_CC
+
+# doxygen program for documentation building
+
+EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
+
+
 ### Checks for libraries
 
 win32_libs=""
@@ -50,18 +62,6 @@ EFL_CHECK_MPATROL([have_mpatrol="yes"], [have_mpatrol="no"])
 
 ### Checks for header files
 AC_CHECK_HEADERS([errno.h])
-
-
-### Checks for programs
-AM_PROG_AS
-AC_PROG_CXX
-AC_LANG(C)
-AC_PROG_CPP
-AC_PROG_CC
-
-# doxygen program for documentation building
-
-EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 
 ### Checks for types
