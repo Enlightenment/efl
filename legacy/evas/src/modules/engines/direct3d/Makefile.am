@@ -21,10 +21,10 @@ evas_outbuf.c \
 evas_direct3d_buffer.c \
 evas_direct3d_main.cpp
 
+module_la_CXXFLAGS = -fno-rtti -fno-exceptions
 module_la_LIBADD = @EINA_LIBS@ $(top_builddir)/src/lib/libevas.la @direct3d_libs@
 module_la_LDFLAGS = @lt_no_undefined@ -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
-module_la_DEPENDENCIES = $(top_builddir)/config.h
 
 include_HEADERS = Evas_Engine_Direct3D.h
 

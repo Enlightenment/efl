@@ -22,10 +22,10 @@ evas_engine.c \
 evas_ddraw_buffer.cpp \
 evas_ddraw_main.cpp
 
+module_la_CXXFLAGS = -fno-rtti -fno-exceptions
 module_la_LIBADD = @EINA_LIBS@ @ddraw_16_libs@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = @lt_no_undefined@ -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
-module_la_DEPENDENCIES = $(top_builddir)/config.h
 
 include_HEADERS = Evas_Engine_Software_16_DDraw.h
 

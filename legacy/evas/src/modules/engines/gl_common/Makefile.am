@@ -26,8 +26,6 @@ evas_gl_rectangle.c \
 evas_gl_texture.c
 
 libevas_engine_gl_common_la_LIBADD = @EINA_LIBS@ @gl_libs@ $(top_builddir)/src/lib/libevas.la
-libevas_engine_gl_common_la_DEPENDENCIES = $(top_builddir)/config.h
-
 endif
 
 EXTRA_DIST = \

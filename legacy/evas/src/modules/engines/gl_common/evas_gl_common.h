@@ -20,6 +20,10 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+#ifdef BUILD_ENGINE_GL_GLEW
+#include <GL/glew.h>
+#endif /* BUILD_ENGINE_GL_GLEW */
+
 #ifdef BUILD_ENGINE_GL_QUARTZ
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
@@ -27,10 +31,6 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #endif /* BUILD_ENGINE_GL_QUARTZ */
-
-#ifdef BUILD_ENGINE_GL_GLEW
-#include <GL/glew.h>
-#endif /* BUILD_ENGINE_GL_GLEW */
 
 typedef struct _Evas_GL_Context                      Evas_GL_Context;
 typedef struct _Evas_GL_Texture                      Evas_GL_Texture;
