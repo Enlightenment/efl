@@ -813,7 +813,7 @@ check_positions(void *data)
    Evas_Object *o;
 
    EINA_LIST_FOREACH(video_objs, lst, o)
-     video_obj_time_changed(data, evas_object_smart_parent_get(o));
+     video_obj_time_changed(o, evas_object_smart_parent_get(o));
 
    return !!video_objs;
 }
