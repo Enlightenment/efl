@@ -1,7 +1,9 @@
 #include "evas_common.h"
+#include <errno.h>
 
 typedef struct _Evas_Object_Table_Data       Evas_Object_Table_Data;
 typedef struct _Evas_Object_Table_Option     Evas_Object_Table_Option;
+typedef struct _Evas_Object_Table_Cache      Evas_Object_Table_Cache;
 
 struct _Evas_Object_Table_Option
 {
@@ -20,6 +22,24 @@ struct _Evas_Object_Table_Option
    Evas_Bool expand_v : 1; /* XXX required? */
 };
 
+struct _Evas_Object_Table_Cache
+{
+   struct {
+      struct {
+	 int h, v;
+      } expands;
+      struct {
+	 Evas_Coord w, h;
+      } min;
+   } total;
+   struct {
+      Evas_Coord *h, *v;
+   } sizes;
+   struct {
+      Evas_Bool *h, *v;
+   } expands;
+};
+
 struct _Evas_Object_Table_Data
 {
    Evas_Object_Smart_Clipped_Data base;
@@ -33,6 +53,7 @@ struct _Evas_Object_Table_Data
    struct {
       int cols, rows;
    } size;
+   Evas_Object_Table_Cache *cache;
    Evas_Object_Table_Homogeneous_Mode homogeneous;
    Evas_Bool hints_changed : 1;
    Evas_Bool expand_h : 1;
@@ -72,6 +93,64 @@ struct _Evas_Object_Table_Data
 
 static const char EVAS_OBJECT_TABLE_OPTION_KEY[] = "Evas_Object_Table_Option";
 
+static Evas_Object_Table_Cache *
+_evas_object_table_cache_alloc(int cols, int rows)
+{
+   Evas_Object_Table_Cache *cache;
+   int size;
+
+   size = (sizeof(Evas_Object_Table_Cache) +
+	   (cols + rows) * (sizeof(Evas_Bool) + sizeof(Evas_Coord)));
+   cache = malloc(size);
+   if (!cache)
+     {
+	fprintf(stderr,
+		"ERROR: could not allocate table cache %dx%d (%d bytes): %s\n",
+		cols, rows, size, strerror(errno));
+	return NULL;
+     }
+
+   cache->sizes.h = (Evas_Coord *)(cache + 1);
+   cache->sizes.v = (Evas_Coord *)(cache->sizes.h + cols);
+   cache->expands.h = (Evas_Bool *)(cache->sizes.v + rows);
+   cache->expands.v = (Evas_Bool *)(cache->expands.h + cols);
+
+   return cache;
+}
+
+static void
+_evas_object_table_cache_free(Evas_Object_Table_Cache *cache)
+{
+   free(cache);
+}
+
+static void
+_evas_object_table_cache_reset(Evas_Object_Table_Data *priv)
+{
+   Evas_Object_Table_Cache *c = priv->cache;
+   int size;
+
+   c->total.expands.v = 0;
+   c->total.expands.h = 0;
+   c->total.min.w = 0;
+   c->total.min.h = 0;
+
+   size = ((priv->size.rows + priv->size.cols) *
+	   (sizeof(Evas_Bool) + sizeof(Evas_Coord)));
+   memset(c + 1, 0, size);
+}
+
+static void
+_evas_object_table_cache_invalidate(Evas_Object_Table_Data *priv)
+{
+   priv->hints_changed = 1;
+   if (priv->cache)
+     {
+	_evas_object_table_cache_free(priv->cache);
+	priv->cache = NULL;
+     }
+}
+
 static Evas_Object_Table_Option *
 _evas_object_table_option_get(Evas_Object *o)
 {
@@ -102,7 +181,7 @@ _on_child_hints_changed(void *data, Evas *evas, Evas_Object *child, void *einfo)
 {
    Evas_Object *table = data;
    EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN(table, priv);
-   priv->hints_changed = 1;
+   _evas_object_table_cache_invalidate(priv);
    evas_object_smart_changed(table);
 }
 
@@ -220,6 +299,7 @@ _evas_object_table_calculate_hints_homogeneous(Evas_Object *o, Evas_Object_Table
 	cell_minw = (child_minw + opt->colspan - 1) / opt->colspan;
 	cell_minh = (child_minh + opt->rowspan - 1) / opt->rowspan;
 
+	opt->expand_h = 0;
 	if ((weightw > 0.0) &&
 	    ((opt->max.w < 0) ||
 	     ((opt->max.w > -1) && (opt->min.w < opt->max.w))))
@@ -235,6 +315,8 @@ _evas_object_table_calculate_hints_homogeneous(Evas_Object *o, Evas_Object_Table
 /* 	     expand_h = 1; */
 /* 	  } */
 
+
+	opt->expand_v = 0;
 	if ((weighth > 0.0) &&
 	    ((opt->max.h < 0) ||
 	     ((opt->max.h > -1) && (opt->min.h < opt->max.h))))
@@ -373,16 +455,271 @@ _evas_object_table_smart_calculate_homogeneous(Evas_Object *o, Evas_Object_Table
    _evas_object_table_calculate_layout_homogeneous(o, priv);
 }
 
+static int
+_evas_object_table_count_expands(const Evas_Bool *expands, int start, int end)
+{
+   const Evas_Bool *itr = expands + start, *itr_end = expands + end;
+   int count = 0;
+
+   for (; itr < itr_end; itr++)
+     if (*itr)
+       count++;
+
+   return count;
+}
+
+static Evas_Coord
+_evas_object_table_sum_sizes(const Evas_Coord *sizes, int start, int end)
+{
+   const Evas_Coord *itr = sizes + start, *itr_end = sizes + end;
+   Evas_Coord sum = 0;
+
+   for (; itr < itr_end; itr++)
+     sum += *itr;
+
+   return sum;
+}
+
+static void
+_evas_object_table_sizes_calc_noexpand(Evas_Coord *sizes, int start, int end, Evas_Coord space)
+{
+   Evas_Coord *itr = sizes + start, *itr_end = sizes + end - 1;
+   Evas_Coord step;
+   int units;
+
+   /* XXX move to fixed point math and spread errors among cells */
+   units = end - start;
+   step = space / units;
+   for (; itr < itr_end; itr++)
+     *itr += step;
+
+   *itr += space - step * (units - 1);
+}
+
+static void
+_evas_object_table_sizes_calc_expand(Evas_Coord *sizes, int start, int end, Evas_Coord space, const Evas_Bool *expands, int expand_count)
+{
+   Evas_Coord *itr = sizes + start, *itr_end = sizes + end;
+   const Evas_Bool *itr_expand = expands + start;
+   Evas_Coord step, last_space;
+
+   /* XXX move to fixed point math and spread errors among cells */
+   step = space / expand_count;
+   last_space = space - step * (expand_count - 1);
+
+   for (; itr < itr_end; itr++, itr_expand++)
+     if (*itr_expand)
+       {
+	  expand_count--;
+	  if (expand_count > 0)
+	    *itr += step;
+	  else
+	    {
+	       *itr += last_space;
+	       break;
+	    }
+       }
+}
+
 static void
 _evas_object_table_calculate_hints_regular(Evas_Object *o, Evas_Object_Table_Data *priv)
 {
-   puts("XXX TODO: calculate hints for non-homogeneous tables");
+   Evas_Object_Table_Option *opt;
+   Evas_Object_Table_Cache *c;
+   Eina_List *l;
+
+   // XXX TODO: account paddings!
+
+   if (!priv->cache)
+     {
+	priv->cache = _evas_object_table_cache_alloc
+	  (priv->size.cols, priv->size.rows);
+	if (!priv->cache)
+	  return;
+     }
+   c = priv->cache;
+   _evas_object_table_cache_reset(priv);
+
+   /* cache interesting data */
+   EINA_LIST_FOREACH(priv->children, l, opt)
+     {
+	Evas_Object *child = opt->obj;
+	double weightw, weighth;
+
+	evas_object_size_hint_min_get(child, &opt->min.w, &opt->min.h);
+	evas_object_size_hint_max_get(child, &opt->max.w, &opt->max.h);
+	evas_object_size_hint_padding_get
+	  (child, &opt->pad.l, &opt->pad.r, &opt->pad.t, &opt->pad.b);
+	evas_object_size_hint_align_get(child, &opt->align.h, &opt->align.v);
+	evas_object_size_hint_weight_get(child, &weightw, &weighth);
+
+	opt->expand_h = 0;
+	if ((weightw > 0.0) &&
+	    ((opt->max.w < 0) ||
+	     ((opt->max.w > -1) && (opt->min.w < opt->max.w))))
+	  opt->expand_h = 1;
+
+	opt->expand_v = 0;
+	if ((weighth > 0.0) &&
+	    ((opt->max.h < 0) ||
+	     ((opt->max.h > -1) && (opt->min.h < opt->max.h))))
+	  opt->expand_v = 1;
+
+	if (opt->expand_h)
+	  memset(c->expands.h + opt->col, 1, opt->colspan);
+	if (opt->expand_v)
+	  memset(c->expands.v + opt->row, 1, opt->rowspan);
+     }
+
+   /* calculate sizes for each row and column */
+   EINA_LIST_FOREACH(priv->children, l, opt)
+     {
+	Evas_Coord tot, need;
+
+	/* handle horizontal */
+	tot = _evas_object_table_sum_sizes(c->sizes.h, opt->col, opt->end_col);
+	need = opt->min.w + opt->pad.l + opt->pad.r;
+	if (tot < need)
+	  {
+	     Evas_Coord space = need - tot;
+	     int count;
+
+	     count = _evas_object_table_count_expands
+	       (c->expands.h, opt->col, opt->end_col);
+
+	     if (count > 0)
+	       _evas_object_table_sizes_calc_expand
+		 (c->sizes.h, opt->col, opt->end_col, space,
+		  c->expands.h, count);
+	     else
+	       _evas_object_table_sizes_calc_noexpand
+		 (c->sizes.h, opt->col, opt->end_col, space);
+	  }
+
+	/* handle vertical */
+	tot = _evas_object_table_sum_sizes(c->sizes.v, opt->row, opt->end_row);
+	need = opt->min.h + opt->pad.t + opt->pad.b;
+	if (tot < opt->min.h)
+	  {
+	     Evas_Coord space = need - tot;
+	     int count;
+
+	     count = _evas_object_table_count_expands
+	       (c->expands.v, opt->row, opt->end_row);
+
+	     if (count > 0)
+	       _evas_object_table_sizes_calc_expand
+		 (c->sizes.v, opt->row, opt->end_row, space,
+		  c->expands.v, count);
+	     else
+	       _evas_object_table_sizes_calc_noexpand
+		 (c->sizes.v, opt->row, opt->end_row, space);
+	  }
+     }
+
+   c->total.expands.h = _evas_object_table_count_expands
+     (c->expands.h, 0, priv->size.cols);
+   c->total.expands.v = _evas_object_table_count_expands
+     (c->expands.v, 0, priv->size.rows);
+
+   c->total.min.w = _evas_object_table_sum_sizes
+     (c->sizes.h, 0, priv->size.cols);
+   c->total.min.h = _evas_object_table_sum_sizes
+     (c->sizes.v, 0, priv->size.rows);
+
+   c->total.min.w += priv->pad.h * (priv->size.cols - 1);
+   c->total.min.h += priv->pad.v * (priv->size.rows - 1);
+
+   if ((c->total.min.w > 0) || (c->total.min.h > 0))
+     evas_object_size_hint_min_set(o, c->total.min.w, c->total.min.h);
+
+   // XXX hint max?
 }
 
 static void
 _evas_object_table_calculate_layout_regular(Evas_Object *o, Evas_Object_Table_Data *priv)
 {
-   puts("XXX TODO: calculate layout for non-homogeneous tables");
+   Evas_Object_Table_Option *opt;
+   Evas_Object_Table_Cache *c;
+   Eina_List *l;
+   Evas_Coord *cols, *rows;
+   Evas_Coord x, y, w, h;
+
+   evas_object_geometry_get(o, &x, &y, &w, &h);
+   c = priv->cache;
+
+   /* handle horizontal */
+   if ((c->total.expands.h <= 0) || (c->total.min.w >= w))
+     {
+	x += (w - c->total.min.w) * priv->align.h;
+	w = c->total.min.w;
+	cols = c->sizes.h;
+     }
+   else
+     {
+	int size = priv->size.cols * sizeof(Evas_Coord);
+	cols = malloc(size);
+	if (!cols)
+	  {
+	     fprintf(stderr,
+		     "ERROR: could not allocate temp columns (%d bytes): %s\n",
+		     size, strerror(errno));
+	     return;
+	  }
+	memcpy(cols, c->sizes.h, size);
+	_evas_object_table_sizes_calc_expand
+	  (cols, 0, priv->size.cols, w - c->total.min.w,
+	   c->expands.h, c->total.expands.h);
+     }
+
+   /* handle vertical */
+   if ((c->total.expands.v <= 0) || (c->total.min.h >= h))
+     {
+	y += (h - c->total.min.h) * priv->align.v;
+	h = c->total.min.h;
+	rows = c->sizes.v;
+     }
+   else
+     {
+	int size = priv->size.rows * sizeof(Evas_Coord);
+	rows = malloc(size);
+	if (!rows)
+	  {
+	     fprintf(stderr,
+		     "ERROR: could not allocate temp rows (%d bytes): %s\n",
+		     size, strerror(errno));
+	     goto end;
+	  }
+	memcpy(rows, c->sizes.v, size);
+	_evas_object_table_sizes_calc_expand
+	  (rows, 0, priv->size.rows, h - c->total.min.h,
+	   c->expands.v, c->total.expands.v);
+     }
+
+   EINA_LIST_FOREACH(priv->children, l, opt)
+     {
+	Evas_Object *child = opt->obj;
+	Evas_Coord cx, cy, cw, ch;
+
+	cx = x + opt->col * (priv->pad.h);
+	cx += _evas_object_table_sum_sizes(cols, 0, opt->col);
+	cw = _evas_object_table_sum_sizes(cols, opt->col, opt->end_col);
+
+	cy = y + opt->row * (priv->pad.v);
+	cy += _evas_object_table_sum_sizes(rows, 0, opt->row);
+	ch = _evas_object_table_sum_sizes(rows, opt->row, opt->end_row);
+
+	_evas_object_table_calculate_cell(opt, &cx, &cy, &cw, &ch);
+
+	evas_object_move(child, cx, cy);
+	evas_object_resize(child, cw, ch);
+     }
+
+ end:
+   if (cols != c->sizes.h)
+     free(cols);
+   if (rows != c->sizes.v)
+     free(rows);
 }
 
 static void
@@ -417,6 +754,7 @@ _evas_object_table_smart_add(Evas_Object *o)
    priv->align.v = 0.5;
    priv->size.cols = 0;
    priv->size.rows = 0;
+   priv->cache = NULL;
    priv->homogeneous = EVAS_OBJECT_TABLE_HOMOGENEOUS_NONE;
    priv->hints_changed = 1;
    priv->expand_h = 0;
@@ -440,6 +778,9 @@ _evas_object_table_smart_del(Evas_Object *o)
 	free(opt);
 	l = eina_list_remove_list(l, l);
      }
+
+   if (priv->cache)
+     _evas_object_table_cache_free(priv->cache);
 
    _parent_sc.del(o);
 }
@@ -490,8 +831,8 @@ _evas_object_table_smart_class_new(void)
 Evas_Object *
 evas_object_table_add(Evas *evas)
 {
+   static Evas_Smart *smart = NULL;
    Evas_Object *o;
-   Evas_Smart *smart;
 
    if (!smart)
      smart = _evas_object_table_smart_class_new();
@@ -588,7 +929,7 @@ evas_object_table_homogeneous_set(Evas_Object *o, Evas_Object_Table_Homogeneous_
    if (priv->homogeneous == homogeneous)
      return;
    priv->homogeneous = homogeneous;
-   priv->hints_changed = 1;
+   _evas_object_table_cache_invalidate(priv);
    evas_object_smart_changed(o);
 }
 
@@ -648,6 +989,7 @@ evas_object_table_padding_set(Evas_Object *o, Evas_Coord horizontal, Evas_Coord 
      return;
    priv->pad.h = horizontal;
    priv->pad.v = vertical;
+   _evas_object_table_cache_invalidate(priv);
    evas_object_smart_changed(o);
 }
 
@@ -742,7 +1084,7 @@ evas_object_table_pack(Evas_Object *o, Evas_Object *child, unsigned short col, u
    _evas_object_table_option_set(child, opt);
    evas_object_smart_member_add(child, o);
    _evas_object_table_child_connect(o, child);
-   priv->hints_changed = 1;
+   _evas_object_table_cache_invalidate(priv);
    evas_object_smart_changed(o);
 
    return 1;
@@ -812,21 +1154,21 @@ evas_object_table_unpack(Evas_Object *o, Evas_Object *child)
    if (o != evas_object_smart_parent_get(child))
      {
 	fputs("ERROR: cannot unpack child from incorrect table!\n", stderr);
-	return;
+	return 0;
      }
 
    opt = _evas_object_table_option_del(child);
    if (!opt)
      {
 	fputs("ERROR: cannot unpack child with no packing option!\n", stderr);
-	return;
+	return 0;
      }
 
    _evas_object_table_child_disconnect(o, child);
    _evas_object_table_remove_opt(priv, opt);
    evas_object_smart_member_del(child);
    free(opt);
-   priv->hints_changed = 1;
+   _evas_object_table_cache_invalidate(priv);
    evas_object_smart_changed(o);
 
    return 1;
@@ -858,6 +1200,7 @@ evas_object_table_clear(Evas_Object *o, Evas_Bool delete)
    priv->children = NULL;
    priv->size.cols = 0;
    priv->size.rows = 0;
+   _evas_object_table_cache_invalidate(priv);
    evas_object_smart_changed(o);
 }
 
