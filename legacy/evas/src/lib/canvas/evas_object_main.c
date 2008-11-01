@@ -580,15 +580,8 @@ evas_object_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, E
 }
 
 /**
- * @defgroup Evas_Object_Size_Hints_Group Object Size Hints Functions
- *
- * Functions that deals with hints about object size.
- */
-
-/**
- * @addtogroup Evas_Object_Size_Hints_Group
+ * @addtogroup Evas_Object_Group
  * @{
- * @ingroup Evas_Object_Group
  */
 
 static void
@@ -1380,16 +1373,8 @@ evas_object_evas_get(const Evas_Object *obj)
 }
 
 /**
- * @defgroup Evas_Object_Finders Object Finder Functions
- *
- * Functions that determine what evas objects are at a given location
- * or within a given region of an evas.
- */
-
-/**
- * @addtogroup Evas_Object_Finders
+ * @addtogroup Evas_Object_Group
  * @{
- * @ingroup Evas_Object_Group
  */
 
 /**

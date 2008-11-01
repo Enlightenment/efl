@@ -2,15 +2,8 @@
 #include "evas_private.h"
 
 /**
- * @defgroup Evas_Object_Name_Group Object Name Function
- *
- * Functions that retrieve and set the name of an evas object.
- */
-
-/**
- * @addtogroup Evas_Object_Name_Group
+ * @addtogroup Evas_Object_Group
  * @{
- * @ingroup Evas_Object_Group
  */
 
 /**

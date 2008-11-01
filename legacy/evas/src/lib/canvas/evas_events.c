@@ -985,16 +985,10 @@ evas_event_feed_hold(Evas *e, int hold, unsigned int timestamp, const void *data
    _evas_unwalk(e);
 }
 
-/**
- * @defgroup Evas_Object_Event_Flags_Group Object Event Flag Functions
- *
- * Functions that deal with how events on an Evas Object are processed.
- */
 
 /**
- * @addtogroup Evas_Object_Event_Flags_Group
+ * @addtogroup Evas_Object_Group
  * @{
- * @ingroup Evas_Object_Group
  */
 
 /**

@@ -148,21 +148,10 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
    _evas_unwalk(e);
 }
 
-/**
- * @defgroup Evas_Object_Callback_Group Object Callback Functions
- *
- * Functions that add and remove callbacks to evas objects.
- */
 
 /**
- * @addtogroup Evas_Object_Callback_Group
+ * @addtogroup Evas_Object_Group
  * @{
- * @ingroup Evas_Object_Group
- */
-
-/**
- * @todo Move this next code example and most of the documentation for
- * this next function into the group documentation.
  */
 
 /**

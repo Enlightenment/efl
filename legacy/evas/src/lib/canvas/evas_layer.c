@@ -116,17 +116,8 @@ evas_layer_del(Evas_Layer *lay)
 /* public functions */
 
 /**
- * @defgroup Evas_Object_Layer_Group Object Layer Functions
- *
- * Functions that retrieve and set the layer that an evas object is on.
- *
- * @todo Document which way layers go.
- */
-
-/**
- * @addtogroup Evas_Object_Layer_Group
+ * @addtogroup Evas_Object_Group
  * @{
- * @ingroup Evas_Object_Group
  */
 
 /**

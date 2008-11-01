@@ -2,16 +2,8 @@
 #include "evas_private.h"
 
 /**
- * @defgroup Evas_Object_Data_Group Object Data Functions
- *
- * Functions that retrieve and set data associated attached to an evas
- * object.
- */
-
-/**
- * @addtogroup Evas_Object_Data_Group
+ * @addtogroup Evas_Object_Group
  * @{
- * @ingroup Evas_Object_Group
  */
 
 /**
