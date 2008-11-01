@@ -206,12 +206,6 @@ evas_object_image_add(Evas *e)
 }
 
 /**
- * @defgroup Evas_Object_Image_File_Group Image Object File Functions
- *
- * Functions that write to or retrieve images from files.
- */
-
-/**
  * Sets the filename and key of the given image object.
  *
  * If the file supports multiple data stored in it as eet,
@@ -221,7 +215,7 @@ evas_object_image_add(Evas *e)
  * @param obj The given image object.
  * @param file The image filename.
  * @param key The image key in file, or NULL.
- * @ingroup Evas_Object_Image_File_Group
+ * @ingroup Evas_Object_Image
  */
 EAPI void
 evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
@@ -303,7 +297,7 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
  * @param obj The given image object.
  * @param file Location to store the image filename, or NULL.
  * @param key Location to store the image key, or NULL.
- * @ingroup Evas_Object_Image_File_Group
+ * @ingroup Evas_Object_Image
  */
 EAPI void
 evas_object_image_file_get(const Evas_Object *obj, const char **file, const char **key)
@@ -326,12 +320,6 @@ evas_object_image_file_get(const Evas_Object *obj, const char **file, const char
 }
 
 /**
- * @defgroup Evas_Object_Image_Border_Group Image Object Border Functions
- *
- * Functions that adjust the unscaled image border of image objects.
- */
-
-/**
  * Sets how much of each border of the given image object is not
  * to be scaled.
  *
@@ -348,7 +336,7 @@ evas_object_image_file_get(const Evas_Object *obj, const char **file, const char
  * @param r Distance of the right border that is not to be stretched.
  * @param t Distance of the top border that is not to be stretched.
  * @param b Distance of the bottom border that is not to be stretched.
- * @ingroup Evas_Object_Image_Border_Group
+ * @ingroup Evas_Object_Image
  */
 EAPI void
 evas_object_image_border_set(Evas_Object *obj, int l, int r, int t, int b)
@@ -389,7 +377,7 @@ evas_object_image_border_set(Evas_Object *obj, int l, int r, int t, int b)
  * @param r Location to store the right border width in, or NULL.
  * @param t Location to store the top border width in, or NULL.
  * @param b Location to store the bottom border width in, or NULL.
- * @ingroup Evas_Object_Image_Border_Group
+ * @ingroup Evas_Object_Image
  */
 EAPI void
 evas_object_image_border_get(const Evas_Object *obj, int *l, int *r, int *t, int *b)
@@ -418,13 +406,6 @@ evas_object_image_border_get(const Evas_Object *obj, int *l, int *r, int *t, int
 }
 
 /**
- * @defgroup Evas_Object_Image_Fill_Group Image Object Fill Rectangle Functions
- *
- * Functions that deal with what areas of the image object are to be
- * tiled with the given image.
- */
-
-/**
  * Sets if the center part of the given image object (not the border)
  * should be drawn.
  *
@@ -435,7 +416,7 @@ evas_object_image_border_get(const Evas_Object *obj, int *l, int *r, int *t, int
  *
  * @param obj The given image object.
  * @param fill Whether the center should be drawn.
- * @ingroup Evas_Object_Image_Fill_Group
+ * @ingroup Evas_Object_Image
  */
 EAPI void
 evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Bool fill)
@@ -465,7 +446,7 @@ evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Bool fill)
  *
  * @param obj The given image object.
  * @return If the center is to be drawn or not.
- * @ingroup Evas_Object_Image_Fill_Group
+ * @ingroup Evas_Object_Image
  */
 EAPI Evas_Bool
 evas_object_image_border_center_fill_get(const Evas_Object *obj)
@@ -499,7 +480,7 @@ evas_object_image_border_center_fill_get(const Evas_Object *obj)
  * @param y The Y coordinate for the top left corner of the image.
  * @param w The width of the image.
  * @param h The height of the image.
- * @ingroup Evas_Object_Image_Fill_Group
+ * @ingroup Evas_Object_Image
  */
 EAPI void
 evas_object_image_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
@@ -540,7 +521,7 @@ evas_object_image_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Co
  * @param y Location to store the Y coordinate for the top left corner of the image in, or NULL.
  * @param w Location to store the width of the image in, or NULL.
  * @param h Location to store the height of the image in, or NULL.
- * @ingroup Evas_Object_Image_Fill_Group
+ * @ingroup Evas_Object_Image
  */
 EAPI void
 evas_object_image_fill_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
@@ -574,7 +555,7 @@ evas_object_image_fill_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y,
  * @param   obj   The given evas image object.
  * @param   spread One of EVAS_TEXTURE_REFLECT, EVAS_TEXTURE_REPEAT,
  * EVAS_TEXTURE_RESTRICT, or EVAS_TEXTURE_PAD.
- * @ingroup Evas_Object_Image_Fill_Group
+ * @ingroup Evas_Object_Image
  */
 EAPI void
 evas_object_image_fill_spread_set(Evas_Object *obj, int spread)
@@ -598,7 +579,7 @@ evas_object_image_fill_spread_set(Evas_Object *obj, int spread)
  * Retrieves the spread (tiling mode) for the given image object's fill.
  * @param   obj The given evas image object.
  * @return  The current spread mode of the image object.
- * @ingroup Evas_Object_Image_Fill_Group
+ * @ingroup Evas_Object_Image
  */
 EAPI int
 evas_object_image_fill_spread_get(const Evas_Object *obj)
@@ -695,12 +676,6 @@ evas_object_image_fill_transform_get (const Evas_Object *obj, Evas_Transform *t)
 }
 
 /**
- * @defgroup Evas_Object_Image_Size Image Object Image Size Functions
- *
- * Functions that change the size of the image used by an image object.
- */
-
-/**
  * Sets the size of the given image object.
  *
  * This function will scale down or crop the image so that it is
@@ -712,7 +687,7 @@ evas_object_image_fill_transform_get (const Evas_Object *obj, Evas_Transform *t)
  * @param obj The given image object.
  * @param w The new width of the image.
  * @param h The new height of the image.
- * @ingroup Evas_Object_Image_Size
+ * @ingroup Evas_Object_Image
  */
 EAPI void
 evas_object_image_size_set(Evas_Object *obj, int w, int h)
@@ -770,7 +745,7 @@ evas_object_image_size_set(Evas_Object *obj, int w, int h)
  * @param obj The given image object.
  * @param w Location to store the width of the image in, or NULL.
  * @param h Location to store the height of the image in, or NULL.
- * @ingroup Evas_Object_Image_Size
+ * @ingroup Evas_Object_Image
  */
 EAPI void
 evas_object_image_size_get(const Evas_Object *obj, int *w, int *h)
@@ -800,7 +775,7 @@ evas_object_image_size_get(const Evas_Object *obj, int *w, int *h)
  *
  * @param obj The given image object.
  * @return The stride of the image.
- * @ingroup Evas_Object_Image_Size
+ * @ingroup Evas_Object_Image
  */
 EAPI int
 evas_object_image_stride_get(const Evas_Object *obj)
@@ -843,13 +818,6 @@ evas_object_image_load_error_get(const Evas_Object *obj)
 }
 
 /**
- * @defgroup Evas_Object_Image_Data Image Object Image Data Functions
- *
- * Functions that allow you to access or modify the image pixel data of an
- * image object.
- */
-
-/**
  * Converts the raw image data of the given image object to the
  * specified colorspace.
  *
@@ -864,7 +832,7 @@ evas_object_image_load_error_get(const Evas_Object *obj)
  * @param obj The given image object.
  * @param to_cspace The colorspace to which the image raw data will be converted.
  * @return data A newly allocated data in the format specified by to_cspace.
- * @ingroup Evas_Object_Image_Data
+ * @ingroup Evas_Object_Image
  */
 EAPI void *
 evas_object_image_data_convert(Evas_Object *obj, Evas_Colorspace to_cspace)
@@ -897,7 +865,7 @@ evas_object_image_data_convert(Evas_Object *obj, Evas_Colorspace to_cspace)
  *
  * @param obj The given image object.
  * @param data The raw data, or NULL.
- * @ingroup Evas_Object_Image_Data
+ * @ingroup Evas_Object_Image
  */
 EAPI void
 evas_object_image_data_set(Evas_Object *obj, void *data)
@@ -967,7 +935,7 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
  * @param obj The given image object.
  * @param for_writing Whether the data being retrieved will be modified.
  * @return The raw image data.
- * @ingroup Evas_Object_Image_Data
+ * @ingroup Evas_Object_Image
  */
 EAPI void *
 evas_object_image_data_get(const Evas_Object *obj, Evas_Bool for_writing)
@@ -1007,7 +975,7 @@ evas_object_image_data_get(const Evas_Object *obj, Evas_Bool for_writing)
  *
  * @param obj The given image object.
  * @param cancel 0 means add to the workqueue, 1 remove it.
- * @ingroup Evas_Object_Image_Data
+ * @ingroup Evas_Object_Image
  */
 EAPI void
 evas_object_image_preload(const Evas_Object *obj, Evas_Bool cancel)
@@ -1052,7 +1020,7 @@ evas_object_image_preload(const Evas_Object *obj, Evas_Bool cancel)
  *
  * @param obj The given image object.
  * @param data The raw data.
- * @ingroup Evas_Object_Image_Data
+ * @ingroup Evas_Object_Image
  */
 EAPI void
 evas_object_image_data_copy_set(Evas_Object *obj, void *data)
@@ -1097,7 +1065,7 @@ evas_object_image_data_copy_set(Evas_Object *obj, void *data)
  * @param y Y-offset of the region to be updated.
  * @param w Width of the region to be updated.
  * @param h Height of the region to be updated.
- * @ingroup Evas_Object_Image_Data
+ * @ingroup Evas_Object_Image
  */
 EAPI void
 evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h)
@@ -1121,12 +1089,6 @@ evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h)
 }
 
 /**
- * @defgroup Evas_Object_Image_Alpha Image Object Image Alpha Functions
- *
- * Functions that change the alpha of an image object.
- */
-
-/**
  * Enable or disable alpha channel of the given image object.
  *
  * This function sets a flag on an image object indicating whether or not to
@@ -1137,7 +1099,7 @@ evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h)
  *
  * @param obj The given image object.
  * @param has_alpha Whether to use alpha channel data or not.
- * @ingroup Evas_Object_Image_Alpha
+ * @ingroup Evas_Object_Image
  */
 EAPI void
 evas_object_image_alpha_set(Evas_Object *obj, Evas_Bool has_alpha)
@@ -1174,7 +1136,7 @@ evas_object_image_alpha_set(Evas_Object *obj, Evas_Bool has_alpha)
  *
  * @param obj The given image object.
  * @return Whether the alpha channel data is being used.
- * @ingroup Evas_Object_Image_Alpha
+ * @ingroup Evas_Object_Image
  */
 EAPI Evas_Bool
 evas_object_image_alpha_get(const Evas_Object *obj)
@@ -1192,12 +1154,6 @@ evas_object_image_alpha_get(const Evas_Object *obj)
 }
 
 /**
- * @defgroup Evas_Object_Image_Scale Image Object Image Scaling Functions
- *
- * Functions that change the scaling quality of an image object.
- */
-
-/**
  * Sets whether to use of high-quality image scaling algorithm
  * of the given image object.
  *
@@ -1207,7 +1163,7 @@ evas_object_image_alpha_get(const Evas_Object *obj)
  *
  * @param obj The given image object.
  * @param smooth_scale Whether to use smooth scale or not.
- * @ingroup Evas_Object_Image_Scale
+ * @ingroup Evas_Object_Image
  */
 EAPI void
 evas_object_image_smooth_scale_set(Evas_Object *obj, Evas_Bool smooth_scale)
@@ -1235,7 +1191,7 @@ evas_object_image_smooth_scale_set(Evas_Object *obj, Evas_Bool smooth_scale)
  *
  * @param obj The given image object.
  * @return Whether smooth scale is being used.
- * @ingroup Evas_Object_Image_Scale
+ * @ingroup Evas_Object_Image
  */
 EAPI Evas_Bool
 evas_object_image_smooth_scale_get(const Evas_Object *obj)

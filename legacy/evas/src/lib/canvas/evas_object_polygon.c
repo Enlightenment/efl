@@ -66,7 +66,7 @@ static const Evas_Object_Func object_func =
 /* it has no other api calls as all properties are standard */
 
 /**
- * @defgroup Evas_Polygon_Group Polygon Functions
+ * @defgroup Evas_Polygon_Group Polygon Object Functions
  *
  * Functions that operate on evas polygon objects.
  */

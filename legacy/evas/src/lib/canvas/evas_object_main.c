@@ -999,15 +999,9 @@ evas_object_size_hint_padding_set(Evas_Object *obj, Evas_Coord l, Evas_Coord r, 
 }
 
 /**
- * @defgroup Evas_Object_Visibility_Group Generic Object Visibility Functions
- *
- * Functions that deal with the visibility of evas objects.
- */
-
-/**
  * Makes the given evas object visible.
  * @param   obj The given evas object.
- * @ingroup Evas_Object_Visibility_Group
+ * @ingroup Evas_Object_Group
  */
 EAPI void
 evas_object_show(Evas_Object *obj)
@@ -1054,7 +1048,7 @@ evas_object_show(Evas_Object *obj)
 /**
  * Makes the given evas object invisible.
  * @param   obj The given evas object.
- * @ingroup Evas_Object_Visibility_Group
+ * @ingroup Evas_Object_Group
  */
 EAPI void
 evas_object_hide(Evas_Object *obj)
@@ -1142,7 +1136,7 @@ evas_object_hide(Evas_Object *obj)
  * Retrieves whether or not the given evas object is visible.
  * @param   obj The given evas object.
  * @return  @c 1 if the object is visible.  @c 0 otherwise.
- * @ingroup Evas_Object_Visibility_Group
+ * @ingroup Evas_Object_Group
  */
 EAPI Evas_Bool
 evas_object_visible_get(const Evas_Object *obj)

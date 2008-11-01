@@ -41,7 +41,7 @@ evas_object_clippers_was_visible(Evas_Object *obj)
 /* public functions */
 
 /**
- * @defgroup Evas_Clip_Group Clip Functions
+ * @defgroup Evas_Clip_Group Object Clip Functions
  *
  * Functions that manage the clipping of objects by other objects.
  */

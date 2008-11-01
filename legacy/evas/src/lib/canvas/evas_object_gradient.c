@@ -81,7 +81,7 @@ static const Evas_Object_Func object_func =
 /* the actual api call to add a gradient */
 
 /**
- * @defgroup Evas_Object_Gradient_Group Evas Gradient Object Functions
+ * @defgroup Evas_Object_Gradient_Group Gradient Object Functions
  *
  * Functions that work on evas gradient objects.
  *
@@ -280,13 +280,6 @@ evas_object_gradient_alpha_data_set(Evas_Object *obj, void *data, int len)
 }
 
 /**
- * @defgroup Evas_Object_Gradient_Fill_Group Gradient Object Fill Rectangle Functions
- *
- * Functions that deal with what areas of the gradient object are to be
- * tiled with the gradient.
- */
-
-/**
  * Sets the rectangle on the gradient object that the gradient will be
  * drawn to.
  *
@@ -304,7 +297,7 @@ evas_object_gradient_alpha_data_set(Evas_Object *obj, void *data, int len)
  * @param   y   The Y coordinate for the top left corner of the rect.
  * @param   w   The width of the rect.
  * @param   h   The height of the rect.
- * @ingroup Evas_Object_Gradient_Fill_Group
+ * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
@@ -344,7 +337,7 @@ evas_object_gradient_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas
  * @param   y   Pointer to an Evas_Coord to store the Y coordinate in.
  * @param   w   Pointer to an Evas_Coord to store the width in.
  * @param   h   Pointer to an Evas_Coord to store the height in.
- * @ingroup Evas_Object_Gradient_Fill_Group
+ * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient_fill_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
@@ -608,20 +601,12 @@ evas_object_gradient_direction_get(const Evas_Object *obj)
 }
 
 /**
- * @defgroup Evas_Object_Gradient_Type_Group Gradient Object Type Functions
- *
- * Functions that set or get a gradient's geometric type. Examples are "linear",
- * "linear.diag", "linear.codiag", "radial", "rectangular", "angular", "sinusoidal", ...
- * Some types may accept additional parameters to further specify the look.
- */
-
-/**
  * Sets the geometric type displayed by the given gradient object.
  * @param   obj  The given gradient object.
  * @param   name Name of the geometric type that the gradient is to be drawn as.
  * @param   params List of allowable params that the given gradient type allows.
  * Can be NULL.
- * @ingroup Evas_Object_Gradient_Type_Group
+ * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient_type_set(Evas_Object *obj, const char *name, const char *params)
@@ -695,7 +680,7 @@ evas_object_gradient_type_set(Evas_Object *obj, const char *name, const char *pa
  *               name in.
  * @param   params  Pointer to a character pointer to store the pointer to the type
  *               params string in.
- * @ingroup Evas_Object_Gradient_Type_Group
+ * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient_type_get(const Evas_Object *obj, char **name, char **params)

@@ -986,7 +986,7 @@ evas_event_feed_hold(Evas *e, int hold, unsigned int timestamp, const void *data
 }
 
 /**
- * @defgroup Evas_Object_Event_Flags_Group Evas Object Event Flag Functions
+ * @defgroup Evas_Object_Event_Flags_Group Object Event Flag Functions
  *
  * Functions that deal with how events on an Evas Object are processed.
  */

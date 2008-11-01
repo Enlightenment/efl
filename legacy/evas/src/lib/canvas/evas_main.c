@@ -32,7 +32,7 @@ evas_shutdown(void)
 }
 
 /**
- * @defgroup Evas_Canvas Evas Canvas
+ * @defgroup Evas_Canvas Evas Canvas functions
  *
  * Functions that deal with the basic evas object.  They are the
  * functions you need to use at a minimum to get a working evas, and

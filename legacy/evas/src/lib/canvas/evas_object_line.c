@@ -69,7 +69,7 @@ static const Evas_Object_Func object_func =
 /* it has no other api calls as all properties are standard */
 
 /**
- * @defgroup Evas_Line_Group Line Functions
+ * @defgroup Evas_Line_Group Line Object Functions
  *
  * Functions used to deal with evas line objects.
  */

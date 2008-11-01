@@ -66,14 +66,6 @@ static const Evas_Object_Func rg_object_func =
 /* the actual api call to add a gradient */
 
 /**
- * @defgroup Evas_Object_Gradient_Radial_Group Evas radial_gradient Object Functions
- *
- * Functions that work on evas radial gradient objects.
- *
- * The following example shows how
- */
-
-/**
  * Adds a gradient object to the given evas.
  * @param   e The given evas.
  * @return  A new evas gradient object if successful.  Otherwise, @c NULL.
@@ -100,12 +92,6 @@ evas_object_gradient2_radial_add(Evas *e)
 }
 
 /**
- * @defgroup Evas_Object_Gradient_Radial_Fill_Group Radial_Gradient Object Fill Functions
- *
- * Functions that deal with the fill geometry of the radial gradient object.
- */
-
-/**
  * Sets the center and radii of the radial gradient geometry for the object.
  *
  * Note that the gradient may extend beyond these,
@@ -120,7 +106,7 @@ evas_object_gradient2_radial_add(Evas *e)
  * @param   cy   The Y coordinate of the start point.
  * @param   rx   The length of the x-cordinate radius.
  * @param   ry   The length of the y-coordinate radius.
- * @ingroup Evas_Object_Gradient_Radial_Fill_Group
+ * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient2_radial_fill_set(Evas_Object *obj, float cx, float cy, float rx, float ry)
