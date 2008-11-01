@@ -204,7 +204,7 @@ eng_gradient2_linear_free(void *data, void *linear_gradient)
 }
 
 static void
-eng_gradient2_linear_fill_set(void *data, void *linear_gradient, int x0, int y0, int x1, int y1)
+eng_gradient2_linear_fill_set(void *data, void *linear_gradient, float x0, float y0, float x1, float y1)
 {
 }
 
@@ -615,7 +615,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 }
 
 static void
-eng_image_data_preload_request(void *data, void *image, void *target)
+eng_image_data_preload_request(void *data, void *image, const void *target)
 {
    Soft16_Image *im = image;
 

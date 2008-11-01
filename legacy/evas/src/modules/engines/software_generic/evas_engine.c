@@ -714,7 +714,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 }
 
 static void
-eng_image_data_preload_request(void *data, void *image, void *target)
+eng_image_data_preload_request(void *data, void *image, const void *target)
 {
    RGBA_Image *im = image;
 
