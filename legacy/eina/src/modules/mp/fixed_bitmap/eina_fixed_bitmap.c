@@ -27,6 +27,10 @@
 #include <string.h>
 #include <assert.h>
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "eina_inlist.h"
 #include "eina_rbtree.h"
 #include "eina_error.h"
