@@ -66,10 +66,15 @@ static const Evas_Object_Func object_func =
 /* the actual api call to add a gradient */
 
 /**
+ * @addtogroup Evas_Object_Gradient2_Group
+ * @{
+ * @ingroup Evas_Object_Group
+ */
+
+/**
  * Adds a gradient object to the given evas.
  * @param   e The given evas.
  * @return  A new evas gradient object if successful.  Otherwise, @c NULL.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI Evas_Object *
 evas_object_gradient2_linear_add(Evas *e)
@@ -107,7 +112,6 @@ evas_object_gradient2_linear_add(Evas *e)
  * @param   y0   The Y coordinate of the start point.
  * @param   x1   The X coordinate of the end point.
  * @param   y1   The Y coordinate of the end point
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient2_linear_fill_set(Evas_Object *obj, float x0, float y0, float x1, float y1)
@@ -160,7 +164,9 @@ evas_object_gradient2_linear_fill_get(const Evas_Object *obj, float *x0, float *
    return;
 }
 
-
+/**
+ * @}
+ */
 
 /* all nice and private */
 static void

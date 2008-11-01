@@ -205,6 +205,12 @@ static const Evas_Object_Func object_func =
  * Note: put here some usage examples
  */
 
+/**
+ * @addtogroup Evas_Object_Textblock
+ * @{
+ * @ingroup Evas_Object_Group
+ */
+
 /* styles */
 static void
 _style_clear(Evas_Textblock_Style *ts)
@@ -2317,7 +2323,6 @@ _find_layout_line_num(const Evas_Object *obj, int line)
  * Adds a textblock to the given evas.
  * @param   e The given evas.
  * @return  The new textblock object.
- * @ingroup Evas_Object_Textblock
  */
 EAPI Evas_Object *
 evas_object_textblock_add(Evas *e)
@@ -2336,7 +2341,6 @@ evas_object_textblock_add(Evas *e)
 /**
  * Creates a new textblock style.
  * @return  The new textblock style.
- * @ingroup Evas_Object_Textblock
  */
 EAPI Evas_Textblock_Style *
 evas_textblock_style_new(void)
@@ -2351,7 +2355,6 @@ evas_textblock_style_new(void)
  * Destroys a textblock style.
  * @param The textblock style to free.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_textblock_style_free(Evas_Textblock_Style *ts)
@@ -2371,7 +2374,6 @@ evas_textblock_style_free(Evas_Textblock_Style *ts)
  * @param ts  to be documented.
  * @param text  to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
@@ -2504,7 +2506,6 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
  * to be documented.
  * @param ts  to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI const char *
 evas_textblock_style_get(const Evas_Textblock_Style *ts)
@@ -2519,7 +2520,6 @@ evas_textblock_style_get(const Evas_Textblock_Style *ts)
  * @param obj to be documented.
  * @param ts  to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
@@ -2559,7 +2559,6 @@ evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
  * to be documented.
  * @param obj  to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI const Evas_Textblock_Style *
 evas_object_textblock_style_get(const Evas_Object *obj)
@@ -2572,7 +2571,6 @@ evas_object_textblock_style_get(const Evas_Object *obj)
  * to be documented.
  * @param obj  to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_object_textblock_replace_char_set(Evas_Object *obj, const char *ch)
@@ -2596,7 +2594,6 @@ evas_object_textblock_replace_char_set(Evas_Object *obj, const char *ch)
  * to be documented.
  * @param obj  to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI const char *
 evas_object_textblock_replace_char_get(Evas_Object *obj)
@@ -2689,7 +2686,6 @@ _escaped_char_get(const char *s, const char *s_end)
  * to be documented.
  * @param obj  to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI const char *
 evas_textblock_escape_string_get(const char *escape)
@@ -2702,7 +2698,6 @@ evas_textblock_escape_string_get(const char *escape)
  * to be documented.
  * @param obj  to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI const char *
 evas_textblock_string_escape_get(const char *string, int *len_ret)
@@ -2738,7 +2733,6 @@ _prepend_escaped_char(Evas_Textblock_Cursor *cur, const char *s,
  * @param ts  to be documented.
  * @param text to be documented.
  * @return Return no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_object_textblock_text_markup_set(Evas_Object *obj, const char *text)
@@ -2881,7 +2875,6 @@ evas_object_textblock_text_markup_set(Evas_Object *obj, const char *text)
  * @param ts  to be documented.
  * @param text to be documented.
  * @return Return no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char *text)
@@ -3010,7 +3003,6 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
  * to be documented.
  * @param obj  to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI const char *
 evas_object_textblock_text_markup_get(const Evas_Object *obj)
@@ -3085,7 +3077,6 @@ evas_object_textblock_text_markup_get(const Evas_Object *obj)
  * to be documented.
  * @param obj  to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI const Evas_Textblock_Cursor *
 evas_object_textblock_cursor_get(const Evas_Object *obj)
@@ -3098,7 +3089,6 @@ evas_object_textblock_cursor_get(const Evas_Object *obj)
  * to be documented.
  * @param obj  to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI Evas_Textblock_Cursor *
 evas_object_textblock_cursor_new(Evas_Object *obj)
@@ -3118,7 +3108,6 @@ evas_object_textblock_cursor_new(Evas_Object *obj)
  * to be documented.
  * @param cur  to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_textblock_cursor_free(Evas_Textblock_Cursor *cur)
@@ -3136,7 +3125,6 @@ evas_textblock_cursor_free(Evas_Textblock_Cursor *cur)
  * to be documented.
  * @param cur  to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_textblock_cursor_node_first(Evas_Textblock_Cursor *cur)
@@ -3153,7 +3141,6 @@ evas_textblock_cursor_node_first(Evas_Textblock_Cursor *cur)
  * to be documented.
  * @param cur  to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_textblock_cursor_node_last(Evas_Textblock_Cursor *cur)
@@ -3179,7 +3166,6 @@ evas_textblock_cursor_node_last(Evas_Textblock_Cursor *cur)
  * to be documented.
  * @param cur  to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI Evas_Bool
 evas_textblock_cursor_node_next(Evas_Textblock_Cursor *cur)
@@ -3202,7 +3188,6 @@ evas_textblock_cursor_node_next(Evas_Textblock_Cursor *cur)
  * to be documented.
  * @param cur  to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI Evas_Bool
 evas_textblock_cursor_node_prev(Evas_Textblock_Cursor *cur)
@@ -3225,7 +3210,6 @@ evas_textblock_cursor_node_prev(Evas_Textblock_Cursor *cur)
  * to be documented.
  * @param cur  to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI Evas_Bool
 evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur)
@@ -3251,7 +3235,6 @@ evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur)
  * to be documented.
  * @param cur  to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI Evas_Bool
 evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *cur)
@@ -3276,7 +3259,6 @@ evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *cur)
  * to be documented.
  * @param cur  to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_textblock_cursor_char_first(Evas_Textblock_Cursor *cur)
@@ -3289,7 +3271,6 @@ evas_textblock_cursor_char_first(Evas_Textblock_Cursor *cur)
  * to be documented.
  * @param cur  to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_textblock_cursor_char_last(Evas_Textblock_Cursor *cur)
@@ -3312,7 +3293,6 @@ evas_textblock_cursor_char_last(Evas_Textblock_Cursor *cur)
  * to be documented.
  * @param cur  to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_textblock_cursor_line_first(Evas_Textblock_Cursor *cur)
@@ -3354,7 +3334,6 @@ evas_textblock_cursor_line_first(Evas_Textblock_Cursor *cur)
  * to be documented.
  * @param cur  to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_textblock_cursor_line_last(Evas_Textblock_Cursor *cur)
@@ -3406,7 +3385,6 @@ evas_textblock_cursor_line_last(Evas_Textblock_Cursor *cur)
  * to be documented.
  * @param cur  to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI int
 evas_textblock_cursor_pos_get(const Evas_Textblock_Cursor *cur)
@@ -3420,7 +3398,6 @@ evas_textblock_cursor_pos_get(const Evas_Textblock_Cursor *cur)
  * @param cur to be documented.
  * @param int to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_textblock_cursor_pos_set(Evas_Textblock_Cursor *cur, int pos)
@@ -3438,7 +3415,6 @@ evas_textblock_cursor_pos_set(Evas_Textblock_Cursor *cur, int pos)
  * @param cur to be documented.
  * @param int to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI Evas_Bool
 evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line)
@@ -3479,7 +3455,6 @@ evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line)
  * @param cur1 to be documented.
  * @param cur2 to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI int
 evas_textblock_cursor_compare(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2)
@@ -3514,7 +3489,6 @@ evas_textblock_cursor_compare(const Evas_Textblock_Cursor *cur1, const Evas_Text
  * @param cur to be documented.
  * @param cur_dest to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_textblock_cursor_copy(const Evas_Textblock_Cursor *cur, Evas_Textblock_Cursor *cur_dest)
@@ -3533,7 +3507,6 @@ evas_textblock_cursor_copy(const Evas_Textblock_Cursor *cur, Evas_Textblock_Curs
  * @param cur to be documented.
  * @param text to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text)
@@ -3611,7 +3584,6 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text)
  * @param cur to be documented.
  * @param text to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text)
@@ -3687,7 +3659,6 @@ evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text)
  * @param cur to be documented.
  * @param format to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *format)
@@ -3766,7 +3737,6 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
  * @param cur to be documented.
  * @param format to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_textblock_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *format)
@@ -3850,7 +3820,6 @@ evas_textblock_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *for
  * to be documented.
  * @param cur to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_textblock_cursor_node_delete(Evas_Textblock_Cursor *cur)
@@ -3923,7 +3892,6 @@ evas_textblock_cursor_node_delete(Evas_Textblock_Cursor *cur)
  * to be documented.
  * @param cur to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
@@ -4006,7 +3974,6 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
  * @param cur1 to be documented.
  * @param cur2 to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2)
@@ -4277,7 +4244,6 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
  * to be documented.
  * @param cur to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI const char *
 evas_textblock_cursor_node_text_get(const Evas_Textblock_Cursor *cur)
@@ -4295,7 +4261,6 @@ evas_textblock_cursor_node_text_get(const Evas_Textblock_Cursor *cur)
  * to be documented.
  * @param cur to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI int
 evas_textblock_cursor_node_text_length_get(const Evas_Textblock_Cursor *cur)
@@ -4313,7 +4278,6 @@ evas_textblock_cursor_node_text_length_get(const Evas_Textblock_Cursor *cur)
  * to be documented.
  * @param cur to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI const char *
 evas_textblock_cursor_node_format_get(const Evas_Textblock_Cursor *cur)
@@ -4331,7 +4295,6 @@ evas_textblock_cursor_node_format_get(const Evas_Textblock_Cursor *cur)
  * to be documented.
  * @param cur to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI Evas_Bool
 evas_textblock_cursor_node_format_is_visible_get(const Evas_Textblock_Cursor *cur)
@@ -4382,7 +4345,6 @@ evas_textblock_cursor_node_format_is_visible_get(const Evas_Textblock_Cursor *cu
  * @param cur2 to be documented.
  * @param format to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI char *
 evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2, Evas_Textblock_Text_Type format)
@@ -4538,7 +4500,6 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
  * @param cw to be documented.
  * @param ch to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI int
 evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
@@ -4622,7 +4583,6 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
  * @param cw to be documented.
  * @param ch to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI int
 evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
@@ -4659,7 +4619,6 @@ evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
  * @param x to be documented.
  * @param y to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI Evas_Bool
 evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, Evas_Coord y)
@@ -4732,7 +4691,6 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
  * @param cur to be documented.
  * @param y to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI int
 evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
@@ -4761,7 +4719,6 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
  * @param cur1 to be documented.
  * @param cur2 to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI Eina_List *
 evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2)
@@ -4867,7 +4824,6 @@ evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, cons
  * @param cw to be documented.
  * @param ch to be documented.
  * @return to be documented.
- * @ingroup Evas_Object_Textblock
  */
 EAPI Evas_Bool
 evas_object_textblock_line_number_geometry_get(const Evas_Object *obj, int line, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
@@ -4888,7 +4844,6 @@ evas_object_textblock_line_number_geometry_get(const Evas_Object *obj, int line,
  * to be documented.
  * @param obj to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_object_textblock_clear(Evas_Object *obj)
@@ -4928,7 +4883,6 @@ evas_object_textblock_clear(Evas_Object *obj)
  * @param w to be documented.
  * @param h to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_object_textblock_size_formatted_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
@@ -4945,7 +4899,6 @@ evas_object_textblock_size_formatted_get(const Evas_Object *obj, Evas_Coord *w, 
  * @param w to be documented.
  * @param h to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_object_textblock_size_native_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
@@ -4971,7 +4924,6 @@ evas_object_textblock_size_native_get(const Evas_Object *obj, Evas_Coord *w, Eva
  * @param t to be documented.
  * @param b to be documented.
  * @return Returns no value.
- * @ingroup Evas_Object_Textblock
  */
 EAPI void
 evas_object_textblock_style_insets_get(const Evas_Object *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b)
@@ -4983,6 +4935,10 @@ evas_object_textblock_style_insets_get(const Evas_Object *obj, Evas_Coord *l, Ev
    if (t) *t = o->style_pad.t;
    if (b) *b = o->style_pad.b;
 }
+
+/**
+ * @}
+ */
 
 /* all nice and private */
 static void

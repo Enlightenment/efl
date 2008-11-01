@@ -75,10 +75,15 @@ static const Evas_Object_Func object_func =
  */
 
 /**
+ * @addtogroup Evas_Line_Group
+ * @{
+ * @ingroup Evas_Object_Group
+ */
+
+/**
  * Adds a new evas line object to the given evas.
  * @param   e The given evas.
  * @return  The new evas line object.
- * @ingroup Evas_Line_Group
  */
 EAPI Evas_Object *
 evas_object_line_add(Evas *e)
@@ -101,7 +106,6 @@ evas_object_line_add(Evas *e)
  * @param   y1  The Y coordinate of the first point.
  * @param   x2  The X coordinate of the second point.
  * @param   y2  The Y coordinate of the second point.
- * @ingroup Evas_Line_Group
  */
 EAPI void
 evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coord x2, Evas_Coord y2)
@@ -188,7 +192,6 @@ evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coo
  *            second end point.
  * @param y2  Pointer to an integer in which to store the Y coordinate of the
  *            second end point.
- * @ingroup Evas_Line_Group
  */
 EAPI void
 evas_object_line_xy_get(const Evas_Object *obj, Evas_Coord *x1, Evas_Coord *y1, Evas_Coord *x2, Evas_Coord *y2)
@@ -216,7 +219,9 @@ evas_object_line_xy_get(const Evas_Object *obj, Evas_Coord *x1, Evas_Coord *y1, 
    if (y2) *y2 = obj->cur.geometry.y + o->cur.y2;
 }
 
-
+/**
+ * @}
+ */
 
 /* all nice and private */
 static void

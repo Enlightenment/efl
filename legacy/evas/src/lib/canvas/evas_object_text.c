@@ -76,6 +76,18 @@ static const Evas_Object_Func object_func =
 /* it has no other api calls as all properties are standard */
 
 /**
+ * @defgroup Evas_Object_Text Text Object Functions
+ *
+ * Functions that operate on evas text objects.
+ */
+
+/**
+ * @addtogroup Evas_Object_Text
+ * @{
+ * @ingroup Evas_Object_Group
+ */
+
+/**
  * Creates a new text @c Evas_Object on the provided @c Evas canvas.
  *
  * @param e The @c Evas canvas to create the text object upon.
@@ -939,6 +951,10 @@ evas_object_text_style_pad_get(const Evas_Object *obj, int *l, int *r, int *t, i
    if (b) *b = sb;
 }
 
+
+/**
+ * @}
+ */
 
 /**
  * @defgroup Evas_Font_Path_Group Font Path Functions

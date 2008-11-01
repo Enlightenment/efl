@@ -89,6 +89,12 @@ static const Evas_Object_Func object_func =
  */
 
 /**
+ * @addtogroup Evas_Object_Gradient_Group
+ * @{
+ * @ingroup Evas_Object_Group
+ */
+
+/**
  * Adds a gradient object to the given evas.
  * @param   e The given evas.
  * @return  A new evas gradient object if successful.  Otherwise, @c NULL.
@@ -132,7 +138,6 @@ evas_object_gradient_add(Evas *e)
  * @param   b        Blue component of the given color.
  * @param   a        Alpha component of the given color.
  * @param   delta    Proportion of the gradient object that is this color.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient_color_stop_add(Evas_Object *obj, int r, int g, int b, int a, int delta)
@@ -166,7 +171,6 @@ evas_object_gradient_color_stop_add(Evas_Object *obj, int r, int g, int b, int a
  * @param   obj      The given evas gradient object.
  * @param   a        Alpha value.
  * @param   delta    Proportion of the gradient object that is this alpha.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient_alpha_stop_add(Evas_Object *obj, int a, int delta)
@@ -191,7 +195,6 @@ evas_object_gradient_alpha_stop_add(Evas_Object *obj, int a, int delta)
 /**
  * Deletes all stops set for the given evas gradient object or any set data.
  * @param   obj The given evas gradient object.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient_clear(Evas_Object *obj)
@@ -224,7 +227,6 @@ evas_object_gradient_clear(Evas_Object *obj)
  * @param   data      The color data to be set. Should be in argb32 pixel format.
  * @param   len       The length of the data pointer - multiple of the pixel size.
  * @param   has_alpha A flag indicating if the data has alpha or not.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient_color_data_set(Evas_Object *obj, void *data, int len, Evas_Bool has_alpha)
@@ -256,7 +258,6 @@ evas_object_gradient_color_data_set(Evas_Object *obj, void *data, int len, Evas_
  * @param   obj       The given evas gradient object.
  * @param   data      The alpha data to be set, in a8 format.
  * @param   len       The length of the data pointer - multiple of the pixel size.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient_alpha_data_set(Evas_Object *obj, void *data, int len)
@@ -297,7 +298,6 @@ evas_object_gradient_alpha_data_set(Evas_Object *obj, void *data, int len)
  * @param   y   The Y coordinate for the top left corner of the rect.
  * @param   w   The width of the rect.
  * @param   h   The height of the rect.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
@@ -337,7 +337,6 @@ evas_object_gradient_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas
  * @param   y   Pointer to an Evas_Coord to store the Y coordinate in.
  * @param   w   Pointer to an Evas_Coord to store the width in.
  * @param   h   Pointer to an Evas_Coord to store the height in.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient_fill_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
@@ -371,7 +370,6 @@ evas_object_gradient_fill_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord 
  * from vertical.
  * @param   obj   The given evas gradient object.
  * @param   angle Angle in degrees.  Can be negative.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient_fill_angle_set(Evas_Object *obj, Evas_Angle angle)
@@ -396,7 +394,6 @@ evas_object_gradient_fill_angle_set(Evas_Object *obj, Evas_Angle angle)
  * clockwise from the vertical.
  * @param   obj The given evas gradient object.
  * @return  The current angle if successful. @c 0.0 otherwise.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI Evas_Angle
 evas_object_gradient_fill_angle_get(const Evas_Object *obj)
@@ -419,7 +416,6 @@ evas_object_gradient_fill_angle_get(const Evas_Object *obj)
  * @param   spread One of EVAS_TEXTURE_REFLECT, EVAS_TEXTURE_REPEAT,
  * EVAS_TEXTURE_RESTRICT, EVAS_TEXTURE_RESTRICT_REFLECT, EVAS_TEXTURE_RESTRICT_REPEAT,
  * or EVAS_TEXTURE_PAD.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient_fill_spread_set(Evas_Object *obj, int spread)
@@ -443,7 +439,6 @@ evas_object_gradient_fill_spread_set(Evas_Object *obj, int spread)
  * Retrieves the spread (tiling mode) for the given gradient object's fill.
  * @param   obj The given evas gradient object.
  * @return  The current spread mode of the gradient object.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI int
 evas_object_gradient_fill_spread_get(const Evas_Object *obj)
@@ -466,7 +461,6 @@ evas_object_gradient_fill_spread_get(const Evas_Object *obj)
  * Used mostly by 'linear' kinds of gradients.
  * @param   obj   The given evas gradient object.
  * @param   angle Angle in degrees.  Can be negative.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient_angle_set(Evas_Object *obj, Evas_Angle angle)
@@ -492,7 +486,6 @@ evas_object_gradient_angle_set(Evas_Object *obj, Evas_Angle angle)
  * rel to its intrinsic orientation.
  * @param   obj The given evas gradient object.
  * @return  The current angle if successful. @c 0.0 otherwise.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI Evas_Angle
 evas_object_gradient_angle_get(const Evas_Object *obj)
@@ -513,7 +506,6 @@ evas_object_gradient_angle_get(const Evas_Object *obj)
  * Sets the offset of the given evas gradient object's spectrum.
  * @param   obj   The given evas gradient object.
  * @param   offset Values can be negative.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient_offset_set(Evas_Object *obj, float offset)
@@ -537,7 +529,6 @@ evas_object_gradient_offset_set(Evas_Object *obj, float offset)
  * Retrieves the spectrum's offset
  * @param   obj The given evas gradient object.
  * @return  The current gradient offset if successful. @c 0.0 otherwise.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI float
 evas_object_gradient_offset_get(const Evas_Object *obj)
@@ -558,7 +549,6 @@ evas_object_gradient_offset_get(const Evas_Object *obj)
  * Sets the direction of the given evas gradient object's spectrum.
  * @param   obj   The given evas gradient object.
  * @param   direction Values are either 1 (the default) or -1.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient_direction_set(Evas_Object *obj, int direction)
@@ -583,7 +573,6 @@ evas_object_gradient_direction_set(Evas_Object *obj, int direction)
  * Retrieves the evas gradient object's spectrum direction
  * @param   obj The given evas gradient object.
  * @return  The current gradient direction if successful. @c 1 otherwise.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI int
 evas_object_gradient_direction_get(const Evas_Object *obj)
@@ -606,7 +595,6 @@ evas_object_gradient_direction_get(const Evas_Object *obj)
  * @param   name Name of the geometric type that the gradient is to be drawn as.
  * @param   params List of allowable params that the given gradient type allows.
  * Can be NULL.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient_type_set(Evas_Object *obj, const char *name, const char *params)
@@ -680,7 +668,6 @@ evas_object_gradient_type_set(Evas_Object *obj, const char *name, const char *pa
  *               name in.
  * @param   params  Pointer to a character pointer to store the pointer to the type
  *               params string in.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient_type_get(const Evas_Object *obj, char **name, char **params)
@@ -702,6 +689,11 @@ evas_object_gradient_type_get(const Evas_Object *obj, char **name, char **params
    if (params) *params = o->cur.type.params;
 }
 
+
+
+/**
+ * @}
+ */
 
 /*
   these two functions don't really belong here as they can apply to other

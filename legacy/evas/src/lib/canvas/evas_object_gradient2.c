@@ -19,6 +19,20 @@ struct _Evas_Object_Gradient2
 };
 
 
+
+/**
+ * @defgroup Evas_Object_Gradient2_Group Gradient2 Object Functions
+ *
+ * Functions that work on evas gradient2 objects.
+ *
+ */
+
+/**
+ * @addtogroup Evas_Object_Gradient2_Group
+ * @{
+ * @ingroup Evas_Object_Group
+ */
+
 /**
  * Inserts a color stop to the given evas gradient object.
  *
@@ -32,7 +46,6 @@ struct _Evas_Object_Gradient2
  * @param   b        Blue component of the given color.
  * @param   a        Alpha component of the given color.
  * @param   pos      The pos in [0,1] of this stop.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient2_color_np_stop_insert(Evas_Object *obj, int r, int g, int b, int a, float pos)
@@ -59,7 +72,6 @@ evas_object_gradient2_color_np_stop_insert(Evas_Object *obj, int r, int g, int b
 /**
  * Deletes all stops set for the given evas gradient object or any set data.
  * @param   obj The given evas gradient object.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient2_clear(Evas_Object *obj)
@@ -89,7 +101,6 @@ evas_object_gradient2_clear(Evas_Object *obj)
  * @param   obj   The given evas gradient object.
  * @param   spread One of EVAS_TEXTURE_REFLECT, EVAS_TEXTURE_REPEAT,
  * EVAS_TEXTURE_RESTRICT, or EVAS_TEXTURE_PAD.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI void
 evas_object_gradient2_fill_spread_set(Evas_Object *obj, int spread)
@@ -113,7 +124,6 @@ evas_object_gradient2_fill_spread_set(Evas_Object *obj, int spread)
  * Retrieves the spread (tiling mode) for the given gradient object's fill.
  * @param   obj The given evas gradient object.
  * @return  The current spread mode of the gradient object.
- * @ingroup Evas_Object_Gradient_Group
  */
 EAPI int
 evas_object_gradient2_fill_spread_get(const Evas_Object *obj)
@@ -209,6 +219,11 @@ evas_object_gradient2_fill_transform_get (const Evas_Object *obj, Evas_Transform
      }
 }
 
+
+
+/**
+ * @}
+ */
 
 #include "evas_object_gradient2_linear.c"
 #include "evas_object_gradient2_radial.c"

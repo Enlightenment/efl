@@ -63,10 +63,21 @@ static const Evas_Object_Func object_func =
 /* it has no other api calls as all properties are standard */
 
 /**
+ * @defgroup Evas_Object_Rectangle Rectangle Object Functions
+ *
+ * Functions that operate on evas rectangle objects.
+ */
+
+/**
+ * @addtogroup Evas_Object_Rectangle
+ * @{
+ * @ingroup Evas_Object_Group
+ */
+
+/**
  * Adds a rectangle to the given evas.
  * @param   e The given evas.
  * @return  The new rectangle object.
- * @todo Find a documentation group to put this under.
  */
 EAPI Evas_Object *
 evas_object_rectangle_add(Evas *e)
@@ -82,10 +93,9 @@ evas_object_rectangle_add(Evas *e)
    return obj;
 }
 
-
-
-
-
+/**
+ * @}
+ */
 
 /* all nice and private */
 static void

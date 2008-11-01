@@ -66,16 +66,21 @@ static const Evas_Object_Func object_func =
 /* it has no other api calls as all properties are standard */
 
 /**
- * @defgroup Evas_Polygon_Group Polygon Object Functions
+ * @defgroup Evas_Object_Polygon Polygon Object Functions
  *
  * Functions that operate on evas polygon objects.
+ */
+
+/**
+ * @addtogroup Evas_Object_Polygon
+ * @{
+ * @ingroup Evas_Object_Group
  */
 
 /**
  * Adds a new evas polygon object to the given evas.
  * @param   e The given evas.
  * @return  A new evas polygon object.
- * @ingroup Evas_Polygon_Group
  */
 EAPI Evas_Object *
 evas_object_polygon_add(Evas *e)
@@ -175,7 +180,6 @@ evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 /**
  * Removes all of the points from the given evas polygon object.
  * @param   obj The given polygon object.
- * @ingroup Evas_Polygon_Group
  */
 EAPI void
 evas_object_polygon_points_clear(Evas_Object *obj)
@@ -217,9 +221,9 @@ evas_object_polygon_points_clear(Evas_Object *obj)
    evas_object_inform_call_resize(obj);
 }
 
-
-
-
+/**
+ * @}
+ */
 
 /* all nice and private */
 static void
