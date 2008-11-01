@@ -528,8 +528,6 @@ _evas_object_table_calculate_hints_regular(Evas_Object *o, Evas_Object_Table_Dat
    Evas_Object_Table_Cache *c;
    Eina_List *l;
 
-   // XXX TODO: account paddings!
-
    if (!priv->cache)
      {
 	priv->cache = _evas_object_table_cache_alloc
@@ -564,6 +562,11 @@ _evas_object_table_calculate_hints_regular(Evas_Object *o, Evas_Object_Table_Dat
 	    ((opt->max.h < 0) ||
 	     ((opt->max.h > -1) && (opt->min.h < opt->max.h))))
 	  opt->expand_v = 1;
+
+	if (opt->align.h < 0.0)
+	  opt->align.h = 0.5;
+	if (opt->align.v < 0.0)
+	  opt->align.v = 0.5;
 
 	if (opt->expand_h)
 	  memset(c->expands.h + opt->col, 1, opt->colspan);
@@ -888,11 +891,16 @@ evas_object_table_smart_set(Evas_Smart_Class *sc)
 /**
  * Set how this table should layout children.
  *
+ * @todo consider aspect hint and respect it.
+ *
  * @par EVAS_OBJECT_TABLE_HOMOGENEOUS_NONE
  * If table does not use homogeneous mode then columns and rows will
  * be calculated based on hints of individual cells. This operation
  * mode is more flexible, but more complex and heavy to calculate as
- * well.
+ * well. @b Weight properties are handled as a boolean
+ * expand. Negative alignment will be considered as 0.5.
+ *
+ * @todo @c EVAS_OBJECT_TABLE_HOMOGENEOUS_NONE should balance weight.
  *
  * @par EVAS_OBJECT_TABLE_HOMOGENEOUS_TABLE
  * When homogeneous is relative to table the own table size is divided

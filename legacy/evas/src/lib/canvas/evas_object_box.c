@@ -652,6 +652,8 @@ _evas_object_box_layout_horizontal_weight_apply(Evas_Object_Box_Data *priv, Evas
  * resized bounded to a minimum or maximum size, their size hint
  * properties must be set (by the
  * evas_object_size_hint_{min,max}_set() functions.
+ *
+ * @todo consider aspect hint and respect it.
  */
 void
 evas_object_box_layout_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv)
@@ -810,6 +812,8 @@ _evas_object_box_layout_vertical_weight_apply(Evas_Object_Box_Data *priv, Evas_O
  * This function behaves analogously to
  * evas_object_box_layout_horizontal().  The description of its
  * behaviour can be derived from that function's documentation.
+ *
+ * @todo consider aspect hint and respect it.
  */
 void
 evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv)
@@ -939,6 +943,8 @@ evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv)
  * value of -1.0 to @c align_y makes the box try to resize this child
  * element to the exact height of its parent (respecting the max hint
  * on the child's height).
+ *
+ * @todo consider aspect hint and respect it.
  */
 void
 evas_object_box_layout_homogeneous_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv)
@@ -1004,6 +1010,8 @@ evas_object_box_layout_homogeneous_horizontal(Evas_Object *o, Evas_Object_Box_Da
  * This function behaves analogously to
  * evas_object_box_layout_homogeneous_horizontal().  The description
  * of its behaviour can be derived from that function's documentation.
+ *
+ * @todo consider aspect hint and respect it.
  */
 void
 evas_object_box_layout_homogeneous_vertical(Evas_Object *o, Evas_Object_Box_Data *priv)
@@ -1101,6 +1109,8 @@ evas_object_box_layout_homogeneous_vertical(Evas_Object *o, Evas_Object_Box_Data
  * value of -1.0 to @c align_y makes the box try to resize this child
  * element to the exact height of its parent (respecting the max hint
  * on the child's height).
+ *
+ * @todo consider aspect hint and respect it.
  */
 void
 evas_object_box_layout_homogeneous_max_size_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv)
@@ -1188,6 +1198,8 @@ evas_object_box_layout_homogeneous_max_size_horizontal(Evas_Object *o, Evas_Obje
  * evas_object_box_layout_homogeneous_max_size_horizontal().  The
  * description of its behaviour can be derived from that function's
  * documentation.
+ *
+ * @todo consider aspect hint and respect it.
  */
 void
 evas_object_box_layout_homogeneous_max_size_vertical(Evas_Object *o, Evas_Object_Box_Data *priv)
@@ -1365,6 +1377,8 @@ _evas_object_box_layout_flow_horizontal_row_info_collect(Evas_Object_Box_Data *p
  * row justifying) of setting space between rows.  Note, however, that
  * @c align_y dictates positioning relative to the *largest height*
  * required by a child object in the actual row.
+ *
+ * @todo consider aspect hint and respect it.
  */
 void
 evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv)
@@ -1532,6 +1546,8 @@ _evas_object_box_layout_flow_vertical_col_info_collect(Evas_Object_Box_Data *pri
  * This function behaves analogously to
  * evas_object_box_layout_flow_horizontal().  The description of its
  * behaviour can be derived from that function's documentation.
+ *
+ * @todo consider aspect hint and respect it.
  */
 void
 evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv)
@@ -1648,6 +1664,8 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv)
  * (respecting the min and max hints on the child's width *and*
  * accounting its horizontal padding properties).  Same applies to
  * vertical axis.
+ *
+ * @todo consider aspect hint and respect it.
  */
 void
 evas_object_box_layout_stack(Evas_Object *o, Evas_Object_Box_Data *priv)
