@@ -28,7 +28,7 @@ AC_SUBST(version_info)
 ### Default options with respect to host
 
 case "$host_os" in
-   mingw32ce* | cegcc*)
+   mingw* | cegcc*)
       want_openssl="no"
       want_cypher="no"
       want_signature="no"
@@ -110,22 +110,42 @@ fi
 AC_SUBST(DEBUG_CFLAGS)
 
 
-### Checks for libraries
+### Checks for programs
+AC_PROG_CC
 
-PKG_PROG_PKG_CONFIG
+# doxygen program for documentation building
+
+EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
+
+
+### Checks for libraries
 
 # Evil library for compilation on Windows
 
 EFL_EET_BUILD=""
 case "$host_os" in
    mingw* | cegcc*)
-   PKG_CHECK_MODULES([EVIL], [evil])
-   AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if Evil library is installed])
-   requirement_eet="evil ${requirement_eet}"
-   EFL_EET_BUILD="-DEFL_EET_BUILD"
+      PKG_CHECK_MODULES([EVIL], [evil])
+      AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if Evil library is installed])
+      requirement_eet="evil ${requirement_eet}"
+      EFL_EET_BUILD="-DEFL_EET_BUILD"
    ;;
 esac
 AC_SUBST(EFL_EET_BUILD)
+
+EET_LIBS=""
+case "$host_os" in
+   mingw32ce*)
+      EET_LIBS="-lws2"
+      ;;
+   cegcc*)
+      EET_LIBS="-lws2"
+      ;;
+   mingw*)
+      EET_LIBS="-lws2_32"
+      ;;
+esac
+AC_SUBST(EET_LIBS)
 
 # Eina library
 
@@ -140,7 +160,8 @@ if test "x${want_openssl}" = "xyes" -o "x${want_openssl}" = "xauto" ; then
        have_openssl="yes"
        AC_DEFINE(HAVE_OPENSSL, 1, [Have Openssl support])
        requirement_eet="openssl ${requirement_eet}"
-      ], [have_openssl="no"])
+      ],
+      [have_openssl="no"])
 fi
 
 have_cypher="no"
@@ -177,14 +198,6 @@ AC_CHECK_HEADERS(netinet/in.h)
 AC_CHECK_HEADER([fnmatch.h],
    [dummy="yes"],
    [AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file. MinGW users: see the INSTALL file])])
-
-
-### Checks for programs
-AC_PROG_CC
-
-# doxygen program for documentation building
-
-EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 
 ### Checks for types
@@ -242,20 +255,6 @@ AC_SUBST(EET_CFLAGS)
 
 
 ### Checks for linker characteristics
-
-EET_LIBS=""
-case "$host_os" in
-   mingw32ce*)
-      EET_LIBS="-lws2"
-      ;;
-   cegcc*)
-      EET_LIBS="-lws2"
-      ;;
-   mingw*)
-      EET_LIBS="-lws2_32"
-      ;;
-esac
-AC_SUBST(EET_LIBS)
 
 lt_enable_auto_import=""
 case "$host_os" in
