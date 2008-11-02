@@ -416,7 +416,7 @@ EAPI void
 edje_edit_style_tag_value_set(
    Evas_Object *obj,       ///< The edje object
    const char *style,      ///< The name of the style to inspect
-   const char *tag         ///< The name of the tag
+   const char *tag,        ///< The name of the tag
    const char *new_value   ///< The new tag value
 );
 
@@ -425,7 +425,7 @@ EAPI void
 edje_edit_style_tag_name_set(
    Evas_Object *obj,       ///< The edje object
    const char *style,      ///< The name of the style
-   const char *tag         ///< The name of the tag
+   const char *tag,        ///< The name of the tag
    const char *new_name    ///< The new name for tag
 );
 
