@@ -24,13 +24,8 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 @QUARTZ_LIBS@ \
 @EINA_LIBS@
 
-libecore_quartz_la_LDFLAGS = @lt_no_undefined@ @lt_enable_auto_import@ -version-info @version_info@
-
-libecore_quartz_la_DEPENDENCIES = \
-$(top_builddir)/src/lib/ecore/libecore.la
+libecore_quartz_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
 
 endif
 
-EXTRA_DIST = \
-Ecore_Quartz.h \
-ecore_quartz.m
+EXTRA_DIST = ecore_quartz.m

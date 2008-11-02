@@ -50,16 +50,18 @@
  */
 
 #ifndef _ECORE_PRIVATE_H
-#include <sys/types.h>
-#include <signal.h>
+# include <sys/types.h>
+# ifndef _WIN32
+#  include <signal.h>
+# endif
 #endif
 
 #ifndef TRUE
-#define TRUE 1
+# define TRUE 1
 #endif
 
 #ifndef FALSE
-#define FALSE 0
+# define FALSE 0
 #endif
 
 #ifdef __cplusplus

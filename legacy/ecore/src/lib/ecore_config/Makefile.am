@@ -51,10 +51,6 @@ $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
 @EET_LIBS@ \
 @EVAS_LIBS@
 
-libecore_config_la_DEPENDENCIES = \
-$(top_builddir)/src/lib/ecore/libecore.la \
-$(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la
-
 else
 
 libecore_config_la_SOURCES = \
@@ -70,9 +66,6 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 @EET_LIBS@ \
 @EINA_LIBS@ \
 @EVAS_LIBS@
-
-libecore_config_la_DEPENDENCIES = \
-$(top_builddir)/src/lib/ecore/libecore.la
 
 endif
 

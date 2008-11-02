@@ -18,8 +18,7 @@ ecore_con.c \
 ecore_con_dns.c \
 ecore_con_info.c \
 ecore_con_ssl.c \
-ecore_con_url.c \
-ecore_con_private.h
+ecore_con_url.c
 
 libecore_con_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
@@ -27,15 +26,6 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 
 libecore_con_la_LDFLAGS = -version-info @version_info@
 
-libecore_con_la_DEPENDENCIES = \
-$(top_builddir)/src/lib/ecore/libecore.la
-
 endif
 
-EXTRA_DIST = \
-ecore_con.c \
-ecore_con_dns.c \
-ecore_con_info.c \
-ecore_con_ssl.c \
-ecore_con_url.c \
-ecore_con_private.h
+EXTRA_DIST = ecore_con_private.h

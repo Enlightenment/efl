@@ -24,9 +24,9 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore_x \
 @EINA_CFLAGS@
 
-noinst_LTLIBRARIES      = libecore_x_xlib.la
+noinst_LTLIBRARIES = libecore_x_xlib.la
 
-libecore_x_xlib_la_SOURCES  = \
+libecore_x_xlib_la_SOURCES = \
 ecore_x.c \
 ecore_x_dnd.c \
 ecore_x_sync.c \
@@ -72,10 +72,6 @@ $(top_builddir)/src/lib/ecore_txt/libecore_txt.la \
 @EINA_LIBS@
 
 libecore_x_xlib_la_LDFLAGS = -version-info @version_info@
-
-libecore_x_xlib_la_DEPENDENCIES = \
-$(top_builddir)/src/lib/ecore/libecore.la \
-$(top_builddir)/src/lib/ecore_txt/libecore_txt.la
 
 endif
 

@@ -11,12 +11,16 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <signal.h>
+#ifdef HAVE_SIGNAL_H
+# include <signal.h>
+#endif
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <limits.h>
 #include <dirent.h>
-#include <sys/resource.h>
+#ifdef HAVE_SYS_RESOURCE_H
+# include <sys/resource.h>
+#endif
 
 #include <eina_types.h>
 

@@ -19,12 +19,5 @@ $(top_builddir)/src/lib/ecore_imf/libecore_imf.la \
 @EVAS_LIBS@ \
 @EINA_LIBS@
 
-libecore_imf_evas_la_DEPENDENCIES = \
-$(top_builddir)/src/lib/ecore_imf/libecore_imf.la
-
-libecore_imf_evas_la_LDFLAGS = @lt_no_undefined@ @lt_enable_auto_import@ -version-info @version_info@
+libecore_imf_evas_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
 endif
-
-EXTRA_DIST = \
-Ecore_IMF_Evas.h \
-ecore_imf_evas.c

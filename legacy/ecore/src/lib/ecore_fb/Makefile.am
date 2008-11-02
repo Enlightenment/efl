@@ -15,8 +15,7 @@ libecore_fb_la_SOURCES = \
 ecore_fb.c \
 ecore_fb_vt.c \
 ecore_fb_li.c \
-ecore_fb_ts.c \
-ecore_fb_private.h
+ecore_fb_ts.c
 # deprecated sources (might not compile):
 # ecore_fb_kbd.c
 # ecore_fb_ps2.c
@@ -28,13 +27,8 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 
 libecore_fb_la_LDFLAGS = -version-info @version_info@
 
-libecore_fb_la_DEPENDENCIES = \
-$(top_builddir)/src/lib/ecore/libecore.la
-
 endif
 
 EXTRA_DIST = \
-Ecore_Fb.h \
-ecore_fb.c \
 ecore_fb_private.h \
 ecore_fb_keytable.h

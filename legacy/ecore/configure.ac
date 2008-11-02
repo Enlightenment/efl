@@ -65,12 +65,12 @@ PKG_PROG_PKG_CONFIG
 PKG_CHECK_MODULES([EINA], [eina-0])
 
 dnl add windows requirements
+WIN32_CPPFLAGS=""
 WIN32_CFLAGS=""
 WIN32_LIBS=""
-lt_no_undefined=""
 lt_enable_auto_import=""
 case "$host_os" in
-	mingw*|cegcc)
+	mingw* | cegcc*)
 		PKG_CHECK_MODULES([EVIL], [evil])
 		AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed.])
 		dnl needed for correct definition of EAPI
@@ -88,23 +88,29 @@ case "$host_os" in
 		AC_DEFINE(HAVE_SYS_TIME_H, 1, [Define to 1 if you have the <sys/time.h> header file.])
                 if test "$host_os" = "cegcc" ; then
 			AC_DEFINE(EFL_ECORE_WINCE_BUILD, 1, [Define to mention that ecore WinCE is built.])
-                        WIN32_CFLAGS="-mwin32"
-                        WIN32_LIBS="-lws2 -laygshell"
-			lt_enable_auto_import="-Wl,--enable-auto-import"
+			WIN32_CPPFLAGS="-D_WIN32_WCE=0x0420"
+			WIN32_CFLAGS="-mwin32"
+			WIN32_LIBS="-lws2 -laygshell"
                 else
-                        WIN32_LIBS="-lws2_32"
+			if test "$host_os" = "mingw32ce" ; then
+				AC_DEFINE(EFL_ECORE_WINCE_BUILD, 1, [Define to mention that ecore WinCE is built.])
+				WIN32_CPPFLAGS="-D_WIN32_WCE=0x0420"
+				WIN32_LIBS="-lws2 -laygshell"
+			else
+				WIN32_LIBS="-lws2_32"
+			fi
                 fi
-		lt_no_undefined="-no-undefined"
+                lt_enable_auto_import="-Wl,--enable-auto-import"
 		;;
 	*)
-		AC_CHECK_HEADERS([dlfcn.h features.h langinfo.h locale.h netdb.h netinet/in.h sys/time.h sys/mman.h])
+		AC_CHECK_HEADERS([dlfcn.h features.h langinfo.h locale.h netdb.h netinet/in.h sys/time.h sys/mman.h signal.h sys/resource.h])
 		AC_CHECK_LIB(dl, dlopen, dlopen_libs=-ldl)
 		AC_SUBST(dlopen_libs)
 		;;
 esac
+AC_SUBST(WIN32_CPPFLAGS)
 AC_SUBST(WIN32_CFLAGS)
 AC_SUBST(WIN32_LIBS)
-AC_SUBST(lt_no_undefined)
 AC_SUBST(lt_enable_auto_import)
 
 dnl check common functions and headers

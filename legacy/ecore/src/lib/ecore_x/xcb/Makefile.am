@@ -25,9 +25,9 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore_x \
 @EINA_CFLAGS@
 
-noinst_LTLIBRARIES      = libecore_x_xcb.la
+noinst_LTLIBRARIES = libecore_x_xcb.la
 
-libecore_x_xcb_la_SOURCES  = \
+libecore_x_xcb_la_SOURCES = \
 ecore_xcb_atom.c \
 ecore_xcb_cursor.c \
 ecore_xcb_damage.c \
@@ -74,10 +74,6 @@ $(top_builddir)/src/lib/ecore_txt/libecore_txt.la \
 @EINA_LIBS@
 
 libecore_x_xcb_la_LDFLAGS = -version-info @version_info@
-
-libecore_x_xcb_la_DEPENDENCIES = \
-$(top_builddir)/src/lib/ecore/libecore.la \
-$(top_builddir)/src/lib/ecore_txt/libecore_txt.la
 
 endif
 
