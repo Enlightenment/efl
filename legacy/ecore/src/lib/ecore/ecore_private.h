@@ -16,6 +16,7 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <dirent.h>
+#include <sys/resource.h>
 
 #include <eina_types.h>
 
@@ -469,5 +470,6 @@ void          _ecore_fps_debug_runtime_add(double t);
 
 
 extern int    _ecore_fps_debug;
+extern double _ecore_loop_time;
 
 #endif

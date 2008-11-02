@@ -207,6 +207,40 @@ _ecore_exe_check_errno(int result, const char *file, int line)
  * Functions that deal with spawned processes.
  */
 
+static int run_pri = ECORE_EXE_PRIORITY_INHERIT;
+
+/**
+ * Sets the priority at which to launch processes
+ *
+ * This sets the priority of processes run by ecore_exe_run() and 
+ * ecore_exe_pipe_run(). If set to ECORE_EXE_PRIORITY_INHERIT child processes
+ * inherit the priority of their parent. This is the default.
+ * 
+ * @param   pri value -20 to 19 or ECORE_EXE_PRIORITY_INHERIT
+ * @ingroup Ecore_Exe_Basic_Group
+ */
+EAPI void
+ecore_exe_run_priority_set(int pri)
+{
+   run_pri = pri;
+}
+
+/**
+ * Gets the priority at which to launch processes
+ *
+ * This gets ths priority of launched processes. See 
+ * ecore_exe_run_priority_set() for details. This just returns the value set
+ * by this call.
+ * 
+ * @return the value set by ecore_exe_run_priority_set()
+ * @ingroup Ecore_Exe_Basic_Group
+ */
+EAPI int
+ecore_exe_run_priority_get(void)
+{
+   return run_pri;
+}
+
 /**
  * Spawns a child process.
  *
@@ -352,6 +386,13 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 	  }
 	else if (pid == 0)	/* child */
 	  {
+	     if (run_pri != ECORE_EXE_PRIORITY_INHERIT)
+	       {
+		  if ((run_pri >= -20) && (run_pri <= 19))
+		    {
+		       setpriority(PRIO_PROCESS, 0, run_pri);
+		    }
+	       }
 	     /* dup2 STDERR, STDIN, and STDOUT.  dup2() allegedly closes the
 	      * second pipe if it's open. On the other hand, there was the
 	      * Great FD Leak Scare of '06, so let's be paranoid. */

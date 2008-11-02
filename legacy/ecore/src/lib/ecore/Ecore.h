@@ -77,6 +77,8 @@ extern "C" {
 #define ECORE_EVENT_SIGNAL_REALTIME 5 /**< Realtime signal event */
 #define ECORE_EVENT_COUNT           6
 
+#define ECORE_EXE_PRIORITY_INHERIT 9999
+   
    EAPI extern int ECORE_EXE_EVENT_ADD; /**< A child process has been added */
    EAPI extern int ECORE_EXE_EVENT_DEL; /**< A child process has been deleted (it exited, naming consistant with the rest of ecore). */
    EAPI extern int ECORE_EXE_EVENT_DATA; /**< Data from a child process. */
@@ -237,6 +239,8 @@ extern "C" {
 
 
 #ifndef _WIN32
+   EAPI void        ecore_exe_run_priority_set(int pri);
+   EAPI int         ecore_exe_run_priority_get(void);
    EAPI Ecore_Exe  *ecore_exe_run(const char *exe_cmd, const void *data);
    EAPI Ecore_Exe  *ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data);
    EAPI int         ecore_exe_send(Ecore_Exe *exe, void *data, int size);
@@ -281,7 +285,8 @@ extern "C" {
    EAPI void              ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
 
    EAPI double ecore_time_get(void);
-
+   EAPI double ecore_loop_time_get(void);
+       
    EAPI Ecore_Timer *ecore_timer_add(double in, int (*func) (void *data), const void *data);
    EAPI void        *ecore_timer_del(Ecore_Timer *timer);
    EAPI void         ecore_timer_interval_set(Ecore_Timer *timer, double in);

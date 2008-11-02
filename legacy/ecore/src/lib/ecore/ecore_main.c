@@ -328,7 +328,7 @@ _ecore_main_select(double timeout)
 	fdh = (Ecore_Fd_Handler *)l;
 
 	if (!fdh->delete_me && fdh->prep_func)
-		fdh->prep_func (fdh->prep_data, fdh);
+	  fdh->prep_func (fdh->prep_data, fdh);
      }
    for (l = (Ecore_List2 *)fd_handlers; l; l = l->next)
      {
@@ -353,6 +353,7 @@ _ecore_main_select(double timeout)
      }
    if (_ecore_signal_count_get()) return -1;
    ret = select(max_fd + 1, &rfds, &wfds, &exfds, t);
+   _ecore_loop_time = ecore_time_get();
    if (ret < 0)
      {
 	if (errno == EINTR) return -1;
@@ -531,7 +532,7 @@ _ecore_main_loop_iterate_internal(int once_only)
      {
 	double now;
 
-	now = ecore_time_get();
+	now = ecore_loop_time_get();
 	while (_ecore_timer_call(now));
 	_ecore_timer_cleanup();
      }
