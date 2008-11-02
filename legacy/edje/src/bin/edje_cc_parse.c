@@ -135,16 +135,15 @@ perform_math (char *input)
 
    /* FIXME
     * Always apply floating-point arithmetic.
-    * Does this cause problems for integer parameters?
+    * Does this cause problems for integer parameters? (yes it will)
     *
     * What we should do is, loop over the string and figure out whether
     * there are floating point operands, too and then switch to
     * floating point math.
     */
-   res = my_atof (input);
-   snprintf (buf, sizeof (buf), "%lf", res);
-
-   return strdup (buf);
+   res = my_atof(input);
+   snprintf(buf, sizeof (buf), "%lf", res);
+   return strdup(buf);
 }
 
 static int
@@ -354,7 +353,7 @@ next_token(char *p, char *end, char **new_p, int *delim)
 	       }
 	  }
      }
-   else if (tok && *tok == '(')
+   else if ((tok) && (*tok == '('))
      {
 	char *tmp;
 	tmp = tok;
