@@ -58,6 +58,5 @@ double _ecore_loop_time = -1.0;
 EAPI double
 ecore_loop_time_get(void)
 {
-   if (_ecore_loop_time < 0.0) return ecore_time_get();
    return _ecore_loop_time;
 }
