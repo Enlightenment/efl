@@ -289,7 +289,7 @@ _ecore_timer_next_get(void)
    Ecore_Timer *timer;
    
    if (!timers) return -1;
-   now = ecore_time_get();
+   now = ecore_loop_time_get();
    timer = (Ecore_Timer *)timers;
    while ((timer) && ((timer->delete_me) || (timer->just_added)))
      timer = (Ecore_Timer *)((Ecore_List2 *)timer)->next;

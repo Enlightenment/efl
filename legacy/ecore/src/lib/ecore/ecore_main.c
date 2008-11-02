@@ -645,17 +645,12 @@ _ecore_main_loop_iterate_internal(int once_only)
 	       {
 		  for (;;)
 		    {
-		       double cur_time, t;
-
 		       if (!_ecore_idler_call()) goto start_loop;
 		       if (_ecore_event_exist()) break;
 		       if (_ecore_main_select(0.0) > 0) have_event = 1;
 		       if (_ecore_main_win32_message(0.0) > 0) have_msg = 1;
 		       if (_ecore_signal_count_get() > 0) have_signal = 1;
 		       if (have_event || have_signal || have_msg) break;
-		       cur_time = ecore_time_get();
-		       t = ecore_time_get() - cur_time;
-		       if (t >= next_time) break;
 		       next_time = _ecore_timer_next_get();
 		       if (next_time < 0) goto start_loop;
 		       if (do_quit) break;
