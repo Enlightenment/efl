@@ -110,12 +110,12 @@ EAPI Eina_Iterator *eina_list_iterator_new(const Eina_List *list);
 EAPI Eina_Accessor *eina_list_accessor_new(const Eina_List *list);
 
 /**
- * @def EINA_LIST_ITER_NEXT
+ * @def EINA_LIST_FOREACH
  * @brief Macro to iterate over a list easily.
  *
  * @param list The list to iterate over.
  * @param l A list that is used as loop index.
- * @param data The data
+ * @param data The data.
  *
  * This macro allow the iteration over @p list in an easy way. It
  * iterates from the first element to the last one. @p data is the
@@ -132,9 +132,9 @@ EAPI Eina_Accessor *eina_list_accessor_new(const Eina_List *list);
  *
  * // list is already filled,
  * // its elements are just duplicated strings,
- * // EINA_LIST_ITER_NEXT will be used to free those strings
+ * // EINA_LIST_FOREACH will be used to free those strings
  *
- * EINA_LIST_ITER_NEXT(list, l, data)
+ * EINA_LIST_FOREACH(list, l, data)
  *   free(data);
  * @endcode
  */
