@@ -835,7 +835,7 @@ _ecore_evas_wince_fullscreen_set(Ecore_Evas *ee, int on)
 }
 
 static void *
-_ecore_evas_wince_window_get(Ecore_Evas *ee)
+_ecore_evas_wince_window_get(const Ecore_Evas *ee)
 {
    return ee->engine.wince.window;
 }
