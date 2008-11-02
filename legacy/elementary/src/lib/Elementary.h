@@ -286,6 +286,26 @@ extern "C" {
 // * frame needs to be able to use custom frame style
 // * button needs to be able to use custom frame style
 // * toggle needs to be able to use custom frame style
+// * entry has no way to show its focused vs other entries
+// * entry selection conflicts with finger scroll
+// * toolbar widget (edje + box + button + separators)
+// * listitem widget (simple label + icon)
+// * radio widget + group handling
+// * checkbox widget (like toggle)
+// * entry needs to support setting selection to all, or clearing
+// * entry click below text doesnt put cursor at end
+// * bubble maybe needs icon + label at top?
+// * need separator widget (h/v)
+// * need slid-open "panel" that can hold stuff and optionally scroll
+// * need "photoframe" widget (for contact photos?)
+// * need calendar widget (select date)
+// * need multi-sel (with button + hover + ...)
+// * need slider widget
+// * need range selector (select range of values from X to Y over an interval)
+// * need a way to filter entry data for entry (eg for phone numbers)
+// * entry needs to set vkbd properties/hint (as does win)
+// * need to get toplevel
+// * need "dialogbutton" widget (bigger button for bottom of wins)
+// * need dialog window widget
 
-   
 #endif
