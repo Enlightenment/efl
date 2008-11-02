@@ -338,7 +338,7 @@ _edje_timer_cb(void *data)
    Eina_List *animl = NULL;
    Edje *ed;
 
-   t = ecore_time_get();
+   t = ecore_loop_time_get();
    EINA_LIST_FOREACH(_edje_animators, l, ed)
      {
 	_edje_ref(ed);

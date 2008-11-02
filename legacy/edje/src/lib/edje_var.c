@@ -50,7 +50,7 @@ _edje_var_anim_cb(void *data)
    double t;
    const void *tmp;
 
-   t = ecore_time_get();
+   t = ecore_loop_time_get();
    EINA_LIST_FOREACH(_edje_anim_list, l, tmp)
      tl = eina_list_append(tl, tmp);
    while (tl)
@@ -1000,7 +1000,7 @@ _edje_var_anim_add(Edje *ed, double len, const char *fname, int val)
    if (fn == EMBRYO_FUNCTION_NONE) return 0;
    ea = calloc(1, sizeof(Edje_Var_Animator));
    if (!ea) return 0;
-   ea->start = ecore_time_get();
+   ea->start = ecore_loop_time_get();
    ea->len = len;
    ea->id = ++ed->var_pool->id_count;
    ea->edje = ed;

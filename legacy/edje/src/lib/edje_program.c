@@ -575,7 +575,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 	     if (!ed->actions)
 	       _edje_animators = eina_list_append(_edje_animators, ed);
 	     ed->actions = eina_list_append(ed->actions, runp);
-	     runp->start_time = ecore_time_get();
+	     runp->start_time = ecore_loop_time_get();
 	     runp->edje = ed;
 	     runp->program = pr;
 	     if (!_edje_timer)
