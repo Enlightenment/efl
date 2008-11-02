@@ -577,6 +577,41 @@ _edje_edit_spectrum_entry_get_by_id(Edje *ed, int spectra_id)
    return NULL;
 }
 
+static Edje_Style *
+_edje_edit_style_get(Edje *ed, const char *name)
+{
+   Eina_List *l;
+   Edje_Style *s;
+
+   if (!ed || !ed->file || !ed->file->styles || !name)
+      return NULL;
+
+   EINA_LIST_FOREACH(ed->file->styles, l, s)
+      if (s->name && !strcmp(s->name, name))
+         return s;
+
+   return NULL;
+}
+
+static Edje_Style_Tag *
+_edje_edit_style_tag_get(Edje *ed, const char *style, const char *name)
+{
+   Eina_List *l;
+   Edje_Style *s;
+   Edje_Style_Tag *t;
+
+   if (!ed || !ed->file || !ed->file->styles || !name)
+      return NULL;
+
+   s = _edje_edit_style_get(ed, style);
+   
+   EINA_LIST_FOREACH(s->tags, l, t)
+      if (t->key && !strcmp(t->key, name))
+         return t;
+
+   return NULL;
+}
+
 /*****************/
 /*  GENERAL API  */
 /*****************/
@@ -1177,6 +1212,203 @@ edje_edit_color_class_name_set(Evas_Object *obj, const char *name, const char *n
    return 0;
 }
 
+
+
+/*********************/
+/*  TEXT STYLES API  */
+/*********************/
+
+EAPI Eina_List *
+edje_edit_styles_list_get(Evas_Object * obj)
+{
+   Eina_List *styles = NULL;
+   Eina_List *l;
+   Edje_Style *s;
+
+   GET_ED_OR_RETURN(NULL);
+
+   if (!ed->file || !ed->file->styles)
+      return NULL;
+   printf("GET STYLES LIST %d\n", eina_list_count(ed->file->styles));
+   EINA_LIST_FOREACH(ed->file->styles, l, s)
+     styles = eina_list_append(styles, eina_stringshare_add(s->name));
+
+   return styles;
+}
+
+EAPI unsigned char
+edje_edit_style_add(Evas_Object * obj, const char* style)
+{
+   Edje_Style *s;
+   GET_ED_OR_RETURN(0);
+   printf("ADD STYLE '%s'\n", style);
+
+   s = _edje_edit_style_get(ed, style);
+   if (s) return 0;
+
+   s = mem_alloc(sizeof(Edje_Style));
+   if (!s) return 0;
+   s->name = (char*)eina_stringshare_add(style);
+   s->tags = NULL;
+   s->style = NULL;
+
+   ed->file->styles = eina_list_append(ed->file->styles, s);
+   return 1;
+}
+
+EAPI void
+edje_edit_style_del(Evas_Object * obj, const char* style)
+{
+   Edje_Style *s;
+   
+   GET_ED_OR_RETURN();
+   printf("DEL STYLE '%s'\n", style);
+   
+   s = _edje_edit_style_get(ed, style);
+   if (!s) return;
+   
+   ed->file->styles = eina_list_remove(ed->file->styles, s);
+   
+   _edje_if_string_free(ed, s->name);
+   //~ //s->style HOWTO FREE ???
+   while (s->tags)
+   {
+      Edje_Style_Tag *t;
+
+      t = s->tags->data;
+      
+      s->tags = eina_list_remove(s->tags, t);
+      _edje_if_string_free(ed, t->key);
+      _edje_if_string_free(ed, t->value);
+      _edje_if_string_free(ed, t->font);
+      _edje_if_string_free(ed, t->text_class);
+      free(t);
+      t = NULL;
+   }
+   free(s);
+   s = NULL;
+   s = NULL;
+}
+
+
+EAPI Eina_List *
+edje_edit_style_tags_list_get(Evas_Object * obj, const char* style)
+{
+   Eina_List *tags = NULL;
+   Eina_List *l, *ll;
+   Edje_Style *s;
+   Edje_Style_Tag *t;
+
+   GET_ED_OR_RETURN(NULL);
+   if (!ed->file || !ed->file->styles || !style)
+      return NULL;
+
+   s = _edje_edit_style_get(ed, style);
+
+   printf("GET STYLE TAG LIST %d\n", eina_list_count(s->tags));
+   EINA_LIST_FOREACH(s->tags, ll, t)
+      tags = eina_list_append(tags, eina_stringshare_add(t->key));
+
+   return tags;
+}
+
+EAPI void
+edje_edit_style_tag_name_set(Evas_Object * obj, const char* style, const char* tag, const char*new_name)
+{
+   Edje_Style_Tag *t;
+
+   GET_ED_OR_RETURN();
+   printf("SET TAG NAME for '%s' FOR STYLE '%s'\n", tag, style);
+
+   if (!ed->file || !ed->file->styles || !style || !tag)
+      return;
+   
+   t = _edje_edit_style_tag_get(ed, style, tag);
+   if (!t) return;
+   _edje_if_string_free(ed, t->key);
+   t->key = eina_stringshare_add(new_name);
+}
+
+EAPI const char*
+edje_edit_style_tag_value_get(Evas_Object * obj, const char* style, const char* tag)
+{
+   Edje_Style_Tag *t;
+
+   GET_ED_OR_RETURN(NULL);
+   printf("GET TAG '%s' FOR STYLE '%s'\n", tag, style);
+
+   if (!ed->file || !ed->file->styles || !style || !tag)
+      return NULL;
+
+   t = _edje_edit_style_tag_get(ed, style, tag);
+   if (t && t->value)
+      return eina_stringshare_add(t->value);
+
+   return NULL;
+}
+
+EAPI void
+edje_edit_style_tag_value_set(Evas_Object * obj, const char* style, const char* tag, const char*new_value)
+{
+   Edje_Style_Tag *t;
+
+   GET_ED_OR_RETURN();
+   printf("SET TAG VALUE for '%s' FOR STYLE '%s'\n", tag, style);
+
+   if (!ed->file || !ed->file->styles || !style || !tag)
+      return;
+   
+   t = _edje_edit_style_tag_get(ed, style, tag);
+   if (!t) return;
+   _edje_if_string_free(ed, t->value);
+   t->value = eina_stringshare_add(new_value);
+}
+
+EAPI unsigned char
+edje_edit_style_tag_add(Evas_Object * obj, const char* style, const char* tag_name)
+{
+   Edje_Style *s;
+   Edje_Style_Tag *t;
+   
+   GET_ED_OR_RETURN(0);
+   printf("ADD TAG '%s' IN STYLE '%s'\n", tag_name, style);
+
+   t = _edje_edit_style_tag_get(ed, style, tag_name);
+   if (t) return 0;
+   s = _edje_edit_style_get(ed, style);
+   if (!s) return 0;
+
+   t = mem_alloc(sizeof(Edje_Style_Tag));
+   if (!t) return 0;
+   t->key = eina_stringshare_add(tag_name);
+   t->value = NULL;
+   t->font = NULL;
+   t->text_class = NULL;
+
+   s->tags = eina_list_append(s->tags, t);
+   return 1;
+}
+
+EAPI void
+edje_edit_style_tag_del(Evas_Object * obj, const char* style, const char* tag)
+{
+   Edje_Style *s;
+   Edje_Style_Tag *t;
+   
+   GET_ED_OR_RETURN();
+   printf("DEL TAG '%s' IN STYLE '%s'\n", tag, style);
+   
+   s = _edje_edit_style_get(ed, style);
+   t = _edje_edit_style_tag_get(ed, style, tag);
+
+   s->tags = eina_list_remove(s->tags, t);
+   _edje_if_string_free(ed, t->key);
+   _edje_if_string_free(ed, t->value);
+   _edje_if_string_free(ed, t->font);
+   _edje_if_string_free(ed, t->text_class);
+   free(t);
+   t = NULL;
+}
 
 /***************/
 /*  PARTS API  */
@@ -4564,8 +4796,7 @@ _edje_generate_source_of_spectra(Edje * ed, const char *name, FILE * f)
 
    if ((d = _edje_edit_spectrum_entry_get(ed, name)))
      {
-	fprintf(f, I1 "spectrum {\n");
-	fprintf(f, I2 "name: \"%s\";\n", d->entry);
+	fprintf(f, I1 "spectrum { name: \"%s\";\n", d->entry);
 
 	EINA_LIST_FOREACH(d->color_list, l, color)
 	  if (color)
@@ -4585,12 +4816,32 @@ _edje_generate_source_of_colorclass(Edje * ed, const char *name, FILE * f)
    EINA_LIST_FOREACH(ed->file->color_classes, l, cc)
      if (!strcmp(cc->name, name))
        {
-	 fprintf(f, I1 "color_class {\n");
-	 fprintf(f, I2 "name: \"%s\";\n", cc->name);
+	 fprintf(f, I1 "color_class { name: \"%s\";\n", cc->name);
 	 fprintf(f, I2 "color: %d %d %d %d;\n", cc->r, cc->g, cc->b, cc->a);
 	 fprintf(f, I2 "color2: %d %d %d %d;\n", cc->r2, cc->g2, cc->b2, cc->a2);
 	 fprintf(f, I2 "color3: %d %d %d %d;\n", cc->r3, cc->g3, cc->b3, cc->a3);
 	 fprintf(f, I1 "}\n");
+       }
+}
+
+ static void
+_edje_generate_source_of_style(Edje * ed, const char *name, FILE * f)
+{
+   Eina_List *l, *ll;
+   Edje_Style *s;
+   Edje_Style_Tag *t;
+
+   EINA_LIST_FOREACH(ed->file->styles, l, s)
+     if (!strcmp(s->name, name))
+       {
+	 t = s->tags ? s->tags->data : NULL;
+	 fprintf(f, I1 "style { name:\"%s\";\n", s->name);
+	 if (t && t->value) fprintf(f, I2 "base: \"%s\";\n", t->value);
+	 EINA_LIST_FOREACH(s->tags, ll, t)
+	   if (ll->prev && t && t->value)
+	     fprintf(f, I2 "tag: \"%s\" \"%s\";\n", t->key, t->value); //TODO need some sort of escaping (at least for '\n')
+	 fprintf(f, I1 "}\n");
+	 return;
        }
 }
 
@@ -4604,8 +4855,7 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, FILE *f)
 
    GET_ED_OR_RETURN();
 
-   fprintf(f, I3"program {\n");
-   fprintf(f, I4"name: \"%s\";\n", program);
+   fprintf(f, I3"program { name: \"%s\";\n", program);
 
    /* Signal */
    if ((s = edje_edit_program_signal_get(obj, program)))
@@ -4715,9 +4965,8 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
    rp = _edje_real_part_get(ed, part);
    if (!rp) return;
    
-   fprintf(f, I4"description {\n");
+   fprintf(f, I4"description { state: \"%s\" %g;\n", pd->state.name, pd->state.value);
    //TODO Support inherit
-   fprintf(f, I5"state: \"%s\" %g;\n", pd->state.name, pd->state.value);
    
    if (!pd->visible)
      fprintf(f, I5"visible: 0;\n");
@@ -4903,8 +5152,7 @@ _edje_generate_source_of_part(Evas_Object *obj, const char *part, FILE *f)
    Eina_List *l, *ll;
    char *data;
 
-   fprintf(f, I3"part {\n");
-   fprintf(f, I4"name: \"%s\";\n", part);
+   fprintf(f, I3"part { name: \"%s\";\n", part);
    fprintf(f, I4"type: %s;\n", types[edje_edit_part_type_get(obj, part)]);
    if (!edje_edit_part_mouse_events_get(obj, part))
       fprintf(f, I4"mouse_events: 0;\n");
@@ -4972,8 +5220,7 @@ _edje_generate_source_of_group(Edje *ed, const char *group, FILE *f)
    obj = edje_object_add(ed->evas);
    if (!edje_object_file_set(obj, ed->file->path, group)) return;
       
-   fprintf(f, I1"group {\n");
-   fprintf(f, I2"name: \"%s\";\n", group);
+   fprintf(f, I1"group { name: \"%s\";\n", group);
    //TODO Support alias:
    if ((w = edje_edit_group_min_w_get(obj)) || (h = edje_edit_group_min_h_get(obj)))
       fprintf(f, I2"min: %d %d;\n", w, h);
@@ -5107,7 +5354,14 @@ _edje_generate_source(Evas_Object *obj)
      }
 
    /* Styles */
-   //TODO Support styles
+   if ((ll = edje_edit_styles_list_get(obj)))
+     {
+	fprintf(f, I0 "styles {\n");
+	EINA_LIST_FOREACH(ll, l, entry)
+	  _edje_generate_source_of_style(ed, entry, f);
+	fprintf(f, I0 "}\n\n");
+	edje_edit_string_list_free(ll);
+     }
 
    /* Collections */
    fprintf(f, "collections {\n");

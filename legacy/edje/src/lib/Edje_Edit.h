@@ -360,6 +360,92 @@ edje_edit_color_class_name_set(
    const char *newname    ///< The new name to assign
 );
 
+//@}
+/******************************************************************************/
+/**************************   TEXT STYLES *************************************/
+/******************************************************************************/
+/** @name Text styles API
+ *  Functions to deal with text styles (see @ref edcref).
+ */ //@{
+
+/** Get the list of all the text styles in the given edje object.
+ *  Use edje_edit_string_list_free() when you don't need it anymore.
+ */
+EAPI Eina_List *           ///@return An Eina_List* of string (char *)containing all the styles name.
+edje_edit_styles_list_get(
+   Evas_Object *obj        ///< The edje object
+);
+
+/** Create a new text style object in the given edje
+ *  If another style with the same name exists nothing is created and FALSE is returned.
+ */
+EAPI unsigned char        ///@return TRUE on success, FALSE if the tag can't be created
+edje_edit_style_add(
+   Evas_Object *obj,      ///< The edje object
+   const char *style      ///< The new name for the style
+);
+
+/** Delete the given text style and all the child tags. */
+EAPI void
+edje_edit_style_del(
+   Evas_Object *obj,      ///< The edje object
+   const char *style      ///< The name for the style to delete
+);
+   
+/** Get the list of all the tags name in the given text style.
+ *  Use edje_edit_string_list_free() when you don't need it anymore.
+ */
+EAPI Eina_List *           ///@return An Eina_List* of string (char *)containing all the tags name.
+edje_edit_style_tags_list_get(
+  Evas_Object *obj,       ///< The edje object
+  const char *style       ///< The name of the style to inspect
+);
+
+/** Get the value of the given tag.
+ *  Use edje_edit_string_free() when you don't need it anymore.
+ */
+EAPI const char*           ///@return The value of the tag.
+edje_edit_style_tag_value_get(
+   Evas_Object *obj,       ///< The edje object
+   const char *style,      ///< The name of the style to inspect
+   const char *tag         ///< The name of the tag
+);
+
+/** Set the value of the given tag. */
+EAPI void
+edje_edit_style_tag_value_set(
+   Evas_Object *obj,       ///< The edje object
+   const char *style,      ///< The name of the style to inspect
+   const char *tag         ///< The name of the tag
+   const char *new_value   ///< The new tag value
+);
+
+/** Set the name of the given tag. */
+EAPI void
+edje_edit_style_tag_name_set(
+   Evas_Object *obj,       ///< The edje object
+   const char *style,      ///< The name of the style
+   const char *tag         ///< The name of the tag
+   const char *new_name    ///< The new name for tag
+);
+
+/** Add a new tag to the given text style.
+ *  If another tag with the same name exists nothing is created and FALSE is returned.
+ */
+EAPI unsigned char         ///@return TRUE on success, FALSE if the tag can't be created
+edje_edit_style_tag_add(
+   Evas_Object *obj,       ///< The edje object
+   const char *style,      ///< The name of the style
+   const char* tag_name    ///< The name of the new tag
+);
+
+/** Delete the given tag. */
+EAPI void
+edje_edit_style_tag_del(
+   Evas_Object *obj,       ///< The edje object
+   const char *style,      ///< The name of the style
+   const char* tag         ///< The name of the tag to remove
+);
 
 //@}
 /******************************************************************************/
