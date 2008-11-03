@@ -439,10 +439,13 @@ evas_common_pipe_grad_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 }
 
 /**************** GRAD2 ******************/
+#include "evas_object_gradient2.h"
 static void
 evas_common_pipe_op_grad2_free(RGBA_Pipe_Op *op)
 {
-   evas_common_gradient2_free(op->op.grad2.grad);
+   Evas_Object_Gradient2 *ogr = op->op.grad2.grad;
+   if (ogr)
+	evas_common_rgba_gradient2_free(ogr->engine_data);
    evas_common_pipe_op_free(op);
 }
 
@@ -459,24 +462,26 @@ evas_common_pipe_grad2_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Thre
 #else	
 	evas_common_draw_context_clip_clip(&(context), info->x, info->y, info->w, info->h);
 #endif	
-	evas_common_gradient2_draw(dst, &(context),
+	evas_common_gradient2_draw(dst, &(context), op->op.grad2.grad,
 				  op->op.grad2.x, op->op.grad2.y,
-				  op->op.grad2.w, op->op.grad2.h,
-				  op->op.grad2.grad);
+				  op->op.grad2.w, op->op.grad2.h);
      }
    else
-     evas_common_gradient2_draw(dst, &(op->context),
+     evas_common_gradient2_draw(dst, &(op->context), op->op.grad2.grad,
 			       op->op.grad2.x, op->op.grad2.y,
-			       op->op.grad2.w, op->op.grad2.h,
-			       op->op.grad2.grad);
+			       op->op.grad2.w, op->op.grad2.h);
 }
 
 EAPI void
-evas_common_pipe_grad2_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
-			   int x, int y, int w, int h, RGBA_Gradient2 *gr)
+evas_common_pipe_grad2_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, void *pgr,
+			   int x, int y, int w, int h)
 {
    RGBA_Pipe_Op *op;
+   Evas_Object_Gradient2 *ogr = pgr;
+   RGBA_Gradient2 *gr;
 
+   if (!ogr) return;
+   gr = ogr->engine_data;
    if (!gr) return;
    dst->pipe = evas_common_pipe_add(dst->pipe, &op);
    if (!dst->pipe) return;
@@ -485,7 +490,7 @@ evas_common_pipe_grad2_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
    op->op.grad2.w = w;
    op->op.grad2.h = h;
    gr->references++;
-   op->op.grad2.grad = gr;
+   op->op.grad2.grad = ogr;
    op->op_func = evas_common_pipe_grad2_draw_do;
    op->free_func = evas_common_pipe_op_grad2_free;
    evas_common_pipe_draw_context_copy(dc, op);
@@ -543,12 +548,18 @@ evas_common_pipe_text_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 }
 
 /**************** IMAGE *****************/
+#include "evas_object_image.h"
 static void
 evas_common_pipe_op_image_free(RGBA_Pipe_Op *op)
 {
-   op->op.image.src->ref--;
-   if (op->op.image.src->ref == 0)
-     evas_cache_image_drop(&op->op.image.src->cache_entry);
+   Evas_Object_Image *oim = op->op.image.im;
+   RGBA_Image *im;
+
+   if (!oim) return;
+   im = oim->engine_data;
+   im->ref--;
+   if (im->ref == 0)
+     evas_cache_image_drop(&im->cache_entry);
    evas_common_pipe_op_free(op);
 }
 
@@ -565,81 +576,35 @@ evas_common_pipe_image_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Thre
 #else
 	evas_common_draw_context_clip_clip(&(context), info->x, info->y, info->w, info->h);
 #endif
-	if (op->op.image.smooth)
-	  evas_common_scale_rgba_in_to_out_clip_smooth(op->op.image.src,
-						       dst, &(context),
-						       op->op.image.sx,
-						       op->op.image.sy,
-						       op->op.image.sw,
-						       op->op.image.sh,
-						       op->op.image.dx,
-						       op->op.image.dy,
-						       op->op.image.dw,
-						       op->op.image.dh);
-	else
-	  evas_common_scale_rgba_in_to_out_clip_sample(op->op.image.src,
-						       dst, &(context),
-						       op->op.image.sx,
-						       op->op.image.sy,
-						       op->op.image.sw,
-						       op->op.image.sh,
-						       op->op.image.dx,
-						       op->op.image.dy,
-						       op->op.image.dw,
-						       op->op.image.dh);
+	evas_common_image_draw2(dst, &(context), op->op.image.im,
+				  op->op.image.x, op->op.image.y,
+				  op->op.image.w, op->op.image.h);
      }
    else
-     {
-	if (op->op.image.smooth)
-	  evas_common_scale_rgba_in_to_out_clip_smooth(op->op.image.src,
-						       dst, &(op->context),
-						       op->op.image.sx,
-						       op->op.image.sy,
-						       op->op.image.sw,
-						       op->op.image.sh,
-						       op->op.image.dx,
-						       op->op.image.dy,
-						       op->op.image.dw,
-						       op->op.image.dh);
-	else
-	  evas_common_scale_rgba_in_to_out_clip_sample(op->op.image.src,
-						       dst, &(op->context),
-						       op->op.image.sx,
-						       op->op.image.sy,
-						       op->op.image.sw,
-						       op->op.image.sh,
-						       op->op.image.dx,
-						       op->op.image.dy,
-						       op->op.image.dw,
-						       op->op.image.dh);
-     }
+     evas_common_image_draw2(dst, &(op->context), op->op.image.im,
+			       op->op.image.x, op->op.image.y,
+			       op->op.image.w, op->op.image.h);
 }
 
 EAPI void
-evas_common_pipe_image_draw(RGBA_Image *src, RGBA_Image *dst,
-			   RGBA_Draw_Context *dc, int smooth,
-			   int src_region_x, int src_region_y,
-			   int src_region_w, int src_region_h,
-			   int dst_region_x, int dst_region_y,
-			   int dst_region_w, int dst_region_h)
+evas_common_pipe_image_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, void *pim,
+			   int x, int y, int w, int h)
 {
    RGBA_Pipe_Op *op;
+   Evas_Object_Image *oim = pim;
+   RGBA_Image *im;
 
-   if (!src) return;
-//   evas_common_pipe_flush(src);
+   if (!oim || !dst) return;
+   im = oim->engine_data;
+   if (!im) return;
    dst->pipe = evas_common_pipe_add(dst->pipe, &op);
    if (!dst->pipe) return;
-   op->op.image.smooth = smooth;
-   op->op.image.sx = src_region_x;
-   op->op.image.sy = src_region_y;
-   op->op.image.sw = src_region_w;
-   op->op.image.sh = src_region_h;
-   op->op.image.dx = dst_region_x;
-   op->op.image.dy = dst_region_y;
-   op->op.image.dw = dst_region_w;
-   op->op.image.dh = dst_region_h;
-   src->ref++;
-   op->op.image.src = src;
+   op->op.image.x = x;
+   op->op.image.y = y;
+   op->op.image.w = w;
+   op->op.image.h = h;
+   im->ref++;
+   op->op.image.im = oim;
    op->op_func = evas_common_pipe_image_draw_do;
    op->free_func = evas_common_pipe_op_image_free;
    evas_common_pipe_draw_context_copy(dc, op);

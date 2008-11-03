@@ -1,5 +1,6 @@
 #include "evas_common.h"
 #include "evas_private.h"
+#include "evas_object_gradient2.h"
 #include <math.h>
 
 #define LINEAR_EPSILON 0.000030517578125
@@ -12,7 +13,7 @@ typedef struct _Linear_Data   Linear_Data;
 struct _Linear_Data
 {
    float    x0, y0, x1, y1;
-   float    fx0, fy0;
+   int      x00, y00;
    int      ayx, ayy;
    int      len;
    unsigned char int_axis_aligned : 1;
@@ -25,32 +26,25 @@ linear_init(void);
 static void 
 linear_shutdown(void);
 
-static void 
-linear_init_geom(RGBA_Gradient2 *gr);
-
 static void
-linear_update_geom(RGBA_Gradient2 *gr);
+linear_update_geom(void *pgr);
 
 static void 
-linear_free_geom(void *gdata);
+linear_free_geom(void *pgr);
 
 static int
-linear_has_alpha(RGBA_Gradient2 *gr, int op);
+linear_has_alpha(void *pgr, int op);
 
 static int
-linear_has_mask(RGBA_Gradient2 *gr, int op);
-
-static int
-linear_get_map_len(RGBA_Gradient2 *gr);
+linear_has_mask(void *pgr, int op);
 
 static Gfx_Func_Gradient2_Fill
-linear_get_fill_func(RGBA_Gradient2 *gr, int op);
+linear_get_fill_func(void *pgr, int op);
 
 static RGBA_Gradient2_Type  linear = {"linear", linear_init, linear_shutdown,
-				      linear_init_geom,
-				      linear_update_geom, linear_free_geom,
+				      linear_free_geom,
 				      linear_has_alpha, linear_has_mask,
-				      linear_get_map_len, linear_get_fill_func};
+				      linear_get_fill_func};
 
 
 EAPI RGBA_Gradient2_Type  *
@@ -60,33 +54,55 @@ evas_common_gradient2_type_linear_get(void)
 }
 
 EAPI RGBA_Gradient2 *
-evas_common_gradient2_linear_new(void)
+evas_common_rgba_gradient2_linear_new(void)
 {
    RGBA_Gradient2 *gr;
+   Linear_Data *linear_data;
 
    gr = calloc(1, sizeof(RGBA_Gradient2));
    if (!gr) return NULL;
+   linear_data = calloc(1, sizeof(Linear_Data));
+   if (!linear_data)  return NULL;
+
    gr->references = 1;
    gr->type.id = MAGIC_OBJ_GRADIENT_LINEAR;
    gr->type.geometer = &linear;
-   linear_init_geom(gr);
+   linear_data->ayy = 65536;  linear_data->ayx = 0;
+   gr->type.gdata = linear_data;
+
    return gr;
 }
 
+
 EAPI void
-evas_common_gradient2_linear_fill_set(RGBA_Gradient2 *gr, float x0, float y0, float x1, float y1)
+evas_common_gradient2_linear_render_pre(RGBA_Draw_Context *dc, void *pgr)
 {
+   Evas_Object_Gradient2 *ogr = pgr;
+   Evas_Object_Gradient2_Linear *lgr;
+   RGBA_Gradient2 *gr;
    Linear_Data *linear_data;
 
+   if (!dc || !ogr) return;
+   gr = ogr->engine_data;
    if (!gr) return;
+   lgr = (Evas_Object_Gradient2_Linear *)(ogr);
+   if (!lgr) return;
    if (gr->type.id != MAGIC_OBJ_GRADIENT_LINEAR) return;
    if (gr->type.geometer != &linear) return;
    linear_data = (Linear_Data *)gr->type.gdata;
    if (!linear_data) return;
-   linear_data->x0 = x0;  linear_data->y0 = y0;
-   linear_data->x1 = x1;  linear_data->y1 = y1;
+   linear_data->x0 = lgr->cur.fill.x0;  linear_data->y0 = lgr->cur.fill.y0;
+   linear_data->x1 = lgr->cur.fill.x1;  linear_data->y1 = lgr->cur.fill.y1;
+
+   linear_update_geom(ogr);
+
+   evas_common_gradient2_map(dc, ogr, linear_data->len);
 }
 
+EAPI void
+evas_common_gradient2_linear_render_post(void *pgr)
+{
+}
 
 
 /** internal functions **/
@@ -126,57 +142,45 @@ linear_shutdown(void)
 static void 
 linear_free_geom(void *gdata)
 {
-   Linear_Data *data = (Linear_Data *)gdata;
-   if (data) free(data);
+   Linear_Data *linear_data = gdata;
+
+   if (linear_data) free(linear_data);
 }
 
 static void
-linear_init_geom(RGBA_Gradient2 *gr)
+linear_update_geom(void *pgr)
 {
-   Linear_Data *linear_data;
-
-   if (!gr || (gr->type.geometer != &linear)) return;
-   linear_data = (Linear_Data *)gr->type.gdata;
-   if (!linear_data)
-     {
-	linear_data = calloc(1, sizeof(Linear_Data));
-	if (!linear_data)  return;
-	linear_data->ayy = 65536;  linear_data->ayx = 0;
-     }
-   gr->type.gdata = linear_data;
-}
-
-
-static void
-linear_update_geom(RGBA_Gradient2 *gr)
-{
+   Evas_Object_Gradient2 *ogr = pgr;
+   RGBA_Gradient2 *gr;
    Linear_Data *linear_data;
    double f;
    double fx0, fy0, fx1, fy1;
    int len;
 
+   if (!ogr) return;
+   gr = ogr->engine_data;
    if (!gr || (gr->type.geometer != &linear)) return;
    linear_data = (Linear_Data *)gr->type.gdata;
    if (!linear_data) return;
 
    linear_data->int_axis_aligned = 0;
    linear_data->len = 0;
-   f = (gr->fill.transform.mxx * (double)gr->fill.transform.myy) - (gr->fill.transform.mxy * (double)gr->fill.transform.myx);
+   f = (ogr->cur.fill.transform.mxx * (double)ogr->cur.fill.transform.myy) - (ogr->cur.fill.transform.mxy * (double)ogr->cur.fill.transform.myx);
    if (fabs(f) < LINEAR_EPSILON) return;
 
    f = 1.0 / f;
-   fx0 = (((gr->fill.transform.myy * (double)linear_data->x0) - (gr->fill.transform.mxy * (double)linear_data->y0)) * f) - gr->fill.transform.mxz;
-   fy0 = ((-(gr->fill.transform.myx * (double)linear_data->x0) + (gr->fill.transform.mxx * (double)linear_data->y0)) * f) - gr->fill.transform.myz;
+   fx0 = (((ogr->cur.fill.transform.myy * (double)linear_data->x0) - (ogr->cur.fill.transform.mxy * (double)linear_data->y0)) * f) - ogr->cur.fill.transform.mxz;
+   fy0 = ((-(ogr->cur.fill.transform.myx * (double)linear_data->x0) + (ogr->cur.fill.transform.mxx * (double)linear_data->y0)) * f) - ogr->cur.fill.transform.myz;
 
-   fx1 = (((gr->fill.transform.myy * (double)linear_data->x1) - (gr->fill.transform.mxy * (double)linear_data->y1)) * f) - gr->fill.transform.mxz;
-   fy1 = ((-(gr->fill.transform.myx * (double)linear_data->x1) + (gr->fill.transform.mxx * (double)linear_data->y1)) * f) - gr->fill.transform.myz;
+   fx1 = (((ogr->cur.fill.transform.myy * (double)linear_data->x1) - (ogr->cur.fill.transform.mxy * (double)linear_data->y1)) * f) - ogr->cur.fill.transform.mxz;
+   fy1 = ((-(ogr->cur.fill.transform.myx * (double)linear_data->x1) + (ogr->cur.fill.transform.mxx * (double)linear_data->y1)) * f) - ogr->cur.fill.transform.myz;
 
    f = hypot(fx1 - fx0, fy1 - fy0);
    linear_data->len = len = f + 0.5;
    if (!len) return;
 
-   linear_data->ayx = ((fx1 - fx0) / f) * 65536;
-   linear_data->ayy = ((fy1 - fy0) / f) * 65536;
+   linear_data->ayx = ((fx1 - fx0) * 65536) / f;
+   linear_data->ayy = ((fy1 - fy0) * 65536) / f;
 
    if (fabs(fy0 - fy1) < LINEAR_INT_TOLERANCE)
      {
@@ -190,54 +194,59 @@ linear_update_geom(RGBA_Gradient2 *gr)
 	    (fabs(((int)fx1) - fx1) < LINEAR_INT_TOLERANCE) )
 	   { linear_data->int_axis_aligned = 1;  linear_data->ayx = 0; }
      }
-   linear_data->fx0 = fx0;
-   linear_data->fy0 = fy0;
+   linear_data->x00 = linear_data->ayx * fx0;
+   linear_data->y00 = linear_data->ayy * fy0;
 }
 
 static int
-linear_has_alpha(RGBA_Gradient2 *gr, int op)
+linear_has_alpha(void *pgr, int op)
 {
+   Evas_Object_Gradient2 *ogr = pgr;
+   RGBA_Gradient2 *gr;
+
+   if (!ogr) return 0;
+   gr = ogr->engine_data;
    if (!gr || (gr->type.geometer != &linear)) return 0;
    if (gr->has_alpha | gr->map.has_alpha)
 	return 1;
    if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
 	return 0;
-   if (gr->fill.spread == _EVAS_TEXTURE_RESTRICT)
+   if (ogr->cur.fill.spread == _EVAS_TEXTURE_RESTRICT)
 	return 1;
    return 0;
 }
 
 static int
-linear_has_mask(RGBA_Gradient2 *gr, int op)
+linear_has_mask(void *pgr, int op)
 {
+   Evas_Object_Gradient2 *ogr = pgr;
+   RGBA_Gradient2 *gr;
+
+   if (!ogr) return 0;
+   gr = ogr->engine_data;
    if (!gr || (gr->type.geometer != &linear)) return 0;
    if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
      {
-	if (gr->fill.spread == _EVAS_TEXTURE_RESTRICT)
+	if (ogr->cur.fill.spread == _EVAS_TEXTURE_RESTRICT)
 	    return 1;
      }
    return 0;
 }
 
-static int
-linear_get_map_len(RGBA_Gradient2 *gr)
-{
-   Linear_Data   *linear_data;
-
-   if (!gr || (gr->type.geometer != &linear)) return 0;
-   linear_data = (Linear_Data *)gr->type.gdata;
-   if (!linear_data) return 0;
-   return linear_data->len;
-}
 
 static Gfx_Func_Gradient2_Fill
-linear_get_fill_func(RGBA_Gradient2 *gr, int op)
+linear_get_fill_func(void *pgr, int op)
 {
+   Evas_Object_Gradient2 *ogr = pgr;
+   RGBA_Gradient2 *gr;
    Linear_Data   *linear_data;
    Gfx_Func_Gradient2_Fill  sfunc = NULL;
    int masked_op = 0;
+
+   if (!ogr) return sfunc;
+   gr = ogr->engine_data;
 
    if (!gr || (gr->type.geometer != &linear))
 	return sfunc;
@@ -248,7 +257,7 @@ linear_get_fill_func(RGBA_Gradient2 *gr, int op)
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
 	masked_op = 1;
 
-   switch (gr->fill.spread)
+   switch (ogr->cur.fill.spread)
      {
       case _EVAS_TEXTURE_REPEAT:
 	sfunc = linear_repeat_aa;
@@ -294,8 +303,8 @@ linear_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len
    Linear_Data  *gdata = (Linear_Data *)params_data;
    int      yy;
 
-   evas_common_cpu_end_opt();
-   yy = (gdata->ayx * (x - gdata->fx0 + 0.5)) + (gdata->ayy * (y - gdata->fy0 + 0.5)) - 32768;
+   yy = (gdata->ayx * x) - gdata->x00 + (gdata->ayx >> 1) + 
+        (gdata->ayy * y) - gdata->y00 + (gdata->ayy >> 1) - 32768;
 
    if (gdata->int_axis_aligned && (gdata->ayx == 0))
      {
@@ -353,8 +362,8 @@ linear_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len
 	int  l = (yy >> 16);
 	int  a = 1 + ((yy & 0xffff) >> 8);
 
-	if ((l >= src_len) || (l < 0))
-	   { l = l % src_len;  if (l < 0) l += src_len; }
+	if ((l >= src_len) || (l < -src_len)) l = l % src_len;
+	if (l < 0) l += src_len;
 
 #ifdef BUILD_MMX
 	MOV_P2R(src[l], mm1, mm0)
@@ -393,8 +402,8 @@ linear_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_le
    Linear_Data  *gdata = (Linear_Data *)params_data;
    int      yy;
 
-   evas_common_cpu_end_opt();
-   yy = (gdata->ayx * (x - gdata->fx0 + 0.5)) + (gdata->ayy * (y - gdata->fy0 + 0.5)) - 32768;
+   yy = (gdata->ayx * x) - gdata->x00 + (gdata->ayx >> 1) + 
+        (gdata->ayy * y) - gdata->y00 + (gdata->ayy >> 1) - 32768;
 
    if (gdata->int_axis_aligned && (gdata->ayx == 0))
      {
@@ -523,8 +532,8 @@ linear_restrict_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_l
    Linear_Data  *gdata = (Linear_Data *)params_data;
    int      yy;
 
-   evas_common_cpu_end_opt();
-   yy = (gdata->ayx * (x - gdata->fx0 + 0.5)) + (gdata->ayy * (y - gdata->fy0 + 0.5)) - 32768;
+   yy = (gdata->ayx * x) - gdata->x00 + (gdata->ayx >> 1) + 
+        (gdata->ayy * y) - gdata->y00 + (gdata->ayy >> 1) - 32768;
 
    if (gdata->int_axis_aligned && (gdata->ayx == 0))
      {
@@ -636,8 +645,8 @@ linear_restrict_masked_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, in
    Linear_Data  *gdata = (Linear_Data *)params_data;
    int      yy;
 
-   evas_common_cpu_end_opt();
-   yy = (gdata->ayx * (x - gdata->fx0 + 0.5)) + (gdata->ayy * (y - gdata->fy0 + 0.5)) - 32768;
+   yy = (gdata->ayx * x) - gdata->x00 + (gdata->ayx >> 1) + 
+        (gdata->ayy * y) - gdata->y00 + (gdata->ayy >> 1) - 32768;
 
 #ifdef BUILD_MMX
    pxor_r2r(mm0, mm0);
@@ -689,8 +698,8 @@ linear_pad_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
    Linear_Data  *gdata = (Linear_Data *)params_data;
    int      yy;
 
-   evas_common_cpu_end_opt();
-   yy = (gdata->ayx * (x - gdata->fx0 + 0.5)) + (gdata->ayy * (y - gdata->fy0 + 0.5)) - 32768;
+   yy = (gdata->ayx * x) - gdata->x00 + (gdata->ayx >> 1) + 
+        (gdata->ayy * y) - gdata->y00 + (gdata->ayy >> 1) - 32768;
 
 #ifdef BUILD_MMX
    pxor_r2r(mm0, mm0);

@@ -1,6 +1,7 @@
 #include "evas_common.h"
 #include "evas_blend_private.h"
 #include "evas_private.h"
+#include "evas_object_gradient2.h"
 #include <math.h>
 
 static void _evas_common_gradient2_stops_free(RGBA_Gradient2 *gr);
@@ -9,6 +10,10 @@ static void _evas_common_gradient2_stops_scale(RGBA_Gradient2 *gr);
 static void _evas_common_gradient2_map_argb(RGBA_Draw_Context *dc, RGBA_Gradient2 *gr, int len);
 static void _evas_common_gradient2_map_ahsv(RGBA_Draw_Context *dc, RGBA_Gradient2 *gr, int len);
 
+static void _evas_common_gradient2_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, void *pgr,
+					int x, int y, int w, int h);
+
+/*
 static  int grad_initialised = 0;
 
 EAPI void
@@ -27,7 +32,7 @@ evas_common_gradient2_init(void)
    grad_initialised = 1;
 }
 
-void
+EAPI void
 evas_common_gradient2_shutdown(void)
 {
    RGBA_Gradient2_Type  *geom;
@@ -42,12 +47,12 @@ evas_common_gradient2_shutdown(void)
 	geom->shutdown();
    grad_initialised = 0;
 }
+*/
 
 static void
 _evas_common_gradient2_stops_free(RGBA_Gradient2 *gr)
 {
-   if (!gr) return;
-   if (gr->stops.stops)
+   if (gr && gr->stops.stops)
      {
 	Eina_Inlist *l;
 
@@ -63,14 +68,12 @@ _evas_common_gradient2_stops_free(RGBA_Gradient2 *gr)
 }
 
 EAPI void
-evas_common_gradient2_free(RGBA_Gradient2 *gr)
+evas_common_rgba_gradient2_free(RGBA_Gradient2 *gr)
 {
    if (!gr) return;
    gr->references--;
    if (gr->references > 0) return;
-   evas_common_gradient2_clear(gr);
-   if (gr->stops.cdata) free(gr->stops.cdata);
-   if (gr->stops.adata) free(gr->stops.adata);
+   _evas_common_gradient2_stops_free(gr);
    if (gr->type.geometer && gr->type.gdata)
 	gr->type.geometer->geom_free(gr->type.gdata);
    if (gr->map.data) free(gr->map.data);
@@ -78,20 +81,28 @@ evas_common_gradient2_free(RGBA_Gradient2 *gr)
 }
 
 EAPI void
-evas_common_gradient2_clear(RGBA_Gradient2 *gr)
+evas_common_gradient2_clear(void *pgr)
 {
+   Evas_Object_Gradient2 *ogr = pgr;
+   RGBA_Gradient2 *gr;
+   
+   if (!ogr) return;
+   gr = ogr->engine_data;
    if (!gr) return;
-
    _evas_common_gradient2_stops_free(gr);
    gr->has_alpha = 0;
 }
 
 EAPI void
-evas_common_gradient2_color_np_stop_insert(RGBA_Gradient2 *gr, int r, int g, int b, int a, float pos)
+evas_common_gradient2_color_np_stop_insert(void *pgr, int r, int g, int b, int a, float pos)
 {
+   Evas_Object_Gradient2 *ogr = pgr;
+   RGBA_Gradient2 *gr;
    RGBA_Gradient2_Color_Np_Stop *gc;
    Eina_Inlist *l;
 
+   if (!ogr) return;
+   gr = ogr->engine_data;
    if (!gr) return;
    if (!gr->stops.stops)
      {
@@ -164,47 +175,87 @@ evas_common_gradient2_color_np_stop_insert(RGBA_Gradient2 *gr, int r, int g, int
 	gr->has_alpha = 1;
 }
 
-EAPI void
-evas_common_gradient2_fill_transform_set(RGBA_Gradient2 *gr, Evas_Common_Transform *t)
+
+EAPI int
+evas_common_gradient2_opaque(RGBA_Draw_Context *dc, void *pgr,
+			     int x, int y, int w, int h)
 {
-   if (!gr) return;
-   if (!t)
+   Evas_Object_Gradient2 *ogr = pgr;
+   RGBA_Gradient2 *gr;
+
+   if (!dc || !ogr) return 0;
+   gr = ogr->engine_data;
+   if (!gr || !gr->type.geometer)  return 0;
+   if (dc->render_op != _EVAS_RENDER_BLEND)
+	return 0;
+   return !(gr->type.geometer->has_alpha(ogr, dc->render_op) |
+              gr->type.geometer->has_mask(ogr, dc->render_op));
+}
+
+EAPI void
+evas_common_gradient2_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, void *pgr,
+			   int x, int y, int w, int h)
+{
+   Cutout_Rects *rects;
+   Cutout_Rect  *r;
+   int          c, cx, cy, cw, ch;
+   int          i;
+
+   /* handle cutouts here! */
+
+   if ((w <= 0) || (h <= 0)) return;
+   if (!(RECTS_INTERSECT(x, y, w, h, 0, 0, dst->cache_entry.w, dst->cache_entry.h)))
+     return;
+   /* save out clip info */
+   c = dc->clip.use; cx = dc->clip.x; cy = dc->clip.y; cw = dc->clip.w; ch = dc->clip.h;
+   evas_common_draw_context_clip_clip(dc, 0, 0, dst->cache_entry.w, dst->cache_entry.h);
+   /* no cutouts - cut right to the chase */
+   if (!dc->cutout.rects)
      {
-	gr->fill.transform.mxx = 1;  gr->fill.transform.mxy = 0;  gr->fill.transform.mxz = 0;
-	gr->fill.transform.myx = 0;  gr->fill.transform.myy = 1;  gr->fill.transform.myz = 0;
-	gr->fill.transform.mzx = 1;  gr->fill.transform.mzy = 0;  gr->fill.transform.mzz = 1;
-	return;
+	_evas_common_gradient2_draw(dst, dc, pgr, x, y, w, h);
      }
-   gr->fill.transform.mxx = t->mxx;  gr->fill.transform.mxy = t->mxy;  gr->fill.transform.mxz = t->mxz;
-   gr->fill.transform.myx = t->myx;  gr->fill.transform.myy = t->myy;  gr->fill.transform.myz = t->myz;
-   gr->fill.transform.mzx = t->mzx;  gr->fill.transform.mzy = t->mzy;  gr->fill.transform.mzz = t->mzz;
+   else
+     {
+	evas_common_draw_context_clip_clip(dc, x, y, w, h);
+	/* our clip is 0 size.. abort */
+	if ((dc->clip.w > 0) && (dc->clip.h > 0))
+	  {
+	     rects = evas_common_draw_context_apply_cutouts(dc);
+	     for (i = 0; i < rects->active; ++i)
+	       {
+		  r = rects->rects + i;
+		  evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
+		  _evas_common_gradient2_draw(dst, dc, pgr, x, y, w, h);
+	       }
+	     evas_common_draw_context_apply_clear_cutouts(rects);
+	  }
+     }
+   /* restore clip info */
+   dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
+   evas_common_cpu_end_opt();
 }
 
-EAPI void
-evas_common_gradient2_fill_spread_set(RGBA_Gradient2 *gr, int spread)
+static void
+_evas_common_gradient2_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, void *pgr,
+			   int x, int y, int w, int h)
 {
-   if (!gr) return;
-   gr->fill.spread = spread;
-}
-
-EAPI void
-evas_common_gradient2_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
-			   int x, int y, int w, int h, RGBA_Gradient2 *gr)
-{
-   Gfx_Func_Gradient2_Fill   gfunc;
+   Evas_Object_Gradient2   *ogr = pgr;
+   RGBA_Gradient2          *gr;
+   Gfx_Func_Gradient2_Fill  gfunc;
    RGBA_Gfx_Func            bfunc;
    int             len;
    int             xin, yin, xoff, yoff;
    int             clx, cly, clw, clh;
    DATA32          *pdst, *dst_end, *buf, *map;
-   RGBA_Image      *argb_buf = NULL, *alpha_buf = NULL;
+   RGBA_Image      argb_buf;
    DATA8           *mask = NULL;
    void            *gdata;
    int             direct_copy = 0, buf_step = 0;
 
-   if (!dst || !dc || !gr || !dst || !dst->image.data)
+   if (!dc || !ogr || !dst || !dst->image.data)
 	return;
-   if (!gr->map.data || !gr->type.geometer)
+   gr = ogr->engine_data;
+   if (!gr || !gr->map.data || !gr->type.geometer)
 	return;
    if ((w < 1) || (h < 1))
 	return;
@@ -222,93 +273,70 @@ evas_common_gradient2_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
    xoff = (x - xin);
    yoff = (y - yin);
 
-   if (!gr->type.geometer->has_mask(gr, dc->render_op))
+   if (!gr->type.geometer->has_mask(ogr, dc->render_op))
      {
 	if ((dc->render_op == _EVAS_RENDER_FILL) ||
              (dc->render_op == _EVAS_RENDER_COPY))
 	  {
 	     direct_copy = 1;  buf_step = dst->cache_entry.w;
-	     if (gr->type.geometer->has_alpha(gr, dc->render_op))
+	     if (gr->type.geometer->has_alpha(ogr, dc->render_op))
 	        dst->cache_entry.flags.alpha = 1;
 	  }
 	else if ((dc->render_op == _EVAS_RENDER_BLEND) &&
-	          !gr->type.geometer->has_alpha(gr, dc->render_op))
+	          !gr->type.geometer->has_alpha(ogr, dc->render_op))
 	  {
 	     direct_copy = 1;  buf_step = dst->cache_entry.w;
 	  }
      }
    if (!direct_copy)
      {
-	argb_buf = evas_common_image_line_buffer_obtain(w);
-	if (!argb_buf)
-	   return;
-	argb_buf->cache_entry.flags.alpha = gr->type.geometer->has_alpha(gr, dc->render_op) ? 1 : 0;
+	buf = alloca(w * sizeof(DATA32));
+	if (!buf) return;
+	argb_buf.cache_entry.flags.alpha = gr->type.geometer->has_alpha(ogr, dc->render_op);
+	argb_buf.cache_entry.flags.alpha_sparse = 0;
 
-	if (gr->type.geometer->has_mask(gr, dc->render_op))
+	if (gr->type.geometer->has_mask(ogr, dc->render_op))
 	  {
-	    alpha_buf = evas_common_image_alpha_line_buffer_obtain(w);
-	    if (!alpha_buf)
-	      {
-		evas_common_image_line_buffer_release(argb_buf);
-		return;
-	      }
-	    bfunc = evas_common_gfx_func_composite_pixel_mask_span_get(argb_buf, dst, w, dc->render_op);
+	    mask = alloca(w * sizeof(DATA8));
+	    if (!mask) return;
+	    bfunc = evas_common_gfx_func_composite_pixel_mask_span_get(&argb_buf, dst, w, dc->render_op);
 	  }
 	else
-	   bfunc = evas_common_gfx_func_composite_pixel_span_get(argb_buf, dst, w, dc->render_op);
+	  {
+	    if (ogr->cur.fill.spread == _EVAS_TEXTURE_RESTRICT)
+		argb_buf.cache_entry.flags.alpha_sparse = 1;
+	    bfunc = evas_common_gfx_func_composite_pixel_span_get(&argb_buf, dst, w, dc->render_op);
+	  }
+	if (!bfunc) return;
      }
 
-   gfunc = gr->type.geometer->get_fill_func(gr, dc->render_op);
+   gfunc = gr->type.geometer->get_fill_func(ogr, dc->render_op);
    gdata = gr->type.gdata;
-   if (!gdata)
-     {
-	if (!direct_copy)
-	  {
-	    evas_common_image_line_buffer_release(argb_buf);
-	    if (alpha_buf)
-		evas_common_image_alpha_line_buffer_release(alpha_buf);
-	  }
-	return;
-     }
+   if (!gdata) return;
 
    map = gr->map.data;
    len = gr->map.len;
    pdst = dst->image.data + (y * dst->cache_entry.w) + x;
    dst_end = pdst + (h * dst->cache_entry.w);
-   if (!direct_copy)
-     {
-	buf = argb_buf->image.data;
-	if (alpha_buf)
-	   mask = (DATA8 *)alpha_buf->image.data;
-     }
-   else
-	buf = pdst;
+   if (direct_copy) buf = pdst;
 
    while (pdst < dst_end)
      {
 #ifdef EVAS_SLI
 	if ((y % dc->sli.h) == dc->sli.y)
-#endif
 	  {
+#endif
 	     gfunc(map, len, buf, mask, w, xoff, yoff, gdata);
 	     if (!direct_copy)
 	       bfunc(buf, mask, 0, pdst, w);
+#ifdef EVAS_SLI
+	     y++;
 	  }
+#endif
 	buf += buf_step;
 	pdst += dst->cache_entry.w;
 	yoff++;
-#ifdef EVAS_SLI
-	y++;
-#endif
      }
-
-   if (!direct_copy)
-     {
-	evas_common_image_line_buffer_release(argb_buf);
-	if (alpha_buf)
-	   evas_common_image_alpha_line_buffer_release(alpha_buf);
-     }
-   evas_common_cpu_end_opt();
 }
 
 static void
@@ -386,23 +414,22 @@ _evas_common_gradient2_map_argb(RGBA_Draw_Context *dc, RGBA_Gradient2 *gr, int l
      {
 	Eina_Inlist  *lc;
 	RGBA_Gradient2_Color_Np_Stop  *gc, *gc_next;
-	DATA32  *pmap, *map_end;
-	DATA8   *pamap = NULL;
+	DATA32  *map, *pmap, *map_end;
+	DATA8   *amap = NULL, *pamap = NULL;
 	int   i, dii;
 	int   r, g, b, a;
 	int   next_r, next_g, next_b, next_a;
 	int   rr, drr, gg, dgg, bb, dbb, aa, daa;
 
-	gr->stops.cdata = realloc(gr->stops.cdata, gr->stops.len * sizeof(DATA32));
-	if (!gr->stops.cdata)  return;
-	pmap = gr->stops.cdata;  map_end = pmap + gr->stops.len;
+	map = alloca(gr->stops.len * sizeof(DATA32));
+	if (!map)  return;
+	pmap = map;  map_end = pmap + gr->stops.len;
 
 	if (gr->has_alpha)
 	  {
-	    gr->stops.adata = realloc(gr->stops.adata, gr->stops.len * sizeof(DATA8));
-	    if (!gr->stops.adata)
-	      { free(gr->stops.cdata);  gr->stops.cdata = NULL;  return; }
-	    pamap = gr->stops.adata;
+	    amap = alloca(gr->stops.len * sizeof(DATA8));
+	    if (!amap) return;
+	    pamap = amap;
 	  }
 
 	gc = (RGBA_Gradient2_Color_Np_Stop *)gr->stops.stops;
@@ -445,17 +472,17 @@ _evas_common_gradient2_map_argb(RGBA_Draw_Context *dc, RGBA_Gradient2 *gr, int l
 		if (pamap) *pamap++ = gc->a;
 	      }
 	  }
-     }
 
-   if (gr->stops.cdata && gr->stops.adata)
+   if (map && amap)
      {
-	evas_common_scale_rgba_a8_span(gr->stops.cdata, gr->stops.adata, gr->stops.len,
+	evas_common_scale_rgba_a8_span(map, amap, gr->stops.len,
 					dc->mul.col, gr->map.data, gr->map.len, 1);
 	return;
      }
 
-   evas_common_scale_rgba_span(gr->stops.cdata, NULL, gr->stops.len,
+   evas_common_scale_rgba_span(map, NULL, gr->stops.len,
 				dc->mul.col, gr->map.data, gr->map.len, 1);
+     }
    gr->map.has_alpha |= (!!(255 - (dc->mul.col >> 24)));
 }
 
@@ -486,8 +513,8 @@ _evas_common_gradient2_map_ahsv(RGBA_Draw_Context *dc, RGBA_Gradient2 *gr, int l
      {
 	Eina_Inlist  *lc;
 	RGBA_Gradient2_Color_Np_Stop  *gc, *gc_next;
-	DATA32  *pmap, *map_end;
-	DATA8   *pamap = NULL;
+	DATA32  *map, *pmap, *map_end;
+	DATA8   *amap = NULL, *pamap = NULL;
 	int   i, dii;
 	int   h, s, v;
 	int   next_h, next_s, next_v;
@@ -495,16 +522,16 @@ _evas_common_gradient2_map_ahsv(RGBA_Draw_Context *dc, RGBA_Gradient2 *gr, int l
 	int   r, g, b, a;
 	int   next_r, next_g, next_b, next_a;
 
-	gr->stops.cdata = realloc(gr->stops.cdata, gr->stops.len * sizeof(DATA32));
-	if (!gr->stops.cdata)  return;
-	pmap = gr->stops.cdata;  map_end = pmap + gr->stops.len;
+	map = alloca(gr->stops.len * sizeof(DATA32));
+	if (!map)  return;
+	pmap = map;  map_end = pmap + gr->stops.len;
 
 	if (gr->has_alpha)
 	  {
-	    gr->stops.adata = realloc(gr->stops.adata, gr->stops.len * sizeof(DATA8));
-	    if (!gr->stops.adata)
-	      { free(gr->stops.cdata);  gr->stops.cdata = NULL;  return; }
-	    pamap = gr->stops.adata;
+	    amap = alloca(gr->stops.len * sizeof(DATA8));
+	    if (!amap)
+	       return;
+	    pamap = amap;
 	  }
 
 	gc = (RGBA_Gradient2_Color_Np_Stop *)gr->stops.stops;
@@ -552,23 +579,28 @@ _evas_common_gradient2_map_ahsv(RGBA_Draw_Context *dc, RGBA_Gradient2 *gr, int l
 		if (pamap) *pamap++ = gc->a;
 	      }
 	  }
-     }
 
-   if (gr->stops.cdata && gr->stops.adata)
+   if (map && amap)
      {
-	evas_common_scale_hsva_a8_span(gr->stops.cdata, gr->stops.adata, gr->stops.len,
+	evas_common_scale_hsva_a8_span(map, amap, gr->stops.len,
 					   dc->mul.col, gr->map.data, gr->map.len, 1);
 	return;
      }
-   evas_common_scale_hsva_span(gr->stops.cdata, NULL, gr->stops.len,
+   evas_common_scale_hsva_span(map, NULL, gr->stops.len,
 				dc->mul.col, gr->map.data, gr->map.len, 1);
+     }
    gr->map.has_alpha |= (!!(255 - (dc->mul.col >> 24)));
 }
 
 EAPI void
-evas_common_gradient2_map(RGBA_Draw_Context *dc, RGBA_Gradient2 *gr, int len)
+evas_common_gradient2_map(RGBA_Draw_Context *dc, void *pgr, int len)
 {
-   if (!gr || !dc) return;
+   Evas_Object_Gradient2 *ogr = pgr;
+   RGBA_Gradient2 *gr;
+
+   if (!ogr || !dc) return;
+   gr = ogr->engine_data;
+   if (!gr) return;
    if (dc->interpolation.color_space == _EVAS_COLOR_SPACE_AHSV)
      {
 	_evas_common_gradient2_map_ahsv(dc, gr, len);

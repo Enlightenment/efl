@@ -1,5 +1,6 @@
 #include "evas_common.h"
 #include "evas_private.h"
+#include "evas_object_gradient2.h"
 #include <math.h>
 
 #define RADIAL_EPSILON 0.000030517578125
@@ -23,31 +24,24 @@ static void
 radial_shutdown(void);
 
 static void 
-radial_init_geom(RGBA_Gradient2 *gr);
-
-static void 
-radial_update_geom(RGBA_Gradient2 *gr);
+radial_update_geom(void *pgr);
 
 static void 
 radial_free_geom(void *gdata);
 
 static int 
-radial_has_alpha(RGBA_Gradient2 *gr, int op);
+radial_has_alpha(void *pgr, int op);
 
 static int 
-radial_has_mask(RGBA_Gradient2 *gr, int op);
-
-static int 
-radial_get_map_len(RGBA_Gradient2 *gr);
+radial_has_mask(void *pgr, int op);
 
 static Gfx_Func_Gradient2_Fill 
-radial_get_fill_func(RGBA_Gradient2 *gr, int op);
+radial_get_fill_func(void *pgr, int op);
 
 static RGBA_Gradient2_Type  radial = {"radial", radial_init, radial_shutdown,
-				      radial_init_geom,
-				      radial_update_geom, radial_free_geom,
+				      radial_free_geom,
 				      radial_has_alpha, radial_has_mask,
-				      radial_get_map_len, radial_get_fill_func};
+				      radial_get_fill_func};
 
 
 EAPI RGBA_Gradient2_Type  *
@@ -57,32 +51,60 @@ evas_common_gradient2_type_radial_get(void)
 }
 
 EAPI RGBA_Gradient2 *
-evas_common_gradient2_radial_new(void)
+evas_common_rgba_gradient2_radial_new(void)
 {
    RGBA_Gradient2 *gr;
+   Radial_Data *radial_data;
 
    gr = calloc(1, sizeof(RGBA_Gradient2));
    if (!gr) return NULL;
+   radial_data = calloc(1, sizeof(Radial_Data));
+   if (!radial_data)  return;
    gr->references = 1;
    gr->type.id = MAGIC_OBJ_GRADIENT_RADIAL;
    gr->type.geometer = &radial;
-   radial_init_geom(gr);
+
+   radial_data->cx = radial_data->cy = 0;
+   radial_data->rx = radial_data->ry = 0;
+   radial_data->axx = 65536;  radial_data->axy = 0;
+   radial_data->ayx = 0;  radial_data->ayy = 65536;
+   radial_data->len = 0;
+   gr->type.gdata = radial_data;
+
    return gr;
 }
 
 EAPI void
-evas_common_gradient2_radial_fill_set(RGBA_Gradient2 *gr, float cx, float cy, float rx, float ry)
+evas_common_gradient2_radial_render_pre(RGBA_Draw_Context *dc, void *pgr)
 {
+   Evas_Object_Gradient2 *ogr = pgr;
+   Evas_Object_Gradient2_Radial *rgr;
+   RGBA_Gradient2 *gr;
    Radial_Data *radial_data;
+   float rx, ry;
 
+   if (!dc || !ogr) return;
+   rgr = (Evas_Object_Gradient2_Radial *)(ogr);
+   if (!rgr) return;
+   gr = ogr->engine_data;
    if (!gr) return;
    if (gr->type.id != MAGIC_OBJ_GRADIENT_RADIAL) return;
    if (gr->type.geometer != &radial) return;
    radial_data = (Radial_Data *)gr->type.gdata;
    if (!radial_data) return;
+   radial_data->cx = rgr->cur.fill.cx;  radial_data->cy = rgr->cur.fill.cy;
+   rx = rgr->cur.fill.rx;  ry = rgr->cur.fill.ry;
    if (rx < 0) rx = -rx;  if (ry < 0) ry = -ry;
-   radial_data->cx = cx;  radial_data->cy = cy;
    radial_data->rx = 1 + rx;  radial_data->ry = 1 + ry;
+
+   radial_update_geom(ogr);
+
+   evas_common_gradient2_map(dc, ogr, radial_data->len);
+}
+
+EAPI void
+evas_common_gradient2_radial_render_post(void *pgr)
+{
 }
 
 
@@ -122,39 +144,23 @@ radial_shutdown(void)
 static void 
 radial_free_geom(void *gdata)
 {
-   Radial_Data *data = (Radial_Data *)gdata;
-   if (data) free(data);
+   Radial_Data *radial_data = (Radial_Data *)gdata;
+   if (radial_data) free(radial_data);
 }
 
-static void
-radial_init_geom(RGBA_Gradient2 *gr)
-{
-   Radial_Data   *radial_data;
-
-   if (!gr || (gr->type.geometer != &radial)) return;
-
-   radial_data = (Radial_Data *)gr->type.gdata;
-   if (!radial_data)
-     {
-	radial_data = calloc(1, sizeof(Radial_Data));
-	if (!radial_data)  return;
-	radial_data->cx = radial_data->cy = 0;
-	radial_data->rx = radial_data->ry = 0;
-	radial_data->axx = 65536;  radial_data->axy = 0;
-	radial_data->ayx = 0;  radial_data->ayy = 65536;
-	radial_data->len = 0;
-    }
-   gr->type.gdata = radial_data;
-}
 
 static void 
-radial_update_geom(RGBA_Gradient2 *gr)
+radial_update_geom(void *pgr)
 {
+   Evas_Object_Gradient2 *ogr = pgr;
+   RGBA_Gradient2 *gr;
    Radial_Data   *radial_data;
    double f, flen;
    double  fx1, fy1;
    int len;
 
+   if (!ogr) return;
+   gr = ogr->engine_data;
    if (!gr || (gr->type.geometer != &radial)) return;
 
    radial_data = (Radial_Data *)gr->type.gdata;
@@ -163,86 +169,81 @@ radial_update_geom(RGBA_Gradient2 *gr)
    if ((radial_data->rx < RADIAL_EPSILON) || (radial_data->ry < RADIAL_EPSILON)) return;
 
    radial_data->len = 0;
-   f = (gr->fill.transform.mxx * (double)gr->fill.transform.myy) - (gr->fill.transform.mxy * (double)gr->fill.transform.myx);
+   f = (ogr->cur.fill.transform.mxx * (double)ogr->cur.fill.transform.myy) - (ogr->cur.fill.transform.mxy * (double)ogr->cur.fill.transform.myx);
    if (fabs(f) < RADIAL_EPSILON) return;
 
    f = 1.0 / f;
-   radial_data->cx0 = (((gr->fill.transform.myy * (double)radial_data->cx) - (gr->fill.transform.mxy * (double)radial_data->cy)) * f) - gr->fill.transform.mxz;
-   radial_data->cy0 = ((-(gr->fill.transform.myx * (double)radial_data->cx) + (gr->fill.transform.mxx * (double)radial_data->cy)) * f) - gr->fill.transform.myz;
+   radial_data->cx0 = (((ogr->cur.fill.transform.myy * (double)radial_data->cx) - (ogr->cur.fill.transform.mxy * (double)radial_data->cy)) * f) - ogr->cur.fill.transform.mxz;
+   radial_data->cy0 = ((-(ogr->cur.fill.transform.myx * (double)radial_data->cx) + (ogr->cur.fill.transform.mxx * (double)radial_data->cy)) * f) - ogr->cur.fill.transform.myz;
 
-   fx1 = (gr->fill.transform.myy * (double)radial_data->rx) * f;
-   fy1 = (gr->fill.transform.myx * (double)radial_data->rx) * f;
+   fx1 = (ogr->cur.fill.transform.myy * (double)radial_data->rx) * f;
+   fy1 = (ogr->cur.fill.transform.myx * (double)radial_data->rx) * f;
 
    flen = hypot(fx1, fy1);
 
-   fx1 = (gr->fill.transform.mxy * (double)radial_data->ry) * f;
-   fy1 = (gr->fill.transform.mxx * (double)radial_data->ry) * f;
+   fx1 = (ogr->cur.fill.transform.mxy * (double)radial_data->ry) * f;
+   fy1 = (ogr->cur.fill.transform.mxx * (double)radial_data->ry) * f;
 
    flen = sqrt(flen * hypot(fx1, fy1));
 
    radial_data->len = len = flen + 0.5;
    if (!len) return;
 
-   radial_data->axx = (((double)gr->fill.transform.mxx * 65536) * flen) / radial_data->rx;
-   radial_data->axy = (((double)gr->fill.transform.mxy * 65536) * flen) / radial_data->rx;
+   radial_data->axx = (((double)ogr->cur.fill.transform.mxx * 65536) * flen) / radial_data->rx;
+   radial_data->axy = (((double)ogr->cur.fill.transform.mxy * 65536) * flen) / radial_data->rx;
 
-   radial_data->ayx = (((double)gr->fill.transform.myx * 65536) * flen) / radial_data->ry;
-   radial_data->ayy = (((double)gr->fill.transform.myy * 65536) * flen) / radial_data->ry;
+   radial_data->ayx = (((double)ogr->cur.fill.transform.myx * 65536) * flen) / radial_data->ry;
+   radial_data->ayy = (((double)ogr->cur.fill.transform.myy * 65536) * flen) / radial_data->ry;
 }
 
 static int
-radial_has_alpha(RGBA_Gradient2 *gr, int op)
+radial_has_alpha(void *pgr, int op)
 {
-   Radial_Data   *radial_data;
+   Evas_Object_Gradient2 *ogr = pgr;
+   RGBA_Gradient2 *gr;
 
+   if (!ogr) return 0;
+   gr = ogr->engine_data;
    if (!gr || (gr->type.geometer != &radial)) return 0;
    if (gr->has_alpha | gr->map.has_alpha)
 	return 1;
    if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
 	return 0;
-   radial_data = (Radial_Data *)gr->type.gdata;
-   if (!radial_data) return 0;
-   if (gr->fill.spread == _EVAS_TEXTURE_RESTRICT)
+   if (ogr->cur.fill.spread == _EVAS_TEXTURE_RESTRICT)
 	return 1;
    return 0;
 }
 
 static int
-radial_has_mask(RGBA_Gradient2 *gr, int op)
+radial_has_mask(void *pgr, int op)
 {
-   Radial_Data   *radial_data;
+   Evas_Object_Gradient2 *ogr= pgr;
+   RGBA_Gradient2 *gr;
 
+   if (!ogr) return 0;
+   gr = ogr->engine_data;
    if (!gr || (gr->type.geometer != &radial)) return 0;
    if ( (op == _EVAS_RENDER_COPY) || (op == _EVAS_RENDER_COPY_REL) || 
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
      {
-	radial_data = (Radial_Data *)gr->type.gdata;
-	if (!radial_data) return 0;
-	if (gr->fill.spread == _EVAS_TEXTURE_RESTRICT)
+	if (ogr->cur.fill.spread == _EVAS_TEXTURE_RESTRICT)
 	    return 1;
      }
    return 0;
 }
 
-static int
-radial_get_map_len(RGBA_Gradient2 *gr)
-{
-   Radial_Data   *radial_data;
-
-   if (!gr || (gr->type.geometer != &radial)) return 0;
-   radial_data = (Radial_Data *)gr->type.gdata;
-   if (!radial_data) return 0;
-   return radial_data->len;
-}
-
 static Gfx_Func_Gradient2_Fill
-radial_get_fill_func(RGBA_Gradient2 *gr, int op)
+radial_get_fill_func(void *pgr, int op)
 {
+   Evas_Object_Gradient2 *ogr = pgr;
+   RGBA_Gradient2 *gr;
    Radial_Data   *radial_data;
    Gfx_Func_Gradient2_Fill  sfunc = NULL;
    int masked_op = 0;
 
+   if (!ogr) return 0;
+   gr = ogr->engine_data;
    if (!gr || (gr->type.geometer != &radial)) return sfunc;
    radial_data = (Radial_Data *)gr->type.gdata;
    if (!radial_data) return sfunc;
@@ -251,7 +252,7 @@ radial_get_fill_func(RGBA_Gradient2 *gr, int op)
          (op == _EVAS_RENDER_MASK) || (op == _EVAS_RENDER_MUL) )
 	masked_op = 1;
 
-   switch (gr->fill.spread)
+   switch (ogr->cur.fill.spread)
      {
       case _EVAS_TEXTURE_REPEAT:
 	sfunc = radial_repeat_aa;

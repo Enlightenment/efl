@@ -916,6 +916,9 @@ extern "C" {
    EAPI void              evas_transform_shear              (float sh, float sv, Evas_Transform *t);
    /* Left-multiply t by the given transform l */
    EAPI void              evas_transform_compose            (Evas_Transform *l, Evas_Transform *t);
+   /* Get bounds of an affine transformation of a given rect */
+   /* Note: this will use the inverse of the given transform */
+   EAPI void              evas_transform_affine_rect_bounds_get   (Evas_Transform *t, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Coord *rx, Evas_Coord *ry, Evas_Coord *rw, Evas_Coord *rh);
 
 /* Evas imaging api - exports some of the comon gfx engine routines */
 /* this is not complete and should be considered experimental. use at your */

@@ -191,6 +191,10 @@ typedef void (*Gfx_Func_Gradient2_Fill)(DATA32 *src, int src_len,
                                          int x, int y,
                                          void *geom_data);
 
+typedef void (*Gfx_Func_Image_Fill)(DATA32 *src, int src_w, int src_h,
+                                      DATA32 *dst, DATA8 *mask, int len,
+                                      int x, int y,
+                                      void *geom_data);
 #include "../cache/evas_cache.h"
 
 /*****************************************************************************/
@@ -350,6 +354,8 @@ struct _Evas_Common_Transform
    float  mxx, mxy, mxz;
    float  myx, myy, myz;
    float  mzx, mzy, mzz;
+   unsigned char is_identity : 1;
+   unsigned char is_projective : 1;
 };
 
 struct _RGBA_Draw_Context
@@ -405,7 +411,7 @@ struct _RGBA_Pipe_Op
 	 int                 x, y, w, h;
       } grad;
       struct {
-	 RGBA_Gradient2      *grad;
+	 void               *grad;
 	 int                 x, y, w, h;
       } grad2;
       struct {
@@ -414,10 +420,8 @@ struct _RGBA_Pipe_Op
 	 char               *text;
       } text;
       struct {
-	 RGBA_Image         *src;
-	 int                 sx, sy, sw, sh, dx, dy, dw, dh;
-	 int                 smooth;
-	 char               *text;
+	 void               *im;
+	 int                 x, y, w, h;
       } image;
    } op;
 };
@@ -565,16 +569,9 @@ struct _RGBA_Gradient2
    struct {
 	Eina_Inlist *stops;
 	int               nstops;
-	DATA32           *cdata;
-	DATA8            *adata;
 	int               len;
    }  stops;
 
-   struct
-     {
-	Evas_Common_Transform  transform;
-	int                    spread;
-     } fill;
    struct
      {
         int                 id;
@@ -592,13 +589,10 @@ struct _RGBA_Gradient2_Type
    const char              *name;
    void                    (*init)(void);
    void                    (*shutdown)(void);
-   void                    (*geom_init)(RGBA_Gradient2 *gr);
-   void                    (*geom_update)(RGBA_Gradient2 *gr);
    void                    (*geom_free)(void *gdata);
-   int                     (*has_alpha)(RGBA_Gradient2 *gr, int render_op);
-   int                     (*has_mask)(RGBA_Gradient2 *gr, int render_op);
-   int                     (*get_map_len)(RGBA_Gradient2 *gr);
-   Gfx_Func_Gradient2_Fill  (*get_fill_func)(RGBA_Gradient2 *gr, int render_op);
+   int                     (*has_alpha)(void *ogr, int render_op);
+   int                     (*has_mask)(void *ogr, int render_op);
+   Gfx_Func_Gradient2_Fill  (*get_fill_func)(void *ogr, int render_op);
 };
 
 
@@ -883,6 +877,7 @@ EAPI void evas_common_cpu_end_opt                       (void);
 EAPI int evas_common_cpu_count                          (void);
 
 /****/
+#include "../engines/common/evas_transform.h"
 #include "../engines/common/evas_blend.h"
 
 EAPI Gfx_Func_Copy        evas_common_draw_func_copy_get        (int pixels, int reverse);

@@ -5,11 +5,11 @@
 static void
 _op_mul_mas_c_dp_mmx(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
+   pxor_r2r(mm0, mm0);
    MOV_P2R(c, mm2, mm0)
    c = ~c;
    MOV_P2R(c, mm3, mm0)
    MOV_A2R(ALPHA_255, mm5)
-   pxor_r2r(mm0, mm0);
    while (d < e) {
 	DATA32 a = *m;
 	switch(a)
@@ -61,9 +61,9 @@ static void
 _op_mul_pt_mas_c_dp_mmx(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
 	s = m + 1;
 	c = ~c;
+	pxor_r2r(mm0, mm0);
 	MOV_P2R(c, mm3, mm0)
 	MOV_A2R(ALPHA_255, mm4)
-	pxor_r2r(mm0, mm0);
 	MOV_A2R(s, mm1)
 	MUL4_256_R2R(mm3, mm1)
 	psubw_r2r(mm1, mm4);

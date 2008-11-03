@@ -6,6 +6,7 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS	     = -I. \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
+		       -I$(top_srcdir)/src/lib/canvas \
 		       -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 		       -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 		       -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
@@ -53,6 +54,8 @@ evas_image_load.c \
 evas_image_save.c \
 evas_image_main.c \
 evas_image_data.c \
+evas_image_fill_main.c \
+evas_image_draw.c \
 evas_line_main.c \
 evas_polygon_main.c \
 evas_rectangle_main.c \
@@ -62,7 +65,8 @@ evas_scale_smooth.c \
 evas_scale_span.c \
 evas_tiler.c \
 evas_regionbuf.c \
-evas_pipe.c
+evas_pipe.c \
+evas_transform.c
 
 EXTRA_DIST = \
 evas_blend.h \
@@ -96,8 +100,13 @@ evas_scale_smooth_scaler_downx_downy.c \
 evas_scale_smooth_scaler_downy.c \
 evas_scale_smooth_scaler_noscale.c \
 evas_scale_smooth_scaler_up.c \
+evas_image_fill_restrict.c \
+evas_image_fill_repeat.c \
+evas_image_fill_reflect.c \
+evas_image_fill_pad.c \
 evas_scale_span.h \
-evas_pipe.h
+evas_pipe.h \
+evas_transform.h
 
 libevas_engine_common_la_DEPENDENCIES = \
 $(top_builddir)/config.h

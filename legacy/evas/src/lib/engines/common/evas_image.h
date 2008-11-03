@@ -28,5 +28,9 @@ EAPI void              evas_common_image_alpha_line_buffer_free    (RGBA_Image *
 EAPI RGBA_Image       *evas_common_load_image_from_file            (const char *file, const char *key, RGBA_Image_Loadopts *lo);
 EAPI int               evas_common_save_image_to_file              (RGBA_Image *im, const char *file, const char *key, int quality, int compress);
 
+EAPI void              evas_common_image_render_pre       (RGBA_Draw_Context *dc, void *pim);
+EAPI void              evas_common_image_draw2            (RGBA_Image *dst, RGBA_Draw_Context *dc, void *pim, int x, int y, int w, int h);
+EAPI int               evas_common_image_is_opaque(RGBA_Draw_Context *dc, void *pim, int x, int y, int w, int h);
+EAPI Gfx_Func_Image_Fill evas_common_image_fill_func_get(void *pim, int render_op);
 
 #endif /* _EVAS_IMAGE_H */
