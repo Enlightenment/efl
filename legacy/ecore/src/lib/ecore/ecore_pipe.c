@@ -14,19 +14,25 @@
 struct _Ecore_Pipe
 {
    ECORE_MAGIC;
-   int                fd_read;
-   int                fd_write;
-   Ecore_Fd_Handler  *fd_handler;
-   void             (*handler) (void *data, void *buffer, int nbyte);
-   const void        *data;
+   int               fd_read;
+   int               fd_write;
+   Ecore_Fd_Handler *fd_handler;
+   const void       *data;
+   void (*handler) (void *data, void *buffer, unsigned int nbyte);
+   unsigned int      len;
+   size_t            already_read;
+   void             *passed_data;
 };
+
+/* How of then we should retry to write to the pipe */
+#define ECORE_PIPE_WRITE_RETRY 6
 
 /*
  * On Windows, pipe() is implemented with sockets.
  * Contrary to Linux, Windows uses different functions
  * for sockets and fd's: write() is for fd's and send
  * is for sockets. So I need to put some win32 code
- * here. I can' think of a solution where the win32
+ * here. I can't think of a solution where the win32
  * code is in Evil and not here.
  */
 
@@ -34,17 +40,17 @@ struct _Ecore_Pipe
 
 # include <winsock2.h>
 
-# define e_write(fd, buffer, size) send((fd), (char *)(buffer), size, 0)
-# define e_read(fd, buffer, size)  recv((fd), (char *)(buffer), size, 0)
+# define pipe_write(fd, buffer, size) send((fd), (char *)(buffer), size, 0)
+# define pipe_read(fd, buffer, size)  recv((fd), (char *)(buffer), size, 0)
 
 #else
 
 # include <unistd.h>
 # include <fcntl.h>
+# include <errno.h>
 
-# define e_write(fd, buffer, size) write((fd), buffer, size)
-# define e_read(fd, buffer, size)  read((fd), buffer, size)
-# define e_pipe(mod)               pipe(mod)
+# define pipe_write(fd, buffer, size) write((fd), buffer, size)
+# define pipe_read(fd, buffer, size)  read((fd), buffer, size)
 
 #endif /* _WIN32 */
 
@@ -80,14 +86,13 @@ static int _ecore_pipe_read(void             *data,
  *                                 GstPad     *new_pad,
  *                                 gpointer    user_data);
  *
- * static void handler(void *data, void *buffer, int nbyte)
+ * static void handler(void *data, void *buf, unsigned int len)
  * {
- *   GstBuffer  *gbuffer;
+ *   GstBuffer  *buffer = *((GstBuffer **)buf);
  *
- *   printf ("handler : %p\n", data);
- *   gbuffer = buffer;
- *   printf ("frame  : %d %p %lld %p\n", nbr++, data, (long long)GST_BUFFER_DURATION(gbuffer), gbuffer);
- *   gst_buffer_unref (gbuffer);
+ *   printf ("handler : %p\n", buffer);
+ *   printf ("frame  : %d %p %lld %p\n", nbr++, data, (long long)GST_BUFFER_DURATION(buffer), buffer);
+ *   gst_buffer_unref (buffer);
  * }
  *
  *
@@ -101,7 +106,7 @@ static int _ecore_pipe_read(void             *data,
  *   pipe = (Ecore_Pipe *)user_data;
  *   printf ("handoff : %p\n", arg0);
  *   gst_buffer_ref (arg0);
- *   ecore_pipe_write(pipe, arg0);
+ *   ecore_pipe_write(pipe, &arg0, sizeof(arg0));
  * }
  *
  * int
@@ -190,7 +195,7 @@ static int _ecore_pipe_read(void             *data,
  *   GstElement          *demuxer;
  *   GstElement          *decoder;
  *   GstElement          *sink;
- *   GstStateChangeReturn res;
+  GstStateChangeReturn res;
  *
  *   pipeline = gst_pipeline_new ("pipeline");
  *   if (!pipeline)
@@ -267,39 +272,38 @@ static int _ecore_pipe_read(void             *data,
  * @ingroup Ecore_Pipe_Group
  */
 EAPI Ecore_Pipe *
-ecore_pipe_add(void (*handler) (void *data, void *buffer, int nbyte),
-	       const void *data)
+ecore_pipe_add(void (*handler) (void *data, void *buffer, unsigned int nbyte),
+		const void *data)
 {
    Ecore_Pipe       *p;
-   Ecore_Fd_Handler *fd_handler;
    int               fds[2];
-   
-   if (!handler)
+
+   if(!handler)
      return NULL;
-   p = (Ecore_Pipe *)malloc(sizeof (Ecore_Pipe));
+   p = (Ecore_Pipe *)calloc(1, sizeof(Ecore_Pipe));
    if (!p)
      return NULL;
-   
-   if (e_pipe(fds))
+
+   if (pipe(fds))
      {
         free(p);
         return NULL;
      }
-   
+
    ECORE_MAGIC_SET(p, ECORE_MAGIC_PIPE);
    p->fd_read = fds[0];
    p->fd_write = fds[1];
    p->handler = handler;
    p->data = data;
-   
+
 #ifndef _WIN32
    fcntl(p->fd_read, F_SETFL, O_NONBLOCK);
 #endif /* _WIN32 */
    p->fd_handler = ecore_main_fd_handler_add(p->fd_read,
-					     ECORE_FD_READ,
-					     _ecore_pipe_read,
-					     p,
-					     NULL, NULL);
+                                          ECORE_FD_READ,
+                                          _ecore_pipe_read,
+                                          p,
+                                          NULL, NULL);
 
    return p;
 }
@@ -308,6 +312,7 @@ ecore_pipe_add(void (*handler) (void *data, void *buffer, int nbyte),
  * Free an Ecore_Pipe object created with ecore_pipe_add().
  *
  * @param p The Ecore_Pipe object to be freed.
+ * @return The pointer to the private data
  * @ingroup Ecore_Pipe_Group
  */
 EAPI void *
@@ -318,7 +323,7 @@ ecore_pipe_del(Ecore_Pipe *p)
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
 	ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE,
-			 "ecore_pipe_del");
+	      "ecore_pipe_del");
 	return NULL;
      }
    ecore_main_fd_handler_del(p->fd_handler);
@@ -333,46 +338,161 @@ ecore_pipe_del(Ecore_Pipe *p)
  * Write on the file descriptor the data passed as parameter.
  *
  * @param p      The Ecore_Pipe object.
- * @param data   The data to write into the pipe.
- * @param nbytes The size of the @p data in bytes
+ * @param buffer The data to write into the pipe.
+ * @param nbytes The size of the @p buffer in bytes
  * @ingroup Ecore_Pipe_Group
  */
-EAPI void
-ecore_pipe_write(Ecore_Pipe *p, const void *buffer, int nbytes)
+EAPI int
+ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
 {
+   ssize_t ret;
+   size_t already_written = 0;
+   int retry = ECORE_PIPE_WRITE_RETRY;
+
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
 	ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE,
-			 "ecore_pipe_write");
-	return;
+	      "ecore_pipe_write");
+	return 0;
      }
    /* first write the len into the pipe */
-   e_write(p->fd_write, &nbytes, sizeof(nbytes));
-   
+   do
+     {
+	ret = pipe_write(p->fd_write, &nbytes, sizeof(nbytes));
+	if (ret == sizeof(nbytes))
+	  {
+	     retry = ECORE_PIPE_WRITE_RETRY;
+	     break;
+	  }
+	else if (ret > 0)
+	  {
+	     /* XXX What should we do here? */
+	     fprintf(stderr, "The length of the data was not written complete"
+		  " to the pipe\n");
+	     return 0;
+	  }
+	else if (ret == -1 && errno == EINTR)
+	  /* try it again */
+	  ;
+	else
+	  {
+	     fprintf(stderr, "An unhandled error (ret: %d errno: %d)"
+		   "occured while writing to the pipe the length\n",
+		   ret, errno);
+	  }
+     } 
+   while (retry--);
+
+   if (retry != ECORE_PIPE_WRITE_RETRY)
+     return 0;
+
    /* and now pass the data to the pipe */
-   e_write(p->fd_write, buffer, nbytes);
+   do
+     {
+	ret = pipe_write(p->fd_write, 
+	      ((unsigned char *)buffer) + already_written,
+	      nbytes - already_written);
+
+	if (ret == (ssize_t)(nbytes - already_written))
+	  return 1;
+	else if (ret >= 0)
+	  {
+	     already_written -= ret;
+	     continue;
+	  }
+	else if (ret == -1 && errno == EINTR)
+	  /* try it again */
+	  ;
+	else
+	  {
+	     fprintf(stderr, "An unhandled error (ret: %d errno: %d)"
+		   "occured while writing to the pipe the length\n",
+		   ret, errno);
+	  }
+     } 
+   while (retry--);
+
+   return 0;
 }
 
 /* Private function */
 
 static int
-_ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler)
+_ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    Ecore_Pipe  *p;
-   unsigned int len;
-   void        *passed_data;
-   
+   double       start_time;
+
    p = (Ecore_Pipe *)data;
-   
-   /* read the len of the passed data */
-   e_read(p->fd_read, &len, sizeof(len));
-   
-   /* and read the passed data */
-   passed_data = malloc(len);
-   e_read(p->fd_read, passed_data, len);
-   
-   p->handler(p->data, passed_data, len);
-   free(passed_data);
-   
+   start_time = ecore_time_get();
+
+   do 
+     {
+	ssize_t       ret;
+
+	/* if we already have read some data we don't need to read the len
+	 * but to finish the already started job
+	 */
+	if (p->len == 0)
+	  {
+	     /* read the len of the passed data */
+	     ret = pipe_read(p->fd_read, &p->len, sizeof(p->len));
+
+	     /* catch the non error case first */
+	     if (ret == sizeof(p->len))
+	       ;
+	     else if (ret > 0)
+	       {
+		  /* XXX What should we do here? */
+		  fprintf(stderr, "Only read %d bytes from the pipe, although"
+			" we need to read %d bytes.\n", ret, sizeof(p->len));
+	       }
+	     else if (ret == 0 
+		   || (ret == -1 && (errno == EINTR || errno == EAGAIN)))
+	       return ECORE_CALLBACK_RENEW;
+	     else
+	       {
+		  fprintf(stderr, "An unhandled error (ret: %d errno: %d)"
+			"occured while reading from the pipe the length\n",
+			ret, errno);
+		  return ECORE_CALLBACK_RENEW;
+	       }
+	  }
+
+	if (!p->passed_data)
+	  p->passed_data = malloc(p->len);
+
+	/* and read the passed data */
+	ret = pipe_read(p->fd_read, 
+	      ((unsigned char *)p->passed_data) + p->already_read,
+	      p->len - p->already_read);
+
+	/* catch the non error case first */
+	if (ret == (ssize_t)(p->len - p->already_read))
+	  {
+	     p->handler((void *)p->data, p->passed_data, p->len);
+	     free(p->passed_data);
+	     /* reset all values to 0 */
+	     p->passed_data = NULL;
+	     p->already_read = 0;
+	     p->len = 0;
+	  }
+	else if (ret >= 0)
+	  {
+	     p->already_read += ret;
+	     return ECORE_CALLBACK_RENEW;
+	  }
+	else if (ret == -1 && (errno == EINTR || errno == EAGAIN))
+	  return ECORE_CALLBACK_RENEW;
+	else
+	  {
+	     fprintf(stderr, "An unhandled error (ret: %d errno: %d)"
+		   "occured while reading from the pipe the data\n",
+		   ret, errno);
+	     return ECORE_CALLBACK_RENEW;
+	  }
+     }
+   while (ecore_time_get() - start_time < ecore_animator_frametime_get());
+
    return ECORE_CALLBACK_RENEW;
 }

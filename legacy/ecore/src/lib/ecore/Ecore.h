@@ -287,9 +287,9 @@ extern "C" {
    EAPI int               ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
    EAPI void              ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
 
-   EAPI Ecore_Pipe  *ecore_pipe_add(void (*handler) (void *data, void *buffer, int nbyte), const void *data);
+   EAPI Ecore_Pipe  *ecore_pipe_add(void (*handler) (void *data, void *buffer, unsigned int nbyte), const void *data);
    EAPI void        *ecore_pipe_del(Ecore_Pipe *p);
-   EAPI void         ecore_pipe_write(Ecore_Pipe *p, const void *buffer, int nbytes);
+   EAPI int          ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes);
 
    EAPI double ecore_time_get(void);
    EAPI double ecore_loop_time_get(void);
