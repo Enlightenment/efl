@@ -419,7 +419,6 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
 
 	if (connect(svr->fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
 	  {
-	    perror("connect()");
 	    goto error;
 	  }
 	svr->path = strdup(buf);
