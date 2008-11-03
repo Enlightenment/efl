@@ -22,6 +22,7 @@ ecore_idler.c \
 ecore_list.c \
 ecore_main.c \
 ecore_path.c \
+ecore_pipe.c \
 ecore_plugin.c \
 ecore_sheap.c \
 ecore_signal.c \

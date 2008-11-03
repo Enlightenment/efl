@@ -127,6 +127,7 @@ extern "C" {
    typedef void Ecore_Event_Filter; /**< A handle for an event filter */
    typedef void Ecore_Event; /**< A handle for an event */
    typedef void Ecore_Animator; /**< A handle for animators */
+   typedef void Ecore_Pipe; /**< A handle for pipes */
    typedef void Ecore_Poller; /**< A handle for pollers */
 #endif
    typedef struct _Ecore_Event_Signal_User     Ecore_Event_Signal_User; /**< User signal event */
@@ -285,6 +286,10 @@ extern "C" {
    EAPI int               ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler);
    EAPI int               ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
    EAPI void              ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
+
+   EAPI Ecore_Pipe  *ecore_pipe_add(void (*handler) (void *data, void *buffer, int nbyte), const void *data);
+   EAPI void        *ecore_pipe_del(Ecore_Pipe *p);
+   EAPI void         ecore_pipe_write(Ecore_Pipe *p, const void *buffer, int nbytes);
 
    EAPI double ecore_time_get(void);
    EAPI double ecore_loop_time_get(void);

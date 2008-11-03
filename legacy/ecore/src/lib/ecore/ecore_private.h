@@ -95,6 +95,8 @@
 #define ECORE_MAGIC_EVENT           0xf77119fe
 #define ECORE_MAGIC_ANIMATOR        0xf7643ea5
 #define ECORE_MAGIC_POLLER          0xf7568127
+#define ECORE_MAGIC_PIPE            0xf7458226
+
 
 #define ECORE_MAGIC                 Ecore_Magic  __magic
 
@@ -247,6 +249,7 @@ typedef struct _Ecore_Event_Handler Ecore_Event_Handler;
 typedef struct _Ecore_Event_Filter  Ecore_Event_Filter;
 typedef struct _Ecore_Event         Ecore_Event;
 typedef struct _Ecore_Animator      Ecore_Animator;
+typedef struct _Ecore_Pipe          Ecore_Pipe;
 typedef struct _Ecore_Poller        Ecore_Poller;
 
 #ifndef _WIN32
