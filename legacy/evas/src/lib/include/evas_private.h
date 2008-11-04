@@ -578,9 +578,12 @@ struct _Evas_Func
 
    void (*gradient2_color_np_stop_insert)   (void *data, void *gradient, int r, int g, int b, int a, float pos);
    void (*gradient2_clear)                  (void *data, void *gradient);
+   void (*gradient2_fill_transform_set)     (void *data, void *gradient, void *transform);
+   void (*gradient2_fill_spread_set)        (void *data, void *gradient, int spread);
 
    void *(*gradient2_linear_new)                   (void *data);
    void (*gradient2_linear_free)                   (void *data, void *linear_gradient);
+   void (*gradient2_linear_fill_set)               (void *data, void *linear_gradient, float x0, float y0, float x1, float y1);
    int  (*gradient2_linear_is_opaque)              (void *data, void *context, void *linear_gradient, int x, int y, int w, int h);
    int  (*gradient2_linear_is_visible)             (void *data, void *context, void *linear_gradient, int x, int y, int w, int h);
    void (*gradient2_linear_render_pre)             (void *data, void *context, void *linear_gradient);
@@ -589,6 +592,7 @@ struct _Evas_Func
 
    void *(*gradient2_radial_new)                   (void *data);
    void (*gradient2_radial_free)                   (void *data, void *radial_gradient);
+   void (*gradient2_radial_fill_set)               (void *data, void *radial_gradient, float cx, float cy, float rx, float ry);
    int  (*gradient2_radial_is_opaque)              (void *data, void *context, void *radial_gradient, int x, int y, int w, int h);
    int  (*gradient2_radial_is_visible)             (void *data, void *context, void *radial_gradient, int x, int y, int w, int h);
    void (*gradient2_radial_render_pre)             (void *data, void *context, void *radial_gradient);
@@ -629,10 +633,9 @@ struct _Evas_Func
    void  (*image_data_preload_cancel)      (void *data, void *image);
    void *(*image_alpha_set)                (void *data, void *image, int has_alpha);
    int  (*image_alpha_get)                 (void *data, void *image);
-   int  (*image_is_opaque)                 (void *data, void *context, void *image, int x, int y, int w, int h);
-   void (*image_render_pre)                (void *data, void *context, void *image);
-   void (*image_render_post)               (void *data, void *image);
-   void (*image_draw)                      (void *data, void *context, void *surface, void *image, int x, int y, int w, int h);
+   void *(*image_border_set)               (void *data, void *image, int l, int r, int t, int b);
+   void  (*image_border_get)               (void *data, void *image, int *l, int *r, int *t, int *b);
+   void (*image_draw)                      (void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth);
    char *(*image_comment_get)              (void *data, void *image, char *key);
    char *(*image_format_get)               (void *data, void *image);
    void (*image_colorspace_set)            (void *data, void *image, int cspace);

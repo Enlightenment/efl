@@ -385,6 +385,17 @@ eng_gradient2_clear(void *data, void *gradient)
 {
 }
 
+static void
+eng_gradient2_fill_transform_set(void *data, void *gradient, void *transform)
+{
+}
+
+static void
+eng_gradient2_fill_spread_set
+(void *data, void *gradient, int spread)
+{
+}
+
 static void *
 eng_gradient2_linear_new(void *data)
 {
@@ -393,6 +404,11 @@ eng_gradient2_linear_new(void *data)
 
 static void
 eng_gradient2_linear_free(void *data, void *linear_gradient)
+{
+}
+
+static void
+eng_gradient2_linear_fill_set(void *data, void *linear_gradient, int x0, int y0, int x1, int y1)
 {
 }
 
@@ -431,6 +447,11 @@ eng_gradient2_radial_new(void *data)
 
 static void
 eng_gradient2_radial_free(void *data, void *radial_gradient)
+{
+}
+
+static void
+eng_gradient2_radial_fill_set(void *data, void *radial_gradient, float cx, float cy, float rx, float ry)
 {
 }
 
@@ -650,6 +671,23 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
      evas_gl_common_image_dirty(im);
    im->im->cache_entry.flags.alpha = has_alpha ? 1 : 0;
    return image;
+}
+
+static void *
+eng_image_border_set(void *data, void *image, int l, int r, int t, int b)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   return image;
+}
+
+static void
+eng_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
 }
 
 static char *
@@ -952,23 +990,6 @@ eng_image_data_preload_cancel(void *data, void *image)
    evas_cache_image_preload_cancel(&im->cache_entry);
 }
 
-static int
-eng_image_is_opaque(void *data, void *context, void *image, int x, int y, int w, int h)
-{
-   return 0;
-}
-
-static void
-eng_image_render_pre(void *data, void *context, void *image)
-{
-}
-
-static void
-eng_image_render_post(void *data, void *image)
-{
-}
-
-#if 0
 static void
 eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
@@ -982,12 +1003,6 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 			     src_x, src_y, src_w, src_h,
 			     dst_x, dst_y, dst_w, dst_h,
 			     smooth);
-}
-#endif
-
-static void
-eng_image_draw(void *data, void *context, void *surface, void *image, int x, int y, int w, int h)
-{
 }
 
 static void
@@ -1077,7 +1092,6 @@ module_open(Evas_Module *em)
    ORD(context_cutout_clear);
    ORD(output_flush);
    ORD(output_idle_flush);
-
    ORD(rectangle_draw);
    ORD(line_draw);
    ORD(polygon_point_add);
@@ -1086,8 +1100,11 @@ module_open(Evas_Module *em)
 
    ORD(gradient2_color_np_stop_insert);
    ORD(gradient2_clear);
+   ORD(gradient2_fill_transform_set);
+   ORD(gradient2_fill_spread_set);
    ORD(gradient2_linear_new);
    ORD(gradient2_linear_free);
+   ORD(gradient2_linear_fill_set);
    ORD(gradient2_linear_is_opaque);
    ORD(gradient2_linear_is_visible);
    ORD(gradient2_linear_render_pre);
@@ -1095,6 +1112,7 @@ module_open(Evas_Module *em)
    ORD(gradient2_linear_draw);
    ORD(gradient2_radial_new);
    ORD(gradient2_radial_free);
+   ORD(gradient2_radial_fill_set);
    ORD(gradient2_radial_is_opaque);
    ORD(gradient2_radial_is_visible);
    ORD(gradient2_radial_render_pre);
@@ -1120,7 +1138,6 @@ module_open(Evas_Module *em)
    ORD(gradient_render_pre);
    ORD(gradient_render_post);
    ORD(gradient_draw);
-
    ORD(image_load);
    ORD(image_new_from_data);
    ORD(image_new_from_copied_data);
@@ -1134,9 +1151,8 @@ module_open(Evas_Module *em)
    ORD(image_data_preload_cancel);
    ORD(image_alpha_set);
    ORD(image_alpha_get);
-   ORD(image_is_opaque);
-   ORD(image_render_pre);
-   ORD(image_render_post);
+   ORD(image_border_set);
+   ORD(image_border_get);
    ORD(image_draw);
    ORD(image_comment_get);
    ORD(image_format_get);
@@ -1144,7 +1160,6 @@ module_open(Evas_Module *em)
    ORD(image_colorspace_get);
    ORD(image_native_set);
    ORD(image_native_get);
-
    ORD(font_draw);
    /* now advertise out own api */
    em->functions = (void *)(&func);

@@ -166,41 +166,41 @@ evas_common_image_draw_data_setup(void *pim, Image_Draw_Data *idata)
 EAPI Gfx_Func_Image_Fill
 evas_common_image_fill_func_get(void *pim, int render_op)
 {
-   Evas_Object_Image *oim = pim;
-   RGBA_Image *im;
-   Gfx_Func_Image_Fill  sfunc = NULL;
-   int masked_op = 0;
-
-   if (!oim) return sfunc;
-   im = oim->engine_data;
-   if (!im) return sfunc;
-
-   if ( (render_op == _EVAS_RENDER_COPY) || (render_op == _EVAS_RENDER_COPY_REL) || 
-         (render_op == _EVAS_RENDER_MASK) || (render_op == _EVAS_RENDER_MUL) )
-	masked_op = 1;
-
-   switch (oim->cur.fill.spread)
-     {
-      case _EVAS_TEXTURE_REPEAT:
-	sfunc = image_repeat_affine_get(oim, render_op);
+  Evas_Object_Image *oim = pim;
+  RGBA_Image *im;
+  Gfx_Func_Image_Fill  sfunc = NULL;
+  int masked_op = 0;
+  
+  if (!oim) return sfunc;
+  im = oim->engine_data;
+  if (!im) return sfunc;
+  
+  if ( (render_op == _EVAS_RENDER_COPY) || (render_op == _EVAS_RENDER_COPY_REL) || 
+       (render_op == _EVAS_RENDER_MASK) || (render_op == _EVAS_RENDER_MUL) )
+    masked_op = 1;
+  
+  switch (oim->cur.fill.spread)
+    {
+    case _EVAS_TEXTURE_REPEAT:
+      sfunc = image_repeat_affine_get(oim, render_op);
       break;
-      case _EVAS_TEXTURE_REFLECT:
-	sfunc = image_reflect_affine_get(oim, render_op);
+    case _EVAS_TEXTURE_REFLECT:
+      sfunc = image_reflect_affine_get(oim, render_op);
       break;
-      case _EVAS_TEXTURE_RESTRICT:
-	if (masked_op)
-	   sfunc = image_restrict_masked_affine_get(oim, render_op);
-	else
-	   sfunc = image_restrict_affine_get(oim, render_op);
+    case _EVAS_TEXTURE_RESTRICT:
+      if (masked_op)
+        sfunc = image_restrict_masked_affine_get(oim, render_op);
+      else
+        sfunc = image_restrict_affine_get(oim, render_op);
       break;
-      case _EVAS_TEXTURE_PAD:
-	sfunc = image_pad_affine_get(oim, render_op);
+    case _EVAS_TEXTURE_PAD:
+      sfunc = image_pad_affine_get(oim, render_op);
       break;
-      default:
-	sfunc = image_repeat_affine_get(oim, render_op);
+    default:
+      sfunc = image_repeat_affine_get(oim, render_op);
       break;
-     }
-   return sfunc;
+    }
+  return sfunc;
 }
 
 

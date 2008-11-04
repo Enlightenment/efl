@@ -193,7 +193,6 @@ eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
      }
 }
 
-/* new gradient engine funcs */
 static void
 eng_gradient2_color_np_stop_insert(void *data, void *gradient, int r, int g, int b, int a, float pos)
 {
@@ -206,22 +205,46 @@ eng_gradient2_clear(void *data, void *gradient)
    evas_common_gradient2_clear(gradient);
 }
 
+static void
+eng_gradient2_fill_transform_set(void *data, void *gradient, void *transform)
+{
+   evas_common_gradient2_fill_transform_set(gradient, transform);
+}
+
+static void
+eng_gradient2_fill_spread_set
+(void *data, void *gradient, int spread)
+{
+   evas_common_gradient2_fill_spread_set(gradient, spread);
+}
+
 static void *
 eng_gradient2_linear_new(void *data)
 {
-   return evas_common_rgba_gradient2_linear_new();
+   return evas_common_gradient2_linear_new();
 }
 
 static void
 eng_gradient2_linear_free(void *data, void *linear_gradient)
 {
-   evas_common_rgba_gradient2_free(linear_gradient);
+   evas_common_gradient2_free(linear_gradient);
+}
+
+static void
+eng_gradient2_linear_fill_set(void *data, void *linear_gradient, float x0, float y0, float x1, float y1)
+{
+   evas_common_gradient2_linear_fill_set(linear_gradient, x0, y0, x1, y1);
 }
 
 static int
 eng_gradient2_linear_is_opaque(void *data, void *context, void *linear_gradient, int x, int y, int w, int h)
 {
-   return evas_common_gradient2_opaque(context, linear_gradient, x, y, w, h);
+   RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
+   RGBA_Gradient2 *gr = (RGBA_Gradient2 *)linear_gradient;
+
+   if (!dc || !gr || !gr->type.geometer)  return 0;
+   return !(gr->type.geometer->has_alpha(gr, dc->render_op) |
+              gr->type.geometer->has_mask(gr, dc->render_op));
 }
 
 static int
@@ -236,8 +259,14 @@ eng_gradient2_linear_is_visible(void *data, void *context, void *linear_gradient
 static void
 eng_gradient2_linear_render_pre(void *data, void *context, void *linear_gradient)
 {
-   if (!context || !linear_gradient) return;
-   evas_common_gradient2_linear_render_pre(context, linear_gradient);
+   RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
+   RGBA_Gradient2 *gr = (RGBA_Gradient2 *)linear_gradient;
+   int  len;
+
+   if (!dc || !gr || !gr->type.geometer)  return;
+   gr->type.geometer->geom_update(gr);
+   len = gr->type.geometer->get_map_len(gr);
+   evas_common_gradient2_map(dc, gr, len);
 }
 
 static void
@@ -250,28 +279,39 @@ eng_gradient2_linear_draw(void *data, void *context, void *surface, void *linear
 {
 #ifdef BUILD_PTHREAD
    if (cpunum > 1)
-     evas_common_pipe_grad2_draw(surface, context, linear_gradient, x, y, w, h);
+     evas_common_pipe_grad2_draw(surface, context, x, y, w, h, linear_gradient);
    else
 #endif
-    evas_common_gradient2_draw(surface, context, linear_gradient, x, y, w, h);
+     evas_common_gradient2_draw(surface, context, x, y, w, h, linear_gradient);
 }
 
 static void *
 eng_gradient2_radial_new(void *data)
 {
-   return evas_common_rgba_gradient2_radial_new();
+   return evas_common_gradient2_radial_new();
 }
 
 static void
 eng_gradient2_radial_free(void *data, void *radial_gradient)
 {
-   evas_common_rgba_gradient2_free(radial_gradient);
+   evas_common_gradient2_free(radial_gradient);
+}
+
+static void
+eng_gradient2_radial_fill_set(void *data, void *radial_gradient, float cx, float cy, float rx, float ry)
+{
+   evas_common_gradient2_radial_fill_set(radial_gradient, cx, cy, rx, ry);
 }
 
 static int
 eng_gradient2_radial_is_opaque(void *data, void *context, void *radial_gradient, int x, int y, int w, int h)
 {
-   return evas_common_gradient2_opaque(context, radial_gradient, x, y, w, h);
+   RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
+   RGBA_Gradient2 *gr = (RGBA_Gradient2 *)radial_gradient;
+
+   if (!dc || !gr || !gr->type.geometer)  return 0;
+   return !(gr->type.geometer->has_alpha(gr, dc->render_op) |
+              gr->type.geometer->has_mask(gr, dc->render_op));
 }
 
 static int
@@ -286,8 +326,14 @@ eng_gradient2_radial_is_visible(void *data, void *context, void *radial_gradient
 static void
 eng_gradient2_radial_render_pre(void *data, void *context, void *radial_gradient)
 {
-   if (!context || !radial_gradient) return;
-   evas_common_gradient2_radial_render_pre(context, radial_gradient);
+   RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
+   RGBA_Gradient2 *gr = (RGBA_Gradient2 *)radial_gradient;
+   int  len;
+
+   if (!dc || !gr || !gr->type.geometer)  return;
+   gr->type.geometer->geom_update(gr);
+   len = gr->type.geometer->get_map_len(gr);
+   evas_common_gradient2_map(dc, gr, len);
 }
 
 static void
@@ -300,13 +346,12 @@ eng_gradient2_radial_draw(void *data, void *context, void *surface, void *radial
 {
 #ifdef BUILD_PTHREAD
    if (cpunum > 1)
-     evas_common_pipe_grad2_draw(surface, context, radial_gradient, x, y, w, h);
+     evas_common_pipe_grad2_draw(surface, context, x, y, w, h, radial_gradient);
    else
 #endif
-     evas_common_gradient2_draw(surface, context, radial_gradient, x, y, w, h);
+     evas_common_gradient2_draw(surface, context, x, y, w, h, radial_gradient);
 }
 
-/* old gradient engine funcs */
 static void *
 eng_gradient_new(void *data)
 {
@@ -443,7 +488,106 @@ eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int 
      }
 }
 
-/* image engine funcs */
+static int
+eng_image_alpha_get(void *data, void *image)
+{
+   Image_Entry *im;
+
+   if (!image) return 1;
+   im = image;
+   switch (im->space)
+     {
+      case EVAS_COLORSPACE_ARGB8888:
+	if (im->flags.alpha) return 1;
+      default:
+	break;
+     }
+   return 0;
+}
+
+static int
+eng_image_colorspace_get(void *data, void *image)
+{
+   Image_Entry *im;
+
+   if (!image) return EVAS_COLORSPACE_ARGB8888;
+   im = image;
+   return im->space;
+}
+
+static void *
+eng_image_alpha_set(void *data, void *image, int has_alpha)
+{
+   RGBA_Image *im;
+
+   if (!image) return NULL;
+   im = image;
+   if (im->cache_entry.space != EVAS_COLORSPACE_ARGB8888)
+     {
+	im->cache_entry.flags.alpha = 0;
+	return im;
+     }
+   im = (RGBA_Image *) evas_cache_image_alone(&im->cache_entry);
+   evas_common_image_colorspace_dirty(im);
+
+   im->cache_entry.flags.alpha = has_alpha ? 1 : 0;
+   return im;
+}
+
+static void *
+eng_image_border_set(void *data, void *image, int l, int r, int t, int b)
+{
+   RGBA_Image *im;
+
+   im = image;
+   return im;
+}
+
+static void
+eng_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b)
+{
+   RGBA_Image *im;
+
+   im = image;
+}
+
+static char *
+eng_image_comment_get(void *data, void *image, char *key)
+{
+   RGBA_Image *im;
+
+   if (!image) return NULL;
+   im = image;
+   return im->info.comment;
+}
+
+static char *
+eng_image_format_get(void *data, void *image)
+{
+   return NULL;
+}
+
+static void
+eng_image_colorspace_set(void *data, void *image, int cspace)
+{
+   Image_Entry *im;
+
+   if (!image) return;
+   im = image;
+   evas_cache_image_colorspace(im, cspace);
+}
+
+static void
+eng_image_native_set(void *data, void *image, void *native)
+{
+}
+
+static void *
+eng_image_native_get(void *data, void *image)
+{
+   return NULL;
+}
+
 static void *
 eng_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
 {
@@ -527,9 +671,6 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
    return im;
 }
 
-static int eng_image_alpha_get(void *data, void *image);
-static int eng_image_colorspace_get(void *data, void *image);
-
 static void *
 eng_image_data_put(void *data, void *image, DATA32 *image_data)
 {
@@ -590,116 +731,34 @@ eng_image_data_preload_cancel(void *data, void *image)
    evas_cache_image_preload_cancel(&im->cache_entry);
 }
 
-static void *
-eng_image_alpha_set(void *data, void *image, int has_alpha)
+static void
+eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
    RGBA_Image *im;
-
-   if (!image) return NULL;
-   im = image;
-   if (im->cache_entry.space != EVAS_COLORSPACE_ARGB8888)
-     {
-	im->cache_entry.flags.alpha = 0;
-	return im;
-     }
-   im = (RGBA_Image *) evas_cache_image_alone(&im->cache_entry);
-   evas_common_image_colorspace_dirty(im);
-
-   im->cache_entry.flags.alpha = has_alpha ? 1 : 0;
-   return im;
-}
-
-static int
-eng_image_alpha_get(void *data, void *image)
-{
-   Image_Entry *im;
-
-   if (!image) return 1;
-   im = image;
-   switch (im->space)
-     {
-      case EVAS_COLORSPACE_ARGB8888:
-	if (im->flags.alpha) return 1;
-      default:
-	break;
-     }
-   return 0;
-}
-
-/* maybe just get rid of this func? */
-static int
-eng_image_is_opaque(void *data, void *context, void *image, int x, int y, int w, int h)
-{
-   return 0;
-}
-
-static void
-eng_image_render_pre(void *data, void *context, void *image)
-{
-   evas_common_image_render_pre(context, image);
-}
-
-static void
-eng_image_render_post(void *data, void *image)
-{
-}
-
-static void
-eng_image_draw(void *data, void *context, void *surface, void *image, int x, int y, int w, int h)
-{
-#ifdef BUILD_PTHREAD
-   if (cpunum > 1)
-     evas_common_pipe_image_draw(surface, context, image, x, y, w, h);
-   else
-#endif
-     evas_common_image_draw2(surface, context, image, x, y, w, h);
-}
-
-static char *
-eng_image_comment_get(void *data, void *image, char *key)
-{
-   RGBA_Image *im;
-
-   if (!image) return NULL;
-   im = image;
-   return im->info.comment;
-}
-
-static char *
-eng_image_format_get(void *data, void *image)
-{
-   return NULL;
-}
-
-static void
-eng_image_colorspace_set(void *data, void *image, int cspace)
-{
-   Image_Entry *im;
 
    if (!image) return;
    im = image;
-   evas_cache_image_colorspace(im, cspace);
-}
-
-static int
-eng_image_colorspace_get(void *data, void *image)
-{
-   Image_Entry *im;
-
-   if (!image) return EVAS_COLORSPACE_ARGB8888;
-   im = image;
-   return im->space;
-}
-
-static void
-eng_image_native_set(void *data, void *image, void *native)
-{
-}
-
-static void *
-eng_image_native_get(void *data, void *image)
-{
-   return NULL;
+   if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
+     evas_cache_image_load_data(&im->cache_entry);
+   evas_common_image_colorspace_normalize(im);
+#ifdef BUILD_PTHREAD
+   if (cpunum > 1)
+     evas_common_pipe_image_draw(im, surface, context, smooth,
+				 src_x, src_y, src_w, src_h,
+				 dst_x, dst_y, dst_w, dst_h);
+   else
+#endif
+     {
+	if (smooth)
+	  evas_common_scale_rgba_in_to_out_clip_smooth(im, surface, context,
+						       src_x, src_y, src_w, src_h,
+						       dst_x, dst_y, dst_w, dst_h);
+	else
+	  evas_common_scale_rgba_in_to_out_clip_sample(im, surface, context,
+						       src_x, src_y, src_w, src_h,
+						       dst_x, dst_y, dst_w, dst_h);
+	evas_common_cpu_end_opt();
+     }
 }
 
 static void
@@ -916,13 +975,15 @@ static Evas_Func func =
      eng_polygon_point_add,
      eng_polygon_points_clear,
      eng_polygon_draw,
-
-     /* gradient2 engine funcs */
+     /* gradient draw funcs */
      eng_gradient2_color_np_stop_insert,
      eng_gradient2_clear,
+     eng_gradient2_fill_transform_set,
+     eng_gradient2_fill_spread_set,
 
      eng_gradient2_linear_new,
      eng_gradient2_linear_free,
+     eng_gradient2_linear_fill_set,
      eng_gradient2_linear_is_opaque,
      eng_gradient2_linear_is_visible,
      eng_gradient2_linear_render_pre,
@@ -931,13 +992,13 @@ static Evas_Func func =
 
      eng_gradient2_radial_new,
      eng_gradient2_radial_free,
+     eng_gradient2_radial_fill_set,
      eng_gradient2_radial_is_opaque,
      eng_gradient2_radial_is_visible,
      eng_gradient2_radial_render_pre,
      eng_gradient2_radial_render_post,
      eng_gradient2_radial_draw,
 
-    /* old gradient funcs */
      eng_gradient_new,
      eng_gradient_free,
      eng_gradient_color_stop_add,
@@ -957,8 +1018,7 @@ static Evas_Func func =
      eng_gradient_render_pre,
      eng_gradient_render_post,
      eng_gradient_draw,
-
-     /* image emgine funcs */
+     /* image draw funcs */
      eng_image_load,
      eng_image_new_from_data,
      eng_image_new_from_copied_data,
@@ -973,9 +1033,8 @@ static Evas_Func func =
      eng_image_data_preload_cancel,
      eng_image_alpha_set,
      eng_image_alpha_get,
-     eng_image_is_opaque,
-     eng_image_render_pre,
-     eng_image_render_post,
+     eng_image_border_set,
+     eng_image_border_get,
      eng_image_draw,
      eng_image_comment_get,
      eng_image_format_get,
@@ -987,8 +1046,7 @@ static Evas_Func func =
      eng_image_cache_flush,
      eng_image_cache_set,
      eng_image_cache_get,
-
-     /* font engine functions */
+     /* font draw functions */
      eng_font_load,
      eng_font_memory_load,
      eng_font_add,

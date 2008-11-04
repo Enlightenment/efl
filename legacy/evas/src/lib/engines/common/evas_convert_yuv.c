@@ -319,7 +319,7 @@ _evas_yv12torgb_sse(unsigned char **yuv, unsigned char *rgb, int w, int h)
 		  r = LUT_CLIP((y + (_crv * v)) >> RES);
 		  g = LUT_CLIP((y - (_cgu * u) - (_cgv * v) + RZ(OFF)) >> RES);
 		  b = LUT_CLIP((y + (_cbu * u) + RZ(OFF)) >> RES);
-		  *((DATA32 *)dp1) = 0xff000000 + RGB_JOIN(r,g,b);
+		  *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(r,g,b);
 
 		  dp1 += 4;
 
@@ -327,7 +327,7 @@ _evas_yv12torgb_sse(unsigned char **yuv, unsigned char *rgb, int w, int h)
 		  r = LUT_CLIP((y + (_crv * v)) >> RES);
 		  g = LUT_CLIP((y - (_cgu * u) - (_cgv * v) + RZ(OFF)) >> RES);
 		  b = LUT_CLIP((y + (_cbu * u) + RZ(OFF)) >> RES);
-		  *((DATA32 *)dp1) = 0xff000000 + RGB_JOIN(r,g,b);
+		  *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(r,g,b);
 
 		  dp1 += 4;
 	       }
@@ -482,7 +482,7 @@ _evas_yv12torgb_mmx(unsigned char **yuv, unsigned char *rgb, int w, int h)
 		  r = LUT_CLIP((y + (_crv * v)) >> RES);
 		  g = LUT_CLIP((y - (_cgu * u) - (_cgv * v) + RZ(OFF)) >> RES);
 		  b = LUT_CLIP((y + (_cbu * u) + RZ(OFF)) >> RES);
-		  *((DATA32 *)dp1) = 0xff000000 + RGB_JOIN(r,g,b);
+		  *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(r,g,b);
 
 		  dp1 += 4;
 
@@ -490,7 +490,7 @@ _evas_yv12torgb_mmx(unsigned char **yuv, unsigned char *rgb, int w, int h)
 		  r = LUT_CLIP((y + (_crv * v)) >> RES);
 		  g = LUT_CLIP((y - (_cgu * u) - (_cgv * v) + RZ(OFF)) >> RES);
 		  b = LUT_CLIP((y + (_cbu * u) + RZ(OFF)) >> RES);
-		  *((DATA32 *)dp1) = 0xff000000 + RGB_JOIN(r,g,b);
+		  *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(r,g,b);
 
 		  dp1 += 4;
 	       }
@@ -751,12 +751,17 @@ _evas_yv12torgb_diz(unsigned char **yuv, unsigned char *rgb, int w, int h)
    int xx, yy;
    int y, u, v, r, g, b;
    unsigned char *yp1, *yp2, *up, *vp;
-   DATA32 *dp1, *dp2;
+   unsigned char *dp1, *dp2;
    int crv, cbu, cgu, cgv;
 
    /* destination pointers */
-   dp1 = (DATA32 *)rgb;
-   dp2 = dp1 + w;
+   dp1 = rgb;
+   dp2 = rgb + (w * 4);
+
+   crv = CRV;   /* 1.596 */
+   cbu = CBU;   /* 2.018 */
+   cgu = CGU;   /* 0.391 */
+   cgv = CGV;   /* 0.813 */
 
    for (yy = 0; yy < h; yy += 2)
      {
@@ -771,46 +776,47 @@ _evas_yv12torgb_diz(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	     u = (*up++) - 128;
 	     v = (*vp++) - 128;
 
-	     crv = (CRV * v);
-	     cgu = (CGU * u);
-	     cgv = (CGV * v) - OFF;
-	     cbu = (CBU * u) + OFF;
-
 	     /* do the top 2 pixels of the 2x2 block whcih shared u & v */
 	     /* yuv to rgb */
 	     y = YMUL * ((*yp1++) - 16);
-	     r = LUT_CLIP((y + crv) >> 16);
-	     g = LUT_CLIP((y - cgu - cgv) >>16);
-	     b = LUT_CLIP((y + cbu) >> 16);
-	     *dp1 = 0xff000000 + RGB_JOIN(r,g,b);
+	     r = LUT_CLIP((y + (crv * v)) >> 16);
+	     g = LUT_CLIP((y - (cgu * u) - (cgv * v) + OFF) >>16);
+	     b = LUT_CLIP((y + (cbu * u) + OFF) >> 16);
+	     *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(r,g,b);
 
 	     dp1 += 4;
 
 	     /* yuv to rgb */
 	     y = YMUL * ((*yp1++) - 16);
-	     r = LUT_CLIP((y + crv) >> 16);
-	     g = LUT_CLIP((y - cgu - cgv) >>16);
-	     b = LUT_CLIP((y + cbu) >> 16);
-	     *dp1++ = 0xff000000 + RGB_JOIN(r,g,b);
+	     r = LUT_CLIP((y + (crv * v)) >> 16);
+	     g = LUT_CLIP((y - (cgu * u) - (cgv * v) + OFF) >>16);
+	     b = LUT_CLIP((y + (cbu * u) + OFF) >> 16);
+	     *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(r,g,b);
+
+	     dp1 += 4;
 
 	     /* do the bottom 2 pixels */
 	     /* yuv to rgb */
 	     y = YMUL * ((*yp2++) - 16);
-	     r = LUT_CLIP((y + crv) >> 16);
-	     g = LUT_CLIP((y - cgu - cgv) >>16);
-	     b = LUT_CLIP((y + cbu) >> 16);
-	     *dp2++ = 0xff000000 + RGB_JOIN(r,g,b);
+	     r = LUT_CLIP((y + (crv * v)) >> 16);
+	     g = LUT_CLIP((y - (cgu * u) - (cgv * v) + OFF) >>16);
+	     b = LUT_CLIP((y + (cbu * u) + OFF) >> 16);
+	     *((DATA32 *) dp2) = 0xff000000 + RGB_JOIN(r,g,b);
+
+	     dp2 += 4;
 
 	     /* yuv to rgb */
 	     y = YMUL * ((*yp2++) - 16);
-	     r = LUT_CLIP((y + crv) >> 16);
-	     g = LUT_CLIP((y - cgu - cgv) >>16);
-	     b = LUT_CLIP((y + cbu) >> 16);
-	     *dp2++ = 0xff000000 + RGB_JOIN(r,g,b);
+	     r = LUT_CLIP((y + (crv * v)) >> 16);
+	     g = LUT_CLIP((y - (cgu * u) - (cgv * v) + OFF) >>16);
+	     b = LUT_CLIP((y + (cbu * u) + OFF) >> 16);
+	     *((DATA32 *) dp2) = 0xff000000 + RGB_JOIN(r,g,b);
+
+	     dp2 += 4;
 	  }
 	/* jump down one line since we are doing 2 at once */
-	dp1 += w;
-	dp2 += w;
+	dp1 += (w * 4);
+	dp2 += (w * 4);
      }
 #endif
 }
@@ -822,11 +828,11 @@ _evas_yv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
    int xx, yy;
    int y, u, v;
    unsigned char *yp1, *yp2, *up, *vp;
-   DATA32 *dp1, *dp2;
+   unsigned char *dp1, *dp2;
 
    /* destination pointers */
-   dp1 = (DATA32 *)rgb;
-   dp2 = dp1 + w;
+   dp1 = rgb;
+   dp2 = rgb + (w * 4);
 
    for (yy = 0; yy < h; yy += 2)
      {
@@ -851,27 +857,35 @@ _evas_yv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
              /* do the top 2 pixels of the 2x2 block whcih shared u & v */
 	     /* yuv to rgb */
 	     y = _v1164[*yp1++];
-	     *dp1++ = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+	     *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+
+	     dp1 += 4;
 
 	     /* yuv to rgb */
 	     y = _v1164[*yp1++];
-	     *dp1++ = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+	     *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+
+	     dp1 += 4;
 
 	     /* do the bottom 2 pixels */
 	     /* yuv to rgb */
 	     y = _v1164[*yp2++];
-	     *dp2++ = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+	     *((DATA32 *) dp2) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+
+	     dp2 += 4;
 
 	     /* yuv to rgb */
 	     y = _v1164[*yp2++];
-	     *dp2++ = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+	     *((DATA32 *) dp2) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
 	     
+	     dp2 += 4;
 	  }
 	/* jump down one line since we are doing 2 at once */
-	dp1 += w;
-	dp2 += w;
+	dp1 += (w * 4);
+	dp2 += (w * 4);
      }
 #endif
 }
 
 #endif
+

@@ -1,6 +1,24 @@
 #include "evas_common.h"
 #include "evas_private.h"
-#include "evas_object_gradient2.h"
+
+typedef struct _Evas_Object_Gradient2      Evas_Object_Gradient2;
+
+struct _Evas_Object_Gradient2
+{
+   DATA32            magic;
+
+   struct {
+      struct {
+         Evas_Common_Transform  transform;
+         int         spread;
+      } fill;
+      unsigned char    gradient_opaque : 1;
+   } cur, prev;
+
+   unsigned char     gradient_changed : 1;
+};
+
+
 
 /**
  * @defgroup Evas_Object_Gradient2_Group Gradient2 Object Functions
@@ -33,6 +51,7 @@ EAPI void
 evas_object_gradient2_color_np_stop_insert(Evas_Object *obj, int r, int g, int b, int a, float pos)
 {
    Evas_Object_Gradient2 *og;
+   void *engine_data;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -41,9 +60,10 @@ evas_object_gradient2_color_np_stop_insert(Evas_Object *obj, int r, int g, int b
    MAGIC_CHECK(og, Evas_Object_Gradient2, MAGIC_OBJ_GRADIENT);
    return;
    MAGIC_CHECK_END();
-   if (og->engine_data)
+   engine_data = obj->func->engine_data_get(obj);
+   if (engine_data)
       obj->layer->evas->engine.func->gradient2_color_np_stop_insert(obj->layer->evas->engine.data.output,
-							     og,
+							     engine_data,
 							     r, g, b, a, pos);
    og->gradient_changed = 1;
    evas_object_change(obj);
@@ -57,6 +77,7 @@ EAPI void
 evas_object_gradient2_clear(Evas_Object *obj)
 {
    Evas_Object_Gradient2 *og;
+   void *engine_data;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -65,9 +86,10 @@ evas_object_gradient2_clear(Evas_Object *obj)
    MAGIC_CHECK(og, Evas_Object_Gradient2, MAGIC_OBJ_GRADIENT);
    return;
    MAGIC_CHECK_END();
-   if (og->engine_data)
+   engine_data = obj->func->engine_data_get(obj);
+   if (engine_data)
       obj->layer->evas->engine.func->gradient2_clear(obj->layer->evas->engine.data.output,
-						     og);
+						     engine_data);
    og->gradient_changed = 1;
    og->cur.gradient_opaque = 0;
    evas_object_change(obj);
@@ -146,16 +168,16 @@ evas_object_gradient2_fill_transform_set (Evas_Object *obj, Evas_Transform *t)
 	evas_object_change(obj);
 	return;
      }
-   if ( (og->cur.fill.transform.mxx == t->mxx) &&
-        (og->cur.fill.transform.mxy == t->mxy) &&
-	(og->cur.fill.transform.mxz == t->mxz) &&
-	(og->cur.fill.transform.myx == t->myx) &&
-	(og->cur.fill.transform.myy == t->myy) &&
-	(og->cur.fill.transform.myz == t->myz) &&
-	(og->cur.fill.transform.mzx == t->mzx) &&
-	(og->cur.fill.transform.mzy == t->mzy) &&
-	(og->cur.fill.transform.mzz == t->mzz) )
-     return;
+   if ( (og->cur.fill.transform.mxx == t->mxx) ||
+	 (og->cur.fill.transform.mxy == t->mxy) ||
+	 (og->cur.fill.transform.mxy == t->mxy) ||
+	 (og->cur.fill.transform.mxy == t->mxy) ||
+	 (og->cur.fill.transform.mxy == t->mxy) ||
+	 (og->cur.fill.transform.mxy == t->mxy) ||
+	 (og->cur.fill.transform.mxy == t->mxy) ||
+	 (og->cur.fill.transform.mxy == t->mxy) ||
+	 (og->cur.fill.transform.mxy == t->mxy) )
+	    return;
 
    og->cur.fill.transform.mxx = t->mxx;
    og->cur.fill.transform.mxy = t->mxy;
@@ -167,11 +189,6 @@ evas_object_gradient2_fill_transform_set (Evas_Object *obj, Evas_Transform *t)
    og->cur.fill.transform.mzy = t->mzy;
    og->cur.fill.transform.mzz = t->mzz;
 
-   og->cur.fill.transform.is_identity = 0;
-   if ( (t->mxx == 1) && (t->mxy == 0) && (t->mxz == 0) &&
-	(t->myx == 0) && (t->myy == 1) && (t->myz == 0) &&
-	(t->mzx == 0) && (t->mzy == 0) && (t->mzz == 1) )
-     og->cur.fill.transform.is_identity = 1;
    og->gradient_changed = 1;
    evas_object_change(obj);
 }
@@ -201,3 +218,12 @@ evas_object_gradient2_fill_transform_get (const Evas_Object *obj, Evas_Transform
         t->mzz = og->cur.fill.transform.mzz;
      }
 }
+
+
+
+/**
+ * @}
+ */
+
+#include "evas_object_gradient2_linear.c"
+#include "evas_object_gradient2_radial.c"

@@ -1,9 +1,29 @@
 #include "evas_common.h"
 #include "evas_private.h"
-#include "evas_object_gradient2.h"
 
 /* private magic number for radial gradient objects */
 static const char rg_type[] = "radial_gradient";
+
+/* private struct for gradient object internal data */
+typedef struct _Evas_Object_Gradient2_Radial      Evas_Object_Gradient2_Radial;
+
+struct _Evas_Object_Gradient2_Radial
+{
+   Evas_Object_Gradient2 base;
+
+   DATA32            magic;
+
+   struct {
+      struct {
+         float  cx, cy, rx, ry;
+      } fill;
+   } cur, prev;
+
+   void             *engine_data;
+
+   unsigned char     gradient_changed : 1;
+   unsigned char     changed : 1;
+};
 
 /* private methods for radial gradient objects */
 static void evas_object_gradient2_radial_init(Evas_Object *obj);
@@ -69,7 +89,7 @@ evas_object_gradient2_radial_add(Evas *e)
    evas_object_inject(obj, e);
    if (obj->object_data)
      {
-	Evas_Object_Gradient2 *o = (Evas_Object_Gradient2 *)(obj->object_data);
+	Evas_Object_Gradient2_Radial *o = (Evas_Object_Gradient2_Radial *)(obj->object_data);
 
 	o->engine_data = e->engine.func->gradient2_radial_new(e->engine.data.output);
      }
@@ -205,7 +225,6 @@ static void
 evas_object_gradient2_radial_free(Evas_Object *obj)
 {
    Evas_Object_Gradient2_Radial *o;
-   Evas_Object_Gradient2 *og;
 
    /* frees private object data. very simple here */
    o = (Evas_Object_Gradient2_Radial *)(obj->object_data);
@@ -213,10 +232,9 @@ evas_object_gradient2_radial_free(Evas_Object *obj)
    return;
    MAGIC_CHECK_END();
    /* free obj */
-   og = (Evas_Object_Gradient2 *)o;
-   if (og->engine_data)
+   if (o->engine_data)
       obj->layer->evas->engine.func->gradient2_radial_free(obj->layer->evas->engine.data.output,
-							   og->engine_data);
+							  o->engine_data);
    free(o);
    obj->object_data = NULL; 
 }
@@ -230,20 +248,18 @@ evas_object_gradient2_radial_render(Evas_Object *obj, void *output, void *contex
 
    /* render object to surface with context, and offxet by x,y */
    o = (Evas_Object_Gradient2_Radial *)(obj->object_data);
-   obj->layer->evas->engine.func->context_multiplier_set(output, context,
-							 obj->cur.cache.clip.r, obj->cur.cache.clip.g,
-							 obj->cur.cache.clip.b, obj->cur.cache.clip.a);
+   obj->layer->evas->engine.func->context_multiplier_unset(output, context);
    obj->layer->evas->engine.func->context_anti_alias_set(output, context, obj->cur.anti_alias);
    obj->layer->evas->engine.func->context_render_op_set(output, context, obj->cur.render_op);
-   obj->layer->evas->engine.func->context_color_interpolation_set(output, context,
-								  obj->cur.interpolation_color_space);
-   if (o)
+   if (o->engine_data)
+     {
 	obj->layer->evas->engine.func->gradient2_radial_draw(output, context, surface,
-						     o,
+						     o->engine_data,
 						     obj->cur.geometry.x + x,
 						     obj->cur.geometry.y + y,
 						     obj->cur.geometry.w,
 						     obj->cur.geometry.h);
+     }
 }
 
 static void
@@ -286,9 +302,11 @@ evas_object_gradient2_radial_render_pre(Evas_Object *obj)
      { o->gradient_changed = 1;  o->changed = 1; }
    if (!o->changed && (obj->cur.render_op != obj->prev.render_op))
 	o->changed = 1;
+//   if (!o->changed && (obj->cur.anti_alias != obj->prev.anti_alias))
+//	o->changed = 1;
    if (og->gradient_changed)
      { o->gradient_changed = 1;  o->changed = 1; }
-   if (o->changed && og->engine_data)
+   if (o->changed && o->engine_data)
      {
 	obj->layer->evas->engine.func->context_render_op_set(obj->layer->evas->engine.data.output,
 							     obj->layer->evas->engine.data.context, obj->cur.render_op);
@@ -300,15 +318,24 @@ evas_object_gradient2_radial_render_pre(Evas_Object *obj)
 									obj->layer->evas->engine.data.context,
 									obj->cur.interpolation_color_space);
 	if (o->gradient_changed)
+	  {
+	    obj->layer->evas->engine.func->gradient2_radial_fill_set(obj->layer->evas->engine.data.output, o->engine_data, o->cur.fill.cx, o->cur.fill.cy, o->cur.fill.rx, o->cur.fill.ry);
+	    obj->layer->evas->engine.func->gradient2_fill_transform_set(obj->layer->evas->engine.data.output, o->engine_data,
+								&og->cur.fill.transform);
+	    obj->layer->evas->engine.func->gradient2_fill_spread_set(obj->layer->evas->engine.data.output, o->engine_data,
+								og->cur.fill.spread);
 	    obj->layer->evas->engine.func->gradient2_radial_render_pre(obj->layer->evas->engine.data.output,
 								obj->layer->evas->engine.data.context,
-								o);
+								o->engine_data);
+	  }
 	og->cur.gradient_opaque = obj->layer->evas->engine.func->gradient2_radial_is_opaque(obj->layer->evas->engine.data.output,
 										   obj->layer->evas->engine.data.context,
-				  						   o,
+				  						   o->engine_data,
 										   obj->cur.cache.clip.x, obj->cur.cache.clip.y,
 										   obj->cur.cache.clip.w, obj->cur.cache.clip.h);
 
+	if (obj->cur.cache.clip.a != 255)
+	    og->cur.gradient_opaque = 0;
     }
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
@@ -342,12 +369,13 @@ evas_object_gradient2_radial_render_pre(Evas_Object *obj)
    /* area so if there were updates for it they get wiped. don't do it if we */
    /* arent fully opaque and we are visible */
    
-   if (evas_object_is_visible(obj) && evas_object_is_opaque(obj))
-	obj->layer->evas->engine.func->output_redraws_rect_del(obj->layer->evas->engine.data.output,
-								obj->cur.cache.clip.x,
-								obj->cur.cache.clip.y,
-								obj->cur.cache.clip.w,
-								obj->cur.cache.clip.h);
+   if (evas_object_is_visible(obj) &&
+       evas_object_is_opaque(obj))
+     obj->layer->evas->engine.func->output_redraws_rect_del(obj->layer->evas->engine.data.output,
+							    obj->cur.cache.clip.x,
+							    obj->cur.cache.clip.y,
+							    obj->cur.cache.clip.w,
+							    obj->cur.cache.clip.h);
    
    done:
    evas_object_render_pre_effect_updates(&rects, obj, is_v, was_v);
@@ -403,9 +431,9 @@ static unsigned int evas_object_gradient2_radial_visual_id_get(Evas_Object *obj)
 
 static void *evas_object_gradient2_radial_engine_data_get(Evas_Object *obj)
 {
-   Evas_Object_Gradient2 *o;
+   Evas_Object_Gradient2_Radial *o;
 
-   o = (Evas_Object_Gradient2 *)(obj->object_data);
+   o = (Evas_Object_Gradient2_Radial *)(obj->object_data);
    if (!o) return NULL;
    return o->engine_data;
 }
@@ -414,23 +442,27 @@ static void *evas_object_gradient2_radial_engine_data_get(Evas_Object *obj)
 static int
 evas_object_gradient2_radial_is_opaque(Evas_Object *obj)
 {
-   Evas_Object_Gradient2 *o;
+   Evas_Object_Gradient2_Radial *o;
+   Evas_Object_Gradient2 *og;
 
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fully opaque over the entire region it occupies */
-   o = (Evas_Object_Gradient2 *)(obj->object_data);
-   if (!o || !o->engine_data) return 0;
-   return o->cur.gradient_opaque;
+   o = (Evas_Object_Gradient2_Radial *)(obj->object_data);
+   if (!o->engine_data) return 0;
+   og = (Evas_Object_Gradient2 *)(o);
+   return og->cur.gradient_opaque;
  }
 
 static int
 evas_object_gradient2_radial_was_opaque(Evas_Object *obj)
 {
-   Evas_Object_Gradient2 *o;
+   Evas_Object_Gradient2_Radial *o;
+   Evas_Object_Gradient2 *og;
 
    /* this returns 1 if the internal object data implies that the object was */
    /* currently fully opaque over the entire region it occupies */
-   o = (Evas_Object_Gradient2 *)(obj->object_data);
-   if (!o || !o->engine_data) return 0;
-   return o->prev.gradient_opaque;
+   o = (Evas_Object_Gradient2_Radial *)(obj->object_data);
+   if (!o->engine_data) return 0;
+   og = (Evas_Object_Gradient2 *)(o);
+   return og->prev.gradient_opaque;
 }

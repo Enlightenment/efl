@@ -24,8 +24,6 @@ evas_main.c \
 evas_name.c \
 evas_object_gradient.c \
 evas_object_gradient2.c \
-evas_object_gradient2_linear.c \
-evas_object_gradient2_radial.c \
 evas_object_image.c \
 evas_object_main.c \
 evas_object_inform.c \
@@ -48,7 +46,7 @@ evas_async_events.c \
 evas_transform.c
 
 EXTRA_DIST = \
-evas_object_gradient2.h \
-evas_object_image.h
+evas_object_gradient2_linear.c \
+evas_object_gradient2_radial.c
 
 libevas_canvas_la_DEPENDENCIES = $(top_builddir)/config.h
