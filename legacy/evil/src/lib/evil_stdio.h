@@ -5,7 +5,7 @@
 #if defined (_WIN32_WCE) && ! defined (__CEGCC__)
 
 
-#include <stdio.h>
+# include <stdio.h>
 
 /*
  * Error related functions
@@ -20,6 +20,8 @@ EAPI void perror (const char *s);
  */
 
 EAPI FILE *evil_fopen(const char *path, const char *mode);
+
+# define fopen(path, mode) evil_fopen(path, mode)
 
 EAPI void rewind(FILE *stream);
 

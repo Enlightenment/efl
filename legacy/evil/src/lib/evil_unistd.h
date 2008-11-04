@@ -88,6 +88,21 @@ EAPI int symlink(const char *oldpath, const char *newpath);
  */
 EAPI ssize_t readlink(const char *path, char *buf, size_t bufsiz);
 
+
+/*
+ * file related functions
+ *
+ */
+
+
+#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
+
+EAPI int evil_stat(const char *file_name, struct stat *st);
+
+# define stat(f, st) evil_stat(f, st)
+
+#endif /* _WIN32_WCE && ! __CEGCC__ */
+
 /**
  * @brief Get the current directory.
  *
@@ -174,6 +189,8 @@ EAPI void evil_sockets_shutdown(void);
  * @ingroup Evil
  */
 EAPI int evil_pipe(int *fds);
+
+#define pipe(fds) evil_pipe(fds)
 
 
 /*

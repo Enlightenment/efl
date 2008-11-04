@@ -1,3 +1,12 @@
+2008-11-04  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/Evil.h:
+	* src/lib/evil_stdio.h:
+	* src/lib/evil_unistd.c:
+	* src/lib/evil_unistd.h:
+	overload the stat() function for native Windows CE platform.
+	move pipe() and fopen() definitions to their own header files
+
 2008-11-01  Vincent Torri  <doursse at users dot sf dot net>
 
 	* configure.ac:

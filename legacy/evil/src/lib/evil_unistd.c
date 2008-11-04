@@ -14,6 +14,30 @@
 #include "Evil.h"
 #include "evil_private.h"
 
+static time_t
+_evil_systemtime_to_time(SYSTEMTIME st)
+{
+   int days[] = {
+     -1, 30, 58, 89, 119, 150, 180, 211, 242, 272, 303, 333, 364
+   };
+   int day;
+   time_t time;
+
+   st.wYear -= 1900;
+   if ((st.wYear < 70) || (st.wYear > 138))
+     return -1;
+
+   day = st.wDay + days[st.wMonth - 1];
+
+  if (!(st.wYear & 3) && (st.wMonth > 2) )
+    day++;
+
+  time = ((st.wYear - 70) * 365 + ((st.wYear - 1) >> 2) - 17 + day) * 24 + st.wHour;
+  time = (time * 60 + st.wMinute) * 60 + st.wSecond;
+
+  return time;
+}
+
 /*
  * Process identifer related functions
  *
@@ -24,6 +48,11 @@ getpid(void)
 {
   return (pid_t)GetCurrentProcessId();
 }
+
+/*
+ * File related functions
+ *
+ */
 
 char *
 evil_getcwd(char *buffer, size_t size)
@@ -77,6 +106,146 @@ evil_getcwd(char *buffer, size_t size)
    return _getcwd(buffer, size);
 #endif /* ! __CEGCC__ && ! __MINGW32CE__ */
 }
+
+#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
+
+int
+evil_stat(const char *file_name, struct stat *st)
+{
+   SYSTEMTIME      system_time;
+   FILETIME        local_time;
+   WIN32_FIND_DATA data;
+   HANDLE          handle;
+   char           *f;
+   char           *tmp;
+   wchar_t        *file;
+   int             permission = 0;
+
+   if (!file_name || !*file_name)
+     return -1;
+
+   f = strdup(file_name);
+   if (!f)
+     return -1;
+
+   tmp = f;
+   while (*tmp)
+     {
+        if (*tmp == '/') *tmp = '\\';
+        tmp++;
+     }
+
+   if (!strcmp(file_name, "\\"))
+     {
+        st->st_size = 1024;
+        st->st_mode = S_IFDIR;
+        permission = S_IREAD|S_IWRITE|S_IEXEC;
+
+        st->st_mode |= permission | (permission >> 3) | (permission >> 6);
+        return 0;
+     }
+
+   if (*f != '\\')
+     {
+        char  buf[PATH_MAX];
+        char *tmp;
+        int   l1;
+        int   l2;
+
+        evil_getcwd(buf, PATH_MAX);
+        l1 = strlen(buf);
+        l2 = strlen(file_name);
+        tmp = (char *)malloc(l1 + 1 + l2 + 1);
+        if (!tmp)
+          return -1;
+        memcpy(tmp, buf, l1);
+        tmp[l1] = '\\';
+        memcpy(tmp + l1 + 1, file_name, l2);
+        tmp[l1 + 1 + l2] = '\0';
+        file = evil_char_to_wchar(tmp);
+        if (!file)
+          return -1;
+        free(tmp);
+     }
+   else
+     {
+        file = evil_char_to_wchar(f);
+        if (!file)
+          return -1;
+     }
+
+   free(f);
+
+   {
+      char *tmp = evil_wchar_to_char(file);
+      printf ("Evil stat : 3 %s\n", tmp);
+      free(tmp);
+   }
+
+   handle = FindFirstFile(file, &data);
+   if (handle == INVALID_HANDLE_VALUE)
+     {
+        _evil_last_error_display(__FUNCTION__);
+        free(file);
+        return -1;
+     }
+
+   free(file);
+
+   if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+     {
+        st->st_size = 1024;
+        st->st_mode = S_IFDIR;
+        st->st_nlink = 2;
+     }
+   else
+     {
+        st->st_size = data.nFileSizeLow;
+        st->st_mode = S_IFREG;
+        st->st_nlink = 1;
+     }
+
+   permission |= S_IREAD;
+
+   if (!(data.dwFileAttributes & FILE_ATTRIBUTE_READONLY))
+     permission |= S_IWRITE;
+
+   if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+     permission |= S_IEXEC;
+
+   st->st_mode |= permission | (permission >> 3) | (permission >> 6);
+
+   FileTimeToLocalFileTime(&data.ftLastWriteTime, &local_time);
+   FileTimeToSystemTime(&local_time, &system_time);
+
+   st->st_mtime = _evil_systemtime_to_time(system_time);
+
+   FileTimeToLocalFileTime(&data.ftCreationTime, &local_time);
+   FileTimeToSystemTime(&local_time, &system_time);
+
+   st->st_ctime = _evil_systemtime_to_time(system_time);
+
+   FileTimeToLocalFileTime(&data.ftLastAccessTime, &local_time);
+   FileTimeToSystemTime(&local_time, &system_time);
+
+   st->st_atime = _evil_systemtime_to_time(system_time);
+
+   if(st->st_atime == 0)
+     st->st_atime = st->st_mtime;
+   if (st->st_ctime == 0)
+     st->st_ctime = st->st_mtime;
+
+   st->st_rdev = 1;
+   st->st_ino = 0;
+
+   FindClose(handle);
+   printf ("Evil stat : 3\n");
+
+  return 0;
+}
+
+#endif /* _WIN32_WCE && ! __CEGCC__ */
+
 
 
 /*

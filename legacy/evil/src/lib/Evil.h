@@ -147,12 +147,6 @@ typedef unsigned long  gid_t;
 # endif
 #endif
 
-#define pipe(fd) evil_pipe(fd)
-
-#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
-# define fopen(path, mode) evil_fopen(path, mode)
-#endif /* _WIN32_WCE && ! __CEGCC__ */
-
 
 #ifdef __cplusplus
 }
