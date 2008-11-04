@@ -396,6 +396,7 @@ em_init(Evas_Object *obj, void **emotion_video, Emotion_Module_Options *opt)
 	ev->fd_slave_write = fds[1];
 	fcntl(ev->fd_slave_write, F_SETFL, O_NONBLOCK);
      }
+   ev->volume = 0.8;
    ev->delete_me = 0;
    ev->get_pos_thread_deleted = 0;
    ev->opening = 1;

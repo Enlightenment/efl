@@ -271,6 +271,7 @@ em_init(Evas_Object  *obj,
    ev->video_sink_nbr = 0;
    ev->audio_sink_nbr = 0;
    ev->vis = EMOTION_VIS_NONE;
+   ev->volume = 0.8;
 
    /* Create the file descriptors */
    if (pipe(fds) == 0)
