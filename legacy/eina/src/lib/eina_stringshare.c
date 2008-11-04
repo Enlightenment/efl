@@ -962,6 +962,51 @@ _eina_stringshare_node_from_str(const char *str)
 }
 
 /**
+ * Increment references of the given shared string.
+ *
+ * This is similar to eina_stringshare_add(), but it's faster since it will
+ * avoid lookups if possible, but on the down side it requires the parameter
+ * to be shared before, in other words, it must be the return of a previous
+ * eina_stringshare_add().
+ *
+ * There is no unref since this is the work of eina_stringshare_del().
+ */
+EAPI const char *
+eina_stringshare_ref(const char *str)
+{
+   Eina_Stringshare_Node *node;
+   int slen;
+
+   if (!str) return;
+
+   /* special cases */
+   if      (str[0] == '\0') slen = 0;
+   else if (str[1] == '\0') slen = 1;
+   else if (str[2] == '\0') slen = 2;
+   else if (str[3] == '\0') slen = 3;
+   else                     slen = 4; /* handled later */
+
+   if (slen < 2)
+     {
+	_eina_stringshare_population_add(slen);
+	return str;
+     }
+   else if (slen < 4)
+     {
+	_eina_stringshare_population_add(slen);
+	return _eina_stringshare_small_add(str, slen);
+     }
+
+   node = _eina_stringshare_node_from_str(str);
+   node->references++;
+
+   _eina_stringshare_population_add(node->length);
+
+   return str;
+}
+
+
+/**
  * @brief Note that the given string has lost an instance.
  *
  * @param str string The given string.
