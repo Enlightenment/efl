@@ -1,9 +1,19 @@
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
 
-#include <png.h>
+#include <stdio.h>
 #include <setjmp.h>
+#include <png.h>
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
 
 #include "evas_common.h"
 #include "evas_private.h"

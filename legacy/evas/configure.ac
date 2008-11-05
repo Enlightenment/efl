@@ -38,6 +38,7 @@ AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 
 PKG_PROG_PKG_CONFIG
 
+WIN32_CPPFLAGS=""
 WIN32_CFLAGS=""
 lt_no_undefined=""
 lt_enable_auto_import=""
@@ -48,12 +49,17 @@ case "$host_os" in
 		dnl needed for correct definition of EAPI
 		AC_DEFINE(EFL_EVAS_BUILD, 1, [Define to mention that evas is built])
                 if test "$host_os" = "cegcc" ; then
+                        WIN32_CPPFLAGS="-D_WIN32_WCE=0x0420"
                         WIN32_CFLAGS="-mwin32"
 			lt_enable_auto_import="-Wl,--enable-auto-import"
+                fi
+                if test "$host_os" = "mingw32ce" ; then
+                        WIN32_CPPFLAGS="-D_WIN32_WCE=0x0420"
                 fi
                 lt_no_undefined="-no-undefined"
                 ;;
 esac
+AC_SUBST(WIN32_CPPFLAGS)
 AC_SUBST(WIN32_CFLAGS)
 AC_SUBST(lt_no_undefined)
 AC_SUBST(lt_enable_auto_import)

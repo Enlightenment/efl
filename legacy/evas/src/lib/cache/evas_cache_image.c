@@ -2,8 +2,18 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <assert.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
 
 #include "evas_common.h"
 #include "evas_private.h"

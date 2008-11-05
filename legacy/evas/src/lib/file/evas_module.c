@@ -153,7 +153,7 @@ evas_module_init(void)
 	struct dirent *de;
 
 	if (!(dir = opendir(mp->path))) break;
-/*	printf("[evas module] searching modules on %s\n", mp->path); */
+/* 	printf("[evas module] searching modules on %s\n", mp->path); */
 	while ((de = readdir(dir)))
 	  {
 	     char *buf;
@@ -192,7 +192,7 @@ evas_module_init(void)
                   else if (em->type == EVAS_MODULE_TYPE_IMAGE_SAVER)
 		    {
 		    }
-/*		  printf("[evas module] including module path %s/%s of type %d\n",em->path, em->name, em->type); */
+/* 		  printf("[evas module] including module path %s/%s of type %d\n",em->path, em->name, em->type); */
 		  evas_modules = eina_list_append(evas_modules, em);
 	       }
 	     free(buf);

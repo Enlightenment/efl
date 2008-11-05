@@ -1,8 +1,17 @@
-#include "evas_common.h"
-#include "evas_private.h"
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
 #include <stdio.h>
 #include <tiffio.h>
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
+#include "evas_common.h"
+#include "evas_private.h"
 
 
 int evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *key);

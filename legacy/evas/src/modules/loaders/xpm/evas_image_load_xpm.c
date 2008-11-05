@@ -1,3 +1,12 @@
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "evas_common.h"
 #include "evas_private.h"
 
@@ -23,12 +32,12 @@ xpm_parse_color(char *color, int *r, int *g, int *b)
      {
         int                 len;
         char                val[32];
-	
+
         len = strlen(color) - 1;
         if (len < 96)
           {
              int                 i;
-	     
+
              len /= 3;
              for (i = 0; i < len; i++)
                 val[i] = color[1 + i + (0 * len)];
@@ -71,7 +80,7 @@ xpm_parse_color(char *color, int *r, int *g, int *b)
           {
              int rr, gg, bb;
              char name[4096];
-	     
+
              if (sscanf(buf, "%i %i %i %[^\n]", &rr, &gg, &bb, name) == 4)
 	       {
 		  if (!strcasecmp(name, color))
@@ -142,7 +151,7 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key, int
         xpm_parse_done();
         return 0;
      }
-   
+
    i = 0;
    j = 0;
    cmap = NULL;
@@ -361,7 +370,7 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key, int
                          }
 
                        if (transp) ie->flags.alpha = 1;
-		       
+
                        if (load_data)
                          {
                             evas_cache_image_surface_alloc(ie, w, h);
@@ -634,7 +643,7 @@ module_open(Evas_Module *em)
 EAPI void
 module_close(void)
 {
-   
+
 }
 
 EAPI Evas_Module_Api evas_modapi =

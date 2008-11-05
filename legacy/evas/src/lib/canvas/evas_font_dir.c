@@ -1,8 +1,19 @@
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "evas_common.h"
 #include "evas_private.h"
+
 #ifdef BUILD_FONT_LOADER_EET
 #include <Eet.h>
 #endif
+
 #ifdef HAVE_FONTCONFIG
 #include <fontconfig/fontconfig.h>
 #endif
@@ -602,7 +613,7 @@ object_text_font_cache_dir_add(char *dir)
      {
 	FILE *f;
 
-	f = fopen(tmp, "r");
+	f = fopen(tmp, "rb");
 	if (f)
 	  {
 	     int num;
@@ -685,7 +696,7 @@ object_text_font_cache_dir_add(char *dir)
      {
 	FILE *f;
 
-	f = fopen(tmp, "r");
+	f = fopen(tmp, "rb");
 	if (f)
 	  {
 	     char fname[4096], fdef[4096];

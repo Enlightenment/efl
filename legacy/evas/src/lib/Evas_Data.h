@@ -1,6 +1,8 @@
 #ifndef _EVAS_DATA_H
 #define _EVAS_DATA_H
 
+#include <Eina.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -26,8 +28,6 @@
 #  define EAPI
 # endif
 #endif /* ! _WIN32 */
-
-#include <Eina.h>
 
 /**
  * @file
