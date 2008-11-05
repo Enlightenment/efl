@@ -86,6 +86,7 @@ EAPI Eina_Bool    eina_array_remove   (Eina_Array *array, Eina_Bool (*keep)(void
 static inline Eina_Bool     eina_array_push  (Eina_Array *array, const void *data);
 static inline void         *eina_array_pop   (Eina_Array *array);
 static inline void         *eina_array_data_get (const Eina_Array *array, unsigned int index);
+static inline void          eina_array_data_set (const Eina_Array *array, unsigned int index, const void *data);
 static inline unsigned int  eina_array_count_get (const Eina_Array *array);
 
 EAPI Eina_Iterator *eina_array_iterator_new (const Eina_Array *array);

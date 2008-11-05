@@ -102,6 +102,23 @@ eina_array_data_get(const Eina_Array *array, unsigned int index)
 }
 
 /**
+ * @brief Return the data at a given position in an array.
+ *
+ * @param array The array.
+ * @param index The potition of the data to retrieve.
+ * @return The retrieved data.
+ *
+ * This function returns the data at the position @p index in @p
+ * array. For performance reasons, there is no check of @p array or @p
+ * index. If it is @c NULL or invalid, the program may crash.
+ */
+static inline void
+eina_array_data_set(const Eina_Array *array, unsigned int index, const void *data)
+{
+   array->data[index] = (void*) data;
+}
+
+/**
  * @brief Return the number of elements in the array.
  *
  * @param array The array.
