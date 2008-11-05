@@ -4109,7 +4109,7 @@ _edje_program_get_byname(Evas_Object *obj, const char *prog_name)
    for (i = 0; i < ed->table_programs_size; i++)
      {
 	epr = ed->table_programs[i];
-	if (strcmp(epr->name, prog_name) == 0)
+	if ((epr->name) && (strcmp(epr->name, prog_name) == 0))
 	  return epr;
      }
    return NULL;
