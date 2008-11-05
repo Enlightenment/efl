@@ -6,4 +6,4 @@ Exec=elementary_test
 Icon=elementary
 Terminal=false
 Type=Application
-Categories=Application;Utilities;
+Categories=Application;Utility;
