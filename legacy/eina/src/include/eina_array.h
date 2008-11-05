@@ -112,7 +112,7 @@ EAPI Eina_Accessor *eina_array_accessor_new (const Eina_Array *array);
  * @code
  * Eina_Array          *array;
  * char                *item;
- * Eina_Array_Iterator *iterator;
+ * Eina_Array_Iterator  iterator;
  * unsigned int         i;
  *
  * // array is already filled,
