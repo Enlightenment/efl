@@ -23,7 +23,9 @@ EAPI FILE *evil_fopen(const char *path, const char *mode);
 
 # define fopen(path, mode) evil_fopen(path, mode)
 
-EAPI void rewind(FILE *stream);
+EAPI void evil_rewind(FILE *stream);
+
+#define rewind(f) evil_rewind(f)
 
 #endif /* _WIN32_WCE && ! __CEGCC__ */
 

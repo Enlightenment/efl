@@ -56,9 +56,9 @@ FILE *evil_fopen(const char *path, const char *mode)
    return f;
 }
 
-void rewind(FILE *stream)
+void evil_rewind(FILE *stream)
 {
-  fseek(stream, 0, SEEK_SET);
+   fseek(stream, 0, SEEK_SET);
 }
 
 

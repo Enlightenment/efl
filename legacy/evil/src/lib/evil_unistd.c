@@ -178,7 +178,6 @@ evil_stat(const char *file_name, struct stat *st)
 
    {
       char *tmp = evil_wchar_to_char(file);
-      printf ("Evil stat : 3 %s\n", tmp);
       free(tmp);
    }
 
@@ -239,7 +238,6 @@ evil_stat(const char *file_name, struct stat *st)
    st->st_ino = 0;
 
    FindClose(handle);
-   printf ("Evil stat : 3\n");
 
   return 0;
 }

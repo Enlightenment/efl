@@ -1,3 +1,12 @@
+2008-11-05  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_stdio.c:
+	* src/lib/evil_stdio.h:
+	overload rewind for Windows CE
+
+	* src/lib/evil_unistd.c:
+	remove debug
+
 2008-11-04  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Evil.h:
