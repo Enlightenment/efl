@@ -8,8 +8,8 @@
 #endif
 
 #include <stdio.h>
-#include <setjmp.h>
 #include <png.h>
+#include <setjmp.h>
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
