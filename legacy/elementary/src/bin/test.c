@@ -1249,219 +1249,219 @@ my_bt_17(void *data, Evas_Object *obj, void *event_info)
 static void
 my_win_main(void)
 {
-   Evas_Object *win, *bg, *bx0, *lb, *bx, *bt, *sc, *fr;
-   
-   /* 1 create an elm window - it returns an evas object. this is a little
-    * special as the object lives in the canvas that is inside the window
-    * so what is returned is really inside the window, but as you manipulate
-    * the evas object returned - the window will respond. elm_win makes sure
-    * of that so you can blindly treat it like any other evas object
-    * pretty much, just as long as you know it has special significance */
-   /* the first parameter is a "parent" window - eg for a dialog you want to
-    * have a main window it is related to, here it is NULL meaning there
-    * is no parent. "main" is the name of the window - used by the window
-    * manager for identifying the window uniquely amongst all the windows
-    * within this application (and all instances of the application). the
-    * type is a basic window (the final parameter) */
-   win = elm_win_add(NULL, "main", ELM_WIN_BASIC);
-   /* set the title of the window - this is in the titlebar */
-   elm_win_title_set(win, "Elementary Tests");
-   
-   /* set a callback on the window when "delete-request" is emitted as
-    * a callback. when this happens my_win_del() is called and the 
-    * data pointer (first param) is passed the final param here (in this
-    * case it is NULL). This is how you can pass specific things to a
-    * callback like objects or data layered on top */
-   evas_object_smart_callback_add(win, "delete-request", my_win_del, NULL);
-
-   /* add a background to our window. this just uses the standard theme set
-    * background. without a backgorund, you could make a window seem
-    * transparent with elm_win_alpha_set(win, 1); for example. if you have
-    * a compositor running this will make the window able to be
-    * semi-transparent and any space not filled by object/widget pixels will
-    * be transparent or translucent based on alpha. if you do not have a
-    * comnpositor running this should fall back to using shaped windows
-    * (which have a mask). both these features will be slow and rely on
-    * a lot more resources, so only use it if you need it. */
-   bg = elm_bg_add(win);
-   /* set weight to 1.0 x 1.0 == expand in both x and y direction */
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
-   /* tell the window that this object is to be resized along with the window.
-    * also as a result this object will be one of several objects that
-    * controls the minimum/maximum size of the window */
-   elm_win_resize_object_add(win, bg);
-   /* and show the background */
-   evas_object_show(bg);
-
-   /* add a box layout widget to the window */
-   bx0 = elm_box_add(win);
-   /* allow base box (bx0) to expand in x and y */
-   evas_object_size_hint_weight_set(bx0, 1.0, 1.0);
-   /* tell the window that the box affects window size and also will be 
-    * resized when the window is */
-   elm_win_resize_object_add(win, bx0);
-   evas_object_show(bx0);
-
-   fr = elm_frame_add(win);
-   elm_frame_label_set(fr, "Information");
-   elm_box_pack_end(bx0, fr);
-   evas_object_show(fr);
-   
-   lb = elm_label_add(win);
-   elm_label_label_set(lb, 
-		       "Please slect a test from the list below<br>"
-		       "by clicking the test button to show the<br>"
-		       "test window.");
-   elm_frame_content_set(fr, lb);
-   evas_object_show(lb);
-   
-   /* add a scroller object - anything inside is scrollable */
-   sc = elm_scroller_add(win);
-   /* add scroller to main box */
-   evas_object_size_hint_weight_set(sc, 1.0, 1.0);
-   evas_object_size_hint_align_set(sc, -1.0, -1.0);
-   elm_box_pack_end(bx0, sc);
-   evas_object_show(sc);
-   
-   /* add a box layout widget to the window */
-   bx = elm_box_add(win);
-   /* set weight to 1.0 x 1.0 == expand in x and y) */
-   evas_object_size_hint_weight_set(bx, 1.0, 0.0);
-
-   /* set the box ad the content in the scrolled view*/
-   elm_scroller_content_set(sc, bx);
-   /* show the box, scroller and main box */
-   evas_object_show(bx);
-   
-   /* create a button */
-   bt = elm_button_add(win);
-   /* set the button label */
-   elm_button_label_set(bt, "Bg Plain");
-   /* add a callback to be run when the button is clicked */
-   evas_object_smart_callback_add(bt, "clicked", my_bt_1, NULL);
-   /* the button should fill any space it is given horizontally */
-   evas_object_size_hint_align_set(bt, -1.0, 0.0);
-   /* put the button at the end of the box */
-   elm_box_pack_end(bx, bt);
-   /* show the button */
-   evas_object_show(bt);
-
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "Bg Image");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_2, NULL);
-   evas_object_size_hint_align_set(bt, -1.0, 0.0);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "Icon Transparent");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_3, NULL);
-   evas_object_size_hint_align_set(bt, -1.0, 0.0);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "Box Vert");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_4, NULL);
-   evas_object_size_hint_align_set(bt, -1.0, 0.0);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "Box Horiz");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_5, NULL);
-   evas_object_size_hint_align_set(bt, -1.0, 0.0);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "Buttons");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_6, NULL);
-   evas_object_size_hint_align_set(bt, -1.0, 0.0);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "Toggles");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_7, NULL);
-   evas_object_size_hint_align_set(bt, -1.0, 0.0);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "Table");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_8, NULL);
-   evas_object_size_hint_align_set(bt, -1.0, 0.0);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "Clock");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_9, NULL);
-   evas_object_size_hint_align_set(bt, -1.0, 0.0);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "Layout");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_10, NULL);
-   evas_object_size_hint_align_set(bt, -1.0, 0.0);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "Hover");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_11, NULL);
-   evas_object_size_hint_align_set(bt, -1.0, 0.0);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "Hover 2");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_12, NULL);
-   evas_object_size_hint_align_set(bt, -1.0, 0.0);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "Entry");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_13, NULL);
-   evas_object_size_hint_align_set(bt, -1.0, 0.0);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "Entry Scrolled");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_14, NULL);
-   evas_object_size_hint_align_set(bt, -1.0, 0.0);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-   
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "Notepad");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_15, NULL);
-   evas_object_size_hint_align_set(bt, -1.0, 0.0);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "Anchorview");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_16, NULL);
-   evas_object_size_hint_align_set(bt, -1.0, 0.0);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "Anchorblock");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_17, NULL);
-   evas_object_size_hint_align_set(bt, -1.0, 0.0);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-
-   /* set an initial window size */
-   evas_object_resize(win, 320, 520);
-   /* show the window */
-   evas_object_show(win);
+  Evas_Object *win, *bg, *bx0, *lb, *bx, *bt, *sc, *fr;
+  
+  /* 1 create an elm window - it returns an evas object. this is a little
+   * special as the object lives in the canvas that is inside the window
+   * so what is returned is really inside the window, but as you manipulate
+   * the evas object returned - the window will respond. elm_win makes sure
+   * of that so you can blindly treat it like any other evas object
+   * pretty much, just as long as you know it has special significance */
+  /* the first parameter is a "parent" window - eg for a dialog you want to
+   * have a main window it is related to, here it is NULL meaning there
+   * is no parent. "main" is the name of the window - used by the window
+   * manager for identifying the window uniquely amongst all the windows
+   * within this application (and all instances of the application). the
+   * type is a basic window (the final parameter) */
+  win = elm_win_add(NULL, "main", ELM_WIN_BASIC);
+  /* set the title of the window - this is in the titlebar */
+  elm_win_title_set(win, "Elementary Tests");
+  
+  /* set a callback on the window when "delete-request" is emitted as
+   * a callback. when this happens my_win_del() is called and the 
+   * data pointer (first param) is passed the final param here (in this
+   * case it is NULL). This is how you can pass specific things to a
+   * callback like objects or data layered on top */
+  evas_object_smart_callback_add(win, "delete-request", my_win_del, NULL);
+  
+  /* add a background to our window. this just uses the standard theme set
+   * background. without a backgorund, you could make a window seem
+   * transparent with elm_win_alpha_set(win, 1); for example. if you have
+   * a compositor running this will make the window able to be
+   * semi-transparent and any space not filled by object/widget pixels will
+   * be transparent or translucent based on alpha. if you do not have a
+   * comnpositor running this should fall back to using shaped windows
+   * (which have a mask). both these features will be slow and rely on
+   * a lot more resources, so only use it if you need it. */
+  bg = elm_bg_add(win);
+  /* set weight to 1.0 x 1.0 == expand in both x and y direction */
+  evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+  /* tell the window that this object is to be resized along with the window.
+   * also as a result this object will be one of several objects that
+   * controls the minimum/maximum size of the window */
+  elm_win_resize_object_add(win, bg);
+  /* and show the background */
+  evas_object_show(bg);
+  
+  /* add a box layout widget to the window */
+  bx0 = elm_box_add(win);
+  /* allow base box (bx0) to expand in x and y */
+  evas_object_size_hint_weight_set(bx0, 1.0, 1.0);
+  /* tell the window that the box affects window size and also will be 
+   * resized when the window is */
+  elm_win_resize_object_add(win, bx0);
+  evas_object_show(bx0);
+  
+  fr = elm_frame_add(win);
+  elm_frame_label_set(fr, "Information");
+  elm_box_pack_end(bx0, fr);
+  evas_object_show(fr);
+  
+  lb = elm_label_add(win);
+  elm_label_label_set(lb, 
+                      "Please slect a test from the list below<br>"
+                      "by clicking the test button to show the<br>"
+                      "test window.");
+  elm_frame_content_set(fr, lb);
+  evas_object_show(lb);
+  
+  /* add a scroller object - anything inside is scrollable */
+  sc = elm_scroller_add(win);
+  /* add scroller to main box */
+  evas_object_size_hint_weight_set(sc, 1.0, 1.0);
+  evas_object_size_hint_align_set(sc, -1.0, -1.0);
+  elm_box_pack_end(bx0, sc);
+  evas_object_show(sc);
+  
+  /* add a box layout widget to the window */
+  bx = elm_box_add(win);
+  /* set weight to 1.0 x 1.0 == expand in x and y) */
+  evas_object_size_hint_weight_set(bx, 1.0, 0.0);
+  
+  /* set the box ad the content in the scrolled view*/
+  elm_scroller_content_set(sc, bx);
+  /* show the box, scroller and main box */
+  evas_object_show(bx);
+  
+  /* create a button */
+  bt = elm_button_add(win);
+  /* set the button label */
+  elm_button_label_set(bt, "Bg Plain");
+  /* add a callback to be run when the button is clicked */
+  evas_object_smart_callback_add(bt, "clicked", my_bt_1, NULL);
+  /* the button should fill any space it is given horizontally */
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  /* put the button at the end of the box */
+  elm_box_pack_end(bx, bt);
+  /* show the button */
+  evas_object_show(bt);
+  
+  bt = elm_button_add(win);
+  elm_button_label_set(bt, "Bg Image");
+  evas_object_smart_callback_add(bt, "clicked", my_bt_2, NULL);
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+  
+  bt = elm_button_add(win);
+  elm_button_label_set(bt, "Icon Transparent");
+  evas_object_smart_callback_add(bt, "clicked", my_bt_3, NULL);
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+  
+  bt = elm_button_add(win);
+  elm_button_label_set(bt, "Box Vert");
+  evas_object_smart_callback_add(bt, "clicked", my_bt_4, NULL);
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+  
+  bt = elm_button_add(win);
+  elm_button_label_set(bt, "Box Horiz");
+  evas_object_smart_callback_add(bt, "clicked", my_bt_5, NULL);
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+  
+  bt = elm_button_add(win);
+  elm_button_label_set(bt, "Buttons");
+  evas_object_smart_callback_add(bt, "clicked", my_bt_6, NULL);
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+  
+  bt = elm_button_add(win);
+  elm_button_label_set(bt, "Toggles");
+  evas_object_smart_callback_add(bt, "clicked", my_bt_7, NULL);
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+  
+  bt = elm_button_add(win);
+  elm_button_label_set(bt, "Table");
+  evas_object_smart_callback_add(bt, "clicked", my_bt_8, NULL);
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+  
+  bt = elm_button_add(win);
+  elm_button_label_set(bt, "Clock");
+  evas_object_smart_callback_add(bt, "clicked", my_bt_9, NULL);
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+  
+  bt = elm_button_add(win);
+  elm_button_label_set(bt, "Layout");
+  evas_object_smart_callback_add(bt, "clicked", my_bt_10, NULL);
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+  
+  bt = elm_button_add(win);
+  elm_button_label_set(bt, "Hover");
+  evas_object_smart_callback_add(bt, "clicked", my_bt_11, NULL);
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+  
+  bt = elm_button_add(win);
+  elm_button_label_set(bt, "Hover 2");
+  evas_object_smart_callback_add(bt, "clicked", my_bt_12, NULL);
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+  
+  bt = elm_button_add(win);
+  elm_button_label_set(bt, "Entry");
+  evas_object_smart_callback_add(bt, "clicked", my_bt_13, NULL);
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+  
+  bt = elm_button_add(win);
+  elm_button_label_set(bt, "Entry Scrolled");
+  evas_object_smart_callback_add(bt, "clicked", my_bt_14, NULL);
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+  
+  bt = elm_button_add(win);
+  elm_button_label_set(bt, "Notepad");
+  evas_object_smart_callback_add(bt, "clicked", my_bt_15, NULL);
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+  
+  bt = elm_button_add(win);
+  elm_button_label_set(bt, "Anchorview");
+  evas_object_smart_callback_add(bt, "clicked", my_bt_16, NULL);
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+  
+  bt = elm_button_add(win);
+  elm_button_label_set(bt, "Anchorblock");
+  evas_object_smart_callback_add(bt, "clicked", my_bt_17, NULL);
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+  
+  /* set an initial window size */
+  evas_object_resize(win, 320, 520);
+  /* show the window */
+  evas_object_show(win);
 }
 
 int

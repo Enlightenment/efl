@@ -283,9 +283,6 @@ extern "C" {
 // * scroller could do with page up/down/left/right buttons and and idea of
 //   a page size
 // * tab widget focusing (not useful for touchscreen tho...)
-// * frame needs to be able to use custom frame style
-// * button needs to be able to use custom frame style
-// * toggle needs to be able to use custom frame style
 // * entry has no way to show its focused vs other entries
 // * entry selection conflicts with finger scroll
 // * toolbar widget (edje + box + button + separators)
@@ -307,5 +304,9 @@ extern "C" {
 // * need to get toplevel
 // * need "dialogbutton" widget (bigger button for bottom of wins)
 // * need dialog window widget
+// * need a phone-number widget (hilight country dial prefixes, add flags, 
+//   photos of contacts that match etc.)
+// * need imageview widget (for large not iconic images)
+// * labels with "" are 0x0 size, but with " " are correct vertically. check
 
 #endif

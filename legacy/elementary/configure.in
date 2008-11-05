@@ -57,4 +57,5 @@ data/Makefile
 data/themes/Makefile
 data/images/Makefile
 data/objects/Makefile
+data/desktop/Makefile
 ])

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Elementary Test
+Comment=Elementary Test Application
+Exec=elementary_test
+Icon=elementary
+Terminal=false
+Type=Application
+Categories=Application;Utilities;
