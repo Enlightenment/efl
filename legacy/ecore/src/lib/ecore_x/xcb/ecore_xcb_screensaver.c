@@ -6,20 +6,19 @@
 
 
 /**
- * @defgroup Ecore_X_ScrenSaver_Group X Shape extension
+ * @defgroup Ecore_X_ScreenSaver_Group X ScreenSaver extension
  *
- * These functions use the shape extension of the X server to change
- * shape of given windows.
- */
+ * These functions use the ScreenSaver extension of the X server
+  */
 
 
 /**
- * Return whether the X server supports the ScrenSaver Extension.
- * @return 1 if the X ScrenSaver Extension is available, 0 otherwise.
+ * Return whether the X server supports the ScreenSaver Extension.
+ * @return 1 if the X ScreenSaver Extension is available, 0 otherwise.
  *
- * Return 1 if the X server supports the ScrenSaver Extension version 1.0,
+ * Return 1 if the X server supports the ScreenSaver Extension version 1.0,
  * 0 otherwise.
- * @ingroup Ecore_X_ScrenSaver_Group
+ * @ingroup Ecore_X_ScreenSaver_Group
  */
 EAPI int
 ecore_x_screensaver_event_available_get(void)
@@ -30,7 +29,7 @@ ecore_x_screensaver_event_available_get(void)
 
 /**
  * Sends the QueryInfo request.
- * @ingroup Ecore_X_ScrenSaver_Group
+ * @ingroup Ecore_X_ScreenSaver_Group
  */
 EAPI void
 ecore_x_screensaver_idle_time_prefetch(void)
@@ -46,7 +45,7 @@ ecore_x_screensaver_idle_time_prefetch(void)
 
 /**
  * Gets the reply of the QueryInfo request sent by ecore_x_get_screensaver_prefetch().
- * @ingroup Ecore_X_ScrenSaver_Group
+ * @ingroup Ecore_X_ScreenSaver_Group
  */
 EAPI void
 ecore_x_screensaver_idle_time_fetch(void)
@@ -72,7 +71,7 @@ ecore_x_screensaver_idle_time_fetch(void)
  * To use this function, you must call before, and in order,
  * ecore_x_get_screensaver_prefetch(), which sends the GetScreenSaver request,
  * then ecore_x_get_screensaver_fetch(), which gets the reply.
- * @ingroup Ecore_X_ScrenSaver_Group
+ * @ingroup Ecore_X_ScreenSaver_Group
  */
 EAPI int
 ecore_x_screensaver_idle_time_get(void)
@@ -105,7 +104,7 @@ ecore_x_screensaver_idle_time_get(void)
  * interval, in seconds, between screen saver alterations. @p blank
  * specifies how to enable screen blanking. @p expose specifies the
  * screen save control values.
- * @ingroup Ecore_X_ScrenSaver_Group
+ * @ingroup Ecore_X_ScreenSaver_Group
  */
 EAPI void
 ecore_x_screensaver_set(int timeout,
@@ -123,7 +122,7 @@ ecore_x_screensaver_set(int timeout,
 
 /**
  * Sends the GetScreenSaver request.
- * @ingroup Ecore_X_ScrenSaver_Group
+ * @ingroup Ecore_X_ScreenSaver_Group
  */
 EAPI void
 ecore_x_get_screensaver_prefetch(void)
@@ -137,7 +136,7 @@ ecore_x_get_screensaver_prefetch(void)
 
 /**
  * Gets the reply of the GetScreenSaver request sent by ecore_x_get_screensaver_prefetch().
- * @ingroup Ecore_X_ScrenSaver_Group
+ * @ingroup Ecore_X_ScreenSaver_Group
  */
 EAPI void
 ecore_x_get_screensaver_fetch(void)
@@ -160,7 +159,7 @@ ecore_x_get_screensaver_fetch(void)
  * To use this function, you must call before, and in order,
  * ecore_x_get_screensaver_prefetch(), which sends the GetScreenSaver request,
  * then ecore_x_get_screensaver_fetch(), which gets the reply.
- * @ingroup Ecore_X_ScrenSaver_Group
+ * @ingroup Ecore_X_ScreenSaver_Group
  */
 EAPI void
 ecore_x_screensaver_timeout_set(int timeout)
@@ -187,7 +186,7 @@ ecore_x_screensaver_timeout_set(int timeout)
  * To use this function, you must call before, and in order,
  * ecore_x_get_screensaver_prefetch(), which sends the GetScreenSaver request,
  * then ecore_x_get_screensaver_fetch(), which gets the reply.
- * @ingroup Ecore_X_ScrenSaver_Group
+ * @ingroup Ecore_X_ScreenSaver_Group
  */
 EAPI int
 ecore_x_screensaver_timeout_get(void)
@@ -210,7 +209,7 @@ ecore_x_screensaver_timeout_get(void)
  * To use this function, you must call before, and in order,
  * ecore_x_get_screensaver_prefetch(), which sends the GetScreenSaver request,
  * then ecore_x_get_screensaver_fetch(), which gets the reply.
- * @ingroup Ecore_X_ScrenSaver_Group
+ * @ingroup Ecore_X_ScreenSaver_Group
  */
 EAPI void
 ecore_x_screensaver_interval_set(int interval)
@@ -237,7 +236,7 @@ ecore_x_screensaver_interval_set(int interval)
  * To use this function, you must call before, and in order,
  * ecore_x_get_screensaver_prefetch(), which sends the GetScreenSaver request,
  * then ecore_x_get_screensaver_fetch(), which gets the reply.
- * @ingroup Ecore_X_ScrenSaver_Group
+ * @ingroup Ecore_X_ScreenSaver_Group
  */
 EAPI int
 ecore_x_screensaver_interval_get(void)
@@ -260,7 +259,7 @@ ecore_x_screensaver_interval_get(void)
  * To use this function, you must call before, and in order,
  * ecore_x_get_screensaver_prefetch(), which sends the GetScreenSaver request,
  * then ecore_x_get_screensaver_fetch(), which gets the reply.
- * @ingroup Ecore_X_ScrenSaver_Group
+ * @ingroup Ecore_X_ScreenSaver_Group
  */
 EAPI void
 ecore_x_screensaver_blank_set(int blank)
@@ -287,7 +286,7 @@ ecore_x_screensaver_blank_set(int blank)
  * To use this function, you must call before, and in order,
  * ecore_x_get_screensaver_prefetch(), which sends the GetScreenSaver request,
  * then ecore_x_get_screensaver_fetch(), which gets the reply.
- * @ingroup Ecore_X_ScrenSaver_Group
+ * @ingroup Ecore_X_ScreenSaver_Group
  */
 EAPI int
 ecore_x_screensaver_blank_get(void)
@@ -310,7 +309,7 @@ ecore_x_screensaver_blank_get(void)
  * To use this function, you must call before, and in order,
  * ecore_x_get_screensaver_prefetch(), which sends the GetScreenSaver request,
  * then ecore_x_get_screensaver_fetch(), which gets the reply.
- * @ingroup Ecore_X_ScrenSaver_Group
+ * @ingroup Ecore_X_ScreenSaver_Group
  */
 EAPI void
 ecore_x_screensaver_expose_set(int expose)
@@ -337,7 +336,7 @@ ecore_x_screensaver_expose_set(int expose)
  * To use this function, you must call before, and in order,
  * ecore_x_get_screensaver_prefetch(), which sends the GetScreenSaver request,
  * then ecore_x_get_screensaver_fetch(), which gets the reply.
- * @ingroup Ecore_X_ScrenSaver_Group
+ * @ingroup Ecore_X_ScreenSaver_Group
  */
 EAPI int
 ecore_x_screensaver_expose_get(void)
@@ -359,7 +358,7 @@ ecore_x_screensaver_expose_get(void)
  * associated with drawable should be generated for this client. If
  * @p on is set to @c 0, the generation is disabled, otherwise, it is
  * enabled.
- * @ingroup Ecore_X_ScrenSaver_Group
+ * @ingroup Ecore_X_ScreenSaver_Group
  */
 EAPI void
 ecore_x_screensaver_event_listen_set(int on)
