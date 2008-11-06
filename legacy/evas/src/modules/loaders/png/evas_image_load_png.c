@@ -59,7 +59,6 @@ evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key
 	fclose(f);
 	return 0;
      }
-   rewind(f);
    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
    if (!png_ptr)
      {
@@ -73,13 +72,14 @@ evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key
 	fclose(f);
 	return 0;
      }
-   if (setjmp(png_ptr->jmpbuf))
+   if (setjmp(png_jmpbuf(png_ptr)))
      {
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 	fclose(f);
 	return 0;
      }
    png_init_io(png_ptr, f);
+   png_set_sig_bytes(png_ptr, PNG_BYTES_TO_CHECK);
    png_read_info(png_ptr, info_ptr);
    png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *) (&w32),
 		(png_uint_32 *) (&h32), &bit_depth, &color_type,
@@ -129,7 +129,6 @@ evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key
 	fclose(f);
 	return 0;
      }
-   rewind(f);
    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
    if (!png_ptr)
      {
@@ -143,13 +142,14 @@ evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key
 	fclose(f);
 	return 0;
      }
-   if (setjmp(png_ptr->jmpbuf))
+   if (setjmp(png_jmpbuf(png_ptr)))
      {
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 	fclose(f);
 	return 0;
      }
    png_init_io(png_ptr, f);
+   png_set_sig_bytes(png_ptr, PNG_BYTES_TO_CHECK);
    png_read_info(png_ptr, info_ptr);
    png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *) (&w32),
 		(png_uint_32 *) (&h32), &bit_depth, &color_type,
