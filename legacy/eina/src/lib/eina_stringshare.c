@@ -977,7 +977,7 @@ eina_stringshare_ref(const char *str)
    Eina_Stringshare_Node *node;
    int slen;
 
-   if (!str) return;
+   if (!str) return NULL;
 
    /* special cases */
    if      (str[0] == '\0') slen = 0;
