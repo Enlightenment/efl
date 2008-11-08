@@ -624,124 +624,6 @@ _eina_stringshare_small_shutdown(void)
      }
 }
 
-
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-
-/**
- * @addtogroup Eina_Data_Types_Group Data Types
- *
- * @{
- */
-
-/**
- * @addtogroup Eina_Stringshare_Group Stringshare
- *
- * These functions allow you to store one copy of a string, and use it
- * throughout your program.
- *
- * This is a method to reduce the number of duplicated strings kept in
- * memory. It's pretty common for the same strings to be dynamically
- * allocated repeatedly between applications and libraries, especially in
- * circumstances where you could have multiple copies of a structure that
- * allocates the string. So rather than duplicating and freeing these
- * strings, you request a read-only pointer to an existing string and
- * only incur the overhead of a hash lookup.
- *
- * It sounds like micro-optimizing, but profiling has shown this can have
- * a significant impact as you scale the number of copies up. It improves
- * string creation/destruction speed, reduces memory use and decreases
- * memory fragmentation, so a win all-around.
- *
- * For more information, you can look at the @ref tutorial_stringshare_page.
- *
- * @{
- */
-
-/**
- * @brief Initialize the eina stringshare internal structure.
- *
- * @return 1 or greater on success, 0 on error.
- *
- * This function allocates the memory needed by the stringshare
- * internal structure and sets up the error module of Eina. It is also
- * called by eina_init(). It returns 0 on failure, otherwise it
- * returns the number of times it has already been called.
- */
-EAPI int
-eina_stringshare_init(void)
-{
-   /*
-    * No strings have been loaded at this point, so create the hash
-    * table for storing string info for later.
-    */
-   if (!_eina_stringshare_init_count)
-     {
-	share = calloc(1, sizeof(Eina_Stringshare));
-	if (!share)
-	  return 0;
-
-	eina_error_init();
-	eina_magic_string_init();
-
-	eina_magic_string_set(EINA_MAGIC_STRINGSHARE,
-			      "Eina Stringshare");
-	eina_magic_string_set(EINA_MAGIC_STRINGSHARE_HEAD,
-			      "Eina Stringshare Head");
-	eina_magic_string_set(EINA_MAGIC_STRINGSHARE_NODE,
-			      "Eina Stringshare Node");
-       	EINA_MAGIC_SET(share, EINA_MAGIC_STRINGSHARE);
-
-	_eina_stringshare_small_init();
-	_eina_stringshare_population_init();
-     }
-
-   return ++_eina_stringshare_init_count;
-}
-
-/**
- * @brief Shut down the eina stringshare internal structures
- *
- * @return 0 when the stringshare module is completely shut down, 1 or
- * greater otherwise.
- *
- * This function frees the memory allocated by eina_stringshare_init()
- * and shuts down the error module. It is also called by
- * eina_shutdown(). It returns 0 when it is called the same number of
- * times than eina_stringshare_init().
- */
-EAPI int
-eina_stringshare_shutdown(void)
-{
-   unsigned int i;
-
-   _eina_stringshare_population_stats();
-
-   --_eina_stringshare_init_count;
-   if (!_eina_stringshare_init_count)
-     {
-	/* remove any string still in the table */
-	for (i = 0; i < EINA_STRINGSHARE_BUCKETS; i++)
-	  {
-	     eina_rbtree_delete(EINA_RBTREE_GET(share->buckets[i]), EINA_RBTREE_FREE_CB(_eina_stringshare_head_free), NULL);
-	     share->buckets[i] = NULL;
-	  }
-	MAGIC_FREE(share);
-
-	_eina_stringshare_population_shutdown();
-	_eina_stringshare_small_shutdown();
-	eina_magic_string_shutdown();
-	eina_error_shutdown();
-     }
-
-   return _eina_stringshare_init_count;
-}
-
 static void
 _eina_stringshare_node_init(Eina_Stringshare_Node *node, const char *str, int slen)
 {
@@ -875,6 +757,124 @@ _eina_stringshare_node_alloc(int slen)
      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
 
    return node;
+}
+
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+/**
+ * @addtogroup Eina_Data_Types_Group Data Types
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Eina_Stringshare_Group Stringshare
+ *
+ * These functions allow you to store one copy of a string, and use it
+ * throughout your program.
+ *
+ * This is a method to reduce the number of duplicated strings kept in
+ * memory. It's pretty common for the same strings to be dynamically
+ * allocated repeatedly between applications and libraries, especially in
+ * circumstances where you could have multiple copies of a structure that
+ * allocates the string. So rather than duplicating and freeing these
+ * strings, you request a read-only pointer to an existing string and
+ * only incur the overhead of a hash lookup.
+ *
+ * It sounds like micro-optimizing, but profiling has shown this can have
+ * a significant impact as you scale the number of copies up. It improves
+ * string creation/destruction speed, reduces memory use and decreases
+ * memory fragmentation, so a win all-around.
+ *
+ * For more information, you can look at the @ref tutorial_stringshare_page.
+ *
+ * @{
+ */
+
+/**
+ * @brief Initialize the eina stringshare internal structure.
+ *
+ * @return 1 or greater on success, 0 on error.
+ *
+ * This function allocates the memory needed by the stringshare
+ * internal structure and sets up the error module of Eina. It is also
+ * called by eina_init(). It returns 0 on failure, otherwise it
+ * returns the number of times it has already been called.
+ */
+EAPI int
+eina_stringshare_init(void)
+{
+   /*
+    * No strings have been loaded at this point, so create the hash
+    * table for storing string info for later.
+    */
+   if (!_eina_stringshare_init_count)
+     {
+	share = calloc(1, sizeof(Eina_Stringshare));
+	if (!share)
+	  return 0;
+
+	eina_error_init();
+	eina_magic_string_init();
+
+	eina_magic_string_set(EINA_MAGIC_STRINGSHARE,
+			      "Eina Stringshare");
+	eina_magic_string_set(EINA_MAGIC_STRINGSHARE_HEAD,
+			      "Eina Stringshare Head");
+	eina_magic_string_set(EINA_MAGIC_STRINGSHARE_NODE,
+			      "Eina Stringshare Node");
+       	EINA_MAGIC_SET(share, EINA_MAGIC_STRINGSHARE);
+
+	_eina_stringshare_small_init();
+	_eina_stringshare_population_init();
+     }
+
+   return ++_eina_stringshare_init_count;
+}
+
+/**
+ * @brief Shut down the eina stringshare internal structures
+ *
+ * @return 0 when the stringshare module is completely shut down, 1 or
+ * greater otherwise.
+ *
+ * This function frees the memory allocated by eina_stringshare_init()
+ * and shuts down the error module. It is also called by
+ * eina_shutdown(). It returns 0 when it is called the same number of
+ * times than eina_stringshare_init().
+ */
+EAPI int
+eina_stringshare_shutdown(void)
+{
+   unsigned int i;
+
+   _eina_stringshare_population_stats();
+
+   --_eina_stringshare_init_count;
+   if (!_eina_stringshare_init_count)
+     {
+	/* remove any string still in the table */
+	for (i = 0; i < EINA_STRINGSHARE_BUCKETS; i++)
+	  {
+	     eina_rbtree_delete(EINA_RBTREE_GET(share->buckets[i]), EINA_RBTREE_FREE_CB(_eina_stringshare_head_free), NULL);
+	     share->buckets[i] = NULL;
+	  }
+	MAGIC_FREE(share);
+
+	_eina_stringshare_population_shutdown();
+	_eina_stringshare_small_shutdown();
+	eina_magic_string_shutdown();
+	eina_error_shutdown();
+     }
+
+   return _eina_stringshare_init_count;
 }
 
 /**
