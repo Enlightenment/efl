@@ -163,9 +163,9 @@ evil_stat(const char *file_name, struct stat *st)
         memcpy(tmp + l1 + 1, file_name, l2);
         tmp[l1 + 1 + l2] = '\0';
         file = evil_char_to_wchar(tmp);
+        free(tmp);
         if (!file)
           return -1;
-        free(tmp);
      }
    else
      {
@@ -175,11 +175,6 @@ evil_stat(const char *file_name, struct stat *st)
      }
 
    free(f);
-
-   {
-      char *tmp = evil_wchar_to_char(file);
-      free(tmp);
-   }
 
    handle = FindFirstFile(file, &data);
    if (handle == INVALID_HANDLE_VALUE)

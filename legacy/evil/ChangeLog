@@ -1,3 +1,21 @@
+2008-11-09  Vincent Torri  <doursse at users dot sf dot net>
+
+	* evil.pc.in:
+	remove -ldl
+
+	* src/lib/evil_dirent.c:
+	change guards
+
+	* src/lib/evil_stdio.c:
+	* src/lib/evil_stdio.h:
+	add some checks,
+	add a function that more or less mimic fopen, but with
+	native win32 api calls. This is only for the evas loader
+	and saver of png files and works only for Windows CE.
+
+	* src/lib/evil_unistd.c:
+	move a free() and remove debug calls.
+
 2008-11-05  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_stdio.c:

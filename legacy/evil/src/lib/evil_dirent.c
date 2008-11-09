@@ -20,8 +20,7 @@ struct DIR
 };
 
 
-#if defined (_MSC_VER) || \
-  (defined (_WIN32_WCE) && ! defined (__CEGCC__))
+#ifndef __CEGCC__
 
 DIR *opendir(char const *name)
 {
@@ -195,4 +194,4 @@ struct dirent *readdir(DIR *dir)
    return &dir->dirent;
 }
 
-#endif /* _MSC_VER || ( _WIN32_WCE && ! __CEGCC__ ) */
+#endif /* ! __CEGCC__ */

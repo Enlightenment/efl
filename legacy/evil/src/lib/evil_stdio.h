@@ -30,4 +30,15 @@ EAPI void evil_rewind(FILE *stream);
 #endif /* _WIN32_WCE && ! __CEGCC__ */
 
 
+#ifdef _WIN32_WCE
+
+EAPI FILE *evil_fopen_native(const char *path, const char *mode);
+
+EAPI size_t evil_fread_native(void* buffer, size_t size, size_t count, FILE* stream);
+
+EAPI int evil_fclose_native(FILE *stream);
+
+#endif /* _WIN32_WCE */
+
+
 #endif /* __EVIL_STDIO_H__ */
