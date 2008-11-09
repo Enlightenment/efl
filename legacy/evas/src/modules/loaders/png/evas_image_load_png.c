@@ -15,6 +15,16 @@
 # include <Evil.h>
 #endif
 
+#ifdef _WIN32_WCE
+# define E_FOPEN(file, mode) evil_fopen_native((file), (mode))
+# define E_FREAD(buffer, size, count, stream) evil_fread_native(buffer, size, count, stream)
+# define E_FCLOSE(stream) evil_fclose_native(stream)
+#else
+# define E_FOPEN(file, mode) fopen((file), (mode))
+# define E_FREAD(buffer, size, count, stream) fread(buffer, size, count, stream)
+# define E_FCLOSE(stream) fclose(stream)
+#endif
+
 #include "evas_common.h"
 #include "evas_private.h"
 
@@ -45,38 +55,30 @@ evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key
 
    if ((!file)) return 0;
    hasa = 0;
-   f = fopen(file, "rb");
+   f = E_FOPEN(file, "rb");
    if (!f) return 0;
 
    /* if we havent read the header before, set the header data */
-   if (fread(buf, PNG_BYTES_TO_CHECK, 1, f) != 1)
-     {
-	fclose(f);
-	return 0;
-     }
+   if (E_FREAD(buf, PNG_BYTES_TO_CHECK, 1, f) != 1)
+     goto close_file;
+
    if (!png_check_sig(buf, PNG_BYTES_TO_CHECK))
-     {
-	fclose(f);
-	return 0;
-     }
+     goto close_file;
+
    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
    if (!png_ptr)
-     {
-	fclose(f);
-	return 0;
-     }
+     goto close_file;
+
    info_ptr = png_create_info_struct(png_ptr);
    if (!info_ptr)
      {
 	png_destroy_read_struct(&png_ptr, NULL, NULL);
-	fclose(f);
-	return 0;
+	goto close_file;
      }
    if (setjmp(png_jmpbuf(png_ptr)))
      {
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-	fclose(f);
-	return 0;
+	goto close_file;
      }
    png_init_io(png_ptr, f);
    png_set_sig_bytes(png_ptr, PNG_BYTES_TO_CHECK);
@@ -86,9 +88,8 @@ evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key
 		&interlace_type, NULL, NULL);
    if ((w32 < 1) || (h32 < 1) || (w32 > 8192) || (h32 > 8192))
      {
-	png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-	fclose(f);
-	return 0;
+	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+	goto close_file;
      }
    ie->w = (int) w32;
    ie->h = (int) h32;
@@ -96,9 +97,14 @@ evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key
    if (color_type == PNG_COLOR_TYPE_RGB_ALPHA) hasa = 1;
    if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA) hasa = 1;
    if (hasa) ie->flags.alpha = 1;
-   png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-   fclose(f);
+   png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+   E_FCLOSE(f);
    return 1;
+
+ close_file:
+   E_FCLOSE(f);
+   return 0;
+
    key = 0;
 }
 
@@ -119,34 +125,27 @@ evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key
 
    if ((!file)) return 0;
    hasa = 0;
-   f = fopen(file, "rb");
+   f = E_FOPEN(file, "rb");
    if (!f) return 0;
 
    /* if we havent read the header before, set the header data */
-   fread(buf, 1, PNG_BYTES_TO_CHECK, f);
+   E_FREAD(buf, 1, PNG_BYTES_TO_CHECK, f);
    if (!png_check_sig(buf, PNG_BYTES_TO_CHECK))
-     {
-	fclose(f);
-	return 0;
-     }
+     goto close_file;
    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
    if (!png_ptr)
-     {
-	fclose(f);
-	return 0;
-     }
+     goto close_file;
+
    info_ptr = png_create_info_struct(png_ptr);
    if (!info_ptr)
      {
 	png_destroy_read_struct(&png_ptr, NULL, NULL);
-	fclose(f);
-	return 0;
+	goto close_file;
      }
    if (setjmp(png_jmpbuf(png_ptr)))
      {
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-	fclose(f);
-	return 0;
+	goto close_file;
      }
    png_init_io(png_ptr, f);
    png_set_sig_bytes(png_ptr, PNG_BYTES_TO_CHECK);
@@ -158,15 +157,13 @@ evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key
    surface = (unsigned char *) evas_cache_image_pixels(ie);
    if (!surface)
      {
-	png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-	fclose(f);
-	return 0;
+	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+	goto close_file;
      }
    if ((w32 != ie->w) || (h32 != ie->h))
      {
-	png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-	fclose(f);
-	return 0;
+	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+	goto close_file;
      }
    if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) hasa = 1;
    if (color_type == PNG_COLOR_TYPE_RGB_ALPHA) hasa = 1;
@@ -207,11 +204,16 @@ evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key
      lines[i] = surface + (i * w * sizeof(DATA32));
    png_read_image(png_ptr, lines);
    png_read_end(png_ptr, info_ptr);
-   png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-   fclose(f);
+   png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+   E_FCLOSE(f);
    evas_common_image_premul(ie);
 
    return 1;
+
+ close_file:
+   E_FCLOSE(f);
+   return 0;
+
    key = 0;
 }
 
@@ -226,7 +228,7 @@ module_open(Evas_Module *em)
 EAPI void
 module_close(void)
 {
-   
+
 }
 
 EAPI Evas_Module_Api evas_modapi =
