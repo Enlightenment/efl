@@ -304,9 +304,9 @@ _eina_hash_find_by_data(const Eina_Hash *hash, const void *data, int *key_hash, 
 static void
 _eina_hash_el_free(Eina_Hash_El *el, Eina_Hash *hash)
 {
-   if (el->begin == EINA_FALSE) free(el);
    if (hash->data_free_cb)
      hash->data_free_cb(el->tuple.data);
+   if (el->begin == EINA_FALSE) free(el);
 }
 
 static void
