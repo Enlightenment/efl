@@ -860,6 +860,13 @@ void
 _edje_callbacks_patterns_clean(Edje *ed)
 {
    _edje_signals_sources_patterns_clean(&ed->patterns.callbacks);
+
+   eina_rbtree_delete(ed->patterns.callbacks.exact_match,
+		      EINA_RBTREE_FREE_CB(edje_match_signal_source_free),
+		      NULL);
+   ed->patterns.callbacks.exact_match = NULL;
+
+   ed->patterns.callbacks.globing = eina_list_free(ed->patterns.callbacks.globing);
 }
 
 static void
@@ -870,8 +877,11 @@ _edje_callbacks_patterns_init(Edje *ed)
    if (ssp->signals_patterns)
      return;
 
-   ssp->signals_patterns = edje_match_callback_signal_init(ed->callbacks);
-   ssp->sources_patterns = edje_match_callback_source_init(ed->callbacks);
+   ssp->globing = edje_match_callback_hash_build(ed->callbacks,
+						 &ssp->exact_match);
+
+   ssp->signals_patterns = edje_match_callback_signal_init(ssp->globing);
+   ssp->sources_patterns = edje_match_callback_source_init(ssp->globing);
 }
 
 /* FIXME: what if we delete the evas object??? */
@@ -942,14 +952,24 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src)
 #endif
              if (ed->collection->programs)
                {
-                  if (edje_match_programs_exec(ed->patterns.programs.signals_patterns,
-                                               ed->patterns.programs.sources_patterns,
-                                               sig,
-                                               src,
-                                               ed->collection->programs,
-                                               _edje_glob_callback,
-                                               &data) == 0)
-                    goto break_prog;
+		  const Eina_List *match;
+		  const Eina_List *l;
+		  Edje_Program *pr;
+
+		  if (ed->patterns.programs.globing)
+		    if (edje_match_programs_exec(ed->patterns.programs.signals_patterns,
+						 ed->patterns.programs.sources_patterns,
+						 sig,
+						 src,
+						 ed->patterns.programs.globing,
+						 _edje_glob_callback,
+						 &data) == 0)
+		      goto break_prog;
+
+		  match = edje_match_signal_source_hash_get(sig, src,
+							    ed->patterns.programs.exact_match);
+		  EINA_LIST_FOREACH(match, l, pr)
+		    _edje_glob_callback(pr, &data);
                }
 
 #ifdef EDJE_PROGRAM_CACHE
@@ -994,18 +1014,32 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src)
 
    if (ed->callbacks)
      {
-        int     r;
+	Edje_Signal_Callback *escb;
+	const Eina_List *match;
+	const Eina_List *l;
+        int r = 1;
 
 	_edje_callbacks_patterns_init(ed);
-        r = edje_match_callback_exec(ed->patterns.callbacks.signals_patterns,
-                                     ed->patterns.callbacks.sources_patterns,
-                                     sig,
-                                     src,
-                                     ed->callbacks,
-                                     ed);
+	if (ed->patterns.callbacks.globing)
+	  r = edje_match_callback_exec(ed->patterns.callbacks.signals_patterns,
+				       ed->patterns.callbacks.sources_patterns,
+				       sig,
+				       src,
+				       ed->patterns.callbacks.globing,
+				       ed);
 
         if (!r)
           goto break_prog;
+
+	match = edje_match_signal_source_hash_get(sig, src,
+						  ed->patterns.callbacks.exact_match);
+	EINA_LIST_FOREACH(match, l, escb)
+	  if ((!escb->just_added) && (!escb->delete_me))
+	    {
+	       escb->func(escb->data, ed->obj, sig, src);
+	       if (_edje_block_break(ed))
+		 goto break_prog;
+	    }
      }
 
    ed->walking_callbacks = 0;

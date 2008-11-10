@@ -581,11 +581,25 @@ typedef struct _Edje_Var_Hash Edje_Var_Hash;
 typedef struct _Edje_Var_Animator Edje_Var_Animator;
 typedef struct _Edje_Var_Timer Edje_Var_Timer;
 typedef struct _Edje_Var_Pool Edje_Var_Pool;
+typedef struct _Edje_Signal_Source_Char Edje_Signal_Source_Char;
+
+struct _Edje_Signal_Source_Char
+{
+   EINA_RBTREE;
+
+   const char *signal;
+   const char *source;
+
+   Eina_List *list;
+};
 
 struct _Edje_Signals_Sources_Patterns
 {
    Edje_Patterns *signals_patterns;
    Edje_Patterns *sources_patterns;
+
+   Eina_Rbtree   *exact_match;
+   Eina_List     *globing;
 };
 
 typedef struct _Edje_Signals_Sources_Patterns Edje_Signals_Sources_Patterns;
@@ -951,6 +965,15 @@ int              edje_match_callback_exec(const Edje_Patterns    *ppat_signal,
 					  Edje                   *ed);
 
 void             edje_match_patterns_free(Edje_Patterns *ppat);
+
+Eina_List *edje_match_program_hash_build(const Eina_List *callbacks,
+					 Eina_Rbtree **tree);
+Eina_List *edje_match_callback_hash_build(const Eina_List *callbacks,
+					  Eina_Rbtree **tree);
+const Eina_List *edje_match_signal_source_hash_get(const char *signal,
+						   const char *source,
+						   const Eina_Rbtree *tree);
+void edje_match_signal_source_free(Edje_Signal_Source_Char *key, void *data);
 
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_file;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_style;

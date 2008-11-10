@@ -214,19 +214,28 @@ static void
 _edje_programs_patterns_clean(Edje *ed)
 {
    _edje_signals_sources_patterns_clean(&ed->patterns.programs);
+
+   eina_rbtree_delete(ed->patterns.programs.exact_match,
+		      EINA_RBTREE_FREE_CB(edje_match_signal_source_free),
+		      NULL);
+   ed->patterns.programs.exact_match = NULL;
+
+   ed->patterns.programs.globing = eina_list_free(ed->patterns.programs.globing);
 }
 
 static void
 _edje_programs_patterns_init(Edje *ed)
 {
    Edje_Signals_Sources_Patterns *ssp = &ed->patterns.programs;
-   Eina_List *programs = ed->collection->programs;
 
    if (ssp->signals_patterns)
      return;
 
-   ssp->signals_patterns = edje_match_programs_signal_init(programs);
-   ssp->sources_patterns = edje_match_programs_source_init(programs);
+   ssp->globing = edje_match_program_hash_build(ed->collection->programs,
+							  &ssp->exact_match);
+
+   ssp->signals_patterns = edje_match_programs_signal_init(ssp->globing);
+   ssp->sources_patterns = edje_match_programs_source_init(ssp->globing);
 }
 
 static int
