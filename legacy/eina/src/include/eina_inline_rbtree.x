@@ -20,14 +20,14 @@
 #define EINA_RBTREE_INLINE_H_
 
 static inline Eina_Rbtree *
-eina_rbtree_inline_lookup(Eina_Rbtree *root, const void *key, int length, Eina_Rbtree_Cmp_Key_Cb cmp, const void *data)
+eina_rbtree_inline_lookup(const Eina_Rbtree *root, const void *key, int length, Eina_Rbtree_Cmp_Key_Cb cmp, const void *data)
 {
    int result;
 
    while (root)
      {
 	result = cmp(root, key, length, (void*) data);
-	if (result == 0) return root;
+	if (result == 0) return (Eina_Rbtree*) root;
 
 	root = root->son[result < 0 ? 0 : 1];
      }
