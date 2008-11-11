@@ -271,7 +271,7 @@ lt_enable_auto_import=""
 case "${host_os}" in
    mingw* | cegcc*)
       AC_DEFINE(EFL_EINA_BUILD, 1, [Define to mention that eina is built])
-      EINA_LIBS="${EINA_LIBS} ${EVIL_LIBS} -lm"
+      EINA_LIBS="${EINA_LIBS} -ldl ${EVIL_LIBS} -lm"
       lt_enable_auto_import="-Wl,--enable-auto-import"
    ;;
    *bsd*)
