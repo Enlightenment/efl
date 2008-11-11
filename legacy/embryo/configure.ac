@@ -34,6 +34,14 @@ embryoincludedir="${datadir}/include"
 ### Additional options to configure
 
 
+### Checks for programs
+AC_PROG_CC
+
+# doxygen program for documentation building
+
+EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
+
+
 ### Checks for libraries
 
 PKG_PROG_PKG_CONFIG
@@ -57,14 +65,6 @@ AC_SUBST(EFL_EMBRYO_BUILD)
 AC_CHECK_HEADER([fnmatch.h],
    [dummy="yes"],
    [AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file. MinGW users: see the INSTALL file])])
-
-
-### Checks for programs
-AC_PROG_CC
-
-# doxygen program for documentation building
-
-EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 
 ### Checks for types
