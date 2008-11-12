@@ -213,7 +213,7 @@ EAPI int evil_pipe(int *fds);
  *
  * @ingroup Evil
  */
-int execvp( const char *file, char *const argv[]);
+EAPI int execvp( const char *file, char *const argv[]);
 
 #endif /* _WIN32_WCE && ! __CEGCC__ */
 

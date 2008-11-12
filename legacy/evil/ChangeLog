@@ -1,3 +1,8 @@
+2008-11-12  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_unistd.h:
+	export execvp()
+
 2008-11-09  Vincent Torri  <doursse at users dot sf dot net>
 
 	* evil.pc.in:
