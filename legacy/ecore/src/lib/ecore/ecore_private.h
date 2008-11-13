@@ -385,19 +385,19 @@ struct _Ecore_Animator
 {
    Ecore_List2   __list_data;
    ECORE_MAGIC;
-   signed char  delete_me : 1;
-   int        (*func) (void *data);
-   void        *data;
+   unsigned char delete_me : 1;
+   int           (*func) (void *data);
+   void          *data;
 };
 
 struct _Ecore_Poller
 {
    Ecore_List2   __list_data;
    ECORE_MAGIC;
-   int          ibit;
-   signed char  delete_me : 1;
-   int        (*func) (void *data);
-   void        *data;
+   int           ibit;
+   unsigned char delete_me : 1;
+   int           (*func) (void *data);
+   void          *data;
 };
 
 #endif
