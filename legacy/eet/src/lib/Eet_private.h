@@ -16,10 +16,15 @@
 # include <config.h>
 #endif
 
+#ifdef HAVE_GNUTLS
+# include <gnutls/gnutls.h>
+# include <gnutls/x509.h>
+#else
 #ifdef HAVE_OPENSSL
-#include <openssl/evp.h>
-#include <openssl/x509.h>
-#include <openssl/pem.h>
+# include <openssl/evp.h>
+# include <openssl/x509.h>
+# include <openssl/pem.h>
+#endif
 #endif
 
 typedef struct _Eet_String              Eet_String;
@@ -67,8 +72,13 @@ struct _Eet_Key
 {
    int          references;
 #ifdef HAVE_SIGNATURE
+# ifdef HAVE_GNUTLS
+   gnutls_x509_crt_t		certificate;
+   gnutls_x509_privkey_t	private_key;
+# else
    X509	       *certificate;
    EVP_PKEY    *private_key;
+# endif
 #endif
 };
 
@@ -86,8 +96,8 @@ int   _eet_hash_gen(const char *key, int hash_size);
 const void* eet_identity_check(const void *data_base, unsigned int data_length,
 			       const void *signature_base, unsigned int signature_length,
 			       int *x509_length);
-Eet_Error eet_cypher(void *data, unsigned int size, const char *key, unsigned int length);
-Eet_Error eet_decypher(void *data, unsigned int size, const char *key, unsigned int length);
+Eet_Error eet_cipher(const void *data, unsigned int size, const char *key, unsigned int length, void **result, unsigned int *result_length);
+Eet_Error eet_decipher(const void *data, unsigned int size, const char *key, unsigned int length, void **result, unsigned int *result_length);
 Eet_Error eet_identity_sign(FILE *fp, Eet_Key *key);
 void eet_identity_unref(Eet_Key *key);
 void eet_identity_ref(Eet_Key *key);

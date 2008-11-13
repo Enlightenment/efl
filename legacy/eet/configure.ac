@@ -29,13 +29,15 @@ AC_SUBST(version_info)
 
 case "$host_os" in
    mingw* | cegcc*)
+      want_gnutls="no"
       want_openssl="no"
-      want_cypher="no"
+      want_cipher="no"
       want_signature="no"
       ;;
    *)
+      want_gnutls="auto"
       want_openssl="auto"
-      want_cypher="yes"
+      want_cipher="yes"
       want_signature="yes"
       ;;
 esac
@@ -64,6 +66,15 @@ else
    AC_DEFINE(EET_OLD_EET_FILE_FORMAT, 0, [support old eet file format])
 fi
 
+# Gnutls support
+
+AC_ARG_ENABLE([gnutls],
+   [AC_HELP_STRING([--disable-gnutls], [disable gnutls eet support])],
+   [want_gnutls=$enableval]
+)
+AC_MSG_CHECKING([whether to use Gnutls])
+AC_MSG_RESULT([${want_gnutls}])
+
 # Openssl support
 
 AC_ARG_ENABLE([openssl],
@@ -75,12 +86,12 @@ AC_MSG_RESULT([${want_openssl}])
 
 # Cryptography support
 
-AC_ARG_ENABLE([cypher],
-   [AC_HELP_STRING([--disable-cypher], [disable cypher support for eet API])],
-   [want_cypher=$enableval]
+AC_ARG_ENABLE([cipher],
+   [AC_HELP_STRING([--disable-cipher], [disable cipher support for eet API])],
+   [want_cipher=$enableval]
 )
-AC_MSG_CHECKING([whether to use cypher])
-AC_MSG_RESULT([${want_cypher}])
+AC_MSG_CHECKING([whether to use cipher])
+AC_MSG_RESULT([${want_cipher}])
 
 AC_ARG_ENABLE([signature],
    [AC_HELP_STRING([--disable-signature], [disable signature file support for eet])],
@@ -152,6 +163,20 @@ AC_SUBST(EET_LIBS)
 PKG_CHECK_MODULES(EINA, [eina-0])
 requirement_eet="eina-0 ${requirement_eet}"
 
+# Gnutls library
+have_gnutls="no"
+if test "x${want_gnutls}" = "xyes" -o "x${want_gnutls}" = "xauto" ; then
+   PKG_CHECK_MODULES(GNUTLS, [gnutls >= 1.7.6],
+      [
+       have_gnutls="yes"
+       AC_DEFINE(HAVE_GNUTLS, 1, [Have Gnutls support])
+       requirement_eet="gnutls ${requirement_eet}"
+      ],
+      [
+       have_gnutls="no"
+      ])
+fi
+
 # Openssl library
 have_openssl="no"
 if test "x${want_openssl}" = "xyes" -o "x${want_openssl}" = "xauto" ; then
@@ -164,17 +189,23 @@ if test "x${want_openssl}" = "xyes" -o "x${want_openssl}" = "xauto" ; then
       [have_openssl="no"])
 fi
 
-have_cypher="no"
-if test "x${have_openssl}" = "xyes" -a "x${want_cypher}" = "xyes" ; then
-   have_cypher="yes"
-   AC_DEFINE(HAVE_CYPHER, 1, [Have cypher support built in eet])
+have_cipher="no"
+if test "x${have_gnutls}" = "xyes" -a "x${want_cipher}" = "xyes" ; then
+   have_cipher="yes"
+   AC_DEFINE(HAVE_CIPHER, 1, [Have cipher support built in eet])
+elif test "x${have_openssl}" = "xyes" -a "x${want_cipher}" = "xyes" ; then
+   have_cipher="yes"
+   AC_DEFINE(HAVE_CIPHER, 1, [Have cipher support built in eet])
 fi
 
-AC_MSG_CHECKING(whether to activate cypher support in eet)
-AC_MSG_RESULT(${have_cypher})
+AC_MSG_CHECKING(whether to activate cipher support in eet)
+AC_MSG_RESULT(${have_cipher})
 
 have_signature="no"
-if test "x${have_openssl}" = "xyes" -a "x${want_signature}" = "xyes" ; then
+if test "x${have_gnutls}" = "xyes" -a "x${want_signature}" = "xyes" ; then
+   have_signature="yes"
+   AC_DEFINE(HAVE_SIGNATURE, 1, [Have signature support for eet file])
+elif test "x${have_openssl}" = "xyes" -a "x${want_signature}" = "xyes" ; then
    have_signature="yes"
    AC_DEFINE(HAVE_SIGNATURE, 1, [Have signature support for eet file])
 fi
@@ -313,8 +344,9 @@ echo "------------------------------------------------------------------------"
 echo
 echo "Configuration Options Summary:"
 echo
+echo "  Gnutls...............: ${have_gnutls}"
 echo "  Openssl..............: ${have_openssl}"
-echo "    Cypher support.....: ${have_cypher}"
+echo "    Cipher support.....: ${have_cipher}"
 echo "    Signature..........: ${have_signature}"
 echo
 echo "  Documentation........: ${enable_doc}"

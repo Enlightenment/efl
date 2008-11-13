@@ -35,6 +35,10 @@ void *alloca (size_t);
 #include <unistd.h>
 #include <zlib.h>
 
+#ifdef HAVE_OPENSSL
+#include <openssl/err.h>
+#endif
+
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
 #endif
@@ -45,6 +49,11 @@ void *alloca (size_t);
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
+#endif
+
+#ifdef HAVE_GNUTLS
+# include <gnutls/gnutls.h>
+# include <gcrypt.h>
 #endif
 
 #ifdef HAVE_OPENSSL
@@ -120,6 +129,7 @@ struct _Eet_File_Node
 
    unsigned char         free_name : 1;
    unsigned char         compression : 1;
+   unsigned char         ciphered : 1;
 };
 
 #if 0
@@ -132,7 +142,7 @@ int bytes_directory_entries; /* bytes of directory entries to follow */
 struct
 {
    int offset; /* bytes offset into file for data chunk */
-   int flags; /* flags - for now 0 = uncompressed, 1 = compressed */
+   int flags; /* flags - for now 0 = uncompressed and clear, 1 = compressed and clear, 2 = uncompressed and ciphered, 3 = compressed and ciphered */
    int size; /* size of the data chunk */
    int data_size; /* size of the (uncompressed) data chunk */
    int name_size; /* length in bytes of the name field */
@@ -459,14 +469,17 @@ eet_flush2(Eet_File *ef)
      {
         for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
           {
-             int        ibuf[EET_FILE2_DIRECTORY_ENTRY_COUNT];
+	     unsigned int flag;
+             int ibuf[EET_FILE2_DIRECTORY_ENTRY_COUNT];
+
+	     flag = (efn->ciphered << 1) | efn->compression;
 
              ibuf[0] = (int) htonl ((unsigned int) efn->offset);
              ibuf[1] = (int) htonl ((unsigned int) efn->size);
              ibuf[2] = (int) htonl ((unsigned int) efn->data_size);
              ibuf[3] = (int) htonl ((unsigned int) efn->name_offset);
              ibuf[4] = (int) htonl ((unsigned int) efn->name_size);
-             ibuf[5] = (int) htonl ((unsigned int) efn->compression);
+             ibuf[5] = (int) htonl ((unsigned int) flag);
 
              if (fwrite(ibuf, sizeof(ibuf), 1, ef->fp) != 1)
                goto write_error;
@@ -700,6 +713,30 @@ eet_init(void)
 
    if (eet_initcount > 1) return eet_initcount;
 
+#ifdef HAVE_GNUTLS
+   if (gnutls_global_init())
+     return --eet_initcount;
+   /* Before the library can be used, it must initialize itself. */
+   gcry_check_version(NULL);
+   /* Disable warning messages about problems with the secure memory subsystem.
+      This command should be run right after gcry_check_version. */
+   if (gcry_control(GCRYCTL_DISABLE_SECMEM_WARN))
+     {
+       gnutls_global_deinit();
+       return --eet_initcount;
+     }
+   /* This command is used to allocate a pool of secure memory and thus
+      enabling the use of secure memory. It also drops all extra privileges the
+      process has (i.e. if it is run as setuid (root)). If the argument nbytes
+      is 0, secure memory will be disabled. The minimum amount of secure memory
+      allocated is currently 16384 bytes; you may thus use a value of 1 to
+      request that default size. */
+   if (gcry_control(GCRYCTL_INIT_SECMEM, 16384, 0))
+     {
+       gnutls_global_deinit();
+       return --eet_initcount;
+     }
+#endif
 #ifdef HAVE_OPENSSL
    ERR_load_crypto_strings();
 #endif
@@ -717,6 +754,9 @@ eet_shutdown(void)
    if (eet_initcount > 0) return eet_initcount;
 
    eet_clearcache();
+#ifdef HAVE_GNUTLS
+   gnutls_global_deinit();
+#endif
 #ifdef HAVE_OPENSSL
    ERR_free_strings();
 #endif
@@ -850,6 +890,7 @@ eet_internal_read2(Eet_File *ef)
         int              name_offset;
         int              name_size;
         int              hash;
+	int              flag;
 
         /* out directory block is inconsistent - we have oveerun our */
         /* dynamic block buffer before we finished scanning dir entries */
@@ -863,7 +904,10 @@ eet_internal_read2(Eet_File *ef)
         GET_INT(efn->data_size, data, index);
         GET_INT(name_offset, data, index);
         GET_INT(name_size, data, index);
-        GET_INT(efn->compression, data, index);
+        GET_INT(flag, data, index);
+
+	efn->compression = flag & 0x1 ? 1 : 0;
+	efn->ciphered = flag & 0x2 ? 1 : 0;
 
 #define EFN_TEST(Test, Ef, Efn)                 \
         if (eet_test_close(Test, Ef))           \
@@ -1089,6 +1133,7 @@ eet_internal_read1(Eet_File *ef)
 	EXTRACT_INT(name_size, p, indexn);
 
         efn->name_size = name_size;
+	efn->ciphered = 0;
 
 	/* invalid size */
 	if (eet_test_close(efn->size <= 0, ef))
@@ -1486,7 +1531,7 @@ eet_close(Eet_File *ef)
 }
 
 EAPI void *
-eet_read(Eet_File *ef, const char *name, int *size_ret)
+eet_read_cipher(Eet_File *ef, const char *name, int *size_ret, const char *cipher_key)
 {
    void			*data = NULL;
    int			size = 0;
@@ -1524,6 +1569,8 @@ eet_read(Eet_File *ef, const char *name, int *size_ret)
    /* uncompressed data */
    if (efn->compression == 0)
      {
+        void *data_deciphered = NULL;
+	unsigned int data_deciphered_sz = 0;
 	/* if we alreayd have the data in ram... copy that */
 	if (efn->data)
 	  memcpy(data, efn->data, efn->size);
@@ -1533,11 +1580,25 @@ eet_read(Eet_File *ef, const char *name, int *size_ret)
 	       free(data);
 	       return NULL;
 	    }
+        if (efn->ciphered && cipher_key)
+	  {
+	    if (eet_decipher(data, size, cipher_key, strlen(cipher_key), &data_deciphered, &data_deciphered_sz))
+	      {
+		free(data);
+		if (data_deciphered) free(data_deciphered);
+		return NULL;
+	      }
+	    free(data);
+	    data = data_deciphered;
+	    size = data_deciphered_sz;
+	  }
      }
    /* compressed data */
    else
      {
 	void	*tmp_data;
+	void	*data_deciphered = NULL;
+	unsigned int data_deciphered_sz = 0;
 	int	free_tmp = 0;
 	int	compr_size = efn->size;
 	uLongf	dlen;
@@ -1564,6 +1625,20 @@ eet_read(Eet_File *ef, const char *name, int *size_ret)
 	       }
 	  }
 
+	if (efn->ciphered && cipher_key)
+	  {
+	    if (eet_decipher(tmp_data, compr_size, cipher_key, strlen(cipher_key), &data_deciphered, &data_deciphered_sz))
+	      {
+		free(data);
+		if (free_tmp) free(tmp_data);
+		if (data_deciphered) free(data_deciphered);
+		return NULL;
+	      }
+	    free(tmp_data);
+	    tmp_data = data_deciphered;
+	    compr_size = data_deciphered_sz;
+	  }
+
 	/* decompress it */
 	dlen = size;
 	if (uncompress((Bytef *)data, &dlen,
@@ -1582,6 +1657,12 @@ eet_read(Eet_File *ef, const char *name, int *size_ret)
      *size_ret = size;
 
    return data;
+}
+
+EAPI void *
+eet_read(Eet_File *ef, const char *name, int *size_ret)
+{
+   return eet_read_cipher(ef, name, size_ret, NULL);
 }
 
 EAPI const void *
@@ -1619,7 +1700,8 @@ eet_read_direct(Eet_File *ef, const char *name, int *size_ret)
    size = efn->data_size;
 
    /* uncompressed data */
-   if (efn->compression == 0)
+   if (efn->compression == 0
+       && efn->ciphered == 0)
      data = efn->data ? efn->data : ef->data + efn->offset;
    /* compressed data */
    else
@@ -1633,10 +1715,10 @@ eet_read_direct(Eet_File *ef, const char *name, int *size_ret)
 }
 
 EAPI int
-eet_write(Eet_File *ef, const char *name, const void *data, int size, int compress)
+eet_write_cipher(Eet_File *ef, const char *name, const void *data, int size, int compress, const char *cipher_key)
 {
    Eet_File_Node	*efn;
-   void			*data2;
+   void			*data2 = NULL;
    int			exists_already = 0;
    int			data_size;
    int			hash;
@@ -1676,9 +1758,12 @@ eet_write(Eet_File *ef, const char *name, const void *data, int size, int compre
 
    data_size = compress ? 12 + ((size * 101) / 100) : size;
 
-   data2 = malloc(data_size);
-   if (!data2)
-     return 0;
+   if (compress || !cipher_key)
+     {
+       data2 = malloc(data_size);
+       if (!data2)
+	 return 0;
+     }
 
    /* if we want to compress */
    if (compress)
@@ -1709,8 +1794,30 @@ eet_write(Eet_File *ef, const char *name, const void *data, int size, int compre
 	       data2 = data3;
 	  }
      }
-   if (!compress)
-     memcpy(data2, data, size);
+
+   if (cipher_key)
+     {
+       void *data_ciphered = NULL;
+       unsigned int data_ciphered_sz = 0;
+       const void *tmp;
+
+       tmp = data2 ? data2 : data;
+       if (!eet_cipher(tmp, data_size, cipher_key, strlen(cipher_key), &data_ciphered, &data_ciphered_sz))
+	 {
+	   if (data2) free(data2);
+	   data2 = data_ciphered;
+	   data_size = data_ciphered_sz;
+	   size = (data_size > size) ? data_size : size;
+	 }
+       else
+	 {
+	   if (data_ciphered) free(data_ciphered);
+	   cipher_key = NULL;
+	 }
+     }
+   else
+     if (!compress)
+       memcpy(data2, data, size);
 
    /* Does this node already exist? */
    for (efn = ef->header->directory->nodes[hash]; efn; efn = efn->next)
@@ -1719,6 +1826,7 @@ eet_write(Eet_File *ef, const char *name, const void *data, int size, int compre
 	if ((efn->name) && (eet_string_match(efn->name, name)))
 	  {
 	     free(efn->data);
+	     efn->ciphered = cipher_key ? 1 : 0;
 	     efn->compression = !!compress;
 	     efn->size = data_size;
 	     efn->data_size = size;
@@ -1743,6 +1851,7 @@ eet_write(Eet_File *ef, const char *name, const void *data, int size, int compre
 	efn->next = ef->header->directory->nodes[hash];
 	ef->header->directory->nodes[hash] = efn;
 	efn->offset = -1;
+	efn->ciphered = cipher_key ? 1 : 0;
 	efn->compression = !!compress;
 	efn->size = data_size;
 	efn->data_size = size;
@@ -1752,6 +1861,12 @@ eet_write(Eet_File *ef, const char *name, const void *data, int size, int compre
    /* flags that writes are pending */
    ef->writes_pending = 1;
    return data_size;
+}
+
+EAPI int
+eet_write(Eet_File *ef, const char *name, const void *data, int size, int compress)
+{
+   return eet_write_cipher(ef, name, data, size, compress, NULL);
 }
 
 EAPI int

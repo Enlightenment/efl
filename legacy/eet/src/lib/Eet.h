@@ -94,7 +94,10 @@ extern "C" {
 	EET_ERROR_SIGNATURE_FAILED,
 	EET_ERROR_INVALID_SIGNATURE,
 	EET_ERROR_NOT_SIGNED,
-	EET_ERROR_NOT_IMPLEMENTED
+	EET_ERROR_NOT_IMPLEMENTED,
+	EET_ERROR_PRNG_NOT_SEEDED,
+	EET_ERROR_ENCRYPT_FAILED,
+	EET_ERROR_DECRYPT_FAILED
      } Eet_Error;
 
    typedef struct _Eet_File                  Eet_File;
@@ -358,6 +361,7 @@ extern "C" {
     *
     * @since 1.0.0
     */
+   EAPI void *eet_read_cipher(Eet_File *ef, const char *name, int *size_ret, const char *cipher_key);
    EAPI void *eet_read(Eet_File *ef, const char *name, int *size_ret);
 
    /**
@@ -406,6 +410,7 @@ extern "C" {
     *
     * @since 1.0.0
     */
+   EAPI int eet_write_cipher(Eet_File *ef, const char *name, const void *data, int size, int compress, const char *cipher_key);
    EAPI int eet_write(Eet_File *ef, const char *name, const void *data, int size, int compress);
 
    /**
@@ -503,6 +508,7 @@ extern "C" {
     *
     * @since 1.0.0
     */
+   EAPI int eet_data_image_header_read_cipher(Eet_File *ef, const char *name, const char *key, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy);
    EAPI int eet_data_image_header_read(Eet_File *ef, const char *name, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy);
 
    /**
@@ -540,6 +546,7 @@ extern "C" {
     *
     * @since 1.0.0
     */
+   EAPI void *eet_data_image_read_cipher(Eet_File *ef, const char *name, const char *key, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy);
    EAPI void *eet_data_image_read(Eet_File *ef, const char *name, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy);
 
    /**
@@ -579,7 +586,8 @@ extern "C" {
     *
     * @since 1.0.2
     */
-  EAPI int eet_data_image_read_to_surface(Eet_File *ef, const char *name, unsigned int src_x, unsigned int src_y, unsigned int *d, unsigned int w, unsigned int h, unsigned int row_stride, int *alpha, int *compress, int *quality, int *lossy);
+   EAPI int eet_data_image_read_to_surface_cipher(Eet_File *ef, const char *name, const char *key, unsigned int src_x, unsigned int src_y, unsigned int *d, unsigned int w, unsigned int h, unsigned int row_stride, int *alpha, int *compress, int *quality, int *lossy);
+   EAPI int eet_data_image_read_to_surface(Eet_File *ef, const char *name, unsigned int src_x, unsigned int src_y, unsigned int *d, unsigned int w, unsigned int h, unsigned int row_stride, int *alpha, int *compress, int *quality, int *lossy);
 
    /**
     * Write image data to the named key in an eet file.
@@ -613,6 +621,7 @@ extern "C" {
     *
     * @since 1.0.0
     */
+   EAPI int eet_data_image_write_cipher(Eet_File *ef, const char *name, const char *key, const void *data, unsigned int w, unsigned int h, int alpha, int compress, int quality, int lossy);
    EAPI int eet_data_image_write(Eet_File *ef, const char *name, const void *data, unsigned int w, unsigned int h, int alpha, int compress, int quality, int lossy);
 
    /**
@@ -648,6 +657,7 @@ extern "C" {
     *
     * @since 1.0.0
     */
+   EAPI int eet_data_image_header_decode_cipher(const void *data, const char *key, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy);
    EAPI int eet_data_image_header_decode(const void *data, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy);
 
    /**
@@ -685,6 +695,7 @@ extern "C" {
     *
     * @since 1.0.0
     */
+   EAPI void *eet_data_image_decode_cipher(const void *data, const char *key, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy);
    EAPI void *eet_data_image_decode(const void *data, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy);
 
    /**
@@ -724,6 +735,7 @@ extern "C" {
     *
     * @since 1.0.2
     */
+   EAPI int eet_data_image_decode_to_surface_cipher(const void *data, const char *key, int size, unsigned int src_x, unsigned int src_y, unsigned int *d, unsigned int w, unsigned int h, unsigned int row_stride, int *alpha, int *compress, int *quality, int *lossy);
    EAPI int eet_data_image_decode_to_surface(const void *data, int size, unsigned int src_x, unsigned int src_y, unsigned int *d, unsigned int w, unsigned int h, unsigned int row_stride, int *alpha, int *compress, int *quality, int *lossy);
 
    /**
@@ -757,6 +769,7 @@ extern "C" {
     *
     * @since 1.0.0
     */
+   EAPI void *eet_data_image_encode_cipher(const void *data, const char *key, unsigned int w, unsigned int h, int alpha, int compress, int quality, int lossy, int *size_ret);
    EAPI void *eet_data_image_encode(const void *data, int *size_ret, unsigned int w, unsigned int h, int alpha, int compress, int quality, int lossy);
 
 /***************************************************************************/
@@ -986,6 +999,7 @@ extern "C" {
     *
     * @since 1.0.0
     */
+   EAPI void *eet_data_read_cipher(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name, const char *key);
    EAPI void *eet_data_read(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name);
 
    /**
@@ -1002,6 +1016,7 @@ extern "C" {
     *
     * @since 1.0.0
     */
+   EAPI int eet_data_write_cipher(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name, const char *key, const void *data, int compress);
    EAPI int eet_data_write(Eet_File *ef, Eet_Data_Descriptor *edd, const char *name, const void *data, int compress);
 
    /**
@@ -1047,6 +1062,7 @@ extern "C" {
     *
     * @since 1.0.0
     */
+   EAPI int eet_data_text_dump_cipher(const void *data_in, const char *key, int size_in, void (*dumpfunc) (void *data, const char *str), void *dumpdata);
    EAPI int eet_data_text_dump(const void *data_in, int size_in, void (*dumpfunc) (void *data, const char *str), void *dumpdata);
 
    /**
@@ -1063,6 +1079,7 @@ extern "C" {
     *
     * @since 1.0.0
     */
+   EAPI void *eet_data_text_undump_cipher(const char *text, const char *key, int textlen, int *size_ret);
    EAPI void *eet_data_text_undump(const char *text, int textlen, int *size_ret);
 
    /**
@@ -1082,6 +1099,7 @@ extern "C" {
     *
     * @since 1.0.0
     */
+   EAPI int eet_data_dump_cipher(Eet_File *ef, const char *name, const char *key, void (*dumpfunc) (void *data, const char *str), void *dumpdata);
    EAPI int eet_data_dump(Eet_File *ef, const char *name, void (*dumpfunc) (void *data, const char *str), void *dumpdata);
 
    /**
@@ -1102,6 +1120,7 @@ extern "C" {
     *
     * @since 1.0.0
     */
+   EAPI int eet_data_undump_cipher(Eet_File *ef, const char *name, const char *key, const char *text, int textlen, int compress);
    EAPI int eet_data_undump(Eet_File *ef, const char *name, const char *text, int textlen, int compress);
 
    /**
@@ -1128,6 +1147,7 @@ extern "C" {
     *
     * @since 1.0.0
     */
+   EAPI void *eet_data_descriptor_decode_cipher(Eet_Data_Descriptor *edd, const void *data_in, const char *key, int size_in);
    EAPI void *eet_data_descriptor_decode(Eet_Data_Descriptor *edd, const void *data_in, int size_in);
 
    /**
@@ -1156,6 +1176,7 @@ extern "C" {
     *
     * @since 1.0.0
     */
+   EAPI void *eet_data_descriptor_encode_cipher(Eet_Data_Descriptor *edd, const void *data_in, const char *key, int *size_ret);
    EAPI void *eet_data_descriptor_encode(Eet_Data_Descriptor *edd, const void *data_in, int *size_ret);
 
    /**

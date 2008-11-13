@@ -1275,6 +1275,60 @@ START_TEST(eet_identity_simple)
 }
 END_TEST
 
+START_TEST(eet_cipher_decipher_simple)
+{
+   const char *buffer = "Here is a string of data to save !";
+   const char *key = "This is a crypto key";
+   const char *key_bad = "This is another crypto key";
+   Eet_File *ef;
+   char *test;
+   char *file = strdup("/tmp/eet_suite_testXXXXXX");
+   int size;
+   int fd;
+
+   eet_init();
+
+   mktemp(file);
+   chdir("src/tests");
+
+   /* Crypt an eet file. */
+   ef = eet_open(file, EET_FILE_MODE_WRITE);
+   fail_if(!ef);
+
+   fail_if(!eet_write_cipher(ef, "keys/tests", buffer, strlen(buffer) + 1, 0, key));
+
+   eet_close(ef);
+
+   /* Decrypt an eet file. */
+   ef = eet_open(file, EET_FILE_MODE_READ);
+   fail_if(!ef);
+
+   test = eet_read_cipher(ef, "keys/tests", &size, key);
+   fail_if(!test);
+   fail_if(size != (int) strlen(buffer) + 1);
+
+   fail_if(memcmp(test, buffer, strlen(buffer) + 1) != 0);
+
+   eet_close(ef);
+
+   /* Decrypt an eet file. */
+   ef = eet_open(file, EET_FILE_MODE_READ);
+   fail_if(!ef);
+
+   test = eet_read_cipher(ef, "keys/tests", &size, key_bad);
+
+   if (size == (int) strlen(buffer) + 1)
+     fail_if(memcmp(test, buffer, strlen(buffer) + 1) == 0);
+
+   eet_close(ef);
+
+   fail_if(unlink(file) != 0);
+
+   eet_shutdown();
+}
+END_TEST
+
+
 Suite *
 eet_suite(void)
 {
@@ -1307,6 +1361,12 @@ eet_suite(void)
 #ifdef HAVE_SIGNATURE
    tc = tcase_create("Eet Identity");
    tcase_add_test(tc, eet_identity_simple);
+   suite_add_tcase(s, tc);
+#endif
+
+#ifdef HAVE_CIPHER
+   tc = tcase_create("Eet Cipher");
+   tcase_add_test(tc, eet_cipher_decipher_simple);
    suite_add_tcase(s, tc);
 #endif
 
