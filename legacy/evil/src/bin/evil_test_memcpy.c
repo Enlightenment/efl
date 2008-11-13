@@ -107,7 +107,7 @@ test_memcpy(suite *s)
    memset (buf1, 0xa5, page_size);
    memset (buf2, 0x5a, page_size);
 
-  for (i = 0; i < 18; ++i)
+  for (i = 0; i < 5; ++i)
     {
       test_memcpy_tests_run(s, 0, 0, 1 << i);
       test_memcpy_tests_run(s, i, 0, 1 << i);

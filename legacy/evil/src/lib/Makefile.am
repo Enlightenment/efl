@@ -19,13 +19,13 @@ nobase_include_HEADERS = pwd.h sys/mman.h
 
 if EVIL_HAVE_MINGW32CE
 
-nobase_include_HEADERS += fnmatch.h errno.h
+nobase_include_HEADERS += errno.h
 
 endif
 
 if ! EVIL_HAVE_CEGCC
 
-nobase_include_HEADERS += dirent.h
+nobase_include_HEADERS += fnmatch.h dirent.h
 
 endif
 

@@ -1,4 +1,4 @@
-#if defined (_MSC_VER) || defined (__MINGW32CE__)
+#if defined (_MSC_VER) || defined (__MINGW32__) || defined (__MINGW32CE__)
 
 #include <assert.h>
 #include <string.h>
@@ -228,4 +228,4 @@ fnmatch(const char *pattern,
   return r;
 }
 
-#endif /* _MSC_VER || __MINGW32CE__ */
+#endif /* _MSC_VER || __MINGW32__ || __MINGW32CE__ */

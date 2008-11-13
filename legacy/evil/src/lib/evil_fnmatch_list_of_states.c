@@ -1,4 +1,4 @@
-#if defined (_MSC_VER) || defined (__MINGW32CE__)
+#if defined (_MSC_VER) || defined (__MINGW32__) || defined (__MINGW32CE__)
 
 #include <assert.h>
 #include <stdlib.h>
@@ -73,4 +73,4 @@ fnmatch_list_of_states_clear(struct list_of_states *list)
   memset(list->has, 0, list->reserved * sizeof (*list->has));
 }
 
-#endif /* _MSC_VER || __MINGW32CE__ */
+#endif /* _MSC_VER || __MINGWCE__  || __MINGW32CE__ */
