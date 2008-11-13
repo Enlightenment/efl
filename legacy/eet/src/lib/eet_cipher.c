@@ -321,9 +321,9 @@ eet_identity_certificate_print(const unsigned char *certificate, int der_length,
 }
 
 Eet_Error
-eet_cypher(void *data, unsigned int size, const char *key, unsigned int length)
+eet_cipher(const void *data, unsigned int size, const char *key, unsigned int length, void **result, unsigned int *result_length)
 {
-#ifdef HAVE_CYPHER
+#ifdef HAVE_CIPHER
    (void) data;
    (void) size;
    (void) key;
@@ -339,9 +339,9 @@ eet_cypher(void *data, unsigned int size, const char *key, unsigned int length)
 }
 
 Eet_Error
-eet_decypher(void *data, unsigned int size, const char *key, unsigned int length)
+eet_decipher(const void *data, unsigned int size, const char *key, unsigned int length, void **result, unsigned int *result_length)
 {
-#ifdef HAVE_CYPHER
+#ifdef HAVE_CIPHER
    (void) data;
    (void) size;
    (void) key;

@@ -3130,22 +3130,23 @@ eet_data_text_undump_cipher(const char *text,
 			    int *size_ret)
 {
    void *ret = NULL;
-   void *cyphered = NULL;
-   unsigned int cyphered_len;
 
    ret = _eet_data_dump_parse(NULL, size_ret, text, textlen);
    if (ret && key)
      {
-       if (eet_cipher(ret, *size_ret, key, strlen(key), &cyphered, &cyphered_len))
+	void *ciphered = NULL;
+	unsigned int ciphered_len;
+
+       if (eet_cipher(ret, *size_ret, key, strlen(key), &ciphered, &ciphered_len))
 	 {
-	   if (cyphered) free(cyphered);
+	   if (ciphered) free(ciphered);
 	   size_ret = 0;
 	   free(ret);
 	   return NULL;
 	 }
        free(ret);
-       *size_ret = cyphered_len;
-       ret = cyphered;
+       *size_ret = ciphered_len;
+       ret = ciphered;
      }
    return ret;
 }
