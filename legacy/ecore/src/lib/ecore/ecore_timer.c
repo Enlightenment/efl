@@ -8,6 +8,7 @@ static int          timers_delete_me = 0;
 static Ecore_Timer *timers = NULL;
 static Ecore_Timer *suspended = NULL;
 static double       last_check = 0.0;
+static double       precision = 10.0 / 1000000.0;
 
 /**
  * @defgroup Ecore_Time_Group Ecore Time Functions
@@ -15,6 +16,52 @@ static double       last_check = 0.0;
  * Functions that deal with time.  These functions include those that simply
  * retrieve it in a given format, and those that create events based on it.
  */
+
+/**
+ * Retrieves the current precision used by timer infrastructure.
+ *
+ * @see ecore_timer_precision_set()
+ */
+EAPI double
+ecore_timer_precision_get(void)
+{
+   return precision;
+}
+
+/**
+ * Sets the precision to be used by timer infrastructure.
+ *
+ * When system calculates time to expire the next timer we'll be able
+ * to delay the timer by the given amount so more timers will fit in
+ * the same dispatch, waking up the system less often and thus being
+ * able to save power.
+ *
+ * Be aware that kernel may delay delivery even further, these delays
+ * are always possible due other tasks having higher priorities or
+ * other scheduler policies.
+ *
+ * Example:
+ *  We have 2 timers, one that expires in a 2.0s and another that
+ *  expires in 2.1s, if precision is 0.1s, then the Ecore will request
+ *  for the next expire to happen in 2.1s and not 2.0s and another one
+ *  of 0.1 as it would before.
+ *
+ * @note Ecore is smart enough to see if there are timers in the
+ * precision range, if it does not, in our example if no second timer
+ * in (T + precision) existed, then it would use the minimum timeout.
+ *
+ * @param value allowed introduced timeout delay, in seconds.
+ */
+EAPI void
+ecore_timer_precision_set(double value)
+{
+   if (value < 0.0)
+     {
+	fprintf(stderr, "ERROR: precision %f less than zero, ignored\n", value);
+	return;
+     }
+   precision = value;
+}
 
 /**
  * Creates a timer to call the given function in the given period of time.
@@ -281,23 +328,51 @@ _ecore_timer_enable_new(void)
      }
 }
 
+static inline Ecore_Timer *
+_ecore_timer_first_get(void)
+{
+   Ecore_Timer *timer = (Ecore_Timer *)timers;
+
+   while ((timer) && ((timer->delete_me) || (timer->just_added)))
+     timer = (Ecore_Timer *)((Ecore_List2 *)timer)->next;
+
+   return timer;
+}
+
+static inline Ecore_Timer *
+_ecore_timer_after_get(Ecore_Timer *base)
+{
+   Ecore_Timer *timer = (Ecore_Timer *)((Ecore_List2 *)base)->next;
+   double maxtime = base->at + precision;
+
+   while ((timer) && ((timer->delete_me) || (timer->just_added)) && (timer->at <= maxtime))
+     timer = (Ecore_Timer *)((Ecore_List2 *)timer)->next;
+
+   if ((!timer) || (timer->at > maxtime))
+     return NULL;
+
+   return timer;
+}
+
 double
 _ecore_timer_next_get(void)
 {
    double now;
    double in;
-   Ecore_Timer *timer;
-   
-   if (!timers) return -1;
+   Ecore_Timer *first, *second;
+
+   first = _ecore_timer_first_get();
+   if (!first) return -1;
+
+   second = _ecore_timer_after_get(first);
+   if (second)
+     first = second;
+
    now = ecore_loop_time_get();
-   timer = (Ecore_Timer *)timers;
-   while ((timer) && ((timer->delete_me) || (timer->just_added)))
-     timer = (Ecore_Timer *)((Ecore_List2 *)timer)->next;
-   if (!timer) return -1;
-   in = timer->at - now;
+   in = first->at - now;
    if (in < 0) in = 0;
    return in;
-}  
+}
 
 int
 _ecore_timer_call(double when)

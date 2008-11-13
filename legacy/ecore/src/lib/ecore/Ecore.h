@@ -302,6 +302,9 @@ extern "C" {
    EAPI void         ecore_timer_delay(Ecore_Timer *timer, double add);
    EAPI double       ecore_timer_pending_get(Ecore_Timer *timer);
 
+   EAPI double       ecore_timer_precision_get(void);
+   EAPI void         ecore_timer_precision_set(double precision);
+
    EAPI Ecore_Animator *ecore_animator_add(int (*func) (void *data), const void *data);
    EAPI void           *ecore_animator_del(Ecore_Animator *animator);
    EAPI void            ecore_animator_frametime_set(double frametime);
