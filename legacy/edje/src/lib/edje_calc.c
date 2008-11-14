@@ -143,10 +143,10 @@ _edje_recalc(Edje *ed)
 	if (!ed->calc_only)
 	  {
 	     if (_edje_freeze_val > 0) _edje_freeze_calc_count++;
-	     return ;
+	     return;
 	  }
      }
-   if (ed->postponed) return ;
+   if (ed->postponed) return;
    evas_object_smart_changed(ed->obj);
    ed->postponed = 1;
 }

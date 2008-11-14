@@ -1033,7 +1033,7 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *signal, const char *
      length_parent = strlen(ed->parent);
    length_source = strlen(source);
    if (length_source + length_parent + 2 > sizeof(new_src))
-     return ;
+     return;
 
    if (ed->parent)
      memcpy(new_src, ed->parent, length_parent);

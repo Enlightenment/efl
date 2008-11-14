@@ -612,7 +612,7 @@ edje_match_program_hash_build(const Eina_List *callbacks,
 	     if (!item)
 	       {
 		  item = malloc(sizeof (Edje_Signal_Source_Char));
-		  if (!item) continue ;
+		  if (!item) continue;
 
 		  item->signal = program->signal;
 		  item->source = program->source;
@@ -653,7 +653,7 @@ edje_match_callback_hash_build(const Eina_List *callbacks,
 	     if (!item)
 	       {
 		  item = malloc(sizeof (Edje_Signal_Source_Char));
-		  if (!item) continue ;
+		  if (!item) continue;
 
 		  item->signal = callback->signal;
 		  item->source = callback->source;
