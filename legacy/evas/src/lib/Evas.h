@@ -977,7 +977,7 @@ extern "C" {
    typedef struct _Evas_Object_Box_Api        Evas_Object_Box_Api;
    typedef struct _Evas_Object_Box_Data       Evas_Object_Box_Data;
    typedef struct _Evas_Object_Box_Option     Evas_Object_Box_Option;
-   typedef void (*Evas_Object_Box_Layout)(Evas_Object *o, Evas_Object_Box_Data *priv);
+   typedef void (*Evas_Object_Box_Layout)(Evas_Object *o, Evas_Object_Box_Data *priv, void *user_data);
 
    struct _Evas_Object_Box_Api
    {
@@ -1007,7 +1007,11 @@ extern "C" {
 	 Evas_Coord h, v;
       } pad;
       Eina_List *children;
-      Evas_Object_Box_Layout layout;
+      struct {
+	 Evas_Object_Box_Layout cb;
+	 void *data;
+	 void (*free_data)(void *data);
+      } layout;
    };
 
    struct _Evas_Object_Box_Option
@@ -1016,20 +1020,20 @@ extern "C" {
    };
 
    EAPI void evas_object_box_smart_set(Evas_Object_Box_Api *api);
-   EAPI void evas_object_box_layout_set(Evas_Object *o, Evas_Object_Box_Layout cb);
+  EAPI void evas_object_box_layout_set(Evas_Object *o, Evas_Object_Box_Layout cb, const void *data, void (*free_data)(void *data));
 
    EAPI Evas_Object *evas_object_box_add(Evas *evas);
    EAPI Evas_Object *evas_object_box_add_to(Evas_Object *parent);
 
-   EAPI void evas_object_box_layout_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv);
-   EAPI void evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv);
-   EAPI void evas_object_box_layout_homogeneous_vertical(Evas_Object *o, Evas_Object_Box_Data *priv);
-   EAPI void evas_object_box_layout_homogeneous_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv);
-   EAPI void evas_object_box_layout_homogeneous_max_size_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv);
-   EAPI void evas_object_box_layout_homogeneous_max_size_vertical(Evas_Object *o, Evas_Object_Box_Data *priv);
-   EAPI void evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv);
-   EAPI void evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv);
-   EAPI void evas_object_box_layout_stack(Evas_Object *o, Evas_Object_Box_Data *priv);
+   EAPI void evas_object_box_layout_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data);
+   EAPI void evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data);
+   EAPI void evas_object_box_layout_homogeneous_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data);
+   EAPI void evas_object_box_layout_homogeneous_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data);
+   EAPI void evas_object_box_layout_homogeneous_max_size_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data);
+   EAPI void evas_object_box_layout_homogeneous_max_size_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data);
+   EAPI void evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data);
+   EAPI void evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data);
+   EAPI void evas_object_box_layout_stack(Evas_Object *o, Evas_Object_Box_Data *priv, void *data);
 
    EAPI void   evas_object_box_align_set(Evas_Object *o, double horizontal, double vertical);
    EAPI void   evas_object_box_align_get(const Evas_Object *o, double *horizontal, double *vertical);

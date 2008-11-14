@@ -333,7 +333,9 @@ _evas_object_box_smart_add(Evas_Object *o)
    priv->align.v = 0.5;
    priv->pad.h = 0;
    priv->pad.v = 0;
-   priv->layout = evas_object_box_layout_horizontal;
+   priv->layout.cb = evas_object_box_layout_horizontal;
+   priv->layout.data = NULL;
+   priv->layout.free_data = NULL;
 }
 
 static void
@@ -362,6 +364,9 @@ _evas_object_box_smart_del(Evas_Object *o)
 	l = eina_list_remove_list(l, l);
      }
 
+   if (priv->layout.data && priv->layout.free_data)
+     priv->layout.free_data(priv->layout.data);
+
    _parent_sc.del(o);
 }
 
@@ -375,8 +380,8 @@ static void
 _evas_object_box_smart_calculate(Evas_Object *o)
 {
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(o, priv);
-   if (priv->layout)
-     priv->layout(o, priv);
+   if (priv->layout.cb)
+     priv->layout.cb(o, priv, priv->layout.data);
    else
      fprintf(stderr, "ERROR: no layout function set for %p box.\n", o);
 }
@@ -478,10 +483,16 @@ evas_object_box_smart_set(Evas_Object_Box_Api *api)
  * etc.).
  */
 void
-evas_object_box_layout_set(Evas_Object *o, Evas_Object_Box_Layout cb)
+evas_object_box_layout_set(Evas_Object *o, Evas_Object_Box_Layout cb, const void *data, void (*free_data)(void *data))
 {
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(o, priv);
-   priv->layout = cb;
+
+   if (priv->layout.data && priv->layout.free_data)
+     priv->layout.free_data(priv->layout.data);
+
+   priv->layout.cb = cb;
+   priv->layout.data = (void *)data;
+   priv->layout.free_data = free_data;
    evas_object_smart_changed(o);
 }
 
@@ -656,7 +667,7 @@ _evas_object_box_layout_horizontal_weight_apply(Evas_Object_Box_Data *priv, Evas
  * @todo consider aspect hint and respect it.
  */
 void
-evas_object_box_layout_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv)
+evas_object_box_layout_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 {
    int pad_inc = 0, sub_pixel = 0;
    int req_w, global_pad, remaining;
@@ -816,7 +827,7 @@ _evas_object_box_layout_vertical_weight_apply(Evas_Object_Box_Data *priv, Evas_O
  * @todo consider aspect hint and respect it.
  */
 void
-evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv)
+evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 {
    int pad_inc = 0, sub_pixel = 0;
    int req_h, global_pad, remaining;
@@ -947,7 +958,7 @@ evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv)
  * @todo consider aspect hint and respect it.
  */
 void
-evas_object_box_layout_homogeneous_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv)
+evas_object_box_layout_homogeneous_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 {
    int cell_sz, share, inc;
    int sub_pixel = 0;
@@ -1014,7 +1025,7 @@ evas_object_box_layout_homogeneous_horizontal(Evas_Object *o, Evas_Object_Box_Da
  * @todo consider aspect hint and respect it.
  */
 void
-evas_object_box_layout_homogeneous_vertical(Evas_Object *o, Evas_Object_Box_Data *priv)
+evas_object_box_layout_homogeneous_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 {
    int cell_sz, share, inc;
    int sub_pixel = 0;
@@ -1113,7 +1124,7 @@ evas_object_box_layout_homogeneous_vertical(Evas_Object *o, Evas_Object_Box_Data
  * @todo consider aspect hint and respect it.
  */
 void
-evas_object_box_layout_homogeneous_max_size_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv)
+evas_object_box_layout_homogeneous_max_size_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 {
    int remaining, global_pad, pad_inc = 0, sub_pixel = 0;
    int cell_sz = 0;
@@ -1202,7 +1213,7 @@ evas_object_box_layout_homogeneous_max_size_horizontal(Evas_Object *o, Evas_Obje
  * @todo consider aspect hint and respect it.
  */
 void
-evas_object_box_layout_homogeneous_max_size_vertical(Evas_Object *o, Evas_Object_Box_Data *priv)
+evas_object_box_layout_homogeneous_max_size_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 {
    int remaining, global_pad, pad_inc = 0, sub_pixel = 0;
    int cell_sz = 0;
@@ -1381,7 +1392,7 @@ _evas_object_box_layout_flow_horizontal_row_info_collect(Evas_Object_Box_Data *p
  * @todo consider aspect hint and respect it.
  */
 void
-evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv)
+evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 {
    int n_children, v_justify;
    int r, row_count = 0;
@@ -1550,7 +1561,7 @@ _evas_object_box_layout_flow_vertical_col_info_collect(Evas_Object_Box_Data *pri
  * @todo consider aspect hint and respect it.
  */
 void
-evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv)
+evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 {
    int n_children, h_justify;
    int c, col_count;
@@ -1668,7 +1679,7 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv)
  * @todo consider aspect hint and respect it.
  */
 void
-evas_object_box_layout_stack(Evas_Object *o, Evas_Object_Box_Data *priv)
+evas_object_box_layout_stack(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 {
    Eina_List *l;
    Evas_Coord ox, oy, ow, oh;
