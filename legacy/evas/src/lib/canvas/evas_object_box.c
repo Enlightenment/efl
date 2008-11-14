@@ -287,7 +287,7 @@ _evas_object_box_remove_at_default(Evas_Object *o, Evas_Object_Box_Data *priv, u
 
    for (l = priv->children, i = 0; l != NULL; l = l->next, i++)
      {
-	Evas_Object_Box_Option *opt;
+	Evas_Object_Box_Option *opt = l->data;
         Evas_Object *obj = opt->obj;
 
         if (i == pos)
@@ -405,8 +405,8 @@ _evas_object_box_smart_class_new(void)
 Evas_Object *
 evas_object_box_add(Evas *evas)
 {
+   static Evas_Smart *smart = NULL;
    Evas_Object *o;
-   Evas_Smart *smart;
 
    if (!smart)
      smart = _evas_object_box_smart_class_new();
