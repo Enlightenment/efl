@@ -190,9 +190,9 @@ int efreet_desktop_shutdown(void);
 
 const char *efreet_home_dir_get(void);
 
-const char *efreet_lang_get(void);
-const char *efreet_lang_country_get(void);
-const char *efreet_lang_modifier_get(void);
+EAPI const char *efreet_lang_get(void);
+EAPI const char *efreet_lang_country_get(void);
+EAPI const char *efreet_lang_modifier_get(void);
 
 size_t efreet_array_cat(char *buffer, size_t size, const char *strs[]);
 
