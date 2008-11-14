@@ -749,7 +749,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 	_edje_embryo_test_run(ed, fname, ssig, ssrc);
 //	_edje_emit(ed, "program,stop", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
-	_edje_recalc(ed);
+	_edje_recalc_do(ed);
      }
    else if (pr->action == EDJE_ACTION_TYPE_FOCUS_SET)
      {

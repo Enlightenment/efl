@@ -667,6 +667,7 @@ struct _Edje
    unsigned short        walking_actions : 1;
    unsigned short        block_break : 1;
    unsigned short        delete_me : 1;
+   unsigned short        postponed : 1;
 };
 
 struct _Edje_Real_Part
@@ -1009,6 +1010,7 @@ void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos);
 Edje_Part_Description *_edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *name, double val);
 void  _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char  *d1, double v1, const char *d2, double v2);
 void  _edje_recalc(Edje *ed);
+void  _edje_recalc_do(Edje *ed);
 int   _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, double *x, double *y);
 void  _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, double x, double y);
 

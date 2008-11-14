@@ -137,20 +137,29 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
 void
 _edje_recalc(Edje *ed)
 {
-   int i;
-
-   if (!ed->dirty)
-     {
-	return;
-     }
    if ((ed->freeze > 0) || (_edje_freeze_val > 0))
      {
 	ed->recalc = 1;
 	if (!ed->calc_only)
 	  {
 	     if (_edje_freeze_val > 0) _edje_freeze_calc_count++;
-	     return;
+	     return ;
 	  }
+     }
+   if (ed->postponed) return ;
+   evas_object_smart_changed(ed->obj);
+   ed->postponed = 1;
+}
+
+void
+_edje_recalc_do(Edje *ed)
+{
+   int i;
+
+   ed->postponed = 0;
+   if (!ed->dirty)
+     {
+	return;
      }
    for (i = 0; i < ed->table_parts_size; i++)
      {
@@ -168,8 +177,9 @@ _edje_recalc(Edje *ed)
 	if (ep->calculated != FLAG_XY)
 	  _edje_part_recalc(ed, ep, (~ep->calculated) & FLAG_XY);
      }
-   ed->dirty = 0;
    if (!ed->calc_only) ed->recalc = 0;
+   ed->dirty = 0;
+   ed->calc_only = 0;
 }
 
 int

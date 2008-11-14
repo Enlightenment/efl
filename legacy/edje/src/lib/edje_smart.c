@@ -13,6 +13,7 @@ static void _edje_smart_hide(Evas_Object * obj);
 static void _edje_smart_color_set(Evas_Object * obj, int r, int g, int b, int a);
 static void _edje_smart_clip_set(Evas_Object * obj, Evas_Object * clip);
 static void _edje_smart_clip_unset(Evas_Object * obj);
+static void _edje_smart_calculate(Evas_Object * obj);
 
 static Evas_Smart *_edje_smart = NULL;
 
@@ -45,7 +46,7 @@ edje_object_add(Evas *evas)
 	       _edje_smart_color_set,
 	       _edje_smart_clip_set,
 	       _edje_smart_clip_unset,
-	       NULL,
+	       _edje_smart_calculate,
 	       NULL,
 	       NULL,
 	       NULL
@@ -170,7 +171,7 @@ _edje_smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h)
      }
 //   evas_object_resize(ed->clipper, ed->w, ed->h);
    ed->dirty = 1;
-   _edje_recalc(ed);
+   _edje_recalc_do(ed);
    _edje_emit(ed, "resize", NULL);
 }
 
@@ -243,4 +244,14 @@ _edje_smart_clip_unset(Evas_Object * obj)
    if (!evas_object_clip_get(obj)) return;
    evas_object_clip_unset(ed->clipper);
 //   _edje_emit(ed, "clip_unset", NULL);
+}
+
+static void
+_edje_smart_calculate(Evas_Object *obj)
+{
+   Edje *ed;
+
+   ed = evas_object_smart_data_get(obj);
+   if (!ed) return;
+   _edje_recalc_do(ed);
 }
