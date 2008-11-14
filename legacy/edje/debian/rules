@@ -6,16 +6,15 @@ include /usr/share/cdbs/1/class/autotools.mk
 #DEB_INSTALL_MANPAGES_libedje-doc := $(DEB_SRCDIR)/doc/man/man3/*.3
 DEB_DH_STRIP_ARGS := --dbg-package=libedje-dbg
 DEB_CONFIGURE_EXTRA_FLAGS := --disable-rpath
+DEB_SOURCE_VERSION := $(shell grep AC_INIT $(DEB_SRCDIR)/configure.ac|sed -e 's/AC_INIT(\[edje\],\ \[\(.*\)\],\ \[.*@.*\])/\1/g')
 
 build/libedje-doc::
-	cd $(DEB_SRCDIR) && doxygen
+	cd $(DEB_SRCDIR)/doc && make doc
 
 install/libedje-doc::
-	cp -R $(DEB_SRCDIR)/doc/html debian/libedje-doc/usr/share/doc/libedje-doc/
+	tar jxf edje-*-doc.tar.bz2 -C $(DEB_SRCDIR)
+	cp -R $(DEB_SRCDIR)/edje-$(DEB_SOURCE_VERSION)-doc/doc/html debian/libedje-doc/usr/share/doc/libedje-doc/
+	rm -rf $(DEB_SRCDIR)/edje-$(DEB_SOURCE_VERSION)-doc/
 
 clean::
-	rm -rf $(DEB_SRCDIR)/doc/html $(DEB_SRCDIR)/doc/latex $(DEB_SRCDIR)/doc/man
-	mkdir -p $(DEB_SRCDIR)/doc/html
-	cp $(DEB_SRCDIR)/doc/img/*.png $(DEB_SRCDIR)/doc/html/
-	cp $(DEB_SRCDIR)/doc/img/*.gif $(DEB_SRCDIR)/doc/html/
 	./autogen.sh --prefix=/usr $(DEB_CONFIGURE_EXTRA_FLAGS)
