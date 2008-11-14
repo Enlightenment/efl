@@ -174,7 +174,7 @@ AC_CHECK_HEADER([fnmatch.h],
 AC_CHECK_FUNCS([fnmatch], [res="yes"], [res="no"])
 if test "x$res" = "xno"; then
    AC_SEARCH_LIBS([fnmatch],
-      [fnmatch iberty evil],
+      [fnmatch evil iberty],
       [res="yes"],
       [res="no"])
    if test "x$res" = "xno"; then
