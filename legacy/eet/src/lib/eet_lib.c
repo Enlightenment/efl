@@ -58,6 +58,7 @@ void *alloca (size_t);
 
 #ifdef HAVE_OPENSSL
 # include <openssl/err.h>
+# include <openssl/evp.h>
 #endif
 
 #include <Eina.h>
@@ -739,6 +740,7 @@ eet_init(void)
 #endif
 #ifdef HAVE_OPENSSL
    ERR_load_crypto_strings();
+   OpenSSL_add_all_algorithms();
 #endif
 
    eina_init();
@@ -758,6 +760,7 @@ eet_shutdown(void)
    gnutls_global_deinit();
 #endif
 #ifdef HAVE_OPENSSL
+   EVP_cleanup();
    ERR_free_strings();
 #endif
 

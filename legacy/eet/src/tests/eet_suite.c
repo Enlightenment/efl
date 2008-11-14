@@ -1275,6 +1275,88 @@ START_TEST(eet_identity_simple)
 }
 END_TEST
 
+START_TEST(eet_identity_open_simple)
+{
+   Eet_Key *k = NULL;
+
+   eet_init();
+
+   chdir("src/tests");
+
+   k = eet_identity_open("cert.pem", "key.pem", NULL);
+   fail_if(!k);
+
+   if (k) eet_identity_close(k);
+
+   eet_shutdown();
+}
+END_TEST
+
+START_TEST(eet_identity_open_pkcs8)
+{
+   Eet_Key *k = NULL;
+
+   eet_init();
+
+   chdir("src/tests");
+
+   k = eet_identity_open("cert.pem", "key_enc_none.pem", NULL);
+   fail_if(!k);
+
+   if (k) eet_identity_close(k);
+
+   eet_shutdown();
+}
+END_TEST
+
+static int pass_get(char *pass, int size, __UNUSED__ int rwflags, __UNUSED__ void *u)
+{
+   memset(pass, 0, size);
+
+   if (strlen("password") > size)
+     return 0;
+   snprintf(pass, size, "%s", "password");
+   return strlen(pass);
+}
+
+static int badpass_get(char *pass, int size, __UNUSED__ int rwflags, __UNUSED__ void *u)
+{
+   memset(pass, 0, size);
+
+   if (strlen("bad password") > size)
+     return 0;
+   snprintf(pass, size, "%s", "bad password");
+   return strlen(pass);
+}
+
+
+START_TEST(eet_identity_open_pkcs8_enc)
+{
+   Eet_Key *k = NULL;
+
+   eet_init();
+
+   chdir("src/tests");
+
+   k = eet_identity_open("cert.pem", "key_enc.pem", NULL);
+   fail_if(k);
+
+   if (k) eet_identity_close(k);
+
+   k = eet_identity_open("cert.pem", "key_enc.pem", &badpass_get);
+   fail_if(k);
+
+   if (k) eet_identity_close(k);
+
+   k = eet_identity_open("cert.pem", "key_enc.pem", &pass_get);
+   fail_if(!k);
+
+   if (k) eet_identity_close(k);
+
+   eet_shutdown();
+}
+END_TEST
+
 START_TEST(eet_cipher_decipher_simple)
 {
    const char *buffer = "Here is a string of data to save !";
@@ -1361,6 +1443,9 @@ eet_suite(void)
 #ifdef HAVE_SIGNATURE
    tc = tcase_create("Eet Identity");
    tcase_add_test(tc, eet_identity_simple);
+   tcase_add_test(tc, eet_identity_open_simple);
+   tcase_add_test(tc, eet_identity_open_pkcs8);
+   tcase_add_test(tc, eet_identity_open_pkcs8_enc);
    suite_add_tcase(s, tc);
 #endif
 

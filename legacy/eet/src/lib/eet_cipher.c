@@ -16,6 +16,7 @@
 #ifdef HAVE_SIGNATURE
 # ifdef HAVE_GNUTLS
 #  include <gnutls/gnutls.h>
+#  include <gnutls/x509.h>
 # else
 #  include <openssl/rsa.h>
 #  include <openssl/objects.h>
@@ -23,6 +24,9 @@
 #  include <openssl/ssl.h>
 #  include <openssl/dh.h>
 #  include <openssl/dsa.h>
+#  include <openssl/evp.h>
+#  include <openssl/x509.h>
+#  include <openssl/pem.h>
 # endif
 #endif
 
@@ -61,6 +65,20 @@ static Eet_Error eet_hmac_sha1(const void *key, size_t key_len, const void *data
 static Eet_Error eet_pbkdf2_sha1(const char *key, int key_len, const unsigned char *salt, unsigned int salt_len, int iter, unsigned char *res, int res_len);
 #endif
 
+struct _Eet_Key
+{
+   int          references;
+#ifdef HAVE_SIGNATURE
+# ifdef HAVE_GNUTLS
+   gnutls_x509_crt_t		certificate;
+   gnutls_x509_privkey_t	private_key;
+# else
+   X509	       *certificate;
+   EVP_PKEY    *private_key;
+# endif
+#endif
+};
+
 EAPI Eet_Key*
 eet_identity_open(const char *certificate_file, const char *private_key_file, Eet_Key_Password_Callback cb)
 {
@@ -75,6 +93,7 @@ eet_identity_open(const char *certificate_file, const char *private_key_file, Ee
   void *data = NULL;
   gnutls_datum_t load_file = { NULL, 0 };
   int res;
+  char pass[1024];
 
   /* Init */
   if (!(key = malloc(sizeof(Eet_Key)))) goto on_error;
@@ -111,8 +130,23 @@ eet_identity_open(const char *certificate_file, const char *private_key_file, Ee
   /* Import the private key in Eet_Key structure */
   load_file.data = data;
   load_file.size = st.st_size;
+  /* Try to directly import the PEM encoded private key */
   if ((res = gnutls_x509_privkey_import(key->private_key, &load_file, GNUTLS_X509_FMT_PEM)) < 0)
-    goto on_error;
+    {
+      /* Else ask for the private key pass */
+      if (cb && cb(pass, 1024, 0, NULL))
+	{
+	  /* If pass then try to decode the pkcs 8 private key */
+	  if ((res = gnutls_x509_privkey_import_pkcs8(key->private_key, &load_file, GNUTLS_X509_FMT_PEM, pass, 0)))
+	    goto on_error;
+	}
+      else
+	{
+	  /* Else try to import the pkcs 8 private key without pass */
+	  if ((res = gnutls_x509_privkey_import_pkcs8(key->private_key, &load_file, GNUTLS_X509_FMT_PEM, NULL, 1)))
+	    goto on_error;
+	}
+    }
   if (munmap(data, st.st_size)) goto on_error;
   fclose(fp);
 
@@ -230,14 +264,15 @@ eet_identity_print(Eet_Key *key, FILE *out)
 	    }
 	  if (err) goto on_error;
 
-	  fprintf(out, "%s:\n", names[i]);
+	  fprintf(out, "\t%s:\n", names[i]);
 	  for (j = 0; strlen(res) > j; j += 32)
 	    {
 	      snprintf(buf, 32, "%s", res + j);
-	      fprintf(out, "\t%s\n", buf);
+	      fprintf(out, "\t\t%s\n", buf);
 	    }
 	}
       free(res);
+      res = NULL;
     }
 
   if (key->certificate)
@@ -246,7 +281,9 @@ eet_identity_print(Eet_Key *key, FILE *out)
       if (gnutls_x509_crt_print(key->certificate, GNUTLS_X509_CRT_FULL, &data)) goto on_error;
       fprintf(out, "%s", data.data);
       gnutls_free(data.data);
+      data.data = NULL;
     }
+
  on_error:
   if (res) free(res);
   if (data.data) gnutls_free(data.data);

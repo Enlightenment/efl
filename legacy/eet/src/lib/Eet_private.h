@@ -16,17 +16,6 @@
 # include <config.h>
 #endif
 
-#ifdef HAVE_GNUTLS
-# include <gnutls/gnutls.h>
-# include <gnutls/x509.h>
-#else
-#ifdef HAVE_OPENSSL
-# include <openssl/evp.h>
-# include <openssl/x509.h>
-# include <openssl/pem.h>
-#endif
-#endif
-
 typedef struct _Eet_String              Eet_String;
 
 struct _Eet_String
@@ -66,20 +55,6 @@ struct _Eet_Dictionary
 
   const char   *start;
   const char   *end;
-};
-
-struct _Eet_Key
-{
-   int          references;
-#ifdef HAVE_SIGNATURE
-# ifdef HAVE_GNUTLS
-   gnutls_x509_crt_t		certificate;
-   gnutls_x509_privkey_t	private_key;
-# else
-   X509	       *certificate;
-   EVP_PKEY    *private_key;
-# endif
-#endif
 };
 
 Eet_Dictionary  *eet_dictionary_add(void);
