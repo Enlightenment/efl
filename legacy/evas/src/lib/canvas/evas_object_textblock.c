@@ -2532,9 +2532,12 @@ evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
    if ((ts) && (ts->delete_me)) return;
    if (o->markup_text)
      {
-	free(o->markup_text);
-	o->markup_text = NULL;
-	evas_object_textblock_text_markup_get(obj);
+        if (o->style)
+          {
+             free(o->markup_text);
+             o->markup_text = NULL;
+             evas_object_textblock_text_markup_get(obj);
+          }
      }
    if (o->style)
      {
