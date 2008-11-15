@@ -767,8 +767,8 @@ my_bt_14(void *data, Evas_Object *obj, void *event_info)
    en = elm_entry_add(win);
    elm_entry_single_line_set(en, 1);
    elm_entry_entry_set(en, "This is a single line");
-   evas_object_size_hint_weight_set(en, 1.0, 1.0);
-   evas_object_size_hint_align_set(en, -1.0, -1.0);
+   evas_object_size_hint_weight_set(en, 1.0, 0.0);
+   evas_object_size_hint_align_set(en, -1.0, 0.0);
    elm_scroller_content_set(sc, en);
    evas_object_show(en);
 
@@ -783,8 +783,8 @@ my_bt_14(void *data, Evas_Object *obj, void *event_info)
    en = elm_entry_add(win);
    elm_entry_password_set(en, 1);
    elm_entry_entry_set(en, "Password here");
-   evas_object_size_hint_weight_set(en, 1.0, 1.0);
-   evas_object_size_hint_align_set(en, -1.0, -1.0);
+   evas_object_size_hint_weight_set(en, 1.0, 0.0);
+   evas_object_size_hint_align_set(en, -1.0, 0.0);
    elm_scroller_content_set(sc, en);
    evas_object_show(en);
 
