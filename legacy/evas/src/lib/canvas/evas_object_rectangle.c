@@ -56,6 +56,7 @@ static const Evas_Object_Func object_func =
      evas_object_rectangle_was_opaque,
      NULL,
      NULL,
+     NULL,
      NULL
 };
 

@@ -1263,6 +1263,7 @@ evas_object_scale_set(Evas_Object *obj, double scale)
      return;
    obj->cur.scale = scale;
    evas_object_change(obj);
+   if (obj->func->scale_update) obj->func->scale_update(obj);
 }
 
 

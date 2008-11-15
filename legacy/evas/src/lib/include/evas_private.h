@@ -529,6 +529,8 @@ struct _Evas_Object_Func
    int  (*was_inside) (Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 
    void (*coords_recalc) (Evas_Object *obj);
+   
+   void (*scale_update) (Evas_Object *obj);
 };
 
 struct _Evas_Func

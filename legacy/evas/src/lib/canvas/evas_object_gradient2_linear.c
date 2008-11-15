@@ -60,6 +60,7 @@ static const Evas_Object_Func object_func =
      evas_object_gradient2_linear_was_opaque,
      NULL,
      NULL,
+     NULL,
      NULL
 };
 

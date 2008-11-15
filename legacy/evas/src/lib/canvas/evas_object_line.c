@@ -62,7 +62,8 @@ static const Evas_Object_Func object_func =
      evas_object_line_was_opaque,
      evas_object_line_is_inside,
      evas_object_line_was_inside,
-     evas_object_line_coords_recalc
+     evas_object_line_coords_recalc,
+     NULL
 };
 
 /* the actual api call to add a rect */

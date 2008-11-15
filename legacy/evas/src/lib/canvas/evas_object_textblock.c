@@ -153,6 +153,8 @@ static int evas_object_textblock_was_opaque(Evas_Object *obj);
 
 static void evas_object_textblock_coords_recalc(Evas_Object *obj);
 
+static void evas_object_textblock_scale_update(Evas_Object *obj);
+
 static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
@@ -172,7 +174,8 @@ static const Evas_Object_Func object_func =
      evas_object_textblock_was_opaque,
      NULL,
      NULL,
-     evas_object_textblock_coords_recalc
+     evas_object_textblock_coords_recalc,
+     evas_object_textblock_scale_update
 };
 
 /* the actual api call to add a textblock */
@@ -5607,6 +5610,15 @@ evas_object_textblock_coords_recalc(Evas_Object *obj)
 	o->native.valid = 0;
 	o->changed = 1;
      }
+}
+
+static void
+evas_object_textblock_scale_update(Evas_Object *obj)
+{
+   Evas_Object_Textblock *o;
+
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   _relayout(obj);
 }
 
 void

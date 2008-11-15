@@ -59,6 +59,7 @@ static const Evas_Object_Func object_func =
      evas_object_polygon_was_opaque,
      evas_object_polygon_is_inside,
      evas_object_polygon_was_inside,
+     NULL,
      NULL
 };
 

@@ -86,22 +86,23 @@ static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
    evas_object_image_free,
-   evas_object_image_render,
-   evas_object_image_render_pre,
-   evas_object_image_render_post,
-   evas_object_image_id_get,
-   evas_object_image_visual_id_get,
-   evas_object_image_engine_data_get,
-   /* these are optional. NULL = nothing */
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   evas_object_image_is_opaque,
-   evas_object_image_was_opaque,
-   evas_object_image_is_inside,
-   NULL,
-   NULL
+     evas_object_image_render,
+     evas_object_image_render_pre,
+     evas_object_image_render_post,
+     evas_object_image_id_get,
+     evas_object_image_visual_id_get,
+     evas_object_image_engine_data_get,
+     /* these are optional. NULL = nothing */
+     NULL,
+     NULL,
+     NULL,
+     NULL,
+     evas_object_image_is_opaque,
+     evas_object_image_was_opaque,
+     evas_object_image_is_inside,
+     NULL,
+     NULL,
+     NULL
 };
 
 /**

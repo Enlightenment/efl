@@ -50,6 +50,8 @@ static void *evas_object_text_engine_data_get(Evas_Object *obj);
 static int evas_object_text_is_opaque(Evas_Object *obj);
 static int evas_object_text_was_opaque(Evas_Object *obj);
 
+static void evas_object_text_scale_update(Evas_Object *obj);
+
 static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
@@ -69,7 +71,8 @@ static const Evas_Object_Func object_func =
      evas_object_text_was_opaque,
      NULL,
      NULL,
-     NULL
+     NULL,
+     evas_object_text_scale_update
 };
 
 /* the actual api call to add a rect */
@@ -1728,6 +1731,24 @@ evas_object_text_was_opaque(Evas_Object *obj)
    /* currently fulyl opque over the entire gradient it occupies */
    o = (Evas_Object_Text *)(obj->object_data);
    return 0;
+}
+
+static void
+evas_object_text_scale_update(Evas_Object *obj)
+{
+   Evas_Object_Text *o;
+   int size;
+   const char *font;
+   
+   o = (Evas_Object_Text *)(obj->object_data);
+   font = eina_stringshare_add(o->cur.font);
+   size = o->cur.size;
+   if (o->cur.font) eina_stringshare_del(o->cur.font);
+   o->cur.font = NULL;
+   o->prev.font = NULL;
+   o->cur.size = 0;
+   o->prev.size = 0;
+   evas_object_text_font_set(obj, font, size);
 }
 
 void
