@@ -377,11 +377,14 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
      }
 
    if (e->pointer.mouse_grabbed < 0)
-     fprintf(stderr, "BUG? e->pointer.mouse_grabbed (=%d) < 0!\n",
-	     e->pointer.mouse_grabbed);
-
-   if ((e->pointer.button == 0) && (e->pointer.mouse_grabbed))
      {
+        fprintf(stderr, "BUG? e->pointer.mouse_grabbed (=%d) < 0!\n",
+                e->pointer.mouse_grabbed);
+     }
+
+   if ((e->pointer.button == 0) && (e->pointer.mouse_grabbed != 0))
+     {
+        printf("restore to 0 grabs (from %i)\n", e->pointer.mouse_grabbed);
 	e->pointer.mouse_grabbed = 0;
      }
    _evas_unwalk(e);
@@ -556,7 +559,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 
 		  obj = outs->data;
 		  outs = eina_list_remove(outs, obj);
-		  if ((!obj->mouse_grabbed) && (!e->delete_me))
+		  if ((obj->mouse_grabbed == 0) && (!e->delete_me))
 		    {
 		       e->pointer.object.in = eina_list_remove(e->pointer.object.in, obj);
 			 {

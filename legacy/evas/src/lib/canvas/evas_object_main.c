@@ -1083,32 +1083,30 @@ evas_object_hide(Evas_Object *obj)
 //		       if (obj->layer->evas->pointer.mouse_grabbed >= obj->mouse_grabbed)
 			 obj->layer->evas->pointer.mouse_grabbed -= obj->mouse_grabbed;
 		    }
-		    {
-		       if ((obj->mouse_in) || (obj->mouse_grabbed > 0))
-			 {
-			    obj->layer->evas->pointer.object.in = eina_list_remove(obj->layer->evas->pointer.object.in, obj);
-			 }
-		       obj->mouse_grabbed = 0;
-		       if (obj->layer->evas->events_frozen > 0)
-			 {
-			    obj->mouse_in = 0;
-			    return;
-			 }
-		       if (obj->mouse_in)
-			 {
-			    Evas_Event_Mouse_Out ev;
-			    
-			    obj->mouse_in = 0;
-			    ev.buttons = obj->layer->evas->pointer.button;
-			    ev.output.x = obj->layer->evas->pointer.x;
-			    ev.output.y = obj->layer->evas->pointer.y;
-			    ev.canvas.x = obj->layer->evas->pointer.x;
-			    ev.canvas.y = obj->layer->evas->pointer.y;
-			    ev.data = NULL;
-			    ev.modifiers = &(obj->layer->evas->modifiers);
-			    ev.locks = &(obj->layer->evas->locks);
-			    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
-			 }
+                  if ((obj->mouse_in) || (obj->mouse_grabbed > 0))
+                    {
+                       obj->layer->evas->pointer.object.in = eina_list_remove(obj->layer->evas->pointer.object.in, obj);
+                    }
+                  obj->mouse_grabbed = 0;
+                  if (obj->layer->evas->events_frozen > 0)
+                    {
+                       obj->mouse_in = 0;
+                       return;
+                    }
+                  if (obj->mouse_in)
+                    {
+                       Evas_Event_Mouse_Out ev;
+                       
+                       obj->mouse_in = 0;
+                       ev.buttons = obj->layer->evas->pointer.button;
+                       ev.output.x = obj->layer->evas->pointer.x;
+                       ev.output.y = obj->layer->evas->pointer.y;
+                       ev.canvas.x = obj->layer->evas->pointer.x;
+                       ev.canvas.y = obj->layer->evas->pointer.y;
+                       ev.data = NULL;
+                       ev.modifiers = &(obj->layer->evas->modifiers);
+                       ev.locks = &(obj->layer->evas->locks);
+                       evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 		    }
 	       }
 	  }
