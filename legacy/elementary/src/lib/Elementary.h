@@ -308,5 +308,7 @@ extern "C" {
 //   photos of contacts that match etc.)
 // * need imageview widget (for large not iconic images)
 // * labels with "" are 0x0 size, but with " " are correct vertically. check
-
+// * tiled image + zoom widget (tiled map viewer)
+// * dialpad widget - need one with a phone dialpad
+// * scale property from e - watch for changes. also allow for env var option
 #endif
