@@ -124,10 +124,10 @@ elm_widget_theme(Evas_Object *obj)
    Eina_List *l;
    
    API_ENTRY return;
-   if (sd->theme_func) sd->theme_func(obj);
    for (l = sd->subobjs; l; l = l->next) elm_widget_theme(l->data);
    if (sd->resize_obj) elm_widget_theme(sd->resize_obj);
    if (sd->hover_obj) elm_widget_theme(sd->hover_obj);
+   if (sd->theme_func) sd->theme_func(obj);
 }
 
 EAPI void

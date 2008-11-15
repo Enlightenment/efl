@@ -7,9 +7,11 @@ struct _Widget_Data
 {
    Evas_Object *bbl;
    Evas_Object *content, *icon;
+   const char *label, *info;
 };
 
 static void _del_hook(Evas_Object *obj);
+static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
@@ -18,7 +20,19 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->label) eina_stringshare_del(wd->label);
+   if (wd->info) eina_stringshare_del(wd->info);
    free(wd);
+}
+
+static void
+_theme_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   _elm_theme_set(wd->bbl, "bubble", "base", "default");
+   edje_object_part_text_set(wd->bbl, "elm.text", wd->label);
+   edje_object_part_text_set(wd->bbl, "elm.info", wd->info);
+   _sizing_eval(obj);
 }
 
 static void
@@ -76,6 +90,7 @@ elm_bubble_add(Evas_Object *parent)
    obj = elm_widget_add(e);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_theme_hook_set(obj, _theme_hook);
    
    wd->bbl = edje_object_add(e);
    _elm_theme_set(wd->bbl, "bubble", "base", "default");
@@ -91,15 +106,21 @@ EAPI void
 elm_bubble_label_set(Evas_Object *obj, const char *label)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->label) eina_stringshare_del(wd->label);
+   if (label) wd->label = eina_stringshare_add(label);
+   else wd->label = NULL;
    edje_object_part_text_set(wd->bbl, "elm.text", label);
    _sizing_eval(obj);
 }
 
 EAPI void
-elm_bubble_info_set(Evas_Object *obj, const char *label)
+elm_bubble_info_set(Evas_Object *obj, const char *info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   edje_object_part_text_set(wd->bbl, "elm.info", label);
+   if (wd->info) eina_stringshare_del(wd->info);
+   if (info) wd->info = eina_stringshare_add(info);
+   else wd->info = NULL;
+   edje_object_part_text_set(wd->bbl, "elm.info", info);
    _sizing_eval(obj);
 }
 

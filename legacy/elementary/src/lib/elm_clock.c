@@ -23,6 +23,7 @@ struct _Widget_Data
 };
 
 static void _del_hook(Evas_Object *obj);
+static void _theme_hook(Evas_Object *obj);
 static int _ticker(void *data);
 static void _signal_clock_val_up(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _signal_clock_val_down(void *data, Evas_Object *obj, const char *emission, const char *source);
@@ -40,6 +41,14 @@ _del_hook(Evas_Object *obj)
    if (wd->ampm) evas_object_del(wd->ampm);
    if (wd->ticker) ecore_timer_del(wd->ticker);
    free(wd);
+}
+
+static void
+_theme_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   wd->cur.am_pm = !wd->cur.am_pm; /* hack - force update */
+   _time_update(obj);
 }
 
 static int
@@ -350,6 +359,7 @@ elm_clock_add(Evas_Object *parent)
    obj = elm_widget_add(e);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_theme_hook_set(obj, _theme_hook);
    
    wd->clk = edje_object_add(e);
    elm_widget_resize_object_set(obj, wd->clk);

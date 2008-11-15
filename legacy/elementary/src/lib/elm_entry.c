@@ -16,9 +16,11 @@ struct _Widget_Data
 };
 
 static void _del_hook(Evas_Object *obj);
+static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _on_focus_hook(void *data, Evas_Object *obj);
 static void _resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static const char *_getbase(Evas_Object *obj);
 static void _signal_entry_changed(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _signal_selection_start(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _signal_selection_changed(void *data, Evas_Object *obj, const char *emission, const char *source);
@@ -34,6 +36,19 @@ _del_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
    free(wd);
+}
+
+static void
+_theme_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   char *t;
+   t = elm_entry_entry_get(obj);
+   if (t) t = strdup(t);
+   _elm_theme_set(wd->ent, "entry", _getbase(obj), "default");
+   elm_entry_entry_set(obj, t);
+   if (t) free(t);
+   _sizing_eval(obj);
 }
 
 static void
@@ -93,6 +108,39 @@ _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
    if (wd->linewrap) _sizing_eval(data);
    Evas_Coord ww, hh;
    evas_object_geometry_get(wd->ent, NULL, NULL, &ww, &hh);
+}
+
+static const char *
+_getbase(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->editable)
+     {
+	if (wd->password) return "base-password";
+	else
+	  {
+	     if (wd->single_line) return "base-single";
+	     else
+	       {
+		  if (wd->linewrap) return "base";
+		  else  return "base-nowrap";
+	       }
+	  }
+     }
+   else
+     {
+	if (wd->password) return "base-password";
+	else
+	  {
+	     if (wd->single_line) return "base-single-noedit";
+	     else
+	       {
+		  if (wd->linewrap) return "base-noedit";
+		  else  return "base-nowrap-noedit";
+	       }
+	  }
+     }
+   return "base";
 }
 
 static void
@@ -268,6 +316,7 @@ elm_entry_add(Evas_Object *parent)
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, 1);
 
    wd->linewrap = 1;
@@ -293,39 +342,6 @@ elm_entry_add(Evas_Object *parent)
    edje_object_signal_callback_add(wd->ent, "entry,key,enter", "elm.text", _signal_key_enter, obj);
    elm_widget_resize_object_set(obj, wd->ent);
    return obj;
-}
-
-static const char *
-_getbase(Evas_Object *obj)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (wd->editable)
-     {
-	if (wd->password) return "base-password";
-	else
-	  {
-	     if (wd->single_line) return "base-single";
-	     else
-	       {
-		  if (wd->linewrap) return "base";
-		  else  return "base-nowrap";
-	       }
-	  }
-     }
-   else
-     {
-	if (wd->password) return "base-password";
-	else
-	  {
-	     if (wd->single_line) return "base-single-noedit";
-	     else
-	       {
-		  if (wd->linewrap) return "base-noedit";
-		  else  return "base-nowrap-noedit";
-	       }
-	  }
-     }
-   return "base";
 }
 
 EAPI void
@@ -366,7 +382,6 @@ elm_entry_entry_set(Evas_Object *obj, const char *entry)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    edje_object_part_text_set(wd->ent, "elm.text", entry);
-   
    // debug
 #if 0
      {

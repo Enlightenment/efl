@@ -20,6 +20,13 @@ _del_hook(Evas_Object *obj)
 }
 
 static void
+_theme_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   _elm_theme_set(wd->img, "bg", "base", "default");
+}
+
+static void
 _custom_resize(void *data, Evas *a, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = data;
@@ -54,6 +61,7 @@ elm_bg_add(Evas_Object *parent)
    obj = elm_widget_add(e);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, 0);
    
    wd->img = edje_object_add(e);

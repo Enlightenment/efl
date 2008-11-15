@@ -10,6 +10,7 @@ struct _Widget_Data
 };
 
 static void _del_hook(Evas_Object *obj);
+static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
@@ -19,6 +20,12 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    free(wd);
+}
+
+static void
+_theme_hook(Evas_Object *obj)
+{
+   _sizing_eval(obj);
 }
 
 static void
@@ -66,6 +73,7 @@ elm_frame_add(Evas_Object *parent)
    obj = elm_widget_add(e);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_theme_hook_set(obj, _theme_hook);
    
    wd->frm = edje_object_add(e);
    _elm_theme_set(wd->frm, "frame", "base", "default");

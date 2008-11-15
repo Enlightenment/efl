@@ -337,6 +337,18 @@ elm_smart_scroller_single_dir_get(Evas_Object *obj)
    return sd->one_dir_at_a_time;
 }
 
+void
+elm_smart_scroller_theme_set(Evas_Object *obj, const char *style)
+{
+   API_ENTRY return;
+   _elm_theme_set(sd->edje_obj, "scroller", "base", style);
+   if (sd->pan_obj)
+     edje_object_part_swallow(sd->edje_obj, "elm.swallow.content", sd->pan_obj);
+   sd->vbar_visible = !sd->vbar_visible;
+   sd->hbar_visible = !sd->hbar_visible;
+   _smart_scrollbar_bar_visibility_adjust(sd);
+}
+
 /* local subsystem functions */
 static void
 _smart_edje_drag_v(void *data, Evas_Object *obj, const char *emission, const char *source)

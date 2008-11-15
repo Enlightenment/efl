@@ -28,19 +28,18 @@ _del_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
-   const char *label;
-   Evas_Object *icon;
    Widget_Data *wd = elm_widget_data_get(obj);
-   // FIXME: this is wrong. edje needs to handle more of this.
-   label = eina_stringshare_add(wd->label);
-   icon = wd->icon;
-   _elm_theme_set(wd->btn, "x", "base", "default");
-   elm_button_label_set(obj, NULL);
-   elm_button_icon_set(obj, NULL);
    _elm_theme_set(wd->btn, "button", "base", "default");
-   elm_button_label_set(obj, label);
-   elm_button_icon_set(obj, icon);
-   eina_stringshare_del(label);
+   if (wd->label)
+     edje_object_signal_emit(wd->btn, "elm,state,text,visible", "elm");
+   else
+     edje_object_signal_emit(wd->btn, "elm,state,text,hidden", "elm");
+   if (wd->icon)
+     edje_object_signal_emit(wd->btn, "elm,state,icon,visible", "elm");
+   else
+     edje_object_signal_emit(wd->btn, "elm,state,icon,hidden", "elm");
+   edje_object_part_text_set(wd->btn, "elm.text", wd->label);
+   edje_object_message_signal_process(wd->btn);
    _sizing_eval(obj);
 }
 
@@ -75,6 +74,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 	evas_object_event_callback_del
 	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
 	wd->icon = NULL;
+        edje_object_message_signal_process(wd->btn);
 	_sizing_eval(obj);
      }
 }
@@ -148,6 +148,7 @@ elm_button_icon_set(Evas_Object *obj, Evas_Object *icon)
 	edje_object_signal_emit(wd->btn, "elm,state,icon,visible", "elm");
 	evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
+        edje_object_message_signal_process(wd->btn);
 	_sizing_eval(obj);
      }
    else

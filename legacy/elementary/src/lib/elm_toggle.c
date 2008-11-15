@@ -9,9 +9,12 @@ struct _Widget_Data
    Evas_Object *icon;
    Evas_Bool state;
    Evas_Bool *statep;
+   const char *label;
+   const char *ontext, *offtext;
 };
 
 static void _del_hook(Evas_Object *obj);
+static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
@@ -22,7 +25,34 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->label) eina_stringshare_del(wd->label);
+   if (wd->ontext) eina_stringshare_del(wd->ontext);
+   if (wd->offtext) eina_stringshare_del(wd->offtext);
    free(wd);
+}
+
+static void
+_theme_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   _elm_theme_set(wd->tgl, "toggle", "base", "default");
+   if (wd->icon)
+     edje_object_signal_emit(wd->tgl, "elm,state,icon,visible", "elm");
+   else
+     edje_object_signal_emit(wd->tgl, "elm,state,icon,hidden", "elm");
+   if (wd->state)
+     edje_object_signal_emit(wd->tgl, "elm,state,toggle,on", "elm");
+   else
+     edje_object_signal_emit(wd->tgl, "elm,state,toggle,off", "elm");
+   if (wd->label)
+     edje_object_signal_emit(wd->tgl, "elm,state,text,visible", "elm");
+   else
+     edje_object_signal_emit(wd->tgl, "elm,state,text,hidden", "elm");
+   edje_object_part_text_set(wd->tgl, "elm.text", wd->label);
+   edje_object_part_text_set(wd->tgl, "elm.ontext", wd->ontext);
+   edje_object_part_text_set(wd->tgl, "elm.offtext", wd->offtext);
+   edje_object_message_signal_process(wd->tgl);
+   _sizing_eval(obj);
 }
 
 static void
@@ -90,12 +120,17 @@ elm_toggle_add(Evas_Object *parent)
    obj = elm_widget_add(e);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_theme_hook_set(obj, _theme_hook);
    
    wd->tgl = edje_object_add(e);
    _elm_theme_set(wd->tgl, "toggle", "base", "default");
+   wd->ontext = eina_stringshare_add("ON");
+   wd->offtext = eina_stringshare_add("OFF");
    edje_object_signal_callback_add(wd->tgl, "elm,action,toggle,on", "", _signal_toggle_on, obj);
    edje_object_signal_callback_add(wd->tgl, "elm,action,toggle,off", "", _signal_toggle_off, obj);
    elm_widget_resize_object_set(obj, wd->tgl);
+   edje_object_part_text_set(wd->tgl, "elm.ontext", wd->ontext);
+   edje_object_part_text_set(wd->tgl, "elm.offtext", wd->offtext);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    
@@ -108,14 +143,17 @@ elm_toggle_label_set(Evas_Object *obj, const char *label)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord mw, mh;
-   
+
+   if (wd->label) eina_stringshare_del(wd->label);
    if (label)
      {
+        wd->label = eina_stringshare_add(label);
 	edje_object_signal_emit(wd->tgl, "elm,state,text,visible", "elm");
 	edje_object_message_signal_process(wd->tgl);
      }
    else
      {
+        wd->label = NULL;
 	edje_object_signal_emit(wd->tgl, "elm,state,text,hidden", "elm");
 	edje_object_message_signal_process(wd->tgl);
      }
@@ -145,6 +183,12 @@ EAPI void
 elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *offlabel)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->ontext) eina_stringshare_del(wd->ontext);
+   if (wd->offtext) eina_stringshare_del(wd->offtext);
+   if (onlabel) wd->ontext = eina_stringshare_add(onlabel);
+   else wd->ontext = NULL;
+   if (offlabel) wd->offtext = eina_stringshare_add(offlabel);
+   else wd->offtext = NULL;
    edje_object_part_text_set(wd->tgl, "elm.ontext", onlabel);
    edje_object_part_text_set(wd->tgl, "elm.offtext", offlabel);
    _sizing_eval(obj);

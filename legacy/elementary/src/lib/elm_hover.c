@@ -11,6 +11,7 @@ struct _Widget_Data
    Evas_Object *offset, *size;
    Evas_Object *parent, *target;
    Eina_List *subs;
+   const char *style;
 };
 
 struct _Subinfo
@@ -21,9 +22,12 @@ struct _Subinfo
 
 static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
+static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
+static void _reval_content(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
+static void _hov_show_do(Evas_Object *obj);
 static void _hov_move(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _hov_resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _hov_show(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -46,6 +50,7 @@ _del_pre_hook(Evas_Object *obj)
 	evas_stringshare_del(si->swallow);
 	free(si);
      }
+   if (wd->style) eina_stringshare_del(wd->style);
 }
 
 static void
@@ -54,6 +59,22 @@ _del_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    free(wd);
 }
+
+static void
+_theme_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   // FIXME: hover contents doesnt seem to propagate resizes properly
+   if (wd->style)
+     _elm_theme_set(wd->cov, "hover", "base", wd->style);
+   else
+     _elm_theme_set(wd->cov, "hover", "base", "default");
+   edje_object_message_signal_process(wd->cov);
+   _reval_content(obj);
+   _sizing_eval(obj);
+   if (evas_object_visible_get(wd->cov)) _hov_show_do(obj);
+}
+
 
 static void
 _sizing_eval(Evas_Object *obj)
@@ -72,6 +93,18 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static void
+_reval_content(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_List *l;
+   for (l = wd->subs; l; l = l->next)
+     {
+	Subinfo *si = l->data;
+        edje_object_part_swallow(wd->hov, si->swallow, si->obj);
+     }
+}
+
+static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
@@ -81,7 +114,7 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	Subinfo *si = l->data;
 	if (si->obj == obj)
 	  {
-	     edje_object_part_swallow(wd->hov, si->swallow, obj);
+	     edje_object_part_swallow(wd->hov, si->swallow, si->obj);
 	     break;
 	  }
      }
@@ -110,23 +143,10 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 }    
 
 static void
-_hov_move(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_hov_show_do(Evas_Object *obj)
 {
-   _sizing_eval(data);
-}
-
-static void
-_hov_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
-{
-   _sizing_eval(data);
-}
-
-static void
-_hov_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
-{
-   Widget_Data *wd = elm_widget_data_get(data);
+   Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
-   // FIXME: use signals for show for hov
    if (wd->cov)
      {
 	evas_object_show(wd->cov);
@@ -146,11 +166,28 @@ _hov_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
+_hov_move(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   _sizing_eval(data);
+}
+
+static void
+_hov_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   _sizing_eval(data);
+}
+
+static void
+_hov_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   _hov_show_do(data);
+}
+
+static void
 _hov_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Eina_List *l;
-   // FIXME: use signals for hide for hov
    if (wd->cov)
      {
 	edje_object_signal_emit(wd->cov, "elm,action,hide", "elm");
@@ -229,6 +266,7 @@ elm_hover_add(Evas_Object *parent)
    obj = elm_widget_add(e);
    elm_widget_data_set(obj, wd);
    elm_widget_del_pre_hook_set(obj, _del_pre_hook);
+   elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_del_hook_set(obj, _del_hook);
 
    wd->hov = evas_object_rectangle_add(e);
@@ -329,7 +367,6 @@ elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conten
      {
 	elm_widget_sub_object_add(obj, content);
 	edje_object_part_swallow(wd->cov, buf, content);
-	
 	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
 	si = ELM_NEW(Subinfo);
@@ -344,6 +381,10 @@ EAPI void
 elm_hover_style_set(Evas_Object *obj, const char *style)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->style) eina_stringshare_del(wd->style);
+   if (style) wd->style = eina_stringshare_add(style);
+   else wd->style = NULL;
    _elm_theme_set(wd->cov, "hover", "base", style);
+   _reval_content(obj);
    _sizing_eval(obj);
 }

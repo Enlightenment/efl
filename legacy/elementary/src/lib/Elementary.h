@@ -242,6 +242,7 @@ extern "C" {
      };
    EAPI Evas_Object *elm_anchorview_add(Evas_Object *parent);
    EAPI void         elm_anchorview_text_set(Evas_Object *obj, const char *text);
+   EAPI void         elm_anchorview_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void         elm_anchorview_hover_style_set(Evas_Object *obj, const char *style);
    EAPI void         elm_anchorview_hover_end(Evas_Object *obj);
    /* smart callbacks called:
@@ -264,6 +265,7 @@ extern "C" {
      };
    EAPI Evas_Object *elm_anchorblock_add(Evas_Object *parent);
    EAPI void         elm_anchorblock_text_set(Evas_Object *obj, const char *text);
+   EAPI void         elm_anchorblock_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void         elm_anchorblock_hover_style_set(Evas_Object *obj, const char *style);
    EAPI void         elm_anchorblock_hover_end(Evas_Object *obj);
    /* smart callbacks called:
@@ -272,7 +274,7 @@ extern "C" {
        
    EAPI Evas_Object *elm_bubble_add(Evas_Object *parent);
    EAPI void         elm_bubble_label_set(Evas_Object *obj, const char *label);
-   EAPI void         elm_bubble_info_set(Evas_Object *obj, const char *label);
+   EAPI void         elm_bubble_info_set(Evas_Object *obj, const char *info);
    EAPI void         elm_bubble_content_set(Evas_Object *obj, Evas_Object *content);
    EAPI void         elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon);
    /* smart callbacks called:
