@@ -15,6 +15,7 @@ bt_base1.png \
 bt_base2.png \
 bt_bases.png \
 bt_basew.png \
+bt_glow.png \
 bt_hilight.png \
 bt_hilightw.png \
 bt_shine.png \
