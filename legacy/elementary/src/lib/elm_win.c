@@ -336,6 +336,14 @@ _elm_win_shutdown(void)
    while (_elm_win_list) evas_object_del(_elm_win_list->data);
 }
 
+void
+_elm_win_rescale(void)
+{
+   Eina_List *l;
+   
+   for (l = _elm_win_list; l; l = l->next) elm_widget_theme(l->data);
+}
+
 EAPI Evas_Object *
 elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 {

@@ -19,6 +19,7 @@ struct _Smart_Data
    void         (*focus_func) (Evas_Object *obj);
    void         (*activate_func) (Evas_Object *obj);
    void         (*disable_func) (Evas_Object *obj);
+   void         (*theme_func) (Evas_Object *obj);
    void         (*on_focus_func) (void *data, Evas_Object *obj);
    void          *on_focus_data;
    void         (*on_change_func) (void *data, Evas_Object *obj);
@@ -108,6 +109,25 @@ elm_widget_disable_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
 {
    API_ENTRY return;
    sd->disable_func = func;
+}
+
+EAPI void
+elm_widget_theme_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
+{
+   API_ENTRY return;
+   sd->theme_func = func;
+}
+
+EAPI void
+elm_widget_theme(Evas_Object *obj)
+{
+   Eina_List *l;
+   
+   API_ENTRY return;
+   if (sd->theme_func) sd->theme_func(obj);
+   for (l = sd->subobjs; l; l = l->next) elm_widget_theme(l->data);
+   if (sd->resize_obj) elm_widget_theme(sd->resize_obj);
+   if (sd->hover_obj) elm_widget_theme(sd->hover_obj);
 }
 
 EAPI void

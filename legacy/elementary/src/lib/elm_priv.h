@@ -35,6 +35,7 @@ struct _Elm_Config
 #define ELM_NEW(t) calloc(1, sizeof(t))
 
 void _elm_win_shutdown(void);
+void _elm_win_rescale(void);
 
 int _elm_theme_set(Evas_Object *o, const char *clas, const char *group, const char *style);
 int _elm_theme_icon_set(Evas_Object *o, const char *group, const char *style);
@@ -46,6 +47,8 @@ EAPI void         elm_widget_del_pre_hook_set(Evas_Object *obj, void (*func) (Ev
 EAPI void         elm_widget_focus_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
 EAPI void         elm_widget_activate_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
 EAPI void         elm_widget_disable_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
+EAPI void         elm_widget_theme_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
+EAPI void         elm_widget_theme(Evas_Object *obj);
 EAPI void         elm_widget_on_focus_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
 EAPI void         elm_widget_on_change_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
 EAPI void         elm_widget_on_show_region_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
