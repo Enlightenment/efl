@@ -309,12 +309,11 @@ extern "C" {
 // * need a phone-number widget (hilight country dial prefixes, add flags, 
 //   photos of contacts that match etc.)
 // * need imageview widget (for large not iconic images)
-// * labels with "" are 0x0 size, but with " " are correct vertically. check
 // * tiled image + zoom widget (tiled map viewer)
 // * dialpad widget - need one with a phone dialpad
 // * scale property from e - watch for changes. also allow for env var option
 // * on the fly theme changes - test
 // * single line entry on scale change adds newlines
 // * scale change for hover doesnt seem to do new size alloc nicely
-// * click + drag on button in scrollvie leaves pressed glow
+// * left/right arrow broken with password mode for entry
 #endif

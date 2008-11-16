@@ -6,6 +6,7 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *lbl;
+   const char *label;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -16,12 +17,16 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->label) eina_stringshare_del(wd->label);
    free(wd);
 }
 
 static void
 _theme_hook(Evas_Object *obj)
 {
+   Widget_Data *wd = elm_widget_data_get(obj);
+   _elm_theme_set(wd->lbl, "label", "base", "default");
+   edje_object_part_text_set(wd->lbl, "elm.text", wd->label);
    _sizing_eval(obj);
 }
 
@@ -53,7 +58,10 @@ elm_label_add(Evas_Object *parent)
    
    wd->lbl = edje_object_add(e);
    _elm_theme_set(wd->lbl, "label", "base", "default");
+   wd->label = eina_stringshare_add("<br>");
+   edje_object_part_text_set(wd->lbl, "elm.text", "<br>");
    elm_widget_resize_object_set(obj, wd->lbl);
+   _sizing_eval(obj);
    return obj;
 }
 
@@ -61,6 +69,9 @@ EAPI void
 elm_label_label_set(Evas_Object *obj, const char *label)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!label) label = "";
+   if (wd->label) eina_stringshare_del(wd->label);
+   wd->label = eina_stringshare_add(label);
    edje_object_part_text_set(wd->lbl, "elm.text", label);
    _sizing_eval(obj);
 }

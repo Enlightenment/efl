@@ -340,7 +340,9 @@ elm_entry_add(Evas_Object *parent)
    edje_object_signal_callback_add(wd->ent, "anchor,mouse,in,*", "elm.text", _signal_anchor_in, obj);
    edje_object_signal_callback_add(wd->ent, "anchor,mouse,out,*", "elm.text", _signal_anchor_out, obj);
    edje_object_signal_callback_add(wd->ent, "entry,key,enter", "elm.text", _signal_key_enter, obj);
+   edje_object_part_text_set(wd->ent, "elm.text", "<br>");
    elm_widget_resize_object_set(obj, wd->ent);
+   _sizing_eval(obj);
    return obj;
 }
 
@@ -381,6 +383,7 @@ EAPI void
 elm_entry_entry_set(Evas_Object *obj, const char *entry)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!entry) entry = "<br>";
    edje_object_part_text_set(wd->ent, "elm.text", entry);
    // debug
 #if 0
