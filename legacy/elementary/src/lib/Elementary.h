@@ -295,7 +295,7 @@ extern "C" {
 // * entry click below text doesnt put cursor at end
 // * bubble should allow style (left/right + top/bottom)
 // * need separator widget (h/v)
-// * need slid-open "panel" that can hold stuff and optionally scroll
+// * need slide-open "panel" that can hold stuff and optionally scroll
 // * need "photoframe" widget (for contact photos?)
 // * need calendar widget (select date)
 // * need multi-sel (with button + hover + ...)
@@ -311,8 +311,7 @@ extern "C" {
 // * need imageview widget (for large not iconic images)
 // * tiled image + zoom widget (tiled map viewer)
 // * dialpad widget - need one with a phone dialpad
-// * scale property from e - watch for changes. also allow for env var option
-// * on the fly theme changes - test
+// * on the fly theme changes - test (should work)
 // * single line entry on scale change adds newlines
 // * scale change for hover doesnt seem to do new size alloc nicely
 // * left/right arrow broken with password mode for entry
