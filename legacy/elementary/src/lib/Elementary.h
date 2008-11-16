@@ -293,7 +293,7 @@ extern "C" {
 // * checkbox widget (like toggle)
 // * entry needs to support setting selection to all, or clearing
 // * entry click below text doesnt put cursor at end
-// * bubble maybe needs icon + label at top?
+// * bubble should allow style (left/right + top/bottom)
 // * need separator widget (h/v)
 // * need slid-open "panel" that can hold stuff and optionally scroll
 // * need "photoframe" widget (for contact photos?)
