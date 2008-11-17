@@ -273,8 +273,7 @@ static Evas_Object *
 _evas_object_box_remove_at_default(Evas_Object *o, Evas_Object_Box_Data *priv, unsigned int pos)
 {
    const Evas_Object_Box_Api *api;
-   Eina_List *l;
-   int i;
+   Eina_List *node;
 
    api = priv->api;
 
@@ -285,21 +284,19 @@ _evas_object_box_remove_at_default(Evas_Object *o, Evas_Object_Box_Data *priv, u
         return NULL;
      }
 
-   for (l = priv->children, i = 0; l != NULL; l = l->next, i++)
+   node = eina_list_nth_list(priv->children, pos);
+   if (!node)
      {
-	Evas_Object_Box_Option *opt = l->data;
-        Evas_Object *obj = opt->obj;
-
-        if (i == pos)
-	  {
-	     priv->children = eina_list_remove(priv->children, opt);
-	     api->option_free(o, priv, opt);
-
-	     return obj;
-	  }
+	fprintf(stderr, "ERROR: no item to be removed at position %d\n", pos);
+	return NULL;
      }
 
-   return NULL;
+   Evas_Object_Box_Option *opt = node->data;
+   Evas_Object *obj = opt->obj;
+
+   priv->children = eina_list_remove_list(priv->children, node);
+   api->option_free(o, priv, opt);
+   return obj;
 }
 
 static void
