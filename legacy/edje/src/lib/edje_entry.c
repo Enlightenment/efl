@@ -1060,13 +1060,19 @@ _edje_part_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
    if (!evas_textblock_cursor_char_coord_set(en->cursor, en->cx, en->cy))
      {
 	Evas_Coord lx, ly, lw, lh;
+        int line;
 	
-	evas_textblock_cursor_line_coord_set(en->cursor, en->cy);
-	evas_textblock_cursor_line_geometry_get(en->cursor, &lx, &ly, &lw, &lh);
-	if (en->cx <= lx)
-	  _curs_lin_start(en->cursor, rp->object, en);
-	else
-	  _curs_lin_end(en->cursor, rp->object, en);
+	line = evas_textblock_cursor_line_coord_set(en->cursor, en->cy);
+        if (line == -1)
+          _curs_end(en->cursor, rp->object, en);
+        else
+          {
+             evas_textblock_cursor_line_geometry_get(en->cursor, &lx, &ly, &lw, &lh);
+             if (en->cx <= lx)
+               _curs_lin_start(en->cursor, rp->object, en);
+             else
+               _curs_lin_end(en->cursor, rp->object, en);
+          }
      }
    en->selecting = 1;
    _sel_clear(en->cursor, rp->object, en);
