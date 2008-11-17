@@ -587,6 +587,12 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 	     ed->load_error = EDJE_LOAD_ERROR_NONE;
 	     _edje_emit(ed, "load", NULL);
 	  }
+        // this has to be here to textblock works! otherwise textblock objects
+        // don't have styles. withotu styles textblock doesnt know how to
+        // convert markup to format nodes+text - so if u append or modify the
+        // text by appending format or text nodes, you lose the markup as it
+        // has no idea what to do. this forces at least a style to be applied
+        edje_object_calc_force(obj);
 	return 1;
      }
    else

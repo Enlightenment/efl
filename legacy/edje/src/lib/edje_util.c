@@ -919,7 +919,7 @@ edje_object_part_text_get(const Evas_Object *obj, const char *part)
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return NULL;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-	return _edje_entry_text_get(rp);
+     return _edje_entry_text_get(rp);
    else
      {
 	if (rp->part->type == EDJE_PART_TYPE_TEXT) return rp->text.text;

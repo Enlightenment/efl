@@ -273,6 +273,8 @@ _sel_clear(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 	Sel *sel;
 	
 	sel = en->sel->data;
+        en->rp->edje->subobjs = eina_list_remove(en->rp->edje->subobjs, sel->obj_bg);
+        en->rp->edje->subobjs = eina_list_remove(en->rp->edje->subobjs, sel->obj_fg);
 	if (sel->obj_bg) evas_object_del(sel->obj_bg);
 	if (sel->obj_fg) evas_object_del(sel->obj_fg);
 	free(sel);
@@ -302,6 +304,8 @@ _sel_update(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 	while (en->sel)
 	  {
 	     sel = en->sel->data;
+             en->rp->edje->subobjs = eina_list_remove(en->rp->edje->subobjs, sel->obj_bg);
+             en->rp->edje->subobjs = eina_list_remove(en->rp->edje->subobjs, sel->obj_fg);
 	     if (sel->obj_bg) evas_object_del(sel->obj_bg);
 	     if (sel->obj_fg) evas_object_del(sel->obj_fg);
 	     free(sel);
@@ -323,6 +327,8 @@ _sel_update(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 		  evas_object_pass_events_set(ob, 1);
 		  evas_object_show(ob);
 		  sel->obj_bg = ob;
+                  en->rp->edje->subobjs = eina_list_append(en->rp->edje->subobjs, sel->obj_bg);
+                  
 		  ob = edje_object_add(en->rp->edje->evas);
 		  edje_object_file_set(ob, en->rp->edje->path, en->rp->part->source2);
 		  evas_object_smart_member_add(ob, smart);
@@ -331,6 +337,7 @@ _sel_update(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 		  evas_object_pass_events_set(ob, 1);
 		  evas_object_show(ob);
 		  sel->obj_fg = ob;
+                  en->rp->edje->subobjs = eina_list_append(en->rp->edje->subobjs, sel->obj_fg);
 	       }
 	  }
      }
@@ -503,6 +510,8 @@ _anchors_update(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 	     while (an->sel)
 	       {
 		  sel = an->sel->data;
+                  en->rp->edje->subobjs = eina_list_remove(en->rp->edje->subobjs, sel->obj_bg);
+                  en->rp->edje->subobjs = eina_list_remove(en->rp->edje->subobjs, sel->obj_fg);
 		  if (sel->obj_bg) evas_object_del(sel->obj_bg);
 		  if (sel->obj_fg) evas_object_del(sel->obj_fg);
 		  if (sel->obj) evas_object_del(sel->obj);
@@ -523,6 +532,8 @@ _anchors_update(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 		  evas_object_pass_events_set(ob, 1);
 		  evas_object_show(ob);
 		  sel->obj_bg = ob;
+                  en->rp->edje->subobjs = eina_list_append(en->rp->edje->subobjs, sel->obj_bg);
+                  
 		  ob = edje_object_add(en->rp->edje->evas);
 		  edje_object_file_set(ob, en->rp->edje->path, en->rp->part->source6);
 		  evas_object_smart_member_add(ob, smart);
@@ -531,6 +542,8 @@ _anchors_update(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 		  evas_object_pass_events_set(ob, 1);
 		  evas_object_show(ob);
 		  sel->obj_fg = ob;
+                  en->rp->edje->subobjs = eina_list_append(en->rp->edje->subobjs, sel->obj_fg);
+                  
 		  ob = evas_object_rectangle_add(en->rp->edje->evas);
 		  evas_object_color_set(ob, 0, 0, 0, 0);
 		  evas_object_smart_member_add(ob, smart);
@@ -590,6 +603,8 @@ _anchors_clear(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 	while (an->sel)
 	  {
 	     Sel *sel = an->sel->data;
+             en->rp->edje->subobjs = eina_list_remove(en->rp->edje->subobjs, sel->obj_bg);
+             en->rp->edje->subobjs = eina_list_remove(en->rp->edje->subobjs, sel->obj_fg);
 	     if (sel->obj_bg) evas_object_del(sel->obj_bg);
 	     if (sel->obj_fg) evas_object_del(sel->obj_fg);
 	     if (sel->obj) evas_object_del(sel->obj);
@@ -1189,6 +1204,7 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
    evas_object_stack_below(en->cursor_bg, rp->object);
    evas_object_clip_set(en->cursor_bg, evas_object_clip_get(rp->object));
    evas_object_pass_events_set(en->cursor_bg, 1);
+   rp->edje->subobjs = eina_list_append(rp->edje->subobjs, en->cursor_bg);
    
    en->cursor_fg = edje_object_add(rp->edje->evas);
    edje_object_file_set(en->cursor_fg, rp->edje->path, rp->part->source4);
@@ -1196,12 +1212,13 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
    evas_object_stack_above(en->cursor_fg, rp->object);
    evas_object_clip_set(en->cursor_fg, evas_object_clip_get(rp->object));
    evas_object_pass_events_set(en->cursor_fg, 1);
+   rp->edje->subobjs = eina_list_append(rp->edje->subobjs, en->cursor_fg);
+   
    if (rp->part->entry_mode >= EDJE_ENTRY_EDIT_MODE_EDITABLE)
      {
 	evas_object_show(en->cursor_bg);
 	evas_object_show(en->cursor_fg);
      }
-   
    en->cursor = evas_object_textblock_cursor_get(rp->object);
 }
 
@@ -1213,6 +1230,8 @@ _edje_entry_real_part_shutdown(Edje_Real_Part *rp)
    rp->entry_data = NULL;
    _sel_clear(en->cursor, rp->object, en);
    _anchors_clear(en->cursor, rp->object, en);
+   rp->edje->subobjs = eina_list_remove(rp->edje->subobjs, en->cursor_bg);
+   rp->edje->subobjs = eina_list_remove(rp->edje->subobjs, en->cursor_fg);
    evas_object_del(en->cursor_bg);
    evas_object_del(en->cursor_fg);
    free(en);

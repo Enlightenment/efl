@@ -629,6 +629,7 @@ struct _Edje
    Edje_Real_Part      **table_parts;
    Edje_Program        **table_programs;
    Edje_Real_Part       *focused_part;
+   Eina_List            *subobjs;
    void                 *script_only_data;
    int                   table_programs_size;
    int                   table_parts_size;
@@ -1238,5 +1239,5 @@ void _edje_entry_set_cursor_end(Edje_Real_Part *rp);
 const Eina_List *_edje_entry_anchor_geometry_get(Edje_Real_Part *rp, const char *anchor);
 const Eina_List *_edje_entry_anchors_list(Edje_Real_Part *rp);
 void _edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
-    
+  
 #endif

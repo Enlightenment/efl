@@ -812,11 +812,22 @@ void
 _edje_emit(Edje *ed, const char *sig, const char *src)
 {
    Edje_Message_Signal emsg;
-
+   Eina_List *l;
+   Evas_Object *obj;
+   
    if (ed->delete_me) return;
    emsg.sig = sig;
    emsg.src = src;
    _edje_message_send(ed, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
+   EINA_LIST_FOREACH(ed->subobjs, l, obj)
+     {
+        Edje *ed2;
+        
+        ed2 = _edje_fetch(obj);
+        if (!ed2) continue;
+        if (ed2->delete_me) continue;
+        _edje_message_send(ed2, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
+     }
 }
 
 struct _Edje_Program_Data
