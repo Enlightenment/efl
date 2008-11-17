@@ -15,7 +15,6 @@ static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void _on_focus_hook(void *data, Evas_Object *obj);
 static void _parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 static void

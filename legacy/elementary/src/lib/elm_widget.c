@@ -443,6 +443,7 @@ elm_widget_focused_object_clear(Evas_Object *obj)
 	  }
      }
    if (sd->focus_func) sd->focus_func(obj);
+   if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
 }
 
 EAPI void

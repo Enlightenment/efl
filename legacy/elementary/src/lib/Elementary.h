@@ -281,19 +281,28 @@ extern "C" {
     */
        
 // FIXME: fixes to do
-// * current sizing tree inefficient
-// * scroller could do with page up/down/left/right buttons and and idea of
-//   a page size
+// (bugs)
+// * entry click below text doesnt put cursor at end
+// * single line entry on scale change adds newlines
+// * scale change for hover doesnt seem to do new size alloc nicely
+// * left/right arrow broken with password mode for entry
+// * for some reason on oe builds of elementary initial text set doesnt work.
+// 
+// (incomplete)
+// * disabled not supported
 // * tab widget focusing (not useful for touchscreen tho...)
-// * entry has no way to show its focused vs other entries
+// * entry needs to support setting selection to all, or clearing
+// * bubble should allow style (left/right + top/bottom)
+// * need to get toplevel
+// * entry needs to set vkbd properties/hint (as does win)
 // * entry selection conflicts with finger scroll
+// * on the fly theme changes - test (should work)
+// 
+// (more widgets/features)
 // * toolbar widget (edje + box + button + separators)
 // * listitem widget (simple label + icon)
 // * radio widget + group handling
 // * checkbox widget (like toggle)
-// * entry needs to support setting selection to all, or clearing
-// * entry click below text doesnt put cursor at end
-// * bubble should allow style (left/right + top/bottom)
 // * need separator widget (h/v)
 // * need slide-open "panel" that can hold stuff and optionally scroll
 // * need "photoframe" widget (for contact photos?)
@@ -301,9 +310,6 @@ extern "C" {
 // * need multi-sel (with button + hover + ...)
 // * need slider widget
 // * need range selector (select range of values from X to Y over an interval)
-// * need a way to filter entry data for entry (eg for phone numbers)
-// * entry needs to set vkbd properties/hint (as does win)
-// * need to get toplevel
 // * need "dialogbutton" widget (bigger button for bottom of wins)
 // * need dialog window widget
 // * need a phone-number widget (hilight country dial prefixes, add flags, 
@@ -311,8 +317,12 @@ extern "C" {
 // * need imageview widget (for large not iconic images)
 // * tiled image + zoom widget (tiled map viewer)
 // * dialpad widget - need one with a phone dialpad
-// * on the fly theme changes - test (should work)
-// * single line entry on scale change adds newlines
-// * scale change for hover doesnt seem to do new size alloc nicely
-// * left/right arrow broken with password mode for entry
+// 
+// (improvements)
+// * widgets should show who is focused (not useful for touchscreen)
+// * scroller could do with page up/down/left/right buttons and and idea of
+//   a page size
+// * current sizing tree inefficient
+// * need a way to filter entry data for entry (eg for phone numbers)
+// 
 #endif
