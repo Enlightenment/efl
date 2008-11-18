@@ -586,13 +586,35 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 	     _edje_unref(ed);
 	     ed->load_error = EDJE_LOAD_ERROR_NONE;
 	     _edje_emit(ed, "load", NULL);
+	     /* instantiate 'internal swallows' */
+	     for (i = 0; i < ed->table_parts_size; i++)
+	       {
+		  Edje_Real_Part *rp;
+		  
+		  rp = ed->table_parts[i];
+                  if ((rp->part->type == EDJE_PART_TYPE_TEXTBLOCK) &&
+                      (rp->part->default_desc))
+                    {
+                       Edje_Style *stl  = NULL;
+                       const char *style;
+                       
+                       style = rp->part->default_desc->text.style;
+                       if (style)
+                         {
+                            EINA_LIST_FOREACH(ed->file->styles, l, stl)
+                              {
+                                 if ((stl->name) && (!strcmp(stl->name, style))) break;
+                                 stl = NULL;
+                              }
+                         }
+                       if (stl)
+                         {
+                            if (evas_object_textblock_style_get(rp->object) != stl->style)
+                              evas_object_textblock_style_set(rp->object, stl->style);
+                         }
+                    }
+               }
 	  }
-        // this has to be here to textblock works! otherwise textblock objects
-        // don't have styles. withotu styles textblock doesnt know how to
-        // convert markup to format nodes+text - so if u append or modify the
-        // text by appending format or text nodes, you lose the markup as it
-        // has no idea what to do. this forces at least a style to be applied
-        edje_object_calc_force(obj);
 	return 1;
      }
    else
