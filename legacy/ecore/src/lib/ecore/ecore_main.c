@@ -8,6 +8,7 @@
 
 #ifdef _WIN32
 # include <winsock2.h>
+# define USER_TIMER_MINIMUM 0x0a
 #endif
 
 #include <math.h>
@@ -303,6 +304,11 @@ _ecore_main_select(double timeout)
      {
 	int sec, usec;
 
+#if _WIN32
+        if (timeout > 0.05)
+          timeout = 0.05;
+#endif
+
 #ifdef FIX_HZ
 	timeout += (0.5 / HZ);
 	sec = (int)timeout;
@@ -459,73 +465,12 @@ _ecore_main_fd_handlers_buf_call(void)
    return ret;
 }
 
-static int
-_ecore_main_win32_message(double timeout)
-{
-#ifdef _WIN32
-   MSG msg;
-
-   if (!finite(timeout))
-     timeout = 0.0;
-
-   if (timeout < 0.0)
-     {
-       for (;;)
-         {
-            if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
-              return 1;
-         }
-     }
-   else
-     {
-        double start;
-        double t;
-
-        start = ecore_time_get();
-        while ((t = ecore_time_get()) < (start + timeout))
-          {
-             if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
-               return 1;
-          }
-     }
-#else
-   timeout = 0.0;
-#endif /* _WIN32 */
-
-   return 0;
-}
-
-static int
-_ecore_main_win32_message_buf_call(void)
-{
-#ifdef _WIN32
-   MSG msg;
-   int ret;
-
-   ret = 0;
-   if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-     {
-        if ((msg.message & 0xffff) < 0xC000)
-          {
-             TranslateMessage(&msg);
-             DispatchMessage(&msg);
-          }
-        ret = 1;
-     }
-
-   return ret;
-#else
-   return 0;
-#endif /* _WIN32 */
-}
-
 static void
 _ecore_main_loop_iterate_internal(int once_only)
 {
    double next_time;
    int    have_event = 0;
    int    have_signal;
-   int    have_msg = 0;
 
    in_main_loop++;
    /* expire any timers */
@@ -544,9 +489,7 @@ _ecore_main_loop_iterate_internal(int once_only)
      {
 	have_event = 1;
 	have_signal = 1;
-	have_msg = 1;
 	_ecore_main_select(0.0);
-	_ecore_main_win32_message(0.0);
 	goto process_events;
      }
    /* call idle enterers ... */
@@ -554,29 +497,25 @@ _ecore_main_loop_iterate_internal(int once_only)
      _ecore_idle_enterer_call();
    else
      {
-	have_event = have_signal = have_msg = 0;
+	have_event = have_signal = 0;
 
 	if (_ecore_main_select(0.0) > 0) have_event = 1;
 
-	if (_ecore_main_win32_message(0.0) > 0) have_msg = 1;
 	if (_ecore_signal_count_get() > 0) have_signal = 1;
 
-	if (have_signal || have_event || have_msg)
+	if (have_signal || have_event)
 	  goto process_events;
      }
 
    /* if these calls caused any buffered events to appear - deal with them */
    while (_ecore_main_fd_handlers_buf_call());
-   while (_ecore_main_win32_message_buf_call());
 
    /* if ther are any - jump to processing them */
    if (_ecore_event_exist())
      {
 	have_event = 1;
 	have_signal = 1;
-	have_msg = 1;
 	_ecore_main_select(0.0);
-	_ecore_main_win32_message(0.0);
 	goto process_events;
      }
    if (once_only)
@@ -601,7 +540,7 @@ _ecore_main_loop_iterate_internal(int once_only)
    if (!_ecore_event_exist())
      {
 	/* init flags */
-	have_event = have_signal = have_msg = 0;
+	have_event = have_signal = 0;
 	next_time = _ecore_timer_next_get();
 	/* no timers */
 	if (next_time < 0)
@@ -610,7 +549,6 @@ _ecore_main_loop_iterate_internal(int once_only)
 	     if (!_ecore_idler_exist())
 	       {
 		  if (_ecore_main_select(-1.0) > 0) have_event = 1;
-		  if (_ecore_main_win32_message(-1.0) > 0) have_msg = 1;
 		  if (_ecore_signal_count_get() > 0) have_signal = 1;
 	       }
 	     /* idlers */
@@ -621,9 +559,8 @@ _ecore_main_loop_iterate_internal(int once_only)
 		       if (!_ecore_idler_call()) goto start_loop;
 		       if (_ecore_event_exist()) break;
 		       if (_ecore_main_select(0.0) > 0) have_event = 1;
-		       if (_ecore_main_win32_message(0.0) > 0) have_msg = 1;
 		       if (_ecore_signal_count_get() > 0) have_signal = 1;
-		       if (have_event || have_signal || have_msg) break;
+		       if (have_event || have_signal) break;
 		       next_time = _ecore_timer_next_get();
 		       if (next_time >= 0) goto start_loop;
 		       if (do_quit) break;
@@ -637,7 +574,6 @@ _ecore_main_loop_iterate_internal(int once_only)
 	     if (!_ecore_idler_exist())
 	       {
 		  if (_ecore_main_select(next_time) > 0) have_event = 1;
-		  if (_ecore_main_win32_message(next_time) > 0) have_msg = 1;
 		  if (_ecore_signal_count_get() > 0) have_signal = 1;
 	       }
 	     /* idlers */
@@ -648,9 +584,8 @@ _ecore_main_loop_iterate_internal(int once_only)
 		       if (!_ecore_idler_call()) goto start_loop;
 		       if (_ecore_event_exist()) break;
 		       if (_ecore_main_select(0.0) > 0) have_event = 1;
-		       if (_ecore_main_win32_message(0.0) > 0) have_msg = 1;
 		       if (_ecore_signal_count_get() > 0) have_signal = 1;
-		       if (have_event || have_signal || have_msg) break;
+		       if (have_event || have_signal) break;
 		       next_time = _ecore_timer_next_get();
 		       if (next_time < 0) goto start_loop;
 		       if (do_quit) break;
@@ -679,8 +614,37 @@ _ecore_main_loop_iterate_internal(int once_only)
 	_ecore_main_fd_handlers_cleanup();
      }
    while (_ecore_main_fd_handlers_buf_call());
-   if (have_msg) _ecore_main_win32_message_buf_call();
-   while (_ecore_main_win32_message_buf_call());
+#if _WIN32
+   {
+      MSG msg;
+      BOOL ret;
+      UINT_PTR TmrID = 0;
+      if ((UINT) (next_time * 1000.0) > USER_TIMER_MINIMUM)
+        {
+           TmrID = SetTimer(NULL, 0, (UINT) (next_time * 1000.0), NULL);
+           ret = GetMessage(&msg, NULL, 0, 0);
+        }
+      else
+        {
+           ret = PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);
+        }
+
+      if (ret)
+        {
+           do
+             {
+                TranslateMessage(&msg);
+                DispatchMessageW(&msg);
+                Sleep(0); /* Give other threads a chance to run */
+             } while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE));
+        }
+
+      if (TmrID)
+        KillTimer(NULL, TmrID);
+   }
+#endif
+
+
 /* ok - too much optimising. let's call idle enterers more often. if we
  * have events that place more events or jobs etc. on the event queue
  * we may never get to call an idle enterer
