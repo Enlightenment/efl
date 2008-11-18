@@ -288,7 +288,6 @@ extern "C" {
 // * single line entry on scale change adds newlines
 // * scale change for hover doesnt seem to do new size alloc nicely
 // * left/right arrow broken with password mode for entry
-// * for some reason on oe builds of elementary initial text set doesnt work.
 // 
 //// (incomplete - medium priority)
 // * disabled not supported
