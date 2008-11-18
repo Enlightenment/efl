@@ -27,13 +27,6 @@ void *alloca (size_t);
 
 #include "edje_private.h"
 
-// FIXME: need a way to propagate emits to selections and cursors (eg for disabled etc.)
-// FIXME: look for anchors <+ a href=X>...</> in nodes - make matching anchor
-//        ranges (2 cursors) AND then make matching acnhor event objects,
-//        capture events on those objects, emit achor mouse,in, mouse,out,
-//        mouse,down and mouse,up 
-// FIXME: apis 's query anchor stuff???, anchor revents
-
 typedef struct _Entry Entry;
 typedef struct _Sel Sel;
 typedef struct _Anchor Anchor;
@@ -1343,6 +1336,27 @@ _edje_entry_set_cursor_end(Edje_Real_Part *rp)
    Entry *en = rp->entry_data;
    if (!en) return;
    _curs_end(en->cursor, rp->object, en);
+}
+
+void
+_edje_entry_select_none(Edje_Real_Part *rp)
+{
+   Entry *en = rp->entry_data;
+   if (!en) return;
+   _sel_clear(en->cursor, rp->object, en);
+}
+
+void
+_edje_entry_select_all(Edje_Real_Part *rp)
+{
+   Entry *en = rp->entry_data;
+   if (!en) return;
+   _sel_clear(en->cursor, rp->object, en);
+   _curs_start(en->cursor, rp->object, en);
+   _sel_enable(en->cursor, rp->object, en);
+   _sel_start(en->cursor, rp->object, en);
+   _curs_end(en->cursor, rp->object, en);
+   _sel_extend(en->cursor, rp->object, en);
 }
 
 const Eina_List *

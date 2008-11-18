@@ -947,6 +947,42 @@ edje_object_part_text_selection_get(const Evas_Object *obj, const char *part)
    return NULL;
 }
 
+/** sets the selection to be none
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ */
+EAPI void
+edje_object_part_text_select_none(const Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     _edje_entry_select_none(rp);
+}
+
+/** sets the selection to be everything
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ */
+EAPI void
+edje_object_part_text_select_all(const Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     _edje_entry_select_all(rp);
+}
+
 /** Inserts the text for an object part just before the cursor position
  * @param obj A valid Evas Object handle
  * @param part The part name

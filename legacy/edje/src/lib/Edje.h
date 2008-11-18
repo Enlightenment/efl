@@ -236,6 +236,9 @@ extern "C" {
    EAPI void         edje_object_part_text_set       (Evas_Object *obj, const char *part, const char *text);
    EAPI const char  *edje_object_part_text_get       (const Evas_Object *obj, const char *part);
    EAPI const char  *edje_object_part_text_selection_get(const Evas_Object *obj, const char *part);
+   EAPI void         edje_object_part_text_select_none(const Evas_Object *obj, const char *part);
+   EAPI void         edje_object_part_text_select_all(const Evas_Object *obj, const char *part);
+       
    EAPI void         edje_object_part_text_insert    (Evas_Object *obj, const char *part, const char *text);
    EAPI Eina_List   *edje_object_part_text_anchor_list_get(const Evas_Object *obj, const char *part);
    EAPI Eina_List   *edje_object_part_text_anchor_geometry_get(const Evas_Object *obj, const char *part, const char *anchor);
