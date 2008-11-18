@@ -28,6 +28,7 @@ struct _Smart_Data
    void          *on_show_region_data;
    void          *data;
    Evas_Coord     rx, ry, rw, rh;
+   int            scroll_hold;
    unsigned char  can_focus : 1;
    unsigned char  child_can_focus : 1;
    unsigned char  focused : 1;
@@ -212,6 +213,11 @@ elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
    API_ENTRY return;
    if (sd->resize_obj)
      {
+        if (!strcmp(evas_object_type_get(sd->resize_obj), SMART_NAME))
+          {
+             Smart_Data *sd2 = evas_object_smart_data_get(sd->resize_obj);
+             if (sd2) sd2->parent_obj = NULL;
+          }
 	evas_object_event_callback_del(sd->resize_obj, EVAS_CALLBACK_DEL, _sub_obj_del);
 	evas_object_event_callback_del(sd->resize_obj, EVAS_CALLBACK_MOUSE_DOWN, _sub_obj_mouse_down);
 	evas_object_smart_member_del(sd->resize_obj);
@@ -219,6 +225,11 @@ elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
    sd->resize_obj = sobj;
    if (sd->resize_obj)
      {
+        if (!strcmp(evas_object_type_get(sd->resize_obj), SMART_NAME))
+          {
+             Smart_Data *sd2 = evas_object_smart_data_get(sd->resize_obj);
+             if (sd2) sd2->parent_obj = obj;
+          }
 	evas_object_clip_set(sobj, evas_object_clip_get(obj));
 	evas_object_smart_member_add(sobj, obj);
 	evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
@@ -280,6 +291,15 @@ elm_widget_focused_object_get(Evas_Object *obj)
 	fobj = elm_widget_focused_object_get(l->data);
 	if (fobj) return fobj;
      }
+   return obj;
+}
+
+EAPI Evas_Object *
+elm_widget_top_get(Evas_Object *obj)
+{
+   Eina_List *l;
+   API_ENTRY return NULL;
+   if (sd->parent_obj) return elm_widget_top_get(sd->parent_obj);
    return obj;
 }
 
@@ -542,6 +562,29 @@ elm_widget_show_region_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_
    if (y) *y = sd->ry;
    if (w) *w = sd->rw;
    if (h) *h = sd->rh;
+}
+
+EAPI void
+elm_widget_scroll_hold_push(Evas_Object *obj)
+{
+   API_ENTRY return;
+   sd->scroll_hold++;
+   if (sd->parent_obj) elm_widget_scroll_hold_push(sd->parent_obj);
+}
+
+EAPI void
+elm_widget_scroll_hold_pop(Evas_Object *obj)
+{
+   API_ENTRY return;
+   sd->scroll_hold--;
+   if (sd->parent_obj) elm_widget_scroll_hold_pop(sd->parent_obj);
+}
+
+EAPI int
+elm_widget_scroll_hold_get(Evas_Object *obj)
+{
+   API_ENTRY return 0;
+   return sd->scroll_hold;
 }
 
 /* local subsystem functions */

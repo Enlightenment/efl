@@ -62,6 +62,7 @@ EAPI void         elm_widget_can_focus_set(Evas_Object *obj, int can_focus);
 EAPI int          elm_widget_can_focus_get(Evas_Object *obj);
 EAPI int          elm_widget_focus_get(Evas_Object *obj);
 EAPI Evas_Object *elm_widget_focused_object_get(Evas_Object *obj);
+EAPI Evas_Object *elm_widget_top_get(Evas_Object *obj);
 EAPI int          elm_widget_focus_jump(Evas_Object *obj, int forward);
 EAPI void         elm_widget_focus_set(Evas_Object *obj, int first);
 EAPI void         elm_widget_focused_object_clear(Evas_Object *obj);
@@ -73,8 +74,10 @@ EAPI void         elm_widget_disabled_set(Evas_Object *obj, int disabled);
 EAPI int          elm_widget_disabled_get(Evas_Object *obj);
 EAPI void         elm_widget_show_region_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 EAPI void         elm_widget_show_region_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
-   
-					 
+EAPI void         elm_widget_scroll_hold_push(Evas_Object *obj);   
+EAPI void         elm_widget_scroll_hold_pop(Evas_Object *obj);   
+EAPI int          elm_widget_scroll_hold_get(Evas_Object *obj);
+    
 extern char *_elm_appname;
 
 extern Elm_Config *_elm_config;

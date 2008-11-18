@@ -101,15 +101,18 @@ static void
 _on_focus_hook(void *data, Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *top = elm_widget_top_get(obj);
    if (elm_widget_focus_get(obj))
      {
         evas_object_focus_set(wd->ent, 1);
         edje_object_signal_emit(wd->ent, "elm,action,focus", "elm");
+        elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
      }
    else
      {
         edje_object_signal_emit(wd->ent, "elm,action,unfocus", "elm");
         evas_object_focus_set(wd->ent, 0);
+        elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
      }
 }
 

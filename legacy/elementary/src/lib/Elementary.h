@@ -69,6 +69,20 @@ extern "C" {
 	ELM_WIN_BASIC,
 	  ELM_WIN_DIALOG_BASIC
      } Elm_Win_Type;
+
+   typedef enum _Elm_Win_Keyboard_Mode
+     {
+	ELM_WIN_KEYBOARD_UNKNOWN,
+          ELM_WIN_KEYBOARD_OFF,
+          ELM_WIN_KEYBOARD_ON,
+          ELM_WIN_KEYBOARD_ALPHA,
+          ELM_WIN_KEYBOARD_NUMERIC,
+          ELM_WIN_KEYBOARD_PIN,
+          ELM_WIN_KEYBOARD_PHONE_NUMBER,
+          ELM_WIN_KEYBOARD_HEX,
+          ELM_WIN_KEYBOARD_TERMINAL,
+          ELM_WIN_KEYBOARD_PASSWORD
+     } Elm_Win_Keyboard_Mode;
    
 /**************************************************************************/   
    /* General calls */
@@ -87,7 +101,8 @@ extern "C" {
    EAPI void         elm_win_shaped_set(Evas_Object *obj, Evas_Bool shaped);
    EAPI void         elm_win_alpha_set(Evas_Object *obj, Evas_Bool alpha);
    EAPI void         elm_win_override_set(Evas_Object *obj, Evas_Bool override);
-// FIXME: implement more of the above calls
+   EAPI void         elm_win_keyboard_mode_set(Evas_Object *obj, Elm_Win_Keyboard_Mode mode);
+   EAPI void         elm_win_keyboard_win_set(Evas_Object *obj, Evas_Bool is_keyboard);
    /* smart callbacks called:
     * "delete-request" - the user requested to delete the window
     */
@@ -295,11 +310,10 @@ extern "C" {
 // * disabled not supported
 // * tab widget focusing (not useful for touchscreen tho...)
 // * bubble should allow style (left/right + top/bottom)
-// * need to get toplevel object (win)
-// * entry needs to set vkbd properties/hint (as does win)
-// * entry selection conflicts with finger scroll (make selection start/stop work on signals?)
 // * on the fly theme changes - test (should work)
 // * entry doesnt talk with x copy & paste at all
+// * entry selection conflicts with finger scroll (make selection start/stop work on signals?)
+// * need a hold-scroll counter in elm_widget
 // 
 //// (more widgets/features - medium priority)
 // * toolbar widget (edje + box + button + separators)
@@ -327,5 +341,8 @@ extern "C" {
 //   a page size
 // * current sizing tree inefficient
 // * need a way to filter entry data for entry (eg for phone numbers)
+// * win should emit signals based on vkbd type - if it gets a message and is a vkbd win
+// * win needs a way of setting aspect too
+// * use the wrong call on the wrong widget and *BOOM*
 // 
 #endif

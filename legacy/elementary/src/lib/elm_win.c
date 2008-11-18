@@ -13,8 +13,10 @@ struct _Elm_Win
    Ecore_X_Window  xwin;
    Ecore_Job      *deferred_resize_job;
    Ecore_Job      *deferred_child_eval_job;
-   Elm_Win_Type    type;
-   Evas_Bool       autodel : 1;
+   
+   Elm_Win_Type          type;
+   Elm_Win_Keyboard_Mode kbdmode;
+   Evas_Bool             autodel : 1;
 };
 
 static void _elm_win_resize(Ecore_Evas *ee);
@@ -270,7 +272,9 @@ _elm_win_xwin_update(Elm_Win *win)
 	     break;
 	  }
      }
-
+   if (win->xwin)
+     ecore_x_e_virtual_keyboard_state_set
+     (win->xwin, (Ecore_X_Virtual_Keyboard_State)win->kbdmode);
 }
 
 static void
@@ -528,4 +532,66 @@ elm_win_override_set(Evas_Object *obj, Evas_Bool override)
    if (!win) return;
    ecore_evas_override_set(win->ee, override);
    _elm_win_xwin_update(win);
+}
+
+EAPI void
+elm_win_keyboard_mode_set(Evas_Object *obj, Elm_Win_Keyboard_Mode mode)
+{
+   Elm_Win *win = evas_object_data_get(obj, "__Elm");
+   if (!win) return;
+   if (mode == win->kbdmode) return;
+   win->xwin = 0;
+   switch (_elm_config->engine)
+     {
+      case ELM_SOFTWARE_X11:
+	if (win->ee) win->xwin = ecore_evas_software_x11_window_get(win->ee);
+	break;
+      case ELM_SOFTWARE_FB:
+	break;
+      case ELM_SOFTWARE_16_X11:
+	if (win->ee) win->xwin = ecore_evas_software_x11_16_window_get(win->ee);
+	break;
+      case ELM_XRENDER_X11:
+	if (win->ee) win->xwin = ecore_evas_xrender_x11_window_get(win->ee);
+	break;
+      case ELM_OPENGL_X11:
+	if (win->ee) win->xwin = ecore_evas_gl_x11_window_get(win->ee);
+	break;
+      default:
+	break;
+     }
+   win->kbdmode = mode;
+   if (win->xwin)
+     ecore_x_e_virtual_keyboard_state_set
+     (win->xwin, (Ecore_X_Virtual_Keyboard_State)win->kbdmode);
+}
+
+EAPI void
+elm_win_keyboard_win_set(Evas_Object *obj, Evas_Bool is_keyboard)
+{
+   Elm_Win *win = evas_object_data_get(obj, "__Elm");
+   if (!win) return;
+   win->xwin = 0;
+   switch (_elm_config->engine)
+     {
+      case ELM_SOFTWARE_X11:
+	if (win->ee) win->xwin = ecore_evas_software_x11_window_get(win->ee);
+	break;
+      case ELM_SOFTWARE_FB:
+	break;
+      case ELM_SOFTWARE_16_X11:
+	if (win->ee) win->xwin = ecore_evas_software_x11_16_window_get(win->ee);
+	break;
+      case ELM_XRENDER_X11:
+	if (win->ee) win->xwin = ecore_evas_xrender_x11_window_get(win->ee);
+	break;
+      case ELM_OPENGL_X11:
+	if (win->ee) win->xwin = ecore_evas_gl_x11_window_get(win->ee);
+	break;
+      default:
+	break;
+     }
+   if (win->xwin)
+     ecore_x_e_virtual_keyboard_set
+     (win->xwin, is_keyboard);
 }
