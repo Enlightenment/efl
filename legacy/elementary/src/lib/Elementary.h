@@ -200,6 +200,9 @@ extern "C" {
    EAPI void         elm_entry_entry_insert(Evas_Object *obj, const char *entry);
    EAPI void         elm_entry_line_wrap_set(Evas_Object *obj, Evas_Bool wrap);
    EAPI void         elm_entry_editable_set(Evas_Object *obj, Evas_Bool editable);
+   EAPI void         elm_entry_select_none(Evas_Object *obj);
+   EAPI void         elm_entry_select_all(Evas_Object *obj);
+       
    /* smart callbacks called:
     * "changed" - the text content changed
     * "selection,start" - the user started selecting text
@@ -285,19 +288,18 @@ extern "C" {
 ////////////////////////
 // 
 //// (bugs - high priority)
-// * single line entry on scale change adds newlines
 // * scale change for hover doesnt seem to do new size alloc nicely
-// * left/right arrow broken with password mode for entry
+// * left/right arrow broken with password mode for entry + utf8 chars...
 // 
 //// (incomplete - medium priority)
 // * disabled not supported
 // * tab widget focusing (not useful for touchscreen tho...)
-// * entry needs to support setting selection to all, or clearing
 // * bubble should allow style (left/right + top/bottom)
 // * need to get toplevel object (win)
 // * entry needs to set vkbd properties/hint (as does win)
-// * entry selection conflicts with finger scroll
+// * entry selection conflicts with finger scroll (make selection start/stop work on signals?)
 // * on the fly theme changes - test (should work)
+// * entry doesnt talk with x copy & paste at all
 // 
 //// (more widgets/features - medium priority)
 // * toolbar widget (edje + box + button + separators)

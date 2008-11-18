@@ -2950,7 +2950,7 @@ collections {
 	    description { state: "default" 0.0;
 	       text {
 		  style: "entry_single_textblock_style";
-		  repch: "●";
+		  repch: "*";
 		  min: 1 1;
 	       }
 	    }

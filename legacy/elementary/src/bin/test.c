@@ -769,6 +769,7 @@ my_bt_14(void *data, Evas_Object *obj, void *event_info)
    elm_entry_entry_set(en, "This is a single line");
    evas_object_size_hint_weight_set(en, 1.0, 0.0);
    evas_object_size_hint_align_set(en, -1.0, 0.0);
+   elm_entry_select_all(en);
    elm_scroller_content_set(sc, en);
    evas_object_show(en);
 

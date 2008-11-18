@@ -30,10 +30,13 @@ static void _signal_entry_copy_notify(void *data, Evas_Object *obj, const char *
 static void _signal_entry_cut_notify(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _signal_cursor_changed(void *data, Evas_Object *obj, const char *emission, const char *source);
 
+static Eina_List *entries = NULL;
+
 static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   entries = eina_list_remove(entries, obj);
    if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
    free(wd);
 }
@@ -165,7 +168,12 @@ static void
 _signal_selection_start(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   Eina_List *l;
    evas_object_smart_callback_call(data, "selection,start", NULL);
+   for (l = entries; l; l = l->next)
+     {
+        if (l->data != data) elm_entry_select_none(l->data);
+     }
    // FIXME: x clipboard/copy & paste - do
 }
 
@@ -352,6 +360,7 @@ elm_entry_add(Evas_Object *parent)
    edje_object_part_text_set(wd->ent, "elm.text", "<br>");
    elm_widget_resize_object_set(obj, wd->ent);
    _sizing_eval(obj);
+   entries = eina_list_prepend(entries, obj);
    return obj;
 }
 
@@ -458,4 +467,18 @@ elm_entry_editable_set(Evas_Object *obj, Evas_Bool editable)
    elm_entry_entry_set(obj, t);
    if (t) free(t);
    _sizing_eval(obj);
+}
+
+EAPI void
+elm_entry_select_none(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   edje_object_part_text_select_none(wd->ent, "elm.text");
+}
+
+EAPI void
+elm_entry_select_all(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   edje_object_part_text_select_all(wd->ent, "elm.text");
 }
