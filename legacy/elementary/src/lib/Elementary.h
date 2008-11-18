@@ -279,26 +279,28 @@ extern "C" {
    EAPI void         elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon);
    /* smart callbacks called:
     */
-       
-// FIXME: fixes to do
-// (bugs)
-// * entry click below text doesnt put cursor at end
+
+  ////////////////////////
+ /// FIXME: TODO LIST ///
+////////////////////////
+// 
+//// (bugs - high priority)
 // * single line entry on scale change adds newlines
 // * scale change for hover doesnt seem to do new size alloc nicely
 // * left/right arrow broken with password mode for entry
 // * for some reason on oe builds of elementary initial text set doesnt work.
 // 
-// (incomplete)
+//// (incomplete - medium priority)
 // * disabled not supported
 // * tab widget focusing (not useful for touchscreen tho...)
 // * entry needs to support setting selection to all, or clearing
 // * bubble should allow style (left/right + top/bottom)
-// * need to get toplevel
+// * need to get toplevel object (win)
 // * entry needs to set vkbd properties/hint (as does win)
 // * entry selection conflicts with finger scroll
 // * on the fly theme changes - test (should work)
 // 
-// (more widgets/features)
+//// (more widgets/features - medium priority)
 // * toolbar widget (edje + box + button + separators)
 // * listitem widget (simple label + icon)
 // * radio widget + group handling
@@ -318,7 +320,7 @@ extern "C" {
 // * tiled image + zoom widget (tiled map viewer)
 // * dialpad widget - need one with a phone dialpad
 // 
-// (improvements)
+//// (improvements - low priority)
 // * widgets should show who is focused (not useful for touchscreen)
 // * scroller could do with page up/down/left/right buttons and and idea of
 //   a page size
