@@ -459,6 +459,12 @@ _ecore_evas_constructor_software_16_wince_gapi(int x, int y, int w, int h, const
 {
    return ecore_evas_software_wince_gapi_new(NULL, x, y, w, h);
 }
+
+static Ecore_Evas *
+_ecore_evas_constructor_software_16_wince_gdi(int x, int y, int w, int h, const char *extra_options)
+{
+   return ecore_evas_software_wince_gdi_new(NULL, x, y, w, h);
+}
 #endif
 
 #ifdef BUILD_ECORE_EVAS_BUFFER
@@ -514,6 +520,7 @@ static const struct ecore_evas_engine _engines[] = {
   {"software_16_wince", _ecore_evas_constructor_software_16_wince},
   {"software_16_wince_fb", _ecore_evas_constructor_software_16_wince_fb},
   {"software_16_wince_gapi", _ecore_evas_constructor_software_16_wince_gapi},
+  {"software_16_wince_gdi", _ecore_evas_constructor_software_16_wince_gdi},
 #endif
 
   /* Last chance to have a window */

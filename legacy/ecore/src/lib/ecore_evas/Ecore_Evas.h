@@ -226,6 +226,12 @@ EAPI Ecore_Evas     *ecore_evas_software_wince_ddraw_new(Ecore_WinCE_Window *par
                                                          int                 width,
                                                          int                 height);
 
+EAPI Ecore_Evas     *ecore_evas_software_wince_gdi_new(Ecore_WinCE_Window *parent,
+                                                       int                 x,
+                                                       int                 y,
+                                                       int                 width,
+                                                       int                 height);
+
 EAPI Ecore_WinCE_Window *ecore_evas_software_wince_window_get(const Ecore_Evas *ee);
 
 /* generic manipulation calls */
