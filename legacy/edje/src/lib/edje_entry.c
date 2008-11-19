@@ -1051,12 +1051,17 @@ _edje_part_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
    Evas_Coord x, y, w, h;
    Evas_Bool multiline;
    Evas_Textblock_Cursor *tc;
-   if (ev->button != 1) return;
    if (!rp) return;
    en = rp->entry_data;
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_SELECTABLE))
      return;
+   if (ev->button == 2)
+     {
+	_edje_emit(rp->edje, "entry,paste,request", rp->part->name);
+        return;
+     }
+   if (ev->button != 2) return;
    // double click -> select word
    // triple click -> select line
    tc = evas_object_textblock_cursor_new(rp->object);
