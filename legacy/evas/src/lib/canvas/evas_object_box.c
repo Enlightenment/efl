@@ -1927,6 +1927,7 @@ evas_object_box_remove(Evas_Object *o, Evas_Object *child)
      {
         _evas_object_box_child_callbacks_unregister(obj);
         evas_object_smart_member_del(obj);
+        evas_object_smart_changed(o);
         return 1;
      }
 
@@ -1957,6 +1958,7 @@ evas_object_box_remove_at(Evas_Object *o, unsigned int pos)
      {
         _evas_object_box_child_callbacks_unregister(obj);
         evas_object_smart_member_del(obj);
+        evas_object_smart_changed(o);
         return 1;
      }
 
@@ -2043,7 +2045,11 @@ evas_object_box_option_property_vset(Evas_Object *o, Evas_Object_Box_Option *opt
    if ((!api) || (!api->property_set))
      return 0;
 
-   return api->property_set(o, opt, property, args);
+   if (!api->property_set(o, opt, property, args))
+     return 0;
+
+   evas_object_smart_changed(o);
+   return 1;
 }
 
 /**
