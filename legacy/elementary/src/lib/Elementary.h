@@ -103,6 +103,8 @@ extern "C" {
    EAPI void         elm_win_override_set(Evas_Object *obj, Evas_Bool override);
    EAPI void         elm_win_keyboard_mode_set(Evas_Object *obj, Elm_Win_Keyboard_Mode mode);
    EAPI void         elm_win_keyboard_win_set(Evas_Object *obj, Evas_Bool is_keyboard);
+   /* X specific calls - won't work on non-x engines (return 0) */
+   EAPI Ecore_X_Window elm_win_xwindow_get(Evas_Object *obj);   
    /* smart callbacks called:
     * "delete-request" - the user requested to delete the window
     */
@@ -298,9 +300,9 @@ extern "C" {
    /* smart callbacks called:
     */
 
-  ////////////////////////
- /// FIXME: TODO LIST ///
-////////////////////////
+  ////////////////////////////////////////////////////////////////////////////
+ /// FIXME: TODO LIST ///////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
 // 
 //// (bugs - high priority)
 // * scale change for hover doesnt seem to do new size alloc nicely
@@ -345,4 +347,5 @@ extern "C" {
 // * win needs a way of setting aspect too
 // * use the wrong call on the wrong widget and *BOOM*
 // 
+//////////////////////////////////////////////////////////////////////////////
 #endif

@@ -6,13 +6,18 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *ent;
+   Ecore_Job *deferred_recalc_job;
+   Ecore_Event_Handler *sel_notify_handler; 
+   Ecore_Event_Handler *sel_clear_handler;
+   const char *cut_sel;
    Evas_Coord lastw;
    Evas_Bool changed : 1;
    Evas_Bool linewrap : 1;
    Evas_Bool single_line : 1;
    Evas_Bool password : 1;
    Evas_Bool editable : 1;
-   Ecore_Job *deferred_recalc_job;
+   Evas_Bool selection_asked : 1;
+   Evas_Bool have_selection : 1;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -37,6 +42,9 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    entries = eina_list_remove(entries, obj);
+   ecore_event_handler_del(wd->sel_notify_handler);
+   ecore_event_handler_del(wd->sel_clear_handler);
+   if (wd->cut_sel) eina_stringshare_del(wd->cut_sel);
    if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
    free(wd);
 }
@@ -46,7 +54,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    char *t;
-   t = elm_entry_entry_get(obj);
+   t = (char *)elm_entry_entry_get(obj);
    if (t) t = strdup(t);
    _elm_theme_set(wd->ent, "entry", _getbase(obj), "default");
    elm_entry_entry_set(obj, t);
@@ -158,6 +166,181 @@ _getbase(Evas_Object *obj)
    return "base";
 }
 
+static char *
+_str_append(char *str, const char *txt, int *len, int *alloc)
+{
+   int txt_len = strlen(txt);
+   if (txt_len <= 0) return str;
+   if ((*len + txt_len) >= *alloc)
+     {
+        char *str2;
+        int alloc2;
+        
+        alloc2 = *alloc + txt_len + 128;
+        str2 = realloc(str, alloc2);
+        if (!str2) return str;
+        *alloc = alloc2;
+        str = str2;
+     }
+   strcpy(str + *len, txt);
+   *len += txt_len;
+   return str;
+}
+
+static char *
+_mkup_to_text(const char *mkup)
+{
+   char *str = NULL;
+   int str_len = 0, str_alloc = 0;
+   // FIXME: markup -> text
+   char *s, *p;
+   char *tag_start, *tag_end, *esc_start, *esc_end, *ts;
+   
+   tag_start = tag_end = esc_start = esc_end = NULL;
+   p = (char *)mkup;
+   s = p;
+   for (;;)
+     {
+        if ((*p == 0) ||
+            (tag_end) || (esc_end) ||
+            (tag_start) || (esc_start))
+          {
+             if (tag_end)
+               {
+                  char *ttag, *match;
+                  
+                  ttag = malloc(tag_end - tag_start);
+                  if (ttag)
+                    {
+                       strncpy(ttag, tag_start + 1, tag_end - tag_start - 1);
+                       ttag[tag_end - tag_start - 1] = 0;
+                       if (!strcmp(ttag, "br"))
+                         str = _str_append(str, "\n", &str_len, &str_alloc);
+                       else if (!strcmp(ttag, "\n"))
+                         str = _str_append(str, "\n", &str_len, &str_alloc);
+                       else if (!strcmp(ttag, "\\n"))
+                         str = _str_append(str, "\n", &str_len, &str_alloc);
+                       else if (!strcmp(ttag, "\t"))
+                         str = _str_append(str, "\t", &str_len, &str_alloc);
+                       else if (!strcmp(ttag, "\\t"))
+                         str = _str_append(str, "\t", &str_len, &str_alloc);
+                       free(ttag);
+                    }
+                  tag_start = tag_end = NULL;
+               }
+             else if (esc_end)
+               {
+                  ts = malloc(esc_end - esc_start + 1);
+                  if (ts)
+                    {
+                       const char *esc;
+                       strncpy(ts, esc_start, esc_end - esc_start); 
+                       ts[esc_end - esc_start] = 0;
+                       esc = evas_textblock_escape_string_get(ts);
+                       if (esc)
+                         str = _str_append(str, esc, &str_len, &str_alloc);
+                       free(ts);
+                    }
+                  esc_start = esc_end = NULL;
+               }
+             else if (*p == 0)
+               {
+                  ts = malloc(p - s + 1);
+                  if (ts)
+                    {
+                       strncpy(ts, s, p - s);
+                       ts[p - s] = 0;
+                       str = _str_append(str, ts, &str_len, &str_alloc);
+                       free(ts);
+                    }
+                  s = NULL;
+               }
+             if (*p == 0)
+               break;
+          }
+        if (*p == '<')
+          {
+             if (!esc_start)
+               {
+                  tag_start = p;
+                  tag_end = NULL;
+                  ts = malloc(p - s + 1);
+                  if (ts)
+                    {
+                       strncpy(ts, s, p - s);
+                       ts[p - s] = 0;
+                       str = _str_append(str, ts, &str_len, &str_alloc);
+                       free(ts);
+                    }
+                  s = NULL;
+               }
+          }
+        else if (*p == '>')
+          {
+             if (tag_start)
+               {
+                  tag_end = p;
+                  s = p + 1;
+               }
+          }
+        else if (*p == '&')
+          {
+             if (!tag_start)
+               {
+                  esc_start = p;
+                  esc_end = NULL;
+                  ts = malloc(p - s + 1);
+                  if (ts)
+                    {
+                       strncpy(ts, s, p - s);
+                       ts[p - s] = 0;
+                       str = _str_append(str, ts, &str_len, &str_alloc);
+                       free(ts);
+                    }
+                  s = NULL;
+               }
+          }
+        else if (*p == ';')
+          {
+             if (esc_start)
+               {
+                  esc_end = p;
+                  s = p + 1;
+               }
+          }
+        p++;
+     }
+   return str;
+}
+
+static char *
+_text_to_mkup(const char *text)
+{
+   char *str = NULL;
+   int str_len = 0, str_alloc = 0;
+   int ch, pos = 0;
+   
+   for (;;)
+     {
+        ch = evas_common_font_utf8_get_next((unsigned char *)(text), &pos);
+        if (ch <= 0) break;
+        if (ch == '\n') str = _str_append(str, "<br>", &str_len, &str_alloc);
+        else if (ch == '\t') str = _str_append(str, "<\t>", &str_len, &str_alloc);
+        else
+          {
+             int pos2;
+             char tstr[16];
+             
+             pos2 = pos;
+             ch = evas_common_font_utf8_get_next((unsigned char *)(text), &pos2);
+             strncpy(tstr, text + pos, pos2 - pos);
+             tstr[pos2 - pos] = 0;
+             str = _str_append(str, tstr, &str_len, &str_alloc);
+          }
+     }
+   return str;
+}
+
 static void
 _signal_entry_changed(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
@@ -172,28 +355,64 @@ _signal_selection_start(void *data, Evas_Object *obj, const char *emission, cons
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Eina_List *l;
-   evas_object_smart_callback_call(data, "selection,start", NULL);
    for (l = entries; l; l = l->next)
      {
         if (l->data != data) elm_entry_select_none(l->data);
      }
-   // FIXME: x clipboard/copy & paste - do
+   wd->have_selection = 1;
+   evas_object_smart_callback_call(data, "selection,start", NULL);
+   if (wd->sel_notify_handler)
+     {
+        char *txt = _mkup_to_text(elm_entry_selection_get(data));
+        if (txt)
+          {
+             ecore_x_selection_primary_set
+               (elm_win_xwindow_get(elm_widget_top_get(data)),
+                txt, strlen(txt));
+             free(txt);
+          }
+     } 
 }
 
 static void
 _signal_selection_changed(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   wd->have_selection = 1;
    evas_object_smart_callback_call(data, "selection,changed", NULL);
-   // FIXME: x clipboard/copy & paste - do
+   if (wd->sel_notify_handler)
+     {
+        char *txt = _mkup_to_text(elm_entry_selection_get(data));
+        if (txt)
+          {
+             ecore_x_selection_primary_set
+               (elm_win_xwindow_get(elm_widget_top_get(data)),
+                txt, strlen(txt));
+             free(txt);
+          }
+     }
 }
 
 static void
 _signal_selection_cleared(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd->have_selection) return;
+   wd->have_selection = 0;
    evas_object_smart_callback_call(data, "selection,cleared", NULL);
-   // FIXME: x clipboard/copy & paste - do
+   if (wd->sel_notify_handler)
+     {
+        if (wd->cut_sel)
+          {
+             ecore_x_selection_primary_set
+               (elm_win_xwindow_get(elm_widget_top_get(data)),
+                wd->cut_sel, strlen(wd->cut_sel));
+             eina_stringshare_del(wd->cut_sel);
+             wd->cut_sel = NULL;
+          }
+        else
+          ecore_x_selection_primary_clear();
+     }
 }
 
 static void
@@ -201,7 +420,13 @@ _signal_entry_paste_request(void *data, Evas_Object *obj, const char *emission, 
 {
    Widget_Data *wd = elm_widget_data_get(data);
    evas_object_smart_callback_call(data, "selection,paste", NULL);
-   // FIXME: x clipboard/copy and paste - request
+   if (wd->sel_notify_handler)
+     {
+        ecore_x_selection_primary_request
+          (elm_win_xwindow_get(elm_widget_top_get(data)),
+           ECORE_X_SELECTION_TARGET_UTF8_STRING);
+        wd->selection_asked = 1;
+     }
 }
 
 static void
@@ -209,17 +434,25 @@ _signal_entry_copy_notify(void *data, Evas_Object *obj, const char *emission, co
 {
    Widget_Data *wd = elm_widget_data_get(data);
    evas_object_smart_callback_call(data, "selection,copy", NULL);
-   // FIXME: x clipboard/copy & paste - do
 }
 
 static void
 _signal_entry_cut_notify(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   char *txt;
    evas_object_smart_callback_call(data, "selection,cut", NULL);
+   if (wd->cut_sel) eina_stringshare_del(wd->cut_sel);
+   wd->cut_sel = NULL;
+   txt = _mkup_to_text(elm_entry_selection_get(data));
+   if (txt)
+     {
+        wd->cut_sel = eina_stringshare_add(txt);
+        free(txt);
+     }
+   edje_object_part_text_insert(wd->ent, "elm.text", "");
    wd->changed = 1;
    _sizing_eval(data);
-   // FIXME: x clipboard/copy & paste - do
 }
 
 static void
@@ -228,10 +461,7 @@ _signal_cursor_changed(void *data, Evas_Object *obj, const char *emission, const
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord cx, cy, cw, ch;
    evas_object_smart_callback_call(data, "cursor,changed", NULL);
-   // FIXME: handle auto-scroll within parent (get cursor - if not visible
-   // jump so it is)
    edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text", &cx, &cy, &cw, &ch);
-//   printf("CURSOR: @%i+%i %ix%i\n", cx, cy, cw, ch);
    elm_widget_show_region_set(data, cx, cy, cw, ch);
 }
 
@@ -239,7 +469,6 @@ static void
 _signal_anchor_down(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-//   printf("DOWN %s\n", emission);
 }
 
 static void
@@ -249,7 +478,6 @@ _signal_anchor_up(void *data, Evas_Object *obj, const char *emission, const char
    Elm_Entry_Anchor_Info ei;
    char *buf, *buf2, *p, *p2, *n;
    int buflen;
-//   printf("UP %s\n", emission);
    p = strrchr(emission, ',');
    if (p)
      {
@@ -299,21 +527,18 @@ static void
 _signal_anchor_move(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-//   printf("MOVE %s\n", emission);
 }
 
 static void
 _signal_anchor_in(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-//   printf("IN %s\n", emission);
 }
 
 static void
 _signal_anchor_out(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-//   printf("OUT %s\n", emission);
 }
 
 static void
@@ -321,6 +546,49 @@ _signal_key_enter(void *data, Evas_Object *obj, const char *emission, const char
 {
    Widget_Data *wd = elm_widget_data_get(data);
    evas_object_smart_callback_call(data, "activated", NULL);
+}
+
+static int
+_event_selection_notify(void *data, int type, void *event)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Ecore_X_Event_Selection_Notify *ev = event;
+   if (!wd->selection_asked) return 1;
+   if ((ev->selection == ECORE_X_SELECTION_CLIPBOARD) ||
+       (ev->selection == ECORE_X_SELECTION_PRIMARY))
+     {
+        Ecore_X_Selection_Data_Text *text_data;
+        
+        text_data = ev->data;
+        if (text_data->data.content == ECORE_X_SELECTION_CONTENT_TEXT)
+          {
+             if (text_data->text)
+               {
+                  char *txt = _text_to_mkup(text_data->text);
+                  if (txt)
+                    {
+                       elm_entry_entry_insert(data, txt);
+                       free(txt);
+                    }
+               }
+          }
+        wd->selection_asked = 0;
+     }
+   return 1;
+}
+    
+static int
+_event_selection_clear(void *data, int type, void *event)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Ecore_X_Event_Selection_Clear *ev = event;
+   if (!wd->have_selection) return 1;
+   if ((ev->selection == ECORE_X_SELECTION_CLIPBOARD) ||
+       (ev->selection == ECORE_X_SELECTION_PRIMARY))
+     {
+        elm_entry_select_none(data);
+     }
+   return 1;
 }
 
 EAPI Evas_Object *
@@ -363,6 +631,17 @@ elm_entry_add(Evas_Object *parent)
    edje_object_part_text_set(wd->ent, "elm.text", "<br>");
    elm_widget_resize_object_set(obj, wd->ent);
    _sizing_eval(obj);
+
+   if (elm_win_xwindow_get(elm_widget_top_get(parent)) != 0)
+     {
+        wd->sel_notify_handler = 
+          ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY,
+                                  _event_selection_notify, obj);
+        wd->sel_clear_handler = 
+          ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR,
+                                  _event_selection_clear, obj);
+     }
+   
    entries = eina_list_prepend(entries, obj);
    return obj;
 }
@@ -476,6 +755,7 @@ EAPI void
 elm_entry_select_none(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   wd->have_selection = 0;
    edje_object_part_text_select_none(wd->ent, "elm.text");
 }
 
@@ -483,5 +763,6 @@ EAPI void
 elm_entry_select_all(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   wd->have_selection = 1;
    edje_object_part_text_select_all(wd->ent, "elm.text");
 }
