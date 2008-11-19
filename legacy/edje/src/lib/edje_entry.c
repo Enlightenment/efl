@@ -226,6 +226,11 @@ _sel_start(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
    en->sel_end = evas_object_textblock_cursor_new(o);
    evas_textblock_cursor_copy(c, en->sel_start);
    en->have_selection = 0;
+   if (en->selection)
+     {
+	free(en->selection);
+	en->selection = NULL;
+     }
 }
 
 static void
@@ -233,6 +238,11 @@ _sel_enable(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 {
    if (en->have_selection) return;
    en->have_selection = 1;
+   if (en->selection)
+     {
+	free(en->selection);
+	en->selection = NULL;
+     }
    _edje_emit(en->rp->edje, "selection,start", en->rp->part->name);
 }
 
@@ -243,6 +253,11 @@ _sel_extend(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
    _sel_enable(c, o, en);
    if (!evas_textblock_cursor_compare(c, en->sel_end)) return;
    evas_textblock_cursor_copy(c, en->sel_end);
+   if (en->selection)
+     {
+	free(en->selection);
+	en->selection = NULL;
+     }
    _edje_emit(en->rp->edje, "selection,changed", en->rp->part->name);
 }
 
