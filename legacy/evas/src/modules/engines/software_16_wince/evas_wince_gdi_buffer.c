@@ -155,6 +155,7 @@ evas_software_wince_gdi_output_buffer_paste(FB_Output_Buffer *fbob)
                0, 0,
                SRCCOPY);
         DeleteDC(dc);
+        DeleteObject(bitmap);
         ReleaseDC(priv->window, dc2);
 
      }
