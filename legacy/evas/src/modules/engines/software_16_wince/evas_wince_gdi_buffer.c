@@ -41,44 +41,44 @@ evas_software_wince_gdi_init(HWND window,
         return NULL;
      }
 
-  priv->width = GetSystemMetrics(SM_CXSCREEN);
-  priv->height = GetSystemMetrics(SM_CYSCREEN);
+   priv->width = GetSystemMetrics(SM_CXSCREEN);
+   priv->height = GetSystemMetrics(SM_CYSCREEN);
 
-  if ((priv->width != width) ||
-      (priv->height != height))
-    {
-       fprintf (stderr, "[Evas] [Engine] [WinCE GDI] Size mismatch\n");
-       fprintf (stderr, "[Evas] [Engine] [WinCE GDI] asked: %dx%d\n", width, height);
-       fprintf (stderr, "[Evas] [Engine] [WinCE GDI] got  : %dx%d\n", priv->width, priv->height);
-       ReleaseDC(window, priv->dc);
-       free(priv);
-       return NULL;
-    }
+   if ((priv->width != width) ||
+       (priv->height != height))
+     {
+        fprintf (stderr, "[Evas] [Engine] [WinCE GDI] Size mismatch\n");
+        fprintf (stderr, "[Evas] [Engine] [WinCE GDI] asked: %dx%d\n", width, height);
+        fprintf (stderr, "[Evas] [Engine] [WinCE GDI] got  : %dx%d\n", priv->width, priv->height);
+        ReleaseDC(window, priv->dc);
+        free(priv);
+        return NULL;
+     }
 
-  priv->bitmap_info = (BITMAPINFO_16bpp *)malloc(sizeof(BITMAPINFO_16bpp));
-  if (!priv->bitmap_info)
-    {
-       ReleaseDC(window, priv->dc);
-       free(priv);
-       return NULL;
-    }
+   priv->bitmap_info = (BITMAPINFO_16bpp *)malloc(sizeof(BITMAPINFO_16bpp));
+   if (!priv->bitmap_info)
+     {
+        ReleaseDC(window, priv->dc);
+        free(priv);
+        return NULL;
+     }
 
-  priv->bitmap_info->bih.biSize = sizeof(BITMAPINFOHEADER);
-  priv->bitmap_info->bih.biWidth = priv->width;
-  priv->bitmap_info->bih.biHeight = priv->height; /* -h for topdown bitmap ? */
-  priv->bitmap_info->bih.biPlanes = 1;
-  priv->bitmap_info->bih.biSizeImage = 2 * priv->width * priv->height;
-  priv->bitmap_info->bih.biXPelsPerMeter = 0;
-  priv->bitmap_info->bih.biYPelsPerMeter = 0;
-  priv->bitmap_info->bih.biClrUsed = 0;
-  priv->bitmap_info->bih.biClrImportant = 0;
-  priv->bitmap_info->bih.biBitCount = 16;
-  priv->bitmap_info->bih.biCompression = BI_BITFIELDS;
-  priv->bitmap_info->masks[0] = 0x0000f800;
-  priv->bitmap_info->masks[1] = 0x000007e0;
-  priv->bitmap_info->masks[2] = 0x0000001f;
+   priv->bitmap_info->bih.biSize = sizeof(BITMAPINFOHEADER);
+   priv->bitmap_info->bih.biWidth = priv->width;
+   priv->bitmap_info->bih.biHeight = -priv->height;
+   priv->bitmap_info->bih.biPlanes = 1;
+   priv->bitmap_info->bih.biSizeImage = 2 * priv->width * priv->height;
+   priv->bitmap_info->bih.biXPelsPerMeter = 0;
+   priv->bitmap_info->bih.biYPelsPerMeter = 0;
+   priv->bitmap_info->bih.biClrUsed = 0;
+   priv->bitmap_info->bih.biClrImportant = 0;
+   priv->bitmap_info->bih.biBitCount = 16;
+   priv->bitmap_info->bih.biCompression = BI_BITFIELDS;
+   priv->bitmap_info->masks[0] = 0x0000f800;
+   priv->bitmap_info->masks[1] = 0x000007e0;
+   priv->bitmap_info->masks[2] = 0x0000001f;
 
-  return priv;
+   return priv;
 }
 
 void
@@ -92,12 +92,12 @@ evas_software_wince_gdi_shutdown(void *priv)
 
 FB_Output_Buffer *
 evas_software_wince_gdi_output_buffer_new(void *priv,
-                                         int   width,
-                                         int   height)
+                                          int   width,
+                                          int   height)
 {
    Evas_Engine_WinCE_GDI_Priv *priv2;
-   FB_Output_Buffer *fbob;
-   void             *buffer;
+   FB_Output_Buffer           *fbob;
+   void                       *buffer;
 
    fbob = calloc(1, sizeof(FB_Output_Buffer));
    if (!fbob) return NULL;
@@ -105,6 +105,7 @@ evas_software_wince_gdi_output_buffer_new(void *priv,
    fbob->priv = priv;
 
    priv2 = (Evas_Engine_WinCE_GDI_Priv *)fbob->priv;
+
    priv2->bitmap = CreateDIBSection(priv2->dc,
                                     (const BITMAPINFO *)priv2->bitmap_info,
                                     DIB_RGB_COLORS,
