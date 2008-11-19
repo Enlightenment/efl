@@ -22,9 +22,10 @@ pkg_LTLIBRARIES	= module.la
 module_la_SOURCES = \
 evas_engine.h \
 evas_engine.c \
+evas_wince_ddraw_buffer.cpp \
 evas_wince_fb_buffer.c \
 evas_wince_gapi_buffer.c \
-evas_wince_ddraw_buffer.cpp \
+evas_wince_gdi_buffer.c \
 evas_wince_gapi.rc
 
 module_la_CFLAGS = @WIN32_CFLAGS@

@@ -77,4 +77,19 @@ void              evas_software_wince_ddraw_surface_resize(FB_Output_Buffer *fbo
 #endif
 
 
+/* GDI */
+
+void             *evas_software_wince_gdi_init (HWND window,
+                                                int  width,
+                                                int  height);
+FB_Output_Buffer *evas_software_wince_gdi_output_buffer_new (void *priv,
+                                                             int   width,
+                                                             int   height);
+void              evas_software_wince_gdi_shutdown(void *priv);
+void              evas_software_wince_gdi_output_buffer_free (FB_Output_Buffer *fbob);
+void              evas_software_wince_gdi_output_buffer_paste (FB_Output_Buffer *fbob);
+
+void              evas_software_wince_gdi_surface_resize(FB_Output_Buffer *fbob);
+
+
 #endif /* __EVAS_ENGINE_H__ */

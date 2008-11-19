@@ -9,7 +9,8 @@ typedef enum
 {
   EVAS_ENGINE_WINCE_FB,
   EVAS_ENGINE_WINCE_GAPI,
-  EVAS_ENGINE_WINCE_DDRAW
+  EVAS_ENGINE_WINCE_DDRAW,
+  EVAS_ENGINE_WINCE_GDI
 } Evas_Engine_WinCE_Backend;
 
 
@@ -21,7 +22,7 @@ typedef struct _Render_Engine Render_Engine;
 
 struct _Render_Engine
 {
-   Evas_Engine_WinCE_Backend backend; /* 1: raw, 2: gapi, 3: ddraw */
+   Evas_Engine_WinCE_Backend backend; /* 1: raw, 2: gapi, 3: ddraw, 4: GDI */
    void               *backend_priv;
    void              (*backend_shutdown)(void *priv);
    FB_Output_Buffer *(*backend_output_buffer_new)(void *priv,
@@ -217,6 +218,20 @@ eng_setup(Evas *e, void *in)
               re->backend_output_buffer_paste = evas_software_wince_ddraw_output_buffer_paste;
               re->backend_surface_resize = evas_software_wince_ddraw_surface_resize;
               break;
+           case 4: /* GDI */
+              re->backend = EVAS_ENGINE_WINCE_GDI;
+              re->backend_priv = evas_software_wince_gdi_init(info->info.window, info->info.width, info->info.height);
+              if (!re->backend_priv)
+                {
+                   free(re);
+                   return;
+                }
+              re->backend_shutdown = evas_software_wince_gdi_shutdown;
+              re->backend_output_buffer_new = evas_software_wince_gdi_output_buffer_new;
+              re->backend_output_buffer_free = evas_software_wince_gdi_output_buffer_free;
+              re->backend_output_buffer_paste = evas_software_wince_gdi_output_buffer_paste;
+              re->backend_surface_resize = evas_software_wince_gdi_surface_resize;
+              break;
            default:
               free(re);
               return;
@@ -277,6 +292,20 @@ eng_setup(Evas *e, void *in)
               re->backend_output_buffer_free = evas_software_wince_ddraw_output_buffer_free;
               re->backend_output_buffer_paste = evas_software_wince_ddraw_output_buffer_paste;
               re->backend_surface_resize = evas_software_wince_ddraw_surface_resize;
+              break;
+           case 4: /* GDI */
+              re->backend = EVAS_ENGINE_WINCE_GDI;
+              re->backend_priv = evas_software_wince_gdi_init(info->info.window, info->info.width, info->info.height);
+              if (!re->backend_priv)
+                {
+                   free(re);
+                   return;
+                }
+              re->backend_shutdown = evas_software_wince_gdi_shutdown;
+              re->backend_output_buffer_new = evas_software_wince_gdi_output_buffer_new;
+              re->backend_output_buffer_free = evas_software_wince_gdi_output_buffer_free;
+              re->backend_output_buffer_paste = evas_software_wince_gdi_output_buffer_paste;
+              re->backend_surface_resize = evas_software_wince_gdi_surface_resize;
               break;
            default:
               free(re);
