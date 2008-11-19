@@ -313,7 +313,6 @@ extern "C" {
 // * tab widget focusing (not useful for touchscreen tho...)
 // * bubble should allow style (left/right + top/bottom)
 // * on the fly theme changes - test (should work)
-// * entry doesnt talk with x copy & paste at all
 // * entry selection conflicts with finger scroll (make selection start/stop work on signals?)
 // * need a hold-scroll counter in elm_widget
 // 
