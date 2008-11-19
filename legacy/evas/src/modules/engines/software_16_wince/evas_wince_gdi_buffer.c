@@ -13,9 +13,10 @@ struct BITMAPINFO_16bpp
 
 struct Evas_Engine_WinCE_GDI_Priv
 {
-   BITMAPINFO_16bpp *bitmap_info;
    HWND              window;
    HDC               dc;
+   BITMAPINFO_16bpp *bitmap_info;
+   HBITMAP           bitmap;
    int               width;
    int               height;
 };
@@ -94,20 +95,27 @@ evas_software_wince_gdi_output_buffer_new(void *priv,
                                          int   width,
                                          int   height)
 {
+   Evas_Engine_WinCE_GDI_Priv *priv2;
    FB_Output_Buffer *fbob;
    void             *buffer;
 
    fbob = calloc(1, sizeof(FB_Output_Buffer));
    if (!fbob) return NULL;
 
-   buffer = malloc (width * height * 2); /* we are sure to have 16bpp */
-   if (!buffer)
+   fbob->priv = priv;
+
+   priv2 = (Evas_Engine_WinCE_GDI_Priv *)fbob->priv;
+   priv2->bitmap = CreateDIBSection(priv2->dc,
+                                    (const BITMAPINFO *)priv2->bitmap_info,
+                                    DIB_RGB_COLORS,
+                                    (void **)(&buffer),
+                                    NULL,
+                                    0);
+   if (!priv2->bitmap)
      {
         free(fbob);
         return NULL;
      }
-
-   fbob->priv = priv;
 
    fbob->im = (Soft16_Image *) evas_cache_image_data(evas_common_soft16_image_cache_get(), width, height, (DATA32 *)buffer, 0, EVAS_COLORSPACE_RGB565_A5P);
    if (fbob->im)
@@ -119,7 +127,10 @@ evas_software_wince_gdi_output_buffer_new(void *priv,
 void
 evas_software_wince_gdi_output_buffer_free(FB_Output_Buffer *fbob)
 {
-   free(fbob->im->pixels);
+   Evas_Engine_WinCE_GDI_Priv *priv;
+
+   priv = (Evas_Engine_WinCE_GDI_Priv *)fbob->priv;
+   DeleteObject(priv->bitmap);
    free(fbob);
 }
 
@@ -134,20 +145,9 @@ evas_software_wince_gdi_output_buffer_paste(FB_Output_Buffer *fbob)
        (fbob->im->cache_entry.h == priv->height))
      {
         HDC     dc;
-        HDC     dc2;
-        HBITMAP bitmap;
-        void   *bits;
 
-        dc2 = GetDC(priv->window);
-        bitmap = CreateDIBSection(priv->dc,
-                                  (const BITMAPINFO *)priv->bitmap_info,
-                                  DIB_RGB_COLORS,
-                                  (void **)(&bits),
-                                  NULL,
-                                  0);
         dc = CreateCompatibleDC(priv->dc);
-        SelectObject(dc, bitmap);
-        memcpy(bits, fbob->im->pixels, priv->width * priv->height * 2);
+        SelectObject(dc, priv->bitmap);
         BitBlt(priv->dc,
                0, 0,
                priv->width, priv->height,
@@ -155,8 +155,6 @@ evas_software_wince_gdi_output_buffer_paste(FB_Output_Buffer *fbob)
                0, 0,
                SRCCOPY);
         DeleteDC(dc);
-        DeleteObject(bitmap);
-        ReleaseDC(priv->window, dc2);
 
      }
 }
