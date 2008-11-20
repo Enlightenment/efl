@@ -415,6 +415,7 @@ _eina_hash_iterator_next(Eina_Iterator_Hash *it, void **data)
 	       }
 	     ++bucket;
 	  }
+	if (it->list) eina_iterator_free(it->list);
 	it->list = eina_rbtree_iterator_prefix(it->eh->head);
 	ok = eina_iterator_next(it->list, (void**) &it->el);
 	if (bucket == EINA_HASH_BUCKET_SIZE) ok = EINA_FALSE;
@@ -439,6 +440,7 @@ static void
 _eina_hash_iterator_free(Eina_Iterator_Hash *it)
 {
    if (it->current) eina_iterator_free(it->current);
+   if (it->list) eina_iterator_free(it->list);
    free(it);
 }
 
