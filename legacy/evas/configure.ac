@@ -144,7 +144,7 @@ fi
 
 dlopen_libs=""
 case "$host_os" in
-  mingw32ce*|cegcc*)
+  mingw32ce* | cegcc*)
 dnl managed by evil
     AC_DEFINE(HAVE_DLADDR)
   ;;
@@ -179,7 +179,7 @@ if test "x$res" = "xno"; then
       [res="no"])
    if test "x$res" = "xno"; then
       AC_MSG_ERROR([Cannot find fnmatch() in neither libc nor libfnmatch, nor libiberty, nor libevil])
-	fi
+   fi
 fi
 
 #####################################################################
