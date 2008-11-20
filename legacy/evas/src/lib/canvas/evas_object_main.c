@@ -631,6 +631,8 @@ evas_object_size_hint_min_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord 
  * This is not a size enforcement in any way, it's just a hint that should
  * be used whenever appropriate.
  *
+ * Value 0 is considered unset.
+ *
  * @param obj The given evas object.
  * @param   w Integer to use as the minimum width hint.
  * @param   h Integer to use as the minimum height hint.
@@ -686,6 +688,8 @@ evas_object_size_hint_max_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord 
  * This is not a size enforcement in any way, it's just a hint that should
  * be used whenever appropriate.
  *
+ * Value -1 is considered unset.
+ *
  * @param obj The given evas object.
  * @param   w Integer to use as the maximum width hint.
  * @param   h Integer to use as the maximum height hint.
@@ -740,6 +744,8 @@ evas_object_size_hint_request_get(const Evas_Object *obj, Evas_Coord *w, Evas_Co
  *
  * This is not a size enforcement in any way, it's just a hint that should
  * be used whenever appropriate.
+ *
+ * Value 0 is considered unset.
  *
  * @param obj The given evas object.
  * @param   w Integer to use as the preferred width hint.
@@ -828,9 +834,12 @@ evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control aspect, E
  * This is not a size enforcement in any way, it's just a hint that should
  * be used whenever appropriate.
  *
+ * Note that if any of @p x or @p y are @c NULL, the @c NULL
+ * parameters are ignored.
+ *
  * @param    obj The given evas object.
- * @param      w Pointer to a double in which to store the align x.
- * @param      h Pointer to a double in which to store the align y.
+ * @param      x Pointer to a double in which to store the align x.
+ * @param      y Pointer to a double in which to store the align y.
  */
 EAPI void
 evas_object_size_hint_align_get(const Evas_Object *obj, double *x, double *y)
@@ -854,9 +863,13 @@ evas_object_size_hint_align_get(const Evas_Object *obj, double *x, double *y)
  * This is not a size enforcement in any way, it's just a hint that should
  * be used whenever appropriate.
  *
+ * Accepted values are in the 0.0 to 1.0 range, with the special value
+ * -1.0 used to specify "justify" or "fill" by some users. See
+ * documentation of possible users.
+ *
  * @param    obj The given evas object.
- * @param      x Double (0.0-1.0) to use as align x hint.
- * @param      y Double (0.0-1.0) to use as align y hint.
+ * @param      x Double (0.0..1.0 or -1.0) to use as align x hint.
+ * @param      y Double (0.0..1.0 or -1.0) to use as align y hint.
  */
 EAPI void
 evas_object_size_hint_align_set(Evas_Object *obj, double x, double y)
@@ -880,9 +893,16 @@ evas_object_size_hint_align_set(Evas_Object *obj, double x, double y)
  * This is not a size enforcement in any way, it's just a hint that should
  * be used whenever appropriate.
  *
+ * Note that if any of @p x or @p y are @c NULL, the @c NULL
+ * parameters are ignored.
+ *
+ * Accepted values are zero or positive values. Some users might use
+ * this hint as a boolean, but some might consider it as a proportion,
+ * see documentation of possible users.
+ *
  * @param    obj The given evas object.
- * @param      w Pointer to a double in which to store the weight x.
- * @param      h Pointer to a double in which to store the weight y.
+ * @param      x Pointer to a double in which to store the weight x.
+ * @param      y Pointer to a double in which to store the weight y.
  */
 EAPI void
 evas_object_size_hint_weight_get(const Evas_Object *obj, double *x, double *y)
@@ -932,9 +952,14 @@ evas_object_size_hint_weight_set(Evas_Object *obj, double x, double y)
  * This is not a size enforcement in any way, it's just a hint that should
  * be used whenever appropriate.
  *
+ * Note that if any of @p l, @p r, @p t or @p b are @c NULL, the @c
+ * NULL parameters are ignored.
+ *
  * @param    obj The given evas object.
- * @param      w Pointer to a double in which to store the padding x.
- * @param      h Pointer to a double in which to store the padding y.
+ * @param      l Pointer to an integer in which to store left padding.
+ * @param      r Pointer to an integer in which to store right padding.
+ * @param      t Pointer to an integer in which to store top padding.
+ * @param      b Pointer to an integer in which to store bottom padding.
  */
 EAPI void
 evas_object_size_hint_padding_get(const Evas_Object *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b)
@@ -963,8 +988,10 @@ evas_object_size_hint_padding_get(const Evas_Object *obj, Evas_Coord *l, Evas_Co
  * be used whenever appropriate.
  *
  * @param    obj The given evas object.
- * @param      x Double (0.0-1.0) to use as padding x hint.
- * @param      y Double (0.0-1.0) to use as padding y hint.
+ * @param      l Integer to specify left padding.
+ * @param      r Integer to specify right padding.
+ * @param      t Integer to specify top padding.
+ * @param      b Integer to specify bottom padding.
  */
 EAPI void
 evas_object_size_hint_padding_set(Evas_Object *obj, Evas_Coord l, Evas_Coord r, Evas_Coord t, Evas_Coord b)
