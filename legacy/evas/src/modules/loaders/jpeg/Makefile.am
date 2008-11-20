@@ -7,7 +7,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/include \
 @FREETYPE_CFLAGS@ \
 @EINA_CFLAGS@ \
-@jpeg_cflags@ \
+@evas_image_loader_jpeg_cflags@ \
 @EVIL_CFLAGS@ \
 @WIN32_CPPFLAGS@
 
@@ -19,6 +19,6 @@ pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES = evas_image_load_jpeg.c
 
-module_la_LIBADD = @EINA_LIBS@ @EVIL_LIBS@ @jpeg_libs@ $(top_builddir)/src/lib/libevas.la
+module_la_LIBADD = @EINA_LIBS@ @EVIL_LIBS@ @evas_image_loader_jpeg_libs@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = @lt_no_undefined@ @lt_enable_auto_import@ -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static

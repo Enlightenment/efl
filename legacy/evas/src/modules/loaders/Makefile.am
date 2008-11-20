@@ -16,8 +16,16 @@ if BUILD_LOADER_JPEG
 jpeg_subdir = jpeg
 endif
 
+if BUILD_LOADER_PMAPS
+pmaps_subdir = pmaps
+endif
+
 if BUILD_LOADER_PNG
 png_subdir = png
+endif
+
+if BUILD_LOADER_SVG
+svg_subdir = svg
 endif
 
 if BUILD_LOADER_TIFF
@@ -28,13 +36,5 @@ if BUILD_LOADER_XPM
 xpm_subdir = xpm
 endif
 
-if BUILD_LOADER_SVG
-svg_subdir = svg
-endif
 
-if BUILD_LOADER_PMAPS
-pmaps_subdir = pmaps
-endif
-
-
-SUBDIRS = $(edb_subdir) $(eet_subdir) $(gif_subdir) $(jpeg_subdir) $(png_subdir) $(tiff_subdir) $(xpm_subdir) $(svg_subdir) $(pmaps_subdir)
+SUBDIRS = $(edb_subdir) $(eet_subdir) $(gif_subdir) $(jpeg_subdir) $(pmaps_subdir) $(png_subdir) $(svg_subdir) $(tiff_subdir) $(xpm_subdir)

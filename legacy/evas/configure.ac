@@ -827,340 +827,39 @@ AM_CONDITIONAL(BUILD_ENGINE_GLITZ_X11, test "x$have_evas_glitz_x11" = "xyes")
 #####################################################################
 ## Image loaders
 
-#######################################
-## GIF
-want_gif="auto";
-have_gif="no";
+EVAS_CHECK_IMAGE_LOADER([Edb], [yes])
 
-AC_MSG_CHECKING(whether to enable gif image loader)
-AC_ARG_ENABLE(image-loader-gif,
-  AC_HELP_STRING([--disable-image-loader-gif], [disable GIF image loader]),
-  [ want_gif=$enableval ]
-)
-AC_MSG_RESULT($want_gif)
+EVAS_CHECK_IMAGE_LOADER([Eet], [yes])
+EVAS_CHECK_FONT_LOADER([yes])
 
-if test "x$want_gif" = "xyes" -o "x$want_gif" = "xauto"; then
-  AC_CHECK_HEADER(gif_lib.h,
-    [
-      AC_CHECK_LIB(gif, DGifOpenFileName,
-        [
-          gif_libs="-lgif"
-          have_gif="yes"
-        ],
-        [
-          AC_CHECK_LIB(ungif, DGifOpenFileName,
-            [
-              gif_libs="-lungif"
-              have_gif="yes"
-            ],
-            [ have_gif="no" ]
-          )
-        ]
-     )
-    ],
-    [ have_gif="no" ]
-  )
-fi
+EVAS_CHECK_IMAGE_LOADER([Gif], [yes])
 
-if test "x$have_gif" = "xyes"; then
-  AC_DEFINE(BUILD_LOADER_GIF, 1, [GIF Image Loader Support])
-  gif_cflags=""
-else
-  if test "x$want_gif" = "xyes" -a "x$use_strict" = "xyes" ; then
-    AC_MSG_ERROR([GIF not found (strict dependencies checking)])
-  fi
-fi
+have_evas_image_saver_jpeg="no"
+EVAS_CHECK_IMAGE_LOADER([Jpeg], [yes])
 
-AM_CONDITIONAL(BUILD_LOADER_GIF, test "x$have_gif" = "xyes")
-
-#######################################
-## PNG
-want_png="auto";
-have_png="no";
-
-AC_MSG_CHECKING(whether to enable png image loader)
-AC_ARG_ENABLE(image-loader-png,
-  AC_HELP_STRING([--disable-image-loader-png], [disable PNG image loader]),
-  [ want_png=$enableval ]
-)
-AC_MSG_RESULT($want_png)
-
-if test "x$want_png" = "xyes" -o "x$want_png" = "xauto"; then
-  PKG_CHECK_EXISTS(libpng12,
-    [ PKG_CHECK_MODULES(PNG, libpng12, [ have_png="yes" ], [ have_png="no"]) ],
-    [
-      PKG_CHECK_EXISTS(libpng10,
-        [ PKG_CHECK_MODULES(PNG, libpng10, [ have_png="yes" ], [ have_png="no"]) ],
-        [ PKG_CHECK_MODULES(PNG, libpng, [ have_png="yes" ], [ have_png="no"]) ]
-      )
-    ]
-  )
-fi
-
-if test "x$want_png" = "xyes" -a ! "x$have_png" = "xyes" -a "x$use_strict" = "xyes" ; then
-  AC_MSG_ERROR([PNG not found (strict dependencies checking)])
-fi
-
-AM_CONDITIONAL(BUILD_LOADER_PNG, test "x$have_png" = "xyes")
-
-#######################################
-## JPEG
-want_jpeg="auto";
-have_jpeg="no";
-
-AC_MSG_CHECKING(whether to enable jpeg image loader)
-AC_ARG_ENABLE(image-loader-jpeg,
-  AC_HELP_STRING([--disable-image-loader-jpeg], [disable JPEG image loader]),
-  [ want_jpeg=$enableval ]
-)
-AC_MSG_RESULT($want_jpeg)
-
-if test "x$want_jpeg" = "xyes" -o "x$want_jpeg" = "xauto"; then
-  AC_CHECK_HEADER(jpeglib.h,
-    [
-      AC_DEFINE(BUILD_LOADER_JPEG, 1, [JPEG Image Loader Support])
-      jpeg_cflags=""
-      jpeg_libs="-ljpeg"
-      have_jpeg="yes"
-      have_jpeg_saver="yes"
-    ],
-    [
-      if test "x$want_jpeg" = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR(JPEG not found (strict dependencies checking))
-      fi
-    ]
-  )
-fi
 dnl Windows has no sigsetjmp function, nor equivalent.
 dnl So we disable the jpeg saver.
+dnl TODO: must find a workaround
 case "$host_os" in
-   mingw*|cegcc*)
-   have_jpeg_saver="no"
-   ;;
-esac
-AM_CONDITIONAL(BUILD_LOADER_JPEG, test "x$have_jpeg" = "xyes")
-AM_CONDITIONAL(BUILD_SAVER_JPEG, test "x$have_jpeg_saver" = "xyes")
-
-#######################################
-## EET
-#
-# first, check whether the user WANTS to use EET
-want_eet_image_loader="auto"
-want_eet_font_loader="auto"
-have_eet=no
-AC_ARG_ENABLE(image-loader-eet,
-  AC_HELP_STRING(
-    [--disable-image-loader-eet],
-    [disable EET image loader. [[default=enabled]]]
-  ),
-  [want_eet_image_loader=$enableval]
-)
-
-AC_ARG_ENABLE(font-loader-eet,
-  AC_HELP_STRING(
-    [--disable-font-loader-eet],
-    [disable EET font loader. [[default=enabled]]]
-  ),
-  [want_eet_font_loader=$enableval]
-)
-
-# next, if she does, check whether EET is available
-if test "x$want_eet_image_loader" = "xyes" -o "x$want_eet_font_loader" = "xyes" -o "x$want_eet_image_loader" = "xauto" -o "x$want_eet_font_loader" = "xauto"; then
-  PKG_CHECK_MODULES(EET, eet >= 1.0.1, [have_eet="yes"],
-    [
-      if test "x$want_eet_image_loader" = "xyes" -a "x$use_strict" = "xyes" -o "x$want_eet_font_loader" = "xyes" -a "x$use_strict" = "xyes"; then
-        AC_MSG_ERROR([EET not found (strict dependencies checking)])
+   mingw* | cegcc*)
+      ;;
+   *)
+      if test "x${have_evas_image_loader_jpeg}" = "xyes" ; then
+         have_evas_image_saver_jpeg="yes"
       fi
-    ]
-  )
-fi
+      ;;
+esac
+AM_CONDITIONAL([BUILD_SAVER_JPEG], [test "x${have_evas_image_saver_jpeg}" = "xyes"])
 
-# finally, spew out the result
-AC_MSG_CHECKING(whether to enable eet font loader)
-if test "x$want_eet_font_loader" = "xyes" -o "x$want_eet_font_loader" = "xauto" -a "x$have_eet" = "xyes"; then
-  AC_DEFINE(BUILD_FONT_LOADER_EET, 1, [EET Font Loader Support])
-  have_eet_font_loader="yes"
-else
-  have_eet_font_loader="no"
-fi
-AC_MSG_RESULT($have_eet_font_loader)
+EVAS_CHECK_IMAGE_LOADER([PMAPS], [yes])
 
-AC_MSG_CHECKING(whether to enable eet image loader)
-if test "x$want_eet_image_loader" = "xyes" -o "x$want_eet_image_loader" = "xauto" -a "x$have_eet" = "xyes"; then
-  AC_DEFINE(BUILD_LOADER_EET, 1, [EET Image Loader Support])
-  have_eet_image_loader="yes"
-else
-  have_eet_image_loader="no"
-fi
-AC_MSG_RESULT($have_eet_image_loader)
+EVAS_CHECK_IMAGE_LOADER([PNG], [yes])
 
-AM_CONDITIONAL(BUILD_LOADER_EET, test "x$have_eet_image_loader" = "xyes")
+EVAS_CHECK_IMAGE_LOADER([SVG], [yes])
 
-#######################################
-## EDB
-#
-# first, check whether the user WANTS to use EDB
-have_edb=no
-AC_ARG_ENABLE(image-loader-edb,
-  AC_HELP_STRING(
-    [--enable-image-loader-edb],
-    [enable EDB image loader.]
-  ),
-  [want_edb_image_loader=$enableval],
-  [want_edb_image_loader=no]
-)
+EVAS_CHECK_IMAGE_LOADER([Tiff], [yes])
 
-# next, if she does, check whether EDB is available
-if test "$want_edb_image_loader" = yes; then
-  PKG_CHECK_MODULES(EDB, edb, have_edb=yes, have_edb=no)
-fi
-
-# finally, spew out the result
-AC_MSG_CHECKING(whether to enable edb image loader)
-if test "$want_edb_image_loader" = yes -a "$have_edb" = yes; then
-  AC_DEFINE(BUILD_LOADER_EDB, 1, [EDB Image Loader Support])
-  have_edb_image_loader=yes
-else
-  have_edb_image_loader=no
-fi
-AC_MSG_RESULT($have_edb_image_loader)
-
-AM_CONDITIONAL(BUILD_LOADER_EDB, test $have_edb_image_loader = yes)
-
-#######################################
-## TIFF
-want_tiff="auto";
-have_tiff="no";
-
-AC_MSG_CHECKING(whether to enable tiff image loader)
-AC_ARG_ENABLE(image-loader-tiff,
-  AC_HELP_STRING([--disable-image-loader-tiff], [disable TIFF image loader]),
-  [ want_tiff=$enableval ]
-)
-AC_MSG_RESULT($want_tiff)
-
-if test "x$want_tiff" = "xyes" -o "x$want_tiff" = "xauto"; then
-  AC_CHECK_HEADER(tiffio.h,
-    [
-      AC_CHECK_LIB(tiff, TIFFReadScanline,
-        [
-          tiff_libs="-ltiff"
-          have_tiff="yes"
-        ],
-        [
-          AC_CHECK_LIB(tiff, TIFFReadScanline,
-            [
-              tiff_libs="-ltiff -ljpeg -lz -lm"
-              have_tiff="yes"
-            ],
-            [
-              AC_CHECK_LIB(tiff34, TIFFReadScanline,
-                [
-                  tiff_libs="-ltiff34 -ljpeg -lz -lm"
-                  have_tiff="yes"
-                ],
-                [
-                  have_tiff="no"
-                ]
-              )
-            ]
-          )
-        ]
-      )
-    ],
-    [ have_tiff="no" ]
-  )
-fi
-
-if test "x$have_tiff" = "xyes"; then
-  AC_DEFINE(BUILD_LOADER_TIFF, 1, [TIFF Image Loader Support])
-  tiff_cflags=""
-else
-  if test "x$want_tiff" = "xyes" -a "x$use_strict" = "xyes" ; then
-    AC_MSG_ERROR([TIFF not found (strict dependencies checking)])
-  fi
-fi
-
-AM_CONDITIONAL(BUILD_LOADER_TIFF, test x$have_tiff = xyes)
-
-#######################################
-## XPM
-have_xpm="yes";
-AC_MSG_CHECKING(whether to enable xpm image loader)
-AC_ARG_ENABLE(image-loader-xpm,
-  AC_HELP_STRING([--disable-image-loader-xpm], [disable XPM image loader]),
-  [ have_xpm=$enableval ]
-)
-AC_MSG_RESULT($have_xpm)
-
-xpm_cflags=""
-xpm_libs=""
-
-AM_CONDITIONAL(BUILD_LOADER_XPM, test x$have_xpm = xyes)
-
-#######################################
-## SVG
-want_svg="auto";
-have_svg="no";
-
-AC_MSG_CHECKING(whether to enable svg image loader)
-AC_ARG_ENABLE(image-loader-svg,
-  AC_HELP_STRING([--disable-image-loader-svg], [disable SVG image loader]),
-  [ want_svg=$enableval ]
-)
-AC_MSG_RESULT($want_svg)
-
-svg_cflags=""
-svg_libs=""
-if test "x$want_svg" = "xyes" -o "x$want_svg" = "xauto"; then
-  # Check if really available
-  PKG_CHECK_MODULES(SVG, librsvg-2.0 >= 2.14.0,
-    [ have_svg="yes" ],
-    [ have_svg="no" ]
-  )
-  if test "x$have_svg" = "xyes"; then
-    PKG_CHECK_MODULES(CAIRO_SVG, cairo-svg,
-      [
-        have_svg="yes"
-        svg_cflags="$SVG_CFLAGS $CAIRO_SVG_CFLAGS"
-        svg_libs="$SVG_LIBS $CAIRO_SVG_LIBS"
-      ],
-      [
-        PKG_CHECK_MODULES(LIBSVG_CAIRO, libsvg-cairo,
-          [
-            have_svg="yes"
-            svg_cflags="$SVG_CFLAGS $LIBSVG_CAIRO_CFLAGS"
-            svg_libs="$SVG_LIBS $LIBSVG_CAIRO_LIBS"
-          ],
-          [
-            have_svg="no"
-          ]
-        )
-      ]
-    )
-  fi
-fi
-
-if test "x$want_svg" = "xyes" -a ! "x$have_svg" = "xyes" -a "x$use_strict" = "xyes" ; then
-  AC_MSG_ERROR([SVG not found (strict dependencies checking)])
-fi
-
-AM_CONDITIONAL(BUILD_LOADER_SVG, test x$have_svg = xyes)
-
-#######################################
-## PMAPS
-have_pmaps="yes";
-AC_MSG_CHECKING(whether to enable pmaps image loader)
-AC_ARG_ENABLE(image-loader-pmaps,
-  AC_HELP_STRING([--disable-image-loader-pmaps], [disable PMAPS image loader]),
-  [ have_pmaps=$enableval ]
-)
-AC_MSG_RESULT($have_pmaps)
-
-pmaps_cflags=""
-pmaps_libs=""
-
-AM_CONDITIONAL(BUILD_LOADER_PMAPS, test x$have_pmaps = xyes)
+EVAS_CHECK_IMAGE_LOADER([XPM], [yes])
 
 
 #####################################################################
@@ -1750,18 +1449,6 @@ AC_SUBST(qt_cflags)
 AC_SUBST(qt_libs)
 AC_SUBST(qt_moc)
 
-AC_SUBST(gif_cflags)
-AC_SUBST(gif_libs)
-AC_SUBST(jpeg_cflags)
-AC_SUBST(jpeg_libs)
-AC_SUBST(tiff_cflags)
-AC_SUBST(tiff_libs)
-AC_SUBST(xpm_cflags)
-AC_SUBST(xpm_libs)
-AC_SUBST(svg_cflags)
-AC_SUBST(svg_libs)
-AC_SUBST(pmaps_cflags)
-AC_SUBST(pmaps_libs)
 AC_SUBST(altivec_cflags)
 AC_SUBST(pthread_cflags)
 AC_SUBST(pthread_libs)
@@ -1893,20 +1580,20 @@ echo "  DirectFB...................: $have_evas_directfb"
 # FIXME: xrender engine to be written
 echo
 echo "Image Loaders:"
-echo "  GIF.....................: $have_gif"
-echo "  PNG.....................: $have_png"
-echo "  JPEG....................: $have_jpeg"
-echo "  EET.....................: $have_eet_image_loader"
-echo "  EDB.....................: $have_edb_image_loader"
-echo "  TIFF....................: $have_tiff"
-echo "  XPM.....................: $have_xpm"
-echo "  SVG.....................: $have_svg"
-echo "  PMAPS...................: $have_pmaps"
+echo "  EDB.....................: $have_evas_image_loader_edb"
+echo "  EET.....................: $have_evas_image_loader_eet"
+echo "  GIF.....................: $have_evas_image_loader_gif"
+echo "  JPEG....................: $have_evas_image_loader_jpeg"
+echo "  PMAPS...................: $have_evas_image_loader_pmaps"
+echo "  PNG.....................: $have_evas_image_loader_png"
+echo "  SVG.....................: $have_evas_image_loader_svg"
+echo "  TIFF....................: $have_evas_image_loader_tiff"
+echo "  XPM.....................: $have_evas_image_loader_xpm"
 # FIXME: need to add modular image loader system
 # FIXME: add more image loader modules
 echo
 echo "Font Sourcing Systems:"
-echo "  EET.....................: $have_eet_font_loader"
+echo "  EET.....................: $have_evas_font_loader_eet"
 echo
 echo "Font Searching Systems:"
 echo "  Fontconfig..............: $have_fontconfig"
