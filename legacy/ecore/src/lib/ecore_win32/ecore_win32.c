@@ -123,7 +123,7 @@ ecore_win32_init()
 int
 ecore_win32_shutdown()
 {
-   _ecore_win32_init_count++;
+   _ecore_win32_init_count--;
    if (_ecore_win32_init_count > 0) return _ecore_win32_init_count;
    if (!_ecore_win32_instance) return _ecore_win32_init_count;
 

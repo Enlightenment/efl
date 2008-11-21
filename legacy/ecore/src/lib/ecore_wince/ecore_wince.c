@@ -113,7 +113,7 @@ ecore_wince_init()
 int
 ecore_wince_shutdown()
 {
-   _ecore_wince_init_count++;
+   _ecore_wince_init_count--;
    if (_ecore_wince_init_count > 0) return _ecore_wince_init_count;
    if (!_ecore_wince_instance) return _ecore_wince_init_count;
 
