@@ -55,7 +55,8 @@ DEB_CONFIGURE_EXTRA_FLAGS := --enable-strict \
 	--enable-convert-32-rgb-rot-270 \
 	--enable-convert-32-rgb-rot-90 \
 	--disable-rpath \
-	--enable-pthreads
+	--enable-pthreads \
+	--disable-image-loader-edb
 
 build/libevas-doc::
 	cd $(DEB_SRCDIR) && ./gendoc
