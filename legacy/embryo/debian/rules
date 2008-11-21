@@ -10,7 +10,7 @@ DEB_SOURCE_VERSION := $(shell grep AC_INIT $(DEB_SRCDIR)/configure.ac|sed -e 's/
 CFLAGS += -fvisibility=hidden
 
 build/libembryo-doc::
-	cd $(DEB_SRCDIR)/doc && make
+	cd $(DEB_SRCDIR)/doc && make doc
 
 install/libembryo-doc::
 	tar jxf embryo-*-doc.tar.bz2 -C $(DEB_SRCDIR)
