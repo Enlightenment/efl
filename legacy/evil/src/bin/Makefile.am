@@ -5,7 +5,8 @@ AM_CPPFLAGS = \
 -I$(top_srcdir) \
 -I$(top_srcdir)/bin \
 -I$(top_srcdir)/src/lib \
--I$(top_srcdir)/src/lib/dlfcn
+-I$(top_srcdir)/src/lib/dlfcn \
+@win32_cppflags@
 
 AM_CFLAGS = @win32_cflags@
 
@@ -14,6 +15,7 @@ bin_PROGRAMS = evil_suite test_dlfcn test_pipe test_evil
 evil_suite_SOURCES = \
 evil_suite.c \
 evil_test_environment.c \
+evil_test_gettimeofday.c \
 evil_test_link.c \
 evil_test_memcpy.c
 

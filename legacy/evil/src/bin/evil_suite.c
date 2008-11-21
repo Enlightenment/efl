@@ -5,8 +5,10 @@
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
 
+#include "Evil.h"
 #include "evil_suite.h"
 #include "evil_test_environment.h"
+#include "evil_test_gettimeofday.h"
 #include "evil_test_link.h"
 #include "evil_test_memcpy.h"
 
@@ -150,17 +152,24 @@ int
 main()
 {
    test tests[] = {
-     { "environment",  test_environment },
-     { "link       ",  test_link },
-     { "memcpy     ",  test_memcpy },
-     { NULL,           NULL },
+     { "environment ",  test_environment },
+     { "gettimeofday",  test_gettimeofday },
+     { "link        ",  test_link },
+     { "memcpy      ",  test_memcpy },
+     { NULL,            NULL },
    };
    suite *s;
    int i;
 
+   if (!evil_init())
+     return EXIT_FAILURE;
+
    s = suite_new();
    if (!s)
-     return EXIT_FAILURE;
+     {
+        evil_shutdown();
+        return EXIT_FAILURE;
+     }
 
    for (i = 0; tests[i].name; ++i)
      {
@@ -171,6 +180,7 @@ main()
    suite_run(s);
 
    suite_del(s);
+   evil_shutdown();
 
    return EXIT_SUCCESS;
 }

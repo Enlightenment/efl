@@ -38,8 +38,10 @@ int ffs(int i)
    /* remove the sign bit */
    x = i & -i;
    size = sizeof(int) << 3;
-   for (i = size; i > 0; --i, x << 1)
+   for (i = size; i > 0; --i, x <<= 1)
      if (x & (1 << (size - 1))) return i;
+
+   return x;
 }
 
 #endif /* ! __CEGCC__ */

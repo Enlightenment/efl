@@ -4,6 +4,8 @@
 #endif /* HAVE_CONFIG_H */
 
 #include "Evil.h"
+#include "evil_private.h"
+
 #undef fopen
 
 

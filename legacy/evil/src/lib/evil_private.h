@@ -6,6 +6,8 @@
 extern "C" {
 #endif
 
+long _evil_systemtime_to_time(SYSTEMTIME st);
+
 void _evil_error_display(const char *fct, LONG res);
 
 void _evil_last_error_display(const char *fct);

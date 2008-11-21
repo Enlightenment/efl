@@ -3,6 +3,21 @@
 
 
 /*
+ * Time related functions
+ *
+ */
+
+
+#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
+
+EAPI int evil_gettimeofday(struct timeval * tp, void * tzp);
+
+# define gettimeofday(tp, tzp) evil_gettimeofday(tp, tzp)
+
+#endif /* _WIN32_WCE && ! __CEGCC__ */
+
+
+/*
  * Process identifer related functions
  *
  */

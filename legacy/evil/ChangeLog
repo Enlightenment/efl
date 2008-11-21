@@ -1,3 +1,29 @@
+2008-11-21  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/bin/Makefile.am:
+	* src/bin/evil_suite.c:
+	* src/bin/evil_test_gettimeofday.c:
+	* src/bin/evil_test_gettimeofday.h:
+	add a small test for gettimeofday
+
+	* src/bin/evil_test_memcpy.c:
+	fix warning
+
+	* src/lib/Evil.h:
+	* src/lib/Makefile.am:
+	* src/lib/evil_main.c:
+	* src/lib/evil_main.h:
+	* src/lib/evil_unistd.c:
+	* src/lib/evil_unistd.h:
+	* src/lib/evil_private.h:
+	add gettimeofday for Windows CE natively. It is necessary
+	to initialise evil with evil_init() now, to have that
+	feature.
+
+	* src/lib/evil_stdio.c:
+	* src/lib/evil_string.c:
+	fix warnings
+
 2008-11-12  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_unistd.h:

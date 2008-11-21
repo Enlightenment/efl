@@ -7,6 +7,8 @@
 #include <errno.h>
 #endif /* HAVE_ERRNO_H */
 
+#include <sys/time.h>
+
 #define WIN32_LEAN_AND_MEAN
 #include <winsock2.h>
 #undef WIN32_LEAN_AND_MEAN
@@ -14,7 +16,16 @@
 #include "Evil.h"
 #include "evil_private.h"
 
-static time_t
+
+#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
+
+long _evil_time_second;
+long _evil_time_millisecond;
+
+#endif /* _WIN32_WCE && ! __CEGCC__ */
+
+
+long
 _evil_systemtime_to_time(SYSTEMTIME st)
 {
    int days[] = {
@@ -35,8 +46,26 @@ _evil_systemtime_to_time(SYSTEMTIME st)
   time = ((st.wYear - 70) * 365 + ((st.wYear - 1) >> 2) - 17 + day) * 24 + st.wHour;
   time = (time * 60 + st.wMinute) * 60 + st.wSecond;
 
-  return time;
+  return (long)time;
 }
+
+/*
+ * Time related functions
+ *
+ */
+
+#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
+
+int
+evil_gettimeofday(struct timeval *tp, void *tzp __UNUSED__)
+{
+   tp->tv_sec = _evil_time_second;
+   tp->tv_usec = (GetTickCount() - _evil_time_millisecond) * 1000;
+
+   return 1;
+}
+
+#endif /* _WIN32_WCE && ! __CEGCC__ */
 
 /*
  * Process identifer related functions

@@ -104,6 +104,7 @@ typedef unsigned long  gid_t;
 
 #include "evil_fcntl.h"
 #include "evil_langinfo.h"
+#include "evil_main.h"
 #include "evil_stdlib.h"
 #include "evil_stdio.h"
 #include "evil_string.h"
