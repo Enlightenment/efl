@@ -68,6 +68,9 @@ ecore_init(void)
 	     printf("WARNING: not a utf8 locale!\n");
 	  }
 	 */
+#ifdef HAVE_EVIL
+        evil_init();
+#endif
 	eina_init();
 	if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
 	if (_ecore_fps_debug) _ecore_fps_debug_init();
@@ -107,6 +110,9 @@ ecore_shutdown(void)
    _ecore_main_shutdown();
    _ecore_signal_shutdown();
    eina_shutdown();
+#ifdef HAVE_EVIL
+   evil_shutdown();
+#endif
 
    return _ecore_init_count;
 }
