@@ -42,4 +42,4 @@ edje_script_only.c \
 edje_entry.c
 
 libedje_la_LIBADD = @EDJE_LIBS@ -lm
-libedje_la_LDFLAGS = no-undefined @lt_enable_auto_import@ -version-info @version_info@
+libedje_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
