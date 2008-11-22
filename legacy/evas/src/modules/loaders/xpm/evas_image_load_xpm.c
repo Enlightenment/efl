@@ -383,8 +383,8 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key, int
                                  xpm_parse_done();
                                  return 0;
                               }
-                            end = ptr + (w * h);
                             pixels = w * h;
+                            end = ptr + pixels;
                          }
                        else
                          {
