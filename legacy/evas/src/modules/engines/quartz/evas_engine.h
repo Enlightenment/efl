@@ -8,7 +8,7 @@ typedef struct _Evas_Quartz_Context Evas_Quartz_Context;
 struct _Evas_Quartz_Context
 {
    int         w, h;
-   
+
    struct
    {
       double   r, g, b, a;
@@ -43,7 +43,7 @@ struct _Evas_Quartz_Image
 {
    RGBA_Image  *im;
    CGImageRef  cgim;
-   
+
    int         references;
 };
 

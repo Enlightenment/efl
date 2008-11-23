@@ -17,7 +17,7 @@ struct _Render_Engine
 {
    CGContextRef ctx;
    int w, h;
-   
+
    struct
    {
       int redraw : 1;
@@ -30,9 +30,9 @@ flip_pixels(int *y, int *h, void *re)
 {
    // We need to flip the Y axis, because Quartz uses a coordinate system
    // with the origin in the bottom left, while Evas uses a top left origin.
-   
+
    (*y) = ((Evas_Quartz_Context *)re)->h - (*y);
-   
+
    if (h && y) (*y) -= *h;
 }
 
@@ -43,7 +43,7 @@ eng_info(Evas *e)
 
    info = calloc(1, sizeof(Evas_Engine_Info_Quartz));
    if (!info) return NULL;
-      
+
    info->magic.magic = rand();
 
    return info;
@@ -67,7 +67,7 @@ eng_setup(Evas *e, void *in)
 
    if (!e->engine.data.context)
       e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
-   
+
    ((Evas_Quartz_Context *)e->engine.data.context)->w = e->output.w;
    ((Evas_Quartz_Context *)e->engine.data.context)->h = e->output.h;
 }
@@ -79,11 +79,11 @@ eng_output_setup(CGContextRef context, int w, int h)
 {
    Render_Engine *re = calloc(1, sizeof(Render_Engine));
    if (!re) return NULL;
-   
+
    re->ctx = context;
    re->w = w;
    re->h = h;
-   
+
    evas_common_cpu_init();
 
    evas_common_blend_init();
@@ -125,7 +125,7 @@ static void
 eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
 {
    Render_Engine *re = (Render_Engine *)data;
-   
+
    if (!re->draw.redraw)
    {
       re->draw.x1 = x;
@@ -140,7 +140,7 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
       if ((x + w - 1) > re->draw.x2) re->draw.x2 = x + w - 1;
       if ((y + h - 1) > re->draw.y2) re->draw.y2 = y + h - 1;
    }
-   
+
    re->draw.redraw = 1;
 }
 
@@ -162,7 +162,7 @@ static void *
 eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
 {
    Render_Engine *re = (Render_Engine *)data;
-   
+
    if (!re->draw.redraw) return NULL;
 
    if (x) *x = re->draw.x1;
@@ -173,7 +173,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    if (cy) *cy = re->draw.y1;
    if (cw) *cw = re->draw.x2 - re->draw.x1 + 1;
    if (ch) *ch = re->draw.y2 - re->draw.y1 + 1;
-   
+
    return re;
 }
 
@@ -183,9 +183,9 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
    Render_Engine *re = (Render_Engine *)data;
    Evas_Quartz_Context *ctx = (Evas_Quartz_Context *)(re->ctx);
    re->draw.redraw = 0;
-   
+
    flip_pixels(&y, &h, ctx);
-   
+
    CGContextClearRect(re->ctx, CGRectMake(x, y, w, h));
 }
 
@@ -194,9 +194,9 @@ eng_output_flush(void *data)
 {
    // By default, Apple coalesces calls to CGContextFlush, but this actually
    // blocks if called more than 60 times per second, which is a waste of time.
-   // 
+   //
    // http://developer.apple.com/technotes/tn2005/tn2133.html
-   
+
    CGContextFlush(((Render_Engine *)data)->ctx);
 }
 
@@ -216,7 +216,7 @@ eng_context_free(void *data, void *context)
 {
    Render_Engine *re = (Render_Engine *)data;
    Evas_Quartz_Context *ctxt = (Evas_Quartz_Context *)context;
-   
+
    if (re->ctx) CGContextRelease(re->ctx);
    free(ctxt);
 }
@@ -226,13 +226,13 @@ eng_context_clip_set(void *data, void *context, int x, int y, int w, int h)
 {
    Render_Engine *re = (Render_Engine *)data;
    Evas_Quartz_Context *ctxt = (Evas_Quartz_Context *)context;
-   
+
    flip_pixels(&y, &h, ctxt);
-   
+
    CGContextResetClip(re->ctx);
    CGContextClipToRect(re->ctx, CGRectMake(0, 0, re->w, re->h)); // don't draw over the title bar
    CGContextClipToRect(re->ctx, CGRectMake(x, y, w, h));
-   
+
    ctxt->clipped = 1;
 }
 
@@ -241,9 +241,9 @@ eng_context_clip_unset(void *data, void *context)
 {
    Render_Engine *re = (Render_Engine *)data;
    Evas_Quartz_Context *ctxt = (Evas_Quartz_Context *)context;
-   
+
    CGContextResetClip(re->ctx);
-   
+
    ctxt->clipped = 0;
 }
 
@@ -252,13 +252,13 @@ eng_context_clip_get(void *data, void *context, int *x, int *y, int *w, int *h)
 {
    Render_Engine *re = (Render_Engine *)data;
    Evas_Quartz_Context *ctxt = (Evas_Quartz_Context *)context;
-   
+
    CGRect clip = CGContextGetClipBoundingBox(re->ctx);
    if (x) *x = clip.origin.x;
    if (y) *y = clip.origin.y;
    if (w) *w = clip.size.width;
    if (h) *h = clip.size.height;
-   
+
    return ctxt->clipped;
 }
 
@@ -266,7 +266,7 @@ static void
 eng_context_color_set(void *data, void *context, int r, int g, int b, int a)
 {
    Evas_Quartz_Context *ctxt = (Evas_Quartz_Context *)context;
-   
+
    ctxt->col.r = (double)r / 255.0;
    ctxt->col.g = (double)g / 255.0;
    ctxt->col.b = (double)b / 255.0;
@@ -296,7 +296,7 @@ eng_context_multiplier_set(void *data, void *context, int r, int g, int b, int a
    ctxt->mul.b = (double)b / 255.0;
    ctxt->mul.a = (double)a / 255.0;
    ctxt->mul.set = 1;
-   
+
    CGContextSetAlpha(re->ctx, ctxt->mul.a);
 }
 
@@ -305,7 +305,7 @@ eng_context_multiplier_unset(void *data, void *context)
 {
    Render_Engine *re = (Render_Engine *)data;
    Evas_Quartz_Context *ctxt = (Evas_Quartz_Context *)context;
-   
+
    ctxt->mul.set = 0;
    CGContextSetAlpha(re->ctx, 1.0);
 }
@@ -339,9 +339,9 @@ eng_context_anti_alias_set(void *data, void *context, unsigned char aa)
 {
    Render_Engine *re = (Render_Engine *)data;
    Evas_Quartz_Context *ctxt = (Evas_Quartz_Context *)context;
-   
+
    ctxt->aa = aa;
-   
+
    CGContextSetAllowsAntialiasing(re->ctx, (bool)aa);
    CGContextSetShouldAntialias(re->ctx, (bool)aa);
    CGContextSetInterpolationQuality(re->ctx, kCGInterpolationLow); // is it OK to assume low quality?
@@ -351,7 +351,7 @@ static unsigned char
 eng_context_anti_alias_get(void *data, void *context)
 {
    Evas_Quartz_Context *ctxt = (Evas_Quartz_Context *)context;
-   
+
    return ctxt->aa;
 }
 
@@ -363,14 +363,14 @@ eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w
    Render_Engine *re = (Render_Engine *)data;
    Evas_Quartz_Context *ctxt = (Evas_Quartz_Context *)context;
    double r, g, b, a;
-   
+
    flip_pixels(&y, &h, ctxt);
 
    r = ctxt->col.r;
    g = ctxt->col.g;
    b = ctxt->col.b;
    a = ctxt->col.a;
-   
+
    if (ctxt->mul.set)
    {
       r *= ctxt->mul.r;
@@ -378,7 +378,7 @@ eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w
       b *= ctxt->mul.b;
       a *= ctxt->mul.a;
    }
-   
+
    CGContextSetRGBFillColor(re->ctx, r, g, b, a);
    CGContextFillRect(re->ctx, CGRectMake(x, y, w, h));
 }
@@ -391,7 +391,7 @@ eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, 
    Render_Engine *re = (Render_Engine *)data;
    Evas_Quartz_Context *ctxt = (Evas_Quartz_Context *)context;
    double r, g, b, a;
-   
+
    flip_pixels(&y1, NULL, ctxt);
    flip_pixels(&y2, NULL, ctxt);
 
@@ -399,7 +399,7 @@ eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, 
    g = ctxt->col.g;
    b = ctxt->col.b;
    a = ctxt->col.a;
-   
+
    if (ctxt->mul.set)
    {
       r *= ctxt->mul.r;
@@ -407,7 +407,7 @@ eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, 
       b *= ctxt->mul.b;
       a *= ctxt->mul.a;
    }
-   
+
    CGContextSetRGBStrokeColor(re->ctx, r, g, b, a);
    CGContextBeginPath(re->ctx);
    CGContextMoveToPoint(re->ctx, x1, y1);
@@ -423,7 +423,7 @@ eng_polygon_point_add(void *data, void *context, void *polygon, int x, int y)
    Evas_Quartz_Polygon *poly;
    Evas_Quartz_Polygon_Point *pt;
    Evas_Quartz_Context *ctxt = (Evas_Quartz_Context *)context;
-   
+
    flip_pixels(&y, NULL, ctxt);
 
    poly = (Evas_Quartz_Polygon *)polygon;
@@ -465,9 +465,9 @@ eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
    Evas_Quartz_Context *ctxt = (Evas_Quartz_Context *)context;
    Evas_Quartz_Polygon *poly = (Evas_Quartz_Polygon *)polygon;
    Evas_Quartz_Polygon_Point *pt;
-   
+
    double r, g, b, a;
-   
+
    CGContextBeginPath(re->ctx);
 
    pt = poly->points->data;
@@ -491,7 +491,7 @@ eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
       b *= ctxt->mul.b;
       a *= ctxt->mul.a;
    }
-   
+
    CGContextSetRGBFillColor(re->ctx, r, g, b, a);
    CGContextFillPath(re->ctx);
 }
@@ -503,14 +503,14 @@ eng_gradient_new(void *data)
 {
    Evas_Quartz_Gradient *gradient = calloc(1, sizeof(Evas_Quartz_Gradient));
    if (!gradient) return NULL;
-   
+
    gradient->grad = evas_common_gradient_new();
    if (!(gradient->grad))
    {
       free(gradient);
       return NULL;
    }
-   
+
    gradient->changed = 1;
    gradient->buf = NULL;
 
@@ -642,11 +642,11 @@ eng_gradient_is_opaque(void *data, void *context, void *gradient, int x, int y, 
    RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
    RGBA_Gradient *grad;
    if (!gradient) return 0;
-   
+
    grad = ((Evas_Quartz_Gradient *)gradient)->grad;
 
    if (!grad || !grad->type.geometer) return 0;
-   
+
    return !(grad->type.geometer->has_alpha(grad, dc->render_op) |
               grad->type.geometer->has_mask(grad, dc->render_op));
 }
@@ -683,7 +683,7 @@ eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int 
 {
    RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
    Evas_Quartz_Gradient *gr = (Evas_Quartz_Gradient *)gradient;
-   
+
    printf("#Gradient#\n");
    printf("Fill: %i %i %i %i\n", gr->grad->fill.x, gr->grad->fill.y, gr->grad->fill.w, gr->grad->fill.h);
    printf("Type: %s %s\n", gr->grad->type.name, gr->grad->type.params);
@@ -693,10 +693,10 @@ eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int 
    printf("Color: nstops: %d len: %d\n", gr->grad->color.nstops, gr->grad->color.len);
    printf("Alpha: nstops: %d len: %d\n", gr->grad->alpha.nstops, gr->grad->alpha.len);
    printf("\n");
-   
+
    if ((gr->sw != w) || (gr->sh != h))
       gr->changed = 1;
-   
+
    if ((gr->changed) || (!gr->im))
    {
       if (gr->buf && ((gr->sw != w) || (gr->sh != h)))
@@ -704,10 +704,10 @@ eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int 
          free(gr->buf);
          gr->buf = NULL;
       }
-      
+
       if (!gr->buf)
          gr->buf = calloc(w * h, 4);
-      
+
       eng_image_free(data, gr->im);
       gr->im = eng_image_new_from_data(data, w, h, gr->buf, 1, EVAS_COLORSPACE_ARGB8888);
       dc->render_op = _EVAS_RENDER_FILL;
@@ -717,7 +717,7 @@ eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int 
       gr->sh = h;
       gr->changed = 0;
    }
-   
+
    eng_image_draw(data, context, NULL, gr->im, 0, 0, 0, 0, x, y, w, h, 0);
 }
 
@@ -727,11 +727,11 @@ static void *
 eng_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
 {
    Evas_Quartz_Image *im = calloc(1, sizeof(Evas_Quartz_Image));
-   
+
    // FIXME: set error before returning without a new image...
    // I can't figure out what to set it to, even trying to follow through the core code.
    // Also, none of the other engines set it.
-   
+
    if (error) *error = 0;
    if (!im) return NULL;
 
@@ -749,18 +749,18 @@ static void *
 eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
    Evas_Quartz_Image *im = calloc(1, sizeof(Evas_Quartz_Image));
-   
+
    if (!im) return NULL;
-   
+
    im->im = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(), w, h, image_data, alpha, cspace);
    im->references = 1;
-   
+
    if (!im->im)
    {
       free(im);
       return NULL;
    }
-   
+
    return im;
 }
 
@@ -768,18 +768,18 @@ static void *
 eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
    Evas_Quartz_Image *im = calloc(1, sizeof(Evas_Quartz_Image));
-   
+
    if (!im) return NULL;
-   
+
    im->im = (RGBA_Image *)evas_cache_image_copied_data(evas_common_image_cache_get(), w, h, image_data, alpha, cspace);
    im->references = 1;
-   
+
    if (!im->im)
    {
       free(im);
       return NULL;
    }
-   
+
    return im;
 }
 
@@ -787,11 +787,11 @@ static void
 eng_image_free(void *data, void *image)
 {
    Evas_Quartz_Image *im = (Evas_Quartz_Image *)image;
-   
+
    if (!im) return;
-   
+
    if (--im->references > 0) return;
-   
+
    if (im->cgim) CGImageRelease(im->cgim);
    if (im->im) evas_cache_image_drop(&im->im->cache_entry);
    free(im);
@@ -802,7 +802,7 @@ eng_image_size_set(void *data, void *image, int w, int h)
 {
    Evas_Quartz_Image *im = (Evas_Quartz_Image *)image;
    Evas_Quartz_Image *im_old;
-   
+
    if (!im) return NULL;
    im_old = image;
    if ((eng_image_colorspace_get(data, image) == EVAS_COLORSPACE_YCBCR422P601_PL) ||
@@ -811,7 +811,7 @@ eng_image_size_set(void *data, void *image, int w, int h)
 
    if ((im_old) && (im_old->im->cache_entry.w == w) && (im_old->im->cache_entry.h == h))
       return image;
-      
+
    if ((w <= 0) || (h <= 0))
    {
       eng_image_free(data, im_old);
@@ -828,7 +828,7 @@ eng_image_size_set(void *data, void *image, int w, int h)
    return im;
 }
 
-static void 
+static void
 eng_image_size_get(void *data, void *image, int *w, int *h)
 {
    Evas_Quartz_Image *im = (Evas_Quartz_Image *)image;
@@ -849,7 +849,7 @@ static void *
 eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 {
    Evas_Quartz_Image *im = (Evas_Quartz_Image *)image;
-   
+
    if ((im) && (im->im))
       return evas_cache_image_dirty(&im->im->cache_entry, x, y, w, h);
 }
@@ -858,9 +858,9 @@ static void *
 eng_image_alpha_set(void *data, void *image, int has_alpha)
 {
    Evas_Quartz_Image *im = (Evas_Quartz_Image *)image;
-   
+
    if ((!im) || (!im->im)) return NULL;
-      
+
    if (im->im->cache_entry.space != EVAS_COLORSPACE_ARGB8888)
    {
       im->im->cache_entry.flags.alpha = 0;
@@ -871,7 +871,7 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
       evas_common_image_colorspace_dirty(im->im);
       im->im->cache_entry.flags.alpha = has_alpha ? 1 : 0;
    }
-   
+
    return im;
 }
 
@@ -879,9 +879,9 @@ static int
 eng_image_alpha_get(void *data, void *image)
 {
    Evas_Quartz_Image *im = (Evas_Quartz_Image *) image;
-   
+
    if (!im->im) return 0;
-   
+
    return (int)(im->im->cache_entry.flags.alpha);
 }
 
@@ -889,7 +889,7 @@ static char *
 eng_image_comment_get(void *data, void *image, char *key)
 {
    Evas_Quartz_Image *im = (Evas_Quartz_Image *)image;
-   
+
    if ((!im) || (!im->im))
       return NULL;
    else
@@ -908,7 +908,7 @@ static void
 eng_image_colorspace_set(void *data, void *image, int cspace)
 {
    Evas_Quartz_Image *im = (Evas_Quartz_Image *)image;
-   
+
    if (!im)
       return;
    else
@@ -919,7 +919,7 @@ static int
 eng_image_colorspace_get(void *data, void *image)
 {
    Evas_Quartz_Image *im = (Evas_Quartz_Image *)image;
-   
+
    if (!im)
       return EVAS_COLORSPACE_ARGB8888;
    else
@@ -943,17 +943,17 @@ static void *
 eng_image_data_put(void *data, void *image, DATA32 *image_data)
 {
    // FIXME: one last leak somewhere in this function
-   
+
    Evas_Quartz_Image *im_old = (Evas_Quartz_Image *)image;
 
    if (!im_old) return NULL;
-   
+
    if (im_old->cgim)
    {
       CGImageRelease(im_old->cgim);
       im_old->cgim = NULL;
    }
-   
+
    switch (im_old->im->cache_entry.space)
    {
       case EVAS_COLORSPACE_ARGB8888:
@@ -967,13 +967,13 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
             if (im_old->im->cs.data)
                if (!im_old->im->cs.no_free)
                   free(im_old->im->cs.data);
-            
+
             im_old->im->cs.data = image_data;
             evas_common_image_colorspace_dirty(im_old->im);
          }
          break;
    }
-   
+
    if (!image) return NULL;
 
    return image;
@@ -989,7 +989,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
       *image_data = NULL;
       return NULL;
    }
-   
+
    switch (im->im->cache_entry.space)
    {
       case EVAS_COLORSPACE_ARGB8888:
@@ -997,7 +997,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
          {
             CGImageRelease(im->cgim);
             im->cgim = NULL;
-            
+
             if (im->references > 1)
             {
                Evas_Quartz_Image *im_new;
@@ -1007,13 +1007,13 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
                                                        im->im->image.data,
                                                        eng_image_alpha_get(data, image),
                                                        eng_image_colorspace_get(data, image));
-               
+
                if (!im_new)
                {
                   if (image_data) *image_data = NULL;
                   return im;
                }
-               
+
                eng_image_free(data, im);
                im = im_new;
             }
@@ -1025,9 +1025,9 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
                im->references++;
             }
          }
-         
+
          evas_cache_image_load_data(&im->im->cache_entry);
-         
+
          if (image_data) *image_data = im->im->image.data;
          break;
       case EVAS_COLORSPACE_YCBCR422P709_PL:
@@ -1039,7 +1039,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
          abort(); // this seems ... incredibly unreasonable, but GL does it...
          break;
    }
-   
+
    return im;
 }
 
@@ -1052,16 +1052,16 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
    flip_pixels(&dst_y, &dst_h, ctxt);
 
    if ((!im) || (!im->im)) return;
-   
+
    if (!im->cgim)
    {
       CGColorSpaceRef colorspace;
       CGDataProviderRef provider;
       evas_cache_image_load_data(&im->im->cache_entry);
       evas_common_image_colorspace_normalize((RGBA_Image *)(&im->im->cache_entry));
-      
+
       if (!im->im->image.data) return;
-      
+
       colorspace = CGColorSpaceCreateDeviceRGB();
       provider = CGDataProviderCreateWithData(NULL,
                                               im->im->image.data,
@@ -1078,15 +1078,15 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
                                NULL,
                                smooth,
                                kCGRenderingIntentDefault);
-                               
+
       CGDataProviderRelease(provider);
       CGColorSpaceRelease(colorspace);
-      
+
       if (!im->cgim) return;
    }
-   
+
    CGImageRef subImage = NULL;
-   
+
    if (src_x != 0 || src_y != 0 || src_w != 0 || src_h != 0)
    {
       subImage = CGImageCreateWithImageInRect(im->cgim, CGRectMake(src_x,src_y,src_w,src_h));
@@ -1111,17 +1111,17 @@ quartz_font_from_ats(ATSFontContainerRef container, int size)
    CFTypeRef values[1];
    CFDictionaryRef attr;
    Evas_Quartz_Font *loaded_font;
-   
+
    ATSFontFindFromContainer(container, kATSOptionFlagsDefault, 0, NULL, &count);
    fonts = calloc(count, sizeof(ATSFontRef));
    if (!fonts) return NULL;
    ATSFontFindFromContainer(container, kATSOptionFlagsDefault, count, fonts, NULL);
-   
+
    font = CTFontCreateWithPlatformFont(fonts[0], size, NULL, NULL);
-   
+
    loaded_font = calloc(1, sizeof(Evas_Quartz_Font));
    if (!font || !loaded_font) return NULL;
-   
+
    keys[0] = kCTFontAttributeName;
    values[0] = font;
    attr = CFDictionaryCreate(NULL,
@@ -1130,13 +1130,13 @@ quartz_font_from_ats(ATSFontContainerRef container, int size)
                             sizeof(keys) / sizeof(keys[0]),
                             &kCFTypeDictionaryKeyCallBacks,
                             &kCFTypeDictionaryValueCallBacks);
-   
+
    loaded_font->font = font;
    loaded_font->attr = attr;
    loaded_font->size = size;
-   
+
    free(fonts);
-   
+
    return loaded_font;
 }
 
@@ -1145,7 +1145,7 @@ eng_font_add(void *data, void *font, const char *name, int size)
 {
    // FIXME: what is this function supposed to do?
    // if I delete it, we eventually crash when it gets run
-   
+
    return (char *)name;
 }
 
@@ -1154,10 +1154,10 @@ eng_font_load(void *data, const char *name, int size)
 {
    FSRef fontFile;
    ATSFontContainerRef container;
-   
+
    FSPathMakeRef((unsigned char *)name, &fontFile, NULL);
    ATSFontActivateFromFileReference(&fontFile, kATSFontContextLocal, kATSFontFormatUnspecified, NULL, kATSOptionFlagsDefault, &container);
-   
+
    return quartz_font_from_ats(container, size);;
 }
 
@@ -1165,7 +1165,7 @@ static void *
 eng_font_memory_load(void *data, char *name, int size, const void *fdata, int fdata_size)
 {
    ATSFontContainerRef container;
-   
+
    ATSFontActivateFromMemory((void *)fdata, fdata_size, kATSFontContextLocal, kATSFontFormatUnspecified, NULL, kATSOptionFlagsDefault, &container);
 
    return quartz_font_from_ats(container, size);
@@ -1185,7 +1185,7 @@ static int
 eng_font_ascent_get(void *data, void *font)
 {
    Evas_Quartz_Font *loaded_font = (Evas_Quartz_Font *)font;
-   
+
    return CTFontGetAscent(loaded_font->font);
 }
 
@@ -1193,7 +1193,7 @@ static int
 eng_font_descent_get(void *data, void *font)
 {
    Evas_Quartz_Font *loaded_font = (Evas_Quartz_Font *)font;
-   
+
    return CTFontGetDescent(loaded_font->font);
 }
 
@@ -1201,7 +1201,7 @@ static int
 eng_font_max_ascent_get(void *data, void *font)
 {
    Evas_Quartz_Font *loaded_font = (Evas_Quartz_Font *)font;
-   
+
    return CTFontGetAscent(loaded_font->font);
 }
 
@@ -1209,7 +1209,7 @@ static int
 eng_font_max_descent_get(void *data, void *font)
 {
    Evas_Quartz_Font *loaded_font = (Evas_Quartz_Font *)font;
-   
+
    return CTFontGetDescent(loaded_font->font);
 }
 
@@ -1218,20 +1218,20 @@ eng_font_string_size_get(void *data, void *font, const char *text, int *w, int *
 {
    Render_Engine *re = (Render_Engine *)data;
    Evas_Quartz_Font *loaded_font = (Evas_Quartz_Font *)font;
-   
+
    CFStringRef string = CFStringCreateWithCString(NULL, text, kCFStringEncodingUTF8);
    CFAttributedStringRef attrString = CFAttributedStringCreate(NULL, string, loaded_font->attr);
    CTLineRef line = CTLineCreateWithAttributedString(attrString);
    CGContextSetTextMatrix(re->ctx, CGAffineTransformIdentity);
    CGContextSetTextPosition(re->ctx, 0, CTFontGetDescent(loaded_font->font));
    CGRect bounds = CTLineGetImageBounds(line, re->ctx);
-   
+
    // Descenders on characters seem to leave origin at typographic origin, instead of image origin.
    // Evas expects text to be treated like an image, so we have to offset by the typographic origin.
-   
+
    if (w) (*w) = ceil(bounds.size.width + bounds.origin.x);
    if (h) (*h) = ceil(bounds.size.height + bounds.origin.y);
-   
+
    CFRelease(attrString);
    CFRelease(string);
    CFRelease(line);
@@ -1247,9 +1247,9 @@ static int
 eng_font_h_advance_get(void *data, void *font, const char *text)
 {
    int w;
-   
+
    eng_font_string_size_get(data, font, text, &w, NULL);
-   
+
    return w + 2; // FIXME: shouldn't need a constant here. from where do we get word spacing?
    // it seems we lose the space between differently-styled text in a text block. Why?
 }
@@ -1258,9 +1258,9 @@ static int
 eng_font_v_advance_get(void *data, void *font, const char *text)
 {
    int h;
-   
+
    eng_font_string_size_get(data, font, text, NULL, &h);
-   
+
    return h;
 }
 
@@ -1268,19 +1268,19 @@ static int
 eng_font_char_coords_get(void *data, void *font, const char *text, int pos, int *cx, int *cy, int *cw, int *ch)
 {
    Evas_Quartz_Font *loaded_font = (Evas_Quartz_Font *)font;
-   
+
    CFStringRef string = CFStringCreateWithCString(NULL, text, kCFStringEncodingUTF8);
    CFAttributedStringRef attrString = CFAttributedStringCreate(NULL, string, loaded_font->attr);
    CTLineRef line = CTLineCreateWithAttributedString(attrString);
-   
+
    float offset = CTLineGetOffsetForStringIndex(line, pos, NULL);
    if (cx) *cx = offset;
    if (cy) *cy = loaded_font->size;
-   
+
    CFRelease(attrString);
    CFRelease(string);
    CFRelease(line);
-   
+
    return 1;
 }
 
@@ -1289,24 +1289,24 @@ eng_font_char_at_coords_get(void *data, void *font, const char *text, int x, int
 {
    // Return the index of the character at the given point, also lookup it's origin x, y, w, and h.
    Evas_Quartz_Font *loaded_font = (Evas_Quartz_Font *)font;
-   
+
    CFStringRef string = CFStringCreateWithCString(NULL, text, kCFStringEncodingUTF8);
    CFAttributedStringRef attrString = CFAttributedStringCreate(NULL, string, loaded_font->attr);
    CTLineRef line = CTLineCreateWithAttributedString(attrString);
-   
+
    int stringIndex = (int) CTLineGetStringIndexForPosition(line, CGPointMake(x, y));
-   
+
    // In order to get the character's size and position, look up the position of this character and the next one
    eng_font_char_coords_get(data, font, text, stringIndex, cx, cy, NULL, NULL);
    eng_font_char_coords_get(data, font, text, stringIndex + 1, cw, NULL, NULL, NULL);
-   
+
    if (cw && cx) *cw -= *cx;
    if (ch) *ch = loaded_font->size;
 
    CFRelease(attrString);
    CFRelease(string);
    CFRelease(line);
-   
+
    return stringIndex;
 }
 
@@ -1339,17 +1339,17 @@ eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y
    CFStringRef string;
    CFAttributedStringRef attrString;
    CTLineRef line;
-   
+
    flip_pixels(&y, &h, ctxt);
-   
+
    // FIXME: I know this should never happen, but the next line is magic.
    // It's also... broken. It /works/, but ... for example, subtracting 1 shouldn't need to happen.
    // The text drawing is a mess, but this is the closest I've gotten yet...
-   
+
    y += floor(CTFontGetAscent(loaded_font->font) - (CTFontGetXHeight(loaded_font->font) + CTFontGetDescent(loaded_font->font))) - 1;
-   
+
    CGContextSetShouldSmoothFonts(re->ctx, (bool)(loaded_font->hint));
-   
+
    r = ctxt->col.r;
    g = ctxt->col.g;
    b = ctxt->col.b;
@@ -1362,21 +1362,21 @@ eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y
       b *= ctxt->mul.b;
       a *= ctxt->mul.a;
    }
-   
+
    colors[0] = r;
    colors[1] = g;
    colors[2] = b;
    colors[3] = a;
-   
+
    // Create an attributed string
    colorspace = CGColorSpaceCreateDeviceRGB();
    color = CGColorCreate(colorspace, colors);
-   
+
    keys[0] =   kCTFontAttributeName;
    values[0] = loaded_font->font;
    keys[1] =   kCTForegroundColorAttributeName;
    values[1] = color;
-   
+
    attr = CFDictionaryCreate(NULL, (const void **)&keys, (const void **)&values, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
    string = CFStringCreateWithCString(NULL, text, kCFStringEncodingUTF8);
    attrString = CFAttributedStringCreate(NULL, string, attr);
@@ -1497,7 +1497,7 @@ module_open(Evas_Module *em)
 EAPI void
 module_close(void)
 {
-   
+
 }
 
 EAPI Evas_Module_Api evas_modapi =
