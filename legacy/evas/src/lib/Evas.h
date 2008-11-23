@@ -1020,7 +1020,7 @@ extern "C" {
    };
 
    EAPI void evas_object_box_smart_set(Evas_Object_Box_Api *api);
-  EAPI void evas_object_box_layout_set(Evas_Object *o, Evas_Object_Box_Layout cb, const void *data, void (*free_data)(void *data));
+   EAPI void evas_object_box_layout_set(Evas_Object *o, Evas_Object_Box_Layout cb, const void *data, void (*free_data)(void *data));
 
    EAPI Evas_Object *evas_object_box_add(Evas *evas);
    EAPI Evas_Object *evas_object_box_add_to(Evas_Object *parent);
@@ -1046,6 +1046,7 @@ extern "C" {
    EAPI Evas_Object_Box_Option *evas_object_box_insert_at(Evas_Object *o, Evas_Object *child, unsigned int pos);
    EAPI Evas_Bool               evas_object_box_remove(Evas_Object *o, Evas_Object *child);
    EAPI Evas_Bool               evas_object_box_remove_at(Evas_Object *o, unsigned int pos);
+   EAPI Evas_Bool               evas_object_box_remove_all(Evas_Object *o, Evas_Bool clear);
 
    EAPI const char *evas_object_box_option_property_name_get(Evas_Object *o, int property);
    EAPI int         evas_object_box_option_property_id_get(Evas_Object *o, const char *name);

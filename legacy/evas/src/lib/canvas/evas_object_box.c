@@ -667,7 +667,7 @@ void
 evas_object_box_layout_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 {
    int pad_inc = 0, sub_pixel = 0;
-   int req_w, global_pad, remaining;
+   int req_w, global_pad, remaining, top_h = 0;
    double weight_total = 0.0;
    int weight_use = 0;
    int x, y, w, h;
@@ -742,6 +742,7 @@ evas_object_box_layout_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, vo
 
         off_x = padding_l;
         new_h = child_h;
+        if (new_h > top_h) top_h = new_h;
 
         _layout_set_offset_and_expand_dimension_space_max_bounded
 	  (child_h, &new_h, h, max_h, &off_y, align_y, padding_t, padding_b);
@@ -757,6 +758,7 @@ evas_object_box_layout_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, vo
 	     sub_pixel -= 1 << 16;
 	  }
      }
+   evas_object_size_hint_min_set(o, x, top_h);
 }
 
 static int
@@ -827,7 +829,7 @@ void
 evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 {
    int pad_inc = 0, sub_pixel = 0;
-   int req_h, global_pad, remaining;
+   int req_h, global_pad, remaining, top_w = 0;
    double weight_total = 0.0;
    int weight_use = 0;
    int x, y, w, h;
@@ -902,6 +904,7 @@ evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void
 
         off_y = padding_t;
         new_w = child_w;
+        if (new_w > top_w) top_w = new_w;
 
         _layout_set_offset_and_expand_dimension_space_max_bounded
 	  (child_w, &new_w, w, max_w, &off_x, align_x, padding_l, padding_r);
@@ -917,6 +920,7 @@ evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void
 	     sub_pixel -= 1 << 16;
 	  }
      }
+   evas_object_size_hint_min_set(o, top_w, y);
 }
 
 /**
@@ -1009,6 +1013,7 @@ evas_object_box_layout_homogeneous_horizontal(Evas_Object *o, Evas_Object_Box_Da
 	     sub_pixel -= 1 << 16;
 	  }
      }
+   evas_object_size_hint_min_set(o, w, h);
 }
 
 /**
@@ -1075,6 +1080,7 @@ evas_object_box_layout_homogeneous_vertical(Evas_Object *o, Evas_Object_Box_Data
 	     sub_pixel -= 1 << 16;
 	  }
      }
+   evas_object_size_hint_min_set(o, w, h);
 }
 
 /**
@@ -1126,6 +1132,7 @@ evas_object_box_layout_homogeneous_max_size_horizontal(Evas_Object *o, Evas_Obje
    int remaining, global_pad, pad_inc = 0, sub_pixel = 0;
    int cell_sz = 0;
    int x, y, w, h;
+   int top_h = 0;
    int n_children;
    Evas_Object_Box_Option *opt;
    Eina_List *l;
@@ -1177,6 +1184,7 @@ evas_object_box_layout_homogeneous_max_size_horizontal(Evas_Object *o, Evas_Obje
 
         new_w = child_w;
         new_h = child_h;
+        if (new_h > top_h) top_h = new_h;
 
         _layout_set_offset_and_expand_dimension_space_max_bounded
 	  (child_h, &new_h, h, max_h, &off_y, align_y, padding_t, padding_b);
@@ -1196,6 +1204,7 @@ evas_object_box_layout_homogeneous_max_size_horizontal(Evas_Object *o, Evas_Obje
 	     sub_pixel -= 1 << 16;
 	  }
      }
+   evas_object_size_hint_min_set(o, x, top_h);
 }
 
 /**
@@ -1215,6 +1224,7 @@ evas_object_box_layout_homogeneous_max_size_vertical(Evas_Object *o, Evas_Object
    int remaining, global_pad, pad_inc = 0, sub_pixel = 0;
    int cell_sz = 0;
    int x, y, w, h;
+   int top_w = 0;
    int n_children;
    Evas_Object_Box_Option *opt;
    Eina_List *l;
@@ -1266,6 +1276,7 @@ evas_object_box_layout_homogeneous_max_size_vertical(Evas_Object *o, Evas_Object
 
         new_w = child_w;
         new_h = child_h;
+        if (new_w > top_w) top_w = new_w;
 
         _layout_set_offset_and_expand_dimension_space_max_bounded
 	  (child_w, &new_w, w, max_w, &off_x, align_x, padding_l, padding_r);
@@ -1284,8 +1295,8 @@ evas_object_box_layout_homogeneous_max_size_vertical(Evas_Object *o, Evas_Object
 	     y++;
 	     sub_pixel -= 1 << 16;
 	  }
-
      }
+   evas_object_size_hint_min_set(o, top_w, y);
 }
 
 static void
@@ -1349,6 +1360,9 @@ _evas_object_box_layout_flow_horizontal_row_info_collect(Evas_Object_Box_Data *p
    *row_count = n_rows;
    *off_y_ret = off_y;
    *max_h_ret = max_h;
+   
+   //TODO set size hints
+   //evas_object_size_hint_min_set(o, w,h);
 }
 
 /**
@@ -1481,6 +1495,9 @@ evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *pri
         evas_object_geometry_get(o, &x, NULL, NULL, NULL);
         y += row_max_h[r] + inc_y;
      }
+
+   //TODO set size hints
+   //evas_object_size_hint_min_set(o, x, y);
 }
 
 static void
@@ -1545,6 +1562,9 @@ _evas_object_box_layout_flow_vertical_col_info_collect(Evas_Object_Box_Data *pri
    *col_count = n_cols;
    *off_x_ret = off_x;
    *max_w_ret = max_w;
+
+   //TODO set size hints
+   //evas_object_size_hint_min_set(o, w,h);
 }
 
 /**
@@ -1650,6 +1670,9 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv,
         evas_object_geometry_get(o, NULL, &y, NULL, NULL);
         x += col_max_w[c] + inc_x;
      }
+
+   //TODO set size hints
+   //evas_object_size_hint_min_set(o, w,h);
 }
 
 /**
@@ -1680,6 +1703,7 @@ evas_object_box_layout_stack(Evas_Object *o, Evas_Object_Box_Data *priv, void *d
 {
    Eina_List *l;
    Evas_Coord ox, oy, ow, oh;
+   Evas_Coord top_w = 0, top_h = 0;
    Evas_Object_Box_Option *opt;
    Evas_Object *old_child = NULL;
 
@@ -1701,7 +1725,9 @@ evas_object_box_layout_stack(Evas_Object *o, Evas_Object_Box_Data *priv, void *d
         evas_object_geometry_get(child, NULL, NULL, &child_w, &child_h);
         new_w = child_w;
         new_h = child_h;
-
+        if (new_w > top_w) top_w = new_w;
+        if (new_h > top_h) top_h = new_h;
+        
         _layout_set_offset_and_change_dimension_min_max_cell_bounded
 	  (child_w, &new_w, min_w, max_w, ow, &off_x, align_x, pad_l, pad_r);
         _layout_set_offset_and_change_dimension_min_max_cell_bounded
@@ -1714,6 +1740,7 @@ evas_object_box_layout_stack(Evas_Object *o, Evas_Object_Box_Data *priv, void *d
 	  evas_object_stack_above(child, old_child);
         old_child = child;
      }
+   evas_object_size_hint_min_set(o, top_w, top_h);
 }
 
 /**
@@ -1965,6 +1992,39 @@ evas_object_box_remove_at(Evas_Object *o, unsigned int pos)
    return 0;
 }
 
+/**
+ * Remove all child objects.
+ * @return 0 on errors
+ */
+Evas_Bool
+evas_object_box_remove_all(Evas_Object *o, Evas_Bool clear)
+{
+   const Evas_Object_Box_Api *api;
+
+   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, 0);
+
+   api = priv->api;
+   if ((!api) || (!api->remove))
+     return 0;
+
+   while (priv->children)
+     {
+        Evas_Object_Box_Option *opt = priv->children->data;
+        Evas_Object *obj;
+
+        obj = api->remove(o, priv, opt->obj);
+        if (obj)
+          {
+             _evas_object_box_child_callbacks_unregister(obj);
+             evas_object_smart_member_del(obj);
+             if (clear)
+               evas_object_del(obj);
+          }
+        else return 0;
+     }
+
+   return 1;
+}
 /**
  * Get the name of the property of the child elements of the box @a o
  * whose id is @a property. On error, @c NULL is returned.
