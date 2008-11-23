@@ -2023,6 +2023,7 @@ evas_object_box_remove_all(Evas_Object *o, Evas_Bool clear)
         else return 0;
      }
 
+   evas_object_smart_changed(o);
    return 1;
 }
 /**
