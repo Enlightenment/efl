@@ -7,7 +7,8 @@ lib_LTLIBRARIES = libecore.la
 include_HEADERS = \
 Ecore.h \
 Ecore_Data.h \
-Ecore_Str.h
+Ecore_Str.h \
+Ecore_Getopt.h
 
 libecore_la_SOURCES = \
 ecore.c \
@@ -32,7 +33,8 @@ ecore_time.c \
 ecore_timer.c \
 ecore_tree.c \
 ecore_value.c \
-ecore_poll.c
+ecore_poll.c \
+ecore_getopt.c
 
 libecore_la_LIBADD = @dlopen_libs@ @EINA_LIBS@ @EVIL_LIBS@ @WIN32_LIBS@ -lm
 libecore_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
