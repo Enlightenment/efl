@@ -183,22 +183,8 @@ PKG_CHECK_MODULES([SVG], [librsvg-2.0 >= 2.14.0],
 )
 
 if test "x${have_dep}" = "xyes" ; then
-   PKG_CHECK_MODULES([CAIRO_SVG], [cairo-svg],
-      [
-       evas_image_loader_[]$1[]_cflags="${SVG_CFLAGS} ${CAIRO_SVG_CFLAGS}"
-       evas_image_loader_[]$1[]_libs="${SVG_LIBS} ${CAIRO_SVG_LIBS}"
-      ],
-      [have_dep="no"]
-   )
-   if test "x${have_dep}" = "xno" ; then
-      PKG_CHECK_MODULES([LIBSVG_CAIRO], [libsvg-cairo],
-         [
-          have_dep="yes"
-          evas_image_loader_[]$1[]_cflags="${SVG_CFLAGS} ${LIBSVG_CAIRO_CFLAGS}"
-          evas_image_loader_[]$1[]_libs="${SVG_LIBS} ${LIBSVG_CAIRO_LIBS}"
-         ]
-      )
-   fi
+   evas_image_loader_[]$1[]_cflags="${SVG_CFLAGS}"
+   evas_image_loader_[]$1[]_libs="${SVG_LIBS}"
 fi
 
 AC_SUBST([evas_image_loader_$1_cflags])
