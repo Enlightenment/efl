@@ -16,5 +16,5 @@ pkg_LTLIBRARIES        = module.la
 module_la_SOURCES      = evas_image_load_edb.c
 
 module_la_LIBADD       = @evas_image_loader_edb_libs@ @EINA_LIBS@ $(top_builddir)/src/lib/libevas.la
-module_la_LDFLAGS      = @lt_no_undefined@ -module -avoid-version
+module_la_LDFLAGS      = -no-undefined -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static

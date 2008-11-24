@@ -149,7 +149,7 @@ if BUILD_ENGINE_SOFTWARE_16_WINCE
 psoftware16wince = evas-software-16-wince.pc
 endif
 
-if BUILD_ENGINE_SDL
+if BUILD_ENGINE_SOFTWARE_SDL
 psoftwaresdl = evas-software-sdl.pc
 endif
 

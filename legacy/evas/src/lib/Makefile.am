@@ -55,5 +55,5 @@ libevas_la_DEPENDENCIES += engines/common_16/libevas_engine_common_16.la
 
 endif
 
-libevas_la_LDFLAGS = @lt_no_undefined@ @lt_enable_auto_import@ -version-info @version_info@
+libevas_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
 

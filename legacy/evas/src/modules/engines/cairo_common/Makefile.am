@@ -14,10 +14,12 @@ if BUILD_ENGINE_CAIRO_COMMON
 noinst_LTLIBRARIES = libevas_engine_cairo_common.la
 
 libevas_engine_cairo_common_la_SOURCES = \
-evas_cairo_private.h \
-evas_cairo_common.h \
 evas_cairo_main.c
 
 libevas_engine_cairo_common_la_LIBADD = @EINA_LIBS@ @CAIRO_LIBS@ $(top_builddir)/src/lib/libevas.la
 
 endif
+
+EXTRA_DIST = \
+evas_cairo_private.h \
+evas_cairo_common.h

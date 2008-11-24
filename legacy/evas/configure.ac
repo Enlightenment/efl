@@ -29,6 +29,61 @@ SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
+
+want_evas_engine_buffer="yes"
+want_evas_engine_software_x11="no"
+want_evas_engine_xrender_x11="no"
+want_evas_engine_gl_x11="no"
+want_evas_engine_glitz_x11="no"
+want_evas_engine_cairo_x11="no"
+want_evas_engine_software_xcb="no"
+want_evas_engine_xrender_xcb="no"
+want_evas_engine_software_ddraw="no"
+want_evas_engine_direct3d="no"
+want_evas_engine_quartz="no"
+want_evas_engine_gl_glew="no"
+want_evas_engine_software_sdl="no"
+want_evas_engine_fb="no"
+want_evas_engine_directfb="no"
+want_evas_engine_software_qtopia="no"
+want_evas_engine_software_16_x11="no"
+want_evas_engine_software_16_ddraw="no"
+want_evas_engine_software_16_wince="no"
+
+want_evas_image_loader_edb="yes"
+want_evas_image_loader_eet="yes"
+want_evas_image_loader_gif="yes"
+want_evas_image_loader_jpeg="yes"
+want_evas_image_loader_pmaps="yes"
+want_evas_image_loader_png="yes"
+want_evas_image_loader_svg="yes"
+want_evas_image_loader_tiff="yes"
+want_evas_image_loader_xpm="yes"
+
+want_evas_font_loader_eet="yes"
+
+case "$host_os" in
+   mingw32ce* | cegcc*)
+      want_evas_engine_software_16_wince="yes"
+      want_evas_image_loader_edb="no"
+      want_evas_image_loader_gif="no"
+      want_evas_image_loader_svg="no"
+      want_evas_image_loader_tiff="no"
+      ;;
+   mingw*)
+      want_evas_engine_software_ddraw="yes"
+      want_evas_engine_direct3d="auto"
+      want_evas_engine_software_16_ddraw="yes"
+      want_evas_image_loader_edb="no"
+      want_evas_image_loader_svg="no"
+      ;;
+   *)
+      want_evas_engine_software_x11="auto"
+      want_evas_engine_xrender_x11="auto"
+      want_evas_engine_software_16_x11="auto"
+      ;;
+esac
+
 LT_PROG_RC
 AC_FUNC_ALLOCA
 
@@ -40,7 +95,6 @@ PKG_PROG_PKG_CONFIG
 
 WIN32_CPPFLAGS=""
 WIN32_CFLAGS=""
-lt_no_undefined=""
 lt_enable_auto_import=""
 case "$host_os" in
         mingw*|cegcc*)
@@ -56,24 +110,12 @@ case "$host_os" in
                 if test "$host_os" = "mingw32ce" ; then
                         WIN32_CPPFLAGS="-D_WIN32_WCE=0x0420"
                 fi
-                lt_no_undefined="-no-undefined"
                 ;;
 esac
 AC_SUBST(WIN32_CPPFLAGS)
 AC_SUBST(WIN32_CFLAGS)
-AC_SUBST(lt_no_undefined)
 AC_SUBST(lt_enable_auto_import)
 
-x_dir=""
-x_cflags=""
-x_libs=""
-gl_dir=""
-gl_cflags=""
-gl_libs=""
-qt_dir=""
-qt_cflags=""
-qt_libs=""
-qt_moc="moc"
 
 dnl when used, that option makes configure script fails when
 dnl a requirement is selected, but not met.
@@ -86,23 +128,10 @@ AC_ARG_ENABLE(strict,
 
 #####################################################################
 # Check evas strong dependencie
+
 PKG_CHECK_MODULES([EINA], [eina-0])
 
-#####################################################################
-
-# blah-config style checks
-# qtdir setting
-AC_ARG_WITH(qtdir,
-AC_HELP_STRING([--with-qtdir=QT_DIR], [use qt directory specified]),
-[
-  qt_dir=$withval;
-  echo "using "$qt_dir" for qt directory.";
-], [
-  qt_dir="/opt/Qtopia";
-])
-
-# check for freetype
-PKG_CHECK_MODULES(FREETYPE, freetype2 >= 9.3.0)
+PKG_CHECK_MODULES([FREETYPE], [freetype2 >= 9.3.0])
 
 #######################################
 ## Simple X11 build/link
@@ -185,657 +214,115 @@ fi
 #####################################################################
 ## Engines
 
-#######################################
-## Check if we should build the software_ddraw engine
-want_evas_software_ddraw="auto";
-have_evas_software_ddraw="no";
+EVAS_CHECK_ENGINE([buffer], [${want_evas_engine_buffer}], [no], [Buffer])
 
-AC_MSG_CHECKING(whether software directdraw backend is to be built)
-AC_ARG_ENABLE(software-ddraw,
-  AC_HELP_STRING([--enable-software-ddraw], [enable the Software DirectDraw rendering backend]),
-  [ want_evas_software_ddraw=$enableval ]
-)
-AC_MSG_RESULT($want_evas_software_ddraw)
+EVAS_CHECK_ENGINE([software-x11], [${want_evas_engine_software_x11}], [yes], [Software X11])
 
-if test "x$want_evas_software_ddraw" = "xyes" -o "x$want_evas_software_ddraw" = "xauto" ; then
-  AC_CHECK_HEADER(ddraw.h,
-    [
-      have_evas_software_ddraw="yes"
-      AC_DEFINE(BUILD_ENGINE_SOFTWARE_DDRAW, 1, [Software DirectDraw Rendering Backend])
-      ddraw_libs="-lddraw"
-    ],
-    [
-      if test "x$want_evas_software_ddraw"  = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR([DirectDraw not found (strict dependencies checking)])
-      fi
-    ]
-  )
+EVAS_CHECK_ENGINE([xrender-x11], [${want_evas_engine_xrender_x11}], [yes], [XRender X11])
+
+EVAS_CHECK_ENGINE([gl-x11], [${want_evas_engine_gl_x11}], [yes], [OpenGL X11])
+
+EVAS_CHECK_ENGINE([glitz-x11], [${want_evas_engine_glitz_x11}], [yes], [Glitz X11])
+
+EVAS_CHECK_ENGINE([cairo-x11], [${want_evas_engine_cairo_x11}], [yes], [Cairo X11])
+
+EVAS_CHECK_ENGINE([software-xcb], [${want_evas_engine_software_xcb}], [no], [Software XCB])
+
+EVAS_CHECK_ENGINE([xrender-xcb], [${want_evas_engine_xrender_xcb}], [no], [XRender XCB])
+
+EVAS_CHECK_ENGINE([software-ddraw], [${want_evas_engine_software_ddraw}], [no], [Software DirectDraw])
+
+EVAS_CHECK_ENGINE([direct3d], [${want_evas_engine_direct3d}], [no], [Direct3D])
+
+EVAS_CHECK_ENGINE([quartz], [${want_evas_engine_quartz}], [no], [Quartz])
+
+EVAS_CHECK_ENGINE([gl-glew], [${want_evas_engine_gl_glew}], [no], [OpenGL Glew])
+
+EVAS_CHECK_ENGINE([software-sdl], [${want_evas_engine_software_sdl}], [no], [Software SDL])
+
+EVAS_CHECK_ENGINE([fb], [${want_evas_engine_fb}], [no], [Framebuffer])
+
+EVAS_CHECK_ENGINE([directfb], [${want_evas_engine_directfb}], [no], [DirectFB])
+
+EVAS_CHECK_ENGINE([software-qtopia], [${want_evas_engine_software_qtopia}], [no], [Qtopia])
+
+EVAS_CHECK_ENGINE([software-16-x11], [${want_evas_engine_software_16_x11}], [yes], [Software X11 16 bits])
+
+EVAS_CHECK_ENGINE([software-16-ddraw], [${want_evas_engine_software_16_ddraw}], [no], [Software DirectDraw 16 bits])
+
+EVAS_CHECK_ENGINE([software-16-wince], [${want_evas_engine_software_16_wince}], [no], [Software Windows CE 16 bits])
+
+# common cairo
+have_evas_engine_cairo_common="no"
+if test "x${have_evas_engine_cairo_x11}" = "xyes" ; then
+   have_evas_engine_cairo_common="yes"
+   AC_DEFINE([BUILD_ENGINE_CAIRO_COMMON], [1], [Generic Cairo Rendering Support])
 fi
-AC_MSG_CHECKING(whether software directdraw backend will be built)
-AC_MSG_RESULT($have_evas_software_ddraw)
-AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_DDRAW, test "x$have_evas_software_ddraw" = "xyes")
-
-#######################################
-## Check if we should build the 16bit software_ddraw engine
-want_evas_software_16_ddraw="auto";
-have_evas_software_16_ddraw="no";
-
-AC_MSG_CHECKING(whether 16 bit software directdraw backend is to be built)
-AC_ARG_ENABLE(software-16-ddraw,
-  AC_HELP_STRING([--enable-software-16-ddraw], [enable the 16bit Software DirectDraw rendering backend]),
-  [ want_evas_software_16_ddraw=$enableval ]
-)
-AC_MSG_RESULT($want_evas_software_16_ddraw)
-
-if test "x$want_evas_software_16_ddraw" = "xyes" -o "x$want_evas_software_16_ddraw" = "xauto"; then
-  AC_CHECK_HEADER(ddraw.h,
-    [
-      AC_DEFINE(BUILD_ENGINE_SOFTWARE_16_DDRAW, 1, [16bit Software DirectDraw Rendering Backend])
-      ddraw_16_libs="-lddraw -lgdi32"
-      have_evas_software_16_ddraw="yes"
-    ],
-    [
-      if test "x$want_evas_software_16_ddraw"  = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR([DirectDraw not found (strict dependencies checking)])
-      fi
-    ]
-  )
-fi
-AC_MSG_CHECKING(whether 16 bits software directdraw backend will be built)
-AC_MSG_RESULT($have_evas_software_16_ddraw)
-AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_16_DDRAW, test "x$have_evas_software_16_ddraw" = "xyes")
-
-
-#######################################
-## Check if we should build the direct3d engine
-want_evas_direct3d="auto";
-have_evas_direct3d="no";
-
-AC_MSG_CHECKING(whether direct3d backend is to be built)
-AC_ARG_ENABLE(direct3d,
-  AC_HELP_STRING([--enable-direct3d], [enable the Direct3D rendering backend]),
-  [ want_evas_direct3d=$enableval ]
-)
-AC_MSG_RESULT($want_evas_direct3d)
-
-if test "x$want_evas_direct3d" = "xyes"; then
-  AC_CHECK_HEADERS(d3d9.h d3dx9.h,
-    [
-      AC_DEFINE(BUILD_ENGINE_DIRECT3D, 1, [Direct3D Rendering Backend])
-      direct3d_libs="-ld3d9 -ld3dx9d"
-      have_evas_direct3d="yes"
-    ],
-    [
-      if test "x$want_evas_direct3d"  = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR([Direct3D not found (strict dependencies checking)])
-      fi
-    ]
-  )
-fi
-AC_MSG_CHECKING(whether direct3d backend will be built)
-AC_MSG_RESULT($have_evas_direct3d)
-AM_CONDITIONAL(BUILD_ENGINE_DIRECT3D, test "x$have_evas_direct3d" = "xyes")
-
-
-#######################################
-## Check if we should build the 16bit software_wince engine
-want_evas_software_16_wince="auto";
-have_evas_software_16_wince="no";
-
-AC_MSG_CHECKING(whether 16 bit software WinCE backend is to be built)
-AC_ARG_ENABLE(software-16-wince,
-  AC_HELP_STRING([--enable-software-16-wince], [enable the 16bit Software WinCE rendering backend]),
-  [ want_evas_software_16_wince=$enableval ]
-)
-AC_MSG_RESULT($want_evas_software_16_wince)
-
-if test "x$want_evas_software_16_wince" = "xyes" -o "x$want_evas_software_16_wince" = "xauto"; then
-  AC_CHECK_HEADER(windows.h,
-    [
-      AC_DEFINE(BUILD_ENGINE_SOFTWARE_16_WINCE, 1, [16bit Software WinCE Rendering Backend])
-      wince_16_libs=""
-      have_evas_software_16_wince="yes"
-    ],
-    [
-      if test "x$want_evas_software_16_wince"  = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR([WinCE not found (strict dependencies checking)])
-      fi
-    ]
-  )
-fi
-AC_MSG_CHECKING(whether 16 bits software WinCE backend will be built)
-AC_MSG_RESULT($have_evas_software_16_wince)
-AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_16_WINCE, test "x$have_evas_software_16_wince" = "xyes")
-
-
-#######################################
-## Check if we should build the software_x11 engine
-want_evas_software_x11="auto";
-have_evas_software_x11="no";
-
-AC_MSG_CHECKING(whether software x11 backend is to be built)
-AC_ARG_ENABLE(software-x11,
-  AC_HELP_STRING([--disable-software-x11], [disable the Software X11 rendering backend]),
-  [ want_evas_software_x11=$enableval ]
-)
-AC_MSG_RESULT($want_evas_software_x11)
-
-if test "x$want_evas_software_x11" = "xyes" -o "x$want_evas_software_x11" = "xauto"; then
-  AC_PATH_X
-  AC_PATH_XTRA
-  AC_CHECK_HEADER(X11/X.h,
-    [
-      AC_DEFINE(BUILD_ENGINE_SOFTWARE_X11, 1, [Software X11 Rendering Backend])
-      if test "x$want_evas_simple_x11" = "xyes"; then
-        x_libs="${x_libs} -lX11 -lXext"
-      else
-        x_dir=${x_dir:-/usr/X11R6}
-        x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
-        x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
-      fi
-      have_evas_software_x11="yes"
-    ],
-    [
-      if test "x$want_evas_software_x11" = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR([X11 not found (strict dependencies checking)])
-      fi
-    ]
-  )
-fi
-AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_X11, test "x$have_evas_software_x11" = "xyes")
-
-#######################################
-## Check if we should build the software_x11 16bit engine
-want_evas_software_16_x11="no";
-have_evas_software_16_x11="no";
-
-AC_MSG_CHECKING(whether software 16bit x11 backend is to be built)
-AC_ARG_ENABLE(software-16-x11,
-  AC_HELP_STRING([--enable-software-16-x11], [enable the Software 16bit X11 rendering backend]),
-  [ want_evas_software_16_x11=$enableval ]
-)
-AC_MSG_RESULT($want_evas_software_16_x11)
-
-if test "x$want_evas_software_16_x11" = "xyes"; then
-  AC_PATH_X
-  AC_PATH_XTRA
-  AC_CHECK_HEADER(X11/X.h,
-    [
-      AC_DEFINE(BUILD_ENGINE_SOFTWARE_16_X11, 1, [Software 16bit X11 Rendering Backend])
-      if test "x$want_evas_simple_x11" = "xyes"; then
-        x_libs="${x_libs} -lX11 -lXext"
-      else
-        x_dir=${x_dir:-/usr/X11R6}
-        x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
-        x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
-      fi
-      have_evas_software_16_x11="yes"
-    ],
-    [
-      if test "x$want_evas_sofware_16_x11" = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR([X11 not found (strict dependencies checking)])
-      fi
-    ]
-  )
-fi
-AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_16_X11, test "x$have_evas_software_16_x11" = "xyes")
-
-#######################################
-## Check if we should build the software_xcb engine
-want_evas_software_xcb="no";
-have_evas_software_xcb="no";
-
-AC_MSG_CHECKING(whether software xcb backend is to be built)
-AC_ARG_ENABLE(software-xcb,
-  AC_HELP_STRING([--enable-software-xcb], [enable the Software XCB rendering backend]),
-  [ want_evas_software_xcb=$enableval ]
-)
-AC_MSG_RESULT($want_evas_software_xcb)
-
-if test "x$want_evas_software_xcb" = "xyes"; then
-  PKG_CHECK_MODULES(
-    XCB,
-    xcb xcb-shm xcb-image >= 0.2.1 pixman-1,
-    [
-      AC_DEFINE(BUILD_ENGINE_SOFTWARE_XCB, 1, [Software XCB Rendering Backend])
-      have_evas_software_xcb="yes"
-    ],
-    [
-      if test "x$want_evas_software_xcb" = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR([XCB not found (strict dependencies checking)])
-      fi
-    ]
-  )
-fi
-AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_XCB, test "x$have_evas_software_xcb" = "xyes")
-
-#######################################
-## Check if we should build the directfb engine
-want_evas_directfb="no";
-have_evas_directfb="no";
-
-AC_MSG_CHECKING(whether directfb backend is to be built)
-AC_ARG_ENABLE(directfb,
-  AC_HELP_STRING([--enable-directfb], [enable the DirectFB rendering backend]),
-  [ want_evas_directfb=$enableval ]
-)
-AC_MSG_RESULT($want_evas_directfb)
-
-if test "x$want_evas_directfb" = "xyes"; then
-  PKG_CHECK_MODULES(DIRECTFB, directfb >= 0.9.16,
-    [
-      AC_DEFINE(BUILD_ENGINE_DIRECTFB, 1, [DirectFB Rendering Backend])
-      have_evas_directfb="yes"
-    ],
-    [
-      if test "x$want_evas_directfb" = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR([DirectFB not found (strict dependencies checking)])
-      fi
-    ]
-  )
-fi
-AM_CONDITIONAL(BUILD_ENGINE_DIRECTFB, test "x$have_evas_directfb" = "xyes")
-
-#######################################
-## Check if we should build the sdl engine
-want_evas_sdl="no";
-have_evas_sdl="no";
-ENGINE_SDL_PRG="";
-
-AC_MSG_CHECKING(whether SDL backend is to be built)
-AC_ARG_ENABLE(sdl,
-  AC_HELP_STRING([--enable-sdl], [enable the SDL rendering backend]),
-  [ want_evas_sdl=$enableval ]
-)
-AC_MSG_RESULT($want_evas_sdl)
-
-if test "x$want_evas_sdl" = "xyes"; then
-  PKG_CHECK_MODULES(SDL, sdl >= 1.2.0,
-    [
-      have_evas_sdl="yes"
-      ENGINE_SDL_PRG="evas_sdl_test"
-      AC_DEFINE(BUILD_ENGINE_SDL, 1, [SDL Rendering Backend])
-    ],
-    [
-      if test "x$want_evas_sdl" = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR([SDL not found (strict dependencies checking)])
-      fi
-    ]
-  )
-fi
-AM_CONDITIONAL(BUILD_ENGINE_SDL, test "x$have_evas_sdl" = "xyes")
-
-## Check if we want to use some SDL primitive
-sdl_primitive="no";
-
-AC_MSG_CHECKING(whether to use SDL primitive when possible)
-AC_ARG_ENABLE(sdl-primitive,
-  AC_HELP_STRING([--enable-sdl-primitive], []),
-  [ sdl_primitive=$enableval ]
-)
-AC_MSG_RESULT($sdl_primitive)
-
-if test "x$sdl_primitive" = "xyes"; then
-  AC_DEFINE(ENGINE_SDL_PRIMITIVE, 1, [Use SDL primitive when possible])
-fi
-
-#######################################
-## Check if we should build the fb engine
-want_evas_fb="no";
-have_evas_fb="no";
-
-AC_MSG_CHECKING(whether fb backend is to be built)
-AC_ARG_ENABLE(fb,
-  AC_HELP_STRING([--enable-fb], [enable the FB rendering backend]),
-  [ want_evas_fb=$enableval ]
-)
-AC_MSG_RESULT($want_evas_fb)
-
-if test "x$want_evas_fb" = "xyes"; then
-  AC_CHECK_HEADER(linux/fb.h,
-    [
-      AC_DEFINE(BUILD_ENGINE_FB, 1, [Linux FB Rendering Backend])
-      have_evas_fb="yes"
-    ],
-    [
-      if test "x$want_evas_fb" = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR([FB not found (strict dependencies checking)])
-      fi
-    ]
-  )
-fi
-AM_CONDITIONAL(BUILD_ENGINE_FB, test "x$have_evas_fb" = "xyes")
-
-#######################################
-## Check if we should build the buffer engine
-want_evas_buffer="yes"
-have_evas_buffer="no"
-
-AC_MSG_CHECKING(whether buffer backend is to be built)
-AC_ARG_ENABLE(buffer,
-  AC_HELP_STRING([--disable-buffer], [disable the Buffer rendering backend]),
-  [ want_evas_buffer=$enableval ]
-)
-AC_MSG_RESULT($want_evas_buffer)
-
-if test "x$want_evas_buffer" = "xyes"; then
-  AC_DEFINE(BUILD_ENGINE_BUFFER, 1, [Buffer Rendering Backend])
-  have_evas_buffer="yes"
-fi
-AM_CONDITIONAL(BUILD_ENGINE_BUFFER, test "x$have_evas_buffer" = "xyes")
-
-#######################################
-## Check if we should build the software_qtopia engine
-want_evas_qtopia="no";
-have_evas_qtopia="no";
-
-AC_MSG_CHECKING(whether software qtopia backend is to be built)
-AC_ARG_ENABLE(software-qtopia,
-  AC_HELP_STRING([--enable-software-qtopia], [enable the Software Qtopia rendering backend]),
-  [ want_evas_qtopia=$enableval ]
-)
-AC_MSG_RESULT($want_evas_qtopia)
-
-if test "x$want_evas_qtopia" = "xyes"; then
-  AC_LANG_PUSH(C++)
-  AC_CHECK_HEADER(qdirectpainter_qws.h,
-    [
-      AC_DEFINE(BUILD_ENGINE_SOFTWARE_QTOPIA, 1, [Qtopia Rendering Backend])
-      qt_cflags="-fno-exceptions -fno-rtti -I"$qt_dir"/include"
-      qt_libs="-L"$qt_dir"/lib -lqte -lqpe"
-      qt_moc=$qt_dir"/bin/moc"
-      have_evas_qtopia="yes"
-    ],
-    [
-      if test "x$want_evas_qtopia" = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR([Qtopia not found (strict dependencies checking)])
-      fi
-    ],
-    [
-      #include <qwidget.h>
-      #include <qnamespace.h>
-      #include <qbrush.h>
-      #include <qpainter.h>
-    ]
-  )
-  AC_LANG_POP(C++)
-fi
-AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_QTOPIA, test "x$have_evas_qtopia" = "xyes")
-
-#######################################
-## Check if we should build the gl_x11 engine
-want_evas_gl_x11="no";
-have_evas_gl_x11="no";
-
-AC_MSG_CHECKING(whether gl x11 backend is to be built)
-AC_ARG_ENABLE(gl-x11,
-  AC_HELP_STRING([--enable-gl-x11], [enable the OpenGL X11 display engine]),
-  [ want_evas_gl_x11=$enableval ]
-)
-AC_MSG_RESULT($want_evas_gl_x11)
-
-if test "x$want_evas_gl_x11" = "xyes"; then
-  AC_PATH_X
-  AC_PATH_XTRA
-  AC_CHECK_HEADERS(GL/gl.h GL/glu.h X11/X.h,
-    [
-      AC_DEFINE(BUILD_ENGINE_GL_X11, 1, [OpenGL X11 Rendering Backend])
-      if test "x$want_evas_simple_x11" = "xyes"; then
-        x_libs="${x_libs} -lX11 -lXext"
-      else
-        x_dir=${x_dir:-/usr/X11R6}
-        x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
-        x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
-        gl_cflags="-I/usr/include"
-      fi
-      gl_libs="-lGL -lGLU -lpthread"
-      gl_dir=""
-      have_evas_gl_x11="yes"
-    ],
-    [
-      if test "x$want_evas_gl_x11" = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR([OpenGL X11 not found (strict dependencies checking)])
-      fi
-    ]
-  )
-fi
-AM_CONDITIONAL(BUILD_ENGINE_GL_X11, test "x$have_evas_gl_x11" = "xyes")
-
-#######################################
-## Check if we should build the quartz engine
-## FIXME: someone more experienced with Autotools-on-OSX: how do Frameworks work with AC_CHECK_HEADERS?
-## I want this to detect Cocoa/Cocoa.h, but it's not in the normal include path.
-want_evas_quartz="no";
-have_evas_quartz="no";
-
-AC_MSG_CHECKING(whether quartz backend is to be built)
-AC_ARG_ENABLE(quartz,
-  AC_HELP_STRING([--enable-quartz], [enable the Quartz display engine]),
-  [ want_evas_quartz=$enableval ]
-)
-AC_MSG_RESULT($want_evas_quartz)
-
-if test "x$want_evas_quartz" = "xyes"; then
-  AC_PATH_X
-  AC_PATH_XTRA
-  AC_CHECK_HEADERS(/System/Library/Frameworks/Cocoa.framework/Headers/Cocoa.h,
-    [
-      have_evas_quartz="yes"
-    ],
-    [
-	  if test "x$want_evas_quartz" = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR([Quartz not found (strict dependencies checking)])
-      fi
-    ]
-  )
-fi
-AM_CONDITIONAL(BUILD_ENGINE_QUARTZ, test "x$have_evas_quartz" = "xyes")
-
-#######################################
-## Check if we should build the gl_glew engine
-want_evas_gl_glew="no";
-have_evas_gl_glew="no";
-
-AC_MSG_CHECKING(whether gl glew backend is to be built)
-AC_ARG_ENABLE(gl-glew,
-  AC_HELP_STRING([--enable-gl-glew], [enable the OpenGL Glew display engine]),
-  [ want_evas_gl_glew=$enableval ]
-)
-AC_MSG_RESULT($want_evas_gl_glew)
-
-if test "x$want_evas_gl_glew" = "xyes" -o "x$want_evas_gl_glew" = "xauto"; then
-  AC_CHECK_HEADERS(GL/gl.h GL/glu.h GL/glew.h,
-    [
-      AC_DEFINE(BUILD_ENGINE_GL_GLEW, 1, [OpenGL Glew Rendering Backend])
-      glew_libs="-lglew32 -lopengl32 -lgdi32"
-      gl_libs="-lglu32"
-      have_evas_gl_glew="yes"
-    ],
-    [
-      if test "x$want_evas_gl_glew" = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR([OpenGL Glew not found (strict dependencies checking)])
-      fi
-    ]
-  )
-fi
-AC_MSG_CHECKING(whether gl glew backend will be built)
-AC_MSG_RESULT($have_evas_gl_glew)
-AM_CONDITIONAL(BUILD_ENGINE_GL_GLEW, test "x$have_evas_gl_glew" = "xyes")
+AM_CONDITIONAL([BUILD_ENGINE_CAIRO_COMMON], [test "x$have_evas_engine_cairo_common" = "xyes"])
 
 # common gl
-have_evas_gl_common="no"
-if test "x$have_evas_gl_x11" = "xyes" -o "x$have_evas_gl_glew" = "xyes"; then
-  AC_DEFINE(BUILD_ENGINE_GL_COMMON, 1, [Generic OpenGL Rendering Support])
-  have_evas_gl_common="yes"
+have_evas_engine_gl_common="no"
+if test "x$have_evas_engine_gl_x11" = "xyes" -o "x$have_evas_engine_gl_glew" = "xyes"; then
+   AC_DEFINE(BUILD_ENGINE_GL_COMMON, 1, [Generic OpenGL Rendering Support])
+   have_evas_engine_gl_common="yes"
+   evas_engine_gl_common_libs="-lglu32"
 fi
-AM_CONDITIONAL(BUILD_ENGINE_GL_COMMON, test "x$have_evas_gl_common" = "xyes")
 
-#######################################
-## Check if we should build the cairo_x11 engine
-have_evas_cairo_common="no";
-want_evas_cairo_x11="no";
-have_evas_cairo_x11="no";
-
-#AC_MSG_CHECKING(whether cairo x11 backend is to be built)
-#AC_ARG_ENABLE(cairo-x11,
-#  AC_HELP_STRING([--enable-cairo-x11], [enable the Cairo X11 display engine]),
-#  [ want_evas_cairo_x11=$enableval ]
-#)
-#AC_MSG_RESULT($want_evas_cairo_x11)
-
-if test "x$want_evas_cairo_x11" = "xyes"; then
-  PKG_CHECK_MODULES(CAIRO, cairo >= 1.0.0,
-    [
-      have_evas_cairo_common="yes"
-      AC_CHECK_HEADER(X11/X.h,
-        [
-          AC_DEFINE(BUILD_ENGINE_CAIRO_X11, 1, [Cairo X11 Rendering Backend])
-          AC_DEFINE(BUILD_ENGINE_CAIRO_COMMON, 1, [Generic Cairo Rendering Support])
-          if test "x$want_evas_simple_x11" = "xyes"; then
-            x_libs="${x_libs} -lX11 -lXext"
-          else
-            x_dir=${x_dir:-/usr/X11R6}
-            x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
-            x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
-          fi
-          have_evas_cairo_x11="yes"
-        ], [
-          have_evas_cairo_common="no"
-          have_evas_cairo_x11="no"
-        ]
-      )
-    ],
-    [
-      have_evas_cairo_common="no"
-      have_evas_cairo_x11="no"
-    ]
-  )
+if test "x$have_evas_engine_gl_x11" = "xyes" ; then
+   evas_engine_gl_common_libs="-lGL -lGLU -lpthread"
 fi
-AM_CONDITIONAL(BUILD_ENGINE_CAIRO_X11, test "x$have_evas_cairo_x11" = "xyes")
-AM_CONDITIONAL(BUILD_ENGINE_CAIRO_COMMON, test "x$have_evas_cairo_common" = "xyes")
 
-#######################################
-## Check if we should build the xrender_x11 engine
-want_evas_xrender_x11="auto";
-have_evas_xrender_x11="no";
+if test "x$have_evas_engine_gl_glew" = "xyes" ; then
+   evas_engine_gl_common_libs="-lglu32"
+fi
+AC_SUBST([evas_engine_gl_common_libs])
 
-AC_MSG_CHECKING(whether xrender x11 backend is to be built)
-AC_ARG_ENABLE(xrender-x11,
-  AC_HELP_STRING([--disable-xrender-x11], [disable the XRender X11 rendering backend]),
-  [ want_evas_xrender_x11=$enableval ]
+AM_CONDITIONAL(BUILD_ENGINE_GL_COMMON, test "x$have_evas_engine_gl_common" = "xyes")
+
+# SDL primitive
+sdl_primitive="no"
+
+AC_ARG_ENABLE([sdl-primitive],
+   [AC_HELP_STRING([--enable-sdl-primitive], [])],
+   [sdl_primitive=${enableval}]
 )
-AC_MSG_RESULT($want_evas_xrender_x11)
+AC_MSG_CHECKING([whether to use SDL primitive when possible])
+AC_MSG_RESULT([${sdl_primitive}])
 
-if test "x$want_evas_xrender_x11" = "xyes" -o "x$want_evas_xrender_x11" = "xauto"; then
-  AC_PATH_X
-  AC_PATH_XTRA
-  AC_CHECK_HEADERS(X11/X.h X11/extensions/Xrender.h,
-    [
-      AC_DEFINE(BUILD_ENGINE_XRENDER_X11, 1, [XRender X11 Rendering Backend])
-      if test "x$want_evas_simple_x11" = "xyes"; then
-      	x_libs="${x_libs} -lX11 -lXext"
-      else
-        x_dir=${x_dir:-/usr/X11R6}
-        x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
-        x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
-      fi
-      have_evas_xrender_x11="yes"
-    ],
-    [
-      if test "x$want_evas_xrender_x11" = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR([XRender X11 not found (strict dependencies checking)])
-      fi
-    ]
-  )
+if test "x${sdl_primitive}" = "xyes" ; then
+   AC_DEFINE([ENGINE_SDL_PRIMITIVE], [1], [Use SDL primitive when possible])
 fi
-AM_CONDITIONAL(BUILD_ENGINE_XRENDER_X11, test "x$have_evas_xrender_x11" = "xyes")
 
-#######################################
-## Check if we should build the xrender_xcb engine
-want_evas_xrender_xcb="no";
-have_evas_xrender_xcb="no";
-
-AC_MSG_CHECKING(whether xrender xcb backend is to be built)
-AC_ARG_ENABLE(xrender-xcb,
-  AC_HELP_STRING([--enable-xrender-xcb], [enable the Xrender XCB rendering backend]),
-  [ want_evas_xrender_xcb=$enableval ]
-)
-AC_MSG_RESULT($want_evas_xrender_xcb)
-
-if test "x$want_evas_xrender_xcb" = "xyes"; then
-  PKG_CHECK_MODULES(
-    XCBRENDER,
-    xcb xcb-shm xcb-render xcb-image >= 0.2.1,
-    [
-      AC_DEFINE(BUILD_ENGINE_XRENDER_XCB, 1, [Xrender XCB Rendering Backend])
-      have_evas_xrender_xcb="yes"
-    ],
-    [
-      if test "x$want_evas_xrender_xcb" = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR([XRender XCB not found (strict dependencies checking)])
-      fi
-    ]
-  )
+# if software 16 x11 is enabled - build software_16 (the generic 16bit
+# engine). later enable it fb_16 or other "16" bit engines are enabled.
+have_evas_engine_software_16="no"
+if test "x$have_evas_engine_software_16_x11" = "xyes"; then
+   have_evas_engine_software_16="yes"
 fi
-AM_CONDITIONAL(BUILD_ENGINE_XRENDER_XCB, test "x$have_evas_xrender_xcb" = "xyes")
-
-#######################################
-## Check if we should build the glitz_x11 engine
-want_evas_glitz_x11="no";
-have_evas_glitz_x11="no";
-
-AC_MSG_CHECKING(whether glitz x11 backend is to be built)
-AC_ARG_ENABLE(glitz-x11,
-  AC_HELP_STRING([--enable-glitz-x11], [enable the Glitz X11 rendering backend]),
-  [ want_evas_glitz_x11=$enableval ]
-)
-AC_MSG_RESULT($want_evas_glitz_x11)
-
-if test "x$want_evas_glitz_x11" = "xyes"; then
-  AC_PATH_X
-  AC_PATH_XTRA
-  AC_CHECK_HEADER(X11/X.h,
-    [
-      PKG_CHECK_MODULES(GLITZ, glitz glitz-glx,
-        [
-          if test "x$want_evas_simple_x11" = "xyes"; then
-            x_libs="${x_libs} -lX11 -lXext"
-          else
-            x_dir=${x_dir:-/usr/X11R6}
-            x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
-            x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
-          fi
-          AC_DEFINE(BUILD_ENGINE_GLITZ_X11, 1, [Glitz X11 Rendering Backend])
-          have_evas_glitz_x11="yes"
-        ],
-        [
-          if test "x$want_evas_glitz_gl_x11" = "xyes" -a "x$use_strict" = "xyes" ; then
-            AC_MSG_ERROR([Glitz X11 not found (strict dependencies checking)])
-          fi
-        ]
-      )
-    ],
-    [
-      if test "x$want_evas_glitz_gl_x11" = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR([Glitz X11 not found (strict dependencies checking)])
-      fi
-    ]
-  )
+if test "x$have_evas_engine_software_sdl" = "xyes"; then
+   have_evas_engine_software_16="yes"
 fi
-AM_CONDITIONAL(BUILD_ENGINE_GLITZ_X11, test "x$have_evas_glitz_x11" = "xyes")
+if test "x$have_evas_engine_software_16_ddraw" = "xyes"; then
+   have_evas_engine_software_16="yes"
+fi
+if test "x$have_evas_engine_software_16_wince" = "xyes"; then
+   have_evas_engine_software_16="yes"
+fi
+AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_16, test "x$have_evas_engine_software_16" = "xyes")
+
 
 #####################################################################
 ## Image loaders
 
-EVAS_CHECK_IMAGE_LOADER([Edb], [yes])
+EVAS_CHECK_IMAGE_LOADER([Edb], [${want_evas_image_loader_edb}])
 
-EVAS_CHECK_IMAGE_LOADER([Eet], [yes])
-EVAS_CHECK_FONT_LOADER([yes])
+EVAS_CHECK_IMAGE_LOADER([Eet], [${want_evas_image_loader_eet}])
+EVAS_CHECK_FONT_LOADER([${want_evas_font_loader_eet}])
 
-EVAS_CHECK_IMAGE_LOADER([Gif], [yes])
+EVAS_CHECK_IMAGE_LOADER([Gif], [${want_evas_image_loader_gif}])
 
 have_evas_image_saver_jpeg="no"
-EVAS_CHECK_IMAGE_LOADER([Jpeg], [yes])
+EVAS_CHECK_IMAGE_LOADER([Jpeg], [${want_evas_image_loader_jpeg}])
 
 dnl Windows has no sigsetjmp function, nor equivalent.
 dnl So we disable the jpeg saver.
@@ -851,15 +338,15 @@ case "$host_os" in
 esac
 AM_CONDITIONAL([BUILD_SAVER_JPEG], [test "x${have_evas_image_saver_jpeg}" = "xyes"])
 
-EVAS_CHECK_IMAGE_LOADER([PMAPS], [yes])
+EVAS_CHECK_IMAGE_LOADER([PMAPS], [${want_evas_image_loader_pmaps}])
 
-EVAS_CHECK_IMAGE_LOADER([PNG], [yes])
+EVAS_CHECK_IMAGE_LOADER([PNG], [${want_evas_image_loader_png}])
 
-EVAS_CHECK_IMAGE_LOADER([SVG], [yes])
+EVAS_CHECK_IMAGE_LOADER([SVG], [${want_evas_image_loader_svg}])
 
-EVAS_CHECK_IMAGE_LOADER([Tiff], [yes])
+EVAS_CHECK_IMAGE_LOADER([Tiff], [${want_evas_image_loader_tiff}])
 
-EVAS_CHECK_IMAGE_LOADER([XPM], [yes])
+EVAS_CHECK_IMAGE_LOADER([XPM], [${want_evas_image_loader_xpm}])
 
 
 #####################################################################
@@ -1410,48 +897,13 @@ if test x$want_valgrind = "xyes"; then
   )
 fi
 
-### if software 16 x11 is enabled - build software_16 (the generic 16bit
-### engine). later enable it fb_16 or other "16" bit engines are enabled.
-have_evas_software_16="no"
-if test "x$have_evas_software_16_x11" = "xyes"; then
-   have_evas_software_16="yes"
-fi
-if test "x$have_evas_sdl" = "xyes"; then
-   have_evas_software_16="yes"
-fi
-if test "x$have_evas_software_16_ddraw" = "xyes"; then
-   have_evas_software_16="yes"
-fi
-if test "x$have_evas_software_16_wince" = "xyes"; then
-   have_evas_software_16="yes"
-fi
-AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_16, test "x$have_evas_software_16" = "xyes")
-
 #####################################################################
 ## Fill in flags
-
-AC_SUBST(ddraw_libs)
-AC_SUBST(ddraw_16_libs)
-AC_SUBST(direct3d_libs)
-
-AC_SUBST(glew_libs)
-
-AC_SUBST(x_cflags)
-AC_SUBST(x_libs)
-
-AC_SUBST(gl_cflags)
-AC_SUBST(gl_libs)
-
-AC_SUBST(quartz_cflags)
-AC_SUBST(quartz_libs)
-
-AC_SUBST(qt_cflags)
-AC_SUBST(qt_libs)
-AC_SUBST(qt_moc)
 
 AC_SUBST(altivec_cflags)
 AC_SUBST(pthread_cflags)
 AC_SUBST(pthread_libs)
+
 
 #####################################################################
 ## Output
@@ -1555,27 +1007,27 @@ echo
 echo "Configuration Options Summary:"
 echo
 echo "Engines:"
-echo "  Software Memory Buffer.....: $have_evas_buffer"
-echo "  Software X11...............: $have_evas_software_x11"
-echo "  XRender X11................: $have_evas_xrender_x11"
-echo "  OpenGL X11.................: $have_evas_gl_x11"
-echo "  Glitz X11..................: $have_evas_glitz_x11"
-echo "  Cairo X11..................: $have_evas_cairo_x11"
-echo "  Software XCB...............: $have_evas_software_xcb"
-echo "  XRender XCB................: $have_evas_xrender_xcb"
-echo "  Software DirectDraw........: $have_evas_software_ddraw"
-echo "  Direct3d...................: $have_evas_direct3d"
-echo "  Quartz.....................: $have_evas_quartz"
-echo "  OpenGL Glew................: $have_evas_gl_glew"
-echo "  Software SDL...............: $have_evas_sdl (primitive: $sdl_primitive)"
-echo "  Software Framebuffer.......: $have_evas_fb"
-echo "  Software Qtopia............: $have_evas_qtopia"
-echo "  Software 16bit ............: $have_evas_software_16"
-echo "  Software 16bit X11.........: $have_evas_software_16_x11"
-echo "  Software 16bit Directdraw..: $have_evas_software_16_ddraw"
-echo "  Software 16bit WinCE.......: $have_evas_software_16_wince"
-echo "  Software 16bit SDL.........: $have_evas_sdl (primitive: $sdl_primitive)"
-echo "  DirectFB...................: $have_evas_directfb"
+echo "  Software Memory Buffer.....: $have_evas_engine_buffer"
+echo "  Software X11...............: $have_evas_engine_software_x11"
+echo "  XRender X11................: $have_evas_engine_xrender_x11"
+echo "  OpenGL X11.................: $have_evas_engine_gl_x11"
+echo "  Glitz X11..................: $have_evas_engine_glitz_x11"
+echo "  Cairo X11..................: $have_evas_engine_cairo_x11"
+echo "  Software XCB...............: $have_evas_engine_software_xcb"
+echo "  XRender XCB................: $have_evas_engine_xrender_xcb"
+echo "  Software DirectDraw........: $have_evas_engine_software_ddraw"
+echo "  Direct3d...................: $have_evas_engine_direct3d"
+echo "  Quartz.....................: $have_evas_engine_quartz"
+echo "  OpenGL Glew................: $have_evas_engine_gl_glew"
+echo "  Software SDL...............: $have_evas_engine_software_sdl (primitive: $sdl_primitive)"
+echo "  Software Framebuffer.......: $have_evas_engine_fb"
+echo "  DirectFB...................: $have_evas_engine_directfb"
+echo "  Software Qtopia............: $have_evas_engine_software_qtopia"
+echo "  Software 16bit ............: $have_evas_engine_software_16"
+echo "  Software 16bit X11.........: $have_evas_engine_software_16_x11"
+echo "  Software 16bit Directdraw..: $have_evas_engine_software_16_ddraw"
+echo "  Software 16bit WinCE.......: $have_evas_engine_software_16_wince"
+echo "  Software 16bit SDL.........: $have_evas_engine_software_sdl (primitive: $sdl_primitive)"
 # FIXME: opengl engine needs to be fixed and tested lots for all drivers
 # FIXME: xrender engine to be written
 echo

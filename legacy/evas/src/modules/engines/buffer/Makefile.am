@@ -21,8 +21,8 @@ module_la_SOURCES = \
 evas_engine.c \
 evas_outbuf.c
 
-module_la_LIBADD = @EINA_LIBS@ $(top_builddir)/src/lib/libevas.la
-module_la_LDFLAGS =  @lt_no_undefined@ @lt_enable_auto_import@ -module -avoid-version
+module_la_LIBADD = $(top_builddir)/src/lib/libevas.la @EINA_LIBS@
+module_la_LDFLAGS =  -no-undefined @lt_enable_auto_import@ -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 
 include_HEADERS = Evas_Engine_Buffer.h

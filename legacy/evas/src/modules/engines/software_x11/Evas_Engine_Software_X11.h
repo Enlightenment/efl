@@ -35,9 +35,10 @@ struct _Evas_Engine_Info_Software_X11
       Colormap  (*best_colormap_get) (Display *disp, int screen);
       int       (*best_depth_get)    (Display *disp, int screen);
    } func;
-   
+
    int mask_changed;
 };
+
 #endif
 
 
