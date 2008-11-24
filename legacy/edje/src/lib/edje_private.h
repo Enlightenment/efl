@@ -125,6 +125,7 @@ typedef struct _Edje_Program_Target                  Edje_Program_Target;
 typedef struct _Edje_Program_After                   Edje_Program_After;
 typedef struct _Edje_Part_Collection_Directory       Edje_Part_Collection_Directory;
 typedef struct _Edje_Part_Collection_Directory_Entry Edje_Part_Collection_Directory_Entry;
+typedef struct _Edje_Pack_Element                    Edje_Pack_Element;
 typedef struct _Edje_Part_Collection                 Edje_Part_Collection;
 typedef struct _Edje_Part                            Edje_Part;
 typedef struct _Edje_Part_Image_Id                   Edje_Part_Image_Id;
@@ -151,7 +152,8 @@ typedef struct _Edje_Patterns                        Edje_Patterns;
 #define EDJE_PART_TYPE_TEXTBLOCK 5
 #define EDJE_PART_TYPE_GRADIENT  6
 #define EDJE_PART_TYPE_GROUP     7
-#define EDJE_PART_TYPE_LAST      8
+#define EDJE_PART_TYPE_BOX       8
+#define EDJE_PART_TYPE_LAST      9
 
 #define EDJE_TEXT_EFFECT_NONE                0
 #define EDJE_TEXT_EFFECT_PLAIN               1
@@ -397,6 +399,25 @@ struct _Edje_Part_Collection_Directory_Entry
 
 /*----------*/
 
+/*----------*/
+
+struct _Edje_Pack_Element
+{
+   unsigned char    type; /* only GROUP supported for now */
+   const char      *name; /* if != NULL, will be set with evas_object_name_set */
+   const char      *source; /* group name to use as source for this element */
+   Edje_Size        min, prefer, max;
+   struct {
+	   int l, r, t, b;
+   } padding;
+   Edje_Alignment   align;
+   Edje_Alignment   weight;
+   Edje_Aspect      aspect;
+   const char      *options; /* extra options for custom objects */
+};
+
+/*----------*/
+
 struct _Edje_Part_Collection
 {
    Eina_List *programs; /* a list of Edje_Program */
@@ -447,6 +468,7 @@ struct _Edje_Part
       signed char         x; /* can u click & drag this bit in x dir */
       signed char         y; /* can u click & drag this bit in y dir */
    } dragable;
+   Eina_List             *items; /* packed items for box and table */
    unsigned char          type; /* what type (image, rect, text) */
    unsigned char          effect; /* 0 = plain... */
    unsigned char          mouse_events; /* it will affect/respond to mouse events */
@@ -553,6 +575,14 @@ struct _Edje_Part_Description
       unsigned char  max_y; /* if text size should be part max size */
 
    } text;
+
+   struct {
+      char          *layout, *alt_layout;
+      Edje_Alignment align;
+      struct {
+	      int x, y;
+      } padding;
+   } box;
 
    Edje_Color color, color2, color3;  /* color for rect or text, shadow etc. */
 
@@ -677,6 +707,7 @@ struct _Edje_Real_Part
    Evas_Object              *object;
    Eina_List                *extra_objects;
    Evas_Object              *swallowed_object;
+   Eina_List                *items;
    void                     *entry_data;
    Evas_Object              *cursorbg_object;
    Evas_Object              *cursorfg_object;
@@ -1087,6 +1118,17 @@ int               _edje_block_break(Edje *ed);
 void              _edje_block_violate(Edje *ed);
 void              _edje_object_part_swallow_free_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 void              _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow);
+void              _edje_box_init(void);
+void              _edje_box_shutdown(void);
+Evas_Bool         _edje_box_layout_find(const char *name, Evas_Object_Box_Layout *cb, void **data, void (**free_data)(void *data));
+
+Evas_Bool         _edje_real_part_box_append(Edje_Real_Part *rp, Evas_Object *child_obj);
+Evas_Bool         _edje_real_part_box_prepend(Edje_Real_Part *rp, Evas_Object *child_obj);
+Evas_Bool         _edje_real_part_box_insert_before(Edje_Real_Part *rp, Evas_Object *child_obj, const Evas_Object *ref);
+Evas_Bool         _edje_real_part_box_insert_at(Edje_Real_Part *rp, Evas_Object *child_obj, unsigned int pos);
+Evas_Object      *_edje_real_part_box_remove(Edje_Real_Part *rp, Evas_Object *child_obj);
+Evas_Object      *_edje_real_part_box_remove_at(Edje_Real_Part *rp, unsigned int pos);
+Evas_Bool         _edje_real_part_box_remove_all(Edje_Real_Part *rp, Evas_Bool clear);
 
 void          _edje_embryo_script_init      (Edje *ed);
 void          _edje_embryo_script_shutdown  (Edje *ed);

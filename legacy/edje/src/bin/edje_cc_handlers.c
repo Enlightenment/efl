@@ -110,6 +110,20 @@ static void st_collections_group_parts_part_dragable_y(void);
 static void st_collections_group_parts_part_dragable_confine(void);
 static void st_collections_group_parts_part_dragable_events(void);
 
+static void ob_collections_group_parts_part_box_items_item(void);
+static void st_collections_group_parts_part_box_items_item_type(void);
+static void st_collections_group_parts_part_box_items_item_name(void);
+static void st_collections_group_parts_part_box_items_item_source(void);
+static void st_collections_group_parts_part_box_items_item_min(void);
+static void st_collections_group_parts_part_box_items_item_prefer(void);
+static void st_collections_group_parts_part_box_items_item_max(void);
+static void st_collections_group_parts_part_box_items_item_padding(void);
+static void st_collections_group_parts_part_box_items_item_align(void);
+static void st_collections_group_parts_part_box_items_item_weight(void);
+static void st_collections_group_parts_part_box_items_item_aspect(void);
+static void st_collections_group_parts_part_box_items_item_aspect_mode(void);
+static void st_collections_group_parts_part_box_items_item_options(void);
+
 static void ob_collections_group_parts_part_description(void);
 static void st_collections_group_parts_part_description_inherit(void);
 static void st_collections_group_parts_part_description_state(void);
@@ -166,6 +180,9 @@ static void st_collections_group_parts_part_description_gradient_rel1_relative(v
 static void st_collections_group_parts_part_description_gradient_rel1_offset(void);
 static void st_collections_group_parts_part_description_gradient_rel2_relative(void);
 static void st_collections_group_parts_part_description_gradient_rel2_offset(void);
+static void st_collections_group_parts_part_description_box_layout(void);
+static void st_collections_group_parts_part_description_box_align(void);
+static void st_collections_group_parts_part_description_box_padding(void);
 
 static void ob_collections_group_programs_program(void);
 static void st_collections_group_programs_program_name(void);
@@ -270,6 +287,18 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.color_classes.color_class.color", st_color_class_color}, /* dup */
      {"collections.group.parts.part.color_classes.color_class.color2", st_color_class_color2}, /* dup */
      {"collections.group.parts.part.color_classes.color_class.color3", st_color_class_color3}, /* dup */
+     {"collections.group.parts.part.box.items.item.type", st_collections_group_parts_part_box_items_item_type},
+     {"collections.group.parts.part.box.items.item.name", st_collections_group_parts_part_box_items_item_name},
+     {"collections.group.parts.part.box.items.item.source", st_collections_group_parts_part_box_items_item_source},
+     {"collections.group.parts.part.box.items.item.min", st_collections_group_parts_part_box_items_item_min},
+     {"collections.group.parts.part.box.items.item.prefer", st_collections_group_parts_part_box_items_item_prefer},
+     {"collections.group.parts.part.box.items.item.max", st_collections_group_parts_part_box_items_item_max},
+     {"collections.group.parts.part.box.items.item.padding", st_collections_group_parts_part_box_items_item_padding},
+     {"collections.group.parts.part.box.items.item.align", st_collections_group_parts_part_box_items_item_align},
+     {"collections.group.parts.part.box.items.item.weight", st_collections_group_parts_part_box_items_item_weight},
+     {"collections.group.parts.part.box.items.item.aspect", st_collections_group_parts_part_box_items_item_aspect},
+     {"collections.group.parts.part.box.items.item.aspect_mode", st_collections_group_parts_part_box_items_item_aspect_mode},
+     {"collections.group.parts.part.box.items.item.options", st_collections_group_parts_part_box_items_item_options},
      {"collections.group.parts.part.description.inherit", st_collections_group_parts_part_description_inherit},
      {"collections.group.parts.part.description.state", st_collections_group_parts_part_description_state},
      {"collections.group.parts.part.description.visible", st_collections_group_parts_part_description_visible},
@@ -329,6 +358,9 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.gradient.rel2.relative", st_collections_group_parts_part_description_gradient_rel2_relative},
      {"collections.group.parts.part.description.gradient.rel2.offset", st_collections_group_parts_part_description_gradient_rel2_offset},
      {"collections.group.parts.part.description.gradient.spectrum", st_collections_group_parts_part_description_gradient_spectrum},
+     {"collections.group.parts.part.description.box.layout", st_collections_group_parts_part_description_box_layout},
+     {"collections.group.parts.part.description.box.align", st_collections_group_parts_part_description_box_align},
+     {"collections.group.parts.part.description.box.padding", st_collections_group_parts_part_description_box_padding},
      {"collections.group.parts.part.description.images.image", st_images_image}, /* dup */
      {"collections.group.parts.part.description.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.fonts.font", st_fonts_font}, /* dup */
@@ -463,6 +495,9 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.styles.style", ob_styles_style}, /* dup */
      {"collections.group.parts.part.color_classes", NULL}, /* dup */
      {"collections.group.parts.part.color_classes.color_class", ob_color_class}, /* dup */
+     {"collections.group.parts.part.box", NULL},
+     {"collections.group.parts.part.box.items", NULL},
+     {"collections.group.parts.part.box.items.item", ob_collections_group_parts_part_box_items_item},
      {"collections.group.parts.part.description", ob_collections_group_parts_part_description},
      {"collections.group.parts.part.description.rel1", NULL},
      {"collections.group.parts.part.description.rel2", NULL},
@@ -480,6 +515,7 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.gradient", NULL},
      {"collections.group.parts.part.description.gradient.rel1", NULL},
      {"collections.group.parts.part.description.gradient.rel2", NULL},
+     {"collections.group.parts.part.description.box", NULL},
      {"collections.group.parts.part.description.color_classes", NULL}, /* dup */
      {"collections.group.parts.part.description.color_classes.color_class", ob_color_class}, /* dup */
      {"collections.group.parts.part.description.program", ob_collections_group_programs_program}, /* dup */
@@ -1460,6 +1496,7 @@ st_collections_group_data_item(void)
 
                     description { }
                     dragable { }
+                    items { }
                 }
                 ..
             }
@@ -1491,6 +1528,7 @@ ob_collections_group_parts_part(void)
    ep->clip_to_id = -1;
    ep->dragable.confine_id = -1;
    ep->dragable.events_id = -1;
+   ep->items = NULL;
 }
 
 /**
@@ -1549,6 +1587,7 @@ st_collections_group_parts_part_name(void)
             @li TEXTBLOCK
             @li GRADIENT
             @li GROUP
+            @li BOX
     @endproperty
 */
 static void
@@ -1570,6 +1609,7 @@ st_collections_group_parts_part_type(void)
 			 "TEXTBLOCK", EDJE_PART_TYPE_TEXTBLOCK,
 			 "GRADIENT", EDJE_PART_TYPE_GRADIENT,
 			 "GROUP", EDJE_PART_TYPE_GROUP,
+			 "BOX", EDJE_PART_TYPE_BOX,
 			 NULL);
 }
 
@@ -2210,6 +2250,409 @@ st_collections_group_parts_part_dragable_events(void)
 /**
     @page edcref
     @block
+        items
+    @context
+        part {
+            ..
+	    box {
+                items {
+                    item {
+                        type: TYPE;
+                        source: "some source";
+                        min: 1 1;
+                        max: 100 100;
+                        padding: 1 1 2 2;
+                    }
+                    item {
+                        type: TYPE;
+                        source: "some other source";
+                        name: "some name";
+                        align: 1.0 0.5;
+                    }
+                    ..
+                }
+	    }
+            ..
+        }
+    @description
+        On a part of type BOX, this block can be used to set other groups
+	as elements of the box. These can be mixed with external objects set
+	by the application through the edje_object_part_box_* API.
+    @endblock
+*/
+static void ob_collections_group_parts_part_box_items_item(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Pack_Element *item;
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_BOX)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"box attributes in non-BOX part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   item = mem_alloc(SZ(Edje_Pack_Element));
+   ep->items = eina_list_append(ep->items, item);
+   item->type = EDJE_PART_TYPE_GROUP;
+   item->name = NULL;
+   item->source = NULL;
+   item->min.w = 0;
+   item->min.h = 0;
+   item->prefer.w = 0;
+   item->prefer.h = 0;
+   item->max.w = -1;
+   item->max.h = -1;
+   item->padding.l = 0;
+   item->padding.r = 0;
+   item->padding.t = 0;
+   item->padding.b = 0;
+   item->align.x = 0.5;
+   item->align.y = 0.5;
+   item->weight.x = 0.0;
+   item->weight.y = 0.0;
+   item->aspect.w = 0;
+   item->aspect.h = 0;
+   item->aspect.mode = EDJE_ASPECT_PREFER_NONE;
+   item->options = NULL;
+}
+
+/**
+    @page edcref
+    @property
+        type
+    @parameters
+        Only GROUP for now (defaults to it)
+    @effect
+        Sets the type of the object this item will hold.
+    @endproperty
+*/
+static void st_collections_group_parts_part_box_items_item_type(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Pack_Element *item;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   item = eina_list_data_get(eina_list_last(ep->items));
+
+     {
+	char *s;
+
+	s = parse_str(0);
+	if (strcmp(s, "GROUP"))
+	  {
+	     fprintf(stderr, "%s: Error. parse error %s:%i. "
+		     "token %s not one of: GROUP.\n",
+		     progname, file_in, line - 1, s);
+	     exit(-1);
+	  }
+	/* FIXME: handle the enum, once everything else is supported */
+	item->type = EDJE_PART_TYPE_GROUP;
+     }
+}
+
+/**
+    @page edcref
+    @property
+        name
+    @parameters
+        [name for the object]
+    @effect
+        Sets the name of the object via evas_object_name_set().
+    @endproperty
+*/
+static void st_collections_group_parts_part_box_items_item_name(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Pack_Element *item;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   item = eina_list_data_get(eina_list_last(ep->items));
+   item->name = parse_str(0);
+}
+
+/**
+    @page edcref
+    @property
+        source
+    @parameters
+        [another groups name]
+    @effect
+        Sets the group this object will be made from.
+    @endproperty
+*/
+static void st_collections_group_parts_part_box_items_item_source(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Pack_Element *item;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   item = eina_list_data_get(eina_list_last(ep->items));
+   item->source = parse_str(0);
+}
+
+/**
+    @page edcref
+    @property
+        min
+    @parameters
+        [width] [height]
+    @effect
+        Sets the minimum size hints for this object.
+    @endproperty
+*/
+static void st_collections_group_parts_part_box_items_item_min(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Pack_Element *item;
+
+   check_arg_count(2);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   item = eina_list_data_get(eina_list_last(ep->items));
+   item->min.w = parse_int_range(0, 0, 0x7ffffff);
+   item->min.h = parse_int_range(1, 0, 0x7ffffff);
+}
+
+/**
+    @page edcref
+    @property
+        prefer
+    @parameters
+        [width] [height]
+    @effect
+        Sets the preferred size hints for this object.
+    @endproperty
+*/
+static void st_collections_group_parts_part_box_items_item_prefer(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Pack_Element *item;
+
+   check_arg_count(2);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   item = eina_list_data_get(eina_list_last(ep->items));
+   item->prefer.w = parse_int_range(0, 0, 0x7ffffff);
+   item->prefer.h = parse_int_range(1, 0, 0x7ffffff);
+}
+/**
+    @page edcref
+    @property
+        max
+    @parameters
+        [width] [height]
+    @effect
+        Sets the maximum size hints for this object.
+    @endproperty
+*/
+static void st_collections_group_parts_part_box_items_item_max(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Pack_Element *item;
+
+   check_arg_count(2);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   item = eina_list_data_get(eina_list_last(ep->items));
+   item->max.w = parse_int_range(0, 0, 0x7ffffff);
+   item->max.h = parse_int_range(1, 0, 0x7ffffff);
+}
+
+/**
+    @page edcref
+    @property
+        padding
+    @parameters
+        [left] [right] [top] [bottom]
+    @effect
+        Sets the padding hints for this object.
+    @endproperty
+*/
+static void st_collections_group_parts_part_box_items_item_padding(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Pack_Element *item;
+
+   check_arg_count(4);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   item = eina_list_data_get(eina_list_last(ep->items));
+   item->padding.l = parse_int_range(0, 0, 0x7ffffff);
+   item->padding.r = parse_int_range(1, 0, 0x7ffffff);
+   item->padding.t = parse_int_range(2, 0, 0x7ffffff);
+   item->padding.b = parse_int_range(3, 0, 0x7ffffff);
+}
+
+/**
+    @page edcref
+    @property
+        align
+    @parameters
+        [x] [y]
+    @effect
+        Sets the alignment hints for this object.
+    @endproperty
+*/
+static void st_collections_group_parts_part_box_items_item_align(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Pack_Element *item;
+
+   check_arg_count(2);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   item = eina_list_data_get(eina_list_last(ep->items));
+   item->align.x = parse_float_range(0, -1.0, 1.0);
+   item->align.y = parse_float_range(1, -1.0, 1.0);
+}
+
+/**
+    @page edcref
+    @property
+        weight
+    @parameters
+        [x] [y]
+    @effect
+        Sets the weight hints for this object.
+    @endproperty
+*/
+static void st_collections_group_parts_part_box_items_item_weight(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Pack_Element *item;
+
+   check_arg_count(2);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   item = eina_list_data_get(eina_list_last(ep->items));
+   item->weight.x = parse_float_range(0, 0.0, 99999.99);
+   item->weight.y = parse_float_range(1, 0.0, 99999.99);
+}
+
+/**
+    @page edcref
+    @property
+        aspect
+    @parameters
+        [w] [h]
+    @effect
+        Sets the aspect width and height hints for this object.
+    @endproperty
+*/
+static void st_collections_group_parts_part_box_items_item_aspect(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Pack_Element *item;
+
+   check_arg_count(2);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   item = eina_list_data_get(eina_list_last(ep->items));
+   item->aspect.w = parse_int_range(0, 0, 0x7fffffff);
+   item->aspect.h = parse_int_range(1, 0, 0x7fffffff);
+}
+
+/**
+    @page edcref
+    @property
+        aspect_mode
+    @parameters
+        NONE, NEITHER, HORIZONTAL, VERTICAL, BOTH
+    @effect
+        Sets the aspect control hints for this object.
+    @endproperty
+*/
+static void st_collections_group_parts_part_box_items_item_aspect_mode(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Pack_Element *item;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   item = eina_list_data_get(eina_list_last(ep->items));
+   item->aspect.mode = parse_enum(0,
+				  "NONE", EDJE_ASPECT_CONTROL_NONE,
+				  "NEITHER", EDJE_ASPECT_CONTROL_NEITHER,
+				  "HORIZONTAL", EDJE_ASPECT_CONTROL_HORIZONTAL,
+				  "VERTICAL", EDJE_ASPECT_CONTROL_VERTICAL,
+				  "BOTH", EDJE_ASPECT_CONTROL_BOTH,
+				  NULL);
+}
+
+/**
+    @page edcref
+    @property
+        options
+    @parameters
+        [extra options]
+    @effect
+        Sets extra options for the object. Unused for now.
+    @endproperty
+*/
+static void st_collections_group_parts_part_box_items_item_options(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Pack_Element *item;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   item = eina_list_data_get(eina_list_last(ep->items));
+   item->options = parse_str(0);
+}
+
+/**
+    @page edcref
+    @block
         description
     @context
         description {
@@ -2310,6 +2753,12 @@ ob_collections_group_parts_part_description(void)
    ed->gradient.rel2.relative_y = 1;
    ed->gradient.rel2.offset_x = -1;
    ed->gradient.rel2.offset_y = -1;
+   ed->box.layout = NULL;
+   ed->box.alt_layout = NULL;
+   ed->box.align.x = 0.5;
+   ed->box.align.y = 0.5;
+   ed->box.padding.x = 0;
+   ed->box.padding.y = 0;
 }
 
 /**
@@ -4462,6 +4911,143 @@ st_collections_group_parts_part_description_gradient_rel2_offset(void)
 	ed->gradient.rel2.offset_x = parse_int(0);
 	ed->gradient.rel2.offset_y = parse_int(1);
      }
+}
+
+/**
+    @page edcref
+
+    @block
+        box
+    @context
+        part {
+            description {
+                ..
+                box {
+                    layout: "vertical";
+                    padding: 0 2;
+                    align: 0.5 0.5;
+                }
+                ..
+            }
+        }
+    @description
+        A box block can contain other objects and display them in different
+	layouts, any of the predefined set, or a custom one, set by the
+	application.
+    @endblock
+
+    @property
+        layout
+    @parameters
+        [primary layout] [fallback layout]
+    @effect
+        Sets the layout for the box:
+            @li horizontal (default)
+            @li vertical
+            @li horizontal_homogeneous
+            @li vertical_homogeneous
+            @li horizontal_max (homogeneous to the max sized child)
+            @li vertical_max
+            @li horizontal_flow
+            @li vertical_flow
+            @li stack
+            @li some_other_custom_layout_set_by_the_application
+        You could set a custom layout as fallback, it makes very
+        very little sense though, and if that one fails, it will
+        default to horizontal.
+    @endproperty
+
+    @property
+        align
+    @parameters
+        [horizontal] [vertical]
+    @effect
+        Change the position of the point of balance inside the container. The
+        default value is 0.5 0.5.
+    @endproperty
+
+    @property
+        padding
+    @parameters
+        [horizontal] [vertical]
+    @effect
+        Sets the space between cells in pixels. Defaults to 0 0.
+    @endproperty
+*/
+static void st_collections_group_parts_part_description_box_layout(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_min_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_BOX)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"box attributes in non-BOX part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->box.layout = parse_str(0);
+   if (is_param(1))
+     ed->box.alt_layout = parse_str(1);
+}
+
+static void st_collections_group_parts_part_description_box_align(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(2);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_BOX)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"box attributes in non-BOX part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->box.align.x = parse_float_range(0, -1.0, 1.0);
+   ed->box.align.y = parse_float_range(1, -1.0, 1.0);
+}
+
+static void st_collections_group_parts_part_description_box_padding(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(2);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_BOX)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"box attributes in non-BOX part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->box.padding.x = parse_int_range(0, 0, 0x7fffffff);
+   ed->box.padding.y = parse_int_range(1, 0, 0x7fffffff);
 }
 
 /**

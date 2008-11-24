@@ -1194,6 +1194,31 @@ _edje_gradient_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, 
 }
 
 static void
+_edje_box_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description *chosen_desc)
+{
+   Evas_Object_Box_Layout layout;
+   void (*free_data)(void *data);
+   void *data;
+
+   if (!_edje_box_layout_find(chosen_desc->box.layout, &layout, &data, &free_data))
+     {
+	if ((!chosen_desc->box.alt_layout) ||
+	    (!_edje_box_layout_find(chosen_desc->box.alt_layout, &layout, &data, &free_data)))
+	  {
+	     fprintf(stderr, "ERROR: box layout '%s' (fallback '%s') not available, using horizontal.\n",
+		     chosen_desc->box.layout, chosen_desc->box.alt_layout);
+	     layout = evas_object_box_layout_horizontal;
+	     free_data = NULL;
+	     data = NULL;
+	  }
+     }
+
+   evas_object_box_layout_set(ep->object, layout, data, free_data);
+   evas_object_box_align_set(ep->object, chosen_desc->box.align.x, chosen_desc->box.align.y);
+   evas_object_box_padding_set(ep->object, chosen_desc->box.padding.x, chosen_desc->box.padding.y);
+}
+
+static void
 _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description *chosen_desc, double pos)
 {
    int image_id;
@@ -1480,6 +1505,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	   case EDJE_PART_TYPE_IMAGE:
 	   case EDJE_PART_TYPE_TEXTBLOCK:
 	   case EDJE_PART_TYPE_GRADIENT:
+	   case EDJE_PART_TYPE_BOX:
 	      evas_object_color_set(ep->object,
 				    (pf->color.r * pf->color.a) / 255,
 				    (pf->color.g * pf->color.a) / 255,
@@ -1516,6 +1542,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	      break;
 	   case EDJE_PART_TYPE_GRADIENT:
 	      _edje_gradient_recalc_apply(ed, ep, pf, chosen_desc);
+	      break;
+	   case EDJE_PART_TYPE_BOX:
+	      _edje_box_recalc_apply(ed, ep, pf, chosen_desc);
 	      break;
 	   case EDJE_PART_TYPE_RECTANGLE:
 	   case EDJE_PART_TYPE_SWALLOW:

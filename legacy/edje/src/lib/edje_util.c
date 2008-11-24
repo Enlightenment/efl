@@ -6,11 +6,27 @@
 
 #include "edje_private.h"
 
+
+struct _Edje_Box_Layout
+{
+	EINA_RBTREE;
+	Evas_Object_Box_Layout func;
+	void *(*layout_data_get)(void *);
+	void (*layout_data_free)(void *);
+	void *data;
+	void (*free_data)(void *);
+	char name[];
+};
+typedef struct _Edje_Box_Layout                      Edje_Box_Layout;
+
+
 static Evas_Hash *_edje_color_class_hash = NULL;
 static Evas_Hash *_edje_color_class_member_hash = NULL;
 
 static Evas_Hash *_edje_text_class_hash = NULL;
 static Evas_Hash *_edje_text_class_member_hash = NULL;
+
+static Eina_Rbtree *_edje_box_layout_registry = NULL;
 
 char *_edje_fontset_append = NULL;
 double _edje_scale = 1.0;
@@ -1209,6 +1225,220 @@ edje_extern_object_aspect_set(Evas_Object *obj, Edje_Aspect_Control aspect, Evas
      }
 }
 
+
+static const struct edje_box_layout_builtin {
+   const char *name;
+   Evas_Object_Box_Layout cb;
+} _edje_box_layout_builtin[] = {
+  /* KEEP SORTED AND UPDATE OFFSETS BELOW AT _edje_box_layout_builtin_find() */
+  {"horizontal", evas_object_box_layout_horizontal},
+  {"horizontal_flow", evas_object_box_layout_flow_horizontal},
+  {"horizontal_homogeneous", evas_object_box_layout_homogeneous_horizontal},
+  {"horizontal_max", evas_object_box_layout_homogeneous_max_size_horizontal},
+  {"stack", evas_object_box_layout_stack},
+  {"vertical", evas_object_box_layout_vertical},
+  {"vertical_flow", evas_object_box_layout_flow_vertical},
+  {"vertical_homogeneous", evas_object_box_layout_homogeneous_vertical},
+  {"vertical_max", evas_object_box_layout_homogeneous_max_size_vertical},
+  {NULL, NULL}
+};
+
+static Evas_Object_Box_Layout
+_edje_box_layout_builtin_find(const char *name)
+{
+   const struct edje_box_layout_builtin *base;
+
+   switch (name[0])
+     {
+      case 'h':
+	 base = _edje_box_layout_builtin + 0;
+	 break;
+      case 's':
+	 base = _edje_box_layout_builtin + 4;
+	 break;
+      case 'v':
+	 base = _edje_box_layout_builtin + 5;
+	 break;
+      default:
+	 return NULL;
+     }
+
+   for (; (base->name != NULL) && (base->name[0] == name[0]); base++)
+     if (strcmp(base->name, name) == 0)
+       return base->cb;
+
+   return NULL;
+}
+
+static Eina_Rbtree_Direction
+_edje_box_layout_external_node_cmp(const Eina_Rbtree *left, const Eina_Rbtree *right, __UNUSED__ void *data)
+{
+   Edje_Box_Layout *l = (Edje_Box_Layout *)left;
+   Edje_Box_Layout *r = (Edje_Box_Layout *)right;
+
+   if (strcmp(l->name, r->name) < 0)
+     return EINA_RBTREE_LEFT;
+   else
+     return EINA_RBTREE_RIGHT;
+}
+
+static int
+_edje_box_layout_external_find_cmp(const Eina_Rbtree *node, const void *key, __UNUSED__ int length, __UNUSED__ void *data)
+{
+   Edje_Box_Layout *l = (Edje_Box_Layout *)node;
+   return strcmp(key, l->name);
+}
+
+static Edje_Box_Layout *
+_edje_box_layout_external_find(const char *name)
+{
+   return (Edje_Box_Layout *)eina_rbtree_inline_lookup
+     (_edje_box_layout_registry, name, 0, _edje_box_layout_external_find_cmp,
+      NULL);
+}
+
+Evas_Bool
+_edje_box_layout_find(const char *name, Evas_Object_Box_Layout *cb, void **data, void (**free_data)(void *data))
+{
+   const Edje_Box_Layout *l;
+
+   if (!name)
+     return 0;
+
+   *cb = _edje_box_layout_builtin_find(name);
+   if (*cb)
+     {
+	*free_data = NULL;
+	*data = NULL;
+	return 1;
+     }
+
+   l = _edje_box_layout_external_find(name);
+   if (!l)
+     return 0;
+
+   *cb = l->func;
+   *free_data = l->layout_data_free;
+   if (l->layout_data_get)
+     *data = l->layout_data_get(l->data);
+   else
+     *data = NULL;
+
+   return 1;
+}
+
+void
+_edje_box_layout_external_free(Eina_Rbtree *node, __UNUSED__ void *data)
+{
+   Edje_Box_Layout *l = (Edje_Box_Layout *)node;
+
+   if (l->data && l->free_data)
+     l->free_data(l->data);
+   free(l);
+}
+
+static Edje_Box_Layout *
+_edje_box_layout_external_new(const char *name, Evas_Object_Box_Layout func, void *(*layout_data_get)(void *), void (*layout_data_free)(void *), void (*free_data)(void *), void *data)
+{
+   Edje_Box_Layout *l;
+   int name_len;
+
+   name_len = strlen(name) + 1;
+   l = malloc(sizeof(Edje_Box_Layout) + name_len);
+   if (!l)
+     {
+	perror("malloc");
+	return NULL;
+     }
+
+   l->func = func;
+   l->layout_data_get = layout_data_get;
+   l->layout_data_free = layout_data_free;
+   l->free_data = free_data;
+   l->data = data;
+
+   memcpy(l->name, name, name_len);
+
+   return l;
+}
+
+/** Registers a custom layout to be used in edje boxes
+ * @param name The name of the layout
+ * @param func The function defining the layout
+ * @param layout_data_get This function gets the custom data pointer for func
+ * @param layout_data_free Passed to func to free its private data when needed
+ * @param free_data Frees data
+ * @param data Private pointer passed to layout_data_get
+ *
+ * This function registers custom layouts that can be referred from themes
+ * by the registered name.
+ * The Evas_Object_Box_Layout functions receive two pointers for internal
+ * use, one being private data, and the other the function to free that
+ * data when it's not longer needed. From Edje, this private data will be
+ * retrieved by calling layout_data_get, and layout_data_free will be the
+ * free function passed to func. layout_data_get will be called with data
+ * as its parameter, and this one will be freed by free_data whenever the
+ * layout is unregistered from Edje.
+ */
+EAPI void
+edje_box_layout_register(const char *name, Evas_Object_Box_Layout func, void *(*layout_data_get)(void *), void (*layout_data_free)(void *), void (*free_data)(void *), void *data)
+{
+   Edje_Box_Layout *l;
+
+   if (!name) return;
+
+   if (_edje_box_layout_builtin_find(name))
+     {
+	fprintf(stderr,
+		"ERROR: cannot register layout '%s': would override builtin!\n",
+		name);
+
+	if (data && free_data) free_data(data);
+	return;
+     }
+
+   l = _edje_box_layout_external_find(name);
+   if (!l)
+     {
+	if (!func)
+	  {
+	     if (data && free_data) free_data(data);
+	     return;
+	  }
+
+	l = _edje_box_layout_external_new
+	  (name, func, layout_data_get, layout_data_free, free_data, data);
+	if (!l)
+	  return;
+
+	_edje_box_layout_registry = eina_rbtree_inline_insert
+	  (_edje_box_layout_registry, (Eina_Rbtree *)l,
+	   _edje_box_layout_external_node_cmp, NULL);
+     }
+   else
+     {
+	if (func)
+	  {
+	     if (l->data && l->free_data) l->free_data(l->data);
+
+	     l->func = func;
+	     l->layout_data_get = layout_data_get;
+	     l->layout_data_free = layout_data_free;
+	     l->free_data = free_data;
+	     l->data = data;
+	  }
+	else
+	  {
+	     if (data && free_data) free_data(data);
+
+	     _edje_box_layout_registry = eina_rbtree_inline_remove
+	       (_edje_box_layout_registry, (Eina_Rbtree *)l,
+		_edje_box_layout_external_node_cmp, NULL);
+	     _edje_box_layout_external_free((Eina_Rbtree *)l, NULL);
+	  }
+     }
+}
+
 /** Unswallow an object
  * @param obj A valid Evas_Object handle
  * @param obj_swallow The swallowed object
@@ -1912,6 +2142,307 @@ edje_object_part_drag_page(Evas_Object *obj, const char *part, double dx, double
    if ((px == rp->drag.val.x) && (py == rp->drag.val.y)) return;
    _edje_dragable_pos_set(rp->edje, rp, rp->drag.val.x, rp->drag.val.y);
    _edje_emit(rp->edje, "drag,page", rp->part->name);
+}
+
+void
+_edje_box_init(void)
+{
+}
+
+void
+_edje_box_shutdown(void)
+{
+   if (!_edje_box_layout_registry)
+     return;
+
+   eina_rbtree_delete
+     (_edje_box_layout_registry, _edje_box_layout_external_free, NULL);
+   _edje_box_layout_registry = NULL;
+}
+
+/** Appends an object to the box
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param child The object to append
+ *
+ * @return 1: Successfully added.\n
+ * 0: An error occured.
+ *
+ * Appends child to the box indicated by part.\n
+ */
+EAPI Evas_Bool
+edje_object_part_box_append(Evas_Object *obj, const char *part, Evas_Object *child)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part) || (!child)) return 0;
+
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return 0;
+   if (rp->part->type != EDJE_PART_TYPE_BOX) return 0;
+
+   return _edje_real_part_box_append(rp, child);
+}
+
+/** Prepends an object to the box
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param child The object to prepend
+ *
+ * @return 1: Successfully added.\n
+ * 0: An error occured.
+ *
+ * Prepends child to the box indicated by part.\n
+ */
+EAPI Evas_Bool
+edje_object_part_box_prepend(Evas_Object *obj, const char *part, Evas_Object *child)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return 0;
+
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return 0;
+   if (rp->part->type != EDJE_PART_TYPE_BOX) return 0;
+
+   return _edje_real_part_box_prepend(rp, child);
+}
+
+/** Adds an object to the box
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param child The object to insert
+ * @param reference The object to be used as reference
+ *
+ * @return 1: Successfully added.\n
+ * 0: An error occured.
+ *
+ * Inserts child in the box given by part, in the position marked by reference.\n
+ */
+EAPI Evas_Bool
+edje_object_part_box_insert_before(Evas_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return 0;
+
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return 0;
+   if (rp->part->type != EDJE_PART_TYPE_BOX) return 0;
+
+   return _edje_real_part_box_insert_before(rp, child, reference);
+}
+
+/** Inserts an object to the box
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param child The object to insert
+ * @param pos The position where to insert child
+ *
+ * @return 1: Successfully added.\n
+ * 0: An error occured.
+ *
+ * Adds child to the box indicated by part, in the position given by pos.\n
+ */
+EAPI Evas_Bool
+edje_object_part_box_insert_at(Evas_Object *obj, const char *part, Evas_Object *child, unsigned int pos)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return 0;
+
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return 0;
+   if (rp->part->type != EDJE_PART_TYPE_BOX) return 0;
+
+   return _edje_real_part_box_insert_at(rp, child, pos);
+}
+
+/** Removes an object from the box
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param child The object to remove
+ *
+ * @return 1: Successfully removed.\n
+ * 0: An error occured.
+ *
+ * Removes child from the box indicated by part.\n
+ */
+EAPI Evas_Object *
+edje_object_part_box_remove(Evas_Object *obj, const char *part, Evas_Object *child)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return NULL;
+
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return NULL;
+   if (rp->part->type != EDJE_PART_TYPE_BOX) return NULL;
+
+   return _edje_real_part_box_remove(rp, child);
+}
+
+/** Removes an object from the box
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param pos
+ *
+ * @return 1: Successfully removed.\n
+ * 0: An error occured.
+ *
+ * Removes from the box indicated by part, the object in the position pos.\n
+ */
+EAPI Evas_Object *
+edje_object_part_box_remove_at(Evas_Object *obj, const char *part, unsigned int pos)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return NULL;
+
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return NULL;
+   if (rp->part->type != EDJE_PART_TYPE_BOX) return NULL;
+
+   return _edje_real_part_box_remove_at(rp, pos);
+}
+
+/** Removes all elements from the box
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param clear Delete objects on removal
+ *
+ * @return 1: Successfully cleared.\n
+ * 0: An error occured.
+ *
+ * Removes all the external objects from the box indicated by part.
+ * Elements created from the theme will not be removed.\n
+ */
+EAPI Evas_Bool
+edje_object_part_box_remove_all(Evas_Object *obj, const char *part, Evas_Bool clear)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return NULL;
+
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return NULL;
+   if (rp->part->type != EDJE_PART_TYPE_BOX) return NULL;
+
+   return _edje_real_part_box_remove_all(rp, clear);
+
+}
+
+Evas_Bool
+_edje_real_part_box_append(Edje_Real_Part *rp, Evas_Object *child_obj)
+{
+   Evas_Object_Box_Option *opt;
+
+   opt = evas_object_box_append(rp->object, child_obj);
+   if (!opt) return 0;
+
+   return 1;
+}
+
+Evas_Bool
+_edje_real_part_box_prepend(Edje_Real_Part *rp, Evas_Object *child_obj)
+{
+   Evas_Object_Box_Option *opt;
+
+   opt = evas_object_box_prepend(rp->object, child_obj);
+   if (!opt) return 0;
+
+   return 1;
+}
+
+Evas_Bool
+_edje_real_part_box_insert_before(Edje_Real_Part *rp, Evas_Object *child_obj, const Evas_Object *ref)
+{
+   Evas_Object_Box_Option *opt;
+
+   opt = evas_object_box_insert_before(rp->object, child_obj, ref);
+   if (!opt) return 0;
+
+   return 1;
+}
+
+Evas_Bool
+_edje_real_part_box_insert_at(Edje_Real_Part *rp, Evas_Object *child_obj, unsigned int pos)
+{
+   Evas_Object_Box_Option *opt;
+
+   opt = evas_object_box_insert_at(rp->object, child_obj, pos);
+   if (!opt) return 0;
+
+   return 1;
+}
+
+Evas_Object *
+_edje_real_part_box_remove(Edje_Real_Part *rp, Evas_Object *child_obj)
+{
+   if (evas_object_data_get(child_obj, "\377 edje.box_item")) return NULL;
+   if (evas_object_box_remove(rp->object, child_obj))
+     return child_obj;
+   return NULL;
+}
+
+Evas_Object *
+_edje_real_part_box_remove_at(Edje_Real_Part *rp, unsigned int pos)
+{
+   Evas_Object_Box_Option *opt;
+   Evas_Object_Box_Data *priv;
+   Evas_Object *child_obj;
+
+   priv = evas_object_smart_data_get(rp->object);
+   opt = eina_list_nth(priv->children, pos);
+   if (!opt) return NULL;
+   child_obj = opt->obj;
+   if (evas_object_data_get(child_obj, "\377 edje.box_item")) return NULL;
+   if (evas_object_box_remove_at(rp->object, pos))
+     return child_obj;
+   return NULL;
+}
+
+Evas_Bool
+_edje_real_part_box_remove_all(Edje_Real_Part *rp, Evas_Bool clear)
+{
+   Evas_Object_Box_Option *opt;
+   Evas_Object_Box_Data *priv;
+   Eina_List *l;
+   int i;
+
+   if (eina_list_count(rp->items) == 0)
+     return evas_object_box_remove_all(rp->object, clear);
+   priv = evas_object_smart_data_get(rp->object);
+   i = 0;
+   EINA_LIST_FOREACH(priv->children, l, opt)
+     {
+	Evas_Object *child_obj;
+	child_obj = opt->obj;
+	if (evas_object_data_get(child_obj, "\377 edje.box_item"))
+	  {
+	     i++;
+	     continue;
+	  }
+	if (!evas_object_box_remove_at(rp->object, i))
+	  return 0;
+	if (clear)
+	  evas_object_del(child_obj);
+     }
+   return 1;
 }
 
 Edje_Real_Part *

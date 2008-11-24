@@ -151,6 +151,21 @@ check_image_part_desc (Edje_Part_Collection *pc, Edje_Part *ep,
 }
 
 static void
+check_packed_items(Edje_Part_Collection *pc, Edje_Part *ep, Edje_File *ef)
+{
+   Eina_List *l;
+   Edje_Pack_Element *it;
+
+   EINA_LIST_FOREACH(ep->items, l, it)
+     {
+	if (it->type == EDJE_PART_TYPE_GROUP && !it->source)
+	  error_and_abort(ef, "Collection %i: missing source on packed item "
+			  "of type GROUP in part \"%s\"\n",
+			  pc->id, ep->name);
+     }
+}
+
+static void
 check_part (Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 {
    Edje_Part_Description *epd = ep->default_desc;
@@ -168,6 +183,8 @@ check_part (Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 	EINA_LIST_FOREACH(ep->other_desc, l, data)
 	  check_image_part_desc (pc, ep, data, ef);
      }
+   else if (ep->type == EDJE_PART_TYPE_BOX)
+     check_packed_items(pc, ep, ef);
 }
 
 static void

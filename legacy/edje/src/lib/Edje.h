@@ -197,6 +197,7 @@ extern "C" {
    EAPI void         edje_extern_object_min_size_set (Evas_Object *obj, Evas_Coord minw, Evas_Coord minh);
    EAPI void         edje_extern_object_max_size_set (Evas_Object *obj, Evas_Coord maxw, Evas_Coord maxh);
    EAPI void         edje_extern_object_aspect_set(Evas_Object *obj, Edje_Aspect_Control aspect, Evas_Coord aw, Evas_Coord ah);
+   EAPI void         edje_box_layout_register(const char *name, Evas_Object_Box_Layout func, void *(*layout_data_get)(void *), void (*layout_data_free)(void *), void (*free_data)(void *), void *data);
 
    /* edje_smart.c */
    EAPI Evas_Object *edje_object_add                 (Evas *evas);
@@ -259,6 +260,13 @@ extern "C" {
    EAPI void         edje_object_part_drag_page_get  (const Evas_Object *obj, const char *part, double *dx, double *dy);
    EAPI void         edje_object_part_drag_step      (Evas_Object *obj, const char *part, double dx, double dy);
    EAPI void         edje_object_part_drag_page      (Evas_Object *obj, const char *part, double dx, double dy);
+   EAPI Evas_Bool    edje_object_part_box_append     (Evas_Object *obj, const char *part, Evas_Object *child);
+   EAPI Evas_Bool    edje_object_part_box_prepend    (Evas_Object *obj, const char *part, Evas_Object *child);
+   EAPI Evas_Bool    edje_object_part_box_insert_before (Evas_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference);
+   EAPI Evas_Bool    edje_object_part_box_insert_at  (Evas_Object *obj, const char *part, Evas_Object *child, unsigned int pos);
+   EAPI Evas_Object *edje_object_part_box_remove     (Evas_Object *obj, const char *part, Evas_Object *child);
+   EAPI Evas_Object *edje_object_part_box_remove_at  (Evas_Object *obj, const char *part, unsigned int pos);
+   EAPI Evas_Bool    edje_object_part_box_remove_all (Evas_Object *obj, const char *part, Evas_Bool clear);
 
    /* edje_message_queue.c */
    EAPI void         edje_object_message_send           (Evas_Object *obj, Edje_Message_Type type, int id, void *msg);

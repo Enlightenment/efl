@@ -25,6 +25,7 @@ edje_init(void)
 	srand(time(NULL));
 	_edje_edd_setup();
 	_edje_text_init();
+	_edje_box_init();
 	embryo_init();
 	eet_init();
      }
@@ -53,6 +54,7 @@ edje_shutdown(void)
    _edje_color_class_hash_free();
    _edje_text_class_members_free();
    _edje_text_class_hash_free();
+   _edje_box_shutdown();
    embryo_shutdown();
    ecore_job_shutdown();
    eet_shutdown();
