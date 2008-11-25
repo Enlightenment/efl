@@ -1265,9 +1265,8 @@ ob_collections_group(void)
 static void
 st_collections_group_name(void)
 {
-   Edje_Part_Collection_Directory_Entry *de;
-   Eina_List *l;
-   Edje_Part_Collection_Directory_Entry *de_other;
+   Edje_Part_Collection_Directory_Entry *de, *de_other, *alias;
+   Eina_List *l, *l2;
 
    check_arg_count(1);
 
@@ -1295,6 +1294,12 @@ st_collections_group_name(void)
 	     for (i = 0, l = edje_file->collection_dir->entries; l; l = eina_list_next(l), i++)
 	       {
 		  de_other = eina_list_data_get(l);
+                  for (l2 = aliases; l2; l2 = l2->next)
+                    {
+                       alias = l2->data;
+                       if (alias->id == de_other->id)
+                         alias->id = i;
+                    }
 		  de_other->id = i;
 	       }
 	     for (i = 0, l = edje_collections; l; l = eina_list_next(l), i++)
