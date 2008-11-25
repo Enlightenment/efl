@@ -606,7 +606,7 @@ want_engine="$2"
 have_evas_engine_[]DOWN="no"
 
 AC_ARG_ENABLE([$1],
-   [AC_HELP_STRING([--enable-$1], [disable $4 rendering backend])],
+   [AC_HELP_STRING([--enable-$1], [enable $4 rendering backend])],
    [want_engine=${enableval}]
 )
 
