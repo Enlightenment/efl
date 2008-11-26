@@ -307,6 +307,12 @@ extern "C" {
      */
    EAPI const void *eet_identity_x509(Eet_File *ef, int *der_length);
 
+    /**
+     * Get the raw signature associated with an Eet_File. Will return NULL
+     * if the file is not signed.
+     */
+   EAPI const void *eet_identity_signature(Eet_File *ef, int *signature_length);
+
    /**
     * Display the x509 der certificate to out.
     *

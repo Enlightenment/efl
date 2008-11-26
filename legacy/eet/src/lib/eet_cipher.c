@@ -477,6 +477,7 @@ eet_identity_sign(FILE *fp, Eet_Key *key)
 const void*
 eet_identity_check(const void *data_base, unsigned int data_length,
 		   const void *signature_base, unsigned int signature_length,
+		   const void **raw_signature_base, unsigned int *raw_signature_length,
 		   int *x509_length)
 {
 #ifdef HAVE_SIGNATURE
@@ -554,6 +555,8 @@ eet_identity_check(const void *data_base, unsigned int data_length,
      return NULL;
 # endif
    if (x509_length) *x509_length = cert_len;
+   if (raw_signature_base) *raw_signature_base = sign;
+   if (raw_signature_length) *raw_signature_length = sign_len;
    return cert_der;
 #else
    return NULL;

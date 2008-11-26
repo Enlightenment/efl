@@ -89,13 +89,17 @@ struct _Eet_File
    Eet_Key		*key;
    const unsigned char  *data;
    const void           *x509_der;
+   const void           *signature;
+
+   Eet_File_Mode         mode;
 
    int                   magic;
    int                   references;
 
-   Eet_File_Mode         mode;
    int                   data_size;
    int                   x509_length;
+   unsigned int          signature_length;
+
    time_t                mtime;
 
    unsigned char         writes_pending : 1;
@@ -1022,12 +1026,16 @@ eet_internal_read2(Eet_File *ef)
    /* Check if the file is signed */
    ef->x509_der = NULL;
    ef->x509_length = 0;
+   ef->signature = NULL;
+   ef->signature_length = 0;
+
    if (signature_base_offset < ef->data_size)
      {
 #ifdef HAVE_SIGNATURE
 	const unsigned char *buffer = ((const unsigned char*) ef->data) + signature_base_offset;
 	ef->x509_der = eet_identity_check(ef->data, signature_base_offset,
 					  buffer, ef->data_size - signature_base_offset,
+					  &ef->signature, &ef->signature_length,
 					  &ef->x509_length);
 
 	if (eet_test_close(ef->x509_der == NULL, ef)) return NULL;
@@ -1438,6 +1446,15 @@ eet_identity_x509(Eet_File *ef, int *der_length)
 
    if (der_length) *der_length = ef->x509_length;
    return ef->x509_der;
+}
+
+EAPI const void *
+eet_identity_signature(Eet_File *ef, int *signature_length)
+{
+   if (!ef->signature) return NULL;
+
+   if (signature_length) *signature_length = ef->signature_length;
+   return ef->signature;
 }
 
 EAPI Eet_Error

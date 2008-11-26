@@ -70,6 +70,7 @@ int   _eet_hash_gen(const char *key, int hash_size);
 
 const void* eet_identity_check(const void *data_base, unsigned int data_length,
 			       const void *signature_base, unsigned int signature_length,
+			       const void **raw_signature_base, unsigned int *raw_signature_length,
 			       int *x509_length);
 Eet_Error eet_cipher(const void *data, unsigned int size, const char *key, unsigned int length, void **result, unsigned int *result_length);
 Eet_Error eet_decipher(const void *data, unsigned int size, const char *key, unsigned int length, void **result, unsigned int *result_length);
