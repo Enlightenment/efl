@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <stdio.h>   /* for printf */
 
+#define _WIN32_WINNT 0x0500  // For WS_EX_LAYERED
+
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
@@ -69,7 +71,12 @@ ecore_win32_window_override_new(Ecore_Win32_Window *parent,
 void
 ecore_win32_window_del(Ecore_Win32_Window *window)
 {
+   struct _Ecore_Win32_Window *wnd = window;
+
    if (!window) return;
+
+   if (wnd->shape.mask != NULL)
+      free(wnd->shape.mask);
 
    DestroyWindow(((struct _Ecore_Win32_Window *)window)->window);
    free(window);
@@ -423,7 +430,90 @@ ecore_win32_window_size_step_get(Ecore_Win32_Window *window,
    if (step_height) *step_height = w->step_height;
 }
 
-/* TODO: ecore_win32_window_shaped_set */
+void
+ecore_win32_window_shape_set(Ecore_Win32_Window *window,
+                             unsigned short      width,
+                             unsigned short      height,
+                             unsigned char      *mask)
+{
+   struct _Ecore_Win32_Window *wnd;
+   HRGN                        rgn;
+   int                         x;
+   int                         y;
+   OSVERSIONINFO               version_info;
+
+   if (window == NULL)
+      return;
+
+   wnd = (struct _Ecore_Win32_Window *)window;
+
+   if (mask == NULL)
+     {
+       wnd->shape.enabled = 0;
+       if (wnd->shape.layered != 0)
+         {
+           wnd->shape.layered = 0;
+#if defined(WS_EX_LAYERED)
+           SetWindowLong(wnd->window, GWL_EXSTYLE,
+                         GetWindowLong(wnd->window, GWL_EXSTYLE) & (~WS_EX_LAYERED));
+           RedrawWindow(wnd->window, NULL, NULL,
+                        RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
+#endif
+         }
+       else
+         SetWindowRgn(wnd->window, NULL, TRUE);
+       return;
+     }
+
+   if (width == 0 || height == 0)
+     return;
+
+   wnd->shape.enabled = 1;
+
+   if (width != wnd->shape.width || height != wnd->shape.height)
+     {
+       wnd->shape.width = width;
+       wnd->shape.height = height;
+       if (wnd->shape.mask != NULL)
+         {
+           free(wnd->shape.mask);
+           wnd->shape.mask = NULL;
+         }
+       wnd->shape.mask = malloc(width * height);
+     }
+   memcpy(wnd->shape.mask, mask, width * height);
+
+   wnd->shape.layered = 0;
+
+#if defined(WS_EX_LAYERED)
+   version_info.dwOSVersionInfoSize = sizeof(version_info);
+   if (GetVersionEx(&version_info) == TRUE && version_info.dwMajorVersion == 5)
+     {
+       SetWindowLong(wnd->window, GWL_EXSTYLE,
+                     GetWindowLong(wnd->window, GWL_EXSTYLE) | WS_EX_LAYERED);
+       wnd->shape.layered = 1;
+       return;
+     }
+#endif
+
+   rgn = CreateRectRgn(0, 0, 0, 0);
+   for (y = 0; y < height; y++)
+     {
+       HRGN rgnLine = CreateRectRgn(0, 0, 0, 0);
+       for (x = 0; x < width; x++)
+         {
+           if (mask[y * width + x] > 0)
+             {
+               HRGN rgnDot = CreateRectRgn(x, y, x + 1, y + 1);
+               CombineRgn(rgnLine, rgnLine, rgnDot, RGN_OR);
+               DeleteObject(rgnDot);
+             }
+         }
+       CombineRgn(rgn, rgn, rgnLine, RGN_OR);
+       DeleteObject(rgnLine);
+     }
+   SetWindowRgn(wnd->window, rgn, TRUE);
+}
 
 void
 ecore_win32_window_show(Ecore_Win32_Window *window)
@@ -579,19 +669,23 @@ ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
         if (!SetWindowLong(w, GWL_STYLE,
                            (ew->style & ~WS_OVERLAPPEDWINDOW) | WS_POPUP))
           return;
-        SetWindowPos(w, HWND_TOP, 0, 0, width, height,
-                     SWP_NOCOPYBITS | SWP_SHOWWINDOW);
+        if (!SetWindowLong(w, GWL_EXSTYLE, WS_EX_TOPMOST))
+          return;
+        SetWindowPos(w, HWND_TOPMOST, 0, 0, width, height,
+                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
      }
    else
      {
-        if (!SetWindowLong(w, GWL_STYLE, ew->style))
+        if (!SetWindowLong(w, GWL_STYLE, (ew->style & ~WS_POPUP) | WS_OVERLAPPEDWINDOW)
+          return;
+        if (!SetWindowLong(w, GWL_EXSTYLE, 0))
           return;
         SetWindowPos(w, HWND_NOTOPMOST,
                      ew->rect.left,
                      ew->rect.top,
                      ew->rect.right - ew->rect.left,
                      ew->rect.bottom - ew->rect.top,
-                     SWP_NOCOPYBITS | SWP_SHOWWINDOW);
+                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
      }
 }
 

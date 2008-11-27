@@ -6,6 +6,11 @@
 #define __ECORE_WIN32_PRIVATE_H__
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 #define ECORE_WIN32_WINDOW_CLASS "Ecore_Win32_Window_Class"
 
 
@@ -68,6 +73,16 @@ struct _Ecore_Win32_Window
    unsigned int           borderless    : 1;
    unsigned int           iconified     : 1;
    unsigned int           fullscreen    : 1;
+
+   struct {
+      unsigned short width;
+      unsigned short height;
+      unsigned char *mask;
+      unsigned int   enabled : 1;
+      unsigned int   layered : 1;
+   } shape;
+
+   void *dnd_drop_target;
 };
 
 
@@ -96,6 +111,19 @@ void  _ecore_win32_event_handle_unmap_notify(Ecore_Win32_Callback_Data *msg);
 void  _ecore_win32_event_handle_configure_notify(Ecore_Win32_Callback_Data *msg);
 void  _ecore_win32_event_handle_resize(Ecore_Win32_Callback_Data *msg);
 void  _ecore_win32_event_handle_delete_request(Ecore_Win32_Callback_Data *msg);
+
+void *_ecore_win32_dnd_data_object_new(void *fmtetc, void *stgmeds, int count);
+void _ecore_win32_dnd_data_object_free(void *data_object);
+void *_ecore_win32_dnd_drop_source_new();
+void _ecore_win32_dnd_drop_source_free(void *drop_source);
+void *_ecore_win32_dnd_register_drop_window(HWND hwnd,
+                                            Ecore_Win32_Dnd_DropTarget_Callback callback, void *ptr);
+void _ecore_win32_dnd_unregister_drop_window(HWND hwnd, void *drop_target);
+
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif /* __ECORE_WIN32_PRIVATE_H__ */

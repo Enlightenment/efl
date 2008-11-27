@@ -16,6 +16,11 @@ Ecore_Win32.h
 libecore_win32_la_SOURCES = \
 ecore_win32.c \
 ecore_win32_cursor.c \
+ecore_win32_dnd.c \
+ecore_win32_dnd_enumformatetc.cpp \
+ecore_win32_dnd_data_object.cpp \
+ecore_win32_dnd_drop_source.cpp \
+ecore_win32_dnd_drop_target.cpp \
 ecore_win32_event.c \
 ecore_win32_window.c
 
@@ -29,4 +34,9 @@ libecore_win32_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info 
 
 endif
 
-EXTRA_DIST = ecore_win32_private.h
+EXTRA_DIST = \
+ecore_win32_private.h \
+ecore_win32_dnd_enumformatetc.h \
+ecore_win32_dnd_data_object.h \
+ecore_win32_dnd_drop_source.h \
+ecore_win32_dnd_drop_target.h

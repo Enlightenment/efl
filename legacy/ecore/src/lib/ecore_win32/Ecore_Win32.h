@@ -33,6 +33,11 @@
 #endif /* ! _WIN32 */
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 typedef void Ecore_Win32_Window;
 typedef void Ecore_Win32_Cursor;
 
@@ -281,6 +286,14 @@ struct _Ecore_Win32_Event_Window_Delete_Request
    double              time;
 };
 
+#define ECORE_WIN32_DND_EVENT_DRAG_ENTER     1
+#define ECORE_WIN32_DND_EVENT_DRAG_OVER      2
+#define ECORE_WIN32_DND_EVENT_DRAG_LEAVE     3
+#define ECORE_WIN32_DND_EVENT_DROP           4
+
+
+typedef int (*Ecore_Win32_Dnd_DropTarget_Callback)(void *window, int event, int pt_x, int pt_y, void *data, int size);
+
 EAPI extern int ECORE_WIN32_EVENT_KEY_DOWN;
 EAPI extern int ECORE_WIN32_EVENT_KEY_UP;
 EAPI extern int ECORE_WIN32_EVENT_MOUSE_BUTTON_DOWN;
@@ -404,6 +417,11 @@ EAPI void ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
 EAPI void ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
                                             int                 on);
 
+EAPI void ecore_win32_window_shape_set(Ecore_Win32_Window *window,
+                                       unsigned short      width,
+                                       unsigned short      height,
+                                       unsigned char      *mask);
+
 EAPI void ecore_win32_window_cursor_set(Ecore_Win32_Window *window,
                                         Ecore_Win32_Cursor *cursor);
 
@@ -432,6 +450,22 @@ EAPI void                ecore_win32_cursor_free(Ecore_Win32_Cursor *cursor);
 EAPI Ecore_Win32_Cursor *ecore_win32_cursor_shape_get(Ecore_Win32_Cursor_Shape shape);
 
 EAPI int                 ecore_win32_cursor_size_get(void);
+
+
+
+/* Drag and drop */
+EAPI int ecore_win32_dnd_init();
+EAPI int ecore_win32_dnd_shutdown();
+EAPI int ecore_win32_dnd_begin(const char *data,
+                               int         size);
+EAPI int ecore_win32_dnd_register_drop_target(Ecore_Win32_Window                 *window,
+                                              Ecore_Win32_Dnd_DropTarget_Callback callback);
+EAPI void ecore_win32_dnd_unregister_drop_target(Ecore_Win32_Window *window);
+
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif /* __ECORE_WIN32_H__ */

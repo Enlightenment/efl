@@ -67,7 +67,7 @@ _ecore_evas_win32_render(Ecore_Evas *ee)
    Eina_List *updates;
 #ifdef BUILD_ECORE_EVAS_BUFFER
    Eina_List *ll;
-   Ecore_Evas *ee2;²
+   Ecore_Evas *ee2;
 #endif
 
 #ifdef BUILD_ECORE_EVAS_BUFFER

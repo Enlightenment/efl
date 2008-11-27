@@ -101,13 +101,14 @@ case "$host_os" in
 			fi
                 fi
                 lt_enable_auto_import="-Wl,--enable-auto-import"
+                dlopen_libs=-ldl
 		;;
 	*)
 		AC_CHECK_HEADERS([dlfcn.h features.h langinfo.h locale.h netdb.h netinet/in.h sys/time.h sys/mman.h signal.h sys/resource.h])
 		AC_CHECK_LIB(dl, dlopen, dlopen_libs=-ldl)
-		AC_SUBST(dlopen_libs)
 		;;
 esac
+AC_SUBST(dlopen_libs)
 AC_SUBST(WIN32_CPPFLAGS)
 AC_SUBST(WIN32_CFLAGS)
 AC_SUBST(WIN32_LIBS)
@@ -578,7 +579,7 @@ fi
 dnl ecore_win32
 
 ECORE_CHECK_MODULE([Win32], [no], [yes],
-  [ecore_win32_libs="-lgdi32"])
+  [ecore_win32_libs="-lole32 -lgdi32"])
 AC_SUBST(ecore_win32_libs)
 
 want_ecore_evas_software_ddraw="yes"
@@ -587,7 +588,7 @@ ECORE_EVAS_CHECK_MODULE([software-ddraw],
   [Software DirectDraw],
   $have_ecore_win32)
 
-want_ecore_evas_direct3d="yes"
+want_ecore_evas_direct3d="auto"
 ECORE_EVAS_CHECK_MODULE([direct3d],
   [$want_ecore_evas_direct3d],
   [Direct3d],
@@ -599,7 +600,7 @@ ECORE_EVAS_CHECK_MODULE([opengl-glew],
   [Glew OpenGL],
   $have_ecore_win32)
 
-want_ecore_evas_software_16_ddraw="yes"
+want_ecore_evas_software_16_ddraw="auto"
 ECORE_EVAS_CHECK_MODULE([software-16-ddraw],
   [$want_ecore_evas_software_16_ddraw],
   [16 bpp Software DirectDraw],

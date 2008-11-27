@@ -19,6 +19,17 @@
 #include "ecore_win32_private.h"
 
 
+/* OLE IID for Drag'n Drop */
+
+# define INITGUID
+# include <basetyps.h>
+DEFINE_OLEGUID(IID_IEnumFORMATETC, 0x00000103L, 0, 0);
+DEFINE_OLEGUID(IID_IDataObject,    0x0000010EL, 0, 0);
+DEFINE_OLEGUID(IID_IDropSource,    0x00000121L, 0, 0);
+DEFINE_OLEGUID(IID_IDropTarget,    0x00000122L, 0, 0);
+DEFINE_OLEGUID(IID_IUnknown,       0x00000000L, 0, 0);
+
+
 /***** Global declarations *****/
 
 HINSTANCE           _ecore_win32_instance = NULL;
@@ -93,6 +104,12 @@ ecore_win32_init()
         return 0;
      }
 
+   if (!ecore_win32_dnd_init())
+     {
+        FreeLibrary(_ecore_win32_instance);
+        return 0;
+     }
+
    if (!ECORE_WIN32_EVENT_KEY_DOWN)
      {
         ECORE_WIN32_EVENT_KEY_DOWN              = ecore_event_type_new();
@@ -127,6 +144,7 @@ ecore_win32_shutdown()
    if (_ecore_win32_init_count > 0) return _ecore_win32_init_count;
    if (!_ecore_win32_instance) return _ecore_win32_init_count;
 
+   ecore_win32_dnd_shutdown();
    UnregisterClass(ECORE_WIN32_WINDOW_CLASS, _ecore_win32_instance);
    FreeLibrary(_ecore_win32_instance);
    _ecore_win32_instance = NULL;
