@@ -110,6 +110,7 @@ _on_focus_hook(void *data, Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *top = elm_widget_top_get(obj);
+   if (!wd->editable) return;
    if (elm_widget_focus_get(obj))
      {
         evas_object_focus_set(wd->ent, 1);

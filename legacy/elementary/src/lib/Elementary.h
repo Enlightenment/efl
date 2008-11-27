@@ -192,11 +192,19 @@ extern "C" {
    /* smart callbacks called:
     */
    
+   typedef enum _Elm_Hover_Axis
+     {
+	ELM_HOVER_AXIS_NONE,
+          ELM_HOVER_AXIS_HORIZONTAL,
+          ELM_HOVER_AXIS_VERTICAL,
+          ELM_HOVER_AXIS_BOTH
+     } Elm_Hover_Axis;
    EAPI Evas_Object *elm_hover_add(Evas_Object *parent);
    EAPI void         elm_hover_target_set(Evas_Object *obj, Evas_Object *target);
    EAPI void         elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void         elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
    EAPI void         elm_hover_style_set(Evas_Object *obj, const char *style);
+   EAPI const char  *elm_hover_best_content_location_get(Evas_Object *obj, Elm_Hover_Axis pref_axis);
    /* smart callbacks called:
     * "clicked" - the user clicked the empty space in the hover to dismiss
     */
@@ -309,24 +317,26 @@ extern "C" {
 // * left/right arrow broken with password mode for entry + utf8 chars...
 // 
 //// (incomplete - medium priority)
+// * bubble should allow style (left/right + top/bottom)
+// * hover needs a "best direction" call for where to put entries with constraints
+// * buttons need a "bigbutton" option
 // * disabled not supported
 // * tab widget focusing (not useful for touchscreen tho...)
-// * bubble should allow style (left/right + top/bottom)
 // * on the fly theme changes - test (should work)
 // * entry selection conflicts with finger scroll (make selection start/stop work on signals?)
 // * need a hold-scroll counter in elm_widget
 // * add fullscreen mode on/off for windows
 // 
 //// (more widgets/features - medium priority)
+// * need multi-sel (with button + hover + ...)
+// * need "photoframe" widget (for contact photos?)
 // * toolbar widget (edje + box + button + separators)
 // * listitem widget (simple label + icon)
 // * radio widget + group handling
 // * checkbox widget (like toggle)
 // * need separator widget (h/v)
 // * need slide-open "panel" that can hold stuff and optionally scroll
-// * need "photoframe" widget (for contact photos?)
 // * need calendar widget (select date)
-// * need multi-sel (with button + hover + ...)
 // * need slider widget
 // * need range selector (select range of values from X to Y over an interval)
 // * need "dialogbutton" widget (bigger button for bottom of wins)

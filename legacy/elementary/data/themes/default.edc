@@ -2399,6 +2399,7 @@ collections {
 	 }
 	 part { name: "elm.swallow.slot.left";
             type: SWALLOW;
+	    clip_to: "leftclip";
 	    description { state: "default" 0.0;
 	       align: 0.0 0.5;
 	       rel1.to: "elm.swallow.slot.middle";
@@ -2456,6 +2457,7 @@ collections {
 	 }
 	 part { name: "elm.swallow.slot.right";
             type: SWALLOW;
+	    clip_to: "rightclip";
 	    description { state: "default" 0.0;
 	       align: 1.0 0.5;
 	       rel1.to: "elm.swallow.slot.middle";
@@ -2572,6 +2574,7 @@ collections {
 	 }
 	 part { name: "elm.swallow.slot.bottom";
             type: SWALLOW;
+	    clip_to: "bottomclip";
 	    description { state: "default" 0.0;
 	       align: 0.5 1.0;
 	       rel1.to: "elm.swallow.slot.middle";

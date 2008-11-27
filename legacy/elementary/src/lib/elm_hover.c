@@ -217,8 +217,8 @@ static void
 _signal_dismiss(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   evas_object_smart_callback_call(data, "clicked", NULL);
    evas_object_hide(data);
+   evas_object_smart_callback_call(data, "clicked", NULL);
 }
 
 static void
@@ -387,4 +387,42 @@ elm_hover_style_set(Evas_Object *obj, const char *style)
    _elm_theme_set(wd->cov, "hover", "base", style);
    _reval_content(obj);
    _sizing_eval(obj);
+}
+
+EAPI const char *
+elm_hover_best_content_location_get(Evas_Object *obj, Elm_Hover_Axis pref_axis)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Coord x = 0, y = 0, w = 0, h = 0, x2 = 0, y2 = 0, w2 = 0, h2 = 0;
+   Evas_Coord spc_l, spc_r, spc_t, spc_b;
+     
+   if (wd->parent) evas_object_geometry_get(wd->parent, &x, &y, &w, &h);
+   if (wd->hov) evas_object_geometry_get(wd->hov, &x2, &y2, &w2, &h2);
+   spc_l = x2 - x;
+   spc_r = (x + w) - (x2 + w2);
+   if (spc_l < 0) spc_l = 0;
+   if (spc_r < 0) spc_r = 0;
+   spc_t = y2 - y;
+   spc_b = (y + h) - (y2 + y2);
+   if (spc_t < 0) spc_t = 0;
+   if (spc_b < 0) spc_b = 0;
+   if (pref_axis == ELM_HOVER_AXIS_HORIZONTAL)
+     {
+        if (spc_l < spc_r) return "right";
+        else return "left";
+     }
+   else if (pref_axis == ELM_HOVER_AXIS_VERTICAL)
+     {
+        if (spc_t < spc_b) return "bottom";
+        else return "top";
+     }
+   if (spc_l < spc_r)
+     {
+        if (spc_t > spc_r) return "top";
+        else if (spc_b > spc_r) return "bottom";
+        return "right";
+     }
+   if (spc_t > spc_r) return "top";
+   else if (spc_b > spc_r) return "bottom";
+   return "left";
 }
