@@ -315,6 +315,7 @@ extern "C" {
 // * on the fly theme changes - test (should work)
 // * entry selection conflicts with finger scroll (make selection start/stop work on signals?)
 // * need a hold-scroll counter in elm_widget
+// * add fullscreen mode on/off for windows
 // 
 //// (more widgets/features - medium priority)
 // * toolbar widget (edje + box + button + separators)
