@@ -8,7 +8,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/modules/engines \
 @FREETYPE_CFLAGS@ \
 @EINA_CFLAGS@ \
-@evas_engine_glitz_cflags@
+@evas_engine_glitz_x11_cflags@
 
 if BUILD_ENGINE_GLITZ_X11
 
@@ -23,7 +23,7 @@ evas_engine_image.c \
 evas_engine_font.c \
 evas_engine_gradient.c
 
-module_la_LIBADD = @EINA_LIBS@ @evas_engine_glitz_libs@ $(top_builddir)/src/lib/libevas.la
+module_la_LIBADD = @EINA_LIBS@ @evas_engine_glitz_x11_libs@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 
