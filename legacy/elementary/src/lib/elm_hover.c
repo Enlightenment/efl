@@ -37,6 +37,8 @@ static void
 _del_pre_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (evas_object_visible_get(obj))
+     evas_object_smart_callback_call(obj, "clicked", NULL);
    elm_hover_target_set(obj, NULL);
    elm_hover_parent_set(obj, NULL);
    evas_object_event_callback_del(wd->hov, EVAS_CALLBACK_MOVE, _hov_move);

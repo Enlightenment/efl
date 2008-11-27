@@ -323,6 +323,7 @@ _text_to_mkup(const char *text)
    
    for (;;)
      {
+        // FIXME: use evas_string_char_next_get()
         ch = evas_common_font_utf8_get_next((unsigned char *)(text), &pos);
         if (ch <= 0) break;
         if (ch == '\n') str = _str_append(str, "<br>", &str_len, &str_alloc);
@@ -333,6 +334,7 @@ _text_to_mkup(const char *text)
              char tstr[16];
              
              pos2 = pos;
+             // FIXME: use evas_string_char_next_get()
              ch = evas_common_font_utf8_get_next((unsigned char *)(text), &pos2);
              strncpy(tstr, text + pos, pos2 - pos);
              tstr[pos2 - pos] = 0;
