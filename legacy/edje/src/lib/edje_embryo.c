@@ -1290,7 +1290,7 @@ _edje_embryo_fn_set_drag_page(Embryo_Program *ep, Embryo_Cell *params)
    return(0);
 }
 
-/* send_message(id, Msg_Type:type, ...); */
+/* send_message(Msg_Type:type, id,...); */
 static Embryo_Cell
 _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
 {
