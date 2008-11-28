@@ -163,6 +163,7 @@ edje_file_group_exists(const char *file, const char *glob)
              if (edje_match_collection_dir_exec(patterns, glob))
                {
                   edje_match_patterns_free(patterns);
+                  _edje_cache_file_unref(edf);
                   return 1;
                }
              edje_match_patterns_free(patterns);
