@@ -1,3 +1,6 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
 #if defined (_WIN32_WCE) && ! defined (__CEGCC__)
 

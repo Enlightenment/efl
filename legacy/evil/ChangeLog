@@ -1,3 +1,8 @@
+2008-11-29  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_main.c:
+	define correctly EAPI
+
 2008-11-21  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/bin/Makefile.am:
