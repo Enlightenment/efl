@@ -13,8 +13,8 @@ static int          idlers_delete_me = 0;
  *
  * Add an idler handle to the event loop, returning a handle on success and
  * NULL otherwise.  The function @p func will be called repeatedly while
- * no other events are ready to be processed, as long as it returns 1 
- * (or ECORE_CALLBACK_RENEW). A return of 0 (or ECORE_CALLBACK_CANCEL) deletes 
+ * no other events are ready to be processed, as long as it returns 1
+ * (or ECORE_CALLBACK_RENEW). A return of 0 (or ECORE_CALLBACK_CANCEL) deletes
  * the idler.
  *
  * Idlers are useful for progressively prossessing data without blocking.
@@ -61,7 +61,7 @@ _ecore_idler_shutdown(void)
    while (idlers)
      {
 	Ecore_Idler *ie;
-	
+
 	ie = idlers;
 	idlers = _ecore_list2_remove(idlers, ie);
 	ECORE_MAGIC_SET(ie, ECORE_MAGIC_NONE);
@@ -78,7 +78,7 @@ _ecore_idler_call(void)
    for (l = (Ecore_List2 *)idlers; l; l = l->next)
      {
 	Ecore_Idler *ie;
-	
+
 	ie = (Ecore_Idler *)l;
 	if (!ie->delete_me)
 	  {
@@ -90,7 +90,7 @@ _ecore_idler_call(void)
 	for (l = (Ecore_List2 *)idlers; l;)
 	  {
 	     Ecore_Idler *ie;
-	     
+
 	     ie = (Ecore_Idler *)l;
 	     l = l->next;
 	     if (ie->delete_me)

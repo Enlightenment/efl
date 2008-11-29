@@ -212,10 +212,10 @@ static int run_pri = ECORE_EXE_PRIORITY_INHERIT;
 /**
  * Sets the priority at which to launch processes
  *
- * This sets the priority of processes run by ecore_exe_run() and 
+ * This sets the priority of processes run by ecore_exe_run() and
  * ecore_exe_pipe_run(). If set to ECORE_EXE_PRIORITY_INHERIT child processes
  * inherit the priority of their parent. This is the default.
- * 
+ *
  * @param   pri value -20 to 19 or ECORE_EXE_PRIORITY_INHERIT
  * @ingroup Ecore_Exe_Basic_Group
  */
@@ -228,10 +228,10 @@ ecore_exe_run_priority_set(int pri)
 /**
  * Gets the priority at which to launch processes
  *
- * This gets ths priority of launched processes. See 
+ * This gets ths priority of launched processes. See
  * ecore_exe_run_priority_set() for details. This just returns the value set
  * by this call.
- * 
+ *
  * @return the value set by ecore_exe_run_priority_set()
  * @ingroup Ecore_Exe_Basic_Group
  */
@@ -330,7 +330,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
    if ((flags & ECORE_EXE_PIPE_AUTO) && (!(flags & ECORE_EXE_PIPE_ERROR))
        && (!(flags & ECORE_EXE_PIPE_READ)))
      /* We need something to auto pipe. */
-     flags |= ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR; 
+     flags |= ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR;
 
    exe->child_fd_error = -1;
    exe->child_fd_read = -1;
@@ -374,11 +374,11 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
      {
 	pid_t               pid = 0;
 	volatile int        vfork_exec_errno = 0;
-	
+
 	/* FIXME: I should double check this.  After a quick look around, this is already done, but via a more modern method. */
 	/* signal(SIGPIPE, SIG_IGN);    We only want EPIPE on errors */
 	pid = fork();
-	
+
 	if (pid == -1)
 	  {
 	     fprintf(stderr, "Failed to fork process\n");
@@ -434,7 +434,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 	     if (flags & ECORE_EXE_PIPE_WRITE)
 	       E_NO_ERRNO(result, close(writePipe[0]), ok);
 	     E_NO_ERRNO(result, close(statusPipe[1]), ok);
-	     
+
 	     _exit(-1);
 	  }
 	else			/* parent */
@@ -442,13 +442,13 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 	     /* Close the unused pipes. */
 	     E_NO_ERRNO(result, close(statusPipe[1]), ok);
 
-	     /* FIXME: after having a good look at the current e fd 
+	     /* FIXME: after having a good look at the current e fd
 	      * handling, investigate fcntl(dataPipe[x], F_SETSIG, ...) */
 	     /* FIXME: above F_SETSIG etc. - this is async SIGIO based IO
 	      * which is also linux specific so we probably don't want to
 	      * do this as long as select() is working fine. the only time
 	      * we really want to think of SIGIO async IO is when it all
-	      * actually works basically everywhere and we can turn all 
+	      * actually works basically everywhere and we can turn all
 	      * IO into DMA async activities (i.e. you do a read() then
 	      * the read is complete not on return but when you get a
 	      * SIGIO - the read() just starts the transfer and it is
@@ -463,7 +463,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 	     for (;;)
 	       {
 		  char                buf;
-		  
+
 		  E_NO_ERRNO(result, read(statusPipe[0], &buf, 1), ok);
 		  if (result == 0)
 		    {
@@ -560,7 +560,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 			     ok = 0;
 		       }
 		    }
-		  
+
 		  exes = _ecore_list2_append(exes, exe);
 		  n = 0;
 	       }
@@ -579,7 +579,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
    else
      {
 	Ecore_Exe_Event_Add *e;
-	
+
 	e = _ecore_exe_event_add_new();
 	e->exe = exe;
 	if (e) /* Send the event. */
@@ -587,7 +587,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 			  _ecore_exe_event_add_free, NULL);
 	/* printf("Running as %d for %s.\n", exe->pid, exe->cmd); */
      }
-   
+
    errno = n;
    return exe;
 }
@@ -1448,7 +1448,7 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler * fd_handler,
 	     lost_exe = 0;
 	     errno = 0;
 	     if ((num = read(child_fd, buf, READBUFSIZ)) < 1)
-	       /* FIXME: SPEED/SIZE TRADE OFF - add a smaller READBUFSIZE 
+	       /* FIXME: SPEED/SIZE TRADE OFF - add a smaller READBUFSIZE
 		* (currently 64k) to inbuf, use that instead of buf, and
 		* save ourselves a memcpy(). */
 	       {

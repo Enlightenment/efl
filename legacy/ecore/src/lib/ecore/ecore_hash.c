@@ -218,7 +218,7 @@ ecore_hash_hash_set(Ecore_Hash *hash, Ecore_Hash *set)
  * @return  @c TRUE on success, @c FALSE on error.
  * @ingroup Ecore_Data_Hash_ADT_Destruction_Group
  */
-EAPI void 
+EAPI void
 ecore_hash_destroy(Ecore_Hash *hash)
 {
    unsigned int i = 0;
@@ -281,7 +281,7 @@ ecore_hash_count(Ecore_Hash *hash)
  * @return  TRUE on success, FALSE otherwise.
  * @ingroup Ecore_Data_Hash_ADT_Traverse_Group
  */
-EAPI int 
+EAPI int
 ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func, void *user_data)
 {
    unsigned int i = 0;

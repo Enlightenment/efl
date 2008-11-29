@@ -75,9 +75,9 @@ ecore_timer_precision_set(double value)
  * This function adds a timer and returns its handle on success and NULL on
  * failure. The function @p func will be called every @in@ seconds. The
  * function will be passed the @p data pointer as its parameter.
- * 
- * When the timer @p func is called, it must return a value of either 1 
- * (or ECORE_CALLBACK_RENEW) or 0 (or ECORE_CALLBACK_CANCEL). 
+ *
+ * When the timer @p func is called, it must return a value of either 1
+ * (or ECORE_CALLBACK_RENEW) or 0 (or ECORE_CALLBACK_CANCEL).
  * If it returns 1, it will be called again at the next tick, or if it returns
  * 0 it will be deleted automatically making any references/handles for it
  * invalid.
@@ -255,7 +255,7 @@ _ecore_timer_shutdown(void)
    while (timers)
      {
 	Ecore_Timer *timer;
-	
+
 	timer = timers;
 	timers = _ecore_list2_remove(timers, timer);
 	ECORE_MAGIC_SET(timer, ECORE_MAGIC_NONE);
@@ -282,7 +282,7 @@ _ecore_timer_cleanup(void)
    for (l = (Ecore_List2 *)timers; l;)
      {
 	Ecore_Timer *timer;
-	
+
 	timer = (Ecore_Timer *)l;
 	l = l->next;
 	if (timer->delete_me)
@@ -297,7 +297,7 @@ _ecore_timer_cleanup(void)
    for (l = (Ecore_List2 *)suspended; l;)
      {
 	Ecore_Timer *timer;
-	
+
 	timer = (Ecore_Timer *)l;
 	l = l->next;
 	if (timer->delete_me)
@@ -315,14 +315,14 @@ _ecore_timer_cleanup(void)
 void
 _ecore_timer_enable_new(void)
 {
-   Ecore_List2 *l;   
+   Ecore_List2 *l;
 
    if (!timers_added) return;
    timers_added = 0;
    for (l = (Ecore_List2 *)timers; l; l = l->next)
      {
 	Ecore_Timer *timer;
-	
+
 	timer = (Ecore_Timer *)l;
 	timer->just_added = 0;
      }
@@ -377,7 +377,7 @@ _ecore_timer_next_get(void)
 int
 _ecore_timer_call(double when)
 {
-   Ecore_List2 *l;   
+   Ecore_List2 *l;
    Ecore_Timer *timer;
 
    if (!timers) return 0;
@@ -427,13 +427,13 @@ _ecore_timer_call(double when)
 	  }
      }
    return 0;
-}  
+}
 
 static void
 _ecore_timer_set(Ecore_Timer *timer, double at, double in, int (*func) (void *data), void *data)
 {
    Ecore_List2 *l;
-   
+
    timers_added = 1;
    timer->at = at;
    timer->in = in;
@@ -447,7 +447,7 @@ _ecore_timer_set(Ecore_Timer *timer, double at, double in, int (*func) (void *da
 	for (l = ((Ecore_List2 *)(timers))->last; l; l = l->prev)
 	  {
 	     Ecore_Timer *t2;
-	     
+
 	     t2 = (Ecore_Timer *)l;
 	     if (timer->at > t2->at)
 	       {

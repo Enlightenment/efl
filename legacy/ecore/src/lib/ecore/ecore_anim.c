@@ -14,22 +14,22 @@ static double          animators_frametime = 1.0 / 30.0;
  * @param data The data to pass to the function
  * @return A handle to the new animator
  * @ingroup Ecore_Animator_Group
- * 
+ *
  * This function adds a animator and returns its handle on success and NULL on
  * failure. The function @p func will be called every N seconds where N is the
  * frametime interval set by ecore_animator_frametime_set(). The function will
  * be passed the @p data pointer as its parameter.
- * 
- * When the animator @p func is called, it must return a value of either 1 or 0. 
- * If it returns 1 (or ECORE_CALLBACK_RENEW), it will be called again at the 
- * next tick, or if it returns 0 (or ECORE_CALLBACK_CANCEL) it will be deleted 
+ *
+ * When the animator @p func is called, it must return a value of either 1 or 0.
+ * If it returns 1 (or ECORE_CALLBACK_RENEW), it will be called again at the
+ * next tick, or if it returns 0 (or ECORE_CALLBACK_CANCEL) it will be deleted
  * automatically making any references/handles for it invalid.
  */
 EAPI Ecore_Animator *
 ecore_animator_add(int (*func) (void *data), const void *data)
 {
    Ecore_Animator *animator;
-   
+
    if (!func) return NULL;
    animator = calloc(1, sizeof(Ecore_Animator));
    if (!animator) return NULL;
@@ -47,7 +47,7 @@ ecore_animator_add(int (*func) (void *data), const void *data)
  * @param animator The animator to delete
  * @return The data pointer set for the animator
  * @ingroup Ecore_Animator_Group
- * 
+ *
  * Delete the specified @p aqnimator from the set of animators that are executed
  * during main loop execution. This function returns the data parameter that
  * was being passed to the callback on success, or NULL on failure. After this
@@ -72,7 +72,7 @@ ecore_animator_del(Ecore_Animator *animator)
 /**
  * Set the animator call interval in seconds.
  * @param frametime The time in seconds in between animator ticks.
- * 
+ *
  * This function sets the time interval (in seconds) inbetween animator ticks.
  */
 EAPI void
@@ -93,7 +93,7 @@ ecore_animator_frametime_set(double frametime)
 /**
  * Get the animator call interval in seconds.
  * @return The time in second in between animator ticks.
- * 
+ *
  * this function retrieves the time inbetween animator ticks, in seconds.
  */
 EAPI double
@@ -109,11 +109,11 @@ _ecore_animator_shutdown(void)
      {
 	ecore_timer_del(timer);
 	timer = NULL;
-     } 
+     }
    while (animators)
      {
 	Ecore_Animator *animator;
-	
+
 	animator = animators;
 	animators = _ecore_list2_remove(animators, animator);
 	ECORE_MAGIC_SET(animator, ECORE_MAGIC_NONE);
@@ -129,7 +129,7 @@ _ecore_animator(void *data __UNUSED__)
    for (l = (Ecore_List2 *)animators; l;)
      {
 	Ecore_Animator *animator;
-	
+
 	animator = (Ecore_Animator *)l;
 	l = l->next;
 	if (!animator->delete_me)
@@ -146,7 +146,7 @@ _ecore_animator(void *data __UNUSED__)
 	for (l = (Ecore_List2 *)animators; l;)
 	  {
 	     Ecore_Animator *animator;
-	     
+
 	     animator = (Ecore_Animator *)l;
 	     l = l->next;
 	     if (animator->delete_me)

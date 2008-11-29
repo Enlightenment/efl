@@ -19,9 +19,9 @@
 
 /**
  * Retrieves the current system time as a floating point value in seconds.
- * 
+ *
  * Also see ecore_loop_time_get().
- * 
+ *
  * @return  The number of seconds since 12.00AM 1st January 1970.
  * @ingroup Ecore_Time_Group
  */
@@ -42,7 +42,7 @@ double _ecore_loop_time = -1.0;
 
 /**
  * Retrieves the time at which the last loop stopped waiting for timeouts or events
- * 
+ *
  * This gets the time (since Jan 1st, 1970, 12:00AM) that the main loop ceased
  * waiting for timouts and/or events to come in or for signals or any other
  * interrupt source. This should be considered a reference point fo all
@@ -51,7 +51,7 @@ double _ecore_loop_time = -1.0;
  * current actual timepoint - then use ecore_time_get(). If this is called
  * before any loop has ever been run, then it will call ecore_time_get() for
  * you the first time and thus have an initial time reference.
- * 
+ *
  * @return  The number of seconds since 12.00AM 1st January 1970.
  * @ingroup Ecore_Time_Group
  */

@@ -36,13 +36,13 @@ static void *_ecore_list_find(Ecore_List *list, Ecore_Compare_Cb function,
 /* Sorting functions */
 static Ecore_List_Node *_ecore_list_node_mergesort(Ecore_List_Node *first,
                                   int n, Ecore_Compare_Cb compare, int order);
-static Ecore_List_Node *_ecore_list_node_merge(Ecore_List_Node *first, 
+static Ecore_List_Node *_ecore_list_node_merge(Ecore_List_Node *first,
                                                Ecore_List_Node *second,
                                                Ecore_Compare_Cb compare,
                                                int order);
 static Ecore_List_Node *_ecore_dlist_node_mergesort(Ecore_List_Node *first,
                                   int n, Ecore_Compare_Cb compare, int order);
-static Ecore_List_Node *_ecore_dlist_node_merge(Ecore_List_Node *first, 
+static Ecore_List_Node *_ecore_dlist_node_merge(Ecore_List_Node *first,
                                                Ecore_List_Node *second,
                                                Ecore_Compare_Cb compare,
                                                int order);
@@ -259,7 +259,7 @@ ecore_list_new(void)
  * @return  @c TRUE if successful, @c FALSE if an error occurs.
  * @ingroup Ecore_Data_List_Creation_Group
  */
-EAPI int 
+EAPI int
 ecore_list_init(Ecore_List *list)
 {
    CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
@@ -274,7 +274,7 @@ ecore_list_init(Ecore_List *list)
  * @param   list The list to be freed.
  * @ingroup Ecore_Data_List_Creation_Group
  */
-EAPI void 
+EAPI void
 ecore_list_destroy(Ecore_List *list)
 {
    void *data;
@@ -298,7 +298,7 @@ ecore_list_destroy(Ecore_List *list)
  * @param  free_func The function that will free the key data.
  * @return @c TRUE on successful set, @c FALSE otherwise.
  */
-EAPI int 
+EAPI int
 ecore_list_free_cb_set(Ecore_List *list, Ecore_Free_Cb free_func)
 {
    CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
@@ -313,7 +313,7 @@ ecore_list_free_cb_set(Ecore_List *list, Ecore_Free_Cb free_func)
  * @param  list  The list to check for nodes
  * @return @c TRUE if no nodes in list, @c FALSE if the list contains nodes
  */
-EAPI int 
+EAPI int
 ecore_list_empty_is(Ecore_List *list)
 {
    int ret = TRUE;
@@ -331,7 +331,7 @@ ecore_list_empty_is(Ecore_List *list)
  * @param  list The list to return the number of the current node.
  * @return The number of the current node in the list.
  */
-EAPI int 
+EAPI int
 ecore_list_index(Ecore_List *list)
 {
    int ret;
@@ -348,7 +348,7 @@ ecore_list_index(Ecore_List *list)
  * @param  list The list to find the number of nodes
  * @return The number of nodes in the list.
  */
-EAPI int 
+EAPI int
 ecore_list_count(Ecore_List *list)
 {
    int ret = 0;
@@ -373,7 +373,7 @@ Functions that are used to add nodes to an Ecore_List.
  * @return  @c FALSE if an error occurs, @c TRUE if appended successfully
  * @ingroup Ecore_Data_List_Add_Item_Group
  */
-EAPI inline int 
+EAPI inline int
 ecore_list_append(Ecore_List *list, void *data)
 {
    int ret;
@@ -390,7 +390,7 @@ ecore_list_append(Ecore_List *list, void *data)
 }
 
 /* For adding items to the end of the list */
-static int 
+static int
 _ecore_list_append_0(Ecore_List *list, Ecore_List_Node *end)
 {
    if (list->last)
@@ -420,7 +420,7 @@ _ecore_list_append_0(Ecore_List *list, Ecore_List_Node *end)
  * @return @c FALSE if an error occurs, @c TRUE if prepended successfully.
  * @ingroup Ecore_Data_List_Add_Item_Group
  */
-EAPI inline int 
+EAPI inline int
 ecore_list_prepend(Ecore_List *list, void *data)
 {
    int ret;
@@ -437,7 +437,7 @@ ecore_list_prepend(Ecore_List *list, void *data)
 }
 
 /* For adding items to the beginning of the list */
-static int 
+static int
 _ecore_list_prepend_0(Ecore_List *list, Ecore_List_Node *start)
 {
    /* Put it at the beginning of the list */
@@ -462,7 +462,7 @@ _ecore_list_prepend_0(Ecore_List *list, Ecore_List_Node *start)
  * @return  @c FALSE if there is an error, @c TRUE on success
  * @ingroup Ecore_Data_List_Add_Item_Group
  */
-EAPI inline int 
+EAPI inline int
 ecore_list_insert(Ecore_List *list, void *data)
 {
    int ret;
@@ -479,7 +479,7 @@ ecore_list_insert(Ecore_List *list, void *data)
 }
 
 /* For adding items in front of the current position in the list */
-static int 
+static int
 _ecore_list_insert(Ecore_List *list, Ecore_List_Node *new_node)
 {
    /*
@@ -521,7 +521,7 @@ _ecore_list_insert(Ecore_List *list, Ecore_List_Node *new_node)
  * @ingroup Ecore_Data_List_Add_Item_Group
  */
 
-EAPI int 
+EAPI int
 ecore_list_append_list(Ecore_List *list, Ecore_List *append)
 {
    CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
@@ -553,7 +553,7 @@ ecore_list_append_list(Ecore_List *list, Ecore_List *append)
  * @return @c FALSE if an error occurs, @c TRUE if prepended successfully.
  * @ingroup Ecore_Data_List_Add_Item_Group
  */
-EAPI int 
+EAPI int
 ecore_list_prepend_list(Ecore_List *list, Ecore_List *prepend)
 {
    CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
@@ -648,7 +648,7 @@ _ecore_list_remove_0(Ecore_List *list)
  * @return  @c TRUE on success, @c FALSE on error
  * @ingroup Ecore_Data_List_Remove_Item_Group
  */
-EAPI int 
+EAPI int
 ecore_list_remove_destroy(Ecore_List *list)
 {
    void *data;
@@ -808,7 +808,7 @@ _ecore_list_index_goto(Ecore_List *list, int index)
    if (index > ecore_list_count(list) || index < 0)
      return NULL;
 
-   if (index < list->index) 
+   if (index < list->index)
      {
 	_ecore_list_first_goto(list);
 	i = 0;
@@ -1053,7 +1053,7 @@ _ecore_list_next(Ecore_List *list)
  * @note The data for each item on the list is not freed by
  *       @c ecore_list_clear().
  */
-EAPI int 
+EAPI int
 ecore_list_clear(Ecore_List *list)
 {
    CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
@@ -1071,7 +1071,7 @@ ecore_list_clear(Ecore_List *list)
  * @return  Returns @c TRUE on success, @c FALSE on failure.
  * @ingroup Ecore_Data_List_Traverse_Group
  */
-EAPI int 
+EAPI int
 ecore_list_for_each(Ecore_List *list, Ecore_For_Each function, void *user_data)
 {
    int ret;
@@ -1084,7 +1084,7 @@ ecore_list_for_each(Ecore_List *list, Ecore_For_Each function, void *user_data)
 }
 
 /* The real meat of executing the function for each data node */
-static int 
+static int
 _ecore_list_for_each(Ecore_List *list, Ecore_For_Each function, void *user_data)
 {
    void *value;
@@ -1147,14 +1147,14 @@ EAPI int
 ecore_list_sort(Ecore_List *list, Ecore_Compare_Cb compare, char order)
 {
    CHECK_PARAM_POINTER_RETURN("list", list, 0);
-   
+
    if (list->nodes < 2)
      return 1;
    if (list->nodes < ECORE_MERGESORT_LIMIT)
      return ecore_list_mergesort(list, compare, order);
    if (!ecore_list_heapsort(list, compare, order))
      return ecore_list_mergesort(list, compare, order);
-  
+
    return 1;
 }
 
@@ -1166,7 +1166,7 @@ ecore_list_sort(Ecore_List *list, Ecore_Compare_Cb compare, char order)
  *                  ECORE_SORT_MAX
  * @return          true on success
  *
- * Mergesort is a stable, in-place sorting algorithm 
+ * Mergesort is a stable, in-place sorting algorithm
  */
 EAPI int
 ecore_list_mergesort(Ecore_List *list, Ecore_Compare_Cb compare, char order)
@@ -1217,14 +1217,14 @@ ecore_list_merge(Ecore_List *list, Ecore_List *l2, Ecore_Compare_Cb compare, cha
        ecore_list_append_list(list, l2);
        return;
      }
-   
+
    if (order == ECORE_SORT_MIN)
      order = 1;
    else
      order = -1;
 
    list->first = _ecore_list_node_merge(list->first, l2->first, compare, order);
-   
+
    if ((order * compare(list->last->data, l2->last->data)) < 0)
      list->last = l2->last;
 
@@ -1371,7 +1371,7 @@ ecore_list_heapsort(Ecore_List *list, Ecore_Compare_Cb compare, char order)
 }
 
 /* Initialize a node to starting values */
-EAPI int 
+EAPI int
 ecore_list_node_init(Ecore_List_Node *node)
 {
    CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
@@ -1417,7 +1417,7 @@ ecore_list_node_new()
  * @return  @c TRUE.
  * @ingroup Ecore_Data_List_Node_Group
  */
-EAPI int 
+EAPI int
 ecore_list_node_destroy(Ecore_List_Node *node, Ecore_Free_Cb free_func)
 {
    CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
@@ -1466,7 +1466,7 @@ ecore_dlist_new()
  * @return  @c TRUE if successful, @c FALSE if an error occurs.
  * @ingroup Ecore_Data_DList_Creation_Group
  */
-EAPI int 
+EAPI int
 ecore_dlist_init(Ecore_DList *list)
 {
    CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
@@ -1481,7 +1481,7 @@ ecore_dlist_init(Ecore_DList *list)
  * @param   list The doubly linked list to be freed.
  * @ingroup Ecore_Data_DList_Creation_Group
  */
-EAPI void 
+EAPI void
 ecore_dlist_destroy(Ecore_DList *list)
 {
    void *data;
@@ -1505,7 +1505,7 @@ ecore_dlist_destroy(Ecore_DList *list)
  * @return  @c TRUE on success, @c FALSE on failure.
  * @ingroup Ecore_Data_DList_Creation_Group
  */
-EAPI int 
+EAPI int
 ecore_dlist_free_cb_set(Ecore_DList *list, Ecore_Free_Cb free_func)
 {
    CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
@@ -1518,7 +1518,7 @@ ecore_dlist_free_cb_set(Ecore_DList *list, Ecore_Free_Cb free_func)
  * @param  list The given doubly linked list.
  * @return @c TRUE if there are nodes, @c FALSE otherwise.
  */
-EAPI int 
+EAPI int
 ecore_dlist_empty_is(Ecore_DList *list)
 {
    CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
@@ -1531,7 +1531,7 @@ ecore_dlist_empty_is(Ecore_DList *list)
  * @param  list The given doubly linked list.
  * @return The index of the current node.
  */
-EAPI inline int 
+EAPI inline int
 ecore_dlist_index(Ecore_DList *list)
 {
    CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
@@ -1552,7 +1552,7 @@ ecore_dlist_index(Ecore_DList *list)
  * @return  @c TRUE if the data is successfully appended, @c FALSE otherwise.
  * @ingroup Ecore_Data_DList_Add_Item_Group
  */
-EAPI int 
+EAPI int
 ecore_dlist_append(Ecore_DList *list, void *data)
 {
    int ret;
@@ -1579,7 +1579,7 @@ ecore_dlist_append(Ecore_DList *list, void *data)
  * @return  @c TRUE if the data is successfully prepended, @c FALSE otherwise.
  * @ingroup Ecore_Data_DList_Add_Item_Group
  */
-EAPI int 
+EAPI int
 ecore_dlist_prepend(Ecore_DList *list, void *data)
 {
    int ret;
@@ -1606,7 +1606,7 @@ ecore_dlist_prepend(Ecore_DList *list, void *data)
  * @return  @c TRUE on success, @c FALSE otherwise.
  * @ingroup Ecore_Data_DList_Add_Item_Group
  */
-EAPI int 
+EAPI int
 ecore_dlist_insert(Ecore_DList *list, void *data)
 {
    int ret = TRUE;
@@ -1649,7 +1649,7 @@ ecore_dlist_insert(Ecore_DList *list, void *data)
  * @return  @c TRUE if the data is successfully appended, @c FALSE otherwise.
  * @ingroup Ecore_Data_DList_Add_Item_Group
  */
-EAPI int 
+EAPI int
 ecore_dlist_append_list(Ecore_DList *list, Ecore_DList *append)
 {
    CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
@@ -1682,7 +1682,7 @@ ecore_dlist_append_list(Ecore_DList *list, Ecore_DList *append)
  * @return  @c TRUE if the data is successfully prepended, @c FALSE otherwise.
  * @ingroup Ecore_Data_DList_Add_Item_Group
  */
-EAPI int 
+EAPI int
 ecore_dlist_prepend_list(Ecore_DList *list, Ecore_DList *prepend)
 {
    CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
@@ -1766,7 +1766,7 @@ ecore_dlist_first_remove(Ecore_DList *list)
  * @return  @c TRUE on success, @c FALSE otherwise.
  * @ingroup Ecore_Data_DList_Remove_Item_Group
  */
-EAPI int 
+EAPI int
 ecore_dlist_remove_destroy(Ecore_DList *list)
 {
    void *data;
@@ -2013,7 +2013,7 @@ _ecore_dlist_previous(Ecore_DList *list)
  *
  * @return Returns TRUE on success, FALSE on errors
  */
-EAPI int 
+EAPI int
 ecore_dlist_clear(Ecore_DList *list)
 {
    CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
@@ -2039,14 +2039,14 @@ EAPI int
 ecore_dlist_sort(Ecore_List *list, Ecore_Compare_Cb compare, char order)
 {
    CHECK_PARAM_POINTER_RETURN("list", list, 0);
-   
+
    if (list->nodes < 2)
      return 1;
    if (list->nodes < ECORE_MERGESORT_LIMIT)
      return ecore_dlist_mergesort(list, compare, order);
    if (!ecore_dlist_heapsort(list, compare, order))
      return ecore_dlist_mergesort(list, compare, order);
-  
+
    return 1;
 }
 
@@ -2058,7 +2058,7 @@ ecore_dlist_sort(Ecore_List *list, Ecore_Compare_Cb compare, char order)
  *                  ECORE_SORT_MAX
  * @return          true on success
  *
- * Mergesort is a stable, in-place sorting algorithm 
+ * Mergesort is a stable, in-place sorting algorithm
  */
 EAPI int
 ecore_dlist_mergesort(Ecore_DList *list, Ecore_Compare_Cb compare, char order)
@@ -2109,14 +2109,14 @@ ecore_dlist_merge(Ecore_DList *list, Ecore_DList *l2, Ecore_Compare_Cb compare, 
        ecore_dlist_append_list(list, l2);
        return;
      }
-   
+
    if (order == ECORE_SORT_MIN)
      order = 1;
    else
      order = -1;
 
    list->first = _ecore_dlist_node_merge(list->first, l2->first, compare, order);
-   
+
    if ((order * compare(list->last->data, l2->last->data)) < 0)
      list->last = l2->last;
 
@@ -2206,14 +2206,14 @@ _ecore_dlist_node_merge(Ecore_List_Node *first, Ecore_List_Node *second,
      }
 
    /* append the rest or set it to NULL */
-   if (first) 
+   if (first)
      {
 	ECORE_DLIST_NODE(first)->previous = ECORE_DLIST_NODE(l);
         l->next = first;
      }
    else if (second)
      {
-     	ECORE_DLIST_NODE(second)->previous = ECORE_DLIST_NODE(l);
+	ECORE_DLIST_NODE(second)->previous = ECORE_DLIST_NODE(l);
 	l->next = second;
      }
    else
@@ -2227,7 +2227,7 @@ _ecore_dlist_node_merge(Ecore_List_Node *first, Ecore_List_Node *second,
  * @param node: the node to initialize
  * @return Returns TRUE on success, FALSE on errors
  */
-EAPI int 
+EAPI int
 ecore_dlist_node_init(Ecore_DList_Node *node)
 {
    int ret;
@@ -2270,7 +2270,7 @@ ecore_dlist_node_new()
  * @param free_func: the callback function to execute on the data
  * @return Returns TRUE on success, FALSE on error
  */
-EAPI int 
+EAPI int
 ecore_dlist_node_destroy(Ecore_DList_Node * node, Ecore_Free_Cb free_func)
 {
    CHECK_PARAM_POINTER_RETURN("node", node, FALSE);

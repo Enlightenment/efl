@@ -23,7 +23,7 @@
 #include "ecore_private.h"
 #include "Ecore_Str.h"
 
-static int ecore_str_has_suffix_helper(const char *str, const char *suffix, 
+static int ecore_str_has_suffix_helper(const char *str, const char *suffix,
 		int (*cmp)(const char *, const char *));
 /**
  * @param dst the destination
@@ -73,7 +73,7 @@ ecore_strlcpy(char *dst, const char *src, size_t siz)
  * @param dst the destination
  * @param src the source
  * @param siz the size of the destination
- * @return the length of the source string plus MIN(siz, strlen(initial dst)) 
+ * @return the length of the source string plus MIN(siz, strlen(initial dst))
  * @brief append a c-string
  *
  * Appends src to string dst of size siz (unlike strncat, siz is the
@@ -144,7 +144,7 @@ ecore_str_has_suffix(const char *str, const char *suffix)
 {
    CHECK_PARAM_POINTER_RETURN("str", str, 0);
    CHECK_PARAM_POINTER_RETURN("suffix", suffix, 0);
-   
+
    return ecore_str_has_suffix_helper(str, suffix, strcmp);
 }
 
@@ -162,16 +162,16 @@ ecore_str_has_extension(const char *str, const char *ext)
 {
    CHECK_PARAM_POINTER_RETURN("str", str, 0);
    CHECK_PARAM_POINTER_RETURN("ext", ext, 0);
-   
+
    return ecore_str_has_suffix_helper(str, ext, strcasecmp);
 }
 
 /*
- * Internal helper function used by ecore_str_has_suffix() and 
+ * Internal helper function used by ecore_str_has_suffix() and
  * ecore_str_has_extension()
  */
 static int
-ecore_str_has_suffix_helper(const char *str, const char *suffix, 
+ecore_str_has_suffix_helper(const char *str, const char *suffix,
 		int (*cmp)(const char *, const char *))
 {
    size_t str_len;
@@ -191,10 +191,10 @@ ecore_str_has_suffix_helper(const char *str, const char *suffix,
  * string array contains the remainder of string.
  *
  * @param str         A string to split.
- * @param delim       A string which specifies the places at which to split the 
- *                    string. The delimiter is not included in any of the 
+ * @param delim       A string which specifies the places at which to split the
+ *                    string. The delimiter is not included in any of the
  *                    resulting strings, unless max_tokens is reached.
- * @param max_tokens  The maximum number of strings to split string into. 
+ * @param max_tokens  The maximum number of strings to split string into.
  *                    If this is less than 1, the string is split completely.
  * @return            A newly-allocated NULL-terminated array of strings.
  *                    To free it: free the first element of the array
@@ -218,7 +218,7 @@ ecore_str_split(const char *str, const char *delim, int max_tokens)
    dlen = strlen(delim);
    s = strdup(str);
    str_array = malloc(sizeof(char *) * (len + 1));
-   for (i = 0; (i < max_tokens) && (sep = strstr(s, delim)); i++) 
+   for (i = 0; (i < max_tokens) && (sep = strstr(s, delim)); i++)
       {
           str_array[i] = s;
           s = sep + dlen;
@@ -228,7 +228,6 @@ ecore_str_split(const char *str, const char *delim, int max_tokens)
    str_array[i++] = s;
    str_array = realloc(str_array, sizeof(char *) * (i + 1));
    str_array[i] = NULL;
- 
+
    return str_array;
 }
-

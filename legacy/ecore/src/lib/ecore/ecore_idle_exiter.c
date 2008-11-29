@@ -53,7 +53,7 @@ _ecore_idle_exiter_shutdown(void)
    while (idle_exiters)
      {
 	Ecore_Idle_Exiter *ie;
-	
+
 	ie = idle_exiters;
 	idle_exiters = _ecore_list2_remove(idle_exiters, ie);
 	ECORE_MAGIC_SET(ie, ECORE_MAGIC_NONE);
@@ -66,11 +66,11 @@ void
 _ecore_idle_exiter_call(void)
 {
    Ecore_List2 *l;
-   
+
    for (l = (Ecore_List2 *)idle_exiters; l; l = l->next)
      {
 	Ecore_Idle_Exiter *ie;
-	
+
 	ie = (Ecore_Idle_Exiter *)l;
 	if (!ie->delete_me)
 	  {
@@ -82,7 +82,7 @@ _ecore_idle_exiter_call(void)
 	for (l = (Ecore_List2 *)idle_exiters; l;)
 	  {
 	     Ecore_Idle_Exiter *ie;
-	     
+
 	     ie = (Ecore_Idle_Exiter *)l;
 	     l = l->next;
 	     if (ie->delete_me)

@@ -35,7 +35,7 @@ EAPI const unsigned int ecore_prime_table[] =
      2097143, 4194301, 8388617, 16777213
 };
 
-EAPI void 
+EAPI void
 ecore_print_warning(const char *function, const char *sparam)
 {
    fprintf(stderr, "***** Developer Warning ***** :\n"
@@ -53,7 +53,7 @@ ecore_print_warning(const char *function, const char *sparam)
  * @param  key The key to return compute a hash value
  * @return The key cast to an unsigned int.
  */
-EAPI unsigned int 
+EAPI unsigned int
 ecore_direct_hash(const void *key)
 {
 #ifdef __LP64__
@@ -70,7 +70,7 @@ ecore_direct_hash(const void *key)
  * @param  key A pointer to the string to compute a hash value
  * @return A computed hash value for @a key.
  */
-EAPI unsigned int 
+EAPI unsigned int
 ecore_str_hash(const void *key)
 {
    int i;
@@ -97,7 +97,7 @@ ecore_str_hash(const void *key)
  * @param  key2 The second key to compare
  * @return A strcmp style value to indicate the larger key
  */
-EAPI int 
+EAPI int
 ecore_direct_compare(const void *key1, const void *key2)
 {
    unsigned int k1, k2;
@@ -120,7 +120,7 @@ ecore_direct_compare(const void *key1, const void *key2)
  * @param  key2 The second key to compare
  * @return A strcmp style value to indicate the larger key
  */
-EAPI int 
+EAPI int
 ecore_str_compare(const void *key1, const void *key2)
 {
    const char *k1, *k2;

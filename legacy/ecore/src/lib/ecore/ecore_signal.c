@@ -167,7 +167,7 @@ _ecore_signal_call(void)
 #endif
    volatile sig_atomic_t n;
    sigset_t oldset, newset;
-   
+
    if (sig_count == 0) return;
    sigemptyset(&newset);
    sigaddset(&newset, SIGPIPE);
@@ -185,7 +185,7 @@ _ecore_signal_call(void)
 #ifdef SIGRTMIN
    for (i = 0; i < num; i++)
      sigaddset(&newset, SIGRTMIN + i);
-#endif   
+#endif
    sigprocmask(SIG_BLOCK, &newset, &oldset);
    if (sigchld_count > MAXSIGQ)
      printf("ECORE WARNING. %i SIGCHLD in queue. max queue size %i. losing "
@@ -258,7 +258,7 @@ _ecore_signal_call(void)
 	sig_count--;
      }
    sigchld_count = 0;
-   
+
    if (sigusr1_count > MAXSIGQ)
      printf("ECORE WARNING. %i SIGUSR1 in queue. max queue size %i. losing "
 	    "siginfo for extra signals.\n", sigusr1_count, MAXSIGQ);
@@ -279,7 +279,7 @@ _ecore_signal_call(void)
 	sig_count--;
      }
    sigusr1_count = 0;
-   
+
    if (sigusr2_count > MAXSIGQ)
      printf("ECORE WARNING. %i SIGUSR2 in queue. max queue size %i. losing "
 	    "siginfo for extra signals.\n", sigusr2_count, MAXSIGQ);
@@ -300,7 +300,7 @@ _ecore_signal_call(void)
 	sig_count--;
      }
    sigusr2_count = 0;
-   
+
    if (sighup_count > MAXSIGQ)
      printf("ECORE WARNING. %i SIGHUP in queue. max queue size %i. losing "
 	    "siginfo for extra signals.\n", sighup_count, MAXSIGQ);
@@ -319,7 +319,7 @@ _ecore_signal_call(void)
 	sig_count--;
      }
    sighup_count = 0;
-   
+
    if (sigquit_count > MAXSIGQ)
      printf("ECORE WARNING. %i SIGQUIT in queue. max queue size %i. losing "
 	    "siginfo for extra signals.\n", sigquit_count, MAXSIGQ);
@@ -361,7 +361,7 @@ _ecore_signal_call(void)
 	sig_count--;
      }
    sigint_count = 0;
-   
+
    if (sigterm_count > MAXSIGQ)
      printf("ECORE WARNING. %i SIGTERM in queue. max queue size %i. losing "
 	    "siginfo for extra signals.\n", sigterm_count, MAXSIGQ);
@@ -382,7 +382,7 @@ _ecore_signal_call(void)
 	sig_count--;
      }
    sigterm_count = 0;
-   
+
 #ifdef SIGPWR
    if (sigpwr_count > MAXSIGQ)
      printf("ECORE WARNING. %i SIGPWR in queue. max queue size %i. losing "

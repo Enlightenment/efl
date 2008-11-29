@@ -59,8 +59,8 @@ ecore_path_group_add(Ecore_Path_Group *group, const char *path)
    CHECK_PARAM_POINTER("path", path);
 
    if (!group->paths)
-     { 
-     	group->paths = ecore_list_new();
+     {
+	group->paths = ecore_list_new();
 	ecore_list_free_cb_set(group->paths, free);
      }
 
@@ -206,4 +206,3 @@ ecore_path_group_available_get(Ecore_Path_Group *group)
 
    return avail;
 }
-

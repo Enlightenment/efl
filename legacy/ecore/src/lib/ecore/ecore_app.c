@@ -1,4 +1,3 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -17,7 +16,7 @@ static char **app_argv = NULL;
  * Set up the programs command-line arguments.
  * @param argc The same as passed as argc to the programs main() function
  * @param argv The same as passed as argv to the programs main() function
- * 
+ *
  * A call to this function will store the programs command-line arguments
  * for later use by ecore_app_restart() or ecore_app_args_get().
  */
@@ -34,7 +33,7 @@ ecore_app_args_set(int argc, const char **argv)
  * Return the programs stored command-line arguments.
  * @param argc A pointer to the return value to hold argc
  * @param argv A pointer to the return value to hold argv
- * 
+ *
  * When called, this funciton returns the arguments for the program stored by
  * ecore_app_args_set(). The integer pointed to by @p argc will be filled, if
  * the pointer is not NULL, and the string array pointer @p argv will be filled
@@ -50,7 +49,7 @@ ecore_app_args_get(int *argc, char ***argv)
 
 /**
  * Restart the program executable with the command-line arguments stored.
- * 
+ *
  * This function will restart & re-execute this program in place of itself
  * using the command-line arguments stored by ecore_app_args_set(). This is
  * an easy way for a program to restart itself for cleanup purposes,
@@ -61,7 +60,7 @@ ecore_app_restart(void)
 {
    char *args[4096];
    int i;
-   
+
    if ((app_argc < 1) || (!app_argv)) return;
    if (app_argc >= 4096) return;
    for (i = 0; i < app_argc; i++) args[i] = app_argv[i];

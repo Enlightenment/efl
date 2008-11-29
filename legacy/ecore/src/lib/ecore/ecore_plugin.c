@@ -232,4 +232,3 @@ ecore_plugin_available_get(Ecore_Path_Group *group)
 
    return avail;
 }
- 

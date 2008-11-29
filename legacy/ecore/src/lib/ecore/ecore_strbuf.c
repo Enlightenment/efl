@@ -45,7 +45,7 @@ ecore_strbuf_new(void)
 EAPI void
 ecore_strbuf_free(Ecore_Strbuf *buf)
 {
-  CHECK_PARAM_POINTER("buf", buf); 
+  CHECK_PARAM_POINTER("buf", buf);
   free(buf->buf);
   free(buf);
 }
@@ -61,12 +61,12 @@ ecore_strbuf_append(Ecore_Strbuf *buf, const char *str)
   size_t l;
   size_t off = 0;
 
-  CHECK_PARAM_POINTER("buf", buf); 
-  CHECK_PARAM_POINTER("str", str); 
+  CHECK_PARAM_POINTER("buf", buf);
+  CHECK_PARAM_POINTER("str", str);
 
   l = ecore_strlcpy(buf->buf + buf->len, str, buf->size - buf->len);
 
-  while (l > buf->size - buf->len) 
+  while (l > buf->size - buf->len)
     {
         /* we successfully appended this much */
         off += buf->size - buf->len - 1;
@@ -93,7 +93,7 @@ ecore_strbuf_insert(Ecore_Strbuf *buf, const char *str, size_t pos)
 {
   size_t len;
 
-  CHECK_PARAM_POINTER("buf", buf); 
+  CHECK_PARAM_POINTER("buf", buf);
   CHECK_PARAM_POINTER("str", str);
 
   if (pos >= buf->len)
@@ -124,7 +124,7 @@ ecore_strbuf_insert(Ecore_Strbuf *buf, const char *str, size_t pos)
 EAPI void
 ecore_strbuf_append_char(Ecore_Strbuf *buf, char c)
 {
-  CHECK_PARAM_POINTER("buf", buf); 
+  CHECK_PARAM_POINTER("buf", buf);
   if (buf->len >= buf->size - 1)
   {
       buf->size += buf->step;
@@ -147,7 +147,7 @@ ecore_strbuf_append_char(Ecore_Strbuf *buf, char c)
 EAPI const char *
 ecore_strbuf_string_get(Ecore_Strbuf *buf)
 {
-  CHECK_PARAM_POINTER_RETURN("buf", buf, NULL); 
+  CHECK_PARAM_POINTER_RETURN("buf", buf, NULL);
   return buf->buf;
 }
 
@@ -158,7 +158,7 @@ ecore_strbuf_string_get(Ecore_Strbuf *buf)
 EAPI size_t
 ecore_strbuf_length_get(Ecore_Strbuf *buf)
 {
-  CHECK_PARAM_POINTER_RETURN("buf", buf, 0); 
+  CHECK_PARAM_POINTER_RETURN("buf", buf, 0);
   return buf->len;
 }
 
@@ -167,7 +167,7 @@ ecore_strbuf_length_get(Ecore_Strbuf *buf)
  * @param buf the Ecore_Strbuf to work with
  * @param str the string to replace
  * @param with the replaceing string
- * @param n the number of the fitting string 
+ * @param n the number of the fitting string
  *
  * @return true on success
  */
@@ -179,7 +179,7 @@ ecore_strbuf_replace(Ecore_Strbuf *buf, const char *str, const char *with,
   char *spos;
   size_t pos;
 
-  CHECK_PARAM_POINTER_RETURN("buf", buf, 0); 
+  CHECK_PARAM_POINTER_RETURN("buf", buf, 0);
   CHECK_PARAM_POINTER_RETURN("str", str, 0);
   CHECK_PARAM_POINTER_RETURN("with", with, 0);
 
@@ -190,21 +190,21 @@ ecore_strbuf_replace(Ecore_Strbuf *buf, const char *str, const char *with,
   while (n--)
     {
 	spos = strstr(spos, str);
-  	if (!spos || *spos == '\0')
+	if (!spos || *spos == '\0')
 	   return 0;
 	if (n) spos++;
     }
 
   pos = spos - buf->buf;
-  len1 = strlen(str); 
+  len1 = strlen(str);
   len2 = strlen(with);
   if (len1 != len2)
     {
 	/* resize the buffer if necessary */
 	if (!_ecore_strbuf_resize(buf, buf->len - len1 + len2))
 	   return 0;
-  	/* move the existing text */
-  	memmove(buf->buf + pos + len2, buf->buf + pos + len1, 
+	/* move the existing text */
+	memmove(buf->buf + pos + len2, buf->buf + pos + len1,
 			buf->len - pos - len1);
     }
   /* and now insert the given string */
@@ -233,7 +233,7 @@ ecore_strbuf_replace_all(Ecore_Strbuf *buf, const char *str, const char *with)
   size_t pos_tmp, start_tmp;
   int n = 0;
 
-  CHECK_PARAM_POINTER_RETURN("buf", buf, 0); 
+  CHECK_PARAM_POINTER_RETURN("buf", buf, 0);
   CHECK_PARAM_POINTER_RETURN("str", str, 0);
   CHECK_PARAM_POINTER_RETURN("with", with, 0);
 
@@ -241,7 +241,7 @@ ecore_strbuf_replace_all(Ecore_Strbuf *buf, const char *str, const char *with)
   if (!spos || *spos == '\0')
      return 0;
 
-  len1 = strlen(str); 
+  len1 = strlen(str);
   len2 = strlen(with);
 
   /* if the size of the two string is equal, it is fairly easy to replace them
@@ -256,7 +256,7 @@ ecore_strbuf_replace_all(Ecore_Strbuf *buf, const char *str, const char *with)
 	   }
 	return n;
     }
-  
+
   pos = pos_tmp = spos - buf->buf;
   tmp_buf = buf->buf;
   buf->buf = malloc(buf->size);
@@ -280,9 +280,9 @@ ecore_strbuf_replace_all(Ecore_Strbuf *buf, const char *str, const char *with)
 	       len = (len + len1) - len2;
 	       break;
 	   }
-	
-  	/* copy the untouched text */
-  	memcpy(buf->buf + start, tmp_buf + start_tmp, pos - start);
+
+	/* copy the untouched text */
+	memcpy(buf->buf + start, tmp_buf + start_tmp, pos - start);
 	/* copy the new string */
 	memcpy(buf->buf + pos, with, len2);
 
@@ -312,7 +312,7 @@ ecore_strbuf_replace_all(Ecore_Strbuf *buf, const char *str, const char *with)
  * @param buf the buffer to resize
  * @param size the minimum size of the buffer
  */
-static int 
+static int
 _ecore_strbuf_resize(Ecore_Strbuf *buf, size_t size)
 {
   char *buffer;
@@ -338,7 +338,7 @@ _ecore_strbuf_resize(Ecore_Strbuf *buf, size_t size)
                   new_step *= 2;
 	   }
     }
-  else 
+  else
     {
         /* shrink the buffer */
 	/*
@@ -351,10 +351,9 @@ _ecore_strbuf_resize(Ecore_Strbuf *buf, size_t size)
   buffer = realloc(buf->buf, new_size);
   if (!buffer)
     return 0;
-  
+
   buf->buf = buffer;
   buf->size = new_size;
   buf->step = new_step;
   return 1;
 }
-

@@ -11,12 +11,12 @@ static int             poller_walking = 0;
 static double          poll_interval = 0.125;
 static double          poll_cur_interval = 0.0;
 static double          last_tick = 0.0;
-static Ecore_Poller   *pollers[16] = 
+static Ecore_Poller   *pollers[16] =
 {
    NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
    NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
 };
-static unsigned short  poller_counters[16] = 
+static unsigned short  poller_counters[16] =
 {
    0,0,0,0,0,0,0,0,
    0,0,0,0,0,0,0,0
@@ -30,7 +30,7 @@ _ecore_poller_next_tick_eval(void)
 {
    int i;
    double interval;
-   
+
    min_interval = -1;
    for (i = 0; i < 15; i++)
      {
@@ -64,7 +64,7 @@ _ecore_poller_next_tick_eval(void)
    else
      {
 	double t;
-	
+
 	if (!timer)
 	  timer = ecore_timer_add(interval, _ecore_poller_cb_timer, NULL);
 	else
@@ -76,7 +76,7 @@ _ecore_poller_next_tick_eval(void)
 		  /* delete the timer and reset it to tick off in the new
 		   * time interval. at the tick this will be adjusted */
 		  ecore_timer_del(timer);
-		  timer = ecore_timer_add(interval - t, 
+		  timer = ecore_timer_add(interval - t,
 					  _ecore_poller_cb_timer, NULL);
 	       }
 	  }
@@ -103,7 +103,7 @@ _ecore_poller_cb_timer(void *data __UNUSED__)
 	/* wrap back to 0 if we exceed out loop count for the counter */
 	if (poller_counters[i] >= (1 << i)) poller_counters[i] = 0;
      }
-   
+
    just_added_poller = 0;
    /* walk the pollers now */
    poller_walking++;
@@ -131,7 +131,7 @@ _ecore_poller_cb_timer(void *data __UNUSED__)
 	  }
      }
    poller_walking--;
-	
+
    /* handle deletes afterwards */
    if (poller_delete_count > 0)
      {
@@ -161,11 +161,11 @@ _ecore_poller_cb_timer(void *data __UNUSED__)
 
    just_added_poller = 0;
    poller_delete_count = 0;
-   
+
    at_tick--;
-   
+
    /* if the timer was deleted then there is no point returning 1 - ambiguous
-    * if we do as it im plies "keep running me" but we have been deleted 
+    * if we do as it im plies "keep running me" but we have been deleted
     * anyway */
    if (!timer) return 0;
 
@@ -189,7 +189,7 @@ _ecore_poller_cb_timer(void *data __UNUSED__)
  * @param   type The ticker type to adjust
  * @param   poll_time The time (in seconds) between ticks of the clock
  * @ingroup Ecore_Poller_Group
- * 
+ *
  * This will adjust the time between ticks of the given ticker type defined
  * by @p type to the time period defined by @p poll_time.
  */
@@ -205,7 +205,7 @@ ecore_poller_poll_interval_set(Ecore_Poller_Type type __UNUSED__, double poll_ti
  * @param   type The ticker type to query
  * @return  The time in seconds between ticks of the ticker clock
  * @ingroup Ecore_Poller_Group
- * 
+ *
  * This will get the time between ticks of the specifider ticker clock.
  */
 EAPI double
@@ -233,7 +233,7 @@ ecore_poller_poll_interval_get(Ecore_Poller_Type type __UNUSED__)
  * save power as the CPU has more of a chance to go into a low power state
  * the longer it is asleep for, so this should be used if you are at all
  * power conscious.
- * 
+ *
  * The @p type parameter defines the poller tick type (there is a virtual
  * clock ticking all the time - though ecore avoids making it tick when
  * there will not be any work to do at that tick point). There is only one
@@ -241,7 +241,7 @@ ecore_poller_poll_interval_get(Ecore_Poller_Type type __UNUSED__)
  * expansion if multiple clocks with different frequencies are really required.
  * The default time between ticks for the ECORE_POLLER_CORE ticker is 0.125
  * seconds.
- * 
+ *
  * The @p interval is the number of ticker ticks that will pass by in between
  * invocations of the @p func callback. This must be between 1 and 32768
  * inclusive, and must be a power of 2 (i.e. 1, 2, 4, 8, 16, ... 16384, 32768).
@@ -250,13 +250,13 @@ ecore_poller_poll_interval_get(Ecore_Poller_Type type __UNUSED__)
  * which tick is undefined, as only the interval between calls can be defined.
  * Ecore will endeavour to keep pollers synchronised and to call as many in
  * 1 wakeup event as possible.
- * 
+ *
  * This function adds a poller and returns its handle on success and NULL on
  * failure. The function @p func will be called at tick intervals described
  * above. The function will be passed the @p data pointer as its parameter.
- * 
- * When the poller @p func is called, it must return a value of either 
- * 1 (or ECORE_CALLBACK_RENEW) or 0 (or ECORE_CALLBACK_CANCEL). If it 
+ *
+ * When the poller @p func is called, it must return a value of either
+ * 1 (or ECORE_CALLBACK_RENEW) or 0 (or ECORE_CALLBACK_CANCEL). If it
  * returns 1, it will be called again at the next tick, or if it returns
  * 0 it will be deleted automatically making any references/handles for it
  * invalid.
@@ -266,10 +266,10 @@ ecore_poller_add(Ecore_Poller_Type type __UNUSED__, int interval, int (*func) (v
 {
    Ecore_Poller *poller;
    int ibit;
-   
+
    if (!func) return NULL;
    if (interval < 1) interval = 1;
-   
+
    poller = calloc(1, sizeof(Ecore_Poller));
    if (!poller) return NULL;
    ECORE_MAGIC_SET(poller, ECORE_MAGIC_POLLER);
@@ -283,7 +283,7 @@ ecore_poller_add(Ecore_Poller_Type type __UNUSED__, int interval, int (*func) (v
      }
    /* only allow up to 32768 - i.e. ibit == 15, so limit it */
    if (ibit > 15) ibit = 15;
-   
+
    poller->ibit = ibit;
    poller->func = func;
    poller->data = (void *)data;
@@ -309,7 +309,7 @@ EAPI void *
 ecore_poller_del(Ecore_Poller *poller)
 {
    void *data;
-   
+
    if (!ECORE_MAGIC_CHECK(poller, ECORE_MAGIC_POLLER))
      {
 	ECORE_MAGIC_FAIL(poller, ECORE_MAGIC_POLLER,
@@ -339,7 +339,7 @@ _ecore_poller_shutdown(void)
    int i;
    Ecore_List2 *l;
    Ecore_Poller *poller;
-   
+
    for (i = 0; i < 15; i++)
      {
 	for (l = (Ecore_List2 *)pollers[i]; l;)

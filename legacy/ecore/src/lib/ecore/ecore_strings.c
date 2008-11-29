@@ -30,7 +30,7 @@ static int ecore_string_init_count = 0;
  * Initialize the ecore string internal structure.
  * @return  Zero on failure, non-zero on successful initialization.
  */
-EAPI int 
+EAPI int
 ecore_string_init()
 {
    /*
@@ -100,7 +100,7 @@ ecore_string_instance(const char *string)
  * @param   string The given string.
  * @ingroup Ecore_String_Group
  */
-EAPI void 
+EAPI void
 ecore_string_release(const char *string)
 {
    Ecore_String *str;
@@ -134,7 +134,7 @@ ecore_string_hash_dump_stats(void)
 /**
  * Shutdown the ecore string internal structures
  */
-EAPI void 
+EAPI void
 ecore_string_shutdown()
 {
    --ecore_string_init_count;
@@ -145,7 +145,7 @@ ecore_string_shutdown()
      }
 }
 
-static void 
+static void
 ecore_string_free_cb(void *data)
 {
    Ecore_String *str;

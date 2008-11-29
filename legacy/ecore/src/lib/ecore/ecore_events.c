@@ -24,21 +24,21 @@ static void                *ecore_raw_event_event =  NULL;
  * @param func The function to call when the event is found in the queue
  * @param data A data pointer to pass to the called function @p func
  * @return A new Event handler, or NULL on failure
- * 
+ *
  * Add an event handler to the list of handlers. This will, on success, return
  * a handle to the event handler object that was created, that can be used
- * later to remove the handler using ecore_event_handler_del(). The @p type 
+ * later to remove the handler using ecore_event_handler_del(). The @p type
  * parameter is the iteger of the event type that will trigger this callback
  * to be called. The callback @p func is called when this event is processed
  * and will be passed the event type, a pointer to the private event
- * structure that is specific to that event type, and a data pointer that is 
+ * structure that is specific to that event type, and a data pointer that is
  * provided in this call as the @p data parameter.
- * 
- * When the callback @p func is called, it must return 1 or 0. If it returns 
- * 1 (or ECORE_CALLBACK_RENEW), It will keep being called as per normal, for 
- * each handler set up for that event type. If it returns 0 (or 
+ *
+ * When the callback @p func is called, it must return 1 or 0. If it returns
+ * 1 (or ECORE_CALLBACK_RENEW), It will keep being called as per normal, for
+ * each handler set up for that event type. If it returns 0 (or
  * ECORE_CALLBACK_CANCEL), it will cease processing handlers for that particular
- * event, so all handler set to handle that event type that have not already 
+ * event, so all handler set to handle that event type that have not already
  * been called, will not be.
  */
 EAPI Ecore_Event_Handler *
@@ -57,14 +57,14 @@ ecore_event_handler_add(int type, int (*func) (void *data, int type, void *event
    if (type >= (event_handlers_num - 1))
      {
 	int p_alloc_num;
-	
+
 	p_alloc_num = event_handlers_alloc_num;
 	event_handlers_num = type + 1;
 	if (event_handlers_num > event_handlers_alloc_num)
 	  {
 	     Ecore_Event_Handler **new_handlers;
 	     int i;
-	     
+
 	     event_handlers_alloc_num = ((event_handlers_num + 16) / 16) * 16;
 	     new_handlers = realloc(event_handlers, event_handlers_alloc_num * sizeof(Ecore_Event_Handler *));
 	     if (!new_handlers)
@@ -85,7 +85,7 @@ ecore_event_handler_add(int type, int (*func) (void *data, int type, void *event
  * Delete an event handler.
  * @param event_handler Event handler handle to delete
  * @return Data passed to handler
- * 
+ *
  * Delete a specified event handler from the handler list. On success this will
  * delete the event handler and return the pointer passed as @p data when the
  * handler was added by ecore_event_handler_add(). On failure NULL will be
@@ -95,8 +95,8 @@ EAPI void *
 ecore_event_handler_del(Ecore_Event_Handler *event_handler)
 {
    Ecore_List2_Data *node;
-   
-   if (!ECORE_MAGIC_CHECK(event_handler, ECORE_MAGIC_EVENT_HANDLER)) 
+
+   if (!ECORE_MAGIC_CHECK(event_handler, ECORE_MAGIC_EVENT_HANDLER))
      {
 	ECORE_MAGIC_FAIL(event_handler, ECORE_MAGIC_EVENT_HANDLER,
 			 "ecore_event_handler_del");
@@ -109,7 +109,7 @@ ecore_event_handler_del(Ecore_Event_Handler *event_handler)
    return event_handler->data;
 }
 
-static void 
+static void
 _ecore_event_generic_free (void *data __UNUSED__, void *event)
 {
    free (event);
@@ -122,10 +122,10 @@ _ecore_event_generic_free (void *data __UNUSED__, void *event)
  * @param func_free The function to be called to free this private structure
  * @param data The data pointer to be passed to the free function
  * @return A Handle for that event
- * 
+ *
  * On success this function returns a handle to an event on the event queue, or
  * NULL if it fails. If it succeeds, an event of type @p type will be added
- * to the queue for processing by event handlers added by 
+ * to the queue for processing by event handlers added by
  * ecore_event_handler_add(). The @p ev parameter will be a pointer to the event
  * private data that is specific to that event type. When the event is no
  * longer needed, @p func_free will be called and passed the private structure
@@ -147,7 +147,7 @@ ecore_event_add(int type, void *ev, void (*func_free) (void *data, void *ev), vo
  * Delete an event from the queue.
  * @param event The event handle to delete
  * @return The data pointer originally set for the event free function
- * 
+ *
  * This deletes the event @p event from the event queue, and returns the
  * @p data parameer originally set when adding it with ecore_event_add(). This
  * does not immediately call the free function, and it may be called later on
@@ -157,9 +157,9 @@ ecore_event_add(int type, void *ev, void (*func_free) (void *data, void *ev), vo
 EAPI void *
 ecore_event_del(Ecore_Event *event)
 {
-   if (!ECORE_MAGIC_CHECK(event, ECORE_MAGIC_EVENT)) 
+   if (!ECORE_MAGIC_CHECK(event, ECORE_MAGIC_EVENT))
      {
-	ECORE_MAGIC_FAIL(event, ECORE_MAGIC_EVENT, "ecore_event_del");	
+	ECORE_MAGIC_FAIL(event, ECORE_MAGIC_EVENT, "ecore_event_del");
 	return NULL;
      }
    event->delete_me = 1;
@@ -169,8 +169,8 @@ ecore_event_del(Ecore_Event *event)
 /**
  * Allocate a new event type id sensibly and return the new id.
  * @return A new event type id.
- * 
- * This function allocates a new event type id and returns it. Once an event 
+ *
+ * This function allocates a new event type id and returns it. Once an event
  * type has been allocated it can never be de-allocated during the life of
  * the program. There is no guarantee of the contents of this event ID, or how
  * it is calculated, except that the ID will be unique to the current instance
@@ -190,8 +190,8 @@ ecore_event_type_new(void)
  * @param func_end Function to call after the queu has been filtered
  * @param data Data to pass to the filter functions
  * @return A filter handle
- * 
- * This adds a filter to call callbacks to loop through the event queue and 
+ *
+ * This adds a filter to call callbacks to loop through the event queue and
  * filter events out of the queue. On failure NULL is returned. On success a
  * Filter handle is returned. Filters are called on the queue just before
  * Event handler processing to try and remove redundant events. Just as
@@ -207,7 +207,7 @@ EAPI Ecore_Event_Filter *
 ecore_event_filter_add(void * (*func_start) (void *data), int (*func_filter) (void *data, void *loop_data, int type, void *event), void (*func_end) (void *data, void *loop_data), const void *data)
 {
    Ecore_Event_Filter *ef;
-   
+
    if (!func_filter) return NULL;
    ef = calloc(1, sizeof(Ecore_Event_Filter));
    if (!ef) return NULL;
@@ -224,14 +224,14 @@ ecore_event_filter_add(void * (*func_start) (void *data), int (*func_filter) (vo
  * Delete an event filter.
  * @param ef The event filter handle
  * @return The data set for the filter
- * 
+ *
  * Delete a filter that has been added by its @p ef handle. On success this
  * will return the data pointer set when this filter was added. On failure
  * NULL is returned.
  */
 EAPI void *
 ecore_event_filter_del(Ecore_Event_Filter *ef)
-{   
+{
    if (!ECORE_MAGIC_CHECK(ef, ECORE_MAGIC_EVENT_FILTER))
      {
 	ECORE_MAGIC_FAIL(ef, ECORE_MAGIC_EVENT_FILTER, "ecore_event_filter_del");
@@ -245,11 +245,11 @@ ecore_event_filter_del(Ecore_Event_Filter *ef)
 /**
  * Return the current event type being handled.
  * @return The current event type being handled if inside a handler callback
- * 
+ *
  * If the program is currently inside an Ecore event handler callback this
  * will return the type of the current event being processed. If Ecore is
  * not inside an event handler, ECORE_EVENT_NONE is returned.
- * 
+ *
  * This is useful when certain Ecore modules such as Ecore_Evas "swallow"
  * events and not all the original information is passed on. In special cases
  * this extra information may be useful or needed and using this call can let
@@ -265,11 +265,11 @@ ecore_event_current_type_get(void)
 /**
  * Return the current event type pointer handled.
  * @return The current event pointer being handled if inside a handler callback
- * 
+ *
  * If the program is currently inside an Ecore event handler callback this
  * will return the pointer of the current event being processed. If Ecore is
  * not inside an event handler, NULL will be returned.
- * 
+ *
  * This is useful when certain Ecore modules such as Ecore_Evas "swallow"
  * events and not all the original information is passed on. In special cases
  * this extra information may be useful or needed and using this call can let
@@ -286,14 +286,14 @@ void
 _ecore_event_shutdown(void)
 {
    int i;
-   
+
    while (events) _ecore_event_del(events);
    for (i = 0; i < event_handlers_num; i++)
      {
 	while (event_handlers[i])
 	  {
 	     Ecore_Event_Handler *eh;
-	     
+
 	     eh = event_handlers[i];
 	     event_handlers[i] = _ecore_list2_remove(event_handlers[i], eh);
 	     ECORE_MAGIC_SET(eh, ECORE_MAGIC_NONE);
@@ -303,7 +303,7 @@ _ecore_event_shutdown(void)
    while (event_handlers_delete_list)
      {
 	Ecore_List2_Data *ehd;
-	
+
 	ehd = event_handlers_delete_list;
 	event_handlers_delete_list = _ecore_list2_remove(event_handlers_delete_list, ehd);
 	free(ehd);
@@ -315,9 +315,9 @@ _ecore_event_shutdown(void)
    while (event_filters)
      {
 	Ecore_Event_Filter *ef;
-	
+
 	ef = event_filters;
-	event_filters = _ecore_list2_remove(event_filters, ef);   
+	event_filters = _ecore_list2_remove(event_filters, ef);
 	ECORE_MAGIC_SET(ef, ECORE_MAGIC_NONE);
 	free(ef);
      }
@@ -335,7 +335,7 @@ Ecore_Event *
 _ecore_event_add(int type, void *ev, void (*func_free) (void *data, void *ev), void *data)
 {
    Ecore_Event *e;
-   
+
    e = calloc(1, sizeof(Ecore_Event));
    if (!e) return NULL;
    ECORE_MAGIC_SET(e, ECORE_MAGIC_EVENT);
@@ -352,7 +352,7 @@ void *
 _ecore_event_del(Ecore_Event *event)
 {
    void *data;
-   
+
    data = event->data;
    if (event->func_free) event->func_free(event->data, event->event);
    events = _ecore_list2_remove(events, event);
@@ -440,7 +440,7 @@ _ecore_event_call(void)
 //   printf("EVENT BATCH DONE\n");
    ecore_raw_event_type = ECORE_EVENT_NONE;
    ecore_raw_event_event = NULL;
-   
+
    while (events) _ecore_event_del(events);
    while (event_handlers_delete_list)
      {
@@ -458,7 +458,7 @@ EAPI void *
 _ecore_event_signal_user_new(void)
 {
    Ecore_Event_Signal_User *e;
-   
+
    e = calloc(1, sizeof(Ecore_Event_Signal_User));
    return e;
 }
@@ -467,7 +467,7 @@ void *
 _ecore_event_signal_hup_new(void)
 {
    Ecore_Event_Signal_Hup *e;
-   
+
    e = calloc(1, sizeof(Ecore_Event_Signal_Hup));
    return e;
 }
@@ -476,7 +476,7 @@ void *
 _ecore_event_signal_exit_new(void)
 {
    Ecore_Event_Signal_Exit *e;
-   
+
    e = calloc(1, sizeof(Ecore_Event_Signal_Exit));
    return e;
 }
@@ -485,7 +485,7 @@ void *
 _ecore_event_signal_power_new(void)
 {
    Ecore_Event_Signal_Power *e;
-   
+
    e = calloc(1, sizeof(Ecore_Event_Signal_Power));
    return e;
 }
