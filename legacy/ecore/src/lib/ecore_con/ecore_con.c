@@ -870,6 +870,17 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
    t_start = ecore_time_get();
    while ((svr->write_buf) && (!svr->dead))
      {
+        fd_set rfds, wfds, exfds;
+        struct timeval tv;
+        
+        FD_ZERO(&rfds);
+        FD_ZERO(&wfds);
+        FD_SET(svr->fd, &wfds);
+        FD_ZERO(&exfds);
+        FD_SET(svr->fd, &exfds);
+        tv.tv_sec = 0;
+        tv.tv_usec = 1000000 / 10; /* 1 1/10th of a sec */
+        select(svr->fd + 1, &rfds, &wfds, &exfds, &tv);
 	_ecore_con_server_flush(svr);
 	t = ecore_time_get();
 	if ((t - t_start) > 0.5)
@@ -905,6 +916,17 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
    t_start = ecore_time_get();
    while ((cl->buf) && (!cl->dead))
      {
+        fd_set rfds, wfds, exfds;
+        struct timeval tv;
+        
+        FD_ZERO(&rfds);
+        FD_ZERO(&wfds);
+        FD_SET(cl->fd, &wfds);
+        FD_ZERO(&exfds);
+        FD_SET(cl->fd, &exfds);
+        tv.tv_sec = 0;
+        tv.tv_usec = 1000000 / 10; /* 1 1/10th of a sec */
+        select(cl->fd + 1, &rfds, &wfds, &exfds, &tv);
 	_ecore_con_client_flush(cl);
 	t = ecore_time_get();
 	if ((t - t_start) > 0.5)
