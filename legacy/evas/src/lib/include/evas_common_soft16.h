@@ -37,30 +37,65 @@ extern "C" {
 #define UNROLL8(op...) UNROLL4(op) UNROLL4(op)
 #define UNROLL16(op...) UNROLL8(op) UNROLL8(op)
 
-#if defined(__ARM_ARCH_3M__) || defined(__ARM_ARCH_4__) || \
-    defined(__ARM_ARCH_4T__)
-# define __ARM_ARCH__ 4
+#if defined(__ARM_ARCH_3M__)
+# define __ARM_ARCH__ 40
+#endif
+#if defined(__ARM_ARCH_4__)
+# define __ARM_ARCH__ 40
+#endif
+#if defined(__ARM_ARCH_4T__)
+# define __ARM_ARCH__ 41
 #endif
 
-#if defined(__ARM_ARCH_5__) || defined(__ARM_ARCH_5T__) || \
-    defined(__ARM_ARCH_5E__) || defined(__ARM_ARCH_5TE__) || \
-    defined(__ARM_ARCH_5TEJ__)
-# define __ARM_ARCH__ 5
+#if defined(__ARM_ARCH_5__)
+# define __ARM_ARCH__ 50
+#endif
+#if defined(__ARM_ARCH_5T__)
+# define __ARM_ARCH__ 51
+#endif
+#if defined(__ARM_ARCH_5E__)
+# define __ARM_ARCH__ 52
+#endif
+#if defined(__ARM_ARCH_5TE__)
+# define __ARM_ARCH__ 53
+#endif
+#if defined(__ARM_ARCH_5TEJ__)
+# define __ARM_ARCH__ 54
 #endif
 
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_6J__) || \
-    defined(__ARM_ARCH_6K__) || defined(__ARM_ARCH_6Z__) || \
-    defined(__ARM_ARCH_6ZK__) || defined(__ARM_ARCH_6T2__)
-# define __ARM_ARCH__ 6
+#if defined(__ARM_ARCH_6__)
+# define __ARM_ARCH__ 60
+#endif
+#if defined(__ARM_ARCH_6J__)
+# define __ARM_ARCH__ 61
+#endif
+#if defined(__ARM_ARCH_6K__)
+# define __ARM_ARCH__ 62
+#endif
+#if defined(__ARM_ARCH_6Z__)
+# define __ARM_ARCH__ 63
+#endif
+#if defined(__ARM_ARCH_6ZK__)
+# define __ARM_ARCH__ 64
+#endif
+#if defined(__ARM_ARCH_6T2__)
+# define __ARM_ARCH__ 65
 #endif
 
-#if defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7A__) || \
-    defined(__ARM_ARCH_7R__) || defined(__ARM_ARCH_7M__)
-# define __ARM_ARCH__ 7
+#if defined(__ARM_ARCH_7__)
+# define __ARM_ARCH__ 70
+#endif
+#if defined(__ARM_ARCH_7A__)
+# define __ARM_ARCH__ 71
+#endif
+#if defined(__ARM_ARCH_7R__)
+# define __ARM_ARCH__ 72
+#endif
+#if defined(__ARM_ARCH_7M__)
+# define __ARM_ARCH__ 73
 #endif
 
-
-#if defined(__ARM_ARCH__) && (__ARM_ARCH__ >= 5)
+#if defined(__ARM_ARCH__) && (__ARM_ARCH__ >= 52)
 /* tested on ARMv6 (arm1136j-s), Nokia N800 CPU */
 #define pld(addr, off)                                                  \
    __asm__("pld [%[address], %[offset]]"::                              \
