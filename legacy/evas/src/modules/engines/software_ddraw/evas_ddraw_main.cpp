@@ -4,12 +4,11 @@
 int
 evas_software_ddraw_init (HWND    window,
                           int     depth,
+                          int     fullscreen,
                           Outbuf *buf)
 {
    DDSURFACEDESC  surface_desc;
    DDPIXELFORMAT  pixel_format;
-   RECT           rect;
-   LPDIRECTDRAW   o;
    HRESULT        res;
    int            width;
    int            height;
@@ -17,62 +16,109 @@ evas_software_ddraw_init (HWND    window,
    if (!buf)
      return 0;
 
-   if (!GetClientRect(window, &rect))
-     return 0;
-
-   width = rect.right - rect.left;
-   height = rect.bottom - rect.top;
-
    buf->priv.dd.window = window;
 
    res = DirectDrawCreate(NULL, &buf->priv.dd.object, NULL);
    if (FAILED(res))
      return 0;
 
-   res = buf->priv.dd.object->SetCooperativeLevel(window, DDSCL_NORMAL);
-   if (FAILED(res))
-     goto release_object;
+   if (buf->priv.dd.fullscreen)
+     {
+        DDSCAPS caps;
 
-   res = buf->priv.dd.object->CreateClipper (0, &buf->priv.dd.clipper, NULL);
-   if (FAILED(res))
-     goto release_object;
+        res = buf->priv.dd.object->SetCooperativeLevel(window,
+                                                       DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
+        if (FAILED(res))
+          goto release_object;
 
-   res = buf->priv.dd.clipper->SetHWnd (0, window);
-   if (FAILED(res))
-     goto release_clipper;
+        width = GetSystemMetrics(SM_CXSCREEN);
+        height = GetSystemMetrics(SM_CYSCREEN);
 
-   memset(&surface_desc, 0, sizeof(surface_desc));
-   surface_desc.dwSize = sizeof(surface_desc);
-   surface_desc.dwFlags = DDSD_CAPS;
-   surface_desc.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
+        ZeroMemory(&pixel_format, sizeof(pixel_format));
+        pixel_format.dwSize = sizeof(pixel_format);
+        buf->priv.dd.surface_primary->GetPixelFormat(&pixel_format);
 
-   res = buf->priv.dd.object->CreateSurface (&surface_desc, &buf->priv.dd.surface_primary, NULL);
-   if (FAILED(res))
-     goto release_clipper;
+        if (pixel_format.dwRGBBitCount != depth)
+          goto release_object;
 
-   res = buf->priv.dd.surface_primary->SetClipper (buf->priv.dd.clipper);
-   if (FAILED(res))
-     goto release_surface_primary;
+        buf->priv.dd.depth = depth;
 
-   memset (&surface_desc, 0, sizeof(surface_desc));
-   surface_desc.dwSize = sizeof(surface_desc);
-   surface_desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH;
-   surface_desc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
-   surface_desc.dwWidth = width;
-   surface_desc.dwHeight = height;
+        res = buf->priv.dd.object->SetDisplayMode(width, height, depth);
+        if (FAILED(res))
+          goto release_object;
 
-   res = buf->priv.dd.object->CreateSurface (&surface_desc, &buf->priv.dd.surface_back, NULL);
-   if (FAILED(res))
-     goto release_surface_primary;
+        memset(&surface_desc, 0, sizeof(surface_desc));
+        surface_desc.dwSize = sizeof(surface_desc);
+        surface_desc.dwFlags = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
+        surface_desc.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE | DDSCAPS_FLIP | DDSCAPS_COMPLEX;
+        surface_desc.dwBackBufferCount = 1;
 
-   ZeroMemory(&pixel_format, sizeof(pixel_format));
-   pixel_format.dwSize = sizeof(pixel_format);
-   buf->priv.dd.surface_primary->GetPixelFormat(&pixel_format);
+        res = buf->priv.dd.object->CreateSurface(&surface_desc,
+                                                 &buf->priv.dd.surface_primary, NULL);
+        if (FAILED(res))
+          goto release_object;
 
-   if (pixel_format.dwRGBBitCount != depth)
-     goto release_surface_back;
+        caps.dwCaps = DDSCAPS_BACKBUFFER;
+        res = buf->priv.dd.surface_primary->GetAttachedSurface(&caps,
+                                                               &buf->priv.dd.surface_back);
+        if (FAILED(res))
+          goto release_surface_primary;
+     }
+   else
+     {
+        RECT           rect;
 
-   buf->priv.dd.depth = depth;
+        if (!GetClientRect(window, &rect))
+          goto release_object;
+
+        width = rect.right - rect.left;
+        height = rect.bottom - rect.top;
+
+        res = buf->priv.dd.object->SetCooperativeLevel(window, DDSCL_NORMAL);
+        if (FAILED(res))
+          goto release_object;
+
+        res = buf->priv.dd.object->CreateClipper(0, &buf->priv.dd.clipper, NULL);
+        if (FAILED(res))
+          goto release_object;
+
+        res = buf->priv.dd.clipper->SetHWnd(0, window);
+        if (FAILED(res))
+          goto release_clipper;
+
+        memset(&surface_desc, 0, sizeof(surface_desc));
+        surface_desc.dwSize = sizeof(surface_desc);
+        surface_desc.dwFlags = DDSD_CAPS;
+        surface_desc.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
+
+        res = buf->priv.dd.object->CreateSurface(&surface_desc, &buf->priv.dd.surface_primary, NULL);
+        if (FAILED(res))
+          goto release_clipper;
+
+        res = buf->priv.dd.surface_primary->SetClipper(buf->priv.dd.clipper);
+        if (FAILED(res))
+          goto release_surface_primary;
+
+        memset (&surface_desc, 0, sizeof(surface_desc));
+        surface_desc.dwSize = sizeof(surface_desc);
+        surface_desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH;
+        surface_desc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
+        surface_desc.dwWidth = width;
+        surface_desc.dwHeight = height;
+
+        res = buf->priv.dd.object->CreateSurface(&surface_desc, &buf->priv.dd.surface_back, NULL);
+        if (FAILED(res))
+          goto release_surface_primary;
+
+        ZeroMemory(&pixel_format, sizeof(pixel_format));
+        pixel_format.dwSize = sizeof(pixel_format);
+        buf->priv.dd.surface_primary->GetPixelFormat(&pixel_format);
+
+        if (pixel_format.dwRGBBitCount != depth)
+          goto release_surface_back;
+
+        buf->priv.dd.depth = depth;
+     }
 
    return 1;
 
@@ -81,7 +127,8 @@ evas_software_ddraw_init (HWND    window,
  release_surface_primary:
    buf->priv.dd.surface_primary->Release();
  release_clipper:
-   buf->priv.dd.clipper->Release();
+   if (buf->priv.dd.fullscreen)
+     buf->priv.dd.clipper->Release();
  release_object:
    buf->priv.dd.object->Release();
 
@@ -94,10 +141,16 @@ evas_software_ddraw_shutdown(Outbuf *buf)
    if (!buf)
      return;
 
-   buf->priv.dd.surface_back->Release();
-   buf->priv.dd.surface_primary->Release();
-   buf->priv.dd.clipper->Release();
-   buf->priv.dd.object->Release();
+   if (buf->priv.dd.fullscreen)
+     if (buf->priv.dd.surface_back)
+       buf->priv.dd.surface_back->Release();
+   if (buf->priv.dd.surface_primary)
+     buf->priv.dd.surface_primary->Release();
+   if (buf->priv.dd.fullscreen)
+     if (buf->priv.dd.clipper)
+       buf->priv.dd.clipper->Release();
+   if (buf->priv.dd.object)
+     buf->priv.dd.object->Release();
 }
 
 int

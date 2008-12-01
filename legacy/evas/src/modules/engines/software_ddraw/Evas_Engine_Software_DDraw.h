@@ -16,9 +16,10 @@ struct _Evas_Engine_Info_Software_DDraw
    Evas_Engine_Info magic;
 
    struct {
-      HWND                window;
-      int                 depth;
-      int                 rotation;
+      HWND         window;
+      int          depth;
+      int          rotation;
+      unsigned int fullscreen : 1;
    } info;
 };
 

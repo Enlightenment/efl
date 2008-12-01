@@ -103,7 +103,8 @@ evas_software_ddraw_outbuf_setup(int          width,
                                  int          rotation,
                                  Outbuf_Depth depth,
                                  HWND         window,
-                                 int          w_depth)
+                                 int          w_depth,
+                                 int          fullscreen)
 {
    Outbuf *buf;
 
@@ -116,7 +117,7 @@ evas_software_ddraw_outbuf_setup(int          width,
    buf->depth = depth;
    buf->rot = rotation;
 
-   if (!evas_software_ddraw_init(window, w_depth, buf))
+   if (!evas_software_ddraw_init(window, w_depth, fullscreen, buf))
      {
         free(buf);
         return NULL;

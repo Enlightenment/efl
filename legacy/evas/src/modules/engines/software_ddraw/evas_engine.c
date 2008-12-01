@@ -24,7 +24,8 @@ _output_setup(int  width,
               int  height,
               int  rot,
               HWND window,
-              int  depth)
+              int  depth,
+              int  fullscreen)
 {
    Render_Engine *re;
 
@@ -51,7 +52,7 @@ _output_setup(int  width,
 
    re->ob = evas_software_ddraw_outbuf_setup(width, height, rot,
                                              OUTBUF_DEPTH_INHERIT,
-                                             window, depth);
+                                             window, depth, fullscreen);
    if (!re->ob)
      {
 	free(re);
@@ -59,7 +60,7 @@ _output_setup(int  width,
      }
 
    /* for updates return 1 big buffer, but only use portions of it, also cache
-    it and keepit around until an idle_flush */
+    it and keep it around until an idle_flush */
    /* disable for now - i am hunting down why some expedite tests are slower,
     * as well as shaped stuff is broken and probable non-32bpp is broken as
     * convert funcs dont do the right thing
@@ -116,7 +117,8 @@ eng_setup(Evas *e, void *in)
                                            e->output.h,
                                            info->info.rotation,
                                            info->info.window,
-                                           info->info.depth);
+                                           info->info.depth,
+                                           info->info.fullscreen);
    else
      {
 	int ponebuf = 0;
@@ -129,7 +131,8 @@ eng_setup(Evas *e, void *in)
                                                   info->info.rotation,
                                                   OUTBUF_DEPTH_INHERIT,
                                                   info->info.window,
-                                                  info->info.depth);
+                                                  info->info.depth,
+                                                  info->info.fullscreen);
 	re->ob->onebuf = ponebuf;
      }
    if (!e->engine.data.output) return;

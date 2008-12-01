@@ -42,8 +42,9 @@ struct _Outbuf
          LPDIRECTDRAWSURFACE surface_back;
          LPDIRECTDRAWCLIPPER clipper;
          int                 depth;
-         unsigned char       swap : 1;
-         unsigned char       bit_swap : 1;
+         unsigned char       fullscreen : 1;
+         unsigned char       swap       : 1;
+         unsigned char       bit_swap   : 1;
       } dd;
       struct {
          DATA32              r, g, b;
@@ -58,10 +59,10 @@ struct _Outbuf
       /* a list of previous frame pending regions to write to the target */
       Eina_List             *prev_pending_writes;
 
-      unsigned char          mask_dither : 1;
+      unsigned char          mask_dither       : 1;
       unsigned char          destination_alpha : 1;
-      unsigned char          debug : 1;
-      unsigned char          synced : 1;
+      unsigned char          debug             : 1;
+      unsigned char          synced            : 1;
    } priv;
 };
 
@@ -97,7 +98,8 @@ Outbuf *evas_software_ddraw_outbuf_setup(int          width,
                                          int          rotation,
                                          Outbuf_Depth depth,
                                          HWND         window,
-                                         int          w_depth);
+                                         int          w_depth,
+                                         int          fullscreen);
 
 void evas_software_ddraw_outbuf_reconfigure(Outbuf      *buf,
                                             int          width,
@@ -168,6 +170,7 @@ extern "C" {
 
 int evas_software_ddraw_init (HWND    window,
                               int     depth,
+                              int     fullscreen,
                               Outbuf *buf);
 
 void evas_software_ddraw_shutdown(Outbuf *buf);
