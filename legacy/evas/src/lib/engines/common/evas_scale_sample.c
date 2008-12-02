@@ -271,9 +271,10 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 	/* scale to dst */
 	dptr = dst_ptr;
 #ifdef DIRECT_SCALE
-	if ((!src->cache_entry.flags.alpha) &&
+	if ((dc->render_op == _EVAS_RENDER_COPY) ||
+            ((!src->cache_entry.flags.alpha) &&
 	     (!dst->cache_entry.flags.alpha) &&
-	     (!dc->mul.use))
+	     (!dc->mul.use)))
 	  {
 	     for (y = 0; y < dst_clip_h; y++)
 	       {

@@ -270,64 +270,70 @@ struct _Image_Entry_Flags
 
 struct _Image_Entry
 {
-  EINA_INLIST;
-
-  Evas_Cache_Image      *cache;
-
-  const char            *cache_key;
-
-  const char            *file;
-  const char            *key;
-
-  const void            *target;
-
-  time_t                 timestamp;
-  time_t                 laststat;
-
-  int                    references;
-
-  unsigned char          scale;
-
-  RGBA_Image_Loadopts    load_opts;
-  int                    space;
-  int                    w;
-  int                    h;
-
-  struct
-  {
-     int		 w;
-     int		 h;
-  } allocated;
-
-  struct
-  {
-     void		*module;
-     void		*loader;
-  } info;
-
-  Image_Entry_Flags      flags;
+   EINA_INLIST;
+   
+   Evas_Cache_Image      *cache;
+   
+   const char            *cache_key;
+   
+   const char            *file;
+   const char            *key;
+   
+   const void            *target;
+   
+   time_t                 timestamp;
+   time_t                 laststat;
+   
+   int                    references;
+   
+   unsigned char          scale;
+   
+   RGBA_Image_Loadopts    load_opts;
+   int                    space;
+   int                    w;
+   int                    h;
+   
+   struct {
+      int		  w;
+      int		  h;
+   } allocated;
+   
+   struct {
+      void		 *module;
+      void		 *loader;
+   } info;
+   
+   Image_Entry_Flags      flags;
+   struct {
+      int                 usage;
+      int                 mem;
+      int                 src_x, src_y, src_w, src_h;
+      int                 dst_w, dst_h;
+      int                 smooth;
+      Image_Entry        *parent;
+      Eina_List          *others;
+   } scalecache;
 };
 
 struct _Engine_Image_Entry
 {
    EINA_INLIST;
-
+   
    /* Upper Engine data. */
    Image_Entry                  *src;
-
+   
    /* Cache stuff. */
    Evas_Cache_Engine_Image      *cache;
    const char                   *cache_key;
-
-   struct
-   {
-     Evas_Bool                   cached : 1;
-     Evas_Bool                   activ : 1;
-     Evas_Bool                   dirty : 1;
-     Evas_Bool                   loaded : 1;
-     Evas_Bool                   need_parent : 1;
+   
+   struct {
+      Evas_Bool                   cached : 1;
+      Evas_Bool                   activ : 1;
+      Evas_Bool                   dirty : 1;
+      Evas_Bool                   loaded : 1;
+      Evas_Bool                   need_parent : 1;
    } flags;
-
+   
    int                           references;
    int                           w;
    int                           h;

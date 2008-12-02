@@ -405,7 +405,36 @@ EAPI void
 evas_common_image_set_cache(int size)
 {
    if (eci != NULL)
-     evas_cache_image_set(eci, size);
+     {
+        Evas_Cache_Image *cache = eci;
+        
+        evas_cache_image_set(eci, size);
+        while (cache->scaledmem > (cache->limit >> 2))
+          {
+             Eina_List *l;
+             Image_Entry *ie;
+             
+             l = eina_list_last(cache->scaled);
+             while (l)
+               {
+                  ie = l->data;
+                  if (ie->scalecache.parent) break;
+                  l = l->prev;
+               }
+             if (!l)
+               {
+                  break;
+               }
+             ie->scalecache.parent->scalecache.mem -= ie->scalecache.dst_w * ie->scalecache.dst_h;
+             cache->scaledmem -= ie->scalecache.dst_w * ie->scalecache.dst_h;
+             cache->scaled =
+               eina_list_remove_list(cache->scaled, l);
+             ie->scalecache.parent->scalecache.others =
+               eina_list_remove(ie->scalecache.parent->scalecache.others, ie);
+             ie->scalecache.parent = NULL;
+             evas_cache_image_drop(ie);
+          }
+     }
 }
 
 EAPI int

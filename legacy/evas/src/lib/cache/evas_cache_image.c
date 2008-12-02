@@ -45,19 +45,38 @@ static void _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry 
 
 static void
 _evas_cache_image_make_dirty(Evas_Cache_Image *cache,
-                             Image_Entry *im)
+                             Image_Entry *ie)
 {
-   im->flags.cached = 1;
-   im->flags.dirty = 1;
-   im->flags.activ = 0;
-   im->flags.lru_nodata = 0;
-   cache->dirty = eina_inlist_prepend(cache->dirty, EINA_INLIST_GET(im));
+   ie->flags.cached = 1;
+   ie->flags.dirty = 1;
+   ie->flags.activ = 0;
+   ie->flags.lru_nodata = 0;
+   cache->dirty = eina_inlist_prepend(cache->dirty, EINA_INLIST_GET(ie));
 
-   if (im->cache_key)
+   if (ie->cache_key)
      {
-        eina_stringshare_del(im->cache_key);
-        im->cache_key = NULL;
+        eina_stringshare_del(ie->cache_key);
+        ie->cache_key = NULL;
      }
+
+   while (ie->scalecache.others)
+     {
+        Image_Entry *ie2;
+        
+        ie2 = ie->scalecache.others->data;
+        cache->usage -= cache->func.mem_size_get(ie2);
+        if (ie2->scalecache.usage >= 6)
+          {
+             ie->scalecache.mem -= ie2->scalecache.dst_w * ie2->scalecache.dst_h;
+             ie->cache->scaledmem -= ie2->scalecache.dst_w * ie2->scalecache.dst_h;
+             ie->cache->scaled =
+               eina_list_remove(ie->cache->scaled, ie2);
+          }
+        ie->scalecache.others = eina_list_remove_list(ie->scalecache.others, ie->scalecache.others);
+        ie2->scalecache.parent = NULL;
+        evas_cache_image_drop(ie2);
+     }
+   
 }
 
 static void
@@ -92,7 +111,6 @@ _evas_cache_image_make_inactiv(Evas_Cache_Image *cache,
 	im->flags.cached = 1;
 	cache->inactiv = evas_hash_direct_add(cache->inactiv, key, im);
 	cache->lru = eina_inlist_prepend(cache->lru, EINA_INLIST_GET(im));
-	cache->usage += cache->func.mem_size_get(im);
      }
    else
      {
@@ -108,7 +126,6 @@ _evas_cache_image_remove_lru_nodata(Evas_Cache_Image *cache,
      {
         im->flags.lru_nodata = 0;
         cache->lru_nodata = eina_inlist_remove(cache->lru_nodata, EINA_INLIST_GET(im));
-        cache->usage -= cache->func.mem_size_get(im);
      }
 }
 
@@ -160,6 +177,24 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
    if (cache->func.debug)
      cache->func.debug("deleting", ie);
 
+   while (ie->scalecache.others)
+     {
+        Image_Entry *ie2;
+        
+        ie2 = ie->scalecache.others->data;
+        cache->usage -= cache->func.mem_size_get(ie2);
+        if (ie2->scalecache.usage >= 6)
+          {
+             ie->scalecache.mem -= ie2->scalecache.dst_w * ie2->scalecache.dst_h;
+             ie->cache->scaledmem -= ie2->scalecache.dst_w * ie2->scalecache.dst_h;
+             ie->cache->scaled =
+               eina_list_remove(ie->cache->scaled, ie2);
+          }
+        ie->scalecache.others = eina_list_remove_list(ie->scalecache.others, ie->scalecache.others);
+        ie2->scalecache.parent = NULL;
+        evas_cache_image_drop(ie2);
+     }
+   
    cache->func.destructor(ie);
 
    _evas_cache_image_remove_activ(cache, ie);
@@ -251,7 +286,7 @@ _evas_cache_image_entry_surface_alloc(Evas_Cache_Image *cache,
    wmin = w > 0 ? w : 1;
    hmin = h > 0 ? h : 1;
    if (ie->allocated.w == wmin && ie->allocated.h == hmin)
-     return ;
+     return;
 
 #ifdef BUILD_ASYNC_PRELOAD
    pthread_mutex_lock(&mutex_surface_alloc);
@@ -382,6 +417,9 @@ evas_cache_image_init(const Evas_Cache_Image_Func *cb)
 
    new->references = 1;
 
+   new->scaled = NULL;
+   new->scaledmem = 0;
+   
    return new;
 }
 
@@ -603,6 +641,20 @@ evas_cache_image_drop(Image_Entry *im)
    assert(im);
    assert(im->cache);
 
+   if (im->scalecache.parent)
+     {
+        im->scalecache.parent->cache->usage -= im->scalecache.parent->cache->func.mem_size_get(im);
+        if (im->scalecache.usage >= 6)
+          {
+             im->scalecache.parent->scalecache.mem -= im->scalecache.dst_w * im->scalecache.dst_h;
+             im->scalecache.parent->cache->scaledmem -= im->scalecache.dst_w * im->scalecache.dst_h;
+             im->scalecache.parent->cache->scaled =
+               eina_list_remove(im->scalecache.parent->cache->scaled, im);
+          }
+        im->scalecache.parent->scalecache.others = 
+          eina_list_remove(im->scalecache.parent->scalecache.others, im);
+     }
+   
    im->references--;
    cache = im->cache;
 
@@ -643,13 +695,31 @@ evas_cache_image_data_not_needed(Image_Entry *im)
 EAPI Image_Entry *
 evas_cache_image_dirty(Image_Entry *im, int x, int y, int w, int h)
 {
-   Image_Entry          *im_dirty = im;
+   Image_Entry          *im_dirty = im, *ie = im;
    Evas_Cache_Image     *cache;
 
    assert(im);
    assert(im->cache);
 
    cache = im->cache;
+   while (ie->scalecache.others)
+     {
+        Image_Entry *ie2;
+        
+        ie2 = ie->scalecache.others->data;
+        cache->usage -= cache->func.mem_size_get(ie2);
+        if (ie2->scalecache.usage >= 6)
+          {
+             ie->scalecache.mem -= ie2->scalecache.dst_w * ie2->scalecache.dst_h;
+             ie->cache->scaledmem -= ie2->scalecache.dst_w * ie2->scalecache.dst_h;
+             ie->cache->scaled =
+               eina_list_remove(ie->cache->scaled, ie2);
+          }
+        ie->scalecache.others = eina_list_remove_list(ie->scalecache.others, ie->scalecache.others);
+        ie2->scalecache.parent = NULL;
+        evas_cache_image_drop(ie2);
+     }
+   
    if (!(im->flags.dirty))
      {
         if (im->references == 1) im_dirty = im;
@@ -815,6 +885,41 @@ evas_cache_image_surface_alloc(Image_Entry *im, int w, int h)
      cache->func.debug("surface-alloc", im);
 }
 
+EAPI void
+evas_cache_image_surface_dealloc(Image_Entry *im)
+{
+   Evas_Cache_Image     *cache;
+
+   assert(im);
+   assert(im->cache);
+
+   cache = im->cache;
+
+   if (!((RGBA_Image *)im)->image.data) return;
+   if (!im->info.loader) return;
+   if (!im->info.module) return;
+   if (!im->flags.loaded) return;
+   
+   im->flags.loaded = 0;
+   
+#ifdef BUILD_ASYNC_PRELOAD
+   pthread_mutex_lock(&mutex_surface_alloc);
+#endif
+
+   printf("-------- actual dealloc %p\n", im);
+   _evas_cache_image_remove_lru_nodata(cache, im);
+   cache->func.surface_delete(im);
+   im->allocated.w = 0;
+   im->allocated.h = 0;
+
+#ifdef BUILD_ASYNC_PRELOAD
+   pthread_mutex_unlock(&mutex_surface_alloc);
+#endif
+
+   if (cache->func.debug)
+     cache->func.debug("surface-dealloc", im);
+}
+
 EAPI Image_Entry *
 evas_cache_image_size_set(Image_Entry *im, int w, int h)
 {
@@ -890,7 +995,6 @@ evas_cache_image_load_data(Image_Entry *im)
      {
         _evas_cache_image_entry_surface_alloc(cache, im, im->w, im->h);
         im->flags.loaded = 0;
-
         return ;
      }
 

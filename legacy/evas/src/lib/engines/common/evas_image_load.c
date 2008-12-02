@@ -43,6 +43,10 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
    char                 *dot;
    int                   i;
 
+   if (ie->info.loader)
+     {
+        if (!evas_common_load_rgba_image_data_from_file(ie)) return 0;
+     }
    dot = strrchr (ie->file, '.');
    if (dot)
      {
