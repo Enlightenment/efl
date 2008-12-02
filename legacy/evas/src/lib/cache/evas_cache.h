@@ -57,9 +57,6 @@ struct _Evas_Cache_Image
    int                           usage;
    int                           limit;
    int                           references;
-   
-   Eina_List                    *scaled;
-   int                           scaledmem;
 };
 
 struct _Evas_Cache_Engine_Image_Func
@@ -129,7 +126,6 @@ EAPI Image_Entry*             evas_cache_image_alone(Image_Entry *im);
 EAPI Image_Entry*             evas_cache_image_dirty(Image_Entry *im, int x, int y, int w, int h);
 EAPI void                     evas_cache_image_load_data(Image_Entry *im);
 EAPI void                     evas_cache_image_surface_alloc(Image_Entry *im, int w, int h);
-EAPI void                     evas_cache_image_surface_dealloc(Image_Entry *im);
 EAPI DATA32*                  evas_cache_image_pixels(Image_Entry *im);
 EAPI Image_Entry*             evas_cache_image_copied_data(Evas_Cache_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace);
 EAPI Image_Entry*             evas_cache_image_data(Evas_Cache_Image *cache, int w, int h, DATA32 *image_data, int alpha, int cspace);

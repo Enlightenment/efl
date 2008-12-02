@@ -731,175 +731,6 @@ eng_image_data_preload_cancel(void *data, void *image)
    evas_cache_image_preload_cancel(&im->cache_entry);
 }
 
-#define SCALECACHE 1
-
-#ifdef SCALECACHE
-static Image_Entry *
-_sc_find(Image_Entry *im, int src_x, int src_y, int src_w, int src_h, int dst_w, int dst_h, int smooth)
-{
-   Eina_List *l;
-   Image_Entry *ie = NULL;
-   
-   for (l = im->scalecache.others; l; l = l->next)
-     {
-        ie = l->data;
-        if ((ie->scalecache.dst_w == dst_w) &&
-            (ie->scalecache.dst_h == dst_h) &&
-            (ie->scalecache.src_w == src_w) &&
-            (ie->scalecache.src_h == src_h) &&
-            (ie->scalecache.src_x == src_x) &&
-            (ie->scalecache.src_y == src_y) &&
-            (ie->scalecache.smooth == smooth))
-          {
-             if (l != ie->scalecache.others)
-               {
-                  im->scalecache.others = eina_list_remove_list(im->scalecache.others, l);
-                  im->scalecache.others = eina_list_prepend(im->scalecache.others, ie);
-               }
-             ie->scalecache.usage++;
-             return ie;
-          }
-     }
-   return NULL;
-}
-
-static void
-_sc_clean(Image_Entry *im)
-{
-   while ((im->scalecache.mem > (im->cache->limit >> 2)) ||
-          (eina_list_count(im->scalecache.others) > 40))
-     {
-        Eina_List *l;
-        Image_Entry *ie;
-        
-        printf("clean %i > %i\n", im->cache->scaledmem, im->cache->limit >> 2);
-        l = eina_list_last(im->scalecache.others);
-        ie = l->data;
-        if (ie->scalecache.usage >= 6)
-          {
-             im->scalecache.mem -= ie->scalecache.dst_w * ie->scalecache.dst_h;
-             im->cache->scaledmem -= ie->scalecache.dst_w * ie->scalecache.dst_h;
-             im->cache->scaled =
-               eina_list_remove(im->cache->scaled, ie);
-          }
-        im->scalecache.others = eina_list_remove_list(im->scalecache.others, l);
-        ie->scalecache.parent = NULL;
-        evas_cache_image_drop(ie);
-     }
-}
-
-static Image_Entry *
-_sc_new(Image_Entry *im, int src_x, int src_y, int src_w, int src_h, int dst_w, int dst_h, int smooth)
-{
-   Image_Entry *ie;
-
-   ie = evas_cache_image_empty(im->cache);
-   evas_cache_image_colorspace(ie, EVAS_COLORSPACE_ARGB8888);
-   im->scalecache.usage++;
-   im->scalecache.others = eina_list_prepend(im->scalecache.others, ie);
-   ie->scalecache.src_x = src_x;
-   ie->scalecache.src_y = src_y;
-   ie->scalecache.src_w = src_w;
-   ie->scalecache.src_h = src_h;
-   ie->scalecache.dst_w = dst_w;
-   ie->scalecache.dst_h = dst_h;
-   ie->scalecache.smooth = smooth;
-   ie->scalecache.parent = im;
-   return ie;
-}
-
-static int
-_sc_fill(Image_Entry *im, Image_Entry *ie)
-{
-   RGBA_Draw_Context *tctx;
-   
-   ie->scalecache.usage++;
-   if (ie->scalecache.usage < 5) return 0;
-   if (ie->scalecache.usage >= 6)
-     {
-        ie->scalecache.parent->scalecache.usage--;
-        if (ie->scalecache.parent->scalecache.usage <= 0)
-          {
-             ie->scalecache.parent->scalecache.usage = 0;
-             if ((im->info.loader) && 
-                 (im->flags.loaded) && 
-                 (im->info.module) &&
-                 (im->file) && 
-                 (((RGBA_Image*)im)->image.data));
-               {
-                  evas_cache_image_surface_dealloc(im);
-               }
-          }
-        im->cache->scaled =
-          eina_list_remove(im->cache->scaled, ie);
-        im->cache->scaled =
-          eina_list_prepend(im->cache->scaled, ie);
-        return 1;
-     }
-   im->scalecache.usage += 10;
-   im->cache->func.load(im);
-   ie->scalecache.usage = 6;
-   im->scalecache.mem += ie->scalecache.dst_w * ie->scalecache.dst_h;
-   im->cache->scaledmem += ie->scalecache.dst_w * ie->scalecache.dst_h;
-   im->cache->scaled =
-     eina_list_prepend(im->cache->scaled, ie);
-   ie->flags.alpha = im->flags.alpha;
-   ie->w = ie->scalecache.dst_w;
-   ie->h = ie->scalecache.dst_h;
-   evas_cache_image_surface_alloc(ie, ie->w, ie->h);
-   tctx = evas_common_draw_context_new();
-   evas_common_draw_context_set_render_op(tctx, _EVAS_RENDER_COPY);
-   if (ie->scalecache.smooth)
-     evas_common_scale_rgba_in_to_out_clip_smooth
-     ((RGBA_Image *)im, (RGBA_Image *)ie, tctx,
-      ie->scalecache.src_x, ie->scalecache.src_y,
-      ie->scalecache.src_w, ie->scalecache.src_h,
-      0, 0,
-      ie->scalecache.dst_w, ie->scalecache.dst_h);
-   else
-     evas_common_scale_rgba_in_to_out_clip_sample
-     ((RGBA_Image *)im, (RGBA_Image *)ie, tctx,
-      ie->scalecache.src_x, ie->scalecache.src_y,
-      ie->scalecache.src_w, ie->scalecache.src_h,
-      0, 0,
-      ie->scalecache.dst_w, ie->scalecache.dst_h);
-   evas_common_draw_context_free(tctx);
-   return 1;
-}
-
-static void
-_sc_flush(Evas_Cache_Image *cache)
-{
-   while (cache->scaledmem > (cache->limit >> 2))
-     {
-        Eina_List *l;
-        Image_Entry *ie;
-
-        printf("flush %i > %i\n", cache->scaledmem, cache->limit >> 2);
-        l = eina_list_last(cache->scaled);
-        while (l)
-          {
-             ie = l->data;
-             if (ie->scalecache.parent) break;
-             l = l->prev;
-          }
-        if (!l)
-          {
-             break;
-          }
-        ie->scalecache.parent->scalecache.mem -= ie->scalecache.dst_w * ie->scalecache.dst_h;
-        cache->scaledmem -= ie->scalecache.dst_w * ie->scalecache.dst_h;
-        cache->scaled =
-          eina_list_remove_list(cache->scaled, l);
-        ie->scalecache.parent->scalecache.others =
-          eina_list_remove(ie->scalecache.parent->scalecache.others, ie);
-        ie->scalecache.parent = NULL;
-        evas_cache_image_drop(ie);
-     }
-}
-
-#endif
-
 static void
 eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
@@ -912,72 +743,20 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
    evas_common_image_colorspace_normalize(im);
 #ifdef BUILD_PTHREAD
    if (cpunum > 1)
-     {
-        if (im->image.data)
-          {
-             evas_common_pipe_image_draw(im, surface, 
-                                         context, smooth,
-                                         src_x, src_y, src_w, src_h,
-                                         dst_x, dst_y, dst_w, dst_h);
-          }
-     }
+     evas_common_pipe_image_draw(im, surface, context, smooth,
+				 src_x, src_y, src_w, src_h,
+				 dst_x, dst_y, dst_w, dst_h);
    else
 #endif
      {
-#ifdef SCALECACHE        
-        Image_Entry *ie, *ie2;
-        int ok;
-        
-        ie = (Image_Entry *)im;
-        if ((src_w == dst_w) && (src_h == dst_h))
-          {
-             ie->scalecache.usage++;
-             if (smooth)
-               evas_common_scale_rgba_in_to_out_clip_smooth(im, surface, context,
-                                                            src_x, src_y, src_w, src_h,
-                                                            dst_x, dst_y, dst_w, dst_h);
-             else
-               evas_common_scale_rgba_in_to_out_clip_sample(im, surface, context,
-                                                            src_x, src_y, src_w, src_h,
-                                                            dst_x, dst_y, dst_w, dst_h);
-          }
-        else
-          {
-             ok = 0;
-             _sc_clean(ie);
-             ie2 = _sc_find(ie, src_x, src_y, src_w, src_h, dst_w, dst_h, smooth);
-             if (ie2) ok = _sc_fill(ie, ie2);
-             else
-               {
-                  ie2 = _sc_new(ie, src_x, src_y, src_w, src_h, dst_w, dst_h, smooth);
-                  if (ie2) ok = _sc_fill(ie, ie2);
-               }
-             if ((ie2) && (ok))
-               evas_common_scale_rgba_in_to_out_clip_sample((RGBA_Image *)ie2,
-                                                            surface, context,
-                                                            0, 0, dst_w, dst_h,
-                                                            dst_x, dst_y, dst_w, dst_h);
-             else
-               {
-                  ie->scalecache.usage++;
-                  evas_cache_image_load_data(ie);
-#endif
-                  if (im->image.data)
-                    {
-                       if (smooth)
-                         evas_common_scale_rgba_in_to_out_clip_smooth(im, surface, context,
-                                                                      src_x, src_y, src_w, src_h,
-                                                                      dst_x, dst_y, dst_w, dst_h);
-                       else
-                         evas_common_scale_rgba_in_to_out_clip_sample(im, surface, context,
-                                                                      src_x, src_y, src_w, src_h,
-                                                                      dst_x, dst_y, dst_w, dst_h);
-                    }
-#ifdef SCALECACHE        
-               }
-          }
-        _sc_flush(ie->cache);
-#endif
+	if (smooth)
+	  evas_common_scale_rgba_in_to_out_clip_smooth(im, surface, context,
+						       src_x, src_y, src_w, src_h,
+						       dst_x, dst_y, dst_w, dst_h);
+	else
+	  evas_common_scale_rgba_in_to_out_clip_sample(im, surface, context,
+						       src_x, src_y, src_w, src_h,
+						       dst_x, dst_y, dst_w, dst_h);
 	evas_common_cpu_end_opt();
      }
 }

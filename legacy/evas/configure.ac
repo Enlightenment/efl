@@ -386,9 +386,7 @@ AC_CHECK_HEADERS(pthread.h sched.h,
 )
 ### disable pthreads by default for now - some wierd deadlock issue with
 # barriers (makes no sense)
-# disable pthread code - messes with scalecache (whihc really is a much
-# bigger general speedup
-build_pthreads="no"
+#build_pthreads="no"
 AC_MSG_CHECKING(whether to build pthread code)
 AC_ARG_ENABLE(pthreads,
   AC_HELP_STRING([--enable-pthreads], [enable threaded rendering]),

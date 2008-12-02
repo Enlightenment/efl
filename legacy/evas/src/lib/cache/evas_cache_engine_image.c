@@ -192,7 +192,7 @@ evas_cache_engine_image_init(const Evas_Cache_Engine_Image_Func *cb, Evas_Cache_
    parent->references++;
 
    new->brother = NULL;
-   
+
    return new;
 }
 
@@ -260,7 +260,6 @@ evas_cache_engine_image_flush(Evas_Cache_Engine_Image *cache)
         eim = (Engine_Image_Entry *) cache->lru->last;
         _evas_cache_engine_image_dealloc(cache, eim);
      }
-   evas_common_image_set_cache(evas_common_image_get_cache());
 }
 
 EAPI void
