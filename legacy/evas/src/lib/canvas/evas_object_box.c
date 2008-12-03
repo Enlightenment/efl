@@ -130,7 +130,7 @@ _evas_object_box_option_new_default(Evas_Object *o, Evas_Object_Box_Data *priv, 
 {
    Evas_Object_Box_Option *opt;
 
-   opt = malloc(sizeof(*opt));
+   opt = (Evas_Object_Box_Option *)malloc(sizeof(*opt));
    if (!opt)
      return NULL;
 
