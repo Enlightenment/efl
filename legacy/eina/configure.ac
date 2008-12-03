@@ -196,7 +196,7 @@ AM_CONDITIONAL(EINA_HAVE_ECORE, test "x${have_ecore}" = "xyes")
 # Check if we want to benchmark on real data
 enable_benchmark_e17="no"
 AC_ARG_ENABLE([e17],
-   [AC_HELP_STRING([--enable-e17], [disable heavy benchmark @<:@default=no@:>@])],
+   [AC_HELP_STRING([--enable-e17], [enable heavy benchmark @<:@default=no@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        enable_benchmark_e17="yes"
