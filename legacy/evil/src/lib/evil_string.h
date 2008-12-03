@@ -25,4 +25,16 @@ EAPI int ffs(int i);
 #endif /* ! __CEGCC__ */
 
 
+#ifdef _WIN32_WCE
+
+/*
+ * String manipulation related functions
+ *
+ */
+
+EAPI int strcoll (const char *s1, const char *s2);
+
+#endif /* _WIN32_WCE */
+
+
 #endif /* __EVIL_STRING_H__ */

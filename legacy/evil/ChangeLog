@@ -1,3 +1,13 @@
+2008-12-03  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/bin/evil_test_gettimeofday.c:
+	replace evil_gettimeofday by gettimeofday
+
+	* src/lib/evil_string.c:
+	* src/lib/evil_string.h:
+	add strcoll() "port" to Windows CE OS. Note it's
+	just strcmp, no locale stuff is used onn that OS.
+
 2008-11-29  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_main.c:

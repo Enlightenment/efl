@@ -17,11 +17,11 @@ test_time_tests_run(suite *s)
    struct timeval tp1;
    struct timeval tp2;
 
-   evil_gettimeofday (&tp1, NULL);
+   gettimeofday (&tp1, NULL);
 
    Sleep(20);
 
-   evil_gettimeofday (&tp2, NULL);
+   gettimeofday (&tp2, NULL);
 
    printf ("time : %ld %ld\n", tp1.tv_sec, tp1.tv_usec);
    printf ("time : %ld %ld\n", tp2.tv_sec, tp2.tv_usec);
