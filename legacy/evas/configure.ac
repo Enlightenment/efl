@@ -93,6 +93,11 @@ AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 
 PKG_PROG_PKG_CONFIG
 
+dnl wierd debian etch bug where pthread_barrier doesn't work without adding
+dnl this.
+CFLAGS="${CFLAGS=} -D_GNU_SOURCE"
+AC_SUBST(CFLAGS)
+
 WIN32_CPPFLAGS=""
 WIN32_CFLAGS=""
 lt_enable_auto_import=""
