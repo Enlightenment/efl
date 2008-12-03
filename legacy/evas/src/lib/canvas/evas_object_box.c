@@ -310,7 +310,7 @@ _evas_object_box_smart_add(Evas_Object *o)
         const Evas_Smart *smart;
         const Evas_Smart_Class *sc;
 
-	priv = calloc(1, sizeof(*priv));
+	priv = (Evas_Object_Box_Data *)calloc(1, sizeof(*priv));
 	if (!priv)
 	  {
 	     fputs("ERROR: could not allocate object private data.\n", stderr);
