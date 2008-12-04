@@ -28,10 +28,10 @@ eina_inline_mempool.x \
 eina_inline_rectangle.x \
 eina_iterator.h
 
-installed_mainheaderdir = $(prefix)/include/eina-@VMAJ@
+installed_mainheaderdir = $(includedir)/eina-@VMAJ@
 installed_mainheader_DATA = Eina.h eina_config.h
 
-installed_headersdir = $(prefix)/include/eina-@VMAJ@/eina
+installed_headersdir = $(includedir)/eina-@VMAJ@/eina
 installed_headers_DATA = $(EINAHEADERS)
 
 EXTRA_DIST = \

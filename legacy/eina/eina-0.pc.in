@@ -9,4 +9,4 @@ Requires:
 Version: @VERSION@
 Libs: -L${exec_prefix}/lib -leina
 Libs.private: -ldl
-Cflags: -I${prefix}/include/eina-@VMAJ@ -I${prefix}/include/eina-@VMAJ@/eina
+Cflags: -I${includedir}/eina-@VMAJ@ -I${includedir}/eina-@VMAJ@/eina
