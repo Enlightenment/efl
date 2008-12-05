@@ -984,6 +984,7 @@ else
 fi
   echo "    GnuTLS.....................: $have_gnutls"
   echo "    CURL.......................: $have_curl"
+  echo "    Abstract Sockets...........: $want_abstract_sockets"
 fi
 echo "  Ecore_Ipc....................: $have_ecore_ipc"
 if test "x$have_ecore_con" = "xyes" ; then

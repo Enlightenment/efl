@@ -235,7 +235,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 	socket_unix.sun_family = AF_UNIX;
 	if (type == ECORE_CON_LOCAL_ABSTRACT)
 	  {
-#ifdef HAVE_ABSTRACT_SOCKET
+#ifdef HAVE_ABSTRACT_SOCKETS
 	     /* . is a placeholder */
 	     snprintf(socket_unix.sun_path, sizeof(socket_unix.sun_path), ".%s", name);
 	     /* first char null indicates abstract namespace */
