@@ -3687,7 +3687,6 @@ collections {
                aspect: 1.0 1.0;
                aspect_preference: BOTH;
 	       image.normal: "head.png";
-	       fill.smooth: 0;
 	    }
 	 }
 	 part { name: "elm.swallow.content";
