@@ -55,6 +55,7 @@ flip_base_shad.png \
 flip_pmb.png \
 flip_pmt.png \
 flip_shad.png \
+head.png \
 sb_runnerh.png \
 sb_runnerv.png \
 shelf_inset.png \

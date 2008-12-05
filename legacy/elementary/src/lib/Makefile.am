@@ -34,6 +34,7 @@ elm_layout.c \
 elm_hover.c \
 elm_entry.c \
 elm_bubble.c \
+elm_photo.c \
 elm_contact.c \
 elm_contactlist.c \
 \

@@ -305,7 +305,15 @@ extern "C" {
    EAPI void         elm_bubble_info_set(Evas_Object *obj, const char *info);
    EAPI void         elm_bubble_content_set(Evas_Object *obj, Evas_Object *content);
    EAPI void         elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon);
+   EAPI void         elm_bubble_corner_set(Evas_Object *obj, const char *corner);
    /* smart callbacks called:
+    */
+
+   EAPI Evas_Object *elm_photo_add(Evas_Object *parent);
+   EAPI void         elm_photo_file_set(Evas_Object *obj, const char *file);
+   EAPI void         elm_photo_size_set(Evas_Object *obj, int size);
+   /* smart callbacks called:
+    * "clicked" - the user clicked the icon
     */
 
   ////////////////////////////////////////////////////////////////////////////
@@ -320,7 +328,6 @@ extern "C" {
 // * bubble doesnt handle child size changes right
 // 
 //// (incomplete - medium priority)
-// * bubble should allow style (left/right + top/bottom)
 // * buttons need a "bigbutton" option
 // * disabled not supported
 // * tab widget focusing (not useful for touchscreen tho...)

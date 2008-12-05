@@ -157,3 +157,17 @@ elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon)
 	_sizing_eval(obj);
      }
 }
+
+EAPI void
+elm_bubble_corner_set(Evas_Object *obj, const char *corner)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   
+   _elm_theme_set(wd->bbl, "bubble", corner, "default");
+   if (wd->icon)
+     edje_object_part_swallow(wd->bbl, "elm.swallow.icon", wd->icon);
+   if (wd->content)
+     edje_object_part_swallow(wd->bbl, "elm.swallow.content", wd->content);
+   // FIXME: fix label etc.
+   _sizing_eval(obj);
+}

@@ -3645,6 +3645,75 @@ collections {
   }
   
 ///////////////////////////////////////////////////////////////////////////////
+   group { name: "elm/photo/base/default";
+      images {
+	 image: "frame_1.png" COMP;
+	 image: "frame_2.png" COMP;
+         image: "dia_grad.png" COMP;
+         image: "head.png" COMP;
+      }
+      parts {
+         part { name: "base0";
+	    mouse_events:  0;	
+	    description { state: "default" 0.0;
+	       image.normal: "dia_grad.png";
+	       rel1.to: "over";
+	       rel2.to: "over";
+               fill {
+		  smooth: 0;
+		  size {
+		     relative: 0.0 1.0;
+                     offset: 64 0;
+		  }
+	       }
+	    }
+	 }
+	 part { name: "base";
+	    mouse_events:  0;
+	    description { state:    "default" 0.0;
+	       image {
+		  normal: "frame_2.png";
+		  border: 5 5 32 26;
+		  middle: 0;
+	       }
+	       fill.smooth : 0;
+	    }
+	 }
+         part { name: "head";
+	    mouse_events:  0;
+	    description { state:    "default" 0.0;
+	       rel1.offset: 4 4;
+	       rel2.offset: -5 -5;
+               aspect: 1.0 1.0;
+               aspect_preference: BOTH;
+	       image.normal: "head.png";
+	       fill.smooth: 0;
+	    }
+	 }
+	 part { name: "elm.swallow.content";
+	    type: SWALLOW;
+	    description { state: "default" 0.0;
+	       rel1.offset: 4 4;
+	       rel2.offset: -5 -5;
+	    }
+	 }
+         part { name: "over";
+	    mouse_events:  0;
+	    description { state:    "default" 0.0;
+	       rel1.offset: 4 4;
+	       rel2.offset: -5 -5;
+	       image {
+		  normal: "frame_1.png";
+		  border: 2 2 28 22;
+		  middle: 0;
+	       }
+	       fill.smooth: 0;
+	    }
+	 }
+      }
+   }
+   
+///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/icon/home/default"; min: 32 32;
       images.image: "icon_home.png" COMP; parts { part { name: "base";
 	 description { state: "default" 0.0; aspect: 1.0 1.0;
