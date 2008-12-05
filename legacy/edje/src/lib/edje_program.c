@@ -885,7 +885,8 @@ _edje_callbacks_patterns_init(Edje *ed)
 {
    Edje_Signals_Sources_Patterns *ssp = &ed->patterns.callbacks;
 
-   if (ssp->signals_patterns)
+   if ((ssp->signals_patterns) || (ssp->sources_patterns) ||
+       (ssp->globing) || (ssp->exact_match))
      return;
 
    ssp->globing = edje_match_callback_hash_build(ed->callbacks,
@@ -919,7 +920,7 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src)
 #ifdef EDJE_PROGRAM_CACHE
 	l1 = strlen(sig);
 	l2 = strlen(src);
-	tmps = alloca(l1 + l2 + 2);
+	tmps = alloca(l1 + l2 + 3); /* \0, \337, \0 */
 	strcpy(tmps, sig);
 	tmps[l1] = '\377';
 	strcpy(&(tmps[l1 + 1]), src);
@@ -1052,19 +1053,19 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src)
 		 goto break_prog;
 	    }
      }
+   break_prog:
 
    ed->walking_callbacks = 0;
    if ((ed->delete_callbacks) || (ed->just_added_callbacks))
      {
-        Edje_Signal_Callback *escb;
-
 	ed->delete_callbacks = 0;
 	ed->just_added_callbacks = 0;
-	EINA_LIST_FOREACH(ed->callbacks, l, escb)
+	l = ed->callbacks;
+	while (l)
 	  {
-	     Eina_List *next_l;
+	     Edje_Signal_Callback *escb = l->data;
+	     Eina_List *next_l = l->next;
 
-	     next_l = eina_list_next(l);
 	     if (escb->just_added)
 	       escb->just_added = 0;
 	     if (escb->delete_me)
@@ -1079,7 +1080,6 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src)
 
         _edje_callbacks_patterns_clean(ed);
      }
-   break_prog:
    _edje_unblock(ed);
    _edje_thaw(ed);
    _edje_unref(ed);
