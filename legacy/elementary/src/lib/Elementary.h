@@ -315,10 +315,12 @@ extern "C" {
 //// (bugs - high priority)
 // * scale change for hover doesnt seem to do new size alloc nicely
 // * left/right arrow broken with password mode for entry + utf8 chars...
+// * edje entry selections broke
+// * entry signal "changed" not called when deleting
+// * bubble doesnt handle child size changes right
 // 
 //// (incomplete - medium priority)
 // * bubble should allow style (left/right + top/bottom)
-// * hover needs a "best direction" call for where to put entries with constraints
 // * buttons need a "bigbutton" option
 // * disabled not supported
 // * tab widget focusing (not useful for touchscreen tho...)
@@ -331,7 +333,9 @@ extern "C" {
 // * need multi-sel (with button + hover + ...)
 // * need "photoframe" widget (for contact photos?)
 // * toolbar widget (edje + box + button + separators)
+// * in-window dialog container widget
 // * listitem widget (simple label + icon)
+// * page widget (for pushing/popping pages and going back and forward and flipping)
 // * radio widget + group handling
 // * checkbox widget (like toggle)
 // * need separator widget (h/v)
@@ -348,6 +352,7 @@ extern "C" {
 // * dialpad widget - need one with a phone dialpad
 // 
 //// (improvements - low priority)
+// * return list of toplevel window objects
 // * widgets should show who is focused (not useful for touchscreen)
 // * scroller could do with page up/down/left/right buttons and and idea of
 //   a page size

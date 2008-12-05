@@ -2861,7 +2861,6 @@ collections {
 	    entry_mode: PLAIN;
 	    multiline: 0;
 	    source: "elm/entry/selection/default"; // selection under
-	    source4: "elm/entry/cursor/default"; // cursorover
 	    source5: "elm/entry/anchor/default"; // anchor under
 	    description { state: "default" 0.0;
 	       text {
@@ -2890,7 +2889,6 @@ collections {
 	    entry_mode: PLAIN;
 	    multiline: 1;
 	    source: "elm/entry/selection/default"; // selection under
-	    source4: "elm/entry/cursor/default"; // cursorover
 	    source5: "elm/entry/anchor/default"; // anchor under
 	    description { state: "default" 0.0;
 	       text {
@@ -2919,7 +2917,6 @@ collections {
 	    entry_mode: PLAIN;
 	    multiline: 1;
 	    source: "elm/entry/selection/default"; // selection under
-	    source4: "elm/entry/cursor/default"; // cursorover
 	    source5: "elm/entry/anchor/default"; // anchor under
 	    description { state: "default" 0.0;
 	       text {
