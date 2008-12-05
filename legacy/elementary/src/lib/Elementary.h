@@ -335,6 +335,7 @@ extern "C" {
 // * entry selection conflicts with finger scroll (make selection start/stop work on signals?)
 // * need a hold-scroll counter in elm_widget
 // * add fullscreen mode on/off for windows
+// * add test for photo widget
 // 
 //// (more widgets/features - medium priority)
 // * need multi-sel (with button + hover + ...)
