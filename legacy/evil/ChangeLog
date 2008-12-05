@@ -1,3 +1,8 @@
+2008-12-05  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_main.c:
+	always export evil_init() and evil_shutdown()
+
 2008-12-03  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/bin/evil_test_gettimeofday.c:

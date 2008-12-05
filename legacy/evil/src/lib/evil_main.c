@@ -2,14 +2,16 @@
 # include <config.h>
 #endif
 
+
+#include "Evil.h"
+#include "evil_private.h"
+
 #if defined (_WIN32_WCE) && ! defined (__CEGCC__)
 
 # define WIN32_LEAN_AND_MEAN
 # include <winsock2.h>
 # undef WIN32_LEAN_AND_MEAN
 
-#include "Evil.h"
-#include "evil_private.h"
 
 extern long _evil_time_second;
 extern long _evil_time_millisecond;
