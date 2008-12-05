@@ -338,7 +338,6 @@ extern "C" {
 // 
 //// (more widgets/features - medium priority)
 // * need multi-sel (with button + hover + ...)
-// * need "photoframe" widget (for contact photos?)
 // * toolbar widget (edje + box + button + separators)
 // * in-window dialog container widget
 // * listitem widget (simple label + icon)
