@@ -248,6 +248,11 @@ do_eet_sign(const char *file, const char *private_key, const char *public_key)
      }
 
    key = eet_identity_open(public_key, private_key, NULL);
+   if (!key)
+     {
+	fprintf(stdout, "cannot open key '%s:%s'.\n", public_key, private_key);
+	exit(-1);
+     }
 
    fprintf(stdout, "Using the following key to sign `%s`.\n", file);
    eet_identity_print(key, stdout);

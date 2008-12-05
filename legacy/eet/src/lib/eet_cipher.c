@@ -171,7 +171,7 @@ eet_identity_open(const char *certificate_file, const char *private_key_file, Ee
   if (!fp) return NULL;
   cert = PEM_read_X509(fp, NULL, NULL, NULL);
   fclose(fp);
-  if (!cert) return NULL;
+  if (!cert) goto on_error;
 
   /* Check the presence of the public key. Just in case. */
   pkey = X509_get_pubkey(cert);
