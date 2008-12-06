@@ -40,12 +40,12 @@ typedef void (*Eina_Accessor_Free_Callback)(Eina_Accessor *it);
 
 struct _Eina_Accessor
 {
-#define EINA_MAGIC_ACCESSOR 0x98761232
-   EINA_MAGIC;
-
    Eina_Accessor_Get_At_Callback        get_at;
    Eina_Accessor_Get_Container_Callback	get_container;
    Eina_Accessor_Free_Callback          free;
+
+#define EINA_MAGIC_ACCESSOR 0x98761232
+   EINA_MAGIC;
 };
 
 #define FUNC_ACCESSOR_GET_AT(Function) ((Eina_Accessor_Get_At_Callback)Function)

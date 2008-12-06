@@ -65,12 +65,12 @@ typedef void **Eina_Array_Iterator;
  */
 struct _Eina_Array
 {
-   EINA_MAGIC;
-
    void		**data;   /**< Pointer to a vector of pointer to payload */
    unsigned int   total;  /**< Total number of slot in the vector */
    unsigned int   count;  /**< Number of activ slot in the vector */
    unsigned int	  step;   /**< How much must we grow the vector when it is full */
+
+   EINA_MAGIC;
 };
 
 EAPI int          eina_array_init     (void);

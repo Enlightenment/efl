@@ -40,12 +40,12 @@ typedef void (*Eina_Iterator_Free_Callback)(Eina_Iterator *it);
 
 struct _Eina_Iterator
 {
-#define EINA_MAGIC_ITERATOR 0x98761233
-   EINA_MAGIC;
-
    Eina_Iterator_Next_Callback          next;
    Eina_Iterator_Get_Container_Callback get_container;
    Eina_Iterator_Free_Callback          free;
+
+#define EINA_MAGIC_ITERATOR 0x98761233
+   EINA_MAGIC;
 };
 
 

@@ -72,20 +72,18 @@ struct _Eina_Iterator_Array
 {
    Eina_Iterator iterator;
 
-   EINA_MAGIC;
-
    const Eina_Array *array;
    unsigned int index;
+
+   EINA_MAGIC;
 };
 
 typedef struct _Eina_Accessor_Array Eina_Accessor_Array;
 struct _Eina_Accessor_Array
 {
    Eina_Accessor accessor;
-
-   EINA_MAGIC;
-
    const Eina_Array *array;
+   EINA_MAGIC;
 };
 
 static int _eina_array_init_count = 0;

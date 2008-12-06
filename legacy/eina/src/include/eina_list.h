@@ -60,20 +60,19 @@ typedef struct _Eina_List_Accounting Eina_List_Accounting;
  */
 struct _Eina_List /** A linked list node */
 {
-   EINA_MAGIC;
-
    void      *data; /**< Pointer to list element payload */
    Eina_List *next; /**< Next member in the list */
    Eina_List *prev; /**< Previous member in the list */
    struct _Eina_List_Accounting *accounting; /**< Private list accounting info - don't touch */
+
+   EINA_MAGIC;
 };
 
 struct _Eina_List_Accounting
 {
-   EINA_MAGIC;
-
    Eina_List *last;
    unsigned int count;
+   EINA_MAGIC;
 };
 
 

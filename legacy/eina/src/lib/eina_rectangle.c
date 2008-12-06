@@ -42,22 +42,20 @@ typedef struct _Eina_Rectangle_Alloc Eina_Rectangle_Alloc;
 
 struct _Eina_Rectangle_Pool
 {
-   EINA_MAGIC;
-
    Eina_Inlist *head;
    void *data;
 
    unsigned int references;
    int w;
    int h;
+   EINA_MAGIC;
 };
 
 struct _Eina_Rectangle_Alloc
 {
    EINA_INLIST;
-   EINA_MAGIC;
-
    Eina_Rectangle_Pool *pool;
+   EINA_MAGIC;
 };
 
 #define EINA_MAGIC_CHECK_RECTANGLE_POOL(d)		       \

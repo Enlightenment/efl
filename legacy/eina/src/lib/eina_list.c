@@ -118,22 +118,22 @@ struct _Eina_Iterator_List
 {
    Eina_Iterator iterator;
 
-   EINA_MAGIC;
-
    const Eina_List *head;
    const Eina_List *current;
+
+   EINA_MAGIC;
 };
 
 struct _Eina_Accessor_List
 {
    Eina_Accessor accessor;
 
-   EINA_MAGIC;
-
    const Eina_List *head;
    const Eina_List *current;
 
    unsigned int index;
+
+   EINA_MAGIC;
 };
 
 static int _eina_list_init_count = 0;
