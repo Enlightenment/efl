@@ -20,6 +20,7 @@
 #define EINA_ITERATOR_H__
 
 #include "eina_types.h"
+#include "eina_magic.h"
 
 /**
  * @defgroup Eina_Iterator_Group Iterator Functions
@@ -32,6 +33,25 @@
  * Type for iterators.
  */
 typedef struct _Eina_Iterator Eina_Iterator;
+
+typedef Eina_Bool (*Eina_Iterator_Next_Callback)(Eina_Iterator *it, void **data);
+typedef void *(*Eina_Iterator_Get_Container_Callback)(Eina_Iterator *it);
+typedef void (*Eina_Iterator_Free_Callback)(Eina_Iterator *it);
+
+struct _Eina_Iterator
+{
+#define EINA_MAGIC_ITERATOR 0x98761233
+   EINA_MAGIC;
+
+   Eina_Iterator_Next_Callback          next;
+   Eina_Iterator_Get_Container_Callback get_container;
+   Eina_Iterator_Free_Callback          free;
+};
+
+
+#define FUNC_ITERATOR_NEXT(Function) ((Eina_Iterator_Next_Callback)Function)
+#define FUNC_ITERATOR_GET_CONTAINER(Function) ((Eina_Iterator_Get_Container_Callback)Function)
+#define FUNC_ITERATOR_FREE(Function) ((Eina_Iterator_Free_Callback)Function)
 
 EAPI void eina_iterator_free           (Eina_Iterator *iterator);
 

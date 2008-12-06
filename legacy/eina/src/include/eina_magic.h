@@ -52,8 +52,8 @@ EAPI void eina_magic_fail(void *d, Eina_Magic m, Eina_Magic req_m,
 #define eina_magic_string_get(Magic)                  (NULL)
 #define eina_magic_string_set(Magic, Magic_Name)      ((void) 0)
 #define eina_magic_fail(d, m, req_m, file, fnx, line) ((void) 0)
-#define eina_magic_string_init()   (1)
-#define eina_magic_string_shutdown() (0)
+#define eina_magic_string_init()   do {} while(0)
+#define eina_magic_string_shutdown() do {} while(0)
 
 #endif
 

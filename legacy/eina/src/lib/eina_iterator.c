@@ -29,6 +29,25 @@
 #include "eina_private.h"
 
 /*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
+
+#define EINA_MAGIC_CHECK_ITERATOR(d)				\
+  do {								\
+    if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ITERATOR))		\
+      EINA_MAGIC_FAIL(d, EINA_MAGIC_ITERATOR);			\
+  } while(0);
+
+/**
+ * @endcond
+ */
+
+
+/*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
 
@@ -72,6 +91,7 @@
 EAPI void
 eina_iterator_free(Eina_Iterator *iterator)
 {
+   EINA_MAGIC_CHECK_ITERATOR(iterator);
    if (iterator) iterator->free(iterator);
 }
 
@@ -87,6 +107,7 @@ eina_iterator_free(Eina_Iterator *iterator)
 EAPI void *
 eina_iterator_container_get(Eina_Iterator *iterator)
 {
+   EINA_MAGIC_CHECK_ITERATOR(iterator);
    if (!iterator) return NULL;
    return iterator->get_container(iterator);
 }
@@ -106,6 +127,7 @@ eina_iterator_container_get(Eina_Iterator *iterator)
 EAPI Eina_Bool
 eina_iterator_next(Eina_Iterator *iterator, void **data)
 {
+   EINA_MAGIC_CHECK_ITERATOR(iterator);
    if (!iterator) return EINA_FALSE;
    return iterator->next(iterator, data);
 }
@@ -129,6 +151,8 @@ eina_iterator_foreach(Eina_Iterator *iterator,
 {
    void *container;
    void *data;
+
+   EINA_MAGIC_CHECK_ITERATOR(iterator);
 
    if (!iterator) return ;
 

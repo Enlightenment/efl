@@ -20,6 +20,7 @@
 #define EINA_ACCESSOR_H__
 
 #include "eina_types.h"
+#include "eina_magic.h"
 
 /**
  * @defgroup Eina_Accessor_Group Accessor Functions
@@ -32,6 +33,25 @@
  * Type for accessors.
  */
 typedef struct _Eina_Accessor Eina_Accessor;
+
+typedef Eina_Bool (*Eina_Accessor_Get_At_Callback)(Eina_Accessor *it, unsigned int index, void **data);
+typedef void *(*Eina_Accessor_Get_Container_Callback)(Eina_Accessor *it);
+typedef void (*Eina_Accessor_Free_Callback)(Eina_Accessor *it);
+
+struct _Eina_Accessor
+{
+#define EINA_MAGIC_ACCESSOR 0x98761232
+   EINA_MAGIC;
+
+   Eina_Accessor_Get_At_Callback        get_at;
+   Eina_Accessor_Get_Container_Callback	get_container;
+   Eina_Accessor_Free_Callback          free;
+};
+
+#define FUNC_ACCESSOR_GET_AT(Function) ((Eina_Accessor_Get_At_Callback)Function)
+#define FUNC_ACCESSOR_GET_CONTAINER(Function) ((Eina_Accessor_Get_Container_Callback)Function)
+#define FUNC_ACCESSOR_FREE(Function) ((Eina_Accessor_Free_Callback)Function)
+
 
 EAPI void eina_accessor_free           (Eina_Accessor *accessor);
 

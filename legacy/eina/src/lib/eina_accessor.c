@@ -28,6 +28,25 @@
 #include "eina_accessor.h"
 #include "eina_private.h"
 
+
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
+
+#define EINA_MAGIC_CHECK_ACCESSOR(d)				\
+  do {								\
+    if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ACCESSOR))		\
+      EINA_MAGIC_FAIL(d, EINA_MAGIC_ACCESSOR);			\
+  } while(0);
+
+/**
+ * @endcond
+ */
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -72,6 +91,7 @@
 EAPI void
 eina_accessor_free(Eina_Accessor *accessor)
 {
+   EINA_MAGIC_CHECK_ACCESSOR(accessor);
    if (accessor) accessor->free(accessor);
 }
 
@@ -87,6 +107,7 @@ eina_accessor_free(Eina_Accessor *accessor)
 EAPI void *
 eina_accessor_container_get(Eina_Accessor *accessor)
 {
+   EINA_MAGIC_CHECK_ACCESSOR(accessor);
    if (!accessor) return NULL;
    return accessor->get_container(accessor);
 }
@@ -107,6 +128,7 @@ eina_accessor_container_get(Eina_Accessor *accessor)
 EAPI Eina_Bool
 eina_accessor_data_get(Eina_Accessor *accessor, unsigned int position, void **data)
 {
+   EINA_MAGIC_CHECK_ACCESSOR(accessor);
    if (!accessor) return EINA_FALSE;
    return accessor->get_at(accessor, position, data);
 }
@@ -137,6 +159,8 @@ eina_accessor_over(Eina_Accessor *accessor,
    void *container;
    void *data;
    unsigned int i = start;
+
+   EINA_MAGIC_CHECK_ACCESSOR(accessor);
 
    if (!accessor) return ;
    if (!(start < end)) return ;
