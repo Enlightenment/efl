@@ -821,7 +821,7 @@ EAPI Eina_Bool
 eina_hash_del(Eina_Hash *hash, const void *key, const void *data)
 {
    int key_length = 0;
-   int hash_num;
+   int hash_num = 0; /* XXX: shut up GCC, not really required */
 
    if (!hash) return EINA_FALSE;
    if (key)
