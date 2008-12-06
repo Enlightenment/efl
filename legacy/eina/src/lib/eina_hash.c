@@ -44,7 +44,7 @@
 
 typedef struct _Eina_Hash_Head Eina_Hash_Head;
 typedef struct _Eina_Hash_El Eina_Hash_El;
-typedef struct _Eina_Hash_Foreach Eina_Hash_Foreach;
+typedef struct _Eina_Hash_Foreach_Data Eina_Hash_Foreach_Data;
 typedef struct _Eina_Iterator_Hash Eina_Iterator_Hash;
 typedef struct _Eina_Hash_Each Eina_Hash_Each;
 
@@ -74,9 +74,9 @@ struct _Eina_Hash_El
    Eina_Bool begin : 1;
 };
 
-struct _Eina_Hash_Foreach
+struct _Eina_Hash_Foreach_Data
 {
-   Eina_Foreach cb;
+   Eina_Hash_Foreach cb;
    const void *fdata;
 };
 
@@ -331,7 +331,7 @@ _eina_string_key_cmp(const char *key1, __UNUSED__ int key1_length,
 }
 
 static Eina_Bool
-_eina_foreach_cb(const Eina_Hash *hash, Eina_Hash_Tuple *data, Eina_Hash_Foreach *fdata)
+_eina_foreach_cb(const Eina_Hash *hash, Eina_Hash_Tuple *data, Eina_Hash_Foreach_Data *fdata)
 {
    return fdata->cb((Eina_Hash *) hash, data->key, data->data, (void*) fdata->fdata);
 }
@@ -977,11 +977,11 @@ eina_hash_modify(Eina_Hash *hash, const void *key, const void *data)
  */
 EAPI void
 eina_hash_foreach(const Eina_Hash *hash,
-		  Eina_Foreach func,
+		  Eina_Hash_Foreach func,
 		  const void *fdata)
 {
    Eina_Iterator *it;
-   Eina_Hash_Foreach foreach;
+   Eina_Hash_Foreach_Data foreach;
 
    foreach.cb = func;
    foreach.fdata = fdata;

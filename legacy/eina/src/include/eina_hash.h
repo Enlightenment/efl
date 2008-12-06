@@ -96,9 +96,9 @@ EAPI Eina_Iterator * eina_hash_iterator_key_new(const Eina_Hash *hash);
 EAPI Eina_Iterator * eina_hash_iterator_data_new(const Eina_Hash *hash);
 EAPI Eina_Iterator * eina_hash_iterator_tuple_new(const Eina_Hash *hash);
 
-typedef Eina_Bool (*Eina_Foreach)(const Eina_Hash *hash, const void *key, void *data, void *fdata);
+typedef Eina_Bool (*Eina_Hash_Foreach)(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 EAPI void        eina_hash_foreach(const Eina_Hash *hash,
-				   Eina_Foreach cb,
+				   Eina_Hash_Foreach cb,
 				   const void *fdata);
 
 /* Paul Hsieh (http://www.azillionmonkeys.com/qed/hash.html) hash function
