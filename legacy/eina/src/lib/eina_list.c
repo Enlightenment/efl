@@ -1422,18 +1422,20 @@ eina_list_sorted_merge(Eina_List *left, Eina_List *right, Eina_Compare_Cb func)
      {
 	current->next = left;
 	left->prev = current;
+	current->accounting = ret->accounting;
      }
 
    if (right)
      {
 	current->next = right;
 	right->prev = current;
+	current->accounting = ret->accounting;
      }
 
    while (current->next)
      {
-	current->accounting = ret->accounting;
 	current = current->next;
+	current->accounting = ret->accounting;
      }
 
    ret->accounting->last = current;
