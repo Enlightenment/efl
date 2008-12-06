@@ -2419,18 +2419,19 @@ _edje_real_part_box_remove_at(Edje_Real_Part *rp, unsigned int pos)
 Evas_Bool
 _edje_real_part_box_remove_all(Edje_Real_Part *rp, Evas_Bool clear)
 {
-   Evas_Object_Box_Option *opt;
    Evas_Object_Box_Data *priv;
-   Eina_List *l;
+   Eina_List *l, *l_next;
    int i;
 
    if (eina_list_count(rp->items) == 0)
      return evas_object_box_remove_all(rp->object, clear);
    priv = evas_object_smart_data_get(rp->object);
    i = 0;
-   EINA_LIST_FOREACH(priv->children, l, opt)
+   for (l = priv->children; l != NULL; l = l_next)
      {
+	Evas_Object_Box_Option *opt = l->data;
 	Evas_Object *child_obj;
+	l_next = l->next;
 	child_obj = opt->obj;
 	if (evas_object_data_get(child_obj, "\377 edje.box_item"))
 	  {
