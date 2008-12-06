@@ -11,7 +11,7 @@ typedef struct _DDraw_Output_Buffer       DDraw_Output_Buffer;
 
 struct _DDraw_Output_Buffer
 {
-   Soft16_Image im;
+   Soft16_Image *im;
   struct {
      HWND                window;
      LPDIRECTDRAW        object;
@@ -19,6 +19,7 @@ struct _DDraw_Output_Buffer
      LPDIRECTDRAWSURFACE surface_back;
      LPDIRECTDRAWSURFACE surface_source;
   } dd;
+   void        *data;
    int          x;
    int          y;
    int          width;

@@ -38,17 +38,19 @@ evas_software_ddraw_output_buffer_new(HWND                window,
         return NULL;
      }
 
-   ddob->im.pixels = (DATA16 *)surface_desc.lpSurface;
-   ddob->im.w = width;
-   ddob->im.h = height;
-   ddob->im.stride = width;
-   ddob->im.references = 1;
+   ddob->data = (DATA16 *)surface_desc.lpSurface;
 
    if (FAILED(ddob->dd.surface_source->Unlock(NULL)))
      {
         free(ddob);
         return NULL;
      }
+   if (ddob->im)
+     evas_cache_image_drop(&ddob->im->cache_entry);
+
+   ddob->im =  (Soft16_Image *) evas_cache_image_data(evas_common_soft16_image_cache_get(), width, height, (DATA32 *) ddob->data, 0, EVAS_COLORSPACE_RGB565_A5P);
+   if (ddob->im)
+     ddob->im->stride = ddob->pitch;
 
    return ddob;
 }

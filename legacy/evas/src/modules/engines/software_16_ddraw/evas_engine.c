@@ -68,13 +68,6 @@ eng_info_free(Evas *e, void *info)
 }
 
 static void
-_tmp_out_free(Soft16_Image *tmp_out)
-{
-   free(tmp_out->pixels);
-   free(tmp_out);
-}
-
-static void
 _tmp_out_alloc(Render_Engine *re)
 {
    Tilebuf_Rect *r;
@@ -88,9 +81,9 @@ _tmp_out_alloc(Render_Engine *re)
 
    if (re->tmp_out)
      {
-	if ((re->tmp_out->w < w) || (re->tmp_out->h < h))
+	if ((re->tmp_out->cache_entry.w < w) || (re->tmp_out->cache_entry.h < h))
 	  {
-	     _tmp_out_free(re->tmp_out);
+	     evas_cache_image_drop(&re->tmp_out->cache_entry);
 	     re->tmp_out = NULL;
 	  }
      }
@@ -99,14 +92,9 @@ _tmp_out_alloc(Render_Engine *re)
      {
 	Soft16_Image *im;
 
-	im = calloc(1, sizeof(Soft16_Image));
-	im->w = w;
-	im->h = h;
-	im->stride = w + ((w % 4) ? (4 - (w % 4)) : 0);
-	im->have_alpha = 0;
-	im->references = 1;
-	im->free_pixels = 1;
-	im->pixels = malloc(h * im->stride * sizeof(DATA16));
+	im = (Soft16_Image *) evas_cache_image_empty(evas_common_soft16_image_cache_get());
+        im->cache_entry.flags.alpha = 0;
+        evas_cache_image_surface_alloc(&im->cache_entry, w, h);
 
 	re->tmp_out = im;
      }
@@ -184,7 +172,7 @@ eng_setup(Evas *e, void *in)
 	  evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
 	if (re->tmp_out)
 	  {
-	     _tmp_out_free(re->tmp_out);
+	     evas_cache_image_drop(&re->tmp_out->cache_entry);
 	     re->tmp_out = NULL;
 	  }
      }
@@ -205,7 +193,7 @@ eng_output_free(void *data)
    if (re->clip_rects) DeleteObject(re->clip_rects);
    if (re->tb) evas_common_tilebuf_free(re->tb);
    if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);
-   if (re->tmp_out) _tmp_out_free(re->tmp_out);
+   if (re->tmp_out) evas_cache_image_drop(&re->tmp_out->cache_entry);
    free(re);
 
    evas_common_font_shutdown();
@@ -243,7 +231,7 @@ eng_output_resize(void *data, int w, int h)
      }
    if (re->tmp_out)
      {
-	_tmp_out_free(re->tmp_out);
+	evas_cache_image_drop(&re->tmp_out->cache_entry);
 	re->tmp_out = NULL;
      }
 }
@@ -461,7 +449,7 @@ _tmp_out_process(Render_Engine *re, int out_x, int out_y, int w, int h)
    d = &re->ddob->im;
    s = re->tmp_out;
 
-   if ((w < 1) || (h < 1) || (out_x >= d->w) || (out_y >= d->h))
+   if ((w < 1) || (h < 1) || (out_x >= d->cache_entry.w) || (out_y >= d->cache_entry.h))
      return;
 
    if (re->rotation == 90)
@@ -567,7 +555,7 @@ eng_output_idle_flush(void *data)
      }
    if (re->tmp_out)
      {
-	_tmp_out_free(re->tmp_out);
+	evas_cache_image_drop(&re->tmp_out->cache_entry);
 	re->tmp_out = NULL;
      }
 }
