@@ -2420,6 +2420,7 @@ Evas_Bool
 _edje_real_part_box_remove_all(Edje_Real_Part *rp, Evas_Bool clear)
 {
    Evas_Object_Box_Data *priv;
+   Evas_Object_Box_Option *opt;
    Eina_List *l, *l_next;
    int i;
 
@@ -2427,11 +2428,9 @@ _edje_real_part_box_remove_all(Edje_Real_Part *rp, Evas_Bool clear)
      return evas_object_box_remove_all(rp->object, clear);
    priv = evas_object_smart_data_get(rp->object);
    i = 0;
-   for (l = priv->children; l != NULL; l = l_next)
+   EINA_LIST_FOREACH_SAFE(priv->children, l, l_next, opt)
      {
-	Evas_Object_Box_Option *opt = l->data;
 	Evas_Object *child_obj;
-	l_next = l->next;
 	child_obj = opt->obj;
 	if (evas_object_data_get(child_obj, "\377 edje.box_item"))
 	  {
