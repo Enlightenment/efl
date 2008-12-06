@@ -90,7 +90,7 @@ struct _Sinfo
    } job;
    struct {
       int id;
-      Evas_Hash *hash; // FIXME: hash -> bad. too big. one-way lookup etc.
+      Eina_Hash *hash; // FIXME: hash -> bad. too big. one-way lookup etc.
    } oid;
 };
 
@@ -183,8 +183,8 @@ _oid_free(Oid *oid)
    free(oid);
 }
 
-static Evas_Bool
-_oid_freeall_cb(const Evas_Hash *hash, const char *key, void *data, void *fdata)
+static Eina_Bool
+_oid_freeall_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata)
 {
    Oid *oid = data;
    evas_object_del(oid->obj);
@@ -202,8 +202,8 @@ _oid_freeall(Edje *ed)
    si->oid.hash = NULL;
 }
 
-static Evas_Bool
-_oid_moveall_cb(const Evas_Hash *hash, const char *key, void *data, void *fdata)
+static Eina_Bool
+_oid_moveall_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata)
 {
    Oid *oid = data;
    evas_object_move(oid->obj, oid->ed->x + oid->x, oid->ed->y + oid->y);

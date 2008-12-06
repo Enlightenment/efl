@@ -151,7 +151,7 @@ check_image_part_desc (Edje_Part_Collection *pc, Edje_Part *ep,
 }
 
 static void
-check_packed_items(Edje_Part_Collection *pc, Edje_Part *ep, Edje_File *ef)
+check_packed_items(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 {
    Eina_List *l;
    Edje_Pack_Element *it;

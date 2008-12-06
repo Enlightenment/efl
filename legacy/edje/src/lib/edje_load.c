@@ -7,9 +7,9 @@
 #include "edje_private.h"
 
 void _edje_collection_free_part_description_free(Edje_Part_Description *desc, unsigned int free_strings);
-static Evas_Bool _edje_file_collection_hash_foreach(const Evas_Hash *hash, const char *key, void *data, void *fdata);
+static Eina_Bool _edje_file_collection_hash_foreach(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 #ifdef EDJE_PROGRAM_CACHE
-static Evas_Bool  _edje_collection_free_prog_cache_matches_free_cb(const Evas_Hash *hash, const char *key, void *data, void *fdata);
+static Eina_Bool  _edje_collection_free_prog_cache_matches_free_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 #endif
 static int _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *group, Eina_List *group_path);
 static void _edje_object_pack_item_hints_set(Evas_Object *obj, Edje_Pack_Element *it);
@@ -491,8 +491,13 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 	     for (i = 0; i < ed->table_parts_size; i++)
 	       {
 		  Edje_Real_Part *rp;
-		  Eina_List *curr_item;
-		  Edje_Pack_Element *pack_it;
+		  /* XXX: curr_item and pack_it don't require to be NULL since
+		   * XXX: they are just used when source != NULL and type == BOX,
+		   * XXX: and they're always set in this case, but GCC fails to
+		   * XXX: notice that, so let's shut it up
+		   */
+		  Eina_List *curr_item = NULL;
+		  Edje_Pack_Element *pack_it = NULL;
 		  const char *source = NULL;
 		  
 		  rp = ed->table_parts[i];
@@ -823,7 +828,7 @@ _edje_file_del(Edje *ed)
  * Used to free the cached data values that are stored in the data_cache
  * hash table.
  */
-static Evas_Bool data_cache_free(const Evas_Hash *hash, const char *key, void *data, void *fdata)
+static Eina_Bool data_cache_free(const Eina_Hash *hash, const void *key, void *data, void *fdata)
 {
    Edje_File    *edf;
 
@@ -1070,8 +1075,8 @@ _edje_collection_free_part_description_free(Edje_Part_Description *desc, unsigne
    free(desc);
 }
 
-static Evas_Bool
-_edje_file_collection_hash_foreach(const Evas_Hash *hash, const char *key, void *data, void *fdata)
+static Eina_Bool
+_edje_file_collection_hash_foreach(const Eina_Hash *hash, const void *key, void *data, void *fdata)
 {
    Edje_File *edf;
    Edje_Part_Collection *coll;
@@ -1087,11 +1092,12 @@ _edje_file_collection_hash_foreach(const Evas_Hash *hash, const char *key, void 
 }
 
 #ifdef EDJE_PROGRAM_CACHE
-static Evas_Bool
-_edje_collection_free_prog_cache_matches_free_cb(const Evas_Hash *hash, const char *key, void *data, void *fdata)
+static Eina_Bool
+_edje_collection_free_prog_cache_matches_free_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata)
 {
    eina_list_free((Eina_List *)data);
    return 1;
+   key = NULL;
    hash = NULL;
    fdata = NULL;
 }

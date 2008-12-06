@@ -38,15 +38,15 @@ source_edd(void)
    eddc.version = EET_DATA_DESCRIPTOR_CLASS_VERSION;
    eddc.func.mem_alloc = NULL;
    eddc.func.mem_free = NULL;
-   eddc.func.str_alloc = eina_stringshare_add;
-   eddc.func.str_free = eina_stringshare_del;
-   eddc.func.list_next = eina_list_next;
-   eddc.func.list_append = eina_list_append;
-   eddc.func.list_data = eina_list_data_get;
-   eddc.func.list_free = eina_list_free;
-   eddc.func.hash_foreach = evas_hash_foreach;
-   eddc.func.hash_add = evas_hash_add;
-   eddc.func.hash_free = evas_hash_free;
+   eddc.func.str_alloc = (char *(*)(const char *))eina_stringshare_add;
+   eddc.func.str_free = (void (*)(const char *))eina_stringshare_del;
+   eddc.func.list_next = (void *(*)(void *))eina_list_next;
+   eddc.func.list_append = (void *(*)(void *, void *))eina_list_append;
+   eddc.func.list_data = (void *(*)(void *))eina_list_data_get;
+   eddc.func.list_free = (void *(*)(void *))eina_list_free;
+   eddc.func.hash_foreach = (void (*)(void *, int (*) (void *, const char *, void *, void *), void *))evas_hash_foreach;
+   eddc.func.hash_add = (void *(*)(void *, const char *, void *))evas_hash_add;
+   eddc.func.hash_free = (void (*)(void *))evas_hash_free;
    eddc.func.str_direct_alloc = _edje_str_direct_alloc;
    eddc.func.str_direct_free = _edje_str_direct_free;
 

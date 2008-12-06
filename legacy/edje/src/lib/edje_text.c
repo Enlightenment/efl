@@ -516,6 +516,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 		       bottom = 1;
 		       top = 10;
 		    }
+		  else bottom = 0; /* XXX shut up GCC, th == sh is handled before! */
 
 		  top = size;
 		  /* search one that fits (binary search) */

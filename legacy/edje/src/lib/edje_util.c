@@ -20,11 +20,11 @@ struct _Edje_Box_Layout
 typedef struct _Edje_Box_Layout                      Edje_Box_Layout;
 
 
-static Evas_Hash *_edje_color_class_hash = NULL;
-static Evas_Hash *_edje_color_class_member_hash = NULL;
+static Eina_Hash *_edje_color_class_hash = NULL;
+static Eina_Hash *_edje_color_class_member_hash = NULL;
 
-static Evas_Hash *_edje_text_class_hash = NULL;
-static Evas_Hash *_edje_text_class_member_hash = NULL;
+static Eina_Hash *_edje_text_class_hash = NULL;
+static Eina_Hash *_edje_text_class_member_hash = NULL;
 
 static Eina_Rbtree *_edje_box_layout_registry = NULL;
 
@@ -40,8 +40,8 @@ struct _Edje_List_Foreach_Data
    Eina_List *list;
 };
 
-static Evas_Bool _edje_color_class_list_foreach(const Evas_Hash *hash, const char *key, void *data, void *fdata);
-static Evas_Bool _edje_text_class_list_foreach(const Evas_Hash *hash, const char *key, void *data, void *fdata);
+static Eina_Bool _edje_color_class_list_foreach(const Eina_Hash *hash, const void *key, void *data, void *fdata);
+static Eina_Bool _edje_text_class_list_foreach(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 
 Edje_Real_Part *_edje_real_part_recursive_get_helper(Edje *ed, char **path);
 
@@ -400,8 +400,8 @@ edje_color_class_list(void)
    return fdata.list;
 }
 
-static Evas_Bool
-_edje_color_class_list_foreach(const Evas_Hash *hash, const char *key, void *data, void *fdata)
+static Eina_Bool
+_edje_color_class_list_foreach(const Eina_Hash *hash, const void *key, void *data, void *fdata)
 {
    Edje_List_Foreach_Data *fd;
 
@@ -679,8 +679,8 @@ edje_text_class_list(void)
    return fdata.list;
 }
 
-static Evas_Bool
-_edje_text_class_list_foreach(const Evas_Hash *hash, const char *key, void *data, void *fdata)
+static Eina_Bool
+_edje_text_class_list_foreach(const Eina_Hash *hash, const void *key, void *data, void *fdata)
 {
    Edje_List_Foreach_Data *fd;
 
@@ -1026,9 +1026,9 @@ edje_object_part_text_insert(Evas_Object *obj, const char *part, const char *tex
 /** Returns a list of char * anchor names
  * @param obj A valid Evas_Object handle
  * @param part The part name
- * @return The list of anchors (const char *)
+ * @return The list of anchors (const char *), do not modify!
  */
-EAPI Eina_List *
+EAPI const Eina_List *
 edje_object_part_text_anchor_list_get(const Evas_Object *obj, const char *part)
 {
    Edje *ed;
@@ -1047,9 +1047,9 @@ edje_object_part_text_anchor_list_get(const Evas_Object *obj, const char *part)
  * @param obj A valid Evas_Object handle
  * @param part The part name
  * @param anchor The anchor name
- * @return The list of anchor rects (const Evas_Textblock_Rectangle *)
+ * @return The list of anchor rects (const Evas_Textblock_Rectangle *), do not modify!
  */
-EAPI Eina_List *
+EAPI const Eina_List *
 edje_object_part_text_anchor_geometry_get(const Evas_Object *obj, const char *part, const char *anchor)
 {
    Edje *ed;
@@ -1148,7 +1148,6 @@ _recalc_extern_parent(Evas_Object *obj)
 EAPI void
 edje_extern_object_min_size_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord minh)
 {
-   int mw, mh;
    Edje_Real_Part *rp;
 
    evas_object_size_hint_min_set(obj, minw, minh);
@@ -2336,11 +2335,11 @@ edje_object_part_box_remove_all(Evas_Object *obj, const char *part, Evas_Bool cl
    Edje_Real_Part *rp;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return NULL;
+   if ((!ed) || (!part)) return 0;
 
    rp = _edje_real_part_recursive_get(ed, part);
-   if (!rp) return NULL;
-   if (rp->part->type != EDJE_PART_TYPE_BOX) return NULL;
+   if (!rp) return 0;
+   if (rp->part->type != EDJE_PART_TYPE_BOX) return 0;
 
    return _edje_real_part_box_remove_all(rp, clear);
 
@@ -2561,8 +2560,8 @@ _edje_color_class_member_del(Edje *ed, const char *color_class)
  * Used to free the member lists that are stored in the text_class
  * and color_class hashtables.
  */
-static Evas_Bool
-member_list_free(const Evas_Hash *hash, const char *key, void *data, void *fdata)
+static Eina_Bool
+member_list_free(const Eina_Hash *hash, const void *key, void *data, void *fdata)
 {
    eina_list_free(data);
    return 1;
@@ -2577,8 +2576,8 @@ _edje_color_class_members_free(void)
    _edje_color_class_member_hash = NULL;
 }
 
-static Evas_Bool
-color_class_hash_list_free(const Evas_Hash *hash, const char *key, void *data, void *fdata)
+static Eina_Bool
+color_class_hash_list_free(const Eina_Hash *hash, const void *key, void *data, void *fdata)
 {
    Edje_Color_Class *cc;
 
@@ -2677,8 +2676,8 @@ _edje_text_class_members_free(void)
    _edje_text_class_member_hash = NULL;
 }
 
-static Evas_Bool
-text_class_hash_list_free(const Evas_Hash *hash, const char *key, void *data, void *fdata)
+static Eina_Bool
+text_class_hash_list_free(const Eina_Hash *hash, const void *key, void *data, void *fdata)
 {
    Edje_Text_Class *tc;
 

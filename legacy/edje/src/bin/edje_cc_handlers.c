@@ -2787,7 +2787,8 @@ st_collections_group_parts_part_description_inherit(void)
    Edje_Part_Description *ed, *parent = NULL;
    Eina_List *l;
    Edje_Part_Image_Id *iid;
-   char *parent_name, *state_name;
+   char *parent_name;
+   const char *state_name;
    double parent_val, state_val;
 
    check_arg_count(2);

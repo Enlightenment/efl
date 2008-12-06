@@ -1295,7 +1295,7 @@ EAPI Eina_List *
 edje_edit_style_tags_list_get(Evas_Object * obj, const char* style)
 {
    Eina_List *tags = NULL;
-   Eina_List *l, *ll;
+   Eina_List *ll;
    Edje_Style *s;
    Edje_Style_Tag *t;
 
@@ -5222,9 +5222,13 @@ _edje_generate_source_of_group(Edje *ed, const char *group, FILE *f)
       
    fprintf(f, I1"group { name: \"%s\";\n", group);
    //TODO Support alias:
-   if ((w = edje_edit_group_min_w_get(obj)) || (h = edje_edit_group_min_h_get(obj)))
+   w = edje_edit_group_min_w_get(obj);
+   h = edje_edit_group_min_h_get(obj);
+   if ((w > 0) || (h > 0))
       fprintf(f, I2"min: %d %d;\n", w, h);
-   if ((w = edje_edit_group_max_w_get(obj)) || (h = edje_edit_group_max_h_get(obj)))
+   w = edje_edit_group_max_w_get(obj);
+   h = edje_edit_group_max_h_get(obj);
+   if ((w > -1) || (h > -1))
       fprintf(f, I2"max: %d %d;\n", w, h);
    //TODO Support data
    //TODO Support script
@@ -5404,15 +5408,15 @@ source_edd(void)
    eddc.version = EET_DATA_DESCRIPTOR_CLASS_VERSION;
    eddc.func.mem_alloc = NULL;
    eddc.func.mem_free = NULL;
-   eddc.func.str_alloc = eina_stringshare_add;
-   eddc.func.str_free = eina_stringshare_del;
-   eddc.func.list_next = eina_list_next;
-   eddc.func.list_append = eina_list_append;
-   eddc.func.list_data = eina_list_data_get;
-   eddc.func.list_free = eina_list_free;
-   eddc.func.hash_foreach = evas_hash_foreach;
-   eddc.func.hash_add = evas_hash_add;
-   eddc.func.hash_free = evas_hash_free;
+   eddc.func.str_alloc = (char *(*)(const char *))eina_stringshare_add;
+   eddc.func.str_free = (void (*)(const char *))eina_stringshare_del;
+   eddc.func.list_next = (void *(*)(void *))eina_list_next;
+   eddc.func.list_append = (void *(*)(void *, void *))eina_list_append;
+   eddc.func.list_data = (void *(*)(void *))eina_list_data_get;
+   eddc.func.list_free = (void *(*)(void *))eina_list_free;
+   eddc.func.hash_foreach = (void (*)(void *, int (*) (void *, const char *, void *, void *), void *))evas_hash_foreach;
+   eddc.func.hash_add = (void *(*)(void *, const char *, void *))evas_hash_add;
+   eddc.func.hash_free = (void (*)(void *))evas_hash_free;
    eddc.func.str_direct_alloc = _edje_edit_str_direct_alloc;
    eddc.func.str_direct_free = _edje_edit_str_direct_free;
 

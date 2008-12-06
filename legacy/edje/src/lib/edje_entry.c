@@ -636,7 +636,7 @@ _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
    evas_textblock_cursor_node_first(c1);
    do 
      {
-	char *s;
+	const char *s;
 	
 	s = evas_textblock_cursor_node_format_get(c1);
 	if (s)
@@ -1032,7 +1032,6 @@ static void
 _edje_key_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Edje *ed = data;
-   Evas_Event_Key_Up *ev = event_info;
    Edje_Real_Part *rp = ed->focused_part;
    Entry *en;
    if (!rp) return;
