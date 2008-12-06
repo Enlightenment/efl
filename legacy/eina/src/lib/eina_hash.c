@@ -286,6 +286,8 @@ _eina_hash_find_by_data(const Eina_Hash *hash, const void *data, int *key_hash, 
 
    for (hash_num = 0; hash_num < EINA_HASH_BUCKET_SIZE; hash_num++)
      {
+	if (!hash->buckets[hash_num])
+	  continue;
 	it = eina_rbtree_iterator_prefix(hash->buckets[hash_num]);
 	eina_iterator_foreach(it, EINA_EACH(_eina_hash_rbtree_each), &each);
 	eina_iterator_free(it);
@@ -1009,6 +1011,8 @@ eina_hash_iterator_data_new(const Eina_Hash *hash)
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_hash_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_hash_iterator_free);
 
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
    return &it->iterator;
 }
 
@@ -1030,6 +1034,8 @@ eina_hash_iterator_key_new(const Eina_Hash *hash)
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_hash_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_hash_iterator_free);
 
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
    return &it->iterator;
 }
 
@@ -1050,6 +1056,8 @@ eina_hash_iterator_tuple_new(const Eina_Hash *hash)
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_hash_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_hash_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_hash_iterator_free);
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
 
    return &it->iterator;
 }

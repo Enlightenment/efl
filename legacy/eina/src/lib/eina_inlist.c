@@ -355,6 +355,8 @@ eina_inlist_iterator_new(const Eina_Inlist *list)
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(eina_inlist_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(eina_inlist_iterator_free);
 
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
    return &it->iterator;
 }
 
@@ -379,6 +381,8 @@ eina_inlist_accessor_new(const Eina_Inlist *list)
    it->accessor.get_at = FUNC_ACCESSOR_GET_AT(eina_inlist_accessor_get_at);
    it->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(eina_inlist_accessor_get_container);
    it->accessor.free = FUNC_ACCESSOR_FREE(eina_inlist_accessor_free);
+
+   EINA_MAGIC_SET(&it->accessor, EINA_MAGIC_ACCESSOR);
 
    return &it->accessor;
 }

@@ -179,6 +179,8 @@ _eina_rbtree_iterator_build(const Eina_Rbtree *root, unsigned char mask)
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_rbtree_iterator_get_content);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_rbtree_iterator_free);
 
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
    return &it->iterator;
 
  on_error:

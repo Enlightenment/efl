@@ -19,6 +19,8 @@
 #ifndef EINA_MAGIC_H_
 #define EINA_MAGIC_H_
 
+#include "eina_config.h"
+
 #ifdef EINA_MAGIC_DEBUG
 
 #include "eina_types.h"
