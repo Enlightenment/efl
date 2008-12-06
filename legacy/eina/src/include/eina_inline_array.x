@@ -59,7 +59,7 @@ EAPI Eina_Bool eina_array_grow(Eina_Array *array);
 static inline Eina_Bool
 eina_array_push(Eina_Array *array, const void *data)
 {
-   if (UNLIKELY((array->count + array->step) > array->total))
+   if (UNLIKELY((array->count + 1) > array->total))
      if (!eina_array_grow(array)) return EINA_FALSE;
 
    array->data[array->count++] = (void*) data;
