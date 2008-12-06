@@ -755,40 +755,9 @@ eina_hash_direct_add(Eina_Hash *hash, const void *key, const void *data)
    return eina_hash_direct_add_by_hash(hash, key, key_length, key_hash, data);
 }
 
-/**
- * Removes the entry identified by @p key and @p key_hash or @p data from the given
- * hash table.
- *
- * If @p key is @c NULL, then @p data is used to find a match to
- * remove.
- *
- * @param   hash The given hash table.
- * @param   key  The key.  Can be @c NULL.
- * @param   key_length Should be the length of @p key (don't forget to count '\\0' for string).
- * @param   key_hash The hash that always match the key. Ignored if @p key is @c NULL.
- * @param   data The data pointer to remove if @p key is @c NULL.
- *               Otherwise, not required and can be @c NULL.
- * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
- *          thing goes fine.
- */
-EAPI Eina_Bool
-eina_hash_del_by_hash(Eina_Hash *hash, const void *key, int key_length, int key_hash, const void *data)
+static Eina_Bool
+_eina_hash_del_by_hash_el(Eina_Hash *hash, Eina_Hash_El *el, Eina_Hash_Head *eh, int key_hash)
 {
-   Eina_Hash_El *el = NULL;
-   Eina_Hash_Head *eh;
-   Eina_Hash_Tuple tuple;
-
-   tuple.key = (void *) key;
-   tuple.key_length = key_length;
-   tuple.data = (void *) data;
-
-   if (!hash) return EINA_FALSE;
-   if (!key) el = _eina_hash_find_by_data(hash, data, &key_hash, &eh);
-   else el = _eina_hash_find_by_hash(hash, &tuple, key_hash, &eh);
-
-   if (!el) return EINA_FALSE;
-   if (data && el->tuple.data != data) return EINA_FALSE;
-
    eh->head = eina_rbtree_inline_remove(eh->head, EINA_RBTREE_GET(el), EINA_RBTREE_CMP_NODE_CB(_eina_hash_key_rbtree_cmp_node), hash->key_cmp_cb);
    if (el->begin == EINA_FALSE) free(el);
 
@@ -806,6 +775,121 @@ eina_hash_del_by_hash(Eina_Hash *hash, const void *key, int key_length, int key_
 }
 
 /**
+ * Removes the entry identified by @p key and @p key_hash from the given
+ * hash table.
+ *
+ * @param   hash The given hash table.
+ * @param   key  The key.  Cannot be @c NULL.
+ * @param   key_length Should be the length of @p key (don't forget to count '\\0' for string).
+ * @param   key_hash The hash that always match the key.
+ * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
+ *          thing goes fine.
+ *
+ * @note if you don't have the key_hash, use eina_hash_del_by_key() instead.
+ * @note if you don't have the key, use eina_hash_del_by_data() instead.
+ */
+EAPI Eina_Bool
+eina_hash_del_by_key_hash(Eina_Hash *hash, const void *key, int key_length, int key_hash)
+{
+   Eina_Hash_El *el;
+   Eina_Hash_Head *eh;
+   Eina_Hash_Tuple tuple;
+
+   if (!hash) return EINA_FALSE;
+   if (!key) return EINA_FALSE;
+
+   tuple.key = (void *) key;
+   tuple.key_length = key_length;
+   tuple.data = NULL;
+
+   el = _eina_hash_find_by_hash(hash, &tuple, key_hash, &eh);
+   if (!el) return EINA_FALSE;
+   return _eina_hash_del_by_hash_el(hash, el, eh, key_hash);
+}
+
+/**
+ * Removes the entry identified by @p key from the given hash table.
+ *
+ * This version will calculate key length and hash by using functions
+ * provided to hash creation function.
+ *
+ * @param   hash The given hash table.
+ * @param   key  The key.  Cannot be @c NULL.
+ * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
+ *          thing goes fine.
+ *
+ * @note if you already have the key_hash, use eina_hash_del_by_key_hash() instead.
+ * @note if you don't have the key, use eina_hash_del_by_data() instead.
+ */
+EAPI Eina_Bool
+eina_hash_del_by_key(Eina_Hash *hash, const void *key)
+{
+   int key_length, key_hash;
+
+   if (!hash) return EINA_FALSE;
+   if (!key) return EINA_FALSE;
+
+   key_length = hash->key_length_cb(key);
+   key_hash = hash->key_hash_cb(key, key_length);
+   return eina_hash_del_by_key_hash(hash, key, key_length, key_hash);
+}
+
+/**
+ * Removes the entry identified by @p data from the given hash table.
+ *
+ * This version is slow since there is no quick access to nodes based on data.
+ *
+ * @param   hash The given hash table.
+ * @param   data  The data value to search and remove.
+ * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
+ *          thing goes fine.
+ *
+ * @note if you already have the key, use eina_hash_del_by_key() or eina_hash_del_by_key_hash() instead.
+ */
+EAPI Eina_Bool
+eina_hash_del_by_data(Eina_Hash *hash, const void *data)
+{
+   Eina_Hash_El *el;
+   Eina_Hash_Head *eh;
+   int key_hash;
+
+   if (!hash) return EINA_FALSE;
+   if (!data) return EINA_FALSE;
+
+   el = _eina_hash_find_by_data(hash, data, &key_hash, &eh);
+   if (!el) return EINA_FALSE;
+   if (el->tuple.data != data) return EINA_FALSE;
+   return _eina_hash_del_by_hash_el(hash, el, eh, key_hash);
+}
+
+/**
+ * Removes the entry identified by @p key and @p key_hash or @p data from the given
+ * hash table.
+ *
+ * If @p key is @c NULL, then @p data is used to find a match to
+ * remove.
+ *
+ * @param   hash The given hash table.
+ * @param   key  The key.  Can be @c NULL.
+ * @param   key_length Should be the length of @p key (don't forget to count '\\0' for string).
+ * @param   key_hash The hash that always match the key. Ignored if @p key is @c NULL.
+ * @param   data The data pointer to remove if @p key is @c NULL.
+ *               Otherwise, not required and can be @c NULL.
+ * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
+ *          thing goes fine.
+ *
+ * @note if you know you already have the key, use eina_hash_del_by_key_hash(),
+ *       if you know you don't have the key, use eina_hash_del_by_data()
+ *       directly.
+ */
+EAPI Eina_Bool
+eina_hash_del_by_hash(Eina_Hash *hash, const void *key, int key_length, int key_hash, const void *data)
+{
+   if (key) return eina_hash_del_by_key_hash(hash, key, key_length, key_hash);
+   else return eina_hash_del_by_data(hash, data);
+}
+
+/**
  * Removes the entry identified by @p key or @p data from the given
  * hash table.
  *
@@ -818,21 +902,17 @@ eina_hash_del_by_hash(Eina_Hash *hash, const void *key, int key_length, int key_
  *               Otherwise, not required and can be @c NULL.
  * @return  Will return EINA_FALSE if an error occured, and EINA_TRUE if every
  *          thing goes fine.
+ *
+ * @note if you know you already have the key, use
+ *       eina_hash_del_by_key() or eina_hash_del_by_key_hash(). If you
+ *       know you don't have the key, use eina_hash_del_by_data()
+ *       directly.
  */
 EAPI Eina_Bool
 eina_hash_del(Eina_Hash *hash, const void *key, const void *data)
 {
-   int key_length = 0;
-   int hash_num = 0; /* XXX: shut up GCC, not really required */
-
-   if (!hash) return EINA_FALSE;
-   if (key)
-     {
-	key_length = hash->key_length_cb(key);
-	hash_num = hash->key_hash_cb(key, key_length);
-     }
-
-   return eina_hash_del_by_hash(hash, key, key_length, hash_num, data);
+   if (key) return eina_hash_del_by_key(hash, key);
+   else return eina_hash_del_by_data(hash, data);
 }
 
 /**
