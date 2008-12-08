@@ -19,6 +19,8 @@
 #ifndef EINA_ACCESSOR_H__
 #define EINA_ACCESSOR_H__
 
+#include "eina_config.h"
+
 #include "eina_types.h"
 #include "eina_magic.h"
 
