@@ -717,20 +717,6 @@ _edje_file_del(Edje *ed)
    _edje_programs_patterns_clean(ed);
 
    if (!((ed->file) && (ed->collection))) return;
-   if ((ed->file) && (ed->collection))
-     {
-	Eina_List *l;
-	Edje_Part *ep;
-
-	_edje_textblock_styles_del(ed);
-	EINA_LIST_FOREACH(ed->collection->parts, l, ep)
-	  {
-	     _edje_text_part_on_del(ed, ep);
-	     _edje_color_class_on_del(ed, ep);
-	  }
-	_edje_cache_coll_unref(ed->file, ed->collection);
-	ed->collection = NULL;
-     }
    if (ed->table_parts)
      {
 	int i;
@@ -786,6 +772,20 @@ _edje_file_del(Edje *ed)
 	     _edje_unref(rp->edje);
 	     free(rp);
 	  }
+     }
+   if ((ed->file) && (ed->collection))
+     {
+	Eina_List *l;
+	Edje_Part *ep;
+
+	_edje_textblock_styles_del(ed);
+	EINA_LIST_FOREACH(ed->collection->parts, l, ep)
+	  {
+	     _edje_text_part_on_del(ed, ep);
+	     _edje_color_class_on_del(ed, ep);
+	  }
+	_edje_cache_coll_unref(ed->file, ed->collection);
+	ed->collection = NULL;
      }
    if (ed->file)
      {
