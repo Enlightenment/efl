@@ -187,32 +187,59 @@ _ecore_x_event_handle_key_press(XEvent *xevent)
    Ecore_X_Event_Key_Down *e;
    char                   *keyname;
    int                     val;
-   char                    buf[256];
+   char                   *buf;
+   int                     buflen = 256;
    KeySym                  sym;
    XComposeStatus          status;
 
    e = calloc(1, sizeof(Ecore_X_Event_Key_Down));
    if (!e) return;
+   buf = malloc(buflen);
+   if (!buf)
+     {
+	free(e);
+	return;
+     }
    keyname = XKeysymToString(XKeycodeToKeysym(xevent->xkey.display, 
 					      xevent->xkey.keycode, 0));
    if (!keyname)
      {
-	snprintf(buf, sizeof(buf), "Keycode-%i", xevent->xkey.keycode);
+	snprintf(buf, buflen, "Keycode-%i", xevent->xkey.keycode);
 	keyname = buf;
      }
    e->keyname = strdup(keyname);
    if (!e->keyname)
      {
+	free(buf);
 	free(e);
 	return;
      }
-   val = XLookupString((XKeyEvent *)xevent, buf, sizeof(buf), &sym, &status);
-   if (val > 0)
+   if (_ecore_x_ic)
      {
-	buf[val] = 0;
-	e->key_compose = ecore_txt_convert(nl_langinfo(CODESET), "UTF-8", buf);
+	Status mbstatus;
+	val = Xutf8LookupString(_ecore_x_ic, (XKeyEvent *)xevent, buf, buflen - 1, &sym, &mbstatus);
+	if (mbstatus == XBufferOverflow)
+	  {
+	     buflen = val + 1;
+	     buf = realloc(buf, buflen);
+	     val = Xutf8LookupString(_ecore_x_ic, (XKeyEvent *)xevent, buf, buflen - 1, &sym, &mbstatus);
+	  }
+	if (val > 0)
+	  {
+	     buf[val] = 0;
+	     e->key_compose = strdup(buf);
+	  }
      }
-   else e->key_compose = NULL;
+   else
+     {
+	val = XLookupString((XKeyEvent *)xevent, buf, sizeof(buf), &sym, &status);
+	if (val > 0)
+	  {
+	     buf[val] = 0;
+	     e->key_compose = ecore_txt_convert(nl_langinfo(CODESET), "UTF-8", buf);
+	  }
+        else e->key_compose = NULL;
+     }
    keyname = XKeysymToString(sym);
    if (keyname) e->keysymbol = strdup(keyname);
    else e->keysymbol = strdup(e->keyname);
@@ -220,6 +247,7 @@ _ecore_x_event_handle_key_press(XEvent *xevent)
      {
 	if (e->keyname) free(e->keyname);
 	if (e->key_compose) free(e->key_compose);
+	free(buf);
 	free(e);
 	return;
      }
@@ -231,7 +259,9 @@ _ecore_x_event_handle_key_press(XEvent *xevent)
    e->same_screen = xevent->xkey.same_screen;
    e->root_win = xevent->xkey.root;
    _ecore_x_event_last_time = e->time;
+   printf("ECORE_X KEY: %s %s\n", e->keyname, e->key_compose);
    ecore_event_add(ECORE_X_EVENT_KEY_DOWN, e, _ecore_x_event_free_key_down, NULL);
+   free(buf);
 }
 
 void
@@ -706,6 +736,14 @@ _ecore_x_event_handle_focus_in(XEvent *xevent)
 {
    Ecore_X_Event_Window_Focus_In *e;
 	
+   if (_ecore_x_ic)
+     {
+	char *str;
+	XSetICValues(_ecore_x_ic, XNFocusWindow, xevent->xfocus.window, NULL);
+	if ((str = Xutf8ResetIC(_ecore_x_ic)))
+	  XFree(str);
+	XSetICFocus(_ecore_x_ic);
+     }
    e = calloc(1, sizeof(Ecore_X_Event_Window_Focus_In));
    if (!e) return;
    e->win = xevent->xfocus.window;
@@ -731,6 +769,8 @@ _ecore_x_event_handle_focus_out(XEvent *xevent)
 {
    Ecore_X_Event_Window_Focus_Out *e;
 	
+   if (_ecore_x_ic)
+     XUnsetICFocus(_ecore_x_ic);
    e = calloc(1, sizeof(Ecore_X_Event_Window_Focus_Out));
    if (!e) return;
    e->win = xevent->xfocus.window;

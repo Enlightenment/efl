@@ -146,6 +146,7 @@ extern Window   _ecore_x_event_last_win;
 extern int      _ecore_x_event_last_root_x;
 extern int      _ecore_x_event_last_root_y;
 extern int      _ecore_x_xcursor;
+extern XIC      _ecore_x_ic;
 
 extern Ecore_X_Atom     _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
 

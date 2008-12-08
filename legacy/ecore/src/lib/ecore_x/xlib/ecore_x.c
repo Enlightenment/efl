@@ -37,6 +37,7 @@ Window   _ecore_x_event_last_win = 0;
 int      _ecore_x_event_last_root_x = 0;
 int      _ecore_x_event_last_root_y = 0;
 int      _ecore_x_xcursor = 0;
+XIC      _ecore_x_ic = NULL; /* Input context for composed characters */
 
 Ecore_X_Window _ecore_x_private_win = 0;
 
@@ -407,6 +408,40 @@ ecore_x_init(const char *name)
    
    _ecore_x_private_win = ecore_x_window_override_new(0, -77, -777, 123, 456);
    
+   /* Setup XIM */
+   if (!_ecore_x_ic && XSupportsLocale())
+     {
+	XIM im;
+	XIC ic;
+	XIMStyles *supported_styles;
+	XIMStyle chosen_style = 0;
+	Ecore_X_Window client_window = ecore_x_window_root_get(_ecore_x_private_win);
+	char *ret;
+	int i;
+
+	XSetLocaleModifiers("@im=none");
+	if ((im = XOpenIM(_ecore_x_disp, NULL, NULL, NULL)) == NULL)
+	  goto _im_create_end;
+	ret = XGetIMValues(im, XNQueryInputStyle, &supported_styles, NULL);
+	if (ret || !supported_styles)
+	  goto _im_create_error;
+	for (i = 0; i < supported_styles->count_styles; i++)
+	  if (supported_styles->supported_styles[i] == (XIMPreeditNothing | XIMStatusNothing))
+	    chosen_style = supported_styles->supported_styles[i];
+	XFree(supported_styles);
+	if (!chosen_style)
+	  goto _im_create_error;
+	ic = XCreateIC(im, XNInputStyle, chosen_style, XNClientWindow, client_window, NULL);
+	if (ic)
+	  {
+	     _ecore_x_ic = ic;
+	     goto _im_create_end;
+	  }
+_im_create_error:
+	XCloseIM(im);
+     }
+_im_create_end:
+
    return _ecore_x_init_count;
 }
 
@@ -428,6 +463,14 @@ _ecore_x_shutdown(int close_display)
    _ecore_x_selection_shutdown();
    _ecore_x_dnd_shutdown();
    ecore_x_netwm_shutdown();
+   if (_ecore_x_ic)
+     {
+	XIM xim;
+	xim = XIMOfIC(_ecore_x_ic);
+	XDestroyIC(_ecore_x_ic);
+	XCloseIM(xim);
+	_ecore_x_ic = NULL;
+     }
    if (_ecore_x_init_count < 0) _ecore_x_init_count = 0;
    return _ecore_x_init_count;
 }
