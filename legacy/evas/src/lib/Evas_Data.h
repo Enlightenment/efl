@@ -115,8 +115,8 @@ extern "C" {
   }
   static inline void evas_hash_free(Eina_Hash *hash)
   {
-     if (!hash) return NULL;
-     return eina_hash_free(hash);
+     if (!hash) return ;
+     eina_hash_free(hash);
   }
 
   static inline void evas_hash_foreach(const Eina_Hash *hash, Eina_Hash_Foreach cb, const void *fdata)
