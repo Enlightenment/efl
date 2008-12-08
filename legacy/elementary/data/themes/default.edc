@@ -3637,7 +3637,7 @@ collections {
 	    type: TEXTBLOCK;
 	    mouse_events: 1;
 	    scale: 1;
-	    entry_mode: PASSOWRD;
+	    entry_mode: PASSWORD;
 	    multiline: 0;
 	    source: "elm/entry/selection/default"; // selection under
 	    source4: "elm/entry/cursor/default"; // cursorover

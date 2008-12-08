@@ -319,23 +319,20 @@ _text_to_mkup(const char *text)
 {
    char *str = NULL;
    int str_len = 0, str_alloc = 0;
-   int ch, pos = 0;
+   int ch, pos = 0, pos2 = 0;
    
    for (;;)
      {
         // FIXME: use evas_string_char_next_get()
-        ch = evas_common_font_utf8_get_next((unsigned char *)(text), &pos);
+        pos = pos2;
+        ch = evas_common_font_utf8_get_next((unsigned char *)(text), &pos2);
         if (ch <= 0) break;
         if (ch == '\n') str = _str_append(str, "<br>", &str_len, &str_alloc);
         else if (ch == '\t') str = _str_append(str, "<\t>", &str_len, &str_alloc);
         else
           {
-             int pos2;
              char tstr[16];
              
-             pos2 = pos;
-             // FIXME: use evas_string_char_next_get()
-             ch = evas_common_font_utf8_get_next((unsigned char *)(text), &pos2);
              strncpy(tstr, text + pos, pos2 - pos);
              tstr[pos2 - pos] = 0;
              str = _str_append(str, tstr, &str_len, &str_alloc);
