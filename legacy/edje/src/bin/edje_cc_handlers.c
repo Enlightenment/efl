@@ -2081,7 +2081,7 @@ st_collections_group_parts_part_entry_mode(void)
 			       "NONE", EDJE_ENTRY_EDIT_MODE_NONE,
 			       "PLAIN", EDJE_ENTRY_EDIT_MODE_SELECTABLE,
 			       "EDITABLE", EDJE_ENTRY_EDIT_MODE_EDITABLE,
-			       "PASSOWRD", EDJE_ENTRY_EDIT_MODE_PASSWORD,
+			       "PASSWORD", EDJE_ENTRY_EDIT_MODE_PASSWORD,
 			       NULL);
 }
 
