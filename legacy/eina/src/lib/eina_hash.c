@@ -349,6 +349,41 @@ _eina_string_key_cmp(const char *key1, __UNUSED__ int key1_length,
    return strcmp(key1, key2);
 }
 
+static unsigned int
+_eina_int32_key_length(__UNUSED__ const uint32_t *key)
+{
+  return 4;
+}
+
+static int
+_eina_int32_key_cmp(const uint32_t *key1, __UNUSED__ int key1_length,
+		    const uint32_t *key2, __UNUSED__ int key2_length)
+{
+  if (*key1 > *key2)
+    return 1;
+  if (*key1 < *key2)
+    return -1;
+  return 0;
+}
+
+static unsigned int
+_eina_int64_key_length(__UNUSED__ const uint32_t *key)
+{
+  return 8;
+}
+
+static int
+_eina_int64_key_cmp(const uint64_t *key1, __UNUSED__ int key1_length,
+		    const uint64_t *key2, __UNUSED__ int key2_length)
+{
+  if (*key1 > *key2)
+    return 1;
+  if (*key1 < *key2)
+    return -1;
+  return 0;
+}
+
+
 static Eina_Bool
 _eina_foreach_cb(const Eina_Hash *hash, Eina_Hash_Tuple *data, Eina_Hash_Foreach_Data *fdata)
 {
@@ -603,6 +638,40 @@ eina_hash_string_superfast_new(Eina_Free_Cb data_free_cb)
 			EINA_KEY_CMP(_eina_string_key_cmp),
 			EINA_KEY_HASH(eina_hash_superfast),
 			data_free_cb);
+}
+
+EAPI Eina_Hash *
+eina_hash_int32_new(Eina_Free_Cb data_free_cb)
+{
+   return eina_hash_new(EINA_KEY_LENGTH(_eina_int32_key_length),
+			EINA_KEY_CMP(_eina_int32_key_cmp),
+			EINA_KEY_HASH(eina_hash_int32),
+			data_free_cb);
+}
+
+EAPI Eina_Hash *
+eina_hash_int64_new(Eina_Free_Cb data_free_cb)
+{
+   return eina_hash_new(EINA_KEY_LENGTH(_eina_int64_key_length),
+			EINA_KEY_CMP(_eina_int64_key_cmp),
+			EINA_KEY_HASH(eina_hash_int64),
+			data_free_cb);
+}
+
+EAPI Eina_Hash *
+eina_hash_pointer_new(Eina_Free_Cb data_free_cb)
+{
+#ifdef __LP64__
+   return eina_hash_new(EINA_KEY_LENGTH(_eina_int64_key_length),
+			EINA_KEY_CMP(_eina_int64_key_cmp),
+			EINA_KEY_HASH(eina_hash_int64),
+			data_free_cb);
+#else
+   return eina_hash_new(EINA_KEY_LENGTH(_eina_int32_key_length),
+			EINA_KEY_CMP(_eina_int32_key_cmp),
+			EINA_KEY_HASH(eina_hash_int32),
+			data_free_cb);
+#endif
 }
 
 /**

@@ -68,6 +68,9 @@ EAPI Eina_Hash * eina_hash_new(Eina_Key_Length key_length_cb,
 			       Eina_Free_Cb data_free_cb);
 EAPI Eina_Hash * eina_hash_string_djb2_new(Eina_Free_Cb data_free_cb);
 EAPI Eina_Hash * eina_hash_string_superfast_new(Eina_Free_Cb data_free_cb);
+EAPI Eina_Hash * eina_hash_int32_new(Eina_Free_Cb data_free_cb);
+EAPI Eina_Hash * eina_hash_int64_new(Eina_Free_Cb data_free_cb);
+EAPI Eina_Hash * eina_hash_pointer_new(Eina_Free_Cb data_free_cb);
 
 EAPI Eina_Bool   eina_hash_add(Eina_Hash *hash, const void *key, const void *data);
 EAPI Eina_Bool   eina_hash_direct_add(Eina_Hash *hash, const void *key, const void *data);
@@ -113,6 +116,10 @@ EAPI int eina_hash_superfast(const char *key, int len);
 
 /* Hash function first reported by dan bernstein many years ago in comp.lang.c */
 static inline int eina_hash_djb2(const char *key, int len);
+
+/* Hash function from http://www.concentric.net/~Ttwang/tech/inthash.htm */
+static inline int eina_hash_int32(unsigned int *pkey, __UNUSED__ int len);
+static inline int eina_hash_int64(unsigned long int *pkey, __UNUSED__ int len);
 
 #include "eina_inline_hash.x"
 

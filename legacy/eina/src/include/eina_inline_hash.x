@@ -53,4 +53,32 @@ eina_hash_djb2_len(const char *key, int *plen)
    return (int)hash_num;
 }
 
+static inline int
+eina_hash_int32(unsigned int *pkey, __UNUSED__ int len)
+{
+  unsigned int key = *pkey;
+
+  key = ~key + (key << 15);
+  key = key ^ (key >> 12);
+  key = key + (key << 2);
+  key = key ^ (key >> 4);
+  key = key * 2057;
+  key = key ^ (key >> 16);
+  return key;
+}
+
+static inline int
+eina_hash_int64(unsigned long int *pkey, __UNUSED__ int len)
+{
+  unsigned long int key = *pkey;
+
+  key = (~key) + (key << 18);
+  key = key ^ (key >> 31);
+  key = key * 21;
+  key = key ^ (key >> 11);
+  key = key + (key << 6);
+  key = key ^ (key >> 22);
+  return (int) key;
+}
+
 #endif
