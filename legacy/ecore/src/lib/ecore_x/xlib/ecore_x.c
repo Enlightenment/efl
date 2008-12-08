@@ -451,6 +451,14 @@ _ecore_x_shutdown(int close_display)
    _ecore_x_init_count--;
    if (_ecore_x_init_count > 0) return _ecore_x_init_count;
    if (!_ecore_x_disp) return _ecore_x_init_count;
+   if (_ecore_x_ic)
+     {
+	XIM xim;
+	xim = XIMOfIC(_ecore_x_ic);
+	XDestroyIC(_ecore_x_ic);
+	XCloseIM(xim);
+	_ecore_x_ic = NULL;
+     }
    if (close_display)
       XCloseDisplay(_ecore_x_disp);
    else
@@ -463,14 +471,6 @@ _ecore_x_shutdown(int close_display)
    _ecore_x_selection_shutdown();
    _ecore_x_dnd_shutdown();
    ecore_x_netwm_shutdown();
-   if (_ecore_x_ic)
-     {
-	XIM xim;
-	xim = XIMOfIC(_ecore_x_ic);
-	XDestroyIC(_ecore_x_ic);
-	XCloseIM(xim);
-	_ecore_x_ic = NULL;
-     }
    if (_ecore_x_init_count < 0) _ecore_x_init_count = 0;
    return _ecore_x_init_count;
 }
