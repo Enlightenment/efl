@@ -35,12 +35,11 @@ elm_hover.c \
 elm_entry.c \
 elm_bubble.c \
 elm_photo.c \
-elm_contact.c \
-elm_contactlist.c \
 \
 elc_notepad.c \
 elc_anchorview.c \
 elc_anchorblock.c \
+elc_hoversel.c \
 \
 els_pan.c \
 els_pan.h \

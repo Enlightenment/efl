@@ -138,6 +138,7 @@ extern "C" {
    EAPI Evas_Object *elm_button_add(Evas_Object *parent);
    EAPI void         elm_button_label_set(Evas_Object *obj, const char *label);
    EAPI void         elm_button_icon_set(Evas_Object *obj, Evas_Object *icon);
+   EAPI void         elm_button_style_set(Evas_Object *obj, const char *style);
    /* smart callbacks called:
     * "clicked" - the user clicked the button
     */
@@ -166,6 +167,7 @@ extern "C" {
    EAPI Evas_Object *elm_frame_add(Evas_Object *parent);
    EAPI void         elm_frame_label_set(Evas_Object *obj, const char *label);
    EAPI void         elm_frame_content_set(Evas_Object *obj, Evas_Object *content);
+   EAPI void         elm_frame_style_set(Evas_Object *obj, const char *style);
    /* smart callbacks called:
     */
        

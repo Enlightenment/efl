@@ -8,6 +8,7 @@ struct _Widget_Data
    Evas_Object *btn;
    Evas_Object *icon;
    const char *label;
+   const char *style;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -22,6 +23,7 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->label) eina_stringshare_del(wd->label);
+   if (wd->style) eina_stringshare_del(wd->style);
    free(wd);
 }
 
@@ -29,7 +31,10 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   _elm_theme_set(wd->btn, "button", "base", "default");
+   if (wd->style) _elm_theme_set(wd->btn, "button", "base", wd->style);
+   else _elm_theme_set(wd->btn, "button", "base", "default");
+   if (wd->icon)
+     edje_object_part_swallow(wd->btn, "elm.swallow.content", wd->icon);
    if (wd->label)
      edje_object_signal_emit(wd->btn, "elm,state,text,visible", "elm");
    else
@@ -153,4 +158,14 @@ elm_button_icon_set(Evas_Object *obj, Evas_Object *icon)
      }
    else
      wd->icon = icon;
+}
+
+EAPI void
+elm_button_style_set(Evas_Object *obj, const char *style)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->style) eina_stringshare_del(wd->style);
+   if (style) wd->style = eina_stringshare_add(style);
+   else wd->style = NULL;
+   _theme_hook(obj);
 }

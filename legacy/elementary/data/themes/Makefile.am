@@ -62,7 +62,12 @@ shelf_inset.png \
 tog_base.png \
 shad_circ.png \
 bt_dis_base.png \
-bt_dis_hilight.png
+bt_dis_hilight.png \
+outdent-top.png \
+outdent-bottom.png \
+updown.png \
+leftright.png \
+hoversel_entry_bg.png
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
