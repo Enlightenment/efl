@@ -1,3 +1,4 @@
+
 /* EINA - EFL data type library
  * Copyright (C) 2002-2008 Carsten Haitzler, Gustavo Sverzut Barbieri,
  *                         Vincent Torri, Jorge Luis Zapata Muga, Cedric Bail
@@ -87,9 +88,9 @@ EAPI Eina_Bool   eina_hash_direct_add_by_hash(Eina_Hash *hash,
 					      const void *key, int key_length, int key_hash,
 					      const void *data);
 
-EAPI Eina_Bool   eina_hash_del_by_key_hash(Eina_Hash *hash, const void *key, int key_length, int key_hash, const void *data);
+EAPI Eina_Bool   eina_hash_del_by_key_hash(Eina_Hash *hash, const void *key, int key_length, int key_hash);
 
-EAPI Eina_Bool   eina_hash_del_by_key(Eina_Hash *hash, const void *key, const void *data);
+EAPI Eina_Bool   eina_hash_del_by_key(Eina_Hash *hash, const void *key);
 EAPI Eina_Bool   eina_hash_del_by_data(Eina_Hash *hash, const void *data);
 
 EAPI Eina_Bool   eina_hash_del_by_hash(Eina_Hash *hash,
