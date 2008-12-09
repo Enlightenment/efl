@@ -25,9 +25,9 @@
 
 #include <stdlib.h>
 
-#include "eina_accessor.h"
 #include "eina_private.h"
 
+#include "eina_accessor.h"
 
 /*============================================================================*
  *                                  Local                                     *

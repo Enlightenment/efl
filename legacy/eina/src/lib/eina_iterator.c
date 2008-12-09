@@ -25,8 +25,9 @@
 
 #include <stdlib.h>
 
-#include "eina_iterator.h"
 #include "eina_private.h"
+
+#include "eina_iterator.h"
 
 /*============================================================================*
  *                                  Local                                     *
