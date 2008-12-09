@@ -758,7 +758,7 @@ evas_object_box_layout_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, vo
 	     sub_pixel -= 1 << 16;
 	  }
      }
-   evas_object_size_hint_min_set(o, x, top_h);
+   evas_object_size_hint_min_set(o, req_w, top_h);
 }
 
 static int
@@ -920,7 +920,7 @@ evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void
 	     sub_pixel -= 1 << 16;
 	  }
      }
-   evas_object_size_hint_min_set(o, top_w, y);
+   evas_object_size_hint_min_set(o, top_w, req_h);
 }
 
 /**
