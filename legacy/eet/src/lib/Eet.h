@@ -842,6 +842,16 @@ extern "C" {
     * }
     * Blah;
     *
+    * Eina_Hash*
+    * eet_eina_hash_add(Eina_Hash *hash, const char *key, const void *data)
+    * {
+    *    if (!hash) hash = eina_hash_string_superfast_new(NULL);
+    *    if (!hash) return NULL;
+    *
+    *    eina_hash_add(hash, key, data);
+    *    return hash;
+    * }
+    *
     * int
     * main(int argc, char **argv)
     * {
@@ -859,9 +869,9 @@ extern "C" {
     *                                   eina_list_append,
     *                                   eina_list_data_get,
     *                                   eina_list_free,
-    *                                   evas_hash_foreach,
-    *                                   evas_hash_add,
-    *                                   evas_hash_free);
+    *                                   eina_hash_foreach,
+    *                                   eet_eina_hash_add,
+    *                                   eina_hash_free);
     *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd3, Blah3, "string3", string, EET_T_STRING);
     *
     *    edd2 = eet_data_descriptor_new("blah2", sizeof(Blah2),
@@ -869,9 +879,9 @@ extern "C" {
     *                                   eina_list_append,
     *                                   eina_list_data_get,
     *                                   eina_list_free,
-    *                                   evas_hash_foreach,
-    *                                   evas_hash_add,
-    *                                   evas_hash_free);
+    *                                   eina_hash_foreach,
+    *                                   eet_eina_hash_add,
+    *                                   eina_hash_free);
     *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd2, Blah2, "string2", string, EET_T_STRING);
     *
     *    edd = eet_data_descriptor_new("blah", sizeof(Blah),
@@ -879,9 +889,9 @@ extern "C" {
     *                                   eina_list_append,
     *                                   eina_list_data_get,
     *                                   eina_list_free,
-    *                                   evas_hash_foreach,
-    *                                   evas_hash_add,
-    *                                   evas_hash_free);
+    *                                   eina_hash_foreach,
+    *                                   eet_eina_hash_add,
+    *                                   eina_hash_free);
     *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "character", character, EET_T_CHAR);
     *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "sixteen", sixteen, EET_T_SHORT);
     *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "integer", integer, EET_T_INT);
