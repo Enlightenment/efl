@@ -317,7 +317,7 @@ ecore_file_mv(const char *src, const char *dst)
 	     stat(src, &st);
 	     if (S_ISREG(st.st_mode))
 	       {
-		  const char *dir;
+		  char *dir;
 		  dir = ecore_file_dir_get(dst);
 		  // Since we can't directly rename, try to 
 		  // copy to temp file in the dst directory
