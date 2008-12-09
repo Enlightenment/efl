@@ -2,6 +2,7 @@
 #define _ECORE_GETOPT_H
 
 #include <Eina.h>
+#include <stdio.h>
 
 #ifdef EAPI
 # undef EAPI
