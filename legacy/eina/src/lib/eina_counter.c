@@ -95,6 +95,40 @@ _eina_counter_time_get(Eina_Nano_Time *tp)
 }
 #endif /* _WIN2 */
 
+static char *
+_eina_counter_asiprintf(char *base, int *position, const char *format, ...)
+{
+   char *tmp, *result;
+   int size = 32;
+   int n;
+   va_list ap;
+
+   tmp = realloc(base, sizeof (char) * (*position + size));
+   if (!tmp) return base;
+   result = tmp;
+
+   while (1)
+     {
+	va_start(ap, format);
+	n = vsnprintf(result + *position, size, format, ap);
+	va_end(ap);
+
+	if (n > -1 && n < size)
+	  {
+	     /* If we always have glibc > 2.2, we could just return *position += n. */
+	     *position += strlen(result + *position);
+	     return result;
+	  }
+
+	if (n > -1) size = n + 1;
+	else size <<= 1;
+
+	tmp = realloc(result, sizeof (char) * (*position + size));
+	if (!tmp) return result;
+	result = tmp;
+     }
+}
+
 /**
  * @endcond
  */
@@ -379,8 +413,8 @@ eina_counter_stop(Eina_Counter *counter, int specimen)
 /**
  * @brief Dump the result of all clocks of a counter to a stream.
  *
+ * @return A string with a summary of the test.
  * @param counter The counter.
- * @param out The stream to dump the clocks.
  *
  * This function dump all the valid clocks of @p counter to the stream
  * @p out. If @p counter or @p out are @c NULL, the functions exits
@@ -393,14 +427,17 @@ eina_counter_stop(Eina_Counter *counter, int specimen)
  *
  * The unit of time is the nanosecond.
 */
-EAPI void
-eina_counter_dump(Eina_Counter *counter, FILE *out)
+EAPI char *
+eina_counter_dump(Eina_Counter *counter)
 {
    Eina_Clock *clk;
+   char *result = NULL;
+   int position = 0;
 
-   if (!counter || !out) return;
+   if (!counter) return NULL;
 
-   fprintf(out, "# specimen\texperiment time\tstarting time\tending time\n");
+   result = _eina_counter_asiprintf(result, &position, "# specimen\texperiment time\tstarting time\tending time\n");
+   if (!result) return NULL;
 
    EINA_INLIST_REVERSE_FOREACH(counter->clocks, clk)
      {
@@ -420,12 +457,15 @@ eina_counter_dump(Eina_Counter *counter, FILE *out)
         diff = (long int)(((long long int)(clk->end.QuadPart - clk->start.QuadPart) * 1000000000LL) / (long long int)_eina_counter_frequency.QuadPart);
 #endif /* _WIN2 */
 
-	fprintf(out, "%i\t%li\t%li\t%li\n",
-		clk->specimen,
-		diff,
-		start,
-		end);
+	result = _eina_counter_asiprintf(result, &position,
+					 "%i\t%li\t%li\t%li\n",
+					 clk->specimen,
+					 diff,
+					 start,
+					 end);
      }
+
+   return result;
 }
 
 /**

@@ -49,7 +49,7 @@ EAPI void eina_counter_delete(Eina_Counter *counter);
 
 EAPI void eina_counter_start(Eina_Counter *counter);
 EAPI void eina_counter_stop(Eina_Counter *counter, int specimen);
-EAPI void eina_counter_dump(Eina_Counter *counter, FILE *out);
+EAPI char *eina_counter_dump(Eina_Counter *counter);
 
 /**
  * @}

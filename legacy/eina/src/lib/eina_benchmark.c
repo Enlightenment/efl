@@ -335,6 +335,7 @@ eina_benchmark_run(Eina_Benchmark *bench)
    EINA_INLIST_FOREACH(bench->runs, run)
      {
 	Eina_Counter *counter;
+	char *result;
 	int i;
 
 	snprintf(buffer, PATH_MAX, "bench_%s_%s.%s.data", bench->name, bench->run, run->name);
@@ -356,7 +357,12 @@ eina_benchmark_run(Eina_Benchmark *bench)
 	     eina_counter_stop(counter, i);
 	  }
 
-	eina_counter_dump(counter, current_data);
+	result = eina_counter_dump(counter);
+	if (result)
+	  {
+	     fprintf(current_data, "%s", result);
+	     free(result);
+	  }
 
 	eina_counter_delete(counter);
 
