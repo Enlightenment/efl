@@ -886,7 +886,7 @@ _eina_hash_del_by_hash_el(Eina_Hash *hash, Eina_Hash_El *el, Eina_Hash_Head *eh,
  * @note if you don't have the key, use eina_hash_del_by_data() instead.
  */
 EAPI Eina_Bool
-eina_hash_del_by_key_hash(Eina_Hash *hash, const void *key, int key_length, int key_hash)
+eina_hash_del_by_key_hash(Eina_Hash *hash, const void *key, int key_length, int key_hash, const void *data)
 {
    Eina_Hash_El *el;
    Eina_Hash_Head *eh;
@@ -898,7 +898,7 @@ eina_hash_del_by_key_hash(Eina_Hash *hash, const void *key, int key_length, int 
 
    tuple.key = (void *) key;
    tuple.key_length = key_length;
-   tuple.data = NULL;
+   tuple.data = (void *) data;
 
    el = _eina_hash_find_by_hash(hash, &tuple, key_hash, &eh);
    if (!el) return EINA_FALSE;
@@ -920,7 +920,7 @@ eina_hash_del_by_key_hash(Eina_Hash *hash, const void *key, int key_length, int 
  * @note if you don't have the key, use eina_hash_del_by_data() instead.
  */
 EAPI Eina_Bool
-eina_hash_del_by_key(Eina_Hash *hash, const void *key)
+eina_hash_del_by_key(Eina_Hash *hash, const void *key, const void *data)
 {
    int key_length, key_hash;
 
@@ -930,7 +930,7 @@ eina_hash_del_by_key(Eina_Hash *hash, const void *key)
 
    key_length = hash->key_length_cb(key);
    key_hash = hash->key_hash_cb(key, key_length);
-   return eina_hash_del_by_key_hash(hash, key, key_length, key_hash);
+   return eina_hash_del_by_key_hash(hash, key, key_length, key_hash, data);
 }
 
 /**
@@ -985,7 +985,7 @@ eina_hash_del_by_data(Eina_Hash *hash, const void *data)
 EAPI Eina_Bool
 eina_hash_del_by_hash(Eina_Hash *hash, const void *key, int key_length, int key_hash, const void *data)
 {
-   if (key) return eina_hash_del_by_key_hash(hash, key, key_length, key_hash);
+   if (key) return eina_hash_del_by_key_hash(hash, key, key_length, key_hash, data);
    else return eina_hash_del_by_data(hash, data);
 }
 
@@ -1011,7 +1011,7 @@ eina_hash_del_by_hash(Eina_Hash *hash, const void *key, int key_length, int key_
 EAPI Eina_Bool
 eina_hash_del(Eina_Hash *hash, const void *key, const void *data)
 {
-   if (key) return eina_hash_del_by_key(hash, key);
+   if (key) return eina_hash_del_by_key(hash, key, data);
    else return eina_hash_del_by_data(hash, data);
 }
 
