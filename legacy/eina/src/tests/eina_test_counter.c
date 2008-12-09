@@ -20,6 +20,7 @@
 # include "config.h"
 #endif
 
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "eina_counter.h"
@@ -65,6 +66,8 @@ START_TEST(eina_counter_simple)
 
    dump = eina_counter_dump(cnt);
    fail_if(!dump);
+
+   fprintf(stderr, "%s", dump);
 
    free(dump);
 
