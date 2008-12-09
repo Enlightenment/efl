@@ -1948,8 +1948,8 @@ evas_object_image_new(void)
    /* alloc obj private data */
    o = calloc(1, sizeof(Evas_Object_Image));
    o->magic = MAGIC_OBJ_IMAGE;
-   o->cur.fill.w = 1;
-   o->cur.fill.h = 1;
+   o->cur.fill.w = 0;
+   o->cur.fill.h = 0;
    o->cur.smooth_scale = 1;
    o->cur.border.fill = 1;
    o->cur.cspace = EVAS_COLORSPACE_ARGB8888;
@@ -1995,6 +1995,10 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 
    /* render object to surface with context, and offset by x,y */
    o = (Evas_Object_Image *)(obj->object_data);
+
+   if ((o->cur.fill.w < 1) || (o->cur.fill.h < 1))
+     return; /* no error message, already printed in pre_render */
+
    obj->layer->evas->engine.func->context_color_set(output,
 						    context,
 						    255, 255, 255, 255);
@@ -2196,6 +2200,15 @@ evas_object_image_render_pre(Evas_Object *obj)
    /* then when this is done the object needs to figure if it changed and */
    /* if so what and where and add the appropriate redraw rectangles */
    o = (Evas_Object_Image *)(obj->object_data);
+
+   if ((o->cur.fill.w < 1) || (o->cur.fill.h < 1))
+     {
+	fprintf(stderr,
+		"ERROR: evas image: %p has invalid fill size: %dx%d. Ignored\n",
+		obj, o->cur.fill.w, o->cur.fill.h);
+	return;
+     }
+
    /* if someone is clipping this obj - go calculate the clipper */
    if (obj->cur.clipper)
      {
@@ -2473,6 +2486,8 @@ evas_object_image_is_opaque(Evas_Object *obj)
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fully opaque over the entire rectangle it occupies */
    o = (Evas_Object_Image *)(obj->object_data);
+   if ((o->cur.fill.w < 1) || (o->cur.fill.h < 1))
+     return 0;
    if (((o->cur.border.l != 0) ||
 	(o->cur.border.r != 0) ||
 	(o->cur.border.t != 0) ||
@@ -2495,6 +2510,8 @@ evas_object_image_was_opaque(Evas_Object *obj)
    /* this returns 1 if the internal object data implies that the object was */
    /* previously fully opaque over the entire rectangle it occupies */
    o = (Evas_Object_Image *)(obj->object_data);
+   if ((o->prev.fill.w < 1) || (o->prev.fill.h < 1))
+     return 0;
    if (((o->prev.border.l != 0) ||
 	(o->prev.border.r != 0) ||
 	(o->prev.border.t != 0) ||
