@@ -19,7 +19,7 @@
 #endif
 
 /* font dir cache */
-static Evas_Hash *font_dirs = NULL;
+static Eina_Hash *font_dirs = NULL;
 static Eina_List *fonts_cache = NULL;
 static Eina_List *fonts_zero = NULL;
 
@@ -35,7 +35,7 @@ struct _Fndat
 };
 
 /* private methods for font dir cache */
-static Evas_Bool font_cache_dir_free(const Evas_Hash *hash, const void *key, void *data, void *fdata);
+static Evas_Bool font_cache_dir_free(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 static Evas_Font_Dir *object_text_font_cache_dir_update(char *dir, Evas_Font_Dir *fd);
 static Evas_Font *object_text_font_cache_font_find_x(Evas_Font_Dir *fd, char *font);
 static Evas_Font *object_text_font_cache_font_find_file(Evas_Font_Dir *fd, char *font);
@@ -50,17 +50,18 @@ evas_font_dir_cache_free(void)
 {
    if (!font_dirs) return;
 
-   evas_hash_foreach(font_dirs, font_cache_dir_free, NULL);
-   evas_hash_free(font_dirs);
+   eina_hash_foreach(font_dirs, font_cache_dir_free, NULL);
+   eina_hash_free(font_dirs);
    font_dirs = NULL;
 }
 
 const char *
 evas_font_dir_cache_find(char *dir, char *font)
 {
-   Evas_Font_Dir *fd;
+   Evas_Font_Dir *fd = NULL;
 
-   fd = evas_hash_find(font_dirs, dir);
+   if (!font_dirs) font_dirs = eina_hash_string_superfast_new(NULL);
+   else fd = eina_hash_find(font_dirs, dir);
    fd = object_text_font_cache_dir_update(dir, fd);
    if (fd)
      {
@@ -435,11 +436,13 @@ evas_font_dir_available_list(const Evas *evas)
    if (!evas->font_path)
      return available;
 
+   if (!font_dirs) font_dirs = eina_hash_string_superfast_new(NULL);
+
    EINA_LIST_FOREACH(evas->font_path, l, dir)
      {
 	Evas_Font_Dir *fd;
 
-	fd = evas_hash_find(font_dirs, dir);
+	fd = eina_hash_find(font_dirs, dir);
 	fd = object_text_font_cache_dir_update(dir, fd);
 	if (fd && fd->aliases)
 	  {
@@ -465,7 +468,7 @@ evas_font_dir_available_list_free(Eina_List *available)
 
 /* private stuff */
 static Eina_Bool
-font_cache_dir_free(const Evas_Hash *hash, const void *key, void *data, void *fdata)
+font_cache_dir_free(const Eina_Hash *hash, const void *key, void *data, void *fdata)
 {
    object_text_font_cache_dir_del((char *) key, data);
    return 1;
@@ -483,7 +486,7 @@ object_text_font_cache_dir_update(char *dir, Evas_Font_Dir *fd)
 	if (mt != fd->dir_mod_time)
 	  {
 	     object_text_font_cache_dir_del(dir, fd);
-	     font_dirs = evas_hash_del(font_dirs, dir, fd);
+	     eina_hash_del(font_dirs, dir, fd);
 	  }
 	else
 	  {
@@ -495,7 +498,7 @@ object_text_font_cache_dir_update(char *dir, Evas_Font_Dir *fd)
 		  if (mt != fd->fonts_dir_mod_time)
 		    {
 		       object_text_font_cache_dir_del(dir, fd);
-		       font_dirs = evas_hash_del(font_dirs, dir, fd);
+		       eina_hash_del(font_dirs, dir, fd);
 		    }
 		  else
 		    {
@@ -508,7 +511,7 @@ object_text_font_cache_dir_update(char *dir, Evas_Font_Dir *fd)
 		       if (mt != fd->fonts_alias_mod_time)
 			 {
 			    object_text_font_cache_dir_del(dir, fd);
-			    font_dirs = evas_hash_del(font_dirs, dir, fd);
+			    eina_hash_del(font_dirs, dir, fd);
 			 }
 		       else
 			 return fd;
@@ -584,13 +587,13 @@ object_text_font_cache_font_find(Evas_Font_Dir *fd, char *font)
 {
    Evas_Font *fn;
 
-   fn = evas_hash_find(fd->lookup, font);
+   fn = eina_hash_find(fd->lookup, font);
    if (fn) return fn;
    fn = object_text_font_cache_font_find_alias(fd, font);
    if (!fn) fn = object_text_font_cache_font_find_x(fd, font);
    if (!fn) fn = object_text_font_cache_font_find_file(fd, font);
    if (!fn) return NULL;
-   fd->lookup = evas_hash_add(fd->lookup, font, fn);
+   eina_hash_add(fd->lookup, font, fn);
    return fn;
 }
 
@@ -600,10 +603,13 @@ object_text_font_cache_dir_add(char *dir)
    Evas_Font_Dir *fd;
    char *tmp, *tmp2;
    Eina_List *fdir;
+   Evas_Font *fn;
 
    fd = calloc(1, sizeof(Evas_Font_Dir));
    if (!fd) return NULL;
-   font_dirs = evas_hash_add(font_dirs, dir, fd);
+   fd->lookup = eina_hash_string_superfast_new(NULL);
+
+   eina_hash_add(font_dirs, dir, fd);
 
    /* READ fonts.alias, fonts.dir and directory listing */
 
@@ -632,8 +638,6 @@ object_text_font_cache_dir_add(char *dir)
 		  num = evas_object_text_font_string_parse((char *)fdef, font_prop);
 		  if (num == 14)
 		    {
-		       Evas_Font *fn;
-
 		       fn = calloc(1, sizeof(Evas_Font));
 		       if (fn)
 			 {
@@ -663,8 +667,6 @@ object_text_font_cache_dir_add(char *dir)
 	tmp = evas_file_path_join(dir, fdir->data);
 	if (tmp)
 	  {
-	     Evas_Font *fn;
-
 	     fn = calloc(1, sizeof(Evas_Font));
 	     if (fn)
 	       {
@@ -747,7 +749,7 @@ object_text_font_cache_dir_add(char *dir)
 static void
 object_text_font_cache_dir_del(char *dir, Evas_Font_Dir *fd)
 {
-   if (fd->lookup) evas_hash_free(fd->lookup);
+   if (fd->lookup) eina_hash_free(fd->lookup);
    while (fd->fonts)
      {
 	Evas_Font *fn;

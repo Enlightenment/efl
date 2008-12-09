@@ -270,7 +270,7 @@ struct _Evas
 
    Evas_Layer       *layers;
 
-   Evas_Hash        *name_hash;
+   Eina_Hash        *name_hash;
 
    int               output_validity;
 
@@ -479,7 +479,7 @@ struct _Evas_Data_Node
 
 struct _Evas_Font_Dir
 {
-   Evas_Hash *lookup;
+   Eina_Hash *lookup;
    Eina_List *fonts;
    Eina_List *aliases;
    DATA64     dir_mod_time;

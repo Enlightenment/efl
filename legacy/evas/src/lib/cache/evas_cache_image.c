@@ -72,7 +72,7 @@ _evas_cache_image_make_activ(Evas_Cache_Image *cache,
         im->flags.activ = 1;
         im->flags.lru_nodata = 0;
         im->flags.dirty = 0;
-        cache->activ = evas_hash_direct_add(cache->activ, key, im);
+	eina_hash_direct_add(cache->activ, key, im);
      }
    else
      {
@@ -90,7 +90,7 @@ _evas_cache_image_make_inactiv(Evas_Cache_Image *cache,
 	im->flags.activ = 0;
 	im->flags.dirty = 0;
 	im->flags.cached = 1;
-	cache->inactiv = evas_hash_direct_add(cache->inactiv, key, im);
+	eina_hash_direct_add(cache->inactiv, key, im);
 	cache->lru = eina_inlist_prepend(cache->lru, EINA_INLIST_GET(im));
 	cache->usage += cache->func.mem_size_get(im);
      }
@@ -130,7 +130,7 @@ _evas_cache_image_remove_activ(Evas_Cache_Image *cache,
      {
         if (ie->flags.activ)
           {
-             cache->activ = evas_hash_del(cache->activ, ie->cache_key, ie);
+	     eina_hash_del(cache->activ, ie->cache_key, ie);
              _evas_cache_image_remove_lru_nodata(cache, ie);
           }
         else
@@ -141,7 +141,7 @@ _evas_cache_image_remove_activ(Evas_Cache_Image *cache,
                }
              else
                {
-                  cache->inactiv = evas_hash_del(cache->inactiv, ie->cache_key, ie);
+		  eina_hash_del(cache->inactiv, ie->cache_key, ie);
                   cache->lru = eina_inlist_remove(cache->lru, EINA_INLIST_GET(ie));
                   cache->usage -= cache->func.mem_size_get(ie);
                }
@@ -377,8 +377,8 @@ evas_cache_image_init(const Evas_Cache_Image_Func *cb)
    new->dirty = NULL;
    new->lru = NULL;
    new->lru_nodata = NULL;
-   new->inactiv = NULL;
-   new->activ = NULL;
+   new->inactiv = eina_hash_string_superfast_new(NULL);
+   new->activ = eina_hash_string_superfast_new(NULL);
 
    new->references = 1;
 
@@ -386,7 +386,7 @@ evas_cache_image_init(const Evas_Cache_Image_Func *cb)
 }
 
 static Evas_Bool
-_evas_cache_image_free_cb(__UNUSED__ const Evas_Hash *hash, __UNUSED__ const void *key, void *data, void *fdata)
+_evas_cache_image_free_cb(__UNUSED__ const Eina_Hash *hash, __UNUSED__ const void *key, void *data, void *fdata)
 {
    Eina_List **delete_list = fdata;
 
@@ -426,7 +426,7 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
         _evas_cache_image_entry_delete(cache, im);
      }
 
-   evas_hash_foreach(cache->activ, _evas_cache_image_free_cb, &delete_list);
+   eina_hash_foreach(cache->activ, _evas_cache_image_free_cb, &delete_list);
 
    while (delete_list)
      {
@@ -434,8 +434,8 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
 	delete_list = eina_list_remove_list(delete_list, delete_list);
      }
 
-   evas_hash_free(cache->activ);
-   evas_hash_free(cache->inactiv);
+   eina_hash_free(cache->activ);
+   eina_hash_free(cache->inactiv);
 
    free(cache);
 }
@@ -514,7 +514,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
 
    hkey[size] = '\0';
 
-   im = evas_hash_find(cache->activ, hkey);
+   im = eina_hash_find(cache->activ, hkey);
    if (im)
      {
         time_t  t;
@@ -537,7 +537,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
 	_evas_cache_image_make_dirty(cache, im);
      }
 
-   im = evas_hash_find(cache->inactiv, hkey);
+   im = eina_hash_find(cache->inactiv, hkey);
    if (im)
      {
         int     ok;

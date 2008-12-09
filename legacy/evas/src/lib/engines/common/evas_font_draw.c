@@ -9,7 +9,6 @@ EAPI RGBA_Font_Glyph *
 evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
 {
    RGBA_Font_Glyph *fg;
-   char key[6];
    FT_UInt hindex;
    FT_Error error;
    const FT_Int32 hintflags[3] =
@@ -17,14 +16,7 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
 
    hindex = index + (fi->hinting * 500000000);
 
-   key[0] = ((hindex       ) & 0x7f) + 1;
-   key[1] = ((hindex >> 7  ) & 0x7f) + 1;
-   key[2] = ((hindex >> 14 ) & 0x7f) + 1;
-   key[3] = ((hindex >> 21 ) & 0x7f) + 1;
-   key[4] = ((hindex >> 28 ) & 0x0f) + 1;
-   key[5] = 0;
-
-   fg = evas_hash_find(fi->glyphs, key);
+   fg = eina_hash_find(fi->glyphs, &hindex);
    if (fg) return fg;
 
 //   error = FT_Load_Glyph(fi->src->ft.face, index, FT_LOAD_NO_BITMAP);
@@ -54,7 +46,7 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
      }
    fg->glyph_out = (FT_BitmapGlyph)fg->glyph;
 
-   fi->glyphs = evas_hash_add(fi->glyphs, key, fg);
+   eina_hash_add(fi->glyphs, &hindex, fg);
    return fg;
 }
 

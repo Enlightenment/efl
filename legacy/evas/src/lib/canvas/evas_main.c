@@ -68,6 +68,7 @@ evas_new(void)
    e->viewport.w = 1;
    e->viewport.h = 1;
    e->hinting = EVAS_FONT_HINTING_BYTECODE;
+   e->name_hash = eina_hash_string_superfast_new(NULL);
 
    eina_array_step_set(&e->delete_objects, 16);
    eina_array_step_set(&e->active_objects, 16);
@@ -141,7 +142,8 @@ evas_free(Evas *e)
    evas_font_path_clear(e);
    e->pointer.object.in = eina_list_free(e->pointer.object.in);
 
-   if (e->name_hash) evas_hash_free(e->name_hash);
+   if (e->name_hash) eina_hash_free(e->name_hash);
+   e->name_hash = NULL;
 
    while (e->damages)
      {

@@ -26,7 +26,7 @@ _evas_cache_engine_image_make_active(Evas_Cache_Engine_Image *cache,
    eim->flags.cached = 1;
    eim->flags.activ = 1;
    eim->flags.dirty = 0;
-   cache->activ = evas_hash_add(cache->activ, key, eim);
+   eina_hash_add(cache->activ, key, eim);
 }
 
 static void
@@ -37,7 +37,7 @@ _evas_cache_engine_image_make_inactive(Evas_Cache_Engine_Image *cache,
    eim->flags.cached = 1;
    eim->flags.dirty = 0;
    eim->flags.activ = 0;
-   cache->inactiv = evas_hash_add(cache->inactiv, key, eim);
+   eina_hash_add(cache->inactiv, key, eim);
    cache->lru = eina_inlist_prepend(cache->lru, EINA_INLIST_GET(eim));
    cache->usage += cache->func.mem_size_get(eim);
 }
@@ -55,12 +55,12 @@ _evas_cache_engine_image_remove_activ(Evas_Cache_Engine_Image *cache,
         else
           if (eim->flags.activ)
             {
-               cache->activ = evas_hash_del(cache->activ, eim->cache_key, eim);
+	       eina_hash_del(cache->activ, eim->cache_key, eim);
             }
           else
             {
                cache->usage -= cache->func.mem_size_get(eim);
-               cache->inactiv = evas_hash_del(cache->inactiv, eim->cache_key, eim);
+	       eina_hash_del(cache->inactiv, eim->cache_key, eim);
                cache->lru = eina_inlist_remove(cache->lru, EINA_INLIST_GET(eim));
             }
         eim->flags.cached = 0;
@@ -185,8 +185,8 @@ evas_cache_engine_image_init(const Evas_Cache_Engine_Image_Func *cb, Evas_Cache_
 
    new->dirty = NULL;
    new->lru = NULL;
-   new->activ = NULL;
-   new->inactiv = NULL;
+   new->activ = eina_hash_string_superfast_new(NULL);
+   new->inactiv = eina_hash_string_superfast_new(NULL);
 
    new->parent = parent;
    parent->references++;
@@ -239,7 +239,7 @@ evas_cache_engine_image_dup(const Evas_Cache_Engine_Image_Func *cb, Evas_Cache_E
 }
 
 static Evas_Bool
-_evas_cache_engine_image_free_cb(__UNUSED__ const Evas_Hash *hash, __UNUSED__ const void *key, void *data, void *fdata)
+_evas_cache_engine_image_free_cb(__UNUSED__ const Eina_Hash *hash, __UNUSED__ const void *key, void *data, void *fdata)
 {
    Eina_List **delete_list = fdata;
 
@@ -272,8 +272,8 @@ evas_cache_engine_image_shutdown(Evas_Cache_Engine_Image *cache)
 
    if (cache->func.debug) cache->func.debug("shutdown-engine", NULL);
 
-   evas_hash_foreach(cache->inactiv, _evas_cache_engine_image_free_cb, &delete_list);
-   evas_hash_foreach(cache->activ, _evas_cache_engine_image_free_cb, &delete_list);
+   eina_hash_foreach(cache->inactiv, _evas_cache_engine_image_free_cb, &delete_list);
+   eina_hash_foreach(cache->activ, _evas_cache_engine_image_free_cb, &delete_list);
 
    while (delete_list)
      {
@@ -281,8 +281,8 @@ evas_cache_engine_image_shutdown(Evas_Cache_Engine_Image *cache)
 	delete_list = eina_list_remove_list(delete_list, delete_list);
      }
 
-   evas_hash_free(cache->inactiv);
-   evas_hash_free(cache->activ);
+   eina_hash_free(cache->inactiv);
+   eina_hash_free(cache->activ);
 
    /* This is mad, I am about to destroy image still alive, but we need to prevent leak. */
    while (cache->dirty)
@@ -325,14 +325,14 @@ evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache,
    if (!ekey)
      goto on_error;
 
-   eim = evas_hash_find(cache->activ, ekey);
+   eim = eina_hash_find(cache->activ, ekey);
    if (eim)
      {
         evas_cache_image_drop(im);
         goto on_ok;
      }
 
-   eim = evas_hash_find(cache->inactiv, ekey);
+   eim = eina_hash_find(cache->inactiv, ekey);
    if (eim)
      {
         _evas_cache_engine_image_remove_activ(cache, eim);

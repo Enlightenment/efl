@@ -3,58 +3,60 @@
 #include "evas_engine.h"
 #include "Evas_Engine_XRender_X11.h"
 
-static Evas_Hash *_xr_image_hash        = NULL;
+static Eina_Hash *_xr_image_hash        = NULL;
 static int        _xr_image_cache_size  = 0;
 static int        _xr_image_cache_usage = 0;
 static Eina_List *_xr_image_cache       = NULL;
-static Evas_Hash *_xr_image_dirty_hash  = NULL;
+static Eina_Hash *_xr_image_dirty_hash  = NULL;
 
 static void
 __xre_image_dirty_hash_add(XR_Image *im)
 {
    char buf[64];
-   
+
    if (!im->data) return;
    snprintf(buf, sizeof(buf), "%p", im->data);
-   _xr_image_dirty_hash = evas_hash_add(_xr_image_dirty_hash, buf, im);
+   if (!_xr_image_dirty_hash) _xr_image_dirty_hash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(_xr_image_dirty_hash, buf, im);
 }
 
 static void
 __xre_image_dirty_hash_del(XR_Image *im)
 {
    char buf[64];
-   
+
    if (!im->data) return;
    snprintf(buf, sizeof(buf), "%p", im->data);
-   _xr_image_dirty_hash = evas_hash_del(_xr_image_dirty_hash, buf, im);
+   eina_hash_del(_xr_image_dirty_hash, buf, im);
 }
 
 static XR_Image *
 __xre_image_dirty_hash_find(void *data)
 {
    char buf[64];
-   
+
    snprintf(buf, sizeof(buf), "%p", data);
-   return evas_hash_find(_xr_image_dirty_hash, buf);
+   return eina_hash_find(_xr_image_dirty_hash, buf);
 }
 
 static XR_Image *
 __xre_image_find(char *fkey)
 {
    XR_Image *im;
-   
-   im = evas_hash_find(_xr_image_hash, fkey);
+
+   im = eina_hash_find(_xr_image_hash, fkey);
    if (!im)
      {
 	Eina_List *l;
-	
+
 	for (l = _xr_image_cache; l; l = l->next)
 	  {
 	     im = l->data;
 	     if (!strcmp(im->fkey, fkey))
 	       {
 		  _xr_image_cache = eina_list_remove_list(_xr_image_cache, l);
-		  _xr_image_hash = evas_hash_add(_xr_image_hash, im->fkey, im);
+		  if (!_xr_image_hash) _xr_image_hash = eina_hash_string_superfast_new(NULL);
+		  eina_hash_add(_xr_image_hash, im->fkey, im);
 		  _xr_image_cache_usage -= (im->w * im->h * 4);
 		  break;
 	       }
@@ -91,7 +93,7 @@ _xre_image_load(Ximage_Info *xinf, const char *file, const char *key, Evas_Image
      {
 	return im;
      }
-   
+
    im = calloc(1, sizeof(XR_Image));
    if (!im) return NULL;
    im->im = evas_common_load_image_from_file(file, key, lo);
@@ -113,7 +115,8 @@ _xre_image_load(Ximage_Info *xinf, const char *file, const char *key, Evas_Image
    if (im->im->info.comment) im->comment = eina_stringshare_add(im->im->info.comment);
 //   if (im->im->info.format == 1) im->format = eina_stringshare_add("png");
    if (im->im->cache_entry.flags.alpha) im->alpha = 1;
-   _xr_image_hash = evas_hash_direct_add(_xr_image_hash, im->fkey, im);
+   if (!_xr_image_hash) _xr_image_hash = eina_hash_string_superfast_new(NULL);
+   eina_hash_direct_add(_xr_image_hash, im->fkey, im);
    return im;
 }
 
@@ -170,7 +173,7 @@ _xre_image_new_from_copied_data(Ximage_Info *xinf, int w, int h, void *data, int
 	if (data)
 	  {
 	     Gfx_Func_Copy func;
-	     
+
 	     func = evas_common_draw_func_copy_get(w * h, 0);
 	     if (func) func(data, im->data, w * h);
 	     evas_common_cpu_end_opt();
@@ -254,7 +257,7 @@ _xre_image_free(XR_Image *im)
    if (!im->dirty)
      {
 	if (im->fkey)
-	  _xr_image_hash = evas_hash_del(_xr_image_hash, im->fkey, im);
+	  eina_hash_del(_xr_image_hash, im->fkey, im);
 	_xr_image_cache = eina_list_prepend(_xr_image_cache, im);
 	_xr_image_cache_usage += (im->w * im->h * 4);
 	_xre_image_cache_set(_xr_image_cache_size);
@@ -282,7 +285,7 @@ _xre_image_dirty(XR_Image *im)
 {
    if (im->dirty) return;
    if (im->fkey)
-     _xr_image_hash = evas_hash_del(_xr_image_hash, im->fkey, im);
+     eina_hash_del(_xr_image_hash, im->fkey, im);
    im->dirty = 1;
    __xre_image_dirty_hash_add(im);
 }
@@ -463,7 +466,7 @@ _xre_image_data_put(XR_Image *im, void *data)
    if (!im->dirty)
      {
 	if (im->fkey)
-	  _xr_image_hash = evas_hash_del(_xr_image_hash, im->fkey, im);
+	  eina_hash_del(_xr_image_hash, im->fkey, im);
 	im->dirty = 1;
      }
    if (im->updates)

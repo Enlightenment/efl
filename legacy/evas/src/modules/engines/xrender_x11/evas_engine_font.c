@@ -3,20 +3,20 @@
 #include "evas_engine.h"
 #include "Evas_Engine_XRender_X11.h"
 
-static Evas_Hash *_xr_fg_pool = NULL;
+static Eina_Hash *_xr_fg_pool = NULL;
 
 XR_Font_Surface *
 _xre_font_surface_new(Ximage_Info *xinf, RGBA_Font_Glyph *fg)
-{    
+{
    XR_Font_Surface *fs;
    DATA8 *data;
    int w, h, j;
    XRenderPictureAttributes att;
    XRenderPictFormat *fmt;
    Ximage_Image  *xim;
-   Evas_Hash *pool;
+   Eina_Hash *pool;
    char buf[256], buf2[256];
-   
+
    data = fg->glyph_out->bitmap.buffer;
    w = fg->glyph_out->bitmap.width;
    h = fg->glyph_out->bitmap.rows;
@@ -30,11 +30,11 @@ _xre_font_surface_new(Ximage_Info *xinf, RGBA_Font_Glyph *fg)
 	if ((fs->xinf->disp == xinf->disp) && (fs->xinf->root == xinf->root))
 	  return fs;
 	snprintf(buf, sizeof(buf), "@%p@/@%lx@", fs->xinf->disp, fs->xinf->root);
-	pool = evas_hash_find(_xr_fg_pool, buf);
+	pool = eina_hash_find(_xr_fg_pool, buf);
 	if (pool)
 	  {
 	     snprintf(buf, sizeof(buf), "%p", fg);
-	     fs = evas_hash_find(pool, buf);
+	     fs = eina_hash_find(pool, buf);
 	     if (fs) return fs;
 	  }
      }
@@ -47,12 +47,14 @@ _xre_font_surface_new(Ximage_Info *xinf, RGBA_Font_Glyph *fg)
    fs->xinf->references++;
    fs->w = w;
    fs->h = h;
-   
+
    snprintf(buf, sizeof(buf), "@%p@/@%lx@", fs->xinf->disp, fs->xinf->root);
-   pool = evas_hash_find(_xr_fg_pool, buf);
+   pool = eina_hash_find(_xr_fg_pool, buf);
+   if (!pool) pool = eina_hash_string_superfast_new(NULL);
    snprintf(buf2, sizeof(buf2), "%p", fg);
-   pool = evas_hash_add(pool, buf2, fs);
-   _xr_fg_pool = evas_hash_add(_xr_fg_pool, buf, pool);
+   eina_hash_add(pool, buf2, fs);
+   if (!_xr_fg_pool) _xr_fg_pool = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(_xr_fg_pool, buf, pool);
 
    /* FIXME: maybe use fmt4? */
    fmt = xinf->fmt8;
@@ -60,9 +62,9 @@ _xre_font_surface_new(Ximage_Info *xinf, RGBA_Font_Glyph *fg)
    att.dither = 0;
    att.component_alpha = 0;
    att.repeat = 0;
-   fs->pic = XRenderCreatePicture(xinf->disp, fs->draw,fmt, 
+   fs->pic = XRenderCreatePicture(xinf->disp, fs->draw,fmt,
 				  CPRepeat | CPDither | CPComponentAlpha, &att);
-   
+
    /* FIXME: handle if fmt->depth != 8 */
    xim = _xr_image_new(fs->xinf, w, h,fmt->depth);
    if ((fg->glyph_out->bitmap.num_grays == 256) &&
@@ -127,17 +129,18 @@ _xre_font_surface_new(Ximage_Info *xinf, RGBA_Font_Glyph *fg)
 }
 
 static Evas_Bool
-_xre_font_pool_cb(const Evas_Hash *hash, const char *key, void *data, void *fdata)
+_xre_font_pool_cb(const Eina_Hash *hash, const char *key, void *data, void *fdata)
 {
-   Evas_Hash *pool;
+   Eina_Hash *pool;
    XR_Font_Surface *fs;
    char buf[256];
-   
+
    fs = fdata;
    pool = data;
    snprintf(buf, sizeof(buf), "@%p@/@%lx@", fs->xinf->disp, fs->xinf->root);
-   pool = evas_hash_del(pool, buf, fs);
-   hash = evas_hash_modify(hash, key, pool);
+   eina_hash_del(pool, buf, fs);
+   if (!hash) hash = eina_hash_string_superfast_new(NULL);
+   eina_hash_modify(hash, key, pool);
    return 1;
 }
 
@@ -145,7 +148,7 @@ void
 _xre_font_surface_free(XR_Font_Surface *fs)
 {
    if (!fs) return;
-   evas_hash_foreach(_xr_fg_pool, _xre_font_pool_cb, fs);
+   eina_hash_foreach(_xr_fg_pool, _xre_font_pool_cb, fs);
    XFreePixmap(fs->xinf->disp, fs->draw);
    XRenderFreePicture(fs->xinf->disp, fs->pic);
    _xr_image_info_free(fs->xinf);

@@ -629,7 +629,7 @@ struct _RGBA_Font_Int
       FT_Size       size;
    } ft;
 
-   Evas_Hash       *glyphs;
+   Eina_Hash       *glyphs;
 
    int              usage;
    Font_Hint_Flags hinting;
