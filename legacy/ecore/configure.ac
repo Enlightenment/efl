@@ -251,6 +251,15 @@ if test "x$have_iconv" = "xno" ; then
       ]
     )
   fi
+
+  if test "x$have_iconv" != "xyes"; then
+    AC_CHECK_LIB(iconv_plug, iconv,
+      [
+       iconv_libs="-liconv_plug"
+       have_iconv="yes"
+      ]
+    )
+  fi
 fi
 AC_MSG_CHECKING(for explicit iconv link options)
 AC_MSG_RESULT($iconv_libs)
