@@ -17,10 +17,10 @@ static pthread_mutex_t _mutex = PTHREAD_MUTEX_INITIALIZER;
 typedef struct _Evas_Event_Async	Evas_Event_Async;
 struct _Evas_Event_Async
 {
-   void			(*func)(void *target, Evas_Callback_Type type, void *event_info);
    const void		 *target;
-   Evas_Callback_Type	  type;
    void			 *event_info;
+   void			(*func)(void *target, Evas_Callback_Type type, void *event_info);
+   Evas_Callback_Type	  type;
 };
 
 #endif
@@ -129,7 +129,7 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
 #ifdef BUILD_ASYNC_EVENTS
    Evas_Event_Async new;
    ssize_t check;
-   int	offset = 0;
+   int offset = 0;
    Evas_Bool result = 0;
 
    if (!func) return 0;
