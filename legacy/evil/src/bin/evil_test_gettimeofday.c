@@ -25,6 +25,7 @@ test_time_tests_run(suite *s)
 
    printf ("time : %ld %ld\n", tp1.tv_sec, tp1.tv_usec);
    printf ("time : %ld %ld\n", tp2.tv_sec, tp2.tv_usec);
+   printf ("time : %f\n", (double)tp2.tv_sec - tp1.tv_sec + (tp2.tv_usec - tp1.tv_usec) / 1000000.0);
 
    return 1;
 }

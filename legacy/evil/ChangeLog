@@ -1,3 +1,14 @@
+2008-12-09  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/bin/evil_test_gettimeofday.c:
+	add output
+
+	* src/bin/evil_test_link.c:
+	add a unit test for readlink()
+
+	* src/lib/evil_link_xp.cpp:
+	fix readlink() and symlink() on Windows XP
+
 2008-12-05  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_main.c:
