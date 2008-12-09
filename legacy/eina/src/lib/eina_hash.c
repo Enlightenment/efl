@@ -1175,6 +1175,8 @@ eina_hash_foreach(const Eina_Hash *hash,
    foreach.fdata = fdata;
 
    it = eina_hash_iterator_tuple_new(hash);
+   if (!it) return;
+
    eina_iterator_foreach(it, EINA_EACH(_eina_foreach_cb), &foreach);
    eina_iterator_free(it);
 }
