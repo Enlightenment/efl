@@ -1056,8 +1056,8 @@ eina_hash_find(const Eina_Hash *hash, const void *key)
    int key_length;
    int hash_num;
 
-   EINA_MAGIC_CHECK_HASH(hash);
    if ((!hash) || (!key)) return NULL;
+   EINA_MAGIC_CHECK_HASH(hash);
 
    key_length = hash->key_length_cb(key);
    hash_num = hash->key_hash_cb(key, key_length);
