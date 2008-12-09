@@ -19,8 +19,6 @@
 #ifndef EINA_COUNTER_H_
 #define EINA_COUNTER_H_
 
-#include <stdio.h>
-
 #include "eina_types.h"
 
 /**
