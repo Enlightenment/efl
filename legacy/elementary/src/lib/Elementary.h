@@ -16,8 +16,6 @@
  * 
  */
 
-#include "elementary_config.h"
-
 /* Standard headers for standard system calls etc. */
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,9 +39,6 @@
 #include <libintl.h>
 #include <errno.h>
 #include <signal.h>
-#ifdef HAVE_ALLOCA_H
-#include <alloca.h>
-#endif
 
 /* EFL headers */
 #include <Eina.h>

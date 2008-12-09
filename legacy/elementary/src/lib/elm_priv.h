@@ -1,6 +1,12 @@
 #ifndef ELM_PRIV_H
 #define ELM_PRIV_H
 
+#include "elementary_config.h"
+
+#ifdef HAVE_ALLOCA_H
+#include <alloca.h>
+#endif
+
 #include "els_pan.h"
 #include "els_scroller.h"
 #include "els_box.h"
