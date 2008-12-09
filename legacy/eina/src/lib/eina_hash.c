@@ -1031,8 +1031,8 @@ eina_hash_find_by_hash(const Eina_Hash *hash, const void *key, int key_length, i
    Eina_Hash_El *el;
    Eina_Hash_Tuple tuple;
 
-   EINA_MAGIC_CHECK_HASH(hash);
    if ((!hash) || (!key)) return NULL;
+   EINA_MAGIC_CHECK_HASH(hash);
 
    tuple.key = key;
    tuple.key_length = key_length;
