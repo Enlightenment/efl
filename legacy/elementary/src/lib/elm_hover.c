@@ -397,13 +397,13 @@ elm_hover_best_content_location_get(Evas_Object *obj, Elm_Hover_Axis pref_axis)
    Evas_Coord spc_l, spc_r, spc_t, spc_b;
      
    if (wd->parent) evas_object_geometry_get(wd->parent, &x, &y, &w, &h);
-   if (wd->hov) evas_object_geometry_get(wd->hov, &x2, &y2, &w2, &h2);
+   if (wd->target) evas_object_geometry_get(wd->target, &x2, &y2, &w2, &h2);
    spc_l = x2 - x;
    spc_r = (x + w) - (x2 + w2);
    if (spc_l < 0) spc_l = 0;
    if (spc_r < 0) spc_r = 0;
    spc_t = y2 - y;
-   spc_b = (y + h) - (y2 + y2);
+   spc_b = (y + h) - (y2 + h2);
    if (spc_t < 0) spc_t = 0;
    if (spc_b < 0) spc_b = 0;
    if (pref_axis == ELM_HOVER_AXIS_HORIZONTAL)
