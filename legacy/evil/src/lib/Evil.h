@@ -62,6 +62,7 @@ extern "C" {
 #undef WIN32_LEAN_AND_MEAN
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <sys/time.h>
 #include <limits.h>
 #include <sys/stat.h>

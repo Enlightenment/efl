@@ -1,3 +1,9 @@
+2008-12-10  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/Evil.h:
+	be sure to include stdio.h before redefining the
+	functions that are declared int it.
+
 2008-12-09  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/bin/evil_test_gettimeofday.c:
