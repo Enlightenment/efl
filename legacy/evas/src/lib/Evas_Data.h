@@ -102,10 +102,30 @@ extern "C" {
      return 255;
   }
 
-  #define evas_hash_find eina_hash_find
-  #define evas_hash_modify eina_hash_modify
-  #define evas_hash_free eina_hash_free
-  #define evas_hash_foreach eina_hash_foreach
+  static inline void *evas_hash_find(const Eina_Hash *hash, const void *key)
+  {
+     if (!hash) return NULL;
+     return eina_hash_find(hash, key);
+  }
+
+  static inline void *evas_hash_modify(Eina_Hash *hash, const void *key, const void *data)
+  {
+     if (!hash) return NULL;
+     return eina_hash_modify(hash, key, data);
+  }
+
+  static inline void evas_hash_free(Eina_Hash *hash)
+  {
+     if (!hash) return;
+     eina_hash_free(hash);
+  }
+
+  static inline void evas_hash_foreach(const Eina_Hash *hash, Eina_Bool (*cb)(const Eina_Hash *hash, const char *key, void *data, void *fdata), const void *fdata)
+  {
+     if (!hash) return;
+     eina_hash_foreach(hash, (Eina_Hash_Foreach)cb, fdata);
+  }
+
   #define evas_hash_alloc_error eina_error_get
 
   /*
