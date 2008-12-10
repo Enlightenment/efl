@@ -35,13 +35,28 @@ PKG_CHECK_MODULES([ELEMENTARY], [
    eet
    evas
    ecore
-   ecore-x
    ecore-evas
    ecore-job
    ecore-txt
    ecore-file
    edje
    edbus
+   ])
+
+have_elementary_x="no"
+PKG_CHECK_MODULES([ELEMENTARY_X], [ecore-x], [
+      AC_DEFINE(HAVE_ELEMENTARY_X, 1, [X11 support for Elementary]) 
+      have_elementary_x="yes"
+   ], [
+      have_elementary_x="no"
+   ])
+
+have_elementary_fb="no"
+PKG_CHECK_MODULES([ELEMENTARY_FB], [ecore-fb], [
+      AC_DEFINE(HAVE_ELEMENTARY_FB, 1, [FB support for Elementary])
+      have_elementary_fb="yes"
+   ], [
+      have_elementary_fb="no"
    ])
 
 my_libs="-lm"

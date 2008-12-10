@@ -42,8 +42,10 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    entries = eina_list_remove(entries, obj);
+#ifdef HAVE_ELEMENTARY_X
    ecore_event_handler_del(wd->sel_notify_handler);
    ecore_event_handler_del(wd->sel_clear_handler);
+#endif   
    if (wd->cut_sel) eina_stringshare_del(wd->cut_sel);
    if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
    free(wd);
@@ -548,6 +550,7 @@ _signal_key_enter(void *data, Evas_Object *obj, const char *emission, const char
    evas_object_smart_callback_call(data, "activated", NULL);
 }
 
+#ifdef HAVE_ELEMENTARY_X
 static int
 _event_selection_notify(void *data, int type, void *event)
 {
@@ -590,6 +593,7 @@ _event_selection_clear(void *data, int type, void *event)
      }
    return 1;
 }
+#endif
 
 EAPI Evas_Object *
 elm_entry_add(Evas_Object *parent)
@@ -632,6 +636,7 @@ elm_entry_add(Evas_Object *parent)
    elm_widget_resize_object_set(obj, wd->ent);
    _sizing_eval(obj);
 
+#ifdef HAVE_ELEMENTARY_X
    if (elm_win_xwindow_get(elm_widget_top_get(parent)) != 0)
      {
         wd->sel_notify_handler = 
@@ -641,6 +646,7 @@ elm_entry_add(Evas_Object *parent)
           ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR,
                                   _event_selection_clear, obj);
      }
+#endif
    
    entries = eina_list_prepend(entries, obj);
    return obj;

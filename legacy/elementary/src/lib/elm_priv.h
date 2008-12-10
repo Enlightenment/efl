@@ -3,6 +3,12 @@
 
 #include "elementary_config.h"
 
+#ifdef HAVE_ELEMENTARY_X
+#include <Ecore_X.h>
+#endif
+#ifdef HAVE_ELEMENTARY_FB
+#include <Ecore_Fb.h>
+#endif
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #endif

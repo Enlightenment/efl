@@ -2,7 +2,9 @@
 #include "elm_priv.h"
 
 static int _elm_signal_exit(void *data, int ev_type, void *ev);
+#ifdef HAVE_ELEMENTARY_X
 static int _elm_window_property_change(void *data, int ev_type, void *ev);
+#endif
 static void _elm_rescale(void);
 
 char *_elm_appname = NULL;
@@ -17,6 +19,7 @@ _elm_signal_exit(void *data, int ev_type, void *ev)
    return 1;
 }
 
+#ifdef HAVE_ELEMENTARY_X
 static int
 _elm_window_property_change(void *data, int ev_type, void *ev)
 {
@@ -42,6 +45,7 @@ _elm_window_property_change(void *data, int ev_type, void *ev)
      }
    return 1;
 }
+#endif
 
 static void
 _elm_rescale(void)
@@ -55,6 +59,7 @@ EAPI void
 elm_init(int argc, char **argv)
 {
    int i;
+   const char *elm_engine, *elm_scale;
    
    eet_init();
    ecore_init();
@@ -68,14 +73,46 @@ elm_init(int argc, char **argv)
    
    _elm_appname = strdup(ecore_file_file_get(argv[0]));
 
+   elm_engine = getenv("ELM_ENGINE");
+   elm_scale = getenv("ELM_SCALE");
+   
    // FIXME: actually load config
    _elm_config = ELM_NEW(Elm_Config);
    _elm_config->engine = ELM_SOFTWARE_X11;
+   if (elm_engine)
+     {
+        if ((!strcasecmp(elm_engine, "x11")) ||
+            (!strcasecmp(elm_engine, "x")) ||
+            (!strcasecmp(elm_engine, "software-x11")) ||
+            (!strcasecmp(elm_engine, "software_x11")))
+          _elm_config->engine = ELM_SOFTWARE_X11;
+        else if ((!strcasecmp(elm_engine, "x11-16")) ||
+                 (!strcasecmp(elm_engine, "x16")) ||
+                 (!strcasecmp(elm_engine, "software-16-x11")) ||
+                 (!strcasecmp(elm_engine, "software_16_x11")))
+          _elm_config->engine = ELM_SOFTWARE_16_X11;
+        else if ((!strcasecmp(elm_engine, "xrender")) ||
+                 (!strcasecmp(elm_engine, "xr")) ||
+                 (!strcasecmp(elm_engine, "xrender-x11")) ||
+                 (!strcasecmp(elm_engine, "xrender_x11")))
+          _elm_config->engine = ELM_XRENDER_X11;
+        else if ((!strcasecmp(elm_engine, "fb")) ||
+                 (!strcasecmp(elm_engine, "software-fb")) ||
+                 (!strcasecmp(elm_engine, "software_fb")))
+          _elm_config->engine = ELM_SOFTWARE_FB;
+        else if ((!strcasecmp(elm_engine, "opengl")) ||
+                 (!strcasecmp(elm_engine, "gl")) ||
+                 (!strcasecmp(elm_engine, "opengl-x11")) ||
+                 (!strcasecmp(elm_engine, "opengl_x11")))
+          _elm_config->engine = ELM_OPENGL_X11;
+     }
+   
    _elm_config->thumbscroll_enable = 1;
    _elm_config->thumbscroll_threshhold = 24;
    _elm_config->thumbscroll_momentum_threshhold = 100.0;
    _elm_config->thumbscroll_friction = 1.0;
    _elm_config->scale = 1.0;
+   
    _elm_config->bgpixmap = 0;
    _elm_config->compositing = 1;
 
@@ -84,6 +121,7 @@ elm_init(int argc, char **argv)
        (_elm_config->engine == ELM_XRENDER_X11) ||
        (_elm_config->engine == ELM_OPENGL_X11))
      {
+#ifdef HAVE_ELEMENTARY_X
 	int val = 1000;
 	
 	ecore_x_init(NULL);
@@ -100,14 +138,31 @@ elm_init(int argc, char **argv)
 	  }
 	if (!ecore_x_screen_is_composited(0))
 	  _elm_config->compositing = 0;
+#endif        
       }
-   
+
+   if (elm_scale)
+     {
+        _elm_config->scale = atof(elm_scale);
+     }
 }
 
 EAPI void
 elm_shutdown(void)
 {
    _elm_win_shutdown();
+
+   if ((_elm_config->engine == ELM_SOFTWARE_X11) ||
+              (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
+              (_elm_config->engine == ELM_XRENDER_X11) ||
+              (_elm_config->engine == ELM_OPENGL_X11))
+     {
+#ifdef HAVE_ELEMENTARY_X
+        ecore_event_handler_del(_elm_event_property_change);
+        _elm_event_property_change = NULL;
+        ecore_x_shutdown();
+#endif        
+     }
    
    free(_elm_config);
    free(_elm_appname);

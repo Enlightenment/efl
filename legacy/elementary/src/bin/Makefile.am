@@ -7,7 +7,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib \
 -I$(top_srcdir)/src/bin \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@ELEMENTARY_CFLAGS@
+@ELEMENTARY_CFLAGS@ @ELEMENTARY_X_CFLAGS@ @ELEMENTARY_FB_CFLAGS@
 
 bin_PROGRAMS = elementary_test
 

@@ -10,7 +10,9 @@ struct _Elm_Win
    Evas_Object    *parent;
    Evas_Object    *win_obj;
    Eina_List      *subobjs;
+#ifdef HAVE_ELEMENTARY_X   
    Ecore_X_Window  xwin;
+#endif   
    Ecore_Job      *deferred_resize_job;
    Ecore_Job      *deferred_child_eval_job;
    
@@ -34,7 +36,9 @@ static void _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, voi
 static void _elm_win_obj_callback_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _elm_win_delete_request(Ecore_Evas *ee);
 static void _elm_win_resize_job(void *data);
+#ifdef HAVE_ELEMENTARY_X   
 static void _elm_win_xwin_update(Elm_Win *win);
+#endif
 static void _elm_win_eval_subobjs(Evas_Object *obj);
 static void _elm_win_subobj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _elm_win_subobj_callback_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -78,7 +82,19 @@ static void
 _elm_win_obj_intercept_resize(void *data, Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
    Elm_Win *win = data;
-   ecore_evas_resize(win->ee, w, h);
+   switch (_elm_config->engine)
+     {
+      case ELM_SOFTWARE_FB:
+	break;
+      case ELM_SOFTWARE_X11:
+      case ELM_SOFTWARE_16_X11:
+      case ELM_XRENDER_X11:
+      case ELM_OPENGL_X11:
+        ecore_evas_resize(win->ee, w, h);
+	break;
+      default:
+	break;
+     }
 }
 
 static void
@@ -249,6 +265,7 @@ _elm_win_xwindow_get(Elm_Win *win)
 static void
 _elm_win_xwin_update(Elm_Win *win)
 {
+#ifdef HAVE_ELEMENTARY_X   
    _elm_win_xwindow_get(win);
    if (win->parent)
      {
@@ -281,6 +298,7 @@ _elm_win_xwin_update(Elm_Win *win)
    if (win->xwin)
      ecore_x_e_virtual_keyboard_state_set
      (win->xwin, (Ecore_X_Virtual_Keyboard_State)win->kbdmode);
+#endif
 }
 
 static void
@@ -367,7 +385,6 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 	break;
       case ELM_SOFTWARE_FB:
 	win->ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-        ecore_evas_fullscreen_set(win->ee, 1);
 	break;
       case ELM_SOFTWARE_16_X11:
 	win->ee = ecore_evas_software_x11_16_new(NULL, 0, 0, 0, 1, 1);
@@ -430,13 +447,25 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 //   evas_font_hinting_set(win->evas, EVAS_FONT_HINTING_NONE);
 //   evas_font_hinting_set(win->evas, EVAS_FONT_HINTING_AUTO);
 //   evas_font_hinting_set(win->evas, EVAS_FONT_HINTING_BYTECODE);
-   edje_frametime_set(1.0 / 30.0);
+   edje_frametime_set(1.0 / 60.0);
    edje_scale_set(_elm_config->scale);
 
    _elm_win_xwin_update(win);
 
    _elm_win_list = eina_list_append(_elm_win_list, win->win_obj);
    
+   switch (_elm_config->engine)
+     {
+      case ELM_SOFTWARE_FB:
+        ecore_evas_fullscreen_set(win->ee, 1);
+	break;
+      case ELM_SOFTWARE_X11:
+      case ELM_SOFTWARE_16_X11:
+      case ELM_XRENDER_X11:
+      case ELM_OPENGL_X11:
+      default:
+	break;
+     }
    return win->win_obj;
 }
 
@@ -545,9 +574,11 @@ elm_win_keyboard_mode_set(Evas_Object *obj, Elm_Win_Keyboard_Mode mode)
    if (mode == win->kbdmode) return;
    _elm_win_xwindow_get(win);
    win->kbdmode = mode;
+#ifdef HAVE_ELEMENTARY_X   
    if (win->xwin)
      ecore_x_e_virtual_keyboard_state_set
      (win->xwin, (Ecore_X_Virtual_Keyboard_State)win->kbdmode);
+#endif   
 }
 
 EAPI void
@@ -556,9 +587,11 @@ elm_win_keyboard_win_set(Evas_Object *obj, Evas_Bool is_keyboard)
    Elm_Win *win = evas_object_data_get(obj, "__Elm");
    if (!win) return;
    _elm_win_xwindow_get(win);
+#ifdef HAVE_ELEMENTARY_X   
    if (win->xwin)
      ecore_x_e_virtual_keyboard_set
      (win->xwin, is_keyboard);
+#endif   
 }
 
 EAPI Ecore_X_Window
