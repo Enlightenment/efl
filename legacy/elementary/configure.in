@@ -45,7 +45,7 @@ PKG_CHECK_MODULES([ELEMENTARY], [
 
 have_elementary_x="no"
 PKG_CHECK_MODULES([ELEMENTARY_X], [ecore-x], [
-      AC_DEFINE(HAVE_ELEMENTARY_X, 1, [X11 support for Elementary]) 
+      AC_DEFINE(HAVE_ELEMENTARY_X, 1, [X11 support for Elementary])
       have_elementary_x="yes"
    ], [
       have_elementary_x="no"
@@ -77,3 +77,26 @@ data/images/Makefile
 data/objects/Makefile
 data/desktop/Makefile
 ])
+
+#####################################################################
+## Info
+
+echo
+echo
+echo
+echo "------------------------------------------------------------------------"
+echo "$PACKAGE $VERSION"
+echo "------------------------------------------------------------------------"
+echo
+echo "Configuration Options Summary:"
+echo
+echo "Engines:"
+echo "  X11...........: ${have_elementary_x}"
+echo "  Framebuffer...: ${have_elementary_fb}"
+echo
+echo "------------------------------------------------------------------------"
+echo
+echo "Now type 'make' ('gmake' on some systems) to compile $PACKAGE,"
+echo "and then afterwards as root (or the user who will install this), type"
+echo "'make install'. Change users with 'su' or 'sudo' appropriately."
+echo
