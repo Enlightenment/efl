@@ -368,9 +368,12 @@ _signal_selection_start(void *data, Evas_Object *obj, const char *emission, cons
         char *txt = _mkup_to_text(elm_entry_selection_get(data));
         if (txt)
           {
-             ecore_x_selection_primary_set
-               (elm_win_xwindow_get(elm_widget_top_get(data)),
-                txt, strlen(txt));
+#ifdef HAVE_ELEMENTARY_X
+             if (elm_win_xwindow_get(elm_widget_top_get(data)))
+                 ecore_x_selection_primary_set
+                 (elm_win_xwindow_get(elm_widget_top_get(data)),
+                  txt, strlen(txt));
+#endif             
              free(txt);
           }
      } 
@@ -387,9 +390,12 @@ _signal_selection_changed(void *data, Evas_Object *obj, const char *emission, co
         char *txt = _mkup_to_text(elm_entry_selection_get(data));
         if (txt)
           {
-             ecore_x_selection_primary_set
+#ifdef HAVE_ELEMENTARY_X
+             if (elm_win_xwindow_get(elm_widget_top_get(data)))
+               ecore_x_selection_primary_set
                (elm_win_xwindow_get(elm_widget_top_get(data)),
                 txt, strlen(txt));
+#endif             
              free(txt);
           }
      }
@@ -406,14 +412,22 @@ _signal_selection_cleared(void *data, Evas_Object *obj, const char *emission, co
      {
         if (wd->cut_sel)
           {
-             ecore_x_selection_primary_set
+#ifdef HAVE_ELEMENTARY_X
+             if (elm_win_xwindow_get(elm_widget_top_get(data)))
+               ecore_x_selection_primary_set
                (elm_win_xwindow_get(elm_widget_top_get(data)),
                 wd->cut_sel, strlen(wd->cut_sel));
+#endif             
              eina_stringshare_del(wd->cut_sel);
              wd->cut_sel = NULL;
           }
         else
-          ecore_x_selection_primary_clear();
+          {
+#ifdef HAVE_ELEMENTARY_X
+             if (elm_win_xwindow_get(elm_widget_top_get(data)))
+               ecore_x_selection_primary_clear();
+#endif        
+          }
      }
 }
 
@@ -424,10 +438,15 @@ _signal_entry_paste_request(void *data, Evas_Object *obj, const char *emission, 
    evas_object_smart_callback_call(data, "selection,paste", NULL);
    if (wd->sel_notify_handler)
      {
-        ecore_x_selection_primary_request
-          (elm_win_xwindow_get(elm_widget_top_get(data)),
-           ECORE_X_SELECTION_TARGET_UTF8_STRING);
-        wd->selection_asked = 1;
+#ifdef HAVE_ELEMENTARY_X
+        if (elm_win_xwindow_get(elm_widget_top_get(data)))
+          {
+             ecore_x_selection_primary_request
+               (elm_win_xwindow_get(elm_widget_top_get(data)),
+                ECORE_X_SELECTION_TARGET_UTF8_STRING);
+             wd->selection_asked = 1;
+          }
+#endif        
      }
 }
 

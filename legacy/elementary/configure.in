@@ -51,6 +51,9 @@ PKG_CHECK_MODULES([ELEMENTARY_X], [ecore-x], [
       have_elementary_x="no"
    ])
 
+AC_SUBST(ELEMENTARY_X_CFLAGS)
+AC_SUBST(ELEMENTARY_X_LIBS)
+
 have_elementary_fb="no"
 PKG_CHECK_MODULES([ELEMENTARY_FB], [ecore-fb], [
       AC_DEFINE(HAVE_ELEMENTARY_FB, 1, [FB support for Elementary])

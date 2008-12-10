@@ -10,9 +10,7 @@ struct _Elm_Win
    Evas_Object    *parent;
    Evas_Object    *win_obj;
    Eina_List      *subobjs;
-#ifdef HAVE_ELEMENTARY_X   
    Ecore_X_Window  xwin;
-#endif   
    Ecore_Job      *deferred_resize_job;
    Ecore_Job      *deferred_child_eval_job;
    

@@ -10,8 +10,10 @@ static void _elm_rescale(void);
 char *_elm_appname = NULL;
 Elm_Config *_elm_config = NULL;
 Ecore_Event_Handler *_elm_event_property_change = NULL;
+#ifdef HAVE_ELEMENTARY_X
 Ecore_X_Atom _elm_atom_enlightenment_scale = 0;
-  
+#endif
+
 static int
 _elm_signal_exit(void *data, int ev_type, void *ev)
 {
