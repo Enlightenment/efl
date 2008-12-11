@@ -353,7 +353,7 @@ static Eina_Bool
 _eina_hash_del_by_hash_el(Eina_Hash *hash, Eina_Hash_El *el, Eina_Hash_Head *eh, int key_hash)
 {
    eh->head = eina_rbtree_inline_remove(eh->head, EINA_RBTREE_GET(el), EINA_RBTREE_CMP_NODE_CB(_eina_hash_key_rbtree_cmp_node), hash->key_cmp_cb);
-   if (el->begin == EINA_FALSE) free(el);
+   _eina_hash_el_free(el, hash);
 
    if (!eh->head)
      {
