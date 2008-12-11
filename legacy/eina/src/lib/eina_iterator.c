@@ -128,8 +128,8 @@ eina_iterator_container_get(Eina_Iterator *iterator)
 EAPI Eina_Bool
 eina_iterator_next(Eina_Iterator *iterator, void **data)
 {
-   EINA_MAGIC_CHECK_ITERATOR(iterator);
    if (!iterator) return EINA_FALSE;
+   EINA_MAGIC_CHECK_ITERATOR(iterator);
    return iterator->next(iterator, data);
 }
 
@@ -153,9 +153,9 @@ eina_iterator_foreach(Eina_Iterator *iterator,
    void *container;
    void *data;
 
-   EINA_MAGIC_CHECK_ITERATOR(iterator);
-
    if (!iterator) return ;
+
+   EINA_MAGIC_CHECK_ITERATOR(iterator);
 
    container = iterator->get_container(iterator);
    while (iterator->next(iterator, &data) == EINA_TRUE) {
