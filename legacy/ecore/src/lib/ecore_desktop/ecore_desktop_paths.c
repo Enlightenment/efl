@@ -898,25 +898,23 @@ _ecore_desktop_paths_cb_exe_exit(void *data, int type, void *event)
 }
 #endif
 
-/** Split a list of paths into an Ecore_Hash.
+/** Split a list of paths into an Eina_Hash.
  *
  * The list of paths can use any one of ;:, to seperate the paths.
  * You can also escape the :;, with \.
  *
  * @param   paths A list of paths.
  */
-Ecore_Hash         *
+Eina_Hash*
 ecore_desktop_paths_to_hash(const char *paths)
 {
-   Ecore_Hash         *result;
+   Eina_Hash          *result;
    char               *path;
    char                buf[PATH_MAX], *p, *pp;
 
    if (!paths) return NULL;
-   result = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+   result = eina_hash_string_superfast_new(free);
    if (!result) return NULL;
-   ecore_hash_free_key_cb_set(result, free);
-   ecore_hash_free_value_cb_set(result, free);
 
    path = strdup(paths);
    if (path)
@@ -942,7 +940,7 @@ ecore_desktop_paths_to_hash(const char *paths)
 		  p++;
 	       }
 	     *pp = '\0';
-	     if (*buf) ecore_hash_set(result, strdup(buf), strdup(buf));
+	     if (*buf) eina_hash_add(result, buf, strdup(buf));
 	     if (*p) p++;
 	     else p = NULL;
 	  }
@@ -951,7 +949,7 @@ ecore_desktop_paths_to_hash(const char *paths)
    return result;
 }
 
-/** Split a list of paths into an Ecore_Hash.
+/** Split a list of paths into an Eina_Hash.
  *
  * The list of paths can use any one of ;:, to seperate the paths.
  * You can also escape the :;, with \.

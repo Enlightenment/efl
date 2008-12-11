@@ -14,7 +14,7 @@ static int _ecore_evas_fps_debug = 0;
 static Ecore_Event_Handler *ecore_evas_event_handlers[13];
 
 static Ecore_Evas *ecore_evases = NULL;
-static Evas_Hash *ecore_evases_hash = NULL;
+static Eina_Hash *ecore_evases_hash = NULL;
 
 static Ecore_Idle_Enterer *ecore_evas_directfb_idle_enterer = NULL;
 
@@ -90,19 +90,19 @@ _ecore_evas_directfb_winid_str_get(Ecore_X_Window win)
 
 static Ecore_Evas *
 _ecore_evas_directfb_match(DFBWindowID win)
-{    
+{
    Ecore_Evas *ee;
-   
-   ee = evas_hash_find(ecore_evases_hash, _ecore_evas_directfb_winid_str_get(win));
+
+   ee = eina_hash_find(ecore_evases_hash, _ecore_evas_directfb_winid_str_get(win));
    return ee;
 }
-	
-static void 
+
+static void
 _ecore_evas_directfb_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp)
 {
    ee->mouse.x = x;
    ee->mouse.y = y;
-   
+
    if (ee->prop.cursor.object)
      {
 	evas_object_show(ee->prop.cursor.object);
@@ -324,19 +324,19 @@ _ecore_evas_directfb_init(void)
    ecore_evas_event_handlers[10]  = NULL;
    ecore_evas_event_handlers[11]  = NULL;
    ecore_evas_event_handlers[12]  = NULL;
-   
+
    return _ecore_evas_init_count;
 }
 
 /* engine functions */
 /********************/
-	
+
 static void
 _ecore_evas_directfb_free(Ecore_Evas *ee)
 {
-   ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_directfb_winid_str_get(ee->engine.directfb.window->id), ee);
+   eina_hash_del(ecore_evases_hash, _ecore_evas_directfb_winid_str_get(ee->engine.directfb.window->id), ee);
    ecore_directfb_window_del(ee->engine.directfb.window);
-   ecore_evases = _ecore_list2_remove(ecore_evases, ee);   
+   ecore_evases = _ecore_list2_remove(ecore_evases, ee);
    _ecore_evas_directfb_shutdown();
    ecore_directfb_shutdown();
 }
@@ -601,12 +601,14 @@ ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
    ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
-   ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_directfb_winid_str_get(ee->engine.directfb.window->id), ee);
-   
+   if (!ecore_evases_hash)
+     ecore_evases_hash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(ecore_evases_hash, _ecore_evas_directfb_winid_str_get(ee->engine.directfb.window->id), ee);
+
    return ee;
 #else
    disp_name = NULL;
    windowed = x = y = w = h = 0;
    return NULL;
-#endif   
+#endif
 }

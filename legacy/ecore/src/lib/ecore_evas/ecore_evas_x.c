@@ -22,7 +22,7 @@ static int _ecore_evas_init_count = 0;
 static int _ecore_evas_fps_debug = 0;
 
 static Ecore_Evas *ecore_evases = NULL;
-static Evas_Hash *ecore_evases_hash = NULL;
+static Eina_Hash *ecore_evases_hash = NULL;
 static Ecore_Event_Handler *ecore_evas_event_handlers[18];
 static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
 
@@ -372,7 +372,7 @@ _ecore_evas_x_match(Ecore_X_Window win)
 {
    Ecore_Evas *ee;
 
-   ee = evas_hash_find(ecore_evases_hash, _ecore_evas_x_winid_str_get(win));
+   ee = eina_hash_find(ecore_evases_hash, _ecore_evas_x_winid_str_get(win));
    return ee;
 }
 
@@ -1330,14 +1330,14 @@ _ecore_evas_x_free(Ecore_Evas *ee)
 #else
    ee->engine.x.damages = 0;
 #endif /* ! HAVE_ECORE_X_XCB */
-   ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+   eina_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
    while (ee->engine.x.win_extra)
      {
 	Ecore_X_Window *winp;
 
 	winp = ee->engine.x.win_extra->data;
 	ee->engine.x.win_extra = eina_list_remove_list(ee->engine.x.win_extra, ee->engine.x.win_extra);
-	ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(*winp), ee);
+	eina_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(*winp), ee);
 	free(winp);
      }
    ecore_evases = _ecore_list2_remove(ecore_evases, ee);
@@ -1838,7 +1838,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	ee->shaped = 0;
 	ee->alpha = alpha;
 	ecore_x_window_del(ee->engine.x.win);
-	ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+	eina_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
 	if (ee->alpha)
 	  {
 	     if (ee->prop.override)
@@ -1886,7 +1886,9 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 	evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
 	ecore_x_window_shape_mask_set(ee->engine.x.win, 0);
-	ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+	if (!ecore_evases_hash)
+	  ecore_evases_hash = eina_hash_string_superfast_new(NULL);
+	eina_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
 	if (ee->prop.borderless)
 	  ecore_x_mwm_borderless_set(ee->engine.x.win, ee->prop.borderless);
 	if (ee->visible) ecore_x_window_show(ee->engine.x.win);
@@ -1917,7 +1919,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	ee->shaped = 0;
 	ee->alpha = alpha;
 	ecore_x_window_del(ee->engine.x.win);
-	ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+	eina_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
 	if (ee->alpha)
 	  {
 	     if (ee->prop.override)
@@ -1958,7 +1960,9 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 	evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
 	ecore_x_window_shape_mask_set(ee->engine.x.win, 0);
-	ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+	if (!ecore_evases_hash)
+	  ecore_evases_hash = eina_hash_string_superfast_new(NULL);
+	eina_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
 	if (ee->prop.borderless)
 	  ecore_x_mwm_borderless_set(ee->engine.x.win, ee->prop.borderless);
 	if (ee->visible) ecore_x_window_show(ee->engine.x.win);
@@ -1981,7 +1985,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	ee->shaped = 0;
 	ee->alpha = alpha;
 	ecore_x_window_del(ee->engine.x.win);
-	ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+	eina_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
 	if (ee->alpha)
 	  {
 	     if (ee->prop.override)
@@ -2016,7 +2020,9 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 	evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
 	ecore_x_window_shape_mask_set(ee->engine.x.win, 0);
-	ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+	if (!ecore_evases_hash)
+	  ecore_evases_hash = eina_hash_string_superfast_new(NULL);
+	eina_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
 	if (ee->prop.borderless)
 	  ecore_x_mwm_borderless_set(ee->engine.x.win, ee->prop.borderless);
 	if (ee->visible) ecore_x_window_show(ee->engine.x.win);
@@ -2832,7 +2838,9 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
    evas_key_lock_add(ee->evas, "Scroll_Lock");
 
    ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
-   ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+   if (!ecore_evases_hash)
+     ecore_evases_hash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
    return ee;
 #else
    return NULL;
@@ -2933,7 +2941,9 @@ ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window wi
      {
 	*winp = win;
 	ee->engine.x.win_extra = eina_list_append(ee->engine.x.win_extra, winp);
-	ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(win), ee);
+	if (!ecore_evases_hash)
+	  ecore_evases_hash = eina_hash_string_superfast_new(NULL);
+	eina_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(win), ee);
      }
 #else
 #endif
@@ -3020,7 +3030,9 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
    evas_key_lock_add(ee->evas, "Scroll_Lock");
 
    ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
-   ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+   if (!ecore_evases_hash)
+     ecore_evases_hash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
 # endif /* HAVE_ECORE_X_XCB */
 
    return ee;
@@ -3279,7 +3291,9 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
    evas_key_lock_add(ee->evas, "Scroll_Lock");
 
    ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
-   ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+   if (!ecore_evases_hash)
+     ecore_evases_hash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
    return ee;
 #else
    return NULL;
@@ -3493,7 +3507,9 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
    evas_key_lock_add(ee->evas, "Scroll_Lock");
 
    ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
-   ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+   if (!ecore_evases_hash)
+     ecore_evases_hash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
    return ee;
 #else
    return NULL;
@@ -3594,7 +3610,9 @@ ecore_evas_software_x11_16_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window
      {
 	*winp = win;
 	ee->engine.x.win_extra = eina_list_append(ee->engine.x.win_extra, winp);
-	ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(win), ee);
+	if(!ecore_evases_hash)
+	  ecore_evases_hash = eina_hash_string_superfast_new(NULL);
+	eina_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(win), ee);
      }
 #else
 #endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */

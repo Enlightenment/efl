@@ -3,8 +3,11 @@
 #include "Ecore_Desktop.h"
 #include "ecore_desktop_private.h"
 
-static void         ecore_desktop_tree_dump_each_hash_node(void *value,
-							   void *user_data);
+static Eina_Bool
+ecore_desktop_tree_dump_each_hash_node(const Eina_Hash *hash,
+				       const void *key,
+				       void *value,
+				       void *user_data);
 
 /* Just a quick and dirty tree implemtation that will likely get replaced by 
  * something much saner at a later date.  I wrote most of this while falling
@@ -172,7 +175,7 @@ ecore_desktop_tree_add_child(Ecore_Desktop_Tree * tree,
 }
 
 Ecore_Desktop_Tree *
-ecore_desktop_tree_add_hash(Ecore_Desktop_Tree * tree, Ecore_Hash * element)
+ecore_desktop_tree_add_hash(Ecore_Desktop_Tree * tree, Eina_Hash * element)
 {
    tree->elements =
       (Ecore_Desktop_Tree_Element *) realloc(tree->elements,
@@ -310,10 +313,10 @@ ecore_desktop_tree_dump(Ecore_Desktop_Tree * tree, int level)
 
 		lev = level + 1;
 		printf("HASH ELEMENT TYPE\n");
-		ecore_hash_for_each_node((Ecore_Hash *) tree->elements[i].
-					 element,
-					 ecore_desktop_tree_dump_each_hash_node,
-					 &lev);
+		eina_hash_foreach((Eina_Hash *) tree->elements[i].
+				  element,
+				  ecore_desktop_tree_dump_each_hash_node,
+				  &lev);
 	     }
 	     break;
 
@@ -326,18 +329,19 @@ ecore_desktop_tree_dump(Ecore_Desktop_Tree * tree, int level)
      }
 }
 
-static void
-ecore_desktop_tree_dump_each_hash_node(void *value, void *user_data)
+static Eina_Bool
+ecore_desktop_tree_dump_each_hash_node(const Eina_Hash *hash,
+				       const void *key,
+				       void *value,
+				       void *user_data)
 {
-   Ecore_Hash_Node    *node;
    int                 level;
    int                 j;
 
-   node = (Ecore_Hash_Node *) value;
    level = *((int *)user_data);
    for (j = 0; j < level; j++)
       printf(".");
-   printf("%s = %s\n", (char *)node->key, (char *)node->value);
+   printf("%s = %s\n", (char *)key, (char *)value);
 }
 
 void
@@ -351,7 +355,7 @@ ecore_desktop_tree_del(Ecore_Desktop_Tree * tree)
 	   ecore_desktop_tree_del((Ecore_Desktop_Tree *) tree->elements[i].
 				  element);
 	else if (tree->elements[i].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_HASH)
-	   ecore_hash_destroy((Ecore_Hash *) tree->elements[i].element);
+	   eina_hash_free((Eina_Hash *) tree->elements[i].element);
      }
 
    E_FREE(tree->elements);

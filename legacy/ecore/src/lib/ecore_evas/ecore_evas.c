@@ -687,7 +687,7 @@ ecore_evas_data_get(const Ecore_Evas *ee, const char *key)
 
    if (!key) return NULL;
 
-   return evas_hash_find(ee->data, key);
+   return eina_hash_find(ee->data, key);
 }
 
 /**
@@ -717,9 +717,13 @@ ecore_evas_data_set(Ecore_Evas *ee, const char *key, const void *data)
 
    if (!key) return;
 
-   ee->data = evas_hash_del(ee->data, key, NULL);
+   eina_hash_del(ee->data, key, NULL);
    if (data)
-     ee->data = evas_hash_add(ee->data, key, data);
+     {
+       if (!ee->data)
+	 ee->data = eina_hash_string_superfast_new(NULL);
+       eina_hash_add(ee->data, key, data);
+     }
 }
 
 #define IFC(_ee, _fn)  if (_ee->engine.func->_fn) {_ee->engine.func->_fn
@@ -2410,7 +2414,7 @@ _ecore_evas_free(Ecore_Evas *ee)
      {
 	_ecore_evas_free(ee->sub_ecore_evas->data);
      }
-   if (ee->data) evas_hash_free(ee->data);
+   if (ee->data) eina_hash_free(ee->data);
    if (ee->name) free(ee->name);
    if (ee->prop.title) free(ee->prop.title);
    if (ee->prop.name) free(ee->prop.name);

@@ -60,7 +60,7 @@ static void  _ecore_x_netwm_startup_info_free(void *data);
  * Local variables
  */
 
-static Ecore_Hash *startup_info = NULL;
+static Eina_Hash *startup_info = NULL;
 
 /**
  * Initialize the NetWM module
@@ -68,11 +68,7 @@ static Ecore_Hash *startup_info = NULL;
 EAPI void
 ecore_x_netwm_init(void)
 {
-   startup_info = ecore_hash_new(ecore_direct_hash, ecore_direct_compare);
-   if (startup_info)
-     {
-	ecore_hash_free_value_cb_set(startup_info, _ecore_x_netwm_startup_info_free);
-     }
+   startup_info = eina_hash_string_superfast_new(_ecore_x_netwm_startup_info_free);
 }
 
 /**
@@ -82,7 +78,7 @@ EAPI void
 ecore_x_netwm_shutdown(void)
 {
    if (startup_info)
-     ecore_hash_destroy(startup_info);
+     eina_hash_free(startup_info);
    startup_info = NULL;
 }
 
@@ -2765,11 +2761,13 @@ _ecore_x_netwm_startup_info_begin(Ecore_X_Window window,
 {
 #if 0
    Ecore_X_Startup_Info *info;
+   unsigned char	exists = 0;
 
    if (!startup_info) return 0;
-   info = ecore_hash_get(startup_info, (void *)window);
+   info = eina_hash_find(startup_info, (void *)window);
    if (info)
      {
+        exists = 1;
 	printf("Already got info for win: 0x%x\n", window);
 	_ecore_x_netwm_startup_info_free(info);
      }
@@ -2787,7 +2785,10 @@ _ecore_x_netwm_startup_info_begin(Ecore_X_Window window,
    memcpy(info->buffer, data, 20);
    info->length += 20;
    info->buffer[info->length] = 0;
-   ecore_hash_set(startup_info, (void *)info->win, info);
+   if (exists)
+     eina_hash_modify(startup_info, (void *)info->win, info);
+   else
+     eina_hash_add(startup_info, (void *)info->win, info);
    if (strlen(info->buffer) != 20)
      {
 	/* We have a '\0' in there, the message is done */
@@ -2810,7 +2811,7 @@ _ecore_x_netwm_startup_info(Ecore_X_Window window,
    char *p;
 
    if (!startup_info) return 0;
-   info = ecore_hash_get(startup_info, (void *)window);
+   info = eina_hash_find(startup_info, (void *)window);
    if (!info) return 0;
    if ((info->length + 20) > info->buffer_size)
      {
@@ -2818,7 +2819,7 @@ _ecore_x_netwm_startup_info(Ecore_X_Window window,
 	info->buffer = realloc(info->buffer, info->buffer_size * sizeof(char));
 	if (!info->buffer)
 	  {
-	     ecore_hash_remove(startup_info, (void *)info->win);
+	     eina_hash_del(startup_info, (void *)info->win);
 	     _ecore_x_netwm_startup_info_free(info);
 	     return 0;
 	  }
@@ -2922,7 +2923,7 @@ _ecore_x_netwm_startup_info_process(Ecore_X_Startup_Info *info)
    p = strchr(info->buffer, ':');
    if (!p)
      {
-	ecore_hash_remove(startup_info, (void *)info->win);
+	eina_hash_del(startup_info, (void *)info->win);
 	_ecore_x_netwm_startup_info_free(info);
 	return 0;
      }
@@ -2943,7 +2944,7 @@ _ecore_x_netwm_startup_info_process(Ecore_X_Startup_Info *info)
      event = ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE;
    else
      {
-	ecore_hash_remove(startup_info, (void *)info->win);
+	eina_hash_del(startup_info, (void *)info->win);
 	_ecore_x_netwm_startup_info_free(info);
 	return 0;
      }
@@ -2952,7 +2953,7 @@ _ecore_x_netwm_startup_info_process(Ecore_X_Startup_Info *info)
 
    if (!_ecore_x_netwm_startup_info_parse(info, p))
      {
-	ecore_hash_remove(startup_info, (void *)info->win);
+	eina_hash_del(startup_info, (void *)info->win);
 	_ecore_x_netwm_startup_info_free(info);
 	return 0;
      }
@@ -2962,7 +2963,7 @@ _ecore_x_netwm_startup_info_process(Ecore_X_Startup_Info *info)
 	e = calloc(1, sizeof(Ecore_X_Event_Startup_Sequence));
 	if (!e)
 	  {
-	     ecore_hash_remove(startup_info, (void *)info->win);
+	     eina_hash_del(startup_info, (void *)info->win);
 	     _ecore_x_netwm_startup_info_free(info);
 	     return 0;
 	  }
@@ -2972,7 +2973,7 @@ _ecore_x_netwm_startup_info_process(Ecore_X_Startup_Info *info)
 
    if (event == ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE)
      {
-	ecore_hash_remove(startup_info, (void *)info->win);
+        eina_hash_del(startup_info, (void *)info->win);
 	_ecore_x_netwm_startup_info_free(info);
      }
    else

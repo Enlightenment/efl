@@ -34,7 +34,7 @@ struct _Ecore_Desktop
     * space and cycles that just covers up bugs.  On the other hand, it makes 
     * for a more robust library, and it's used everywhere else in ecore.
     */
-   Ecore_Hash         *data, *group, *Categories, *OnlyShowIn, *NotShowIn, *MimeTypes, *Actions;
+   Eina_Hash         *data, *group, *Categories, *OnlyShowIn, *NotShowIn, *MimeTypes, *Actions;
    char               *original_path;
    char               *original_lang;
    char               *eap_name;
@@ -72,7 +72,7 @@ typedef struct _Ecore_Desktop Ecore_Desktop;
 
 struct _Ecore_Desktop_Icon_Theme
 {
-   Ecore_Hash         *data, *group;
+   Eina_Hash         *data, *group;
    Ecore_List         *Inherits;
    Ecore_List         *Directories;
    char               *path;
@@ -92,7 +92,7 @@ typedef struct _Ecore_Desktop_Icon_Theme Ecore_Desktop_Icon_Theme;
 
 struct _Ecore_Desktop_Icon_Theme_Directory
 {
-   Ecore_Hash         *icons;
+   Eina_Hash         *icons;
    char               *path;
    char               *full_path;
    char               *type;
@@ -201,12 +201,12 @@ extern              "C"
 							    void *data);
    EAPI int            ecore_desktop_paths_shutdown(void);
 
-   Ecore_Hash         *ecore_desktop_paths_to_hash(const char *paths);
+   Eina_Hash         *ecore_desktop_paths_to_hash(const char *paths);
    Ecore_List         *ecore_desktop_paths_to_list(const char *paths);
 
    EAPI int            ecore_desktop_init(void);
    EAPI int            ecore_desktop_shutdown(void);
-   Ecore_Hash         *ecore_desktop_ini_get(const char *file);
+   Eina_Hash         *ecore_desktop_ini_get(const char *file);
    Ecore_Desktop      *ecore_desktop_get(const char *file, const char *lang);
    void                ecore_desktop_save(Ecore_Desktop * desktop);
    EAPI Ecore_List    *ecore_desktop_get_command(Ecore_Desktop * desktop,
@@ -220,7 +220,7 @@ extern              "C"
 					       const char *icon_size,
 					       const char *icon_theme);
 
-   Ecore_Hash         *ecore_desktop_icon_theme_list(void);
+   Eina_Hash         *ecore_desktop_icon_theme_list(void);
    Ecore_Desktop_Icon_Theme *ecore_desktop_icon_theme_get(const char *file,
 							  const char *lang);
    void                ecore_desktop_icon_theme_destroy(Ecore_Desktop_Icon_Theme
@@ -228,7 +228,7 @@ extern              "C"
 
    EAPI void          
       ecore_desktop_menu_for_each(void (*func)
-				  (const char *name, const char *path, const char *directory, Ecore_Hash * apps));
+				  (const char *name, const char *path, const char *directory, Eina_Hash * apps));
    Ecore_Desktop_Tree *ecore_desktop_menu_get(char *file);
 
    Ecore_Desktop_Tree *ecore_desktop_tree_new(char *buffer);
@@ -249,7 +249,7 @@ extern              "C"
 						    Ecore_Desktop_Tree *
 						    element);
    Ecore_Desktop_Tree *ecore_desktop_tree_add_hash(Ecore_Desktop_Tree * tree,
-						   Ecore_Hash * element);
+						   Eina_Hash * element);
    void                ecore_desktop_tree_remove(Ecore_Desktop_Tree * tree,
 						 int element);
    int                 ecore_desktop_tree_exist(Ecore_Desktop_Tree * tree,

@@ -29,7 +29,7 @@ _ecore_desktop_icon_theme_cache_check(Ecore_Desktop_Icon_Theme *icon_theme);
 static const char  *ext[] =
    { "", ".edj", ".png", ".svgz", ".svg", ".xpm", NULL };  /* "" is in case the icon already has an extension, search for that first. */
 static int          init_count = 0;
-static Ecore_Hash  *icon_theme_cache = NULL;
+static Eina_Hash  *icon_theme_cache = NULL;
 
 /**
  * @defgroup Ecore_Desktop_Icon_Group icon theme Functions
@@ -233,7 +233,7 @@ _ecore_desktop_icon_find0(const char *icon, const char *icon_size,
 #ifdef DEBUG
 		            printf("FDO icon = %s\n", path);
 #endif
-                            found = ecore_hash_get(directory->icons, path);
+                            found = eina_hash_find(directory->icons, path);
 			    if (found)
 			      {
 			         found = strdup(found);
@@ -341,7 +341,7 @@ done:
    return found;
 }
 
-Ecore_Hash         *
+Eina_Hash*
 ecore_desktop_icon_theme_list(void)
 {
    static int          loaded = 0;
@@ -382,15 +382,7 @@ ecore_desktop_icon_init()
       return init_count;
 
    if (!icon_theme_cache)
-     {
-	icon_theme_cache = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-	if (icon_theme_cache)
-	  {
-	     ecore_hash_free_key_cb_set(icon_theme_cache, free);
-	     ecore_hash_free_value_cb_set(icon_theme_cache,
-				       ECORE_FREE_CB(_ecore_desktop_icon_theme_destroy));
-	  }
-     }
+     icon_theme_cache = eina_hash_string_superfast_new(_ecore_desktop_icon_theme_destroy);
 
    return init_count;
 }
@@ -411,7 +403,7 @@ ecore_desktop_icon_shutdown()
 
    if (icon_theme_cache)
      {
-	ecore_hash_destroy(icon_theme_cache);
+	eina_hash_free(icon_theme_cache);
 	icon_theme_cache = NULL;
      }
 
@@ -422,7 +414,7 @@ ecore_desktop_icon_shutdown()
  * Get the contents of an index.theme file.
  *
  * Everything that is in the index.theme file is returned in the
- * data member of the Ecore_Desktop_Icon_Theme structure, it's an Ecore_Hash 
+ * data member of the Ecore_Desktop_Icon_Theme structure, it's an Eina_Hash 
  * as returned by ecore_desktop_ini_get().  Some of the data in the
  * index.theme file is decoded into specific members of the returned 
  * structure.
@@ -454,7 +446,7 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang __UNUSED__
 #endif
       }
 
-   result = ecore_hash_get(icon_theme_cache, icon_theme);
+   result = eina_hash_find(icon_theme_cache, icon_theme);
    if (result) goto done;
    if (!theme_dir)
      {
@@ -474,7 +466,7 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang __UNUSED__
    if (!result) goto error;
    result->data = ecore_desktop_ini_get(theme_path);
    if (!result->data) goto error;
-   result->group = ecore_hash_get(result->data, "Icon Theme");
+   result->group = eina_hash_find(result->data, "Icon Theme");
    if (!result->group) goto error;
 
 
@@ -482,23 +474,23 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang __UNUSED__
       result->hicolor = 1;
 
    /* According to the spec, name and comment are required, but we can fake those easily enough. */
-   value = ecore_hash_get(result->group, "Name");
+   value = eina_hash_find(result->group, "Name");
    if (!value) value = icon_theme;
    result->name = strdup(value);
-   value = ecore_hash_get(result->group, "Comment");
+   value = eina_hash_find(result->group, "Comment");
    if (!value) value = "No comment provided.";
    result->comment = strdup(value);
-   value = ecore_hash_get(result->group, "Inherits");
+   value = eina_hash_find(result->group, "Inherits");
    if (value)
      {
 	result->inherits = strdup(value);
 	if (result->inherits)
 	  result->Inherits = ecore_desktop_paths_to_list(result->inherits);
      }
-   value = ecore_hash_get(result->group, "Example");
+   value = eina_hash_find(result->group, "Example");
    if (!value) value = "exec";
    result->example = strdup(value);
-   value = ecore_hash_get(result->group, "Directories");
+   value = eina_hash_find(result->group, "Directories");
    /* FIXME: Directories is also required, don't feel like faking it for now. */
    if (!value) goto error;
    result->directories = strdup(value);
@@ -511,11 +503,11 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang __UNUSED__
    ecore_list_first_goto(Directories);
    while ((directory = ecore_list_next(Directories)) != NULL)
      {
-	Ecore_Hash         *sub_group;
+	Eina_Hash         *sub_group;
 	Ecore_Desktop_Icon_Theme_Directory *dir;
 
 	/* Get the details for this theme directory. */
-	sub_group = ecore_hash_get(result->data, directory);
+	sub_group = eina_hash_find(result->data, directory);
 	dir = calloc(1, sizeof (Ecore_Desktop_Icon_Theme_Directory));
 	if ((dir) && (sub_group))
 	  {
@@ -525,14 +517,14 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang __UNUSED__
              dir->path = strdup(directory);
 	     snprintf(full_path, PATH_MAX, "%s/%s", theme_dir, directory);
              dir->full_path = strdup(full_path);
-	     value = ecore_hash_get(sub_group, "Type");
+	     value = eina_hash_find(sub_group, "Type");
 	     if (!value)
 	       value = "Threshold";
 	     dir->type = strdup(value);
-	     size = ecore_hash_get(sub_group, "Size");
-	     minsize = ecore_hash_get(sub_group, "MinSize");
-	     maxsize = ecore_hash_get(sub_group, "MaxSize");
-	     threshold = ecore_hash_get(sub_group, "Threshold");
+	     size = eina_hash_find(sub_group, "Size");
+	     minsize = eina_hash_find(sub_group, "MinSize");
+	     maxsize = eina_hash_find(sub_group, "MaxSize");
+	     threshold = eina_hash_find(sub_group, "Threshold");
 	     if (size)
 	       {
 		  if (!minsize)
@@ -558,8 +550,8 @@ ecore_desktop_icon_theme_get(const char *icon_theme, const char *lang __UNUSED__
 
    /* This passes the basic validation tests, mark it as real and cache it. */
    result->path = strdup(theme_path);
-   ecore_hash_set(icon_theme_cache, strdup(icon_theme), result);
-   ecore_hash_destroy(result->data);
+   eina_hash_add(icon_theme_cache, icon_theme, result);
+   eina_hash_free(result->data);
    result->data = NULL;
    result->group = NULL;
 
@@ -576,7 +568,7 @@ error:
    if (theme_path) free(theme_path);
    if (result)
      {
-	if (result->data) ecore_hash_destroy(result->data);
+	if (result->data) eina_hash_free(result->data);
 	_ecore_desktop_icon_theme_destroy(result);
      }
    return NULL;
@@ -633,7 +625,7 @@ _ecore_desktop_icon_theme_directory_destroy(Ecore_Desktop_Icon_Theme_Directory *
    if (icon_theme_directory->type)
       free(icon_theme_directory->type);
    if (icon_theme_directory->icons)
-      ecore_hash_destroy(icon_theme_directory->icons);
+      eina_hash_free(icon_theme_directory->icons);
    free(icon_theme_directory);
 }
 
@@ -686,16 +678,14 @@ _ecore_desktop_icon_theme_cache_check(Ecore_Desktop_Icon_Theme *icon_theme)
           {
              if (dir->icons)
 	       {
-                   ecore_hash_destroy(dir->icons);
+                   eina_hash_free(dir->icons);
 		   dir->icons = NULL;
 	       }
-             dir->icons = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+             dir->icons = eina_hash_string_superfast_new(NULL);
              if (dir->icons)
                {
 	          Ecore_List *files;
 
-                  ecore_hash_free_key_cb_set(dir->icons, free);
-                  ecore_hash_free_value_cb_set(dir->icons, free);
                   files = ecore_file_ls(dir->full_path);
                   if (files)
                     {
@@ -704,7 +694,7 @@ _ecore_desktop_icon_theme_cache_check(Ecore_Desktop_Icon_Theme *icon_theme)
                        while ((file = ecore_list_next(files)))
                          {
                             snprintf(full_path, PATH_MAX, "%s/%s", dir->full_path, file);
-			    ecore_hash_set(dir->icons, strdup(file), strdup(full_path));
+			    eina_hash_add(dir->icons, file, strdup(full_path));
                          }
                        ecore_list_destroy(files);
                     }

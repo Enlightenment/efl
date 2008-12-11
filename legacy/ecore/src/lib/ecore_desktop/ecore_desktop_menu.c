@@ -24,7 +24,7 @@
 struct _ecore_desktop_menu_expand_apps_data
 {
    char               *path;
-   Ecore_Hash         *pool;
+   Eina_Hash          *pool;
    int                 length;
 };
 
@@ -41,7 +41,7 @@ struct _ecore_desktop_menu_generate_data
 {
    char               *name, *path;
    Ecore_Desktop_Tree *rules;
-   Ecore_Hash         *pool, *apps;
+   Eina_Hash         *pool, *apps;
    int                 unallocated;
 
    Ecore_Desktop_Tree *rule;
@@ -88,7 +88,7 @@ static void         _ecore_desktop_menu_add_dirs(Ecore_Desktop_Tree * tree,
 static int          _ecore_desktop_menu_expand_apps(struct
 						    _ecore_desktop_menu_unxml_data
 						    *unxml_data, char *app_dir,
-						    Ecore_Hash * pool);
+						    Eina_Hash * pool);
 static int          _ecore_desktop_menu_check_app(void *data, const char *path);
 
 static int          _ecore_desktop_menu_merge(const void *data,
@@ -123,7 +123,7 @@ static int          _ecore_desktop_menu_apply_rules(struct
 
 EAPI void
 ecore_desktop_menu_for_each(void (*func)
-			    (const char *name, const char *path, const char *directory, Ecore_Hash * apps))
+			    (const char *name, const char *path, const char *directory, Eina_Hash * apps))
 {
    char               *menu_file;
 
@@ -177,9 +177,9 @@ _ecore_desktop_menu_make_apps(const void *data, Ecore_Desktop_Tree * tree,
 	     char               *path;
 	     char               *name;
 	     char               *directory;
-	     Ecore_Hash         *apps;
+	     Eina_Hash         *apps;
 	     void                (*func) (char *name, char *path, char *directory,
-					  Ecore_Hash * apps);
+					  Eina_Hash * apps);
 
 	     func = data;
 	     name = (char *)tree->elements[element].element;
@@ -206,8 +206,8 @@ _ecore_desktop_menu_make_apps(const void *data, Ecore_Desktop_Tree * tree,
 	     else
 	        directory = NULL;
 	     path = (char *)tree->elements[element + 1].element;
-//             pool = (Ecore_Hash *) tree->elements[element + 2].element;
-	     apps = (Ecore_Hash *) tree->elements[element + 4].element;
+//             pool = (Eina_Hash *) tree->elements[element + 2].element;
+	     apps = (Eina_Hash *) tree->elements[element + 4].element;
 	     path = &path[11];
 #ifdef DEBUG
 	     printf("OUTPUTTING MENU - %s \t\t%s \t\t%s\n", path, name, directory);
@@ -650,18 +650,14 @@ static Ecore_Desktop_Tree *
 _ecore_desktop_menu_create_menu()
 {
    Ecore_Desktop_Tree *menu, *rules;
-   Ecore_Hash         *pool, *apps;
+   Eina_Hash         *pool, *apps;
 
    menu = ecore_desktop_tree_new(NULL);
    rules = ecore_desktop_tree_new(NULL);
-   pool = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-   apps = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+   pool = eina_hash_string_superfast_new(free);
+   apps = eina_hash_string_superfast_new(free);
    if ((menu) && (rules) && (pool) && (apps))
      {
-	ecore_hash_free_key_cb_set(pool, free);
-	ecore_hash_free_value_cb_set(pool, free);
-	ecore_hash_free_key_cb_set(apps, free);
-	ecore_hash_free_value_cb_set(apps, free);
 	ecore_desktop_tree_extend(menu, "<MENU <    > <> <>");
 	ecore_desktop_tree_extend(menu, "<MENU_PATH ");
 	ecore_desktop_tree_add_hash(menu, pool);
@@ -671,9 +667,9 @@ _ecore_desktop_menu_create_menu()
    else
      {
 	if (apps)
-	   ecore_hash_destroy(apps);
+	   eina_hash_free(apps);
 	if (pool)
-	   ecore_hash_destroy(pool);
+	   eina_hash_free(pool);
 	if (rules)
 	   ecore_desktop_tree_del(rules);
 	if (menu)
@@ -889,10 +885,10 @@ _ecore_desktop_menu_legacy_menu(void *data, const char *path)
      }
    else if (strcmp(".desktop", &file[count - 8]) == 0)
      {
-	Ecore_Hash         *pool;
+	Eina_Hash         *pool;
 	Ecore_Desktop_Tree *rules;
 
-	pool = (Ecore_Hash *) legacy_data->current->elements[2].element;
+	pool = (Eina_Hash *) legacy_data->current->elements[2].element;
 	rules =
 	   (Ecore_Desktop_Tree *) legacy_data->current->elements[3].element;
 	if (rules->size == 0)
@@ -904,7 +900,7 @@ _ecore_desktop_menu_legacy_menu(void *data, const char *path)
 		ecore_desktop_tree_add_child(rules, new_rules);
 	  }
 	sprintf(temp, "%s%s", legacy_data->prefix, file);
-	ecore_hash_set(pool, strdup(temp), strdup(path));
+	eina_hash_add(pool, temp, strdup(path));
 #ifdef DEBUG
 //	printf
 //	   ("POOLING - _ecore_desktop_menu_legacy_menu(void *data, %s) - %s - %s\n",
@@ -1066,7 +1062,7 @@ _ecore_desktop_menu_add_dirs(Ecore_Desktop_Tree * tree, Ecore_List * paths,
 
 static int
 _ecore_desktop_menu_expand_apps(struct _ecore_desktop_menu_unxml_data
-				*unxml_data, char *app_dir, Ecore_Hash * pool)
+				*unxml_data, char *app_dir, Eina_Hash * pool)
 {
    if (pool)
      {
@@ -1107,12 +1103,17 @@ _ecore_desktop_menu_check_app(void *data, const char *path)
 	     char               *file;
 
 	     file = strdup(path + our_data->length);
-	     if ((file) && (path))
+	     if (file)
 	       {
-		  for (i = 0; file[i] != '\0'; i++)
-		     if (file[i] == '/')
-			file[i] = '-';
-		  ecore_hash_set(our_data->pool, file, strdup(path));
+		  if (path)
+		    {
+		       for (i = 0; file[i] != '\0'; i++)
+			 if (file[i] == '/')
+			   file[i] = '-';
+		       eina_hash_add(our_data->pool, file, strdup(path));
+		    }
+		  free(file);
+	       }
 #ifdef DEBUG
 //		  printf
 //		     ("POOLING - _ecore_desktop_menu_check_app(void *data, %s) - %s\n",
@@ -1423,9 +1424,9 @@ _ecore_desktop_menu_generate(const void *data, Ecore_Desktop_Tree * tree,
 	     generate_data.unallocated = unxml_data->unallocated;
 	     generate_data.name = (char *)tree->elements[element].element;
 	     generate_data.path = (char *)tree->elements[element + 1].element;
-	     generate_data.pool = (Ecore_Hash *) tree->elements[element + 2].element;
+	     generate_data.pool = (Eina_Hash *) tree->elements[element + 2].element;
 	     generate_data.rules = (Ecore_Desktop_Tree *) tree->elements[element + 3].element;
-	     generate_data.apps = (Ecore_Hash *) tree->elements[element + 4].element;
+	     generate_data.apps = (Eina_Hash *) tree->elements[element + 4].element;
 
 	     /* generate and inherit the pools on the first pass, and preparse the include/exclude logic. */
 	     if (!generate_data.unallocated)
@@ -1511,10 +1512,10 @@ _ecore_desktop_menu_generate(const void *data, Ecore_Desktop_Tree * tree,
 		    {
 		       if (unxml_data->stack->elements[i].type == ECORE_DESKTOP_TREE_ELEMENT_TYPE_HASH)
 			 {
-			    Ecore_Hash         *ancestor;
+			    Eina_Hash         *ancestor;
 
-			    ancestor = (Ecore_Hash *) unxml_data->stack->elements[i].element;
-			    ecore_hash_for_each_node(ancestor, _ecore_desktop_menu_inherit_apps, generate_data.pool);
+			    ancestor = (Eina_Hash *) unxml_data->stack->elements[i].element;
+			    eina_hash_foreach(ancestor, _ecore_desktop_menu_inherit_apps, generate_data.pool);
 			 }
 		    }
 	       }
@@ -1542,12 +1543,12 @@ _ecore_desktop_menu_generate(const void *data, Ecore_Desktop_Tree * tree,
 				 if (type == 'I')
 				   {
 				      generate_data.include = TRUE;
-				      ecore_hash_for_each_node(generate_data.pool, _ecore_desktop_menu_select_app, &generate_data);
+				      eina_hash_foreach(generate_data.pool, _ecore_desktop_menu_select_app, &generate_data);
 				   }
 				 else
 				   {
 				      generate_data.include = FALSE;
-				      ecore_hash_for_each_node(generate_data.apps, _ecore_desktop_menu_select_app, &generate_data);
+				      eina_hash_foreach(generate_data.apps, _ecore_desktop_menu_select_app, &generate_data);
 				   }
 			      }
 			 }
@@ -1575,39 +1576,26 @@ _ecore_desktop_menu_is_include(const void *data, Ecore_Desktop_Tree * tree, int 
    return 0;
 }
 
-static void
-_ecore_desktop_menu_inherit_apps(void *value, void *user_data)
+static Eina_Bool
+_ecore_desktop_menu_inherit_apps(const Eina_Hash *hash, const void *key, void *value, void *user_data)
 {
-   Ecore_Hash_Node    *node;
-   Ecore_Hash         *pool;
-   char               *key, *app;
-
-   pool = (Ecore_Hash *) user_data;
-   node = (Ecore_Hash_Node *) value;
-   key = (char *)node->key;
-   app = (char *)node->value;
 #ifdef DEBUG
 //   printf("CHECKING %s - %s\n", app, key);
 #endif
-   if (!ecore_hash_get(pool, key))
-      ecore_hash_set(pool, strdup(key), strdup(app));
+   if (!eina_hash_find(user_data, key))
+      eina_hash_add(user_data, key, strdup(value));
 }
 
 static void
-_ecore_desktop_menu_select_app(void *value, void *user_data)
+_ecore_desktop_menu_select_app(const Eina_Hash *hash, const void *key, void *value, void *user_data)
 {
-   Ecore_Hash_Node    *node;
    Ecore_Desktop      *desktop;
    struct _ecore_desktop_menu_generate_data *generate_data;
-   char               *key, *app;
 
-   node = (Ecore_Hash_Node *) value;
    generate_data = (struct _ecore_desktop_menu_generate_data *)user_data;
-   key = (char *)node->key;
-   app = (char *)node->value;
 
    /* FIXME: pass an actuall language parameter. */
-   desktop = ecore_desktop_get(app, NULL);
+   desktop = ecore_desktop_get(value, NULL);
 
    if (desktop)
      {
@@ -1619,16 +1607,16 @@ _ecore_desktop_menu_select_app(void *value, void *user_data)
 	     desktop->allocated = TRUE;
 	     if (generate_data->include)
 	       {
-		  ecore_hash_set(generate_data->apps, key, strdup(app));
+		  eina_hash_add(generate_data->apps, key, strdup(value));
 #ifdef DEBUG
-		  printf("INCLUDING %s%s - %s\n", ((generate_data->unallocated) ? "UNALLOCATED " : ""), app, key);
+		  printf("INCLUDING %s%s - %s\n", ((generate_data->unallocated) ? "UNALLOCATED " : ""), value, key);
 #endif
 	       }
 	     else
 	       {
-		  ecore_hash_remove(generate_data->apps, key);
+		  eina_hash_del(generate_data->apps, key);
 #ifdef DEBUG
-		  printf("EXCLUDING %s%s - %s\n", ((generate_data->unallocated) ? "UNALLOCATED " : ""), app, key);
+		  printf("EXCLUDING %s%s - %s\n", ((generate_data->unallocated) ? "UNALLOCATED " : ""), value, key);
 #endif
 	       }
 	  }
@@ -1675,7 +1663,7 @@ _ecore_desktop_menu_apply_rules(struct _ecore_desktop_menu_generate_data *genera
 	       case 'C':
 		  {
 		     /* Try to match a category. */
-		     if ((desktop->Categories) && (ecore_hash_get(desktop->Categories, &rul[4]) != NULL))
+		     if ((desktop->Categories) && (eina_hash_find(desktop->Categories, &rul[4]) != NULL))
 		        sub_result = TRUE;
 		     break;
 		  }

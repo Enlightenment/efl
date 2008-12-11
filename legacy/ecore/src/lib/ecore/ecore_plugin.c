@@ -24,6 +24,10 @@
 
 static Ecore_List *loaded_plugins = NULL;
 
+static Eina_Bool _hash_keys(const Eina_Hash	*hash,
+			    const char		*key,
+                            void		*list);
+
 /**
  * @defgroup Ecore_Plugin Plugin Functions
  *
@@ -163,7 +167,8 @@ EAPI Ecore_List *
 ecore_plugin_available_get(Ecore_Path_Group *group)
 {
    Ecore_List *avail = NULL;
-   Ecore_Hash *plugins = NULL;
+   Eina_Hash *plugins = NULL;
+   Eina_Iterator *it = NULL;
    char *path;
 
    CHECK_PARAM_POINTER_RETURN("group", group, NULL);
@@ -172,8 +177,7 @@ ecore_plugin_available_get(Ecore_Path_Group *group)
      return NULL;
 
    ecore_list_first_goto(group->paths);
-   plugins = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-   ecore_hash_free_key_cb_set(plugins, free);
+   plugins = eina_hash_string_superfast_new(free);
 
    while ((path = ecore_list_next(group->paths)) != NULL)
      {
@@ -214,21 +218,37 @@ ecore_plugin_available_get(Ecore_Path_Group *group)
 	     ext = strrchr(ppath, '.');
 	     *ext = '\0';
 
-	     if (!ecore_hash_get(plugins, ppath))
+	     if (!eina_hash_find(plugins, ppath))
 	       {
 		  char *key;
 
 		  key = strdup(ppath);
-		  ecore_hash_set(plugins, key, key);
+		  eina_hash_add(plugins, key, key);
 	       }
 	  }
 	closedir(dir);
      }
 
-   ecore_hash_free_key_cb_set(plugins, NULL);
-   avail = ecore_hash_keys(plugins);
+   avail = ecore_list_new();
    ecore_list_free_cb_set(avail, free);
-   ecore_hash_destroy(plugins);
+
+
+   it = eina_hash_iterator_key_new(plugins);
+   if (it)
+     {
+	eina_iterator_foreach(it, EINA_EACH(_hash_keys), avail);
+	eina_iterator_free(it);
+     }
+
+   eina_hash_free(plugins);
+
 
    return avail;
+}
+
+static Eina_Bool
+_hash_keys(const Eina_Hash *hash, const char *key, void *list)
+{
+   ecore_list_append(list, key);
+   return EINA_TRUE;
 }

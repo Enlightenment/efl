@@ -233,7 +233,7 @@ struct _Ecore_Evas
    Eina_Bool   should_be_visible : 1;
    Eina_Bool   alpha  : 1;
 
-   Evas_Hash  *data;
+   Eina_Hash  *data;
 
    struct {
       int      x, y;

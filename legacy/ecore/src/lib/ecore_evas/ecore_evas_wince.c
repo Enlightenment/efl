@@ -32,7 +32,7 @@ static int _ecore_evas_fps_debug  = 0;
 static Ecore_Event_Handler *ecore_evas_event_handlers[ECORE_EVAS_EVENT_COUNT];
 static Ecore_Idle_Enterer  *ecore_evas_idle_enterer = NULL;
 static Ecore_Evas          *ecore_evases = NULL;
-static Evas_Hash           *ecore_evases_hash = NULL;
+static Eina_Hash           *ecore_evases_hash = NULL;
 
 static int _ecore_evas_wince_event_key_down(void *data __UNUSED__, int type __UNUSED__, void *event);
 
@@ -206,7 +206,7 @@ _ecore_evas_wince_match(Ecore_WinCE_Window *window)
 {
    Ecore_Evas *ee;
 
-   ee = evas_hash_find(ecore_evases_hash, _ecore_evas_wince_winid_str_get(window));
+   ee = eina_hash_find(ecore_evases_hash, _ecore_evas_wince_winid_str_get(window));
 
    return ee;
 }
@@ -507,7 +507,7 @@ static void
 _ecore_evas_wince_free(Ecore_Evas *ee)
 {
    ecore_wince_window_del(ee->engine.wince.window);
-   ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_wince_winid_str_get(ee->engine.wince.window), ee);
+   eina_hash_del(ecore_evases_hash, _ecore_evas_wince_winid_str_get(ee->engine.wince.window), ee);
    ecore_evases = _ecore_list2_remove(ecore_evases, ee);
    _ecore_evas_wince_shutdown();
    ecore_wince_shutdown();
@@ -988,7 +988,9 @@ ecore_evas_software_wince_new_internal(int                 backend,
    evas_key_lock_add(ee->evas, "Scroll_Lock");
 
    ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
-   ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_wince_winid_str_get(ee->engine.wince.window), ee);
+   if (!ecore_evases_hash)
+     ecore_evases_hash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(ecore_evases_hash, _ecore_evas_wince_winid_str_get(ee->engine.wince.window), ee);
 
    return ee;
 }

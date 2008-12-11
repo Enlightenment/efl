@@ -43,7 +43,7 @@ static Ecore_Fd_Handler *_window_event_fd_handler_handle = NULL;
 static Ecore_Fd_Handler *_input_event_fd_handler_handle = NULL;
 
 /* this hash is to store all the possible key names for fast lookup */
-static Ecore_Hash *_ecore_directfb_key_symbols_hash = NULL;
+static Eina_Hash *_ecore_directfb_key_symbols_hash = NULL;
 
 
 static IDirectFB *_dfb = NULL;			// the main interface
@@ -163,7 +163,7 @@ _ecore_directfb_event_handle_key_down(DFBEvent *evt)
 	{
 		case DFEC_INPUT:
 			key_symbol = evt->input.key_symbol;
-			k = ecore_hash_get(_ecore_directfb_key_symbols_hash, &key_symbol);
+			k = eina_hash_find(_ecore_directfb_key_symbols_hash, &key_symbol);
 
 			if(!k) 
 			{
@@ -179,7 +179,7 @@ _ecore_directfb_event_handle_key_down(DFBEvent *evt)
 	      
 		case DFEC_WINDOW:
 			key_symbol = evt->window.key_symbol;
-			k = ecore_hash_get(_ecore_directfb_key_symbols_hash, &key_symbol);
+			k = eina_hash_find(_ecore_directfb_key_symbols_hash, &key_symbol);
 
 			if(!k) 
 			{
@@ -211,7 +211,7 @@ _ecore_directfb_event_handle_key_up(DFBEvent *evt)
 	{
 		case DFEC_INPUT:
 			key_symbol = evt->input.key_symbol;
-			k = ecore_hash_get(_ecore_directfb_key_symbols_hash, &key_symbol);
+			k = eina_hash_find(_ecore_directfb_key_symbols_hash, &key_symbol);
 
 			
 			if(!k) 
@@ -228,7 +228,7 @@ _ecore_directfb_event_handle_key_up(DFBEvent *evt)
 	      
 		case DFEC_WINDOW:
 			key_symbol = evt->window.key_symbol;
-			k = ecore_hash_get(_ecore_directfb_key_symbols_hash, &key_symbol);
+			k = eina_hash_find(_ecore_directfb_key_symbols_hash, &key_symbol);
 
 			if(!k) 
 			{
@@ -698,14 +698,14 @@ ecore_directfb_init(const char *name)
 	ECORE_DIRECTFB_EVENT_WHEEL = ecore_event_type_new();;
 
 	/* create the hash table for the keynames */
-	_ecore_directfb_key_symbols_hash = ecore_hash_new(_ecore_directfb_hash_create,_ecore_directfb_hash_compare);
+	_ecore_directfb_key_symbols_hash = eina_hash_int32_new(NULL);
 	for(i=0; i<_ecore_directfb_key_symbols_count; i++)
 	{
 		struct keymap *k;
 		k = malloc(sizeof(struct keymap));
 		k->name = _ecore_directfb_key_symbols[i].name;
 		k->string = _ecore_directfb_key_symbols[i].string;
-		ecore_hash_set(_ecore_directfb_key_symbols_hash, &_ecore_directfb_key_symbols[i].id, k);
+		eina_hash_add(_ecore_directfb_key_symbols_hash, &_ecore_directfb_key_symbols[i].id, k);
 	}
 	/* create the hash for the windows(key = windowid, val = Ecore_DirectFB_Window struct) */
 	return _ecore_directfb_init_count;
@@ -728,8 +728,8 @@ ecore_directfb_shutdown(void)
 	for(i=0; i<_ecore_directfb_key_symbols_count; i++)
 	{
 		struct keymap *k;
-		k = ecore_hash_get(_ecore_directfb_key_symbols_hash, &_ecore_directfb_key_symbols[i].id);
-		ecore_hash_remove(_ecore_directfb_key_symbols_hash, &_ecore_directfb_key_symbols[i].id);
+		k = eina_hash_find(_ecore_directfb_key_symbols_hash, &_ecore_directfb_key_symbols[i].id);
+		eina_hash_del(_ecore_directfb_key_symbols_hash, &_ecore_directfb_key_symbols[i].id);
 		free(k);
 	}
 	

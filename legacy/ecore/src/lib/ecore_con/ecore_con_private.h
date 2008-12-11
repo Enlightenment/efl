@@ -72,7 +72,7 @@ struct _Ecore_Con_Server
    char             *path;
    void             *data;
    Ecore_Fd_Handler *fd_handler;
-   Ecore_List       *clients;
+   Eina_List        *clients;
    int               write_buf_size;
    int               write_buf_offset;
    unsigned char    *write_buf;

@@ -14,12 +14,12 @@ extern int          reject_count, not_over_count;
 
 static int          init_count = 0;
 
-static Ecore_Hash  *desktop_cache;
+static Eina_Hash  *desktop_cache = NULL;
 
 Ecore_Desktop      *_ecore_desktop_get(const char *file, const char *lang);
 void                _ecore_desktop_destroy(Ecore_Desktop * desktop);
 
-#define IFGETDUP(src, key, dst) src = (char *)ecore_hash_get(result->group, key); if (src) dst = strdup(src); else dst = NULL;
+#define IFGETDUP(src, key, dst) src = (char *)eina_hash_find(result->group, key); if (src) dst = strdup(src); else dst = NULL;
 #define IFFREE(src) if (src) free(src);  src = NULL;
 
 /**
@@ -33,35 +33,33 @@ void                _ecore_desktop_destroy(Ecore_Desktop * desktop);
 /**
  * Get the contents of a .ini style file.
  *
- * The Ecore_Hash returned is a two level hash, the first level
+ * The Eina_Hash returned is a two level hash, the first level
  * is the groups in the file, one per group, keyed by the name 
  * of that group.  The value of each of those first level hashes
- * is the second level Ecore_Hash, the contents of each group.
+ * is the second level Eina_Hash, the contents of each group.
  *
  * @param   file Full path to the .ini style file.
- * @return  An Ecore_Hash of the files contents.
+ * @return  An Eina_Hash of the files contents.
  * @ingroup Ecore_Desktop_Main_Group
  */
-Ecore_Hash         *
+Eina_Hash         *
 ecore_desktop_ini_get(const char *file)
 {
-   Ecore_Hash         *result;
+   Eina_Hash         *result;
    FILE               *f;
    char                buffer[PATH_MAX];
-   Ecore_Hash         *current = NULL;
+   Eina_Hash         *current = NULL;
 
-   result = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+   result = eina_hash_string_superfast_new(eina_hash_free);
    if (!result) return NULL;
 
    f = fopen(file, "r");
    if (!f)
      {
 	fprintf(stderr, "ERROR: Cannot Open File %s\n", file);
-	ecore_hash_destroy(result);
+	eina_hash_free(result);
 	return NULL;
      }
-   ecore_hash_free_key_cb_set(result, free);
-   ecore_hash_free_value_cb_set(result, (Ecore_Free_Cb) ecore_hash_destroy);
    *buffer = '\0';
 #ifdef DEBUG
    fprintf(stdout, "PARSING INI %s\n", file);
@@ -84,12 +82,10 @@ ecore_desktop_ini_get(const char *file)
 	     while ((*c != ']') && (*c != '\n') && (*c != '\0'))
 	        c++;
 	     *c++ = '\0';
-	     current = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+	     current = ein_hash_string_superfast_new(free);
 	     if (current)
 	       {
-		  ecore_hash_free_key_cb_set(current, free);
-		  ecore_hash_free_value_cb_set(current, free);
-		  ecore_hash_set(result, strdup(key), current);
+		  eina_hash_add(result, key, current);
 #ifdef DEBUG
 		  fprintf(stdout, "  GROUP [%s]\n", key);
 #endif
@@ -121,10 +117,9 @@ ecore_desktop_ini_get(const char *file)
 		     c++;
 		  *c++ = '\0';
 		  /* FIXME: should strip space at end, then unescape value. */
-		  tv = ecore_hash_remove(current, key);
-		  if (tv) free(tv);
+		  eina_hash_del(current, key);
 		  if (value[0] != '\0')
-		    ecore_hash_set(current, strdup(key), strdup(value));
+		    eina_hash_add(current, key, strdup(value));
 #ifdef DEBUG
 		  fprintf(stdout, "    %s=%s\n", key, value);
 #endif
@@ -158,7 +153,7 @@ ecore_desktop_get(const char *file, const char *lang)
 	/* Kill the hash, it takes up way too much memory. */
 	if (result->data)
 	  {
-	     ecore_hash_destroy(result->data);
+	     eina_hash_free(result->data);
 	     result->data = NULL;
 	  }
 	result->group = NULL;
@@ -178,7 +173,7 @@ _ecore_desktop_get(const char *file, const char *lang)
    double              begin;
 
    begin = ecore_time_get();
-   result = (Ecore_Desktop *) ecore_hash_get(desktop_cache, (char *)file);
+   result = eina_hash_find(desktop_cache, (char *)file);
    /* Check if the cache is still valid. */
    if (result)
      {
@@ -187,7 +182,7 @@ _ecore_desktop_get(const char *file, const char *lang)
 	  {
 	     if (st.st_mtime > result->mtime)
 	       {
-		  ecore_hash_remove(desktop_cache, result->original_path);
+		  eina_hash_del(desktop_cache, result->original_path);
 		  result = NULL;
 	       }
 	     stated = 1;
@@ -214,9 +209,9 @@ _ecore_desktop_get(const char *file, const char *lang)
 	/* Timestamp the cache, and no need to stat the file twice if the cache was stale. */
 	if ((stated) || (stat(result->original_path, &st) >= 0))
 	  result->mtime = st.st_mtime;
-	result->group = ecore_hash_get(result->data, "Desktop Entry");
+	result->group = eina_hash_find(result->data, "Desktop Entry");
 	if (!result->group)
-	  result->group = ecore_hash_get(result->data, "KDE Desktop Entry");
+	  result->group = eina_hash_find(result->data, "KDE Desktop Entry");
 	/* This is a "Desktop" file, probably an application. */
 	if (result->group)
 	  {
@@ -428,42 +423,42 @@ _ecore_desktop_get(const char *file, const char *lang)
 		    }
 	       }
 
-	     value = ecore_hash_get(result->group, "MimeType");
+	     value = eina_hash_find(result->group, "MimeType");
 	     if (value)
 	       result->MimeTypes =
 		  ecore_desktop_paths_to_hash(value);
-	     value = ecore_hash_get(result->group, "Actions");
+	     value = eina_hash_find(result->group, "Actions");
 	     if (value)
 	       result->Actions =
 		  ecore_desktop_paths_to_hash(value);
-	     value = ecore_hash_get(result->group, "OnlyShowIn");
+	     value = eina_hash_find(result->group, "OnlyShowIn");
 	     if (value)
 	       result->OnlyShowIn =
 		  ecore_desktop_paths_to_hash(value);
-	     value = ecore_hash_get(result->group, "NotShowIn");
+	     value = eina_hash_find(result->group, "NotShowIn");
 	     if (value)
 	       result->NotShowIn =
 		  ecore_desktop_paths_to_hash(value);
-	     value = ecore_hash_get(result->group, "X-KDE-StartupNotify");
+	     value = eina_hash_find(result->group, "X-KDE-StartupNotify");
 	     if (value)
 	       result->startup = (strcmp(value, "true") == 0);
-	     value = ecore_hash_get(result->group, "StartupNotify");
+	     value = eina_hash_find(result->group, "StartupNotify");
 	     if (value)
 	       result->startup = (strcmp(value, "true") == 0);
-	     value = ecore_hash_get(result->group, "X-Enlightenment-WaitExit");
+	     value = eina_hash_find(result->group, "X-Enlightenment-WaitExit");
 	     if (value)
 	       result->wait_exit = (strcmp(value, "true") == 0);
-	     value = ecore_hash_get(result->group, "NoDisplay");
+	     value = eina_hash_find(result->group, "NoDisplay");
 	     if (value)
 	       result->no_display = (strcmp(value, "true") == 0);
-	     value = ecore_hash_get(result->group, "Hidden");
+	     value = eina_hash_find(result->group, "Hidden");
 	     if (value)
 	       result->hidden = (strcmp(value, "true") == 0);
 	  }
 	else
 	  {
 	     /*Maybe it's a 'trash' file - which also follows the Desktop FDO spec */
-	     result->group = ecore_hash_get(result->data, "Trash Info");
+	     result->group = eina_hash_find(result->data, "Trash Info");
 	     if (result->group)
 	       {
 		  IFGETDUP(value, "Path", result->path);
@@ -479,7 +474,7 @@ _ecore_desktop_get(const char *file, const char *lang)
 	     result = NULL;
 	  }
 	else
-	   ecore_hash_set(desktop_cache, strdup(result->original_path), result);
+	   eina_hash_add(desktop_cache, result->original_path, result);
      }
 
 error:
@@ -504,6 +499,13 @@ error:
    return result;
 }
 
+static Eina_Bool
+_hash_keys(Eina_Hash *hash, const void *key, void *data, void *list)
+{
+  ecore_list_append(list, key);
+  return EINA_TRUE;
+}
+
 void
 ecore_desktop_save(Ecore_Desktop * desktop)
 {
@@ -517,27 +519,20 @@ ecore_desktop_save(Ecore_Desktop * desktop)
 	  {
 	     desktop->data = ecore_desktop_ini_get(desktop->original_path);
 	     desktop->group =
-		(Ecore_Hash *) ecore_hash_get(desktop->data, "Desktop Entry");
+		(Eina_Hash *) eina_hash_find(desktop->data, "Desktop Entry");
 	     if (!desktop->group)
 		desktop->group =
-		   (Ecore_Hash *) ecore_hash_get(desktop->data,
+		   (Eina_Hash *) eina_hash_find(desktop->data,
 						 "KDE Desktop Entry");
 	     if (!desktop->group)
 	       {
 		  trash = 1;
 		  desktop->group =
-		     (Ecore_Hash *) ecore_hash_get(desktop->data, "Trash Info");
+		     (Eina_Hash *) eina_hash_find(desktop->data, "Trash Info");
 	       }
 	  }
 	else
-	  {
-	     desktop->group = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-	     if (desktop->group)
-	       {
-		  ecore_hash_free_key_cb_set(desktop->group, free);
-		  ecore_hash_free_value_cb_set(desktop->group, free);
-	       }
-	  }
+	  desktop->group = eina_hash_string_superfast_new(free);
      }
 
    if (desktop->group)
@@ -552,9 +547,9 @@ ecore_desktop_save(Ecore_Desktop * desktop)
 
 		  real = ecore_file_readlink(desktop->original_path);
 		  if (real)
-		     ecore_hash_set(desktop->group,
-				    strdup("X-Enlightenment-OriginalPath"),
-				    real);
+		     eina_hash_add(desktop->group,
+				   "X-Enlightenment-OriginalPath",
+				   real);
 	       }
 	  }
 
@@ -562,106 +557,119 @@ ecore_desktop_save(Ecore_Desktop * desktop)
         commands = ecore_desktop_get_command(desktop, NULL, 0);
 	if (commands)
 	  {
-	     temp = ecore_list_first(commands);
-	     if (temp)
-	        ecore_hash_set(desktop->group, strdup("Exec"), strdup(temp));
-	     ecore_list_destroy(commands);
+	    temp = ecore_list_first(commands);
+	    if (temp)
+	      eina_hash_add(desktop->group, "Exec", strdup(temp));
+	    ecore_list_destroy(commands);
 	  }
 
 	if (desktop->name)
-	   ecore_hash_set(desktop->group, strdup("Name"),
-			  strdup(desktop->name));
+	  eina_hash_add(desktop->group, "Name",
+			strdup(desktop->name));
 	if (desktop->generic)
-	   ecore_hash_set(desktop->group, strdup("GenericName"),
-			  strdup(desktop->generic));
+	  eina_hash_add(desktop->group, "GenericName",
+			strdup(desktop->generic));
 	if (desktop->comment)
-	   ecore_hash_set(desktop->group, strdup("Comment"),
-			  strdup(desktop->comment));
+	  eina_hash_add(desktop->group, "Comment",
+			strdup(desktop->comment));
 	if (desktop->type)
-	   ecore_hash_set(desktop->group, strdup("Type"),
-			  strdup(desktop->type));
+	  eina_hash_add(desktop->group, "Type",
+			strdup(desktop->type));
 	if (desktop->URL)
-	   ecore_hash_set(desktop->group, strdup("URL"), strdup(desktop->URL));
+	  eina_hash_add(desktop->group, "URL", strdup(desktop->URL));
 	if (desktop->file)
-	   ecore_hash_set(desktop->group, strdup("File"),
-			  strdup(desktop->file));
+	  eina_hash_add(desktop->group, "File",
+			strdup(desktop->file));
 	if (desktop->icon)
-	   ecore_hash_set(desktop->group, strdup("Icon"),
-			  strdup(desktop->icon));
+	  eina_hash_add(desktop->group, "Icon",
+			strdup(desktop->icon));
 	if (desktop->icon_theme)
-	   ecore_hash_set(desktop->group, strdup("X-Enlightenment-IconTheme"),
-			  strdup(desktop->icon_theme));
+	  eina_hash_add(desktop->group, "X-Enlightenment-IconTheme",
+			strdup(desktop->icon_theme));
 	else
-           ecore_hash_remove(desktop->group, "X-Enlightenment-IconTheme");
+	  eina_hash_del(desktop->group, "X-Enlightenment-IconTheme");
 	if (desktop->icon_class)
-	   ecore_hash_set(desktop->group, strdup("X-Enlightenment-IconClass"),
-			  strdup(desktop->icon_class));
+	  eina_hash_add(desktop->group, "X-Enlightenment-IconClass",
+			strdup(desktop->icon_class));
 	else
-           ecore_hash_remove(desktop->group, "X-Enlightenment-IconClass");
+	  eina_hash_del(desktop->group, "X-Enlightenment-IconClass");
 	if (desktop->icon_path)
-	   ecore_hash_set(desktop->group, strdup("X-Enlightenment-IconPath"),
-			  strdup(desktop->icon_path));
+	  eina_hash_add(desktop->group, "X-Enlightenment-IconPath",
+			strdup(desktop->icon_path));
 	else
-           ecore_hash_remove(desktop->group, "X-Enlightenment-IconPath");
+	  eina_hash_del(desktop->group, "X-Enlightenment-IconPath");
 	if (desktop->window_class)
-	   ecore_hash_set(desktop->group, strdup("StartupWMClass"),
-			  strdup(desktop->window_class));
+	  eina_hash_add(desktop->group, "StartupWMClass",
+			strdup(desktop->window_class));
 	if (desktop->categories)
-	   ecore_hash_set(desktop->group, strdup("Categories"),
-			  strdup(desktop->categories));
+	  eina_hash_add(desktop->group, "Categories",
+			strdup(desktop->categories));
 	if (desktop->window_name)
-	   ecore_hash_set(desktop->group, strdup("X-Enlightenment-WindowName"),
-			  strdup(desktop->window_name));
+	  eina_hash_add(desktop->group, "X-Enlightenment-WindowName",
+			strdup(desktop->window_name));
 	else
-           ecore_hash_remove(desktop->group, "X-Enlightenment-WindowName");
+	  eina_hash_del(desktop->group, "X-Enlightenment-WindowName");
 	if (desktop->window_title)
-	   ecore_hash_set(desktop->group, strdup("X-Enlightenment-WindowTitle"),
-			  strdup(desktop->window_title));
+	  eina_hash_add(desktop->group, "X-Enlightenment-WindowTitle",
+			strdup(desktop->window_title));
 	else
-           ecore_hash_remove(desktop->group, "X-Enlightenment-WindowTitle");
+	  eina_hash_del(desktop->group, "X-Enlightenment-WindowTitle");
 	if (desktop->window_role)
-	   ecore_hash_set(desktop->group, strdup("X-Enlightenment-WindowRole"),
-			  strdup(desktop->window_role));
+	  eina_hash_add(desktop->group, "X-Enlightenment-WindowRole",
+			strdup(desktop->window_role));
 	else
-           ecore_hash_remove(desktop->group, "X-Enlightenment-WindowRole");
-	ecore_hash_remove(desktop->group, "X-KDE-StartupNotify");
+	  eina_hash_del(desktop->group, "X-Enlightenment-WindowRole");
+	eina_hash_del(desktop->group, "X-KDE-StartupNotify");
 	if (desktop->wait_exit)
-	   ecore_hash_set(desktop->group, strdup("X-Enlightenment-WaitExit"),
-			  strdup("true"));
+	  eina_hash_add(desktop->group, "X-Enlightenment-WaitExit",
+			strdup("true"));
 	else
-	   ecore_hash_remove(desktop->group, "X-Enlightenment-WaitExit");
+	  eina_hash_del(desktop->group, "X-Enlightenment-WaitExit");
 	if (desktop->startup)
-	   ecore_hash_set(desktop->group, strdup("StartupNotify"),
-			  strdup("true"));
+	  eina_hash_add(desktop->group, "StartupNotify",
+			strdup("true"));
 	else
-	   ecore_hash_remove(desktop->group, "StartupNotify");
+	  eina_hash_del(desktop->group, "StartupNotify");
 	if (desktop->no_display)
-	   ecore_hash_set(desktop->group, strdup("NoDisplay"), strdup("true"));
+	  eina_hash_add(desktop->group, "NoDisplay", strdup("true"));
 	else
-	   ecore_hash_remove(desktop->group, "NoDisplay");
+	  eina_hash_del(desktop->group, "NoDisplay");
 	if (desktop->hidden)
-	   ecore_hash_set(desktop->group, strdup("Hidden"), strdup("true"));
+	  eina_hash_add(desktop->group, "Hidden", strdup("true"));
 	else
-	   ecore_hash_remove(desktop->group, "Hidden");
+	  eina_hash_del(desktop->group, "Hidden");
 
 	/* FIXME: deal with the ShowIn's and mime stuff. */
 
 	if (desktop->path)
-	   ecore_hash_set(desktop->group, strdup("Path"),
-			  strdup(desktop->path));
+	  eina_hash_add(desktop->group, "Path",
+			strdup(desktop->path));
 	if (desktop->deletiondate)
-	   ecore_hash_set(desktop->group, strdup("DeletionDate"),
-			  strdup(desktop->deletiondate));
+	  eina_hash_add(desktop->group, "DeletionDate",
+			strdup(desktop->deletiondate));
 
 	if (desktop->original_path)
 	  {
 	     FILE               *f;
 	     Ecore_List         *list;
 	     char               *key;
+	     Eina_Iterator	*it = NULL;
 
 	     ecore_file_unlink(desktop->original_path);
 	     f = fopen(desktop->original_path, "wb");
-	     list = ecore_hash_keys(desktop->group);
+
+	     if ((list = ecore_list_new()))
+	       return;
+
+	     if ((it = eina_hash_iterator_key_new(desktop->group)))
+	       {
+		 ecore_list_destroy(list);
+		 return;
+	       }
+
+	     eina_iterator_foreach(it, EINA_EACH(_hash_keys), list);
+	     eina_iterator_free(it);
+
 	     if ((!f) || (!list))
 		return;
 
@@ -674,7 +682,7 @@ ecore_desktop_save(Ecore_Desktop * desktop)
 	       {
 		  char               *value;
 
-		  value = (char *)ecore_hash_get(desktop->group, key);
+		  value = (char *)eina_hash_find(desktop->group, key);
 		  if ((value) && (value[0] != '\0'))
 		     fprintf(f, "%s=%s\n", key, value);
 	       }
@@ -683,11 +691,11 @@ ecore_desktop_save(Ecore_Desktop * desktop)
 
 	if (desktop->data)
 	  {
-	     ecore_hash_destroy(desktop->data);
+	     eina_hash_free(desktop->data);
 	     desktop->data = NULL;
 	  }
 	else
-	   ecore_hash_destroy(desktop->group);
+	   eina_hash_free(desktop->group);
 	desktop->group = NULL;
      }
 }
@@ -710,15 +718,7 @@ ecore_desktop_init()
       return --init_count;
 
    if (!desktop_cache)
-     {
-	desktop_cache = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-	if (desktop_cache)
-	  {
-	     ecore_hash_free_key_cb_set(desktop_cache, free);
-	     ecore_hash_free_value_cb_set(desktop_cache,
-				       (Ecore_Free_Cb) _ecore_desktop_destroy);
-	  }
-     }
+     desktop_cache = eina_hash_string_superfast_new(_ecore_desktop_destroy);
 
    if (!ecore_desktop_icon_init())
       return --init_count;
@@ -744,7 +744,7 @@ ecore_desktop_shutdown()
 
    if (desktop_cache)
      {
-	ecore_hash_destroy(desktop_cache);
+	eina_hash_free(desktop_cache);
 	desktop_cache = NULL;
      }
 
@@ -795,14 +795,14 @@ _ecore_desktop_destroy(Ecore_Desktop * desktop)
    IFFREE(desktop->window_name);
    IFFREE(desktop->window_title);
    IFFREE(desktop->window_role);
-   if (desktop->NotShowIn) ecore_hash_destroy(desktop->NotShowIn);
-   if (desktop->OnlyShowIn) ecore_hash_destroy(desktop->OnlyShowIn);
-   if (desktop->Categories) ecore_hash_destroy(desktop->Categories);
-   if (desktop->MimeTypes) ecore_hash_destroy(desktop->MimeTypes);
-   if (desktop->Actions) ecore_hash_destroy(desktop->Actions);
+   if (desktop->NotShowIn) eina_hash_free(desktop->NotShowIn);
+   if (desktop->OnlyShowIn) eina_hash_free(desktop->OnlyShowIn);
+   if (desktop->Categories) eina_hash_free(desktop->Categories);
+   if (desktop->MimeTypes) eina_hash_free(desktop->MimeTypes);
+   if (desktop->Actions) eina_hash_free(desktop->Actions);
    if (desktop->data)
      {
-	ecore_hash_destroy(desktop->data);
+	eina_hash_free(desktop->data);
 	desktop->data = NULL;
      }
    desktop->group = NULL;

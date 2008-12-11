@@ -178,7 +178,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
    svr->created = 1;
    svr->reject_excess_clients = 0;
    svr->client_limit = -1;
-   svr->clients = ecore_list_new();
+   svr->clients = NULL;
    svr->ppid = getpid();
    ecore_con_ssl_server_prepare(svr);
 
@@ -351,8 +351,8 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
    svr->data = (void *)data;
    svr->created = 0;
    svr->reject_excess_clients = 0;
+   svr->clients = NULL;
    svr->client_limit = -1;
-   svr->clients = ecore_list_new();
    ecore_con_ssl_server_prepare(svr);
 
    type = compl_type & ECORE_CON_TYPE;
@@ -551,7 +551,7 @@ ecore_con_server_connected_get(Ecore_Con_Server *svr)
  * @return  The list of clients on this server.
  * @ingroup Ecore_Con_Server_Group
  */
-EAPI Ecore_List *
+EAPI Eina_List *
 ecore_con_server_clients_get(Ecore_Con_Server *svr)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
@@ -782,8 +782,7 @@ ecore_con_client_del(Ecore_Con_Client *cl)
      }
    else
      {
-	if (ecore_list_goto(cl->server->clients, cl))
-	  ecore_list_remove(cl->server->clients);
+        cl->server->clients = eina_list_remove(cl->server->clients, cl);
 	_ecore_con_client_free(cl);
      }
    return data;
@@ -864,6 +863,7 @@ ecore_con_client_flush(Ecore_Con_Client *cl)
 static void
 _ecore_con_server_free(Ecore_Con_Server *svr)
 {
+   Ecore_Con_Client *cl;
    double t_start, t;
 
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_NONE);
@@ -882,9 +882,12 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
 	  }
      }
    if (svr->write_buf) free(svr->write_buf);
-   while (!ecore_list_empty_is(svr->clients))
-     _ecore_con_client_free(ecore_list_first_remove(svr->clients));
-   ecore_list_destroy(svr->clients);
+   while (svr->clients)
+     {
+       cl = eina_list_data_get(svr->clients);
+       svr->clients = eina_list_remove(svr->clients, cl);
+       _ecore_con_client_free(cl);
+     }
    if ((svr->created) && (svr->path) && (svr->ppid == getpid()))
      unlink(svr->path);
    if (svr->fd >= 0) close(svr->fd);
@@ -1181,7 +1184,7 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    if (svr->delete_me) return 1;
    if ((svr->client_limit >= 0) && (!svr->reject_excess_clients))
      {
-	if (ecore_list_count(svr->clients) >= svr->client_limit) return 1;
+	if (eina_list_count(svr->clients) >= svr->client_limit) return 1;
      }
    /* a new client */
    size_in = sizeof(struct sockaddr_in);
@@ -1223,7 +1226,7 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	  ecore_main_fd_handler_add(cl->fd, ECORE_FD_READ,
 				    _ecore_con_svr_cl_handler, cl, NULL, NULL);
 	ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
-	ecore_list_append(svr->clients, cl);
+	eina_list_append(svr->clients, cl);
 	if (!svr->path)
 	  {
 	     ip = incoming.sin_addr.s_addr;
@@ -1422,7 +1425,7 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
 		 }
 	       memcpy(cl->data,  &client_addr, sizeof(client_addr));
 	       ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
-	       ecore_list_append(svr->clients, cl);
+	       eina_list_append(svr->clients, cl);
 
 	       ip = client_addr.sin_addr.s_addr;
 	       snprintf(ipbuf, sizeof(ipbuf),
