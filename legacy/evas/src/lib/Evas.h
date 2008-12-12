@@ -503,12 +503,16 @@ extern "C" {
 
 /* image objects */
    EAPI Evas_Object      *evas_object_image_add             (Evas *e);
+   EAPI Evas_Object      *evas_object_image_filled_add      (Evas *e);
+
    EAPI void              evas_object_image_file_set        (Evas_Object *obj, const char *file, const char *key);
    EAPI void              evas_object_image_file_get        (const Evas_Object *obj, const char **file, const char **key);
    EAPI void              evas_object_image_border_set      (Evas_Object *obj, int l, int r, int t, int b);
    EAPI void              evas_object_image_border_get      (const Evas_Object *obj, int *l, int *r, int *t, int *b);
    EAPI void              evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Bool fill);
    EAPI Evas_Bool         evas_object_image_border_center_fill_get(const Evas_Object *obj);
+   EAPI void              evas_object_image_filled_set      (Evas_Object *obj, Evas_Bool setting);
+   EAPI Evas_Bool         evas_object_image_filled_get      (const Evas_Object *obj);
    EAPI void              evas_object_image_fill_set        (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
    EAPI void              evas_object_image_fill_get        (const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
    EAPI void              evas_object_image_fill_spread_set   (Evas_Object *obj, int tile_mode);

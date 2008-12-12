@@ -57,6 +57,7 @@ struct _Evas_Object_Image
 
    unsigned char     changed : 1;
    unsigned char     dirty_pixels : 1;
+   unsigned char     filled : 1;
 };
 
 /* private methods for image objects */
@@ -81,6 +82,7 @@ static int evas_object_image_was_opaque(Evas_Object *obj);
 static int evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 
 static void *evas_object_image_data_convert_internal(Evas_Object_Image *o, void *data, Evas_Colorspace to_cspace);
+static void evas_object_image_filled_resize_listener(void *data, Evas *e, Evas_Object *obj, void *einfo);
 
 static const Evas_Object_Func object_func =
 {
@@ -208,6 +210,26 @@ evas_object_image_add(Evas *e)
    o = (Evas_Object_Image *)(obj->object_data);
    o->cur.cspace = obj->layer->evas->engine.func->image_colorspace_get(obj->layer->evas->engine.data.output,
 								       o->engine_data);
+   return obj;
+}
+
+/**
+ * Creates a new image object that automatically scales on the given evas.
+ *
+ * This is a helper around evas_object_image_add() and
+ * evas_object_image_filled_set(), it will track object resizes and apply
+ * evas_object_image_fill_set() with the new geometry.
+ *
+ * @see evas_object_image_add()
+ * @see evas_object_image_filled_set()
+ * @see evas_object_image_fill_set()
+ */
+EAPI Evas_Object *
+evas_object_image_filled_add(Evas *e)
+{
+   Evas_Object *obj;
+   obj = evas_object_image_add(e);
+   evas_object_image_filled_set(obj, 1);
    return obj;
 }
 
@@ -438,6 +460,73 @@ evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Bool fill)
    o->changed = 1;
    evas_object_change(obj);
 }
+
+/**
+ * Retrieves if image fill property is tracking object size.
+ *
+ * @param obj The given image object.
+ * @return 1 if it is tracking, 0 if not and evas_object_fill_set()
+ * must be called manually.
+ */
+EAPI Evas_Bool
+evas_object_image_filled_get(const Evas_Object *obj)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return 0;
+   MAGIC_CHECK_END();
+
+   return o->filled;
+}
+
+/**
+ * Sets if image fill property should track object size.
+ *
+ * If set to true, then every evas_object_resize() will automatically
+ * trigger call to evas_object_image_fill_set() with the new size so
+ * image will fill the whole object area.
+ *
+ * @param obj The given image object.
+ * @param setting whether to follow object size.
+ *
+ * @see evas_object_image_filled_add()
+ * @see evas_object_image_fill_set()
+ */
+EAPI void
+evas_object_image_filled_set(Evas_Object *obj, Evas_Bool setting)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return;
+   MAGIC_CHECK_END();
+
+   setting = !!setting;
+   if (o->filled == setting) return;
+
+   o->filled = setting;
+   if (!o->filled)
+     evas_object_event_callback_del(obj, EVAS_CALLBACK_RESIZE, evas_object_image_filled_resize_listener);
+   else
+     {
+	Evas_Coord w, h;
+
+	evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+	evas_object_image_fill_set(obj, 0, 0, w, h);
+
+	evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, evas_object_image_filled_resize_listener, NULL);
+     }
+}
+
 
 /**
  * Retrieves if the center of the given image object is to be drawn
@@ -2606,4 +2695,12 @@ evas_object_image_data_convert_internal(Evas_Object_Image *o, void *data, Evas_C
      }
 
    return out;
+}
+
+static void
+evas_object_image_filled_resize_listener(void *data, Evas *e, Evas_Object *obj, void *einfo)
+{
+   Evas_Coord w, h;
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   evas_object_image_fill_set(obj, 0, 0, w, h);
 }
