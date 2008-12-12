@@ -686,6 +686,7 @@ ecore_evas_data_get(const Ecore_Evas *ee, const char *key)
      }
 
    if (!key) return NULL;
+   if (!ee->data) return NULL;
 
    return eina_hash_find(ee->data, key);
 }
@@ -717,7 +718,8 @@ ecore_evas_data_set(Ecore_Evas *ee, const char *key, const void *data)
 
    if (!key) return;
 
-   eina_hash_del(ee->data, key, NULL);
+   if (ee->data)
+     eina_hash_del(ee->data, key, NULL);
    if (data)
      {
        if (!ee->data)
