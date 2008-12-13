@@ -59,8 +59,11 @@ _evil_systemtime_to_time(SYSTEMTIME st)
 int
 evil_gettimeofday(struct timeval *tp, void *tzp __UNUSED__)
 {
-   tp->tv_sec = _evil_time_second;
-   tp->tv_usec = (GetTickCount() - _evil_time_millisecond) * 1000;
+   int   milli_sec;
+
+   milli_sec = (int)GetTickCount() - _evil_time_millisecond;
+   tp->tv_sec = _evil_time_second + milli_sec / 1000;
+   tp->tv_usec = (milli_sec % 1000) * 1000;
 
    return 1;
 }

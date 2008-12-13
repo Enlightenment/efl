@@ -1,6 +1,15 @@
 2008-12-13  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/bin/Makefile.am:
+	* src/bin/evil_test_gettimeofday.c:
+	fix unit test; now all tests pass, finally
+
+	* src/lib/evil_unistd.c:
+	fix gettimeofday() on mingw32ce
+
+2008-12-13  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/bin/Makefile.am:
 	and don't compile test_dlfcn...
 
 2008-12-13  Vincent Torri  <doursse at users dot sf dot net>

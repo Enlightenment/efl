@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #include <Evil.h>
 
@@ -20,14 +21,13 @@ test_time_tests_run(suite *s)
 
    gettimeofday (&tp1, NULL);
 
-   Sleep(997);
+   Sleep(1000);
 
    gettimeofday (&tp2, NULL);
 
-   delta = (double)tp2.tv_sec - tp1.tv_sec + (tp2.tv_usec - tp1.tv_usec) / 1000000.0;
-   if (delta > 0.005)
+   delta = (double)(tp2.tv_sec - tp1.tv_sec) + (double)(tp2.tv_usec - tp1.tv_usec) / 1000000.0;
+   if (fabs(delta - 1) > 0.005)
      {
-       printf (" * %f\n", delta);
         return 0;
      }
 
