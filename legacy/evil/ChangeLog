@@ -1,5 +1,10 @@
 2008-12-13  Vincent Torri  <doursse at users dot sf dot net>
 
+	* src/bin/Makefile.am:
+	and don't compile test_dlfcn...
+
+2008-12-13  Vincent Torri  <doursse at users dot sf dot net>
+
 	* src/bin/evil_suite.c:
 	do not access to undefined pointer
 

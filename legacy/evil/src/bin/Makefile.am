@@ -10,7 +10,7 @@ AM_CPPFLAGS = \
 
 AM_CFLAGS = @win32_cflags@
 
-bin_PROGRAMS = evil_suite test_dlfcn test_pipe test_evil
+bin_PROGRAMS = evil_suite test_pipe test_evil
 
 evil_suite_SOURCES = \
 evil_suite.c \
@@ -32,10 +32,6 @@ endif
 
 evil_suite_LDADD = $(top_builddir)/src/lib/libevil.la $(top_builddir)/src/lib/dlfcn/libdl.la
 evil_suite_LDFLAGS = -Wl,--enable-auto-import
-
-test_dlfcn_SOURCES = test_dlfcn.c
-test_dlfcn_LDADD = $(top_builddir)/src/lib/libevil.la $(top_builddir)/src/lib/dlfcn/libdl.la
-test_dlfcn_LDFLAGS = -Wl,--enable-auto-import
 
 test_pipe_SOURCES = test_pipe.c
 test_pipe_LDADD = $(top_builddir)/src/lib/libevil.la
