@@ -151,17 +151,17 @@ suite_run(suite *s)
         t = (test *)l->data;
         l->succeed = t->fct(s);
         printf("%s test: %s\n", t->name, l->succeed ? "success" : "failure");
-        l = l->next;
         s->tests_count++;
         if (l->succeed)
           s->tests_success++;
+        l = l->next;
      }
 }
 
 static void
 suite_show(suite *s)
 {
-   printf ("%d/%d tests passed (%d%%)\n",
+   printf ("\n%d/%d tests passed (%d%%)\n",
            s->tests_success,
            s->tests_count,
            (100 * s->tests_success) / s->tests_count);
