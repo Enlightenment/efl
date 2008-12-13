@@ -40,7 +40,7 @@ symlink(const char *oldpath, const char *newpath)
         return -1;
      }
 
-   res = SHCreateShortcutEx(w_newpath, w_oldpath, NULL, NULL);
+   res = SHCreateShortcut(w_newpath, w_oldpath);
    if (!res)
      _evil_last_error_display(__FUNCTION__);
 
@@ -54,7 +54,7 @@ ssize_t
 readlink(const char *path, char *buf, size_t bufsiz)
 {
    wchar_t *w_path;
-   wchar_t  w_newpath[MB_CUR_MAX];
+   wchar_t  w_newpath[1024];
    char    *newpath;
    size_t   length;
    BOOL     res;
@@ -63,7 +63,9 @@ readlink(const char *path, char *buf, size_t bufsiz)
    if (!w_path)
      return -1;
 
-   res = SHGetShortcutTarget(w_path, w_newpath, MB_CUR_MAX);
+   res = SHGetShortcutTarget(w_path, w_newpath, 1024);
+   if (!res)
+     _evil_last_error_display(__FUNCTION__);
 
    free(w_path);
 
@@ -74,11 +76,12 @@ readlink(const char *path, char *buf, size_t bufsiz)
    if (!newpath)
      return -1;
 
-   length = strlen(newpath);
+   /* That stupid SHGetShortcutTarget add " around the file name... */
+   length = strlen(newpath) - 2;
    if (length > bufsiz)
      length = bufsiz;
 
-   memcpy(buf, newpath, length);
+   memcpy(buf, newpath + 1, length);
 
    free(newpath);
 

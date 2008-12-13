@@ -7,6 +7,7 @@
 
 #include "Evil.h"
 #include "evil_suite.h"
+#include "evil_test_dlfcn.h"
 #include "evil_test_environment.h"
 #include "evil_test_gettimeofday.h"
 #include "evil_test_link.h"
@@ -36,10 +37,13 @@ struct suite
 
    list         *first;
    list         *l;
+
+   int           tests_count;
+   int           tests_success;
 };
 
 
-suite *
+static suite *
 suite_new(void)
 {
    suite *s;
@@ -56,10 +60,13 @@ suite_new(void)
    s->first = NULL;
    s->l = NULL;
 
+   s->tests_count = 0;
+   s->tests_success = 0;
+
    return s;
 }
 
-void
+static void
 suite_del(suite *s)
 {
    list *l;
@@ -97,7 +104,7 @@ suite_time_get(suite *s)
    return (double)(s->end.QuadPart - s->start.QuadPart) / (double)s->freq.QuadPart;
 }
 
-void
+static void
 suite_test_add(suite *s, const char *name, function fct)
 {
    test *t;
@@ -131,7 +138,7 @@ suite_test_add(suite *s, const char *name, function fct)
      }
 }
 
-void
+static void
 suite_run(suite *s)
 {
    list *l;
@@ -145,21 +152,34 @@ suite_run(suite *s)
         l->succeed = t->fct(s);
         printf("%s test: %s\n", t->name, l->succeed ? "success" : "failure");
         l = l->next;
+        s->tests_count++;
+        if (l->succeed)
+          s->tests_success++;
      }
+}
+
+static void
+suite_show(suite *s)
+{
+   printf ("%d/%d tests passed (%d%%)\n",
+           s->tests_success,
+           s->tests_count,
+           (100 * s->tests_success) / s->tests_count);
 }
 
 int
 main()
 {
    test tests[] = {
+     { "dlfcn       ",  test_environment },
      { "environment ",  test_environment },
      { "gettimeofday",  test_gettimeofday },
      { "link        ",  test_link },
-     { "memcpy      ",  test_memcpy },
+/*      { "memcpy      ",  test_memcpy }, */
      { NULL,            NULL },
    };
    suite *s;
-   int i;
+   int    i;
 
    if (!evil_init())
      return EXIT_FAILURE;
@@ -178,6 +198,8 @@ main()
      }
 
    suite_run(s);
+
+   suite_show(s);
 
    suite_del(s);
    evil_shutdown();

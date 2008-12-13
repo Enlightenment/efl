@@ -1,3 +1,23 @@
+2008-12-13  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/bin/Makefile.am:
+	* src/bin/evil_test_dlfcn.c:
+	* src/bin/evil_test_dlfcn.h:
+	add dflcn unit test
+
+	* src/bin/evil_suite.c:
+	show result of the unit tests and add dlfcn unit test
+
+	* src/bin/evil_test_environment.c:
+	remove debug
+
+	* src/bin/evil_test_gettimeofday.c:
+	debug, not working yet :/
+
+	* src/bin/evil_test_link.c:
+	* src/lib/evil_link_ce.c:
+	fix link support on Windows CE
+
 2008-12-10  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Evil.h:

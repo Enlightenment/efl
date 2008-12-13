@@ -1,5 +1,3 @@
-
-
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
@@ -38,23 +36,31 @@ test_link_test_file_create(const char *name, const char *data)
 static int
 test_link_test_symlink(void)
 {
-   if (!test_link_test_file_create("evil_test_link.dat",
+#ifdef _WIN32_WCE
+   const char *old_name = "\\efl\\evil_test_link.dat";
+   const char *new_name = "\\efl\\evil_test_link.lnk";
+#else
+   const char *old_name = "evil_test_link.dat";
+   const char *new_name = "evil_test_link.lnk";
+#endif
+
+   if (!test_link_test_file_create(old_name,
                                    "evil_test_link symlink data\n"))
      return 0;
 
-   if (symlink("evil_test_link.dat", "evil_test_link.lnk") < 0)
+   if (symlink(old_name, new_name) < 0)
      {
-        unlink("evil_test_link.dat");
+        unlink(old_name);
         return 0;
      }
 
-   if (unlink("evil_test_link.lnk") < 0)
+   if (unlink(new_name) < 0)
      {
-        unlink("evil_test_link.dat");
+        unlink(old_name);
         return 0;
      }
 
-   if (unlink("evil_test_link.dat") < 0)
+   if (unlink(old_name) < 0)
      return 0;
 
    return 1;
@@ -63,25 +69,30 @@ test_link_test_symlink(void)
 static int
 test_link_test_readlink(void)
 {
-   char    buf[1024];
-   char   *data;
-   FILE   *f;
-   ssize_t s1;
-   size_t  s2;
-   int     l;
+   char        buf[1024];
+#ifdef _WIN32_WCE
+   const char *old_name = "\\efl\\evil_test_link.dat";
+   const char *new_name = "\\efl\\evil_test_link.lnk";
+#else
+   const char *old_name = "evil_test_link.dat";
+   const char *new_name = "evil_test_link.lnk";
+#endif
+   const char *data = "evil_test_link symlink data\n";
+   FILE       *f;
+   ssize_t     s1;
+   size_t      s2;
+   int         l;
 
-   data = "evil_test_link symlink data\n";
-
-   if (!test_link_test_file_create("evil_test_link.dat", data))
+   if (!test_link_test_file_create(old_name, data))
      return 0;
 
-   if (symlink("evil_test_link.dat", "evil_test_link.lnk") < 0)
+   if (symlink(old_name, new_name) < 0)
      return 0;
 
-   if ((s1 = readlink("evil_test_link.lnk", buf, 1023)) < 0)
+   if ((s1 = readlink(new_name, buf, 1023)) < 0)
      {
-        unlink("evil_test_link.dat");
-        unlink("evil_test_link.lnk");
+        unlink(old_name);
+        unlink(new_name);
         return 0;
      }
 
@@ -90,8 +101,8 @@ test_link_test_readlink(void)
    f = fopen(buf, "rb");
    if (!f)
      {
-        unlink("evil_test_link.dat");
-        unlink("evil_test_link.lnk");
+        unlink(old_name);
+        unlink(new_name);
         return 0;
      }
 
@@ -101,28 +112,28 @@ test_link_test_readlink(void)
    if ((int)s2 != (l + 1))
      {
         fclose(f);
-        unlink("evil_test_link.dat");
-        unlink("evil_test_link.lnk");
+        unlink(old_name);
+        unlink(new_name);
         return 0;
      }
 
    if (strcmp(buf, data))
      {
         fclose(f);
-        unlink("evil_test_link.dat");
-        unlink("evil_test_link.lnk");
+        unlink(old_name);
+        unlink(new_name);
         return 0;
      }
 
    fclose(f);
 
-   if (unlink("evil_test_link.lnk") < 0)
+   if (unlink(new_name) < 0)
      {
-        unlink("evil_test_link.dat");
+        unlink(old_name);
         return 0;
      }
 
-   if (unlink("evil_test_link.dat") < 0)
+   if (unlink(old_name) < 0)
      return 0;
 
    return 1;
