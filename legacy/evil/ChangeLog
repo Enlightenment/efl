@@ -1,5 +1,10 @@
 2008-12-13  Vincent Torri  <doursse at users dot sf dot net>
 
+	* src/bin/test_dlfcn.c:
+	remove dlfcn test, is in the unit test now
+
+2008-12-13  Vincent Torri  <doursse at users dot sf dot net>
+
 	* src/bin/Makefile.am:
 	* src/bin/evil_test_dlfcn.c:
 	* src/bin/evil_test_dlfcn.h:
