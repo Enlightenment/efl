@@ -721,8 +721,11 @@ efreet_menu_save_menu(Efreet_Menu *menu, FILE *f, int indent)
 {
     efreet_menu_save_indent(f, indent);
     fprintf(f, "<Menu>\n");
-    efreet_menu_save_indent(f, indent + 1);
-    fprintf(f, "<Name>%s</Name>\n", menu->name);
+    if (menu->name)
+    {
+        efreet_menu_save_indent(f, indent + 1);
+        fprintf(f, "<Name>%s</Name>\n", menu->name);
+    }
 
     if (indent == 0)
     {
