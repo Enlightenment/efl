@@ -157,10 +157,12 @@ _edje_recalc_do(Edje *ed)
    int i;
 
    ed->postponed = 0;
+   evas_object_smart_need_recalculate_set(ed->obj, 0);
    if (!ed->dirty)
      {
 	return;
      }
+   ed->dirty = 0;
    for (i = 0; i < ed->table_parts_size; i++)
      {
 	Edje_Real_Part *ep;
@@ -178,7 +180,6 @@ _edje_recalc_do(Edje *ed)
 	  _edje_part_recalc(ed, ep, (~ep->calculated) & FLAG_XY);
      }
    if (!ed->calc_only) ed->recalc = 0;
-   ed->dirty = 0;
    ed->calc_only = 0;
 }
 
