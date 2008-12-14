@@ -259,7 +259,6 @@ _ecore_x_event_handle_key_press(XEvent *xevent)
    e->same_screen = xevent->xkey.same_screen;
    e->root_win = xevent->xkey.root;
    _ecore_x_event_last_time = e->time;
-   printf("ECORE_X KEY: %s %s\n", e->keyname, e->key_compose);
    ecore_event_add(ECORE_X_EVENT_KEY_DOWN, e, _ecore_x_event_free_key_down, NULL);
    free(buf);
 }
