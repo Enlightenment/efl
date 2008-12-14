@@ -1060,6 +1060,7 @@ _edje_part_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
 	_edje_emit(rp->edje, "entry,paste,request", rp->part->name);
         return;
      }
+   if (ev->button != 1) return;
    // double click -> select word
    // triple click -> select line
    tc = evas_object_textblock_cursor_new(rp->object);
