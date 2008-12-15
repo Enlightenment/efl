@@ -13,7 +13,6 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       ecore.spec \
 		       ecore-con.pc \
 		       ecore-config.pc \
-		       ecore-desktop.pc \
 		       ecore-directfb.pc\
 		       ecore-evas.pc \
 		       ecore-fb.pc \
@@ -38,7 +37,6 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN \
 	     ecore.pc.in \
 	     ecore-con.pc.in \
 	     ecore-config.pc.in \
-	     ecore-desktop.pc.in \
 	     ecore-directfb.pc.in\
 	     ecore-evas.pc.in \
 	     ecore-fb.pc.in \
@@ -78,10 +76,6 @@ endif
 
 if BUILD_ECORE_FILE
 pfile = ecore-file.pc
-endif
-
-if BUILD_ECORE_DESKTOP
-pdesktop = ecore-desktop.pc
 endif
 
 if BUILD_ECORE_IMF
@@ -131,5 +125,5 @@ endif
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
 	ecore.pc $(pcon) $(pconfig) $(pdfb) $(pevas) \
-	$(pfb) $(pfile) $(pdesktop) $(pimf) $(pimfevas) $(pipc) $(pjob) $(ptxt) \
+	$(pfb) $(pfile) $(pimf) $(pimfevas) $(pipc) $(pjob) $(ptxt) \
 	$(px) $(pwin32) $(pwince) $(psdl) $(pquartz)

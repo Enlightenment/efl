@@ -44,7 +44,6 @@ AC_SUBST(version_info)
 # only the trivial requirements go here.
 requirements_ecore_con=""
 requirements_ecore_config=""
-requirements_ecore_desktop=""
 requirements_ecore_directfb=""
 requirements_ecore_evas="evas"
 requirements_ecore_fb=""
@@ -886,10 +885,6 @@ if test "x$have_ecore_file" = "xyes"; then
   requirements_ecore_file="$requirements_ecore_file $requirements_ecore_con"
 fi
 
-dnl ecore_desktop
-ECORE_CHECK_MODULE([Desktop], [no], [$have_ecore_file],
-  [requirements_ecore_desktop="ecore-file"])
-
 dnl ecore_imf
 ECORE_CHECK_MODULE([IMF], [yes])
 
@@ -903,7 +898,6 @@ ECORE_CHECK_MODULE([IMF_EVAS], [yes], [$try_ecore_imf_evas])
 dnl requirements
 AC_SUBST(requirements_ecore_con)
 AC_SUBST(requirements_ecore_config)
-AC_SUBST(requirements_ecore_desktop)
 AC_SUBST(requirements_ecore_directfb)
 AC_SUBST(requirements_ecore_evas)
 AC_SUBST(requirements_ecore_fb)
@@ -924,7 +918,6 @@ AC_OUTPUT([
 Makefile
 ecore-con.pc
 ecore-config.pc
-ecore-desktop.pc
 ecore-directfb.pc
 ecore-evas.pc
 ecore-fb.pc
@@ -959,7 +952,6 @@ src/lib/ecore_ipc/Makefile
 src/lib/ecore_txt/Makefile
 src/lib/ecore_config/Makefile
 src/lib/ecore_file/Makefile
-src/lib/ecore_desktop/Makefile
 src/lib/ecore_directfb/Makefile
 src/lib/ecore_win32/Makefile
 src/lib/ecore_wince/Makefile
@@ -982,7 +974,6 @@ if test "x$have_ecore_file" = "xyes" ; then
   echo "    Poll.......................: $have_poll"
   echo "    CURL.......................: $have_curl"
 fi
-echo "  Ecore_Desktop................: $have_ecore_desktop"
 echo "  Ecore_Con....................: $have_ecore_con"
 if test "x$have_ecore_con" = "xyes" ; then
   echo -n "    OpenSSL....................: $have_openssl"
