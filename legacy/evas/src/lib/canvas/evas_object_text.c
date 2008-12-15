@@ -1215,6 +1215,18 @@ evas_string_char_prev_get(const char *str, int pos, int *decoded)
 }
 
 /**
+ * Get the length in characters of the string.
+ * @param  str The string to get the length of.
+ * @return The length in characters (not bytes)
+ */
+EAPI int
+evas_string_char_len_get(const char *str)
+{
+	if (!str) return 0;
+	return evas_common_font_utf8_get_len(str);
+}
+
+/**
  * Get the minimum padding a style adds to the text.
  * @param style The style to determine padding.
  * @param     l Pointer to the current left padding value

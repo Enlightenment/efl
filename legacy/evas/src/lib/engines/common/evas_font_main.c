@@ -271,3 +271,18 @@ evas_common_font_utf8_get_last(unsigned char *buf, int buflen)
      }
    return 0;
 }
+
+EAPI int
+evas_common_font_utf8_get_len(unsigned char *buf)
+{
+   /* returns the number of utf8 characters (not bytes) in the string */
+   int index = 0, len = 0;
+
+   while (buf[index])
+     {
+	if ((buf[index] & 0xc0) != 0x80)
+	  len++;
+	index++;
+     }
+   return len;
+}

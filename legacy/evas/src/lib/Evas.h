@@ -602,6 +602,7 @@ extern "C" {
 /* string and font handling */
    EAPI int               evas_string_char_next_get         (const char *str, int pos, int *decoded);
    EAPI int               evas_string_char_prev_get         (const char *str, int pos, int *decoded);
+   EAPI int               evas_string_char_len_get          (const char *str);
 
    EAPI void              evas_font_path_clear              (Evas *e);
    EAPI void              evas_font_path_append             (Evas *e, const char *path);

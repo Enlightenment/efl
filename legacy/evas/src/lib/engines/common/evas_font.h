@@ -20,6 +20,7 @@ EAPI int               evas_common_font_get_line_advance     (RGBA_Font *fn);
 EAPI int               evas_common_font_utf8_get_next        (unsigned char *buf, int *iindex);
 EAPI int               evas_common_font_utf8_get_prev        (unsigned char *buf, int *iindex);
 EAPI int               evas_common_font_utf8_get_last        (unsigned char *buf, int buflen);
+EAPI int               evas_common_font_utf8_get_len         (unsigned char *buf);
 
 /* draw */
 
