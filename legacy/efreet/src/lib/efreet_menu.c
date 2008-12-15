@@ -557,12 +557,25 @@ efreet_menu_shutdown(void)
     eina_stringshare_shutdown();
 }
 
+/**
+ * @param name The internal name of the menu
+ * @return Returns the Efreet_Menu on success or
+ * NULL on failure
+ * @brief Creates a new menu
+ */
 EAPI Efreet_Menu *
-efreet_menu_new(void)
+efreet_menu_new(const char *name)
 {
     Efreet_Menu *menu;
+
+    if (!name)
+    {
+        printf("Error creating a new menu, name is missing\n");
+        return NULL;
+    }
     menu = efreet_menu_entry_new();
     menu->type = EFREET_MENU_ENTRY_MENU;
+    menu->name = eina_stringshare_add(name);
     return menu;
 }
 

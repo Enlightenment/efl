@@ -51,7 +51,7 @@ struct Efreet_Menu
 
 EAPI int              efreet_menu_kde_legacy_init(void);
 
-EAPI Efreet_Menu     *efreet_menu_new(void);
+EAPI Efreet_Menu     *efreet_menu_new(const char *name);
 EAPI void             efreet_menu_file_set(const char *file);
 EAPI Efreet_Menu     *efreet_menu_get(void);
 EAPI Efreet_Menu     *efreet_menu_parse(const char *path);
