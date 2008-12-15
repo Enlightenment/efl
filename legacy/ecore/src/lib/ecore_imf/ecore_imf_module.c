@@ -72,7 +72,6 @@ ecore_imf_module_available_get(void)
 {
    Ecore_List *values;
    Eina_Iterator *it = NULL;
-   unsigned int i = 0;
 
    if (!modules) return NULL;
 
@@ -155,7 +154,7 @@ ecore_imf_module_context_ids_get(void)
 }
 
 static Eina_Bool
-_hash_ids_by_canvas_type_get(const Eina_Hash *hash, int *data, void *fdata)
+_hash_ids_by_canvas_type_get(const Eina_Hash *hash, void *data, void *fdata)
 {
    Ecore_IMF_Module *module = data;
    Ecore_IMF_Selector *selector = fdata;
@@ -172,7 +171,6 @@ ecore_imf_module_context_ids_by_canvas_type_get(const char *canvas_type)
    Ecore_IMF_Selector selector;
    Ecore_List *values;
    Eina_Iterator *it = NULL;
-   unsigned int i = 0;
 
    if (!modules) return NULL;
 
@@ -291,8 +289,6 @@ _ecore_imf_module_free(Ecore_IMF_Module *module)
 static int
 _ecore_imf_modules_exists(const char *ctx_id)
 {
-   Eina_Iterator *it = NULL;
-
    if (!modules) return 0;
    if (!ctx_id) return 0;
 
