@@ -128,8 +128,8 @@ _xre_font_surface_new(Ximage_Info *xinf, RGBA_Font_Glyph *fg)
    return fs;
 }
 
-static Evas_Bool
-_xre_font_pool_cb(const Eina_Hash *hash, const char *key, void *data, void *fdata)
+static Eina_Bool
+_xre_font_pool_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata)
 {
    Eina_Hash *pool;
    XR_Font_Surface *fs;
