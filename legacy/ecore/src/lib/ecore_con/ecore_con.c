@@ -1218,7 +1218,7 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	    (ecore_con_ssl_client_init(cl)))
 	  {
 	    close(new_fd);
-	    ecore_con_ssl_client_shutdown(svr);
+	    ecore_con_ssl_client_shutdown(cl);
 	    return 1;
 	  }
 
@@ -1275,7 +1275,7 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	  {
 	    int num;
 	    int lost_server = 1;
-	    char buf[READBUFSIZ];
+	    unsigned char buf[READBUFSIZ];
 
 	    if (!(svr->type & ECORE_CON_SSL))
 	      {
@@ -1519,7 +1519,7 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 
 	for (;;)
 	  {
-	     char buf[65536];
+	     unsigned char buf[65536];
 	     int num;
 
 	     errno = 0;
@@ -1593,7 +1593,7 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 static void
 _ecore_con_server_flush(Ecore_Con_Server *svr)
 {
-   int count, num, lost_server = 0;
+   int count, num;
 
    if (!svr->write_buf) return;
 

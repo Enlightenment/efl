@@ -141,5 +141,17 @@ int ecore_con_info_mcast_listen(Ecore_Con_Server *svr, Ecore_Con_Info_Cb done_cb
 /* from ecore_con_ssl.c */
 Ecore_Con_Ssl_Error ecore_con_ssl_init(void);
 Ecore_Con_Ssl_Error ecore_con_ssl_shutdown(void);
+void                ecore_con_ssl_server_prepare(Ecore_Con_Server *svr);
+Ecore_Con_Ssl_Error ecore_con_ssl_server_init(Ecore_Con_Server *svr);
+Ecore_Con_Ssl_Error ecore_con_ssl_server_shutdown(Ecore_Con_Server *svr);
+Ecore_Con_State     ecore_con_ssl_server_try(Ecore_Con_Server *svr);
+int                 ecore_con_ssl_server_read(Ecore_Con_Server *svr, unsigned char *buf, int size);
+int                 ecore_con_ssl_server_write(Ecore_Con_Server *svr, unsigned char *buf, int size);
+Ecore_Con_Ssl_Error ecore_con_ssl_client_init(Ecore_Con_Client *svr);
+Ecore_Con_Ssl_Error ecore_con_ssl_client_shutdown(Ecore_Con_Client *svr);
+Ecore_Con_State     ecore_con_ssl_client_try(Ecore_Con_Client *svr);
+int                 ecore_con_ssl_client_read(Ecore_Con_Client *svr, unsigned char *buf, int size);
+int                 ecore_con_ssl_client_write(Ecore_Con_Client *svr, unsigned char *buf, int size);
+
 
 #endif

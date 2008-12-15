@@ -42,9 +42,9 @@ SSL_SUFFIX(_ecore_con_ssl_server_shutdown)(Ecore_Con_Server *svr);
 static Ecore_Con_State
 SSL_SUFFIX(_ecore_con_ssl_server_try)(Ecore_Con_Server *svr);
 static int
-SSL_SUFFIX(_ecore_con_ssl_server_read)(Ecore_Con_Server *svr, char *buf, int size);
+SSL_SUFFIX(_ecore_con_ssl_server_read)(Ecore_Con_Server *svr, unsigned char *buf, int size);
 static int
-SSL_SUFFIX(_ecore_con_ssl_server_write)(Ecore_Con_Server *svr, char *buf, int size);
+SSL_SUFFIX(_ecore_con_ssl_server_write)(Ecore_Con_Server *svr, unsigned char *buf, int size);
 
 static void
 SSL_SUFFIX(_ecore_con_ssl_client_prepare)(Ecore_Con_Client *cl);
@@ -53,15 +53,15 @@ SSL_SUFFIX(_ecore_con_ssl_client_init)(Ecore_Con_Client *cl);
 static Ecore_Con_Ssl_Error
 SSL_SUFFIX(_ecore_con_ssl_client_shutdown)(Ecore_Con_Client *cl);
 static int
-SSL_SUFFIX(_ecore_con_ssl_client_read)(Ecore_Con_Client *cl, char *buf, int size);
+SSL_SUFFIX(_ecore_con_ssl_client_read)(Ecore_Con_Client *cl, unsigned char *buf, int size);
 static int
-SSL_SUFFIX(_ecore_con_ssl_client_write)(Ecore_Con_Client *cl, char *buf, int size);
+SSL_SUFFIX(_ecore_con_ssl_client_write)(Ecore_Con_Client *cl, unsigned char *buf, int size);
 
 /*
  * General SSL API
  */
 
-EAPI Ecore_Con_Ssl_Error
+Ecore_Con_Ssl_Error
 ecore_con_ssl_init(void)
 {
   if (!_init_count++)
@@ -70,7 +70,7 @@ ecore_con_ssl_init(void)
   return _init_count;
 }
 
-EAPI Ecore_Con_Ssl_Error
+Ecore_Con_Ssl_Error
 ecore_con_ssl_shutdown(void)
 {
   if (!--_init_count)
@@ -84,69 +84,69 @@ ecore_con_ssl_shutdown(void)
  * @return  1 if SSL is available, 0 if it is not.
  * @ingroup Ecore_Con_Client_Group
  */
-EAPI int
+int
 ecore_con_ssl_available_get(void)
 {
   return _ECORE_CON_SSL_AVAILABLE;
 }
 
 
-EAPI void
+void
 ecore_con_ssl_server_prepare(Ecore_Con_Server *svr)
 {
   SSL_SUFFIX(_ecore_con_ssl_server_prepare)(svr);
 }
 
-EAPI Ecore_Con_Ssl_Error
+Ecore_Con_Ssl_Error
 ecore_con_ssl_server_init(Ecore_Con_Server *svr)
 {
   return SSL_SUFFIX(_ecore_con_ssl_server_init)(svr);
 }
 
-EAPI Ecore_Con_Ssl_Error
+Ecore_Con_Ssl_Error
 ecore_con_ssl_server_shutdown(Ecore_Con_Server *svr)
 {
   return SSL_SUFFIX(_ecore_con_ssl_server_shutdown)(svr);
 }
 
-EAPI Ecore_Con_State
+Ecore_Con_State
 ecore_con_ssl_server_try(Ecore_Con_Server *svr)
 {
   return SSL_SUFFIX(_ecore_con_ssl_server_try)(svr);
 }
 
-EAPI int
-ecore_con_ssl_server_read(Ecore_Con_Server *svr, char *buf, int size)
+int
+ecore_con_ssl_server_read(Ecore_Con_Server *svr, unsigned char *buf, int size)
 {
   return SSL_SUFFIX(_ecore_con_ssl_server_read)(svr, buf, size);
 }
 
-EAPI int
-ecore_con_ssl_server_write(Ecore_Con_Server *svr, char *buf, int size)
+int
+ecore_con_ssl_server_write(Ecore_Con_Server *svr, unsigned char *buf, int size)
 {
   return SSL_SUFFIX(_ecore_con_ssl_server_write)(svr, buf, size);
 }
 
-EAPI Ecore_Con_Ssl_Error
+Ecore_Con_Ssl_Error
 ecore_con_ssl_client_init(Ecore_Con_Client *cl)
 {
   return SSL_SUFFIX(_ecore_con_ssl_client_init)(cl);
 }
 
-EAPI Ecore_Con_Ssl_Error
+Ecore_Con_Ssl_Error
 ecore_con_ssl_client_shutdown(Ecore_Con_Client *cl)
 {
   return SSL_SUFFIX(_ecore_con_ssl_client_shutdown)(cl);
 }
 
-EAPI int
-ecore_con_ssl_client_read(Ecore_Con_Client *cl, char *buf, int size)
+int
+ecore_con_ssl_client_read(Ecore_Con_Client *cl, unsigned char *buf, int size)
 {
   return SSL_SUFFIX(_ecore_con_ssl_client_read)(cl, buf, size);
 }
 
-EAPI int
-ecore_con_ssl_client_write(Ecore_Con_Client *cl, char *buf, int size)
+int
+ecore_con_ssl_client_write(Ecore_Con_Client *cl, unsigned char *buf, int size)
 {
   return SSL_SUFFIX(_ecore_con_ssl_client_write)(cl, buf, size);
 }
@@ -186,7 +186,6 @@ static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
 {
   const int *proto = NULL;
-  gnutls_dh_params_t dh_params;
   int ret;
   const int kx[] = { GNUTLS_KX_ANON_DH, 0 };
   const int ssl3_proto[] = { GNUTLS_SSL3, 0 };
@@ -263,7 +262,7 @@ _ecore_con_ssl_server_try_gnutls(Ecore_Con_Server *svr)
 }
 
 static int
-_ecore_con_ssl_server_read_gnutls(Ecore_Con_Server *svr, char *buf, int size)
+_ecore_con_ssl_server_read_gnutls(Ecore_Con_Server *svr, unsigned char *buf, int size)
 {
   int num;
 
@@ -278,7 +277,7 @@ _ecore_con_ssl_server_read_gnutls(Ecore_Con_Server *svr, char *buf, int size)
 }
 
 static int
-_ecore_con_ssl_server_write_gnutls(Ecore_Con_Server *svr, char *buf, int size)
+_ecore_con_ssl_server_write_gnutls(Ecore_Con_Server *svr, unsigned char *buf, int size)
 {
   int num;
 
@@ -381,7 +380,7 @@ _ecore_con_ssl_client_shutdown_gnutls(Ecore_Con_Client *cl)
 }
 
 static int
-_ecore_con_ssl_client_read_gnutls(Ecore_Con_Client *cl, char *buf, int size)
+_ecore_con_ssl_client_read_gnutls(Ecore_Con_Client *cl, unsigned char *buf, int size)
 {
   int num;
 
@@ -396,7 +395,7 @@ _ecore_con_ssl_client_read_gnutls(Ecore_Con_Client *cl, char *buf, int size)
 }
 
 static int
-_ecore_con_ssl_client_write_gnutls(Ecore_Con_Client *cl, char *buf, int size)
+_ecore_con_ssl_client_write_gnutls(Ecore_Con_Client *cl, unsigned char *buf, int size)
 {
   int num;
 
@@ -523,7 +522,7 @@ _ecore_con_ssl_server_try_openssl(Ecore_Con_Server *svr)
 }
 
 static int
-_ecore_con_ssl_server_read_openssl(Ecore_Con_Server *svr, char *buf, int size)
+_ecore_con_ssl_server_read_openssl(Ecore_Con_Server *svr, unsigned char *buf, int size)
 {
   int num;
 
@@ -548,7 +547,7 @@ _ecore_con_ssl_server_read_openssl(Ecore_Con_Server *svr, char *buf, int size)
 }
 
 static int
-_ecore_con_ssl_server_write_openssl(Ecore_Con_Server *svr, char *buf, int size)
+_ecore_con_ssl_server_write_openssl(Ecore_Con_Server *svr, unsigned char *buf, int size)
 {
   int num;
 
@@ -629,7 +628,7 @@ _ecore_con_ssl_client_shutdown_openssl(Ecore_Con_Client *cl)
 }
 
 static int
-_ecore_con_ssl_client_read_openssl(Ecore_Con_Client *cl, char *buf, int size)
+_ecore_con_ssl_client_read_openssl(Ecore_Con_Client *cl, unsigned char *buf, int size)
 {
   int num;
 
@@ -654,7 +653,7 @@ _ecore_con_ssl_client_read_openssl(Ecore_Con_Client *cl, char *buf, int size)
 }
 
 static int
-_ecore_con_ssl_client_write_openssl(Ecore_Con_Client *cl, char *buf, int size)
+_ecore_con_ssl_client_write_openssl(Ecore_Con_Client *cl, unsigned char *buf, int size)
 {
   int num;
 
@@ -724,13 +723,13 @@ _ecore_con_ssl_server_try_none(Ecore_Con_Server *svr)
 }
 
 static int
-_ecore_con_ssl_server_read_none(Ecore_Con_Server *svr, char *buf, int size)
+_ecore_con_ssl_server_read_none(Ecore_Con_Server *svr, unsigned char *buf, int size)
 {
   return -1;
 }
 
 static int
-_ecore_con_ssl_server_write_none(Ecore_Con_Server *svr, char *buf, int size)
+_ecore_con_ssl_server_write_none(Ecore_Con_Server *svr, unsigned char *buf, int size)
 {
   return -1;
 }
@@ -754,13 +753,13 @@ _ecore_con_ssl_client_shutdown_none(Ecore_Con_Client *cl)
 }
 
 static int
-_ecore_con_ssl_client_read_none(Ecore_Con_Client *cl, char *buf, int size)
+_ecore_con_ssl_client_read_none(Ecore_Con_Client *cl, unsigned char *buf, int size)
 {
   return -1;
 }
 
 static int
-_ecore_con_ssl_client_write_none(Ecore_Con_Client *cl, char *buf, int size)
+_ecore_con_ssl_client_write_none(Ecore_Con_Client *cl, unsigned char *buf, int size)
 {
   return -1;
 }
