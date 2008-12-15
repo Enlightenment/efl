@@ -122,7 +122,7 @@ struct _Oid
    int oid;
 };
 
-/* FIXME: using evas_hash and strings is just nasty! make a custom int hash */
+/* FIXME: using eina_hash and strings is just nasty! make a custom int hash */
 static int
 _oid_alloc(Edje *ed)
 {
@@ -153,7 +153,7 @@ _oid_track(Edje *ed, Evas_Object *o)
    evas_object_clip_set(oi->obj, oi->ed->clipper);
    evas_object_geometry_get(oi->obj, &(oi->x), &(oi->y), &(oi->w), &(oi->h));
    snprintf(buf, sizeof(buf), "%i", oi->oid);
-   si->oid.hash = evas_hash_add(si->oid.hash, buf, oi);
+   eina_hash_add(si->oid.hash, buf, oi);
    return oi;
 }
 
@@ -164,7 +164,7 @@ _oid_find(Edje *ed, int oid)
    SI_RETURN(NULL);
 
    snprintf(buf, sizeof(buf), "%i", oid);
-   return evas_hash_find(si->oid.hash, buf);
+   return eina_hash_find(si->oid.hash, buf);
 }
 
 static void
@@ -174,7 +174,7 @@ _oid_del(Edje *ed, int oid)
    SI;
 
    snprintf(buf, sizeof(buf), "%i", oid);
-   si->oid.hash = evas_hash_del(si->oid.hash, buf, NULL);
+   eina_hash_del(si->oid.hash, buf, NULL);
 }
 
 static void
@@ -197,8 +197,8 @@ _oid_freeall(Edje *ed)
 {
    SI;
    if (!si->oid.hash) return;
-   evas_hash_foreach(si->oid.hash, _oid_freeall_cb, ed);
-   evas_hash_free(si->oid.hash);
+   eina_hash_foreach(si->oid.hash, _oid_freeall_cb, ed);
+   eina_hash_free(si->oid.hash);
    si->oid.hash = NULL;
 }
 
@@ -215,7 +215,7 @@ _oid_moveall(Edje *ed)
 {
    SI;
    if (!si->oid.hash) return;
-   evas_hash_foreach(si->oid.hash, _oid_moveall_cb, ed);
+   eina_hash_foreach(si->oid.hash, _oid_moveall_cb, ed);
 }
 
 /**********/

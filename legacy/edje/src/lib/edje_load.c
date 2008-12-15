@@ -203,7 +203,7 @@ edje_file_data_get(const char *file, const char *key)
 	  {
 	     if (edf->data_cache != NULL)
 	       {
-		  str = evas_hash_find(edf->data_cache, key);
+		  str = eina_hash_find(edf->data_cache, key);
 		  if (str) str = strdup(str);
 	       }
 	     _edje_cache_file_unref(edf);
@@ -849,7 +849,7 @@ _edje_file_free(Edje_File *edf)
 	     fe = eina_list_data_get(edf->font_dir->entries);
 	     edf->font_dir->entries =
 	       eina_list_remove_list(edf->font_dir->entries, edf->font_dir->entries);
-	     edf->font_hash = evas_hash_del(edf->font_hash, fe->entry, edf);
+	     eina_hash_del(edf->font_hash, fe->entry, edf);
 	     if (edf->free_strings && fe->path) eina_stringshare_del(fe->path);
 	     free(fe);
 	  }
@@ -922,8 +922,8 @@ _edje_file_free(Edje_File *edf)
      }
    if (edf->data_cache)
      {
-	evas_hash_foreach(edf->data_cache, data_cache_free, edf);
-	evas_hash_free(edf->data_cache);
+	eina_hash_foreach(edf->data_cache, data_cache_free, edf);
+	eina_hash_free(edf->data_cache);
 	edf->data_cache = NULL;
      }
 
@@ -951,9 +951,9 @@ _edje_file_free(Edje_File *edf)
 	       "before calling edje_shutdown().\n"
 	       "The following errors are the edje object files and parts that are still\n"
 	       "hanging around, with their reference counts\n");
-	evas_hash_foreach(edf->collection_hash,
+	eina_hash_foreach(edf->collection_hash,
                           _edje_file_collection_hash_foreach, edf);
-	evas_hash_free(edf->collection_hash);
+	eina_hash_free(edf->collection_hash);
      }
    if (edf->path) eina_stringshare_del(edf->path);
    if (edf->free_strings && edf->compiler) eina_stringshare_del(edf->compiler);
@@ -1038,13 +1038,13 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
      }
    if (edf->free_strings && ec->part) eina_stringshare_del(ec->part);
 #ifdef EDJE_PROGRAM_CACHE
-   if (ec->prog_cache.no_matches) evas_hash_free(ec->prog_cache.no_matches);
+   if (ec->prog_cache.no_matches) eina_hash_free(ec->prog_cache.no_matches);
    if (ec->prog_cache.matches)
      {
-	evas_hash_foreach(ec->prog_cache.matches,
+	eina_hash_foreach(ec->prog_cache.matches,
 			  _edje_collection_free_prog_cache_matches_free_cb,
 			  NULL);
-	evas_hash_free(ec->prog_cache.matches);
+	eina_hash_free(ec->prog_cache.matches);
      }
 #endif
    if (ec->script) embryo_program_free(ec->script);

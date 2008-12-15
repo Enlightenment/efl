@@ -287,7 +287,7 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
 
    if (!color_class) return;
 
-   cc = evas_hash_find(_edje_color_class_hash, color_class);
+   cc = eina_hash_find(_edje_color_class_hash, color_class);
    if (!cc)
      {
         cc = calloc(1, sizeof(Edje_Color_Class));
@@ -298,15 +298,7 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
 	     free(cc);
 	     return;
 	  }
-	_edje_color_class_hash =
-          evas_hash_add(_edje_color_class_hash, color_class, cc);
-	if (evas_hash_alloc_error())
-	  {
-	     eina_stringshare_del(cc->name);
-	     free(cc);
-	     return;
-	  }
-
+        eina_hash_add(_edje_color_class_hash, color_class, cc);
      }
 
    if (r < 0)   r = 0;
@@ -337,7 +329,7 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
    cc->b3 = b3;
    cc->a3 = a3;
 
-   members = evas_hash_find(_edje_color_class_member_hash, color_class);
+   members = eina_hash_find(_edje_color_class_member_hash, color_class);
    while (members)
      {
 	Edje *ed;
@@ -362,15 +354,14 @@ edje_color_class_del(const char *color_class)
 
    if (!color_class) return;
 
-   cc = evas_hash_find(_edje_color_class_hash, color_class);
+   cc = eina_hash_find(_edje_color_class_hash, color_class);
    if (!cc) return;
 
-   _edje_color_class_hash =
-     evas_hash_del(_edje_color_class_hash, color_class, cc);
+   eina_hash_del(_edje_color_class_hash, color_class, cc);
    eina_stringshare_del(cc->name);
    free(cc);
 
-   members = evas_hash_find(_edje_color_class_member_hash, color_class);
+   members = eina_hash_find(_edje_color_class_member_hash, color_class);
    while (members)
      {
 	Edje *ed;
@@ -394,7 +385,7 @@ edje_color_class_list(void)
    Edje_List_Foreach_Data fdata;
 
    memset(&fdata, 0, sizeof(Edje_List_Foreach_Data));
-   evas_hash_foreach(_edje_color_class_member_hash,
+   eina_hash_foreach(_edje_color_class_member_hash,
                      _edje_color_class_list_foreach, &fdata);
 
    return fdata.list;
@@ -570,7 +561,7 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
    if (!text_class) return;
    if (!font) font = "";
 
-   tc = evas_hash_find(_edje_text_class_hash, text_class);
+   tc = eina_hash_find(_edje_text_class_hash, text_class);
    /* Create new text class */
    if (!tc)
      {
@@ -582,14 +573,7 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
 	     free(tc);
 	     return;
 	  }
-	_edje_text_class_hash =
-          evas_hash_add(_edje_text_class_hash, text_class, tc);
-	if (evas_hash_alloc_error())
-	  {
-	     eina_stringshare_del(tc->name);
-	     free(tc);
-	     return;
-	  }
+        eina_hash_add(_edje_text_class_hash, text_class, tc);
 
 	tc->font = eina_stringshare_add(font);
 	tc->size = size;
@@ -605,15 +589,14 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
    tc->font = eina_stringshare_add(font);
    if (!tc->font)
      {
-	_edje_text_class_hash =
-          evas_hash_del(_edje_text_class_hash, text_class, tc);
+        eina_hash_del(_edje_text_class_hash, text_class, tc);
 	free(tc);
 	return;
      }
    tc->size = size;
 
    /* Tell all members of the text class to recalc */
-   members = evas_hash_find(_edje_text_class_member_hash, text_class);
+   members = eina_hash_find(_edje_text_class_member_hash, text_class);
    while (members)
      {
 	Edje *ed;
@@ -639,16 +622,15 @@ edje_text_class_del(const char *text_class)
 
    if (!text_class) return;
 
-   tc = evas_hash_find(_edje_text_class_hash, text_class);
+   tc = eina_hash_find(_edje_text_class_hash, text_class);
    if (!tc) return;
 
-   _edje_text_class_hash =
-     evas_hash_del(_edje_text_class_hash, text_class, tc);
+   eina_hash_del(_edje_text_class_hash, text_class, tc);
    eina_stringshare_del(tc->name);
    eina_stringshare_del(tc->font);
    free(tc);
 
-   members = evas_hash_find(_edje_text_class_member_hash, text_class);
+   members = eina_hash_find(_edje_text_class_member_hash, text_class);
    while (members)
      {
 	Edje *ed;
@@ -673,7 +655,7 @@ edje_text_class_list(void)
    Edje_List_Foreach_Data fdata;
 
    memset(&fdata, 0, sizeof(Edje_List_Foreach_Data));
-   evas_hash_foreach(_edje_text_class_member_hash,
+   eina_hash_foreach(_edje_text_class_member_hash,
                      _edje_text_class_list_foreach, &fdata);
 
    return fdata.list;
@@ -2509,7 +2491,7 @@ _edje_color_class_find(Edje *ed, const char *color_class)
      if ((cc->name) && (!strcmp(color_class, cc->name))) return cc;
 
    /* next look through the global scope */
-   cc = evas_hash_find(_edje_color_class_hash, color_class);
+   cc = eina_hash_find(_edje_color_class_hash, color_class);
    if (cc) return cc;
 
    /* finally, look through the file scope */
@@ -2525,16 +2507,14 @@ _edje_color_class_member_add(Edje *ed, const char *color_class)
    Eina_List *members;
 
    if ((!ed) || (!color_class)) return;
-   members = evas_hash_find(_edje_color_class_member_hash, color_class);
+   members = eina_hash_find(_edje_color_class_member_hash, color_class);
    if (members)
      {
-        _edje_color_class_member_hash =
-          evas_hash_del(_edje_color_class_member_hash, color_class, members);
+        eina_hash_del(_edje_color_class_member_hash, color_class, members);
      }
 
    members = eina_list_prepend(members, ed);
-   _edje_color_class_member_hash =
-     evas_hash_add(_edje_color_class_member_hash, color_class, members);
+   eina_hash_add(_edje_color_class_member_hash, color_class, members);
 }
 
 void
@@ -2543,16 +2523,14 @@ _edje_color_class_member_del(Edje *ed, const char *color_class)
    Eina_List *members;
 
    if ((!ed) || (!color_class)) return;
-   members = evas_hash_find(_edje_color_class_member_hash, color_class);
+   members = eina_hash_find(_edje_color_class_member_hash, color_class);
    if (!members) return;
 
-   _edje_color_class_member_hash =
-     evas_hash_del(_edje_color_class_member_hash, color_class, members);
+   eina_hash_del(_edje_color_class_member_hash, color_class, members);
    members = eina_list_remove(members, ed);
    if (members)
      {
-        _edje_color_class_member_hash =
-          evas_hash_add(_edje_color_class_member_hash, color_class, members);
+        eina_hash_add(_edje_color_class_member_hash, color_class, members);
      }
 }
 
@@ -2571,8 +2549,8 @@ void
 _edje_color_class_members_free(void)
 {
    if (!_edje_color_class_member_hash) return;
-   evas_hash_foreach(_edje_color_class_member_hash, member_list_free, NULL);
-   evas_hash_free(_edje_color_class_member_hash);
+   eina_hash_foreach(_edje_color_class_member_hash, member_list_free, NULL);
+   eina_hash_free(_edje_color_class_member_hash);
    _edje_color_class_member_hash = NULL;
 }
 
@@ -2591,8 +2569,8 @@ void
 _edje_color_class_hash_free(void)
 {
    if (!_edje_color_class_hash) return;
-   evas_hash_foreach(_edje_color_class_hash, color_class_hash_list_free, NULL);
-   evas_hash_free(_edje_color_class_hash);
+   eina_hash_foreach(_edje_color_class_hash, color_class_hash_list_free, NULL);
+   eina_hash_free(_edje_color_class_hash);
    _edje_color_class_hash = NULL;
 }
 
@@ -2619,7 +2597,7 @@ _edje_text_class_find(Edje *ed, const char *text_class)
    if ((!ed) || (!text_class)) return NULL;
    EINA_LIST_FOREACH(ed->text_classes, l, tc)
      if ((tc->name) && (!strcmp(text_class, tc->name))) return tc;
-   return evas_hash_find(_edje_text_class_hash, text_class);
+   return eina_hash_find(_edje_text_class_hash, text_class);
 }
 
 void
@@ -2630,21 +2608,19 @@ _edje_text_class_member_add(Edje *ed, const char *text_class)
    if ((!ed) || (!text_class)) return;
 
    /* Get members list */
-   members = evas_hash_find(_edje_text_class_member_hash, text_class);
+   members = eina_hash_find(_edje_text_class_member_hash, text_class);
 
    /* Remove members list */
    if (members)
      {
-        _edje_text_class_member_hash =
-          evas_hash_del(_edje_text_class_member_hash, text_class, members);
+        eina_hash_del(_edje_text_class_member_hash, text_class, members);
      }
 
    /* Update the member list */
    members = eina_list_prepend(members, ed);
 
    /* Add the member list back */
-   _edje_text_class_member_hash =
-     evas_hash_add(_edje_text_class_member_hash, text_class, members);
+   eina_hash_add(_edje_text_class_member_hash, text_class, members);
 }
 
 void
@@ -2653,17 +2629,15 @@ _edje_text_class_member_del(Edje *ed, const char *text_class)
    Eina_List *members;
 
    if ((!ed) || (!text_class)) return;
-   members = evas_hash_find(_edje_text_class_member_hash, text_class);
+   members = eina_hash_find(_edje_text_class_member_hash, text_class);
    if (!members) return;
 
-   _edje_text_class_member_hash =
-     evas_hash_del(_edje_text_class_member_hash, text_class, members);
+   eina_hash_del(_edje_text_class_member_hash, text_class, members);
 
    members = eina_list_remove(members, ed);
    if (members)
      {
-        _edje_text_class_member_hash =
-          evas_hash_add(_edje_text_class_member_hash, text_class, members);
+        eina_hash_add(_edje_text_class_member_hash, text_class, members);
      }
 }
 
@@ -2671,8 +2645,8 @@ void
 _edje_text_class_members_free(void)
 {
    if (!_edje_text_class_member_hash) return;
-   evas_hash_foreach(_edje_text_class_member_hash, member_list_free, NULL);
-   evas_hash_free(_edje_text_class_member_hash);
+   eina_hash_foreach(_edje_text_class_member_hash, member_list_free, NULL);
+   eina_hash_free(_edje_text_class_member_hash);
    _edje_text_class_member_hash = NULL;
 }
 
@@ -2692,8 +2666,8 @@ void
 _edje_text_class_hash_free(void)
 {
    if (!_edje_text_class_hash) return;
-   evas_hash_foreach(_edje_text_class_hash, text_class_hash_list_free, NULL);
-   evas_hash_free(_edje_text_class_hash);
+   eina_hash_foreach(_edje_text_class_hash, text_class_hash_list_free, NULL);
+   eina_hash_free(_edje_text_class_hash);
    _edje_text_class_hash = NULL;
 }
 
