@@ -419,6 +419,7 @@ collections {
 	      tag:  "br" "\n";
 	      tag:  "hilight" "+ font=Sans:style=Bold";
 	      tag:  "b" "+ font=Sans:style=Bold";
+	      tag:  "tab" "\t";
 	   }
 	}
       parts {
@@ -2757,7 +2758,7 @@ collections {
       }
       programs {
 	 program { name: "end";
-	    signal: "mouse,down,1";
+	    signal: "mouse,up,1";
 	    source: "base";
 	    action: SIGNAL_EMIT "elm,action,dismiss" "";
 	 }
@@ -3079,7 +3080,7 @@ collections {
       }
       programs {
 	 program { name: "end";
-	    signal: "mouse,down,1";
+	    signal: "mouse,up,1";
 	    source: "base";
 	    action: SIGNAL_EMIT "elm,action,dismiss" "";
 	 }
@@ -3362,7 +3363,7 @@ collections {
       }
       programs {
 	 program { name: "end";
-	    signal: "mouse,down,1";
+	    signal: "mouse,up,1";
 	    source: "base";
 	    action: SIGNAL_EMIT "elm,action,dismiss" "";
 	 }

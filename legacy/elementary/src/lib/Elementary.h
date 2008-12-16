@@ -312,6 +312,21 @@ extern "C" {
     * "clicked" - the user clicked the icon
     */
 
+   typedef enum _Elm_Icon_Type
+     {
+        ELM_ICON_NONE,
+        ELM_ICON_FILE,
+        ELM_ICON_STANDARD
+     } Elm_Icon_Type;
+   typedef struct _Elm_Hoversel_Item Elm_Hoversel_Item;
+   EAPI Evas_Object *elm_hoversel_add(Evas_Object *parent);
+   EAPI void         elm_hoversel_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
+   EAPI void         elm_hoversel_label_set(Evas_Object *obj, const char *label);
+   EAPI void         elm_hoversel_icon_set(Evas_Object *obj, Evas_Object *icon);
+   EAPI void         elm_hoversel_hover_end(Evas_Object *obj);
+   EAPI Elm_Hoversel_Item *elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
+   EAPI void         elm_hoversel_item_del(Elm_Hoversel_Item *item);
+              
   ////////////////////////////////////////////////////////////////////////////
  /// FIXME: TODO LIST ///////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////

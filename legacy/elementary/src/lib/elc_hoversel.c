@@ -2,12 +2,23 @@
 #include "elm_priv.h"
 
 typedef struct _Widget_Data Widget_Data;
+typedef struct _Item Item;
 
 struct _Widget_Data
 {
    Evas_Object *btn, *hover;
    Evas_Object *hover_parent;
-   const char *hover_style;
+   Evas_List *items;
+};
+
+struct _Item
+{
+   Evas_Object *obj;
+   const char *label;
+   const char *icon_file;
+   Elm_Icon_Type icon_type;
+   void (*func) (void *data, Evas_Object *obj, void *event_info);
+   const void *data;
 };
 
 static void _del_pre_hook(Evas_Object *obj);
@@ -27,7 +38,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (wd->hover_style) eina_stringshare_del(wd->hover_style);
+   elm_hoversel_hover_end(obj);
    free(wd);
 }
 
@@ -56,10 +67,20 @@ _hover_clicked(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+_item_clicked(void *data, Evas_Object *obj, void *event_info)
+{
+   Item *it = data;
+   Evas_Object *obj2 = it->obj;
+   if (it->func) it->func(it->data, obj2, NULL);
+   elm_hoversel_hover_end(obj2);
+}
+
+static void
 _button_clicked(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Object *bt, *bx, *ic;
+   Eina_List *l;
    wd->hover = elm_hover_add(data);
    elm_hover_style_set(wd->hover, "hoversel_vertical");
    evas_object_smart_callback_add(wd->hover, "clicked", _hover_clicked, data);
@@ -69,15 +90,20 @@ _button_clicked(void *data, Evas_Object *obj, void *event_info)
    bx = elm_box_add(wd->hover);
    elm_box_homogenous_set(bx, 1);
    
-   bt = elm_button_add(wd->hover);
-   elm_button_style_set(bt, "hoversel_vertical_entry");
-   elm_button_label_set(bt, "Forward");
-   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
-   evas_object_size_hint_align_set(bt, -1.0, -1.0);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-   
-   // FIXME: fill.
+   for (l = wd->items; l; l = l->next)
+     {
+        Item *it = l->data;
+        bt = elm_button_add(wd->hover);
+        elm_button_style_set(bt, "hoversel_vertical_entry");
+        elm_button_label_set(bt, it->label);
+// FIXME: add icon        
+//        elm_button_icon_set(bt, it->icon_file);
+        evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+        evas_object_size_hint_align_set(bt, -1.0, -1.0);
+        elm_box_pack_end(bx, bt);
+        evas_object_smart_callback_add(bt, "clicked", _item_clicked, it);
+        evas_object_show(bt);
+     }
 
    elm_hover_content_set
      (wd->hover,
@@ -152,21 +178,30 @@ elm_hoversel_hover_end(Evas_Object *obj)
    wd->hover = NULL;
 }
 
-EAPI void * // FIXME: return some sort of handle other than void *
-elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, int icon_type, void (*func) (void *data, Evas_Object *obj, void *event_into), const void *data)
+EAPI Elm_Hoversel_Item *
+elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   // FIXME: implement
+   Item *it = calloc(1, sizeof(Item));
+   if (!it) return NULL;
+   wd->items = eina_list_append(wd->items, it);
+   it->obj = obj;
+   it->label = eina_stringshare_add(label);
+   it->icon_file = eina_stringshare_add(icon_file);
+   it->icon_type = icon_type;
+   it->func = func;
+   it->data = data;
+   return (Elm_Hoversel_Item *)it;
 }
 
 EAPI void
-elm_hoversel_item_del(void *item)
+elm_hoversel_item_del(Elm_Hoversel_Item *item)
 {
-   // FIXME: implement
-}
-
-EAPI void
-elm_hoversel_item_enabled_set(void *item, Evas_Bool enabled)
-{
-   // FIXME: implement
+   Item *it = (Item *)item;
+   Widget_Data *wd = elm_widget_data_get(it->obj);
+   wd->items = eina_list_remove(wd->items, it);
+   eina_stringshare_del(it->label);
+   eina_stringshare_del(it->icon_file);
+   free(it);
+   // FIXME: if hover up - this will be bad and break
 }
