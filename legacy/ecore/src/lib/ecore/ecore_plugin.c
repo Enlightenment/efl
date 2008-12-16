@@ -177,7 +177,7 @@ ecore_plugin_available_get(Ecore_Path_Group *group)
      return NULL;
 
    ecore_list_first_goto(group->paths);
-   plugins = eina_hash_string_superfast_new(free);
+   plugins = eina_hash_string_superfast_new(NULL);
 
    while ((path = ecore_list_next(group->paths)) != NULL)
      {
@@ -233,7 +233,7 @@ ecore_plugin_available_get(Ecore_Path_Group *group)
    ecore_list_free_cb_set(avail, free);
 
 
-   it = eina_hash_iterator_key_new(plugins);
+   it = eina_hash_iterator_data_new(plugins);
    if (it)
      {
 	eina_iterator_foreach(it, EINA_EACH(_hash_keys), avail);
