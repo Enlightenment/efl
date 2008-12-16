@@ -50,8 +50,9 @@
        EINA_MAGIC_FAIL(d, EINA_MAGIC_HASH_ITERATOR);			\
   } while(0)
 
-#define EINA_HASH_BUCKET_SIZE 256
-#define EINA_HASH_BUCKET_MASK 0xFF
+#define EINA_HASH_BUCKET_SIZE 8
+#define EINA_HASH_SMALL_BUCKET_SIZE 5
+
 #define EINA_HASH_RBTREE_MASK 0xFFF
 
 typedef struct _Eina_Hash_Head Eina_Hash_Head;
@@ -68,6 +69,9 @@ struct _Eina_Hash
    Eina_Free_Cb data_free_cb;
 
    Eina_Rbtree **buckets;
+   int size;
+   int mask;
+
    int population;
 
    EINA_MAGIC;
@@ -190,13 +194,13 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
    error = EINA_ERROR_OUT_OF_MEMORY;
 
    /* Apply eina mask to hash. */
-   hash_num = key_hash & EINA_HASH_BUCKET_MASK;
+   hash_num = key_hash & hash->mask;
    key_hash &= EINA_HASH_RBTREE_MASK;
 
    if (!hash->buckets)
      {
-	hash->buckets = malloc(sizeof (Eina_Rbtree*) * EINA_HASH_BUCKET_SIZE);
-	memset(hash->buckets, 0, sizeof (Eina_Rbtree*) * EINA_HASH_BUCKET_SIZE);
+	hash->buckets = malloc(sizeof (Eina_Rbtree*) * hash->size);
+	memset(hash->buckets, 0, sizeof (Eina_Rbtree*) * hash->size);
 
 	eh = NULL;
      }
@@ -287,7 +291,7 @@ _eina_hash_find_by_hash(const Eina_Hash *hash, Eina_Hash_Tuple *tuple, int key_h
    Eina_Hash_El *el;
    int rb_hash = key_hash & EINA_HASH_RBTREE_MASK;
 
-   key_hash &= EINA_HASH_BUCKET_MASK;
+   key_hash &= hash->mask;
 
    if (!hash->buckets) return NULL;
 
@@ -315,7 +319,7 @@ _eina_hash_find_by_data(const Eina_Hash *hash, const void *data, int *key_hash, 
    each.el = NULL;
    each.data = data;
 
-   for (hash_num = 0; hash_num < EINA_HASH_BUCKET_SIZE; hash_num++)
+   for (hash_num = 0; hash_num < hash->size; hash_num++)
      {
 	if (!hash->buckets[hash_num])
 	  continue;
@@ -357,7 +361,7 @@ _eina_hash_del_by_hash_el(Eina_Hash *hash, Eina_Hash_El *el, Eina_Hash_Head *eh,
 
    if (!eh->head)
      {
-	key_hash &= EINA_HASH_BUCKET_MASK;
+	key_hash &= hash->mask;
 
 	hash->buckets[key_hash] = eina_rbtree_inline_remove(hash->buckets[key_hash], EINA_RBTREE_GET(eh), EINA_RBTREE_CMP_NODE_CB(_eina_hash_hash_rbtree_cmp_node), NULL);
 	free(eh);
@@ -534,7 +538,7 @@ _eina_hash_iterator_next(Eina_Iterator_Hash *it, void **data)
 
    if (ok == EINA_FALSE)
      {
-	while (bucket < EINA_HASH_BUCKET_SIZE)
+	while (bucket < it->hash->size)
 	  {
 	     if (it->hash->buckets[bucket] != NULL)
 	       {
@@ -549,7 +553,7 @@ _eina_hash_iterator_next(Eina_Iterator_Hash *it, void **data)
 	if (it->list) eina_iterator_free(it->list);
 	it->list = eina_rbtree_iterator_prefix(it->eh->head);
 	ok = eina_iterator_next(it->list, (void**) &it->el);
-	if (bucket == EINA_HASH_BUCKET_SIZE) ok = EINA_FALSE;
+	if (bucket == it->hash->size) ok = EINA_FALSE;
      }
 
    it->index++;
@@ -663,18 +667,19 @@ eina_hash_shutdown(void)
      eina_error_shutdown();
    return --_eina_hash_init_count;
 }
-
 EAPI Eina_Hash *
 eina_hash_new(Eina_Key_Length key_length_cb,
 	      Eina_Key_Cmp key_cmp_cb,
 	      Eina_Key_Hash key_hash_cb,
-	      Eina_Free_Cb data_free_cb)
+	      Eina_Free_Cb data_free_cb,
+	      int buckets_power_size)
 {
    /* FIXME: Use mempool. */
    Eina_Hash *new;
 
    eina_error_set(0);
    if (!key_length_cb || !key_cmp_cb) return NULL;
+   if (buckets_power_size < 3 || buckets_power_size > 16) return NULL;
 
    new = malloc(sizeof (Eina_Hash));
    if (!new) goto on_error;
@@ -685,6 +690,9 @@ eina_hash_new(Eina_Key_Length key_length_cb,
    new->data_free_cb = data_free_cb;
    new->buckets = NULL;
    new->population = 0;
+
+   new->size = 1 << buckets_power_size;
+   new->mask = new->size - 1;
 
    EINA_MAGIC_SET(new, EINA_MAGIC_HASH);
 
@@ -701,7 +709,8 @@ eina_hash_string_djb2_new(Eina_Free_Cb data_free_cb)
    return eina_hash_new(EINA_KEY_LENGTH(_eina_string_key_length),
 			EINA_KEY_CMP(_eina_string_key_cmp),
 			EINA_KEY_HASH(eina_hash_djb2),
-			data_free_cb);
+			data_free_cb,
+			EINA_HASH_BUCKET_SIZE);
 }
 
 EAPI Eina_Hash *
@@ -710,7 +719,18 @@ eina_hash_string_superfast_new(Eina_Free_Cb data_free_cb)
    return eina_hash_new(EINA_KEY_LENGTH(_eina_string_key_length),
 			EINA_KEY_CMP(_eina_string_key_cmp),
 			EINA_KEY_HASH(eina_hash_superfast),
-			data_free_cb);
+			data_free_cb,
+			EINA_HASH_BUCKET_SIZE);
+}
+
+EAPI Eina_Hash *
+eina_hash_string_small_new(Eina_Free_Cb data_free_cb)
+{
+   return eina_hash_new(EINA_KEY_LENGTH(_eina_string_key_length),
+			EINA_KEY_CMP(_eina_string_key_cmp),
+			EINA_KEY_HASH(eina_hash_superfast),
+			data_free_cb,
+			EINA_HASH_SMALL_BUCKET_SIZE);
 }
 
 EAPI Eina_Hash *
@@ -719,7 +739,8 @@ eina_hash_int32_new(Eina_Free_Cb data_free_cb)
    return eina_hash_new(EINA_KEY_LENGTH(_eina_int32_key_length),
 			EINA_KEY_CMP(_eina_int32_key_cmp),
 			EINA_KEY_HASH(eina_hash_int32),
-			data_free_cb);
+			data_free_cb,
+			EINA_HASH_BUCKET_SIZE);
 }
 
 EAPI Eina_Hash *
@@ -728,7 +749,8 @@ eina_hash_int64_new(Eina_Free_Cb data_free_cb)
    return eina_hash_new(EINA_KEY_LENGTH(_eina_int64_key_length),
 			EINA_KEY_CMP(_eina_int64_key_cmp),
 			EINA_KEY_HASH(eina_hash_int64),
-			data_free_cb);
+			data_free_cb,
+			EINA_HASH_BUCKET_SIZE);
 }
 
 EAPI Eina_Hash *
@@ -738,12 +760,14 @@ eina_hash_pointer_new(Eina_Free_Cb data_free_cb)
    return eina_hash_new(EINA_KEY_LENGTH(_eina_int64_key_length),
 			EINA_KEY_CMP(_eina_int64_key_cmp),
 			EINA_KEY_HASH(eina_hash_int64),
-			data_free_cb);
+			data_free_cb,
+			EINA_HASH_BUCKET_SIZE);
 #else
    return eina_hash_new(EINA_KEY_LENGTH(_eina_int32_key_length),
 			EINA_KEY_CMP(_eina_int32_key_cmp),
 			EINA_KEY_HASH(eina_hash_int32),
-			data_free_cb);
+			data_free_cb,
+			EINA_HASH_BUCKET_SIZE);
 #endif
 }
 
@@ -787,7 +811,7 @@ eina_hash_free(Eina_Hash *hash)
    if (!hash) return;
 
    if (hash->buckets)
-     for (i = 0; i < EINA_HASH_BUCKET_SIZE; i++)
+     for (i = 0; i < hash->size; i++)
        eina_rbtree_delete(hash->buckets[i], EINA_RBTREE_FREE_CB(_eina_hash_head_free), hash);
    free(hash);
 }

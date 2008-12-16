@@ -66,9 +66,11 @@ EAPI int eina_hash_shutdown(void);
 EAPI Eina_Hash * eina_hash_new(Eina_Key_Length key_length_cb,
 			       Eina_Key_Cmp key_cmp_cb,
 			       Eina_Key_Hash key_hash_cb,
-			       Eina_Free_Cb data_free_cb);
+			       Eina_Free_Cb data_free_cb,
+			       int buckets_power_size);
 EAPI Eina_Hash * eina_hash_string_djb2_new(Eina_Free_Cb data_free_cb);
 EAPI Eina_Hash * eina_hash_string_superfast_new(Eina_Free_Cb data_free_cb);
+EAPI Eina_Hash * eina_hash_string_small_new(Eina_Free_Cb data_free_cb);
 EAPI Eina_Hash * eina_hash_int32_new(Eina_Free_Cb data_free_cb);
 EAPI Eina_Hash * eina_hash_int64_new(Eina_Free_Cb data_free_cb);
 EAPI Eina_Hash * eina_hash_pointer_new(Eina_Free_Cb data_free_cb);
@@ -119,8 +121,8 @@ EAPI int eina_hash_superfast(const char *key, int len);
 static inline int eina_hash_djb2(const char *key, int len);
 
 /* Hash function from http://www.concentric.net/~Ttwang/tech/inthash.htm */
-static inline int eina_hash_int32(unsigned int *pkey, __UNUSED__ int len);
-static inline int eina_hash_int64(unsigned long int *pkey, __UNUSED__ int len);
+static inline int eina_hash_int32(unsigned int *pkey, int len);
+static inline int eina_hash_int64(unsigned long int *pkey, int len);
 
 #include "eina_inline_hash.x"
 
