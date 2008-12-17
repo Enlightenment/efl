@@ -298,6 +298,7 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
 	     free(cc);
 	     return;
 	  }
+	if (!_edje_color_class_hash) _edje_color_class_hash = eina_hash_string_superfast_new(NULL);
         eina_hash_add(_edje_color_class_hash, color_class, cc);
      }
 
@@ -573,6 +574,7 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
 	     free(tc);
 	     return;
 	  }
+	if (!_edje_text_class_hash) _edje_text_class_hash = eina_hash_string_superfast_new(NULL);
         eina_hash_add(_edje_text_class_hash, text_class, tc);
 
 	tc->font = eina_stringshare_add(font);
@@ -2514,6 +2516,7 @@ _edje_color_class_member_add(Edje *ed, const char *color_class)
      }
 
    members = eina_list_prepend(members, ed);
+   if (!_edje_color_class_member_hash) _edje_color_class_member_hash = eina_hash_string_superfast_new(NULL);
    eina_hash_add(_edje_color_class_member_hash, color_class, members);
 }
 
@@ -2530,7 +2533,7 @@ _edje_color_class_member_del(Edje *ed, const char *color_class)
    members = eina_list_remove(members, ed);
    if (members)
      {
-        eina_hash_add(_edje_color_class_member_hash, color_class, members);
+	eina_hash_add(_edje_color_class_member_hash, color_class, members);
      }
 }
 
@@ -2620,6 +2623,7 @@ _edje_text_class_member_add(Edje *ed, const char *text_class)
    members = eina_list_prepend(members, ed);
 
    /* Add the member list back */
+   if (!_edje_text_class_member_hash) _edje_text_class_member_hash = eina_hash_string_superfast_new(NULL);
    eina_hash_add(_edje_text_class_member_hash, text_class, members);
 }
 

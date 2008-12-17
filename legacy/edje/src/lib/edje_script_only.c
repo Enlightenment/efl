@@ -153,6 +153,7 @@ _oid_track(Edje *ed, Evas_Object *o)
    evas_object_clip_set(oi->obj, oi->ed->clipper);
    evas_object_geometry_get(oi->obj, &(oi->x), &(oi->y), &(oi->w), &(oi->h));
    snprintf(buf, sizeof(buf), "%i", oi->oid);
+   if (!si->oid.hash) si->oid.hash = eina_hash_string_superfast_new(NULL);
    eina_hash_add(si->oid.hash, buf, oi);
    return oi;
 }
