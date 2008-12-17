@@ -23,6 +23,12 @@
 
 #include "eina_config.h"
 
+#if HAVE___ATTRIBUTE__
+# define __UNUSED__ __attribute__((unused))
+#else
+# define __UNUSED__
+#endif
+
 #include "eina_magic.h"
 #include "eina_iterator.h"
 #include "eina_accessor.h"

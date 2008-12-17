@@ -45,12 +45,6 @@
 # endif
 #endif
 
-#if HAVE___ATTRIBUTE__
-# define __UNUSED__ __attribute__((unused))
-#else
-# define __UNUSED__
-#endif
-
 /* remove this TRUE/FALSE redifinitions */
 
 #ifndef TRUE
