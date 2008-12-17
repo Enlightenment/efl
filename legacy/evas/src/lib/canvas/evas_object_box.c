@@ -37,6 +37,9 @@ static void
 _on_child_resize(void *data, Evas *evas, Evas_Object *o, void *einfo)
 {
    Evas_Object *box = data;
+   Evas_Object_Box_Data *priv;
+   priv = evas_object_smart_data_get(box);
+   if (priv->in_calc) return;
    evas_object_smart_changed(box);
 }
 
@@ -378,7 +381,11 @@ _evas_object_box_smart_calculate(Evas_Object *o)
 {
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(o, priv);
    if (priv->layout.cb)
-     priv->layout.cb(o, priv, priv->layout.data);
+     {
+	priv->in_calc = 1;
+	priv->layout.cb(o, priv, priv->layout.data);
+	priv->in_calc = 0;
+     }
    else
      fprintf(stderr, "ERROR: no layout function set for %p box.\n", o);
 }

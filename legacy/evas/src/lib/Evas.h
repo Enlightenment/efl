@@ -1017,6 +1017,7 @@ extern "C" {
 	 void *data;
 	 void (*free_data)(void *data);
       } layout;
+      unsigned char in_calc:1;
    };
 
    struct _Evas_Object_Box_Option
