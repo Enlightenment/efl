@@ -958,7 +958,6 @@ src/modules/engines/software_ddraw/Makefile
 src/modules/engines/direct3d/Makefile
 src/modules/engines/software_16_wince/Makefile
 src/modules/engines/software_x11/Makefile
-src/modules/engines/software_xcb/Makefile
 src/modules/engines/fb/Makefile
 src/modules/engines/buffer/Makefile
 src/modules/engines/software_win32_gdi/Makefile
@@ -1013,12 +1012,11 @@ echo "Configuration Options Summary:"
 echo
 echo "Engines:"
 echo "  Software Memory Buffer.....: $have_evas_engine_buffer"
-echo "  Software X11...............: $have_evas_engine_software_x11"
+echo "  Software X11...............: $have_evas_engine_software_x11 (XCB: $have_evas_engine_software_xcb)"
 echo "  XRender X11................: $have_evas_engine_xrender_x11"
 echo "  OpenGL X11.................: $have_evas_engine_gl_x11"
 echo "  Glitz X11..................: $have_evas_engine_glitz_x11"
 echo "  Cairo X11..................: $have_evas_engine_cairo_x11"
-echo "  Software XCB...............: $have_evas_engine_software_xcb"
 echo "  XRender XCB................: $have_evas_engine_xrender_xcb"
 echo "  Software DirectDraw........: $have_evas_engine_software_ddraw"
 echo "  Direct3d...................: $have_evas_engine_direct3d"

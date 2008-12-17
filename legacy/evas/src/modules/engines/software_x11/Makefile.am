@@ -8,7 +8,8 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/modules/engines \
 @FREETYPE_CFLAGS@ \
 @EINA_CFLAGS@ \
-@evas_engine_software_x11_cflags@
+@evas_engine_software_x11_cflags@ \
+@evas_engine_software_xcb_cflags@
 
 if BUILD_ENGINE_SOFTWARE_X11
 
@@ -18,12 +19,22 @@ pkg_LTLIBRARIES	= module.la
 
 module_la_SOURCES = \
 evas_engine.c \
-evas_outbuf.c \
-evas_x_buffer.c \
-evas_x_color.c \
-evas_x_main.c
+evas_xlib_outbuf.c \
+evas_xlib_buffer.c \
+evas_xlib_color.c \
+evas_xlib_main.c
 
-module_la_LIBADD = $(top_builddir)/src/lib/libevas.la @EINA_LIBS@ @evas_engine_software_x11_libs@
+if BUILD_ENGINE_SOFTWARE_XCB
+
+module_la_SOURCES += \
+evas_xcb_outbuf.c \
+evas_xcb_buffer.c \
+evas_xcb_color.c \
+evas_xcb_main.c
+
+endif
+
+module_la_LIBADD = $(top_builddir)/src/lib/libevas.la @EINA_LIBS@ @evas_engine_software_x11_libs@ @evas_engine_software_xcb_libs@
 module_la_LDFLAGS = -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 
@@ -31,4 +42,11 @@ include_HEADERS = Evas_Engine_Software_X11.h
 
 endif
 
-EXTRA_DIST = evas_engine.h
+EXTRA_DIST = \
+evas_engine.h \
+evas_xlib_outbuf.h \
+evas_xlib_buffer.h \
+evas_xlib_color.h \
+evas_xcb_outbuf.h \
+evas_xcb_buffer.h \
+evas_xcb_color.h

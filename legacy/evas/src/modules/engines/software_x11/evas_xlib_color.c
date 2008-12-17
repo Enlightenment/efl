@@ -1,4 +1,5 @@
 #include "evas_common.h"
+
 #include "evas_engine.h"
 
 #include <X11/Xlib.h>
@@ -77,7 +78,7 @@ x_color_alloc_rgb(int nr, int ng, int nb, Display *d, Colormap cmap, Visual *v)
 		  if (dg < 0) dg = -dg;
 		  db = (int)xcl_in.blue - (int)xcl.blue;
 		  if (db < 0) db = -db;
-/*		  
+/*
 		  printf("ASK [%i]: %04x %04x %04x = %04x %04x %04x | dif = %04x / %04x\n",
 			 ret,
 			 xcl_in.red, xcl_in.green, xcl_in.blue,
@@ -86,7 +87,7 @@ x_color_alloc_rgb(int nr, int ng, int nb, Display *d, Colormap cmap, Visual *v)
  */
 		  if ((ret == 0) ||
 		      ((dr + dg + db) > delt)
-/*		      
+/*
 		      ||
 		      ((xcl_in.red & sig_mask) != (xcl.red & sig_mask)) ||
 		      ((xcl_in.green & sig_mask) != (xcl.green & sig_mask)) ||
@@ -236,7 +237,7 @@ x_color_alloc_mono(Display *d, Colormap cmap, Visual *v)
 }
 
 void
-evas_software_x11_x_color_init(void)
+evas_software_xlib_x_color_init(void)
 {
    static int initialised = 0;
 
@@ -286,7 +287,10 @@ evas_software_x11_x_color_init(void)
 }
 
 Convert_Pal *
-evas_software_x11_x_color_allocate(Display *disp, Colormap cmap, Visual *vis, Convert_Pal_Mode colors)
+evas_software_xlib_x_color_allocate(Display         *disp,
+                                    Colormap         cmap,
+                                    Visual          *vis,
+                                    Convert_Pal_Mode colors)
 {
    Convert_Pal_Priv *palpriv;
    Convert_Pal      *pal;
@@ -341,7 +345,10 @@ evas_software_x11_x_color_allocate(Display *disp, Colormap cmap, Visual *vis, Co
 }
 
 void
-evas_software_x11_x_color_deallocate(Display *disp, Colormap cmap, Visual *vis, Convert_Pal *pal)
+evas_software_xlib_x_color_deallocate(Display     *disp,
+                                      Colormap     cmap,
+                                      Visual      *vis,
+                                      Convert_Pal *pal)
 {
    unsigned long pixels[256];
    int j;
