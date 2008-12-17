@@ -70,7 +70,7 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
    edc->part = eina_stringshare_add(coll);
    edc->references = 1;
    if (!edf->collection_hash)
-     edf->collection_hash = eina_hash_string_superfast_new(NULL);
+     edf->collection_hash = eina_hash_string_small_new(NULL);
    eina_hash_add(edf->collection_hash, coll, edc);
    return edc;
 }
@@ -81,7 +81,7 @@ _edje_font_hash(Edje_File *edf)
    int	count = 0;
 
    if (!edf->font_hash)
-     edf->font_hash = eina_hash_string_superfast_new(NULL);
+     edf->font_hash = eina_hash_string_small_new(NULL);
 
    if (edf->font_dir)
      {
@@ -162,7 +162,8 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
    _edje_textblock_style_parse_and_fix(edf);
 
    if (!edf->data_cache)
-     edf->data_cache = eina_hash_string_superfast_new(NULL);
+     edf->data_cache = eina_hash_string_small_new(NULL);
+
    EINA_LIST_FOREACH(edf->data, l, di)
      eina_hash_add(edf->data_cache, di->key, di->value);
 
@@ -192,14 +193,12 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
    Edje_Part *ep;
 
    if (!_edje_file_hash)
-     _edje_file_hash = eina_hash_string_superfast_new(NULL);
+     _edje_file_hash = eina_hash_string_small_new(NULL);
    edf = eina_hash_find(_edje_file_hash, file);
 
    if (edf)
      {
 	edf->references++;
-	if (!edf->collection_hash)
-	  edf->collection_hash = eina_hash_string_superfast_new(NULL);
      }
    else
      {
@@ -222,6 +221,9 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 	eina_hash_add(_edje_file_hash, file, edf);
 	return edf;
      }
+
+   if (!edf->collection_hash)
+     edf->collection_hash = eina_hash_string_small_new(NULL);
 
    if (!coll) return edf;
 
