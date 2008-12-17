@@ -31,7 +31,7 @@
 # ifdef HAVE_ECORE_X_XCB
 #  include <xcb/xcb.h>
 #  ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-#   include <Evas_Engine_Software_Xcb.h>
+#   include <Evas_Engine_Software_X11.h>
 #  endif
 #  ifdef BUILD_ECORE_EVAS_XRENDER_XCB
 #   include <xcb/render.h>

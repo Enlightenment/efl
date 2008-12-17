@@ -382,15 +382,9 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
    if (!strcmp(ee->driver, "software_x11") || !strcmp(ee->driver, "software_xcb"))
      {
 #if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-	Evas_Engine_Info_Software_Xcb *einfo;
-
-	einfo = (Evas_Engine_Info_Software_Xcb *)evas_engine_info_get(ee->evas);
-# else
 	Evas_Engine_Info_Software_X11 *einfo;
 
 	einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
-# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 	if (einfo)
 	  {
 # ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
@@ -1591,15 +1585,9 @@ _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation)
    if (!strcmp(ee->driver, "software_x11") || !strcmp(ee->driver, "software_xcb"))
      {
 #if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-	Evas_Engine_Info_Software_Xcb *einfo;
-
-	einfo = (Evas_Engine_Info_Software_Xcb *)evas_engine_info_get(ee->evas);
-# else
 	Evas_Engine_Info_Software_X11 *einfo;
 
 	einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
-# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 	if (!einfo) return;
 	einfo->info.rotation = rotation;
 	_ecore_evas_x_rotation_set_internal
@@ -1629,16 +1617,9 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
    if (!strcmp(ee->driver, "software_x11") || !strcmp(ee->driver, "software_xcb"))
      {
 #if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-	Evas_Engine_Info_Software_Xcb *einfo;
-
-	einfo = (Evas_Engine_Info_Software_Xcb *)evas_engine_info_get(ee->evas);
-# else
 	Evas_Engine_Info_Software_X11 *einfo;
 
 	einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
-# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
-
 	ee->shaped = shaped;
 	if (einfo)
 	  {
@@ -1821,16 +1802,9 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
    if (!strcmp(ee->driver, "software_x11") || !strcmp(ee->driver, "software_xcb"))
      {
 #if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-	Evas_Engine_Info_Software_Xcb *einfo;
-
-	einfo = (Evas_Engine_Info_Software_Xcb *)evas_engine_info_get(ee->evas);
-#else
 	Evas_Engine_Info_Software_X11 *einfo;
 
 	einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
-
 	if (!einfo) return;
 
 	if (!ecore_x_composite_query()) return;
@@ -1903,16 +1877,9 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
    else if (!strcmp(ee->driver, "xrender_x11") || !strcmp(ee->driver, "xrender_xcb"))
      {
 #if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
-# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
-	Evas_Engine_Info_XRender_Xcb *einfo;
-
-	einfo = (Evas_Engine_Info_XRender_Xcb *)evas_engine_info_get(ee->evas);
-# else
 	Evas_Engine_Info_XRender_X11 *einfo;
 
 	einfo = (Evas_Engine_Info_XRender_X11 *)evas_engine_info_get(ee->evas);
-# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
-
 	if (!einfo) return;
 	if (!ecore_x_composite_query()) return;
 
@@ -2410,18 +2377,10 @@ _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
    if ((!strcmp(ee->driver, "software_x11")) || (!strcmp(ee->driver, "software_xcb")))
      {
 #if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-	Evas_Engine_Info_Software_Xcb *einfo;
-# else
 	Evas_Engine_Info_Software_X11 *einfo;
-# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 
 	ee->prop.avoid_damage = on;
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-	einfo = (Evas_Engine_Info_Software_Xcb *)evas_engine_info_get(ee->evas);
-# else
 	einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
-# endif /* !BUILD_ECORE_EVAS_SOFTWARE_XCB */
 	if (einfo)
 	  {
 	     if (ee->prop.avoid_damage)
@@ -2597,21 +2556,13 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 			    int x, int y, int w, int h)
 {
 #if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-   Evas_Engine_Info_Software_Xcb *einfo;
-# else
    Evas_Engine_Info_Software_X11 *einfo;
-# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
    Ecore_Evas *ee;
    int argb = 0;
    int rmethod;
    static int redraw_debug = -1;
 
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-   rmethod = evas_render_method_lookup("software_xcb");
-# else
    rmethod = evas_render_method_lookup("software_x11");
-# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
    if (!rmethod) return NULL;
    if (!ecore_x_init(disp_name)) return NULL;
    ee = calloc(1, sizeof(Ecore_Evas));
@@ -2674,11 +2625,7 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 	 * for the '=' char */
 //	putenv((char*)"DESKTOP_STARTUP_ID=");
      }
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-   einfo = (Evas_Engine_Info_Software_Xcb *)evas_engine_info_get(ee->evas);
-# else
    einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
-# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
    if (einfo)
      {
 # ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
@@ -2690,6 +2637,7 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 
 	/* FIXME: this is inefficient as its a round trip */
 # ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
+        einfo->info.backend = 1;
 	screen = ecore_x_default_screen_get();
         iter = xcb_setup_roots_iterator (xcb_get_setup (ecore_x_connection_get()));
 	if (iter.rem > 1)
@@ -2728,6 +2676,7 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
                }
 	  }
 # else
+        einfo->info.backend = 0;
 	screen = DefaultScreen(ecore_x_display_get());
 	if (ScreenCount(ecore_x_display_get()) > 1)
 	  {
@@ -2765,10 +2714,11 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 	       redraw_debug = 0;
 	  }
 # ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-	einfo->info.conn   = ecore_x_connection_get();
+	einfo->info.connection = ecore_x_connection_get();
 	einfo->info.screen = screen;
 # else
-	einfo->info.display  = ecore_x_display_get();
+	einfo->info.connection = ecore_x_display_get();
+	einfo->info.screen = NULL;
 # endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 	einfo->info.drawable = ee->engine.x.win;
 	if (argb)
