@@ -855,6 +855,11 @@ _edje_file_free(Edje_File *edf)
 	  }
 	free(edf->font_dir);
      }
+   if (edf->font_hash)
+     {
+	eina_hash_free(edf->font_hash);
+	edf->font_hash = NULL;
+     }
    if (edf->image_dir)
      {
 	while (edf->image_dir->entries)

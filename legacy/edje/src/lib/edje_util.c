@@ -20,11 +20,11 @@ struct _Edje_Box_Layout
 typedef struct _Edje_Box_Layout                      Edje_Box_Layout;
 
 
-static Eina_Hash *_edje_color_class_hash = NULL;
-static Eina_Hash *_edje_color_class_member_hash = NULL;
+static Evas_Hash *_edje_color_class_hash = NULL;
+static Evas_Hash *_edje_color_class_member_hash = NULL;
 
-static Eina_Hash *_edje_text_class_hash = NULL;
-static Eina_Hash *_edje_text_class_member_hash = NULL;
+static Evas_Hash *_edje_text_class_hash = NULL;
+static Evas_Hash *_edje_text_class_member_hash = NULL;
 
 static Eina_Rbtree *_edje_box_layout_registry = NULL;
 
@@ -40,8 +40,8 @@ struct _Edje_List_Foreach_Data
    Eina_List *list;
 };
 
-static Eina_Bool _edje_color_class_list_foreach(const Eina_Hash *hash, const void *key, void *data, void *fdata);
-static Eina_Bool _edje_text_class_list_foreach(const Eina_Hash *hash, const void *key, void *data, void *fdata);
+static Evas_Bool _edje_color_class_list_foreach(const Eina_Hash *hash, const void *key, void *data, void *fdata);
+static Evas_Bool _edje_text_class_list_foreach(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 
 Edje_Real_Part *_edje_real_part_recursive_get_helper(Edje *ed, char **path);
 

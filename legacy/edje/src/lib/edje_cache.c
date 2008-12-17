@@ -28,7 +28,7 @@ void *alloca (size_t);
 
 #include "edje_private.h"
 
-static Eina_Hash   *_edje_file_hash = NULL;
+static Evas_Hash   *_edje_file_hash = NULL;
 static int          _edje_file_cache_size = 16;
 static Eina_List   *_edje_file_cache = NULL;
 
@@ -69,7 +69,9 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
 
    edc->part = eina_stringshare_add(coll);
    edc->references = 1;
-   edf->collection_hash = evas_hash_add(edf->collection_hash, coll, edc);
+   if (!edf->collection_hash)
+     edf->collection_hash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(edf->collection_hash, coll, edc);
    return edc;
 }
 
@@ -77,6 +79,9 @@ static int
 _edje_font_hash(Edje_File *edf)
 {
    int	count = 0;
+
+   if (!edf->font_hash)
+     edf->font_hash = eina_hash_string_superfast_new(NULL);
 
    if (edf->font_dir)
      {
@@ -96,7 +101,7 @@ _edje_font_hash(Edje_File *edf)
              if (edf->free_strings)
                eina_stringshare_del(fnt->entry);
 	     fnt->entry = fnt->path + 6;
-	     edf->font_hash = evas_hash_direct_add(edf->font_hash, fnt->entry, fnt);
+	     eina_hash_direct_add(edf->font_hash, fnt->entry, fnt);
 
 	     count++;
 	  }
@@ -156,8 +161,10 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
 
    _edje_textblock_style_parse_and_fix(edf);
 
+   if (!edf->data_cache)
+     edf->data_cache = eina_hash_string_superfast_new(NULL);
    EINA_LIST_FOREACH(edf->data, l, di)
-     edf->data_cache = evas_hash_add(edf->data_cache, eina_stringshare_add(di->key), di->value);
+     eina_hash_add(edf->data_cache, di->key, di->value);
 
    if (coll)
      {
@@ -184,10 +191,15 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
    Edje_Part_Collection *edc;
    Edje_Part *ep;
 
-   edf = evas_hash_find(_edje_file_hash, file);
+   if (!_edje_file_hash)
+     _edje_file_hash = eina_hash_string_superfast_new(NULL);
+   edf = eina_hash_find(_edje_file_hash, file);
+
    if (edf)
      {
 	edf->references++;
+	if (!edf->collection_hash)
+	  edf->collection_hash = eina_hash_string_superfast_new(NULL);
      }
    else
      {
@@ -197,7 +209,7 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 	       {
 		  edf->references = 1;
 		  _edje_file_cache = eina_list_remove_list(_edje_file_cache, l);
-		  _edje_file_hash = evas_hash_add(_edje_file_hash, file, edf);
+		  eina_hash_add(_edje_file_hash, file, edf);
 		  break;
 	       }
 	     edf = NULL;
@@ -207,13 +219,13 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
      {
 	edf = _edje_file_open(file, coll, error_ret, edc_ret);
 	if (!edf) return NULL;
-	_edje_file_hash = evas_hash_add(_edje_file_hash, file, edf);
+	eina_hash_add(_edje_file_hash, file, edf);
 	return edf;
      }
 
    if (!coll) return edf;
 
-   edc = evas_hash_find(edf->collection_hash, coll);
+   edc = eina_hash_find(edf->collection_hash, coll);
    if (edc)
      {
 	edc->references++;
@@ -226,7 +238,7 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 	       {
 		  edc->references = 1;
 		  edf->collection_cache = eina_list_remove_list(edf->collection_cache, l);
-		  edf->collection_hash = evas_hash_add(edf->collection_hash, coll, edc);
+		  eina_hash_add(edf->collection_hash, coll, edc);
 		  break;
 	       }
 	     edc = NULL;
@@ -345,7 +357,12 @@ _edje_cache_coll_unref(Edje_File *edf, Edje_Part_Collection *edc)
 {
    edc->references--;
    if (edc->references != 0) return;
-   edf->collection_hash = evas_hash_del(edf->collection_hash, edc->part, edc);
+   eina_hash_del(edf->collection_hash, edc->part, edc);
+   if (!eina_hash_population(edf->collection_hash))
+     {
+       eina_hash_free(edf->collection_hash);
+       edf->collection_hash = NULL;
+     }
    edf->collection_cache = eina_list_prepend(edf->collection_cache, edc);
    _edje_cache_coll_clean(edf);
 }
@@ -372,7 +389,13 @@ _edje_cache_file_unref(Edje_File *edf)
 {
    edf->references--;
    if (edf->references != 0) return;
-   _edje_file_hash = evas_hash_del(_edje_file_hash, edf->path, edf);
+
+   eina_hash_del(_edje_file_hash, edf->path, edf);
+   if (!eina_hash_population(_edje_file_hash))
+     {
+       eina_hash_free(_edje_file_hash);
+       _edje_file_hash = NULL;
+     }
    _edje_file_cache = eina_list_prepend(_edje_file_cache, edf);
    _edje_cache_file_clean();
 }

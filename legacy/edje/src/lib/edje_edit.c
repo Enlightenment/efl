@@ -716,7 +716,9 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    //cd = mem_alloc(SZ(Code));
    //codes = eina_list_append(codes, cd);
 
-   ed->file->collection_hash = evas_hash_add(ed->file->collection_hash, name, pc);
+   if (!ed->file->collection_hash)
+     ed->file->collection_hash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(ed->file->collection_hash, name, pc);
 
    return 1;
 }
@@ -828,10 +830,12 @@ edje_edit_group_name_set(Evas_Object *obj, const char *new_name)
      {
 	if (pc->id == pce->id)
 	  {
-	     ed->file->collection_hash = evas_hash_del(ed->file->collection_hash,
-						       pce->entry, NULL);
-	     ed->file->collection_hash = evas_hash_add(ed->file->collection_hash,
-						       new_name, pc);
+	     eina_hash_del(ed->file->collection_hash,
+			   pce->entry, NULL);
+	     if (!ed->file->collection_hash)
+	       ed->file->collection_hash = eina_hash_string_superfast_new(NULL);
+	     eina_hash_add(ed->file->collection_hash,
+			   new_name, pc);
 
 	     //if (pce->entry &&  //TODO Also this cause segv
 	     //    !eet_dictionary_string_check(eet_dictionary_get(ed->file->ef), pce->entry))
@@ -1295,7 +1299,7 @@ EAPI Eina_List *
 edje_edit_style_tags_list_get(Evas_Object * obj, const char* style)
 {
    Eina_List *tags = NULL;
-   Eina_List *ll;
+   Eina_List *l, *ll;
    Edje_Style *s;
    Edje_Style_Tag *t;
 
@@ -3310,7 +3314,9 @@ edje_edit_font_add(Evas_Object *obj, const char* path)
 	fnt->path = mem_strdup(buf);
 
 	ed->file->font_dir->entries = eina_list_append(ed->file->font_dir->entries, fnt);
-	ed->file->font_hash = evas_hash_direct_add(ed->file->font_hash, fnt->entry, fnt);
+	if (!ed->file->font_hash)
+	  ed->file->font_hash = eina_hash_string_superfast_new(NULL);
+	eina_hash_direct_add(ed->file->font_hash, fnt->entry, fnt);
      }
 
    return 1;
@@ -5397,6 +5403,20 @@ _edje_edit_str_direct_free(const char *str)
 {
 }
 
+static void *
+_edje_eina_hash_add_alloc(void *hash, const void *key, void *data)
+{
+   Eina_Hash *result = hash;
+
+   if (!result) result = eina_hash_string_small_new(NULL);
+   if (!result) return NULL;
+
+   eina_hash_add(result, key, data);
+
+   return result;
+}
+
+
 static Eet_Data_Descriptor *_srcfile_edd = NULL;
 static Eet_Data_Descriptor *_srcfile_list_edd = NULL;
 
@@ -5408,15 +5428,15 @@ source_edd(void)
    eddc.version = EET_DATA_DESCRIPTOR_CLASS_VERSION;
    eddc.func.mem_alloc = NULL;
    eddc.func.mem_free = NULL;
-   eddc.func.str_alloc = (char *(*)(const char *))eina_stringshare_add;
-   eddc.func.str_free = (void (*)(const char *))eina_stringshare_del;
-   eddc.func.list_next = (void *(*)(void *))eina_list_next;
-   eddc.func.list_append = (void *(*)(void *, void *))eina_list_append;
-   eddc.func.list_data = (void *(*)(void *))eina_list_data_get;
-   eddc.func.list_free = (void *(*)(void *))eina_list_free;
-   eddc.func.hash_foreach = (void (*)(void *, int (*) (void *, const char *, void *, void *), void *))evas_hash_foreach;
-   eddc.func.hash_add = (void *(*)(void *, const char *, void *))evas_hash_add;
-   eddc.func.hash_free = (void (*)(void *))evas_hash_free;
+   eddc.func.str_alloc = eina_stringshare_add;
+   eddc.func.str_free = eina_stringshare_del;
+   eddc.func.list_next = eina_list_next;
+   eddc.func.list_append = eina_list_append;
+   eddc.func.list_data = eina_list_data_get;
+   eddc.func.list_free = eina_list_free;
+   eddc.func.hash_foreach = eina_hash_foreach;
+   eddc.func.hash_add = _edje_eina_hash_add_alloc;
+   eddc.func.hash_free = eina_hash_free;
    eddc.func.str_direct_alloc = _edje_edit_str_direct_alloc;
    eddc.func.str_direct_free = _edje_edit_str_direct_free;
 

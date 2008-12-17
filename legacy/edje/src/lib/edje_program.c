@@ -933,11 +933,11 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src)
 	     Eina_List *l;
 	     Edje_Program *pr;
 
-	     if (evas_hash_find(ec->prog_cache.no_matches, tmps))
+	     if (eina_hash_find(ec->prog_cache.no_matches, tmps))
 	       {
 		  done = 1;
 	       }
-	     else if ((matches = evas_hash_find(ec->prog_cache.matches, tmps)))
+	     else if ((matches = eina_hash_find(ec->prog_cache.matches, tmps)))
 	       {
 		 EINA_LIST_FOREACH(matches, l, pr)
 		    {
@@ -988,11 +988,17 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src)
 	     if (tmps)
 	       {
 		  if (data.matched == 0)
-		    ec->prog_cache.no_matches =
-		    evas_hash_add(ec->prog_cache.no_matches, tmps, ed);
+		    {
+		      if (!ec->prog_cache.no_matches)
+			ec->prog_cache.no_matches = eina_hash_string_superfast_new(NULL);
+		      eina_hash_add(ec->prog_cache.no_matches, tmps, ed);
+		    }
 		  else
-		    ec->prog_cache.matches =
-		    evas_hash_add(ec->prog_cache.matches, tmps, data.matches);
+		    {
+		      if (!ec->prog_cache.matches)
+			ec->prog_cache.matches = eina_hash_string_superfast_new(NULL);
+		      eina_hash_add(ec->prog_cache.matches, tmps, data.matches);
+		    }
 	       }
 #endif
 	  }

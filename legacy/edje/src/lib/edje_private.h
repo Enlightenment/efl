@@ -255,10 +255,10 @@ struct _Edje_File
    int                             version;
    int                             feature_ver;
 
-   Evas_Hash                      *collection_hash;
-   Evas_Hash			  *font_hash;
+   Eina_Hash                      *collection_hash;
+   Eina_Hash			  *font_hash;
    Eina_List                      *collection_cache;
-   Evas_Hash                      *data_cache;
+   Eina_Hash                      *data_cache;
 
    Eet_File                       *ef;
 
@@ -433,8 +433,8 @@ struct _Edje_Part_Collection
    int        references;
 #ifdef EDJE_PROGRAM_CACHE
    struct {
-      Evas_Hash                   *no_matches;
-      Evas_Hash                   *matches;
+      Eina_Hash                   *no_matches;
+      Eina_Hash                   *matches;
    } prog_cache;
 #endif
 
@@ -880,7 +880,7 @@ struct _Edje_Var_List
 
 struct _Edje_Var_Hash
 {
-   Evas_Hash *v;
+   Eina_Hash *v;
 };
 
 struct _Edje_Var_Timer

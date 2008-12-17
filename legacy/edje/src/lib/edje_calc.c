@@ -777,7 +777,7 @@ _edje_part_recalc_single(Edje *ed,
 	  {
 	     Edje_Font_Directory_Entry *fnt;
 
-	     fnt = evas_hash_find(ed->file->font_hash, font);
+	     fnt = eina_hash_find(ed->file->font_hash, font);
 
 	     if (fnt)
 	       {
