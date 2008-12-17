@@ -9,8 +9,8 @@
 
 static Ecore_List *globs = NULL;     /* contains Efreet_Mime_Glob structs */
 static Ecore_List *magics = NULL;    /* contains Efreet_Mime_Magic structs */
-static Ecore_Hash *wild = NULL;      /* contains *.ext and mime.types globs*/
-static Ecore_Hash *monitors = NULL;  /* contains file monitors */
+static Eina_Hash *wild = NULL;      /* contains *.ext and mime.types globs*/
+static Eina_Hash *monitors = NULL;  /* contains file monitors */
 
 /**
  * @internal
@@ -111,10 +111,7 @@ efreet_mime_init(void)
 
     efreet_mime_endianess = efreet_mime_endian_check();
 
-    monitors = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_free_key_cb_set(monitors, ECORE_FREE_CB(free));
-    ecore_hash_free_value_cb_set(monitors,
-                    ECORE_FREE_CB(ecore_file_monitor_del));
+    monitors = eina_hash_string_superfast_new(EINA_FREE_CB(ecore_file_monitor_del));
 
     if (!efreet_mime_init_files())
         return 0;
@@ -269,7 +266,7 @@ efreet_mime_globs_type_get(const char *file)
         while (p)
         {
             p++;
-            if (p && (mime = ecore_hash_get(wild, p))) return mime;
+            if (p && (mime = eina_hash_find(wild, p))) return mime;
             p = strchr(p, '.');
         }
     }
@@ -342,11 +339,14 @@ efreet_mime_monitor_add(const char *file)
 
     /* if this is already in our hash then we're already monitoring so no
      * reason to re-monitor */
-    if (ecore_hash_get(monitors, file))
+    if (eina_hash_find(monitors, file))
         return;
 
     if ((fm = ecore_file_monitor_add(file, efreet_mime_cb_update_file, NULL)))
-        ecore_hash_set(monitors, strdup(file), fm);
+      {
+	 eina_hash_del(monitors, file, NULL);
+	 eina_hash_add(monitors, file, fm);
+      }
 }
 
 /**
@@ -364,10 +364,7 @@ efreet_mime_load_globs(Ecore_List *datadirs, const char *datahome)
     const char *datadir = NULL;
 
     IF_FREE_HASH(wild);
-    wild = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_free_key_cb_set(wild, ECORE_FREE_CB(eina_stringshare_del));
-    ecore_hash_free_value_cb_set(wild,
-                    ECORE_FREE_CB(eina_stringshare_del));
+    wild = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
     IF_FREE_LIST(globs);
     globs = ecore_list_new();
     ecore_list_free_cb_set(globs, efreet_mime_glob_free);
@@ -688,8 +685,8 @@ efreet_mime_mime_types_load(const char *file)
             strncpy(ext, pp, (p - pp));
             ext[p - pp] = 0;
 
-            ecore_hash_set(wild, (void*)eina_stringshare_add(ext),
-                                            (void*)eina_stringshare_add(mimetype));
+	    eina_hash_del(wild, ext, NULL);
+            eina_hash_add(wild, ext, (void*)eina_stringshare_add(mimetype));
         }
         while ((*p != '\n') && (*p != 0));
     }
@@ -746,8 +743,9 @@ efreet_mime_shared_mimeinfo_globs_load(const char *file)
 
         if (ext[0] == '*' && ext[1] == '.')
         {
-            ecore_hash_set(wild, (void*)eina_stringshare_add(&(ext[2])),
-                                      (void*)eina_stringshare_add(mimetype));
+            eina_hash_del(wild, &(ext[2]), NULL);
+            eina_hash_add(wild, &(ext[2]),
+			  (void*)eina_stringshare_add(mimetype));
         }
         else
         {

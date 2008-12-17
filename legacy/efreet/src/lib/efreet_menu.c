@@ -51,7 +51,7 @@ struct Efreet_Menu_Internal
     Ecore_List *applications;       /**< applications in this menu */
 
     Ecore_DList *directory_dirs;    /**< .directory file directories */
-    Ecore_Hash *directory_cache;    /**< .directory dirs */
+    Eina_Hash *directory_cache;    /**< .directory dirs */
 
     Ecore_List *moves;              /**< List of moves to be handled by the menu */
     Ecore_List *filters;            /**< Include and Exclude filters */
@@ -212,13 +212,13 @@ Ecore_List *efreet_menu_kde_legacy_dirs = NULL; /**< The directories to use for 
 static const char *efreet_tag_menu = NULL;
 static char *efreet_menu_file = NULL; /**< A menu file set explicityl as default */
 
-static Ecore_Hash *efreet_merged_menus = NULL;
-static Ecore_Hash *efreet_merged_dirs = NULL;
+static Eina_Hash *efreet_merged_menus = NULL;
+static Eina_Hash *efreet_merged_dirs = NULL;
 
-static Ecore_Hash *efreet_menu_handle_cbs = NULL;
-static Ecore_Hash *efreet_menu_filter_cbs = NULL;
-static Ecore_Hash *efreet_menu_move_cbs = NULL;
-static Ecore_Hash *efreet_menu_layout_cbs = NULL;
+static Eina_Hash *efreet_menu_handle_cbs = NULL;
+static Eina_Hash *efreet_menu_filter_cbs = NULL;
+static Eina_Hash *efreet_menu_move_cbs = NULL;
+static Eina_Hash *efreet_menu_layout_cbs = NULL;
 
 static const char *efreet_menu_prefix_get(void);
 
@@ -242,14 +242,14 @@ static int efreet_menu_app_dir_scan(Efreet_Menu_Internal *internal,
                                         int legacy);
 static int efreet_menu_directory_dirs_process(Efreet_Menu_Internal *internal);
 static int efreet_menu_directory_dir_scan(const char *path,
-                                            const char *relative_path,
-                                            Ecore_Hash *cache);
+					  const char *relative_path,
+					  Eina_Hash *cache);
 static Efreet_Desktop *efreet_menu_directory_get(Efreet_Menu_Internal *internal,
                                                     const char *path);
 static void efreet_menu_process_filters(Efreet_Menu_Internal *internal,
                                             unsigned int only_unallocated);
 static void efreet_menu_process_app_pool(Ecore_List *pool, Ecore_List *applications,
-                                        Ecore_Hash *matches,
+					 Eina_Hash *matches,
                                         Efreet_Menu_Filter *filter,
                                         unsigned int only_unallocated);
 static int efreet_menu_filter_matches(Efreet_Menu_Filter_Op *op,
@@ -439,47 +439,54 @@ efreet_menu_init(void)
     if (!eina_stringshare_init()) return 0;
     if (!efreet_xml_init()) return 0;
 
-    efreet_menu_handle_cbs = ecore_hash_new(NULL, NULL);
-    efreet_menu_filter_cbs = ecore_hash_new(NULL, NULL);
-    efreet_menu_move_cbs = ecore_hash_new(NULL, NULL);
-    efreet_menu_layout_cbs = ecore_hash_new(NULL, NULL);
+    efreet_menu_handle_cbs = eina_hash_string_superfast_new(NULL);
+    efreet_menu_filter_cbs = eina_hash_string_superfast_new(NULL);
+    efreet_menu_move_cbs = eina_hash_string_superfast_new(NULL);
+    efreet_menu_layout_cbs = eina_hash_string_superfast_new(NULL);
     if (!efreet_menu_handle_cbs || !efreet_menu_filter_cbs
             || !efreet_menu_move_cbs || !efreet_menu_layout_cbs)
         return 0;
-
-    ecore_hash_free_key_cb_set(efreet_menu_handle_cbs,
-                        ECORE_FREE_CB(eina_stringshare_del));
-    ecore_hash_free_key_cb_set(efreet_menu_filter_cbs,
-                        ECORE_FREE_CB(eina_stringshare_del));
-    ecore_hash_free_key_cb_set(efreet_menu_move_cbs,
-                        ECORE_FREE_CB(eina_stringshare_del));
-    ecore_hash_free_key_cb_set(efreet_menu_layout_cbs,
-                        ECORE_FREE_CB(eina_stringshare_del));
 
     /* set Menu into it's own so we can check the XML is valid before trying
      * to handle it */
     efreet_tag_menu = eina_stringshare_add(menu_cbs[0].key);
 
     for (i = 0; menu_cbs[i].key != NULL; i++)
-        ecore_hash_set(efreet_menu_handle_cbs,
-                        (void *)eina_stringshare_add(menu_cbs[i].key),
-                        menu_cbs[i].cb);
-
+      {
+	 eina_hash_del(efreet_menu_handle_cbs,
+	       menu_cbs[i].key,
+	       NULL);
+	 eina_hash_add(efreet_menu_handle_cbs,
+	       menu_cbs[i].key,
+	       menu_cbs[i].cb);
+      }
     for (i = 0; filter_cbs[i].key != NULL; i++)
-        ecore_hash_set(efreet_menu_filter_cbs,
-                        (void *)eina_stringshare_add(filter_cbs[i].key),
-                        filter_cbs[i].cb);
-
+      {
+	 eina_hash_del(efreet_menu_filter_cbs,
+	       filter_cbs[i].key,
+	       NULL);
+	 eina_hash_add(efreet_menu_filter_cbs,
+	       filter_cbs[i].key,
+	       filter_cbs[i].cb);
+      }
     for (i = 0; move_cbs[i].key != NULL; i++)
-        ecore_hash_set(efreet_menu_move_cbs,
-                        (void *)eina_stringshare_add(move_cbs[i].key),
-                        move_cbs[i].cb);
-
+      {
+	 eina_hash_del(efreet_menu_move_cbs,
+	       move_cbs[i].key,
+	       NULL);
+	 eina_hash_add(efreet_menu_move_cbs,
+	       move_cbs[i].key,
+	       move_cbs[i].cb);
+      }
     for (i = 0; layout_cbs[i].key != NULL; i++)
-        ecore_hash_set(efreet_menu_layout_cbs,
-                        (void *)eina_stringshare_add(layout_cbs[i].key),
-                        layout_cbs[i].cb);
-
+      {
+	 eina_hash_del(efreet_menu_layout_cbs,
+	       layout_cbs[i].key,
+	       NULL);
+	 eina_hash_add(efreet_menu_layout_cbs,
+	       layout_cbs[i].key,
+	       layout_cbs[i].cb);
+      }
     return 1;
 }
 
@@ -651,12 +658,10 @@ efreet_menu_parse(const char *path)
     }
 
     IF_FREE_HASH(efreet_merged_menus);
-    efreet_merged_menus = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_free_key_cb_set(efreet_merged_menus, ECORE_FREE_CB(free));
+    efreet_merged_menus = eina_hash_string_superfast_new(NULL);
 
     IF_FREE_HASH(efreet_merged_dirs);
-    efreet_merged_dirs = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_free_key_cb_set(efreet_merged_dirs, ECORE_FREE_CB(free));
+    efreet_merged_dirs = eina_hash_string_superfast_new(NULL);
 
     /* split appart the filename and the path */
     internal = efreet_menu_internal_new();
@@ -1065,7 +1070,7 @@ efreet_menu_handle_menu(Efreet_Menu_Internal *internal, Efreet_Xml *xml)
     ecore_list_last_goto(xml->children);
     while ((child = ecore_dlist_previous(xml->children)))
     {
-        cb = ecore_hash_get(efreet_menu_handle_cbs, child->tag);
+        cb = eina_hash_find(efreet_menu_handle_cbs, child->tag);
         if (cb)
         {
             if (!cb(internal, child))
@@ -1649,10 +1654,10 @@ efreet_menu_merge(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char *pat
     }
 
     /* don't merge the same path twice */
-    if (ecore_hash_get(efreet_merged_menus, realpath))
+    if (eina_hash_find(efreet_merged_menus, realpath))
         return 1;
 
-    ecore_hash_set(efreet_merged_menus, strdup(realpath), (void *)1);
+    eina_hash_add(efreet_merged_menus, realpath, (void *)1);
 
     merge_xml = efreet_xml_new(realpath);
     FREE(realpath);
@@ -1723,8 +1728,8 @@ efreet_menu_merge_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char 
     if (!parent || !xml || !path) return 0;
 
     /* check to see if we've merged this directory already */
-    if (ecore_hash_get(efreet_merged_dirs, path)) return 1;
-    ecore_hash_set(efreet_merged_dirs, strdup(path), (void *)1);
+    if (eina_hash_find(efreet_merged_dirs, path)) return 1;
+    eina_hash_add(efreet_merged_dirs, path, (void *)1);
 
     files = opendir(path);
     if (!files) return 1;
@@ -2025,7 +2030,7 @@ efreet_menu_handle_move(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
     {
         int (*cb)(Efreet_Menu_Internal *parent, Efreet_Xml *xml);
 
-        cb = ecore_hash_get(efreet_menu_move_cbs, child->tag);
+        cb = eina_hash_find(efreet_menu_move_cbs, child->tag);
         if (cb)
         {
             if (!cb(parent, child))
@@ -2130,7 +2135,7 @@ efreet_menu_handle_layout(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
     {
         int (*cb)(Efreet_Menu_Internal *parent, Efreet_Xml *xml, int def);
 
-        cb = ecore_hash_get(efreet_menu_layout_cbs, child->tag);
+        cb = eina_hash_find(efreet_menu_layout_cbs, child->tag);
         if (cb)
         {
             if (!cb(parent, child, 0))
@@ -2187,7 +2192,7 @@ efreet_menu_handle_default_layout(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
     {
         int (*cb)(Efreet_Menu_Internal *parent, Efreet_Xml *xml, int def);
 
-        cb = ecore_hash_get(efreet_menu_layout_cbs, child->tag);
+        cb = eina_hash_find(efreet_menu_layout_cbs, child->tag);
         if (cb)
         {
             if (!cb(parent, child, 1))
@@ -2366,7 +2371,7 @@ efreet_menu_handle_filter_op(Efreet_Menu_Filter_Op *op, Efreet_Xml *xml)
     {
         int (*cb)(Efreet_Menu_Filter_Op *op, Efreet_Xml *xml);
 
-        cb = ecore_hash_get(efreet_menu_filter_cbs, child->tag);
+        cb = eina_hash_find(efreet_menu_filter_cbs, child->tag);
         if (cb)
         {
             if (!cb(op, child))
@@ -2683,9 +2688,9 @@ efreet_menu_process_filters(Efreet_Menu_Internal *internal, unsigned int only_un
 
         if (filter->type == EFREET_MENU_FILTER_INCLUDE)
         {
-            Ecore_Hash *matches;
+            Eina_Hash *matches;
 
-            matches = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+            matches = eina_hash_string_superfast_new(NULL);
             efreet_menu_process_app_pool(internal->app_pool, internal->applications,
                                         matches, filter, internal->only_unallocated);
             if (internal->parent)
@@ -2699,7 +2704,7 @@ efreet_menu_process_filters(Efreet_Menu_Internal *internal, unsigned int only_un
                                                 internal->only_unallocated);
                 } while ((parent = parent->parent));
             }
-            ecore_hash_destroy(matches);
+            eina_hash_free(matches);
         }
         else
         {
@@ -2762,9 +2767,9 @@ efreet_menu_process_filters(Efreet_Menu_Internal *internal, unsigned int only_un
  */
 static
 void efreet_menu_process_app_pool(Ecore_List *pool, Ecore_List *applications,
-                                        Ecore_Hash *matches,
-                                        Efreet_Menu_Filter *filter,
-                                        unsigned int only_unallocated)
+				  Eina_Hash *matches,
+				  Efreet_Menu_Filter *filter,
+				  unsigned int only_unallocated)
 {
     Efreet_Menu_Desktop *md;
 
@@ -2773,12 +2778,12 @@ void efreet_menu_process_app_pool(Ecore_List *pool, Ecore_List *applications,
     ecore_list_first_goto(pool);
     while ((md = ecore_list_next(pool)))
     {
-        if (ecore_hash_get(matches, md->id)) continue;
+        if (eina_hash_find(matches, md->id)) continue;
         if (only_unallocated && md->allocated) continue;
         if (efreet_menu_filter_matches(filter->op, md))
         {
             ecore_list_append(applications, md);
-            ecore_hash_set(matches, (void *)md->id, md);
+            eina_hash_add(matches, (void *)md->id, md);
             md->allocated = 1;
         }
     }
@@ -3459,9 +3464,8 @@ efreet_menu_directory_dirs_process(Efreet_Menu_Internal *internal)
 
     if (internal->directory_dirs)
     {
-        internal->directory_cache = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-        ecore_hash_free_key_cb_set(internal->directory_cache, ECORE_FREE_CB(free));
-        ecore_hash_free_value_cb_set(internal->directory_cache, ECORE_FREE_CB(efreet_desktop_free));
+        internal->directory_cache =
+	  eina_hash_string_superfast_new(EINA_FREE_CB(efreet_desktop_free));
 
         ecore_dlist_last_goto(internal->directory_dirs);
         while ((path = ecore_dlist_previous(internal->directory_dirs)))
@@ -3496,7 +3500,7 @@ efreet_menu_directory_dirs_process(Efreet_Menu_Internal *internal)
  */
 static int
 efreet_menu_directory_dir_scan(const char *path, const char *relative_path,
-                                                            Ecore_Hash *cache)
+			       Eina_Hash *cache)
 {
     Efreet_Desktop *desktop;
     DIR *files;
@@ -3531,7 +3535,8 @@ efreet_menu_directory_dir_scan(const char *path, const char *relative_path,
                 continue;
             }
 
-            ecore_hash_set(cache, (void *)strdup(buf2), desktop);
+	    eina_hash_del(cache, buf2, NULL);
+            eina_hash_add(cache, buf2, desktop);
         }
     }
     closedir(files);
@@ -3553,7 +3558,7 @@ efreet_menu_directory_get(Efreet_Menu_Internal *internal, const char *path)
 
     if (internal->directory_cache)
     {
-        dir = ecore_hash_get(internal->directory_cache, path);
+        dir = eina_hash_find(internal->directory_cache, path);
         if (dir) return dir;
     }
 

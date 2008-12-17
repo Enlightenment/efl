@@ -94,7 +94,7 @@
  */
 #define IF_FREE_HASH(x) do { \
     if (x) { \
-        Ecore_Hash *__tmp; __tmp = (x); (x) = NULL; ecore_hash_destroy(__tmp); \
+        Eina_Hash *__tmp; __tmp = (x); (x) = NULL; eina_hash_free(__tmp); \
     } \
     (x) = NULL; \
 } while (0)

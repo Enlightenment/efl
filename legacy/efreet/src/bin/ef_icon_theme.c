@@ -12,11 +12,12 @@
 #define THEME "Tango"
 #define FREE(x) do { free(x); x = NULL; } while (0);
 
+static Eina_Bool _hash_keys(Eina_Hash *hash, const char *key, void *list);
 static void ef_icon_theme_themes_find(const char *search_dir,
-                                        Ecore_Hash *themes);
+                                        Eina_Hash *themes);
 static void ef_icons_find(Efreet_Icon_Theme *theme, Ecore_List *themes,
-                                                    Ecore_Hash *icons);
-static void ef_read_dir(const char *dir, Ecore_Hash *icons);
+                                                    Eina_Hash *icons);
+static void ef_read_dir(const char *dir, Eina_Hash *icons);
 
 int
 ef_cb_efreet_icon_theme(void)
@@ -52,19 +53,27 @@ ef_cb_efreet_icon_theme(void)
     return ret;
 }
 
+static Eina_Bool
+_hash_keys(Eina_Hash *hash, const char *key, void *list)
+{
+  ecore_list_append(list, key);
+  return EINA_TRUE;
+}
+
 int
 ef_cb_efreet_icon_theme_list(void)
 {
     int ret = 1;
     Ecore_List *themes;
-    Ecore_Hash *dirs;
+    Eina_Hash *dirs;
+    Eina_Iterator *it;
     Efreet_Icon_Theme *theme;
     Ecore_List *icon_dirs;
     const char *dir;
     char buf[PATH_MAX];
+    void *value;
 
-    dirs = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_free_key_cb_set(dirs, free);
+    dirs = eina_hash_string_superfast_new(free);
 
     icon_dirs = efreet_data_dirs_get();
     ecore_list_first_goto(icon_dirs);
@@ -81,8 +90,8 @@ ef_cb_efreet_icon_theme_list(void)
     ecore_list_first_goto(themes);
     while ((theme = ecore_list_next(themes)))
     {
-        if (ecore_hash_get(dirs, theme->name.internal))
-            ecore_hash_remove(dirs, theme->name.internal);
+        if ((eina_hash_find(dirs, theme->name.internal)))
+	    eina_hash_del(dirs, theme->name.internal, NULL);
         else
         {
             printf("efreet_icon_theme_list_get() returned %s which we didn't "
@@ -92,7 +101,11 @@ ef_cb_efreet_icon_theme_list(void)
     }
     ecore_list_destroy(themes);
 
-    themes = ecore_hash_keys(dirs);
+    themes = ecore_list_new();
+    it = eina_hash_iterator_key_new(dirs);
+    eina_iterator_foreach(it, EINA_EACH(_hash_keys), themes);
+    eina_iterator_free(it);
+
     if (ecore_list_count(themes) > 0)
     {
         char *dir;
@@ -106,13 +119,13 @@ ef_cb_efreet_icon_theme_list(void)
         ret = 0;
     }
     ecore_list_destroy(themes);
-    ecore_hash_destroy(dirs);
+    eina_hash_free(dirs);
 
     return ret;
 }
 
 static void
-ef_icon_theme_themes_find(const char *search_dir, Ecore_Hash *themes)
+ef_icon_theme_themes_find(const char *search_dir, Eina_Hash *themes)
 {
     Ecore_List *dirs;
     char *dir;
@@ -127,7 +140,7 @@ ef_icon_theme_themes_find(const char *search_dir, Ecore_Hash *themes)
         char p[PATH_MAX];
 
         /* if we've already added the theme we're done */
-        if (ecore_hash_get(themes, dir))
+        if (eina_hash_find(themes, dir))
         {
             free(dir);
             continue;
@@ -152,7 +165,7 @@ ef_icon_theme_themes_find(const char *search_dir, Ecore_Hash *themes)
             if (!skip)
             {
                 d = strdup(dir);
-                ecore_hash_set(themes, d, d);
+                eina_hash_add(themes, dir, d);
             }
         }
         free(dir);
@@ -425,7 +438,7 @@ int
 ef_cb_efreet_icon_match(void)
 {
     int i, ret = 1;
-    Ecore_Hash *icon_hash;
+    Eina_Hash *icon_hash;
     Efreet_Icon_Theme *theme;
     Ecore_List *themes;
 
@@ -444,9 +457,7 @@ ef_cb_efreet_icon_match(void)
         return 1;
     }
 
-    icon_hash = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_free_key_cb_set(icon_hash, free);
-    ecore_hash_free_value_cb_set(icon_hash, free);
+    icon_hash = eina_hash_string_superfast_new(free);
 
     ef_icons_find(theme, themes, icon_hash);
     ecore_list_destroy(themes);
@@ -461,7 +472,7 @@ ef_cb_efreet_icon_match(void)
         if (!path)
         {
 #if 1
-            if (ecore_hash_get(icon_hash, icons[i]))
+            if (eina_hash_find(icon_hash, icons[i]))
             {
                 printf("NOT FOUND %s\n", icons[i]);
                 ret = 0;
@@ -469,7 +480,7 @@ ef_cb_efreet_icon_match(void)
 #endif
             continue;
         }
-        else if (!ecore_hash_get(icon_hash, icons[i]))
+        else if (!eina_hash_find(icon_hash, icons[i]))
         {
             printf("Found icon not in hash: %s\n", icons[i]);
         }
@@ -487,7 +498,7 @@ ef_cb_efreet_icon_match(void)
         free(path);
     }
     printf("Time: %f\n", (ecore_time_get() - start));
-    ecore_hash_destroy(icon_hash);
+    eina_hash_free(icon_hash);
 
     start = ecore_time_get();
     for (i = 0; icons[i] != NULL; i++)
@@ -516,7 +527,7 @@ ef_cb_efreet_icon_match(void)
 }
 
 static void
-ef_icons_find(Efreet_Icon_Theme *theme, Ecore_List *themes, Ecore_Hash *icons)
+ef_icons_find(Efreet_Icon_Theme *theme, Ecore_List *themes, Eina_Hash *icons)
 {
     char path[PATH_MAX];
 
@@ -599,7 +610,7 @@ ef_icons_find(Efreet_Icon_Theme *theme, Ecore_List *themes, Ecore_Hash *icons)
 }
 
 static void
-ef_read_dir(const char *dir, Ecore_Hash *icons)
+ef_read_dir(const char *dir, Eina_Hash *icons)
 {
     Ecore_List *files;
     char *file;
@@ -624,7 +635,7 @@ ef_read_dir(const char *dir, Ecore_Hash *icons)
         {
             *p = '\0';
 
-            ecore_hash_set(icons, strdup(file), strdup(file));
+            eina_hash_add(icons, file, strdup(file));
         }
 
         FREE(file);

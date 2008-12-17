@@ -93,7 +93,7 @@ struct Efreet_Desktop
     unsigned char startup_notify:1;    /**< The starup notify settings of the app */
     unsigned char cached:1;            /**< The desktop file is cached by Efreet */
 
-    Ecore_Hash *x; /**< Keep track of all user extensions, keys that begin with X- */
+    Eina_Hash *x; /**< Keep track of all user extensions, keys that begin with X- */
     void *type_data; /**< Type specific data for custom types */
 };
 

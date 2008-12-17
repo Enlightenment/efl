@@ -2,11 +2,13 @@
 #include "Efreet.h"
 #include "efreet_private.h"
 
-static Ecore_Hash *efreet_ini_parse(const char *file);
+static Eina_Hash *efreet_ini_parse(const char *file);
 static char *efreet_ini_unescape(const char *str);
 
-static void efreet_ini_section_save(Ecore_Hash_Node *node, FILE *f);
-static void efreet_ini_value_save(Ecore_Hash_Node *node, FILE *f);
+static Eina_Bool
+efreet_ini_section_save(const Eina_Hash *hash, const void *key, void *data, void *fdata);
+static Eina_Bool
+efreet_ini_value_save(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 
 /**
  * The number of times the Ini subsytem has been initialized
@@ -65,16 +67,16 @@ efreet_ini_new(const char *file)
 /**
  * @internal
  * @param file The file to parse
- * @return Returns an Ecore_Hash with the contents of @a file, or NULL if the
+ * @return Returns an Eina_Hash with the contents of @a file, or NULL if the
  *         file fails to parse or if the file doesn't exist
- * @brief Parses the ini file @a file into an Ecore_Hash
+ * @brief Parses the ini file @a file into an Eina_Hash
  */
-static Ecore_Hash *
+static Eina_Hash *
 efreet_ini_parse(const char *file)
 {
     const char *buffer, *line_start;
     FILE *f;
-    Ecore_Hash *data, *section = NULL;
+    Eina_Hash *data, *section = NULL;
     struct stat file_stat;
     int line_length, left;
 
@@ -100,9 +102,7 @@ efreet_ini_parse(const char *file)
         return NULL;
     }
 
-    data = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_free_key_cb_set(data, ECORE_FREE_CB(eina_stringshare_del));
-    ecore_hash_free_value_cb_set(data, ECORE_FREE_CB(ecore_hash_destroy));
+    data = eina_hash_string_small_new(EINA_FREE_CB(eina_hash_free));
 
     line_start = buffer;
     while (left > 0)
@@ -141,7 +141,7 @@ efreet_ini_parse(const char *file)
 
             if (line_start[header_length] == ']')
             {
-                Ecore_Hash *old;
+                Eina_Hash *old;
                 const char *header;
 
                 header = alloca(header_length * sizeof(unsigned char));
@@ -150,18 +150,13 @@ efreet_ini_parse(const char *file)
                 memcpy((char*)header, line_start + 1, header_length - 1);
                 ((char*)header)[header_length - 1] = '\0';
 
-                section = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-                ecore_hash_free_key_cb_set(section,
-                            ECORE_FREE_CB(eina_stringshare_del));
-                ecore_hash_free_value_cb_set(section, ECORE_FREE_CB(free));
+                section = eina_hash_string_small_new(free);
 
-                old = ecore_hash_remove(data, header);
+                eina_hash_del(data, header, NULL);
 //                if (old) printf("[efreet] Warning: duplicate section '%s' "
   //                              "in file '%s'\n", header, file);
 
-                IF_FREE_HASH(old);
-                ecore_hash_set(data, (void *)eina_stringshare_add(header),
-                                section);
+                eina_hash_add(data, header, section);
             }
             else
             {
@@ -196,16 +191,16 @@ efreet_ini_parse(const char *file)
             if (!isspace(line_start[key_end])) key_end++;
 
             /* trim whitespace from start of value */
-            for (value_start = sep + 1; 
-                    (value_start < line_length) && 
-                    isspace(line_start[value_start]); ++value_start)
+            for (value_start = sep + 1;
+                 (value_start < line_length) &&
+                 isspace(line_start[value_start]); ++value_start)
                 ;
 
             /* trim \n off of end of value */
             for (value_end = line_length; 
-                    (value_end > value_start) &&
-                    ((line_start[value_end] == '\n') ||
-                        (line_start[value_end] == '\r')); --value_end)
+                 (value_end > value_start) &&
+                 ((line_start[value_end] == '\n') ||
+                  (line_start[value_end] == '\r')); --value_end)
                 ;
 
             if (line_start[value_end] != '\n'
@@ -233,11 +228,8 @@ efreet_ini_parse(const char *file)
                     value_end - value_start);
             ((char*)value)[value_end - value_start] = '\0';
 
-            old = ecore_hash_remove(section, key);
-            IF_FREE(old);
-
-            ecore_hash_set(section, (void *)eina_stringshare_add(key),
-                           efreet_ini_unescape(value));
+            eina_hash_del(section, key, NULL);
+            eina_hash_add(section, key, efreet_ini_unescape(value));
         }
 //        else
 //        {
@@ -283,7 +275,7 @@ efreet_ini_save(Efreet_Ini *ini, const char *file)
 
     f = fopen(file, "wb");
     if (!f) return 0;
-    ecore_hash_for_each_node(ini->data, ECORE_FOR_EACH(efreet_ini_section_save), f);
+    eina_hash_foreach(ini->data, efreet_ini_section_save, f);
     fclose(f);
 
     return 1;
@@ -300,7 +292,7 @@ efreet_ini_section_set(Efreet_Ini *ini, const char *section)
 {
     if (!ini || !ini->data || !section) return 0;
 
-    ini->section = ecore_hash_get(ini->data, section);
+    ini->section = eina_hash_find(ini->data, section);
     return (ini->section ? 1 : 0);
 }
 
@@ -313,22 +305,16 @@ efreet_ini_section_set(Efreet_Ini *ini, const char *section)
 EAPI void
 efreet_ini_section_add(Efreet_Ini *ini, const char *section)
 {
-    Ecore_Hash *hash;
+    Eina_Hash *hash;
 
     if (!ini || !section) return;
 
     if (!ini->data)
-    {
-        ini->data = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-        ecore_hash_free_key_cb_set(ini->data, ECORE_FREE_CB(eina_stringshare_del));
-        ecore_hash_free_value_cb_set(ini->data, ECORE_FREE_CB(ecore_hash_destroy));
-    }
-    if (ecore_hash_get(ini->data, section)) return;
+      ini->data = eina_hash_string_small_new(EINA_FREE_CB(eina_hash_free));
+    if (eina_hash_find(ini->data, section)) return;
 
-    hash = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_free_key_cb_set(hash, ECORE_FREE_CB(eina_stringshare_del));
-    ecore_hash_free_value_cb_set(hash, ECORE_FREE_CB(free));
-    ecore_hash_set(ini->data, (void *)eina_stringshare_add(section), hash);
+    hash = eina_hash_string_small_new(free);
+    eina_hash_add(ini->data, section, hash);
 }
 
 /**
@@ -343,7 +329,7 @@ efreet_ini_string_get(Efreet_Ini *ini, const char *key)
 {
     if (!ini || !key || !ini->section) return NULL;
 
-    return ecore_hash_get(ini->section, key);
+    return eina_hash_find(ini->section, key);
 }
 
 /**
@@ -358,7 +344,8 @@ efreet_ini_string_set(Efreet_Ini *ini, const char *key, const char *value)
 {
     if (!ini || !key || !ini->section) return;
 
-    ecore_hash_set(ini->section, (void *)eina_stringshare_add(key), strdup(value));
+    eina_hash_del(ini->section, key, NULL);
+    eina_hash_add(ini->section, key, strdup(value));
 }
 
 /**
@@ -637,15 +624,21 @@ efreet_ini_unescape(const char *str)
     return buf;
 }
 
-static void
-efreet_ini_section_save(Ecore_Hash_Node *node, FILE *f)
+static Eina_Bool
+efreet_ini_section_save(const Eina_Hash *hash, const void *key, void *value, void *fdata)
 {
-    fprintf(f, "[%s]\n", (char *)node->key);
-    ecore_hash_for_each_node(node->value, ECORE_FOR_EACH(efreet_ini_value_save), f);
+    FILE *f = fdata;
+
+    fprintf(f, "[%s]\n", (char *)key);
+    eina_hash_foreach(value, efreet_ini_value_save, f);
+    return EINA_TRUE;
 }
 
-static void
-efreet_ini_value_save(Ecore_Hash_Node *node, FILE *f)
+static Eina_Bool
+efreet_ini_value_save(const Eina_Hash *hash, const void *key, void *value, void *fdata)
 {
-    fprintf(f, "%s=%s\n", (char *)node->key, (char *)node->value);
+    FILE *f = fdata;
+
+    fprintf(f, "%s=%s\n", (char *)key, (char *)value);
+    return EINA_TRUE;
 }

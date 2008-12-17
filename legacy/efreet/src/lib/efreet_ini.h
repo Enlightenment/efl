@@ -22,8 +22,8 @@ typedef struct Efreet_Ini Efreet_Ini;
  */
 struct Efreet_Ini
 {
-  Ecore_Hash *data;     /**< Hash of string => (Hash of string => string) */
-  Ecore_Hash *section;  /**< currently selected section */
+  Eina_Hash *data;     /**< Hash of string => (Hash of string => string) */
+  Eina_Hash *section;  /**< currently selected section */
 };
 
 EAPI Efreet_Ini  *efreet_ini_new(const char *file);

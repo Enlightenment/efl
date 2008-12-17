@@ -13,7 +13,7 @@ static const char *desktop_environment = NULL;
  * A cache of all loaded desktops, hashed by file name.
  * Values are Efreet_Desktop structures
  */
-static Ecore_Hash *efreet_desktop_cache = NULL;
+static Eina_Hash *efreet_desktop_cache = NULL;
 
 /**
  * A list of the desktop types available
@@ -61,10 +61,14 @@ static int efreet_desktop_generic_fields_parse(Efreet_Desktop *desktop,
                                                 Efreet_Ini *ini);
 static void efreet_desktop_generic_fields_save(Efreet_Desktop *desktop,
                                                 Efreet_Ini *ini);
-static void efreet_desktop_x_fields_parse(Ecore_Hash_Node *node,
-                                            Efreet_Desktop *desktop);
-static void efreet_desktop_x_fields_save(Ecore_Hash_Node *node,
-                                            Efreet_Ini *ini);
+static Eina_Bool efreet_desktop_x_fields_parse(const Eina_Hash *hash,
+					       const void *key,
+					       void *data,
+					       void *fdata);
+static Eina_Bool efreet_desktop_x_fields_save(const Eina_Hash *hash,
+					      const void *key,
+					      void *value,
+					      void *fdata);
 static int efreet_desktop_environment_check(Efreet_Ini *ini);
 static char *efreet_string_append(char *dest, int *size,
                                     int *len, const char *src);
@@ -116,8 +120,7 @@ efreet_desktop_init(void)
     if (!eina_stringshare_init()) return --init;
     if (!ecore_file_init()) return --init;
 
-    efreet_desktop_cache = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-    ecore_hash_free_key_cb_set(efreet_desktop_cache, ECORE_FREE_CB(free));
+    efreet_desktop_cache = eina_hash_string_superfast_new(NULL);
 
     efreet_desktop_types = ecore_list_new();
     ecore_list_free_cb_set(efreet_desktop_types,
@@ -188,7 +191,7 @@ efreet_desktop_get(const char *file)
 
     if (efreet_desktop_cache)
     {
-        desktop = ecore_hash_get(efreet_desktop_cache, file);
+        desktop = eina_hash_find(efreet_desktop_cache, file);
         if (desktop)
         {
             if (efreet_desktop_cache_check(desktop))
@@ -206,14 +209,14 @@ efreet_desktop_get(const char *file)
             }
 
             desktop->cached = 0;
-            ecore_hash_remove(efreet_desktop_cache, file);
+            eina_hash_del(efreet_desktop_cache, file, NULL);
         }
     }
 
     desktop = efreet_desktop_new(file);
     if (!desktop) return NULL;
 
-    ecore_hash_set(efreet_desktop_cache, strdup(file), desktop);
+    eina_hash_add(efreet_desktop_cache, file, desktop);
     desktop->cached = 1;
     return desktop;
 }
@@ -330,8 +333,7 @@ efreet_desktop_read(Efreet_Desktop *desktop)
     if (!error && !efreet_desktop_environment_check(ini)) error = 1;
     if (!error && !efreet_desktop_generic_fields_parse(desktop, ini)) error = 1;
     if (!error)
-        ecore_hash_for_each_node(ini->section,
-                ECORE_FOR_EACH(efreet_desktop_x_fields_parse), desktop);
+       eina_hash_foreach(ini->section, efreet_desktop_x_fields_parse, desktop);
 
     efreet_ini_free(ini);
 
@@ -428,11 +430,12 @@ efreet_desktop_save(Efreet_Desktop *desktop)
         if (!efreet_ini_save(ini, desktop->orig_path)) ok = 0;
         else
         {
-            if (desktop != ecore_hash_get(efreet_desktop_cache, desktop->orig_path))
+            if (desktop != eina_hash_find(efreet_desktop_cache, desktop->orig_path))
             {
                 desktop->cached = 1;
-                ecore_hash_set(efreet_desktop_cache,
-                                strdup(desktop->orig_path), desktop);
+                eina_hash_del(efreet_desktop_cache, desktop->orig_path, NULL);
+                eina_hash_add(efreet_desktop_cache, desktop->orig_path,
+                              desktop);
             }
         }
     }
@@ -449,10 +452,10 @@ efreet_desktop_save(Efreet_Desktop *desktop)
 EAPI int
 efreet_desktop_save_as(Efreet_Desktop *desktop, const char *file)
 {
-    if (desktop == ecore_hash_get(efreet_desktop_cache, desktop->orig_path))
+    if (desktop == eina_hash_find(efreet_desktop_cache, desktop->orig_path))
     {
         desktop->cached = 0;
-        ecore_hash_remove(efreet_desktop_cache, desktop->orig_path);
+        eina_hash_del(efreet_desktop_cache, desktop->orig_path, NULL);
     }
     FREE(desktop->orig_path);
     desktop->orig_path = strdup(file);
@@ -474,7 +477,7 @@ efreet_desktop_free(Efreet_Desktop *desktop)
     if (desktop->ref > 0) return;
 
     if (desktop->cached && efreet_desktop_cache)
-        ecore_hash_remove(efreet_desktop_cache, desktop->orig_path);
+      eina_hash_del(efreet_desktop_cache, desktop->orig_path, NULL);
 
     IF_FREE(desktop->orig_path);
 
@@ -985,9 +988,8 @@ efreet_desktop_generic_fields_save(Efreet_Desktop *desktop, Efreet_Ini *ini)
     efreet_ini_boolean_set(ini, "NoDisplay", desktop->no_display);
     efreet_ini_boolean_set(ini, "Hidden", desktop->hidden);
 
-    if (desktop->x) ecore_hash_for_each_node(desktop->x,
-                                             ECORE_FOR_EACH(efreet_desktop_x_fields_save),
-                                             ini);
+    if (desktop->x) eina_hash_foreach(desktop->x, efreet_desktop_x_fields_save,
+				      ini);
 }
 
 /**
@@ -997,21 +999,19 @@ efreet_desktop_generic_fields_save(Efreet_Desktop *desktop, Efreet_Ini *ini)
  * @return Returns no value
  * @brief Parses out an X- key from @a node and stores in @a desktop
  */
-static void
-efreet_desktop_x_fields_parse(Ecore_Hash_Node *node, Efreet_Desktop *desktop)
+static Eina_Bool
+efreet_desktop_x_fields_parse(const Eina_Hash *hash, const void *key, void *value, void *fdata)
 {
-    if (strncmp(node->key, "X-", 2)) return;
+    Efreet_Desktop * desktop = fdata;
 
-    if (!desktop->x)
-    {
-        desktop->x = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-        ecore_hash_free_key_cb_set(desktop->x,
-                            ECORE_FREE_CB(eina_stringshare_del));
-        ecore_hash_free_value_cb_set(desktop->x,
-                            ECORE_FREE_CB(eina_stringshare_del));
-    }
-    ecore_hash_set(desktop->x, (void *)eina_stringshare_add(node->key),
-            (void *)eina_stringshare_add(node->value));
+    if (strncmp(key, "X-", 2)) return EINA_TRUE;
+
+    if (desktop && !desktop->x)
+      desktop->x = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
+    eina_hash_del(desktop->x, key, NULL);
+    eina_hash_add(desktop->x, key, (void *)eina_stringshare_add(value));
+
+    return EINA_TRUE;
 }
 
 /**
@@ -1021,10 +1021,13 @@ efreet_desktop_x_fields_parse(Ecore_Hash_Node *node, Efreet_Desktop *desktop)
  * @return Returns no value
  * @brief Stores an X- key from @a node and stores in @a ini
  */
-static void
-efreet_desktop_x_fields_save(Ecore_Hash_Node *node, Efreet_Ini *ini)
+static Eina_Bool
+efreet_desktop_x_fields_save(const Eina_Hash *hash, const void *key, void *value, void *fdata)
 {
-    efreet_ini_string_set(ini, node->key, node->value);
+    Efreet_Ini *ini = fdata;
+    efreet_ini_string_set(ini, key, value);
+
+    return EINA_TRUE;
 }
 
 
