@@ -127,19 +127,20 @@ elm_init(int argc, char **argv)
 	int val = 1000;
 	
 	ecore_x_init(NULL);
+	if (!ecore_x_screen_is_composited(0))
+	  _elm_config->compositing = 0;
         _elm_atom_enlightenment_scale = ecore_x_atom_get("ENLIGHTENMENT_SCALE");
         ecore_x_event_mask_set(ecore_x_window_root_first_get(),
                                ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
         _elm_event_property_change = ecore_event_handler_add
           (ECORE_X_EVENT_WINDOW_PROPERTY, _elm_window_property_change, NULL);
+        /* FIXME if quickstart this happens in child */
 	if (ecore_x_window_prop_card32_get(ecore_x_window_root_first_get(),
 					   _elm_atom_enlightenment_scale,
 					   &val, 1) > 0)
 	  {
 	     if (val > 0) _elm_config->scale = (double)val / 1000.0;
 	  }
-	if (!ecore_x_screen_is_composited(0))
-	  _elm_config->compositing = 0;
 #endif        
       }
 
@@ -147,6 +148,27 @@ elm_init(int argc, char **argv)
      {
         _elm_config->scale = atof(elm_scale);
      }
+   /* FIXME: implement quickstart below */
+   /* if !quickstart return
+    * else
+    *  set up fast-start-fifo (in $ELM_FAST_START_FIFO)
+    *  sit on blocking read
+    *  read 2 bytes == length of data in bytes including nulls
+    *  read N bytes (must be < (page_size - 2))
+    *  format: exename\0exepath\0[arg1\0][arg2\0][...]
+    *  dlopen exepath
+    *  dlsym elm_main in exe
+    *  if (elm_main ! exists)
+    *   ecore_exe exename
+    *  else
+    *   fork()
+    *   [child]
+    *    call exit(elm_main());
+    *   [parent]
+    *    close x fd the nasty way (with close())
+    *    ecore_x_shutdown()
+    *    ecore_x_init() etc. etc. loop back to blocking on fifo read
+    */
 }
 
 EAPI void

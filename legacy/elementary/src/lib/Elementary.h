@@ -326,7 +326,14 @@ extern "C" {
    EAPI void         elm_hoversel_hover_end(Evas_Object *obj);
    EAPI Elm_Hoversel_Item *elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
    EAPI void         elm_hoversel_item_del(Elm_Hoversel_Item *item);
-              
+
+   typedef struct _Elm_Toolbar_Item Elm_Toolbar_Item;
+   EAPI Evas_Object *elm_toolbar_add(Evas_Object *parent);
+   EAPI Elm_Toolbar_Item *elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
+   EAPI void         elm_toolbar_item_del(Elm_Toolbar_Item *item);
+   EAPI void         elm_toolbar_item_select(Elm_Toolbar_Item *item);
+   EAPI void         elm_toolbar_scrollable_set(Evas_Object *obj, Evas_Bool scrollable);
+
   ////////////////////////////////////////////////////////////////////////////
  /// FIXME: TODO LIST ///////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
@@ -372,6 +379,9 @@ extern "C" {
 // * dialpad widget - need one with a phone dialpad
 // 
 //// (improvements - low priority)
+// * somehow a pdf(ps) viewer widget that doesnt make it gpl (lgpl)
+// * emotion widget?
+// * ewebkit widget
 // * need url and path entry modes for vkbd
 // * return list of toplevel window objects
 // * widgets should show who is focused (not useful for touchscreen)

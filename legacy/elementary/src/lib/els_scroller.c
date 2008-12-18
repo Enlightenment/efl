@@ -338,10 +338,10 @@ elm_smart_scroller_single_dir_get(Evas_Object *obj)
 }
 
 void
-elm_smart_scroller_theme_set(Evas_Object *obj, const char *style)
+elm_smart_scroller_theme_set(Evas_Object *obj, const char *clas, const char *group, const char *style)
 {
    API_ENTRY return;
-   _elm_theme_set(sd->edje_obj, "scroller", "base", style);
+   _elm_theme_set(sd->edje_obj, clas, group, style);
    if (sd->pan_obj)
      edje_object_part_swallow(sd->edje_obj, "elm.swallow.content", sd->pan_obj);
    sd->vbar_visible = !sd->vbar_visible;

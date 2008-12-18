@@ -35,6 +35,7 @@ elm_hover.c \
 elm_entry.c \
 elm_bubble.c \
 elm_photo.c \
+elm_toolbar.c \
 \
 elc_notepad.c \
 elc_anchorview.c \

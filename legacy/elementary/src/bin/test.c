@@ -1248,6 +1248,63 @@ my_bt_17(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+my_bt_18(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *bx, *tb, *ic;
+   char buf[PATH_MAX];
+   
+   win = elm_win_add(NULL, "toolbar", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Toolbar");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_show(bg);
+   
+   bx = elm_box_add(win);
+   elm_win_resize_object_add(win, bx);
+   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   evas_object_show(bx);
+
+   tb = elm_toolbar_add(win);
+   evas_object_size_hint_weight_set(tb, 0.0, 0.0);
+   evas_object_size_hint_align_set(tb, -1.0, 0.0);
+   
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_toolbar_item_add(tb, ic, "Hello", NULL, NULL);
+   
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_toolbar_item_add(tb, ic, "World", NULL, NULL);
+   
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_toolbar_item_add(tb, ic, "Here", NULL, NULL);
+   
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_toolbar_item_add(tb, ic, "Comes", NULL, NULL);
+   
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_toolbar_item_add(tb, ic, "Elementary", NULL, NULL);
+   
+   elm_box_pack_end(bx, tb);
+   evas_object_show(tb);
+   
+   evas_object_resize(win, 320, 300);
+   
+   evas_object_show(win);
+}
+
+static void
 my_win_main(void)
 {
   Evas_Object *win, *bg, *bx0, *lb, *bx, *bt, *sc, *fr;
@@ -1455,6 +1512,13 @@ my_win_main(void)
   bt = elm_button_add(win);
   elm_button_label_set(bt, "Anchorblock");
   evas_object_smart_callback_add(bt, "clicked", my_bt_17, NULL);
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+  
+  bt = elm_button_add(win);
+  elm_button_label_set(bt, "Toolbar");
+  evas_object_smart_callback_add(bt, "clicked", my_bt_18, NULL);
   evas_object_size_hint_align_set(bt, -1.0, 0.0);
   elm_box_pack_end(bx, bt);
   evas_object_show(bt);

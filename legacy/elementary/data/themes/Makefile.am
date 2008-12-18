@@ -67,7 +67,11 @@ outdent-top.png \
 outdent-bottom.png \
 updown.png \
 leftright.png \
-hoversel_entry_bg.png
+hoversel_entry_bg.png \
+bt_dis_shine.png \
+icon_left_arrow.png \
+icon_right_arrow.png \
+toolbar_sel.png
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
