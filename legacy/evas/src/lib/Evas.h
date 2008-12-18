@@ -1053,6 +1053,9 @@ extern "C" {
    EAPI Evas_Bool               evas_object_box_remove(Evas_Object *o, Evas_Object *child);
    EAPI Evas_Bool               evas_object_box_remove_at(Evas_Object *o, unsigned int pos);
    EAPI Evas_Bool               evas_object_box_remove_all(Evas_Object *o, Evas_Bool clear);
+   EAPI Eina_Iterator          *evas_object_box_iterator_new(const Evas_Object *o);
+   EAPI Eina_Accessor          *evas_object_box_accessor_new(const Evas_Object *o);
+   EAPI Eina_List              *evas_object_box_children_get(const Evas_Object *o);
 
    EAPI const char *evas_object_box_option_property_name_get(Evas_Object *o, int property);
    EAPI int         evas_object_box_option_property_id_get(Evas_Object *o, const char *name);
@@ -1077,6 +1080,9 @@ extern "C" {
    EAPI void         evas_object_table_clear(Evas_Object *o, Evas_Bool clear);
 
    EAPI void         evas_object_table_col_row_size_get(const Evas_Object *o, int *cols, int *rows);
+   EAPI Eina_Iterator *evas_object_table_iterator_new(const Evas_Object *o);
+   EAPI Eina_Accessor *evas_object_table_accessor_new(const Evas_Object *o);
+   EAPI Eina_List     *evas_object_table_children_get(const Evas_Object *o);
 
 #ifdef __cplusplus
 }

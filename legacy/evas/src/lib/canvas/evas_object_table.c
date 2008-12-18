@@ -4,6 +4,8 @@
 typedef struct _Evas_Object_Table_Data       Evas_Object_Table_Data;
 typedef struct _Evas_Object_Table_Option     Evas_Object_Table_Option;
 typedef struct _Evas_Object_Table_Cache      Evas_Object_Table_Cache;
+typedef struct _Evas_Object_Table_Iterator   Evas_Object_Table_Iterator;
+typedef struct _Evas_Object_Table_Accessor   Evas_Object_Table_Accessor;
 
 struct _Evas_Object_Table_Option
 {
@@ -60,6 +62,22 @@ struct _Evas_Object_Table_Data
    Evas_Bool expand_v : 1;
 };
 
+struct _Evas_Object_Table_Iterator
+{
+   Eina_Iterator iterator;
+
+   Eina_Iterator *real_iterator;
+   const Evas_Object *table;
+};
+
+struct _Evas_Object_Table_Accessor
+{
+   Eina_Accessor accessor;
+
+   Eina_Accessor *real_accessor;
+   const Evas_Object *table;
+};
+
 /**
  * @addtogroup Evas_Object_Table
  * @{
@@ -92,6 +110,54 @@ struct _Evas_Object_Table_Data
     }
 
 static const char EVAS_OBJECT_TABLE_OPTION_KEY[] = "Evas_Object_Table_Option";
+
+static Eina_Bool
+_evas_object_table_iterator_next(Evas_Object_Table_Iterator *it, void **data)
+{
+   Evas_Object_Table_Option *opt;
+
+   if (!eina_iterator_next(it->real_iterator, &opt))
+     return EINA_FALSE;
+   if (data) *data = opt->obj;
+   return EINA_TRUE;
+}
+
+static Evas_Object *
+_evas_object_table_iterator_get_container(Evas_Object_Table_Iterator *it)
+{
+   return (Evas_Object *)it->table;
+}
+
+static void
+_evas_object_table_iterator_free(Evas_Object_Table_Iterator *it)
+{
+   eina_iterator_free(it->real_iterator);
+   free(it);
+}
+
+static Eina_Bool
+_evas_object_table_accessor_get_at(Evas_Object_Table_Accessor *it, unsigned int index, void **data)
+{
+   Evas_Object_Table_Option *opt;
+
+   if (!eina_accessor_data_get(it->real_accessor, index, &opt))
+     return EINA_FALSE;
+   if (data) *data = opt->obj;
+   return EINA_TRUE;
+}
+
+static Evas_Object *
+_evas_object_table_accessor_get_container(Evas_Object_Table_Accessor *it)
+{
+   return (Evas_Object *)it->table;
+}
+
+static void
+_evas_object_table_accessor_free(Evas_Object_Table_Accessor *it)
+{
+   eina_accessor_free(it->real_accessor);
+   free(it);
+}
 
 static Evas_Object_Table_Cache *
 _evas_object_table_cache_alloc(int cols, int rows)
@@ -1234,4 +1300,84 @@ evas_object_table_col_row_size_get(const Evas_Object *o, int *cols, int *rows)
 	if (cols) *cols = -1;
 	if (rows) *rows = -1;
      }
+}
+
+/**
+ * Get an iterator to walk the list of children for the table.
+ *
+ * @note Do not remove or delete objects while walking the list.
+ */
+Eina_Iterator *
+evas_object_table_iterator_new(const Evas_Object *o)
+{
+   Evas_Object_Table_Iterator *it;
+
+   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(o, priv, NULL);
+
+   if (!priv->children) return NULL;
+
+   it = calloc(1, sizeof(Evas_Object_Table_Iterator));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->real_iterator = eina_list_iterator_new(priv->children);
+   it->table = o;
+
+   it->iterator.next = FUNC_ITERATOR_NEXT(_evas_object_table_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_evas_object_table_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_evas_object_table_iterator_free);
+
+   return &it->iterator;
+}
+
+/**
+ * Get an accessor to get random access to the list of children for the table.
+ *
+ * @note Do not remove or delete objects while walking the list.
+ */
+Eina_Accessor *
+evas_object_table_accessor_new(const Evas_Object *o)
+{
+   Evas_Object_Table_Accessor *it;
+
+   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(o, priv, NULL);
+
+   if (!priv->children) return NULL;
+
+   it = calloc(1, sizeof(Evas_Object_Table_Accessor));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->accessor, EINA_MAGIC_ACCESSOR);
+
+   it->real_accessor = eina_list_accessor_new(priv->children);
+   it->table = o;
+
+   it->accessor.get_at = FUNC_ACCESSOR_GET_AT(_evas_object_table_accessor_get_at);
+   it->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(_evas_object_table_accessor_get_container);
+   it->accessor.free = FUNC_ACCESSOR_FREE(_evas_object_table_accessor_free);
+
+   return &it->accessor;
+}
+
+/**
+ * Get the list of children for the table.
+ *
+ * @note This is a duplicate of the list kept by the table internally.
+ *       It's up to the user to destroy it when it no longer needs it.
+ *       It's possible to remove objects from the table when walking this
+ *       list, but these removals won't be reflected on it.
+ */
+Eina_List *
+evas_object_table_children_get(const Evas_Object *o)
+{
+   Eina_List *new_list = NULL, *l;
+   Evas_Object_Table_Option *opt;
+
+   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(o, priv, NULL);
+
+   EINA_LIST_FOREACH(priv->children, l, opt)
+      new_list = eina_list_append(new_list, opt->obj);
+
+   return new_list;
 }
