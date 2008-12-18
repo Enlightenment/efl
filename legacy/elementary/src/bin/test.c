@@ -1465,17 +1465,30 @@ my_win_main(void)
   evas_object_show(win);
 }
 
+/* this is your elementary main function - it MUSt be called IMMEDIATELY
+ * after elm_init() and MUSt be passed argc and argv, and MUST be called
+ * elm_main and not be static - must be a visible symbol with EAPI infront */
+EAPI int
+elm_main(int argc, char **argv)
+{
+   /* put ere any init specific to this app like parsing args etc. */
+   my_win_main(); /* create main window */
+   elm_run(); /* and run the program now  and handle all events etc. */
+   /* if the mainloop that elm_run() runs exist - we exit the app */
+   elm_shutdown(); /* clean up and shut down */
+   /* exit code */
+   return 0;
+}
+
 int
 main(int argc, char **argv)
 {
    /* init Elementary (all Elementary calls begin with elm_ and all data
     * types, enums and macros will be Elm_ and ELM_ etc.) */
    elm_init(argc, argv);
-
-   my_win_main();
-   
-   elm_run(); /* and run the program now  and handle all events etc. */
-   
-   elm_shutdown(); /* clean up and shut down */
-   return 0; 
+   /* this must be called right after elm_init(). this function is used for
+    * fast-starting elementary apps by caching a pre-init and x connect etc.
+    * in elm_init(). the ONLY call allowed to be done before elm_main() is
+    * elm_init() and nothing else. */
+   return elm_main(argc, argv);
 }

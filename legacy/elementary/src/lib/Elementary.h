@@ -339,6 +339,7 @@ extern "C" {
 // 
 //// (incomplete - medium priority)
 // * entry selection conflicts with finger scroll (make selection start/stop work on signals?)
+// 
 // * add test for photo widget
 // * add test for hoversel
 // * disabled not supported
@@ -346,6 +347,7 @@ extern "C" {
 // * on the fly theme changes - test (should work)
 // * need a hold-scroll counter in elm_widget
 // * add fullscreen mode on/off for windows
+// * hoversel only vertical right now - make horizontal
 // 
 //// (more widgets/features - medium priority)
 // * biglist widget (restricted format label + icon intended for massive lists)
@@ -370,6 +372,7 @@ extern "C" {
 // * dialpad widget - need one with a phone dialpad
 // 
 //// (improvements - low priority)
+// * need url and path entry modes for vkbd
 // * return list of toplevel window objects
 // * widgets should show who is focused (not useful for touchscreen)
 // * scroller could do with page up/down/left/right buttons and and idea of a page size
