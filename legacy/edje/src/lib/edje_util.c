@@ -2402,30 +2402,168 @@ _edje_real_part_box_remove_at(Edje_Real_Part *rp, unsigned int pos)
 Evas_Bool
 _edje_real_part_box_remove_all(Edje_Real_Part *rp, Evas_Bool clear)
 {
-   Evas_Object_Box_Data *priv;
-   Evas_Object_Box_Option *opt;
-   Eina_List *l, *l_next;
+   Eina_List *children;
    int i;
 
    if (eina_list_count(rp->items) == 0)
      return evas_object_box_remove_all(rp->object, clear);
-   priv = evas_object_smart_data_get(rp->object);
    i = 0;
-   EINA_LIST_FOREACH_SAFE(priv->children, l, l_next, opt)
+   children = evas_object_box_children_get(rp->object);
+   while (children)
      {
-	Evas_Object *child_obj;
-	child_obj = opt->obj;
+	Evas_Object *child_obj = children->data;
 	if (evas_object_data_get(child_obj, "\377 edje.box_item"))
+	  i++;
+	else
 	  {
-	     i++;
-	     continue;
+	     if (!evas_object_box_remove_at(rp->object, i))
+	       return 0;
+	     if (clear)
+	       evas_object_del(child_obj);
 	  }
-	if (!evas_object_box_remove_at(rp->object, i))
-	  return 0;
-	if (clear)
-	  evas_object_del(child_obj);
+	children = eina_list_remove_list(children, children);
      }
    return 1;
+}
+
+/** Packs an object into the table
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param child The object to pack in
+ * @param col The column to place it in
+ * @param row The row to place it in
+ * @param colspan Columns the child will take
+ * @param rowspan Rows the child will take
+ *
+ * @return 1: Successfully added.\n
+ * 0: An error occured.
+ *
+ * Packs an object into the table indicated by part.\n
+ */
+EAPI Evas_Bool
+edje_object_part_table_pack(Evas_Object *obj, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return 0;
+
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return 0;
+   if (rp->part->type != EDJE_PART_TYPE_TABLE) return 0;
+
+   return _edje_real_part_table_pack(rp, child_obj, col, row, colspan, rowspan);
+}
+
+/** Removes an object from the table
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param child The object to pack in
+ *
+ * @return 1: Successfully removed.\n
+ * 0: An error occured.
+ *
+ * Removes an object from the table indicated by part.\n
+ */
+EAPI Evas_Bool
+edje_object_part_table_unpack(Evas_Object *obj, const char *part, Evas_Object *child_obj)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return 0;
+
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return 0;
+   if (rp->part->type != EDJE_PART_TYPE_TABLE) return 0;
+
+   return _edje_real_part_table_unpack(rp, child_obj);
+}
+
+/** Gets the number of columns and rows the table has
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param cols Pointer where to store number of columns (can be NULL)
+ * @param rows Pointer where to store number of rows (can be NULL)
+ *
+ * Retrieves the size of the table in number of columns and rows.\n
+ */
+EAPI void
+edje_object_part_table_col_row_size_get(const Evas_Object *obj, const char *part, int *cols, int *rows)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return;
+   if (rp->part->type != EDJE_PART_TYPE_TABLE) return;
+
+   return evas_object_table_col_row_size_get(rp->object, cols, rows);
+}
+
+/** Removes all object from the table
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param clear If set, will delete subobjs on remove
+ *
+ * Removes all object from the table indicated by part, except
+ * the internal ones set from the theme.\n
+ */
+EAPI void
+edje_object_part_table_clear(Evas_Object *obj, const char *part, Evas_Bool clear)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return;
+   if (rp->part->type != EDJE_PART_TYPE_TABLE) return;
+
+   return _edje_real_part_table_clear(rp, clear);
+}
+
+Evas_Bool
+_edje_real_part_table_pack(Edje_Real_Part *rp, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
+{
+   return evas_object_table_pack(rp->object, child_obj, col, row, colspan, rowspan);
+}
+
+Evas_Bool
+_edje_real_part_table_unpack(Edje_Real_Part *rp, Evas_Object *child_obj)
+{
+   return evas_object_table_unpack(rp->object, child_obj);
+}
+
+void
+_edje_real_part_table_clear(Edje_Real_Part *rp, Evas_Bool clear)
+{
+   Eina_List *children;
+
+   if (eina_list_count(rp->items) == 0)
+     {
+	evas_object_table_clear(rp->object, clear);
+	return;
+     }
+   children = evas_object_table_children_get(rp->object);
+   while (children)
+     {
+	Evas_Object *child_obj = children->data;
+	if (!evas_object_data_get(child_obj, "\377 edje.table_item"))
+	  {
+	     evas_object_table_unpack(rp->object, child_obj);
+	     if (clear)
+	       evas_object_del(child_obj);
+	  }
+	children = eina_list_remove_list(children, children);
+     }
 }
 
 Edje_Real_Part *

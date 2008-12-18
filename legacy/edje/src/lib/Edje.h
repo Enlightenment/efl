@@ -62,6 +62,14 @@ enum _Edje_Aspect_Control
 };
 typedef enum _Edje_Aspect_Control Edje_Aspect_Control;
 
+enum _Edje_Object_Table_Homogeneous_Mode
+{
+   EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE = 0,
+   EDJE_OBJECT_TABLE_HOMOGENEOUS_TABLE = 1,
+   EDJE_OBJECT_TABLE_HOMOGENEOUS_ITEM = 2
+};
+typedef enum _Edje_Object_Table_Homogeneous_Mode Edje_Object_Table_Homogeneous_Mode;
+
 typedef struct _Edje_Message_String           Edje_Message_String;
 typedef struct _Edje_Message_Int              Edje_Message_Int;
 typedef struct _Edje_Message_Float            Edje_Message_Float;
@@ -267,6 +275,10 @@ extern "C" {
    EAPI Evas_Object *edje_object_part_box_remove     (Evas_Object *obj, const char *part, Evas_Object *child);
    EAPI Evas_Object *edje_object_part_box_remove_at  (Evas_Object *obj, const char *part, unsigned int pos);
    EAPI Evas_Bool    edje_object_part_box_remove_all (Evas_Object *obj, const char *part, Evas_Bool clear);
+   EAPI Evas_Bool    edje_object_part_table_pack     (Evas_Object *obj, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
+   EAPI Evas_Bool    edje_object_part_table_unpack   (Evas_Object *obj, const char *part, Evas_Object *child_obj);
+   EAPI void         edje_object_part_table_col_row_size_get (const Evas_Object *obj, const char *part, int *cols, int *rows);
+   EAPI void         edje_object_part_table_clear    (Evas_Object *obj, const char *part, Evas_Bool clear);
 
    /* edje_message_queue.c */
    EAPI void         edje_object_message_send           (Evas_Object *obj, Edje_Message_Type type, int id, void *msg);

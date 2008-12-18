@@ -349,6 +349,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		    {
 		       rp->object = evas_object_box_add(ed->evas);
 		    }
+		  else if (ep->type == EDJE_PART_TYPE_TABLE)
+		    rp->object = evas_object_table_add(ed->evas);
 		  else
 		    printf("EDJE ERROR: wrong part type %i!\n", ep->type);
 		  if (rp->object)
@@ -502,10 +504,12 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		  
 		  rp = ed->table_parts[i];
 		  if (rp->part->type != EDJE_PART_TYPE_GROUP &&
-		      rp->part->type != EDJE_PART_TYPE_BOX) continue;
+		      rp->part->type != EDJE_PART_TYPE_BOX &&
+		      rp->part->type != EDJE_PART_TYPE_TABLE) continue;
 		  if (rp->part->type == EDJE_PART_TYPE_GROUP)
 		    source = rp->part->source;
-		  else if (rp->part->type == EDJE_PART_TYPE_BOX)
+		  else if (rp->part->type == EDJE_PART_TYPE_BOX ||
+			   rp->part->type == EDJE_PART_TYPE_TABLE)
 		    {
 		       if (rp->part->items)
 			 {
@@ -579,15 +583,22 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			    _edje_real_part_swallow(rp, child_obj);
 			    source = NULL;
 			 }
-		       else if (rp->part->type == EDJE_PART_TYPE_BOX)
+		       else
 			 {
 			    _edje_object_pack_item_hints_set(child_obj, pack_it);
 			    evas_object_show(child_obj);
-
-			    _edje_real_part_box_append(rp, child_obj);
-			    evas_object_data_set(child_obj, "\377 edje.box_item", curr_item->data);
 			    if (pack_it->name)
 			      evas_object_name_set(child_obj, pack_it->name);
+			    if (rp->part->type == EDJE_PART_TYPE_BOX)
+			      {
+				 _edje_real_part_box_append(rp, child_obj);
+				 evas_object_data_set(child_obj, "\377 edje.box_item", pack_it);
+			      }
+			    else if(rp->part->type == EDJE_PART_TYPE_TABLE)
+			      {
+				 _edje_real_part_table_pack(rp, child_obj, pack_it->col, pack_it->row, pack_it->colspan, pack_it->rowspan);
+				 evas_object_data_set(child_obj, "\377 edje.table_item", pack_it);
+			      }
 			    rp->items = eina_list_append(rp->items, child_obj);
 			    if (!(curr_item = curr_item->next))
 			      source = NULL;
@@ -756,7 +767,7 @@ _edje_file_del(Edje *ed)
 		  /* all internal, for now */
 		  while (rp->items)
 		    {
-		       /* evas_box handles deletion of objects */
+		       /* evas_box/table handles deletion of objects */
 		       /*evas_object_del(rp->items->data);*/
 		       rp->items = eina_list_remove_list(rp->items, rp->items);
 		    }

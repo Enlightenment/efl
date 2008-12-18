@@ -1220,6 +1220,14 @@ _edje_box_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_
 }
 
 static void
+_edje_table_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description *chosen_desc)
+{
+   evas_object_table_homogeneous_set(ep->object, chosen_desc->table.homogeneous);
+   evas_object_table_align_set(ep->object, chosen_desc->table.align.x, chosen_desc->table.align.y);
+   evas_object_table_padding_set(ep->object, chosen_desc->table.padding.x, chosen_desc->table.padding.y);
+}
+
+static void
 _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description *chosen_desc, double pos)
 {
    int image_id;
@@ -1507,6 +1515,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	   case EDJE_PART_TYPE_TEXTBLOCK:
 	   case EDJE_PART_TYPE_GRADIENT:
 	   case EDJE_PART_TYPE_BOX:
+	   case EDJE_PART_TYPE_TABLE:
 	      evas_object_color_set(ep->object,
 				    (pf->color.r * pf->color.a) / 255,
 				    (pf->color.g * pf->color.a) / 255,
@@ -1546,6 +1555,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	      break;
 	   case EDJE_PART_TYPE_BOX:
 	      _edje_box_recalc_apply(ed, ep, pf, chosen_desc);
+	      break;
+	   case EDJE_PART_TYPE_TABLE:
+	      _edje_table_recalc_apply(ed, ep, pf, chosen_desc);
 	      break;
 	   case EDJE_PART_TYPE_RECTANGLE:
 	   case EDJE_PART_TYPE_SWALLOW:

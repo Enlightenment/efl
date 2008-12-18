@@ -110,6 +110,7 @@ static void st_collections_group_parts_part_dragable_y(void);
 static void st_collections_group_parts_part_dragable_confine(void);
 static void st_collections_group_parts_part_dragable_events(void);
 
+/* box and table items share these */
 static void ob_collections_group_parts_part_box_items_item(void);
 static void st_collections_group_parts_part_box_items_item_type(void);
 static void st_collections_group_parts_part_box_items_item_name(void);
@@ -123,6 +124,9 @@ static void st_collections_group_parts_part_box_items_item_weight(void);
 static void st_collections_group_parts_part_box_items_item_aspect(void);
 static void st_collections_group_parts_part_box_items_item_aspect_mode(void);
 static void st_collections_group_parts_part_box_items_item_options(void);
+/* but these are only for table */
+static void st_collections_group_parts_part_table_items_item_position(void);
+static void st_collections_group_parts_part_table_items_item_span(void);
 
 static void ob_collections_group_parts_part_description(void);
 static void st_collections_group_parts_part_description_inherit(void);
@@ -183,6 +187,9 @@ static void st_collections_group_parts_part_description_gradient_rel2_offset(voi
 static void st_collections_group_parts_part_description_box_layout(void);
 static void st_collections_group_parts_part_description_box_align(void);
 static void st_collections_group_parts_part_description_box_padding(void);
+static void st_collections_group_parts_part_description_table_homogeneous(void);
+static void st_collections_group_parts_part_description_table_align(void);
+static void st_collections_group_parts_part_description_table_padding(void);
 
 static void ob_collections_group_programs_program(void);
 static void st_collections_group_programs_program_name(void);
@@ -299,6 +306,20 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.box.items.item.aspect", st_collections_group_parts_part_box_items_item_aspect},
      {"collections.group.parts.part.box.items.item.aspect_mode", st_collections_group_parts_part_box_items_item_aspect_mode},
      {"collections.group.parts.part.box.items.item.options", st_collections_group_parts_part_box_items_item_options},
+     {"collections.group.parts.part.table.items.item.type", st_collections_group_parts_part_box_items_item_type}, /* dup */
+     {"collections.group.parts.part.table.items.item.name", st_collections_group_parts_part_box_items_item_name}, /* dup */
+     {"collections.group.parts.part.table.items.item.source", st_collections_group_parts_part_box_items_item_source}, /* dup */
+     {"collections.group.parts.part.table.items.item.min", st_collections_group_parts_part_box_items_item_min}, /* dup */
+     {"collections.group.parts.part.table.items.item.prefer", st_collections_group_parts_part_box_items_item_prefer}, /* dup */
+     {"collections.group.parts.part.table.items.item.max", st_collections_group_parts_part_box_items_item_max}, /* dup */
+     {"collections.group.parts.part.table.items.item.padding", st_collections_group_parts_part_box_items_item_padding}, /* dup */
+     {"collections.group.parts.part.table.items.item.align", st_collections_group_parts_part_box_items_item_align}, /* dup */
+     {"collections.group.parts.part.table.items.item.weight", st_collections_group_parts_part_box_items_item_weight}, /* dup */
+     {"collections.group.parts.part.table.items.item.aspect", st_collections_group_parts_part_box_items_item_aspect}, /* dup */
+     {"collections.group.parts.part.table.items.item.aspect_mode", st_collections_group_parts_part_box_items_item_aspect_mode}, /* dup */
+     {"collections.group.parts.part.table.items.item.options", st_collections_group_parts_part_box_items_item_options}, /* dup */
+     {"collections.group.parts.part.table.items.item.position", st_collections_group_parts_part_table_items_item_position},
+     {"collections.group.parts.part.table.items.item.span", st_collections_group_parts_part_table_items_item_span},
      {"collections.group.parts.part.description.inherit", st_collections_group_parts_part_description_inherit},
      {"collections.group.parts.part.description.state", st_collections_group_parts_part_description_state},
      {"collections.group.parts.part.description.visible", st_collections_group_parts_part_description_visible},
@@ -361,6 +382,9 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.box.layout", st_collections_group_parts_part_description_box_layout},
      {"collections.group.parts.part.description.box.align", st_collections_group_parts_part_description_box_align},
      {"collections.group.parts.part.description.box.padding", st_collections_group_parts_part_description_box_padding},
+     {"collections.group.parts.part.description.table.homogeneous", st_collections_group_parts_part_description_table_homogeneous},
+     {"collections.group.parts.part.description.table.align", st_collections_group_parts_part_description_table_align},
+     {"collections.group.parts.part.description.table.padding", st_collections_group_parts_part_description_table_padding},
      {"collections.group.parts.part.description.images.image", st_images_image}, /* dup */
      {"collections.group.parts.part.description.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.fonts.font", st_fonts_font}, /* dup */
@@ -498,6 +522,9 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.box", NULL},
      {"collections.group.parts.part.box.items", NULL},
      {"collections.group.parts.part.box.items.item", ob_collections_group_parts_part_box_items_item},
+     {"collections.group.parts.part.table", NULL},
+     {"collections.group.parts.part.table.items", NULL},
+     {"collections.group.parts.part.table.items.item", ob_collections_group_parts_part_box_items_item}, /* dup */
      {"collections.group.parts.part.description", ob_collections_group_parts_part_description},
      {"collections.group.parts.part.description.rel1", NULL},
      {"collections.group.parts.part.description.rel2", NULL},
@@ -516,6 +543,7 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.gradient.rel1", NULL},
      {"collections.group.parts.part.description.gradient.rel2", NULL},
      {"collections.group.parts.part.description.box", NULL},
+     {"collections.group.parts.part.description.table", NULL},
      {"collections.group.parts.part.description.color_classes", NULL}, /* dup */
      {"collections.group.parts.part.description.color_classes.color_class", ob_color_class}, /* dup */
      {"collections.group.parts.part.description.program", ob_collections_group_programs_program}, /* dup */
@@ -1593,6 +1621,7 @@ st_collections_group_parts_part_name(void)
             @li GRADIENT
             @li GROUP
             @li BOX
+            @li TABLE
     @endproperty
 */
 static void
@@ -1615,6 +1644,7 @@ st_collections_group_parts_part_type(void)
 			 "GRADIENT", EDJE_PART_TYPE_GRADIENT,
 			 "GROUP", EDJE_PART_TYPE_GROUP,
 			 "BOX", EDJE_PART_TYPE_BOX,
+			 "TABLE", EDJE_PART_TYPE_TABLE,
 			 NULL);
 }
 
@@ -2294,10 +2324,10 @@ static void ob_collections_group_parts_part_box_items_item(void)
    pc = eina_list_data_get(eina_list_last(edje_collections));
    ep = eina_list_data_get(eina_list_last(pc->parts));
 
-   if (ep->type != EDJE_PART_TYPE_BOX)
+   if ((ep->type != EDJE_PART_TYPE_BOX) && (ep->type != EDJE_PART_TYPE_TABLE))
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"box attributes in non-BOX part.\n",
+		"box attributes in non-BOX or TABLE part.\n",
 		progname, file_in, line - 1);
 	exit(-1);
      }
@@ -2325,6 +2355,10 @@ static void ob_collections_group_parts_part_box_items_item(void)
    item->aspect.h = 0;
    item->aspect.mode = EDJE_ASPECT_PREFER_NONE;
    item->options = NULL;
+   item->col = -1;
+   item->row = -1;
+   item->colspan = 1;
+   item->rowspan = 1;
 }
 
 /**
@@ -2657,6 +2691,76 @@ static void st_collections_group_parts_part_box_items_item_options(void)
 
 /**
     @page edcref
+    @property
+        position
+    @parameters
+        [col] [row]
+    @effect
+        Sets the position this item will have in the table.
+        This is required for parts of type TABLE.
+    @endproperty
+*/
+static void st_collections_group_parts_part_table_items_item_position(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Pack_Element *item;
+
+   check_arg_count(2);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_TABLE)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"table attributes in non-TABLE part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   item = eina_list_data_get(eina_list_last(ep->items));
+   item->col = parse_int_range(0, 0, 0xffff);
+   item->row = parse_int_range(1, 0, 0xffff);
+}
+
+/**
+    @page edcref
+    @property
+        span
+    @parameters
+        [col] [row]
+    @effect
+        Sets how many columns/rows this item will use.
+        Defaults to 1 1.
+    @endproperty
+*/
+static void st_collections_group_parts_part_table_items_item_span(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Pack_Element *item;
+
+   check_arg_count(2);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_TABLE)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"table attributes in non-TABLE part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   item = eina_list_data_get(eina_list_last(ep->items));
+   item->colspan = parse_int_range(0, 1, 0xffff);
+   item->rowspan = parse_int_range(1, 1, 0xffff);
+}
+
+/**
+    @page edcref
     @block
         description
     @context
@@ -2764,6 +2868,11 @@ ob_collections_group_parts_part_description(void)
    ed->box.align.y = 0.5;
    ed->box.padding.x = 0;
    ed->box.padding.y = 0;
+   ed->table.homogeneous = EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE;
+   ed->table.align.x = 0.5;
+   ed->table.align.y = 0.5;
+   ed->table.padding.x = 0;
+   ed->table.padding.y = 0;
 }
 
 /**
@@ -5054,6 +5163,135 @@ static void st_collections_group_parts_part_description_box_padding(void)
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
    ed->box.padding.x = parse_int_range(0, 0, 0x7fffffff);
    ed->box.padding.y = parse_int_range(1, 0, 0x7fffffff);
+}
+
+/**
+    @page edcref
+
+    @block
+        table
+    @context
+        part {
+            description {
+                ..
+                table {
+                    homogeneous: TABLE;
+                    padding: 0 2;
+                    align: 0.5 0.5;
+                }
+                ..
+            }
+        }
+    @description
+        A table block can contain other objects packed in multiple columns
+        and rows, and each item can span across more than one column and/or
+        row.
+    @endblock
+
+    @property
+        homogeneous
+    @parameters
+        [homogeneous mode]
+    @effect
+        Sets the homogeneous mode for the table:
+            @li NONE (default)
+            @li TABLE
+            @li ITEM
+    @endproperty
+
+    @property
+        align
+    @parameters
+        [horizontal] [vertical]
+    @effect
+        Change the position of the point of balance inside the container. The
+        default value is 0.5 0.5.
+    @endproperty
+
+    @property
+        padding
+    @parameters
+        [horizontal] [vertical]
+    @effect
+        Sets the space between cells in pixels. Defaults to 0 0.
+    @endproperty
+*/
+static void st_collections_group_parts_part_description_table_homogeneous(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_min_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_TABLE)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"table attributes in non-TABLE part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->table.homogeneous = parse_enum(0,
+				     "NONE", EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE,
+				     "TABLE", EDJE_OBJECT_TABLE_HOMOGENEOUS_TABLE,
+				     "ITEM", EDJE_OBJECT_TABLE_HOMOGENEOUS_ITEM,
+				     NULL);
+}
+
+static void st_collections_group_parts_part_description_table_align(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(2);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_TABLE)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"table attributes in non-TABLE part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->table.align.x = parse_float_range(0, -1.0, 1.0);
+   ed->table.align.y = parse_float_range(1, -1.0, 1.0);
+}
+
+static void st_collections_group_parts_part_description_table_padding(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(2);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_TABLE)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"table attributes in non-TABLE part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->table.padding.x = parse_int_range(0, 0, 0x7fffffff);
+   ed->table.padding.y = parse_int_range(1, 0, 0x7fffffff);
 }
 
 /**
