@@ -96,8 +96,17 @@ _button_clicked(void *data, Evas_Object *obj, void *event_info)
         bt = elm_button_add(wd->hover);
         elm_button_style_set(bt, "hoversel_vertical_entry");
         elm_button_label_set(bt, it->label);
-// FIXME: add icon        
-//        elm_button_icon_set(bt, it->icon_file);
+        if (it->icon_file)
+          {
+             ic = elm_icon_add(data);
+             elm_icon_scale_set(ic, 0, 1);
+             if (it->icon_type == ELM_ICON_FILE)
+               elm_icon_file_set(ic, it->icon_file, NULL);
+             else if (it->icon_type == ELM_ICON_STANDARD)
+               elm_icon_standard_set(ic, it->icon_file);
+             elm_button_icon_set(bt, ic);
+             evas_object_show(ic);
+          }
         evas_object_size_hint_weight_set(bt, 1.0, 0.0);
         evas_object_size_hint_align_set(bt, -1.0, -1.0);
         elm_box_pack_end(bx, bt);
@@ -199,9 +208,9 @@ elm_hoversel_item_del(Elm_Hoversel_Item *item)
 {
    Item *it = (Item *)item;
    Widget_Data *wd = elm_widget_data_get(it->obj);
+   elm_hoversel_hover_end(it->obj);
    wd->items = eina_list_remove(wd->items, it);
    eina_stringshare_del(it->label);
    eina_stringshare_del(it->icon_file);
    free(it);
-   // FIXME: if hover up - this will be bad and break
 }

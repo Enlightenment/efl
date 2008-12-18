@@ -334,46 +334,45 @@ extern "C" {
 //// (bugs - high priority)
 // * scale change for hover doesnt seem to do new size alloc nicely
 // * left/right arrow broken with password mode for entry + utf8 chars...
-// * edje entry selections broke
 // * entry signal "changed" not called when deleting
 // * bubble doesnt handle child size changes right
 // 
 //// (incomplete - medium priority)
-// * buttons need a "bigbutton" option
+// * entry selection conflicts with finger scroll (make selection start/stop work on signals?)
+// * add test for photo widget
+// * add test for hoversel
 // * disabled not supported
 // * tab widget focusing (not useful for touchscreen tho...)
 // * on the fly theme changes - test (should work)
-// * entry selection conflicts with finger scroll (make selection start/stop work on signals?)
 // * need a hold-scroll counter in elm_widget
 // * add fullscreen mode on/off for windows
-// * add test for photo widget
 // 
 //// (more widgets/features - medium priority)
-// * need multi-sel (with button + hover + ...)
-// * toolbar widget (edje + box + button + separators)
-// * in-window dialog container widget
-// * listitem widget (simple label + icon)
-// * page widget (for pushing/popping pages and going back and forward and flipping)
+// * biglist widget (restricted format label + icon intended for massive lists)
+// * listitem widget (can contain anything)
+// * treeview widget (like biglist - but items can expand to sub-items)
 // * radio widget + group handling
 // * checkbox widget (like toggle)
-// * need separator widget (h/v)
-// * need slide-open "panel" that can hold stuff and optionally scroll
-// * need calendar widget (select date)
-// * need slider widget
-// * need range selector (select range of values from X to Y over an interval)
-// * need "dialogbutton" widget (bigger button for bottom of wins)
-// * need dialog window widget
-// * need a phone-number widget (hilight country dial prefixes, add flags, 
-//   photos of contacts that match etc.)
-// * need imageview widget (for large not iconic images)
+// * page widget (for pushing/popping pages and going back and forward and flipping)
+// * slider widget
+// 
+// * toolbar widget (edje + box + button + separators)
+// * in-window dialog container widget
+// * separator widget (h/v)
+// * slide-open "panel" that can hold stuff and optionally scroll
+// * calendar widget (select date)
+// * range selector (select range of values from X to Y over an interval)
+// * "dialogbutton" widget (bigger button for bottom of wins)
+// * dialog window widget
+// * phone-number widget (hilight country dial prefixes, add flags, photos of contacts that match etc.)
+// * imageview widget (for large not iconic images)
 // * tiled image + zoom widget (tiled map viewer)
 // * dialpad widget - need one with a phone dialpad
 // 
 //// (improvements - low priority)
 // * return list of toplevel window objects
 // * widgets should show who is focused (not useful for touchscreen)
-// * scroller could do with page up/down/left/right buttons and and idea of
-//   a page size
+// * scroller could do with page up/down/left/right buttons and and idea of a page size
 // * current sizing tree inefficient
 // * need a way to filter entry data for entry (eg for phone numbers)
 // * win should emit signals based on vkbd type - if it gets a message and is a vkbd win
