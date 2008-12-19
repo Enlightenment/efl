@@ -240,6 +240,9 @@ _ecore_evas_object_evas_check(const char *function, const Ecore_Evas *ee, const 
  *   - ECORE_EVAS_OBJECT_ASSOCIATE_LAYER: stacking operations will act
  *     on the Ecore_Evas, not the object. So evas_object_layer_set() will
  *     call ecore_evas_layer_set().
+ *   - ECORE_EVAS_OBJECT_ASSOCIATE_DEL: the object delete will delete the
+ *     ecore_evas as well as delete_requests on the ecore_evas will delete
+ *     etc.
  *
  * @param ee The Ecore_Evas to associate to @a obj
  * @param obj The object to associate to @a ee
