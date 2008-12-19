@@ -440,7 +440,6 @@ extern "C" {
 //// (improvements - low priority)
 // * use evas's new box instead of a box smart
 // * use evas's table instead of a table smart
-// * use ecore_evas_object_associate for win widget
 // * use stack for win widget
 // * somehow a pdf(ps) viewer widget that doesnt make it gpl (lgpl)
 // * emotion widget?
