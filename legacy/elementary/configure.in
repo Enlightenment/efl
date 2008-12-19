@@ -107,6 +107,26 @@ PKG_CHECK_MODULES([ELEMENTARY_WINCE],
    [have_elementary_wince="no"]
 )
 
+ELM_EDBUS_DEF="#undef"
+have_elementary_edbus="no"
+PKG_CHECK_MODULES([ELEMENTARY_EDBUS],
+   [
+    edbus
+    ehal
+   ],
+   [
+    AC_DEFINE(HAVE_ELEMENTARY_EDBUS, 1, [EDBus support for Elementary])
+    have_elementary_edbus="yes"
+    ELM_EDBUS_DEF="#define"
+   ],
+   [have_elementary_edbus="no"]
+)
+AC_SUBST(ELM_EDBUS_DEF)
+
+ELM_ALLOCA_H_DEF="#undef"
+AC_CHECK_HEADER(alloca.h, [ELM_ALLOCA_H_DEF="#define"])
+AC_SUBST(ELM_ALLOCA_H_DEF)
+
 my_libs="-lm"
 AC_SUBST(my_libs)
 
@@ -140,6 +160,9 @@ echo "Engines:"
 echo "  X11...........: ${have_elementary_x}"
 echo "  Framebuffer...: ${have_elementary_fb}"
 echo "  Windows CE....: ${have_elementary_wince}"
+echo
+echo "Features:"
+echo "  EDBus.........: ${have_elementary_edbus}"
 echo
 echo "------------------------------------------------------------------------"
 echo

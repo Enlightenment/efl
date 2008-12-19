@@ -10,7 +10,8 @@ AM_CPPFLAGS = \
 @ELEMENTARY_CFLAGS@ \
 @ELEMENTARY_X_CFLAGS@ \
 @ELEMENTARY_FB_CFLAGS@ \
-@ELEMENTARY_WINCE_CFLAGS@
+@ELEMENTARY_WINCE_CFLAGS@ \
+@ELEMENTARY_EDBUS_CFLAGS@
 
 lib_LTLIBRARIES = libelementary.la
 
@@ -58,5 +59,5 @@ els_icon.h
 
 
 libelementary_la_CFLAGS =
-libelementary_la_LIBADD = @ELEMENTARY_LIBS@ @ELEMENTARY_X_LIBS@ @ELEMENTARY_FB_LIBS@ @ELEMENTARY_WINCE_LIBS@ @my_libs@
+libelementary_la_LIBADD = @ELEMENTARY_LIBS@ @ELEMENTARY_X_LIBS@ @ELEMENTARY_FB_LIBS@ @ELEMENTARY_WINCE_LIBS@ @ELEMENTARY_EDBUS_LIBS@ @my_libs@
 libelementary_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@

@@ -19,7 +19,9 @@
 @ELM_UNIX_DEF@ ELM_UNIX
 @ELM_WIN32_DEF@ ELM_WIN32
 @ELM_WINCE_DEF@ ELM_WINCE
-
+@ELM_EDBUS_DEF@ ELM_EDBUS
+@ELM_ALLOCA_H_DEF@ ELM_ALLOCA_H
+  
 /* Standard headers for standard system calls etc. */
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,6 +46,10 @@
 #include <errno.h>
 #include <signal.h>
 
+#ifdef ELM_ALLOCA_H
+# include <alloca.h>
+#endif
+  
 /* EFL headers */
 #include <Eina.h>
 #include <Eet.h>
@@ -55,6 +61,10 @@
 #include <Ecore_File.h>
 #include <Edje.h>
 
+#ifdef ELM_EDBUS
+# include <E_DBus.h>
+# include <E_Hal.h>
+#endif
 
 #ifdef EAPI
 # undef EAPI
