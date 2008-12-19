@@ -1095,6 +1095,7 @@ ecore_evas_move(Ecore_Evas *ee, int x, int y)
 			 "ecore_evas_move");
 	return;
      }
+   if (ee->prop.fullscreen) return;
    IFC(ee, fn_move) (ee, x, y);
    IFE;
 }
@@ -1137,6 +1138,7 @@ ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 			 "ecore_evas_resize");
 	return;
      }
+   if (ee->prop.fullscreen) return;
    if (w < 1) w = 1;
    if (h < 1) h = 1;
    if ((ee->rotation == 90) || (ee->rotation == 270))
@@ -1172,6 +1174,7 @@ ecore_evas_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 			 "ecore_evas_move_resize");
 	return;
      }
+   if (ee->prop.fullscreen) return;
    if (w < 1) w = 1;
    if (h < 1) h = 1;
    if ((ee->rotation == 90) || (ee->rotation == 270))
