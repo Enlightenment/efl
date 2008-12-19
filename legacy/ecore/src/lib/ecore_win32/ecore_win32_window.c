@@ -676,7 +676,7 @@ ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
      }
    else
      {
-        if (!SetWindowLong(w, GWL_STYLE, (ew->style & ~WS_POPUP) | WS_OVERLAPPEDWINDOW)
+        if (!SetWindowLong(w, GWL_STYLE, (ew->style & ~WS_POPUP) | WS_OVERLAPPEDWINDOW))
           return;
         if (!SetWindowLong(w, GWL_EXSTYLE, 0))
           return;
