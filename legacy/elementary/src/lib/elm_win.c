@@ -17,21 +17,11 @@ struct _Elm_Win
    Elm_Win_Type          type;
    Elm_Win_Keyboard_Mode kbdmode;
    Evas_Bool             autodel : 1;
+   int                   *autodel_clear;
 };
 
-static void _elm_win_resize(Ecore_Evas *ee);
-static void _elm_win_obj_intercept_show(void *data, Evas_Object *obj);
-static void _elm_win_obj_intercept_hide(void *data, Evas_Object *obj);
-static void _elm_win_obj_intercept_move(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y);
-static void _elm_win_obj_intercept_resize(void *data, Evas_Object *obj, Evas_Coord w, Evas_Coord h);
-static void _elm_win_obj_intercept_raise(void *data, Evas_Object *obj);
-static void _elm_win_obj_intercept_lower(void *data, Evas_Object *obj);
-static void _elm_win_obj_intercept_stack_above(void *data, Evas_Object *obj, Evas_Object *above);
-static void _elm_win_obj_intercept_stack_below(void *data, Evas_Object *obj, Evas_Object *below);
-static void _elm_win_obj_intercept_layer_set(void *data, Evas_Object *obj, int l);
-static void _elm_win_obj_intercept_color_set(void *data, Evas_Object *obj, int r, int g, int b, int a);
 static void _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void _elm_win_obj_callback_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _elm_win_resize(Ecore_Evas *ee);
 static void _elm_win_delete_request(Ecore_Evas *ee);
 static void _elm_win_resize_job(void *data);
 #ifdef HAVE_ELEMENTARY_X   
@@ -46,110 +36,10 @@ static Eina_List *_elm_win_list = NULL;
 static void
 _elm_win_resize(Ecore_Evas *ee)
 {
-   Elm_Win *win = ecore_evas_data_get(ee, "__Elm");
+   Elm_Win *win = evas_object_data_get(ecore_evas_object_associate_get(ee), "__Elm");
    if (!win) return;
    if (win->deferred_resize_job) ecore_job_del(win->deferred_resize_job);
    win->deferred_resize_job = ecore_job_add(_elm_win_resize_job, win);
-}
-
-static void
-_elm_win_obj_intercept_show(void *data, Evas_Object *obj)
-{
-   Elm_Win *win = data;
-   ecore_evas_show(win->ee);
-   evas_object_show(obj);
-}
-
-static void
-_elm_win_obj_intercept_hide(void *data, Evas_Object *obj)
-{
-   Elm_Win *win = data;
-   ecore_evas_hide(win->ee);
-   evas_object_hide(obj);
-}
-
-static void
-_elm_win_obj_intercept_move(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y)
-{
-   Elm_Win *win = data;
-   // FIXME: account for frame
-   ecore_evas_move(win->ee, x, y);
-}
-
-static void
-_elm_win_obj_intercept_resize(void *data, Evas_Object *obj, Evas_Coord w, Evas_Coord h)
-{
-   Elm_Win *win = data;
-   switch (_elm_config->engine)
-     {
-      case ELM_SOFTWARE_FB:
-      case ELM_SOFTWARE_16_WINCE:
-	break;
-      case ELM_SOFTWARE_X11:
-      case ELM_SOFTWARE_16_X11:
-      case ELM_XRENDER_X11:
-      case ELM_OPENGL_X11:
-        ecore_evas_resize(win->ee, w, h);
-	break;
-      default:
-	break;
-     }
-}
-
-static void
-_elm_win_obj_intercept_raise(void *data, Evas_Object *obj)
-{
-   Elm_Win *win = data;
-   ecore_evas_raise(win->ee);
-}
-
-static void
-_elm_win_obj_intercept_lower(void *data, Evas_Object *obj)
-{
-   Elm_Win *win = data;
-   ecore_evas_lower(win->ee);
-}
-
-static void
-_elm_win_obj_intercept_stack_above(void *data, Evas_Object *obj, Evas_Object *above)
-{
-   if (above)
-     {
-	Elm_Win *win = evas_object_data_get(above, "__Elm");
-	if (!win) evas_object_raise(obj);
-	// FIXME: find window id of win and stack abive
-	return;
-     }
-   evas_object_raise(obj);
-   return;
-}
-
-static void
-_elm_win_obj_intercept_stack_below(void *data, Evas_Object *obj, Evas_Object *below)
-{
-   if (below)
-     {
-	Elm_Win *win = evas_object_data_get(below, "__Elm");
-	if (!win) evas_object_raise(obj);
-	// FIXME: find window id of win and stack below
-	return;
-     }
-   evas_object_lower(obj);
-   return;
-}
-
-static void
-_elm_win_obj_intercept_layer_set(void *data, Evas_Object *obj, int l)
-{
-   Elm_Win *win = data;
-   // FIXME: use netwm above/below hints
-   ecore_evas_layer_set(win->ee, l);
-}
-
-static void
-_elm_win_obj_intercept_color_set(void *data, Evas_Object *obj, int r, int g, int b, int a)
-{
-   return;
 }
 
 static void
@@ -163,20 +53,9 @@ _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_inf
 {
    Elm_Win *win = data;
 
+   if (win->autodel_clear) *(win->autodel_clear) = -1;
    _elm_win_list = eina_list_remove(_elm_win_list, win->win_obj);
    while (win->subobjs) elm_win_resize_object_del(obj, win->subobjs->data);
-   evas_object_intercept_show_callback_del(win->win_obj, _elm_win_obj_intercept_show);
-   evas_object_intercept_hide_callback_del(win->win_obj, _elm_win_obj_intercept_hide);
-   evas_object_intercept_move_callback_del(win->win_obj, _elm_win_obj_intercept_move);
-   evas_object_intercept_resize_callback_del(win->win_obj, _elm_win_obj_intercept_resize);
-   evas_object_intercept_raise_callback_del(win->win_obj, _elm_win_obj_intercept_raise);
-   evas_object_intercept_lower_callback_del(win->win_obj, _elm_win_obj_intercept_lower);
-   evas_object_intercept_stack_above_callback_del(win->win_obj, _elm_win_obj_intercept_stack_above);
-   evas_object_intercept_stack_below_callback_del(win->win_obj, _elm_win_obj_intercept_stack_below);
-   evas_object_intercept_layer_set_callback_del(win->win_obj, _elm_win_obj_intercept_layer_set);
-   evas_object_intercept_color_set_callback_del(win->win_obj, _elm_win_obj_intercept_color_set);
-   evas_object_event_callback_del(win->win_obj, EVAS_CALLBACK_DEL, _elm_win_obj_callback_del);
-   evas_object_event_callback_del(win->win_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _elm_win_obj_callback_changed_size_hints);
    ecore_evas_callback_delete_request_set(win->ee, NULL);
    ecore_evas_callback_resize_set(win->ee, NULL);
    if (win->deferred_resize_job) ecore_job_del(win->deferred_resize_job);
@@ -187,7 +66,7 @@ _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_inf
    while (evas_object_top_get(win->evas) &&
 	  (evas_object_top_get(win->evas) != obj))
      evas_object_del(evas_object_top_get(win->evas));
-// fixme - we are in the del handler for the object and delete the canvas
+// FIXME: we are in the del handler for the object and delete the canvas
 // that lives under it from the handler... nasty. deferring doesnt help either
    ecore_job_add(_deferred_ecore_evas_free, win->ee);
 //   ecore_evas_free(win->ee);
@@ -195,26 +74,16 @@ _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_inf
 }
 
 static void
-_elm_win_obj_callback_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
-{
-   Elm_Win *win = data;
-   Evas_Coord w, h;
-   
-   evas_object_size_hint_min_get(obj, &w, &h);
-   ecore_evas_size_min_set(win->ee, w, h);
-   evas_object_size_hint_max_get(obj, &w, &h);
-   if (w < 1) w = -1;
-   if (h < 1) h = -1;
-   ecore_evas_size_max_set(win->ee, w, h);
-}
-
-static void
 _elm_win_delete_request(Ecore_Evas *ee)
 {
-   Elm_Win *win = ecore_evas_data_get(ee, "__Elm");
+   Elm_Win *win = evas_object_data_get(ecore_evas_object_associate_get(ee), "__Elm");
    if (!win) return;
+   int autodel = win->autodel;
+   win->autodel_clear = &autodel;
    evas_object_smart_callback_call(win->win_obj, "delete-request", NULL);
-   if (win->autodel) evas_object_del(win->win_obj);
+   // FIXME: if above callback deletes - then the below will be invalid
+   if (autodel == 1) evas_object_del(win->win_obj);
+   else if (autodel == 0) win->autodel_clear = NULL;
 }
 
 static void
@@ -226,9 +95,7 @@ _elm_win_resize_job(void *data)
    
    win->deferred_resize_job = NULL;
    ecore_evas_geometry_get(win->ee, NULL, NULL, &w, &h);
-   evas_object_intercept_resize_callback_del(win->win_obj, _elm_win_obj_intercept_resize);
    evas_object_resize(win->win_obj, w, h);
-   evas_object_intercept_resize_callback_add(win->win_obj, _elm_win_obj_intercept_resize, win);
    for (l = win->subobjs; l; l = l->next)
      {
 	evas_object_move(l->data, 0, 0);
@@ -426,18 +293,12 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    evas_object_pass_events_set(win->win_obj, 1);
    evas_object_data_set(win->win_obj, "__Elm", win);
 
-   evas_object_intercept_show_callback_add(win->win_obj, _elm_win_obj_intercept_show, win);
-   evas_object_intercept_hide_callback_add(win->win_obj, _elm_win_obj_intercept_hide, win);
-   evas_object_intercept_move_callback_add(win->win_obj, _elm_win_obj_intercept_move, win);
-   evas_object_intercept_resize_callback_add(win->win_obj, _elm_win_obj_intercept_resize, win);
-   evas_object_intercept_raise_callback_add(win->win_obj, _elm_win_obj_intercept_raise, win);
-   evas_object_intercept_lower_callback_add(win->win_obj, _elm_win_obj_intercept_lower, win);
-   evas_object_intercept_stack_above_callback_add(win->win_obj, _elm_win_obj_intercept_stack_above, win);
-   evas_object_intercept_stack_below_callback_add(win->win_obj, _elm_win_obj_intercept_stack_below, win);
-   evas_object_intercept_layer_set_callback_add(win->win_obj, _elm_win_obj_intercept_layer_set, win);
-   evas_object_intercept_color_set_callback_add(win->win_obj, _elm_win_obj_intercept_color_set, win);
-   evas_object_event_callback_add(win->win_obj, EVAS_CALLBACK_DEL, _elm_win_obj_callback_del, win);
-   evas_object_event_callback_add(win->win_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _elm_win_obj_callback_changed_size_hints, win);
+   ecore_evas_object_associate(win->ee, win->win_obj,
+                               ECORE_EVAS_OBJECT_ASSOCIATE_BASE |
+                               ECORE_EVAS_OBJECT_ASSOCIATE_STACK |
+                               ECORE_EVAS_OBJECT_ASSOCIATE_LAYER);
+   evas_object_event_callback_add(win->win_obj, EVAS_CALLBACK_DEL,
+                                  _elm_win_obj_callback_del, win);
    
    ecore_evas_name_class_set(win->ee, name, _elm_appname);
    ecore_evas_data_set(win->ee, "__Elm", win);
