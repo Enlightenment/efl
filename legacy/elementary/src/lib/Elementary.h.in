@@ -380,6 +380,9 @@ extern "C" {
    EAPI Elm_Hoversel_Item *elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
    EAPI void         elm_hoversel_item_del(Elm_Hoversel_Item *item);
    /* smart callbacks called:
+    * "clicked" - the user clicked the hoversel button and popped up the sel
+    * "selected" - an item in the hoversel list is selected
+    * "dismissed" - the hover is dismissed
     */
    
    typedef struct _Elm_Toolbar_Item Elm_Toolbar_Item;
@@ -389,6 +392,7 @@ extern "C" {
    EAPI void         elm_toolbar_item_select(Elm_Toolbar_Item *item);
    EAPI void         elm_toolbar_scrollable_set(Evas_Object *obj, Evas_Bool scrollable);
    /* smart callbacks called:
+    * "clicked" - when the user clicks on a toolbar item and becomes selected
     */
 
   ////////////////////////////////////////////////////////////////////////////
@@ -400,12 +404,11 @@ extern "C" {
 // * left/right arrow broken with password mode for entry + utf8 chars...
 // * entry signal "changed" not called when deleting
 // * bubble doesnt handle child size changes right
+// * table doesnt do homogenous properly
 // 
 //// (incomplete - medium priority)
 // * entry selection conflicts with finger scroll (make selection start/stop work on signals?)
-// 
-// * add test for photo widget
-// * add test for hoversel
+
 // * disabled not supported
 // * tab widget focusing (not useful for touchscreen tho...)
 // * on the fly theme changes - test (should work)
@@ -436,6 +439,10 @@ extern "C" {
 // * dialpad widget - need one with a phone dialpad
 // 
 //// (improvements - low priority)
+// * use evas's new box instead of a box smart
+// * use evas's table instead of a table smart
+// * use ecore_evas_object_associate for win widget
+// * use stack for win widget
 // * somehow a pdf(ps) viewer widget that doesnt make it gpl (lgpl)
 // * emotion widget?
 // * ewebkit widget

@@ -26,7 +26,6 @@ struct _Item
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
-static void _mouse_up(void *data, Evas_Object *obj, void *event_info);
 
 static void
 _item_show(Item *it)
@@ -40,6 +39,32 @@ _item_show(Item *it)
 }
 
 static void
+_item_select(Item *it)
+{
+   Item *it2;
+   Widget_Data *wd = elm_widget_data_get(it->obj);
+   Evas_Object *obj2;
+   Eina_List *l;
+   if (it->selected) return;
+   for (l = wd->items; l; l = l->next)
+     {
+        it2 = l->data;
+        if (it2->selected)
+          {
+             it2->selected = 0;
+             edje_object_signal_emit(it2->base, "elm,state,unselected", "elm");
+             break;
+          }
+     }
+   it->selected = 1;
+   edje_object_signal_emit(it->base, "elm,state,selected", "elm");
+   _item_show(it);
+   obj2 = it->obj;
+   if (it->func) it->func(it->data, it->obj, NULL);
+   evas_object_smart_callback_call(obj2, "clicked", NULL);
+}
+
+static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -49,7 +74,28 @@ _del_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
-   // FIXME: re-eval icon and all min sizes
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_List *l;
+   Item *it;
+   Evas_Coord mw, mh;
+   for (l = wd->items; l; l = l->next)
+     {
+        it = l->data;
+        if (it->selected)
+          edje_object_signal_emit(it->base, "elm,state,selected", "elm");
+        _elm_theme_set(it->base, "toolbar", "item", "default");
+        if (it->icon)
+          {
+             edje_extern_object_min_size_set(it->icon, 
+                                             (double)wd->icon_size * _elm_config->scale, 
+                                             (double)wd->icon_size * _elm_config->scale);
+             edje_object_part_swallow(it->base, "elm.swallow.icon", it->icon);
+          }
+        edje_object_part_text_set(it->base, "elm.text", it->label);
+        edje_object_size_min_calc(it->base, &mw, &mh);
+        evas_object_size_hint_min_set(it->base, mw, mh);
+        evas_object_size_hint_max_set(it->base, 9999, mh);
+     }
    _sizing_eval(obj);
 }
 
@@ -77,12 +123,6 @@ _sizing_eval(Evas_Object *obj)
      }
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
-}
-
-static void
-_mouse_up(void *data, Evas_Object *obj, void *event_info)
-{
-   evas_object_smart_callback_call(data, "clicked", NULL);
 }
 
 static void
@@ -115,24 +155,7 @@ _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _select(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
-   Item *it = data, *it2;
-   Widget_Data *wd = elm_widget_data_get(it->obj);
-   Eina_List *l;
-   if (it->selected) return;
-   for (l = wd->items; l; l = l->next)
-     {
-        it2 = l->data;
-        if (it2->selected)
-          {
-             it2->selected = 0;
-             edje_object_signal_emit(it2->base, "elm,state,unselected", "elm");
-             break;
-          }
-          }
-   it->selected = 1;
-   edje_object_signal_emit(it->base, "elm,state,selected", "elm");
-   _item_show(it);
-   if (it->func) it->func(it->data, it->obj, NULL);
+   _item_select(data);
 }
 
 EAPI Evas_Object *
@@ -191,16 +214,16 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, voi
    _elm_theme_set(it->base, "toolbar", "item", "default");
    edje_object_signal_callback_add(it->base, "elm,action,click", "elm",
                                    _select, it);
-   if (icon)
+   if (it->icon)
      {
-        edje_extern_object_min_size_set(icon, 
+        edje_extern_object_min_size_set(it->icon, 
                                         (double)wd->icon_size * _elm_config->scale, 
                                         (double)wd->icon_size * _elm_config->scale);
-        edje_object_part_swallow(it->base, "elm.swallow.icon", icon);
-        evas_object_show(icon);
+        edje_object_part_swallow(it->base, "elm.swallow.icon", it->icon);
+        evas_object_show(it->icon);
         elm_widget_sub_object_add(obj, it->icon);
      }
-   edje_object_part_text_set(it->base, "elm.text", label);
+   edje_object_part_text_set(it->base, "elm.text", it->label);
    edje_object_size_min_calc(it->base, &mw, &mh);
    evas_object_size_hint_weight_set(it->base, 0.0, 0.0);
    evas_object_size_hint_align_set(it->base, -1.0, -1.0);
@@ -216,14 +239,21 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, voi
 EAPI void
 elm_toolbar_item_del(Elm_Toolbar_Item *item)
 {
-   // FIXME: remove item
+   Item *it = (Item *)item;
+   Widget_Data *wd = elm_widget_data_get(it->obj);
+   Evas_Object *obj2 = it->obj;
+   wd->items = eina_list_remove(wd->items, it);
+   eina_stringshare_del(it->label);
+   if (it->icon) evas_object_del(it->icon);
+   evas_object_del(it->base);
+   free(it);
+   _theme_hook(obj2);
 }
 
 EAPI void
 elm_toolbar_item_select(Elm_Toolbar_Item *item)
 {
-   // FIXME select item   
-   //   Widget_Data *wd = elm_widget_data_get(obj);
+   _item_select(item);
 }
 
 EAPI void

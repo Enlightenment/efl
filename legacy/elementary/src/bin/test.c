@@ -1248,9 +1248,48 @@ my_bt_17(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+tb_1(void *data, Evas_Object *obj, void *event_info)
+{
+   char buf[PATH_MAX];
+   snprintf(buf, sizeof(buf), "%s/images/panel_01.jpg", PACKAGE_DATA_DIR);
+   elm_photo_file_set(data, buf);
+}
+
+static void
+tb_2(void *data, Evas_Object *obj, void *event_info)
+{
+   char buf[PATH_MAX];
+   snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", PACKAGE_DATA_DIR);
+   elm_photo_file_set(data, buf);
+}
+
+static void
+tb_3(void *data, Evas_Object *obj, void *event_info)
+{
+   char buf[PATH_MAX];
+   snprintf(buf, sizeof(buf), "%s/images/wood_01.jpg", PACKAGE_DATA_DIR);
+   elm_photo_file_set(data, buf);
+}
+
+static void
+tb_4(void *data, Evas_Object *obj, void *event_info)
+{
+   char buf[PATH_MAX];
+   snprintf(buf, sizeof(buf), "%s/images/sky_03.jpg", PACKAGE_DATA_DIR);
+   elm_photo_file_set(data, buf);
+}
+
+static void
+tb_5(void *data, Evas_Object *obj, void *event_info)
+{
+   elm_photo_file_set(data, NULL);
+}
+
+static void
 my_bt_18(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *bx, *tb, *ic;
+   Evas_Object *win, *bg, *bx, *tb, *ic, *ph;
+   Evas_Object *ph1, *ph2, *ph3, *ph4;
    char buf[PATH_MAX];
    
    win = elm_win_add(NULL, "toolbar", ELM_WIN_BASIC);
@@ -1270,34 +1309,174 @@ my_bt_18(void *data, Evas_Object *obj, void *event_info)
    tb = elm_toolbar_add(win);
    evas_object_size_hint_weight_set(tb, 0.0, 0.0);
    evas_object_size_hint_align_set(tb, -1.0, 0.0);
+
+   ph1 = elm_photo_add(win);
+   ph2 = elm_photo_add(win);
+   ph3 = elm_photo_add(win);
+   ph4 = elm_photo_add(win);
    
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   elm_toolbar_item_add(tb, ic, "Hello", NULL, NULL);
+   elm_toolbar_item_add(tb, ic, "Hello", tb_1, ph1);
    
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   elm_toolbar_item_add(tb, ic, "World", NULL, NULL);
+   elm_toolbar_item_add(tb, ic, "World", tb_2, ph1);
    
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   elm_toolbar_item_add(tb, ic, "Here", NULL, NULL);
+   elm_toolbar_item_add(tb, ic, "Here", tb_3, ph4);
    
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   elm_toolbar_item_add(tb, ic, "Comes", NULL, NULL);
+   elm_toolbar_item_add(tb, ic, "Comes", tb_4, ph4);
    
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   elm_toolbar_item_add(tb, ic, "Elementary", NULL, NULL);
+   elm_toolbar_item_add(tb, ic, "Elementary", tb_5, ph4);
    
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
+
+   tb = elm_table_add(win);
+//   elm_table_homogenous_set(tb, 1);
+   evas_object_size_hint_weight_set(tb, 0.0, 1.0);
+   evas_object_size_hint_align_set(tb, -1.0, -1.0);
+   
+   ph = ph1;
+   elm_photo_size_set(ph, 40);
+   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", PACKAGE_DATA_DIR);
+   elm_photo_file_set(ph, buf);
+   evas_object_size_hint_weight_set(ph, 1.0, 1.0);
+   evas_object_size_hint_align_set(ph, 0.5, 0.5);
+   elm_table_pack(tb, ph, 0, 0, 1, 1);
+   evas_object_show(ph);
+   
+   ph = ph2;
+   elm_photo_size_set(ph, 80);
+   evas_object_size_hint_weight_set(ph, 1.0, 1.0);
+   evas_object_size_hint_align_set(ph, 0.5, 0.5);
+   elm_table_pack(tb, ph, 1, 0, 1, 1);
+   evas_object_show(ph);
+   
+   ph = ph3;
+   elm_photo_size_set(ph, 20);
+   snprintf(buf, sizeof(buf), "%s/images/sky_01.jpg", PACKAGE_DATA_DIR);
+   elm_photo_file_set(ph, buf);
+   evas_object_size_hint_weight_set(ph, 1.0, 1.0);
+   evas_object_size_hint_align_set(ph, 0.5, 0.5);
+   elm_table_pack(tb, ph, 0, 1, 1, 1);
+   evas_object_show(ph);
+   
+   ph = ph4;
+   elm_photo_size_set(ph, 60);
+   snprintf(buf, sizeof(buf), "%s/images/sky_02.jpg", PACKAGE_DATA_DIR);
+   elm_photo_file_set(ph, buf);
+   evas_object_size_hint_weight_set(ph, 1.0, 1.0);
+   evas_object_size_hint_align_set(ph, 0.5, 0.5);
+   elm_table_pack(tb, ph, 1, 1, 1, 1);
+   evas_object_show(ph);
+   
+   elm_box_pack_end(bx, tb);
+   evas_object_show(tb);
+   
+   evas_object_resize(win, 320, 300);
+   
+   evas_object_show(win);
+}
+
+static void
+my_bt_19(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *bx, *bt, *ic;
+   char buf[PATH_MAX];
+   
+   win = elm_win_add(NULL, "hoversel", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Hoversel");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_show(bg);
+
+   bx = elm_box_add(win);
+   elm_win_resize_object_add(win, bx);
+   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   evas_object_show(bx);
+
+   bt = elm_hoversel_add(win);
+   elm_hoversel_hover_parent_set(bt, win);
+   elm_hoversel_label_set(bt, "Labels");
+   elm_hoversel_item_add(bt, "Item 1", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(bt, "Item 2", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(bt, "Item 3", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(bt, "Item 4", NULL, ELM_ICON_NONE, NULL, NULL);
+   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
+   evas_object_size_hint_align_set(bt, 0.5, 0.5);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+   
+   bt = elm_hoversel_add(win);
+   elm_hoversel_hover_parent_set(bt, win);
+   elm_hoversel_label_set(bt, "Some Icons");
+   elm_hoversel_item_add(bt, "Item 1", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(bt, "Item 2", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(bt, "Item 3", "home", ELM_ICON_STANDARD, NULL, NULL);
+   elm_hoversel_item_add(bt, "Item 4", "close", ELM_ICON_STANDARD, NULL, NULL);
+   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
+   evas_object_size_hint_align_set(bt, 0.5, 0.5);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+   
+   bt = elm_hoversel_add(win);
+   elm_hoversel_hover_parent_set(bt, win);
+   elm_hoversel_label_set(bt, "All Icons");
+   elm_hoversel_item_add(bt, "Item 1", "apps", ELM_ICON_STANDARD, NULL, NULL);
+   elm_hoversel_item_add(bt, "Item 2", "arrow_down", ELM_ICON_STANDARD, NULL, NULL);
+   elm_hoversel_item_add(bt, "Item 3", "home", ELM_ICON_STANDARD, NULL, NULL);
+   elm_hoversel_item_add(bt, "Item 4", "close", ELM_ICON_STANDARD, NULL, NULL);
+   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
+   evas_object_size_hint_align_set(bt, 0.5, 0.5);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+   
+   bt = elm_hoversel_add(win);
+   elm_hoversel_hover_parent_set(bt, win);
+   elm_hoversel_label_set(bt, "All Icons");
+   elm_hoversel_item_add(bt, "Item 1", "apps", ELM_ICON_STANDARD, NULL, NULL);
+   snprintf(buf, sizeof(buf), "%s/images/sky_02.jpg", PACKAGE_DATA_DIR);
+   elm_hoversel_item_add(bt, "Item 2", buf, ELM_ICON_FILE, NULL, NULL);
+   elm_hoversel_item_add(bt, "Item 3", "home", ELM_ICON_STANDARD, NULL, NULL);
+   elm_hoversel_item_add(bt, "Item 4", "close", ELM_ICON_STANDARD, NULL, NULL);
+   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
+   evas_object_size_hint_align_set(bt, 0.5, 0.5);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+   
+   bt = elm_hoversel_add(win);
+   elm_hoversel_hover_parent_set(bt, win);
+   elm_hoversel_label_set(bt, "Icon + Label");
+
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/sky_03.jpg", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_hoversel_icon_set(bt, ic);
+   evas_object_show(ic);
+   
+   elm_hoversel_item_add(bt, "Item 1", "apps", ELM_ICON_STANDARD, NULL, NULL);
+   elm_hoversel_item_add(bt, "Item 2", "arrow_down", ELM_ICON_STANDARD, NULL, NULL);
+   elm_hoversel_item_add(bt, "Item 3", "home", ELM_ICON_STANDARD, NULL, NULL);
+   elm_hoversel_item_add(bt, "Item 4", "close", ELM_ICON_STANDARD, NULL, NULL);
+   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
+   evas_object_size_hint_align_set(bt, 0.5, 0.5);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
    
    evas_object_resize(win, 320, 300);
    
@@ -1519,6 +1698,13 @@ my_win_main(void)
   bt = elm_button_add(win);
   elm_button_label_set(bt, "Toolbar");
   evas_object_smart_callback_add(bt, "clicked", my_bt_18, NULL);
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+  
+  bt = elm_button_add(win);
+  elm_button_label_set(bt, "Hoversel");
+  evas_object_smart_callback_add(bt, "clicked", my_bt_19, NULL);
   evas_object_size_hint_align_set(bt, -1.0, 0.0);
   elm_box_pack_end(bx, bt);
   evas_object_show(bt);

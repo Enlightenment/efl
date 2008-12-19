@@ -72,6 +72,7 @@ _item_clicked(void *data, Evas_Object *obj, void *event_info)
    Item *it = data;
    Evas_Object *obj2 = it->obj;
    if (it->func) it->func(it->data, obj2, NULL);
+   evas_object_smart_callback_call(obj2, "selected", NULL);
    elm_hoversel_hover_end(obj2);
 }
 
@@ -121,6 +122,7 @@ _button_clicked(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bx);
    
    evas_object_show(wd->hover);
+   evas_object_smart_callback_call(data, "clicked", NULL);
 }
 
 static void
@@ -185,6 +187,7 @@ elm_hoversel_hover_end(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->hover) evas_object_del(wd->hover);
    wd->hover = NULL;
+   evas_object_smart_callback_call(obj, "dismissed", NULL);
 }
 
 EAPI Elm_Hoversel_Item *
