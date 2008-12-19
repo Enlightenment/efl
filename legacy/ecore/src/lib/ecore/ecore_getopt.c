@@ -1,9 +1,15 @@
-#include "Ecore_Getopt.h"
-#include <Ecore.h>
-#include <string.h>
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <stdio.h>
+#include <string.h>
 #include <stdarg.h>
 #include <ctype.h>
+
+#include <Ecore.h>
+
+#include "Ecore_Getopt.h"
 
 static const char *prog = NULL;
 static char **argv = NULL;
