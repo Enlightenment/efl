@@ -125,9 +125,9 @@ EAPI Eina_Accessor *eina_array_accessor_new (const Eina_Array *array);
  * @endcode
  */
 #define EINA_ARRAY_ITER_NEXT(array, index, item, iterator)		\
-  for (index = 0, iterator = (array)->data, item = iterator != NULL ? *(iterator) : NULL; \
-       index < eina_array_count_get(array);					\
-       ++(index), item = *(++(iterator)))
+  for (index = 0, iterator = (array)->data; \
+       (index < eina_array_count_get(array)) && ((item = *((iterator)++))); \
+       ++(index))
 
 #include "eina_inline_array.x"
 
