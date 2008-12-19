@@ -96,7 +96,8 @@ typedef enum _Ecore_Evas_Object_Associate_Flags
 {
   ECORE_EVAS_OBJECT_ASSOCIATE_BASE  = 0,
   ECORE_EVAS_OBJECT_ASSOCIATE_STACK = 1 << 0,
-  ECORE_EVAS_OBJECT_ASSOCIATE_LAYER = 1 << 1
+  ECORE_EVAS_OBJECT_ASSOCIATE_LAYER = 1 << 1,
+  ECORE_EVAS_OBJECT_ASSOCIATE_DEL = 1 << 2
 } Ecore_Evas_Object_Associate_Flags;
 
 #ifndef _ECORE_X_H
