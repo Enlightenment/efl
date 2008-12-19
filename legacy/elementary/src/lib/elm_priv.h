@@ -1,21 +1,16 @@
 #ifndef ELM_PRIV_H
 #define ELM_PRIV_H
-
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
-
 #ifdef HAVE_ELEMENTARY_X
-#include <Ecore_X.h>
+# include <Ecore_X.h>
 #endif
 #ifdef HAVE_ELEMENTARY_FB
-#include <Ecore_Fb.h>
+# include <Ecore_Fb.h>
 #endif
 #ifdef HAVE_ELEMENTARY_WINCE
-/* #include <Ecore_WinCE.h> */
-#endif
-#ifdef HAVE_ALLOCA_H
-#include <alloca.h>
+# include <Ecore_WinCE.h>
 #endif
 
 #include "els_pan.h"
