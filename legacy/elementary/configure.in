@@ -4,6 +4,8 @@ rm -f config.cache
 AC_INIT(elementary, 0.1.0.0, enlightenment-devel@lists.sourceforge.net)
 AC_PREREQ(2.52)
 AC_CONFIG_SRCDIR(configure.in)
+AC_CANONICAL_BUILD
+AC_CANONICAL_HOST
 
 AM_INIT_AUTOMAKE(1.6 dist-bzip2)
 AM_CONFIG_HEADER(elementary_config.h)
@@ -28,39 +30,82 @@ VMIC=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $3);}'`
 SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
+
 PKG_PROG_PKG_CONFIG
 
-PKG_CHECK_MODULES([ELEMENTARY], [
-   eina-0
-   eet
-   evas
-   ecore
-   ecore-evas
-   ecore-job
-   ecore-txt
-   ecore-file
-   edje
-   edbus
-   ])
+lt_enable_auto_import=""
+ELM_UNIX_DEF="#undef"
+ELM_WIN32_DEF="#undef"
+ELM_WINCE_DEF="#undef"
+case "$host_os" in
+   mingw32* | cegcc*)
+      PKG_CHECK_MODULES([EVIL], [evil])
+      AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed.])
+      dnl needed for correct definition of EAPI
+      AC_DEFINE(ELEMENTARY_BUILD, 1, [Define to mention that evas is built])
+      lt_enable_auto_import="-Wl,--enable-auto-import"
+      ELM_WINCE_DEF="#define"
+      ;;
+   mingw*)
+      PKG_CHECK_MODULES([EVIL], [evil])
+      AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed.])
+      dnl needed for correct definition of EAPI
+      AC_DEFINE(ELEMENTARY_BUILD, 1, [Define to mention that evas is built])
+      lt_enable_auto_import="-Wl,--enable-auto-import"
+      ELM_WIN32_DEF="#define"
+      ;;
+   *)
+      ELM_UNIX_DEF="#define"
+      ;;
+esac
+AC_SUBST(lt_enable_auto_import)
+AC_SUBST(ELM_UNIX_DEF)
+AC_SUBST(ELM_WIN32_DEF)
+AC_SUBST(ELM_WINCE_DEF)
+
+PKG_CHECK_MODULES([ELEMENTARY],
+   [
+    eina-0
+    eet
+    evas
+    ecore
+    ecore-evas
+    ecore-job
+    ecore-txt
+    ecore-file
+    edje
+   ]
+)
 
 have_elementary_x="no"
-PKG_CHECK_MODULES([ELEMENTARY_X], [ecore-x], [
-      AC_DEFINE(HAVE_ELEMENTARY_X, 1, [X11 support for Elementary])
-      have_elementary_x="yes"
-   ], [
-      have_elementary_x="no"
-   ])
-
-AC_SUBST(ELEMENTARY_X_CFLAGS)
-AC_SUBST(ELEMENTARY_X_LIBS)
+PKG_CHECK_MODULES([ELEMENTARY_X],
+   [ecore-x],
+   [
+    AC_DEFINE(HAVE_ELEMENTARY_X, 1, [X11 support for Elementary])
+    have_elementary_x="yes"
+   ],
+   [have_elementary_x="no"]
+)
 
 have_elementary_fb="no"
-PKG_CHECK_MODULES([ELEMENTARY_FB], [ecore-fb], [
-      AC_DEFINE(HAVE_ELEMENTARY_FB, 1, [FB support for Elementary])
-      have_elementary_fb="yes"
-   ], [
-      have_elementary_fb="no"
-   ])
+PKG_CHECK_MODULES([ELEMENTARY_FB],
+   [ecore-fb],
+   [
+    AC_DEFINE(HAVE_ELEMENTARY_FB, 1, [FB support for Elementary])
+    have_elementary_fb="yes"
+   ],
+   [have_elementary_fb="no"]
+)
+
+have_elementary_wince="no"
+PKG_CHECK_MODULES([ELEMENTARY_WINCE],
+   [ecore-wince],
+   [
+    AC_DEFINE(HAVE_ELEMENTARY_WINCE, 1, [Windows CE support for Elementary])
+    have_elementary_wince="yes"
+   ],
+   [have_elementary_wince="no"]
+)
 
 my_libs="-lm"
 AC_SUBST(my_libs)
@@ -70,6 +115,7 @@ Makefile
 elementary.pc
 src/Makefile
 src/lib/Makefile
+src/lib/Elementary.h
 src/bin/Makefile
 data/Makefile
 data/themes/Makefile
@@ -93,6 +139,7 @@ echo
 echo "Engines:"
 echo "  X11...........: ${have_elementary_x}"
 echo "  Framebuffer...: ${have_elementary_fb}"
+echo "  Windows CE....: ${have_elementary_wince}"
 echo
 echo "------------------------------------------------------------------------"
 echo

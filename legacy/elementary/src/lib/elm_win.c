@@ -83,6 +83,7 @@ _elm_win_obj_intercept_resize(void *data, Evas_Object *obj, Evas_Coord w, Evas_C
    switch (_elm_config->engine)
      {
       case ELM_SOFTWARE_FB:
+      case ELM_SOFTWARE_16_WINCE:
 	break;
       case ELM_SOFTWARE_X11:
       case ELM_SOFTWARE_16_X11:
@@ -245,6 +246,7 @@ _elm_win_xwindow_get(Elm_Win *win)
 	if (win->ee) win->xwin = ecore_evas_software_x11_window_get(win->ee);
 	break;
       case ELM_SOFTWARE_FB:
+      case ELM_SOFTWARE_16_WINCE:
 	break;
       case ELM_SOFTWARE_16_X11:
 	if (win->ee) win->xwin = ecore_evas_software_x11_16_window_get(win->ee);
@@ -393,6 +395,9 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
       case ELM_OPENGL_X11:
 	win->ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 1, 1);
 	break;
+      case ELM_SOFTWARE_16_WINCE:
+	win->ee = ecore_evas_software_wince_fb_new(NULL, 0, 0, 1, 1);
+	break;
       default:
 	break;
      }
@@ -454,6 +459,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    
    switch (_elm_config->engine)
      {
+      case ELM_SOFTWARE_16_WINCE:
       case ELM_SOFTWARE_FB:
         ecore_evas_fullscreen_set(win->ee, 1);
 	break;

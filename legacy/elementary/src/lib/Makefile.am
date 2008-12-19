@@ -7,7 +7,10 @@ AM_CPPFLAGS = \
 -I$(top_srcdir) \
 -I$(top_srcdir)/src/lib \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@ELEMENTARY_CFLAGS@ @ELEMENTARY_X_CFLAGS@ @ELEMENTARY_FB_CFLAGS@
+@ELEMENTARY_CFLAGS@ \
+@ELEMENTARY_X_CFLAGS@ \
+@ELEMENTARY_FB_CFLAGS@ \
+@ELEMENTARY_WINCE_CFLAGS@
 
 lib_LTLIBRARIES = libelementary.la
 
@@ -54,11 +57,6 @@ els_icon.c \
 els_icon.h
 
 
-libelementary_la_CFLAGS = 
-libelementary_la_LIBADD = @my_libs@ @ELEMENTARY_LIBS@ @ELEMENTARY_X_LIBS@ @ELEMENTARY_FB_LIBS@
-libelementary_la_LDFLAGS = -version-info @version_info@
-libelementary_la_DEPENDENCIES = $(top_builddir)/elementary_config.h
-
-clean-local:
-	@rm -rf *.gcno
-	
+libelementary_la_CFLAGS =
+libelementary_la_LIBADD = @ELEMENTARY_LIBS@ @ELEMENTARY_X_LIBS@ @ELEMENTARY_FB_LIBS@ @ELEMENTARY_WINCE_LIBS@ @my_libs@
+libelementary_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@

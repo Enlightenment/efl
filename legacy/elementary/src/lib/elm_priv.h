@@ -1,13 +1,18 @@
 #ifndef ELM_PRIV_H
 #define ELM_PRIV_H
 
-#include "elementary_config.h"
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 
 #ifdef HAVE_ELEMENTARY_X
 #include <Ecore_X.h>
 #endif
 #ifdef HAVE_ELEMENTARY_FB
 #include <Ecore_Fb.h>
+#endif
+#ifdef HAVE_ELEMENTARY_WINCE
+/* #include <Ecore_WinCE.h> */
 #endif
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
@@ -27,7 +32,8 @@ typedef enum _Elm_Engine
      ELM_SOFTWARE_FB,
      ELM_SOFTWARE_16_X11,
      ELM_XRENDER_X11,
-     ELM_OPENGL_X11
+     ELM_OPENGL_X11,
+     ELM_SOFTWARE_16_WINCE
 } Elm_Engine;
 
 typedef struct _Elm_Config Elm_Config;

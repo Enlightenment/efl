@@ -1,3 +1,11 @@
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include <Elementary.h>
 #include "elm_priv.h"
 
@@ -107,6 +115,10 @@ elm_init(int argc, char **argv)
                  (!strcasecmp(elm_engine, "opengl-x11")) ||
                  (!strcasecmp(elm_engine, "opengl_x11")))
           _elm_config->engine = ELM_OPENGL_X11;
+        else if ((!strcasecmp(elm_engine, "wince-fb")) ||
+                 (!strcasecmp(elm_engine, "software-16-wince-fb")) ||
+                 (!strcasecmp(elm_engine, "software_16_wince_fb")))
+          _elm_config->engine = ELM_SOFTWARE_16_WINCE;
      }
    
    _elm_config->thumbscroll_enable = 1;
@@ -121,7 +133,8 @@ elm_init(int argc, char **argv)
    if ((_elm_config->engine == ELM_SOFTWARE_X11) ||
        (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
        (_elm_config->engine == ELM_XRENDER_X11) ||
-       (_elm_config->engine == ELM_OPENGL_X11))
+       (_elm_config->engine == ELM_OPENGL_X11) ||
+       (_elm_config->engine == ELM_SOFTWARE_16_WINCE))
      {
 #ifdef HAVE_ELEMENTARY_X
 	int val = 1000;
@@ -179,7 +192,8 @@ elm_shutdown(void)
    if ((_elm_config->engine == ELM_SOFTWARE_X11) ||
               (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
               (_elm_config->engine == ELM_XRENDER_X11) ||
-              (_elm_config->engine == ELM_OPENGL_X11))
+              (_elm_config->engine == ELM_OPENGL_X11) ||
+              (_elm_config->engine == ELM_SOFTWARE_16_WINCE))
      {
 #ifdef HAVE_ELEMENTARY_X
         ecore_event_handler_del(_elm_event_property_change);

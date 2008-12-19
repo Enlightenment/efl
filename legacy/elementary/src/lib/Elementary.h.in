@@ -16,6 +16,10 @@
  * 
  */
 
+@ELM_UNIX_DEF@ ELM_UNIX
+@ELM_WIN32_DEF@ ELM_WIN32
+@ELM_WINCE_DEF@ ELM_WINCE
+
 /* Standard headers for standard system calls etc. */
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,6 +54,34 @@
 #include <Ecore_Txt.h>
 #include <Ecore_File.h>
 #include <Edje.h>
+
+
+#ifdef EAPI
+# undef EAPI
+#endif
+
+#ifdef _WIN32
+# ifdef ELEMENTARY_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif /* ! DLL_EXPORT */
+# else
+#  define EAPI __declspec(dllimport)
+# endif /* ! EFL_EVAS_BUILD */
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI
+# endif
+#endif /* ! _WIN32 */
+
 
 /* allow usage from c++ */
 #ifdef __cplusplus
@@ -315,8 +347,8 @@ extern "C" {
    typedef enum _Elm_Icon_Type
      {
         ELM_ICON_NONE,
-        ELM_ICON_FILE,
-        ELM_ICON_STANDARD
+          ELM_ICON_FILE,
+          ELM_ICON_STANDARD
      } Elm_Icon_Type;
    typedef struct _Elm_Hoversel_Item Elm_Hoversel_Item;
    EAPI Evas_Object *elm_hoversel_add(Evas_Object *parent);
@@ -326,13 +358,17 @@ extern "C" {
    EAPI void         elm_hoversel_hover_end(Evas_Object *obj);
    EAPI Elm_Hoversel_Item *elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
    EAPI void         elm_hoversel_item_del(Elm_Hoversel_Item *item);
-
+   /* smart callbacks called:
+    */
+   
    typedef struct _Elm_Toolbar_Item Elm_Toolbar_Item;
    EAPI Evas_Object *elm_toolbar_add(Evas_Object *parent);
    EAPI Elm_Toolbar_Item *elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
    EAPI void         elm_toolbar_item_del(Elm_Toolbar_Item *item);
    EAPI void         elm_toolbar_item_select(Elm_Toolbar_Item *item);
    EAPI void         elm_toolbar_scrollable_set(Evas_Object *obj, Evas_Bool scrollable);
+   /* smart callbacks called:
+    */
 
   ////////////////////////////////////////////////////////////////////////////
  /// FIXME: TODO LIST ///////////////////////////////////////////////////////
