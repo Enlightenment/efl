@@ -1049,6 +1049,9 @@ evas_object_image_data_get(const Evas_Object *obj, Evas_Bool for_writing)
  * This function request the preload of the data image in the background. The
  * worked is queued before being processed.
  *
+ * If image data is already loaded, it will callback
+ * EVAS_CALLBACK_IMAGE_PRELOADED immediatelly and do nothing else.
+ *
  * If cancel is set, it will remove the image from the workqueue.
  *
  * @param obj The given image object.
@@ -1066,7 +1069,11 @@ evas_object_image_preload(const Evas_Object *obj, Evas_Bool cancel)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return ;
    MAGIC_CHECK_END();
-   if (!o->engine_data) return ;
+   if (!o->engine_data)
+     {
+	evas_object_inform_call_image_preloaded((Evas_Object *)obj);
+	return ;
+     }
    if (cancel)
      obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
 							      o->engine_data);

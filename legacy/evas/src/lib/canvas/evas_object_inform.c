@@ -38,3 +38,9 @@ evas_object_inform_call_changed_size_hints(Evas_Object *obj)
 {
    evas_object_event_callback_call(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, NULL);
 }
+
+void
+evas_object_inform_call_image_preloaded(Evas_Object *obj)
+{
+   evas_object_event_callback_call(obj, EVAS_CALLBACK_IMAGE_PRELOADED, NULL);
+}
