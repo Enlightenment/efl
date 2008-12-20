@@ -7,9 +7,6 @@
 # include <Evil.h>
 #endif
 
-#include "evas_common.h"
-#include "evas_private.h"
-
 #ifdef BUILD_FONT_LOADER_EET
 #include <Eet.h>
 #endif
@@ -17,6 +14,9 @@
 #ifdef HAVE_FONTCONFIG
 #include <fontconfig/fontconfig.h>
 #endif
+
+#include "evas_common.h"
+#include "evas_private.h"
 
 /* font dir cache */
 static Eina_Hash *font_dirs = NULL;

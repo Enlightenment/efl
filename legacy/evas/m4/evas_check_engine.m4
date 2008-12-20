@@ -311,7 +311,7 @@ evas_engine_[]$1[]_libs=""
 AC_CHECK_HEADERS([d3d9.h d3dx9.h.h],
    [
     have_dep="yes"
-    evas_engine_[]$1[]_libs="-ld3d9 -ld3dx9d"
+    evas_engine_[]$1[]_libs="-ld3d9 -ld3dx9 -lgdi32"
    ]
 )
 
@@ -630,6 +630,7 @@ fi
 
 AM_CONDITIONAL(BUILD_ENGINE_[]UP, [test "x${have_evas_engine_[]DOWN}" = "xyes"])
 
-m4_popdef([UP], [DOWN])
+m4_popdef([UP])
+m4_popdef([DOWN])
 
 ])

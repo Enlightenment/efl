@@ -6,132 +6,87 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define EVAS_INLINE_ARRAY_H  // We dont need that and it is buggy
+
 #include "evas_common.h"
+#include "evas_private.h"
 
+#ifdef __cplusplus
+}
+#endif
 
-typedef struct _Outbuf                   Outbuf;
-typedef struct _Direct3D_Output_Buffer   Direct3D_Output_Buffer;
+//#define ENABLE_LOG_PRINTF
+#ifdef ENABLE_LOG_PRINTF
+#define Log(str, ...) printf("D3D "str"\n", __VA_ARGS__)
+#else
+#define Log(str, ...)
+#endif
 
-
-enum _Outbuf_Depth
-{
-   OUTBUF_DEPTH_NONE,
-   OUTBUF_DEPTH_INHERIT,
-   OUTBUF_DEPTH_RGB_16BPP_565_565_DITHERED,
-   OUTBUF_DEPTH_RGB_16BPP_555_555_DITHERED,
-   OUTBUF_DEPTH_RGB_16BPP_444_444_DITHERED,
-   OUTBUF_DEPTH_RGB_16BPP_565_444_DITHERED,
-   OUTBUF_DEPTH_RGB_32BPP_888_8888,
-   OUTBUF_DEPTH_LAST
-};
-typedef enum   _Outbuf_Depth             Outbuf_Depth;
-
-
-struct _Outbuf
-{
-   int             width;
-   int             height;
-   int             rot;
-   Outbuf_Depth    depth;
-
-   struct {
-      struct {
-         HWND                window;
-         LPDIRECT3D9         object;
-         LPDIRECT3DDEVICE9   device;
-         LPD3DXSPRITE        sprite;
-         LPDIRECT3DTEXTURE9  texture;
-         int                 depth;
-      } d3d;
-      struct {
-         DATA32    r, g, b;
-      } mask;
-
-      /* a list of pending regions to write to the target */
-      Eina_List   *pending_writes;
-   } priv;
-};
-
-struct _Direct3D_Output_Buffer
-{
-   void *image;
-   int   x;
-   int   y;
-   int   width;
-   int   height;
-   int   depth;
-   int   pitch;
-};
-
+typedef void * Direct3DDeviceHandler;
+typedef void * Direct3DImageHandler;
+typedef void * Direct3DFontGlyphHandler;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+// Main engine functions
 
-/* Outbuf functions */
-void         evas_direct3d_outbuf_init(void);
-void         evas_direct3d_outbuf_free(Outbuf *buf);
-Outbuf      *evas_direct3d_outbuf_setup_d3d(int                width,
-                                            int                height,
-                                            int                rotation,
-                                            Outbuf_Depth       depth,
-                                            HWND               window,
-                                            LPDIRECT3D9        object,
-                                            LPDIRECT3DDEVICE9  device,
-                                            LPD3DXSPRITE       sprite,
-                                            LPDIRECT3DTEXTURE9 texture,
-                                            int                w_depth);
-RGBA_Image  *evas_direct3d_outbuf_new_region_for_update(Outbuf *buf,
-                                                        int x,
-                                                        int y,
-                                                        int width,
-                                                        int height,
-                                                        int *cx,
-                                                        int *cy,
-                                                        int *cw,
-                                                        int *ch);
-void         evas_direct3d_outbuf_free_region_for_update(Outbuf     *buf,
-                                                         RGBA_Image *update);
-void         evas_direct3d_outbuf_flush(Outbuf *buf);
-void         evas_direct3d_outbuf_push_updated_region(Outbuf     *buf,
-                                                      RGBA_Image *update,
-                                                      int         x,
-                                                      int         y,
-                                                      int         width,
-                                                      int         height);
-void         evas_direct3d_outbuf_reconfigure(Outbuf      *buf,
-                                              int          width,
-                                              int          height,
-                                              int          rotation,
-                                              Outbuf_Depth depth);
-int          evas_direct3d_outbuf_width_get(Outbuf *buf);
-int          evas_direct3d_outbuf_height_get(Outbuf *buf);
-Outbuf_Depth evas_direct3d_outbuf_depth_get(Outbuf *buf);
-int          evas_direct3d_outbuf_rot_get(Outbuf *buf);
-
-/* Output Buffer functions */
-Direct3D_Output_Buffer *evas_direct3d_output_buffer_new(int   depth,
-                                                        int   width,
-                                                        int   height,
-                                                        void *data);
-void   evas_direct3d_output_buffer_free(Direct3D_Output_Buffer *d3dob);
-void   evas_direct3d_output_buffer_paste(Direct3D_Output_Buffer *d3dob,
-                                         DATA8                  *d3d_data,
-                                         int                     d3d_width,
-                                         int                     d3d_height,
-                                         int                     d3d_pitch,
-                                         int                     x,
-                                         int                     y);
-DATA8 *evas_direct3d_output_buffer_data(Direct3D_Output_Buffer *d3dob,
-                                        int                    *bytes_per_line_ret);
-int    evas_direct3d_output_buffer_depth(Direct3D_Output_Buffer *d3dob);
+Direct3DDeviceHandler evas_direct3d_init(HWND window, int depth, int fullscreen);
+void         evas_direct3d_free(Direct3DDeviceHandler d3d);
+void         evas_direct3d_render_all(Direct3DDeviceHandler d3d);
+void         evas_direct3d_resize(Direct3DDeviceHandler d3d, int width, int height);
+void         evas_direct3d_set_fullscreen(Direct3DDeviceHandler d3d,
+   int width, int height, int fullscreen);
+void         evas_direct3d_set_layered(Direct3DDeviceHandler d3d, int layered,
+   int mask_width, int mask_height, unsigned char *mask);
 
 
-int    evas_direct3d_masks_get(Outbuf *buf);
-void  *evas_direct3d_lock(Outbuf *buf, int *d3d_width, int *d3d_height, int *d3d_pitch);
-void   evas_direct3d_unlock(Outbuf *buf);
+// Context manipulations
 
+void         evas_direct3d_context_color_set(Direct3DDeviceHandler d3d, int r, int g, int b, int a);
+void         evas_direct3d_context_set_multiplier(Direct3DDeviceHandler d3d, int r, int g, int b, int a);
+
+// Simple objects
+
+void         evas_direct3d_line_draw(Direct3DDeviceHandler d3d, int x1, int y1, int x2, int y2);
+void         evas_direct3d_rectangle_draw(Direct3DDeviceHandler d3d, int x, int y, int w, int h);
+
+// Images
+
+Direct3DImageHandler evas_direct3d_image_load(Direct3DDeviceHandler d3d,
+   const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo);
+Direct3DImageHandler evas_direct3d_image_new_from_data(Direct3DDeviceHandler d3d,
+   int w, int h, DWORD *image_data, int alpha, int cspace);
+Direct3DImageHandler evas_direct3d_image_new_from_copied_data(Direct3DDeviceHandler d3d,
+   int w, int h, DWORD *image_data, int alpha, int cspace);
+void evas_direct3d_image_free(Direct3DDeviceHandler d3d, Direct3DImageHandler image);
+void evas_direct3d_image_data_put(Direct3DDeviceHandler d3d, Direct3DImageHandler image,
+   DWORD *image_data);
+void evas_direct3d_image_data_get(Direct3DDeviceHandler d3d, Direct3DImageHandler image,
+   int to_write, DATA32 **image_data);
+void evas_direct3d_image_draw(Direct3DDeviceHandler d3d, Direct3DImageHandler image,
+   int src_x, int src_y, int src_w, int src_h,
+   int dst_x, int dst_y, int dst_w, int dst_h, int smooth);
+void evas_direct3d_image_size_get(Direct3DImageHandler image, int *w, int *h);
+void evas_direct3d_image_border_set(Direct3DDeviceHandler d3d, Direct3DImageHandler image,
+   int l, int r, int t, int b);
+void evas_direct3d_image_border_get(Direct3DDeviceHandler d3d, Direct3DImageHandler image,
+   int *l, int *r, int *t, int *b);
+
+// Fonts
+
+Direct3DFontGlyphHandler evas_direct3d_font_texture_new(Direct3DDeviceHandler d3d,
+   RGBA_Font_Glyph *fg);
+void evas_direct3d_font_texture_free(Direct3DFontGlyphHandler ft);
+void evas_direct3d_font_texture_draw(Direct3DDeviceHandler d3d, void *dest, void *context,
+   RGBA_Font_Glyph *fg, int x, int y);
+void evas_direct3d_select_or_create_font(Direct3DDeviceHandler d3d, void *font);
+void evas_direct3d_font_free(Direct3DDeviceHandler d3d, void *font);
 
 #ifdef __cplusplus
 }

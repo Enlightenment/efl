@@ -304,7 +304,8 @@ fi
 
 AM_CONDITIONAL(BUILD_LOADER_[]UP, [test "x${have_evas_image_loader_[]DOWN}" = "xyes"])
 
-m4_popdef([UP], [DOWN])
+m4_popdef([UP])
+m4_popdef([DOWN])
 
 ])
 
