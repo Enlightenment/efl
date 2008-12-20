@@ -906,7 +906,11 @@ evas_cache_image_preload_data(Image_Entry *im, const void *target)
    assert(im);
    assert(im->cache);
 
-   if (im->flags.loaded) return ;
+   if (im->flags.loaded)
+     {
+	evas_async_events_put(target, EVAS_CALLBACK_IMAGE_PRELOADED, NULL, evas_object_event_callback_call);
+	return ;
+     }
 
    cache = im->cache;
 

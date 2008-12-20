@@ -1058,7 +1058,7 @@ evas_object_image_data_get(const Evas_Object *obj, Evas_Bool for_writing)
  * @param cancel 0 means add to the workqueue, 1 remove it.
  */
 EAPI void
-evas_object_image_preload(const Evas_Object *obj, Evas_Bool cancel)
+evas_object_image_preload(Evas_Object *obj, Evas_Bool cancel)
 {
    Evas_Object_Image *o;
 
@@ -1071,7 +1071,7 @@ evas_object_image_preload(const Evas_Object *obj, Evas_Bool cancel)
    MAGIC_CHECK_END();
    if (!o->engine_data)
      {
-	evas_object_inform_call_image_preloaded((Evas_Object *)obj);
+	evas_object_inform_call_image_preloaded(obj);
 	return ;
      }
    if (cancel)

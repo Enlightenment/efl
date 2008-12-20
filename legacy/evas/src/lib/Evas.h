@@ -532,7 +532,7 @@ extern "C" {
    EAPI Evas_Bool         evas_object_image_alpha_get       (const Evas_Object *obj);
    EAPI void              evas_object_image_smooth_scale_set(Evas_Object *obj, Evas_Bool smooth_scale);
    EAPI Evas_Bool         evas_object_image_smooth_scale_get(const Evas_Object *obj);
-   EAPI void              evas_object_image_preload         (const Evas_Object *obj, Evas_Bool cancel);
+   EAPI void              evas_object_image_preload         (Evas_Object *obj, Evas_Bool cancel);
    EAPI void              evas_object_image_reload          (Evas_Object *obj);
    EAPI Evas_Bool         evas_object_image_save            (const Evas_Object *obj, const char *file, const char *key, const char *flags);
    EAPI Evas_Bool         evas_object_image_pixels_import          (Evas_Object *obj, Evas_Pixel_Import_Source *pixels);
