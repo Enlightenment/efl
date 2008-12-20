@@ -1208,27 +1208,26 @@ edje_extern_object_aspect_set(Evas_Object *obj, Edje_Aspect_Control aspect, Evas
      }
 }
 
-
-static const struct edje_box_layout_builtin {
+struct edje_box_layout_builtin {
    const char *name;
    Evas_Object_Box_Layout cb;
-} _edje_box_layout_builtin[] = {
-  /* KEEP SORTED AND UPDATE OFFSETS BELOW AT _edje_box_layout_builtin_find() */
-  {"horizontal", evas_object_box_layout_horizontal},
-  {"horizontal_flow", evas_object_box_layout_flow_horizontal},
-  {"horizontal_homogeneous", evas_object_box_layout_homogeneous_horizontal},
-  {"horizontal_max", evas_object_box_layout_homogeneous_max_size_horizontal},
-  {"stack", evas_object_box_layout_stack},
-  {"vertical", evas_object_box_layout_vertical},
-  {"vertical_flow", evas_object_box_layout_flow_vertical},
-  {"vertical_homogeneous", evas_object_box_layout_homogeneous_vertical},
-  {"vertical_max", evas_object_box_layout_homogeneous_max_size_vertical},
-  {NULL, NULL}
 };
 
 static Evas_Object_Box_Layout
 _edje_box_layout_builtin_find(const char *name)
 {
+   const struct edje_box_layout_builtin _edje_box_layout_builtin[] = {
+     {"horizontal", evas_object_box_layout_horizontal},
+     {"horizontal_flow", evas_object_box_layout_flow_horizontal},
+     {"horizontal_homogeneous", evas_object_box_layout_homogeneous_horizontal},
+     {"horizontal_max", evas_object_box_layout_homogeneous_max_size_horizontal},
+     {"stack", evas_object_box_layout_stack},
+     {"vertical", evas_object_box_layout_vertical},
+     {"vertical_flow", evas_object_box_layout_flow_vertical},
+     {"vertical_homogeneous", evas_object_box_layout_homogeneous_vertical},
+     {"vertical_max", evas_object_box_layout_homogeneous_max_size_vertical},
+     {NULL, NULL}
+   };
    const struct edje_box_layout_builtin *base;
 
    switch (name[0])
