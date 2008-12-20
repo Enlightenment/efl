@@ -596,7 +596,7 @@ ECORE_EVAS_CHECK_MODULE([software-ddraw],
   [Software DirectDraw],
   $have_ecore_win32)
 
-want_ecore_evas_direct3d="auto"
+want_ecore_evas_direct3d="yes"
 ECORE_EVAS_CHECK_MODULE([direct3d],
   [$want_ecore_evas_direct3d],
   [Direct3d],

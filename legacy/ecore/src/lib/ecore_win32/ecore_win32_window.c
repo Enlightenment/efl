@@ -647,8 +647,6 @@ ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
 {
    struct _Ecore_Win32_Window *ew;
    HWND                        w;
-   int                         width;
-   int                         height;
 
    if (!window) return;
 
@@ -657,35 +655,33 @@ ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
        ((!ew->fullscreen) && (!on)))
      return;
 
-   ew->fullscreen = on;
+   ew->fullscreen = !!on;
    w = ew->window;
 
    if (on)
      {
+        DWORD style;
+
         if (!GetWindowRect(w, &ew->rect)) return;
-        ew->style = GetWindowLong(w, GWL_STYLE);
-        width = GetSystemMetrics (SM_CXSCREEN);
-        height = GetSystemMetrics (SM_CYSCREEN);
-        if (!SetWindowLong(w, GWL_STYLE,
-                           (ew->style & ~WS_OVERLAPPEDWINDOW) | WS_POPUP))
-          return;
-        if (!SetWindowLong(w, GWL_EXSTYLE, WS_EX_TOPMOST))
-          return;
-        SetWindowPos(w, HWND_TOPMOST, 0, 0, width, height,
-                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+        if (!(ew->style = GetWindowLong(w, GWL_STYLE))) return;
+        style = ew->style & ~WS_OVERLAPPEDWINDOW & ~WS_SIZEBOX;
+        style |= WS_VISIBLE | WS_POPUP;
+        if (!SetWindowLong(w, GWL_STYLE, style)) return;
+        if (!SetWindowLong(w, GWL_EXSTYLE, WS_EX_TOPMOST)) return;
+        SetWindowPos(w, HWND_TOPMOST, 0, 0,
+                     GetSystemMetrics (SM_CXSCREEN), GetSystemMetrics (SM_CYSCREEN),
+                     SWP_NOCOPYBITS | SWP_SHOWWINDOW);
      }
    else
      {
-        if (!SetWindowLong(w, GWL_STYLE, (ew->style & ~WS_POPUP) | WS_OVERLAPPEDWINDOW))
-          return;
-        if (!SetWindowLong(w, GWL_EXSTYLE, 0))
-          return;
+        if (!SetWindowLong(w, GWL_STYLE, ew->style)) return;
+        if (!SetWindowLong(w, GWL_EXSTYLE, 0)) return;
         SetWindowPos(w, HWND_NOTOPMOST,
                      ew->rect.left,
                      ew->rect.top,
                      ew->rect.right - ew->rect.left,
                      ew->rect.bottom - ew->rect.top,
-                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+                     SWP_NOCOPYBITS | SWP_SHOWWINDOW);
      }
 }
 
@@ -950,13 +946,14 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
        rect.right = rect.left + minimal_width;
      }
 
-   w->window = CreateWindow(ECORE_WIN32_WINDOW_CLASS, "",
-                            style,
-                            x, y,
-                            rect.right - rect.left,
-                            rect.bottom - rect.top,
-                            parent ? ((struct _Ecore_Win32_Window *)parent)->window : NULL,
-                            NULL, _ecore_win32_instance, NULL);
+   w->window = CreateWindowEx(0,
+                              ECORE_WIN32_WINDOW_CLASS, "",
+                              style,
+                              x, y,
+                              rect.right - rect.left,
+                              rect.bottom - rect.top,
+                              parent ? ((struct _Ecore_Win32_Window *)parent)->window : NULL,
+                              NULL, _ecore_win32_instance, NULL);
    if (!w->window)
      {
         free(w);

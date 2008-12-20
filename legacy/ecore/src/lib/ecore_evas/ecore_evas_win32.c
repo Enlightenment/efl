@@ -126,7 +126,7 @@ _ecore_evas_win32_idle_enter(void *data __UNUSED__)
    if (_ecore_evas_fps_debug)
      {
 	t2 = ecore_time_get();
-/* 	_ecore_evas_fps_debug_rendertime_add(t2 - t1); */
+/*	_ecore_evas_fps_debug_rendertime_add(t2 - t1); */
      }
    return 1;
 }
@@ -543,8 +543,8 @@ _ecore_evas_win32_event_window_configure(void *data __UNUSED__, int type __UNUSE
              ecore_evas_avoid_damage_set(ee, 1);
           }
         /* FIXME: to do... */
-/* 	if (ee->shaped) */
-/* 	  _ecore_evas_x_resize_shape(ee); */
+/*	if (ee->shaped) */
+/*	  _ecore_evas_x_resize_shape(ee); */
         if ((ee->expecting_resize.w > 0) &&
             (ee->expecting_resize.h > 0))
           {
@@ -909,17 +909,60 @@ _ecore_evas_win32_borderless_set(Ecore_Evas *ee, int on)
 static void
 _ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, int on)
 {
-   if ((ee->prop.fullscreen && on) ||
-      (!ee->prop.fullscreen && !on)) return;
+   struct _Ecore_Win32_Window *window;
+
+   if ((ee->engine.win32.state.fullscreen && on) ||
+      (!ee->engine.win32.state.fullscreen && !on))
+     return;
 
    ee->engine.win32.state.fullscreen = on;
-   ecore_win32_window_fullscreen_set(ee->engine.win32.window, ee->prop.borderless);
-   /* FIXME: what to do with that code ?? */
-/*    if (ee->should_be_visible) */
-/*      ecore_x_netwm_state_request_send(ee->engine.x.win, ee->engine.x.win_root, */
-/* 				      ECORE_X_WINDOW_STATE_FULLSCREEN, -1, on); */
-/*    else */
-/*      _ecore_evas_win32_state_update(ee); */
+   ee->prop.fullscreen = on;
+
+   window = (struct _Ecore_Win32_Window *)ee->engine.win32.window;
+
+   if (on != 0)
+   {
+      ecore_win32_window_shape_set(ee->engine.win32.window, 0, 0, NULL);
+      ecore_win32_window_fullscreen_set(ee->engine.win32.window, on);
+   }
+   else
+   {
+      ecore_win32_window_fullscreen_set(window, on);
+      ecore_win32_window_shape_set(window,
+                                   window->shape.width,
+                                   window->shape.height,
+                                   window->shape.mask);
+   }
+
+#ifdef BUILD_ECORE_EVAS_DIRECT3D
+   if (strcmp(ee->driver, "direct3d") == 0)
+     {
+        Evas_Engine_Info_Direct3D *einfo;
+
+        einfo = (Evas_Engine_Info_Direct3D *)evas_engine_info_get(ecore_evas_get(ee));
+        if (einfo != NULL)
+          {
+             einfo->info.fullscreen = !!on;
+             einfo->info.layered = window->shape.layered;
+             evas_engine_info_set(ecore_evas_get(ee), (Evas_Engine_Info *)einfo);
+          }
+     }
+#endif /* BUILD_ECORE_EVAS_DIRECT3D */
+
+#ifdef BUILD_ECORE_EVAS_SOFTWRE_DDRAW
+   if (strcmp(ee->driver, "software_ddraw") == 0)
+     {
+        Evas_Engine_Info_Software_DDraw *einfo;
+
+        einfo = (Evas_Engine_Info_Direct3D *)evas_engine_info_get(ecore_evas_get(ee));
+        if (einfo != NULL)
+          {
+             einfo->info.fullscreen = !!on;
+/*           einfo->info.layered = window->shape.layered; */
+             evas_engine_info_set(ecore_evas_get(ee), (Evas_Engine_Info *)einfo);
+          }
+     }
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_DDRAW */
 }
 
 
@@ -1012,7 +1055,7 @@ _ecore_evas_engine_software_ddraw_init(Ecore_Evas *ee)
 
    return 1;
 }
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_DDRAW */
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_DDRAW */
 
 #ifdef BUILD_ECORE_EVAS_DIRECT3D
 static int
@@ -1043,7 +1086,7 @@ _ecore_evas_engine_direct3d_init(Ecore_Evas *ee)
 
    return 1;
 }
-#endif /* ! BUILD_ECORE_EVAS_DIRECT3D */
+#endif /* BUILD_ECORE_EVAS_DIRECT3D */
 
 #ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
 static int
@@ -1053,13 +1096,13 @@ _ecore_evas_engine_opengl_glew_init(Ecore_Evas *ee)
    const char               *driver;
    int                       rmethod;
 
-   driver = "gl_glew";
+   driver = "opengl_glew";
 
    rmethod = evas_render_method_lookup(driver);
    if (!rmethod)
      return 0;
 
-   ee->driver = "opengl_glew";
+   ee->driver = driver;
    evas_output_method_set(ee->evas, rmethod);
 
    einfo = (Evas_Engine_Info_GL_Glew *)evas_engine_info_get(ee->evas);
@@ -1073,7 +1116,7 @@ _ecore_evas_engine_opengl_glew_init(Ecore_Evas *ee)
 
    return 1;
 }
-#endif /* ! BUILD_ECORE_EVAS_OPENGL_GLEW */
+#endif /* BUILD_ECORE_EVAS_OPENGL_GLEW */
 
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DIRECTDRAW
 static int
@@ -1104,8 +1147,10 @@ _ecore_evas_engine_software_16_ddraw_init(Ecore_Evas *ee)
         einfo->info.rotation = 0;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
+
+   return 1;
 }
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_DIRECTDRAW */
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_16_DIRECTDRAW */
 
 #ifdef BUILD_ECORE_EVAS_WIN32
 static Ecore_Evas *
@@ -1184,7 +1229,7 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_init)(Ecore_Evas *ee),
 
    return ee;
 }
-#endif /* ! BUILD_ECORE_EVAS_WIN32 */
+#endif /* BUILD_ECORE_EVAS_WIN32 */
 
 EAPI Ecore_Evas *
 ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
