@@ -53,7 +53,7 @@ cb_handoff(GstElement *fakesrc,
 	memcpy(ev->obj_data, GST_BUFFER_DATA(buffer), GST_BUFFER_SIZE(buffer));
 	buf[0] = GST_BUFFER_DATA(buffer);
 	buf[1] = buffer;
-	write(ev->fd_ev_write, buf, sizeof(buf));
+	ecore_pipe_write(ev->pipe, buf, sizeof(buf));
      }
    else
      {

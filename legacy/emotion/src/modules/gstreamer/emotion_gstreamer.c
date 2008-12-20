@@ -12,7 +12,7 @@
 
 /* Callbacks to get the eos */
 static int  _eos_timer_fct   (void *data);
-static int  _em_fd_ev_active (void *data, Ecore_Fd_Handler *fdh);
+static void _em_buffer_read(void *data, void *buffer, unsigned int nbyte);
 static void _for_each_tag    (GstTagList const* list, gchar const* tag, void *data);
 static void _free_metadata   (Emotion_Gstreamer_Metadata *m);
 
@@ -274,18 +274,8 @@ em_init(Evas_Object  *obj,
    ev->volume = 0.8;
 
    /* Create the file descriptors */
-   if (pipe(fds) == 0)
-     {
-	ev->fd_ev_read = fds[0];
-	ev->fd_ev_write = fds[1];
-	fcntl(ev->fd_ev_read, F_SETFL, O_NONBLOCK);
-	ev->fd_ev_handler = ecore_main_fd_handler_add(ev->fd_ev_read,
-						      ECORE_FD_READ,
-						      _em_fd_ev_active,
-						      ev, NULL, NULL);
-	ecore_main_fd_handler_active_set(ev->fd_ev_handler, ECORE_FD_READ);
-     }
-   else
+   ev->pipe = ecore_pipe_add (_em_buffer_read, ev);
+   if (!ev->pipe)
      goto failure_pipe;
 
    return 1;
@@ -310,10 +300,7 @@ em_shutdown(void *video)
    if (!ev)
      return 0;
 
-   ecore_main_fd_handler_del(ev->fd_ev_handler);
-
-   close(ev->fd_ev_write);
-   close(ev->fd_ev_read);
+   ecore_pipe_del(ev->pipe);
 
    /* FIXME: and the evas object ? */
    if (ev->obj_data) free(ev->obj_data);
@@ -1426,33 +1413,18 @@ _free_metadata(Emotion_Gstreamer_Metadata *m)
   free(m);
 }
 
-static int
-_em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
+static void
+_em_buffer_read(void *data, void *buf, unsigned int nbyte)
 {
-   int fd;
-   int len;
-   void *buf[2];
-   unsigned char *frame_data;
    Emotion_Gstreamer_Video *ev;
-   GstBuffer  *buffer;
+   Emotion_Video_Sink      *vsink;
+   GstBuffer               *buffer;
 
-   ev = data;
-   fd = ecore_main_fd_handler_fd_get(fdh);
-
-   while ((len = read(fd, buf, sizeof(buf))) > 0)
-     {
-	if (len == sizeof(buf))
-	  {
-	     Emotion_Video_Sink *vsink;
-
-	     frame_data = buf[0];
-	     buffer = buf[1];
-	     _emotion_frame_new(ev->obj);
-	     vsink = (Emotion_Video_Sink *)ecore_list_index_goto(ev->video_sinks, ev->video_sink_nbr);
-	     if (vsink) _emotion_video_pos_update(ev->obj, ev->position, vsink->length_time);
-	  }
-     }
-   return 1;
+   ev = (Emotion_Gstreamer_Video *)data;
+   buffer = *((GstBuffer **)buf);
+   _emotion_frame_new(ev->obj);
+   vsink = (Emotion_Video_Sink *)ecore_list_index_goto(ev->video_sinks, ev->video_sink_nbr);
+   if (vsink) _emotion_video_pos_update(ev->obj, ev->position, vsink->length_time);
 }
 
 static int

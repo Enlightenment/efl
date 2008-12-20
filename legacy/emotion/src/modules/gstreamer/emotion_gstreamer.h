@@ -84,9 +84,7 @@ struct _Emotion_Gstreamer_Video
    volatile int      seek_to;
    volatile int      get_poslen;
 
-   int               fd_ev_read;
-   int               fd_ev_write;
-   Ecore_Fd_Handler *fd_ev_handler;
+   Ecore_Pipe       *pipe;
 
    Emotion_Gstreamer_Metadata *metadata;
 
