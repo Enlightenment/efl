@@ -381,8 +381,6 @@ extern "C" {
   EAPI Eina_List *ecore_getopt_list_free(Eina_List *list);
 
   /* helper functions to be used with ECORE_GETOPT_CALLBACK_*() */
-
-  EAPI unsigned char ecore_getopt_callback_ecore_evas_list_engines(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage);
   EAPI unsigned char ecore_getopt_callback_geometry_parse(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage);
 
 

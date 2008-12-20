@@ -431,3 +431,42 @@ _ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj)
 
    _evas_object_associate_del(obj);
 }
+
+/**
+ * Helper ecore_getopt callback to list available Ecore_Evas engines.
+ *
+ * This will list all available engines except buffer, this is useful
+ * for applications to let user choose how they should create windows
+ * with ecore_evas_new().
+ *
+ * @c callback_data value is used as @c FILE* and says where to output
+ * messages, by default it is @c stdout. You can specify this value
+ * with ECORE_GETOPT_CALLBACK_FULL() or ECORE_GETOPT_CALLBACK_ARGS().
+ *
+ * If there is a boolean storage provided, then it is marked with 1
+ * when this option is executed.
+ */
+unsigned char
+ecore_getopt_callback_ecore_evas_list_engines(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage)
+{
+   Eina_List  *lst, *n;
+   const char *engine;
+   FILE *fp = data;
+
+   if (!fp)
+     fp = stdout;
+
+   lst = ecore_evas_engines_get();
+
+   fputs("supported engines:\n", fp);
+   EINA_LIST_FOREACH(lst, n, engine)
+     if (strcmp(engine, "buffer") != 0)
+       fprintf(fp, "\t%s\n", engine);
+
+   ecore_evas_engines_free(lst);
+
+   if (storage->boolp)
+     *storage->boolp = 1;
+
+   return 1;
+}

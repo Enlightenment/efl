@@ -49,6 +49,7 @@
  */
 
 #include <Evas.h>
+#include <Ecore_Getopt.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -317,6 +318,9 @@ EAPI void       *ecore_evas_window_get(const Ecore_Evas *ee);
 EAPI int          ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object_Associate_Flags flags);
 EAPI int          ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj);
 EAPI Evas_Object *ecore_evas_object_associate_get(const Ecore_Evas *ee);
+
+/* helper function to be used with ECORE_GETOPT_CALLBACK_*() */
+EAPI unsigned char ecore_getopt_callback_ecore_evas_list_engines(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage);
 
 #ifdef __cplusplus
 }
