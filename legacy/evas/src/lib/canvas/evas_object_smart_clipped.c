@@ -191,7 +191,7 @@ evas_object_smart_clipped_smart_member_del(Evas_Object *obj, Evas_Object *member
  * Evas_Smart_Class *my_class_new(void)
  * {
  *    static Evas_Smart_Class sc = {"MyClass"};
- *    if (parent_sc.name)
+ *    if (!parent_sc.name)
  *      {
  *         evas_object_smart_clipped_smart_set(&sc);
  *         parent_sc = sc;
