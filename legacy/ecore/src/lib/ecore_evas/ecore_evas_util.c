@@ -147,6 +147,13 @@ _ecore_evas_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_
 }
 
 static void
+_ecore_evas_obj_callback_del_dissociate(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Ecore_Evas *ee = data;
+   _ecore_evas_object_dissociate(ee, obj);
+}
+
+static void
 _ecore_evas_delete_request(Ecore_Evas *ee)
 {
    Evas_Object *obj = _ecore_evas_associate_get(ee);
@@ -342,10 +349,11 @@ _ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object
      (obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
       _ecore_evas_obj_callback_changed_size_hints, ee);
    if (flags & ECORE_EVAS_OBJECT_ASSOCIATE_DEL)
-     {
-        evas_object_event_callback_add
-          (obj, EVAS_CALLBACK_DEL, _ecore_evas_obj_callback_del, ee);
-     }
+     evas_object_event_callback_add
+       (obj, EVAS_CALLBACK_DEL, _ecore_evas_obj_callback_del, ee);
+   else
+     evas_object_event_callback_add
+       (obj, EVAS_CALLBACK_DEL, _ecore_evas_obj_callback_del_dissociate, ee);
 
    evas_object_intercept_move_callback_add
      (obj, _ecore_evas_obj_intercept_move, ee);
@@ -395,6 +403,8 @@ _ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj)
       _ecore_evas_obj_callback_changed_size_hints, ee);
    evas_object_event_callback_del_full
      (obj, EVAS_CALLBACK_DEL, _ecore_evas_obj_callback_del, ee);
+   evas_object_event_callback_del_full
+     (obj, EVAS_CALLBACK_DEL, _ecore_evas_obj_callback_del_dissociate, ee);
 
    evas_object_intercept_move_callback_del
      (obj, _ecore_evas_obj_intercept_move);
