@@ -1112,7 +1112,7 @@ eina_stringshare_strlen(const char *str)
    if (str[3] == '\0') return 3;
 
    node = _eina_stringshare_node_from_str(str);
-   return node->length;
+   return node->length - 1;
 }
 
 struct dumpinfo
