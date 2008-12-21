@@ -378,8 +378,8 @@ _ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object
      {
         ecore_evas_callback_delete_request_set(ee, _ecore_evas_delete_request);
         ecore_evas_callback_destroy_set(ee, _ecore_evas_destroy);
-        ecore_evas_callback_pre_free_set(ee, _ecore_evas_pre_free);
      }
+   ecore_evas_callback_pre_free_set(ee, _ecore_evas_pre_free);
    ecore_evas_callback_resize_set(ee, _ecore_evas_resize);
 
    _evas_object_associate_set(obj, ee);
