@@ -217,6 +217,7 @@ extern "C" {
    EAPI int          edje_object_file_set            (Evas_Object *obj, const char *file, const char *group);
    EAPI void         edje_object_file_get            (const Evas_Object *obj, const char **file, const char **group);
    EAPI int          edje_object_load_error_get      (const Evas_Object *obj);
+   EAPI const char  *edje_load_error_str             (int error);
 
    /* edje_program.c */
    EAPI void         edje_object_signal_callback_add (Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *obj, const char *emission, const char *source), void *data);

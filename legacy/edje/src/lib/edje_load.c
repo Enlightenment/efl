@@ -91,6 +91,37 @@ edje_object_load_error_get(const Evas_Object *obj)
    return ed->load_error;
 }
 
+EAPI const char *
+edje_load_error_str(int error)
+{
+   switch (error)
+     {
+      case EDJE_LOAD_ERROR_NONE:
+	 return "No Error";
+      case EDJE_LOAD_ERROR_GENERIC:
+	 return "Generic Error";
+      case EDJE_LOAD_ERROR_DOES_NOT_EXIST:
+	 return "File Does Not Exist";
+      case EDJE_LOAD_ERROR_PERMISSION_DENIED:
+	 return "Permission Denied";
+      case EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED:
+	 return "Resource Allocation Failed";
+      case EDJE_LOAD_ERROR_CORRUPT_FILE:
+	 return "Corrupt File";
+      case EDJE_LOAD_ERROR_UNKNOWN_FORMAT:
+	 return "Unknown Format";
+      case EDJE_LOAD_ERROR_INCOMPATIBLE_FILE:
+	 return "Incompatible File";
+      case EDJE_LOAD_ERROR_UNKNOWN_COLLECTION:
+	 return "Unknown Collection";
+      case EDJE_LOAD_ERROR_RECURSIVE_REFERENCE:
+	 return "Recursive Reference";
+      default:
+	 return "Unknown Error";
+     }
+}
+
+
 /** Get a list of groups in an edje file
  * @param file The path to the edje file
  *
