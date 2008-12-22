@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(INCLUDE)"
-				PreprocessorDefinitions="HAVE_ERRNO_H;SECURITY_WIN32;WIN32;_DEBUG;_WINDOWS;_USRDLL;EFL_EVIL_BUILD;DLL_EXPORT;snprintf=_snprintf_c;__CRT_INLINE=__inline;inline=__inline"
+				PreprocessorDefinitions="HAVE_ERRNO_H;SECURITY_WIN32;WIN32;_DEBUG;_WINDOWS;_USRDLL;EFL_EVIL_BUILD;DLL_EXPORT;snprintf=_snprintf_c;__CRT_INLINE=__inline;inline=__inline;__UNUSED__="
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -123,7 +123,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="$(INCLUDE)"
-				PreprocessorDefinitions="HAVE_ERRNO_H;SECURITY_WIN32;WIN32;NDEBUG;_WINDOWS;_USRDLL;EFL_EVIL_BUILD;DLL_EXPORT;snprintf=_snprintf_c;__CRT_INLINE=__inline;inline=__inline"
+				PreprocessorDefinitions="HAVE_ERRNO_H;SECURITY_WIN32;WIN32;NDEBUG;_WINDOWS;_USRDLL;EFL_EVIL_BUILD;DLL_EXPORT;snprintf=_snprintf_c;__CRT_INLINE=__inline;inline=__inline;__UNUSED__="
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -189,7 +189,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\lib\evil.c"
+				RelativePath="..\..\src\lib\evil_dirent.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_errno.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_fcntl.c"
 				>
 			</File>
 			<File
@@ -201,6 +209,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\lib\evil_langinfo.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_link_xp.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_main.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\lib\evil_mman.c"
 				>
 			</File>
@@ -209,7 +229,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\lib\evil_stdio.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\lib\evil_stdlib.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_string.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_time.c"
 				>
 			</File>
 			<File
@@ -220,6 +252,10 @@
 				RelativePath="..\..\src\lib\evil_util.c"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_uuid.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -227,7 +263,19 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\..\src\lib\dirent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\errno.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\lib\Evil.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_fcntl.h"
 				>
 			</File>
 			<File
@@ -235,47 +283,55 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\lib\evil_langinfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_main.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_private.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_stdio.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_stdlib.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_string.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_unistd.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_util.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\lib\fnmatch.h"
 				>
 			</File>
-			<Filter
-				Name="pwd"
+			<File
+				RelativePath="..\..\src\lib\sys\mman.h"
 				>
-				<File
-					RelativePath="..\..\src\lib\pwd\pwd.h"
-					>
-				</File>
-			</Filter>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\pwd.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
-		</Filter>
-		<Filter
-			Name="Common"
-			>
-			<File
-				RelativePath="..\common\dirent.c"
-				>
-			</File>
-			<File
-				RelativePath="..\common\dirent.h"
-				>
-			</File>
-			<Filter
-				Name="sys"
-				>
-				<File
-					RelativePath="..\common\sys\time.c"
-					>
-				</File>
-				<File
-					RelativePath="..\common\sys\time.h"
-					>
-				</File>
-			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(INCLUDE)"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;EFL_EVIL_DLFCN_BUILD;DLL_EXPORT;_POSIX_"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;EFL_EVIL_DLFCN_BUILD;DLL_EXPORT;_POSIX_;__UNUSED__="
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -117,7 +117,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="$(INCLUDE)"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;EFL_EVIL_DLFCN_BUILD;DLL_EXPORT;_POSIX_"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;EFL_EVIL_DLFCN_BUILD;DLL_EXPORT;_POSIX_;__UNUSED__="
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
