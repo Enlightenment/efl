@@ -249,6 +249,6 @@ ecore_plugin_available_get(Ecore_Path_Group *group)
 static Eina_Bool
 _hash_keys(const Eina_Hash *hash, const char *key, void *list)
 {
-   ecore_list_append(list, key);
+   ecore_list_append(list, strdup(key));
    return EINA_TRUE;
 }
