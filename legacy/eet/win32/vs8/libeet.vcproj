@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="libeet"
 	ProjectGUID="{689B4F2B-666D-439F-9BF3-1203D813DE3F}"
 	RootNamespace="libeet"
@@ -64,7 +64,7 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="false"
 				LinkLibraryDependencies="true"
-				AdditionalDependencies="zlib.lib jpeg.lib wsock32.lib libmman.lib libevil.lib"
+				AdditionalDependencies="zlib.lib jpeg.lib wsock32.lib libevil.lib eina.lib"
 				OutputFile="$(OutDir)\libeet.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(LIB); $(DebugLibraryDirectory)"
@@ -144,7 +144,7 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="false"
 				LinkLibraryDependencies="true"
-				AdditionalDependencies="zlib.lib jpeg.lib wsock32.lib libmman.lib libevil.lib"
+				AdditionalDependencies="zlib.lib jpeg.lib wsock32.lib libevil.lib eina.lib"
 				OutputFile="$(OutDir)\libeet.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(LIB); $(ReleaseLibraryDirectory)"
@@ -189,6 +189,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\src\lib\eet_cipher.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\lib\eet_data.c"
 				>
 			</File>
@@ -202,10 +206,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\lib\eet_lib.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\lib\eet_memfile.c"
 				>
 			</File>
 			<File
