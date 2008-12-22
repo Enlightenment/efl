@@ -436,6 +436,8 @@ static const Ecore_Evas_Engine_Func _ecore_sdl_engine_func =
    NULL,
    NULL,
    NULL,
+   NULL,
+   NULL,
    NULL
 };
 
@@ -456,8 +458,6 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    if (!ee) return NULL;
 
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
-
-   _ecore_evas_sdl_init(w, h);
 
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_sdl_engine_func;
 
@@ -510,6 +510,8 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    evas_key_lock_add(ee->evas, "Scroll_Lock");
 
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
+
+   _ecore_evas_sdl_init(w, h);
 
    SDL_ShowCursor(SDL_DISABLE);
 
