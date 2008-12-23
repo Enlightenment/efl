@@ -292,6 +292,8 @@ eina_benchmark_register(Eina_Benchmark *bench, const char *name, Eina_Benchmark_
  * immediatly. Otherwise, it returns the list of the names of each
  * test.
  */
+#define EINA_BENCHMARK_FILENAME_MASK "bench_%s_%s.gnuplot"
+#define EINA_BENCHMARK_DATA_MASK "bench_%s_%s.%s.data"
 EAPI Eina_Array *
 eina_benchmark_run(Eina_Benchmark *bench)
 {
@@ -299,12 +301,18 @@ eina_benchmark_run(Eina_Benchmark *bench)
    FILE *current_data;
    Eina_Array *ea;
    Eina_Run *run;
-   char buffer[PATH_MAX];
+   char *buffer;
    Eina_Bool first = EINA_FALSE;
+   int length;
 
    if (!bench) return NULL;
 
-   snprintf(buffer, PATH_MAX, "bench_%s_%s.gnuplot", bench->name, bench->run);
+   length = strlen(EINA_BENCHMARK_FILENAME_MASK) + strlen(bench->name) + strlen(bench->run);
+
+   buffer = alloca(sizeof (char) * length);
+   if (!buffer) return NULL;
+
+   snprintf(buffer, length, EINA_BENCHMARK_FILENAME_MASK, bench->name, bench->run);
 
    main_script = fopen(buffer, "w");
    if (!main_script) return NULL;
@@ -336,9 +344,17 @@ eina_benchmark_run(Eina_Benchmark *bench)
      {
 	Eina_Counter *counter;
 	char *result;
+	int tmp;
 	int i;
 
-	snprintf(buffer, PATH_MAX, "bench_%s_%s.%s.data", bench->name, bench->run, run->name);
+	tmp = strlen(EINA_BENCHMARK_DATA_MASK) + strlen(bench->name) + strlen(bench->run) + strlen(run->name);
+	if (tmp > length)
+	  {
+	     buffer = alloca(sizeof (char) * tmp);
+	     length = tmp;
+	  }
+
+	snprintf(buffer, length, EINA_BENCHMARK_DATA_MASK, bench->name, bench->run, run->name);
 
 	current_data = fopen(buffer, "w");
 	if (!current_data) continue ;

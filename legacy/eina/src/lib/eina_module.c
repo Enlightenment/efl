@@ -107,10 +107,16 @@ static void _dir_list_cb(const char *name, const char *path, void *data)
 	if (!strcmp(name + length - strlen(MODULE_EXTENSION),
 			MODULE_EXTENSION))
 	{
-		char file[PATH_MAX];
+		char *file;
 		Eina_Module *m;
+		int length;
 
-		snprintf(file, PATH_MAX, "%s/%s", path, name);
+		length = strlen(path) + strlen(name) + 2;
+
+		file = alloca(sizeof (char) * length);
+		if (!file) return ;
+
+		snprintf(file, length, "%s/%s", path, name);
 		m = eina_module_new(file);
 		if (!m)
 			return;

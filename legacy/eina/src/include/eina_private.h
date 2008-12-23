@@ -33,10 +33,6 @@
 #include "eina_iterator.h"
 #include "eina_accessor.h"
 
-#ifndef PATH_MAX
-# define PATH_MAX 4096
-#endif
-
 #ifndef MIN
 # define MIN(x, y) (((x) > (y)) ? (y) : (x))
 #endif
