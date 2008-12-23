@@ -870,6 +870,7 @@ evas_cache_image_load_data(Image_Entry *im)
 
    assert(im);
    assert(im->cache);
+   cache = im->cache;
 
    if (im->flags.loaded) return ;
 
@@ -878,8 +879,6 @@ evas_cache_image_load_data(Image_Entry *im)
    _evas_cache_image_entry_preload_remove(cache, im);
    if (im->flags.loaded) return ;
 #endif
-
-   cache = im->cache;
 
    error = cache->func.load(im);
 
@@ -908,7 +907,8 @@ evas_cache_image_preload_data(Image_Entry *im, const void *target)
 
    if (im->flags.loaded)
      {
-	evas_async_events_put(target, EVAS_CALLBACK_IMAGE_PRELOADED, NULL, evas_object_event_callback_call);
+	evas_async_events_put(target, EVAS_CALLBACK_IMAGE_PRELOADED, NULL,
+			      (void (*)(void*, Evas_Callback_Type, void*))evas_object_event_callback_call);
 	return ;
      }
 
@@ -930,6 +930,7 @@ evas_cache_image_preload_cancel(Image_Entry *im)
 
    assert(im);
    assert(im->cache);
+   cache = im->cache;
 
    _evas_cache_image_entry_preload_remove(cache, im);
 #else
@@ -1023,7 +1024,7 @@ evas_cache_private_set(Evas_Cache_Image *cache, const void *data)
 {
    assert(cache);
 
-   cache->data = data;
+   cache->data = (void *)data;
 }
 
 EAPI DATA32 *
@@ -1078,11 +1079,13 @@ _evas_cache_background_load(void *data)
 	       }
 
 	     current->flags.preload = 0;
+
+	     evas_async_events_put(current->target, EVAS_CALLBACK_IMAGE_PRELOADED, NULL,
+				   (void (*)(void*, Evas_Callback_Type, void*))evas_object_event_callback_call);
+
+	     current = NULL;
 	  }
 
-	evas_async_events_put(current->target, EVAS_CALLBACK_IMAGE_PRELOADED, NULL, evas_object_event_callback_call);
-
-	current = NULL;
 	pthread_cond_signal(&cond);
      }
 
