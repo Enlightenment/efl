@@ -50,7 +50,7 @@ static inline int32_t eina_f16p16_int_to(Eina_F16p16 v)
 static inline Eina_F16p16 eina_f16p16_float_from(float v)
 {
 	Eina_F16p16 r;
-	r = (Eina_F16p16)(v * 65536.0 + (v < 0 ? -0.5 : 0.5));
+	r = (Eina_F16p16)(v * 65536.0f + (v < 0 ? -0.5f : 0.5f));
 	return r;
 }
 /**
@@ -60,7 +60,7 @@ static inline Eina_F16p16 eina_f16p16_float_from(float v)
 static inline float eina_f16p16_float_to(Eina_F16p16 v)
 {
 	float r;
-	r = v / 65536.0;
+	r = v / 65536.0f;
 	return r;
 }
 /**
