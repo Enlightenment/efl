@@ -138,8 +138,9 @@ eina_file_dir_list(const char *dir, Eina_Bool recursive, Eina_File_Dir_List_Cb c
 			strcpy(path, dir);
 			strcat(path, "/");
 			strcat(path, de->d_name);
-
+#ifndef sun
 			if (de->d_type == DT_UNKNOWN) {
+#endif
 				struct stat st;
 
 				if (stat(path, &st))
@@ -147,9 +148,11 @@ eina_file_dir_list(const char *dir, Eina_Bool recursive, Eina_File_Dir_List_Cb c
 
 				if (!S_ISDIR(st.st_mode))
 					continue ;
+#ifndef sun
 			} else if (de->d_type != DT_DIR) {
 				continue ;
 			}
+#endif
 
 			eina_file_dir_list(path, recursive, cb, data);
 		}
