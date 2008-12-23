@@ -158,7 +158,7 @@ eina_accessor_over(Eina_Accessor *accessor,
 {
    void *container;
    void *data;
-   unsigned int i = start;
+   unsigned int i;
 
    EINA_MAGIC_CHECK_ACCESSOR(accessor);
 

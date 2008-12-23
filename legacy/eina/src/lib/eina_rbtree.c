@@ -324,7 +324,7 @@ EAPI Eina_Rbtree *
 eina_rbtree_inline_remove(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_Node_Cb cmp, const void *data)
 {
    Eina_Rbtree head;
-   Eina_Rbtree *q, *p, *g;
+   Eina_Rbtree *q, *p;
    Eina_Rbtree *f = NULL;
    Eina_Rbtree_Direction dir;
 
@@ -334,13 +334,14 @@ eina_rbtree_inline_remove(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_
 
    dir = EINA_RBTREE_RIGHT;
    q = &head;
-   g = p = NULL;
+   p = NULL;
    q->son[EINA_RBTREE_RIGHT] = root;
 
    /* Search and push a red down */
    while (q->son[dir] != NULL)
      {
 	Eina_Rbtree_Direction last = dir;
+	Eina_Rbtree *g;
 
 	/* Update helpers */
 	g = p; p = q;

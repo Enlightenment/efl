@@ -102,7 +102,6 @@ _eina_rectangle_pool_find(Eina_Rectangle_Alloc *head, int poolw, int poolh, int 
 	Eina_Bool t2 = EINA_TRUE;
 	Eina_Bool t3 = EINA_TRUE;
 	Eina_Bool t4 = EINA_TRUE;
-	Eina_Bool intersects;
 
 	if ((rect->x + rect->w + w) > poolw) t1 = EINA_FALSE;
 	if ((rect->y + h) > poolh) t1 = EINA_FALSE;
@@ -113,9 +112,9 @@ _eina_rectangle_pool_find(Eina_Rectangle_Alloc *head, int poolw, int poolh, int 
 	if ((rect->x + w) > poolw) t4 = EINA_FALSE;
 	if ((rect->y - h) < 0) t4 = EINA_FALSE;
 
-	intersects = EINA_FALSE;
 	if (t1)
 	  {
+	     Eina_Bool intersects;
 	     /* 1. try here:
 	      * +----++--+
 	      * |AAAA||??|
@@ -128,9 +127,9 @@ _eina_rectangle_pool_find(Eina_Rectangle_Alloc *head, int poolw, int poolh, int 
 
 	     if (!intersects) goto on_intersect;
 	  }
-	intersects = EINA_FALSE;
 	if (t2)
 	  {
+	     Eina_Bool intersects;
 	     /* 2. try here:
 	      * +----+
 	      * |AAAA|
@@ -146,9 +145,9 @@ _eina_rectangle_pool_find(Eina_Rectangle_Alloc *head, int poolw, int poolh, int 
 
 	     if (!intersects) goto on_intersect;
 	  }
-	intersects = EINA_FALSE;
 	if (t3)
 	  {
+	     Eina_Bool intersects;
 	     /* 3. try here:
 	      * +--++----+
 	      * |??||AAAA|
@@ -161,9 +160,9 @@ _eina_rectangle_pool_find(Eina_Rectangle_Alloc *head, int poolw, int poolh, int 
 
 	     if (!intersects) goto on_intersect;
 	  }
-	intersects = EINA_FALSE;
 	if (t4)
 	  {
+	     Eina_Bool intersects;
 	     /* 2. try here:
 	      * +--+
 	      * |??|
