@@ -977,6 +977,7 @@ _smart_del(Evas_Object *obj)
    evas_object_del(sd->event_obj);
    if (sd->down.momentum_animator) ecore_animator_del(sd->down.momentum_animator);
    free(sd);
+   evas_object_smart_data_set(obj, NULL);
 }
 
 static void

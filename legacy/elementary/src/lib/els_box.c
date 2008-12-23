@@ -488,6 +488,7 @@ _smart_del(Evas_Object *obj)
      }
    evas_object_del(sd->clip);
    free(sd);
+   evas_object_smart_data_set(obj, NULL);
 }
 
 static void
@@ -501,6 +502,8 @@ _smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    if (!sd) return;
    dx = x - sd->x;
    dy = y - sd->y;
+   sd->x = x;
+   sd->y = y;
    for (l = sd->items; l; l = l->next)
      {
 	Evas_Coord ox, oy;
@@ -508,8 +511,6 @@ _smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 	evas_object_geometry_get(l->data, &ox, &oy, NULL, NULL);
 	evas_object_move(l->data, ox + dx, oy + dy);
      }
-   sd->x = x;
-   sd->y = y;
 }
 
 static void

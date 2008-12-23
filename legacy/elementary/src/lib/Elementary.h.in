@@ -425,6 +425,7 @@ extern "C" {
 // * page widget (for pushing/popping pages and going back and forward and flipping)
 // * slider widget
 // 
+// * carousel selector widget
 // * in-window dialog container widget
 // * separator widget (h/v)
 // * slide-open "panel" that can hold stuff and optionally scroll

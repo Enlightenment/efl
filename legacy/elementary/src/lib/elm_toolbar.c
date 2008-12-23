@@ -214,6 +214,7 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, voi
    _elm_theme_set(it->base, "toolbar", "item", "default");
    edje_object_signal_callback_add(it->base, "elm,action,click", "elm",
                                    _select, it);
+   elm_widget_sub_object_add(obj, it->base);
    if (it->icon)
      {
         edje_extern_object_min_size_set(it->icon, 
@@ -231,7 +232,6 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, voi
    evas_object_size_hint_max_set(it->base, 9999, mh);
    _els_smart_box_pack_end(wd->bx, it->base);
    evas_object_show(it->base);
-   elm_widget_sub_object_add(obj, it->base);
    _sizing_eval(obj);
    return (Elm_Toolbar_Item *)it;
 }

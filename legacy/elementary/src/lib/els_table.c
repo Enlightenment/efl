@@ -823,6 +823,7 @@ _smart_del(Evas_Object *obj)
      }
    evas_object_del(sd->clip);
    free(sd);
+   evas_object_smart_data_set(obj, NULL);
 }
 
 static void
