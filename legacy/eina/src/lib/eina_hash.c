@@ -471,8 +471,11 @@ _eina_foreach_cb(const Eina_Hash *hash, Eina_Hash_Tuple *data, Eina_Hash_Foreach
 static void *
 _eina_hash_iterator_data_get_content(Eina_Iterator_Hash *it)
 {
+   Eina_Hash_El *stuff;
+
    EINA_MAGIC_CHECK_HASH_ITERATOR(it);
-   Eina_Hash_El *stuff = it->el;
+
+   stuff = it->el;
 
    if (!stuff) return NULL;
    return stuff->tuple.data;
@@ -481,8 +484,11 @@ _eina_hash_iterator_data_get_content(Eina_Iterator_Hash *it)
 static void *
 _eina_hash_iterator_key_get_content(Eina_Iterator_Hash *it)
 {
+   Eina_Hash_El *stuff;
+
    EINA_MAGIC_CHECK_HASH_ITERATOR(it);
-   Eina_Hash_El *stuff = it->el;
+
+   stuff = it->el;
 
    if (!stuff) return NULL;
    return (void *) stuff->tuple.key;
@@ -491,8 +497,11 @@ _eina_hash_iterator_key_get_content(Eina_Iterator_Hash *it)
 static Eina_Hash_Tuple *
 _eina_hash_iterator_tuple_get_content(Eina_Iterator_Hash *it)
 {
+   Eina_Hash_El *stuff;
+
    EINA_MAGIC_CHECK_HASH_ITERATOR(it);
-   Eina_Hash_El *stuff = it->el;
+
+   stuff = it->el;
 
    if (!stuff) return NULL;
    return &stuff->tuple;
