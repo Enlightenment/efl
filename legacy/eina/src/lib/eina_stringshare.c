@@ -636,8 +636,8 @@ _eina_stringshare_node_init(Eina_Stringshare_Node *node, const char *str, int sl
 static Eina_Stringshare_Head *
 _eina_stringshare_head_alloc(int slen)
 {
-   Eina_Stringshare_Head *head;
-   const unsigned int head_size = (char *)head->builtin_node.str - (char *)head;
+   Eina_Stringshare_Head *head, t;
+   const unsigned int head_size = (char *)&(t.builtin_node.str) - (char *)&t;
 
    head = malloc(head_size + slen);
    if (!head)
@@ -749,8 +749,8 @@ _eina_stringshare_find_hash(Eina_Stringshare_Head *bucket, int hash)
 static Eina_Stringshare_Node *
 _eina_stringshare_node_alloc(int slen)
 {
-   Eina_Stringshare_Node *node;
-   const unsigned int node_size = (char *)node->str - (char *)node;
+   Eina_Stringshare_Node *node, t;
+   const unsigned int node_size = (char *)&(t.str) - (char *)&t;
 
    node = malloc(node_size + slen);
    if (!node)
@@ -953,8 +953,8 @@ eina_stringshare_add(const char *str)
 static Eina_Stringshare_Node *
 _eina_stringshare_node_from_str(const char *str)
 {
-   Eina_Stringshare_Node *node;
-   const unsigned int offset = (char *)node->str - (char *)node;
+   Eina_Stringshare_Node *node, t;
+   const unsigned int offset = (char *)&(t.str) - (char *)&t;
 
    node = (Eina_Stringshare_Node *)(str - offset);
    EINA_MAGIC_CHECK_STRINGSHARE_NODE(node);
