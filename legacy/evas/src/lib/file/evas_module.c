@@ -174,7 +174,7 @@ evas_module_init(void)
 		  em->handle = NULL;
 		  em->data = NULL;
                   em->loaded = 0;
-#if defined(HAVE_PTHREAD_H) && defined(BUILD_ASYNC_PRELOAD)
+#if defined(BUILD_PTHREAD) && defined(BUILD_ASYNC_PRELOAD)
 		  pthread_spin_init(&em->lock, PTHREAD_PROCESS_PRIVATE);
 #endif
 		  if (em->type == EVAS_MODULE_TYPE_ENGINE)
