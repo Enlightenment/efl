@@ -305,6 +305,10 @@ struct _Image_Entry
      void		*loader;
   } info;
 
+#ifdef BUILD_ASYNC_PRELOAD
+   pthread_mutex_t lock;
+#endif
+
   Image_Entry_Flags      flags;
 };
 
