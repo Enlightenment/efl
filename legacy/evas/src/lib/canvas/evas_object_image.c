@@ -264,6 +264,11 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
 	if ((o->cur.key) && (key) && (!strcmp(o->cur.key, key)))
 	  return;
      }
+
+   if (!o->engine_data)
+     obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
+							      o->engine_data);
+
    if (o->cur.file) eina_stringshare_del(o->cur.file);
    if (o->cur.key) eina_stringshare_del(o->cur.key);
    if (file) o->cur.file = eina_stringshare_add(file);
