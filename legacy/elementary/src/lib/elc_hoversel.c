@@ -71,9 +71,9 @@ _item_clicked(void *data, Evas_Object *obj, void *event_info)
 {
    Item *it = data;
    Evas_Object *obj2 = it->obj;
+   elm_hoversel_hover_end(obj2);
    if (it->func) it->func(it->data, obj2, NULL);
    evas_object_smart_callback_call(obj2, "selected", NULL);
-   elm_hoversel_hover_end(obj2);
 }
 
 static void

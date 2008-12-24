@@ -20,6 +20,9 @@ static void _parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _del_pre_hook(Evas_Object *obj)
 {
+   Widget_Data *wd = elm_widget_data_get(obj);
+   evas_object_event_callback_del(wd->entry, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+				  _changed_size_hints);
    elm_anchorblock_hover_end(obj);
    elm_anchorblock_hover_parent_set(obj, NULL);
 }

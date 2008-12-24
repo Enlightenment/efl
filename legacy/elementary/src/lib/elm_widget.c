@@ -58,14 +58,13 @@ _sub_obj_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
    if (obj == sd->resize_obj)
      {
         sd->resize_obj = NULL;
-        evas_object_smart_callback_call(sd->obj, "sub-object-del", obj);
      }
    else if (obj == sd->hover_obj) sd->hover_obj = NULL;
    else
      {
         sd->subobjs = eina_list_remove(sd->subobjs, obj);
-        evas_object_smart_callback_call(sd->obj, "sub-object-del", obj);
      }
+   evas_object_smart_callback_call(sd->obj, "sub-object-del", obj);
 }
 
 static void
@@ -640,12 +639,14 @@ _smart_del(Evas_Object *obj)
      {
 	evas_object_event_callback_del(sd->resize_obj, EVAS_CALLBACK_DEL, _sub_obj_del);
 	sd->resize_obj = NULL;
+        evas_object_smart_callback_call(sd->obj, "sub-object-del", sd->resize_obj);
 	evas_object_del(sd->resize_obj);
      }
    if (sd->hover_obj)
      {
 	evas_object_event_callback_del(sd->hover_obj, EVAS_CALLBACK_DEL, _sub_obj_del);
 	sd->hover_obj = NULL;
+        evas_object_smart_callback_call(sd->obj, "sub-object-del", sd->hover_obj);
 	evas_object_del(sd->hover_obj);
      }
    while (sd->subobjs)
@@ -653,6 +654,7 @@ _smart_del(Evas_Object *obj)
 	sobj = sd->subobjs->data;
 	sd->subobjs = eina_list_remove_list(sd->subobjs, sd->subobjs);
 	evas_object_event_callback_del(sobj, EVAS_CALLBACK_DEL, _sub_obj_del);
+        evas_object_smart_callback_call(sd->obj, "sub-object-del", sobj);
 	evas_object_del(sobj);
      }
    if (sd->del_func) sd->del_func(obj);

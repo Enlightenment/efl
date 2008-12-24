@@ -69,7 +69,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 	wd->content = NULL;
 	_sizing_eval(obj);
      }
-   if (sub == wd->icon)
+   else if (sub == wd->icon)
      {
 	evas_object_event_callback_del
 	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
@@ -137,8 +137,8 @@ elm_bubble_content_set(Evas_Object *obj, Evas_Object *content)
 	edje_object_part_swallow(wd->bbl, "elm.swallow.content", content);
 	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
-	_sizing_eval(obj);
      }
+   _sizing_eval(obj);
 }
 
 EAPI void
@@ -154,8 +154,8 @@ elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon)
 	edje_object_part_swallow(wd->bbl, "elm.swallow.icon", icon);
 	evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
-	_sizing_eval(obj);
      }
+   _sizing_eval(obj);
 }
 
 EAPI void
