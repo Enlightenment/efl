@@ -311,7 +311,7 @@ _emotion_frame_alloc(vo_driver_t *vo_driver)
    
    dv = (Emotion_Driver *)vo_driver;
 //   printf("emotion: _emotion_frame_alloc()\n");
-   fr = (Emotion_Frame *)malloc(sizeof(Emotion_Frame));
+   fr = (Emotion_Frame *)calloc(1, sizeof(Emotion_Frame));
    if (!fr) return NULL;
    
    fr->vo_frame.base[0]    = NULL;
