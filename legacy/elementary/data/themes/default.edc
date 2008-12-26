@@ -4437,6 +4437,22 @@ collections {
       images.image: "icon_arrow_right.png" COMP; parts { part { name: "base";
 	 description { state: "default" 0.0; aspect: 1.0 1.0;
 	    image.normal: "icon_arrow_right.png"; } } } }
+   group { name: "elm/icon/chat/default"; min: 32 32;
+      images.image: "icon_chat.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	    image.normal: "icon_chat.png"; } } } }
+   group { name: "elm/icon/clock/default"; min: 32 32;
+      images.image: "icon_clock.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	    image.normal: "icon_clock.png"; } } } }
+   group { name: "elm/icon/delete/default"; min: 32 32;
+      images.image: "icon_delete.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	    image.normal: "icon_delete.png"; } } } }
+   group { name: "elm/icon/edit/default"; min: 32 32;
+      images.image: "icon_edit.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	    image.normal: "icon_edit.png"; } } } }
    
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/toolbar/base/default";

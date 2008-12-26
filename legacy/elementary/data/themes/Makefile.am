@@ -90,7 +90,11 @@ icon_arrow_right.png \
 bt_dis_shine.png \
 icon_left_arrow.png \
 icon_right_arrow.png \
-toolbar_sel.png
+toolbar_sel.png \
+icon_chat.png \
+icon_clock.png \
+icon_delete.png \
+icon_edit.png
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
