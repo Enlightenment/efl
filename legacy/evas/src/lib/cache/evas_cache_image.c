@@ -255,6 +255,27 @@ _evas_cache_image_entry_new(Evas_Cache_Image *cache,
 }
 
 static void
+_evas_cache_image_entry_surface_alloc__locked(Evas_Cache_Image *cache,
+					      Image_Entry *ie,
+					      int wmin,
+					      int hmin)
+{
+   if (ie->allocated.w == wmin && ie->allocated.h == hmin)
+     return ;
+
+   if (cache->func.surface_alloc(ie, wmin, hmin))
+     {
+        wmin = 0;
+        hmin = 0;
+     }
+
+   ie->w = wmin;
+   ie->h = hmin;
+   ie->allocated.w = wmin;
+   ie->allocated.h = hmin;
+}
+
+static void
 _evas_cache_image_entry_surface_alloc(Evas_Cache_Image *cache,
                                       Image_Entry *ie,
                                       int w,
@@ -265,27 +286,14 @@ _evas_cache_image_entry_surface_alloc(Evas_Cache_Image *cache,
 
    wmin = w > 0 ? w : 1;
    hmin = h > 0 ? h : 1;
-   if (ie->allocated.w == wmin && ie->allocated.h == hmin)
-     return ;
 
 #ifdef BUILD_ASYNC_PRELOAD
    pthread_mutex_lock(&mutex_surface_alloc);
 #endif
-
-   if (cache->func.surface_alloc(ie, wmin, hmin))
-     {
-        wmin = 0;
-        hmin = 0;
-     }
-
+   _evas_cache_image_entry_surface_alloc__locked(cache, ie, wmin, hmin);
 #ifdef BUILD_ASYNC_PRELOAD
    pthread_mutex_unlock(&mutex_surface_alloc);
 #endif
-
-   ie->w = wmin;
-   ie->h = hmin;
-   ie->allocated.w = wmin;
-   ie->allocated.h = hmin;
 }
 
 #ifdef BUILD_ASYNC_PRELOAD
