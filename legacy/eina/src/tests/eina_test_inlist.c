@@ -107,7 +107,7 @@ START_TEST(eina_inlist_simple)
    fail_if(lst != (Eina_Inlist*) tmp);
 
    tmp = (Eina_Test_Inlist*) eina_inlist_find(lst, EINA_INLIST_GET(prev));
-   eina_inlist_remove(lst, EINA_INLIST_GET(tmp));
+   lst = eina_inlist_remove(lst, EINA_INLIST_GET(tmp));
    tmp = (Eina_Test_Inlist*) eina_inlist_find(lst, EINA_INLIST_GET(tmp));
    fail_if(tmp != NULL);
 

@@ -55,10 +55,10 @@ EAPI extern Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH;
 EAPI int eina_convert_init(void);
 EAPI int eina_convert_shutdown(void);
 
-EAPI int eina_convert_itoa(int n, char *s);
-EAPI int eina_convert_xtoa(unsigned int n, char *s);
-EAPI int eina_convert_dtoa(double d, char *des);
-EAPI Eina_Bool eina_convert_atod(const char *src, int length, long long *m, long *e);
+EAPI int eina_convert_itoa(int n, char *s)  EINA_ARG_NONNULL(2);
+EAPI int eina_convert_xtoa(unsigned int n, char *s) EINA_ARG_NONNULL(2);
+EAPI int eina_convert_dtoa(double d, char *des) EINA_ARG_NONNULL(2);
+EAPI Eina_Bool eina_convert_atod(const char *src, int length, long long *m, long *e)  EINA_ARG_NONNULL(1,3,4);
 
 /**
  * @}

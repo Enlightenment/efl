@@ -687,7 +687,7 @@ eina_hash_new(Eina_Key_Length key_length_cb,
    Eina_Hash *new;
 
    eina_error_set(0);
-   if (!key_length_cb || !key_cmp_cb) return NULL;
+   if (!key_length_cb || !key_cmp_cb || !key_hash_cb) return NULL;
    if (buckets_power_size < 3 || buckets_power_size > 16) return NULL;
 
    new = malloc(sizeof (Eina_Hash));

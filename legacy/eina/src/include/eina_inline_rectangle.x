@@ -26,7 +26,7 @@ eina_spans_intersect(int c1, int l1, int c2, int l2)
 }
 
 static inline Eina_Bool
-eina_rectangle_is_empty(Eina_Rectangle *r)
+eina_rectangle_is_empty(const Eina_Rectangle *r)
 {
 	return ((r->w < 1) || (r->h < 1)) ? EINA_TRUE : EINA_FALSE;
 }
@@ -41,31 +41,31 @@ eina_rectangle_coords_from(Eina_Rectangle *r, int x, int y, int w, int h)
 }
 
 static inline Eina_Bool
-eina_rectangles_intersect(Eina_Rectangle *r1, Eina_Rectangle *r2)
+eina_rectangles_intersect(const Eina_Rectangle *r1, const Eina_Rectangle *r2)
 {
 	return (eina_spans_intersect(r1->x, r1->w, r2->x, r2->w) && eina_spans_intersect(r1->y, r1->h, r2->y, r2->h)) ? EINA_TRUE : EINA_FALSE;
 }
 
 static inline Eina_Bool
-eina_rectangle_xcoord_inside(Eina_Rectangle *r, int x)
+eina_rectangle_xcoord_inside(const Eina_Rectangle *r, int x)
 {
 	return ((x >= r->x) && (x < (r->x + r->w))) ? EINA_TRUE : EINA_FALSE;
 }
 
 static inline Eina_Bool
-eina_rectangle_ycoord_inside(Eina_Rectangle *r, int y)
+eina_rectangle_ycoord_inside(const Eina_Rectangle *r, int y)
 {
 	return ((y >= r->y) && (y < (r->y + r->h))) ? EINA_TRUE : EINA_FALSE;
 }
 
 static inline Eina_Bool
-eina_rectangle_coords_inside(Eina_Rectangle *r, int x, int y)
+eina_rectangle_coords_inside(const Eina_Rectangle *r, int x, int y)
 {
 	return (eina_rectangle_xcoord_inside(r, x) && eina_rectangle_ycoord_inside(r, y)) ? EINA_TRUE : EINA_FALSE;
 }
 
 static inline void
-eina_rectangle_union(Eina_Rectangle *dst, Eina_Rectangle *src)
+eina_rectangle_union(Eina_Rectangle *dst, const Eina_Rectangle *src)
 {
 	/* left */
 	if (dst->x > src->x)
@@ -88,7 +88,7 @@ eina_rectangle_union(Eina_Rectangle *dst, Eina_Rectangle *src)
 }
 
 static inline Eina_Bool
-eina_rectangle_intersection(Eina_Rectangle *dst, Eina_Rectangle *src)
+eina_rectangle_intersection(Eina_Rectangle *dst, const Eina_Rectangle *src)
 {
 	if (!(eina_rectangles_intersect(dst, src)))
 		return EINA_FALSE;
@@ -120,7 +120,7 @@ eina_rectangle_intersection(Eina_Rectangle *dst, Eina_Rectangle *src)
 }
 
 static inline void
-eina_rectangle_rescale_in(Eina_Rectangle *out, Eina_Rectangle *in, Eina_Rectangle *res)
+eina_rectangle_rescale_in(const Eina_Rectangle *out, const Eina_Rectangle *in, Eina_Rectangle *res)
 {
 	res->x = in->x - out->x;
 	res->y = in->y - out->y;
@@ -129,7 +129,7 @@ eina_rectangle_rescale_in(Eina_Rectangle *out, Eina_Rectangle *in, Eina_Rectangl
 }
 
 static inline void
-eina_rectangle_rescale_out(Eina_Rectangle *out, Eina_Rectangle *in, Eina_Rectangle *res)
+eina_rectangle_rescale_out(const Eina_Rectangle *out, const Eina_Rectangle *in, Eina_Rectangle *res)
 {
 	res->x = out->x + in->x;
 	res->y = out->y + in->y;

@@ -35,18 +35,18 @@ EAPI extern Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE;
 EAPI int eina_mempool_init(void);
 EAPI int eina_mempool_shutdown(void);
 
-EAPI Eina_Mempool * eina_mempool_new(const char *module, const char *context, const char *options, ...);
-EAPI void eina_mempool_delete(Eina_Mempool *mp);
+EAPI Eina_Mempool * eina_mempool_new(const char *module, const char *context, const char *options, ...) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EAPI void eina_mempool_delete(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
 
-static inline void * eina_mempool_realloc(Eina_Mempool *mp, void *element, unsigned int size);
-static inline void * eina_mempool_alloc(Eina_Mempool *mp, unsigned int size);
-static inline void eina_mempool_free(Eina_Mempool *mp, void *element);
+static inline void * eina_mempool_realloc(Eina_Mempool *mp, void *element, unsigned int size) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+static inline void * eina_mempool_alloc(Eina_Mempool *mp, unsigned int size) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+static inline void eina_mempool_free(Eina_Mempool *mp, void *element) EINA_ARG_NONNULL(1);
 
-EAPI void eina_mempool_gc(Eina_Mempool *mp);
-EAPI void eina_mempool_statistics(Eina_Mempool *mp);
+EAPI void eina_mempool_gc(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
+EAPI void eina_mempool_statistics(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
 
-EAPI Eina_Bool eina_mempool_register(Eina_Mempool_Backend *be);
-EAPI void eina_mempool_unregister(Eina_Mempool_Backend *be);
+EAPI Eina_Bool eina_mempool_register(Eina_Mempool_Backend *be) EINA_ARG_NONNULL(1);
+EAPI void eina_mempool_unregister(Eina_Mempool_Backend *be) EINA_ARG_NONNULL(1);
 
 #include "eina_inline_mempool.x"
 /** @} */

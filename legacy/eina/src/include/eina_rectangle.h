@@ -40,27 +40,27 @@ typedef struct _Eina_Rectangle
 
 typedef struct _Eina_Rectangle_Pool Eina_Rectangle_Pool;
 
-static inline int eina_spans_intersect(int c1, int l1, int c2, int l2);
-static inline Eina_Bool eina_rectangle_is_empty(Eina_Rectangle *r);
-static inline void eina_rectangle_coords_from(Eina_Rectangle *r, int x, int y, int w, int h);
-static inline Eina_Bool eina_rectangles_intersect(Eina_Rectangle *r1, Eina_Rectangle *r2);
-static inline Eina_Bool eina_rectangle_xcoord_inside(Eina_Rectangle *r, int x);
-static inline Eina_Bool eina_rectangle_ycoord_inside(Eina_Rectangle *r, int y);
-static inline Eina_Bool eina_rectangle_coords_inside(Eina_Rectangle *r, int x, int y);
-static inline void eina_rectangle_union(Eina_Rectangle *dst, Eina_Rectangle *src);
-static inline Eina_Bool eina_rectangle_intersection(Eina_Rectangle *dst, Eina_Rectangle *src);
-static inline void eina_rectangle_rescale_in(Eina_Rectangle *out, Eina_Rectangle *in, Eina_Rectangle *res);
-static inline void eina_rectangle_rescale_out(Eina_Rectangle *out, Eina_Rectangle *in, Eina_Rectangle *res);
+static inline int eina_spans_intersect(int c1, int l1, int c2, int l2) EINA_CONST EINA_WARN_UNUSED_RESULT;
+static inline Eina_Bool eina_rectangle_is_empty(const Eina_Rectangle *r) EINA_PURE EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+static inline void eina_rectangle_coords_from(Eina_Rectangle *r, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
+static inline Eina_Bool eina_rectangles_intersect(const Eina_Rectangle *r1, const Eina_Rectangle *r2) EINA_PURE EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
+static inline Eina_Bool eina_rectangle_xcoord_inside(const Eina_Rectangle *r, int x) EINA_PURE EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+static inline Eina_Bool eina_rectangle_ycoord_inside(const Eina_Rectangle *r, int y) EINA_PURE EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+static inline Eina_Bool eina_rectangle_coords_inside(const Eina_Rectangle *r, int x, int y) EINA_PURE EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+static inline void eina_rectangle_union(Eina_Rectangle *dst, const Eina_Rectangle *src) EINA_ARG_NONNULL(1, 2);
+static inline Eina_Bool eina_rectangle_intersection(Eina_Rectangle *dst, const Eina_Rectangle *src) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
+static inline void eina_rectangle_rescale_in(const Eina_Rectangle *out, const Eina_Rectangle *in, Eina_Rectangle *res) EINA_ARG_NONNULL(1, 2, 3);
+static inline void eina_rectangle_rescale_out(const Eina_Rectangle *out, const Eina_Rectangle *in, Eina_Rectangle *res) EINA_ARG_NONNULL(1, 2, 3);
 
-EAPI Eina_Rectangle_Pool *eina_rectangle_pool_add(int w, int h);
-EAPI Eina_Rectangle_Pool *eina_rectangle_pool_get(Eina_Rectangle *rect);
-EAPI Eina_Bool eina_rectangle_pool_geometry_get(Eina_Rectangle_Pool *pool, int *w, int *h);
-EAPI void *eina_rectangle_pool_data_get(Eina_Rectangle_Pool *pool);
-EAPI void eina_rectangle_pool_data_set(Eina_Rectangle_Pool *pool, const void *data);
-EAPI void eina_rectangle_pool_delete(Eina_Rectangle_Pool *pool);
-EAPI int eina_rectangle_pool_count(Eina_Rectangle_Pool *pool);
-EAPI Eina_Rectangle *eina_rectangle_pool_request(Eina_Rectangle_Pool *pool, int w, int h);
-EAPI void eina_rectangle_pool_release(Eina_Rectangle *rect);
+EAPI Eina_Rectangle_Pool *eina_rectangle_pool_add(int w, int h) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Rectangle_Pool *eina_rectangle_pool_get(Eina_Rectangle *rect) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EAPI Eina_Bool eina_rectangle_pool_geometry_get(Eina_Rectangle_Pool *pool, int *w, int *h) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EAPI void *eina_rectangle_pool_data_get(Eina_Rectangle_Pool *pool) EINA_PURE EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EAPI void eina_rectangle_pool_data_set(Eina_Rectangle_Pool *pool, const void *data) EINA_ARG_NONNULL(1);
+EAPI void eina_rectangle_pool_delete(Eina_Rectangle_Pool *pool) EINA_ARG_NONNULL(1);
+EAPI int eina_rectangle_pool_count(Eina_Rectangle_Pool *pool) EINA_PURE EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Rectangle *eina_rectangle_pool_request(Eina_Rectangle_Pool *pool, int w, int h) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EAPI void eina_rectangle_pool_release(Eina_Rectangle *rect) EINA_ARG_NONNULL(1);
 
 #include "eina_inline_rectangle.x"
 

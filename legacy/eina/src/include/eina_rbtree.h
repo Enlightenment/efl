@@ -55,15 +55,15 @@ typedef int (*Eina_Rbtree_Cmp_Key_Cb)(const Eina_Rbtree *node, const void *key, 
 typedef void (*Eina_Rbtree_Free_Cb)(Eina_Rbtree *node, void *data);
 #define EINA_RBTREE_FREE_CB(Function) ((Eina_Rbtree_Free_Cb) Function)
 
-EAPI Eina_Rbtree *eina_rbtree_inline_insert(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_Node_Cb cmp, const void *data);
-EAPI Eina_Rbtree *eina_rbtree_inline_remove(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_Node_Cb cmp, const void *data);
-EAPI void eina_rbtree_delete(Eina_Rbtree *root, Eina_Rbtree_Free_Cb func, void *data);
+EAPI Eina_Rbtree *eina_rbtree_inline_insert(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_Node_Cb cmp, const void *data) EINA_ARG_NONNULL(2, 3) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Rbtree *eina_rbtree_inline_remove(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_Node_Cb cmp, const void *data) EINA_ARG_NONNULL(1, 2, 3) EINA_WARN_UNUSED_RESULT;
+EAPI void eina_rbtree_delete(Eina_Rbtree *root, Eina_Rbtree_Free_Cb func, void *data) EINA_ARG_NONNULL(1, 2);
 
-static inline Eina_Rbtree *eina_rbtree_inline_lookup(const Eina_Rbtree *root, const void *key, int length, Eina_Rbtree_Cmp_Key_Cb cmp, const void *data);
+static inline Eina_Rbtree *eina_rbtree_inline_lookup(const Eina_Rbtree *root, const void *key, int length, Eina_Rbtree_Cmp_Key_Cb cmp, const void *data) EINA_PURE EINA_ARG_NONNULL(1, 2, 4) EINA_WARN_UNUSED_RESULT;
 
-EAPI Eina_Iterator *eina_rbtree_iterator_prefix(const Eina_Rbtree *root);
-EAPI Eina_Iterator *eina_rbtree_iterator_infix(const Eina_Rbtree *root);
-EAPI Eina_Iterator *eina_rbtree_iterator_postfix(const Eina_Rbtree *root);
+EAPI Eina_Iterator *eina_rbtree_iterator_prefix(const Eina_Rbtree *root) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Iterator *eina_rbtree_iterator_infix(const Eina_Rbtree *root) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Iterator *eina_rbtree_iterator_postfix(const Eina_Rbtree *root) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 #include "eina_inline_rbtree.x"
 

@@ -67,7 +67,7 @@ EAPI Eina_Hash * eina_hash_new(Eina_Key_Length key_length_cb,
 			       Eina_Key_Cmp key_cmp_cb,
 			       Eina_Key_Hash key_hash_cb,
 			       Eina_Free_Cb data_free_cb,
-			       int buckets_power_size);
+			       int buckets_power_size) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2, 3);
 EAPI Eina_Hash * eina_hash_string_djb2_new(Eina_Free_Cb data_free_cb);
 EAPI Eina_Hash * eina_hash_string_superfast_new(Eina_Free_Cb data_free_cb);
 EAPI Eina_Hash * eina_hash_string_small_new(Eina_Free_Cb data_free_cb);
@@ -75,43 +75,43 @@ EAPI Eina_Hash * eina_hash_int32_new(Eina_Free_Cb data_free_cb);
 EAPI Eina_Hash * eina_hash_int64_new(Eina_Free_Cb data_free_cb);
 EAPI Eina_Hash * eina_hash_pointer_new(Eina_Free_Cb data_free_cb);
 
-EAPI Eina_Bool   eina_hash_add(Eina_Hash *hash, const void *key, const void *data);
-EAPI Eina_Bool   eina_hash_direct_add(Eina_Hash *hash, const void *key, const void *data);
-EAPI Eina_Bool   eina_hash_del(Eina_Hash *hash, const void *key, const void *data);
-EAPI void      * eina_hash_find(const Eina_Hash *hash, const void *key);
-EAPI void      * eina_hash_modify(Eina_Hash *hash, const void *key, const void *data);
-EAPI void        eina_hash_free(Eina_Hash *hash);
-EAPI int         eina_hash_population(const Eina_Hash *hash);
+EAPI Eina_Bool   eina_hash_add(Eina_Hash *hash, const void *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
+EAPI Eina_Bool   eina_hash_direct_add(Eina_Hash *hash, const void *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
+EAPI Eina_Bool   eina_hash_del(Eina_Hash *hash, const void *key, const void *data) EINA_ARG_NONNULL(1);
+EAPI void      * eina_hash_find(const Eina_Hash *hash, const void *key) EINA_ARG_NONNULL(1, 2);
+EAPI void      * eina_hash_modify(Eina_Hash *hash, const void *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
+EAPI void        eina_hash_free(Eina_Hash *hash) EINA_ARG_NONNULL(1);
+EAPI int         eina_hash_population(const Eina_Hash *hash) EINA_ARG_NONNULL(1) EINA_PURE;
 
 EAPI Eina_Bool   eina_hash_add_by_hash(Eina_Hash *hash,
 				       const void *key, int key_length, int key_hash,
-				       const void *data);
+				       const void *data)  EINA_ARG_NONNULL(1, 2, 5);
 EAPI Eina_Bool   eina_hash_direct_add_by_hash(Eina_Hash *hash,
 					      const void *key, int key_length, int key_hash,
-					      const void *data);
+					      const void *data) EINA_ARG_NONNULL(1, 2, 5);
 
-EAPI Eina_Bool   eina_hash_del_by_key_hash(Eina_Hash *hash, const void *key, int key_length, int key_hash);
+EAPI Eina_Bool   eina_hash_del_by_key_hash(Eina_Hash *hash, const void *key, int key_length, int key_hash) EINA_ARG_NONNULL(1, 2);
 
-EAPI Eina_Bool   eina_hash_del_by_key(Eina_Hash *hash, const void *key);
-EAPI Eina_Bool   eina_hash_del_by_data(Eina_Hash *hash, const void *data);
+EAPI Eina_Bool   eina_hash_del_by_key(Eina_Hash *hash, const void *key) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool   eina_hash_del_by_data(Eina_Hash *hash, const void *data) EINA_ARG_NONNULL(1, 2);
 
 EAPI Eina_Bool   eina_hash_del_by_hash(Eina_Hash *hash,
 				       const void *key, int key_length, int key_hash,
-				       const void *data);
+				       const void *data) EINA_ARG_NONNULL(1);
 EAPI void      * eina_hash_find_by_hash(const Eina_Hash *hash,
-					const void *key, int key_length, int key_hash);
+					const void *key, int key_length, int key_hash) EINA_ARG_NONNULL(1, 2);
 EAPI void      * eina_hash_modify_by_hash(Eina_Hash *hash,
 					  const void *key, int key_length, int key_hash,
-					  const void *data);
+					  const void *data) EINA_ARG_NONNULL(1, 2, 5);
 
-EAPI Eina_Iterator * eina_hash_iterator_key_new(const Eina_Hash *hash);
-EAPI Eina_Iterator * eina_hash_iterator_data_new(const Eina_Hash *hash);
-EAPI Eina_Iterator * eina_hash_iterator_tuple_new(const Eina_Hash *hash);
+EAPI Eina_Iterator * eina_hash_iterator_key_new(const Eina_Hash *hash) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Iterator * eina_hash_iterator_data_new(const Eina_Hash *hash) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Iterator * eina_hash_iterator_tuple_new(const Eina_Hash *hash) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 typedef Eina_Bool (*Eina_Hash_Foreach)(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 EAPI void        eina_hash_foreach(const Eina_Hash *hash,
 				   Eina_Hash_Foreach cb,
-				   const void *fdata);
+				   const void *fdata) EINA_ARG_NONNULL(1, 2);
 
 /* Paul Hsieh (http://www.azillionmonkeys.com/qed/hash.html) hash function
    used by WebCore (http://webkit.org/blog/8/hashtables-part-2/) */

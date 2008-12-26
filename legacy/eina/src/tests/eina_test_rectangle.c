@@ -29,7 +29,6 @@ START_TEST(eina_rectangle_pool)
 {
    Eina_Rectangle_Pool *pool;
    Eina_Rectangle *rects[8][8];
-   Eina_Rectangle *rct;
    int x;
    int y;
    int w;

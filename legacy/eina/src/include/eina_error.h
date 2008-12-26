@@ -111,19 +111,19 @@ EAPI extern Eina_Error EINA_ERROR_OUT_OF_MEMORY;
 
 EAPI int eina_error_init(void);
 EAPI int eina_error_shutdown(void);
-EAPI Eina_Error eina_error_msg_register(const char *msg);
+EAPI Eina_Error eina_error_msg_register(const char *msg) EINA_ARG_NONNULL(1);
 EAPI Eina_Error eina_error_get(void);
 EAPI void eina_error_set(Eina_Error err);
-EAPI const char * eina_error_msg_get(Eina_Error error);
+EAPI const char * eina_error_msg_get(Eina_Error error) EINA_PURE;
 EAPI void eina_error_print(Eina_Error_Level level, const char *file,
-		const char *function, int line, const char *fmt, ...);
+	        const char *function, int line, const char *fmt, ...) EINA_ARG_NONNULL(2, 3, 5) EINA_PRINTF(5, 6);
 EAPI void eina_error_print_cb_stdout(Eina_Error_Level level, const char *file,
                 const char *fnc, int line, const char *fmt, void *data,
 		va_list args);
 EAPI void eina_error_print_cb_file(Eina_Error_Level level, const char *file,
                 const char *fnc, int line, const char *fmt, void *data,
                 va_list args);
-EAPI void eina_error_print_cb_set(Eina_Error_Print_Cb cb, void *data);
+EAPI void eina_error_print_cb_set(Eina_Error_Print_Cb cb, void *data) EINA_ARG_NONNULL(1);
 EAPI void eina_error_log_level_set(Eina_Error_Level level);
 
 /**

@@ -40,10 +40,10 @@ typedef void (*Eina_Lalloc_Free) (void *user_data);
 
 typedef struct _Eina_Lalloc Eina_Lalloc;
 
-EAPI Eina_Lalloc *eina_lalloc_new(void *data, Eina_Lalloc_Alloc alloc_cb, Eina_Lalloc_Free free_cb, int num_init);
-EAPI void eina_lalloc_delete(Eina_Lalloc *a);
-EAPI Eina_Bool eina_lalloc_elements_add(Eina_Lalloc *a, int num);
-EAPI Eina_Bool eina_lalloc_element_add(Eina_Lalloc *a);
+EAPI Eina_Lalloc *eina_lalloc_new(void *data, Eina_Lalloc_Alloc alloc_cb, Eina_Lalloc_Free free_cb, int num_init) EINA_ARG_NONNULL(2, 3);
+EAPI void eina_lalloc_delete(Eina_Lalloc *a) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool eina_lalloc_elements_add(Eina_Lalloc *a, int num) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool eina_lalloc_element_add(Eina_Lalloc *a) EINA_ARG_NONNULL(1);
 
 /**
  * @}

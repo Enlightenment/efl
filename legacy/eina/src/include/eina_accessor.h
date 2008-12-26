@@ -42,9 +42,9 @@ typedef void (*Eina_Accessor_Free_Callback)(Eina_Accessor *it);
 
 struct _Eina_Accessor
 {
-   Eina_Accessor_Get_At_Callback        get_at;
-   Eina_Accessor_Get_Container_Callback	get_container;
-   Eina_Accessor_Free_Callback          free;
+   Eina_Accessor_Get_At_Callback        get_at EINA_ARG_NONNULL(1, 3) EINA_WARN_UNUSED_RESULT;
+   Eina_Accessor_Get_Container_Callback	get_container EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+   Eina_Accessor_Free_Callback          free EINA_ARG_NONNULL(1);
 
 #define EINA_MAGIC_ACCESSOR 0x98761232
    EINA_MAGIC;
@@ -55,16 +55,16 @@ struct _Eina_Accessor
 #define FUNC_ACCESSOR_FREE(Function) ((Eina_Accessor_Free_Callback)Function)
 
 
-EAPI void eina_accessor_free           (Eina_Accessor *accessor);
+EAPI void eina_accessor_free           (Eina_Accessor *accessor) EINA_ARG_NONNULL(1);
 
-EAPI Eina_Bool eina_accessor_data_get  (Eina_Accessor *accessor, unsigned int position, void **data);
-EAPI void *eina_accessor_container_get (Eina_Accessor *accessor);
+EAPI Eina_Bool eina_accessor_data_get  (Eina_Accessor *accessor, unsigned int position, void **data) EINA_ARG_NONNULL(1) EINA_PURE;
+EAPI void *eina_accessor_container_get (Eina_Accessor *accessor) EINA_ARG_NONNULL(1) EINA_PURE;
 
 EAPI void eina_accessor_over           (Eina_Accessor *accessor,
 					Eina_Each cb,
 					unsigned int start,
 					unsigned int end,
-					const void *fdata);
+					const void *fdata) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @}

@@ -76,21 +76,21 @@ struct _Eina_Array
 EAPI int          eina_array_init     (void);
 EAPI int          eina_array_shutdown (void);
 
-EAPI Eina_Array  *eina_array_new      (unsigned int step);
-EAPI void         eina_array_free     (Eina_Array *array);
-EAPI void         eina_array_step_set (Eina_Array *array, unsigned int step);
-EAPI void         eina_array_clean    (Eina_Array *array);
-EAPI void         eina_array_flush    (Eina_Array *array);
-EAPI Eina_Bool    eina_array_remove   (Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata), void *gdata);
+EAPI Eina_Array  *eina_array_new      (unsigned int step) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+EAPI void         eina_array_free     (Eina_Array *array) EINA_ARG_NONNULL(1);
+EAPI void         eina_array_step_set (Eina_Array *array, unsigned int step) EINA_ARG_NONNULL(1);
+EAPI void         eina_array_clean    (Eina_Array *array) EINA_ARG_NONNULL(1);
+EAPI void         eina_array_flush    (Eina_Array *array) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool    eina_array_remove   (Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata), void *gdata) EINA_ARG_NONNULL(1, 2);
 
-static inline Eina_Bool     eina_array_push  (Eina_Array *array, const void *data);
-static inline void         *eina_array_pop   (Eina_Array *array);
-static inline void         *eina_array_data_get (const Eina_Array *array, unsigned int index);
-static inline void          eina_array_data_set (const Eina_Array *array, unsigned int index, const void *data);
-static inline unsigned int  eina_array_count_get (const Eina_Array *array);
+static inline Eina_Bool     eina_array_push  (Eina_Array *array, const void *data) EINA_ARG_NONNULL(1, 2);
+static inline void         *eina_array_pop   (Eina_Array *array) EINA_ARG_NONNULL(1);
+static inline void         *eina_array_data_get (const Eina_Array *array, unsigned int index) EINA_ARG_NONNULL(1) EINA_PURE;
+static inline void          eina_array_data_set (const Eina_Array *array, unsigned int index, const void *data) EINA_ARG_NONNULL(1, 3);
+static inline unsigned int  eina_array_count_get (const Eina_Array *array) EINA_ARG_NONNULL(1) EINA_PURE;
 
-EAPI Eina_Iterator *eina_array_iterator_new (const Eina_Array *array);
-EAPI Eina_Accessor *eina_array_accessor_new (const Eina_Array *array);
+EAPI Eina_Iterator *eina_array_iterator_new (const Eina_Array *array) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Accessor *eina_array_accessor_new (const Eina_Array *array) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @def EINA_ARRAY_ITER_NEXT
