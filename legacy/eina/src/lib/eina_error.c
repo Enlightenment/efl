@@ -361,6 +361,7 @@
 #include "eina_error.h"
 #include "eina_inlist.h"
 #include "eina_private.h"
+#include "eina_safety_checks.h"
 
 /* TODO
  * + printing errors to stdout or stderr can be implemented
@@ -588,6 +589,8 @@ EAPI Eina_Error eina_error_msg_register(const char *msg)
 	Eina_Inlist *tmp;
 	int length;
 
+	EINA_SAFETY_ON_NULL_RETURN_VAL(msg, 0);
+
 	length = strlen(msg) + 1;
 
 	tmp = malloc(sizeof (Eina_Inlist) + length);
@@ -685,6 +688,10 @@ EAPI void eina_error_print(Eina_Error_Level level, const char *file,
 
 	if (level > _error_level)
 		return;
+
+	EINA_SAFETY_ON_NULL_RETURN(file);
+	EINA_SAFETY_ON_NULL_RETURN(fnc);
+	EINA_SAFETY_ON_NULL_RETURN(fmt);
 
 	va_start(args, fmt);
 	_print_cb(level, file, fnc, line, fmt, _print_cb_data, args);

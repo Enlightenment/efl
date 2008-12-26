@@ -76,6 +76,8 @@
 #include "eina_list.h"
 #include "eina_mempool.h"
 #include "eina_private.h"
+#include "eina_safety_checks.h"
+
 
 /*============================================================================*
  *                                  Local                                     *
@@ -498,7 +500,7 @@ eina_list_shutdown(void)
  * @param data The data to append.
  * @return A list pointer.
  *
- * This function appends @p data to @p list. If @p data is @c NULL, a
+ * This function appends @p data to @p list. If @p list is @c NULL, a
  * new list is returned. On success, a new list pointer that should be
  * used in place of the one given to this function is
  * returned. Otherwise, the old pointer is returned.
@@ -553,7 +555,7 @@ eina_list_append(Eina_List *list, const void *data)
  * @param data The data to prepend.
  * @return A list pointer.
  *
- * This function prepends @p data to @p list. If @p data is @c NULL, a
+ * This function prepends @p data to @p list. If @p list is @c NULL, a
  * new list is returned. On success, a new list pointer that should be
  * used in place of the one given to this function is
  * returned. Otherwise, the old pointer is returned.
@@ -1242,8 +1244,8 @@ eina_list_sort(Eina_List *list, unsigned int size, Eina_Compare_Cb func)
    Eina_List *unsort = NULL;
    Eina_List *stack[EINA_LIST_SORT_STACK_SIZE];
 
-   if (!list || !func) return NULL;
-
+   EINA_SAFETY_ON_NULL_RETURN_VAL(func, list);
+   if (!list) return NULL;
    EINA_MAGIC_CHECK_LIST(list);
 
    /* if the caller specified an invalid size, sort the whole list */
@@ -1376,9 +1378,10 @@ eina_list_sorted_merge(Eina_List *left, Eina_List *right, Eina_Compare_Cb func)
    Eina_List *ret;
    Eina_List *current;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
+
    if (!left) return right;
    if (!right) return left;
-   if (!func) return NULL;
 
    if (func(left->data, right->data) < 0)
      {
@@ -1460,8 +1463,6 @@ eina_list_iterator_new(const Eina_List *list)
 {
    Eina_Iterator_List *it;
 
-   if (!list) return NULL;
-
    eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_List));
    if (!it) {
@@ -1498,8 +1499,6 @@ EAPI Eina_Accessor *
 eina_list_accessor_new(const Eina_List *list)
 {
    Eina_Accessor_List *it;
-
-   if (!list) return NULL;
 
    eina_error_set(0);
    it = calloc(1, sizeof (Eina_Accessor_List));

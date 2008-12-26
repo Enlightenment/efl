@@ -36,6 +36,7 @@
 #include "eina_inlist.h"
 #include "eina_error.h"
 #include "eina_private.h"
+#include "eina_safety_checks.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -299,7 +300,7 @@ eina_counter_add(const char *name)
    Eina_Counter *counter;
    int length;
 
-   if (!name) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
 
    length = strlen(name) + 1;
 
@@ -330,7 +331,7 @@ eina_counter_add(const char *name)
 EAPI void
 eina_counter_delete(Eina_Counter *counter)
 {
-   if (!counter) return;
+   EINA_SAFETY_ON_NULL_RETURN(counter);
 
    while (counter->clocks)
      {
@@ -365,7 +366,7 @@ eina_counter_start(Eina_Counter *counter)
    Eina_Clock *clk;
    Eina_Nano_Time tp;
 
-   if (!counter) return;
+   EINA_SAFETY_ON_NULL_RETURN(counter);
    if (_eina_counter_time_get(&tp) != 0) return;
 
    eina_error_set(0);
@@ -400,7 +401,7 @@ eina_counter_stop(Eina_Counter *counter, int specimen)
    Eina_Clock *clk;
    Eina_Nano_Time tp;
 
-   if (!counter) return;
+   EINA_SAFETY_ON_NULL_RETURN(counter);
    if (_eina_counter_time_get(&tp) != 0) return;
 
    clk = (Eina_Clock *) counter->clocks;
@@ -436,7 +437,7 @@ eina_counter_dump(Eina_Counter *counter)
    char *result = NULL;
    int position = 0;
 
-   if (!counter) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(counter, NULL);
 
    result = _eina_counter_asiprintf(result, &position, "# specimen\texperiment time\tstarting time\tending time\n");
    if (!result) return NULL;

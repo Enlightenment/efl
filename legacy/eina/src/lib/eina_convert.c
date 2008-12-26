@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "eina_convert.h"
+#include "eina_safety_checks.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -277,6 +278,8 @@ eina_convert_itoa(int n, char *s)
    int i = 0;
    int r = 0;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(s, 0);
+
    if (n < 0)
      {
 	n = -n;
@@ -315,6 +318,8 @@ EAPI int
 eina_convert_xtoa(unsigned int n, char *s)
 {
    int i;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(s, 0);
 
    i = 0;
    do {
@@ -378,6 +383,10 @@ eina_convert_atod(const char *src, int length, long long *m, long *e)
    long        exponent;
    int         nbr_decimals = 0;
    int         sign = 1;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(m, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, EINA_FALSE);
 
    if (length <= 0) goto on_length_error;
 
@@ -486,6 +495,8 @@ eina_convert_dtoa(double d, char *des)
    int length = 0;
    int p;
    int i;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(des, EINA_FALSE);
 
    if (d < 0.0)
      {

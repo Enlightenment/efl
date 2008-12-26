@@ -60,6 +60,7 @@ void *alloca (size_t);
 
 #include "eina_file.h"
 #include "eina_private.h"
+#include "eina_safety_checks.h"
 
 /*============================================================================*
  *                                 Global                                     *
@@ -114,11 +115,13 @@ void *alloca (size_t);
 EAPI Eina_Bool
 eina_file_dir_list(const char *dir, Eina_Bool recursive, Eina_File_Dir_List_Cb cb, void *data)
 {
+        EINA_SAFETY_ON_NULL_RETURN_VAL(cb, EINA_FALSE);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(dir, EINA_FALSE);
+        EINA_SAFETY_ON_TRUE_RETURN_VAL(dir[0] == '\0', EINA_FALSE);
+
 #ifndef _WIN32
 	struct dirent *de;
 	DIR *d;
-
-	if (!cb) return EINA_FALSE;
 
 	d = opendir(dir);
 	if (!d) return EINA_FALSE;
@@ -165,9 +168,6 @@ eina_file_dir_list(const char *dir, Eina_Bool recursive, Eina_File_Dir_List_Cb c
 	char           *new_dir;
 	TCHAR          *tdir;
 	int             length_dir;
-
-	if (!cb) return EINA_FALSE;
-	if (!dir || (*dir == '\0')) return EINA_FALSE;
 
 	length_dir = strlen(dir);
 	new_dir = (char *)alloca(length_dir + 5);
@@ -248,7 +248,7 @@ eina_file_split(char *path)
 	char *current;
 	int length;
 
-	if (!path) return NULL;
+	EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
 
 	ea = eina_array_new(16);
 

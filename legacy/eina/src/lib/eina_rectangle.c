@@ -26,6 +26,7 @@
 #include "eina_magic.h"
 #include "eina_inlist.h"
 #include "eina_private.h"
+#include "eina_safety_checks.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -223,7 +224,7 @@ eina_rectangle_pool_delete(Eina_Rectangle_Pool *pool)
 {
    Eina_Rectangle_Alloc *del;
 
-   if (!pool) return ;
+   EINA_SAFETY_ON_NULL_RETURN(pool);
    while (pool->head)
      {
 	del = (Eina_Rectangle_Alloc*) pool->head;
@@ -239,7 +240,7 @@ eina_rectangle_pool_delete(Eina_Rectangle_Pool *pool)
 EAPI int
 eina_rectangle_pool_count(Eina_Rectangle_Pool *pool)
 {
-   if (!pool) return 0;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pool, 0);
    return pool->references;
 }
 
@@ -252,7 +253,8 @@ eina_rectangle_pool_request(Eina_Rectangle_Pool *pool, int w, int h)
    int x;
    int y;
 
-   if (!pool) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pool, NULL);
+
    if (w > pool->w || h > pool->h) return NULL;
 
    test = _eina_rectangle_pool_find((Eina_Rectangle_Alloc*) pool->head, pool->w, pool->h, w, h, &x, &y);
@@ -279,6 +281,8 @@ eina_rectangle_pool_release(Eina_Rectangle *rect)
 {
    Eina_Rectangle_Alloc *era = ((Eina_Rectangle_Alloc *) rect) - 1;
 
+   EINA_SAFETY_ON_NULL_RETURN(rect);
+
    EINA_MAGIC_CHECK_RECTANGLE_ALLOC(era);
    EINA_MAGIC_CHECK_RECTANGLE_POOL(era->pool);
 
@@ -293,7 +297,7 @@ eina_rectangle_pool_get(Eina_Rectangle *rect)
 {
    Eina_Rectangle_Alloc *era = ((Eina_Rectangle_Alloc *) rect) - 1;
 
-   if (!rect) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(rect, NULL);
 
    EINA_MAGIC_CHECK_RECTANGLE_ALLOC(era);
    EINA_MAGIC_CHECK_RECTANGLE_POOL(era->pool);
@@ -304,9 +308,8 @@ eina_rectangle_pool_get(Eina_Rectangle *rect)
 EAPI void
 eina_rectangle_pool_data_set(Eina_Rectangle_Pool *pool, const void *data)
 {
-   if (!pool) return ;
-
    EINA_MAGIC_CHECK_RECTANGLE_POOL(pool);
+   EINA_SAFETY_ON_NULL_RETURN(pool);
 
    pool->data = (void*) data;
 }
@@ -314,9 +317,8 @@ eina_rectangle_pool_data_set(Eina_Rectangle_Pool *pool, const void *data)
 EAPI void *
 eina_rectangle_pool_data_get(Eina_Rectangle_Pool *pool)
 {
-   if (!pool) return NULL;
-
    EINA_MAGIC_CHECK_RECTANGLE_POOL(pool);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pool, NULL);
 
    return pool->data;
 }
@@ -327,6 +329,7 @@ eina_rectangle_pool_geometry_get(Eina_Rectangle_Pool *pool, int *w, int *h)
    if (!pool) return EINA_FALSE;
 
    EINA_MAGIC_CHECK_RECTANGLE_POOL(pool);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pool, EINA_FALSE);
 
    if (w) *w = pool->w;
    if (h) *h = pool->h;

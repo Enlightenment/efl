@@ -39,6 +39,7 @@
 #include "eina_array.h"
 #include "eina_inline_array.x"
 #include "eina_private.h"
+#include "eina_safety_checks.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -148,6 +149,7 @@ eina_array_grow(Eina_Array *array)
    unsigned int total;
 
    EINA_MAGIC_CHECK_ARRAY(array);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(array, EINA_FALSE);
 
    total = array->total + array->step;
    eina_error_set(0);
@@ -318,6 +320,7 @@ eina_array_free(Eina_Array *array)
    eina_array_flush(array);
 
    EINA_MAGIC_CHECK_ARRAY(array);
+   EINA_SAFETY_ON_NULL_RETURN(array);
    MAGIC_FREE(array);
 }
 
@@ -334,6 +337,7 @@ eina_array_free(Eina_Array *array)
 EAPI void
 eina_array_step_set(Eina_Array *array, unsigned int step)
 {
+  EINA_SAFETY_ON_NULL_RETURN(array);
   array->data = NULL;
   array->total = 0;
   array->count = 0;
@@ -354,6 +358,7 @@ EAPI void
 eina_array_clean(Eina_Array *array)
 {
    EINA_MAGIC_CHECK_ARRAY(array);
+   EINA_SAFETY_ON_NULL_RETURN(array);
    array->count = 0;
 }
 
@@ -371,10 +376,12 @@ EAPI void
 eina_array_flush(Eina_Array *array)
 {
    EINA_MAGIC_CHECK_ARRAY(array);
+   EINA_SAFETY_ON_NULL_RETURN(array);
    array->count = 0;
    array->total = 0;
 
-   if (array->data) free(array->data);
+   if (!array->data) return;
+   free(array->data);
    array->data = NULL;
 }
 
@@ -405,6 +412,9 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata),
    unsigned int i;
 
    EINA_MAGIC_CHECK_ARRAY(array);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(array, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(keep, EINA_FALSE);
+
    if (array->total == 0) return EINA_TRUE;
 
    for (i = 0; i < array->count; ++i)
@@ -492,7 +502,9 @@ eina_array_iterator_new(const Eina_Array *array)
 {
    Eina_Iterator_Array *it;
 
-   if (!array) return NULL;
+   EINA_MAGIC_CHECK_ARRAY(array);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(array, NULL);
+
    if (eina_array_count_get(array) <= 0) return NULL;
 
    eina_error_set(0);
@@ -531,7 +543,8 @@ eina_array_accessor_new(const Eina_Array *array)
 {
    Eina_Accessor_Array *it;
 
-   if (!array) return NULL;
+   EINA_MAGIC_CHECK_ARRAY(array);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(array, NULL);
 
    eina_error_set(0);
    it = calloc(1, sizeof (Eina_Accessor_Array));

@@ -28,6 +28,7 @@
 #include "eina_private.h"
 
 #include "eina_accessor.h"
+#include "eina_safety_checks.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -92,7 +93,9 @@ EAPI void
 eina_accessor_free(Eina_Accessor *accessor)
 {
    EINA_MAGIC_CHECK_ACCESSOR(accessor);
-   if (accessor) accessor->free(accessor);
+   EINA_SAFETY_ON_NULL_RETURN(accessor);
+   EINA_SAFETY_ON_NULL_RETURN(accessor->free);
+   accessor->free(accessor);
 }
 
 /**
@@ -108,7 +111,8 @@ EAPI void *
 eina_accessor_container_get(Eina_Accessor *accessor)
 {
    EINA_MAGIC_CHECK_ACCESSOR(accessor);
-   if (!accessor) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(accessor, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(accessor->get_container, NULL);
    return accessor->get_container(accessor);
 }
 
@@ -129,7 +133,9 @@ EAPI Eina_Bool
 eina_accessor_data_get(Eina_Accessor *accessor, unsigned int position, void **data)
 {
    EINA_MAGIC_CHECK_ACCESSOR(accessor);
-   if (!accessor) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(accessor, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(accessor->get_at, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
    return accessor->get_at(accessor, position, data);
 }
 
@@ -156,16 +162,18 @@ eina_accessor_over(Eina_Accessor *accessor,
 		   unsigned int end,
 		   const void *fdata)
 {
-   void *container;
+   const void *container;
    void *data;
    unsigned int i;
 
    EINA_MAGIC_CHECK_ACCESSOR(accessor);
+   EINA_SAFETY_ON_NULL_RETURN(accessor);
+   EINA_SAFETY_ON_NULL_RETURN(accessor->get_container);
+   EINA_SAFETY_ON_NULL_RETURN(accessor->get_at);
+   EINA_SAFETY_ON_NULL_RETURN(cb);
+   EINA_SAFETY_ON_FALSE_RETURN(start < end);
 
-   if (!accessor) return ;
-   if (!(start < end)) return ;
-
-   container = eina_accessor_container_get(accessor);
+   container = accessor->get_container(accessor);
    for (i = start; i < end && accessor->get_at(accessor, i, &data) == EINA_TRUE; ++i)
       if (cb(container, data, (void*) fdata) != EINA_TRUE) return ;
 }

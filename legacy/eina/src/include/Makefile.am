@@ -1,6 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 EINAHEADERS = \
+eina_safety_checks.h \
 eina_error.h \
 eina_f16p16.h \
 eina_hash.h \

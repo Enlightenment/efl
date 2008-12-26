@@ -24,6 +24,7 @@
 
 #include "eina_lalloc.h"
 #include "eina_private.h"
+#include "eina_safety_checks.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -65,6 +66,9 @@ EAPI Eina_Lalloc * eina_lalloc_new(void *data, Eina_Lalloc_Alloc alloc_cb, Eina_
 {
 	Eina_Lalloc *a;
 
+	EINA_SAFETY_ON_NULL_RETURN_VAL(alloc_cb, NULL);
+	EINA_SAFETY_ON_NULL_RETURN_VAL(free_cb, NULL);
+
 	a = calloc(1, sizeof(Eina_Lalloc));
 	a->data = data;
 	a->alloc_cb = alloc_cb;
@@ -79,12 +83,17 @@ EAPI Eina_Lalloc * eina_lalloc_new(void *data, Eina_Lalloc_Alloc alloc_cb, Eina_
 
 EAPI void eina_lalloc_delete(Eina_Lalloc *a)
 {
+	EINA_SAFETY_ON_NULL_RETURN(a);
+	EINA_SAFETY_ON_NULL_RETURN(a->free_cb);
 	a->free_cb(a->data);
 	free(a);
 }
 
 EAPI Eina_Bool eina_lalloc_element_add(Eina_Lalloc *a)
 {
+	EINA_SAFETY_ON_NULL_RETURN_VAL(a, EINA_FALSE);
+	EINA_SAFETY_ON_NULL_RETURN_VAL(a->alloc_cb, EINA_FALSE);
+
 	if (a->num_elements == a->num_allocated)
 	{
 		if (a->alloc_cb(a->data, (1 << a->acc)) == EINA_TRUE)
@@ -103,6 +112,9 @@ EAPI Eina_Bool eina_lalloc_element_add(Eina_Lalloc *a)
 EAPI Eina_Bool eina_lalloc_elements_add(Eina_Lalloc *a, int num)
 {
 	int tmp;
+
+	EINA_SAFETY_ON_NULL_RETURN_VAL(a, EINA_FALSE);
+	EINA_SAFETY_ON_NULL_RETURN_VAL(a->alloc_cb, EINA_FALSE);
 
 	tmp = a->num_elements + num;
 	if (tmp > a->num_allocated)

@@ -80,6 +80,7 @@
 #include "eina_error.h"
 #include "eina_private.h"
 #include "eina_magic.h"
+#include "eina_safety_checks.h"
 
 /*============================================================================*
  *                                  Local                                     *

@@ -29,4 +29,9 @@
 #define EINA_DEFAULT_MEMPOOL
 #endif
 
+#undef EINA_SAFETY_CHECKS
+#if @EINA_SAFETY_CHECKS@
+#define EINA_SAFETY_CHECKS
+#endif
+
 #endif /* EINA_CONFIG_H_ */

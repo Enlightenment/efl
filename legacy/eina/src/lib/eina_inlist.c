@@ -26,6 +26,7 @@
 #include "eina_inlist.h"
 #include "eina_error.h"
 #include "eina_private.h"
+#include "eina_safety_checks.h"
 
 /* FIXME: TODO please, refactor this :) */
 
@@ -142,6 +143,8 @@ eina_inlist_append(Eina_Inlist *list, Eina_Inlist *new_l)
 {
    Eina_Inlist *l;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(new_l, list);
+
    new_l->next = NULL;
    if (!list) {
       new_l->prev = NULL;
@@ -165,6 +168,8 @@ eina_inlist_append(Eina_Inlist *list, Eina_Inlist *new_l)
 EAPI Eina_Inlist *
 eina_inlist_prepend(Eina_Inlist *list, Eina_Inlist *new_l)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(new_l, list);
+
    new_l->prev = NULL;
    if (!list) {
       new_l->next = NULL;
@@ -186,6 +191,8 @@ eina_inlist_append_relative(Eina_Inlist *list,
 			    Eina_Inlist *new_l,
 			    Eina_Inlist *relative)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(new_l, list);
+
    if (relative) {
       if (relative->next) {
 	 new_l->next = relative->next;
@@ -209,6 +216,8 @@ eina_inlist_prepend_relative(Eina_Inlist *list,
 			     Eina_Inlist *new_l,
 			     Eina_Inlist *relative)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(new_l, list);
+
    if (relative) {
       new_l->prev = relative->prev;
       new_l->next = relative;
@@ -239,8 +248,8 @@ eina_inlist_remove(Eina_Inlist *list, Eina_Inlist *item)
    Eina_Inlist *return_l;
 
    /* checkme */
-   if (!list) return list;
-   if (!item) return list;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(list, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(item, list);
 
    if (item->next)
      item->next->prev = item->prev;
@@ -266,8 +275,10 @@ eina_inlist_remove(Eina_Inlist *list, Eina_Inlist *item)
 EAPI Eina_Inlist *
 eina_inlist_promote(Eina_Inlist *list, Eina_Inlist *item)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(list, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(item, list);
+
    if (item == list) return list;
-   if (!item || !list) return list;
 
    if (item->next)
      item->next->prev = item->prev;
@@ -294,7 +305,9 @@ eina_inlist_demote(Eina_Inlist *list, Eina_Inlist *item)
 {
    Eina_Inlist *l;
 
-   if (!item || !list) return list;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(list, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(item, list);
+
    if (list->last == item) return list;
 
    if (!list->last)
@@ -339,8 +352,6 @@ eina_inlist_iterator_new(const Eina_Inlist *list)
 {
    Eina_Iterator_Inlist *it;
 
-   if (!list) return NULL;
-
    eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Inlist));
    if (!it) {
@@ -364,8 +375,6 @@ EAPI Eina_Accessor *
 eina_inlist_accessor_new(const Eina_Inlist *list)
 {
    Eina_Accessor_Inlist *it;
-
-   if (!list) return NULL;
 
    eina_error_set(0);
    it = calloc(1, sizeof (Eina_Accessor_Inlist));

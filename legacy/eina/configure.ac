@@ -62,6 +62,27 @@ if test "x${enable_magic_debug}" = "xyes" ; then
 fi
 AC_SUBST(EINA_MAGIC_DEBUG)
 
+# Safety checks (avoid crashes on wrong api usage)
+want_safety_checks="yes"
+AC_MSG_CHECKING(whether to do safety checking on api parameters)
+AC_ARG_ENABLE(safety-checks,
+  AC_HELP_STRING(
+    [--disable-safety-checks],
+    [disable safety checks for NULL pointers and like. [[default=enabled]]]
+  ),
+  [ want_safety_checks="$enableval" ]
+)
+AC_MSG_RESULT($want_safety_checks)
+
+AM_CONDITIONAL(SAFETY_CHECKS, test "x$want_safety_checks" = "xyes")
+if test "x$want_safety_checks" = "xyes"; then
+  AC_DEFINE(SAFETY_CHECKS, 1, [disable safety checks for NULL pointers and like.])
+  EINA_SAFETY_CHECKS=1
+else
+  EINA_SAFETY_CHECKS=0
+fi
+AC_SUBST(EINA_SAFETY_CHECKS)
+
 # Choose best memory pool
 AC_ARG_ENABLE([default-mempool],
    [AC_HELP_STRING([--enable-default-mempool], [Default memory allocator could be faster for some computer])],
