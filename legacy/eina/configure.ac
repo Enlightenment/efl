@@ -76,7 +76,7 @@ AC_MSG_RESULT($want_safety_checks)
 
 AM_CONDITIONAL(SAFETY_CHECKS, test "x$want_safety_checks" = "xyes")
 if test "x$want_safety_checks" = "xyes"; then
-  AC_DEFINE(SAFETY_CHECKS, 1, [disable safety checks for NULL pointers and like.])
+  AC_DEFINE(EINA_SAFETY_CHECKS, 1, [disable safety checks for NULL pointers and like.])
   EINA_SAFETY_CHECKS=1
 else
   EINA_SAFETY_CHECKS=0
