@@ -24,13 +24,13 @@ static unsigned char *buf2 = NULL;
 static size_t         page_size = 0;
 
 
-#ifdef __MINGW32CE__
+#if defined (__MINGW32CE__) || defined (_MSC_VER)
 static int
 getpagesize()
 {
    return 1024;
 }
-#endif /* __MINGW32CE__ */
+#endif /* __MINGW32CE__ || _MSC_VER */
 
 
 static void

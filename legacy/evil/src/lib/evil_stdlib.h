@@ -14,11 +14,11 @@ EAPI char *getenv(const char *name);
 #endif /* __CEGCC__ || __MINGW32CE__ */
 
 
-#if ! defined(__CEGCC__)
+#ifdef __MINGW32CE__
 
 EAPI int putenv(const char *string);
 
-#endif /* ! __CEGCC__ */
+#endif /* __MINGW32CE__ */
 
 /**
  * @brief Create, modify, or remove environment variables.

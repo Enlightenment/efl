@@ -1,3 +1,39 @@
+2008-12-27  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/bin/evil_test_environment.c:
+	check returned value
+
+	* src/bin/evil_test_memcpy.c:
+	define getpagesize() for vc++
+
+	* src/lib/evil_unistd.c:
+	move inclusion of time.h after windsock2.h
+	include direct.h for vc++
+	use _WIN32_WCE for Windows CE compilers in evil_getcwd()
+
+	* src/lib/Evil.h:
+	* src/lib/evil_unistd.h:
+	move getcwd() define from Evil.h to evil_unistd.h
+	add some C99 types to Evil.h for vc++ (will be used in eina)
+
+	* src/lib/evil_fcntl.c:
+	include io.h for vc++
+
+	* src/lib/evil_link_xp.cpp:
+	use full name for symlink(). Fix symlink on Windows XP with
+	the DOS prompt or the debugger of Visual Studio.
+
+	* src/lib/evil_mman.c:
+	don't include unistd.h if vc++ is used
+
+	* src/lib/evil_stdio.h:
+	formatting
+
+	* src/lib/evil_stdlib.h:
+	* src/lib/evil_stdlib.c:
+	define putenv only for mingw32ce
+	move the returned value of setenv()
+
 2008-12-13  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/bin/Makefile.am:

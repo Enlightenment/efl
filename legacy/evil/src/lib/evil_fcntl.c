@@ -1,6 +1,10 @@
 
 #include <stdio.h>
 
+#ifdef _MSC_VER
+# include <io.h>   /* for _get_osfhandle _lseek and _locking */
+#endif
+
 #ifndef __CEGCC__
 # include <sys/locking.h>
 #endif /* __CEGCC__ */

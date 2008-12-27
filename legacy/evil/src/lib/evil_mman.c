@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <sys/types.h>
-#include <unistd.h>
+
+#ifndef _MSC_VER
+# include <unistd.h>
+#endif
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>

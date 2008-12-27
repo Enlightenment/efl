@@ -149,6 +149,7 @@ EAPI int evil_stat(const char *file_name, struct stat *st);
  */
 EAPI char *evil_getcwd(char *buffer, size_t size);
 
+#define getcwd(b,s) evil_getcwd((b),(s))
 
 /*
  * Sockets and pipe related functions

@@ -7,11 +7,15 @@
 #include <errno.h>
 #endif /* HAVE_ERRNO_H */
 
-#include <sys/time.h>
-
 #define WIN32_LEAN_AND_MEAN
 #include <winsock2.h>
 #undef WIN32_LEAN_AND_MEAN
+
+# include <sys/time.h>
+
+#ifdef _MSC_VER
+# include <direct.h>   /* for _getcwd */
+#endif
 
 #include "Evil.h"
 #include "evil_private.h"
@@ -89,7 +93,7 @@ getpid(void)
 char *
 evil_getcwd(char *buffer, size_t size)
 {
-#if defined(__CEGCC__) || defined(__MINGW32CE__)
+#ifdef _WIN32_WCE
    wchar_t wpath[PATH_MAX];
    char   *cpath;
    char   *delim;
@@ -136,7 +140,7 @@ evil_getcwd(char *buffer, size_t size)
    return buffer;
 #else
    return _getcwd(buffer, size);
-#endif /* ! __CEGCC__ && ! __MINGW32CE__ */
+#endif /* ! _WIN32_WCE */
 }
 
 #if defined (_WIN32_WCE) && ! defined (__CEGCC__)

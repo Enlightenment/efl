@@ -22,6 +22,8 @@ test_env_tests_run(suite *s)
      return 0;
 
    val = getenv("EVIL_TEST_ENV");
+   if (!val)
+     return 0;
    if (strcmp(val, "val1"))
      return 0;
 

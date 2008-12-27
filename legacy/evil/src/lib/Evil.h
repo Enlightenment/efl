@@ -92,6 +92,11 @@ typedef int            pid_t;
 typedef SSIZE_T        ssize_t;
 typedef unsigned short mode_t;
 
+typedef unsigned short uint16_t;
+typedef unsigned int uint32_t;
+typedef signed int int32_t;
+typedef unsigned __int64 uint64_t;
+
 #endif /* _MSC_VER */
 
 
@@ -142,7 +147,6 @@ typedef unsigned long  gid_t;
 #  define write(fd,buffer,count) _write((fd),(buffer),(count))
 #  define unlink(filename) _unlink((filename))
 #  define mkdir(p,m) _mkdir(p)
-#  define getcwd(b,s) evil_getcwd((b),(s))
 #  define lstat(f,s) _stat((f),(s))
 #  define strdup(s) _strdup(s)
 

@@ -25,11 +25,14 @@
 int
 symlink(const char *oldpath, const char *newpath)
 {
+   char          fullname[PATH_MAX]; 
    wchar_t      *wnewpath;
    IShellLink   *pISL;
    IPersistFile *pIPF;
    HRESULT       res;
    size_t        size;
+
+   realpath(oldpath, fullname);
 
    res = CoInitialize(NULL);
    if (FAILED(res))
@@ -46,7 +49,7 @@ symlink(const char *oldpath, const char *newpath)
                                (void **)&pISL)))
      goto no_instance;
 
-   if (FAILED(pISL->SetPath(oldpath)))
+   if (FAILED(pISL->SetPath(fullname)))
      goto no_setpath;
 
    if (FAILED(pISL->QueryInterface(IID_IPersistFile, (void **)&pIPF)))

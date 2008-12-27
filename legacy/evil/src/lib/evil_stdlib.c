@@ -93,14 +93,11 @@ getenv(const char *name)
 
 #endif /* __CEGCC__ || __MINGW32CE__ */
 
-#if ! defined(__CEGCC__)
+#ifdef __MINGW32CE__
 
 int
 putenv(const char *string)
 {
-#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
-   return _putenv(string);
-#else
    char *str;
    char *egal;
    char *name;
@@ -120,10 +117,9 @@ putenv(const char *string)
    free(str);
 
    return 0;
-#endif /* __CEGCC__ || __MINGW32CE__ */
 }
 
-#endif /* ! __CEGCC__ */
+#endif /* __MINGW32CE__ */
 
 
 
@@ -233,9 +229,9 @@ setenv(const char *name,
         return -1;
      }
 
-#endif /* __CEGCC__ || __MINGW32CE__ */
-
    return 0;
+
+#endif /* __CEGCC__ || __MINGW32CE__ */
 }
 
 #if ! defined(__CEGCC__)

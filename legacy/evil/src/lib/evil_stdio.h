@@ -4,9 +4,6 @@
 
 #if defined (_WIN32_WCE) && ! defined (__CEGCC__)
 
-
-# include <stdio.h>
-
 /*
  * Error related functions
  *
@@ -25,7 +22,7 @@ EAPI FILE *evil_fopen(const char *path, const char *mode);
 
 EAPI void evil_rewind(FILE *stream);
 
-#define rewind(f) evil_rewind(f)
+# define rewind(f) evil_rewind(f)
 
 #endif /* _WIN32_WCE && ! __CEGCC__ */
 
