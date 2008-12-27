@@ -1,5 +1,11 @@
 2008-12-27  Vincent Torri  <doursse at users dot sf dot net>
 
+	* configure.ac:
+	add SECURITY_WIN32 to the proprocessor on Windows XP,
+	should fix the bug with security.h
+
+2008-12-27  Vincent Torri  <doursse at users dot sf dot net>
+
 	* src/bin/evil_test_environment.c:
 	check returned value
 

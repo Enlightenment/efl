@@ -93,7 +93,7 @@ case "$host_os" in
     ;;
   *)
     have_wince="no"
-    win32_cppflags="${win32_cppflags} -D_WIN32_WINNT=0x0500"
+    win32_cppflags="${win32_cppflags} -D_WIN32_WINNT=0x0500 -DSECURITY_WIN32"
     ;;
 esac
 AC_SUBST(win32_cppflags)
