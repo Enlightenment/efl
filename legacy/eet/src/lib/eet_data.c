@@ -2200,7 +2200,7 @@ _eet_data_descriptor_decode(const Eet_Dictionary *ed,
 			    void *dumpdata)
 {
    void *data = NULL;
-   char *p, *buf, tbuf[256];
+   char *p, tbuf[256];
    int size, i, dump;
    Eet_Data_Chunk chnk;
 
@@ -2251,8 +2251,6 @@ _eet_data_descriptor_decode(const Eet_Dictionary *ed,
 	dump = 1;
 	if (chnk.type == EET_T_UNKNOW)
 	  {
-	     buf = tbuf;
-
 	     for (i = 0; i < level; i++) dumpfunc(dumpdata, "  ");
 	     dumpfunc(dumpdata, "group \"");
 	     _eet_data_dump_string_escape(dumpdata, dumpfunc, chnk.name);
@@ -2345,6 +2343,8 @@ _eet_data_descriptor_decode(const Eet_Dictionary *ed,
 					       echnk.data,
 					       ((char *)echnk.data) + echnk.size,
 					       dd);
+		       if (ret <= 0) goto error;
+
 		       for (i = 0; i < level; i++) dumpfunc(dumpdata, "  ");
 		       dumpfunc(dumpdata, "  value \"");
 		       _eet_data_dump_string_escape(dumpdata, dumpfunc, echnk.name);
