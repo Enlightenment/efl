@@ -44,7 +44,8 @@ static int _eina_convert_init_count = 0;
 
 static inline void reverse(char s[], int length)
 {
-   int c, i, j;
+   int i, j;
+   char c;
 
    for (i = 0, j = length - 1; i < j; i++, j--)
      {
