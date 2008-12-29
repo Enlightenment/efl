@@ -469,7 +469,6 @@ eet_flush2(Eet_File *ef)
      goto write_error;
 
    /* write directories entry */
-   j = 0;
    for (i = 0; i < num; i++)
      {
         for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
@@ -1924,7 +1923,7 @@ eet_delete(Eet_File *ef, const char *name)
 	     if (efn->data)
 	       free(efn->data);
 
-	     if (efn == ef->header->directory->nodes[hash])
+	     if (pefn == NULL)
 	       ef->header->directory->nodes[hash] = efn->next;
 	     else
 	       pefn->next = efn->next;
