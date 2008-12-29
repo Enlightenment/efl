@@ -644,7 +644,7 @@ eet_data_image_lossless_compressed_convert(int *size, const void *data, unsigned
 			(Bytef *)(d + 32),
 			(uLong)(w * h * 4),
 			compression);
-	if (buflen > (w * h * 4))
+	if (ret != Z_OK || buflen > (w * h * 4))
 	  {
 	     free(comp);
 	     free(d);
