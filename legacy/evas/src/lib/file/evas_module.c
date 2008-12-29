@@ -309,7 +309,7 @@ evas_module_unload(Evas_Module *em)
    em->func.close = NULL;
    em->api = NULL;
    em->loaded = 0;
-#if defined(HAVE_PTHREAD_H) && defined(BUILD_ASYNC_PRELOAD)
+#if defined(BUILD_PTHREAD) && defined(BUILD_ASYNC_PRELOAD)
    pthread_spin_destroy(&em->lock);
 #endif
 }
@@ -317,12 +317,12 @@ evas_module_unload(Evas_Module *em)
 void
 evas_module_ref(Evas_Module *em)
 {
-#if defined(HAVE_PTHREAD_H) && defined(BUILD_ASYNC_PRELOAD)
+#if defined(BUILD_PTHREAD) && defined(BUILD_ASYNC_PRELOAD)
    pthread_spin_lock(&em->lock);
 #endif
    em->ref++;
 /*   printf("M: %s ref++ = %i\n", em->name, em->ref); */
-#if defined(HAVE_PTHREAD_H) && defined(BUILD_ASYNC_PRELOAD)
+#if defined(BUILD_PTHREAD) && defined(BUILD_ASYNC_PRELOAD)
    pthread_spin_unlock(&em->lock);
 #endif
 }
@@ -330,12 +330,12 @@ evas_module_ref(Evas_Module *em)
 void
 evas_module_unref(Evas_Module *em)
 {
-#if defined(HAVE_PTHREAD_H) && defined(BUILD_ASYNC_PRELOAD)
+#if defined(BUILD_PTHREAD) && defined(BUILD_ASYNC_PRELOAD)
    pthread_spin_lock(&em->lock);
 #endif
    em->ref--;
 /*   printf("M: %s ref-- = %i\n", em->name, em->ref); */
-#if defined(HAVE_PTHREAD_H) && defined(BUILD_ASYNC_PRELOAD)
+#if defined(BUILD_PTHREAD) && defined(BUILD_ASYNC_PRELOAD)
    pthread_spin_unlock(&em->lock);
 #endif
 }
