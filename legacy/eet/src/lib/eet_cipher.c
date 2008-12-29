@@ -115,7 +115,6 @@ eet_identity_open(const char *certificate_file, const char *private_key_file, Ee
 
   /* Reset values */
   fclose(fp);
-  fd = -1;
   fp = NULL;
   data = NULL;
   load_file.data = NULL;
@@ -681,7 +680,6 @@ eet_cipher(const void *data, unsigned int size, const char *key, unsigned int le
 
    /* Gcrypt close the cipher */
    gcry_cipher_close(cipher);
-   opened = 0;
 # else
    buffer = alloca(crypted_length);
    *buffer = tmp;
@@ -702,9 +700,8 @@ eet_cipher(const void *data, unsigned int size, const char *key, unsigned int le
    if (!EVP_EncryptFinal_ex(&ctx, ((unsigned char*)(ret + 1)) + tmp_len, &tmp_len))
      goto on_error;
    EVP_CIPHER_CTX_cleanup(&ctx);
-   opened = 0;
-
 # endif
+
    /* Set return values */
    if (result_length) *result_length = crypted_length + sizeof(unsigned int);
    if (result) *result = ret;
