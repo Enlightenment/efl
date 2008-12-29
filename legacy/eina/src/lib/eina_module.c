@@ -364,7 +364,7 @@ EAPI Eina_Array * eina_module_list_get(Eina_Array *array, const char *path, unsi
 	Dir_List_Get_Cb_Data list_get_cb_data;
 	Dir_List_Cb_Data list_cb_data;
 
-	EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
+	EINA_SAFETY_ON_NULL_RETURN_VAL(path, array);
 
 	list_get_cb_data.array = array ? array : eina_array_new(4);
 	list_get_cb_data.cb = cb;
