@@ -796,8 +796,9 @@ eina_hash_pointer_new(Eina_Free_Cb data_free_cb)
 EAPI int
 eina_hash_population(const Eina_Hash *hash)
 {
+   if (!hash) return 0;
+
    EINA_MAGIC_CHECK_HASH(hash);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(hash, 0);
    return hash->population;
 }
 
@@ -1121,8 +1122,9 @@ eina_hash_find_by_hash(const Eina_Hash *hash, const void *key, int key_length, i
    Eina_Hash_El *el;
    Eina_Hash_Tuple tuple;
 
+   if (!hash) return NULL;
+
    EINA_MAGIC_CHECK_HASH(hash);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(hash, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key, NULL);
 
    tuple.key = key;
@@ -1147,8 +1149,9 @@ eina_hash_find(const Eina_Hash *hash, const void *key)
    int key_length;
    int hash_num;
 
+   if (!hash) return NULL;
+
    EINA_MAGIC_CHECK_HASH(hash);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(hash, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash->key_length_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash->key_hash_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key, NULL);
