@@ -92,7 +92,6 @@ eet_identity_open(const char *certificate_file, const char *private_key_file, Ee
   struct stat st;
   void *data = NULL;
   gnutls_datum_t load_file = { NULL, 0 };
-  int res;
   char pass[1024];
 
   /* Init */
@@ -109,7 +108,7 @@ eet_identity_open(const char *certificate_file, const char *private_key_file, Ee
   /* Import the certificate in Eet_Key structure */
   load_file.data = data;
   load_file.size = st.st_size;
-  if ((res = gnutls_x509_crt_import(key->certificate, &load_file, GNUTLS_X509_FMT_PEM)) < 0)
+  if (gnutls_x509_crt_import(key->certificate, &load_file, GNUTLS_X509_FMT_PEM) < 0)
     goto on_error;
   if (munmap(data, st.st_size)) goto on_error;
 
@@ -130,19 +129,19 @@ eet_identity_open(const char *certificate_file, const char *private_key_file, Ee
   load_file.data = data;
   load_file.size = st.st_size;
   /* Try to directly import the PEM encoded private key */
-  if ((res = gnutls_x509_privkey_import(key->private_key, &load_file, GNUTLS_X509_FMT_PEM)) < 0)
+  if (gnutls_x509_privkey_import(key->private_key, &load_file, GNUTLS_X509_FMT_PEM) < 0)
     {
       /* Else ask for the private key pass */
       if (cb && cb(pass, 1024, 0, NULL))
 	{
 	  /* If pass then try to decode the pkcs 8 private key */
-	  if ((res = gnutls_x509_privkey_import_pkcs8(key->private_key, &load_file, GNUTLS_X509_FMT_PEM, pass, 0)))
+	  if (gnutls_x509_privkey_import_pkcs8(key->private_key, &load_file, GNUTLS_X509_FMT_PEM, pass, 0))
 	    goto on_error;
 	}
       else
 	{
 	  /* Else try to import the pkcs 8 private key without pass */
-	  if ((res = gnutls_x509_privkey_import_pkcs8(key->private_key, &load_file, GNUTLS_X509_FMT_PEM, NULL, 1)))
+	  if (gnutls_x509_privkey_import_pkcs8(key->private_key, &load_file, GNUTLS_X509_FMT_PEM, NULL, 1))
 	    goto on_error;
 	}
     }
