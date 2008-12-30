@@ -483,7 +483,6 @@ _smart_del(Evas_Object *obj)
 	Evas_Object *child;
 	
 	child = sd->items->data;
-	printf("_smart_del -> _els_smart_box_unpack\n");
 	_els_smart_box_unpack(child);
      }
    evas_object_del(sd->clip);

@@ -150,6 +150,11 @@ extern "C" {
    EAPI void         elm_win_override_set(Evas_Object *obj, Evas_Bool override);
    EAPI void         elm_win_keyboard_mode_set(Evas_Object *obj, Elm_Win_Keyboard_Mode mode);
    EAPI void         elm_win_keyboard_win_set(Evas_Object *obj, Evas_Bool is_keyboard);
+
+   EAPI Evas_Object *elm_win_inwin_add(Evas_Object *obj);
+   EAPI void         elm_win_inwin_activate(Evas_Object *obj);
+   EAPI void         elm_win_inwin_style_set(Evas_Object *obj, const char *style);
+       
    /* X specific calls - won't work on non-x engines (return 0) */
    EAPI Ecore_X_Window elm_win_xwindow_get(Evas_Object *obj);   
    /* smart callbacks called:
@@ -426,7 +431,7 @@ extern "C" {
 // * slider widget
 // 
 // * carousel selector widget
-// * in-window dialog container widget
+// * in-window dialog container widget (push/pop)
 // * separator widget (h/v)
 // * slide-open "panel" that can hold stuff and optionally scroll
 // * calendar widget (select date)

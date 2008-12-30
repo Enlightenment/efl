@@ -60,7 +60,6 @@ _elm_window_property_change(void *data, int ev_type, void *ev)
 static void
 _elm_rescale(void)
 {
-   printf("Scale %3.3f\n", _elm_config->scale); 
    edje_scale_set(_elm_config->scale);
    _elm_win_rescale();
 }
