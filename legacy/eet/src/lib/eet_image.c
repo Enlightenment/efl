@@ -439,10 +439,6 @@ eet_data_image_jpeg_rgb_decode(const void *data, int size, unsigned int src_x, u
 		       ptr2 = tmp + row_stride / 4;
 		    }
 	       }
-	     else
-	       {
-		  ptr += iw * scans;
-	       }
 	  }
      }
    /* end data decoding */
