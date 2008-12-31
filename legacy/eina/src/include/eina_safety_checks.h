@@ -98,19 +98,19 @@
 #else /* no safety checks */
 
 #define EINA_SAFETY_ON_NULL_RETURN(exp)					\
-  do { (void)((exp) == NULL) } while (0)
+  do { (void)((exp) == NULL); } while (0)
 
 #define EINA_SAFETY_ON_NULL_RETURN_VAL(exp, val)			\
   do { if (0 && (exp) == NULL) (void)val; } while (0)
 
 #define EINA_SAFETY_ON_TRUE_RETURN(exp)					\
-  do { (void)(exp) } while (0)
+  do { (void)(exp); } while (0)
 
 #define EINA_SAFETY_ON_TRUE_RETURN_VAL(exp, val)			\
   do { if (0 && (exp)) (void)val; } while (0)
 
 #define EINA_SAFETY_ON_FALSE_RETURN(exp)				\
-  do { (void)((!exp)) } while (0)
+  do { (void)((!exp)); } while (0)
 
 #define EINA_SAFETY_ON_FALSE_RETURN_VAL(exp, val)			\
   do { if (0 && !(exp)) (void)val; } while (0)

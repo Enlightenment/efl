@@ -83,8 +83,10 @@ _eina_counter_time_get(Eina_Nano_Time *tp)
    return clock_gettime(CLOCK_PROCESS_CPUTIME_ID, tp);
 #elif defined(CLOCK_PROF)
    return clock_gettime(CLOCK_PROF, tp);
-#else
+#elif defined(CLOCK_REALTIME)
    return clock_gettime(CLOCK_REALTIME, tp);
+#else
+   return gettimeofday(tp, NULL);
 #endif
 }
 #else

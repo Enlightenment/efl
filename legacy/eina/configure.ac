@@ -298,6 +298,9 @@ case "${host_os}" in
    *bsd*)
       EINA_LIBS="${EINA_LIBS} -lrt -lm"
    ;;
+   *darwin*)
+      EINA_LIBS="${EINA_LIBS} -lm"
+   ;;
    *)
       EINA_LIBS="${EINA_LIBS} -ldl -lrt -lm"
    ;;
