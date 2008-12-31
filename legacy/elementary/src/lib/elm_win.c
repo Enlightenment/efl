@@ -574,10 +574,6 @@ elm_win_inwin_activate(Evas_Object *obj)
    evas_object_raise(obj);
    evas_object_show(obj);
    edje_object_signal_emit(wd->frm, "elm,action,show", "elm");
-   printf("clear parent focus %p [%p]\n", 
-          elm_widget_parent_get(obj),
-          elm_widget_parent_get(elm_widget_parent_get(obj))
-          );
    elm_widget_focused_object_clear(elm_widget_parent_get(obj));
 }
 

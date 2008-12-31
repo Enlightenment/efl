@@ -118,14 +118,12 @@ _on_focus_hook(void *data, Evas_Object *obj)
         evas_object_focus_set(wd->ent, 1);
         edje_object_signal_emit(wd->ent, "elm,action,focus", "elm");
         elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
-        printf("foc on %p\n", obj);
      }
    else
      {
         edje_object_signal_emit(wd->ent, "elm,action,unfocus", "elm");
         evas_object_focus_set(wd->ent, 0);
         elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
-        printf("foc off %p\n", obj);
      }
 }
 
