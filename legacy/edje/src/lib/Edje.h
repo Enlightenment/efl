@@ -278,8 +278,8 @@ extern "C" {
    EAPI Evas_Bool    edje_object_part_box_remove_all (Evas_Object *obj, const char *part, Evas_Bool clear);
    EAPI Evas_Bool    edje_object_part_table_pack     (Evas_Object *obj, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
    EAPI Evas_Bool    edje_object_part_table_unpack   (Evas_Object *obj, const char *part, Evas_Object *child_obj);
-   EAPI void         edje_object_part_table_col_row_size_get (const Evas_Object *obj, const char *part, int *cols, int *rows);
-   EAPI void         edje_object_part_table_clear    (Evas_Object *obj, const char *part, Evas_Bool clear);
+   EAPI Evas_Bool    edje_object_part_table_col_row_size_get (const Evas_Object *obj, const char *part, int *cols, int *rows);
+   EAPI Evas_Bool    edje_object_part_table_clear    (Evas_Object *obj, const char *part, Evas_Bool clear);
 
    /* edje_message_queue.c */
    EAPI void         edje_object_message_send           (Evas_Object *obj, Edje_Message_Type type, int id, void *msg);

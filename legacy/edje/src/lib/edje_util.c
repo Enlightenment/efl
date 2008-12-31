@@ -2487,22 +2487,26 @@ edje_object_part_table_unpack(Evas_Object *obj, const char *part, Evas_Object *c
  * @param cols Pointer where to store number of columns (can be NULL)
  * @param rows Pointer where to store number of rows (can be NULL)
  *
+ * @return 1: Successfully get some data.\n
+ * 0: An error occured.
+ *
  * Retrieves the size of the table in number of columns and rows.\n
  */
-EAPI void
+EAPI Evas_Bool
 edje_object_part_table_col_row_size_get(const Evas_Object *obj, const char *part, int *cols, int *rows)
 {
    Edje *ed;
    Edje_Real_Part *rp;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return 0;
 
    rp = _edje_real_part_recursive_get(ed, part);
-   if (!rp) return;
-   if (rp->part->type != EDJE_PART_TYPE_TABLE) return;
+   if (!rp) return 0;
+   if (rp->part->type != EDJE_PART_TYPE_TABLE) return 0;
 
-   return evas_object_table_col_row_size_get(rp->object, cols, rows);
+   evas_object_table_col_row_size_get(rp->object, cols, rows);
+   return 1;
 }
 
 /** Removes all object from the table
@@ -2510,23 +2514,27 @@ edje_object_part_table_col_row_size_get(const Evas_Object *obj, const char *part
  * @param part The part name
  * @param clear If set, will delete subobjs on remove
  *
+ * @return 1: Successfully clear table.\n
+ * 0: An error occured.
+ *
  * Removes all object from the table indicated by part, except
  * the internal ones set from the theme.\n
  */
-EAPI void
+EAPI Evas_Bool
 edje_object_part_table_clear(Evas_Object *obj, const char *part, Evas_Bool clear)
 {
    Edje *ed;
    Edje_Real_Part *rp;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return 0;
 
    rp = _edje_real_part_recursive_get(ed, part);
-   if (!rp) return;
-   if (rp->part->type != EDJE_PART_TYPE_TABLE) return;
+   if (!rp) return 0;
+   if (rp->part->type != EDJE_PART_TYPE_TABLE) return 0;
 
-   return _edje_real_part_table_clear(rp, clear);
+   _edje_real_part_table_clear(rp, clear);
+   return 1;
 }
 
 Evas_Bool
