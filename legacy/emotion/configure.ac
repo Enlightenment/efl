@@ -141,7 +141,6 @@ src/modules/gstreamer/Makefile
 src/modules/vlc/Makefile
 src/bin/Makefile
 data/Makefile
-debian/changelog
 ])
 
 
