@@ -332,6 +332,7 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
      {
 	Eina_List *l;
 	int focus_next;
+        int noloop = 0;
 	
 	focus_next = 0;
 	if (!sd->focused)
@@ -345,28 +346,51 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
 	  {
 	     if (forward)
 	       {
-                  // FIXME: sd->resize_obj acocunt for
-		  for (l = sd->subobjs; l; l = l->next)
-		    {
-		       if (elm_widget_can_focus_get(l->data))
-			 {
-			    if ((focus_next) &&
-				(!elm_widget_disabled_get(l->data)))
-			      {
-				 /* the previous focused item was unfocused - so focus
-				  * the next one (that can be focused) */
-				 if (elm_widget_focus_jump(l->data, forward)) return 1;
-				 else break;
-			      }
-			    else
-			      {
-				 if (elm_widget_focus_get(l->data))
-				   {
-				      /* jump to the next focused item or focus this item */
-				      if (elm_widget_focus_jump(l->data, forward)) return 1;
-				      /* it returned 0 - it got to the last item and is past it */
-				      focus_next = 1;
-				   }
+                  if (elm_widget_can_focus_get(sd->resize_obj))
+                    {
+                       if ((focus_next) &&
+                           (!elm_widget_disabled_get(sd->resize_obj)))
+                         {
+                            /* the previous focused item was unfocused - so focus
+                             * the next one (that can be focused) */
+                            if (elm_widget_focus_jump(sd->resize_obj, forward)) return 1;
+                            else noloop = 1;
+                         }
+                       else
+                         {
+                            if (elm_widget_focus_get(sd->resize_obj))
+                              {
+                                 /* jump to the next focused item or focus this item */
+                                 if (elm_widget_focus_jump(sd->resize_obj, forward)) return 1;
+                                 /* it returned 0 - it got to the last item and is past it */
+                                 focus_next = 1;
+                              }
+                         }
+                    }
+                  if (!noloop)
+                    {
+                       for (l = sd->subobjs; l; l = l->next)
+                         {
+                            if (elm_widget_can_focus_get(l->data))
+                              {
+                                 if ((focus_next) &&
+                                     (!elm_widget_disabled_get(l->data)))
+                                   {
+                                      /* the previous focused item was unfocused - so focus
+                                       * the next one (that can be focused) */
+                                      if (elm_widget_focus_jump(l->data, forward)) return 1;
+                                      else break;
+                                   }
+                                 else
+                                   {
+                                      if (elm_widget_focus_get(l->data))
+                                        {
+                                           /* jump to the next focused item or focus this item */
+                                           if (elm_widget_focus_jump(l->data, forward)) return 1;
+                                           /* it returned 0 - it got to the last item and is past it */
+                                           focus_next = 1;
+                                        }
+                                   }
 			      }
 			 }
 		    }
@@ -397,7 +421,29 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
 			      }
 			 }
 		    }
-                  // FIXME: sd->resize_obj acocunt for
+                  if (!l)
+                    {
+		       if (elm_widget_can_focus_get(sd->resize_obj))
+			 {
+			    if ((focus_next) &&
+				(!elm_widget_disabled_get(sd->resize_obj)))
+			      {
+				 /* the previous focused item was unfocused - so focus
+				  * the next one (that can be focused) */
+				 if (elm_widget_focus_jump(sd->resize_obj, forward)) return 1;
+			      }
+			    else
+			      {
+				 if (elm_widget_focus_get(sd->resize_obj))
+				   {
+				      /* jump to the next focused item or focus this item */
+				      if (elm_widget_focus_jump(sd->resize_obj, forward)) return 1;
+				      /* it returned 0 - it got to the last item and is past it */
+				      focus_next = 1;
+				   }
+			      }
+			 }
+                    }
 	       }
 	  }
      }
@@ -499,7 +545,6 @@ elm_widget_focused_object_clear(Evas_Object *obj)
                }
           }
      }
-   printf("CLEAR %p %i\n", obj, sd->focused);
    sd->focused = 0;
    if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
    if (sd->focus_func) sd->focus_func(obj);
@@ -510,13 +555,8 @@ _elm_widget_parent_focus(Evas_Object *obj)
 {
    API_ENTRY return;
    Evas_Object *o = elm_widget_parent_get(obj);
-   if (sd->focused)
-     {
-        printf("STOp @ %p\n", obj);
-        return;
-     }
+   if (sd->focused) return;
    if (o) _elm_widget_parent_focus(o);
-   printf("DOF %p\n", obj);
    sd->focused = 1;
    if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
    if (sd->focus_func) sd->focus_func(obj);
@@ -529,18 +569,15 @@ elm_widget_focus_steal(Evas_Object *obj)
    API_ENTRY return;
    if (sd->focused) return;
    if (sd->disabled) return;
-   printf("elm_widget_focus_steal %p...\n", obj);
    parent = obj;
    for (;;)
      {
 	o = elm_widget_parent_get(parent);
 	if (!o) break;
         sd = evas_object_smart_data_get(o);
-        printf("stop2 @ %p\n", o);
         if (sd->focused) break;
 	parent = o;
      }
-   printf("steal clear, parent %p\n", parent);
    if (!elm_widget_parent_get(parent))
      elm_widget_focused_object_clear(parent);
    else
@@ -549,24 +586,19 @@ elm_widget_focus_steal(Evas_Object *obj)
         parent = elm_widget_parent_get(parent);
         sd = evas_object_smart_data_get(parent);
         if (elm_widget_focus_get(sd->resize_obj))
-          {  
-             printf("clear on sub %p\n", sd->resize_obj);
-             elm_widget_focused_object_clear(sd->resize_obj);
-          }
+          elm_widget_focused_object_clear(sd->resize_obj);
         else
           {
              for (l = sd->subobjs; l; l = l->next)
                {
                   if (elm_widget_focus_get(l->data))
                     {
-                       printf("clear on sub %p\n", l->data);
                        elm_widget_focused_object_clear(l->data);
                        break;
                     }
                }
           }
      }
-   printf("focus parents %p\n", obj);
    _elm_widget_parent_focus(obj);
    return;
 }
