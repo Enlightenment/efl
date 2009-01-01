@@ -1,8 +1,0 @@
-files
-libeet0
-libeet0-dev
-libeet0.postinst.debhelper
-libeet0.postrm.debhelper
-libeet0.substvars
-tmp
-changelog
