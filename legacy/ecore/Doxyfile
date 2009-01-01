@@ -64,7 +64,6 @@ WARN_FORMAT            = "$file:$line: $text"
 WARN_LOGFILE           = 
 FILE_PATTERNS          =
 RECURSIVE              = YES 
-EXCLUDE                = ./src/lib/ecore_desktop
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
 EXAMPLE_PATH           = ./examples/
