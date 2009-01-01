@@ -6,7 +6,8 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@EINA_CFLAGS@
+@EINA_CFLAGS@ \
+-fno-strict-aliasing
 
 lib_LTLIBRARIES = libeina.la
 
