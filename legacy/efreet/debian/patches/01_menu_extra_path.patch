@@ -1,0 +1,14 @@
+#Allows E17 to find a menu provided by the e17 package if no menus are found
+#after searching the FDO paths
+--- efreet-0.0.3/src/lib/efreet_menu.c	2007-05-13 18:58:05.000000000 +0200
++++ efreet-0.0.3.patch/src/lib/efreet_menu.c	2007-05-13 18:57:35.000000000 +0200
+@@ -583,6 +583,9 @@
+             return efreet_menu_parse(menu);
+     }
+ 
++    snprintf(menu, sizeof(menu), "/etc/xdg/menus/enlightenment-applications.menu");
++    if (ecore_file_exists(menu)) return efreet_menu_parse(menu);
++
+     return NULL;
+ }
+ 

@@ -1,0 +1,11 @@
+eina (0.0.1-2) unstable; urgency=low
+
+  * a SVN release.
+
+ -- quaker <quaker66@gmail.com>  Fri, 26 Dec 2008 12:59:47 +0100
+
+eina (0.0.1-1) unstable; urgency=low
+
+  * a CVS snapshot release.
+
+ -- Falko Schmidt <falko@alphagemini.org>  Tue, 21 Oct 2008 11:44:05 +0000

@@ -1,0 +1,13 @@
+debian/tmp/usr/lib/libevas.so.*
+debian/tmp/usr/lib/evas/modules/loaders/eet/*/*.so
+debian/tmp/usr/lib/evas/modules/loaders/gif/*/*.so
+debian/tmp/usr/lib/evas/modules/loaders/jpeg/*/*.so
+debian/tmp/usr/lib/evas/modules/loaders/png/*/*.so
+debian/tmp/usr/lib/evas/modules/loaders/svg/*/*.so
+debian/tmp/usr/lib/evas/modules/loaders/tiff/*/*.so
+debian/tmp/usr/lib/evas/modules/loaders/xpm/*/*.so
+debian/tmp/usr/lib/evas/modules/savers/eet/*/*.so
+debian/tmp/usr/lib/evas/modules/savers/jpeg/*/*.so
+debian/tmp/usr/lib/evas/modules/savers/png/*/*.so
+debian/tmp/usr/lib/evas/modules/savers/tiff/*/*.so
+

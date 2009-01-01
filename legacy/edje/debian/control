@@ -1,0 +1,73 @@
+Source: edje
+Section: libs
+Priority: optional
+Maintainer: Falko Schmidt <falko@alphagemini.org>
+Build-Depends: debhelper (>= 6), cdbs, libeet-dev, libevas-dev, libecore-dev,
+ libembryo-dev, doxygen
+Standards-Version: 3.7.3
+Homepage: http://www.enlightenment.org
+
+Package: libedje-bin
+Architecture: any
+Section: devel
+Depends: ${shlibs:Depends}, libembryo-bin, libevas-engines 
+Provides: libedje0-bin
+Description: Various binaries for use with libedje
+ Edje is a graphical layout and animation library for animated resizable,
+ compressed and scalable themes. It is the theming engine behind
+ Enlightenment DR 0.17.
+ .
+ This package contains the following binaries:
+  - edje_cc: Compiles EDC files.
+  - edje_decc: Used to decompile compiled edje files.
+  - edje_recc: A convenience script to recompile EDC files.
+
+Package: libedje0
+Architecture: any
+Depends: ${shlibs:Depends}, libedje-bin
+Provides: libedje
+Suggests: libedje-bin (= ${binary:Version})
+Description: Graphical layout and animation library
+ Edje is a graphical layout and animation library for animated resizable,
+ compressed and scalable themes. It is the theming engine behind
+ Enlightenment DR 0.17.
+
+Package: libedje-doc
+Architecture: all
+Section: doc
+Enhances: libedje-dev
+Provides: libedje0-doc
+Description: libedje0 development documentation
+ Edje is a graphical layout and animation library for animated resizable,
+ compressed and scalable themes. It is the theming engine behind
+ Enlightenment DR 0.17.
+ .
+ This package provides development documentation for Edje.
+ 
+Package: libedje-dev
+Architecture: any
+Section: libdevel
+Depends: libedje0 (= ${binary:Version}), libeet-dev, libecore-dev, libevas-dev, libembryo-dev, pkg-config
+Provides: libedje0-dev
+Description: libedje headers and static libraries
+ Edje is a graphical layout and animation library for animated resizable,
+ compressed and scalable themes. It is the theming engine behind
+ Enlightenment DR 0.17.
+ .
+ This package provides headers and shared libraries for Edje.
+
+Package: libedje-dbg
+Architecture: any
+Section: libdevel
+Priority: extra
+Depends: libedje0 (= ${binary:Version})
+Provides: libedje0-dbg
+Description: Graphical layout and animation library
+ Edje is a graphical layout and animation library for animated resizable,
+ compressed and scalable themes. It is the theming engine behind
+ Enlightenment DR 0.17.
+ .
+ This package contains unstripped shared libraries. It is provided primarily
+ to provide a backtrace with names in a debugger, this makes it somewhat
+ easier to interpret core dumps. The libraries are installed in
+ /usr/lib/debug and are automatically used by gdb.
