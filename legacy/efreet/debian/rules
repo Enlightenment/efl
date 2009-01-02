@@ -14,4 +14,4 @@ install/libefreet-doc::
 
 clean::
 	rm -rf $(DEB_SRCDIR)/doc/html $(DEB_SRCDIR)/doc/latex
-	./autogen.sh --prefix=/usr
+	./autogen.sh --prefix=/usr $(DEB_CONFIGURE_EXTRA_FLAGS)
