@@ -1,0 +1,6 @@
+debian/tmp/usr/lib/*.so.*
+debian/tmp/usr/lib/*.so
+debian/tmp/usr/share/elementary/images/*
+debian/tmp/usr/share/elementary/objects/*
+debian/tmp/usr/share/elementary/themes/*
+debian/tmp/usr/share/icons/elementary.png

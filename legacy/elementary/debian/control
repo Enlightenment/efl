@@ -1,0 +1,26 @@
+Source: elementary
+Section: x11
+Priority: optional
+Maintainer: quaker <quaker66@gmail.com>
+Build-Depends: debhelper (>= 6), cdbs, libecore-dev, libevas-dev, libeet-dev, libedje-dev
+Standards-Version: 3.7.3
+Homepage: http://www.enlightenment.org
+
+Package: libelm-dev
+Section: libdevel
+Architecture: any
+Depends: libelm0 (= ${binary:Version}), libecore-dev, libevas-dev, libeet-dev, libedje-dev
+Description: Elementary - a basic widget set that is easy to use based on EFL for mobile
+ This package contains devel content.
+
+Package: libelm0
+Architecture: any
+Depends: ${shlibs:Depends}, libelm-bin
+Description: Elementary - a basic widget set that is easy to use based on EFL for mobile
+ This package contains a widget toolkit.
+
+Package: libelm-bin
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Elementary - a basic widget set that is easy to use based on EFL for mobile
+ This package contains elementary_test
