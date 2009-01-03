@@ -217,17 +217,29 @@ _ecore_x_event_handle_key_press(XEvent *xevent)
    if (_ecore_x_ic)
      {
 	Status mbstatus;
+#ifdef X_HAVE_UTF8_STRING
 	val = Xutf8LookupString(_ecore_x_ic, (XKeyEvent *)xevent, buf, buflen - 1, &sym, &mbstatus);
+#else
+	val = XmbLookupString(_ecore_x_ic, (XKeyEvent *)xevent, buf, buflen - 1, &sym, &mbstatus);
+#endif
 	if (mbstatus == XBufferOverflow)
 	  {
 	     buflen = val + 1;
 	     buf = realloc(buf, buflen);
+#ifdef X_HAVE_UTF8_STRING
 	     val = Xutf8LookupString(_ecore_x_ic, (XKeyEvent *)xevent, buf, buflen - 1, &sym, &mbstatus);
+#else
+	     val = XmbLookupString(_ecore_x_ic, (XKeyEvent *)xevent, buf, buflen - 1, &sym, &mbstatus);
+#endif
 	  }
 	if (val > 0)
 	  {
 	     buf[val] = 0;
+#ifdef X_HAVE_UTF8_STRING
 	     e->key_compose = strdup(buf);
+#else
+	     e->key_compose = ecore_txt_convert(nl_langinfo(CODESET), "UTF-8", buf);
+#endif
 	  }
      }
    else
@@ -739,7 +751,7 @@ _ecore_x_event_handle_focus_in(XEvent *xevent)
      {
 	char *str;
 	XSetICValues(_ecore_x_ic, XNFocusWindow, xevent->xfocus.window, NULL);
-	if ((str = Xutf8ResetIC(_ecore_x_ic)))
+	if ((str = Xmb8ResetIC(_ecore_x_ic)))
 	  XFree(str);
 	XSetICFocus(_ecore_x_ic);
      }
