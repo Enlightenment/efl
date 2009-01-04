@@ -63,23 +63,23 @@ e_prefix_determine(char *argv0)
 
    /* if user provides E_PREFIX - then use that or also more specific sub
     * dirs for bin, lib, data and locale */
-   if (getenv("E_PREFIX"))
+   if (getenv("EMBRYO_PREFIX"))
      {
-	_prefix_path = strdup(getenv("E_PREFIX"));
-	if (getenv("E_BIN_DIR"))
-	  snprintf(buf, sizeof(buf), "%s/bin", getenv("E_BIN_DIR"));
+	_prefix_path = strdup(getenv("EMBRYO_PREFIX"));
+	if (getenv("EMBRYO_BIN_DIR"))
+	  snprintf(buf, sizeof(buf), "%s/bin", getenv("EMBRYO_BIN_DIR"));
 	else
 	  snprintf(buf, sizeof(buf), "%s/bin", _prefix_path);
 	_prefix_path_bin = strdup(buf);
 
-	if (getenv("E_LIB_DIR"))
-	  snprintf(buf, sizeof(buf), "%s/lib", getenv("E_LIB_DIR"));
+	if (getenv("EMBRYO_LIB_DIR"))
+	  snprintf(buf, sizeof(buf), "%s/lib", getenv("EMBRYO_LIB_DIR"));
 	else
 	  snprintf(buf, sizeof(buf), "%s/lib", _prefix_path);
 	_prefix_path_lib = strdup(buf);
 
-	if (getenv("E_DATA_DIR"))
-	  snprintf(buf, sizeof(buf), "%s/"SHARE_D, getenv("E_DATA_DIR"));
+	if (getenv("EMBRYO_DATA_DIR"))
+	  snprintf(buf, sizeof(buf), "%s/"SHARE_D, getenv("EMBRYO_DATA_DIR"));
 	else
 	  snprintf(buf, sizeof(buf), "%s/"SHARE_D, _prefix_path);
 	_prefix_path_data = strdup(buf);
@@ -302,12 +302,12 @@ _e_prefix_fallbacks(void)
 	  "         and is falling back on the compiled in default:\n"
 	  "           %s\n"
 	  "         You might like to try setting the following environment variables:\n"
-	  "           E_PREFIX     - points to the base prefix of install\n"
-	  "           E_BIN_DIR    - optional in addition to E_PREFIX to provide\n"
+	  "           EMBRYO_PREFIX  - points to the base prefix of install\n"
+	  "           EMBRYO_BIN_DIR - optional in addition to E_PREFIX to provide\n"
 	  "                          a more specific binary directory\n"
-	  "           E_LIB_DIR    - optional in addition to E_PREFIX to provide\n"
+	  "           EMBRYO_LIB_DIR - optional in addition to E_PREFIX to provide\n"
 	  "                          a more specific library dir\n"
-	  "           E_DATA_DIR   - optional in addition to E_PREFIX to provide\n"
+	  "           EMBRYO_DATA_DIR - optional in addition to E_PREFIX to provide\n"
 	  "                          a more specific location for shared data\n"
 	  ,
 	  _prefix_path);
