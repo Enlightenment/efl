@@ -43,9 +43,7 @@ ecore_x_event_mask_set(Ecore_X_Window w, Ecore_X_Event_Mask mask)
    XWindowAttributes attr;
    XSetWindowAttributes s_attr;
 
-   if (!w)
-      w = DefaultRootWindow(_ecore_x_disp);
-
+   if (!w) w = DefaultRootWindow(_ecore_x_disp);
    memset(&attr, 0, sizeof(XWindowAttributes));
    XGetWindowAttributes(_ecore_x_disp, w, &attr);
    s_attr.event_mask = mask | attr.your_event_mask;
@@ -58,9 +56,7 @@ ecore_x_event_mask_unset(Ecore_X_Window w, Ecore_X_Event_Mask mask)
    XWindowAttributes attr;
    XSetWindowAttributes s_attr;
 
-   if (!w)
-      w = DefaultRootWindow(_ecore_x_disp);
-
+   if (!w) w = DefaultRootWindow(_ecore_x_disp);
    memset(&attr, 0, sizeof(XWindowAttributes));
    XGetWindowAttributes(_ecore_x_disp, w, &attr);
    s_attr.event_mask = attr.your_event_mask & ~mask;
@@ -72,7 +68,7 @@ static void
 _ecore_x_event_free_window_prop_name_class_change(void *data, void *ev)
 {
    Ecore_X_Event_Window_Prop_Name_Class_Change *e;
-   
+
    e = ev;
    if (e->name) free(e->name);
    if (e->clas) free(e->clas);
@@ -83,7 +79,7 @@ static void
 _ecore_x_event_free_window_prop_title_change(void *data, void *ev)
 {
    Ecore_X_Event_Window_Prop_Title_Change *e;
-   
+
    e = ev;
    if (e->title) free(e->title);
    free(e);
@@ -93,7 +89,7 @@ static void
 _ecore_x_event_free_window_prop_visible_title_change(void *data, void *ev)
 {
    Ecore_X_Event_Window_Prop_Visible_Title_Change *e;
-   
+
    e = ev;
    if (e->title) free(e->title);
    free(e);
@@ -103,7 +99,7 @@ static void
 _ecore_x_event_free_window_prop_icon_name_change(void *data, void *ev)
 {
    Ecore_X_Event_Window_Prop_Icon_Name_Change *e;
-   
+
    e = ev;
    if (e->name) free(e->name);
    free(e);
@@ -113,7 +109,7 @@ static void
 _ecore_x_event_free_window_prop_visible_icon_name_change(void *data, void *ev)
 {
    Ecore_X_Event_Window_Prop_Visible_Icon_Name_Change *e;
-   
+
    e = ev;
    if (e->name) free(e->name);
    free(e);
@@ -123,7 +119,7 @@ static void
 _ecore_x_event_free_window_prop_client_machine_change(void *data, void *ev)
 {
    Ecore_X_Event_Window_Prop_Client_Machine_Change *e;
-   
+
    e = ev;
    if (e->name) free(e->name);
    free(e);
@@ -175,8 +171,7 @@ _ecore_x_event_free_selection_notify(void *data __UNUSED__, void *ev)
 
    e = ev;
    sel = e->data;
-   if (sel->free)
-     sel->free(sel);
+   if (sel->free) sel->free(sel);
    free(e->target);
    free(e);
 }
@@ -185,12 +180,10 @@ void
 _ecore_x_event_handle_key_press(XEvent *xevent)
 {
    Ecore_X_Event_Key_Down *e;
-   char                   *keyname;
-   int                     val;
-   char                   *buf;
-   int                     buflen = 256;
-   KeySym                  sym;
-   XComposeStatus          status;
+   char *keyname, *buf;
+   int val, buflen = 256;
+   KeySym sym;
+   XComposeStatus status;
 
    e = calloc(1, sizeof(Ecore_X_Event_Key_Down));
    if (!e) return;
@@ -217,6 +210,7 @@ _ecore_x_event_handle_key_press(XEvent *xevent)
    if (_ecore_x_ic)
      {
 	Status mbstatus;
+
 #ifdef X_HAVE_UTF8_STRING
 	val = Xutf8LookupString(_ecore_x_ic, (XKeyEvent *)xevent, buf, buflen - 1, &sym, &mbstatus);
 #else
@@ -279,12 +273,12 @@ void
 _ecore_x_event_handle_key_release(XEvent *xevent)
 {
    Ecore_X_Event_Key_Up *e;
-   char                   *keyname;
-   int                     val;
-   char                    buf[256];
-   KeySym                  sym;
-   XComposeStatus          status;
-   
+   char *keyname;
+   int val;
+   char buf[256];
+   KeySym sym;
+   XComposeStatus status;
+
    e = calloc(1, sizeof(Ecore_X_Event_Key_Up));
    if (!e) return;
    keyname = XKeysymToString(XKeycodeToKeysym(xevent->xkey.display, 
@@ -336,16 +330,14 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
    if ((xevent->xbutton.button > 3) && (xevent->xbutton.button < 8))
      {
 	Ecore_X_Event_Mouse_Wheel *e;
-	
+
 	e = malloc(sizeof(Ecore_X_Event_Mouse_Wheel));
-	
-	if (!e)
-	  return;
-	
+	if (!e) return;
+
 	e->modifiers = xevent->xbutton.state;
 	e->direction = 0;
 	e->z = 0;
-	if      (xevent->xbutton.button == 4)
+	if (xevent->xbutton.button == 4)
 	  {
 	     e->direction = 0;
 	     e->z = -1;
@@ -751,7 +743,7 @@ _ecore_x_event_handle_focus_in(XEvent *xevent)
      {
 	char *str;
 	XSetICValues(_ecore_x_ic, XNFocusWindow, xevent->xfocus.window, NULL);
-	if ((str = Xmb8ResetIC(_ecore_x_ic)))
+	if ((str = XmbResetIC(_ecore_x_ic)))
 	  XFree(str);
 	XSetICFocus(_ecore_x_ic);
      }
