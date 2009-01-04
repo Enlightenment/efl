@@ -62,23 +62,23 @@ e_prefix_determine(char *argv0)
 
    /* if user provides E_PREFIX - then use that or also more specific sub
     * dirs for bin, lib, data and locale */
-   if (getenv("E_PREFIX"))
+   if (getenv("EDJE_PREFIX"))
      {
-	_prefix_path = strdup(getenv("E_PREFIX"));
-	if (getenv("E_BIN_DIR"))
-	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S "bin", getenv("E_BIN_DIR"));
+	_prefix_path = strdup(getenv("EDJE_PREFIX"));
+	if (getenv("EDJE_BIN_DIR"))
+	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S "bin", getenv("EDJE_BIN_DIR"));
 	else
 	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S "bin", _prefix_path);
 	_prefix_path_bin = strdup(buf);
 
-	if (getenv("E_LIB_DIR"))
-	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S "lib", getenv("E_LIB_DIR"));
+	if (getenv("EDJE_LIB_DIR"))
+	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S "lib", getenv("EDJE_LIB_DIR"));
 	else
 	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S "lib", _prefix_path);
 	_prefix_path_lib = strdup(buf);
 
-	if (getenv("E_DATA_DIR"))
-	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S SHARE_D, getenv("E_DATA_DIR"));
+	if (getenv("EDJE_DATA_DIR"))
+	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S SHARE_D, getenv("EDJE_DATA_DIR"));
 	else
 	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S SHARE_D, _prefix_path);
 	_prefix_path_data = strdup(buf);
@@ -301,12 +301,12 @@ _e_prefix_fallbacks(void)
 	  "         and is falling back on the compiled in default:\n"
 	  "           %s\n"
 	  "         You might like to try setting the following environment variables:\n"
-	  "           E_PREFIX     - points to the base prefix of install\n"
-	  "           E_BIN_DIR    - optional in addition to E_PREFIX to provide\n"
+	  "           EDJE_PREFIX  - points to the base prefix of install\n"
+	  "           EDJE_BIN_DIR - optional in addition to E_PREFIX to provide\n"
 	  "                          a more specific binary directory\n"
-	  "           E_LIB_DIR    - optional in addition to E_PREFIX to provide\n"
+	  "           EDJE_LIB_DIR - optional in addition to E_PREFIX to provide\n"
 	  "                          a more specific library dir\n"
-	  "           E_DATA_DIR   - optional in addition to E_PREFIX to provide\n"
+	  "           EDJE_DATA_DIR- optional in addition to E_PREFIX to provide\n"
 	  "                          a more specific location for shared data\n"
 	  ,
 	  _prefix_path);
