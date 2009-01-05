@@ -1562,7 +1562,7 @@ my_win_main(void)
   
   /* add a box layout widget to the window */
   bx = elm_box_add(win);
-  /* set weight to 1.0 x 1.0 == expand in x and y) */
+  /* set weight to 1.0 x 0.0 == expand in x and not in y) */
   evas_object_size_hint_weight_set(bx, 1.0, 0.0);
   
   /* set the box ad the content in the scrolled view*/
