@@ -251,7 +251,10 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 	_xr_render_surface_solid_rectangle_set(surface, 0, 0, 0, 0, 0, 0, uw, uh);
 	return surface;
      }
-   return _xr_render_surface_new(re->xinf, uw, uh, re->xinf->fmtdef, 0);
+// use target format to avoid conversion to depth when copying to screen   
+//   return _xr_render_surface_new(re->xinf, uw, uh, re->xinf->fmtdef, 0);
+// use 24/32bpp for tmp buf for better quality. rendering in 24/32bpp
+   return _xr_render_surface_new(re->xinf, uw, uh, re->xinf->fmt24, 0);
 }
 
 static void

@@ -116,10 +116,11 @@ _xr_render_surface_format_adopt(Ximage_Info *xinf, Drawable draw, int w, int h, 
    rs->xinf->references++;
    rs->allocated = 0;
    rs->draw = draw;
-   att.dither = 0;
+   att.dither = 1;
    att.component_alpha = 0;
    att.repeat = 0;
-   rs->pic = XRenderCreatePicture(xinf->disp, rs->draw, fmt, CPRepeat | CPDither | CPComponentAlpha, &att);
+   rs->pic = XRenderCreatePicture(xinf->disp, rs->draw, fmt, 
+                                  CPRepeat | CPDither | CPComponentAlpha, &att);
    if (rs->pic == None)
      {
 	rs->xinf->references--;
