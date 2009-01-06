@@ -1226,7 +1226,7 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	  ecore_main_fd_handler_add(cl->fd, ECORE_FD_READ,
 				    _ecore_con_svr_cl_handler, cl, NULL, NULL);
 	ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
-	eina_list_append(svr->clients, cl);
+	svr->clients = eina_list_append(svr->clients, cl);
 	if (!svr->path)
 	  {
 	     ip = incoming.sin_addr.s_addr;
@@ -1425,7 +1425,7 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
 		 }
 	       memcpy(cl->data,  &client_addr, sizeof(client_addr));
 	       ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
-	       eina_list_append(svr->clients, cl);
+	       svr->clients = eina_list_append(svr->clients, cl);
 
 	       ip = client_addr.sin_addr.s_addr;
 	       snprintf(ipbuf, sizeof(ipbuf),
