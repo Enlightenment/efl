@@ -60,8 +60,8 @@ _item_select(Item *it)
    edje_object_signal_emit(it->base, "elm,state,selected", "elm");
    _item_show(it);
    obj2 = it->obj;
-   if (it->func) it->func(it->data, it->obj, NULL);
-   evas_object_smart_callback_call(obj2, "clicked", NULL);
+   if (it->func) it->func(it->data, it->obj, it);
+   evas_object_smart_callback_call(obj2, "clicked", it);
 }
 
 static void
