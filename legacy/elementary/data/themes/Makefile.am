@@ -94,7 +94,10 @@ toolbar_sel.png \
 icon_chat.png \
 icon_clock.png \
 icon_delete.png \
-icon_edit.png
+icon_edit.png \
+ilist_1.png \
+ilist_2.png \
+ilist_item_shadow.png
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \

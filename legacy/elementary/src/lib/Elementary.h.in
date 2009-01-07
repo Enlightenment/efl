@@ -400,6 +400,19 @@ extern "C" {
     * "clicked" - when the user clicks on a toolbar item and becomes selected
     */
 
+   typedef enum _Elementary_List_Mode
+     {
+        ELM_LIST_COMPRESS,
+        ELM_LIST_SCROLL,
+        ELM_LIST_LIMIT
+     } Elementary_List_Mode;
+   typedef struct _Elm_List_Item Elm_List_Item;
+   EAPI Evas_Object *elm_list_add(Evas_Object *parent);
+   EAPI Elm_List_Item *elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *indicator, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
+   /* smart callbacks called:
+    * "clicked" - when the user double-clicked an item
+    */
+       
   ////////////////////////////////////////////////////////////////////////////
  /// FIXME: TODO LIST ///////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////

@@ -40,6 +40,7 @@ elm_entry.c \
 elm_bubble.c \
 elm_photo.c \
 elm_toolbar.c \
+elm_list.c \
 \
 elc_notepad.c \
 elc_anchorview.c \

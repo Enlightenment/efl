@@ -8,7 +8,7 @@ struct _Widget_Data
 {
    Evas_Object *btn, *hover;
    Evas_Object *hover_parent;
-   Evas_List *items;
+   Eina_List *items;
 };
 
 struct _Item

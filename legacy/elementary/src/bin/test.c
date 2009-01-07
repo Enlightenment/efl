@@ -1484,6 +1484,42 @@ my_bt_19(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+my_bt_20(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *li;
+   char buf[PATH_MAX];
+   
+   win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
+   elm_win_title_set(win, "List");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_show(bg);
+
+   li = elm_list_add(win);
+   elm_win_resize_object_add(win, li);
+   evas_object_size_hint_weight_set(li, 1.0, 1.0);
+
+   elm_list_item_append(li, "Hello", NULL, NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "World", NULL, NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "How", NULL, NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "Are", NULL, NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "You", NULL, NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "Doing", NULL, NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "Out", NULL, NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "There", NULL, NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "?", NULL, NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "Is this label long enough?", NULL, NULL, NULL,  NULL, NULL);
+   
+   evas_object_show(li);
+   
+   evas_object_resize(win, 320, 300);
+   evas_object_show(win);
+}
+
+static void
 my_win_main(void)
 {
   Evas_Object *win, *bg, *bx0, *lb, *bx, *bt, *sc, *fr;
@@ -1705,6 +1741,13 @@ my_win_main(void)
   bt = elm_button_add(win);
   elm_button_label_set(bt, "Hoversel");
   evas_object_smart_callback_add(bt, "clicked", my_bt_19, NULL);
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+  
+  bt = elm_button_add(win);
+  elm_button_label_set(bt, "List");
+  evas_object_smart_callback_add(bt, "clicked", my_bt_20, NULL);
   evas_object_size_hint_align_set(bt, -1.0, 0.0);
   elm_box_pack_end(bx, bt);
   evas_object_show(bt);
