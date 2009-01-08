@@ -22,6 +22,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->label) eina_stringshare_del(wd->label);
    if (wd->style) eina_stringshare_del(wd->style);
    free(wd);
@@ -31,6 +32,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->style) _elm_theme_set(wd->btn, "button", "base", wd->style);
    else _elm_theme_set(wd->btn, "button", "base", "default");
    if (wd->icon)
@@ -52,6 +54,7 @@ static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
  
    edje_object_size_min_calc(wd->btn, &minw, &minh);
@@ -63,6 +66,7 @@ static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
    if (obj != wd->icon) return;
    edje_object_part_swallow(wd->btn, "elm.swallow.content", obj);
    _sizing_eval(data);
@@ -72,6 +76,7 @@ static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    Evas_Object *sub = event_info;
    if (sub == wd->icon)
      {
@@ -88,6 +93,7 @@ static void
 _signal_clicked(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
    evas_object_smart_callback_call(data, "clicked", NULL);
 }
 
@@ -120,6 +126,7 @@ EAPI void
 elm_button_label_set(Evas_Object *obj, const char *label)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    Evas_Coord mw, mh;
 
    if (wd->label) eina_stringshare_del(wd->label);
@@ -143,6 +150,7 @@ EAPI void
 elm_button_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if ((wd->icon != icon) && (wd->icon))
      elm_widget_sub_object_del(obj, wd->icon);
    if ((icon) && (wd->icon != icon))
@@ -164,6 +172,7 @@ EAPI void
 elm_button_style_set(Evas_Object *obj, const char *style)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->style) eina_stringshare_del(wd->style);
    if (style) wd->style = eina_stringshare_add(style);
    else wd->style = NULL;

@@ -408,7 +408,7 @@ extern "C" {
      } Elementary_List_Mode;
    typedef struct _Elm_List_Item Elm_List_Item;
    EAPI Evas_Object *elm_list_add(Evas_Object *parent);
-   EAPI Elm_List_Item *elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *indicator, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
+   EAPI Elm_List_Item *elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
    /* smart callbacks called:
     * "clicked" - when the user double-clicked an item
     */
@@ -426,13 +426,13 @@ extern "C" {
 // 
 //// (incomplete - medium priority)
 // * entry selection conflicts with finger scroll (make selection start/stop work on signals?)
-
 // * disabled not supported
 // * tab widget focusing (not useful for touchscreen tho...)
 // * on the fly theme changes - test (should work)
 // * need a hold-scroll counter in elm_widget
 // * add fullscreen mode on/off for windows
 // * hoversel only vertical right now - make horizontal
+// * set scaling per widget (and if scaling should be inheited by children)
 // 
 //// (more widgets/features - medium priority)
 // * biglist widget (restricted format label + icon intended for massive lists)
@@ -455,6 +455,7 @@ extern "C" {
 // * imageview widget (for large not iconic images)
 // * tiled image + zoom widget (tiled map viewer)
 // * dialpad widget - need one with a phone dialpad
+// * file selector widget
 // 
 //// (improvements - low priority)
 // * use evas's new box instead of a box smart

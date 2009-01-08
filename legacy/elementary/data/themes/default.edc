@@ -4411,47 +4411,47 @@ collections {
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/icon/home/default"; min: 32 32;
       images.image: "icon_home.png" COMP; parts { part { name: "base";
-	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_home.png"; } } } }
    group { name: "elm/icon/close/default"; min: 32 32;
       images.image: "icon_close.png" COMP; parts { part { name: "base";
-	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_close.png"; } } } }
    group { name: "elm/icon/apps/default"; min: 32 32;
       images.image: "icon_apps.png" COMP; parts { part { name: "base";
-	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_apps.png"; } } } }
    group { name: "elm/icon/arrow_up/default"; min: 32 32;
       images.image: "icon_arrow_up.png" COMP; parts { part { name: "base";
-	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_arrow_up.png"; } } } }
    group { name: "elm/icon/arrow_down/default"; min: 32 32;
       images.image: "icon_arrow_down.png" COMP; parts { part { name: "base";
-	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_arrow_down.png"; } } } }
    group { name: "elm/icon/arrow_left/default"; min: 32 32;
       images.image: "icon_arrow_left.png" COMP; parts { part { name: "base";
-	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_arrow_left.png"; } } } }
    group { name: "elm/icon/arrow_right/default"; min: 32 32;
       images.image: "icon_arrow_right.png" COMP; parts { part { name: "base";
-	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_arrow_right.png"; } } } }
    group { name: "elm/icon/chat/default"; min: 32 32;
       images.image: "icon_chat.png" COMP; parts { part { name: "base";
-	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_chat.png"; } } } }
    group { name: "elm/icon/clock/default"; min: 32 32;
       images.image: "icon_clock.png" COMP; parts { part { name: "base";
-	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_clock.png"; } } } }
    group { name: "elm/icon/delete/default"; min: 32 32;
       images.image: "icon_delete.png" COMP; parts { part { name: "base";
-	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_delete.png"; } } } }
    group { name: "elm/icon/edit/default"; min: 32 32;
       images.image: "icon_edit.png" COMP; parts { part { name: "base";
-	 description { state: "default" 0.0; aspect: 1.0 1.0;
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_edit.png"; } } } }
    
 ///////////////////////////////////////////////////////////////////////////////
@@ -4885,8 +4885,6 @@ collections {
             description {
                state:    "default" 0.0;
                align:    0.0 0.5;
-               aspect:   1.0 1.0;
-               aspect_preference: VERTICAL;
                rel1 {
                   relative: 0.0  0.0;
                   offset:   4    4;
@@ -4894,6 +4892,22 @@ collections {
                rel2 {
                   relative: 0.0  1.0;
                   offset:   4   -5;
+               }
+            }
+         }
+         part {
+            name:          "elm.swallow.end";
+            type:          SWALLOW;
+            description {
+               state:    "default" 0.0;
+               align:    1.0 0.5;
+               rel1 {
+                  relative: 1.0  0.0;
+                  offset:   -5    4;
+               }
+               rel2 {
+                  relative: 1.0  1.0;
+                  offset:   -5   -5;
                }
             }
          }
@@ -4909,11 +4923,12 @@ collections {
                rel1 {
                   to_x:     "elm.swallow.icon";
                   relative: 1.0  0.0;
-                  offset:   4 4;
+                  offset:   0 4;
                }
                rel2 {
-                  relative: 1.0  1.0;
-                  offset:   -5 -5;
+                  to_x:     "elm.swallow.end";
+                  relative: 0.0  1.0;
+                  offset:   -1 -5;
                }
                color: 0 0 0 255;
                color3: 0 0 0 0;
@@ -4971,6 +4986,7 @@ collections {
          part {
             name:           "event";
             type:           RECT;
+            repeat_events: 1;
             description {
                state: "default" 0.0;
                color: 0 0 0 0;
@@ -5020,6 +5036,7 @@ collections {
                   normal: "ilist_2.png";
                   border: 2 2 2 2;
                }
+               fill.smooth: 0;
             }
          }
          part { name: "bg";
@@ -5039,7 +5056,6 @@ collections {
                   normal: "bt_sm_base1.png";
                   border: 6 6 6 6;
                }
-               fill.smooth: 0;
             }
             description { state: "selected" 0.0;
                inherit: "default" 0.0;
@@ -5061,8 +5077,6 @@ collections {
             description {
                state:    "default" 0.0;
                align:    0.0 0.5;
-               aspect:   1.0 1.0;
-               aspect_preference: VERTICAL;
                rel1 {
                   relative: 0.0  0.0;
                   offset:   4    4;
@@ -5070,6 +5084,22 @@ collections {
                rel2 {
                   relative: 0.0  1.0;
                   offset:   4   -5;
+               }
+            }
+         }
+         part {
+            name:          "elm.swallow.end";
+            type:          SWALLOW;
+            description {
+               state:    "default" 0.0;
+               align:    1.0 0.5;
+               rel1 {
+                  relative: 1.0  0.0;
+                  offset:   -5    4;
+               }
+               rel2 {
+                  relative: 1.0  1.0;
+                  offset:   -5   -5;
                }
             }
          }
@@ -5085,11 +5115,12 @@ collections {
                rel1 {
                   to_x:     "elm.swallow.icon";
                   relative: 1.0  0.0;
-                  offset:   4 4;
+                  offset:   0 4;
                }
                rel2 {
-                  relative: 1.0  1.0;
-                  offset:   -5 -5;
+                  to_x:     "elm.swallow.end";
+                  relative: 0.0  1.0;
+                  offset:   -1 -5;
                }
                color: 0 0 0 255;
                color3: 0 0 0 0;
@@ -5147,6 +5178,7 @@ collections {
          part {
             name:           "event";
             type:           RECT;
+            repeat_events: 1;
             description {
                state: "default" 0.0;
                color: 0 0 0 0;

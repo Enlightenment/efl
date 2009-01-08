@@ -11,6 +11,7 @@ struct _Widget_Data
    Eina_List *selected;
    Elementary_List_Mode mode;
    Evas_Bool on_hold : 1;
+   Evas_Coord minw[2], minh[2];
 };
 
 struct _Item
@@ -18,7 +19,7 @@ struct _Item
    Evas_Object *obj;
    Evas_Object *base;
    const char *label;
-   Evas_Object *icon, *indicator, *end;
+   Evas_Object *icon, *end;
    void (*func) (void *data, Evas_Object *obj, void *event_info);
    const void *data;
    Evas_Bool even : 1;
@@ -78,7 +79,7 @@ _item_select(Item *it)
    if ((selectraise) && (!strcmp(selectraise, "on")))
      evas_object_raise(it->base);
    it->selected = 1;
-   if (it->func) it->func(it->data, it->obj, it);
+   if (it->func) it->func((void *)it->data, it->obj, it);
 }
 
 static void
@@ -120,7 +121,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 }
 
 static Item *
-_item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *indicator, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
+_item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it;
@@ -129,7 +130,6 @@ _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *i
    it->obj = obj;
    it->label = eina_stringshare_add(label);
    it->icon = icon;
-   it->indicator = indicator;
    it->end = end;
    it->func = func;
    it->data = data;
@@ -148,13 +148,41 @@ _fix_items(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
-   int i;
+   Evas_Coord minw[2] = { 0, 0 }, minh[2] = { 0, 0 };
+   int i, redo = 0;
    
+   for (l = wd->items; l; l = l->next)
+     {
+        Evas_Coord mw, mh;
+        Item *it = l->data;
+        if (it->icon)
+          {
+             evas_object_size_hint_min_get(it->icon, &mw, &mh);
+             if (mw > minw[0]) minw[0] = mw;
+             if (mh > minh[0]) minh[0] = mh;
+          }
+        if (it->end)
+          {
+             evas_object_size_hint_min_get(it->end, &mw, &mh);
+             if (mw > minw[1]) minw[1] = mw;
+             if (mh > minh[1]) minh[1] = mh;
+          }
+     }
+   if ((minw[0] != wd->minw[0]) || (minw[1] != wd->minw[1]) || 
+       (minw[0] != wd->minh[0]) || (minh[1] != wd->minh[1]))
+     {
+        wd->minw[0] = minw[0];
+        wd->minw[1] = minw[1];
+        wd->minh[0] = minh[0];
+        wd->minh[1] = minh[1];
+        redo = 1;
+     }
+   printf("%ix%i | %ix%i\n", minw[0], minh[0], minw[1], minh[1]);
    for (i = 0, l = wd->items; l; l = l->next, i++)
      {
         Item *it = l->data;
         it->even = i & 0x1;
-        if ((it->even != it->is_even) || (!it->fixed))
+        if ((it->even != it->is_even) || (!it->fixed) || (redo))
           {
              const char *stacking;
              if (it->even)
@@ -170,6 +198,27 @@ _fix_items(Evas_Object *obj)
                     evas_object_raise(it->base);
                }
              edje_object_part_text_set(it->base, "elm.text", it->label);
+             if ((!it->icon) && (minw[0] > 0))
+               {
+                  it->icon = evas_object_rectangle_add(evas_object_evas_get(it->base));
+                  evas_object_color_set(it->icon, 0, 0, 0, 0);
+               }
+             if ((!it->end) && (minw[1] > 0))
+               {
+                  it->end = evas_object_rectangle_add(evas_object_evas_get(it->base));
+                  evas_object_color_set(it->end, 0, 0, 0, 0);
+               }
+             if (it->icon)
+               {
+                  edje_extern_object_min_size_set(it->icon, minw[0], minh[0]);
+                  printf("|%s| %ix%i\n", it->label, minw[0], minh[0]);
+                  edje_object_part_swallow(it->base, "elm.swallow.icon", it->icon);
+               }
+             if (it->end)
+               {
+                  edje_extern_object_min_size_set(it->end, minw[1], minh[1]);
+                  edje_object_part_swallow(it->base, "elm.swallow.end", it->end);
+               }
              if (!it->fixed)
                {
                   Evas_Coord minw, minh;
@@ -177,6 +226,7 @@ _fix_items(Evas_Object *obj)
                   edje_object_message_signal_process(it->base);
                   edje_object_size_min_calc(it->base, &minw, &minh);
                   if (wd->mode == ELM_LIST_COMPRESS) minw = 0;
+                  printf("-- %ix%i\n", minw, minh);
                   evas_object_size_hint_min_set(it->base, minw, minh);
                   evas_object_show(it->base);
                }
@@ -206,66 +256,85 @@ elm_list_add(Evas_Object *parent)
    elm_widget_resize_object_set(obj, wd->scroller);
    
    wd->box = elm_box_add(parent);
-   
+   elm_box_homogenous_set(wd->box, 1);
    evas_object_size_hint_weight_set(wd->box, 1.0, 0.0);
    evas_object_size_hint_align_set(wd->box, -1.0, 0.0);
    elm_scroller_content_set(wd->scroller, wd->box);
    evas_object_show(wd->box);
 
-   wd->mode = ELM_LIST_COMPRESS;
+   wd->mode = ELM_LIST_SCROLL;
    
    _sizing_eval(obj);
    return obj;
 }
 
 EAPI Elm_List_Item *
-elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *indicator, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
+elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Item *it = _item_new(obj, label, icon, indicator, end, func, data);
+   Item *it = _item_new(obj, label, icon, end, func, data);
    wd->items = eina_list_append(wd->items, it);
    elm_box_pack_end(wd->box, it->base);
-   _fix_items(obj);
    return (Elm_List_Item *)it;
 }
 
 EAPI Elm_List_Item *
-elm_list_item_prepend(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *indicator, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
+elm_list_item_prepend(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   return NULL;
+   Item *it = _item_new(obj, label, icon, end, func, data);
+   wd->items = eina_list_prepend(wd->items, it);
+   elm_box_pack_start(wd->box, it->base);
+   return (Elm_List_Item *)it;
 }
 
 EAPI Elm_List_Item *
-elm_list_item_insert_before(Evas_Object *obj, Elm_List_Item *before, const char *label, Evas_Object *icon, Evas_Object *indicator, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
+elm_list_item_insert_before(Evas_Object *obj, Elm_List_Item *before, const char *label, Evas_Object *icon, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   return NULL;
+   Item *it = _item_new(obj, label, icon, end, func, data);
+   wd->items = eina_list_prepend_relative(wd->items, it, before);
+   elm_box_pack_before(wd->box, it->base, ((Item *)before)->base);
+   return (Elm_List_Item *)it;
 }
 
 EAPI Elm_List_Item *
-elm_list_item_insert_after(Evas_Object *obj, Elm_List_Item *after, const char *label, Evas_Object *icon, Evas_Object *indicator, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
+elm_list_item_insert_after(Evas_Object *obj, Elm_List_Item *after, const char *label, Evas_Object *icon, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   return NULL;
+   Item *it = _item_new(obj, label, icon, end, func, data);
+   wd->items = eina_list_append_relative(wd->items, it, after);
+   elm_box_pack_after(wd->box, it->base, ((Item *)after)->base);
+   return (Elm_List_Item *)it;
+}
+
+EAPI void
+elm_list_go(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   _fix_items(obj);
 }
 
 EAPI void
 elm_list_multi_select_set(Evas_Object *obj, Evas_Bool multi)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   // FIXME: implement
 }
 
 EAPI void
 elm_list_horizontal_mode_set(Evas_Object *obj, Elementary_List_Mode mode)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->mode == mode) return;
+   wd->mode = mode;
 }
 
 EAPI const Elm_List_Item *
 elm_list_selected_item_get(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   // FIXME: implement
    return NULL;
 }
 
@@ -273,26 +342,40 @@ EAPI const Eina_List *
 elm_list_items_get(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   return NULL;
+   if (wd->selected) return wd->selected;
+   return wd->items;
 }
 
 EAPI void
 elm_list_item_selected_set(Elm_List_Item *item, Evas_Bool selected)
 {
+   Item *it = (Item *)item;
+   Widget_Data *wd = elm_widget_data_get(it->obj);
+   Eina_List *l;
+   if (it->selected) return;
+   for (l = wd->items; l; l = l->next)
+     {
+        Item *it2 = l->data;
+        if ((it2 != it) && (it2->selected)) _item_unselect(it2);
+     }
+   _item_select(it);
 }
 
 EAPI void
 elm_list_item_show(Elm_List_Item *item)
 {
+   // FIXME: implement
 }
 
 EAPI void
 elm_list_item_del(Elm_List_Item *item)
 {
+   // FIXME: implement
 }
 
 EAPI const void *
 elm_list_item_data_get(Elm_List_Item *item)
 {
-   return NULL;
+   Item *it = (Item *)item;
+   return it->data;
 }

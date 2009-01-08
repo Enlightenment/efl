@@ -23,6 +23,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->stdicon) eina_stringshare_del(wd->stdicon);
    free(wd);
 }
@@ -31,6 +32,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->stdicon)
      _elm_theme_icon_set(wd->img, wd->stdicon, "default");
    _sizing_eval(obj);
@@ -40,6 +42,7 @@ static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    int w, h;
  
@@ -107,6 +110,7 @@ EAPI void
 elm_icon_file_set(Evas_Object *obj, const char *file, const char *group)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    const char *p;
    
    if (!file) return;
@@ -123,6 +127,7 @@ EAPI void
 elm_icon_standard_set(Evas_Object *obj, const char *name)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    
    if (!name) return;
    if (wd->stdicon) eina_stringshare_del(wd->stdicon);
@@ -135,6 +140,7 @@ EAPI void
 elm_icon_smooth_set(Evas_Object *obj, Evas_Bool smooth)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    wd->smooth = smooth;
    _sizing_eval(obj);
 }
@@ -143,6 +149,7 @@ EAPI void
 elm_icon_no_scale_set(Evas_Object *obj, Evas_Bool no_scale)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    wd->no_scale = no_scale;
    _sizing_eval(obj);
 }
@@ -151,6 +158,7 @@ EAPI void
 elm_icon_scale_set(Evas_Object *obj, Evas_Bool scale_up, Evas_Bool scale_down)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    wd->scale_up = scale_up;
    wd->scale_down = scale_down;
    _sizing_eval(obj);
@@ -160,6 +168,7 @@ EAPI void
 elm_icon_fill_outside_set(Evas_Object *obj, Evas_Bool fill_outside)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    wd->fill_outside = fill_outside;
    _sizing_eval(obj);
 }

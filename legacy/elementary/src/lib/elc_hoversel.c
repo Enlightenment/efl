@@ -18,7 +18,7 @@ struct _Item
    const char *icon_file;
    Elm_Icon_Type icon_type;
    void (*func) (void *data, Evas_Object *obj, void *event_info);
-   const void *data;
+   void *data;
 };
 
 static void _del_pre_hook(Evas_Object *obj);
@@ -38,6 +38,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    elm_hoversel_hover_end(obj);
    free(wd);
 }
@@ -46,6 +47,7 @@ static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
    evas_object_size_hint_min_get(wd->btn, &minw, &minh);
@@ -80,6 +82,7 @@ static void
 _button_clicked(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
    Evas_Object *bt, *bx, *ic;
    Eina_List *l;
    wd->hover = elm_hover_add(data);
@@ -129,6 +132,7 @@ static void
 _parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
    wd->hover_parent = NULL;
 }
 
@@ -160,6 +164,7 @@ EAPI void
 elm_hoversel_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->hover_parent)
      evas_object_event_callback_del(wd->hover_parent, EVAS_CALLBACK_DEL, _parent_del);
    wd->hover_parent = parent;
@@ -171,6 +176,7 @@ EAPI void
 elm_hoversel_label_set(Evas_Object *obj, const char *label)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    elm_button_label_set(wd->btn, label);
 }
 
@@ -178,6 +184,7 @@ EAPI void
 elm_hoversel_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    elm_button_icon_set(wd->btn, icon);
 }
 
@@ -185,6 +192,7 @@ EAPI void
 elm_hoversel_hover_end(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->hover) evas_object_del(wd->hover);
    wd->hover = NULL;
    evas_object_smart_callback_call(obj, "dismissed", NULL);
@@ -194,6 +202,7 @@ EAPI Elm_Hoversel_Item *
 elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
    Item *it = calloc(1, sizeof(Item));
    if (!it) return NULL;
    wd->items = eina_list_append(wd->items, it);
@@ -202,7 +211,7 @@ elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file
    it->icon_file = eina_stringshare_add(icon_file);
    it->icon_type = icon_type;
    it->func = func;
-   it->data = data;
+   it->data = (void *)data;
    return (Elm_Hoversel_Item *)it;
 }
 
@@ -211,6 +220,7 @@ elm_hoversel_item_del(Elm_Hoversel_Item *item)
 {
    Item *it = (Item *)item;
    Widget_Data *wd = elm_widget_data_get(it->obj);
+   if (!wd) return;
    elm_hoversel_hover_end(it->obj);
    wd->items = eina_list_remove(wd->items, it);
    eina_stringshare_del(it->label);

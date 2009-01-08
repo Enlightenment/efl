@@ -1486,7 +1486,7 @@ my_bt_19(void *data, Evas_Object *obj, void *event_info)
 static void
 my_bt_20(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *li;
+   Evas_Object *win, *bg, *li, *ic, *ic2, *bx;
    char buf[PATH_MAX];
    
    win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
@@ -1502,16 +1502,71 @@ my_bt_20(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, li);
    evas_object_size_hint_weight_set(li, 1.0, 1.0);
 
-   elm_list_item_append(li, "Hello", NULL, NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "World", NULL, NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "How", NULL, NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "Are", NULL, NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "You", NULL, NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "Doing", NULL, NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "Out", NULL, NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "There", NULL, NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "?", NULL, NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "Is this label long enough?", NULL, NULL, NULL,  NULL, NULL);
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_list_item_append(li, "Hello", ic, NULL,  NULL, NULL);
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_scale_set(ic, 0, 0);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_list_item_append(li, "world", ic, NULL,  NULL, NULL);
+   ic = elm_icon_add(win);
+   elm_icon_standard_set(ic, "edit");
+   elm_icon_scale_set(ic, 0, 0);
+   elm_list_item_append(li, ".", ic, NULL,  NULL, NULL);
+   
+   ic = elm_icon_add(win);
+   elm_icon_standard_set(ic, "delete");
+   elm_icon_scale_set(ic, 0, 0);
+   ic2 = elm_icon_add(win);
+   elm_icon_standard_set(ic2, "clock");
+   elm_icon_scale_set(ic2, 0, 0);
+   elm_list_item_append(li, "How", ic, ic2,  NULL, NULL);
+   
+   bx = elm_box_add(win);
+   elm_box_horizontal_set(bx, 1);
+
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   evas_object_size_hint_align_set(ic, 0.5, 0.5);
+   elm_box_pack_end(bx, ic);
+   evas_object_show(ic);
+   
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   evas_object_size_hint_align_set(ic, 0.5, 0.0);
+   elm_box_pack_end(bx, ic);
+   evas_object_show(ic);
+   
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   evas_object_size_hint_align_set(ic, 0.0, 1.0);
+   elm_box_pack_end(bx, ic);
+   evas_object_show(ic);
+   elm_list_item_append(li, "are", bx, NULL,  NULL, NULL);
+   
+   elm_list_item_append(li, "you", NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "doing", NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "out", NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "there", NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "today", NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "?", NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "Here", NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "are", NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "some", NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "more", NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "items", NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "Is this label long enough?", NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "Maybe this one is even longer so we can test long long items.", NULL, NULL,  NULL, NULL);
+
+   elm_list_go(li);
    
    evas_object_show(li);
    
