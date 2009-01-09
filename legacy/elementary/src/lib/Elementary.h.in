@@ -130,6 +130,8 @@ extern "C" {
           ELM_WIN_KEYBOARD_TERMINAL,
           ELM_WIN_KEYBOARD_PASSWORD
      } Elm_Win_Keyboard_Mode;
+
+#define ELM_MAIN() int main(int argc, char **argv) {elm_init(argc, argv); return elm_main(argc, argv);}
    
 /**************************************************************************/   
    /* General calls */
@@ -425,7 +427,6 @@ extern "C" {
    EAPI const void  *elm_list_item_data_get(Elm_List_Item *item);
    EAPI Evas_Object *elm_list_item_icon_get(Elm_List_Item *item);
    EAPI Evas_Object *elm_list_item_end_get(Elm_List_Item *item);
-       
    /* smart callbacks called:
     * "clicked" - when the user double-clicked an item
     * "selected" - when the user selected an item

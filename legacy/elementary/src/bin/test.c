@@ -2017,16 +2017,5 @@ elm_main(int argc, char **argv)
    /* exit code */
    return 0;
 }
-
-int
-main(int argc, char **argv)
-{
-   /* init Elementary (all Elementary calls begin with elm_ and all data
-    * types, enums and macros will be Elm_ and ELM_ etc.) */
-   elm_init(argc, argv);
-   /* this must be called right after elm_init(). this function is used for
-    * fast-starting elementary apps by caching a pre-init and x connect etc.
-    * in elm_init(). the ONLY call allowed to be done before elm_main() is
-    * elm_init() and nothing else. */
-   return elm_main(argc, argv);
-}
+/* all emeentary apps should use this. but it right after elm_main() */
+ELM_MAIN()
