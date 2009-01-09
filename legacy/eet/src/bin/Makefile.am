@@ -16,4 +16,4 @@ bin_PROGRAMS = eet
 eet_SOURCES = eet_main.c
 eet_CFLAGS = @EET_CFLAGS@
 eet_LDADD = $(top_builddir)/src/lib/libeet.la
-eet_LDFLAGS = @lt_enable_auto_import@ -Wl
+eet_LDFLAGS = @lt_enable_auto_import@ @ld_as_needed@
