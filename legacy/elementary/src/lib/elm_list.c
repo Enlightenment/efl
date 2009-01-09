@@ -26,6 +26,8 @@ struct _Item
    Evas_Bool is_even : 1;
    Evas_Bool fixed : 1;
    Evas_Bool selected : 1;
+   Evas_Bool dummy_icon : 1;
+   Evas_Bool dummy_end : 1;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -45,6 +47,8 @@ _sizing_eval(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    
+   evas_object_size_hint_min_get(wd->scroller, &minw, &minh);
+   evas_object_size_hint_max_get(wd->scroller, &maxw, &maxh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
@@ -149,6 +153,7 @@ _fix_items(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
    Evas_Coord minw[2] = { 0, 0 }, minh[2] = { 0, 0 };
+   Evas_Coord mw, mh;
    int i, redo = 0;
    
    for (l = wd->items; l; l = l->next)
@@ -177,7 +182,6 @@ _fix_items(Evas_Object *obj)
         wd->minh[1] = minh[1];
         redo = 1;
      }
-   printf("%ix%i | %ix%i\n", minw[0], minh[0], minw[1], minh[1]);
    for (i = 0, l = wd->items; l; l = l->next, i++)
      {
         Item *it = l->data;
@@ -185,10 +189,21 @@ _fix_items(Evas_Object *obj)
         if ((it->even != it->is_even) || (!it->fixed) || (redo))
           {
              const char *stacking;
-             if (it->even)
-               _elm_theme_set(it->base, "list", "item", "default");
+             
+             if (wd->mode == ELM_LIST_COMPRESS) 
+               {
+                  if (it->even)
+                    _elm_theme_set(it->base, "list", "item_compress", "default");
+                  else
+                    _elm_theme_set(it->base, "list", "item_compress_odd", "default");
+               }
              else
-               _elm_theme_set(it->base, "list", "item_odd", "default");
+               {
+                  if (it->even)
+                    _elm_theme_set(it->base, "list", "item", "default");
+                  else
+                    _elm_theme_set(it->base, "list", "item_odd", "default");
+               }
              stacking = edje_object_data_get(it->base, "stacking");
              if (stacking)
                {
@@ -198,20 +213,21 @@ _fix_items(Evas_Object *obj)
                     evas_object_raise(it->base);
                }
              edje_object_part_text_set(it->base, "elm.text", it->label);
-             if ((!it->icon) && (minw[0] > 0))
+             if ((!it->icon) && (minh[0] > 0))
                {
                   it->icon = evas_object_rectangle_add(evas_object_evas_get(it->base));
                   evas_object_color_set(it->icon, 0, 0, 0, 0);
+                  it->dummy_icon = 1;
                }
-             if ((!it->end) && (minw[1] > 0))
+             if ((!it->end) && (minh[1] > 0))
                {
                   it->end = evas_object_rectangle_add(evas_object_evas_get(it->base));
                   evas_object_color_set(it->end, 0, 0, 0, 0);
+                  it->dummy_end = 1;
                }
              if (it->icon)
                {
                   edje_extern_object_min_size_set(it->icon, minw[0], minh[0]);
-                  printf("|%s| %ix%i\n", it->label, minw[0], minh[0]);
                   edje_object_part_swallow(it->base, "elm.swallow.icon", it->icon);
                }
              if (it->end)
@@ -221,19 +237,21 @@ _fix_items(Evas_Object *obj)
                }
              if (!it->fixed)
                {
-                  Evas_Coord minw, minh;
-                   
                   edje_object_message_signal_process(it->base);
-                  edje_object_size_min_calc(it->base, &minw, &minh);
-                  if (wd->mode == ELM_LIST_COMPRESS) minw = 0;
-                  printf("-- %ix%i\n", minw, minh);
-                  evas_object_size_hint_min_set(it->base, minw, minh);
+                  edje_object_size_min_calc(it->base, &mw, &mh);
+                  evas_object_size_hint_min_set(it->base, mw, mh);
                   evas_object_show(it->base);
                }
              it->fixed = 1;
              it->is_even = it->even;
           }
      }
+   mw = 0; mh = 0;
+   evas_object_size_hint_min_get(wd->box, &mw, &mh);
+   if (wd->mode == ELM_LIST_LIMIT)
+     elm_scroller_content_min_limit(wd->scroller, 1, 0);
+   else
+     elm_scroller_content_min_limit(wd->scroller, 0, 0);
    _sizing_eval(obj);
 }
 
@@ -328,6 +346,10 @@ elm_list_horizontal_mode_set(Evas_Object *obj, Elementary_List_Mode mode)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->mode == mode) return;
    wd->mode = mode;
+   if (wd->mode == ELM_LIST_LIMIT)
+     elm_scroller_content_min_limit(wd->scroller, 1, 0);
+   else
+     elm_scroller_content_min_limit(wd->scroller, 0, 0);
 }
 
 EAPI const Elm_List_Item *
@@ -343,6 +365,7 @@ elm_list_items_get(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->selected) return wd->selected;
+   // FIXME: implement
    return wd->items;
 }
 
@@ -378,4 +401,20 @@ elm_list_item_data_get(Elm_List_Item *item)
 {
    Item *it = (Item *)item;
    return it->data;
+}
+
+EAPI Evas_Object *
+elm_list_item_icon_get(Elm_List_Item *item)
+{
+   Item *it = (Item *)item;
+   if (it->dummy_icon) return NULL;
+   return it->icon;
+}
+
+EAPI Evas_Object *
+elm_list_item_end_get(Elm_List_Item *item)
+{
+   Item *it = (Item *)item;
+   if (it->dummy_end) return NULL;
+   return it->end;
 }

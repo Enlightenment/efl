@@ -70,6 +70,7 @@ _sizing_eval(Evas_Object *obj)
    edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), &vmw, &vmh);
    if (wd->min_w) w = vmw + minw;
    if (wd->min_h) h = vmh + minh;
+   printf("%i : %i + %i\n",wd->min_w, vmw, minw); 
    evas_object_size_hint_min_set(obj, w, h);
 }
 
