@@ -1064,7 +1064,6 @@ extern "C" {
    EAPI Evas_Bool   evas_object_box_option_property_vget(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args);
 
 
-   EAPI void         evas_object_table_smart_set(Evas_Smart_Class *sc);
    EAPI Evas_Object *evas_object_table_add(Evas *evas);
    EAPI Evas_Object *evas_object_table_add_to(Evas_Object *parent);
    EAPI void         evas_object_table_homogeneous_set(Evas_Object *o, Evas_Object_Table_Homogeneous_Mode homogeneous);

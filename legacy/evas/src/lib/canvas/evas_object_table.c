@@ -878,6 +878,29 @@ _evas_object_table_smart_calculate(Evas_Object *o)
      _evas_object_table_smart_calculate_regular(o, priv);
 }
 
+static void
+_evas_object_table_smart_set(Evas_Smart_Class *sc)
+{
+   if (!sc)
+     return;
+
+   if (!_parent_sc.name)
+     evas_object_smart_clipped_smart_set(&_parent_sc);
+
+   sc->add = _evas_object_table_smart_add;
+   sc->del = _evas_object_table_smart_del;
+   sc->move = _parent_sc.move;
+   sc->resize = _evas_object_table_smart_resize;
+   sc->show = _parent_sc.show;
+   sc->hide = _parent_sc.hide;
+   sc->color_set = _parent_sc.color_set;
+   sc->clip_set = _parent_sc.clip_set;
+   sc->clip_unset = _parent_sc.clip_unset;
+   sc->calculate = _evas_object_table_smart_calculate;
+   sc->member_add = _parent_sc.member_add;
+   sc->member_del = _parent_sc.member_del;
+}
+
 static Evas_Smart *
 _evas_object_table_smart_class_new(void)
 {
@@ -886,7 +909,7 @@ _evas_object_table_smart_class_new(void)
    };
 
    if (!_parent_sc.name)
-     evas_object_table_smart_set(&sc);
+     _evas_object_table_smart_set(&sc);
 
    return evas_smart_class_new(&sc);
 }
@@ -925,33 +948,6 @@ evas_object_table_add_to(Evas_Object *parent)
    o = evas_object_table_add(evas);
    evas_object_smart_member_add(o, parent);
    return o;
-}
-
-/**
- * Set the default table @a api struct (Evas_Smart_Class)
- * with the default values. May be used to extend that API.
- */
-void
-evas_object_table_smart_set(Evas_Smart_Class *sc)
-{
-   if (!sc)
-     return;
-
-   if (!_parent_sc.name)
-     evas_object_smart_clipped_smart_set(&_parent_sc);
-
-   sc->add = _evas_object_table_smart_add;
-   sc->del = _evas_object_table_smart_del;
-   sc->move = _parent_sc.move;
-   sc->resize = _evas_object_table_smart_resize;
-   sc->show = _parent_sc.show;
-   sc->hide = _parent_sc.hide;
-   sc->color_set = _parent_sc.color_set;
-   sc->clip_set = _parent_sc.clip_set;
-   sc->clip_unset = _parent_sc.clip_unset;
-   sc->calculate = _evas_object_table_smart_calculate;
-   sc->member_add = _parent_sc.member_add;
-   sc->member_del = _parent_sc.member_del;
 }
 
 /**
