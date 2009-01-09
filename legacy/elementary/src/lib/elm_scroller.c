@@ -70,7 +70,6 @@ _sizing_eval(Evas_Object *obj)
    edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), &vmw, &vmh);
    if (wd->min_w) w = vmw + minw;
    if (wd->min_h) h = vmh + minh;
-   printf("%i : %i + %i\n",wd->min_w, vmw, minw); 
    evas_object_size_hint_min_set(obj, w, h);
 }
 
@@ -154,4 +153,11 @@ elm_scroller_content_min_limit(Evas_Object *obj, Evas_Bool w, Evas_Bool h)
    wd->min_w = w;
    wd->min_h = h;
    _sizing_eval(obj);
+}
+
+EAPI void
+elm_scroller_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   elm_smart_scroller_child_region_show(wd->scr, x, y, w, h);
 }

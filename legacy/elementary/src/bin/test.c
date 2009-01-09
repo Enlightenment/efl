@@ -1593,6 +1593,7 @@ my_bt_21(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, li);
    evas_object_size_hint_weight_set(li, 1.0, 1.0);
    elm_list_horizontal_mode_set(li, ELM_LIST_LIMIT);
+   elm_list_multi_select_set(li, 1);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);

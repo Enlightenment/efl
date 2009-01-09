@@ -10,8 +10,9 @@ struct _Widget_Data
    Eina_List *items;
    Eina_List *selected;
    Elementary_List_Mode mode;
-   Evas_Bool on_hold : 1;
    Evas_Coord minw[2], minh[2];
+   Evas_Bool on_hold : 1;
+   Evas_Bool multi : 1;
 };
 
 struct _Item
@@ -38,6 +39,20 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   while (wd->items)
+     {
+        Item *it = wd->items->data;
+        wd->items = eina_list_remove_list(wd->items, wd->items);
+        eina_stringshare_del(it->label);
+        if (!it->fixed)
+          {
+             if (it->icon) evas_object_del(it->icon);
+             if (it->end) evas_object_del(it->end);
+          }
+        if (it->base) evas_object_del(it->base);
+        free(it);
+     }
+   eina_list_free(wd->selected);
    free(wd);
 }
 
@@ -76,6 +91,7 @@ _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 static void
 _item_select(Item *it)
 {
+   Widget_Data *wd = elm_widget_data_get(it->obj);
    const char *selectraise;
    if (it->selected) return;
    edje_object_signal_emit(it->base, "elm,state,selected", "elm");
@@ -83,12 +99,15 @@ _item_select(Item *it)
    if ((selectraise) && (!strcmp(selectraise, "on")))
      evas_object_raise(it->base);
    it->selected = 1;
+   wd->selected = eina_list_append(wd->selected, it);
    if (it->func) it->func((void *)it->data, it->obj, it);
+   evas_object_smart_callback_call(it->obj, "selected", it);
 }
 
 static void
 _item_unselect(Item *it)
 {
+   Widget_Data *wd = elm_widget_data_get(it->obj);
    const char *stacking, *selectraise;
    if (!it->selected) return;
    edje_object_signal_emit(it->base, "elm,state,unselected", "elm");
@@ -100,6 +119,8 @@ _item_unselect(Item *it)
           evas_object_lower(it->base);
      }
    it->selected = 0;
+   wd->selected = eina_list_remove(wd->selected, it);
+   evas_object_smart_callback_call(it->obj, "unselected", it);
 }
 
 static void
@@ -116,12 +137,20 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
         wd->on_hold = 0;
         return;
      }
-   for (l = wd->items; l; l = l->next)
+   if (wd->multi)
      {
-        Item *it2 = l->data;
-        if ((it2 != it) && (it2->selected)) _item_unselect(it2);
+        if (!it->selected) _item_select(it);
+        else _item_unselect(it);
      }
-   if (!it->selected) _item_select(it);
+   else
+     {
+        for (l = wd->items; l; l = l->next)
+          {
+             Item *it2 = l->data;
+             if ((it2 != it) && (it2->selected)) _item_unselect(it2);
+          }
+        if (!it->selected) _item_select(it);
+     }
 }
 
 static Item *
@@ -337,7 +366,7 @@ EAPI void
 elm_list_multi_select_set(Evas_Object *obj, Evas_Bool multi)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   // FIXME: implement
+   wd->multi = multi;
 }
 
 EAPI void
@@ -352,21 +381,26 @@ elm_list_horizontal_mode_set(Evas_Object *obj, Elementary_List_Mode mode)
      elm_scroller_content_min_limit(wd->scroller, 0, 0);
 }
 
-EAPI const Elm_List_Item *
-elm_list_selected_item_get(Evas_Object *obj)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   // FIXME: implement
-   return NULL;
-}
-
 EAPI const Eina_List *
 elm_list_items_get(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (wd->selected) return wd->selected;
-   // FIXME: implement
    return wd->items;
+}
+
+EAPI const Elm_List_Item *
+elm_list_selected_item_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->selected) return wd->selected->data;
+   return NULL;
+}
+
+EAPI const Eina_List *
+elm_list_selected_items_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->selected;
 }
 
 EAPI void
@@ -375,25 +409,45 @@ elm_list_item_selected_set(Elm_List_Item *item, Evas_Bool selected)
    Item *it = (Item *)item;
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Eina_List *l;
-   if (it->selected) return;
-   for (l = wd->items; l; l = l->next)
+   if (selected)
      {
-        Item *it2 = l->data;
-        if ((it2 != it) && (it2->selected)) _item_unselect(it2);
+        if (!wd->multi)
+          {
+             Item *it2 = l->data;
+             if ((it2 != it) && (it2->selected)) _item_unselect(it2);
+          }
+        if (!it->selected) _item_select(it);
      }
-   _item_select(it);
+   else if (it->selected)
+     _item_unselect(it);
 }
 
 EAPI void
 elm_list_item_show(Elm_List_Item *item)
 {
-   // FIXME: implement
+   Item *it = (Item *)item;
+   Widget_Data *wd = elm_widget_data_get(it->obj);
+   Evas_Coord bx, by, bw, bh;
+   Evas_Coord x, y, w, h;
+   evas_object_geometry_get(wd->box, &bx, &by, &bw, &bh);
+   evas_object_geometry_get(it->base, &x, &y, &w, &h);
+   x -= bx;
+   y -= by;
+   elm_scroller_region_show(wd->scroller, x, y, w, h);
 }
 
 EAPI void
 elm_list_item_del(Elm_List_Item *item)
 {
-   // FIXME: implement
+   Item *it = (Item *)item;
+   Widget_Data *wd = elm_widget_data_get(it->obj);
+   if (it->selected) _item_unselect(it);
+   wd->items = eina_list_remove(wd->items, it);
+   eina_stringshare_del(it->label);
+   if (it->icon) evas_object_del(it->icon);
+   if (it->end) evas_object_del(it->end);
+   if (it->base) evas_object_del(it->base);
+   free(it);
 }
 
 EAPI const void *
