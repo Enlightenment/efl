@@ -452,7 +452,7 @@ extern "C" {
 // * need a hold-scroll counter in elm_widget
 // * add fullscreen mode on/off for windows
 // * hoversel only vertical right now - make horizontal
-// * set scaling per widget (and if scaling should be inheited by children)
+// * set scaling per widget (and if scaling should be inherited by children)
 // 
 //// (more widgets/features - medium priority)
 // * biglist widget (restricted format label + icon intended for massive lists)
@@ -478,6 +478,7 @@ extern "C" {
 // * file selector widget
 // 
 //// (improvements - low priority)
+// * merge with gurana
 // * use evas's new box instead of a box smart
 // * use evas's table instead of a table smart
 // * use stack for win widget
