@@ -89,12 +89,12 @@ case "$host_os" in
 			AC_DEFINE(EFL_ECORE_WINCE_BUILD, 1, [Define to mention that ecore WinCE is built.])
 			WIN32_CPPFLAGS="-D_WIN32_WCE=0x0420"
 			WIN32_CFLAGS="-mwin32"
-			WIN32_LIBS="-lws2 -laygshell"
+			WIN32_LIBS="-lws2"
                 else
 			if test "$host_os" = "mingw32ce" ; then
 				AC_DEFINE(EFL_ECORE_WINCE_BUILD, 1, [Define to mention that ecore WinCE is built.])
 				WIN32_CPPFLAGS="-D_WIN32_WCE=0x0420"
-				WIN32_LIBS="-lws2 -laygshell"
+				WIN32_LIBS="-lws2"
 			else
 				WIN32_LIBS="-lws2_32"
 			fi

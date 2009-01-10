@@ -6,12 +6,12 @@
 # include <features.h>
 #endif
 
-#include "Ecore.h"
-#include "ecore_private.h"
-
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
+
+#include "Ecore.h"
+#include "ecore_private.h"
 
 #include "Ecore_File.h"
 

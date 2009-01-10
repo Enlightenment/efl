@@ -2,6 +2,10 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>   /* for printf */
 
@@ -104,8 +108,6 @@ ecore_wince_init()
      }
 
    _ecore_wince_init_count++;
-
-   printf ("ecore_wince : instance + class bon\n");
 
    return _ecore_wince_init_count;
 }
@@ -276,7 +278,7 @@ _ecore_wince_window_procedure(HWND   window,
        _ecore_wince_event_handle_create_notify(data);
        return 0;
      case WM_DESTROY:
-       printf (" * ecore message : destroy\n");
+       printf (" *** ecore message : destroy\n");
        _ecore_wince_event_handle_destroy_notify(data);
        return 0;
      case WM_SHOWWINDOW:
@@ -297,7 +299,7 @@ _ecore_wince_window_procedure(HWND   window,
 
        return 0;
      case WM_CLOSE:
-       printf (" * ecore message : close\n");
+       printf (" *** ecore message : close\n");
        _ecore_wince_event_handle_delete_request(data);
        return 0;
        /* GDI notifications */
@@ -306,10 +308,10 @@ _ecore_wince_window_procedure(HWND   window,
           RECT rect;
           PAINTSTRUCT paint;
 
-          printf (" * ecore message : paint\n");
+/*           printf (" * ecore message : paint\n"); */
           if (BeginPaint(window, &paint))
             {
-               printf (" * ecore message : painting...\n");
+/*                printf (" * ecore message : painting...\n"); */
                data->update = paint.rcPaint;
                _ecore_wince_event_handle_expose(data);
                EndPaint(window, &paint);

@@ -5,6 +5,9 @@
 #ifndef _ECORE_EVAS_H
 #define _ECORE_EVAS_H
 
+#include <Evas.h>
+#include <Ecore_Getopt.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -47,9 +50,6 @@
  * - qt back-end ???
  * - dfb back-end ??? (dfb's threads make this REALLY HARD)
  */
-
-#include <Evas.h>
-#include <Ecore_Getopt.h>
 
 #ifdef __cplusplus
 extern "C" {

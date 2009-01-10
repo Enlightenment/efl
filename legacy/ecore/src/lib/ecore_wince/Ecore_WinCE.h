@@ -37,7 +37,9 @@ extern "C" {
 #endif
 
 
+#ifndef _ECORE_EVAS_H
 typedef void Ecore_WinCE_Window;
+#endif
 
 
 /* Events */
@@ -213,6 +215,9 @@ EAPI void ecore_wince_window_show(Ecore_WinCE_Window *window);
 
 EAPI void ecore_wince_window_hide(Ecore_WinCE_Window *window);
 
+EAPI void ecore_wince_window_title_set(Ecore_WinCE_Window *window,
+                                       const char         *title);
+
 EAPI void ecore_wince_window_backend_set(Ecore_WinCE_Window *window, int backend);
 
 EAPI void ecore_wince_window_suspend_set(Ecore_WinCE_Window *window, int (*suspend)(int));
@@ -230,6 +235,9 @@ EAPI void ecore_wince_window_size_get(Ecore_WinCE_Window *window,
                                       int                *height);
 
 EAPI void *ecore_wince_window_window_get(Ecore_WinCE_Window *window);
+
+EAPI void ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
+                                            int                 on);
 
 
 #ifdef __cplusplus

@@ -2,6 +2,10 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>   /* for printf */
 
@@ -263,7 +267,7 @@ _ecore_wince_event_handle_enter_notify(Ecore_WinCE_Callback_Data *msg)
    Ecore_WinCE_Window *window;
 
    window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
-   printf (" * ecore event enter notify 0\n");
+/*    printf (" * ecore event enter notify 0\n"); */
 
    {
       Ecore_WinCE_Event_Mouse_Move *e;
@@ -297,7 +301,7 @@ _ecore_wince_event_handle_enter_notify(Ecore_WinCE_Callback_Data *msg)
 
       ecore_event_add(ECORE_WINCE_EVENT_MOUSE_IN, e, NULL, NULL);
    }
-   printf (" * ecore event enter notify 1\n");
+/*    printf (" * ecore event enter notify 1\n"); */
 }
 
 void

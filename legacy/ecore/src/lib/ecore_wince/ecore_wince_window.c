@@ -2,13 +2,15 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
-#include <stdlib.h>
-#include <stdio.h>   /* for printf */
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
-#include <aygshell.h>
+
+#include <Evil.h>
 
 #include "Ecore_WinCE.h"
 #include "ecore_wince_private.h"
@@ -38,27 +40,29 @@ ecore_wince_window_new(Ecore_WinCE_Window *parent,
    if (!w)
      return NULL;
 
-   SetRect(&rect, 0, 0,
-           GetSystemMetrics(SM_CXSCREEN),
-           GetSystemMetrics(SM_CYSCREEN));
+   rect.left = 0;
+   rect.top = 0;
+   rect.right = width;
+   rect.bottom = height;
+   if (!AdjustWindowRectEx(&rect, WS_CAPTION | WS_SYSMENU | WS_VISIBLE, FALSE, WS_EX_TOPMOST))
+     {
+        free(w);
+        return NULL;
+     }
 
    window = CreateWindowEx(WS_EX_TOPMOST,
                            ECORE_WINCE_WINDOW_CLASS,
                            L"",
-                           WS_VISIBLE | WS_POPUP,
-                           rect.left, rect.top,
-                           rect.right - rect.left,
-                           rect.bottom - rect.top,
-                            parent ? ((struct _Ecore_WinCE_Window *)parent)->window : NULL,
+                           WS_CAPTION | WS_SYSMENU | WS_VISIBLE,
+                           x, y,
+                           rect.right - rect.left, rect.bottom - rect.top,
+                           parent ? ((struct _Ecore_WinCE_Window *)parent)->window : NULL,
                            NULL, _ecore_wince_instance, NULL);
    if (!window)
      {
         free(w);
         return NULL;
      }
-
-   SHFullScreen(window,
-                SHFS_HIDETASKBAR | SHFS_HIDESTARTICON | SHFS_HIDESIPBUTTON);
 
    if (!_ecore_wince_hardware_keys_register(window))
      {
@@ -113,6 +117,23 @@ ecore_wince_window_hide(Ecore_WinCE_Window *window)
    fprintf (stderr, " ** ecore_wince_window_hide  %p\n", window);
    ShowWindow(((struct _Ecore_WinCE_Window *)window)->window, SW_HIDE);
    SendMessage(((struct _Ecore_WinCE_Window *)window)->window, WM_SHOWWINDOW, 0, 0);
+}
+
+void
+ecore_wince_window_title_set(Ecore_WinCE_Window *window,
+                             const char         *title)
+{
+   wchar_t *wtitle;
+
+   if (!window) return;
+
+   if (!title || !title[0]) return;
+
+   wtitle = evil_char_to_wchar(title);
+   if (!wtitle) return;
+
+   SetWindowText(((struct _Ecore_WinCE_Window *)window)->window, wtitle);
+   free(wtitle);
 }
 
 void
@@ -211,7 +232,6 @@ ecore_wince_window_size_get(Ecore_WinCE_Window *window,
 {
    RECT rect;
 
-   printf ("ecore_wince_window_size_get %p\n", window);
    if (!window)
      {
         if (width) *width = GetSystemMetrics(SM_CXSCREEN);
@@ -240,6 +260,86 @@ ecore_wince_window_window_get(Ecore_WinCE_Window *window)
      return NULL;
 
    return ((struct _Ecore_WinCE_Window *)window)->window;
+}
+
+void
+ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
+                                  int                 on)
+{
+   struct _Ecore_WinCE_Window *ew;
+   HWND                        w;
+   HWND                        task_bar;
+   int                         width;
+   int                         height;
+
+   if (!window) return;
+
+   ew = (struct _Ecore_WinCE_Window *)window;
+   if (((ew->fullscreen) && (on)) ||
+       ((!ew->fullscreen) && (!on)))
+     return;
+
+   ew->fullscreen = !!on;
+   w = ew->window;
+
+   if (on)
+     {
+        /* save the position and size of the window */
+        if (!GetWindowRect(w, &ew->rect)) return;
+
+        /* hide task bar */
+        task_bar = FindWindow(L"HHTaskBar", NULL);
+        if (!task_bar) return;
+        ShowWindow(task_bar, SW_HIDE);
+        EnableWindow(task_bar, FALSE);
+
+        /* style: visible + popup */
+        if (!SetWindowLong(w, GWL_STYLE, WS_POPUP | WS_VISIBLE)) return;
+
+        /* resize window to fit the entire screen */
+        SetWindowPos(w, HWND_TOPMOST,
+                     0, 0,
+                     GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
+                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+        /*
+         * It seems that SetWindowPos is not sufficient.
+         * Call MoveWindow with the correct size and force painting.
+         * Note that UpdateWindow (forcing repainting) is not sufficient
+         */
+        MoveWindow(w,
+                   0, 0,
+                   GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
+                   TRUE);
+     }
+   else
+     {
+        /* show task bar */
+        task_bar = FindWindow(L"HHTaskBar", NULL);
+        if (!task_bar) return;
+        ShowWindow(task_bar, SW_SHOW);
+        EnableWindow(task_bar, TRUE);
+
+        /* style: visible + caption + sysmenu */
+        if (!SetWindowLong(w, GWL_STYLE, WS_CAPTION | WS_SYSMENU | WS_VISIBLE)) return;
+        /* restaure the position and size of the window */
+        SetWindowPos(w, HWND_TOPMOST,
+                     ew->rect.left,
+                     ew->rect.top,
+                     ew->rect.right - ew->rect.left,
+                     ew->rect.bottom - ew->rect.top,
+                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+        /*
+         * It seems that SetWindowPos is not sufficient.
+         * Call MoveWindow with the correct size and force painting.
+         * Note that UpdateWindow (forcing repainting) is not sufficient
+         */
+        MoveWindow(w,
+                   ew->rect.left,
+                   ew->rect.top,
+                   ew->rect.right - ew->rect.left,
+                   ew->rect.bottom - ew->rect.top,
+                   TRUE);
+     }
 }
 
 

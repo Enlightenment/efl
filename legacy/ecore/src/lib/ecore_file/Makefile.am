@@ -6,7 +6,8 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore \
 @CURL_CFLAGS@ \
 @EVIL_CFLAGS@ \
-@EINA_CFLAGS@
+@EINA_CFLAGS@ \
+@WIN32_CPPFLAGS@
 
 AM_CFLAGS = @WIN32_CFLAGS@
 

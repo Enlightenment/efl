@@ -705,14 +705,14 @@ _ecore_evas_wince_hide(Ecore_Evas *ee)
 /*      ecore_wince_window_lower(ee->engine.wince.window); */
 /* } */
 
-/* static void */
-/* _ecore_evas_wince_title_set(Ecore_Evas *ee, const char *title) */
-/* { */
-/*    if (ee->prop.title) free(ee->prop.title); */
-/*    ee->prop.title = NULL; */
-/*    if (title) ee->prop.title = strdup(title); */
-/*    ecore_wince_window_title_set(ee->engine.wince.window, ee->prop.title); */
-/* } */
+static void
+_ecore_evas_wince_title_set(Ecore_Evas *ee, const char *title)
+{
+   if (ee->prop.title) free(ee->prop.title);
+   ee->prop.title = NULL;
+   if (title) ee->prop.title = strdup(title);
+   ecore_wince_window_title_set(ee->engine.wince.window, ee->prop.title);
+}
 
 /* static void */
 /* _ecore_evas_wince_size_min_set(Ecore_Evas *ee, int width, int height) */
@@ -821,17 +821,52 @@ _ecore_evas_wince_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int ho
 static void
 _ecore_evas_wince_fullscreen_set(Ecore_Evas *ee, int on)
 {
-/*    if ((ee->prop.fullscreen && on) || */
-/*       (!ee->prop.fullscreen && !on)) return; */
+   Evas_Engine_Info_Software_16_WinCE *einfo;
+   struct _Ecore_WinCE_Window         *window;
 
-/*    ee->engine.wince.state.fullscreen = on; */
-/*    ecore_wince_window_fullscreen_set(ee->engine.wince.window, ee->prop.borderless); */
-   /* FIXME: what to do with that code ?? */
-/*    if (ee->should_be_visible) */
-/*      ecore_x_netwm_state_request_send(ee->engine.x.win, ee->engine.x.win_root, */
-/* 				      ECORE_X_WINDOW_STATE_FULLSCREEN, -1, on); */
-/*    else */
-/*      _ecore_evas_wince_state_update(ee); */
+   if ((ee->engine.wince.state.fullscreen && on) ||
+      (!ee->engine.wince.state.fullscreen && !on))
+     return;
+
+   ee->engine.wince.state.fullscreen = on;
+   ee->prop.fullscreen = on;
+
+   window = (struct _Ecore_WinCE_Window *)ee->engine.wince.window;
+
+   if (on != 0)
+   {
+/*       ecore_win32_window_shape_set(ee->engine.win32.window, 0, 0, NULL); */
+      ecore_wince_window_fullscreen_set(ee->engine.wince.window, on);
+      ee->w = GetSystemMetrics(SM_CXSCREEN);
+      ee->h = GetSystemMetrics(SM_CYSCREEN);
+      evas_output_size_set(ee->evas, ee->w, ee->h);
+      evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+   }
+   else
+   {
+      int w;
+      int h;
+
+      ecore_wince_window_fullscreen_set(ee->engine.wince.window, on);
+      ecore_wince_window_size_get(ee->engine.wince.window, &w, &h);
+      ee->w = w;
+      ee->h = h;
+      evas_output_size_set(ee->evas, ee->w, ee->h);
+      evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+/*       ecore_win32_window_shape_set(window, */
+/*                                    window->shape.width, */
+/*                                    window->shape.height, */
+/*                                    window->shape.mask); */
+   }
+
+   einfo = (Evas_Engine_Info_Software_16_WinCE *)evas_engine_info_get(ecore_evas_get(ee));
+   if (einfo != NULL)
+     {
+        einfo->info.fullscreen = !!on;
+/*         einfo->info.layered = window->shape.layered; */
+        printf ("_ecore_evas_wince_fullscreen_set : %d\n", einfo->info.fullscreen);
+        evas_engine_info_set(ecore_evas_get(ee), (Evas_Engine_Info *)einfo);
+     }
 }
 
 static void *
@@ -868,7 +903,7 @@ static const Ecore_Evas_Engine_Func _ecore_wince_engine_func =
    NULL, //_ecore_evas_wince_raise,
    NULL, //_ecore_evas_wince_lower,
    NULL, //_ecore_evas_wince_activate,
-   NULL, //_ecore_evas_wince_title_set,
+   _ecore_evas_wince_title_set,
      NULL, /* _ecore_evas_x_name_class_set */
    NULL, //_ecore_evas_wince_size_min_set,
    NULL, //_ecore_evas_wince_size_max_set,

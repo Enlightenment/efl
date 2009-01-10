@@ -36,7 +36,10 @@ struct _Ecore_WinCE_Window
    ecore_wince_suspend suspend;
    ecore_wince_resume  resume;
 
+   RECT                rect;           /* used to go fullscreen to normal */
+
    unsigned int        pointer_is_in : 1;
+   unsigned int        fullscreen    : 1;
 };
 
 extern double              _ecore_wince_double_click_time;

@@ -212,6 +212,9 @@ struct _Ecore_Evas_Engine
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
    struct {
       Ecore_WinCE_Window *window;
+     struct {
+       unsigned char fullscreen : 1;
+     } state;
    } wince;
 #endif
 

@@ -148,7 +148,7 @@ static int _ecore_pipe_read(void             *data,
  *   pipeline = _buid_pipeline (filename, pipe);
  *   if (!pipeline) {
  *     g_print ("Error during the pipeline building\n");
- *     ecore_pipe_free (pipe);
+ *     ecore_pipe_del (pipe);
  *     ecore_shutdown ();
  *     gst_deinit ();
  *     return -1;
@@ -158,7 +158,7 @@ static int _ecore_pipe_read(void             *data,
  *
  *   ecore_main_loop_begin();
  *
- *   ecore_pipe_free (pipe);
+ *   ecore_pipe_del (pipe);
  *   ecore_shutdown ();
  *   gst_deinit ();
  *
