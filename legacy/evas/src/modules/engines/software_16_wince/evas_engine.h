@@ -81,7 +81,8 @@ void              evas_software_wince_ddraw_surface_resize(FB_Output_Buffer *fbo
 
 void             *evas_software_wince_gdi_init (HWND window,
                                                 int  width,
-                                                int  height);
+                                                int  height,
+                                                int  fullscreen);
 FB_Output_Buffer *evas_software_wince_gdi_output_buffer_new (void *priv,
                                                              int   width,
                                                              int   height);

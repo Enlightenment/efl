@@ -24,7 +24,8 @@ struct Evas_Engine_WinCE_GDI_Priv
 void *
 evas_software_wince_gdi_init(HWND window,
                              int  width,
-                             int  height)
+                             int  height,
+                             int  fullscreen)
 {
    Evas_Engine_WinCE_GDI_Priv *priv;
 
@@ -41,18 +42,15 @@ evas_software_wince_gdi_init(HWND window,
         return NULL;
      }
 
-   priv->width = GetSystemMetrics(SM_CXSCREEN);
-   priv->height = GetSystemMetrics(SM_CYSCREEN);
-
-   if ((priv->width != width) ||
-       (priv->height != height))
+   if (fullscreen)
      {
-        fprintf (stderr, "[Evas] [Engine] [WinCE GDI] Size mismatch\n");
-        fprintf (stderr, "[Evas] [Engine] [WinCE GDI] asked: %dx%d\n", width, height);
-        fprintf (stderr, "[Evas] [Engine] [WinCE GDI] got  : %dx%d\n", priv->width, priv->height);
-        ReleaseDC(window, priv->dc);
-        free(priv);
-        return NULL;
+        priv->width = GetSystemMetrics(SM_CXSCREEN);
+        priv->height = GetSystemMetrics(SM_CYSCREEN);
+     }
+   else
+     {
+        priv->width = width;
+        priv->height = height;
      }
 
    priv->bitmap_info = (BITMAPINFO_16bpp *)malloc(sizeof(BITMAPINFO_16bpp));

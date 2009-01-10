@@ -14,11 +14,12 @@ struct _Evas_Engine_Info_Software_16_WinCE
    Evas_Engine_Info magic;
 
    struct {
-      HWND  window;
-      int   width;
-      int   height;
-      int   backend; /* 0: auto, 1: raw, 2: gapi, 3: ddraw, 4: gdi */
-      int   rotation;
+      HWND         window;
+      int          width;
+      int          height;
+      int          backend; /* 0: auto, 1: raw, 2: gapi, 3: ddraw, 4: gdi */
+      int          rotation;
+      unsigned int fullscreen : 1;
    } info;
    /* engine specific function calls to query stuff about messages */
    struct {

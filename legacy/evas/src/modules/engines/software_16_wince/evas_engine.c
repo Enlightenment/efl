@@ -220,7 +220,7 @@ eng_setup(Evas *e, void *in)
               break;
            case 4: /* GDI */
               re->backend = EVAS_ENGINE_WINCE_GDI;
-              re->backend_priv = evas_software_wince_gdi_init(info->info.window, info->info.width, info->info.height);
+              re->backend_priv = evas_software_wince_gdi_init(info->info.window, info->info.width, info->info.height, info->info.fullscreen);
               if (!re->backend_priv)
                 {
                    free(re);
@@ -295,7 +295,7 @@ eng_setup(Evas *e, void *in)
               break;
            case 4: /* GDI */
               re->backend = EVAS_ENGINE_WINCE_GDI;
-              re->backend_priv = evas_software_wince_gdi_init(info->info.window, info->info.width, info->info.height);
+              re->backend_priv = evas_software_wince_gdi_init(info->info.window, info->info.width, info->info.height, info->info.fullscreen);
               if (!re->backend_priv)
                 {
                    free(re);
