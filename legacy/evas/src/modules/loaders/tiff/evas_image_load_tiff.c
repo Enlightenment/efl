@@ -183,6 +183,7 @@ evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *ke
    ie->w = tiff_image.width;
    ie->h = tiff_image.height;
 
+   TIFFRGBAImageEnd(&tiff_image);
    TIFFClose(tif);
    return 1;
 }
