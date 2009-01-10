@@ -4,7 +4,9 @@ struct _Ecore_DirectFB_Key_Symbols
 	char *string;
 	char *name;
 	unsigned int id;
-} _ecore_directfb_key_symbols[] = {
+};
+
+static const Ecore_DirectFB_Key_Symbols _ecore_directfb_key_symbols[] = {
 	{"\010", "BackSpace",DIKS_BACKSPACE},
 	{"\011", "Tab", DIKS_TAB},
 	{"\015", "Return", DIKS_RETURN},
@@ -179,3 +181,4 @@ struct _Ecore_DirectFB_Key_Symbols
 	/* not included the custom keys */
 	{"", "VoidSymbol", DIKS_NULL}
 };
+static int _ecore_directfb_key_symbols_count = sizeof(_ecore_directfb_key_symbols)/sizeof(Ecore_DirectFB_Key_Symbols);
