@@ -263,7 +263,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 	win->ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 1, 1);
 	break;
       case ELM_SOFTWARE_16_WINCE:
-	win->ee = ecore_evas_software_wince_fb_new(NULL, 0, 0, 1, 1);
+	win->ee = ecore_evas_software_wince_gdi_new(NULL, 0, 0, 1, 1);
 	break;
       default:
 	break;

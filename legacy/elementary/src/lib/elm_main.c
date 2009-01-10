@@ -114,9 +114,9 @@ elm_init(int argc, char **argv)
                  (!strcasecmp(elm_engine, "opengl-x11")) ||
                  (!strcasecmp(elm_engine, "opengl_x11")))
           _elm_config->engine = ELM_OPENGL_X11;
-        else if ((!strcasecmp(elm_engine, "wince-fb")) ||
-                 (!strcasecmp(elm_engine, "software-16-wince-fb")) ||
-                 (!strcasecmp(elm_engine, "software_16_wince_fb")))
+        else if ((!strcasecmp(elm_engine, "wince-gdi")) ||
+                 (!strcasecmp(elm_engine, "software-16-wince-gdi")) ||
+                 (!strcasecmp(elm_engine, "software_16_wince_gdi")))
           _elm_config->engine = ELM_SOFTWARE_16_WINCE;
      }
    
