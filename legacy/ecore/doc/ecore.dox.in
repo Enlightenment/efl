@@ -1,0 +1,378 @@
+/** 
+@brief Ecore Library Public API Calls
+ 
+These routines are used for Ecore Library interaction
+*/
+
+/**
+
+@mainpage Ecore
+
+@image latex ecore_big.eps width=5cm
+@image html  ecore.png
+
+@version @PACKAGE_VERSION@
+@author Carsten Haitzler <raster\@rasterman.com>
+@author Tom Gilbert <tom\@linuxbrit.co.uk>
+@author Burra <burra\@colorado.edu>
+@author Chris Ross <chris\@darkrock.co.uk>
+@author Term <term\@twistedpath.org>
+@author Tilman Sauerbeck <tilman\@code-monkey.de>
+@author Nathan Ingersoll <rbdpngn\@users.sourceforge.net>
+@date 2000-2004
+
+@section intro Introduction
+
+Ecore is a library of convenience functions.
+
+The Ecore library provides the following modules:
+@li @link Ecore.h        Ecore - Main Loop Functions. @endlink
+@li @link Ecore_Con.h    Ecore_Con - Connection functions. @endlink
+@li @link Ecore_Config.h Ecore_Config - Configuration functions. @endlink
+@li @link Ecore_Evas.h   Ecore_Evas - Evas convenience functions. @endlink
+@li @link Ecore_Fb.h     Ecore_FB - Frame buffer convenience functions. @endlink
+@li @link Ecore_Ipc.h    Ecore_IPC - Inter Process Communication functions. @endlink
+@li @link Ecore_Job.h    Ecore_Job - Job functions, to be used in the Ecore main loop. @endlink
+@li @link Ecore_Txt.h    Ecore_Txt - Text encoding conversion. @endlink
+@li @link Ecore_X.h      Ecore_X - X Windows System wrapper. @endlink
+
+@section compiling How to compile using Ecore?
+
+This section has to be documented. Below is just a quick line to handle all
+Ecore modules at once.
+
+@verbatim
+gcc *.c \
+-I/usr/local/include -I/usr/X11R6/include \
+-L/usr/local/lib -L/usr/X11R6/lib \
+-lecore -lecore_evas -lecore_x -lecore_fb -lecore_job \
+`pkg-config evas --cflags --libs`
+@endverbatim
+
+@section install How is it installed?
+
+Suggested configure options for evas for a Linux desktop X display:
+
+@verbatim
+./configure \
+--enable-ecore-x \
+--enable-ecore-fb \
+--enable-ecore-evas \
+--enable-ecore-evas-gl \
+--enable-ecore-job \
+--enable-ecore-con \
+--enable-ecore-ipc \
+--enable-ecore-txt
+make CFLAGS="-O9 -mpentiumpro -march=pentiumpro -mcpu=pentiumpro"
+@endverbatim
+
+@todo (1.0) Document API
+
+*/
+
+/*
+@page Ecore_Main_Loop_Page The Ecore Main Loop
+
+@section intro What is Ecore?
+
+Ecore is a clean and tiny event loop library with many modules to do lots of
+convenient things for a programmer, to save time and effort.
+
+It's small and lean, designed to work on embedded systems all the way to
+large and powerful multi-cpu workstations. It serialises all system signals,
+events etc. into a single event queue, that is easily processed without
+needing to worry about concurrency. A properly written, event-driven program
+using this kind of programming doesn't need threads, nor has to worry about
+concurrency. It turns a program into a state machine, and makes it very
+robust and easy to follow.
+
+Ecore gives you other handy primitives, such as timers to tick over for you
+and call specified functions at particular times so the programmer can use
+this to do things, like animate, or time out on connections or tasks that take
+too long etc.
+
+Idle handlers are provided too, as well as calls on entering an idle state
+(often a very good time to update the state of the program). All events that
+enter the system are passed to specific callback functions that the program
+sets up to handle those events. Handling them is simple and other Ecore
+modules produce more events on the queue, coming from other sources such as
+file descriptors etc.
+
+Ecore also lets you have functions called when file descriptors become active
+for reading or writing, allowing for streamlined, non-blocking IO.
+
+Here is an exmaple of a simple program and its basic event loop flow:
+
+@image html  prog_flow.png
+
+
+
+@section work How does Ecore work?
+
+Ecore is very easy to learn and use. All the function calls are designed to
+be easy to remember, explicit in describing what they do, and heavily
+name-spaced. Ecore programs can start and be very simple.
+
+For example:
+
+@code
+#include <Ecore.h>
+
+int main(int argc, const char **argv)
+{
+  ecore_init();
+  ecore_app_args_set(argc, argv);
+  ecore_main_loop_begin();
+  ecore_shutdown();
+  return 0;
+}
+@endcode
+
+This program is very simple and does't check for errors, but it does start up
+and begin a main loop waiting for events or timers to tick off. This program
+doesn't set up any, but now we can expand on this simple program a little
+more by adding some event handlers and timers.
+
+@code
+#include <Ecore.h>
+
+Ecore_Timer         *timer1     = NULL;
+Ecore_Event_Handler *handler1   = NULL;
+double               start_time = 0.0;
+
+int timer_func(void *data)
+{
+  printf("Tick timer. Sec: %3.2f\n", ecore_time_get() - start_time);
+  return 1;
+}
+
+int exit_func(void *data, int ev_type, void *ev)
+{
+  Ecore_Event_Signal_Exit *e;
+
+  e = (Ecore_Event_Signal_Exit *)ev;
+  if (e->interrupt)      printf("Exit: interrupt\n");
+  else if (e->quit)      printf("Exit: quit\n");
+  else if (e->terminate) printf("Exit: terminate\n");
+  ecore_main_loop_quit();
+  return 1;
+}
+
+int main(int argc, const char **argv)
+{
+  ecore_init();
+  ecore_app_args_set(argc, argv);  
+  start_time = ecore_time_get();
+  handler1 = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, exit_func, NULL);
+  timer1 = ecore_timer_add(0.5, timer_func, NULL);  
+  ecore_main_loop_begin();
+  ecore_shutdown();
+  return 0;
+}
+@endcode
+
+In the previous example, we initialize our application and get the time at
+which our program has started so we can calculate an offset. We set
+up a timer to tick off in 0.5 seconds, and since it returns 1, will
+keep ticking off every 0.5 seconds until it returns 0, or is deleted
+by hand. An event handler is set up to call a function - exit_func(),
+whenever an event of type ECORE_EVENT_SIGNAL_EXIT is received (CTRL-C
+on the command line will cause such an event to happen). If this event
+occurs it tells you what kind of exit signal was received, and asks
+the main loop to quit when it is finished by calling
+ecore_main_loop_quit().
+
+The handles returned by ecore_timer_add() and ecore_event_handler_add() are 
+only stored here as an example. If you don't need to address the timer or 
+event handler again you don't need to store the result, so just call the 
+function, and don't assign the result to any variable.
+
+This program looks slightly more complex than needed to do these simple
+things, but in principle, programs don't get any more complex. You add more
+event handlers, for more events, will have more timers and such, BUT it all
+follows the same principles as shown in this example.
+
+*/
+
+/**
+@page Ecore_Config_Page The Enlightened Property Library
+
+The Enlightened Property Library (Ecore_Config) is an adbstraction
+from the complexities of writing your own configuration. It provides
+many features using the Enlightenment 17 development libraries.
+
+To use the library, you:
+@li Set the default values of your properties.
+@li Load the configuration from a file.  You must set the default values
+    first, so that the library knows the correct type of each argument.
+
+The following examples show how to use the Enlightened Property Library:
+@li @link config_basic_example.c config_basic_example.c @endlink
+@li @link config_listener_example.c config_listener_example.c @endlink
+
+*/
+
+/**
+@page Ecore_ADT_Page Ecore Abstract Data Types
+
+This page briefly describes the different abstract data types
+that are provided by the Ecore library for general usage.  You need to
+include the @link Ecore_Data.h Ecore_Data.h @endlink to use them.
+
+@section Ecore_ADT_List List
+
+A list is a simple data type where one each piece of data points to
+another piece of data.
+
+Associated modules that describe the List ADT include:
+@li @ref Ecore_Data_List_Creation_Group
+@li @ref Ecore_Data_List_Add_Item_Group
+@li @ref Ecore_Data_List_Remove_Item_Group
+@li @ref Ecore_Data_List_Traverse_Group
+@li @ref Ecore_Data_List_Node_Group
+
+Examples involving lists include:
+@li @link list_example.c list_example.c @endlink
+
+@section Ecore_ADT_DList Doubly Linked List
+
+A doubly linked list is like a linked list, only each piece of data
+can also point to the piece before it.  In other words, you can traverse
+a doubly linked list in both directions.
+
+Associated modules that describe the DList ADT include:
+@li @ref Ecore_Data_DList_Creation_Group
+@li @ref Ecore_Data_DList_Add_Item_Group
+@li @ref Ecore_Data_DList_Remove_Item_Group
+
+@section Ecore_ADT_Hash Hash
+
+A hash is an abstract data type where one value is associated with another
+value.  Instead of each element of the group being accessible using a
+number, each element is accessed using another object.
+
+Associated modules that describe the Hash ADT include:
+@li @ref Ecore_Data_Hash_ADT_Creation_Group
+@li @ref Ecore_Data_Hash_ADT_Destruction_Group
+@li @ref Ecore_Data_Hash_ADT_Data_Group
+
+@todo Finish this.
+*/
+
+/**
+@page X_Window_System_Page X Window System
+
+The Ecore library includes a wrapper for handling the X window system.
+This page briefly explains what the X window system is and various terms
+that are used.
+*/
+
+// GROUP DEFINITIONS
+
+/**
+@defgroup Ecore_Timer_Group Ecore Timer
+
+The timer allows callbacks to be called at specific intervals.
+ */
+
+/**
+@defgroup Ecore_Job_Group Ecore Jobs
+
+You can queue jobs that are to be done by the main loop when the current
+event is dealt with.
+*/
+
+/**
+@defgroup Idle_Group Idle Handlers
+
+Callbacks that are called when the program enters or exits an idle state.
+
+The ecore main loop enters an idle state when it is waiting for timers
+to time out, data to come in on a file descriptor or any other event
+to occur.  You can set callbacks to be called when the main loop
+enters an idle state, during an idle state or just after the program
+wakes up.
+
+Enterer callbacks are good for updating your program's state, if it
+has a state engine.  Once all of the enterer handlers are called, the
+program will enter a "sleeping" state.
+
+Idler callbacks are called when the main loop has called all enterer
+handlers.  They are useful for interfaces that require polling and
+timers would be too slow to use.
+
+If no idler callbacks are specified, then the process literally goes
+to sleep.  Otherwise, the idler callbacks are called continuously
+while the loop is "idle", using as much CPU as is available to the
+process.
+
+Exiter callbacks are called when the main loop wakes up from an idle
+state.
+
+*/
+
+/**
+@defgroup Ecore_Config_Create_Group Ecore Config Create Functions
+
+Convenience functions that set default values, bounds, option values and
+descriptions in one call.
+*/
+
+/**
+@defgroup Ecore_Config_File_Group Ecore Config File Functions
+
+Functions that are used to load and save properties from and to files.
+*/
+
+// EXAMPLES
+
+/**
+@example args_example.c
+Shows how to set and retrieve the program arguments.
+*/
+
+/**
+@example con_server_example.c
+Shows how to write a simple server using the Ecore_Con library.
+*/
+
+/**
+@example con_client_example.c
+Shows how to write a simple client, that connects to the example server.
+*/
+
+/**
+@example event_handler_example.c
+Shows how to use event handlers.
+*/
+
+/**
+@example timer_example.c
+Demonstrates use of the ecore_timer.
+*/
+
+/**
+@example config_basic_example.c
+Provides an example of how to use the basic configuration functions.
+See the file Ecore_Config.h for the full list of available functions.
+*/
+
+/**
+@example config_listener_example.c
+Shows how to set up a listener to listen for configuration changes.
+*/
+
+/**
+@example list_example.c
+Provides a basic example of how to append to and traverse a list.
+*/
+
+/**
+@example list_destroy_example.c
+Shows how to set and use a destructor for an Ecore_List.
+*/
+
+/**
+@example x_window_example.c
+Shows the basics of using the X Windows system through Ecore functions.
+*/

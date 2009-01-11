@@ -1,0 +1,222 @@
+/**
+
+@mainpage Evas
+@image latex evas_big.eps width=5cm
+@image html  evas.png
+@version @PACKAGE_VERSION@
+@author Carsten Haitzler <raster\@rasterman.com>
+@author Till Adam <till\@adam-lilienthal.de>
+@author Steve Ireland <sireland\@pobox.com>
+@author Brett Nash <nash\@nash.id.au>
+@author Tilman Sauerbeck <tilman at code-monkey.de>
+@author Corey Donohoe <atmos\@atmos.org>
+@author Yuri Hudobin <glassy_ape\@users.sourceforge.net>
+@author Nathan Ingersoll <ningerso\@d.umn.edu>
+@author Willem Monsuwe <willem\@stack.nl>
+@author Vincent Torri <vtorri at univ-evry dot fr>
+@author Gustavo Barbieri <barbieri at profusion dot mobi>
+@author Cedric Bail <moa dot bluebugs at gmail dot com>
+@date 2000-2008
+
+
+@section intro What is Evas?
+
+Evas is a clean display canvas API for several target display systems that
+can draw anti-aliased text, smooth super and sub-sampled scaled images,
+alpha-blend objects much and more.
+
+It abstracts any need to know much about what the characteristics of your
+display system are or what graphics calls are used to draw them and how. It
+deals on an object level where all you do is create and manipulate objects
+in a canvas, set their properties, and the rest is done for you.
+
+Evas optimises the rendering pipeline to minimise effort in redrawing changes
+made to the canvas and so takes this work out of the programmers hand,
+saving a lot of time and energy.
+
+It's small and lean, designed to work on embedded systems all the way to
+large and powerful multi-cpu workstations. It can be compiled to only have
+the features you need for your target platform if you so wish, thus keeping
+it small and lean. It has several display back-ends, letting it display on
+several display systems, making it portable for cross-device and
+cross-platform development.
+
+
+@section work How does Evas work?
+
+Evas is a canvas display library. This is markedly different from most
+display and windowing systems as a Canvas is structural and is also a state
+engine, wheras most display and windowing systems are immediate mode display
+targets. Evas handles the logic between a structural display via its' state
+engine, and controls the target windowing system in order to produce
+rendered results of the current canvases state on the display.
+
+Immediate mode display systems retain very little, or no state. A program
+will execute a series of commands:
+
+@verbatim
+bitmap_handle = create_new_bitmap();
+draw_line(0, 0, 100, 200);
+draw_rectangle(10, 30, 50, 500);
+draw_bitmap(10, 30, bitmap_handle);
+etc.
+@endverbatim
+
+The series of commands is executed by the windowing system and the results
+are displayed on the screen (normally). Once the commands are executed the
+display system has little or no idea of how to reproduce this image again,
+and so has to be instructed by the application how to redraw sections of the
+screen whenever needed. Each sucessive command will be executed as
+instructed by the application and either emulated by software or sent to the
+graphics hardware on the device to be performed.
+
+The advantage of such a system is that it is simple, and gives a program
+tight control over how something looks and is drawn. Given the increasing
+complexity of displays and demands by users to have better looking
+interfaces, more and more work is needing to be done at this level by the
+internals of widget sets, custom display widgets and other programs. This
+means more and more logic and display rendering code needs to be written
+time and time again, each time the application needs to figure out how to
+minimise redraws so that display is fast and interactive, and keep track of
+redraw logic. The power comes at a high-price, lots of extra code and work.
+Programmers not very familiar with graphics programming will often make
+mistakes at this level and produce code that is sub optimal. Those familiar
+with this kind of programming will simply get bored by writing the same code
+again and again.
+
+Evas is a structural system in which the programmer creates and manages
+display objects and their properties, and as a result of this higher level
+state management, the canvas is able to redraw the set of objects when
+needed to represent the current state of the canvas.
+
+For example:
+
+@verbatim
+bitmap_handle = create_bitmap();
+move(bitmap_handle, 10, 30);
+show(bitmap_handle);
+rectangle_handle = create_rectangle();
+move(rectangle_handle, 10, 30);
+resize(rectangle_handle, 50, 500);
+show(rectangle_handle);
+line_handle = create_line();
+set_line_coords(line_handle, 0, 0, 100, 200);
+show(line_handle);
+etc.
+@endverbatim
+
+This may look longer, but when the display needs to be refreshed or updated,
+the programmer only moves, resizes, shows, hides etc. the objects that they
+need to change. The programmer simply thinks at the object logic level, and
+the canvas software does the rest of the work for them, figuring out what
+actually changed in the canvas since it was last drawn, how to most
+efficiently redraw he canvas and its contents to reflect the current state,
+and then it can go off and do the actual drawing of the canvas.
+
+This lets the programmer think in a more natural way when dealing with a
+display, and saves time and effort of working out how to load and display
+images, render given the current display system etc. Since Evas also is
+portable across different display systems, this also gives the programmer
+the ability to have their code ported and display on different display
+systems with very little work.
+
+Evas can be seen as a display system that stands somewhere between a widget
+set and an immediate mode display system. It retains basic display logic,
+but does very little high-level logic such as scrollbars, sliders, push
+buttons etc.
+
+
+@section compiling How to compile using Evas?
+
+Evas is a library your application links to. The proceedure for this is very
+simple. You simply have to compile your application with the appropriate
+compiler flags that the @p evas-config script outputs. For example:
+
+Compiling C or C++ files into object files:
+
+@verbatim
+gcc -c -o main.o main.c `pkg-config --cflags evas`
+@endverbatim
+
+Linking object files into a binary executable:
+
+@verbatim
+gcc -o my_application main.o `pkg-config --libs evas`
+@endverbatim
+
+You simply have to make sure that pkg-config is in your shell's PATH (see
+the manual page for your appropriate shell) and evas.pc in /usr/lib/pkgconfig
+or its path is in the PKG_CONFIG_PATH environment variable. It's that simple
+to link and use Evas once you have written your code to use it.
+
+Since the program is linked to Evas, it is now able to use any advertised
+API calls to display graphics in a canvas managed by Evas, as well as use
+the API calls provided to manage data as well.
+
+You should make sure you add any extra compile and link flags to your
+compile commands that your application may need as well. The above example
+is only guaranteed to make Evas add it's own requirements.
+
+
+@section install How is it installed?
+
+Simple:
+
+@verbatim
+./configure
+make
+su -
+...
+make install
+@endverbatim
+
+
+@todo (1.0) Need a way ot scaling an image and just PRODUCING the output (scaling direct to target buffe r- no blend/copy etc.)
+@todo (1.0) Could improve evas's scaling down code to limit multiple samples per output pixel to maybe 2x2?
+@todo (1.0) Document API
+@todo (1.0) Evas needs to check delete_me member for all object functions
+@todo (1.0) Evas engine that renders to Evas_Objects
+@todo (1.0) OpenGL engine needs to use texture meshes
+@todo (1.0) OpenGL engine needs texture cache and size setting
+@todo (1.0) OpenGL Engine needs YUV import API to YUV texture
+@todo (1.0) All engines need pixel import API
+@todo (1.0) Add parital render through composite layer api to engines
+@todo (1.0) Move callback processing to a queue and do it asynchronously???
+@todo (1.0) Add button grabbing
+@todo (1.0) Add generic object method call system
+@todo (1.0) Add callbacks set for smart object parents to be set on all child smart objects too.
+@todo (1.0) Define image load errors (and maybe have an error to string func)
+@todo (1.0) Add text styles (outline etc.)
+@todo (1.0) Add font load query calls (so we know if a font load failed)
+@todo (1.0) Add font listing calls
+@todo (1.0) Add ability to check image comments & disk format
+@todo (1.0) Add group objects
+@todo (1.0) Add fontset support
+@todo (1.0) Export engine rendering API cleanly to Evas API
+@todo (1.0) Add smart object ability to provide rendering callback
+@todo (1.1) Make freetype optional and put in optional graymap font engine
+@todo (1.1) Free images if object invisible (and put back in chache)
+@todo (1.1) Check robustness of malloc/calloc/realloc failures.
+@todo (1.1) Add memory use reduction code if any allocations fail
+@todo (1.1) If image loads fails due to memory allocatue failure, load reduced res version
+@todo (1.1) If image load fails due to memory allocation failure, try split it up into tiles and demand-load them
+@todo (1.2) Add external image loaders (application provided callbacks to load)
+@todo (1.2) Add loadable image loader module support (evas loads file.so)
+@todo (1.2) Add external image loader modules (application provides path to file.so)
+@todo (1.3) Add X11 primtive engine (ie pixmap)
+@todo (1.3) Add immediate mode drawing commands to image objects
+@todo (1.3) Fix FB engine to allocate vt and release properly
+@todo (1.4) Add ellipse objects (circle, arc, ellipse etc.)
+@todo (1.5) Make software engine draw lines & polys etc. with aa
+@todo (1.5) Add radial gradients to gradient objects
+@todo (1.5) Add Symbian Engine
+@todo (1.6) Add PalmOS Engine
+@todo (1.6) Add Apple OpenGL Engine
+@todo (1.7) Document engine API and other internals
+@todo (1.7) Allow any object to clip any other object, and not just rectangles
+@todo (1.8) Add more evas demos
+@todo (1.9) Write the error mechanism in evas_xcb_buffer.c
+@todo (1.9) Rewrite the render xcb engine
+@todo (1.10) Improve Win32 Direct3D Engine
+
+*/
