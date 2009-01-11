@@ -17,6 +17,14 @@ AC_DEFUN([AC_C___ATTRIBUTE__],
 
 AC_MSG_CHECKING([for __attribute__])
 
+dnl On mac os x, error of compilation without -fnested-functions
+case "${host_os}" in
+   darwin*)
+      CFLAGS_SAVE=${CFLAGS}
+      CFLAGS="${CFLAGS} -fnested-functions"
+   ;;
+esac
+
 AC_CACHE_VAL([ac_cv___attribute__],
    [AC_TRY_COMPILE(
        [
@@ -33,6 +41,12 @@ int foo(int x __attribute__ ((unused)))
        [ac_cv___attribute__="no"]
     )]
 )
+
+case "${host_os}" in
+   darwin*)
+      CFLAGS=${CFLAGS_SAVE}
+   ;;
+esac
 
 AC_MSG_RESULT($ac_cv___attribute__)
 
