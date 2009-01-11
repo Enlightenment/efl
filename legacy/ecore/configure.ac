@@ -895,6 +895,8 @@ fi
 
 ECORE_CHECK_MODULE([IMF_EVAS], [yes], [$try_ecore_imf_evas])
 
+EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
+
 dnl requirements
 AC_SUBST(requirements_ecore_con)
 AC_SUBST(requirements_ecore_config)
@@ -933,6 +935,8 @@ ecore-sdl.pc
 ecore-quartz.pc
 ecore-wince.pc
 ecore.pc
+doc/ecore.dox
+doc/Makefile
 src/Makefile
 src/bin/Makefile
 src/lib/Makefile
@@ -1066,6 +1070,8 @@ if test "x$have_ecore_evas" = "xyes" ; then
   echo "    Software 16bit DirectDraw..: $have_ecore_evas_software_16_ddraw"
   echo "    Software 16bit WinCE.......: $have_ecore_evas_software_16_wince"
 fi
+echo
+echo " Documentation.................: ${build_doc}"
 echo
 echo "Now type 'make' ('gmake' on some systems) to compile $PACKAGE."
 echo

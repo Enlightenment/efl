@@ -2,13 +2,12 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = src
+SUBDIRS = doc src
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
                        config.h.in config.sub configure install-sh \
 		       ltconfig ltmain.sh missing mkinstalldirs \
 		       stamp-h.in  build-stamp configure-stamp depcomp \
-		       ecore_docs.tar.gz ecore.c \
 		       README \
 		       ecore.spec \
 		       ecore-con.pc \
@@ -27,13 +26,20 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       ecore-sdl.pc \
 		       ecore-quartz.pc \
 		       ecore-wince.pc \
-		       ecore.pc
+		       ecore.pc \
+		       $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.gz \
+		       $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.bz2 \
+		       $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-doc.tar.bz2 \
+		       m4/libtool.m4 \
+		       m4/lt~obsolete.m4 \
+		       m4/ltoptions.m4 \
+		       m4/ltsugar.m4 \
+		       m4/ltversion.m4
 
 bin_SCRIPTS = 
 
 EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN \
-	     autogen.sh ecore.c.in gendoc ecore.supp \
-             Doxyfile \
+	     autogen.sh ecore.supp \
 	     ecore.pc.in \
 	     ecore-con.pc.in \
 	     ecore-config.pc.in \
@@ -51,8 +57,7 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN \
 	     ecore-sdl.pc.in \
 	     ecore-quartz.pc.in \
 	     ecore-wince.pc.in \
-	     ecore.spec.in ecore.spec \
-	     doc gendoc
+	     ecore.spec.in ecore.spec
 
 if BUILD_ECORE_CON
 pcon = ecore-con.pc
@@ -127,3 +132,10 @@ pkgconfig_DATA = \
 	ecore.pc $(pcon) $(pconfig) $(pdfb) $(pevas) \
 	$(pfb) $(pfile) $(pimf) $(pimfevas) $(pipc) $(pjob) $(ptxt) \
 	$(px) $(pwin32) $(pwince) $(psdl) $(pquartz)
+
+.PHONY: doc
+
+doc:
+	@echo "entering doc/"
+	make -C doc doc
+

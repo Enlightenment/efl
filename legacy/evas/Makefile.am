@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = src
+SUBDIRS = src doc
 
 MAINTAINERCLEANFILES = \
 Makefile.in \
@@ -18,8 +18,6 @@ stamp-h.in \
 build-stamp \
 configure-stamp \
 depcomp \
-evas_docs.tar.gz \
-evas.c \
 README \
 evas-cairo-x11.pc \
 evas-directfb.pc \
@@ -41,7 +39,15 @@ evas-direct3d.pc \
 evas-software-16-wince.pc \
 evas-software-sdl.pc \
 evas.pc \
-evas.spec
+evas.spec \
+$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.gz \
+$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.bz2 \
+$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-doc.tar.bz2 \
+m4/libtool.m4 \
+m4/lt~obsolete.m4 \
+m4/ltoptions.m4 \
+m4/ltsugar.m4 \
+m4/ltversion.m4
 
 bin_SCRIPTS =
 
@@ -50,9 +56,6 @@ AUTHORS \
 COPYING \
 COPYING-PLAIN \
 autogen.sh \
-evas.c.in \
-gendoc \
-Doxyfile \
 README.in \
 README \
 evas.pc.in \
@@ -74,8 +77,7 @@ evas-software-16-ddraw.pc.in \
 evas-direct3d.pc.in \
 evas-software-16-wince.pc.in \
 evas-software-sdl.pc.in \
-evas.spec.in evas.spec \
-doc gendoc
+evas.spec.in evas.spec
 
 if BUILD_ENGINE_SOFTWARE_X11
 psoftwarex11 = evas-software-x11.pc
@@ -159,3 +161,9 @@ pkgconfig_DATA = \
 	$(psoftwarebuffer) $(psoftwareqtopia) $(popenglx11) $(pquartz) $(pcairox11) \
 	$(pxrenderx11) $(pxrenderxcb) $(pglitzx11) $(psoftwareddraw) $(psoftwaresdl) \
 	$(psoftware16x11) $(pdirect3d) $(psoftware16ddraw) $(psoftware16wince) $(popenglglew)
+
+.PHONY: doc
+
+doc:
+	@echo "entering doc/"
+	$(MAKE) -C doc doc

@@ -906,6 +906,7 @@ if test x$want_valgrind = "xyes"; then
   )
 fi
 
+EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 #####################################################################
 ## Fill in flags
 
@@ -939,6 +940,8 @@ evas-direct3d.pc
 evas-software-16-wince.pc
 evas-software-sdl.pc
 evas.pc
+doc/evas.dox
+doc/Makefile
 src/Makefile
 src/lib/Makefile
 src/lib/canvas/Makefile
@@ -1115,6 +1118,8 @@ echo "  32bpp Rotation 0........: $conv_32_rgb_rot_0"
 echo "  32bpp Rotation 90.......: $conv_32_rgb_rot_90"
 echo "  32bpp Rotation 180......: $conv_32_rgb_rot_180"
 echo "  32bpp Rotation 270......: $conv_32_rgb_rot_270"
+echo
+echo "Documentation.............: ${build_doc}"
 echo
 echo "------------------------------------------------------------------------"
 echo

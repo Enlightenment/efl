@@ -1,3 +1,5 @@
+MAINTAINERCLEANFILES = Makefile.in
+
 EXTRA_DIST = \
 op_sub_color_.c \
 op_sub_color_i386.c \
