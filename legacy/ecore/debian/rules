@@ -12,17 +12,12 @@ DEB_CONFIGURE_EXTRA_FLAGS := --enable-ecore-fb --disable-ecore-directfb \
 DEB_MAKE_CLEAN_TARGET := clean
 
 build/libecore-doc::
-	cd $(DEB_SRCDIR) && doxygen
+	cd $(DEB_SRCDIR)/doc && make doc
 
 install/libecore-doc::
-	mkdir -p debian/libecore-doc/usr/share/doc/libecore-doc/
+	mkdir -p debian/libecore-doc/usr/share/doc/libecore-doc
 	cp -R $(DEB_SRCDIR)/doc/html debian/libecore-doc/usr/share/doc/libecore-doc/
-	cd $(DEB_SRCDIR)/doc/man/man3 && ls -1 | grep -vi ecore | xargs rm
 
 clean::
-	rm -rf $(DEB_SRCDIR)/doc/html $(DEB_SRCDIR)/doc/latex $(DEB_SRCDIR)/doc/man
-	mkdir -p $(DEB_SRCDIR)/doc/html
-	cp $(DEB_SRCDIR)/doc/img/*.png $(DEB_SRCDIR)/doc/html/
-	cp $(DEB_SRCDIR)/doc/img/*.gif $(DEB_SRCDIR)/doc/html/
 	./autogen.sh --prefix=/usr $(DEB_CONFIGURE_EXTRA_FLAGS) 
 

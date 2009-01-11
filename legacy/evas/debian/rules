@@ -60,13 +60,12 @@ DEB_CONFIGURE_EXTRA_FLAGS := --enable-strict \
 	--disable-image-loader-edb
 
 build/libevas-doc::
-	cd $(DEB_SRCDIR) && ./gendoc
+	cd $(DEB_SRCDIR)/doc && make doc
 
 install/libevas-doc::
+	mkdir -p debian/libevas-doc/usr/share/doc/libevas-doc
 	cp -R $(DEB_SRCDIR)/doc/html debian/libevas-doc/usr/share/doc/libevas-doc/
-	cd $(DEB_SRCDIR)/doc/man/man3 && ls -1 | grep -vi evas | xargs rm
 
 clean::
-	rm -rf $(DEB_SRCDIR)/doc/html $(DEB_SRCDIR)/doc/latex $(DEB_SRCDIR)/doc/man
 	./autogen.sh --prefix=/usr $(DEB_CONFIGURE_EXTRA_FLAGS) 
 
