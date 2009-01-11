@@ -1,9 +1,0 @@
-#!/bin/sh
-rm -rf ./doc/html ./doc/latex ./doc/man
-mkdir -p doc/html doc/man doc/latex
-doxygen
-cp doc/img/* doc/html/
-rm -f evas_docs.tar evas_docs.tar.gz
-tar -cvf evas_docs.tar doc/html doc/man doc/latex
-gzip -9 evas_docs.tar
-exit 0
