@@ -16,7 +16,7 @@
  *
  */
 
-void perror (const char *s)
+void perror (const char *s __UNUSED__)
 {
    fprintf(stderr, "[Windows CE] error\n");
 }

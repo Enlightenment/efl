@@ -13,7 +13,7 @@
  *
  */
 
-char *strerror (int errnum)
+char *strerror (int errnum __UNUSED__)
 {
    return "[Windows CE] error\n";
 }

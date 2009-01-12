@@ -130,10 +130,10 @@ setenv(const char *name,
 {
 #if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
 
-   char *old_name;
-   char *str;
-   int   length;
-   int   res;
+   char  *old_name;
+   char  *str;
+   size_t length;
+   int    res;
 
    if (!name || !*name)
      return -1;
@@ -254,10 +254,10 @@ int
 mkstemp(char *template)
 {
    const char lookup[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-   char *suffix;
-   DWORD val;
-   int   length;
-   int   i;
+   char      *suffix;
+   DWORD      val;
+   size_t     length;
+   int        i;
 
    if (!template)
      return 0;

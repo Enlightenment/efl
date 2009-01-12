@@ -90,7 +90,7 @@ readlink(const char *path, char *buf, size_t bufsiz)
    char          new_path[PATH_MAX];
    IShellLink   *pISL;
    IPersistFile *pIPF;
-   unsigned int  length;
+   size_t        length;
    HRESULT       res;
    size_t        size;
 

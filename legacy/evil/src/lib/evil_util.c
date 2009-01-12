@@ -20,14 +20,14 @@ evil_char_to_wchar(const char *text)
    wchar_t *wtext;
    int      wsize;
 
-   wsize = MultiByteToWideChar(CP_ACP, 0, text, strlen(text) + 1, NULL, 0);
+   wsize = MultiByteToWideChar(CP_ACP, 0, text, (int)strlen(text) + 1, NULL, 0);
    if ((wsize == 0) ||
        (wsize > (int)(ULONG_MAX / sizeof(wchar_t))))
      return NULL;
 
    wtext = malloc(wsize * sizeof(wchar_t));
    if (wtext)
-     if (!MultiByteToWideChar(CP_ACP, 0, text, strlen(text) + 1, wtext, wsize))
+     if (!MultiByteToWideChar(CP_ACP, 0, text, (int)strlen(text) + 1, wtext, wsize))
        return NULL;
 
    return wtext;
@@ -36,20 +36,20 @@ evil_char_to_wchar(const char *text)
 char *
 evil_wchar_to_char(const wchar_t *text)
 {
-   char * atext;
-   int    size;
+   char  *atext;
+   size_t size;
    int    asize;
 
    size = wcslen(text) + 1;
 
-   asize = WideCharToMultiByte(CP_ACP, 0, text, size, NULL, 0, NULL, NULL);
+   asize = WideCharToMultiByte(CP_ACP, 0, text, (int)size, NULL, 0, NULL, NULL);
    if (asize == 0)
      return NULL;
 
    atext = (char*)malloc((asize + 1) * sizeof(char));
 
    if (atext)
-     if (!WideCharToMultiByte(CP_ACP, 0, text, size, atext, asize, NULL, NULL))
+     if (!WideCharToMultiByte(CP_ACP, 0, text, (int)size, atext, asize, NULL, NULL))
        return NULL;
    atext[asize] = '\0';
 

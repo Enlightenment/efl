@@ -1,3 +1,15 @@
+2009-01-12  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_dirent.c:
+	* src/lib/evil_fnmatch.c:
+	* src/lib/evil_link_xp.cpp:
+	* src/lib/evil_stdio.c:
+	* src/lib/evil_stdlib.c:
+	* src/lib/evil_string.c:
+	* src/lib/evil_unistd.c:
+	* src/lib/evil_util.c:
+	warnings fixes
+
 2008-12-27  Vincent Torri  <doursse at users dot sf dot net>
 
 	* configure.ac:

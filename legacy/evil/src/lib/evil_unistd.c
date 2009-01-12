@@ -139,7 +139,7 @@ evil_getcwd(char *buffer, size_t size)
 
    return buffer;
 #else
-   return _getcwd(buffer, size);
+   return _getcwd(buffer, (int)size);
 #endif /* ! _WIN32_WCE */
 }
 
@@ -414,7 +414,7 @@ evil_pipe(int *fds)
 
 #if defined (_WIN32_WCE) && ! defined (__CEGCC__)
 
-int execvp( const char *file, char *const argv[])
+int execvp (const char *file __UNUSED__, char *const argv[] __UNUSED__)
 {
    return 1;
 }

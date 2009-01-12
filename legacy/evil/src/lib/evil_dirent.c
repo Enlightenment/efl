@@ -28,7 +28,7 @@ DIR *opendir(char const *name)
    char    *tmp1;
    char    *tmp2;
    DWORD    attr;
-   int      l;
+   size_t   l;
 #ifdef UNICODE
    wchar_t *wname;
    char    *d_name;

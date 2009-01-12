@@ -205,7 +205,7 @@ fnmatch(const char *pattern,
 	    }
 	  else
 	    {
-	      const int	m = fnmatch_match_token(pattern + pos, *c,
+	      const size_t m = fnmatch_match_token(pattern + pos, *c,
 						leading, flags);
 
 	      if (m == FNM_SYNTAXERR)
@@ -225,7 +225,7 @@ fnmatch(const char *pattern,
 
   r = fnmatch_check_finals(pattern, states);
   fnmatch_list_of_states_free(states < new_states ? states : new_states, 2);
-  return r;
+  return (int)r;
 }
 
 #endif /* _MSC_VER || __MINGW32__ || __MINGW32CE__ */
