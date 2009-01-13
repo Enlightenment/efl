@@ -432,7 +432,16 @@ extern "C" {
     * "selected" - when the user selected an item
     * "unselected" - when the user selected an item
     */
-       
+
+   typedef struct _Elm_Carousel_Item Elm_Carousel_Item;
+   EAPI Evas_Object *elm_carousel_add(Evas_Object *parent);
+   EAPI Elm_Carousel_Item *elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
+   EAPI void         elm_carousel_item_del(Elm_Carousel_Item *item);
+   EAPI void         elm_carousel_item_select(Elm_Carousel_Item *item);
+   /* smart callbacks called:
+    * "clicked" - when the user clicks on a carousel item and becomes selected
+    */
+   
   ////////////////////////////////////////////////////////////////////////////
  /// FIXME: TODO LIST ///////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////

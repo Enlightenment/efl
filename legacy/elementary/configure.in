@@ -45,7 +45,9 @@ case "$host_os" in
       AC_DEFINE(ELEMENTARY_BUILD, 1, [Define to mention that evas is built])
       lt_enable_auto_import="-Wl,--enable-auto-import"
       ELM_WINCE_DEF="#define"
-      ;;
+dnl managed by evil
+      AC_DEFINE(HAVE_DLADDR)
+    ;;
    mingw*)
       PKG_CHECK_MODULES([EVIL], [evil])
       AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed.])
@@ -56,8 +58,21 @@ case "$host_os" in
       ;;
    *)
       ELM_UNIX_DEF="#define"
+      AC_CHECK_FUNCS(dlopen, res=yes, res=no)
+      if test "x$res" = "xyes"; then
+        AC_CHECK_FUNCS(dladdr, AC_DEFINE(HAVE_DLADDR))
+      else
+        AC_CHECK_LIB(dl, dlopen, res=yes, res=no)
+        if test "x$res" = "xyes"; then
+          AC_CHECK_LIB(dl, dladdr, AC_DEFINE(HAVE_DLADDR))
+          dlopen_libs=-ldl
+        else
+          AC_MSG_ERROR(Cannot find dlopen)
+        fi
+      fi
       ;;
 esac
+AC_SUBST(dlopen_libs)
 AC_SUBST(lt_enable_auto_import)
 AC_SUBST(ELM_UNIX_DEF)
 AC_SUBST(ELM_WIN32_DEF)

@@ -8,5 +8,5 @@ Description: Mobile device touchscreen widget library
 Requires: evas ecore ecore-x ecore-evas ecore-job ecore-txt ecore-file eet edje
 Version: @VERSION@
 Libs: -L${libdir} -lelementary
-Libs.private: @my_libs@ @ELEMENTARY_LIBS@ @ELEMENTARY_X_LIBS@ @ELEMENTARY_FB_LIBS@ @ELEMENTARY_WINCE_LIBS@ @ELEMENTARY_EDBUS_LIBS@
+Libs.private: @dlopen_libs@ @my_libs@ @ELEMENTARY_LIBS@ @ELEMENTARY_X_LIBS@ @ELEMENTARY_FB_LIBS@ @ELEMENTARY_WINCE_LIBS@ @ELEMENTARY_EDBUS_LIBS@
 Cflags: -I${includedir} -I${includedir}/elementary @ELEMENTARY_CFLAGS@ @ELEMENTARY_X_CFLAGS@ @ELEMENTARY_FB_CFLAGS@ @ELEMENTARY_WINCE_CFLAGS@ @ELEMENTARY_EDBUS_CFLAGS@

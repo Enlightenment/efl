@@ -41,6 +41,7 @@ elm_bubble.c \
 elm_photo.c \
 elm_toolbar.c \
 elm_list.c \
+elm_carousel.c \
 \
 elc_notepad.c \
 elc_anchorview.c \
@@ -60,5 +61,5 @@ els_icon.h
 
 
 libelementary_la_CFLAGS =
-libelementary_la_LIBADD = @ELEMENTARY_LIBS@ @ELEMENTARY_X_LIBS@ @ELEMENTARY_FB_LIBS@ @ELEMENTARY_WINCE_LIBS@ @ELEMENTARY_EDBUS_LIBS@ @my_libs@
+libelementary_la_LIBADD = @my_libs@ @dlopen_libs@ @ELEMENTARY_LIBS@ @ELEMENTARY_X_LIBS@ @ELEMENTARY_FB_LIBS@ @ELEMENTARY_WINCE_LIBS@ @ELEMENTARY_EDBUS_LIBS@
 libelementary_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@

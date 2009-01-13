@@ -1,6 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+// FIXME: this is NOT the carousel - yet!
+
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Item Item;
 
@@ -83,7 +85,7 @@ _theme_hook(Evas_Object *obj)
         it = l->data;
         if (it->selected)
           edje_object_signal_emit(it->base, "elm,state,selected", "elm");
-        _elm_theme_set(it->base, "toolbar", "item", "default");
+        _elm_theme_set(it->base, "carousel", "item", "default");
         if (it->icon)
           {
              edje_extern_object_min_size_set(it->icon, 
@@ -159,7 +161,7 @@ _select(void *data, Evas_Object *obj, const char *emission, const char *source)
 }
 
 EAPI Evas_Object *
-elm_toolbar_add(Evas_Object *parent)
+elm_carousel_add(Evas_Object *parent)
 {
    Evas_Object *obj;
    Evas *e;
@@ -174,7 +176,7 @@ elm_toolbar_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, 0);
    
    wd->scr = elm_smart_scroller_add(e);
-   elm_smart_scroller_theme_set(wd->scr, "toolbar", "base", "default");
+   elm_smart_scroller_theme_set(wd->scr, "carousel", "base", "default");
    elm_widget_resize_object_set(obj, wd->scr);
    elm_smart_scroller_policy_set(wd->scr, 
                                  ELM_SMART_SCROLLER_POLICY_AUTO,
@@ -197,8 +199,8 @@ elm_toolbar_add(Evas_Object *parent)
    return obj;
 }
 
-EAPI Elm_Toolbar_Item *
-elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
+EAPI Elm_Carousel_Item *
+elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord mw, mh;
@@ -211,7 +213,7 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, voi
    it->func = func;
    it->data = data;
    it->base = edje_object_add(evas_object_evas_get(obj));
-   _elm_theme_set(it->base, "toolbar", "item", "default");
+   _elm_theme_set(it->base, "carousel", "item", "default");
    edje_object_signal_callback_add(it->base, "elm,action,click", "elm",
                                    _select, it);
    elm_widget_sub_object_add(obj, it->base);
@@ -233,11 +235,11 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, voi
    _els_smart_box_pack_end(wd->bx, it->base);
    evas_object_show(it->base);
    _sizing_eval(obj);
-   return (Elm_Toolbar_Item *)it;
+   return (Elm_Carousel_Item *)it;
 }
 
 EAPI void
-elm_toolbar_item_del(Elm_Toolbar_Item *item)
+elm_carousel_item_del(Elm_Carousel_Item *item)
 {
    Item *it = (Item *)item;
    Widget_Data *wd = elm_widget_data_get(it->obj);
@@ -251,15 +253,7 @@ elm_toolbar_item_del(Elm_Toolbar_Item *item)
 }
 
 EAPI void
-elm_toolbar_item_select(Elm_Toolbar_Item *item)
+elm_carousel_item_select(Elm_Carousel_Item *item)
 {
    _item_select(item);
-}
-
-EAPI void
-elm_toolbar_scrollable_set(Evas_Object *obj, Evas_Bool scrollable)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   wd->scrollable = scrollable;
-   _sizing_eval(obj);
 }

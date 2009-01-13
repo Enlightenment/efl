@@ -52,7 +52,8 @@ void _elm_win_rescale(void);
 
 int _elm_theme_set(Evas_Object *o, const char *clas, const char *group, const char *style);
 int _elm_theme_icon_set(Evas_Object *o, const char *group, const char *style);
-    
+int _elm_theme_parse(const char *theme);
+
 /* FIXME: should this be public? for now - private (but public symbols) */
 EAPI Evas_Object *elm_widget_add(Evas *evas);
 EAPI void         elm_widget_del_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
@@ -92,7 +93,7 @@ EAPI void         elm_widget_scroll_hold_pop(Evas_Object *obj);
 EAPI int          elm_widget_scroll_hold_get(Evas_Object *obj);
     
 extern char *_elm_appname;
-
 extern Elm_Config *_elm_config;
+extern const char *_elm_data_dir;
 
 #endif

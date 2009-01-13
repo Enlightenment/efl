@@ -1,3 +1,9 @@
+#ifndef _GNU_SOURCE
+# define _GNU_SOURCE
+#endif
+
+#include <dlfcn.h>      /* dlopen,dlclose,etc */
+
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
@@ -9,6 +15,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+
 static int _elm_signal_exit(void *data, int ev_type, void *ev);
 #ifdef HAVE_ELEMENTARY_X
 static int _elm_window_property_change(void *data, int ev_type, void *ev);
@@ -17,9 +24,11 @@ static void _elm_rescale(void);
 
 char *_elm_appname = NULL;
 Elm_Config *_elm_config = NULL;
-Ecore_Event_Handler *_elm_event_property_change = NULL;
+const char *_elm_data_dir = NULL;
+
+static Ecore_Event_Handler *_elm_event_property_change = NULL;
 #ifdef HAVE_ELEMENTARY_X
-Ecore_X_Atom _elm_atom_enlightenment_scale = 0;
+static Ecore_X_Atom _elm_atom_enlightenment_scale = 0;
 #endif
 
 static int
@@ -68,7 +77,8 @@ EAPI void
 elm_init(int argc, char **argv)
 {
    int i;
-   const char *elm_engine, *elm_scale;
+   const char *elm_engine, *elm_scale, *elm_theme, *elm_prefix, *elm_data_dir;
+   char buf[PATH_MAX];
    
    eet_init();
    ecore_init();
@@ -84,7 +94,56 @@ elm_init(int argc, char **argv)
 
    elm_engine = getenv("ELM_ENGINE");
    elm_scale = getenv("ELM_SCALE");
+   elm_theme = getenv("ELM_THEME");
+   elm_prefix = getenv("ELM_PREFIX");
+   elm_data_dir = getenv("ELM_DATA_DIR");
    
+   if (!_elm_data_dir)
+     {
+        _elm_data_dir = eina_stringshare_add(elm_data_dir);
+     }
+   if (!_elm_data_dir)
+     {  
+        if (elm_prefix)
+          {
+             snprintf(buf, sizeof(buf), "%s/share/elementary", elm_prefix);
+             _elm_data_dir = eina_stringshare_add(buf);
+          }
+     }
+#ifdef HAVE_DLADDR
+   if (!_elm_data_dir)
+     {
+        Dl_info elementary_dl;
+        // libelementary.so/../../share/elementary/
+        if (dladdr(elm_init, &elementary_dl))
+          {
+             char *dir, *dir2;
+             
+             dir = ecore_file_dir_get(elementary_dl.dli_fname);
+             if (dir)
+               {
+                  dir2 = ecore_file_dir_get(dir);
+                  if (dir2)
+                    {
+                       snprintf(buf, sizeof(buf), "%s/share/elementary", dir2);
+                       if (ecore_file_is_dir(buf))
+                         _elm_data_dir = eina_stringshare_add(buf);
+                       free(dir2);
+                    }
+                  free(dir);
+               }
+          }
+     }
+#endif
+   if (!_elm_data_dir)
+     {
+        _elm_data_dir = eina_stringshare_add(PACKAGE_DATA_DIR);
+     }
+   if (!_elm_data_dir)
+     {
+        _elm_data_dir = eina_stringshare_add("/");
+     }
+        
    // FIXME: actually load config
    _elm_config = ELM_NEW(Elm_Config);
    _elm_config->engine = ELM_SOFTWARE_X11;
@@ -157,9 +216,13 @@ elm_init(int argc, char **argv)
       }
 
    if (elm_scale)
-     {
-        _elm_config->scale = atof(elm_scale);
-     }
+     _elm_config->scale = atof(elm_scale);
+   
+   if (elm_theme)
+     _elm_theme_parse(elm_theme);
+   else
+     _elm_theme_parse("default");
+   
    /* FIXME: implement quickstart below */
    /* if !quickstart return
     * else
@@ -200,6 +263,9 @@ elm_shutdown(void)
         ecore_x_shutdown();
 #endif        
      }
+
+   eina_stringshare_del(_elm_data_dir);
+   _elm_data_dir = NULL;
    
    free(_elm_config);
    free(_elm_appname);
