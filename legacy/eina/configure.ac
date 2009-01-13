@@ -273,9 +273,6 @@ case "${host_os}" in
    mingw*)
       EINA_CFLAGS="${EINA_CFLAGS} ${EVIL_CFLAGS}"
    ;;
-   darwin*)
-      EINA_CFLAGS="${EINA_CFLAGS} -fnested-functions"
-   ;;
 esac
 
 if test "x$enable_coverage" = "xyes" ; then
