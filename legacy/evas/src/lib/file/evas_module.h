@@ -50,7 +50,7 @@ struct _Evas_Module
    int           ref; /* how many refs */
    int           last_used; /* the cycle count when it was last used */
 
-#if defined(HAVE_PTHREAD_H) && defined(BUILD_ASYNC_PRELOAD)
+#if defined(HAVE_PTHREAD_H) && defined(BUILD_ASYNC_PRELOAD) && _POSIX_SPIN_LOCKS > -1
    pthread_spinlock_t lock;
 #endif
 
