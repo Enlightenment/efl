@@ -3,7 +3,7 @@ dnl Copyright (C) 2008 Vincent Torri <vtorri at univ-evry dot fr>
 dnl That code is public domain and can be freely used or copied.
 dnl Originally snatched from somewhere...
 
-dnl Macro for checking if the compiler supports __atribute__
+dnl Macro for checking if the compiler supports __attribute__
 
 dnl Usage: AC_C___ATTRIBUTE__
 dnl call AC_DEFINE for HAVE___ATTRIBUTE__ and __UNUSED__
