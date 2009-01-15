@@ -487,6 +487,7 @@ extern "C" {
 // * file selector widget
 // 
 //// (improvements - low priority)
+// * need a way to set a preferred size of a widget (but not min or max).
 // * merge with gurana
 // * use evas's new box instead of a box smart
 // * use evas's table instead of a table smart

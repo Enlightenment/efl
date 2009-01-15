@@ -11,7 +11,6 @@ struct _Widget_Data
    Evas_Object *scr, *bx;
    Eina_List *items;
    int icon_size;
-   Evas_Bool scrollable : 1;
 };
 
 struct _Item
@@ -113,16 +112,8 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_min_get(wd->bx, &minw, &minh);
    evas_object_resize(wd->bx, minw, minh);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
-   if (wd->scrollable)
-     {
-        minw = 500 - vw;
-        minh = minh + (500 - vh);
-     }
-   else
-     {
-        minw = minw + (500 - vw);
-        minh = minh + (500 - vh);
-     }
+   minw = minw + (500 - vw);
+   minh = minh + (500 - vh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
@@ -183,7 +174,6 @@ elm_carousel_add(Evas_Object *parent)
                                  ELM_SMART_SCROLLER_POLICY_OFF);
    
    wd->icon_size = 32;
-   wd->scrollable = 1;
    
    wd->bx = _els_smart_box_add(e);
    _els_smart_box_orientation_set(wd->bx, 1);

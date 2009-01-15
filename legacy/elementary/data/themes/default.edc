@@ -4817,6 +4817,7 @@ collections {
                state: "default" 0.0;
                align: 0.0 0.0;
                min: 0 10;
+               fixed: 1 1;
                rel1 {
                   to: "base";
                   relative: 0.0 1.0;

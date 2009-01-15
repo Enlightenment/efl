@@ -1751,6 +1751,25 @@ my_bt_22(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+my_bt_23(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg;
+   char buf[PATH_MAX];
+   
+   win = elm_win_add(NULL, "carousel", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Carousel");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_show(bg);
+   
+   evas_object_resize(win, 320, 240);
+   evas_object_show(win);
+}
+
+static void
 my_win_main(void)
 {
   Evas_Object *win, *bg, *bx0, *lb, *bx, *bt, *sc, *fr;
@@ -1993,6 +2012,13 @@ my_win_main(void)
   bt = elm_button_add(win);
   elm_button_label_set(bt, "List 3");
   evas_object_smart_callback_add(bt, "clicked", my_bt_22, NULL);
+  evas_object_size_hint_align_set(bt, -1.0, 0.0);
+  elm_box_pack_end(bx, bt);
+  evas_object_show(bt);
+  
+  bt = elm_button_add(win);
+  elm_button_label_set(bt, "Carousel");
+  evas_object_smart_callback_add(bt, "clicked", my_bt_23, NULL);
   evas_object_size_hint_align_set(bt, -1.0, 0.0);
   elm_box_pack_end(bx, bt);
   evas_object_show(bt);

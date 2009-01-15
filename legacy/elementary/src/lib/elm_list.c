@@ -256,11 +256,13 @@ _fix_items(Evas_Object *obj)
                }
              if (it->icon)
                {
+                  edje_extern_object_aspect_set(it->icon, EDJE_ASPECT_CONTROL_VERTICAL, minw[0], minh[0]);
                   edje_extern_object_min_size_set(it->icon, minw[0], minh[0]);
                   edje_object_part_swallow(it->base, "elm.swallow.icon", it->icon);
                }
              if (it->end)
                {
+                  edje_extern_object_aspect_set(it->end, EDJE_ASPECT_CONTROL_VERTICAL, minw[1], minh[1]);
                   edje_extern_object_min_size_set(it->end, minw[1], minh[1]);
                   edje_object_part_swallow(it->base, "elm.swallow.end", it->end);
                }
