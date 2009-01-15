@@ -2601,6 +2601,174 @@ collections {
       }
    }
    
+   group { name: "elm/frame/base/pad_small";
+      parts {
+         part { name: "b0";
+	    mouse_events:  0;	
+            type: RECT;
+            scale: 1;
+	    description { state: "default" 0.0;
+               visible: 0;
+               min: 4 4;
+               max: 4 4;
+               align: 0.0 0.0;
+	    }
+	 }
+         part { name: "b1";
+	    mouse_events:  0;	
+            type: RECT;
+            scale: 1;
+	    description { state: "default" 0.0;
+               visible: 0;
+               min: 4 4;
+               max: 4 4;
+               align: 1.0 1.0;
+	    }
+	 }
+	 part { name: "elm.swallow.content";
+	    type: SWALLOW;
+	    description { state: "default" 0.0;
+               rel1 {
+                  to: "b0";
+                  relative: 1.0 1.0;
+                  offset: 0 0;
+               }
+	       rel2 {
+                  to: "b1";
+                  relative: 0.0 0.0;
+                  offset: -1 -1;
+               }
+	    }
+	 }
+      }
+   }
+   
+   group { name: "elm/frame/base/pad_medium";
+      parts {
+         part { name: "b0";
+	    mouse_events:  0;	
+            type: RECT;
+            scale: 1;
+	    description { state: "default" 0.0;
+               visible: 0;
+               min: 8 8;
+               max: 8 8;
+               align: 0.0 0.0;
+	    }
+	 }
+         part { name: "b1";
+	    mouse_events:  0;	
+            type: RECT;
+            scale: 1;
+	    description { state: "default" 0.0;
+               visible: 0;
+               min: 8 8;
+               max: 8 8;
+               align: 1.0 1.0;
+	    }
+	 }
+	 part { name: "elm.swallow.content";
+	    type: SWALLOW;
+	    description { state: "default" 0.0;
+               rel1 {
+                  to: "b0";
+                  relative: 1.0 1.0;
+                  offset: 0 0;
+               }
+	       rel2 {
+                  to: "b1";
+                  relative: 0.0 0.0;
+                  offset: -1 -1;
+               }
+	    }
+	 }
+      }
+   }
+   
+   group { name: "elm/frame/base/pad_large";
+      parts {
+         part { name: "b0";
+	    mouse_events:  0;	
+            type: RECT;
+            scale: 1;
+	    description { state: "default" 0.0;
+               visible: 0;
+               min: 16 16;
+               max: 16 16;
+               align: 0.0 0.0;
+	    }
+	 }
+         part { name: "b1";
+	    mouse_events:  0;	
+            type: RECT;
+            scale: 1;
+	    description { state: "default" 0.0;
+               visible: 0;
+               min: 16 16;
+               max: 16 16;
+               align: 1.0 1.0;
+	    }
+	 }
+	 part { name: "elm.swallow.content";
+	    type: SWALLOW;
+	    description { state: "default" 0.0;
+               rel1 {
+                  to: "b0";
+                  relative: 1.0 1.0;
+                  offset: 0 0;
+               }
+	       rel2 {
+                  to: "b1";
+                  relative: 0.0 0.0;
+                  offset: -1 -1;
+               }
+	    }
+	 }
+      }
+   }
+   
+   group { name: "elm/frame/base/pad_huge";
+      parts {
+         part { name: "b0";
+	    mouse_events:  0;	
+            type: RECT;
+            scale: 1;
+	    description { state: "default" 0.0;
+               visible: 0;
+               min: 32 32;
+               max: 32 32;
+               align: 0.0 0.0;
+	    }
+	 }
+         part { name: "b1";
+	    mouse_events:  0;	
+            type: RECT;
+            scale: 1;
+	    description { state: "default" 0.0;
+               visible: 0;
+               min: 32 32;
+               max: 32 32;
+               align: 1.0 1.0;
+	    }
+	 }
+	 part { name: "elm.swallow.content";
+	    type: SWALLOW;
+	    description { state: "default" 0.0;
+               rel1 {
+                  to: "b0";
+                  relative: 1.0 1.0;
+                  offset: 0 0;
+               }
+	       rel2 {
+                  to: "b1";
+                  relative: 0.0 0.0;
+                  offset: -1 -1;
+               }
+	    }
+	 }
+      }
+   }
+   
    group { name: "elm/frame/base/outdent_top";
       images {
 	 image: "outdent-top.png" COMP;
