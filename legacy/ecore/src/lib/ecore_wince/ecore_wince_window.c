@@ -98,6 +98,116 @@ ecore_wince_window_del(Ecore_WinCE_Window *window)
    fprintf (stderr, "ecore_wince_window_del\n");
 }
 
+void *
+ecore_wince_window_hwnd_get(Ecore_WinCE_Window *window)
+{
+   struct _Ecore_WinCE_Window *w;
+
+   if (!window)
+     return NULL;
+
+   return ((struct _Ecore_WinCE_Window *)window)->window;
+}
+
+void
+ecore_wince_window_move(Ecore_WinCE_Window *window,
+                        int                 x,
+                        int                 y)
+{
+   RECT rect;
+   HWND w;
+
+   if (!window || ((struct _Ecore_WinCE_Window *)window)->fullscreen)
+     return;
+
+   printf ("ecore_wince_window_move %p : %d %d\n", window, x, y);
+   w = ((struct _Ecore_WinCE_Window *)window)->window;
+   if (!GetWindowRect(w, &rect))
+     return;
+
+   MoveWindow(w, x, y,
+              rect.right - rect.left,
+              rect.bottom - rect.top,
+              TRUE);
+}
+
+void
+ecore_wince_window_resize(Ecore_WinCE_Window *window,
+                          int                 width,
+                          int                 height)
+{
+   RECT                        rect;
+   struct _Ecore_WinCE_Window *w;
+   DWORD                       style;
+   DWORD                       exstyle;
+   int                         x;
+   int                         y;
+
+   if (!window || ((struct _Ecore_WinCE_Window *)window)->fullscreen)
+     return;
+
+   w = (struct _Ecore_WinCE_Window *)window;
+   if (!GetWindowRect(w->window, &rect)) return;
+
+   printf ("ecore_wince_window_resize 0 : %p (%d %d)\n",
+           w,
+           width,
+           height);
+
+   x = rect.left;
+   y = rect.top;
+   rect.left = 0;
+   rect.top = 0;
+   rect.right = width;
+   rect.bottom = height;
+   style = GetWindowLong(w->window, GWL_STYLE);
+   exstyle = GetWindowLong(w->window, GWL_EXSTYLE);
+   if (!AdjustWindowRectEx(&rect, style, FALSE, exstyle))
+     return;
+
+   if (!MoveWindow(w->window, x, y,
+                   rect.right - rect.left,
+                   rect.bottom - rect.top,
+                   FALSE))
+     {
+       printf (" MEEERDE !!!\n");
+     }
+   printf ("ecore_wince_window_resize 4 : %d %d\n", width, height);
+}
+
+void
+ecore_wince_window_move_resize(Ecore_WinCE_Window *window,
+                               int                 x,
+                               int                 y,
+                               int                 width,
+                               int                 height)
+{
+   RECT                        rect;
+   struct _Ecore_WinCE_Window *w;
+   DWORD                       style;
+   DWORD                       exstyle;
+
+   if (!window || ((struct _Ecore_WinCE_Window *)window)->fullscreen)
+     return;
+
+   printf ("ecore_wince_window_move_resize 0 : %p  %d %d\n", window, width, height);
+   w = ((struct _Ecore_WinCE_Window *)window);
+   rect.left = 0;
+   rect.top = 0;
+   printf ("ecore_wince_window_move_resize 1 : %d %d\n", width, height);
+   rect.right = width;
+   rect.bottom = height;
+   style = GetWindowLong(w->window, GWL_STYLE);
+   exstyle = GetWindowLong(w->window, GWL_EXSTYLE);
+   if (!AdjustWindowRectEx(&rect, style, FALSE, exstyle))
+     return;
+
+   MoveWindow(w->window, x, y,
+              rect.right - rect.left,
+              rect.bottom - rect.top,
+              TRUE);
+}
+
 void
 ecore_wince_window_show(Ecore_WinCE_Window *window)
 {
@@ -249,17 +359,6 @@ ecore_wince_window_size_get(Ecore_WinCE_Window *window,
 
    if (width) *width = rect.right - rect.left;
    if (height) *height = rect.bottom - rect.top;
-}
-
-void *
-ecore_wince_window_window_get(Ecore_WinCE_Window *window)
-{
-   struct _Ecore_WinCE_Window *w;
-
-   if (!window)
-     return NULL;
-
-   return ((struct _Ecore_WinCE_Window *)window)->window;
 }
 
 void

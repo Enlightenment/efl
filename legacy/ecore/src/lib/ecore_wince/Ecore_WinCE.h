@@ -211,6 +211,22 @@ EAPI Ecore_WinCE_Window *ecore_wince_window_new(Ecore_WinCE_Window *parent,
 
 EAPI void ecore_wince_window_del(Ecore_WinCE_Window *window);
 
+EAPI void *ecore_wince_window_hwnd_get(Ecore_WinCE_Window *window);
+
+EAPI void ecore_wince_window_move(Ecore_WinCE_Window *window,
+                                  int                 x,
+                                  int                 y);
+
+EAPI void ecore_wince_window_resize(Ecore_WinCE_Window *window,
+                                    int                 width,
+                                    int                 height);
+
+EAPI void ecore_wince_window_move_resize(Ecore_WinCE_Window *window,
+                                         int                 x,
+                                         int                 y,
+                                         int                 width,
+                                         int                 height);
+
 EAPI void ecore_wince_window_show(Ecore_WinCE_Window *window);
 
 EAPI void ecore_wince_window_hide(Ecore_WinCE_Window *window);
@@ -233,8 +249,6 @@ EAPI void ecore_wince_window_geometry_get(Ecore_WinCE_Window *window,
 EAPI void ecore_wince_window_size_get(Ecore_WinCE_Window *window,
                                       int                *width,
                                       int                *height);
-
-EAPI void *ecore_wince_window_window_get(Ecore_WinCE_Window *window);
 
 EAPI void ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
                                             int                 on);

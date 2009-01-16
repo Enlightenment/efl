@@ -520,81 +520,81 @@ _ecore_evas_wince_callback_delete_request_set(Ecore_Evas *ee,
    ee->func.fn_delete_request = func;
 }
 
-/* static void */
-/* _ecore_evas_wince_move(Ecore_Evas *ee, int x, int y) */
-/* { */
-/*    if ((x != ee->x) || (y != ee->y)) */
-/*      { */
-/*         ee->x = x; */
-/*         ee->y = y; */
-/*         ecore_wince_window_move(ee->engine.wince.window, x, y); */
-/*         if (ee->func.fn_move) ee->func.fn_move(ee); */
-/*      } */
-/* } */
+static void
+_ecore_evas_wince_move(Ecore_Evas *ee, int x, int y)
+{
+   if ((x != ee->x) || (y != ee->y))
+     {
+        ee->x = x;
+        ee->y = y;
+        ecore_wince_window_move(ee->engine.wince.window, x, y);
+        if (ee->func.fn_move) ee->func.fn_move(ee);
+     }
+}
 
-/* static void */
-/* _ecore_evas_wince_resize(Ecore_Evas *ee, int width, int height) */
-/* { */
-/*   printf (" * _ecore_evas_wince_resize %d %d\n", width, height); */
-/*    if ((ee->w != width) || (ee->h != height)) */
-/*      { */
-/*         ee->w = width; */
-/*         ee->h = height; */
-/*         ecore_wince_window_resize(ee->engine.wince.window, width, height); */
-/*         if ((ee->rotation == 90) || (ee->rotation == 270)) */
-/*           { */
-/*              evas_output_size_set(ee->evas, ee->h, ee->w); */
-/*              evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w); */
-/*           } */
-/*         else */
-/*           { */
-/*              evas_output_size_set(ee->evas, ee->w, ee->h); */
-/*              evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h); */
-/*           } */
-/*         /\* FIXME: damage and shape *\/ */
+static void
+_ecore_evas_wince_resize(Ecore_Evas *ee, int width, int height)
+{
+  printf (" * _ecore_evas_wince_resize %d %d\n", width, height);
+   if ((ee->w != width) || (ee->h != height))
+     {
+        ee->w = width;
+        ee->h = height;
+        ecore_wince_window_resize(ee->engine.wince.window, width, height);
+        if ((ee->rotation == 90) || (ee->rotation == 270))
+          {
+             evas_output_size_set(ee->evas, ee->h, ee->w);
+             evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+          }
+        else
+          {
+             evas_output_size_set(ee->evas, ee->w, ee->h);
+             evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+          }
+        /* FIXME: damage and shape */
 
-/*         if (ee->func.fn_resize) ee->func.fn_resize(ee); */
-/*      } */
-/* } */
+        if (ee->func.fn_resize) ee->func.fn_resize(ee);
+     }
+}
 
-/* static void */
-/* _ecore_evas_wince_move_resize(Ecore_Evas *ee, int x, int y, int width, int height) */
-/* { */
-/*   printf (" * _ecore_evas_wince_resize\n"); */
-/*    if ((ee->w != width) || (ee->h != height) || (x != ee->x) || (y != ee->y)) */
-/*      { */
-/*         int change_size = 0; */
-/*         int change_pos = 0; */
+static void
+_ecore_evas_wince_move_resize(Ecore_Evas *ee, int x, int y, int width, int height)
+{
+  printf (" * _ecore_evas_wince_resize\n");
+   if ((ee->w != width) || (ee->h != height) || (x != ee->x) || (y != ee->y))
+     {
+        int change_size = 0;
+        int change_pos = 0;
 
-/*         if ((ee->w != width) || (ee->h != height)) change_size = 1; */
-/*         if ((x != ee->x) || (y != ee->y)) change_pos = 1; */
+        if ((ee->w != width) || (ee->h != height)) change_size = 1;
+        if ((x != ee->x) || (y != ee->y)) change_pos = 1;
 
-/*         ee->x = x; */
-/*         ee->y = y; */
-/*         ee->w = width; */
-/*         ee->h = height; */
-/*         ecore_wince_window_move_resize(ee->engine.wince.window, x, y, width, height); */
-/*         if ((ee->rotation == 90) || (ee->rotation == 270)) */
-/*           { */
-/*              evas_output_size_set(ee->evas, ee->h, ee->w); */
-/*              evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w); */
-/*           } */
-/*         else */
-/*           { */
-/*              evas_output_size_set(ee->evas, ee->w, ee->h); */
-/*              evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h); */
-/*           } */
-/*         /\* FIXME: damage and shape *\/ */
-/*         if (change_pos) */
-/*           { */
-/*              if (ee->func.fn_move) ee->func.fn_move(ee); */
-/*           } */
-/*         if (change_size) */
-/*           { */
-/*              if (ee->func.fn_resize) ee->func.fn_resize(ee); */
-/*           } */
-/*      } */
-/* } */
+        ee->x = x;
+        ee->y = y;
+        ee->w = width;
+        ee->h = height;
+        ecore_wince_window_move_resize(ee->engine.wince.window, x, y, width, height);
+        if ((ee->rotation == 90) || (ee->rotation == 270))
+          {
+             evas_output_size_set(ee->evas, ee->h, ee->w);
+             evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+          }
+        else
+          {
+             evas_output_size_set(ee->evas, ee->w, ee->h);
+             evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+          }
+        /* FIXME: damage and shape */
+        if (change_pos)
+          {
+             if (ee->func.fn_move) ee->func.fn_move(ee);
+          }
+        if (change_size)
+          {
+             if (ee->func.fn_resize) ee->func.fn_resize(ee);
+          }
+     }
+}
 
 /* static void */
 /* _ecore_evas_wince_rotation_set(Ecore_Evas *ee, int rotation) */
@@ -892,10 +892,10 @@ static const Ecore_Evas_Engine_Func _ecore_wince_engine_func =
      NULL,
      NULL,
      NULL,
-   NULL, //_ecore_evas_wince_move,
+   _ecore_evas_wince_move,
      NULL,
-   NULL, //_ecore_evas_wince_resize,
-   NULL, //_ecore_evas_wince_move_resize,
+   _ecore_evas_wince_resize,
+   _ecore_evas_wince_move_resize,
    NULL, //_ecore_evas_wince_rotation_set,
      NULL, /* _ecore_evas_x_shaped_set */
      _ecore_evas_wince_show,

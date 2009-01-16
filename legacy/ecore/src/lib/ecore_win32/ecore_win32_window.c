@@ -221,7 +221,7 @@ ecore_win32_window_move_resize(Ecore_Win32_Window *window,
    rect.right = width;
    rect.bottom = height;
    style = GetWindowLong(w->window, GWL_STYLE);
-   if (!AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW | WS_SIZEBOX, FALSE))
+   if (!AdjustWindowRect(&rect, style, FALSE))
      return;
 
    MoveWindow(w->window, x, y,
