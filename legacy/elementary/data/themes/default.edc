@@ -3321,6 +3321,7 @@ collections {
 	    source: "elm";
 	    action: STATE_SET "visible" 0.0;
 	    transition: DECELERATE 0.5;
+	    target: "bottom";
 	    target: "elm.swallow.slot.bottom";
 	 }
 	 program { name: "bottomhide";
@@ -3328,6 +3329,7 @@ collections {
 	    source: "elm";
 	    action: STATE_SET "default" 0.0;
 	    transition: DECELERATE 0.5;
+	    target: "bottom";
 	    target: "elm.swallow.slot.bottom";
 	 }
       }
