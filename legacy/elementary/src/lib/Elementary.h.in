@@ -156,6 +156,9 @@ extern "C" {
    EAPI Evas_Object *elm_win_inwin_add(Evas_Object *obj);
    EAPI void         elm_win_inwin_activate(Evas_Object *obj);
    EAPI void         elm_win_inwin_style_set(Evas_Object *obj, const char *style);
+   /* available styles: 
+    * default
+    */
        
    /* X specific calls - won't work on non-x engines (return 0) */
    EAPI Ecore_X_Window elm_win_xwindow_get(Evas_Object *obj);   
@@ -193,6 +196,11 @@ extern "C" {
    EAPI void         elm_button_label_set(Evas_Object *obj, const char *label);
    EAPI void         elm_button_icon_set(Evas_Object *obj, Evas_Object *icon);
    EAPI void         elm_button_style_set(Evas_Object *obj, const char *style);
+   /* available styles: 
+    * default 
+    * hoversel_vertical 
+    * hoversel_vertical_entry
+    */
    /* smart callbacks called:
     * "clicked" - the user clicked the button
     */
@@ -223,6 +231,15 @@ extern "C" {
    EAPI void         elm_frame_label_set(Evas_Object *obj, const char *label);
    EAPI void         elm_frame_content_set(Evas_Object *obj, Evas_Object *content);
    EAPI void         elm_frame_style_set(Evas_Object *obj, const char *style);
+   /* available styles:
+    * default
+    * pad_small
+    * pad_medium
+    * pad_large
+    * pad_huge
+    * outdent_top
+    * outdent_bottom
+    */
    /* smart callbacks called:
     */
        
@@ -261,6 +278,11 @@ extern "C" {
    EAPI void         elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void         elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
    EAPI void         elm_hover_style_set(Evas_Object *obj, const char *style);
+   /* available styles: 
+    * default
+    * popout
+    * hoversel_vertical
+    */
    EAPI const char  *elm_hover_best_content_location_get(Evas_Object *obj, Elm_Hover_Axis pref_axis);
    /* smart callbacks called:
     * "clicked" - the user clicked the empty space in the hover to dismiss
