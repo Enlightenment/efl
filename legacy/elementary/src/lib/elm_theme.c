@@ -30,7 +30,7 @@ _elm_theme_group_file_find(const char *group)
                   return file;
                }
           }
-        snprintf(buf, sizeof(buf), "%s/themes/%s.edj", PACKAGE_DATA_DIR, l->data);
+        snprintf(buf, sizeof(buf), "%s/themes/%s.edj", _elm_data_dir, l->data);
         if (edje_file_group_exists(buf, group))
           {
              file = eina_stringshare_add(buf);
