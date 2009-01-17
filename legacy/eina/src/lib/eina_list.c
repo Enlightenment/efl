@@ -417,7 +417,7 @@ eina_list_sort_merge(Eina_List *a, Eina_List *b, Eina_Compare_Cb func)
 EAPI int
 eina_list_init(void)
 {
-   char *choice;
+   const char *choice;
 
    if (!_eina_list_init_count)
      {

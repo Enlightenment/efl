@@ -399,7 +399,7 @@ static Eina_Error_Level _error_level = EINA_ERROR_LEVEL_DBG;
 static Eina_Error_Level _error_level = EINA_ERROR_LEVEL_ERR;
 #endif
 
-static char *_colors[EINA_ERROR_LEVELS] = {
+static const char *_colors[EINA_ERROR_LEVELS] = {
   RED, // EINA_ERROR_LEVEL_ERR
   YELLOW, // EINA_ERROR_LEVEL_WARN
   NOTHING, // EINA_ERROR_LEVEL_INFO
