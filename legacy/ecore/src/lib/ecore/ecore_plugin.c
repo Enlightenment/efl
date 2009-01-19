@@ -58,7 +58,11 @@ ecore_plugin_load(Ecore_Path_Group *group, const char *plugin_name, const char *
    if (!version || *version == '\0')
      snprintf(temp, sizeof(temp), "%s" SHARED_LIB_SUFFIX, plugin_name);
    else
+#ifndef _WIN32
      snprintf(temp, sizeof(temp), "%s" SHARED_LIB_SUFFIX ".%s", plugin_name, version);
+#else
+     snprintf(temp, sizeof(temp), "%s-%s" SHARED_LIB_SUFFIX, plugin_name, version);
+#endif
 
    path = ecore_path_group_find(group, temp);
 
