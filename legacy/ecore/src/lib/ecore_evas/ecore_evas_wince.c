@@ -990,6 +990,8 @@ ecore_evas_software_wince_new_internal(int                 backend,
         return NULL;
      }
 
+   ecore_wince_window_fullscreen_set(ee->engine.wince.window, fullscreen);
+
    /* init evas here */
    ee->evas = evas_new();
    evas_data_attach_set(ee->evas, ee);
