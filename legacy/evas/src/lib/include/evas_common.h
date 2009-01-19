@@ -137,6 +137,7 @@ typedef unsigned char                   DATA8;
 typedef struct _Image_Entry             Image_Entry;
 typedef struct _Image_Entry_Flags	Image_Entry_Flags;
 typedef struct _Engine_Image_Entry      Engine_Image_Entry;
+typedef struct _Evas_Cache_Target       Evas_Cache_Target;
 
 typedef struct _RGBA_Image_Loadopts   RGBA_Image_Loadopts;
 typedef struct _RGBA_Pipe_Op          RGBA_Pipe_Op;
@@ -268,6 +269,12 @@ struct _Image_Entry_Flags
 #endif
 };
 
+struct _Evas_Cache_Target
+{
+  EINA_INLIST;
+  const void *target;
+};
+
 struct _Image_Entry
 {
   EINA_INLIST;
@@ -279,7 +286,7 @@ struct _Image_Entry
   const char            *file;
   const char            *key;
 
-  const void            *target;
+  Evas_Cache_Target     *targets;
 
   time_t                 timestamp;
   time_t                 laststat;

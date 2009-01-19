@@ -21,7 +21,9 @@
 #ifdef BUILD_ASYNC_PRELOAD
 #include <pthread.h>
 
-struct _cache_preload
+typedef struct _Evas_Cache_Preload Evas_Cache_Preload;
+
+struct _Evas_Cache_Preload
 {
    EINA_INLIST;
    Image_Entry *ie;
@@ -234,6 +236,7 @@ _evas_cache_image_entry_new(Evas_Cache_Image *cache,
 
 #ifdef BUILD_ASYNC_PRELOAD
    pthread_mutex_init(&ie->lock, NULL);
+   ie->targets = NULL;
 #endif
 
    if (lo)
@@ -298,39 +301,53 @@ _evas_cache_image_entry_surface_alloc(Evas_Cache_Image *cache,
 
 #ifdef BUILD_ASYNC_PRELOAD
 static int
-_evas_cache_image_entry_preload_add(Evas_Cache_Image *cache,
-				    Image_Entry *ie,
+_evas_cache_image_entry_preload_add(Image_Entry *ie,
 				    const void *target)
 {
+   Evas_Cache_Target *tg;
    int ret = 0;
 
    pthread_mutex_lock(&mutex);
 
-   if (!ie->flags.preload)
+   if (!ie->flags.loaded)
      {
-	struct _cache_preload *t = malloc(sizeof(*t));
-	t->ie = ie;
-	preload = eina_inlist_append(preload, EINA_INLIST_GET(t));
-	ie->flags.preload = 1;
-	ie->target = target;
+	tg = malloc(sizeof (Evas_Cache_Target));
+	if (!tg) goto end;
 
-	if (!running)
+	tg->target = target;
+	ie->targets = (Evas_Cache_Target*) eina_inlist_append(EINA_INLIST_GET(ie->targets), EINA_INLIST_GET(tg));
+
+	if (!ie->flags.preload)
 	  {
-	     if (pthread_create(&tid, NULL, _evas_cache_background_load, NULL) == 0)
-	       running = 1;
-	  }
+	     Evas_Cache_Preload *tmp;
 
+	     tmp = malloc(sizeof (Evas_Cache_Preload));
+	     if (!tmp) goto end;
+
+	     tmp->ie = ie;
+	     preload = eina_inlist_append(preload, EINA_INLIST_GET(tmp));
+
+	     ie->flags.preload = 1;
+
+	     if (!running)
+	       {
+		  if (pthread_create(&tid, NULL, _evas_cache_background_load, NULL) == 0)
+		    running = 1;
+	       }
+
+	     ret = 2;
+	  }
 	ret = 1;
      }
 
+ end:
    pthread_mutex_unlock(&mutex);
 
    return ret;
 }
 
 static int
-_evas_cache_image_entry_preload_remove(Evas_Cache_Image *cache,
-				       Image_Entry *ie)
+_evas_cache_image_entry_preload_remove(Image_Entry *ie)
 {
    int ret = 0;
 
@@ -347,7 +364,7 @@ _evas_cache_image_entry_preload_remove(Evas_Cache_Image *cache,
 	       }
 	     else
 	       {
-		  struct _cache_preload *l;
+		  Evas_Cache_Preload *l;
 		  EINA_INLIST_FOREACH(preload, l)
 		    {
 		       if (l->ie == ie)
@@ -367,6 +384,22 @@ _evas_cache_image_entry_preload_remove(Evas_Cache_Image *cache,
      }
 
    return ret;
+}
+
+static void
+_evas_cache_image_async_call(Image_Entry *im)
+{
+   pthread_mutex_lock(&mutex);
+   while (im->targets)
+     {
+	Evas_Cache_Target *tmp = im->targets;
+
+	evas_async_events_put(tmp->target, EVAS_CALLBACK_IMAGE_PRELOADED, NULL,
+			      (void (*)(void*, Evas_Callback_Type, void*))evas_object_event_callback_call);
+	im->targets = (Evas_Cache_Target*) eina_inlist_remove(EINA_INLIST_GET(im->targets), EINA_INLIST_GET(im->targets));
+	free(tmp);
+     }
+   pthread_mutex_unlock(&mutex);
 }
 #endif
 
@@ -644,7 +677,7 @@ evas_cache_image_drop(Image_Entry *im)
    if (im->references == 0)
      {
 #ifdef BUILD_ASYNC_PRELOAD
-	_evas_cache_image_entry_preload_remove(cache, im);
+	_evas_cache_image_entry_preload_remove(im);
 #endif
 
 	if (im->flags.dirty)
@@ -912,7 +945,7 @@ evas_cache_image_load_data(Image_Entry *im)
 #ifdef BUILD_ASYNC_PRELOAD
    int preload = im->flags.preload;
    /* We check a first time, to prevent useless lock. */
-   _evas_cache_image_entry_preload_remove(cache, im);
+   _evas_cache_image_entry_preload_remove(im);
    if (im->flags.loaded) return ;
    pthread_mutex_lock(&im->lock);
 #endif
@@ -928,8 +961,7 @@ evas_cache_image_load_data(Image_Entry *im)
 
 #ifdef BUILD_ASYNC_PRELOAD
    if (preload)
-     evas_async_events_put(im->target, EVAS_CALLBACK_IMAGE_PRELOADED, NULL,
-			   (void (*)(void*, Evas_Callback_Type, void*))evas_object_event_callback_call);
+     _evas_cache_image_async_call(im);
 #endif
 
    if (error)
@@ -961,11 +993,14 @@ evas_cache_image_preload_data(Image_Entry *im, const void *target)
 
    cache = im->cache;
 
-   _evas_cache_image_entry_preload_add(cache, im, target);
+   if (!_evas_cache_image_entry_preload_add(im, target))
+     evas_async_events_put(target, EVAS_CALLBACK_IMAGE_PRELOADED, NULL,
+			   (void (*)(void*, Evas_Callback_Type, void*))evas_object_event_callback_call);
 #else
    evas_cache_image_load_data(im);
 
-   evas_async_events_put(target, EVAS_CALLBACK_IMAGE_PRELOADED, NULL, evas_object_event_callback_call);
+   evas_async_events_put(target, EVAS_CALLBACK_IMAGE_PRELOADED, NULL,
+			 (void (*)(void*, Evas_Callback_Type, void*))evas_object_event_callback_call);
 #endif
 }
 
@@ -979,7 +1014,7 @@ evas_cache_image_preload_cancel(Image_Entry *im)
    assert(im->cache);
    cache = im->cache;
 
-   _evas_cache_image_entry_preload_remove(cache, im);
+   _evas_cache_image_entry_preload_remove(im);
 #else
    (void) im;
 #endif
@@ -1100,10 +1135,12 @@ _evas_cache_background_load(void *data)
 
 	if (preload)
 	  {
-	     Eina_Inlist *t = preload;
-	     current = ((struct _cache_preload *)preload)->ie;
+	     Evas_Cache_Preload *tmp = (Evas_Cache_Preload*) preload;
+
+	     current = tmp->ie;
 	     preload = eina_inlist_remove(preload, preload);
-	     free(t);
+
+	     free(tmp);
 	  }
 
 	pthread_mutex_unlock(&mutex);
@@ -1134,9 +1171,8 @@ _evas_cache_background_load(void *data)
 	     current->flags.preload = 0;
 
 	     pthread_mutex_unlock(&current->lock);
-	     evas_async_events_put(current->target, EVAS_CALLBACK_IMAGE_PRELOADED, NULL,
-				   (void (*)(void*, Evas_Callback_Type, void*))evas_object_event_callback_call);
 
+	     _evas_cache_image_async_call(current);
 	     current = NULL;
 	  }
 
