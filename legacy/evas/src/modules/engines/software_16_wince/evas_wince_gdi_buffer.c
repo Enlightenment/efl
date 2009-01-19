@@ -56,6 +56,7 @@ evas_software_wince_gdi_init(HWND window,
    priv->bitmap_info = (BITMAPINFO_16bpp *)malloc(sizeof(BITMAPINFO_16bpp));
    if (!priv->bitmap_info)
      {
+        fprintf (stderr, "[Evas] [Engine] [WinCE GDI] Can not allocate bitmap info\n");
         ReleaseDC(window, priv->dc);
         free(priv);
         return NULL;
