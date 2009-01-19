@@ -9,7 +9,7 @@ filesdir = $(datadir)/elementary/objects
 files_DATA = test.edj
 
 EXTRA_DIST = \
-test.edc over.png under.png
+test.edc over.png under.png sky.jpg clo.png
 
 test.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \

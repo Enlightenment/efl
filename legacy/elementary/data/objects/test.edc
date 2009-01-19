@@ -3,8 +3,27 @@ collections {
       images {
 	 image: "over.png" COMP;
 	 image: "under.png" COMP;
+	 image: "sky.jpg" LOSSY 80;
+	 image: "clo.png" LOSSY 60;
       }
       parts {
+	 part { name: "sky";
+            mouse_events: 0;
+	    description { state: "default" 0.0;
+	       aspect: 2.6225 2.6225;
+	       aspect_preference: NONE;
+	       image.normal: "sky.jpg";
+	    }
+	    description { state: "drift" 0.0;
+               inherit: "default" 0.0;
+               fill {
+                  origin {
+                     relative: 1.0 0.0;
+                     offset: 0 0;
+                  }
+               }
+	    }
+	 }
 	 part { name: "under";
             mouse_events: 0;
 	    description { state: "default" 0.0;
@@ -57,6 +76,64 @@ collections {
 	       image.normal: "over.png";
 	    }
 	 }
+         part { name: "clo";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               fill {
+                  smooth: 0;
+                  origin {
+                     relative: 0.0 0.0;
+                     offset: 0 0;
+                  }
+                  size {
+                     relative: 1.84722 1.0;
+                     offset: 0 0;
+                  }
+               }
+               image.normal: "clo.png";
+            }
+            description { state: "drift" 0.0;
+               inherit: "default" 0.0;
+               fill {
+                  origin {
+                     relative: 1.84722 0.0;
+                     offset: 0 0;
+                  }
+                  size {
+                     relative: 1.84722 1.0;
+                     offset: 0 0;
+                  }
+               }
+            }
+         }
+      }
+      programs {
+         program { name: "anim1";
+            signal: "show";
+            source: "";
+            action: STATE_SET "drift" 0.0;
+            transition: LINEAR 10.0;
+            target: "clo";
+            after: "anim2";
+         }
+         program { name: "anim2";
+            action: STATE_SET "default" 0.0;
+            target: "clo";
+            after: "anim1";
+         }
+         program { name: "anim3";
+            signal: "show";
+            source: "";
+            action: STATE_SET "drift" 0.0;
+            transition: LINEAR 40.0;
+            target: "sky";
+            after: "anim4";
+         }
+         program { name: "anim4";
+            action: STATE_SET "default" 0.0;
+            target: "sky";
+            after: "anim3";
+         }
       }
    }
 }
