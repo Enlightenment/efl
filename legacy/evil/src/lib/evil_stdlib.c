@@ -176,6 +176,8 @@ setenv(const char *name,
    LONG     res;
    DWORD    disposition;
    wchar_t *wname;
+   char    *data;
+   DWORD    size;
 
    if (!name || !*name)
      return -1;
@@ -208,11 +210,31 @@ setenv(const char *name,
         return -1;
      }
 
+   if (value)
+     {
+        size = strlen(value);
+        data = malloc(sizeof(char) * (size + 1));
+        if (!data)
+          return -1;
+        memcpy((void *)data, value, size);
+        data[size] = '\0';
+     }
+   else
+     {
+        size = 0;
+        data = malloc(sizeof(char));
+        if (!data)
+          return -1;
+        data[0] = '\0';
+     }
+   if (!data)
+     return -1;
+
    if ((res = RegSetValueEx(key,
                             (LPCWSTR)wname,
                             0, REG_SZ,
-                            (const BYTE *)value,
-                            strlen(value) + 1)) != ERROR_SUCCESS)
+                            (const BYTE *)data,
+                            size + 1)) != ERROR_SUCCESS)
      {
         free(wname);
         _evil_error_display(__FUNCTION__, res);
@@ -221,6 +243,7 @@ setenv(const char *name,
         return -1;
      }
 
+   free(data);
    free(wname);
 
    if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
@@ -251,7 +274,7 @@ unsetenv(const char *name)
  */
 
 int
-mkstemp(char *template)
+mkstemp(char *__template)
 {
    const char lookup[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
    char      *suffix;
@@ -259,12 +282,12 @@ mkstemp(char *template)
    size_t     length;
    int        i;
 
-   if (!template)
+   if (!__template)
      return 0;
 
-   length = strlen(template);
+   length = strlen(__template);
    if ((length < 6) ||
-       (strncmp (template + length - 6, "XXXXXX", 6)))
+       (strncmp (__template + length - 6, "XXXXXX", 6)))
      {
 #ifdef HAVE_ERRNO_H
         errno = EINVAL;
@@ -272,7 +295,7 @@ mkstemp(char *template)
         return -1;
      }
 
-   suffix = template + length - 6;
+   suffix = __template + length - 6;
 
    val = GetTickCount();
    val += GetCurrentProcessId();
@@ -298,12 +321,17 @@ mkstemp(char *template)
         v /= 62;
 
 #if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
-        fd = _open(template, _O_RDWR | _O_BINARY | _O_CREAT | _O_EXCL, _S_IREAD | _S_IWRITE);
+        fd = _open(__template, _O_RDWR | _O_BINARY | _O_CREAT | _O_EXCL, _S_IREAD | _S_IWRITE);
 #else /* __CEGCC__ || __MINGW32CE__ */
         {
-           FILE *f;
+           FILE    *f;
+           wchar_t *wtemplate;
 
-           f = fopen(template, "rwb");
+           wtemplate = evil_char_to_wchar(__template);
+           if (!wtemplate)
+             return -1;
+           f = _wfopen(wtemplate, L"rwb");
+           free(wtemplate);
            if (!f)
              {
 #ifdef HAVE_ERRNO_H
@@ -311,7 +339,7 @@ mkstemp(char *template)
 #endif /* HAVE_ERRNO_H */
                 return -1;
              }
-           fd = fileno(f);
+           fd = _fileno(f);
         }
 #endif /* __CEGCC__ || __MINGW32CE__ */
         if (fd >= 0)
@@ -333,13 +361,27 @@ realpath(const char *file_name, char *resolved_name)
 #if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
    return _fullpath(resolved_name, file_name, PATH_MAX);
 #else
-   int length;
+   char   cwd[PATH_MAX];
+   size_t l1;
+   size_t l2;
+   size_t l;
 
-   length = strlen(file_name);
-   if ((length + 1) > PATH_MAX)
-     length = PATH_MAX - 1;
-   memcpy(resolved_name, file_name, length);
-   resolved_name[length] = '\0';
+   if (!file_name || !resolved_name)
+     return NULL;
+
+   if (!getcwd(cwd, PATH_MAX))
+     return NULL;
+
+   l1 = strlen(cwd);
+   l2 = strlen(file_name);
+   l = l1 + l2 + 2;
+
+   if (l > PATH_MAX)
+     l = PATH_MAX - 1;
+   memcpy(resolved_name, cwd, l1);
+   resolved_name[l1] = '\\';
+   memcpy(resolved_name + l1 + 1, file_name, l2);
+   resolved_name[l] = '\0';
 
    return resolved_name;
 #endif /* __CEGCC__ || __MINGW32CE__ */

@@ -12,6 +12,8 @@
 #include "evil_test_gettimeofday.h"
 #include "evil_test_link.h"
 #include "evil_test_memcpy.h"
+#include "evil_test_mkstemp.h"
+#include "evil_test_realpath.h"
 
 
 typedef int(*function)(suite *s);
@@ -171,10 +173,12 @@ int
 main()
 {
    test tests[] = {
-     { "dlfcn       ",  test_environment },
+     { "dlfcn       ",  test_dlfcn },
      { "environment ",  test_environment },
      { "gettimeofday",  test_gettimeofday },
      { "link        ",  test_link },
+     { "mkstemp     ",  test_mkstemp },
+     { "realpath    ",  test_realpath },
 /*      { "memcpy      ",  test_memcpy }, */
      { NULL,            NULL },
    };
@@ -193,7 +197,6 @@ main()
 
    for (i = 0; tests[i].name; ++i)
      {
-
         suite_test_add(s, tests[i].name, tests[i].fct);
      }
 

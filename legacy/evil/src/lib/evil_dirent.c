@@ -47,9 +47,9 @@ DIR *opendir(char const *name)
    wname = evil_char_to_wchar(name);
    if (!wname)
      {
-#ifdef HAVE_ERRNO_H
+# ifdef HAVE_ERRNO_H
         errno = ENOMEM;
-#endif
+# endif
         return NULL;
      }
 
@@ -68,8 +68,8 @@ DIR *opendir(char const *name)
    free(wname);
 #endif
 
-     /* directory */
-     if (attr != FILE_ATTRIBUTE_DIRECTORY)
+   /* directory */
+   if (!(attr & FILE_ATTRIBUTE_DIRECTORY))
      {
 #ifdef HAVE_ERRNO_H
         errno = ENOTDIR;
@@ -77,8 +77,8 @@ DIR *opendir(char const *name)
         return NULL;
      }
 
-     dir = (DIR *)malloc(sizeof(DIR));
-     if (!dir)
+   dir = (DIR *)malloc(sizeof(DIR));
+   if (!dir)
      {
 #ifdef HAVE_ERRNO_H
         errno = ENOMEM;

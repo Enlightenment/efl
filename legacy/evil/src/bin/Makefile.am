@@ -18,7 +18,9 @@ evil_test_dlfcn.c \
 evil_test_environment.c \
 evil_test_gettimeofday.c \
 evil_test_link.c \
-evil_test_memcpy.c
+evil_test_memcpy.c \
+evil_test_mkstemp.c \
+evil_test_realpath.c
 
 if EVIL_HAVE_WINCE
 
@@ -46,4 +48,6 @@ evil_suite.h \
 evil_test_dlfcn.h \
 evil_test_environment.h \
 evil_test_link.h \
-evil_test_memcpy.h
+evil_test_memcpy.h \
+evil_test_mkstemp.h \
+evil_test_realpath.h

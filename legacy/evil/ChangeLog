@@ -1,3 +1,32 @@
+2009-01-19  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/bin/Makefile.am:
+	* src/bin/evil_suite.c:
+	* src/bin/evil_test_dlfcn.c:
+	* src/bin/evil_test_dlfcn.h:
+	* src/bin/evil_test_environment.c:
+	* src/bin/evil_test_environment.h:
+	* src/bin/evil_test_gettimeofday.c:
+	* src/bin/evil_test_gettimeofday.h:
+	* src/bin/evil_test_link.c:
+	* src/bin/evil_test_link.h:
+	* src/bin/evil_test_mkstemp.c:
+	* src/bin/evil_test_mkstemp.h:
+	* src/bin/evil_test_realpath.c:
+	* src/bin/evil_test_realpath.h:
+	various fixes in the test suite.
+	add mkstemp() and realpath tests.
+
+	* src/lib/evil_dirent.c:
+	fix opendir() when indexation search is not active.
+	formatting.
+
+	* src/lib/evil_stdlib.c:
+	fir mkstemp() on both platform
+
+	* src/lib/evil_unistd.c:
+	remove useless error message.
+
 2009-01-12  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_dirent.c:

@@ -215,7 +215,6 @@ evil_stat(const char *file_name, struct stat *st)
    handle = FindFirstFile(file, &data);
    if (handle == INVALID_HANDLE_VALUE)
      {
-        _evil_last_error_display(__FUNCTION__);
         free(file);
         return -1;
      }

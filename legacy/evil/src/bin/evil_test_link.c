@@ -2,7 +2,6 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-#include <stdio.h>
 #include <string.h>
 
 #include <Evil.h>
@@ -144,7 +143,7 @@ test_link_tests_run(suite *s)
 {
    int res;
 
-   res = test_link_test_symlink();
+   res  = test_link_test_symlink();
    res &= test_link_test_readlink();
 
    return res;

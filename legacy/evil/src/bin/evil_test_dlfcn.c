@@ -2,7 +2,6 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-#include <stdio.h>
 #include <string.h>
 #include <dlfcn.h>
 
@@ -22,7 +21,7 @@ test_dlfcn_test_dlopen()
    if (!handle)
      return 0;
 
-   if (!dlclose(handle))
+   if (dlclose(handle))
      return 0;
 
    return 1;
@@ -53,7 +52,7 @@ test_dlfcn_test_dlsym()
         return 0;
      }
 
-   if (!dlclose(handle))
+   if (dlclose(handle))
      return 0;
 
    return 1;
@@ -64,7 +63,7 @@ test_dlfcn_tests_run(suite *s)
 {
    int res;
 
-   res = test_dlfcn_test_dlopen();
+   res  = test_dlfcn_test_dlopen();
    res &= test_dlfcn_test_dlsym();
 
    return res;

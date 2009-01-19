@@ -1,10 +1,7 @@
-
-
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-#include <stdio.h>
 #include <string.h>
 #include <math.h>
 
@@ -13,7 +10,7 @@
 #include "evil_suite.h"
 
 static int
-test_time_tests_run(suite *s)
+test_time_test_gettimeofday(void)
 {
    struct timeval tp1;
    struct timeval tp2;
@@ -32,6 +29,16 @@ test_time_tests_run(suite *s)
      }
 
    return 1;
+}
+
+static int
+test_time_tests_run(suite *s)
+{
+   int res;
+
+   res = test_time_test_gettimeofday();
+
+   return res;
 }
 
 int
