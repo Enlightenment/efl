@@ -115,9 +115,20 @@ ecore_wince_init()
 int
 ecore_wince_shutdown()
 {
+   HWND task_bar;
+
    _ecore_wince_init_count--;
    if (_ecore_wince_init_count > 0) return _ecore_wince_init_count;
    if (!_ecore_wince_instance) return _ecore_wince_init_count;
+
+   /* force task bar to be shown (in case the application exits */
+   /* while being fullscreen) */
+   task_bar = FindWindow(L"HHTaskBar", NULL);
+   if (task_bar)
+     {
+        ShowWindow(task_bar, SW_SHOW);
+        EnableWindow(task_bar, TRUE);
+     }
 
    UnregisterClass(ECORE_WINCE_WINDOW_CLASS, _ecore_wince_instance);
    FreeLibrary(_ecore_wince_instance);
