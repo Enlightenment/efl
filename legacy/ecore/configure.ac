@@ -254,7 +254,7 @@ if test "x$have_iconv" = "xno" ; then
   if test "x$have_iconv" != "xyes"; then
     AC_CHECK_LIB(iconv_plug, iconv,
       [
-       iconv_libs="-liconv_plug"
+       iconv_libs="-liconv -liconv_plug"
        have_iconv="yes"
       ]
     )
