@@ -77,6 +77,7 @@ eina_ememoa_fixed_statistics(void *data)
    Eina_Ememoa_Fixed_Mempool *efm = data;
 
    ememoa_mempool_fixed_display_statistic(efm->pool);
+   (void) efm;
 }
 
 static void*
