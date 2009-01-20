@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "eina_types.h"
 #include "eina_error.h"
 #include "eina_array.h"
 #include "eina_inline_array.x"
@@ -89,12 +90,19 @@ struct _Eina_Accessor_Array
 
 static int _eina_array_init_count = 0;
 
+static void eina_array_iterator_free(Eina_Iterator_Array *it) EINA_ARG_NONNULL(1);
+static Eina_Array *eina_array_iterator_get_container(Eina_Iterator_Array *it) EINA_ARG_NONNULL(1);
+static Eina_Bool eina_array_iterator_next(Eina_Iterator_Array *it, void **data) EINA_ARG_NONNULL(1);
+
+static Eina_Bool eina_array_accessor_get_at(Eina_Accessor_Array *it, unsigned int index, void **data) EINA_ARG_NONNULL(1);
+static Eina_Array *eina_array_accessor_get_container(Eina_Accessor_Array *it) EINA_ARG_NONNULL(1);
+static void eina_array_accessor_free(Eina_Accessor_Array *it) EINA_ARG_NONNULL(1);
+
 static Eina_Bool
 eina_array_iterator_next(Eina_Iterator_Array *it, void **data)
 {
    EINA_MAGIC_CHECK_ARRAY_ITERATOR(it);
 
-   if (!it) return EINA_FALSE;
    if (!(it->index < eina_array_count_get(it->array)))
      return EINA_FALSE;
    if (data)
@@ -107,7 +115,7 @@ static Eina_Array *
 eina_array_iterator_get_container(Eina_Iterator_Array *it)
 {
    EINA_MAGIC_CHECK_ARRAY_ITERATOR(it);
-   return it ? (Eina_Array *) it->array : NULL;
+   return (Eina_Array *) it->array;
 }
 
 static void
@@ -122,7 +130,6 @@ eina_array_accessor_get_at(Eina_Accessor_Array *it, unsigned int index, void **d
 {
    EINA_MAGIC_CHECK_ARRAY_ACCESSOR(it);
 
-   if (!it) return EINA_FALSE;
    if (!(index < eina_array_count_get(it->array)))
      return EINA_FALSE;
    if (data)
@@ -134,7 +141,7 @@ static Eina_Array *
 eina_array_accessor_get_container(Eina_Accessor_Array *it)
 {
    EINA_MAGIC_CHECK_ARRAY_ACCESSOR(it);
-   return it ? (Eina_Array *) it->array : NULL;
+   return (Eina_Array *) it->array;
 }
 
 static void
