@@ -34,6 +34,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+
 static Eina_Hash *_backends;
 static Eina_Array *_modules;
 static int _init_count = 0;
@@ -43,7 +44,7 @@ _new_from_buffer(const char *name, const char *context, const char *options, va_
 {
 	Eina_Mempool_Backend *be;
 	Eina_Mempool *mp;
-	
+
 	Eina_Error err = EINA_ERROR_NOT_MEMPOOL_MODULE;
 
 	eina_error_set(0);
@@ -95,6 +96,7 @@ void fixed_bitmap_shutdown(void);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+
 EAPI Eina_Bool eina_mempool_register(Eina_Mempool_Backend *be)
 {
 	return eina_hash_add(_backends, be->name, be);
@@ -104,6 +106,7 @@ EAPI void eina_mempool_unregister(Eina_Mempool_Backend *be)
 {
 	eina_hash_del(_backends, be->name, be);
 }
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

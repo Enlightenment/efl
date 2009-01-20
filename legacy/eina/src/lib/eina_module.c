@@ -29,6 +29,23 @@
 #include <dirent.h>
 #include <string.h>
 
+#ifdef HAVE_ALLOCA_H
+# include <alloca.h>
+#elif defined __GNUC__
+# define alloca __builtin_alloca
+#elif defined _AIX
+# define alloca __alloca
+#elif defined _MSC_VER
+# include <malloc.h>
+# define alloca _alloca
+#else
+# include <stddef.h>
+# ifdef  __cplusplus
+extern "C"
+# endif
+void *alloca (size_t);
+#endif
+
 #include <dlfcn.h>
 
 #ifdef HAVE_EVIL
@@ -126,9 +143,19 @@ static void _dir_list_cb(const char *name, const char *path, void *data)
 	}
 }
 static int _eina_module_count = 0;
+
+/**
+ * @endcond
+ */
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+
 /**
  * To be documented
  * FIXME: To be fixed
