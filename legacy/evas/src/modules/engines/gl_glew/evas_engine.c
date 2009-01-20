@@ -837,7 +837,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 }
 
 static void
-eng_image_data_preload_request(void *data, void *image, void *target)
+eng_image_data_preload_request(void *data, void *image, const void *target)
 {
    Evas_GL_Image *gim = image;
    RGBA_Image *im;
@@ -849,7 +849,7 @@ eng_image_data_preload_request(void *data, void *image, void *target)
 }
 
 static void
-eng_image_data_preload_cancel(void *data, void *image)
+eng_image_data_preload_cancel(void *data, void *image, const void *target)
 {
    Evas_GL_Image *gim = image;
    RGBA_Image *im;
@@ -857,7 +857,7 @@ eng_image_data_preload_cancel(void *data, void *image)
    if (!gim) return ;
    im = (RGBA_Image*) gim->im;
    if (!im) return ;
-   evas_cache_image_preload_cancel(&im->cache_entry);
+   evas_cache_image_preload_cancel(&im->cache_entry, target);
 }
 
 static void

@@ -723,12 +723,12 @@ eng_image_data_preload_request(void *data, void *image, const void *target)
 }
 
 static void
-eng_image_data_preload_cancel(void *data, void *image)
+eng_image_data_preload_cancel(void *data, void *image, const void *target)
 {
    RGBA_Image *im = image;
 
    if (!im) return ;
-   evas_cache_image_preload_cancel(&im->cache_entry);
+   evas_cache_image_preload_cancel(&im->cache_entry, target);
 }
 
 static void

@@ -79,8 +79,8 @@ static void *eng_image_size_set(void *data, void *image, int w, int h);
 static void *eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h);
 static void *eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data);
 static void *eng_image_data_put(void *data, void *image, DATA32 *image_data);
-static void eng_image_data_preload_request(void *data, void *image, void *target);
-static void eng_image_data_preload_cancel(void *data, void *image);
+static void eng_image_data_preload_request(void *data, void *image, const void *target);
+static void eng_image_data_preload_cancel(void *data, void *image, const void *target);
 static void *eng_image_alpha_set(void *data, void *image, int has_alpha);
 static int eng_image_alpha_get(void *data, void *image);
 static void *eng_image_border_set(void *data, void *image, int l, int r, int t, int b);
@@ -1047,7 +1047,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 }
 
 static void
-eng_image_data_preload_request(void *data, void *image, void *target)
+eng_image_data_preload_request(void *data, void *image, const void *target)
 {
    Render_Engine *re;
 
@@ -1057,7 +1057,7 @@ eng_image_data_preload_request(void *data, void *image, void *target)
 }
 
 static void
-eng_image_data_preload_cancel(void *data, void *image)
+eng_image_data_preload_cancel(void *data, void *image, const void *target)
 {
    Render_Engine *re;
 

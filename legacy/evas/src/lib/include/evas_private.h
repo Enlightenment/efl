@@ -632,7 +632,7 @@ struct _Evas_Func
    void *(*image_data_get)                 (void *data, void *image, int to_write, DATA32 **image_data);
    void *(*image_data_put)                 (void *data, void *image, DATA32 *image_data);
    void  (*image_data_preload_request)     (void *data, void *image, const void *target);
-   void  (*image_data_preload_cancel)      (void *data, void *image);
+   void  (*image_data_preload_cancel)      (void *data, void *image, const void *target);
    void *(*image_alpha_set)                (void *data, void *image, int has_alpha);
    int  (*image_alpha_get)                 (void *data, void *image);
    void *(*image_border_set)               (void *data, void *image, int l, int r, int t, int b);

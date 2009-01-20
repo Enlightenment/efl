@@ -267,7 +267,8 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
 
    if (!o->engine_data)
      obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
-							      o->engine_data);
+							      o->engine_data,
+							      obj);
 
    if (o->cur.file) eina_stringshare_del(o->cur.file);
    if (o->cur.key) eina_stringshare_del(o->cur.key);
@@ -1081,7 +1082,8 @@ evas_object_image_preload(Evas_Object *obj, Evas_Bool cancel)
      }
    if (cancel)
      obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
-							      o->engine_data);
+							      o->engine_data,
+							      obj);
    else
      obj->layer->evas->engine.func->image_data_preload_request(obj->layer->evas->engine.data.output,
 							       o->engine_data,
