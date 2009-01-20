@@ -95,11 +95,10 @@
   } while(0);
 
 #define MAGIC_FREE(ptr)					\
-  do {							\
+  if (ptr) {						\
      EINA_MAGIC_SET(ptr, EINA_MAGIC_NONE);		\
      FREE(ptr);						\
-  } while(0);
-
+  }
 
 #endif /* EINA_PRIVATE_H_ */
 

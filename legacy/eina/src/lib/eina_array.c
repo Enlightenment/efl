@@ -94,6 +94,7 @@ eina_array_iterator_next(Eina_Iterator_Array *it, void **data)
 {
    EINA_MAGIC_CHECK_ARRAY_ITERATOR(it);
 
+   if (!it) return EINA_FALSE;
    if (!(it->index < eina_array_count_get(it->array)))
      return EINA_FALSE;
    if (data)
@@ -106,7 +107,7 @@ static Eina_Array *
 eina_array_iterator_get_container(Eina_Iterator_Array *it)
 {
    EINA_MAGIC_CHECK_ARRAY_ITERATOR(it);
-   return (Eina_Array *) it->array;
+   return it ? (Eina_Array *) it->array : NULL;
 }
 
 static void
@@ -121,6 +122,7 @@ eina_array_accessor_get_at(Eina_Accessor_Array *it, unsigned int index, void **d
 {
    EINA_MAGIC_CHECK_ARRAY_ACCESSOR(it);
 
+   if (!it) return EINA_FALSE;
    if (!(index < eina_array_count_get(it->array)))
      return EINA_FALSE;
    if (data)
@@ -132,7 +134,7 @@ static Eina_Array *
 eina_array_accessor_get_container(Eina_Accessor_Array *it)
 {
    EINA_MAGIC_CHECK_ARRAY_ACCESSOR(it);
-   return (Eina_Array *) it->array;
+   return it ? (Eina_Array *) it->array : NULL;
 }
 
 static void
