@@ -65,14 +65,14 @@ struct _Eina_List /** A linked list node */
    Eina_List *prev; /**< Previous member in the list */
    struct _Eina_List_Accounting *accounting; /**< Private list accounting info - don't touch */
 
-   EINA_MAGIC;
+   EINA_MAGIC
 };
 
 struct _Eina_List_Accounting
 {
    Eina_List *last;
    unsigned int count;
-   EINA_MAGIC;
+   EINA_MAGIC
 };
 
 

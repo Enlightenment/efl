@@ -19,7 +19,11 @@
 #ifndef EINA_F16P16_H_
 #define EINA_F16P16_H_
 
-#include <stdint.h>
+#ifdef _MSC_VER
+# include <Evil.h>
+#else
+# include <stdint.h>
+#endif
 
 /**
  * To be documented

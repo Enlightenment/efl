@@ -47,7 +47,7 @@ struct _Eina_Iterator
    Eina_Iterator_Free_Callback          free EINA_ARG_NONNULL(1);
 
 #define EINA_MAGIC_ITERATOR 0x98761233
-   EINA_MAGIC;
+   EINA_MAGIC
 };
 
 

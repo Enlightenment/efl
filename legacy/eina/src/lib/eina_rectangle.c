@@ -49,14 +49,14 @@ struct _Eina_Rectangle_Pool
    unsigned int references;
    int w;
    int h;
-   EINA_MAGIC;
+   EINA_MAGIC
 };
 
 struct _Eina_Rectangle_Alloc
 {
    EINA_INLIST;
    Eina_Rectangle_Pool *pool;
-   EINA_MAGIC;
+   EINA_MAGIC
 };
 
 #define EINA_MAGIC_CHECK_RECTANGLE_POOL(d)		       \

@@ -113,14 +113,14 @@ struct _Eina_Stringshare
 {
    Eina_Stringshare_Head *buckets[EINA_STRINGSHARE_BUCKETS];
 
-   EINA_MAGIC;
+   EINA_MAGIC
 };
 
 struct _Eina_Stringshare_Node
 {
    Eina_Stringshare_Node *next;
 
-   EINA_MAGIC;
+   EINA_MAGIC
 
    unsigned short         length;
    unsigned short         references;
@@ -130,7 +130,7 @@ struct _Eina_Stringshare_Node
 struct _Eina_Stringshare_Head
 {
    EINA_RBTREE;
-   EINA_MAGIC;
+   EINA_MAGIC
 
    int                    hash;
 

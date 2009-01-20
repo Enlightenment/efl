@@ -70,7 +70,7 @@ struct _Eina_Array
    unsigned int   count;  /**< Number of activ slot in the vector */
    unsigned int	  step;   /**< How much must we grow the vector when it is full */
 
-   EINA_MAGIC;
+   EINA_MAGIC
 };
 
 EAPI int          eina_array_init     (void);

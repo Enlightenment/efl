@@ -47,7 +47,7 @@ struct _Eina_Accessor
    Eina_Accessor_Free_Callback          free EINA_ARG_NONNULL(1);
 
 #define EINA_MAGIC_ACCESSOR 0x98761232
-   EINA_MAGIC;
+   EINA_MAGIC
 };
 
 #define FUNC_ACCESSOR_GET_AT(Function) ((Eina_Accessor_Get_At_Callback)Function)

@@ -123,7 +123,7 @@ struct _Eina_Iterator_List
    const Eina_List *head;
    const Eina_List *current;
 
-   EINA_MAGIC;
+   EINA_MAGIC
 };
 
 struct _Eina_Accessor_List
@@ -135,7 +135,7 @@ struct _Eina_Accessor_List
 
    unsigned int index;
 
-   EINA_MAGIC;
+   EINA_MAGIC
 };
 
 static int _eina_list_init_count = 0;

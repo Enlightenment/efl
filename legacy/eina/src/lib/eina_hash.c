@@ -23,7 +23,11 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
+#ifdef _MSC_VER
+# include <Evil.h>
+#else
+# include <stdint.h>
+#endif
 
 #include "eina_hash.h"
 #include "eina_rbtree.h"
@@ -75,7 +79,7 @@ struct _Eina_Hash
 
    int population;
 
-   EINA_MAGIC;
+   EINA_MAGIC
 };
 
 struct _Eina_Hash_Head
@@ -117,7 +121,7 @@ struct _Eina_Iterator_Hash
 
    int index;
 
-   EINA_MAGIC;
+   EINA_MAGIC
 };
 
 struct _Eina_Hash_Each
