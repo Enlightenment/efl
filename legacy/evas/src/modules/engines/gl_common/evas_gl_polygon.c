@@ -1,5 +1,9 @@
 #include "evas_gl_private.h"
 
+#ifdef _WIN32
+# define EFL_STDCALL __stdcall
+#endif
+
 #define GLU_TESS
 
 Evas_GL_Polygon *
@@ -36,11 +40,11 @@ evas_gl_common_poly_points_clear(Evas_GL_Polygon *poly)
 }
 
 #ifdef GLU_TESS
-static void _evas_gl_tess_begin_cb(GLenum which);
-static void _evas_gl_tess_end_cb(void);
-static void _evas_gl_tess_error_cb(GLenum errorcode);
-static void _evas_gl_tess_vertex_cb(GLvoid *vertex);
-static void _evas_gl_tess_combine_cb(GLdouble coords[3], GLdouble *vertex_data[4], GLfloat weight[4], GLdouble **data_out);
+static void EFL_STDCALL _evas_gl_tess_begin_cb(GLenum which);
+static void EFL_STDCALL _evas_gl_tess_end_cb(void);
+static void EFL_STDCALL _evas_gl_tess_error_cb(GLenum errorcode);
+static void EFL_STDCALL _evas_gl_tess_vertex_cb(GLvoid *vertex);
+static void EFL_STDCALL _evas_gl_tess_combine_cb(GLdouble coords[3], GLdouble *vertex_data[4], GLfloat weight[4], GLdouble **data_out);
 
 static void
 _evas_gl_tess_begin_cb(GLenum which)
