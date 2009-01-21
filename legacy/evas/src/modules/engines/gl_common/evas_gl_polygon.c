@@ -2,6 +2,8 @@
 
 #ifdef _WIN32
 # define EFL_STDCALL __stdcall
+#else
+# define EFL_STDCALL
 #endif
 
 #define GLU_TESS
