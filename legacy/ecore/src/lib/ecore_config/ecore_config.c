@@ -528,7 +528,7 @@ ecore_config_typed_add(const char *key, const void *val, int type)
 
    if (!(e = calloc(1, sizeof(Ecore_Config_Prop))))
      {
-	error = ECORE_CONFIG_ERR_OOM;
+	return ECORE_CONFIG_ERR_OOM;
      }
    else if (!(e->key = strdup(key)))
      {
