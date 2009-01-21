@@ -74,7 +74,6 @@ static double _ecore_fb_double_click_time = 0.25;
 EAPI int
 ecore_fb_ts_init(void)
 {
-   int prev_flags;
 #ifdef HAVE_TSLIB
    char *tslib_tsdevice = NULL;
    if ( ( tslib_tsdevice = getenv("TSLIB_TSDEVICE") ) != NULL )
@@ -105,8 +104,6 @@ ecore_fb_ts_init(void)
 #endif
    if (_ecore_fb_ts_fd >= 0)
      {
-	prev_flags = fcntl(_ecore_fb_ts_fd, F_GETFL);
-	fcntl(_ecore_fb_ts_fd, F_SETFL, prev_flags | O_NONBLOCK);
 	_ecore_fb_ts_fd_handler_handle = ecore_main_fd_handler_add(_ecore_fb_ts_fd, 
 								   ECORE_FD_READ,
 								   _ecore_fb_ts_fd_handler, NULL,
