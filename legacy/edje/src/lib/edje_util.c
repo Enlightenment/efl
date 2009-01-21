@@ -1104,7 +1104,11 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
    // XXX: I guess this is not required, removing for testing purposes
    // XXX: uncomment if you see glitches in e17 or others.
    // XXX: by Gustavo, January 21th 2009.
-   //_edje_recalc_do(ed);
+   // XXX: I got a backtrace with over 30000 calls without this,
+   // XXX: only with 32px shelves. The problem is probably somewhere else,
+   // XXX: but until it's found, leave this here.
+   // XXX: by Sachiel, January 21th 2009, 19:30 UTC
+   _edje_recalc_do(ed);
 
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return;
