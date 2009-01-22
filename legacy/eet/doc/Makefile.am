@@ -10,8 +10,8 @@ if EFL_BUILD_DOC
 doc-clean:
 	rm -rf html/ latex/ man/ xml/ $(PACKAGE_DOCNAME).tar*
 
-doc: all doc-clean
-	$(DOXYGEN)
+doc: doc-clean
+	$(efl_doxygen)
 	cp img/* html/
 	rm -rf $(PACKAGE_DOCNAME).tar*
 	mkdir -p $(PACKAGE_DOCNAME)/doc
