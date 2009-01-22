@@ -128,13 +128,19 @@ evas_common_cpu_init(void)
    cpu_feature_mask |= CPU_FEATURE_MMX *
      evas_common_cpu_feature_test(evas_common_cpu_mmx_test);
    evas_common_cpu_end_opt();
+   if (getenv("EVAS_CPU_NO_MMX"))
+     cpu_feature_mask &= ~CPU_FEATURE_MMX;
    cpu_feature_mask |= CPU_FEATURE_MMX2 *
      evas_common_cpu_feature_test(evas_common_cpu_mmx2_test);
    evas_common_cpu_end_opt();
+   if (getenv("EVAS_CPU_NO_MMX2"))
+     cpu_feature_mask &= ~CPU_FEATURE_MMX2;
 #ifdef BUILD_SSE
    cpu_feature_mask |= CPU_FEATURE_SSE *
      evas_common_cpu_feature_test(evas_common_cpu_sse_test);
    evas_common_cpu_end_opt();
+   if (getenv("EVAS_CPU_NO_SSE"))
+     cpu_feature_mask &= ~CPU_FEATURE_SSE;
 #endif /* BUILD_SSE */
 #endif /* BUILD_MMX */
 #ifdef __POWERPC__
@@ -142,12 +148,16 @@ evas_common_cpu_init(void)
    cpu_feature_mask |= CPU_FEATURE_ALTIVEC *
      evas_common_cpu_feature_test(evas_common_cpu_altivec_test);
    evas_common_cpu_end_opt();
+   if (getenv("EVAS_CPU_NO_ALTIVEC"))
+     cpu_feature_mask &= ~CPU_FEATURE_ALTIVEC;
 #endif /* __VEC__ */
 #endif /* __POWERPC__ */
 #ifdef __SPARC__
    cpu_feature_mask |= CPU_FEATURE_VIS *
      evas_common_cpu_feature_test(evas_common_cpu_vis_test);
    evas_common_cpu_end_opt();
+   if (getenv("EVAS_CPU_NO_VIS"))
+     cpu_feature_mask &= ~CPU_FEATURE_VIS;
 #endif /* __SPARC__ */
 }
 
