@@ -124,6 +124,9 @@ _elm_win_xwindow_get(Elm_Win *win)
       case ELM_OPENGL_X11:
 	if (win->ee) win->xwin = ecore_evas_gl_x11_window_get(win->ee);
 	break;
+      case ELM_SOFTWARE_WIN32:
+	if (win->ee) win->xwin = (int)ecore_evas_win32_window_get(win->ee);
+	break;
       default:
 	break;
      }
@@ -262,6 +265,9 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
       case ELM_OPENGL_X11:
 	win->ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 1, 1);
 	break;
+      case ELM_SOFTWARE_WIN32:
+	win->ee = ecore_evas_software_ddraw_new(NULL, 0, 0, 1, 1);
+	break;
       case ELM_SOFTWARE_16_WINCE:
 	win->ee = ecore_evas_software_wince_gdi_new(NULL, 0, 0, 1, 1);
 	break;
@@ -327,6 +333,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
       case ELM_SOFTWARE_16_X11:
       case ELM_XRENDER_X11:
       case ELM_OPENGL_X11:
+      case ELM_SOFTWARE_WIN32:
       default:
 	break;
      }

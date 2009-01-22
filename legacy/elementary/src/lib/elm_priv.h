@@ -28,6 +28,7 @@ typedef enum _Elm_Engine
      ELM_SOFTWARE_16_X11,
      ELM_XRENDER_X11,
      ELM_OPENGL_X11,
+     ELM_SOFTWARE_WIN32,
      ELM_SOFTWARE_16_WINCE
 } Elm_Engine;
 

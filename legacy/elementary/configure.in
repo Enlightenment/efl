@@ -31,30 +31,33 @@ SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
+requirement_elm=""
+
 PKG_PROG_PKG_CONFIG
 
 lt_enable_auto_import=""
 ELM_UNIX_DEF="#undef"
 ELM_WIN32_DEF="#undef"
 ELM_WINCE_DEF="#undef"
+have_windows="no"
 case "$host_os" in
-   mingw32* | cegcc*)
+   mingw32ce* | cegcc*)
       PKG_CHECK_MODULES([EVIL], [evil])
       AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed.])
-      dnl needed for correct definition of EAPI
-      AC_DEFINE(ELEMENTARY_BUILD, 1, [Define to mention that evas is built])
       lt_enable_auto_import="-Wl,--enable-auto-import"
       ELM_WINCE_DEF="#define"
+      have_windows="yes"
 dnl managed by evil
       AC_DEFINE(HAVE_DLADDR)
+      requirement_elm="evil"
     ;;
    mingw*)
       PKG_CHECK_MODULES([EVIL], [evil])
       AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed.])
-      dnl needed for correct definition of EAPI
-      AC_DEFINE(ELEMENTARY_BUILD, 1, [Define to mention that evas is built])
       lt_enable_auto_import="-Wl,--enable-auto-import"
       ELM_WIN32_DEF="#define"
+      have_windows="yes"
+      requirement_elm="evil"
       ;;
    *)
       ELM_UNIX_DEF="#define"
@@ -78,6 +81,8 @@ AC_SUBST(ELM_UNIX_DEF)
 AC_SUBST(ELM_WIN32_DEF)
 AC_SUBST(ELM_WINCE_DEF)
 
+AM_CONDITIONAL([ELEMENTARY_WINDOWS_BUILD], [test "x${have_windows}" = "xyes"])
+
 PKG_CHECK_MODULES([ELEMENTARY],
    [
     eina-0
@@ -92,12 +97,15 @@ PKG_CHECK_MODULES([ELEMENTARY],
    ]
 )
 
+requirement_elm="edje ecore-file ecore-txt ecore-job ecore-evas ecore evas eet eina-0 ${requirement_elm}"
+
 have_elementary_x="no"
 PKG_CHECK_MODULES([ELEMENTARY_X],
    [ecore-x],
    [
     AC_DEFINE(HAVE_ELEMENTARY_X, 1, [X11 support for Elementary])
     have_elementary_x="yes"
+    requirement_elm="ecore-x ${requirement_elm}"
    ],
    [have_elementary_x="no"]
 )
@@ -108,8 +116,20 @@ PKG_CHECK_MODULES([ELEMENTARY_FB],
    [
     AC_DEFINE(HAVE_ELEMENTARY_FB, 1, [FB support for Elementary])
     have_elementary_fb="yes"
+    requirement_elm="ecore-fb ${requirement_elm}"
    ],
    [have_elementary_fb="no"]
+)
+
+have_elementary_win32="no"
+PKG_CHECK_MODULES([ELEMENTARY_WIN32],
+   [ecore-win32],
+   [
+    AC_DEFINE(HAVE_ELEMENTARY_WIN32, 1, [Windows XP support for Elementary])
+    have_elementary_win32="yes"
+    requirement_elm="ecore-win32 ${requirement_elm}"
+   ],
+   [have_elementary_win32="no"]
 )
 
 have_elementary_wince="no"
@@ -118,6 +138,7 @@ PKG_CHECK_MODULES([ELEMENTARY_WINCE],
    [
     AC_DEFINE(HAVE_ELEMENTARY_WINCE, 1, [Windows CE support for Elementary])
     have_elementary_wince="yes"
+    requirement_elm="ecore-wince ${requirement_elm}"
    ],
    [have_elementary_wince="no"]
 )
@@ -133,6 +154,7 @@ PKG_CHECK_MODULES([ELEMENTARY_EDBUS],
     AC_DEFINE(HAVE_ELEMENTARY_EDBUS, 1, [EDBus support for Elementary])
     have_elementary_edbus="yes"
     ELM_EDBUS_DEF="#define"
+    requirement_elm="ehal edbus ${requirement_elm}"
    ],
    [have_elementary_edbus="no"]
 )
@@ -144,6 +166,7 @@ AC_SUBST(ELM_ALLOCA_H_DEF)
 
 my_libs="-lm"
 AC_SUBST(my_libs)
+AC_SUBST(requirement_elm)
 
 AC_OUTPUT([
 Makefile
@@ -174,6 +197,7 @@ echo
 echo "Engines:"
 echo "  X11...........: ${have_elementary_x}"
 echo "  Framebuffer...: ${have_elementary_fb}"
+echo "  Windows XP....: ${have_elementary_win32}"
 echo "  Windows CE....: ${have_elementary_wince}"
 echo
 echo "Features:"
