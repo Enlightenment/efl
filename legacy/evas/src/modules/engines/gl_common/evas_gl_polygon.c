@@ -48,24 +48,24 @@ static void EFL_STDCALL _evas_gl_tess_error_cb(GLenum errorcode);
 static void EFL_STDCALL _evas_gl_tess_vertex_cb(GLvoid *vertex);
 static void EFL_STDCALL _evas_gl_tess_combine_cb(GLdouble coords[3], GLdouble *vertex_data[4], GLfloat weight[4], GLdouble **data_out);
 
-static void
+static void EFL_STDCALL
 _evas_gl_tess_begin_cb(GLenum which)
 {
    glBegin(which);
 }
 
-static void
+static void EFL_STDCALL
 _evas_gl_tess_end_cb(void)
 {
    glEnd();
 }
 
-static void
+static void EFL_STDCALL
 _evas_gl_tess_error_cb(GLenum errorcode)
 {
 }
 
-static void
+static void EFL_STDCALL
 _evas_gl_tess_vertex_cb(GLvoid *vertex)
 {
    GLdouble *v;
@@ -74,7 +74,7 @@ _evas_gl_tess_vertex_cb(GLvoid *vertex)
    glVertex2d(v[0], v[1]);
 }
 
-static void
+static void EFL_STDCALL
 _evas_gl_tess_combine_cb(GLdouble coords[3], GLdouble *vertex_data[4], GLfloat weight[4], GLdouble **data_out)
 {
    GLdouble *vertex;
