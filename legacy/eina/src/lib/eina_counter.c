@@ -300,7 +300,7 @@ EAPI Eina_Counter *
 eina_counter_add(const char *name)
 {
    Eina_Counter *counter;
-   int length;
+   size_t length;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
 

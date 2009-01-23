@@ -117,7 +117,7 @@ static Eina_Bool _dir_list_get_cb(Eina_Module *m, void *data)
 static void _dir_list_cb(const char *name, const char *path, void *data)
 {
 	Dir_List_Cb_Data *cb_data = data;
-	unsigned int length;
+	size_t length;
 
 	length = strlen(name);
 	if (length < strlen(MODULE_EXTENSION) + 1) /* x.so */
@@ -127,7 +127,7 @@ static void _dir_list_cb(const char *name, const char *path, void *data)
 	{
 		char *file;
 		Eina_Module *m;
-		int length;
+		size_t length;
 
 		length = strlen(path) + strlen(name) + 2;
 
@@ -354,9 +354,9 @@ EAPI char *eina_module_environment_path_get(const char *env, const char *sub_dir
 	env_dir = getenv(env);
 	if (env_dir)
 	{
-		char *path;
-		int   l1;
-		int   l2 = 0;
+		char  *path;
+		size_t l1;
+		size_t l2 = 0;
 
 		l1 = strlen(env_dir);
 		if (sub_dir && (*sub_dir != '\0'))

@@ -198,7 +198,7 @@ eina_mempool_shutdown(void)
 }
 
 /**
- * 
+ *
  */
 EAPI Eina_Mempool *
 eina_mempool_new(const char *name, const char *context, const char *options, ...)
@@ -216,7 +216,7 @@ eina_mempool_new(const char *name, const char *context, const char *options, ...
 }
 
 /**
- * 
+ *
  */
 EAPI void eina_mempool_delete(Eina_Mempool *mp)
 {

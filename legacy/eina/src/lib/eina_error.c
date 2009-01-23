@@ -587,7 +587,7 @@ EAPI int eina_error_shutdown(void)
 EAPI Eina_Error eina_error_msg_register(const char *msg)
 {
 	Eina_Inlist *tmp;
-	int length;
+	size_t length;
 
 	EINA_SAFETY_ON_NULL_RETURN_VAL(msg, 0);
 

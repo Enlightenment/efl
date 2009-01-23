@@ -167,7 +167,7 @@ eina_file_dir_list(const char *dir, Eina_Bool recursive, Eina_File_Dir_List_Cb c
 	HANDLE          hSearch;
 	char           *new_dir;
 	TCHAR          *tdir;
-	int             length_dir;
+	size_t          length_dir;
 
 	length_dir = strlen(dir);
 	new_dir = (char *)alloca(length_dir + 5);
@@ -246,7 +246,7 @@ eina_file_split(char *path)
 {
 	Eina_Array *ea;
 	char *current;
-	int length;
+	size_t length;
 
 	EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
 

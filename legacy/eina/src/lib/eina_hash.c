@@ -425,7 +425,7 @@ static unsigned int
 _eina_string_key_length(const char *key)
 {
    if (!key) return 0;
-   return strlen(key) + 1;
+   return (int)strlen(key) + 1;
 }
 
 static int

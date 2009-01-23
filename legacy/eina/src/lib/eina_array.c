@@ -23,8 +23,49 @@
 /**
  * @page tutorial_array_page Array Tutorial
  *
- * to be written...
+ * The Array data type is allow the storage of data like a C array.
+ * It is designed such that the access to its element is very fast.
+ * But the addition or removal can be done only at the end of the
+ * array. To add or remove an element at any location, the Eina
+ * @ref Eina_List_Group is the correct container is the correct one.
  *
+ * @section tutorial_error_basic_usage Basic Usage
+ *
+ * The first thing to do when using arrays is to initialize the array
+ * module with eina_array_init() and, when no more arrays are used, the
+ * module is shut down with eina_array_shutdown(). So a basic program
+ * would look like that:
+ *
+ * @code
+ * #include <stdlib.h>
+ * #include <stdio.h>
+ *
+ * #include <eina_array.h>
+ *
+ * int main(void)
+ * {
+ *    if (!eina_array_init())
+ *    {
+ *        printf ("Error during the initialization of eina_error module\n");
+ *        return EXIT_FAILURE;
+ *    }
+ *
+ *    eina_array_shutdown();
+ *
+ *    return EXIT_SUCCESS;
+ * }
+ * @endcode
+ *
+ * All program using any module of eina must be compiled with the
+ * following command:
+ *
+ * @code
+ * gcc -Wall -o my_exe my_source.c `pkg-config --cflags --libs eina`
+ * @endcode
+ *
+ * Then, an array must created with eina_array_new().
+ *
+ * To be continued
  */
 
 #ifdef HAVE_CONFIG_H
@@ -191,6 +232,12 @@ eina_array_grow(Eina_Array *array)
  * @addtogroup Eina_Array_Group Array
  *
  * @brief These functions provide array management.
+ *
+ * The Array data type in Eina is designed to have a very fast access to
+ * its data (compared to the Eina @ref Eina_List_Group). On the other hand,
+ * data can be added or removed only at the end of the array. To insert
+ * data at any place, he Eina @ref Eina_List_Group is the correct container
+ * to use.
  *
  * To use the array data type, eina_array_init() must be called before
  * any other array functions. When no more array function is used,

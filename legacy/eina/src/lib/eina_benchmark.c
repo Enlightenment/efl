@@ -319,7 +319,7 @@ eina_benchmark_run(Eina_Benchmark *bench)
    Eina_Run *run;
    char *buffer;
    Eina_Bool first = EINA_FALSE;
-   int length;
+   size_t length;
 
    if (!bench) return NULL;
 
@@ -360,7 +360,7 @@ eina_benchmark_run(Eina_Benchmark *bench)
      {
 	Eina_Counter *counter;
 	char *result;
-	int tmp;
+	size_t tmp;
 	int i;
 
 	tmp = strlen(EINA_BENCHMARK_DATA_MASK) + strlen(bench->name) + strlen(bench->run) + strlen(run->name);
