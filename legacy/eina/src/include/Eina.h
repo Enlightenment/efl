@@ -138,6 +138,7 @@ extern "C" {
 
 #include "eina_config.h"
 #include "eina_types.h"
+#include "eina_main.h"
 #include "eina_f16p16.h"
 #include "eina_rectangle.h"
 #include "eina_inlist.h"
@@ -157,9 +158,6 @@ extern "C" {
 #include "eina_iterator.h"
 #include "eina_benchmark.h"
 #include "eina_convert.h"
-
-EAPI int eina_init(void);
-EAPI int eina_shutdown(void);
 
 #ifdef __cplusplus
 }
