@@ -335,6 +335,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\include\eina_main.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\include\eina_mempool.h"
 				>
 			</File>
