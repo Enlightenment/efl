@@ -501,6 +501,31 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
    if (cache->references > 0)
      return ;
 
+#ifdef BUILD_ASYNC_PRELOAD
+   pthread_mutex_lock(&mutex);
+   if (running)
+     {
+	while (preload)
+	  {
+	     Evas_Cache_Preload *tmp = (Evas_Cache_Preload *)preload;
+	     Image_Entry *ie = tmp->ie;
+
+	     while (ie->targets)
+	       {
+		  Evas_Cache_Target *t = ie->targets;
+		  ie->targets = (Evas_Cache_Target *)
+		    eina_inlist_remove(EINA_INLIST_GET(ie->targets),
+				       EINA_INLIST_GET(ie->targets));
+		  free(t);
+	       }
+
+	     preload = eina_inlist_remove(preload, preload);
+	     free(tmp);
+	  }
+     }
+   pthread_mutex_unlock(&mutex);
+#endif
+
    while (cache->lru)
      {
         im = (Image_Entry *) cache->lru;
