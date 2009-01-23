@@ -420,7 +420,7 @@ _eina_stringshare_small_bucket_resize(Eina_Stringshare_Small_Bucket *bucket, int
 {
    void *tmp;
 
-   tmp = realloc(bucket->strings, size * sizeof(bucket->strings[0]));
+   tmp = realloc((void*)bucket->strings, size * sizeof(bucket->strings[0]));
    if (!tmp)
      {
 	eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
@@ -482,7 +482,7 @@ _eina_stringshare_small_bucket_insert_at(Eina_Stringshare_Small_Bucket **p_bucke
    todo = bucket->count - index;
    if (todo > 0)
      {
-	memmove(bucket->strings + off, bucket->strings + index,
+       memmove((void *)(bucket->strings + off), bucket->strings + index,
 		todo * sizeof(bucket->strings[0]));
 	memmove(bucket->lengths + off, bucket->lengths + index,
 		todo * sizeof(bucket->lengths[0]));
@@ -514,7 +514,7 @@ _eina_stringshare_small_bucket_remove_at(Eina_Stringshare_Small_Bucket **p_bucke
 
    if (bucket->count == 1)
      {
-	free(bucket->strings);
+	free((void *)bucket->strings);
 	free(bucket->lengths);
 	free(bucket->references);
 	free(bucket);
@@ -529,7 +529,7 @@ _eina_stringshare_small_bucket_remove_at(Eina_Stringshare_Small_Bucket **p_bucke
    off = index + 1;
    todo = bucket->count - index;
 
-   memmove(bucket->strings + index, bucket->strings + off,
+   memmove((void *)(bucket->strings + index), bucket->strings + off,
 	   todo * sizeof(bucket->strings[0]));
    memmove(bucket->lengths + index, bucket->lengths + off,
 	   todo * sizeof(bucket->lengths[0]));
@@ -617,7 +617,7 @@ _eina_stringshare_small_shutdown(void)
 	for (; s < s_end; s++)
 	  free(*s);
 
-	free(bucket->strings);
+	free((void *)bucket->strings);
 	free(bucket->lengths);
 	free(bucket->references);
 	free(bucket);
