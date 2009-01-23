@@ -135,8 +135,6 @@ eng_setup(Evas *e, void *in)
    Evas_Engine_Info_Buffer *info;
 
    info = (Evas_Engine_Info_Buffer *)in;
-   if (e->engine.data.output)
-     eng_output_free(e->engine.data.output);
    re = _output_setup(e->output.w,
 		      e->output.h,
 		      info->info.dest_buffer,
@@ -149,6 +147,8 @@ eng_setup(Evas *e, void *in)
 		      info->info.color_key_b,
 		      info->info.func.new_update_region,
 		      info->info.func.free_update_region);
+   if (e->engine.data.output)
+     eng_output_free(e->engine.data.output);
    e->engine.data.output = re;
    if (!e->engine.data.output) return;
    if (!e->engine.data.context)
