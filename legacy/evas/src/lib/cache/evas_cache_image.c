@@ -520,6 +520,7 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
         _evas_cache_image_entry_delete(cache, im);
      }
 
+   delete_list = NULL;
    eina_hash_foreach(cache->activ, _evas_cache_image_free_cb, &delete_list);
 
    while (delete_list)

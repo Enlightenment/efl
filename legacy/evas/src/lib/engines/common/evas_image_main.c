@@ -109,8 +109,10 @@ evas_common_image_shutdown(void)
 // evas_common_image_init() at the start and evas_common_image_shutdown()
 // after it all. really ref 0 should only be reached when no more canvases
 // with no more objects exist anywhere.
-//        evas_cache_image_shutdown(eci);
-//        eci = NULL;
+
+// ENABLE IT AGAIN, hope it is fixed. Gustavo @ January 22nd, 2009.
+       evas_cache_image_shutdown(eci);
+       eci = NULL;
      }
 
 #ifdef BUILD_LOADER_EET
