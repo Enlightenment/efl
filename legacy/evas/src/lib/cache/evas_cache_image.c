@@ -303,7 +303,7 @@ _evas_cache_image_entry_surface_alloc(Evas_Cache_Image *cache,
 
 #ifdef BUILD_ASYNC_PRELOAD
 static void
-_evas_cache_image_async_call__unlocked(Image_Entry *im)
+_evas_cache_image_async_call__locked(Image_Entry *im)
 {
    while (im->targets)
      {
@@ -320,7 +320,7 @@ static void
 _evas_cache_image_async_call(Image_Entry *im)
 {
    pthread_mutex_lock(&mutex);
-   _evas_cache_image_async_call__unlocked(im);
+   _evas_cache_image_async_call__locked(im);
    pthread_mutex_unlock(&mutex);
 }
 
@@ -413,7 +413,7 @@ _evas_cache_image_entry_preload_remove(Image_Entry *ie, const void *target)
 				    }
 				 }
 			    } else {
-			       _evas_cache_image_async_call__unlocked(ie);
+			       _evas_cache_image_async_call__locked(ie);
 
 			       while (ie->targets)
 				 {
