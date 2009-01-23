@@ -32,10 +32,12 @@ struct _Evas_Cache_Preload
 static Eina_Inlist *preload = NULL;
 static Image_Entry *current = NULL;
 
-static pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+static pthread_cond_t cond_done = PTHREAD_COND_INITIALIZER;
+static pthread_cond_t cond_new = PTHREAD_COND_INITIALIZER;
+static pthread_mutex_t mutex_new = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t mutex_surface_alloc = PTHREAD_MUTEX_INITIALIZER;
-static pthread_t tid;
+static pthread_t tid = 0;
 
 static Evas_Bool running = 0;
 
@@ -347,8 +349,16 @@ _evas_cache_image_entry_preload_add(Image_Entry *ie,
 
 	     if (!running)
 	       {
-		  if (pthread_create(&tid, NULL, _evas_cache_background_load, NULL) == 0)
-		    running = 1;
+		  if (tid)
+		    {
+		       running = 1;
+		       pthread_cond_signal(&cond_new);
+		    }
+		  else
+		    {
+		       if (pthread_create(&tid, NULL, _evas_cache_background_load, NULL) == 0)
+			 running = 1;
+		    }
 	       }
 
 	     ret = 2;
@@ -376,7 +386,7 @@ _evas_cache_image_entry_preload_remove(Image_Entry *ie, const void *target)
 	     if (current == ie)
 	       {
 		  /* Wait until ie is processed. */
-		  pthread_cond_wait(&cond, &mutex);
+		  pthread_cond_wait(&cond_done, &mutex);
 	       }
 	     else
 	       {
@@ -1228,7 +1238,7 @@ _evas_cache_background_load(void *data)
 	     current = NULL;
 	  }
 
-	pthread_cond_signal(&cond);
+	pthread_cond_signal(&cond_done);
      }
 
    pthread_mutex_lock(&mutex);
@@ -1240,6 +1250,11 @@ _evas_cache_background_load(void *data)
 
    running = 0;
    pthread_mutex_unlock(&mutex);
+
+   pthread_mutex_lock(&mutex_new);
+   pthread_cond_wait(&cond_new, &mutex_new);
+   pthread_mutex_unlock(&mutex_new);
+   goto restart;
 
    return NULL;
 }
