@@ -56,34 +56,37 @@ int fcntl(int fd, int cmd, ...)
 #if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
    else if ((cmd == F_SETLK) || (cmd == F_SETLKW))
      {
-        struct flock fl;
+        struct flock *fl;
         off_t        length = 0;
         long         pos;
 
-        fl = va_arg(va, struct flock);
+        fl = va_arg(va, struct flock *);
 
-        if (fl.l_len == 0)
+        if (fl->l_len == 0)
           {
              length = _lseek(fd, 0L, SEEK_END);
              if (length != -1L)
                res = 0;
           }
-        fl.l_len = length - fl.l_start - 1;
+        fl->l_len = length - fl->l_start - 1;
 
-        pos = _lseek(fd, fl.l_start, fl.l_whence);
+        pos = _lseek(fd, fl->l_start, fl->l_whence);
         if (pos != -1L)
           res = 0;
 
-        if ((fl.l_type == F_RDLCK) || (fl.l_type == F_WRLCK))
+        printf ("Evil 1 %d %d %d\n", fl->l_type, F_RDLCK, F_WRLCK);
+        if ((fl->l_type == F_RDLCK) || (fl->l_type == F_WRLCK))
           {
+        printf ("Evil 2\n");
              if (cmd == F_SETLK)
-               res = _locking(fd, _LK_NBLCK, fl.l_len); /* if cannot be locked, we return immediatly */
+               res = _locking(fd, _LK_NBLCK, fl->l_len); /* if cannot be locked, we return immediatly */
              else /* F_SETLKW */
-               res = _locking(fd, _LK_LOCK, fl.l_len); /* otherwise, we try several times */
+               res = _locking(fd, _LK_LOCK, fl->l_len); /* otherwise, we try several times */
           }
 
-        if (fl.l_type == F_UNLCK)
-          res = _locking(fd, _LK_UNLCK, fl.l_len);
+        printf ("Evil 3\n");
+        if (fl->l_type == F_UNLCK)
+          res = _locking(fd, _LK_UNLCK, fl->l_len);
      }
 
 #endif /* __CEGCC__ || __MINGW32CE__ */

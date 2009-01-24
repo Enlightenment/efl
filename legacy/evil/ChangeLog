@@ -1,3 +1,8 @@
+2009-01-24  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_fcntl.c:
+	fix fcntl()
+
 2009-01-19  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/bin/Makefile.am:
