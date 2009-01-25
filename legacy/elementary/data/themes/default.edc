@@ -4945,8 +4945,8 @@ collections {
 	 part { name: "elm.swallow.content";
             type: SWALLOW;
 	    description { state: "default" 0.0;
-               rel1.relative: 0.2 0.2;
-               rel2.relative: 0.8 0.8;
+               rel1.relative: 0.1 0.1;
+               rel2.relative: 0.9 0.9;
 	    }
 	 }
       }

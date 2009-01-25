@@ -34,6 +34,10 @@ struct _Item
 static void _del_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _on_focus_hook(void *data, Evas_Object *obj);
+static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _sub_del(void *data, Evas_Object *obj, void *event_info);
+
+static void _fix_items(Evas_Object *obj);
 
 static void
 _del_hook(Evas_Object *obj)
@@ -74,6 +78,38 @@ _on_focus_hook(void *data, Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
 //   if (elm_widget_focus_get(obj))
 //     elm_widget_focus_steal(wd->entry);
+}
+
+static void
+_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   _fix_items(data);
+   _sizing_eval(data);
+}
+
+static void 
+_sub_del(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *sub = event_info;
+   Eina_List *l;
+   
+   for (l = wd->items; l; l = l->next)
+     {
+        Item *it = l->data;
+        
+        if ((sub == it->icon) || (sub == it->end))
+          {
+             if (it->icon == sub) it->icon = NULL;
+             if (it->end == sub) it->end = NULL;
+             evas_object_event_callback_del
+               (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
+             _fix_items(obj);
+             _sizing_eval(obj);
+             break;
+          }
+     }
 }
 
 static void
@@ -173,6 +209,18 @@ _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *e
                                   _mouse_up, it);
    evas_object_size_hint_weight_set(it->base, 1.0, 1.0);
    evas_object_size_hint_align_set(it->base, -1.0, -1.0);
+   if (it->icon)
+     {
+        elm_widget_sub_object_add(obj, it->icon);
+        evas_object_event_callback_add(it->icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+     }
+   if (it->end)
+     {
+        elm_widget_sub_object_add(obj, it->end);
+        evas_object_event_callback_add(it->end, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+     }
    return it;
 }
 
@@ -312,6 +360,8 @@ elm_list_add(Evas_Object *parent)
    evas_object_show(wd->box);
 
    wd->mode = ELM_LIST_SCROLL;
+
+   evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    
    _sizing_eval(obj);
    return obj;
