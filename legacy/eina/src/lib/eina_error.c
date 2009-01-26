@@ -113,7 +113,7 @@
  * If you compiled Eina without debug mode, after executing that
  * program, you will see only 1 message (the argument being
  * negative). Why ? These macros are just wrappers around
- * eina_error_print(). This function only dysplays messages if the
+ * eina_error_print(). This function only displays messages if the
  * current error level is lesser or equal than the one used by
  * eina_error_print(). By default, the current error level is
  * #EINA_ERROR_LEVEL_ERR (in non debug mode), and the macro uses
@@ -465,7 +465,7 @@ static const char *_colors[EINA_ERROR_LEVELS] = {
  * }
  * @endcode
  *
- * Compile this code with the following commant:
+ * Compile this code with the following command:
  *
  * @code
  * gcc -Wall -o test_eina_error test_eina.c `pkg-config --cflags --libs eina`
@@ -520,7 +520,7 @@ EAPI Eina_Error EINA_ERROR_OUT_OF_MEMORY = 0;
  * #EINA_ERROR_LEVEL_INFO and #EINA_ERROR_LEVEL_DBG. That value can
  * also be set later with eina_error_log_level_set().
  *
- * If you call explicitely this function and once the error subsystem
+ * If you call explicitly this function and once the error subsystem
  * is not used anymore, then eina_error_shutdown() must be called to
  * shut down the error system.
  */
@@ -581,7 +581,7 @@ EAPI int eina_error_shutdown(void)
  *
  * This function stores in a list the error message described by
  * @p msg. The returned value is a unique identifier greater or equal
- * than 1. The description can be retrive later by passing to
+ * than 1. The description can be retrieve later by passing to
  * eina_error_msg_get() the returned value.
  */
 EAPI Eina_Error eina_error_msg_register(const char *msg)
@@ -666,7 +666,7 @@ EAPI void eina_error_set(Eina_Error err)
  * @p fmt, which is a formatted string, followed by optional arguments
  * that can be converted (like with printf). If @p level is strictly
  * larger than the current error level, that function returns
- * immediatly, otherwise it prints all the errors up to the current
+ * immediately, otherwise it prints all the errors up to the current
  * error level. The current error level can be changed with
  * eina_error_log_level_set(). See also eina_error_init() for more
  * informations.

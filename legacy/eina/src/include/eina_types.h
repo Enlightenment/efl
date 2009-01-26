@@ -110,8 +110,8 @@
 #   define EINA_SCANF(fmt, arg)
 #   define EINA_FORMAT(fmt)
 #   define EINA_CONST
-#   define EINA_UNLIKELY(exp)
-#   define EINA_LIKELY(exp)
+#   define EINA_UNLIKELY(exp) exp
+#   define EINA_LIKELY(exp) exp
 #  endif
 # else /* no __GNUC__ */
 #  define EINA_WARN_UNUSED_RESULT
@@ -122,8 +122,8 @@
 #  define EINA_SCANF(fmt, arg)
 #  define EINA_FORMAT(fmt)
 #  define EINA_CONST
-#  define EINA_UNLIKELY(exp)
-#  define EINA_LIKELY(exp)
+#  define EINA_UNLIKELY(exp) exp
+#  define EINA_LIKELY(exp) exp
 # endif
 #else /* no HAVE___ATTRIBUTE__ */
 # define EINA_WARN_UNUSED_RESULT
@@ -134,8 +134,8 @@
 # define EINA_SCANF(fmt, arg)
 # define EINA_FORMAT(fmt)
 # define EINA_CONST
-# define EINA_UNLIKELY(exp)
-# define EINA_LIKELY(exp)
+# define EINA_UNLIKELY(exp) exp
+# define EINA_LIKELY(exp) exp
 #endif
 
 
