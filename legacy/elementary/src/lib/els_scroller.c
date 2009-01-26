@@ -108,7 +108,7 @@ elm_smart_scroller_child_set(Evas_Object *obj, Evas_Object *child)
    if (sd->child_obj)
      {
 	_elm_smart_pan_child_set(sd->pan_obj, NULL);
-	evas_object_event_callback_del(sd->child_obj, EVAS_CALLBACK_FREE, _smart_child_del_hook);
+	evas_object_event_callback_del(sd->child_obj, EVAS_CALLBACK_DEL, _smart_child_del_hook);
      }
    
    sd->child_obj = child;
@@ -129,7 +129,7 @@ elm_smart_scroller_child_set(Evas_Object *obj, Evas_Object *child)
    sd->pan_func.max_get = _elm_smart_pan_max_get;
    sd->pan_func.child_size_get = _elm_smart_pan_child_size_get;
    
-   evas_object_event_callback_add(child, EVAS_CALLBACK_FREE, _smart_child_del_hook, sd);
+   evas_object_event_callback_add(child, EVAS_CALLBACK_DEL, _smart_child_del_hook, sd);
    _elm_smart_pan_child_set(sd->pan_obj, sd->child_obj);
    sd->pan_func.child_size_get(sd->pan_obj, &w, &h);
    sd->child.w = w;
