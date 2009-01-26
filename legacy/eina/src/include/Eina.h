@@ -158,6 +158,8 @@ extern "C" {
 #include "eina_iterator.h"
 #include "eina_benchmark.h"
 #include "eina_convert.h"
+#include "eina_cpu.h"
+#include "eina_tiler.h"
 
 #ifdef __cplusplus
 }

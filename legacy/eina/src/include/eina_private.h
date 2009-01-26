@@ -68,6 +68,9 @@
 #define EINA_MAGIC_HASH 0x9876123e
 #define EINA_MAGIC_HASH_ITERATOR 0x9876123f
 
+#define EINA_MAGIC_TILER 0x98761240
+#define EINA_MAGIC_TILER_ITERATOR 0x98761241
+
 /* undef the following, we want out version */
 #undef FREE
 #define FREE(ptr)				\

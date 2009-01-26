@@ -31,7 +31,9 @@ eina_convert.c \
 eina_rbtree.c \
 eina_benchmark.c \
 eina_rectangle.c \
-eina_stringshare.c
+eina_stringshare.c \
+eina_cpu.c \
+eina_tiler.c
 
 if EINA_STATIC_BUILD_CHAINED_POOL
 
