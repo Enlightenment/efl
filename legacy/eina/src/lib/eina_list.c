@@ -953,25 +953,87 @@ eina_list_promote_list(Eina_List *list, Eina_List *move_list)
    if (!move_list) return list;
    /* Promoting head to be head. */
    if (move_list == list) return list;
+   if (move_list->next == list) return move_list;
 
    EINA_MAGIC_CHECK_LIST(list);
    EINA_MAGIC_CHECK_LIST(move_list);
 
-   /* Update pointer to the last entry if necessary. */
-   if (move_list == list->accounting->last)
-     list->accounting->last = move_list->prev;
-
    /* Remove the promoted item from the list. */
-   if (move_list->next) move_list->next->prev = move_list->prev;
-   if (move_list->prev) move_list->prev->next = move_list->next;
-   else list = move_list->next;
+   if (!move_list->prev)
+      move_list->next->prev = NULL;
+   else
+     {
+	move_list->prev->next = move_list->next;
+	if (move_list == list->accounting->last)
+	   list->accounting->last = move_list->prev;
+	else
+	   move_list->next->prev = move_list->prev;
+     }
 
-   move_list->prev = list->prev;
-   if (list->prev)
-     list->prev->next = move_list;
-   list->prev = move_list;
+   /* Add the promoted item in the list. */
    move_list->next = list;
+   move_list->prev = list->prev;
+   list->prev = move_list;
+   if (move_list->prev)
+      move_list->prev->next = move_list;
+
    return move_list;
+}
+
+/**
+ * @brief Move the specified data to the tail of the list.
+ *
+ * @param list The list handle to move the data.
+ * @param move_list The list node to move.
+ * @return A new list handle to replace the old one
+ *
+ * This function move @p move_list to the back of @p list. If list is
+ * @c NULL, @c NULL is returned. If @p move_list is @c NULL,
+ * @p list is returned. Otherwise, a new list pointer that should be
+ * used in place of the one passed to this function.
+ *
+ * Example:
+ * @code
+ * extern Eina_List *list;
+ * Eina_List *l;
+ * extern void *my_data;
+ * void *data;
+ *
+ * EINA_LIST_FOREACH(list, l, data)
+ *   {
+ *     if (data == my_data)
+ *       {
+ *         list = eina_list_demote_list(list, l);
+ *         break;
+ *       }
+ *   }
+ * @endcode
+ */
+EAPI Eina_List *
+eina_list_demote_list(Eina_List *list, Eina_List *move_list)
+{
+   if (!list) return NULL;
+   if (!move_list) return list;
+   /* Demoting tail to be tail. */
+   if (move_list == list->accounting->last) return list;
+
+   EINA_MAGIC_CHECK_LIST(list);
+   EINA_MAGIC_CHECK_LIST(move_list);
+
+   /* Update pointer list if necessary. */
+   if (list == move_list)
+      list = move_list->next;
+   /* Remove the demoted item from the list. */
+   if (move_list->prev)
+      move_list->prev->next = move_list->next;
+   move_list->next->prev = move_list->prev;
+   /* Add the demoted item in the list. */
+   move_list->prev = list->accounting->last;
+   move_list->prev->next = move_list;
+   move_list->next = NULL;
+   list->accounting->last = move_list;
+
+   return list;
 }
 
 /**
@@ -1445,6 +1507,54 @@ eina_list_sorted_merge(Eina_List *left, Eina_List *right, Eina_Compare_Cb func)
 
    return ret;
 }
+
+EAPI void *
+eina_list_search_sorted(const Eina_List *list, Eina_Compare_Cb func, const void *data)
+{
+   void *d;
+   unsigned int inf, sup, cur, tmp;
+   int part;
+
+   inf = 0;
+   sup = eina_list_count(list) ;
+   cur = sup >> 1;
+   d = eina_list_nth(list, cur);
+
+   while ((part = func(d, data)))
+     {
+       if (inf == sup)
+          return NULL;
+       if (part < 0)
+          inf = (sup + inf) >> 1;
+       else
+          sup = (sup + inf) >> 1;
+       /* Faster to move directly from where we are to the new position than using eina_list_nth_list. */
+       tmp = (sup + inf) >> 1;
+       if (tmp < cur)
+	 for (; cur != tmp; cur--, d = eina_list_prev(d))
+	   ;
+       else
+	 for (; cur != tmp; cur++, d = eina_list_next(d))
+	   ;
+     }
+
+   return d;
+}
+
+EAPI void *
+eina_list_search_unsorted(const Eina_List *list, Eina_Compare_Cb func, const void *data)
+{
+   const Eina_List *l;
+   void *d;
+
+   EINA_LIST_FOREACH(list, l, d)
+     {
+       if (!func(d, data))
+        return d;
+     }
+   return NULL;
+}
+
 
 /**
  * @brief Returned a new iterator asociated to a list.

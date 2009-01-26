@@ -75,7 +75,6 @@ struct _Eina_List_Accounting
    EINA_MAGIC
 };
 
-
 EAPI int eina_list_init(void);
 EAPI int eina_list_shutdown(void);
 
@@ -88,6 +87,7 @@ EAPI Eina_List *eina_list_prepend_relative_list (Eina_List *list, const void *da
 EAPI Eina_List *eina_list_remove (Eina_List *list, const void *data) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_List *eina_list_remove_list (Eina_List *list, Eina_List *remove_list) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_List *eina_list_promote_list (Eina_List *list, Eina_List *move_list) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_List *eina_list_demote_list (Eina_List *list, Eina_List *move_list);
 EAPI void *eina_list_data_find(const Eina_List *list, const void *data) EINA_PURE EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_List *eina_list_data_find_list (const Eina_List *list, const void *data) EINA_PURE EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_List *eina_list_free (Eina_List *list);
@@ -97,6 +97,8 @@ EAPI Eina_List *eina_list_reverse (Eina_List *list) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_List *eina_list_sort (Eina_List *list, unsigned int size, Eina_Compare_Cb func) EINA_ARG_NONNULL(3) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_List *eina_list_merge (Eina_List *left, Eina_List *right) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_List *eina_list_sorted_merge(Eina_List *left, Eina_List *right, Eina_Compare_Cb func) EINA_ARG_NONNULL(3) EINA_WARN_UNUSED_RESULT;
+EAPI void *eina_list_search_sorted(const Eina_List *list, Eina_Compare_Cb func, const void *data);
+EAPI void *eina_list_search_unsorted(const Eina_List *list, Eina_Compare_Cb func, const void *data);
 
 
 static inline Eina_List *eina_list_last (const Eina_List *list) EINA_PURE EINA_WARN_UNUSED_RESULT;
