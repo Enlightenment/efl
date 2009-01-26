@@ -15,6 +15,10 @@
  * License along with this library;
  * if not, see <http://www.gnu.org/licenses/>.
  */
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include "eina_cpu.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -25,10 +29,18 @@
 static inline void _x86_cpuid(int op, int *a, int *b, int *c, int *d)
 {
 	asm volatile(
+#if defined(__x86_64__)
+		"pushq %%rbx      \n\t" /* save %ebx */
+#else
 		"pushl %%ebx      \n\t" /* save %ebx */
+#endif
 		"cpuid            \n\t"
 		"movl %%ebx, %1   \n\t" /* save what cpuid just put in %ebx */
+#if defined(__x86_64__)
+		"popq %%rbx       \n\t" /* restore the old %ebx */
+#else
 		"popl %%ebx       \n\t" /* restore the old %ebx */
+#endif
 		: "=a"(*a), "=r"(*b), "=c"(*c), "=d"(*d)
 		: "a"(op)
 		: "cc");

@@ -21,12 +21,15 @@
  * version Gustavo did is hardcoded here
  * http://blog.gustavobarbieri.com.br/2007/06/03/evas-now-using-rectangle-split-and-merge/
  */
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 
 #include "eina_tiler.h"
 #include "eina_private.h"
-#include "eina_types.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
