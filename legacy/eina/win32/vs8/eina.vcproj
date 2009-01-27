@@ -209,6 +209,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\lib\eina_cpu.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\lib\eina_error.c"
 				>
 			</File>
@@ -265,6 +269,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\lib\eina_tiler.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\lib\eina_value.c"
 				>
 			</File>
@@ -296,6 +304,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\include\eina_counter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\include\eina_cpu.h"
 				>
 			</File>
 			<File
@@ -360,6 +372,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\include\eina_stringshare.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\include\eina_tiler.h"
 				>
 			</File>
 			<File
