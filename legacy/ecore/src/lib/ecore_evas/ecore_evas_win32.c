@@ -1096,7 +1096,7 @@ _ecore_evas_engine_opengl_glew_init(Ecore_Evas *ee)
    const char               *driver;
    int                       rmethod;
 
-   driver = "opengl_glew";
+   driver = "gl_glew";
 
    rmethod = evas_render_method_lookup(driver);
    if (!rmethod)
