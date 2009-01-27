@@ -367,7 +367,6 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
    if (!gc->change.texture) return;
    if (gc->font_texture > 0)
      {
-	glUseProgramObjectARB(0);
 	if (gc->texture_program)
 	  {
 	     glUseProgramObjectARB(0);
