@@ -15,14 +15,17 @@
  * License along with this library;
  * if not, see <http://www.gnu.org/licenses/>.
  */
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
 
 #include "eina_cpu.h"
+
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+
 /* FIXME this ifdefs should be replaced */
 #if defined(__i386__) || defined(__x86_64__)
 /* We save ebx and restore it to be PIC compatible */
@@ -72,12 +75,15 @@ void _x86_simd(Eina_Cpu_Features *features)
 		*features |= EINA_CPU_SSE3;
 }
 #endif
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+
 /* FIXME the features checks should be called when this function is called?
  * or make it static by doing eina_cpu_init() and return a local var
  */

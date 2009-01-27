@@ -21,6 +21,7 @@
  * version Gustavo did is hardcoded here
  * http://blog.gustavobarbieri.com.br/2007/06/03/evas-now-using-rectangle-split-and-merge/
  */
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
@@ -30,9 +31,11 @@
 
 #include "eina_tiler.h"
 #include "eina_private.h"
+
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+
 /* The splitter data types */
 typedef struct list_node list_node_t;
 typedef struct list list_t;
@@ -91,7 +94,7 @@ typedef struct _Eina_Iterator_Tiler
 	Eina_Iterator iterator;
 	const Eina_Tiler *tiler;
 	list_node_t *curr;
-	EINA_MAGIC;
+	EINA_MAGIC
 } Eina_Iterator_Tiler;
 
 struct _Eina_Tiler
@@ -101,9 +104,10 @@ struct _Eina_Tiler
 		int w, h;
 	} tile;
 	Eina_Rectangle area;
-	EINA_MAGIC;
+	EINA_MAGIC
 	splitter_t splitter;
 };
+
 #define EINA_MAGIC_CHECK_TILER(d)					\
 	do {								\
 		if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_TILER))		\
