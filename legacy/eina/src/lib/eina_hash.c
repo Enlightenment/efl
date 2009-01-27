@@ -833,8 +833,11 @@ eina_hash_free(Eina_Hash *hash)
    EINA_SAFETY_ON_NULL_RETURN(hash);
 
    if (hash->buckets)
-     for (i = 0; i < hash->size; i++)
-       eina_rbtree_delete(hash->buckets[i], EINA_RBTREE_FREE_CB(_eina_hash_head_free), hash);
+     {
+	for (i = 0; i < hash->size; i++)
+	  eina_rbtree_delete(hash->buckets[i], EINA_RBTREE_FREE_CB(_eina_hash_head_free), hash);
+	free(hash->buckets);
+     }
    free(hash);
 }
 
