@@ -71,7 +71,7 @@ _buf_append(char *buf, const char *str, int *len, int *alloc)
 }
 
 static char *
-_load_markup_utf8(const char *file)
+_load_file(const char *file)
 {
    FILE *f;
    size_t size;
@@ -82,69 +82,26 @@ _load_markup_utf8(const char *file)
    if (!f) return NULL;
    while (size = fread(buf, 1, sizeof(buf), f))
      {
-	pos = 0;
 	buf[size] = 0;
-	while (pos < size)
-	  {
-	     int ch;
-	     char str[2];
-	     
-	     ch = buf[pos];
-	     if (ch != '\n')
-	       {
-		  str[0] = ch;
-		  str[1] = 0;
-		  text = _buf_append(text, str, &len, &alloc);
-	       }
-	     pos++;
-	  }
+        text = _buf_append(text, buf, &len, &alloc);
      }
    fclose(f);
    return text;
 }
 
 static char *
-_load_plain_utf8(const char *file)
+_load_plain(const char *file)
 {
-   FILE *f;
-   size_t size;
-   int alloc = 0, len = 0, pos;
-   char *text = NULL, buf[4096];
+   char *text, *text2;
    
-   f = fopen(file, "r");
-   if (!f) return NULL;
-   while (size = fread(buf, 1, sizeof(buf), f))
+   text = _load_file(file);
+   if (text)
      {
-	pos = 0;
-	buf[size] = 0;
-	while (pos < size)
-	  {
-	     int ch, ppos;
-	     
-	     ppos = pos;
-	     ch = evas_common_font_utf8_get_next(buf, &pos);
-	     if (ch == '\n')
-	       text = _buf_append(text, "<br>", &len, &alloc);
-	     else
-	       {
-		  int stlen = 0;
-		  const char *escape;
-		  char str[16];
-		  
-		  escape = evas_textblock_string_escape_get(buf + ppos, &stlen);
-		  if (escape)
-		    text = _buf_append(text, escape, &len, &alloc);
-		  else
-		    {
-		       strncpy(str, buf + ppos, pos - ppos);
-		       str[pos - ppos] = 0;
-		       text = _buf_append(text, str, &len, &alloc);
-		    }
-	       }
-	  }
+        text2 = elm_entry_utf8_to_markup(text);
+        free(text);
+        return text2;
      }
-   fclose(f);
-   return text;
+   return NULL;
 }
 
 static void
@@ -161,10 +118,10 @@ _load(Evas_Object *obj)
    switch (wd->format)
      {
       case ELM_TEXT_FORMAT_PLAIN_UTF8:
-	text = _load_plain_utf8(wd->file);
+	text = _load_plain(wd->file);
 	break;
       case ELM_TEXT_FORMAT_MARKUP_UTF8:
-	text = _load_markup_utf8(wd->file);
+	text = _load_file(wd->file);
 	break;
       default:
 	elm_entry_entry_set(wd->entry, "Unknown Text Format");
@@ -196,112 +153,20 @@ _save_markup_utf8(const char *file, const char *text)
 	return;
      }
    fputs(text, f); // FIXME: catch error
-   fputs("\n", f); // FIXME: catch error
    fclose(f);
 }
 
 static void
 _save_plain_utf8(const char *file, const char *text)
 {
-   FILE *f;
-   char *s, *p;
-   char *tag_start, *tag_end, *esc_start, *esc_end;
-
-   if ((!text) || (text[0] == 0))
+   char *text2;
+   
+   text2 = elm_entry_markup_to_utf8(text);
+   if (text2)
      {
-	ecore_file_unlink(file);
-	return;
+        _save_markup_utf8(file, text2);
+        free(text2);
      }
-   f = fopen(file, "w");
-   if (!f)
-     {
-	// FIXME: report a write error
-	return;
-     }
-   tag_start = tag_end = esc_start = esc_end = NULL;
-   p = (char *)text;
-   s = p;
-   for (;;)
-     {
-	if ((*p == 0) ||
-	    (tag_end) || (esc_end) ||
-	    (tag_start) || (esc_start))
-	  {
-	     if (tag_end)
-	       {
-		  char *ttag, *match;
-		  
-		  ttag = malloc(tag_end - tag_start);
-		  if (ttag)
-		    {
-		       strncpy(ttag, tag_start + 1, tag_end - tag_start - 1);
-		       ttag[tag_end - tag_start - 1] = 0;
-		       if (!strcmp(ttag, "br")) fputs("\n", f); // FIXME: catch error
-		       free(ttag);
-		    }
-		  tag_start = tag_end = NULL;
-	       }
-	     else if (esc_end)
-	       {
-		  char tesc[256];
-		  char *str;
-		  
-		  if ((esc_end - esc_start) < (sizeof(tesc) - 2))
-		    {
-		       strncpy(tesc, esc_start, esc_end - esc_start + 1);
-		       tesc[esc_end - esc_start + 1] = 0;
-		    }
-		  str = evas_textblock_escape_string_get(tesc);
-		  if (str) fputs(str, f); // FIXME: catch error
-		  esc_start = esc_end = NULL;
-	       }
-	     else if (*p == 0)
-	       {
-		  fwrite(s, p - s, 1, f); // FIXME: catch error
-		  s = NULL;
-	       }
-	     if (*p == 0)
-	       break;
-	  }
-	if (*p == '<')
-	  {
-	     if (!esc_start)
-	       {
-		  tag_start = p;
-		  tag_end = NULL;
-		  fwrite(s, p - s, 1, f); // FIXME: catch error
-		  s = NULL;
-	       }
-	  }
-	else if (*p == '>')
-	  {
-	     if (tag_start)
-	       {
-		  tag_end = p;
-		  s = p + 1;
-	       }
-	  }
-	else if (*p == '&')
-	  {
-	     if (!tag_start)
-	       {
-		  esc_start = p;
-		  esc_end = NULL;
-		  fwrite(s, p - s, 1, f); // FIXME: catch error
-		  s = NULL;
-	       }
-	  }
-	else if (*p == ';')
-	  {
-	     if (esc_start)
-	       {
-		  esc_end = p;
-		  s = p + 1;
-	       }
-	  }
-	p++;
-     }
-   fclose(f);
 }
 
 static void

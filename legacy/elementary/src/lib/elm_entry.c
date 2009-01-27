@@ -791,3 +791,15 @@ elm_entry_select_all(Evas_Object *obj)
    wd->have_selection = 1;
    edje_object_part_text_select_all(wd->ent, "elm.text");
 }
+
+EAPI char *
+elm_entry_markup_to_utf8(const char *s)
+{
+   return _mkup_to_text(s);
+}
+
+EAPI char *
+elm_entry_utf8_to_markup(const char *s)
+{
+   return _text_to_mkup(s);
+}

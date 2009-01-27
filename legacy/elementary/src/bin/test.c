@@ -898,7 +898,7 @@ my_bt_15(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bx);
 
    np = elm_notepad_add(win);
-   elm_notepad_file_set(np, "note.txt", ELM_TEXT_FORMAT_PLAIN_UTF8);
+   elm_notepad_file_set(np, "note.txt", ELM_TEXT_FORMAT_MARKUP_UTF8);
    evas_object_size_hint_weight_set(np, 1.0, 1.0);
    evas_object_size_hint_align_set(np, -1.0, -1.0);
    elm_box_pack_end(bx, np);

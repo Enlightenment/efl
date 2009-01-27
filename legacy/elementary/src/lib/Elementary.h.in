@@ -306,6 +306,8 @@ extern "C" {
    EAPI void         elm_entry_editable_set(Evas_Object *obj, Evas_Bool editable);
    EAPI void         elm_entry_select_none(Evas_Object *obj);
    EAPI void         elm_entry_select_all(Evas_Object *obj);
+   EAPI char        *elm_entry_markup_to_utf8(const char *s);
+   EAPI char        *elm_entry_utf8_to_markup(const char *s);
        
    /* smart callbacks called:
     * "changed" - the text content changed
