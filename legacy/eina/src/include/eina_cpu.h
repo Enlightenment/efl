@@ -15,6 +15,7 @@
  * License along with this library;
  * if not, see <http://www.gnu.org/licenses/>.
  */
+
 #ifndef EINA_CPU_H_
 #define EINA_CPU_H_
 
