@@ -33,10 +33,10 @@ eina_cpu.h \
 eina_tiler.h
 
 installed_mainheaderdir = $(includedir)/eina-@VMAJ@
-installed_mainheader_DATA = Eina.h eina_config.h
+dist_installed_mainheader_DATA = Eina.h eina_config.h
 
 installed_headersdir = $(includedir)/eina-@VMAJ@/eina
-installed_headers_DATA = $(EINAHEADERS)
+dist_installed_headers_DATA = $(EINAHEADERS)
 
 EXTRA_DIST = \
 eina_config.h.in \
