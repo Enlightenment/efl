@@ -496,8 +496,8 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (wd->style) _elm_theme_set(wd->frm, "frame", "base", wd->style);
-   else _elm_theme_set(wd->frm, "frame", "base", "default");
+   if (wd->style) _elm_theme_set(wd->frm, "win", "inwin", wd->style);
+   else _elm_theme_set(wd->frm, "win", "inwin", "default");
    if (wd->content)
      edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->content);
    _sizing_eval(obj);

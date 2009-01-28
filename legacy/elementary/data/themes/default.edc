@@ -4968,6 +4968,168 @@ collections {
       }
    }
 
+   group { name: "elm/win/inwin/minimal";
+      images {
+	 image: "shad_circ.png" COMP;
+	 image: "bt_dis_base.png" COMP;
+	 image: "bt_dis_hilight.png" COMP;
+      }
+      parts {
+	 part { name: "base";
+	    type: RECT;
+	    mouse_events: 1;
+	    description { state: "default" 0.0;
+	       color: 0 0 0 0;
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 1.0;
+	       color: 0 0 0 64;
+	    }
+	 }
+         part { name: "shad";
+	    mouse_events:  0;	
+	    description { state: "default" 0.0;
+	       image.normal: "shad_circ.png";
+	       rel1.to: "elm.swallow.content";
+	       rel1.offset: -64 -64;
+	       rel2.to: "elm.swallow.content";
+	       rel2.offset: 63 63;
+               fill.smooth: 0;
+	    }
+	 }
+	 part { name: "pop";
+	    mouse_events: 1;
+	    description { state: "default" 0.0;
+	       rel1.to: "elm.swallow.content";
+               rel1.offset: -5 -5;
+	       rel2.to: "elm.swallow.content";
+               rel2.offset: 4 4;
+               image {
+		  normal: "bt_dis_base.png";
+		  border: 4 4 4 4;
+	       }
+	    }
+	 }
+         part { name: "popover";
+	    mouse_events: 0;
+	    description { state: "default" 0.0;
+	       rel1.to: "pop";
+	       rel2.to: "pop";
+	       rel2.relative: 1.0 0.5;
+	       image {
+		  normal: "bt_dis_hilight.png";
+		  border: 4 4 4 0;
+	       }
+	    }
+	 }
+	 part { name: "elm.swallow.content";
+            type: SWALLOW;
+	    description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.relative: 0.5 0.5;
+               rel2.relative: 0.5 0.5;
+	    }
+	 }
+      }
+      programs {
+	 program { name: "show";
+            signal: "elm,action,show";
+	    source: "elm";
+	    action: STATE_SET "visible" 0.0;
+//	    transition: DECELERATE 0.5;
+	    target: "base";
+	 }
+	 program { name: "hide";
+            signal: "elm,action,hide";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
+//	    transition: DECELERATE 0.5;
+	    target: "base";
+	 }
+      }
+   }
+
+   group { name: "elm/win/inwin/minimal_vertical";
+      images {
+	 image: "shad_circ.png" COMP;
+	 image: "bt_dis_base.png" COMP;
+	 image: "bt_dis_hilight.png" COMP;
+      }
+      parts {
+	 part { name: "base";
+	    type: RECT;
+	    mouse_events: 1;
+	    description { state: "default" 0.0;
+	       color: 0 0 0 0;
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 1.0;
+	       color: 0 0 0 64;
+	    }
+	 }
+         part { name: "shad";
+	    mouse_events:  0;	
+	    description { state: "default" 0.0;
+	       image.normal: "shad_circ.png";
+	       rel1.to: "elm.swallow.content";
+	       rel1.offset: -64 -64;
+	       rel2.to: "elm.swallow.content";
+	       rel2.offset: 63 63;
+               fill.smooth: 0;
+	    }
+	 }
+	 part { name: "pop";
+	    mouse_events: 1;
+	    description { state: "default" 0.0;
+	       rel1.to: "elm.swallow.content";
+               rel1.offset: -5 -5;
+	       rel2.to: "elm.swallow.content";
+               rel2.offset: 4 4;
+               image {
+		  normal: "bt_dis_base.png";
+		  border: 4 4 4 4;
+	       }
+	    }
+	 }
+         part { name: "popover";
+	    mouse_events: 0;
+	    description { state: "default" 0.0;
+	       rel1.to: "pop";
+	       rel2.to: "pop";
+	       rel2.relative: 1.0 0.5;
+	       image {
+		  normal: "bt_dis_hilight.png";
+		  border: 4 4 4 0;
+	       }
+	    }
+	 }
+	 part { name: "elm.swallow.content";
+            type: SWALLOW;
+	    description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.relative: 0.1 0.5;
+               rel2.relative: 0.9 0.5;
+	    }
+	 }
+      }
+      programs {
+	 program { name: "show";
+            signal: "elm,action,show";
+	    source: "elm";
+	    action: STATE_SET "visible" 0.0;
+//	    transition: DECELERATE 0.5;
+	    target: "base";
+	 }
+	 program { name: "hide";
+            signal: "elm,action,hide";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
+//	    transition: DECELERATE 0.5;
+	    target: "base";
+	 }
+      }
+   }
+
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/list/item/default";
       data.item: "stacking" "above";

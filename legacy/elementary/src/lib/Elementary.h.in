@@ -158,6 +158,8 @@ extern "C" {
    EAPI void         elm_win_inwin_style_set(Evas_Object *obj, const char *style);
    /* available styles: 
     * default
+    * minimal
+    * minimal_vertical
     */
        
    /* X specific calls - won't work on non-x engines (return 0) */
