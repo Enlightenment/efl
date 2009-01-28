@@ -457,7 +457,7 @@ static inline int _split_fuzzy(list_t *dirty, const rect_t a, rect_t *b)
 	return action;
 }
 
-void rect_list_node_pool_set_max(int max)
+static void rect_list_node_pool_set_max(int max)
 {
 	int diff;
 
@@ -476,7 +476,7 @@ void rect_list_node_pool_set_max(int max)
 	list_node_pool.max = max;
 }
 
-void rect_list_node_pool_flush(void)
+static void rect_list_node_pool_flush(void)
 {
 	while (list_node_pool.node)
 	{
@@ -504,12 +504,12 @@ static inline void rect_list_node_pool_put(list_node_t *node)
 		free(node);
 }
 
-void rect_print(const rect_t r)
+static void rect_print(const rect_t r)
 {
 	printf("<rect(%d, %d, %d, %d)>", r.left, r.top, r.width, r.height);
 }
 
-void rect_list_print(const list_t rects)
+static void rect_list_print(const list_t rects)
 {
 	list_node_t *node;
 	int len;
@@ -568,7 +568,7 @@ static inline void rect_list_del_next(list_t *rects, list_node_t *parent_node)
 	rect_list_node_pool_put(node);
 }
 
-void rect_list_clear(list_t *rects)
+static void rect_list_clear(list_t *rects)
 {
 	list_node_t *node;
 
@@ -584,7 +584,7 @@ void rect_list_clear(list_t *rects)
 	*rects = list_zeroed;
 }
 
-void rect_list_del_split_strict(list_t *rects, const rect_t del_r)
+static void rect_list_del_split_strict(list_t *rects, const rect_t del_r)
 {
 	list_t modified = list_zeroed;
 	list_node_t *cur_node, *prev_node;
@@ -636,7 +636,7 @@ void rect_list_del_split_strict(list_t *rects, const rect_t del_r)
 	rect_list_concat(rects, &modified);
 }
 
-void rect_list_add_split_strict(list_t *rects, list_node_t *node)
+static void rect_list_add_split_strict(list_t *rects, list_node_t *node)
 {
 	list_t dirty = list_zeroed;
 	list_t new_dirty = list_zeroed;
@@ -705,7 +705,7 @@ void rect_list_add_split_strict(list_t *rects, list_node_t *node)
 	}
 }
 
-list_node_t *
+static list_node_t *
 rect_list_add_split_fuzzy(list_t *rects, list_node_t *node, int accepted_error)
 {
 	list_t dirty = list_zeroed;
@@ -895,7 +895,7 @@ static inline void _calc_outer_rect_area(const rect_t a, const rect_t b,
 	outer->area = outer->width * outer->height;
 }
 
-void rect_list_merge_rects(list_t *rects, list_t *to_merge, int accepted_error)
+static void rect_list_merge_rects(list_t *rects, list_t *to_merge, int accepted_error)
 {
 	while (to_merge->head)
 	{
@@ -949,7 +949,7 @@ void rect_list_merge_rects(list_t *rects, list_t *to_merge, int accepted_error)
 	}
 }
 
-void rect_list_add_split_fuzzy_and_merge(list_t *rects, list_node_t *node,
+static void rect_list_add_split_fuzzy_and_merge(list_t *rects, list_node_t *node,
 		int split_accepted_error, int merge_accepted_error)
 {
 	list_node_t *n;
@@ -1063,6 +1063,8 @@ static Eina_Bool _iterator_next(Eina_Iterator_Tiler *it, void **data)
 			continue;
 		if ((rect->w <= 0) || (rect->h <= 0))
 			continue;
+
+		it->curr = n->next;
 		return EINA_TRUE;
 	}
 	return EINA_FALSE;
