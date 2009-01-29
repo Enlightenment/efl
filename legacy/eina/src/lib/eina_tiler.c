@@ -843,10 +843,6 @@ rect_list_add_split_fuzzy(list_t *rects, list_node_t *node, int accepted_error)
 				break;
 			}
 		}
-		if (__builtin_expect((keep_dirty), 0))
-		{
-			printf("ok\n");
-		}
 		if (EINA_UNLIKELY(keep_dirty))
 		{
 			rect_list_append_node(rects, d_node);
