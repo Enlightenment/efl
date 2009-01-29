@@ -133,6 +133,7 @@ evas_imaging_font_load(const char *file, const char *key, int size)
      {
 	font = evas_common_font_hinting_load((char *)file, size, _evas_hinting);
      }
+   if (!font) return NULL;
    fn = calloc(1, sizeof(RGBA_Font));
    if (!fn) return NULL;
    fn->font = font;
@@ -142,6 +143,7 @@ evas_imaging_font_load(const char *file, const char *key, int size)
 EAPI void
 evas_imaging_font_free(Evas_Imaging_Font *fn)
 {
+   if (!fn) return;
    evas_common_font_free(fn->font);
    free(fn);
 }
@@ -149,60 +151,70 @@ evas_imaging_font_free(Evas_Imaging_Font *fn)
 EAPI int
 evas_imaging_font_ascent_get(const Evas_Imaging_Font *fn)
 {
+   if (!fn) return 0;
    return evas_common_font_ascent_get(fn->font);
 }
 
 EAPI int
 evas_imaging_font_descent_get(const Evas_Imaging_Font *fn)
 {
+   if (!fn) return 0;
    return evas_common_font_descent_get(fn->font);
 }
 
 EAPI int
 evas_imaging_font_max_ascent_get(const Evas_Imaging_Font *fn)
 {
+   if (!fn) return 0;
    return evas_common_font_max_ascent_get(fn->font);
 }
 
 EAPI int
 evas_imaging_font_max_descent_get(const Evas_Imaging_Font *fn)
 {
+   if (!fn) return 0;
    return evas_common_font_max_descent_get(fn->font);
 }
 
 EAPI int
 evas_imaging_font_line_advance_get(const Evas_Imaging_Font *fn)
 {
+   if (!fn) return 0;
    return evas_common_font_get_line_advance(fn->font);
 }
 
 EAPI void
 evas_imaging_font_string_advance_get(const Evas_Imaging_Font *fn, const char *str, int *x, int *y)
 {
+   if (!fn) return 0;
    evas_common_font_query_advance(fn->font, str, x, y);
 }
 
 EAPI void
 evas_imaging_font_string_size_query(const Evas_Imaging_Font *fn, const char *str, int *w, int *h)
 {
+   if (!fn) return 0;
    evas_common_font_query_size(fn->font, str, w, h);
 }
 
 EAPI int
 evas_imaging_font_string_inset_get(const Evas_Imaging_Font *fn, const char *str)
 {
+   if (!fn) return 0;
    return evas_common_font_query_inset(fn->font, str);
 }
 
 EAPI int
 evas_imaging_font_string_char_coords_get(const Evas_Imaging_Font *fn, const char *str, int pos, int *cx, int *cy, int *cw, int *ch)
 {
+   if (!fn) return 0;
    return evas_common_font_query_char_coords(fn->font, str, pos, cx, cy, cw, ch);
 }
 
 EAPI int
 evas_imaging_font_string_char_at_coords_get(const Evas_Imaging_Font *fn, const char *str, int x, int y, int *cx, int *cy, int *cw, int *ch)
 {
+   if (!fn) return -1;
    return evas_common_font_query_text_at_pos(fn->font, str, x, y, cx, cy, cw, ch);
 }
 
