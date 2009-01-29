@@ -2,8 +2,6 @@
 #include "Efreet.h"
 #include "efreet_private.h"
 
-#define NON_EXISTING (void *)-1
-
 static char *efreet_icon_deprecated_user_dir = NULL;
 static char *efreet_icon_user_dir = NULL;
 static Eina_Hash *efreet_icon_themes = NULL;
@@ -346,6 +344,11 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
     char *value = NULL;
     Efreet_Icon_Theme *theme;
 
+    if ((value = efreet_icon_hash_get(theme_name, icon, size)) != NULL)
+    {
+       if (value == NON_EXISTING) return NULL;
+       return strdup(value);
+    }
     theme = efreet_icon_find_theme_check(theme_name);
 
 #ifdef SLOPPY_SPEC
@@ -365,6 +368,8 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
      */
     if (!value || (value == NON_EXISTING)) value = efreet_icon_fallback_icon(icon);
 
+    efreet_icon_hash_put(theme_name, icon, size, value);
+   
     if (value == NON_EXISTING) value = NULL;
     return value;
 }

@@ -31,6 +31,7 @@ efreet_utils.c \
 efreet_uri.c \
 efreet_private.h \
 efreet_xml.h \
+efreet_cache.c \
 $(EFREETHEADERS)
 
 libefreet_la_SOURCES = \

@@ -198,6 +198,12 @@ size_t efreet_array_cat(char *buffer, size_t size, const char *strs[]);
 
 const char *efreet_desktop_environment_get(void);
 
+#define NON_EXISTING (void *)-1
+
+void efreet_cache_clear(void);
+const char *efreet_icon_hash_get(const char *theme_name, const char *icon, int size);
+void efreet_icon_hash_put(const char *theme_name, const char *icon, int size, const char *file);
+
 /**
  * @}
  */
