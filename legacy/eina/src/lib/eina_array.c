@@ -60,10 +60,83 @@
  * following command:
  *
  * @code
- * gcc -Wall -o my_exe my_source.c `pkg-config --cflags --libs eina`
+ * gcc -o my_bin my_source.c `pkg-config --cflags --libs eina-0`
  * @endcode
  *
- * Then, an array must created with eina_array_new().
+ * Then, an array must created with eina_array_new(). That function
+ * takes an integer as parameter, which is the count of pointers to
+ * add when increasing the array size. Once the array is not used
+ * anymore, it must be destroyed with eina_array_free().
+ *
+ * To append data at the end of the array, the function
+ * eina_array_push() must be used. To remove the data at the end of
+ * the array, eina_array_pop() must be used. Once the array is filled,
+ * one can check its elements by iterating over it. A while loop and
+ * eina_array_data_get() can be used, or else one can use the
+ * predefined macro EINA_ARRAY_ITER_NEXT(). To free all the elements,
+ * a while loop can be used with eina_array_count_get(). Here is an
+ * example of use:
+ *
+ * @code
+ * #include <stdlib.h>
+ * #include <stdio.h>
+ * #include <string.h>
+ *
+ * #include <eina_array.h>
+ *
+ * int main(void)
+ * {
+ *     const char *strings[] = {
+ *         "first string",
+ *         "second string",
+ *         "third string",
+ *         "fourth string"
+ *     };
+ *     Eina_Array         *array;
+ *     char               *item;
+ *     Eina_Array_Iterator iterator;
+ *     unsigned int        i;
+ *
+ *     if (!eina_array_init())
+ *     {
+ *         printf ("Error during the initialization of eina_error module\n");
+ *         return EXIT_FAILURE;
+ *     }
+ *
+ *     array = eina_array_new(16);
+ *     if (!array)
+ *         goto shutdown_array;
+ *
+ *     for (i = 0; i < 4; i++)
+ *     {
+ *         eina_array_push(array, strdup(strings[i]));
+ *     }
+ *
+ *     printf("array count: %d\n", eina_array_count_get(array));
+ *     EINA_ARRAY_ITER_NEXT(array, i, item, iterator)
+ *     {
+ *         printf("item #%d: %s\n", i, item);
+ *     }
+ *
+ *     while (eina_array_count_get(array))
+ *     {
+ *         void *data;
+ *
+ *         data = eina_array_pop(array);
+ *         free(data);
+ *     }
+ *
+ *     eina_array_free(array);
+ *     eina_array_shutdown();
+ *
+ *     return EXIT_SUCCESS;
+ *
+ *   shutdown_array:
+ *     eina_array_shutdown();
+ *
+ *     return EXIT_FAILURE;
+ * }
+ * @endcode
  *
  * To be continued
  */
