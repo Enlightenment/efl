@@ -2,6 +2,8 @@
 
 #include <string.h>
 
+#include <d3dx9.h>
+
 #include "evas_direct3d_object_image.h"
 #include "evas_direct3d_image_cache.h"
 #include "evas_direct3d_device.h"

@@ -4,6 +4,8 @@
 #include "evas_engine.h"
 #include <assert.h>
 
+#include <d3dx9.h>
+
 #include "evas_direct3d_device.h"
 #include "evas_direct3d_context.h"
 #include "evas_direct3d_shader_pack.h"

@@ -2,9 +2,10 @@
 #define __EVAS_ENGINE_H__
 
 
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
 #include <d3d9.h>
-#include <d3dx9.h>
 
 #ifdef __cplusplus
 extern "C" {
