@@ -668,7 +668,7 @@ eet_cipher(const void *data, unsigned int size, const char *key, unsigned int le
    err = gcry_cipher_open(&cipher, GCRY_CIPHER_AES256, GCRY_CIPHER_MODE_CBC, 0);
    if (err) goto on_error;
    opened = 1;
-   err = gcry_cipher_setiv(cipher, &iv, MAX_IV_LEN);
+   err = gcry_cipher_setiv(cipher, iv, MAX_IV_LEN);
    if (err) goto on_error;
    err = gcry_cipher_setkey(cipher, ik, MAX_KEY_LEN);
    if (err) goto on_error;
@@ -772,7 +772,7 @@ eet_decipher(const void *data, unsigned int size, const char *key, unsigned int 
    /* Gcrypt create the corresponding cipher */
    err = gcry_cipher_open(&cipher, GCRY_CIPHER_AES256, GCRY_CIPHER_MODE_CBC, 0);
    if (err) return EET_ERROR_DECRYPT_FAILED;
-   err = gcry_cipher_setiv(cipher, &iv, MAX_IV_LEN);
+   err = gcry_cipher_setiv(cipher, iv, MAX_IV_LEN);
    if (err) goto on_error;
    err = gcry_cipher_setkey(cipher, ik, MAX_KEY_LEN);
    if (err) goto on_error;
