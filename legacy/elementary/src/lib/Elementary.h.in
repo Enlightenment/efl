@@ -479,7 +479,6 @@ extern "C" {
 //// (bugs - high priority)
 // * scale change for hover doesnt seem to do new size alloc nicely
 // * left/right arrow broken with password mode for entry + utf8 chars...
-// * entry signal "changed" not called when deleting
 // * bubble doesnt handle child size changes right
 // * table doesnt do homogenous properly
 // 
@@ -492,10 +491,10 @@ extern "C" {
 // * add fullscreen mode on/off for windows
 // * hoversel only vertical right now - make horizontal
 // * set scaling per widget (and if scaling should be inherited by children)
+// * when entries are in a scroller and change size, the scroller shows scrollbars. fix. same for selecting. for 1 line entries in a scroller should only have scroll arrow indicators.
 // 
 //// (more widgets/features - medium priority)
 // * biglist widget (restricted format label + icon intended for massive lists)
-// * listitem widget (can contain anything)
 // * treeview widget (like biglist - but items can expand to sub-items)
 // * radio widget + group handling
 // * checkbox widget (like toggle)
@@ -503,7 +502,6 @@ extern "C" {
 // * slider widget
 // 
 // * carousel selector widget
-// * in-window dialog container widget (push/pop)
 // * separator widget (h/v)
 // * slide-open "panel" that can hold stuff and optionally scroll
 // * calendar widget (select date)
@@ -515,8 +513,12 @@ extern "C" {
 // * tiled image + zoom widget (tiled map viewer)
 // * dialpad widget - need one with a phone dialpad
 // * file selector widget
+// * progress bar widget
+// * generic "tacho" widget (set min/max labels - and up to 3 intermediate labels)
+// * status widget (busy, stalled, running, etc.)
 // 
 //// (improvements - low priority)
+// * need another sample theme
 // * need a way to set a preferred size of a widget (but not min or max).
 // * merge with gurana
 // * use evas's new box instead of a box smart
@@ -528,6 +530,7 @@ extern "C" {
 // * need url and path entry modes for vkbd
 // * return list of toplevel window objects
 // * widgets should show who is focused (not useful for touchscreen)
+// * focus should have an object that is layered above all others (definable layer) that moves + resizes (slides about - animated) from one focused widget to the next for focus. also emit focus/unfocus signals too
 // * scroller could do with page up/down/left/right buttons and and idea of a page size
 // * current sizing tree inefficient
 // * need a way to filter entry data for entry (eg for phone numbers)
