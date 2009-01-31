@@ -1,3 +1,14 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <stdio.h>
+#include <string.h>
+
 #include "ecore_private.h"
 #include "Ecore.h"
 #include "Ecore_Data.h"
@@ -413,7 +424,7 @@ _ecore_hash_bucket_destroy(Ecore_Hash_Node *list, Ecore_Free_Cb keyd, Ecore_Free
 static int
 _ecore_hash_node_add(Ecore_Hash *hash, Ecore_Hash_Node *node)
 {
-   unsigned int hash_val;
+   unsigned long hash_val;
 
    CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
    CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
@@ -424,7 +435,7 @@ _ecore_hash_node_add(Ecore_Hash *hash, Ecore_Hash_Node *node)
 
    /* Compute the position in the table */
    if (!hash->hash_func)
-     hash_val = (unsigned int)node->key % ecore_prime_table[hash->size];
+     hash_val = (unsigned long)node->key % ecore_prime_table[hash->size];
    else
      hash_val = ECORE_COMPUTE_HASH(hash, node->key);
 
@@ -475,14 +486,14 @@ ecore_hash_remove(Ecore_Hash *hash, const void *key)
 {
    Ecore_Hash_Node *node = NULL;
    Ecore_Hash_Node *list;
-   unsigned int hash_val;
+   unsigned long hash_val;
    void *ret = NULL;
 
    CHECK_PARAM_POINTER_RETURN("hash", hash, NULL);
 
    /* Compute the position in the table */
    if (!hash->hash_func)
-     hash_val = (unsigned int )key % ecore_prime_table[hash->size];
+     hash_val = (unsigned long )key % ecore_prime_table[hash->size];
    else
      hash_val = ECORE_COMPUTE_HASH(hash, key);
 
@@ -580,7 +591,7 @@ ecore_hash_find(Ecore_Hash *hash, Ecore_Compare_Cb compare, const void *value)
 static Ecore_Hash_Node *
 _ecore_hash_node_get(Ecore_Hash *hash, const void *key)
 {
-   unsigned int hash_val;
+   unsigned long hash_val;
    Ecore_Hash_Node *node = NULL;
 
    CHECK_PARAM_POINTER_RETURN("hash", hash, NULL);
@@ -592,7 +603,7 @@ _ecore_hash_node_get(Ecore_Hash *hash, const void *key)
 
    /* Compute the position in the table */
    if (!hash->hash_func)
-     hash_val = (unsigned int )key % ecore_prime_table[hash->size];
+     hash_val = (unsigned long)key % ecore_prime_table[hash->size];
    else
      hash_val = ECORE_COMPUTE_HASH(hash, key);
 

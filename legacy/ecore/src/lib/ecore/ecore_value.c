@@ -24,6 +24,17 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <stdio.h>
+#include <string.h>
+
 #include "Ecore.h"
 #include "Ecore_Data.h"
 #include "ecore_private.h"
@@ -100,10 +111,10 @@ ecore_str_hash(const void *key)
 EAPI int
 ecore_direct_compare(const void *key1, const void *key2)
 {
-   unsigned int k1, k2;
+   unsigned long k1, k2;
 
-   k1 = (unsigned int) key1;
-   k2 = (unsigned int) key2;
+   k1 = (unsigned long) key1;
+   k2 = (unsigned long) key2;
 
    if (k1 > k2)
      return 1;

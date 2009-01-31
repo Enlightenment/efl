@@ -6,6 +6,13 @@
 # include <config.h>
 #endif
 
+#include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <dirent.h>
+
 #include "ecore_private.h"
 #include "Ecore_Data.h"
 #include "Ecore_Str.h"

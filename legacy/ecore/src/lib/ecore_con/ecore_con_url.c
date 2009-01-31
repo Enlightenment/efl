@@ -43,14 +43,20 @@
  *
  * FIXME: Support more CURL features: Authentication, Progress callbacks and more...
  */
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <string.h>
+#include <errno.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
 #include "Ecore.h"
 #include "ecore_private.h"
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
-
-#include <errno.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 
 /**
  * @defgroup Ecore_Con_Url_Group Ecore URL Connection Functions
@@ -827,7 +833,7 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
 }
 
 static int
-_ecore_con_url_idler_handler(void *data)
+_ecore_con_url_idler_handler(void *data __UNUSED__)
 {
    double	start;
    int		done = 1;

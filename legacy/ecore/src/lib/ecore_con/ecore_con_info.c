@@ -1,22 +1,29 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
+
 /*
  * getaddrinfo with callback
  *
  * man getaddrinfo
  *
  */
-#include "ecore_private.h"
-#include "Ecore.h"
-#include "ecore_con_private.h"
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <string.h>
 #include <ctype.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <arpa/nameser.h>
 #include <netdb.h>
+
+#include "ecore_private.h"
+#include "Ecore.h"
+#include "ecore_con_private.h"
 
 typedef struct _CB_Data CB_Data;
 

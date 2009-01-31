@@ -1,3 +1,11 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,8 +15,6 @@
 
 #include "Ecore_Config.h"
 #include "Ecore.h"
-
-#include "config.h"
 
 typedef struct __Ecore_Config_Arg_Callback _Ecore_Config_Arg_Callback;
 struct __Ecore_Config_Arg_Callback

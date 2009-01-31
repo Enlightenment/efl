@@ -1,9 +1,12 @@
 #ifndef _ECORE_IPC_H
 #define _ECORE_IPC_H
 
+#include <Ecore_Data.h>
+
 #ifdef EAPI
-#undef EAPI
+# undef EAPI
 #endif
+
 #ifdef _MSC_VER
 # ifdef BUILDING_DLL
 #  define EAPI __declspec(dllexport)
@@ -21,8 +24,6 @@
 #  define EAPI
 # endif
 #endif
-
-#include <Ecore_Data.h>
 
 /**
  * @file Ecore_Ipc.h

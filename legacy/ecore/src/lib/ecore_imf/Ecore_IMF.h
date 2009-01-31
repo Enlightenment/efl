@@ -5,6 +5,8 @@
 #ifndef _ECORE_IMF_H
 #define _ECORE_IMF_H
 
+#include <Ecore_Data.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -30,8 +32,6 @@
 #  define EAPI
 # endif
 #endif /* ! _WIN32 */
-
-#include <Ecore_Data.h>
 
 #ifdef __cplusplus
 extern "C" {

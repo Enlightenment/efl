@@ -1,14 +1,15 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include <iconv.h>
-#include <errno.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
 #include <string.h>
+#include <errno.h>
+#include <iconv.h>
 
 #include "Ecore_Txt.h"
 #include "ecore_txt_private.h"

@@ -1,9 +1,15 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
+
 /*
  * Screensaver code
  */
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"

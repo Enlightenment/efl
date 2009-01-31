@@ -1,8 +1,8 @@
 #ifndef _ECORE_GETOPT_H
 #define _ECORE_GETOPT_H
 
-#include <Eina.h>
 #include <stdio.h>
+#include <Eina.h>
 
 #ifdef EAPI
 # undef EAPI

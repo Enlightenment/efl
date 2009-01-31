@@ -6,6 +6,8 @@
 # include "config.h"
 #endif
 
+#include <string.h>
+
 #include "Ecore.h"
 #include "ecore_private.h"
 #ifdef BUILD_ECORE_EVAS_X11

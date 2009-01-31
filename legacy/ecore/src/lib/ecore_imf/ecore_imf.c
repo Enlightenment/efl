@@ -2,12 +2,14 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <Ecore.h>
 
 #include "Ecore_IMF.h"
 #include "ecore_imf_private.h"
-
-#include <Ecore.h>
 
 EAPI int ECORE_IMF_EVENT_PREEDIT_START = 0;
 EAPI int ECORE_IMF_EVENT_PREEDIT_END = 0;

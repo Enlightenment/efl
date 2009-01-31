@@ -1,8 +1,6 @@
 #ifndef _ECORE_X_PRIVATE_H
 #define _ECORE_X_PRIVATE_H
 
-#include "config.h"
-
 #include <sys/param.h>
 #ifndef MAXHOSTNAMELEN
 #define MAXHOSTNAMELEN 256

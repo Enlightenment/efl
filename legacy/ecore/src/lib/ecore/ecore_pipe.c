@@ -7,6 +7,7 @@
 #endif
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <errno.h>
 
 #ifdef HAVE_EVIL

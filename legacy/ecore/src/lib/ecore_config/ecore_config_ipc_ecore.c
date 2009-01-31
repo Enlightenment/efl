@@ -1,3 +1,11 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 /* by Azundris, with thanks to Corey Donohoe <atmos@atmos.org> */
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,7 +26,6 @@
 #include "ecore_config_private.h"
 
 #include "Ecore_Config.h"
-#include "config.h"
 
 
 /*****************************************************************************/

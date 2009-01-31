@@ -11,6 +11,8 @@
 # define USER_TIMER_MINIMUM 0x0a
 #endif
 
+#include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
 #include <sys/time.h>
 #include <sys/types.h>

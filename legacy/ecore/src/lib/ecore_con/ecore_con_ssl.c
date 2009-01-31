@@ -2,6 +2,10 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #if USE_GNUTLS
 # include <gnutls/gnutls.h>
 #elif USE_OPENSSL
@@ -256,7 +260,7 @@ _ecore_con_ssl_server_shutdown_gnutls(Ecore_Con_Server *svr)
  * should try again later.
  */
 static Ecore_Con_State
-_ecore_con_ssl_server_try_gnutls(Ecore_Con_Server *svr)
+_ecore_con_ssl_server_try_gnutls(Ecore_Con_Server *svr __UNUSED__)
 {
    return ECORE_CON_CONNECTED;
 }

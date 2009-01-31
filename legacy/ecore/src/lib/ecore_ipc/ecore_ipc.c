@@ -1,5 +1,12 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include "Ecore.h"
-#include <config.h>
 #include "Ecore_Con.h"
 #include "ecore_private.h"
 #include "ecore_ipc_private.h"
@@ -8,6 +15,7 @@
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
 #endif
+
 #ifdef HAVE_WINSOCK2_H
 # include <winsock2.h>
 #endif

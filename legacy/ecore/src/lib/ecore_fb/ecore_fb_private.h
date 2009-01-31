@@ -6,6 +6,7 @@
 #include "Ecore_Data.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 #include <termios.h>
 #include <sys/types.h>

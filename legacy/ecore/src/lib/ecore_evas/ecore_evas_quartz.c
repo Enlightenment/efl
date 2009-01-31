@@ -1,4 +1,11 @@
-#include "config.h"
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #ifdef BUILD_ECORE_EVAS_QUARTZ
 #import <Cocoa/Cocoa.h>
 #endif

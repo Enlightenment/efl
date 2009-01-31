@@ -6,6 +6,13 @@
 # include <config.h>
 #endif
 
+#include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <dirent.h>
+
 #ifndef _FILE_OFFSET_BITS
 # define _FILE_OFFSET_BITS  64
 #endif

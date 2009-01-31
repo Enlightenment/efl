@@ -2,13 +2,17 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <sys/stat.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <errno.h>
-
-#include <config.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #include "Ecore.h"
 #include "ecore_private.h"

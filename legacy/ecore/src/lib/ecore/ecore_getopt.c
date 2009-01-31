@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -7,8 +11,7 @@
 #include <stdarg.h>
 #include <ctype.h>
 
-#include <Ecore.h>
-
+#include "Ecore.h"
 #include "Ecore_Getopt.h"
 
 static const char *prog = NULL;
@@ -18,7 +21,7 @@ static int cols = 80;
 static int helpcol = 80 / 3;
 
 static void
-_ecore_getopt_help_print_replace_program(FILE *fp, const Ecore_Getopt *parser, const char *text)
+_ecore_getopt_help_print_replace_program(FILE *fp, const Ecore_Getopt *parser __UNUSED__, const char *text)
 {
    do
      {
@@ -321,7 +324,7 @@ _ecore_getopt_help_desc_store(FILE *fp, const int base, const int total, int use
    const Ecore_Getopt_Desc_Store *store = &desc->action_param.store;
    char buf[64];
    const char *str;
-   int len;
+   size_t len;
 
    fputc('\n', fp);
    for (used = 0; used < base; used++)
@@ -802,7 +805,7 @@ _ecore_getopt_parse_double(const char *str, double *v)
 }
 
 static unsigned char
-_ecore_getopt_parse_store(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *value, const char *arg_val)
+_ecore_getopt_parse_store(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *value, const char *arg_val)
 {
    const Ecore_Getopt_Desc_Store *store = &desc->action_param.store;
    long int v;
@@ -922,7 +925,7 @@ _ecore_getopt_parse_store(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *d
 }
 
 static unsigned char
-_ecore_getopt_parse_store_const(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val)
+_ecore_getopt_parse_store_const(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
 {
    if (!val->ptrp)
      {
@@ -935,7 +938,7 @@ _ecore_getopt_parse_store_const(const Ecore_Getopt *parser, const Ecore_Getopt_D
 }
 
 static unsigned char
-_ecore_getopt_parse_store_true(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val)
+_ecore_getopt_parse_store_true(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
 {
    if (!val->boolp)
      {
@@ -947,7 +950,7 @@ _ecore_getopt_parse_store_true(const Ecore_Getopt *parser, const Ecore_Getopt_De
 }
 
 static unsigned char
-_ecore_getopt_parse_store_false(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val)
+_ecore_getopt_parse_store_false(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
 {
    if (!val->boolp)
      {
@@ -959,7 +962,7 @@ _ecore_getopt_parse_store_false(const Ecore_Getopt *parser, const Ecore_Getopt_D
 }
 
 static unsigned char
-_ecore_getopt_parse_choice(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val)
+_ecore_getopt_parse_choice(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val)
 {
    const char * const *pchoice;
 
@@ -993,7 +996,7 @@ _ecore_getopt_parse_choice(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *
 }
 
 static unsigned char
-_ecore_getopt_parse_append(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val)
+_ecore_getopt_parse_append(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val)
 {
    void *data;
    long int v;
@@ -1113,7 +1116,7 @@ _ecore_getopt_parse_append(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *
 }
 
 static unsigned char
-_ecore_getopt_parse_count(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val)
+_ecore_getopt_parse_count(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
 {
    if (!val->intp)
      {
@@ -1169,7 +1172,7 @@ _ecore_getopt_parse_callback(const Ecore_Getopt *parser, const Ecore_Getopt_Desc
 }
 
 static unsigned char
-_ecore_getopt_parse_help(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val)
+_ecore_getopt_parse_help(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc __UNUSED__, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
 {
    if (val->boolp)
      (*val->boolp) = 1;
@@ -1178,7 +1181,7 @@ _ecore_getopt_parse_help(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *de
 }
 
 static unsigned char
-_ecore_getopt_parse_version(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val)
+_ecore_getopt_parse_version(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
 {
    if (val->boolp)
      (*val->boolp) = 1;
@@ -1192,7 +1195,7 @@ _ecore_getopt_parse_version(const Ecore_Getopt *parser, const Ecore_Getopt_Desc 
 }
 
 static unsigned char
-_ecore_getopt_parse_copyright(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val)
+_ecore_getopt_parse_copyright(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
 {
    if (val->boolp)
      (*val->boolp) = 1;
@@ -1206,7 +1209,7 @@ _ecore_getopt_parse_copyright(const Ecore_Getopt *parser, const Ecore_Getopt_Des
 }
 
 static unsigned char
-_ecore_getopt_parse_license(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val)
+_ecore_getopt_parse_license(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
 {
    if (val->boolp)
      (*val->boolp) = 1;
@@ -1254,7 +1257,7 @@ _ecore_getopt_desc_handle(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *d
 }
 
 static unsigned char
-_ecore_getopt_parse_arg_long(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc, char **argv, int *idx, int *nonargs, const char *arg)
+_ecore_getopt_parse_arg_long(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc __UNUSED__, char **argv, int *idx, int *nonargs, const char *arg)
 {
    const Ecore_Getopt_Desc *desc;
    Ecore_Getopt_Desc_Arg_Requirement arg_req;
@@ -1317,7 +1320,7 @@ _ecore_getopt_parse_arg_long(const Ecore_Getopt *parser, Ecore_Getopt_Value *val
 }
 
 static unsigned char
-_ecore_getopt_parse_arg_short(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc, char **argv, int *idx, int *nonargs, const char *arg)
+_ecore_getopt_parse_arg_short(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc __UNUSED__, char **argv, int *idx, int *nonargs, const char *arg)
 {
    int run = 1;
    while (run && (arg[0] != '\0'))
@@ -1649,7 +1652,7 @@ ecore_getopt_list_free(Eina_List *list)
  * @c callback_data value is ignored, you can safely use @c NULL.
  */
 unsigned char
-ecore_getopt_callback_geometry_parse(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage)
+ecore_getopt_callback_geometry_parse(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc __UNUSED__, const char *str, void *data __UNUSED__, Ecore_Getopt_Value *storage)
 {
    Eina_Rectangle *v = (Eina_Rectangle *)storage->ptrp;
 

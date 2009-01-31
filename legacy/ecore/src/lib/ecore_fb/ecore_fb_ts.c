@@ -1,10 +1,18 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#ifdef HAVE_TSLIB
+# include <tslib.h>
+# include <errno.h>
+#endif
+
 #include "Ecore_Fb.h"
 #include "ecore_fb_private.h"
-#include "config.h"
-#ifdef HAVE_TSLIB
-#include <tslib.h>
-#include <errno.h>
-#endif
 
 typedef struct _Ecore_Fb_Ts_Event Ecore_Fb_Ts_Event;
 typedef struct _Ecore_Fb_Ts_Calibrate Ecore_Fb_Ts_Calibrate;

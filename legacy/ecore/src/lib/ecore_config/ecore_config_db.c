@@ -1,3 +1,11 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -9,10 +17,11 @@
 #include <unistd.h>
 #include <locale.h>
 
+#include <Eet.h>
+
 #include "Ecore_Config.h"
 #include "ecore_config_private.h"
 #include "ecore_config_util.h"
-#include <Eet.h>
 
 struct _Ecore_Config_DB_File
 {

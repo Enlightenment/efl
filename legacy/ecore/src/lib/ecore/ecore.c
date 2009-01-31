@@ -1,6 +1,16 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
@@ -10,13 +20,17 @@
 # include <langinfo.h>
 #endif
 
-#include "Ecore.h"
-#include "ecore_private.h"
+#ifdef HAVE_SYS_MMAN_H
+# include <sys/mman.h>
+#endif
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
 #include <Eina.h>
+
+#include "Ecore.h"
+#include "ecore_private.h"
 
 static const char *_ecore_magic_string_get(Ecore_Magic m);
 static int _ecore_init_count = 0;

@@ -116,6 +116,7 @@ AC_SUBST(lt_enable_auto_import)
 dnl check common functions and headers
 AC_CHECK_FUNCS(gettimeofday)
 AC_CHECK_FUNCS(strlcpy)
+AC_FUNC_ALLOCA
 
 dnl gnutls
 want_gnutls="yes"

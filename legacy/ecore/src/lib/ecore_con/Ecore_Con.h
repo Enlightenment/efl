@@ -4,9 +4,17 @@
 #ifndef _ECORE_CON_H
 #define _ECORE_CON_H
 
-#ifdef EAPI
-#undef EAPI
+#include <time.h>
+#include <libgen.h>
+#ifdef HAVE_NETDB_H
+# include <netdb.h>
 #endif
+#include <Ecore_Data.h>
+
+#ifdef EAPI
+# undef EAPI
+#endif
+
 #ifdef _MSC_VER
 # ifdef BUILDING_DLL
 #  define EAPI __declspec(dllexport)
@@ -24,13 +32,6 @@
 #  define EAPI
 # endif
 #endif
-
-#include <time.h>
-#include <libgen.h>
-#ifdef HAVE_NETDB_H
-# include <netdb.h>
-#endif
-#include <Ecore_Data.h>
 
 /**
  * @file Ecore_Con.h

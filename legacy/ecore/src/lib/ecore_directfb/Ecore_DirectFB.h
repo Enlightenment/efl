@@ -1,6 +1,9 @@
 #ifndef _ECORE_DIRECTFB_H
 #define _ECORE_DIRECTFB_H
 
+#include <directfb.h>
+#include <Ecore_Data.h>
+
 #ifdef EAPI
 #undef EAPI
 #endif
@@ -21,9 +24,6 @@
 #  define EAPI
 # endif
 #endif
-
-#include <Ecore_Data.h>
-#include <directfb.h>
 
 
 #ifdef __cplusplus

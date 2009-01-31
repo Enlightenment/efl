@@ -1,3 +1,11 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 /* ############## bad */
 #define HAVE_EVAS2
 
@@ -15,7 +23,6 @@
 #include "ecore_config_util.h"
 #include "ecore_config_ipc.h"
 
-#include "config.h"
 #include "ecore_config_private.h"
 
 static Ecore_Config_Server *__ecore_config_servers;

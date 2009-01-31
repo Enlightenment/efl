@@ -8,13 +8,19 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <dirent.h>
+
 
 #ifdef HAVE_DLFCN_H
 # include <dlfcn.h>
 #endif
 
 #ifdef HAVE_EVIL_H
-# include <evil.h>
+# include <Evil.h>
 #endif
 
 #include "Ecore_Data.h"
@@ -251,7 +257,7 @@ ecore_plugin_available_get(Ecore_Path_Group *group)
 }
 
 static Eina_Bool
-_hash_keys(const Eina_Hash *hash, const char *key, void *list)
+_hash_keys(const Eina_Hash *hash __UNUSED__, const char *key, void *list)
 {
    ecore_list_append(list, strdup(key));
    return EINA_TRUE;

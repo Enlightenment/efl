@@ -6,6 +6,9 @@
 # include <config.h>
 #endif
 
+#include <stdio.h>
+#include <string.h>
+
 #include "ecore_file_private.h"
 
 #ifdef HAVE_POLL
