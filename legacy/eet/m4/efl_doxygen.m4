@@ -28,50 +28,53 @@ AC_ARG_ENABLE([doc],
    [efl_enable_doc="yes"]
 )
 
+if test "x${efl_enable_doc}" = "xyes" ; then
+
 dnl
 dnl Specify the full file name, with path
 dnl
 
-efl_doxygen="doxygen"
+   efl_doxygen="doxygen"
 
-AC_ARG_WITH([doxygen],
-   [AC_HELP_STRING(
-       [--with-doxygen=FILE],
-       [doxygen program to use @<:@default=doxygen@:>@])],
-   dnl
-   dnl Check the given doxygen program.
-   dnl
-   [DOXYGEN=${withval}
-    AC_CHECK_PROG([efl_have_doxygen],
-       [${efl_doxygen}],
-       [yes],
-       [no])
-    if test "x${efl_have_doxygen}" = "xno" ; then
-       echo "WARNING:"
-       echo "The doxygen program you specified:"
-       echo "$efl_doxygen"
-       echo "was not found.  Please check the path and make sure "
-       echo "the program exists and is executable."
-       AC_MSG_WARN([Warning: no doxygen detected. Documentation will not be built])
-    fi
-   ],
-   [AC_CHECK_PROG([efl_have_doxygen],
-       [${efl_doxygen}],
-       [yes],
-       [no])
-    if test "x${efl_have_doxygen}" = "xno" ; then
-       echo "WARNING:"
-       echo "The doxygen program was not found in your execute"
-       echo "You may have doxygen installed somewhere not covered by your path."
-       echo ""
-       echo "If this is the case make sure you have the packages installed, AND"
-       echo "that the doxygen program is in your execute path (see your"
-       echo "shell manual page on setting the \$PATH environment variable), OR"
-       echo "alternatively, specify the program to use with --with-doxygen."
-       AC_MSG_WARN([Warning: no doxygen detected. Documentation will not be built])
-    fi
-   ]
-)
+   AC_ARG_WITH([doxygen],
+      [AC_HELP_STRING(
+          [--with-doxygen=FILE],
+          [doxygen program to use @<:@default=doxygen@:>@])],
+dnl
+dnl Check the given doxygen program.
+dnl
+      [DOXYGEN=${withval}
+       AC_CHECK_PROG([efl_have_doxygen],
+          [${efl_doxygen}],
+          [yes],
+          [no])
+       if test "x${efl_have_doxygen}" = "xno" ; then
+          echo "WARNING:"
+          echo "The doxygen program you specified:"
+          echo "$efl_doxygen"
+          echo "was not found.  Please check the path and make sure "
+          echo "the program exists and is executable."
+          AC_MSG_WARN([Warning: no doxygen detected. Documentation will not be built])
+       fi
+      ],
+      [AC_CHECK_PROG([efl_have_doxygen],
+          [${efl_doxygen}],
+          [yes],
+          [no])
+       if test "x${efl_have_doxygen}" = "xno" ; then
+          echo "WARNING:"
+          echo "The doxygen program was not found in your execute"
+          echo "You may have doxygen installed somewhere not covered by your path."
+          echo ""
+          echo "If this is the case make sure you have the packages installed, AND"
+          echo "that the doxygen program is in your execute path (see your"
+          echo "shell manual page on setting the \$PATH environment variable), OR"
+          echo "alternatively, specify the program to use with --with-doxygen."
+          AC_MSG_WARN([Warning: no doxygen detected. Documentation will not be built])
+       fi
+      ]
+   )
+fi
 
 dnl
 dnl Substitution
