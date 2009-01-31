@@ -3,7 +3,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include <config.h>
 #endif
 
 #ifdef BUILD_ECORE_EVAS_QUARTZ
