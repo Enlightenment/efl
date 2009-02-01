@@ -1,5 +1,12 @@
 2009-02-01  Vincent Torri  <doursse at users dot sf dot net>
 
+	* doc/Makefile.am:
+	* m4/efl_doxygen.m4:
+	Missing modification of the variable DOXYGEN to
+	efl_doxygen. Spotted by Albin Tonnerre (Lutin).
+
+2009-02-01  Vincent Torri  <doursse at users dot sf dot net>
+
 	* m4/efl_doxygen.m4:
 	fix logic in efl_doxygen.m4
 
