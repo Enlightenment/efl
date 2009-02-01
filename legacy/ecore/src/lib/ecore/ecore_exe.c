@@ -6,6 +6,11 @@
 # include <config.h>
 #endif
 
+#ifdef __FreeBSD__
+#include <sys/time.h>
+#include <sys/resource.h>
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
