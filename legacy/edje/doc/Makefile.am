@@ -13,7 +13,7 @@ doc-clean:
 doc: all doc-clean
 	cat ../src/lib/Edje.h >> ./edje.dox
 	cat `find ../src/lib -name "*.c" -fprint /dev/stdout | grep -v edje_edit.c` >> edje.dox
-	$(DOXYGEN)
+	$(efl_doxygen)
 	cp img/* html/
 	rm -rf $(PACKAGE_DOCNAME).tar*
 	mkdir -p $(PACKAGE_DOCNAME)/doc
