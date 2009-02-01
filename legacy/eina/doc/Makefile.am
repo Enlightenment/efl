@@ -7,7 +7,7 @@ if EFL_BUILD_DOC
 
 doc: all
 	rm -rf html/ latex/ man/
-	$(DOXYGEN)
+	$(efl_doxygen)
 
 else
 
