@@ -5,7 +5,7 @@ dnl Macro that check if doxygen is available or not.
 
 dnl EFL_CHECK_DOXYGEN([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 dnl Test for the doxygen program
-dnl Defines DOXYGEN
+dnl Defines efl_doxygen
 dnl Defines the automake conditionnal EFL_BUILD_DOC
 dnl
 AC_DEFUN([EFL_CHECK_DOXYGEN],
@@ -43,7 +43,7 @@ dnl
 dnl
 dnl Check the given doxygen program.
 dnl
-      [DOXYGEN=${withval}
+      [efl_doxygen=${withval}
        AC_CHECK_PROG([efl_have_doxygen],
           [${efl_doxygen}],
           [yes],
