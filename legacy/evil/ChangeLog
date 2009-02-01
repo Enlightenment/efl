@@ -1,3 +1,8 @@
+2009-02-01  Vincent Torri  <doursse at users dot sf dot net>
+
+	* m4/efl_doxygen.m4:
+	fix logic in efl_doxygen.m4
+
 2009-01-24  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_fcntl.c:
