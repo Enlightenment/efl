@@ -328,6 +328,12 @@ elm_shutdown(void)
 
    eina_stringshare_del(_elm_data_dir);
    _elm_data_dir = NULL;
+
+   while (_elm_config->font_dirs)
+     {
+        eina_stringshare_del(_elm_config->font_dirs->data);
+        _elm_config->font_dirs = eina_list_remove_list(_elm_config->font_dirs, _elm_config->font_dirs);
+     }
    
    free(_elm_config);
    free(_elm_appname);
