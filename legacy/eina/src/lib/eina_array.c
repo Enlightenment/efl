@@ -309,7 +309,7 @@ eina_array_grow(Eina_Array *array)
  * The Array data type in Eina is designed to have a very fast access to
  * its data (compared to the Eina @ref Eina_List_Group). On the other hand,
  * data can be added or removed only at the end of the array. To insert
- * data at any place, he Eina @ref Eina_List_Group is the correct container
+ * data at any place, the Eina @ref Eina_List_Group is the correct container
  * to use.
  *
  * To use the array data type, eina_array_init() must be called before
