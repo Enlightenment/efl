@@ -1,5 +1,5 @@
 body {
-    background: url("images/b.png");
+    background: url("b.png");
     background-repeat: repeat-x;
     background-position: top left;
     background-color: #f4f4f4;
@@ -19,10 +19,10 @@ div.main {
     width: 80%;
 }
 
-td.t { background-image:url("images/t.gif"); }
-td.t[class] { background-image:url("images/t.png"); }
-td.tl { background-image:url("images/tl.gif"); }
-td.tl[class] { background-image:url("images/tl.png"); }
+td.t { background-image:url("t.gif"); }
+td.t[class] { background-image:url("t.png"); }
+td.tl { background-image:url("tl.gif"); }
+td.tl[class] { background-image:url("tl.png"); }
 
 td.nav, td.lnav,  td.rnav {
    align: middle;
@@ -37,10 +37,10 @@ td.nav, td.lnav,  td.rnav {
    white-space: no-wrap;
 }  
 
-td.lnav[class] { background-image:url("images/n.png"); }
-td.lnav[class] { background-image:url("images/n.png"); }
-td.rnav { background-image:url("images/n.gif"); }
-td.rnav[class] { background-image:url("images/n.png"); }
+td.lnav[class] { background-image:url("n.png"); }
+td.lnav[class] { background-image:url("n.png"); }
+td.rnav { background-image:url("n.gif"); }
+td.rnav[class] { background-image:url("n.png"); }
 
 hr {
     width: 200px;

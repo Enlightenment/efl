@@ -1,8 +1,9 @@
 rm -f config.cache
 
-AC_INIT(efreet, 0.5.0.050, enlightenment-devel@lists.sourceforge.net)
-AC_PREREQ(2.52)
-AC_CONFIG_SRCDIR(configure.ac)
+AC_INIT([efreet], [0.5.0.050], [enlightenment-devel@lists.sourceforge.net])
+AC_PREREQ([2.52])
+AC_CONFIG_SRCDIR([configure.ac])
+AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 
@@ -64,6 +65,7 @@ else
     AC_DEFINE(DEFAULT_VISIBLITY, 1, [Default visibility])
 fi
 AM_CONDITIONAL(DEFAULT_VISIBILITY, test "x$enable_hidden_visibility" != "xyes")
+EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 AC_SUBST(requirements)
 AC_OUTPUT([
@@ -72,6 +74,8 @@ efreet.pc
 efreet-mime.pc
 efreet-trash.pc
 Makefile
+doc/Makefile
+doc/Doxyfile
 src/Makefile
 src/lib/Makefile
 src/bin/Makefile
