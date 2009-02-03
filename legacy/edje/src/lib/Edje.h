@@ -181,7 +181,9 @@ extern "C" {
    EAPI const char  *edje_fontset_append_get         (void);
    EAPI void         edje_scale_set                  (double scale);
    EAPI double       edje_scale_get                  (void);
-
+   EAPI void         edje_object_scale_set           (Evas_Object *obj, double scale);
+   EAPI double       edje_object_scale_get           (const Evas_Object *obj);
+       
    /* edje_load.c */
    EAPI Eina_List   *edje_file_collection_list       (const char *file);
    EAPI void         edje_file_collection_list_free  (Eina_List *lst);

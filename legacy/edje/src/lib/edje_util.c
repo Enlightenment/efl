@@ -163,6 +163,28 @@ edje_scale_get(void)
    return _edje_scale;
 }
 
+EAPI void
+edje_object_scale_set(Evas_Object *obj, double scale)
+{
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
+   if (!ed) return;
+   if (ed->scale == scale) return;
+   ed->scale = scale;
+   edje_object_calc_force(obj);
+}
+
+EAPI double
+edje_object_scale_get(const Evas_Object *obj)
+{
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
+   if (!ed) return 0.0;
+   return ed->scale;
+}
+
 /* FIXDOC: Verify/Expand */
 /** Get Edje object data
  * @param obj A valid Evas_Object handle

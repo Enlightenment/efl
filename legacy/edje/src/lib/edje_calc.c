@@ -270,13 +270,16 @@ _edje_part_recalc_single(Edje *ed,
 			 int flags)
 {
    int minw = 0, minh = 0, maxw = 0, maxh = 0;
+   double sc;
 
    flags = FLAG_XY;
 
+   sc = ed->scale;
+   if (sc == 0.0) sc = _edje_scale;
 //   if (flags & FLAG_X)
      {
 	minw = desc->min.w;
-	if (ep->part->scale) minw = (int)(((double)minw) * _edje_scale);
+	if (ep->part->scale) minw = (int)(((double)minw) * sc);
 	if (ep->swallow_params.min.w > desc->min.w)
 	  minw = ep->swallow_params.min.w;
 
@@ -287,7 +290,7 @@ _edje_part_recalc_single(Edje *ed,
 	     maxw = desc->max.w;
 	     if (maxw > 0)
 	       {
-		  if (ep->part->scale) maxw = (int)(((double)maxw) * _edje_scale);
+		  if (ep->part->scale) maxw = (int)(((double)maxw) * sc);
 		  if (maxw < 1) maxw = 1;
 	       }
 	  }
@@ -300,7 +303,7 @@ _edje_part_recalc_single(Edje *ed,
 		  maxw = desc->max.w;
 		  if (maxw > 0)
 		    {
-		       if (ep->part->scale) maxw = (int)(((double)maxw) * _edje_scale);
+		       if (ep->part->scale) maxw = (int)(((double)maxw) * sc);
 		       if (maxw < 1) maxw = 1;
 		    }
 		  if (ep->swallow_params.max.w < maxw)
@@ -315,7 +318,7 @@ _edje_part_recalc_single(Edje *ed,
 //   if (flags & FLAG_Y)
      {
 	minh = desc->min.h;
-	if (ep->part->scale) minh = (int)(((double)minh) * _edje_scale);
+	if (ep->part->scale) minh = (int)(((double)minh) * sc);
 	if (ep->swallow_params.min.h > desc->min.h)
 	  minh = ep->swallow_params.min.h;
 
@@ -326,7 +329,7 @@ _edje_part_recalc_single(Edje *ed,
 	     maxh = desc->max.h;
 	     if (maxh > 0)
 	       {
-		  if (ep->part->scale) maxh = (int)(((double)maxh) * _edje_scale);
+		  if (ep->part->scale) maxh = (int)(((double)maxh) * sc);
 		  if (maxh < 1) maxh = 1;
 	       }
 	  }
@@ -339,7 +342,7 @@ _edje_part_recalc_single(Edje *ed,
 		  maxh = desc->max.h;
 		  if (maxh > 0)
 		    {
-		       if (ep->part->scale) maxh = (int)(((double)maxh) * _edje_scale);
+		       if (ep->part->scale) maxh = (int)(((double)maxh) * sc);
 		       if (maxh < 1) maxh = 1;
 		    }
 		  if (ep->swallow_params.max.h < maxh)
@@ -647,7 +650,7 @@ _edje_part_recalc_single(Edje *ed,
 	  }
 
 	if (ep->part->scale)
-	  evas_object_scale_set(ep->object, _edje_scale);
+	  evas_object_scale_set(ep->object, sc);
 	
 	if (stl)
 	  {
@@ -786,7 +789,7 @@ _edje_part_recalc_single(Edje *ed,
 	       }
 	  }
 	if (ep->part->scale)
-	  evas_object_scale_set(ep->object, _edje_scale);
+	  evas_object_scale_set(ep->object, sc);
 	if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
 	else evas_object_text_font_source_set(ep->object, NULL);
 

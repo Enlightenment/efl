@@ -684,6 +684,7 @@ struct _Edje
    int                   block;
    int                   load_error;
    int                   freeze;
+   double                scale;
 
    struct {
       void (*func) (void *data, Evas_Object *obj, const char *part);
