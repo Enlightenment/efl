@@ -44,6 +44,10 @@ struct _Elm_Config
    double scale;
    int bgpixmap;
    int compositing;
+   Eina_List *font_dirs;
+   int font_hinting;
+   int image_cache;
+   int font_cache;
 };
 
 #define ELM_NEW(t) calloc(1, sizeof(t))

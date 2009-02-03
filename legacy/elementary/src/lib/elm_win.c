@@ -246,6 +246,7 @@ EAPI Evas_Object *
 elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 {
    Elm_Win *win;
+   Eina_List *l;
    
    win = ELM_NEW(Elm_Win);
    switch (_elm_config->engine)
@@ -309,13 +310,16 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    ecore_evas_name_class_set(win->ee, name, _elm_appname);
    ecore_evas_callback_delete_request_set(win->ee, _elm_win_delete_request);
    ecore_evas_callback_resize_set(win->ee, _elm_win_resize);
-   // FIXME: use elm config for this
-   evas_image_cache_set(win->evas, 4096 * 1024);
-   evas_font_cache_set(win->evas, 512 * 1024);
-   evas_font_path_append(win->evas, "fonts");
-//   evas_font_hinting_set(win->evas, EVAS_FONT_HINTING_NONE);
-//   evas_font_hinting_set(win->evas, EVAS_FONT_HINTING_AUTO);
-//   evas_font_hinting_set(win->evas, EVAS_FONT_HINTING_BYTECODE);
+   evas_image_cache_set(win->evas, _elm_config->image_cache * 1024);
+   evas_font_cache_set(win->evas, _elm_config->font_cache * 1024);
+   for (l = _elm_config->font_dirs; l; l = l->next)
+     evas_font_path_append(win->evas, l->data);
+   if (_elm_config->font_hinting == 0)
+     evas_font_hinting_set(win->evas, EVAS_FONT_HINTING_NONE);
+   else if (_elm_config->font_hinting == 1)
+     evas_font_hinting_set(win->evas, EVAS_FONT_HINTING_AUTO);
+   else if (_elm_config->font_hinting == 2)
+     evas_font_hinting_set(win->evas, EVAS_FONT_HINTING_BYTECODE);
    edje_frametime_set(1.0 / 60.0);
    edje_scale_set(_elm_config->scale);
 

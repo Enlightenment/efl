@@ -78,6 +78,7 @@ elm_init(int argc, char **argv)
 {
    int i;
    const char *elm_engine, *elm_scale, *elm_theme, *elm_prefix, *elm_data_dir;
+   const char *elm_font_hinting, *elm_font_path, *elm_image_cache, *elm_font_cache;
    char buf[PATH_MAX];
    
    eet_init();
@@ -97,6 +98,10 @@ elm_init(int argc, char **argv)
    elm_theme = getenv("ELM_THEME");
    elm_prefix = getenv("ELM_PREFIX");
    elm_data_dir = getenv("ELM_DATA_DIR");
+   elm_font_hinting = getenv("ELM_FONT_HINTING");
+   elm_font_path = getenv("ELM_FONT_PATH");
+   elm_image_cache = getenv("ELM_IMAGE_CACHE");
+   elm_font_cache = getenv("ELM_FONT_CACHE");
    
    if (!_elm_data_dir)
      {
@@ -188,6 +193,10 @@ elm_init(int argc, char **argv)
    _elm_config->thumbscroll_momentum_threshhold = 100.0;
    _elm_config->thumbscroll_friction = 1.0;
    _elm_config->scale = 1.0;
+   _elm_config->font_hinting = 2;
+   _elm_config->font_dirs = NULL;
+   _elm_config->image_cache = 4096;
+   _elm_config->font_cache = 512;
    
    _elm_config->bgpixmap = 0;
    _elm_config->compositing = 1;
@@ -227,6 +236,53 @@ elm_init(int argc, char **argv)
      _elm_theme_parse(elm_theme);
    else
      _elm_theme_parse("default");
+   
+   _elm_config->font_hinting = 2;
+   if (elm_font_hinting)
+     {
+        if (!strcasecmp(elm_font_hinting, "none"))
+          _elm_config->font_hinting = 0;
+        else if (!strcasecmp(elm_font_hinting, "auto"))
+          _elm_config->font_hinting = 1;
+        else if (!strcasecmp(elm_font_hinting, "bytecode"))
+          _elm_config->font_hinting = 2;
+     }
+   
+   if (elm_font_path)
+     {
+        const char *p, *pp, *s;
+        char *buf;
+        
+        buf = alloca(strlen(elm_font_path) + 1);
+        p = elm_font_path;
+        pp = p;
+        for (;;)
+          {
+             if ((*p == ':') || (*p == 0))
+               {
+                  int len;
+                  
+                  len = p - pp;
+                  strncpy(buf, pp, len);
+                  buf[len] = 0;
+                  _elm_config->font_dirs = eina_list_append(_elm_config->font_dirs, buf);
+                  if (*p == 0) break;
+                  p++;
+                  pp = p;
+               }
+             else
+               {
+                  if (*p == 0) break;
+                  p++;
+               }
+          }
+     }
+   
+   if (elm_image_cache)
+     _elm_config->image_cache = atoi(elm_image_cache);
+
+   if (elm_font_cache)
+     _elm_config->font_cache = atoi(elm_font_cache);
    
    /* FIXME: implement quickstart below */
    /* if !quickstart return
