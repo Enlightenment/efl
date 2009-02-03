@@ -39,6 +39,8 @@ _del_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
+   Widget_Data *wd = elm_widget_data_get(obj);
+   edje_object_scale_set(wd->lay, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
 }
 

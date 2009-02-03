@@ -25,6 +25,8 @@ _del_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
+   Widget_Data *wd = elm_widget_data_get(obj);
+   edje_object_scale_set(wd->frm, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
 }
 
@@ -35,8 +37,8 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
  
    evas_object_size_hint_min_set(wd->img, 
-                                 wd->size * _elm_config->scale,
-                                 wd->size * _elm_config->scale);
+                                 wd->size * elm_widget_scale_get(obj) * _elm_config->scale,
+                                 wd->size * elm_widget_scale_get(obj) * _elm_config->scale);
    edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->img);
    edje_object_size_min_calc(wd->frm, &minw, &minh);
    maxw = minw;
@@ -75,7 +77,7 @@ elm_photo_add(Evas_Object *parent)
    _els_smart_icon_scale_down_set(wd->img, 1);
    _els_smart_icon_smooth_scale_set(wd->img, 1);
    _els_smart_icon_fill_inside_set(wd->img, 0);
-   _els_smart_icon_scale_set(wd->img, _elm_config->scale);
+   _els_smart_icon_scale_set(wd->img, elm_widget_scale_get(obj) * _elm_config->scale);
    evas_object_event_callback_add(wd->img, EVAS_CALLBACK_MOUSE_UP,
 				  _mouse_up, obj);
    evas_object_repeat_events_set(wd->img, 1);

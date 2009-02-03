@@ -32,6 +32,7 @@ _theme_hook(Evas_Object *obj)
    _elm_theme_set(wd->bbl, "bubble", "base", "default");
    edje_object_part_text_set(wd->bbl, "elm.text", wd->label);
    edje_object_part_text_set(wd->bbl, "elm.info", wd->info);
+   edje_object_scale_set(wd->bbl, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
 }
 

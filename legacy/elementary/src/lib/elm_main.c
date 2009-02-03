@@ -294,3 +294,21 @@ elm_exit(void)
 {
    ecore_main_loop_quit();
 }
+
+EAPI void
+elm_object_scale_set(Evas_Object *obj, double scale)
+{
+   return elm_widget_scale_set(obj, scale);
+}
+
+EAPI double
+elm_object_scale_get(Evas_Object *obj)
+{
+   return elm_widget_scale_get(obj);
+}
+
+EAPI void
+elm_object_focus(Evas_Object *obj)
+{
+   elm_widget_focus_set(obj, 1);
+}

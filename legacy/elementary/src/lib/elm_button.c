@@ -47,6 +47,7 @@ _theme_hook(Evas_Object *obj)
      edje_object_signal_emit(wd->btn, "elm,state,icon,hidden", "elm");
    edje_object_part_text_set(wd->btn, "elm.text", wd->label);
    edje_object_message_signal_process(wd->btn);
+   edje_object_scale_set(wd->btn, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
 }
 

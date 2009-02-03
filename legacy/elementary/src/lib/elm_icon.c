@@ -54,7 +54,7 @@ _sizing_eval(Evas_Object *obj)
    if (wd->no_scale) _els_smart_icon_scale_set(wd->img, 1.0);
    else
      {
-	_els_smart_icon_scale_set(wd->img, _elm_config->scale);
+	_els_smart_icon_scale_set(wd->img, elm_widget_scale_get(obj) * _elm_config->scale);
 	_els_smart_icon_size_get(wd->img, &w, &h);
      }
    if (!wd->scale_down)

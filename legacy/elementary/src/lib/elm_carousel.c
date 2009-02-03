@@ -85,6 +85,7 @@ _theme_hook(Evas_Object *obj)
         if (it->selected)
           edje_object_signal_emit(it->base, "elm,state,selected", "elm");
         _elm_theme_set(it->base, "carousel", "item", "default");
+        edje_object_scale_set(it->base, elm_widget_scale_get(obj) * _elm_config->scale);
         if (it->icon)
           {
              edje_extern_object_min_size_set(it->icon, 

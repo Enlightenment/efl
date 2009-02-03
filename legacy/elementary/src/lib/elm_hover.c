@@ -69,6 +69,7 @@ _theme_hook(Evas_Object *obj)
    // FIXME: hover contents doesnt seem to propagate resizes properly
    if (wd->style) _elm_theme_set(wd->cov, "hover", "base", wd->style);
    else _elm_theme_set(wd->cov, "hover", "base", "default");
+   edje_object_scale_set(wd->cov, elm_widget_scale_get(obj) * _elm_config->scale);
    _reval_content(obj);
    _sizing_eval(obj);
    if (evas_object_visible_get(wd->cov)) _hov_show_do(obj);
@@ -99,7 +100,7 @@ _reval_content(Evas_Object *obj)
    for (l = wd->subs; l; l = l->next)
      {
 	Subinfo *si = l->data;
-        edje_object_part_swallow(wd->hov, si->swallow, si->obj);
+        edje_object_part_swallow(wd->cov, si->swallow, si->obj);
      }
 }
 
@@ -113,7 +114,7 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	Subinfo *si = l->data;
 	if (si->obj == obj)
 	  {
-	     edje_object_part_swallow(wd->hov, si->swallow, si->obj);
+	     edje_object_part_swallow(wd->cov, si->swallow, si->obj);
 	     break;
 	  }
      }

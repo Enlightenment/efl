@@ -2,8 +2,15 @@
 #include "elm_priv.h"
 
 #define SMART_NAME "e_widget"
-#define API_ENTRY Smart_Data *sd = evas_object_smart_data_get(obj); if ((!obj) || (!sd) || (evas_object_type_get(obj) && strcmp(evas_object_type_get(obj), SMART_NAME)))
-#define INTERNAL_ENTRY Smart_Data *sd = evas_object_smart_data_get(obj); if (!sd) return;
+#define API_ENTRY \
+   Smart_Data *sd = evas_object_smart_data_get(obj); \
+   if ((!obj) || (!sd) || \
+          (evas_object_type_get(obj) && \
+              strcmp(evas_object_type_get(obj), SMART_NAME)))
+#define INTERNAL_ENTRY \
+   Smart_Data *sd = evas_object_smart_data_get(obj); \
+   if (!sd) return;
+
 typedef struct _Smart_Data Smart_Data;
 
 struct _Smart_Data
@@ -29,6 +36,7 @@ struct _Smart_Data
    void          *data;
    Evas_Coord     rx, ry, rw, rh;
    int            scroll_hold;
+   double         scale;
    unsigned char  can_focus : 1;
    unsigned char  child_can_focus : 1;
    unsigned char  focused : 1;
@@ -180,6 +188,7 @@ EAPI void
 elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
 {
    API_ENTRY return;
+   double scale, pscale = elm_widget_scale_get(sobj);
    sd->subobjs = eina_list_append(sd->subobjs, sobj);
    if (!sd->child_can_focus)
      {
@@ -196,6 +205,8 @@ elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
      }
    evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
    evas_object_smart_callback_call(obj, "sub-object-add", sobj);
+   scale = elm_widget_scale_get(sobj);
+   if (scale != pscale) elm_widget_theme(sobj);
 }
 
 EAPI void
@@ -692,6 +703,26 @@ elm_widget_scroll_hold_get(Evas_Object *obj)
 {
    API_ENTRY return 0;
    return sd->scroll_hold;
+}
+
+EAPI void
+elm_widget_scale_set(Evas_Object *obj, double scale)
+{
+   API_ENTRY return;
+   if (scale <= 0.0) scale = 0.0;
+   if (sd->scale != scale)
+     {
+        sd->scale = scale;
+        elm_widget_theme(obj);
+     }
+}
+
+EAPI double
+elm_widget_scale_get(Evas_Object *obj)
+{
+   API_ENTRY return 1.0;
+   if (sd->scale == 0.0) return elm_widget_scale_get(sd->parent_obj);
+   return sd->scale;
 }
 
 /* local subsystem functions */

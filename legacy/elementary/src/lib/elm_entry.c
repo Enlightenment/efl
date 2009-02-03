@@ -61,6 +61,7 @@ _theme_hook(Evas_Object *obj)
    _elm_theme_set(wd->ent, "entry", _getbase(obj), "default");
    elm_entry_entry_set(obj, t);
    if (t) free(t);
+   edje_object_scale_set(wd->ent, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
 }
 

@@ -29,6 +29,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    elm_smart_scroller_theme_set(wd->scr, "scroller", "base", "default");
+   edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
 }
 

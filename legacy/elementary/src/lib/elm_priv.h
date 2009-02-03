@@ -92,7 +92,9 @@ EAPI void         elm_widget_show_region_get(Evas_Object *obj, Evas_Coord *x, Ev
 EAPI void         elm_widget_scroll_hold_push(Evas_Object *obj);   
 EAPI void         elm_widget_scroll_hold_pop(Evas_Object *obj);   
 EAPI int          elm_widget_scroll_hold_get(Evas_Object *obj);
-    
+EAPI void         elm_widget_scale_set(Evas_Object *obj, double scale);
+EAPI double       elm_widget_scale_get(Evas_Object *obj);
+
 extern char *_elm_appname;
 extern Elm_Config *_elm_config;
 extern const char *_elm_data_dir;

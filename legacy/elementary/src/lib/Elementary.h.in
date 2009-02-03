@@ -140,6 +140,10 @@ extern "C" {
    EAPI void         elm_run(void);
    EAPI void         elm_exit(void);
    
+   EAPI void         elm_object_scale_set(Evas_Object *obj, double scale);
+   EAPI double       elm_object_scale_get(Evas_Object *obj);
+   EAPI void         elm_object_focus(Evas_Object *obj);
+       
    EAPI Evas_Object *elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type);
    EAPI void         elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj);
    EAPI void         elm_win_resize_object_del(Evas_Object *obj, Evas_Object *subobj);
@@ -494,12 +498,16 @@ extern "C" {
 // * when entries are in a scroller and change size, the scroller shows scrollbars. fix. same for selecting. for 1 line entries in a scroller should only have scroll arrow indicators.
 // 
 //// (more widgets/features - medium priority)
+// * selective widget scaling
+// * slider widget
+// * <evas scale cache>
+// * radio + group handling
+// * checkbox (like toggle)
+// * pager (for pushing/popping pages and going back and forward and flipping)
+// * <edje copy & paste fixed>
 // * biglist widget (restricted format label + icon intended for massive lists)
 // * treeview widget (like biglist - but items can expand to sub-items)
-// * radio widget + group handling
-// * checkbox widget (like toggle)
-// * page widget (for pushing/popping pages and going back and forward and flipping)
-// * slider widget
+// * <evas shared cache>
 // 
 // * carousel selector widget
 // * separator widget (h/v)
