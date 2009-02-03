@@ -498,7 +498,6 @@ extern "C" {
 // * when entries are in a scroller and change size, the scroller shows scrollbars. fix. same for selecting. for 1 line entries in a scroller should only have scroll arrow indicators.
 // 
 //// (more widgets/features - medium priority)
-// * selective widget scaling
 // * slider widget
 // * <evas scale cache>
 // * radio + group handling
@@ -510,6 +509,7 @@ extern "C" {
 // * <evas shared cache>
 // 
 // * carousel selector widget
+// * auto-size label/text that adapts text size to its allocated region
 // * separator widget (h/v)
 // * slide-open "panel" that can hold stuff and optionally scroll
 // * calendar widget (select date)
