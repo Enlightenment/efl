@@ -435,6 +435,40 @@ if ! test "x$have_ecore_x_xcb" = "xyes" ; then
     AC_SUBST(Xcursor_cflags)
     AC_SUBST(Xcursor_libs)
 
+    Xkb_libs=""
+    Xkb_cflags=""
+    use_Xkb="no"
+    PCFLAGS=$CFLAGS
+    CFLAGS="$x_cflags $x_includes"
+    AC_CHECK_HEADER(X11/XKBlib.h,
+      [
+        AC_CHECK_LIB(X11, XkbSetDetectableAutoRepeat,
+          [
+            AC_DEFINE(ECORE_XKB, 1, [Build support for Xkb])
+            Xkb_cflags=""
+            Xkb_libs=""
+            use_Xkb="yes"
+          ], [
+            Xkb_cflags=""
+            Xkb_libs=""
+            use_Xkb="no"
+          ], [
+            $x_libs
+          ]
+        )
+      ], [
+        Xkb_cflags=""
+        Xkb_libs=""
+        use_Xkb="no"
+      ], [
+        #include <X11/XKBlib.h>
+      ]
+    )
+    CFLAGS=$PCFLAGS
+
+    AC_SUBST(Xkb_cflags)
+    AC_SUBST(Xkb_libs)
+
     ECORE_CHECK_X_EXTENSION([Xcomposite], [Xcomposite.h], [Xcomposite], [XCompositeQueryExtension])
     ECORE_CHECK_X_EXTENSION([Xdamage], [Xdamage.h], [Xdamage], [XDamageSubtract])
     ECORE_CHECK_X_EXTENSION([Xdpms], [dpms.h], [Xdpms], [DPMSQueryExtension])
@@ -1027,6 +1061,7 @@ if test "x$have_ecore_x" = "xyes" ; then
   else
     echo "  Ecore_X (Xlib backend).......: $have_ecore_x"
     echo "    Xcursor....................: $use_Xcursor"
+    echo "    Xkb........................: $use_Xkb"
     echo "    Xprint.....................: $use_xprint"
     echo "    Xinerama...................: $use_xinerama"
     echo "    Xrandr.....................: $use_xrandr"

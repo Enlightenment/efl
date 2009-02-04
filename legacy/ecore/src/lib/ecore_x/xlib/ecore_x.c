@@ -279,7 +279,19 @@ ecore_x_init(const char *name)
    if (_ecore_x_event_damage_id)
      _ecore_x_event_handlers[_ecore_x_event_damage_id] = _ecore_x_event_handle_damage_notify;
 #endif
-
+#ifdef ECORE_XKB
+   // set x autorepeat detection to on. that means instead of
+   //   press-release-press-release-press-release
+   // you get
+   //   press-press-press-press-press-release
+   do
+     {
+        Bool works = 0;
+        XkbSetDetectableAutoRepeat(_ecore_x_disp, 1, &works);
+     }
+   while (0);
+#endif
+   
    if (!ECORE_X_EVENT_KEY_DOWN)
      {
 	ECORE_X_EVENT_KEY_DOWN                 = ecore_event_type_new();

@@ -47,6 +47,9 @@
 #ifdef ECORE_XDPMS
 #include <X11/extensions/dpms.h>
 #endif
+#ifdef ECORE_XKB
+#include <X11/XKBlib.h>
+#endif
 
 #include "ecore_private.h"
 #include "Ecore_X.h"
