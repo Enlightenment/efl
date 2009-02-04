@@ -1,8 +1,8 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 if BUILD_ECORE_X
-ECORE_X_INC = -I$(top_srcdir)/src/lib/ecore_x
-ECORE_X_LIB = $(top_builddir)/src/lib/ecore_x/libecore_x.la
+ECORE_X_INC = -I$(top_srcdir)/src/lib/ecore_x @x_cflags@ @XRENDER_CFLAGS@ @XCB_CFLAGS@ @XCB_RENDER_CFLAGS@
+ECORE_X_LIB = $(top_builddir)/src/lib/ecore_x/libecore_x.la @x_libs@ @XRENDER_LIBS@ @XCB_LIBS@ @XCB_RENDER_LIBS@
 else
 ECORE_X_INC =
 ECORE_X_LIB =
