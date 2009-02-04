@@ -30,4 +30,4 @@ doc:
 
 endif
 
-EXTRA_DIST = Doxyfile e.css foot.html head.html img/ embryo.dox.in
+EXTRA_DIST = Doxyfile e.css foot.html head.html img embryo.dox.in
