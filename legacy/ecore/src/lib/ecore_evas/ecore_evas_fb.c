@@ -436,6 +436,16 @@ _ecore_evas_rotation_set(Ecore_Evas *ee, int rotation)
 }
 
 static void
+_ecore_evas_object_cursor_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Ecore_Evas *ee;
+
+   ee = data;
+   if (ee)
+     ee->prop.cursor.object = NULL;
+}
+
+static void
 _ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
 {
    int x, y;
@@ -463,6 +473,8 @@ _ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int h
    evas_object_pass_events_set(ee->prop.cursor.object, 1);
    if (evas_pointer_inside_get(ee->evas))
      evas_object_show(ee->prop.cursor.object);
+
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _ecore_evas_object_cursor_del, ee);
 }
 
 static void
