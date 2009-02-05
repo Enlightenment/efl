@@ -435,8 +435,11 @@ _evas_object_box_smart_del(Evas_Object *o)
 }
 
 static void
-_evas_object_box_smart_resize(Evas_Object *o, int w, int h)
+_evas_object_box_smart_resize(Evas_Object *o, Evas_Coord w, Evas_Coord h)
 {
+   Evas_Coord ow, oh;
+   evas_object_geometry_get(o, NULL, NULL, &ow, &oh);
+   if ((ow == w) && (oh == h)) return;
    evas_object_smart_changed(o);
 }
 
