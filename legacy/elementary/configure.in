@@ -164,6 +164,21 @@ ELM_ALLOCA_H_DEF="#undef"
 AC_CHECK_HEADER(alloca.h, [ELM_ALLOCA_H_DEF="#define"])
 AC_SUBST(ELM_ALLOCA_H_DEF)
 
+ELM_LIBINTL_H_DEF="#undef"
+AC_CHECK_HEADER(libintl.h, [ELM_LIBINTL_H_DEF="#define"])
+AC_SUBST(ELM_LIBINTL_H_DEF)
+
+AC_ARG_WITH(edje-cc,
+[  --with-edje-cc=PATH              specify a specific path to edje_cc],
+[
+  v=$withval;
+  edje_cc=$v
+  echo "  Enlightenment edje_cc explicitly set to "$edje_cc;
+],[
+  edje_cc=$(pkg-config --variable=prefix edje)/bin/edje_cc
+])
+AC_SUBST(edje_cc)
+
 my_libs="-lm"
 AC_SUBST(my_libs)
 AC_SUBST(requirement_elm)
@@ -202,6 +217,8 @@ echo "  Windows CE....: ${have_elementary_wince}"
 echo
 echo "Features:"
 echo "  EDBus.........: ${have_elementary_edbus}"
+echo
+echo "edje_cc.........: ${edje_cc}"
 echo
 echo "------------------------------------------------------------------------"
 echo

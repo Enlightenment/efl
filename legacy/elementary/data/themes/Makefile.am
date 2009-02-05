@@ -1,7 +1,7 @@
 AUTOMAKE_OPTIONS     = 1.4 foreign
 MAINTAINERCLEANFILES = Makefile.in
 
-EDJE_CC = edje_cc
+EDJE_CC = @edje_cc@
 EDJE_FLAGS = -v -id $(top_srcdir)/data/themes -fd $(top_srcdir)/data/themes
 
 filesdir = $(datadir)/elementary/themes

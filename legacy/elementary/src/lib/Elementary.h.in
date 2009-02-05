@@ -21,7 +21,8 @@
 @ELM_WINCE_DEF@ ELM_WINCE
 @ELM_EDBUS_DEF@ ELM_EDBUS
 @ELM_ALLOCA_H_DEF@ ELM_ALLOCA_H
-  
+@ELM_LIBINTL_H_DEF@ ELM_LIBINTL_H
+
 /* Standard headers for standard system calls etc. */
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,7 +44,9 @@
 
 #ifdef ELM_UNIX
 # include <locale.h>
+#ifdef ELM_LIBINTL_H
 # include <libintl.h>
+#endif
 # include <signal.h>
 # include <grp.h>
 # include <glob.h>
