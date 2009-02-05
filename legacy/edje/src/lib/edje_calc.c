@@ -867,6 +867,18 @@ _edje_part_recalc_single(Edje *ed,
 	  }
 	if (sfont) free(sfont);
      }
+
+   if (ep->part->type == EDJE_PART_TYPE_TEXT)
+     {
+	const char *font;
+	char *sfont = NULL;
+	int size;
+
+	font = _edje_text_class_font_get(ed, desc, &size, &sfont);
+	free(sfont);
+	params->text.size = size;
+     }
+
    /* rememebr what our size is BEFORE we go limit it */
    params->req.x = params->x;
    params->req.y = params->y;
@@ -1469,6 +1481,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 		}
 	      break;
 	   case EDJE_PART_TYPE_TEXT:
+	      p3.text.size = INTP(p1.text.size, p2.text.size, pos);
 	   case EDJE_PART_TYPE_TEXTBLOCK:
 	      p3.color2.r = INTP(p1.color2.r, p2.color2.r, pos);
 	      p3.color2.g = INTP(p1.color2.g, p2.color2.g, pos);

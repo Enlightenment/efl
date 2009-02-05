@@ -392,6 +392,9 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	sw = params->w;
 	sh = params->h;
      }
+
+   size = params->text.size;
+
    if ((ep->text.cache.in_size == size) &&
        (ep->text.cache.in_w == sw) &&
        (ep->text.cache.in_h == sh) &&

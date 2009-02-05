@@ -823,6 +823,7 @@ struct _Edje_Calc_Params
    struct {
       Edje_Alignment align; /* text alignment within bounds */
       double         elipsis;
+      int            size;
    } text;
    struct {
      int             id;
