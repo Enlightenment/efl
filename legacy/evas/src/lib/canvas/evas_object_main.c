@@ -13,6 +13,18 @@
  */
 //#define FORWARD_NOOP_RESIZES_TO_SMART_OBJS
 
+/* Similar to FORWARD_NOOP_*, this will allow no-operations (those calls that
+ * have values exactly like current state) to call EVAS_CALLBACK_*.
+ *
+ * For some unknown reason this was the default behavior so it is left as
+ * a compile-time option, but will be deprecated and removed soon as it can
+ * potentially lead to execution of unnecessary code.
+ * by Gustavo, February 5th, 2009.
+ * XXX: remove-me before e17 release!
+ */
+//#define CALLBACK_NOOP
+
+
 static Eina_Inlist *
 get_layer_objects_last(Evas_Layer *l)
 {
@@ -425,7 +437,9 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    if ((obj->cur.geometry.x == x) &&
        (obj->cur.geometry.y == y))
      {
+#ifdef CALLBACK_NOOP
 	evas_object_inform_call_move(obj);
+#endif
 	return;
      }
 #ifndef FORWARD_NOOP_MOVES_TO_SMART_OBJS
@@ -498,7 +512,9 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    if ((obj->cur.geometry.w == w) &&
        (obj->cur.geometry.h == h))
      {
+#ifdef CALLBACK_NOOP
 	evas_object_inform_call_resize(obj);
+#endif
 	return;
      }
 #ifndef FORWARD_NOOP_RESIZES_TO_SMART_OBJS
@@ -1036,7 +1052,9 @@ evas_object_show(Evas_Object *obj)
      }
    if (obj->cur.visible)
      {
+#ifdef CALLBACK_NOOP
 	evas_object_inform_call_show(obj);
+#endif
 	return;
      }
    obj->cur.visible = 1;
@@ -1083,7 +1101,9 @@ evas_object_hide(Evas_Object *obj)
      }
    if (!obj->cur.visible)
      {
+#ifdef CALLBACK_NOOP
 	evas_object_inform_call_hide(obj);
+#endif
 	return;
      }
    obj->cur.visible = 0;
