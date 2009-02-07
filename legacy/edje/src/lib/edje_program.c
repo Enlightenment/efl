@@ -95,9 +95,9 @@ edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const ch
    if (!ed) return;
    if (ed->delete_me) return;
    escb = calloc(1, sizeof(Edje_Signal_Callback));
-   if ((emission) && (emission[0]))
+   if (emission[0])
      escb->signal = eina_stringshare_add(emission);
-   if ((source) && (source[0]))
+   if (source[0])
      escb->source = eina_stringshare_add(source);
    escb->func = func;
    escb->data = data;
