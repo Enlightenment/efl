@@ -979,7 +979,9 @@ typedef enum _Ecore_X_Action {
     ECORE_X_ACTION_MAXIMIZE_VERT,
     ECORE_X_ACTION_FULLSCREEN,
     ECORE_X_ACTION_CHANGE_DESKTOP,
-    ECORE_X_ACTION_CLOSE
+    ECORE_X_ACTION_CLOSE,
+    ECORE_X_ACTION_ABOVE,
+    ECORE_X_ACTION_BELOW
 } Ecore_X_Action;
 
 typedef enum _Ecore_X_Window_Configure_Mask {
