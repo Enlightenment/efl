@@ -274,7 +274,6 @@ _JPEGErrorHandler2(j_common_ptr cinfo, int msg_level)
    /*   cinfo->err->output_message(cinfo);*/
    /*   longjmp(errmgr->setjmp_buffer, 1);*/
    return;
-   msg_level = 0;
 }
 
 static int
