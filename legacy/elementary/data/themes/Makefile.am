@@ -97,7 +97,18 @@ icon_delete.png \
 icon_edit.png \
 ilist_1.png \
 ilist_2.png \
-ilist_item_shadow.png
+ilist_item_shadow.png \
+sl_bg.png \
+sl_bg_over.png \
+sl_bt_0.png \
+sl_bt_1.png \
+sl_bt_2.png \
+sl_bt2_0_0.png \
+sl_bt2_0_1.png \
+sl_bt2_0_2.png \
+sl_bt2_1.png \
+sl_bt2_2.png \
+sl_units.png
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \

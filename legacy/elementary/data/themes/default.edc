@@ -5948,4 +5948,516 @@ collections {
          }
       }
    }
+
+///////////////////////////////////////////////////////////////////////////////
+   group { name: "elm/slider/horizontal/default";
+      // FIXME: do this element properly theme-wise. this is just testing here
+      images {
+	 image: "sl_bg.png" COMP;
+	 image: "sl_bg_over.png" COMP;
+	 image: "sl_bt_0.png" COMP;
+	 image: "sl_bt_1.png" COMP;
+	 image: "sl_bt_2.png" COMP;
+	 image: "sl_bt2_0_0.png" COMP;
+	 image: "sl_bt2_0_1.png" COMP;
+	 image: "sl_bt2_0_2.png" COMP;
+	 image: "sl_bt2_1.png" COMP;
+	 image: "sl_bt2_2.png" COMP;
+         image: "sl_units.png" COMP;
+      }
+      parts {
+         part { name: "base";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               max: 99999 6;
+               min: 0 6;
+               rel1 { to: "bg";
+                  offset: 1 0;
+               }
+               rel2 { to: "bg";
+                  offset: -2 -1;
+               }
+               image.normal: "sl_bg.png";
+               fill.smooth: 0;
+            }
+         }
+         part { name: "level";
+            type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "base";
+               rel2 {
+                  to_y: "base";
+                  to_x: "elm.dragable.slider";
+                  relative: 0.5 1.0;
+               }
+               color: 255 0 0 200;
+            }
+            description { state: "inverted" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+         }
+         part { name: "level2";
+            type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               visible: 0;
+               rel1 {
+                  to_y: "base";
+                  to_x: "elm.dragable.slider";
+                  relative: 0.5 0.0;
+               }
+               rel2.to: "base";
+               color: 255 0 0 200;
+            }
+            description { state: "inverted" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part {
+            name: "base_over";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "base";
+               rel1.offset: -1 -1;
+               rel2.to: "base";
+               rel2.offset: 0 0;
+               image {
+                  normal: "sl_bg_over.png";
+                  border: 3 3 3 3;
+               }
+               fill.smooth: 0;
+            }
+         }
+         part { name: "bg";
+	    type: RECT;
+	    mouse_events: 0;
+	    scale: 1;
+	    description { state: "default" 0.0;
+               visible: 0;
+	       rel1.to: "elm.swallow.bar";
+	       rel2.to: "elm.swallow.bar";
+	       color: 0 0 0 0;
+	    }
+	 }
+	 part { name: "elm.swallow.bar";
+	    type: SWALLOW;
+            scale: 1;
+	    description { state: "default" 0.0;
+	       min: 48 24;
+	       max: 99999 24;
+	       align: 1.0 0.5;
+	       rel1 {
+                  to_x: "elm.text";
+                  relative: 1.0 0.0;
+                  offset: 2 0;
+               }
+	       rel2 {
+                  to_x: "elm.units";
+                  relative: 0.0 1.0;
+                  offset: -3 -1;
+               }
+	    }
+	 }
+	 part { name: "elm.swallow.content";
+	    type: SWALLOW;
+	    description { state: "default" 0.0;
+	       visible: 0;
+	       align: 0.0 0.5;
+	       rel1 {
+                  offset: 4 0;
+                  to_y: "elm.swallow.bar";
+               }
+	       rel2 {
+                  offset: 3 -1;
+                  relative: 0.0 1.0;
+                  to_y: "elm.swallow.bar";
+               }
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
+	       aspect: 1.0 1.0;
+	       aspect_preference: VERTICAL;
+	       rel2.offset: 4 -5;
+	    }
+	 }
+         part { name: "elm.text";
+	    type: TEXT;
+	    mouse_events: 0;
+	    scale: 1;
+	    description { state: "default" 0.0;
+	       visible: 0;
+               fixed: 1 1;
+               align: 0.0 0.5;
+	       rel1.to_x: "elm.swallow.content";
+	       rel1.relative: 1.0 0.0;
+               rel1.offset: -1 4;
+	       rel2.to_x: "elm.swallow.content";
+	       rel2.relative: 1.0 1.0;
+	       rel2.offset: -1 -5;
+	       color: 0 0 0 255;
+	       text {
+		  font: "Sans,Edje-Vera";
+		  size: 10;
+		  min: 0 0;
+		  align: 0.0 0.5;
+	       }
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
+	       text.min: 1 1;
+               rel1.offset: 0 4;
+               rel2.offset: 0 -5;
+	    }
+	 }
+         part { name: "units";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+	       visible: 0;
+               rel1 {
+                  to_x: "elm.units";
+                  offset: 0 5;
+               }
+               image {
+                  normal: "sl_units.png";
+                  border: 0 5 3 8;
+               }
+               fill.smooth: 0;
+            }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
+            }
+         }
+         part { name: "elm.units";
+	    type: TEXT;
+	    mouse_events: 0;
+	    scale: 1;
+	    description { state: "default" 0.0;
+	       visible: 0;
+               fixed: 1 1;
+	       align: 1.0 0.5;
+	       rel1.relative: 1.0 0.0;
+	       rel1.offset: 0 8;
+	       rel2.relative: 1.0 1.0;
+	       rel2.offset: 0 -9;
+	       color: 0 0 0 255;
+	       text {
+		  font: "Sans,Edje-Vera";
+		  size: 10;
+		  min: 0 0;
+		  align: 0.0 0.5;
+	       }
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+               fixed: 1 1;
+	       visible: 1;
+	       text.min: 1 1;
+	       rel1.offset: -5 0;
+	       rel2.offset: -5 -1;
+	    }
+	 }
+         part { name: "elm.dragable.slider";
+            type: RECT;
+            mouse_events: 1;
+            scale: 1;
+            dragable {
+               x: 1 1 0;
+               y: 0 0 0;
+               confine: "bg";
+            }
+            description { state: "default" 0.0;
+               min: 24 24;
+               max: 24 24;
+               fixed: 1 1;
+               rel1 {
+                  relative: 0.5  0.5;
+                  to: "bg";
+               }
+               rel2 {
+                  relative: 0.5  0.5;
+                  to: "bg";
+               }
+               color: 0 0 0 0;
+            }
+         }
+         part { name: "button0";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               max: 17 999;
+               min: 17 24;
+               rel1.to: "elm.dragable.slider";
+               rel2.to: "elm.dragable.slider";
+               image {
+                  normal: "sl_bt_0.png";
+                  border: 5 5 5 10;
+               }
+               fill.smooth: 0;
+            }
+         }
+         part { name: "button1";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "button0";
+               rel2 {
+                  to: "button0";
+                  relative: 1.0 0.5;
+                  offset: -1 -5;
+               }
+               image {
+                  normal: "sl_bt_1.png";
+                  border: 5 5 5 0;
+               }
+            }
+         }
+         part { name: "button2";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "button0";
+               rel2.to: "button0";
+               image {
+                  normal: "sl_bt_2.png";
+                  border: 5 5 5 10;
+               }
+               fill.smooth: 0;
+            }
+         }
+         part { name: "button3";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+	       visible: 0;
+               min: 8 32;
+               align: 1.0 0.5;
+               rel1 {
+                  to_x: "elm.indicator";
+                  to_y: "button4";
+                  relative: 0.0 0.0;
+                  offset: -7 0;
+               }
+               rel2 {
+                  to: "button4";
+                  relative: 0.0 1.0;
+                  offset: 0 -1;
+               }
+               image {
+                  normal: "sl_bt2_0_0.png";
+                  border: 6 0 6 12;
+               }
+               fill.smooth: 0;
+            }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
+            }
+         }
+         part { name: "button4";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+	       visible: 0;
+               max: 15 999;
+               min: 15 32;
+               rel1 {
+                  to_x: "elm.dragable.slider";
+                  to_y: "elm.indicator";
+                  offset: 0 -7;
+               }
+               rel2.to: "elm.dragable.slider";
+               image {
+                  normal: "sl_bt2_0_1.png";
+                  border: 0 0 6 12;
+               }
+               fill.smooth: 0;
+            }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
+            }
+         }
+         part { name: "button5";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+	       visible: 0;
+               min: 8 32;
+               align: 1.0 0.5;
+               rel1 {
+                  to: "button4";
+                  relative: 1.0 0.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  to_x: "elm.indicator";
+                  to_y: "button4";
+                  relative: 1.0 1.0;
+                  offset: 6 -1;
+               }
+               image {
+                  normal: "sl_bt2_0_2.png";
+                  border: 0 6 6 12;
+               }
+               fill.smooth: 0;
+            }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
+            }
+         }
+         part { name: "elm.indicator";
+	    type: TEXT;
+	    mouse_events: 0;
+            effect: SOFT_SHADOW;
+	    scale: 1;
+	    description { state: "default" 0.0;
+	       visible: 0;
+               fixed: 1 1;
+               align: 0.5 1.0;
+	       rel1 { 
+                  to: "elm.dragable.slider";
+                  relative: 0.0 0.0;
+                  offset: 0 0;
+               }
+	       rel2 {
+                  to_x: "elm.dragable.slider";
+                  relative: 1.0 0.0;
+                  offset: -1 0;
+               }
+	       color: 224 224 224 255;
+	       color3: 0 0 0 64;
+	       text {
+		  font:     "Sans,Edje-Vera";
+		  size:     10;
+		  min:      0 0;
+		  align:    0.5 0.5;
+	       }
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
+	       text.min: 1 1;
+               rel1.offset: 0 -1;
+               rel2.offset: -1 -1;
+	    }
+	 }
+         part { name: "button6";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+	       visible: 0;
+               rel1.to: "button3";
+               rel2 {
+                  to: "button5";
+                  relative: 1.0 0.3;
+                  offset: -1 -1;
+               }
+               image {
+                  normal: "sl_bt2_1.png";
+                  border: 5 5 5 0;
+               }
+               fill.smooth: 0;
+            }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
+            }
+         }
+         part { name: "button7";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+	       visible: 0;
+               rel1.to: "button3";
+               rel2.to: "button5";
+               image {
+                  normal: "sl_bt2_2.png";
+                  border: 5 5 5 0;
+                  middle: 0;
+               }
+               fill.smooth: 0;
+            }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
+            }
+         }
+      }
+      programs {
+	 program { name: "text_show";
+	    signal: "elm,state,text,visible";
+	    source: "elm";
+	    action:  STATE_SET "visible" 0.0;
+	    target: "elm.text";
+	 }
+	 program { name: "text_hide";
+	    signal: "elm,state,text,hidden";
+	    source: "elm";
+	    action:  STATE_SET "default" 0.0;
+	    target: "elm.text";
+	 }
+	 program { name: "icon_show";
+	    signal: "elm,state,icon,visible";
+	    source: "elm";
+	    action:  STATE_SET "visible" 0.0;
+	    target: "elm.swallow.content";
+	 }
+	 program { name: "icon_hide";
+	    signal: "elm,state,icon,hidden";
+	    source: "elm";
+	    action:  STATE_SET "default" 0.0;
+	    target: "elm.swallow.content";
+	 }
+	 program { name: "units_show";
+	    signal: "elm,state,units,visible";
+	    source: "elm";
+	    action:  STATE_SET "visible" 0.0;
+	    target: "elm.units";
+	    target: "units";
+	 }
+	 program { name: "units_hide";
+	    signal: "elm,state,units,hidden";
+	    source: "elm";
+	    action:  STATE_SET "default" 0.0;
+	    target: "elm.units";
+	    target: "units";
+	 }
+	 program { name: "invert_on";
+	    signal: "elm,state,inverted,on";
+	    source: "elm";
+	    action:  STATE_SET "inverted" 0.0;
+	    target: "level";
+	    target: "level2";
+	 }
+	 program { name: "invert_off";
+	    signal: "elm,state,inverted,off";
+	    source: "elm";
+	    action:  STATE_SET "default" 0.0;
+	    target: "level";
+	    target: "level2";
+	 }
+	 program { name: "val_show";
+	    signal: "mouse,down,*";
+	    source: "elm.dragable.slider";
+	    action:  STATE_SET "visible" 0.0;
+	    target: "elm.indicator";
+	    target: "button3";
+	    target: "button4";
+	    target: "button5";
+	    target: "button6";
+	    target: "button7";
+	 }
+	 program { name: "val_hide";
+	    signal: "mouse,up,*";
+	    source: "elm.dragable.slider";
+	    action:  STATE_SET "default" 0.0;
+	    target: "elm.indicator";
+	    target: "button3";
+	    target: "button4";
+	    target: "button5";
+	    target: "button6";
+	    target: "button7";
+	 }
+      }
+   }
+
 }

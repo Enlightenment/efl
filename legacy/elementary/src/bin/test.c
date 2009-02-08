@@ -1898,8 +1898,8 @@ my_bt_27(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *win, *bg, *bx, *fr, *lb;
    char buf[PATH_MAX];
    
-   win = elm_win_add(NULL, "scaling", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Scaling");
+   win = elm_win_add(NULL, "scaling-2", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Scaling 2");
    elm_win_autodel_set(win, 1);
 
    bg = elm_bg_add(win);
@@ -1952,6 +1952,74 @@ my_bt_27(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(fr);
    
    evas_object_resize(win, 320, 320);
+   evas_object_show(win);
+}
+
+static void
+my_bt_28(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *bx, *sl, *ic;
+   char buf[PATH_MAX];
+   
+   win = elm_win_add(NULL, "slider", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Slider");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_show(bg);
+   
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   sl = elm_slider_add(win);
+   elm_slider_label_set(sl, "Label");
+   elm_slider_icon_set(sl, ic);
+   elm_slider_unit_format_set(sl, "%1.1f units");
+   elm_slider_span_size_set(sl, 400);
+   evas_object_size_hint_align_set(sl, -1.0, -1.0);
+   evas_object_size_hint_weight_set(sl, 1.0, 1.0);
+   elm_box_pack_end(bx, sl);
+   evas_object_show(ic);
+   evas_object_show(sl);
+
+   sl = elm_slider_add(win);
+   elm_slider_label_set(sl, "Label 2");
+   elm_slider_span_size_set(sl, 200);
+   evas_object_size_hint_align_set(sl, -1.0, -1.0);
+   evas_object_size_hint_weight_set(sl, 1.0, 1.0);
+   elm_slider_indicator_format_set(sl, "%3.0f");
+   elm_slider_min_max_set(sl, 50, 150);
+   elm_slider_value_set(sl, 80);
+   elm_slider_inverted_set(sl, 1);
+   evas_object_size_hint_align_set(sl, 0.5, 0.5);
+   evas_object_size_hint_weight_set(sl, 0.0, 0.0);
+   elm_box_pack_end(bx, sl);
+   evas_object_show(ic);
+   evas_object_show(sl);
+   
+   sl = elm_slider_add(win);
+   elm_slider_label_set(sl, "Label 3");
+   elm_slider_unit_format_set(sl, "units");
+   elm_slider_span_size_set(sl, 200);
+   evas_object_size_hint_align_set(sl, -1.0, -1.0);
+   evas_object_size_hint_weight_set(sl, 1.0, 1.0);
+   elm_slider_indicator_format_set(sl, "%3.0f");
+   elm_slider_min_max_set(sl, 50, 150);
+   elm_slider_value_set(sl, 80);
+   elm_slider_inverted_set(sl, 1);
+   elm_object_scale_set(sl, 2.0);
+   elm_box_pack_end(bx, sl);
+   evas_object_show(ic);
+   evas_object_show(sl);
+   
    evas_object_show(win);
 }
 
@@ -2057,11 +2125,12 @@ my_win_main(void)
    elm_list_item_append(li, "Inwin 2", NULL, NULL, my_bt_25, NULL);
    elm_list_item_append(li, "Scaling", NULL, NULL, my_bt_26, NULL);
    elm_list_item_append(li, "Scaling 2", NULL, NULL, my_bt_27, NULL);
+   elm_list_item_append(li, "Slider", NULL, NULL, my_bt_28, NULL);
 
    elm_list_go(li);
    
    /* set an initial window size */
-   evas_object_resize(win, 320, 520);
+   evas_object_resize(win, 312, 480);
    /* show the window */
    evas_object_show(win);
 }

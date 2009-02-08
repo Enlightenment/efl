@@ -47,6 +47,7 @@ elm_photo.c \
 elm_toolbar.c \
 elm_list.c \
 elm_carousel.c \
+elm_slider.c \
 \
 elc_notepad.c \
 elc_anchorview.c \

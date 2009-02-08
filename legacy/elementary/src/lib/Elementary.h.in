@@ -474,6 +474,25 @@ extern "C" {
    /* smart callbacks called:
     * "clicked" - when the user clicks on a carousel item and becomes selected
     */
+   
+   EAPI Evas_Object *elm_slider_add(Evas_Object *parent);
+   EAPI void elm_slider_label_set(Evas_Object *obj, const char *label);
+   EAPI void elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon);
+   EAPI void elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size);
+   EAPI void elm_slider_unit_format_set(Evas_Object *obj, const char *format);
+   EAPI void elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator);
+   EAPI void elm_slider_horizontal_set(Evas_Object *obj, Evas_Bool horizontal);
+   EAPI void elm_slider_min_max_set(Evas_Object *obj, double min, double max);
+   EAPI void elm_slider_value_set(Evas_Object *obj, double val);
+   EAPI double elm_slider_value_get(Evas_Object *obj);
+   EAPI void elm_slider_inverted_set(Evas_Object *obj, Evas_Bool inverted);
+       
+       
+   /* smart callbacks called:
+    * "changed" - when the slider value changes
+    * "delay,changed" - when the slider value changed, but a small time after a change (use this if you only want to respond to a change once the slider is held still for a short while).
+    */
+       
 
 #ifdef __cplusplus
 }
@@ -527,6 +546,7 @@ extern "C" {
 // * progress bar widget
 // * generic "tacho" widget (set min/max labels - and up to 3 intermediate labels)
 // * status widget (busy, stalled, running, etc.)
+// * full window in window widget (so move/resize of window object does as you'd expect a child window to do within the canvas)
 // 
 //// (improvements - low priority)
 // * need another sample theme
