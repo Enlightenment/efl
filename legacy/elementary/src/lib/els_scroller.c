@@ -27,6 +27,8 @@ struct _Smart_Data
 	 double        timestamp;
       } history[20];
       double anim_start;
+      Evas_Coord hold_x, hold_y;
+      Ecore_Animator *hold_animator;
       Ecore_Animator *momentum_animator;
       Evas_Coord locked_x, locked_y;
       unsigned char now : 1;
@@ -63,6 +65,7 @@ static void _smart_pan_changed_hook(void *data, Evas_Object *obj, void *event_in
 static void _smart_pan_pan_changed_hook(void *data, Evas_Object *obj, void *event_info);
 static void _smart_event_wheel(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _smart_event_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static int  _smart_hold_animator(void *data);
 static int  _smart_momentum_animator(void *data);
 static void _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -431,6 +434,11 @@ _smart_event_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
    ev = event_info;
    if (_elm_config->thumbscroll_enable)
      {
+	if (sd->down.hold_animator)
+	  {
+	     ecore_animator_del(sd->down.hold_animator);
+	     sd->down.hold_animator = NULL;
+	  }
 	if (sd->down.momentum_animator)
 	  {
 	     ecore_animator_del(sd->down.momentum_animator);
@@ -454,6 +462,17 @@ _smart_event_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	     sd->down.history[0].y = ev->canvas.y;
 	  }
      }
+}
+
+static int
+_smart_hold_animator(void *data)
+{
+   Smart_Data *sd;
+   
+   sd = data;
+   sd->down.hold_animator = NULL;
+   elm_smart_scroller_child_pos_set(sd->smart_obj, sd->down.hold_x, sd->down.hold_y);
+   return 0;
 }
 
 static int
@@ -533,6 +552,11 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info)
 			 {
 			    if (!sd->down.momentum_animator)
 			      sd->down.momentum_animator = ecore_animator_add(_smart_momentum_animator, sd);
+                            if (sd->down.hold_animator)
+                              {
+                                 ecore_animator_del(sd->down.hold_animator);
+                                 sd->down.hold_animator = NULL;
+                              }
 			    sd->down.dx = ((double)dx / at);
 			    sd->down.dy = ((double)dy / at);
 			    sd->down.anim_start = t;
@@ -614,7 +638,11 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj, void *event_info)
 		       if (sd->down.dir_x) y = sd->down.locked_y;
 		       else x = sd->down.locked_x;
 		    }
-		  elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
+                  sd->down.hold_x = x;
+                  sd->down.hold_y = y;
+                  if (!sd->down.hold_animator)
+                    sd->down.hold_animator = ecore_animator_add(_smart_hold_animator, sd);
+//		  elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
 	       }
 	  }
      }
@@ -975,6 +1003,7 @@ _smart_del(Evas_Object *obj)
    if (!sd->extern_pan) evas_object_del(sd->pan_obj);
    evas_object_del(sd->edje_obj);
    evas_object_del(sd->event_obj);
+   if (sd->down.hold_animator) ecore_animator_del(sd->down.hold_animator);
    if (sd->down.momentum_animator) ecore_animator_del(sd->down.momentum_animator);
    free(sd);
    evas_object_smart_data_set(obj, NULL);

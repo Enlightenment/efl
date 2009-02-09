@@ -466,6 +466,7 @@ extern "C" {
     * "unselected" - when the user selected an item
     */
 
+   // FIXME: incomplete - carousel
    typedef struct _Elm_Carousel_Item Elm_Carousel_Item;
    EAPI Evas_Object *elm_carousel_add(Evas_Object *parent);
    EAPI Elm_Carousel_Item *elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
@@ -476,24 +477,43 @@ extern "C" {
     */
    
    EAPI Evas_Object *elm_slider_add(Evas_Object *parent);
-   EAPI void elm_slider_label_set(Evas_Object *obj, const char *label);
-   EAPI void elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon);
-   EAPI void elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size);
-   EAPI void elm_slider_unit_format_set(Evas_Object *obj, const char *format);
-   EAPI void elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator);
-   EAPI void elm_slider_horizontal_set(Evas_Object *obj, Evas_Bool horizontal);
-   EAPI void elm_slider_min_max_set(Evas_Object *obj, double min, double max);
-   EAPI void elm_slider_value_set(Evas_Object *obj, double val);
-   EAPI double elm_slider_value_get(Evas_Object *obj);
-   EAPI void elm_slider_inverted_set(Evas_Object *obj, Evas_Bool inverted);
-       
-       
+   EAPI void         elm_slider_label_set(Evas_Object *obj, const char *label);
+   EAPI void         elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon);
+   EAPI void         elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size);
+   EAPI void         elm_slider_unit_format_set(Evas_Object *obj, const char *format);
+   EAPI void         elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator);
+   EAPI void         elm_slider_horizontal_set(Evas_Object *obj, Evas_Bool horizontal);
+   EAPI void         elm_slider_min_max_set(Evas_Object *obj, double min, double max);
+   EAPI void         elm_slider_value_set(Evas_Object *obj, double val);
+   EAPI double       elm_slider_value_get(Evas_Object *obj);
+   EAPI void         elm_slider_inverted_set(Evas_Object *obj, Evas_Bool inverted);
    /* smart callbacks called:
     * "changed" - when the slider value changes
     * "delay,changed" - when the slider value changed, but a small time after a change (use this if you only want to respond to a change once the slider is held still for a short while).
     */
        
+   typedef enum _Elm_Genlist_Item_Flags
+     {
+        ELM_GENLIST_ITEM_DISABLED,
+        ELM_GENLIST_ITEM_EXPANDED
+     } Elm_Genlist_Item_Flags;
+   typedef struct _Elm_Genlist_Item_Class Elm_Genlist_Item_Class;
+   typedef struct _Elm_Genlist_Item       Elm_Genlist_Item;
+   struct _Elm_Genlist_Item_Class
+     {
+        const char *style;
+        struct {
+           char        *(*label_get) (const void *data, const char *part);
+           Evas_Object *(*icon_get)  (const void *data, const char *part);
+           Evas_Bool    (*state_get) (const void *data, const char *part);
+        } func;
+     };
 
+   EAPI Evas_Object *elm_genlist_add(Evas_Object *parent);
+   EAPI Elm_Genlist_Item *elm_genlist_item_add(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *parent, Elm_Genlist_Item_Flags flags);
+   /* smart callbacks called:
+    */
+        
 #ifdef __cplusplus
 }
 #endif
@@ -520,18 +540,22 @@ extern "C" {
 // * when entries are in a scroller and change size, the scroller shows scrollbars. fix. same for selecting. for 1 line entries in a scroller should only have scroll arrow indicators.
 // 
 //// (more widgets/features - medium priority)
-// * slider widget
-// * <evas scale cache>
+// * biglist widget (restricted format label + icon intended for massive lists)
+// * treeview widget (like biglist - but items can expand to sub-items)
 // * radio + group handling
 // * checkbox (like toggle)
 // * pager (for pushing/popping pages and going back and forward and flipping)
 // * <edje copy & paste fixed>
-// * biglist widget (restricted format label + icon intended for massive lists)
-// * treeview widget (like biglist - but items can expand to sub-items)
+// * <evas scale cache>
 // * <evas shared cache>
 // 
 // * carousel selector widget
 // * auto-size label/text that adapts text size to its allocated region
+// * [ scrollable dropdown combo box ]
+// * [ notepad widget ]
+// * [ toggle with 2x labelled button for 2 states ]
+// * [ poker spinner with numbers + labels ]
+// * [ wrapping text button bar ]
 // * separator widget (h/v)
 // * slide-open "panel" that can hold stuff and optionally scroll
 // * calendar widget (select date)

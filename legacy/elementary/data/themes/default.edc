@@ -6080,7 +6080,7 @@ collections {
 	       visible: 1;
 	       aspect: 1.0 1.0;
 	       aspect_preference: VERTICAL;
-	       rel2.offset: 4 -5;
+	       rel2.offset: 4 -1;
 	    }
 	 }
          part { name: "elm.text";
@@ -6461,8 +6461,9 @@ collections {
 
    group { name: "elm/slider/vertical/default";
       images {
-	 image: "sl_bg.png" COMP;
-	 image: "sl_bg_over.png" COMP;
+	 image: "slv_bg.png" COMP;
+	 image: "slv_bg_over.png" COMP;
+         
 	 image: "sl_bt_0.png" COMP;
 	 image: "sl_bt_1.png" COMP;
 	 image: "sl_bt_2.png" COMP;
@@ -6471,21 +6472,22 @@ collections {
 	 image: "sl_bt2_0_2.png" COMP;
 	 image: "sl_bt2_1.png" COMP;
 	 image: "sl_bt2_2.png" COMP;
-         image: "sl_units.png" COMP;
+         
+         image: "slv_units.png" COMP;
       }
       parts {
          part { name: "base";
             mouse_events: 0;
             description { state: "default" 0.0;
-               max: 99999 6;
-               min: 0 6;
+               max: 6 99999;
+               min: 6 0;
                rel1 { to: "bg";
                   offset: 1 0;
                }
                rel2 { to: "bg";
                   offset: -2 -1;
                }
-               image.normal: "sl_bg.png";
+               image.normal: "slv_bg.png";
                fill.smooth: 0;
             }
          }
@@ -6495,9 +6497,9 @@ collections {
             description { state: "default" 0.0;
                rel1.to: "base";
                rel2 {
-                  to_y: "base";
-                  to_x: "elm.dragable.slider";
-                  relative: 0.5 1.0;
+                  to_x: "base";
+                  to_y: "elm.dragable.slider";
+                  relative: 1.0 0.5;
                }
                color: 255 0 0 200;
             }
@@ -6512,9 +6514,9 @@ collections {
             description { state: "default" 0.0;
                visible: 0;
                rel1 {
-                  to_y: "base";
-                  to_x: "elm.dragable.slider";
-                  relative: 0.5 0.0;
+                  to_x: "base";
+                  to_y: "elm.dragable.slider";
+                  relative: 0.0 0.5;
                }
                rel2.to: "base";
                color: 255 0 0 200;
@@ -6533,7 +6535,7 @@ collections {
                rel2.to: "base";
                rel2.offset: 0 0;
                image {
-                  normal: "sl_bg_over.png";
+                  normal: "slv_bg_over.png";
                   border: 3 3 3 3;
                }
                fill.smooth: 0;
@@ -6554,18 +6556,18 @@ collections {
 	    type: SWALLOW;
             scale: 1;
 	    description { state: "default" 0.0;
-	       min: 48 24;
-	       max: 99999 24;
+	       min: 24 48;
+	       max: 24 9999;
 	       align: 1.0 0.5;
 	       rel1 {
-                  to_x: "elm.text";
-                  relative: 1.0 0.0;
-                  offset: 2 0;
+                  to_y: "elm.text";
+                  relative: 0.0 1.0;
+                  offset: 0 2;
                }
 	       rel2 {
-                  to_x: "elm.units";
-                  relative: 0.0 1.0;
-                  offset: -3 -1;
+                  to_y: "elm.units";
+                  relative: 1.0 0.0;
+                  offset: -1 -3;
                }
 	    }
 	 }
@@ -6573,23 +6575,23 @@ collections {
 	    type: SWALLOW;
 	    description { state: "default" 0.0;
 	       visible: 0;
-	       align: 0.0 0.5;
+	       align: 0.5 0.0;
 	       rel1 {
-                  offset: 4 0;
-                  to_y: "elm.swallow.bar";
+                  offset: 0 4;
+                  to_x: "elm.swallow.bar";
                }
 	       rel2 {
-                  offset: 3 -1;
-                  relative: 0.0 1.0;
-                  to_y: "elm.swallow.bar";
+                  offset: -1 3;
+                  relative: 1.0 0.0;
+                  to_x: "elm.swallow.bar";
                }
 	    }
 	    description { state: "visible" 0.0;
 	       inherit: "default" 0.0;
 	       visible: 1;
 	       aspect: 1.0 1.0;
-	       aspect_preference: VERTICAL;
-	       rel2.offset: 4 -5;
+	       aspect_preference: HORIZONTAL;
+	       rel2.offset: -1 4;
 	    }
 	 }
          part { name: "elm.text";
@@ -6599,27 +6601,27 @@ collections {
 	    description { state: "default" 0.0;
 	       visible: 0;
                fixed: 1 1;
-               align: 0.0 0.5;
-	       rel1.to_x: "elm.swallow.content";
-	       rel1.relative: 1.0 0.0;
-               rel1.offset: -1 4;
-	       rel2.to_x: "elm.swallow.content";
-	       rel2.relative: 1.0 1.0;
-	       rel2.offset: -1 -5;
+               align: 0.5 0.0;
+	       rel1.to_y: "elm.swallow.content";
+	       rel1.relative: 0.5 1.0;
+               rel1.offset: 0 -1;
+	       rel2.to_y: "elm.swallow.content";
+	       rel2.relative: 0.5 1.0;
+	       rel2.offset: -1 -1;
 	       color: 0 0 0 255;
 	       text {
 		  font: "Sans,Edje-Vera";
 		  size: 10;
 		  min: 0 0;
-		  align: 0.0 0.5;
+		  align: 0.5 0.0;
 	       }
 	    }
 	    description { state: "visible" 0.0;
 	       inherit: "default" 0.0;
 	       visible: 1;
 	       text.min: 1 1;
-               rel1.offset: 0 4;
-               rel2.offset: 0 -5;
+               rel1.offset: 4 0;
+               rel2.offset: -5 0;
 	    }
 	 }
          part { name: "units";
@@ -6627,12 +6629,16 @@ collections {
             description { state: "default" 0.0;
 	       visible: 0;
                rel1 {
-                  to_x: "elm.units";
-                  offset: 0 5;
+                  to: "elm.units";
+                  offset: -8 0;
+               }
+               rel2 {
+                  to: "elm.units";
+                  offset: 7 8;
                }
                image {
-                  normal: "sl_units.png";
-                  border: 0 5 3 8;
+                  normal: "slv_units.png";
+                  border: 8 8 0 9;
                }
                fill.smooth: 0;
             }
@@ -6648,17 +6654,17 @@ collections {
 	    description { state: "default" 0.0;
 	       visible: 0;
                fixed: 1 1;
-	       align: 1.0 0.5;
-	       rel1.relative: 1.0 0.0;
-	       rel1.offset: 0 8;
+	       align: 0.5 1.0;
+	       rel1.relative: 0.0 1.0;
+	       rel1.offset: 8 0;
 	       rel2.relative: 1.0 1.0;
-	       rel2.offset: 0 -9;
+	       rel2.offset: -9 0;
 	       color: 0 0 0 255;
 	       text {
 		  font: "Sans,Edje-Vera";
 		  size: 10;
 		  min: 0 0;
-		  align: 0.0 0.5;
+		  align: 0.5 0.0;
 	       }
 	    }
 	    description { state: "visible" 0.0;
@@ -6666,8 +6672,8 @@ collections {
                fixed: 1 1;
 	       visible: 1;
 	       text.min: 1 1;
-	       rel1.offset: -5 0;
-	       rel2.offset: -5 -1;
+	       rel1.offset: 8 -9;
+	       rel2.offset: -9 -9;
 	    }
 	 }
          part { name: "elm.dragable.slider";
@@ -6769,6 +6775,7 @@ collections {
 	       visible: 0;
                max: 15 999;
                min: 15 32;
+               fixed: 1 1;
                rel1 {
                   to_x: "elm.dragable.slider";
                   to_y: "elm.indicator";
@@ -6829,7 +6836,7 @@ collections {
                   offset: 0 0;
                }
 	       rel2 {
-                  to_x: "elm.dragable.slider";
+                  to: "elm.dragable.slider";
                   relative: 1.0 0.0;
                   offset: -1 0;
                }
