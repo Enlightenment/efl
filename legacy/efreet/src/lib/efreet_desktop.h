@@ -17,14 +17,9 @@ EAPI extern int EFREET_DESKTOP_TYPE_LINK;
 EAPI extern int EFREET_DESKTOP_TYPE_DIRECTORY;
 
 /**
- * Efreet_Desktop_Type
- */
-typedef enum Efreet_Desktop_Type Efreet_Desktop_Type;
-
-/**
  * Efreet_Desktop
  */
-typedef struct Efreet_Desktop Efreet_Desktop;
+typedef struct _Efreet_Desktop Efreet_Desktop;
 
 /**
  * A callback used with efreet_desktop_command_get()
@@ -57,7 +52,7 @@ typedef void *(*Efreet_Desktop_Type_Free_Cb) (void *data);
  * Efreet_Desktop
  * @brief a parsed representation of a .desktop file
  */
-struct Efreet_Desktop
+struct _Efreet_Desktop
 {
     int type;               /**< type of desktop file */
 
