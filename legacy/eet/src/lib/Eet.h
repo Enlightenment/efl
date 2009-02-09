@@ -313,6 +313,14 @@ extern "C" {
      */
    EAPI const void *eet_identity_signature(Eet_File *ef, int *signature_length);
 
+    /**
+     * Get the SHA1 associated with a file. Could be the one used to sign the data
+     * or if the data where not signed, it will be the SHA1 of the file.
+     *
+     * @since 2.0.0
+     */
+   EAPI const void *eet_identity_sha1(Eet_File *ef, int *sha1_length);
+
    /**
     * Display the x509 der certificate to out.
     *

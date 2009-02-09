@@ -30,6 +30,10 @@
 # endif
 #endif
 
+#ifdef HAVE_OPENSSL
+#  include <openssl/sha.h>
+#endif
+
 #ifdef HAVE_CIPHER
 # ifdef HAVE_GNUTLS
 #  include <gnutls/x509.h>
@@ -337,6 +341,31 @@ eet_identity_unref(Eet_Key *key)
    eet_identity_close(key);
 }
 
+void *
+eet_identity_compute_sha1(const void *data_base, unsigned int data_length,
+			  int *sha1_length)
+{
+   void *result;
+
+#ifdef HAVE_GNUTLS
+   result = malloc(gcry_md_get_algo_dlen(GCRY_MD_SHA1));
+   if (!result) return NULL;
+
+   gcry_md_hash_buffer(GCRY_MD_SHA1, result, data_base, data_length);
+#else
+# ifdef HAVE_OPENSSL
+   result = malloc(SHA_DIGEST_LENGTH);
+   if (!result) return NULL;
+
+   SHA1(data_base, data_length, result);
+# else
+   result = NULL;
+# endif
+#endif
+
+   return result;
+}
+
 Eet_Error
 eet_identity_sign(FILE *fp, Eet_Key *key)
 {
@@ -513,11 +542,12 @@ eet_identity_check(const void *data_base, unsigned int data_length,
    gnutls_x509_crt_init(&cert);
    gnutls_x509_crt_import(cert, &datum, GNUTLS_X509_FMT_DER);
 
+   signature.data = (void *)sign;
+   signature.size = sign_len;
+
    /* Verify the signature */
    datum.data = (void *)data_base;
    datum.size = data_length;
-   signature.data = (void *)sign;
-   signature.size = sign_len;
    if (!gnutls_x509_crt_verify_data(cert, 0, &datum, &signature))
      return NULL;
 # else

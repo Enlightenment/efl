@@ -90,6 +90,7 @@ struct _Eet_File
    const unsigned char  *data;
    const void           *x509_der;
    const void           *signature;
+   void                 *sha1;
 
    Eet_File_Mode         mode;
 
@@ -99,6 +100,7 @@ struct _Eet_File
    int                   data_size;
    int                   x509_length;
    unsigned int          signature_length;
+   unsigned int          sha1_length;
 
    time_t                mtime;
 
@@ -1266,6 +1268,8 @@ eet_memopen_read(const void *data, size_t size)
    ef->readfp = NULL;
    ef->data = data;
    ef->data_size = size;
+   ef->sha1 = NULL;
+   ef->sha1_length = 0;
 
    return eet_internal_read(ef);
 }
@@ -1382,6 +1386,8 @@ eet_open(const char *file, Eet_File_Mode mode)
    ef->delete_me_now = 0;
    ef->data = NULL;
    ef->data_size = 0;
+   ef->sha1 = NULL;
+   ef->sha1_length = 0;
 
    ef->ed = (mode == EET_FILE_MODE_WRITE)
      || (ef->fp == NULL && mode == EET_FILE_MODE_READ_WRITE) ?
@@ -1454,6 +1460,16 @@ eet_identity_signature(Eet_File *ef, int *signature_length)
 
    if (signature_length) *signature_length = ef->signature_length;
    return ef->signature;
+}
+
+EAPI const void *
+eet_identity_sha1(Eet_File *ef, int *sha1_length)
+{
+   if (!ef->sha1)
+     ef->sha1 = eet_identity_compute_sha1(ef->data, ef->data_size, &ef->sha1_length);
+
+   if (sha1_length) *sha1_length = ef->sha1_length;
+   return ef->sha1;
 }
 
 EAPI Eet_Error
