@@ -34,6 +34,7 @@ static void _ecore_x_event_free_window_prop_client_machine_change(void *data, vo
 #endif
 static void _ecore_x_event_free_key_down(void *data, void *ev);
 static void _ecore_x_event_free_key_up(void *data, void *ev);
+static void _ecore_x_event_free_mouse_move(void *data, void *ev);
 
 static Window _ecore_x_mouse_down_last_win = 0;
 static Window _ecore_x_mouse_down_last_last_win = 0;
@@ -43,6 +44,8 @@ static Time _ecore_x_mouse_down_last_time = 0;
 static Time _ecore_x_mouse_down_last_last_time = 0;
 static int _ecore_x_mouse_up_count = 0;
 static int _ecore_x_mouse_down_did_triple = 0;
+static int _ecore_x_last_event_mouse_move = 0;
+static Ecore_Event *_ecore_x_last_event_mouse_move_event = NULL;
 
 EAPI void
 ecore_x_event_mask_set(Ecore_X_Window w, Ecore_X_Event_Mask mask)
@@ -158,6 +161,20 @@ _ecore_x_event_free_key_up(void *data __UNUSED__, void *ev)
 }
 
 static void
+_ecore_x_event_free_mouse_move(void *data __UNUSED__, void *ev)
+{
+   Ecore_X_Event_Mouse_Move *e;
+
+   e = ev;
+   if (_ecore_x_last_event_mouse_move)
+     {
+        _ecore_x_last_event_mouse_move_event = NULL;
+        _ecore_x_last_event_mouse_move = 0;
+     }
+   free(e);
+}
+
+static void
 _ecore_x_event_free_xdnd_enter(void *data __UNUSED__, void *ev)
 {
    Ecore_X_Event_Xdnd_Enter *e;
@@ -192,6 +209,7 @@ _ecore_x_event_handle_key_press(XEvent *xevent)
    KeySym sym;
    XComposeStatus status;
 
+   _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Key_Down));
    if (!e) return;
    buf = malloc(buflen);
@@ -286,6 +304,7 @@ _ecore_x_event_handle_key_release(XEvent *xevent)
    KeySym sym;
    XComposeStatus status;
 
+   _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Key_Up));
    if (!e) return;
    keyname = XKeysymToString(XKeycodeToKeysym(xevent->xkey.display, 
@@ -334,6 +353,7 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 {
    int i;
 
+   _ecore_x_last_event_mouse_move = 0;
    if ((xevent->xbutton.button > 3) && (xevent->xbutton.button < 8))
      {
 	Ecore_X_Event_Mouse_Wheel *e;
@@ -526,6 +546,7 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 void
 _ecore_x_event_handle_button_release(XEvent *xevent)
 {
+   _ecore_x_last_event_mouse_move = 0;
    /* filter out wheel buttons */
    if ((xevent->xbutton.button <= 3) || (xevent->xbutton.button > 7))
      {
@@ -601,7 +622,14 @@ void
 _ecore_x_event_handle_motion_notify(XEvent *xevent)
 {
    Ecore_X_Event_Mouse_Move *e;
-
+   Ecore_Event *event;
+   
+   if (_ecore_x_last_event_mouse_move)
+     {
+        ecore_event_del(_ecore_x_last_event_mouse_move_event);
+        _ecore_x_last_event_mouse_move = 0;
+        _ecore_x_last_event_mouse_move_event = NULL;
+     }
    e = calloc(1, sizeof(Ecore_X_Event_Mouse_Move));
    if (!e) return;
    e->modifiers = xevent->xmotion.state;
@@ -623,12 +651,15 @@ _ecore_x_event_handle_motion_notify(XEvent *xevent)
    /* Xdnd handling */
    _ecore_x_dnd_drag(xevent->xmotion.root, e->root.x, e->root.y);
 
-   ecore_event_add(ECORE_X_EVENT_MOUSE_MOVE, e, NULL, NULL);
+   event = ecore_event_add(ECORE_X_EVENT_MOUSE_MOVE, e, _ecore_x_event_free_mouse_move, NULL);
+   _ecore_x_last_event_mouse_move = 1;
+   _ecore_x_last_event_mouse_move_event  = event;
 }
 
 void
 _ecore_x_event_handle_enter_notify(XEvent *xevent)
 {
+   _ecore_x_last_event_mouse_move = 0;
      {
 	Ecore_X_Event_Mouse_Move *e;
 
@@ -694,6 +725,7 @@ _ecore_x_event_handle_enter_notify(XEvent *xevent)
 void
 _ecore_x_event_handle_leave_notify(XEvent *xevent)
 {
+   _ecore_x_last_event_mouse_move = 0;
      {
 	Ecore_X_Event_Mouse_Move *e;
 
@@ -764,6 +796,7 @@ _ecore_x_event_handle_focus_in(XEvent *xevent)
 {
    Ecore_X_Event_Window_Focus_In *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    if (_ecore_x_ic)
      {
 	char *str;
@@ -813,6 +846,7 @@ _ecore_x_event_handle_focus_out(XEvent *xevent)
 {
    Ecore_X_Event_Window_Focus_Out *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    if (_ecore_x_ic) XUnsetICFocus(_ecore_x_ic);
    e = calloc(1, sizeof(Ecore_X_Event_Window_Focus_Out));
    if (!e) return;
@@ -852,6 +886,7 @@ _ecore_x_event_handle_focus_out(XEvent *xevent)
 void
 _ecore_x_event_handle_keymap_notify(XEvent *xevent __UNUSED__)
 {
+   _ecore_x_last_event_mouse_move = 0;
    /* FIXME: handle this event type */   
 }
 
@@ -860,6 +895,7 @@ _ecore_x_event_handle_expose(XEvent *xevent)
 {
    Ecore_X_Event_Window_Damage *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Damage));
    if (!e) return;
    e->win = xevent->xexpose.window;
@@ -877,6 +913,7 @@ _ecore_x_event_handle_graphics_expose(XEvent *xevent)
 {
    Ecore_X_Event_Window_Damage *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Damage));
    if (!e) return;
    e->win = xevent->xgraphicsexpose.drawable;
@@ -892,6 +929,7 @@ _ecore_x_event_handle_graphics_expose(XEvent *xevent)
 void
 _ecore_x_event_handle_visibility_notify(XEvent *xevent)
 {
+   _ecore_x_last_event_mouse_move = 0;
 //   if (xevent->xvisibility.state != VisibilityPartiallyObscured)
    {
       Ecore_X_Event_Window_Visibility_Change *e;
@@ -913,6 +951,7 @@ _ecore_x_event_handle_create_notify(XEvent *xevent)
 {
    Ecore_X_Event_Window_Create *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Create));
    if (!e) return;
    e->win = xevent->xcreatewindow.window;
@@ -929,6 +968,7 @@ _ecore_x_event_handle_destroy_notify(XEvent *xevent)
 {
    Ecore_X_Event_Window_Destroy *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Destroy));
    if (!e) return;
    e->win =  xevent->xdestroywindow.window;
@@ -943,6 +983,7 @@ _ecore_x_event_handle_unmap_notify(XEvent *xevent)
 {
    Ecore_X_Event_Window_Hide *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Hide));
    if (!e) return;
    e->win = xevent->xunmap.window;
@@ -956,6 +997,7 @@ _ecore_x_event_handle_map_notify(XEvent *xevent)
 {
    Ecore_X_Event_Window_Show *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Show));
    if (!e) return;
    e->win = xevent->xmap.window;
@@ -969,6 +1011,7 @@ _ecore_x_event_handle_map_request(XEvent *xevent)
 {
    Ecore_X_Event_Window_Show_Request *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Show_Request));
    if (!e) return;
    e->win = xevent->xmaprequest.window;
@@ -982,6 +1025,7 @@ _ecore_x_event_handle_reparent_notify(XEvent *xevent)
 {
    Ecore_X_Event_Window_Reparent *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Reparent));
    if (!e) return;
    e->win = xevent->xreparent.window;
@@ -996,6 +1040,7 @@ _ecore_x_event_handle_configure_notify(XEvent *xevent)
 {
    Ecore_X_Event_Window_Configure *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Configure));
    if (!e) return;
    e->win = xevent->xconfigure.window;
@@ -1017,6 +1062,7 @@ _ecore_x_event_handle_configure_request(XEvent *xevent)
 {
    Ecore_X_Event_Window_Configure_Request *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Configure_Request));
    if (!e) return;
    e->win = xevent->xconfigurerequest.window;
@@ -1047,6 +1093,7 @@ _ecore_x_event_handle_configure_request(XEvent *xevent)
 void
 _ecore_x_event_handle_gravity_notify(XEvent *xevent __UNUSED__)
 {
+   _ecore_x_last_event_mouse_move = 0;
    /* FIXME: handle this event type */
 }
 
@@ -1055,6 +1102,7 @@ _ecore_x_event_handle_resize_request(XEvent *xevent)
 {
    Ecore_X_Event_Window_Resize_Request *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Resize_Request));
    if (!e) return;
    e->win = xevent->xresizerequest.window;
@@ -1069,6 +1117,7 @@ _ecore_x_event_handle_circulate_notify(XEvent *xevent)
 {
    Ecore_X_Event_Window_Stack *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Stack));
    if (!e) return;
    e->win = xevent->xcirculate.window;
@@ -1086,6 +1135,7 @@ _ecore_x_event_handle_circulate_request(XEvent *xevent)
 {
    Ecore_X_Event_Window_Stack_Request *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Stack_Request));
    if (!e) return;
    e->win = xevent->xcirculaterequest.window;
@@ -1101,6 +1151,7 @@ _ecore_x_event_handle_circulate_request(XEvent *xevent)
 void
 _ecore_x_event_handle_property_notify(XEvent *xevent)
 {
+   _ecore_x_last_event_mouse_move = 0;
 #if 0 /* for now i disabled this. nice idea though this is - it leaves a lot
        * to be desired for efficiency that is better left to the app layer
        */
@@ -1221,6 +1272,7 @@ _ecore_x_event_handle_selection_clear(XEvent *xevent)
    Ecore_X_Event_Selection_Clear *e;
    Ecore_X_Atom sel;
 
+   _ecore_x_last_event_mouse_move = 0;
    if (!(d = _ecore_x_selection_get(xevent->xselectionclear.selection)))
      return;
    if (xevent->xselectionclear.time > d->time)
@@ -1250,6 +1302,7 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
    Ecore_X_Selection_Intern *sd;
    void *data;
 
+   _ecore_x_last_event_mouse_move = 0;
    /*
     * Generate a selection request event.
     */
@@ -1308,6 +1361,7 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
    Ecore_X_Atom selection;
    int num_ret, format;
 
+   _ecore_x_last_event_mouse_move = 0;
    selection = xevent->xselection.selection;
 
    if (xevent->xselection.target == ECORE_X_ATOM_SELECTION_TARGETS)
@@ -1356,6 +1410,7 @@ _ecore_x_event_handle_colormap_notify(XEvent *xevent)
 {
    Ecore_X_Event_Window_Colormap *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    e = calloc(1,sizeof(Ecore_X_Event_Window_Colormap));
    if (!e) return;
    e->win = xevent->xcolormap.window;
@@ -1371,6 +1426,7 @@ _ecore_x_event_handle_colormap_notify(XEvent *xevent)
 void
 _ecore_x_event_handle_client_message(XEvent *xevent)
 {
+   _ecore_x_last_event_mouse_move = 0;
    /* Special client message event handling here. need to put LOTS of if */
    /* checks here and generate synthetic events per special message known */
    /* otherwise generate generic client message event. this would handle*/
@@ -1765,6 +1821,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 void
 _ecore_x_event_handle_mapping_notify(XEvent *xevent __UNUSED__)
 {
+   _ecore_x_last_event_mouse_move = 0;
    /* FIXME: handle this event type */
 }
 
@@ -1774,6 +1831,7 @@ _ecore_x_event_handle_shape_change(XEvent *xevent)
    XShapeEvent *shape_event;
    Ecore_X_Event_Window_Shape *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    shape_event = (XShapeEvent *)xevent;
    e = calloc(1, sizeof(Ecore_X_Event_Window_Shape));
    if (!e) return;
@@ -1789,6 +1847,7 @@ _ecore_x_event_handle_screensaver_notify(XEvent *xevent)
    XScreenSaverNotifyEvent *screensaver_event;
    Ecore_X_Event_Screensaver_Notify *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    screensaver_event = (XScreenSaverNotifyEvent *)xevent;
    e = calloc(1, sizeof(Ecore_X_Event_Screensaver_Notify));
    if (!e) return;
@@ -1810,6 +1869,7 @@ _ecore_x_event_handle_sync_counter(XEvent *xevent)
    XSyncCounterNotifyEvent *sync_counter_event;
    Ecore_X_Event_Sync_Counter *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    sync_counter_event = (XSyncCounterNotifyEvent *)xevent;
    e = calloc(1, sizeof(Ecore_X_Event_Sync_Counter));
    if (!e) return;
@@ -1823,6 +1883,7 @@ _ecore_x_event_handle_sync_alarm(XEvent *xevent)
    XSyncAlarmNotifyEvent *sync_alarm_event;
    Ecore_X_Event_Sync_Alarm *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    sync_alarm_event = (XSyncAlarmNotifyEvent *)xevent;
 
    e = calloc(1, sizeof(Ecore_X_Event_Sync_Alarm));
@@ -1839,6 +1900,7 @@ _ecore_x_event_handle_randr_change(XEvent *xevent)
    XRRScreenChangeNotifyEvent *randr_event;
    Ecore_X_Event_Screen_Change *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    randr_event = (XRRScreenChangeNotifyEvent *)xevent;
    if (!XRRUpdateConfiguration(xevent))
      printf("ERROR: Can't update RR config!\n");
@@ -1857,6 +1919,7 @@ _ecore_x_event_handle_randr_change(XEvent *xevent)
 void
 _ecore_x_event_handle_fixes_selection_notify(XEvent *event)
 {
+   _ecore_x_last_event_mouse_move = 0;
    /* Nothing here yet */
    event = NULL;
 }
@@ -1869,6 +1932,7 @@ _ecore_x_event_handle_damage_notify(XEvent *event)
    XDamageNotifyEvent *damage_event;
    Ecore_X_Event_Damage *e;
 
+   _ecore_x_last_event_mouse_move = 0;
    damage_event = (XDamageNotifyEvent *)event;
 
    e = calloc(1, sizeof(Ecore_X_Event_Damage));

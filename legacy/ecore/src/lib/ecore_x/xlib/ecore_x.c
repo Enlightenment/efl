@@ -22,6 +22,7 @@ static Ecore_Fd_Handler *_ecore_x_fd_handler_handle = NULL;
 static int _ecore_x_event_shape_id = 0;
 static int _ecore_x_event_screensaver_id = 0;
 static int _ecore_x_event_sync_id = 0;
+
 #ifdef ECORE_XRANDR
 static int _ecore_x_event_randr_id = 0;
 #endif
@@ -397,6 +398,7 @@ ecore_x_init(const char *name)
 	_ecore_x_event_handlers = NULL;
 	return 0;
      }
+   
 
    _ecore_x_atoms_init();
 
