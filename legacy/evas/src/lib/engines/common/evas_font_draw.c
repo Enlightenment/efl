@@ -50,6 +50,46 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
    return fg;
 }
 
+typedef struct _Font_Char_Index Font_Char_Index;
+struct _Font_Char_Index
+{
+   FT_UInt index;
+   int gl;
+};
+
+static FT_UInt
+_evas_common_get_char_index(RGBA_Font_Int* fi, int gl)
+{
+   Font_Char_Index *result;
+
+#ifdef HAVE_PTHREAD
+   pthread_mutex_lock(&fi->ft_mutex);
+#endif
+
+   result = eina_hash_find(fi->indexes, &gl);
+   if (result) goto on_correct;
+
+   result = malloc(sizeof (Font_Char_Index));
+   if (!result)
+     {
+#ifdef HAVE_PTHREAD
+	pthread_mutex_unlock(&fi->ft_mutex);
+#endif
+	return FT_Get_Char_Index(fi->src->ft.face, gl);
+     }
+
+   result->index = FT_Get_Char_Index(fi->src->ft.face, gl);
+   result->gl = gl;
+
+   eina_hash_direct_add(fi->indexes, &result->gl, result);
+
+ on_correct:
+#ifdef HAVE_PTHREAD
+   pthread_mutex_unlock(&fi->ft_mutex);
+#endif
+   return result->index;
+}
+
 EAPI int
 evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 {
@@ -112,7 +152,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 	  }
 	else /* Charmap not loaded, FS loaded */
 	  {
-	     index = FT_Get_Char_Index(fi->src->ft.face, gl);
+	     index = _evas_common_get_char_index(fi, gl);
 	     if (index != 0)
 	       {
 		  if (!fi->ft.size)
@@ -184,7 +224,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	FT_UInt index;
 	RGBA_Font_Glyph *fg;
 	int chr_x, chr_y;
-	int gl;
+	int gl, kern;
 
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
@@ -194,18 +234,9 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	/* you want performance */
         if ((use_kerning) && (prev_index) && (index) &&
 	    (pface == fi->src->ft.face))
-	  {
-	     FT_Vector delta;
+	  if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
+	    pen_x += kern;
 
-	     /* NOTE: ft2 seems to have a bug. and sometimes returns bizarre
-	      * values to kern by - given same font, same size and same
-	      * prev_index and index. auto/bytecode or none hinting doesnt
-	      * matter */
-	     if (FT_Get_Kerning(fi->src->ft.face, prev_index, index,
-				ft_kerning_default, 
-				&delta) == 0)
-	       pen_x += delta.x >> 6;
-	  }
 	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	if (!fg) continue;

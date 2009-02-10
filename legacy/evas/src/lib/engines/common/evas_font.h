@@ -60,6 +60,7 @@ EAPI RGBA_Font_Int    *evas_common_font_int_find             (const char *name, 
 
 /* query */
 
+EAPI int               evas_common_font_query_kerning        (RGBA_Font_Int* fi, FT_UInt prev, FT_UInt index, int* kerning);
 EAPI void              evas_common_font_query_size           (RGBA_Font *fn, const char *text, int *w, int *h);
 EAPI int               evas_common_font_query_inset          (RGBA_Font *fn, const char *text);
 EAPI void              evas_common_font_query_advance        (RGBA_Font *fn, const char *text, int *h_adv, int *v_adv);

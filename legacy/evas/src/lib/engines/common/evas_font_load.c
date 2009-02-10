@@ -138,6 +138,63 @@ evas_common_font_size_use(RGBA_Font *fn)
      }
 }
 
+static unsigned int
+_evas_common_font_int_length(const void *key)
+{
+   return sizeof (int);
+}
+
+static unsigned int
+_evas_common_font_double_int_length(const void *key)
+{
+   return sizeof (int) * 2;
+}
+
+static int
+_evas_common_font_int_cmp(const int *key1, __UNUSED__ int key1_length,
+			  const int *key2, __UNUSED__ int key2_length)
+{
+   return *key1 - *key2;
+}
+
+static int
+_evas_common_font_double_int_cmp(const int *key1, __UNUSED__ int key1_length,
+				 const int *key2, __UNUSED__ int key2_length)
+{
+   if (key1[0] - key2[0] == 0)
+     return key1[1] - key2[1];
+   return key1[0] - key2[0];
+}
+
+static int
+_evas_common_font_double_int_hash(const int key[2], int key_length)
+{
+   int tmp;
+
+   tmp = eina_hash_int32(&key[0], key_length);
+   tmp ^= eina_hash_int32(&key[1], key_length);
+
+   return tmp;
+}
+
+static void
+_evas_commont_font_int_cache_init(RGBA_Font_Int *fi)
+{
+   /* Add some font kerning cache. */
+   fi->indexes = eina_hash_new(EINA_KEY_LENGTH(_evas_common_font_int_length),
+			       EINA_KEY_CMP(_evas_common_font_int_cmp),
+			       eina_hash_int32,
+			       free, 3);
+   fi->kerning = eina_hash_new(EINA_KEY_LENGTH(_evas_common_font_double_int_length),
+			       EINA_KEY_CMP(_evas_common_font_double_int_cmp),
+			       EINA_KEY_HASH(_evas_common_font_double_int_hash),
+			       free, 3);
+#ifdef HAVE_PTHREAD
+   pthread_mutex_init(&fi->ft_mutex, NULL);
+#endif
+}
+
+
 EAPI RGBA_Font_Int *
 evas_common_font_int_memory_load(const char *name, int size, const void *data, int data_size)
 {
@@ -160,6 +217,8 @@ evas_common_font_int_memory_load(const char *name, int size, const void *data, i
      }
 
    fi->size = size;
+
+   _evas_commont_font_int_cache_init(fi);
 
    fi = evas_common_font_int_load_init(fi);
    evas_common_font_int_load_complete(fi);
@@ -189,6 +248,8 @@ evas_common_font_int_load(const char *name, int size)
      }
 
    fi->size = size;
+
+   _evas_commont_font_int_cache_init(fi);
 
    return evas_common_font_int_load_init(fi);
 }
@@ -557,6 +618,13 @@ evas_common_font_flush_last(void)
 
    eina_hash_foreach(fi->glyphs, font_flush_free_glyph_cb, NULL);
    eina_hash_free(fi->glyphs);
+
+   eina_hash_free(fi->kerning);
+   eina_hash_free(fi->indexes);
+
+#ifdef HAVE_PTHREAD
+   pthread_mutex_destroy(&fi->ft_mutex);
+#endif
 
    evas_common_font_source_free(fi->src);
 

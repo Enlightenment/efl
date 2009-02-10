@@ -642,6 +642,12 @@ struct _RGBA_Font_Int
 
    Eina_Hash       *glyphs;
 
+#ifdef HAVE_PTHREAD
+   pthread_mutex_t  ft_mutex;
+#endif
+   Eina_Hash       *kerning;
+   Eina_Hash       *indexes;
+
    int              usage;
    Font_Hint_Flags hinting;
 

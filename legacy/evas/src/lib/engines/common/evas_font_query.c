@@ -1,5 +1,62 @@
 #include "evas_common.h"
 
+EAPI int
+evas_common_font_query_kerning(RGBA_Font_Int* fi,
+			       FT_UInt prev, FT_UInt index,
+			       int* kerning)
+{
+   int *result;
+   FT_Vector delta;
+   int key[2];
+   int error = 1;
+
+   key[0] = prev;
+   key[1] = index;
+
+#ifdef HAVE_PTHREAD
+   pthread_mutex_lock(&fi->ft_mutex);
+#endif
+
+   result = eina_hash_find(fi->kerning, key);
+   if (result)
+     {
+	*kerning = result[2];
+	goto on_correct;
+     }
+
+   /* NOTE: ft2 seems to have a bug. and sometimes returns bizarre
+    * values to kern by - given same font, same size and same
+    * prev_index and index. auto/bytecode or none hinting doesnt
+    * matter */
+   if (FT_Get_Kerning(fi->src->ft.face,
+		      key[0], key[1],
+		      ft_kerning_default, &delta) == 0)
+     {
+	int *push;
+
+	*kerning = delta.x >> 6;
+
+	push = malloc(sizeof (int) * 3);
+	if (!push) return 1;
+
+	push[0] = key[0];
+	push[1] = key[1];
+	push[2] = *kerning;
+
+	eina_hash_direct_add(fi->kerning, push, push);
+
+	goto on_correct;
+     }
+
+   error = 0;
+
+ on_correct:
+#ifdef HAVE_PTHREAD
+   pthread_mutex_unlock(&fi->ft_mutex);
+#endif
+   return error;
+}
+
 /* string extents */
 EAPI void
 evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
@@ -38,16 +95,9 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
 	kern = 0;
 	if ((use_kerning) && (prev_index) && (index) &&
 	    (pface == fi->src->ft.face))
-	  {
-	     FT_Vector delta;
+	  if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
+	    pen_x += kern;
 
-	     if (FT_Get_Kerning(fi->src->ft.face, prev_index, index,
-				ft_kerning_default, &delta) == 0)
-	       {
-		  kern = delta.x >> 6;
-		  pen_x += kern;
-	       }
-	  }
 	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	if (!fg) continue;
@@ -138,7 +188,7 @@ evas_common_font_query_advance(RGBA_Font *fn, const char *text, int *h_adv, int 
 	FT_UInt index;
 	RGBA_Font_Glyph *fg;
 	int chr_x, chr_y, chr_w;
-        int gl;
+        int gl, kern;
 
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
@@ -148,13 +198,9 @@ evas_common_font_query_advance(RGBA_Font *fn, const char *text, int *h_adv, int 
 	/* you want performance */
 	if ((use_kerning) && (prev_index) && (index) &&
 	    (pface == fi->src->ft.face))
-	  {
-	     FT_Vector delta;
+	  if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
+	    pen_x += kern;
 
-	     if (FT_Get_Kerning(fi->src->ft.face, prev_index, index,
-				ft_kerning_default, &delta) == 0)
-	       pen_x += delta.x >> 6;
-	  }
 	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	if (!fg) continue;
@@ -211,16 +257,9 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *text, int pos, int
 	/* you want performance */
 	if ((use_kerning) && (prev_index) && (index) &&
 	    (pface == fi->src->ft.face))
-	  {
-	     FT_Vector delta;
+	  if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
+	    pen_x += kern;
 
-	     if (FT_Get_Kerning(fi->src->ft.face, prev_index, index,
-				ft_kerning_default, &delta) == 0)
-	       {
-		  kern = delta.x >> 6;
-		  pen_x += kern;
-	       }
-	  }
 	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	if (!fg) continue;
@@ -297,16 +336,9 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y
 	/* you want performance */
 	if ((use_kerning) && (prev_index) && (index) &&
 	    (pface == fi->src->ft.face))
-	  {
-	     FT_Vector delta;
+	  if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
+	    pen_x += kern;
 
-	     if (FT_Get_Kerning(fi->src->ft.face, prev_index, index,
-				ft_kerning_default, &delta) == 0)
-	       {
-		  kern = delta.x >> 6;
-		  pen_x += kern;
-	       }
-	  }
 	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	if (!fg) continue;
