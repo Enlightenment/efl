@@ -11,6 +11,9 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 #ifdef BUILD_ECORE_EVAS_WIN32
+# define WIN32_LEAN_AND_MEAN
+# include <windows.h>
+# undef WIN32_LEAN_AND_MEAN
 # include "Ecore_Win32.h"
 # include "ecore_win32_private.h"
 #endif /* BUILD_ECORE_EVAS_WIN32 */
