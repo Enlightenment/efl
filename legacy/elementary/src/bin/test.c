@@ -1983,7 +1983,7 @@ my_bt_28(void *data, Evas_Object *obj, void *event_info)
    elm_slider_label_set(sl, "Label");
    elm_slider_icon_set(sl, ic);
    elm_slider_unit_format_set(sl, "%1.1f units");
-   elm_slider_span_size_set(sl, 400);
+   elm_slider_span_size_set(sl, 120);
    evas_object_size_hint_align_set(sl, -1.0, -1.0);
    evas_object_size_hint_weight_set(sl, 1.0, 1.0);
    elm_box_pack_end(bx, sl);
@@ -1992,7 +1992,7 @@ my_bt_28(void *data, Evas_Object *obj, void *event_info)
 
    sl = elm_slider_add(win);
    elm_slider_label_set(sl, "Label 2");
-   elm_slider_span_size_set(sl, 200);
+   elm_slider_span_size_set(sl, 80);
    evas_object_size_hint_align_set(sl, -1.0, -1.0);
    evas_object_size_hint_weight_set(sl, 1.0, 1.0);
    elm_slider_indicator_format_set(sl, "%3.0f");
@@ -2008,7 +2008,7 @@ my_bt_28(void *data, Evas_Object *obj, void *event_info)
    sl = elm_slider_add(win);
    elm_slider_label_set(sl, "Label 3");
    elm_slider_unit_format_set(sl, "units");
-   elm_slider_span_size_set(sl, 200);
+   elm_slider_span_size_set(sl, 40);
    evas_object_size_hint_align_set(sl, -1.0, -1.0);
    evas_object_size_hint_weight_set(sl, 1.0, 1.0);
    elm_slider_indicator_format_set(sl, "%3.0f");
@@ -2028,7 +2028,7 @@ my_bt_28(void *data, Evas_Object *obj, void *event_info)
    elm_slider_icon_set(sl, ic);
    elm_slider_label_set(sl, "Label 4");
    elm_slider_unit_format_set(sl, "units");
-   elm_slider_span_size_set(sl, 200);
+   elm_slider_span_size_set(sl, 60);
    evas_object_size_hint_align_set(sl, 0.5, -1.0);
    evas_object_size_hint_weight_set(sl, 0.0, 1.0);
    elm_slider_indicator_format_set(sl, "%1.1f");

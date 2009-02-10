@@ -494,8 +494,7 @@ extern "C" {
        
    typedef enum _Elm_Genlist_Item_Flags
      {
-        ELM_GENLIST_ITEM_DISABLED,
-        ELM_GENLIST_ITEM_EXPANDED
+        ELM_GENLIST_ITEM_SUBITEMS
      } Elm_Genlist_Item_Flags;
    typedef struct _Elm_Genlist_Item_Class Elm_Genlist_Item_Class;
    typedef struct _Elm_Genlist_Item       Elm_Genlist_Item;
@@ -506,11 +505,16 @@ extern "C" {
            char        *(*label_get) (const void *data, const char *part);
            Evas_Object *(*icon_get)  (const void *data, const char *part);
            Evas_Bool    (*state_get) (const void *data, const char *part);
+           void         (*del)       (const void *data);
         } func;
      };
 
    EAPI Evas_Object *elm_genlist_add(Evas_Object *parent);
-   EAPI Elm_Genlist_Item *elm_genlist_item_add(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *parent, Elm_Genlist_Item_Flags flags);
+   EAPI Elm_Genlist_Item *
+     elm_genlist_item_append(Evas_Object *obj, const Elm_Genlist_Item_Class *itc,
+                             const void *data, Elm_Genlist_Item *parent,
+                             Elm_Genlist_Item_Flags flags,
+                             void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data);
    /* smart callbacks called:
     */
         
