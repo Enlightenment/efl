@@ -78,7 +78,8 @@ elm_init(int argc, char **argv)
 {
    int i;
    const char *elm_engine, *elm_scale, *elm_theme, *elm_prefix, *elm_data_dir;
-   const char *elm_font_hinting, *elm_font_path, *elm_image_cache, *elm_font_cache;
+   const char *elm_font_hinting, *elm_font_path, *elm_image_cache;
+   const char *elm_font_cache, *elm_finger_size;
    char buf[PATH_MAX];
    
    eet_init();
@@ -102,6 +103,7 @@ elm_init(int argc, char **argv)
    elm_font_path = getenv("ELM_FONT_PATH");
    elm_image_cache = getenv("ELM_IMAGE_CACHE");
    elm_font_cache = getenv("ELM_FONT_CACHE");
+   elm_finger_size = getenv("ELM_FINGER_SIZE");
    
    if (!_elm_data_dir)
      {
@@ -197,6 +199,7 @@ elm_init(int argc, char **argv)
    _elm_config->font_dirs = NULL;
    _elm_config->image_cache = 4096;
    _elm_config->font_cache = 512;
+   _elm_config->finger_size = 40;
    
    _elm_config->bgpixmap = 0;
    _elm_config->compositing = 1;
@@ -283,6 +286,12 @@ elm_init(int argc, char **argv)
 
    if (elm_font_cache)
      _elm_config->font_cache = atoi(elm_font_cache);
+
+   _elm_config->finger_size = 
+     (double)_elm_config->finger_size * _elm_config->scale;
+   if (elm_finger_size)
+     _elm_config->finger_size = 
+     (double)(atoi(elm_finger_size)) * _elm_config->scale;
    
    /* FIXME: implement quickstart below */
    /* if !quickstart return
@@ -373,4 +382,13 @@ EAPI void
 elm_object_focus(Evas_Object *obj)
 {
    elm_widget_focus_set(obj, 1);
+}
+
+EAPI void
+elm_coords_finger_size_adjust(int times_w, Evas_Coord *w, int times_h, Evas_Coord *h)
+{
+   if ((w) && (*w < (_elm_config->finger_size * times_w)))
+     *w = _elm_config->finger_size * times_w;
+   if ((h) && (*h < (_elm_config->finger_size * times_h)))
+     *h = _elm_config->finger_size * times_h;
 }

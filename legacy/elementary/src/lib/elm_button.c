@@ -58,7 +58,9 @@ _sizing_eval(Evas_Object *obj)
    if (!wd) return;
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
  
-   edje_object_size_min_calc(wd->btn, &minw, &minh);
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+   edje_object_size_min_restricted_calc(wd->btn, &minw, &minh, minw, minh);
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }

@@ -40,7 +40,9 @@ _sizing_eval(Evas_Object *obj)
                                  wd->size * elm_widget_scale_get(obj) * _elm_config->scale,
                                  wd->size * elm_widget_scale_get(obj) * _elm_config->scale);
    edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->img);
-   edje_object_size_min_calc(wd->frm, &minw, &minh);
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+   edje_object_size_min_restricted_calc(wd->frm, &minw, &minh, minw, minh);
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    maxw = minw;
    maxh = minh;
    evas_object_size_hint_min_set(obj, minw, minh);

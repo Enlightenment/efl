@@ -463,6 +463,7 @@ collections {
 	 part { name: "elm.swallow.content";
 	    type: SWALLOW;
 	    description { state: "default" 0.0;
+               fixed: 1 0;
 	       visible: 0;
 	       align: 0.0 0.5;
 	       rel1.offset: 4 4;
@@ -471,6 +472,7 @@ collections {
 	    }
 	    description { state: "visible" 0.0;
 	       inherit: "default" 0.0;
+               fixed: 1 0;
 	       visible: 1;
 	       aspect: 1.0 1.0;
 	       aspect_preference: VERTICAL;
@@ -478,6 +480,7 @@ collections {
 	    }
 	    description { state: "icononly" 0.0;
 	       inherit: "default" 0.0;
+               fixed: 0 0;
 	       visible: 1;
 	       align: 0.5 0.5;
 	       aspect: 1.0 1.0;
@@ -672,6 +675,7 @@ collections {
 	 part { name: "elm.swallow.content";
 	    type: SWALLOW;
 	    description { state: "default" 0.0;
+               fixed: 1 0;
 	       visible: 0;
 	       align: 0.0 0.5;
 	       rel1 {
@@ -687,6 +691,7 @@ collections {
 	    }
 	    description { state: "visible" 0.0;
 	       inherit: "default" 0.0;
+               fixed: 0 0;
 	       visible: 1;
 	       aspect: 1.0 1.0;
 	       aspect_preference: VERTICAL;
@@ -694,6 +699,7 @@ collections {
 	    }
 	    description { state: "icononly" 0.0;
 	       inherit: "default" 0.0;
+               fixed: 0 0;
 	       visible: 1;
 	       align: 0.5 0.5;
 	       aspect: 1.0 1.0;
@@ -1037,8 +1043,8 @@ collections {
 	       rel1.offset: -4 3;
 	       rel2.offset: -4 -4;
 	       align: 1.0 0.5;
-	       min: 96 24;
-	       max: 96 24;
+	       min: 96 16;
+	       max: 96 16;
 	       aspect: 4.0 4.0;
 	       aspect_preference: VERTICAL;
 	       color: 255 255 255 255;
@@ -1067,8 +1073,8 @@ collections {
 	       fixed: 1 1;
 	       rel1.to: "bg";
 	       rel2.to: "bg";
-	       min: 24 24;
-	       max: 24 24;
+	       min: 16 16;
+	       max: 16 16;
 	       aspect: 1.0 1.0;
 	       aspect_preference: VERTICAL;
 	       color: 0 0 0 0;
@@ -1080,12 +1086,12 @@ collections {
 	       events: "button";
 	    }
 	    description { state: "default" 0.0;
-	       rel1.to: "bg";
-	       rel1.offset: -8 -8;
-	       rel1.relative: -0.1 -0.1;
-	       rel2.to: "bg";
-	       rel2.offset: 7 7;
-	       rel2.relative: 1.1 1.1;
+	       rel1.to_x: "bg";
+	       rel1.offset: 0 0;
+	       rel1.relative: 0.0 0.0;
+	       rel2.to_x: "bg";
+	       rel2.offset: -1 -1;
+	       rel2.relative: 1.0 1.0;
 	       color: 0 0 0 0;
 	    }
 	 }
@@ -1096,7 +1102,7 @@ collections {
 	    mouse_events: 0;
 	    description { state: "default" 0.0;
 	       rel1.to: "button";
-	       rel1.relative: -3.0 0.0;
+	       rel1.relative: -5.0 0.0;
 	       rel2.to: "button";
 	       rel2.relative: 0.0 1.0;
 	       color: 0 0 0 0;
@@ -1111,7 +1117,7 @@ collections {
 	       rel1.to: "button";
 	       rel1.relative: 1.0 0.0;
 	       rel2.to: "button";
-	       rel2.relative: 4.0 1.0;
+	       rel2.relative: 6.0 1.0;
 	       color: 0 0 0 0;
 	    }
 	 }
@@ -1130,8 +1136,9 @@ collections {
 	    scale: 1;
 	    clip_to: "clipper";
 	    description { state: "default" 0.0;
-	       rel1.to: "offrect";
-	       rel2.to: "offrect";
+               fixed: 1 1;
+	       rel1.to_x: "offrect";
+	       rel2.to_x: "offrect";
 	       color: 0 0 0 255;
 	       text {
 		  font:     "Sans,Edje-Vera";
@@ -1149,9 +1156,10 @@ collections {
 	    scale: 1;
 	    clip_to: "clipper";
 	    description { state: "default" 0.0;
-	       rel1.to: "onrect";
+               fixed: 1 1;
+	       rel1.to_x: "onrect";
 	       rel1.offset: 1 1;
-	       rel2.to: "onrect";
+	       rel2.to_x: "onrect";
 	       rel2.offset: 0 0;
 	       color: 224 224 224 255;
 	       color3: 0 0 0 64;
@@ -1224,24 +1232,25 @@ collections {
 	 part { name: "elm.swallow.content";
 	    type: SWALLOW;
 	    description { state: "default" 0.0;
+//               fixed: 1 1;
 	       visible: 0;
 	       align: 0.0 0.5;
 	       rel1.offset: 4 4;
-	       rel2.offset: 3 -5;
 	       rel2.relative: 0.0 1.0;
+	       rel2.offset: 3 -5;
 	    }
 	    description { state: "visible" 0.0;
 	       inherit: "default" 0.0;
+//               fixed: 0 0;
 	       visible: 1;
 	       aspect: 1.0 1.0;
 	       aspect_preference: VERTICAL;
 	       rel2.offset: 4 -5;
 	    }
 	 }
-         part {
-	    name:          "elm.text";
-	    type:          TEXT;
-	    mouse_events:  0;
+         part { name: "elm.text";
+	    type: TEXT;
+	    mouse_events: 0;
 	    scale: 1;
 	    description { state: "default" 0.0;
 	       visible: 0;
@@ -1253,10 +1262,10 @@ collections {
 	       rel2.offset: -5 -5;
 	       color: 0 0 0 255;
 	       text {
-		  font:     "Sans,Edje-Vera";
-		  size:     10;
-		  min:      0 0;
-		  align:    0.0 0.5;
+		  font: "Sans,Edje-Vera";
+		  size: 10;
+		  min: 0 0;
+		  align: 0.0 0.5;
 	       }
 	    }
 	    description { state: "visible" 0.0;
@@ -1434,7 +1443,8 @@ collections {
 	       // FIXME 48x96 should be the native pixel design, right now
 	       // its 80x160. fix int he artwork later
 	       min: 24 48;
-	       max: 24 48;
+               aspect: 0.5 0.5;
+//	       max: 24 48;
 	       image.normal: "flip_base.png";
 	    }
 	 }
@@ -2004,8 +2014,9 @@ collections {
 	       rel2.offset: -5 -5;
 	       // FIXME 48x96 should be the native pixel design, right now
 	       // its 80x160. fix int he artwork later
+               aspect: 0.5 0.5;
 	       min: 24 48;
-	       max: 24 48;
+//	       max: 24 48;
 	       image.normal: "flip_base.png";
 	    }
 	 }
@@ -3337,7 +3348,7 @@ collections {
 
    group { name: "elm/hover/base/hoversel_vertical";
       images {
-	 image: "shad_circ.png" COMP;
+//	 image: "shad_circ.png" COMP;
 	 image: "bt_base2.png" COMP;
 	 image: "bt_hilight.png" COMP;
 	 image: "bt_shine.png" COMP;
@@ -3363,7 +3374,7 @@ collections {
 	       rel2.relative: 1.0 1.0;
 	    }
 	 }
-
+/*
         part { name: "shad";
 	    mouse_events:  0;	
 	    description { state: "default" 0.0;
@@ -3375,6 +3386,7 @@ collections {
                fill.smooth: 0;
 	    }
 	 }
+ */
 	 part { name: "button_image";
 	    mouse_events: 1;
 	    description { state: "default" 0.0;
@@ -5210,12 +5222,11 @@ collections {
                }
             }
          }
-         part {
-            name:          "elm.swallow.icon";
-            type:          SWALLOW;
-            description {
-               state:    "default" 0.0;
-               align:    0.0 0.5;
+         part { name: "elm.swallow.icon";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               fixed: 1 0;
+               align: 0.0 0.5;
                rel1 {
                   relative: 0.0  0.0;
                   offset:   4    4;
@@ -5226,12 +5237,13 @@ collections {
                }
             }
          }
-         part {
-            name:          "elm.swallow.end";
-            type:          SWALLOW;
-            description {
-               state:    "default" 0.0;
-               align:    1.0 0.5;
+         part { name: "elm.swallow.end";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               fixed: 1 0;
+               align: 1.0 0.5;
+               aspect: 1.0 1.0;
+               aspect_preference: VERTICAL;
                rel1 {
                   relative: 1.0  0.0;
                   offset:   -5    4;
@@ -5242,15 +5254,14 @@ collections {
                }
             }
          }
-         part {
-            name:           "elm.text";
+         part { name: "elm.text";
             type:           TEXT;
             effect:         SOFT_SHADOW;
             mouse_events:   0;
             scale: 1;
             description {
                state: "default" 0.0;
-               min:      16 16;
+//               min: 16 16;
                rel1 {
                   to_x:     "elm.swallow.icon";
                   relative: 1.0  0.0;
@@ -5405,8 +5416,8 @@ collections {
          part {
             name:          "elm.swallow.icon";
             type:          SWALLOW;
-            description {
-               state:    "default" 0.0;
+            description { state:    "default" 0.0;
+               fixed: 1 0;
                align:    0.0 0.5;
                rel1 {
                   relative: 0.0  0.0;
@@ -5421,8 +5432,8 @@ collections {
          part {
             name:          "elm.swallow.end";
             type:          SWALLOW;
-            description {
-               state:    "default" 0.0;
+            description { state:    "default" 0.0;
+               fixed: 1 0;
                align:    1.0 0.5;
                rel1 {
                   relative: 1.0  0.0;
@@ -5442,7 +5453,7 @@ collections {
             scale: 1;
             description {
                state: "default" 0.0;
-               min:      16 16;
+//               min:      16 16;
                rel1 {
                   to_x:     "elm.swallow.icon";
                   relative: 1.0  0.0;
@@ -5554,8 +5565,8 @@ collections {
          part {
             name: "base_sh";
             mouse_events: 0;
-            description {
-               state: "default" 0.0;
+            description { state: "default" 0.0;
+               fixed: 1 1;
                align: 0.0 0.0;
                min: 0 10;
                rel1 {
@@ -5618,11 +5629,10 @@ collections {
                }
             }
          }
-         part {
-            name:          "elm.swallow.icon";
+         part { name:          "elm.swallow.icon";
             type:          SWALLOW;
-            description {
-               state:    "default" 0.0;
+            description { state:    "default" 0.0;
+               fixed: 1 0;
                align:    0.0 0.5;
                rel1 {
                   relative: 0.0  0.0;
@@ -5634,11 +5644,10 @@ collections {
                }
             }
          }
-         part {
-            name:          "elm.swallow.end";
+         part { name:          "elm.swallow.end";
             type:          SWALLOW;
-            description {
-               state:    "default" 0.0;
+            description { state:    "default" 0.0;
+               fixed: 1 0;
                align:    1.0 0.5;
                rel1 {
                   relative: 1.0  0.0;
@@ -5656,9 +5665,8 @@ collections {
             effect:         SOFT_SHADOW;
             mouse_events:   0;
             scale: 1;
-            description {
-               state: "default" 0.0;
-               min:      16 16;
+            description { state: "default" 0.0;
+//               min:      16 16;
                rel1 {
                   to_x:     "elm.swallow.icon";
                   relative: 1.0  0.0;
@@ -5810,11 +5818,10 @@ collections {
                }
             }
          }
-         part {
-            name:          "elm.swallow.icon";
+         part { name:          "elm.swallow.icon";
             type:          SWALLOW;
-            description {
-               state:    "default" 0.0;
+            description { state:    "default" 0.0;
+               fixed: 1 0;
                align:    0.0 0.5;
                rel1 {
                   relative: 0.0  0.0;
@@ -5826,11 +5833,10 @@ collections {
                }
             }
          }
-         part {
-            name:          "elm.swallow.end";
+         part { name:          "elm.swallow.end";
             type:          SWALLOW;
-            description {
-               state:    "default" 0.0;
+            description { state:    "default" 0.0;
+               fixed: 1 0;
                align:    1.0 0.5;
                rel1 {
                   relative: 1.0  0.0;
@@ -5850,7 +5856,7 @@ collections {
             scale: 1;
             description {
                state: "default" 0.0;
-               min:      16 16;
+//               min:      16 16;
                rel1 {
                   to_x:     "elm.swallow.icon";
                   relative: 1.0  0.0;
@@ -6177,14 +6183,14 @@ collections {
                max: 0 24;
                fixed: 1 1;
                rel1 {
-                  relative: 0.5  0.5;
-                  to: "bg";
+                  relative: 0.5 0.0;
+                  to_x: "bg";
                }
                rel2 {
-                  relative: 0.5  0.5;
-                  to: "bg";
+                  relative: 0.5 1.0;
+                  to_x: "bg";
                }
-               color: 0 0 0 0;
+               color: 255 0 0 100;
             }
          }
          part { name: "button_events";
@@ -6193,13 +6199,13 @@ collections {
 	       events: "elm.dragable.slider";
 	    }
             mouse_events: 1;
-            scale: 1;
 	    description { state: "default" 0.0;
                fixed: 1 1;
-               min: 32 32;
-               max: 32 32;
-	       rel1.to: "elm.dragable.slider";
-	       rel2.to: "elm.dragable.slider";
+               min: 16 16;
+               aspect: 1.0 1.0;
+               aspect_preference: VERTICAL;
+	       rel1.to_x: "elm.dragable.slider";
+	       rel2.to_x: "elm.dragable.slider";
 	       color: 0 0 0 0;
 	    }
 	 }
@@ -6581,7 +6587,7 @@ collections {
 	    description { state: "default" 0.0;
 	       min: 24 48;
 	       max: 24 9999;
-	       align: 1.0 0.5;
+	       align: 0.5 1.0;
 	       rel1 {
                   to_y: "elm.text";
                   relative: 0.0 1.0;
@@ -6713,12 +6719,12 @@ collections {
                max: 24 0;
                fixed: 1 1;
                rel1 {
-                  relative: 0.5  0.5;
-                  to: "bg";
+                  relative: 0.5  0.0;
+                  to_y: "bg";
                }
                rel2 {
-                  relative: 0.5  0.5;
-                  to: "bg";
+                  relative: 0.5  1.0;
+                  to_y: "bg";
                }
                color: 0 0 0 0;
             }
@@ -6729,13 +6735,13 @@ collections {
 	       events: "elm.dragable.slider";
 	    }
             mouse_events: 1;
-            scale: 1;
 	    description { state: "default" 0.0;
                fixed: 1 1;
-               min: 32 32;
-               max: 32 32;
-	       rel1.to: "elm.dragable.slider";
-	       rel2.to: "elm.dragable.slider";
+               min: 16 16;
+               aspect: 1.0 1.0;
+               aspect_preference: HORIZONTAL;
+	       rel1.to_y: "elm.dragable.slider";
+	       rel2.to_y: "elm.dragable.slider";
 	       color: 0 0 0 0;
 	    }
 	 }
@@ -6745,8 +6751,8 @@ collections {
                fixed: 1 1;
                max: 17 999;
                min: 17 24;
-               rel1.to: "button_events";
-               rel2.to: "button_events";
+               rel1.to: "elm.dragable.slider";
+               rel2.to: "elm.dragable.slider";
                image {
                   normal: "sl_bt_0.png";
                   border: 5 5 5 10;
@@ -6872,12 +6878,12 @@ collections {
                align: 0.5 1.0;
 	       rel1 { 
                   to: "button0";
-                  relative: 0.0 -0.25;
+                  relative: 0.0 -1.0;
                   offset: 0 0;
                }
 	       rel2 {
                   to: "button0";
-                  relative: 1.0 -0.25;
+                  relative: 1.0 -1.0;
                   offset: -1 0;
                }
 	       color: 224 224 224 255;

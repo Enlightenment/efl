@@ -221,7 +221,10 @@ _time_update(Evas_Object *obj)
 					     _signal_clock_val_up, obj);
 	     edje_object_signal_callback_add(wd->digit[i], "elm,action,down", "",
 					     _signal_clock_val_down, obj);
-	     edje_object_size_min_calc(wd->digit[i], &mw, &mh);
+             mw = mh = -1;
+             elm_coords_finger_size_adjust(1, &mw, 2, &mh);
+	     edje_object_size_min_restricted_calc(wd->digit[i], &mw, &mh, mw, mh);
+             elm_coords_finger_size_adjust(1, &mw, 2, &mh);
 	     edje_extern_object_min_size_set(wd->digit[i], mw, mh);
 	     snprintf(buf, sizeof(buf), "d%i", i);
 	     edje_object_part_swallow(wd->clk , buf, wd->digit[i]);
@@ -238,7 +241,10 @@ _time_update(Evas_Object *obj)
 					     _signal_clock_val_up, obj);
 	     edje_object_signal_callback_add(wd->ampm, "elm,action,down", "",
 					     _signal_clock_val_down, obj);
-	     edje_object_size_min_calc(wd->ampm, &mw, &mh);
+             mw = mh = -1;
+             elm_coords_finger_size_adjust(1, &mw, 2, &mh);
+	     edje_object_size_min_restricted_calc(wd->ampm, &mw, &mh, mw, mh);
+             elm_coords_finger_size_adjust(1, &mw, 2, &mh);
 	     edje_extern_object_min_size_set(wd->ampm, mw, mh);
 	     edje_object_part_swallow(wd->clk , "ampm", wd->ampm);
 	     evas_object_show(wd->ampm);

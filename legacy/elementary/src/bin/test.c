@@ -265,6 +265,8 @@ my_bt_7(void *data, Evas_Object *obj, void *event_info)
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    tg = elm_toggle_add(win);
+   evas_object_size_hint_weight_set(tg, 1.0, 1.0);
+   evas_object_size_hint_align_set(tg, -1.0, 0.5);
    elm_toggle_label_set(tg, "Icon sized to toggle");
    elm_toggle_icon_set(tg, ic);
    elm_toggle_state_set(tg, 1);
@@ -283,13 +285,13 @@ my_bt_7(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
    evas_object_show(ic);
-   
+
    tg = elm_toggle_add(win);
    elm_toggle_label_set(tg, "Label Only");
-   elm_toggle_states_labels_set(tg, "Big", "Small");
+   elm_toggle_states_labels_set(tg, "Big long fun times label", "Small long happy fun label");
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
@@ -1500,6 +1502,7 @@ my_bt_20(void *data, Evas_Object *obj, void *event_info)
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 1, 1);
    elm_list_item_append(li, "Hello", ic, NULL,  NULL, NULL);
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
@@ -1984,7 +1987,7 @@ my_bt_28(void *data, Evas_Object *obj, void *event_info)
    elm_slider_icon_set(sl, ic);
    elm_slider_unit_format_set(sl, "%1.1f units");
    elm_slider_span_size_set(sl, 120);
-   evas_object_size_hint_align_set(sl, -1.0, -1.0);
+   evas_object_size_hint_align_set(sl, -1.0, 0.5);
    evas_object_size_hint_weight_set(sl, 1.0, 1.0);
    elm_box_pack_end(bx, sl);
    evas_object_show(ic);
@@ -1993,7 +1996,7 @@ my_bt_28(void *data, Evas_Object *obj, void *event_info)
    sl = elm_slider_add(win);
    elm_slider_label_set(sl, "Label 2");
    elm_slider_span_size_set(sl, 80);
-   evas_object_size_hint_align_set(sl, -1.0, -1.0);
+   evas_object_size_hint_align_set(sl, -1.0, 0.5);
    evas_object_size_hint_weight_set(sl, 1.0, 1.0);
    elm_slider_indicator_format_set(sl, "%3.0f");
    elm_slider_min_max_set(sl, 50, 150);
@@ -2009,7 +2012,7 @@ my_bt_28(void *data, Evas_Object *obj, void *event_info)
    elm_slider_label_set(sl, "Label 3");
    elm_slider_unit_format_set(sl, "units");
    elm_slider_span_size_set(sl, 40);
-   evas_object_size_hint_align_set(sl, -1.0, -1.0);
+   evas_object_size_hint_align_set(sl, -1.0, 0.5);
    evas_object_size_hint_weight_set(sl, 1.0, 1.0);
    elm_slider_indicator_format_set(sl, "%3.0f");
    elm_slider_min_max_set(sl, 50, 150);
@@ -2039,6 +2042,63 @@ my_bt_28(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(ic);
    evas_object_show(sl);
    
+   evas_object_show(win);
+}
+
+static Elm_Genlist_Item_Class itc1;
+char *gl_label_get(const void *data, const char *part)
+{
+   char buf[256];
+   snprintf(buf, sizeof(buf), "Item # %i", (int)data);
+   return strdup(buf);
+}
+Evas_Object *gl_icon_get(const void *data, const char *part)
+{
+   return NULL;
+}
+Evas_Bool gl_state_get(const void *data, const char *part)
+{
+   return 0;
+}
+void gl_del(const void *data)
+{
+}
+
+
+static void
+my_bt_29(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *gl;
+   Elm_Genlist_Item *gli;
+   int i;
+   
+   win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Genlist");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_show(bg);
+   
+   gl = elm_genlist_add(win);
+   elm_win_resize_object_add(win, gl);
+   evas_object_size_hint_weight_set(gl, 1.0, 1.0);
+   evas_object_show(gl);
+   
+   itc1.style = "default";
+   itc1.func.label_get = gl_label_get;
+   itc1.func.icon_get = gl_icon_get;
+   itc1.func.state_get = gl_state_get;
+   itc1.func.del = gl_del;
+
+   for (i = 0; i < 2000; i++)
+     {
+        gli = elm_genlist_item_append(gl, &itc1, (void *)i/* item data */, 
+                                      NULL/* parent */, ELM_GENLIST_ITEM_NONE, 
+                                      NULL/* func */, NULL/* func data */);
+     }
+   evas_object_resize(win, 320, 320);
    evas_object_show(win);
 }
 
@@ -2145,6 +2205,7 @@ my_win_main(void)
    elm_list_item_append(li, "Scaling", NULL, NULL, my_bt_26, NULL);
    elm_list_item_append(li, "Scaling 2", NULL, NULL, my_bt_27, NULL);
    elm_list_item_append(li, "Slider", NULL, NULL, my_bt_28, NULL);
+   elm_list_item_append(li, "Genlist", NULL, NULL, my_bt_29, NULL);
 
    elm_list_go(li);
    

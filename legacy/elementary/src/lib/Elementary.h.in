@@ -112,6 +112,8 @@
 extern "C" {
 #endif
 
+#define ELM_RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh) (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && (((x) + (w)) > (xx)) && (((y) + (h)) > (yy)))
+   
 /**************************************************************************/   
    /* Objects */
    typedef enum _Elm_Win_Type
@@ -146,6 +148,8 @@ extern "C" {
    EAPI void         elm_object_scale_set(Evas_Object *obj, double scale);
    EAPI double       elm_object_scale_get(Evas_Object *obj);
    EAPI void         elm_object_focus(Evas_Object *obj);
+   
+   EAPI void         elm_coords_finger_size_adjust(int times_w, Evas_Coord *w, int times_h, Evas_Coord *h);
        
    EAPI Evas_Object *elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type);
    EAPI void         elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj);
@@ -494,7 +498,8 @@ extern "C" {
        
    typedef enum _Elm_Genlist_Item_Flags
      {
-        ELM_GENLIST_ITEM_SUBITEMS
+        ELM_GENLIST_ITEM_NONE = 0,
+        ELM_GENLIST_ITEM_SUBITEMS = (1 << 0)
      } Elm_Genlist_Item_Flags;
    typedef struct _Elm_Genlist_Item_Class Elm_Genlist_Item_Class;
    typedef struct _Elm_Genlist_Item       Elm_Genlist_Item;

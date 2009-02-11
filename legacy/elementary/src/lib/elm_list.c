@@ -84,8 +84,8 @@ static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   _fix_items(data);
-   _sizing_eval(data);
+//   _fix_items(data);
+//   _sizing_eval(data);
 }
 
 static void 
@@ -304,20 +304,23 @@ _fix_items(Evas_Object *obj)
                }
              if (it->icon)
                {
-                  edje_extern_object_aspect_set(it->icon, EDJE_ASPECT_CONTROL_VERTICAL, minw[0], minh[0]);
-                  edje_extern_object_min_size_set(it->icon, minw[0], minh[0]);
+                  evas_object_size_hint_min_set(it->icon, minw[0], minh[0]);
+                  evas_object_size_hint_max_set(it->icon, 99999, 99999);
                   edje_object_part_swallow(it->base, "elm.swallow.icon", it->icon);
                }
              if (it->end)
                {
-                  edje_extern_object_aspect_set(it->end, EDJE_ASPECT_CONTROL_VERTICAL, minw[1], minh[1]);
-                  edje_extern_object_min_size_set(it->end, minw[1], minh[1]);
+                  evas_object_size_hint_min_set(it->end, minw[1], minh[1]);
+                  evas_object_size_hint_max_set(it->end, 99999, 99999);
                   edje_object_part_swallow(it->base, "elm.swallow.end", it->end);
                }
              if (!it->fixed)
                {
                   edje_object_message_signal_process(it->base);
-                  edje_object_size_min_calc(it->base, &mw, &mh);
+                  mw = mh = -1;
+                  elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+                  edje_object_size_min_restricted_calc(it->base, &mw, &mh, mw, mh);
+                  elm_coords_finger_size_adjust(1, &mw, 1, &mh);
                   evas_object_size_hint_min_set(it->base, mw, mh);
                   evas_object_show(it->base);
                }

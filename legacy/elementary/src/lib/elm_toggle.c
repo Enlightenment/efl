@@ -62,7 +62,9 @@ _sizing_eval(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    
-   edje_object_size_min_calc(wd->tgl, &minw, &minh);
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+   edje_object_size_min_restricted_calc(wd->tgl, &minw, &minh, minw, minh);
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
@@ -73,6 +75,8 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Widget_Data *wd = elm_widget_data_get(data);
    if (obj != wd->icon) return;
    edje_object_part_swallow(wd->tgl, "elm.swallow.content", obj);
+   Evas_Coord mw, mh;
+   evas_object_size_hint_min_get(obj, &mw, &mh);
    _sizing_eval(data);
 }
 
@@ -173,6 +177,9 @@ elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon)
      {
 	elm_widget_sub_object_add(obj, icon);
 	edje_object_part_swallow(wd->tgl, "elm.swallow.content", icon);
+   Evas_Coord mw, mh;
+   evas_object_size_hint_min_get(wd->icon, &mw, &mh);
+   printf("%ix%i\n", mw, mh);
 	edje_object_signal_emit(wd->tgl, "elm,state,icon,visible", "elm");
 	evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);

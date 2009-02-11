@@ -101,7 +101,10 @@ _theme_hook(Evas_Object *obj)
              edje_object_part_swallow(it->base, "elm.swallow.icon", it->icon);
           }
         edje_object_part_text_set(it->base, "elm.text", it->label);
-        edje_object_size_min_calc(it->base, &mw, &mh);
+        mw = mh = -1;
+        elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+        edje_object_size_min_restricted_calc(it->base, &mw, &mh, mw, mh);
+        elm_coords_finger_size_adjust(1, &mw, 1, &mh);
         evas_object_size_hint_min_set(it->base, mw, mh);
         evas_object_size_hint_max_set(it->base, 9999, mh);
      }
@@ -234,7 +237,10 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, voi
         elm_widget_sub_object_add(obj, it->icon);
      }
    edje_object_part_text_set(it->base, "elm.text", it->label);
-   edje_object_size_min_calc(it->base, &mw, &mh);
+   mw = mh = -1;
+   elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+   edje_object_size_min_restricted_calc(it->base, &mw, &mh, mw, mh);
+   elm_coords_finger_size_adjust(1, &mw, 1, &mh);
    evas_object_size_hint_weight_set(it->base, 0.0, 0.0);
    evas_object_size_hint_align_set(it->base, -1.0, -1.0);
    evas_object_size_hint_min_set(it->base, mw, mh);
