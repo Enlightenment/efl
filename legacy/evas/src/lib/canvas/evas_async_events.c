@@ -21,7 +21,7 @@ struct _Evas_Event_Async
    void			 *event_info;
    void			(*func)(void *target, Evas_Callback_Type type, void *event_info);
    Evas_Callback_Type	  type;
-};
+} __PACKED__ ;
 
 #endif
 
