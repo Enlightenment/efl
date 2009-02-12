@@ -21,7 +21,7 @@ struct _Evas_Event_Async
    void			 *event_info;
    void			(*func)(void *target, Evas_Callback_Type type, void *event_info);
    Evas_Callback_Type	  type;
-} __PACKED__ ;
+};
 
 #endif
 
@@ -134,6 +134,8 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
 
    if (!func) return 0;
    if (_fd_write == -1) return 0;
+
+   memset(&new, 0, sizeof (new));
 
    new.func = func;
    new.target = target;
