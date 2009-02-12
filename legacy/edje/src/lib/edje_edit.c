@@ -3640,14 +3640,19 @@ EAPI unsigned char
 edje_edit_state_image_border_fill_get(Evas_Object *obj, const char *part, const char *state)
 {
    GET_PD_OR_RETURN(0);
-   return pd->border.no_fill ? 0 : 1;
+   if (pd->border.no_fill == 0) return 1;
+   else if (pd->border.no_fill == 1) return 0;
+   else if (pd->border.no_fill == 2) return 2;
+   return 0;
 }
 
 EAPI void
 edje_edit_state_image_border_fill_set(Evas_Object *obj, const char *part, const char *state, unsigned char fill)
 {
    GET_PD_OR_RETURN();
-   pd->border.no_fill = fill ? 0 : 1;
+   if (fill == 0) pd->border.no_fill = 1;
+   else if (fill == 1) pd->border.no_fill = 0;
+   else if (fill == 2) pd->border.no_fill = 2;
 
    edje_object_calc_force(obj);
 }
@@ -5068,8 +5073,12 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
       
 	if (pd->border.l || pd->border.r || pd->border.t || pd->border.b)
 	  fprintf(f, I6"border: %d %d %d %d;\n", pd->border.l, pd->border.r, pd->border.t, pd->border.b);
-	if (pd->border.no_fill)
-	  fprintf(f, I6"middle: 0;\n");
+	if (pd->border.no_fill == 1)
+	  fprintf(f, I6"middle: NONE;\n");
+	else if (pd->border.no_fill == 0)
+	  fprintf(f, I6"middle: DEFAULT;\n");
+	else if (pd->border.no_fill == 2)
+	  fprintf(f, I6"middle: SOLID;\n");
 
 	fprintf(f, I5"}\n");//image
      }

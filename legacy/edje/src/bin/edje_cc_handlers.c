@@ -3689,7 +3689,7 @@ st_collections_group_parts_part_description_rel2_to_y(void)
                 ..
                 tween:  "filenameN.ext";
                 border:  left right top bottom;
-                middle:  0-1;
+                middle:  0/1/NONE/DEFAULT/SOLID;
             }
             ..
         }
@@ -3828,11 +3828,11 @@ st_collections_group_parts_part_description_image_border(void)
     @property
         middle
     @parameters
-        [0 or 1]
+        0, 1, NONE, DEFAULT, SOLID
     @effect
-        If border is set, this boolean value tells Edje if the rest of the
-        image (not covered by the defined border) will be displayed or not.
-        The default value is 1.
+        If border is set, this value tells Edje if the rest of the
+        image (not covered by the defined border) will be displayed or not
+        or be assumed to be solid (without alpha). The default is 1/DEFAULT.
     @endproperty
 */
 static void
@@ -3857,7 +3857,13 @@ st_collections_group_parts_part_description_image_middle(void)
 
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->border.no_fill = !parse_bool(0);
+   ed->border.no_fill =  parse_enum(0,
+                                    "1", 0,
+                                    "DEFAULT", 0,
+                                    "0", 1,
+                                    "NONE", 1,
+                                    "SOLID", 2,
+                                    NULL);
 }
 
 /**

@@ -1258,8 +1258,12 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 
    evas_object_image_border_set(ep->object, p3->border.l, p3->border.r,
 				p3->border.t, p3->border.b);
-   evas_object_image_border_center_fill_set(ep->object,
-					    !(chosen_desc->border.no_fill));
+   if (chosen_desc->border.no_fill == 0)
+     evas_object_image_border_center_fill_set(ep->object, EVAS_BORDER_FILL_DEFAULT);
+   else if (chosen_desc->border.no_fill == 1)
+     evas_object_image_border_center_fill_set(ep->object, EVAS_BORDER_FILL_NONE);
+   else if (chosen_desc->border.no_fill == 2)
+     evas_object_image_border_center_fill_set(ep->object, EVAS_BORDER_FILL_SOLID);
    image_id = ep->param1.description->image.id;
    if (image_id < 0)
      {
