@@ -441,14 +441,14 @@ evas_object_image_border_get(const Evas_Object *obj, int *l, int *r, int *t, int
  *
  * When rendering, the image may be scaled to fit the size of the
  * image object. This function sets if the center part of the scaled image
- * is to be drawn or left completely blank. Very useful for frames and
- * decorations.
+ * is to be drawn or left completely blank, or forced to be solid. Very useful
+ * for frames and decorations.
  *
  * @param obj The given image object.
- * @param fill Whether the center should be drawn.
+ * @param fill Fill mode of the middle.
  */
 EAPI void
-evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Bool fill)
+evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Border_Fill_Mode fill)
 {
    Evas_Object_Image *o;
 
@@ -459,9 +459,7 @@ evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Bool fill)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
-   if (((o->cur.border.fill) && (fill)) ||
-       ((!o->cur.border.fill) && (!fill)))
-     return;
+   if (fill == o->cur.border.fill) return;
    o->cur.border.fill = fill;
    o->changed = 1;
    evas_object_change(obj);
@@ -541,9 +539,9 @@ evas_object_image_filled_set(Evas_Object *obj, Evas_Bool setting)
  * See @ref evas_object_image_fill_set for more details.
  *
  * @param obj The given image object.
- * @return If the center is to be drawn or not.
+ * @return Fill mode of the  center.
  */
-EAPI Evas_Bool
+EAPI Evas_Border_Fill_Mode
 evas_object_image_border_center_fill_get(const Evas_Object *obj)
 {
    Evas_Object_Image *o;
@@ -2247,13 +2245,19 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 		       outx = ox; outy = oy + bt;
 		       outw = bl; outh = ih - bt - bb;
 		       obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
-		       if (o->cur.border.fill)
+		       if (o->cur.border.fill > EVAS_BORDER_FILL_NONE)
 			 {
 			    inx = bl; iny = bt;
 			    inw = imw - bl - br; inh = imh - bt - bb;
 			    outx = ox + bl; outy = oy + bt;
 			    outw = iw - bl - br; outh = ih - bt - bb;
+                            if (o->cur.border.fill == EVAS_BORDER_FILL_SOLID)
+                              obj->layer->evas->engine.func->context_render_op_set(output, context,
+                                                                                   EVAS_RENDER_COPY);
 			    obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
+                            if (o->cur.border.fill == EVAS_BORDER_FILL_SOLID)
+                              obj->layer->evas->engine.func->context_render_op_set(output, context,
+                                                                                   obj->cur.render_op);
 			 }
 		       inx = imw - br; iny = bt;
 		       inw = br; inh = imh - bt - bb;

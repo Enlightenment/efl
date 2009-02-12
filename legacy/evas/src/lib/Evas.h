@@ -245,6 +245,12 @@ typedef enum _Evas_Render_Op
    EVAS_RENDER_MUL = 11 /**< d = d*s */
 } Evas_Render_Op; /**<  */
 
+typedef enum _Evas_Border_Fill_Mode
+{
+   EVAS_BORDER_FILL_NONE = 0,
+   EVAS_BORDER_FILL_DEFAULT = 1,
+   EVAS_BORDER_FILL_SOLID = 2
+} Evas_Border_Fill_Mode;
 
 struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
 {
@@ -509,8 +515,8 @@ extern "C" {
    EAPI void              evas_object_image_file_get        (const Evas_Object *obj, const char **file, const char **key);
    EAPI void              evas_object_image_border_set      (Evas_Object *obj, int l, int r, int t, int b);
    EAPI void              evas_object_image_border_get      (const Evas_Object *obj, int *l, int *r, int *t, int *b);
-   EAPI void              evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Bool fill);
-   EAPI Evas_Bool         evas_object_image_border_center_fill_get(const Evas_Object *obj);
+   EAPI void              evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Border_Fill_Mode fill);
+   EAPI Evas_Border_Fill_Mode evas_object_image_border_center_fill_get(const Evas_Object *obj);
    EAPI void              evas_object_image_filled_set      (Evas_Object *obj, Evas_Bool setting);
    EAPI Evas_Bool         evas_object_image_filled_get      (const Evas_Object *obj);
    EAPI void              evas_object_image_fill_set        (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
