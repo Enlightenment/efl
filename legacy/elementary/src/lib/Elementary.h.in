@@ -540,17 +540,15 @@ extern "C" {
 //// (incomplete - medium priority)
 // * entry selection conflicts with finger scroll (make selection start/stop work on signals?)
 // * disabled not supported
-// * tab widget focusing (not useful for touchscreen tho...)
 // * on the fly theme changes - test (should work)
 // * need a hold-scroll counter in elm_widget
 // * add fullscreen mode on/off for windows
 // * hoversel only vertical right now - make horizontal
-// * set scaling per widget (and if scaling should be inherited by children)
 // * when entries are in a scroller and change size, the scroller shows scrollbars. fix. same for selecting. for 1 line entries in a scroller should only have scroll arrow indicators.
 // 
 //// (more widgets/features - medium priority)
-// * biglist widget (restricted format label + icon intended for massive lists)
-// * treeview widget (like biglist - but items can expand to sub-items)
+// * genlist widget (complex list widget - harder to use than normal simple list, but handles huge lists of items etc.)
+// * tree feature fir genlist widget (like biglist - but items can expand to sub-items)
 // * radio + group handling
 // * checkbox (like toggle)
 // * pager (for pushing/popping pages and going back and forward and flipping)
@@ -577,7 +575,7 @@ extern "C" {
 // * dialpad widget - need one with a phone dialpad
 // * file selector widget
 // * progress bar widget
-// * generic "tacho" widget (set min/max labels - and up to 3 intermediate labels)
+// * generic "tacho" widget (set min/max labels - and up to 3 intermediate labels etc.)
 // * status widget (busy, stalled, running, etc.)
 // * full window in window widget (so move/resize of window object does as you'd expect a child window to do within the canvas)
 // 
@@ -588,19 +586,24 @@ extern "C" {
 // * use evas's new box instead of a box smart
 // * use evas's table instead of a table smart
 // * use stack for win widget
+// * prepend or append theme files from code for an app to allow an app to augment the theme eithe rby forcibly overriding things with its own theme file (so it can ship some custom elements that always override user theme) and so it can also provide a final (even after default) fallback for "extended" styles of its own (but thus allowing themes to overried its extensions if they want)
+// * determine prefix of app dynamically and export calls to get prefix info
+// * load config from file
+// * load config from x prpoerty
+// * handle finger size property and on-the-fly changes like scaling does
 // * somehow a pdf(ps) viewer widget that doesnt make it gpl (lgpl)
-// * emotion widget?
+// * emotion widget
 // * ewebkit widget
+// * flash (gnash) widget
 // * need url and path entry modes for vkbd
 // * return list of toplevel window objects
-// * widgets should show who is focused (not useful for touchscreen)
 // * focus should have an object that is layered above all others (definable layer) that moves + resizes (slides about - animated) from one focused widget to the next for focus. also emit focus/unfocus signals too
 // * scroller could do with page up/down/left/right buttons and and idea of a page size
 // * current sizing tree inefficient
 // * need a way to filter entry data for entry (eg for phone numbers)
 // * win should emit signals based on vkbd type - if it gets a message and is a vkbd win
 // * win needs a way of setting aspect too
-// * use the wrong call on the wrong widget and *BOOM*
+// * use the wrong call on the wrong widget and *BOOM* ... crashland
 // 
 //////////////////////////////////////////////////////////////////////////////
 #endif

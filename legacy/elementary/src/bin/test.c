@@ -2086,13 +2086,13 @@ my_bt_29(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(gl, 1.0, 1.0);
    evas_object_show(gl);
    
-   itc1.style = "default";
+   itc1.style          = "default";
    itc1.func.label_get = gl_label_get;
-   itc1.func.icon_get = gl_icon_get;
+   itc1.func.icon_get  = gl_icon_get;
    itc1.func.state_get = gl_state_get;
-   itc1.func.del = gl_del;
+   itc1.func.del       = gl_del;
 
-   for (i = 0; i < 2000; i++)
+   for (i = 0; i < 10000; i++)
      {
         gli = elm_genlist_item_append(gl, &itc1, (void *)i/* item data */, 
                                       NULL/* parent */, ELM_GENLIST_ITEM_NONE, 
