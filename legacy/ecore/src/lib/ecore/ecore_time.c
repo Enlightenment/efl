@@ -12,6 +12,10 @@
 # include <sys/time.h>
 #endif
 
+#ifdef HAVE_EVIL
+# include <Evil.h> /* for gettimeofday */
+#endif
+
 #include "Ecore.h"
 #include "ecore_private.h"
 
