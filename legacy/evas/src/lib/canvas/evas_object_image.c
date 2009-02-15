@@ -2251,13 +2251,18 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 			    inw = imw - bl - br; inh = imh - bt - bb;
 			    outx = ox + bl; outy = oy + bt;
 			    outw = iw - bl - br; outh = ih - bt - bb;
-                            if (o->cur.border.fill == EVAS_BORDER_FILL_SOLID)
-                              obj->layer->evas->engine.func->context_render_op_set(output, context,
-                                                                                   EVAS_RENDER_COPY);
-			    obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
-                            if (o->cur.border.fill == EVAS_BORDER_FILL_SOLID)
-                              obj->layer->evas->engine.func->context_render_op_set(output, context,
-                                                                                   obj->cur.render_op);
+                            if ((o->cur.border.fill == EVAS_BORDER_FILL_SOLID) &&
+                                (obj->cur.cache.clip.a == 255) &&
+                                (obj->cur.render_op == EVAS_RENDER_BLEND))
+                              {
+                                 obj->layer->evas->engine.func->context_render_op_set(output, context,
+                                                                                      EVAS_RENDER_COPY);
+                                 obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
+                                 obj->layer->evas->engine.func->context_render_op_set(output, context,
+                                                                                      obj->cur.render_op);
+                              }
+                            else
+                              obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
 			 }
 		       inx = imw - br; iny = bt;
 		       inw = br; inh = imh - bt - bb;
