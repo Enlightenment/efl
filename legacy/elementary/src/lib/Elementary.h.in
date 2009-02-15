@@ -507,10 +507,10 @@ extern "C" {
      {
         const char *style;
         struct {
-           char        *(*label_get) (const void *data, const char *part);
-           Evas_Object *(*icon_get)  (const void *data, const char *part);
-           Evas_Bool    (*state_get) (const void *data, const char *part);
-           void         (*del)       (const void *data);
+           char        *(*label_get) (const void *data, Evas_Object *obj, const char *part);
+           Evas_Object *(*icon_get)  (const void *data, Evas_Object *obj, const char *part);
+           Evas_Bool    (*state_get) (const void *data, Evas_Object *obj, const char *part);
+           void         (*del)       (const void *data, Evas_Object *obj);
         } func;
      };
 

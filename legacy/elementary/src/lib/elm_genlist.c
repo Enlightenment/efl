@@ -11,7 +11,6 @@ struct _Widget_Data
    Evas_Object *obj;
    Evas_Object *scr;
    Evas_Object *pan_smart;
-   Evas_Object *content;
    Eina_Inlist *items;
    Eina_Inlist *blocks;
    Pan *pan;
@@ -53,6 +52,7 @@ struct _Item
    
    Evas_Object *base;
    Eina_List *labels, *icons, *states;
+   Eina_List *icon_objs;
    
    Evas_Bool realized : 1;
    Evas_Bool selected : 1;
@@ -80,6 +80,20 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+/*   
+   while (wd->blocks)
+     {
+        Item_Block *itb = wd->blocks;
+        while (itb->items)
+          {
+             Item *it = itb->items->data;
+             
+          }
+        free(itb);
+     }
+ */
+   evas_object_del(wd->pan_smart);
+   wd->pan_smart = NULL;
    free(wd);
 }
 
@@ -107,7 +121,8 @@ _sizing_eval(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord  vw, vh, minw, minh, maxw, maxh, w, h, vmw, vmh;
    double xw, xy;
-   
+
+   /*
    evas_object_size_hint_min_get(wd->content, &minw, &minh);
    evas_object_size_hint_max_get(wd->content, &maxw, &maxh);
    evas_object_size_hint_weight_get(wd->content, &xw, &xy);
@@ -131,6 +146,7 @@ _sizing_eval(Evas_Object *obj)
    if (wd->min_w) w = vmw + minw;
    if (wd->min_h) h = vmh + minh;
    evas_object_size_hint_min_set(obj, w, h);
+    */
 }
 
 static void
@@ -138,7 +154,7 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    _sizing_eval(data);
 }
-
+/*
 static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
@@ -153,7 +169,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 	_sizing_eval(obj);
      }
 }
-
+*/
 static void
 _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
@@ -233,11 +249,44 @@ _item_realize(Item *it, int in, int calc)
         for (l = it->labels; l; l = l->next)
           {
              const char *key = l->data;
-             char *s = it->itc->func.label_get(it->data, l->data);
+             char *s = it->itc->func.label_get(it->data, it->wd->obj, l->data);
              if (s)
                {
                   edje_object_part_text_set(it->base, l->data, s);
                   free(s);
+               }
+          }
+     }
+   if (it->itc->func.icon_get)
+     {
+        Eina_List *l;
+        
+        it->icons = _stringlist_get(edje_object_data_get(it->base, "icons"));
+        for (l = it->icons; l; l = l->next)
+          {
+             const char *key = l->data;
+             Evas_Object *ic = it->itc->func.icon_get(it->data, it->wd->obj, l->data);
+             if (ic)
+               {
+                  it->icon_objs = eina_list_append(it->icon_objs, ic);
+                  edje_object_part_swallow(it->base, key, ic);
+                  evas_object_show(ic);
+                  elm_widget_sub_object_add(it->wd->obj, ic);
+               }
+          }
+     }
+   if (it->itc->func.state_get)
+     {
+        Eina_List *l;
+        
+        it->states = _stringlist_get(edje_object_data_get(it->base, "states"));
+        for (l = it->states; l; l = l->next)
+          {
+             const char *key = l->data;
+             Evas_Bool on = it->itc->func.state_get(it->data, it->wd->obj, l->data);
+             if (on)
+               {
+                  // FIXME: emit to base
                }
           }
      }
@@ -266,6 +315,11 @@ _item_unrealize(Item *it)
    _stringlist_free(it->icons);
    it->icons = NULL;
    _stringlist_free(it->states);
+   while (it->icon_objs)
+     {
+        evas_object_del(it->icon_objs->data);
+        it->icon_objs = eina_list_remove_list(it->icon_objs, it->icon_objs);
+     }
    it->states = NULL;
    it->realized = 0;
 }
@@ -530,7 +584,7 @@ elm_genlist_add(Evas_Object *parent)
         static Evas_Smart_Class sc;
         evas_object_smart_clipped_smart_set(&_pan_sc);
         sc = _pan_sc;
-        sc.name = "Elm_Genlist_Pan";
+        sc.name = "elm_genlist_pan";
         sc.version = EVAS_SMART_CLASS_VERSION;
         sc.add = _pan_add;
         sc.del = _pan_del;
@@ -552,9 +606,9 @@ elm_genlist_add(Evas_Object *parent)
    edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, obj);
-
-//   evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
-   
+/*
+   evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
+ */
    _sizing_eval(obj);
    return obj;
 }
@@ -756,7 +810,7 @@ elm_genlist_item_selected_set(Elm_Genlist_Item *item, Evas_Bool selected)
 EAPI void
 elm_genlist_item_expanded_set(Elm_Genlist_Item *item, Evas_Bool expanded)
 {
- // not done yet
+   // FIXME: not done yet
 }
 
 EAPI void
@@ -777,4 +831,15 @@ elm_genlist_item_del(Elm_Genlist_Item *item)
 EAPI const void *
 elm_genlist_item_data_get(Elm_Genlist_Item *item)
 {
+}
+
+EAPI const Evas_Object *
+elm_genlist_item_icon_get(Elm_Genlist_Item *item)
+{
+}
+
+EAPI void
+elm_genlist_item_update(Elm_Genlist_Item *item)
+{
+   // call all the class get funcs again - re realize if realized.
 }

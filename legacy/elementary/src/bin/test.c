@@ -2046,24 +2046,35 @@ my_bt_28(void *data, Evas_Object *obj, void *event_info)
 }
 
 static Elm_Genlist_Item_Class itc1;
-char *gl_label_get(const void *data, const char *part)
+char *gl_label_get(const void *data, Evas_Object *obj, const char *part)
 {
    char buf[256];
    snprintf(buf, sizeof(buf), "Item # %i", (int)data);
    return strdup(buf);
 }
-Evas_Object *gl_icon_get(const void *data, const char *part)
+Evas_Object *gl_icon_get(const void *data, Evas_Object *obj, const char *part)
 {
-   return NULL;
+   char buf[PATH_MAX];
+#if 1
+   Evas_Object *ic = elm_icon_add(obj);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+#else
+   Evas_Object *ic = evas_object_image_filled_add(evas_object_evas_get(obj));
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   evas_object_image_file_set(ic, buf, NULL);
+#endif
+   
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   return ic;
 }
-Evas_Bool gl_state_get(const void *data, const char *part)
+Evas_Bool gl_state_get(const void *data, Evas_Object *obj, const char *part)
 {
    return 0;
 }
-void gl_del(const void *data)
+void gl_del(const void *data, Evas_Object *obj)
 {
 }
-
 
 static void
 my_bt_29(void *data, Evas_Object *obj, void *event_info)
@@ -2210,7 +2221,7 @@ my_win_main(void)
    elm_list_go(li);
    
    /* set an initial window size */
-   evas_object_resize(win, 312, 480);
+   evas_object_resize(win, 240, 480);
    /* show the window */
    evas_object_show(win);
 }

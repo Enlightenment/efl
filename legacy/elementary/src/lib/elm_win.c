@@ -62,10 +62,14 @@ _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_inf
    if (win->deferred_child_eval_job) ecore_job_del(win->deferred_child_eval_job);
    while (evas_object_bottom_get(win->evas) &&
 	  (evas_object_bottom_get(win->evas) != obj))
-     evas_object_del(evas_object_bottom_get(win->evas));
+     {
+        evas_object_del(evas_object_bottom_get(win->evas));
+     }
    while (evas_object_top_get(win->evas) &&
 	  (evas_object_top_get(win->evas) != obj))
-     evas_object_del(evas_object_top_get(win->evas));
+     {
+        evas_object_del(evas_object_top_get(win->evas));
+     }
 // FIXME: we are in the del handler for the object and delete the canvas
 // that lives under it from the handler... nasty. deferring doesnt help either
    ecore_job_add(_deferred_ecore_evas_free, win->ee);

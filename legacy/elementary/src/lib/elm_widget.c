@@ -1,7 +1,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-#define SMART_NAME "e_widget"
+#define SMART_NAME "elm_widget"
 #define API_ENTRY \
    Smart_Data *sd = evas_object_smart_data_get(obj); \
    if ((!obj) || (!sd) || \
@@ -766,17 +766,19 @@ _smart_del(Evas_Object *obj)
    if (sd->del_pre_func) sd->del_pre_func(obj);
    if (sd->resize_obj)
      {
-	evas_object_event_callback_del(sd->resize_obj, EVAS_CALLBACK_DEL, _sub_obj_del);
+        sobj = sd->resize_obj;
 	sd->resize_obj = NULL;
+	evas_object_event_callback_del(sobj, EVAS_CALLBACK_DEL, _sub_obj_del);
         evas_object_smart_callback_call(sd->obj, "sub-object-del", sd->resize_obj);
-	evas_object_del(sd->resize_obj);
+	evas_object_del(sobj);
      }
    if (sd->hover_obj)
      {
-	evas_object_event_callback_del(sd->hover_obj, EVAS_CALLBACK_DEL, _sub_obj_del);
+        sobj = sd->resize_obj;
 	sd->hover_obj = NULL;
-        evas_object_smart_callback_call(sd->obj, "sub-object-del", sd->hover_obj);
-	evas_object_del(sd->hover_obj);
+	evas_object_event_callback_del(sobj, EVAS_CALLBACK_DEL, _sub_obj_del);
+        evas_object_smart_callback_call(sd->obj, "sub-object-del", sobj);
+	evas_object_del(sobj);
      }
    while (sd->subobjs)
      {

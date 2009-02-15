@@ -201,6 +201,7 @@ collections {
 		  normal: "bt_sm_base2.png";
 		  border: 6 6 6 6;
 	       }
+               image.middle: SOLID;
 	    }
 	 }
 	 part { name: "sb_vbar_over1";
@@ -298,6 +299,7 @@ collections {
 		  normal: "bt_sm_base2.png";
 		  border: 6 6 6 6;
 	       }
+               image.middle: SOLID;
 	    }
 	 }
 	 part { name: "sb_hbar_over1";
@@ -454,10 +456,12 @@ collections {
 		  normal: "bt_base2.png";
 		  border: 7 7 7 7;
 	       }
+               image.middle: SOLID;
 	    }
 	    description { state: "clicked" 0.0;
 	       inherit: "default" 0.0;
 	       image.normal: "bt_base1.png";
+               image.middle: SOLID;
 	    }
 	 }
 	 part { name: "elm.swallow.content";
@@ -654,10 +658,12 @@ collections {
 		  normal: "bt_base2.png";
 		  border: 7 7 7 7;
 	       }
+               image.middle: SOLID;
 	    }
 	    description { state: "clicked" 0.0;
 	       inherit: "default" 0.0;
 	       image.normal: "bt_base1.png";
+               image.middle: SOLID;
 	    }
 	 }
 	 part { name: "arrow";
@@ -1199,6 +1205,7 @@ collections {
 		  normal: "bt_bases.png";
 		  border: 11 11 11 11;
 	       }
+               image.middle: SOLID;
 	       color: 255 255 255 128;
 	    }
 	 }
@@ -1214,6 +1221,7 @@ collections {
 		  normal: "bt_basew.png";
 		  border: 7 7 7 7;
 	       }
+               image.middle: SOLID;
 	    }
 	 }
 	 part { name: "button3";
@@ -3000,6 +3008,7 @@ collections {
 		  normal: "bt_dis_base.png";
 		  border: 4 4 4 4;
 	       }
+               image.middle: SOLID;
 	    }
 	    description { state: "visible" 0.0;
 	       inherit: "default" 0.0;
@@ -3058,6 +3067,7 @@ collections {
 		  normal: "bt_dis_base.png";
 		  border: 4 4 4 4;
 	       }
+               image.middle: SOLID;
 	    }
 	    description { state: "visible" 0.0;
 	       inherit: "default" 0.0;
@@ -3116,6 +3126,7 @@ collections {
 		  normal: "bt_dis_base.png";
 		  border: 4 4 4 4;
 	       }
+               image.middle: SOLID;
 	    }
 	    description { state: "visible" 0.0;
 	       inherit: "default" 0.0;
@@ -3175,6 +3186,7 @@ collections {
 		  normal: "bt_dis_base.png";
 		  border: 4 4 4 4;
 	       }
+               image.middle: SOLID;
 	    }
 	    description { state: "visible" 0.0;
 	       inherit: "default" 0.0;
@@ -3235,6 +3247,7 @@ collections {
 		  normal: "bt_dis_base.png";
 		  border: 4 4 4 4;
 	       }
+               image.middle: SOLID;
 	    }
 	 }
 	 part { name: "elm.swallow.slot.middle";
@@ -3398,6 +3411,7 @@ collections {
 		  normal: "bt_base2.png";
 		  border: 7 7 7 7;
 	       }
+               image.middle: SOLID;
 	    }
 	 }
          
@@ -4106,6 +4120,7 @@ collections {
             normal: "bubble_3.png";
             border: 36 11 18 9;
           }
+          image.middle: SOLID;
           fill.smooth: 0;
         }
       }
@@ -4232,6 +4247,7 @@ collections {
             normal: "bubble_4.png";
             border: 11 36 18 9;
           }
+          image.middle: SOLID;
           fill.smooth: 0;
         }
       }
@@ -4358,6 +4374,7 @@ collections {
             normal: "bubble_1.png";
             border: 36 11 10 19;
           }
+          image.middle: SOLID;
           fill.smooth: 0;
         }
       }
@@ -4484,6 +4501,7 @@ collections {
             normal: "bubble_2.png";
             border: 11 36 10 19;
           }
+          image.middle: SOLID;
           fill.smooth: 0;
         }
       }
@@ -4658,6 +4676,7 @@ collections {
                   normal: "bt_dis_base.png";
                   border: 4 4 4 4;
                }
+               image.middle: SOLID;
             }
          }
          part { name: "clipper";
@@ -4806,6 +4825,7 @@ collections {
                   normal: "toolbar_sel.png";
                   border: 3 3 0 0;
                }
+               image.middle: SOLID;
                fill.smooth: 0;
             }
             description { state: "selected" 0.0;
@@ -4940,6 +4960,7 @@ collections {
 		  normal: "bt_dis_base.png";
 		  border: 4 4 4 4;
 	       }
+               image.middle: SOLID;
 	    }
 	 }
          part { name: "popover";
@@ -5020,6 +5041,7 @@ collections {
 		  normal: "bt_dis_base.png";
 		  border: 4 4 4 4;
 	       }
+               image.middle: SOLID;
 	    }
 	 }
          part { name: "popover";
@@ -5101,6 +5123,7 @@ collections {
 		  normal: "bt_dis_base.png";
 		  border: 4 4 4 4;
 	       }
+               image.middle: SOLID;
 	    }
 	 }
          part { name: "popover";
@@ -5207,6 +5230,7 @@ collections {
                   normal: "bt_sm_base1.png";
                   border: 6 6 6 6;
                }
+               image.middle: SOLID;
             }
             description { state: "selected" 0.0;
                inherit: "default" 0.0;
@@ -5398,6 +5422,7 @@ collections {
                   normal: "bt_sm_base1.png";
                   border: 6 6 6 6;
                }
+               image.middle: SOLID;
             }
             description { state: "selected" 0.0;
                inherit: "default" 0.0;
@@ -5614,6 +5639,7 @@ collections {
                   normal: "bt_sm_base1.png";
                   border: 6 6 6 6;
                }
+               image.middle: SOLID;
             }
             description { state: "selected" 0.0;
                inherit: "default" 0.0;
@@ -5803,6 +5829,7 @@ collections {
                   normal: "bt_sm_base1.png";
                   border: 6 6 6 6;
                }
+               image.middle: SOLID;
             }
             description { state: "selected" 0.0;
                inherit: "default" 0.0;
@@ -7089,6 +7116,7 @@ collections {
                   normal: "bt_sm_base1.png";
                   border: 6 6 6 6;
                }
+               image.middle: SOLID;
             }
             description { state: "selected" 0.0;
                inherit: "default" 0.0;
@@ -7283,6 +7311,7 @@ collections {
                   normal: "bt_sm_base1.png";
                   border: 6 6 6 6;
                }
+               image.middle: SOLID;
             }
             description { state: "selected" 0.0;
                inherit: "default" 0.0;
