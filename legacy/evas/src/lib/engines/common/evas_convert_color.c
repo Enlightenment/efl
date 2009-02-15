@@ -127,7 +127,7 @@ evas_common_convert_color_rgb_to_hsv(int r, int g, int b, float *h, float *s, fl
    d = max - min;
 
    if (v) *v = (max / 255.0);
-   if (!max)
+   if (!max || !d)
      {
 	if (s) *s = 0;
         if (h) *h = 0;
