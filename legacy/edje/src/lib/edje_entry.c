@@ -224,7 +224,7 @@ _sel_start(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
    en->sel_start = evas_object_textblock_cursor_new(o);
    evas_textblock_cursor_copy(c, en->sel_start);
    en->sel_end = evas_object_textblock_cursor_new(o);
-   evas_textblock_cursor_copy(c, en->sel_start);
+   evas_textblock_cursor_copy(c, en->sel_end);
    en->have_selection = 0;
    if (en->selection)
      {
