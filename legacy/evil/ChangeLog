@@ -1,3 +1,8 @@
+2009-02-16  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_stdio.c:
+	replace / by \ in the path passed to fopen
+
 2009-02-01  Vincent Torri  <doursse at users dot sf dot net>
 
 	* doc/Makefile.am:

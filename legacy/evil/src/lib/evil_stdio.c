@@ -30,11 +30,12 @@ FILE *evil_fopen(const char *path, const char *mode)
 {
    FILE *f;
    char *filename;
+   char *tmp;
 
    if (!path || !*path)
      return NULL;
 
-   if (*path != '\\')
+   if ((*path != '\\') && (*path != '/'))
      {
         char buf[PATH_MAX];
         int   l1;
@@ -54,11 +55,20 @@ FILE *evil_fopen(const char *path, const char *mode)
         filename[l1 + 1 + l2] = '\0';
      }
    else
-     filename = (char *)path;
+     filename = _strdup(path);
+
+   tmp = filename;
+   while (*tmp)
+     {
+        if (*tmp == '/')
+          *tmp = '\\';
+        tmp++;
+     }
+
+   printf ("fopen : %s\n", filename);
 
    f = fopen(filename, mode);
-   if (*path != '\\')
-     free(filename);
+   free(filename);
 
    return f;
 }
@@ -78,6 +88,7 @@ FILE *evil_fopen_native(const char *path, const char *mode)
 {
    HANDLE   handle;
    char    *filename;
+   char    *tmp;
    wchar_t *wfilename;
    DWORD    access = GENERIC_READ;
    DWORD    creation;
@@ -85,7 +96,7 @@ FILE *evil_fopen_native(const char *path, const char *mode)
    if (!path || !*path || !mode || !*mode)
      return NULL;
 
-   if (*path != '\\')
+   if ((*path != '\\') && (*path != '/'))
      {
         char buf[PATH_MAX];
         int   l1;
@@ -105,11 +116,19 @@ FILE *evil_fopen_native(const char *path, const char *mode)
         filename[l1 + 1 + l2] = '\0';
      }
    else
-     filename = (char *)path;
+     filename = _strdup(path);
+
+   tmp = filename;
+   while (*tmp)
+     {
+        if (*tmp == '/')
+          *tmp = '\\';
+        tmp++;
+     }
+   printf ("fopen native : %s\n", filename);
 
    wfilename = evil_char_to_wchar(filename);
-   if (*path != '\\')
-     free(filename);
+   free(filename);
 
    if (!wfilename)
      return NULL;
