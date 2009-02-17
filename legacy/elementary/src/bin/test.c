@@ -2158,6 +2158,26 @@ my_gl_del(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+my_gl_first(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *gl = data;
+   Elm_Genlist_Item *gli = elm_genlist_first_item_get(gl);
+   if (!gli) return;
+   elm_genlist_item_show(gli);
+   elm_genlist_item_selected_set(gli, 1);
+}
+
+static void
+my_gl_last(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *gl = data;
+   Elm_Genlist_Item *gli = elm_genlist_last_item_get(gl);
+   if (!gli) return;
+   elm_genlist_item_show(gli);
+   elm_genlist_item_selected_set(gli, 1);
+}
+
+static void
 my_bt_30(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *gl, *bx, *bx2, *bt;
@@ -2190,6 +2210,22 @@ my_bt_30(void *data, Evas_Object *obj, void *event_info)
    elm_box_homogenous_set(bx2, 1);
    evas_object_size_hint_weight_set(bx2, 1.0, 0.0);
    evas_object_size_hint_align_set(bx2, -1.0, -1.0);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "[/\\]");
+   evas_object_smart_callback_add(bt, "clicked", my_gl_first, gl);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "[\\/]");
+   evas_object_smart_callback_add(bt, "clicked", my_gl_last, gl);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
    
    bt = elm_button_add(win);
    elm_button_label_set(bt, "[+]");

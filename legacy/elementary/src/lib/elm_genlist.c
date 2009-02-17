@@ -19,6 +19,7 @@ struct _Widget_Data
    Ecore_Idler *queue_idler;
    Eina_List *queue;
    Eina_List *selected;
+   Item *show_item;
    Evas_Bool on_hold : 1;
    Evas_Bool multi : 1;
    Evas_Bool min_w : 1;
@@ -63,6 +64,7 @@ struct _Item
    Evas_Bool disabled : 1;
    Evas_Bool mincalcd : 1;
    Evas_Bool queued : 1;
+   Evas_Bool showme : 1;
 };
 
 struct _Pan {
@@ -76,26 +78,29 @@ static void _show_region_hook(void *data, Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 
+static void _item_unrealize(Item *it);
+
 static Evas_Smart_Class _pan_sc = {NULL};
 
 static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-/*   
+   while (wd->items)
+     {
+        Item *it = (Item *)(wd->items);
+        wd->items = eina_inlist_remove(wd->items, wd->items);
+        if (it->realized) _item_unrealize(it);
+        if (it->itc->func.del) it->itc->func.del(it->data, it->wd->obj);
+        free(it);
+     }
    while (wd->blocks)
      {
-        Item_Block *itb = wd->blocks;
-        while (itb->items)
-          {
-             Item *it = itb->items->data;
-             
-          }
+        Item_Block *itb = (Item_Block *)(wd->blocks);
+        wd->blocks = eina_inlist_remove(wd->blocks, wd->blocks);
+        if (itb->items) eina_list_free(itb->items);
         free(itb);
      }
- */
-   // free wd->items
-   // free wd->blocks
    if (wd->selected) eina_list_free(wd->selected);
    if (wd->queue) eina_list_free(wd->queue);
    if (wd->calc_job) ecore_job_del(wd->calc_job);
@@ -392,15 +397,17 @@ _item_unrealize(Item *it)
    it->realized = 0;
 }
 
-static void
+static int
 _item_block_recalc(Item_Block *itb, int in)
 {
    Eina_List *l;
    Evas_Coord minw = 0, minh = 0;
-
+   int showme = 0;
+   
    for (l = itb->items; l; l = l->next)
      {
         Item *it = l->data;
+        showme |= it->showme;
         if (!itb->realized)
           {
              _item_realize(it, in, 1);
@@ -417,6 +424,7 @@ _item_block_recalc(Item_Block *itb, int in)
    itb->changed = 0;
    /* force an evas norender to garbage collect deleted objects */
    evas_norender(evas_object_evas_get(itb->wd->obj));
+   return showme;
 }
 
 static void
@@ -483,8 +491,8 @@ _calc_job(void *data)
    for (bn = 0, in = 0, il = wd->blocks; il; il = il->next, bn++)
      {
         Item_Block *itb = (Item_Block *)il;
-        if (itb->changed)
-          _item_block_recalc(itb, in);
+        int showme;
+        if (itb->changed) showme = _item_block_recalc(itb, in);
         itb->y = y;
         itb->x = 0;
         itb->w = itb->minw;
@@ -494,6 +502,12 @@ _calc_job(void *data)
         itb->h = itb->minh;
         y += itb->minh;
         in += itb->count;
+        if (showme)
+          {
+             wd->show_item->showme = 0;
+             elm_smart_scroller_child_region_show(wd->scr, wd->show_item->x, wd->show_item->y, wd->show_item->w, wd->show_item->h);
+             wd->show_item = NULL;
+          }
      }
    evas_object_geometry_get(wd->pan_smart, NULL, NULL, &ow, &oh);
    if (minw < ow) minw = ow;
@@ -723,6 +737,7 @@ _item_block_del(Item *it)
 static void
 _item_del(Item *it)
 {
+   if (it->wd->show_item == it) it->wd->show_item = NULL;
    if (it->selected) it->wd->selected = eina_list_remove(it->wd->selected, it);
    if (it->itc->func.del) it->itc->func.del(it->data, it->wd->obj);
    if (it->realized) _item_unrealize(it);
@@ -926,13 +941,13 @@ elm_genlist_last_item_get(Evas_Object *obj)
 EAPI const Elm_Genlist_Item *
 elm_genlist_item_next_get(Elm_Genlist_Item *item)
 {
-   return ((Eina_Inlist *)item)->next;
+   return (Elm_Genlist_Item *)(((Eina_Inlist *)item)->next);
 }
 
 EAPI const Elm_Genlist_Item *
 elm_genlist_item_prev_get(Elm_Genlist_Item *item)
 {
-   return ((Eina_Inlist *)item)->prev;
+   return (Elm_Genlist_Item *)(((Eina_Inlist *)item)->prev);
 }
 
 EAPI void
@@ -973,7 +988,19 @@ elm_genlist_item_disabled_set(Elm_Genlist_Item *item, Evas_Bool disabled)
 EAPI void
 elm_genlist_item_show(Elm_Genlist_Item *item)
 {
-   // call this to jump to item in scroll
+   Item *it = (Item *)item;
+   if ((it->queued) || (!it->mincalcd))
+     {
+        it->wd->show_item = it;
+        it->showme = 1;
+        return;
+     }
+   if (it->wd->show_item)
+     {
+        it->wd->show_item->showme = 0;
+        it->wd->show_item = NULL;
+     }
+   elm_smart_scroller_child_region_show(it->wd->scr, it->x, it->y, it->w, it->h);
 }
 
 EAPI void
