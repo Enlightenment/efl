@@ -80,6 +80,8 @@ static void *evas_object_image_engine_data_get(Evas_Object *obj);
 static int evas_object_image_is_opaque(Evas_Object *obj);
 static int evas_object_image_was_opaque(Evas_Object *obj);
 static int evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+static int evas_object_image_has_opaque_rect(Evas_Object *obj);
+static int evas_object_image_get_opaque_rect(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
 static void *evas_object_image_data_convert_internal(Evas_Object_Image *o, void *data, Evas_Colorspace to_cspace);
 static void evas_object_image_filled_resize_listener(void *data, Evas *e, Evas_Object *obj, void *einfo);
@@ -104,7 +106,9 @@ static const Evas_Object_Func object_func =
      evas_object_image_is_inside,
      NULL,
      NULL,
-     NULL
+     NULL,
+     evas_object_image_has_opaque_rect,
+     evas_object_image_get_opaque_rect
 };
 
 /**
@@ -2685,6 +2689,38 @@ evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
      }
 
    return (a != 0);
+}
+
+static int
+evas_object_image_has_opaque_rect(Evas_Object *obj)
+{
+   Evas_Object_Image *o;
+   
+   o = (Evas_Object_Image *)(obj->object_data);
+   if (((o->cur.border.l | o->cur.border.r | o->cur.border.t | o->cur.border.b) != 0) &&
+       (o->cur.border.fill == EVAS_BORDER_FILL_SOLID) &&
+       (obj->cur.render_op == EVAS_RENDER_BLEND) &&
+       (obj->cur.cache.clip.a == 255) &&
+       (o->cur.fill.x == 0) && 
+       (o->cur.fill.y == 0) &&
+       (o->cur.fill.w == obj->cur.geometry.w) &&
+       (o->cur.fill.h == obj->cur.geometry.h)
+       ) return 1;
+   return 0;
+}
+
+static int
+evas_object_image_get_opaque_rect(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+{
+   Evas_Object_Image *o;
+   
+   o = (Evas_Object_Image *)(obj->object_data);
+   *x = obj->cur.geometry.x + o->cur.border.l;
+   *y = obj->cur.geometry.y + o->cur.border.t;
+   *w = obj->cur.geometry.w - (o->cur.border.l + o->cur.border.r);
+   if (*w < 0) *w = 0;
+   *h = obj->cur.geometry.h - (o->cur.border.t + o->cur.border.b);
+   if (*h < 0) *h = 0;
 }
 
 static void *

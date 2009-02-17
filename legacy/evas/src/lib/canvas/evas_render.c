@@ -400,7 +400,9 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 	Evas_Object *obj;
 
 	obj = eina_array_data_get(&e->active_objects, i);
-	if (UNLIKELY(evas_object_is_opaque(obj) &&
+	if (UNLIKELY((evas_object_is_opaque(obj) ||
+                      ((obj->func->has_opaque_rect) &&
+                       (obj->func->has_opaque_rect(obj)))) &&
                      evas_object_is_visible(obj) &&
                      (!obj->clip.clipees) &&
                      (obj->cur.visible) &&
@@ -476,21 +478,6 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 					  obj->cur.cache.clip.h);
 		       if ((w > 0) && (h > 0))
 			 {
-///		       printf("CLIP: %p | %i %i, %ix%i | %p %i %i %ix%i\n",
-///			      obj,
-///			      x, y, w, h,
-///			      obj->cur.clipper,
-///			      obj->cur.cache.clip.x + off_x,
-///			      obj->cur.cache.clip.y + off_y,
-///			      obj->cur.cache.clip.w,
-///			      obj->cur.cache.clip.h
-///			      );
-///			    if (((obj->cur.cache.clip.x + off_x) == 0) &&
-///				((obj->cur.cache.clip.w) == 960))
-///			      {
-///				 abort();
-///			      }
-
 			    e->engine.func->context_clip_set(e->engine.data.output,
 							     e->engine.data.context,
 							     x, y, w, h);
@@ -500,12 +487,37 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 				 Evas_Object *obj2;
 
 				 obj2 = (Evas_Object *) eina_array_data_get(&e->temporary_objects, j);
-				 e->engine.func->context_cutout_add(e->engine.data.output,
-								    e->engine.data.context,
-								    obj2->cur.cache.clip.x + off_x,
-								    obj2->cur.cache.clip.y + off_y,
-								    obj2->cur.cache.clip.w,
-								    obj2->cur.cache.clip.h);
+                                 if (evas_object_is_opaque(obj2))
+                                   e->engine.func->context_cutout_add(e->engine.data.output,
+                                                                      e->engine.data.context,
+                                                                      obj2->cur.cache.clip.x + off_x,
+                                                                      obj2->cur.cache.clip.y + off_y,
+                                                                      obj2->cur.cache.clip.w,
+                                                                      obj2->cur.cache.clip.h);
+                                 else
+                                   {
+                                      if (obj2->func->get_opaque_rect)
+                                        {
+                                           Evas_Coord obx, oby, obw, obh;
+                                           
+                                           obj2->func->get_opaque_rect
+                                             (obj2, &obx, &oby, &obw, &obh);
+                                           if ((obw > 0) && (obh > 0))
+                                             {
+                                                obx += off_x;
+                                                oby += off_y;
+                                                RECTS_CLIP_TO_RECT(obx, oby, obw, obh,
+                                                                   obj2->cur.cache.clip.x + off_x,
+                                                                   obj2->cur.cache.clip.y + off_y,
+                                                                   obj2->cur.cache.clip.w,
+                                                                   obj2->cur.cache.clip.h);
+                                                e->engine.func->context_cutout_add(e->engine.data.output,
+                                                                                   e->engine.data.context,
+                                                                                   obx, oby,
+                                                                                   obw, obh);
+                                             }
+                                        }
+                                   }
 			      }
 #endif
 			    obj->func->render(obj,

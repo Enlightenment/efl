@@ -531,6 +531,9 @@ struct _Evas_Object_Func
    void (*coords_recalc) (Evas_Object *obj);
    
    void (*scale_update) (Evas_Object *obj);
+
+   int (*has_opaque_rect) (Evas_Object *obj);
+   int (*get_opaque_rect) (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 };
 
 struct _Evas_Func

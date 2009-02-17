@@ -175,7 +175,9 @@ static const Evas_Object_Func object_func =
      NULL,
      NULL,
      evas_object_textblock_coords_recalc,
-     evas_object_textblock_scale_update
+     evas_object_textblock_scale_update,
+     NULL,
+     NULL
 };
 
 /* the actual api call to add a textblock */

@@ -63,6 +63,8 @@ static const Evas_Object_Func object_func =
      evas_object_line_is_inside,
      evas_object_line_was_inside,
      evas_object_line_coords_recalc,
+     NULL,
+     NULL,
      NULL
 };
 
