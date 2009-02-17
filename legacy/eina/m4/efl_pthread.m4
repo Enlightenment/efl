@@ -13,7 +13,7 @@ AC_DEFUN([EFL_CHECK_PTHREAD],
 dnl configure option
 
 AC_ARG_ENABLE([pthread],
-   [AC_HELP_STRING([--enable-pthread], [enable POSIX threads code @<:@default=no@:>@])],
+   [AC_HELP_STRING([--disable-pthread], [enable POSIX threads code @<:@default=no@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        _efl_enable_pthread="yes"
@@ -21,7 +21,7 @@ AC_ARG_ENABLE([pthread],
        _efl_enable_pthread="no"
     fi
    ],
-   [_efl_enable_pthread="no"]
+   [_efl_enable_pthread="yes"]
 )
 AC_MSG_CHECKING([whether to build POSIX threads code])
 AC_MSG_RESULT([${_efl_enable_pthread}])
@@ -42,18 +42,36 @@ if test "x${_efl_enable_pthread}" = "xyes" ; then
                        ]],
                        [[]])
       ],
-      [_efl_have_pthread="yes"
-       EFL_PTHREAD_FLAGS="-pthread"]
+      [
+       _efl_have_pthread="yes"
+       EFL_PTHREAD_CFLAGS="-pthread"
+       EFL_PTHREAD_LIBS="-pthread"
+       ]
    )
 
    AC_LANG_POP([C])
    CFLAGS=${SAVE_CFLAGS}
 fi
 
-AC_MSG_CHECKING([whether POSIX threads are supported])
+AC_MSG_CHECKING([whether compiler need -pthread POSIX for threads support])
 AC_MSG_RESULT([${_efl_have_pthread}])
 
-AC_SUBST(EFL_PTHREAD_FLAGS)
+if test "x${_efl_have_pthread}" = "xno" -a "x${_efl_enable_pthread}" = "xyes" ; then
+   AC_CHECK_HEADER(pthread.h,
+		[
+		  _efl_have_pthread="yes"
+		  EFL_PTHREAD_LIBS="-lpthread"
+		],
+		[
+		  _efl_have_pthread="no"
+		])
+
+   AC_MSG_CHECKING([whether system support POSIX threads])
+   AC_MSG_RESULT([${_efl_enable_pthread}])
+fi
+
+AC_SUBST(EFL_PTHREAD_CFLAGS)
+AC_SUBST(EFL_PTHREAD_LIBS)
 
 if test "x${_efl_have_pthread}" = "xyes" ; then
    AC_DEFINE(EFL_HAVE_PTHREAD, 1, [Define to mention that POSIX threads are supported])

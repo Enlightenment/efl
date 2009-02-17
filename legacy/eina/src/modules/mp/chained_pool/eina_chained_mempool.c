@@ -26,6 +26,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef EFL_HAVE_PTHREAD
+#include <pthread.h>
+#endif
+
 #include "eina_inlist.h"
 #include "eina_error.h"
 #include "eina_module.h"
@@ -41,6 +45,9 @@ struct _Chained_Mempool
    int item_size;
    int pool_size;
    int usage;
+#ifdef EFL_HAVE_PTHREAD
+   pthread_mutex_t mutex;
+#endif
 };
 
 typedef struct _Chained_Pool Chained_Pool;
@@ -85,6 +92,10 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
    Chained_Pool *p = NULL;
    void *mem;
 
+#ifdef EFL_HAVE_PTHREAD
+   pthread_mutex_lock(&pool->mutex);
+#endif
+
    // look 4 pool from 2nd bucket on
    EINA_INLIST_FOREACH(pool->first, p)
      {
@@ -95,11 +106,18 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
 	     break;
 	  }
      }
+
    // we have reached the end of the list - no free pools
    if (!p)
      {
 	p = _eina_chained_mp_pool_new(pool);
-	if (!p) return NULL;
+	if (!p)
+	  {
+#ifdef EFL_HAVE_PTHREAD
+	     pthread_mutex_unlock(&pool->mutex);
+#endif
+	     return NULL;
+	  }
 	pool->first = eina_inlist_prepend(pool->first, EINA_INLIST_GET(p));
      }
    // this points to the next free block - so take it
@@ -108,9 +126,15 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
    p->base = *((void **)mem);
    // move to end - it just filled up
    if (!p->base)
-     pool->first = eina_inlist_demote(pool->first, EINA_INLIST_GET(p));
+     {
+	pool->first = eina_inlist_demote(pool->first, EINA_INLIST_GET(p));
+     }
    p->usage++;
    pool->usage++;
+
+#ifdef EFL_HAVE_PTHREAD
+   pthread_mutex_unlock(&pool->mutex);
+#endif
    return mem;
 }
 
@@ -125,6 +149,10 @@ eina_chained_mempool_free(void *data, void *ptr)
    item_alloc = ((pool->item_size + sizeof(void *) - 1) / sizeof(void *)) * sizeof(void *);
    psize = item_alloc * pool->pool_size;
    // look 4 pool
+
+#ifdef EFL_HAVE_PTHREAD
+   pthread_mutex_lock(&pool->mutex);
+#endif
 
    EINA_INLIST_FOREACH(pool->first, p)
      {
@@ -153,6 +181,10 @@ eina_chained_mempool_free(void *data, void *ptr)
 	     break;
 	  }
      }
+
+#ifdef EFL_HAVE_PTHREAD
+   pthread_mutex_unlock(&pool->mutex);
+#endif
 }
 
 static void*
@@ -181,6 +213,10 @@ eina_chained_mempool_init(const char *context, __UNUSED__ const char *option, va
 	memcpy((char*) mp->name, context, length);
      }
 
+#ifdef EFL_HAVE_PTHREAD
+   pthread_mutex_init(&mp->mutex, NULL);
+#endif
+
    return mp;
 }
 
@@ -203,6 +239,10 @@ eina_chained_mempool_shutdown(void *data)
 	mp->first = eina_inlist_remove(mp->first, mp->first);
 	_eina_chained_mp_pool_free(p);
      }
+
+#ifdef EFL_HAVE_PTHREAD
+   pthread_mutex_destroy(&mp->mutex);
+#endif
 
    free(mp);
 }
