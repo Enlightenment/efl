@@ -2077,6 +2077,12 @@ void gl_del(const void *data, Evas_Object *obj)
 }
 
 static void
+gl_sel(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("sel item data [%p] on genlist obj [%p], item pointer [%p]\n", data, obj, event_info);
+}
+
+static void
 my_bt_29(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *gl;
@@ -2105,10 +2111,105 @@ my_bt_29(void *data, Evas_Object *obj, void *event_info)
 
    for (i = 0; i < 10000; i++)
      {
-        gli = elm_genlist_item_append(gl, &itc1, (void *)i/* item data */, 
-                                      NULL/* parent */, ELM_GENLIST_ITEM_NONE, 
-                                      NULL/* func */, NULL/* func data */);
+        gli = elm_genlist_item_append(gl, &itc1, 
+                                      (void *)i/* item data */, 
+                                      NULL/* parent */, 
+                                      ELM_GENLIST_ITEM_NONE, 
+                                      gl_sel/* func */, 
+                                      (void *)(i * 10)/* func data */);
      }
+   evas_object_resize(win, 320, 320);
+   evas_object_show(win);
+}
+
+static void
+my_gl_add(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *gl = data;
+   Elm_Genlist_Item *gli;
+   static int i = 0;
+
+   itc1.style          = "default";
+   itc1.func.label_get = gl_label_get;
+   itc1.func.icon_get  = gl_icon_get;
+   itc1.func.state_get = gl_state_get;
+   itc1.func.del       = gl_del;
+
+   gli = elm_genlist_item_append(gl, &itc1, 
+                                 (void *)i/* item data */, 
+                                 NULL/* parent */, 
+                                 ELM_GENLIST_ITEM_NONE, 
+                                 gl_sel/* func */, 
+                                 (void *)(i * 10)/* func data */);
+   i++;
+}
+
+static void
+my_gl_del(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *gl = data;
+   Elm_Genlist_Item *gli = elm_genlist_selected_item_get(gl);
+   if (!gli)
+     {
+        printf("no item selected\n");
+        return;
+     }
+   elm_genlist_item_del(gli);
+}
+
+static void
+my_bt_30(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *gl, *bx, *bx2, *bt;
+   int i;
+   
+   win = elm_win_add(NULL, "genlist-2", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Genlist 2");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_show(bg);
+   
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   gl = elm_genlist_add(win);
+   evas_object_size_hint_align_set(gl, -1.0, -1.0);
+   evas_object_size_hint_weight_set(gl, 1.0, 1.0);
+   evas_object_show(gl);
+   
+   elm_box_pack_end(bx, gl);
+   evas_object_show(bx2);
+   
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, 1);
+   elm_box_homogenous_set(bx2, 1);
+   evas_object_size_hint_weight_set(bx2, 1.0, 0.0);
+   evas_object_size_hint_align_set(bx2, -1.0, -1.0);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "[+]");
+   evas_object_smart_callback_add(bt, "clicked", my_gl_add, gl);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "[-]");
+   evas_object_smart_callback_add(bt, "clicked", my_gl_del, gl);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+   
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
 }
@@ -2217,6 +2318,7 @@ my_win_main(void)
    elm_list_item_append(li, "Scaling 2", NULL, NULL, my_bt_27, NULL);
    elm_list_item_append(li, "Slider", NULL, NULL, my_bt_28, NULL);
    elm_list_item_append(li, "Genlist", NULL, NULL, my_bt_29, NULL);
+   elm_list_item_append(li, "Genlist 2", NULL, NULL, my_bt_30, NULL);
 
    elm_list_go(li);
    

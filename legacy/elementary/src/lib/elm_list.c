@@ -180,9 +180,10 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
      }
    else
      {
-        for (l = wd->items; l; l = l->next)
+        for (l = wd->selected; l;)
           {
              Item *it2 = l->data;
+             l = l->next;
              if ((it2 != it) && (it2->selected)) _item_unselect(it2);
           }
         if (!it->selected) _item_select(it);
@@ -468,8 +469,12 @@ elm_list_item_selected_set(Elm_List_Item *item, Evas_Bool selected)
      {
         if (!wd->multi)
           {
-             Item *it2 = l->data;
-             if ((it2 != it) && (it2->selected)) _item_unselect(it2);
+             for (l = it->selected; l;)
+               {
+                  Item *it2 = l->data;
+                  l = l->next;
+                  if ((it2 != it) && (it2->selected)) _item_unselect(it2);
+               }
           }
         if (!it->selected) _item_select(it);
      }
