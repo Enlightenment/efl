@@ -448,4 +448,6 @@ EAPI void eina_module_list_delete(Eina_Array *array)
 
 	EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
 		eina_module_delete(m);
+
+	eina_array_flush(array);
 }
