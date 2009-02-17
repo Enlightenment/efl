@@ -2721,6 +2721,7 @@ evas_object_image_get_opaque_rect(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y
    if (*w < 0) *w = 0;
    *h = obj->cur.geometry.h - (o->cur.border.t + o->cur.border.b);
    if (*h < 0) *h = 0;
+   return 1;
 }
 
 static void *
