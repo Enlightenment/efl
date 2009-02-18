@@ -516,6 +516,9 @@ extern "C" {
 
    EAPI Evas_Object *elm_genlist_add(Evas_Object *parent);
    EAPI Elm_Genlist_Item *elm_genlist_item_append(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *parent, Elm_Genlist_Item_Flags flags, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data);
+   EAPI Elm_Genlist_Item *elm_genlist_item_prepend(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *parent, Elm_Genlist_Item_Flags flags, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data);
+   EAPI Elm_Genlist_Item *elm_genlist_item_insert_before(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *before, Elm_Genlist_Item_Flags flags, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data);
+   EAPI Elm_Genlist_Item *elm_genlist_item_insert_after(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *after, Elm_Genlist_Item_Flags flags, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data);
    EAPI void elm_genlist_clear(Evas_Object *obj);
    EAPI const Elm_Genlist_Item *elm_genlist_selected_item_get(Evas_Object *obj);
    EAPI const Eina_List *elm_genlist_selected_items_get(Evas_Object *obj);
@@ -524,7 +527,9 @@ extern "C" {
    EAPI const Elm_Genlist_Item *elm_genlist_item_next_get(Elm_Genlist_Item *item);
    EAPI const Elm_Genlist_Item *elm_genlist_item_prev_get(Elm_Genlist_Item *item);
    EAPI void elm_genlist_item_selected_set(Elm_Genlist_Item *item, Evas_Bool selected);
+   EAPI Evas_Bool elm_genlist_item_selected_get(Elm_Genlist_Item *item);
    EAPI void elm_genlist_item_disabled_set(Elm_Genlist_Item *item, Evas_Bool disabled);
+   EAPI Evas_Bool elm_genlist_item_disabled_get(Elm_Genlist_Item *item);
    EAPI void elm_genlist_item_show(Elm_Genlist_Item *item);
    EAPI void elm_genlist_item_del(Elm_Genlist_Item *item);
    EAPI const void *elm_genlist_item_data_get(Elm_Genlist_Item *item);

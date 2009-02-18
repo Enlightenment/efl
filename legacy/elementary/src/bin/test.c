@@ -2203,6 +2203,7 @@ static void
 my_bt_30(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *gl, *bx, *bx2, *bt;
+   Elm_Genlist_Item *gli[10];
    int i;
    
    win = elm_win_add(NULL, "genlist-2", ELM_WIN_BASIC);
@@ -2223,6 +2224,34 @@ my_bt_30(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(gl, -1.0, -1.0);
    evas_object_size_hint_weight_set(gl, 1.0, 1.0);
    evas_object_show(gl);
+
+   itc1.item_style     = "default";
+   itc1.func.label_get = gl_label_get;
+   itc1.func.icon_get  = gl_icon_get;
+   itc1.func.state_get = gl_state_get;
+   itc1.func.del       = gl_del;
+
+   gli[0] = elm_genlist_item_append(gl, &itc1, 
+                                    (void *)1001/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */, 
+                                    (void *)1001/* func data */);
+   gli[1] = elm_genlist_item_append(gl, &itc1, 
+                                    (void *)1002/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */, 
+                                    (void *)1002/* func data */);
+   gli[2] = elm_genlist_item_append(gl, &itc1, 
+                                    (void *)1003/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */, 
+                                    (void *)1003/* func data */);
+   gli[3] = elm_genlist_item_prepend(gl, &itc1, 
+                                     (void *)1004/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */, 
+                                     (void *)1004/* func data */);
+   gli[4] = elm_genlist_item_prepend(gl, &itc1, 
+                                     (void *)1005/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */, 
+                                     (void *)1005/* func data */);
+   gli[5] = elm_genlist_item_insert_before(gl, &itc1, 
+                                           (void *)1006/* item data */, gli[2]/* rel */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+                                           (void *)1006/* func data */);
+   gli[6] = elm_genlist_item_insert_after(gl, &itc1, 
+                                          (void *)1007/* item data */, gli[2]/* rel */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+                                          (void *)1007/* func data */);
    
    elm_box_pack_end(bx, gl);
    evas_object_show(bx2);

@@ -820,8 +820,8 @@ static void
 _item_block_add(Widget_Data *wd, Item *it, Item *itpar, Item *itrel, int before)
 {
    Item_Block *itb;
-   
-   if (!itrel) /* new block */
+
+   if (!itrel)
      {
         newblock:
         itb = calloc(1, sizeof(Item_Block));
@@ -832,17 +832,29 @@ _item_block_add(Widget_Data *wd, Item *it, Item *itpar, Item *itrel, int before)
              if (itrel)
                {
                   if (!itrel->block)
-                    printf("EEEK itrel has no block!\n");
+                    {
+                       wd->blocks = eina_inlist_append(wd->blocks, (Eina_Inlist *)itb);
+                       itb->items = eina_list_append(itb->items, it);
+                    }
                   else
                     {
                        if (before)
-                         wd->blocks = eina_inlist_prepend_relative(wd->blocks, (Eina_Inlist *)itb, (Eina_Inlist *)(itrel->block));
+                         {
+                            wd->blocks = eina_inlist_prepend_relative(wd->blocks, (Eina_Inlist *)itb, (Eina_Inlist *)(itrel->block));
+                            itb->items = eina_list_prepend_relative(itb->items, it, itrel);
+                         }
                        else
-                         wd->blocks = eina_inlist_append_relative(wd->blocks, (Eina_Inlist *)itb, (Eina_Inlist *)(itrel->block));
+                         {
+                            wd->blocks = eina_inlist_append_relative(wd->blocks, (Eina_Inlist *)itb, (Eina_Inlist *)(itrel->block));
+                            itb->items = eina_list_append_relative(itb->items, it, itrel);
+                         }
                     }
                }
              else
-               wd->blocks = eina_inlist_append(wd->blocks, (Eina_Inlist *)itb);
+               {
+                  wd->blocks = eina_inlist_append(wd->blocks, (Eina_Inlist *)itb);
+                  itb->items = eina_list_append(itb->items, it);
+               }
           }
         else
           {
@@ -852,9 +864,12 @@ _item_block_add(Widget_Data *wd, Item *it, Item *itpar, Item *itrel, int before)
    else
      {
         itb = itrel->block;
-        if (itb->count > 32) goto newblock;
+        if ((!itb) || (itb->count > 32)) goto newblock;
+        if (before)
+          itb->items = eina_list_prepend_relative(itb->items, it, itrel);
+        else
+          itb->items = eina_list_append_relative(itb->items, it, itrel);
      }
-   itb->items = eina_list_append(itb->items, it);
    itb->count++;
    itb->changed = 1;
    it->block = itb;
@@ -922,7 +937,6 @@ elm_genlist_item_append(Evas_Object *obj, const Elm_Genlist_Item_Class *itc,
                         void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Item *itpar;
    Item *it = _item_new(wd, itc, data, parent, flags, func, func_data);
    if (!it) return NULL;
    if (!it->parent)
@@ -941,7 +955,17 @@ elm_genlist_item_prepend(Evas_Object *obj, const Elm_Genlist_Item_Class *itc,
                          Elm_Genlist_Item_Flags flags,
                          void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
 {
-   // fixme - now
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Item *it = _item_new(wd, itc, data, parent, flags, func, func_data);
+   if (!it) return NULL;
+   if (!it->parent)
+     wd->items = eina_inlist_prepend(wd->items, (Eina_Inlist *)it);
+   else
+     {
+        // FIXME: tree. not done yet
+     }
+   _item_queue(wd, it);
+   return (Elm_Genlist_Item *)it;
 }
 
 EAPI Elm_Genlist_Item *
@@ -950,7 +974,17 @@ elm_genlist_item_insert_before(Evas_Object *obj, const Elm_Genlist_Item_Class *i
                                Elm_Genlist_Item_Flags flags,
                                void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
 {
-   // fixme - now
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Item *it = _item_new(wd, itc, data, NULL, flags, func, func_data);
+   if (!it) return NULL;
+   if (!it->parent)
+     wd->items = eina_inlist_prepend_relative(wd->items, (Eina_Inlist *)it, (Eina_Inlist *)before);
+   else
+     {
+        // FIXME: tree. not done yet
+     }
+   _item_queue(wd, it);
+   return (Elm_Genlist_Item *)it;
 }
 
 EAPI Elm_Genlist_Item *
@@ -959,7 +993,17 @@ elm_genlist_item_insert_after(Evas_Object *obj, const Elm_Genlist_Item_Class *it
                               Elm_Genlist_Item_Flags flags,
                               void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
 {
-   // fixme - now
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Item *it = _item_new(wd, itc, data, NULL, flags, func, func_data);
+   if (!it) return NULL;
+   if (!it->parent)
+     wd->items = eina_inlist_append_relative(wd->items, (Eina_Inlist *)it, (Eina_Inlist *)after);
+   else
+     {
+        // FIXME: tree. not done yet
+     }
+   _item_queue(wd, it);
+   return (Elm_Genlist_Item *)it;
 }
 
 EAPI void
