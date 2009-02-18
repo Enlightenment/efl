@@ -524,6 +524,7 @@ extern "C" {
    EAPI const Elm_Genlist_Item *elm_genlist_item_next_get(Elm_Genlist_Item *item);
    EAPI const Elm_Genlist_Item *elm_genlist_item_prev_get(Elm_Genlist_Item *item);
    EAPI void elm_genlist_item_selected_set(Elm_Genlist_Item *item, Evas_Bool selected);
+   EAPI void elm_genlist_item_disabled_set(Elm_Genlist_Item *item, Evas_Bool disabled);
    EAPI void elm_genlist_item_show(Elm_Genlist_Item *item);
    EAPI void elm_genlist_item_del(Elm_Genlist_Item *item);
    EAPI const void *elm_genlist_item_data_get(Elm_Genlist_Item *item);

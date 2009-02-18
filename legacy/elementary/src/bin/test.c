@@ -2165,6 +2165,21 @@ my_gl_del(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+my_gl_disable(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *gl = data;
+   Elm_Genlist_Item *gli = elm_genlist_selected_item_get(gl);
+   if (!gli)
+     {
+        printf("no item selected\n");
+        return;
+     }
+   elm_genlist_item_disabled_set(gli, 1);
+   elm_genlist_item_selected_set(gli, 0);
+}
+
+
+static void
 my_gl_first(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *gl = data;
@@ -2237,6 +2252,14 @@ my_bt_30(void *data, Evas_Object *obj, void *event_info)
    bt = elm_button_add(win);
    elm_button_label_set(bt, "[X]");
    evas_object_smart_callback_add(bt, "clicked", my_gl_clear, gl);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "[.]");
+   evas_object_smart_callback_add(bt, "clicked", my_gl_disable, gl);
    evas_object_size_hint_align_set(bt, -1.0, -1.0);
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);

@@ -7100,6 +7100,7 @@ collections {
             }
          }
          part { name: "bg";
+            clip_to: "disclip";
             mouse_events: 0;
             description { state: "default" 0.0;
                visible: 0;
@@ -7133,6 +7134,7 @@ collections {
             }
          }
          part { name: "elm.swallow.icon";
+            clip_to: "disclip";
             type: SWALLOW;
             description { state: "default" 0.0;
                fixed: 1 0;
@@ -7148,6 +7150,7 @@ collections {
             }
          }
          part { name: "elm.swallow.end";
+            clip_to: "disclip";
             type: SWALLOW;
             description { state: "default" 0.0;
                fixed: 1 0;
@@ -7165,6 +7168,7 @@ collections {
             }
          }
          part { name: "elm.text";
+            clip_to: "disclip";
             type:           TEXT;
             effect:         SOFT_SHADOW;
             mouse_events:   0;
@@ -7199,6 +7203,7 @@ collections {
             }
          }
          part { name: "fg1";
+            clip_to: "disclip";
             mouse_events: 0;
             description { state: "default" 0.0;
                visible: 0;
@@ -7218,6 +7223,7 @@ collections {
             }
          }
          part { name: "fg2";
+            clip_to: "disclip";
             mouse_events: 0;
             description { state: "default" 0.0;
                visible: 0;
@@ -7235,6 +7241,17 @@ collections {
                color: 255 255 255 255;
             }
          }
+         part { name: "disclip";
+            type: RECT;
+            description { state: "default" 0.0;
+               rel1.to: "bg";
+               rel2.to: "bg";
+            }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 64;
+            }
+         }
          part {
             name:           "event";
             type:           RECT;
@@ -7246,6 +7263,11 @@ collections {
          }
       }
       programs {
+         // signal: elm,state,%s,active
+         //   a "check" item named %s went active
+         // signal: elm,state,%s,passive
+         //   a "check" item named %s went passive
+         // default is passive
          program {
             name:    "go_active";
             signal:  "elm,state,selected";
@@ -7266,6 +7288,20 @@ collections {
             target:  "fg2";
             target:  "elm.text";
             transition: LINEAR 0.1;
+         }
+         program {
+            name:    "go_disabled";
+            signal:  "elm,state,disabled";
+            source:  "elm";
+            action:  STATE_SET "disabled" 0.0;
+            target:  "disclip";
+         }
+         program {
+            name:    "go_enabled";
+            signal:  "elm,state,enabled";
+            source:  "elm";
+            action:  STATE_SET "default" 0.0;
+            target:  "disclip";
          }
       }
    }
@@ -7295,6 +7331,7 @@ collections {
             }
          }
          part { name: "bg";
+            clip_to: "disclip";
             mouse_events: 0;
             description { state: "default" 0.0;
                visible: 0;
@@ -7329,6 +7366,7 @@ collections {
          }
          part {
             name:          "elm.swallow.icon";
+            clip_to: "disclip";
             type:          SWALLOW;
             description { state:    "default" 0.0;
                fixed: 1 0;
@@ -7345,6 +7383,7 @@ collections {
          }
          part {
             name:          "elm.swallow.end";
+            clip_to: "disclip";
             type:          SWALLOW;
             description { state:    "default" 0.0;
                fixed: 1 0;
@@ -7359,8 +7398,8 @@ collections {
                }
             }
          }
-         part {
-            name:           "elm.text";
+         part { name: "elm.text";
+            clip_to: "disclip";
             type:           TEXT;
             effect:         SOFT_SHADOW;
             mouse_events:   0;
@@ -7395,6 +7434,7 @@ collections {
             }
          }
          part { name: "fg1";
+            clip_to: "disclip";
             mouse_events: 0;
             description { state: "default" 0.0;
                visible: 0;
@@ -7414,6 +7454,7 @@ collections {
             }
          }
          part { name: "fg2";
+            clip_to: "disclip";
             mouse_events: 0;
             description { state: "default" 0.0;
                visible: 0;
@@ -7431,9 +7472,19 @@ collections {
                color: 255 255 255 255;
             }
          }
-         part {
-            name:           "event";
-            type:           RECT;
+         part { name: "disclip";
+            type: RECT;
+            description { state: "default" 0.0;
+               rel1.to: "bg";
+               rel2.to: "bg";
+            }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 64;
+            }
+         }
+         part { name: "event";
+            type: RECT;
             repeat_events: 1;
             description {
                state: "default" 0.0;
@@ -7442,6 +7493,11 @@ collections {
          }
       }
       programs {
+         // signal: elm,state,%s,active
+         //   a "check" item named %s went active
+         // signal: elm,state,%s,passive
+         //   a "check" item named %s went passive
+         // default is passive
          program {
             name:    "go_active";
             signal:  "elm,state,selected";
@@ -7462,6 +7518,20 @@ collections {
             target:  "fg2";
             target:  "elm.text";
             transition: LINEAR 0.1;
+         }
+         program {
+            name:    "go_disabled";
+            signal:  "elm,state,disabled";
+            source:  "elm";
+            action:  STATE_SET "disabled" 0.0;
+            target:  "disclip";
+         }
+         program {
+            name:    "go_enabled";
+            signal:  "elm,state,enabled";
+            source:  "elm";
+            action:  STATE_SET "default" 0.0;
+            target:  "disclip";
          }
       }
    }

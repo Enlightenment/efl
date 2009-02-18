@@ -98,7 +98,7 @@ _theme_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    elm_smart_scroller_theme_set(wd->scr, "scroller", "base", "default");
    edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
-   // FIXME: redo items
+   // fixme - now redo items
    _sizing_eval(obj);
 }
 
@@ -118,6 +118,7 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord  vw, vh, minw, minh, maxw, maxh, w, h, vmw, vmh;
    double xw, xy;
 
+   // fixme - now handle scroll hinting etc.
    /*
    evas_object_size_hint_min_get(wd->content, &minw, &minh);
    evas_object_size_hint_max_get(wd->content, &maxw, &maxh);
@@ -249,6 +250,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
         it->wd->on_hold = 0;
         return;
      }
+   if (it->disabled) return;
    if (it->wd->multi)
      {
         if (!it->selected) _item_select(it);
@@ -295,6 +297,8 @@ _item_realize(Item *it, int in, int calc)
                                        _mouse_up, it);
         if (it->selected)
           edje_object_signal_emit(it->base, "elm,state,selected", "elm");
+        if (it->disabled)
+          edje_object_signal_emit(it->base, "elm,state,disabled", "elm");
      }
    
    if (it->itc->func.label_get)
@@ -342,7 +346,8 @@ _item_realize(Item *it, int in, int calc)
              Evas_Bool on = it->itc->func.state_get(it->data, it->wd->obj, l->data);
              if (on)
                {
-                  // FIXME: emit to base
+                  snprintf(buf, sizeof(buf), "elm,state,%s,active", key);
+                  edje_object_signal_emit(it->base, buf, "elm");
                }
           }
      }
@@ -490,7 +495,6 @@ _calc_job(void *data)
           {
              if (itb->realized) _item_block_unrealize(itb);
              showme = _item_block_recalc(itb, in);
-             printf("change block %i\n", bn);
              chb = itb;
           }
         itb->y = y;
@@ -750,11 +754,6 @@ _item_block_del(Item *it)
    itb->changed = 1;
    if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
    it->wd->calc_job = ecore_job_add(_calc_job, it->wd);
-//   for (il = (Eina_Inlist *)(itb); il; il = il->next)
-//     {
-//        Item_Block *itb2 = (Item_Block *)il;
-//        _item_block_unrealize(itb2);
-//     }
    if (itb->count < 1)
      {
         it->wd->blocks = eina_inlist_remove(it->wd->blocks, (Eina_Inlist *)itb);
@@ -768,8 +767,6 @@ _item_block_del(Item *it)
              Item_Block *itbn = (Item_Block *)(((Eina_Inlist *)(itb))->next);
              if ((itbp) && ((itbp->count + itb->count) < 48))
                {
-                  printf("merge with prev\n");
-                  // merge prev + itb
                   while (itb->items)
                     {
                        Item *it2 = itb->items->data;
@@ -784,8 +781,6 @@ _item_block_del(Item *it)
                }
              else if ((itbn) && ((itbn->count + itb->count) < 48))
                {
-                  printf("merge with next\n");
-                  // merge next + itb
                   while (itb->items)
                     {
                        Eina_List *last = eina_list_last(itb->items);
@@ -811,8 +806,8 @@ _item_del(Item *it)
    if (it->itc->func.del) it->itc->func.del(it->data, it->wd->obj);
    if (it->realized) _item_unrealize(it);
    if (it->block) _item_block_del(it);
-   // FIXME: del it->subblocks
-   // FIXME: del it->subitems
+   // FIXME: tree. del it->subblocks
+   // FIXME: tree. del it->subitems
    if (it->queued)
      {
         it->wd->queue = eina_list_remove(it->wd->queue, it);
@@ -900,7 +895,6 @@ _item_idler(void *data)
      }
    if (n > 0)
      {
-        // queue a draw
         if (wd->calc_job) ecore_job_del(wd->calc_job);
         wd->calc_job = ecore_job_add(_calc_job, wd);
      }
@@ -947,7 +941,7 @@ elm_genlist_item_prepend(Evas_Object *obj, const Elm_Genlist_Item_Class *itc,
                          Elm_Genlist_Item_Flags flags,
                          void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
 {
-   // fixme
+   // fixme - now
 }
 
 EAPI Elm_Genlist_Item *
@@ -956,7 +950,7 @@ elm_genlist_item_insert_before(Evas_Object *obj, const Elm_Genlist_Item_Class *i
                                Elm_Genlist_Item_Flags flags,
                                void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
 {
-   // fixme
+   // fixme - now
 }
 
 EAPI Elm_Genlist_Item *
@@ -965,7 +959,7 @@ elm_genlist_item_insert_after(Evas_Object *obj, const Elm_Genlist_Item_Class *it
                               Elm_Genlist_Item_Flags flags,
                               void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
 {
-   // fixme
+   // fixme - now
 }
 
 EAPI void
@@ -1087,16 +1081,45 @@ elm_genlist_item_selected_set(Elm_Genlist_Item *item, Evas_Bool selected)
      _item_unselect(it);
 }
 
-EAPI void
-elm_genlist_item_expanded_set(Elm_Genlist_Item *item, Evas_Bool expanded)
+EAPI Evas_Bool
+elm_genlist_item_selected_get(Elm_Genlist_Item *item)
 {
-   // FIXME: not done yet
+   Item *it = (Item *)item;
+   return it->selected;
 }
 
 EAPI void
+elm_genlist_item_expanded_set(Elm_Genlist_Item *item, Evas_Bool expanded)
+{
+   // FIXME: tree. not done yet
+}
+
+EAPI Evas_Bool
+elm_genlist_item_expanded_get(Elm_Genlist_Item *item)
+{
+   // FIXME: tree. not done yet
+}
+    
+EAPI void
 elm_genlist_item_disabled_set(Elm_Genlist_Item *item, Evas_Bool disabled)
 {
-   // call this to set the disabled flag and update
+   Item *it = (Item *)item;
+   if (it->disabled == disabled) return;
+   it->disabled = disabled;
+   if (it->realized)
+     {
+        if (it->disabled)
+          edje_object_signal_emit(it->base, "elm,state,disabled", "elm");
+        else
+          edje_object_signal_emit(it->base, "elm,state,enabled", "elm");
+     }
+}
+
+EAPI Evas_Bool
+elm_genlist_item_disabled_get(Elm_Genlist_Item *item)
+{
+   Item *it = (Item *)item;
+   return it->disabled;
 }
 
 EAPI void
@@ -1114,10 +1137,6 @@ elm_genlist_item_show(Elm_Genlist_Item *item)
         it->wd->show_item->showme = 0;
         it->wd->show_item = NULL;
      }
-   printf("%i %i | %ix%i\n",
-          it->x + it->block->x,
-          it->y + it->block->y,
-          it->block->w, it->h);
    elm_smart_scroller_child_region_show(it->wd->scr,
                                         it->x + it->block->x, 
                                         it->y + it->block->y,
@@ -1142,5 +1161,5 @@ elm_genlist_item_data_get(Elm_Genlist_Item *item)
 EAPI void
 elm_genlist_item_update(Elm_Genlist_Item *item)
 {
-   // call all the class get funcs again - re realize if realized.
+   // fixme - now do call all the class get funcs again - re realize if realized.
 }
