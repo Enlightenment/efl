@@ -2123,6 +2123,13 @@ my_bt_29(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+my_gl_clear(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *gl = data;
+   elm_genlist_clear(gl);
+}
+
+static void
 my_gl_add(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *gl = data;
@@ -2222,6 +2229,14 @@ my_bt_30(void *data, Evas_Object *obj, void *event_info)
    bt = elm_button_add(win);
    elm_button_label_set(bt, "[\\/]");
    evas_object_smart_callback_add(bt, "clicked", my_gl_last, gl);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "[X]");
+   evas_object_smart_callback_add(bt, "clicked", my_gl_clear, gl);
    evas_object_size_hint_align_set(bt, -1.0, -1.0);
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);

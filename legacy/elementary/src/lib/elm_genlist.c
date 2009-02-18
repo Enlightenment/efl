@@ -86,24 +86,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   while (wd->items)
-     {
-        Item *it = (Item *)(wd->items);
-        wd->items = eina_inlist_remove(wd->items, wd->items);
-        if (it->realized) _item_unrealize(it);
-        if (it->itc->func.del) it->itc->func.del(it->data, it->wd->obj);
-        free(it);
-     }
-   while (wd->blocks)
-     {
-        Item_Block *itb = (Item_Block *)(wd->blocks);
-        wd->blocks = eina_inlist_remove(wd->blocks, wd->blocks);
-        if (itb->items) eina_list_free(itb->items);
-        free(itb);
-     }
-   if (wd->selected) eina_list_free(wd->selected);
-   if (wd->queue) eina_list_free(wd->queue);
-   if (wd->calc_job) ecore_job_del(wd->calc_job);
+   elm_genlist_clear(obj);
    evas_object_del(wd->pan_smart);
    wd->pan_smart = NULL;
    free(wd);
@@ -983,6 +966,53 @@ elm_genlist_item_insert_after(Evas_Object *obj, const Elm_Genlist_Item_Class *it
                               void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
 {
    // fixme
+}
+
+EAPI void
+elm_genlist_clear(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   while (wd->items)
+     {
+        Item *it = (Item *)(wd->items);
+        wd->items = eina_inlist_remove(wd->items, wd->items);
+        if (it->realized) _item_unrealize(it);
+        if (it->itc->func.del) it->itc->func.del(it->data, it->wd->obj);
+        free(it);
+     }
+   while (wd->blocks)
+     {
+        Item_Block *itb = (Item_Block *)(wd->blocks);
+        wd->blocks = eina_inlist_remove(wd->blocks, wd->blocks);
+        if (itb->items) eina_list_free(itb->items);
+        free(itb);
+     }
+   if (wd->calc_job)
+     {
+        ecore_job_del(wd->calc_job);
+        wd->calc_job = NULL;
+     }
+   if (wd->queue_idler)
+     {
+        ecore_idler_del(wd->queue_idler);
+        wd->queue_idler = NULL;
+     }
+   if (wd->queue)
+     {
+        eina_list_free(wd->queue);
+        wd->queue = NULL;
+     }
+   if (wd->selected)
+     {
+        eina_list_free(wd->selected);
+        wd->selected = NULL;
+     }
+   wd->show_item = NULL;
+   wd->pan_x = 0;
+   wd->pan_y = 0;
+   wd->minw = 0;
+   wd->minh = 0;
+   evas_object_smart_callback_call(wd->pan_smart, "changed", NULL);
 }
 
 EAPI void
