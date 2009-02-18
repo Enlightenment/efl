@@ -915,9 +915,11 @@ _smart_scrollbar_size_adjust(Smart_Data *sd)
 	  edje_object_part_drag_page_set(sd->edje_obj, "elm.dragable.vbar", 0.0, -((double)sd->page.y * ((double)vh / (double)h)) / 100.0);
 	
 	sd->pan_func.get(sd->pan_obj, &px, &py);
+        if (vx != mx) x = px;
+        if (vy != my) y = py;
 	sd->pan_func.set(sd->pan_obj, x, y);
-	if ((px != 0) || (py != 0))
-	  edje_object_signal_emit(sd->edje_obj, "elm,action,scroll", "elm");
+//	if ((px != 0) || (py != 0))
+//	  edje_object_signal_emit(sd->edje_obj, "elm,action,scroll", "elm");
      }
    else
      {

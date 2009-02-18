@@ -2109,7 +2109,7 @@ my_bt_29(void *data, Evas_Object *obj, void *event_info)
    itc1.func.state_get = gl_state_get;
    itc1.func.del       = gl_del;
 
-   for (i = 0; i < 10000; i++)
+   for (i = 0; i < 100000; i++)
      {
         gli = elm_genlist_item_append(gl, &itc1, 
                                       (void *)i/* item data */, 
@@ -2176,6 +2176,7 @@ my_gl_disable(void *data, Evas_Object *obj, void *event_info)
      }
    elm_genlist_item_disabled_set(gli, 1);
    elm_genlist_item_selected_set(gli, 0);
+   elm_genlist_item_update(gli);
 }
 
 

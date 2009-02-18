@@ -1222,5 +1222,10 @@ elm_genlist_item_data_get(Elm_Genlist_Item *item)
 EAPI void
 elm_genlist_item_update(Elm_Genlist_Item *item)
 {
-   // fixme - now do call all the class get funcs again - re realize if realized.
+   Item *it = (Item *)item;
+   if (!it->block) return;
+   it->mincalcd = 0;
+   it->block->changed = 1;
+   if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
+   it->wd->calc_job = ecore_job_add(_calc_job, it->wd);
 }
