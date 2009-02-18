@@ -505,7 +505,7 @@ extern "C" {
    typedef struct _Elm_Genlist_Item       Elm_Genlist_Item;
    struct _Elm_Genlist_Item_Class
      {
-        const char *style;
+        const char *item_style;
         struct {
            char        *(*label_get) (const void *data, Evas_Object *obj, const char *part);
            Evas_Object *(*icon_get)  (const void *data, Evas_Object *obj, const char *part);
@@ -561,7 +561,7 @@ extern "C" {
 // 
 //// (more widgets/features - medium priority)
 // * genlist widget (complex list widget - harder to use than normal simple list, but handles huge lists of items etc.)
-// * tree feature fir genlist widget (like biglist - but items can expand to sub-items)
+// * tree feature for genlist widget (like biglist - but items can expand to sub-items)
 // * radio + group handling
 // * checkbox (like toggle)
 // * pager (for pushing/popping pages and going back and forward and flipping)
@@ -602,7 +602,7 @@ extern "C" {
 // * prepend or append theme files from code for an app to allow an app to augment the theme eithe rby forcibly overriding things with its own theme file (so it can ship some custom elements that always override user theme) and so it can also provide a final (even after default) fallback for "extended" styles of its own (but thus allowing themes to overried its extensions if they want)
 // * determine prefix of app dynamically and export calls to get prefix info
 // * load config from file
-// * load config from x prpoerty
+// * load config from x property
 // * handle finger size property and on-the-fly changes like scaling does
 // * somehow a pdf(ps) viewer widget that doesnt make it gpl (lgpl)
 // * emotion widget
