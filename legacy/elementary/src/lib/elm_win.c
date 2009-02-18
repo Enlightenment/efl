@@ -281,7 +281,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
      }
    if (!win->ee)
      {
-	printf("ELEMENTARY: Error. Cannot create window.\n");
+	EINA_ERROR_PERR("elementary: ERROR. Cannot create window.\n");
 	free(win);
 	return NULL;
      }

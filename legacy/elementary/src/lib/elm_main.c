@@ -214,7 +214,11 @@ elm_init(int argc, char **argv)
 #ifdef HAVE_ELEMENTARY_X
 	int val = 1000;
 	
-	ecore_x_init(NULL);
+	if (!ecore_x_init(NULL))
+          {
+             EINA_ERROR_PERR("elementary: ERROR. Cannot connect to X11 display. check $DISPLAY variable\n");
+             exit(1);
+          }
 	if (!ecore_x_screen_is_composited(0))
 	  _elm_config->compositing = 0;
         _elm_atom_enlightenment_scale = ecore_x_atom_get("ENLIGHTENMENT_SCALE");
