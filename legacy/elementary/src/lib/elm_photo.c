@@ -85,6 +85,7 @@ elm_photo_add(Evas_Object *parent)
    evas_object_repeat_events_set(wd->img, 1);
    edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->img);
    evas_object_show(wd->img);
+   elm_widget_sub_object_add(obj, wd->img);
    
    wd->size = 40;
    
