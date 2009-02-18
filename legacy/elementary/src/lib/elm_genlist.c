@@ -79,7 +79,9 @@ static void _sizing_eval(Evas_Object *obj);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 
 static void _item_unrealize(Item *it);
-
+static void _item_block_unrealize(Item_Block *itb);
+static void _calc_job(void *data);
+    
 static Evas_Smart_Class _pan_sc = {NULL};
 
 static void
@@ -96,9 +98,23 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_Inlist *il;
+   Eina_List *l;
    elm_smart_scroller_theme_set(wd->scr, "scroller", "base", "default");
    edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
-   // fixme - now redo items
+   for (il = wd->blocks; il; il = il->next)
+     {
+        Item_Block *itb = (Item_Block *)il;
+        if (itb->realized) _item_block_unrealize(itb);
+        for (l = itb->items; l; l = l->next)
+          {
+             Item *it = l->data;
+             it->mincalcd = 0;
+          }
+        itb->changed = 1;
+     }
+   if (wd->calc_job) ecore_job_del(wd->calc_job);
+   wd->calc_job = ecore_job_add(_calc_job, wd);
    _sizing_eval(obj);
 }
 
@@ -276,6 +292,7 @@ _item_realize(Item *it, int in, int calc)
    
    if (it->realized) return;
    it->base = edje_object_add(evas_object_evas_get(it->wd->obj));
+   edje_object_scale_set(it->base, elm_widget_scale_get(it->wd->obj) * _elm_config->scale);
    evas_object_smart_member_add(it->base, it->wd->pan_smart);
    elm_widget_sub_object_add(it->wd->obj, it->base);
    if (in & 0x1)
