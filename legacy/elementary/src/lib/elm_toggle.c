@@ -177,9 +177,6 @@ elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon)
      {
 	elm_widget_sub_object_add(obj, icon);
 	edje_object_part_swallow(wd->tgl, "elm.swallow.content", icon);
-   Evas_Coord mw, mh;
-   evas_object_size_hint_min_get(wd->icon, &mw, &mh);
-   printf("%ix%i\n", mw, mh);
 	edje_object_signal_emit(wd->tgl, "elm,state,icon,visible", "elm");
 	evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);

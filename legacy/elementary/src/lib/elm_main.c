@@ -294,8 +294,7 @@ elm_init(int argc, char **argv)
    _elm_config->finger_size = 
      (double)_elm_config->finger_size * _elm_config->scale;
    if (elm_finger_size)
-     _elm_config->finger_size = 
-     (double)(atoi(elm_finger_size)) * _elm_config->scale;
+     _elm_config->finger_size = atoi(elm_finger_size);
    
    /* FIXME: implement quickstart below */
    /* if !quickstart return
