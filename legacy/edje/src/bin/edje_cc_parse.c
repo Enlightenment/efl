@@ -721,7 +721,7 @@ compile(void)
 	free(def);
  */
      }
-   fd = open(file_in, O_RDONLY | O_BINARY);
+   fd = open(file_in, O_RDONLY | O_BINARY, S_IRUSR | S_IWUSR);
    if (fd < 0)
      {
 	fprintf(stderr, "%s: Error. cannot open file \"%s\" for input. %s\n",
