@@ -7,6 +7,7 @@
 #endif
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "ecore_private.h"
 #include "Ecore.h"

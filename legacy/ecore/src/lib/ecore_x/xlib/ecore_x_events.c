@@ -7,6 +7,7 @@
 #endif
 
 #include <stdlib.h>
+#include <string.h>
 
 #include <langinfo.h>
 
