@@ -1,7 +1,7 @@
 @echo off
 
 rem Set external libraries directory.
-set EXT_DIR=%cd%\..\..\..\..\extern
+set EXT_DIR=%cd%\..\..\..\extern
 
 if not exist %EXT_DIR% (
 	set EXT_DIR=
@@ -11,9 +11,9 @@ if not exist %EXT_DIR% (
 )
 
 rem Add Evil lib path
-set EvilInclude=%cd%\..\..\proto\evil\src\lib
-set EvilCommon=%cd%\..\..\proto\evil\win32\common
-set EvilOut=%cd%\..\..\proto\evil\win32\%PROJECT_TYPE%\out
+set EvilInclude=%cd%\..\..\evil\src\lib
+set EvilCommon=%cd%\..\..\evil\win32\common
+set EvilOut=%cd%\..\..\evil\win32\%PROJECT_TYPE%\out
 
 set INCLUDE=%EvilCommon%;%EvilInclude%;%EvilInclude%\dlfcn;%EvilInclude%\mman;%INCLUDE%
 set LIB=%EvilOut%;%LIB%
