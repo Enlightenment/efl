@@ -480,7 +480,7 @@ _ecore_main_loop_iterate_internal(int once_only)
 	double now;
 
 	now = ecore_loop_time_get();
-	while (_ecore_timer_call(now));
+        while (_ecore_timer_call(now));
 	_ecore_timer_cleanup();
      }
    /* any timers re-added as a result of these are allowed to go */
@@ -567,6 +567,7 @@ _ecore_main_loop_iterate_internal(int once_only)
 		       if (next_time >= 0) goto start_loop;
 		       if (do_quit) break;
 		    }
+                  _ecore_loop_time = ecore_time_get();
 	       }
 	  }
 	/* timers */
@@ -592,6 +593,7 @@ _ecore_main_loop_iterate_internal(int once_only)
 		       if (next_time < 0) goto start_loop;
 		       if (do_quit) break;
 		    }
+                  _ecore_loop_time = ecore_time_get();
 	       }
 	  }
      }
