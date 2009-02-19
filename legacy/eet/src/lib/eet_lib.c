@@ -36,8 +36,11 @@ void *alloca (size_t);
 #include <string.h>
 #include <fnmatch.h>
 #include <fcntl.h>
-#include <unistd.h>
 #include <zlib.h>
+
+#ifndef _MSC_VER
+# include <unistd.h>
+#endif
 
 #ifdef HAVE_OPENSSL
 #include <openssl/err.h>
