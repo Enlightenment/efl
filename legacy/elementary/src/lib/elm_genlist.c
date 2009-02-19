@@ -510,7 +510,7 @@ _calc_job(void *data)
    Item_Block *chb = NULL;
    int bn, in;
    int minw_change = 0;
-   
+
    for (bn = 0, in = 0, il = wd->blocks; il; il = il->next, bn++)
      {
         Item_Block *itb = (Item_Block *)il;
@@ -927,19 +927,11 @@ _item_idler(void *data)
    Widget_Data *wd = data;
    int n;
 
-   printf("L-----------------\n");
-   Eina_Inlist *il;
-   for (il = wd->items; il; il = il->next)
-     {
-        Item *it = (Item *)il;
-        printf("L: %p %i\n", it, it->data);
-     }
-   for (n = 0; (wd->queue) && (n < 16); n++)
+   for (n = 0; (wd->queue) && (n < 32); n++)
      {
         Item *it;
         
         it = wd->queue->data;
-        printf("process %p @ %i\n", it, it->data);
         wd->queue = eina_list_remove_list(wd->queue, wd->queue);
         it->queued = 0;
         if (!it->parent)
