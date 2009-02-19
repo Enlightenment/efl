@@ -927,7 +927,7 @@ _item_idler(void *data)
    Widget_Data *wd = data;
    int n;
 
-   for (n = 0; (wd->queue) && (n < 32); n++)
+   for (n = 0; (wd->queue) && (n < 8); n++)
      {
         Item *it;
         
