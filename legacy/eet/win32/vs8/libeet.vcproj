@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(INCLUDE)"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;EFL_EET_BUILD;DLL_EXPORT;HAVE_EVIL;__CRT_INLINE=static;inline=__inline;snprintf=_snprintf_c;EET_OLD_EET_FILE_FORMAT"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;EFL_EET_BUILD;DLL_EXPORT;HAVE_EVIL;__CRT_INLINE=static;inline=__inline;snprintf=_snprintf_c;EET_OLD_EET_FILE_FORMAT;__UNUSED__="
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
