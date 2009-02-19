@@ -78,6 +78,8 @@ extern "C" {
 
 #ifdef _MSC_VER
 
+#include <io.h>
+
 #define F_OK 0  /* Check for file existence */
 #define X_OK 1  /* MS access() doesn't check for execute permission. */
 #define W_OK 2  /* Check for write permission */
