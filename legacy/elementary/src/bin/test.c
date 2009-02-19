@@ -735,7 +735,7 @@ my_bt_13(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
-   elm_object_focus(win);
+   elm_object_focus(en);
    evas_object_show(win);
 }
 
