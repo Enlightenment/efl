@@ -1,7 +1,7 @@
 @echo off
 
 rem Set external libraries directory.
-set EXT_DIR=%cd%\..\..\..\..\..\extern
+set EXT_DIR=%cd%\..\..\..\extern
 
 if not exist %EXT_DIR% (
 	set EXT_DIR=
