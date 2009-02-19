@@ -6,6 +6,10 @@
 # include <config.h>
 #endif
 
+#if defined(_WIN32) && ! defined(__CEGCC__)
+# include <winsock2.h>
+#endif
+
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
 #elif defined __GNUC__
@@ -41,10 +45,6 @@ void *alloca (size_t);
 
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
-#endif
-
-#if defined(_WIN32) && ! defined(__CEGCC__)
-# include <winsock2.h>
 #endif
 
 #ifdef HAVE_EVIL
