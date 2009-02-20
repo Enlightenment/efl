@@ -184,6 +184,7 @@ EAPI Eina_Accessor *eina_list_accessor_new(const Eina_List *list) EINA_MALLOC EI
  */
 #define EINA_LIST_FOREACH_SAFE(list, l, l_next, data) for (l = list, l_next = eina_list_next(l), data = eina_list_data_get(l); l; l = l_next, l_next = eina_list_next(l), data = eina_list_data_get(l))
 
+#define EINA_LIST_FREE(list, data) for (data = list ? eina_list_data_get(list) : NULL; list; list = eina_list_remove_list(list, list), data = list ? eina_list_data_get(list) : NULL)
 
 #include "eina_inline_list.x"
 
