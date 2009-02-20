@@ -2055,16 +2055,9 @@ char *gl_label_get(const void *data, Evas_Object *obj, const char *part)
 Evas_Object *gl_icon_get(const void *data, Evas_Object *obj, const char *part)
 {
    char buf[PATH_MAX];
-#if 1
    Evas_Object *ic = elm_icon_add(obj);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-#else
-   Evas_Object *ic = evas_object_image_filled_add(evas_object_evas_get(obj));
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   evas_object_image_file_set(ic, buf, NULL);
-#endif
-   
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    return ic;
 }
@@ -2318,6 +2311,152 @@ my_bt_30(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(win);
 }
 
+typedef struct _Testitem
+{
+   Elm_Genlist_Item *item;
+   int mode;
+} Testitem;
+static Elm_Genlist_Item_Class itc2;
+char *gl2_label_get(const void *data, Evas_Object *obj, const char *part)
+{
+   Testitem *tit = data;
+   char buf[256];
+   snprintf(buf, sizeof(buf), "Item mode %i", tit->mode);
+   return strdup(buf);
+}
+Evas_Object *gl2_icon_get(const void *data, Evas_Object *obj, const char *part)
+{
+   Testitem *tit = data;
+   char buf[PATH_MAX];
+   Evas_Object *ic = elm_icon_add(obj);
+   if (!strcmp(part, "elm.swallow.icon"))
+     {
+        if ((tit->mode & 0x3) == 0)
+          snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+        else if ((tit->mode & 0x3) == 1)
+          snprintf(buf, sizeof(buf), "%s/images/logo.png", PACKAGE_DATA_DIR);
+        else if ((tit->mode & 0x3) == 2)
+          snprintf(buf, sizeof(buf), "%s/images/panel_01.jpg", PACKAGE_DATA_DIR);
+        else if ((tit->mode & 0x3) == 3)
+          snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", PACKAGE_DATA_DIR);
+        elm_icon_file_set(ic, buf, NULL);
+     }
+   else if (!strcmp(part, "elm.swallow.end"))
+     {
+        if ((tit->mode & 0x3) == 0)
+          snprintf(buf, sizeof(buf), "%s/images/sky_01.jpg", PACKAGE_DATA_DIR);
+        else if ((tit->mode & 0x3) == 1)
+          snprintf(buf, sizeof(buf), "%s/images/sky_02.jpg", PACKAGE_DATA_DIR);
+        else if ((tit->mode & 0x3) == 2)
+          snprintf(buf, sizeof(buf), "%s/images/sky_03.jpg", PACKAGE_DATA_DIR);
+        else if ((tit->mode & 0x3) == 3)
+          snprintf(buf, sizeof(buf), "%s/images/sky_04.jpg", PACKAGE_DATA_DIR);
+        elm_icon_file_set(ic, buf, NULL);
+     }
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   return ic;
+}
+Evas_Bool gl2_state_get(const void *data, Evas_Object *obj, const char *part)
+{
+   return 0;
+}
+void gl2_del(const void *data, Evas_Object *obj)
+{
+}
+
+static void
+my_gl_update(void *data, Evas_Object *obj, void *event_info)
+{
+   Testitem *tit = data;
+   tit->mode++;
+   elm_genlist_item_update(tit->item);
+}
+
+static void
+my_bt_31(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *gl, *bx, *bx2, *bt;
+   static Testitem tit[3];
+   int i;
+   
+   win = elm_win_add(NULL, "genlist-2", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Genlist 2");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_show(bg);
+   
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   gl = elm_genlist_add(win);
+   evas_object_size_hint_align_set(gl, -1.0, -1.0);
+   evas_object_size_hint_weight_set(gl, 1.0, 1.0);
+   evas_object_show(gl);
+
+   itc2.item_style     = "default";
+   itc2.func.label_get = gl2_label_get;
+   itc2.func.icon_get  = gl2_icon_get;
+   itc2.func.state_get = gl2_state_get;
+   itc2.func.del       = gl2_del;
+
+   tit[0].mode = 0;
+   tit[0].item = elm_genlist_item_append(gl, &itc2, 
+                                         &(tit[0])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+                                         NULL/* func data */);
+   tit[1].mode = 1;
+   tit[1].item = elm_genlist_item_append(gl, &itc2, 
+                                         &(tit[1])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+                                         NULL/* func data */);
+   tit[2].mode = 2;
+   tit[2].item = elm_genlist_item_append(gl, &itc2, 
+                                         &(tit[2])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+                                         NULL/* func data */);
+   
+   elm_box_pack_end(bx, gl);
+   evas_object_show(bx2);
+   
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, 1);
+   elm_box_homogenous_set(bx2, 1);
+   evas_object_size_hint_weight_set(bx2, 1.0, 0.0);
+   evas_object_size_hint_align_set(bx2, -1.0, -1.0);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "[1]");
+   evas_object_smart_callback_add(bt, "clicked", my_gl_update, &(tit[0]));
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "[2]");
+   evas_object_smart_callback_add(bt, "clicked", my_gl_update, &(tit[1]));
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "[3]");
+   evas_object_smart_callback_add(bt, "clicked", my_gl_update, &(tit[2]));
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+   
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
+   evas_object_resize(win, 320, 320);
+   evas_object_show(win);
+}
+
 static void
 my_win_main(void)
 {
@@ -2423,6 +2562,7 @@ my_win_main(void)
    elm_list_item_append(li, "Slider", NULL, NULL, my_bt_28, NULL);
    elm_list_item_append(li, "Genlist", NULL, NULL, my_bt_29, NULL);
    elm_list_item_append(li, "Genlist 2", NULL, NULL, my_bt_30, NULL);
+   elm_list_item_append(li, "Genlist 3", NULL, NULL, my_bt_31, NULL);
 
    elm_list_go(li);
    

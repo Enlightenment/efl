@@ -568,7 +568,6 @@ extern "C" {
 // * when entries are in a scroller and change size, the scroller shows scrollbars. fix. same for selecting. for 1 line entries in a scroller should only have scroll arrow indicators.
 // 
 //// (more widgets/features - medium priority)
-// * genlist widget (complex list widget - harder to use than normal simple list, but handles huge lists of items etc.)
 // * tree feature for genlist widget (like biglist - but items can expand to sub-items)
 // * radio + group handling
 // * checkbox (like toggle)
