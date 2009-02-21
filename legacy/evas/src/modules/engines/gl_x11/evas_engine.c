@@ -85,7 +85,7 @@ eng_setup(Evas *e, void *in)
 	  }
 
 	evas_common_cpu_init();
-	
+
 	evas_common_blend_init();
 	evas_common_image_init();
 	evas_common_convert_init();
@@ -223,7 +223,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
      }
 //   printf("GL: update....!\n");
 #ifdef SLOW_GL_COPY_RECT
-   /* if any update - just return the whole canvas - works with swap 
+   /* if any update - just return the whole canvas - works with swap
     * buffers then */
    if (x) *x = 0;
    if (y) *y = 0;
@@ -248,7 +248,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    if (cy) *cy = re->win->draw.y1;
    if (cw) *cw = re->win->draw.x2 - re->win->draw.x1 + 1;
    if (ch) *ch = re->win->draw.y2 - re->win->draw.y1 + 1;
-#endif   
+#endif
    return re;
 }
 
@@ -279,11 +279,11 @@ eng_output_flush(void *data)
    glFlush();
      {
 	unsigned int rc;
-   
+
 	glXGetVideoSyncSGI(&rc);
 	glXWaitVideoSyncSGI(2, (rc + 1) % 2, &rc);
      }
-#endif   
+#endif
 #ifdef SLOW_GL_COPY_RECT
    glXSwapBuffers(re->win->disp, re->win->win);
 #else
@@ -313,10 +313,10 @@ eng_context_cutout_add(void *data, void *context, int x, int y, int w, int h)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-#ifndef EVAS_GL_COMMON_NOCUTOUTS   
+#ifndef EVAS_GL_COMMON_NOCUTOUTS
    re->win->gl_context->dc = context;
    evas_common_draw_context_add_cutout(context, x, y, w, h);
-#endif   
+#endif
 }
 
 static void
@@ -325,10 +325,10 @@ eng_context_cutout_clear(void *data, void *context)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-#ifndef EVAS_GL_COMMON_NOCUTOUTS   
+#ifndef EVAS_GL_COMMON_NOCUTOUTS
    re->win->gl_context->dc = context;
    evas_common_draw_context_clear_cutouts(context);
-#endif   
+#endif
 }
 
 static void
@@ -641,7 +641,7 @@ eng_image_colorspace_get(void *data, void *image)
 {
    Render_Engine *re;
    Evas_GL_Image *im;
-   
+
    re = (Render_Engine *)data;
    if (!image) return EVAS_COLORSPACE_ARGB8888;
    im = image;
@@ -724,7 +724,7 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
 {
    Render_Engine *re;
    Evas_GL_Image *im;
-   
+
    re = (Render_Engine *)data;
    if (!image) return;
    im = image;
@@ -845,10 +845,10 @@ eng_image_size_set(void *data, void *image, int w, int h)
      return image;
    if (im_old)
      {
-	im = evas_gl_common_image_new(re->win->gl_context, w, h, 
+	im = evas_gl_common_image_new(re->win->gl_context, w, h,
 				      eng_image_alpha_get(data, image),
 				      eng_image_colorspace_get(data, image));
-/*	
+/*
 	evas_common_load_image_data_from_file(im_old->im);
 	if (im_old->im->image->data)
 	  {
@@ -897,7 +897,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 	     if (im->references > 1)
 	       {
 		  Evas_GL_Image *im_new;
-		  
+
 		  im_new = evas_gl_common_image_new_from_copied_data(im->gc, im->im->cache_entry.w, im->im->cache_entry.h, im->im->image.data,
 								     eng_image_alpha_get(data, image),
 								     eng_image_colorspace_get(data, image));
@@ -941,7 +941,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 	if (image_data != im->im->image.data)
 	  {
 	     int w, h;
-	     
+
 	     w = im->im->cache_entry.w;
 	     h = im->im->cache_entry.h;
 	     im2 = eng_image_new_from_data(data, w, h, image_data,
@@ -1175,7 +1175,7 @@ module_open(Evas_Module *em)
 EAPI void
 module_close(void)
 {
-   
+
 }
 
 EAPI Evas_Module_Api evas_modapi =
