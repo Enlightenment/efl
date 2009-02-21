@@ -11,6 +11,7 @@
 #undef WIN32_LEAN_AND_MEAN
 
 #include <Evil.h>
+#include <Eina.h>
 
 #include "Ecore_WinCE.h"
 #include "ecore_wince_private.h"
@@ -36,9 +37,14 @@ ecore_wince_window_new(Ecore_WinCE_Window *parent,
    HWND                        window;
    RECT                        rect;
 
+   EINA_ERROR_PINFO("creating window\n");
+
    w = (struct _Ecore_WinCE_Window *)calloc(1, sizeof(struct _Ecore_WinCE_Window));
    if (!w)
-     return NULL;
+     {
+        EINA_ERROR_PERR("malloc() failed\n");
+        return NULL;
+     }
 
    rect.left = 0;
    rect.top = 0;
@@ -46,6 +52,7 @@ ecore_wince_window_new(Ecore_WinCE_Window *parent,
    rect.bottom = height;
    if (!AdjustWindowRectEx(&rect, WS_CAPTION | WS_SYSMENU | WS_VISIBLE, FALSE, WS_EX_TOPMOST))
      {
+        EINA_ERROR_PERR("AdjustWindowRectEx() failed\n");
         free(w);
         return NULL;
      }
@@ -60,12 +67,14 @@ ecore_wince_window_new(Ecore_WinCE_Window *parent,
                            NULL, _ecore_wince_instance, NULL);
    if (!window)
      {
+        EINA_ERROR_PERR("CreateWindowEx() failed\n");
         free(w);
         return NULL;
      }
 
    if (!_ecore_wince_hardware_keys_register(window))
      {
+        EINA_ERROR_PERR("_ecore_wince_hardware_keys_register() failed\n");
         DestroyWindow(window);
         free(w);
         return NULL;
@@ -76,6 +85,7 @@ ecore_wince_window_new(Ecore_WinCE_Window *parent,
    SetLastError(0);
    if (!SetWindowLong(window, GWL_USERDATA, (LONG)w) && (GetLastError() != 0))
      {
+        EINA_ERROR_PERR("SetWindowLong() failed\n");
         DestroyWindow(window);
         free(w);
         return NULL;
@@ -89,20 +99,17 @@ ecore_wince_window_new(Ecore_WinCE_Window *parent,
 void
 ecore_wince_window_del(Ecore_WinCE_Window *window)
 {
-   Ecore_WinCE_Window *w;
-
    if (!window) return;
+
+   EINA_ERROR_PINFO("destroying window\n");
 
    DestroyWindow(((struct _Ecore_WinCE_Window *)window)->window);
    free(window);
-   fprintf (stderr, "ecore_wince_window_del\n");
 }
 
 void *
 ecore_wince_window_hwnd_get(Ecore_WinCE_Window *window)
 {
-   struct _Ecore_WinCE_Window *w;
-
    if (!window)
      return NULL;
 
@@ -120,15 +127,22 @@ ecore_wince_window_move(Ecore_WinCE_Window *window,
    if (!window || ((struct _Ecore_WinCE_Window *)window)->fullscreen)
      return;
 
-   printf ("ecore_wince_window_move %p : %d %d\n", window, x, y);
+   EINA_ERROR_PINFO("moving window (%dx%d)\n", x, y);
+
    w = ((struct _Ecore_WinCE_Window *)window)->window;
    if (!GetWindowRect(w, &rect))
-     return;
+     {
+        EINA_ERROR_PERR("GetWindowRect() failed\n");
+        return;
+     }
 
-   MoveWindow(w, x, y,
-              rect.right - rect.left,
-              rect.bottom - rect.top,
-              TRUE);
+   if (!MoveWindow(w, x, y,
+                   rect.right - rect.left,
+                   rect.bottom - rect.top,
+                   TRUE))
+     {
+        EINA_ERROR_PERR("MoveWindow() failed\n");
+     }
 }
 
 void
@@ -146,13 +160,14 @@ ecore_wince_window_resize(Ecore_WinCE_Window *window,
    if (!window || ((struct _Ecore_WinCE_Window *)window)->fullscreen)
      return;
 
-   w = (struct _Ecore_WinCE_Window *)window;
-   if (!GetWindowRect(w->window, &rect)) return;
+   EINA_ERROR_PINFO("resizing window (%dx%d)\n", width, height);
 
-   printf ("ecore_wince_window_resize 0 : %p (%d %d)\n",
-           w,
-           width,
-           height);
+   w = (struct _Ecore_WinCE_Window *)window;
+   if (!GetWindowRect(w->window, &rect))
+     {
+        EINA_ERROR_PERR("GetWindowRect() failed\n");
+        return;
+     }
 
    x = rect.left;
    y = rect.top;
@@ -160,19 +175,29 @@ ecore_wince_window_resize(Ecore_WinCE_Window *window,
    rect.top = 0;
    rect.right = width;
    rect.bottom = height;
-   style = GetWindowLong(w->window, GWL_STYLE);
-   exstyle = GetWindowLong(w->window, GWL_EXSTYLE);
+   if (!(style = GetWindowLong(w->window, GWL_STYLE)))
+     {
+        EINA_ERROR_PERR("GetWindowLong() failed\n");
+        return;
+     }
+   if (!(exstyle = GetWindowLong(w->window, GWL_EXSTYLE)))
+     {
+        EINA_ERROR_PERR("GetWindowLong() failed\n");
+        return;
+     }
    if (!AdjustWindowRectEx(&rect, style, FALSE, exstyle))
-     return;
+     {
+        EINA_ERROR_PERR("AdjustWindowRectEx() failed\n");
+        return;
+     }
 
    if (!MoveWindow(w->window, x, y,
                    rect.right - rect.left,
                    rect.bottom - rect.top,
                    FALSE))
      {
-       printf (" MEEERDE !!!\n");
+        EINA_ERROR_PERR("MoveWindow() failed\n");
      }
-   printf ("ecore_wince_window_resize 4 : %d %d\n", width, height);
 }
 
 void
@@ -190,22 +215,36 @@ ecore_wince_window_move_resize(Ecore_WinCE_Window *window,
    if (!window || ((struct _Ecore_WinCE_Window *)window)->fullscreen)
      return;
 
-   printf ("ecore_wince_window_move_resize 0 : %p  %d %d\n", window, width, height);
+   EINA_ERROR_PINFO("moving and resizing window (%dx%d %dx%d)\n", x, y, width, height);
+
    w = ((struct _Ecore_WinCE_Window *)window);
    rect.left = 0;
    rect.top = 0;
-   printf ("ecore_wince_window_move_resize 1 : %d %d\n", width, height);
    rect.right = width;
    rect.bottom = height;
-   style = GetWindowLong(w->window, GWL_STYLE);
-   exstyle = GetWindowLong(w->window, GWL_EXSTYLE);
+   if (!(style = GetWindowLong(w->window, GWL_STYLE)))
+     {
+        EINA_ERROR_PERR("GetWindowLong() failed\n");
+        return;
+     }
+   if (!(exstyle = GetWindowLong(w->window, GWL_EXSTYLE)))
+     {
+        EINA_ERROR_PERR("GetWindowLong() failed\n");
+        return;
+     }
    if (!AdjustWindowRectEx(&rect, style, FALSE, exstyle))
-     return;
+     {
+        EINA_ERROR_PERR("AdjustWindowRectEx() failed\n");
+        return;
+     }
 
-   MoveWindow(w->window, x, y,
+   if (!MoveWindow(w->window, x, y,
               rect.right - rect.left,
               rect.bottom - rect.top,
-              TRUE);
+              TRUE))
+     {
+        EINA_ERROR_PERR("MoveWindow() failed\n");
+     }
 }
 
 void
@@ -213,10 +252,21 @@ ecore_wince_window_show(Ecore_WinCE_Window *window)
 {
    if (!window) return;
 
-   fprintf (stderr, " ** ecore_wince_window_show  %p\n", window);
-   ShowWindow(((struct _Ecore_WinCE_Window *)window)->window, SW_SHOWNORMAL);
-   UpdateWindow(((struct _Ecore_WinCE_Window *)window)->window);
-   SendMessage(((struct _Ecore_WinCE_Window *)window)->window, WM_SHOWWINDOW, 1, 0);
+   EINA_ERROR_PINFO("showing window\n");
+
+   if (!ShowWindow(((struct _Ecore_WinCE_Window *)window)->window, SW_SHOWNORMAL))
+     {
+        EINA_ERROR_PERR("ShowWindow() failed\n");
+        return;
+     }
+   if (!UpdateWindow(((struct _Ecore_WinCE_Window *)window)->window))
+     {
+        EINA_ERROR_PERR("UpdateWindow() failed\n");
+     }
+   if (!SendMessage(((struct _Ecore_WinCE_Window *)window)->window, WM_SHOWWINDOW, 1, 0))
+     {
+        EINA_ERROR_PERR("SendMessage() failed\n");
+     }
 }
 
 void
@@ -224,9 +274,17 @@ ecore_wince_window_hide(Ecore_WinCE_Window *window)
 {
    if (!window) return;
 
-   fprintf (stderr, " ** ecore_wince_window_hide  %p\n", window);
-   ShowWindow(((struct _Ecore_WinCE_Window *)window)->window, SW_HIDE);
-   SendMessage(((struct _Ecore_WinCE_Window *)window)->window, WM_SHOWWINDOW, 0, 0);
+   EINA_ERROR_PINFO("hiding window\n");
+
+   if (!ShowWindow(((struct _Ecore_WinCE_Window *)window)->window, SW_HIDE))
+     {
+        EINA_ERROR_PERR("ShowWindow() failed\n");
+        return;
+     }
+   if (!SendMessage(((struct _Ecore_WinCE_Window *)window)->window, WM_SHOWWINDOW, 0, 0))
+     {
+        EINA_ERROR_PERR("SendMessage() failed\n");
+     }
 }
 
 void
@@ -239,10 +297,15 @@ ecore_wince_window_title_set(Ecore_WinCE_Window *window,
 
    if (!title || !title[0]) return;
 
+   EINA_ERROR_PINFO("setting window title\n");
+
    wtitle = evil_char_to_wchar(title);
    if (!wtitle) return;
 
-   SetWindowText(((struct _Ecore_WinCE_Window *)window)->window, wtitle);
+   if (!SetWindowText(((struct _Ecore_WinCE_Window *)window)->window, wtitle))
+     {
+        EINA_ERROR_PERR("SetWindowText() failed\n");
+     }
    free(wtitle);
 }
 
@@ -253,6 +316,8 @@ ecore_wince_window_backend_set(Ecore_WinCE_Window *window, int backend)
 
    if (!window)
      return;
+
+   EINA_ERROR_PINFO("setting backend\n");
 
    w = (struct _Ecore_WinCE_Window *)window;
    w->backend = backend;
@@ -266,6 +331,8 @@ ecore_wince_window_suspend_set(Ecore_WinCE_Window *window, int (*suspend)(int))
    if (!window)
      return;
 
+   EINA_ERROR_PINFO("setting suspend callback\n");
+
    w = (struct _Ecore_WinCE_Window *)window;
    w->suspend = suspend;
 }
@@ -277,6 +344,8 @@ ecore_wince_window_resume_set(Ecore_WinCE_Window *window, int (*resume)(int))
 
    if (!window)
      return;
+
+   EINA_ERROR_PINFO("setting resume callback\n");
 
    w = (struct _Ecore_WinCE_Window *)window;
    w->resume = resume;
@@ -293,7 +362,8 @@ ecore_wince_window_geometry_get(Ecore_WinCE_Window *window,
    int  w;
    int  h;
 
-   printf ("ecore_wince_window_geometry_get %p\n", window);
+   EINA_ERROR_PINFO("getting window geometry\n");
+
    if (!window)
      {
         if (x) *x = 0;
@@ -307,6 +377,8 @@ ecore_wince_window_geometry_get(Ecore_WinCE_Window *window,
    if (!GetClientRect(((struct _Ecore_WinCE_Window *)window)->window,
                       &rect))
      {
+        EINA_ERROR_PERR("GetClientRect() failed\n");
+
         if (x) *x = 0;
         if (y) *y = 0;
         if (width) *width = 0;
@@ -321,6 +393,8 @@ ecore_wince_window_geometry_get(Ecore_WinCE_Window *window,
    if (!GetWindowRect(((struct _Ecore_WinCE_Window *)window)->window,
                       &rect))
      {
+        EINA_ERROR_PERR("GetWindowRect() failed\n");
+
         if (x) *x = 0;
         if (y) *y = 0;
         if (width) *width = 0;
@@ -342,6 +416,8 @@ ecore_wince_window_size_get(Ecore_WinCE_Window *window,
 {
    RECT rect;
 
+   EINA_ERROR_PINFO("getting window size\n");
+
    if (!window)
      {
         if (width) *width = GetSystemMetrics(SM_CXSCREEN);
@@ -353,6 +429,8 @@ ecore_wince_window_size_get(Ecore_WinCE_Window *window,
    if (!GetClientRect(((struct _Ecore_WinCE_Window *)window)->window,
                       &rect))
      {
+        EINA_ERROR_PERR("GetClientRect() failed\n");
+
         if (width) *width = 0;
         if (height) *height = 0;
      }
@@ -368,8 +446,6 @@ ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
    struct _Ecore_WinCE_Window *ew;
    HWND                        w;
    HWND                        task_bar;
-   int                         width;
-   int                         height;
 
    if (!window) return;
 
@@ -378,66 +454,118 @@ ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
        ((!ew->fullscreen) && (!on)))
      return;
 
+   EINA_ERROR_PINFO("setting fullscreen: %s\n", on ? "yes" : "no");
+
    ew->fullscreen = !!on;
    w = ew->window;
 
    if (on)
      {
         /* save the position and size of the window */
-        if (!GetWindowRect(w, &ew->rect)) return;
+        if (!GetWindowRect(w, &ew->rect))
+          {
+             EINA_ERROR_PERR("GetWindowRect() failed\n");
+             return;
+          }
 
         /* hide task bar */
         task_bar = FindWindow(L"HHTaskBar", NULL);
-        if (!task_bar) return;
-        ShowWindow(task_bar, SW_HIDE);
-        EnableWindow(task_bar, FALSE);
+        if (!task_bar)
+          {
+             EINA_ERROR_PERR("FindWindow() failed\n");
+             return;
+          }
+        if (!ShowWindow(task_bar, SW_HIDE))
+          {
+             EINA_ERROR_PERR("ShowWindow() failed\n");
+             return;
+          }
+        if (!EnableWindow(task_bar, FALSE))
+          {
+             EINA_ERROR_PERR("EnableWindow() failed\n");
+             return;
+          }
 
         /* style: visible + popup */
-        if (!SetWindowLong(w, GWL_STYLE, WS_POPUP | WS_VISIBLE)) return;
+        if (!SetWindowLong(w, GWL_STYLE, WS_POPUP | WS_VISIBLE))
+          {
+             EINA_ERROR_PERR("SetWindowLong() failed\n");
+             return;
+          }
 
         /* resize window to fit the entire screen */
-        SetWindowPos(w, HWND_TOPMOST,
-                     0, 0,
-                     GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
-                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+        if (!SetWindowPos(w, HWND_TOPMOST,
+                          0, 0,
+                          GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
+                          SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED))
+          {
+             EINA_ERROR_PERR("SetWindowLong() failed\n");
+             return;
+          }
         /*
          * It seems that SetWindowPos is not sufficient.
          * Call MoveWindow with the correct size and force painting.
          * Note that UpdateWindow (forcing repainting) is not sufficient
          */
-        MoveWindow(w,
-                   0, 0,
-                   GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
-                   TRUE);
+        if (!MoveWindow(w,
+                        0, 0,
+                        GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
+                        TRUE))
+          {
+             EINA_ERROR_PERR("MoveWindow() failed\n");
+          }
      }
    else
      {
         /* show task bar */
         task_bar = FindWindow(L"HHTaskBar", NULL);
-        if (!task_bar) return;
-        ShowWindow(task_bar, SW_SHOW);
-        EnableWindow(task_bar, TRUE);
+        if (!task_bar)
+          {
+             EINA_ERROR_PERR("FindWindow() failed\n");
+             return;
+          }
+        if (!ShowWindow(task_bar, SW_SHOW))
+          {
+             EINA_ERROR_PERR("ShowWindow() failed\n");
+             return;
+          }
+        if (!EnableWindow(task_bar, TRUE))
+          {
+             EINA_ERROR_PERR("EnableWindow() failed\n");
+             return;
+          }
 
         /* style: visible + caption + sysmenu */
-        if (!SetWindowLong(w, GWL_STYLE, WS_CAPTION | WS_SYSMENU | WS_VISIBLE)) return;
+        if (!SetWindowLong(w, GWL_STYLE, WS_CAPTION | WS_SYSMENU | WS_VISIBLE))
+          {
+             EINA_ERROR_PERR("SetWindowLong() failed\n");
+             return;
+          }
         /* restaure the position and size of the window */
-        SetWindowPos(w, HWND_TOPMOST,
-                     ew->rect.left,
-                     ew->rect.top,
-                     ew->rect.right - ew->rect.left,
-                     ew->rect.bottom - ew->rect.top,
-                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+        if (!SetWindowPos(w, HWND_TOPMOST,
+                          ew->rect.left,
+                          ew->rect.top,
+                          ew->rect.right - ew->rect.left,
+                          ew->rect.bottom - ew->rect.top,
+                          SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED))
+          {
+             EINA_ERROR_PERR("SetWindowLong() failed\n");
+             return;
+          }
         /*
          * It seems that SetWindowPos is not sufficient.
          * Call MoveWindow with the correct size and force painting.
          * Note that UpdateWindow (forcing repainting) is not sufficient
          */
-        MoveWindow(w,
-                   ew->rect.left,
-                   ew->rect.top,
-                   ew->rect.right - ew->rect.left,
-                   ew->rect.bottom - ew->rect.top,
-                   TRUE);
+        if (!MoveWindow(w,
+                        ew->rect.left,
+                        ew->rect.top,
+                        ew->rect.right - ew->rect.left,
+                        ew->rect.bottom - ew->rect.top,
+                        TRUE))
+          {
+             EINA_ERROR_PERR("MoveWindow() failed\n");
+          }
      }
 }
 
@@ -453,11 +581,15 @@ _ecore_wince_hardware_keys_register(HWND window)
 
    core_dll = LoadLibrary(L"coredll.dll");
    if (!core_dll)
-     return 0;
+     {
+        EINA_ERROR_PERR("LoadLibrary() failed\n");
+        return 0;
+     }
 
    unregister_fct = (UnregisterFunc1Proc)GetProcAddress(core_dll, L"UnregisterFunc1");
    if (!unregister_fct)
      {
+        EINA_ERROR_PERR("GetProcAddress() failed\n");
         FreeLibrary(core_dll);
         return 0;
      }
