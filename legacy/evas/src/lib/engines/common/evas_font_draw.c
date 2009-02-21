@@ -166,59 +166,23 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
    return 0;
 }
 
-EAPI void
-evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const char *text)
+static void
+evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const char *text,
+                               RGBA_Gfx_Func func, int ext_x, int ext_y, int ext_w, int ext_h, RGBA_Font_Int *fi,
+                               int im_w, int im_h, int use_kerning
+                               )
 {
-   int use_kerning;
    int pen_x, pen_y;
    int chr;
-   FT_UInt prev_index;
-   RGBA_Gfx_Func func;
-   int ext_x, ext_y, ext_w, ext_h;
-   DATA32 *im;
-   int im_w, im_h;
-   int c;
-   RGBA_Font_Int *fi;
    FT_Face pface = NULL;
-
-   fi = fn->fonts->data;
-
-   im = dst->image.data;
-   im_w = dst->cache_entry.w;
-   im_h = dst->cache_entry.h;
-
-   ext_x = 0; ext_y = 0; ext_w = im_w; ext_h = im_h;
-   if (dc->clip.use)
-     {
-	ext_x = dc->clip.x;
-	ext_y = dc->clip.y;
-	ext_w = dc->clip.w;
-	ext_h = dc->clip.h;
-	if (ext_x < 0)
-	  {
-	     ext_w += ext_x;
-	     ext_x = 0;
-	  }
-	if (ext_y < 0)
-	  {
-	     ext_h += ext_y;
-	     ext_y = 0;
-	  }
-	if ((ext_x + ext_w) > im_w)
-	  ext_w = im_w - ext_x;
-	if ((ext_y + ext_h) > im_h)
-	  ext_h = im_h - ext_y;
-     }
-   if (ext_w <= 0) return;
-   if (ext_h <= 0) return;
+   FT_UInt prev_index;
+   DATA32 *im;
+   int c;
 
    pen_x = x;
    pen_y = y;
-   LKL(fn->lock);
-   evas_common_font_size_use(fn);
-   use_kerning = FT_HAS_KERNING(fi->src->ft.face);
    prev_index = 0;
-   func = evas_common_gfx_func_composite_mask_color_span_get(dc->col.col, dst, 1, dc->render_op);
+   im = dst->image.data;
    for (c = 0, chr = 0; text[chr];)
      {
 	FT_UInt index;
@@ -383,5 +347,82 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	pen_x += fg->glyph->advance.x >> 16;
 	prev_index = index;
      }
+}
+
+EAPI void
+evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const char *text)
+{
+   int ext_x, ext_y, ext_w, ext_h;
+   int im_w, im_h;
+   int use_kerning;
+   RGBA_Gfx_Func func; 
+   RGBA_Font_Int *fi;
+   Cutout_Rects *rects;
+   Cutout_Rect  *r;
+   int          c, cx, cy, cw, ch;
+   int          i;
+   
+   fi = fn->fonts->data;
+
+   im_w = dst->cache_entry.w;
+   im_h = dst->cache_entry.h;
+
+   ext_x = 0; ext_y = 0; ext_w = im_w; ext_h = im_h;
+   if (dc->clip.use)
+     {
+	ext_x = dc->clip.x;
+	ext_y = dc->clip.y;
+	ext_w = dc->clip.w;
+	ext_h = dc->clip.h;
+	if (ext_x < 0)
+	  {
+	     ext_w += ext_x;
+	     ext_x = 0;
+	  }
+	if (ext_y < 0)
+	  {
+	     ext_h += ext_y;
+	     ext_y = 0;
+	  }
+	if ((ext_x + ext_w) > im_w)
+	  ext_w = im_w - ext_x;
+	if ((ext_y + ext_h) > im_h)
+	  ext_h = im_h - ext_y;
+     }
+   if (ext_w <= 0) return;
+   if (ext_h <= 0) return;
+
+   LKL(fn->lock);
+   evas_common_font_size_use(fn);
+   use_kerning = FT_HAS_KERNING(fi->src->ft.face);
+   func = evas_common_gfx_func_composite_mask_color_span_get(dc->col.col, dst, 1, dc->render_op);
+
+   if (!dc->cutout.rects)
+     {
+        evas_common_font_draw_internal(dst, dc, fn, x, y, text,
+                                       func, ext_x, ext_y, ext_w, ext_h, fi,
+                                       im_w, im_h, use_kerning
+                                       );
+     }
+   else
+     {
+        evas_common_draw_context_clip_clip(dc, 0, 0, dst->cache_entry.w, dst->cache_entry.h);
+        /* our clip is 0 size.. abort */
+        if ((dc->clip.w > 0) && (dc->clip.h > 0))
+          {
+             rects = evas_common_draw_context_apply_cutouts(dc);
+             for (i = 0; i < rects->active; ++i)
+               {
+                  r = rects->rects + i;
+                  evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
+                  evas_common_font_draw_internal(dst, dc, fn, x, y, text,
+                                                 func, r->x, r->y, r->w, r->h, fi,
+                                                 im_w, im_h, use_kerning
+                                                 );
+               }
+             evas_common_draw_context_apply_clear_cutouts(rects);
+          }
+     }
+   dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
    LKU(fn->lock);
 }

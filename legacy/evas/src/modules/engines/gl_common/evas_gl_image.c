@@ -198,7 +198,11 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
    double tx1, ty1, tx2, ty2;
    int    ow, oh;
    int    space;
-
+   Cutout_Rects *rects;
+   Cutout_Rect  *rct;
+   int          c, cx, cy, cw, ch;
+   int          i;
+   
    if (sw < 1) sw = 1;
    if (sh < 1) sh = 1;
    dc = gc->dc;
@@ -299,7 +303,7 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
 	abort();
 	break;
     }
-
+   
 //   if ((!im->tex->have_mipmaps) && (smooth) &&
 //       ((im->tex->uw < im->tex->tw) || (im->tex->uh < im->tex->th)) &&
 //       (!gc->ext.sgis_generate_mipmap))
@@ -309,20 +313,53 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
    if ((a < 255) || im->im->cache_entry.flags.alpha)
      evas_gl_common_context_blend_set(gc, 1);
    else evas_gl_common_context_blend_set(gc, 0);
-   if (dc->clip.use)
-     evas_gl_common_context_clip_set(gc, 1,
-				     dc->clip.x, dc->clip.y,
-				     dc->clip.w, dc->clip.h);
-   else
-     evas_gl_common_context_clip_set(gc, 0,
-				     0, 0, 0, 0);
    evas_gl_common_context_read_buf_set(gc, GL_BACK);
    evas_gl_common_context_write_buf_set(gc, GL_BACK);
 
-   glBegin(GL_QUADS);
-   glTexCoord2d(tx1, ty1); glVertex2i(dx     , dy     );
-   glTexCoord2d(tx2, ty1); glVertex2i(dx + dw, dy     );
-   glTexCoord2d(tx2, ty2); glVertex2i(dx + dw, dy + dh);
-   glTexCoord2d(tx1, ty2); glVertex2i(dx     , dy + dh);
-   glEnd();
+   if (!gc->dc->cutout.rects)
+     {
+        if (gc->dc->clip.use)
+          evas_gl_common_context_clip_set(gc, 1,
+                                          gc->dc->clip.x, gc->dc->clip.y,
+                                          gc->dc->clip.w, gc->dc->clip.h);
+        else
+          evas_gl_common_context_clip_set(gc, 0,
+                                          0, 0, 0, 0);
+        glBegin(GL_QUADS);
+        glTexCoord2d(tx1, ty1); glVertex2i(dx     , dy     );
+        glTexCoord2d(tx2, ty1); glVertex2i(dx + dw, dy     );
+        glTexCoord2d(tx2, ty2); glVertex2i(dx + dw, dy + dh);
+        glTexCoord2d(tx1, ty2); glVertex2i(dx     , dy + dh);
+        glEnd();
+        return;
+     }
+   /* save out clip info */
+   c = gc->dc->clip.use; cx = gc->dc->clip.x; cy = gc->dc->clip.y; cw = gc->dc->clip.w; ch = gc->dc->clip.h;
+   evas_common_draw_context_clip_clip(gc->dc, 0, 0, gc->w, gc->h);
+   evas_common_draw_context_clip_clip(gc->dc, dx, dy, dw, dh);
+   /* our clip is 0 size.. abort */
+   if ((gc->dc->clip.w <= 0) || (gc->dc->clip.h <= 0))
+     {
+        gc->dc->clip.use = c; gc->dc->clip.x = cx; gc->dc->clip.y = cy; gc->dc->clip.w = cw; gc->dc->clip.h = ch;
+        return;
+     }
+   rects = evas_common_draw_context_apply_cutouts(dc);
+   for (i = 0; i < rects->active; ++i)
+     {
+        rct = rects->rects + i;
+        if (gc->dc->clip.use)
+          evas_gl_common_context_clip_set(gc, 1, rct->x, rct->y, rct->w, rct->h);
+        else
+          evas_gl_common_context_clip_set(gc, 0,
+                                          0, 0, 0, 0);
+        glBegin(GL_QUADS);
+        glTexCoord2d(tx1, ty1); glVertex2i(dx     , dy     );
+        glTexCoord2d(tx2, ty1); glVertex2i(dx + dw, dy     );
+        glTexCoord2d(tx2, ty2); glVertex2i(dx + dw, dy + dh);
+        glTexCoord2d(tx1, ty2); glVertex2i(dx     , dy + dh);
+        glEnd();
+     }
+   evas_common_draw_context_apply_clear_cutouts(rects);
+   /* restore clip info */
+   gc->dc->clip.use = c; gc->dc->clip.x = cx; gc->dc->clip.y = cy; gc->dc->clip.w = cw; gc->dc->clip.h = ch;
 }

@@ -1,6 +1,8 @@
 #ifndef EVAS_GL_COMMON_H
 #define EVAS_GL_COMMON_H
 
+#define EVAS_GL_COMMON_NOCUTOUTS 1
+
 /* FIXME: need to handle memory errors */
 /* FIXME: need to handle list errors */
 /* FIXME: need to handle gl errors */
