@@ -14,6 +14,8 @@
 #undef WIN32_LEAN_AND_MEAN
 #include <windowsx.h>
 
+#include <Eina.h>
+
 #include "Ecore.h"
 #include "Ecore_Win32.h"
 #include "ecore_win32_private.h"
@@ -66,6 +68,14 @@ LRESULT CALLBACK _ecore_win32_window_procedure(HWND   window,
                                                WPARAM window_param,
                                                LPARAM data_param);
 
+static void      _ecore_wince_error_print_cb(Eina_Error_Level level,
+                                             const char      *file,
+                                             const char      *fnc,
+                                             int              line,
+                                             const char      *fmt,
+                                             void            *data,
+                                             va_list          args);
+
 
 /***** API *****/
 
@@ -75,16 +85,22 @@ ecore_win32_init()
 {
    WNDCLASS wc;
 
+   eina_error_print_cb_set(_ecore_wince_error_print_cb, NULL);
+
+   EINA_ERROR_PINFO("initializing ecore_win32 (current count: %d)\n", _ecore_win32_init_count);
+
    if (_ecore_win32_init_count > 0)
      {
 	_ecore_win32_init_count++;
 	return _ecore_win32_init_count;
      }
 
-   printf (" *** ecore_win32_init\n");
    _ecore_win32_instance = GetModuleHandle(NULL);
    if (!_ecore_win32_instance)
-     return 0;
+     {
+        EINA_ERROR_PERR("GetModuleHandle() failed\n");
+        return 0;
+     }
 
    memset (&wc, 0, sizeof (WNDCLASS));
    wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -100,12 +116,14 @@ ecore_win32_init()
 
    if(!RegisterClass(&wc))
      {
+        EINA_ERROR_PERR("RegisterClass() failed\n");
         FreeLibrary(_ecore_win32_instance);
         return 0;
      }
 
    if (!ecore_win32_dnd_init())
      {
+        EINA_ERROR_PERR("ecore_win32_dnd_init() failed\n");
         FreeLibrary(_ecore_win32_instance);
         return 0;
      }
@@ -140,13 +158,21 @@ ecore_win32_init()
 int
 ecore_win32_shutdown()
 {
+   EINA_ERROR_PINFO("shutting down ecore_win32 (current count: %d)\n", _ecore_win32_init_count);
+
    _ecore_win32_init_count--;
    if (_ecore_win32_init_count > 0) return _ecore_win32_init_count;
    if (!_ecore_win32_instance) return _ecore_win32_init_count;
 
    ecore_win32_dnd_shutdown();
-   UnregisterClass(ECORE_WIN32_WINDOW_CLASS, _ecore_win32_instance);
-   FreeLibrary(_ecore_win32_instance);
+   if (!UnregisterClass(ECORE_WIN32_WINDOW_CLASS, _ecore_win32_instance))
+     {
+        EINA_ERROR_PERR("UnregisterClass() failed\n");
+     }
+   if (!FreeLibrary(_ecore_win32_instance))
+     {
+        EINA_ERROR_PERR("FreeLibrary() failed\n");
+     }
    _ecore_win32_instance = NULL;
 
    if (_ecore_win32_init_count < 0) _ecore_win32_init_count = 0;
@@ -160,12 +186,20 @@ ecore_win32_screen_depth_get()
    HDC dc;
    int depth;
 
+   EINA_ERROR_PINFO("getting screen depth\n");
+
    dc = GetDC(NULL);
    if (!dc)
-     return 0;
+     {
+        EINA_ERROR_PERR("GetDC() failed\n");
+        return 0;
+     }
 
    depth = GetDeviceCaps(dc, BITSPIXEL);
-   ReleaseDC(NULL, dc);
+   if (!ReleaseDC(NULL, dc))
+     {
+        EINA_ERROR_PERR("ReleaseDC() failed (device context not released)\n");
+     }
 
    return depth;
 }
@@ -239,47 +273,37 @@ _ecore_win32_window_procedure(HWND   window,
      {
        /* Keyboard input notifications */
      case WM_KEYDOWN:
-       printf (" * ecore message : keystroke down\n");
        _ecore_win32_event_handle_key_press(data, 1);
        return 0;
      case WM_CHAR:
        _ecore_win32_event_handle_key_press(data, 0);
        return 0;
      case WM_KEYUP:
-       printf (" * ecore message : keystroke up\n");
        _ecore_win32_event_handle_key_release(data, 1);
        return 0;
      case WM_SETFOCUS:
-       printf (" * ecore message : focus in\n");
        _ecore_win32_event_handle_focus_in(data);
        return 0;
      case WM_KILLFOCUS:
-       printf (" * ecore message : focus out\n");
        _ecore_win32_event_handle_focus_out(data);
        return 0;
        /* Mouse input notifications */
      case WM_LBUTTONDOWN:
-       printf (" * ecore message : lbuttondown\n");
        _ecore_win32_event_handle_button_press(data, 1);
        return 0;
      case WM_MBUTTONDOWN:
-       printf (" * ecore message : mbuttondown\n");
        _ecore_win32_event_handle_button_press(data, 2);
        return 0;
      case WM_RBUTTONDOWN:
-       printf (" * ecore message : rbuttondown\n");
        _ecore_win32_event_handle_button_press(data, 3);
        return 0;
      case WM_LBUTTONUP:
-       printf (" * ecore message : lbuttonup\n");
        _ecore_win32_event_handle_button_release(data, 1);
        return 0;
      case WM_MBUTTONUP:
-       printf (" * ecore message : mbuttonup\n");
        _ecore_win32_event_handle_button_release(data, 2);
        return 0;
      case WM_RBUTTONUP:
-       printf (" * ecore message : rbuttonup\n");
        _ecore_win32_event_handle_button_release(data, 3);
        return 0;
      case WM_MOUSEMOVE:
@@ -290,58 +314,49 @@ _ecore_win32_window_procedure(HWND   window,
           w = (struct _Ecore_Win32_Window *)GetWindowLong(window, GWL_USERDATA);
 
           if (GetClientRect(window, &rect))
-          {
-             POINT pt;
+            {
+               POINT pt;
 
-             pt.x = GET_X_LPARAM(data_param);
-             pt.y = GET_Y_LPARAM(data_param);
-             if (!PtInRect(&rect, pt))
-               {
-                  if (w->pointer_is_in)
-                    {
-                       w->pointer_is_in = 0;
-                       _ecore_win32_event_handle_leave_notify(data);
-                    }
-               }
-             else
-               {
-                  if (!w->pointer_is_in)
-                    {
-                       w->pointer_is_in = 1;
-                       _ecore_win32_event_handle_enter_notify(data);
-                    }
+               EINA_ERROR_PINFO("mouse in window\n");
 
-               }
-          }
+               pt.x = GET_X_LPARAM(data_param);
+               pt.y = GET_Y_LPARAM(data_param);
+               if (!PtInRect(&rect, pt))
+                 {
+                    if (w->pointer_is_in)
+                      {
+                         w->pointer_is_in = 0;
+                         _ecore_win32_event_handle_leave_notify(data);
+                      }
+                 }
+               else
+                 {
+                    if (!w->pointer_is_in)
+                      {
+                         w->pointer_is_in = 1;
+                         _ecore_win32_event_handle_enter_notify(data);
+                      }
+                 }
+            }
+          else
+            {
+               EINA_ERROR_PERR("GetClientRect() failed\n");
+            }
           _ecore_win32_event_handle_motion_notify(data);
 
           return 0;
        }
      case WM_MOUSEWHEEL:
-       printf (" * ecore message : mouse wheel\n");
        _ecore_win32_event_handle_button_press(data, 4);
        return 0;
        /* Window notifications */
      case WM_CREATE:
-       {
-         RECT rect;
-         GetClientRect(window, &rect);
-         printf (" *** ecore message : create %ld %ld\n",
-                 rect.right - rect.left, rect.bottom - rect.top);
-       }
        _ecore_win32_event_handle_create_notify(data);
        return 0;
      case WM_DESTROY:
-       printf (" * ecore message : destroy\n");
        _ecore_win32_event_handle_destroy_notify(data);
        return 0;
      case WM_SHOWWINDOW:
-       {
-         RECT rect;
-         GetClientRect(window, &rect);
-         printf (" *** ecore message : show %ld %ld\n",
-                 rect.right - rect.left, rect.bottom - rect.top);
-       }
        if ((data->data_param == SW_OTHERUNZOOM) ||
            (data->data_param == SW_OTHERUNZOOM))
          return 0;
@@ -353,7 +368,6 @@ _ecore_win32_window_procedure(HWND   window,
 
        return 0;
      case WM_CLOSE:
-       printf (" * ecore message : close\n");
        _ecore_win32_event_handle_delete_request(data);
        return 0;
      case WM_MOVING:
@@ -380,12 +394,6 @@ _ecore_win32_window_procedure(HWND   window,
 /*        _ecore_win32_event_handle_configure_notify(data); */
 /*        return 0; */
      case WM_WINDOWPOSCHANGED:
-       {
-         RECT rect;
-         GetClientRect(window, &rect);
-         printf (" *** ecore message : WINDOWPOSCHANGED %ld %ld\n",
-                 rect.right - rect.left, rect.bottom - rect.top);
-       }
        _ecore_win32_event_handle_configure_notify(data);
        return 0;
      case WM_ENTERSIZEMOVE :
@@ -399,7 +407,6 @@ _ecore_win32_window_procedure(HWND   window,
        {
          RECT rect;
 
-         printf (" * ecore message : paint\n");
          if (GetUpdateRect(window, &rect, FALSE))
            {
               PAINTSTRUCT ps;
@@ -409,11 +416,6 @@ _ecore_win32_window_procedure(HWND   window,
               data->update = rect;
               _ecore_win32_event_handle_expose(data);
               EndPaint(window, &ps);
-              printf (" *    %ld %ld %ld %ld\n",
-                      rect.left,
-                      rect.top,
-                      rect.right - rect.left,
-                      rect.bottom - rect.top);
            }
          return 0;
        }
@@ -426,5 +428,17 @@ _ecore_win32_window_procedure(HWND   window,
      default:
        return DefWindowProc(window, message, window_param, data_param);
      }
+}
 
+static void
+_ecore_wince_error_print_cb(Eina_Error_Level level __UNUSED__,
+                             const char     *file __UNUSED__,
+                             const char     *fnc,
+                             int             line,
+                             const char     *fmt,
+                             void           *data __UNUSED__,
+                             va_list         args)
+{
+   fprintf(stderr, "[%s:%d] ", fnc, line);
+   vfprintf(stderr, fmt, args);
 }

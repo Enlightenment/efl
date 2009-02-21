@@ -10,6 +10,8 @@
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
 
+#include <Eina.h>
+
 #include "Ecore_Win32.h"
 #include "ecore_win32_private.h"
 
@@ -27,6 +29,8 @@ ecore_win32_cursor_new(const void *pixels_and,
    Ecore_Win32_Cursor *cursor = NULL;
    int                 cursor_width;
    int                 cursor_height;
+
+   EINA_ERROR_PINFO("creating cursor\n");
 
    cursor_width = GetSystemMetrics(SM_CXCURSOR);
    cursor_height = GetSystemMetrics(SM_CYCURSOR);
@@ -48,6 +52,8 @@ ecore_win32_cursor_new(const void *pixels_and,
 void
 ecore_win32_cursor_free(Ecore_Win32_Cursor *cursor)
 {
+   EINA_ERROR_PINFO("destroying cursor\n");
+
    DestroyCursor(cursor);
 }
 
@@ -56,6 +62,8 @@ ecore_win32_cursor_shape_get(Ecore_Win32_Cursor_Shape shape)
 {
    Ecore_Win32_Cursor *cursor = NULL;
    const char         *cursor_name;
+
+   EINA_ERROR_PINFO("geting shape cursor\n");
 
    switch (shape)
      {
@@ -116,6 +124,8 @@ ecore_win32_cursor_size_get(void)
 {
    int width;
    int height;
+
+   EINA_ERROR_PINFO("geting size cursor\n");
 
    width = GetSystemMetrics(SM_CXCURSOR);
    height = GetSystemMetrics(SM_CYCURSOR);
