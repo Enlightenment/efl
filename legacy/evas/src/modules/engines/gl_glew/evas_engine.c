@@ -288,7 +288,10 @@ eng_context_cutout_add(void *data, void *context, int x, int y, int w, int h)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   /* not used in gl engine */
+#ifndef EVAS_GL_COMMON_NOCUTOUTS
+   re->window->gl_context->dc = context;
+   evas_common_draw_context_add_cutout(context, x, y, w, h);
+#endif
 }
 
 static void
@@ -297,7 +300,10 @@ eng_context_cutout_clear(void *data, void *context)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   /* not used in gl engine */
+#ifndef EVAS_GL_COMMON_NOCUTOUTS
+   re->window->gl_context->dc = context;
+   evas_common_draw_context_clear_cutouts(context);
+#endif
 }
 
 static void
