@@ -6,28 +6,24 @@
 #include "Evil.h"
 #include "evil_private.h"
 
-#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
-
 # define WIN32_LEAN_AND_MEAN
 # include <winsock2.h>
 # undef WIN32_LEAN_AND_MEAN
 
 
-extern long _evil_time_second;
-extern long _evil_time_millisecond;
+static int           _evil_init_count = 0;
 
-#endif /* _WIN32_WCE && ! __CEGCC__ */
-
-static int  _evil_init_count = 0;
+extern LONGLONG _evil_time_freq;
+extern LONGLONG _evil_time_count;
+extern long     _evil_time_second;
 
 int
 evil_init()
 {
-#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
-   SYSTEMTIME st;
-   DWORD      tick;
-   WORD       second = 59;
-#endif /* _WIN32_WCE && ! __CEGCC__ */
+   SYSTEMTIME    st;
+   LARGE_INTEGER freq;
+   LARGE_INTEGER count;
+   WORD          second = 59;
 
    if (_evil_init_count > 0)
      {
@@ -35,7 +31,11 @@ evil_init()
 	return _evil_init_count;
      }
 
-#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
+   if (!QueryPerformanceFrequency(&freq))
+     {
+       return 0;
+     }
+   _evil_time_freq = freq.QuadPart;
 
    /* be sure that second + 1 != 0 */
    while (second == 59)
@@ -48,7 +48,7 @@ evil_init()
    while (1)
      {
         GetSystemTime(&st);
-        tick = GetTickCount();
+        QueryPerformanceCounter(&count);
         if (st.wSecond == second + 1)
           break;
      }
@@ -56,9 +56,7 @@ evil_init()
    _evil_time_second = _evil_systemtime_to_time(st);
    if (_evil_time_second < 0)
      return 0;
-   _evil_time_millisecond = tick;
-
-#endif /* _WIN32_WCE && ! __CEGCC__ */
+   _evil_time_count = count.QuadPart;
 
    _evil_init_count++;
 

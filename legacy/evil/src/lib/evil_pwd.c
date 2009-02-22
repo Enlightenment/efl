@@ -29,7 +29,11 @@ getpwuid (uid_t uid)
 
    length = PATH_MAX;
    /* get from USERPROFILE for win 98 ? */
-   res = GetUserNameEx(NameUnknown, name, &length);
+#ifdef _WIN32_WINNT
+   res = GetUserNameEx(NameDisplay, name, &length);
+#else
+   res = GetUserNameEx(NameWindowsCeLocal, name, &length);
+#endif
 #ifdef UNICODE
    if (res)
      {

@@ -21,12 +21,9 @@
 #include "evil_private.h"
 
 
-#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
-
-long _evil_time_second;
-long _evil_time_millisecond;
-
-#endif /* _WIN32_WCE && ! __CEGCC__ */
+LONGLONG _evil_time_freq;
+LONGLONG _evil_time_count;
+long     _evil_time_second;
 
 
 long
@@ -58,21 +55,30 @@ _evil_systemtime_to_time(SYSTEMTIME st)
  *
  */
 
-#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
+double
+evil_time_get()
+{
+   LARGE_INTEGER count;
+
+   QueryPerformanceCounter(&count);
+
+   return (double)_evil_time_second + (double)(count.QuadPart - _evil_time_count)/ (double)_evil_time_freq;
+}
 
 int
 evil_gettimeofday(struct timeval *tp, void *tzp __UNUSED__)
 {
-   int   milli_sec;
+   LARGE_INTEGER count;
+   LONGLONG      diff;
 
-   milli_sec = (int)GetTickCount() - _evil_time_millisecond;
-   tp->tv_sec = _evil_time_second + milli_sec / 1000;
-   tp->tv_usec = (milli_sec % 1000) * 1000;
+   QueryPerformanceCounter(&count);
+   diff = count.QuadPart - _evil_time_count;
+   tp->tv_sec = _evil_time_second + diff / _evil_time_freq;
+   tp->tv_usec = (diff % _evil_time_freq) * 1000000000ll;
 
    return 1;
 }
 
-#endif /* _WIN32_WCE && ! __CEGCC__ */
 
 /*
  * Process identifer related functions

@@ -1,3 +1,16 @@
+2009-02-22  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_main.c:
+	* src/lib/evil_unistd.c:
+	* src/lib/evil_unistd.h:
+	Use high resolution timer for gettimeofday() and
+	export a convenient function for ecore_time_get(),
+	to save some computations.
+
+	* src/lib/evil_pwd.c:
+	Use the correct name for GetUserNameEx() according
+	to the platform.
+
 2009-02-16  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_stdio.c:

@@ -7,14 +7,11 @@
  *
  */
 
-
-#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
+EAPI double evil_time_get();
 
 EAPI int evil_gettimeofday(struct timeval * tp, void * tzp);
 
-# define gettimeofday(tp, tzp) evil_gettimeofday(tp, tzp)
-
-#endif /* _WIN32_WCE && ! __CEGCC__ */
+#define gettimeofday(tp, tzp) evil_gettimeofday(tp, tzp)
 
 
 /*
