@@ -93,7 +93,7 @@ file_new_decoded_pad_cb(GstElement *decodebin,
 	GstElement         *queue;
 	GstPad             *videopad;
 
-	vsink = (Emotion_Video_Sink *)malloc(sizeof(Emotion_Video_Sink));
+	vsink = (Emotion_Video_Sink *)calloc(1, sizeof(Emotion_Video_Sink));
 	if (!vsink) return;
 	if (!ecore_list_append(ev->video_sinks, vsink))
 	  {
@@ -121,7 +121,7 @@ file_new_decoded_pad_cb(GstElement *decodebin,
 	Emotion_Audio_Sink *asink;
 	GstPad             *audiopad;
 
-	asink = (Emotion_Audio_Sink *)malloc(sizeof(Emotion_Audio_Sink));
+	asink = (Emotion_Audio_Sink *)calloc(1, sizeof(Emotion_Audio_Sink));
 	if (!asink) return;
 	if (!ecore_list_append(ev->audio_sinks, asink))
 	  {
@@ -146,7 +146,7 @@ emotion_video_sink_new(Emotion_Gstreamer_Video *ev)
 
    if (!ev) return NULL;
 
-   vsink = (Emotion_Video_Sink *)malloc(sizeof(Emotion_Video_Sink));
+   vsink = (Emotion_Video_Sink *)calloc(1, sizeof(Emotion_Video_Sink));
    if (!vsink) return NULL;
 
    if (!ecore_list_append(ev->video_sinks, vsink))
