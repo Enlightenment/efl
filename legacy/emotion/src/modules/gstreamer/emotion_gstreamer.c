@@ -390,6 +390,17 @@ em_file_open(const char   *file,
 	     return 0;
 	  }
      }
+   /* v4l */
+   else if (strstr(file, "v4l://"))
+     {
+	fprintf(stderr, "[Emotion] [gst] build V4L pipeline\n");
+	if (!(emotion_pipeline_v4l_build(ev, file)))
+	  {
+	     fprintf(stderr, "[Emotion] [gst] error while building V4L pipeline\n");
+	     gst_object_unref(ev->pipeline);
+	     return 0;
+	  }
+     }
    /* Normal media file */
    else
      {
