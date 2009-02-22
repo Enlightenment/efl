@@ -79,7 +79,7 @@ raster(TIFFRGBAImage_Extra * img, uint32 * rast,
    uint32             *pixel, pixel_value;
    int                 i, j, dy, rast_offset;
    DATA32             *buffer_pixel, *buffer = evas_cache_image_pixels(img->image);
-   int                 alpha_premult;
+   int                 alpha_premult = 0;
 
    image_width = img->image->w;
    image_height = img->image->h;
