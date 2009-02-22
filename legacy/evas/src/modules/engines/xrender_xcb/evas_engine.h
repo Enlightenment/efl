@@ -15,10 +15,11 @@ typedef struct _Xcb_Render_Surface  Xcb_Render_Surface;
 struct _Xcb_Image_Info
 {
    xcb_connection_t          *conn;
+   xcb_screen_t              *screen;
    xcb_drawable_t             root;
    xcb_drawable_t             draw;
    int                        depth;
-   xcb_visualid_t             vis;
+   xcb_visualtype_t          *visual;
    int                        pool_mem;
    Eina_List                 *pool;
    unsigned char              can_do_shm;
@@ -27,6 +28,7 @@ struct _Xcb_Image_Info
    xcb_render_pictforminfo_t *fmt8;
    xcb_render_pictforminfo_t *fmt4;
    xcb_render_pictforminfo_t *fmt1;
+   xcb_render_pictforminfo_t *fmtdef;
    unsigned char              mul_r;
    unsigned char              mul_g;
    unsigned char              mul_b;
@@ -63,7 +65,7 @@ struct _Xcb_Render_Surface
 };
 
 /* ximage support calls (ximage vs xshmimage, cache etc.) */
-Xcb_Image_Info  *_xr_image_info_get(xcb_connection_t *conn, xcb_drawable_t draw, xcb_visualid_t vis);
+Xcb_Image_Info  *_xr_image_info_get(xcb_connection_t *conn, xcb_screen_t *screen, xcb_drawable_t draw, xcb_visualtype_t *visual);
 void             _xr_image_info_free(Xcb_Image_Info *xcbinf);
 void             _xr_image_info_pool_flush(Xcb_Image_Info *xcbinf, int max_num, int max_mem);
 Xcb_Image_Image *_xr_image_new(Xcb_Image_Info *xcbinf, int w, int h, int depth);
@@ -77,16 +79,16 @@ Xcb_Render_Surface *_xr_render_surface_format_adopt(Xcb_Image_Info *xcbinf, xcb_
 void                _xr_render_surface_free(Xcb_Render_Surface *rs);
 void                _xr_render_surface_repeat_set(Xcb_Render_Surface *rs, int repeat);
 void                _xr_render_surface_solid_rectangle_set(Xcb_Render_Surface *rs, int r, int g, int b, int a, int x, int y, int w, int h);
-void                _xr_render_surface_argb_pixels_fill(Xcb_Render_Surface *rs, int sw, int sh, void *pixels, int x, int y, int w, int h);
-void                _xr_render_surface_rgb_pixels_fill(Xcb_Render_Surface *rs, int sw, int sh, void *pixels, int x, int y, int w, int h);
+void                _xr_render_surface_argb_pixels_fill(Xcb_Render_Surface *rs, int sw, int sh, void *pixels, int x, int y, int w, int h, int ox, int oy);
+void                _xr_render_surface_rgb_pixels_fill(Xcb_Render_Surface *rs, int sw, int sh, void *pixels, int x, int y, int w, int h, int ox, int oy);
 void                _xr_render_surface_clips_set(Xcb_Render_Surface *rs, RGBA_Draw_Context *dc, int rx, int ry, int rw, int rh);
 void                _xr_render_surface_composite(Xcb_Render_Surface *srs, Xcb_Render_Surface *drs, RGBA_Draw_Context *dc, int sx, int sy, int sw, int sh, int x, int y, int w, int h, int smooth);
 void                _xr_render_surface_copy(Xcb_Render_Surface *srs, Xcb_Render_Surface *drs, int sx, int sy, int x, int y, int w, int h);
 void                _xr_render_surface_rectangle_draw(Xcb_Render_Surface *rs, RGBA_Draw_Context *dc, int x, int y, int w, int h);
 void                _xr_render_surface_line_draw(Xcb_Render_Surface *rs, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2);
 void                _xre_poly_draw(Xcb_Render_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points);
-  
-    
+
+
 typedef struct _XR_Image XR_Image;
 
 struct _XR_Image
@@ -104,14 +106,19 @@ struct _XR_Image
    const char           *comment;
    Tilebuf              *updates;
    RGBA_Image_Loadopts   load_opts;
+   struct {
+      int                space;
+      void              *data;
+      unsigned char      no_free : 1;
+   } cs;
    unsigned char         alpha : 1;
    unsigned char         dirty : 1;
    unsigned char         free_data : 1;
 };
 
 XR_Image *_xre_image_load(Xcb_Image_Info *xcbinf, const char *file, const char *key, Evas_Image_Load_Opts *lo);
-XR_Image *_xre_image_new_from_data(Xcb_Image_Info *xcbinf, int w, int h, void *data);
-XR_Image *_xre_image_new_from_copied_data(Xcb_Image_Info *xcbinf, int w, int h, void *data);
+XR_Image *_xre_image_new_from_data(Xcb_Image_Info *xcbinf, int w, int h, void *data, int alpha, int cspace);
+XR_Image *_xre_image_new_from_copied_data(Xcb_Image_Info *xcbinf, int w, int h, void *data, int alpha, int cspace);
 XR_Image *_xre_image_new(Xcb_Image_Info *xcbinf, int w, int h);
 void      _xre_image_resize(XR_Image *im, int w, int h);
 void      _xre_image_free(XR_Image *im);
@@ -160,7 +167,7 @@ struct _XR_Gradient
    Xcb_Image_Info     *xcbinf;
    Xcb_Render_Surface *surface;
    RGBA_Gradient      *grad;
-   unsigned char       changed;
+   unsigned char       changed : 1;
    int                 sw, sh;
 };
 
@@ -180,5 +187,5 @@ void         _xre_gradient_offset_set(XR_Gradient *gr, float offset);
 void         _xre_gradient_direction_set(XR_Gradient *gr, int direction);
 void         _xre_gradient_type_set(XR_Gradient *gr, char *name, char *params);
 void         _xre_gradient_draw(Xcb_Render_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, int x, int y, int w, int h);
-    
+
 #endif

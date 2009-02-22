@@ -10,19 +10,21 @@ _xre_font_surface_new(Xcb_Image_Info *xcbinf, RGBA_Font_Glyph *fg)
 {
    char             buf[256];
    char             buf2[256];
+   uint32_t         values[3];
    XR_Font_Surface *fs;
    DATA8           *data;
-   int              w, h, j;
-   Xcb_Image_Image *xcim;
+   Xcb_Image_Image *xcbim;
    Eina_Hash       *pool;
    uint32_t         mask;
-   uint32_t         values[3];
+   int              w;
+   int              h;
+   int              pitch;
 
    data = fg->glyph_out->bitmap.buffer;
    w = fg->glyph_out->bitmap.width;
    h = fg->glyph_out->bitmap.rows;
-   j = fg->glyph_out->bitmap.pitch;
-   if (j < w) j = w;
+   pitch = fg->glyph_out->bitmap.pitch;
+   if (pitch < w) pitch = w;
    if ((w <= 0) || (h <= 0)) return NULL;
 
    if (fg->ext_dat)
@@ -67,18 +69,18 @@ _xre_font_surface_new(Xcb_Image_Info *xcbinf, RGBA_Font_Glyph *fg)
    values[2] = 0;
    fs->pic = xcb_generate_id(xcbinf->conn);
    xcb_render_create_picture(xcbinf->conn, fs->pic, fs->draw, xcbinf->fmt8->id, mask, values);
-   
-   xcim = _xr_image_new(fs->xcbinf, w, h, xcbinf->fmt8->depth);
+
+   xcbim = _xr_image_new(fs->xcbinf, w, h, xcbinf->fmt8->depth);
    if ((fg->glyph_out->bitmap.num_grays == 256) &&
        (fg->glyph_out->bitmap.pixel_mode == ft_pixel_mode_grays))
      {
 	int x, y;
 	DATA8 *p1, *p2;
-	
+
 	for (y = 0; y < h; y++)
 	  {
-	     p1 = data + (j * y);
-	     p2 = ((DATA8 *)xcim->data) + (xcim->line_bytes * y);
+	     p1 = data + (pitch * y);
+	     p2 = ((DATA8 *)xcbim->data) + (xcbim->line_bytes * y);
 	     for (x = 0; x < w; x++)
 	       {
 		  *p2 = *p1;
@@ -86,23 +88,23 @@ _xre_font_surface_new(Xcb_Image_Info *xcbinf, RGBA_Font_Glyph *fg)
 		  p2++;
 	       }
 	  }
-	
+
      }
    else
      {
         DATA8      *tmpbuf = NULL, *dp, *tp, bits;
 	int         bi, bj, end;
 	const DATA8 bitrepl[2] = {0x0, 0xff};
-	
+
 	tmpbuf = alloca(w);
 	  {
 	     int    x, y;
 	     DATA8 *p1, *p2;
-	     
+
 	     for (y = 0; y < h; y++)
 	       {
 		  p1 = tmpbuf;
-		  p2 = ((DATA8 *)xcim->data) + (xcim->line_bytes * y);
+		  p2 = ((DATA8 *)xcbim->data) + (xcbim->line_bytes * y);
 		  tp = tmpbuf;
 		  dp = data + (y * fg->glyph_out->bitmap.pitch);
 		  for (bi = 0; bi < w; bi += 8)
@@ -126,7 +128,7 @@ _xre_font_surface_new(Xcb_Image_Info *xcbinf, RGBA_Font_Glyph *fg)
 	       }
 	  }
      }
-   _xr_image_put(xcim, fs->draw, 0, 0, w, h);
+   _xr_image_put(xcbim, fs->draw, 0, 0, w, h);
    return fs;
 }
 
@@ -167,9 +169,9 @@ _xre_font_surface_draw(Xcb_Image_Info *xcbinf, RGBA_Image *surface, RGBA_Draw_Co
    int                 g;
    int                 b;
    int                 a;
-   
+
    fs = fg->ext_dat;
-   if (!fs) return;
+   if (!fs || !fs->xcbinf || !dc || !dc->col.col) return;
    target_surface = (Xcb_Render_Surface *)(surface->image.data);
    a = (dc->col.col >> 24) & 0xff;
    r = (dc->col.col >> 16) & 0xff;
@@ -188,15 +190,15 @@ _xre_font_surface_draw(Xcb_Image_Info *xcbinf, RGBA_Image *surface, RGBA_Draw_Co
    rect.y = y;
    rect.width = fs->w;
    rect.height = fs->h;
-   if ((dc) && (dc->clip.use))
+   if (dc->clip.use)
      {
 	RECTS_CLIP_TO_RECT(rect.x, rect.y, rect.width, rect.height,
 			   dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
      }
-   xcb_render_set_picture_clip_rectangles(target_surface->xcbinf->conn, 
+   xcb_render_set_picture_clip_rectangles(target_surface->xcbinf->conn,
                                           target_surface->pic, 0, 0, 1, &rect);
    xcb_render_composite(fs->xcbinf->conn, XCB_RENDER_PICT_OP_OVER,
-                        fs->xcbinf->mul->pic, 
+                        fs->xcbinf->mul->pic,
                         fs->pic,
                         target_surface->pic,
                         0, 0,

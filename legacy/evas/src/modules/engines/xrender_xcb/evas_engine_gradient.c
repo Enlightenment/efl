@@ -158,19 +158,45 @@ _xre_gradient_draw(Xcb_Render_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *g
      {
 	int op = dc->render_op, cuse = dc->clip.use;
 	RGBA_Image  *im;
+	Xcb_Image_Image  *xcbim;
 
-        im = (RGBA_Image*) evas_cache_image_empty(evas_common_image_cache_get());
+	xcbim = _xr_image_new(gr->xcbinf, w, h, gr->surface->depth);
+	if (!xcbim)
+	  {
+	    _xr_render_surface_free(gr->surface);
+	    gr->surface = NULL;
+	    return;
+	  }
+
+        im = (RGBA_Image *) evas_cache_image_data(evas_common_image_cache_get(),
+                                                  w, h,
+                                                  (DATA32 *)xcbim->data,
+                                                  1, EVAS_COLORSPACE_ARGB8888);
 	if (!im)
 	  {
 	    _xr_render_surface_free(gr->surface);
 	    gr->surface = NULL;
 	    return;
 	  }
-        evas_cache_image_surface_alloc(&im->cache_entry, w, h);
+
 	dc->render_op = _EVAS_RENDER_FILL;
 	dc->clip.use = 0;
 	evas_common_gradient_draw(im, dc, 0, 0, w, h, gr->grad);
-	_xr_render_surface_argb_pixels_fill(gr->surface, w, h, im->image.data, 0, 0, w, h);
+	if
+#ifdef WORDS_BIGENDIAN
+	   (xcbim->xcbim->byte_order == XCB_IMAGE_ORDER_LSB_FIRST)
+#else
+	   (xcbim->xcbim->byte_order == XCB_IMAGE_ORDER_MSB_FIRST)
+#endif
+	  {
+	     DATA32  *p = im->image.data, *pe = p + (w * h);
+	     while (p < pe)
+	       {
+		  *p = (*p << 24) + ((*p << 8) & 0xff0000) + ((*p >> 8) & 0xff00) + (*p >> 24);
+		  p++;
+	       }
+	  }
+	_xr_image_put(xcbim, gr->surface->draw, 0, 0, w, h);
         evas_cache_image_drop(&im->cache_entry);
 	dc->render_op = op;
 	dc->clip.use = cuse;

@@ -14,9 +14,10 @@ struct _Evas_Engine_Info_XRender_Xcb
    /* engine specific data & parameters it needs to set up */
    struct {
       xcb_connection_t *conn;
+      xcb_screen_t     *screen;
       xcb_drawable_t    drawable;
       xcb_pixmap_t      mask;
-      xcb_visualid_t    visual;
+      xcb_visualtype_t *visual;
       unsigned char     destination_alpha : 1;
    } info;
 };

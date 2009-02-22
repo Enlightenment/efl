@@ -259,7 +259,7 @@ _tmp_xcb_err(xcb_connection_t *conn/* , XErrorEvent *ev */)
 }
 
 Xcb_Image_Info *
-_xr_image_info_get(xcb_connection_t *conn, xcb_drawable_t draw, xcb_visualid_t vis)
+_xr_image_info_get(xcb_connection_t *conn, xcb_screen_t *screen, xcb_drawable_t draw, xcb_visualtype_t *visual)
 {
    xcb_get_geometry_cookie_t cookie;
    xcb_get_geometry_reply_t *rep;
@@ -281,17 +281,19 @@ _xr_image_info_get(xcb_connection_t *conn, xcb_drawable_t draw, xcb_visualid_t v
 
    xcbinf->references = 1;
    xcbinf->conn = conn;
+   xcbinf->screen = screen;
    xcbinf->draw = draw;
    cookie = xcb_get_geometry_unchecked(xcbinf->conn, xcbinf->draw);
    rep = xcb_get_geometry_reply(xcbinf->conn, cookie, NULL);
    xcbinf->root = rep->root;
    free(rep);
-   xcbinf->vis = vis;
+   xcbinf->visual = visual;
    xcbinf->fmt32 = xcb_render_find_standard_pictforminfo(xcbinf->conn, xcb_render_standard_pictforminfoargb_32_t);
    xcbinf->fmt24 = xcb_render_find_standard_pictforminfo(xcbinf->conn, xcb_render_standard_pictforminforgb_24_t);
    xcbinf->fmt8 = xcb_render_find_standard_pictforminfo(xcbinf->conn, xcb_render_standard_pictforminfoa_8_t);
    xcbinf->fmt4 = xcb_render_find_standard_pictforminfo(xcbinf->conn, xcb_render_standard_pictforminfoa_4_t);
    xcbinf->fmt1 = xcb_render_find_standard_pictforminfo(xcbinf->conn, xcb_render_standard_pictforminfoa_1_t);
+
    xcbinf->mul = _xr_render_surface_new(xcbinf, 1, 1, xcbinf->fmt32, 1);
    _xr_render_surface_repeat_set(xcbinf->mul, 1);
    xcbinf->mul_r = xcbinf->mul_g = xcbinf->mul_b = xcbinf->mul_a = 0xff;
@@ -303,39 +305,32 @@ _xr_image_info_get(xcb_connection_t *conn, xcb_drawable_t draw, xcb_visualid_t v
      }
    else
      {
-       xcb_shm_segment_info_t shm_info;
-       xcb_image_t           *xcbim;
+        xcb_depth_iterator_t iter_depth;
+        xcb_shm_segment_info_t shm_info;
+        xcb_image_t           *xcbim;
 
-        xcbinf->depth = 32;
-        {
-          xcb_setup_t          *rep;
-          xcb_screen_iterator_t iter_screen;
+        iter_depth = xcb_screen_allowed_depths_iterator (xcbinf->screen);
+        for (; iter_depth.rem ; xcb_depth_next (&iter_depth))
+          {
+             xcb_visualtype_iterator_t iter_visual;
 
-          rep = (xcb_setup_t *)xcb_get_setup(xcbinf->conn);
-          iter_screen = xcb_setup_roots_iterator(rep);
-          for (; iter_screen.rem ; xcb_screen_next (&iter_screen)) {
-            xcb_depth_iterator_t iter_depth;
-
-            iter_depth = xcb_screen_allowed_depths_iterator (iter_screen.data);
-            for (; iter_depth.rem ; xcb_depth_next (&iter_depth)) {
-              xcb_visualtype_iterator_t iter_visual;
-
-              iter_visual = xcb_depth_visuals_iterator (iter_depth.data);
-              for (; iter_visual.rem ; xcb_visualtype_next (&iter_visual)) {
-                if (iter_visual.data->visual_id == vis)
-                  xcbinf->depth = iter_depth.data->depth;
-              }
-            }
+             iter_visual = xcb_depth_visuals_iterator (iter_depth.data);
+             for (; iter_visual.rem ; xcb_visualtype_next (&iter_visual))
+               {
+                  if (iter_visual.data->visual_id == visual->visual_id)
+                    xcbinf->depth = iter_depth.data->depth;
+               }
           }
-        }
 
 	xcbinf->can_do_shm = 0;
 
 
         shm_info.shmseg = xcb_generate_id(xcbinf->conn);
-        xcbim = xcb_image_shm_create(xcbinf->conn, xcbinf->depth, XCB_IMAGE_FORMAT_Z_PIXMAP, NULL, 1, 1);
+        xcbim = xcb_image_create_native(xcbinf->conn, 1, 1,
+                                        XCB_IMAGE_FORMAT_Z_PIXMAP,
+                                        xcbinf->depth, NULL, ~0, NULL);
         if (xcbim) {
-           shm_info.shmid = shmget(IPC_PRIVATE, xcbim->bytes_per_line * xcbim->height, IPC_CREAT | 0777);
+           shm_info.shmid = shmget(IPC_PRIVATE, xcbim->size, IPC_CREAT | 0777);
            if (shm_info.shmid >= 0) {
               shm_info.shmaddr = xcbim->data = shmat(shm_info.shmid, 0, 0);
               if ((shm_info.shmaddr != NULL) && (shm_info.shmaddr != (void *) -1)) {
@@ -364,7 +359,7 @@ _xr_image_info_get(xcb_connection_t *conn, xcb_drawable_t draw, xcb_visualid_t v
               }
               shmctl(shm_info.shmid, IPC_RMID, 0);
            }
-           xcb_image_shm_destroy(xcbim);
+           xcb_image_destroy(xcbim);
         }
      }
    _image_info_list = eina_list_prepend(_image_info_list, xcbinf);
@@ -378,7 +373,7 @@ _xr_image_info_free(Xcb_Image_Info *xcbinf)
    if (xcbinf->pool)
      {
         xcb_get_input_focus_reply_t *reply;
-       
+
         reply = xcb_get_input_focus_reply(xcbinf->conn,
                                           xcb_get_input_focus_unchecked(xcbinf->conn),
                                           NULL);
@@ -450,10 +445,10 @@ _xr_image_new(Xcb_Image_Info *xcbinf, int w, int h, int depth)
 	     if (xcbim->shm_info)
 	       {
                   xcbim->shm_info->shmseg = xcb_generate_id(xcbinf->conn);
-		  xcbim->xcbim = xcb_image_shm_create(xcbim->xcbinf->conn, xcbim->depth, XCB_IMAGE_FORMAT_Z_PIXMAP, NULL, xcbim->w, xcbim->h);
+		  xcbim->xcbim = xcb_image_create_native(xcbim->xcbinf->conn, xcbim->w, xcbim->h, XCB_IMAGE_FORMAT_Z_PIXMAP, xcbim->depth, NULL, ~0, NULL);
 		  if (xcbim->xcbim)
 		    {
-		       xcbim->shm_info->shmid = shmget(IPC_PRIVATE, xcbim->xcbim->bytes_per_line * xcbim->xcbim->height, IPC_CREAT | 0777);
+		       xcbim->shm_info->shmid = shmget(IPC_PRIVATE, xcbim->xcbim->size, IPC_CREAT | 0777);
 		       if (xcbim->shm_info->shmid >= 0)
 			 {
 			    xcbim->shm_info->shmaddr = xcbim->xcbim->data = shmat(xcbim->shm_info->shmid, 0, 0);
@@ -484,19 +479,19 @@ _xr_image_new(Xcb_Image_Info *xcbinf, int w, int h, int depth)
 			      }
 			    shmctl(xcbim->shm_info->shmid, IPC_RMID, 0);
 			 }
-		       xcb_image_shm_destroy(xcbim->xcbim);
+		       xcb_image_destroy(xcbim->xcbim);
 		    }
 		  free(xcbim->shm_info);
 		  xcbim->shm_info = NULL;
 	       }
 	  }
-	xcbim->xcbim = xcb_image_create(xcbim->xcbinf->conn, xcbim->depth, XCB_IMAGE_FORMAT_Z_PIXMAP, 0, NULL, xcbim->w, xcbim->h, 32, 0);
+	xcbim->xcbim = xcb_image_create_native(xcbim->xcbinf->conn, xcbim->w, xcbim->h, XCB_IMAGE_FORMAT_Z_PIXMAP, xcbim->depth, NULL, ~0, NULL);
 	if (!xcbim->xcbim)
 	  {
 	     free(xcbim);
 	     return NULL;
 	  }
-	xcbim->xcbim->data = malloc(xcbim->xcbim->bytes_per_line * xcbim->xcbim->height);
+	xcbim->xcbim->data = malloc(xcbim->xcbim->size);
 	if (!xcbim->xcbim->data)
 	  {
 	     xcb_image_destroy(xcbim->xcbim);
@@ -508,7 +503,7 @@ _xr_image_new(Xcb_Image_Info *xcbinf, int w, int h, int depth)
    xcbim_ok:
    _xr_image_info_pool_flush(xcbinf, 32, (1600 * 1200 * 32 * 2));
 
-   xcbim->line_bytes = xcbim->xcbim->bytes_per_line;
+   xcbim->line_bytes = xcbim->xcbim->stride;
    xcbim->data = (void *)(xcbim->xcbim->data);
    xcbinf->pool_mem += (xcbim->w * xcbim->h * xcbim->depth);
    xcbinf->pool = eina_list_append(xcbinf->pool, xcbim);
@@ -523,14 +518,14 @@ _xr_image_free(Xcb_Image_Image *xcbim)
 	if (!xcbim->available)
           {
             xcb_get_input_focus_reply_t *reply;
-            
+
             reply = xcb_get_input_focus_reply(xcbim->xcbinf->conn,
                                               xcb_get_input_focus_unchecked(xcbim->xcbinf->conn),
                                               NULL);
             free(reply);
           }
 	xcb_shm_detach(xcbim->xcbinf->conn, xcbim->shm_info->shmseg);
-	xcb_image_shm_destroy(xcbim->xcbim);
+	xcb_image_destroy(xcbim->xcbim);
 	shmdt(xcbim->shm_info->shmaddr);
 	shmctl(xcbim->shm_info->shmid, IPC_RMID, 0);
 	free(xcbim->shm_info);
@@ -572,7 +567,7 @@ _xr_image_put(Xcb_Image_Image *xcbim, xcb_drawable_t draw, int x, int y, int w, 
         free(reply);
      }
    else
-     xcb_image_put(xcbim->xcbinf->conn, draw, gc, xcbim->xcbim, 0, 0, x, y, w, h);
+     xcb_image_put(xcbim->xcbinf->conn, draw, gc, xcbim->xcbim, x, y, 0);
    xcbim->available = 1;
    xcb_free_gc(xcbim->xcbinf->conn, gc);
 }
