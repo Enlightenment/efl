@@ -1126,7 +1126,6 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
         EINA_ERROR_PERR("malloc() failed\n");
         return NULL;
      }
-     return NULL;
 
    rect.left = 0;
    rect.top = 0;

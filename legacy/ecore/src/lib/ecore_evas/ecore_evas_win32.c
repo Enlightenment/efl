@@ -254,7 +254,7 @@ _ecore_evas_win32_event_mouse_button_down(void *data __UNUSED__, int type __UNUS
    Ecore_Win32_Event_Mouse_Button_Down *e;
    Evas_Button_Flags                    flags = EVAS_BUTTON_NONE;
 
-   EINA_ERROR_PINFO("mouse button down (%f %dx%d)\n", e->time, e->x, e->y);
+   EINA_ERROR_PINFO("mouse button down\n");
 
    e = event;
    ee = _ecore_evas_win32_match(e->window);
@@ -266,6 +266,8 @@ _ecore_evas_win32_event_mouse_button_down(void *data __UNUSED__, int type __UNUS
    if (e->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
    evas_event_feed_mouse_down(ee->evas, e->button, flags, e->time, NULL);
 
+   EINA_ERROR_PINFO("mouse button down (%f %dx%d)\n", e->time, e->x, e->y);
+
    return 1;
 }
 
@@ -276,7 +278,7 @@ _ecore_evas_win32_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED
    Ecore_Win32_Event_Mouse_Button_Up *e;
    Evas_Button_Flags                  flags = EVAS_BUTTON_NONE;
 
-   EINA_ERROR_PINFO("mouse button up (%f %dx%d)\n", e->time, e->x, e->y);
+   EINA_ERROR_PINFO("mouse button up\n");
 
    e = event;
    ee = _ecore_evas_win32_match(e->window);
@@ -287,6 +289,8 @@ _ecore_evas_win32_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED
    if (e->double_click) flags |= EVAS_BUTTON_DOUBLE_CLICK;
    if (e->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
    evas_event_feed_mouse_up(ee->evas, e->button, flags, e->time, NULL);
+
+   EINA_ERROR_PINFO("mouse button up (%f %dx%d)\n", e->time, e->x, e->y);
 
    return 1;
 }
