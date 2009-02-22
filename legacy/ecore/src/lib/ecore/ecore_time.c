@@ -13,7 +13,7 @@
 #endif
 
 #ifdef HAVE_EVIL
-# include <Evil.h> /* for gettimeofday */
+# include <Evil.h>
 #endif
 
 #include "Ecore.h"
@@ -34,13 +34,17 @@
 EAPI double
 ecore_time_get(void)
 {
-#ifdef HAVE_GETTIMEOFDAY
+#ifdef HAVE_EVIL
+  return evil_time_get();
+#else
+# ifdef HAVE_GETTIMEOFDAY
    struct timeval      timev;
 
    gettimeofday(&timev, NULL);
    return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
-#else
-# error "Your platform isn't supported yet"
+# else
+#  error "Your platform isn't supported yet"
+# endif
 #endif
 }
 
