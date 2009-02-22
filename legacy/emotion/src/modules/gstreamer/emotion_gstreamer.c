@@ -605,8 +605,6 @@ em_len_get(void *video)
    return val / 1000000000.0;
 
  fallback:
-   fputs("Gstreamer reported no length, try existing sinks...\n", stderr);
-
    ecore_list_first_goto(ev->audio_sinks);
    while ((asink = ecore_list_next(ev->audio_sinks)) != NULL)
      if (asink->length_time >= 0)
