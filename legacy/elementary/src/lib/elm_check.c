@@ -96,6 +96,7 @@ _signal_check_off(void *data, Evas_Object *obj, const char *emission, const char
    Widget_Data *wd = elm_widget_data_get(data);
    wd->state = 0;
    if (wd->statep) *wd->statep = wd->state;
+   edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
    evas_object_smart_callback_call(data, "changed", NULL);
 }
 
@@ -105,6 +106,21 @@ _signal_check_on(void *data, Evas_Object *obj, const char *emission, const char 
    Widget_Data *wd = elm_widget_data_get(data);
    wd->state = 1;
    if (wd->statep) *wd->statep = wd->state;
+   edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
+   evas_object_smart_callback_call(data, "changed", NULL);
+}
+
+static void
+_signal_check_toggle(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   printf("tog\n");
+   wd->state = !wd->state;
+   if (wd->statep) *wd->statep = wd->state;
+   if (wd->state)
+     edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
+   else
+     edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
    evas_object_smart_callback_call(data, "changed", NULL);
 }
 
@@ -126,6 +142,7 @@ elm_check_add(Evas_Object *parent)
    _elm_theme_set(wd->chk, "check", "base", "default");
    edje_object_signal_callback_add(wd->chk, "elm,action,check,on", "", _signal_check_on, obj);
    edje_object_signal_callback_add(wd->chk, "elm,action,check,off", "", _signal_check_off, obj);
+   edje_object_signal_callback_add(wd->chk, "elm,action,check,toggle", "", _signal_check_toggle, obj);
    elm_widget_resize_object_set(obj, wd->chk);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);

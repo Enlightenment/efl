@@ -7539,209 +7539,50 @@ collections {
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/check/base/default";
       images {
-         image: "shelf_inset.png" COMP;
-	 image: "bt_basew.png" COMP;
-	 image: "bt_bases.png" COMP;
-	 image: "bt_hilightw.png" COMP;
-	 image: "tog_base.png" COMP;
+         image: "check_base.png" COMP;
+	 image: "check.png" COMP;
+	 image: "check2.png" COMP;
       }
       parts {      
          part { name: "bg";
-	    type: RECT;
 	    mouse_events: 0;
 	    scale: 1;
 	    description { state: "default" 0.0;
-	       rel1.relative: 1.0 0.0;
-	       rel1.offset: -4 3;
-	       rel2.offset: -4 -4;
-	       align: 1.0 0.5;
-	       min: 96 16;
-	       max: 96 16;
-	       aspect: 4.0 4.0;
-	       aspect_preference: VERTICAL;
-	       color: 255 255 255 255;
-	    }
-	 }
-         part { name: "clipper";
-	    type: RECT;
-	    mouse_events: 0;
-	    description { state: "default" 0.0;
-	       rel1.to: "bg";
-	       rel2.to: "bg";
-	       color: 255 255 255 255;
-	    }
-	 }
-         part { name: "button";
-	    type: RECT;
-	    scale: 1;
-	    clip_to: "clipper";
-	    mouse_events: 1;
- 	    dragable {
-	       x: 1 1 0;
-	       y: 0 0 0;
-	       confine: "bg";
-	    }
-	    description { state: "default" 0.0;
-	       fixed: 1 1;
-	       rel1.to: "bg";
-	       rel2.to: "bg";
+	       rel1.offset: 1 1;
+	       rel2.relative: 0.0 1.0;
+	       rel2.offset: 1 -2;
+	       align: 0.0 0.5;
 	       min: 16 16;
 	       max: 16 16;
 	       aspect: 1.0 1.0;
 	       aspect_preference: VERTICAL;
-	       color: 0 0 0 0;
+               image {
+                  normal: "check_base.png";
+                  border: 5 5 5 5;
+                  middle: 0;
+               }
+               fill.smooth : 0;
 	    }
 	 }
-         part { name: "button_events";
-	    type: RECT;
- 	    dragable {
-	       events: "button";
-	    }
-	    description { state: "default" 0.0;
-	       rel1.to_x: "bg";
-	       rel1.offset: 0 0;
-	       rel1.relative: 0.0 0.0;
-	       rel2.to_x: "bg";
-	       rel2.offset: -1 -1;
-	       rel2.relative: 1.0 1.0;
-	       color: 0 0 0 0;
-	    }
-	 }
-         part { name: "onrect";
-	    type: RECT;
-	    scale: 1;
-	    clip_to: "clipper";
+         part { name: "check";
 	    mouse_events: 0;
-	    description { state: "default" 0.0;
-	       rel1.to: "button";
-	       rel1.relative: -5.0 0.0;
-	       rel2.to: "button";
-	       rel2.relative: 0.0 1.0;
-	       color: 0 0 0 0;
-	    }
-	 }
-         part { name: "offrect";
-	    type: RECT;
 	    scale: 1;
-	    clip_to: "clipper";
-	    mouse_events: 0;
 	    description { state: "default" 0.0;
-	       rel1.to: "button";
-	       rel1.relative: 1.0 0.0;
-	       rel2.to: "button";
-	       rel2.relative: 6.0 1.0;
-	       color: 0 0 0 0;
+               rel1 {
+                  to: "bg";
+                  offset: 1 1;
+               }
+               rel2 {
+                  to: "bg";
+                  offset: -2 -2;
+               }
+               visible: 0;
+               image.normal: "check.png";
 	    }
-	 }
-	 part { name: "togbase";
-	    mouse_events:  0;
-	    clip_to: "clipper";
-	    description { state: "default" 0.0;
-	       rel1.to: "onrect";
-	       rel2.to: "offrect";
-	       image.normal: "tog_base.png";
-	    }
-	 }
-         part { name: "elm.offtext";
-	    type: TEXT;
-	    mouse_events:  0;
-	    scale: 1;
-	    clip_to: "clipper";
-	    description { state: "default" 0.0;
-               fixed: 1 1;
-	       rel1.to_x: "offrect";
-	       rel2.to_x: "offrect";
-	       color: 0 0 0 255;
-	       text {
-		  font:     "Sans,Edje-Vera";
-		  size:     10;
-		  min:      0 1;
-		  align:    0.5 0.5;
-		  text:     "OFF";
-	       }
-	    }
-	 }
-         part { name: "elm.ontext";
-	    type: TEXT;
-	    effect: SOFT_SHADOW;
-	    mouse_events:  0;
-	    scale: 1;
-	    clip_to: "clipper";
-	    description { state: "default" 0.0;
-               fixed: 1 1;
-	       rel1.to_x: "onrect";
-	       rel1.offset: 1 1;
-	       rel2.to_x: "onrect";
-	       rel2.offset: 0 0;
-	       color: 224 224 224 255;
-	       color3: 0 0 0 64;
-	       text {
-		  font:     "Sans,Edje-Vera";
-		  size:     10;
-		  min:      0 1;
-		  align:    0.5 0.5;
-		  text:     "ON";
-	       }
-	    }
-	 }
-	 part { name: "conf_over";
-	    mouse_events:  0;
-	    description { state: "default" 0.0;
-	       rel1.offset: -1 -1;
-	       rel1.to: "bg";
-	       rel2.offset: 0 0;
-	       rel2.to: "bg";
-	       image {
-		  normal: "shelf_inset.png";
-		  border: 7 7 7 7;
-		  middle: 0;
-	       }
-	       fill.smooth : 0;
-	    }
-	 }
-	 part { name: "button0";
-	    mouse_events:  0;
-	    clip_to: "clipper";
-	    description { state: "default" 0.0;
-	       rel1.to: "button2";
-	       rel1.offset: -4 -4;
-	       rel2.to: "button2";
-	       rel2.offset: 3 3;
-	       image {
-		  normal: "bt_bases.png";
-		  border: 11 11 11 11;
-	       }
-               image.middle: SOLID;
-	       color: 255 255 255 128;
-	    }
-	 }
-	 part { name: "button2";
-	    mouse_events:  0;
-	    clip_to: "clipper";
-	    description { state: "default" 0.0;
-	       rel1.to: "button";
-	       rel1.offset: -2 -2;
-	       rel2.to: "button";
-	       rel2.offset: 1 1;
-	       image {
-		  normal: "bt_basew.png";
-		  border: 7 7 7 7;
-	       }
-               image.middle: SOLID;
-	    }
-	 }
-	 part { name: "button3";
-	    mouse_events:  0;
-	    clip_to: "clipper";
-	    description { state: "default" 0.0;
-	       rel1.to: "button2";
-	       rel2.to: "button2";
-               rel2.relative: 1.0 0.5;
-	       image {
-                  normal: "bt_hilightw.png";
-		  border: 4 4 4 0;
-	       }
-	    }
+	    description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
 	 }
 	 part { name: "elm.swallow.content";
 	    type: SWALLOW;
@@ -7749,9 +7590,12 @@ collections {
 //               fixed: 1 1;
 	       visible: 0;
 	       align: 0.0 0.5;
-	       rel1.offset: 4 4;
-	       rel2.relative: 0.0 1.0;
-	       rel2.offset: 3 -5;
+               rel1.to_x: "bg";
+               rel1.relative: 1.0 0.0;
+	       rel1.offset: 1 1;
+               rel2.to_x: "bg";
+	       rel2.relative: 1.0 1.0;
+	       rel2.offset: 2 -2;
 	    }
 	    description { state: "visible" 0.0;
 	       inherit: "default" 0.0;
@@ -7759,7 +7603,6 @@ collections {
 	       visible: 1;
 	       aspect: 1.0 1.0;
 	       aspect_preference: VERTICAL;
-	       rel2.offset: 4 -5;
 	    }
 	 }
          part { name: "elm.text";
@@ -7770,10 +7613,9 @@ collections {
 	       visible: 0;
 	       rel1.to_x: "elm.swallow.content";
 	       rel1.relative: 1.0 0.0;
-               rel1.offset: 0 4;
-	       rel2.to_x: "bg";
-	       rel2.relative: 0.0 1.0;
-	       rel2.offset: -5 -5;
+               rel1.offset: 1 1;
+	       rel2.relative: 1.0 1.0;
+	       rel2.offset: -2 -2;
 	       color: 0 0 0 255;
 	       text {
 		  font: "Sans,Edje-Vera";
@@ -7788,39 +7630,31 @@ collections {
 	       text.min: 1 1;
 	    }
 	 }
+         part { name: "events";
+	    type: RECT;
+            ignore_flags: ON_HOLD;
+	    description { state: "default" 0.0;
+	       color: 0 0 0 0;
+	    }
+	 }
       }
       programs {
-	 program { name:   "drag_end";
+	 program { name: "click";
 	    signal: "mouse,up,1";
-	    source: "button";
-	    script {
-	       new Float:dx, Float:dy;
-	       get_drag(PART:"button", dx, dy);
-	       if (dx > 0.5)
-		 {
-		    set_drag(PART:"button", 1.0, 0.0);
-		    emit("elm,action,check,on", "");
-		 }
-	       else
-		 {
-		    set_drag(PART:"button", 0.0, 0.0);
-		    emit("elm,action,check,off", "");
-		 }
-	    }
+	    source: "events";
+            action: SIGNAL_EMIT "elm,action,check,toggle" "";
 	 }
 	 program { name: "check_on";
 	    signal: "elm,state,check,on";
 	    source: "elm";
-	    script {
-	       set_drag(PART:"button", 100.0, 0.0);
-	    }
+	    action:  STATE_SET "visible" 0.0;
+	    target: "check";
 	 }
 	 program { name: "check_off";
 	    signal: "elm,state,check,off";
 	    source: "elm";
-	    script {
-	       set_drag(PART:"button", 0.0, 0.0);
-	    }
+	    action:  STATE_SET "default" 0.0;
+	    target: "check";
 	 }
 	 program { name: "text_show";
 	    signal: "elm,state,text,visible";

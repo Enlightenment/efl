@@ -111,7 +111,10 @@ sl_bt2_2.png \
 sl_units.png \
 slv_bg.png \
 slv_bg_over.png \
-slv_units.png
+slv_units.png \
+check_base.png \
+check.png \
+check2.png
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
