@@ -1393,17 +1393,16 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
    ENFN->context_render_op_set(output, context, obj->cur.render_op);
 /*
    ENFN->context_color_set(output,
-						    context,
-						    230, 160, 30, 100);
+                           context,
+                           230, 160, 30, 100);
    ENFN->rectangle_draw(output,
-						 context,
-						 surface,
-						 obj->cur.cache.geometry.x + x,
-						 obj->cur.cache.geometry.y + y,
-						 obj->cur.cache.geometry.w,
-						 obj->cur.cache.geometry.h);
+                        context,
+                        surface,
+                        obj->cur.geometry.x + x,
+                        obj->cur.geometry.y + y,
+                        obj->cur.geometry.w,
+                        obj->cur.geometry.h);
  */
-
 #define COLOR_ONLY_SET(object, sub, col) \
 	ENFN->context_color_set(output, context, \
 				object->sub.col.r, \
@@ -1438,7 +1437,6 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 				(((int)object->sub.col.g) * (amul)) / 255, \
 				(((int)object->sub.col.b) * (amul)) / 255, \
 				(((int)object->sub.col.a) * (amul)) / 255);
-          
 
 #define DRAW_TEXT(ox, oy) \
    if ((o->engine_data) && (o->cur.text)) \
