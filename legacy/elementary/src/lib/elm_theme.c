@@ -1,14 +1,55 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+static Eina_List *overlay = NULL;
 static Eina_List *themes = NULL;
+static Eina_List *extension = NULL;
 static Eina_Hash *cache = NULL;
+
+static const char *
+_elm_theme_find_try(const char *f, const char *group)
+{
+   const char *file;
+   
+   if (edje_file_group_exists(f, group))
+     {
+        file = eina_stringshare_add(f);
+        if (file)
+          {
+             eina_hash_add(cache, group, file);
+             return file;
+          }
+     }
+   return NULL;
+}
+
+static const char *
+_elm_theme_theme_element_try(const char *home, const char *f, const char *group)
+{
+   char buf[PATH_MAX];
+   const char *file = NULL;
+   
+   if ((f[0] == '/') ||
+       ((f[0] == '.') && (f[1] == '/')) ||
+       ((f[0] == '.') && (f[1] == '.') && (f[2] == '/')))
+     return _elm_theme_find_try(f, group);
+   else if (((f[0] == '~') && (f[1] == '/')))
+     {
+        snprintf(buf, sizeof(buf), "%s/%s", home, f + 2);
+        return _elm_theme_find_try(buf, group);
+     }
+   snprintf(buf, sizeof(buf), "%s/.elementary/themes/%s.edj", home, f);
+   file = _elm_theme_find_try(buf, group);
+   if (file) return file;
+   snprintf(buf, sizeof(buf), "%s/themes/%s.edj", _elm_data_dir, f);
+   file = _elm_theme_find_try(buf, group);
+   if (file) return file;
+}
 
 static const char *
 _elm_theme_group_file_find(const char *group)
 {
    Eina_List *l;
-   char buf[PATH_MAX];
    char *p;
    static const char *home = NULL;
    const char *file = eina_hash_find(cache, group);
@@ -18,61 +59,36 @@ _elm_theme_group_file_find(const char *group)
         home = getenv("HOME");
         if (!home) home = "";
      }
+   for (l = overlay; l; l = l->next)
+     {
+        file = _elm_theme_theme_element_try(home, l->data, group);
+        if (file) return file;
+     }
    for (l = themes; l; l = l->next)
      {
-        char *f = l->data;
-        
-        if ((f[0] == '/') ||
-            ((f[0] == '.') && (f[1] == '/')) ||
-            ((f[0] == '.') && (f[1] == '.') && (f[2] == '/')))
-          {
-             if (edje_file_group_exists(f, group))
-               {
-                  file = eina_stringshare_add(f);
-                  if (file)
-                    {
-                       eina_hash_add(cache, group, file);
-                       return file;
-                    }
-               }
-             return NULL;
-          }
-        else if (((f[0] == '~') && (f[1] == '/')))
-          {
-             snprintf(buf, sizeof(buf), "%s/%s", home, f + 2);
-             if (edje_file_group_exists(f, group))
-               {
-                  file = eina_stringshare_add(f);
-                  if (file)
-                    {
-                       eina_hash_add(cache, group, file);
-                       return file;
-                    }
-               }
-             return NULL;
-          }
-        snprintf(buf, sizeof(buf), "%s/.elementary/themes/%s.edj", home, f);
-        if (edje_file_group_exists(buf, group))
-          {
-             file = eina_stringshare_add(buf);
-             if (file)
-               {
-                  eina_hash_add(cache, group, file);
-                  return file;
-               }
-          }
-        snprintf(buf, sizeof(buf), "%s/themes/%s.edj", _elm_data_dir, f);
-        if (edje_file_group_exists(buf, group))
-          {
-             file = eina_stringshare_add(buf);
-             if (file)
-               {
-                  eina_hash_add(cache, group, file);
-                  return file;
-               }
-          }
+        file = _elm_theme_theme_element_try(home, l->data, group);
+        if (file) return file;
+     }
+   for (l = extension; l; l = l->next)
+     {
+        file = _elm_theme_theme_element_try(home, l->data, group);
+        if (file) return file;
      }
    return NULL;
+}
+
+EAPI void
+elm_theme_overlay_add(const char *item)
+{
+   const char *f = eina_stringshare_add(item);
+   if (f) overlay = eina_list_prepend(overlay, f);
+}
+
+EAPI void
+elm_theme_extension_add(const char *item)
+{
+   const char *f = eina_stringshare_add(item);
+   if (f) extension = eina_list_append(extension, f);
 }
 
 int

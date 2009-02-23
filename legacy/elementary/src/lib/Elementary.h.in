@@ -150,6 +150,9 @@ extern "C" {
    EAPI void         elm_object_focus(Evas_Object *obj);
    
    EAPI void         elm_coords_finger_size_adjust(int times_w, Evas_Coord *w, int times_h, Evas_Coord *h);
+   
+   EAPI void         elm_theme_overlay_add(const char *item);
+   EAPI void         elm_theme_extension_add(const char *item);
        
    EAPI Evas_Object *elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type);
    EAPI void         elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj);
