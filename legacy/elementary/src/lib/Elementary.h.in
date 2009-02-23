@@ -586,6 +586,7 @@ extern "C" {
 // * <evas scale cache>
 // * <evas shared cache>
 // 
+// * multiple genlist item styles (multi-label, 1 icon + 2 line label, header etc.)
 // * carousel selector widget
 // * auto-size label/text that adapts text size to its allocated region
 // * [ scrollable dropdown combo box ]
@@ -610,13 +611,17 @@ extern "C" {
 // * full window in window widget (so move/resize of window object does as you'd expect a child window to do within the canvas)
 // 
 //// (improvements - low priority)
+// * test for all bubble styles
+// * test for all frame styles
+// * test for all genlist item styles
+// * need a way to attach a "dnd detector" to any object
+// * need a dnd handler (able to hook to dnd detector)
 // * need another sample theme
 // * need a way to set a preferred size of a widget (but not min or max).
 // * merge with gurana
 // * use evas's new box instead of a box smart
 // * use evas's table instead of a table smart
 // * use stack for win widget
-// * prepend or append theme files from code for an app to allow an app to augment the theme eithe rby forcibly overriding things with its own theme file (so it can ship some custom elements that always override user theme) and so it can also provide a final (even after default) fallback for "extended" styles of its own (but thus allowing themes to overried its extensions if they want)
 // * determine prefix of app dynamically and export calls to get prefix info
 // * load config from file
 // * load config from x property
