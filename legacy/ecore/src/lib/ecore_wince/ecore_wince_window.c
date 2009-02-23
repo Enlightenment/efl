@@ -472,25 +472,21 @@ ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
         task_bar = FindWindow(L"HHTaskBar", NULL);
         if (!task_bar)
           {
-             EINA_ERROR_PERR("FindWindow() failed\n");
-             return;
+             EINA_ERROR_PINFO("FindWindow(): can not find task bar\n");
           }
         if (!ShowWindow(task_bar, SW_HIDE))
           {
-             EINA_ERROR_PERR("ShowWindow() failed\n");
-             return;
+             EINA_ERROR_PINFO("ShowWindow(): task bar already hidden\n");
           }
         if (!EnableWindow(task_bar, FALSE))
           {
-             EINA_ERROR_PERR("EnableWindow() failed\n");
-             return;
+             EINA_ERROR_PINFO("EnableWindow(): input already disabled\n");
           }
 
         /* style: visible + popup */
         if (!SetWindowLong(w, GWL_STYLE, WS_POPUP | WS_VISIBLE))
           {
-             EINA_ERROR_PERR("SetWindowLong() failed\n");
-             return;
+             EINA_ERROR_PINFO("SetWindowLong() failed\n");
           }
 
         /* resize window to fit the entire screen */
@@ -499,8 +495,7 @@ ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
                           GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
                           SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED))
           {
-             EINA_ERROR_PERR("SetWindowLong() failed\n");
-             return;
+             EINA_ERROR_PINFO("SetWindowPos() failed\n");
           }
         /*
          * It seems that SetWindowPos is not sufficient.
@@ -512,7 +507,7 @@ ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
                         GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
                         TRUE))
           {
-             EINA_ERROR_PERR("MoveWindow() failed\n");
+             EINA_ERROR_PINFO("MoveWindow() failed\n");
           }
      }
    else
@@ -521,25 +516,21 @@ ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
         task_bar = FindWindow(L"HHTaskBar", NULL);
         if (!task_bar)
           {
-             EINA_ERROR_PERR("FindWindow() failed\n");
-             return;
+             EINA_ERROR_PINFO("FindWindow(): can not find task bar\n");
           }
         if (!ShowWindow(task_bar, SW_SHOW))
           {
-             EINA_ERROR_PERR("ShowWindow() failed\n");
-             return;
+             EINA_ERROR_PINFO("ShowWindow(): task bar already visible\n");
           }
         if (!EnableWindow(task_bar, TRUE))
           {
-             EINA_ERROR_PERR("EnableWindow() failed\n");
-             return;
+             EINA_ERROR_PINFO("EnableWindow():  input already enabled\n");
           }
 
         /* style: visible + caption + sysmenu */
         if (!SetWindowLong(w, GWL_STYLE, WS_CAPTION | WS_SYSMENU | WS_VISIBLE))
           {
-             EINA_ERROR_PERR("SetWindowLong() failed\n");
-             return;
+             EINA_ERROR_PINFO("SetWindowLong() failed\n");
           }
         /* restaure the position and size of the window */
         if (!SetWindowPos(w, HWND_TOPMOST,
@@ -549,8 +540,7 @@ ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
                           ew->rect.bottom - ew->rect.top,
                           SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED))
           {
-             EINA_ERROR_PERR("SetWindowLong() failed\n");
-             return;
+             EINA_ERROR_PINFO("SetWindowLong() failed\n");
           }
         /*
          * It seems that SetWindowPos is not sufficient.
@@ -564,7 +554,7 @@ ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
                         ew->rect.bottom - ew->rect.top,
                         TRUE))
           {
-             EINA_ERROR_PERR("MoveWindow() failed\n");
+             EINA_ERROR_PINFO("MoveWindow() failed\n");
           }
      }
 }
