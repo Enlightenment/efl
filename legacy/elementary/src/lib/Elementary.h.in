@@ -167,6 +167,8 @@ extern "C" {
    EAPI Evas_Object *elm_win_inwin_add(Evas_Object *obj);
    EAPI void         elm_win_inwin_activate(Evas_Object *obj);
    EAPI void         elm_win_inwin_style_set(Evas_Object *obj, const char *style);
+   EAPI void         elm_win_inwin_activate(Evas_Object *obj);
+   EAPI void         elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content);
    /* available styles: 
     * default
     * minimal
@@ -534,14 +536,19 @@ extern "C" {
    EAPI void              elm_genlist_item_del(Elm_Genlist_Item *item);
    EAPI const void       *elm_genlist_item_data_get(Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_update(Elm_Genlist_Item *item);
-       
    /* smart callbacks called:
     * "clicked" - the user clicked the hoversel button and popped up the sel
     * "selected" - an item in the hoversel list is selected
     * "dismissed" - the hover is dismissed
     */
    
+   EAPI Evas_Object *elm_check_add(Evas_Object *parent);
+   EAPI void         elm_check_label_set(Evas_Object *obj, const char *label);
+   EAPI void         elm_check_icon_set(Evas_Object *obj, Evas_Object *icon);
+   EAPI void         elm_check_state_set(Evas_Object *obj, Evas_Bool state);
+   EAPI void         elm_check_state_pointer_set(Evas_Object *obj, Evas_Bool *statep);
    /* smart callbacks called:
+    * "changed" - the user toggled the state
     */
         
 #ifdef __cplusplus

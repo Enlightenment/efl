@@ -20,7 +20,38 @@ _elm_theme_group_file_find(const char *group)
      }
    for (l = themes; l; l = l->next)
      {
-        snprintf(buf, sizeof(buf), "%s/.elementary/themes/%s.edj", home, l->data);
+        char *f = l->data;
+        
+        if ((f[0] == '/') ||
+            ((f[0] == '.') && (f[1] == '/')) ||
+            ((f[0] == '.') && (f[1] == '.') && (f[2] == '/')))
+          {
+             if (edje_file_group_exists(f, group))
+               {
+                  file = eina_stringshare_add(f);
+                  if (file)
+                    {
+                       eina_hash_add(cache, group, file);
+                       return file;
+                    }
+               }
+             return NULL;
+          }
+        else if (((f[0] == '~') && (f[1] == '/')))
+          {
+             snprintf(buf, sizeof(buf), "%s/%s", home, f + 2);
+             if (edje_file_group_exists(f, group))
+               {
+                  file = eina_stringshare_add(f);
+                  if (file)
+                    {
+                       eina_hash_add(cache, group, file);
+                       return file;
+                    }
+               }
+             return NULL;
+          }
+        snprintf(buf, sizeof(buf), "%s/.elementary/themes/%s.edj", home, f);
         if (edje_file_group_exists(buf, group))
           {
              file = eina_stringshare_add(buf);
@@ -30,7 +61,7 @@ _elm_theme_group_file_find(const char *group)
                   return file;
                }
           }
-        snprintf(buf, sizeof(buf), "%s/themes/%s.edj", _elm_data_dir, l->data);
+        snprintf(buf, sizeof(buf), "%s/themes/%s.edj", _elm_data_dir, f);
         if (edje_file_group_exists(buf, group))
           {
              file = eina_stringshare_add(buf);
@@ -105,7 +136,7 @@ _elm_theme_parse(const char *theme)
    pe = p;
    for (;;)
      {
-        if ((*pe == '/') || (*pe == 0))
+        if ((*pe == ':') || (*pe == 0))
           { // p -> pe == 'name/'
              if (pe > p)
                {
