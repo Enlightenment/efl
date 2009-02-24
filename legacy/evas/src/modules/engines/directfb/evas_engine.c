@@ -1391,7 +1391,7 @@ evas_engine_dfb_image_data_put(void *data, void *image, DATA32* image_data)
              evas_cache_engine_image_drop(ce);
              deie = (DirectFB_Engine_Image_Entry *)
 	       evas_cache_engine_image_data(re->cache, ce->w, ce->h,
-					    image_data, alpha, cspace, data);
+					    image_data, alpha, cspace, NULL);
           }
         break;
      case EVAS_COLORSPACE_YCBCR422P601_PL:
