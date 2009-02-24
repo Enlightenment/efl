@@ -151,7 +151,8 @@ _ecore_evas_directfb_event_key_down(void *data __UNUSED__, int type __UNUSED__, 
    ee = _ecore_evas_directfb_match(e->win);
    
    if (!ee) return 1; /* pass on event */
-   evas_event_feed_key_down(ee->evas, e->name, NULL, e->string, e->key_compose, e->time, NULL);
+   evas_event_feed_key_down(ee->evas, e->name, e->name, e->string,
+                            e->key_compose, e->time, NULL);
    return 1;
 }
 
@@ -165,7 +166,8 @@ _ecore_evas_directfb_event_key_up(void *data __UNUSED__, int type __UNUSED__, vo
    ee = _ecore_evas_directfb_match(e->win);
    
    if (!ee) return 1; /* pass on event */
-   evas_event_feed_key_up(ee->evas, e->name, NULL, e->string, e->key_compose, e->time, NULL);
+   evas_event_feed_key_up(ee->evas, e->name, e->name, e->string,
+                          e->key_compose, e->time, NULL);
    return 1;	
 }
 
