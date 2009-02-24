@@ -154,14 +154,14 @@ evas_software_xcb_x_output_buffer_new(xcb_connection_t *c,
                            /* XErrorHandler ph; */
                            /* EventHandlers eh; */
 
-                           //                           free(xcb_get_input_focus_reply(c, xcb_get_input_focus_unchecked(c), NULL));
+                           free(xcb_get_input_focus_reply(c, xcb_get_input_focus_unchecked(c), NULL));
                            _xcb_err = 0;
                            /* ph = XSetErrorHandler((XErrorHandler) */
                            /* x_output_tmp_x_err); */
                            xcb_shm_attach(c,
                                           xcbob->shm_info->shmseg,
                                           xcbob->shm_info->shmid, 0);
-                           //                           free(xcb_get_input_focus_reply(c, xcb_get_input_focus_unchecked(c), NULL));
+                           free(xcb_get_input_focus_reply(c, xcb_get_input_focus_unchecked(c), NULL));
                            /* XSetErrorHandler((XErrorHandler)ph); */
                            if (!_xcb_err)
                              {
