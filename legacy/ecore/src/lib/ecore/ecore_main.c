@@ -470,7 +470,7 @@ _ecore_main_fd_handlers_buf_call(void)
 static void
 _ecore_main_loop_iterate_internal(int once_only)
 {
-   double next_time;
+   double next_time = -1.0;
    int    have_event = 0;
    int    have_signal;
 
@@ -623,7 +623,8 @@ _ecore_main_loop_iterate_internal(int once_only)
       MSG msg;
       BOOL ret;
       UINT_PTR TmrID = 0;
-      if ((UINT) (next_time * 1000.0) > USER_TIMER_MINIMUM)
+      if ((next_time > 0) && ((UINT) (next_time * 1000.0) > USER_TIMER_MINIMUM))
+
         {
            TmrID = SetTimer(NULL, 0, (UINT) (next_time * 1000.0), NULL);
            ret = GetMessage(&msg, NULL, 0, 0);
@@ -644,7 +645,10 @@ _ecore_main_loop_iterate_internal(int once_only)
         }
 
       if (TmrID)
-        KillTimer(NULL, TmrID);
+        {
+           KillTimer(NULL, TmrID);
+           TmrID = 0;
+        }
    }
 #endif
 
