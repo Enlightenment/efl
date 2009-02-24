@@ -584,7 +584,6 @@ _pan_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    Pan *sd = evas_object_smart_data_get(obj);
    Evas_Coord ow, oh;
-   if ((x == sd->wd->pan_x) && (y == sd->wd->pan_y)) return;
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    ow = sd->wd->minw - ow;
    if (ow < 0) ow = 0;
@@ -594,6 +593,7 @@ _pan_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    if (y < 0) y = 0;
    if (x > ow) x = ow;
    if (y > oh) y = oh;
+   if ((x == sd->wd->pan_x) && (y == sd->wd->pan_y)) return;
    sd->wd->pan_x = x;
    sd->wd->pan_y = y;
    evas_object_smart_changed(obj);
@@ -784,8 +784,10 @@ _item_block_del(Item *it)
    it->wd->calc_job = ecore_job_add(_calc_job, it->wd);
    if (itb->count < 1)
      {
+        Item_Block *itbn = (Item_Block *)(((Eina_Inlist *)(itb))->next);
         it->wd->blocks = eina_inlist_remove(it->wd->blocks, (Eina_Inlist *)itb);
         free(itb);
+        if (itbn) itbn->changed = 1;
      }
    else
      {
@@ -829,6 +831,7 @@ _item_block_del(Item *it)
 static void
 _item_del(Item *it)
 {
+   it->delete_me = 1;
    if (it->wd->show_item == it) it->wd->show_item = NULL;
    if (it->selected) it->wd->selected = eina_list_remove(it->wd->selected, it);
    if ((!it->delete_me) && (it->itc->func.del)) it->itc->func.del(it->data, it->wd->obj);
@@ -847,21 +850,20 @@ _item_del(Item *it)
 static void
 _item_block_add(Widget_Data *wd, Item *it, Item *itpar)
 {
-   Item_Block *itb;
+   Item_Block *itb = NULL;
 
    if (!it->rel)
      {
         newblock:
-        itb = calloc(1, sizeof(Item_Block));
-        if (!itb) return;
-        itb->wd = wd;
         if (!it->parent)
           {
              if (it->rel)
                {
+                  itb = calloc(1, sizeof(Item_Block));
+                  if (!itb) return;
+                  itb->wd = wd;
                   if (!it->rel->block)
                     {
-                       printf("EEK rel no block\n");
                        wd->blocks = eina_inlist_append(wd->blocks, (Eina_Inlist *)itb);
                        itb->items = eina_list_append(itb->items, it);
                     }
@@ -883,12 +885,46 @@ _item_block_add(Widget_Data *wd, Item *it, Item *itpar)
                {
                   if (it->before)
                     {
-                       wd->blocks = eina_inlist_prepend(wd->blocks, (Eina_Inlist *)itb);
+                       if (wd->blocks)
+                         {
+                            itb = (Item_Block *)(wd->blocks);
+                            if (itb->count >= 32)
+                              {
+                                 itb = calloc(1, sizeof(Item_Block));
+                                 if (!itb) return;
+                                 itb->wd = wd;
+                                 wd->blocks = eina_inlist_prepend(wd->blocks, (Eina_Inlist *)itb);
+                              }
+                         }
+                       else
+                         {
+                            itb = calloc(1, sizeof(Item_Block));
+                            if (!itb) return;
+                            itb->wd = wd;
+                            wd->blocks = eina_inlist_prepend(wd->blocks, (Eina_Inlist *)itb);
+                         }
                        itb->items = eina_list_prepend(itb->items, it);
                     }
                   else
                     {
-                       wd->blocks = eina_inlist_append(wd->blocks, (Eina_Inlist *)itb);
+                       if (wd->blocks)
+                         {
+                            itb = (Item_Block *)(wd->blocks->last);
+                            if (itb->count >= 32)
+                              {
+                                 itb = calloc(1, sizeof(Item_Block));
+                                 if (!itb) return;
+                                 itb->wd = wd;
+                                 wd->blocks = eina_inlist_append(wd->blocks, (Eina_Inlist *)itb);
+                              }
+                         }
+                       else
+                         {
+                            itb = calloc(1, sizeof(Item_Block));
+                            if (!itb) return;
+                            itb->wd = wd;
+                            wd->blocks = eina_inlist_append(wd->blocks, (Eina_Inlist *)itb);
+                         }
                        itb->items = eina_list_append(itb->items, it);
                     }
                }
@@ -901,7 +937,10 @@ _item_block_add(Widget_Data *wd, Item *it, Item *itpar)
    else
      {
         itb = it->rel->block;
-        if ((!itb) || (itb->count > 32)) goto newblock;
+        if ((!itb) || (itb->count >= 32))
+          {
+             goto newblock;
+          }
         if (it->before)
           itb->items = eina_list_prepend_relative(itb->items, it, it->rel);
         else
