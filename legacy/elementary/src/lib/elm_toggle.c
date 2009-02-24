@@ -214,6 +214,13 @@ elm_toggle_state_set(Evas_Object *obj, Evas_Bool state)
      }
 }
 
+EAPI Evas_Bool
+elm_toggle_state_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->state;
+}
+
 EAPI void
 elm_toggle_state_pointer_set(Evas_Object *obj, Evas_Bool *statep)
 {

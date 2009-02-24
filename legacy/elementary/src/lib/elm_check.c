@@ -114,7 +114,6 @@ static void
 _signal_check_toggle(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   printf("tog\n");
    wd->state = !wd->state;
    if (wd->statep) *wd->statep = wd->state;
    if (wd->state)
@@ -205,6 +204,13 @@ elm_check_state_set(Evas_Object *obj, Evas_Bool state)
 	else
 	  edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
      }
+}
+
+EAPI Evas_Bool
+elm_check_state_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->state;
 }
 
 EAPI void

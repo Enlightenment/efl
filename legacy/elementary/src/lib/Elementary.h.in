@@ -240,6 +240,7 @@ extern "C" {
    EAPI void         elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon);
    EAPI void         elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *offlabel);
    EAPI void         elm_toggle_state_set(Evas_Object *obj, Evas_Bool state);
+   EAPI Evas_Bool    elm_toggle_state_get(Evas_Object *obj);
    EAPI void         elm_toggle_state_pointer_set(Evas_Object *obj, Evas_Bool *statep);
    /* smart callbacks called:
     * "changed" - the user toggled the state
@@ -549,6 +550,7 @@ extern "C" {
    EAPI void         elm_check_label_set(Evas_Object *obj, const char *label);
    EAPI void         elm_check_icon_set(Evas_Object *obj, Evas_Object *icon);
    EAPI void         elm_check_state_set(Evas_Object *obj, Evas_Bool state);
+   EAPI Evas_Bool    elm_check_state_get(Evas_Object *obj);
    EAPI void         elm_check_state_pointer_set(Evas_Object *obj, Evas_Bool *statep);
    /* smart callbacks called:
     * "changed" - the user toggled the state
