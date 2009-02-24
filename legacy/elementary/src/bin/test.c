@@ -2474,16 +2474,8 @@ Evas_Object *gl3_icon_get(const void *data, Evas_Object *obj, const char *part)
         Evas_Object *bx = elm_box_add(obj);
         Evas_Object *ic;
         elm_box_horizontal_set(bx, 1);
-        
         ic = elm_icon_add(obj);
-//        if ((tit->mode & 0x3) == 0)
-          snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-//        else if ((tit->mode & 0x3) == 1)
-//          snprintf(buf, sizeof(buf), "%s/images/logo.png", PACKAGE_DATA_DIR);
-//        else if ((tit->mode & 0x3) == 2)
-//          snprintf(buf, sizeof(buf), "%s/images/panel_01.jpg", PACKAGE_DATA_DIR);
-//        else if ((tit->mode & 0x3) == 3)
-//          snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", PACKAGE_DATA_DIR);
+        snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
         elm_icon_file_set(ic, buf, NULL);
         elm_icon_scale_set(ic, 0, 0);
         evas_object_show(ic);
