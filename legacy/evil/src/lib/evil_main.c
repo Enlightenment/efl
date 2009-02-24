@@ -3,12 +3,12 @@
 #endif
 
 
-#include "Evil.h"
-#include "evil_private.h"
-
 # define WIN32_LEAN_AND_MEAN
 # include <winsock2.h>
 # undef WIN32_LEAN_AND_MEAN
+
+#include "Evil.h"
+#include "evil_private.h"
 
 
 static int           _evil_init_count = 0;
