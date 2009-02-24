@@ -2460,7 +2460,7 @@ my_bt_31(void *data, Evas_Object *obj, void *event_info)
 static void
 my_bt_32(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *bx, *ic, *tg;
+   Evas_Object *win, *bg, *bx, *ic, *ck;
    char buf[PATH_MAX];
    
    win = elm_win_add(NULL, "check", ELM_WIN_BASIC);
@@ -2481,41 +2481,113 @@ my_bt_32(void *data, Evas_Object *obj, void *event_info)
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-   tg = elm_check_add(win);
-   evas_object_size_hint_weight_set(tg, 1.0, 1.0);
-   evas_object_size_hint_align_set(tg, -1.0, 0.5);
-   elm_check_label_set(tg, "Icon sized to check");
-   elm_check_icon_set(tg, ic);
-   elm_check_state_set(tg, 1);
-   elm_box_pack_end(bx, tg);
-   evas_object_show(tg);
+   ck = elm_check_add(win);
+   evas_object_size_hint_weight_set(ck, 1.0, 1.0);
+   evas_object_size_hint_align_set(ck, -1.0, 0.5);
+   elm_check_label_set(ck, "Icon sized to check");
+   elm_check_icon_set(ck, ic);
+   elm_check_state_set(ck, 1);
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
    evas_object_show(ic);
    
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
-   tg = elm_check_add(win);
-   elm_check_label_set(tg, "Icon no scale");
-   elm_check_icon_set(tg, ic);
-   elm_box_pack_end(bx, tg);
-   evas_object_show(tg);
+   ck = elm_check_add(win);
+   elm_check_label_set(ck, "Icon no scale");
+   elm_check_icon_set(ck, ic);
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
    evas_object_show(ic);
 
-   tg = elm_check_add(win);
-   elm_check_label_set(tg, "Label Only");
-   elm_box_pack_end(bx, tg);
-   evas_object_show(tg);
+   ck = elm_check_add(win);
+   elm_check_label_set(ck, "Label Only");
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
-   tg = elm_check_add(win);
-   elm_check_icon_set(tg, ic);
-   elm_box_pack_end(bx, tg);
-   evas_object_show(tg);
+   ck = elm_check_add(win);
+   elm_check_icon_set(ck, ic);
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
    evas_object_show(ic);
+   
+   evas_object_show(win);
+}
+
+static void
+my_bt_33(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *bx, *ic, *rd, *rdg;
+   char buf[PATH_MAX];
+   
+   win = elm_win_add(NULL, "radio", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Radios");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_show(bg);
+   
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   rd = elm_radio_add(win);
+   elm_radio_state_value_set(rd, 0);
+   evas_object_size_hint_weight_set(rd, 1.0, 1.0);
+   evas_object_size_hint_align_set(rd, -1.0, 0.5);
+   elm_radio_label_set(rd, "Icon sized to radio");
+   elm_radio_icon_set(rd, ic);
+   elm_box_pack_end(bx, rd);
+   evas_object_show(rd);
+   evas_object_show(ic);
+   rdg = rd;
+   
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   rd = elm_radio_add(win);
+   elm_radio_state_value_set(rd, 1);
+   elm_radio_group_add(rd, rdg);
+   elm_radio_label_set(rd, "Icon no scale");
+   elm_radio_icon_set(rd, ic);
+   elm_box_pack_end(bx, rd);
+   evas_object_show(rd);
+   evas_object_show(ic);
+
+   rd = elm_radio_add(win);
+   elm_radio_state_value_set(rd, 2);
+   elm_radio_group_add(rd, rdg);
+   elm_radio_label_set(rd, "Label Only");
+   elm_box_pack_end(bx, rd);
+   evas_object_show(rd);
+
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   rd = elm_radio_add(win);
+   elm_radio_state_value_set(rd, 3);
+   elm_radio_group_add(rd, rdg);
+   elm_radio_icon_set(rd, ic);
+   elm_box_pack_end(bx, rd);
+   evas_object_show(rd);
+   evas_object_show(ic);
+   
+   elm_radio_value_set(rdg, 2);
    
    evas_object_show(win);
 }
@@ -2627,6 +2699,7 @@ my_win_main(void)
    elm_list_item_append(li, "Genlist 2", NULL, NULL, my_bt_30, NULL);
    elm_list_item_append(li, "Genlist 3", NULL, NULL, my_bt_31, NULL);
    elm_list_item_append(li, "Checks", NULL, NULL, my_bt_32, NULL);
+   elm_list_item_append(li, "Radios", NULL, NULL, my_bt_33, NULL);
 
    elm_list_go(li);
    

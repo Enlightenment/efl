@@ -556,6 +556,18 @@ extern "C" {
     * "changed" - the user toggled the state
     */
         
+   EAPI Evas_Object *elm_radio_add(Evas_Object *parent);
+   EAPI void         elm_radio_label_set(Evas_Object *obj, const char *label);
+   EAPI void         elm_radio_icon_set(Evas_Object *obj, Evas_Object *icon);
+   EAPI void         elm_radio_group_add(Evas_Object *obj, Evas_Object *group);
+   EAPI void         elm_radio_state_value_set(Evas_Object *obj, int value);
+   EAPI void         elm_radio_value_set(Evas_Object *obj, int value);
+   EAPI int          elm_radio_value_get(Evas_Object *obj);
+   EAPI void         elm_radio_value_pointer_set(Evas_Object *obj, int *valuep);
+   /* smart callbacks called:
+    * "changed" - the user toggled the state
+    */
+        
 #ifdef __cplusplus
 }
 #endif
@@ -581,8 +593,6 @@ extern "C" {
 // 
 //// (more widgets/features - medium priority)
 // * tree feature for genlist widget (like biglist - but items can expand to sub-items)
-// * radio + group handling
-// * checkbox (like toggle)
 // * pager (for pushing/popping pages and going back and forward and flipping)
 // * <edje copy & paste fixed>
 // * <evas scale cache>

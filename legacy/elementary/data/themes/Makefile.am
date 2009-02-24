@@ -114,7 +114,10 @@ slv_bg_over.png \
 slv_units.png \
 check_base.png \
 check.png \
-check2.png
+check2.png \
+radio_base.png \
+radio.png \
+radio2.png
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \

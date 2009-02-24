@@ -2,14 +2,23 @@
 #include "elm_priv.h"
 
 typedef struct _Widget_Data Widget_Data;
+typedef struct _Group Group;
+
+struct _Group
+{
+   int value;
+   int *valuep;
+   Eina_List *radios;
+};
 
 struct _Widget_Data
 {
    Evas_Object *chk;
    Evas_Object *icon;
-   Evas_Bool state;
-   Evas_Bool *statep;
+   int value;
    const char *label;
+   Evas_Bool state;
+   Group *group;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -17,15 +26,17 @@ static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
-static void _signal_check_off(void *data, Evas_Object *obj, const char *emission, const char *source);
-static void _signal_check_on(void *data, Evas_Object *obj, const char *emission, const char *source);
-static void _signal_check_toggle(void *data, Evas_Object *obj, const char *emission, const char *source);
+static void _signal_radio_on(void *data, Evas_Object *obj, const char *emission, const char *source);
+static void _signal_radio_toggle(void *data, Evas_Object *obj, const char *emission, const char *source);
 
 static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->label) eina_stringshare_del(wd->label);
+   wd->group->radios = eina_list_remove(wd->group->radios, obj);
+   if (!wd->group->radios) free(wd->group);
+   wd->group = NULL;
    free(wd);
 }
 
@@ -33,15 +44,15 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   _elm_theme_set(wd->chk, "check", "base", "default");
+   _elm_theme_set(wd->chk, "radio", "base", "default");
    if (wd->icon)
      edje_object_signal_emit(wd->chk, "elm,state,icon,visible", "elm");
    else
      edje_object_signal_emit(wd->chk, "elm,state,icon,hidden", "elm");
    if (wd->state)
-     edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
+     edje_object_signal_emit(wd->chk, "elm,state,radio,on", "elm");
    else
-     edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
+     edje_object_signal_emit(wd->chk, "elm,state,radio,off", "elm");
    if (wd->label)
      edje_object_signal_emit(wd->chk, "elm,state,text,visible", "elm");
    else
@@ -92,40 +103,38 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_signal_check_off(void *data, Evas_Object *obj, const char *emission, const char *source)
+_state_set(Evas_Object *obj, Evas_Bool state)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
-   wd->state = 0;
-   if (wd->statep) *wd->statep = wd->state;
-   edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
-   evas_object_smart_callback_call(data, "changed", NULL);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (state != wd->state)
+     {
+        wd->state = state;
+        if (wd->state)
+          edje_object_signal_emit(wd->chk, "elm,state,radio,on", "elm");
+        else
+          edje_object_signal_emit(wd->chk, "elm,state,radio,off", "elm");
+     }
 }
 
 static void
-_signal_check_on(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_radio_on(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   wd->state = 1;
-   if (wd->statep) *wd->statep = wd->state;
-   edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
-   evas_object_smart_callback_call(data, "changed", NULL);
-}
-
-static void
-_signal_check_toggle(void *data, Evas_Object *obj, const char *emission, const char *source)
-{
-   Widget_Data *wd = elm_widget_data_get(data);
-   wd->state = !wd->state;
-   if (wd->statep) *wd->statep = wd->state;
-   if (wd->state)
-     edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
-   else
-     edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
+   Eina_List *l;
+   if (wd->group->value == wd->value) return;
+   wd->group->value = wd->value;
+   if (wd->group->valuep) *(wd->group->valuep) = wd->group->value;
+   for (l = wd->group->radios; l; l = l->next)
+     {
+        Widget_Data *wd2 = elm_widget_data_get(l->data);
+        if (wd2->value == wd->group->value) _state_set(l->data, 1);
+        else _state_set(l->data, 0);
+     }
    evas_object_smart_callback_call(data, "changed", NULL);
 }
 
 EAPI Evas_Object *
-elm_check_add(Evas_Object *parent)
+elm_radio_add(Evas_Object *parent)
 {
    Evas_Object *obj;
    Evas *e;
@@ -139,20 +148,23 @@ elm_check_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    
    wd->chk = edje_object_add(e);
-   _elm_theme_set(wd->chk, "check", "base", "default");
-   edje_object_signal_callback_add(wd->chk, "elm,action,check,on", "", _signal_check_on, obj);
-   edje_object_signal_callback_add(wd->chk, "elm,action,check,off", "", _signal_check_off, obj);
-   edje_object_signal_callback_add(wd->chk, "elm,action,check,toggle", "", _signal_check_toggle, obj);
+   _elm_theme_set(wd->chk, "radio", "base", "default");
+   edje_object_signal_callback_add(wd->chk, "elm,action,radio,on", "", _signal_radio_on, obj);
+   edje_object_signal_callback_add(wd->chk, "elm,action,radio,toggle", "", _signal_radio_on, obj);
    elm_widget_resize_object_set(obj, wd->chk);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
+
+   wd->group = calloc(1, sizeof(Group));
+   wd->group->radios = eina_list_append(wd->group->radios, obj);
+   wd->state = 0;
    
    _sizing_eval(obj);
    return obj;
 }
 
 EAPI void
-elm_check_label_set(Evas_Object *obj, const char *label)
+elm_radio_label_set(Evas_Object *obj, const char *label)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord mw, mh;
@@ -175,7 +187,7 @@ elm_check_label_set(Evas_Object *obj, const char *label)
 }
 
 EAPI void
-elm_check_icon_set(Evas_Object *obj, Evas_Object *icon)
+elm_radio_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if ((wd->icon != icon) && (wd->icon))
@@ -193,46 +205,76 @@ elm_check_icon_set(Evas_Object *obj, Evas_Object *icon)
 }
 
 EAPI void
-elm_check_state_set(Evas_Object *obj, Evas_Bool state)
+elm_radio_group_add(Evas_Object *obj, Evas_Object *group)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (state != wd->state)
-     {
-	wd->state = state;
-	if (wd->statep) *wd->statep = wd->state;
-	if (wd->state)
-	  edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
-	else
-	  edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
-     }
-}
-
-EAPI Evas_Bool
-elm_check_state_get(Evas_Object *obj)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   return wd->state;
+   Widget_Data *wd2 = elm_widget_data_get(group);
+   Evas_Bool state = 0;
+   if (wd->group == wd2->group) return;
+   wd->group->radios = eina_list_remove(wd->group->radios, obj);
+   if (!wd->group->radios) free(wd->group);
+   wd->group = wd2->group;
+   wd->group->radios = eina_list_append(wd->group->radios, obj);
+   if (wd->value == wd->group->value) _state_set(obj, 1);
+   else _state_set(obj, 0);
 }
 
 EAPI void
-elm_check_state_pointer_set(Evas_Object *obj, Evas_Bool *statep)
+elm_radio_state_value_set(Evas_Object *obj, int value)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+//   if (wd->value == value) return;
+   wd->value = value;
+   if (wd->value == wd->group->value) _state_set(obj, 1);
+   else _state_set(obj, 0);
+}
+
+EAPI void
+elm_radio_value_set(Evas_Object *obj, int value)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_List *l;
+   if (value == wd->group->value) return;
+   wd->group->value = value;
+   if (wd->group->valuep) *(wd->group->valuep) = wd->group->value;
+   for (l = wd->group->radios; l; l = l->next)
+     {
+        Widget_Data *wd2 = elm_widget_data_get(l->data);
+        if (wd2->value == wd->group->value) _state_set(l->data, 1);
+        else _state_set(l->data, 0);
+     }
+}
+
+EAPI int
+elm_radio_value_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->group->value;
+}
+
+EAPI void
+elm_radio_value_pointer_set(Evas_Object *obj, int *valuep)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if (statep)
+   if (valuep)
      {
-	wd->statep = statep;
-	if (*wd->statep != wd->state)
+        wd->group->valuep = valuep;
+	if (*(wd->group->valuep) != wd->group->value)
 	  {
-	     wd->state = *wd->statep;
-	     if (wd->state)
-	       edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
-	     else
-	       edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
-	  }
+             Eina_List *l;
+             
+             wd->group->value = *(wd->group->valuep);
+             for (l = wd->group->radios; l; l = l->next)
+	       {
+                  Widget_Data *wd2 = elm_widget_data_get(l->data);
+                  if (wd2->value == wd->group->value) _state_set(l->data, 1);
+                  else _state_set(l->data, 0);
+               }
+          }
      }
    else
      {
-        wd->statep = NULL;
+        wd->group->valuep = NULL;
      }
 }

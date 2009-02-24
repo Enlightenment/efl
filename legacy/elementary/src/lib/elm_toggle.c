@@ -238,4 +238,8 @@ elm_toggle_state_pointer_set(Evas_Object *obj, Evas_Bool *statep)
 	       edje_object_signal_emit(wd->tgl, "elm,state,toggle,off", "elm");
 	  }
      }
+   else
+     {
+        wd->statep = NULL;
+     }
 }
