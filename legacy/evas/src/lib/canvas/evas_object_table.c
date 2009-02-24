@@ -236,14 +236,14 @@ _evas_object_table_option_del(Evas_Object *o)
 }
 
 static void
-_on_child_del(void *data, Evas *evas, Evas_Object *child, void *einfo)
+_on_child_del(void *data, Evas *evas __UNUSED__, Evas_Object *child, void *einfo __UNUSED__)
 {
    Evas_Object *table = data;
    evas_object_table_unpack(table, child);
 }
 
 static void
-_on_child_hints_changed(void *data, Evas *evas, Evas_Object *child, void *einfo)
+_on_child_hints_changed(void *data, Evas *evas __UNUSED__, Evas_Object *child __UNUSED__, void *einfo __UNUSED__)
 {
    Evas_Object *table = data;
    EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN(table, priv);

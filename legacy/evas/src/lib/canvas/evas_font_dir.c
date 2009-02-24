@@ -468,7 +468,7 @@ evas_font_dir_available_list_free(Eina_List *available)
 
 /* private stuff */
 static Eina_Bool
-font_cache_dir_free(const Eina_Hash *hash, const void *key, void *data, void *fdata)
+font_cache_dir_free(const Eina_Hash *hash __UNUSED__, const void *key, void *data, void *fdata __UNUSED__)
 {
    object_text_font_cache_dir_del((char *) key, data);
    return 1;
@@ -747,7 +747,7 @@ object_text_font_cache_dir_add(char *dir)
 }
 
 static void
-object_text_font_cache_dir_del(char *dir, Evas_Font_Dir *fd)
+object_text_font_cache_dir_del(char *dir __UNUSED__, Evas_Font_Dir *fd)
 {
    if (fd->lookup) eina_hash_free(fd->lookup);
    while (fd->fonts)

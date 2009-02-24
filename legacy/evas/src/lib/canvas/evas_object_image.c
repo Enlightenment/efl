@@ -2758,9 +2758,10 @@ evas_object_image_data_convert_internal(Evas_Object_Image *o, void *data, Evas_C
 }
 
 static void
-evas_object_image_filled_resize_listener(void *data, Evas *e, Evas_Object *obj, void *einfo)
+evas_object_image_filled_resize_listener(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *einfo __UNUSED__)
 {
    Evas_Coord w, h;
+
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    evas_object_image_fill_set(obj, 0, 0, w, h);
 }

@@ -91,7 +91,7 @@ EAPI Evas_Imaging_Font *
 evas_imaging_font_load(const char *file, const char *key, int size)
 {
    Evas_Imaging_Font *fn;
-   RGBA_Font *font;
+   RGBA_Font *font = NULL;
 
    evas_common_cpu_init();
    evas_common_font_init();

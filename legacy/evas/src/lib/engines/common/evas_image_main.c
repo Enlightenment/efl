@@ -203,12 +203,12 @@ _evas_common_rgba_image_surface_delete(Image_Entry *ie)
 }
 
 static void
-_evas_common_rgba_image_unload(Image_Entry* im)
+_evas_common_rgba_image_unload(Image_Entry* im __UNUSED__)
 {
 }
 
 static void
-_evas_common_rgba_image_dirty_region(Image_Entry* ie, int x, int y, int w, int h)
+_evas_common_rgba_image_dirty_region(Image_Entry* ie, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
    RGBA_Image   *im = (RGBA_Image *) ie;
 

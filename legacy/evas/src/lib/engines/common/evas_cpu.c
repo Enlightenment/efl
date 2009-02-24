@@ -22,13 +22,13 @@ static void evas_common_cpu_catch_ill(int sig);
 static void evas_common_cpu_catch_segv(int sig);
 
 static void
-evas_common_cpu_catch_ill(int sig)
+evas_common_cpu_catch_ill(int sig __UNUSED__)
 {
    siglongjmp(detect_buf, 1);
 }
 
 static void
-evas_common_cpu_catch_segv(int sig)
+evas_common_cpu_catch_segv(int sig __UNUSED__)
 {
    siglongjmp(detect_buf, 1);
 }

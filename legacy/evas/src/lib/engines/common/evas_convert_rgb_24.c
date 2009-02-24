@@ -7,7 +7,7 @@
 
 #ifdef BUILD_CONVERT_24_RGB_888
 void
-evas_common_convert_rgba_to_24bpp_rgb_888(DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_24bpp_rgb_888(DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
    DATA32 *src_ptr;
    DATA8 *dst_ptr;
@@ -30,14 +30,11 @@ evas_common_convert_rgba_to_24bpp_rgb_888(DATA32 *src, DATA8 *dst, int src_jump,
 	dst_ptr += (dst_jump * 3);
      }
    return;
-   pal = 0;
-   dith_x = 0;
-   dith_y = 0;
 }
 #endif
 #ifdef BUILD_CONVERT_24_BGR_888
 void
-evas_common_convert_rgba_to_24bpp_bgr_888(DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_24bpp_bgr_888(DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
    DATA32 *src_ptr;
    DATA8 *dst_ptr;
@@ -60,8 +57,5 @@ evas_common_convert_rgba_to_24bpp_bgr_888(DATA32 *src, DATA8 *dst, int src_jump,
 	dst_ptr += (dst_jump * 3);
      }
    return;
-   pal = 0;
-   dith_x = 0;
-   dith_y = 0;
 }
 #endif

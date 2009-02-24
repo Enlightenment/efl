@@ -7,7 +7,7 @@
 #include "evas_scale_span.h"
 
 static void
-evas_common_scale_rgba_span_(DATA32 *src, DATA8 *mask, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len, int dir)
+evas_common_scale_rgba_span_(DATA32 *src, DATA8 *mask __UNUSED__, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len, int dir)
 {
    int  mul = 0, step = 1;
    DATA32 *pdst = dst;
@@ -238,7 +238,7 @@ evas_common_scale_rgba_a8_span_(DATA32 *src, DATA8 *mask, int src_len, DATA32 mu
 }
 
 static void
-evas_common_scale_a8_span_(DATA32 *src, DATA8 *mask, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len, int dir)
+evas_common_scale_a8_span_(DATA32 *src __UNUSED__, DATA8 *mask, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len, int dir)
 {
    int    step = 1;
    DATA32 *pdst = dst;
@@ -313,7 +313,7 @@ evas_common_scale_a8_span_(DATA32 *src, DATA8 *mask, int src_len, DATA32 mul_col
 }
 
 static void
-evas_common_scale_clip_a8_span_(DATA32 *src, DATA8 *mask, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len, int dir)
+evas_common_scale_clip_a8_span_(DATA32 *src __UNUSED__, DATA8 *mask, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len, int dir)
 {
    int   mul = 0, step = 1;
    DATA32 *pdst = dst;
@@ -480,7 +480,7 @@ evas_common_scale_clip_a8_span(DATA32 *src, DATA8 *mask, int src_len, DATA32 mul
 }
 
 EAPI void
-evas_common_scale_hsva_span(DATA32 *src, DATA8 *mask, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len, int dir)
+evas_common_scale_hsva_span(DATA32 *src, DATA8 *mask __UNUSED__, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len, int dir)
 {
    int  mul = 0, step = 1;
    DATA32 *pdst = dst;

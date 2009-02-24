@@ -139,13 +139,13 @@ evas_common_font_size_use(RGBA_Font *fn)
 }
 
 static unsigned int
-_evas_common_font_int_length(const void *key)
+_evas_common_font_int_length(const void *key __UNUSED__)
 {
    return sizeof (int);
 }
 
 static unsigned int
-_evas_common_font_double_int_length(const void *key)
+_evas_common_font_double_int_length(const void *key __UNUSED__)
 {
    return sizeof (int) * 2;
 }

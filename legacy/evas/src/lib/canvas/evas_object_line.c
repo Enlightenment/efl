@@ -468,7 +468,7 @@ evas_object_line_was_opaque(Evas_Object *obj)
 }
 
 static int
-evas_object_line_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
+evas_object_line_is_inside(Evas_Object *obj, Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__)
 {
    Evas_Object_Line *o;
 
@@ -477,12 +477,10 @@ evas_object_line_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    /* and other complex objects it might be */
    o = (Evas_Object_Line *)(obj->object_data);
    return 1;
-   x = 0;
-   y = 0;
 }
 
 static int
-evas_object_line_was_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
+evas_object_line_was_inside(Evas_Object *obj, Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__)
 {
    Evas_Object_Line *o;
 
@@ -491,8 +489,6 @@ evas_object_line_was_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    /* and other complex objects it might be */
    o = (Evas_Object_Line *)(obj->object_data);
    return 1;
-   x = 0;
-   y = 0;
 }
 
 static void

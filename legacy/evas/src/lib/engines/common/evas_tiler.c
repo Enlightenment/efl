@@ -1053,7 +1053,7 @@ evas_common_tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
 }
 
 EAPI int
-evas_common_tilebuf_add_motion_vector(Tilebuf *tb, int x, int y, int w, int h, int dx, int dy, int alpha)
+evas_common_tilebuf_add_motion_vector(Tilebuf *tb, int x, int y, int w, int h, int dx, int dy, int alpha __UNUSED__)
 {
 #ifdef EVAS_RECT_SPLIT
    list_t lr = list_zeroed;

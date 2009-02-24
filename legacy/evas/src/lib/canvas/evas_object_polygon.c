@@ -470,7 +470,7 @@ evas_object_polygon_was_opaque(Evas_Object *obj)
 }
 
 static int
-evas_object_polygon_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
+evas_object_polygon_is_inside(Evas_Object *obj, Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__)
 {
    Evas_Object_Polygon *o;
 
@@ -479,12 +479,10 @@ evas_object_polygon_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    /* and other complex objects it might be */
    o = (Evas_Object_Polygon *)(obj->object_data);
    return 1;
-   x = 0;
-   y = 0;
 }
 
 static int
-evas_object_polygon_was_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
+evas_object_polygon_was_inside(Evas_Object *obj, Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__)
 {
    Evas_Object_Polygon *o;
 
@@ -493,6 +491,4 @@ evas_object_polygon_was_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    /* and other complex objects it might be */
    o = (Evas_Object_Polygon *)(obj->object_data);
    return 1;
-   x = 0;
-   y = 0;
 }

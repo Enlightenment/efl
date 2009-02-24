@@ -1522,7 +1522,7 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 }
 
 static Evas_Object_Textblock_Item *
-_layout_item_new(Ctxt *c, Evas_Object_Textblock_Format *fmt, char *str)
+_layout_item_new(Ctxt *c __UNUSED__, Evas_Object_Textblock_Format *fmt, char *str)
 {
    Evas_Object_Textblock_Item *it;
    
@@ -1551,7 +1551,7 @@ _layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_
 }
 
 static void
-_layout_item_text_cutoff(Ctxt *c, Evas_Object_Textblock_Item *it, int cut)
+_layout_item_text_cutoff(Ctxt *c __UNUSED__, Evas_Object_Textblock_Item *it, int cut)
 {
    char *ts;
    
@@ -1605,7 +1605,7 @@ _layout_ends_with_space(char *str)
 }
 
 static int
-_layout_strip_trailing_whitespace(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Item *it)
+_layout_strip_trailing_whitespace(Ctxt *c, Evas_Object_Textblock_Format *fmt __UNUSED__, Evas_Object_Textblock_Item *it)
 {
    int p, tp, chr, adv, tw, th;
    

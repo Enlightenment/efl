@@ -777,11 +777,9 @@ evas_object_smart_free(Evas_Object *obj)
 }
 
 static void
-evas_object_smart_render(Evas_Object *obj, void *output, void *context, void *surface, int x, int y)
+evas_object_smart_render(Evas_Object *obj __UNUSED__, void *output __UNUSED__, void *context __UNUSED__, void *surface __UNUSED__, int x __UNUSED__, int y __UNUSED__)
 {
    return;
-   obj = output = context = surface = NULL;
-   x = y = 0;
 }
 
 static void

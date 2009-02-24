@@ -68,7 +68,7 @@ evas_common_rgba_image_from_copied_data(Image_Entry* ie_dst, int w, int h, DATA3
 }
 
 int
-evas_common_rgba_image_size_set(Image_Entry *ie_dst, const Image_Entry *ie_im, int w, int h)
+evas_common_rgba_image_size_set(Image_Entry *ie_dst, const Image_Entry *ie_im, int w, int h __UNUSED__)
 {
    RGBA_Image   *dst = (RGBA_Image *) ie_dst;
    RGBA_Image   *im = (RGBA_Image *) ie_im;
