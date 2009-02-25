@@ -816,17 +816,11 @@ EAPI Eina_List *
 eina_list_remove(Eina_List *list, const void *data)
 {
    Eina_List *l;
-   void *list_data;
 
    if (list) EINA_MAGIC_CHECK_LIST(list);
 
-   EINA_LIST_FOREACH(list, l, list_data)
-     {
-         if (list_data == data)
+   l = eina_list_data_find_list(list, data);
              return eina_list_remove_list(list, l);
-     }
-
-   return list;
 }
 
 /**
@@ -878,12 +872,11 @@ eina_list_remove_list(Eina_List *list, Eina_List *remove_list)
      }
    else
      return_l = remove_list->next;
-   if (remove_list == list->accounting->last)
+   if (remove_list == remove_list->accounting->last)
      {
        EINA_MAGIC_CHECK_LIST(list);
        list->accounting->last = remove_list->prev;
      }
-
    _eina_list_mempool_list_free(remove_list);
    return return_l;
 }

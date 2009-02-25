@@ -696,6 +696,8 @@ EAPI void eina_error_print(Eina_Error_Level level, const char *file,
 	va_start(args, fmt);
 	_print_cb(level, file, fnc, line, fmt, _print_cb_data, args);
 	va_end(args);
+
+	if (getenv("EINA_ERROR_ABORT")) abort();
 }
 
 /**
