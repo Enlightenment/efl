@@ -271,6 +271,14 @@ elm_quicklaunch_init(int argc, char **argv)
    if (elm_font_cache)
      _elm_config->font_cache = atoi(elm_font_cache);
 
+   if (elm_scale)
+     _elm_config->scale = atof(elm_scale);
+   
+   _elm_config->finger_size = 
+     (double)_elm_config->finger_size * _elm_config->scale;
+   if (elm_finger_size)
+     _elm_config->finger_size = atoi(elm_finger_size);
+   
    /* FIXME: implement quickstart below */
    /* if !quickstart return
     * else
@@ -323,18 +331,19 @@ elm_quicklaunch_sub_init(int argc, char **argv)
 					   _elm_atom_enlightenment_scale,
 					   &val, 1) > 0)
 	  {
-	     if (val > 0) _elm_config->scale = (double)val / 1000.0;
+	     if (val > 0)
+               {
+                  _elm_config->scale = (double)val / 1000.0;
+                  // FIXME: hack until e export finger size too
+                  if (!elm_finger_size)
+                    {
+                       40.0 * _elm_config->scale;
+                    }
+               }
 	  }
 #endif        
       }
 
-   if (elm_scale)
-     _elm_config->scale = atof(elm_scale);
-   
-   _elm_config->finger_size = 
-     (double)_elm_config->finger_size * _elm_config->scale;
-   if (elm_finger_size)
-     _elm_config->finger_size = atoi(elm_finger_size);
 }
 
 EAPI void
