@@ -91,7 +91,7 @@ init_mul_pixel_mask_span_funcs_c(void)
 
 #ifdef BUILD_C
 static void
-_op_mul_pt_p_mas_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_mul_pt_p_mas_dp(DATA32 s, DATA8 m, DATA32 c __UNUSED__, DATA32 *d) {
 	s = ~s;
 	s = ~MUL_SYM(m, s);
 	*d = MUL4_SYM(s, *d);

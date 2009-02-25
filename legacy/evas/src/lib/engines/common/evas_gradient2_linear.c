@@ -287,7 +287,7 @@ linear_get_fill_func(RGBA_Gradient2 *gr, int op)
 #endif
 
 static void
-linear_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+linear_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                  int x, int y, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -386,7 +386,7 @@ linear_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len
 
 
 static void
-linear_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+linear_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                   int x, int y, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -516,7 +516,7 @@ linear_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_le
 
 
 static void
-linear_restrict_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+linear_restrict_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                    int x, int y, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -682,7 +682,7 @@ linear_restrict_masked_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, in
 
 
 static void
-linear_pad_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+linear_pad_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
               int x, int y, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;

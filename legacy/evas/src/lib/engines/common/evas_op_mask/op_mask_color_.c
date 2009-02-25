@@ -4,7 +4,7 @@
 
 #ifdef BUILD_C
 static void
-_op_mask_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_mask_c_dp(DATA32 *s __UNUSED__, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    c = 1 + (c >> 24);
    for (; d < e; d++) {
@@ -30,7 +30,7 @@ init_mask_color_span_funcs_c(void)
 
 #ifdef BUILD_C
 static void
-_op_mask_pt_c_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_mask_pt_c_dp(DATA32 s __UNUSED__, DATA8 m __UNUSED__, DATA32 c, DATA32 *d) {
 	*d = MUL_SYM(c >> 24, *d);
 }
 

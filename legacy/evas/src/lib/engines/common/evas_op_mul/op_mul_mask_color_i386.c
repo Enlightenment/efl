@@ -3,7 +3,7 @@
 
 #ifdef BUILD_MMX
 static void
-_op_mul_mas_c_dp_mmx(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_mul_mas_c_dp_mmx(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    MOV_P2R(c, mm2, mm0)
    c = ~c;

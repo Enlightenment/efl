@@ -14,7 +14,7 @@
 	((((s) << 3) & 0xf8) | (((s) >> 2) & 0x7))
 
 static inline void *
-evas_common_convert_argb8888_to_rgb565_a5p(void *data, int w, int h, int stride, Evas_Bool has_alpha)
+evas_common_convert_argb8888_to_rgb565_a5p(void *data __UNUSED__, int w __UNUSED__, int h __UNUSED__, int stride __UNUSED__, Evas_Bool has_alpha __UNUSED__)
 {
    return NULL;
 }

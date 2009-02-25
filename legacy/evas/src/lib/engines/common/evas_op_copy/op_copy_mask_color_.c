@@ -3,7 +3,7 @@
 
 #ifdef BUILD_C
 static void
-_op_copy_mas_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_copy_mas_c_dp(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    while (d < e) {
 	l = *m;
@@ -49,7 +49,7 @@ init_copy_mask_color_span_funcs_c(void)
 
 #ifdef BUILD_C
 static void
-_op_copy_pt_mas_c_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_copy_pt_mas_c_dp(DATA32 s __UNUSED__, DATA8 m, DATA32 c, DATA32 *d) {
 	*d = INTERP_256(m + 1, c, *d);
 }
 
@@ -84,7 +84,7 @@ init_copy_mask_color_pt_funcs_c(void)
 
 #ifdef BUILD_C
 static void
-_op_copy_rel_mas_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_copy_rel_mas_c_dp(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    while (d < e) {
 	l = *m;

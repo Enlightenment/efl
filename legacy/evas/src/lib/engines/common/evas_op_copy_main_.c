@@ -150,7 +150,7 @@ copy_gfx_span_func_cpu(int s, int m, int c, int d)
 }
 
 static RGBA_Gfx_Func
-op_copy_pixel_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
+op_copy_pixel_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels __UNUSED__)
 {
    int  s = SP_AN, m = SM_N, c = SC_N, d = DP_AN;
 
@@ -165,7 +165,7 @@ op_copy_pixel_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
 }
 
 static RGBA_Gfx_Func
-op_copy_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
+op_copy_color_span_get(DATA32 col, RGBA_Image *dst, int pixels __UNUSED__)
 {
    int  s = SP_N, m = SM_N, c = SC_AN, d = DP_AN;
 
@@ -185,7 +185,7 @@ op_copy_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
 }
 
 static RGBA_Gfx_Func
-op_copy_pixel_color_span_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, int pixels)
+op_copy_pixel_color_span_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, int pixels __UNUSED__)
 {
    int  s = SP_AN, m = SM_N, c = SC_AN, d = DP_AN;
 
@@ -211,7 +211,7 @@ op_copy_pixel_color_span_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, int p
 }
 
 static RGBA_Gfx_Func
-op_copy_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
+op_copy_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels __UNUSED__)
 {
    int  s = SP_N, m = SM_AS, c = SC_AN, d = DP;
 
@@ -227,7 +227,7 @@ op_copy_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
 }
 
 static RGBA_Gfx_Func
-op_copy_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
+op_copy_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels __UNUSED__)
 {
    int  s = SP_AN, m = SM_AS, c = SC_N, d = DP;
 
@@ -409,7 +409,7 @@ copy_rel_gfx_span_func_cpu(int s, int m, int c, int d)
 }
 
 static RGBA_Gfx_Func
-op_copy_rel_pixel_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
+op_copy_rel_pixel_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels __UNUSED__)
 {
    int  s = SP_AN, m = SM_N, c = SC_N, d = DP_AN;
 
@@ -425,7 +425,7 @@ op_copy_rel_pixel_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
 }
 
 static RGBA_Gfx_Func
-op_copy_rel_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
+op_copy_rel_color_span_get(DATA32 col, RGBA_Image *dst, int pixels __UNUSED__)
 {
    int  s = SP_N, m = SM_N, c = SC_AN, d = DP_AN;
 
@@ -445,7 +445,7 @@ op_copy_rel_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
 }
 
 static RGBA_Gfx_Func
-op_copy_rel_pixel_color_span_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, int pixels)
+op_copy_rel_pixel_color_span_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, int pixels __UNUSED__)
 {
    int  s = SP_AN, m = SM_N, c = SC_AN, d = DP_AN;
 
@@ -471,7 +471,7 @@ op_copy_rel_pixel_color_span_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, i
 }
 
 static RGBA_Gfx_Func
-op_copy_rel_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
+op_copy_rel_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels __UNUSED__)
 {
    int  s = SP_N, m = SM_AS, c = SC_AN, d = DP;
 
@@ -487,7 +487,7 @@ op_copy_rel_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels)
 }
 
 static RGBA_Gfx_Func
-op_copy_rel_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
+op_copy_rel_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels __UNUSED__)
 {
    int  s = SP_AN, m = SM_AS, c = SC_N, d = DP;
 

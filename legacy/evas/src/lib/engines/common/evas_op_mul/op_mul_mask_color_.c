@@ -3,7 +3,7 @@
 
 #ifdef BUILD_C
 static void
-_op_mul_mas_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_mul_mas_c_dp(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l, nc = ~c;
    while (d < e)
      {
@@ -46,7 +46,7 @@ init_mul_mask_color_span_funcs_c(void)
 
 #ifdef BUILD_C
 static void
-_op_mul_pt_mas_c_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_mul_pt_mas_c_dp(DATA32 s __UNUSED__, DATA8 m, DATA32 c, DATA32 *d) {
 	c = ~c;
 	c = ~MUL_SYM(m, c);
 	*d = MUL4_SYM(c, *d);

@@ -3,7 +3,7 @@
 
 #ifdef BUILD_C
 static void
-_op_blend_mas_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_blend_mas_c_dp(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    l = 256 - (c >> 24);
    while (d < e) {
@@ -28,7 +28,7 @@ _op_blend_mas_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 }
 
 static void
-_op_blend_mas_can_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_blend_mas_can_dp(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    while (d < e) {
 	l = *m;
@@ -80,7 +80,7 @@ _op_blend_pt_mas_c_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
 }
 
 static void
-_op_blend_pt_mas_can_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_blend_pt_mas_can_dp(DATA32 s __UNUSED__, DATA8 m, DATA32 c, DATA32 *d) {
 	*d = INTERP_256(m + 1, c, *d);
 }
 
@@ -113,7 +113,7 @@ init_blend_mask_color_pt_funcs_c(void)
 
 #ifdef BUILD_C
 static void
-_op_blend_rel_mas_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_blend_rel_mas_c_dp(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    while (d < e) {
 	DATA32 mc = MUL_SYM(*m, c);

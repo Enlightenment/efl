@@ -402,7 +402,7 @@ linear_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa)
 
 
 static void
-linear_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+linear_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -508,7 +508,7 @@ linear_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_le
 }
 
 static void
-linear_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+linear_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
               int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -637,7 +637,7 @@ linear_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len
 }
 
 static void
-linear_restrict(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+linear_restrict(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                 int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -912,7 +912,7 @@ linear_restrict_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, in
 }
 
 static void
-linear_restrict_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+linear_restrict_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                         int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1184,7 +1184,7 @@ linear_restrict_reflect_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *
 }
 
 static void
-linear_restrict_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+linear_restrict_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                        int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1436,7 +1436,7 @@ linear_restrict_repeat_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *m
 }
 
 static void
-linear_pad(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+linear_pad(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
            int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;

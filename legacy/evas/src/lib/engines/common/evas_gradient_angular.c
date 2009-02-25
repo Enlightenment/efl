@@ -562,7 +562,7 @@ angular_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa)
 
 
 static void
-angular_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+angular_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                 int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -594,7 +594,7 @@ angular_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
 }
 
 static void
-angular_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+angular_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                    int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -629,7 +629,7 @@ angular_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_l
 }
 
 static void
-angular_reflect_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+angular_reflect_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                         int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -668,7 +668,7 @@ angular_reflect_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int 
 }
 
 static void
-angular_reflect_aa_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+angular_reflect_aa_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                            int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -806,7 +806,7 @@ angular_reflect_aa_masked_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *
 }
 
 static void
-angular_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+angular_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -832,7 +832,7 @@ angular_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
 }
 
 static void
-angular_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+angular_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                   int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -863,7 +863,7 @@ angular_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_le
 }
 
 static void
-angular_repeat_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+angular_repeat_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                        int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -896,7 +896,7 @@ angular_repeat_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int d
 }
 
 static void
-angular_repeat_aa_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+angular_repeat_aa_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                           int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1021,7 +1021,7 @@ angular_repeat_aa_masked_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *m
 }
 
 static void
-angular_restrict_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+angular_restrict_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                          int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1058,7 +1058,7 @@ angular_restrict_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int
 }
 
 static void
-angular_restrict_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+angular_restrict_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                             int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1182,7 +1182,7 @@ angular_restrict_reflect_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 
 }
 
 static void
-angular_restrict_reflect_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+angular_restrict_reflect_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                                  int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1225,7 +1225,7 @@ angular_restrict_reflect_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *m
 }
 
 static void
-angular_restrict_reflect_aa_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+angular_restrict_reflect_aa_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                                     int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1384,7 +1384,7 @@ angular_restrict_reflect_aa_masked_annulus(DATA32 *src, int src_len, DATA32 *dst
 }
 
 static void
-angular_restrict_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+angular_restrict_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                          int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1415,7 +1415,7 @@ angular_restrict_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int 
 }
 
 static void
-angular_restrict_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+angular_restrict_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                             int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1525,7 +1525,7 @@ angular_restrict_repeat_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *
 }
 
 static void
-angular_restrict_repeat_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+angular_restrict_repeat_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                                  int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1562,7 +1562,7 @@ angular_restrict_repeat_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *ma
 }
 
 static void
-angular_restrict_repeat_aa_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+angular_restrict_repeat_aa_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                                     int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1707,7 +1707,7 @@ angular_restrict_repeat_aa_masked_annulus(DATA32 *src, int src_len, DATA32 *dst,
 }
 
 static void
-angular_pad(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+angular_pad(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
             int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1730,7 +1730,7 @@ angular_pad(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
 }
 
 static void
-angular_pad_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+angular_pad_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1755,7 +1755,7 @@ angular_pad_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
 }
 
 static void
-angular_pad_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+angular_pad_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                     int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1786,7 +1786,7 @@ angular_pad_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_
 }
 
 static void
-angular_pad_aa_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+angular_pad_aa_annulus(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                        int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;

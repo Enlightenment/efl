@@ -169,7 +169,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 static void
 evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const char *text,
                                RGBA_Gfx_Func func, int ext_x, int ext_y, int ext_w, int ext_h, RGBA_Font_Int *fi,
-                               int im_w, int im_h, int use_kerning
+                               int im_w, int im_h __UNUSED__, int use_kerning
                                )
 {
    int pen_x, pen_y;

@@ -3,7 +3,7 @@
 
 #ifdef BUILD_C
 static void
-_op_copy_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_copy_c_dp(DATA32 *s __UNUSED__, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    for (; d < e; d++) {
       *d = c;
@@ -36,7 +36,7 @@ init_copy_color_span_funcs_c(void)
 
 #ifdef BUILD_C
 static void
-_op_copy_pt_c_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_copy_pt_c_dp(DATA32 s __UNUSED__, DATA8 m __UNUSED__, DATA32 c, DATA32 *d) {
       *d = c;
 }
 
@@ -70,7 +70,7 @@ init_copy_color_pt_funcs_c(void)
 
 #ifdef BUILD_C
 static void
-_op_copy_rel_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_copy_rel_c_dp(DATA32 *s __UNUSED__, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    for (; d < e; d++) {
 	*d = MUL_SYM(*d >> 24, c);
@@ -104,7 +104,7 @@ init_copy_rel_color_span_funcs_c(void)
 
 #ifdef BUILD_C
 static void
-_op_copy_rel_pt_c_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_copy_rel_pt_c_dp(DATA32 s, DATA8 m __UNUSED__, DATA32 c, DATA32 *d) {
 	s = 1 + (*d >> 24);
 	*d = MUL_256(s, c);
 }

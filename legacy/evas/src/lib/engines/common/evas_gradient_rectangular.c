@@ -456,7 +456,7 @@ rectangular_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa)
    rr0 <<= 16;
 
 static void
-rectangular_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                     int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -496,7 +496,7 @@ rectangular_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_
 }
 
 static void
-rectangular_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                        int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -667,7 +667,7 @@ rectangular_reflect_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask
 }
 
 static void
-rectangular_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                    int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -701,7 +701,7 @@ rectangular_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_l
 }
 
 static void
-rectangular_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                       int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -870,7 +870,7 @@ rectangular_repeat_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask,
 }
 
 static void
-rectangular_restrict_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_restrict_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                              int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -910,7 +910,7 @@ rectangular_restrict_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask,
 }
 
 static void
-rectangular_restrict_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_restrict_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                                 int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1092,7 +1092,7 @@ rectangular_restrict_reflect_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DA
 }
 
 static void
-rectangular_restrict_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_restrict_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                             int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1122,7 +1122,7 @@ rectangular_restrict_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, 
 }
 
 static void
-rectangular_restrict_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_restrict_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                                int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1290,7 +1290,7 @@ rectangular_restrict_repeat_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DAT
 
 
 static void
-rectangular_pad(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_pad(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                 int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -1321,7 +1321,7 @@ rectangular_pad(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
 }
 
 static void
-rectangular_pad_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+rectangular_pad_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                    int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;

@@ -3,7 +3,7 @@
 
 #ifdef BUILD_C
 static void
-_op_mul_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_mul_c_dp(DATA32 *s __UNUSED__, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    for (; d < e; d++) {
       *d = MUL4_SYM(c, *d);
@@ -11,7 +11,7 @@ _op_mul_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 }
 
 static void
-_op_mul_caa_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_mul_caa_dp(DATA32 *s __UNUSED__, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    c = 1 + (c >> 24);
    for (; d < e; d++) {
@@ -40,7 +40,7 @@ init_mul_color_span_funcs_c(void)
 
 #ifdef BUILD_C
 static void
-_op_mul_pt_c_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_mul_pt_c_dp(DATA32 s __UNUSED__, DATA8 m __UNUSED__, DATA32 c, DATA32 *d) {
 	*d = MUL4_SYM(c, *d);
 }
 

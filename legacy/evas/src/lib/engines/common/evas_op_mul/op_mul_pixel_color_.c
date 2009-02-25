@@ -3,7 +3,7 @@
 
 #ifdef BUILD_C
 static void
-_op_mul_p_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_mul_p_c_dp(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    while (d < e) {
 	DATA32 cs = MUL4_SYM(c, *s);
@@ -13,7 +13,7 @@ _op_mul_p_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 }
 
 static void
-_op_mul_p_caa_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_mul_p_caa_dp(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    c = 1 + (c >> 24);
    while (d < e)
@@ -69,13 +69,13 @@ init_mul_pixel_color_span_funcs_c(void)
 
 #ifdef BUILD_C
 static void
-_op_mul_pt_p_c_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_mul_pt_p_c_dp(DATA32 s, DATA8 m __UNUSED__, DATA32 c, DATA32 *d) {
 	s = MUL4_SYM(c, s);
 	*d = MUL4_SYM(s, *d);
 }
 
 static void
-_op_mul_pt_p_caa_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_mul_pt_p_caa_dp(DATA32 s, DATA8 m __UNUSED__, DATA32 c, DATA32 *d) {
 	s = MUL_SYM(c >> 24, s);
 	*d = MUL4_SYM(s, *d);
 }

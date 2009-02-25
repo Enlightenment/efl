@@ -3,7 +3,7 @@
 
 #ifdef BUILD_MMX
 static void
-_op_copy_p_c_dp_mmx(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_copy_p_c_dp_mmx(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    pxor_r2r(mm0, mm0);
    MOV_P2R(c, mm3, mm0)
@@ -18,7 +18,7 @@ _op_copy_p_c_dp_mmx(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 
 
 static void
-_op_copy_p_caa_dp_mmx(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_copy_p_caa_dp_mmx(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    c = 1 + (c >> 24);
    MOV_A2R(c, mm3)
@@ -77,7 +77,7 @@ init_copy_pixel_color_span_funcs_mmx(void)
 
 #ifdef BUILD_MMX
 static void
-_op_copy_pt_p_c_dp_mmx(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_copy_pt_p_c_dp_mmx(DATA32 s, DATA8 m __UNUSED__, DATA32 c, DATA32 *d) {
 	pxor_r2r(mm0, mm0);
 	MOV_A2R(ALPHA_255, mm5)
 	MOV_P2R(c, mm2, mm0)
@@ -136,7 +136,7 @@ init_copy_pixel_color_pt_funcs_mmx(void)
 
 #ifdef BUILD_MMX
 static void
-_op_copy_rel_p_c_dp_mmx(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_copy_rel_p_c_dp_mmx(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    pxor_r2r(mm0, mm0);
    MOV_P2R(c, mm3, mm0)
@@ -198,7 +198,7 @@ init_copy_rel_pixel_color_span_funcs_mmx(void)
 
 #ifdef BUILD_MMX
 static void
-_op_copy_rel_pt_p_c_dp_mmx(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_copy_rel_pt_p_c_dp_mmx(DATA32 s, DATA8 m __UNUSED__, DATA32 c, DATA32 *d) {
 	pxor_r2r(mm0, mm0);
 	MOV_P2R(c, mm3, mm0)
 	MOV_A2R(ALPHA_255, mm5)

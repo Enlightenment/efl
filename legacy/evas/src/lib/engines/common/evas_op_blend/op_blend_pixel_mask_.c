@@ -48,7 +48,7 @@ _op_blend_pas_mas_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 }
 
 static void
-_op_blend_pan_mas_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_blend_pan_mas_dp(DATA32 *s, DATA8 *m, DATA32 c __UNUSED__, DATA32 *d, int l) {
    DATA32 *e = d + l;
    while (d < e) {
 	l = *m;
@@ -95,7 +95,7 @@ _op_blend_pt_p_mas_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
 }
 
 static void
-_op_blend_pt_pan_mas_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_blend_pt_pan_mas_dp(DATA32 s, DATA8 m, DATA32 c __UNUSED__, DATA32 *d) {
 	*d = INTERP_256(m + 1, s, *d);
 }
 

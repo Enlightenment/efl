@@ -3,7 +3,7 @@
 
 #ifdef BUILD_MMX
 static void
-_op_mask_c_dp_mmx(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_mask_c_dp_mmx(DATA32 *s __UNUSED__, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    c = 1 + (c >> 24);
    MOV_A2R(c, mm2)
@@ -33,7 +33,7 @@ init_mask_color_span_funcs_mmx(void)
 
 #ifdef BUILD_MMX
 static void
-_op_mask_pt_c_dp_mmx(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_mask_pt_c_dp_mmx(DATA32 s __UNUSED__, DATA8 m __UNUSED__, DATA32 c, DATA32 *d) {
 	c = 1 + (c >> 24);
 	MOV_A2R(c, mm2)
 	pxor_r2r(mm0, mm0);

@@ -349,7 +349,7 @@ sinusoidal_get_fill_func(RGBA_Gradient *gr, int op, unsigned char aa)
    yf = (a10 * x) + (a11 * y);
 
 static void
-sinusoidal_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+sinusoidal_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                    int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -378,7 +378,7 @@ sinusoidal_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_l
 }
 
 static void
-sinusoidal_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+sinusoidal_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                       int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -415,7 +415,7 @@ sinusoidal_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int ds
 }
 
 static void
-sinusoidal_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+sinusoidal_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                   int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -438,7 +438,7 @@ sinusoidal_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_le
 }
 
 static void
-sinusoidal_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+sinusoidal_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                      int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -471,7 +471,7 @@ sinusoidal_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst
 }
 
 static void
-sinusoidal_restrict_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+sinusoidal_restrict_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                             int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -506,7 +506,7 @@ sinusoidal_restrict_reflect(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, 
 }
 
 static void
-sinusoidal_restrict_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+sinusoidal_restrict_reflect_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                                int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -637,7 +637,7 @@ sinusoidal_restrict_reflect_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DAT
 }
 
 static void
-sinusoidal_restrict_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+sinusoidal_restrict_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                            int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -666,7 +666,7 @@ sinusoidal_restrict_repeat(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, i
 }
 
 static void
-sinusoidal_restrict_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+sinusoidal_restrict_repeat_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                               int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -783,7 +783,7 @@ sinusoidal_restrict_repeat_aa_masked(DATA32 *src, int src_len, DATA32 *dst, DATA
 }
 
 static void
-sinusoidal_pad(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+sinusoidal_pad(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;
@@ -807,7 +807,7 @@ sinusoidal_pad(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
 }
 
 static void
-sinusoidal_pad_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask, int dst_len,
+sinusoidal_pad_aa(DATA32 *src, int src_len, DATA32 *dst, DATA8 *mask __UNUSED__, int dst_len,
                   int x, int y, int axx, int axy, int ayx, int ayy, void *params_data)
 {
    DATA32  *dst_end = dst + dst_len;

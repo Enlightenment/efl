@@ -3,7 +3,7 @@
 
 #ifdef BUILD_C
 static void
-_op_mask_p_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_mask_p_c_dp(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    l = 1 + (c >> 24);
    while (d < e) {
@@ -55,7 +55,7 @@ init_mask_pixel_color_span_funcs_c(void)
 
 #ifdef BUILD_C
 static void
-_op_mask_pt_p_c_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_mask_pt_p_c_dp(DATA32 s, DATA8 m __UNUSED__, DATA32 c, DATA32 *d) {
 	c = 1 + ((((c >> 24) * (s >> 24)) + 255) >> 8);
 	*d = MUL_256(c, *d);
 }

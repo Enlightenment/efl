@@ -3,7 +3,7 @@
 
 #ifdef BUILD_C
 static void
-_op_blend_p_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_blend_p_c_dp(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    while (d < e) {
 	DATA32 sc = MUL4_SYM(c, *s);
@@ -15,7 +15,7 @@ _op_blend_p_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 }
 
 static void
-_op_blend_pan_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_blend_pan_c_dp(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    l = 256 - (c >> 24);
    while (d < e) {
@@ -26,7 +26,7 @@ _op_blend_pan_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 }
 
 static void
-_op_blend_p_can_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_blend_p_can_dp(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    while (d < e) {
 	l = 256 - (*s >> 24);
@@ -37,7 +37,7 @@ _op_blend_p_can_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 }
 
 static void
-_op_blend_pan_can_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_blend_pan_can_dp(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    while (d < e) {
 	*d++ = 0xff000000 + MUL3_SYM(c, *s);
@@ -46,7 +46,7 @@ _op_blend_pan_can_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 }
 
 static void
-_op_blend_p_caa_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_blend_p_caa_dp(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    c = 1 + (c & 0xff);
   while (d < e) {
@@ -59,7 +59,7 @@ _op_blend_p_caa_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 }
 
 static void
-_op_blend_pan_caa_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_blend_pan_caa_dp(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    c = 1 + (c & 0xff);
    while (d < e) {
@@ -110,7 +110,7 @@ init_blend_pixel_color_span_funcs_c(void)
 
 #ifdef BUILD_C
 static void
-_op_blend_pt_p_c_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_blend_pt_p_c_dp(DATA32 s, DATA8 m __UNUSED__, DATA32 c, DATA32 *d) {
 	s = MUL4_SYM(c, s);
 	c = 256 - (s >> 24);
 	*d = s + MUL_256(c, *d);
@@ -166,7 +166,7 @@ init_blend_pixel_color_pt_funcs_c(void)
 
 #ifdef BUILD_C
 static void
-_op_blend_rel_p_c_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_blend_rel_p_c_dp(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    while (d < e) {
 	DATA32 sc = MUL4_SYM(c, *s);
@@ -223,7 +223,7 @@ init_blend_rel_pixel_color_span_funcs_c(void)
 
 #ifdef BUILD_C
 static void
-_op_blend_rel_pt_p_c_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
+_op_blend_rel_pt_p_c_dp(DATA32 s, DATA8 m __UNUSED__, DATA32 c, DATA32 *d) {
 	s = MUL4_SYM(c, s);
 	c = 256 - (s >> 24);
 	*d = MUL_SYM(*d >> 24, s) + MUL_256(c, *d);

@@ -3,7 +3,7 @@
 
 #ifdef BUILD_MMX
 static void
-_op_copy_mas_c_dp_mmx(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_copy_mas_c_dp_mmx(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    pxor_r2r(mm0, mm0);
    MOV_P2R(c, mm2, mm0)
@@ -99,7 +99,7 @@ init_copy_mask_color_pt_funcs_mmx(void)
 
 #ifdef BUILD_MMX
 static void
-_op_copy_rel_mas_c_dp_mmx(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+_op_copy_rel_mas_c_dp_mmx(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
    pxor_r2r(mm0, mm0);
    MOV_P2R(c, mm2, mm0)
