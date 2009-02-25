@@ -207,7 +207,7 @@ _stringlist_free(Eina_List *list)
 {
    const char *s;
    EINA_LIST_FREE(list, s)
-     eina_stringshare_del(list->data);
+     eina_stringshare_del(s);
 }
 
 static void
