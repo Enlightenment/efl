@@ -1354,18 +1354,17 @@ data_process_script_lookups(void)
 
    EINA_LIST_FOREACH(code_lookups, l, cl)
      {
-	char buf[256];
-	int i, n;
+	char buf[12];
+	int n;
 
-	snprintf(buf, sizeof(buf), "%i", cl->val);
-	n = strlen(buf);
+	n = eina_convert_itoa(cl->val, buf);
 	if (n > cl->len)
 	  {
 	     fprintf(stderr, "%s: Error. The unexpected happened. A numeric replacement string was larger than the original!\n",
 		     progname);
 	     exit(-1);
 	  }
-	for (i = 0; i < cl->len; i++) cl->ptr[i] = ' ';
+	memset(cl->ptr, ' ', cl->len);
 	strncpy(cl->ptr, buf, n);
      }
 }
