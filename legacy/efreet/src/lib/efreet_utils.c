@@ -178,7 +178,7 @@ efreet_util_shutdown(void)
 static char *
 efreet_util_path_in_default(const char *section, const char *path)
 {
-    Eina_List *dirs, *l;
+    Eina_List *dirs;
     char *ret = NULL;
     char *dir;
 

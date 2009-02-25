@@ -142,8 +142,8 @@ ef_cb_desktop_save(void)
     desktop->generic_name = strdup("Test Application");
     desktop->exec = strdup("efreet_test");
     desktop->categories = NULL;
-    desktop->categories = eina_list_append(desktop->categories, strdup("Test"));
-    desktop->categories = eina_list_append(desktop->categories, strdup("Enlightenment"));
+    desktop->categories = eina_list_append(desktop->categories, eina_stringshare_add("Test"));
+    desktop->categories = eina_list_append(desktop->categories, eina_stringshare_add("Enlightenment"));
     printf("save test: %d\n", efreet_desktop_save(desktop));
     unlink("/tmp/test.desktop");
     efreet_desktop_free(desktop);
@@ -198,8 +198,7 @@ ef_cb_desktop_command_get(void)
     expected = eina_list_append(expected, "app '/relative_uri'");
 
     efreet_desktop_command_get(desktop, files, _cb_command, info);
-    while (expected)
-	    expected = eina_list_remove_list(expected, expected);
+    expected = eina_list_free(expected);
 
     /* test single uri */
     info->type = 'u';
@@ -211,8 +210,7 @@ ef_cb_desktop_command_get(void)
     expected = eina_list_append(expected, "app 'file:///relative_uri'");
 
     efreet_desktop_command_get(desktop, files, _cb_command, info);
-    while (expected)
-	    expected = eina_list_remove_list(expected, expected);
+    expected = eina_list_free(expected);
 
     /* test single dir */
     info->type = 'd';
@@ -224,8 +222,7 @@ ef_cb_desktop_command_get(void)
     expected = eina_list_append(expected, "app '/'");
 
     efreet_desktop_command_get(desktop, files, _cb_command, info);
-    while (expected)
-	    expected = eina_list_remove_list(expected, expected);
+    expected = eina_list_free(expected);
 
 
     /* test single names */
@@ -238,8 +235,7 @@ ef_cb_desktop_command_get(void)
     expected = eina_list_append(expected, "app 'relative_uri'");
 
     efreet_desktop_command_get(desktop, files, _cb_command, info);
-    while (expected)
-	    expected = eina_list_remove_list(expected, expected);
+    expected = eina_list_free(expected);
 
     /* test multiple fullpaths */
     info->type = 'F';
@@ -248,8 +244,7 @@ ef_cb_desktop_command_get(void)
     expected = eina_list_append(expected, "app '/tmp/absolute_path' '/relative_path' '/tmp/absolute_uri' '/relative_uri'");
 
     efreet_desktop_command_get(desktop, files, _cb_command, info);
-    while (expected)
-	    expected = eina_list_remove_list(expected, expected);
+    expected = eina_list_free(expected);
 
     /* test multiple URIs */
     info->type = 'U';
@@ -258,8 +253,7 @@ ef_cb_desktop_command_get(void)
     expected = eina_list_append(expected, "app 'file:///tmp/absolute_path' 'file:///relative_path' 'file:///tmp/absolute_uri' 'file:///relative_uri'");
 
     efreet_desktop_command_get(desktop, files, _cb_command, info);
-    while (expected)
-	    expected = eina_list_remove_list(expected, expected);
+    expected = eina_list_free(expected);
 
     /* test multiple dirs */
     info->type = 'D';
@@ -268,8 +262,7 @@ ef_cb_desktop_command_get(void)
     expected = eina_list_append(expected, "app '/tmp' '/' '/tmp' '/'");
 
     efreet_desktop_command_get(desktop, files, _cb_command, info);
-    while (expected)
-	    expected = eina_list_remove_list(expected, expected);
+    expected = eina_list_free(expected);
 
     /* test multiple names */
     info->type = 'N';
@@ -278,8 +271,7 @@ ef_cb_desktop_command_get(void)
     expected = eina_list_append(expected, "app 'absolute_path' 'relative_path' 'absolute_uri' 'relative_uri'");
 
     efreet_desktop_command_get(desktop, files, _cb_command, info);
-    while (expected)
-	    expected = eina_list_remove_list(expected, expected);
+    expected = eina_list_free(expected);
 
     /* test icon appending */
     info->type = 'i';
@@ -288,8 +280,7 @@ ef_cb_desktop_command_get(void)
     expected = eina_list_append(expected, "app --icon 'icon.png'");
 
     efreet_desktop_command_get(desktop, NULL, _cb_command, info);
-    while (expected)
-	    expected = eina_list_remove_list(expected, expected);
+    expected = eina_list_free(expected);
 
     /* test app name */
     info->type = 'c';
@@ -298,8 +289,7 @@ ef_cb_desktop_command_get(void)
     expected = eina_list_append(expected, "app 'App Name'");
 
     efreet_desktop_command_get(desktop, NULL, _cb_command, info);
-    while (expected)
-	    expected = eina_list_remove_list(expected, expected);
+    expected = eina_list_free(expected);
 
     /* test desktop path */
     info->type = 'k';
@@ -308,15 +298,12 @@ ef_cb_desktop_command_get(void)
     expected = eina_list_append(expected, "app 'test.desktop'");
 
     efreet_desktop_command_get(desktop, NULL, _cb_command, info);
-    while (expected)
-	    expected = eina_list_remove_list(expected, expected);
+    expected = eina_list_free(expected);
 
     /* clean up */
     efreet_desktop_free(desktop);
-    while (files)
-	    files = eina_list_remove_list(files, expected);
-    while (expected)
-	    expected = eina_list_remove_list(expected, expected);
+    files = eina_list_free(files);
+    expected = eina_list_free(expected);
 
     ret = info->error > 0 ? 0 : 1;
     free(info);
@@ -348,8 +335,6 @@ _cb_command(void *data, Efreet_Desktop *desktop __UNUSED__,
       info->error++;
     }
   }
-
-  free(exec);
   return NULL;
 }
 

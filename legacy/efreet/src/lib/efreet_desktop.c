@@ -488,6 +488,8 @@ efreet_desktop_save_as(Efreet_Desktop *desktop, const char *file)
 EAPI void
 efreet_desktop_free(Efreet_Desktop *desktop)
 {
+    char *str;
+
     if (!desktop) return;
 
     desktop->ref--;
@@ -512,16 +514,10 @@ efreet_desktop_free(Efreet_Desktop *desktop)
     IF_FREE_LIST(desktop->only_show_in);
     IF_FREE_LIST(desktop->not_show_in);
 
-    while (desktop->categories)
-    {
-        eina_stringshare_del(eina_list_data_get(desktop->categories));
-        desktop->categories = eina_list_remove_list(desktop->categories, desktop->categories);
-    }
-    while (desktop->mime_types)
-    {
-        eina_stringshare_del(eina_list_data_get(desktop->mime_types));
-        desktop->mime_types = eina_list_remove_list(desktop->mime_types, desktop->mime_types);
-    }
+    EINA_LIST_FREE(desktop->categories, str)
+        eina_stringshare_del(str);
+    EINA_LIST_FREE(desktop->mime_types, str)
+        eina_stringshare_del(str);
 
     IF_FREE_HASH(desktop->x);
 
@@ -1058,7 +1054,7 @@ efreet_desktop_x_fields_save(const Eina_Hash *hash, const void *key, void *value
 static int
 efreet_desktop_environment_check(Efreet_Ini *ini)
 {
-    Eina_List *list, *l;
+    Eina_List *list;
     int found = 0;
     char *val;
 
@@ -1207,12 +1203,8 @@ efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Eina_List *files,
         Eina_List *execs;
         execs = efreet_desktop_command_build(command);
         ret = efreet_desktop_command_execs_process(command, execs);
-        while (execs)
-        {
-            exec = eina_list_data_get(execs);
-            free(exec);
-            execs = eina_list_remove_list(execs, execs);
-        }
+	EINA_LIST_FREE(execs, exec)
+	  free(exec);
         efreet_desktop_command_free(command);
     }
 

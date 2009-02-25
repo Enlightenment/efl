@@ -115,6 +115,8 @@ main(int argc, char ** argv)
     Eina_List *run = NULL;
     double total;
 
+    eina_init();
+
     total = ecore_time_get();
     if (argc > 1)
     {
@@ -176,5 +178,7 @@ main(int argc, char ** argv)
         run = eina_list_remove_list(run, run);
 
     printf("Total run: %.3f seconds\n", ecore_time_get() - total);
+
+    eina_shutdown();
     return 0;
 }
