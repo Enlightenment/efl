@@ -788,10 +788,8 @@ _smart_del(Evas_Object *obj)
         evas_object_smart_callback_call(sd->obj, "sub-object-del", sobj);
 	evas_object_del(sobj);
      }
-   while (sd->subobjs)
+   EINA_LIST_FREE(sd->subobjs, sobj)
      {
-	sobj = sd->subobjs->data;
-	sd->subobjs = eina_list_remove_list(sd->subobjs, sd->subobjs);
 	evas_object_event_callback_del(sobj, EVAS_CALLBACK_DEL, _sub_obj_del);
         evas_object_smart_callback_call(sd->obj, "sub-object-del", sobj);
 	evas_object_del(sobj);

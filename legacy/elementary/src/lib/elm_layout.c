@@ -26,10 +26,9 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   while (wd->subs)
+   Subinfo *si;
+   EINA_LIST_FREE(wd->subs, si)
      {
-        Subinfo *si = wd->subs->data;
-	wd->subs = eina_list_remove_list(wd->subs, wd->subs);
 	evas_stringshare_del(si->swallow);
 	free(si);
      }

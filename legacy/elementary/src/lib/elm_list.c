@@ -42,10 +42,9 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   while (wd->items)
+   Elm_List_Item *it;
+   EINA_LIST_FREE(wd->items, it)
      {
-        Elm_List_Item *it = wd->items->data;
-        wd->items = eina_list_remove_list(wd->items, wd->items);
         eina_stringshare_del(it->label);
         if (!it->fixed)
           {

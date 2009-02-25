@@ -369,12 +369,10 @@ elm_quicklaunch_shutdown(void)
    eina_stringshare_del(_elm_data_dir);
    _elm_data_dir = NULL;
 
-   while (_elm_config->font_dirs)
-     {
-        eina_stringshare_del(_elm_config->font_dirs->data);
-        _elm_config->font_dirs = eina_list_remove_list(_elm_config->font_dirs, _elm_config->font_dirs);
-     }
-   
+   const char *fontdir;
+   EINA_LIST_FREE(_elm_config->font_dirs, fontdir)
+        eina_stringshare_del(fontdir);
+
    ecore_event_handler_del(_elm_exit_handler);
    _elm_exit_handler = NULL;
    

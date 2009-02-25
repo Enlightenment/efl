@@ -205,11 +205,9 @@ _stringlist_get(const char *str)
 static void
 _stringlist_free(Eina_List *list)
 {
-   while (list)
-     {
-        eina_stringshare_del(list->data);
-        list = eina_list_remove_list(list, list);
-     }
+   const char *s;
+   EINA_LIST_FREE(list, s)
+     eina_stringshare_del(list->data);
 }
 
 static void
@@ -406,11 +404,11 @@ _item_unrealize(Elm_Genlist_Item *it)
    _stringlist_free(it->icons);
    it->icons = NULL;
    _stringlist_free(it->states);
-   while (it->icon_objs)
-     {
-        evas_object_del(it->icon_objs->data);
-        it->icon_objs = eina_list_remove_list(it->icon_objs, it->icon_objs);
-     }
+
+   Evas_Object *icon;
+   EINA_LIST_FREE(it->icon_objs, icon)
+        evas_object_del(icon);
+
    it->states = NULL;
    it->realized = 0;
 }
@@ -799,12 +797,11 @@ _item_block_del(Elm_Genlist_Item *it)
              Item_Block *itbn = (Item_Block *)(il->next);
              if ((itbp) && ((itbp->count + itb->count) < 48))
                {
-                  while (itb->items)
+		  Elm_Genlist_Item *it2;
+		  EINA_LIST_FREE(itb->items, it2)
                     {
-                       Elm_Genlist_Item *it2 = itb->items->data;
                        it2->block = itbp;
                        itbp->items = eina_list_append(itbp->items, it2);
-                       itb->items = eina_list_remove_list(itb->items, itb->items);
                        itbp->count++;
                        itbp->changed = 1;
                     }

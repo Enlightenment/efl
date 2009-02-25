@@ -190,13 +190,10 @@ _elm_theme_parse(const char *theme)
         cache = NULL;
      }
    cache = eina_hash_string_superfast_new(NULL);
-   
-   while (themes)
-     {
-        eina_stringshare_del(themes->data);
-        themes = eina_list_remove_list(themes, themes);
-     }
-   
+
+   EINA_LIST_FREE(themes, p)
+     eina_stringshare_del(p);
+
    themes = names;
    return 1;
 }

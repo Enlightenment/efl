@@ -45,10 +45,10 @@ _del_pre_hook(Evas_Object *obj)
    evas_object_event_callback_del(wd->hov, EVAS_CALLBACK_RESIZE, _hov_resize);
    evas_object_event_callback_del(wd->hov, EVAS_CALLBACK_SHOW, _hov_show);
    evas_object_event_callback_del(wd->hov, EVAS_CALLBACK_HIDE, _hov_hide);
-   while (wd->subs)
+
+   Subinfo *si;
+   EINA_LIST_FREE(wd->subs, si)
      {
-        Subinfo *si = wd->subs->data;
-	wd->subs = eina_list_remove_list(wd->subs, wd->subs);
 	evas_stringshare_del(si->swallow);
 	free(si);
      }
