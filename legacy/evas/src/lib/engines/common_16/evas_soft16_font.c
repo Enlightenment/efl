@@ -185,7 +185,7 @@ _glyph_scanline(Soft16_Image *dst, const DATA8 *p_mask,
 
 static void
 _soft16_font_glyph_draw_grayscale(Soft16_Image *dst,
-				  RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg,
+				  RGBA_Draw_Context *dc __UNUSED__, RGBA_Font_Glyph *fg __UNUSED__,
 				  int x, int y, DATA8 alpha, DATA16 rgb565,
 				  const Evas_Rectangle ext, int bw, int bh,
 				  int bpitch, const DATA8 *bitmap)
@@ -224,7 +224,7 @@ _glyph_create_mask_line(DATA8 *mask, const DATA8 *bitmap, int w)
 
 static void
 _soft16_font_glyph_draw_mono(Soft16_Image *dst,
-			     RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg,
+			     RGBA_Draw_Context *dc __UNUSED__, RGBA_Font_Glyph *fg __UNUSED__,
 			     int x, int y, DATA8 alpha, DATA16 rgb565,
 			     const Evas_Rectangle ext, int bw, int bh,
 			     int bpitch, const DATA8 *bitmap)
@@ -246,7 +246,7 @@ _soft16_font_glyph_draw_mono(Soft16_Image *dst,
 }
 
 void
-soft16_font_glyph_draw(void *data, void *dest, void *context,
+soft16_font_glyph_draw(void *data, void *dest __UNUSED__, void *context,
 		       RGBA_Font_Glyph *fg, int x, int y)
 {
    Soft16_Image *dst;
@@ -291,12 +291,12 @@ soft16_font_glyph_draw(void *data, void *dest, void *context,
 }
 
 void *
-soft16_font_glyph_new(void *data, RGBA_Font_Glyph *fg)
+soft16_font_glyph_new(void *data __UNUSED__, RGBA_Font_Glyph *fg __UNUSED__)
 {
    return (void *)1; /* core requires != NULL to work */
 }
 
 void
-soft16_font_glyph_free(void *ext_dat)
+soft16_font_glyph_free(void *ext_dat __UNUSED__)
 {
 }

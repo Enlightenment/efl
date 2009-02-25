@@ -63,14 +63,14 @@ evas_alloc_error(void)
 
 /* free cached items only in ram for speed reasons. return 0 if cant free */
 int
-evas_mem_free(int mem_required)
+evas_mem_free(int mem_required __UNUSED__)
 {
    return 0;
 }
 
 /* start reducing quality of images etc. return 0 if cant free anything */
 int
-evas_mem_degrade(int mem_required)
+evas_mem_degrade(int mem_required __UNUSED__)
 {
    return 0;
 }

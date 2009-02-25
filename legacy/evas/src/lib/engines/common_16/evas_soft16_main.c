@@ -146,7 +146,7 @@ _evas_common_soft16_image_surface_delete(Image_Entry *ie)
 }
 
 static DATA32 *
-_evas_common_soft16_image_surface_pixels(Image_Entry *ie)
+_evas_common_soft16_image_surface_pixels(Image_Entry *ie __UNUSED__)
 {
    abort();
 
@@ -173,12 +173,12 @@ _evas_common_load_soft16_image_from_file(Image_Entry *ie)
 }
 
 static void
-_evas_common_soft16_image_unload(Image_Entry *ie)
+_evas_common_soft16_image_unload(Image_Entry *ie __UNUSED__)
 {
 }
 
 static void
-_evas_common_soft16_image_dirty_region(Image_Entry *im, int x, int y, int w, int h)
+_evas_common_soft16_image_dirty_region(Image_Entry *im __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
 }
 
@@ -208,7 +208,7 @@ _evas_common_soft16_image_ram_usage(Image_Entry *ie)
 }
 
 static int
-_evas_common_soft16_image_size_set(Image_Entry *ie_dst, const Image_Entry *ie_im, int w, int h)
+_evas_common_soft16_image_size_set(Image_Entry *ie_dst, const Image_Entry *ie_im, int w __UNUSED__, int h __UNUSED__)
 {
    Soft16_Image *dst = (Soft16_Image *) ie_dst;
    Soft16_Image *im = (Soft16_Image *) ie_im;
@@ -219,7 +219,7 @@ _evas_common_soft16_image_size_set(Image_Entry *ie_dst, const Image_Entry *ie_im
 }
 
 static int
-_evas_common_soft16_image_from_data(Image_Entry* ie_dst, int w, int h, DATA32 *image_data, int alpha, int cspace)
+_evas_common_soft16_image_from_data(Image_Entry* ie_dst, int w, int h, DATA32 *image_data, int alpha, int cspace __UNUSED__)
 {
    Soft16_Image *im = (Soft16_Image *) ie_dst;
 
@@ -240,7 +240,7 @@ _evas_common_soft16_image_from_data(Image_Entry* ie_dst, int w, int h, DATA32 *i
 }
 
 static int
-_evas_common_soft16_image_from_copied_data(Image_Entry* ie_dst, int w, int h, DATA32 *image_data, int alpha, int cspace)
+_evas_common_soft16_image_from_copied_data(Image_Entry* ie_dst, int w __UNUSED__, int h, DATA32 *image_data, int alpha __UNUSED__, int cspace __UNUSED__)
 {
    Soft16_Image *im = (Soft16_Image *) ie_dst;
 
@@ -254,7 +254,7 @@ _evas_common_soft16_image_from_copied_data(Image_Entry* ie_dst, int w, int h, DA
 }
 
 static int
-_evas_common_soft16_image_colorspace_set(Image_Entry* ie_dst, int cspace)
+_evas_common_soft16_image_colorspace_set(Image_Entry* ie_dst __UNUSED__, int cspace __UNUSED__)
 {
    /* FIXME: handle colorspace */
    return 0;
@@ -471,7 +471,7 @@ soft16_image_draw(Soft16_Image *src, Soft16_Image *dst,
 		  int src_region_w, int src_region_h,
 		  int dst_region_x, int dst_region_y,
 		  int dst_region_w, int dst_region_h,
-		  int smooth)
+		  int smooth __UNUSED__)
 {
    Evas_Rectangle sr, dr;
    Cutout_Rects *rects;

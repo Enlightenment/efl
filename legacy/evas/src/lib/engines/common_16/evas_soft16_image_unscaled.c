@@ -3,7 +3,7 @@
 
 static void
 _soft16_image_draw_unscaled_solid_solid(Soft16_Image *src, Soft16_Image *dst,
-					RGBA_Draw_Context *dc,
+					RGBA_Draw_Context *dc __UNUSED__,
 					int src_offset, int dst_offset,
 					int w, int h)
 {
@@ -23,7 +23,7 @@ _soft16_image_draw_unscaled_solid_solid(Soft16_Image *src, Soft16_Image *dst,
 
 static void
 _soft16_image_draw_unscaled_transp_solid(Soft16_Image *src, Soft16_Image *dst,
-					 RGBA_Draw_Context *dc,
+					 RGBA_Draw_Context *dc __UNUSED__,
 					 int src_offset, int dst_offset,
 					 int w, int h)
 
@@ -69,7 +69,7 @@ _soft16_image_draw_unscaled_no_mul(Soft16_Image *src, Soft16_Image *dst,
 static void
 _soft16_image_draw_unscaled_solid_solid_mul_alpha(Soft16_Image *src,
                                                   Soft16_Image *dst,
-                                                  RGBA_Draw_Context *dc,
+                                                  RGBA_Draw_Context *dc __UNUSED__,
                                                   int src_offset,
                                                   int dst_offset,
                                                   int w, int h, DATA8 a)
@@ -91,7 +91,7 @@ _soft16_image_draw_unscaled_solid_solid_mul_alpha(Soft16_Image *src,
 static void
 _soft16_image_draw_unscaled_transp_solid_mul_alpha(Soft16_Image *src,
                                                    Soft16_Image *dst,
-                                                   RGBA_Draw_Context *dc,
+                                                   RGBA_Draw_Context *dc __UNUSED__,
                                                    int src_offset,
                                                    int dst_offset,
                                                    int w, int h, DATA8 a)
@@ -137,7 +137,7 @@ _soft16_image_draw_unscaled_mul_alpha(Soft16_Image *src, Soft16_Image *dst,
 static void
 _soft16_image_draw_unscaled_solid_solid_mul_color(Soft16_Image *src,
                                                   Soft16_Image *dst,
-                                                  RGBA_Draw_Context *dc,
+                                                  RGBA_Draw_Context *dc __UNUSED__,
                                                   int src_offset,
                                                   int dst_offset,
                                                   int w, int h, DATA8 r,
@@ -170,7 +170,7 @@ _soft16_image_draw_unscaled_solid_solid_mul_color(Soft16_Image *src,
 static void
 _soft16_image_draw_unscaled_transp_solid_mul_color(Soft16_Image *src,
                                                    Soft16_Image *dst,
-                                                   RGBA_Draw_Context *dc,
+                                                   RGBA_Draw_Context *dc __UNUSED__,
                                                    int src_offset,
                                                    int dst_offset,
                                                    int w, int h, DATA8 r,

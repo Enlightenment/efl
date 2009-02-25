@@ -4,7 +4,7 @@
 static void
 _soft16_image_draw_scaled_solid_solid(Soft16_Image *src,
 				      Soft16_Image *dst,
-				      RGBA_Draw_Context *dc,
+				      RGBA_Draw_Context *dc __UNUSED__,
 				      int dst_offset, int w, int h,
 				      int *offset_x, int *offset_y)
 {
@@ -44,7 +44,7 @@ _soft16_image_draw_scaled_solid_solid(Soft16_Image *src,
 static void
 _soft16_image_draw_scaled_transp_solid(Soft16_Image *src,
 				       Soft16_Image *dst,
-				       RGBA_Draw_Context *dc,
+				       RGBA_Draw_Context *dc __UNUSED__,
 				       int dst_offset, int w, int h,
 				       int *offset_x, int *offset_y)
 {
@@ -110,7 +110,7 @@ _soft16_image_draw_scaled_no_mul(Soft16_Image *src, Soft16_Image *dst,
 static void
 _soft16_image_draw_scaled_solid_solid_mul_alpha(Soft16_Image *src,
 						Soft16_Image *dst,
-						RGBA_Draw_Context *dc,
+						RGBA_Draw_Context *dc __UNUSED__,
 						int dst_offset, int w, int h,
 						int *offset_x, int *offset_y,
 						DATA8 alpha)
@@ -154,7 +154,7 @@ _soft16_image_draw_scaled_solid_solid_mul_alpha(Soft16_Image *src,
 static void
 _soft16_image_draw_scaled_transp_solid_mul_alpha(Soft16_Image *src,
 						 Soft16_Image *dst,
-						 RGBA_Draw_Context *dc,
+						 RGBA_Draw_Context *dc __UNUSED__,
 						 int dst_offset, int w, int h,
 						 int *offset_x, int *offset_y,
 						 DATA8 alpha)
@@ -223,7 +223,7 @@ _soft16_image_draw_scaled_mul_alpha(Soft16_Image *src, Soft16_Image *dst,
 static void
 _soft16_image_draw_scaled_solid_solid_mul_color(Soft16_Image *src,
 						Soft16_Image *dst,
-						RGBA_Draw_Context *dc,
+						RGBA_Draw_Context *dc __UNUSED__,
 						int dst_offset, int w, int h,
 						int *offset_x, int *offset_y,
 						DATA8 r, DATA8 g, DATA8 b,
@@ -299,7 +299,7 @@ _soft16_image_draw_scaled_solid_solid_mul_color(Soft16_Image *src,
 static void
 _soft16_image_draw_scaled_transp_solid_mul_color(Soft16_Image *src,
 						 Soft16_Image *dst,
-						 RGBA_Draw_Context *dc,
+						 RGBA_Draw_Context *dc __UNUSED__,
 						 int dst_offset, int w, int h,
 						 int *offset_x, int *offset_y,
 						 DATA8 r, DATA8 g, DATA8 b,
