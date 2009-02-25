@@ -58,7 +58,7 @@ cb_handoff(GstElement *fakesrc,
    else
      {
 	Emotion_Audio_Sink *asink;
-	asink = (Emotion_Audio_Sink *)ecore_list_index_goto(ev->audio_sinks, ev->audio_sink_nbr);
+	asink = (Emotion_Audio_Sink *)eina_list_nth(ev->audio_sinks, ev->audio_sink_nbr);
 	_emotion_video_pos_update(ev->obj, ev->position, asink->length_time);
      }
 
@@ -82,6 +82,7 @@ file_new_decoded_pad_cb(GstElement *decodebin,
    Emotion_Gstreamer_Video *ev;
    GstCaps *caps;
    gchar   *str;
+   unsigned int index;
 
    ev = (Emotion_Gstreamer_Video *)user_data;
    caps = gst_pad_get_caps(new_pad);
@@ -95,7 +96,8 @@ file_new_decoded_pad_cb(GstElement *decodebin,
 
 	vsink = (Emotion_Video_Sink *)calloc(1, sizeof(Emotion_Video_Sink));
 	if (!vsink) return;
-	if (!ecore_list_append(ev->video_sinks, vsink))
+	ev->video_sinks = eina_list_append(ev->video_sinks, vsink);
+	if (!eina_list_data_find(ev->video_sinks, vsink))
 	  {
 	     free(vsink);
 	     return;
@@ -108,7 +110,7 @@ file_new_decoded_pad_cb(GstElement *decodebin,
 	videopad = gst_element_get_pad(queue, "sink");
 	gst_pad_link(new_pad, videopad);
 	gst_object_unref(videopad);
-	if (ecore_list_count(ev->video_sinks) == 1)
+	if (eina_list_count(ev->video_sinks) == 1)
 	  {
 	     ev->ratio = (double)vsink->width / (double)vsink->height;
 	  }
@@ -123,13 +125,16 @@ file_new_decoded_pad_cb(GstElement *decodebin,
 
 	asink = (Emotion_Audio_Sink *)calloc(1, sizeof(Emotion_Audio_Sink));
 	if (!asink) return;
-	if (!ecore_list_append(ev->audio_sinks, asink))
+	ev->audio_sinks = eina_list_append(ev->audio_sinks, asink);
+	if (!eina_list_data_find(ev->audio_sinks, asink))
 	  {
 	     free(asink);
 	     return;
 	  }
 
-	asink->sink = emotion_audio_sink_create(ev, ecore_list_index(ev->audio_sinks));
+	for (index = 0; asink != eina_list_nth(ev->audio_sinks, index); index++)
+	  ;
+	asink->sink = emotion_audio_sink_create(ev, index);
 	gst_bin_add(GST_BIN(ev->pipeline), asink->sink);
 	audiopad = gst_element_get_pad(asink->sink, "sink");
 	gst_pad_link(new_pad, audiopad);
@@ -149,7 +154,8 @@ emotion_video_sink_new(Emotion_Gstreamer_Video *ev)
    vsink = (Emotion_Video_Sink *)calloc(1, sizeof(Emotion_Video_Sink));
    if (!vsink) return NULL;
 
-   if (!ecore_list_append(ev->video_sinks, vsink))
+   ev->video_sinks = eina_list_append(ev->video_sinks, vsink);
+   if (!eina_list_data_find(ev->video_sinks, vsink))
      {
 	free(vsink);
 	return NULL;
@@ -162,11 +168,8 @@ emotion_video_sink_free(Emotion_Gstreamer_Video *ev, Emotion_Video_Sink *vsink)
 {
    if (!ev || !vsink) return;
 
-   if (ecore_list_goto(ev->video_sinks, vsink))
-     {
-	ecore_list_remove(ev->video_sinks);
+   ev->video_sinks = eina_list_remove(ev->video_sinks, vsink);
 	free(vsink);
-     }
 }
 
 Emotion_Video_Sink *
@@ -470,10 +473,12 @@ void
 emotion_streams_sinks_get(Emotion_Gstreamer_Video *ev, GstElement *decoder)
 {
    GstIterator *it;
+   Eina_List   *alist;
+   Eina_List   *vlist;
    gpointer     data;
 
-   ecore_list_first_goto(ev->video_sinks);
-   ecore_list_first_goto(ev->audio_sinks);
+   alist = ev->audio_sinks;
+   vlist = ev->video_sinks;
 
    it = gst_element_iterate_src_pads(decoder);
    while (gst_iterator_next(it, &data) == GST_ITERATOR_OK)
@@ -493,7 +498,8 @@ emotion_streams_sinks_get(Emotion_Gstreamer_Video *ev, GstElement *decoder)
 	  {
 	     Emotion_Video_Sink *vsink;
 
-	     vsink = (Emotion_Video_Sink *)ecore_list_next(ev->video_sinks);
+	     vsink = (Emotion_Video_Sink *)eina_list_data_get(vlist);
+	     vlist = eina_list_next(vlist);
 
 	     emotion_video_sink_fill(vsink, pad, caps);
 	  }
@@ -501,15 +507,17 @@ emotion_streams_sinks_get(Emotion_Gstreamer_Video *ev, GstElement *decoder)
 	else if (g_str_has_prefix(str, "audio/"))
 	  {
 	     Emotion_Audio_Sink *asink;
-	     gint                index;
+	     unsigned int index;
 
-	     asink = (Emotion_Audio_Sink *)ecore_list_next(ev->audio_sinks);
+	     asink = (Emotion_Audio_Sink *)eina_list_data_get(alist);
+	     alist = eina_list_next(alist);
 
 	     emotion_audio_sink_fill(asink, pad, caps);
 
-	     index = ecore_list_index(ev->audio_sinks);
+	     for (index = 0; asink != eina_list_nth(ev->audio_sinks, index) ; index++)
+	       ;
 
-	     if (ecore_list_count(ev->video_sinks) == 0)
+	     if (eina_list_count(ev->video_sinks) == 0)
 	       {
 		  if (index == 1)
 		    {

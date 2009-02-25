@@ -107,7 +107,8 @@ _emotion_audio_sink_new(Emotion_Gstreamer_Video *ev)
    asink = (Emotion_Audio_Sink *)malloc(sizeof(Emotion_Audio_Sink));
    if (!asink) return NULL;
 
-   if (!ecore_list_append(ev->audio_sinks, asink))
+   ev->audio_sinks = eina_list_append(ev->audio_sinks, asink);
+   if (!eina_list_data_find(ev->audio_sinks, asink))
      {
 	free(asink);
 	return NULL;
@@ -120,9 +121,6 @@ _emotion_audio_sink_free(Emotion_Gstreamer_Video *ev, Emotion_Audio_Sink *asink)
 {
    if (!ev || !asink) return;
 
-   if (ecore_list_goto(ev->audio_sinks, asink))
-     {
-	ecore_list_remove(ev->audio_sinks);
+   ev->audio_sinks = eina_list_remove(ev->audio_sinks, asink);
 	free(asink);
-     }
 }

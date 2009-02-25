@@ -21,6 +21,8 @@ emotion_pipeline_dvd_build(void *video, const char *device)
    GstElement              *dvdreadsrc;
    GstElement              *dvddemux;
    Emotion_Gstreamer_Video *ev;
+   Eina_List               *alist;
+   Eina_List               *vlist;
 
    ev = (Emotion_Gstreamer_Video *)video;
    if (!ev) return 0;
@@ -53,8 +55,8 @@ emotion_pipeline_dvd_build(void *video, const char *device)
    no_more_pads = 0;
 
    /* We get the informations of streams */
-   ecore_list_first_goto(ev->video_sinks);
-   ecore_list_first_goto(ev->audio_sinks);
+   alist = ev->audio_sinks;
+   vlist = ev->video_sinks;
 
      {
 	GstIterator *it;
@@ -79,7 +81,8 @@ emotion_pipeline_dvd_build(void *video, const char *device)
 		  GstPad             *sink_pad;
 		  GstCaps            *sink_caps;
 
-		  vsink = (Emotion_Video_Sink *)ecore_list_next(ev->video_sinks);
+		  vsink = (Emotion_Video_Sink *)eina_list_data_get(vlist);
+		  vlist = eina_list_next(vlist);
 		  sink_pad = gst_element_get_pad(gst_bin_get_by_name(GST_BIN(ev->pipeline), "mpeg2dec"), "src");
 		  sink_caps = gst_pad_get_caps(sink_pad);
 		  str = gst_caps_to_string(sink_caps);
@@ -97,7 +100,7 @@ emotion_pipeline_dvd_build(void *video, const char *device)
 		  GstPad             *sink_pad;
 		  GstCaps            *sink_caps;
 
-		  asink = (Emotion_Audio_Sink *)ecore_list_next(ev->audio_sinks);
+		  asink = (Emotion_Audio_Sink *)eina_list_data_get(alist);
 		  sink_pad = gst_element_get_pad(gst_bin_get_by_name(GST_BIN(ev->pipeline), "a52dec"), "src");
 		  sink_caps = gst_pad_get_caps(sink_pad);
 
@@ -115,7 +118,7 @@ emotion_pipeline_dvd_build(void *video, const char *device)
      {
 	Emotion_Video_Sink *vsink;
 
-	vsink = (Emotion_Video_Sink *)ecore_list_first_goto(ev->video_sinks);
+	vsink = (Emotion_Video_Sink *)eina_list_data_get(ev->video_sinks);
 	if (vsink && vsink->sink)
 	  {
 	     g_object_set(G_OBJECT(vsink->sink), "sync", TRUE, NULL);
@@ -161,7 +164,8 @@ dvd_pad_added_cb(GstElement *dvddemuxer,
 
 	vsink = (Emotion_Video_Sink *)malloc(sizeof(Emotion_Video_Sink));
 	if (!vsink) return;
-	if (!ecore_list_append(ev->video_sinks, vsink))
+	ev->video_sinks = eina_list_append(ev->video_sinks, vsink);
+	if (!eina_list_data_find(ev->video_sinks, vsink))
 	  {
 	     free(vsink);
 	     return;
@@ -176,7 +180,7 @@ dvd_pad_added_cb(GstElement *dvddemuxer,
 	videopad = gst_element_get_pad(queue, "sink");
 	gst_pad_link(GST_PAD(new_pad), videopad);
 	gst_object_unref(videopad);
-	if (ecore_list_count(ev->video_sinks) == 1)
+	if (eina_list_count(ev->video_sinks) == 1)
 	  {
 	     ev->ratio = (double)vsink->width / (double)vsink->height;
 	  }
@@ -198,7 +202,8 @@ dvd_pad_added_cb(GstElement *dvddemuxer,
 
 	asink = (Emotion_Audio_Sink *)malloc(sizeof(Emotion_Audio_Sink));
 	if (!asink) return;
-	if (!ecore_list_append(ev->audio_sinks, asink))
+	ev->audio_sinks = eina_list_append(ev->audio_sinks, asink);
+	if (!eina_list_data_find(ev->audio_sinks, asink))
 	  {
 	     free(asink);
 	     return;

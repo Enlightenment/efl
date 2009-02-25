@@ -39,7 +39,7 @@ emotion_pipeline_file_build(void *video, const char *file)
      {
 	Emotion_Video_Sink *vsink;
 
-	vsink = (Emotion_Video_Sink *)ecore_list_first_goto(ev->video_sinks);
+	vsink = (Emotion_Video_Sink *)eina_list_data_get(ev->video_sinks);
 	if (vsink && vsink->sink)
 	  {
 	     g_object_set(G_OBJECT(vsink->sink), "sync", TRUE, NULL);

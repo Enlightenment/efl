@@ -66,8 +66,8 @@ struct _Emotion_Gstreamer_Video
    Ecore_Timer      *eos_timer;
 
    /* Sinks */
-   Ecore_List       *video_sinks;
-   Ecore_List       *audio_sinks;
+   Eina_List        *video_sinks;
+   Eina_List        *audio_sinks;
 
    int               video_sink_nbr;
    int               audio_sink_nbr;
