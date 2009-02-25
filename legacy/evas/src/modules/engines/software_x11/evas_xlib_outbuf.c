@@ -268,7 +268,7 @@ evas_software_xlib_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 		  }
 		/* FIXME: only alloc once per display+cmap */
 		buf->priv.pal = evas_software_xlib_x_color_allocate(disp, cmap, vis,
-								   PAL_MODE_RGB666);
+								    pm);
 		if (!buf->priv.pal)
 		  {
 		     free(buf);

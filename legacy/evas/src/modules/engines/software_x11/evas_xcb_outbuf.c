@@ -299,7 +299,7 @@ evas_software_xcb_outbuf_setup_x(int               w,
 		   evas_software_xcb_x_color_allocate(conn,
 						      cmap,
 						      vis,
-						      PAL_MODE_RGB666);
+						      pm);
 		if (!buf->priv.pal)
 		  {
 		     free(buf);
