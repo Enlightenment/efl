@@ -388,6 +388,8 @@ efreet_util_desktop_name_find(const char *name)
     eina_iterator_foreach(it, EINA_EACH(efreet_util_cache_search_name), &search);
     eina_iterator_free(it);
 
+    if (!search.result) return NULL;
+
     efreet_desktop_ref(search.result->desktop);
     return search.result->desktop;
 }
@@ -406,6 +408,8 @@ efreet_util_desktop_generic_name_find(const char *generic_name)
     it = eina_hash_iterator_data_new(desktop_by_file_id);
     eina_iterator_foreach(it, EINA_EACH(efreet_util_cache_search_generic_name), &search);
     eina_iterator_free(it);
+
+    if (!search.result) return NULL;
 
     efreet_desktop_ref(search.result->desktop);
     return search.result->desktop;
