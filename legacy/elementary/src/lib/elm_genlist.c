@@ -1185,7 +1185,7 @@ elm_genlist_item_next_get(Elm_Genlist_Item *item)
    while (it)
      {
         it = (Item *)(((Eina_Inlist *)it)->next);
-        if (!it->delete_me) break;
+        if ((it) && (!it->delete_me)) break;
      }
    return (Elm_Genlist_Item *)it;
 }
@@ -1197,7 +1197,7 @@ elm_genlist_item_prev_get(Elm_Genlist_Item *item)
    while (it)
      {
         it = (Item *)(((Eina_Inlist *)it)->prev);
-        if (!it->delete_me) break;
+        if ((it) && (!it->delete_me)) break;
      }
    return (Elm_Genlist_Item *)it;
 }
