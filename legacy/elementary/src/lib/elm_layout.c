@@ -59,10 +59,10 @@ static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   Eina_List *l;
-   for (l = wd->subs; l; l = l->next)
+   const Eina_List *l;
+   const Subinfo *si;
+   EINA_LIST_FOREACH(wd->subs, l, si)
      {
-	Subinfo *si = l->data;
 	if (si->obj == obj)
 	  {
 	     edje_object_part_swallow(wd->lay, si->swallow, obj);
@@ -78,10 +78,9 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
    Eina_List *l;
-   
-   for (l = wd->subs; l; l = l->next)
+   Subinfo *si;
+   EINA_LIST_FOREACH(wd->subs, l, si)
      {
-	Subinfo *si = l->data;
 	if (si->obj == sub)
 	  {
 	     evas_object_event_callback_del
@@ -130,11 +129,10 @@ elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conte
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Subinfo *si;
-   Eina_List *l;
-   
-   for (l = wd->subs; l; l = l->next)
+   const Eina_List *l;
+
+   EINA_LIST_FOREACH(wd->subs, l, si)
      {
-	si = l->data;
 	if (!strcmp(swallow, si->swallow))
 	  {
 	     if (content == si->obj) return;

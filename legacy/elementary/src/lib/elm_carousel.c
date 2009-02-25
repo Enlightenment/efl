@@ -44,11 +44,10 @@ _item_select(Elm_Carousel_Item *it)
    Elm_Carousel_Item *it2;
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Object *obj2;
-   Eina_List *l;
+   const Eina_List *l;
    if (it->selected) return;
-   for (l = wd->items; l; l = l->next)
+   EINA_LIST_FOREACH(wd->items, l, it2)
      {
-        it2 = l->data;
         if (it2->selected)
           {
              it2->selected = 0;
@@ -75,12 +74,11 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Eina_List *l;
-   Elm_Carousel_Item *it;
+   const Eina_List *l;
+   const Elm_Carousel_Item *it;
    Evas_Coord mw, mh;
-   for (l = wd->items; l; l = l->next)
+   EINA_LIST_FOREACH(wd->items, l, it)
      {
-        it = l->data;
         if (it->selected)
           edje_object_signal_emit(it->base, "elm,state,selected", "elm");
         _elm_theme_set(it->base, "carousel", "item", "default");
@@ -123,7 +121,7 @@ _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord mw, mh, vw, vh, w, h;
-   Eina_List *l;
+   const Eina_List *l;
    Elm_Carousel_Item *it;
    
    elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
@@ -133,9 +131,8 @@ _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
      {
         if (w != vw) evas_object_resize(wd->bx, vw, h);
      }
-   for (l = wd->items; l; l = l->next)
+   EINA_LIST_FOREACH(wd->items, l, it)
      {
-        it = l->data;
         if (it->selected)
           {
              _item_show(it);

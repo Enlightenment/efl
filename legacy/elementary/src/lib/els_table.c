@@ -181,7 +181,8 @@ static void
 _smart_reconfigure(Smart_Data *sd)
 {
    Evas_Coord x, y, w, h, xx, yy;
-   Eina_List *l;
+   const Eina_List *l;
+   Evas_Object *obj;
    Evas_Coord minw, minh;
    int expandw, expandh;
    double ax, ay;
@@ -207,16 +208,14 @@ _smart_reconfigure(Smart_Data *sd)
 	y = y + ((h - minh) * (1.0 - ay));
 	h = minh;
      }
-   for (l = sd->items; l; l = l->next)
+   EINA_LIST_FOREACH(sd->items, l, obj)
      {
 	Table_Item *ti;
-	Evas_Object *obj;
 	int xw, xh;
 	double wx, wy;
-		  
-	obj = l->data;
+
 	ti = evas_object_data_get(obj, "e_table_data");
-	evas_object_size_hint_weight_get(l->data, &wx, &wy);
+	evas_object_size_hint_weight_get(obj, &wx, &wy);
 	xw = 0;
 	xh = 0;
 	if (wx > 0.0) xw = 1;
@@ -238,26 +237,24 @@ _smart_reconfigure(Smart_Data *sd)
    y = sd->y;
    if (sd->homogenous)
      {
-	for (l = sd->items; l; l = l->next)
+	EINA_LIST_FOREACH(sd->items, l, obj)
 	  {
 	     Table_Item *ti;
-	     Evas_Object *obj;
 	     Evas_Coord ww, hh, ow, oh;
 	     Evas_Coord mxw, mxh;
 	     int xw, xh;
 	     double wx, wy;
-	     
-	     obj = l->data;
+
 	     ti = evas_object_data_get(obj, "e_table_data");
-	     
+
 	     xx = x + ((ti->col) * (w / (Evas_Coord)sd->size.cols));
 	     yy = y + ((ti->row) * (h / (Evas_Coord)sd->size.rows));
 	     ww = ((w / (Evas_Coord)sd->size.cols) * (ti->colspan));
 	     hh = ((h / (Evas_Coord)sd->size.rows) * (ti->rowspan));
-	     evas_object_size_hint_min_get(l->data, &ow, &oh);
-	     evas_object_size_hint_max_get(l->data, &mxw, &mxh);
-	     evas_object_size_hint_weight_get(l->data, &wx, &wy);
-	     evas_object_size_hint_align_get(l->data, &ax, &ay);
+	     evas_object_size_hint_min_get(obj, &ow, &oh);
+	     evas_object_size_hint_max_get(obj, &mxw, &mxh);
+	     evas_object_size_hint_weight_get(obj, &wx, &wy);
+	     evas_object_size_hint_align_get(obj, &ax, &ay);
 	     xw = 0;
 	     xh = 0;
 	     if (wx > 0.0) xw = 1;
@@ -275,12 +272,10 @@ _smart_reconfigure(Smart_Data *sd)
    else
      {
 	int i, ex, tot, need, num, dif, left, nx;
-	for (l = sd->items; l; l = l->next)
+	EINA_LIST_FOREACH(sd->items, l, obj)
 	  {
 	     Table_Item *ti;
-	     Evas_Object *obj;
-	     
-	     obj = l->data;
+
 	     ti = evas_object_data_get(obj, "e_table_data");	
 	     if (sd->size.cols < (ti->col + ti->colspan))
 	       sd->size.cols = ti->col + ti->colspan;
@@ -295,17 +290,15 @@ _smart_reconfigure(Smart_Data *sd)
 	     rows = calloc(sd->size.rows, sizeof(int));
 	     colsx = calloc(sd->size.cols, sizeof(int));
 	     rowsx = calloc(sd->size.rows, sizeof(int));
-	     
-	     for (l = sd->items; l; l = l->next)
+
+	     EINA_LIST_FOREACH(sd->items, l, obj)
 	       {
 		  Table_Item *ti;
-		  Evas_Object *obj;
 		  int xw, xh;
 		  double wx, wy;
 
-		  obj = l->data;
 		  ti = evas_object_data_get(obj, "e_table_data");
-		  evas_object_size_hint_weight_get(l->data, &wx, &wy);
+		  evas_object_size_hint_weight_get(obj, &wx, &wy);
 		  xw = 0;
 		  xh = 0;
 		  if (wx > 0.0) xw = 1;
@@ -315,22 +308,20 @@ _smart_reconfigure(Smart_Data *sd)
 		  for (i = ti->row; i < (ti->row + ti->rowspan); i++)
 		    rowsx[i] |= xh;
 	       }
-	     
-	     for (l = sd->items; l; l = l->next)
+
+	     EINA_LIST_FOREACH(sd->items, l, obj)
 	       {
 		  Table_Item *ti;
-		  Evas_Object *obj;
 		  Evas_Coord mnw, mnh, mxw, mxh;
 		  int xw, xh;
 		  double wx, wy;
-		  
-		  obj = l->data;
+
 		  ti = evas_object_data_get(obj, "e_table_data");
-		  
-		  evas_object_size_hint_min_get(l->data, &mnw, &mnh);
-		  evas_object_size_hint_max_get(l->data, &mxw, &mxh);
-		  evas_object_size_hint_weight_get(l->data, &wx, &wy);
-		  evas_object_size_hint_align_get(l->data, &ax, &ay);
+
+		  evas_object_size_hint_min_get(obj, &mnw, &mnh);
+		  evas_object_size_hint_max_get(obj, &mxw, &mxh);
+		  evas_object_size_hint_weight_get(obj, &wx, &wy);
+		  evas_object_size_hint_align_get(obj, &ax, &ay);
 		  xw = 0;
 		  xh = 0;
 		  if (wx > 0.0) xw = 1;
@@ -508,20 +499,18 @@ _smart_reconfigure(Smart_Data *sd)
 			 }
 		    }
 	       }
-	     
-	     for (l = sd->items; l; l = l->next)
+
+	     EINA_LIST_FOREACH(sd->items, l, obj)
 	       {
 		  Table_Item *ti;
-		  Evas_Object *obj;
 		  Evas_Coord ww, hh, ow, oh, i;
 		  Evas_Coord mxw, mxh;
-		  
-		  obj = l->data;
+
 		  ti = evas_object_data_get(obj, "e_table_data");
-		  evas_object_size_hint_min_get(l->data, &ow, &oh);
-		  evas_object_size_hint_max_get(l->data, &mxw, &mxh);
-		  evas_object_size_hint_align_get(l->data, &ax, &ay);
-		  
+		  evas_object_size_hint_min_get(obj, &ow, &oh);
+		  evas_object_size_hint_max_get(obj, &mxw, &mxh);
+		  evas_object_size_hint_align_get(obj, &ax, &ay);
+
 		  xx = x;
 		  for (i = 0; i < ti->col; i++) xx += cols[i];
 		  ww = 0;
@@ -551,7 +540,6 @@ _smart_reconfigure(Smart_Data *sd)
 static void
 _smart_extents_calcuate(Smart_Data *sd)
 {
-   Eina_List *l;
    Evas_Coord minw, minh, maxw, maxh;
 
    minw = 0;
@@ -562,20 +550,20 @@ _smart_extents_calcuate(Smart_Data *sd)
    sd->size.rows = 0;
    if (sd->homogenous)
      {
-	for (l = sd->items; l; l = l->next)
+	const Eina_List *l;
+	const Evas_Object *obj;
+	EINA_LIST_FOREACH(sd->items, l, obj)
 	  {
 	     Table_Item *ti;
-	     Evas_Object *obj;
 	     int mw, mh;
 	     Evas_Coord w, h;
-	     
-	     obj = l->data;
+
 	     ti = evas_object_data_get(obj, "e_table_data");	
 	     if (sd->size.cols < (ti->col + ti->colspan))
 	       sd->size.cols = ti->col + ti->colspan;
 	     if (sd->size.rows < (ti->row + ti->rowspan))
 	       sd->size.rows = ti->row + ti->rowspan;
-	     evas_object_size_hint_min_get(l->data, &w, &h);
+	     evas_object_size_hint_min_get(obj, &w, &h);
 	     mw = (w + (ti->colspan - 1)) / ti->colspan;
 	     mh = (h + (ti->rowspan - 1)) / ti->rowspan;
 	     if (minw < mw) minw = mw;
@@ -586,14 +574,14 @@ _smart_extents_calcuate(Smart_Data *sd)
      }
    else
      {
+	const Eina_List *l;
+	const Evas_Object *obj;
 	int i, ex, tot, need, num, dif, left, nx;
-	for (l = sd->items; l; l = l->next)
+	EINA_LIST_FOREACH(sd->items, l, obj)
 	  {
 	     Table_Item *ti;
-	     Evas_Object *obj;
-	     
-	     obj = l->data;
-	     ti = evas_object_data_get(obj, "e_table_data");	
+
+	     ti = evas_object_data_get(obj, "e_table_data");
 	     if (sd->size.cols < (ti->col + ti->colspan))
 	       sd->size.cols = ti->col + ti->colspan;
 	     if (sd->size.rows < (ti->row + ti->rowspan))
@@ -607,17 +595,15 @@ _smart_extents_calcuate(Smart_Data *sd)
 	     rows = calloc(sd->size.rows, sizeof(int));
 	     colsx = calloc(sd->size.cols, sizeof(int));
 	     rowsx = calloc(sd->size.rows, sizeof(int));
-	     
-	     for (l = sd->items; l; l = l->next)
+
+	     EINA_LIST_FOREACH(sd->items, l, obj)
 	       {
 		  Table_Item *ti;
-		  Evas_Object *obj;
 		  int xw, xh;
 		  double wx, wy;
-		  
-		  obj = l->data;
+
 		  ti = evas_object_data_get(obj, "e_table_data");
-		  evas_object_size_hint_weight_get(l->data, &wx, &wy);
+		  evas_object_size_hint_weight_get(obj, &wx, &wy);
 		  xw = 0;
 		  xh = 0;
 		  if (wx > 0.0) xw = 1;
@@ -627,17 +613,15 @@ _smart_extents_calcuate(Smart_Data *sd)
 		  for (i = ti->row; i < (ti->row + ti->rowspan); i++)
 		    rowsx[i] |= xh;
 	       }
-	     
-	     for (l = sd->items; l; l = l->next)
+
+	     EINA_LIST_FOREACH(sd->items, l, obj)
 	       {
 		  Table_Item *ti;
-		  Evas_Object *obj;
 		  Evas_Coord w, h;
-		  
-		  obj = l->data;
+
 		  ti = evas_object_data_get(obj, "e_table_data");
-		  evas_object_size_hint_min_get(l->data, &w, &h);
-		  
+		  evas_object_size_hint_min_get(obj, &w, &h);
+
 		  /* handle horizontal */
 		  ex = 0;
 		  tot = 0;
@@ -830,19 +814,20 @@ static void
 _smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    Smart_Data *sd;
-   Eina_List *l;
+   const Eina_List *l;
+   Evas_Object *child;
    Evas_Coord dx, dy;
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    dx = x - sd->x;
    dy = y - sd->y;
-   for (l = sd->items; l; l = l->next)
+   EINA_LIST_FOREACH(sd->items, l, child)
      {
 	Evas_Coord ox, oy;
-	
-	evas_object_geometry_get(l->data, &ox, &oy, NULL, NULL);
-	evas_object_move(l->data, ox + dx, oy + dy);
+
+	evas_object_geometry_get(child, &ox, &oy, NULL, NULL);
+	evas_object_move(child, ox + dx, oy + dy);
      }
    sd->x = x;
    sd->y = y;

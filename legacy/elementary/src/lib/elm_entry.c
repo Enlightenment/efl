@@ -356,10 +356,11 @@ static void
 _signal_selection_start(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   Eina_List *l;
-   for (l = entries; l; l = l->next)
+   const Eina_List *l;
+   Evas_Object *entry;
+   EINA_LIST_FOREACH(entries, l, entry)
      {
-        if (l->data != data) elm_entry_select_none(l->data);
+        if (entry != data) elm_entry_select_none(entry);
      }
    wd->have_selection = 1;
    evas_object_smart_callback_call(data, "selection,start", NULL);
@@ -712,10 +713,11 @@ elm_entry_entry_set(Evas_Object *obj, const char *entry)
    // debug
 #if 0
      {
-	Eina_List *l, *an;
+	const Eina_List *l, *an;
+	const char *anchor;
 	an = edje_object_part_text_anchor_list_get(wd->ent, "elm.text");
-	for (l = an; l; l = l->next)
-	  printf("ANCHOR: %s\n", l->data);
+	EINA_LIST_FOREACH(an, l, anchor)
+	  printf("ANCHOR: %s\n", anchor);
      }
 #endif   
    wd->changed = 1;

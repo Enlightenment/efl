@@ -92,12 +92,11 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
-   Eina_List *l;
-   
-   for (l = wd->items; l; l = l->next)
+   const Eina_List *l;
+   Elm_List_Item *it;
+
+   EINA_LIST_FOREACH(wd->items, l, it)
      {
-        Elm_List_Item *it = l->data;
-        
         if ((sub == it->icon) || (sub == it->end))
           {
              if (it->icon == sub) it->icon = NULL;
@@ -164,7 +163,6 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    Elm_List_Item *it = data;
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Event_Mouse_Up *ev = event_info;
-   Eina_List *l;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) wd->on_hold = 1;
    else wd->on_hold = 0;
    if (wd->on_hold)
@@ -179,13 +177,19 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
      }
    else
      {
-        for (l = wd->selected; l;)
-          {
-             Elm_List_Item *it2 = l->data;
-             l = l->next;
-             if ((it2 != it) && (it2->selected)) _item_unselect(it2);
+	if (!it->selected)
+	  {
+	     while (wd->selected)
+	       _item_unselect(wd->selected->data);
+	     _item_select(it);
           }
-        if (!it->selected) _item_select(it);
+	else
+	  {
+	     const Eina_List *l, *l_next;
+	     Elm_List_Item *it2;
+	     EINA_LIST_FOREACH_SAFE(wd->selected, l, l_next, it2)
+	       if (it2 != it) _item_unselect(it2);
+	  }
      }
 }
 
@@ -228,15 +232,15 @@ static void
 _fix_items(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Eina_List *l;
+   const Eina_List *l;
+   Elm_List_Item *it;
    Evas_Coord minw[2] = { 0, 0 }, minh[2] = { 0, 0 };
    Evas_Coord mw, mh;
    int i, redo = 0;
-   
-   for (l = wd->items; l; l = l->next)
+
+   EINA_LIST_FOREACH(wd->items, l, it)
      {
         Evas_Coord mw, mh;
-        Elm_List_Item *it = l->data;
         if (it->icon)
           {
              evas_object_size_hint_min_get(it->icon, &mw, &mh);
@@ -259,9 +263,9 @@ _fix_items(Evas_Object *obj)
         wd->minh[1] = minh[1];
         redo = 1;
      }
-   for (i = 0, l = wd->items; l; l = l->next, i++)
+   i = 0;
+   EINA_LIST_FOREACH(wd->items, l, it)
      {
-        Elm_List_Item *it = l->data;
         it->even = i & 0x1;
         if ((it->even != it->is_even) || (!it->fixed) || (redo))
           {
@@ -327,6 +331,7 @@ _fix_items(Evas_Object *obj)
              it->fixed = 1;
              it->is_even = it->even;
           }
+	i++;
      }
    mw = 0; mh = 0;
    evas_object_size_hint_min_get(wd->box, &mw, &mh);

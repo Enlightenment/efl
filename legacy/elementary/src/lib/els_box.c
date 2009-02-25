@@ -108,44 +108,48 @@ _els_smart_box_pack_end(Evas_Object *obj, Evas_Object *child)
    return eina_list_count(sd->items) - 1;
 }
 
+static int
+_els_smart_box_find(const Smart_Data *sd, const Evas_Object *child)
+{
+   int i = 0;
+   const Eina_List *l;
+   const Evas_Object *oitr;
+   EINA_LIST_FOREACH(sd->items, l, oitr)
+     {
+	if (oitr == child)
+	  return i;
+	i++;
+     }
+   return -1;
+}
+
 int
 _els_smart_box_pack_before(Evas_Object *obj, Evas_Object *child, Evas_Object *before)
 {
    Smart_Data *sd;
-   int i = 0;
-   Eina_List *l;
-   
+
    if (!child) return 0;
    sd = evas_object_smart_data_get(obj);
    if (!sd) return 0;
    _smart_adopt(sd, child);
    sd->items = eina_list_prepend_relative(sd->items, child, before);
-   for (i = 0, l = sd->items; l; l = l->next, i++)
-     {
-	if (l->data == child) break;
-     }
    _smart_reconfigure(sd);
-   return i;
+
+   return _els_smart_box_find(sd, child);
 }
 
 int
 _els_smart_box_pack_after(Evas_Object *obj, Evas_Object *child, Evas_Object *after)
 {
    Smart_Data *sd;
-   int i = 0;
-   Eina_List *l;
-   
+
    if (!child) return 0;
    sd = evas_object_smart_data_get(obj);
    if (!sd) return 0;
    _smart_adopt(sd, child);
    sd->items = eina_list_append_relative(sd->items, child, after);
-   for (i = 0, l = sd->items; l; l = l->next, i++)
-     {
-	if (l->data == child) break;
-     }
    _smart_reconfigure(sd);
-   return i;
+   return _els_smart_box_find(sd, child);
 }
 
 void
@@ -215,7 +219,8 @@ static void
 _smart_reconfigure(Smart_Data *sd)
 {
    Evas_Coord x, y, w, h, xx, yy;
-   Eina_List *l;
+   const Eina_List *l;
+   Evas_Object *obj;
    Evas_Coord minw, minh, wdif, hdif, mnw, mnh, mxw, mxh;
    int count, expand, fw, fh, xw, xh;
    double ax, ay, wx, wy;
@@ -241,9 +246,9 @@ _smart_reconfigure(Smart_Data *sd)
 	y = y + ((h - minh) * (1.0 - ay));
 	h = minh;
      }
-   for (l = sd->items; l; l = l->next)
+   EINA_LIST_FOREACH(sd->items, l, obj)
      {
-	evas_object_size_hint_weight_get(l->data, &wx, &wy);
+	evas_object_size_hint_weight_get(obj, &wx, &wy);
 	if (sd->horizontal)
 	  {
 	     if (wx > 0.0) expand++;
@@ -271,15 +276,12 @@ _smart_reconfigure(Smart_Data *sd)
    hdif = h - minh;
    xx = x;
    yy = y;
-   for (l = sd->items; l; l = l->next)
+   EINA_LIST_FOREACH(sd->items, l, obj)
      {
-	Evas_Object *obj;
-	
-	obj = l->data;
-	evas_object_size_hint_align_get(l->data, &ax, &ay);
-	evas_object_size_hint_weight_get(l->data, &wx, &wy);
-	evas_object_size_hint_min_get(l->data, &mnw, &mnh);
-	evas_object_size_hint_max_get(l->data, &mxw, &mxh);
+	evas_object_size_hint_align_get(obj, &ax, &ay);
+	evas_object_size_hint_weight_get(obj, &wx, &wy);
+	evas_object_size_hint_min_get(obj, &mnw, &mnh);
+	evas_object_size_hint_max_get(obj, &mxw, &mxh);
 	fw = fh = 0;
 	xw = xh = 0;
 	if (ax == -1.0) {fw = 1; ax = 0.5;}
@@ -386,7 +388,6 @@ _smart_reconfigure(Smart_Data *sd)
 static void
 _smart_extents_calculate(Smart_Data *sd)
 {
-   Eina_List *l;
    Evas_Coord minw, minh, maxw, maxh, mnw, mnh;
 
    /* FIXME: need to calc max */
@@ -396,9 +397,11 @@ _smart_extents_calculate(Smart_Data *sd)
    maxh = -1;
    if (sd->homogenous)
      {
-	for (l = sd->items; l; l = l->next)
+	const Eina_List *l;
+	const Evas_Object *obj;
+	EINA_LIST_FOREACH(sd->items, l, obj)
 	  {
-	     evas_object_size_hint_min_get(l->data, &mnw, &mnh);
+	     evas_object_size_hint_min_get(obj, &mnw, &mnh);
 	     if (minh < mnh) minh = mnh;
 	     if (minw < mnw) minw = mnw;
 	  }
@@ -409,9 +412,11 @@ _smart_extents_calculate(Smart_Data *sd)
      }
    else
      {
-	for (l = sd->items; l; l = l->next)
+	const Eina_List *l;
+	const Evas_Object *obj;
+	EINA_LIST_FOREACH(sd->items, l, obj)
 	  {
-	     evas_object_size_hint_min_get(l->data, &mnw, &mnh);
+	     evas_object_size_hint_min_get(obj, &mnw, &mnh);
 	     if (sd->horizontal)
 	       {
 		  if (minh < mnh) minh = mnh;
@@ -494,7 +499,8 @@ static void
 _smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    Smart_Data *sd;
-   Eina_List *l;
+   const Eina_List *l;
+   Evas_Object *child;
    Evas_Coord dx, dy;
    
    sd = evas_object_smart_data_get(obj);
@@ -503,12 +509,12 @@ _smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    dy = y - sd->y;
    sd->x = x;
    sd->y = y;
-   for (l = sd->items; l; l = l->next)
+   EINA_LIST_FOREACH(sd->items, l, child)
      {
 	Evas_Coord ox, oy;
-	
-	evas_object_geometry_get(l->data, &ox, &oy, NULL, NULL);
-	evas_object_move(l->data, ox + dx, oy + dy);
+
+	evas_object_geometry_get(child, &ox, &oy, NULL, NULL);
+	evas_object_move(child, ox + dx, oy + dy);
      }
 }
 

@@ -94,16 +94,17 @@ static void
 _elm_win_resize_job(void *data)
 {
    Elm_Win *win = data;
-   Eina_List *l;
+   const Eina_List *l;
+   Evas_Object *obj;
    int w, h;
    
    win->deferred_resize_job = NULL;
    ecore_evas_geometry_get(win->ee, NULL, NULL, &w, &h);
    evas_object_resize(win->win_obj, w, h);
-   for (l = win->subobjs; l; l = l->next)
+   EINA_LIST_FOREACH(win->subobjs, l, obj)
      {
-	evas_object_move(l->data, 0, 0);
-	evas_object_resize(l->data, w, h);
+	evas_object_move(obj, 0, 0);
+	evas_object_resize(obj, w, h);
      }
 }
 
@@ -178,25 +179,26 @@ _elm_win_xwin_update(Elm_Win *win)
 static void
 _elm_win_eval_subobjs(Evas_Object *obj)
 {
-   Eina_List *l;
+   const Eina_List *l;
+   const Evas_Object *child;
    Elm_Win *win = elm_widget_data_get(obj);
    Evas_Coord w, h, minw = -1, minh = -1, maxw = -1, maxh = -1;
    int xx = 1, xy = 1;
    double wx, wy;
 
-   for (l = win->subobjs; l; l = l->next)
+   EINA_LIST_FOREACH(win->subobjs, l, child)
      {
-	evas_object_size_hint_weight_get(l->data, &wx, &wy);
+	evas_object_size_hint_weight_get(child, &wx, &wy);
 	if (wx == 0.0) xx = 0;
 	if (wy == 0.0) xy = 0;
 	
-	evas_object_size_hint_min_get(l->data, &w, &h);
+	evas_object_size_hint_min_get(child, &w, &h);
 	if (w < 1) w = -1;
 	if (h < 1) h = -1;
 	if (w > minw) minw = w;
 	if (h > minh) minh = h;
 	
-	evas_object_size_hint_max_get(l->data, &w, &h);
+	evas_object_size_hint_max_get(child, &w, &h);
 	if (w < 1) w = -1;
 	if (h < 1) h = -1;
 	if (maxw == -1) maxw = w;
@@ -241,16 +243,18 @@ _elm_win_shutdown(void)
 void
 _elm_win_rescale(void)
 {
-   Eina_List *l;
-   
-   for (l = _elm_win_list; l; l = l->next) elm_widget_theme(l->data);
+   const Eina_List *l;
+   Evas_Object *obj;
+   EINA_LIST_FOREACH(_elm_win_list, l, obj)
+     elm_widget_theme(obj);
 }
 
 EAPI Evas_Object *
 elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 {
    Elm_Win *win;
-   Eina_List *l;
+   const Eina_List *l;
+   const char *fontpath;
    
    win = ELM_NEW(Elm_Win);
    switch (_elm_config->engine)
@@ -316,8 +320,8 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    ecore_evas_callback_resize_set(win->ee, _elm_win_resize);
    evas_image_cache_set(win->evas, _elm_config->image_cache * 1024);
    evas_font_cache_set(win->evas, _elm_config->font_cache * 1024);
-   for (l = _elm_config->font_dirs; l; l = l->next)
-     evas_font_path_append(win->evas, l->data);
+   EINA_LIST_FOREACH(_elm_config->font_dirs, l, fontpath)
+     evas_font_path_append(win->evas, fontpath);
    if (_elm_config->font_hinting == 0)
      evas_font_hinting_set(win->evas, EVAS_FONT_HINTING_NONE);
    else if (_elm_config->font_hinting == 1)

@@ -2,7 +2,6 @@
 #include "elm_priv.h"
 
 typedef struct _Widget_Data Widget_Data;
-typedef struct _Item Item;
 
 struct _Widget_Data
 {
@@ -11,7 +10,7 @@ struct _Widget_Data
    Eina_List *items;
 };
 
-struct _Item
+struct _Elm_Hoversel_Item
 {
    Evas_Object *obj;
    const char *label;
@@ -71,7 +70,7 @@ _hover_clicked(void *data, Evas_Object *obj, void *event_info)
 static void
 _item_clicked(void *data, Evas_Object *obj, void *event_info)
 {
-   Item *it = data;
+   Elm_Hoversel_Item *it = data;
    Evas_Object *obj2 = it->obj;
    elm_hoversel_hover_end(obj2);
    if (it->func) it->func(it->data, obj2, it);
@@ -84,7 +83,9 @@ _button_clicked(void *data, Evas_Object *obj, void *event_info)
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
    Evas_Object *bt, *bx, *ic;
-   Eina_List *l;
+   const Eina_List *l;
+   const Elm_Hoversel_Item *it;
+
    wd->hover = elm_hover_add(data);
    elm_hover_style_set(wd->hover, "hoversel_vertical");
    evas_object_smart_callback_add(wd->hover, "clicked", _hover_clicked, data);
@@ -93,10 +94,9 @@ _button_clicked(void *data, Evas_Object *obj, void *event_info)
 
    bx = elm_box_add(wd->hover);
    elm_box_homogenous_set(bx, 1);
-   
-   for (l = wd->items; l; l = l->next)
+
+   EINA_LIST_FOREACH(wd->items, l, it)
      {
-        Item *it = l->data;
         bt = elm_button_add(wd->hover);
         elm_button_style_set(bt, "hoversel_vertical_entry");
         elm_button_label_set(bt, it->label);
@@ -203,7 +203,7 @@ elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   Item *it = calloc(1, sizeof(Item));
+   Elm_Hoversel_Item *it = calloc(1, sizeof(Elm_Hoversel_Item));
    if (!it) return NULL;
    wd->items = eina_list_append(wd->items, it);
    it->obj = obj;
@@ -212,13 +212,12 @@ elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file
    it->icon_type = icon_type;
    it->func = func;
    it->data = (void *)data;
-   return (Elm_Hoversel_Item *)it;
+   return it;
 }
 
 EAPI void
-elm_hoversel_item_del(Elm_Hoversel_Item *item)
+elm_hoversel_item_del(Elm_Hoversel_Item *it)
 {
-   Item *it = (Item *)item;
    Widget_Data *wd = elm_widget_data_get(it->obj);
    if (!wd) return;
    elm_hoversel_hover_end(it->obj);

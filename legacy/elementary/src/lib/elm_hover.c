@@ -96,22 +96,20 @@ static void
 _reval_content(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Eina_List *l;
-   for (l = wd->subs; l; l = l->next)
-     {
-	Subinfo *si = l->data;
-        edje_object_part_swallow(wd->cov, si->swallow, si->obj);
-     }
+   const Eina_List *l;
+   const Subinfo *si;
+   EINA_LIST_FOREACH(wd->subs, l, si)
+     edje_object_part_swallow(wd->cov, si->swallow, si->obj);
 }
 
 static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   Eina_List *l;
-   for (l = wd->subs; l; l = l->next)
+   const Eina_List *l;
+   const Subinfo *si;
+   EINA_LIST_FOREACH(wd->subs, l, si)
      {
-	Subinfo *si = l->data;
 	if (si->obj == obj)
 	  {
 	     edje_object_part_swallow(wd->cov, si->swallow, si->obj);
@@ -126,10 +124,9 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
    Eina_List *l;
-
-   for (l = wd->subs; l; l = l->next)
+   Subinfo *si;
+   EINA_LIST_FOREACH(wd->subs, l, si)
      {
-	Subinfo *si = l->data;
 	if (si->obj == sub)
 	  {
 	     evas_object_event_callback_del
@@ -146,15 +143,15 @@ static void
 _hov_show_do(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Eina_List *l;
+   const Eina_List *l;
+   const Subinfo *si;
    if (wd->cov)
      {
 	evas_object_show(wd->cov);
 	edje_object_signal_emit(wd->cov, "elm,action,show", "elm");
      }
-   for (l = wd->subs; l; l = l->next)
+   EINA_LIST_FOREACH(wd->subs, l, si)
      {
-	Subinfo *si = l->data;
 	char buf[1024];
 	if (!strncmp(si->swallow, "elm.swallow.slot.", 17))
 	  {
@@ -187,15 +184,15 @@ static void
 _hov_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   Eina_List *l;
+   const Eina_List *l;
+   const Subinfo *si;
    if (wd->cov)
      {
 	edje_object_signal_emit(wd->cov, "elm,action,hide", "elm");
 	evas_object_hide(wd->cov);
      }
-   for (l = wd->subs; l; l = l->next)
+   EINA_LIST_FOREACH(wd->subs, l, si)
      {
-	Subinfo *si = l->data;
 	char buf[1024];
 	if (!strncmp(si->swallow, "elm.swallow.slot.", 17))
 	  {
@@ -349,13 +346,12 @@ elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conten
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Subinfo *si;
-   Eina_List *l;
+   const Eina_List *l;
    char buf[1024];
 
    snprintf(buf, sizeof(buf), "elm.swallow.slot.%s", swallow);
-   for (l = wd->subs; l; l = l->next)
+   EINA_LIST_FOREACH(wd->subs, l, si)
      {
-	si = l->data;
 	if (!strcmp(buf, si->swallow))
 	  {
 	     if (content == si->obj) return;

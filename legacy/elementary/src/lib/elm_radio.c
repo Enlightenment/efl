@@ -117,19 +117,27 @@ _state_set(Evas_Object *obj, Evas_Bool state)
 }
 
 static void
+_state_set_all(Widget_Data *wd)
+{
+   const Eina_List *l;
+   Evas_Object *child;
+
+   EINA_LIST_FOREACH(wd->group->radios, l, child)
+     {
+        Widget_Data *wd2 = elm_widget_data_get(child);
+        if (wd2->value == wd->group->value) _state_set(child, 1);
+        else _state_set(child, 0);
+     }
+}
+
+static void
 _signal_radio_on(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   Eina_List *l;
    if (wd->group->value == wd->value) return;
    wd->group->value = wd->value;
    if (wd->group->valuep) *(wd->group->valuep) = wd->group->value;
-   for (l = wd->group->radios; l; l = l->next)
-     {
-        Widget_Data *wd2 = elm_widget_data_get(l->data);
-        if (wd2->value == wd->group->value) _state_set(l->data, 1);
-        else _state_set(l->data, 0);
-     }
+   _state_set_all(wd);
    evas_object_smart_callback_call(data, "changed", NULL);
 }
 
@@ -233,16 +241,12 @@ EAPI void
 elm_radio_value_set(Evas_Object *obj, int value)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Eina_List *l;
+   const Eina_List *l;
+   Evas_Object *child;
    if (value == wd->group->value) return;
    wd->group->value = value;
    if (wd->group->valuep) *(wd->group->valuep) = wd->group->value;
-   for (l = wd->group->radios; l; l = l->next)
-     {
-        Widget_Data *wd2 = elm_widget_data_get(l->data);
-        if (wd2->value == wd->group->value) _state_set(l->data, 1);
-        else _state_set(l->data, 0);
-     }
+   _state_set_all(wd);
 }
 
 EAPI int
@@ -262,15 +266,11 @@ elm_radio_value_pointer_set(Evas_Object *obj, int *valuep)
         wd->group->valuep = valuep;
 	if (*(wd->group->valuep) != wd->group->value)
 	  {
-             Eina_List *l;
-             
+             const Eina_List *l;
+	     Evas_Object *child;
+
              wd->group->value = *(wd->group->valuep);
-             for (l = wd->group->radios; l; l = l->next)
-	       {
-                  Widget_Data *wd2 = elm_widget_data_get(l->data);
-                  if (wd2->value == wd->group->value) _state_set(l->data, 1);
-                  else _state_set(l->data, 0);
-               }
+	     _state_set_all(wd);
           }
      }
    else

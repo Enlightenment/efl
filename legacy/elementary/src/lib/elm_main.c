@@ -534,7 +534,8 @@ elm_quicklaunch_exe_path_get(const char *exe)
 {
    static char *path = NULL;
    static Eina_List *pathlist = NULL;
-   Eina_List *l;
+   const char *pathitr;
+   const Eina_List *l;
    char buf[PATH_MAX];
    if (exe[0] == '/') return strdup(exe);
    if ((exe[0] == '.') && (exe[1] == '/')) return strdup(exe);
@@ -568,9 +569,9 @@ elm_quicklaunch_exe_path_get(const char *exe)
                }
           }
      }
-   for (l = pathlist; l; l = l->next)
+   EINA_LIST_FOREACH(pathlist, l, pathitr)
      {
-        snprintf(buf, sizeof(buf), "%s/%s", (char *)l->data, exe);
+        snprintf(buf, sizeof(buf), "%s/%s", pathitr, exe);
         if (access(buf, R_OK | X_OK) == 0) return strdup(buf);
      }
    return NULL;

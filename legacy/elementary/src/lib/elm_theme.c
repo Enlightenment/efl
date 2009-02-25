@@ -49,7 +49,8 @@ _elm_theme_theme_element_try(const char *home, const char *f, const char *group)
 static const char *
 _elm_theme_group_file_find(const char *group)
 {
-   Eina_List *l;
+   const Eina_List *l;
+   const char *f;
    char *p;
    static const char *home = NULL;
    const char *file = eina_hash_find(cache, group);
@@ -59,19 +60,19 @@ _elm_theme_group_file_find(const char *group)
         home = getenv("HOME");
         if (!home) home = "";
      }
-   for (l = overlay; l; l = l->next)
+   EINA_LIST_FOREACH(overlay, l, f)
      {
-        file = _elm_theme_theme_element_try(home, l->data, group);
+        file = _elm_theme_theme_element_try(home, f, group);
         if (file) return file;
      }
-   for (l = themes; l; l = l->next)
+   EINA_LIST_FOREACH(themes, l, f)
      {
-        file = _elm_theme_theme_element_try(home, l->data, group);
+        file = _elm_theme_theme_element_try(home, f, group);
         if (file) return file;
      }
-   for (l = extension; l; l = l->next)
+   EINA_LIST_FOREACH(extension, l, f)
      {
-        file = _elm_theme_theme_element_try(home, l->data, group);
+        file = _elm_theme_theme_element_try(home, f, group);
         if (file) return file;
      }
    return NULL;

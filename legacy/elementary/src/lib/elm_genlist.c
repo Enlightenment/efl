@@ -279,13 +279,20 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
      }
    else
      {
-        for (l = it->wd->selected; l;)
-          {
-             Elm_Genlist_Item *it2 = l->data;
-             l = l->next;
-             if ((it2 != it) && (it2->selected)) _item_unselect(it2);
+	if (!it->selected)
+	  {
+	     Widget_Data *wd = it->wd;
+	     while (wd->selected)
+	       _item_unselect(wd->selected->data);
+	     _item_select(it);
+	  }
+	else
+	  {
+	     const Eina_List *l, *l_next;
+	     Elm_Genlist_Item *it2;
+	     EINA_LIST_FOREACH_SAFE(it->wd->selected, l, l_next, it2)
+	       if (it2 != it) _item_unselect(it2);
           }
-        if (!it->selected) _item_select(it);
      }
 }
 
@@ -326,12 +333,12 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
    
    if (it->itc->func.label_get)
      {
-        Eina_List *l;
-        
+	const Eina_List *l;
+	const char *key;
+
         it->labels = _stringlist_get(edje_object_data_get(it->base, "labels"));
-        for (l = it->labels; l; l = l->next)
+	EINA_LIST_FOREACH(it->labels, l, key)
           {
-             const char *key = l->data;
              char *s = it->itc->func.label_get(it->data, it->wd->obj, l->data);
              if (s)
                {
@@ -342,12 +349,12 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
      }
    if (it->itc->func.icon_get)
      {
-        Eina_List *l;
-        
+	const Eina_List *l;
+	const char *key;
+
         it->icons = _stringlist_get(edje_object_data_get(it->base, "icons"));
-        for (l = it->icons; l; l = l->next)
+	EINA_LIST_FOREACH(it->icons, l, key)
           {
-             const char *key = l->data;
              Evas_Object *ic = it->itc->func.icon_get(it->data, it->wd->obj, l->data);
              if (ic)
                {
@@ -360,12 +367,12 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
      }
    if (it->itc->func.state_get)
      {
-        Eina_List *l;
-        
+	const Eina_List *l;
+	const char *key;
+
         it->states = _stringlist_get(edje_object_data_get(it->base, "states"));
-        for (l = it->states; l; l = l->next)
+	EINA_LIST_FOREACH(it->states, l, key)
           {
-             const char *key = l->data;
              Evas_Bool on = it->itc->func.state_get(it->data, it->wd->obj, l->data);
              if (on)
                {
@@ -411,14 +418,14 @@ _item_unrealize(Elm_Genlist_Item *it)
 static int
 _item_block_recalc(Item_Block *itb, int in)
 {
-   Eina_List *l;
+   const Eina_List *l;
+   Elm_Genlist_Item *it;
    Evas_Coord minw = 0, minh = 0;
    int showme = 0;
    Evas_Coord y = 0;
-   
-   for (l = itb->items; l; l = l->next)
+
+   EINA_LIST_FOREACH(itb->items, l, it)
      {
-        Elm_Genlist_Item *it = l->data;
         if (it->delete_me) continue;
         showme |= it->showme;
         if (!itb->realized)
@@ -446,11 +453,11 @@ _item_block_recalc(Item_Block *itb, int in)
 static void
 _item_block_realize(Item_Block *itb, int in)
 {
-   Eina_List *l;
+   const Eina_List *l;
+   Elm_Genlist_Item *it;
    if (itb->realized) return;
-   for (l = itb->items; l; l = l->next)
+   EINA_LIST_FOREACH(itb->items, l, it)
      {
-        Elm_Genlist_Item *it = l->data;
         if (it->delete_me) continue;
         _item_realize(it, in, 0);
         in++;
@@ -461,12 +468,12 @@ _item_block_realize(Item_Block *itb, int in)
 static void
 _item_block_unrealize(Item_Block *itb)
 {
-   Eina_List *l;
-   
+   const Eina_List *l;
+   Elm_Genlist_Item *it;
+
    if (!itb->realized) return;
-   for (l = itb->items; l; l = l->next)
+   EINA_LIST_FOREACH(itb->items, l, it)
      {
-        Elm_Genlist_Item *it = l->data;
         _item_unrealize(it);
      }
    itb->realized = 0;
@@ -475,14 +482,13 @@ _item_block_unrealize(Item_Block *itb)
 static void
 _item_block_position(Item_Block *itb)
 {
-   Eina_List *l;
+   const Eina_List *l;
+   Elm_Genlist_Item *it;
    Evas_Coord y = 0, ox, oy;
    
    evas_object_geometry_get(itb->wd->pan_smart, &ox, &oy, NULL, NULL);
-   for (l = itb->items; l; l = l->next)
+   EINA_LIST_FOREACH(itb->items, l, it)
      {
-        Elm_Genlist_Item *it = l->data;
-        
         if (it->delete_me) continue;
         it->x = 0;
         it->y = y;
