@@ -1,8 +1,6 @@
 #ifndef _ECORE_DATA_H
 # define _ECORE_DATA_H
 
-#include <Eina.h>
-
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -31,6 +29,8 @@
 
 /* we need this for size_t */
 #include <stddef.h>
+
+#include <Eina.h>
 
 /**
  * @file Ecore_Data.h
@@ -300,7 +300,7 @@ extern "C" {
 
    struct _ecore_path_group
      {
-	Ecore_List *paths;
+	Eina_List *paths;
      };
    
    /*
@@ -331,7 +331,7 @@ extern "C" {
    /*
     * Get a list of all the available files in a path set
     */
-   EAPI Ecore_List * ecore_path_group_available_get(Ecore_Path_Group *group);
+   EAPI Eina_List * ecore_path_group_available_get(Ecore_Path_Group *group);
    
    
    typedef struct _ecore_plugin Ecore_Plugin;
@@ -355,7 +355,7 @@ extern "C" {
     */
    EAPI void *ecore_plugin_symbol_get(Ecore_Plugin * plugin, const char *symbol_name);
 
-   EAPI Ecore_List *ecore_plugin_available_get(Ecore_Path_Group *group);
+   EAPI Eina_List *ecore_plugin_available_get(Ecore_Path_Group *group);
 
 
    typedef struct _ecore_heap Ecore_Sheap;

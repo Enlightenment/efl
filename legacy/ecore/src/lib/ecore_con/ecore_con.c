@@ -57,7 +57,7 @@ EAPI int ECORE_CON_EVENT_SERVER_DEL = 0;
 EAPI int ECORE_CON_EVENT_CLIENT_DATA = 0;
 EAPI int ECORE_CON_EVENT_SERVER_DATA = 0;
 
-static Ecore_List *servers = NULL;
+static Eina_List *servers = NULL;
 static int init_count = 0;
 
 #define LENGTH_OF_SOCKADDR_UN(s) (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
@@ -94,8 +94,6 @@ ecore_con_init(void)
    ecore_con_dns_init();
    ecore_con_info_init();
 
-   servers = ecore_list_new();
-
    return init_count;
 }
 
@@ -110,10 +108,8 @@ ecore_con_shutdown(void)
 {
    if (--init_count != 0) return init_count;
 
-   while (!ecore_list_empty_is(servers))
-     _ecore_con_server_free(ecore_list_first_remove(servers));
-   ecore_list_destroy(servers);
-   servers = NULL;
+   while (servers)
+     _ecore_con_server_free(eina_list_data_get(servers));
 
    ecore_con_info_shutdown();
    ecore_con_dns_shutdown();
@@ -239,7 +235,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 	socket_unix.sun_family = AF_UNIX;
 	if (type == ECORE_CON_LOCAL_ABSTRACT)
 	  {
-#ifdef HAVE_ABSTRACT_SOCKETS
+#ifdef HAVE_ABSTRACT_SOCKET
 	     /* . is a placeholder */
 	     snprintf(socket_unix.sun_path, sizeof(socket_unix.sun_path), ".%s", name);
 	     /* first char null indicates abstract namespace */
@@ -285,7 +281,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
         if (!ecore_con_info_udp_listen(svr, _ecore_con_cb_udp_listen, svr)) goto error;
      }
 
-   ecore_list_append(servers, svr);
+   servers = eina_list_append(servers, svr);
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_CON_SERVER);
 
    return svr;
@@ -463,7 +459,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
         if (!ecore_con_info_udp_connect(svr, _ecore_con_cb_udp_connect, svr)) goto error;
      }
 
-   ecore_list_append(servers, svr);
+   servers = eina_list_append(servers, svr);
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_CON_SERVER);
 
    return svr;
@@ -494,6 +490,8 @@ ecore_con_server_del(Ecore_Con_Server *svr)
 	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_server_del");
 	return NULL;
      }
+   if (svr->delete_me) return NULL;
+
    data = svr->data;
    svr->data = NULL;
    svr->delete_me = 1;
@@ -508,7 +506,6 @@ ecore_con_server_del(Ecore_Con_Server *svr)
    else
      {
 	_ecore_con_server_free(svr);
-	if (ecore_list_goto(servers, svr)) ecore_list_remove(servers);
      }
    return data;
 }
@@ -886,12 +883,8 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
 	  }
      }
    if (svr->write_buf) free(svr->write_buf);
-   while (svr->clients)
-     {
-       cl = eina_list_data_get(svr->clients);
-       svr->clients = eina_list_remove(svr->clients, cl);
+   EINA_LIST_FREE(svr->clients, cl)
        _ecore_con_client_free(cl);
-     }
    if ((svr->created) && (svr->path) && (svr->ppid == getpid()))
      unlink(svr->path);
    if (svr->fd >= 0) close(svr->fd);
@@ -900,6 +893,7 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
    if (svr->path) free(svr->path);
    if (svr->ip) free(svr->ip);
    if (svr->fd_handler) ecore_main_fd_handler_del(svr->fd_handler);
+   servers = eina_list_remove(servers, svr);
    free(svr);
 }
 
@@ -1389,7 +1383,7 @@ static int
 _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {
    Ecore_Con_Server   *svr;
-   Ecore_Con_Client *cl;
+   Ecore_Con_Client *cl = NULL;
 
    svr = data;
    if (svr->dead) return 1;

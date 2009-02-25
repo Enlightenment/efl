@@ -141,7 +141,6 @@ efreet_ini_parse(const char *file)
 
             if (line_start[header_length] == ']')
             {
-                Eina_Hash *old;
                 const char *header;
 
                 header = alloca(header_length * sizeof(unsigned char));
@@ -180,7 +179,6 @@ efreet_ini_parse(const char *file)
         if (sep < line_length)
         {
             const char *key, *value;
-            char *old;
             int key_end, value_start, value_end;
 
             /* trim whitespace from end of key */

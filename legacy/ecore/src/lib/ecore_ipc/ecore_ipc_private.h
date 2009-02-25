@@ -39,7 +39,6 @@ __attribute__ ((packed));
 
 struct _Ecore_Ipc_Client
 {
-   Ecore_List        __list_data;
    ECORE_MAGIC;
    Ecore_Con_Client  *client;
    void              *data;
@@ -57,11 +56,10 @@ struct _Ecore_Ipc_Client
    
 struct _Ecore_Ipc_Server
 {
-   Ecore_List        __list_data;
    ECORE_MAGIC;
    Ecore_Con_Server *server;
-   Ecore_Ipc_Client *clients;
-   Ecore_List       *client_list;
+   Eina_List        *clients;
+   Eina_List        *client_list;
    void              *data;
    unsigned char     *buf;
    int                buf_size;

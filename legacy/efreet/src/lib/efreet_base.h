@@ -16,10 +16,10 @@
 #include <Ecore_Data.h>
 
 EAPI const char *efreet_data_home_get(void);
-EAPI Ecore_List *efreet_data_dirs_get(void);
+EAPI Eina_List *efreet_data_dirs_get(void);
 
 EAPI const char *efreet_config_home_get(void);
-EAPI Ecore_List *efreet_config_dirs_get(void);
+EAPI Eina_List *efreet_config_dirs_get(void);
 
 EAPI const char *efreet_cache_home_get(void);
 

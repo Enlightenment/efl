@@ -75,12 +75,12 @@ struct _Efreet_Desktop
                                 the given string as it's WM class or WM name */
     char *url;              /**< URL to access if type is EFREET_TYPE_LINK */
 
-    Ecore_List *only_show_in;   /**< list of environments that should
+    Eina_List  *only_show_in;   /**< list of environments that should
                                                     display the icon */
-    Ecore_List *not_show_in;    /**< list of environments that shoudn't
+    Eina_List  *not_show_in;    /**< list of environments that shoudn't
                                                     display the icon */
-    Ecore_List *categories;     /**< Categories in which item should be shown */
-    Ecore_List *mime_types;     /**< The mime types supppored by this app */
+    Eina_List  *categories;     /**< Categories in which item should be shown */
+    Eina_List  *mime_types;     /**< The mime types supppored by this app */
 
     unsigned char no_display:1;        /**< Don't display this application in menus */
     unsigned char hidden:1;            /**< User delete the item */
@@ -103,21 +103,21 @@ EAPI int               efreet_desktop_save_as(Efreet_Desktop *desktop,
                                                 const char *file);
 
 EAPI void              efreet_desktop_exec(Efreet_Desktop *desktop,
-                                      Ecore_List *files, void *data);
+                                           Eina_List *files, void *data);
 
 EAPI void              efreet_desktop_environment_set(const char *environment);
 EAPI const char       *efreet_desktop_environment_get(void);
 EAPI void             *efreet_desktop_command_progress_get(Efreet_Desktop *desktop,
-                                         Ecore_List *files,
+                                         Eina_List *files,
                                          Efreet_Desktop_Command_Cb cb_command,
                                          Efreet_Desktop_Progress_Cb cb_prog,
                                          void *data);
 EAPI void              *efreet_desktop_command_get(Efreet_Desktop *desktop,
-                                         Ecore_List *files,
+                                         Eina_List *files,
                                          Efreet_Desktop_Command_Cb func,
                                          void *data);
-EAPI Ecore_List *      efreet_desktop_command_local_get(Efreet_Desktop *desktop,
-                                         Ecore_List *files);
+EAPI Eina_List *      efreet_desktop_command_local_get(Efreet_Desktop *desktop,
+                                         Eina_List *files);
 
 EAPI unsigned int      efreet_desktop_category_count_get(Efreet_Desktop *desktop);
 EAPI void              efreet_desktop_category_add(Efreet_Desktop *desktop,
@@ -133,8 +133,8 @@ EAPI int               efreet_desktop_type_alias (int from_type,
                                              const char *alias);
 EAPI void             *efreet_desktop_type_data_get(Efreet_Desktop *desktop);
 
-EAPI Ecore_List       *efreet_desktop_string_list_parse(const char *string);
-EAPI char             *efreet_desktop_string_list_join(Ecore_List *list);
+EAPI Eina_List        *efreet_desktop_string_list_parse(const char *string);
+EAPI char             *efreet_desktop_string_list_join(Eina_List *list);
 
 EAPI void              efreet_desktop_cache_flush(void);
 

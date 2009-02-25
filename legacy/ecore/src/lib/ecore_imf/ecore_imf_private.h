@@ -29,10 +29,10 @@ struct _Ecore_IMF_Module
 
 void               ecore_imf_module_init(void);
 void               ecore_imf_module_shutdown(void);
-Ecore_List        *ecore_imf_module_available_get(void);
+Eina_List         *ecore_imf_module_available_get(void);
 Ecore_IMF_Module  *ecore_imf_module_get(const char *ctx_id);
 Ecore_IMF_Context *ecore_imf_module_context_create(const char *ctx_id);
-Ecore_List        *ecore_imf_module_context_ids_get(void);
-Ecore_List        *ecore_imf_module_context_ids_by_canvas_type_get(const char *canvas_type);
+Eina_List         *ecore_imf_module_context_ids_get(void);
+Eina_List         *ecore_imf_module_context_ids_by_canvas_type_get(const char *canvas_type);
 
 #endif

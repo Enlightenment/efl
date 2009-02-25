@@ -71,10 +71,7 @@
  * If x is a valid pointer destroy x and set to NULL
  */
 #define IF_FREE_LIST(x) do { \
-    if (x) { \
-        Ecore_List *__tmp; __tmp = (x); (x) = NULL; ecore_list_destroy(__tmp); \
-    } \
-    (x) = NULL; \
+     x = eina_list_free(x);			\
 } while (0)
 
 /**
@@ -146,7 +143,7 @@ struct Efreet_Desktop_Command
   Efreet_Desktop_Progress_Cb cb_progress;
   void *data;
 
-  Ecore_List *files; /**< list of Efreet_Desktop_Command_File */
+  Eina_List *files; /**< list of Efreet_Desktop_Command_File */
 };
 
 /**
@@ -178,8 +175,8 @@ void efreet_icon_shutdown(void);
 
 int efreet_menu_init(void);
 void efreet_menu_shutdown(void);
-Ecore_List *efreet_default_dirs_get(const char *user_dir,
-                                    Ecore_List *system_dirs,
+Eina_List *efreet_default_dirs_get(const char *user_dir,
+                                    Eina_List *system_dirs,
                                     const char *suffix);
 
 int efreet_ini_init(void);

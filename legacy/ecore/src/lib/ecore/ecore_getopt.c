@@ -1635,11 +1635,10 @@ ecore_getopt_parse(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int a
 Eina_List *
 ecore_getopt_list_free(Eina_List *list)
 {
-   while (list)
-     {
-	free(list->data);
-	list = eina_list_remove_list(list, list);
-     }
+   void *data;
+
+   EINA_LIST_FREE(list, data)
+     free(data);
    return NULL;
 }
 

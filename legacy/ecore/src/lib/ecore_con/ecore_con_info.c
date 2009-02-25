@@ -198,9 +198,10 @@ ecore_con_info_get(Ecore_Con_Server *svr,
 	char service[NI_MAXSERV];
 	char hbuf[NI_MAXHOST];
 	char sbuf[NI_MAXSERV];
-	void *tosend;
+	void *tosend = NULL;
 	int tosend_len;
 	int canonname_len = 0;
+	int err;
 
 	/* FIXME with EINA */
 	snprintf(service, NI_MAXSERV, "%i", svr->port);
@@ -210,12 +211,13 @@ ecore_con_info_get(Ecore_Con_Server *svr,
 	    if (result->ai_canonname)
 	      canonname_len = strlen(result->ai_canonname) + 1;
 	    tosend_len = sizeof(Ecore_Con_Info) + result->ai_addrlen + canonname_len;
-	    tosend = malloc(tosend_len);
+
+	    if ((tosend = malloc(tosend_len)));
+	      goto on_error;
+	    memset(tosend, 0, tosend_len);
 	    container = (Ecore_Con_Info *)tosend;
 
 	    container->size = tosend_len;
-	    memset(container->ip, 0, sizeof(container->ip));
-	    memset(container->service, 0, sizeof(container->service));
 
 	    memcpy(&container->info, result, sizeof(struct addrinfo));
 	    memcpy(tosend + sizeof(Ecore_Con_Info), result->ai_addr, result->ai_addrlen);
@@ -228,13 +230,14 @@ ecore_con_info_get(Ecore_Con_Server *svr,
 		memcpy(container->ip, hbuf, sizeof(container->ip));
 		memcpy(container->service, sbuf, sizeof(container->service));
 	      }
-	    write(fd[1], tosend, tosend_len);
+	    err = write(fd[1], tosend, tosend_len);
 
 	    free(tosend);
 	  }
 	else
-	  write(fd[1], "", 1);
+	  err = write(fd[1], "", 1);
 
+on_error:
 	close(fd[1]);
 # ifdef __USE_ISOC99
 	_Exit(0);

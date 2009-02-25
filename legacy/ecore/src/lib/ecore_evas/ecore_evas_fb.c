@@ -23,7 +23,7 @@ static int _ecore_evas_init_count = 0;
 
 static int _ecore_evas_fps_debug = 0;
 static char *ecore_evas_default_display = "0";
-static Ecore_List *ecore_evas_input_devices = NULL;
+static Eina_List *ecore_evas_input_devices = NULL;
 static Ecore_Evas *ecore_evases = NULL;
 static Ecore_Event_Handler *ecore_evas_event_handlers[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
 static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
@@ -76,6 +76,7 @@ static void
 _ecore_evas_fb_lose(void *data __UNUSED__)
 {
    Ecore_List2 *l;
+   Eina_List *ll;
    Ecore_Fb_Input_Device *dev;
 
    for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
@@ -87,8 +88,7 @@ _ecore_evas_fb_lose(void *data __UNUSED__)
      }
    if (ecore_evas_input_devices)
      {
-	ecore_list_first_goto(ecore_evas_input_devices);
-	while ((dev = ecore_list_next(ecore_evas_input_devices)))
+	EINA_LIST_FOREACH(ecore_evas_input_devices, ll, dev)
 	  ecore_fb_input_device_listen(dev, 0);
      }
 }
@@ -97,6 +97,7 @@ static void
 _ecore_evas_fb_gain(void *data __UNUSED__)
 {
    Ecore_List2 *l;
+   Eina_List *l;
    Ecore_Fb_Input_Device *dev;
 
    for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
@@ -112,8 +113,7 @@ _ecore_evas_fb_gain(void *data __UNUSED__)
      }
    if (ecore_evas_input_devices)
      {
-	ecore_list_first_goto(ecore_evas_input_devices);
-	while ((dev = ecore_list_next(ecore_evas_input_devices)))
+	EINA_LIST_FOREACH(ecore_evas_input_devices, ll, dev)
 	  ecore_fb_input_device_listen(dev, 1);
      }
 }
@@ -274,7 +274,6 @@ _ecore_evas_fb_init(int w, int h)
    input_dir = opendir("/dev/input/");
    if (!input_dir) return _ecore_evas_init_count;
    
-   ecore_evas_input_devices = ecore_list_new();
    while ((input_entry = readdir(input_dir)))
      {
 	char device_path[256];
@@ -295,7 +294,7 @@ _ecore_evas_fb_init(int w, int h)
 	       {
 		  ecore_fb_input_device_axis_size_set(device, w, h);
 		  ecore_fb_input_device_listen(device,1);
-		  ecore_list_append(ecore_evas_input_devices, device);
+		  ecore_evas_input_devices = eina_list_append(ecore_evas_input_devices, device);
 		  if (!mouse_handled)
 		    {
 		       ecore_evas_event_handlers[2]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_BUTTON_DOWN, _ecore_evas_event_mouse_button_down, NULL);
@@ -309,7 +308,7 @@ _ecore_evas_fb_init(int w, int h)
 	     else if ((caps & ECORE_FB_INPUT_DEVICE_CAP_KEYS_OR_BUTTONS) && !(caps & ECORE_FB_INPUT_DEVICE_CAP_ABSOLUTE))
 	       {
 		  ecore_fb_input_device_listen(device,1);
-		  ecore_list_append(ecore_evas_input_devices, device);
+		  ecore_evas_input_devices = eina_list_append(ecore_evas_input_devices, device);
 		  if (!keyboard_handled)
 		    {
 		       ecore_evas_event_handlers[0]  = ecore_event_handler_add(ECORE_FB_EVENT_KEY_DOWN, _ecore_evas_event_key_down, NULL);
@@ -480,6 +479,7 @@ _ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int h
 static void
 _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
 {
+   Eina_List *l;
    int resized = 0;
    
    if (((ee->prop.fullscreen) && (on)) ||
@@ -520,9 +520,8 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
      {
 	Ecore_Fb_Input_Device *dev;
 	
-	ecore_list_first_goto(ecore_evas_input_devices);
-	while ((dev = ecore_list_next(ecore_evas_input_devices)))
-	  ecore_fb_input_device_axis_size_set(dev, ee->w, ee->h);
+	EINA_LIST_FOREACH(ecore_evas_input_devices, l, dev)
+	   ecore_fb_input_device_axis_size_set(dev, ee->wn ee->h);
      }
    if (resized)
      {

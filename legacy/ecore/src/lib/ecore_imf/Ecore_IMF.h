@@ -294,8 +294,8 @@ extern "C" {
    EAPI int                           ecore_imf_init(void);
    EAPI int                           ecore_imf_shutdown(void);
 
-   EAPI Ecore_List                   *ecore_imf_context_available_ids_get(void);
-   EAPI Ecore_List                   *ecore_imf_context_available_ids_by_canvas_type_get(const char *canvas_type);
+   EAPI Eina_List                    *ecore_imf_context_available_ids_get(void);
+   EAPI Eina_List                    *ecore_imf_context_available_ids_by_canvas_type_get(const char *canvas_type);
    EAPI const char                   *ecore_imf_context_default_id_get(void);
    EAPI const char                   *ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type);
    EAPI const Ecore_IMF_Context_Info *ecore_imf_context_info_by_id_get(const char *id);

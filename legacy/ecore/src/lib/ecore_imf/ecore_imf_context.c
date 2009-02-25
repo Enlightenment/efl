@@ -24,20 +24,20 @@
 /**
  * Get the list of the available Input Method Context ids.
  *
- * Note that the caller is responsible for freeing the Ecore_List
+ * Note that the caller is responsible for freeing the Eina_List
  * when finished with it. There is no need to finish the list strings.
  *
- * @return Return an Ecore_List of strings;
+ * @return Return an EIna_List of strings;
  *         on failure it returns NULL.
  * @ingroup Ecore_IMF_Context_Group
  */
-EAPI Ecore_List *
+EAPI Eina_List *
 ecore_imf_context_available_ids_get(void)
 {
    return ecore_imf_module_context_ids_get();
 }
 
-EAPI Ecore_List *
+EAPI Eina_List *
 ecore_imf_context_available_ids_by_canvas_type_get(const char *canvas_type)
 {
    return ecore_imf_module_context_ids_by_canvas_type_get(canvas_type);
@@ -85,7 +85,7 @@ EAPI const char *
 ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type)
 {
    const char *id;
-   Ecore_List *modules;
+   Eina_List *modules;
    Ecore_IMF_Module *module;
    char *locale;
    char *tmp;
@@ -113,8 +113,7 @@ ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type)
 
    id = NULL;
 
-   ecore_list_first_goto(modules);
-   while ((module = ecore_list_next(modules)))
+   EINA_LIST_FREE(modules, module)
      {
 	if (canvas_type &&
 	    strcmp(module->info->canvas_type, canvas_type) == 0)
@@ -135,7 +134,6 @@ ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type)
 	      p = q ? q + 1 : NULL;
 	  }
      }
-   ecore_list_destroy(modules);
 
    free(locale);
    return id;

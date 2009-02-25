@@ -45,11 +45,12 @@ ecore_path_group_new(void)
 EAPI void
 ecore_path_group_del(Ecore_Path_Group *group)
 {
+   char *path;
+
    CHECK_PARAM_POINTER("group", group);
 
-   if (group->paths)
-     ecore_list_destroy(group->paths);
-
+   EINA_LIST_FREE(group->paths, path)
+     free(path);
    free(group);
 }
 
@@ -65,13 +66,7 @@ ecore_path_group_add(Ecore_Path_Group *group, const char *path)
    CHECK_PARAM_POINTER("group", group);
    CHECK_PARAM_POINTER("path", path);
 
-   if (!group->paths)
-     {
-	group->paths = ecore_list_new();
-	ecore_list_free_cb_set(group->paths, free);
-     }
-
-   ecore_list_append(group->paths, strdup(path));
+   group->paths = eina_list_append(group->paths, strdup(path));
 }
 
 /**
@@ -94,16 +89,16 @@ ecore_path_group_remove(Ecore_Path_Group *group, const char *path)
    /*
     * Find the path in the list of available paths
     */
-   ecore_list_first_goto(group->paths);
-
-   while ((found = ecore_list_current(group->paths)) && strcmp(found, path))
-     ecore_list_next(group->paths);
+   found = eina_list_search_unsorted(group->paths, strcmp, path);
 
    /*
     * If the path is found, remove and free it
     */
    if (found)
-     ecore_list_remove_destroy(group->paths);
+     {
+	group->paths = eina_list_remove(group->paths, found);
+	free(found);
+     }
 }
 
 /**
@@ -117,6 +112,7 @@ ecore_path_group_remove(Ecore_Path_Group *group, const char *path)
 EAPI char *
 ecore_path_group_find(Ecore_Path_Group *group, const char *name)
 {
+   Eina_List *l;
    int r;
    char *p;
    struct stat st;
@@ -131,15 +127,13 @@ ecore_path_group_find(Ecore_Path_Group *group, const char *name)
    /*
     * Search the paths of the path group for the specified file name
     */
-   ecore_list_first_goto(group->paths);
-   p = ecore_list_next(group->paths);
-   do
+   EINA_LIST_FOREACH(group->paths, l, p)
      {
 	snprintf(path, PATH_MAX, "%s/%s", p, name);
 	r = stat(path, &st);
+	if ((r >= 0) && S_ISREG(st.st_mode))
+	  break;
      }
-   while (((r < 0) || !S_ISREG(st.st_mode)) &&
-	  (p = ecore_list_next(group->paths)));
 
    if (p)
      p = strdup(path);
@@ -154,20 +148,19 @@ ecore_path_group_find(Ecore_Path_Group *group, const char *name)
  *          identified by @p group_id.  @c NULL otherwise.
  * @ingroup Ecore_Path_Group
  */
-EAPI Ecore_List *
+EAPI Eina_List *
 ecore_path_group_available_get(Ecore_Path_Group *group)
 {
-   Ecore_List *avail = NULL;
+   Eina_List *avail = NULL;
+   Eina_List *l;
    char *path;
 
    CHECK_PARAM_POINTER_RETURN("group", group, NULL);
 
-   if (!group->paths || ecore_list_empty_is(group->paths))
+   if (!group->paths || !eina_list_count(group->paths))
      return NULL;
 
-   ecore_list_first_goto(group->paths);
-
-   while ((path = ecore_list_next(group->paths)) != NULL)
+   EINA_LIST_FOREACH(group->paths, l, path)
      {
 	DIR *dir;
 	struct stat st;
@@ -203,13 +196,11 @@ ecore_path_group_available_get(Ecore_Path_Group *group)
 
 	     strncpy(n, d->d_name, l - 2);
 */
-	     if (!avail)
-	       avail = ecore_list_new();
-
-/*	     ecore_list_append(avail, strdup(n));*/
-	     ecore_list_append(avail, strdup(d->d_name));
+/*	     avail = eina_list_append(avail, strdup(n));*/
+	     avail = eina_list_append(avail, strdup(d->d_name));
 	  }
      }
 
    return avail;
 }
+

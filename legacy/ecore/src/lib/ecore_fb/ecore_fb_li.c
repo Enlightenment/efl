@@ -11,7 +11,7 @@
 
 #define CLICK_THRESHOLD_DEFAULT 0.25
 
-static Ecore_List *_ecore_fb_li_devices = NULL;
+static Eina_List *_ecore_fb_li_devices = NULL;
 
 static const char *_ecore_fb_li_kbd_syms[128 * 6] =
 {
@@ -374,9 +374,6 @@ ecore_fb_input_device_open(const char *dev)
 	device = calloc(1, sizeof(Ecore_Fb_Input_Device));
 	if(!device) return NULL;
 
-	if(!_ecore_fb_li_devices)
-		_ecore_fb_li_devices = ecore_list_new();
-
 	if((fd = open(dev, O_RDONLY, O_NONBLOCK)) < 0)
 	{
 		fprintf(stderr, "[ecore_fb_li:device_open] %s %s", dev, strerror(errno));
@@ -433,7 +430,7 @@ ecore_fb_input_device_open(const char *dev)
 			break;
 		}
 	}
-	ecore_list_append(_ecore_fb_li_devices, device);
+	_ecore_fb_li_devices = eina_list_append(_ecore_fb_li_devices, device);
 	return device;
 
 	error_caps:
@@ -450,8 +447,7 @@ ecore_fb_input_device_close(Ecore_Fb_Input_Device *dev)
 	/* close the fd */
 	close(dev->fd);
 	/* remove the element from the list */
-	if(ecore_list_goto(_ecore_fb_li_devices, dev))
-		ecore_list_remove(_ecore_fb_li_devices);
+	_ecore_fb_li_devices = eina_list_remove(_ecore_fb_li_devices, dev);
 	free(dev);
 }
 

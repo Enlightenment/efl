@@ -117,29 +117,28 @@ ecore_file_monitor_poll_add(const char *path,
 	if (ecore_file_is_dir(em->path))
 	  {
 	     /* Check for subdirs */
-	     Ecore_List *files;
+	     Eina_List *files;
 	     char *file;
 
 	     files = ecore_file_ls(em->path);
-	     if (files)
-	       {
-		  while ((file = ecore_list_next(files)))
+	     EINA_LIST_FREE(files, file)
 		    {
 		       Ecore_File *f;
 		       char buf[PATH_MAX];
 
 		       f = calloc(1, sizeof(Ecore_File));
 		       if (!f)
+		    {
+		       free(file);
 			 continue;
+		    }
 
 		       snprintf(buf, sizeof(buf), "%s/%s", em->path, file);
-		       f->name = strdup(file);
+		  f->name = file;
 		       f->mtime = ecore_file_mod_time(buf);
 		       f->is_dir = ecore_file_is_dir(buf);
 		       em->files = _ecore_list2_append(em->files, f);
 		    }
-		  ecore_list_destroy(files);
-	       }
 	  }
      }
    else
@@ -307,7 +306,8 @@ _ecore_file_monitor_poll_check(Ecore_File_Monitor *em)
 	/* Check for new files */
 	if (ECORE_FILE_MONITOR_POLL(em)->mtime < mtime)
 	  {
-	     Ecore_List *files;
+	     Eina_List *files;
+	     Eina_List *l;
 	     char *file;
 
 	     /* Files have been added or removed */
@@ -315,7 +315,7 @@ _ecore_file_monitor_poll_check(Ecore_File_Monitor *em)
 	     if (files)
 	       { 
 		  /* Are we a directory? We should check first, rather than rely on null here*/
-		  while ((file = ecore_list_next(files)))
+		  EINA_LIST_FOREACH(files, l, file)
 		    {
 		       Ecore_File *f;
 		       char buf[PATH_MAX];
@@ -331,7 +331,7 @@ _ecore_file_monitor_poll_check(Ecore_File_Monitor *em)
 		       
 		       f->name = strdup(file);
 		       f->mtime = ecore_file_mod_time(buf);
-		       f->is_dir = ecore_file_is_dir(buf);
+		       f->is_dir = ecore_file_mod_time(buf);
 		       if (f->is_dir)
 			 event = ECORE_FILE_EVENT_CREATED_DIRECTORY;
 		       else
@@ -339,7 +339,12 @@ _ecore_file_monitor_poll_check(Ecore_File_Monitor *em)
 		       em->func(em->data, em, event, buf);
 		       em->files = _ecore_list2_append(em->files, f);
 		    }
-		  ecore_list_destroy(files);
+		  while (files)
+		    {
+		       file = eina_list_data_get(files);
+		       free(file);
+		       files = eina_list_remove_list(files, files);
+		    }
 	       }
 	     
 	     if (!ecore_file_is_dir(em->path))

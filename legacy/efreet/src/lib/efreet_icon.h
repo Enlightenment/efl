@@ -66,17 +66,11 @@ struct Efreet_Icon_Theme
     char *example_icon;   /**< Icon to use as an example of the theme */
 
     /* An icon theme can have multiple directories that store it's icons. We
-     * need to be able to find a search each one. If count is 1 then path
-     * will be a char * pointing to the directory. If count > 1 then path
-     * will be an Ecore_List of char *'s pointing to the directories */
-    struct
-    {
-        void *path;       /**< The paths */
-        int count;        /**< The number of path's */
-    } paths;              /**< The paths to this theme */
+     * need to be able to find a search each one. */
 
-    Ecore_List *inherits;       /**< Icon themes we inherit from */
-    Ecore_List *directories;    /**< List of subdirectories for this theme */
+    Eina_List *paths;          /**< The paths */
+    Eina_List *inherits;       /**< Icon themes we inherit from */
+    Eina_List *directories;    /**< List of subdirectories for this theme */
 
     double last_cache_check;    /**< Last time the cache was checked */
 
@@ -135,7 +129,7 @@ struct Efreet_Icon
     } embedded_text_rectangle;  /**< Rectangle where text can
                                         be displayed on the icon */
 
-    Ecore_List *attach_points; /**< List of points to be used as anchor
+    Eina_List *attach_points; /**< List of points to be used as anchor
                                         points for emblems/overlays */
 
     unsigned int ref_count;    /**< References to this icon */
@@ -161,14 +155,14 @@ struct Efreet_Icon_Point
 EAPI const char        *efreet_icon_user_dir_get(void);
 EAPI void               efreet_icon_extension_add(const char *ext);
 
-EAPI Ecore_List        *efreet_icon_extra_list_get(void);
-EAPI Ecore_List        *efreet_icon_theme_list_get(void);
+EAPI Eina_List         *efreet_icon_extra_list_get(void);
+EAPI Eina_List         *efreet_icon_theme_list_get(void);
 EAPI Efreet_Icon_Theme *efreet_icon_theme_find(const char *theme_name);
 EAPI Efreet_Icon       *efreet_icon_find(const char *theme_name,
                                             const char *icon,
                                             unsigned int size);
 EAPI char              *efreet_icon_list_find(const char *theme_name,
-                                                Ecore_List *icons,
+                                                Eina_List *icons,
                                                 unsigned int size);
 EAPI char              *efreet_icon_path_find(const char *theme_name,
                                                 const char *icon,

@@ -241,7 +241,7 @@ EAPI int ECORE_IPC_EVENT_CLIENT_DATA = 0;
 EAPI int ECORE_IPC_EVENT_SERVER_DATA = 0;
 
 static int                  init_count = 0;
-static Ecore_Ipc_Server    *servers = NULL;
+static Eina_List           *servers = NULL;
 static Ecore_Event_Handler *handler[6];
 
 /**
@@ -300,7 +300,7 @@ ecore_ipc_shutdown(void)
 
    if (--init_count != 0) return init_count;
 
-   while (servers) ecore_ipc_server_del(servers);
+   while (servers) ecore_ipc_server_del(eina_list_data_get(servers));
 
    for (i = 0; i < 6; i++)
      ecore_event_handler_del(handler[i]);
@@ -364,9 +364,7 @@ ecore_ipc_server_add(Ecore_Ipc_Type compl_type, const char *name, int port, cons
      }
    svr->max_buf_size = 32 * 1024;
    svr->data = (void *)data;
-   svr->client_list = ecore_list_new();
-   ecore_list_init(svr->client_list);
-   servers = _ecore_list2_append(servers, svr);
+   servers = eina_list_append(servers, svr);
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_IPC_SERVER);
    return svr;
 }
@@ -422,7 +420,7 @@ ecore_ipc_server_connect(Ecore_Ipc_Type compl_type, char *name, int port, const 
      }
    svr->max_buf_size = -1;
    svr->data = (void *)data;
-   servers = _ecore_list2_append(servers, svr);
+   servers = eina_list_append(servers, svr);
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_IPC_SERVER);
    return svr;
 }
@@ -444,17 +442,21 @@ ecore_ipc_server_del(Ecore_Ipc_Server *svr)
 			 "ecore_ipc_server_del");
 	return NULL;
      }
+   if (svr->delete_me) return NULL;
+
    data = svr->data;
    svr->data = NULL;
    svr->delete_me = 1;
    if (svr->event_count == 0)
      {
-	while (svr->clients)
-	  ecore_ipc_client_del((Ecore_Ipc_Client *)svr->clients);
+	Ecore_Ipc_Client *cl;
+
+	EINA_LIST_FREE(svr->clients, cl)
+	  ecore_ipc_client_del(cl);
 	ecore_con_server_del(svr->server);
-	servers = _ecore_list2_remove(servers, svr);
+	servers = eina_list_remove(servers, svr);
+
 	if (svr->buf) free(svr->buf);
-	if (svr->client_list) ecore_list_destroy(svr->client_list);
 	ECORE_MAGIC_SET(svr, ECORE_MAGIC_NONE);
 	free(svr);
      }
@@ -500,10 +502,10 @@ ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr)
 /**
  * Retrieves the list of clients for this server.
  * @param   svr The given IPC server.
- * @return  An Ecore_List with the clients.
+ * @return  An Eina_List with the clients.
  * @ingroup Ecore_IPC_Server_Group
  */
-EAPI Ecore_List *
+EAPI Eina_List *
 ecore_ipc_server_clients_get(Ecore_Ipc_Server *svr)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_IPC_SERVER))
@@ -1000,7 +1002,7 @@ _ecore_ipc_event_client_add(void *data __UNUSED__, int ev_type __UNUSED__, void 
    Ecore_Con_Event_Client_Add *e;
 
    e = ev;
-   if (!_ecore_list2_find(servers, ecore_con_server_data_get(ecore_con_client_server_get(e->client)))) return 1;
+   if (!eina_list_data_find(servers, ecore_con_server_data_get(ecore_con_client_server_get(e->client)))) return 1;
    /* handling code here */
      {
 	Ecore_Ipc_Client *cl;
@@ -1014,7 +1016,7 @@ _ecore_ipc_event_client_add(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	cl->max_buf_size = 32 * 1024;
 	ecore_con_client_data_set(cl->client, (void *)cl);
 	svr->clients = _ecore_list2_append(svr->clients, cl);
-	ecore_list_append(svr->client_list, cl);
+	svr->client_list = eina_list_append(svr->client_list, cl);
 	if (!cl->delete_me)
 	  {
 	     Ecore_Ipc_Event_Client_Add *e2;
@@ -1038,7 +1040,7 @@ _ecore_ipc_event_client_del(void *data __UNUSED__, int ev_type __UNUSED__, void 
    Ecore_Con_Event_Client_Del *e;
 
    e = ev;
-   if (!_ecore_list2_find(servers, ecore_con_server_data_get(ecore_con_client_server_get(e->client)))) return 1;
+   if (!eina_list_data_find(servers, ecore_con_server_data_get(ecore_con_client_server_get(e->client)))) return 1;
    /* handling code here */
      {
 	Ecore_Ipc_Client *cl;
@@ -1049,9 +1051,7 @@ _ecore_ipc_event_client_del(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	     Ecore_Ipc_Server *svr;
 
 	     svr = ecore_con_server_data_get(ecore_con_client_server_get(e->client));
-	     ecore_list_goto(svr->client_list, cl);
-	     ecore_list_remove(svr->client_list);
-	     ecore_list_first_goto(svr->client_list);
+	     svr->client_list = eina_list_remove(svr->client_list, cl);
 	     if (!cl->delete_me)
 	       {
 		  e2 = calloc(1, sizeof(Ecore_Ipc_Event_Client_Del));
@@ -1074,7 +1074,7 @@ _ecore_ipc_event_server_add(void *data __UNUSED__, int ev_type __UNUSED__, void 
    Ecore_Con_Event_Server_Add *e;
 
    e = ev;
-   if (!_ecore_list2_find(servers, ecore_con_server_data_get(e->server))) return 1;
+   if (!eina_list_data_find(servers, ecore_con_server_data_get(e->server))) return 1;
    /* handling code here */
      {
 	Ecore_Ipc_Server *svr;
@@ -1103,7 +1103,7 @@ _ecore_ipc_event_server_del(void *data __UNUSED__, int ev_type __UNUSED__, void 
    Ecore_Con_Event_Server_Del *e;
 
    e = ev;
-   if (!_ecore_list2_find(servers, ecore_con_server_data_get(e->server))) return 1;
+   if (!eina_list_data_find(servers, ecore_con_server_data_get(e->server))) return 1;
    /* handling code here */
      {
 	Ecore_Ipc_Server *svr;
@@ -1173,7 +1173,7 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
    Ecore_Con_Event_Client_Data *e;
 
    e = ev;
-   if (!_ecore_list2_find(servers, ecore_con_server_data_get(ecore_con_client_server_get(e->client)))) return 1;
+   if (!eina_list_data_find(servers, ecore_con_server_data_get(ecore_con_client_server_get(e->client)))) return 1;
    /* handling code here */
      {
 	Ecore_Ipc_Client *cl;
@@ -1365,7 +1365,7 @@ _ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void
    Ecore_Con_Event_Server_Data *e;
 
    e = ev;
-   if (!_ecore_list2_find(servers, ecore_con_server_data_get(e->server))) return 1;
+   if (!eina_list_data_find(servers, ecore_con_server_data_get(e->server))) return 1;
    /* handling code here */
      {
 	Ecore_Ipc_Server *svr;

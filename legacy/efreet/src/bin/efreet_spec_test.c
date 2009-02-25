@@ -35,11 +35,11 @@ static void
 dump(Efreet_Menu *menu, const char *path)
 {
     Efreet_Menu *entry;
+    Eina_List *l;
 
     if (!menu || !menu->entries) return;
 
-    ecore_list_first_goto(menu->entries);
-    while ((entry = ecore_list_next(menu->entries)))
+    EINA_LIST_FOREACH(menu->entries, l, entry)
     {
         if (entry->type == EFREET_MENU_ENTRY_DESKTOP)
         {

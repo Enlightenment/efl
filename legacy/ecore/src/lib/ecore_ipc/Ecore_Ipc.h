@@ -297,7 +297,7 @@ EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v);
    EAPI void             *ecore_ipc_server_del(Ecore_Ipc_Server *svr);
    EAPI void             *ecore_ipc_server_data_get(Ecore_Ipc_Server *svr);
    EAPI int               ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr);
-   EAPI Ecore_List       *ecore_ipc_server_clients_get(Ecore_Ipc_Server *svr);
+   EAPI Eina_List        *ecore_ipc_server_clients_get(Ecore_Ipc_Server *svr);
    /* FIXME: this needs to become an ipc message */
    EAPI int               ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int ref_to, int response, const void *data, int size);
    EAPI void              ecore_ipc_server_client_limit_set(Ecore_Ipc_Server *svr, int client_limit, char reject_excess_clients);

@@ -80,7 +80,7 @@ static void _ecore_con_event_url_free(void *data __UNUSED__, void *ev);
 static int _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match);
 
 static Ecore_Idler	*_fd_idler_handler = NULL;
-static Ecore_List	*_url_con_list = NULL;
+static Eina_List	*_url_con_list = NULL;
 static CURLM		*curlm = NULL;
 static fd_set		 _current_fd_set;
 static int		 init_count = 0;
@@ -129,6 +129,8 @@ EAPI int
 ecore_con_url_init(void)
 {
 #ifdef HAVE_CURL
+   Ecore_Con_Url *url_con;
+
    if (!ECORE_CON_EVENT_URL_DATA)
      {
 	ECORE_CON_EVENT_URL_DATA = ecore_event_type_new();
@@ -136,27 +138,21 @@ ecore_con_url_init(void)
 	ECORE_CON_EVENT_URL_PROGRESS = ecore_event_type_new();
      }
 
-   if (!_url_con_list)
-     {
-	_url_con_list = ecore_list_new();
-	if (!_url_con_list) return 0;
-     }
-
    if (!curlm)
      {
 	FD_ZERO(&_current_fd_set);
 	if (curl_global_init(CURL_GLOBAL_NOTHING))
 	  {
-	     ecore_list_destroy(_url_con_list);
-	     _url_con_list = NULL;
+	     EINA_LIST_FREE(_url_con_list, url_con)
+	       ecore_con_url_destroy(url_con);
 	     return 0;
 	  }
 
 	curlm = curl_multi_init();
 	if (!curlm)
 	  {
-	     ecore_list_destroy(_url_con_list);
-	     _url_con_list = NULL;
+	     EINA_LIST_FREE(_url_con_list, url_con)
+	       ecore_con_url_destroy(url_con);
 	     return 0;
 	  }
      }
@@ -176,24 +172,14 @@ EAPI int
 ecore_con_url_shutdown(void)
 {
 #ifdef HAVE_CURL
+   Ecore_Con_Url *url_con;
 
    if (!init_count)
      return 0;
 
    init_count--;
-   if (_url_con_list)
-     {
-	if (!ecore_list_empty_is(_url_con_list))
-	  {
-	     Ecore_Con_Url *url_con;
-	     while ((url_con = ecore_list_first(_url_con_list)))
-	       {
+   EINA_LIST_FREE(_url_con_list, url_con)
 		  ecore_con_url_destroy(url_con);
-	       }
-	  }
-	ecore_list_destroy(_url_con_list);
-	_url_con_list = NULL;
-     }
 
    if (curlm)
      {
@@ -286,8 +272,7 @@ ecore_con_url_destroy(Ecore_Con_Url *url_con)
      {
 	if (url_con->active)
 	  {
-	     if (ecore_list_find(_url_con_list, ecore_direct_compare, url_con) == url_con)
-	       ecore_list_remove(_url_con_list);
+	     _url_con_list = eina_list_remove(_url_con_list, url_con);
 	     url_con->active = 0;
 
 	     curl_multi_remove_handle(curlm, url_con->curl_easy);
@@ -615,14 +600,14 @@ ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con, int use_epsv)
 static int
 _ecore_con_url_suspend_fd_handler(void)
 {
+   Eina_List		*l;
    Ecore_Con_Url	*url_con;
    int			 deleted = 0;
 
    if (!_url_con_list)
      return 0;
 
-   ecore_list_first_goto(_url_con_list);
-   while ((url_con = ecore_list_current(_url_con_list)))
+   EINA_LIST_FOREACH(_url_con_list, l, url_con)
      {
 	if (url_con->active && url_con->fd_handler)
 	  {
@@ -630,7 +615,6 @@ _ecore_con_url_suspend_fd_handler(void)
 	     url_con->fd_handler = NULL;
 	     deleted++;
 	  }
-	ecore_list_next(_url_con_list);
      }
 
    return deleted;
@@ -639,25 +623,23 @@ _ecore_con_url_suspend_fd_handler(void)
 static int
 _ecore_con_url_restart_fd_handler(void)
 {
+   Eina_List		*l;
    Ecore_Con_Url	*url_con;
    int			 activated = 0;
 
    if (!_url_con_list)
      return 0;
 
-   ecore_list_first_goto(_url_con_list);
-   while ((url_con = ecore_list_current(_url_con_list)))
+   EINA_LIST_FOREACH(_url_con_list, l, url_con)
      {
-	if (url_con->fd_handler == NULL
-	    && url_con->fd != -1)
+	if (url_con->fd_handler == NULL && url_con->fd != -1)
 	  {
-	     url_con->fd_handler = ecore_main_fd_handler_add(url_con->fd,
+	     url_con->fd_handler == ecore_main_fd_handler_add(url_con->fd,
 							     url_con->flags,
 							     _ecore_con_url_fd_handler,
 							     NULL, NULL, NULL);
 	     activated++;
 	  }
-	ecore_list_next(_url_con_list);
      }
 
    return activated;
@@ -781,7 +763,7 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
    int still_running;
    int completed_immediately = 0;
 
-   ecore_list_append(_url_con_list, url_con);
+   _url_con_list = eina_list_append(_url_con_list, url_con);
 
    url_con->active = 1;
    curl_multi_add_handle(curlm, url_con->curl_easy);
@@ -874,7 +856,9 @@ _ecore_con_url_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __
 static int
 _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
 {
+   Eina_List *l;
    Ecore_Con_Url *url_con;
+   Ecore_Con_Event_Url_Complete *e;
    CURLMsg *curlmsg;
    int n_remaining;
    int job_matched = 0;
@@ -885,16 +869,13 @@ _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
 	if (curlmsg->msg != CURLMSG_DONE) continue;
 
 	/* find the job which is done */
-	ecore_list_first_goto(_url_con_list);
-	while ((url_con = ecore_list_current(_url_con_list)))
+	EINA_LIST_FOREACH(_url_con_list, l, url_con)
 	  {
 	     if (curlmsg->easy_handle == url_con->curl_easy)
 	       {
-		  /* We have found the completed job in our job list */
-		  if (url_con_to_match && (url_con == url_con_to_match)) {
+		  if (url_con_to_match && (url_con == url_con_to_match))
 		       job_matched = 1;
-		  }
-		  if (url_con->fd != -1)
+		  if(url_con->fd != -1)
 		    {
 		       FD_CLR(url_con->fd, &_current_fd_set);
 		       if (url_con->fd_handler)
@@ -902,27 +883,22 @@ _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
 		       url_con->fd = -1;
 		       url_con->fd_handler = NULL;
 		    }
-		  ecore_list_remove(_url_con_list);
+		  _url_con_list = eina_list_remove(_url_con_list, url_con);
 		  url_con->active = 0;
-		    {
-		       Ecore_Con_Event_Url_Complete *e;
 		       e = calloc(1, sizeof(Ecore_Con_Event_Url_Complete));
 		       if (e)
 			 {
 			    e->url_con = url_con;
-
 			    e->status = 0;
 			    curl_easy_getinfo(curlmsg->easy_handle, CURLINFO_RESPONSE_CODE, &e->status);
-
 			    _url_complete_push_event(ECORE_CON_EVENT_URL_COMPLETE, e);
 			 }
-		    }
 		  curl_multi_remove_handle(curlm, url_con->curl_easy);
 		  break;
 	       }
-	     ecore_list_next(_url_con_list);
 	  }
      }
+
    return job_matched;
 }
 

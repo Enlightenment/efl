@@ -45,7 +45,7 @@ static void _ecore_file_download_abort(Ecore_File_Download_Job *job);
 static int			 init = 0;
 static Ecore_Event_Handler	*_url_complete_handler = NULL;
 static Ecore_Event_Handler	*_url_progress_download = NULL;
-static Ecore_List		*_job_list;
+static Eina_List		*_job_list;
 
 EAPI int
 ecore_file_download_init(void)
@@ -59,11 +59,6 @@ ecore_file_download_init(void)
 	_url_complete_handler = ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _ecore_file_download_url_complete_cb, NULL);
 	_url_progress_download = ecore_event_handler_add(ECORE_CON_EVENT_URL_PROGRESS, _ecore_file_download_url_progress_cb, NULL);
 #endif
-     }
-   if (!_job_list)
-     {
-	_job_list = ecore_list_new();
-	if (!_job_list) return 0;
      }
 
    return 1;
@@ -84,9 +79,7 @@ ecore_file_download_shutdown(void)
 	  ecore_event_handler_del(_url_progress_download);
 	_url_complete_handler = NULL;
 	_url_progress_download = NULL;
-	if (_job_list)
-	  ecore_list_destroy(_job_list);
-	_job_list = NULL;
+	ecore_file_download_abort_all();
      }
 
    return ecore_con_url_shutdown();
@@ -98,16 +91,10 @@ ecore_file_download_shutdown(void)
 EAPI void
 ecore_file_download_abort_all(void)
 {
-   if (!ecore_list_empty_is(_job_list))
-     {
 	Ecore_File_Download_Job *job;
 
-	while ((job = ecore_list_first_remove(_job_list)))
-	  {
+   EINA_LIST_FREE(_job_list, job)
 	     _ecore_file_download_abort(job);
-	  }
-     }
-   ecore_list_clear(_job_list);
 }
 
 /**
@@ -212,10 +199,10 @@ _ecore_file_download_url_complete_cb(void *data, int type, void *event)
    Ecore_Con_Event_Url_Complete	*ev = event;
    Ecore_File_Download_Job	*job;
 
-   job = ecore_list_find(_job_list, _ecore_file_download_url_compare_job, ev->url_con);
+   job = eina_list_search_unsorted(_job_list, _ecore_file_download_url_compare_job, ev->url_con);
    if (!ECORE_MAGIC_CHECK(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB)) return 1;
 
-   ecore_list_remove(_job_list);
+   _job_list = eina_list_remove(_job_list, job);
 
    if (job->completion_cb)
      job->completion_cb(ecore_con_url_data_get(job->url_con), job->dst, !ev->status);
@@ -233,7 +220,7 @@ _ecore_file_download_url_progress_cb(void *data, int type, void *event)
    Ecore_Con_Event_Url_Progress	*ev = event;
    Ecore_File_Download_Job	*job;
 
-   job = ecore_list_find(_job_list, _ecore_file_download_url_compare_job, ev->url_con);
+   job = eina_list_search_unsorted(_job_list, _ecore_file_download_url_compare_job, ev->url_con);
    if (!ECORE_MAGIC_CHECK(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB)) return 1;
 
    if (job->progress_cb)
@@ -241,7 +228,7 @@ _ecore_file_download_url_progress_cb(void *data, int type, void *event)
 			  (long int) ev->down.total, (long int) ev->down.now,
 			  (long int) ev->up.total, (long int) ev->up.now) != 0)
        {
-	  ecore_list_remove(_job_list);
+	  _job_list = eina_list_remove(_job_list, job);
 	  _ecore_file_download_abort(job);
        }
 
@@ -285,7 +272,7 @@ _ecore_file_download_curl(const char *url, const char *dst,
 
    job->completion_cb = completion_cb;
    job->progress_cb = progress_cb;
-   ecore_list_append(_job_list, job);
+   _job_list = eina_list_append(_job_list, job);
 
    ecore_con_url_send(job->url_con, NULL, 0, NULL);
 

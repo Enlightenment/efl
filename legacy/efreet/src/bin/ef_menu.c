@@ -8,20 +8,20 @@
 static void
 ef_menu_desktop_exec(Efreet_Menu *menu)
 {
+    Eina_List *l;
+
     if (menu->entries)
     {
         Efreet_Desktop *desktop;
 
-        ecore_list_first_goto(menu->entries);
-        while ((desktop = ecore_list_next(menu->entries)))
+        EINA_LIST_FOREACH(menu->entries, l, desktop)
             efreet_desktop_exec(desktop, NULL);
     }
     if (menu->sub_menus)
     {
         Efreet_Menu *sub_menu;
 
-        ecore_list_first_goto(menu->sub_menus);
-        while ((sub_menu = ecore_list_next(menu->sub_menus)))
+        EINA_LIST_FOREACH(menu->sub_menus, l, sub_menu)
             ef_menu_desktop_exec(sub_menu);
     }
 }
@@ -113,8 +113,7 @@ ef_cb_menu_edit(void)
     efreet_menu_dump(menu, "");
     printf("\n");
 #endif
-    ecore_list_first_goto(menu->entries);
-    entry = ecore_list_current(menu->entries);
+    entry = eina_list_data_get(menu->entries);
     if (desktop != entry->desktop)
     {
         efreet_menu_free(menu);
@@ -127,8 +126,7 @@ ef_cb_menu_edit(void)
     efreet_menu_dump(menu, "");
     printf("\n");
 #endif
-    ecore_list_index_goto(menu->entries, 2);
-    entry = ecore_list_current(menu->entries);
+    entry = eina_list_nth(menu->entries, 2);
     if (desktop != entry->desktop)
     {
         efreet_menu_free(menu);
@@ -141,8 +139,7 @@ ef_cb_menu_edit(void)
     efreet_menu_dump(menu, "");
     printf("\n");
 #endif
-    ecore_list_last_goto(menu->entries);
-    entry = ecore_list_current(menu->entries);
+    entry = eina_list_data_get(eina_list_last(menu->entries));
     if (desktop != entry->desktop)
     {
         efreet_menu_free(menu);

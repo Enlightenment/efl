@@ -18,7 +18,7 @@ static Eina_Hash *efreet_desktop_cache = NULL;
 /**
  * A list of the desktop types available
  */
-static Ecore_List *efreet_desktop_types = NULL;
+static Eina_List *efreet_desktop_types = NULL;
 
 /**
  * A unique id for each tmp file created while building a command
@@ -74,7 +74,7 @@ static char *efreet_string_append(char *dest, int *size,
                                     int *len, const char *src);
 static char *efreet_string_append_char(char *dest, int *size,
                                         int *len, char c);
-static Ecore_List *efreet_desktop_command_build(Efreet_Desktop_Command *command);
+static Eina_List *efreet_desktop_command_build(Efreet_Desktop_Command *command);
 static void efreet_desktop_command_free(Efreet_Desktop_Command *command);
 static char *efreet_desktop_command_append_quoted(char *dest, int *size,
                                                     int *len, char *src);
@@ -106,7 +106,7 @@ static void *efreet_desktop_exec_cb(void *data, Efreet_Desktop *desktop,
 
 static void efreet_desktop_type_info_free(Efreet_Desktop_Type_Info *info);
 static int efreet_desktop_command_flags_get(Efreet_Desktop *desktop);
-static void *efreet_desktop_command_execs_process(Efreet_Desktop_Command *command, Ecore_List *execs);
+static void *efreet_desktop_command_execs_process(Efreet_Desktop_Command *command, Eina_List *execs);
 
 /**
  * @internal
@@ -121,10 +121,7 @@ efreet_desktop_init(void)
     if (!ecore_file_init()) return --init;
 
     efreet_desktop_cache = eina_hash_string_superfast_new(NULL);
-
-    efreet_desktop_types = ecore_list_new();
-    ecore_list_free_cb_set(efreet_desktop_types,
-                            ECORE_FREE_CB(efreet_desktop_type_info_free));
+    efreet_desktop_types = NULL;
 
     EFREET_DESKTOP_TYPE_APPLICATION = efreet_desktop_type_add("Application",
                                         efreet_desktop_application_fields_parse,
@@ -147,13 +144,21 @@ efreet_desktop_init(void)
 int
 efreet_desktop_shutdown(void)
 {
+    Efreet_Desktop_Type_Info *info;
+
     if (--init) return init;
     ecore_file_shutdown();
     eina_stringshare_shutdown();
 
     IF_RELEASE(desktop_environment);
     IF_FREE_HASH(efreet_desktop_cache);
-    IF_FREE_LIST(efreet_desktop_types);
+    while (efreet_desktop_types)
+    {
+        info = eina_list_data_get(efreet_desktop_types);
+        efreet_desktop_type_info_free(info);
+        efreet_desktop_types = eina_list_remove_list(efreet_desktop_types,
+                                                     efreet_desktop_types);
+    }
 
     return init;
 }
@@ -353,6 +358,8 @@ efreet_desktop_read(Efreet_Desktop *desktop)
 static void
 efreet_desktop_clear(Efreet_Desktop *desktop)
 {
+    char *data;
+
     IF_FREE(desktop->name);
     IF_FREE(desktop->generic_name);
     IF_FREE(desktop->comment);
@@ -366,15 +373,25 @@ efreet_desktop_clear(Efreet_Desktop *desktop)
 
     IF_FREE_LIST(desktop->only_show_in);
     IF_FREE_LIST(desktop->not_show_in);
-    IF_FREE_LIST(desktop->categories);
-    IF_FREE_LIST(desktop->mime_types);
+    while (desktop->categories)
+    {
+        data = eina_list_data_get(desktop->categories);
+        eina_stringshare_del(data);
+        desktop->categories = eina_list_remove_list(desktop->categories, desktop->categories);
+    }
+    while (desktop->mime_types)
+    {
+        data = eina_list_data_get(desktop->mime_types);
+        eina_stringshare_del(data);
+        desktop->mime_types = eina_list_remove_list(desktop->mime_types, desktop->mime_types);
+    }
 
     IF_FREE_HASH(desktop->x);
 
     if (desktop->type_data)
     {
         Efreet_Desktop_Type_Info *info;
-        info = ecore_list_index_goto(efreet_desktop_types, desktop->type);
+        info = eina_list_nth(efreet_desktop_types, desktop->type);
         if (info->free_func)
             info->free_func(desktop->type_data);
     }
@@ -397,7 +414,7 @@ efreet_desktop_save(Efreet_Desktop *desktop)
     efreet_ini_section_add(ini, "Desktop Entry");
     efreet_ini_section_set(ini, "Desktop Entry");
 
-    info = ecore_list_index_goto(efreet_desktop_types, desktop->type);
+    info = eina_list_nth(efreet_desktop_types, desktop->type);
     if (info)
     {
         efreet_ini_string_set(ini, "Type", info->type);
@@ -494,15 +511,24 @@ efreet_desktop_free(Efreet_Desktop *desktop)
 
     IF_FREE_LIST(desktop->only_show_in);
     IF_FREE_LIST(desktop->not_show_in);
-    IF_FREE_LIST(desktop->categories);
-    IF_FREE_LIST(desktop->mime_types);
+
+    while (desktop->categories)
+    {
+        eina_stringshare_del(eina_list_data_get(desktop->categories));
+        desktop->categories = eina_list_remove_list(desktop->categories, desktop->categories);
+    }
+    while (desktop->mime_types)
+    {
+        eina_stringshare_del(eina_list_data_get(desktop->mime_types));
+        desktop->mime_types = eina_list_remove_list(desktop->mime_types, desktop->mime_types);
+    }
 
     IF_FREE_HASH(desktop->x);
 
     if (desktop->type_data)
     {
         Efreet_Desktop_Type_Info *info;
-        info = ecore_list_index_goto(efreet_desktop_types, desktop->type);
+        info = eina_list_nth(efreet_desktop_types, desktop->type);
         if (info->free_func)
             info->free_func(desktop->type_data);
     }
@@ -518,7 +544,7 @@ efreet_desktop_free(Efreet_Desktop *desktop)
  * @brief Parses the @a desktop exec line and returns an Ecore_Exe.
  */
 EAPI void
-efreet_desktop_exec(Efreet_Desktop *desktop, Ecore_List *files, void *data)
+efreet_desktop_exec(Efreet_Desktop *desktop, Eina_List *files, void *data)
 {
     efreet_desktop_command_get(desktop, files, efreet_desktop_exec_cb, data);
 }
@@ -564,7 +590,7 @@ EAPI unsigned int
 efreet_desktop_category_count_get(Efreet_Desktop *desktop)
 {
     if (!desktop || !desktop->categories) return 0;
-    return ecore_list_count(desktop->categories);
+    return eina_list_count(desktop->categories);
 }
 
 /**
@@ -577,17 +603,10 @@ efreet_desktop_category_add(Efreet_Desktop *desktop, const char *category)
 {
     if (!desktop) return;
 
-    if (!desktop->categories)
-    {
-        desktop->categories = ecore_list_new();
-        ecore_list_free_cb_set(desktop->categories,
-                                ECORE_FREE_CB(eina_stringshare_del));
-    }
-    else
-        if (ecore_list_find(desktop->categories,
-                                ECORE_COMPARE_CB(strcmp), category)) return;
+    if (eina_list_search_unsorted(desktop->categories,
+                                  (Eina_Compare_Cb)strcmp, category)) return;
 
-    ecore_list_append(desktop->categories,
+    desktop->categories = eina_list_append(desktop->categories,
                         (void *)eina_stringshare_add(category));
 }
 
@@ -600,17 +619,20 @@ efreet_desktop_category_add(Efreet_Desktop *desktop, const char *category)
 EAPI int
 efreet_desktop_category_del(Efreet_Desktop *desktop, const char *category)
 {
-    int found = 0;
+    char *found = NULL;
+
     if (!desktop || !desktop->categories) return 0;
 
-    if (ecore_list_find(desktop->categories,
-                            ECORE_COMPARE_CB(strcmp), category))
+    if ((found = eina_list_search_unsorted(desktop->categories,
+                                           (Eina_Compare_Cb)strcmp, category)))
     {
-        found = 1;
-        ecore_list_remove(desktop->categories);
+        eina_stringshare_del(found);
+        desktop->categories = eina_list_remove(desktop->categories, found);
+
+        return 1;
     }
 
-    return found;
+    return 0;
 }
 
 /**
@@ -632,7 +654,7 @@ efreet_desktop_type_add(const char *type, Efreet_Desktop_Type_Parse_Cb parse_fun
     info = NEW(Efreet_Desktop_Type_Info, 1);
     if (!info) return 0;
 
-    id = ecore_list_count(efreet_desktop_types);
+    id = eina_list_count(efreet_desktop_types);
 
     info->id = id;
     info->type = strdup(type);
@@ -640,7 +662,7 @@ efreet_desktop_type_add(const char *type, Efreet_Desktop_Type_Parse_Cb parse_fun
     info->save_func = save_func;
     info->free_func = free_func;
 
-    ecore_list_append(efreet_desktop_types, info);
+    efreet_desktop_types = eina_list_append(efreet_desktop_types, info);
 
     return id;
 }
@@ -657,7 +679,7 @@ EAPI int
 efreet_desktop_type_alias(int from_type, const char *alias)
 {
     Efreet_Desktop_Type_Info *info;
-    info = ecore_list_index_goto(efreet_desktop_types, from_type);
+    info = eina_list_nth(efreet_desktop_types, from_type);
     if (!info) return -1;
 
     return efreet_desktop_type_add(alias, info->parse_func, info->save_func, info->free_func);
@@ -696,11 +718,11 @@ static Efreet_Desktop_Type_Info *
 efreet_desktop_type_parse(const char *type_str)
 {
     Efreet_Desktop_Type_Info *info;
+    Eina_List *l;
 
     if (!type_str) return NULL;
 
-    ecore_list_first_goto(efreet_desktop_types);
-    while ((info = ecore_list_next(efreet_desktop_types)))
+    EINA_LIST_FOREACH(efreet_desktop_types, l, info)
     {
         if (!strcmp(info->type, type_str))
             return info;
@@ -711,22 +733,17 @@ efreet_desktop_type_parse(const char *type_str)
 
 /**
  * @param string: the raw string list
- * @return an Ecore_List of ecore string's
+ * @return an Eina_List of ecore string's
  * @brief Parse ';' separate list of strings according to the desktop spec
  */
-EAPI Ecore_List *
+EAPI Eina_List *
 efreet_desktop_string_list_parse(const char *string)
 {
-    Ecore_List *list;
+    Eina_List *list = NULL;
     char *tmp;
     char *s, *p;
 
     if (!string) return NULL;
-
-    list = ecore_list_new();
-    if (!list) return NULL;
-
-    ecore_list_free_cb_set(list, ECORE_FREE_CB(eina_stringshare_del));
 
     tmp = strdup(string);
     s = tmp;
@@ -735,7 +752,7 @@ efreet_desktop_string_list_parse(const char *string)
     {
         if (p > tmp && *(p-1) == '\\') continue;
         *p = '\0';
-        ecore_list_append(list, (void *)eina_stringshare_add(s));
+        list = eina_list_append(list, (void *)eina_stringshare_add(s));
         s = p + 1;
     }
     /* If this is true, the .desktop file does not follow the standard */
@@ -745,7 +762,7 @@ efreet_desktop_string_list_parse(const char *string)
         printf("[Efreet]: Found a string list without ';' "
                 "at the end: %s\n", string);
 #endif
-        ecore_list_append(list, (void *)eina_stringshare_add(s));
+        list = eina_list_append(list, (void *)eina_stringshare_add(s));
     }
 
     free(tmp);
@@ -754,25 +771,25 @@ efreet_desktop_string_list_parse(const char *string)
 }
 
 /**
- * @param list: Ecore_List with strings
+ * @param list: Eina_List with strings
  * @return a raw string list
  * @brief Create a ';' separate list of strings according to the desktop spec
  */
 EAPI char *
-efreet_desktop_string_list_join(Ecore_List *list)
+efreet_desktop_string_list_join(Eina_List *list)
 {
+    Eina_List *l;
     const char *tmp;
     char *string;
     size_t size, pos, len;
 
-    if (ecore_list_empty_is(list)) return strdup("");
+    if (!list) return strdup("");
 
     size = 1024;
     string = malloc(size);
     pos = 0;
 
-    ecore_list_first_goto(list);
-    while ((tmp = ecore_list_next(list)))
+    EINA_LIST_FOREACH(list, l, tmp)
     {
         len = strlen(tmp);
         /* +1 for ';' */
@@ -1041,54 +1058,35 @@ efreet_desktop_x_fields_save(const Eina_Hash *hash, const void *key, void *value
 static int
 efreet_desktop_environment_check(Efreet_Ini *ini)
 {
-    Ecore_List *list;
-    const char *val;
+    Eina_List *list, *l;
+    int found = 0;
+    char *val;
+
+    if (!desktop_environment)
+      return 1;
 
     list = efreet_desktop_string_list_parse(efreet_ini_string_get(ini, "OnlyShowIn"));
     if (list)
     {
-        int found = 0;
-
-        if (desktop_environment)
-        {
-            ecore_list_first_goto(list);
-            while ((val = ecore_list_next(list)))
+       EINA_LIST_FREE(list, val)
             {
                 if (!strcmp(val, desktop_environment))
-                {
                     found = 1;
-                    break;
-                }
-            }
+	    eina_stringshare_del(val);
         }
 
-        ecore_list_destroy(list);
         return found;
     }
 
-    if (desktop_environment)
-    {
-        int found = 0;
-
         list = efreet_desktop_string_list_parse(efreet_ini_string_get(ini, "NotShowIn"));
-        if (list)
-        {
-            ecore_list_first_goto(list);
-            while ((val = ecore_list_next(list)))
+    EINA_LIST_FREE(list, val)
             {
                 if (!strcmp(val, desktop_environment))
-                {
                     found = 1;
-                    break;
-                }
-            }
-            ecore_list_destroy(list);
+	 eina_stringshare_del(val);
         }
 
         return !found;
-    }
-
-    return 1;
 }
 
 
@@ -1102,7 +1100,7 @@ efreet_desktop_environment_check(Efreet_Ini *ini)
  * @brief Get a command to use to execute a desktop entry.
  */
 EAPI void *
-efreet_desktop_command_get(Efreet_Desktop *desktop, Ecore_List *files,
+efreet_desktop_command_get(Efreet_Desktop *desktop, Eina_List *files,
                             Efreet_Desktop_Command_Cb func, void *data)
 {
     return efreet_desktop_command_progress_get(desktop, files, func, NULL, data);
@@ -1116,30 +1114,25 @@ efreet_desktop_command_get(Efreet_Desktop *desktop, Ecore_List *files,
  *
  * The returned list and each of its elements must be freed.
  */
-EAPI Ecore_List *
-efreet_desktop_command_local_get(Efreet_Desktop *desktop, Ecore_List *files)
+EAPI Eina_List *
+efreet_desktop_command_local_get(Efreet_Desktop *desktop, Eina_List *files)
 {
     Efreet_Desktop_Command *command;
     char *file;
-    Ecore_List *execs;
+    Eina_List *execs, *l;
 
     if (!desktop || !desktop->exec) return NULL;
 
     command = NEW(Efreet_Desktop_Command, 1);
     if (!command) return 0;
 
-    command->files = ecore_list_new();
     command->desktop = desktop;
-
-    ecore_list_free_cb_set(command->files,
-                            ECORE_FREE_CB(efreet_desktop_command_file_free));
 
     command->flags = efreet_desktop_command_flags_get(desktop);
     /* get the required info for each file passed in */
     if (files)
     {
-        ecore_list_first_goto(files);
-        while ((file = ecore_list_next(files)))
+        EINA_LIST_FOREACH(files, l, file)
         {
             Efreet_Desktop_Command_File *dcf;
 
@@ -1150,7 +1143,7 @@ efreet_desktop_command_local_get(Efreet_Desktop *desktop, Ecore_List *files)
                 efreet_desktop_command_file_free(dcf);
                 continue;
             }
-            ecore_list_append(command->files, dcf);
+            command->files = eina_list_append(command->files, dcf);
         }
     }
 
@@ -1173,13 +1166,15 @@ efreet_desktop_command_local_get(Efreet_Desktop *desktop, Ecore_List *files)
  * updates for downloading of remote URI's passed in.
  */
 EAPI void *
-efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Ecore_List *files,
+efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Eina_List *files,
                                     Efreet_Desktop_Command_Cb cb_command,
                                     Efreet_Desktop_Progress_Cb cb_progress,
                                     void *data)
 {
     Efreet_Desktop_Command *command;
+    Eina_List *l;
     char *file;
+    char *exec;
     void *ret = NULL;
 
     if (!desktop || !cb_command || !desktop->exec) return NULL;
@@ -1190,34 +1185,34 @@ efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Ecore_List *files,
     command->cb_command = cb_command;
     command->cb_progress = cb_progress;
     command->data = data;
-    command->files = ecore_list_new();
     command->desktop = desktop;
-
-    ecore_list_free_cb_set(command->files,
-                            ECORE_FREE_CB(efreet_desktop_command_file_free));
 
     command->flags = efreet_desktop_command_flags_get(desktop);
     /* get the required info for each file passed in */
     if (files)
     {
-        ecore_list_first_goto(files);
-        while ((file = ecore_list_next(files)))
+        EINA_LIST_FOREACH(files, l, file)
         {
             Efreet_Desktop_Command_File *dcf;
 
             dcf = efreet_desktop_command_file_process(command, file);
             if (!dcf) continue;
-            ecore_list_append(command->files, dcf);
+            command->files = eina_list_append(command->files, dcf);
             command->num_pending += dcf->pending;
         }
     }
 
     if (command->num_pending == 0)
     {
-        Ecore_List *execs;
+        Eina_List *execs;
         execs = efreet_desktop_command_build(command);
         ret = efreet_desktop_command_execs_process(command, execs);
-        ecore_list_destroy(execs);
+        while (execs)
+        {
+            exec = eina_list_data_get(execs);
+            free(exec);
+            execs = eina_list_remove_list(execs, execs);
+        }
         efreet_desktop_command_free(command);
     }
 
@@ -1289,15 +1284,15 @@ efreet_desktop_command_flags_get(Efreet_Desktop *desktop)
  * @param execs
  */
 static void *
-efreet_desktop_command_execs_process(Efreet_Desktop_Command *command, Ecore_List *execs)
+efreet_desktop_command_execs_process(Efreet_Desktop_Command *command, Eina_List *execs)
 {
+    Eina_List *l;
     char *exec;
     int num;
     void *ret = NULL;
    
-    num = ecore_list_count(execs);
-    ecore_list_first_goto(execs);
-    while ((exec = ecore_list_next(execs)))
+    num = eina_list_count(execs);
+    EINA_LIST_FOREACH(execs, l, exec)
     {
         ret = command->cb_command(command->data, command->desktop, exec, --num);
     }
@@ -1313,30 +1308,25 @@ efreet_desktop_command_execs_process(Efreet_Desktop_Command *command, Ecore_List
  * @param command: the command to build
  * @return a list of executable strings
  */
-static Ecore_List *
+static Eina_List *
 efreet_desktop_command_build(Efreet_Desktop_Command *command)
 {
     Efreet_Desktop_Command_File *file = NULL;
-    int first = 1;
-    Ecore_List *execs;
+    Eina_List *execs = NULL;
+    Eina_List *l;
     char *exec;
 
-    execs = ecore_list_new();
-
-    ecore_list_first_goto(command->files);
 
     /* if the Exec field appends multiple, that will run the list to the end,
      * causing this loop to only run once. otherwise, this loop will generate a
      * command for each file in the list. if the list is empty, this
      * will run once, removing any file field codes */
-    while ((file = ecore_list_next(command->files)) || first)
+    EINA_LIST_FOREACH(command->files, l, file)
     {
         const char *p;
         int len = 0;
         int size = PATH_MAX;
         int file_added = 0;
-
-        first = 0;
 
         exec = malloc(size);
         p = command->desktop->exec;
@@ -1437,7 +1427,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
 #endif
         exec[len++] = '\0';
 
-        ecore_list_append(execs, exec);
+        execs = eina_list_append(execs, exec);
 
         /* If no file was added, then the Exec field doesn't contain any file
          * fields (fFuUdDnN). We only want to run the app once in this case. */
@@ -1450,9 +1440,17 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
 static void
 efreet_desktop_command_free(Efreet_Desktop_Command *command)
 {
+    Efreet_Desktop_Command_File *dcf;
+
     if (!command) return;
 
-    IF_FREE_LIST(command->files);
+    while (command->files)
+    {
+        dcf = eina_list_data_get(command->files);
+        efreet_desktop_command_file_free(dcf);
+        command->files = eina_list_remove_list(command->files,
+                                               command->files);
+    }
     FREE(command);
 }
 
@@ -1490,12 +1488,12 @@ efreet_desktop_command_append_multiple(char *dest, int *size, int *len,
                                         char type)
 {
     Efreet_Desktop_Command_File *file;
+    Eina_List *l;
     int first = 1;
 
     if (!command->files) return dest;
 
-    ecore_list_first_goto(command->files);
-    while ((file = ecore_list_next(command->files)))
+    EINA_LIST_FOREACH(command->files, l, file)
     {
         if (first)
             first = 0;
@@ -1759,6 +1757,8 @@ efreet_desktop_cb_download_complete(void *data, const char *file __UNUSED__,
                                                         int status __UNUSED__)
 {
     Efreet_Desktop_Command_File *f;
+    char *exec;
+
     f = data;
 
     /* XXX check status... error handling, etc */
@@ -1767,11 +1767,16 @@ efreet_desktop_cb_download_complete(void *data, const char *file __UNUSED__,
 
     if (f->command->num_pending <= 0)
     {
-        Ecore_List *execs;
+        Eina_List *execs;
         execs = efreet_desktop_command_build(f->command);
         /* TODO: Need to handle the return value from efreet_desktop_command_execs_process */
         efreet_desktop_command_execs_process(f->command, execs);
-        ecore_list_destroy(execs);
+        while (execs)
+        {
+            exec = eina_list_data_get(execs);
+            free(exec);
+            execs = eina_list_remove_list(execs, execs);
+        }
         efreet_desktop_command_free(f->command);
     }
 }

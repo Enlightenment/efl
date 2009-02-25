@@ -46,7 +46,7 @@ struct Efreet_Menu
     const char *icon; /**< Icon for this entry */
 
     Efreet_Desktop *desktop;   /**< The desktop we refer too */
-    Ecore_List     *entries;   /**< The menu items */
+    Eina_List      *entries;   /**< The menu items */
 };
 
 EAPI int              efreet_menu_kde_legacy_init(void);

@@ -364,6 +364,7 @@ _ecore_config_ipc_ecore_exit(void **data)
      }
 
    ecore_ipc_shutdown();
+   ecore_shutdown();
 
    return ret;
 }

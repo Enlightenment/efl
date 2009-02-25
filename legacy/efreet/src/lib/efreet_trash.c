@@ -178,12 +178,12 @@ efreet_trash_empty_trash(void)
  * when you don't need anymore)
  * @brief List all the files and directory currently inside the trash.
  */
-EAPI Ecore_List*
+EAPI Eina_List*
 efreet_trash_ls(void)
 {
     char *infofile;
     char buf[PATH_MAX];
-    Ecore_List *files;
+    Eina_List *files, *l;
 
     // NOTE THIS FUNCTION NOW IS NOT COMPLETE AS I DON'T NEED IT
     // TODO read the name from the infofile instead of the filename
@@ -191,7 +191,7 @@ efreet_trash_ls(void)
     snprintf(buf, PATH_MAX, "%s/files", efreet_trash_dir_get());
     files = ecore_file_ls(buf);
 
-    while ((infofile = ecore_list_next(files)))
+    EINA_LIST_FOREACH(files, l, infofile)
         printf("FILE: %s\n", infofile);
 
     return files;

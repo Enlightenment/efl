@@ -84,7 +84,7 @@ extern "C" {
    EAPI int         ecore_file_can_write    (const char *file);
    EAPI int         ecore_file_can_exec     (const char *file);
    EAPI char       *ecore_file_readlink     (const char *link);
-   EAPI Ecore_List *ecore_file_ls           (const char *dir);
+   EAPI Eina_List  *ecore_file_ls           (const char *dir);
    EAPI char       *ecore_file_app_exe_get  (const char *app);
    EAPI char       *ecore_file_escape_name  (const char *filename);
    EAPI char       *ecore_file_strip_ext    (const char *file);
@@ -100,7 +100,7 @@ extern "C" {
 
    EAPI int         ecore_file_path_dir_exists(const char *in_dir);
    EAPI int         ecore_file_app_installed(const char *exe);
-   EAPI Ecore_List *ecore_file_app_list(void);
+   EAPI Eina_List  *ecore_file_app_list(void);
 
    EAPI int         ecore_file_download(const char *url, const char *dst,
 					void (*completion_cb)(void *data,

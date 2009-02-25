@@ -509,36 +509,32 @@ ecore_file_readlink(const char *link)
  * For more information see the manual pages of strcoll and setlocale.
  * The list will not contain the directory entries for '.' and '..'.
  * @param  dir The name of the directory to list
- * @return Return an Ecore_List containing all the files in the directory;
+ * @return Return an Eina_List containing all the files in the directory;
  *         on failure it returns NULL.
  */
-EAPI Ecore_List *
+EAPI Eina_List *
 ecore_file_ls(const char *dir)
 {
    char               *f;
    DIR                *dirp;
    struct dirent      *dp;
-   Ecore_List         *list;
+   Eina_List         *list = NULL;
 
    dirp = opendir(dir);
    if (!dirp) return NULL;
-
-   list = ecore_list_new();
-   ecore_list_free_cb_set(list, free);
 
    while ((dp = readdir(dirp)))
      {
 	if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
 	  {
 	       f = strdup(dp->d_name);
-	       ecore_list_append(list, f);
+	       list = eina_list_append(list, f);
 	  }
      }
    closedir(dirp);
 
-   ecore_list_sort(list, ECORE_COMPARE_CB(strcoll), ECORE_SORT_MIN);
+   list = eina_list_sort(list, ECORE_SORT_MIN, ECORE_COMPARE_CB(strcoll));
 
-   ecore_list_first_goto(list);
    return list;
 }
 

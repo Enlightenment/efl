@@ -77,34 +77,34 @@ static Efreet_Test tests[] = {
 };
 
 extern char **environ;
-static Ecore_List *environment = NULL;
+static Eina_List *environment = NULL;
 
 void
 environment_store(void)
 {
+    char *env;
     char **e;
 
-    if (environment)
-        ecore_list_clear(environment);
-    else
+    while (environment)
     {
-        environment = ecore_list_new();
-        ecore_list_free_cb_set(environment, ECORE_FREE_CB(free));
+        env = eina_list_data_get(environment);
+        free(env);
+        environment = eina_list_remove_list(environment, environment);
     }
 
     for (e = environ; *e; e++)
-        ecore_list_append(environment, strdup(*e));
+        environment = eina_list_append(environment, strdup(*e));
 }
 
 void
 environment_restore(void)
 {
+    Eina_List *l;
     char *e;
     if (!environment) return;
 
     *environ = NULL;
-    ecore_list_first_goto(environment);
-    while ((e = ecore_list_next(environment)))
+    EINA_LIST_FOREACH(environment, l, e)
         putenv(e);
 }
 
@@ -112,13 +112,12 @@ int
 main(int argc, char ** argv)
 {
     int i, passed = 0, num_tests = 0;
-    Ecore_List *run = NULL;
+    Eina_List *run = NULL;
     double total;
 
     total = ecore_time_get();
     if (argc > 1)
     {
-        run = ecore_list_new();
         for (i = 1; i < argc; i++)
         {
             if ((!strcmp(argv[i], "-h")) ||
@@ -130,7 +129,7 @@ main(int argc, char ** argv)
                 }
                 return 1;
             }
-            ecore_list_append(run, argv[i]);
+            run = eina_list_append(run, argv[i]);
         }
     }
 
@@ -141,7 +140,7 @@ main(int argc, char ** argv)
         double start;
 
         /* we've been given specific tests and it isn't in the list */
-        if (run && !ecore_list_find(run, ECORE_COMPARE_CB(strcasecmp),
+        if (run && !eina_list_search_unsorted(run, ECORE_COMPARE_CB(strcasecmp),
                                                         tests[i].name))
             continue;
 
@@ -166,10 +165,15 @@ main(int argc, char ** argv)
     }
 
     printf("\n-----------------\n");
-    if (environment) ecore_list_destroy(environment);
+    while (environment)
+    {
+        free(eina_list_data_get(environment));
+        environment = eina_list_remove_list(environment, environment);
+    }
     printf("Passed %d of %d tests.\n", passed, num_tests);
 
-    if (run) ecore_list_destroy(run);
+    while (run)
+        run = eina_list_remove_list(run, run);
 
     printf("Total run: %.3f seconds\n", ecore_time_get() - total);
     return 0;

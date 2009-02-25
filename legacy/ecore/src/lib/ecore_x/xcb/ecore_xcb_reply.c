@@ -19,7 +19,7 @@
  *   but its code is commented.
  */
 
-static Ecore_List *_ecore_xcb_cookies = NULL;
+static Eina_List  *_ecore_xcb_cookies = NULL;
 static void       *_ecore_xcb_reply = NULL;
 
 typedef struct _Ecore_Xcb_Data Ecore_Xcb_Data;
@@ -33,35 +33,22 @@ struct _Ecore_Xcb_Data
 int
 _ecore_x_reply_init ()
 {
-   _ecore_xcb_cookies = ecore_list_new();
-   if (!_ecore_xcb_cookies)
-     return 0;
-
-   if (!ecore_list_init(_ecore_xcb_cookies))
-     {
-        ecore_list_destroy(_ecore_xcb_cookies);
-        return 0;
-     }
-
-   if (!ecore_list_free_cb_set(_ecore_xcb_cookies, ECORE_FREE_CB(free)))
-     {
-        ecore_list_destroy(_ecore_xcb_cookies);
-        return 0;
-     }
-
    return 1;
 }
 
 void
 _ecore_x_reply_shutdown ()
 {
+  Ecore_Xcb_Data *data;
+
   if (_ecore_xcb_reply)
     free(_ecore_xcb_reply);
 
    if (!_ecore_xcb_cookies)
      return;
 
-   ecore_list_destroy(_ecore_xcb_cookies);
+   EINA_LIST_FREE(_ecore_xcb_cookies, data)
+     free(data);
 }
 
 void
@@ -78,7 +65,8 @@ _ecore_xcb_cookie_cache (unsigned int cookie)
 
    data->cookie = cookie;
 
-   if (!ecore_list_append(_ecore_xcb_cookies, data))
+   _ecore_xcb_cookies = eina_list_append(_ecore_xcb_cookies, data);
+   if (!eina_list_data_find(_ecore_xcb_cookies, data))
      {
         free(data);
         return;
@@ -94,16 +82,14 @@ _ecore_xcb_cookie_get (void)
    if (!_ecore_xcb_cookies)
      return 0;
 
-   data = ecore_list_first_remove(_ecore_xcb_cookies);
-   if (data)
-     {
+   data = eina_list_data_get(_ecore_xcb_cookies);
+   if (!data) return 0;
+
+   _ecore_xcb_cookies = eina_list_remove_list(_ecore_xcb_cookies, _ecore_xcb_cookies);
         cookie = data->cookie;
         free(data);
 
         return cookie;
-     }
-
-   return 0;
 }
 
 void
