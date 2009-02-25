@@ -136,7 +136,11 @@ extern "C" {
           ELM_WIN_KEYBOARD_PASSWORD
      } Elm_Win_Keyboard_Mode;
 
+#ifndef ELM_LIB_QUICKLAUNCH   
 #define ELM_MAIN() int main(int argc, char **argv) {elm_init(argc, argv); return elm_main(argc, argv);}
+#else
+#define ELM_MAIN() int main(int argc, char **argv) {return elm_quicklaunch_fallback(argc, argv);}
+#endif
    
 /**************************************************************************/   
    /* General calls */
@@ -145,6 +149,17 @@ extern "C" {
    EAPI void         elm_run(void);
    EAPI void         elm_exit(void);
    
+   EAPI void         elm_quicklaunch_init(int argc, char **argv);
+   EAPI void         elm_quicklaunch_sub_init(int argc, char **argv);
+   EAPI void         elm_quicklaunch_sub_shutdown(void);
+   EAPI void         elm_quicklaunch_shutdown(void);
+   EAPI void         elm_quicklaunch_seed(void);
+   EAPI Evas_Bool    elm_quicklaunch_prepare(int argc, char **argv);
+   EAPI Evas_Bool    elm_quicklaunch_fork(int argc, char **argv, char *cwd);
+   EAPI void         elm_quicklaunch_cleanup(void);
+   EAPI int          elm_quicklaunch_fallback(int argc, char **argv);
+   EAPI char        *elm_quicklaunch_exe_path_get(const char *exe);
+       
    EAPI void         elm_object_scale_set(Evas_Object *obj, double scale);
    EAPI double       elm_object_scale_get(Evas_Object *obj);
    EAPI void         elm_object_focus(Evas_Object *obj);
@@ -626,6 +641,13 @@ extern "C" {
 // * test for all bubble styles
 // * test for all frame styles
 // * test for all genlist item styles
+// * test for all button styles
+// * test for all hoversel styles
+// * test for all inwin styles
+// * test for all anchorblock styles
+// * test for all anchorview styles
+// * test more layout in layout
+// * test normal evas (and edje) objects used as children in elm widgets
 // * need a way to attach a "dnd detector" to any object
 // * need a dnd handler (able to hook to dnd detector)
 // * need another sample theme

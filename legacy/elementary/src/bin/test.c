@@ -1,5 +1,5 @@
 #include <Elementary.h>
-
+#ifndef ELM_LIB_QUICKLAUNCH
 static void my_win_del(void *data, Evas_Object *obj, void *event_info);
 static void my_bt_1(void *data, Evas_Object *obj, void *event_info);
 static void my_win_main(void);
@@ -2879,5 +2879,6 @@ elm_main(int argc, char **argv)
    /* exit code */
    return 0;
 }
+#endif
 /* all emeentary apps should use this. but it right after elm_main() */
 ELM_MAIN()

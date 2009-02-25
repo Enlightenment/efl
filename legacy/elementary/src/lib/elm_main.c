@@ -26,6 +26,7 @@ char *_elm_appname = NULL;
 Elm_Config *_elm_config = NULL;
 const char *_elm_data_dir = NULL;
 
+static Ecore_Event_Handler *_elm_exit_handler = NULL;
 static Ecore_Event_Handler *_elm_event_property_change = NULL;
 #ifdef HAVE_ELEMENTARY_X
 static Ecore_X_Atom _elm_atom_enlightenment_scale = 0;
@@ -76,21 +77,36 @@ _elm_rescale(void)
 EAPI void
 elm_init(int argc, char **argv)
 {
+   elm_quicklaunch_init(argc, argv);
+   elm_quicklaunch_sub_init(argc, argv);
+}
+
+EAPI void
+elm_shutdown(void)
+{
+   elm_quicklaunch_sub_shutdown();
+   elm_quicklaunch_shutdown();
+}
+
+static const char *elm_engine, *elm_scale, *elm_theme, *elm_prefix, *elm_data_dir;
+static const char *elm_font_hinting, *elm_font_path, *elm_image_cache;
+static const char *elm_font_cache, *elm_finger_size;
+
+EAPI void
+elm_quicklaunch_init(int argc, char **argv)
+{
    int i;
-   const char *elm_engine, *elm_scale, *elm_theme, *elm_prefix, *elm_data_dir;
-   const char *elm_font_hinting, *elm_font_path, *elm_image_cache;
-   const char *elm_font_cache, *elm_finger_size;
    char buf[PATH_MAX];
    
    eet_init();
-   ecore_init();
+   ecore_init(); 
    ecore_app_args_set(argc, (const char **)argv);
    ecore_file_init();
    evas_init();
    edje_init();
    ecore_evas_init(); // FIXME: check errors
    
-   ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, _elm_signal_exit, NULL);
+   _elm_exit_handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, _elm_signal_exit, NULL);
    
    _elm_appname = strdup(ecore_file_file_get(argv[0]));
 
@@ -154,6 +170,19 @@ elm_init(int argc, char **argv)
    // FIXME: actually load config
    _elm_config = ELM_NEW(Elm_Config);
    _elm_config->engine = ELM_SOFTWARE_X11;
+   _elm_config->thumbscroll_enable = 1;
+   _elm_config->thumbscroll_threshhold = 24;
+   _elm_config->thumbscroll_momentum_threshhold = 100.0;
+   _elm_config->thumbscroll_friction = 1.0;
+   _elm_config->scale = 1.0;
+   _elm_config->font_hinting = 2;
+   _elm_config->font_dirs = NULL;
+   _elm_config->image_cache = 4096;
+   _elm_config->font_cache = 512;
+   _elm_config->finger_size = 40;
+   _elm_config->bgpixmap = 0;
+   _elm_config->compositing = 1;
+   
    if (elm_engine)
      {
         if ((!strcasecmp(elm_engine, "x11")) ||
@@ -190,55 +219,6 @@ elm_init(int argc, char **argv)
           _elm_config->engine = ELM_SOFTWARE_16_WINCE;
      }
    
-   _elm_config->thumbscroll_enable = 1;
-   _elm_config->thumbscroll_threshhold = 24;
-   _elm_config->thumbscroll_momentum_threshhold = 100.0;
-   _elm_config->thumbscroll_friction = 1.0;
-   _elm_config->scale = 1.0;
-   _elm_config->font_hinting = 2;
-   _elm_config->font_dirs = NULL;
-   _elm_config->image_cache = 4096;
-   _elm_config->font_cache = 512;
-   _elm_config->finger_size = 40;
-   
-   _elm_config->bgpixmap = 0;
-   _elm_config->compositing = 1;
-
-   if ((_elm_config->engine == ELM_SOFTWARE_X11) ||
-       (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
-       (_elm_config->engine == ELM_XRENDER_X11) ||
-       (_elm_config->engine == ELM_OPENGL_X11) ||
-       (_elm_config->engine == ELM_SOFTWARE_WIN32) ||
-       (_elm_config->engine == ELM_SOFTWARE_16_WINCE))
-     {
-#ifdef HAVE_ELEMENTARY_X
-	int val = 1000;
-	
-	if (!ecore_x_init(NULL))
-          {
-             EINA_ERROR_PERR("elementary: ERROR. Cannot connect to X11 display. check $DISPLAY variable\n");
-             exit(1);
-          }
-	if (!ecore_x_screen_is_composited(0))
-	  _elm_config->compositing = 0;
-        _elm_atom_enlightenment_scale = ecore_x_atom_get("ENLIGHTENMENT_SCALE");
-        ecore_x_event_mask_set(ecore_x_window_root_first_get(),
-                               ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
-        _elm_event_property_change = ecore_event_handler_add
-          (ECORE_X_EVENT_WINDOW_PROPERTY, _elm_window_property_change, NULL);
-        /* FIXME if quickstart this happens in child */
-	if (ecore_x_window_prop_card32_get(ecore_x_window_root_first_get(),
-					   _elm_atom_enlightenment_scale,
-					   &val, 1) > 0)
-	  {
-	     if (val > 0) _elm_config->scale = (double)val / 1000.0;
-	  }
-#endif        
-      }
-
-   if (elm_scale)
-     _elm_config->scale = atof(elm_scale);
-   
    if (elm_theme)
      _elm_theme_parse(elm_theme);
    else
@@ -272,7 +252,7 @@ elm_init(int argc, char **argv)
                   len = p - pp;
                   strncpy(buf, pp, len);
                   buf[len] = 0;
-                  _elm_config->font_dirs = eina_list_append(_elm_config->font_dirs, buf);
+                  _elm_config->font_dirs = eina_list_append(_elm_config->font_dirs, eina_stringshare_add(buf));
                   if (*p == 0) break;
                   p++;
                   pp = p;
@@ -291,11 +271,6 @@ elm_init(int argc, char **argv)
    if (elm_font_cache)
      _elm_config->font_cache = atoi(elm_font_cache);
 
-   _elm_config->finger_size = 
-     (double)_elm_config->finger_size * _elm_config->scale;
-   if (elm_finger_size)
-     _elm_config->finger_size = atoi(elm_finger_size);
-   
    /* FIXME: implement quickstart below */
    /* if !quickstart return
     * else
@@ -320,24 +295,70 @@ elm_init(int argc, char **argv)
 }
 
 EAPI void
-elm_shutdown(void)
+elm_quicklaunch_sub_init(int argc, char **argv)
+{
+   ecore_app_args_set(argc, (const char **)argv);
+   if ((_elm_config->engine == ELM_SOFTWARE_X11) ||
+       (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
+       (_elm_config->engine == ELM_XRENDER_X11) ||
+       (_elm_config->engine == ELM_OPENGL_X11))
+     {
+#ifdef HAVE_ELEMENTARY_X
+	int val = 1000;
+	
+	if (!ecore_x_init(NULL))
+          {
+             EINA_ERROR_PERR("elementary: ERROR. Cannot connect to X11 display. check $DISPLAY variable\n");
+             exit(1);
+          }
+	if (!ecore_x_screen_is_composited(0))
+	  _elm_config->compositing = 0;
+        _elm_atom_enlightenment_scale = ecore_x_atom_get("ENLIGHTENMENT_SCALE");
+        ecore_x_event_mask_set(ecore_x_window_root_first_get(),
+                               ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
+        _elm_event_property_change = ecore_event_handler_add
+          (ECORE_X_EVENT_WINDOW_PROPERTY, _elm_window_property_change, NULL);
+        /* FIXME if quickstart this happens in child */
+	if (ecore_x_window_prop_card32_get(ecore_x_window_root_first_get(),
+					   _elm_atom_enlightenment_scale,
+					   &val, 1) > 0)
+	  {
+	     if (val > 0) _elm_config->scale = (double)val / 1000.0;
+	  }
+#endif        
+      }
+
+   if (elm_scale)
+     _elm_config->scale = atof(elm_scale);
+   
+   _elm_config->finger_size = 
+     (double)_elm_config->finger_size * _elm_config->scale;
+   if (elm_finger_size)
+     _elm_config->finger_size = atoi(elm_finger_size);
+}
+
+EAPI void
+elm_quicklaunch_sub_shutdown(void)
 {
    _elm_win_shutdown();
-
    if ((_elm_config->engine == ELM_SOFTWARE_X11) ||
-              (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
-              (_elm_config->engine == ELM_XRENDER_X11) ||
-              (_elm_config->engine == ELM_OPENGL_X11) ||
-              (_elm_config->engine == ELM_SOFTWARE_WIN32) ||
-              (_elm_config->engine == ELM_SOFTWARE_16_WINCE))
+       (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
+       (_elm_config->engine == ELM_XRENDER_X11) ||
+       (_elm_config->engine == ELM_OPENGL_X11) ||
+       (_elm_config->engine == ELM_SOFTWARE_WIN32) ||
+       (_elm_config->engine == ELM_SOFTWARE_16_WINCE))
      {
 #ifdef HAVE_ELEMENTARY_X
         ecore_event_handler_del(_elm_event_property_change);
         _elm_event_property_change = NULL;
-        ecore_x_shutdown();
+        ecore_x_disconnect();
 #endif        
      }
+}
 
+EAPI void
+elm_quicklaunch_shutdown(void)
+{
    eina_stringshare_del(_elm_data_dir);
    _elm_data_dir = NULL;
 
@@ -347,6 +368,9 @@ elm_shutdown(void)
         _elm_config->font_dirs = eina_list_remove_list(_elm_config->font_dirs, _elm_config->font_dirs);
      }
    
+   ecore_event_handler_del(_elm_exit_handler);
+   _elm_exit_handler = NULL;
+   
    free(_elm_config);
    free(_elm_appname);
    ecore_evas_shutdown();
@@ -355,6 +379,182 @@ elm_shutdown(void)
    ecore_file_shutdown();
    ecore_shutdown();
    eet_shutdown();
+}
+
+EAPI void
+elm_quicklaunch_seed(void)
+{
+   Evas_Object *win, *bg, *bt;
+   
+   win = elm_win_add(NULL, "seed", ELM_WIN_BASIC);
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_show(bg);
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789~-_=+\\|]}[{;:'\",<.>/?");
+   elm_win_resize_object_add(win, bt);
+   ecore_main_loop_iterate();
+   evas_object_del(win);
+   ecore_main_loop_iterate();
+   if ((_elm_config->engine == ELM_SOFTWARE_X11) ||
+       (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
+       (_elm_config->engine == ELM_XRENDER_X11) ||
+       (_elm_config->engine == ELM_OPENGL_X11))
+     {
+#ifdef HAVE_ELEMENTARY_X
+        ecore_x_sync();
+#endif        
+      }
+   ecore_main_loop_iterate();
+}
+
+static void *qr_handle = NULL;
+static int (*qr_main) (int argc, char **argv) = NULL;
+
+EAPI Evas_Bool
+elm_quicklaunch_prepare(int argc, char **argv)
+{
+   char *exe = elm_quicklaunch_exe_path_get(argv[0]);
+   if (!exe)
+     {
+        printf("ERROR: %s does not exist\n", argv[0]);
+        return;
+     }
+   else
+     {
+        char *exe2, *p;
+        char *exename;
+        
+        exe2 = malloc(strlen(exe) + 1 + 10);
+        strcpy(exe2, exe);
+        p = strrchr(exe2, '/');
+        if (p) p++;
+        else p = exe2;
+        exename = alloca(strlen(p) + 1);
+        strcpy(exename, p);
+        *p = 0;
+        strcat(p, "../lib/");
+        strcat(p, exename);
+        strcat(p, ".so");
+        if (access(exe2, R_OK | X_OK) == 0)
+          {
+             free(exe);
+             exe = exe2;
+          }
+        else
+          free(exe2);
+     }
+   qr_handle = dlopen(exe, RTLD_NOW | RTLD_GLOBAL);
+   free(exe);
+   if (!qr_handle) return 0;
+   qr_main = dlsym(qr_handle, "elm_main");
+   if (!qr_main)
+     {
+        dlclose(qr_handle);
+        qr_handle = NULL;
+        return 0;
+     }
+   return 1;
+}
+
+EAPI Evas_Bool
+elm_quicklaunch_fork(int argc, char **argv, char *cwd)
+{
+   pid_t child;
+   int ret;
+   int real_argc;
+   char **real_argv;
+   
+   // FIXME:
+   // need to accept current environment from elementary_run
+   if (!qr_main)
+     {
+        int i;
+        char **args;
+        
+        child = fork();
+        if (child) return 1;
+        chdir(cwd);
+        args = alloca((argc + 1) * sizeof(char *));
+        for (i = 0; i < argc; i++) args[i] = argv[i];
+        args[argc] = NULL;
+        printf("WARNING: %s not quicklaunch capable\n", argv[0]);
+        exit(execvp(argv[0], args));
+     }
+   child = fork();
+   if (child) return 1;
+   chdir(cwd);
+   ret = qr_main(argc, argv);
+   exit(ret);
+}
+
+EAPI void
+elm_quicklaunch_cleanup(void)
+{
+   if (qr_handle)
+     {
+        dlclose(qr_handle);
+        qr_handle = NULL;
+        qr_main = NULL;
+     }
+}
+
+EAPI int
+elm_quicklaunch_fallback(int argc, char **argv)
+{
+   int ret;
+   elm_quicklaunch_init(argc, argv);
+   elm_quicklaunch_sub_init(argc, argv);
+   elm_quicklaunch_prepare(argc, argv);
+   ret = qr_main(argc, argv);
+   exit(ret);
+}
+
+EAPI char *
+elm_quicklaunch_exe_path_get(const char *exe)
+{
+   static char *path = NULL;
+   static Eina_List *pathlist = NULL;
+   Eina_List *l;
+   char buf[PATH_MAX];
+   if (exe[0] == '/') return strdup(exe);
+   if ((exe[0] == '.') && (exe[1] == '/')) return strdup(exe);
+   if ((exe[0] == '.') && (exe[1] == '.') && (exe[2] == '/')) return strdup(exe);
+   if (!path)
+     {
+        const char *p, *pp, *s;
+        char *buf;
+        path = getenv("PATH");
+        buf = alloca(strlen(path) + 1);
+        p = path;
+        pp = p;
+        for (;;)
+          {
+             if ((*p == ':') || (*p == 0))
+               {
+                  int len;
+                  
+                  len = p - pp;
+                  strncpy(buf, pp, len);
+                  buf[len] = 0;
+                  pathlist = eina_list_append(pathlist, eina_stringshare_add(buf));
+                  if (*p == 0) break;
+                  p++;
+                  pp = p;
+               }
+             else
+               {
+                  if (*p == 0) break;
+                  p++;
+               }
+          }
+     }
+   for (l = pathlist; l; l = l->next)
+     {
+        snprintf(buf, sizeof(buf), "%s/%s", l->data, exe);
+        if (access(buf, R_OK | X_OK) == 0) return strdup(buf);
+     }
+   return NULL;
 }
 
 EAPI void
