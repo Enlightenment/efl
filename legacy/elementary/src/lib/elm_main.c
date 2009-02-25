@@ -336,9 +336,7 @@ elm_quicklaunch_sub_init(int argc, char **argv)
                   _elm_config->scale = (double)val / 1000.0;
                   // FIXME: hack until e export finger size too
                   if (!elm_finger_size)
-                    {
-                       40.0 * _elm_config->scale;
-                    }
+                    _elm_config->finger_size = 40.0 * _elm_config->scale;
                }
 	  }
 #endif        
