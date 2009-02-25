@@ -4,7 +4,6 @@
 // FIXME: this is NOT the carousel - yet!
 
 typedef struct _Widget_Data Widget_Data;
-typedef struct _Item Item;
 
 struct _Widget_Data
 {
@@ -13,7 +12,7 @@ struct _Widget_Data
    int icon_size;
 };
 
-struct _Item
+struct _Elm_Carousel_Item
 {
    Evas_Object *obj;
    Evas_Object *base;
@@ -29,7 +28,7 @@ static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 
 static void
-_item_show(Item *it)
+_item_show(Elm_Carousel_Item *it)
 {
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Coord x, y, w, h, bx, by;
@@ -40,9 +39,9 @@ _item_show(Item *it)
 }
 
 static void
-_item_select(Item *it)
+_item_select(Elm_Carousel_Item *it)
 {
-   Item *it2;
+   Elm_Carousel_Item *it2;
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Object *obj2;
    Eina_List *l;
@@ -77,7 +76,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
-   Item *it;
+   Elm_Carousel_Item *it;
    Evas_Coord mw, mh;
    for (l = wd->items; l; l = l->next)
      {
@@ -125,7 +124,7 @@ _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord mw, mh, vw, vh, w, h;
    Eina_List *l;
-   Item *it;
+   Elm_Carousel_Item *it;
    
    elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
    evas_object_size_hint_min_get(wd->bx, &mw, &mh);
@@ -195,7 +194,7 @@ elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, vo
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord mw, mh;
-   Item *it = calloc(1, sizeof(Item));
+   Elm_Carousel_Item *it = calloc(1, sizeof(Elm_Carousel_Item));
    if (!it) return NULL;
    wd->items = eina_list_append(wd->items, it);
    it->obj = obj;
@@ -226,13 +225,12 @@ elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, vo
    _els_smart_box_pack_end(wd->bx, it->base);
    evas_object_show(it->base);
    _sizing_eval(obj);
-   return (Elm_Carousel_Item *)it;
+   return it;
 }
 
 EAPI void
-elm_carousel_item_del(Elm_Carousel_Item *item)
+elm_carousel_item_del(Elm_Carousel_Item *it)
 {
-   Item *it = (Item *)item;
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Object *obj2 = it->obj;
    wd->items = eina_list_remove(wd->items, it);

@@ -157,7 +157,7 @@ elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conte
 }
 
 EAPI Evas_Object *
-elm_layout_edje_get(Evas_Object *obj)
+elm_layout_edje_get(const Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    return wd->lay;

@@ -480,8 +480,14 @@ elm_quicklaunch_fork(int argc, char **argv, char *cwd)
         char **args;
         
         child = fork();
-        if (child) return 1;
-        chdir(cwd);
+        if (child > 0) return 1;
+	else if (child < 0)
+	  {
+	     perror("could not fork");
+	     return 0;
+	  }
+        if (chdir(cwd) != 0)
+	  perror("could not chdir");
         args = alloca((argc + 1) * sizeof(char *));
         for (i = 0; i < argc; i++) args[i] = argv[i];
         args[argc] = NULL;
@@ -489,8 +495,14 @@ elm_quicklaunch_fork(int argc, char **argv, char *cwd)
         exit(execvp(argv[0], args));
      }
    child = fork();
-   if (child) return 1;
-   chdir(cwd);
+   if (child > 0) return 1;
+   else if (child < 0)
+     {
+	perror("could not fork");
+	return 0;
+     }
+   if (chdir(cwd) != 0)
+     perror("could not chdir");
    ret = qr_main(argc, argv);
    exit(ret);
 }
@@ -558,7 +570,7 @@ elm_quicklaunch_exe_path_get(const char *exe)
      }
    for (l = pathlist; l; l = l->next)
      {
-        snprintf(buf, sizeof(buf), "%s/%s", l->data, exe);
+        snprintf(buf, sizeof(buf), "%s/%s", (char *)l->data, exe);
         if (access(buf, R_OK | X_OK) == 0) return strdup(buf);
      }
    return NULL;
@@ -583,7 +595,7 @@ elm_object_scale_set(Evas_Object *obj, double scale)
 }
 
 EAPI double
-elm_object_scale_get(Evas_Object *obj)
+elm_object_scale_get(const Evas_Object *obj)
 {
    return elm_widget_scale_get(obj);
 }

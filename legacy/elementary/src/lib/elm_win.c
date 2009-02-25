@@ -611,9 +611,9 @@ elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content)
 
 /* windowing spcific calls - shall we do this differently? */
 EAPI Ecore_X_Window
-elm_win_xwindow_get(Evas_Object *obj)
+elm_win_xwindow_get(const Evas_Object *obj)
 {
-   Elm_Win *win = elm_widget_data_get(obj);
+   Elm_Win *win = (Elm_Win *)elm_widget_data_get(obj);
    if (!win) return 0;
    _elm_win_xwindow_get(win);
    return win->xwin;

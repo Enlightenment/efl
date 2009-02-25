@@ -178,7 +178,7 @@ elm_widget_data_set(Evas_Object *obj, void *data)
 }
 
 EAPI void *
-elm_widget_data_get(Evas_Object *obj)
+elm_widget_data_get(const Evas_Object *obj)
 {
    API_ENTRY return NULL;
    return sd->data;
@@ -283,7 +283,7 @@ elm_widget_can_focus_set(Evas_Object *obj, int can_focus)
 }
 
 EAPI int
-elm_widget_can_focus_get(Evas_Object *obj)
+elm_widget_can_focus_get(const Evas_Object *obj)
 {
    API_ENTRY return 0;
    if (sd->can_focus) return 1;
@@ -292,35 +292,33 @@ elm_widget_can_focus_get(Evas_Object *obj)
 }
 
 EAPI int
-elm_widget_focus_get(Evas_Object *obj)
+elm_widget_focus_get(const Evas_Object *obj)
 {
    API_ENTRY return 0;
    return sd->focused;
 }
 
 EAPI Evas_Object *
-elm_widget_focused_object_get(Evas_Object *obj)
+elm_widget_focused_object_get(const Evas_Object *obj)
 {
-   Eina_List *l;
+   const Evas_Object *subobj;
+   const Eina_List *l;
    API_ENTRY return NULL;
    if (!sd->focused) return NULL;
-   for (l = sd->subobjs; l; l = l->next)
-     {  
-	Evas_Object *fobj;
-	
-	fobj = elm_widget_focused_object_get(l->data);
+   EINA_LIST_FOREACH(sd->subobjs, l, subobj)
+     {
+	Evas_Object *fobj = elm_widget_focused_object_get(subobj);
 	if (fobj) return fobj;
      }
-   return obj;
+   return (Evas_Object *)obj;
 }
 
 EAPI Evas_Object *
-elm_widget_top_get(Evas_Object *obj)
+elm_widget_top_get(const Evas_Object *obj)
 {
-   Eina_List *l;
    API_ENTRY return NULL;
    if (sd->parent_obj) return elm_widget_top_get(sd->parent_obj);
-   return obj;
+   return (Evas_Object *)obj;
 }
 
 EAPI int
@@ -529,7 +527,7 @@ elm_widget_focus_set(Evas_Object *obj, int first)
 }
 
 EAPI Evas_Object *
-elm_widget_parent_get(Evas_Object *obj)
+elm_widget_parent_get(const Evas_Object *obj)
 {
    API_ENTRY return NULL;
    return sd->parent_obj;
@@ -654,7 +652,7 @@ elm_widget_disabled_set(Evas_Object *obj, int disabled)
 }
 
 EAPI int
-elm_widget_disabled_get(Evas_Object *obj)
+elm_widget_disabled_get(const Evas_Object *obj)
 {
    API_ENTRY return 0;
    return sd->disabled;
@@ -673,7 +671,7 @@ elm_widget_show_region_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Co
 }
 
 EAPI void
-elm_widget_show_region_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+elm_widget_show_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    API_ENTRY return;
    if (x) *x = sd->rx;
@@ -699,7 +697,7 @@ elm_widget_scroll_hold_pop(Evas_Object *obj)
 }
 
 EAPI int
-elm_widget_scroll_hold_get(Evas_Object *obj)
+elm_widget_scroll_hold_get(const Evas_Object *obj)
 {
    API_ENTRY return 0;
    return sd->scroll_hold;
@@ -718,7 +716,7 @@ elm_widget_scale_set(Evas_Object *obj, double scale)
 }
 
 EAPI double
-elm_widget_scale_get(Evas_Object *obj)
+elm_widget_scale_get(const Evas_Object *obj)
 {
    API_ENTRY return 1.0;
    if (sd->scale == 0.0) return elm_widget_scale_get(sd->parent_obj);

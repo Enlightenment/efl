@@ -372,7 +372,7 @@ elm_slider_value_set(Evas_Object *obj, double val)
 }
 
 EAPI double
-elm_slider_value_get(Evas_Object *obj)
+elm_slider_value_get(const Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    return wd->val;

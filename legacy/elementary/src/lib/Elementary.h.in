@@ -161,7 +161,7 @@ extern "C" {
    EAPI char        *elm_quicklaunch_exe_path_get(const char *exe);
        
    EAPI void         elm_object_scale_set(Evas_Object *obj, double scale);
-   EAPI double       elm_object_scale_get(Evas_Object *obj);
+   EAPI double       elm_object_scale_get(const Evas_Object *obj);
    EAPI void         elm_object_focus(Evas_Object *obj);
    
    EAPI void         elm_coords_finger_size_adjust(int times_w, Evas_Coord *w, int times_h, Evas_Coord *h);
@@ -194,7 +194,7 @@ extern "C" {
     */
        
    /* X specific calls - won't work on non-x engines (return 0) */
-   EAPI Ecore_X_Window elm_win_xwindow_get(Evas_Object *obj);   
+   EAPI Ecore_X_Window elm_win_xwindow_get(const Evas_Object *obj);   
    /* smart callbacks called:
     * "delete-request" - the user requested to delete the window
     */
@@ -255,7 +255,7 @@ extern "C" {
    EAPI void         elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon);
    EAPI void         elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *offlabel);
    EAPI void         elm_toggle_state_set(Evas_Object *obj, Evas_Bool state);
-   EAPI Evas_Bool    elm_toggle_state_get(Evas_Object *obj);
+   EAPI Evas_Bool    elm_toggle_state_get(const Evas_Object *obj);
    EAPI void         elm_toggle_state_pointer_set(Evas_Object *obj, Evas_Bool *statep);
    /* smart callbacks called:
     * "changed" - the user toggled the state
@@ -285,7 +285,7 @@ extern "C" {
    
    EAPI Evas_Object *elm_clock_add(Evas_Object *parent);
    EAPI void         elm_clock_time_set(Evas_Object *obj, int hrs, int min, int sec);
-   EAPI void         elm_clock_time_get(Evas_Object *obj, int *hrs, int *min, int *sec);
+   EAPI void         elm_clock_time_get(const Evas_Object *obj, int *hrs, int *min, int *sec);
    EAPI void         elm_clock_edit_set(Evas_Object *obj, Evas_Bool edit);
    EAPI void         elm_clock_show_am_pm_set(Evas_Object *obj, Evas_Bool am_pm);
    EAPI void         elm_clock_show_seconds_set(Evas_Object *obj, Evas_Bool seconds);
@@ -296,7 +296,7 @@ extern "C" {
    EAPI Evas_Object *elm_layout_add(Evas_Object *parent);
    EAPI void         elm_layout_file_set(Evas_Object *obj, const char *file, const char *group);
    EAPI void         elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
-   EAPI Evas_Object *elm_layout_edje_get(Evas_Object *obj);
+   EAPI Evas_Object *elm_layout_edje_get(const Evas_Object *obj);
    /* smart callbacks called:
     */
    
@@ -317,7 +317,7 @@ extern "C" {
     * popout
     * hoversel_vertical
     */
-   EAPI const char  *elm_hover_best_content_location_get(Evas_Object *obj, Elm_Hover_Axis pref_axis);
+   EAPI const char  *elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_axis);
    /* smart callbacks called:
     * "clicked" - the user clicked the empty space in the hover to dismiss
     */
@@ -333,8 +333,8 @@ extern "C" {
    EAPI void         elm_entry_single_line_set(Evas_Object *obj, Evas_Bool single_line);
    EAPI void         elm_entry_password_set(Evas_Object *obj, Evas_Bool password);
    EAPI void         elm_entry_entry_set(Evas_Object *obj, const char *entry);
-   EAPI const char  *elm_entry_entry_get(Evas_Object *obj);
-   EAPI const char  *elm_entry_selection_get(Evas_Object *obj);
+   EAPI const char  *elm_entry_entry_get(const Evas_Object *obj);
+   EAPI const char  *elm_entry_selection_get(const Evas_Object *obj);
    EAPI void         elm_entry_entry_insert(Evas_Object *obj, const char *entry);
    EAPI void         elm_entry_line_wrap_set(Evas_Object *obj, Evas_Bool wrap);
    EAPI void         elm_entry_editable_set(Evas_Object *obj, Evas_Bool editable);
@@ -476,15 +476,15 @@ extern "C" {
    EAPI void         elm_list_go(Evas_Object *obj);
    EAPI void         elm_list_multi_select_set(Evas_Object *obj, Evas_Bool multi);
    EAPI void         elm_list_horizontal_mode_set(Evas_Object *obj, Elementary_List_Mode mode);
-   EAPI const Eina_List     *elm_list_items_get(Evas_Object *obj);
-   EAPI const Elm_List_Item *elm_list_selected_item_get(Evas_Object *obj);
-   EAPI const Eina_List     *elm_list_selected_items_get(Evas_Object *obj);
+   EAPI const Eina_List     *elm_list_items_get(const Evas_Object *obj);
+   EAPI Elm_List_Item       *elm_list_selected_item_get(const Evas_Object *obj);
+   EAPI const Eina_List     *elm_list_selected_items_get(const Evas_Object *obj);
    EAPI void         elm_list_item_selected_set(Elm_List_Item *item, Evas_Bool selected);
    EAPI void         elm_list_item_show(Elm_List_Item *item);
    EAPI void         elm_list_item_del(Elm_List_Item *item);
-   EAPI const void  *elm_list_item_data_get(Elm_List_Item *item);
-   EAPI Evas_Object *elm_list_item_icon_get(Elm_List_Item *item);
-   EAPI Evas_Object *elm_list_item_end_get(Elm_List_Item *item);
+   EAPI const void  *elm_list_item_data_get(const Elm_List_Item *item);
+   EAPI Evas_Object *elm_list_item_icon_get(const Elm_List_Item *item);
+   EAPI Evas_Object *elm_list_item_end_get(const Elm_List_Item *item);
    /* smart callbacks called:
     * "clicked" - when the user double-clicked an item
     * "selected" - when the user selected an item
@@ -510,7 +510,7 @@ extern "C" {
    EAPI void         elm_slider_horizontal_set(Evas_Object *obj, Evas_Bool horizontal);
    EAPI void         elm_slider_min_max_set(Evas_Object *obj, double min, double max);
    EAPI void         elm_slider_value_set(Evas_Object *obj, double val);
-   EAPI double       elm_slider_value_get(Evas_Object *obj);
+   EAPI double       elm_slider_value_get(const Evas_Object *obj);
    EAPI void         elm_slider_inverted_set(Evas_Object *obj, Evas_Bool inverted);
    /* smart callbacks called:
     * "changed" - when the slider value changes
@@ -541,19 +541,19 @@ extern "C" {
    EAPI Elm_Genlist_Item *elm_genlist_item_insert_before(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *before, Elm_Genlist_Item_Flags flags, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data);
    EAPI Elm_Genlist_Item *elm_genlist_item_insert_after(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *after, Elm_Genlist_Item_Flags flags, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data);
    EAPI void              elm_genlist_clear(Evas_Object *obj);
-   EAPI const Elm_Genlist_Item *elm_genlist_selected_item_get(Evas_Object *obj);
-   EAPI const Eina_List  *elm_genlist_selected_items_get(Evas_Object *obj);
-   EAPI const Elm_Genlist_Item *elm_genlist_first_item_get(Evas_Object *obj);
-   EAPI const Elm_Genlist_Item *elm_genlist_last_item_get(Evas_Object *obj);
-   EAPI const Elm_Genlist_Item *elm_genlist_item_next_get(Elm_Genlist_Item *item);
-   EAPI const Elm_Genlist_Item *elm_genlist_item_prev_get(Elm_Genlist_Item *item);
+   EAPI Elm_Genlist_Item *elm_genlist_selected_item_get(const Evas_Object *obj);
+   EAPI const Eina_List  *elm_genlist_selected_items_get(const Evas_Object *obj);
+   EAPI Elm_Genlist_Item *elm_genlist_first_item_get(const Evas_Object *obj);
+   EAPI Elm_Genlist_Item *elm_genlist_last_item_get(const Evas_Object *obj);
+   EAPI Elm_Genlist_Item *elm_genlist_item_next_get(const Elm_Genlist_Item *item);
+   EAPI Elm_Genlist_Item *elm_genlist_item_prev_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_selected_set(Elm_Genlist_Item *item, Evas_Bool selected);
-   EAPI Evas_Bool         elm_genlist_item_selected_get(Elm_Genlist_Item *item);
+   EAPI Evas_Bool         elm_genlist_item_selected_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_disabled_set(Elm_Genlist_Item *item, Evas_Bool disabled);
-   EAPI Evas_Bool         elm_genlist_item_disabled_get(Elm_Genlist_Item *item);
+   EAPI Evas_Bool         elm_genlist_item_disabled_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_show(Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_del(Elm_Genlist_Item *item);
-   EAPI const void       *elm_genlist_item_data_get(Elm_Genlist_Item *item);
+   EAPI const void       *elm_genlist_item_data_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_update(Elm_Genlist_Item *item);
    /* smart callbacks called:
     * "clicked" - the user clicked the hoversel button and popped up the sel
@@ -565,7 +565,7 @@ extern "C" {
    EAPI void         elm_check_label_set(Evas_Object *obj, const char *label);
    EAPI void         elm_check_icon_set(Evas_Object *obj, Evas_Object *icon);
    EAPI void         elm_check_state_set(Evas_Object *obj, Evas_Bool state);
-   EAPI Evas_Bool    elm_check_state_get(Evas_Object *obj);
+   EAPI Evas_Bool    elm_check_state_get(const Evas_Object *obj);
    EAPI void         elm_check_state_pointer_set(Evas_Object *obj, Evas_Bool *statep);
    /* smart callbacks called:
     * "changed" - the user toggled the state
@@ -577,7 +577,7 @@ extern "C" {
    EAPI void         elm_radio_group_add(Evas_Object *obj, Evas_Object *group);
    EAPI void         elm_radio_state_value_set(Evas_Object *obj, int value);
    EAPI void         elm_radio_value_set(Evas_Object *obj, int value);
-   EAPI int          elm_radio_value_get(Evas_Object *obj);
+   EAPI int          elm_radio_value_get(const Evas_Object *obj);
    EAPI void         elm_radio_value_pointer_set(Evas_Object *obj, int *valuep);
    /* smart callbacks called:
     * "changed" - the user toggled the state

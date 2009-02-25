@@ -396,7 +396,7 @@ elm_clock_time_set(Evas_Object *obj, int hrs, int min, int sec)
 }
 
 EAPI void
-elm_clock_time_get(Evas_Object *obj, int *hrs, int *min, int *sec)
+elm_clock_time_get(const Evas_Object *obj, int *hrs, int *min, int *sec)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (hrs) *hrs = wd->hrs;

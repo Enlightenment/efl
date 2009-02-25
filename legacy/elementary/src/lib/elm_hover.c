@@ -391,7 +391,7 @@ elm_hover_style_set(Evas_Object *obj, const char *style)
 }
 
 EAPI const char *
-elm_hover_best_content_location_get(Evas_Object *obj, Elm_Hover_Axis pref_axis)
+elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_axis)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord x = 0, y = 0, w = 0, h = 0, x2 = 0, y2 = 0, w2 = 0, h2 = 0;

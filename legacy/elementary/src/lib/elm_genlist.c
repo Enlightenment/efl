@@ -2,7 +2,6 @@
 #include "elm_priv.h"
 
 typedef struct _Widget_Data Widget_Data;
-typedef struct _Item Item;
 typedef struct _Item_Block Item_Block;
 typedef struct _Pan Pan;
 
@@ -19,7 +18,7 @@ struct _Widget_Data
    Ecore_Idler *queue_idler;
    Eina_List *queue;
    Eina_List *selected;
-   Item *show_item;
+   Elm_Genlist_Item *show_item;
    Evas_Bool on_hold : 1;
    Evas_Bool multi : 1;
    Evas_Bool min_w : 1;
@@ -37,7 +36,7 @@ struct _Item_Block
    Evas_Bool changed : 1;
 };
 
-struct _Item
+struct _Elm_Genlist_Item
 {
    Eina_Inlist __header;
    Widget_Data *wd;
@@ -58,7 +57,7 @@ struct _Item
    Eina_List *labels, *icons, *states;
    Eina_List *icon_objs;
    
-   Item *rel;
+   Elm_Genlist_Item *rel;
    int relcount;
    Evas_Bool before : 1;
    
@@ -83,7 +82,7 @@ static void _show_region_hook(void *data, Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 
-static void _item_unrealize(Item *it);
+static void _item_unrealize(Elm_Genlist_Item *it);
 static void _item_block_unrealize(Item_Block *itb);
 static void _calc_job(void *data);
     
@@ -113,7 +112,7 @@ _theme_hook(Evas_Object *obj)
         if (itb->realized) _item_block_unrealize(itb);
         for (l = itb->items; l; l = l->next)
           {
-             Item *it = l->data;
+             Elm_Genlist_Item *it = l->data;
              it->mincalcd = 0;
           }
         itb->changed = 1;
@@ -217,7 +216,7 @@ _stringlist_free(Eina_List *list)
 static void
 _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 {
-   Item *it = data;
+   Elm_Genlist_Item *it = data;
    Evas_Event_Mouse_Down *ev = event_info;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) it->wd->on_hold = 1;
    else it->wd->on_hold = 0;
@@ -226,7 +225,7 @@ _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 }
 
 static void
-_item_select(Item *it)
+_item_select(Elm_Genlist_Item *it)
 {
    const char *selectraise;
    if (it->delete_me) return;
@@ -242,7 +241,7 @@ _item_select(Item *it)
 }
 
 static void
-_item_unselect(Item *it)
+_item_unselect(Elm_Genlist_Item *it)
 {
    const char *stacking, *selectraise;
    if (it->delete_me) return;
@@ -263,7 +262,7 @@ _item_unselect(Item *it)
 static void
 _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 {
-   Item *it = data;
+   Elm_Genlist_Item *it = data;
    Evas_Event_Mouse_Up *ev = event_info;
    Eina_List *l;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) it->wd->on_hold = 1;
@@ -283,7 +282,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
      {
         for (l = it->wd->selected; l;)
           {
-             Item *it2 = l->data;
+             Elm_Genlist_Item *it2 = l->data;
              l = l->next;
              if ((it2 != it) && (it2->selected)) _item_unselect(it2);
           }
@@ -292,7 +291,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 }
 
 static void
-_item_realize(Item *it, int in, int calc)
+_item_realize(Elm_Genlist_Item *it, int in, int calc)
 {
    const char *stacking;
    char buf[1024];
@@ -391,7 +390,7 @@ _item_realize(Item *it, int in, int calc)
 }
 
 static void
-_item_unrealize(Item *it)
+_item_unrealize(Elm_Genlist_Item *it)
 {
    if (!it->realized) return;
    evas_object_del(it->base);
@@ -420,7 +419,7 @@ _item_block_recalc(Item_Block *itb, int in)
    
    for (l = itb->items; l; l = l->next)
      {
-        Item *it = l->data;
+        Elm_Genlist_Item *it = l->data;
         if (it->delete_me) continue;
         showme |= it->showme;
         if (!itb->realized)
@@ -452,7 +451,7 @@ _item_block_realize(Item_Block *itb, int in)
    if (itb->realized) return;
    for (l = itb->items; l; l = l->next)
      {
-        Item *it = l->data;
+        Elm_Genlist_Item *it = l->data;
         if (it->delete_me) continue;
         _item_realize(it, in, 0);
         in++;
@@ -468,7 +467,7 @@ _item_block_unrealize(Item_Block *itb)
    if (!itb->realized) return;
    for (l = itb->items; l; l = l->next)
      {
-        Item *it = l->data;
+        Elm_Genlist_Item *it = l->data;
         _item_unrealize(it);
      }
    itb->realized = 0;
@@ -483,7 +482,7 @@ _item_block_position(Item_Block *itb)
    evas_object_geometry_get(itb->wd->pan_smart, &ox, &oy, NULL, NULL);
    for (l = itb->items; l; l = l->next)
      {
-        Item *it = l->data;
+        Elm_Genlist_Item *it = l->data;
         
         if (it->delete_me) continue;
         it->x = 0;
@@ -751,15 +750,15 @@ elm_genlist_add(Evas_Object *parent)
    return obj;
 }
 
-static Item *
+static Elm_Genlist_Item *
 _item_new(Widget_Data *wd, const Elm_Genlist_Item_Class *itc, 
           const void *data, Elm_Genlist_Item *parent, 
           Elm_Genlist_Item_Flags flags,
           void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
 {
-   Item *it;
+   Elm_Genlist_Item *it;
    
-   it = calloc(1, sizeof(Item));
+   it = calloc(1, sizeof(Elm_Genlist_Item));
    if (!it) return NULL;
    it->wd = wd;
    it->itc = itc;
@@ -772,7 +771,7 @@ _item_new(Widget_Data *wd, const Elm_Genlist_Item_Class *itc,
 }
 
 static void
-_item_block_del(Item *it)
+_item_block_del(Elm_Genlist_Item *it)
 {
    Eina_Inlist *il;
    Item_Block *itb = it->block;
@@ -799,7 +798,7 @@ _item_block_del(Item *it)
                {
                   while (itb->items)
                     {
-                       Item *it2 = itb->items->data;
+                       Elm_Genlist_Item *it2 = itb->items->data;
                        it2->block = itbp;
                        itbp->items = eina_list_append(itbp->items, it2);
                        itb->items = eina_list_remove_list(itb->items, itb->items);
@@ -814,7 +813,7 @@ _item_block_del(Item *it)
                   while (itb->items)
                     {
                        Eina_List *last = eina_list_last(itb->items);
-                       Item *it2 = last->data;
+                       Elm_Genlist_Item *it2 = last->data;
                        it2->block = itbn;
                        itb->items = eina_list_remove_list(itb->items, last);
                        itbn->items = eina_list_prepend(itbn->items, it2);
@@ -829,7 +828,7 @@ _item_block_del(Item *it)
 }
 
 static void
-_item_del(Item *it)
+_item_del(Elm_Genlist_Item *it)
 {
    it->delete_me = 1;
    if (it->wd->show_item == it) it->wd->show_item = NULL;
@@ -848,7 +847,7 @@ _item_del(Item *it)
 }
 
 static void
-_item_block_add(Widget_Data *wd, Item *it, Item *itpar)
+_item_block_add(Widget_Data *wd, Elm_Genlist_Item *it, Elm_Genlist_Item *itpar)
 {
    Item_Block *itb = NULL;
 
@@ -968,7 +967,7 @@ _item_idler(void *data)
 
    for (n = 0; (wd->queue) && (n < 8); n++)
      {
-        Item *it;
+        Elm_Genlist_Item *it;
         
         it = wd->queue->data;
         wd->queue = eina_list_remove_list(wd->queue, wd->queue);
@@ -996,7 +995,7 @@ _item_idler(void *data)
 }
 
 static void
-_item_queue(Widget_Data *wd, Item *it)
+_item_queue(Widget_Data *wd, Elm_Genlist_Item *it)
 {
    if (it->queued) return;
    if (!wd->queue_idler) wd->queue_idler = ecore_idler_add(_item_idler, wd);
@@ -1011,7 +1010,7 @@ elm_genlist_item_append(Evas_Object *obj, const Elm_Genlist_Item_Class *itc,
                         void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Item *it = _item_new(wd, itc, data, parent, flags, func, func_data);
+   Elm_Genlist_Item *it = _item_new(wd, itc, data, parent, flags, func, func_data);
    if (!it) return NULL;
    if (!it->parent)
      wd->items = eina_inlist_append(wd->items, (Eina_Inlist *)it);
@@ -1022,7 +1021,7 @@ elm_genlist_item_append(Evas_Object *obj, const Elm_Genlist_Item_Class *itc,
    it->rel = NULL;
    it->before = 0;
    _item_queue(wd, it);
-   return (Elm_Genlist_Item *)it;
+   return it;
 }
 
 EAPI Elm_Genlist_Item *
@@ -1032,7 +1031,7 @@ elm_genlist_item_prepend(Evas_Object *obj, const Elm_Genlist_Item_Class *itc,
                          void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Item *it = _item_new(wd, itc, data, parent, flags, func, func_data);
+   Elm_Genlist_Item *it = _item_new(wd, itc, data, parent, flags, func, func_data);
    if (!it) return NULL;
    if (!it->parent)
      wd->items = eina_inlist_prepend(wd->items, (Eina_Inlist *)it);
@@ -1043,7 +1042,7 @@ elm_genlist_item_prepend(Evas_Object *obj, const Elm_Genlist_Item_Class *itc,
    it->rel = NULL;
    it->before = 1;
    _item_queue(wd, it);
-   return (Elm_Genlist_Item *)it;
+   return it;
 }
 
 EAPI Elm_Genlist_Item *
@@ -1053,7 +1052,7 @@ elm_genlist_item_insert_before(Evas_Object *obj, const Elm_Genlist_Item_Class *i
                                void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Item *it = _item_new(wd, itc, data, NULL, flags, func, func_data);
+   Elm_Genlist_Item *it = _item_new(wd, itc, data, NULL, flags, func, func_data);
    if (!it) return NULL;
    if (!it->parent)
      wd->items = eina_inlist_prepend_relative(wd->items, (Eina_Inlist *)it, (Eina_Inlist *)before);
@@ -1061,11 +1060,11 @@ elm_genlist_item_insert_before(Evas_Object *obj, const Elm_Genlist_Item_Class *i
      {
         // FIXME: tree. not done yet
      }
-   it->rel = (Item *)before;
+   it->rel = before;
    it->rel->relcount++;
    it->before = 1;
    _item_queue(wd, it);
-   return (Elm_Genlist_Item *)it;
+   return it;
 }
 
 EAPI Elm_Genlist_Item *
@@ -1075,7 +1074,7 @@ elm_genlist_item_insert_after(Evas_Object *obj, const Elm_Genlist_Item_Class *it
                               void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Item *it = _item_new(wd, itc, data, NULL, flags, func, func_data);
+   Elm_Genlist_Item *it = _item_new(wd, itc, data, NULL, flags, func, func_data);
    if (!it) return NULL;
    if (!it->parent)
      wd->items = eina_inlist_append_relative(wd->items, (Eina_Inlist *)it, (Eina_Inlist *)after);
@@ -1083,11 +1082,11 @@ elm_genlist_item_insert_after(Evas_Object *obj, const Elm_Genlist_Item_Class *it
      {
         // FIXME: tree. not done yet
      }
-   it->rel = (Item *)after;
+   it->rel = after;
    it->rel->relcount++;
    it->before = 0;
    _item_queue(wd, it);
-   return (Elm_Genlist_Item *)it;
+   return it;
 }
 
 EAPI void
@@ -1096,7 +1095,7 @@ elm_genlist_clear(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    while (wd->items)
      {
-        Item *it = (Item *)(wd->items);
+        Elm_Genlist_Item *it = (Elm_Genlist_Item *)(wd->items);
         wd->items = eina_inlist_remove(wd->items, wd->items);
         if (it->realized) _item_unrealize(it);
         if (it->itc->func.del) it->itc->func.del(it->data, it->wd->obj);
@@ -1144,8 +1143,8 @@ elm_genlist_multi_select_set(Evas_Object *obj, Evas_Bool multi)
    wd->multi = multi;
 }
 
-EAPI const Elm_Genlist_Item *
-elm_genlist_selected_item_get(Evas_Object *obj)
+EAPI Elm_Genlist_Item *
+elm_genlist_selected_item_get(const Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->selected) return wd->selected->data;
@@ -1153,83 +1152,80 @@ elm_genlist_selected_item_get(Evas_Object *obj)
 }
 
 EAPI const Eina_List *
-elm_genlist_selected_items_get(Evas_Object *obj)
+elm_genlist_selected_items_get(const Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    return wd->selected;
 }
 
-EAPI const Elm_Genlist_Item *
-elm_genlist_first_item_get(Evas_Object *obj)
+EAPI Elm_Genlist_Item *
+elm_genlist_first_item_get(const Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Item *it = (Item *)(wd->items);
-   while ((it) && (it->delete_me)) it = (Item *)(((Eina_Inlist *)it)->next);
-   return (Elm_Genlist_Item *)it;
+   Elm_Genlist_Item *it = (Elm_Genlist_Item *)(wd->items);
+   while ((it) && (it->delete_me))
+     it = (Elm_Genlist_Item *)(((Eina_Inlist *)it)->next);
+   return it;
 }
 
-EAPI const Elm_Genlist_Item *
-elm_genlist_last_item_get(Evas_Object *obj)
+EAPI Elm_Genlist_Item *
+elm_genlist_last_item_get(const Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd->items) return NULL;
-   Item *it = (Item *)(wd->items->last);
-   while ((it) && (it->delete_me)) it = (Item *)(((Eina_Inlist *)it)->prev);
-   return (Elm_Genlist_Item *)it;
+   Elm_Genlist_Item *it = (Elm_Genlist_Item *)(wd->items->last);
+   while ((it) && (it->delete_me))
+     it = (Elm_Genlist_Item *)(((Eina_Inlist *)it)->prev);
+   return it;
 }
 
-EAPI const Elm_Genlist_Item *
-elm_genlist_item_next_get(Elm_Genlist_Item *item)
+EAPI Elm_Genlist_Item *
+elm_genlist_item_next_get(const Elm_Genlist_Item *it)
 {
-   Item *it = (Item *)item;
    while (it)
      {
-        it = (Item *)(((Eina_Inlist *)it)->next);
+        it = (Elm_Genlist_Item *)(((Eina_Inlist *)it)->next);
         if ((it) && (!it->delete_me)) break;
      }
    return (Elm_Genlist_Item *)it;
 }
 
-EAPI const Elm_Genlist_Item *
-elm_genlist_item_prev_get(Elm_Genlist_Item *item)
+EAPI Elm_Genlist_Item *
+elm_genlist_item_prev_get(const Elm_Genlist_Item *it)
 {
-   Item *it = (Item *)item;
    while (it)
      {
-        it = (Item *)(((Eina_Inlist *)it)->prev);
+        it = (Elm_Genlist_Item *)(((Eina_Inlist *)it)->prev);
         if ((it) && (!it->delete_me)) break;
      }
    return (Elm_Genlist_Item *)it;
 }
 
 EAPI void
-elm_genlist_item_selected_set(Elm_Genlist_Item *item, Evas_Bool selected)
+elm_genlist_item_selected_set(Elm_Genlist_Item *it, Evas_Bool selected)
 {
-   Item *it = (Item *)item;
    Widget_Data *wd = elm_widget_data_get(it->wd->obj);
-   Eina_List *l;
+
    if (it->delete_me) return;
+   selected = !!selected;
+   if (it->selected == selected) return;
+
    if (selected)
      {
         if (!wd->multi)
           {
-             for (l = it->wd->selected; l;)
-               {
-                  Item *it2 = l->data;
-                  l = l->next;
-                  if ((it2 != it) && (it2->selected)) _item_unselect(it2);
-               }
+	     while (wd->selected)
+	       _item_unselect(wd->selected->data);
           }
-        if (!it->selected) _item_select(it);
+	_item_select(it);
      }
-   else if (it->selected)
+   else
      _item_unselect(it);
 }
 
 EAPI Evas_Bool
-elm_genlist_item_selected_get(Elm_Genlist_Item *item)
+elm_genlist_item_selected_get(const Elm_Genlist_Item *it)
 {
-   Item *it = (Item *)item;
    return it->selected;
 }
 
@@ -1240,15 +1236,14 @@ elm_genlist_item_expanded_set(Elm_Genlist_Item *item, Evas_Bool expanded)
 }
 
 EAPI Evas_Bool
-elm_genlist_item_expanded_get(Elm_Genlist_Item *item)
+elm_genlist_item_expanded_get(const Elm_Genlist_Item *item)
 {
    // FIXME: tree. not done yet
 }
     
 EAPI void
-elm_genlist_item_disabled_set(Elm_Genlist_Item *item, Evas_Bool disabled)
+elm_genlist_item_disabled_set(Elm_Genlist_Item *it, Evas_Bool disabled)
 {
-   Item *it = (Item *)item;
    if (it->disabled == disabled) return;
    if (it->delete_me) return;
    it->disabled = disabled;
@@ -1262,17 +1257,15 @@ elm_genlist_item_disabled_set(Elm_Genlist_Item *item, Evas_Bool disabled)
 }
 
 EAPI Evas_Bool
-elm_genlist_item_disabled_get(Elm_Genlist_Item *item)
+elm_genlist_item_disabled_get(const Elm_Genlist_Item *it)
 {
-   Item *it = (Item *)item;
    if (it->delete_me) return 0;
    return it->disabled;
 }
 
 EAPI void
-elm_genlist_item_show(Elm_Genlist_Item *item)
+elm_genlist_item_show(Elm_Genlist_Item *it)
 {
-   Item *it = (Item *)item;
    if (it->delete_me) return;
    if ((it->queued) || (!it->mincalcd))
      {
@@ -1292,9 +1285,8 @@ elm_genlist_item_show(Elm_Genlist_Item *item)
 }
 
 EAPI void
-elm_genlist_item_del(Elm_Genlist_Item *item)
+elm_genlist_item_del(Elm_Genlist_Item *it)
 {
-   Item *it = (Item *)item;
    if (!it) return;
    if (it->relcount > 0)
      {
@@ -1315,16 +1307,14 @@ elm_genlist_item_del(Elm_Genlist_Item *item)
 }
 
 EAPI const void *
-elm_genlist_item_data_get(Elm_Genlist_Item *item)
+elm_genlist_item_data_get(const Elm_Genlist_Item *it)
 {
-   Item *it = (Item *)item;
    return it->data;
 }
 
 EAPI void
-elm_genlist_item_update(Elm_Genlist_Item *item)
+elm_genlist_item_update(Elm_Genlist_Item *it)
 {
-   Item *it = (Item *)item;
    if (!it->block) return;
    if (it->delete_me) return;
    it->mincalcd = 0;

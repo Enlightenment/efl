@@ -55,12 +55,11 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   char *t;
-   t = (char *)elm_entry_entry_get(obj);
-   if (t) t = strdup(t);
+   const char *t;
+   t = eina_stringshare_ref(elm_entry_entry_get(obj));
    _elm_theme_set(wd->ent, "entry", _getbase(obj), "default");
    elm_entry_entry_set(obj, t);
-   if (t) free(t);
+   eina_stringshare_del(t);
    edje_object_scale_set(wd->ent, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
 }
@@ -503,7 +502,7 @@ _signal_anchor_up(void *data, Evas_Object *obj, const char *emission, const char
    p = strrchr(emission, ',');
    if (p)
      {
-	Eina_List *geoms;
+	const Eina_List *geoms;
 	
 	n = p + 1;
 	p2 = p -1;
@@ -523,7 +522,7 @@ _signal_anchor_up(void *data, Evas_Object *obj, const char *emission, const char
 	if (geoms)
 	  {
 	     Evas_Textblock_Rectangle *r;
-	     Eina_List *l;
+	     const Eina_List *l;
 	     Evas_Coord px, py, x, y;
 
 	     evas_object_geometry_get(wd->ent, &x, &y, NULL, NULL);
@@ -676,15 +675,15 @@ EAPI void
 elm_entry_single_line_set(Evas_Object *obj, Evas_Bool single_line)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   char *t;
+   const char *t;
    if (wd->single_line == single_line) return;
    wd->single_line = single_line;
    wd->linewrap = 0;
-   t = elm_entry_entry_get(obj);
-   if (t) t = strdup(t);
+   t = eina_stringshare_ref(elm_entry_entry_get(obj));
+   eina_stringshare_del(t);
    _elm_theme_set(wd->ent, "entry", _getbase(obj), "default");
    elm_entry_entry_set(obj, t);
-   if (t) free(t);
+   eina_stringshare_del(t);
    _sizing_eval(obj);
 }
 
@@ -692,16 +691,15 @@ EAPI void
 elm_entry_password_set(Evas_Object *obj, Evas_Bool password)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   char *t;
+   const char *t;
    if (wd->password == password) return;
    wd->password = password;
    wd->single_line = 1;
    wd->linewrap = 0;
-   t = elm_entry_entry_get(obj);
-   if (t) t = strdup(t);
+   t = eina_stringshare_ref(elm_entry_entry_get(obj));
    _elm_theme_set(wd->ent, "entry", _getbase(obj), "default");
    elm_entry_entry_set(obj, t);
-   if (t) free(t);
+   eina_stringshare_del(t);
    _sizing_eval(obj);
 }
 
@@ -725,14 +723,14 @@ elm_entry_entry_set(Evas_Object *obj, const char *entry)
 }
 
 EAPI const char *
-elm_entry_entry_get(Evas_Object *obj)
+elm_entry_entry_get(const Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    return edje_object_part_text_get(wd->ent, "elm.text");
 }
 
 EAPI const char *
-elm_entry_selection_get(Evas_Object *obj)
+elm_entry_selection_get(const Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    return edje_object_part_text_selection_get(wd->ent, "elm.text");
@@ -751,14 +749,13 @@ EAPI void
 elm_entry_line_wrap_set(Evas_Object *obj, Evas_Bool wrap)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   char *t;
+   const char *t;
    if (wd->linewrap == wrap) return;
    wd->linewrap = wrap;
-   t = elm_entry_entry_get(obj);
-   if (t) t = strdup(t);
+   t = eina_stringshare_ref(elm_entry_entry_get(obj));
    _elm_theme_set(wd->ent, "entry", _getbase(obj), "default");
    elm_entry_entry_set(obj, t);
-   if (t) free(t);
+   eina_stringshare_del(t);
    _sizing_eval(obj);
 }
 
@@ -766,14 +763,13 @@ EAPI void
 elm_entry_editable_set(Evas_Object *obj, Evas_Bool editable)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   char *t;
+   const char *t;
    if (wd->editable == editable) return;
    wd->editable = editable;
-   t = elm_entry_entry_get(obj);
-   if (t) t = strdup(t);
+   t = eina_stringshare_ref(elm_entry_entry_get(obj));
    _elm_theme_set(wd->ent, "entry", _getbase(obj), "default");
    elm_entry_entry_set(obj, t);
-   if (t) free(t);
+   eina_stringshare_del(t);
    _sizing_eval(obj);
 }
 
