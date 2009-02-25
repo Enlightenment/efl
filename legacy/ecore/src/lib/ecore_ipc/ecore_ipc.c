@@ -862,7 +862,7 @@ ecore_ipc_client_del(Ecore_Ipc_Client *cl)
      {
 	svr = ecore_con_server_data_get(ecore_con_client_server_get(cl->client));
 	ecore_con_client_del(cl->client);
-	svr->clients = _ecore_list2_remove(svr->clients, cl);
+	svr->clients = eina_list_remove(svr->clients, cl);
 	if (cl->buf) free(cl->buf);
 	ECORE_MAGIC_SET(cl, ECORE_MAGIC_NONE);
 	free(cl);
@@ -1015,7 +1015,7 @@ _ecore_ipc_event_client_add(void *data __UNUSED__, int ev_type __UNUSED__, void 
 	cl->client = e->client;
 	cl->max_buf_size = 32 * 1024;
 	ecore_con_client_data_set(cl->client, (void *)cl);
-	svr->clients = _ecore_list2_append(svr->clients, cl);
+	svr->clients = eina_list_append(svr->clients, cl);
 	svr->client_list = eina_list_append(svr->client_list, cl);
 	if (!cl->delete_me)
 	  {

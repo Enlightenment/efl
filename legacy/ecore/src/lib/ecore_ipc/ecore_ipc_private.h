@@ -39,7 +39,6 @@ __attribute__ ((packed));
 
 struct _Ecore_Ipc_Client
 {
-   Ecore_List2        __in_list;
    ECORE_MAGIC;
    Ecore_Con_Client  *client;
    void              *data;
