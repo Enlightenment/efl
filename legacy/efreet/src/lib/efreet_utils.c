@@ -825,9 +825,9 @@ efreet_util_cache_search_mime(__UNUSED__ const Eina_Hash *hash, void *value, voi
     search = fdata;
     ud = value;
 
-    if (!ud->desktop->mime_types) return EINA_FALSE;
+    if (!ud->desktop->mime_types) return EINA_TRUE;
     EINA_LIST_FOREACH(ud->desktop->mime_types, l, mime)
-        if (search->what == mime)
+      if (search->what == mime)
         {
 	    efreet_desktop_ref(ud->desktop);
             search->list = eina_list_append(search->list, ud->desktop);
@@ -956,7 +956,7 @@ efreet_util_cache_search_exec_glob(__UNUSED__ const Eina_Hash *hash, void *value
     search = fdata;
     ud = value;
 
-    if (!ud->desktop->exec) return EINA_FALSE;
+    if (!ud->desktop->exec) return EINA_TRUE;
     exec = ecore_file_app_exe_get(ud->desktop->exec);
     if (!exec) return EINA_TRUE;
 
