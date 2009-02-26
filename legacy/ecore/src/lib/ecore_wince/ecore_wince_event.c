@@ -49,7 +49,8 @@ static int  _ecore_wince_event_char_get(int    key,
 /***** Global functions *****/
 
 void
-_ecore_wince_event_handle_key_press(Ecore_WinCE_Callback_Data *msg)
+_ecore_wince_event_handle_key_press(Ecore_WinCE_Callback_Data *msg,
+                                    int                        is_keystroke)
 {
    Ecore_WinCE_Event_Key_Down *e;
 
@@ -58,13 +59,27 @@ _ecore_wince_event_handle_key_press(Ecore_WinCE_Callback_Data *msg)
    e = (Ecore_WinCE_Event_Key_Down *)malloc(sizeof(Ecore_WinCE_Event_Key_Down));
    if (!e) return;
 
-   if (!_ecore_wince_event_keystroke_get(LOWORD(msg->window_param),
+   if (is_keystroke)
+     {
+        if (!_ecore_wince_event_keystroke_get(LOWORD(msg->window_param),
+                                              &e->keyname,
+                                              &e->keysymbol,
+                                              &e->keycompose))
+          {
+             free(e);
+             return;
+          }
+     }
+   else
+     {
+        if (!_ecore_wince_event_char_get(LOWORD(msg->window_param),
                                          &e->keyname,
                                          &e->keysymbol,
                                          &e->keycompose))
-     {
-        free(e);
-        return;
+          {
+             free(e);
+             return;
+          }
      }
 
    e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
@@ -81,7 +96,8 @@ _ecore_wince_event_handle_key_press(Ecore_WinCE_Callback_Data *msg)
 }
 
 void
-_ecore_wince_event_handle_key_release(Ecore_WinCE_Callback_Data *msg)
+_ecore_wince_event_handle_key_release(Ecore_WinCE_Callback_Data *msg,
+                                      int                        is_keystroke)
 {
    Ecore_WinCE_Event_Key_Up *e;
 
@@ -90,13 +106,27 @@ _ecore_wince_event_handle_key_release(Ecore_WinCE_Callback_Data *msg)
    e = (Ecore_WinCE_Event_Key_Up *)calloc(1, sizeof(Ecore_WinCE_Event_Key_Up));
    if (!e) return;
 
-   if (!_ecore_wince_event_keystroke_get(LOWORD(msg->window_param),
+   if (is_keystroke)
+     {
+        if (!_ecore_wince_event_keystroke_get(LOWORD(msg->window_param),
+                                              &e->keyname,
+                                              &e->keysymbol,
+                                              &e->keycompose))
+          {
+             free(e);
+             return;
+          }
+     }
+   else
+     {
+        if (!_ecore_wince_event_char_get(LOWORD(msg->window_param),
                                          &e->keyname,
                                          &e->keysymbol,
                                          &e->keycompose))
-     {
-        free(e);
-        return;
+          {
+             free(e);
+             return;
+          }
      }
 
    e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
@@ -554,7 +584,7 @@ _ecore_wince_event_handle_delete_request(Ecore_WinCE_Callback_Data *msg)
 /***** Private functions definitions *****/
 
 static void
-_ecore_wince_event_free_key_down(void *data,
+_ecore_wince_event_free_key_down(void *data __UNUSED__,
                                  void *ev)
 {
    Ecore_WinCE_Event_Key_Down *e;
@@ -567,7 +597,7 @@ _ecore_wince_event_free_key_down(void *data,
 }
 
 static void
-_ecore_wince_event_free_key_up(void *data,
+_ecore_wince_event_free_key_up(void *data __UNUSED__,
                                void *ev)
 {
    Ecore_WinCE_Event_Key_Up *e;
@@ -764,6 +794,16 @@ _ecore_wince_event_keystroke_get(int    key,
      case VK_F24:
        kn = "F24";
        ks = "F24";
+       kc = "";
+       break;
+     case VK_APPS:
+       kn = "Application";
+       ks = "Application";
+       kc = "";
+       break;
+     case VK_MENU:
+       kn = "Menu";
+       ks = "Menu";
        kc = "";
        break;
      default:

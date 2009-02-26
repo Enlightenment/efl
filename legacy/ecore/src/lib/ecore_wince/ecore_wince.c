@@ -232,14 +232,19 @@ _ecore_wince_window_procedure(HWND   window,
    switch (data->message)
      {
        /* Keyboard input notifications */
+     case WM_CHAR:
+       _ecore_wince_event_handle_key_press(data, 0);
+       break;
      case WM_HOTKEY:
-       _ecore_wince_event_handle_key_press(data);
+       _ecore_wince_event_handle_key_press(data, 1);
        break;
      case WM_KEYDOWN:
-       _ecore_wince_event_handle_key_press(data);
+     case WM_SYSKEYDOWN:
+       _ecore_wince_event_handle_key_press(data, 1);
        break;
      case WM_KEYUP:
-       _ecore_wince_event_handle_key_release(data);
+     case WM_SYSKEYUP:
+       _ecore_wince_event_handle_key_release(data, 1);
        break;
      case WM_SETFOCUS:
        _ecore_wince_event_handle_focus_in(data);

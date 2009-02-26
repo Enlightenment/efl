@@ -49,8 +49,8 @@ extern Ecore_WinCE_Window *_ecore_wince_event_last_window;
 extern HINSTANCE           _ecore_wince_instance;
 
 
-void  _ecore_wince_event_handle_key_press(Ecore_WinCE_Callback_Data *msg);
-void  _ecore_wince_event_handle_key_release(Ecore_WinCE_Callback_Data *msg);
+void  _ecore_wince_event_handle_key_press(Ecore_WinCE_Callback_Data *msg, int is_keystroke);
+void  _ecore_wince_event_handle_key_release(Ecore_WinCE_Callback_Data *msg, int is_keystroke);
 void  _ecore_wince_event_handle_button_press(Ecore_WinCE_Callback_Data *msg, int button);
 void  _ecore_wince_event_handle_button_release(Ecore_WinCE_Callback_Data *msg, int button);
 void  _ecore_wince_event_handle_motion_notify(Ecore_WinCE_Callback_Data *msg);
