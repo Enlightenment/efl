@@ -11,6 +11,8 @@
 #include <fcntl.h>
 #include <signal.h>
 
+static double restart_time = 0.0;
+
 #define LENGTH_OF_SOCKADDR_UN(s) (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
 
 static void
@@ -45,6 +47,21 @@ child_handler(int n)
    wait(&status);
 }
 
+EAPI void
+crash_handler(int x, siginfo_t *info, void *data)
+{
+   double t;
+   
+   EINA_ERROR_PERR("elementary_quicklaunch: crash detected. restarting.\n");
+   t = ecore_time_get();
+   if ((t - restart_time) <= 2.0)
+     {
+        EINA_ERROR_PERR("elementary_quicklaunch: crash too fast - less than 2 seconds. abort restart\n");
+        exit(-1);
+     }
+   ecore_app_restart();
+}
+
 int
 main(int argc, char **argv)
 {
@@ -53,11 +70,11 @@ main(int argc, char **argv)
    struct sockaddr_un socket_unix;
    struct linger lin;
    char buf[PATH_MAX];
-   struct sigaction  sa;
+   struct sigaction action;
    
    if (!getenv("DISPLAY"))
      {
-        fprintf(stderr, "elementary_quicklaunch: DISPLAY env var not set\n");
+        EINA_ERROR_PERR("elementary_quicklaunch: DISPLAY env var not set\n");
         exit(-1);
      }
    snprintf(buf, sizeof(buf), "/tmp/elm-ql-%i", getuid());
@@ -68,11 +85,13 @@ main(int argc, char **argv)
    if (sock < 0)
      {
         perror("elementary_quicklaunch: socket(AF_UNIX, SOCK_STREAM, 0)");
+        EINA_ERROR_PERR("elementary_quicklaunch: cannot create socket for socket for '%s'\n", buf);
         exit(-1);
      }
    if (fcntl(sock, F_SETFD, FD_CLOEXEC) < 0)
      {
         perror("elementary_quicklaunch: fcntl(sock, F_SETFD, FD_CLOEXEC)");
+        EINA_ERROR_PERR("elementary_quicklaunch: cannot set close on exec socket for '%s'\n", buf);
         exit(-1);
      }
    lin.l_onoff = 1;
@@ -80,6 +99,7 @@ main(int argc, char **argv)
    if (setsockopt(sock, SOL_SOCKET, SO_LINGER, &lin, sizeof(struct linger)) < 0)
      {
         perror("elementary_quicklaunch: setsockopt(sock, SOL_SOCKET, SO_LINGER, &lin, sizeof(struct linger)) ");
+        EINA_ERROR_PERR("elementary_quicklaunch: cannot set linger for socket for '%s'\n", buf);
         exit(-1);
      }
    socket_unix.sun_family = AF_UNIX;
@@ -88,7 +108,7 @@ main(int argc, char **argv)
    if (bind(sock, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
      {
         perror("elementary_quicklaunch: bind(sock, (struct sockaddr *)&socket_unix, socket_unix_len)");
-        printf("elementary_quicklaunch: cannot bind socket for '%s'\n", buf);
+        EINA_ERROR_PERR("elementary_quicklaunch: cannot bind socket for '%s'\n", buf);
         exit(-1);
      }
    if (listen(sock, 4096) < 0)
@@ -105,6 +125,34 @@ main(int argc, char **argv)
    signal(SIGUSR2, SIG_DFL);
    signal(SIGHUP, SIG_DFL);
    signal(SIGCHLD, child_handler);
+
+   restart_time = ecore_time_get();
+   
+   action.sa_sigaction = crash_handler;
+   action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGSEGV, &action, NULL);
+   
+   action.sa_sigaction = crash_handler;
+   action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGILL, &action, NULL);
+   
+   action.sa_sigaction = crash_handler;
+   action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGFPE, &action, NULL);
+   
+   action.sa_sigaction = crash_handler;
+   action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGBUS, &action, NULL);
+   
+   action.sa_sigaction = crash_handler;
+   action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGABRT, &action, NULL);
+   
    for (;;)
      {
         int fd;
