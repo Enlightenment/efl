@@ -1170,7 +1170,6 @@ efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Eina_List *files,
     Efreet_Desktop_Command *command;
     Eina_List *l;
     char *file;
-    char *exec;
     void *ret = NULL;
 
     if (!desktop || !cb_command || !desktop->exec) return NULL;
@@ -1203,8 +1202,7 @@ efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Eina_List *files,
         Eina_List *execs;
         execs = efreet_desktop_command_build(command);
         ret = efreet_desktop_command_execs_process(command, execs);
-	EINA_LIST_FREE(execs, exec)
-	  free(exec);
+	eina_list_free(execs);
         efreet_desktop_command_free(command);
     }
 
@@ -1303,22 +1301,22 @@ efreet_desktop_command_execs_process(Efreet_Desktop_Command *command, Eina_List 
 static Eina_List *
 efreet_desktop_command_build(Efreet_Desktop_Command *command)
 {
-    Efreet_Desktop_Command_File *file = NULL;
     Eina_List *execs = NULL;
-    Eina_List *l;
+    const Eina_List *l;
     char *exec;
-
 
     /* if the Exec field appends multiple, that will run the list to the end,
      * causing this loop to only run once. otherwise, this loop will generate a
      * command for each file in the list. if the list is empty, this
      * will run once, removing any file field codes */
-    EINA_LIST_FOREACH(command->files, l, file)
-    {
+    l = command->files;
+    do
+      {
         const char *p;
         int len = 0;
         int size = PATH_MAX;
         int file_added = 0;
+	Efreet_Desktop_Command_File *file = eina_list_data_get(l);
 
         exec = malloc(size);
         p = command->desktop->exec;
@@ -1424,7 +1422,8 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
         /* If no file was added, then the Exec field doesn't contain any file
          * fields (fFuUdDnN). We only want to run the app once in this case. */
         if (!file_added) break;
-    }
+      }
+    while ((l = eina_list_next(l)) != NULL);
 
     return execs;
 }
@@ -1749,7 +1748,6 @@ efreet_desktop_cb_download_complete(void *data, const char *file __UNUSED__,
                                                         int status __UNUSED__)
 {
     Efreet_Desktop_Command_File *f;
-    char *exec;
 
     f = data;
 
@@ -1763,12 +1761,7 @@ efreet_desktop_cb_download_complete(void *data, const char *file __UNUSED__,
         execs = efreet_desktop_command_build(f->command);
         /* TODO: Need to handle the return value from efreet_desktop_command_execs_process */
         efreet_desktop_command_execs_process(f->command, execs);
-        while (execs)
-        {
-            exec = eina_list_data_get(execs);
-            free(exec);
-            execs = eina_list_remove_list(execs, execs);
-        }
+	eina_list_free(execs);
         efreet_desktop_command_free(f->command);
     }
 }
