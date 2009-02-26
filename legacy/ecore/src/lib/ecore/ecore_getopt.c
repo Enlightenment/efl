@@ -11,6 +11,10 @@
 #include <stdarg.h>
 #include <ctype.h>
 
+#ifdef _WIN32_WCE
+# include <Evil.h>
+#endif
+
 #include "Ecore.h"
 #include "Ecore_Getopt.h"
 

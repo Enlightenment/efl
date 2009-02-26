@@ -35,6 +35,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <stdio.h>
 #include <string.h>
 
+#ifdef _WIN32_WCE
+# include <Evil.h>
+#endif
+
 #include "Ecore.h"
 #include "Ecore_Data.h"
 #include "ecore_private.h"

@@ -1,6 +1,11 @@
 #ifndef _ECORE_DATA_H
 # define _ECORE_DATA_H
 
+/* we need this for size_t */
+#include <stddef.h>
+
+#include <Eina.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -26,11 +31,6 @@
 #  define EAPI
 # endif
 #endif /* ! _WIN32 */
-
-/* we need this for size_t */
-#include <stddef.h>
-
-#include <Eina.h>
 
 /**
  * @file Ecore_Data.h
