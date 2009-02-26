@@ -204,10 +204,10 @@ efreet_icon_extension_add(const char *ext)
  * from first to last directory in this list. the strings in the list should
  * be created with eina_stringshare_add().
  */
-EAPI Eina_List *
+EAPI Eina_List **
 efreet_icon_extra_list_get(void)
 {
-    return efreet_extra_icon_dirs;
+    return &efreet_extra_icon_dirs;
 }
 
 static Eina_Bool
