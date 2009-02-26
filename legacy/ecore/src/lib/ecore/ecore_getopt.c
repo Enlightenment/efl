@@ -1103,12 +1103,11 @@ _ecore_getopt_parse_append(const Ecore_Getopt *parser __UNUSED__, const Ecore_Ge
 	     *(double *)data = d;
 	}
 	break;
-     }
-
-   if (!data)
-     {
-	_ecore_getopt_desc_print_error(desc, "could not parse value.\n");
-	return 0;
+      default:
+	{
+	  _ecore_getopt_desc_print_error(desc, "could not parse value.\n");
+	  return 0;
+	}
      }
 
    *val->listp = eina_list_append(*val->listp, data);
