@@ -97,7 +97,7 @@ static void
 _ecore_evas_fb_gain(void *data __UNUSED__)
 {
    Ecore_List2 *l;
-   Eina_List *l;
+   Eina_List *ll;
    Ecore_Fb_Input_Device *dev;
 
    for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
