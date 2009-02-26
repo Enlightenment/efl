@@ -1009,17 +1009,18 @@ efreet_desktop_generic_fields_save(Efreet_Desktop *desktop, Efreet_Ini *ini)
  * @internal
  * @param node: The node to work with
  * @param desktop: The desktop file to work with
- * @return Returns no value
+ * @return Returns always true, to be used in eina_hash_foreach()
  * @brief Parses out an X- key from @a node and stores in @a desktop
  */
 static Eina_Bool
-efreet_desktop_x_fields_parse(const Eina_Hash *hash, const void *key, void *value, void *fdata)
+efreet_desktop_x_fields_parse(const Eina_Hash *hash __UNUSED__, const void *key, void *value, void *fdata)
 {
     Efreet_Desktop * desktop = fdata;
 
+    if (!desktop) return EINA_TRUE;
     if (strncmp(key, "X-", 2)) return EINA_TRUE;
 
-    if (desktop && !desktop->x)
+    if (!desktop->x)
       desktop->x = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
     eina_hash_del(desktop->x, key, NULL);
     eina_hash_add(desktop->x, key, (void *)eina_stringshare_add(value));
@@ -1035,7 +1036,7 @@ efreet_desktop_x_fields_parse(const Eina_Hash *hash, const void *key, void *valu
  * @brief Stores an X- key from @a node and stores in @a ini
  */
 static Eina_Bool
-efreet_desktop_x_fields_save(const Eina_Hash *hash, const void *key, void *value, void *fdata)
+efreet_desktop_x_fields_save(const Eina_Hash *hash __UNUSED__, const void *key, void *value, void *fdata)
 {
     Efreet_Ini *ini = fdata;
     efreet_ini_string_set(ini, key, value);

@@ -4,7 +4,7 @@
 #include "comp.h"
 
 int
-main(int argc, char **argv)
+main(void)
 {
     int i = 0, k;
     char *path;

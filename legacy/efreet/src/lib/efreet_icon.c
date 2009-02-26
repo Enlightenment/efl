@@ -48,7 +48,6 @@ static int efreet_icon_directory_size_match(Efreet_Icon_Theme_Directory *dir,
                                                   unsigned int size);
 
 static Efreet_Icon *efreet_icon_new(const char *path);
-static void efreet_icon_point_free(Efreet_Icon_Point *point);
 static void efreet_icon_populate(Efreet_Icon *icon, const char *file);
 
 static char *efreet_icon_lookup_directory_helper(Efreet_Icon_Theme_Directory *dir,
@@ -67,7 +66,6 @@ static void efreet_icon_theme_index_read(Efreet_Icon_Theme *theme,
 
 static Efreet_Icon_Theme_Directory *efreet_icon_theme_directory_new(Efreet_Ini *ini,
                                                                 const char *name);
-static void efreet_icon_theme_directory_free(Efreet_Icon_Theme_Directory *dir);
 
 static void efreet_icon_theme_cache_check(Efreet_Icon_Theme *theme);
 static int efreet_icon_theme_cache_check_dir(Efreet_Icon_Theme *theme,
@@ -211,7 +209,7 @@ efreet_icon_extra_list_get(void)
 }
 
 static Eina_Bool
-_hash_keys(Eina_Hash *hash, const void *key, void *list)
+_hash_keys(Eina_Hash *hash __UNUSED__, const void *key, void *list)
 {
   *(Eina_List**)list = eina_list_append(*(Eina_List**)list, key);
   return EINA_TRUE;
@@ -354,13 +352,14 @@ efreet_icon_find_theme_check(const char *theme_name)
 EAPI char *
 efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int size)
 {
-    char *value = NULL;
+    const char *cached;
+    char *value;
     Efreet_Icon_Theme *theme;
 
-    if ((value = efreet_icon_hash_get(theme_name, icon, size)) != NULL)
+    if ((cached = efreet_icon_hash_get(theme_name, icon, size)) != NULL)
     {
-       if (value == NON_EXISTING) return NULL;
-       return strdup(value);
+       if (cached == NON_EXISTING) return NULL;
+       return strdup(cached);
     }
     theme = efreet_icon_find_theme_check(theme_name);
 
@@ -988,20 +987,6 @@ efreet_icon_free(Efreet_Icon *icon)
 
 /**
  * @internal
- * @param point: The Efreet_Icon_Point to free
- * @return Returns no value
- * @brief Frees the given structure
- */
-static void
-efreet_icon_point_free(Efreet_Icon_Point *point)
-{
-    if (!point) return;
-
-    FREE(point);
-}
-
-/**
- * @internal
  * @param icon: The icon to populate
  * @param file: The file to populate from
  * @return Returns no value
@@ -1503,21 +1488,6 @@ efreet_icon_theme_directory_new(Efreet_Ini *ini, const char *name)
     else dir->size.threshold = val;
 
     return dir;
-}
-
-/**
- * @internal
- * @param dir: The Efreet_Icon_Theme_Directory to free
- * @return Returns no value
- * @brief Frees the given directory @a dir
- */
-static void
-efreet_icon_theme_directory_free(Efreet_Icon_Theme_Directory *dir)
-{
-    if (!dir) return;
-
-    IF_FREE(dir->name);
-    FREE(dir);
 }
 
 static int

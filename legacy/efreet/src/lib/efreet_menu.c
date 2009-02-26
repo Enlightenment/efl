@@ -280,7 +280,6 @@ static void efreet_menu_create_default_layout_list(Efreet_Menu_Internal *interna
 static char *efreet_menu_path_get(Efreet_Menu_Internal *internal, const char *suffix);
 
 static Efreet_Menu_App_Dir *efreet_menu_app_dir_new(void);
-static void efreet_menu_app_dir_free(Efreet_Menu_App_Dir *dir);
 
 static Efreet_Menu_Move *efreet_menu_move_new(void);
 static void efreet_menu_move_free(Efreet_Menu_Move *move);
@@ -289,7 +288,6 @@ static Efreet_Menu_Filter *efreet_menu_filter_new(void);
 static void efreet_menu_filter_free(Efreet_Menu_Filter *filter);
 
 static Efreet_Menu_Layout *efreet_menu_layout_new(void);
-static void efreet_menu_layout_free(Efreet_Menu_Layout *layout);
 
 static Efreet_Menu_Filter_Op *efreet_menu_filter_op_new(void);
 static void efreet_menu_filter_op_free(Efreet_Menu_Filter_Op *op);
@@ -2429,22 +2427,6 @@ efreet_menu_layout_new(void)
 
 /**
  * @internal
- * @param layout: The layout to work with
- * @return Returns no data
- * @brief Frees the given layout and all data
- */
-static void
-efreet_menu_layout_free(Efreet_Menu_Layout *layout)
-{
-    if (!layout) return;
-
-    IF_FREE(layout->name);
-
-    FREE(layout);
-}
-
-/**
- * @internal
  * @return Returns a new Efreet_Menu_Filter_Op on success or NULL on failure
  * @brief Creates and initializes an Efreet_Menu_Filter_Op structure
  */
@@ -3214,23 +3196,6 @@ efreet_menu_app_dir_new(void)
     dir = NEW(Efreet_Menu_App_Dir, 1);
 
     return dir;
-}
-
-/**
- * @internal
- * @param dir: The app dir to free
- * @return Returns no value
- * @brief Frees @a dir
- */
-static void
-efreet_menu_app_dir_free(Efreet_Menu_App_Dir *dir)
-{
-    if (!dir) return;
-
-    IF_FREE(dir->path);
-    IF_FREE(dir->prefix);
-
-    FREE(dir);
 }
 
 /**

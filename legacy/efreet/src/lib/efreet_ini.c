@@ -623,7 +623,7 @@ efreet_ini_unescape(const char *str)
 }
 
 static Eina_Bool
-efreet_ini_section_save(const Eina_Hash *hash, const void *key, void *value, void *fdata)
+efreet_ini_section_save(const Eina_Hash *hash __UNUSED__, const void *key, void *value, void *fdata)
 {
     FILE *f = fdata;
 
@@ -633,7 +633,7 @@ efreet_ini_section_save(const Eina_Hash *hash, const void *key, void *value, voi
 }
 
 static Eina_Bool
-efreet_ini_value_save(const Eina_Hash *hash, const void *key, void *value, void *fdata)
+efreet_ini_value_save(const Eina_Hash *hash __UNUSED__, const void *key, void *value, void *fdata)
 {
     FILE *f = fdata;
 

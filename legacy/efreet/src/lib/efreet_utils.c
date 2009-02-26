@@ -480,7 +480,7 @@ efreet_util_desktop_comment_glob_list(const char *glob)
 }
 
 static Eina_Bool
-_hash_keys(Eina_Hash *hash, const void *key, void *fdata)
+_hash_keys(Eina_Hash *hash __UNUSED__, const void *key, void *fdata)
 {
     Eina_List **l = fdata;
 

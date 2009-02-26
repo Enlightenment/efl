@@ -54,7 +54,7 @@ ef_cb_efreet_icon_theme(void)
 }
 
 static Eina_Bool
-_hash_keys(Eina_Hash *hash, const char *key, void *list)
+_hash_keys(Eina_Hash *hash __UNUSED__, const char *key, void *list)
 {
   Eina_List **l = list;
 
@@ -74,7 +74,6 @@ ef_cb_efreet_icon_theme_list(void)
     Efreet_Icon_Theme *theme;
     const char *dir;
     char buf[PATH_MAX];
-    void *value;
 
     dirs = eina_hash_string_superfast_new(free);
 
