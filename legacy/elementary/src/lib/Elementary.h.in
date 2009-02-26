@@ -4,15 +4,37 @@
 #ifndef ELEMENTARY_H
 #define ELEMENTARY_H
 
-/* What is this?
+/* What is this?: This is a VERY SIMPLE toolkit. It is not meant for writing
+ * extensive desktop applications (yet). Small simple ones with simple needs.
+ * It is meant to make the programmers work almost brainless but give them
+ * lots of flexibility.
  * 
- * This is a VERY SIMPLE toolkit - VERY SIMPLE. It is not meant for writing
- * extensive applications. Small simple ones with simple needs. It is meant
- * to make the programmers work almost brainless.
+ * License: LGPL v2 (see COPYING in the base of Elementary's source). This
+ * applies to all files in the source here.
  * 
- * I'm toying with backing this with etk or ewl - or not. right now I am
- * unsure as some of the widgets will be faily complex edje creations. Do
- * not consider any choices permanent - but the API should stay unbroken.
+ * Acknowledgements: There is a lot that goes into making a widget set, and
+ * they don't happen out of nothing. It's like trying to make everyone
+ * everywhere happy, regardless of age, gender, race or nationality - and
+ * that is really tough. So thanks to people and organisations behind this,
+ * and here are some of them (if you think you've been missed out please
+ * email enlightenment-devel@lists.sourceforge.net with the information):
+ * 
+ * Organisations:
+ * 
+ *  Swisscom - http://www.swisscom.ch/
+ * 
+ * Individuals:
+ * 
+ * (Enlightenment Developers)
+ *  Carsten Haitzler         <raster@rasterman.com>
+ *  Gustavo Sverzut Barbieri <barbieri@profusion.mobi>
+ *  Cedric Bail              <cedric.bail@free.fr>
+ *  Vincent Torri            <vtorri@univ-evry.fr>
+ *  Daniel Kolesa            <quaker6667@hotmail.com>
+ *  Jaime Thomas             <avi.thomas@gmail.com>
+ * (Others)
+ * 
+ * < if you contribute to elementary please add your name and email above >
  * 
  */
 
@@ -112,6 +134,7 @@
 extern "C" {
 #endif
 
+/* handy macros */
 #define ELM_RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh) (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && (((x) + (w)) > (xx)) && (((y) + (h)) > (yy)))
    
 /**************************************************************************/   
