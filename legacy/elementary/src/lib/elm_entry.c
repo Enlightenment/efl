@@ -199,6 +199,7 @@ _mkup_to_text(const char *mkup)
    char *s, *p;
    char *tag_start, *tag_end, *esc_start, *esc_end, *ts;
    
+   if (!mkup) return NULL;
    tag_start = tag_end = esc_start = esc_end = NULL;
    p = (char *)mkup;
    s = p;
@@ -323,6 +324,7 @@ _text_to_mkup(const char *text)
    int str_len = 0, str_alloc = 0;
    int ch, pos = 0, pos2 = 0;
    
+   if (!text) return NULL;
    for (;;)
      {
         // FIXME: use evas_string_char_next_get()

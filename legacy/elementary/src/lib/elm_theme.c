@@ -192,7 +192,9 @@ _elm_theme_parse(const char *theme)
    cache = eina_hash_string_superfast_new(NULL);
 
    EINA_LIST_FREE(themes, p)
-     eina_stringshare_del(p);
+     {
+        eina_stringshare_del(p);
+     }
 
    themes = names;
    return 1;

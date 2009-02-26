@@ -366,12 +366,15 @@ elm_quicklaunch_sub_shutdown(void)
 EAPI void
 elm_quicklaunch_shutdown(void)
 {
+   const char *fontdir;
+   
    eina_stringshare_del(_elm_data_dir);
    _elm_data_dir = NULL;
 
-   const char *fontdir;
    EINA_LIST_FREE(_elm_config->font_dirs, fontdir)
+     {
         eina_stringshare_del(fontdir);
+     }
 
    ecore_event_handler_del(_elm_exit_handler);
    _elm_exit_handler = NULL;
@@ -484,6 +487,7 @@ elm_quicklaunch_fork(int argc, char **argv, char *cwd)
 	     perror("could not fork");
 	     return 0;
 	  }
+        setsid();
         if (chdir(cwd) != 0)
 	  perror("could not chdir");
         args = alloca((argc + 1) * sizeof(char *));
@@ -499,6 +503,7 @@ elm_quicklaunch_fork(int argc, char **argv, char *cwd)
 	perror("could not fork");
 	return 0;
      }
+   setsid();
    if (chdir(cwd) != 0)
      perror("could not chdir");
    ret = qr_main(argc, argv);
