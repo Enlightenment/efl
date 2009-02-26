@@ -605,6 +605,10 @@ extern "C" {
    /* smart callbacks called:
     * "changed" - the user toggled the state
     */
+   
+   EAPI Evas_Object *elm_pager_add(Evas_Object *parent);
+   /* smart callbacks called:
+    */
         
 #ifdef __cplusplus
 }

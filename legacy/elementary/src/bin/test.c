@@ -2337,6 +2337,7 @@ typedef struct _Testitem
 {
    Elm_Genlist_Item *item;
    int mode;
+   int onoff;
 } Testitem;
 static Elm_Genlist_Item_Class itc2;
 char *gl2_label_get(const void *data, Evas_Object *obj, const char *part)
@@ -2479,6 +2480,14 @@ my_bt_31(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(win);
 }
 
+static void
+my_gl_item_check_changed(void *data, Evas_Object *obj, void *event_info)
+{
+   Testitem *tit = data;
+   tit->onoff = elm_check_state_get(obj);
+   printf("item %p onoff = %i\n", tit, tit->onoff);
+}
+
 static Elm_Genlist_Item_Class itc3;
 char *gl3_label_get(const void *data, Evas_Object *obj, const char *part)
 {
@@ -2514,6 +2523,8 @@ Evas_Object *gl3_icon_get(const void *data, Evas_Object *obj, const char *part)
      {
         Evas_Object *ck;
         ck = elm_check_add(obj);
+        elm_check_state_set(ck, tit->onoff);
+        evas_object_smart_callback_add(ck, "changed", my_gl_item_check_changed, data);
         evas_object_show(ck);
         return ck;
      }
