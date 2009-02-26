@@ -521,7 +521,7 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
 	Ecore_Fb_Input_Device *dev;
 	
 	EINA_LIST_FOREACH(ecore_evas_input_devices, l, dev)
-	   ecore_fb_input_device_axis_size_set(dev, ee->wn ee->h);
+	   ecore_fb_input_device_axis_size_set(dev, ee->w, ee->h);
      }
    if (resized)
      {
