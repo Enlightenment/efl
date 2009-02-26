@@ -10,10 +10,67 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <sys/wait.h>
 
 static double restart_time = 0.0;
 
 #define LENGTH_OF_SOCKADDR_UN(s) (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
+
+static struct sigaction old_sigint;
+static struct sigaction old_sigterm;
+static struct sigaction old_sigquit;
+static struct sigaction old_sigalrm;
+static struct sigaction old_sigusr1;
+static struct sigaction old_sigusr2;
+static struct sigaction old_sighup;
+static struct sigaction old_sigchld;
+static struct sigaction old_sigsegv;
+static struct sigaction old_sigill;
+static struct sigaction old_sigfpe;
+static struct sigaction old_sigbus;
+static struct sigaction old_sigabrt;
+
+static void
+post_fork(void *data)
+{
+   sigaction(SIGINT, &old_sigint, NULL);
+   sigaction(SIGTERM, &old_sigterm, NULL);
+   sigaction(SIGQUIT, &old_sigquit, NULL);
+   sigaction(SIGALRM, &old_sigalrm, NULL);
+   sigaction(SIGUSR1, &old_sigusr1, NULL);
+   sigaction(SIGUSR2, &old_sigusr2, NULL);
+   sigaction(SIGHUP, &old_sighup, NULL);
+   sigaction(SIGCHLD, &old_sigchld, NULL);
+   sigaction(SIGSEGV, &old_sigsegv, NULL);
+   sigaction(SIGILL, &old_sigill, NULL);
+   sigaction(SIGFPE, &old_sigfpe, NULL);
+   sigaction(SIGBUS, &old_sigbus, NULL);
+   sigaction(SIGABRT, &old_sigabrt, NULL);
+}
+
+static void
+child_handler(int x, siginfo_t *info, void *data)
+{
+   int status;
+   pid_t pid;
+   
+   while ((pid = waitpid(-1, &status, WNOHANG)) > 0);
+}
+
+static void
+crash_handler(int x, siginfo_t *info, void *data)
+{
+   double t;
+   
+   EINA_ERROR_PERR("elementary_quicklaunch: crash detected. restarting.\n");
+   t = ecore_time_get();
+   if ((t - restart_time) <= 2.0)
+     {
+        EINA_ERROR_PERR("elementary_quicklaunch: crash too fast - less than 2 seconds. abort restart\n");
+        exit(-1);
+     }
+   ecore_app_restart();
+}
 
 static void
 handle_run(int fd, unsigned long bytes)
@@ -36,30 +93,8 @@ handle_run(int fd, unsigned long bytes)
    for (i = 0; i < argc; i++) argv[i] = buf + (unsigned long)argv[i];
    cwd = argv[argc - 1] + strlen(argv[argc - 1]) + 1;
    elm_quicklaunch_prepare(argc, argv);
-   elm_quicklaunch_fork(argc, argv, cwd);
+   elm_quicklaunch_fork(argc, argv, cwd, post_fork, NULL);
    elm_quicklaunch_cleanup();
-}
-
-static void
-child_handler(int n)
-{
-   int status;
-   wait(&status);
-}
-
-EAPI void
-crash_handler(int x, siginfo_t *info, void *data)
-{
-   double t;
-   
-   EINA_ERROR_PERR("elementary_quicklaunch: crash detected. restarting.\n");
-   t = ecore_time_get();
-   if ((t - restart_time) <= 2.0)
-     {
-        EINA_ERROR_PERR("elementary_quicklaunch: crash too fast - less than 2 seconds. abort restart\n");
-        exit(-1);
-     }
-   ecore_app_restart();
 }
 
 int
@@ -117,41 +152,98 @@ main(int argc, char **argv)
         exit(-1);
      }
    elm_quicklaunch_init(argc, argv);
-   signal(SIGINT, SIG_DFL);
-   signal(SIGTERM, SIG_DFL);
-   signal(SIGQUIT, SIG_DFL);
-   signal(SIGALRM, SIG_DFL);
-   signal(SIGUSR1, SIG_DFL);
-   signal(SIGUSR2, SIG_DFL);
-   signal(SIGHUP, SIG_DFL);
-   signal(SIGCHLD, child_handler);
-
    restart_time = ecore_time_get();
+
+   action.sa_handler = SIG_DFL;
+   action.sa_restorer = NULL;
+   action.sa_sigaction = NULL;
+   action.sa_flags = SA_RESTART | SA_SIGINFO;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGINT, &action, &old_sigint);
    
+   action.sa_handler = SIG_DFL;
+   action.sa_restorer = NULL;
+   action.sa_sigaction = NULL;
+   action.sa_flags = SA_RESTART | SA_SIGINFO;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGTERM, &action, &old_sigterm);
+   
+   action.sa_handler = SIG_DFL;
+   action.sa_restorer = NULL;
+   action.sa_sigaction = NULL;
+   action.sa_flags = SA_RESTART | SA_SIGINFO;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGQUIT, &action, &old_sigquit);
+   
+   action.sa_handler = SIG_DFL;
+   action.sa_restorer = NULL;
+   action.sa_sigaction = NULL;
+   action.sa_flags = SA_RESTART | SA_SIGINFO;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGALRM, &action, &old_sigalrm);
+   
+   action.sa_handler = SIG_DFL;
+   action.sa_restorer = NULL;
+   action.sa_sigaction = NULL;
+   action.sa_flags = SA_RESTART | SA_SIGINFO;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGUSR1, &action, &old_sigusr1);
+   
+   action.sa_handler = SIG_DFL;
+   action.sa_restorer = NULL;
+   action.sa_sigaction = NULL;
+   action.sa_flags = SA_RESTART | SA_SIGINFO;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGUSR2, &action, &old_sigusr2);
+   
+   action.sa_handler = SIG_DFL;
+   action.sa_restorer = NULL;
+   action.sa_sigaction = NULL;
+   action.sa_flags = SA_RESTART | SA_SIGINFO;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGHUP, &action, &old_sighup);
+   
+   action.sa_handler = NULL;
+   action.sa_restorer = NULL;
+   action.sa_sigaction = child_handler;
+   action.sa_flags = SA_RESTART | SA_SIGINFO;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGCHLD, &action, &old_sigchld);
+
+   action.sa_handler = NULL;
+   action.sa_restorer = NULL;
    action.sa_sigaction = crash_handler;
    action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
    sigemptyset(&action.sa_mask);
-   sigaction(SIGSEGV, &action, NULL);
+   sigaction(SIGSEGV, &action, &old_sigsegv);
    
+   action.sa_handler = NULL;
+   action.sa_restorer = NULL;
    action.sa_sigaction = crash_handler;
    action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
    sigemptyset(&action.sa_mask);
-   sigaction(SIGILL, &action, NULL);
+   sigaction(SIGILL, &action, &old_sigill);
    
+   action.sa_handler = NULL;
+   action.sa_restorer = NULL;
    action.sa_sigaction = crash_handler;
    action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
    sigemptyset(&action.sa_mask);
-   sigaction(SIGFPE, &action, NULL);
+   sigaction(SIGFPE, &action, &old_sigfpe);
    
+   action.sa_handler = NULL;
+   action.sa_restorer = NULL;
    action.sa_sigaction = crash_handler;
    action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
    sigemptyset(&action.sa_mask);
-   sigaction(SIGBUS, &action, NULL);
+   sigaction(SIGBUS, &action, &old_sigbus);
    
+   action.sa_handler = NULL;
+   action.sa_restorer = NULL;
    action.sa_sigaction = crash_handler;
    action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
    sigemptyset(&action.sa_mask);
-   sigaction(SIGABRT, &action, NULL);
+   sigaction(SIGABRT, &action, &old_sigabrt);
    
    for (;;)
      {
@@ -169,6 +261,7 @@ main(int argc, char **argv)
              char line[4096];
 
              read(fd, &bytes, sizeof(unsigned long));
+             ecore_app_args_set(argc, (const char **)argv);
              handle_run(fd, bytes);
           }
         elm_quicklaunch_sub_shutdown();

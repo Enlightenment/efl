@@ -155,7 +155,7 @@ extern "C" {
    EAPI void         elm_quicklaunch_shutdown(void);
    EAPI void         elm_quicklaunch_seed(void);
    EAPI Evas_Bool    elm_quicklaunch_prepare(int argc, char **argv);
-   EAPI Evas_Bool    elm_quicklaunch_fork(int argc, char **argv, char *cwd);
+   EAPI Evas_Bool    elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (postfork_func) (void *data), void *postfork_data);
    EAPI void         elm_quicklaunch_cleanup(void);
    EAPI int          elm_quicklaunch_fallback(int argc, char **argv);
    EAPI char        *elm_quicklaunch_exe_path_get(const char *exe);
