@@ -218,7 +218,6 @@ do_eet_check(const char *file)
 {
    Eet_File *ef;
    const void *der;
-   const void *sign;
    int der_length;
    int sign_length;
 
@@ -234,7 +233,7 @@ do_eet_check(const char *file)
    fprintf(stderr, "Certificate length %i.\n", der_length);
    eet_identity_certificate_print(der, der_length, stdout);
 
-   sign = eet_identity_signature(ef, &sign_length);
+   eet_identity_signature(ef, &sign_length);
    fprintf(stderr, "Signature length %i.\n", sign_length);
 
    eet_close(ef);

@@ -103,7 +103,7 @@ struct _Eet_File
    int                   data_size;
    int                   x509_length;
    unsigned int          signature_length;
-   unsigned int          sha1_length;
+   int                   sha1_length;
 
    time_t                mtime;
 
