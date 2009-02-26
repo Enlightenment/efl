@@ -1055,6 +1055,21 @@ ecore_evas_software_wince_new_internal(int                 backend,
 
    return ee;
 }
+
+#else
+
+static Ecore_Evas *
+ecore_evas_software_wince_new_internal(int                 backend __UNUSED__,
+                                       Ecore_WinCE_Window *parent __UNUSED__,
+                                       int                 x __UNUSED__,
+                                       int                 y __UNUSED__,
+                                       int                 width __UNUSED__,
+                                       int                 height __UNUSED__,
+                                       int                 fullscreen __UNUSED__)
+{
+   return NULL;
+}
+
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
 
 
@@ -1065,16 +1080,7 @@ ecore_evas_software_wince_new(Ecore_WinCE_Window *parent,
                               int                 width,
                               int                 height)
 {
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
    return ecore_evas_software_wince_new_internal(0, parent, x, y, width, height, 1);
-#else
-   return NULL;
-   parent = NULL;
-   x = 0;
-   y = 0;
-   width = 0;
-   height = 0;
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
 }
 
 EAPI Ecore_Evas *
@@ -1084,16 +1090,7 @@ ecore_evas_software_wince_fb_new(Ecore_WinCE_Window *parent,
                                  int                 width,
                                  int                 height)
 {
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
    return ecore_evas_software_wince_new_internal(1, parent, x, y, width, height, 1);
-#else
-   return NULL;
-   parent = NULL;
-   x = 0;
-   y = 0;
-   width = 0;
-   height = 0;
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
 }
 
 EAPI Ecore_Evas *
@@ -1103,16 +1100,7 @@ ecore_evas_software_wince_gapi_new(Ecore_WinCE_Window *parent,
                                    int                 width,
                                    int                 height)
 {
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
    return ecore_evas_software_wince_new_internal(2, parent, x, y, width, height, 1);
-#else
-   return NULL;
-   parent = NULL;
-   x = 0;
-   y = 0;
-   width = 0;
-   height = 0;
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
 }
 
 EAPI Ecore_Evas *
@@ -1122,16 +1110,7 @@ ecore_evas_software_wince_ddraw_new(Ecore_WinCE_Window *parent,
                                     int                 width,
                                     int                 height)
 {
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
    return ecore_evas_software_wince_new_internal(3, parent, x, y, width, height, 1);
-#else
-   return NULL;
-   parent = NULL;
-   x = 0;
-   y = 0;
-   width = 0;
-   height = 0;
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
 }
 
 EAPI Ecore_Evas *
@@ -1141,24 +1120,23 @@ ecore_evas_software_wince_gdi_new(Ecore_WinCE_Window *parent,
                                   int                 width,
                                   int                 height)
 {
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
    return ecore_evas_software_wince_new_internal(4, parent, x, y, width, height, 0);
-#else
-   return NULL;
-   parent = NULL;
-   x = 0;
-   y = 0;
-   width = 0;
-   height = 0;
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
 }
+
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
 
 EAPI Ecore_WinCE_Window *
 ecore_evas_software_wince_window_get(const Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
    return (Ecore_WinCE_Window *) _ecore_evas_wince_window_get(ee);
-#else
-   return NULL;
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
 }
+
+#else
+
+EAPI Ecore_WinCE_Window *
+ecore_evas_software_wince_window_get(const Ecore_Evas *ee __UNUSED__)
+{
+   return NULL;
+}
+
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */

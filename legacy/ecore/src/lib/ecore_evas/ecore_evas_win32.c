@@ -1269,7 +1269,10 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_init)(Ecore_Evas *ee),
 
    return ee;
 }
+
 #endif /* BUILD_ECORE_EVAS_WIN32 */
+
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
 
 EAPI Ecore_Evas *
 ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
@@ -1278,22 +1281,30 @@ ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
                               int                 width,
                               int                 height)
 {
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
    return _ecore_evas_win32_new_internal(_ecore_evas_engine_software_ddraw_init,
                                          parent,
                                          x,
                                          y,
                                          width,
                                          height);
-#else
-   return NULL;
-   parent = NULL;
-   x = 0;
-   y = 0;
-   width = 0;
-   height = 0;
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_DDRAW */
 }
+
+#else
+
+EAPI Ecore_Evas *
+ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent __UNUSED__,
+                              int                 x __UNUSED__,
+                              int                 y __UNUSED__,
+                              int                 width __UNUSED__,
+                              int                 height __UNUSED__)
+{
+   return NULL;
+}
+
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_DDRAW */
+
+
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DIRECTDRAW
 
 EAPI Ecore_Evas *
 ecore_evas_software_16_ddraw_new(Ecore_Win32_Window *parent,
@@ -1302,22 +1313,30 @@ ecore_evas_software_16_ddraw_new(Ecore_Win32_Window *parent,
                                  int                 width,
                                  int                 height)
 {
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DIRECTDRAW
    return _ecore_evas_win32_new_internal(_ecore_evas_engine_software_16_ddraw_init,
                                          parent,
                                          x,
                                          y,
                                          width,
                                          height);
-#else
-   return NULL;
-   parent = NULL;
-   x = 0;
-   y = 0;
-   width = 0;
-   height = 0;
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_DIRECTDRAW */
 }
+
+#else
+
+EAPI Ecore_Evas *
+ecore_evas_software_16_ddraw_new(Ecore_Win32_Window *parent __UNUSED__,
+                                 int                 x __UNUSED__,
+                                 int                 y __UNUSED__,
+                                 int                 width __UNUSED__,
+                                 int                 height __UNUSED__)
+{
+   return NULL;
+}
+
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_DIRECTDRAW */
+
+
+#ifdef BUILD_ECORE_EVAS_DIRECT3D
 
 EAPI Ecore_Evas *
 ecore_evas_direct3d_new(Ecore_Win32_Window *parent,
@@ -1326,22 +1345,30 @@ ecore_evas_direct3d_new(Ecore_Win32_Window *parent,
                         int                 width,
                         int                 height)
 {
-#ifdef BUILD_ECORE_EVAS_DIRECT3D
    return _ecore_evas_win32_new_internal(_ecore_evas_engine_direct3d_init,
                                          parent,
                                          x,
                                          y,
                                          width,
                                          height);
-#else
-   return NULL;
-   parent = NULL;
-   x = 0;
-   y = 0;
-   width = 0;
-   height = 0;
-#endif /* ! BUILD_ECORE_EVAS_DIRECT3D */
 }
+
+#else
+
+EAPI Ecore_Evas *
+ecore_evas_direct3d_new(Ecore_Win32_Window *parent __UNUSED__,
+                        int                 x __UNUSED__,
+                        int                 y __UNUSED__,
+                        int                 width __UNUSED__,
+                        int                 height __UNUSED__)
+{
+   return NULL;
+}
+
+#endif /* ! BUILD_ECORE_EVAS_DIRECT3D */
+
+
+#ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
 
 EAPI Ecore_Evas *
 ecore_evas_gl_glew_new(Ecore_Win32_Window *parent,
@@ -1350,30 +1377,43 @@ ecore_evas_gl_glew_new(Ecore_Win32_Window *parent,
                        int                 width,
                        int                 height)
 {
-#ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
    return _ecore_evas_win32_new_internal(_ecore_evas_engine_opengl_glew_init,
                                          parent,
                                          x,
                                          y,
                                          width,
                                          height);
-#else
-   return NULL;
-   parent = NULL;
-   x = 0;
-   y = 0;
-   width = 0;
-   height = 0;
-#endif /* BUILD_ECORE_EVAS_OPENGL_GLEW */
 }
+
+#else
+
+EAPI Ecore_Evas *
+ecore_evas_gl_glew_new(Ecore_Win32_Window *parent,
+                       int                 x,
+                       int                 y,
+                       int                 width,
+                       int                 height)
+{
+   return NULL;
+}
+
+#endif /* BUILD_ECORE_EVAS_OPENGL_GLEW */
+
+
+#ifdef BUILD_ECORE_EVAS_WIN32
 
 EAPI Ecore_Win32_Window *
 ecore_evas_win32_window_get(const Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_WIN32
    return (Ecore_Win32_Window *) _ecore_evas_win32_window_get(ee);
-#else
-   return NULL;
-   ee = NULL;
-#endif /* BUILD_ECORE_EVAS_WIN32 */
 }
+
+#else
+
+EAPI Ecore_Win32_Window *
+ecore_evas_win32_window_get(const Ecore_Evas *ee)
+{
+   return NULL;
+}
+
+#endif /* BUILD_ECORE_EVAS_WIN32 */
