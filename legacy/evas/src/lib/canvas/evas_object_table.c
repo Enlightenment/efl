@@ -116,7 +116,7 @@ _evas_object_table_iterator_next(Evas_Object_Table_Iterator *it, void **data)
 {
    Evas_Object_Table_Option *opt;
 
-   if (!eina_iterator_next(it->real_iterator, &opt))
+   if (!eina_iterator_next(it->real_iterator, (void **)&opt))
      return EINA_FALSE;
    if (data) *data = opt->obj;
    return EINA_TRUE;
@@ -140,7 +140,7 @@ _evas_object_table_accessor_get_at(Evas_Object_Table_Accessor *it, unsigned int 
 {
    Evas_Object_Table_Option *opt;
 
-   if (!eina_accessor_data_get(it->real_accessor, index, &opt))
+   if (!eina_accessor_data_get(it->real_accessor, index, (void **)&opt))
      return EINA_FALSE;
    if (data) *data = opt->obj;
    return EINA_TRUE;

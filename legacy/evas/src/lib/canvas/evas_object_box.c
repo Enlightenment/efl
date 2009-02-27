@@ -57,7 +57,7 @@ _evas_object_box_iterator_next(Evas_Object_Box_Iterator *it, void **data)
 {
    Evas_Object_Box_Option *opt;
 
-   if (!eina_iterator_next(it->real_iterator, &opt))
+   if (!eina_iterator_next(it->real_iterator, (void **)&opt))
      return EINA_FALSE;
    if (data) *data = opt->obj;
    return EINA_TRUE;
@@ -81,7 +81,7 @@ _evas_object_box_accessor_get_at(Evas_Object_Box_Accessor *it, unsigned int inde
 {
    Evas_Object_Box_Option *opt;
 
-   if (!eina_accessor_data_get(it->real_accessor, index, &opt))
+   if (!eina_accessor_data_get(it->real_accessor, index, (void *)&opt))
      return EINA_FALSE;
    if (data) *data = opt->obj;
    return EINA_TRUE;
@@ -269,7 +269,7 @@ static Evas_Object_Box_Option *
 _evas_object_box_insert_at_default(Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object *child, unsigned int pos)
 {
    Eina_List *l;
-   int i;
+   unsigned int i;
 
    if ((pos == 0) && (eina_list_count(priv->children) == 0))
      {
@@ -2047,9 +2047,6 @@ evas_object_box_remove_at(Evas_Object *o, unsigned int pos)
    Evas_Object *obj;
 
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, 0);
-   if (pos < 0)
-     return 0;
-
    api = priv->api;
    if ((!api) || (!api->remove_at))
      return 0;
