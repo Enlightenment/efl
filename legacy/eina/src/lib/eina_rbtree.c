@@ -62,8 +62,12 @@ _eina_rbtree_iterator_list_new(const Eina_Rbtree *tree)
 {
    Eina_Iterator_Rbtree_List *new;
 
+   eina_error_set(0);
    new = malloc(sizeof (Eina_Iterator_Rbtree_List));
-   if (!new) return NULL;
+   if (!new) {
+      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+      return NULL;
+   }
 
    new->tree = (Eina_Rbtree*) tree;
    new->dir = EINA_RBTREE_RIGHT;
@@ -162,8 +166,12 @@ _eina_rbtree_iterator_build(const Eina_Rbtree *root, unsigned char mask)
    Eina_Iterator_Rbtree_List *first;
    Eina_Iterator_Rbtree *it;
 
+   eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Rbtree));
-   if (!it) return NULL;
+   if (!it) {
+      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+      return NULL;
+   }
 
    it->stack = eina_array_new(8);
    if (!it->stack) goto on_error;
@@ -437,18 +445,75 @@ eina_rbtree_inline_remove(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_
    return root;
 }
 
+/**
+ * @brief Returned a new prefix iterator asociated to a rbtree.
+ *
+ * @param root The root of rbtree.
+ * @return A new iterator.
+ *
+ * This function returns a newly allocated iterator associated to @p
+ * root. It will iterate the tree using prefix walk. If @p root is @c
+ * NULL, this function still returns a valid iterator that will always
+ * return false on eina_iterator_next(), thus keeping API sane.
+ *
+ * If the memory can not be allocated, NULL is returned and
+ * #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
+ * returned.
+ *
+ * @warning if the rbtree structure changes then the iterator becomes
+ *    invalid! That is, if you add or remove nodes this iterator
+ *    behavior is undefined and your program may crash!
+ */
 EAPI Eina_Iterator *
 eina_rbtree_iterator_prefix(const Eina_Rbtree *root)
 {
    return _eina_rbtree_iterator_build(root, EINA_RBTREE_ITERATOR_PREFIX_MASK);
 }
 
+/**
+ * @brief Returned a new prefix iterator asociated to a rbtree.
+ *
+ * @param root The root of rbtree.
+ * @return A new iterator.
+ *
+ * This function returns a newly allocated iterator associated to @p
+ * root. It will iterate the tree using infix walk. If @p root is @c
+ * NULL, this function still returns a valid iterator that will always
+ * return false on eina_iterator_next(), thus keeping API sane.
+ *
+ * If the memory can not be allocated, NULL is returned and
+ * #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
+ * returned.
+ *
+ * @warning if the rbtree structure changes then the iterator becomes
+ *    invalid! That is, if you add or remove nodes this iterator
+ *    behavior is undefined and your program may crash!
+ */
 EAPI Eina_Iterator *
 eina_rbtree_iterator_infix(const Eina_Rbtree *root)
 {
    return _eina_rbtree_iterator_build(root, EINA_RBTREE_ITERATOR_INFIX_MASK);
 }
 
+/**
+ * @brief Returned a new prefix iterator asociated to a rbtree.
+ *
+ * @param root The root of rbtree.
+ * @return A new iterator.
+ *
+ * This function returns a newly allocated iterator associated to @p
+ * root. It will iterate the tree using postfix walk. If @p root is @c
+ * NULL, this function still returns a valid iterator that will always
+ * return false on eina_iterator_next(), thus keeping API sane.
+ *
+ * If the memory can not be allocated, NULL is returned and
+ * #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
+ * returned.
+ *
+ * @warning if the rbtree structure changes then the iterator becomes
+ *    invalid! That is, if you add or remove nodes this iterator
+ *    behavior is undefined and your program may crash!
+ */
 EAPI Eina_Iterator *
 eina_rbtree_iterator_postfix(const Eina_Rbtree *root)
 {

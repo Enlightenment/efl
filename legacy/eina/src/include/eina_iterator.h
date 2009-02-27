@@ -65,6 +65,50 @@ EAPI void eina_iterator_foreach        (Eina_Iterator *iterator,
 					const void *fdata) EINA_ARG_NONNULL(1, 2);
 
 /**
+ * @def EINA_ITERATOR_FOREACH
+ * @brief Macro to iterate over all elements easily.
+ *
+ * @param iterator The iterator to use.
+ * @param data Where to store * data, must be a pointer support getting
+ *        its address since * eina_iterator_next() requires a pointer
+ *        to pointer!
+ *
+ * This macro is a convenient way to use iterators, very similar to
+ * EINA_LIST_FOREACH().
+ *
+ * This macro can be used for freeing the data of a list, like in the
+ * following example. It has the same goal as the one documented in
+ * EINA_LIST_FOREACH(), but using iterators:
+ *
+ * @code
+ * Eina_List     *list;
+ * Eina_Iterator *itr;
+ * char          *data;
+ *
+ * // list is already filled,
+ * // its elements are just duplicated strings
+ *
+ * itr = eina_list_iterator_new(list);
+ * EINA_ITERATOR_FOREACH(itr, data)
+ *   free(data);
+ * eina_iterator_free(itr);
+ * eina_list_free(list);
+ * @endcode
+ *
+ * @note this example is not optimal algorithm to release a list since
+ *    it will walk the list twice, but it serves as an example. For
+ *    optimized version use EINA_LIST_FREE()
+ *
+ * @warning unless explicitly stated in functions returning iterators,
+ *    do not modify the iterated object while you walk it, in this
+ *    example using lists, do not remove list nodes or you might
+ *    crash!  This is not a limitiation of iterators themselves,
+ *    rather in the iterators implementations to keep them as simple
+ *    and fast as possible.
+ */
+#define EINA_ITERATOR_FOREACH(itr, data) while (eina_iterator_next((itr), (void **)&(data)))
+
+/**
  * @}
  */
 

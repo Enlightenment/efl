@@ -277,7 +277,7 @@ _eina_hash_rbtree_each(__UNUSED__ const Eina_Rbtree *container, const Eina_Hash_
    Eina_Bool found = EINA_TRUE;
 
    it = eina_rbtree_iterator_prefix(eh->head);
-   while (eina_iterator_next(it, (void**) &el))
+   EINA_ITERATOR_FOREACH(it, el)
      {
 	if (el->tuple.data == data->data)
 	  {
@@ -1293,6 +1293,25 @@ eina_hash_foreach(const Eina_Hash *hash,
    eina_iterator_free(it);
 }
 
+/**
+ * @brief Returned a new iterator asociated to hash data.
+ *
+ * @param hash The hash.
+ * @return A new iterator.
+ *
+ * This function returns a newly allocated iterator associated to @p
+ * hash. If @p hash is not populated, this function still returns a
+ * valid iterator that will always return false on
+ * eina_iterator_next(), thus keeping API sane.
+ *
+ * If the memory can not be allocated, NULL is returned and
+ * #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
+ * returned.
+ *
+ * @warning if the hash structure changes then the iterator becomes
+ *    invalid! That is, if you add or remove items this iterator
+ *    behavior is undefined and your program may crash!
+ */
 EAPI Eina_Iterator *
 eina_hash_iterator_data_new(const Eina_Hash *hash)
 {
@@ -1301,8 +1320,12 @@ eina_hash_iterator_data_new(const Eina_Hash *hash)
    EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, NULL);
 
+   eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Hash));
-   if (!it) return NULL;
+   if (!it) {
+      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+      return NULL;
+   }
 
    it->hash = hash;
    it->get_content = FUNC_ITERATOR_GET_CONTENT(_eina_hash_iterator_data_get_content);
@@ -1317,6 +1340,25 @@ eina_hash_iterator_data_new(const Eina_Hash *hash)
    return &it->iterator;
 }
 
+/**
+ * @brief Returned a new iterator asociated to hash keys.
+ *
+ * @param hash The hash.
+ * @return A new iterator.
+ *
+ * This function returns a newly allocated iterator associated to @p
+ * hash. If @p hash is not populated, this function still returns a
+ * valid iterator that will always return false on
+ * eina_iterator_next(), thus keeping API sane.
+ *
+ * If the memory can not be allocated, NULL is returned and
+ * #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
+ * returned.
+ *
+ * @warning if the hash structure changes then the iterator becomes
+ *    invalid! That is, if you add or remove items this iterator
+ *    behavior is undefined and your program may crash!
+ */
 EAPI Eina_Iterator *
 eina_hash_iterator_key_new(const Eina_Hash *hash)
 {
@@ -1325,8 +1367,12 @@ eina_hash_iterator_key_new(const Eina_Hash *hash)
    EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, NULL);
 
+   eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Hash));
-   if (!it) return NULL;
+   if (!it) {
+      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+      return NULL;
+   }
 
    it->hash = hash;
    it->get_content = FUNC_ITERATOR_GET_CONTENT(_eina_hash_iterator_key_get_content);
@@ -1341,6 +1387,28 @@ eina_hash_iterator_key_new(const Eina_Hash *hash)
    return &it->iterator;
 }
 
+/**
+ * @brief Returned a new iterator asociated to hash keys and data.
+ *
+ * @param hash The hash.
+ * @return A new iterator.
+ *
+ * This function returns a newly allocated iterator associated to @p
+ * hash. If @p hash is not populated, this function still returns a
+ * valid iterator that will always return false on
+ * eina_iterator_next(), thus keeping API sane.
+ *
+ * If the memory can not be allocated, NULL is returned and
+ * #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
+ * returned.
+ *
+ * @note iterator data will provide values as Eina_Hash_Tuple that should not
+ *   be modified!
+ *
+ * @warning if the hash structure changes then the iterator becomes
+ *    invalid! That is, if you add or remove items this iterator
+ *    behavior is undefined and your program may crash!
+ */
 EAPI Eina_Iterator *
 eina_hash_iterator_tuple_new(const Eina_Hash *hash)
 {
@@ -1349,8 +1417,12 @@ eina_hash_iterator_tuple_new(const Eina_Hash *hash)
    EINA_MAGIC_CHECK_HASH(hash);
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, NULL);
 
+   eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Hash));
-   if (!it) return NULL;
+   if (!it) {
+      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+      return NULL;
+   }
 
    it->hash = hash;
    it->get_content = FUNC_ITERATOR_GET_CONTENT(_eina_hash_iterator_tuple_get_content);

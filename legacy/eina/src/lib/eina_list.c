@@ -1555,11 +1555,19 @@ eina_list_search_unsorted(const Eina_List *list, Eina_Compare_Cb func, const voi
  * @param list The list.
  * @return A new iterator.
  *
- * This function returns a newly allocated iterator associated to
- * @p list. If @p list is @c NULL or the count member of @p list is
- * less or equal than 0, this function returns NULL. If the memory can
- * not be allocated, NULL is returned and #EINA_ERROR_OUT_OF_MEMORY is
- * set. Otherwise, a valid iterator is returned.
+ * This function returns a newly allocated iterator associated to @p
+ * list. If @p list is @c NULL or the count member of @p list is less
+ * or equal than 0, this function still returns a valid iterator that
+ * will always return false on eina_iterator_next(), thus keeping API
+ * sane.
+ *
+ * If the memory can not be allocated, NULL is returned and
+ * #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
+ * returned.
+ *
+ * @warning if the list structure changes then the iterator becomes
+ *    invalid! That is, if you add or remove nodes this iterator
+ *    behavior is undefined and your program may crash!
  */
 EAPI Eina_Iterator *
 eina_list_iterator_new(const Eina_List *list)
