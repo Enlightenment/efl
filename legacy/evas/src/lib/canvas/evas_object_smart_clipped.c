@@ -179,7 +179,7 @@ evas_object_smart_clipped_smart_member_del(Evas_Object *obj, Evas_Object *member
  * somewhere, example:
  *
  * @code
- * static Evas_Smart_Class parent_sc = {NULL};
+ * static Evas_Smart_Class parent_sc = EVAS_SMART_CLASS_INIT_NULL;
  *
  * static void my_class_smart_add(Evas_Object *o)
  * {
@@ -190,7 +190,7 @@ evas_object_smart_clipped_smart_member_del(Evas_Object *obj, Evas_Object *member
  *
  * Evas_Smart_Class *my_class_new(void)
  * {
- *    static Evas_Smart_Class sc = {"MyClass"};
+ *    static Evas_Smart_Class sc = EVAS_SMART_CLASS_INIT_NAME_VERSION("MyClass");
  *    if (!parent_sc.name)
  *      {
  *         evas_object_smart_clipped_smart_set(&sc);

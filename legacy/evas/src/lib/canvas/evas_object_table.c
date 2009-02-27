@@ -799,7 +799,7 @@ _evas_object_table_smart_calculate_regular(Evas_Object *o, Evas_Object_Table_Dat
    _evas_object_table_calculate_layout_regular(o, priv);
 }
 
-static Evas_Smart_Class _parent_sc = {NULL};
+static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
 
 static void
 _evas_object_table_smart_add(Evas_Object *o)
@@ -907,9 +907,7 @@ _evas_object_table_smart_set(Evas_Smart_Class *sc)
 static Evas_Smart *
 _evas_object_table_smart_class_new(void)
 {
-   static Evas_Smart_Class sc = {
-     "Evas_Object_Table", EVAS_SMART_CLASS_VERSION,
-   };
+   static Evas_Smart_Class sc = EVAS_SMART_CLASS_INIT_NAME_VERSION("Evas_Object_Table");
 
    if (!_parent_sc.name)
      _evas_object_table_smart_set(&sc);

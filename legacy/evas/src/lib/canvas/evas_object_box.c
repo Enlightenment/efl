@@ -50,7 +50,7 @@ struct _Evas_Object_Box_Accessor
        return val;							\
     }
 
-static Evas_Smart_Class _parent_sc = {NULL};
+static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
 
 static Eina_Bool
 _evas_object_box_iterator_next(Evas_Object_Box_Iterator *it, void **data)
@@ -456,9 +456,7 @@ _evas_object_box_smart_calculate(Evas_Object *o)
 static Evas_Smart *
 _evas_object_box_smart_class_new(void)
 {
-   static Evas_Object_Box_Api api = {
-     {"Evas_Object_Box", EVAS_SMART_CLASS_VERSION},
-   };
+   static Evas_Object_Box_Api api = EVAS_OBJECT_BOX_API_INIT_NAME_VERSION("Evas_Object_Box");
 
    if (!_parent_sc.name)
      evas_object_box_smart_set(&api);
