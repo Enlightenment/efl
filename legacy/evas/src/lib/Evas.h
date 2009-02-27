@@ -27,6 +27,24 @@
 # endif
 #endif /* ! _WIN32 */
 
+#ifdef _WIN32
+# if defined(_MSC_VER) && _MSC_VER >= 1300
+#  define EDEPRECATED __declspec(deprecated)
+# else
+#  define EDEPRECATED
+# endif
+#else
+# ifdef __GNUC__
+#  if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
+#   define EDEPRECATED __attribute__ ((__deprecated__))
+#  else
+#   define EDEPRECATED
+#  endif
+# else
+#  define EDEPRECATED
+# endif
+#endif /* ! _WIN32 */
+
 /**
  * @file
  * @brief These routines are used for Evas library interaction.
@@ -167,6 +185,43 @@ struct _Evas_Smart_Class /** a smart object class */
 
    const void *data;
 };
+
+/**
+ * Initializer to zero a whole Evas_Smart_Class structure.
+ *
+ * @see EVAS_SMART_CLASS_INIT_VERSION
+ * @see EVAS_SMART_CLASS_INIT_NAME_VERSION
+ */
+#define EVAS_SMART_CLASS_INIT_NULL {NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}
+
+/**
+ * Initializer to zero a whole Evas_Smart_Class structure and set version.
+ *
+ * Similar to EVAS_SMART_CLASS_INIT_NULL, but will set version field to
+ * latest EVAS_SMART_CLASS_VERSION.
+ *
+ * @see EVAS_SMART_CLASS_INIT_NULL
+ * @see EVAS_SMART_CLASS_INIT_NAME_VERSION
+ */
+#define EVAS_SMART_CLASS_INIT_VERSION {NULL, EVAS_SMART_CLASS_VERSION, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}
+
+/**
+ * Initializer to zero a whole Evas_Smart_Class structure and set name
+ * and version.
+ *
+ * Similar to EVAS_SMART_CLASS_INIT_NULL, but will set version field to
+ * latest EVAS_SMART_CLASS_VERSION and name to the specified value.
+ *
+ * It will keep a reference to name field as a "const char *", that is,
+ * name must be available while the structure is used (hint: static or global!)
+ * and will not be modified.
+ *
+ * @see EVAS_SMART_CLASS_INIT_NULL
+ * @see EVAS_SMART_CLASS_INIT_VERSION
+ */
+#define EVAS_SMART_CLASS_INIT_NAME_VERSION(name) {name, EVAS_SMART_CLASS_VERSION, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}
+
+
 
 typedef struct _Evas_Pixel_Import_Source Evas_Pixel_Import_Source; /**< A source description of pixels for importing pixels */
 typedef struct _Evas_Engine_Info      Evas_Engine_Info; /**< A generic Evas Engine information structure */
@@ -789,7 +844,7 @@ extern "C" {
    EAPI Eina_List        *evas_objects_in_rectangle_get     (const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects);
 
 /* smart objects */
-   EAPI Evas_Smart       *evas_smart_new                    (const char *name, void (*func_add) (Evas_Object *obj), void (*func_del) (Evas_Object *obj), void (*func_layer_set) (Evas_Object *obj, int l), void (*func_raise) (Evas_Object *obj), void (*func_lower) (Evas_Object *obj), void (*func_stack_above) (Evas_Object *obj, Evas_Object *above), void (*func_stack_below) (Evas_Object *obj, Evas_Object *below), void (*func_move) (Evas_Object *obj, Evas_Coord x, Evas_Coord y), void (*func_resize) (Evas_Object *obj, Evas_Coord w, Evas_Coord h), void (*func_show) (Evas_Object *obj), void (*func_hide) (Evas_Object *obj), void (*func_color_set) (Evas_Object *obj, int r, int g, int b, int a), void (*func_clip_set) (Evas_Object *obj, Evas_Object *clip), void (*func_clip_unset) (Evas_Object *obj), const void *data);
+   EAPI Evas_Smart       *evas_smart_new                    (const char *name, void (*func_add) (Evas_Object *obj), void (*func_del) (Evas_Object *obj), void (*func_layer_set) (Evas_Object *obj, int l), void (*func_raise) (Evas_Object *obj), void (*func_lower) (Evas_Object *obj), void (*func_stack_above) (Evas_Object *obj, Evas_Object *above), void (*func_stack_below) (Evas_Object *obj, Evas_Object *below), void (*func_move) (Evas_Object *obj, Evas_Coord x, Evas_Coord y), void (*func_resize) (Evas_Object *obj, Evas_Coord w, Evas_Coord h), void (*func_show) (Evas_Object *obj), void (*func_hide) (Evas_Object *obj), void (*func_color_set) (Evas_Object *obj, int r, int g, int b, int a), void (*func_clip_set) (Evas_Object *obj, Evas_Object *clip), void (*func_clip_unset) (Evas_Object *obj), const void *data) EDEPRECATED;
    EAPI void              evas_smart_free                   (Evas_Smart *s);
    EAPI Evas_Smart       *evas_smart_class_new              (const Evas_Smart_Class *sc);
    EAPI const Evas_Smart_Class *evas_smart_class_get        (const Evas_Smart *s);
@@ -1006,6 +1061,60 @@ extern "C" {
       Evas_Object_Box_Option *(*option_new)(Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object *child);
       void                    (*option_free)(Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object_Box_Option *opt);
    };
+
+/**
+ * Initializer for whole Evas_Object_Box_Api structure.
+ *
+ * @param smart_class_init initializer to use for the "base" field
+ * (Evas_Smart_Class).
+ *
+ * @see EVAS_SMART_CLASS_INIT_NULL
+ * @see EVAS_SMART_CLASS_INIT_VERSION
+ * @see EVAS_SMART_CLASS_INIT_NAME_VERSION
+ * @see EVAS_OBJECT_BOX_API_INIT_NULL
+ * @see EVAS_OBJECT_BOX_API_INIT_VERSION
+ * @see EVAS_OBJECT_BOX_API_INIT_NAME_VERSION
+ */
+#define EVAS_OBJECT_BOX_API_INIT(smart_class_init) {smart_class_init, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}
+
+/**
+ * Initializer to zero a whole Evas_Object_Box_Api structure.
+ *
+ * @see EVAS_OBJECT_BOX_API_INIT_VERSION
+ * @see EVAS_OBJECT_BOX_API_INIT_NAME_VERSION
+ * @see EVAS_OBJECT_BOX_API_INIT
+ */
+#define EVAS_OBJECT_BOX_API_INIT_NULL EVAS_OBJECT_BOX_API_INIT(EVAS_SMART_CLASS_INIT_NULL)
+
+/**
+ * Initializer to zero a whole Evas_Object_Box_Api structure and set version.
+ *
+ * Similar to EVAS_OBJECT_BOX_API_INIT_NULL, but will set version field of
+ * Evas_Smart_Class (base field) to latest EVAS_SMART_CLASS_VERSION
+ *
+ * @see EVAS_OBJECT_BOX_API_INIT_NULL
+ * @see EVAS_OBJECT_BOX_API_INIT_NAME_VERSION
+ * @see EVAS_OBJECT_BOX_API_INIT
+ */
+#define EVAS_OBJECT_BOX_API_INIT_VERSION EVAS_OBJECT_BOX_API_INIT(EVAS_SMART_CLASS_INIT_VERSION)
+
+/**
+ * Initializer to zero a whole Evas_Object_Box_Api structure and set
+ * name and version.
+ *
+ * Similar to EVAS_OBJECT_BOX_API_INIT_NULL, but will set version field of
+ * Evas_Smart_Class (base field) to latest EVAS_SMART_CLASS_VERSION and name
+ * to the specific value.
+ *
+ * It will keep a reference to name field as a "const char *", that is,
+ * name must be available while the structure is used (hint: static or global!)
+ * and will not be modified.
+ *
+ * @see EVAS_OBJECT_BOX_API_INIT_NULL
+ * @see EVAS_OBJECT_BOX_API_INIT_VERSION
+ * @see EVAS_OBJECT_BOX_API_INIT
+ */
+#define EVAS_OBJECT_BOX_API_INIT_NAME_VERSION(name) EVAS_OBJECT_BOX_API_INIT(EVAS_SMART_CLASS_INIT_NAME_VERSION(name))
 
    struct _Evas_Object_Box_Data
    {
