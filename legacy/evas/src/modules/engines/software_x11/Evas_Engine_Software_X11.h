@@ -12,7 +12,7 @@ typedef struct _Evas_Engine_Info_Software_X11 Evas_Engine_Info_Software_X11;
  * connection | Display *   |  xcb_connection_t *
  * screen     | NULL        |  xcb_screen_t *
  * drawable   | Drawable    |  xcb_drawable_t
- * mask       | Drawable    |  xcb_drawable_t
+ * mask       | Pixmap      |  xcb_pixmap_t
  * visual     | Visual *    |  xcb_visualtype_t *
  * colormap   | Colormap    |  xcb_colormap_t
  */
