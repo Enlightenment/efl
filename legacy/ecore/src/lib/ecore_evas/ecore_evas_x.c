@@ -139,11 +139,12 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
 #endif /* HAVE_ECORE_X_XCB */
 #endif
 
-static void
+static int
 _ecore_evas_x_render(Ecore_Evas *ee)
 {
-  Evas_Rectangle *r;
-  Eina_List *updates, *l;
+   Evas_Rectangle *r;
+   Eina_List *updates, *l;
+   int rend = 0;
 #ifdef BUILD_ECORE_EVAS_BUFFER
    Eina_List *ll;
    Ecore_Evas *ee2;
@@ -171,11 +172,9 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 		    ecore_x_window_shape_mask_set(ee->engine.x.win, ee->engine.x.mask);
 		  if ((ee->alpha) && (updates))
 		    ecore_x_window_shape_input_mask_set(ee->engine.x.win, ee->engine.x.mask);
-	       }
-	     if (updates)
-	       {
 		  evas_render_updates_free(updates);
 		  _ecore_evas_idle_timeout_update(ee);
+                  rend = 1;
 	       }
 	  }
 	else
@@ -280,6 +279,7 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 	       {
 		  evas_render_updates_free(updates);
 		  _ecore_evas_idle_timeout_update(ee);
+                  rend = 1;
 	       }
 	  }
      }
@@ -295,6 +295,7 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 		  ecore_x_window_shape_mask_set(ee->engine.x.win, ee->engine.x.mask);
 		  evas_render_updates_free(updates);
 		  _ecore_evas_idle_timeout_update(ee);
+                  rend = 1;
 	       }
 	  }
 	else
@@ -306,12 +307,14 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 		  if (ee->alpha)
 		    ecore_x_window_shape_input_mask_set(ee->engine.x.win, ee->engine.x.mask);
 		  _ecore_evas_idle_timeout_update(ee);
+                  rend = 1;
 	       }
 	  }
      }
    else
      evas_norender(ee->evas);
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
+   return rend;
 }
 
 static void
@@ -1256,7 +1259,9 @@ _ecore_evas_x_idle_enter(void *data __UNUSED__)
    Ecore_List2 *l;
    double t1 = 0.0;
    double t2 = 0.0;
+   int rend = 0;
 
+   if (!ecore_evases) return 1;
    if (_ecore_evas_fps_debug)
      {
 	t1 = ecore_time_get();
@@ -1266,13 +1271,14 @@ _ecore_evas_x_idle_enter(void *data __UNUSED__)
 	Ecore_Evas *ee;
 
 	ee = (Ecore_Evas *)l;
-	_ecore_evas_x_render(ee);
+	rend |= _ecore_evas_x_render(ee);
      }
    ecore_x_flush();
    if (_ecore_evas_fps_debug)
      {
 	t2 = ecore_time_get();
-	_ecore_evas_fps_debug_rendertime_add(t2 - t1);
+	if (rend)
+          _ecore_evas_fps_debug_rendertime_add(t2 - t1);
      }
    return 1;
 }

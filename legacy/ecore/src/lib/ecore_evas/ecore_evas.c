@@ -2398,19 +2398,30 @@ _ecore_evas_fps_debug_shutdown(void)
 void
 _ecore_evas_fps_debug_rendertime_add(double t)
 {
-   if ((_ecore_evas_fps_debug_fd >= 0) &&
-       (_ecore_evas_fps_rendertime_mmap))
+   static double rtime = 0.0;
+   static double rlapse = 0.0;
+   static int frames = 0;
+   static int flapse = 0;
+   double tim;
+   
+   tim = ecore_time_get();
+   rtime += t;
+   frames++;
+   if (rlapse == 0.0)
      {
-	unsigned int tm;
-
-	tm = (unsigned int)(t * 1000000.0);
-	/* i know its not 100% theoretically guaranteed, but i'd say a write */
-	/* of an int could be considered atomic for all practical purposes */
-	/* oh and since this is cumulative, 1 second = 1,000,000 ticks, so */
-	/* this can run for about 4294 seconds becore looping. if you are */
-	/* doing performance testing in one run for over an hour... well */
-	/* time to restart or handle a loop condition :) */
-	*(_ecore_evas_fps_rendertime_mmap) += tm;
+        rlapse = tim;
+        flapse = frames;
+     }
+   else if ((tim - rlapse) >= 0.5)
+     {
+        printf("FRAME: %i, FPS: %3.1f, RTIME %3.0f%%\n",
+               frames,
+               (frames - flapse) / (tim - rlapse),
+               (100.0 * rtime) / (tim - rlapse)
+               );
+        rlapse = tim;
+        flapse = frames;
+        rtime = 0.0;
      }
 }
 

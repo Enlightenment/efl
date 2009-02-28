@@ -235,9 +235,10 @@ static int
 _ecore_evas_idle_enter(void *data __UNUSED__)
 {
    Ecore_List2  *l;
-   double       t1 = 0.;
-   double       t2 = 0.;
+   double       t1 = 0.0;
+   double       t2 = 0.0;
 
+   if (!ecore_evases) return 1;
 #ifndef _WIN32
    if (_ecore_evas_fps_debug)
      {

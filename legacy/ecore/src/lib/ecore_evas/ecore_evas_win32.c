@@ -114,6 +114,7 @@ _ecore_evas_win32_idle_enter(void *data __UNUSED__)
    double       t1 = 0.0;
    double       t2 = 0.0;
 
+   if (!ecore_evases) return 1;
    if (_ecore_evas_fps_debug)
      {
 	t1 = ecore_time_get();
