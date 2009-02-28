@@ -1238,7 +1238,11 @@ _edje_box_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_
    evas_object_box_align_set(ep->object, chosen_desc->box.align.x, chosen_desc->box.align.y);
    evas_object_box_padding_set(ep->object, chosen_desc->box.padding.x, chosen_desc->box.padding.y);
 
-   evas_object_smart_calculate(ep->object);
+   if (evas_object_smart_need_recalculate_get(ep->object))
+     {
+	evas_object_smart_need_recalculate_set(ep->object, 0);
+	evas_object_smart_calculate(ep->object);
+     }
    evas_object_size_hint_min_get(ep->object, &min_w, &min_h);
    if (chosen_desc->box.min.h)
      p3->w = min_w;

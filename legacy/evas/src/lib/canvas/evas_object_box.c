@@ -552,6 +552,9 @@ evas_object_box_layout_set(Evas_Object *o, Evas_Object_Box_Layout cb, const void
 {
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(o, priv);
 
+   if ((priv->layout.cb == cb) && (priv->layout.data == data) && (priv->layout.free_data == free_data))
+     return;
+
    if (priv->layout.data && priv->layout.free_data)
      priv->layout.free_data(priv->layout.data);
 
