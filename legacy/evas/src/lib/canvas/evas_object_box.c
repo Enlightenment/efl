@@ -1374,7 +1374,7 @@ evas_object_box_layout_homogeneous_max_size_vertical(Evas_Object *o, Evas_Object
 }
 
 static void
-_evas_object_box_layout_flow_horizontal_row_info_collect(Evas_Object_Box_Data *priv, int box_w, int n_children __UNUSED__, int *row_count, int *row_max_h, int *row_break, int *row_width, int *off_y_ret, int *max_h_ret)
+_evas_object_box_layout_flow_horizontal_row_info_collect(Evas_Object_Box_Data *priv, int box_w, int *row_count, int *row_max_h, int *row_break, int *row_width, int *off_y_ret, int *max_h_ret)
 {
    int i, remain_w = box_w, start_i = 0;
    int off_y = 0, max_h = 0, n_rows = 0;
@@ -1501,8 +1501,7 @@ evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *pri
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
    _evas_object_box_layout_flow_horizontal_row_info_collect
-     (priv, w, n_children, &row_count, row_max_h, row_break, row_width,
-      &off_y, &max_h);
+     (priv, w, &row_count, row_max_h, row_break, row_width, &off_y, &max_h);
 
    inc_y = 0;
    v_justify = 0;
@@ -1575,7 +1574,7 @@ evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *pri
 }
 
 static void
-_evas_object_box_layout_flow_vertical_col_info_collect(Evas_Object_Box_Data *priv, int box_h, int n_children __UNUSED__, int *col_count, int *col_max_w, int *col_break, int *col_height, int *off_x_ret, int *max_w_ret)
+_evas_object_box_layout_flow_vertical_col_info_collect(Evas_Object_Box_Data *priv, int box_h, int *col_count, int *col_max_w, int *col_break, int *col_height, int *off_x_ret, int *max_w_ret)
 {
    int i, remain_h = box_h, start_i = 0;
    int off_x = 0, max_w = 0, n_cols = 0;
@@ -1676,8 +1675,7 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv,
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
    _evas_object_box_layout_flow_vertical_col_info_collect
-     (priv, h, n_children, &col_count, col_max_w, col_break, col_height,
-      &off_x, &max_w);
+     (priv, h, &col_count, col_max_w, col_break, col_height, &off_x, &max_w);
 
    inc_x = 0;
    h_justify = 0;
