@@ -31,6 +31,8 @@ version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
 
+want_fontconfig="auto"
+
 want_evas_engine_buffer="yes"
 want_evas_engine_software_x11="no"
 want_evas_engine_xrender_x11="no"
@@ -65,6 +67,7 @@ want_evas_font_loader_eet="yes"
 
 case "$host_os" in
    mingw32ce* | cegcc*)
+      want_fontconfig="no"
       want_evas_engine_software_16_wince="yes"
       want_evas_image_loader_edb="no"
       want_evas_image_loader_gif="no"
@@ -153,7 +156,6 @@ AC_ARG_ENABLE(simple-x11,
 #######################################
 ## FontConfig
 
-want_fontconfig="auto"
 have_fontconfig="no"
 AC_ARG_ENABLE(fontconfig,
   AC_HELP_STRING(
