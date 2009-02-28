@@ -1269,6 +1269,8 @@ evas_object_image_smooth_scale_set(Evas_Object *obj, Evas_Bool smooth_scale)
        ((!smooth_scale) && (!o->cur.smooth_scale)))
      return;
    o->cur.smooth_scale = smooth_scale;
+   o->changed = 1;
+   evas_object_change(obj);
 }
 
 /**
