@@ -240,8 +240,6 @@ em_init(Evas_Object  *obj,
 	Emotion_Module_Options *opt)
 {
    Emotion_Gstreamer_Video *ev;
-   Emotion_Audio_Sink      *asink;
-   Emotion_Video_Sink      *vsink;
    GError                  *error;
    int                      fds[2];
 
@@ -256,15 +254,7 @@ em_init(Evas_Object  *obj,
 
    /* Initialization of gstreamer */
    if (!gst_init_check(NULL, NULL, &error))
-     goto failure_gstreamer;
-
-   /* We allocate the sinks lists */
-   if (!ev->video_sinks)
-     goto failure_video_sinks;
-   if (!ev->audio_sinks)
-     goto failure_audio_sinks;
-
-   *emotion_video = ev;
+     goto failure;
 
    /* Default values */
    ev->ratio = 1.0;
@@ -276,18 +266,13 @@ em_init(Evas_Object  *obj,
    /* Create the file descriptors */
    ev->pipe = ecore_pipe_add (_em_buffer_read, ev);
    if (!ev->pipe)
-     goto failure_pipe;
+     goto failure;
+
+   *emotion_video = ev;
 
    return 1;
 
-failure_pipe:
-   EINA_LIST_FREE(ev->audio_sinks, asink)
-     free(asink);
-failure_audio_sinks:
-   EINA_LIST_FREE(ev->video_sinks, vsink)
-     free(vsink);
-failure_video_sinks:
-failure_gstreamer:
+failure:
    free(ev);
 
    return 0;
@@ -627,8 +612,6 @@ em_len_get(void *video)
    return val / 1000000000.0;
 
  fallback:
-   fputs("Gstreamer reported no length, try existing sinks...\n", stderr);
-
    EINA_LIST_FOREACH(ev->audio_sinks, l, asink)
      if (asink->length_time >= 0)
        return asink->length_time;
