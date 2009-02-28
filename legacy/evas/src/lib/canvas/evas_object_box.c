@@ -1481,6 +1481,7 @@ evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *pri
 {
    int n_children, v_justify;
    int r, row_count = 0;
+   int min_w = 0, min_h = 0;
    int max_h, inc_y;
    int remain_y, i;
    int x, y, w, h;
@@ -1519,7 +1520,7 @@ evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *pri
 
    for (i = 0, r = 0, l = priv->children; r <= row_count; r++)
      {
-        int row_justify = 0, just_inc = 0, sub_pixel = 0;
+        int row_justify = 0, just_inc = 0, sub_pixel = 0, r_width = 0;
         int row_size, remain_x;
 
         row_size = row_break[r] - i;
@@ -1558,6 +1559,7 @@ evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *pri
 
 	     evas_object_move(opt->obj, x + off_x, y + off_y);
 
+             r_width += child_w + padding_l + padding_r;
 	     x += child_w + padding_l + padding_r + row_justify;
 
 	     sub_pixel += just_inc;
@@ -1569,11 +1571,13 @@ evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *pri
 	  }
 
         evas_object_geometry_get(o, &x, NULL, NULL, NULL);
+        if (min_w < r_width)
+          min_w = r_width;
+        min_h += row_max_h[r];
         y += row_max_h[r] + inc_y;
      }
 
-   //TODO set size hints
-   //evas_object_size_hint_min_set(o, x, y);
+   evas_object_size_hint_min_set(o, min_w, min_h);
 }
 
 static void
@@ -1658,6 +1662,7 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv,
 {
    int n_children, h_justify;
    int c, col_count;
+   int min_w = 0, min_h = 0;
    int max_w, inc_x;
    int remain_x, i;
    int x, y, w, h;
@@ -1696,7 +1701,7 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv,
 
    for (i = 0, c = 0, l = priv->children; c <= col_count; c++)
      {
-        int col_justify = 0, just_inc = 0, sub_pixel = 0;
+        int col_justify = 0, just_inc = 0, sub_pixel = 0, c_height = 0;
         int col_size, remain_y;
 
         col_size = col_break[c] - i;
@@ -1735,6 +1740,7 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv,
 
 	     evas_object_move(opt->obj, x + off_x, y + off_y);
 
+             c_height += child_h + padding_t + padding_b;
 	     y += child_h + padding_t + padding_b + col_justify;
 
 	     sub_pixel += just_inc;
@@ -1746,11 +1752,13 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv,
 	  }
 
         evas_object_geometry_get(o, NULL, &y, NULL, NULL);
+        min_w += col_max_w[c];
+        if (min_h > c_height)
+          min_h = c_height;
         x += col_max_w[c] + inc_x;
      }
 
-   //TODO set size hints
-   //evas_object_size_hint_min_set(o, w,h);
+   evas_object_size_hint_min_set(o, min_w, min_h);
 }
 
 /**
