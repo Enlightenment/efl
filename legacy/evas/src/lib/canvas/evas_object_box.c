@@ -1507,12 +1507,15 @@ evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *pri
    v_justify = 0;
    remain_y = h - (off_y + max_h);
 
-   if (priv->align.v >= 0.0)
-     inc_y = priv->align.v * remain_y;
-   else if (row_count == 0)
-     y += remain_y / 2;
-   else /* y-justified */
-     inc_y = remain_y / row_count;
+   if (remain_y > 0)
+     {
+	if (priv->align.v >= 0.0)
+	  inc_y = priv->align.v * remain_y;
+	else if (row_count == 0)
+	  y += remain_y / 2;
+	else /* y-justified */
+	  inc_y = remain_y / row_count;
+     }
 
    for (i = 0, r = 0, l = priv->children; r <= row_count; r++)
      {
@@ -1681,12 +1684,15 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv,
    h_justify = 0;
    remain_x = w - (off_x + max_w);
 
-   if (priv->align.h >= 0)
-     inc_x = priv->align.h * remain_x;
-   else if (col_count == 0)
-     x += remain_x / 2;
-   else /* x-justified */
-     inc_x = remain_x / col_count;
+   if (remain_x > 0)
+     {
+	if (priv->align.h >= 0)
+	  inc_x = priv->align.h * remain_x;
+	else if (col_count == 0)
+	  x += remain_x / 2;
+	else /* x-justified */
+	  inc_x = remain_x / col_count;
+     }
 
    for (i = 0, c = 0, l = priv->children; c <= col_count; c++)
      {
