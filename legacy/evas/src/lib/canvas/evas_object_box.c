@@ -788,10 +788,10 @@ evas_object_box_layout_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, vo
      x += remaining * priv->align.h;
    else if (n_children == 1)
      x += remaining / 2;
-   else
+   else if (remaining > 0)
      { /* justified */
         _fixed_point_divide_and_decompose_integer
-	  (remaining, n_children - 1, &global_pad, &pad_inc);
+            (remaining, n_children - 1, &global_pad, &pad_inc);
         global_pad += priv->pad.h;
      }
 
