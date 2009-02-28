@@ -41,6 +41,7 @@ CPPFLAGS=$save_CPPFLAGS
 AC_ARG_ENABLE(vlc,
 	AC_HELP_STRING([--disable-vlc],[disable vlc support @<:@default=auto@:>@]),
 	[enable_vlc=$enableval],[enable_vlc=auto])
+HAVE_VLC="no"
 if test "$enable_vlc" != "no" ; then
 	PKG_CHECK_MODULES(VLC, [libvlc >= 0.9], [HAVE_VLC="yes"], [HAVE_VLC="no"])
 fi
