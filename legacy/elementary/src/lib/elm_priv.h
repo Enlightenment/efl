@@ -49,6 +49,7 @@ struct _Elm_Config
    int image_cache;
    int font_cache;
    Evas_Coord finger_size;
+   double fps;
 };
 
 #define ELM_NEW(t) calloc(1, sizeof(t))

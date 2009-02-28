@@ -90,7 +90,7 @@ elm_shutdown(void)
 
 static const char *elm_engine, *elm_scale, *elm_theme, *elm_prefix, *elm_data_dir;
 static const char *elm_font_hinting, *elm_font_path, *elm_image_cache;
-static const char *elm_font_cache, *elm_finger_size;
+static const char *elm_font_cache, *elm_finger_size, *elm_fps;
 
 EAPI void
 elm_quicklaunch_init(int argc, char **argv)
@@ -120,6 +120,7 @@ elm_quicklaunch_init(int argc, char **argv)
    elm_image_cache = getenv("ELM_IMAGE_CACHE");
    elm_font_cache = getenv("ELM_FONT_CACHE");
    elm_finger_size = getenv("ELM_FINGER_SIZE");
+   elm_fps = getenv("ELM_FPS");
    
    if (!_elm_data_dir)
      {
@@ -182,6 +183,7 @@ elm_quicklaunch_init(int argc, char **argv)
    _elm_config->finger_size = 40;
    _elm_config->bgpixmap = 0;
    _elm_config->compositing = 1;
+   _elm_config->fps = 60.0;
    
    if (elm_engine)
      {
@@ -278,6 +280,14 @@ elm_quicklaunch_init(int argc, char **argv)
      (double)_elm_config->finger_size * _elm_config->scale;
    if (elm_finger_size)
      _elm_config->finger_size = atoi(elm_finger_size);
+   
+   if (elm_fps)
+     _elm_config->fps = atof(elm_fps);
+   
+   if (_elm_config->fps < 1.0)
+     _elm_config->fps = 1.0;
+   
+   ecore_animator_frametime_set(1.0 / _elm_config->fps);
 }
 
 EAPI void
