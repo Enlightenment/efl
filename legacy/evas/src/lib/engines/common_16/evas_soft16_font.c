@@ -1,5 +1,4 @@
 #include "evas_common_soft16.h"
-#include "evas_soft16_scanline_blend.c"
 
 static always_inline void
 _glyph_pt_mask_solid_solid(DATA16 *dst,

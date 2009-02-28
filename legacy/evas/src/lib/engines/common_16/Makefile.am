@@ -26,5 +26,6 @@ evas_soft16_polygon.c
 libevas_engine_common_16_la_DEPENDENCIES = $(top_builddir)/config.h
 
 EXTRA_DIST = \
+evas_soft16_point_blend.c \
 evas_soft16_scanline_blend.c \
 evas_soft16_scanline_fill.c

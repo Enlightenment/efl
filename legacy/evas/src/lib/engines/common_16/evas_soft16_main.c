@@ -25,11 +25,11 @@ static int               _evas_common_soft16_image_colorspace_set(Image_Entry* i
 
 static int               _evas_common_load_soft16_image_data_from_file(Image_Entry *ie);
 
-static void
-_evas_common_soft16_image_debug(const char* context, Image_Entry *eim)
-{
-   fprintf(stderr, "[16] %p = [%s] {%s,%s} %i [%i|%i]\n", eim, context, eim->file, eim->key, eim->references, eim->w, eim->h);
-}
+/* static void */
+/* _evas_common_soft16_image_debug(const char* context, Image_Entry *eim) */
+/* { */
+/*    fprintf(stderr, "[16] %p = [%s] {%s,%s} %i [%i|%i]\n", eim, context, eim->file, eim->key, eim->references, eim->w, eim->h); */
+/* } */
 
 static const Evas_Cache_Image_Func      _evas_common_soft16_image_func =
 {

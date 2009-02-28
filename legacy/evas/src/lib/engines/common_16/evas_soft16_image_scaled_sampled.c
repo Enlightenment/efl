@@ -1,5 +1,5 @@
 #include "evas_common_soft16.h"
-#include "evas_soft16_scanline_blend.c"
+#include "evas_soft16_point_blend.c"
 
 static void
 _soft16_image_draw_scaled_solid_solid(Soft16_Image *src,
