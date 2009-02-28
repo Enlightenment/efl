@@ -347,7 +347,7 @@ evas_software_xlib_x_color_allocate(Display         *disp,
 void
 evas_software_xlib_x_color_deallocate(Display     *disp,
                                       Colormap     cmap,
-                                      Visual      *vis,
+                                      Visual      *vis __UNUSED__,
                                       Convert_Pal *pal)
 {
    unsigned long pixels[256];

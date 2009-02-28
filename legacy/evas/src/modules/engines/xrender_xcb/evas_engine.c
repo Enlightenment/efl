@@ -57,7 +57,7 @@ eng_info(Evas *e)
 }
 
 static void
-eng_info_free(Evas *e, void *info)
+eng_info_free(Evas *e __UNUSED__, void *info)
 {
    Evas_Engine_Info_XRender_Xcb *in;
 
@@ -330,7 +330,7 @@ eng_output_idle_flush(void *data)
 }
 
 static void
-eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
+eng_rectangle_draw(void *data __UNUSED__, void *context, void *surface, int x, int y, int w, int h)
 {
    _xr_render_surface_rectangle_draw((Xcb_Render_Surface *)surface,
 				     (RGBA_Draw_Context *)context,
@@ -338,122 +338,121 @@ eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w
 }
 
 static void
-eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2)
+eng_line_draw(void *data __UNUSED__, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
    _xr_render_surface_line_draw((Xcb_Render_Surface *)surface, (RGBA_Draw_Context *)context, x1, y1, x2, y2);
 }
 
 static void
-eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
+eng_polygon_draw(void *data __UNUSED__, void *context, void *surface, void *polygon)
 {
    _xre_poly_draw((Xcb_Render_Surface *)surface, (RGBA_Draw_Context *)context, (RGBA_Polygon_Point *)polygon);
 }
 
 
 static void
-eng_gradient2_color_np_stop_insert(void *data, void *gradient, int r, int g, int b, int a, float pos)
+eng_gradient2_color_np_stop_insert(void *data __UNUSED__, void *gradient __UNUSED__, int r __UNUSED__, int g __UNUSED__, int b __UNUSED__, int a __UNUSED__, float pos __UNUSED__)
 {
 }
 
 static void
-eng_gradient2_clear(void *data, void *gradient)
+eng_gradient2_clear(void *data __UNUSED__, void *gradient __UNUSED__)
 {
 }
 
 static void
-eng_gradient2_fill_transform_set(void *data, void *gradient, void *transform)
+eng_gradient2_fill_transform_set(void *data __UNUSED__, void *gradient __UNUSED__, void *transform __UNUSED__)
 {
 }
 
 static void
-eng_gradient2_fill_spread_set
-(void *data, void *gradient, int spread)
+eng_gradient2_fill_spread_set(void *data __UNUSED__, void *gradient __UNUSED__, int spread __UNUSED__)
 {
 }
 
 static void *
-eng_gradient2_linear_new(void *data)
+eng_gradient2_linear_new(void *data __UNUSED__)
 {
    return NULL;
 }
 
 static void
-eng_gradient2_linear_free(void *data, void *linear_gradient)
+eng_gradient2_linear_free(void *data __UNUSED__, void *linear_gradient __UNUSED__)
 {
 }
 
 static void
-eng_gradient2_linear_fill_set(void *data, void *linear_gradient, int x0, int y0, int x1, int y1)
+eng_gradient2_linear_fill_set(void *data __UNUSED__, void *linear_gradient __UNUSED__, int x0 __UNUSED__, int y0 __UNUSED__, int x1 __UNUSED__, int y1 __UNUSED__)
 {
 }
 
 static int
-eng_gradient2_linear_is_opaque(void *data, void *context, void *linear_gradient, int x, int y, int w, int h)
+eng_gradient2_linear_is_opaque(void *data __UNUSED__, void *context __UNUSED__, void *linear_gradient __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
    return 1;
 }
 
 static int
-eng_gradient2_linear_is_visible(void *data, void *context, void *linear_gradient, int x, int y, int w, int h)
+eng_gradient2_linear_is_visible(void *data __UNUSED__, void *context __UNUSED__, void *linear_gradient __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
    return 1;
 }
 
 static void
-eng_gradient2_linear_render_pre(void *data, void *context, void *linear_gradient)
+eng_gradient2_linear_render_pre(void *data __UNUSED__, void *context __UNUSED__, void *linear_gradient __UNUSED__)
 {
 }
 
 static void
-eng_gradient2_linear_render_post(void *data, void *linear_gradient)
+eng_gradient2_linear_render_post(void *data __UNUSED__, void *linear_gradient __UNUSED__)
 {
 }
 
 static void
-eng_gradient2_linear_draw(void *data, void *context, void *surface, void *linear_gradient, int x, int y, int w, int h)
+eng_gradient2_linear_draw(void *data __UNUSED__, void *context __UNUSED__, void *surface __UNUSED__, void *linear_gradient __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
 }
 
 static void *
-eng_gradient2_radial_new(void *data)
+eng_gradient2_radial_new(void *data __UNUSED__)
 {
    return NULL;
 }
 
 static void
-eng_gradient2_radial_free(void *data, void *radial_gradient)
+eng_gradient2_radial_free(void *data __UNUSED__, void *radial_gradient __UNUSED__)
 {
 }
 
 static void
-eng_gradient2_radial_fill_set(void *data, void *radial_gradient, float cx, float cy, float rx, float ry)
+eng_gradient2_radial_fill_set(void *data __UNUSED__, void *radial_gradient __UNUSED__, float cx __UNUSED__, float cy __UNUSED__, float rx __UNUSED__, float ry __UNUSED__)
 {
 }
 
 static int
-eng_gradient2_radial_is_opaque(void *data, void *context, void *radial_gradient, int x, int y, int w, int h)
+eng_gradient2_radial_is_opaque(void *data __UNUSED__, void *context __UNUSED__, void *radial_gradient __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
    return 1;
 }
 
 static int
-eng_gradient2_radial_is_visible(void *data, void *context, void *radial_gradient, int x, int y, int w, int h)
+eng_gradient2_radial_is_visible(void *data __UNUSED__, void *context __UNUSED__, void *radial_gradient __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
    return 1;
 }
 
 static void
-eng_gradient2_radial_render_pre(void *data, void *context, void *radial_gradient)
+eng_gradient2_radial_render_pre(void *data __UNUSED__, void *context __UNUSED__, void *radial_gradient __UNUSED__)
 {
 }
 
 static void
-eng_gradient2_radial_render_post(void *data, void *radial_gradient)
+eng_gradient2_radial_render_post(void *data __UNUSED__, void *radial_gradient __UNUSED__)
 {
 }
 
 static void
-eng_gradient2_radial_draw(void *data, void *context, void *surface, void *radial_gradient, int x, int y, int w, int h)
+eng_gradient2_radial_draw(void *data __UNUSED__, void *context __UNUSED__, void *surface __UNUSED__, void *radial_gradient __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
 }
 
@@ -466,107 +465,107 @@ eng_gradient_new(void *data)
 }
 
 static void
-eng_gradient_free(void *data, void *gradient)
+eng_gradient_free(void *data __UNUSED__, void *gradient)
 {
    _xre_gradient_free(gradient);
 }
 
 static void
-eng_gradient_color_stop_add(void *data, void *gradient, int r, int g, int b, int a, int delta)
+eng_gradient_color_stop_add(void *data __UNUSED__, void *gradient, int r, int g, int b, int a, int delta)
 {
    _xre_gradient_color_stop_add(gradient, r, g, b, a, delta);
 }
 
 static void
-eng_gradient_alpha_stop_add(void *data, void *gradient, int a, int delta)
+eng_gradient_alpha_stop_add(void *data __UNUSED__, void *gradient, int a, int delta)
 {
    _xre_gradient_alpha_stop_add(gradient, a, delta);
 }
 
 static void
-eng_gradient_color_data_set(void *data, void *gradient, void *map, int len, int has_alpha)
+eng_gradient_color_data_set(void *data __UNUSED__, void *gradient, void *map, int len, int has_alpha)
 {
    _xre_gradient_color_data_set(gradient, map, len, has_alpha);
 }
 
 static void
-eng_gradient_alpha_data_set(void *data, void *gradient, void *alpha_map, int len)
+eng_gradient_alpha_data_set(void *data __UNUSED__, void *gradient, void *alpha_map, int len)
 {
    _xre_gradient_alpha_data_set(gradient, alpha_map, len);
 }
 
 static void
-eng_gradient_clear(void *data, void *gradient)
+eng_gradient_clear(void *data __UNUSED__, void *gradient)
 {
    _xre_gradient_clear(gradient);
 }
 
 static void
-eng_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h)
+eng_gradient_fill_set(void *data __UNUSED__, void *gradient, int x, int y, int w, int h)
 {
    _xre_gradient_fill_set(gradient, x, y, w, h);
 }
 
 static void
-eng_gradient_fill_angle_set(void *data, void *gradient, double angle)
+eng_gradient_fill_angle_set(void *data __UNUSED__, void *gradient, double angle)
 {
    _xre_gradient_fill_angle_set(gradient, angle);
 }
 
 static void
-eng_gradient_fill_spread_set(void *data, void *gradient, int spread)
+eng_gradient_fill_spread_set(void *data __UNUSED__, void *gradient, int spread)
 {
    _xre_gradient_fill_spread_set(gradient, spread);
 }
 
 static void
-eng_gradient_angle_set(void *data, void *gradient, double angle)
+eng_gradient_angle_set(void *data __UNUSED__, void *gradient, double angle)
 {
    _xre_gradient_angle_set(gradient, angle);
 }
 
 static void
-eng_gradient_offset_set(void *data, void *gradient, float offset)
+eng_gradient_offset_set(void *data __UNUSED__, void *gradient, float offset)
 {
    _xre_gradient_offset_set(gradient, offset);
 }
 
 static void
-eng_gradient_direction_set(void *data, void *gradient, int direction)
+eng_gradient_direction_set(void *data __UNUSED__, void *gradient, int direction)
 {
    _xre_gradient_direction_set(gradient, direction);
 }
 
 static void
-eng_gradient_type_set(void *data, void *gradient, char *name, char *params)
+eng_gradient_type_set(void *data __UNUSED__, void *gradient, char *name, char *params)
 {
    _xre_gradient_type_set(gradient, name, params);
 }
 
 static int
-eng_gradient_is_opaque(void *data, void *context, void *gradient, int x, int y, int w, int h)
+eng_gradient_is_opaque(void *data __UNUSED__, void *context, void *gradient, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
-   RGBA_Gradient     *grad;
+   RGBA_Gradient  *grad;
    RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
 
    if (!dc || !gradient) return 0;
    grad = ((XR_Gradient *)gradient)->grad;
    if(!grad || !grad->type.geometer)  return 0;
    return !(grad->type.geometer->has_alpha(grad, dc->render_op) |
-            grad->type.geometer->has_mask(grad, dc->render_op));
+              grad->type.geometer->has_mask(grad, dc->render_op));
 }
 
 static int
-eng_gradient_is_visible(void *data, void *context, void *gradient, int x, int y, int w, int h)
+eng_gradient_is_visible(void *data __UNUSED__, void *context, void *gradient, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
    if (!context || !gradient)  return 0;
    return 1;
 }
 
 static void
-eng_gradient_render_pre(void *data, void *context, void *gradient)
+eng_gradient_render_pre(void *data __UNUSED__, void *context, void *gradient)
 {
-   int             len;
+   int  len;
    RGBA_Gradient  *grad;
 
    if (!context || !gradient) return;
@@ -578,12 +577,12 @@ eng_gradient_render_pre(void *data, void *context, void *gradient)
 }
 
 static void
-eng_gradient_render_post(void *data, void *gradient)
+eng_gradient_render_post(void *data __UNUSED__, void *gradient __UNUSED__)
 {
 }
 
 static void
-eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h)
+eng_gradient_draw(void *data __UNUSED__, void *context, void *surface, void *gradient, int x, int y, int w, int h)
 {
    _xre_gradient_draw(surface, context, gradient, x, y, w, h);
 }
@@ -623,14 +622,14 @@ eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data, int
 }
 
 static void
-eng_image_free(void *data, void *image)
+eng_image_free(void *data __UNUSED__, void *image)
 {
    if (!image) return;
    _xre_image_free((XR_Image *)image);
 }
 
 static void
-eng_image_size_get(void *data, void *image, int *w, int *h)
+eng_image_size_get(void *data __UNUSED__, void *image, int *w, int *h)
 {
    if (!image) return;
    if (w) *w = ((XR_Image *)image)->w;
@@ -638,7 +637,7 @@ eng_image_size_get(void *data, void *image, int *w, int *h)
 }
 
 static void *
-eng_image_size_set(void *data, void *image, int w, int h)
+eng_image_size_set(void *data __UNUSED__, void *image, int w, int h)
 {
    XR_Image *im, *im_old;
 
@@ -664,7 +663,7 @@ eng_image_size_set(void *data, void *image, int w, int h)
 }
 
 static void *
-eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
+eng_image_dirty_region(void *data __UNUSED__, void *image, int x, int y, int w, int h)
 {
    if (!image) return image;
    _xre_image_dirty((XR_Image *)image);
@@ -673,7 +672,7 @@ eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 }
 
 static void *
-eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
+eng_image_data_get(void *data __UNUSED__, void *image, int to_write, DATA32 **image_data)
 {
    XR_Image *im;
 
@@ -717,7 +716,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 }
 
 static void *
-eng_image_data_put(void *data, void *image, DATA32 *image_data)
+eng_image_data_put(void *data __UNUSED__, void *image, DATA32 *image_data)
 {
    XR_Image *im;
 
@@ -783,7 +782,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 }
 
 static void
-eng_image_data_preload_request(void *data, void *image, void *target)
+eng_image_data_preload_request(void *data __UNUSED__, void *image, const void *target)
 {
    XR_Image *xim = image;
    RGBA_Image *im;
@@ -795,7 +794,7 @@ eng_image_data_preload_request(void *data, void *image, void *target)
 }
 
 static void
-eng_image_data_preload_cancel(void *data, void *image, const void *target)
+eng_image_data_preload_cancel(void *data __UNUSED__, void *image, const void *target)
 {
    XR_Image *xim = image;
    RGBA_Image *im;
@@ -807,7 +806,7 @@ eng_image_data_preload_cancel(void *data, void *image, const void *target)
 }
 
 static void *
-eng_image_alpha_set(void *data, void *image, int has_alpha)
+eng_image_alpha_set(void *data __UNUSED__, void *image, int has_alpha)
 {
    XR_Image *im;
 
@@ -837,14 +836,14 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
 }
 
 static int
-eng_image_alpha_get(void *data, void *image)
+eng_image_alpha_get(void *data __UNUSED__, void *image)
 {
    if (!image) return 0;
    return _xre_image_alpha_get((XR_Image *)image);
 }
 
 static void *
-eng_image_border_set(void *data, void *image, int l, int r, int t, int b)
+eng_image_border_set(void *data __UNUSED__, void *image, int l, int r, int t, int b)
 {
    if (!image) return image;
    _xre_image_border_set((XR_Image *)image, l, r, t, b);
@@ -852,14 +851,14 @@ eng_image_border_set(void *data, void *image, int l, int r, int t, int b)
 }
 
 static void
-eng_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b)
+eng_image_border_get(void *data __UNUSED__, void *image, int *l, int *r, int *t, int *b)
 {
    if (!image) return;
    _xre_image_border_get((XR_Image *)image, l, r, t, b);
 }
 
 static void
-eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
+eng_image_draw(void *data __UNUSED__, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
    if ((!image) || (!surface)) return;
    _xre_image_surface_gen((XR_Image *)image);
@@ -872,22 +871,22 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 				  smooth);
 }
 
-static const char *
-eng_image_comment_get(void *data, void *image, char *key)
+static char *
+eng_image_comment_get(void *data __UNUSED__, void *image, char *key __UNUSED__)
 {
    if (!image) return NULL;
    return ((XR_Image *)image)->comment;
 }
 
 static char *
-eng_image_format_get(void *data, void *image)
+eng_image_format_get(void *data __UNUSED__, void *image)
 {
    if (!image) return NULL;
    return ((XR_Image *)image)->format;
 }
 
 static void
-eng_image_colorspace_set(void *data, void *image, int cspace)
+eng_image_colorspace_set(void *data __UNUSED__, void *image, int cspace)
 {
    XR_Image *im;
 
@@ -930,19 +929,19 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
 }
 
 static int
-eng_image_colorspace_get(void *data, void *image)
+eng_image_colorspace_get(void *data __UNUSED__, void *image)
 {
    if (!image) return EVAS_COLORSPACE_ARGB8888;
    return ((XR_Image *)image)->cs.space;
 }
 
 static void
-eng_image_native_set(void *data, void *image, void *native)
+eng_image_native_set(void *data __UNUSED__, void *image __UNUSED__, void *native __UNUSED__)
 {
 }
 
 static void *
-eng_image_native_get(void *data, void *image)
+eng_image_native_get(void *data __UNUSED__, void *image __UNUSED__)
 {
    return NULL;
 }
@@ -972,7 +971,7 @@ eng_image_cache_get(void *data)
 }
 
 static void
-eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text)
+eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow __UNUSED__, int oh __UNUSED__, const char *text)
 {
    Render_Engine        *re;
    RGBA_Image           *im;

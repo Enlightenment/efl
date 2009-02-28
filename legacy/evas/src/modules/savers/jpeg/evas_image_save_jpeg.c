@@ -111,7 +111,7 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
    return 1;
 }
 
-int evas_image_save_file_jpeg(RGBA_Image *im, const char *file, const char *key, int quality, int compress)
+int evas_image_save_file_jpeg(RGBA_Image *im, const char *file, const char *key __UNUSED__, int quality, int compress __UNUSED__)
 {
    return save_image_jpeg(im, file, quality);
 }

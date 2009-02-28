@@ -7,7 +7,7 @@ static Eina_List *_image_info_list = NULL;
 
 static int _x_err = 0;
 static void
-_tmp_x_err(Display *d, XErrorEvent *ev)
+_tmp_x_err(Display *d __UNUSED__, XErrorEvent *ev __UNUSED__)
 {
    _x_err = 1;
    return;

@@ -19,7 +19,7 @@ Evas_Image_Load_Func evas_image_load_gif_func =
 
 
 int
-evas_image_load_file_head_gif(Image_Entry *ie, const char *file, const char *key)
+evas_image_load_file_head_gif(Image_Entry *ie, const char *file, const char *key __UNUSED__)
 {
    int                 fd;
    GifFileType        *gif;
@@ -102,7 +102,7 @@ evas_image_load_file_head_gif(Image_Entry *ie, const char *file, const char *key
 }
 
 int
-evas_image_load_file_data_gif(Image_Entry *ie, const char *file, const char *key)
+evas_image_load_file_data_gif(Image_Entry *ie, const char *file, const char *key __UNUSED__)
 {
    int                 intoffset[] = { 0, 4, 2, 1 };
    int                 intjump[] = { 8, 8, 4, 2 };

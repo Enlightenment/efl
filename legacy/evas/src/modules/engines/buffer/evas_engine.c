@@ -120,7 +120,7 @@ eng_info(Evas *e)
 }
 
 static void
-eng_info_free(Evas *e, void *info)
+eng_info_free(Evas *e __UNUSED__, void *info)
 {
    Evas_Engine_Info_Buffer *in;
 

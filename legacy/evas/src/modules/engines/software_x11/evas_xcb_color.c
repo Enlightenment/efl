@@ -403,7 +403,7 @@ evas_software_xcb_x_color_allocate(xcb_connection_t   *conn,
 void
 evas_software_xcb_x_color_deallocate(xcb_connection_t *conn,
 				     xcb_colormap_t    cmap,
-				     xcb_visualtype_t *vis,
+				     xcb_visualtype_t *vis __UNUSED__,
 				     Convert_Pal      *pal)
 {
    uint32_t pixels[256];

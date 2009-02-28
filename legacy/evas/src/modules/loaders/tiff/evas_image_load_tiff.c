@@ -119,7 +119,7 @@ raster(TIFFRGBAImage_Extra * img, uint32 * rast,
 }
 
 int
-evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *key)
+evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *key __UNUSED__)
 {
    char                txt[1024];
    TIFFRGBAImage       tiff_image;
@@ -189,7 +189,7 @@ evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *ke
 }
 
 int
-evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *key)
+evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *key __UNUSED__)
 {
    char                txt[1024];
    TIFFRGBAImage_Extra rgba_image;

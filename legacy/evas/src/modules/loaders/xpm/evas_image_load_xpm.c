@@ -105,7 +105,7 @@ xpm_parse_done(void)
 
 /** FIXME: clean this up and make more efficient  **/
 static int
-evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key, int load_data)
+evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UNUSED__, int load_data)
 {
    DATA32             *ptr, *end;
    FILE               *f;

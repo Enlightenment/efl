@@ -12,37 +12,37 @@
 static int cpunum = 0;
 
 static void *
-eng_context_new(void *data)
+eng_context_new(void *data __UNUSED__)
 {
    return evas_common_draw_context_new();
 }
 
 static void
-eng_context_free(void *data, void *context)
+eng_context_free(void *data __UNUSED__, void *context)
 {
    evas_common_draw_context_free(context);
 }
 
 static void
-eng_context_clip_set(void *data, void *context, int x, int y, int w, int h)
+eng_context_clip_set(void *data __UNUSED__, void *context, int x, int y, int w, int h)
 {
    evas_common_draw_context_set_clip(context, x, y, w, h);
 }
 
 static void
-eng_context_clip_clip(void *data, void *context, int x, int y, int w, int h)
+eng_context_clip_clip(void *data __UNUSED__, void *context, int x, int y, int w, int h)
 {
    evas_common_draw_context_clip_clip(context, x, y, w, h);
 }
 
 static void
-eng_context_clip_unset(void *data, void *context)
+eng_context_clip_unset(void *data __UNUSED__, void *context)
 {
    evas_common_draw_context_unset_clip(context);
 }
 
 static int
-eng_context_clip_get(void *data, void *context, int *x, int *y, int *w, int *h)
+eng_context_clip_get(void *data __UNUSED__, void *context, int *x, int *y, int *w, int *h)
 {
    *x = ((RGBA_Draw_Context *)context)->clip.x;
    *y = ((RGBA_Draw_Context *)context)->clip.y;
@@ -52,13 +52,13 @@ eng_context_clip_get(void *data, void *context, int *x, int *y, int *w, int *h)
 }
 
 static void
-eng_context_color_set(void *data, void *context, int r, int g, int b, int a)
+eng_context_color_set(void *data __UNUSED__, void *context, int r, int g, int b, int a)
 {
    evas_common_draw_context_set_color(context, r, g, b, a);
 }
 
 static int
-eng_context_color_get(void *data, void *context, int *r, int *g, int *b, int *a)
+eng_context_color_get(void *data __UNUSED__, void *context, int *r, int *g, int *b, int *a)
 {
    *r = (int)(R_VAL(&((RGBA_Draw_Context *)context)->col.col));
    *g = (int)(G_VAL(&((RGBA_Draw_Context *)context)->col.col));
@@ -68,19 +68,19 @@ eng_context_color_get(void *data, void *context, int *r, int *g, int *b, int *a)
 }
 
 static void
-eng_context_multiplier_set(void *data, void *context, int r, int g, int b, int a)
+eng_context_multiplier_set(void *data __UNUSED__, void *context, int r, int g, int b, int a)
 {
    evas_common_draw_context_set_multiplier(context, r, g, b, a);
 }
 
 static void
-eng_context_multiplier_unset(void *data, void *context)
+eng_context_multiplier_unset(void *data __UNUSED__, void *context)
 {
    evas_common_draw_context_unset_multiplier(context);
 }
 
 static int
-eng_context_multiplier_get(void *data, void *context, int *r, int *g, int *b, int *a)
+eng_context_multiplier_get(void *data __UNUSED__, void *context, int *r, int *g, int *b, int *a)
 {
    *r = (int)(R_VAL(&((RGBA_Draw_Context *)context)->mul.col));
    *g = (int)(G_VAL(&((RGBA_Draw_Context *)context)->mul.col));
@@ -90,49 +90,49 @@ eng_context_multiplier_get(void *data, void *context, int *r, int *g, int *b, in
 }
 
 static void
-eng_context_cutout_add(void *data, void *context, int x, int y, int w, int h)
+eng_context_cutout_add(void *data __UNUSED__, void *context, int x, int y, int w, int h)
 {
    evas_common_draw_context_add_cutout(context, x, y, w, h);
 }
 
 static void
-eng_context_cutout_clear(void *data, void *context)
+eng_context_cutout_clear(void *data __UNUSED__, void *context)
 {
    evas_common_draw_context_clear_cutouts(context);
 }
 
 static void
-eng_context_anti_alias_set(void *data, void *context, unsigned char aa)
+eng_context_anti_alias_set(void *data __UNUSED__, void *context, unsigned char aa)
 {
    evas_common_draw_context_set_anti_alias(context, aa);
 }
 
 static unsigned char
-eng_context_anti_alias_get(void *data, void *context)
+eng_context_anti_alias_get(void *data __UNUSED__, void *context)
 {
    return ((RGBA_Draw_Context *)context)->anti_alias;
 }
 
 static void
-eng_context_color_interpolation_set(void *data, void *context, int color_space)
+eng_context_color_interpolation_set(void *data __UNUSED__, void *context, int color_space)
 {
    evas_common_draw_context_set_color_interpolation(context, color_space);
 }
 
 static int
-eng_context_color_interpolation_get(void *data, void *context)
+eng_context_color_interpolation_get(void *data __UNUSED__, void *context)
 {
    return ((RGBA_Draw_Context *)context)->interpolation.color_space;
 }
 
 static void
-eng_context_render_op_set(void *data, void *context, int op)
+eng_context_render_op_set(void *data __UNUSED__, void *context, int op)
 {
    evas_common_draw_context_set_render_op(context, op);
 }
 
 static int
-eng_context_render_op_get(void *data, void *context)
+eng_context_render_op_get(void *data __UNUSED__, void *context)
 {
    return ((RGBA_Draw_Context *)context)->render_op;
 }
@@ -140,7 +140,7 @@ eng_context_render_op_get(void *data, void *context)
 
 
 static void
-eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
+eng_rectangle_draw(void *data __UNUSED__, void *context, void *surface, int x, int y, int w, int h)
 {
 #ifdef BUILD_PTHREAD
    if (cpunum > 1)
@@ -154,7 +154,7 @@ eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w
 }
 
 static void
-eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2)
+eng_line_draw(void *data __UNUSED__, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
 #ifdef BUILD_PTHREAD
    if (cpunum > 1)
@@ -168,19 +168,19 @@ eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, 
 }
 
 static void *
-eng_polygon_point_add(void *data, void *context, void *polygon, int x, int y)
+eng_polygon_point_add(void *data __UNUSED__, void *context __UNUSED__, void *polygon, int x, int y)
 {
    return evas_common_polygon_point_add(polygon, x, y);
 }
 
 static void *
-eng_polygon_points_clear(void *data, void *context, void *polygon)
+eng_polygon_points_clear(void *data __UNUSED__, void *context __UNUSED__, void *polygon)
 {
    return evas_common_polygon_points_clear(polygon);
 }
 
 static void
-eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
+eng_polygon_draw(void *data __UNUSED__, void *context, void *surface, void *polygon)
 {
 #ifdef BUILD_PTHREAD
    if (cpunum > 1)
@@ -194,50 +194,49 @@ eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
 }
 
 static void
-eng_gradient2_color_np_stop_insert(void *data, void *gradient, int r, int g, int b, int a, float pos)
+eng_gradient2_color_np_stop_insert(void *data __UNUSED__, void *gradient, int r, int g, int b, int a, float pos)
 {
    evas_common_gradient2_color_np_stop_insert(gradient, r, g, b, a, pos);
 }
 
 static void
-eng_gradient2_clear(void *data, void *gradient)
+eng_gradient2_clear(void *data __UNUSED__, void *gradient)
 {
    evas_common_gradient2_clear(gradient);
 }
 
 static void
-eng_gradient2_fill_transform_set(void *data, void *gradient, void *transform)
+eng_gradient2_fill_transform_set(void *data __UNUSED__, void *gradient, void *transform)
 {
    evas_common_gradient2_fill_transform_set(gradient, transform);
 }
 
 static void
-eng_gradient2_fill_spread_set
-(void *data, void *gradient, int spread)
+eng_gradient2_fill_spread_set(void *data __UNUSED__, void *gradient, int spread)
 {
    evas_common_gradient2_fill_spread_set(gradient, spread);
 }
 
 static void *
-eng_gradient2_linear_new(void *data)
+eng_gradient2_linear_new(void *data __UNUSED__)
 {
    return evas_common_gradient2_linear_new();
 }
 
 static void
-eng_gradient2_linear_free(void *data, void *linear_gradient)
+eng_gradient2_linear_free(void *data __UNUSED__, void *linear_gradient)
 {
    evas_common_gradient2_free(linear_gradient);
 }
 
 static void
-eng_gradient2_linear_fill_set(void *data, void *linear_gradient, float x0, float y0, float x1, float y1)
+eng_gradient2_linear_fill_set(void *data __UNUSED__, void *linear_gradient, float x0, float y0, float x1, float y1)
 {
    evas_common_gradient2_linear_fill_set(linear_gradient, x0, y0, x1, y1);
 }
 
 static int
-eng_gradient2_linear_is_opaque(void *data, void *context, void *linear_gradient, int x, int y, int w, int h)
+eng_gradient2_linear_is_opaque(void *data __UNUSED__, void *context, void *linear_gradient, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
    RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
    RGBA_Gradient2 *gr = (RGBA_Gradient2 *)linear_gradient;
@@ -248,7 +247,7 @@ eng_gradient2_linear_is_opaque(void *data, void *context, void *linear_gradient,
 }
 
 static int
-eng_gradient2_linear_is_visible(void *data, void *context, void *linear_gradient, int x, int y, int w, int h)
+eng_gradient2_linear_is_visible(void *data __UNUSED__, void *context, void *linear_gradient, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
    RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
 
@@ -257,7 +256,7 @@ eng_gradient2_linear_is_visible(void *data, void *context, void *linear_gradient
 }
 
 static void
-eng_gradient2_linear_render_pre(void *data, void *context, void *linear_gradient)
+eng_gradient2_linear_render_pre(void *data __UNUSED__, void *context, void *linear_gradient)
 {
    RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
    RGBA_Gradient2 *gr = (RGBA_Gradient2 *)linear_gradient;
@@ -270,12 +269,12 @@ eng_gradient2_linear_render_pre(void *data, void *context, void *linear_gradient
 }
 
 static void
-eng_gradient2_linear_render_post(void *data, void *linear_gradient)
+eng_gradient2_linear_render_post(void *data __UNUSED__, void *linear_gradient __UNUSED__)
 {
 }
 
 static void
-eng_gradient2_linear_draw(void *data, void *context, void *surface, void *linear_gradient, int x, int y, int w, int h)
+eng_gradient2_linear_draw(void *data __UNUSED__, void *context, void *surface, void *linear_gradient, int x, int y, int w, int h)
 {
 #ifdef BUILD_PTHREAD
    if (cpunum > 1)
@@ -286,25 +285,25 @@ eng_gradient2_linear_draw(void *data, void *context, void *surface, void *linear
 }
 
 static void *
-eng_gradient2_radial_new(void *data)
+eng_gradient2_radial_new(void *data __UNUSED__)
 {
    return evas_common_gradient2_radial_new();
 }
 
 static void
-eng_gradient2_radial_free(void *data, void *radial_gradient)
+eng_gradient2_radial_free(void *data __UNUSED__, void *radial_gradient)
 {
    evas_common_gradient2_free(radial_gradient);
 }
 
 static void
-eng_gradient2_radial_fill_set(void *data, void *radial_gradient, float cx, float cy, float rx, float ry)
+eng_gradient2_radial_fill_set(void *data __UNUSED__, void *radial_gradient, float cx, float cy, float rx, float ry)
 {
    evas_common_gradient2_radial_fill_set(radial_gradient, cx, cy, rx, ry);
 }
 
 static int
-eng_gradient2_radial_is_opaque(void *data, void *context, void *radial_gradient, int x, int y, int w, int h)
+eng_gradient2_radial_is_opaque(void *data __UNUSED__, void *context, void *radial_gradient, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
    RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
    RGBA_Gradient2 *gr = (RGBA_Gradient2 *)radial_gradient;
@@ -315,7 +314,7 @@ eng_gradient2_radial_is_opaque(void *data, void *context, void *radial_gradient,
 }
 
 static int
-eng_gradient2_radial_is_visible(void *data, void *context, void *radial_gradient, int x, int y, int w, int h)
+eng_gradient2_radial_is_visible(void *data __UNUSED__, void *context, void *radial_gradient, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
    RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
 
@@ -324,7 +323,7 @@ eng_gradient2_radial_is_visible(void *data, void *context, void *radial_gradient
 }
 
 static void
-eng_gradient2_radial_render_pre(void *data, void *context, void *radial_gradient)
+eng_gradient2_radial_render_pre(void *data __UNUSED__, void *context, void *radial_gradient)
 {
    RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
    RGBA_Gradient2 *gr = (RGBA_Gradient2 *)radial_gradient;
@@ -337,12 +336,12 @@ eng_gradient2_radial_render_pre(void *data, void *context, void *radial_gradient
 }
 
 static void
-eng_gradient2_radial_render_post(void *data, void *radial_gradient)
+eng_gradient2_radial_render_post(void *data __UNUSED__, void *radial_gradient __UNUSED__)
 {
 }
 
 static void
-eng_gradient2_radial_draw(void *data, void *context, void *surface, void *radial_gradient, int x, int y, int w, int h)
+eng_gradient2_radial_draw(void *data __UNUSED__, void *context, void *surface, void *radial_gradient, int x, int y, int w, int h)
 {
 #ifdef BUILD_PTHREAD
    if (cpunum > 1)
@@ -353,91 +352,91 @@ eng_gradient2_radial_draw(void *data, void *context, void *surface, void *radial
 }
 
 static void *
-eng_gradient_new(void *data)
+eng_gradient_new(void *data __UNUSED__)
 {
    return evas_common_gradient_new();
 }
 
 static void
-eng_gradient_free(void *data, void *gradient)
+eng_gradient_free(void *data __UNUSED__, void *gradient)
 {
    evas_common_gradient_free(gradient);
 }
 
 static void
-eng_gradient_color_stop_add(void *data, void *gradient, int r, int g, int b, int a, int delta)
+eng_gradient_color_stop_add(void *data __UNUSED__, void *gradient, int r, int g, int b, int a, int delta)
 {
    evas_common_gradient_color_stop_add(gradient, r, g, b, a, delta);
 }
 
 static void
-eng_gradient_alpha_stop_add(void *data, void *gradient, int a, int delta)
+eng_gradient_alpha_stop_add(void *data __UNUSED__, void *gradient, int a, int delta)
 {
    evas_common_gradient_alpha_stop_add(gradient, a, delta);
 }
 
 static void
-eng_gradient_color_data_set(void *data, void *gradient, void *map, int len, int has_alpha)
+eng_gradient_color_data_set(void *data __UNUSED__, void *gradient, void *map, int len, int has_alpha)
 {
    evas_common_gradient_color_data_set(gradient, map, len, has_alpha);
 }
 
 static void
-eng_gradient_alpha_data_set(void *data, void *gradient, void *alpha_map, int len)
+eng_gradient_alpha_data_set(void *data __UNUSED__, void *gradient, void *alpha_map, int len)
 {
    evas_common_gradient_alpha_data_set(gradient, alpha_map, len);
 }
 
 static void
-eng_gradient_clear(void *data, void *gradient)
+eng_gradient_clear(void *data __UNUSED__, void *gradient)
 {
    evas_common_gradient_clear(gradient);
 }
 
 static void
-eng_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h)
+eng_gradient_fill_set(void *data __UNUSED__, void *gradient, int x, int y, int w, int h)
 {
    evas_common_gradient_fill_set(gradient, x, y, w, h);
 }
 
 static void
-eng_gradient_fill_angle_set(void *data, void *gradient, double angle)
+eng_gradient_fill_angle_set(void *data __UNUSED__, void *gradient, double angle)
 {
    evas_common_gradient_fill_angle_set(gradient, angle);
 }
 
 static void
-eng_gradient_fill_spread_set(void *data, void *gradient, int spread)
+eng_gradient_fill_spread_set(void *data __UNUSED__, void *gradient, int spread)
 {
    evas_common_gradient_fill_spread_set(gradient, spread);
 }
 
 static void
-eng_gradient_angle_set(void *data, void *gradient, double angle)
+eng_gradient_angle_set(void *data __UNUSED__, void *gradient, double angle)
 {
    evas_common_gradient_map_angle_set(gradient, angle);
 }
 
 static void
-eng_gradient_offset_set(void *data, void *gradient, float offset)
+eng_gradient_offset_set(void *data __UNUSED__, void *gradient, float offset)
 {
    evas_common_gradient_map_offset_set(gradient, offset);
 }
 
 static void
-eng_gradient_direction_set(void *data, void *gradient, int direction)
+eng_gradient_direction_set(void *data __UNUSED__, void *gradient, int direction)
 {
    evas_common_gradient_map_direction_set(gradient, direction);
 }
 
 static void
-eng_gradient_type_set(void *data, void *gradient, char *name, char *params)
+eng_gradient_type_set(void *data __UNUSED__, void *gradient, char *name, char *params)
 {
    evas_common_gradient_type_set(gradient, name, params);
 }
 
 static int
-eng_gradient_is_opaque(void *data, void *context, void *gradient, int x, int y, int w, int h)
+eng_gradient_is_opaque(void *data __UNUSED__, void *context, void *gradient, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
    RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
    RGBA_Gradient *gr = (RGBA_Gradient *)gradient;
@@ -448,7 +447,7 @@ eng_gradient_is_opaque(void *data, void *context, void *gradient, int x, int y, 
 }
 
 static int
-eng_gradient_is_visible(void *data, void *context, void *gradient, int x, int y, int w, int h)
+eng_gradient_is_visible(void *data __UNUSED__, void *context, void *gradient, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
    RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
 
@@ -457,7 +456,7 @@ eng_gradient_is_visible(void *data, void *context, void *gradient, int x, int y,
 }
 
 static void
-eng_gradient_render_pre(void *data, void *context, void *gradient)
+eng_gradient_render_pre(void *data __UNUSED__, void *context, void *gradient)
 {
    RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
    RGBA_Gradient *gr = (RGBA_Gradient *)gradient;
@@ -470,12 +469,12 @@ eng_gradient_render_pre(void *data, void *context, void *gradient)
 }
 
 static void
-eng_gradient_render_post(void *data, void *gradient)
+eng_gradient_render_post(void *data __UNUSED__, void *gradient __UNUSED__)
 {
 }
 
 static void
-eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h)
+eng_gradient_draw(void *data __UNUSED__, void *context, void *surface, void *gradient, int x, int y, int w, int h)
 {
 #ifdef BUILD_PTHREAD
    if (cpunum > 1)
@@ -489,7 +488,7 @@ eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int 
 }
 
 static int
-eng_image_alpha_get(void *data, void *image)
+eng_image_alpha_get(void *data __UNUSED__, void *image)
 {
    Image_Entry *im;
 
@@ -506,7 +505,7 @@ eng_image_alpha_get(void *data, void *image)
 }
 
 static int
-eng_image_colorspace_get(void *data, void *image)
+eng_image_colorspace_get(void *data __UNUSED__, void *image)
 {
    Image_Entry *im;
 
@@ -516,7 +515,7 @@ eng_image_colorspace_get(void *data, void *image)
 }
 
 static void *
-eng_image_alpha_set(void *data, void *image, int has_alpha)
+eng_image_alpha_set(void *data __UNUSED__, void *image, int has_alpha)
 {
    RGBA_Image *im;
 
@@ -535,7 +534,7 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
 }
 
 static void *
-eng_image_border_set(void *data, void *image, int l, int r, int t, int b)
+eng_image_border_set(void *data __UNUSED__, void *image, int l __UNUSED__, int r __UNUSED__, int t __UNUSED__, int b __UNUSED__)
 {
    RGBA_Image *im;
 
@@ -544,7 +543,7 @@ eng_image_border_set(void *data, void *image, int l, int r, int t, int b)
 }
 
 static void
-eng_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b)
+eng_image_border_get(void *data __UNUSED__, void *image, int *l __UNUSED__, int *r __UNUSED__, int *t __UNUSED__, int *b __UNUSED__)
 {
    RGBA_Image *im;
 
@@ -552,7 +551,7 @@ eng_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b)
 }
 
 static char *
-eng_image_comment_get(void *data, void *image, char *key)
+eng_image_comment_get(void *data __UNUSED__, void *image, char *key __UNUSED__)
 {
    RGBA_Image *im;
 
@@ -562,13 +561,13 @@ eng_image_comment_get(void *data, void *image, char *key)
 }
 
 static char *
-eng_image_format_get(void *data, void *image)
+eng_image_format_get(void *data __UNUSED__, void *image __UNUSED__)
 {
    return NULL;
 }
 
 static void
-eng_image_colorspace_set(void *data, void *image, int cspace)
+eng_image_colorspace_set(void *data __UNUSED__, void *image, int cspace)
 {
    Image_Entry *im;
 
@@ -578,43 +577,43 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
 }
 
 static void
-eng_image_native_set(void *data, void *image, void *native)
+eng_image_native_set(void *data __UNUSED__, void *image __UNUSED__, void *native __UNUSED__)
 {
 }
 
 static void *
-eng_image_native_get(void *data, void *image)
+eng_image_native_get(void *data __UNUSED__, void *image __UNUSED__)
 {
    return NULL;
 }
 
 static void *
-eng_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
+eng_image_load(void *data __UNUSED__, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
 {
    *error = 0;
    return evas_common_load_image_from_file(file, key, lo);
 }
 
 static void *
-eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
+eng_image_new_from_data(void *data __UNUSED__, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
    return evas_cache_image_data(evas_common_image_cache_get(), w, h, image_data, alpha, cspace);
 }
 
 static void *
-eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
+eng_image_new_from_copied_data(void *data __UNUSED__, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
    return evas_cache_image_copied_data(evas_common_image_cache_get(), w, h, image_data, alpha, cspace);
 }
 
 static void
-eng_image_free(void *data, void *image)
+eng_image_free(void *data __UNUSED__, void *image)
 {
    evas_cache_image_drop(image);
 }
 
 static void
-eng_image_size_get(void *data, void *image, int *w, int *h)
+eng_image_size_get(void *data __UNUSED__, void *image, int *w, int *h)
 {
    Image_Entry *im;
 
@@ -624,7 +623,7 @@ eng_image_size_get(void *data, void *image, int *w, int *h)
 }
 
 static void *
-eng_image_size_set(void *data, void *image, int w, int h)
+eng_image_size_set(void *data __UNUSED__, void *image, int w, int h)
 {
    Image_Entry *im;
 
@@ -633,7 +632,7 @@ eng_image_size_set(void *data, void *image, int w, int h)
 }
 
 static void *
-eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
+eng_image_dirty_region(void *data __UNUSED__, void *image, int x, int y, int w, int h)
 {
    Image_Entry *im = image;
 
@@ -642,7 +641,7 @@ eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 }
 
 static void *
-eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
+eng_image_data_get(void *data __UNUSED__, void *image, int to_write, DATA32 **image_data)
 {
    RGBA_Image *im;
 
@@ -714,7 +713,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 }
 
 static void
-eng_image_data_preload_request(void *data, void *image, const void *target)
+eng_image_data_preload_request(void *data __UNUSED__, void *image, const void *target)
 {
    RGBA_Image *im = image;
 
@@ -723,7 +722,7 @@ eng_image_data_preload_request(void *data, void *image, const void *target)
 }
 
 static void
-eng_image_data_preload_cancel(void *data, void *image, const void *target)
+eng_image_data_preload_cancel(void *data __UNUSED__, void *image, const void *target)
 {
    RGBA_Image *im = image;
 
@@ -732,7 +731,7 @@ eng_image_data_preload_cancel(void *data, void *image, const void *target)
 }
 
 static void
-eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
+eng_image_draw(void *data __UNUSED__, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
    RGBA_Image *im;
 
@@ -762,7 +761,7 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 }
 
 static void
-eng_image_cache_flush(void *data)
+eng_image_cache_flush(void *data __UNUSED__)
 {
    int tmp_size;
 
@@ -772,85 +771,85 @@ eng_image_cache_flush(void *data)
 }
 
 static void
-eng_image_cache_set(void *data, int bytes)
+eng_image_cache_set(void *data __UNUSED__, int bytes)
 {
    evas_common_image_set_cache(bytes);
 }
 
 static int
-eng_image_cache_get(void *data)
+eng_image_cache_get(void *data __UNUSED__)
 {
    return evas_common_image_get_cache();
 }
 
 static void *
-eng_font_load(void *data, const char *name, int size)
+eng_font_load(void *data __UNUSED__, const char *name, int size)
 {
    return evas_common_font_load(name, size);
 }
 
 static void *
-eng_font_memory_load(void *data, char *name, int size, const void *fdata, int fdata_size)
+eng_font_memory_load(void *data __UNUSED__, char *name, int size, const void *fdata, int fdata_size)
 {
    return evas_common_font_memory_load(name, size, fdata, fdata_size);
 }
 
 static void *
-eng_font_add(void *data, void *font, const char *name, int size)
+eng_font_add(void *data __UNUSED__, void *font, const char *name, int size)
 {
    return evas_common_font_add(font, name, size);
 }
 
 static void *
-eng_font_memory_add(void *data, void *font, char *name, int size, const void *fdata, int fdata_size)
+eng_font_memory_add(void *data __UNUSED__, void *font, char *name, int size, const void *fdata, int fdata_size)
 {
    return evas_common_font_memory_add(font, name, size, fdata, fdata_size);
 }
 
 static void
-eng_font_free(void *data, void *font)
+eng_font_free(void *data __UNUSED__, void *font)
 {
    evas_common_font_free(font);
 }
 
 static int
-eng_font_ascent_get(void *data, void *font)
+eng_font_ascent_get(void *data __UNUSED__, void *font)
 {
    return evas_common_font_ascent_get(font);
 }
 
 static int
-eng_font_descent_get(void *data, void *font)
+eng_font_descent_get(void *data __UNUSED__, void *font)
 {
    return evas_common_font_descent_get(font);
 }
 
 static int
-eng_font_max_ascent_get(void *data, void *font)
+eng_font_max_ascent_get(void *data __UNUSED__, void *font)
 {
    return evas_common_font_max_ascent_get(font);
 }
 
 static int
-eng_font_max_descent_get(void *data, void *font)
+eng_font_max_descent_get(void *data __UNUSED__, void *font)
 {
    return evas_common_font_max_descent_get(font);
 }
 
 static void
-eng_font_string_size_get(void *data, void *font, const char *text, int *w, int *h)
+eng_font_string_size_get(void *data __UNUSED__, void *font, const char *text, int *w, int *h)
 {
    evas_common_font_query_size(font, text, w, h);
 }
 
 static int
-eng_font_inset_get(void *data, void *font, const char *text)
+eng_font_inset_get(void *data __UNUSED__, void *font, const char *text)
 {
    return evas_common_font_query_inset(font, text);
 }
 
 static int
-eng_font_h_advance_get(void *data, void *font, const char *text)
+eng_font_h_advance_get(void *data __UNUSED__, void *font, const char *text)
 {
    int h, v;
 
@@ -859,7 +858,7 @@ eng_font_h_advance_get(void *data, void *font, const char *text)
 }
 
 static int
-eng_font_v_advance_get(void *data, void *font, const char *text)
+eng_font_v_advance_get(void *data __UNUSED__, void *font, const char *text)
 {
    int h, v;
 
@@ -868,19 +867,19 @@ eng_font_v_advance_get(void *data, void *font, const char *text)
 }
 
 static int
-eng_font_char_coords_get(void *data, void *font, const char *text, int pos, int *cx, int *cy, int *cw, int *ch)
+eng_font_char_coords_get(void *data __UNUSED__, void *font, const char *text, int pos, int *cx, int *cy, int *cw, int *ch)
 {
    return evas_common_font_query_char_coords(font, text, pos, cx, cy, cw, ch);
 }
 
 static int
-eng_font_char_at_coords_get(void *data, void *font, const char *text, int x, int y, int *cx, int *cy, int *cw, int *ch)
+eng_font_char_at_coords_get(void *data __UNUSED__, void *font, const char *text, int x, int y, int *cx, int *cy, int *cw, int *ch)
 {
    return evas_common_font_query_text_at_pos(font, text, x, y, cx, cy, cw, ch);
 }
 
 static void
-eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text)
+eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const char *text)
 {
 #ifdef BUILD_PTHREAD
    if (cpunum > 1)
@@ -894,31 +893,31 @@ eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y
 }
 
 static void
-eng_font_cache_flush(void *data)
+eng_font_cache_flush(void *data __UNUSED__)
 {
    evas_common_font_flush();
 }
 
 static void
-eng_font_cache_set(void *data, int bytes)
+eng_font_cache_set(void *data __UNUSED__, int bytes)
 {
    evas_common_font_cache_set(bytes);
 }
 
 static int
-eng_font_cache_get(void *data)
+eng_font_cache_get(void *data __UNUSED__)
 {
    return evas_common_font_cache_get();
 }
 
 static void
-eng_font_hinting_set(void *data, void *font, int hinting)
+eng_font_hinting_set(void *data __UNUSED__, void *font, int hinting)
 {
    evas_common_font_hinting_set(font, hinting);
 }
 
 static int
-eng_font_hinting_can_hint(void *data, int hinting)
+eng_font_hinting_can_hint(void *data __UNUSED__, int hinting)
 {
    return evas_common_hinting_available(hinting);
 }

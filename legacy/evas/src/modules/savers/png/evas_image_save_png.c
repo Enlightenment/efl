@@ -153,7 +153,7 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
    return 0;
 }
 
-int evas_image_save_file_png(RGBA_Image *im, const char *file, const char *key, int quality, int compress)
+int evas_image_save_file_png(RGBA_Image *im, const char *file, const char *key __UNUSED__, int quality __UNUSED__, int compress)
 {
    return save_image_png(im, file, compress, 0);
 }

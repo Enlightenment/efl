@@ -11,7 +11,7 @@ Evas_Image_Save_Func evas_image_save_tiff_func =
 };
 
 static int
-save_image_tiff(RGBA_Image *im, const char *file, int compress, int interlace)
+save_image_tiff(RGBA_Image *im, const char *file, int compress __UNUSED__, int interlace __UNUSED__)
 {
    TIFF               *tif = NULL;
    uint8              *buf = NULL;
@@ -102,7 +102,7 @@ save_image_tiff(RGBA_Image *im, const char *file, int compress, int interlace)
    return 1;
 }
 
-int evas_image_save_file_tiff(RGBA_Image *im, const char *file, const char *key, int quality, int compress)
+int evas_image_save_file_tiff(RGBA_Image *im, const char *file, const char *key __UNUSED__, int quality __UNUSED__, int compress)
 {
    return save_image_tiff(im, file, compress, 0);
 }

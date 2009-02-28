@@ -168,7 +168,7 @@ evas_gl_font_texture_free(Evas_GL_Font_Texture *ft)
 }
 
 void
-evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y)
+evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface __UNUSED__, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y)
 {
    Evas_GL_Font_Texture *ft;
 

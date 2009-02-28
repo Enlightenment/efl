@@ -528,7 +528,7 @@ evas_cache_image_dfb_dirty(Engine_Image_Entry *dst, const Engine_Image_Entry *sr
 }
 
 static void
-evas_cache_image_dfb_dirty_region(Engine_Image_Entry *eim, int x, int y, int w, int h)
+evas_cache_image_dfb_dirty_region(Engine_Image_Entry *eim, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
    RGBA_Image *im;
 
@@ -668,7 +668,7 @@ static const Evas_Cache_Engine_Image_Func _dfb_cache_engine_image_cb = {
  * Evas Engine
  **********************************************************************/
 static void *
-evas_engine_dfb_info(Evas* e)
+evas_engine_dfb_info(Evas* e __UNUSED__)
 {
    Evas_Engine_Info_DirectFB *info;
 
@@ -682,7 +682,7 @@ evas_engine_dfb_info(Evas* e)
 }
 
 static void
-evas_engine_dfb_info_free(Evas *e, void *in)
+evas_engine_dfb_info_free(Evas *e __UNUSED__, void *in)
 {
    Evas_Engine_Info_DirectFB *info = in;
 
@@ -954,7 +954,7 @@ evas_engine_dfb_output_redraws_next_update_get(void *data, int *x, int *y, int *
 }
 
 static void
-evas_engine_dfb_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h)
+evas_engine_dfb_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x, int y, int w, int h)
 {
    Render_Engine *re = data;
    DFBRegion *r;
@@ -1045,7 +1045,7 @@ evas_engine_dfb_output_idle_flush(void *data)
  * memory.
  */
 static void
-evas_engine_dfb_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text)
+evas_engine_dfb_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const char *text)
 {
    Render_Engine *re = data;
    RGBA_Image *im;
@@ -1066,7 +1066,7 @@ evas_engine_dfb_font_draw(void *data, void *context, void *surface, void *font, 
 
 
 static void
-_cb_draw_line(IDirectFBSurface *surface, RGBA_Draw_Context *dc, const DFBRegion *region, void *data)
+_cb_draw_line(IDirectFBSurface *surface, RGBA_Draw_Context *dc __UNUSED__, const DFBRegion *region __UNUSED__, void *data)
 {
    const Evas_Rectangle *r = data;
 
@@ -1074,7 +1074,7 @@ _cb_draw_line(IDirectFBSurface *surface, RGBA_Draw_Context *dc, const DFBRegion 
 }
 
 static void
-evas_engine_dfb_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2)
+evas_engine_dfb_line_draw(void *data __UNUSED__, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
    IDirectFBSurface *screen = surface;
    Evas_Rectangle r;
@@ -1088,7 +1088,7 @@ evas_engine_dfb_line_draw(void *data, void *context, void *surface, int x1, int 
 
 #ifndef DFB_USE_EVAS_RECT_DRAW
 static void
-_cb_draw_rectangle(IDirectFBSurface *surface, RGBA_Draw_Context *dc, const DFBRegion *region, void *data)
+_cb_draw_rectangle(IDirectFBSurface *surface, RGBA_Draw_Context *dc __UNUSED__, const DFBRegion *region __UNUSED__, void *data)
 {
    const Evas_Rectangle *r = data;
 
@@ -1096,7 +1096,7 @@ _cb_draw_rectangle(IDirectFBSurface *surface, RGBA_Draw_Context *dc, const DFBRe
 }
 
 static void
-evas_engine_dfb_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
+evas_engine_dfb_rectangle_draw(void *data __UNUSED__, void *context, void *surface, int x, int y, int w, int h)
 {
    IDirectFBSurface *screen = surface;
    Evas_Rectangle r;
@@ -1130,7 +1130,7 @@ evas_engine_dfb_rectangle_draw(void *data, void *context, void *surface, int x, 
 
 #ifndef DFB_USE_EVAS_POLYGON_DRAW
 static void
-evas_engine_dfb_polygon_draw(void *data, void *context, void *surface, void *polygon)
+evas_engine_dfb_polygon_draw(void *data __UNUSED__, void *context, void *surface, void *polygon)
 {
    _dfb_polygon_draw(surface, context, polygon);
 }
@@ -1188,7 +1188,7 @@ evas_engine_dfb_image_load(void *data, const char *file, const char *key, int *e
 }
 
 static int
-evas_engine_dfb_image_alpha_get(void *data, void *image)
+evas_engine_dfb_image_alpha_get(void *data __UNUSED__, void *image)
 {
    DirectFB_Engine_Image_Entry *eim = image;
    Image_Entry *ie;
@@ -1208,7 +1208,7 @@ evas_engine_dfb_image_alpha_get(void *data, void *image)
 }
 
 static void
-evas_engine_dfb_image_size_get(void *data, void *image, int *w, int *h)
+evas_engine_dfb_image_size_get(void *data __UNUSED__, void *image, int *w, int *h)
 {
    DirectFB_Engine_Image_Entry *eim = image;
    Image_Entry *ie;
@@ -1219,7 +1219,7 @@ evas_engine_dfb_image_size_get(void *data, void *image, int *w, int *h)
 }
 
 static int
-evas_engine_dfb_image_colorspace_get(void *data, void *image)
+evas_engine_dfb_image_colorspace_get(void *data __UNUSED__, void *image)
 {
    DirectFB_Engine_Image_Entry *eim = image;
 
@@ -1257,7 +1257,7 @@ evas_engine_dfb_image_new_from_data(void *data, int w, int h, DATA32* image_data
 }
 
 static void
-evas_engine_dfb_image_free(void *data, void *image)
+evas_engine_dfb_image_free(void *data __UNUSED__, void *image)
 {
    DirectFB_Engine_Image_Entry *eim = image;
 
@@ -1265,7 +1265,7 @@ evas_engine_dfb_image_free(void *data, void *image)
 }
 
 static void *
-evas_engine_dfb_image_size_set(void *data, void *image, int w, int h)
+evas_engine_dfb_image_size_set(void *data __UNUSED__, void *image, int w, int h)
 {
    DirectFB_Engine_Image_Entry *eim = image;
 
@@ -1273,7 +1273,7 @@ evas_engine_dfb_image_size_set(void *data, void *image, int w, int h)
 }
 
 static void *
-evas_engine_dfb_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
+evas_engine_dfb_image_dirty_region(void *data __UNUSED__, void *image, int x, int y, int w, int h)
 {
    DirectFB_Engine_Image_Entry *eim = image;
 
@@ -1281,7 +1281,7 @@ evas_engine_dfb_image_dirty_region(void *data, void *image, int x, int y, int w,
 }
 
 static void *
-evas_engine_dfb_image_data_get(void *data, void *image, int to_write, DATA32** image_data)
+evas_engine_dfb_image_data_get(void *data __UNUSED__, void *image, int to_write, DATA32** image_data)
 {
    DirectFB_Engine_Image_Entry *deie = image;
    Engine_Image_Entry *ce;
@@ -1414,7 +1414,7 @@ evas_engine_dfb_image_data_put(void *data, void *image, DATA32* image_data)
 }
 
 static void
-evas_engine_dfb_image_data_preload_request(void *data, void *image, const void *target)
+evas_engine_dfb_image_data_preload_request(void *data __UNUSED__, void *image, const void *target)
 {
    DirectFB_Engine_Image_Entry *deie = image;
    RGBA_Image *im;
@@ -1426,7 +1426,7 @@ evas_engine_dfb_image_data_preload_request(void *data, void *image, const void *
 }
 
 static void
-evas_engine_dfb_image_data_preload_cancel(void *data, void *image, const void *target)
+evas_engine_dfb_image_data_preload_cancel(void *data __UNUSED__, void *image, const void *target)
 {
    DirectFB_Engine_Image_Entry *deie = image;
    RGBA_Image *im;
@@ -1438,7 +1438,7 @@ evas_engine_dfb_image_data_preload_cancel(void *data, void *image, const void *t
 }
 
 static void *
-evas_engine_dfb_image_alpha_set(void *data, void *image, int has_alpha)
+evas_engine_dfb_image_alpha_set(void *data __UNUSED__, void *image, int has_alpha)
 {
    DirectFB_Engine_Image_Entry *eim = image;
    Engine_Image_Entry *ce;
@@ -1471,7 +1471,7 @@ struct _for_each_cutout_image
 };
 
 static void
-_cb_draw_image_unscaled(IDirectFBSurface *surface, RGBA_Draw_Context *dc, const DFBRegion *region, void *data)
+_cb_draw_image_unscaled(IDirectFBSurface *surface, RGBA_Draw_Context *dc __UNUSED__, const DFBRegion *region __UNUSED__, void *data)
 {
    const struct _for_each_cutout_image *p = data;
 
@@ -1479,7 +1479,7 @@ _cb_draw_image_unscaled(IDirectFBSurface *surface, RGBA_Draw_Context *dc, const 
 }
 
 static void
-_cb_draw_image_scaled(IDirectFBSurface *surface, RGBA_Draw_Context *dc, const DFBRegion *region, void *data)
+_cb_draw_image_scaled(IDirectFBSurface *surface, RGBA_Draw_Context *dc __UNUSED__, const DFBRegion *region __UNUSED__, void *data)
 {
    const struct _for_each_cutout_image *p = data;
 
@@ -1488,7 +1488,7 @@ _cb_draw_image_scaled(IDirectFBSurface *surface, RGBA_Draw_Context *dc, const DF
 
 #ifndef DFB_USE_EVAS_IMAGE_DRAW
 static void
-evas_engine_dfb_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
+evas_engine_dfb_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth __UNUSED__)
 {
    Render_Engine *re = data;
    IDirectFBSurface *screen = surface;
@@ -1587,7 +1587,7 @@ evas_engine_dfb_image_cache_get(void *data)
 }
 
 static char *
-evas_engine_dfb_image_comment_get(void *data, void *image, char *key)
+evas_engine_dfb_image_comment_get(void *data __UNUSED__, void *image, char *key __UNUSED__)
 {
    DirectFB_Engine_Image_Entry *eim = image;
    RGBA_Image *im;

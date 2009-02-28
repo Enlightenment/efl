@@ -160,7 +160,7 @@ _xre_font_surface_free(XR_Font_Surface *fs)
 }
 
 void
-_xre_font_surface_draw(Xcb_Image_Info *xcbinf, RGBA_Image *surface, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y)
+_xre_font_surface_draw(Xcb_Image_Info *xcbinf __UNUSED__, RGBA_Image *surface, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y)
 {
    XR_Font_Surface    *fs;
    Xcb_Render_Surface *target_surface;

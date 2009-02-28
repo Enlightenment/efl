@@ -150,7 +150,7 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
 }
 
 void
-evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
+evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth __UNUSED__)
 {
    DATA32 *im_data;
    int im_w, im_h;
@@ -543,7 +543,7 @@ evas_gl_common_ycbcr601pl_texture_new(Evas_GL_Context *gc, unsigned char **rows,
 }
 
 void
-evas_gl_common_ycbcr601pl_texture_update(Evas_GL_Texture *tex, unsigned char **rows, int w, int h, int smooth)
+evas_gl_common_ycbcr601pl_texture_update(Evas_GL_Texture *tex, unsigned char **rows, int w __UNUSED__, int h __UNUSED__, int smooth)
 {
    int texfmt;
    int y;

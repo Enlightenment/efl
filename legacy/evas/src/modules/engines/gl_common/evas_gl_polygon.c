@@ -61,7 +61,7 @@ _evas_gl_tess_end_cb(void)
 }
 
 static void EFL_STDCALL
-_evas_gl_tess_error_cb(GLenum errorcode)
+_evas_gl_tess_error_cb(GLenum errorcode __UNUSED__)
 {
 }
 
@@ -75,7 +75,7 @@ _evas_gl_tess_vertex_cb(GLvoid *vertex)
 }
 
 static void EFL_STDCALL
-_evas_gl_tess_combine_cb(GLdouble coords[3], GLdouble *vertex_data[4], GLfloat weight[4], GLdouble **data_out)
+_evas_gl_tess_combine_cb(GLdouble coords[3], GLdouble *vertex_data[4] __UNUSED__, GLfloat weight[4] __UNUSED__, GLdouble **data_out)
 {
    GLdouble *vertex;
 

@@ -563,7 +563,7 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
 }
 
 void
-evas_software_xlib_outbuf_free_region_for_update(Outbuf *buf, RGBA_Image *update)
+evas_software_xlib_outbuf_free_region_for_update(Outbuf *buf __UNUSED__, RGBA_Image *update __UNUSED__)
 {
    /* no need to do anything - they are cleaned up on flush */
 }

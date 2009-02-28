@@ -120,7 +120,7 @@ evas_gl_common_gradient_type_set(Evas_GL_Gradient *gr, char *name, char *params)
 
 int
 evas_gl_common_gradient_is_opaque(Evas_GL_Context *gc, Evas_GL_Gradient *gr,
-                                  int x, int y, int w, int h)
+                                  int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
    RGBA_Draw_Context *dc;
 
@@ -132,7 +132,7 @@ evas_gl_common_gradient_is_opaque(Evas_GL_Context *gc, Evas_GL_Gradient *gr,
 
 int
 evas_gl_common_gradient_is_visible(Evas_GL_Context *gc, Evas_GL_Gradient *gr,
-                                   int x, int y, int w, int h)
+                                   int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
    if (!gc || !gr)  return 0;
    return 1;
@@ -156,7 +156,7 @@ evas_gl_common_gradient_render_pre(Evas_GL_Context *gc, Evas_GL_Gradient *gr)
 }
 
 void
-evas_gl_common_gradient_render_post(Evas_GL_Gradient *gr)
+evas_gl_common_gradient_render_post(Evas_GL_Gradient *gr __UNUSED__)
 {
 }
 

@@ -82,7 +82,7 @@ polygon_edge_sorter(const void *a, const void *b)
 typedef DFBSpan span_t;
 
 static void
-polygon_span_add(span_t *span, int y, int x, int w)
+polygon_span_add(span_t *span, int y __UNUSED__, int x, int w)
 {
    span->x = x;
    span->w = w;

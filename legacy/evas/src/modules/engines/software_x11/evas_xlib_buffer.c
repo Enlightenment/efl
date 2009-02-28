@@ -87,7 +87,7 @@ evas_software_xlib_x_can_do_shm(Display *d)
 }
 
 static void
-x_output_tmp_x_err(Display * d, XErrorEvent * ev)
+x_output_tmp_x_err(Display *d __UNUSED__, XErrorEvent *ev __UNUSED__)
 {
    _x_err = 1;
    return;

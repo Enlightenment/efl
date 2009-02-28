@@ -216,7 +216,7 @@ _xr_render_surface_argb_pixels_fill(Xrender_Surface *rs, int sw, int sh, void *p
 }
 
 void
-_xr_render_surface_rgb_pixels_fill(Xrender_Surface *rs, int sw, int sh, void *pixels, int x, int y, int w, int h, int ox, int oy)
+_xr_render_surface_rgb_pixels_fill(Xrender_Surface *rs, int sw, int sh __UNUSED__, void *pixels, int x, int y, int w, int h, int ox, int oy)
 {
    Ximage_Image  *xim;
    unsigned int  *p, *sp, *sple, *spe;

@@ -36,7 +36,7 @@ svg_loader_unpremul_data(DATA32 *data, unsigned int len)
 }
 
 int
-evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key)
+evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key __UNUSED__)
 {
    char               cwd[PATH_MAX], pcwd[PATH_MAX], *p;
    
@@ -132,7 +132,7 @@ evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key
 
 /** FIXME: All evas loaders need to be tightened up **/
 int
-evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key)
+evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key __UNUSED__)
 {
    DATA32             *pixels;
    char               cwd[PATH_MAX], pcwd[PATH_MAX], *p;

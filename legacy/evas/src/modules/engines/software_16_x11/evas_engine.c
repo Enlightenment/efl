@@ -56,7 +56,7 @@ eng_info(Evas *e)
 }
 
 static void
-eng_info_free(Evas *e, void *info)
+eng_info_free(Evas *e __UNUSED__, void *info)
 {
    Evas_Engine_Info_Software_16_X11 *in;
 
@@ -454,7 +454,7 @@ _tmp_out_process(Render_Engine *re, int out_x, int out_y, int w, int h)
 }
 
 static void
-eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h)
+eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x, int y, int w, int h)
 {
    Render_Engine *re;
    XRectangle r;

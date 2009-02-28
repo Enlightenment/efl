@@ -252,7 +252,7 @@ xcb_render_find_standard_pictforminfo (xcb_connection_t *conn, int format)
 }
 
 static void
-_tmp_xcb_err(xcb_connection_t *conn/* , XErrorEvent *ev */)
+_tmp_xcb_err(xcb_connection_t *conn __UNUSED__/* , XErrorEvent *ev */)
 {
    _xcb_err = 1;
    return;

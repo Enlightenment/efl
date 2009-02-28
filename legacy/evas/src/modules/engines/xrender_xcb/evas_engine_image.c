@@ -548,7 +548,7 @@ _xre_image_border_set(XR_Image *im, int l, int r, int t, int b)
 }
 
 void
-_xre_image_border_get(XR_Image *im, int *l, int *r, int *t, int *b)
+_xre_image_border_get(XR_Image *im __UNUSED__, int *l __UNUSED__, int *r __UNUSED__, int *t __UNUSED__, int *b __UNUSED__)
 {
 }
 

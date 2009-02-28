@@ -267,7 +267,7 @@ _xr_render_surface_solid_rectangle_set(Xcb_Render_Surface *rs, int r, int g, int
 }
 
 void
-_xr_render_surface_argb_pixels_fill(Xcb_Render_Surface *rs, int sw, int sh, void *pixels, int x, int y, int w, int h, int ox, int oy)
+_xr_render_surface_argb_pixels_fill(Xcb_Render_Surface *rs, int sw, int sh __UNUSED__, void *pixels, int x, int y, int w, int h, int ox, int oy)
 {
    Xcb_Image_Image  *xcbim;
    unsigned int     *p, *sp, *sple, *spe;
@@ -315,7 +315,7 @@ _xr_render_surface_argb_pixels_fill(Xcb_Render_Surface *rs, int sw, int sh, void
 }
 
 void
-_xr_render_surface_rgb_pixels_fill(Xcb_Render_Surface *rs, int sw, int sh, void *pixels, int x, int y, int w, int h, int ox, int oy)
+_xr_render_surface_rgb_pixels_fill(Xcb_Render_Surface *rs, int sw, int sh __UNUSED__, void *pixels, int x, int y, int w, int h, int ox, int oy)
 {
    Xcb_Image_Image *xcbim;
    unsigned int    *p, *sp, *sple, *spe;
@@ -735,7 +735,7 @@ _xr_render_surface_rectangle_draw(Xcb_Render_Surface *rs, RGBA_Draw_Context *dc,
 }
 
 void
-_xr_render_surface_line_draw(Xcb_Render_Surface *rs, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2)
+_xr_render_surface_line_draw(Xcb_Render_Surface *rs __UNUSED__, RGBA_Draw_Context *dc __UNUSED__, int x1 __UNUSED__, int y1 __UNUSED__, int x2 __UNUSED__, int y2 __UNUSED__)
 {
 /*    uint32_t         value_mask; */
 /*    uint32_t         value_list[1]; */
@@ -791,7 +791,7 @@ _xr_render_surface_line_draw(Xcb_Render_Surface *rs, RGBA_Draw_Context *dc, int 
 }
 
 void
-_xre_poly_draw(Xcb_Render_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points)
+_xre_poly_draw(Xcb_Render_Surface *rs __UNUSED__, RGBA_Draw_Context *dc __UNUSED__, RGBA_Polygon_Point *points __UNUSED__)
 {
 /*    RGBA_Polygon_Point *pt; */
 /*    int i, num; */
