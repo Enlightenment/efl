@@ -187,6 +187,7 @@ static void st_collections_group_parts_part_description_gradient_rel2_offset(voi
 static void st_collections_group_parts_part_description_box_layout(void);
 static void st_collections_group_parts_part_description_box_align(void);
 static void st_collections_group_parts_part_description_box_padding(void);
+static void st_collections_group_parts_part_description_box_min(void);
 static void st_collections_group_parts_part_description_table_homogeneous(void);
 static void st_collections_group_parts_part_description_table_align(void);
 static void st_collections_group_parts_part_description_table_padding(void);
@@ -382,6 +383,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.box.layout", st_collections_group_parts_part_description_box_layout},
      {"collections.group.parts.part.description.box.align", st_collections_group_parts_part_description_box_align},
      {"collections.group.parts.part.description.box.padding", st_collections_group_parts_part_description_box_padding},
+     {"collections.group.parts.part.description.box.min", st_collections_group_parts_part_description_box_min},
      {"collections.group.parts.part.description.table.homogeneous", st_collections_group_parts_part_description_table_homogeneous},
      {"collections.group.parts.part.description.table.align", st_collections_group_parts_part_description_table_align},
      {"collections.group.parts.part.description.table.padding", st_collections_group_parts_part_description_table_padding},
@@ -5047,6 +5049,7 @@ st_collections_group_parts_part_description_gradient_rel2_offset(void)
                     layout: "vertical";
                     padding: 0 2;
                     align: 0.5 0.5;
+		    min: 0 0;
                 }
                 ..
             }
@@ -5093,6 +5096,16 @@ st_collections_group_parts_part_description_gradient_rel2_offset(void)
         [horizontal] [vertical]
     @effect
         Sets the space between cells in pixels. Defaults to 0 0.
+    @endproperty
+
+    @property
+        min
+    @parameters
+        [horizontal] [vertical]
+    @effect
+        When any of the parameters is enabled (1) it forces the minimum size of
+        the box to be equal to the minimum size of the items. The default
+        value is "0 0".
     @endproperty
 */
 static void st_collections_group_parts_part_description_box_layout(void)
@@ -5169,6 +5182,32 @@ static void st_collections_group_parts_part_description_box_padding(void)
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
    ed->box.padding.x = parse_int_range(0, 0, 0x7fffffff);
    ed->box.padding.y = parse_int_range(1, 0, 0x7fffffff);
+}
+
+static void
+st_collections_group_parts_part_description_box_min(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(2);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_BOX)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"box attributes in non-BOX part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->box.min.h = parse_bool(0);
+   ed->box.min.v = parse_bool(1);
 }
 
 /**

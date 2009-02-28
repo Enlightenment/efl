@@ -586,6 +586,9 @@ struct _Edje_Part_Description
       struct {
 	      int x, y;
       } padding;
+      struct {
+              Eina_Bool h, v;
+      } min;
    } box;
    struct {
       unsigned char  homogeneous;

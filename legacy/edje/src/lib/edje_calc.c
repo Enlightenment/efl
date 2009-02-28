@@ -1219,6 +1219,7 @@ _edje_box_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_
    Evas_Object_Box_Layout layout;
    void (*free_data)(void *data);
    void *data;
+   int min_w, min_h;
 
    if (!_edje_box_layout_find(chosen_desc->box.layout, &layout, &data, &free_data))
      {
@@ -1236,6 +1237,13 @@ _edje_box_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_
    evas_object_box_layout_set(ep->object, layout, data, free_data);
    evas_object_box_align_set(ep->object, chosen_desc->box.align.x, chosen_desc->box.align.y);
    evas_object_box_padding_set(ep->object, chosen_desc->box.padding.x, chosen_desc->box.padding.y);
+
+   evas_object_smart_calculate(ep->object);
+   evas_object_size_hint_min_get(ep->object, &min_w, &min_h);
+   if (chosen_desc->box.min.h)
+     p3->w = min_w;
+   if (chosen_desc->box.min.v)
+     p3->h = min_h;
 }
 
 static void
