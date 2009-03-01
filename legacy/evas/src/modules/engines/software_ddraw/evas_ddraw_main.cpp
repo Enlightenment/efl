@@ -185,7 +185,7 @@ evas_software_ddraw_lock(Outbuf *buf,
 
    if (FAILED(buf->priv.dd.surface_back->Lock(NULL,
                                               &surface_desc,
-                                              DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR,
+                                              DDLOCK_WAIT | DDLOCK_WRITEONLY | DDLOCK_SURFACEMEMORYPTR | DDLOCK_NOSYSLOCK,
                                               NULL)))
      return NULL;
 
