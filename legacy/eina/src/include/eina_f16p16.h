@@ -89,7 +89,7 @@ static inline Eina_F16p16 eina_f16p16_sub(Eina_F16p16 a, Eina_F16p16 b)
  */
 static inline Eina_F16p16 eina_f16p16_mul(Eina_F16p16 a, Eina_F16p16 b)
 {
-	return (a * b) >> 16;
+	return ((int64_t)a * (int64_t)b) >> 16;
 }
 /**
  * To be documented
