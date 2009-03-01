@@ -51,6 +51,7 @@ elm_slider.c \
 elm_genlist.c \
 elm_check.c \
 elm_radio.c \
+elm_pager.c \
 \
 elc_notepad.c \
 elc_anchorview.c \

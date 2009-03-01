@@ -18,13 +18,16 @@ if ELEMENTARY_WINDOWS_BUILD
 AM_CPPFLAGS += -DELEMENTARY_BUILD
 endif
 
-bin_PROGRAMS = elementary_test elementary_quicklaunch elementary_run \
-elementary_testql
+bin_PROGRAMS = elementary_test
+if BUILD_QUICKLAUNCH
+bin_PROGRAMS += elementary_quicklaunch elementary_run elementary_testql
+endif
 
 elementary_test_SOURCES = test.c
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la
 elementary_test_LDFLAGS =
 
+if BUILD_QUICKLAUNCH
 elementary_quicklaunch_SOURCES = quicklaunch.c
 elementary_quicklaunch_LDADD = $(top_builddir)/src/lib/libelementary.la
 elementary_quicklaunch_LDFLAGS = 
@@ -48,3 +51,4 @@ elementary_testql_SOURCES = test.c
 elementary_testql_LDADD = $(top_builddir)/src/lib/libelementary.la
 elementary_testql_CFLAGS = -DELM_LIB_QUICKLAUNCH=1
 elementary_testql_LDFLAGS =
+endif

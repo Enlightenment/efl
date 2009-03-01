@@ -77,7 +77,12 @@ dnl managed by evil
       ;;
 esac
 
-AC_CHECK_FUNCS(fork, AC_DEFINE(HAVE_FORK))
+have_fork="no"
+AC_CHECK_FUNCS(fork, [
+  have_fork="yes"
+  AC_DEFINE(HAVE_FORK)
+])
+AM_CONDITIONAL([BUILD_QUICKLAUNCH], [test "x$have_fork" = "xyes"])
 
 AC_SUBST(dlopen_libs)
 AC_SUBST(lt_enable_auto_import)

@@ -5,8 +5,9 @@ typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
 {
-   Evas_Object *base;
+   Evas_Object *base[2];
    Eina_List *stack;
+   Evas_Object *top, *oldtop;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -26,7 +27,8 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   edje_object_scale_set(wd->base, elm_widget_scale_get(obj) * _elm_config->scale);
+   edje_object_scale_set(wd->base[0], elm_widget_scale_get(obj) * _elm_config->scale);
+   edje_object_scale_set(wd->base[1], elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
 }
 
@@ -35,8 +37,12 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
+   Evas_Coord minw2 = -1, minh2 = -1;
    
-   edje_object_size_min_calc(wd->base, &minw, &minh);
+   edje_object_size_min_calc(wd->base[0], &minw, &minh);
+   edje_object_size_min_calc(wd->base[1], &minw2, &minh2);
+   if (minw < minw2) minw = minw2;
+   if (minh < minh2) minh = minh2;
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
@@ -55,6 +61,20 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
    // FIXME: if sub is top of stack
 }    
 
+static void
+_eval_top(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *stacktop = elm_pager_content_top_get(obj);
+   if (stacktop != wd->top)
+     {
+        wd->oldtop = wd->top;
+        wd->top = stacktop;
+        // FIXME: transition from oldtop to top
+        edje_object_part_swallow(wd->base[1], "elm.swallow.content", wd->top);
+     }
+}
+
 EAPI Evas_Object *
 elm_pager_add(Evas_Object *parent)
 {
@@ -69,8 +89,14 @@ elm_pager_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    
-   wd->base = edje_object_add(e);
-   elm_widget_resize_object_set(obj, wd->base);
+   wd->base[1] = edje_object_add(e);
+   _elm_theme_set(wd->base[1], "pager", "base", "default");
+   elm_widget_resize_object_set(obj, wd->base[1]);
+   
+   wd->base[0] = edje_object_add(e);
+   _elm_theme_set(wd->base[0], "pager", "base", "default");
+   // FIXME: only 1 resize obj!
+   elm_widget_resize_object_set(obj, wd->base[0]);
    
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    
@@ -93,7 +119,7 @@ elm_pager_content_pop(Evas_Object *obj)
    // FIXME actuall make pop animated - promote 2nd last in stack then
    // when anim finished delete 2nd last (which was top).
    Evas_Object *top = elm_pager_content_top_get(obj);
-   if (top) evas_object_del(top);
+   if (wd->top) evas_object_del(wd->top);
 }
 
 EAPI void
