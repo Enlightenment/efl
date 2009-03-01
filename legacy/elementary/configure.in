@@ -76,6 +76,9 @@ dnl managed by evil
       fi
       ;;
 esac
+
+AC_CHECK_FUNCS(fork, AC_DEFINE(HAVE_FORK))
+
 AC_SUBST(dlopen_libs)
 AC_SUBST(lt_enable_auto_import)
 AC_SUBST(ELM_UNIX_DEF)

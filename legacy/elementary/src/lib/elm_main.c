@@ -409,11 +409,12 @@ static int (*qr_main) (int argc, char **argv) = NULL;
 EAPI Evas_Bool
 elm_quicklaunch_prepare(int argc, char **argv)
 {
+#ifdef HAVE_FORK
    char *exe = elm_quicklaunch_exe_path_get(argv[0]);
    if (!exe)
      {
         printf("ERROR: %s does not exist\n", argv[0]);
-        return;
+        return 0;
      }
    else
      {
@@ -450,8 +451,12 @@ elm_quicklaunch_prepare(int argc, char **argv)
         return 0;
      }
    return 1;
+#else
+   return 0;
+#endif
 }
 
+#ifdef HAVE_FORK
 static void
 save_env(void)
 {
@@ -473,10 +478,12 @@ save_env(void)
      environ[i] = strdup(oldenv[i]);
    environ[i] = NULL;
 }
+#endif
 
 EAPI Evas_Bool
 elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (postfork_func) (void *data), void *postfork_data)
 {
+#ifdef HAVE_FORK
    pid_t child;
    int ret;
    int real_argc;
@@ -533,17 +540,23 @@ elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (postfork_func) (voi
    ecore_app_args_set(argc, (const char **)argv);
    ret = qr_main(argc, argv);
    exit(ret);
+   return 1;
+#else
+   return 0;
+#endif   
 }
 
 EAPI void
 elm_quicklaunch_cleanup(void)
 {
+#ifdef HAVE_FORK
    if (qr_handle)
      {
         dlclose(qr_handle);
         qr_handle = NULL;
         qr_main = NULL;
      }
+#endif
 }
 
 EAPI int
@@ -555,6 +568,7 @@ elm_quicklaunch_fallback(int argc, char **argv)
    elm_quicklaunch_prepare(argc, argv);
    ret = qr_main(argc, argv);
    exit(ret);
+   return ret;
 }
 
 EAPI char *
