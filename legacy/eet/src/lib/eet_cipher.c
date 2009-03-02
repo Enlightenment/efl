@@ -938,7 +938,7 @@ eet_pbkdf2_sha1(const char          *key,
   HMAC_CTX              hctx;
 # endif
 
-  buf = malloc(salt_len + 4);
+  buf = alloca(salt_len + 4);
   if (!buf) return 1;
 
   for (i = 1; len; len -= tmp_len, p += tmp_len, i++)
