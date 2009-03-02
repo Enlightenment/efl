@@ -1573,7 +1573,8 @@ evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *pri
 	  }
 
         evas_object_geometry_get(o, &x, NULL, NULL, NULL);
-        min_w = row_width[r];
+        if (min_w < row_width[r])
+            min_w = row_width[r];
         min_h += row_max_h[r];
         y += row_max_h[r] + inc_y;
      }
@@ -1753,7 +1754,8 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv,
 
         evas_object_geometry_get(o, NULL, &y, NULL, NULL);
         min_w += col_max_w[c];
-        min_h = col_height[c];
+        if (min_h < col_height[c])
+            min_h = col_height[c];
         x += col_max_w[c] + inc_x;
      }
 
