@@ -2795,6 +2795,13 @@ my_pager_3(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+my_pager_pop(void *data, Evas_Object *obj, void *event_info)
+{
+   Pginfo *info = data;
+   elm_pager_content_pop(info->pager);
+}
+
+static void
 my_bt_35(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *pg, *bx, *lb, *bt;
@@ -2842,6 +2849,11 @@ my_bt_35(void *data, Evas_Object *obj, void *event_info)
    evas_object_smart_callback_add(bt, "clicked", my_pager_1, &info);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Popme");
+   evas_object_smart_callback_add(bt, "clicked", my_pager_pop, &info);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
    elm_pager_content_push(pg, bx);
    info.pg1 = bx;
 
@@ -2860,6 +2872,11 @@ my_bt_35(void *data, Evas_Object *obj, void *event_info)
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Flip to 3");
    evas_object_smart_callback_add(bt, "clicked", my_pager_2, &info);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Popme");
+   evas_object_smart_callback_add(bt, "clicked", my_pager_pop, &info);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    elm_pager_content_push(pg, bx);
@@ -2882,10 +2899,14 @@ my_bt_35(void *data, Evas_Object *obj, void *event_info)
    evas_object_smart_callback_add(bt, "clicked", my_pager_3, &info);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Popme");
+   evas_object_smart_callback_add(bt, "clicked", my_pager_pop, &info);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
    elm_pager_content_push(pg, bx);
    info.pg3 = bx;
 
-   evas_object_resize(win, 320, 320);
    evas_object_show(win);
 }
 

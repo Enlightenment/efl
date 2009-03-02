@@ -607,9 +607,9 @@ extern "C" {
     */
    
    EAPI Evas_Object *elm_pager_add(Evas_Object *parent);
-   EAPI void elm_pager_content_push(Evas_Object *obj, Evas_Object *content);
-   EAPI void elm_pager_content_pop(Evas_Object *obj);
-   EAPI void elm_pager_content_promote(Evas_Object *obj, Evas_Object *content);
+   EAPI void         elm_pager_content_push(Evas_Object *obj, Evas_Object *content);
+   EAPI void         elm_pager_content_pop(Evas_Object *obj);
+   EAPI void         elm_pager_content_promote(Evas_Object *obj, Evas_Object *content);
    EAPI Evas_Object *elm_pager_content_bottom_get(Evas_Object *obj);
    EAPI Evas_Object *elm_pager_content_top_get(Evas_Object *obj);
    /* smart callbacks called:

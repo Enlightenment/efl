@@ -7833,8 +7833,26 @@ collections {
          image: "dia_grad.png" COMP;
       }
       parts {
+         part { name: "clip";
+            type: RECT;
+	    mouse_events: 0;
+	    description { state: "default" 0.0;
+	       rel1.to: "base";
+	       rel2.to: "base";
+               color: 255 255 255 255;
+	    }
+	    description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+	    }
+	    description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 0;
+               visible: 0;
+	    }
+	 }
          part { name: "base0";
 	    mouse_events:  0;	
+            clip_to: "clip";
 	    description { state: "default" 0.0;
 	       image.normal: "dia_grad.png";
 	       rel1.to: "over";
@@ -7850,6 +7868,7 @@ collections {
 	 }
 	 part { name: "base";
 	    mouse_events:  0;
+            clip_to: "clip";
 	    description { state: "default" 0.0;
 	       image {
 		  normal: "frame_2.png";
@@ -7871,6 +7890,7 @@ collections {
 	 }
 	 part { name: "elm.swallow.content";
 	    type: SWALLOW;
+            clip_to: "clip";
 	    description { state: "default" 0.0;
 	       rel1 {
                   to: "base";
@@ -7884,6 +7904,7 @@ collections {
 	 }
          part { name: "over";
 	    mouse_events:  0;
+            clip_to: "clip";
 	    description { state:    "default" 0.0;
 	       rel1 {
                   to: "base";
@@ -7908,12 +7929,14 @@ collections {
 	    source: "elm";
 	    action:  STATE_SET "hidden" 0.0;
 	    target: "base";
+	    target: "clip";
             after: "show_start2";
 	 }
          program { name: "show_start2";
 	    action:  STATE_SET "visible" 0.0;
             transition: DECELERATE 0.5;
 	    target: "base";
+	    target: "clip";
             after: "show_end";
 	 }
          program { name: "show_end";
@@ -7924,16 +7947,25 @@ collections {
 	    source: "elm";
 	    action:  STATE_SET "visible" 0.0;
 	    target: "base";
+	    target: "clip";
             after: "hide_start2";
 	 }
          program { name: "hide_start2";
 	    action:  STATE_SET "hidden" 0.0;
             transition: DECELERATE 0.5;
 	    target: "base";
+	    target: "clip";
             after: "hide_end";
 	 }
          program { name: "hide_end";
             action: SIGNAL_EMIT "elm,action,hide,finished" "";
+	 }
+         program { name: "reset";
+	    signal: "elm,action,reset";
+	    source: "elm";
+	    action:  STATE_SET "default" 0.0;
+	    target: "base";
+	    target: "clip";
 	 }
       }
    }
