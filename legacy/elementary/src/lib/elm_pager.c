@@ -6,6 +6,7 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *base[2];
+   int swap;
    Eina_List *stack;
    Evas_Object *top, *oldtop;
 };
@@ -71,8 +72,17 @@ _eval_top(Evas_Object *obj)
         wd->oldtop = wd->top;
         wd->top = stacktop;
         // FIXME: transition from oldtop to top
-        edje_object_part_swallow(wd->base[1], "elm.swallow.content", wd->top);
+        edje_object_part_swallow(wd->base[1 - wd->swap], "elm.swallow.content", wd->top);
+        edje_object_signal_emit(wd->base[wd->swap], "elm,action,hide", "elm");
+        edje_object_signal_emit(wd->base[1 - wd->swap], "elm,action,show", "elm");
+        wd->swap = 1 - wd->swap;
      }
+}
+
+static void
+_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
 }
 
 EAPI Evas_Object *
@@ -91,11 +101,11 @@ elm_pager_add(Evas_Object *parent)
    
    wd->base[1] = edje_object_add(e);
    _elm_theme_set(wd->base[1], "pager", "base", "default");
-   elm_widget_resize_object_set(obj, wd->base[1]);
    
    wd->base[0] = edje_object_add(e);
    _elm_theme_set(wd->base[0], "pager", "base", "default");
    // FIXME: only 1 resize obj!
+   evas_object_event_callback_add(wd->base[0], EVAS_CALLBACK_RESIZE, _resize, obj);
    elm_widget_resize_object_set(obj, wd->base[0]);
    
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);

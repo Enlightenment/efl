@@ -549,8 +549,8 @@ collections {
                image {
                   normal: "bt_glow.png";
                   border: 12 12 12 12;
-                  middle: 0;
                }
+	       fill.smooth : 0;
             }
             description { state: "clicked" 0.0;
                inherit:  "default" 0.0;
@@ -773,8 +773,8 @@ collections {
                image {
                   normal: "bt_glow.png";
                   border: 12 12 12 12;
-                  middle: 0;
                }
+	       fill.smooth : 0;
             }
             description { state: "clicked" 0.0;
                inherit:  "default" 0.0;
@@ -7848,13 +7848,23 @@ collections {
 	 }
 	 part { name: "base";
 	    mouse_events:  0;
-	    description { state:    "default" 0.0;
+	    description { state: "default" 0.0;
 	       image {
 		  normal: "frame_2.png";
 		  border: 5 5 32 26;
 		  middle: 0;
 	       }
 	       fill.smooth : 0;
+	    }
+	    description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               rel1.relative: -1.0 0.0;
+               rel2.relative: 0.0 1.0;
+	    }
+	    description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 1.0 1.0;
 	    }
 	 }
 	 part { name: "elm.swallow.content";
@@ -7888,6 +7898,40 @@ collections {
 	       }
 	       fill.smooth : 0;
 	    }
+	 }
+      }
+      programs {
+         program { name: "show_start";
+	    signal: "elm,action,show";
+	    source: "elm";
+	    action:  STATE_SET "hidden" 0.0;
+	    target: "base";
+            after: "show_start2";
+	 }
+         program { name: "show_start2";
+	    action:  STATE_SET "visible" 0.0;
+            transition: DECELERATE 0.5;
+	    target: "base";
+            after: "show_end";
+	 }
+         program { name: "show_end";
+            action: SIGNAL_EMIT "elm,action,show,finished" "";
+	 }
+         program { name: "hide_start";
+	    signal: "elm,action,hide";
+	    source: "elm";
+	    action:  STATE_SET "hidden" 0.0;
+	    target: "base";
+            after: "hide_start2";
+	 }
+         program { name: "hide_start2";
+	    action:  STATE_SET "visible" 0.0;
+            transition: DECELERATE 0.5;
+	    target: "base";
+            after: "hide_end";
+	 }
+         program { name: "hide_end";
+            action: SIGNAL_EMIT "elm,action,hide,finished" "";
 	 }
       }
    }
