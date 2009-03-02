@@ -7823,8 +7823,10 @@ collections {
 
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/pager/base/default";
-      data.item: "stacking" "above";
-      data.item: "selectraise" "on";
+      data.item: "onshow" "raise";
+// other options      
+//      data.item: "onhide" "lower";
+//      data.item: "onshow" "lower";
       images {
 	 image: "frame_1.png" COMP;
 	 image: "frame_2.png" COMP;
@@ -7920,12 +7922,12 @@ collections {
          program { name: "hide_start";
 	    signal: "elm,action,hide";
 	    source: "elm";
-	    action:  STATE_SET "hidden" 0.0;
+	    action:  STATE_SET "visible" 0.0;
 	    target: "base";
             after: "hide_start2";
 	 }
          program { name: "hide_start2";
-	    action:  STATE_SET "visible" 0.0;
+	    action:  STATE_SET "hidden" 0.0;
             transition: DECELERATE 0.5;
 	    target: "base";
             after: "hide_end";
