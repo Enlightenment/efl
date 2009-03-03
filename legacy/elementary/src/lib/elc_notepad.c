@@ -78,9 +78,9 @@ _load_file(const char *file)
    int alloc = 0, len = 0, pos;
    char *text = NULL, buf[4096];
    
-   f = fopen(file, "r");
+   f = fopen(file, "rb");
    if (!f) return NULL;
-   while (size = fread(buf, 1, sizeof(buf), f))
+   while ((size = fread(buf, 1, sizeof(buf), f)))
      {
 	buf[size] = 0;
         text = _buf_append(text, buf, &len, &alloc);
@@ -146,7 +146,7 @@ _save_markup_utf8(const char *file, const char *text)
 	ecore_file_unlink(file);
 	return;
      }
-   f = fopen(file, "w");
+   f = fopen(file, "wb");
    if (!f)
      {
 	// FIXME: report a write error
