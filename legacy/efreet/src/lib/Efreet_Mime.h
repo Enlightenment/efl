@@ -52,6 +52,9 @@ EAPI const char *efreet_mime_fallback_type_get(const char *file);
 EAPI char *efreet_mime_type_icon_get(const char *mime, const char *theme,
                                                           unsigned int size);
 
+EAPI void efreet_mime_type_cache_clear(void);
+EAPI void efreet_mime_type_cache_flush(void);
+
 /**
  * @}
  */

@@ -6,11 +6,14 @@
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/time.h>
+#include <time.h>
 
 static Eina_List *globs = NULL;     /* contains Efreet_Mime_Glob structs */
 static Eina_List *magics = NULL;    /* contains Efreet_Mime_Magic structs */
 static Eina_Hash *wild = NULL;      /* contains *.ext and mime.types globs*/
 static Eina_Hash *monitors = NULL;  /* contains file monitors */
+static Eina_Hash *mime_icons = NULL; /* contains cache with mime->icons */
+static unsigned int _init_count = 0;
 
 /**
  * @internal
@@ -29,6 +32,26 @@ static enum
  * current set of magic rules.  This setting is only here for the future.
  */
 #define EFREET_MIME_MAGIC_BUFFER_SIZE 512
+
+/*
+ * Minimum timeout in seconds between mime-icons cache flush.
+ */
+#define EFREET_MIME_ICONS_FLUSH_TIMEOUT 60
+
+/*
+ * Timeout in seconds, when older mime-icons items are expired.
+ */
+#define EFREET_MIME_ICONS_EXPIRE_TIMEOUT 600
+
+/*
+ * mime-icons maximum population.
+ */
+#define EFREET_MIME_ICONS_MAX_POPULATION 512
+
+/*
+ * If defined, dump mime-icons statistics after flush.
+ */
+//#define EFREET_MIME_ICONS_DEBUG
 
 /**
  * Efreet_Mime_Glob
@@ -69,6 +92,24 @@ struct Efreet_Mime_Magic_Entry
     char *value;
 };
 
+typedef struct Efreet_Mime_Icon_Entry_Head Efreet_Mime_Icon_Entry_Head;
+struct Efreet_Mime_Icon_Entry_Head
+{
+    Eina_Inlist *list;
+    const char *mime;
+    time_t timestamp;
+};
+
+typedef struct Efreet_Mime_Icon_Entry Efreet_Mime_Icon_Entry;
+struct Efreet_Mime_Icon_Entry
+{
+    EINA_INLIST;
+    const char *icon;
+    const char *theme;
+    unsigned int size;
+};
+
+
 static int efreet_mime_glob_remove(const char *glob);
 static void efreet_mime_mime_types_load(const char *file);
 static void efreet_mime_shared_mimeinfo_globs_load(const char *file);
@@ -93,6 +134,17 @@ static void efreet_mime_cb_update_file(void *data,
                                         Ecore_File_Event event,
                                         const char *path);
 
+static void efreet_mime_icons_flush(time_t now);
+static void efreet_mime_icon_entry_head_free(Efreet_Mime_Icon_Entry_Head *entry);
+static void efreet_mime_icon_entry_add(const char *mime,
+                                       const char *icon,
+                                       const char *theme,
+                                       unsigned int size);
+static const char *efreet_mime_icon_entry_find(const char *mime,
+                                               const char *theme,
+                                               unsigned int size);
+static void efreet_mime_icons_debug(void);
+
 /**
  * @return Returns 1 on success or 0 on failure
  * @brief Initializes the efreet mime settings
@@ -100,6 +152,10 @@ static void efreet_mime_cb_update_file(void *data,
 EAPI int
 efreet_mime_init(void)
 {
+    _init_count++;
+    if (_init_count > 1)
+        return 1;
+
     if (!ecore_init())
         return 0;
 
@@ -112,6 +168,8 @@ efreet_mime_init(void)
     efreet_mime_endianess = efreet_mime_endian_check();
 
     monitors = eina_hash_string_superfast_new(EINA_FREE_CB(ecore_file_monitor_del));
+
+    efreet_mime_type_cache_clear();
 
     if (!efreet_mime_init_files())
         return 0;
@@ -126,10 +184,19 @@ efreet_mime_init(void)
 EAPI void
 efreet_mime_shutdown(void)
 {
+    if (_init_count == 0)
+        return;
+    _init_count--;
+    if (_init_count > 0)
+        return;
+
+    efreet_mime_icons_debug();
+
     IF_FREE_LIST(globs);
     IF_FREE_LIST(magics);
     IF_FREE_HASH(monitors);
     IF_FREE_HASH(wild);
+    IF_FREE_HASH(mime_icons);
 
     efreet_shutdown();
     ecore_file_shutdown();
@@ -180,9 +247,20 @@ efreet_mime_type_icon_get(const char *mime, const char *theme, unsigned int size
     const char *env = NULL;
     char *p = NULL, *pp = NULL, *ppp = NULL;
     char buf[PATH_MAX];
+    const char *cache;
 
     if (!mime || !theme || !size)
         return NULL;
+
+    mime = eina_stringshare_add(mime);
+    theme = eina_stringshare_add(theme);
+    cache = efreet_mime_icon_entry_find(mime, theme, size);
+    if (cache)
+    {
+        eina_stringshare_del(mime);
+        eina_stringshare_del(theme);
+        return strdup(cache);
+    }
 
     /* Standard icon name */
     p = strdup(mime);
@@ -231,8 +309,25 @@ efreet_mime_type_icon_get(const char *mime, const char *theme, unsigned int size
         icons = eina_list_remove_list(icons, icons);
     }
 
+    efreet_mime_icon_entry_add(mime, eina_stringshare_add(icon), theme, size);
+
     return icon;
 }
+
+EAPI void
+efreet_mime_type_cache_clear(void)
+{
+    if (mime_icons)
+        eina_hash_free(mime_icons);
+    mime_icons = eina_hash_pointer_new(EINA_FREE_CB(efreet_mime_icon_entry_head_free));
+}
+
+EAPI void
+efreet_mime_type_cache_flush(void)
+{
+    efreet_mime_icons_flush((time_t)ecore_loop_time_get());
+}
+
 
 /**
  * @param file: The file to check the mime type
@@ -1231,3 +1326,186 @@ efreet_mime_glob_case_match(char *str, const char *glob)
     if (!fnmatch(str, tglob, 0)) return 1;
     return 0;
 }
+
+struct Efreet_Mime_Icons_Flush_Data
+{
+    time_t now;
+    int todo;
+    Eina_List *removal;
+};
+
+static Eina_Bool
+efreet_mime_icons_flush_cb(const Eina_Hash *hash __UNUSED__,
+                           const void *key __UNUSED__,
+                           void *data,
+                           void *fdata)
+{
+    struct Efreet_Mime_Icons_Flush_Data *d = fdata;
+    Efreet_Mime_Icon_Entry_Head *entry = data;
+
+    if (d->now - entry->timestamp < EFREET_MIME_ICONS_EXPIRE_TIMEOUT)
+        return 1;
+
+    d->removal = eina_list_append(d->removal, entry->mime);
+    d->todo--;
+
+    return d->todo > 0;
+}
+
+static void
+efreet_mime_icons_flush(time_t now)
+{
+    struct Efreet_Mime_Icons_Flush_Data data;
+    static time_t old = 0;
+    int todo;
+    const char *key;
+
+    if (now - old < EFREET_MIME_ICONS_FLUSH_TIMEOUT)
+        return;
+
+    todo = eina_hash_population(mime_icons) - EFREET_MIME_ICONS_MAX_POPULATION;
+    if (todo <= 0)
+        return;
+
+    data.now = now;
+    data.todo = todo;
+    data.removal = NULL;
+    eina_hash_foreach(mime_icons, efreet_mime_icons_flush_cb, &data);
+
+    EINA_LIST_FREE(data.removal, key)
+        eina_hash_del_by_key(mime_icons, key);
+
+    efreet_mime_icons_debug();
+}
+
+static void
+efreet_mime_icon_entry_free(Efreet_Mime_Icon_Entry *node)
+{
+    eina_stringshare_del(node->icon);
+    eina_stringshare_del(node->theme);
+    free(node);
+}
+
+static void
+efreet_mime_icon_entry_head_free(Efreet_Mime_Icon_Entry_Head *entry)
+{
+    while (entry->list)
+    {
+        Efreet_Mime_Icon_Entry *n = (Efreet_Mime_Icon_Entry *)entry->list;
+        entry->list = eina_inlist_remove(entry->list, entry->list);
+        efreet_mime_icon_entry_free(n);
+    }
+
+    eina_stringshare_del(entry->mime);
+    free(entry);
+}
+
+static Efreet_Mime_Icon_Entry *
+efreet_mime_icon_entry_new(const char *icon,
+                           const char *theme,
+                           unsigned int size)
+{
+    Efreet_Mime_Icon_Entry *entry;
+
+    entry = malloc(sizeof(*entry));
+    if (!entry)
+        return NULL;
+
+    entry->icon = icon;
+    entry->theme = theme;
+    entry->size = size;
+
+    return entry;
+}
+
+static void
+efreet_mime_icon_entry_add(const char *mime,
+                           const char *icon,
+                           const char *theme,
+                           unsigned int size)
+{
+    Efreet_Mime_Icon_Entry_Head *entry;
+    Efreet_Mime_Icon_Entry *n;
+
+    n = efreet_mime_icon_entry_new(icon, theme, size);
+    if (!n)
+        return;
+    entry = eina_hash_find(mime_icons, mime);
+
+    if (entry)
+        entry->list = eina_inlist_prepend(entry->list, EINA_INLIST_GET(n));
+    else
+    {
+        entry = malloc(sizeof(*entry));
+        if (!entry)
+        {
+            efreet_mime_icon_entry_free(n);
+            return;
+        }
+        entry->list = eina_inlist_prepend(NULL, EINA_INLIST_GET(n));
+        entry->mime = mime;
+        eina_hash_direct_add(mime_icons, mime, entry);
+    }
+
+    entry->timestamp = (time_t)ecore_loop_time_get();
+    efreet_mime_icons_flush(entry->timestamp);
+}
+
+static const char *
+efreet_mime_icon_entry_find(const char *mime,
+                            const char *theme,
+                            unsigned int size)
+{
+    Efreet_Mime_Icon_Entry_Head *entry;
+    Efreet_Mime_Icon_Entry *n;
+
+    entry = eina_hash_find(mime_icons, mime);
+    if (!entry)
+        return NULL;
+
+    EINA_INLIST_FOREACH(entry->list, n)
+    {
+        if ((n->theme == theme) && (n->size == size))
+        {
+            Eina_Inlist *l = EINA_INLIST_GET(n);
+            if (entry->list != l)
+                entry->list = eina_inlist_promote(entry->list, l);
+            entry->timestamp = (time_t)ecore_loop_time_get();
+            return n->icon;
+        }
+    }
+
+    return NULL;
+}
+
+#ifdef EFREET_MIME_ICONS_DEBUG
+static Eina_Bool
+efreet_mime_icons_debug_cb(const Eina_Hash *hash __UNUSED__,
+                           const void *key __UNUSED__,
+                           void *data,
+                           void *fdata __UNUSED__)
+{
+    Efreet_Mime_Icon_Entry_Head *entry = data;
+    Efreet_Mime_Icon_Entry *n;
+
+    printf("mime-icon entry: '%s' last used: %s",
+           entry->mime, ctime(&entry->timestamp));
+
+    EINA_INLIST_FOREACH(entry->list, n)
+           printf("\tsize: %3u theme: '%s' icon: '%s'\n",
+                  n->theme, n->size, n->icon);
+
+    return 1;
+}
+
+static void
+efreet_mime_icons_debug(void)
+{
+    eina_hash_foreach(mime_icons, efreet_mime_icons_debug_cb, NULL);
+}
+#else
+static void
+efreet_mime_icons_debug(void)
+{
+}
+#endif
