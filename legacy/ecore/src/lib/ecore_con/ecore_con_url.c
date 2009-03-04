@@ -129,8 +129,6 @@ EAPI int
 ecore_con_url_init(void)
 {
 #ifdef HAVE_CURL
-   Ecore_Con_Url *url_con;
-
    if (!ECORE_CON_EVENT_URL_DATA)
      {
 	ECORE_CON_EVENT_URL_DATA = ecore_event_type_new();
@@ -143,16 +141,16 @@ ecore_con_url_init(void)
 	FD_ZERO(&_current_fd_set);
 	if (curl_global_init(CURL_GLOBAL_NOTHING))
 	  {
-	     EINA_LIST_FREE(_url_con_list, url_con)
-	       ecore_con_url_destroy(url_con);
+	     while (_url_con_list)
+	       ecore_con_url_destroy(eina_list_data_get(_url_con_list));
 	     return 0;
 	  }
 
 	curlm = curl_multi_init();
 	if (!curlm)
 	  {
-	     EINA_LIST_FREE(_url_con_list, url_con)
-	       ecore_con_url_destroy(url_con);
+	     while (_url_con_list)
+	       ecore_con_url_destroy(eina_list_data_get(_url_con_list));
 	     return 0;
 	  }
      }
@@ -172,14 +170,12 @@ EAPI int
 ecore_con_url_shutdown(void)
 {
 #ifdef HAVE_CURL
-   Ecore_Con_Url *url_con;
-
    if (!init_count)
      return 0;
 
    init_count--;
-   EINA_LIST_FREE(_url_con_list, url_con)
-		  ecore_con_url_destroy(url_con);
+   while (_url_con_list)
+     ecore_con_url_destroy(eina_list_data_get(_url_con_list));
 
    if (curlm)
      {
@@ -272,13 +268,13 @@ ecore_con_url_destroy(Ecore_Con_Url *url_con)
      {
 	if (url_con->active)
 	  {
-	     _url_con_list = eina_list_remove(_url_con_list, url_con);
 	     url_con->active = 0;
 
 	     curl_multi_remove_handle(curlm, url_con->curl_easy);
 	  }
 	curl_easy_cleanup(url_con->curl_easy);
      }
+   _url_con_list = eina_list_remove(_url_con_list, url_con);
    curl_slist_free_all(url_con->headers);
    free(url_con->url);
    free(url_con);
@@ -634,7 +630,7 @@ _ecore_con_url_restart_fd_handler(void)
      {
 	if (url_con->fd_handler == NULL && url_con->fd != -1)
 	  {
-	     url_con->fd_handler == ecore_main_fd_handler_add(url_con->fd,
+	     url_con->fd_handler = ecore_main_fd_handler_add(url_con->fd,
 							     url_con->flags,
 							     _ecore_con_url_fd_handler,
 							     NULL, NULL, NULL);
@@ -885,14 +881,14 @@ _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
 		    }
 		  _url_con_list = eina_list_remove(_url_con_list, url_con);
 		  url_con->active = 0;
-		       e = calloc(1, sizeof(Ecore_Con_Event_Url_Complete));
-		       if (e)
-			 {
-			    e->url_con = url_con;
-			    e->status = 0;
-			    curl_easy_getinfo(curlmsg->easy_handle, CURLINFO_RESPONSE_CODE, &e->status);
-			    _url_complete_push_event(ECORE_CON_EVENT_URL_COMPLETE, e);
-			 }
+		  e = calloc(1, sizeof(Ecore_Con_Event_Url_Complete));
+		  if (e)
+		    {
+		       e->url_con = url_con;
+		       e->status = 0;
+		       curl_easy_getinfo(curlmsg->easy_handle, CURLINFO_RESPONSE_CODE, &e->status);
+		       _url_complete_push_event(ECORE_CON_EVENT_URL_COMPLETE, e);
+		    }
 		  curl_multi_remove_handle(curlm, url_con->curl_easy);
 		  break;
 	       }
