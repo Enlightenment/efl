@@ -18,7 +18,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <errno.h>
-#include <assert.h>
 
 #define FIX_HZ 1
 
@@ -150,10 +149,6 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, int (*func) (voi
    if ((fd < 0) ||
        (flags == 0) ||
        (!func)) return NULL;
-
-   EINA_INLIST_FOREACH(fd_handlers, fdh)
-     if (fdh->fd == fd && fdh->flags == flags)
-       abort();
 
    fdh = calloc(1, sizeof(Ecore_Fd_Handler));
    if (!fdh) return NULL;
