@@ -18,6 +18,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <errno.h>
+#include <assert.h>
 
 #define FIX_HZ 1
 
@@ -149,6 +150,11 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, int (*func) (voi
    if ((fd < 0) ||
        (flags == 0) ||
        (!func)) return NULL;
+
+   EINA_INLIST_FOREACH(fd_handlers, fdh)
+     if (fdh->fd == fd && fdh->flags == flags)
+       abort();
+
    fdh = calloc(1, sizeof(Ecore_Fd_Handler));
    if (!fdh) return NULL;
    ECORE_MAGIC_SET(fdh, ECORE_MAGIC_FD_HANDLER);
@@ -162,7 +168,8 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, int (*func) (voi
    fdh->data = (void *)data;
    fdh->buf_func = buf_func;
    fdh->buf_data = (void *)buf_data;
-   fd_handlers = _ecore_list2_append(fd_handlers, fdh);
+   fd_handlers = (Ecore_Fd_Handler *) eina_inlist_append(EINA_INLIST_GET(fd_handlers),
+							 EINA_INLIST_GET(fdh));
    return fdh;
 }
 
@@ -279,7 +286,8 @@ _ecore_main_shutdown(void)
 	Ecore_Fd_Handler *fdh;
 
 	fdh = fd_handlers;
-	fd_handlers = _ecore_list2_remove(fd_handlers, fdh);
+	fd_handlers = (Ecore_Fd_Handler *) eina_inlist_remove(EINA_INLIST_GET(fd_handlers),
+							      EINA_INLIST_GET(fdh));
 	ECORE_MAGIC_SET(fdh, ECORE_MAGIC_NONE);
 	free(fdh);
      }
@@ -293,7 +301,9 @@ _ecore_main_select(double timeout)
    fd_set         rfds, wfds, exfds;
    int            max_fd;
    int            ret;
-   Ecore_List2    *l;
+   Ecore_Fd_Handler *fdh;
+
+   int cr, cw, ce;
 
    t = NULL;
    if ((!finite(timeout)) || (timeout == 0.0))  /* finite() tests for NaN, too big, too small, and infinity.  */
@@ -328,33 +338,31 @@ _ecore_main_select(double timeout)
    FD_ZERO(&wfds);
    FD_ZERO(&exfds);
 
+   cr = 0;
+   cw = 0;
+   ce = 0;
+
    /* call the prepare callback for all handlers */
-   for (l = (Ecore_List2 *)fd_handlers; l; l = l->next)
+   EINA_INLIST_FOREACH(fd_handlers, fdh)
+     if (!fdh->delete_me && fdh->prep_func)
+       fdh->prep_func (fdh->prep_data, fdh);
+   EINA_INLIST_FOREACH(fd_handlers, fdh)
      {
-	Ecore_Fd_Handler *fdh;
-
-	fdh = (Ecore_Fd_Handler *)l;
-
-	if (!fdh->delete_me && fdh->prep_func)
-	  fdh->prep_func (fdh->prep_data, fdh);
-     }
-   for (l = (Ecore_List2 *)fd_handlers; l; l = l->next)
-     {
-	Ecore_Fd_Handler *fdh;
-
-	fdh = (Ecore_Fd_Handler *)l;
 	if (fdh->flags & ECORE_FD_READ)
 	  {
+	     cr++;
 	     FD_SET(fdh->fd, &rfds);
 	     if (fdh->fd > max_fd) max_fd = fdh->fd;
 	  }
 	if (fdh->flags & ECORE_FD_WRITE)
 	  {
+	     cw++;
 	     FD_SET(fdh->fd, &wfds);
 	     if (fdh->fd > max_fd) max_fd = fdh->fd;
 	  }
 	if (fdh->flags & ECORE_FD_ERROR)
 	  {
+	     ce++;
 	     FD_SET(fdh->fd, &exfds);
 	     if (fdh->fd > max_fd) max_fd = fdh->fd;
 	  }
@@ -365,24 +373,31 @@ _ecore_main_select(double timeout)
    if (ret < 0)
      {
 	if (errno == EINTR) return -1;
+	if (errno == EBADF)
+	  {
+	     fprintf(stderr, "max_fd: %i\n", max_fd);
+	     fprintf(stderr, "cr: %i, cw: %i, ce: %i\n", cr, cw, ce);
+
+	     EINA_INLIST_FOREACH(fd_handlers, fdh)
+	       {
+		  if (fdh->flags & ECORE_FD_WRITE)
+		    fprintf(stderr, "%p => %i\n", fdh, fdh->fd);
+	       }
+	     abort();
+	  }
      }
    if (ret > 0)
      {
-	for (l = (Ecore_List2 *)fd_handlers; l; l = l->next)
-	  {
-	     Ecore_Fd_Handler *fdh;
-
-	     fdh = (Ecore_Fd_Handler *)l;
-	     if (!fdh->delete_me)
-	       {
-		  if (FD_ISSET(fdh->fd, &rfds))
-		    fdh->read_active = 1;
-		  if (FD_ISSET(fdh->fd, &wfds))
-		    fdh->write_active = 1;
-		  if (FD_ISSET(fdh->fd, &exfds))
-		    fdh->error_active = 1;
-	       }
-	  }
+	EINA_INLIST_FOREACH(fd_handlers, fdh)
+	  if (!fdh->delete_me)
+	    {
+	       if (FD_ISSET(fdh->fd, &rfds))
+		 fdh->read_active = 1;
+	       if (FD_ISSET(fdh->fd, &wfds))
+		 fdh->write_active = 1;
+	       if (FD_ISSET(fdh->fd, &exfds))
+		 fdh->error_active = 1;
+	    }
 	_ecore_main_fd_handlers_cleanup();
 	return 1;
      }
@@ -392,18 +407,19 @@ _ecore_main_select(double timeout)
 static void
 _ecore_main_fd_handlers_cleanup(void)
 {
-   Ecore_List2 *l;
+   Ecore_Fd_Handler *fdh;
+   Eina_Inlist *l;
 
    if (!fd_handlers_delete_me) return;
-   for (l = (Ecore_List2 *)fd_handlers; l;)
+   for (l = EINA_INLIST_GET(fd_handlers); l; )
      {
-	Ecore_Fd_Handler *fdh;
+	fdh = (Ecore_Fd_Handler *) l;
 
-	fdh = (Ecore_Fd_Handler *)l;
 	l = l->next;
 	if (fdh->delete_me)
 	  {
-	     fd_handlers = _ecore_list2_remove(fd_handlers, fdh);
+	     fd_handlers = (Ecore_Fd_Handler *) eina_inlist_remove(EINA_INLIST_GET(fd_handlers),
+								   EINA_INLIST_GET(fdh));
 	     ECORE_MAGIC_SET(fdh, ECORE_MAGIC_NONE);
 	     free(fdh);
 	  }
@@ -414,56 +430,47 @@ _ecore_main_fd_handlers_cleanup(void)
 static void
 _ecore_main_fd_handlers_call(void)
 {
-   Ecore_List2    *l;
+   Ecore_Fd_Handler *fdh;
 
-   for (l = (Ecore_List2 *)fd_handlers; l; l = l->next)
-     {
-	Ecore_Fd_Handler *fdh;
-
-	fdh = (Ecore_Fd_Handler *)l;
-	if (!fdh->delete_me)
-	  {
-	     if ((fdh->read_active) ||
-		 (fdh->write_active) ||
-		 (fdh->error_active))
-	       {
-		  if (!fdh->func(fdh->data, fdh))
-		    {
-		       fdh->delete_me = 1;
-		       fd_handlers_delete_me = 1;
-		    }
-		  fdh->read_active = 0;
+   EINA_INLIST_FOREACH(fd_handlers, fdh)
+     if (!fdh->delete_me)
+       {
+	  if ((fdh->read_active) ||
+	      (fdh->write_active) ||
+	      (fdh->error_active))
+	    {
+	       if (!fdh->func(fdh->data, fdh))
+		 {
+		    fdh->delete_me = 1;
+		    fd_handlers_delete_me = 1;
+		 }
+	       fdh->read_active = 0;
 		  fdh->write_active = 0;
 		  fdh->error_active = 0;
-	       }
-	  }
-     }
+	    }
+       }
 }
 
 static int
 _ecore_main_fd_handlers_buf_call(void)
 {
-   Ecore_List2    *l;
+   Ecore_Fd_Handler *fdh;
    int ret;
 
    ret = 0;
-   for (l = (Ecore_List2 *)fd_handlers; l; l = l->next)
-     {
-	Ecore_Fd_Handler *fdh;
+   EINA_INLIST_FOREACH(fd_handlers, fdh)
+     if (!fdh->delete_me)
+       {
+	  if (fdh->buf_func)
+	    {
+	       if (fdh->buf_func(fdh->buf_data, fdh))
+		 {
+		    ret |= fdh->func(fdh->data, fdh);
+		    fdh->read_active = 1;
+		 }
+	    }
+       }
 
-	fdh = (Ecore_Fd_Handler *)l;
-	if (!fdh->delete_me)
-	  {
-	     if (fdh->buf_func)
-	       {
-		  if (fdh->buf_func(fdh->buf_data, fdh))
-		    {
-		       ret |= fdh->func(fdh->data, fdh);
-		       fdh->read_active = 1;
-		    }
-	       }
-	  }
-     }
    return ret;
 }
 

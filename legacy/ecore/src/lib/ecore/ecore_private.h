@@ -8,6 +8,8 @@
 # include <signal.h>
 #endif
 
+#include <Eina.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -312,7 +314,7 @@ struct _Ecore_Idle_Exiter
 
 struct _Ecore_Fd_Handler
 {
-   Ecore_List2               __list_data;
+   EINA_INLIST;
    ECORE_MAGIC;
    int                      fd;
    Ecore_Fd_Handler_Flags   flags;
