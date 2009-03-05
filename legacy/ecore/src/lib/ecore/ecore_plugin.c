@@ -27,9 +27,6 @@
 #include "Ecore_Str.h"
 #include "ecore_private.h"
 
-
-static Eina_List *loaded_plugins = NULL;
-
 static Eina_Bool _hash_keys(const Eina_Hash	*hash,
 			    const char		*key,
                             void		*list);
@@ -103,12 +100,6 @@ ecore_plugin_load(Ecore_Path_Group *group, const char *plugin_name, const char *
 
    plugin->handle = handle;
 
-   /*
-    * Now add it to the list of the groups loaded plugins
-    */
-
-   loaded_plugins = eina_list_append(loaded_plugins, plugin);
-
    FREE(path);
 
    return plugin;
@@ -124,12 +115,8 @@ ecore_plugin_unload(Ecore_Plugin *plugin)
 {
    CHECK_PARAM_POINTER("plugin", plugin);
 
-   if (!plugin->handle)
-     return;
-
-   loaded_plugins = eina_list_remove(loaded_plugins, plugin);
-
-   dlclose(plugin->handle);
+   if (plugin->handle)
+	dlclose(plugin->handle);
 
    FREE(plugin);
 }
