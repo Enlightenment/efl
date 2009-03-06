@@ -254,6 +254,9 @@ _ecore_evas_wince_event_key_down(void *data __UNUSED__, int type __UNUSED__, voi
    Ecore_WinCE_Event_Key_Down *e;
 
    e = event;
+
+   EINA_ERROR_PINFO("key down (%f %s %s %s)\n", e->time, e->keyname, e->keysymbol, e->keycompose);
+
    ee = _ecore_evas_wince_match(e->window);
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
    /* FIXME to do */
@@ -270,6 +273,9 @@ _ecore_evas_wince_event_key_up(void *data __UNUSED__, int type __UNUSED__, void 
    Ecore_WinCE_Event_Key_Up *e;
 
    e = event;
+
+   EINA_ERROR_PINFO("key up (%f %s %s %s)\n", e->time, e->keyname, e->keysymbol, e->keycompose);
+
    ee = _ecore_evas_wince_match(e->window);
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
    /* FIXME to do */
@@ -286,9 +292,10 @@ _ecore_evas_wince_event_mouse_button_down(void *data __UNUSED__, int type __UNUS
    Ecore_WinCE_Event_Mouse_Button_Down *e;
    Evas_Button_Flags                    flags = EVAS_BUTTON_NONE;
 
+   e = event;
+
    EINA_ERROR_PINFO("mouse button down (%f %dx%d)\n", e->time, e->x, e->y);
 
-   e = event;
    ee = _ecore_evas_wince_match(e->window);
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
    if (e->window != ee->engine.wince.window) return 1;
@@ -308,9 +315,10 @@ _ecore_evas_wince_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED
    Ecore_WinCE_Event_Mouse_Button_Up *e;
    Evas_Button_Flags                  flags = EVAS_BUTTON_NONE;
 
+   e = event;
+
    EINA_ERROR_PINFO("mouse button up (%f %dx%d)\n", e->time, e->x, e->y);
 
-   e = event;
    ee = _ecore_evas_wince_match(e->window);
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
    if (e->window != ee->engine.wince.window) return 1;
