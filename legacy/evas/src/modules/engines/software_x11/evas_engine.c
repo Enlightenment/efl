@@ -303,7 +303,7 @@ _best_depth_get(int backend, void *connection, int screen)
 
 /* engine api this module provides */
 static void *
-eng_info(Evas *e)
+eng_info(Evas *e __UNUSED__)
 {
    Evas_Engine_Info_Software_X11 *info;
 
@@ -317,7 +317,6 @@ eng_info(Evas *e)
    info->func.best_colormap_get = _best_colormap_get;
    info->func.best_depth_get = _best_depth_get;
    return info;
-   e = NULL;
 }
 
 static void
