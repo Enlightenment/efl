@@ -405,7 +405,7 @@ eng_setup(Evas *e, void *in)
              re->outbuf_free_region_for_update = evas_software_xcb_outbuf_free_region_for_update;
              re->outbuf_flush = evas_software_xcb_outbuf_flush;
              re->outbuf_idle_flush = evas_software_xcb_outbuf_idle_flush;
-#endif             
+#endif
           }
 
         e->engine.data.output = re;
@@ -457,7 +457,7 @@ eng_setup(Evas *e, void *in)
                                                        info->info.shape_dither,
                                                        info->info.destination_alpha);
              evas_software_xcb_outbuf_debug_set(re->ob, info->info.debug);
-#endif             
+#endif
           }
 	re->ob->onebuf = ponebuf;
      }
@@ -638,9 +638,9 @@ module_close(void)
 {
 }
 
-EAPI Evas_Module_Api evas_modapi = 
+EAPI Evas_Module_Api evas_modapi =
 {
-   EVAS_MODULE_API_VERSION, 
+   EVAS_MODULE_API_VERSION,
      EVAS_MODULE_TYPE_ENGINE,
      "software_x11",
      "none"
