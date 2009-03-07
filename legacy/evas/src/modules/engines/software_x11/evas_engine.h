@@ -59,7 +59,7 @@ struct _Outbuf
             xcb_connection_t *conn;
             xcb_screen_t     *screen;
             xcb_drawable_t    win;
-            xcb_drawable_t    mask;
+            xcb_pixmap_t      mask;
             xcb_visualtype_t *vis;
             xcb_colormap_t    cmap;
             int               depth;
