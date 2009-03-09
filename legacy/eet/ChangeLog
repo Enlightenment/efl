@@ -109,3 +109,47 @@
 
 	1.1.0 release
 
+2008-10-20  Cedric BAIL
+
+	* Make use of eina.
+
+2008-10-23  Cedric BAIL
+
+	* Fix string in list and hash.
+
+2008-10-24  Cedric BAIL
+
+	* Fix array in eet_data.
+
+2008-11-13  Cedric BAIL
+
+	* Add crypto support to eet with OpenSSL.
+
+2008-11-13  Arnaud de Turckheim
+
+	* Add GNUtls support to eet.
+
+2008-11-14  Cedric BAIL
+
+	* Make password callback work with GNUtls.
+
+2008-11-26  Cedric BAIL
+
+	* Add a function to retrieve raw signature.
+
+2009-01-30  Cedric BAIL
+
+	* Fix a corrupted pointer use in eet_cipher.c
+
+2009-02-09  Chidambar Zinnoury
+
+	* Add some missing __UNUSED__ flags.
+
+2009-02-26  Luis Felipe Strano Moraes
+
+	* Fix problem reported by llvm
+
+2009-03-09  Cedric BAIL
+
+	* Add sha1 retrieval for an Eet_File.
+
