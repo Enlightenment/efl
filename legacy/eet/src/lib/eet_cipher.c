@@ -351,12 +351,14 @@ eet_identity_compute_sha1(const void *data_base, unsigned int data_length,
    if (!result) return NULL;
 
    gcry_md_hash_buffer(GCRY_MD_SHA1, result, data_base, data_length);
+   if (sha1_length) *sha1_length = gcry_md_get_algo_dlen(GCRY_MD_SHA1);
 #else
 # ifdef HAVE_OPENSSL
    result = malloc(SHA_DIGEST_LENGTH);
    if (!result) return NULL;
 
    SHA1(data_base, data_length, result);
+   if (sha1_length) *sha1_length = SHA_DIGEST_LENGTH;
 # else
    result = NULL;
 # endif
