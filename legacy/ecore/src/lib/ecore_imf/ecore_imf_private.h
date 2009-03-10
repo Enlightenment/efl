@@ -1,10 +1,6 @@
 #ifndef _ECORE_IMF_PRIVATE_H
 #define _ECORE_IMF_PRIVATE_H
 
-#include "Ecore_IMF.h"
-
-#include "ecore_private.h"
-
 #define ECORE_MAGIC_CONTEXT 0x56c1b39a
 
 typedef struct _Ecore_IMF_Module Ecore_IMF_Module;

@@ -7,6 +7,7 @@
 #endif
 
 #include <Ecore.h>
+#include <ecore_private.h>
 
 #include "Ecore_IMF.h"
 #include "ecore_imf_private.h"
