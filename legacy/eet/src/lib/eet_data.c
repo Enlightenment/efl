@@ -1985,11 +1985,7 @@ _eet_data_dump_parse(Eet_Dictionary *ed,
 					     {
 						node_base = n;
 					     }
-					   if (!node)
-					     {
-						node = n;
-					     }
-					   else
+					   if (node)
 					     {
 						/* append node */
 						if (!node->values)
