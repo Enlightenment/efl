@@ -122,7 +122,7 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
 	ecore_plugin_unload(plugin);
      }
    else
-     printf ("Unable to load module %s\n", name);
+     fprintf (stderr, "Unable to load module %s\n", name);
 
    if (path_group)
      {
@@ -195,14 +195,14 @@ emotion_object_init(Evas_Object *obj, const char *module_filename)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
 
-   if (sd->file) free(sd->file);
+   free(sd->file);
    sd->file = NULL;
-   if (sd->title) free(sd->title);
+   free(sd->title);
    sd->title = NULL;
-   if (sd->progress.info) free(sd->progress.info);
+   free(sd->progress.info);
    sd->progress.info = NULL;
    sd->progress.stat = 0.0;
-   if (sd->ref.file) free(sd->ref.file);
+   free(sd->ref.file);
    sd->ref.file = NULL;
    sd->ref.num = 0;
    sd->spu.button_num = 0;
@@ -238,7 +238,7 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
      {
         int w, h;
 
-        if (sd->file) free(sd->file);
+	free(sd->file);
 	sd->file = strdup(file);
 	sd->module->file_close(sd->video);
 	evas_object_image_size_set(sd->obj, 0, 0);
@@ -257,7 +257,7 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
 	     sd->module->file_close(sd->video);
 	     evas_object_image_size_set(sd->obj, 0, 0);
 	  }
-        if (sd->file) free(sd->file);
+        free(sd->file);
         sd->file = NULL;
      }
 }
@@ -277,7 +277,7 @@ emotion_object_play_set(Evas_Object *obj, Evas_Bool play)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   if (((play) && (sd->play)) || ((!play) && (!sd->play))) return;
+   if (play == sd->play) return;
    if (!sd->module) return;
    if (!sd->video) return;
    sd->play = play;
@@ -958,7 +958,7 @@ _emotion_title_set(Evas_Object *obj, char *title)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   if (sd->title) free(sd->title);
+   free(sd->title);
    sd->title = strdup(title);
    evas_object_smart_callback_call(obj, "title_change", NULL);
 }
@@ -969,7 +969,7 @@ _emotion_progress_set(Evas_Object *obj, char *info, double stat)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   if (sd->progress.info) free(sd->progress.info);
+   free(sd->progress.info);
    sd->progress.info = strdup(info);
    sd->progress.stat = stat;
    evas_object_smart_callback_call(obj, "progress_change", NULL);
@@ -981,7 +981,7 @@ _emotion_file_ref_set(Evas_Object *obj, char *file, int num)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   if (sd->ref.file) free(sd->ref.file);
+   free(sd->ref.file);
    sd->ref.file = strdup(file);
    sd->ref.num = num;
    evas_object_smart_callback_call(obj, "ref_change", NULL);
@@ -1243,10 +1243,10 @@ _smart_del(Evas_Object * obj)
    if (sd->video) sd->module->file_close(sd->video);
    _emotion_module_close(sd->module, sd->video);
    evas_object_del(sd->obj);
-   if (sd->file) free(sd->file);
+   free(sd->file);
    if (sd->job) ecore_job_del(sd->job);
-   if (sd->progress.info) free(sd->progress.info);
-   if (sd->ref.file) free(sd->ref.file);
+   free(sd->progress.info);
+   free(sd->ref.file);
    free(sd);
 
    ecore_job_shutdown();
