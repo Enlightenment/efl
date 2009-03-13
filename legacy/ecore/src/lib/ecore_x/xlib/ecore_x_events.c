@@ -1820,10 +1820,10 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 }
 
 void
-_ecore_x_event_handle_mapping_notify(XEvent *xevent __UNUSED__)
+_ecore_x_event_handle_mapping_notify(XEvent *xevent)
 {
    _ecore_x_last_event_mouse_move = 0;
-   /* FIXME: handle this event type */
+   XRefreshKeyboardMapping((XMappingEvent *)xevent);
 }
 
 void
