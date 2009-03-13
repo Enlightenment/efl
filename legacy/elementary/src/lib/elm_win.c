@@ -202,9 +202,9 @@ _elm_win_eval_subobjs(Evas_Object *obj)
 	if (w < 1) w = -1;
 	if (h < 1) h = -1;
 	if (maxw == -1) maxw = w;
-	else if (w < maxw) maxw = w;
+	else if ((w > 0) && (w < maxw)) maxw = w;
 	if (maxh == -1) maxh = h;
-	else if (h < maxh) maxh = h;
+	else if ((h > 0) && (h < maxh)) maxh = h;
      }
    if ((maxw >= 0) && (maxw < minw)) maxw = minw;
    if ((maxh >= 0) && (maxh < minh)) maxh = minh;
@@ -450,6 +450,42 @@ elm_win_override_set(Evas_Object *obj, Evas_Bool override)
    Elm_Win *win = elm_widget_data_get(obj);
    if (!win) return;
    ecore_evas_override_set(win->ee, override);
+   _elm_win_xwin_update(win);
+}
+
+EAPI void
+elm_win_fullscreen_set(Evas_Object *obj, Evas_Bool fullscreen)
+{
+   Elm_Win *win = elm_widget_data_get(obj);
+   if (!win) return;
+   ecore_evas_fullscreen_set(win->ee, fullscreen);
+   _elm_win_xwin_update(win);
+}
+
+EAPI void
+elm_win_maximized_set(Evas_Object *obj, Evas_Bool maximized)
+{
+   Elm_Win *win = elm_widget_data_get(obj);
+   if (!win) return;
+   ecore_evas_maximized_set(win->ee, maximized);
+   _elm_win_xwin_update(win);
+}
+
+EAPI void
+elm_win_iconified_set(Evas_Object *obj, Evas_Bool iconified)
+{
+   Elm_Win *win = elm_widget_data_get(obj);
+   if (!win) return;
+   ecore_evas_iconified_set(win->ee, iconified);
+   _elm_win_xwin_update(win);
+}
+
+EAPI void
+elm_win_layer_set(Evas_Object *obj, int layer)
+{
+   Elm_Win *win = elm_widget_data_get(obj);
+   if (!win) return;
+   ecore_evas_layer_set(win->ee, layer);
    _elm_win_xwin_update(win);
 }
 

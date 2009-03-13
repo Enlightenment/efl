@@ -333,6 +333,8 @@ _text_to_mkup(const char *text)
         if (ch <= 0) break;
         if (ch == '\n') str = _str_append(str, "<br>", &str_len, &str_alloc);
         else if (ch == '\t') str = _str_append(str, "<\t>", &str_len, &str_alloc);
+        else if (ch == '<') str = _str_append(str, "&lt;", &str_len, &str_alloc);
+        else if (ch == '>') str = _str_append(str, "&gt;", &str_len, &str_alloc);
         else
           {
              char tstr[16];

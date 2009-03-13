@@ -314,18 +314,21 @@ elm_quicklaunch_sub_init(int argc, char **argv)
                                ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
         _elm_event_property_change = ecore_event_handler_add
           (ECORE_X_EVENT_WINDOW_PROPERTY, _elm_window_property_change, NULL);
-	if (ecore_x_window_prop_card32_get(ecore_x_window_root_first_get(),
-					   _elm_atom_enlightenment_scale,
-					   &val, 1) > 0)
-	  {
-	     if (val > 0)
+        if (!elm_scale)
+          {
+             if (ecore_x_window_prop_card32_get(ecore_x_window_root_first_get(),
+                                                _elm_atom_enlightenment_scale,
+                                                &val, 1) > 0)
                {
-                  _elm_config->scale = (double)val / 1000.0;
-                  // FIXME: hack until e export finger size too
-                  if (!elm_finger_size)
-                    _elm_config->finger_size = 40.0 * _elm_config->scale;
+                  if (val > 0)
+                    {
+                       _elm_config->scale = (double)val / 1000.0;
+                       // FIXME: hack until e export finger size too
+                       if (!elm_finger_size)
+                         _elm_config->finger_size = 40.0 * _elm_config->scale;
+                    }
                }
-	  }
+          }
 #endif        
       }
 
@@ -641,6 +644,35 @@ EAPI double
 elm_object_scale_get(const Evas_Object *obj)
 {
    return elm_widget_scale_get(obj);
+}
+
+EAPI double
+elm_scale_get(void)
+{
+   return _elm_config->scale;
+}
+
+EAPI void
+elm_scale_set(double scale)
+{
+   if (_elm_config->scale == scale) return;
+   _elm_config->scale = scale;
+   _elm_rescale();
+}
+
+EAPI Evas_Coord
+elm_finger_size_get(void)
+{
+   return _elm_config->finger_size;
+}
+
+EAPI void
+elm_finger_size_set(Evas_Coord size)
+{
+   elm_finger_size = NULL;
+   if (_elm_config->finger_size == size) return;
+   _elm_config->finger_size = size;
+   _elm_rescale();
 }
 
 EAPI void

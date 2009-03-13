@@ -172,3 +172,11 @@ elm_icon_fill_outside_set(Evas_Object *obj, Evas_Bool fill_outside)
    wd->fill_outside = fill_outside;
    _sizing_eval(obj);
 }
+
+EAPI void
+elm_icon_prescale_set(Evas_Object *obj, int size)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   _els_smart_icon_scale_size_set(wd->img, size);
+}

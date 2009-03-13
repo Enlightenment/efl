@@ -185,6 +185,11 @@ extern "C" {
        
    EAPI void         elm_object_scale_set(Evas_Object *obj, double scale);
    EAPI double       elm_object_scale_get(const Evas_Object *obj);
+   EAPI double       elm_scale_get(void);
+   EAPI void         elm_scale_set(double scale);
+   EAPI Evas_Coord   elm_finger_size_get(void);
+   EAPI void         elm_finger_size_set(Evas_Coord size);
+       
    EAPI void         elm_object_focus(Evas_Object *obj);
    
    EAPI void         elm_coords_finger_size_adjust(int times_w, Evas_Coord *w, int times_h, Evas_Coord *h);
@@ -202,6 +207,23 @@ extern "C" {
    EAPI void         elm_win_shaped_set(Evas_Object *obj, Evas_Bool shaped);
    EAPI void         elm_win_alpha_set(Evas_Object *obj, Evas_Bool alpha);
    EAPI void         elm_win_override_set(Evas_Object *obj, Evas_Bool override);
+   EAPI void         elm_win_fullscreen_set(Evas_Object *obj, Evas_Bool fullscreen);
+   EAPI void         elm_win_maximized_set(Evas_Object *obj, Evas_Bool maximized);
+   EAPI void         elm_win_iconified_set(Evas_Object *obj, Evas_Bool iconified);
+   EAPI void         elm_win_layer_set(Evas_Object *obj, int layer);
+   /*...
+    * ecore_x_icccm_hints_set -> accepts_focus (add to ecore_evas)
+    * ecore_x_icccm_hints_set -> window_group (add to ecore_evas)
+    * ecore_x_icccm_size_pos_hints_set -> request_pos (add to ecore_evas)
+    * ecore_x_icccm_client_leader_set -> l (add to ecore_evas)
+    * ecore_x_icccm_window_role_set -> role (add to ecore_evas)
+    * ecore_x_icccm_transient_for_set -> forwin (add to ecore_evas)
+    * ecore_x_netwm_window_type_set -> type (add to ecore_evas)
+    * 
+    * (add to ecore_x) set netwm argb icon! (add to ecore_evas)
+    * (blank mouse, private mouse obj, defaultmouse)
+    *
+    */
    EAPI void         elm_win_keyboard_mode_set(Evas_Object *obj, Elm_Win_Keyboard_Mode mode);
    EAPI void         elm_win_keyboard_win_set(Evas_Object *obj, Evas_Bool is_keyboard);
 
@@ -234,6 +256,7 @@ extern "C" {
    EAPI void         elm_icon_no_scale_set(Evas_Object *obj, Evas_Bool no_scale);
    EAPI void         elm_icon_scale_set(Evas_Object *obj, Evas_Bool scale_up, Evas_Bool scale_down);
    EAPI void         elm_icon_fill_outside_set(Evas_Object *obj, Evas_Bool fill_outside);
+   EAPI void         elm_icon_prescale_set(Evas_Object *obj, int size);
    /* smart callbacks called:
     * "clicked" - the user clicked the icon
     */
@@ -570,18 +593,28 @@ extern "C" {
    EAPI Elm_Genlist_Item *elm_genlist_last_item_get(const Evas_Object *obj);
    EAPI Elm_Genlist_Item *elm_genlist_item_next_get(const Elm_Genlist_Item *item);
    EAPI Elm_Genlist_Item *elm_genlist_item_prev_get(const Elm_Genlist_Item *item);
+   EAPI Evas_Object      *elm_genlist_item_genlist_get(const Elm_Genlist_Item *item);
+   EAPI Elm_Genlist_Item *elm_genlist_item_parent_get(const Elm_Genlist_Item *it);
+   EAPI void              elm_genlist_item_subitems_clear(Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_selected_set(Elm_Genlist_Item *item, Evas_Bool selected);
    EAPI Evas_Bool         elm_genlist_item_selected_get(const Elm_Genlist_Item *item);
+   EAPI void              elm_genlist_item_expanded_set(Elm_Genlist_Item *item, Evas_Bool expanded);
+   EAPI Evas_Bool         elm_genlist_item_expanded_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_disabled_set(Elm_Genlist_Item *item, Evas_Bool disabled);
    EAPI Evas_Bool         elm_genlist_item_disabled_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_show(Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_del(Elm_Genlist_Item *item);
    EAPI const void       *elm_genlist_item_data_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_update(Elm_Genlist_Item *item);
+   EAPI void              elm_genlist_horizontal_mode_set(Evas_Object *obj, Elementary_List_Mode mode);
    /* smart callbacks called:
-    * "clicked" - the user clicked the hoversel button and popped up the sel
-    * "selected" - an item in the hoversel list is selected
-    * "dismissed" - the hover is dismissed
+    * "clicked" - when the user double-clicked an item
+    * "selected" - when the user selected an item
+    * "unselected" - when the user selected an item
+    * "expanded" - when the user expanded an item
+    * "contracted" - when the user contracted an item
+    * "expand,request" - when the user requested to expand an item
+    * "contract,request" - when the user requested to expand an item
     */
    
    EAPI Evas_Object *elm_check_add(Evas_Object *parent);

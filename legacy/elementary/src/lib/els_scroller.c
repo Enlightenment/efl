@@ -395,6 +395,7 @@ _smart_pan_changed_hook(void *data, Evas_Object *obj, void *event_info)
 	sd->child.w = w;
 	sd->child.h = h;
 	_smart_scrollbar_size_adjust(sd);
+        evas_object_size_hint_min_set(sd->smart_obj, sd->child.w, sd->child.h);
      }
 }
 

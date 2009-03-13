@@ -26,7 +26,6 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    _elm_theme_set(wd->img, "bg", "base", "default");
-   _els_smart_icon_scale_set(wd->img, elm_widget_scale_get(obj) * _elm_config->scale);
 }
 
 static void

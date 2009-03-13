@@ -62,6 +62,7 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Item *it = data;
    edje_object_part_swallow(it->base, "elm.swallow.content", it->content);
+   edje_object_size_min_calc(it->base, &it->minw, &it->minh);
    _sizing_eval(it->obj);
 }
 

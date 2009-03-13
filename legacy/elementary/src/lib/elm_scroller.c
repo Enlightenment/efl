@@ -122,6 +122,8 @@ elm_scroller_add(Evas_Object *parent)
    
    wd->scr = elm_smart_scroller_add(e);
    elm_widget_resize_object_set(obj, wd->scr);
+   evas_object_event_callback_add(wd->scr, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
+                                  _changed_size_hints, obj);
 
    edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
