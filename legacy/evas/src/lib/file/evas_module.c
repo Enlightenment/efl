@@ -174,9 +174,12 @@ evas_module_init(void)
 		  em->handle = NULL;
 		  em->data = NULL;
                   em->loaded = 0;
-#if defined(BUILD_PTHREAD) && defined(BUILD_ASYNC_PRELOAD)
-		  pthread_spin_init(&em->lock, PTHREAD_PROCESS_PRIVATE);
-#endif
+#ifdef BUILD_ASYNC_PRELOAD                  
+                  LKI(em->lock);
+#endif                  
+//#if defined(BUILD_PTHREAD) && defined(BUILD_ASYNC_PRELOAD)
+//		  pthread_mutex_init(&em->lock, NULL);
+//#endif
 		  if (em->type == EVAS_MODULE_TYPE_ENGINE)
 		    {
 		       Evas_Module_Engine *eme;
@@ -309,35 +312,50 @@ evas_module_unload(Evas_Module *em)
    em->func.close = NULL;
    em->api = NULL;
    em->loaded = 0;
-#if defined(BUILD_PTHREAD) && defined(BUILD_ASYNC_PRELOAD)
-   pthread_spin_destroy(&em->lock);
+#ifdef BUILD_ASYNC_PRELOAD   
+   LKD(em->lock);
 #endif
+//#if defined(BUILD_PTHREAD) && defined(BUILD_ASYNC_PRELOAD)
+//   pthread_mutex_destroy(&em->lock);
+//#endif
 }
 
 void
 evas_module_ref(Evas_Module *em)
 {
-#if defined(BUILD_PTHREAD) && defined(BUILD_ASYNC_PRELOAD)
-   pthread_spin_lock(&em->lock);
-#endif
+#ifdef BUILD_ASYNC_PRELOAD
+   LKL(em->lock);
+#endif   
+//#if defined(BUILD_PTHREAD) && defined(BUILD_ASYNC_PRELOAD)
+//   pthread_mutex_lock(&em->lock);
+//#endif
    em->ref++;
 /*   printf("M: %s ref++ = %i\n", em->name, em->ref); */
-#if defined(BUILD_PTHREAD) && defined(BUILD_ASYNC_PRELOAD)
-   pthread_spin_unlock(&em->lock);
+#ifdef BUILD_ASYNC_PRELOAD
+   LKU(em->lock);
 #endif
+//#if defined(BUILD_PTHREAD) && defined(BUILD_ASYNC_PRELOAD)
+//   pthread_mutex_unlock(&em->lock);
+//#endif
 }
 
 void
 evas_module_unref(Evas_Module *em)
 {
-#if defined(BUILD_PTHREAD) && defined(BUILD_ASYNC_PRELOAD)
-   pthread_spin_lock(&em->lock);
-#endif
+#ifdef BUILD_ASYNC_PRELOAD
+   LKL(em->lock);
+#endif   
+//#if defined(BUILD_PTHREAD) && defined(BUILD_ASYNC_PRELOAD)
+//   pthread_mutex_lock(&em->lock);
+//#endif
    em->ref--;
 /*   printf("M: %s ref-- = %i\n", em->name, em->ref); */
-#if defined(BUILD_PTHREAD) && defined(BUILD_ASYNC_PRELOAD)
-   pthread_spin_unlock(&em->lock);
+#ifdef BUILD_ASYNC_PRELOAD
+   LKU(em->lock);
 #endif
+//#if defined(BUILD_PTHREAD) && defined(BUILD_ASYNC_PRELOAD)
+//   pthread_mutex_unlock(&em->lock);
+//#endif
 }
 
 static int use_count = 0;
