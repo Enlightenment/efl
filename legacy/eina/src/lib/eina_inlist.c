@@ -347,6 +347,31 @@ eina_inlist_find(Eina_Inlist *list, Eina_Inlist *item)
    return NULL;
 }
 
+/**
+ * @brief Get the count of the number of items in a list.
+ *
+ * @param list The list whose count to return.
+ * @return The number of members in the list.
+ *
+ * This function returns how many members @p list contains. If the
+ * list is @c NULL, 0 is returned.
+ *
+ * @warning This is an order-N operation and so the time will depend
+ *    on the number of elements on the list, that is, it might become
+ *    slow for big lists!
+ */
+EAPI unsigned int
+eina_inlist_count(const Eina_Inlist *list)
+{
+   const Eina_Inlist *l;
+   unsigned int i = 0;
+
+   for (l = list; l; l = l->next)
+     i++;
+
+   return i;
+}
+
 EAPI Eina_Iterator *
 eina_inlist_iterator_new(const Eina_Inlist *list)
 {

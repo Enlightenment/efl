@@ -47,6 +47,7 @@ EAPI Eina_Inlist * eina_inlist_remove(Eina_Inlist *in_list, Eina_Inlist *in_item
 EAPI Eina_Inlist * eina_inlist_find(Eina_Inlist *in_list, Eina_Inlist *in_item) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Inlist * eina_inlist_promote(Eina_Inlist *list, Eina_Inlist *item) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Inlist * eina_inlist_demote(Eina_Inlist *list, Eina_Inlist *item) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
+EAPI unsigned int eina_inlist_count(const Eina_Inlist *list) EINA_WARN_UNUSED_RESULT;
 
 EAPI Eina_Iterator *eina_inlist_iterator_new(const Eina_Inlist *in_list) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
