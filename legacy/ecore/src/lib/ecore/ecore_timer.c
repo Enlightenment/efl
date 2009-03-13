@@ -84,7 +84,7 @@ ecore_timer_precision_set(double value)
  * @ingroup Ecore_Time_Group
  *
  * This function adds a timer and returns its handle on success and NULL on
- * failure. The function @p func will be called every @in@ seconds. The
+ * failure. The function @p func will be called every @p in seconds. The
  * function will be passed the @p data pointer as its parameter.
  *
  * When the timer @p func is called, it must return a value of either 1

@@ -38,7 +38,7 @@ static void                *ecore_raw_event_event =  NULL;
  * Add an event handler to the list of handlers. This will, on success, return
  * a handle to the event handler object that was created, that can be used
  * later to remove the handler using ecore_event_handler_del(). The @p type
- * parameter is the iteger of the event type that will trigger this callback
+ * parameter is the integer of the event type that will trigger this callback
  * to be called. The callback @p func is called when this event is processed
  * and will be passed the event type, a pointer to the private event
  * structure that is specific to that event type, and a data pointer that is

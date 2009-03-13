@@ -55,7 +55,7 @@ double _ecore_loop_time = -1.0;
  *
  * This gets the time (since Jan 1st, 1970, 12:00AM) that the main loop ceased
  * waiting for timouts and/or events to come in or for signals or any other
- * interrupt source. This should be considered a reference point fo all
+ * interrupt source. This should be considered a reference point for all
  * time based activity that should calculate its timepoint from the return
  * of ecore_loop_time_get(). use this UNLESS you absolutely must get the
  * current actual timepoint - then use ecore_time_get(). If this is called
