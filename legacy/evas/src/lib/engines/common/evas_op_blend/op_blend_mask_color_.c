@@ -4,48 +4,51 @@
 #ifdef BUILD_C
 static void
 _op_blend_mas_c_dp(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int l) {
-   DATA32 *e = d + l;
-   l = 256 - (c >> 24);
-   while (d < e) {
-	DATA32 a = *m;
-	switch(a)
-	  {
-	    case 0:
-		break;
-	    case 255:
-		*d = c + MUL_256(l, *d);
-		break;
-	    default:
-	      {
-		DATA32 mc = MUL_SYM(a, c);
-		a = 256 - (mc >> 24);
-		*d = mc + MUL_256(a, *d);
-	      }
-		break;
-	  }
-	m++;  d++;
-     }
+   DATA32 *e;
+   int alpha = 256 - (c >> 24);
+   UNROLL8_PLD_WHILE(d, l, e,
+                     {
+                        DATA32 a = *m;
+                        switch(a)
+                          {
+                          case 0:
+                             break;
+                          case 255:
+                             *d = c + MUL_256(alpha, *d);
+                             break;
+                          default:
+                               {
+                                  DATA32 mc = MUL_SYM(a, c);
+                                  a = 256 - (mc >> 24);
+                                  *d = mc + MUL_256(a, *d);
+                               }
+                             break;
+                          }
+                        m++;  d++;
+                     });
 }
 
 static void
 _op_blend_mas_can_dp(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int l) {
-   DATA32 *e = d + l;
-   while (d < e) {
-	l = *m;
-	switch(l)
-	  {
-	    case 0:
-		break;
-	    case 255:
-		*d = c;
-		break;
-	    default:
-		l++;
-		*d = INTERP_256(l, c, *d);
-		break;
-	  }
-	m++;  d++;
-     }
+    DATA32 *e;
+    int alpha;
+   UNROLL8_PLD_WHILE(d, l, e,
+                     {
+                        alpha = *m;
+                        switch(alpha)
+                          {
+                          case 0:
+                             break;
+                          case 255:
+                             *d = c;
+                             break;
+                          default:
+                             alpha++;
+                             *d = INTERP_256(alpha, c, *d);
+                             break;
+                          }
+                        m++;  d++;
+                     });
 }
 
 #define _op_blend_mas_cn_dp _op_blend_mas_can_dp
@@ -74,14 +77,14 @@ init_blend_mask_color_span_funcs_c(void)
 #ifdef BUILD_C
 static void
 _op_blend_pt_mas_c_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
-	s = MUL_SYM(m, c);
-	m = 256 - (s >> 24);
-	*d = s + MUL_256(m, *d);
+   s = MUL_SYM(m, c);
+   m = 256 - (s >> 24);
+   *d = s + MUL_256(m, *d);
 }
 
 static void
 _op_blend_pt_mas_can_dp(DATA32 s __UNUSED__, DATA8 m, DATA32 c, DATA32 *d) {
-	*d = INTERP_256(m + 1, c, *d);
+   *d = INTERP_256(m + 1, c, *d);
 }
 
 #define _op_blend_pt_mas_cn_dp _op_blend_pt_mas_can_dp
@@ -114,14 +117,16 @@ init_blend_mask_color_pt_funcs_c(void)
 #ifdef BUILD_C
 static void
 _op_blend_rel_mas_c_dp(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int l) {
-   DATA32 *e = d + l;
-   while (d < e) {
-	DATA32 mc = MUL_SYM(*m, c);
-	l = 256 - (mc >> 24);
-	*d = MUL_SYM(*d >> 24, mc) + MUL_256(l, *d);
-	d++;
-	m++;
-     }
+   DATA32 *e;
+   int alpha;
+   UNROLL8_PLD_WHILE(d, l, e,
+                     {
+                        DATA32 mc = MUL_SYM(*m, c);
+                        alpha = 256 - (mc >> 24);
+                        *d = MUL_SYM(*d >> 24, mc) + MUL_256(alpha, *d);
+                        d++;
+                        m++;
+                     });
 }
 
 #define _op_blend_rel_mas_cn_dp _op_blend_rel_mas_c_dp
@@ -151,9 +156,9 @@ init_blend_rel_mask_color_span_funcs_c(void)
 #ifdef BUILD_C
 static void
 _op_blend_rel_pt_mas_c_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
-	s = MUL_SYM(m, c);
-	c = 256 - (s >> 24);
-	*d = MUL_SYM(*d >> 24, s) + MUL_256(c, *d);
+   s = MUL_SYM(m, c);
+   c = 256 - (s >> 24);
+   *d = MUL_SYM(*d >> 24, s) + MUL_256(c, *d);
 }
 
 #define _op_blend_rel_pt_mas_cn_dp _op_blend_rel_pt_mas_c_dp

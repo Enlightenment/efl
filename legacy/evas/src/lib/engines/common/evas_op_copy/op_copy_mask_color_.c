@@ -4,23 +4,25 @@
 #ifdef BUILD_C
 static void
 _op_copy_mas_c_dp(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int l) {
-   DATA32 *e = d + l;
-   while (d < e) {
-	l = *m;
-	switch(l)
-	  {
-	    case 0:
-		break;
-	    case 255:
-		*d = c;
-		break;
-	    default:
-		l++;
-		*d = INTERP_256(l, c, *d);
-		break;
-	  }
-	m++;  d++;
-     }
+   DATA32 *e;
+   int color;
+   UNROLL8_PLD_WHILE(d, l, e,
+                     {
+                        color = *m;
+                        switch(color)
+                          {
+                          case 0:
+                             break;
+                          case 255:
+                             *d = c;
+                             break;
+                          default:
+                             color++;
+                             *d = INTERP_256(color, c, *d);
+                             break;
+                          }
+                        m++;  d++;
+                     });
 }
 
 #define _op_copy_mas_cn_dp _op_copy_mas_c_dp
@@ -50,7 +52,7 @@ init_copy_mask_color_span_funcs_c(void)
 #ifdef BUILD_C
 static void
 _op_copy_pt_mas_c_dp(DATA32 s __UNUSED__, DATA8 m, DATA32 c, DATA32 *d) {
-	*d = INTERP_256(m + 1, c, *d);
+   *d = INTERP_256(m + 1, c, *d);
 }
 
 
@@ -85,28 +87,30 @@ init_copy_mask_color_pt_funcs_c(void)
 #ifdef BUILD_C
 static void
 _op_copy_rel_mas_c_dp(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int l) {
-   DATA32 *e = d + l;
-   while (d < e) {
-	l = *m;
-	switch(l)
-	  {
-	    case 0:
-		break;
-	    case 255:
-		l = 1 + (*d >> 24);
-		*d = MUL_256(l, c);
-		break;
-	    default:
-	      {
-		DATA32 da = 1 + (*d >> 24);
-		da = MUL_256(da, c);
-		l++;
-		*d = INTERP_256(l, da, *d);
-	      }
-		break;
-	  }
-	m++;  d++;
-     }
+   DATA32 *e;
+   int color;
+   UNROLL8_PLD_WHILE(d, l, e,
+                     {
+                        color = *m;
+                        switch(color)
+                          {
+                          case 0:
+                             break;
+                          case 255:
+                             color = 1 + (*d >> 24);
+                             *d = MUL_256(color, c);
+                             break;
+                          default:
+                               {
+                                  DATA32 da = 1 + (*d >> 24);
+                                  da = MUL_256(da, c);
+                                  color++;
+                                  *d = INTERP_256(color, da, *d);
+                               }
+                             break;
+                          }
+                        m++;  d++;
+                     });
 }
 
 
@@ -137,9 +141,9 @@ init_copy_rel_mask_color_span_funcs_c(void)
 #ifdef BUILD_C
 static void
 _op_copy_rel_pt_mas_c_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
-	s = 1 + (*d >> 24);
-	s = MUL_256(s, c);
-	*d = INTERP_256(m + 1, s, *d);
+   s = 1 + (*d >> 24);
+   s = MUL_256(s, c);
+   *d = INTERP_256(m + 1, s, *d);
 }
 
 #define _op_copy_rel_pt_mas_cn_dp _op_copy_rel_pt_mas_c_dp

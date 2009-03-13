@@ -127,6 +127,95 @@ void *alloca (size_t);
 
 /*****************************************************************************/
 
+#if defined(__ARM_ARCH_3M__)
+# define __ARM_ARCH__ 40
+#endif
+#if defined(__ARM_ARCH_4__)
+# define __ARM_ARCH__ 40
+#endif
+#if defined(__ARM_ARCH_4T__)
+# define __ARM_ARCH__ 41
+#endif
+
+#if defined(__ARM_ARCH_5__)
+# define __ARM_ARCH__ 50
+#endif
+#if defined(__ARM_ARCH_5T__)
+# define __ARM_ARCH__ 51
+#endif
+#if defined(__ARM_ARCH_5E__)
+# define __ARM_ARCH__ 52
+#endif
+#if defined(__ARM_ARCH_5TE__)
+# define __ARM_ARCH__ 53
+#endif
+#if defined(__ARM_ARCH_5TEJ__)
+# define __ARM_ARCH__ 54
+#endif
+
+#if defined(__ARM_ARCH_6__)
+# define __ARM_ARCH__ 60
+#endif
+#if defined(__ARM_ARCH_6J__)
+# define __ARM_ARCH__ 61
+#endif
+#if defined(__ARM_ARCH_6K__)
+# define __ARM_ARCH__ 62
+#endif
+#if defined(__ARM_ARCH_6Z__)
+# define __ARM_ARCH__ 63
+#endif
+#if defined(__ARM_ARCH_6ZK__)
+# define __ARM_ARCH__ 64
+#endif
+#if defined(__ARM_ARCH_6T2__)
+# define __ARM_ARCH__ 65
+#endif
+
+#if defined(__ARM_ARCH_7__)
+# define __ARM_ARCH__ 70
+#endif
+#if defined(__ARM_ARCH_7A__)
+# define __ARM_ARCH__ 71
+#endif
+#if defined(__ARM_ARCH_7R__)
+# define __ARM_ARCH__ 72
+#endif
+#if defined(__ARM_ARCH_7M__)
+# define __ARM_ARCH__ 73
+#endif
+
+#if defined(__ARM_ARCH__) && (__ARM_ARCH__ >= 52)
+/* tested on ARMv6 (arm1136j-s), Nokia N800 CPU */
+#define pld(addr, off)                                                  \
+   __asm__("pld [%[address], %[offset]]"::                              \
+           [address] "r" (addr), [offset] "i" (off))
+#else
+#define pld(addr, off)
+#endif /* __ARMEL__ */
+
+/*****************************************************************************/
+
+#define UNROLL2(op...) op op
+#define UNROLL4(op...) UNROLL2(op) UNROLL2(op)
+#define UNROLL8(op...) UNROLL4(op) UNROLL4(op)
+#define UNROLL16(op...) UNROLL8(op) UNROLL8(op)
+
+#define UNROLL8_PLD_WHILE(start, size, end, op)         \
+    pld(start, 0);                                      \
+    end = start + (size & ~7);                          \
+    while (start < end)                                 \
+        {                                               \
+            pld(start, 32);                             \
+            UNROLL8(op);                                \
+        }                                               \
+    end += (size & 7);                                  \
+    pld(start, 32);                                     \
+    while (start <  end)                                \
+        {                                               \
+        op;                                             \
+        }
+
 /*****************************************************************************/
 
 typedef unsigned long long		DATA64;
@@ -277,46 +366,46 @@ struct _Evas_Cache_Target
 
 struct _Image_Entry
 {
-  EINA_INLIST;
+   EINA_INLIST;
 
-  Evas_Cache_Image      *cache;
-
-  const char            *cache_key;
-
-  const char            *file;
-  const char            *key;
-
-  Evas_Cache_Target     *targets;
-
-  time_t                 timestamp;
-  time_t                 laststat;
-
-  int                    references;
-
-  unsigned char          scale;
-
-  RGBA_Image_Loadopts    load_opts;
-  int                    space;
-  int                    w;
-  int                    h;
-
-  struct
-  {
-     int		 w;
-     int		 h;
-  } allocated;
-
-  struct
-  {
-     void		*module;
-     void		*loader;
-  } info;
-
+   Evas_Cache_Image      *cache;
+   
+   const char            *cache_key;
+   
+   const char            *file;
+   const char            *key;
+   
+   Evas_Cache_Target     *targets;
+   
+   time_t                 timestamp;
+   time_t                 laststat;
+   
+   int                    references;
+   
+   unsigned char          scale;
+   
+   RGBA_Image_Loadopts    load_opts;
+   int                    space;
+   int                    w;
+   int                    h;
+   
+   struct
+     {
+        int		 w;
+        int		 h;
+     } allocated;
+   
+   struct
+     {
+        void		*module;
+        void		*loader;
+     } info;
+   
 #ifdef BUILD_ASYNC_PRELOAD
-   pthread_mutex_t lock;
+   LK(lock);
 #endif
 
-  Image_Entry_Flags      flags;
+   Image_Entry_Flags      flags;
 };
 
 struct _Engine_Image_Entry
@@ -642,9 +731,8 @@ struct _RGBA_Font_Int
 
    Eina_Hash       *glyphs;
 
-#ifdef HAVE_PTHREAD
-   pthread_mutex_t  ft_mutex;
-#endif
+   LK(ft_mutex);
+   
    Eina_Hash       *kerning;
    Eina_Hash       *indexes;
 

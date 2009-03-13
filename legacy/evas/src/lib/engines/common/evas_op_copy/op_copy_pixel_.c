@@ -4,10 +4,7 @@
 #ifdef BUILD_C
 static void
 _op_copy_p_dp(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c __UNUSED__, DATA32 *d, int l) {
-   DATA32 *e = d + l;
-   for (; d < e; d++, s++) {
-      *d = *s;
-   }
+   memcpy(d, s, l * sizeof(DATA32));
 }
 
 #define _op_copy_pan_dp _op_copy_p_dp
@@ -33,7 +30,7 @@ init_copy_pixel_span_funcs_c(void)
 #ifdef BUILD_C
 static void
 _op_copy_pt_p_dp(DATA32 s, DATA8 m __UNUSED__, DATA32 c __UNUSED__, DATA32 *d) {
-      *d = s;
+   *d = s;
 }
 
 #define _op_copy_pt_pan_dp _op_copy_pt_p_dp
@@ -63,10 +60,12 @@ init_copy_pixel_pt_funcs_c(void)
 #ifdef BUILD_C
 static void
 _op_copy_rel_p_dp(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c __UNUSED__, DATA32 *d, int l) {
-   DATA32 *e = d + l;
-   for (; d < e; d++, s++) {
-	*d = MUL_SYM(*d >> 24, *s);
-   }
+   DATA32 *e;
+   UNROLL8_PLD_WHILE(d, l, e,
+                     {
+                        *d = MUL_SYM(*d >> 24, *s);
+                        d++; s++;
+                     });
 }
 
 
@@ -93,8 +92,8 @@ init_copy_rel_pixel_span_funcs_c(void)
 #ifdef BUILD_C
 static void
 _op_copy_rel_pt_p_dp(DATA32 s, DATA8 m __UNUSED__, DATA32 c, DATA32 *d) {
-	c = 1 + (*d >> 24);
-	*d = MUL_256(c, s);
+   c = 1 + (*d >> 24);
+   *d = MUL_256(c, s);
 }
 
 

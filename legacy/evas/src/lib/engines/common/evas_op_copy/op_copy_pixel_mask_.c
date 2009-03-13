@@ -4,23 +4,25 @@
 #ifdef BUILD_C
 static void 
 _op_copy_p_mas_dp(DATA32 *s, DATA8 *m, DATA32 c __UNUSED__, DATA32 *d, int l) {
-   DATA32 *e = d + l;
-   while (d < e) {
-	l = *m;
-	switch(l)
-	  {
-	    case 0:
-		break;
-	    case 255:
-		*d = *s;
-		break;
-	    default:
-		l++;
-		*d = INTERP_256(l, *s, *d);
-		break;
-	  }
-	m++;  s++;  d++;
-     }
+   DATA32 *e;
+   int color;
+   UNROLL8_PLD_WHILE(d, l, e,
+                     {
+                        color = *m;
+                        switch(color)
+                          {
+                          case 0:
+                             break;
+                          case 255:
+                             *d = *s;
+                             break;
+                          default:
+                             color++;
+                             *d = INTERP_256(color, *s, *d);
+                             break;
+                          }
+                        m++;  s++;  d++;
+                     });
 }
 
 
@@ -47,7 +49,7 @@ init_copy_pixel_mask_span_funcs_c(void)
 #ifdef BUILD_C
 static void
 _op_copy_pt_p_mas_dp(DATA32 s, DATA8 m, DATA32 c __UNUSED__, DATA32 *d) {
-	*d = INTERP_256(m + 1, s, *d);
+   *d = INTERP_256(m + 1, s, *d);
 }
 
 #define _op_copy_pt_pan_mas_dp _op_copy_pt_p_mas_dp
@@ -75,26 +77,28 @@ init_copy_pixel_mask_pt_funcs_c(void)
 /* copy_rel pixel x mask --> dst */
 
 #ifdef BUILD_C
-static void 
+static void
 _op_copy_rel_p_mas_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
-   DATA32 *e = d + l;
-   while (d < e) {
-	l = *m;
-	switch(l)
-	  {
-	    case 0:
-		break;
-	    case 255:
-		*d = MUL_SYM(*d >> 24, *s);
-		break;
-	    default:
-		c = MUL_SYM(*d >> 24, *s);
-		l++;
-		*d = INTERP_256(l, c, *d);
-		break;
-	  }
-	m++;  s++;  d++;
-     }
+   DATA32 *e;
+   int color;
+   UNROLL8_PLD_WHILE(d, l, e,
+                     {
+                        color = *m;
+                        switch(color)
+                          {
+                          case 0:
+                             break;
+                          case 255:
+                             *d = MUL_SYM(*d >> 24, *s);
+                             break;
+                          default:
+                             c = MUL_SYM(*d >> 24, *s);
+                             l++;
+                             *d = INTERP_256(l, c, *d);
+                             break;
+                          }
+                        m++;  s++;  d++;
+                     });
 }
 
 
@@ -119,10 +123,10 @@ init_copy_rel_pixel_mask_span_funcs_c(void)
 #endif
 
 #ifdef BUILD_C
-static void 
+static void
 _op_copy_rel_pt_p_mas_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
-	c = MUL_SYM(*d >> 24, s);
-	*d = INTERP_256(m + 1, c, *d);
+   c = MUL_SYM(*d >> 24, s);
+   *d = INTERP_256(m + 1, c, *d);
 }
 
 
