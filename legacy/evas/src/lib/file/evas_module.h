@@ -50,9 +50,10 @@ struct _Evas_Module
    int           ref; /* how many refs */
    int           last_used; /* the cycle count when it was last used */
 
-#if defined(HAVE_PTHREAD_H) && defined(BUILD_ASYNC_PRELOAD)
-   pthread_mutex_t lock;
-#endif
+   LK(lock);
+//#if defined(HAVE_PTHREAD_H) && defined(BUILD_ASYNC_PRELOAD)
+//   pthread_mutex_t lock;
+//#endif
 
    unsigned char	loaded : 1;
 };
