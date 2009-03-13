@@ -291,7 +291,11 @@ _ecore_evas_fb_init(int w, int h)
 	if (ecore_evas_input_devices)
 	  {
 	     /* Mouse */
+#ifdef HAVE_TSLIB
 	     if (caps & ECORE_FB_INPUT_DEVICE_CAP_RELATIVE)
+#else
+	     if ((caps & ECORE_FB_INPUT_DEVICE_CAP_RELATIVE) || (caps & ECORE_FB_INPUT_DEVICE_CAP_ABSOLUTE))
+#endif
 	       {
 		  ecore_fb_input_device_axis_size_set(device, w, h);
 		  ecore_fb_input_device_listen(device,1);

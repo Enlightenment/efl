@@ -20,8 +20,8 @@
  #define kernel_ulong_t unsigned long 
  #define BITS_PER_LONG 32
  #include <linux/input.h>
- #undef kernel_ulong_t <-added
- #undef BITS_PER_LONG <-added
+ #undef kernel_ulong_t
+ #undef BITS_PER_LONG
 #else
  #include <linux/input.h>
 #endif
@@ -53,7 +53,7 @@ struct _Ecore_Fb_Input_Device
 		/* absolute axis */
 		int min_w, min_h;
 		double rel_w, rel_h;
-
+		int event;
 	} mouse;
 	struct
 	{

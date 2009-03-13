@@ -258,15 +258,15 @@ _ecore_fb_li_device_event_rel(Ecore_Fb_Input_Device *dev, struct input_event *ie
 static void
 _ecore_fb_li_device_event_abs(Ecore_Fb_Input_Device *dev, struct input_event *iev)
 {
+	static int prev_pressure = 0;
+	int pressure;
+
 	if(!dev->listen)
 		return;
 	switch(iev->code)
 	{
 		case ABS_X:
-		case ABS_Y:
-		{
-			Ecore_Fb_Event_Mouse_Move *ev;
-			if((iev->code == ABS_X) && (dev->mouse.w != 0))
+			if(dev->mouse.w != 0)
 			{
 				int tmp;
 
@@ -277,8 +277,12 @@ _ecore_fb_li_device_event_abs(Ecore_Fb_Input_Device *dev, struct input_event *ie
 					dev->mouse.x = dev->mouse.w;
 				else
 					dev->mouse.x = tmp;
+				dev->mouse.event = ECORE_FB_EVENT_MOUSE_MOVE;
 			}
-			else if((iev->code == ABS_Y) && (dev->mouse.h != 0))
+			break;
+
+		case ABS_Y:
+			if(dev->mouse.h != 0)
 			{
 				int tmp;
 
@@ -289,18 +293,59 @@ _ecore_fb_li_device_event_abs(Ecore_Fb_Input_Device *dev, struct input_event *ie
 					dev->mouse.y = dev->mouse.h;
 				else
 					dev->mouse.y = tmp;
+				dev->mouse.event = ECORE_FB_EVENT_MOUSE_MOVE;
 			}
-			ev = calloc(1,sizeof(Ecore_Fb_Event_Mouse_Move));
-			ev->x = dev->mouse.x;
-			ev->y = dev->mouse.y;
-			ev->dev = dev;
+			break;
 
-			ecore_event_add(ECORE_FB_EVENT_MOUSE_MOVE, ev, NULL, NULL);
-			break;
-		}
 		case ABS_PRESSURE:
-			/* TODO emulate a button press */
+			pressure = iev->value;
+			if ((pressure) && (!prev_pressure))
+			{
+				/* DOWN: mouse is down, but was not now */
+				dev->mouse.event = ECORE_FB_EVENT_MOUSE_BUTTON_DOWN;
+			}
+			else if ((!pressure) && (prev_pressure))
+			{
+				/* UP: mouse was down, but is not now */
+				dev->mouse.event = ECORE_FB_EVENT_MOUSE_BUTTON_UP;
+			}
+			prev_pressure = pressure;
 			break;
+	}
+}
+
+static void
+_ecore_fb_li_device_event_syn(Ecore_Fb_Input_Device *dev, struct input_event *iev)
+{
+	if(!dev->listen)
+		return;
+
+	if(dev->mouse.event == ECORE_FB_EVENT_MOUSE_MOVE)
+	{
+		Ecore_Fb_Event_Mouse_Move *ev;
+		ev = calloc(1,sizeof(Ecore_Fb_Event_Mouse_Move));
+		ev->x = dev->mouse.x;
+		ev->y = dev->mouse.y;
+		ev->dev = dev;
+		ecore_event_add(ECORE_FB_EVENT_MOUSE_MOVE, ev, NULL, NULL);
+	}
+	else if(dev->mouse.event == ECORE_FB_EVENT_MOUSE_BUTTON_DOWN)
+	{
+		Ecore_Fb_Event_Mouse_Button_Down *ev;
+		ev = calloc(1, sizeof(Ecore_Fb_Event_Mouse_Button_Down));
+		ev->x = dev->mouse.x;
+		ev->y = dev->mouse.y;
+		ev->button = 1;
+		ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
+	}
+	else if(dev->mouse.event == ECORE_FB_EVENT_MOUSE_BUTTON_UP)
+	{
+		Ecore_Fb_Event_Mouse_Button_Up *ev;
+		ev = calloc(1, sizeof(Ecore_Fb_Event_Mouse_Button_Up));
+		ev->x = dev->mouse.x;
+		ev->y = dev->mouse.y;
+		ev->button = 1;
+		ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
 	}
 }
 
@@ -320,6 +365,9 @@ _ecore_fb_li_device_fd_callback(void *data, Ecore_Fd_Handler *fdh)
 	{
 		switch(ev[i].type)
 		{
+			case EV_SYN:
+				_ecore_fb_li_device_event_syn(dev, &ev[i]);
+				break;
 			case EV_ABS:
 				_ecore_fb_li_device_event_abs(dev, &ev[i]);
 				break;
