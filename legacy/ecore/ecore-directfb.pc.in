@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: ecore-directfb
 Description: E core library, DirectFB module
-Requires: ecore @requirements_ecore_directfb@
+Requires: @requirements_ecore_directfb@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_directfb
 Cflags: -I${includedir}

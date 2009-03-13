@@ -5,6 +5,7 @@ includedir=@includedir@
 
 Name: ecore-wince
 Description: E core library, WinCE module
+Requires: @requirements_ecore_wince@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_wince
 Libs.private: @WIN32_LIBS@

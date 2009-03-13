@@ -41,7 +41,7 @@ ECORE_SDL_LIB =
 endif
 
 if BUILD_ECORE_QUARTZ
-ECORE_QUARTZ_INC = -I$(top_srcdir)/src/lib/ecore_quartz @QUARTZ_CFLAGS@ -xobjective-c -framework Cocoa
+ECORE_QUARTZ_INC = -I$(top_srcdir)/src/lib/ecore_quartz @quartz_cflags@ -xobjective-c
 ECORE_QUARTZ_LIB = $(top_builddir)/src/lib/ecore_quartz/libecore_quartz.la
 else
 ECORE_QUARTZ_INC =
@@ -61,6 +61,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_evas \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore_evas \
+@EFL_ECORE_EVAS_BUILD@ \
 $(ECORE_X_INC) \
 $(ECORE_FB_INC) \
 $(ECORE_DIRECTFB_INC) \
@@ -104,7 +105,7 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 @EVAS_LIBS@ \
 @XCB_LIBS@ \
 @SDL_LIBS@ \
-@QUARTZ_LIBS@ \
+@quartz_libs@ \
 @EVIL_LIBS@ \
 @EINA_LIBS@
 

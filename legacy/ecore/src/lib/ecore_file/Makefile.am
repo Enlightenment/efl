@@ -4,6 +4,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_con \
 -I$(top_builddir)/src/lib/ecore \
+@EFL_ECORE_FILE_BUILD@ \
 @CURL_CFLAGS@ \
 @EVIL_CFLAGS@ \
 @EINA_CFLAGS@ \

@@ -5,7 +5,7 @@ if BUILD_ECORE_X_XLIB
 
 AM_CPPFLAGS = \
 @Xcursor_cflags@ \
-@Xkb_cflags@ \
+@XKB_CFLAGS@ \
 @XDAMAGE_CFLAGS@ \
 @XCOMPOSITE_CFLAGS@ \
 @XDPMS_CFLAGS@ \
@@ -57,7 +57,7 @@ ecore_x_atoms.c
 
 libecore_x_xlib_la_LIBADD = \
 @Xcursor_libs@ \
-@Xkb_libs@ \
+@XKB_LIBS@ \
 @XDAMAGE_LIBS@ \
 @XCOMPOSITE_LIBS@ \
 @XDPMS_LIBS@ \

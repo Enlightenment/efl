@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: ecore-con
 Description: E core library, Con module
-Requires: ecore @requirements_ecore_con@
+Requires: @requirements_ecore_con@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_con
 Cflags: -I${includedir}

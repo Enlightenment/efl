@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: ecore-imf
 Description: E core library, IMF module
-Requires: ecore
+Requires: @requirements_ecore_imf@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_imf
 Cflags: -I${includedir}

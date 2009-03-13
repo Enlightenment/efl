@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: ecore-evas
 Description: E core library, Evas module
-Requires: ecore @requirements_ecore_evas@
+Requires: @requirements_ecore_evas@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_evas @ecore_evas_libs@
 Cflags: -I${includedir}

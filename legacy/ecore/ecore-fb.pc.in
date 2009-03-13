@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: ecore-fb
 Description: E core library, FB module
-Requires: ecore @requirements_ecore_fb@
+Requires: @requirements_ecore_fb@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_fb
 Cflags: -I${includedir}

@@ -8,7 +8,7 @@
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 
-#ifdef BUILD_ECORE_EVAS_BUFFER
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
 static int _ecore_evas_init_count = 0;
 
 static int _ecore_evas_fps_debug = 0;
@@ -435,7 +435,7 @@ static const Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
 EAPI Ecore_Evas *
 ecore_evas_buffer_new(int w, int h)
 {
-#ifdef BUILD_ECORE_EVAS_BUFFER
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
    Evas_Engine_Info_Buffer *einfo;
    Ecore_Evas *ee;
    int rmethod;
@@ -514,7 +514,7 @@ ecore_evas_buffer_new(int w, int h)
 EAPI const void *
 ecore_evas_buffer_pixels_get(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_BUFFER
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
    _ecore_evas_buffer_render(ee);
    return ee->engine.buffer.pixels;
 #else
@@ -525,7 +525,7 @@ ecore_evas_buffer_pixels_get(Ecore_Evas *ee)
 EAPI Evas_Object *
 ecore_evas_object_image_new(Ecore_Evas *ee_target)
 {
-#ifdef BUILD_ECORE_EVAS_BUFFER
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
    Evas_Object *o;
    Evas_Engine_Info_Buffer *einfo;
    Ecore_Evas *ee;

@@ -31,7 +31,7 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
    switch (engine)
      {
       case ECORE_EVAS_ENGINE_SOFTWARE_BUFFER:
-#ifdef BUILD_ECORE_EVAS_BUFFER
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
 	return 1;
 #else
 	return 0;
@@ -84,8 +84,8 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 #else
 	return 0;
 #endif
-     case ECORE_EVAS_ENGINE_SDL:
-#ifdef BUILD_ECORE_EVAS_SDL
+     case ECORE_EVAS_ENGINE_SOFTWARE_SDL:
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
         return 1;
 #else
         return 0;
@@ -175,7 +175,7 @@ ecore_evas_shutdown(void)
 #ifdef BUILD_ECORE_EVAS_FB
 	while (_ecore_evas_fb_shutdown());
 #endif
-#ifdef BUILD_ECORE_EVAS_BUFFER
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
 	while (_ecore_evas_buffer_shutdown());
 #endif
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
@@ -339,7 +339,7 @@ _ecore_evas_constructor_software_16_x11(int x, int y, int w, int h, const char *
 }
 #endif
 
-#ifdef BUILD_ECORE_EVAS_SDL
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
 static Ecore_Evas *
 _ecore_evas_constructor_sdl(int x, int y, int w, int h, const char *extra_options)
 {
@@ -441,7 +441,7 @@ _ecore_evas_constructor_opengl_glew(int x, int y, int w, int h, const char *extr
 static Ecore_Evas *
 _ecore_evas_constructor_software_16_ddraw(int x, int y, int w, int h, const char *extra_options)
 {
-   return ecore_evas_software_ddraw_new(NULL, x, y, w, h);
+   return ecore_evas_software_16_ddraw_new(NULL, x, y, w, h);
 }
 #endif
 
@@ -471,7 +471,7 @@ _ecore_evas_constructor_software_16_wince_gdi(int x, int y, int w, int h, const 
 }
 #endif
 
-#ifdef BUILD_ECORE_EVAS_BUFFER
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
 static Ecore_Evas *
 _ecore_evas_constructor_buffer(int x, int y, int w, int h, const char *extra_options)
 {
@@ -528,13 +528,13 @@ static const struct ecore_evas_engine _engines[] = {
 #endif
 
   /* Last chance to have a window */
-#ifdef BUILD_ECORE_EVAS_SDL
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
   {"sdl", _ecore_evas_constructor_sdl},
   {"software_16_sdl", _ecore_evas_constructor_sdl16},
 #endif
 
   /* independent */
-#ifdef BUILD_ECORE_EVAS_BUFFER
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
   {"buffer", _ecore_evas_constructor_buffer},
 #endif
   {NULL, NULL}

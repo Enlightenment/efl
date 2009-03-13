@@ -3,6 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore \
+@EFL_ECORE_SDL_BUILD@ \
 @SDL_CFLAGS@ \
 @EINA_CFLAGS@
 

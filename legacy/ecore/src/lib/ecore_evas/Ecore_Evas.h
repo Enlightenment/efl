@@ -64,6 +64,7 @@ extern "C" {
 #define HAVE_ECORE_EVAS_X11_16 1
 #define HAVE_ECORE_EVAS_DIRECTFB 1
 #define HAVE_ECORE_EVAS_WIN32 1
+#define HAVE_ECORE_EVAS_QUARTZ 1
 #define HAVE_ECORE_EVAS_SDL 1
 #define HAVE_ECORE_EVAS_WINCE 1
 
@@ -78,7 +79,8 @@ typedef enum _Ecore_Evas_Engine_Type
    ECORE_EVAS_ENGINE_SOFTWARE_DDRAW,
    ECORE_EVAS_ENGINE_DIRECT3D,
    ECORE_EVAS_ENGINE_OPENGL_GLEW,
-   ECORE_EVAS_ENGINE_SDL,
+   ECORE_EVAS_ENGINE_QUARTZ,
+   ECORE_EVAS_ENGINE_SOFTWARE_SDL,
    ECORE_EVAS_ENGINE_DIRECTFB,
    ECORE_EVAS_ENGINE_SOFTWARE_FB,
    ECORE_EVAS_ENGINE_SOFTWARE_16_X11,
@@ -181,7 +183,7 @@ EAPI Ecore_Evas     *ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
                                                    int                 width,
                                                    int                 height);
 
-EAPI Ecore_Evas     *ecore_evas_software_ddraw_16_new(Ecore_Win32_Window *parent,
+EAPI Ecore_Evas     *ecore_evas_software_16_ddraw_new(Ecore_Win32_Window *parent,
                                                       int                 x,
                                                       int                 y,
                                                       int                 width,
@@ -235,6 +237,8 @@ EAPI Ecore_Evas     *ecore_evas_software_wince_gdi_new(Ecore_WinCE_Window *paren
                                                        int                 height);
 
 EAPI Ecore_WinCE_Window *ecore_evas_software_wince_window_get(const Ecore_Evas *ee);
+
+EAPI Ecore_Evas *ecore_evas_quartz_new(const char* name, int w, int h);
 
 /* generic manipulation calls */
 EAPI const char *ecore_evas_engine_name_get(const Ecore_Evas *ee);

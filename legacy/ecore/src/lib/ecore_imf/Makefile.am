@@ -4,6 +4,7 @@ if BUILD_ECORE_IMF
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+@EFL_ECORE_IMF_BUILD@ \
 @EVIL_CFLAGS@ \
 @EINA_CFLAGS@
 

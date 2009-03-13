@@ -5,6 +5,7 @@ includedir=@includedir@
 
 Name: ecore-win32
 Description: E core library, Win32 module
+Requires: @requirements_ecore_win32@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_win32
 Libs.private: @ddraw_libs@ @direct3d_libs@

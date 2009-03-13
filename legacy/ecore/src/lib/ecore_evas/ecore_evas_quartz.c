@@ -495,7 +495,7 @@ static const Ecore_Evas_Engine_Func _ecore_quartz_engine_func =
 };
 #endif
 
-EAPI Ecore_Evas*
+EAPI Ecore_Evas *
 ecore_evas_quartz_new(const char* name, int w, int h)
 {
 #ifdef BUILD_ECORE_EVAS_QUARTZ

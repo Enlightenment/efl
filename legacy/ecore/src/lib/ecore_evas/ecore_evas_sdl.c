@@ -10,12 +10,12 @@
 #include "ecore_private.h"
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
-#ifdef BUILD_ECORE_EVAS_SDL
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
 #include "Ecore_Sdl.h"
 #include "Evas_Engine_SDL.h"
 #endif
 
-#ifdef BUILD_ECORE_EVAS_SDL
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
 
 /* static char *ecore_evas_default_display = "0"; */
 /* static Ecore_List *ecore_evas_input_devices = NULL; */
@@ -543,7 +543,7 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
 EAPI Ecore_Evas*
 ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha)
 {
-#ifdef BUILD_ECORE_EVAS_SDL
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
    Ecore_Evas          *ee;
    int                  rmethod;
 
@@ -562,7 +562,7 @@ ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen, int hwsurface
 EAPI Ecore_Evas*
 ecore_evas_sdl16_new(const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha)
 {
-#ifdef BUILD_ECORE_EVAS_SDL
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
    Ecore_Evas          *ee;
    int                  rmethod;
 

@@ -66,7 +66,7 @@
 # include "Ecore_DirectFB.h"
 #endif
 
-#ifdef BUILD_ECORE_EVAS_BUFFER
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
 # include <Evas_Engine_Buffer.h>
 #endif
 
@@ -189,7 +189,7 @@ struct _Ecore_Evas_Engine
       int real_h;
    } fb;
 #endif
-#ifdef BUILD_ECORE_EVAS_BUFFER
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
    struct {
       void *pixels;
       Evas_Object *image;
@@ -306,7 +306,7 @@ int _ecore_evas_x_shutdown(void);
 #ifdef BUILD_ECORE_EVAS_FB
 int _ecore_evas_fb_shutdown(void);
 #endif
-#ifdef BUILD_ECORE_EVAS_BUFFER
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
 int _ecore_evas_buffer_shutdown(void);
 void _ecore_evas_buffer_render(Ecore_Evas *ee);
 #endif
