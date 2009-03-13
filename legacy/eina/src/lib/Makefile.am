@@ -5,9 +5,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/include \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@EINA_CFLAGS@ \
--fno-strict-aliasing
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\"
 
 lib_LTLIBRARIES = libeina.la
 
@@ -61,6 +59,7 @@ endif
 
 libeina_la_LIBADD = @EINA_LIBS@ @dlopen_libs@
 libeina_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
+libeina_la_CFLAGS = @EINA_CFLAGS@
 
 clean-local:
 	rm -rf *.gcno

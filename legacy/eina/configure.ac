@@ -284,6 +284,12 @@ if ! test "${VMIC}" = "x" ; then
    EINA_CFLAGS="${EINA_CFLAGS} -Wall -W -Wextra" # -Werror
 fi
 
+GCC_MAJOR_VERSION=`$CC -dumpversion | sed "s/\..*//"`
+
+if test "$GCC_MAJOR_VERSION" = "3" ; then
+   EINA_CFLAGS="${EINA_CFLAGS} -fno-strict-aliasing"
+fi
+
 AC_SUBST(EINA_CFLAGS)
 
 
