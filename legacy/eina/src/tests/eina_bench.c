@@ -52,7 +52,7 @@ static void _mempool_init(void)
 {
     eina_mempool_init();
     /* force modules to be loaded in case they are not installed */
-    _modules = eina_module_list_get(PACKAGE_BUILD_DIR"/src/modules", 1, NULL, NULL);
+    _modules = eina_module_list_get(NULL, PACKAGE_BUILD_DIR"/src/modules", 1, NULL, NULL);
     eina_module_list_load(_modules);
 }
 

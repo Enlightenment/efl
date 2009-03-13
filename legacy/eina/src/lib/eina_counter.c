@@ -205,7 +205,7 @@ _eina_counter_asiprintf(char *base, int *position, const char *format, ...)
  *    test_malloc();
  *    eina_counter_stop(counter, 1);
  *
- *    eina_counter_dump(counter, stdout);
+ *    eina_counter_dump(counter);
  *
  *    eina_counter_delete(counter);
  *    eina_counter_shutdown();

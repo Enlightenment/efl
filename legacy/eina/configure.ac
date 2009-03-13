@@ -308,6 +308,9 @@ case "${host_os}" in
    *darwin*)
       EINA_LIBS="${EINA_LIBS} -lm"
    ;;
+   *cygwin*)
+      EINA_LIBS="${EINA_LIBS} -ldl -lm"
+   ;;
    *)
       EINA_LIBS="${EINA_LIBS} -ldl -lrt -lm"
    ;;
