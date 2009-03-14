@@ -1159,7 +1159,7 @@ _ecore_evas_engine_opengl_glew_init(Ecore_Evas *ee)
 }
 #endif /* BUILD_ECORE_EVAS_OPENGL_GLEW */
 
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DIRECTDRAW
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DDRAW
 static int
 _ecore_evas_engine_software_16_ddraw_init(Ecore_Evas *ee)
 {
@@ -1191,7 +1191,7 @@ _ecore_evas_engine_software_16_ddraw_init(Ecore_Evas *ee)
 
    return 1;
 }
-#endif /* BUILD_ECORE_EVAS_SOFTWARE_16_DIRECTDRAW */
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_16_DDRAW */
 
 #ifdef BUILD_ECORE_EVAS_WIN32
 static Ecore_Evas *
@@ -1305,7 +1305,7 @@ ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent __UNUSED__,
 #endif /* ! BUILD_ECORE_EVAS_SOFTWARE_DDRAW */
 
 
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DIRECTDRAW
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DDRAW
 
 EAPI Ecore_Evas *
 ecore_evas_software_16_ddraw_new(Ecore_Win32_Window *parent,
@@ -1334,7 +1334,7 @@ ecore_evas_software_16_ddraw_new(Ecore_Win32_Window *parent __UNUSED__,
    return NULL;
 }
 
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_DIRECTDRAW */
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_DDRAW */
 
 
 #ifdef BUILD_ECORE_EVAS_DIRECT3D
