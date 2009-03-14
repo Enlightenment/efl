@@ -61,14 +61,15 @@ dnl use: EVAS_CHECK_ENGINE_DEP_XRENDER_X11(engine, simple[, ACTION-IF-FOUND[, AC
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_XRENDER_X11],
 [
 
-have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
 AC_PATH_X
 AC_PATH_XTRA
 
-AC_CHECK_HEADERS([X11/X.h X11/extensions/Xrender.h], [have_dep="yes"])
+AC_CHECK_HEADERS([X11/X.h X11/extensions/Xrender.h],
+   [have_dep="yes"],
+   [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then
    if test "x$2" = "xyes" ; then
@@ -98,14 +99,15 @@ dnl use: EVAS_CHECK_ENGINE_DEP_GL_X11(engine, simple[, ACTION-IF-FOUND[, ACTION-
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_GL_X11],
 [
 
-have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
 AC_PATH_X
 AC_PATH_XTRA
 
-AC_CHECK_HEADERS([GL/gl.h GL/glu.h X11/X.h], [have_dep="yes"])
+AC_CHECK_HEADERS([GL/gl.h GL/glu.h X11/X.h],
+   [have_dep="yes"],
+   [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then
    if test "x$2" = "xyes" ; then
@@ -304,7 +306,6 @@ dnl use: EVAS_CHECK_ENGINE_DEP_DIRECT3D(engine, simple[, ACTION-IF-FOUND[, ACTIO
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_DIRECT3D],
 [
 
-have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
@@ -312,7 +313,8 @@ AC_CHECK_HEADERS([d3d9.h d3dx9.h],
    [
     have_dep="yes"
     evas_engine_[]$1[]_libs="-ld3d9 -ld3dx9 -lgdi32"
-   ]
+   ],
+   [have_dep="no"]
 )
 
 AC_SUBST([evas_engine_$1_cflags])
@@ -331,12 +333,12 @@ dnl use: EVAS_CHECK_ENGINE_DEP_QUARTZ(engine, simple[, ACTION-IF-FOUND[, ACTION-
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_QUARTZ],
 [
 
-have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
 AC_CHECK_HEADERS([/System/Library/Frameworks/Cocoa.framework/Headers/Cocoa.h],
-   [have_dep="yes"]
+   [have_dep="yes"],
+   [have_dep="no"]
 )
 
 AC_SUBST([evas_engine_$1_cflags])
@@ -355,7 +357,6 @@ dnl use: EVAS_CHECK_ENGINE_DEP_GL_GLEW(engine, simple[, ACTION-IF-FOUND[, ACTION
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_GL_GLEW],
 [
 
-have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
@@ -363,7 +364,8 @@ AC_CHECK_HEADERS([GL/gl.h GL/glu.h GL/glew.h],
    [
     have_dep="yes"
     evas_engine_[]$1[]_libs="-lglu32 -lglew32 -lopengl32 -lgdi32"
-   ]
+   ],
+   [have_dep="no"]
 )
 
 AC_SUBST([evas_engine_$1_cflags])
