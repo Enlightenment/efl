@@ -186,7 +186,7 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
    cache->func.surface_delete(ie);
 
 #ifdef BUILD_ASYNC_PRELOAD
-   pthread_mutex_destroy(&ie->lock);
+   LKD(ie->lock);
 #endif
 
    cache->func.dealloc(ie);
@@ -237,7 +237,7 @@ _evas_cache_image_entry_new(Evas_Cache_Image *cache,
    ie->scale = 1;
 
 #ifdef BUILD_ASYNC_PRELOAD
-   pthread_mutex_init(&ie->lock, NULL);
+   LKI(ie->lock);
    ie->targets = NULL;
 #endif
 
@@ -1028,13 +1028,13 @@ evas_cache_image_load_data(Image_Entry *im)
    /* We check a first time, to prevent useless lock. */
    _evas_cache_image_entry_preload_remove(im, NULL);
    if (im->flags.loaded) return ;
-   pthread_mutex_lock(&im->lock);
+   LKL(im->lock);
 #endif
 
    error = cache->func.load(im);
 
 #ifdef BUILD_ASYNC_PRELOAD
-   pthread_mutex_unlock(&im->lock);
+   LKU(im->lock);
 #endif
 
    if (cache->func.debug)
@@ -1231,7 +1231,7 @@ _evas_cache_background_load(void *data)
 	     Evas_Cache_Image *cache;
 	     int error;
 
-	     pthread_mutex_lock(&current->lock);
+	     LKL(current->lock);
 	     cache = current->cache;
 
 	     error = cache->func.load(current);
@@ -1251,7 +1251,7 @@ _evas_cache_background_load(void *data)
 
 	     current->flags.preload = 0;
 
-	     pthread_mutex_unlock(&current->lock);
+	     LKU(current->lock);
 
 	     _evas_cache_image_async_call(current);
 	     current = NULL;
