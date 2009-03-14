@@ -308,7 +308,7 @@ have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
-AC_CHECK_HEADERS([d3d9.h d3dx9.h.h],
+AC_CHECK_HEADERS([d3d9.h d3dx9.h],
    [
     have_dep="yes"
     evas_engine_[]$1[]_libs="-ld3d9 -ld3dx9 -lgdi32"
