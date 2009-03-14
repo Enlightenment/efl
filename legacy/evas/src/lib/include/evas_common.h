@@ -16,6 +16,64 @@
 
 #include "evas_options.h"
 
+#if defined(__ARM_ARCH_3M__)
+# define __ARM_ARCH__ 40
+#endif
+#if defined(__ARM_ARCH_4__)
+# define __ARM_ARCH__ 40
+#endif
+#if defined(__ARM_ARCH_4T__)
+# define __ARM_ARCH__ 41
+#endif
+
+#if defined(__ARM_ARCH_5__)
+# define __ARM_ARCH__ 50
+#endif
+#if defined(__ARM_ARCH_5T__)
+# define __ARM_ARCH__ 51
+#endif
+#if defined(__ARM_ARCH_5E__)
+# define __ARM_ARCH__ 52
+#endif
+#if defined(__ARM_ARCH_5TE__)
+# define __ARM_ARCH__ 53
+#endif
+#if defined(__ARM_ARCH_5TEJ__)
+# define __ARM_ARCH__ 54
+#endif
+
+#if defined(__ARM_ARCH_6__)
+# define __ARM_ARCH__ 60
+#endif
+#if defined(__ARM_ARCH_6J__)
+# define __ARM_ARCH__ 61
+#endif
+#if defined(__ARM_ARCH_6K__)
+# define __ARM_ARCH__ 62
+#endif
+#if defined(__ARM_ARCH_6Z__)
+# define __ARM_ARCH__ 63
+#endif
+#if defined(__ARM_ARCH_6ZK__)
+# define __ARM_ARCH__ 64
+#endif
+#if defined(__ARM_ARCH_6T2__)
+# define __ARM_ARCH__ 65
+#endif
+
+#if defined(__ARM_ARCH_7__)
+# define __ARM_ARCH__ 70
+#endif
+#if defined(__ARM_ARCH_7A__)
+# define __ARM_ARCH__ 71
+#endif
+#if defined(__ARM_ARCH_7R__)
+# define __ARM_ARCH__ 72
+#endif
+#if defined(__ARM_ARCH_7M__)
+# define __ARM_ARCH__ 73
+#endif
+
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
@@ -324,7 +382,8 @@ typedef enum _CPU_Features
    CPU_FEATURE_SSE     = (1 << 2),
    CPU_FEATURE_ALTIVEC = (1 << 3),
    CPU_FEATURE_VIS     = (1 << 4),
-   CPU_FEATURE_VIS2    = (1 << 5)
+   CPU_FEATURE_VIS2    = (1 << 5),
+   CPU_FEATURE_NEON    = (1 << 6)
 } CPU_Features;
 
 typedef enum _Font_Hint_Flags
@@ -1053,6 +1112,12 @@ void              evas_font_dir_cache_free(void);
 
 /*****************************************************************************/
 
+#if defined(__ARM_ARCH__) && (__ARM_ARCH__ >= 70)
+#ifdef BUILD_NEON
+# include <arm_neon.h>
+#endif
+#endif   
+   
 #ifdef __cplusplus
 }
 #endif

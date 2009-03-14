@@ -89,6 +89,13 @@ evas_common_gfx_compositor_copy_rel_get(void)
 # include "./evas_op_copy/op_copy_mask_color_i386.c"
 //# include "./evas_op_copy/op_copy_pixel_mask_color_i386.c"
 
+//# include "./evas_op_copy/op_copy_pixel_i386.c"
+# include "./evas_op_copy/op_copy_color_neon.c"
+//# include "./evas_op_copy/op_copy_pixel_color_i386.c"
+//# include "./evas_op_copy/op_copy_pixel_mask_i386.c"
+//# include "./evas_op_copy/op_copy_mask_color_i386.c"
+////# include "./evas_op_copy/op_copy_pixel_mask_color_i386.c"
+
 
 static void
 op_copy_init(void)
@@ -121,6 +128,19 @@ op_copy_init(void)
    init_copy_color_pt_funcs_c();
    init_copy_mask_color_pt_funcs_c();
 #endif
+#ifdef BUILD_NEON
+//   init_copy_pixel_span_funcs_neon();
+//   init_copy_pixel_color_span_funcs_neon();
+//   init_copy_pixel_mask_span_funcs_neon();
+   init_copy_color_span_funcs_neon();
+//   init_copy_mask_color_span_funcs_neon();
+
+//   init_copy_pixel_pt_funcs_neon();
+//   init_copy_pixel_color_pt_funcs_neon();
+//   init_copy_pixel_mask_pt_funcs_neon();
+   init_copy_color_pt_funcs_neon();
+//   init_copy_mask_color_pt_funcs_neon();
+#endif
 }
 
 static void
@@ -137,6 +157,14 @@ copy_gfx_span_func_cpu(int s, int m, int c, int d)
    if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
     {
       cpu = CPU_MMX;
+      func = op_copy_span_funcs[s][m][c][d][cpu];
+      if (func) return func;
+    }
+#endif
+#ifdef BUILD_NEON
+   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+    {
+      cpu = CPU_NEON;
       func = op_copy_span_funcs[s][m][c][d][cpu];
       if (func) return func;
     }

@@ -10,4 +10,5 @@ op_blend_pixel_color_.c \
 op_blend_pixel_color_i386.c \
 op_blend_pixel_i386.c \
 op_blend_pixel_mask_.c \
-op_blend_pixel_mask_i386.c
+op_blend_pixel_mask_i386.c \
+op_blend_pixel_neon.c

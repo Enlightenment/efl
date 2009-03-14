@@ -3,6 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST = \
 op_copy_color_.c \
 op_copy_color_i386.c \
+op_copy_color_neon.c \
 op_copy_mask_color_.c \
 op_copy_mask_color_i386.c \
 op_copy_pixel_.c \

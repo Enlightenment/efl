@@ -610,10 +610,38 @@ if test "x$build_cpu_altivec" = "xyes"; then
          AC_DEFINE(BUILD_ALTIVEC, 1, [Build Altivec Code])
       fi
    fi
-   AC_MSG_RESULT($altivec_cflags)
+  AC_MSG_RESULT($altivec_cflags)
    CFLAGS="$CFLAGS $altivec_cflags"
 fi
 
+#######################################
+## NEON
+build_cpu_neon="no"
+case $host_cpu in
+  armv7*)
+    build_cpu_neon="yes"
+    ;;
+esac
+AC_MSG_CHECKING(whether to build neon code)
+AC_ARG_ENABLE(cpu-neon,
+  AC_HELP_STRING([--enable-cpu-neon], [enable neon code]),
+  [
+      if test "x$enableval" = "xyes" ; then
+        AC_MSG_RESULT(yes)
+        AC_DEFINE(BUILD_NEON, 1, [Build NEON Code])
+        build_cpu_neon="yes"
+      else
+        AC_MSG_RESULT(no)
+        build_cpu_neon="no"
+      fi
+  ],
+  [
+    AC_MSG_RESULT($build_cpu_neon)
+    if test "x$build_cpu_neon" = "xyes" ; then
+      AC_DEFINE(BUILD_NEON, 1, [Build NEON Code])
+    fi
+  ]
+)
 
 #######################################
 ## C
@@ -1069,6 +1097,7 @@ echo "  Fallback C Code.........: $build_cpu_c"
 echo "  MMX.....................: $build_cpu_mmx"
 echo "  SSE.....................: $build_cpu_sse"
 echo "  ALTIVEC.................: $build_cpu_altivec"
+echo "  NEON....................: $build_cpu_neon"
 echo "  Thread Support..........: $build_pthreads"
 echo "  MAGIC_DEBUG.............: $want_evas_magic_debug"
 echo

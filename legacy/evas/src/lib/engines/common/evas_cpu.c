@@ -77,6 +77,18 @@ evas_common_cpu_altivec_test(void)
 }
 
 void
+evas_common_cpu_neon_test(void)
+{
+#if defined(__ARM_ARCH__) && (__ARM_ARCH__ >= 70)
+#ifdef BUILD_NEON
+   asm volatile (
+                 "vqadd.u8 d0, d1, d0\n"
+                 );
+#endif
+#endif
+}
+
+void
 evas_common_cpu_vis_test(void)
 {
 #ifdef __SPARC__
@@ -159,6 +171,13 @@ evas_common_cpu_init(void)
    if (getenv("EVAS_CPU_NO_VIS"))
      cpu_feature_mask &= ~CPU_FEATURE_VIS;
 #endif /* __SPARC__ */
+#if defined(__ARM_ARCH__) && (__ARM_ARCH__ >= 70)
+#ifdef BUILD_NEON
+   cpu_feature_mask |= CPU_FEATURE_NEON *
+     evas_common_cpu_feature_test(evas_common_cpu_neon_test);
+   evas_common_cpu_end_opt();
+#endif
+#endif
 }
 
 int

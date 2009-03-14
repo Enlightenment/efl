@@ -84,6 +84,13 @@ evas_common_gfx_compositor_blend_rel_get(void)
 # include "./evas_op_blend/op_blend_mask_color_i386.c"
 //# include "./evas_op_blend/op_blend_pixel_mask_color_i386.c"
 
+# include "./evas_op_blend/op_blend_pixel_neon.c"
+//# include "./evas_op_blend/op_blend_color_neon.c"
+//# include "./evas_op_blend/op_blend_pixel_color_neon.c"
+//# include "./evas_op_blend/op_blend_pixel_mask_neon.c"
+//# include "./evas_op_blend/op_blend_mask_color_neon.c"
+////# include "./evas_op_blend/op_blend_pixel_mask_color_neon.c"
+
 static void
 op_blend_init(void)
 {
@@ -115,6 +122,19 @@ op_blend_init(void)
    init_blend_color_pt_funcs_c();
    init_blend_mask_color_pt_funcs_c();
 #endif
+#ifdef BUILD_NEON
+   init_blend_pixel_span_funcs_neon();
+//   init_blend_pixel_color_span_funcs_neon();
+//   init_blend_pixel_mask_span_funcs_neon();
+//   init_blend_color_span_funcs_neon();
+//   init_blend_mask_color_span_funcs_neon();
+
+   init_blend_pixel_pt_funcs_neon();
+//   init_blend_pixel_color_pt_funcs_neon();
+//   init_blend_pixel_mask_pt_funcs_neon();
+//   init_blend_color_pt_funcs_neon();
+//   init_blend_mask_color_pt_funcs_neon();
+#endif   
 }
 
 static void
@@ -131,6 +151,14 @@ blend_gfx_span_func_cpu(int s, int m, int c, int d)
    if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
      {
 	cpu = CPU_MMX;
+	func = op_blend_span_funcs[s][m][c][d][cpu];
+	if (func) return func;
+     }
+#endif
+#ifdef BUILD_NEON
+   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+     {
+	cpu = CPU_NEON;
 	func = op_blend_span_funcs[s][m][c][d][cpu];
 	if (func) return func;
      }
