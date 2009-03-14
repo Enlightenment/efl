@@ -7054,6 +7054,7 @@ collections {
       data.item: "selectraise" "on";
       data.item: "labels" "elm.text";
       data.item: "icons" "elm.swallow.icon elm.swallow.end";
+      data.item: "treesize" "20";
 //      data.item: "states" "";
       images {
          image: "bt_sm_base1.png" COMP;
@@ -7133,8 +7134,7 @@ collections {
                }
             }
          }
-         part { name: "elm.swallow.icon";
-            clip_to: "disclip";
+         part { name: "elm.swallow.pad";
             type: SWALLOW;
             description { state: "default" 0.0;
                fixed: 1 0;
@@ -7146,6 +7146,24 @@ collections {
                rel2 {
                   relative: 0.0  1.0;
                   offset:   4   -5;
+               }
+            }
+         }
+         part { name: "elm.swallow.icon";
+            clip_to: "disclip";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               fixed: 1 0;
+               align: 0.0 0.5;
+               rel1 {
+                  to_x: "elm.swallow.pad";
+                  relative: 1.0  0.0;
+                  offset:   -1    4;
+               }
+               rel2 {
+                  to_x: "elm.swallow.pad";
+                  relative: 1.0  1.0;
+                  offset:   -1   -5;
                }
             }
          }
@@ -7310,6 +7328,7 @@ collections {
       data.item: "selectraise" "on";
       data.item: "labels" "elm.text";
       data.item: "icons" "elm.swallow.icon elm.swallow.end";
+      data.item: "treesize" "20";
 //      data.item: "states" "";
       images {
          image: "bt_sm_base1.png" COMP;
@@ -7364,13 +7383,11 @@ collections {
                }
             }
          }
-         part {
-            name:          "elm.swallow.icon";
-            clip_to: "disclip";
-            type:          SWALLOW;
-            description { state:    "default" 0.0;
+         part { name: "elm.swallow.pad";
+            type: SWALLOW;
+            description { state: "default" 0.0;
                fixed: 1 0;
-               align:    0.0 0.5;
+               align: 0.0 0.5;
                rel1 {
                   relative: 0.0  0.0;
                   offset:   4    4;
@@ -7381,8 +7398,25 @@ collections {
                }
             }
          }
-         part {
-            name:          "elm.swallow.end";
+         part { name: "elm.swallow.icon";
+            clip_to: "disclip";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               fixed: 1 0;
+               align: 0.0 0.5;
+               rel1 {
+                  to_x: "elm.swallow.pad";
+                  relative: 1.0  0.0;
+                  offset:   -1    4;
+               }
+               rel2 {
+                  to_x: "elm.swallow.pad";
+                  relative: 1.0  1.0;
+                  offset:   -1   -5;
+               }
+            }
+         }
+         part { name: "elm.swallow.end";
             clip_to: "disclip";
             type:          SWALLOW;
             description { state:    "default" 0.0;
@@ -7544,6 +7578,7 @@ collections {
       data.item: "selectraise" "on";
       data.item: "labels" "elm.text";
       data.item: "icons" "elm.swallow.icon elm.swallow.end";
+      data.item: "treesize" "20";
 //      data.item: "states" "";
       images {
          image: "bt_sm_base1.png" COMP;
@@ -7625,6 +7660,21 @@ collections {
                }
             }
          }
+         part { name: "elm.swallow.pad";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               fixed: 1 0;
+               align: 0.0 0.5;
+               rel1 {
+                  relative: 0.0  0.0;
+                  offset:   4    4;
+               }
+               rel2 {
+                  relative: 0.0  1.0;
+                  offset:   4   -5;
+               }
+            }
+         }
          part { name: "arrow";
             clip_to: "disclip";
             ignore_flags: ON_HOLD;
@@ -7633,12 +7683,14 @@ collections {
                align: 0.0 0.5;
                aspect: 1.0 1.0;
                rel1 {
-                  relative: 0.0  0.0;
-                  offset:   4    4;
+                  to_x: "elm.swallow.pad";
+                  relative: 1.0  0.0;
+                  offset:   -1    4;
                }
                rel2 {
-                  relative: 0.0  1.0;
-                  offset:   4   -5;
+                  to_x: "elm.swallow.pad";
+                  relative: 1.0  1.0;
+                  offset:   -1   -5;
                }
                image.normal: "icon_arrow_right.png";
             }

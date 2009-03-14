@@ -54,6 +54,7 @@ struct _Elm_Genlist_Item
    } func;
    
    Evas_Object *base;
+   Evas_Object *spacer;
    Eina_List *labels, *icons, *states;
    Eina_List *icon_objs;
    
@@ -293,8 +294,11 @@ _signal_contract(void *data, Evas_Object *obj, const char *emission, const char 
 static void
 _item_realize(Elm_Genlist_Item *it, int in, int calc)
 {
+   Elm_Genlist_Item *it2;
    const char *stacking;
+   const char *treesize;
    char buf[1024];
+   int depth, tsize = 20;
    
    if (it->realized) return;
    if (it->delete_me) return;
@@ -317,6 +321,14 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
           snprintf(buf, sizeof(buf), "%s/%s", "item", it->itc->item_style);
      }
    _elm_theme_set(it->base, "genlist", buf, "default");
+   it->spacer = evas_object_rectangle_add(evas_object_evas_get(it->wd->obj));
+   evas_object_color_set(it->spacer, 0, 0, 0, 0);
+   elm_widget_sub_object_add(it->wd->obj, it->spacer);
+   for (it2 = it, depth = 0; it2->parent; it2 = it2->parent) depth += 1;
+   treesize = edje_object_data_get(it->base, "treesize");
+   if (treesize) tsize = atoi(treesize);
+   evas_object_size_hint_min_set(it->spacer, (depth * tsize) * _elm_config->scale, 1);
+   edje_object_part_swallow(it->base, "elm.swallow.pad", it->spacer);
    if (!calc)
      {
         edje_object_signal_callback_add(it->base, "elm,action,expand,toggle", "elm", _signal_expand_toggle, it);
@@ -410,6 +422,8 @@ _item_unrealize(Elm_Genlist_Item *it)
    if (!it->realized) return;
    evas_object_del(it->base);
    it->base = NULL;
+   evas_object_del(it->spacer);
+   it->spacer = NULL;
    _stringlist_free(it->labels);
    it->labels = NULL;
    _stringlist_free(it->icons);

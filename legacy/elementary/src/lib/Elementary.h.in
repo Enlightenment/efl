@@ -211,6 +211,7 @@ extern "C" {
    EAPI void         elm_win_maximized_set(Evas_Object *obj, Evas_Bool maximized);
    EAPI void         elm_win_iconified_set(Evas_Object *obj, Evas_Bool iconified);
    EAPI void         elm_win_layer_set(Evas_Object *obj, int layer);
+   EAPI void         elm_win_rotation_set(Evas_Object *obj, int rotation);
    /*...
     * ecore_x_icccm_hints_set -> accepts_focus (add to ecore_evas)
     * ecore_x_icccm_hints_set -> window_group (add to ecore_evas)
@@ -663,18 +664,15 @@ extern "C" {
 // * table doesnt do homogenous properly
 // 
 //// (incomplete - medium priority)
-// * entry selection conflicts with finger scroll (make selection start/stop work on signals?)
 // * disabled not supported
 // * on the fly theme changes - test (should work)
 // * need a hold-scroll counter in elm_widget
-// * add fullscreen mode on/off for windows
 // * hoversel only vertical right now - make horizontal
 // * when entries are in a scroller and change size, the scroller shows scrollbars. fix. same for selecting. for 1 line entries in a scroller should only have scroll arrow indicators.
 // 
 //// (more widgets/features - medium priority)
 // * tree feature for genlist widget (like biglist - but items can expand to sub-items)
-// * pager (for pushing/popping pages and going back and forward and flipping)
-// * <edje copy & paste fixed>
+// * <edje selection + copy & paste fixed so it works with scrolling>
 // * <evas scale cache>
 // * <evas shared cache>
 // 
@@ -701,6 +699,7 @@ extern "C" {
 // * generic "tacho" widget (set min/max labels - and up to 3 intermediate labels etc.)
 // * status widget (busy, stalled, running, etc.)
 // * full window in window widget (so move/resize of window object does as you'd expect a child window to do within the canvas)
+// * window frame widget for borderless windows that want the app to do its own frame (move, resize as well etc.)
 // 
 //// (improvements - low priority)
 // * test for all bubble styles
@@ -729,6 +728,7 @@ extern "C" {
 // * emotion widget
 // * ewebkit widget
 // * flash (gnash) widget
+// * menu bar + menu widget
 // * need url and path entry modes for vkbd
 // * return list of toplevel window objects
 // * focus should have an object that is layered above all others (definable layer) that moves + resizes (slides about - animated) from one focused widget to the next for focus. also emit focus/unfocus signals too

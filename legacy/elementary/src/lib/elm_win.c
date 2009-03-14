@@ -458,8 +458,17 @@ elm_win_fullscreen_set(Evas_Object *obj, Evas_Bool fullscreen)
 {
    Elm_Win *win = elm_widget_data_get(obj);
    if (!win) return;
-   ecore_evas_fullscreen_set(win->ee, fullscreen);
-   _elm_win_xwin_update(win);
+   switch (_elm_config->engine)
+     {
+     case ELM_SOFTWARE_16_WINCE:
+     case ELM_SOFTWARE_FB:
+        // these engines... can ONLY be fullscreen
+        break;
+     default:
+        ecore_evas_fullscreen_set(win->ee, fullscreen);
+        _elm_win_xwin_update(win);
+        break;
+     }
 }
 
 EAPI void
@@ -486,6 +495,15 @@ elm_win_layer_set(Evas_Object *obj, int layer)
    Elm_Win *win = elm_widget_data_get(obj);
    if (!win) return;
    ecore_evas_layer_set(win->ee, layer);
+   _elm_win_xwin_update(win);
+}
+
+EAPI void
+elm_win_rotation_set(Evas_Object *obj, int rotation)
+{
+   Elm_Win *win = elm_widget_data_get(obj);
+   if (!win) return;
+   ecore_evas_rotation_set(win->ee, rotation);
    _elm_win_xwin_update(win);
 }
 
