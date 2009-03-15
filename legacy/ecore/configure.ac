@@ -352,7 +352,7 @@ if test -z "$SDL_CONFIG" ; then
    AC_SUBST(SDL_LIBS)
    have_sdl="no"
 else
-   PKG_CHECK_MODULES([SDL], [sdl >= 1.2.0], [have_sdl="yes"])
+   PKG_CHECK_MODULES([SDL], [sdl >= 1.2.0], [have_sdl="yes"], [have_sdl="no"])
 fi
 
 if test "x${have_sdl}" = "xyes" ; then

@@ -199,14 +199,12 @@ if test "x${_ecore_want_tslib}" = "xyes" -o "x${_ecore_want_tslib}" = "xauto" ; 
      [
       AC_DEFINE(HAVE_TSLIB, 1, [Build Ecore_FB Touchscreen Code])
       _ecore_have_ts="yes"
-     ],
-     [
+     ],[
       PKG_CHECK_MODULES(TSLIB, tslib,
         [
          AC_DEFINE(HAVE_TSLIB, 1, [Build Ecore_FB Touchscreen Code])
          _ecore_have_ts="yes"
-        ],
-        [
+        ],[
          AC_CHECK_HEADER([tslib.h],
            [
             AC_CHECK_LIB([ts], [ts_open], 
@@ -215,14 +213,14 @@ if test "x${_ecore_want_tslib}" = "xyes" -o "x${_ecore_want_tslib}" = "xauto" ; 
                TSLIB_CFLAGS=""
                AC_DEFINE(HAVE_TSLIB, 1, [Build Ecore_FB Touchscreen Code])
                _ecore_have_ts="yes"
-              ,
+              ],[
                AC_CHECK_LIB([tslib], [ts_open],
                  [
                   TSLIB_LIBS="-ltslib"
                   TSLIB_CFLAGS=""
                   AC_DEFINE(HAVE_TSLIB, 1, [Build Ecore_FB Touchscreen Code])
                   _ecore_have_ts="yes"
-                 ,
+                 ],[
                   _ecore_have_ts="no"
                  ])
               ])
