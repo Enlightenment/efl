@@ -508,12 +508,12 @@ extern "C" {
     * "clicked" - when the user clicks on a toolbar item and becomes selected
     */
 
-   typedef enum _Elementary_List_Mode
+   typedef enum _Elm_List_Mode
      {
         ELM_LIST_COMPRESS,
         ELM_LIST_SCROLL,
         ELM_LIST_LIMIT
-     } Elementary_List_Mode;
+     } Elm_List_Mode;
    typedef struct _Elm_List_Item Elm_List_Item;
    EAPI Evas_Object *elm_list_add(Evas_Object *parent);
    EAPI Elm_List_Item *elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
@@ -571,14 +571,20 @@ extern "C" {
      } Elm_Genlist_Item_Flags;
    typedef struct _Elm_Genlist_Item_Class Elm_Genlist_Item_Class;
    typedef struct _Elm_Genlist_Item       Elm_Genlist_Item;
+   typedef struct _Elm_Genlist_Item_Class_Func Elm_Genlist_Item_Class_Func;
+   typedef char        *(*GenlistItemLabelGetFunc) (const void *data, Evas_Object *obj, const char *part);
+   typedef Evas_Object *(*GenlistItemIconGetFunc)  (const void *data, Evas_Object *obj, const char *part);
+   typedef Evas_Bool    (*GenlistItemStateGetFunc) (const void *data, Evas_Object *obj, const char *part);
+   typedef void         (*GenlistItemDelFunc)       (const void *data, Evas_Object *obj);
+                                               
    struct _Elm_Genlist_Item_Class
      {
         const char *item_style;
-        struct {
-           char        *(*label_get) (const void *data, Evas_Object *obj, const char *part);
-           Evas_Object *(*icon_get)  (const void *data, Evas_Object *obj, const char *part);
-           Evas_Bool    (*state_get) (const void *data, Evas_Object *obj, const char *part);
-           void         (*del)       (const void *data, Evas_Object *obj);
+        struct _Elm_Genlist_Item_Class_Func {
+           GenlistItemLabelGetFunc label_get;
+           GenlistItemIconGetFunc icon_get;
+           GenlistItemStateGetFunc state_get;
+           GenlistItemDelFunc del;
         } func;
      };
 
