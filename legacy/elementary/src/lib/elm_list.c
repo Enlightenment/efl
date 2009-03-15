@@ -8,7 +8,7 @@ struct _Widget_Data
    Evas_Object *scroller, *box;
    Eina_List *items;
    Eina_List *selected;
-   Elementary_List_Mode mode;
+   Elm_List_Mode mode;
    Evas_Coord minw[2], minh[2];
    Evas_Bool on_hold : 1;
    Evas_Bool multi : 1;
@@ -429,7 +429,7 @@ elm_list_multi_select_set(Evas_Object *obj, Evas_Bool multi)
 }
 
 EAPI void
-elm_list_horizontal_mode_set(Evas_Object *obj, Elementary_List_Mode mode)
+elm_list_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->mode == mode) return;

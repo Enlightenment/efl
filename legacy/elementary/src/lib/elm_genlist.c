@@ -19,7 +19,7 @@ struct _Widget_Data
    Eina_List *queue;
    Eina_List *selected;
    Elm_Genlist_Item *show_item;
-   Elementary_List_Mode mode;
+   Elm_List_Mode mode;
    Evas_Bool on_hold : 1;
    Evas_Bool multi : 1;
    Evas_Bool min_w : 1;
@@ -1432,7 +1432,7 @@ elm_genlist_item_update(Elm_Genlist_Item *it)
 }
 
 EAPI void
-elm_genlist_horizontal_mode_set(Evas_Object *obj, Elementary_List_Mode mode)
+elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->mode == mode) return;

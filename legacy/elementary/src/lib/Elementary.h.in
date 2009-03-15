@@ -522,7 +522,7 @@ extern "C" {
    EAPI Elm_List_Item *elm_list_item_insert_after(Evas_Object *obj, Elm_List_Item *after, const char *label, Evas_Object *icon, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
    EAPI void         elm_list_go(Evas_Object *obj);
    EAPI void         elm_list_multi_select_set(Evas_Object *obj, Evas_Bool multi);
-   EAPI void         elm_list_horizontal_mode_set(Evas_Object *obj, Elementary_List_Mode mode);
+   EAPI void         elm_list_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode);
    EAPI const Eina_List     *elm_list_items_get(const Evas_Object *obj);
    EAPI Elm_List_Item       *elm_list_selected_item_get(const Evas_Object *obj);
    EAPI const Eina_List     *elm_list_selected_items_get(const Evas_Object *obj);
@@ -575,7 +575,7 @@ extern "C" {
    typedef char        *(*GenlistItemLabelGetFunc) (const void *data, Evas_Object *obj, const char *part);
    typedef Evas_Object *(*GenlistItemIconGetFunc)  (const void *data, Evas_Object *obj, const char *part);
    typedef Evas_Bool    (*GenlistItemStateGetFunc) (const void *data, Evas_Object *obj, const char *part);
-   typedef void         (*GenlistItemDelFunc)       (const void *data, Evas_Object *obj);
+   typedef void         (*GenlistItemDelFunc)      (const void *data, Evas_Object *obj);
                                                
    struct _Elm_Genlist_Item_Class
      {
@@ -613,7 +613,7 @@ extern "C" {
    EAPI void              elm_genlist_item_del(Elm_Genlist_Item *item);
    EAPI const void       *elm_genlist_item_data_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_update(Elm_Genlist_Item *item);
-   EAPI void              elm_genlist_horizontal_mode_set(Evas_Object *obj, Elementary_List_Mode mode);
+   EAPI void              elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode);
    /* smart callbacks called:
     * "clicked" - when the user double-clicked an item
     * "selected" - when the user selected an item
