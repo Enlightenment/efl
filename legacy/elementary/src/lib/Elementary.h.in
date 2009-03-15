@@ -677,7 +677,6 @@ extern "C" {
 // * when entries are in a scroller and change size, the scroller shows scrollbars. fix. same for selecting. for 1 line entries in a scroller should only have scroll arrow indicators.
 // 
 //// (more widgets/features - medium priority)
-// * tree feature for genlist widget (like biglist - but items can expand to sub-items)
 // * <edje selection + copy & paste fixed so it works with scrolling>
 // * <evas scale cache>
 // * <evas shared cache>
