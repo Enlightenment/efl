@@ -214,7 +214,7 @@ extern "C" {
    EAPI int               ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url);
    EAPI void		  ecore_con_url_fd_set(Ecore_Con_Url *url_con, int fd);
    EAPI int		  ecore_con_url_received_bytes_get(Ecore_Con_Url *url_con);
-   EAPI int               ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *content_type);
+   EAPI int               ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length, const char *content_type);
    EAPI void              ecore_con_url_time(Ecore_Con_Url *url_con, Ecore_Con_Url_Time condition, time_t tm);
 
 #ifdef HAVE_NETDB_H
@@ -224,7 +224,7 @@ extern "C" {
    EAPI int		  ecore_con_info_get(Ecore_Con_Server *svr, Ecore_Con_Info_Cb done_cb, void *data, struct addrinfo *hints);
 #endif
 
-   EAPI int		  ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, char *filename, char *user, char *pass, char *upload_dir);
+   EAPI int		  ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename, const char *user, const char *pass, const char *upload_dir);
    EAPI void		  ecore_con_url_verbose_set(Ecore_Con_Url *url_con, int verbose);
    EAPI void		  ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con, int use_epsv);
 

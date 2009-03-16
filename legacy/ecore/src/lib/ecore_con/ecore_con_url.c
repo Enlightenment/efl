@@ -428,7 +428,7 @@ ecore_con_url_received_bytes_get(Ecore_Con_Url *url_con)
  * @ingroup Ecore_Con_Url_Group
  */
 EAPI int
-ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *content_type)
+ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length, const char *content_type)
 {
 #ifdef HAVE_CURL
    char tmp[256];
@@ -498,7 +498,7 @@ ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *cont
  * @ingroup Ecore_Con_Url_Group
  */
 EAPI int 
-ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, char *filename, char *user, char *pass, char *upload_dir)
+ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename, const char *user, const char *pass, const char *upload_dir)
 {
 #ifdef HAVE_CURL
    char url[4096];
