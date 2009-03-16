@@ -89,12 +89,12 @@ evas_common_gfx_compositor_copy_rel_get(void)
 # include "./evas_op_copy/op_copy_mask_color_i386.c"
 //# include "./evas_op_copy/op_copy_pixel_mask_color_i386.c"
 
-//# include "./evas_op_copy/op_copy_pixel_i386.c"
+# include "./evas_op_copy/op_copy_pixel_neon.c"
 # include "./evas_op_copy/op_copy_color_neon.c"
-//# include "./evas_op_copy/op_copy_pixel_color_i386.c"
-//# include "./evas_op_copy/op_copy_pixel_mask_i386.c"
-//# include "./evas_op_copy/op_copy_mask_color_i386.c"
-////# include "./evas_op_copy/op_copy_pixel_mask_color_i386.c"
+# include "./evas_op_copy/op_copy_pixel_color_neon.c"
+# include "./evas_op_copy/op_copy_pixel_mask_neon.c"
+# include "./evas_op_copy/op_copy_mask_color_neon.c"
+//# include "./evas_op_copy/op_copy_pixel_mask_color_neon.c"
 
 
 static void
@@ -129,11 +129,11 @@ op_copy_init(void)
    init_copy_mask_color_pt_funcs_c();
 #endif
 #ifdef BUILD_NEON
-//   init_copy_pixel_span_funcs_neon();
-//   init_copy_pixel_color_span_funcs_neon();
-//   init_copy_pixel_mask_span_funcs_neon();
+   init_copy_pixel_span_funcs_neon();
+   init_copy_pixel_color_span_funcs_neon();
+   init_copy_pixel_mask_span_funcs_neon();
    init_copy_color_span_funcs_neon();
-//   init_copy_mask_color_span_funcs_neon();
+   init_copy_mask_color_span_funcs_neon();
 
 //   init_copy_pixel_pt_funcs_neon();
 //   init_copy_pixel_color_pt_funcs_neon();

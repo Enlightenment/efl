@@ -4,9 +4,9 @@
 #ifdef BUILD_NEON
 static void
 _op_copy_c_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
-   // FIXME: handle unaligned stores - stores not aligned to 16bytes may suck
    uint32_t *e;
    uint32_t dalign = ((uint32_t)d) & 0xf; // get alignment
+   // handle unaligned stores - stores not aligned to 16bytes may suck
    if (dalign > 0)
      {
         dalign = 16 - dalign;
@@ -20,7 +20,9 @@ _op_copy_c_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
      }
    e = d + l;
    e -= 15;
+   // expand the color in c to a 128 bit register as "cccc" i.e 4 pixels of c
    uint32x4_t col = vdupq_n_u32(c);
+   // fill a run of 4x4 (16) pixels with the color
    for (; d < e; d += 16) {
       vst1q_u32(d+0, col); // OP
       vst1q_u32(d+4, col); // OP
@@ -28,6 +30,7 @@ _op_copy_c_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
       vst1q_u32(d+12, col); // OP
    }
    e += 15;
+   // fixup any leftover pixels in the run
    for (; d < e; d++) {
       *d = c; // OP
    }
@@ -60,7 +63,7 @@ init_copy_color_span_funcs_neon(void)
 #ifdef BUILD_NEON
 static void
 _op_copy_pt_c_dp_neon(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
-     *d = c;
+   *d = c;
 }
 
 #define _op_copy_pt_cn_dp_neon _op_copy_pt_c_dp_neon
@@ -128,8 +131,8 @@ init_copy_rel_color_span_funcs_neon(void)
 #ifdef BUILD_NEON
 static void
 _op_copy_rel_pt_c_dp_neon(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
-	s = 1 + (*d >> 24);
-	*d = MUL_256(s, c);
+   s = 1 + (*d >> 24);
+   *d = MUL_256(s, c);
 }
 
 

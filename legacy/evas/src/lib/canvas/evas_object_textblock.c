@@ -2279,7 +2279,7 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, in
 	       {
 		  *lnr = ln;
 		  /* FIXME: Is that really what we want ? */
-		  *itr = fit;
+		  *itr = (Evas_Object_Textblock_Item *)fit;
 		  return;
 	       }
 	  }
