@@ -126,6 +126,8 @@ typedef void Ecore_WinCE_Window;
 typedef struct _Ecore_Evas Ecore_Evas;
 #endif
 
+#include <Ecore_Input.h>
+
 /* module setup/shutdown calls */
 
 EAPI int         ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine);
@@ -316,7 +318,7 @@ EAPI void        ecore_evas_sticky_set(Ecore_Evas *ee, int sticky);
 EAPI int         ecore_evas_sticky_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_ignore_events_set(Ecore_Evas *ee, int ignore);
 EAPI int         ecore_evas_ignore_events_get(const Ecore_Evas *ee);
-EAPI void       *ecore_evas_window_get(const Ecore_Evas *ee);
+EAPI Ecore_Window ecore_evas_window_get(const Ecore_Evas *ee);
 
 
 EAPI int          ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object_Associate_Flags flags);

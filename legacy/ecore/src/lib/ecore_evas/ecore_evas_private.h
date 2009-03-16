@@ -8,6 +8,7 @@
 # include <config.h>
 #endif
 
+#include "ecore_private.h"
 #include "Ecore_Data.h"
 
 #include <sys/types.h>
@@ -93,8 +94,10 @@
 
 
 #define IDLE_FLUSH_TIME 0.5
+#ifndef _ECORE_EVAS_H
+typedef struct _Ecore_Evas Ecore_Evas;
+#endif
 
-typedef struct _Ecore_Evas             Ecore_Evas;
 typedef struct _Ecore_Evas_Engine      Ecore_Evas_Engine;
 typedef struct _Ecore_Evas_Engine_Func Ecore_Evas_Engine_Func;
 
@@ -145,7 +148,6 @@ struct _Ecore_Evas_Engine_Func
    void        (*fn_sticky_set) (Ecore_Evas *ee, int sticky);
    void        (*fn_ignore_events_set) (Ecore_Evas *ee, int ignore);
    void        (*fn_alpha_set) (Ecore_Evas *ee, int alpha);
-   void       *(*fn_window_get) (const Ecore_Evas *ee);
 };
 
 struct _Ecore_Evas_Engine
@@ -155,7 +157,6 @@ struct _Ecore_Evas_Engine
 #if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
    struct {
       Ecore_X_Window win_root;
-      Ecore_X_Window win;
       Eina_List     *win_extra;
       Ecore_X_Pixmap pmap;
       Ecore_X_Pixmap mask;
@@ -264,6 +265,7 @@ struct _Ecore_Evas
 	 } hot;
       } cursor;
       int             layer;
+      Ecore_Window    window;
       unsigned char   avoid_damage;
       char            focused      : 1;
       char            iconified    : 1;

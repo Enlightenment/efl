@@ -11,9 +11,10 @@
 #endif
 
 #include "Ecore.h"
+#include "Ecore_Evas.h"
+
 #include "ecore_private.h"
 #include "ecore_evas_private.h"
-#include "Ecore_Evas.h"
 
 #ifdef BUILD_ECORE_EVAS_QUARTZ
 #include "Ecore_Quartz.h"

@@ -10,13 +10,14 @@
 #include <dirent.h>
 
 #include "Ecore.h"
-#include "ecore_private.h"
-#include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 #ifdef BUILD_ECORE_EVAS_FB
 #include "Ecore_Fb.h"
 #include "ecore_fb_private.h"
 #endif
+
+#include "ecore_private.h"
+#include "ecore_evas_private.h"
 
 #ifdef BUILD_ECORE_EVAS_FB
 static int _ecore_evas_init_count = 0;
@@ -595,8 +596,9 @@ static const Ecore_Evas_Engine_Func _ecore_fb_engine_func =
      NULL,
      NULL,
      NULL,
-     _ecore_evas_fullscreen_set,
      NULL,
+     NULL,
+     _ecore_evas_fullscreen_set,
      NULL,
      NULL,
      NULL

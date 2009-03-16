@@ -8,24 +8,48 @@
 
 #include <SDL/SDL.h>
 
+#include "Eina.h"
 #include "Ecore_Sdl.h"
 #include "ecore_private.h"
+#include "Ecore_Input.h"
 #include "Ecore.h"
 #include "Ecore_Data.h"
 #include "Ecore_Sdl_Keys.h"
 
-EAPI int ECORE_SDL_EVENT_KEY_DOWN = 0;
-EAPI int ECORE_SDL_EVENT_KEY_UP = 0;
-EAPI int ECORE_SDL_EVENT_MOUSE_BUTTON_DOWN = 0;
-EAPI int ECORE_SDL_EVENT_MOUSE_BUTTON_UP = 0;
-EAPI int ECORE_SDL_EVENT_MOUSE_MOVE = 0;
-EAPI int ECORE_SDL_EVENT_MOUSE_WHEEL = 0;
+#include <eina_rbtree.h>
+
+typedef struct _Ecore_SDL_Pressed Ecore_SDL_Pressed;
+struct _Ecore_SDL_Pressed
+{
+   EINA_RBTREE;
+
+   SDLKey key;
+};
+
 EAPI int ECORE_SDL_EVENT_GOT_FOCUS = 0;
 EAPI int ECORE_SDL_EVENT_LOST_FOCUS = 0;
 EAPI int ECORE_SDL_EVENT_RESIZE = 0;
 EAPI int ECORE_SDL_EVENT_EXPOSE = 0;
 
 static int _ecore_sdl_init_count = 0;
+static Eina_Rbtree *repeat = NULL;
+
+static Eina_Rbtree_Direction
+_ecore_sdl_pressed_key(const Ecore_SDL_Pressed *left,
+		       const Ecore_SDL_Pressed *right,
+		       __UNUSED__ void *data)
+{
+   return left->key < right->key ? EINA_RBTREE_LEFT : EINA_RBTREE_RIGHT;
+}
+
+static int
+_ecore_sdl_pressed_node(const Ecore_SDL_Pressed *node,
+			const SDLKey *key,
+			__UNUSED__ int length,
+			__UNUSED__ void *data)
+{
+   return node->key - *key;
+}
 
 /**
  * @defgroup Ecore_Sdl_Library_Group Framebuffer Library Functions
@@ -43,20 +67,17 @@ static int _ecore_sdl_init_count = 0;
 EAPI int
 ecore_sdl_init(const char *name __UNUSED__)
 {
-	if(!_ecore_sdl_init_count)
-	{
-		ECORE_SDL_EVENT_KEY_DOWN          = ecore_event_type_new();
-		ECORE_SDL_EVENT_KEY_UP            = ecore_event_type_new();
-		ECORE_SDL_EVENT_MOUSE_BUTTON_DOWN = ecore_event_type_new();
-		ECORE_SDL_EVENT_MOUSE_BUTTON_UP   = ecore_event_type_new();
-		ECORE_SDL_EVENT_MOUSE_MOVE        = ecore_event_type_new();
-		ECORE_SDL_EVENT_MOUSE_WHEEL       = ecore_event_type_new();
-                ECORE_SDL_EVENT_GOT_FOCUS         = ecore_event_type_new();
-                ECORE_SDL_EVENT_LOST_FOCUS        = ecore_event_type_new();
-                ECORE_SDL_EVENT_RESIZE            = ecore_event_type_new();
-                ECORE_SDL_EVENT_EXPOSE            = ecore_event_type_new();
-	}
-	return ++_ecore_sdl_init_count;
+   if(!_ecore_sdl_init_count)
+     {
+	ECORE_SDL_EVENT_GOT_FOCUS         = ecore_event_type_new();
+	ECORE_SDL_EVENT_LOST_FOCUS        = ecore_event_type_new();
+	ECORE_SDL_EVENT_RESIZE            = ecore_event_type_new();
+	ECORE_SDL_EVENT_EXPOSE            = ecore_event_type_new();
+
+	SDL_EnableKeyRepeat(200, 100);
+     }
+   ecore_event_init();
+   return ++_ecore_sdl_init_count;
 }
 
 /**
@@ -68,8 +89,37 @@ ecore_sdl_init(const char *name __UNUSED__)
 EAPI int
 ecore_sdl_shutdown(void)
 {
-	_ecore_sdl_init_count--;
-	return _ecore_sdl_init_count;
+   _ecore_sdl_init_count--;
+   ecore_event_shutdown();
+   return _ecore_sdl_init_count;
+}
+
+static Ecore_Event_Key*
+_ecore_sdl_event_key(SDL_Event *event, double time)
+{
+   Ecore_Event_Key *ev;
+   unsigned int i;
+
+   ev = malloc(sizeof(Ecore_Event_Key));
+   if (!ev) return NULL;
+
+   ev->timestamp = time;
+   ev->window = 0;
+   ev->modifiers = 0; /* FIXME: keep modifier around. */
+   ev->key = NULL;
+   ev->compose = NULL;
+
+   for (i = 0; i < sizeof(keystable) / sizeof(struct _ecore_sdl_keys_s); ++i)
+     if (keystable[i].code == event->key.keysym.sym)
+       {
+	  ev->keyname = keystable[i].name;
+	  ev->string = keystable[i].compose;
+
+	  return ev;
+       }
+
+   free(ev);
+   return NULL;
 }
 
 EAPI void
@@ -85,14 +135,20 @@ ecore_sdl_feed_events(void)
           {
           case SDL_MOUSEMOTION:
           {
-             Ecore_Sdl_Event_Mouse_Move *ev;
+	     Ecore_Event_Mouse_Move *ev;
 
-             ev = malloc(sizeof(Ecore_Sdl_Event_Mouse_Move));
+	     ev = malloc(sizeof(Ecore_Event_Mouse_Move));
+	     if (!ev) return ;
+
+	     ev->timestamp = time;
+	     ev->window = 0;
+	     ev->modifiers = 0; /* FIXME: keep modifier around. */
              ev->x = event.motion.x;
              ev->y = event.motion.y;
-             ev->time = time;
+	     ev->root.x = ev->x;
+	     ev->root.y = ev->y;
 
-             ecore_event_add(ECORE_SDL_EVENT_MOUSE_MOVE, ev, NULL, NULL);
+             ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
              break;
           }
           case SDL_MOUSEBUTTONDOWN:
@@ -100,46 +156,51 @@ ecore_sdl_feed_events(void)
              if (event.button.button == SDL_BUTTON_WHEELUP ||
                  event.button.button == SDL_BUTTON_WHEELDOWN)
                {
-                  Ecore_Sdl_Event_Mouse_Wheel   *ev;
+                  Ecore_Event_Mouse_Wheel *ev;
 
-                  ev = malloc(sizeof (Ecore_Sdl_Event_Mouse_Wheel));
-                  ev->x = event.button.x;
-                  ev->y = event.button.y;
+                  ev = malloc(sizeof(Ecore_Event_Mouse_Wheel));
+		  if (!ev) return ;
+
+		  ev->timestamp = time;
+		  ev->window = 0;
+		  ev->modifiers = 0; /* FIXME: keep modifier around. */
                   ev->direction = 0;
-                  ev->wheel = event.button.button == SDL_BUTTON_WHEELDOWN ? -1 : 1;
-                  ev->time = time;
+                  ev->z = event.button.button == SDL_BUTTON_WHEELDOWN ? -1 : 1;
 
-                  ecore_event_add(ECORE_SDL_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
+                  ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
                }
              else
                {
-                  Ecore_Sdl_Event_Mouse_Button_Down  *ev;
+                  Ecore_Event_Mouse_Button *ev;
 
-                  ev = malloc(sizeof (Ecore_Sdl_Event_Mouse_Button_Down));
-                  ev->x = event.button.x;
-                  ev->y = event.button.y;
-                  ev->button = event.button.button;
+                  ev = malloc(sizeof(Ecore_Event_Mouse_Button));
+		  if (!ev) return ;
+
+		  ev->timestamp = time;
+		  ev->window = 0;
+		  ev->modifiers = 0; /* FIXME: keep modifier around. */
+                  ev->buttons = event.button.button;
                   ev->double_click = 0;
                   ev->triple_click = 0;
-                  ev->time = time;
 
-                  ecore_event_add(ECORE_SDL_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
+                  ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
                }
              break;
           }
           case SDL_MOUSEBUTTONUP:
           {
-             Ecore_Sdl_Event_Mouse_Button_Up  *ev;
+             Ecore_Event_Mouse_Button *ev;
 
-             ev = malloc(sizeof (Ecore_Sdl_Event_Mouse_Button_Up));
-             ev->x = event.button.x;
-             ev->y = event.button.y;
-             ev->button = event.button.button;
+             ev = malloc(sizeof(Ecore_Event_Mouse_Button));
+	     if (!ev) return ;
+	     ev->timestamp = time;
+	     ev->window = 0;
+	     ev->modifiers = 0; /* FIXME: keep modifier around. */
+             ev->buttons = event.button.button;
              ev->double_click = 0;
              ev->triple_click = 0;
-             ev->time = time;
 
-             ecore_event_add(ECORE_SDL_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
+             ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
              break;
           }
           case SDL_VIDEORESIZE:
@@ -162,44 +223,48 @@ ecore_sdl_feed_events(void)
 
           case SDL_KEYDOWN:
           {
-             Ecore_Sdl_Event_Key_Down   *ev;
-             unsigned int               i;
+	     Ecore_SDL_Pressed *entry;
+             Ecore_Event_Key *ev;
 
-             ev = malloc(sizeof (Ecore_Sdl_Event_Key_Down));
-             ev->time = time;
+	     entry = (Ecore_SDL_Pressed*) eina_rbtree_inline_lookup(repeat, &event.key.keysym.sym, sizeof (event.key.keysym.sym),
+								    EINA_RBTREE_CMP_KEY_CB(_ecore_sdl_pressed_node), NULL);
+	     if (entry)
+	       {
+		  ev = _ecore_sdl_event_key(&event, time);
+		  if (ev) ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
+	       }
 
-             for (i = 0; i < sizeof (keystable) / sizeof (struct _ecore_sdl_keys_s); ++i)
-               if (keystable[i].code == event.key.keysym.sym)
-                 {
-                    ev->keyname = keystable[i].name;
-                    ev->keycompose = keystable[i].compose;
+	     ev = _ecore_sdl_event_key(&event, time);
+	     if (ev) ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
 
-                    ecore_event_add(ECORE_SDL_EVENT_KEY_DOWN, ev, NULL, NULL);
-                    return ;
-                 }
+	     if (!entry)
+	       {
+		  entry = malloc(sizeof (Ecore_SDL_Pressed));
+		  if (!entry) break;
 
-             free(ev);
+		  entry->key = event.key.keysym.sym;
+
+		  repeat = eina_rbtree_inline_insert(repeat, EINA_RBTREE_GET(entry),
+						     EINA_RBTREE_CMP_NODE_CB(_ecore_sdl_pressed_key), NULL);
+	       }
              break;
           }
           case SDL_KEYUP:
           {
-             Ecore_Sdl_Event_Key_Up     *ev;
-             unsigned int               i;
+             Ecore_Event_Key *ev;
+	     Ecore_SDL_Pressed *entry;
 
-             ev = malloc(sizeof (Ecore_Sdl_Event_Key_Up));
-             ev->time = time;
+	     entry = (Ecore_SDL_Pressed*) eina_rbtree_inline_lookup(repeat, &event.key.keysym.sym, sizeof (event.key.keysym.sym),
+								    EINA_RBTREE_CMP_KEY_CB(_ecore_sdl_pressed_node), NULL);
+	     if (entry)
+	       {
+		  repeat = eina_rbtree_inline_remove(repeat, EINA_RBTREE_GET(entry),
+						     EINA_RBTREE_CMP_NODE_CB(_ecore_sdl_pressed_key), NULL);
+		  free(entry);
+	       }
 
-             for (i = 0; i < sizeof (keystable) / sizeof (struct _ecore_sdl_keys_s); ++i)
-               if (keystable[i].code == event.key.keysym.sym)
-                 {
-                    ev->keyname = keystable[i].name;
-                    ev->keycompose = keystable[i].compose;
-
-                    ecore_event_add(ECORE_SDL_EVENT_KEY_UP, ev, NULL, NULL);
-                    return ;
-                 }
-
-             free(ev);
+	     ev = _ecore_sdl_event_key(&event, time);
+	     if (ev) ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
              break;
           }
           case SDL_ACTIVEEVENT:

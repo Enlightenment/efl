@@ -4,9 +4,11 @@
 #endif
 
 #include "Ecore.h"
+#include "Ecore_Evas.h"
+#include "Ecore_Input.h"
+
 #include "ecore_private.h"
 #include "ecore_evas_private.h"
-#include "Ecore_Evas.h"
 
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
 static int _ecore_evas_init_count = 0;
@@ -14,14 +16,6 @@ static int _ecore_evas_init_count = 0;
 static int _ecore_evas_fps_debug = 0;
 
 static Ecore_Evas *ecore_evases = NULL;
-
-static void
-_ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp)
-{
-   ee->mouse.x = x;
-   ee->mouse.y = y;
-   evas_event_feed_mouse_move(ee->evas, x, y, timestamp, NULL);
-}
 
 static int
 _ecore_evas_buffer_init(void)
@@ -219,7 +213,7 @@ _ecore_evas_buffer_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *ob
    x = ev->cur.canvas.x;
    y = ev->cur.canvas.y;
    _ecore_evas_buffer_coord_translate(ee, &x, &y);
-   _ecore_evas_mouse_move_process(ee, x, y, ev->timestamp);
+   ecore_evas_mouse_move_process(ee, x, y, ev->timestamp);
 }
 
 static void
@@ -396,8 +390,6 @@ static const Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      NULL,
      NULL,
      _ecore_evas_resize,
-     NULL,
-     NULL,
      NULL,
      NULL,
      NULL,

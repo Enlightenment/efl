@@ -226,14 +226,8 @@ typedef enum _Ecore_X_Shape_Type
    ECORE_X_SHAPE_CLIP
 } Ecore_X_Shape_Type;
 
-typedef struct _Ecore_X_Event_Key_Down                 Ecore_X_Event_Key_Down;
-typedef struct _Ecore_X_Event_Key_Up                   Ecore_X_Event_Key_Up;
-typedef struct _Ecore_X_Event_Mouse_Button_Down        Ecore_X_Event_Mouse_Button_Down;
-typedef struct _Ecore_X_Event_Mouse_Button_Up          Ecore_X_Event_Mouse_Button_Up;
-typedef struct _Ecore_X_Event_Mouse_Move               Ecore_X_Event_Mouse_Move;
 typedef struct _Ecore_X_Event_Mouse_In                 Ecore_X_Event_Mouse_In;
 typedef struct _Ecore_X_Event_Mouse_Out                Ecore_X_Event_Mouse_Out;
-typedef struct _Ecore_X_Event_Mouse_Wheel              Ecore_X_Event_Mouse_Wheel;
 typedef struct _Ecore_X_Event_Window_Focus_In          Ecore_X_Event_Window_Focus_In;
 typedef struct _Ecore_X_Event_Window_Focus_Out         Ecore_X_Event_Window_Focus_Out;
 typedef struct _Ecore_X_Event_Window_Keymap            Ecore_X_Event_Window_Keymap;
@@ -292,80 +286,6 @@ typedef struct _Ecore_X_Event_Desktop_Change             Ecore_X_Event_Desktop_C
 
 typedef struct _Ecore_X_Event_Startup_Sequence           Ecore_X_Event_Startup_Sequence;
 
-struct _Ecore_X_Event_Key_Down
-{
-   char   *keyname;
-   char   *keysymbol;
-   char   *key_compose;
-   int     modifiers;
-   int	   same_screen;
-   Ecore_X_Window  win;
-   Ecore_X_Window  event_win;
-   Ecore_X_Window  root_win;
-   Ecore_X_Time    time;
-};
-
-struct _Ecore_X_Event_Key_Up
-{
-   char   *keyname;
-   char   *keysymbol;
-   char   *key_compose;
-   int     modifiers;
-   int	   same_screen;
-   Ecore_X_Window  win;
-   Ecore_X_Window  event_win;
-   Ecore_X_Window  root_win;
-   Ecore_X_Time    time;
-};
-
-struct _Ecore_X_Event_Mouse_Button_Down
-{
-   int     button;
-   int     modifiers;
-   int     x, y;
-   int	   same_screen;
-   struct {
-      int  x, y;
-   } root;
-   Ecore_X_Window  win;
-   Ecore_X_Window  event_win;
-   Ecore_X_Window  root_win;
-   Ecore_X_Time    time;
-   unsigned int    double_click : 1;
-   unsigned int    triple_click : 1;
-};
-
-struct _Ecore_X_Event_Mouse_Button_Up
-{
-   int     button;
-   int     modifiers;
-   int     x, y;
-   int	   same_screen;
-   struct {
-      int  x, y;
-   } root;
-   Ecore_X_Window  win;
-   Ecore_X_Window  event_win;
-   Ecore_X_Window  root_win;
-   Ecore_X_Time    time;
-   unsigned int    double_click : 1;
-   unsigned int    triple_click : 1;
-};
-
-struct _Ecore_X_Event_Mouse_Move
-{
-   int     modifiers;
-   int     x, y;
-   int	   same_screen;
-   struct {
-      int  x, y;
-   } root;
-   Ecore_X_Window  win;
-   Ecore_X_Window  event_win;
-   Ecore_X_Window  root_win;
-   Ecore_X_Time    time;
-};
-
 struct _Ecore_X_Event_Mouse_In
 {
    int                  modifiers;
@@ -396,24 +316,6 @@ struct _Ecore_X_Event_Mouse_Out
    Ecore_X_Event_Mode		mode;
    Ecore_X_Event_Detail		detail;
    Ecore_X_Time                 time;
-};
-
-struct _Ecore_X_Event_Mouse_Wheel
-{
-   int direction; /* 0 = default up/down wheel FIXME: more wheel types */
-   int z; /* ...,-2,-1 = down, 1,2,... = up */
-   int modifiers;
-   int x, y;
-   int same_screen;
-
-   struct {
-      int x, y;
-   } root;
-
-   Ecore_X_Window win;
-   Ecore_X_Window event_win;
-   Ecore_X_Window root_win;
-   Ecore_X_Time   time;
 };
 
 struct _Ecore_X_Event_Window_Focus_In
@@ -819,14 +721,8 @@ struct _Ecore_X_Event_Desktop_Change
    int                         source;
 };
 
-EAPI extern int ECORE_X_EVENT_KEY_DOWN;
-EAPI extern int ECORE_X_EVENT_KEY_UP;
-EAPI extern int ECORE_X_EVENT_MOUSE_BUTTON_DOWN;
-EAPI extern int ECORE_X_EVENT_MOUSE_BUTTON_UP;
-EAPI extern int ECORE_X_EVENT_MOUSE_MOVE;
 EAPI extern int ECORE_X_EVENT_MOUSE_IN;
 EAPI extern int ECORE_X_EVENT_MOUSE_OUT;
-EAPI extern int ECORE_X_EVENT_MOUSE_WHEEL;
 EAPI extern int ECORE_X_EVENT_WINDOW_FOCUS_IN;
 EAPI extern int ECORE_X_EVENT_WINDOW_FOCUS_OUT;
 EAPI extern int ECORE_X_EVENT_WINDOW_KEYMAP;

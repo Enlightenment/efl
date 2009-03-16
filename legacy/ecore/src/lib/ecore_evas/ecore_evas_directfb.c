@@ -9,13 +9,13 @@
 #include <string.h>
 
 #include "Ecore.h"
-#include "ecore_private.h"
-#include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
 #include "Ecore_DirectFB.h"
 #endif
 
+#include "ecore_private.h"
+#include "ecore_evas_private.h"
 
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
 static int _ecore_evas_init_count = 0;
@@ -78,70 +78,6 @@ _ecore_evas_directfb_idle_enter(void *data __UNUSED__)
    return 1;
 }
 
-static char *
-_ecore_evas_directfb_winid_str_get(Ecore_X_Window win)
-{
-   const char *vals = "qWeRtYuIoP5-$&<~";
-   static char id[9];
-   unsigned int val; 
-   val = (unsigned int)win;
-   id[0] = vals[(val >> 28) & 0xf];    
-   id[1] = vals[(val >> 24) & 0xf];
-   id[2] = vals[(val >> 20) & 0xf];
-   id[3] = vals[(val >> 16) & 0xf];
-   id[4] = vals[(val >> 12) & 0xf];
-   id[5] = vals[(val >>  8) & 0xf];
-   id[6] = vals[(val >>  4) & 0xf];
-   id[7] = vals[(val      ) & 0xf];
-   id[8] = 0;
-   return id;
-}
-
-
-static Ecore_Evas *
-_ecore_evas_directfb_match(DFBWindowID win)
-{
-   Ecore_Evas *ee;
-
-   ee = eina_hash_find(ecore_evases_hash, _ecore_evas_directfb_winid_str_get(win));
-   return ee;
-}
-
-static void
-_ecore_evas_directfb_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp)
-{
-   ee->mouse.x = x;
-   ee->mouse.y = y;
-
-   if (ee->prop.cursor.object)
-     {
-	evas_object_show(ee->prop.cursor.object);
-	if (ee->rotation == 0)
-	  evas_object_move(ee->prop.cursor.object,x - ee->prop.cursor.hot.x,y - ee->prop.cursor.hot.y);
-	else if (ee->rotation == 90)
-	  evas_object_move(ee->prop.cursor.object,
-                           ee->h - y - 1 - ee->prop.cursor.hot.x,
-                           x - ee->prop.cursor.hot.y);
-	else if (ee->rotation == 180)
-	  evas_object_move(ee->prop.cursor.object,
-                           ee->w - x - 1 - ee->prop.cursor.hot.x,
-                           ee->h - y - 1 - ee->prop.cursor.hot.y);
-	else if (ee->rotation == 270)
-	  evas_object_move(ee->prop.cursor.object,
-                           y - ee->prop.cursor.hot.x,
-                           ee->w - x - 1 - ee->prop.cursor.hot.y);
-     }
-   if (ee->rotation == 0)
-     evas_event_feed_mouse_move(ee->evas, x, y, timestamp, NULL);
-   else if (ee->rotation == 90)
-     evas_event_feed_mouse_move(ee->evas, ee->h - y - 1, x, timestamp, NULL);
-   else if (ee->rotation == 180)
-     evas_event_feed_mouse_move(ee->evas, ee->w - x - 1, ee->h - y - 1, timestamp, NULL);
-   else if (ee->rotation == 270)
-     evas_event_feed_mouse_move(ee->evas, y, ee->w - x - 1, timestamp, NULL);
-}
-
-
 static int 
 _ecore_evas_directfb_event_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
@@ -182,7 +118,7 @@ _ecore_evas_directfb_event_motion(void *data __UNUSED__, int type __UNUSED__, vo
    ee = _ecore_evas_directfb_match(e->win);
    
    if (!ee) return 1; /* pass on event */
-   _ecore_evas_directfb_mouse_move_process(ee, e->x, e->y, e->time);
+   ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
    return 1;	
 }
 
@@ -196,7 +132,7 @@ _ecore_evas_directfb_event_button_down(void *data __UNUSED__, int type __UNUSED_
    ee = _ecore_evas_directfb_match(e->win);
    
    if (!ee) return 1; /* pass on event */
-   // _ecore_evas_directfb_mouse_move_process(ee, e->x, e->y, e->time);
+   // ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
    evas_event_feed_mouse_down(ee->evas, e->button, EVAS_BUTTON_NONE, e->time, NULL);
    return 1;	
 }
@@ -212,7 +148,7 @@ _ecore_evas_directfb_event_button_up(void *data __UNUSED__, int type __UNUSED__,
    ee = _ecore_evas_directfb_match(e->win);
    
    if (!ee) return 1; /* pass on event */
-   //_ecore_evas_directfb_mouse_move_process(ee, e->x, e->y, e->time);
+   //ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
    evas_event_feed_mouse_up(ee->evas, e->button, flags, e->time, NULL);
    return 1;	
 }
@@ -228,7 +164,7 @@ _ecore_evas_directfb_event_enter(void *data __UNUSED__, int type __UNUSED__, voi
    
    if (!ee) return 1; /* pass on event */
    evas_event_feed_mouse_in(ee->evas, e->time, NULL);
-   //_ecore_evas_directfb_mouse_move_process(ee, e->x, e->y, e->time);
+   //ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
    return 1;	
 }
 
@@ -243,7 +179,7 @@ _ecore_evas_directfb_event_leave(void *data __UNUSED__, int type __UNUSED__, voi
    
    if (!ee) return 1; /* pass on event */
    evas_event_feed_mouse_out(ee->evas, e->time, NULL);
-   //_ecore_evas_directfb_mouse_move_process(ee, e->x, e->y, e->time);
+   //ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
    if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
    if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
    return 1;	
@@ -560,8 +496,7 @@ static const Ecore_Evas_Engine_Func _ecore_directfb_engine_func =
      NULL,				/* withdrawn */
      NULL,      			/* sticky */
      NULL,                              /* ignore events */
-     NULL,                              /* alpha */
-     _ecore_evas_directfb_window_get    /* window_get */
+     NULL                               /* alpha */
 };
 #endif
 

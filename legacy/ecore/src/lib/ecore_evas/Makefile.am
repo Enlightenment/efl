@@ -35,9 +35,11 @@ endif
 if BUILD_ECORE_SDL
 ECORE_SDL_INC = -I$(top_srcdir)/src/lib/ecore_sdl @SDL_CFLAGS@
 ECORE_SDL_LIB = $(top_builddir)/src/lib/ecore_sdl/libecore_sdl.la
+ECORE_SDL_LIBADD = @SDL_LIBS@ $(ECORE_SDL_LIB)
 else
 ECORE_SDL_INC =
 ECORE_SDL_LIB =
+ECORE_SDL_LIBADD =
 endif
 
 if BUILD_ECORE_QUARTZ
@@ -59,8 +61,10 @@ endif
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_evas \
+-I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore_evas \
+-I$(top_builddir)/src/lib/ecore_input \
 @EFL_ECORE_EVAS_BUILD@ \
 $(ECORE_X_INC) \
 $(ECORE_FB_INC) \
@@ -99,9 +103,11 @@ $(ECORE_FB_LIB) \
 $(ECORE_DIRECTFB_LIB) \
 $(ECORE_WIN32_LIB) \
 $(ECORE_SDL_LIB) \
+$(ECORE_SDL_LIBADD) \
 $(ECORE_QUARTZ_LIB) \
 $(ECORE_WINCE_LIB) \
 $(top_builddir)/src/lib/ecore/libecore.la \
+$(top_builddir)/src/lib/ecore_input/libecore_input.la \
 @EVAS_LIBS@ \
 @XCB_LIBS@ \
 @SDL_LIBS@ \

@@ -60,14 +60,8 @@ Ecore_X_Window      _ecore_xcb_private_window = 0;
 Ecore_X_Atom        _ecore_xcb_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
 
 
-EAPI int ECORE_X_EVENT_KEY_DOWN                 = 0;
-EAPI int ECORE_X_EVENT_KEY_UP                   = 0;
-EAPI int ECORE_X_EVENT_MOUSE_BUTTON_DOWN        = 0;
-EAPI int ECORE_X_EVENT_MOUSE_BUTTON_UP          = 0;
-EAPI int ECORE_X_EVENT_MOUSE_MOVE               = 0;
 EAPI int ECORE_X_EVENT_MOUSE_IN                 = 0;
 EAPI int ECORE_X_EVENT_MOUSE_OUT                = 0;
-EAPI int ECORE_X_EVENT_MOUSE_WHEEL              = 0;
 EAPI int ECORE_X_EVENT_WINDOW_FOCUS_IN          = 0;
 EAPI int ECORE_X_EVENT_WINDOW_FOCUS_OUT         = 0;
 EAPI int ECORE_X_EVENT_WINDOW_KEYMAP            = 0;
@@ -470,14 +464,8 @@ ecore_x_init(const char *name)
 
    if (!ECORE_X_EVENT_KEY_DOWN)
      {
-	ECORE_X_EVENT_KEY_DOWN                 = ecore_event_type_new();
-	ECORE_X_EVENT_KEY_UP                   = ecore_event_type_new();
-	ECORE_X_EVENT_MOUSE_BUTTON_DOWN        = ecore_event_type_new();
-	ECORE_X_EVENT_MOUSE_BUTTON_UP          = ecore_event_type_new();
-	ECORE_X_EVENT_MOUSE_MOVE               = ecore_event_type_new();
 	ECORE_X_EVENT_MOUSE_IN                 = ecore_event_type_new();
 	ECORE_X_EVENT_MOUSE_OUT                = ecore_event_type_new();
-	ECORE_X_EVENT_MOUSE_WHEEL              = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_FOCUS_IN          = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_FOCUS_OUT         = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_KEYMAP            = ecore_event_type_new();

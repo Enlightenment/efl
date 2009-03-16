@@ -9,10 +9,10 @@
 #include <string.h>
 
 #include "Ecore.h"
-#include "ecore_private.h"
-#include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 
+#include "ecore_private.h"
+#include "ecore_evas_private.h"
 
 static const char ASSOCIATE_KEY[] = "__Ecore_Evas_Associate";
 

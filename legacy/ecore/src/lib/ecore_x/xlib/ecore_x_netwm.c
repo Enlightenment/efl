@@ -10,6 +10,8 @@
 # include <config.h>
 #endif
 
+#include <string.h>
+
 #include "Ecore.h"
 #include "Ecore_Data.h"
 #include "ecore_x_private.h"

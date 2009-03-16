@@ -24,6 +24,8 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       ecore-x.pc \
 		       ecore-win32.pc \
 		       ecore-sdl.pc \
+		       ecore-input.pc.in \
+		       ecore-input.pc \
 		       ecore-quartz.pc \
 		       ecore-wince.pc \
 		       ecore.pc \
@@ -104,7 +106,7 @@ ptxt = ecore-txt.pc
 endif
 
 if BUILD_ECORE_X
-px = ecore-x.pc
+px = ecore-x.pc ecore-input.pc
 endif
 
 if BUILD_ECORE_WIN32
@@ -116,7 +118,7 @@ pwince = ecore-wince.pc
 endif
 
 if BUILD_ECORE_SDL
-psdl = ecore-sdl.pc
+psdl = ecore-sdl.pc ecore-input.pc
 endif
 
 if BUILD_ECORE_QUARTZ

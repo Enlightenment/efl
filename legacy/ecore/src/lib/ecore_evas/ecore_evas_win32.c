@@ -9,7 +9,6 @@
 #include <stdlib.h> /* for NULL */
 
 #include "Ecore.h"
-#include "ecore_private.h"
 #ifdef BUILD_ECORE_EVAS_WIN32
 # define WIN32_LEAN_AND_MEAN
 # include <windows.h>
@@ -18,9 +17,10 @@
 # include "ecore_win32_private.h"
 #endif /* BUILD_ECORE_EVAS_WIN32 */
 
-#include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 
+#include "ecore_private.h"
+#include "ecore_evas_private.h"
 
 #ifdef BUILD_ECORE_EVAS_WIN32
 

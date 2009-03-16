@@ -9,9 +9,11 @@
 #include <string.h>
 
 #include "Ecore.h"
+#include "Ecore_Evas.h"
+#include "Ecore_Input.h"
+
 #include "ecore_private.h"
 #include "ecore_evas_private.h"
-#include "Ecore_Evas.h"
 
 static int _ecore_evas_init_count = 0;
 static Ecore_Fd_Handler *_ecore_evas_async_events_fd = NULL;
@@ -2325,18 +2327,17 @@ ecore_evas_ignore_events_get(const Ecore_Evas *ee)
       return ee->ignore_events ? 1 : 0;
 }
 
-EAPI void *
+EAPI Ecore_Window
 ecore_evas_window_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
    {
       ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
          "ecore_evas_window_get");
-      return NULL;
+      return 0;
    }
 
-   if (ee->engine.func->fn_window_get) return ee->engine.func->fn_window_get(ee);
-   return NULL;
+   return ee->prop.window;
 }
 
 /* fps debug calls - for debugging how much time your app actually spends */

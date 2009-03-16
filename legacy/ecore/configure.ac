@@ -135,6 +135,7 @@ requirements_ecore=""
 requirements_ecore_con=""
 requirements_ecore_config=""
 requirements_ecore_directfb=""
+requirements_ecore_input=""
 requirements_ecore_evas=""
 requirements_ecore_fb=""
 requirements_ecore_file=""
@@ -291,6 +292,11 @@ requirements_ecore_x="ecore eina-0 ${requirements_ecore_x}"
 requirements_ecore_win32="ecore eina-0 ${requirements_ecore_win32}"
 requirements_ecore_wince="ecore eina-0 ${requirements_ecore_wince}"
 
+dnl ecore_input
+ECORE_CHECK_MODULE([Input], [yes])
+requirements_ecore_evas="ecore-input ${requirements_ecore_evas}"
+requirements_ecore_sdl="ecore-input ${requirements_ecore_sdl}"
+requirements_ecore_x="ecore-input ${requirements_ecore_x}"
 
 # iconv library (ecore_txt)
 
@@ -934,6 +940,7 @@ AC_SUBST(requirements_ecore)
 AC_SUBST(requirements_ecore_con)
 AC_SUBST(requirements_ecore_config)
 AC_SUBST(requirements_ecore_directfb)
+AC_SUBST(requirements_ecore_input)
 AC_SUBST(requirements_ecore_evas)
 AC_SUBST(requirements_ecore_fb)
 AC_SUBST(requirements_ecore_file)
@@ -962,6 +969,7 @@ ecore-ipc.pc
 ecore-job.pc
 ecore-txt.pc
 ecore-x.pc
+ecore-input.pc
 ecore-win32.pc
 ecore-sdl.pc
 ecore-quartz.pc
@@ -984,6 +992,7 @@ src/lib/ecore_evas/Makefile
 src/lib/ecore_con/Makefile
 src/lib/ecore_imf/Makefile
 src/lib/ecore_imf_evas/Makefile
+src/lib/ecore_input/Makefile
 src/lib/ecore_ipc/Makefile
 src/lib/ecore_txt/Makefile
 src/lib/ecore_config/Makefile
