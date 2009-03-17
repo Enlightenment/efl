@@ -232,6 +232,8 @@ _evas_common_soft16_image_from_data(Image_Entry* ie_dst, int w, int h, DATA32 *i
 
    im->flags.free_pixels = 0;
    im->flags.free_alpha = 0;
+   if (im->stride < 0)
+        im->stride = _calc_stride(w);
 
    /* FIXME: That's bad, the application must be aware of the engine internal. */
    im->pixels = (DATA16 *) image_data;
