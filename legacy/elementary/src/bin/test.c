@@ -3136,7 +3136,7 @@ my_win_main(void)
    
    lb = elm_label_add(win);
    elm_label_label_set(lb, 
-                       "Please slect a test from the list below<br>"
+                       "Please select a test from the list below<br>"
                        "by clicking the test button to show the<br>"
                        "test window.");
    elm_frame_content_set(fr, lb);
