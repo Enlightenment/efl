@@ -110,6 +110,7 @@ static inline void *eina_list_data_get(const Eina_List *list) EINA_PURE EINA_WAR
 static inline unsigned int eina_list_count(const Eina_List *list) EINA_PURE;
 
 EAPI Eina_Iterator *eina_list_iterator_new(const Eina_List *list) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Iterator *eina_list_iterator_reversed_new(const Eina_List *list) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Accessor *eina_list_accessor_new(const Eina_List *list) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
