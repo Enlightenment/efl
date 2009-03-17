@@ -184,10 +184,18 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
 	abort();
 	return;
      }
+   if (obj->layer && smart_obj->layer
+       && obj->layer->evas == smart_obj->layer->evas)
+     {
+	printf("EVAS ERROR: Adding object %p from Evas (%p) from another Evas (%p)\n", obj, obj->layer->evas, smart_obj->layer->evas);
+	abort();
+	return;
+     }
+
    if (obj->smart.parent == smart_obj) return;
    
    if (obj->smart.parent) evas_object_smart_member_del(obj);
-   
+
    evas_object_release(obj, 1);
    obj->layer = smart_obj->layer;
    obj->cur.layer = obj->layer->layer;
