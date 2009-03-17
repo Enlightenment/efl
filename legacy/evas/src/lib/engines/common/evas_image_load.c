@@ -77,7 +77,7 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 	if (!evas_module_load(em)) continue;
         evas_image_load_func = em->functions;
 	evas_module_use(em);
-	if (evas_image_load_func->file_head(ie, ie->file, ie->key))
+	if (evas_image_load_func && evas_image_load_func->file_head(ie, ie->file, ie->key))
 	  {
 	     if (evas_modules != l)
 	       {
