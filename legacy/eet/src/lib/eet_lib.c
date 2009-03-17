@@ -557,6 +557,7 @@ eet_flush2(Eet_File *ef)
 
    /* flush all write to the file. */
    fflush(ef->fp);
+   fsync(fileno(ef->fp));
 
    /* append signature if required */
    if (ef->key)
