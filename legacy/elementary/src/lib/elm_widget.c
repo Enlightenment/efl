@@ -223,7 +223,7 @@ elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj)
    if (!strcmp(evas_object_type_get(sobj), SMART_NAME))
      {
 	Smart_Data *sd2 = evas_object_smart_data_get(sobj);
-	if (sd2) sd->parent_obj = NULL;
+	if (sd2) sd2->parent_obj = NULL;
      }
    evas_object_event_callback_del(sobj, EVAS_CALLBACK_DEL, _sub_obj_del);
    evas_object_smart_callback_call(obj, "sub-object-del", sobj);
