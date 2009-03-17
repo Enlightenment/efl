@@ -19,6 +19,7 @@
 static int _ecore_x_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_x_fd_handler_buf(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_x_key_mask_get(KeySym sym);
+static int _ecore_x_event_modifier(unsigned int state);
 
 static Ecore_Fd_Handler *_ecore_x_fd_handler_handle = NULL;
 static int _ecore_x_event_shape_id = 0;
@@ -1204,7 +1205,7 @@ ecore_x_window_button_grab(Ecore_X_Window win, int button,
    
    b = button;
    if (b == 0) b = AnyButton;
-   m = mod;
+   m = _ecore_x_event_modifier(mod);
    if (any_mod) m = AnyModifier;
    locks[0] = 0;
    locks[1] = ECORE_X_LOCK_CAPS;
@@ -1275,7 +1276,7 @@ ecore_x_window_button_ungrab(Ecore_X_Window win, int button,
    
    b = button;
    if (b == 0) b = AnyButton;
-   m = mod;
+   m = _ecore_x_event_modifier(mod);
    if (any_mod) m = AnyModifier;
    locks[0] = 0;
    locks[1] = ECORE_X_LOCK_CAPS;
@@ -1313,7 +1314,7 @@ ecore_x_window_key_grab(Ecore_X_Window win, const char *key,
      }
    if (keycode == 0) return;
    
-   m = mod;
+   m = _ecore_x_event_modifier(mod);
    if (any_mod) m = AnyModifier;
    locks[0] = 0;
    locks[1] = ECORE_X_LOCK_CAPS;
@@ -1374,7 +1375,7 @@ ecore_x_window_key_ungrab(Ecore_X_Window win, const char *key,
      }
    if (keycode == 0) return;
    
-   m = mod;
+   m = _ecore_x_event_modifier(mod);
    if (any_mod) m = AnyModifier;
    locks[0] = 0;
    locks[1] = ECORE_X_LOCK_CAPS;
@@ -1559,3 +1560,19 @@ ecore_x_pointer_xy_get(Ecore_X_Window win, int *x, int *y)
 /*****************************************************************************/
 /*****************************************************************************/
 /*****************************************************************************/
+
+static int
+_ecore_x_event_modifier(unsigned int state)
+{
+   int xmodifiers = 0;
+
+   if (state & ECORE_EVENT_MODIFIER_SHIFT) xmodifiers |= ECORE_X_MODIFIER_SHIFT;
+   if (state & ECORE_EVENT_MODIFIER_CTRL) xmodifiers |= ECORE_X_MODIFIER_CTRL;
+   if (state & ECORE_EVENT_MODIFIER_ALT) xmodifiers |= ECORE_X_MODIFIER_ALT;
+   if (state & ECORE_EVENT_MODIFIER_WIN) xmodifiers |= ECORE_X_MODIFIER_WIN;
+   if (state & ECORE_EVENT_LOCK_SCROLL) xmodifiers |= ECORE_X_LOCK_SCROLL;
+   if (state & ECORE_EVENT_LOCK_NUM) xmodifiers |= ECORE_X_LOCK_NUM;
+   if (state & ECORE_EVENT_LOCK_CAPS) xmodifiers |= ECORE_X_LOCK_CAPS;
+
+   return xmodifiers;
+}
