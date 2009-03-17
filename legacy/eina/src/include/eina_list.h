@@ -94,6 +94,8 @@ EAPI Eina_List *eina_list_free (Eina_List *list);
 EAPI void *eina_list_nth(const Eina_List *list, unsigned int n) EINA_PURE EINA_WARN_UNUSED_RESULT;
 EAPI Eina_List *eina_list_nth_list (const Eina_List *list, unsigned int n) EINA_PURE EINA_WARN_UNUSED_RESULT;
 EAPI Eina_List *eina_list_reverse (Eina_List *list) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_List *eina_list_reverse_clone(const Eina_List *list) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_List *eina_list_clone(const Eina_List *list) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_List *eina_list_sort (Eina_List *list, unsigned int size, Eina_Compare_Cb func) EINA_ARG_NONNULL(3) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_List *eina_list_merge (Eina_List *left, Eina_List *right) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_List *eina_list_sorted_merge(Eina_List *left, Eina_List *right, Eina_Compare_Cb func) EINA_ARG_NONNULL(3) EINA_WARN_UNUSED_RESULT;
