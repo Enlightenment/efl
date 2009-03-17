@@ -874,7 +874,7 @@ efreet_icon_fallback_dir_scan(const char *dir, const char *icon_name)
 #ifdef SLOPPY_SPEC
     if (!icon)
     {
-        if (ecore_file_exists(path))
+        if ((ecore_file_exists(path))  && (!ecore_file_is_dir(path)))
         {
             icon = strdup(path);
 #ifdef STRICT_SPEC
