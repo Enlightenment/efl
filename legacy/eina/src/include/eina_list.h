@@ -99,9 +99,11 @@ EAPI Eina_List *eina_list_clone(const Eina_List *list) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_List *eina_list_sort (Eina_List *list, unsigned int size, Eina_Compare_Cb func) EINA_ARG_NONNULL(3) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_List *eina_list_merge (Eina_List *left, Eina_List *right) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_List *eina_list_sorted_merge(Eina_List *left, Eina_List *right, Eina_Compare_Cb func) EINA_ARG_NONNULL(3) EINA_WARN_UNUSED_RESULT;
-EAPI void *eina_list_search_sorted(const Eina_List *list, Eina_Compare_Cb func, const void *data);
-EAPI void *eina_list_search_unsorted(const Eina_List *list, Eina_Compare_Cb func, const void *data);
 
+EAPI Eina_List *eina_list_search_sorted_list(const Eina_List *list, Eina_Compare_Cb func, const void *data);
+EAPI void *eina_list_search_sorted(const Eina_List *list, Eina_Compare_Cb func, const void *data);
+EAPI Eina_List *eina_list_search_unsorted_list(const Eina_List *list, Eina_Compare_Cb func, const void *data);
+EAPI void *eina_list_search_unsorted(const Eina_List *list, Eina_Compare_Cb func, const void *data);
 
 static inline Eina_List *eina_list_last (const Eina_List *list) EINA_PURE EINA_WARN_UNUSED_RESULT;
 static inline Eina_List *eina_list_next (const Eina_List *list) EINA_PURE EINA_WARN_UNUSED_RESULT;

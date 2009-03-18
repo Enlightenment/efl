@@ -1590,9 +1590,10 @@ eina_list_sorted_merge(Eina_List *left, Eina_List *right, Eina_Compare_Cb func)
    return ret;
 }
 
-EAPI void *
-eina_list_search_sorted(const Eina_List *list, Eina_Compare_Cb func, const void *data)
+EAPI Eina_List *
+eina_list_search_sorted_list(const Eina_List *list, Eina_Compare_Cb func, const void *data)
 {
+   const Eina_List *ct;
    void *d;
    unsigned int inf, sup, cur, tmp;
    int part;
@@ -1600,7 +1601,8 @@ eina_list_search_sorted(const Eina_List *list, Eina_Compare_Cb func, const void 
    inf = 0;
    sup = eina_list_count(list) ;
    cur = sup >> 1;
-   d = eina_list_nth(list, cur);
+   ct = eina_list_nth_list(list, cur);
+   d = eina_list_data_get(ct);
 
    while ((part = func(d, data)))
      {
@@ -1613,18 +1615,25 @@ eina_list_search_sorted(const Eina_List *list, Eina_Compare_Cb func, const void 
        /* Faster to move directly from where we are to the new position than using eina_list_nth_list. */
        tmp = (sup + inf) >> 1;
        if (tmp < cur)
-	 for (; cur != tmp; cur--, d = eina_list_prev(d))
+	 for (; cur != tmp; cur--, ct = eina_list_prev(ct))
 	   ;
        else
-	 for (; cur != tmp; cur++, d = eina_list_next(d))
+	 for (; cur != tmp; cur++, ct = eina_list_next(ct))
 	   ;
+       d = eina_list_data_get(ct);
      }
 
-   return d;
+   return (Eina_List*) ct;
 }
 
 EAPI void *
-eina_list_search_unsorted(const Eina_List *list, Eina_Compare_Cb func, const void *data)
+eina_list_search_sorted(const Eina_List *list, Eina_Compare_Cb func, const void *data)
+{
+   return eina_list_data_get(eina_list_search_sorted_list(list, func, data));
+}
+
+EAPI Eina_List *
+eina_list_search_unsorted_list(const Eina_List *list, Eina_Compare_Cb func, const void *data)
 {
    const Eina_List *l;
    void *d;
@@ -1632,9 +1641,15 @@ eina_list_search_unsorted(const Eina_List *list, Eina_Compare_Cb func, const voi
    EINA_LIST_FOREACH(list, l, d)
      {
        if (!func(d, data))
-        return d;
+	 return (Eina_List*) l;
      }
    return NULL;
+}
+
+EAPI void *
+eina_list_search_unsorted(const Eina_List *list, Eina_Compare_Cb func, const void *data)
+{
+   return eina_list_data_get(eina_list_search_unsorted_list(list, func, data));
 }
 
 
