@@ -33,7 +33,7 @@ _ecore_evas_directfb_render(Ecore_Evas *ee)
    Eina_List *updates, *ll;
    Ecore_Evas *ee2;
 
-#ifdef BUILD_ECORE_EVAS_BUFFER
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
    EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
 	if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
