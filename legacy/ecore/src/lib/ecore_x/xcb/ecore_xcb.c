@@ -115,10 +115,10 @@ EAPI int ECORE_X_EVENT_STARTUP_SEQUENCE_NEW       = 0;
 EAPI int ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE    = 0;
 EAPI int ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE    = 0;
 
-EAPI int ECORE_X_MODIFIER_SHIFT                   = 0;
-EAPI int ECORE_X_MODIFIER_CTRL                    = 0;
-EAPI int ECORE_X_MODIFIER_ALT                     = 0;
-EAPI int ECORE_X_MODIFIER_WIN                     = 0;
+int ECORE_X_MODIFIER_SHIFT                   = 0;
+int ECORE_X_MODIFIER_CTRL                    = 0;
+int ECORE_X_MODIFIER_ALT                     = 0;
+int ECORE_X_MODIFIER_WIN                     = 0;
 
 EAPI int ECORE_X_LOCK_SCROLL                      = 0;
 EAPI int ECORE_X_LOCK_NUM                         = 0;
