@@ -1591,7 +1591,7 @@ eina_list_sorted_merge(Eina_List *left, Eina_List *right, Eina_Compare_Cb func)
 }
 
 EAPI Eina_List *
-eina_list_search_sorted_list(const Eina_List *list, Eina_Compare_Cb func, const void *data)
+eina_list_search_sorted_near_list(const Eina_List *list, Eina_Compare_Cb func, const void *data)
 {
    const Eina_List *ct;
    void *d;
@@ -1606,8 +1606,10 @@ eina_list_search_sorted_list(const Eina_List *list, Eina_Compare_Cb func, const 
 
    while ((part = func(d, data)))
      {
-       if (inf == sup)
-          return NULL;
+       if (inf == sup
+	   || (part < 0 && inf == cur)
+	   || (part > 0 && sup == cur))
+	 return (Eina_List*) ct;
        if (part < 0)
           inf = (sup + inf) >> 1;
        else
@@ -1624,6 +1626,20 @@ eina_list_search_sorted_list(const Eina_List *list, Eina_Compare_Cb func, const 
      }
 
    return (Eina_List*) ct;
+}
+
+EAPI Eina_List *
+eina_list_search_sorted_list(const Eina_List *list, Eina_Compare_Cb func, const void *data)
+{
+   Eina_List *near;
+   void *d;
+
+   near = eina_list_search_sorted_near_list(list, func, data);
+   if (!near) return NULL;
+   d = eina_list_data_get(near);
+   if (!func(d, data))
+     return near;
+   return NULL;
 }
 
 EAPI void *
