@@ -971,7 +971,7 @@ EAPI void             ecore_x_dnd_type_get_prefetch(Ecore_X_Window window);
 EAPI void             ecore_x_dnd_type_get_fetch(void);
 EAPI int              ecore_x_dnd_type_isset(Ecore_X_Window win, const char *type);
 EAPI void             ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, int on);
-EAPI void             ecore_x_dnd_types_set(Ecore_X_Window win, char **types, unsigned int num_types);
+EAPI void             ecore_x_dnd_types_set(Ecore_X_Window win, const char **types, unsigned int num_types);
 EAPI void             ecore_x_dnd_actions_set(Ecore_X_Window win, Ecore_X_Atom *actions, unsigned int num_actions);
 EAPI void             ecore_x_dnd_begin_prefetch(Ecore_X_Window source);
 EAPI void             ecore_x_dnd_begin_fetch(void);
