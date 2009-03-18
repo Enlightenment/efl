@@ -223,7 +223,7 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
 	  {
 	     Eina_List *updates;
 	     
-#ifdef BUILD_ECORE_EVAS_BUFFER
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
 	     Eina_List *ll;
 	     Ecore_Evas *ee2;
 #endif
