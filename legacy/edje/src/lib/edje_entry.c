@@ -307,6 +307,8 @@ _sel_update(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
    clip = evas_object_clip_get(o);
    if (en->sel_start)
      range = evas_textblock_cursor_range_geometry_get(en->sel_start, en->sel_end);
+   else
+     return;
    if (eina_list_count(range) != eina_list_count(en->sel))
      {
 	while (en->sel)
