@@ -82,8 +82,7 @@ struct _DD_Output_Buffer
    int   height;
    int   depth;
    int   pitch;
-/*    int              w, h, bpl; */
-   int              psize;
+   int   psize;
 };
 
 

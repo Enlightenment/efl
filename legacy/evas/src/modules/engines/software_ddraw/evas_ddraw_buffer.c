@@ -20,6 +20,7 @@ evas_software_ddraw_output_buffer_new(int   depth,
    ddob->width = width;
    ddob->height = height;
    ddob->pitch = width * depth / 8;
+   ddob->psize = ddob->pitch * height;
 
    if (!ddob->data)
      {
