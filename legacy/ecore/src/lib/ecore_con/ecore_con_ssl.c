@@ -13,6 +13,7 @@
 #endif
 
 #include "ecore_con_private.h"
+#include "Ecore.h"
 
 static int _init_count = 0;
 
