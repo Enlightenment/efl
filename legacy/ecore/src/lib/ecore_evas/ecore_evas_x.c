@@ -163,7 +163,7 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 	  {
 	     if (updates)
 	       {
- 		  EINA_LIST_FOREACH(updates, l, r)
+		  EINA_LIST_FOREACH(updates, l, r)
 		    ecore_x_window_area_clear(ee->prop.window, r->x, r->y, r->w, r->h);
 		  if ((ee->shaped) && (updates))
 		    ecore_x_window_shape_mask_set(ee->prop.window, ee->engine.x.mask);
@@ -363,18 +363,12 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
 	  }
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 || BUILD_ECORE_EVAS_SOFTWARE_XCB */
      }
-   else if (!strcmp(ee->driver, "xrender_x11") || !strcmp(ee->driver, "xrender_xcb"))
+   else if (!strcmp(ee->driver, "xrender_x11"))
      {
 #if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
-# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
-	Evas_Engine_Info_XRender_Xcb *einfo;
-
-	einfo = (Evas_Engine_Info_XRender_Xcb *)evas_engine_info_get(ee->evas);
-# else
 	Evas_Engine_Info_XRender_X11 *einfo;
 
 	einfo = (Evas_Engine_Info_XRender_X11 *)evas_engine_info_get(ee->evas);
-# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
 	if (einfo)
 	  {
 # ifdef BUILD_ECORE_EVAS_XRENDER_XCB
@@ -572,29 +566,29 @@ _ecore_evas_x_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *e
 /*       char *ct; */
 
 /*       const char *modes[] = { */
-/* 	"MODE_NORMAL", */
-/* 	"MODE_WHILE_GRABBED", */
-/* 	"MODE_GRAB", */
-/* 	"MODE_UNGRAB" */
+/*	"MODE_NORMAL", */
+/*	"MODE_WHILE_GRABBED", */
+/*	"MODE_GRAB", */
+/*	"MODE_UNGRAB" */
 /*       }; */
 /*       const char *details[] = { */
-/* 	"DETAIL_ANCESTOR", */
-/* 	"DETAIL_VIRTUAL", */
-/* 	"DETAIL_INFERIOR", */
-/* 	"DETAIL_NON_LINEAR", */
-/* 	"DETAIL_NON_LINEAR_VIRTUAL", */
-/* 	"DETAIL_POINTER", */
-/* 	"DETAIL_POINTER_ROOT", */
-/* 	"DETAIL_DETAIL_NONE" */
+/*	"DETAIL_ANCESTOR", */
+/*	"DETAIL_VIRTUAL", */
+/*	"DETAIL_INFERIOR", */
+/*	"DETAIL_NON_LINEAR", */
+/*	"DETAIL_NON_LINEAR_VIRTUAL", */
+/*	"DETAIL_POINTER", */
+/*	"DETAIL_POINTER_ROOT", */
+/*	"DETAIL_DETAIL_NONE" */
 /*       }; */
 /*       t = time(NULL); */
 /*       ct = ctime(&t); */
 /*       ct[strlen(ct) - 1] = 0; */
 /*       printf("@@ ->IN 0x%x 0x%x %s md=%s dt=%s\n", */
-/* 	     e->win, e->event_win, */
-/* 	     ct, */
-/* 	     modes[e->mode], */
-/* 	     details[e->detail]); */
+/*	     e->win, e->event_win, */
+/*	     ct, */
+/*	     modes[e->mode], */
+/*	     details[e->detail]); */
 /*    } */
    // disable. causes mroe problems than it fixes
    //   if ((e->mode == ECORE_X_EVENT_MODE_GRAB) ||
@@ -624,29 +618,29 @@ _ecore_evas_x_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *
 /*       char *ct; */
 
 /*       const char *modes[] = { */
-/* 	"MODE_NORMAL", */
-/* 	"MODE_WHILE_GRABBED", */
-/* 	"MODE_GRAB", */
-/* 	"MODE_UNGRAB" */
+/*	"MODE_NORMAL", */
+/*	"MODE_WHILE_GRABBED", */
+/*	"MODE_GRAB", */
+/*	"MODE_UNGRAB" */
 /*       }; */
 /*       const char *details[] = { */
-/* 	"DETAIL_ANCESTOR", */
-/* 	"DETAIL_VIRTUAL", */
-/* 	"DETAIL_INFERIOR", */
-/* 	"DETAIL_NON_LINEAR", */
-/* 	"DETAIL_NON_LINEAR_VIRTUAL", */
-/* 	"DETAIL_POINTER", */
-/* 	"DETAIL_POINTER_ROOT", */
-/* 	"DETAIL_DETAIL_NONE" */
+/*	"DETAIL_ANCESTOR", */
+/*	"DETAIL_VIRTUAL", */
+/*	"DETAIL_INFERIOR", */
+/*	"DETAIL_NON_LINEAR", */
+/*	"DETAIL_NON_LINEAR_VIRTUAL", */
+/*	"DETAIL_POINTER", */
+/*	"DETAIL_POINTER_ROOT", */
+/*	"DETAIL_DETAIL_NONE" */
 /*       }; */
 /*       t = time(NULL); */
 /*       ct = ctime(&t); */
 /*       ct[strlen(ct) - 1] = 0; */
 /*       printf("@@ ->OUT 0x%x 0x%x %s md=%s dt=%s\n", */
-/* 	     e->win, e->event_win, */
-/* 	     ct, */
-/* 	     modes[e->mode], */
-/* 	     details[e->detail]); */
+/*	     e->win, e->event_win, */
+/*	     ct, */
+/*	     modes[e->mode], */
+/*	     details[e->detail]); */
 /*    } */
    // disable. causes more problems than it fixes
    //   if ((e->mode == ECORE_X_EVENT_MODE_GRAB) ||
@@ -1476,21 +1470,13 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 	  }
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 || BUILD_ECORE_EVAS_SOFTWARE_XCB */
      }
-   else if (!strcmp(ee->driver, "xrender_x11") || !strcmp(ee->driver, "xrender_xcb"))
+   else if (!strcmp(ee->driver, "xrender_x11"))
      {
 #if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
-# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
-	Evas_Engine_Info_XRender_Xcb *einfo;
-# else
 	Evas_Engine_Info_XRender_X11 *einfo;
-# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
 
 	ee->shaped = shaped;
-# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
-	einfo = (Evas_Engine_Info_XRender_Xcb *)evas_engine_info_get(ee->evas);
-# else
 	einfo = (Evas_Engine_Info_XRender_X11 *)evas_engine_info_get(ee->evas);
-# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
 	if (einfo)
 	  {
 	     if (ee->shaped)
@@ -1671,7 +1657,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	  }
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 || BUILD_ECORE_EVAS_SOFTWARE_XCB */
      }
-   else if (!strcmp(ee->driver, "xrender_x11") || !strcmp(ee->driver, "xrender_xcb"))
+   else if (!strcmp(ee->driver, "xrender_x11"))
      {
 #if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
 	Evas_Engine_Info_XRender_X11 *einfo;
@@ -2848,19 +2834,11 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 		      int x, int y, int w, int h)
 {
 #if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
-# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
-   Evas_Engine_Info_XRender_Xcb *einfo;
-# else
    Evas_Engine_Info_XRender_X11 *einfo;
-# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
    Ecore_Evas *ee;
    int rmethod;
 
-# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
-   rmethod = evas_render_method_lookup("xrender_xcb");
-# else
    rmethod = evas_render_method_lookup("xrender_x11");
-# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
    if (!rmethod) return NULL;
    if (!ecore_x_init(disp_name)) return NULL;
    ee = calloc(1, sizeof(Ecore_Evas));
@@ -2872,11 +2850,7 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_x_engine_func;
 
-# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
-   ee->driver = "xrender_xcb";
-# else
    ee->driver = "xrender_x11";
-# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
    if (disp_name) ee->name = strdup(disp_name);
 
    if (w < 1) w = 1;
@@ -2911,11 +2885,7 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 	 * for the '=' char */
 //	putenv((char*)"DESKTOP_STARTUP_ID=");
      }
-# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
-   einfo = (Evas_Engine_Info_XRender_Xcb *)evas_engine_info_get(ee->evas);
-# else
    einfo = (Evas_Engine_Info_XRender_X11 *)evas_engine_info_get(ee->evas);
-# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
    if (einfo)
      {
 # ifdef BUILD_ECORE_EVAS_XRENDER_XCB
@@ -2960,9 +2930,9 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
                   if (reply) free(reply);
                }
 	  }
-	einfo->info.conn   = ecore_x_connection_get();
-        /* FIXME: uncomment that once the XCB render engine has that member */
-/*	einfo->info.screen = screen; */
+	einfo->info.backend = 1;
+	einfo->info.connection   = ecore_x_connection_get();
+	einfo->info.screen = screen;
 	einfo->info.visual = screen->root_visual;
 # else
 	int screen;
@@ -2995,7 +2965,9 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 		  free(roots);
 	       }
 	  }
-	einfo->info.display  = ecore_x_display_get();
+	einfo->info.backend = 0;
+	einfo->info.connection  = ecore_x_display_get();
+	einfo->info.screen = NULL;
 	einfo->info.visual   = DefaultVisual(ecore_x_display_get(), screen);
 # endif /* HAVE_ECORE_X_XCB */
 	einfo->info.drawable = ee->prop.window;

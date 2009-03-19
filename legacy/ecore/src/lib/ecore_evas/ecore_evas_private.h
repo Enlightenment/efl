@@ -36,7 +36,7 @@
 #  endif
 #  ifdef BUILD_ECORE_EVAS_XRENDER_XCB
 #   include <xcb/render.h>
-#   include <Evas_Engine_XRender_Xcb.h>
+#   include <Evas_Engine_XRender_X11.h>
 #  endif
 # endif
 # ifdef HAVE_ECORE_X_XLIB

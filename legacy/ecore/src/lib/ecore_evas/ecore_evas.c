@@ -1854,7 +1854,7 @@ ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int layer, int hot_x, in
  * @param layer
  * @param hot_x The x coordinate of the cursor's hot spot
  * @param hot_y The y coordinate of the cursor's hot spot
- * 
+ *
  * This function makes the mouse cursor over @p ee be the image specified by
  * @p file. The actual point within the image that the mouse is at is specified
  * by @p hot_x and @p hot_y, which are coordinates with respect to the top left
@@ -2404,7 +2404,7 @@ _ecore_evas_fps_debug_rendertime_add(double t)
    static int frames = 0;
    static int flapse = 0;
    double tim;
-   
+
    tim = ecore_time_get();
    rtime += t;
    frames++;

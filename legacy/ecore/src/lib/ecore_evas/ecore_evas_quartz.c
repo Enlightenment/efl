@@ -56,7 +56,7 @@ static NSWindow * main_window;
    if(ctx != NULL)
    {
       Ecore_List2  *l;
-      
+
       for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
       {
          Ecore_Evas *ee;
@@ -140,16 +140,16 @@ _ecore_evas_quartz_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, 
    ee = _ecore_evas_quartz_match();
 
    if (!ee) return 1; // pass on event
-   
+
    NSWindow * win = ((NSWindow*) (e->window));
-   
+
    // Also notify on entering or leaving the window
    NSPoint mouseLoc = [win convertBaseToScreen:NSMakePoint(e->x, e->y)];
-   
+
    if(NSPointInRect(mouseLoc, [win frame]))
    {
       evas_event_feed_mouse_in(ee, 0, NULL);
-      
+
       int w, h;
       evas_output_size_get(ee->evas, &w, &h);
       e->y = h - e->y;
@@ -174,18 +174,18 @@ _ecore_evas_quartz_event_button_down(void *data __UNUSED__, int type __UNUSED__,
    e = event;
    ee = _ecore_evas_quartz_match();
    flags = EVAS_BUTTON_NONE;
-   
+
    if (!ee) return 1;
-   
+
    int w, h;
    evas_output_size_get(ee->evas, &w, &h);
    e->y = h - e->y;
-   
+
    // pass on event
    _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
    if (e->double_click) flags |= EVAS_BUTTON_DOUBLE_CLICK;
    if (e->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
-   
+
    if (e->y >= 0) // Don't register clicks in titlebar!
       evas_event_feed_mouse_down(ee->evas, e->button, flags, e->time, NULL);
 
@@ -204,16 +204,16 @@ _ecore_evas_quartz_event_button_up(void *data __UNUSED__, int type __UNUSED__, v
    flags = EVAS_BUTTON_NONE;
 
    if (!ee) return 1;
-   
+
    int w, h;
    evas_output_size_get(ee->evas, &w, &h);
    e->y = h - e->y;
-   
+
    // pass on event
    _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
    if (e->double_click) flags |= EVAS_BUTTON_DOUBLE_CLICK;
    if (e->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
-   
+
    if (e->y >= 0) // Don't register clicks in titlebar!
       evas_event_feed_mouse_up(ee->evas, e->button, flags, e->time, NULL);
 
@@ -303,7 +303,7 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
    for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
    {
       Ecore_Evas *ee = (Ecore_Evas *)l;
-      
+
       if (ee->visible)
          evas_render(ee->evas);
       else
@@ -353,10 +353,10 @@ _ecore_evas_quartz_shutdown(void)
       int i;
 
       while (ecore_evases) _ecore_evas_free(ecore_evases);
-      
+
       for (i = 0; i < sizeof (ecore_evas_event_handlers) / sizeof (Ecore_Event_Handler*); i++)
          ecore_event_handler_del(ecore_evas_event_handlers[i]);
-         
+
       ecore_idle_enterer_del(ecore_evas_idle_enterer);
       ecore_evas_idle_enterer = NULL;
       ecore_timer_del(ecore_evas_event);
@@ -432,15 +432,15 @@ _ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int h
    ee->prop.cursor.layer = layer;
    ee->prop.cursor.hot.x = hot_x;
    ee->prop.cursor.hot.y = hot_y;
-   
+
    evas_pointer_output_xy_get(ee->evas, &x, &y);
    evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
    evas_object_move(ee->prop.cursor.object,
                     x - ee->prop.cursor.hot.x,
                     y - ee->prop.cursor.hot.y);
-   
+
    evas_object_pass_events_set(ee->prop.cursor.object, 1);
-   
+
    if (evas_pointer_inside_get(ee->evas))
       evas_object_show(ee->prop.cursor.object);
 
@@ -544,7 +544,7 @@ ecore_evas_quartz_new(const char* name, int w, int h)
    ee->evas = evas_new();
    evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, rmethod);
-   
+
    // Set up the Cocoa runtime
    [[NSAutoreleasePool alloc] init];
    [NSApplication sharedApplication];
@@ -555,7 +555,7 @@ ecore_evas_quartz_new(const char* name, int w, int h)
    TransformProcessType (&psn, kProcessTransformToForegroundApplication);
 
    [NSApp finishLaunching];
-   
+
    // Create our main window, and embed an EvasView in it
    main_window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0,0,w,h) styleMask:(NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask | NSMiniaturizableWindowMask) backing:NSBackingStoreBuffered defer:NO screen:nil];
    [main_window makeKeyAndOrderFront:NSApp];
@@ -563,13 +563,13 @@ ecore_evas_quartz_new(const char* name, int w, int h)
    [main_window makeMainWindow];
    [main_window setAcceptsMouseMovedEvents:YES];
    [NSApp activateIgnoringOtherApps:YES];
-   
+
    evas_view = [[EvasView alloc] initWithFrame:NSMakeRect(0,0,w,h)];
    [[main_window contentView] addSubview:evas_view];
-   
+
    // drawRect: must be run at least once, to make sure we've set ctx
    [evas_view display];
-   
+
    evas_output_size_set(ee->evas, w, h);
    evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
@@ -579,7 +579,7 @@ ecore_evas_quartz_new(const char* name, int w, int h)
       einfo->info.context = [[evas_view context] retain];
       evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
    }
-   
+
    evas_key_modifier_add(ee->evas, "Shift");
    evas_key_modifier_add(ee->evas, "Control");
    evas_key_modifier_add(ee->evas, "Alt");

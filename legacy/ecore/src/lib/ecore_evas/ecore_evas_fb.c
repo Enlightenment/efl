@@ -33,7 +33,7 @@ static void
 _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp)
 {
    int fbw, fbh;
-   
+
    ee->mouse.x = x;
    ee->mouse.y = y;
    ecore_fb_size_get(&fbw, &fbh);
@@ -64,7 +64,7 @@ _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timest
    else if (ee->rotation == 180)
      evas_event_feed_mouse_move(ee->evas, (fbw - ee->w) + ee->w - x - 1, (fbh - ee->h) + ee->h - y - 1, timestamp, NULL);
    else if (ee->rotation == 270)
-     evas_event_feed_mouse_move(ee->evas, y, (fbw - ee->w) + ee->w - x - 1, timestamp, NULL);   
+     evas_event_feed_mouse_move(ee->evas, y, (fbw - ee->w) + ee->w - x - 1, timestamp, NULL);
 }
 
 static Ecore_Evas *
@@ -83,7 +83,7 @@ _ecore_evas_fb_lose(void *data __UNUSED__)
    for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
      {
 	Ecore_Evas *ee;
-	
+
 	ee = (Ecore_Evas *)l;
 	ee->visible = 0;
      }
@@ -104,7 +104,7 @@ _ecore_evas_fb_gain(void *data __UNUSED__)
    for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
      {
 	Ecore_Evas *ee;
-	
+
 	ee = (Ecore_Evas *)l;
 	ee->visible = 1;
 	if ((ee->rotation == 90) || (ee->rotation == 270))
@@ -124,7 +124,7 @@ _ecore_evas_event_key_down(void *data __UNUSED__, int type __UNUSED__, void *eve
 {
    Ecore_Evas *ee;
    Ecore_Fb_Event_Key_Down *e;
-   
+
    e = event;
    ee = _ecore_evas_fb_match();
    if (!ee) return 1; /* pass on event */
@@ -137,7 +137,7 @@ _ecore_evas_event_key_up(void *data __UNUSED__, int type __UNUSED__, void *event
 {
    Ecore_Evas *ee;
    Ecore_Fb_Event_Key_Up *e;
-   
+
    e = event;
    ee = _ecore_evas_fb_match();
    if (!ee) return 1; /* pass on event */
@@ -151,7 +151,7 @@ _ecore_evas_event_mouse_button_down(void *data __UNUSED__, int type __UNUSED__, 
    Ecore_Evas *ee;
    Ecore_Fb_Event_Mouse_Button_Down *e;
    Evas_Button_Flags flags = EVAS_BUTTON_NONE;
-   
+
    e = event;
    ee = _ecore_evas_fb_match();
    if (!ee) return 1; /* pass on event */
@@ -167,7 +167,7 @@ _ecore_evas_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, vo
 {
    Ecore_Evas *ee;
    Ecore_Fb_Event_Mouse_Button_Up *e;
-   
+
    e = event;
    ee = _ecore_evas_fb_match();
    if (!ee) return 1; /* pass on event */
@@ -181,7 +181,7 @@ _ecore_evas_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *e
 {
    Ecore_Evas *ee;
    Ecore_Fb_Event_Mouse_Move *e;
-   
+
    e = event;
    ee = _ecore_evas_fb_match();
    if (!ee) return 1; /* pass on event */
@@ -194,7 +194,7 @@ _ecore_evas_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *
 {
    Ecore_Evas *ee;
    Ecore_Fb_Event_Mouse_Wheel *e;
-   
+
    e = event;
    ee = _ecore_evas_fb_match();
    if (!ee) return 1; /* pass on event */
@@ -217,12 +217,12 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
    for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
      {
 	Ecore_Evas *ee;
-	
+
 	ee = (Ecore_Evas *)l;
 	if (ee->visible)
 	  {
 	     Eina_List *updates;
-	     
+
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
 	     Eina_List *ll;
 	     Ecore_Evas *ee2;
@@ -235,8 +235,8 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
 		  _ecore_evas_buffer_render(ee2);
 		  if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
 	       }
-#endif	     
- 	     updates = evas_render_updates(ee->evas);
+#endif
+	     updates = evas_render_updates(ee->evas);
 	     if (updates)
 	       {
 		  evas_render_updates_free(updates);
@@ -262,31 +262,31 @@ _ecore_evas_fb_init(int w, int h)
    Ecore_Fb_Input_Device_Cap caps;
    int mouse_handled = 0;
    int keyboard_handled = 0;
-   
+
    DIR *input_dir;
    struct dirent *input_entry;
-   
+
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
-   
+
    if (getenv("ECORE_EVAS_FPS_DEBUG")) _ecore_evas_fps_debug = 1;
    ecore_evas_idle_enterer = ecore_idle_enterer_add(_ecore_evas_idle_enter, NULL);
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
    /* register all input devices */
    input_dir = opendir("/dev/input/");
    if (!input_dir) return _ecore_evas_init_count;
-   
+
    while ((input_entry = readdir(input_dir)))
      {
 	char device_path[256];
-	
+
 	if (strncmp(input_entry->d_name, "event", 5) != 0)
 	  continue;
-	
+
 	snprintf(device_path, 256, "/dev/input/%s", input_entry->d_name);
 	if (!(device = ecore_fb_input_device_open(device_path)))
 	  continue;
-	
+
 	caps = ecore_fb_input_device_cap_get(device);
 
 	if (ecore_evas_input_devices)
@@ -340,7 +340,7 @@ _ecore_evas_fb_init(int w, int h)
 static void
 _ecore_evas_fb_free(Ecore_Evas *ee)
 {
-   ecore_evases = _ecore_list2_remove(ecore_evases, ee);   
+   ecore_evases = _ecore_list2_remove(ecore_evases, ee);
    _ecore_evas_fb_shutdown();
    ecore_fb_shutdown();
 }
@@ -363,7 +363,7 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
        evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
        evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
      }
-   if (ee->func.fn_resize) ee->func.fn_resize(ee);	
+   if (ee->func.fn_resize) ee->func.fn_resize(ee);
 }
 
 static void
@@ -384,7 +384,7 @@ _ecore_evas_move_resize(Ecore_Evas *ee, int x __UNUSED__, int y __UNUSED__, int 
        evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
        evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
      }
-   if (ee->func.fn_resize) ee->func.fn_resize(ee);	
+   if (ee->func.fn_resize) ee->func.fn_resize(ee);
 }
 
 static void
@@ -392,7 +392,7 @@ _ecore_evas_rotation_set(Ecore_Evas *ee, int rotation)
 {
    Evas_Engine_Info_FB *einfo;
    int rot_dif;
-   
+
    if (ee->rotation == rotation) return;
    einfo = (Evas_Engine_Info_FB *)evas_engine_info_get(ee->evas);
    if (!einfo) return;
@@ -400,13 +400,13 @@ _ecore_evas_rotation_set(Ecore_Evas *ee, int rotation)
    if (rot_dif < 0) rot_dif = -rot_dif;
    if (rot_dif != 180)
      {
-	
+
 	einfo->info.rotation = rotation;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 	if (!ee->prop.fullscreen)
 	  {
 	     int tmp;
-	     
+
 	     tmp = ee->w;
 	     ee->w = ee->h;
 	     ee->h = tmp;
@@ -454,7 +454,7 @@ static void
 _ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
 {
    int x, y;
-   
+
    if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
 
    if (obj == NULL)
@@ -472,7 +472,7 @@ _ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int h
    ee->prop.cursor.hot.y = hot_y;
    evas_pointer_output_xy_get(ee->evas, &x, &y);
    evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
-   evas_object_move(ee->prop.cursor.object, 
+   evas_object_move(ee->prop.cursor.object,
 		    x - ee->prop.cursor.hot.x,
 		    y - ee->prop.cursor.hot.y);
    evas_object_pass_events_set(ee->prop.cursor.object, 1);
@@ -487,13 +487,13 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
 {
    Eina_List *l;
    int resized = 0;
-   
+
    if (((ee->prop.fullscreen) && (on)) ||
        ((!ee->prop.fullscreen) && (!on))) return;
    if (on)
      {
 	int w, h;
-	
+
 	ee->engine.fb.real_w = ee->w;
 	ee->engine.fb.real_h = ee->h;
 	w = ee->w;
@@ -525,16 +525,16 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
    if (ecore_evas_input_devices)
      {
 	Ecore_Fb_Input_Device *dev;
-	
+
 	EINA_LIST_FOREACH(ecore_evas_input_devices, l, dev)
 	   ecore_fb_input_device_axis_size_set(dev, ee->w, ee->h);
      }
    if (resized)
      {
-	if (ee->func.fn_resize) ee->func.fn_resize(ee); 
+	if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
 }
-    
+
 int
 _ecore_evas_fb_shutdown(void)
 {
@@ -542,7 +542,7 @@ _ecore_evas_fb_shutdown(void)
    if (_ecore_evas_init_count == 0)
      {
 	int i;
-   
+
 	while (ecore_evases) _ecore_evas_free(ecore_evases);
 	for (i = 0; i < 5; i++)
 	  ecore_event_handler_del(ecore_evas_event_handlers[i]);
@@ -624,7 +624,7 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
 
    rmethod = evas_render_method_lookup("fb");
    if (!rmethod) return NULL;
-   
+
    if (!ecore_fb_init(disp_name)) return NULL;
    ecore_fb_callback_gain_set(_ecore_evas_fb_gain, NULL);
    ecore_fb_callback_lose_set(_ecore_evas_fb_lose, NULL);
@@ -632,11 +632,11 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
    if (!ee) return NULL;
 
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
-   
+
    _ecore_evas_fb_init(w, h);
-   
+
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_fb_engine_func;
-   
+
    ee->driver = "fb";
    if (disp_name) ee->name = strdup(disp_name);
 
@@ -657,7 +657,7 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
    ee->prop.fullscreen = 0;
    ee->prop.withdrawn = 0;
    ee->prop.sticky = 0;
-   
+
    /* init evas here */
    ee->evas = evas_new();
    evas_data_attach_set(ee->evas, ee);
@@ -693,7 +693,7 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
    evas_key_lock_add(ee->evas, "Caps_Lock");
    evas_key_lock_add(ee->evas, "Num_Lock");
    evas_key_lock_add(ee->evas, "Scroll_Lock");
-   
+
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
 
    ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
@@ -702,5 +702,5 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
    disp_name = NULL;
    rotation = w = h = 0;
    return NULL;
-#endif   
+#endif
 }

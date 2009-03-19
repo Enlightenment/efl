@@ -627,65 +627,65 @@ _ecore_evas_wince_move_resize(Ecore_Evas *ee, int x, int y, int width, int heigh
 /*    if (rot_dif < 0) rot_dif = -rot_dif; */
 /*    if (!strcmp(ee->driver, "software_ddraw")) */
 /*      { */
-/* 	Evas_Engine_Info_Software_16_WinCE *einfo; */
+/*	Evas_Engine_Info_Software_16_WinCE *einfo; */
 
-/* 	einfo = (Evas_Engine_Info_Software_16_WinCE *)evas_engine_info_get(ee->evas); */
-/* 	if (!einfo) return; */
-/* 	if (rot_dif != 180) */
-/* 	  { */
-/* 	     int minw, minh, maxw, maxh, basew, baseh, stepw, steph; */
+/*	einfo = (Evas_Engine_Info_Software_16_WinCE *)evas_engine_info_get(ee->evas); */
+/*	if (!einfo) return; */
+/*	if (rot_dif != 180) */
+/*	  { */
+/*	     int minw, minh, maxw, maxh, basew, baseh, stepw, steph; */
 
-/* 	     einfo->info.rotation = rotation; */
-/* 	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo); */
-/* 	     if (!ee->prop.fullscreen) */
-/* 	       { */
-/* 		  ecore_wince_window_resize(ee->engine.wince.window, ee->h, ee->w); */
-/* 		  ee->expecting_resize.w = ee->h; */
-/* 		  ee->expecting_resize.h = ee->w; */
-/* 	       } */
-/* 	     else */
-/* 	       { */
-/* 		  int w, h; */
+/*	     einfo->info.rotation = rotation; */
+/*	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo); */
+/*	     if (!ee->prop.fullscreen) */
+/*	       { */
+/*		  ecore_wince_window_resize(ee->engine.wince.window, ee->h, ee->w); */
+/*		  ee->expecting_resize.w = ee->h; */
+/*		  ee->expecting_resize.h = ee->w; */
+/*	       } */
+/*	     else */
+/*	       { */
+/*		  int w, h; */
 
-/* 		  ecore_wince_window_size_get(ee->engine.wince.window, &w, &h); */
-/* 		  ecore_wince_window_resize(ee->engine.wince.window, h, w); */
-/* 		  if ((rotation == 0) || (rotation == 180)) */
-/* 		    { */
-/* 		       evas_output_size_set(ee->evas, ee->w, ee->h); */
-/* 		       evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h); */
-/* 		    } */
-/* 		  else */
-/* 		    { */
-/* 		       evas_output_size_set(ee->evas, ee->h, ee->w); */
-/* 		       evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w); */
-/* 		    } */
-/* 		  if (ee->func.fn_resize) ee->func.fn_resize(ee); */
-/* 	       } */
-/* 	     ecore_evas_size_min_get(ee, &minw, &minh); */
-/* 	     ecore_evas_size_max_get(ee, &maxw, &maxh); */
-/* 	     ecore_evas_size_base_get(ee, &basew, &baseh); */
-/* 	     ecore_evas_size_step_get(ee, &stepw, &steph); */
-/* 	     ee->rotation = rotation; */
-/* 	     ecore_evas_size_min_set(ee, minh, minw); */
-/* 	     ecore_evas_size_max_set(ee, maxh, maxw); */
-/* 	     ecore_evas_size_base_set(ee, baseh, basew); */
-/* 	     ecore_evas_size_step_set(ee, steph, stepw); */
-/* 	     _ecore_evas_wince_mouse_move_process(ee, ee->mouse.x, ee->mouse.y, */
+/*		  ecore_wince_window_size_get(ee->engine.wince.window, &w, &h); */
+/*		  ecore_wince_window_resize(ee->engine.wince.window, h, w); */
+/*		  if ((rotation == 0) || (rotation == 180)) */
+/*		    { */
+/*		       evas_output_size_set(ee->evas, ee->w, ee->h); */
+/*		       evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h); */
+/*		    } */
+/*		  else */
+/*		    { */
+/*		       evas_output_size_set(ee->evas, ee->h, ee->w); */
+/*		       evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w); */
+/*		    } */
+/*		  if (ee->func.fn_resize) ee->func.fn_resize(ee); */
+/*	       } */
+/*	     ecore_evas_size_min_get(ee, &minw, &minh); */
+/*	     ecore_evas_size_max_get(ee, &maxw, &maxh); */
+/*	     ecore_evas_size_base_get(ee, &basew, &baseh); */
+/*	     ecore_evas_size_step_get(ee, &stepw, &steph); */
+/*	     ee->rotation = rotation; */
+/*	     ecore_evas_size_min_set(ee, minh, minw); */
+/*	     ecore_evas_size_max_set(ee, maxh, maxw); */
+/*	     ecore_evas_size_base_set(ee, baseh, basew); */
+/*	     ecore_evas_size_step_set(ee, steph, stepw); */
+/*	     _ecore_evas_wince_mouse_move_process(ee, ee->mouse.x, ee->mouse.y, */
 /*                                                   ecore_wince_current_time_get()); */
-/* 	  } */
-/* 	else */
-/* 	  { */
-/* 	     einfo->info.rotation = rotation; */
-/* 	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo); */
-/* 	     ee->rotation = rotation; */
-/* 	     _ecore_evas_wince_mouse_move_process(ee, ee->mouse.x, ee->mouse.y, */
+/*	  } */
+/*	else */
+/*	  { */
+/*	     einfo->info.rotation = rotation; */
+/*	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo); */
+/*	     ee->rotation = rotation; */
+/*	     _ecore_evas_wince_mouse_move_process(ee, ee->mouse.x, ee->mouse.y, */
 /*                                                   ecore_wince_current_time_get()); */
-/* 	     if (ee->func.fn_resize) ee->func.fn_resize(ee); */
-/* 	  } */
-/* 	if ((ee->rotation == 90) || (ee->rotation == 270)) */
-/* 	  evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w); */
-/* 	else */
-/* 	  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h); */
+/*	     if (ee->func.fn_resize) ee->func.fn_resize(ee); */
+/*	  } */
+/*	if ((ee->rotation == 90) || (ee->rotation == 270)) */
+/*	  evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w); */
+/*	else */
+/*	  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h); */
 /*      } */
 /* } */
 
