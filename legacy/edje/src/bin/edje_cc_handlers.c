@@ -104,6 +104,7 @@ static void st_collections_group_parts_part_source4(void);
 static void st_collections_group_parts_part_source5(void);
 static void st_collections_group_parts_part_source6(void);
 static void st_collections_group_parts_part_entry_mode(void);
+static void st_collections_group_parts_part_select_mode(void);
 static void st_collections_group_parts_part_multiline(void);
 static void st_collections_group_parts_part_dragable_x(void);
 static void st_collections_group_parts_part_dragable_y(void);
@@ -283,6 +284,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.dragable.confine", st_collections_group_parts_part_dragable_confine},
      {"collections.group.parts.part.dragable.events", st_collections_group_parts_part_dragable_events},
      {"collections.group.parts.part.entry_mode", st_collections_group_parts_part_entry_mode},
+     {"collections.group.parts.part.select_mode", st_collections_group_parts_part_select_mode},
      {"collections.group.parts.part.multiline", st_collections_group_parts_part_multiline},
      {"collections.group.parts.part.image", st_images_image}, /* dup */
      {"collections.group.parts.part.images.image", st_images_image}, /* dup */
@@ -2115,6 +2117,37 @@ st_collections_group_parts_part_entry_mode(void)
 			       "EDITABLE", EDJE_ENTRY_EDIT_MODE_EDITABLE,
 			       "PASSWORD", EDJE_ENTRY_EDIT_MODE_PASSWORD,
 			       NULL);
+}
+
+/**
+    @page edcref
+    @property
+        select_mode
+    @parameters
+        Sets the selection mode for a textblock part to one of:
+        @li DEFAULT
+        @li EXPLICIT
+    @effect
+        DEFAULT selection mode is what you would expect on any desktop. Press
+        mouse, drag and release to end. EXPLICIT mode requires the application
+        controlling the edje object has to explicitly begin and end selection
+        modes, and the selection itself is dragable at both ends.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_select_mode(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+   ep->select_mode = parse_enum(0,
+                                "DEFAULT", EDJE_ENTRY_SELECTION_MODE_DEFAULT,
+                                "EXPLICIT", EDJE_ENTRY_SELECTION_MODE_EXPLICIT,
+                                NULL);
 }
 
 /**

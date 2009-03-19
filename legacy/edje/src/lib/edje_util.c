@@ -1101,6 +1101,24 @@ edje_object_part_text_cursor_geometry_get(const Evas_Object *obj, const char *pa
    return;
 }
 
+/** XX
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ */
+EAPI void
+edje_object_part_text_select_allow_set(const Evas_Object *obj, const char *part, Evas_Bool allow)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     _edje_entry_select_allow_set(rp, allow);
+}
+
 /** Swallows an object into the edje
  * @param obj A valid Evas_Object handle
  * @param part The part name
