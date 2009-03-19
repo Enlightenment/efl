@@ -78,17 +78,17 @@ _item_clicked(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_button_clicked(void *data, Evas_Object *obj, void *event_info)
+_activate(Evas_Object *obj)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
+   Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    Evas_Object *bt, *bx, *ic;
    const Eina_List *l;
    const Elm_Hoversel_Item *it;
 
-   wd->hover = elm_hover_add(data);
+   wd->hover = elm_hover_add(obj);
    elm_hover_style_set(wd->hover, "hoversel_vertical");
-   evas_object_smart_callback_add(wd->hover, "clicked", _hover_clicked, data);
+   evas_object_smart_callback_add(wd->hover, "clicked", _hover_clicked, obj);
    elm_hover_parent_set(wd->hover, wd->hover_parent);
    elm_hover_target_set(wd->hover, wd->btn);
 
@@ -102,7 +102,7 @@ _button_clicked(void *data, Evas_Object *obj, void *event_info)
         elm_button_label_set(bt, it->label);
         if (it->icon_file)
           {
-             ic = elm_icon_add(data);
+             ic = elm_icon_add(obj);
              elm_icon_scale_set(ic, 0, 1);
              if (it->icon_type == ELM_ICON_FILE)
                elm_icon_file_set(ic, it->icon_file, NULL);
@@ -125,7 +125,13 @@ _button_clicked(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bx);
    
    evas_object_show(wd->hover);
-   evas_object_smart_callback_call(data, "clicked", NULL);
+   evas_object_smart_callback_call(obj, "clicked", NULL);
+}
+
+static void
+_button_clicked(void *data, Evas_Object *obj, void *event_info)
+{
+  _activate(data); 
 }
 
 static void
@@ -186,6 +192,15 @@ elm_hoversel_icon_set(Evas_Object *obj, Evas_Object *icon)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_button_icon_set(wd->btn, icon);
+}
+
+EAPI void
+elm_hoversel_hover_begin(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->hover) return;
+   _activate(obj);
 }
 
 EAPI void

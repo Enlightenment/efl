@@ -205,6 +205,7 @@ elm_smart_scroller_child_pos_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    double vx, vy;
    
    API_ENTRY return;
+   // FIXME: allow for bounce outside of range
    sd->pan_func.max_get(sd->pan_obj, &mx, &my);
    if (mx > 0) vx = (double)x / (double)mx;
    else vx = 0.0;
@@ -514,6 +515,7 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info)
 
    sd = data;
    ev = event_info;
+   // FIXME: respect elm_widget_scroll_hold_get of parent container
    if (_elm_config->thumbscroll_enable)
      {
 	if (ev->button == 1)
@@ -583,6 +585,7 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj, void *event_info)
 
    sd = data;
    ev = event_info;
+   // FIXME: respect elm_widget_scroll_hold_get of parent container
    if (_elm_config->thumbscroll_enable)
      {
 	if (sd->down.now)

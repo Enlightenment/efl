@@ -6,11 +6,14 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *ent;
+   Evas_Object *hoversel;
    Ecore_Job *deferred_recalc_job;
    Ecore_Event_Handler *sel_notify_handler; 
    Ecore_Event_Handler *sel_clear_handler;
+   Ecore_Timer *longpress_timer;
    const char *cut_sel;
    Evas_Coord lastw;
+   Evas_Coord downx, downy;
    Evas_Bool changed : 1;
    Evas_Bool linewrap : 1;
    Evas_Bool single_line : 1;
@@ -18,6 +21,7 @@ struct _Widget_Data
    Evas_Bool editable : 1;
    Evas_Bool selection_asked : 1;
    Evas_Bool have_selection : 1;
+   Evas_Bool selmode : 1;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -48,6 +52,7 @@ _del_hook(Evas_Object *obj)
 #endif   
    if (wd->cut_sel) eina_stringshare_del(wd->cut_sel);
    if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
+   if (wd->longpress_timer) ecore_timer_del(wd->longpress_timer);
    free(wd);
 }
 
@@ -128,12 +133,224 @@ _on_focus_hook(void *data, Evas_Object *obj)
 }
 
 static void
+_hoversel_position(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Coord cx, cy, cw, ch, x, y, mw, mh;
+   evas_object_geometry_get(wd->ent, &x, &y, NULL, NULL);
+   edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text", 
+                                             &cx, &cy, &cw, &ch);
+   evas_object_size_hint_min_get(wd->hoversel, &mw, &mh);
+   if (cw < mw)
+     {
+        cx += (cw - mw) / 2;
+        cw = mw;
+     }
+   if (ch < mh)
+     {
+        cy += (ch - mh) / 2;
+        ch = mh;
+     }
+   evas_object_move(wd->hoversel, x + cx, y + cy);
+   evas_object_resize(wd->hoversel, cw, ch);
+}
+
+static void
+_move(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (wd->hoversel) _hoversel_position(data);
+}
+
+static void
 _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (wd->linewrap) _sizing_eval(data);
-   Evas_Coord ww, hh;
-   evas_object_geometry_get(wd->ent, NULL, NULL, &ww, &hh);
+   if (wd->hoversel) _hoversel_position(data);
+//   Evas_Coord ww, hh;
+//   evas_object_geometry_get(wd->ent, NULL, NULL, &ww, &hh);
+}
+
+static void
+_dismissed(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (wd->hoversel) evas_object_hide(wd->hoversel);
+   if (wd->selmode)
+     edje_object_part_text_select_allow_set(wd->ent, "elm.text", 1);
+}
+
+static void
+_select(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   wd->selmode = 1;
+   edje_object_part_text_select_none(wd->ent, "elm.text");
+   edje_object_part_text_select_allow_set(wd->ent, "elm.text", 1);
+   edje_object_signal_emit(wd->ent, "elm,state,select,on", "elm");
+   elm_widget_scroll_hold_push(data);
+}
+
+static void
+_paste(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   evas_object_smart_callback_call(data, "selection,paste", NULL);
+   if (wd->sel_notify_handler)
+     {
+#ifdef HAVE_ELEMENTARY_X
+        if (elm_win_xwindow_get(elm_widget_top_get(data)))
+          {
+             ecore_x_selection_primary_request
+               (elm_win_xwindow_get(elm_widget_top_get(data)),
+                ECORE_X_SELECTION_TARGET_UTF8_STRING);
+             wd->selection_asked = 1;
+          }
+#endif        
+     }
+}
+
+static void
+_store_selection(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   const char *sel = edje_object_part_text_selection_get(wd->ent, "elm.text");
+   if (wd->cut_sel) eina_stringshare_del(wd->cut_sel);
+   wd->cut_sel = eina_stringshare_add(sel);
+}
+
+static void
+_cut(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   wd->selmode = 0;
+   edje_object_part_text_select_allow_set(wd->ent, "elm.text", 0);
+   edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
+   elm_widget_scroll_hold_pop(data);
+   _store_selection(data);
+   edje_object_part_text_insert(wd->ent, "elm.text", "");
+   edje_object_part_text_select_none(wd->ent, "elm.text");
+}
+
+static void
+_copy(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   wd->selmode = 0;
+   edje_object_part_text_select_allow_set(wd->ent, "elm.text", 0);
+   edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
+   elm_widget_scroll_hold_pop(data);
+   _store_selection(data);
+   edje_object_part_text_select_none(wd->ent, "elm.text");
+}
+
+static int
+_long_press(void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (wd->hoversel) evas_object_del(wd->hoversel);
+   wd->hoversel = elm_hoversel_add(data);
+   elm_widget_sub_object_add(data, wd->hoversel);
+   elm_hoversel_label_set(wd->hoversel, "Text");
+   elm_hoversel_hover_parent_set(wd->hoversel, elm_widget_top_get(data));
+   evas_object_smart_callback_add(wd->hoversel, "dismissed", _dismissed, data);
+   if (!wd->selmode)
+     {
+        elm_hoversel_item_add(wd->hoversel, "Select", NULL, ELM_ICON_NONE, _select, data);
+        elm_hoversel_item_add(wd->hoversel, "Paste", NULL, ELM_ICON_NONE, _paste, data);
+     }
+   else
+     {
+        elm_hoversel_item_add(wd->hoversel, "Copy", NULL, ELM_ICON_NONE, _copy, data);
+        elm_hoversel_item_add(wd->hoversel, "Cut", NULL, ELM_ICON_NONE, _cut, data);
+     }
+   if (wd->hoversel)
+     {
+        _hoversel_position(data);
+        evas_object_show(wd->hoversel);
+        elm_hoversel_hover_begin(wd->hoversel);
+     }
+   wd->longpress_timer = NULL;
+   edje_object_part_text_select_allow_set(wd->ent, "elm.text", 0);
+   return 0;
+}
+
+static void
+_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Evas_Event_Mouse_Down *ev = event_info;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (ev->button != 1) return;
+   //   if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
+   if (wd->longpress_timer) ecore_timer_del(wd->longpress_timer);
+   wd->longpress_timer = ecore_timer_add(1.0, _long_press, data);
+   wd->downx = ev->canvas.x;
+   wd->downy = ev->canvas.y;
+}
+
+static void
+_mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Evas_Event_Mouse_Up *ev = event_info;
+   if (ev->button != 1) return;
+   if (wd->longpress_timer)
+     {
+        ecore_timer_del(wd->longpress_timer);
+        wd->longpress_timer = NULL;
+     }
+}
+
+static void
+_mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Evas_Event_Mouse_Move *ev = event_info;
+   if (!wd->selmode)
+     {
+        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+          {
+             if (wd->longpress_timer)
+               {
+                  ecore_timer_del(wd->longpress_timer);
+                  wd->longpress_timer = NULL;
+               }
+          }
+        else if (wd->longpress_timer)
+          {
+             Evas_Coord dx, dy;
+             
+             dx = wd->downx - ev->cur.canvas.x;
+             dx *= dx;
+             dy = wd->downy - ev->cur.canvas.y;
+             dy *= dy;
+             if ((dx + dy) > 
+                 ((_elm_config->finger_size / 2) * 
+                  (_elm_config->finger_size / 2)))
+               {
+                  ecore_timer_del(wd->longpress_timer);
+                  wd->longpress_timer = NULL;
+               }
+          }     
+     }
+   else if (wd->longpress_timer)
+     {
+        Evas_Coord dx, dy;
+        
+        dx = wd->downx - ev->cur.canvas.x;
+        dx *= dx;
+        dy = wd->downy - ev->cur.canvas.y;
+        dy *= dy;
+        if ((dx + dy) > 
+            ((_elm_config->finger_size / 2) * 
+             (_elm_config->finger_size / 2)))
+          {
+             ecore_timer_del(wd->longpress_timer);
+             wd->longpress_timer = NULL;
+          }
+     }
 }
 
 static const char *
@@ -335,6 +552,7 @@ _text_to_mkup(const char *text)
         else if (ch == '\t') str = _str_append(str, "<\t>", &str_len, &str_alloc);
         else if (ch == '<') str = _str_append(str, "&lt;", &str_len, &str_alloc);
         else if (ch == '>') str = _str_append(str, "&gt;", &str_len, &str_alloc);
+        else if (ch == '&') str = _str_append(str, "&amp;", &str_len, &str_alloc);
         else
           {
              char tstr[16];
@@ -594,6 +812,7 @@ _event_selection_notify(void *data, int type, void *event)
                   char *txt = _text_to_mkup(text_data->text);
                   if (txt)
                     {
+                       printf("inst: %s\n", txt);
                        elm_entry_entry_insert(data, txt);
                        free(txt);
                     }
@@ -639,7 +858,11 @@ elm_entry_add(Evas_Object *parent)
    wd->editable = 1;
    
    wd->ent = edje_object_add(e);
+   evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOVE, _move, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_RESIZE, _resize, obj);
+   evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, obj);
+   evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_UP, _mouse_up, obj);
+   evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move, obj);
 					  
    _elm_theme_set(wd->ent, "entry", "base", "default");
    edje_object_signal_callback_add(wd->ent, "entry,changed", "elm.text", _signal_entry_changed, obj);
@@ -782,6 +1005,12 @@ EAPI void
 elm_entry_select_none(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->selmode)
+     {
+        wd->selmode = 0;
+        edje_object_part_text_select_allow_set(wd->ent, "elm.text", 0);
+        edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
+     }
    wd->have_selection = 0;
    edje_object_part_text_select_none(wd->ent, "elm.text");
 }
@@ -790,6 +1019,12 @@ EAPI void
 elm_entry_select_all(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->selmode)
+     {
+        wd->selmode = 0;
+        edje_object_part_text_select_allow_set(wd->ent, "elm.text", 0);
+        edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
+     }
    wd->have_selection = 1;
    edje_object_part_text_select_all(wd->ent, "elm.text");
 }
