@@ -155,4 +155,12 @@
 
 2009-03-17  Gustavo Sverzut Barbieri
 
-	* force fsync() after data is written to file, solve ext4 issues.
+	* Force fsync() after data is written to file, solve ext4 issues.
+
+2009-03-18  Carsten Haitzler (The Rasterman)
+
+	* Disable fsync. Edit the code if you need it.
+
+2009-03-19  Cedric BAIL
+
+	* Make eet_data thread safe.
