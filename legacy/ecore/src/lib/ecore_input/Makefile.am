@@ -24,6 +24,12 @@ else
 ECORE_WIN32_INC =
 endif
 
+if BUILD_ECORE_WINCE
+ECORE_WINCE_INC = -I$(top_srcdir)/src/lib/ecore_wince
+else
+ECORE_WINCE_INC =
+endif
+
 if BUILD_ECORE_SDL
 ECORE_SDL_INC = -I$(top_srcdir)/src/lib/ecore_sdl @SDL_CFLAGS@
 else
@@ -39,6 +45,7 @@ $(ECORE_X_INC) \
 $(ECORE_FB_INC) \
 $(ECORE_DIRECTFB_INC) \
 $(ECORE_WIN32_INC) \
+$(ECORE_WINCE_INC) \
 $(ECORE_SDL_INC) \
 @EVAS_CFLAGS@
 
@@ -55,14 +62,6 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 @EVAS_LIBS@ \
 @EVIL_LIBS@
 
-libecore_input_la_LDFLAGS = @lt_enable_auto_import@ -version-info @version_info@
-
-libecore_input_la_DEPENDENCIES = \
-$(top_builddir)/src/lib/ecore/libecore.la
+libecore_input_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
 
 endif
-
-EXTRA_DIST = \
-ecore_input.c \
-Ecore_Input.h
-
