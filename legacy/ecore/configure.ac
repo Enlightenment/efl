@@ -47,6 +47,7 @@ want_ecore_ipc="no"
 want_ecore_file="yes"
 want_ecore_config="no"
 want_ecore_imf="no"
+want_ecore_input="yes"
 
 # graphic system modules
 want_evas_simple_x11="no"
@@ -135,12 +136,12 @@ requirements_ecore=""
 requirements_ecore_con=""
 requirements_ecore_config=""
 requirements_ecore_directfb=""
-requirements_ecore_input=""
 requirements_ecore_evas=""
 requirements_ecore_fb=""
 requirements_ecore_file=""
 requirements_ecore_imf=""
 requirements_ecore_imf_evas=""
+requirements_ecore_input=""
 requirements_ecore_ipc=""
 requirements_ecore_job=""
 requirements_ecore_quartz=""
@@ -221,6 +222,7 @@ case "$host_os" in
       EFL_ECORE_FILE_BUILD="-DEFL_ECORE_FILE_BUILD"
       EFL_ECORE_EVAS_BUILD="-DEFL_ECORE_EVAS_BUILD"
       EFL_ECORE_IMF_BUILD="-DEFL_ECORE_IMF_BUILD"
+      EFL_ECORE_INPUT_BUILD="-DEFL_ECORE_INPUT_BUILD"
       ;;
 esac
 
@@ -247,6 +249,7 @@ AC_SUBST(EFL_ECORE_TXT_BUILD)
 AC_SUBST(EFL_ECORE_FILE_BUILD)
 AC_SUBST(EFL_ECORE_EVAS_BUILD)
 AC_SUBST(EFL_ECORE_IMF_BUILD)
+AC_SUBST(EFL_ECORE_INPUT_BUILD)
 AC_SUBST(EFL_ECORE_WINCE_BUILD)
 AC_SUBST(EFL_ECORE_WIN32_BUILD)
 AC_SUBST(EFL_ECORE_SDL_BUILD)
@@ -284,6 +287,7 @@ requirements_ecore_fb="ecore eina-0 ${requirements_ecore_fb}"
 requirements_ecore_file="ecore eina-0 ${requirements_ecore_file}"
 requirements_ecore_imf="ecore eina-0 ${requirements_ecore_imf}"
 requirements_ecore_imf_evas="ecore eina-0 ${requirements_ecore_imf_evas}"
+requirements_ecore_input="ecore eina-0 ${requirements_ecore_input}"
 requirements_ecore_ipc="ecore eina-0 ${requirements_ecore_ipc}"
 requirements_ecore_job="ecore eina-0 ${requirements_ecore_job}"
 requirements_ecore_quartz="ecore eina-0 ${requirements_ecore_quartz}"
@@ -292,11 +296,6 @@ requirements_ecore_x="ecore eina-0 ${requirements_ecore_x}"
 requirements_ecore_win32="ecore eina-0 ${requirements_ecore_win32}"
 requirements_ecore_wince="ecore eina-0 ${requirements_ecore_wince}"
 
-dnl ecore_input
-ECORE_CHECK_MODULE([Input], [yes])
-requirements_ecore_evas="ecore-input ${requirements_ecore_evas}"
-requirements_ecore_sdl="ecore-input ${requirements_ecore_sdl}"
-requirements_ecore_x="ecore-input ${requirements_ecore_x}"
 
 # iconv library (ecore_txt)
 
@@ -746,14 +745,26 @@ if test "x${have_ecore_imf}" = "xyes" -a "x${have_evas}" = "xyes" ; then
 fi
 
 ECORE_CHECK_MODULE([IMF_EVAS], [${want_ecore_imf}], [${ecore_imf_evas_deps}],
-  [requirements_ecore_imf_evas="ecore-imf evas $requirements_ecore_imf_evas"])
+  [requirements_ecore_imf_evas="ecore-imf evas ${requirements_ecore_imf_evas}"])
+
+# ecore_input
+ECORE_CHECK_MODULE([Input], [${want_ecore_input}], [${have_evas}],
+  [requirements_ecore_input="evas ${requirements_ecore_input}"])
 
 ## Graphic systems
 
 # ecore_x{cb}
 
-ECORE_CHECK_MODULE([X], [${want_ecore_x}], [$have_x],
-  [ecore_x_libs="$ecore_x_libs $x_libs"])
+ecore_x_deps="no"
+if test "x${have_x}" = "xyes" -a "x${have_ecore_input}" = "xyes" ; then
+   ecore_x_deps="yes"
+fi
+
+ECORE_CHECK_MODULE([X], [${want_ecore_x}], [${ecore_x_deps}],
+  [
+   ecore_x_libs="$ecore_x_libs $x_libs"
+   requirements_ecore_x="input ${requirements_ecore_x}"
+  ])
 
 # ecore_win32
 
@@ -767,7 +778,13 @@ ECORE_CHECK_MODULE([QUARTZ], [${want_ecore_quartz}], [$have_quartz])
 
 # ecore_sdl
 
-ECORE_CHECK_MODULE([SDL], [${want_ecore_sdl}], [$have_sdl])
+ecore_sdl_deps="no"
+if test "x${have_sdl}" = "xyes" -a "x${have_ecore_input}" = "xyes" ; then
+   ecore_sdl_deps="yes"
+fi
+
+ECORE_CHECK_MODULE([SDL], [${want_ecore_sdl}], [${ecore_sdl_deps}],
+  [requirements_ecore_sdl="input ${requirements_ecore_sdl}"])
 
 # ecore_fb
 ECORE_CHECK_MODULE([FB], [${want_ecore_fb}], [$have_fb])
@@ -789,7 +806,8 @@ ECORE_CHECK_MODULE([WinCE], [${want_ecore_wince}])
 
 # ecore_evas
 
-ECORE_CHECK_MODULE([Evas], [${want_ecore_evas}], [$have_evas])
+ECORE_CHECK_MODULE([Evas], [${want_ecore_evas}], [$have_ecore_input],
+  [requirements_ecore_evas="input ${requirements_ecore_evas}"])
 
 # ecore_evas_buffer
 
@@ -940,12 +958,12 @@ AC_SUBST(requirements_ecore)
 AC_SUBST(requirements_ecore_con)
 AC_SUBST(requirements_ecore_config)
 AC_SUBST(requirements_ecore_directfb)
-AC_SUBST(requirements_ecore_input)
 AC_SUBST(requirements_ecore_evas)
 AC_SUBST(requirements_ecore_fb)
 AC_SUBST(requirements_ecore_file)
 AC_SUBST(requirements_ecore_imf)
 AC_SUBST(requirements_ecore_imf_evas)
+AC_SUBST(requirements_ecore_input)
 AC_SUBST(requirements_ecore_ipc)
 AC_SUBST(requirements_ecore_job)
 AC_SUBST(requirements_ecore_quartz)
@@ -1045,6 +1063,7 @@ fi
 echo "  Ecore_Config.................: $have_ecore_config"
 echo "  Ecore_IMF....................: $have_ecore_imf"
 echo "  Ecore_IMF_Evas...............: $have_ecore_imf_evas"
+echo "  Ecore_Input..................: $have_ecore_input"
 
 echo
 echo " Graphic systems:"
