@@ -24,7 +24,6 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       ecore-x.pc \
 		       ecore-win32.pc \
 		       ecore-sdl.pc \
-		       ecore-input.pc.in \
 		       ecore-input.pc \
 		       ecore-quartz.pc \
 		       ecore-wince.pc \
@@ -58,6 +57,7 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN \
 	     ecore-win32.pc.in \
 	     ecore-sdl.pc.in \
 	     ecore-quartz.pc.in \
+	     ecore-input.pc.in \
 	     ecore-wince.pc.in \
 	     ecore.spec.in ecore.spec
 
@@ -93,6 +93,10 @@ if BUILD_ECORE_IMF_EVAS
 pimfevas = ecore-imf-evas.pc
 endif
 
+if BUILD_ECORE_INPUT
+pinput = ecore-input.pc
+endif
+
 if BUILD_ECORE_IPC
 pipc = ecore-ipc.pc
 endif
@@ -106,7 +110,7 @@ ptxt = ecore-txt.pc
 endif
 
 if BUILD_ECORE_X
-px = ecore-x.pc ecore-input.pc
+px = ecore-x.pc
 endif
 
 if BUILD_ECORE_WIN32
@@ -118,7 +122,7 @@ pwince = ecore-wince.pc
 endif
 
 if BUILD_ECORE_SDL
-psdl = ecore-sdl.pc ecore-input.pc
+psdl = ecore-sdl.pc
 endif
 
 if BUILD_ECORE_QUARTZ
@@ -132,8 +136,8 @@ endif
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
 	ecore.pc $(pcon) $(pconfig) $(pdfb) $(pevas) \
-	$(pfb) $(pfile) $(pimf) $(pimfevas) $(pipc) $(pjob) $(ptxt) \
-	$(px) $(pwin32) $(pwince) $(psdl) $(pquartz)
+	$(pfb) $(pfile) $(pimf) $(pimfevas) $(pinput) $(pipc) $(pjob) \
+	$(ptxt) $(px) $(pwin32) $(pwince) $(psdl) $(pquartz)
 
 .PHONY: doc
 
