@@ -2965,9 +2965,7 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 		  free(roots);
 	       }
 	  }
-	einfo->info.backend = 0;
-	einfo->info.connection  = ecore_x_display_get();
-	einfo->info.screen = NULL;
+	einfo->info.display  = ecore_x_display_get();
 	einfo->info.visual   = DefaultVisual(ecore_x_display_get(), screen);
 # endif /* HAVE_ECORE_X_XCB */
 	einfo->info.drawable = ee->prop.window;
