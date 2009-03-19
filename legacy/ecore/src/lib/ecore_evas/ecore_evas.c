@@ -2484,3 +2484,41 @@ _ecore_evas_idle_timeout_update(Ecore_Evas *ee)
 						 _ecore_evas_cb_idle_flush,
 						 ee);
 }
+
+void
+_ecore_evas_mouse_move_process(void *ecore_evas, int x, int y, unsigned int timestamp)
+{
+   Ecore_Evas *ee = ecore_evas;
+
+   ee->mouse.x = x;
+   ee->mouse.y = y;
+   if (ee->prop.cursor.object)
+     {
+	evas_object_show(ee->prop.cursor.object);
+	if (ee->rotation == 0)
+	  evas_object_move(ee->prop.cursor.object,
+			   x - ee->prop.cursor.hot.x,
+			   y - ee->prop.cursor.hot.y);
+	else if (ee->rotation == 90)
+	  evas_object_move(ee->prop.cursor.object,
+			   ee->h - y - 1 - ee->prop.cursor.hot.x,
+			   x - ee->prop.cursor.hot.y);
+	else if (ee->rotation == 180)
+	  evas_object_move(ee->prop.cursor.object,
+			   ee->w - x - 1 - ee->prop.cursor.hot.x,
+			   ee->h - y - 1 - ee->prop.cursor.hot.y);
+	else if (ee->rotation == 270)
+	  evas_object_move(ee->prop.cursor.object,
+			   y - ee->prop.cursor.hot.x,
+			   ee->w - x - 1 - ee->prop.cursor.hot.y);
+     }
+   if (ee->rotation == 0)
+     evas_event_feed_mouse_move(ee->evas, x, y, timestamp, NULL);
+   else if (ee->rotation == 90)
+     evas_event_feed_mouse_move(ee->evas, ee->h - y - 1, x, timestamp, NULL);
+   else if (ee->rotation == 180)
+     evas_event_feed_mouse_move(ee->evas, ee->w - x - 1, ee->h - y - 1, timestamp, NULL);
+   else if (ee->rotation == 270)
+     evas_event_feed_mouse_move(ee->evas, y, ee->w - x - 1, timestamp, NULL);
+}
+

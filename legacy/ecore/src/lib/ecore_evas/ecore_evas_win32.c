@@ -313,41 +313,6 @@ _ecore_evas_win32_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, 
    return 1;
 }
 
-static void
-_ecore_evas_win32_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp)
-{
-   ee->mouse.x = x;
-   ee->mouse.y = y;
-   if (ee->prop.cursor.object)
-     {
-	evas_object_show(ee->prop.cursor.object);
-	if (ee->rotation == 0)
-	  evas_object_move(ee->prop.cursor.object,
-			   x - ee->prop.cursor.hot.x,
-			   y - ee->prop.cursor.hot.y);
-	else if (ee->rotation == 90)
-	  evas_object_move(ee->prop.cursor.object,
-			   ee->h - y - 1 - ee->prop.cursor.hot.x,
-			   x - ee->prop.cursor.hot.y);
-	else if (ee->rotation == 180)
-	  evas_object_move(ee->prop.cursor.object,
-			   ee->w - x - 1 - ee->prop.cursor.hot.x,
-			   ee->h - y - 1 - ee->prop.cursor.hot.y);
-	else if (ee->rotation == 270)
-	  evas_object_move(ee->prop.cursor.object,
-			   y - ee->prop.cursor.hot.x,
-			   ee->w - x - 1 - ee->prop.cursor.hot.y);
-     }
-   if (ee->rotation == 0)
-     evas_event_feed_mouse_move(ee->evas, x, y, timestamp, NULL);
-   else if (ee->rotation == 90)
-     evas_event_feed_mouse_move(ee->evas, ee->h - y - 1, x, timestamp, NULL);
-   else if (ee->rotation == 180)
-     evas_event_feed_mouse_move(ee->evas, ee->w - x - 1, ee->h - y - 1, timestamp, NULL);
-   else if (ee->rotation == 270)
-     evas_event_feed_mouse_move(ee->evas, y, ee->w - x - 1, timestamp, NULL);
-}
-
 static int
 _ecore_evas_win32_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
@@ -362,7 +327,7 @@ _ecore_evas_win32_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, v
    if (e->window != ee->engine.win32.window) return 1;
    /* FIXME to do */
 /*    _ecore_evas_x_modifier_locks_update(ee, e->modifiers); */
-   _ecore_evas_win32_mouse_move_process(ee, e->x, e->y, e->time);
+   _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
 
    return 1;
 }
@@ -384,7 +349,7 @@ _ecore_evas_win32_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, voi
    /* FIXME to do */
 /*    _ecore_evas_x_modifier_locks_update(ee, e->modifiers); */
    evas_event_feed_mouse_in(ee->evas, e->time, NULL);
-   _ecore_evas_win32_mouse_move_process(ee, e->x, e->y, e->time);
+   _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
 
    return 1;
 }
@@ -404,7 +369,7 @@ _ecore_evas_win32_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, vo
 
    /* FIXME to do */
 /*    _ecore_evas_x_modifier_locks_update(ee, e->modifiers); */
-   _ecore_evas_win32_mouse_move_process(ee, e->x, e->y, e->time);
+   _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
 
    evas_event_feed_mouse_out(ee->evas, e->time, NULL);
    if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
@@ -568,8 +533,8 @@ _ecore_evas_win32_event_window_configure(void *data __UNUSED__, int type __UNUSE
           {
              if ((ee->expecting_resize.w == ee->w) &&
                  (ee->expecting_resize.h == ee->h))
-               _ecore_evas_win32_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
-                                                    ecore_win32_current_time_get());
+               _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
+					      ecore_win32_current_time_get());
              ee->expecting_resize.w = 0;
              ee->expecting_resize.h = 0;
           }
@@ -756,15 +721,15 @@ _ecore_evas_win32_rotation_set(Ecore_Evas *ee, int rotation)
 	     ecore_evas_size_max_set(ee, maxh, maxw);
 	     ecore_evas_size_base_set(ee, baseh, basew);
 	     ecore_evas_size_step_set(ee, steph, stepw);
-	     _ecore_evas_win32_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
-                                                  ecore_win32_current_time_get());
+	     _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
+					    ecore_win32_current_time_get());
 	  }
 	else
 	  {
 	     einfo->info.rotation = rotation;
 	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 	     ee->rotation = rotation;
-	     _ecore_evas_win32_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
+	     _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
                                                   ecore_win32_current_time_get());
 	     if (ee->func.fn_resize) ee->func.fn_resize(ee);
 	  }

@@ -1,52 +1,10 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-if BUILD_ECORE_X
-ECORE_X_INC = -I$(top_srcdir)/src/lib/ecore_x
-else
-ECORE_X_INC =
-endif
-
-if BUILD_ECORE_FB
-ECORE_FB_INC = -I$(top_srcdir)/src/lib/ecore_fb
-else
-ECORE_FB_INC =
-endif
-
-if BUILD_ECORE_DIRECTFB
-ECORE_DIRECTFB_INC = -I$(top_srcdir)/src/lib/ecore_directfb -I@DIRECTFB_CFLAGS@
-else
-ECORE_DIRECTFB_INC =
-endif
-
-if BUILD_ECORE_WIN32
-ECORE_WIN32_INC = -I$(top_srcdir)/src/lib/ecore_win32
-else
-ECORE_WIN32_INC =
-endif
-
-if BUILD_ECORE_WINCE
-ECORE_WINCE_INC = -I$(top_srcdir)/src/lib/ecore_wince
-else
-ECORE_WINCE_INC =
-endif
-
-if BUILD_ECORE_SDL
-ECORE_SDL_INC = -I$(top_srcdir)/src/lib/ecore_sdl @SDL_CFLAGS@
-else
-ECORE_SDL_INC =
-endif
-
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_evas \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore_evas \
-$(ECORE_X_INC) \
-$(ECORE_FB_INC) \
-$(ECORE_DIRECTFB_INC) \
-$(ECORE_WIN32_INC) \
-$(ECORE_WINCE_INC) \
-$(ECORE_SDL_INC) \
 @EVAS_CFLAGS@
 
 if BUILD_ECORE_INPUT

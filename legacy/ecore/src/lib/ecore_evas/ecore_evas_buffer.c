@@ -212,7 +212,7 @@ _ecore_evas_buffer_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *ob
    x = ev->cur.canvas.x;
    y = ev->cur.canvas.y;
    _ecore_evas_buffer_coord_translate(ee, &x, &y);
-   ecore_evas_mouse_move_process(ee, x, y, ev->timestamp);
+   _ecore_evas_mouse_move_process(ee, x, y, ev->timestamp);
 }
 
 static void

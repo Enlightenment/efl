@@ -4,6 +4,18 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 #include "Ecore_Input.h"
+#include "Evas.h"
+
+#include <stdio.h>
+
+typedef struct _Ecore_Input_Window Ecore_Input_Window;
+struct _Ecore_Input_Window
+{
+   Evas *evas;
+   void *window;
+   Ecore_Event_Mouse_Move_Cb move_mouse;
+   int ignore_event;
+};
 
 EAPI int ECORE_EVENT_KEY_DOWN = 0;
 EAPI int ECORE_EVENT_KEY_UP = 0;
@@ -19,35 +31,13 @@ static int _ecore_event_init_count = 0;
 #ifdef BUILD_ECORE_EVAS
 #include "ecore_evas_private.h"
 
-static Ecore_Event_Handler *ecore_evas_event_handlers[8];
-static Evas_Hash *_ecore_evases_hash = NULL;
+static Ecore_Event_Handler *ecore_event_evas_handlers[8];
+static Eina_Hash *_window_hash = NULL;
 
-static int _ecore_evas_event_init_count = 0;
-
-static const char*
-_ecore_evas_winid_str_get(Ecore_Window window)
-{
-   const char *vals = "qWeRtYuIoP5-$&<~";
-   static char id[9];
-
-#define COMPUTE_ID(Result, Index, Source, Window) \
-   Result[Index] = Source[(Window >> (28 - Index * 4)) & 0xf];
-
-   COMPUTE_ID(id, 0, vals, window);
-   COMPUTE_ID(id, 1, vals, window);
-   COMPUTE_ID(id, 2, vals, window);
-   COMPUTE_ID(id, 3, vals, window);
-   COMPUTE_ID(id, 4, vals, window);
-   COMPUTE_ID(id, 5, vals, window);
-   COMPUTE_ID(id, 6, vals, window);
-   COMPUTE_ID(id, 7, vals, window);
-   id[8] = '\0';
-
-   return id;
-}
+static int _ecore_event_evas_init_count = 0;
 
 EAPI void
-ecore_evas_event_modifier_lock_update(Evas *e, unsigned int modifiers)
+ecore_event_evas_modifier_lock_update(Evas *e, unsigned int modifiers)
 {
    if (modifiers & ECORE_EVENT_MODIFIER_SHIFT)
      evas_key_modifier_on(e, "Shift");
@@ -86,178 +76,178 @@ ecore_evas_event_modifier_lock_update(Evas *e, unsigned int modifiers)
 }
 
 EAPI void
-ecore_evas_register(Ecore_Evas *ee, Ecore_Window window)
+ecore_event_window_register(Ecore_Window id, void *window, Evas *evas, Ecore_Event_Mouse_Move_Cb move_mouse)
 {
-   _ecore_evases_hash = evas_hash_add(_ecore_evases_hash, _ecore_evas_winid_str_get(window), ee);
+   Ecore_Input_Window *new;
 
-   evas_key_modifier_add(ee->evas, "Shift");
-   evas_key_modifier_add(ee->evas, "Control");
-   evas_key_modifier_add(ee->evas, "Alt");
-   evas_key_modifier_add(ee->evas, "Meta");
-   evas_key_modifier_add(ee->evas, "Hyper");
-   evas_key_modifier_add(ee->evas, "Super");
-   evas_key_lock_add(ee->evas, "Caps_Lock");
-   evas_key_lock_add(ee->evas, "Num_Lock");
-   evas_key_lock_add(ee->evas, "Scroll_Lock");
+   new = malloc(sizeof (Ecore_Input_Window));
+   if (!new) return ;
+
+   new->evas = evas;
+   new->window = window;
+   new->move_mouse = move_mouse;
+   new->ignore_event = 0;
+
+   eina_hash_add(_window_hash, &id, new);
+
+   evas_key_modifier_add(evas, "Shift");
+   evas_key_modifier_add(evas, "Control");
+   evas_key_modifier_add(evas, "Alt");
+   evas_key_modifier_add(evas, "Meta");
+   evas_key_modifier_add(evas, "Hyper");
+   evas_key_modifier_add(evas, "Super");
+   evas_key_lock_add(evas, "Caps_Lock");
+   evas_key_lock_add(evas, "Num_Lock");
+   evas_key_lock_add(evas, "Scroll_Lock");
 }
 
 EAPI void
-ecore_evas_unregister(Ecore_Evas *ee, Ecore_Window window)
+ecore_event_window_unregister(Ecore_Window id)
 {
-   _ecore_evases_hash = evas_hash_del(_ecore_evases_hash, _ecore_evas_winid_str_get(window), ee);
+   eina_hash_del(_window_hash, &id, NULL);
 }
 
-EAPI Ecore_Evas*
-ecore_evas_window_match(Ecore_Window window)
+EAPI void*
+ecore_event_window_match(Ecore_Window id)
 {
-   return evas_hash_find(_ecore_evases_hash, _ecore_evas_winid_str_get(window));
+   Ecore_Input_Window *lookup;
+
+   lookup = eina_hash_find(_window_hash, &id);
+   if (lookup) return lookup->window;
+   return NULL;
 }
 
 EAPI void
-ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp)
+ecore_event_window_ignore_events(Ecore_Window id, int ignore_event)
 {
-   ee->mouse.x = x;
-   ee->mouse.y = y;
-   if (ee->prop.cursor.object)
-     {
-	evas_object_show(ee->prop.cursor.object);
-	if (ee->rotation == 0)
-	  evas_object_move(ee->prop.cursor.object,
-			   x - ee->prop.cursor.hot.x,
-			   y - ee->prop.cursor.hot.y);
-	else if (ee->rotation == 90)
-	  evas_object_move(ee->prop.cursor.object,
-			   ee->h - y - 1 - ee->prop.cursor.hot.x,
-			   x - ee->prop.cursor.hot.y);
-	else if (ee->rotation == 180)
-	  evas_object_move(ee->prop.cursor.object,
-			   ee->w - x - 1 - ee->prop.cursor.hot.x,
-			   ee->h - y - 1 - ee->prop.cursor.hot.y);
-	else if (ee->rotation == 270)
-	  evas_object_move(ee->prop.cursor.object,
-			   y - ee->prop.cursor.hot.x,
-			   ee->w - x - 1 - ee->prop.cursor.hot.y);
-     }
-   if (ee->rotation == 0)
-     evas_event_feed_mouse_move(ee->evas, x, y, timestamp, NULL);
-   else if (ee->rotation == 90)
-     evas_event_feed_mouse_move(ee->evas, ee->h - y - 1, x, timestamp, NULL);
-   else if (ee->rotation == 180)
-     evas_event_feed_mouse_move(ee->evas, ee->w - x - 1, ee->h - y - 1, timestamp, NULL);
-   else if (ee->rotation == 270)
-     evas_event_feed_mouse_move(ee->evas, y, ee->w - x - 1, timestamp, NULL);
+   Ecore_Input_Window *lookup;
+
+   lookup = eina_hash_find(_window_hash, &id);
+   if (!lookup) return ;
+   lookup->ignore_event = ignore_event;
+}
+
+static Ecore_Input_Window*
+_ecore_event_window_match(Ecore_Window id)
+{
+   Ecore_Input_Window *lookup;
+
+   lookup = eina_hash_find(_window_hash, &id);
+   if (!lookup) return NULL;
+   if (lookup->ignore_event) return NULL; /* Pass on event. */
+   return lookup;
 }
 
 static int
-_ecore_evas_event_key(Ecore_Event_Key *e, Ecore_Event_Press press)
+_ecore_event_evas_key(Ecore_Event_Key *e, Ecore_Event_Press press)
 {
-   Ecore_Evas *ee;
+   Ecore_Input_Window *lookup;
 
-   ee = ecore_evas_window_match(e->window);
-   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
-   ecore_evas_event_modifier_lock_update(ee->evas, e->modifiers);
+   lookup = _ecore_event_window_match(e->window);
+   if (!lookup) return 1;
+   ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
    if (press == ECORE_DOWN)
-     evas_event_feed_key_down(ee->evas, e->keyname, e->key, e->string, e->compose, e->timestamp, NULL);
+     evas_event_feed_key_down(lookup->evas, e->keyname, e->key, e->string, e->compose, e->timestamp, NULL);
    else
-     evas_event_feed_key_up(ee->evas, e->keyname, e->key, e->string, e->compose, e->timestamp, NULL);
+     evas_event_feed_key_up(lookup->evas, e->keyname, e->key, e->string, e->compose, e->timestamp, NULL);
    return 1;
 }
 
 static int
-_ecore_evas_event_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press press)
+_ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press press)
 {
-   Ecore_Evas *ee;
+   Ecore_Input_Window *lookup;
    Evas_Button_Flags flags = EVAS_BUTTON_NONE;
 
-   ee = ecore_evas_window_match(e->window);
-   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
-   ecore_evas_event_modifier_lock_update(ee->evas, e->modifiers);
+   lookup = _ecore_event_window_match(e->window);
+   if (!lookup) return 1;
+   ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
    if (e->double_click) flags |= EVAS_BUTTON_DOUBLE_CLICK;
    if (e->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
    if (press == ECORE_DOWN)
-     evas_event_feed_mouse_down(ee->evas, e->buttons, flags, e->timestamp, NULL);
+     evas_event_feed_mouse_down(lookup->evas, e->buttons, flags, e->timestamp, NULL);
    else
-     evas_event_feed_mouse_up(ee->evas, e->buttons, flags, e->timestamp, NULL);
+     evas_event_feed_mouse_up(lookup->evas, e->buttons, flags, e->timestamp, NULL);
    return 1;
 }
 
 static int
-_ecore_evas_event_mouse_io(Ecore_Event_Mouse_IO *e, Ecore_Event_IO io)
+_ecore_event_evas_mouse_io(Ecore_Event_Mouse_IO *e, Ecore_Event_IO io)
 {
-   Ecore_Evas *ee;
+   Ecore_Input_Window *lookup;
 
-   ee = ecore_evas_window_match(e->window);
-   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
-   ecore_evas_event_modifier_lock_update(ee->evas, e->modifiers);
+   lookup = _ecore_event_window_match(e->window);
+   if (!lookup) return 1;
+   ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
    switch (io)
      {
       case ECORE_IN:
-	 evas_event_feed_mouse_in(ee->evas, e->timestamp, NULL);
+	 evas_event_feed_mouse_in(lookup->evas, e->timestamp, NULL);
 	 break;
       case ECORE_OUT:
-	 evas_event_feed_mouse_out(ee->evas, e->timestamp, NULL);
+	 evas_event_feed_mouse_out(lookup->evas, e->timestamp, NULL);
 	 break;
       default:
 	 break;
      }
 
-   ecore_evas_mouse_move_process(ee, e->x, e->y, e->timestamp);
+   lookup->move_mouse(lookup->window, e->x, e->y, e->timestamp);
    return 1;
 }
 #endif
 
 EAPI int
-ecore_evas_event_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
+ecore_event_evas_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
 #ifdef BUILD_ECORE_EVAS
-   return _ecore_evas_event_key((Ecore_Event_Key*) event, ECORE_DOWN);
+   return _ecore_event_evas_key((Ecore_Event_Key*) event, ECORE_DOWN);
 #else
    return 0;
 #endif
 }
 
 EAPI int
-ecore_evas_event_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
+ecore_event_evas_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
 #ifdef BUILD_ECORE_EVAS
-   return _ecore_evas_event_key((Ecore_Event_Key*) event, ECORE_UP);
+   return _ecore_event_evas_key((Ecore_Event_Key*) event, ECORE_UP);
 #else
    return 0;
 #endif
 }
 
 EAPI int
-ecore_evas_event_mouse_button_down(void *data __UNUSED__, int type __UNUSED__, void *event)
+ecore_event_evas_mouse_button_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
 #ifdef BUILD_ECORE_EVAS
-   return _ecore_evas_event_mouse_button((Ecore_Event_Mouse_Button*) event, ECORE_DOWN);
+   return _ecore_event_evas_mouse_button((Ecore_Event_Mouse_Button*) event, ECORE_DOWN);
 #else
    return 0;
 #endif
 }
 
 EAPI int
-ecore_evas_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, void *event)
+ecore_event_evas_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
 #ifdef BUILD_ECORE_EVAS
-   return _ecore_evas_event_mouse_button((Ecore_Event_Mouse_Button*) event, ECORE_UP);
+   return _ecore_event_evas_mouse_button((Ecore_Event_Mouse_Button*) event, ECORE_UP);
 #else
    return 0;
 #endif
 }
 
 EAPI int
-ecore_evas_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *event)
+ecore_event_evas_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
 #ifdef BUILD_ECORE_EVAS
    Ecore_Event_Mouse_Wheel *e;
-   Ecore_Evas *ee;
+   Ecore_Input_Window *lookup;
 
    e = event;
-   ee = ecore_evas_window_match(e->window);
-   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
-   ecore_evas_event_modifier_lock_update(ee->evas, e->modifiers);
-   evas_event_feed_mouse_wheel(ee->evas, e->direction, e->z, e->timestamp, NULL);
+   lookup = _ecore_event_window_match(e->window);
+   if (!lookup) return 1;
+   ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
+   evas_event_feed_mouse_wheel(lookup->evas, e->direction, e->z, e->timestamp, NULL);
 
    return 1;
 #else
@@ -266,17 +256,17 @@ ecore_evas_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *e
 }
 
 EAPI int
-ecore_evas_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
+ecore_event_evas_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
 #ifdef BUILD_ECORE_EVAS
    Ecore_Event_Mouse_Move *e;
-   Ecore_Evas *ee;
+   Ecore_Input_Window *lookup;
 
    e = event;
-   ee = ecore_evas_window_match(e->window);
-   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
-   ecore_evas_event_modifier_lock_update(ee->evas, e->modifiers);
-   ecore_evas_mouse_move_process(ee, e->x, e->y, e->timestamp);
+   lookup = _ecore_event_window_match(e->window);
+   if (!lookup) return 1;
+   ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
+   lookup->move_mouse(lookup->window, e->x, e->y, e->timestamp);
    return 1;
 #else
    return 0;
@@ -284,81 +274,85 @@ ecore_evas_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *ev
 }
 
 EAPI int
-ecore_evas_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event)
+ecore_event_evas_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
 #ifdef BUILD_ECORE_EVAS
-   return _ecore_evas_event_mouse_io((Ecore_Event_Mouse_IO*) event, ECORE_IN);
+   return _ecore_event_evas_mouse_io((Ecore_Event_Mouse_IO*) event, ECORE_IN);
 #else
    return 0;
 #endif
 }
 
 EAPI int
-ecore_evas_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *event)
+ecore_event_evas_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
 #ifdef BUILD_ECORE_EVAS
-   return _ecore_evas_event_mouse_io((Ecore_Event_Mouse_IO*) event, ECORE_OUT);
+   return _ecore_event_evas_mouse_io((Ecore_Event_Mouse_IO*) event, ECORE_OUT);
 #else
    return 0;
 #endif
 }
 
 EAPI int
-ecore_evas_event_init(void)
+ecore_event_evas_init(void)
 {
 #ifdef BUILD_ECORE_EVAS
-   if (!_ecore_evas_event_init_count)
+   if (!_ecore_event_evas_init_count)
      {
+	ecore_init();
 	ecore_event_init();
 
-	ecore_evas_event_handlers[0] = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
-							       ecore_evas_event_key_down,
+	ecore_event_evas_handlers[0] = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
+							       ecore_event_evas_key_down,
 							       NULL);
-	ecore_evas_event_handlers[1] = ecore_event_handler_add(ECORE_EVENT_KEY_UP,
-							       ecore_evas_event_key_up,
+	ecore_event_evas_handlers[1] = ecore_event_handler_add(ECORE_EVENT_KEY_UP,
+							       ecore_event_evas_key_up,
 							       NULL);
-	ecore_evas_event_handlers[2] = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN,
-							       ecore_evas_event_mouse_button_down,
+	ecore_event_evas_handlers[2] = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN,
+							       ecore_event_evas_mouse_button_down,
 							       NULL);
-	ecore_evas_event_handlers[3] = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP,
-							       ecore_evas_event_mouse_button_up,
+	ecore_event_evas_handlers[3] = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP,
+							       ecore_event_evas_mouse_button_up,
 							       NULL);
-	ecore_evas_event_handlers[4] = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE,
-							       ecore_evas_event_mouse_move,
+	ecore_event_evas_handlers[4] = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE,
+							       ecore_event_evas_mouse_move,
 							       NULL);
-	ecore_evas_event_handlers[5] = ecore_event_handler_add(ECORE_EVENT_MOUSE_WHEEL,
-							       ecore_evas_event_mouse_wheel,
+	ecore_event_evas_handlers[5] = ecore_event_handler_add(ECORE_EVENT_MOUSE_WHEEL,
+							       ecore_event_evas_mouse_wheel,
 							       NULL);
-	ecore_evas_event_handlers[6] = ecore_event_handler_add(ECORE_EVENT_MOUSE_IN,
-							       ecore_evas_event_mouse_in,
+	ecore_event_evas_handlers[6] = ecore_event_handler_add(ECORE_EVENT_MOUSE_IN,
+							       ecore_event_evas_mouse_in,
 							       NULL);
-	ecore_evas_event_handlers[7] = ecore_event_handler_add(ECORE_EVENT_MOUSE_OUT,
-							       ecore_evas_event_mouse_out,
+	ecore_event_evas_handlers[7] = ecore_event_handler_add(ECORE_EVENT_MOUSE_OUT,
+							       ecore_event_evas_mouse_out,
 							       NULL);
+
+	_window_hash = eina_hash_pointer_new(free);
      }
-   return ++_ecore_evas_event_init_count;
+   return ++_ecore_event_evas_init_count;
 #else
    return 0;
 #endif
 }
 
 EAPI int
-ecore_evas_event_shutdown(void)
+ecore_event_evas_shutdown(void)
 {
 #ifdef BUILD_ECORE_EVAS
-   if (_ecore_evas_event_init_count == 1)
+   if (_ecore_event_evas_init_count == 1)
      {
 	int i;
 
-	for (i = 0; i < sizeof(ecore_evas_event_handlers)/sizeof(Ecore_Event_Handler*); ++i)
+	for (i = 0; i < sizeof(ecore_event_evas_handlers)/sizeof(Ecore_Event_Handler*); ++i)
 	  {
-	     ecore_event_handler_del(ecore_evas_event_handlers[i]);
-	     ecore_evas_event_handlers[i] = NULL;
+	     ecore_event_handler_del(ecore_event_evas_handlers[i]);
+	     ecore_event_evas_handlers[i] = NULL;
 	  }
 
 	ecore_event_shutdown();
+	ecore_shutdown();
      }
-   return --_ecore_evas_event_init_count;
+   return --_ecore_event_evas_init_count;
 #else
    return 0;
 #endif

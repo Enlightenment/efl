@@ -191,7 +191,7 @@ _ecore_evas_sdl_init(int w, int h)
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
 #endif /* _WIN32 */
 
-   ecore_evas_event_init();
+   ecore_event_evas_init();
 
    ecore_evas_event_handlers[0] = ecore_event_handler_add(ECORE_SDL_EVENT_GOT_FOCUS, _ecore_evas_sdl_event_got_focus, NULL);
    ecore_evas_event_handlers[1] = ecore_event_handler_add(ECORE_SDL_EVENT_LOST_FOCUS, _ecore_evas_sdl_event_lost_focus, NULL);
@@ -210,9 +210,10 @@ _ecore_evas_sdl_shutdown(void)
 	int i;
 
         while (ecore_evases) _ecore_evas_free(ecore_evases);
+
         for (i = 0; i < sizeof (ecore_evas_event_handlers) / sizeof (Ecore_Event_Handler*); i++)
 	  ecore_event_handler_del(ecore_evas_event_handlers[i]);
-	ecore_evas_event_shutdown();
+	ecore_event_evas_shutdown();
 	ecore_idle_enterer_del(ecore_evas_idle_enterer);
 	ecore_evas_idle_enterer = NULL;
         ecore_poller_del(ecore_evas_event);
@@ -229,7 +230,7 @@ static void
 _ecore_evas_sdl_free(Ecore_Evas *ee)
 {
    ecore_evases = _ecore_list2_remove(ecore_evases, ee);
-   ecore_evas_unregister(ee, 0);
+   ecore_event_window_unregister(0);
    _ecore_evas_sdl_shutdown();
    ecore_sdl_shutdown();
 }
@@ -410,9 +411,6 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
         einfo->info.alpha = alpha;
         evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
-   ecore_evas_register(ee, 0);
-
-   evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
 
    if (!ecore_sdl_init(name))
      {
@@ -423,6 +421,10 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
      }
 
    _ecore_evas_sdl_init(w, h);
+
+   ecore_event_window_register(0, ee, ee->evas, _ecore_evas_mouse_move_process);
+
+   evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
 
    SDL_ShowCursor(SDL_DISABLE);
 

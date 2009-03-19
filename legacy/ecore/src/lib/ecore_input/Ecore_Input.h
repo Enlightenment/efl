@@ -22,6 +22,8 @@
 # endif
 #endif
 
+#include <Evas.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -46,7 +48,7 @@ EAPI extern int ECORE_EVENT_MOUSE_OUT;
 #define ECORE_EVENT_LOCK_NUM		0x0100
 #define ECORE_EVENT_LOCK_CAPS		0x0200
 
-typedef unsigned int Ecore_Window;
+typedef uintptr_t Ecore_Window;
 
 typedef struct _Ecore_Event_Key Ecore_Event_Key;
 struct _Ecore_Event_Key
@@ -180,34 +182,32 @@ struct _Ecore_Event_Modifiers
    unsigned int array[ECORE_LAST];
 };
 
+typedef void (*Ecore_Event_Mouse_Move_Cb)(void *window, int x, int y, unsigned int timestamp);
+
 EAPI int	 ecore_event_init(void);
 EAPI int	 ecore_event_shutdown(void);
 
 EAPI Ecore_Event_Modifier ecore_event_update_modifier(const char *key, Ecore_Event_Modifiers *modifiers, int inc);
 EAPI unsigned int ecore_event_modifier_mask(Ecore_Event_Modifier modifier);
 
-#ifdef _ECORE_EVAS_H
+EAPI int	 ecore_event_evas_init(void);
+EAPI int	 ecore_event_evas_shutdown(void);
 
-EAPI int	 ecore_evas_event_init(void);
-EAPI int	 ecore_evas_event_shutdown(void);
+EAPI int	 ecore_event_evas_key_down(void *data, int type, void *event);
+EAPI int	 ecore_event_evas_key_up(void *data, int type, void *event);
+EAPI int	 ecore_event_evas_mouse_button_up(void *data, int type, void *event);
+EAPI int	 ecore_event_evas_mouse_button_down(void *data, int type, void *event);
+EAPI int	 ecore_event_evas_mouse_wheel(void *data, int type, void *event);
+EAPI int	 ecore_event_evas_mouse_move(void *data, int type, void *event);
+EAPI int	 ecore_event_evas_mouse_in(void *data, int type, void *event);
+EAPI int	 ecore_event_evas_mouse_out(void *data, int type, void *event);
 
-EAPI int	 ecore_evas_event_key_down(void *data, int type, void *event);
-EAPI int	 ecore_evas_event_key_up(void *data, int type, void *event);
-EAPI int	 ecore_evas_event_mouse_button_up(void *data, int type, void *event);
-EAPI int	 ecore_evas_event_mouse_button_down(void *data, int type, void *event);
-EAPI int	 ecore_evas_event_mouse_wheel(void *data, int type, void *event);
-EAPI int	 ecore_evas_event_mouse_move(void *data, int type, void *event);
-EAPI int	 ecore_evas_event_mouse_in(void *data, int type, void *event);
-EAPI int	 ecore_evas_event_mouse_out(void *data, int type, void *event);
+EAPI void        ecore_event_window_register(Ecore_Window id, void *window, Evas *evas, Ecore_Event_Mouse_Move_Cb move_mouse);
+EAPI void        ecore_event_window_unregister(Ecore_Window id);
+EAPI void*       ecore_event_window_match(Ecore_Window id);
+EAPI void        ecore_event_window_ignore_events(Ecore_Window id, int ignore_event);
 
-EAPI void	 ecore_evas_register(Ecore_Evas *ee, Ecore_Window window);
-EAPI void	 ecore_evas_unregister(Ecore_Evas *ee, Ecore_Window window);
-EAPI Ecore_Evas	*ecore_evas_window_match(Ecore_Window window);
-
-EAPI void	 ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp);
-EAPI void	 ecore_evas_event_modifier_lock_update(Evas *e, unsigned int modifiers);
-
-#endif
+EAPI void	 ecore_event_evas_modifier_lock_update(Evas *e, unsigned int modifiers);
 
 #ifdef __cplusplus
 }

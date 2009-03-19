@@ -118,7 +118,7 @@ _ecore_evas_directfb_event_motion(void *data __UNUSED__, int type __UNUSED__, vo
    ee = _ecore_evas_directfb_match(e->win);
 
    if (!ee) return 1; /* pass on event */
-   ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
+   _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
    return 1;
 }
 
@@ -132,7 +132,7 @@ _ecore_evas_directfb_event_button_down(void *data __UNUSED__, int type __UNUSED_
    ee = _ecore_evas_directfb_match(e->win);
 
    if (!ee) return 1; /* pass on event */
-   // ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
+   // _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
    evas_event_feed_mouse_down(ee->evas, e->button, EVAS_BUTTON_NONE, e->time, NULL);
    return 1;
 }
@@ -148,7 +148,7 @@ _ecore_evas_directfb_event_button_up(void *data __UNUSED__, int type __UNUSED__,
    ee = _ecore_evas_directfb_match(e->win);
 
    if (!ee) return 1; /* pass on event */
-   //ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
+   //_ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
    evas_event_feed_mouse_up(ee->evas, e->button, flags, e->time, NULL);
    return 1;
 }
@@ -164,7 +164,7 @@ _ecore_evas_directfb_event_enter(void *data __UNUSED__, int type __UNUSED__, voi
 
    if (!ee) return 1; /* pass on event */
    evas_event_feed_mouse_in(ee->evas, e->time, NULL);
-   //ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
+   //_ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
    return 1;
 }
 
@@ -179,7 +179,7 @@ _ecore_evas_directfb_event_leave(void *data __UNUSED__, int type __UNUSED__, voi
 
    if (!ee) return 1; /* pass on event */
    evas_event_feed_mouse_out(ee->evas, e->time, NULL);
-   //ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
+   //_ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
    if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
    if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
    return 1;

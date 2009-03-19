@@ -327,5 +327,6 @@ void _ecore_evas_fps_debug_shutdown(void);
 void _ecore_evas_fps_debug_rendertime_add(double t);
 void _ecore_evas_free(Ecore_Evas *ee);
 void _ecore_evas_idle_timeout_update(Ecore_Evas *ee);
+void _ecore_evas_mouse_move_process(void *ecore_evas, int x, int y, unsigned int timestamp);
 
 #endif

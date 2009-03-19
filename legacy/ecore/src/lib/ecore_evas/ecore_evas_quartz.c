@@ -79,19 +79,6 @@ static NSWindow * main_window;
 
 @end
 
-static void
-_ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp)
-{
-   ee->mouse.x = x;
-   ee->mouse.y = y;
-   if (ee->prop.cursor.object)
-   {
-      evas_object_show(ee->prop.cursor.object);
-      evas_object_move(ee->prop.cursor.object, x - ee->prop.cursor.hot.x, y - ee->prop.cursor.hot.y);
-   }
-   evas_event_feed_mouse_move(ee->evas, x, y, timestamp, NULL);
-}
-
 static Ecore_Evas *
 _ecore_evas_quartz_match(void)
 {

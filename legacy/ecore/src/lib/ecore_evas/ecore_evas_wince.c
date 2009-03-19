@@ -210,41 +210,6 @@ _ecore_evas_wince_match(Ecore_WinCE_Window *window)
    return ee;
 }
 
-static void
-_ecore_evas_wince_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp)
-{
-   ee->mouse.x = x;
-   ee->mouse.y = y;
-   if (ee->prop.cursor.object)
-     {
-	evas_object_show(ee->prop.cursor.object);
-	if (ee->rotation == 0)
-	  evas_object_move(ee->prop.cursor.object,
-			   x - ee->prop.cursor.hot.x,
-			   y - ee->prop.cursor.hot.y);
-	else if (ee->rotation == 90)
-	  evas_object_move(ee->prop.cursor.object,
-			   ee->h - y - 1 - ee->prop.cursor.hot.x,
-			   x - ee->prop.cursor.hot.y);
-	else if (ee->rotation == 180)
-	  evas_object_move(ee->prop.cursor.object,
-			   ee->w - x - 1 - ee->prop.cursor.hot.x,
-			   ee->h - y - 1 - ee->prop.cursor.hot.y);
-	else if (ee->rotation == 270)
-	  evas_object_move(ee->prop.cursor.object,
-			   y - ee->prop.cursor.hot.x,
-			   ee->w - x - 1 - ee->prop.cursor.hot.y);
-     }
-   if (ee->rotation == 0)
-     evas_event_feed_mouse_move(ee->evas, x, y, timestamp, NULL);
-   else if (ee->rotation == 90)
-     evas_event_feed_mouse_move(ee->evas, ee->h - y - 1, x, timestamp, NULL);
-   else if (ee->rotation == 180)
-     evas_event_feed_mouse_move(ee->evas, ee->w - x - 1, ee->h - y - 1, timestamp, NULL);
-   else if (ee->rotation == 270)
-     evas_event_feed_mouse_move(ee->evas, y, ee->w - x - 1, timestamp, NULL);
-}
-
 static int
 _ecore_evas_wince_event_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
@@ -343,7 +308,7 @@ _ecore_evas_wince_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, v
    if (e->window != ee->engine.wince.window) return 1;
    /* FIXME to do */
 /*    _ecore_evas_x_modifier_locks_update(ee, e->modifiers); */
-   _ecore_evas_wince_mouse_move_process(ee, e->x, e->y, e->time);
+   _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
 
    return 1;
 }
@@ -365,7 +330,7 @@ _ecore_evas_wince_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, voi
    /* FIXME to do */
 /*    _ecore_evas_x_modifier_locks_update(ee, e->modifiers); */
    evas_event_feed_mouse_in(ee->evas, e->time, NULL);
-   _ecore_evas_wince_mouse_move_process(ee, e->x, e->y, e->time);
+   _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
 
    return 1;
 }
@@ -385,7 +350,7 @@ _ecore_evas_wince_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, vo
 
    /* FIXME to do */
 /*    _ecore_evas_x_modifier_locks_update(ee, e->modifiers); */
-   _ecore_evas_wince_mouse_move_process(ee, e->x, e->y, e->time);
+   _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
 
    evas_event_feed_mouse_out(ee->evas, e->time, NULL);
    if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
