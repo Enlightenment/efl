@@ -763,7 +763,7 @@ fi
 ECORE_CHECK_MODULE([X], [${want_ecore_x}], [${ecore_x_deps}],
   [
    ecore_x_libs="$ecore_x_libs $x_libs"
-   requirements_ecore_x="input ${requirements_ecore_x}"
+   requirements_ecore_x="ecore-input ${requirements_ecore_x}"
   ])
 
 # ecore_win32
@@ -784,7 +784,7 @@ if test "x${have_sdl}" = "xyes" -a "x${have_ecore_input}" = "xyes" ; then
 fi
 
 ECORE_CHECK_MODULE([SDL], [${want_ecore_sdl}], [${ecore_sdl_deps}],
-  [requirements_ecore_sdl="input ${requirements_ecore_sdl}"])
+  [requirements_ecore_sdl="ecore-input ${requirements_ecore_sdl}"])
 
 # ecore_fb
 ECORE_CHECK_MODULE([FB], [${want_ecore_fb}], [$have_fb])
@@ -807,7 +807,7 @@ ECORE_CHECK_MODULE([WinCE], [${want_ecore_wince}])
 # ecore_evas
 
 ECORE_CHECK_MODULE([Evas], [${want_ecore_evas}], [$have_ecore_input],
-  [requirements_ecore_evas="input ${requirements_ecore_evas}"])
+  [requirements_ecore_evas="ecore-input ${requirements_ecore_evas}"])
 
 # ecore_evas_buffer
 
