@@ -167,7 +167,7 @@ _evas_common_font_double_int_cmp(const int *key1, __UNUSED__ int key1_length,
 }
 
 static int
-_evas_common_font_double_int_hash(const int key[2], int key_length)
+_evas_common_font_double_int_hash(const unsigned int key[2], int key_length)
 {
    int tmp;
 
@@ -183,7 +183,7 @@ _evas_commont_font_int_cache_init(RGBA_Font_Int *fi)
    /* Add some font kerning cache. */
    fi->indexes = eina_hash_new(EINA_KEY_LENGTH(_evas_common_font_int_length),
 			       EINA_KEY_CMP(_evas_common_font_int_cmp),
-			       eina_hash_int32,
+			       EINA_KEY_HASH(eina_hash_int32),
 			       free, 3);
    fi->kerning = eina_hash_new(EINA_KEY_LENGTH(_evas_common_font_double_int_length),
 			       EINA_KEY_CMP(_evas_common_font_double_int_cmp),

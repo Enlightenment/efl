@@ -425,7 +425,7 @@ Evas_GL_Texture *
 evas_gl_common_ycbcr601pl_texture_new(Evas_GL_Context *gc, unsigned char **rows, int w, int h, int smooth)
 {
    Evas_GL_Texture *tex;
-   int im_w, im_h, tw, th, y;
+   int tw, th;
    GLenum texfmt;
   
 // on an nv 6600gt this is fast - but on a 5500fx its DEAD SLOW!!!!!   
@@ -546,8 +546,7 @@ void
 evas_gl_common_ycbcr601pl_texture_update(Evas_GL_Texture *tex, unsigned char **rows, int w __UNUSED__, int h __UNUSED__, int smooth)
 {
    int texfmt;
-   int y;
-   
+
    /* FIXME: should use subimage */
    glEnable(GL_TEXTURE_2D);
    texfmt = GL_LUMINANCE;

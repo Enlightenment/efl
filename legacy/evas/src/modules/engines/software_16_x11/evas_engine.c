@@ -436,8 +436,6 @@ static void
 _tmp_out_process(Render_Engine *re, int out_x, int out_y, int w, int h)
 {
    Soft16_Image *d, *s;
-   DATA16 *dp, *sp;
-   int y, x, d_dir;
 
    d = re->shbuf->im;
    s = re->tmp_out;
@@ -502,7 +500,6 @@ static void
 eng_output_flush(void *data)
 {
    Render_Engine *re;
-   int w, h;
 
    re = (Render_Engine *)data;
    if (re->clip_rects)

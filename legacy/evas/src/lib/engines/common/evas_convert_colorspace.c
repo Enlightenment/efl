@@ -34,7 +34,7 @@ evas_common_convert_rgb565_a5p_to_argb8888(void *data, int w, int h, int stride,
      {
 	DATA8 *alpha;
 
-	alpha = end;
+	alpha = (DATA8 *)end;
 	for (; src < end; src++, alpha++, dst++)
 	  *dst = (CONVERT_A5P_TO_A8(*alpha) << 24) |
 		  CONVERT_RGB_565_TO_RGB_888(*src);
