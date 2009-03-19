@@ -2,9 +2,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
--I$(top_srcdir)/src/lib/ecore_evas \
 -I$(top_builddir)/src/lib/ecore \
--I$(top_builddir)/src/lib/ecore_evas \
 @EVAS_CFLAGS@
 
 if BUILD_ECORE_INPUT
