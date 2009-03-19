@@ -497,17 +497,17 @@ _hash_keys(Eina_Hash *hash __UNUSED__, const void *key, void *fdata)
 EAPI Eina_List *
 efreet_util_desktop_categories_list(void)
 {
-    Eina_Iterator *it;
-    Eina_List *list = NULL;
-
-	it = eina_hash_iterator_key_new(desktops_by_category);
-    if (it)
-    {
+   Eina_Iterator *it;
+   Eina_List *list = NULL;
+   
+   it = eina_hash_iterator_key_new(desktops_by_category);
+   if (it)
+     {
         eina_iterator_foreach(it, EINA_EACH(_hash_keys), &list);
-	eina_iterator_free(it);
-      }
-
-    return list;
+        eina_iterator_free(it);
+     }
+   
+   return list;
 }
 
 /**
@@ -1144,41 +1144,46 @@ efreet_util_menus_find_helper(Eina_List *menus, const char *config_dir)
 static void
 efreet_util_desktops_by_category_add(Efreet_Desktop *desktop)
 {
-    Eina_List *l;
-    const char *category;
-
-    if (!desktop->categories) return;
-
-    EINA_LIST_FOREACH(desktop->categories, l, category)
-    {
+   Eina_List *l;
+   const char *category;
+   
+   if (!desktop->categories) return;
+   
+   EINA_LIST_FOREACH(desktop->categories, l, category)
+     {
         Eina_List *list;
+        int newlist = 0;
         list = eina_hash_find(desktops_by_category, category);
+        if (!list) newlist = 1;
         if (!eina_list_data_find(list, desktop))
-            list = eina_list_append(list, desktop);
-        eina_hash_modify(desktops_by_category, category, list);
-    }
+          list = eina_list_append(list, desktop);
+        if (newlist)
+          eina_hash_add(desktops_by_category, category, list);
+        else
+          eina_hash_modify(desktops_by_category, category, list);
+     }
 }
 
 static void
 efreet_util_desktops_by_category_remove(Efreet_Desktop *desktop)
 {
-    Eina_List *l;
-    const char *category;
-
-    if (!desktop->categories) return;
-
-    EINA_LIST_FOREACH(desktop->categories, l, category)
-    {
+   Eina_List *l;
+   const char *category;
+   
+   if (!desktop->categories) return;
+   
+   EINA_LIST_FOREACH(desktop->categories, l, category)
+     {
         Eina_List *list;
         list = eina_hash_find(desktops_by_category, category);
         if (!list) continue;
         if (eina_list_data_find(list, desktop))
-            list = eina_list_remove(list, desktop);
+          list = eina_list_remove(list, desktop);
         if (!list)
 	  eina_hash_del(desktops_by_category, category, list);
         else
-            eina_hash_modify(desktops_by_category, category, list);
-    }
+          eina_hash_modify(desktops_by_category, category, list);
+     }
 }
 
 static void
