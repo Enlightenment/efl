@@ -234,7 +234,8 @@ elm_slider_add(Evas_Object *parent)
    edje_object_signal_callback_add(wd->slider, "drag,start", "*", _drag_start, obj);
    edje_object_signal_callback_add(wd->slider, "drag,stop", "*", _drag_stop, obj);
    edje_object_signal_callback_add(wd->slider, "drag,step", "*", _drag_stop, obj);
-   edje_object_signal_callback_add(wd->slider, "drag,set", "*", _drag_stop, obj);
+   edje_object_signal_callback_add(wd->slider, "drag,page", "*", _drag_stop, obj);
+//   edje_object_signal_callback_add(wd->slider, "drag,set", "*", _drag_stop, obj);
    edje_object_part_drag_value_set(wd->slider, "elm.dragable.slider", 0.0, 0.0);
    
    wd->spacer = evas_object_rectangle_add(e);

@@ -98,6 +98,9 @@ EAPI void         elm_widget_show_region_get(const Evas_Object *obj, Evas_Coord 
 EAPI void         elm_widget_scroll_hold_push(Evas_Object *obj);   
 EAPI void         elm_widget_scroll_hold_pop(Evas_Object *obj);   
 EAPI int          elm_widget_scroll_hold_get(const Evas_Object *obj);
+EAPI void         elm_widget_scroll_freeze_push(Evas_Object *obj);   
+EAPI void         elm_widget_scroll_freeze_pop(Evas_Object *obj);   
+EAPI int          elm_widget_scroll_freeze_get(const Evas_Object *obj);
 EAPI void         elm_widget_scale_set(Evas_Object *obj, double scale);
 EAPI double       elm_widget_scale_get(const Evas_Object *obj);
 

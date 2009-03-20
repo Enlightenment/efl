@@ -36,6 +36,7 @@ struct _Smart_Data
    void          *data;
    Evas_Coord     rx, ry, rw, rh;
    int            scroll_hold;
+   int            scroll_freeze;
    double         scale;
    unsigned char  can_focus : 1;
    unsigned char  child_can_focus : 1;
@@ -695,6 +696,8 @@ elm_widget_scroll_hold_push(Evas_Object *obj)
 {
    API_ENTRY return;
    sd->scroll_hold++;
+   if (sd->scroll_hold == 1)
+     evas_object_smart_callback_call(obj, "scroll-hold-on", obj);
    if (sd->parent_obj) elm_widget_scroll_hold_push(sd->parent_obj);
 }
 
@@ -703,6 +706,9 @@ elm_widget_scroll_hold_pop(Evas_Object *obj)
 {
    API_ENTRY return;
    sd->scroll_hold--;
+   if (sd->scroll_hold < 0) sd->scroll_hold = 0;
+   if (sd->scroll_hold == 0)
+     evas_object_smart_callback_call(obj, "scroll-hold-off", obj);
    if (sd->parent_obj) elm_widget_scroll_hold_pop(sd->parent_obj);
 }
 
@@ -711,6 +717,34 @@ elm_widget_scroll_hold_get(const Evas_Object *obj)
 {
    API_ENTRY return 0;
    return sd->scroll_hold;
+}
+
+EAPI void
+elm_widget_scroll_freeze_push(Evas_Object *obj)
+{
+   API_ENTRY return;
+   sd->scroll_freeze++;
+   if (sd->scroll_freeze == 1)
+     evas_object_smart_callback_call(obj, "scroll-freeze-on", obj);
+   if (sd->parent_obj) elm_widget_scroll_freeze_push(sd->parent_obj);
+}
+
+EAPI void
+elm_widget_scroll_freeze_pop(Evas_Object *obj)
+{
+   API_ENTRY return;
+   sd->scroll_freeze--;
+   if (sd->scroll_freeze < 0) sd->scroll_freeze = 0;
+   if (sd->scroll_freeze == 0)
+     evas_object_smart_callback_call(obj, "scroll-freeze-off", obj);
+   if (sd->parent_obj) elm_widget_scroll_freeze_pop(sd->parent_obj);
+}
+
+EAPI int
+elm_widget_scroll_freeze_get(const Evas_Object *obj)
+{
+   API_ENTRY return 0;
+   return sd->scroll_freeze;
 }
 
 EAPI void

@@ -100,6 +100,38 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+_hold_on(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_smart_scroller_hold_set(wd->scr, 1);
+}
+
+static void
+_hold_off(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_smart_scroller_hold_set(wd->scr, 0);
+}
+
+static void
+_freeze_on(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_smart_scroller_freeze_set(wd->scr, 1);
+}
+
+static void
+_freeze_off(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_smart_scroller_freeze_set(wd->scr, 0);
+}
+
+static void
 _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    _sizing_eval(data);
@@ -130,6 +162,10 @@ elm_scroller_add(Evas_Object *parent)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, obj);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
+   evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
+   evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
+   evas_object_smart_callback_add(obj, "scroll-freeze-on", _freeze_on, obj);
+   evas_object_smart_callback_add(obj, "scroll-freeze-off", _freeze_off, obj);
    
    _sizing_eval(obj);
    return obj;

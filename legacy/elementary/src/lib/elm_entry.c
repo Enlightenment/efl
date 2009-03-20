@@ -179,6 +179,7 @@ _dismissed(void *data, Evas_Object *obj, void *event_info)
    if (wd->hoversel) evas_object_hide(wd->hoversel);
    if (wd->selmode)
      edje_object_part_text_select_allow_set(wd->ent, "elm.text", 1);
+   elm_widget_scroll_freeze_pop(data);
 }
 
 static void
@@ -273,6 +274,7 @@ _long_press(void *data)
      }
    wd->longpress_timer = NULL;
    edje_object_part_text_select_allow_set(wd->ent, "elm.text", 0);
+   edje_object_part_text_select_abort(wd->ent, "elm.text");
    return 0;
 }
 
@@ -285,6 +287,7 @@ _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    if (ev->button != 1) return;
    //   if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
    if (wd->longpress_timer) ecore_timer_del(wd->longpress_timer);
+   elm_widget_scroll_freeze_push(data);
    wd->longpress_timer = ecore_timer_add(1.0, _long_press, data);
    wd->downx = ev->canvas.x;
    wd->downy = ev->canvas.y;
@@ -298,6 +301,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    if (ev->button != 1) return;
    if (wd->longpress_timer)
      {
+        elm_widget_scroll_freeze_pop(data);
         ecore_timer_del(wd->longpress_timer);
         wd->longpress_timer = NULL;
      }
@@ -314,6 +318,7 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
           {
              if (wd->longpress_timer)
                {
+                  elm_widget_scroll_freeze_pop(data);
                   ecore_timer_del(wd->longpress_timer);
                   wd->longpress_timer = NULL;
                }
@@ -330,6 +335,7 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
                  ((_elm_config->finger_size / 2) * 
                   (_elm_config->finger_size / 2)))
                {
+                  elm_widget_scroll_freeze_pop(data);
                   ecore_timer_del(wd->longpress_timer);
                   wd->longpress_timer = NULL;
                }
@@ -347,6 +353,7 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
             ((_elm_config->finger_size / 2) * 
              (_elm_config->finger_size / 2)))
           {
+             elm_widget_scroll_freeze_pop(data);
              ecore_timer_del(wd->longpress_timer);
              wd->longpress_timer = NULL;
           }
@@ -412,7 +419,6 @@ _mkup_to_text(const char *mkup)
 {
    char *str = NULL;
    int str_len = 0, str_alloc = 0;
-   // FIXME: markup -> text
    char *s, *p;
    char *tag_start, *tag_end, *esc_start, *esc_end, *ts;
    
@@ -637,9 +643,18 @@ _signal_selection_cleared(void *data, Evas_Object *obj, const char *emission, co
           {
 #ifdef HAVE_ELEMENTARY_X
              if (elm_win_xwindow_get(elm_widget_top_get(data)))
-               ecore_x_selection_primary_set
-               (elm_win_xwindow_get(elm_widget_top_get(data)),
-                wd->cut_sel, strlen(wd->cut_sel));
+               {
+                  char *t;
+                  
+                  t = _mkup_to_text(wd->cut_sel);
+                  if (t)
+                    {
+                       ecore_x_selection_primary_set
+                         (elm_win_xwindow_get(elm_widget_top_get(data)),
+                          t, strlen(t));
+                       free(t);
+                    }
+               }
 #endif             
              eina_stringshare_del(wd->cut_sel);
              wd->cut_sel = NULL;
@@ -812,7 +827,6 @@ _event_selection_notify(void *data, int type, void *event)
                   char *txt = _text_to_mkup(text_data->text);
                   if (txt)
                     {
-                       printf("inst: %s\n", txt);
                        elm_entry_entry_insert(data, txt);
                        free(txt);
                     }

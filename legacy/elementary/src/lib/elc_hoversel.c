@@ -208,9 +208,12 @@ elm_hoversel_hover_end(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->hover) evas_object_del(wd->hover);
-   wd->hover = NULL;
-   evas_object_smart_callback_call(obj, "dismissed", NULL);
+   if (wd->hover)
+     {
+        evas_object_del(wd->hover);
+        wd->hover = NULL;
+        evas_object_smart_callback_call(obj, "dismissed", NULL);
+     }
 }
 
 EAPI Elm_Hoversel_Item *
