@@ -10,6 +10,7 @@
 #endif
 
 #include <Eina.h>
+#include <eina_safety_checks.h>
 #include "Evas.h"
 
 #include "../file/evas_module.h"
