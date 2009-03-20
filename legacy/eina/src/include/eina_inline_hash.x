@@ -54,7 +54,7 @@ eina_hash_djb2_len(const char *key, int *plen)
 }
 
 static inline int
-eina_hash_int32(unsigned int *pkey, int len)
+eina_hash_int32(const unsigned int *pkey, int len)
 {
   unsigned int key = *pkey;
 
@@ -70,7 +70,7 @@ eina_hash_int32(unsigned int *pkey, int len)
 }
 
 static inline int
-eina_hash_int64(unsigned long int *pkey, int len)
+eina_hash_int64(const unsigned long int *pkey, int len)
 {
   unsigned long int key = *pkey;
 
