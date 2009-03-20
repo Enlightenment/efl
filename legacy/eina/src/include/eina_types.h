@@ -90,6 +90,12 @@
 #   define EINA_ARG_NONNULL(idx, ...)
 #  endif
 
+#  if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
+#   define EINA_DEPRECATED __attribute__ ((__deprecated__))
+#  else
+#   define EINA_DEPRECATED
+#  endif
+
 #  if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 96)
 #   define EINA_MALLOC __attribute__ ((malloc))
 #   define EINA_PURE __attribute__ ((pure))
@@ -125,9 +131,26 @@
 #  define EINA_UNLIKELY(exp) exp
 #  define EINA_LIKELY(exp) exp
 # endif
+#elif defined(_WIN32)
+# define EINA_WARN_UNUSED_RESULT
+# define EINA_ARG_NONNULL(idx, ...)
+# if defined(_MSC_VER) && _MSC_VER >= 1300
+#  define EINA_DEPRECATED __declspec(deprecated)
+# else
+#  define EINA_DEPRECATED
+# endif
+# define EINA_MALLOC
+# define EINA_PURE
+# define EINA_PRINTF(fmt, arg)
+# define EINA_SCANF(fmt, arg)
+# define EINA_FORMAT(fmt)
+# define EINA_CONST
+# define EINA_UNLIKELY(exp) exp
+# define EINA_LIKELY(exp) exp
 #else /* no HAVE___ATTRIBUTE__ */
 # define EINA_WARN_UNUSED_RESULT
 # define EINA_ARG_NONNULL(idx, ...)
+# define EINA_DEPRECATED
 # define EINA_MALLOC
 # define EINA_PURE
 # define EINA_PRINTF(fmt, arg)
