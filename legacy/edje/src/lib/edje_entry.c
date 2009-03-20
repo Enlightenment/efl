@@ -1482,3 +1482,14 @@ _edje_entry_select_allow_set(Edje_Real_Part *rp, Evas_Bool allow)
    Entry *en = rp->entry_data;
    en->select_allow = allow;
 }
+
+void
+_edje_entry_select_abort(Edje_Real_Part *rp)
+{
+   Entry *en = rp->entry_data;
+   if (en->selecting)
+     {
+        en->selecting = 0;
+        _edje_entry_real_part_configure(rp);
+     }
+}

@@ -1101,7 +1101,7 @@ edje_object_part_text_cursor_geometry_get(const Evas_Object *obj, const char *pa
    return;
 }
 
-/** XX
+/** Enables selection if the entyr is an EXPLICIT selection mode type
  * @param obj A valid Evas_Object handle
  * @param part The part name
  */
@@ -1117,6 +1117,24 @@ edje_object_part_text_select_allow_set(const Evas_Object *obj, const char *part,
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      _edje_entry_select_allow_set(rp, allow);
+}
+
+/** Aborts any selection action on a part
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ */
+EAPI void
+edje_object_part_text_select_abort(const Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     _edje_entry_select_abort(rp);
 }
 
 /** Swallows an object into the edje

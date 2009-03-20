@@ -1307,5 +1307,6 @@ const Eina_List *_edje_entry_anchor_geometry_get(Edje_Real_Part *rp, const char 
 const Eina_List *_edje_entry_anchors_list(Edje_Real_Part *rp);
 void _edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
 void _edje_entry_select_allow_set(Edje_Real_Part *rp, Evas_Bool allow);
+void _edje_entry_select_abort(Edje_Real_Part *rp);
 
 #endif
