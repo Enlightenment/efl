@@ -61,11 +61,11 @@ struct Efreet_Menu_Internal
 
     Eina_List *layout;             /**< This menus layout */
     Eina_List *default_layout;     /**< Default layout */
-    char show_empty;    /**< Whether to show empty menus */
-    char in_line;       /**< Whether this meny can be inlined */
-    char inline_limit;  /**< Number of elements which triggers inline */
-    char inline_header; /**< Whether we should use the header name when this menu is inlined */
-    char inline_alias;  /**< Whether we should use the menu name when inlining */
+    signed char show_empty;    /**< Whether to show empty menus */
+    signed char in_line;       /**< Whether this meny can be inlined */
+    signed char inline_limit;  /**< Number of elements which triggers inline */
+    signed char inline_header; /**< Whether we should use the header name when this menu is inlined */
+    signed char inline_alias;  /**< Whether we should use the menu name when inlining */
 
     unsigned char seen_allocated:1;     /**< have we set the only_unallocated */
     unsigned char only_unallocated:1;   /**< Show only unallocated .desktops */
@@ -184,11 +184,11 @@ struct Efreet_Menu_Layout
     char *name;                      /**< The name of the element */
 
     /* The items below are for Menuname Layout elements */
-    char show_empty;    /**< Whether to show empty menus */
-    char in_line;       /**< Whether this meny can be inlined */
-    char inline_limit;  /**< Number of elements which triggers inline */
-    char inline_header; /**< Whether we should use the header name when this menu is inlined */
-    char inline_alias;  /**< Whether we should use the menu name when inlining */
+    signed char show_empty;    /**< Whether to show empty menus */
+    signed char in_line;       /**< Whether this meny can be inlined */
+    signed char inline_limit;  /**< Number of elements which triggers inline */
+    signed char inline_header; /**< Whether we should use the header name when this menu is inlined */
+    signed char inline_alias;  /**< Whether we should use the menu name when inlining */
 };
 
 /**
