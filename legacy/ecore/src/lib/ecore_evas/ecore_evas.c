@@ -2486,10 +2486,8 @@ _ecore_evas_idle_timeout_update(Ecore_Evas *ee)
 }
 
 void
-_ecore_evas_mouse_move_process(void *ecore_evas, int x, int y, unsigned int timestamp)
+_ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp)
 {
-   Ecore_Evas *ee = ecore_evas;
-
    ee->mouse.x = x;
    ee->mouse.y = y;
    if (ee->prop.cursor.object)
