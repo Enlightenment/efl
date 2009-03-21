@@ -649,53 +649,53 @@ _ecore_win32_event_keystroke_get(int    key,
        /* Keystroke */
      case VK_PRIOR:
        kn = "KP_Prior";
-       ks = "KP_Prior";
-       kc = "";
+       ks = "KP_9";
+       kc = "KP_Prior";
        break;
      case VK_NEXT:
        kn = "KP_Next";
-       ks = "KP_Next";
-       kc = "";
+       ks = "KP_3";
+       kc = "KP_Next";
        break;
      case VK_END:
        kn = "KP_End";
-       ks = "KP_End";
-       kc = "";
+       ks = "KP_1";
+       kc = "KP_End";
        break;
      case VK_HOME:
        kn = "KP_Home";
-       ks = "KP_Home";
-       kc = "";
+       ks = "KP_7";
+       kc = "KP_Home";
        break;
      case VK_LEFT:
        kn = "KP_Left";
-       ks = "KP_Left";
-       kc = "";
+       ks = "KP_4";
+       kc = "KP_Left";
        break;
      case VK_UP:
        kn = "KP_Up";
-       ks = "KP_Up";
-       kc = "";
+       ks = "KP_8";
+       kc = "KP_Up";
        break;
      case VK_RIGHT:
        kn = "KP_Right";
-       ks = "KP_Right";
-       kc = "";
+       ks = "KP_6";
+       kc = "KP_Right";
        break;
      case VK_DOWN:
        kn = "KP_Down";
-       ks = "KP_Down";
-       kc = "";
+       ks = "KP_2";
+       kc = "KP_Down";
        break;
      case VK_INSERT:
        kn = "KP_Insert";
-       ks = "KP_Insert";
-       kc = "";
+       ks = "KP_0";
+       kc = "KP_Insert";
        break;
      case VK_DELETE:
        kn = "KP_Delete";
-       ks = "KP_Delete";
-       kc = "";
+       ks = "KP_Decimal";
+       kc = "KP_Delete";
        break;
      case VK_F1:
        kn = "F1";
@@ -862,12 +862,12 @@ _ecore_win32_event_char_get(int    key,
      case VK_BACK:
        strncpy(kn, "Backspace", 32);
        strncpy(ks, "Backspace", 32);
-       kc = "";
+       strncpy(kc, "Backspace", 32);
        break;
      case VK_TAB:
        strncpy(kn, "Tab", 32);
-       strncpy(ks, "Tab", 32);
-       kc = "";
+       strncpy(ks, "ISO_Left_Tab", 32);
+       strncpy(kc, "Tab", 32);
        break;
      case 0x0a:
        /* Line feed (Shift + Enter) */
@@ -878,12 +878,12 @@ _ecore_win32_event_char_get(int    key,
      case VK_RETURN:
        strncpy(kn, "Return", 32);
        strncpy(ks, "Return", 32);
-       kc = "";
+       strncpy(kc, "Return", 32);
        break;
      case VK_ESCAPE:
        strncpy(kn, "Escape", 32);
        strncpy(ks, "Escape", 32);
-       kc = "";
+       strncpy(kc, "Escape", 32);
        break;
      default:
        /* displayable characters */
@@ -892,7 +892,8 @@ _ecore_win32_event_char_get(int    key,
        kn[1] = '\0';
        ks[0] = (TCHAR)key;
        ks[1] = '\0';
-       kc = "";
+       kc[0] = (TCHAR)key;
+       kc[1] = '\0';
        break;
      }
    *keyname = strdup(kn);
