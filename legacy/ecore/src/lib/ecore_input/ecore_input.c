@@ -1,12 +1,19 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <stdio.h>
 #include <string.h>
 
-#include "config.h"
 #include "Ecore.h"
 #include "ecore_private.h"
 #include "Ecore_Input.h"
 #include "Evas.h"
 
-#include <stdio.h>
 
 typedef struct _Ecore_Input_Window Ecore_Input_Window;
 struct _Ecore_Input_Window
