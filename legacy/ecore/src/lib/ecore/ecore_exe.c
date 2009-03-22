@@ -6,7 +6,7 @@
 # include <config.h>
 #endif
 
-#ifdef __FreeBSD__
+#if defined (__FreeBSD__) || defined (__OpenBSD__)
 #include <sys/time.h>
 #include <sys/resource.h>
 #endif

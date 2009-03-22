@@ -15,6 +15,9 @@
 
 #include <string.h>
 #include <ctype.h>
+#ifdef __OpenBSD__
+# include <sys/types.h>
+#endif
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
