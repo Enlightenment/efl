@@ -67,9 +67,9 @@ ecore_quartz_feed_events(void)
                                          dequeue:YES];
    [date release];
    if (!event) return; // SDL loops until null; maybe we should do that too. or not.
-   
+
    unsigned int time = (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff);
-   
+
    switch([event type])
    {
       case NSMouseMoved:
@@ -82,9 +82,9 @@ ecore_quartz_feed_events(void)
          ev->y = [event locationInWindow].y;
          ev->time = time;
          ev->window = [event window];
-         
+
          ecore_event_add(ECORE_QUARTZ_EVENT_MOUSE_MOVE, ev, NULL, NULL);
-            
+
          [NSApp sendEvent:event]; // pass along mouse events, for window manager
          break;
       }
@@ -96,21 +96,21 @@ ecore_quartz_feed_events(void)
          ev->x = [event locationInWindow].x;
          ev->y = [event locationInWindow].y;
          ev->button = [event buttonNumber] + 1; // Apple indexes buttons from 0
-         
+
          if ([event clickCount] == 2)
             ev->double_click = 1;
          else
             ev->double_click = 0;
-         
+
          if ([event clickCount] >= 3)
             ev->triple_click = 1;
          else
             ev->triple_click = 0;
-         
+
          ev->time = time;
-         
+
          ecore_event_add(ECORE_QUARTZ_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
-         
+
          [NSApp sendEvent:event]; // pass along mouse events, for window manager
          break;
       }
@@ -122,21 +122,21 @@ ecore_quartz_feed_events(void)
          ev->x = [event locationInWindow].x;
          ev->y = [event locationInWindow].y;
          ev->button = [event buttonNumber] + 1; // Apple indexes buttons from 0
-         
+
          if ([event clickCount] == 2)
             ev->double_click = 1;
          else
             ev->double_click = 0;
-         
+
          if ([event clickCount] >= 3)
             ev->triple_click = 1;
          else
             ev->triple_click = 0;
-         
+
          ev->time = time;
-         
+
          ecore_event_add(ECORE_QUARTZ_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
-         
+
          [NSApp sendEvent:event]; // pass along mouse events, for window manager
          break;
       }
@@ -147,7 +147,7 @@ ecore_quartz_feed_events(void)
 
          ev = malloc(sizeof (Ecore_Quartz_Event_Key_Down));
          ev->time = time;
-         
+
          for (i = 0; i < sizeof (keystable) / sizeof (struct _ecore_quartz_keys_s); ++i)
          {
             if (keystable[i].code == tolower([[event charactersIgnoringModifiers] characterAtIndex:0]))
@@ -159,7 +159,7 @@ ecore_quartz_feed_events(void)
                return;
             }
          }
-         
+
          free(ev);
          break;
       }
@@ -170,7 +170,7 @@ ecore_quartz_feed_events(void)
 
          ev = malloc(sizeof (Ecore_Quartz_Event_Key_Up));
          ev->time = time;
-         
+
          for (i = 0; i < sizeof (keystable) / sizeof (struct _ecore_quartz_keys_s); ++i)
          {
             if (keystable[i].code == tolower([[event charactersIgnoringModifiers] characterAtIndex:0]))
@@ -182,23 +182,23 @@ ecore_quartz_feed_events(void)
                return;
             }
          }
-         
+
          free(ev);
          break;
       }
       case NSFlagsChanged:
       {
          int flags = [event modifierFlags];
-         
+
          Ecore_Quartz_Event_Key_Down *evDown = NULL;
          Ecore_Quartz_Event_Key_Up   *evUp = NULL;
 
          evDown = malloc(sizeof (Ecore_Quartz_Event_Key_Down));
          evDown->keyname = NULL;
-         
+
          evUp = malloc(sizeof (Ecore_Quartz_Event_Key_Up));
          evUp->keyname = NULL;
-         
+
          // Turn special key flags on
          if (flags & NSShiftKeyMask)
             evDown->keyname = "Shift_L";
@@ -210,7 +210,7 @@ ecore_quartz_feed_events(void)
             evDown->keyname = "Super_L";
          else if (flags & NSAlphaShiftKeyMask)
             evDown->keyname = "Caps_Lock";
-         
+
          if (evDown->keyname)
          {
             evDown->time = time;
@@ -219,9 +219,9 @@ ecore_quartz_feed_events(void)
             old_flags = flags;
             break;
          }
-         
+
          int changed_flags = flags ^ old_flags;
-         
+
          // Turn special key flags off
          if (changed_flags & NSShiftKeyMask)
             evUp->keyname = "Shift_L";
@@ -233,7 +233,7 @@ ecore_quartz_feed_events(void)
             evUp->keyname = "Super_L";
          else if (changed_flags & NSAlphaShiftKeyMask)
             evUp->keyname = "Caps_Lock";
-         
+
          if (evUp->keyname)
          {
             evUp->time = time;
@@ -242,7 +242,7 @@ ecore_quartz_feed_events(void)
             old_flags = flags;
             break;
          }
-         
+
          break;
       }
       case NSAppKitDefined:
@@ -264,6 +264,6 @@ ecore_quartz_feed_events(void)
          break;
       }
    }
-   
+
    [event release];
 }
