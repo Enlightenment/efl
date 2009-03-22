@@ -24,6 +24,9 @@ void *alloca (size_t);
 #endif
 
 #ifdef HAVE_NETINET_IN_H
+# ifdef __OpenBSD__
+#  include <sys/types.h>
+# endif
 # include <netinet/in.h>
 #endif
 
