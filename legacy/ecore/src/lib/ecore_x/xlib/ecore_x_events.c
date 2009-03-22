@@ -1204,9 +1204,8 @@ _ecore_x_event_handle_selection_clear(XEvent *xevent)
    Ecore_X_Atom sel;
 
    _ecore_x_last_event_mouse_move = 0;
-   if (!(d = _ecore_x_selection_get(xevent->xselectionclear.selection)))
-     return;
-   if (xevent->xselectionclear.time > d->time)
+   d = _ecore_x_selection_get(xevent->xselectionclear.selection);
+   if (d && (xevent->xselectionclear.time > d->time))
      {
 	_ecore_x_selection_set(None, NULL, 0, 
 			       xevent->xselectionclear.selection);
@@ -1216,13 +1215,15 @@ _ecore_x_event_handle_selection_clear(XEvent *xevent)
    e = malloc(sizeof(Ecore_X_Event_Selection_Clear));
    e->win = xevent->xselectionclear.window;
    e->time = xevent->xselectionclear.time;
-   sel = xevent->xselectionclear.selection;
+   e->atom = sel = xevent->xselectionclear.selection;
    if (sel == ECORE_X_ATOM_SELECTION_PRIMARY)
      e->selection = ECORE_X_SELECTION_PRIMARY;
    else if (sel == ECORE_X_ATOM_SELECTION_SECONDARY)
      e->selection = ECORE_X_SELECTION_SECONDARY;
-   else
+   else if (sel == ECORE_X_ATOM_SELECTION_CLIPBOARD)
      e->selection = ECORE_X_SELECTION_CLIPBOARD;
+   else
+     e->selection = ECORE_X_SELECTION_OTHER;
    ecore_event_add(ECORE_X_EVENT_SELECTION_CLEAR, e, NULL, NULL);
 }
 
@@ -1315,6 +1316,7 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
    if (!e) return;
    e->win = xevent->xselection.requestor;
    e->time = xevent->xselection.time;
+   e->atom = selection;
    e->target = _ecore_x_selection_target_get(xevent->xselection.target);
 
    if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
@@ -1326,10 +1328,8 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
    else if (selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
      e->selection = ECORE_X_SELECTION_CLIPBOARD;
    else
-     {
-	free(e);
-	return;
-     }
+     e->selection = ECORE_X_SELECTION_OTHER;
+
    e->data = _ecore_x_selection_parse(e->target, data, num_ret, format);
 
    ecore_event_add(ECORE_X_EVENT_SELECTION_NOTIFY, e, 

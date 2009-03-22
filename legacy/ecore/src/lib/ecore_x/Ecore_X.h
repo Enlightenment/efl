@@ -156,7 +156,8 @@ typedef enum _Ecore_X_Selection {
    ECORE_X_SELECTION_PRIMARY,
    ECORE_X_SELECTION_SECONDARY,
    ECORE_X_SELECTION_XDND,
-   ECORE_X_SELECTION_CLIPBOARD
+   ECORE_X_SELECTION_CLIPBOARD,
+   ECORE_X_SELECTION_OTHER
 } Ecore_X_Selection;
 
 typedef enum _Ecore_X_Event_Mode
@@ -470,6 +471,7 @@ struct _Ecore_X_Event_Selection_Clear
 {
    Ecore_X_Window    win;
    Ecore_X_Selection selection;
+   Ecore_X_Atom      atom;
    Ecore_X_Time      time;
 };
 
@@ -488,6 +490,7 @@ struct _Ecore_X_Event_Selection_Notify
    Ecore_X_Window             win;
    Ecore_X_Time               time;
    Ecore_X_Selection          selection;
+   Ecore_X_Atom               atom;
    char                      *target;
    void                      *data;
 };

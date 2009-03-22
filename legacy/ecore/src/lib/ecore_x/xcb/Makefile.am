@@ -25,6 +25,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore_txt \
 -I$(top_builddir)/src/lib/ecore_x \
 -I$(top_builddir)/src/lib/ecore_input \
+@EVAS_CFLAGS@ \
 @EINA_CFLAGS@
 
 noinst_LTLIBRARIES = libecore_x_xcb.la

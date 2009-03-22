@@ -1291,9 +1291,8 @@ _ecore_x_event_handle_selection_clear(xcb_generic_event_t *event)
    Ecore_X_Atom                   sel;
 
    ev = (xcb_selection_clear_event_t *)event;
-   if (!(d = _ecore_x_selection_get(ev->selection)))
-     return;
-   if (ev->time > d->time)
+   d = _ecore_x_selection_get(ev->selection);
+   if (d && (ev->time > d->time))
      {
 	_ecore_x_selection_set(XCB_NONE, NULL, 0,
                                ev->selection);
@@ -1303,13 +1302,15 @@ _ecore_x_event_handle_selection_clear(xcb_generic_event_t *event)
    e = malloc(sizeof(Ecore_X_Event_Selection_Clear));
    e->win = ev->owner;
    e->time = ev->time;
-   sel = ev->selection;
+   e->atom = sel = ev->selection;
    if (sel == ECORE_X_ATOM_SELECTION_PRIMARY)
      e->selection = ECORE_X_SELECTION_PRIMARY;
    else if (sel == ECORE_X_ATOM_SELECTION_SECONDARY)
      e->selection = ECORE_X_SELECTION_SECONDARY;
-   else
+   else if (sel == ECORE_X_ATOM_SELECTION_CLIPBOARD)
      e->selection = ECORE_X_SELECTION_CLIPBOARD;
+   else
+     e->selection = ECORE_X_SELECTION_OTHER;
    ecore_event_add(ECORE_X_EVENT_SELECTION_CLEAR, e, NULL, NULL);
 
 }
@@ -1411,6 +1412,7 @@ _ecore_x_event_handle_selection_notify(xcb_generic_event_t *event)
    if (!e) return;
    e->win = ev->requestor;
    e->time = ev->time;
+   e->atom = selection;
    e->target = _ecore_x_selection_target_get(ev->target);
 
    if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
@@ -1422,10 +1424,8 @@ _ecore_x_event_handle_selection_notify(xcb_generic_event_t *event)
    else if (selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
      e->selection = ECORE_X_SELECTION_CLIPBOARD;
    else
-     {
-	free(e);
-	return;
-     }
+     e->selection = ECORE_X_SELECTION_OTHER;
+
    e->data = _ecore_x_selection_parse(e->target, data, num_ret, format);
 
    ecore_event_add(ECORE_X_EVENT_SELECTION_NOTIFY, e, _ecore_x_event_free_selection_notify, NULL);
