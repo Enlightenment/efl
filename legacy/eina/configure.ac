@@ -281,7 +281,7 @@ if test "x$enable_coverage" = "xyes" ; then
 fi
 
 if ! test "${VMIC}" = "x" ; then
-   EINA_CFLAGS="${EINA_CFLAGS} -Wall -W -Wextra" # -Werror
+   EINA_CFLAGS="${EINA_CFLAGS} -Wall -W" # -Werror
 fi
 
 GCC_MAJOR_VERSION=`$CC -dumpversion | sed "s/\..*//"`
@@ -301,6 +301,9 @@ case "${host_os}" in
       AC_DEFINE(EFL_EINA_BUILD, 1, [Define to mention that eina is built])
       EINA_LIBS="${EINA_LIBS} -ldl ${EVIL_LIBS} -lm"
       lt_enable_auto_import="-Wl,--enable-auto-import"
+   ;;
+   *openbsd*)
+      EINA_LIBS="${EINA_LIBS} -lm"
    ;;
    *bsd*)
       EINA_LIBS="${EINA_LIBS} -lrt -lm"
