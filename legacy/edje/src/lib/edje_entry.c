@@ -46,6 +46,9 @@ struct _Entry
    Evas_Bool selecting : 1;
    Evas_Bool have_selection : 1;
    Evas_Bool select_allow : 1;
+   Evas_Bool select_mod_start : 1;
+   Evas_Bool select_mod_end : 1;
+   Evas_Bool had_sel : 1;
 };
 
 struct _Sel
@@ -263,8 +266,24 @@ _sel_extend(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 }
 
 static void
+_sel_preextend(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+{
+   if (!en->sel_end) return;
+   _sel_enable(c, o, en);
+   if (!evas_textblock_cursor_compare(c, en->sel_start)) return;
+   evas_textblock_cursor_copy(c, en->sel_start);
+   if (en->selection)
+     {
+	free(en->selection);
+	en->selection = NULL;
+     }
+   _edje_emit(en->rp->edje, "selection,changed", en->rp->part->name);
+}
+
+static void
 _sel_clear(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 {
+   en->had_sel = 0;
    if (en->sel_start)
      {
 	evas_textblock_cursor_free(en->sel_start);
@@ -371,6 +390,7 @@ _sel_update(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 		  evas_object_move(sel->obj_fg, x + r->x, y + r->y);
 		  evas_object_resize(sel->obj_fg, r->w, r->h);
 	       }
+	     *(&(sel->rect)) = *r;
 	     range = eina_list_remove_list(range, range);
 	     free(r);
 	  }
@@ -394,7 +414,12 @@ _edje_anchor_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_in
    char *buf, *n;
    int len;
    int ignored;
-
+   Entry *en;
+   
+   en = rp->entry_data;
+   if ((rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_EXPLICIT) &&
+       (en->select_allow))
+     return;
    ignored = rp->part->ignore_flags & ev->event_flags;
    if ((!ev->event_flags) || (!ignored))
      {
@@ -421,8 +446,13 @@ _edje_anchor_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
    char *buf, *n;
    int len;
    int ignored;
-
+   Entry *en;
+   
+   en = rp->entry_data;
    ignored = rp->part->ignore_flags & ev->event_flags;
+   if ((rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_EXPLICIT) &&
+       (en->select_allow))
+     return;
    if ((!ev->event_flags) || (!ignored))
      {
 	n = an->name;
@@ -443,7 +473,12 @@ _edje_anchor_mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_in
    char *buf, *n;
    int len;
    int ignored;
-
+   Entry *en;
+   
+   en = rp->entry_data;
+   if ((rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_EXPLICIT) &&
+       (en->select_allow))
+     return;
    ignored = rp->part->ignore_flags & ev->event_flags;
    if ((!ev->event_flags) || (!ignored))
      {
@@ -1066,6 +1101,8 @@ _edje_part_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
         return;
      }
    if (ev->button != 1) return;
+   en->select_mod_start = 0;
+   en->select_mod_end = 0;
    if (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_DEFAULT)
      dosel = 1;
    else if (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_EXPLICIT)
@@ -1105,7 +1142,47 @@ _edje_part_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
         if ((en->have_selection) && 
             (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_EXPLICIT))
           {
-             printf("have selection.. do nothing\n");
+             Eina_List *first, *last;
+             double sc;
+             
+             first = en->sel;
+             last = eina_list_last(en->sel);
+             if (first && last)
+               {
+                  Evas_Textblock_Rectangle *r1, *r2;
+                  Evas_Coord d, d1, d2;
+                  
+                  r1 = first->data;
+                  r2 = last->data;
+                  d = r1->x - en->cx;
+                  d1 = d * d;
+                  d = (r1->y + (r1->h / 2)) - en->cy;
+                  d1 += d * d;
+                  d = r2->x + r2->w - 1 - en->cx;
+                  d2 = d * d;
+                  d = (r2->y + (r2->h / 2)) - en->cy;
+                  d2 += d * d;
+                  sc = rp->edje->scale;
+                  if (sc == 0.0) sc = _edje_scale;
+                  d = (Evas_Coord)(20.0 * sc); // FIXME: maxing number!
+                  d = d * d;
+                  if (d1 < d2)
+                    {
+                       if (d1 <= d)
+                         {
+                            en->select_mod_start = 1;
+                            en->selecting = 1;
+                         }
+                    }
+                  else
+                    {
+                       if (d2 <= d)
+                         {
+                            en->select_mod_end = 1;
+                            en->selecting = 1;
+                         }
+                    }
+               }
           }
         else
           {
@@ -1156,11 +1233,27 @@ _edje_part_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    if (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_EXPLICIT)
      {  
         if (en->select_allow)
-          evas_textblock_cursor_copy(en->cursor, en->sel_end);
+          {
+             if (en->had_sel)
+               {
+                  if (en->select_mod_end)
+                    _sel_extend(en->cursor, rp->object, en);
+                  else if (en->select_mod_start)
+                    _sel_preextend(en->cursor, rp->object, en);
+               }
+             else
+               _sel_extend(en->cursor, rp->object, en);
+//             evas_textblock_cursor_copy(en->cursor, en->sel_end);
+          }
      }
    else
      evas_textblock_cursor_copy(en->cursor, en->sel_end);
-   en->selecting = 0;
+   if (en->selecting)
+     {
+        if (en->have_selection)
+          en->had_sel = 1;
+        en->selecting = 0;
+     }
    if (evas_textblock_cursor_compare(tc, en->cursor))
      _edje_emit(rp->edje, "cursor,changed", rp->part->name);
    evas_textblock_cursor_free(tc);
@@ -1200,10 +1293,20 @@ _edje_part_mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
              else
                _curs_lin_end(en->cursor, rp->object, en);
           }
-        if ((rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_EXPLICIT) &&
-            (en->select_allow))
+        if (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_EXPLICIT)
           {
-             _sel_extend(en->cursor, rp->object, en);
+             if (en->select_allow)
+               {
+                  if (en->had_sel)
+                    {
+                       if (en->select_mod_end)
+                         _sel_extend(en->cursor, rp->object, en);
+                       else if (en->select_mod_start)
+                         _sel_preextend(en->cursor, rp->object, en);
+                    }
+                  else
+                    _sel_extend(en->cursor, rp->object, en);
+               }
           }
         else
           {
