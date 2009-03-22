@@ -1631,14 +1631,14 @@ eina_list_search_sorted_near_list(const Eina_List *list, Eina_Compare_Cb func, c
 EAPI Eina_List *
 eina_list_search_sorted_list(const Eina_List *list, Eina_Compare_Cb func, const void *data)
 {
-   Eina_List *near;
-   void *d;
+   Eina_List *lnear;
+   void      *d;
 
-   near = eina_list_search_sorted_near_list(list, func, data);
-   if (!near) return NULL;
-   d = eina_list_data_get(near);
+   lnear = eina_list_search_sorted_near_list(list, func, data);
+   if (!lnear) return NULL;
+   d = eina_list_data_get(lnear);
    if (!func(d, data))
-     return near;
+     return lnear;
    return NULL;
 }
 
