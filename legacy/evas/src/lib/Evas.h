@@ -534,7 +534,7 @@ extern "C" {
    EAPI void              evas_object_gradient2_fill_spread_set      (Evas_Object *obj, int tile_mode) EINA_ARG_NONNULL(1);
    EAPI int               evas_object_gradient2_fill_spread_get      (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI void              evas_object_gradient2_fill_transform_set   (Evas_Object *obj, Evas_Transform *t) EINA_ARG_NONNULL(1);
-   EAPI void              evas_object_gradient2_fill_transform_get   (const Evas_Object *obj, Evas_Transform *t) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+   EAPI void              evas_object_gradient2_fill_transform_get   (const Evas_Object *obj, Evas_Transform *t) EINA_ARG_NONNULL(1);
 
 /* linear gradient2 objects */
    EAPI Evas_Object      *evas_object_gradient2_linear_add      (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
@@ -668,7 +668,7 @@ extern "C" {
    EAPI int               evas_font_cache_get               (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
    EAPI Eina_List	 *evas_font_available_list	    (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   EAPI void		  evas_font_available_list_free	    (Evas *e, Eina_List *available) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+   EAPI void		  evas_font_available_list_free	    (Evas *e, Eina_List *available) EINA_ARG_NONNULL(1);
    
 /* textblock objects */
    typedef struct _Evas_Textblock_Style     Evas_Textblock_Style;
