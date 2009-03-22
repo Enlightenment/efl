@@ -1317,13 +1317,13 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	  }
 
 /* #if USE_OPENSSL */
-/* 	if (svr->fd_handler) */
-/* 	  { */
-/* 	     if (svr->ssl && ssl_err == SSL_ERROR_WANT_READ) */
-/* 	       ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ); */
-/* 	     else if (svr->ssl && ssl_err == SSL_ERROR_WANT_WRITE) */
-/* 	       ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE); */
-/* 	  } */
+/*	if (svr->fd_handler) */
+/*	  { */
+/*	     if (svr->ssl && ssl_err == SSL_ERROR_WANT_READ) */
+/*	       ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ); */
+/*	     else if (svr->ssl && ssl_err == SSL_ERROR_WANT_WRITE) */
+/*	       ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE); */
+/*	  } */
 /* #endif */
      }
    else if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
@@ -1541,7 +1541,7 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 		  if (inbuf && !cl->delete_me)
 		    {
 		      Ecore_Con_Event_Client_Data *e;
-		      
+
 		      e = calloc(1, sizeof(Ecore_Con_Event_Client_Data));
 		      if (e)
 			{

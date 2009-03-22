@@ -20,7 +20,7 @@
  * bear in mind that each one can only perform one operation at a time.
  * You need to wait for the ECORE_CON_EVENT_URL_COMPLETE event before re-using
  * or destroying the object.
- * 
+ *
  * Example Usage 1 (HTTP GET):
  *   ecore_con_url_url_set(url_con, "http://www.google.com");
  *   ecore_con_url_send(url_con, NULL, 0, NULL);
@@ -61,7 +61,7 @@
 /**
  * @defgroup Ecore_Con_Url_Group Ecore URL Connection Functions
  *
- * Utility functions that set up, use and shut down the Ecore URL 
+ * Utility functions that set up, use and shut down the Ecore URL
  * Connection library.
  * FIXME: write detailed description
  */
@@ -244,7 +244,7 @@ ecore_con_url_new(const char *url)
 
 /**
  * Frees the Ecore_Con_Url.
- * @return  FIXME: To be documented. 
+ * @return  FIXME: To be documented.
  * @ingroup Ecore_Con_Url_Group
  */
 EAPI void
@@ -399,7 +399,7 @@ ecore_con_url_fd_set(Ecore_Con_Url *url_con, int fd)
 	return ;
      }
    url_con->write_fd = fd;
-#endif   
+#endif
 }
 
 /**
@@ -418,7 +418,7 @@ ecore_con_url_received_bytes_get(Ecore_Con_Url *url_con)
      }
 
    return url_con->received;
-#endif   
+#endif
    return 0;
 }
 
@@ -497,7 +497,7 @@ ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length, cons
  * @return  FIXME: To be more documented.
  * @ingroup Ecore_Con_Url_Group
  */
-EAPI int 
+EAPI int
 ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename, const char *user, const char *pass, const char *upload_dir)
 {
 #ifdef HAVE_CURL
@@ -505,13 +505,13 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename, const cha
    char userpwd[4096];
    FILE *fd;
    struct stat file_info;
-	
+
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
      {
 	ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_ftp_upload");
 	return 0;
      }
-     
+
    if (url_con->active) return 0;
    if (!url_con->url) return 0;
    if (filename)
@@ -541,7 +541,7 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename, const cha
    user = NULL;
    pass = NULL;
    upload_dir = NULL;
-#endif   
+#endif
 }
 
 /**
@@ -558,12 +558,12 @@ ecore_con_url_verbose_set(Ecore_Con_Url *url_con, int verbose)
 	ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_verbose_set");
 	return;
      }
-     
+
    if (url_con->active) return;
    if (!url_con->url) return;
-   if (verbose == TRUE) 
+   if (verbose == TRUE)
 	curl_easy_setopt(url_con->curl_easy, CURLOPT_VERBOSE, 1);
-   else 
+   else
 	curl_easy_setopt(url_con->curl_easy, CURLOPT_VERBOSE, 0);
 #endif
 }
@@ -582,12 +582,12 @@ ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con, int use_epsv)
 	ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_ftp_use_epsv_set");
 	return;
      }
-     
+
    if (url_con->active) return;
    if (!url_con->url) return;
-   if (use_epsv == TRUE) 
+   if (use_epsv == TRUE)
 	curl_easy_setopt(url_con->curl_easy, CURLOPT_FTP_USE_EPSV, 1);
-   else 
+   else
 	curl_easy_setopt(url_con->curl_easy, CURLOPT_FTP_USE_EPSV, 0);
 #endif
 }
@@ -734,7 +734,7 @@ _ecore_con_url_progress_cb(void *clientp, double dltotal, double dlnow, double u
    return 0;
 }
 
-static size_t 
+static size_t
 _ecore_con_url_read_cb(void *ptr, size_t size, size_t nitems, void *stream)
 {
    size_t retcode = fread(ptr, size, nitems, stream);
