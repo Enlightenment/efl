@@ -462,7 +462,7 @@ ecore_x_init(const char *name)
      _ecore_xcb_event_handlers[_ecore_xcb_event_fixes_selection_id] = _ecore_x_event_handle_fixes_selection_notify;
 #endif /* ECORE_XCB_FIXES */
 
-   if (!ECORE_X_EVENT_KEY_DOWN)
+   if (!ECORE_X_EVENT_MOUSE_IN)
      {
 	ECORE_X_EVENT_MOUSE_IN                 = ecore_event_type_new();
 	ECORE_X_EVENT_MOUSE_OUT                = ecore_event_type_new();
