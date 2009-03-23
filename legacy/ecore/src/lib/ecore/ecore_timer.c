@@ -110,6 +110,35 @@ ecore_timer_add(double in, int (*func) (void *data), const void *data)
 }
 
 /**
+ * Creates a timer to call the given function in the given period of time.
+ * @param   in   The interval in seconds from current loop time.
+ * @param   func The given function.  If @p func returns 1, the timer is
+ *               rescheduled for the next interval @p in.
+ * @param   data Data to pass to @p func when it is called.
+ * @return  A timer object on success.  @c NULL on failure.
+ * @ingroup Ecore_Time_Group
+ *
+ * This is the same as ecore_timer_add(), but "now" is the time from
+ * ecore_loop_time_get() not ecore_time_get() as ecore_timer_add() uses. See
+ * ecore_timer_add() for more details.
+ */
+EAPI Ecore_Timer *
+ecore_timer_loop_add(double in, int (*func) (void *data), const void *data)
+{
+   double now;
+   Ecore_Timer *timer;
+
+   if (!func) return NULL;
+   if (in < 0.0) in = 0.0;
+   timer = calloc(1, sizeof(Ecore_Timer));
+   if (!timer) return NULL;
+   ECORE_MAGIC_SET(timer, ECORE_MAGIC_TIMER);
+   now = ecore_loop_time_get();
+   _ecore_timer_set(timer, now + in, in, func, (void *)data);
+   return timer;
+}
+
+/**
  * Delete the specified timer from the timer list.
  * @param   timer The timer to delete.
  * @return  The data pointer set for the timer when @ref ecore_timer_add was
