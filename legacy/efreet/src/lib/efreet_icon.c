@@ -710,15 +710,15 @@ efreet_icon_lookup_directory(Efreet_Icon_Theme *theme,
                              Efreet_Icon_Theme_Directory *dir,
                              const char *icon_name)
 {
-   Eina_List *l;
-        char *icon;
-        const char *path;
+    Eina_List *l;
+    char *icon;
+    const char *path;
 
-   EINA_LIST_FOREACH(theme->paths, l, path)
-        {
-            icon = efreet_icon_lookup_directory_helper(dir, path, icon_name);
-            if (icon) return icon;
-        }
+    EINA_LIST_FOREACH(theme->paths, l, path)
+    {
+        icon = efreet_icon_lookup_directory_helper(dir, path, icon_name);
+        if (icon) return icon;
+    }
 
     return NULL;
 }
