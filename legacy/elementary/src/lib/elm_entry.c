@@ -246,6 +246,17 @@ _copy(void *data, Evas_Object *obj, void *event_info)
    edje_object_part_text_select_none(wd->ent, "elm.text");
 }
 
+static void
+_cancel(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   wd->selmode = 0;
+   edje_object_part_text_select_allow_set(wd->ent, "elm.text", 0);
+   edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
+   elm_widget_scroll_hold_pop(data);
+   edje_object_part_text_select_none(wd->ent, "elm.text");
+}
+
 static int
 _long_press(void *data)
 {
@@ -265,6 +276,7 @@ _long_press(void *data)
      {
         elm_hoversel_item_add(wd->hoversel, "Copy", NULL, ELM_ICON_NONE, _copy, data);
         elm_hoversel_item_add(wd->hoversel, "Cut", NULL, ELM_ICON_NONE, _cut, data);
+        elm_hoversel_item_add(wd->hoversel, "Cancel", NULL, ELM_ICON_NONE, _cancel, data);
      }
    if (wd->hoversel)
      {
