@@ -325,38 +325,30 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
 	einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
 	if (einfo)
 	  {
+             unsigned int    foreground;
+	     Ecore_X_GC      gc;
 # ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-             xcb_rectangle_t     rectangle;
-	     Ecore_X_GC          gc;
-             uint32_t            value_list;
-# else
-	     GC gc;
-	     XGCValues gcv;
-# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
+             xcb_rectangle_t rectangle;
+# endif /* BUILD_ECORE_EVAS_SOFTWARE_XCB */
 
 	     if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
 	     ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
+             foreground = 0;
+             gc = ecore_x_gc_new(ee->engine.x.mask,
+                                 ECORE_X_GC_VALUE_MASK_FOREGROUND,
+                                 &foreground);
 # ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-             gc = xcb_generate_id(ecore_x_connection_get());
-	     value_list = 0;
-             xcb_create_gc(ecore_x_connection_get(), gc, ee->engine.x.mask,
-                           XCB_GC_FOREGROUND, &value_list);
              rectangle.x = 0;
              rectangle.y = 0;
              rectangle.width = ee->w;
              rectangle.height = ee->h;
 	     xcb_poly_fill_rectangle(ecore_x_connection_get(), ee->engine.x.mask, gc,
                                      1, &rectangle);
-	     xcb_free_gc(ecore_x_connection_get(), gc);
 # else
-	     gcv.foreground = 0;
-	     gc = XCreateGC(ecore_x_display_get(), ee->engine.x.mask,
-			    GCForeground,
-			    &gcv);
 	     XFillRectangle(ecore_x_display_get(), ee->engine.x.mask, gc,
 			    0, 0, ee->w, ee->h);
-	     XFreeGC(ecore_x_display_get(), gc);
 # endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
+             ecore_x_gc_del(gc);
 	     einfo->info.mask = ee->engine.x.mask;
 	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 	     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
@@ -371,38 +363,30 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
 	einfo = (Evas_Engine_Info_XRender_X11 *)evas_engine_info_get(ee->evas);
 	if (einfo)
 	  {
+             unsigned int    foreground;
+	     Ecore_X_GC      gc;
 # ifdef BUILD_ECORE_EVAS_XRENDER_XCB
              xcb_rectangle_t rectangle;
-	     Ecore_X_GC      gc;
-             uint32_t        value_list;
-# else
-	     GC gc;
-	     XGCValues gcv;
-# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
+# endif /* BUILD_ECORE_EVAS_XRENDER_XCB */
 
 	     if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
 	     ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
+             foreground = 0;
+             ecore_x_gc_new(ee->engine.x.mask,
+                            ECORE_X_GC_VALUE_MASK_FOREGROUND,
+                            &foreground);
 # ifdef BUILD_ECORE_EVAS_XRENDER_XCB
-             gc = xcb_generate_id(ecore_x_connection_get());
-	     value_list = 0;
-	     xcb_create_gc(ecore_x_connection_get(), gc, ee->engine.x.mask,
-                           XCB_GC_FOREGROUND, &value_list);
              rectangle.x = 0;
              rectangle.y = 0;
              rectangle.width = ee->w;
              rectangle.height = ee->h;
 	     xcb_poly_fill_rectangle(ecore_x_connection_get(), ee->engine.x.mask, gc,
                                      1, &rectangle);
-	     xcb_free_gc(ecore_x_connection_get(), gc);
 # else
-	     gcv.foreground = 0;
-	     gc = XCreateGC(ecore_x_display_get(), ee->engine.x.mask,
-			    GCForeground,
-			    &gcv);
 	     XFillRectangle(ecore_x_display_get(), ee->engine.x.mask, gc,
 			    0, 0, ee->w, ee->h);
-	     XFreeGC(ecore_x_display_get(), gc);
 # endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
+             ecore_x_gc_del(gc);
 	     einfo->info.mask = ee->engine.x.mask;
 	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 	     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
@@ -1418,24 +1402,19 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 	  {
 	     if (ee->shaped)
 	       {
+                  unsigned int    foreground;
+                  Ecore_X_GC      gc;
 # ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
                   xcb_rectangle_t rectangle;
-		  Ecore_X_GC      gc;
-		  uint32_t        value_list;
-# else
-		  GC gc;
-		  XGCValues gcv;
 # endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 
 		  if (!ee->engine.x.mask)
 		    ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
+                  foreground = 0;
+                  gc = ecore_x_gc_new(ee->engine.x.mask,
+                                      ECORE_X_GC_VALUE_MASK_FOREGROUND,
+                                      &foreground);
 # ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-                  gc = xcb_generate_id(ecore_x_connection_get());
-		  value_list = 0;
-		  xcb_create_gc(ecore_x_connection_get(),
-                                gc, ee->engine.x.mask,
-				XCB_GC_FOREGROUND,
-                                &value_list);
                   rectangle.x = 0;
                   rectangle.y = 0;
                   rectangle.width = ee->w;
@@ -1443,16 +1422,11 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 		  xcb_poly_fill_rectangle(ecore_x_connection_get(),
                                           ee->engine.x.mask, gc,
                                           1, &rectangle);
-		  xcb_free_gc(ecore_x_connection_get(), gc);
 # else
-		  gcv.foreground = 0;
-		  gc = XCreateGC(ecore_x_display_get(), ee->engine.x.mask,
-				 GCForeground,
-				 &gcv);
 		  XFillRectangle(ecore_x_display_get(), ee->engine.x.mask, gc,
 				 0, 0, ee->w, ee->h);
-		  XFreeGC(ecore_x_display_get(), gc);
 # endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
+                  ecore_x_gc_del(gc);
 		  einfo->info.mask = ee->engine.x.mask;
 		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 		  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
@@ -1481,24 +1455,19 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 	  {
 	     if (ee->shaped)
 	       {
+                  unsigned int    foreground;
+                  Ecore_X_GC      gc;
 # ifdef BUILD_ECORE_EVAS_XRENDER_XCB
                   xcb_rectangle_t rectangle;
-		  Ecore_X_GC      gc;
-		  uint32_t        value_list;
-# else
-		  GC gc;
-		  XGCValues gcv;
 # endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
 
 		  if (!ee->engine.x.mask)
 		    ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
+                  foreground = 0;
+                  gc = ecore_x_gc_new(ee->engine.x.mask,
+                                      ECORE_X_GC_VALUE_MASK_FOREGROUND,
+                                      &foreground);
 # ifdef BUILD_ECORE_EVAS_XRENDER_XCB
-                  gc = xcb_generate_id(ecore_x_connection_get());
-		  value_list = 0;
-		  xcb_create_gc(ecore_x_connection_get(),
-                                gc, ee->engine.x.mask,
-				XCB_GC_FOREGROUND,
-                                &value_list);
                   rectangle.x = 0;
                   rectangle.y = 0;
                   rectangle.width = ee->w;
@@ -1506,16 +1475,11 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 		  xcb_poly_fill_rectangle(ecore_x_connection_get(),
                                           ee->engine.x.mask, gc,
                                           1, &rectangle);
-		  xcb_free_gc(ecore_x_connection_get(), gc);
 # else
-		  gcv.foreground = 0;
-		  gc = XCreateGC(ecore_x_display_get(), ee->engine.x.mask,
-				 GCForeground,
-				 &gcv);
 		  XFillRectangle(ecore_x_display_get(), ee->engine.x.mask, gc,
 				 0, 0, ee->w, ee->h);
-		  XFreeGC(ecore_x_display_get(), gc);
 # endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
+                  ecore_x_gc_del(gc);
 		  einfo->info.mask = ee->engine.x.mask;
 		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 		  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
@@ -2167,7 +2131,7 @@ _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 	     if (ee->prop.avoid_damage)
 	       {
 		  ee->engine.x.pmap = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, einfo->info.depth);
-		  ee->engine.x.gc = ecore_x_gc_new(ee->engine.x.pmap);
+		  ee->engine.x.gc = ecore_x_gc_new(ee->engine.x.pmap, 0, NULL);
 		  einfo->info.drawable = ee->engine.x.pmap;
 		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 		  if ((ee->rotation == 90) || (ee->rotation == 270))
@@ -2218,7 +2182,7 @@ _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 	     if (ee->prop.avoid_damage)
 	       {
 		  ee->engine.x.pmap = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 16);
-		  ee->engine.x.gc = ecore_x_gc_new(ee->engine.x.pmap);
+		  ee->engine.x.gc = ecore_x_gc_new(ee->engine.x.pmap, 0, NULL);
 		  einfo->info.drawable = ee->engine.x.pmap;
 		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 		  if ((ee->rotation == 90) || (ee->rotation == 270))

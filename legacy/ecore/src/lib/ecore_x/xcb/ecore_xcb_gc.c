@@ -10,6 +10,9 @@
  * drawable.
  * @param  drawable Drawable to create graphics context with.  If @c 0 is
  *                  given instead, the default root window is used.
+ * @param value_mask Bitmask values.
+ * @param value_list List of values. The order of values must be the
+ *                   same than the corresponding bitmaks.
  * @return          The new default graphics context.
  *
  * Creates a new default graphics context associated with @p
@@ -18,14 +21,14 @@
  * other drawables results in a BadMatch error.
  */
 EAPI Ecore_X_GC
-ecore_x_gc_new(Ecore_X_Drawable drawable)
+ecore_x_gc_new(Ecore_X_Drawable drawable, Ecore_X_GC_Value_Mask value_mask, const unsigned int *value_list)
 {
    xcb_gcontext_t gc;
 
    if (!drawable) drawable = ((xcb_screen_t *)_ecore_xcb_screen)->root;
 
    gc = xcb_generate_id(_ecore_xcb_conn);
-   xcb_create_gc(_ecore_xcb_conn, gc, drawable, 0, NULL);
+   xcb_create_gc(_ecore_xcb_conn, gc, drawable, value_mask, value_list);
 
    return gc;
 }

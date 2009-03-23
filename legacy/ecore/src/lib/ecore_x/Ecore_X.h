@@ -81,6 +81,32 @@ typedef struct _Ecore_X_Icon {
    unsigned int *data;
 } Ecore_X_Icon;
 
+typedef enum _Ecore_X_GC_Value_Mask {
+   ECORE_X_GC_VALUE_MASK_FUNCTION = (1L << 0),
+   ECORE_X_GC_VALUE_MASK_PLANE_MASK = (1L << 1),
+   ECORE_X_GC_VALUE_MASK_FOREGROUND = (1L << 2),
+   ECORE_X_GC_VALUE_MASK_BACKGROUND = (1L << 3),
+   ECORE_X_GC_VALUE_MASK_LINE_WIDTH = (1L << 4),
+   ECORE_X_GC_VALUE_MASK_LINE_STYLE = (1L << 5),
+   ECORE_X_GC_VALUE_MASK_CAP_STYLE = (1L << 6),
+   ECORE_X_GC_VALUE_MASK_JOIN_STYLE = (1L << 7),
+   ECORE_X_GC_VALUE_MASK_FILL_STYLE = (1L << 8),
+   ECORE_X_GC_VALUE_MASK_FILL_RULE = (1L << 9),
+   ECORE_X_GC_VALUE_MASK_TILE = (1L << 10),
+   ECORE_X_GC_VALUE_MASK_STIPPLE = (1L << 11),
+   ECORE_X_GC_VALUE_MASK_TILE_STIPPLE_ORIGIN_X = (1L << 12),
+   ECORE_X_GC_VALUE_MASK_TILE_STIPPLE_ORIGIN_Y = (1L << 13),
+   ECORE_X_GC_VALUE_MASK_FONT = (1L << 14),
+   ECORE_X_GC_VALUE_MASK_SUBWINDOW_MODE = (1L << 15),
+   ECORE_X_GC_VALUE_MASK_GRAPHICS_EXPOSURES = (1L << 16),
+   ECORE_X_GC_VALUE_MASK_CLIP_ORIGIN_X = (1L << 17),
+   ECORE_X_GC_VALUE_MASK_CLIP_ORIGIN_Y = (1L << 18),
+   ECORE_X_GC_VALUE_MASK_CLIP_MASK = (1L << 19),
+   ECORE_X_GC_VALUE_MASK_DASH_OFFSET = (1L << 20),
+   ECORE_X_GC_VALUE_MASK_DASH_LIST = (1L << 21),
+   ECORE_X_GC_VALUE_MASK_ARC_MODE = (1L << 22)
+} Ecore_X_GC_Value_Mask;
+
 typedef enum _Ecore_X_Window_State {
     /** The window is iconified. */
     ECORE_X_WINDOW_STATE_ICONIFIED,
@@ -1160,7 +1186,7 @@ EAPI void             ecore_x_pixmap_paste(Ecore_X_Pixmap pmap, Ecore_X_Drawable
 EAPI void             ecore_x_pixmap_geometry_get(Ecore_X_Pixmap pmap, int *x, int *y, int *w, int *h);
 EAPI int              ecore_x_pixmap_depth_get(Ecore_X_Pixmap pmap);
 
-EAPI Ecore_X_GC       ecore_x_gc_new(Ecore_X_Drawable draw);
+EAPI Ecore_X_GC       ecore_x_gc_new(Ecore_X_Drawable draw, Ecore_X_GC_Value_Mask value_mask, const unsigned int *value_list);
 EAPI void             ecore_x_gc_del(Ecore_X_GC gc);
 
 EAPI int              ecore_x_client_message32_send(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Event_Mask mask, long d0, long d1, long d2, long d3, long d4);
