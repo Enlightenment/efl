@@ -289,6 +289,7 @@ static Efreet_Menu_Filter *efreet_menu_filter_new(void);
 static void efreet_menu_filter_free(Efreet_Menu_Filter *filter);
 
 static Efreet_Menu_Layout *efreet_menu_layout_new(void);
+static void efreet_menu_layout_free(Efreet_Menu_Layout *layout);
 
 static Efreet_Menu_Filter_Op *efreet_menu_filter_op_new(void);
 static void efreet_menu_filter_op_free(Efreet_Menu_Filter_Op *op);
@@ -501,7 +502,7 @@ efreet_menu_kde_legacy_init(void)
     char buf[PATH_MAX];
     char *p, *s;
 
-    IF_FREE_LIST(efreet_menu_kde_legacy_dirs);
+    IF_FREE_LIST(efreet_menu_kde_legacy_dirs, eina_stringshare_del);
 
     f = popen("kde-config --path apps", "r");
     if (!f) return 0;
@@ -548,7 +549,7 @@ efreet_menu_shutdown(void)
     IF_FREE_HASH(efreet_menu_move_cbs);
     IF_FREE_HASH(efreet_menu_layout_cbs);
 
-    IF_FREE_LIST(efreet_menu_kde_legacy_dirs);
+    IF_FREE_LIST(efreet_menu_kde_legacy_dirs, eina_stringshare_del);
 
     IF_FREE_HASH(efreet_merged_menus);
     IF_FREE_HASH(efreet_merged_dirs);
@@ -988,8 +989,8 @@ efreet_menu_internal_new(void)
 void
 efreet_menu_internal_free(Efreet_Menu_Internal *internal)
 {
-   void *d;
-   
+    void *d;
+
     if (!internal) return;
 
     IF_FREE(internal->file.path);
@@ -998,22 +999,21 @@ efreet_menu_internal_free(Efreet_Menu_Internal *internal)
     IF_RELEASE(internal->name.internal);
     internal->name.name = NULL;
 
-    IF_FREE_LIST(internal->applications);
+    internal->applications = eina_list_free(internal->applications);
 
     IF_FREE_DLIST(internal->directories);
-   EINA_LIST_FREE(internal->app_dirs, d) efreet_menu_app_dir_free(d);
-//    IF_FREE_LIST(internal->app_dirs);
-    IF_FREE_LIST(internal->app_pool);
+    IF_FREE_LIST(internal->app_dirs, efreet_menu_app_dir_free);
+    IF_FREE_LIST(internal->app_pool, efreet_menu_desktop_free);
     IF_FREE_DLIST(internal->directory_dirs);
     IF_FREE_HASH(internal->directory_cache);
 
-    IF_FREE_LIST(internal->moves);
-    IF_FREE_LIST(internal->filters);
+    IF_FREE_LIST(internal->moves, efreet_menu_move_free);
+    IF_FREE_LIST(internal->filters, efreet_menu_filter_free);
 
-    IF_FREE_LIST(internal->sub_menus);
+    IF_FREE_LIST(internal->sub_menus, efreet_menu_internal_free);
 
-    IF_FREE_LIST(internal->layout);
-    IF_FREE_LIST(internal->default_layout);
+    IF_FREE_LIST(internal->layout, efreet_menu_layout_free);
+    IF_FREE_LIST(internal->default_layout, efreet_menu_layout_free);
 
     FREE(internal);
 }
@@ -1727,10 +1727,10 @@ efreet_menu_merge_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char 
 
         snprintf(dir_path, PATH_MAX, "%s/%s", path, file->d_name);
         if (!efreet_menu_merge(parent, xml, dir_path))
-         {
+        {
             closedir(files);
             return 0;
-         }
+        }
     }
     closedir(files);
 
@@ -1902,7 +1902,7 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
                                                         legacy_internal, file_path, prefix);
             if (!ret)
             {
-               efreet_menu_filter_free(filter);
+                efreet_menu_filter_free(filter);
                 efreet_menu_internal_free(legacy_internal);
                 FREE(path);
                 closedir(files);
@@ -1955,7 +1955,7 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
     closedir(files);
 
     FREE(path);
-   efreet_menu_filter_free(filter);
+    efreet_menu_filter_free(filter);
     return legacy_internal;
 }
 
@@ -2436,6 +2436,21 @@ efreet_menu_layout_new(void)
 
 /**
  * @internal
+ * @param filter: The filter to work with
+ * @return Returns no data
+ * @brief Frees the given filter and all data
+ */
+static void
+efreet_menu_layout_free(Efreet_Menu_Layout *layout)
+{
+    if (!layout) return;
+
+    IF_FREE(layout->name);
+    FREE(layout);
+}
+
+/**
+ * @internal
  * @return Returns a new Efreet_Menu_Filter_Op on success or NULL on failure
  * @brief Creates and initializes an Efreet_Menu_Filter_Op structure
  */
@@ -2460,9 +2475,9 @@ efreet_menu_filter_op_free(Efreet_Menu_Filter_Op *op)
 {
     if (!op) return;
 
-    IF_FREE_LIST(op->categories);
-    IF_FREE_LIST(op->filenames);
-    IF_FREE_LIST(op->filters);
+    IF_FREE_LIST(op->categories, free);
+    IF_FREE_LIST(op->filenames, free);
+    IF_FREE_LIST(op->filters, efreet_menu_filter_op_free);
 
     FREE(op);
 }
@@ -2522,7 +2537,7 @@ efreet_menu_free(Efreet_Menu *entry)
 {
     IF_RELEASE(entry->name);
     IF_RELEASE(entry->icon);
-    IF_FREE_LIST(entry->entries);
+    entry->entries = eina_list_free(entry->entries);
     IF_RELEASE(entry->id);
     if (entry->desktop) efreet_desktop_free(entry->desktop);
     FREE(entry);
@@ -3088,7 +3103,7 @@ efreet_menu_resolve_moves(Efreet_Menu_Internal *internal)
             efreet_menu_internal_free(origin);
         }
     }
-    IF_FREE_LIST(internal->moves);
+    IF_FREE_LIST(internal->moves, efreet_menu_move_free);
 }
 
 /**
@@ -3207,12 +3222,20 @@ efreet_menu_app_dir_new(void)
     return dir;
 }
 
+/**
+ * @internal
+ * @param dir: The Efreet_Menu_App_Dir to free
+ * @return Returns no value.
+ * @brief Frees the given dir structure
+ */
 static void
 efreet_menu_app_dir_free(Efreet_Menu_App_Dir *dir)
 {
-   free(dir->path);
-   free(dir->prefix);
-   free(dir);
+    if (!dir) return;
+
+    IF_FREE(dir->path);
+    IF_FREE(dir->prefix);
+    FREE(dir);
 }
 
 /**
@@ -3291,7 +3314,7 @@ efreet_menu_create_directories_list(Efreet_Menu_Internal *internal)
     if (!internal || internal->directories) return;
 
     internal->directories = ecore_dlist_new();
-   ecore_dlist_free_cb_set(internal->directories, free);
+    ecore_dlist_free_cb_set(internal->directories, free);
 }
 
 static char *
@@ -3783,7 +3806,7 @@ efreet_menu_layout_entries_get(Efreet_Menu *entry, Efreet_Menu_Internal *interna
                     entry->entries = eina_list_append(entry->entries, sub_entry);
                 }
             }
-            IF_FREE_LIST(internal->applications);
+            internal->applications = eina_list_free(internal->applications);
         }
         else if (internal->sub_menus && !strcmp(layout->name, "menus"))
         {
@@ -3861,7 +3884,7 @@ efreet_menu_layout_entries_get(Efreet_Menu *entry, Efreet_Menu_Internal *interna
                 }
                 efreet_menu_internal_free(sub);
             }
-            IF_FREE_LIST(internal->sub_menus);
+            IF_FREE_LIST(internal->sub_menus, efreet_menu_internal_free);
         }
         else if (internal->sub_menus && !strcmp(layout->name, "all"))
         {

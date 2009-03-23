@@ -580,9 +580,9 @@ efreet_util_cache_fill(__UNUSED__ void *data)
 
     start = ecore_time_get();
     if (!fill->files)
-     {
+    {
         fill->files = opendir(fill->current->path);
-     }
+    }
     if (!fill->files)
     {
         /* Couldn't open this dir, continue to next */

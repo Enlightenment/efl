@@ -132,26 +132,26 @@ efreet_icon_init(void)
 void
 efreet_icon_shutdown(void)
 {
-   void *d;
-   
+    void *d;
+
     if (--efreet_icon_init_count)
         return;
 
     IF_FREE(efreet_icon_user_dir);
     IF_FREE(efreet_icon_deprecated_user_dir);
 
-   EINA_LIST_FREE(efreet_icon_extensions, d) free(d);
+    IF_FREE_LIST(efreet_icon_extensions, free);
     IF_FREE_HASH(efreet_icon_themes);
-    IF_FREE_LIST(efreet_extra_icon_dirs);
+    efreet_extra_icon_dirs = eina_list_free(efreet_extra_icon_dirs);
 
     IF_FREE_HASH(efreet_icon_cache);
 
    if (fake_null)
-     {
-        efreet_icon_theme_free(fake_null);
-        fake_null = NULL;
-     }
-   
+   {
+       efreet_icon_theme_free(fake_null);
+       fake_null = NULL;
+   }
+
     ecore_shutdown();
     efreet_icon_init_count = 0;
 }
@@ -333,7 +333,7 @@ efreet_icon_find_theme_check(const char *theme_name)
     if (theme_name) theme = efreet_icon_theme_find(theme_name);
     if (!theme)
     {
-       if ((fake_null) && (!theme_name)) return fake_null;
+        if ((fake_null) && (!theme_name)) return fake_null;
         theme = efreet_icon_theme_new();
         theme->fake = 1;
 	if (theme_name)
@@ -990,7 +990,7 @@ efreet_icon_free(Efreet_Icon *icon)
 
     IF_FREE(icon->path);
     IF_FREE(icon->name);
-    IF_FREE_LIST(icon->attach_points);
+    IF_FREE_LIST(icon->attach_points, free);
 
     FREE(icon);
 }
@@ -1117,20 +1117,20 @@ efreet_icon_theme_new(void)
 static void
 efreet_icon_theme_free(Efreet_Icon_Theme *theme)
 {
-   void *d;
-   if (!theme) return;
+    void *d;
+    if (!theme) return;
 
-   IF_RELEASE(theme->name.internal);
-   IF_RELEASE(theme->name.name);
-   
-   IF_FREE(theme->comment);
-   IF_FREE(theme->example_icon);
+    IF_RELEASE(theme->name.internal);
+    IF_RELEASE(theme->name.name);
 
-   EINA_LIST_FREE(theme->paths, d) free(d);
-   EINA_LIST_FREE(theme->inherits, d) free(d);
-   EINA_LIST_FREE(theme->directories, d) efreet_icon_theme_directory_free(d);
+    IF_FREE(theme->comment);
+    IF_FREE(theme->example_icon);
 
-   FREE(theme);
+    IF_FREE_LIST(theme->paths, free);
+    IF_FREE_LIST(theme->inherits, free);
+    IF_FREE_LIST(theme->directories, efreet_icon_theme_directory_free);
+
+    FREE(theme);
 }
 
 /**
@@ -1501,11 +1501,19 @@ efreet_icon_theme_directory_new(Efreet_Ini *ini, const char *name)
     return dir;
 }
 
+/**
+ * @internal
+ * @param dir: The Efreet_Icon_Theme_Directory to free
+ * @return Returns no value
+ * @brief Frees the given directory @a dir
+ */
 static void
 efreet_icon_theme_directory_free(Efreet_Icon_Theme_Directory *dir)
 {
-   free(dir->name);
-   free(dir);
+    if (!dir) return;
+
+    IF_FREE(dir->name);
+    FREE(dir);
 }
 
 static int

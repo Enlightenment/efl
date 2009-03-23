@@ -371,8 +371,8 @@ efreet_desktop_clear(Efreet_Desktop *desktop)
     IF_FREE(desktop->path);
     IF_FREE(desktop->startup_wm_class);
 
-    IF_FREE_LIST(desktop->only_show_in);
-    IF_FREE_LIST(desktop->not_show_in);
+    IF_FREE_LIST(desktop->only_show_in, free);
+    IF_FREE_LIST(desktop->not_show_in, free);
     while (desktop->categories)
     {
         data = eina_list_data_get(desktop->categories);
@@ -511,8 +511,8 @@ efreet_desktop_free(Efreet_Desktop *desktop)
     IF_FREE(desktop->path);
     IF_FREE(desktop->startup_wm_class);
 
-    IF_FREE_LIST(desktop->only_show_in);
-    IF_FREE_LIST(desktop->not_show_in);
+    IF_FREE_LIST(desktop->only_show_in, free);
+    IF_FREE_LIST(desktop->not_show_in, free);
 
     EINA_LIST_FREE(desktop->categories, str)
         eina_stringshare_del(str);

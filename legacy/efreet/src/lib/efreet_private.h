@@ -70,8 +70,12 @@
  * @def IF_FREE_LIST(x)
  * If x is a valid pointer destroy x and set to NULL
  */
-#define IF_FREE_LIST(x) do { \
-     x = eina_list_free(x);			\
+#define IF_FREE_LIST(list, free_cb) do { \
+    while (list) \
+    { \
+        free_cb(eina_list_data_get(list)); \
+        list = eina_list_remove_list(list, list); \
+    } \
 } while (0)
 
 /**

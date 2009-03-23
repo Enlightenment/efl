@@ -39,8 +39,8 @@ efreet_base_shutdown(void)
     IF_RELEASE(xdg_config_home);
     IF_RELEASE(xdg_cache_home);
 
-    IF_FREE_LIST(xdg_data_dirs);
-    IF_FREE_LIST(xdg_config_dirs);
+    IF_FREE_LIST(xdg_data_dirs, eina_stringshare_del);
+    IF_FREE_LIST(xdg_config_dirs, eina_stringshare_del);
 
     eina_stringshare_shutdown();
 }
