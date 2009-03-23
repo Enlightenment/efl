@@ -186,6 +186,8 @@ efreet_mime_init(void)
 EAPI void
 efreet_mime_shutdown(void)
 {
+   void *d;
+   
     if (_init_count == 0)
         return;
     _init_count--;
@@ -194,8 +196,8 @@ efreet_mime_shutdown(void)
 
     efreet_mime_icons_debug();
 
-    IF_FREE_LIST(globs);
-    IF_FREE_LIST(magics);
+   EINA_LIST_FREE(globs, d) efreet_mime_glob_free(d);
+   EINA_LIST_FREE(magics, d) efreet_mime_magic_free(d);
     IF_FREE_HASH(monitors);
     IF_FREE_HASH(wild);
     IF_FREE_HASH(mime_icons);
@@ -1125,13 +1127,14 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
             }
         }
     }
-
+/*
     if (entry)
     {
         IF_FREE(entry->value);
         IF_FREE(entry->mask);
         FREE(entry);
     }
+ */
 }
 
 /**

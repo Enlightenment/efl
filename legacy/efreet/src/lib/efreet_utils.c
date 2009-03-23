@@ -540,7 +540,7 @@ efreet_util_cache_fill(__UNUSED__ void *data)
     double start;
     char buf[PATH_MAX];
 
-    if (!fill->dirs)
+    if ((!fill->dirs) && (!fill->files))
     {
         free(fill);
         idler = NULL;
@@ -579,7 +579,10 @@ efreet_util_cache_fill(__UNUSED__ void *data)
     }
 
     start = ecore_time_get();
-    if (!fill->files) fill->files = opendir(fill->current->path);
+    if (!fill->files)
+     {
+        fill->files = opendir(fill->current->path);
+     }
     if (!fill->files)
     {
         /* Couldn't open this dir, continue to next */

@@ -280,6 +280,7 @@ static void efreet_menu_create_default_layout_list(Efreet_Menu_Internal *interna
 static char *efreet_menu_path_get(Efreet_Menu_Internal *internal, const char *suffix);
 
 static Efreet_Menu_App_Dir *efreet_menu_app_dir_new(void);
+static void efreet_menu_app_dir_free(Efreet_Menu_App_Dir *dir);
 
 static Efreet_Menu_Move *efreet_menu_move_new(void);
 static void efreet_menu_move_free(Efreet_Menu_Move *move);
@@ -987,6 +988,8 @@ efreet_menu_internal_new(void)
 void
 efreet_menu_internal_free(Efreet_Menu_Internal *internal)
 {
+   void *d;
+   
     if (!internal) return;
 
     IF_FREE(internal->file.path);
@@ -998,7 +1001,8 @@ efreet_menu_internal_free(Efreet_Menu_Internal *internal)
     IF_FREE_LIST(internal->applications);
 
     IF_FREE_DLIST(internal->directories);
-    IF_FREE_LIST(internal->app_dirs);
+   EINA_LIST_FREE(internal->app_dirs, d) efreet_menu_app_dir_free(d);
+//    IF_FREE_LIST(internal->app_dirs);
     IF_FREE_LIST(internal->app_pool);
     IF_FREE_DLIST(internal->directory_dirs);
     IF_FREE_HASH(internal->directory_cache);
@@ -1723,7 +1727,10 @@ efreet_menu_merge_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char 
 
         snprintf(dir_path, PATH_MAX, "%s/%s", path, file->d_name);
         if (!efreet_menu_merge(parent, xml, dir_path))
+         {
+            closedir(files);
             return 0;
+         }
     }
     closedir(files);
 
@@ -1895,6 +1902,7 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
                                                         legacy_internal, file_path, prefix);
             if (!ret)
             {
+               efreet_menu_filter_free(filter);
                 efreet_menu_internal_free(legacy_internal);
                 FREE(path);
                 closedir(files);
@@ -1947,6 +1955,7 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
     closedir(files);
 
     FREE(path);
+   efreet_menu_filter_free(filter);
     return legacy_internal;
 }
 
@@ -3198,6 +3207,14 @@ efreet_menu_app_dir_new(void)
     return dir;
 }
 
+static void
+efreet_menu_app_dir_free(Efreet_Menu_App_Dir *dir)
+{
+   free(dir->path);
+   free(dir->prefix);
+   free(dir);
+}
+
 /**
  * @internal
  * @param a: The app dir to compare too
@@ -3233,6 +3250,7 @@ efreet_menu_create_directory_dirs_list(Efreet_Menu_Internal *internal)
     if (!internal || internal->directory_dirs) return;
 
     internal->directory_dirs = ecore_dlist_new();
+    ecore_dlist_free_cb_set(internal->directory_dirs, free);
 }
 
 static void
@@ -3273,6 +3291,7 @@ efreet_menu_create_directories_list(Efreet_Menu_Internal *internal)
     if (!internal || internal->directories) return;
 
     internal->directories = ecore_dlist_new();
+   ecore_dlist_free_cb_set(internal->directories, free);
 }
 
 static char *
