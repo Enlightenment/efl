@@ -170,16 +170,22 @@
        EINA_MAGIC_FAIL(d, EINA_MAGIC_ARRAY);			\
    } while (0);
 
-#define EINA_MAGIC_CHECK_ARRAY_ITERATOR(d)			\
+#define EINA_MAGIC_CHECK_ARRAY_ITERATOR(d, val)		\
    do {								\
      if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ARRAY_ITERATOR))	\
-       EINA_MAGIC_FAIL(d, EINA_MAGIC_ARRAY_ITERATOR);		\
+       {							\
+          EINA_MAGIC_FAIL(d, EINA_MAGIC_ARRAY_ITERATOR);	\
+          return val;						\
+       }							\
    } while (0);
 
-#define EINA_MAGIC_CHECK_ARRAY_ACCESSOR(d)			\
+#define EINA_MAGIC_CHECK_ARRAY_ACCESSOR(d, val)		\
    do {								\
      if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ARRAY_ACCESSOR))	\
-       EINA_MAGIC_FAIL(d, EINA_MAGIC_ACCESSOR);			\
+       {							\
+          EINA_MAGIC_FAIL(d, EINA_MAGIC_ACCESSOR);		\
+          return val;						\
+       }							\
    } while (0);
 
 
@@ -215,7 +221,7 @@ static void eina_array_accessor_free(Eina_Accessor_Array *it) EINA_ARG_NONNULL(1
 static Eina_Bool
 eina_array_iterator_next(Eina_Iterator_Array *it, void **data)
 {
-   EINA_MAGIC_CHECK_ARRAY_ITERATOR(it);
+   EINA_MAGIC_CHECK_ARRAY_ITERATOR(it, EINA_FALSE);
 
    if (!(it->index < eina_array_count_get(it->array)))
      return EINA_FALSE;
@@ -228,21 +234,21 @@ eina_array_iterator_next(Eina_Iterator_Array *it, void **data)
 static Eina_Array *
 eina_array_iterator_get_container(Eina_Iterator_Array *it)
 {
-   EINA_MAGIC_CHECK_ARRAY_ITERATOR(it);
+   EINA_MAGIC_CHECK_ARRAY_ITERATOR(it, NULL);
    return (Eina_Array *) it->array;
 }
 
 static void
 eina_array_iterator_free(Eina_Iterator_Array *it)
 {
-   EINA_MAGIC_CHECK_ARRAY_ITERATOR(it);
+   EINA_MAGIC_CHECK_ARRAY_ITERATOR(it,);
    MAGIC_FREE(it);
 }
 
 static Eina_Bool
 eina_array_accessor_get_at(Eina_Accessor_Array *it, unsigned int index, void **data)
 {
-   EINA_MAGIC_CHECK_ARRAY_ACCESSOR(it);
+   EINA_MAGIC_CHECK_ARRAY_ACCESSOR(it, EINA_FALSE);
 
    if (!(index < eina_array_count_get(it->array)))
      return EINA_FALSE;
@@ -254,14 +260,14 @@ eina_array_accessor_get_at(Eina_Accessor_Array *it, unsigned int index, void **d
 static Eina_Array *
 eina_array_accessor_get_container(Eina_Accessor_Array *it)
 {
-   EINA_MAGIC_CHECK_ARRAY_ACCESSOR(it);
+   EINA_MAGIC_CHECK_ARRAY_ACCESSOR(it, NULL);
    return (Eina_Array *) it->array;
 }
 
 static void
 eina_array_accessor_free(Eina_Accessor_Array *it)
 {
-   EINA_MAGIC_CHECK_ARRAY_ACCESSOR(it);
+   EINA_MAGIC_CHECK_ARRAY_ACCESSOR(it, );
    MAGIC_FREE(it);
 }
 
