@@ -182,6 +182,7 @@ evas_free(Evas *e)
    eina_array_flush(&e->pending_objects);
    eina_array_flush(&e->obscuring_objects);
    eina_array_flush(&e->temporary_objects);
+   eina_array_flush(&e->calculate_objects);
 
    e->magic = 0;
    free(e);
