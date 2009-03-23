@@ -1902,7 +1902,6 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
                                                         legacy_internal, file_path, prefix);
             if (!ret)
             {
-                efreet_menu_filter_free(filter);
                 efreet_menu_internal_free(legacy_internal);
                 FREE(path);
                 closedir(files);
@@ -1955,7 +1954,6 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
     closedir(files);
 
     FREE(path);
-    efreet_menu_filter_free(filter);
     return legacy_internal;
 }
 
