@@ -100,12 +100,14 @@ Ximage_Image *_xr_xlib_image_new(Ximage_Info *xinf, int w, int h, int depth);
 void          _xr_xlib_image_free(Ximage_Image *xim);
 void          _xr_xlib_image_put(Ximage_Image *xim, Drawable draw, int x, int y, int w, int h);
 
+#ifdef BUILD_ENGINE_XRENDER_XCB
 Ximage_Info  *_xr_xcb_image_info_get(xcb_connection_t *conn, xcb_screen_t *screen, xcb_drawable_t draw, xcb_visualtype_t *visual);
 void          _xr_xcb_image_info_free(Ximage_Info *xinf);
 void          _xr_xcb_image_info_pool_flush(Ximage_Info *xinf, int max_num, int max_mem);
 Ximage_Image *_xr_xcb_image_new(Ximage_Info *xinf, int w, int h, int depth);
 void          _xr_xcb_image_free(Ximage_Image *xim);
 void          _xr_xcb_image_put(Ximage_Image *xim, xcb_drawable_t draw, int x, int y, int w, int h);
+#endif
 
 /* xrender support calls */
 Xrender_Surface *_xr_xlib_render_surface_new(Ximage_Info *xinf, int w, int h, XRenderPictFormat *fmt, int alpha);
@@ -123,6 +125,7 @@ void             _xr_xlib_render_surface_rectangle_draw(Xrender_Surface *rs, RGB
 void             _xr_xlib_render_surface_line_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2);
 void             _xr_xlib_render_surface_polygon_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points);
 
+#ifdef BUILD_ENGINE_XRENDER_XCB
 Xrender_Surface *_xr_xcb_render_surface_new(Ximage_Info *xinf, int w, int h, xcb_render_pictforminfo_t *fmt, int alpha);
 Xrender_Surface *_xr_xcb_render_surface_adopt(Ximage_Info *xinf, xcb_drawable_t draw, int w, int h, int alpha);
 Xrender_Surface *_xr_xcb_render_surface_format_adopt(Ximage_Info *xinf, xcb_drawable_t draw, int w, int h, xcb_render_pictforminfo_t *fmt, int alpha);
@@ -137,6 +140,7 @@ void             _xr_xcb_render_surface_copy(Xrender_Surface *srs, Xrender_Surfa
 void             _xr_xcb_render_surface_rectangle_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, int x, int y, int w, int h);
 void             _xr_xcb_render_surface_line_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2);
 void             _xr_xcb_render_surface_polygon_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points);
+#endif
 
 
 typedef struct _XR_Image XR_Image;
@@ -186,6 +190,7 @@ void      _xre_xlib_image_surface_gen(XR_Image *im);
 void      _xre_xlib_image_cache_set(int size);
 int       _xre_xlib_image_cache_get(void);
 
+#ifdef BUILD_ENGINE_XRENDER_XCB
 XR_Image *_xre_xcb_image_load(Ximage_Info *xinf, const char *file, const char *key, Evas_Image_Load_Opts *lo);
 XR_Image *_xre_xcb_image_new_from_data(Ximage_Info *xinf, int w, int h, void *data, int alpha, int cspace);
 XR_Image *_xre_xcb_image_new_from_copied_data(Ximage_Info *xinf, int w, int h, void *data, int alpha, int cspace);
@@ -205,6 +210,7 @@ void      _xre_xcb_image_border_get(XR_Image *im, int *l, int *r, int *t, int *b
 void      _xre_xcb_image_surface_gen(XR_Image *im);
 void      _xre_xcb_image_cache_set(int size);
 int       _xre_xcb_image_cache_get(void);
+#endif
 
 typedef struct _XR_Font_Surface XR_Font_Surface;
 
@@ -221,9 +227,11 @@ XR_Font_Surface *_xre_xlib_font_surface_new(Ximage_Info *xinf, RGBA_Font_Glyph *
 void             _xre_xlib_font_surface_free(XR_Font_Surface *fs);
 void             _xre_xlib_font_surface_draw(Ximage_Info *xinf, RGBA_Image *surface, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y);
 
+#ifdef BUILD_ENGINE_XRENDER_XCB
 XR_Font_Surface *_xre_xcb_font_surface_new(Ximage_Info *xinf, RGBA_Font_Glyph *fg);
 void             _xre_xcb_font_surface_free(XR_Font_Surface *fs);
 void             _xre_xcb_font_surface_draw(Ximage_Info *xinf, RGBA_Image *surface, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y);
+#endif
 
 typedef struct _XR_Gradient XR_Gradient;
 
@@ -252,6 +260,7 @@ void         _xre_xlib_gradient_direction_set(XR_Gradient *gr, int direction);
 void         _xre_xlib_gradient_type_set(XR_Gradient *gr, char *name, char *params);
 void         _xre_xlib_gradient_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, int x, int y, int w, int h);
 
+#ifdef BUILD_ENGINE_XRENDER_XCB
 XR_Gradient *_xre_xcb_gradient_new(Ximage_Info *xinf);
 void         _xre_xcb_gradient_free(XR_Gradient *gr);
 void         _xre_xcb_gradient_color_stop_add(XR_Gradient *gr, int r, int g, int b, int a, int delta);
@@ -267,5 +276,6 @@ void         _xre_xcb_gradient_offset_set(XR_Gradient *gr, float offset);
 void         _xre_xcb_gradient_direction_set(XR_Gradient *gr, int direction);
 void         _xre_xcb_gradient_type_set(XR_Gradient *gr, char *name, char *params);
 void         _xre_xcb_gradient_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, int x, int y, int w, int h);
+#endif
 
 #endif
