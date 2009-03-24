@@ -49,12 +49,12 @@
        EINA_MAGIC_FAIL(d, EINA_MAGIC_HASH);				\
   } while(0)
 
-#define EINA_MAGIC_CHECK_HASH_ITERATOR(d, val)				\
+#define EINA_MAGIC_CHECK_HASH_ITERATOR(d, ...)				\
   do {									\
      if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_HASH_ITERATOR))		\
      {									\
           EINA_MAGIC_FAIL(d, EINA_MAGIC_HASH_ITERATOR);			\
-          return val;							\
+          return __VA_ARGS__;							\
      }									\
   } while(0)
 
@@ -595,7 +595,7 @@ _eina_hash_iterator_get_container(Eina_Iterator_Hash *it)
 static void
 _eina_hash_iterator_free(Eina_Iterator_Hash *it)
 {
-   EINA_MAGIC_CHECK_HASH_ITERATOR(it, );
+   EINA_MAGIC_CHECK_HASH_ITERATOR(it);
    if (it->current) eina_iterator_free(it->current);
    if (it->list) eina_iterator_free(it->list);
    free(it);

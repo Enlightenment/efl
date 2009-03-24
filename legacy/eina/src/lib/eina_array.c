@@ -170,21 +170,21 @@
        EINA_MAGIC_FAIL(d, EINA_MAGIC_ARRAY);			\
    } while (0);
 
-#define EINA_MAGIC_CHECK_ARRAY_ITERATOR(d, val)		\
+#define EINA_MAGIC_CHECK_ARRAY_ITERATOR(d, ...)		\
    do {								\
      if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ARRAY_ITERATOR))	\
        {							\
           EINA_MAGIC_FAIL(d, EINA_MAGIC_ARRAY_ITERATOR);	\
-          return val;						\
+          return __VA_ARGS__;						\
        }							\
    } while (0);
 
-#define EINA_MAGIC_CHECK_ARRAY_ACCESSOR(d, val)		\
+#define EINA_MAGIC_CHECK_ARRAY_ACCESSOR(d, ...)		\
    do {								\
      if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ARRAY_ACCESSOR))	\
        {							\
           EINA_MAGIC_FAIL(d, EINA_MAGIC_ACCESSOR);		\
-          return val;						\
+          return __VA_ARGS__;						\
        }							\
    } while (0);
 
@@ -241,7 +241,7 @@ eina_array_iterator_get_container(Eina_Iterator_Array *it)
 static void
 eina_array_iterator_free(Eina_Iterator_Array *it)
 {
-   EINA_MAGIC_CHECK_ARRAY_ITERATOR(it,);
+   EINA_MAGIC_CHECK_ARRAY_ITERATOR(it);
    MAGIC_FREE(it);
 }
 
@@ -267,7 +267,7 @@ eina_array_accessor_get_container(Eina_Accessor_Array *it)
 static void
 eina_array_accessor_free(Eina_Accessor_Array *it)
 {
-   EINA_MAGIC_CHECK_ARRAY_ACCESSOR(it, );
+   EINA_MAGIC_CHECK_ARRAY_ACCESSOR(it);
    MAGIC_FREE(it);
 }
 
