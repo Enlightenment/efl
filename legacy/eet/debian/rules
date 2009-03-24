@@ -9,7 +9,7 @@ DEB_INSTALL_MANPAGES_libeet-doc := $(DEB_SRCDIR)/doc/man/man3/E*.3 $(DEB_SRCDIR)
 DEB_INSTALL_MANPAGES_libeet-bin := $(DEB_SRCDIR)/debian/eet.1
 DEB_DH_STRIP_ARGS := --dbg-package=libeet-dbg
 DEB_CONFIGURE_EXTRA_FLAGS := --disable-rpath
-DEB_CONFIGURE_SCRIPT := ./autogen.sh --prefix=/usr
+DEB_CONFIGURE_SCRIPT := ./autogen.sh
 DEB_MAKE_CLEAN_TARGET := distclean
 
 build/libeet-doc::
