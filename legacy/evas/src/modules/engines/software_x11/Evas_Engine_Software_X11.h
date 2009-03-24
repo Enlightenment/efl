@@ -39,11 +39,11 @@ struct _Evas_Engine_Info_Software_X11
       int                                   depth;
       int                                   rotation;
 
-      int                                   alloc_grayscale    : 1;
-      int                                   debug              : 1;
-      int                                   shape_dither       : 1;
-      int                                   destination_alpha  : 1;
-      int                                   track_mask_changes : 1;
+      unsigned int                          alloc_grayscale    : 1;
+      unsigned int                          debug              : 1;
+      unsigned int                          shape_dither       : 1;
+      unsigned int                          destination_alpha  : 1;
+      unsigned int                          track_mask_changes : 1;
 
       int                                   alloc_colors_max;
    } info;
