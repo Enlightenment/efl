@@ -1,7 +1,7 @@
 # get rid of that stupid cache mechanism
 rm -f config.cache
 
-AC_INIT(elementary, 0.2.0.0, enlightenment-devel@lists.sourceforge.net)
+AC_INIT(elementary, 0.3.0.0, enlightenment-devel@lists.sourceforge.net)
 AC_PREREQ(2.52)
 AC_CONFIG_SRCDIR(configure.in)
 AC_CANONICAL_BUILD
@@ -94,15 +94,15 @@ AM_CONDITIONAL([ELEMENTARY_WINDOWS_BUILD], [test "x${have_windows}" = "xyes"])
 
 PKG_CHECK_MODULES([ELEMENTARY],
    [
-    eina-0
-    eet
-    evas
-    ecore
-    ecore-evas
-    ecore-job
-    ecore-txt
-    ecore-file
-    edje
+    eina-0 >= 0.0.1
+    eet >= 1.1.0
+    evas >= 0.9.9
+    ecore >= 0.9.9
+    ecore-evas >= 0.9.9
+    ecore-job >= 0.9.9
+    ecore-txt >= 0.9.9
+    ecore-file >= 0.9.9
+    edje >= 0.9.91
    ]
 )
 
