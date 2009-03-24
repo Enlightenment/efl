@@ -3,13 +3,13 @@
 include /usr/share/cdbs/1/class/autotools.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 
-#DEB_INSTALL_MANPAGES_libecore-doc := $(DEB_SRCDIR)/doc/man/man3/*.3
+DEB_CONFIGURE_SCRIPT := ./autogen.sh
 DEB_INSTALL_MANPAGES_libecore-bin := debian/ecore_config.1
 DEB_DH_STRIP_ARGS := --dbg-package=libecore-dbg
 DEB_CONFIGURE_EXTRA_FLAGS := --enable-ecore-fb --disable-ecore-directfb \
 	--disable-ecore-evas-dfb --enable-ecore-evas-fb --disable-rpath \
 	--enable-openssl
-DEB_MAKE_CLEAN_TARGET := clean
+DEB_MAKE_CLEAN_TARGET := distclean
 
 build/libecore-doc::
 	cd $(DEB_SRCDIR)/doc && make doc
@@ -19,5 +19,4 @@ install/libecore-doc::
 	cp -R $(DEB_SRCDIR)/doc/html debian/libecore-doc/usr/share/doc/libecore-doc/
 
 clean::
-	./autogen.sh --prefix=/usr $(DEB_CONFIGURE_EXTRA_FLAGS) 
-
+	[ ! -f Makefile ] || make distclean

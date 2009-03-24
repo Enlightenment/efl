@@ -100,6 +100,20 @@ Description: Ecore Input Method Framework module
  applications.
  .
  This package contains the Ecore Input Method Framework module.
+
+Package: libecore-input0
+Architecture: any
+Section: libs
+Depends: ${shlibs:Depends}
+Provides: libecore-input
+Description: Ecore input module
+ This is the core event abstraction layer and X abstraction layer that makes
+ doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
+ handlers fast, optimized, and convenient. It's a separate library so anyone
+ can make use of the work put into Ecore to make this job easy for
+ applications.
+ .
+ This package contains the Ecore input module.
  
 Package: libecore-imf-evas0
 Architecture: any
@@ -172,11 +186,11 @@ Description: Ecore functions for dealing with the X Windows System
  .
  This package contains the Ecore wrapper and convenience functions for using
  the X Windows System.
- 
+
 Package: libecore0-all
 Architecture: any
 Section: libdevel
-Depends: libecore0 (= ${Source-Version}), libecore-config0, libecore-con0, libecore-evas0, libecore-fb0, libecore-file0, libecore-imf0, libecore-ipc0, libecore-job0, libecore-txt0, libecore-x0
+Depends: libecore0 (= ${Source-Version}), libecore-config0, libecore-con0, libecore-evas0, libecore-fb0, libecore-file0, libecore-imf0, libecore-input0, libecore-ipc0, libecore-job0, libecore-txt0, libecore-x0
 Provides: libecore-all
 Description: Virtual package providing all available Ecore modules.
  This is the core event abstraction layer and X abstraction layer that makes
@@ -198,6 +212,7 @@ Depends: libecore0 (= ${binary:Version}),
          libecore-fb0 (= ${binary:Version}),
          libecore-file0 (= ${binary:Version}),
          libecore-imf0 (= ${binary:Version}),
+         libecore-input0 (= ${binary:Version}),
          libecore-ipc0 (= ${binary:Version}),
          libecore-job0 (= ${binary:Version}),
          libecore-txt0 (= ${binary:Version}),

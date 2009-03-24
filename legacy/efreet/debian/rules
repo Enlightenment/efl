@@ -5,6 +5,8 @@ include /usr/share/cdbs/1/class/autotools.mk
 include /usr/share/cdbs/1/rules/simple-patchsys.mk
 
 DEB_CONFIGURE_EXTRA_FLAGS := --disable-rpath
+DEB_CONFIGURE_SCRIPT := ./autogen.sh
+DEB_MAKE_CLEAN_TARGET := distclean
 
 build/libefreet-doc::
 	cd $(DEB_SRCDIR)/doc && make doc
@@ -14,4 +16,4 @@ install/libefreet-doc::
 	cp -R $(DEB_SRCDIR)/doc/html debian/libefreet-doc/usr/share/doc/libefreet-doc/
 
 clean::
-	./autogen.sh --prefix=/usr $(DEB_CONFIGURE_EXTRA_FLAGS)
+	[ ! -f Makefile ] || make distclean

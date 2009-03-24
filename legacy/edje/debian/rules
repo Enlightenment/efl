@@ -3,7 +3,8 @@
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/autotools.mk
 
-#DEB_INSTALL_MANPAGES_libedje-doc := $(DEB_SRCDIR)/doc/man/man3/*.3
+DEB_CONFIGURE_SCRIPT := ./autogen.sh
+DEB_MAKE_CLEAN_TARGET := distclean
 DEB_DH_STRIP_ARGS := --dbg-package=libedje-dbg
 DEB_CONFIGURE_EXTRA_FLAGS := --disable-rpath
 DEB_SOURCE_VERSION := $(shell grep AC_INIT $(DEB_SRCDIR)/configure.ac|sed -e 's/AC_INIT(\[edje\],\ \[\(.*\)\],\ \[.*@.*\])/\1/g')
@@ -17,4 +18,4 @@ install/libedje-doc::
 	rm -rf $(DEB_SRCDIR)/edje-$(DEB_SOURCE_VERSION)-doc/
 
 clean::
-	./autogen.sh --prefix=/usr $(DEB_CONFIGURE_EXTRA_FLAGS)
+	[ ! -f Makefile ] || make distclean

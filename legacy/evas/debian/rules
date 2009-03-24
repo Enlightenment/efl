@@ -3,9 +3,9 @@
 include /usr/share/cdbs/1/class/autotools.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 
-DEB_MAKE_CLEAN_TARGET := clean
+DEB_CONFIGURE_SCRIPT := ./autogen.sh
+DEB_MAKE_CLEAN_TARGET := distclean
 
-#DEB_INSTALL_MANPAGES_libevas-doc := $(DEB_SRCDIR)/doc/man/man3/*.3
 DEB_DH_STRIP_ARGS := --dbg-package=libevas-dbg
 
 DEB_CONFIGURE_EXTRA_FLAGS := --enable-strict \
@@ -67,5 +67,5 @@ install/libevas-doc::
 	cp -R $(DEB_SRCDIR)/doc/html debian/libevas-doc/usr/share/doc/libevas-doc/
 
 clean::
-	./autogen.sh --prefix=/usr $(DEB_CONFIGURE_EXTRA_FLAGS) 
+	[ ! -f Makefile ] || make distclean
 
