@@ -22,7 +22,6 @@ README \
 evas-cairo-x11.pc \
 evas-directfb.pc \
 evas-fb.pc \
-evas-glitz-x11.pc \
 evas-opengl-x11.pc \
 evas-opengl-glew.pc \
 evas-quartz.pc \
@@ -62,7 +61,6 @@ evas.pc.in \
 evas-cairo-x11.pc.in \
 evas-directfb.pc.in \
 evas-fb.pc.in \
-evas-glitz-x11.pc.in \
 evas-opengl-x11.pc.in \
 evas-opengl-glew.pc.in \
 evas-software-buffer.pc.in \
@@ -97,10 +95,6 @@ endif
 
 if BUILD_ENGINE_FB
 pfb = evas-fb.pc
-endif
-
-if BUILD_ENGINE_GLITZ_X11
-pglitzx11 = evas-glitz-x11.pc
 endif
 
 if BUILD_ENGINE_BUFFER
@@ -159,7 +153,7 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
 	evas.pc $(psoftwarex11) $(psoftwarexcb) $(pdirectfb) $(pfb) \
 	$(psoftwarebuffer) $(psoftwareqtopia) $(popenglx11) $(pquartz) $(pcairox11) \
-	$(pxrenderx11) $(pxrenderxcb) $(pglitzx11) $(psoftwareddraw) $(psoftwaresdl) \
+	$(pxrenderx11) $(pxrenderxcb) $(psoftwareddraw) $(psoftwaresdl) \
 	$(psoftware16x11) $(pdirect3d) $(psoftware16ddraw) $(psoftware16wince) $(popenglglew)
 
 .PHONY: doc

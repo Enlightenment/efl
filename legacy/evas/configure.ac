@@ -37,7 +37,6 @@ want_evas_engine_buffer="yes"
 want_evas_engine_software_x11="no"
 want_evas_engine_xrender_x11="no"
 want_evas_engine_gl_x11="no"
-want_evas_engine_glitz_x11="no"
 want_evas_engine_cairo_x11="no"
 want_evas_engine_software_xcb="no"
 want_evas_engine_xrender_xcb="no"
@@ -232,8 +231,6 @@ EVAS_CHECK_ENGINE([software-x11], [${want_evas_engine_software_x11}], [yes], [So
 EVAS_CHECK_ENGINE([xrender-x11], [${want_evas_engine_xrender_x11}], [yes], [XRender X11])
 
 EVAS_CHECK_ENGINE([gl-x11], [${want_evas_engine_gl_x11}], [yes], [OpenGL X11])
-
-EVAS_CHECK_ENGINE([glitz-x11], [${want_evas_engine_glitz_x11}], [yes], [Glitz X11])
 
 EVAS_CHECK_ENGINE([cairo-x11], [${want_evas_engine_cairo_x11}], [yes], [Cairo X11])
 
@@ -953,7 +950,6 @@ Makefile
 evas-cairo-x11.pc
 evas-directfb.pc
 evas-fb.pc
-evas-glitz-x11.pc
 evas-opengl-glew.pc
 evas-opengl-x11.pc
 evas-quartz.pc
@@ -1008,7 +1004,6 @@ src/modules/engines/cairo_common/Makefile
 src/modules/engines/cairo_x11/Makefile
 src/modules/engines/xrender_x11/Makefile
 src/modules/engines/software_sdl/Makefile
-src/modules/engines/glitz_x11/Makefile
 src/modules/engines/software_16/Makefile
 src/modules/engines/software_16_x11/Makefile
 src/modules/engines/software_16_ddraw/Makefile
@@ -1051,7 +1046,6 @@ echo "  Software Memory Buffer.....: $have_evas_engine_buffer"
 echo "  Software X11...............: $have_evas_engine_software_x11 (XCB: $have_evas_engine_software_xcb)"
 echo "  XRender X11................: $have_evas_engine_xrender_x11 (XCB: $have_evas_engine_xrender_xcb)"
 echo "  OpenGL X11.................: $have_evas_engine_gl_x11"
-echo "  Glitz X11..................: $have_evas_engine_glitz_x11"
 echo "  Cairo X11..................: $have_evas_engine_cairo_x11"
 echo "  XRender XCB................: $have_evas_engine_xrender_xcb"
 echo "  Software DirectDraw........: $have_evas_engine_software_ddraw"
