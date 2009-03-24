@@ -107,6 +107,11 @@ typedef enum _Ecore_X_GC_Value_Mask {
    ECORE_X_GC_VALUE_MASK_ARC_MODE = (1L << 22)
 } Ecore_X_GC_Value_Mask;
 
+typedef enum _Ecore_X_Composite_Update_Type {
+   ECORE_X_COMPOSITE_UPDATE_AUTOMATIC,
+   ECORE_X_COMPOSITE_UPDATE_MANUAL
+} Ecore_X_Composite_Update_Type;
+
 typedef enum _Ecore_X_Window_State {
     /** The window is iconified. */
     ECORE_X_WINDOW_STATE_ICONIFIED,
@@ -1605,6 +1610,10 @@ EAPI void           ecore_x_region_picture_clip_set(Ecore_X_Region region, Ecore
 
 /* XComposite Extension Support */
 EAPI int               ecore_x_composite_query(void);
+EAPI void              ecore_x_composite_redirect_window(Ecore_X_Window win, Ecore_X_Composite_Update_Type type);
+EAPI void              ecore_x_composite_redirect_subwindows(Ecore_X_Window win, Ecore_X_Composite_Update_Type type);
+EAPI void              ecore_x_composite_unredirect_window(Ecore_X_Window win, Ecore_X_Composite_Update_Type type);
+EAPI void              ecore_x_composite_unredirect_subwindows(Ecore_X_Window win, Ecore_X_Composite_Update_Type type);
 EAPI Ecore_X_Pixmap    ecore_x_composite_name_window_pixmap_get(Ecore_X_Window win);
 
 /* XDamage Extension Support */

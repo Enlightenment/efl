@@ -31,6 +31,82 @@ ecore_x_composite_query(void)
    return _composite_available;
 }
 
+EAPI void
+ecore_x_composite_redirect_window(Ecore_X_Window win, Ecore_X_Composite_Update_Type type)
+{
+   int update;
+
+#ifdef ECORE_XCOMPOSITE
+   switch(type)
+     {
+      case ECORE_X_COMPOSITE_UPDATE_AUTOMATIC:
+	 update = CompositeRedirectAutomatic;
+	 break;
+      case ECORE_X_COMPOSITE_UPDATE_MANUAL:
+	 update = CompositeRedirectManual;
+	 break;
+     }
+   XCompositeRedirectWindow(_ecore_x_disp, win, update);
+#endif
+}
+
+EAPI void
+ecore_x_composite_redirect_subwindows(Ecore_X_Window win, Ecore_X_Composite_Update_Type type)
+{
+   int update;
+
+#ifdef ECORE_XCOMPOSITE
+   switch(type)
+     {
+      case ECORE_X_COMPOSITE_UPDATE_AUTOMATIC:
+	 update = CompositeRedirectAutomatic;
+	 break;
+      case ECORE_X_COMPOSITE_UPDATE_MANUAL:
+	 update = CompositeRedirectManual;
+	 break;
+     }
+   XCompositeRedirectSubwindows(_ecore_x_disp, win, update);
+#endif
+}
+
+EAPI void
+ecore_x_composite_unredirect_window(Ecore_X_Window win, Ecore_X_Composite_Update_Type type)
+{
+   int update;
+
+#ifdef ECORE_XCOMPOSITE
+   switch(type)
+     {
+      case ECORE_X_COMPOSITE_UPDATE_AUTOMATIC:
+	 update = CompositeRedirectAutomatic;
+	 break;
+      case ECORE_X_COMPOSITE_UPDATE_MANUAL:
+	 update = CompositeRedirectManual;
+	 break;
+     }
+   XCompositeUnredirectWindow(_ecore_x_disp, win, update);
+#endif
+}
+
+EAPI void
+ecore_x_composite_unredirect_subwindows(Ecore_X_Window win, Ecore_X_Composite_Update_Type type)
+{
+   int update;
+
+#ifdef ECORE_XCOMPOSITE
+   switch(type)
+     {
+      case ECORE_X_COMPOSITE_UPDATE_AUTOMATIC:
+	 update = CompositeRedirectAutomatic;
+	 break;
+      case ECORE_X_COMPOSITE_UPDATE_MANUAL:
+	 update = CompositeRedirectManual;
+	 break;
+     }
+   XCompositeUnredirectSubwindows(_ecore_x_disp, win, update);
+#endif
+}
+
 EAPI Ecore_X_Pixmap
 ecore_x_composite_name_window_pixmap_get(Ecore_X_Window win)
 {
