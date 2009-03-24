@@ -101,9 +101,9 @@ if BUILD_ENGINE_BUFFER
 psoftwarebuffer = evas-software-buffer.pc
 endif
 
-if BUILD_ENGINE_SOFTWARE_QTOPIA
-psoftwareqtopia = evas-software-qtopia.pc
-endif
+#if BUILD_ENGINE_SOFTWARE_QTOPIA
+#psoftwareqtopia = evas-software-qtopia.pc
+#endif
 
 if BUILD_ENGINE_GL_X11
 popenglx11 = evas-opengl-x11.pc
@@ -117,9 +117,9 @@ if BUILD_ENGINE_GL_GLEW
 popenglglew = evas-opengl-glew.pc
 endif
 
-if BUILD_ENGINE_CAIRO_X11
-pcairox11 = evas-cairo-x11.pc
-endif
+#if BUILD_ENGINE_CAIRO_X11
+#pcairox11 = evas-cairo-x11.pc
+#endif
 
 if BUILD_ENGINE_XRENDER_X11
 pxrenderx11 = evas-xrender-x11.pc

@@ -232,7 +232,8 @@ EVAS_CHECK_ENGINE([xrender-x11], [${want_evas_engine_xrender_x11}], [yes], [XRen
 
 EVAS_CHECK_ENGINE([gl-x11], [${want_evas_engine_gl_x11}], [yes], [OpenGL X11])
 
-EVAS_CHECK_ENGINE([cairo-x11], [${want_evas_engine_cairo_x11}], [yes], [Cairo X11])
+# disable cairo engine for the release
+#EVAS_CHECK_ENGINE([cairo-x11], [${want_evas_engine_cairo_x11}], [yes], [Cairo X11])
 
 EVAS_CHECK_ENGINE([software-xcb], [${want_evas_engine_software_xcb}], [no], [Software XCB])
 
@@ -252,7 +253,8 @@ EVAS_CHECK_ENGINE([fb], [${want_evas_engine_fb}], [no], [Framebuffer])
 
 EVAS_CHECK_ENGINE([directfb], [${want_evas_engine_directfb}], [no], [DirectFB])
 
-EVAS_CHECK_ENGINE([software-qtopia], [${want_evas_engine_software_qtopia}], [no], [Qtopia])
+# disable cairo engine for the release
+#EVAS_CHECK_ENGINE([software-qtopia], [${want_evas_engine_software_qtopia}], [no], [Qtopia])
 
 EVAS_CHECK_ENGINE([software-16-x11], [${want_evas_engine_software_16_x11}], [yes], [Software X11 16 bits])
 
@@ -261,12 +263,12 @@ EVAS_CHECK_ENGINE([software-16-ddraw], [${want_evas_engine_software_16_ddraw}], 
 EVAS_CHECK_ENGINE([software-16-wince], [${want_evas_engine_software_16_wince}], [no], [Software Windows CE 16 bits])
 
 # common cairo
-have_evas_engine_cairo_common="no"
-if test "x${have_evas_engine_cairo_x11}" = "xyes" ; then
-   have_evas_engine_cairo_common="yes"
-   AC_DEFINE([BUILD_ENGINE_CAIRO_COMMON], [1], [Generic Cairo Rendering Support])
-fi
-AM_CONDITIONAL([BUILD_ENGINE_CAIRO_COMMON], [test "x$have_evas_engine_cairo_common" = "xyes"])
+#have_evas_engine_cairo_common="no"
+#if test "x${have_evas_engine_cairo_x11}" = "xyes" ; then
+#   have_evas_engine_cairo_common="yes"
+#   AC_DEFINE([BUILD_ENGINE_CAIRO_COMMON], [1], [Generic Cairo Rendering Support])
+#fi
+#AM_CONDITIONAL([BUILD_ENGINE_CAIRO_COMMON], [test "x$have_evas_engine_cairo_common" = "xyes"])
 
 # common gl
 have_evas_engine_gl_common="no"
@@ -947,14 +949,12 @@ AC_SUBST(pthread_libs)
 
 AC_OUTPUT([
 Makefile
-evas-cairo-x11.pc
 evas-directfb.pc
 evas-fb.pc
 evas-opengl-glew.pc
 evas-opengl-x11.pc
 evas-quartz.pc
 evas-software-buffer.pc
-evas-software-qtopia.pc
 evas-software-x11.pc
 evas-software-16-x11.pc
 evas-software-xcb.pc
@@ -994,14 +994,11 @@ src/modules/engines/software_x11/Makefile
 src/modules/engines/fb/Makefile
 src/modules/engines/buffer/Makefile
 src/modules/engines/software_win32_gdi/Makefile
-src/modules/engines/software_qtopia/Makefile
 src/modules/engines/directfb/Makefile
 src/modules/engines/gl_common/Makefile
 src/modules/engines/gl_glew/Makefile
 src/modules/engines/gl_x11/Makefile
 src/modules/engines/quartz/Makefile
-src/modules/engines/cairo_common/Makefile
-src/modules/engines/cairo_x11/Makefile
 src/modules/engines/xrender_x11/Makefile
 src/modules/engines/software_sdl/Makefile
 src/modules/engines/software_16/Makefile
@@ -1029,6 +1026,14 @@ README
 evas.spec
 ])
 
+#disabled for the release:
+# evas-cairo-x11.pc
+# evas-software-qtopia.pc
+# src/modules/engines/cairo_common/Makefile
+# src/modules/engines/cairo_x11/Makefile
+# src/modules/engines/software_qtopia/Makefile
+
+
 #####################################################################
 ## Info
 
@@ -1046,7 +1051,7 @@ echo "  Software Memory Buffer.....: $have_evas_engine_buffer"
 echo "  Software X11...............: $have_evas_engine_software_x11 (XCB: $have_evas_engine_software_xcb)"
 echo "  XRender X11................: $have_evas_engine_xrender_x11 (XCB: $have_evas_engine_xrender_xcb)"
 echo "  OpenGL X11.................: $have_evas_engine_gl_x11"
-echo "  Cairo X11..................: $have_evas_engine_cairo_x11"
+#echo "  Cairo X11..................: $have_evas_engine_cairo_x11"
 echo "  XRender XCB................: $have_evas_engine_xrender_xcb"
 echo "  Software DirectDraw........: $have_evas_engine_software_ddraw"
 echo "  Direct3d...................: $have_evas_engine_direct3d"
@@ -1055,7 +1060,7 @@ echo "  OpenGL Glew................: $have_evas_engine_gl_glew"
 echo "  Software SDL...............: $have_evas_engine_software_sdl (primitive: $sdl_primitive)"
 echo "  Software Framebuffer.......: $have_evas_engine_fb"
 echo "  DirectFB...................: $have_evas_engine_directfb"
-echo "  Software Qtopia............: $have_evas_engine_software_qtopia"
+#echo "  Software Qtopia............: $have_evas_engine_software_qtopia"
 echo "  Software 16bit ............: $have_evas_engine_software_16"
 echo "  Software 16bit X11.........: $have_evas_engine_software_16_x11"
 echo "  Software 16bit Directdraw..: $have_evas_engine_software_16_ddraw"
