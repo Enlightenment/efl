@@ -105,7 +105,7 @@ eng_info_free(Evas *e, void *info)
    free(in);
 }
 
-static void
+static int
 eng_setup(Evas *e, void *in)
 {
    Render_Engine                   *re;
@@ -135,11 +135,13 @@ eng_setup(Evas *e, void *in)
                                                   info->info.fullscreen);
 	re->ob->onebuf = ponebuf;
      }
-   if (!e->engine.data.output) return;
+   if (!e->engine.data.output) return 0;
    if (!e->engine.data.context)
      e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
 
    re = e->engine.data.output;
+
+   return 1;
 }
 
 static void

@@ -116,9 +116,12 @@ _tmp_out_alloc(Render_Engine *re)
 static void*
 _sdl16_output_setup(int w, int h, int rotation, int fullscreen, int noframe, int hwsurface)
 {
-   Render_Engine	*re = calloc(1, sizeof(Render_Engine));
+   Render_Engine	*re;
    SDL_Surface          *surface;
 
+   re = calloc(1, sizeof(Render_Engine));
+   if (!re)
+     return NULL;
    /* if we haven't initialized - init (automatic abort if already done) */
    evas_common_cpu_init();
    evas_common_blend_init();
@@ -141,7 +144,8 @@ _sdl16_output_setup(int w, int h, int rotation, int fullscreen, int noframe, int
    if (!re->cache)
      {
         fprintf(stderr, "Evas_Cache_Engine_Image allocation failed!\n");
-        exit(-1);
+        free(re);
+        return NULL;
      }
 
    re->tb = evas_common_tilebuf_new(w, h);
@@ -166,7 +170,9 @@ _sdl16_output_setup(int w, int h, int rotation, int fullscreen, int noframe, int
    if (!surface)
      {
         fprintf(stderr, "SDL_SetVideoMode [ %i x %i x 16 ] failed\n", w, h);
-        exit(-1);
+        evas_cache_engine_image_shutdown(re->cache);
+        free(re);
+        return NULL;
      }
 
    SDL_SetAlpha(surface, SDL_RLEACCEL, 0);
@@ -176,27 +182,30 @@ _sdl16_output_setup(int w, int h, int rotation, int fullscreen, int noframe, int
    if (!re->soft16_engine_image)
      {
         fprintf(stderr, "Soft16_Image allocation from SDL failed\n");
-        exit(-1);
+        evas_cache_engine_image_shutdown(re->cache);
+        free(re);
+        return NULL;
      }
 
    return re;
 }
 
 
-static void
+static int
 evas_engine_sdl16_setup(Evas *e, void *in)
 {
    Evas_Engine_Info_SDL_16      *info = (Evas_Engine_Info_SDL_16 *) in;
 
    if (evas_output_method_get(e) != evas_render_method_lookup("software_16_sdl"))
-     return ;
+     return 0;
 
    SDL_Init(SDL_INIT_NOPARACHUTE);
 
    if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
      {
         fprintf(stderr, "SDL_Init failed with %s\n", SDL_GetError());
-        exit(-1);
+        SDL_Quit();
+        return 0;
      }
 
    e->engine.data.output = _sdl16_output_setup(e->output.w, e->output.h,
@@ -205,10 +214,12 @@ evas_engine_sdl16_setup(Evas *e, void *in)
                                                info->info.noframe,
                                                info->info.hwsurface);
    if (!e->engine.data.output)
-     return;
+     return 0;
 
    e->engine.func = &func;
    e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
+
+   return 1;
 }
 
 static void

@@ -329,18 +329,19 @@ evas_engine_info_get(const Evas *e)
  *
  * @param   e    The pointer to the Evas Canvas
  * @param   info The pointer to the Engine Info to use
+ * @return  1 if no error occured, 0 otherwise
  * @ingroup Evas_Output_Method
  */
-EAPI void
+EAPI int
 evas_engine_info_set(Evas *e, Evas_Engine_Info *info)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return;
+   return 0;
    MAGIC_CHECK_END();
-   if (!info) return;
-   if (info != e->engine.info) return;
-   if (info->magic != e->engine.info_magic) return;
-   e->engine.func->setup(e, info);
+   if (!info) return 0;
+   if (info != e->engine.info) return 0;
+   if (info->magic != e->engine.info_magic) return 0;
+   return e->engine.func->setup(e, info);
 }
 
 /**

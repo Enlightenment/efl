@@ -55,7 +55,7 @@ eng_info_free(Evas *e, void *info)
    free((Evas_Engine_Info_Quartz *)info);
 }
 
-static void
+static int
 eng_setup(Evas *e, void *in)
 {
    Render_Engine *re;
@@ -63,13 +63,15 @@ eng_setup(Evas *e, void *in)
 
    if (!e->engine.data.output)
      e->engine.data.output = eng_output_setup(info->info.context, e->output.w, e->output.h);
-   if (!e->engine.data.output) return;
+   if (!e->engine.data.output) return 0;
 
    if (!e->engine.data.context)
       e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
 
    ((Evas_Quartz_Context *)e->engine.data.context)->w = e->output.w;
    ((Evas_Quartz_Context *)e->engine.data.context)->h = e->output.h;
+
+   return 1;
 }
 
 #pragma mark Output Setup

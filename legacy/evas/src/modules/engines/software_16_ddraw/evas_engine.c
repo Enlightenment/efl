@@ -33,7 +33,7 @@ struct _Render_Engine
 
 static void *eng_info(Evas *e);
 static void eng_info_free(Evas *e, void *info);
-static void eng_setup(Evas *e, void *info);
+static int eng_setup(Evas *e, void *info);
 static void eng_output_free(void *data);
 static void eng_output_resize(void *data, int w, int h);
 static void eng_output_tile_size_set(void *data, int w, int h);
@@ -101,7 +101,7 @@ _tmp_out_alloc(Render_Engine *re)
 }
 
 
-static void
+static int
 eng_setup(Evas *e, void *in)
 {
    Render_Engine                      *re;
@@ -116,7 +116,7 @@ eng_setup(Evas *e, void *in)
 	 * and no real other acceleration, and high resolution so we
 	 * can pre-dither into 16bpp. */
         if (info->info.depth != 16)
-         return;
+         return 0;
 	/* do common routine init - we wil at least use it for core
 	 * image loading and font loading/glyph rendering & placement */
 	evas_common_cpu_init();
@@ -137,7 +137,7 @@ eng_setup(Evas *e, void *in)
 	/* render engine specific data */
 	re = calloc(1, sizeof(Render_Engine));
         if (!re)
-          return;
+          return 0;
 	e->engine.data.output = re;
 	re->window = info->info.window;
 	re->object = info->info.object;
@@ -156,7 +156,7 @@ eng_setup(Evas *e, void *in)
 	/* we changed the info after first init - do a re-eval where
 	 * appropriate */
        if (info->info.depth != 16)
-         return;
+         return 0;
 	re = e->engine.data.output;
 	if (re->tb) evas_common_tilebuf_free(re->tb);
 	re->window = info->info.window;
@@ -176,11 +176,13 @@ eng_setup(Evas *e, void *in)
 	     re->tmp_out = NULL;
 	  }
      }
-   if (!e->engine.data.output) return;
+   if (!e->engine.data.output) return 0;
    /* add a draw context if we dont have one */
    if (!e->engine.data.context)
      e->engine.data.context =
      e->engine.func->context_new(e->engine.data.output);
+
+   return 1;
 }
 
 static void

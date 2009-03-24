@@ -35,7 +35,7 @@ struct _Render_Engine
 /* prototypes we will use here */
 static void *eng_info(Evas *e);
 static void eng_info_free(Evas *e, void *info);
-static void eng_setup(Evas *e, void *info);
+static int eng_setup(Evas *e, void *info);
 static void eng_output_free(void *data);
 static void eng_output_resize(void *data, int w, int h);
 static void eng_output_tile_size_set(void *data, int w, int h);
@@ -119,7 +119,7 @@ eng_info_free(Evas *e, void *info)
    free(in);
 }
 
-static void
+static int
 eng_setup(Evas *e, void *in)
 {
    Render_Engine *re;
@@ -130,6 +130,8 @@ eng_setup(Evas *e, void *in)
    if (!e->engine.data.output)
      {
 	re = calloc(1, sizeof(Render_Engine));
+        if (!re)
+          return 0;
 	evas_common_cpu_init();
 	evas_common_blend_init();
 	evas_common_image_init();
@@ -149,7 +151,7 @@ eng_setup(Evas *e, void *in)
 	resize = 0;
      }
    re = e->engine.data.output;
-   if (!re) return;
+   if (!re) return 0;
    
    if (!e->engine.data.context) e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
    
@@ -169,6 +171,8 @@ eng_setup(Evas *e, void *in)
         if (re->tb)
 	  evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
      }
+
+   return 1;
 }
 
 static void

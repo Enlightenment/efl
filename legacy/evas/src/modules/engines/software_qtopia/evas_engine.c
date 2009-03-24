@@ -23,7 +23,7 @@ static void *_output_setup(int w, int h, int rot, QWidget *target);
 
 static void *eng_info(Evas *e);
 static void eng_info_free(Evas *e, void *info);
-static void eng_setup(Evas *e, void *info);
+static int eng_setup(Evas *e, void *info);
 static void eng_output_free(void *data);
 static void eng_output_resize(void *data, int w, int h);
 static void eng_output_tile_size_set(void *data, int w, int h);
@@ -42,6 +42,8 @@ _output_setup(int w, int h, int rot, QWidget *target)
    Render_Engine *re;
 
    re = calloc(1, sizeof(Render_Engine));
+   if (!re)
+     return NULL;
    /* if we haven't initialized - init (automatic abort if already done) */
    evas_common_cpu_init();
 
@@ -101,7 +103,7 @@ eng_info_free(Evas *e, void *info)
    free(in);
 }
 
-static void
+static int
 eng_setup(Evas *e, void *in)
 {
    Render_Engine *re;
@@ -114,12 +116,14 @@ eng_setup(Evas *e, void *in)
 		   e->output.h,
 		   info->info.rotation,
 		   info->info.target);
-  if (!e->engine.data.output) return;
+  if (!e->engine.data.output) return 0;
    if (!e->engine.data.context)
      e->engine.data.context =
      e->engine.func->context_new(e->engine.data.output);
 
    re = e->engine.data.output;
+
+   return 1;
 }
 
 static void

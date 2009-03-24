@@ -55,7 +55,7 @@ eng_info_free(Evas *e __UNUSED__, void *info)
    free(in);
 }
 
-static void
+static int
 eng_setup(Evas *e, void *in)
 {
    Render_Engine *re;
@@ -65,9 +65,9 @@ eng_setup(Evas *e, void *in)
    info = (Evas_Engine_Info_GL_X11 *)in;
    if (!e->engine.data.output)
      {
-	if (!glXQueryExtension(info->info.display, &eb, &evb)) return;
+	if (!glXQueryExtension(info->info.display, &eb, &evb)) return 0;
 	re = calloc(1, sizeof(Render_Engine));
-	if (!re) return;
+	if (!re) return 0;
 	e->engine.data.output = re;
 	re->win = eng_window_new(info->info.display,
 				 info->info.drawable,
@@ -81,7 +81,7 @@ eng_setup(Evas *e, void *in)
 	  {
 	     free(re);
 	     e->engine.data.output = NULL;
-	     return;
+	     return 0;
 	  }
 
 	evas_common_cpu_init();
@@ -111,10 +111,12 @@ eng_setup(Evas *e, void *in)
 				 e->output.w,
 				 e->output.h);
      }
-   if (!e->engine.data.output) return;
+   if (!e->engine.data.output) return 0;
    if (!e->engine.data.context)
      e->engine.data.context =
      e->engine.func->context_new(e->engine.data.output);
+
+   return 1;
 }
 
 static void

@@ -45,7 +45,7 @@ static int          _best_depth_get    (int backend, void *connection, int scree
 
 static void *eng_info(Evas *e);
 static void eng_info_free(Evas *e, void *info);
-static void eng_setup(Evas *e, void *info);
+static int eng_setup(Evas *e, void *info);
 static void eng_output_free(void *data);
 static void eng_output_resize(void *data, int w, int h);
 static void eng_output_tile_size_set(void *data, int w, int h);
@@ -79,6 +79,8 @@ _output_xlib_setup(int      w,
    Render_Engine *re;
 
    re = calloc(1, sizeof(Render_Engine));
+   if (!re)
+     return NULL;
 
    evas_software_xlib_x_init();
    evas_software_xlib_x_color_init();
@@ -147,6 +149,8 @@ _output_xcb_setup(int               w,
    Render_Engine *re;
 
    re = calloc(1, sizeof(Render_Engine));
+   if (!re)
+     return NULL;
 
    evas_software_xcb_x_init();
    evas_software_xcb_x_color_init();
@@ -328,7 +332,7 @@ eng_info_free(Evas *e __UNUSED__, void *info)
    free(in);
 }
 
-static void
+static int
 eng_setup(Evas *e, void *in)
 {
    Render_Engine                 *re;
@@ -378,9 +382,9 @@ eng_setup(Evas *e, void *in)
              re->outbuf_idle_flush = evas_software_xlib_outbuf_idle_flush;
           }
 
+#ifdef BUILD_ENGINE_SOFTWARE_XCB
         if (info->info.backend == 1)
           {
-#ifdef BUILD_ENGINE_SOFTWARE_XCB
              re = _output_xcb_setup(e->output.w,
                                     e->output.h,
                                     info->info.rotation,
@@ -405,8 +409,8 @@ eng_setup(Evas *e, void *in)
              re->outbuf_free_region_for_update = evas_software_xcb_outbuf_free_region_for_update;
              re->outbuf_flush = evas_software_xcb_outbuf_flush;
              re->outbuf_idle_flush = evas_software_xcb_outbuf_idle_flush;
-#endif
           }
+#endif
 
         e->engine.data.output = re;
      }
@@ -437,9 +441,9 @@ eng_setup(Evas *e, void *in)
              evas_software_xlib_outbuf_debug_set(re->ob, info->info.debug);
           }
 
+#ifdef BUILD_ENGINE_SOFTWARE_XCB
         if (info->info.backend == 1)
           {
-#ifdef BUILD_ENGINE_SOFTWARE_XCB
              evas_software_xcb_outbuf_free(re->ob);
              re->ob = evas_software_xcb_outbuf_setup_x(e->output.w,
                                                        e->output.h,
@@ -457,16 +461,18 @@ eng_setup(Evas *e, void *in)
                                                        info->info.shape_dither,
                                                        info->info.destination_alpha);
              evas_software_xcb_outbuf_debug_set(re->ob, info->info.debug);
-#endif
           }
+#endif
 	re->ob->onebuf = ponebuf;
      }
-   if (!e->engine.data.output) return;
+   if (!e->engine.data.output) return 0;
    if (!e->engine.data.context)
      e->engine.data.context =
      e->engine.func->context_new(e->engine.data.output);
 
    re = e->engine.data.output;
+
+   return 1;
 }
 
 static void

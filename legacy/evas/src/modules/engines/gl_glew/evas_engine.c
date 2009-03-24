@@ -39,7 +39,7 @@ eng_info_free(Evas *e, void *info)
    free(in);
 }
 
-static void
+static int
 eng_setup(Evas *e, void *in)
 {
    Render_Engine            *re;
@@ -49,13 +49,13 @@ eng_setup(Evas *e, void *in)
    if (!e->engine.data.output)
      {
 	re = calloc(1, sizeof(Render_Engine));
-	if (!re) return;
+	if (!re) return 0;
 
         if (!evas_glew_init(info->info.window, &re->dc, &re->context))
           {
 	     free(re);
 	     e->engine.data.output = NULL;
-	     return;
+	     return 0;
           }
 
         re->win = info->info.window;
@@ -70,7 +70,7 @@ eng_setup(Evas *e, void *in)
 	  {
 	     free(re);
 	     e->engine.data.output = NULL;
-	     return;
+	     return 0;
 	  }
 
 	evas_common_cpu_init();
@@ -94,7 +94,7 @@ eng_setup(Evas *e, void *in)
           {
 	     free(re);
 	     e->engine.data.output = NULL;
-	     return;
+	     return 0;
           }
 
         re->win = info->info.window;
@@ -107,11 +107,13 @@ eng_setup(Evas *e, void *in)
                                     e->output.w,
                                     e->output.h);
      }
-   if (!e->engine.data.output) return;
+   if (!e->engine.data.output) return 0;
 
    if (!e->engine.data.context)
      e->engine.data.context =
        e->engine.func->context_new(e->engine.data.output);
+
+   return 1;
 }
 
 static void

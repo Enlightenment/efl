@@ -48,7 +48,7 @@ struct _Render_Engine
 
 static void *eng_info(Evas *e);
 static void eng_info_free(Evas *e, void *info);
-static void eng_setup(Evas *e, void *info);
+static int eng_setup(Evas *e, void *info);
 static void eng_output_free(void *data);
 static void eng_output_resize(void *data, int w, int h);
 static void eng_output_tile_size_set(void *data, int w, int h);
@@ -142,7 +142,7 @@ _tmp_out_alloc(Render_Engine *re)
 }
 
 
-static void
+static int
 eng_setup(Evas *e, void *in)
 {
    Render_Engine                      *re;
@@ -171,7 +171,7 @@ eng_setup(Evas *e, void *in)
 	/* render engine specific data */
 	re = calloc(1, sizeof(Render_Engine));
         if (!re)
-          return;
+          return 0;
 	e->engine.data.output = re;
 
         switch(info->info.backend)
@@ -182,7 +182,7 @@ eng_setup(Evas *e, void *in)
               if (!re->backend_priv)
                 {
                    free(re);
-                   return;
+                   return 0;
                 }
               re->backend_shutdown = evas_software_wince_fb_shutdown;
               re->backend_output_buffer_new = evas_software_wince_fb_output_buffer_new;
@@ -196,7 +196,7 @@ eng_setup(Evas *e, void *in)
               if (!re->backend_priv)
                 {
                    free(re);
-                   return;
+                   return 0;
                 }
               re->backend_shutdown = evas_software_wince_gapi_shutdown;
               re->backend_output_buffer_new = evas_software_wince_gapi_output_buffer_new;
@@ -210,7 +210,7 @@ eng_setup(Evas *e, void *in)
               if (!re->backend_priv)
                 {
                    free(re);
-                   return;
+                   return 0;
                 }
               re->backend_shutdown = evas_software_wince_ddraw_shutdown;
               re->backend_output_buffer_new = evas_software_wince_ddraw_output_buffer_new;
@@ -224,7 +224,7 @@ eng_setup(Evas *e, void *in)
               if (!re->backend_priv)
                 {
                    free(re);
-                   return;
+                   return 0;
                 }
               re->backend_shutdown = evas_software_wince_gdi_shutdown;
               re->backend_output_buffer_new = evas_software_wince_gdi_output_buffer_new;
@@ -234,7 +234,7 @@ eng_setup(Evas *e, void *in)
               break;
            default:
               free(re);
-              return;
+              return 0;
           }
 
 	re->width = e->output.w;
@@ -257,7 +257,7 @@ eng_setup(Evas *e, void *in)
               if (!re->backend_priv)
                 {
                    free(re);
-                   return;
+                   return 0;
                 }
               re->backend_shutdown = evas_software_wince_fb_shutdown;
               re->backend_output_buffer_new = evas_software_wince_fb_output_buffer_new;
@@ -271,7 +271,7 @@ eng_setup(Evas *e, void *in)
               if (!re->backend_priv)
                 {
                    free(re);
-                   return;
+                   return 0;
                 }
               re->backend_shutdown = evas_software_wince_gapi_shutdown;
               re->backend_output_buffer_new = evas_software_wince_gapi_output_buffer_new;
@@ -285,7 +285,7 @@ eng_setup(Evas *e, void *in)
               if (!re->backend_priv)
                 {
                    free(re);
-                   return;
+                   return 0;
                 }
               re->backend_shutdown = evas_software_wince_ddraw_shutdown;
               re->backend_output_buffer_new = evas_software_wince_ddraw_output_buffer_new;
@@ -299,7 +299,7 @@ eng_setup(Evas *e, void *in)
               if (!re->backend_priv)
                 {
                    free(re);
-                   return;
+                   return 0;
                 }
               re->backend_shutdown = evas_software_wince_gdi_shutdown;
               re->backend_output_buffer_new = evas_software_wince_gdi_output_buffer_new;
@@ -309,7 +309,7 @@ eng_setup(Evas *e, void *in)
               break;
            default:
               free(re);
-              return;
+              return 0;
           }
 
 	re->width = e->output.w;
@@ -324,11 +324,13 @@ eng_setup(Evas *e, void *in)
 	     re->tmp_out = NULL;
 	  }
      }
-   if (!e->engine.data.output) return;
+   if (!e->engine.data.output) return 0;
    /* add a draw context if we dont have one */
    if (!e->engine.data.context)
      e->engine.data.context =
      e->engine.func->context_new(e->engine.data.output);
+
+   return 1;
 }
 
 static void

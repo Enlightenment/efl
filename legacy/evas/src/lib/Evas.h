@@ -470,7 +470,7 @@ extern "C" {
    EAPI int               evas_output_method_get            (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
    EAPI Evas_Engine_Info *evas_engine_info_get              (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   EAPI void              evas_engine_info_set              (Evas *e, Evas_Engine_Info *info) EINA_ARG_NONNULL(1);
+   EAPI int               evas_engine_info_set              (Evas *e, Evas_Engine_Info *info) EINA_ARG_NONNULL(1);
 
    EAPI void              evas_output_size_set              (Evas *e, int w, int h) EINA_ARG_NONNULL(1);
    EAPI void              evas_output_size_get              (const Evas *e, int *w, int *h) EINA_ARG_NONNULL(1);

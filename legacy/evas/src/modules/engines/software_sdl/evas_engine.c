@@ -86,21 +86,22 @@ evas_engine_sdl_info_free	(Evas* e __UNUSED__, void* info)
 }
 
 /* SDL engine output manipulation function */
-static void
+static int
 evas_engine_sdl_setup		(Evas* e, void* in)
 {
    Evas_Engine_Info_SDL*	info = (Evas_Engine_Info_SDL*) in;
 
    /* if we arent set to sdl, why the hell do we get called?! */
    if (evas_output_method_get(e) != evas_render_method_lookup("software_sdl"))
-      return ;
+      return 0;
 
    SDL_Init(SDL_INIT_NOPARACHUTE);
 
    if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
      {
 	fprintf(stderr, "SDL_Init failed with %s\n", SDL_GetError());
-        exit(-1);
+        SDL_Quit();
+        return 0;
      }
 
    /* lets just set up */
@@ -111,10 +112,12 @@ evas_engine_sdl_setup		(Evas* e, void* in)
                                              info->info.hwsurface);
 
    if (!e->engine.data.output)
-      return;
+      return 0;
 
    e->engine.func = &func;
    e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
+
+   return 1;
 }
 
 static void

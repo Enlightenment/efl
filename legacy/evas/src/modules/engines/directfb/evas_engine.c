@@ -840,7 +840,7 @@ _dfb_output_setup(int w, int h, const struct Evas_Engine_DirectFB_Spec *spec)
    return NULL;
 }
 
-static void
+static int
 evas_engine_dfb_setup(Evas *e, void *in)
 {
    Evas_Engine_Info_DirectFB *info = in;
@@ -851,11 +851,13 @@ evas_engine_dfb_setup(Evas *e, void *in)
    // XXX TODO: else reconfigure existing...
 
    if (!e->engine.data.output)
-     return;
+     return 0;
 
    if (!e->engine.data.context)
      e->engine.data.context =
        e->engine.func->context_new(e->engine.data.output);
+
+   return 1;
 }
 
 static void

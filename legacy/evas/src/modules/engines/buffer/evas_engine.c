@@ -23,7 +23,7 @@ static void *_output_setup(int w, int h, void *dest_buffer, int dest_buffer_row_
 
 static void *eng_info(Evas *e);
 static void eng_info_free(Evas *e, void *info);
-static void eng_setup(Evas *e, void *info);
+static int eng_setup(Evas *e, void *info);
 static void eng_output_free(void *data);
 static void eng_output_resize(void *data, int w, int h);
 static void eng_output_tile_size_set(void *data, int w, int h);
@@ -54,6 +54,8 @@ _output_setup(int w,
    Render_Engine *re;
 
    re = calloc(1, sizeof(Render_Engine));
+   if (!re)
+     return NULL;
    /* if we haven't initialized - init (automatic abort if already done) */
    evas_common_cpu_init();
 
@@ -128,7 +130,7 @@ eng_info_free(Evas *e __UNUSED__, void *info)
    free(in);
 }
 
-static void
+static int
 eng_setup(Evas *e, void *in)
 {
    Render_Engine *re;
@@ -150,9 +152,10 @@ eng_setup(Evas *e, void *in)
    if (e->engine.data.output)
      eng_output_free(e->engine.data.output);
    e->engine.data.output = re;
-   if (!e->engine.data.output) return;
+   if (!e->engine.data.output) return 0;
    if (!e->engine.data.context)
      e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
+   return 1;
 }
 
 static void

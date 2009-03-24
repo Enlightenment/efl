@@ -24,7 +24,7 @@ static Evas_Func func, pfunc;
 
 static void *eng_info(Evas *e);
 static void  eng_info_free(Evas *e, void *info);
-static void  eng_setup(Evas *e, void *info);
+static int   eng_setup(Evas *e, void *info);
 static void  eng_output_free(void *data);
 static void  eng_output_resize(void *data, int width, int height);
 
@@ -88,7 +88,7 @@ eng_info_free(Evas *e, void *info)
    free(in);
 }
 
-static void
+static int
 eng_setup(Evas *e, void *info)
 {
    Render_Engine *re;
@@ -98,8 +98,12 @@ eng_setup(Evas *e, void *info)
    in = (Evas_Engine_Info_Direct3D *)info;
    if (e->engine.data.output == NULL)
      {
-     e->engine.data.output = _output_setup(e->output.w, e->output.h,
-        in->info.rotation, in->info.window, in->info.depth, in->info.fullscreen);
+        e->engine.data.output = _output_setup(e->output.w,
+                                              e->output.h,
+                                              in->info.rotation,
+                                              in->info.window,
+                                              in->info.depth,
+                                              in->info.fullscreen);
      }
    else if (in->info.fullscreen != 0)
    {
@@ -117,10 +121,11 @@ eng_setup(Evas *e, void *info)
    }
 
    if (e->engine.data.output == NULL)
-     return;
+     return 0;
    if (e->engine.data.context == NULL)
      e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
 
+   return 1;
 }
 
 static void

@@ -30,7 +30,7 @@ struct _Render_Engine
 
 static void *eng_info(Evas *e);
 static void eng_info_free(Evas *e, void *info);
-static void eng_setup(Evas *e, void *info);
+static int eng_setup(Evas *e, void *info);
 static void eng_output_free(void *data);
 static void eng_output_resize(void *data, int w, int h);
 static void eng_output_tile_size_set(void *data, int w, int h);
@@ -98,7 +98,7 @@ _tmp_out_alloc(Render_Engine *re)
 }
 
 
-static void
+static int
 eng_setup(Evas *e, void *in)
 {
    Render_Engine *re;
@@ -136,6 +136,8 @@ eng_setup(Evas *e, void *in)
 
 	/* render engine specific data */
 	re = calloc(1, sizeof(Render_Engine));
+        if (!re)
+          return 0;
 	e->engine.data.output = re;
 	re->disp = info->info.display;
 	re->draw = info->info.drawable;
@@ -172,13 +174,15 @@ eng_setup(Evas *e, void *in)
 	     re->tmp_out = NULL;
 	  }
      }
-   if (!e->engine.data.output) return;
+   if (!e->engine.data.output) return 0;
    /* add a draw context if we dont have one */
    if (!e->engine.data.context)
      e->engine.data.context =
      e->engine.func->context_new(e->engine.data.output);
    /* check if the display can do shm */
    re->shm = evas_software_x11_x_can_do_shm(re->disp);
+
+   return 1;
 }
 
 static void
