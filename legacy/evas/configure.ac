@@ -76,7 +76,7 @@ case "$host_os" in
       ;;
    mingw*)
       want_evas_engine_software_ddraw="yes"
-      want_evas_engine_direct3d="auto"
+      want_evas_engine_direct3d="yes"
       want_evas_engine_software_16_ddraw="yes"
       want_evas_image_loader_edb="no"
       want_evas_image_loader_svg="no"
@@ -1007,7 +1007,6 @@ src/modules/engines/quartz/Makefile
 src/modules/engines/cairo_common/Makefile
 src/modules/engines/cairo_x11/Makefile
 src/modules/engines/xrender_x11/Makefile
-src/modules/engines/xrender_xcb/Makefile
 src/modules/engines/software_sdl/Makefile
 src/modules/engines/glitz_x11/Makefile
 src/modules/engines/software_16/Makefile
@@ -1050,7 +1049,7 @@ echo
 echo "Engines:"
 echo "  Software Memory Buffer.....: $have_evas_engine_buffer"
 echo "  Software X11...............: $have_evas_engine_software_x11 (XCB: $have_evas_engine_software_xcb)"
-echo "  XRender X11................: $have_evas_engine_xrender_x11"
+echo "  XRender X11................: $have_evas_engine_xrender_x11 (XCB: $have_evas_engine_xrender_xcb)"
 echo "  OpenGL X11.................: $have_evas_engine_gl_x11"
 echo "  Glitz X11..................: $have_evas_engine_glitz_x11"
 echo "  Cairo X11..................: $have_evas_engine_cairo_x11"
@@ -1069,7 +1068,6 @@ echo "  Software 16bit Directdraw..: $have_evas_engine_software_16_ddraw"
 echo "  Software 16bit WinCE.......: $have_evas_engine_software_16_wince"
 echo "  Software 16bit SDL.........: $have_evas_engine_software_sdl (primitive: $sdl_primitive)"
 # FIXME: opengl engine needs to be fixed and tested lots for all drivers
-# FIXME: xrender engine to be written
 echo
 echo "Image Loaders:"
 echo "  EDB.....................: $have_evas_image_loader_edb"

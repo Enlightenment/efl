@@ -15,7 +15,6 @@ software_win32_gdi \
 software_ddraw \
 software_x11 \
 xrender_x11 \
-xrender_xcb \
 software_sdl \
 glitz_x11 \
 software_16 \

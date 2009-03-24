@@ -3,7 +3,23 @@
 
 #include <X11/Xlib.h>
 
-typedef struct _Evas_Engine_Info_XRender_X11              Evas_Engine_Info_XRender_X11;
+typedef enum
+{
+  EVAS_ENGINE_INFO_XRENDER_BACKEND_XLIB,
+  EVAS_ENGINE_INFO_XRENDER_BACKEND_XCB
+} Evas_Engine_Info_XRender_Backend;
+
+typedef struct _Evas_Engine_Info_XRender_X11 Evas_Engine_Info_XRender_X11;
+
+/*
+ *               Xlib       |      XCB
+ * connection | Display *   |  xcb_connection_t *
+ * screen     | NULL        |  xcb_screen_t *
+ * drawable   | Drawable    |  xcb_drawable_t
+ * mask       | Pixmap      |  xcb_pixmap_t
+ * visual     | Visual *    |  xcb_visualtype_t *
+ * colormap   | Colormap    |  xcb_colormap_t
+ */
 
 struct _Evas_Engine_Info_XRender_X11
 {
@@ -13,13 +29,13 @@ struct _Evas_Engine_Info_XRender_X11
 
    /* engine specific data & parameters it needs to set up */
    struct {
-      Display       *display;
-      Drawable       drawable;
-      Pixmap         mask;
-      Visual        *visual;
-      unsigned char  destination_alpha : 1;
+      Evas_Engine_Info_XRender_Backend backend;
+      void                            *connection;
+      void                            *screen;
+      unsigned int                     drawable;
+      unsigned int                     mask;
+      void                            *visual;
+      unsigned char                    destination_alpha : 1;
    } info;
 };
 #endif
-
-
