@@ -1052,7 +1052,6 @@ echo "  Software X11...............: $have_evas_engine_software_x11 (XCB: $have_
 echo "  XRender X11................: $have_evas_engine_xrender_x11 (XCB: $have_evas_engine_xrender_xcb)"
 echo "  OpenGL X11.................: $have_evas_engine_gl_x11"
 #echo "  Cairo X11..................: $have_evas_engine_cairo_x11"
-echo "  XRender XCB................: $have_evas_engine_xrender_xcb"
 echo "  Software DirectDraw........: $have_evas_engine_software_ddraw"
 echo "  Direct3d...................: $have_evas_engine_direct3d"
 echo "  Quartz.....................: $have_evas_engine_quartz"
