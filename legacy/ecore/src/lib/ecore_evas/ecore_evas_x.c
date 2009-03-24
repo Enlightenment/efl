@@ -2890,8 +2890,8 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
                   if (reply) free(reply);
                }
 	  }
-	einfo->info.backend = 1;
-	einfo->info.connection   = ecore_x_connection_get();
+	einfo->info.backend = EVAS_ENGINE_INFO_XRENDER_BACKEND_XCB;
+	einfo->info.connection = ecore_x_connection_get();
 	einfo->info.screen = screen;
 	einfo->info.visual = screen->root_visual;
 # else
@@ -2925,8 +2925,10 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 		  free(roots);
 	       }
 	  }
-	einfo->info.display  = ecore_x_display_get();
-	einfo->info.visual   = DefaultVisual(ecore_x_display_get(), screen);
+	einfo->info.backend = EVAS_ENGINE_INFO_XRENDER_BACKEND_XLIB;
+	einfo->info.connection = ecore_x_display_get();
+	einfo->info.screen = NULL;
+	einfo->info.visual = DefaultVisual(ecore_x_display_get(), screen);
 # endif /* HAVE_ECORE_X_XCB */
 	einfo->info.drawable = ee->prop.window;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
