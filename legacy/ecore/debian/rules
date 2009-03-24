@@ -3,7 +3,7 @@
 include /usr/share/cdbs/1/class/autotools.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 
-DEB_CONFIGURE_SCRIPT := ./autogen.sh
+DEB_CONFIGURE_SCRIPT := ./autogen.sh --prefix=/usr
 DEB_INSTALL_MANPAGES_libecore-bin := debian/ecore_config.1
 DEB_DH_STRIP_ARGS := --dbg-package=libecore-dbg
 DEB_CONFIGURE_EXTRA_FLAGS := --enable-ecore-fb --disable-ecore-directfb \

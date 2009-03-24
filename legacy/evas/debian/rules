@@ -3,7 +3,7 @@
 include /usr/share/cdbs/1/class/autotools.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 
-DEB_CONFIGURE_SCRIPT := ./autogen.sh
+DEB_CONFIGURE_SCRIPT := ./autogen.sh --prefix=/usr
 DEB_MAKE_CLEAN_TARGET := distclean
 
 DEB_DH_STRIP_ARGS := --dbg-package=libevas-dbg
