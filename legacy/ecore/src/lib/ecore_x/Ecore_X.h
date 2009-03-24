@@ -1605,6 +1605,7 @@ EAPI void           ecore_x_region_picture_clip_set(Ecore_X_Region region, Ecore
 
 /* XComposite Extension Support */
 EAPI int               ecore_x_composite_query(void);
+EAPI Ecore_X_Pixmap    ecore_x_composite_name_window_pixmap_get(Ecore_X_Window win);
 
 /* XDamage Extension Support */
 typedef Ecore_X_ID  Ecore_X_Damage;

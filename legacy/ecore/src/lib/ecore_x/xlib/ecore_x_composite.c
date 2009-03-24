@@ -30,3 +30,17 @@ ecore_x_composite_query(void)
 {
    return _composite_available;
 }
+
+EAPI Ecore_X_Pixmap
+ecore_x_composite_name_window_pixmap_get(Ecore_X_Window win)
+{
+   Ecore_X_Pixmap pixmap;
+  
+#ifdef ECORE_XCOMPOSITE
+   pixmap = XCompositeNameWindowPixmap(_ecore_x_disp, win);
+#else
+   return None;
+#endif
+
+   return pixmap;
+}
