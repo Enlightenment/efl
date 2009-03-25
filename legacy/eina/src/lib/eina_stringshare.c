@@ -93,10 +93,13 @@
 #define EINA_STRINGSHARE_BUCKETS 256
 #define EINA_STRINGSHARE_MASK 0xFF
 
-#define EINA_MAGIC_CHECK_STRINGSHARE_HEAD(d)			\
+#define EINA_MAGIC_CHECK_STRINGSHARE_HEAD(d, ...)		\
   do {								\
     if (!EINA_MAGIC_CHECK((d), EINA_MAGIC_STRINGSHARE_HEAD))	\
-      EINA_MAGIC_FAIL((d), EINA_MAGIC_STRINGSHARE_HEAD);	\
+    {								\
+        EINA_MAGIC_FAIL((d), EINA_MAGIC_STRINGSHARE_HEAD);	\
+        return __VA_ARGS__;					\
+    }								\
   } while (0);
 
 #define EINA_MAGIC_CHECK_STRINGSHARE_NODE(d)			\
@@ -305,7 +308,7 @@ static void _eina_stringshare_population_head_del(__UNUSED__ Eina_Stringshare_He
 static int
 _eina_stringshare_cmp(const Eina_Stringshare_Head *ed, const int *hash, __UNUSED__ int length, __UNUSED__ void *data)
 {
-   EINA_MAGIC_CHECK_STRINGSHARE_HEAD(ed);
+   EINA_MAGIC_CHECK_STRINGSHARE_HEAD(ed, 0);
 
    return ed->hash - *hash;
 }
@@ -313,8 +316,8 @@ _eina_stringshare_cmp(const Eina_Stringshare_Head *ed, const int *hash, __UNUSED
 static Eina_Rbtree_Direction
 _eina_stringshare_node(const Eina_Stringshare_Head *left, const Eina_Stringshare_Head *right, __UNUSED__ void *data)
 {
-   EINA_MAGIC_CHECK_STRINGSHARE_HEAD(left);
-   EINA_MAGIC_CHECK_STRINGSHARE_HEAD(right);
+   EINA_MAGIC_CHECK_STRINGSHARE_HEAD(left, 0);
+   EINA_MAGIC_CHECK_STRINGSHARE_HEAD(right, 0);
 
    if (left->hash - right->hash < 0)
      return EINA_RBTREE_LEFT;
@@ -929,7 +932,7 @@ eina_stringshare_add(const char *str)
    if (!ed)
      return _eina_stringshare_add_head(p_bucket, hash, str, slen);
 
-   EINA_MAGIC_CHECK_STRINGSHARE_HEAD(ed);
+   EINA_MAGIC_CHECK_STRINGSHARE_HEAD(ed, NULL);
 
    el = _eina_stringshare_head_find(ed, str, slen);
    if (el)
