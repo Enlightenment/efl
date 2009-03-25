@@ -164,3 +164,8 @@
 2009-03-19  Cedric BAIL
 
 	* Make eet_data thread safe.
+
+2009-03-25  Cedric BAIL
+
+	* Fix eet pkg-config dependencies.
+	* Fix double init of gcry.
