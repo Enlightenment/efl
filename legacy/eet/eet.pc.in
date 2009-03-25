@@ -8,5 +8,5 @@ Description: Library for speedy data storage, retrieval, and compression
 Requires: @requirement_eet@
 Version: @VERSION@
 Libs: -L${libdir} -leet
-Libs.private: @OPENSSL_LIBS@ @EINA_LIBS@ @EVIL_LIBS@ @EET_LIBS@ @fnmatch_libs@ -ljpeg -lz -lm
+Libs.private: @GNUTLS_LIBS@ @OPENSSL_LIBS@ @EINA_LIBS@ @EVIL_LIBS@ @EET_LIBS@ @fnmatch_libs@ -ljpeg -lz -lm
 Cflags: -I${includedir}
