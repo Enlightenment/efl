@@ -87,28 +87,40 @@
  * @cond LOCAL
  */
 
-#define EINA_MAGIC_CHECK_LIST(d)				\
+#define EINA_MAGIC_CHECK_LIST(d, ...)				\
   do {								\
     if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_LIST))			\
-      EINA_MAGIC_FAIL(d, EINA_MAGIC_LIST);			\
+    {								\
+        EINA_MAGIC_FAIL(d, EINA_MAGIC_LIST);			\
+        return __VA_ARGS__;					\
+    }								\
   } while(0);
 
-#define EINA_MAGIC_CHECK_LIST_ITERATOR(d)			\
+#define EINA_MAGIC_CHECK_LIST_ITERATOR(d, ...)			\
   do {								\
     if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_LIST_ITERATOR))		\
-      EINA_MAGIC_FAIL(d, EINA_MAGIC_LIST_ITERATOR);		\
+    {								\
+        EINA_MAGIC_FAIL(d, EINA_MAGIC_LIST_ITERATOR);		\
+        return __VA_ARGS__;					\
+    }								\
   } while(0);
 
-#define EINA_MAGIC_CHECK_LIST_ACCESSOR(d)			\
+#define EINA_MAGIC_CHECK_LIST_ACCESSOR(d, ...)			\
   do {								\
     if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_LIST_ACCESSOR))		\
-      EINA_MAGIC_FAIL(d, EINA_MAGIC_LIST_ACCESSOR);		\
+    {								\
+        EINA_MAGIC_FAIL(d, EINA_MAGIC_LIST_ACCESSOR);		\
+        return __VA_ARGS__;					\
+    }								\
   } while(0);
 
 #define EINA_MAGIC_CHECK_LIST_ACCOUNTING(d)			\
   do {								\
     if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_LIST_ACCOUNTING))	\
-      EINA_MAGIC_FAIL(d, EINA_MAGIC_LIST_ACCOUNTING);		\
+    {								\
+        EINA_MAGIC_FAIL(d, EINA_MAGIC_LIST_ACCOUNTING);		\
+        return;							\
+    }								\
   } while(0);
 
 #define EINA_LIST_SORT_STACK_SIZE 32
@@ -191,7 +203,7 @@ _eina_list_mempool_list_free(Eina_List *list)
 static Eina_List *
 _eina_list_setup_accounting(Eina_List *list)
 {
-   EINA_MAGIC_CHECK_LIST(list);
+   EINA_MAGIC_CHECK_LIST(list, NULL);
 
    list->accounting = _eina_list_mempool_accounting_new(list);
    if (!list->accounting) goto on_error;
@@ -234,7 +246,7 @@ static Eina_Mempool2 _eina_list_accounting_mempool =
 static Eina_Bool
 eina_list_iterator_next(Eina_Iterator_List *it, void **data)
 {
-   EINA_MAGIC_CHECK_LIST_ITERATOR(it);
+   EINA_MAGIC_CHECK_LIST_ITERATOR(it, EINA_FALSE);
 
    if (it->current == NULL) return EINA_FALSE;
    if (data) *data = eina_list_data_get(it->current);
@@ -247,7 +259,7 @@ eina_list_iterator_next(Eina_Iterator_List *it, void **data)
 static Eina_Bool
 eina_list_iterator_prev(Eina_Iterator_List *it, void **data)
 {
-   EINA_MAGIC_CHECK_LIST_ITERATOR(it);
+   EINA_MAGIC_CHECK_LIST_ITERATOR(it, EINA_FALSE);
 
    if (it->current == NULL) return EINA_FALSE;
    if (data) *data = eina_list_data_get(it->current);
@@ -260,7 +272,7 @@ eina_list_iterator_prev(Eina_Iterator_List *it, void **data)
 static Eina_List *
 eina_list_iterator_get_container(Eina_Iterator_List *it)
 {
-   EINA_MAGIC_CHECK_LIST_ITERATOR(it);
+   EINA_MAGIC_CHECK_LIST_ITERATOR(it, NULL);
 
    return (Eina_List *) it->head;
 }
@@ -280,7 +292,7 @@ eina_list_accessor_get_at(Eina_Accessor_List *it, unsigned int index, void **dat
    unsigned int middle;
    unsigned int i;
 
-   EINA_MAGIC_CHECK_LIST_ACCESSOR(it);
+   EINA_MAGIC_CHECK_LIST_ACCESSOR(it, EINA_FALSE);
 
    if (index > eina_list_count(it->head)) return EINA_FALSE;
 
@@ -345,7 +357,7 @@ eina_list_accessor_get_at(Eina_Accessor_List *it, unsigned int index, void **dat
 static Eina_List *
 eina_list_accessor_get_container(Eina_Accessor_List *it)
 {
-   EINA_MAGIC_CHECK_LIST_ACCESSOR(it);
+   EINA_MAGIC_CHECK_LIST_ACCESSOR(it, NULL);
 
    return (Eina_List *) it->head;
 }
@@ -363,7 +375,7 @@ eina_list_sort_rebuild_prev(Eina_List *list)
 {
    Eina_List *prev = NULL;
 
-   EINA_MAGIC_CHECK_LIST(list);
+   EINA_MAGIC_CHECK_LIST(list, NULL);
 
    for (; list; list = list->next)
      {
@@ -549,7 +561,7 @@ eina_list_append(Eina_List *list, const void *data)
 	return _eina_list_setup_accounting(new_l);
      }
 
-   EINA_MAGIC_CHECK_LIST(list);
+   EINA_MAGIC_CHECK_LIST(list, NULL);
 
    l = list->accounting->last;
    list->accounting->last = new_l;
@@ -604,7 +616,7 @@ eina_list_prepend(Eina_List *list, const void *data)
 
    if (!list) return _eina_list_setup_accounting(new_l);
 
-   EINA_MAGIC_CHECK_LIST(list);
+   EINA_MAGIC_CHECK_LIST(list, NULL);
 
    list->prev = new_l;
 
@@ -656,8 +668,8 @@ eina_list_append_relative(Eina_List *list, const void *data, const void *relativ
 {
    Eina_List *l;
    void *list_data;
-   
-   if (list) EINA_MAGIC_CHECK_LIST(list);
+
+   if (list) EINA_MAGIC_CHECK_LIST(list, NULL);
 
    EINA_LIST_FOREACH(list, l, list_data)
      {
@@ -695,7 +707,7 @@ eina_list_append_relative_list(Eina_List *list, const void *data, Eina_List *rel
    new_l = _eina_list_mempool_list_new(list);
    if (!new_l) return list;
 
-   EINA_MAGIC_CHECK_LIST(relative);
+   EINA_MAGIC_CHECK_LIST(relative, NULL);
    new_l->next = relative->next;
    new_l->data = (void *)data;
 
@@ -756,8 +768,8 @@ eina_list_prepend_relative(Eina_List *list, const void *data, const void *relati
 {
    Eina_List *l;
    void *list_data;
-   
-   if (list) EINA_MAGIC_CHECK_LIST(list);
+
+   if (list) EINA_MAGIC_CHECK_LIST(list, NULL);
 
    EINA_LIST_FOREACH(list, l, list_data)
      {
@@ -794,7 +806,7 @@ eina_list_prepend_relative_list(Eina_List *list, const void *data, Eina_List *re
    new_l = _eina_list_mempool_list_new(list);
    if (!new_l) return list;
 
-   EINA_MAGIC_CHECK_LIST(relative);
+   EINA_MAGIC_CHECK_LIST(relative, NULL);
 
    new_l->prev = relative->prev;
    new_l->next = relative;
@@ -830,7 +842,7 @@ eina_list_remove(Eina_List *list, const void *data)
 {
    Eina_List *l;
 
-   if (list) EINA_MAGIC_CHECK_LIST(list);
+   if (list) EINA_MAGIC_CHECK_LIST(list, NULL);
 
    l = eina_list_data_find_list(list, data);
              return eina_list_remove_list(list, l);
@@ -875,7 +887,7 @@ eina_list_remove_list(Eina_List *list, Eina_List *remove_list)
    if (!list) return NULL;
    if (!remove_list) return list;
 
-   EINA_MAGIC_CHECK_LIST(remove_list);
+   EINA_MAGIC_CHECK_LIST(remove_list, NULL);
 
    if (remove_list->next) remove_list->next->prev = remove_list->prev;
    if (remove_list->prev)
@@ -887,7 +899,7 @@ eina_list_remove_list(Eina_List *list, Eina_List *remove_list)
      return_l = remove_list->next;
    if (remove_list == remove_list->accounting->last)
      {
-       EINA_MAGIC_CHECK_LIST(list);
+       EINA_MAGIC_CHECK_LIST(list, NULL);
        list->accounting->last = remove_list->prev;
      }
    _eina_list_mempool_list_free(remove_list);
@@ -910,7 +922,7 @@ eina_list_free(Eina_List *list)
 
    if (!list) return NULL;
 
-   EINA_MAGIC_CHECK_LIST(list);
+   EINA_MAGIC_CHECK_LIST(list, NULL);
 
    for (l = list; l;)
      {
@@ -961,8 +973,8 @@ eina_list_promote_list(Eina_List *list, Eina_List *move_list)
    if (move_list == list) return list;
    if (move_list->next == list) return move_list;
 
-   EINA_MAGIC_CHECK_LIST(list);
-   EINA_MAGIC_CHECK_LIST(move_list);
+   EINA_MAGIC_CHECK_LIST(list, NULL);
+   EINA_MAGIC_CHECK_LIST(move_list, NULL);
 
    /* Remove the promoted item from the list. */
    if (!move_list->prev)
@@ -1023,8 +1035,8 @@ eina_list_demote_list(Eina_List *list, Eina_List *move_list)
    /* Demoting tail to be tail. */
    if (move_list == list->accounting->last) return list;
 
-   EINA_MAGIC_CHECK_LIST(list);
-   EINA_MAGIC_CHECK_LIST(move_list);
+   EINA_MAGIC_CHECK_LIST(list, NULL);
+   EINA_MAGIC_CHECK_LIST(move_list, NULL);
 
    /* Update pointer list if necessary. */
    if (list == move_list)
@@ -1089,7 +1101,7 @@ eina_list_data_find_list(const Eina_List *list, const void *data)
    const Eina_List *l;
    void *list_data;
 
-   if (list) EINA_MAGIC_CHECK_LIST(list);
+   if (list) EINA_MAGIC_CHECK_LIST(list, NULL);
 
    EINA_LIST_FOREACH(list, l, list_data)
      {
@@ -1140,7 +1152,7 @@ eina_list_nth_list(const Eina_List *list, unsigned int n)
    const Eina_List *l;
    unsigned int i;
 
-   if (list) EINA_MAGIC_CHECK_LIST(list);
+   if (list) EINA_MAGIC_CHECK_LIST(list, NULL);
 
    /* check for non-existing nodes */
    if ((!list) || (n > (list->accounting->count - 1)))
@@ -1257,7 +1269,7 @@ eina_list_reverse(Eina_List *list)
 
    if (!list) return NULL;
 
-   EINA_MAGIC_CHECK_LIST(list);
+   EINA_MAGIC_CHECK_LIST(list, NULL);
 
    l1 = list;
    l2 = list->accounting->last;
@@ -1301,7 +1313,7 @@ eina_list_reverse_clone(const Eina_List *list)
 
    if (!list) return NULL;
 
-   EINA_MAGIC_CHECK_LIST(list);
+   EINA_MAGIC_CHECK_LIST(list, NULL);
 
    clone = NULL;
    EINA_LIST_FOREACH(list, l, data)
@@ -1334,7 +1346,7 @@ eina_list_clone(const Eina_List *list)
 
    if (!list) return NULL;
 
-   EINA_MAGIC_CHECK_LIST(list);
+   EINA_MAGIC_CHECK_LIST(list, NULL);
 
    clone = NULL;
    EINA_LIST_FOREACH(list, l, data)
@@ -1390,7 +1402,7 @@ eina_list_sort(Eina_List *list, unsigned int size, Eina_Compare_Cb func)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(func, list);
    if (!list) return NULL;
-   EINA_MAGIC_CHECK_LIST(list);
+   EINA_MAGIC_CHECK_LIST(list, NULL);
 
    /* if the caller specified an invalid size, sort the whole list */
    if ((size == 0) ||
