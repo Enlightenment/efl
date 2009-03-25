@@ -108,17 +108,23 @@ struct _Eina_Tiler
 	splitter_t splitter;
 };
 
-#define EINA_MAGIC_CHECK_TILER(d)					\
+#define EINA_MAGIC_CHECK_TILER(d, ...)					\
 	do {								\
 		if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_TILER))		\
+		{							\
 			EINA_MAGIC_FAIL(d, EINA_MAGIC_TILER);		\
+			return __VA_ARGS__;				\
+		}							\
 	} while(0)
 
 
-#define EINA_MAGIC_CHECK_TILER_ITERATOR(d)				\
+#define EINA_MAGIC_CHECK_TILER_ITERATOR(d, ...)				\
 	do {								\
 		if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_TILER_ITERATOR))	\
+		{							\
 			EINA_MAGIC_FAIL(d, EINA_MAGIC_TILER_ITERATOR);	\
+			return __VA_ARGS__;				\
+		}							\
 	} while(0)
 
 /* The Splitter algorithm */
@@ -1068,7 +1074,7 @@ static Eina_Bool _iterator_next(Eina_Iterator_Tiler *it, void **data)
 
 static void * _iterator_get_container(Eina_Iterator_Tiler *it)
 {
-	EINA_MAGIC_CHECK_TILER_ITERATOR(it);
+	EINA_MAGIC_CHECK_TILER_ITERATOR(it, NULL);
 	return (void *)it->tiler;
 }
 
@@ -1132,7 +1138,7 @@ EAPI Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, Eina_Rectangle *r)
 {
 	Eina_Rectangle tmp;
 
-	EINA_MAGIC_CHECK_TILER(t);
+	EINA_MAGIC_CHECK_TILER(t, EINA_FALSE);
 	if ((r->w <= 0) || (r->h <= 0))
 		return EINA_FALSE;
 	tmp = *r;
@@ -1175,7 +1181,7 @@ EAPI Eina_Iterator * eina_tiler_iterator_new(const Eina_Tiler *t)
 {
 	Eina_Iterator_Tiler *it;
 
-	EINA_MAGIC_CHECK_TILER(t);
+	EINA_MAGIC_CHECK_TILER(t, NULL);
 	it = calloc(1, sizeof (Eina_Iterator_Tiler));
 	if (!it) return NULL;
 
