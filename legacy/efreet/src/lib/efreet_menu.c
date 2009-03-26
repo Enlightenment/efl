@@ -41,7 +41,7 @@ struct Efreet_Menu_Internal
     } name;                       /**< The names for this menu */
 
     Efreet_Desktop *directory; /**< The directory */
-    Ecore_DList *directories;  /**< All the directories set in the menu file */
+    Eina_List *directories;  /**< All the directories set in the menu file */
 
     Efreet_Menu_Move *current_move; /**< The current move */
 
@@ -50,7 +50,7 @@ struct Efreet_Menu_Internal
     Eina_List *app_pool;           /**< application pool */
     Eina_List *applications;       /**< applications in this menu */
 
-    Ecore_DList *directory_dirs;    /**< .directory file directories */
+    Eina_List *directory_dirs;    /**< .directory file directories */
     Eina_Hash *directory_cache;    /**< .directory dirs */
 
     Eina_List *moves;              /**< List of moves to be handled by the menu */
@@ -1001,10 +1001,10 @@ efreet_menu_internal_free(Efreet_Menu_Internal *internal)
 
     internal->applications = eina_list_free(internal->applications);
 
-    IF_FREE_DLIST(internal->directories);
+    IF_FREE_LIST(internal->directories, free);
     IF_FREE_LIST(internal->app_dirs, efreet_menu_app_dir_free);
     IF_FREE_LIST(internal->app_pool, efreet_menu_desktop_free);
-    IF_FREE_DLIST(internal->directory_dirs);
+    IF_FREE_LIST(internal->directory_dirs, free);
     IF_FREE_HASH(internal->directory_cache);
 
     IF_FREE_LIST(internal->moves, efreet_menu_move_free);
@@ -1053,10 +1053,10 @@ static int
 efreet_menu_handle_menu(Efreet_Menu_Internal *internal, Efreet_Xml *xml)
 {
     Efreet_Xml *child;
+    Eina_List *l;
     int (*cb)(Efreet_Menu_Internal *parent, Efreet_Xml *xml);
 
-    ecore_list_last_goto(xml->children);
-    while ((child = ecore_dlist_previous(xml->children)))
+    EINA_LIST_REVERSE_FOREACH(xml->children, l, child)
     {
         cb = eina_hash_find(efreet_menu_handle_cbs, child->tag);
         if (cb)
@@ -1206,13 +1206,13 @@ efreet_menu_handle_directory_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
     if (!path) return 0;
 
     /* we've already got this guy in our list we can skip it */
-    if (ecore_list_find(parent->directory_dirs, ECORE_COMPARE_CB(strcmp), path))
+    if (eina_list_search_unsorted(parent->directory_dirs, EINA_COMPARE_CB(strcmp), path))
     {
         FREE(path);
         return 1;
     }
 
-    ecore_dlist_prepend(parent->directory_dirs, path);
+    parent->directory_dirs = eina_list_prepend(parent->directory_dirs, path);
 
     return 1;
 }
@@ -1237,10 +1237,10 @@ efreet_menu_handle_default_directory_dirs(Efreet_Menu_Internal *parent, Efreet_X
                                                             "desktop-directories");
     EINA_LIST_FOREACH(dirs, l, dir)
     {
-        if (ecore_list_find(parent->directory_dirs, ECORE_COMPARE_CB(strcmp), dir))
+        if (eina_list_search_unsorted(parent->directory_dirs, EINA_COMPARE_CB(strcmp), dir))
             continue;
 
-        ecore_dlist_prepend(parent->directory_dirs, strdup(dir));
+        parent->directory_dirs = eina_list_prepend(parent->directory_dirs, strdup(dir));
     }
 
     while (dirs)
@@ -1293,7 +1293,7 @@ efreet_menu_handle_directory(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
     if (!parent || !xml) return 0;
 
     efreet_menu_create_directories_list(parent);
-    ecore_dlist_prepend(parent->directories, strdup(xml->text));
+    parent->directories = eina_list_prepend(parent->directories, strdup(xml->text));
 
     return 1;
 }
@@ -1867,7 +1867,7 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
 
     /* add the legacy dir as a directory dir */
     efreet_menu_create_directory_dirs_list(legacy_internal);
-    ecore_dlist_append(legacy_internal->directory_dirs, strdup(path));
+    legacy_internal->directory_dirs = eina_list_append(legacy_internal->directory_dirs, strdup(path));
 
     /* setup a filter for all the conforming .desktop files in the legacy
      * dir */
@@ -2003,13 +2003,13 @@ static int
 efreet_menu_handle_move(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 {
     Efreet_Xml *child;
+    Eina_List *l;
 
     if (!parent || !xml) return 0;
 
     efreet_menu_create_move_list(parent);
 
-    ecore_list_first_goto(xml->children);
-    while ((child = ecore_list_next(xml->children)))
+    EINA_LIST_FOREACH(xml->children, l, child)
     {
         int (*cb)(Efreet_Menu_Internal *parent, Efreet_Xml *xml);
 
@@ -2110,6 +2110,7 @@ static int
 efreet_menu_handle_layout(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 {
     Efreet_Xml *child;
+    Eina_List *l;
 
     if (!parent || !xml) return 0;
 
@@ -2118,8 +2119,7 @@ efreet_menu_handle_layout(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
     efreet_menu_create_layout_list(parent);
 
-    ecore_list_first_goto(xml->children);
-    while ((child = ecore_list_next(xml->children)))
+    EINA_LIST_FOREACH(xml->children, l, child)
     {
         int (*cb)(Efreet_Menu_Internal *parent, Efreet_Xml *xml, int def);
 
@@ -2152,6 +2152,7 @@ efreet_menu_handle_default_layout(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 {
     const char *val;
     Efreet_Xml *child;
+    Eina_List *l;
 
     if (!parent || !xml) return 0;
 
@@ -2175,8 +2176,7 @@ efreet_menu_handle_default_layout(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
     efreet_menu_create_default_layout_list(parent);
 
-    ecore_list_first_goto(xml->children);
-    while ((child = ecore_list_next(xml->children)))
+    EINA_LIST_FOREACH(xml->children, l, child)
     {
         int (*cb)(Efreet_Menu_Internal *parent, Efreet_Xml *xml, int def);
 
@@ -2353,9 +2353,9 @@ static int
 efreet_menu_handle_filter_op(Efreet_Menu_Filter_Op *op, Efreet_Xml *xml)
 {
     Efreet_Xml *child;
+    Eina_List *l;
 
-    ecore_list_first_goto(xml->children);
-    while ((child = ecore_list_next(xml->children)))
+    EINA_LIST_FOREACH(xml->children, l, child)
     {
         int (*cb)(Efreet_Menu_Filter_Op *op, Efreet_Xml *xml);
 
@@ -2971,34 +2971,36 @@ efreet_menu_concatenate(Efreet_Menu_Internal *dest, Efreet_Menu_Internal *src)
     if (src->directories)
     {
         efreet_menu_create_directories_list(dest);
-        ecore_dlist_prepend_list(dest->directories, src->directories);
+        dest->directories = eina_list_merge(src->directories, dest->directories);
+        src->directories = NULL;
     }
 
     if (src->app_dirs)
     {
         efreet_menu_create_app_dirs_list(dest);
         dest->app_dirs = eina_list_merge(src->app_dirs, dest->app_dirs);
-	src->app_dirs = NULL;
+       src->app_dirs = NULL;
     }
 
     if (src->directory_dirs)
     {
         efreet_menu_create_directory_dirs_list(dest);
-        ecore_dlist_prepend_list(dest->directory_dirs, src->directory_dirs);
+        dest->directory_dirs = eina_list_merge(src->directory_dirs, dest->directory_dirs);
+        src->directory_dirs = NULL;
     }
 
     if (src->moves)
     {
         efreet_menu_create_move_list(dest);
         dest->moves = eina_list_merge(src->moves, dest->moves);
-	src->moves = NULL;
+        src->moves = NULL;
     }
 
     if (src->filters)
     {
         efreet_menu_create_filter_list(dest);
         dest->filters = eina_list_merge(src->filters, dest->filters);
-	src->filters = NULL;
+        src->filters = NULL;
     }
 
     if (src->sub_menus)
@@ -3270,8 +3272,7 @@ efreet_menu_create_directory_dirs_list(Efreet_Menu_Internal *internal)
 {
     if (!internal || internal->directory_dirs) return;
 
-    internal->directory_dirs = ecore_dlist_new();
-    ecore_dlist_free_cb_set(internal->directory_dirs, free);
+    internal->directory_dirs = NULL;
 }
 
 static void
@@ -3311,8 +3312,7 @@ efreet_menu_create_directories_list(Efreet_Menu_Internal *internal)
 {
     if (!internal || internal->directories) return;
 
-    internal->directories = ecore_dlist_new();
-    ecore_dlist_free_cb_set(internal->directories, free);
+    internal->directories = NULL;
 }
 
 static char *
@@ -3429,21 +3429,20 @@ static int
 efreet_menu_directory_dirs_process(Efreet_Menu_Internal *internal)
 {
     const char *path;
+    Eina_List *l;
 
     if (internal->directory_dirs)
     {
         internal->directory_cache =
 	  eina_hash_string_superfast_new(EINA_FREE_CB(efreet_desktop_free));
 
-        ecore_dlist_last_goto(internal->directory_dirs);
-        while ((path = ecore_dlist_previous(internal->directory_dirs)))
+        EINA_LIST_REVERSE_FOREACH(internal->directory_dirs, l, path)
             efreet_menu_directory_dir_scan(path, NULL, internal->directory_cache);
     }
 
     if (internal->directories)
     {
-        ecore_dlist_last_goto(internal->directories);
-        while ((path = ecore_dlist_previous(internal->directories)))
+        EINA_LIST_REVERSE_FOREACH(internal->directories, l, path)
         {
             internal->directory = efreet_menu_directory_get(internal, path);
             if (internal->directory) break;

@@ -490,7 +490,7 @@ _hash_keys(Eina_Hash *hash __UNUSED__, const void *key, void *fdata)
 
 /**
  * Find all desktop categories
- * This list must be freed using ecore_list_destroy()
+ * This list must be freed using EINA_LIST_FREE
  *
  * @return an Eina_List of category names (const char *)
  */
@@ -1102,7 +1102,7 @@ efreet_util_monitor_free(void *data)
 
 /**
  * Returns a list of .menu files found in the various config dirs.
- * @return An ecore list of menu file paths (const char *). This must be freed with ecore_list_destroy().
+ * @return An eina list of menu file paths (const char *). This must be freed with EINA_LIST_FREE.
  */
 EAPI Eina_List *
 efreet_util_menus_find(void)

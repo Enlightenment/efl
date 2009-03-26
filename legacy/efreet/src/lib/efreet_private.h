@@ -79,17 +79,6 @@
 } while (0)
 
 /**
- * @def IF_FREE_DLIST(x)
- * If x is a valid pointer destroy x and set to NULL
- */
-#define IF_FREE_DLIST(x) do { \
-    if (x) { \
-        Ecore_DList *__tmp; __tmp = (x); (x) = NULL; ecore_dlist_destroy(__tmp); \
-    } \
-    (x) = NULL; \
-} while (0)
-
-/**
  * @def IF_FREE_HASH(x)
  * If x is a valid pointer destroy x and set to NULL
  */

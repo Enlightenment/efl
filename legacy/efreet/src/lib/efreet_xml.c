@@ -97,8 +97,7 @@ ERROR:
 void
 efreet_xml_del(Efreet_Xml *xml)
 {
-    if (xml->children) ecore_dlist_destroy(xml->children);
-    xml->children = NULL;
+    IF_FREE_LIST(xml->children, efreet_xml_cb_attribute_free);
 
     if (xml->tag) eina_stringshare_del(xml->tag);
     if (xml->attributes)
@@ -166,11 +165,11 @@ efreet_xml_dump(Efreet_Xml *xml, int level)
     if (xml->children)
     {
         Efreet_Xml *child;
+        Eina_List *l;
 
         printf(">\n");
 
-        ecore_dlist_first_goto(xml->children);
-        while ((child = ecore_dlist_next(xml->children)))
+        EINA_LIST_FOREACH(xml->children, l, child)
             efreet_xml_dump(child, level + 1);
 
         for (i = 0; i < level; i++)
@@ -200,8 +199,7 @@ efreet_xml_parse(char **data, int *size)
         return NULL;
     }
 
-    xml->children = ecore_dlist_new();
-    ecore_dlist_free_cb_set(xml->children, efreet_xml_cb_attribute_free);
+    xml->children = NULL;
 
     xml->tag = tag;
     efreet_xml_attributes_parse(data, size, &(xml->attributes));
@@ -214,7 +212,7 @@ efreet_xml_parse(char **data, int *size)
     if (efreet_xml_tag_close(data, size, xml->tag)) return xml;
 
     while ((sub_xml = efreet_xml_parse(data, size)))
-        ecore_dlist_append(xml->children, sub_xml);
+        xml->children = eina_list_append(xml->children, sub_xml);
 
     efreet_xml_tag_close(data, size, xml->tag);
 

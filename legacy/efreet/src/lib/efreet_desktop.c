@@ -1089,7 +1089,7 @@ efreet_desktop_environment_check(Efreet_Ini *ini)
 
 /**
  * @param desktop: the desktop entry
- * @param files: an ecore list of file names to execute, as either absolute paths,
+ * @param files: an eina list of file names to execute, as either absolute paths,
  * relative paths, or uris
  * @param func: a callback to call for each prepared command line
  * @param data: user data passed to the callback
@@ -1105,8 +1105,8 @@ efreet_desktop_command_get(Efreet_Desktop *desktop, Eina_List *files,
 
 /**
  * @param desktop: the desktop entry
- * @param files an ecore list of local files, as absolute paths, local paths, or file:// uris (or NULL to get exec string with no files appended)
- * @return Returns an ecore list of exec strings
+ * @param files an eina list of local files, as absolute paths, local paths, or file:// uris (or NULL to get exec string with no files appended)
+ * @return Returns an eina list of exec strings
  * @brief Get the command to use to execute a desktop entry
  *
  * The returned list and each of its elements must be freed.
@@ -1153,7 +1153,7 @@ efreet_desktop_command_local_get(Efreet_Desktop *desktop, Eina_List *files)
 
 /**
  * @param desktop: the desktop entry
- * @param files: an ecore list of file names to execute, as either absolute paths,
+ * @param files: an eina list of file names to execute, as either absolute paths,
  * relative paths, or uris
  * @param cb_command: a callback to call for each prepared command line
  * @param cb_progress: a callback to get progress for the downloads

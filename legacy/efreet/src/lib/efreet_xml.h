@@ -42,7 +42,7 @@ struct Efreet_Xml
 
     Efreet_Xml_Attribute **attributes;  /**< The attributes for this node */
 
-    Ecore_DList *children;               /**< Child nodes */
+    Eina_List *children;               /**< Child nodes */
 };
 
 int efreet_xml_init(void);
