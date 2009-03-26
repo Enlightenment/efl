@@ -608,11 +608,13 @@ efreet_menu_get(void)
     if (ecore_file_exists(menu))
         return efreet_menu_parse(menu);
 
+#ifndef STRICT_SPEC
     if (efreet_menu_file)
     {
         if (ecore_file_exists(efreet_menu_file))
-	  return efreet_menu_parse(efreet_menu_file);
+        return efreet_menu_parse(efreet_menu_file);
     }
+#endif
 
     /* fallback to the XDG_CONFIG_DIRS */
     config_dirs = efreet_config_dirs_get();
