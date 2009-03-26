@@ -2894,7 +2894,7 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 	einfo->info.connection = ecore_x_connection_get();
 	einfo->info.screen = screen;
 	einfo->info.visual = screen->root_visual;
-# elif defined (BUILD_ECORE_EVAS_XRENDER_XCB)
+# elif BUILD_ECORE_EVAS_XRENDER_X11
 	int screen;
 
 	/* FIXME: this is inefficient as its a round trip */
@@ -2929,7 +2929,7 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 	einfo->info.connection = ecore_x_display_get();
 	einfo->info.screen = NULL;
 	einfo->info.visual = DefaultVisual(ecore_x_display_get(), screen);
-# endif /* BUILD_ECORE_EVAS_XRENDER_XCB */
+# endif /* BUILD_ECORE_EVAS_XRENDER_(XCB|X11) */
 	einfo->info.drawable = ee->prop.window;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
