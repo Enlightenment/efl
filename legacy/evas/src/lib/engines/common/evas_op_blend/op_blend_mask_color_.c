@@ -30,8 +30,8 @@ _op_blend_mas_c_dp(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 
 static void
 _op_blend_mas_can_dp(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int l) {
-    DATA32 *e;
-    int alpha;
+   DATA32 *e;
+   int alpha;
    UNROLL8_PLD_WHILE(d, l, e,
                      {
                         alpha = *m;

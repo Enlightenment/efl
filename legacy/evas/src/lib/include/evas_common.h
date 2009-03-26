@@ -624,11 +624,17 @@ struct _RGBA_Image
    } cs;
 
    /* RGBA stuff */
-   struct
-   {
+   struct {
       DATA32            *data;
       Evas_Bool          no_free : 1;
    } image;
+   
+   struct {
+      LK(lock);
+      Eina_List *list;
+      unsigned long long orig_usage;
+      unsigned long long usage_count;
+   } cache;
 };
 
 struct _RGBA_Gradient_Color_Stop

@@ -115,6 +115,19 @@ op_copy_init(void)
    init_copy_color_pt_funcs_mmx();
    init_copy_mask_color_pt_funcs_mmx();
 #endif
+#ifdef BUILD_NEON
+   init_copy_pixel_span_funcs_neon();
+   init_copy_pixel_color_span_funcs_neon();
+   init_copy_pixel_mask_span_funcs_neon();
+   init_copy_color_span_funcs_neon();
+   init_copy_mask_color_span_funcs_neon();
+
+   init_copy_pixel_pt_funcs_neon();
+   init_copy_pixel_color_pt_funcs_neon();
+   init_copy_pixel_mask_pt_funcs_neon();
+   init_copy_color_pt_funcs_neon();
+   init_copy_mask_color_pt_funcs_neon();
+#endif
 #ifdef BUILD_C
    init_copy_pixel_span_funcs_c();
    init_copy_pixel_color_span_funcs_c();
@@ -127,19 +140,6 @@ op_copy_init(void)
    init_copy_pixel_mask_pt_funcs_c();
    init_copy_color_pt_funcs_c();
    init_copy_mask_color_pt_funcs_c();
-#endif
-#ifdef BUILD_NEON
-   init_copy_pixel_span_funcs_neon();
-   init_copy_pixel_color_span_funcs_neon();
-   init_copy_pixel_mask_span_funcs_neon();
-   init_copy_color_span_funcs_neon();
-   init_copy_mask_color_span_funcs_neon();
-
-//   init_copy_pixel_pt_funcs_neon();
-//   init_copy_pixel_color_pt_funcs_neon();
-//   init_copy_pixel_mask_pt_funcs_neon();
-   init_copy_color_pt_funcs_neon();
-//   init_copy_mask_color_pt_funcs_neon();
 #endif
 }
 
@@ -279,6 +279,14 @@ copy_gfx_pt_func_cpu(int s, int m, int c, int d)
       if (func) return func;
     }
 #endif
+#ifdef BUILD_NEON
+   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+    {
+      cpu = CPU_NEON;
+      func = op_copy_pt_funcs[s][m][c][d][cpu];
+      if (func) return func;
+    }
+#endif
 #ifdef BUILD_C
    cpu = CPU_C;
    func = op_copy_pt_funcs[s][m][c][d][cpu];
@@ -395,6 +403,19 @@ op_copy_rel_init(void)
    init_copy_rel_color_pt_funcs_mmx();
    init_copy_rel_mask_color_pt_funcs_mmx();
 #endif
+#ifdef BUILD_NEON
+   init_copy_rel_pixel_span_funcs_neon();
+   init_copy_rel_pixel_color_span_funcs_neon();
+   init_copy_rel_pixel_mask_span_funcs_neon();
+   init_copy_rel_color_span_funcs_neon();
+   init_copy_rel_mask_color_span_funcs_neon();
+
+   init_copy_rel_pixel_pt_funcs_neon();
+   init_copy_rel_pixel_color_pt_funcs_neon();
+   init_copy_rel_pixel_mask_pt_funcs_neon();
+   init_copy_rel_color_pt_funcs_neon();
+   init_copy_rel_mask_color_pt_funcs_neon();
+#endif
 #ifdef BUILD_C
    init_copy_rel_pixel_span_funcs_c();
    init_copy_rel_pixel_color_span_funcs_c();
@@ -424,6 +445,14 @@ copy_rel_gfx_span_func_cpu(int s, int m, int c, int d)
    if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
     {
       cpu = CPU_MMX;
+      func = op_copy_rel_span_funcs[s][m][c][d][cpu];
+      if (func) return func;
+    }
+#endif
+#ifdef BUILD_NEON
+   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+    {
+      cpu = CPU_NEON;
       func = op_copy_rel_span_funcs[s][m][c][d][cpu];
       if (func) return func;
     }
@@ -535,6 +564,14 @@ copy_rel_gfx_pt_func_cpu(int s, int m, int c, int d)
    if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
     {
       cpu = CPU_MMX;
+      func = op_copy_rel_pt_funcs[s][m][c][d][cpu];
+      if (func) return func;
+    }
+#endif
+#ifdef BUILD_NEON
+   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+    {
+      cpu = CPU_NEON;
       func = op_copy_rel_pt_funcs[s][m][c][d][cpu];
       if (func) return func;
     }

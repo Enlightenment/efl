@@ -9,7 +9,7 @@ _op_copy_c_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    // handle unaligned stores - stores not aligned to 16bytes may suck
    if (dalign > 0)
      {
-        dalign = 16 - dalign;
+        dalign = (16 - dalign) >> 2;
         if (l < dalign) dalign = l;
         l -= dalign;
         e = d + dalign;
@@ -19,6 +19,7 @@ _op_copy_c_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
         if (l <= 0) return;
      }
    e = d + l;
+#ifdef NEON_INSTRINSICS_OK
    e -= 15;
    // expand the color in c to a 128 bit register as "cccc" i.e 4 pixels of c
    uint32x4_t col = vdupq_n_u32(c);
@@ -30,6 +31,27 @@ _op_copy_c_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
       vst1q_u32(d+12, col); // OP
    }
    e += 15;
+#else
+   if ((e - d) >= 16)
+     {
+        e -= 31;
+        asm volatile (
+                      "vdup.32 q8, %[c]\n\t"
+                      "asmloop1:\n\t"
+//                      "pld [%[d], #128]\n\t"
+                      "cmp %[e], %[d]\n\t"
+                      "vst1.32 {d16-d17}, [%[d],:128]!\n\t"
+                      "vst1.32 {d16-d17}, [%[d],:128]!\n\t"
+                      "vst1.32 {d16-d17}, [%[d],:128]!\n\t"
+                      "vst1.32 {d16-d17}, [%[d],:128]!\n\t"
+                      "bhi asmloop1\n\t"
+                      : // output regs
+                      : [c] "r" (c), [e] "r" (e), [d] "r" (d) // input
+                      : "q8", "d16", "d17", "memory" // clobbered
+                      );
+        e += 31;
+     }
+#endif
    // fixup any leftover pixels in the run
    for (; d < e; d++) {
       *d = c; // OP

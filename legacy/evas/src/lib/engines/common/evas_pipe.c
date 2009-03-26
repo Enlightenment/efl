@@ -565,6 +565,18 @@ evas_common_pipe_image_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Thre
 #else
 	evas_common_draw_context_clip_clip(&(context), info->x, info->y, info->w, info->h);
 #endif
+        evas_common_rgba_image_scalecache_do(op->op.image.src,
+                                             dst, &(context),
+                                             op->op.image.smooth,
+                                             op->op.image.sx,
+                                             op->op.image.sy,
+                                             op->op.image.sw,
+                                             op->op.image.sh,
+                                             op->op.image.dx,
+                                             op->op.image.dy,
+                                             op->op.image.dw,
+                                             op->op.image.dh);
+/*        
 	if (op->op.image.smooth)
 	  evas_common_scale_rgba_in_to_out_clip_smooth(op->op.image.src,
 						       dst, &(context),
@@ -587,9 +599,22 @@ evas_common_pipe_image_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Thre
 						       op->op.image.dy,
 						       op->op.image.dw,
 						       op->op.image.dh);
+ */
      }
    else
      {
+        evas_common_rgba_image_scalecache_do(op->op.image.src,
+                                             dst, &(op->context),
+                                             op->op.image.smooth,
+                                             op->op.image.sx,
+                                             op->op.image.sy,
+                                             op->op.image.sw,
+                                             op->op.image.sh,
+                                             op->op.image.dx,
+                                             op->op.image.dy,
+                                             op->op.image.dw,
+                                             op->op.image.dh);
+/*
 	if (op->op.image.smooth)
 	  evas_common_scale_rgba_in_to_out_clip_smooth(op->op.image.src,
 						       dst, &(op->context),
@@ -612,6 +637,7 @@ evas_common_pipe_image_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Thre
 						       op->op.image.dy,
 						       op->op.image.dw,
 						       op->op.image.dh);
+ */
      }
 }
 

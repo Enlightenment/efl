@@ -740,6 +740,10 @@ eng_image_draw(void *data __UNUSED__, void *context, void *surface, void *image,
    if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
      evas_cache_image_load_data(&im->cache_entry);
    evas_common_image_colorspace_normalize(im);
+   evas_common_rgba_image_scalecache_prepare(im, surface, context, smooth,
+                                             src_x, src_y, src_w, src_h,
+                                             dst_x, dst_y, dst_w, dst_h);
+
 #ifdef BUILD_PTHREAD
    if (cpunum > 1)
      evas_common_pipe_image_draw(im, surface, context, smooth,
@@ -748,6 +752,10 @@ eng_image_draw(void *data __UNUSED__, void *context, void *surface, void *image,
    else
 #endif
      {
+        evas_common_rgba_image_scalecache_do(im, surface, context, smooth,
+                                             src_x, src_y, src_w, src_h,
+                                             dst_x, dst_y, dst_w, dst_h);
+/*        
 	if (smooth)
 	  evas_common_scale_rgba_in_to_out_clip_smooth(im, surface, context,
 						       src_x, src_y, src_w, src_h,
@@ -756,6 +764,7 @@ eng_image_draw(void *data __UNUSED__, void *context, void *surface, void *image,
 	  evas_common_scale_rgba_in_to_out_clip_sample(im, surface, context,
 						       src_x, src_y, src_w, src_h,
 						       dst_x, dst_y, dst_w, dst_h);
+ */
 	evas_common_cpu_end_opt();
      }
 }

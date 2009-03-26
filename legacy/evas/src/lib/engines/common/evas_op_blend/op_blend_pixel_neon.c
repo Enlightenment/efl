@@ -14,8 +14,74 @@ _op_blend_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 
 static void
 _op_blend_pas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+#if 0
+#ifdef NEON_INSTRINSICS_OK
+#else
    DATA32 *e = d + l;
-   // this one... first
+   if (l >= 4)
+     {
+        e -= 4;
+        asm volatile (
+//                      "vmov.i32 q3, $0xff000000\n\t"
+//                      "asmloop3:\n\t"
+//                      "vld1.32 {d0-d1}, [%[s]]!\n\t"
+//                      "vmov.32 q2, q0\n\t"
+//                      "vand.32 q2, q2, q3\n\t"
+//                      "vceq.i32 q2, q2, #0\n\t"
+//                      "beq blank\n\t"
+//                      "vmov.32 d3, d0\n\t"
+//                      "vmovl.u8 q0, d1\n\t"
+//                      "vmovl.u8 q1, d3\n\t"
+//                      "\n\t"
+//                      "vmovn.u16 d1, q0\n\t"
+//                      "vmovn.u16 d3, q1\n\t"
+//                      "vmov.32 d0, d3\n\t"
+//                      "\n\t"
+//                      "vst1.32 {d0-d1}, [%[d]]!\n\t"
+                      
+//                      "cmp %[e], %[d]\n\t" // if d < e ...
+//                      "bhi asmloop3\n\t" // (if d < e) ... goto asmloop3
+//                      "b done\n\t"
+                      
+//                      "blank:\n\t"
+//                      "add %[s], %[s], #16\n\t"
+//                      "add %[d], %[d], #16\n\t"
+//                      "cmp %[e], %[d]\n\t" // if d < e ...
+//                      "bhi asmloop3\n\t" // (if d < e) ... goto asmloop3
+                      
+//                      "done:\n\t"
+                      "asmloop3:\n\t"
+                      "vld4.8 {d0-d3}, [%[s]]\n\t" // d0-d3 = s
+                      "vld4.8 {d4-d7}, [%[d]]\n\t" // d4-d7 = d
+                      "vmvn.8  d31, d3\n\t" // d31 = 255 - s.a
+                      "vmull.u8 q4, d31, d4\n\t"
+                      "vmull.u8 q5, d31, d5\n\t"
+                      "vmull.u8 q6, d31, d6\n\t"
+                      "vmull.u8 q7, d31, d7\n\t"
+                      "vrshr.u16 q8, q4, #8\n\t"
+                      "vrshr.u16 q9, q5, #8\n\t"
+                      "vraddhn.u16 d20, q4, q8\n\t"
+                      "vrshr.u16 q8, q6, #8\n\t"
+                      "vraddhn.u16 d21, q5, q9\n\t"
+                      "vrshr.u16 q9, q7, #8\n\t"
+                      "vraddhn.u16 d22, q6, q8\n\t"
+                      "vraddhn.u16 d23, q7, q9\n\t"
+                      "vqadd.u8 d20, d0, d20\n\t"
+                      "vqadd.u8 d21, d1, d21\n\t"
+                      "vqadd.u8 d22, d2, d22\n\t"
+                      "vqadd.u8 d23, d3, d23\n\t"
+                      "vst4.8 {d20-d23}, [%[d]]!\n\t"
+                      "vst4.8 {d20-d23}, [%[d]]\n\t"
+                      "add %[s], %[s], #4\n\t" // s++
+                      "add %[d], %[d], #4\n\t" // d++
+                      "cmp %[e], %[d]\n\t" // if d < e ...
+                      "bhi asmloop3\n\t" // (if d < e) ... goto asmloop3
+                      : // output regs
+                      : [s] "r" (s), [e] "r" (e), [d] "r" (d) // input
+                      : "d0", "d1", "memory" // clobbered
+                      );
+        e += 4;
+     }
    while (d < e)
      {
         switch (*s & 0xff000000)
@@ -32,6 +98,26 @@ _op_blend_pas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
           }
         s++;  d++;
      }
+#endif   
+#else   
+   DATA32 *e = d + l;
+   while (d < e)
+     {
+        switch (*s & 0xff000000)
+          {
+          case 0:
+             break;
+          case 0xff000000:
+             *d = *s;
+             break;
+          default :
+             l = 256 - (*s >> 24);
+             *d = *s + MUL_256(l, *d);
+             break;
+          }
+        s++;  d++;
+     }
+#endif   
 }
 
 #define _op_blend_pan_dp_neon NULL
