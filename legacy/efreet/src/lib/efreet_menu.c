@@ -878,7 +878,7 @@ efreet_menu_desktop_remove(Efreet_Menu *menu, Efreet_Desktop *desktop)
     if (!desktop || !menu) return 0;
 
     entry = eina_list_search_unsorted(menu->entries,
-                                      (Eina_Compare_Cb)efreet_menu_cb_entry_compare_desktop,
+                                      EINA_COMPARE_CB(efreet_menu_cb_entry_compare_desktop),
                             desktop);
     if (entry)
     {
@@ -1098,7 +1098,7 @@ efreet_menu_handle_sub_menu(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
     /* if this menu already exists we just take this one and stick it on the
      * start of the existing one */
     if ((match = eina_list_search_unsorted(parent->sub_menus,
-                                           (Eina_Compare_Cb)efreet_menu_cb_menu_compare,
+                                           EINA_COMPARE_CB(efreet_menu_cb_menu_compare),
                                            internal)))
     {
 
@@ -1132,7 +1132,7 @@ efreet_menu_handle_app_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
     /* we've already got this guy in our list we can skip it */
     if (eina_list_search_unsorted(parent->app_dirs,
-                                  (Eina_Compare_Cb)efreet_menu_cb_app_dirs_compare,
+                                  EINA_COMPARE_CB(efreet_menu_cb_app_dirs_compare),
                                   path))
     {
         FREE(path);
@@ -1171,7 +1171,7 @@ efreet_menu_handle_default_app_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *xm
         Efreet_Menu_App_Dir *app_dir;
 
         if (eina_list_search_unsorted(parent->app_dirs,
-                                      (Eina_Compare_Cb)efreet_menu_cb_app_dirs_compare,
+                                      EINA_COMPARE_CB(efreet_menu_cb_app_dirs_compare),
                                       dir))
             continue;
 
@@ -2057,7 +2057,7 @@ efreet_menu_handle_old(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
     /* XXX This seems wrong, but it makes efreet pass the fdo tests */
 #ifndef STRICT_SPEC
     move = eina_list_search_unsorted(parent->moves,
-                                     (Eina_Compare_Cb)efreet_menu_cb_move_compare,
+                                     EINA_COMPARE_CB(efreet_menu_cb_move_compare),
                                      xml->text);
     if (move)
     {
@@ -2815,7 +2815,7 @@ efreet_menu_filter_or_matches(Efreet_Menu_Filter_Op *op, Efreet_Menu_Desktop *md
         EINA_LIST_FOREACH(op->categories, l, t)
         {
             if (eina_list_search_unsorted(md->desktop->categories,
-                                          (Eina_Compare_Cb)strcmp, t))
+                                          EINA_COMPARE_CB(strcmp), t))
                 return 1;
         }
     }
@@ -2860,7 +2860,7 @@ efreet_menu_filter_and_matches(Efreet_Menu_Filter_Op *op, Efreet_Menu_Desktop *m
         EINA_LIST_FOREACH(op->categories, l, t)
         {
             if (!eina_list_search_unsorted(md->desktop->categories,
-                                           (Eina_Compare_Cb)strcmp, t))
+                                           EINA_COMPARE_CB(strcmp), t))
                 return 0;
         }
     }
@@ -2910,7 +2910,7 @@ efreet_menu_filter_not_matches(Efreet_Menu_Filter_Op *op, Efreet_Menu_Desktop *m
         EINA_LIST_FOREACH(op->categories, l, t) 
         {
             if (eina_list_search_unsorted(md->desktop->categories,
-                                          (Eina_Compare_Cb)strcmp, t))
+                                          EINA_COMPARE_CB(strcmp), t))
                 return 0;
         }
     }
@@ -3014,7 +3014,7 @@ efreet_menu_concatenate(Efreet_Menu_Internal *dest, Efreet_Menu_Internal *src)
             src->sub_menus = eina_list_remove(src->sub_menus, submenu);
             /* if this menu is in the list already we just add to that */
             if ((match = eina_list_search_unsorted(dest->sub_menus,
-                                                   (Eina_Compare_Cb)efreet_menu_cb_menu_compare,
+                                                   EINA_COMPARE_CB(efreet_menu_cb_menu_compare),
                                                    submenu)))
             {
                 efreet_menu_concatenate(match, submenu);
@@ -3131,7 +3131,7 @@ efreet_menu_by_name_find(Efreet_Menu_Internal *internal, const char *name, Efree
         *part = '\0';
 
         if (!(internal = eina_list_search_unsorted(internal->sub_menus,
-                                                   (Eina_Compare_Cb)efreet_menu_cb_compare_names,
+                                                   EINA_COMPARE_CB(efreet_menu_cb_compare_names),
                                                    ptr)))
         {
             FREE(tmp);
@@ -3146,7 +3146,7 @@ efreet_menu_by_name_find(Efreet_Menu_Internal *internal, const char *name, Efree
 
     /* find the menu in the parent list */
     if (!(internal = eina_list_search_unsorted(internal->sub_menus,
-                                               (Eina_Compare_Cb)efreet_menu_cb_compare_names,
+                                               EINA_COMPARE_CB(efreet_menu_cb_compare_names),
                                                ptr)))
     {
         FREE(tmp);
@@ -3404,7 +3404,7 @@ efreet_menu_app_dir_scan(Efreet_Menu_Internal *internal, const char *path, const
             }
             /* Don't add two files with the same id in the app pool */
             if (eina_list_search_unsorted(internal->app_pool,
-                                          (Eina_Compare_Cb)efreet_menu_cb_md_compare_ids,
+                                          EINA_COMPARE_CB(efreet_menu_cb_md_compare_ids),
                                           buf2))
                 continue;
 
@@ -3613,7 +3613,7 @@ efreet_menu_layout_menu(Efreet_Menu_Internal *internal)
     {
         internal->sub_menus = eina_list_sort(internal->sub_menus,
                                              0,
-                                             (Eina_Compare_Cb)efreet_menu_cb_menu_compare);
+                                             EINA_COMPARE_CB(efreet_menu_cb_menu_compare));
     }
 #endif
 
@@ -3710,7 +3710,7 @@ efreet_menu_layout_entries_get(Efreet_Menu *entry, Efreet_Menu_Internal *interna
         else inline_alias = layout->inline_alias;
 
         sub = eina_list_search_unsorted(internal->sub_menus,
-                                        (Eina_Compare_Cb)efreet_menu_cb_compare_names, layout->name);
+                                        EINA_COMPARE_CB(efreet_menu_cb_compare_names), layout->name);
         if (sub)
         {
             if (!(sub->directory && sub->directory->no_display) && !sub->deleted)
@@ -3776,7 +3776,7 @@ efreet_menu_layout_entries_get(Efreet_Menu *entry, Efreet_Menu_Internal *interna
     {
         Efreet_Menu_Desktop *md;
         md = eina_list_search_unsorted(internal->applications,
-                                       (Eina_Compare_Cb)efreet_menu_cb_md_compare_ids, layout->name);
+                                       EINA_COMPARE_CB(efreet_menu_cb_md_compare_ids), layout->name);
         if (md)
         {
             sub_entry = efreet_menu_layout_desktop(md);
@@ -3795,7 +3795,7 @@ efreet_menu_layout_entries_get(Efreet_Menu *entry, Efreet_Menu_Internal *interna
                 internal->applications = eina_list_remove_list(internal->applications,
                                                                internal->applications);
                 sub_entry = eina_list_search_unsorted(entry->entries,
-                                                      (Eina_Compare_Cb)efreet_menu_cb_entry_compare_desktop,
+                                                      EINA_COMPARE_CB(efreet_menu_cb_entry_compare_desktop),
                                                       md->desktop);
                 if (!sub_entry)
                 {
@@ -3818,7 +3818,7 @@ efreet_menu_layout_entries_get(Efreet_Menu *entry, Efreet_Menu_Internal *interna
                     continue;
                 }
                 sub_entry = eina_list_search_unsorted(entry->entries,
-                                                      (Eina_Compare_Cb)efreet_menu_cb_entry_compare_menu,
+                                                      EINA_COMPARE_CB(efreet_menu_cb_entry_compare_menu),
                                                       sub);
                 if (!sub_entry)
                 {

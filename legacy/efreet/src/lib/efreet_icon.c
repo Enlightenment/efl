@@ -1566,7 +1566,7 @@ efreet_icon_cache_check(Efreet_Icon_Theme *theme, const char *icon, unsigned int
     if (!list) return NULL;
 
     snprintf(key, sizeof(key), "%s %d", icon, size);
-    cache = eina_list_search_unsorted(list, (Eina_Compare_Cb)efreet_icon_cache_find, key);
+    cache = eina_list_search_unsorted(list, EINA_COMPARE_CB(efreet_icon_cache_find), key);
     if (cache)
     {
         if (!cache->path)

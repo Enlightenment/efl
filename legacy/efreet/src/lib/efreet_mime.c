@@ -732,7 +732,7 @@ efreet_mime_glob_remove(const char *glob)
 {
     Efreet_Mime_Glob *mime = NULL;
 
-    if ((mime = eina_list_search_unsorted(globs, (Eina_Compare_Cb)strcmp, glob)))
+    if ((mime = eina_list_search_unsorted(globs, EINA_COMPARE_CB(strcmp), glob)))
         {
         globs = eina_list_remove(globs, mime);
             IF_RELEASE(mime->glob);

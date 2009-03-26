@@ -600,7 +600,7 @@ efreet_desktop_category_add(Efreet_Desktop *desktop, const char *category)
     if (!desktop) return;
 
     if (eina_list_search_unsorted(desktop->categories,
-                                  (Eina_Compare_Cb)strcmp, category)) return;
+                                  EINA_COMPARE_CB(strcmp), category)) return;
 
     desktop->categories = eina_list_append(desktop->categories,
                         (void *)eina_stringshare_add(category));
@@ -620,7 +620,7 @@ efreet_desktop_category_del(Efreet_Desktop *desktop, const char *category)
     if (!desktop || !desktop->categories) return 0;
 
     if ((found = eina_list_search_unsorted(desktop->categories,
-                                           (Eina_Compare_Cb)strcmp, category)))
+                                           EINA_COMPARE_CB(strcmp), category)))
     {
         eina_stringshare_del(found);
         desktop->categories = eina_list_remove(desktop->categories, found);

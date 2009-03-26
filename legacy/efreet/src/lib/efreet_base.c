@@ -195,13 +195,13 @@ efreet_dirs_get(const char *key, const char *fallback)
     while (p)
     {
         *p = '\0';
-        if (!eina_list_search_unsorted(dirs, (Eina_Compare_Cb)strcmp, s))
+        if (!eina_list_search_unsorted(dirs, EINA_COMPARE_CB(strcmp), s))
             dirs = eina_list_append(dirs, (void *)eina_stringshare_add(s));
 
         s = ++p;
         p = strchr(s, ':');
     }
-    if (!eina_list_search_unsorted(dirs, ECORE_COMPARE_CB(strcmp), s))
+    if (!eina_list_search_unsorted(dirs, EINA_COMPARE_CB(strcmp), s))
       dirs = eina_list_append(dirs, (void *)eina_stringshare_add(s));
     FREE(tmp);
 
