@@ -8,7 +8,7 @@
 #include "evas_private.h"
 #include "evas_image_private.h"
 
-#define SCALECACHE 1
+//#define SCALECACHE 1
 
 #define MAX_SCALEITEMS 16
 #define MIN_SCALE_USES 3
