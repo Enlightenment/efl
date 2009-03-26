@@ -156,6 +156,7 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
 EAPI void
 evas_common_rgba_image_free(Image_Entry *ie)
 {
+   _evas_common_rgba_image_surface_delete(ie);
    _evas_common_rgba_image_delete(ie);
 }
 

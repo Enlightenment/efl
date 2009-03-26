@@ -634,6 +634,7 @@ struct _RGBA_Image
       Eina_List *list;
       unsigned long long orig_usage;
       unsigned long long usage_count;
+      int populate_count;
    } cache;
 };
 
