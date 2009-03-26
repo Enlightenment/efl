@@ -169,6 +169,7 @@ if test "x${want_gnutls}" = "xyes" -o "x${want_gnutls}" = "xauto" ; then
    PKG_CHECK_MODULES(GNUTLS, [gnutls >= 1.7.6],
       [
        have_gnutls="yes"
+       want_openssl="no"
        AC_DEFINE(HAVE_GNUTLS, 1, [Have Gnutls support])
        requirement_eet="gnutls ${requirement_eet}"
       ],
