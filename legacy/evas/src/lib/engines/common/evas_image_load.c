@@ -109,8 +109,8 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
    if (!evas_image_load_func->file_data(ie, ie->file, ie->key))
      return -1;
 
-   evas_module_unref((Evas_Module*) ie->info.module);
-   ie->info.module = NULL;
+//   evas_module_unref((Evas_Module*) ie->info.module);
+//   ie->info.module = NULL;
 
    return 0;
 }

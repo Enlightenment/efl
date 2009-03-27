@@ -162,6 +162,38 @@ evas_common_rgba_image_free(Image_Entry *ie)
    _evas_common_rgba_image_delete(ie);
 }
 
+EAPI void
+evas_common_rgba_image_unload(Image_Entry *ie)
+{
+   RGBA_Image   *im = (RGBA_Image *) ie;
+
+   evas_cache_image_preload_cancel(ie, NULL);
+   
+   if (!ie->flags.loaded) return;
+   if (!ie->info.module) return;
+   if (!ie->file) return;
+   ie->flags.loaded = 0;
+
+   if ((im->cs.data) && (im->image.data))
+     {
+	if (im->cs.data != im->image.data)
+	  {
+	     if (!im->cs.no_free) free(im->cs.data);
+	  }
+     }
+   else if (im->cs.data)
+     {
+	if (!im->cs.no_free) free(im->cs.data);
+     }
+   im->cs.data = NULL;
+
+   if (im->image.data && !im->image.no_free)
+     free(im->image.data);
+   im->image.data = NULL;
+   ie->allocated.w = 0;
+   ie->allocated.h = 0;
+}
+
 static int
 _evas_common_rgba_image_surface_alloc(Image_Entry *ie, int w, int h)
 {
