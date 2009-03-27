@@ -1,6 +1,5 @@
 /* vim: set sw=4 ts=4 sts=4 et: */
 #include <Efreet.h>
-#include <Ecore_Data.h>
 #include <Efreet_Mime.h>
 #include "efreet_private.h"
 #include <arpa/inet.h>

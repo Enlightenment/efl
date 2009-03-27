@@ -12,6 +12,8 @@
  * @{
  */
 
+#include <Eina.h>
+
 EAPI extern int EFREET_DESKTOP_TYPE_APPLICATION;
 EAPI extern int EFREET_DESKTOP_TYPE_LINK;
 EAPI extern int EFREET_DESKTOP_TYPE_DIRECTORY;

@@ -12,6 +12,8 @@
  * @{
  */
 
+#include <Eina.h>
+
 /**
  * The type of entry
  */
