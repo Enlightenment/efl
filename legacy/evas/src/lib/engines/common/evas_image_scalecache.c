@@ -8,7 +8,7 @@
 #include "evas_private.h"
 #include "evas_image_private.h"
 
-//#define SCALECACHE 1
+#define SCALECACHE 1
 
 #define MAX_SCALEITEMS 16
 #define MIN_SCALE_USES 3
@@ -238,10 +238,10 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst,
 #ifdef SCALECACHE
    RGBA_Image *im = (RGBA_Image *)ie;
    Scaleitem *sci;
-   LKL(im->cache.lock);
-   use_counter++;
    if ((dst_region_w == 0) || (dst_region_h == 0) ||
        (src_region_w == 0) || (src_region_h == 0)) return;
+   LKL(im->cache.lock);
+   use_counter++;
    if ((src_region_w == dst_region_w) && (src_region_h == dst_region_h))
      {
         im->cache.orig_usage++;
@@ -334,7 +334,11 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
    sci = _sci_find(im, dc, smooth,
                    src_region_x, src_region_y, src_region_w, src_region_h,
                    dst_region_w, dst_region_h);
-   if (!sci) return;
+   if (!sci)
+     {
+        LKU(im->cache.lock);
+        return;
+     }
    if (sci->populate_me)
      {
 //        printf("##! populate!\n");
