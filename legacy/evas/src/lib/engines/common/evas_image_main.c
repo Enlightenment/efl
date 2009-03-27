@@ -410,7 +410,7 @@ evas_common_image_alpha_create(int w, int h)
    if (!im) return NULL;
    im->cache_entry.w = w;
    im->cache_entry.h = h;
-   im->flags |= RGBA_IMAGE_ALPHA_ONLY;
+   im->cache_entry.flags.alpha = 1;
    if (_evas_common_rgba_image_surface_alloc(&im->cache_entry, w, h))
      {
         _evas_common_rgba_image_delete(&im->cache_entry);
