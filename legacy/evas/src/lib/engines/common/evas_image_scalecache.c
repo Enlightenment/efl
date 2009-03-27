@@ -271,9 +271,18 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst,
    use_counter++;
    if ((src_region_w == dst_region_w) && (src_region_h == dst_region_h))
      {
+        // 1:1 scale.
         im->cache.orig_usage++;
         im->cache.usage_count = use_counter;
-        // 1:1 scale.
+        LKU(im->cache.lock);
+        return;
+     }
+   if ((!im->cache_entry.flags.alpha) && (!smooth))
+     {
+        // solid nearest scaling - it's actually the same speed cached or not,
+        // or in some cases faster not cached
+        im->cache.orig_usage++;
+        im->cache.usage_count = use_counter;
         LKU(im->cache.lock);
         return;
      }
@@ -385,7 +394,7 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
      {
 //        printf("##! populate!\n");
         sci->im = evas_common_image_new
-          (dst_region_w, dst_region_h, im->flags & RGBA_IMAGE_ALPHA_ONLY);
+          (dst_region_w, dst_region_h, im->cache_entry.flags.alpha);
         if (sci->im)
           {
              static RGBA_Draw_Context *ct = NULL;
