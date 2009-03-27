@@ -31,14 +31,10 @@ AC_SUBST(version_info)
 
 AC_FUNC_ALLOCA
 
-PCFLAGS=$CFLAGS
+PKG_CHECK_MODULES(EFREET, [eina-0 ecore >= 0.9.9 ecore-file >= 0.9.9])
+PKG_CHECK_MODULES(EINA, [eina-0])
 
-PKG_CHECK_MODULES(ECORE, [ecore >= 0.9.9 ecore-file >= 0.9.9])
-PKG_CHECK_MODULES([EINA], [eina-0])
-
-CFLAGS=$ECORE_CFLAGS" "$CFLAGS
-
-requirements="ecore ecore-file"
+requirements="ecore-file ecore eina-0"
 
 AC_ARG_ENABLE(strict-spec,
 	[AC_HELP_STRING([--enable-strict-spec],[Enable strict spec compliance])],
@@ -53,8 +49,6 @@ AC_ARG_ENABLE(sloppy-spec,
 if test "x$enable_sloppy_spec" = "xyes" ; then
     AC_DEFINE(SLOPPY_SPEC, 1, [Sloppy Spec Compliance])
 fi
-
-CFLAGS=$PCFLAGS
 
 AC_ARG_ENABLE(hidden-visibility,
 	[AC_HELP_STRING([--enable-hidden-visibility],[Enable hidden visibility])],
