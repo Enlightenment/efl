@@ -142,7 +142,7 @@ main(int argc, char ** argv)
         double start;
 
         /* we've been given specific tests and it isn't in the list */
-        if (run && !eina_list_search_unsorted(run, ECORE_COMPARE_CB(strcasecmp),
+        if (run && !eina_list_search_unsorted(run, EINA_COMPARE_CB(strcasecmp),
                                                         tests[i].name))
             continue;
 
