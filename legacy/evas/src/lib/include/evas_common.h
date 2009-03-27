@@ -78,6 +78,10 @@
 #define _GNU_SOURCE
 #endif
 
+#ifndef BUILD_PTHREAD
+#undef BUILD_PIPE_RENDER
+#endif
+
 #ifdef BUILD_PTHREAD
 
 #ifndef __USE_GNU
@@ -287,9 +291,11 @@ typedef struct _Engine_Image_Entry      Engine_Image_Entry;
 typedef struct _Evas_Cache_Target       Evas_Cache_Target;
 
 typedef struct _RGBA_Image_Loadopts   RGBA_Image_Loadopts;
+#ifdef BUILD_PIPE_RENDER
 typedef struct _RGBA_Pipe_Op          RGBA_Pipe_Op;
 typedef struct _RGBA_Pipe             RGBA_Pipe;
 typedef struct _RGBA_Pipe_Thread_Info RGBA_Pipe_Thread_Info;
+#endif
 typedef struct _RGBA_Image            RGBA_Image;
 typedef struct _RGBA_Image_Span       RGBA_Image_Span;
 typedef struct _RGBA_Draw_Context     RGBA_Draw_Context;
@@ -543,6 +549,7 @@ struct _RGBA_Draw_Context
    Evas_Bool anti_alias : 1;
 };
 
+#ifdef BUILD_PIPE_RENDER
 struct _RGBA_Pipe_Op
 {
    RGBA_Draw_Context         context;
@@ -595,6 +602,7 @@ struct _RGBA_Pipe_Thread_Info
    RGBA_Image *im;
    int         x, y, w, h;
 };
+#endif
 
 struct _RGBA_Image
 {
@@ -611,7 +619,9 @@ struct _RGBA_Image
      } info;
 
    void                *extended_info;
+#ifdef BUILD_PIPE_RENDER
    RGBA_Pipe           *pipe;
+#endif   
    int                  ref;
 
 /*    unsigned char        scale; */
@@ -1111,8 +1121,10 @@ Tilebuf_Rect *evas_common_regionbuf_rects_get (Regionbuf *rb);
 #include "../engines/common/evas_draw.h"
 
 /****/
-#include "../engines/common/evas_pipe.h"
-
+#ifdef BUILD_PIPE_RENDER
+# include "../engines/common/evas_pipe.h"
+#endif
+   
 void              evas_font_dir_cache_free(void);
 
 /****/

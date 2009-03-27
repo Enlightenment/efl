@@ -142,7 +142,7 @@ eng_context_render_op_get(void *data __UNUSED__, void *context)
 static void
 eng_rectangle_draw(void *data __UNUSED__, void *context, void *surface, int x, int y, int w, int h)
 {
-#ifdef BUILD_PTHREAD
+#ifdef BUILD_PIPE_RENDER
    if (cpunum > 1)
      evas_common_pipe_rectangle_draw(surface, context, x, y, w, h);
    else
@@ -156,7 +156,7 @@ eng_rectangle_draw(void *data __UNUSED__, void *context, void *surface, int x, i
 static void
 eng_line_draw(void *data __UNUSED__, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
-#ifdef BUILD_PTHREAD
+#ifdef BUILD_PIPE_RENDER
    if (cpunum > 1)
      evas_common_pipe_line_draw(surface, context, x1, y1, x2, y2);
    else
@@ -182,7 +182,7 @@ eng_polygon_points_clear(void *data __UNUSED__, void *context __UNUSED__, void *
 static void
 eng_polygon_draw(void *data __UNUSED__, void *context, void *surface, void *polygon)
 {
-#ifdef BUILD_PTHREAD
+#ifdef BUILD_PIPE_RENDER
    if (cpunum > 1)
      evas_common_pipe_poly_draw(surface, context, polygon);
    else
@@ -276,7 +276,7 @@ eng_gradient2_linear_render_post(void *data __UNUSED__, void *linear_gradient __
 static void
 eng_gradient2_linear_draw(void *data __UNUSED__, void *context, void *surface, void *linear_gradient, int x, int y, int w, int h)
 {
-#ifdef BUILD_PTHREAD
+#ifdef BUILD_PIPE_RENDER
    if (cpunum > 1)
      evas_common_pipe_grad2_draw(surface, context, x, y, w, h, linear_gradient);
    else
@@ -343,7 +343,7 @@ eng_gradient2_radial_render_post(void *data __UNUSED__, void *radial_gradient __
 static void
 eng_gradient2_radial_draw(void *data __UNUSED__, void *context, void *surface, void *radial_gradient, int x, int y, int w, int h)
 {
-#ifdef BUILD_PTHREAD
+#ifdef BUILD_PIPE_RENDER
    if (cpunum > 1)
      evas_common_pipe_grad2_draw(surface, context, x, y, w, h, radial_gradient);
    else
@@ -476,7 +476,7 @@ eng_gradient_render_post(void *data __UNUSED__, void *gradient __UNUSED__)
 static void
 eng_gradient_draw(void *data __UNUSED__, void *context, void *surface, void *gradient, int x, int y, int w, int h)
 {
-#ifdef BUILD_PTHREAD
+#ifdef BUILD_PIPE_RENDER
    if (cpunum > 1)
      evas_common_pipe_grad_draw(surface, context, x, y, w, h, gradient);
    else
@@ -744,7 +744,7 @@ eng_image_draw(void *data __UNUSED__, void *context, void *surface, void *image,
                                              src_x, src_y, src_w, src_h,
                                              dst_x, dst_y, dst_w, dst_h);
 
-#ifdef BUILD_PTHREAD
+#ifdef BUILD_PIPE_RENDER
    if (cpunum > 1)
      evas_common_pipe_image_draw(im, surface, context, smooth,
 				 src_x, src_y, src_w, src_h,
@@ -890,7 +890,7 @@ eng_font_char_at_coords_get(void *data __UNUSED__, void *font, const char *text,
 static void
 eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const char *text)
 {
-#ifdef BUILD_PTHREAD
+#ifdef BUILD_PIPE_RENDER
    if (cpunum > 1)
      evas_common_pipe_text_draw(surface, context, font, x, y, text);
    else

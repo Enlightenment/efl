@@ -4,6 +4,7 @@
 
 #include "evas_common.h"
 
+#ifdef BUILD_PIPE_RENDER
 static RGBA_Pipe *evas_common_pipe_add(RGBA_Pipe *pipe, RGBA_Pipe_Op **op);
 static void evas_common_pipe_draw_context_copy(RGBA_Draw_Context *dc, RGBA_Pipe_Op *op);
 static void evas_common_pipe_op_free(RGBA_Pipe_Op *op);
@@ -670,3 +671,4 @@ evas_common_pipe_image_draw(RGBA_Image *src, RGBA_Image *dst,
    op->free_func = evas_common_pipe_op_image_free;
    evas_common_pipe_draw_context_copy(dc, op);
 }
+#endif

@@ -140,7 +140,9 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
 {
    RGBA_Image   *im = (RGBA_Image *) ie;
 
+#ifdef BUILD_PIPE_RENDER
    evas_common_pipe_free(im);
+#endif   
    evas_common_rgba_image_scalecache_shutdown(&im->cache_entry);
    if (ie->info.module) evas_module_unref((Evas_Module *)ie->info.module);
    /* memset the image to 0x99 because i recently saw a segv where an

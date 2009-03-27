@@ -394,9 +394,9 @@ AC_CHECK_HEADERS(pthread.h sched.h,
       ],
       [ build_pthreads="no" ]
 )
-### disable pthreads by default for now - some wierd deadlock issue with
-# barriers (makes no sense)
-#build_pthreads="no"
+
+#######################################
+## Pthread
 AC_MSG_CHECKING(whether to build pthread code)
 AC_ARG_ENABLE(pthreads,
   AC_HELP_STRING([--enable-pthreads], [enable threaded rendering]),
@@ -427,6 +427,27 @@ AC_ARG_ENABLE(pthreads,
     fi
   ]
 )
+
+#######################################
+## Pipe Renderer
+build_pipe_render="no"
+AC_MSG_CHECKING(whether to build Threaded Pipe Rendering support)
+AC_ARG_ENABLE(pipe-render,
+  AC_HELP_STRING([--enable-pipe-render], [enable threaded pipe rendering support]),
+  [ build_pipe_render=$enableval ]
+)
+AC_MSG_RESULT($build_pipe_render)
+
+AC_MSG_CHECKING(whether we can build Threaded Pipe Rendering support)
+if test \( "x$build_pipe_render" = "xyes" -o "x$build_pipe_render" = "xauto" \); then
+  AC_MSG_RESULT(yes)
+  AC_DEFINE(BUILD_PIPE_RENDER, 1, [Build pipe render support])
+  build_pipe_render="yes"
+  need_pthreads="yes"
+else
+  AC_MSG_RESULT(no)
+  build_pipe_render="no"
+fi
 
 #######################################
 ## Async events
@@ -1097,6 +1118,7 @@ echo "  NEON....................: $build_cpu_neon"
 echo "  Thread Support..........: $build_pthreads"
 echo "  MAGIC_DEBUG.............: $want_evas_magic_debug"
 echo
+echo "Threaded Pipe Rendering...: $build_pipe_render"
 echo "Async Events..............: $build_async_events"
 echo "Async Image Preload.......: $build_async_preload"
 echo
