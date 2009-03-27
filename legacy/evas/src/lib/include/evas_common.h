@@ -645,6 +645,8 @@ struct _RGBA_Image
       unsigned long long orig_usage;
       unsigned long long usage_count;
       int populate_count;
+      unsigned long long newest_usage;
+      unsigned long long newest_usage_count;
    } cache;
 };
 

@@ -14,6 +14,10 @@
 #define MIN_SCALE_USES 3
 #define MIN_SCALE_AGE_GAP 5000
 #define MIN_SCALECACHE_SIZE 3200
+#define FLOP_ADD 4
+#define MAX_FLOP_COUNT 16
+#define FLOP_DEL 1
+#define SCALE_CACHE_SIZE 4 * 1024 * 1024
 
 typedef struct _Scaleitem Scaleitem;
 
@@ -36,7 +40,7 @@ static LK(cache_lock);
 #endif
 static Eina_Inlist *cache_list = NULL;
 static int cache_size = 0;
-static int max_cache_size = 4 * 1024 * 1024;
+static int max_cache_size = SCALE_CACHE_SIZE;
 #endif
 
 void
@@ -135,6 +139,24 @@ evas_common_rgba_image_scalecache_usage_get(Image_Entry *ie)
 }
 
 #ifdef SCALECACHE
+static void
+_sci_fix_newest(RGBA_Image *im)
+{
+   Eina_List *l;
+   Scaleitem *sci;
+   
+   im->cache.newest_usage = 0;
+   im->cache.newest_usage_count = 0;
+   EINA_LIST_FOREACH(im->cache.list, l, sci)
+     {
+        if (sci->usage > im->cache.newest_usage)
+          im->cache.newest_usage = sci->usage;
+        if (sci->usage_count > im->cache.newest_usage_count)
+          im->cache.newest_usage_count = sci->usage_count;
+     }
+//   printf("_sci_fix_newest! -> %i\n", im->cache.newest_usage);
+}
+
 static Scaleitem *
 _sci_find(RGBA_Image *im,
           RGBA_Draw_Context *dc, int smooth,
@@ -170,6 +192,9 @@ _sci_find(RGBA_Image *im,
         l = eina_list_last(im->cache.list);
         sci = l->data;
         im->cache.list = eina_list_remove_list(im->cache.list, l);
+        if ((sci->usage == im->cache.newest_usage) ||
+            (sci->usage_count == im->cache.newest_usage_count))
+          _sci_fix_newest(im);
         if (sci->im)
           {
              evas_common_rgba_image_free(&sci->im->cache_entry);
@@ -216,7 +241,8 @@ _cache_prune(Scaleitem *notsci)
              evas_common_rgba_image_free(&sci->im->cache_entry);
              sci->im = NULL;
              sci->usage = 0;
-             sci->flop += 4;
+             sci->usage_count = 0;
+             sci->flop += FLOP_ADD;
              cache_size -= sci->dst_w * sci->dst_h * 4;
 //             printf(" 2- %i\n", sci->dst_w * sci->dst_h * 4);
              cache_list = eina_inlist_remove(cache_list, (Eina_Inlist *)sci);
@@ -258,15 +284,16 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst,
 //          src_region_x, src_region_y, src_region_w, src_region_h,
 //          dst_region_x, dst_region_y, dst_region_w, dst_region_h,
 //          smooth);
-   if ((sci->usage >= MIN_SCALE_USES) && 
-       (sci->usage_count > (use_counter - MIN_SCALE_AGE_GAP)))
+   if ((sci->usage >= MIN_SCALE_USES)
+//       && (sci->usage_count > (use_counter - MIN_SCALE_AGE_GAP))
+       )
      {
         if (!sci->im)
           {
              if ((sci->dst_w < MIN_SCALECACHE_SIZE) && 
                  (sci->dst_h < MIN_SCALECACHE_SIZE))
                {
-                  if (sci->flop <= 16)
+                  if (sci->flop <= MAX_FLOP_COUNT)
                     {
                        sci->populate_me = 1;
                        im->cache.populate_count++;
@@ -276,6 +303,13 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst,
      }
    sci->usage++;
    sci->usage_count = use_counter;
+   if (sci->usage > im->cache.newest_usage) 
+     im->cache.newest_usage = sci->usage;
+//   printf("newset? %p %i > %i\n", im, 
+//          (int)sci->usage, 
+//          (int)im->cache.newest_usage);
+   if (sci->usage_count > im->cache.newest_usage_count) 
+     im->cache.newest_usage_count = sci->usage_count;
 //   printf("  -------------- used %8i#, %8i@\n", (int)sci->usage, (int)sci->usage_count);
    LKU(im->cache.lock);
 #endif
@@ -313,6 +347,7 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
  */
    if ((dst_region_w == 0) || (dst_region_h == 0) ||
        (src_region_w == 0) || (src_region_h == 0)) return;
+   LKL(im->cache.lock);
    if ((src_region_w == dst_region_w) && (src_region_h == dst_region_h))
      {
         noscales++;
@@ -328,9 +363,9 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
                                                        src_region_w, src_region_h,
                                                        dst_region_x, dst_region_y, 
                                                        dst_region_w, dst_region_h);
+        LKU(im->cache.lock);
         return;
      }
-   LKL(im->cache.lock);
    sci = _sci_find(im, dc, smooth,
                    src_region_x, src_region_y, src_region_w, src_region_h,
                    dst_region_w, dst_region_h);
@@ -348,6 +383,8 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
           {
              static RGBA_Draw_Context *ct = NULL;
         
+             im->cache.orig_usage++;
+             im->cache.usage_count = use_counter;
              im->cache.populate_count--;
              pops++;
              if (!ct)
@@ -355,6 +392,9 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
                   ct = evas_common_draw_context_new();
                   evas_common_draw_context_set_render_op(ct, _EVAS_RENDER_COPY);
                }
+             if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
+               evas_cache_image_load_data(&im->cache_entry);
+             evas_common_image_colorspace_normalize(im);
              if (smooth)
                evas_common_scale_rgba_in_to_out_clip_smooth
                (im, sci->im, ct,
@@ -388,7 +428,7 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
           }
         else
           {
-             if (sci->flop > 0) sci->flop--;
+             if (sci->flop > 0) sci->flop -= FLOP_DEL;
           }
 //        printf("use cached!\n");
         evas_common_scale_rgba_in_to_out_clip_sample
@@ -398,6 +438,15 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
            dst_region_x, dst_region_y, 
            dst_region_w, dst_region_h);
         hits++;
+//        printf("check %p %i < %i\n", 
+//               im,
+//               (int)im->cache.orig_usage, 
+//               (int)im->cache.newest_usage);
+        if (im->cache.orig_usage < 
+            (im->cache.newest_usage / 20))
+          {
+//             printf("nuke orig %s\n", im->cache_entry.file);
+          }
         LKU(im->cache.lock);
      }
    else
@@ -434,6 +483,7 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
 #endif
 }
 
+#if 0
 // to be done
 void
 evas_common_rgba_image_scalecache_XXX(Image_Entry *ie)
@@ -445,4 +495,4 @@ evas_common_rgba_image_scalecache_XXX(Image_Entry *ie)
    LKU(im->cache.lock);
 #endif
 }
-
+#endif
