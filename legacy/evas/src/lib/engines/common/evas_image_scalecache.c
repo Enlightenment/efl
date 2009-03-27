@@ -8,7 +8,7 @@
 #include "evas_private.h"
 #include "evas_image_private.h"
 
-#define SCALECACHE 1
+//#define SCALECACHE 1
 
 #define MAX_SCALEITEMS 16
 #define MIN_SCALE_USES 3
@@ -486,6 +486,9 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
      }
 #else   
    RGBA_Image *im = (RGBA_Image *)ie;
+   if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
+     evas_cache_image_load_data(&im->cache_entry);
+   evas_common_image_colorspace_normalize(im);
    if (im->image.data)
      {
         if (smooth)
