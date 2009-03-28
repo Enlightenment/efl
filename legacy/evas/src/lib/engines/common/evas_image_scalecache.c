@@ -326,10 +326,10 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst,
 }
 
 #ifdef SCALECACHE
-static int pops = 0;
-static int hits = 0;
-static int misses = 0;
-static int noscales = 0;
+//static int pops = 0;
+//static int hits = 0;
+//static int misses = 0;
+//static int noscales = 0;
 #endif
 
 EAPI void
@@ -363,7 +363,7 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
         if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
           evas_cache_image_load_data(&im->cache_entry);
         evas_common_image_colorspace_normalize(im);
-        noscales++;
+//        noscales++;
         if (im->image.data)
           {
              if (smooth)
@@ -390,7 +390,7 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
         if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
           evas_cache_image_load_data(&im->cache_entry);
         evas_common_image_colorspace_normalize(im);
-        misses++;
+//        misses++;
         LKU(im->cache.lock);
         if (im->image.data)
           {
@@ -421,7 +421,7 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
              im->cache.orig_usage++;
              im->cache.usage_count = use_counter;
              im->cache.populate_count--;
-             pops++;
+//             pops++;
              if (!ct)
                {
                   ct = evas_common_draw_context_new();
@@ -475,7 +475,7 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
            dst_region_w, dst_region_h,
            dst_region_x, dst_region_y, 
            dst_region_w, dst_region_h);
-        hits++;
+//        hits++;
 //        printf("check %p %i < %i\n", 
 //               im,
 //               (int)im->cache.orig_usage, 
@@ -494,7 +494,7 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
         if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
           evas_cache_image_load_data(&im->cache_entry);
         evas_common_image_colorspace_normalize(im);
-        misses++;
+//        misses++;
         LKU(im->cache.lock);
         if (im->image.data)
           {
