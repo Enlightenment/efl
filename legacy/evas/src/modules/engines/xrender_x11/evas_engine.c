@@ -150,8 +150,8 @@ _output_xlib_setup(int           width,
    else
      re->mask_output = NULL;
 
-   if (re->output) _xr_xlib_render_surface_free(re->output);
-   if (re->mask_output) _xr_xlib_render_surface_free(re->mask_output);
+//   if (re->output) _xr_xlib_render_surface_free(re->output);
+//   if (re->mask_output) _xr_xlib_render_surface_free(re->mask_output);
 
    re->x11.sync = _xlib_sync;
 
@@ -475,7 +475,7 @@ eng_output_resize(void *data, int w, int h)
    re = (Render_Engine *)data;
    if (re->output)
      {
-	if ((re->output->width == w) && (re->output->height ==h)) return;
+	if ((re->output->width == w) && (re->output->height == h)) return;
 	if (re->output) re->render_surface_free(re->output);
      }
    re->output = re->render_surface_adopt(re->xinf, re->x11.window, w, h, 0);
