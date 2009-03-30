@@ -1,0 +1,7 @@
+Possible error when calculating edje frame size for thumbnails.
+
+Since edje_object_size_min_calc() still doesn't retuns the actual edje object
+size, it's possible that a part from the edje frame stay outside the picture.
+This should be fixed soon, with a new call to get the current edje object size
+or changing something on the API to tell ethumb that the frame has some border.
+                        - antognolli, 30-03-2009
