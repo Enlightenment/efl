@@ -84,8 +84,10 @@ _theme_hook(Evas_Object *obj)
    const Eina_List *l;
    Elm_Toolbar_Item *it;
    Evas_Coord mw, mh;
+   edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
    EINA_LIST_FOREACH(wd->items, l, it)
      {
+        edje_object_scale_set(it->base, elm_widget_scale_get(obj) * _elm_config->scale);
         if (it->selected)
           edje_object_signal_emit(it->base, "elm,state,selected", "elm");
         _elm_theme_set(it->base, "toolbar", "item", "default");

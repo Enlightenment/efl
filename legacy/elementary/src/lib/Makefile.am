@@ -6,6 +6,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir) \
 -I$(top_srcdir) \
 -I$(top_srcdir)/src/lib \
+-I$(top_builddir)/src/lib \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 @ELEMENTARY_CFLAGS@ \
 @ELEMENTARY_X_CFLAGS@ \
