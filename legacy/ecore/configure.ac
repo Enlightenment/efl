@@ -1033,6 +1033,7 @@ echo "  Ecore........................: always"
 echo "  Ecore_Job....................: $have_ecore_job"
 echo "  Ecore_Txt....................: $have_ecore_txt"
 echo "  Ecore_Con....................: $have_ecore_con"
+echo "  Ecore_SDL....................: $have_ecore_sdl"
 if test "x$have_ecore_con" = "xyes" ; then
   echo -n "    OpenSSL....................: $have_openssl"
 if test "x$have_gnutls" = "xyes" ; then
