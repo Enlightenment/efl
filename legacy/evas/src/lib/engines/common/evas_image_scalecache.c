@@ -10,14 +10,14 @@
 
 #define SCALECACHE 1
 
-#define MAX_SCALEITEMS 16
+#define MAX_SCALEITEMS 32
 #define MIN_SCALE_USES 3
 #define MIN_SCALE_AGE_GAP 5000
 #define MIN_SCALECACHE_SIZE 3200
 #define FLOP_ADD 4
 #define MAX_FLOP_COUNT 16
 #define FLOP_DEL 1
-#define SCALE_CACHE_SIZE 4 * 1024 * 1024
+#define SCALE_CACHE_SIZE 10 * 1024 * 1024
 
 typedef struct _Scaleitem Scaleitem;
 
