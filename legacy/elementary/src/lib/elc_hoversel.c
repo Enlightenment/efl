@@ -244,3 +244,10 @@ elm_hoversel_item_del(Elm_Hoversel_Item *it)
    eina_stringshare_del(it->icon_file);
    free(it);
 }
+
+EAPI void *
+elm_hoversel_item_data_get(Elm_Hoversel_Item *it)
+{
+   if (!it) return NULL;
+   return it->data;
+}

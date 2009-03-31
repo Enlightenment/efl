@@ -493,6 +493,7 @@ extern "C" {
    EAPI void         elm_hoversel_hover_end(Evas_Object *obj);
    EAPI Elm_Hoversel_Item *elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
    EAPI void         elm_hoversel_item_del(Elm_Hoversel_Item *item);
+   EAPI void        *elm_hoversel_item_data_get(Elm_Hoversel_Item *it);
    /* smart callbacks called:
     * "clicked" - the user clicked the hoversel button and popped up the sel
     * "selected" - an item in the hoversel list is selected
