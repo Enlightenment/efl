@@ -633,7 +633,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 		  if (pt->id == runp->program->id)
 		    {
 		       _edje_program_end(ed, runp);
-		       goto done;
+//		       goto done;
 		    }
 	       }
 	     EINA_LIST_FOREACH(ed->pending_actions, ll, pp)
@@ -643,7 +643,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 		       ed->pending_actions = eina_list_remove(ed->pending_actions, pp);
 		       ecore_timer_del(pp->timer);
 		       free(pp);
-		       goto done;
+//		       goto done;
 		    }
 	       }
 	     done:
