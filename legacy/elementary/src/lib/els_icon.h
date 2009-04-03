@@ -1,6 +1,6 @@
 Evas_Object *_els_smart_icon_add              (Evas *evas);
-void         _els_smart_icon_file_key_set     (Evas_Object *obj, const char *file, const char *key);
-void         _els_smart_icon_file_edje_set    (Evas_Object *obj, const char *file, const char *part);
+Eina_Bool    _els_smart_icon_file_key_set     (Evas_Object *obj, const char *file, const char *key);
+Eina_Bool    _els_smart_icon_file_edje_set    (Evas_Object *obj, const char *file, const char *part);
 void         _els_smart_icon_smooth_scale_set (Evas_Object *obj, int smooth);
 void         _els_smart_icon_size_get         (Evas_Object *obj, int *w, int *h);
 void         _els_smart_icon_fill_inside_set  (Evas_Object *obj, int fill_inside);

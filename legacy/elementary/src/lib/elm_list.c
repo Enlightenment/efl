@@ -21,6 +21,7 @@ struct _Elm_List_Item
    const char *label;
    Evas_Object *icon, *end;
    void (*func) (void *data, Evas_Object *obj, void *event_info);
+   void (*del_cb) (void *data, Evas_Object *obj, void *event_info);
    const void *data;
    Evas_Bool even : 1;
    Evas_Bool is_even : 1;
@@ -45,6 +46,7 @@ _del_hook(Evas_Object *obj)
    Elm_List_Item *it;
    EINA_LIST_FREE(wd->items, it)
      {
+	if (it->del_cb) it->del_cb((void *)it->data, it->obj, it);
         eina_stringshare_del(it->label);
         if (!it->fixed)
           {
@@ -415,6 +417,14 @@ elm_list_item_insert_after(Evas_Object *obj, Elm_List_Item *after, const char *l
 }
 
 EAPI void
+elm_list_clear(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   while (wd->items)
+     elm_list_item_del(wd->items->data);
+}
+
+EAPI void
 elm_list_go(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -500,6 +510,7 @@ EAPI void
 elm_list_item_del(Elm_List_Item *it)
 {
    Widget_Data *wd = elm_widget_data_get(it->obj);
+   if (it->del_cb) it->del_cb((void *)it->data, it->obj, it);
    if (it->selected) _item_unselect(it);
    wd->items = eina_list_remove(wd->items, it);
    eina_stringshare_del(it->label);
@@ -507,6 +518,12 @@ elm_list_item_del(Elm_List_Item *it)
    if (it->end) evas_object_del(it->end);
    if (it->base) evas_object_del(it->base);
    free(it);
+}
+
+EAPI void
+elm_list_item_del_cb_set(Elm_List_Item *it, void (*func)(void *data, Evas_Object *obj, void *event_info))
+{
+   it->del_cb = func;
 }
 
 EAPI const void *
@@ -527,4 +544,16 @@ elm_list_item_end_get(const Elm_List_Item *it)
 {
    if (it->dummy_end) return NULL;
    return it->end;
+}
+
+EAPI Evas_Object *
+elm_list_item_base_get(const Elm_List_Item *it)
+{
+   return it->base;
+}
+
+EAPI const char *
+elm_list_item_label_get(const Elm_List_Item *it)
+{
+   return it->label;
 }

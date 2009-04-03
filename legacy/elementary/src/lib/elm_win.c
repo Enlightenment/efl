@@ -130,7 +130,7 @@ _elm_win_xwindow_get(Elm_Win *win)
 	if (win->ee) win->xwin = ecore_evas_gl_x11_window_get(win->ee);
 	break;
       case ELM_SOFTWARE_WIN32:
-	if (win->ee) win->xwin = (int)ecore_evas_win32_window_get(win->ee);
+	if (win->ee) win->xwin = (long)ecore_evas_win32_window_get(win->ee);
 	break;
       default:
 	break;
@@ -405,6 +405,22 @@ elm_win_activate(Evas_Object *obj)
 }
 
 EAPI void
+elm_win_lower(Evas_Object *obj)
+{
+   Elm_Win *win = elm_widget_data_get(obj);
+   if (!win) return;
+   ecore_evas_lower(win->ee);
+}
+
+EAPI void
+elm_win_raise(Evas_Object *obj)
+{
+   Elm_Win *win = elm_widget_data_get(obj);
+   if (!win) return;
+   ecore_evas_raise(win->ee);
+}
+
+EAPI void
 elm_win_borderless_set(Evas_Object *obj, Evas_Bool borderless)
 {
    Elm_Win *win = elm_widget_data_get(obj);
@@ -504,6 +520,15 @@ elm_win_rotation_set(Evas_Object *obj, int rotation)
    Elm_Win *win = elm_widget_data_get(obj);
    if (!win) return;
    ecore_evas_rotation_set(win->ee, rotation);
+   _elm_win_xwin_update(win);
+}
+
+EAPI void
+elm_win_sticky_set(Evas_Object *obj, Eina_Bool sticky)
+{
+   Elm_Win *win = elm_widget_data_get(obj);
+   if (!win) return;
+   ecore_evas_sticky_set(win->ee, sticky);
    _elm_win_xwin_update(win);
 }
 

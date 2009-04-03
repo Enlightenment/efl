@@ -115,12 +115,14 @@ elm_layout_add(Evas_Object *parent)
    return obj;
 }
 
-EAPI void
+EAPI Eina_Bool
 elm_layout_file_set(Evas_Object *obj, const char *file, const char *group)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   edje_object_file_set(wd->lay, file, group);
-   _sizing_eval(obj);
+   Eina_Bool ret = edje_object_file_set(wd->lay, file, group);
+   if (ret)
+     _sizing_eval(obj);
+   return ret;
 }
 
 EAPI void
