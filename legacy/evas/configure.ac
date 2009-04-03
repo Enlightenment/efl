@@ -922,6 +922,48 @@ EVAS_CONVERT_COLOR(32, BGR, 8888)
 EVAS_CONVERT_COLOR(32, BGRX, 8888)
 
 #######################################
+## Convert to 24bpp RGB 666 (666 ezx)
+conv_24_rgb_ezx="yes"
+AC_MSG_CHECKING(whether to build 24bpp 666 (666 ezx) converter code)
+AC_ARG_ENABLE(convert-24-rgb-ezx,
+  AC_HELP_STRING([--disable-convert-24-rgb-ezx], [disable 24bpp 666 (666 ezx) converter code]),
+  [
+      if test "x$enableval" = "xyes" ; then
+        AC_DEFINE(BUILD_CONVERT_24_RGB_666, 1, [24bpp 666 (666 ezx) Converter Support])
+        conv_24_rgb_ezx="yes"
+      else
+        conv_24_rgb_ezx="no"
+      fi
+  ], [
+      if test "x$conv_24_rgb_ezx" = "xyes" ; then
+        AC_DEFINE(BUILD_CONVERT_24_RGB_666, 1, [24bpp 666 (666 ezx) Converter Support])
+      fi
+  ]
+)
+AC_MSG_RESULT($conv_24_rgb_ezx)
+
+#######################################
+## Convert to 32bpp RGB 666 (666 ezx)
+conv_32_rgb_ezx="yes"
+AC_MSG_CHECKING(whether to build 32bpp 666 (666 ezx) converter code)
+AC_ARG_ENABLE(convert-32-rgb-ezx,
+  AC_HELP_STRING([--disable-convert-32-rgb-ezx], [disable 32bpp 666 (666 ezx) converter code]),
+  [
+      if test "x$enableval" = "xyes" ; then
+        AC_DEFINE(BUILD_CONVERT_32_RGB_666, 1, [32bpp 666 (666 ezx) Converter Support])
+        conv_32_rgb_ezx="yes"
+      else
+        conv_32_rgb_ezx="no"
+      fi
+  ], [
+      if test "x$conv_32_rgb_ezx" = "xyes" ; then
+        AC_DEFINE(BUILD_CONVERT_32_RGB_666, 1, [32bpp 666 (666 ezx) Converter Support])
+      fi
+  ]
+)
+AC_MSG_RESULT($conv_32_rgb_ezx)
+
+#######################################
 ## Convert to 32bpp RGB with rotation of 0
 EVAS_CONVERT_ROT(32, RGB, 0)
 ## Convert to 32bpp RGB with rotation of 180
@@ -1147,8 +1189,6 @@ echo "  16bpp RGB 555...........: $conv_16_rgb_555"
 echo "  16bpp RGB 444...........: $conv_16_rgb_444"
 echo "  16bpp RGB 565 (444 ipaq): $conv_16_rgb_ipq"
 # FIXME: add 555 (444 ipaq) support
-# FIXME: add 24bpp 666 support
-# FIXME: add 32bpp 666 support
 # FIXME: add 30bpp support
 # FIXME: add palletted support
 # FIXME: add 8bpp and below rotation
@@ -1158,11 +1198,13 @@ echo "  16bpp Rotation 180......: $conv_16_rgb_rot_180"
 echo "  16bpp Rotation 270......: $conv_16_rgb_rot_270"
 echo "  24bpp RGB 888...........: $conv_24_rgb_888"
 echo "  24bpp BGR 888...........: $conv_24_bgr_888"
+echo "  24bpp RGB 666 (666 ezx).: $conv_24_rgb_ezx"
 # FIXME: add 24bpp rotation
 echo "  32bpp RGB 8888..........: $conv_32_rgb_8888"
 echo "  32bpp RGBX 8888.........: $conv_32_rgbx_8888"
 echo "  32bpp BGR 8888..........: $conv_32_bgr_8888"
 echo "  32bpp BGRX 8888.........: $conv_32_bgrx_8888"
+echo "  32bpp RGB 666 (666 ezx).: $conv_32_rgb_ezx"
 echo "  32bpp Rotation 0........: $conv_32_rgb_rot_0"
 echo "  32bpp Rotation 90.......: $conv_32_rgb_rot_90"
 echo "  32bpp Rotation 180......: $conv_32_rgb_rot_180"

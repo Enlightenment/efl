@@ -540,6 +540,27 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
 #endif
 	       }
 #endif
+#ifdef BUILD_CONVERT_32_RGB_666
+	     if ((rmask == 0x0003f000) && (gmask == 0x00000fc0) && (bmask == 0x0000003f))
+	       {
+#ifdef BUILD_CONVERT_32_RGB_ROT0
+		  if (rotation == 0)
+		    return evas_common_convert_rgba_to_32bpp_rgb_666;
+#endif
+#ifdef BUILD_CONVERT_32_RGB_ROT180
+//		  if (rotation == 180)
+//		    return evas_common_convert_rgba_to_32bpp_rgb_8888_rot_180;
+#endif
+#ifdef BUILD_CONVERT_32_RGB_ROT270
+//		  if (rotation == 270)
+//		    return evas_common_convert_rgba_to_32bpp_rgb_8888_rot_270;
+#endif
+#ifdef BUILD_CONVERT_32_RGB_ROT90
+//		  if (rotation == 90)
+//		    return evas_common_convert_rgba_to_32bpp_rgb_8888_rot_90;
+#endif
+	       }
+#endif
 	  }
 	if (depth == 24)
 	  {
@@ -548,6 +569,13 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
 	       {
 		  if (rotation == 0)
 		    return evas_common_convert_rgba_to_24bpp_rgb_888;
+	       }
+#endif
+#ifdef BUILD_CONVERT_24_RGB_666
+	     if ((rmask == 0x0003f000) && (gmask == 0x00000fc0) && (bmask == 0x0000003f))
+	       {
+		  if (rotation == 0)
+		    return evas_common_convert_rgba_to_24bpp_rgb_666;
 	       }
 #endif
 #ifdef BUILD_CONVERT_24_BGR_888

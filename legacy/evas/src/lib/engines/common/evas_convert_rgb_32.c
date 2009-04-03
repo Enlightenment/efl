@@ -349,3 +349,27 @@ evas_common_convert_rgba_to_32bpp_bgrx_8888_rot_90 (DATA32 *src, DATA8 *dst, int
 }
 #endif
 #endif
+
+#ifdef BUILD_CONVERT_32_RGB_666
+#ifdef BUILD_CONVERT_32_RGB_ROT0
+void
+evas_common_convert_rgba_to_32bpp_rgb_666(DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
+{
+   DATA32 *src_ptr;
+   DATA32 *dst_ptr;
+   int x, y;
+
+   dst_ptr = (DATA32 *)dst;
+
+   CONVERT_LOOP_START_ROT_0();
+
+   *dst_ptr = 
+     (((R_VAL(src_ptr) << 12) | (B_VAL(src_ptr) >> 2)) & 0x03f03f) |
+     ((G_VAL(src_ptr) << 4) & 0x000fc0);
+
+   CONVERT_LOOP_END_ROT_0();
+   return;
+}
+#endif
+#endif
+
