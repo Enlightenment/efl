@@ -247,6 +247,8 @@ extern "C" {
    EAPI Ecore_X_Window elm_win_xwindow_get(const Evas_Object *obj);   
    /* smart callbacks called:
     * "delete-request" - the user requested to delete the window
+    * "focus-in" - window got focus
+    * "focus-out" - window lost focus
     */
 
    EAPI Evas_Object *elm_bg_add(Evas_Object *parent);

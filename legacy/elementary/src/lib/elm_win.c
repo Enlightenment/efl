@@ -43,6 +43,22 @@ _elm_win_resize(Ecore_Evas *ee)
 }
 
 static void
+_elm_win_focus_in(Ecore_Evas *ee)
+{
+   Elm_Win *win = elm_widget_data_get(ecore_evas_object_associate_get(ee));
+   if (!win) return;
+   evas_object_smart_callback_call(win->win_obj, "focus-in", NULL);
+}
+
+static void
+_elm_win_focus_out(Ecore_Evas *ee)
+{
+   Elm_Win *win = elm_widget_data_get(ecore_evas_object_associate_get(ee));
+   if (!win) return;
+   evas_object_smart_callback_call(win->win_obj, "focus-out", NULL);
+}
+
+static void
 _deferred_ecore_evas_free(void *data)
 {
    ecore_evas_free(data);
@@ -318,6 +334,8 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    ecore_evas_name_class_set(win->ee, name, _elm_appname);
    ecore_evas_callback_delete_request_set(win->ee, _elm_win_delete_request);
    ecore_evas_callback_resize_set(win->ee, _elm_win_resize);
+   ecore_evas_callback_focus_in_set(win->ee, _elm_win_focus_in);
+   ecore_evas_callback_focus_out_set(win->ee, _elm_win_focus_out);
    evas_image_cache_set(win->evas, _elm_config->image_cache * 1024);
    evas_font_cache_set(win->evas, _elm_config->font_cache * 1024);
    EINA_LIST_FOREACH(_elm_config->font_dirs, l, fontpath)
