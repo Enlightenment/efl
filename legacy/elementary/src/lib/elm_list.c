@@ -16,6 +16,7 @@ struct _Widget_Data
 
 struct _Elm_List_Item
 {
+   Evas_List *node;
    Evas_Object *obj;
    Evas_Object *base;
    const char *label;
@@ -382,6 +383,7 @@ elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Eva
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_List_Item *it = _item_new(obj, label, icon, end, func, data);
    wd->items = eina_list_append(wd->items, it);
+   it->node = eina_list_last(wd->items);
    elm_box_pack_end(wd->box, it->base);
    return it;
 }
@@ -392,6 +394,7 @@ elm_list_item_prepend(Evas_Object *obj, const char *label, Evas_Object *icon, Ev
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_List_Item *it = _item_new(obj, label, icon, end, func, data);
    wd->items = eina_list_prepend(wd->items, it);
+   it->node = wd->items;
    elm_box_pack_start(wd->box, it->base);
    return it;
 }
@@ -399,9 +402,15 @@ elm_list_item_prepend(Evas_Object *obj, const char *label, Evas_Object *icon, Ev
 EAPI Elm_List_Item *
 elm_list_item_insert_before(Evas_Object *obj, Elm_List_Item *before, const char *label, Evas_Object *icon, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Elm_List_Item *it = _item_new(obj, label, icon, end, func, data);
-   wd->items = eina_list_prepend_relative(wd->items, it, before);
+   Widget_Data *wd;
+   Elm_List_Item *it;
+
+   if ((!before) || (!before->node)) return NULL;
+
+   wd = elm_widget_data_get(obj);
+   it = _item_new(obj, label, icon, end, func, data);
+   wd->items = eina_list_prepend_relative_list(wd->items, it, before->node);
+   it->node = before->node->prev;
    elm_box_pack_before(wd->box, it->base, before->base);
    return it;
 }
@@ -409,9 +418,15 @@ elm_list_item_insert_before(Evas_Object *obj, Elm_List_Item *before, const char 
 EAPI Elm_List_Item *
 elm_list_item_insert_after(Evas_Object *obj, Elm_List_Item *after, const char *label, Evas_Object *icon, Evas_Object *end, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Elm_List_Item *it = _item_new(obj, label, icon, end, func, data);
-   wd->items = eina_list_append_relative(wd->items, it, after);
+   Widget_Data *wd;
+   Elm_List_Item *it;
+
+   if ((!after) || (!after->node)) return NULL;
+
+   wd = elm_widget_data_get(obj);
+   it = _item_new(obj, label, icon, end, func, data);
+   wd->items = eina_list_append_relative_list(wd->items, it, after->node);
+   it->node = after->node->next;
    elm_box_pack_after(wd->box, it->base, after->base);
    return it;
 }
@@ -556,4 +571,22 @@ EAPI const char *
 elm_list_item_label_get(const Elm_List_Item *it)
 {
    return it->label;
+}
+
+EAPI Elm_List_Item *
+elm_list_item_prev(const Elm_List_Item *it)
+{
+   if (it->node->prev)
+     return it->node->prev->data;
+   else
+     return NULL;
+}
+
+EAPI Elm_List_Item *
+elm_list_item_next(const Elm_List_Item *it)
+{
+   if (it->node->next)
+     return it->node->next->data;
+   else
+     return NULL;
 }

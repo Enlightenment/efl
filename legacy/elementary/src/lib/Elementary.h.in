@@ -542,6 +542,9 @@ extern "C" {
    EAPI Evas_Object *elm_list_item_end_get(const Elm_List_Item *item);
    EAPI Evas_Object *elm_list_item_base_get(const Elm_List_Item *item);
    EAPI const char  *elm_list_item_label_get(const Elm_List_Item *item);
+   EAPI Elm_List_Item *elm_list_item_prev(const Elm_List_Item *it);
+   EAPI Elm_List_Item *elm_list_item_next(const Elm_List_Item *it);
+
    /* smart callbacks called:
     * "clicked" - when the user double-clicked an item
     * "selected" - when the user selected an item
