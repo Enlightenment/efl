@@ -700,6 +700,21 @@ EAPI void eina_error_print(Eina_Error_Level level, const char *file,
 	if (getenv("EINA_ERROR_ABORT")) abort();
 }
 
+EAPI void eina_error_vprint(Eina_Error_Level level, const char *file,
+		const char *fnc, int line, const char *fmt, va_list args)
+{
+	if (level > _error_level)
+		return;
+
+	EINA_SAFETY_ON_NULL_RETURN(file);
+	EINA_SAFETY_ON_NULL_RETURN(fnc);
+	EINA_SAFETY_ON_NULL_RETURN(fmt);
+
+	_print_cb(level, file, fnc, line, fmt, _print_cb_data, args);
+
+	if (getenv("EINA_ERROR_ABORT")) abort();
+}
+
 /**
  * @brief Print callback that sends the error message to stdout.
  *

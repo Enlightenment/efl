@@ -117,6 +117,9 @@ EAPI void eina_error_set(Eina_Error err);
 EAPI const char * eina_error_msg_get(Eina_Error error) EINA_PURE;
 EAPI void eina_error_print(Eina_Error_Level level, const char *file,
 	        const char *function, int line, const char *fmt, ...) EINA_ARG_NONNULL(2, 3, 5) EINA_PRINTF(5, 6);
+EAPI void eina_error_vprint(Eina_Error_Level level, const char *file,
+	        const char *fnc, int line, const char *fmt, va_list args) EINA_ARG_NONNULL(2, 3, 5);
+
 EAPI void eina_error_print_cb_stdout(Eina_Error_Level level, const char *file,
                 const char *fnc, int line, const char *fmt, void *data,
 		va_list args);
