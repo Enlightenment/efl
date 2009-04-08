@@ -718,7 +718,6 @@ Evas_Layer *evas_layer_find(Evas *e, short layer_num);
 void evas_layer_add(Evas_Layer *lay);
 void evas_layer_del(Evas_Layer *lay);
 
-int evas_object_was_visible(Evas_Object *obj);
 int evas_object_was_in_output_rect(Evas_Object *obj, int x, int y, int w, int h);
 
 int evas_object_was_opaque(Evas_Object *obj);

@@ -313,21 +313,6 @@ evas_object_was_in_output_rect(Evas_Object *obj, int x, int y, int w, int h)
 }
 
 int
-evas_object_was_visible(Evas_Object *obj)
-{
-   if (obj->smart.smart) return 0;
-   if ((obj->prev.visible) &&
-       (obj->prev.cache.clip.visible) &&
-       (obj->prev.cache.clip.a > 0))
-     {
-	if (obj->func->was_visible)
-	  return obj->func->was_visible(obj);
-	return 1;
-     }
-   return 0;
-}
-
-int
 evas_object_was_opaque(Evas_Object *obj)
 {
    if (obj->smart.smart) return 0;
