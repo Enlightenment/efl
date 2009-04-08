@@ -152,7 +152,8 @@ setenv(const char *name,
    if (!overwrite && old_name)
      return 0;
 
-   length = strlen(name) + strlen(value) + 2;
+   length = value ? strlen(value) : 0;
+   length += strlen(name) + 2;
    str = (char *)malloc(length);
    if (!str)
      {

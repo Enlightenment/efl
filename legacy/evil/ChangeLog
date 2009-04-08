@@ -1,3 +1,8 @@
+2009-04-08  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_stdlib.c:
+	manage correctly getenv() when value is NULL.
+
 2009-02-22  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_main.c:
