@@ -298,8 +298,6 @@ _ecore_main_select(double timeout)
    int            ret;
    Ecore_Fd_Handler *fdh;
 
-   int cr, cw, ce;
-
    t = NULL;
    if ((!finite(timeout)) || (timeout == 0.0))  /* finite() tests for NaN, too big, too small, and infinity.  */
      {
@@ -333,10 +331,6 @@ _ecore_main_select(double timeout)
    FD_ZERO(&wfds);
    FD_ZERO(&exfds);
 
-   cr = 0;
-   cw = 0;
-   ce = 0;
-
    /* call the prepare callback for all handlers */
    EINA_INLIST_FOREACH(fd_handlers, fdh)
      if (!fdh->delete_me && fdh->prep_func)
@@ -345,19 +339,16 @@ _ecore_main_select(double timeout)
      {
 	if (fdh->flags & ECORE_FD_READ)
 	  {
-	     cr++;
 	     FD_SET(fdh->fd, &rfds);
 	     if (fdh->fd > max_fd) max_fd = fdh->fd;
 	  }
 	if (fdh->flags & ECORE_FD_WRITE)
 	  {
-	     cw++;
 	     FD_SET(fdh->fd, &wfds);
 	     if (fdh->fd > max_fd) max_fd = fdh->fd;
 	  }
 	if (fdh->flags & ECORE_FD_ERROR)
 	  {
-	     ce++;
 	     FD_SET(fdh->fd, &exfds);
 	     if (fdh->fd > max_fd) max_fd = fdh->fd;
 	  }
@@ -368,18 +359,6 @@ _ecore_main_select(double timeout)
    if (ret < 0)
      {
 	if (errno == EINTR) return -1;
-	if (errno == EBADF)
-	  {
-	     fprintf(stderr, "max_fd: %i\n", max_fd);
-	     fprintf(stderr, "cr: %i, cw: %i, ce: %i\n", cr, cw, ce);
-
-	     EINA_INLIST_FOREACH(fd_handlers, fdh)
-	       {
-		  if (fdh->flags & ECORE_FD_WRITE)
-		    fprintf(stderr, "%p => %i\n", fdh, fdh->fd);
-	       }
-	     abort();
-	  }
      }
    if (ret > 0)
      {
