@@ -26,13 +26,13 @@
  */
 
 static inline Eina_Bool
-eina_stringshare_replace(const char **p_str, const char *new)
+eina_stringshare_replace(const char **p_str, const char *news)
 {
-   new = eina_stringshare_add(new);
+   news = eina_stringshare_add(news);
    eina_stringshare_del(*p_str);
-   if (*p_str == new)
+   if (*p_str == news)
      return 0;
-   *p_str = new;
+   *p_str = news;
    return 1;
 }
 
