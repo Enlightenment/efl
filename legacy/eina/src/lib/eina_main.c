@@ -30,6 +30,7 @@
 #include "eina_counter.h"
 #include "eina_benchmark.h"
 #include "eina_magic.h"
+#include "eina_rectangle.h"
 
 /*============================================================================*
  *                                 Global                                     *
@@ -54,6 +55,7 @@ eina_init(void)
    eina_counter_init();
    eina_benchmark_init();
    eina_magic_string_init();
+   eina_rectangle_init();
 
  finish_init:
    return ++_eina_main_count;
@@ -64,6 +66,7 @@ eina_shutdown(void)
 {
    if (_eina_main_count != 1) goto finish_shutdown;
 
+   eina_rectangle_shutdown();
    eina_magic_string_shutdown();
    eina_benchmark_shutdown();
    eina_counter_shutdown();

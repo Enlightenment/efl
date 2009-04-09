@@ -52,6 +52,9 @@ static inline Eina_Bool eina_rectangle_intersection(Eina_Rectangle *dst, const E
 static inline void eina_rectangle_rescale_in(const Eina_Rectangle *out, const Eina_Rectangle *in, Eina_Rectangle *res) EINA_ARG_NONNULL(1, 2, 3);
 static inline void eina_rectangle_rescale_out(const Eina_Rectangle *out, const Eina_Rectangle *in, Eina_Rectangle *res) EINA_ARG_NONNULL(1, 2, 3);
 
+EAPI int eina_rectangle_init(void);
+EAPI int eina_rectangle_shutdown(void);
+
 EAPI Eina_Rectangle_Pool *eina_rectangle_pool_add(int w, int h) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Rectangle_Pool *eina_rectangle_pool_get(Eina_Rectangle *rect) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 EAPI Eina_Bool eina_rectangle_pool_geometry_get(Eina_Rectangle_Pool *pool, int *w, int *h) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
