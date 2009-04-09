@@ -784,6 +784,7 @@ eng_image_cache_flush(void *data __UNUSED__)
 
    tmp_size = evas_common_image_get_cache();
    evas_common_image_set_cache(0);
+   evas_common_rgba_image_scalecache_flush();
    evas_common_image_set_cache(tmp_size);
 }
 
@@ -791,6 +792,7 @@ static void
 eng_image_cache_set(void *data __UNUSED__, int bytes)
 {
    evas_common_image_set_cache(bytes);
+   evas_common_rgba_image_scalecache_size_set(bytes);
 }
 
 static int

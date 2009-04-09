@@ -30,6 +30,10 @@ EAPI void              evas_common_image_alpha_line_buffer_free    (RGBA_Image *
 EAPI RGBA_Image       *evas_common_load_image_from_file            (const char *file, const char *key, RGBA_Image_Loadopts *lo);
 EAPI int               evas_common_save_image_to_file              (RGBA_Image *im, const char *file, const char *key, int quality, int compress);
 
+EAPI void evas_common_rgba_image_scalecache_size_set(int size);
+EAPI int evas_common_rgba_image_scalecache_size_get(void);
+EAPI void evas_common_rgba_image_scalecache_flush(void);
+    
 EAPI void
   evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst,
                                             RGBA_Draw_Context *dc, int smooth,
