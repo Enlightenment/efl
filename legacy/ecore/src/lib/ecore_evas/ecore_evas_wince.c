@@ -488,7 +488,7 @@ _ecore_evas_wince_free(Ecore_Evas *ee)
 {
    EINA_ERROR_PINFO("ecore evas free\n");
 
-   ecore_wince_window_del(ee->engine.wince.window);
+   ecore_wince_window_free(ee->engine.wince.window);
    eina_hash_del(ecore_evases_hash, _ecore_evas_wince_winid_str_get(ee->engine.wince.window), ee);
    ecore_evases = _ecore_list2_remove(ecore_evases, ee);
    _ecore_evas_wince_shutdown();

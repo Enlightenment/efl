@@ -209,7 +209,7 @@ EAPI Ecore_WinCE_Window *ecore_wince_window_new(Ecore_WinCE_Window *parent,
                                                 int                 width,
                                                 int                 height);
 
-EAPI void ecore_wince_window_del(Ecore_WinCE_Window *window);
+EAPI void ecore_wince_window_free(Ecore_WinCE_Window *window);
 
 EAPI void *ecore_wince_window_hwnd_get(Ecore_WinCE_Window *window);
 

@@ -75,7 +75,7 @@ ecore_win32_window_override_new(Ecore_Win32_Window *parent,
 }
 
 void
-ecore_win32_window_del(Ecore_Win32_Window *window)
+ecore_win32_window_free(Ecore_Win32_Window *window)
 {
    struct _Ecore_Win32_Window *wnd = window;
 

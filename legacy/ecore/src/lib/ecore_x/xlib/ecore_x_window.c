@@ -277,7 +277,7 @@ ecore_x_window_configure(Ecore_X_Window win,
  * @ingroup Evas_X_Window_Destroy_Group
  */
 EAPI void
-ecore_x_window_del(Ecore_X_Window win)
+ecore_x_window_free(Ecore_X_Window win)
 {
    /* sorry sir, deleting the root window doesn't sound like
     * a smart idea.

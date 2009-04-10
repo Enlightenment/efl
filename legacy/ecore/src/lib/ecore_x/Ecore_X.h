@@ -1030,7 +1030,7 @@ EAPI void             ecore_x_window_configure(Ecore_X_Window win,
 					       Ecore_X_Window sibling,
 					       int stack_mode);
 EAPI void             ecore_x_window_cursor_set(Ecore_X_Window win, Ecore_X_Cursor c);
-EAPI void             ecore_x_window_del(Ecore_X_Window win);
+EAPI void             ecore_x_window_free(Ecore_X_Window win);
 EAPI void             ecore_x_window_ignore_set(Ecore_X_Window win, int ignore);
 EAPI Ecore_X_Window  *ecore_x_window_ignore_list(int *num);
 

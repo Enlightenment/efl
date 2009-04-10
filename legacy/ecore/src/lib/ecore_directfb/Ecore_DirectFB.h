@@ -172,7 +172,7 @@ EAPI int ecore_directfb_shutdown(void);
 EAPI IDirectFB * ecore_directfb_interface_get(void);
 /* window operations */
 EAPI Ecore_DirectFB_Window * ecore_directfb_window_new(int x, int y, int w, int h);
-EAPI void ecore_directfb_window_del(Ecore_DirectFB_Window *window);
+EAPI void ecore_directfb_window_free(Ecore_DirectFB_Window *window);
 EAPI void ecore_directfb_window_move(Ecore_DirectFB_Window *window, int x, int y);
 EAPI void ecore_directfb_window_resize(Ecore_DirectFB_Window *window, int w, int h);
 EAPI void ecore_directfb_window_focus(Ecore_DirectFB_Window *window);

@@ -97,7 +97,7 @@ ecore_wince_window_new(Ecore_WinCE_Window *parent,
 }
 
 void
-ecore_wince_window_del(Ecore_WinCE_Window *window)
+ecore_wince_window_free(Ecore_WinCE_Window *window)
 {
    if (!window) return;
 

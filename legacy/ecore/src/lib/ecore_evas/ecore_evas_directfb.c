@@ -283,7 +283,7 @@ static void
 _ecore_evas_directfb_free(Ecore_Evas *ee)
 {
    eina_hash_del(ecore_evases_hash, _ecore_evas_directfb_winid_str_get(ee->engine.directfb.window->id), ee);
-   ecore_directfb_window_del(ee->engine.directfb.window);
+   ecore_directfb_window_free(ee->engine.directfb.window);
    ecore_evases = _ecore_list2_remove(ecore_evases, ee);
    _ecore_evas_directfb_shutdown();
    ecore_directfb_shutdown();

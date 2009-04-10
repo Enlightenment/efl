@@ -1084,7 +1084,7 @@ _ecore_evas_x_init(void)
 static void
 _ecore_evas_x_free(Ecore_Evas *ee)
 {
-   ecore_x_window_del(ee->prop.window);
+   ecore_x_window_free(ee->prop.window);
    if (ee->engine.x.pmap) ecore_x_pixmap_del(ee->engine.x.pmap);
    if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
    if (ee->engine.x.gc) ecore_x_gc_del(ee->engine.x.gc);
@@ -1560,7 +1560,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 
 	ee->shaped = 0;
 	ee->alpha = alpha;
-	ecore_x_window_del(ee->prop.window);
+	ecore_x_window_free(ee->prop.window);
 	ecore_event_window_unregister(ee->prop.window);
 	if (ee->alpha)
 	  {
@@ -1632,7 +1632,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 
 	ee->shaped = 0;
 	ee->alpha = alpha;
-	ecore_x_window_del(ee->prop.window);
+	ecore_x_window_free(ee->prop.window);
 	ecore_event_window_unregister(ee->prop.window);
 	if (ee->alpha)
 	  {
@@ -1696,7 +1696,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 
 	ee->shaped = 0;
 	ee->alpha = alpha;
-	ecore_x_window_del(ee->prop.window);
+	ecore_x_window_free(ee->prop.window);
 	ecore_event_window_unregister(ee->prop.window);
 	if (ee->alpha)
 	  {

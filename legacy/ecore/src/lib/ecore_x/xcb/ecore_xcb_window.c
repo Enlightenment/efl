@@ -306,7 +306,7 @@ ecore_x_window_override_argb_new(Ecore_X_Window parent,
  * @ingroup Ecore_X_Window_Destroy_Group
  */
 EAPI void
-ecore_x_window_del(Ecore_X_Window window)
+ecore_x_window_free(Ecore_X_Window window)
 {
    /* sorry sir, deleting the root window doesn't sound like
     * a smart idea.

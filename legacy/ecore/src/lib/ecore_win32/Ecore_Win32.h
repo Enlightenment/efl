@@ -335,7 +335,7 @@ EAPI Ecore_Win32_Window *ecore_win32_window_override_new(Ecore_Win32_Window *par
                                                          int                 width,
                                                          int                 height);
 
-EAPI void ecore_win32_window_del(Ecore_Win32_Window *window);
+EAPI void ecore_win32_window_free(Ecore_Win32_Window *window);
 
 EAPI void *ecore_win32_window_hwnd_get(Ecore_Win32_Window *window);
 

@@ -570,7 +570,7 @@ _ecore_evas_win32_free(Ecore_Evas *ee)
 {
    EINA_ERROR_PINFO("ecore evas free\n");
 
-   ecore_win32_window_del(ee->engine.win32.window);
+   ecore_win32_window_free(ee->engine.win32.window);
    eina_hash_del(ecore_evases_hash, _ecore_evas_win32_winid_str_get(ee->engine.win32.window), ee);
    ecore_evases = _ecore_list2_remove(ecore_evases, ee);
    _ecore_evas_win32_shutdown();
