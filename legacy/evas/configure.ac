@@ -81,6 +81,7 @@ case "$host_os" in
       want_evas_image_loader_svg="no"
       ;;
    darwin*)
+      want_evas_engine_software_x11="auto"
       want_evas_engine_quartz="auto"
       ;;
    *)
