@@ -18,6 +18,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <errno.h>
+#include <fcntl.h>
 
 #define FIX_HZ 1
 
@@ -33,6 +34,7 @@
 
 static int  _ecore_main_select(double timeout);
 static void _ecore_main_fd_handlers_cleanup(void);
+static void _ecore_main_fd_handlers_bads_rem(void);
 static void _ecore_main_fd_handlers_call(void);
 static int  _ecore_main_fd_handlers_buf_call(void);
 static void _ecore_main_loop_iterate_internal(int once_only);
@@ -354,11 +356,14 @@ _ecore_main_select(double timeout)
 	  }
      }
    if (_ecore_signal_count_get()) return -1;
+
    ret = select(max_fd + 1, &rfds, &wfds, &exfds, t);
    _ecore_loop_time = ecore_time_get();
    if (ret < 0)
      {
 	if (errno == EINTR) return -1;
+	else if (errno == EBADF)
+	     _ecore_main_fd_handlers_bads_rem();
      }
    if (ret > 0)
      {
@@ -379,6 +384,45 @@ _ecore_main_select(double timeout)
 }
 
 static void
+_ecore_main_fd_handlers_bads_rem(void)
+{
+   fprintf(stderr, "Removing bad fds\n");
+   Ecore_Fd_Handler *fdh;
+   Eina_Inlist *l;
+
+   for (l = EINA_INLIST_GET(fd_handlers); l; )
+     {
+	fdh = (Ecore_Fd_Handler *) l;
+	l = l->next;
+	errno = 0;
+
+	if ((fcntl(fdh->fd, F_GETFD) < 0) && (errno == EBADF))
+	  {
+	     fprintf(stderr, "Found bad fd at index %d\n", fdh->fd);
+	     if (fdh->flags & ECORE_FD_ERROR)
+	       {
+		  fprintf(stderr, "Fd set for error! calling user\n");
+	         if (!fdh->func(fdh->data, fdh))
+		   {
+		     fprintf(stderr, "Fd function err returned 0, remove it\n");
+		     fdh->delete_me = 1;
+		     fd_handlers_delete_me = 1;
+		     _ecore_main_fd_handlers_cleanup();
+		   }
+	       }
+	     else
+	       {
+		  fprintf(stderr, "Problematic fd found at %d! setting it for delete\n", fdh->fd);
+		  fdh->delete_me = 1;
+		  fd_handlers_delete_me = 1;
+		  _ecore_main_fd_handlers_cleanup();
+	       }
+	  }
+
+    }
+}
+
+static void
 _ecore_main_fd_handlers_cleanup(void)
 {
    Ecore_Fd_Handler *fdh;
@@ -392,6 +436,7 @@ _ecore_main_fd_handlers_cleanup(void)
 	l = l->next;
 	if (fdh->delete_me)
 	  {
+	     fprintf(stderr, "Removing fd %d\n", fdh->fd);
 	     fd_handlers = (Ecore_Fd_Handler *) eina_inlist_remove(EINA_INLIST_GET(fd_handlers),
 								   EINA_INLIST_GET(fdh));
 	     ECORE_MAGIC_SET(fdh, ECORE_MAGIC_NONE);
