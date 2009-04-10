@@ -179,7 +179,6 @@ AC_ARG_ENABLE(simple-x11,
 
 ### Checks for programs
 
-have_gnu_objc="no"
 m4_ifdef([AC_PROG_OBJC],
    [
     AC_PROG_OBJC
@@ -189,10 +188,11 @@ m4_ifdef([AC_PROG_OBJC],
     AC_CHECK_TOOL([OBJC], [gcc])
     AC_SUBST([OBJC])
     AC_SUBST([OBJCFLAGS])
-    have_gnu_objc="yes"
    ])
 AC_PROG_CXX
 AC_PROG_CC
+
+have_gnu_objc=${ac_cv_objc_compiler_gnu}
 
 # doxygen program for documentation building
 
@@ -760,14 +760,16 @@ ECORE_CHECK_MODULE([Input], [${want_ecore_input}], [${have_evas}],
 # ecore_x{cb}
 
 ecore_x_deps="no"
-if test "x${have_x}" = "xyes" -a "x${have_ecore_input}" = "xyes" ; then
+if test "x${have_x}" = "xyes" -a 
+        "x${have_ecore_input}" = "xyes" -a
+        "x${have_ecore_txt}" = "xyes" ; then
    ecore_x_deps="yes"
 fi
 
 ECORE_CHECK_MODULE([X], [${want_ecore_x}], [${ecore_x_deps}],
   [
    ecore_x_libs="$ecore_x_libs $x_libs"
-   requirements_ecore_x="ecore-input ${requirements_ecore_x}"
+   requirements_ecore_x="ecore-input ecore-txt ${requirements_ecore_x}"
   ])
 
 # ecore_win32
