@@ -760,8 +760,8 @@ ECORE_CHECK_MODULE([Input], [${want_ecore_input}], [${have_evas}],
 # ecore_x{cb}
 
 ecore_x_deps="no"
-if test "x${have_x}" = "xyes" -a 
-        "x${have_ecore_input}" = "xyes" -a
+if test "x${have_x}" = "xyes" -a \
+        "x${have_ecore_input}" = "xyes" -a \
         "x${have_ecore_txt}" = "xyes" ; then
    ecore_x_deps="yes"
 fi
