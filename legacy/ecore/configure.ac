@@ -331,6 +331,14 @@ if test "x${have_iconv}" = "xno" ; then
           have_iconv="yes"
          ])
    fi
+
+# force the iconv library on mac os x
+   case "$host_os" in
+      darwin*)
+         iconv_libs="/usr/lib/libiconv.la"
+         have_iconv="yes"
+      ;;
+   esac
 fi
 AC_MSG_CHECKING(for explicit iconv link options)
 AC_MSG_RESULT($iconv_libs)
