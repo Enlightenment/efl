@@ -11,7 +11,7 @@ static void *eng_info(Evas *e);
 static void eng_info_free(Evas *e, void *info);
 
 static void *eng_output_setup(CGContextRef context, int w, int h);
-static void eng_setup(Evas *e, void *in);
+static int eng_setup(Evas *e, void *in);
 
 static void eng_output_free(void *data);
 static void eng_output_resize(void *data, int w, int h);
