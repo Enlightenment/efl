@@ -43,7 +43,7 @@ ECORE_SDL_LIBADD =
 endif
 
 if BUILD_ECORE_QUARTZ
-ECORE_QUARTZ_INC = -I$(top_srcdir)/src/lib/ecore_quartz @quartz_cflags@ -xobjective-c
+ECORE_QUARTZ_INC = -I$(top_srcdir)/src/lib/ecore_quartz -xobjective-c
 ECORE_QUARTZ_LIB = $(top_builddir)/src/lib/ecore_quartz/libecore_quartz.la
 else
 ECORE_QUARTZ_INC =
@@ -110,7 +110,7 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 @EVAS_LIBS@
 
-libecore_evas_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
+libecore_evas_la_LDFLAGS = @quartz_ldflags@ -no-undefined @lt_enable_auto_import@ -version-info @version_info@
 
 endif
 

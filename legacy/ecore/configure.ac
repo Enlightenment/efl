@@ -179,6 +179,7 @@ AC_ARG_ENABLE(simple-x11,
 
 ### Checks for programs
 
+have_gnu_objc="no"
 m4_ifdef([AC_PROG_OBJC],
    [
     AC_PROG_OBJC
@@ -188,6 +189,7 @@ m4_ifdef([AC_PROG_OBJC],
     AC_CHECK_TOOL([OBJC], [gcc])
     AC_SUBST([OBJC])
     AC_SUBST([OBJCFLAGS])
+    have_gnu_objc="yes"
    ])
 AC_PROG_CXX
 AC_PROG_CC
@@ -593,19 +595,21 @@ AC_CHECK_HEADER([linux/fb.h],
 
 # Quartz header files (ecore_quartz)
 
-quartz_cflags="";
-quartz_libs="";
+quartz_ldflags="";
 have_quartz="no"
-AC_CHECK_HEADER([Cocoa/Cocoa.h],
-   [
-    have_quartz="yes"
-    quartz_cflags="-framework Cocoa";
-    quartz_libs="-framework Cocoa"
-   ],
-   [have_quartz="no"])
 
-AC_SUBST(quartz_cflags)
-AC_SUBST(quartz_libs)
+if test "x${have_gnu_objc}" = "xyes" ; then
+   AC_LANG_PUSH([Objective C])
+   AC_CHECK_HEADER([Cocoa/Cocoa.h],
+      [
+       have_quartz="yes"
+       quartz_ldflags="-framework Cocoa"
+      ],
+      [have_quartz="no"])
+   AC_LANG_POP([Objective C])
+fi
+
+AC_SUBST(quartz_ldflags)
 
 ### Checks for types
 AC_CHECK_SIZEOF(int, 4)
