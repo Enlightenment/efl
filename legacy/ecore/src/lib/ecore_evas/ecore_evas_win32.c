@@ -1352,11 +1352,11 @@ ecore_evas_gl_glew_new(Ecore_Win32_Window *parent,
 #else
 
 EAPI Ecore_Evas *
-ecore_evas_gl_glew_new(Ecore_Win32_Window *parent,
-                       int                 x,
-                       int                 y,
-                       int                 width,
-                       int                 height)
+ecore_evas_gl_glew_new(Ecore_Win32_Window *parent __UNUSED__,
+                       int                 x __UNUSED__,
+                       int                 y __UNUSED__,
+                       int                 width __UNUSED__,
+                       int                 height __UNUSED__)
 {
    return NULL;
 }
@@ -1375,7 +1375,7 @@ ecore_evas_win32_window_get(const Ecore_Evas *ee)
 #else
 
 EAPI Ecore_Win32_Window *
-ecore_evas_win32_window_get(const Ecore_Evas *ee)
+ecore_evas_win32_window_get(const Ecore_Evas *ee __UNUSED__)
 {
    return NULL;
 }

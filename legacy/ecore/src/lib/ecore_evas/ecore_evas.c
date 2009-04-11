@@ -343,7 +343,7 @@ _ecore_evas_constructor_software_16_x11(int x, int y, int w, int h, const char *
 
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
 static Ecore_Evas *
-_ecore_evas_constructor_sdl(int x, int y, int w, int h, const char *extra_options)
+_ecore_evas_constructor_sdl(int x __UNUSED__, int y __UNUSED__, int w, int h, const char *extra_options)
 {
    Ecore_Evas *ee;
    unsigned int fullscreen = 0, hwsurface = 0, noframe = 0, alpha = 0;
@@ -361,7 +361,7 @@ _ecore_evas_constructor_sdl(int x, int y, int w, int h, const char *extra_option
 }
 
 static Ecore_Evas *
-_ecore_evas_constructor_sdl16(int x, int y, int w, int h, const char *extra_options)
+_ecore_evas_constructor_sdl16(int x __UNUSED__, int y __UNUSED__, int w, int h, const char *extra_options)
 {
    Ecore_Evas *ee;
    unsigned int fullscreen = 0, hwsurface = 0, noframe = 0, alpha = 0;
@@ -399,7 +399,7 @@ _ecore_evas_constructor_directfb(int x, int y, int w, int h, const char *extra_o
 
 #ifdef BUILD_ECORE_EVAS_FB
 static Ecore_Evas *
-_ecore_evas_constructor_fb(int x, int y, int w, int h, const char *extra_options)
+_ecore_evas_constructor_fb(int x __UNUSED__, int y __UNUSED__, int w, int h, const char *extra_options)
 {
    Ecore_Evas *ee;
    char *disp_name = NULL;
@@ -475,7 +475,7 @@ _ecore_evas_constructor_software_16_wince_gdi(int x, int y, int w, int h, const 
 
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
 static Ecore_Evas *
-_ecore_evas_constructor_buffer(int x, int y, int w, int h, const char *extra_options)
+_ecore_evas_constructor_buffer(int x __UNUSED__, int y __UNUSED__, int w, int h, const char *extra_options __UNUSED__)
 {
    return ecore_evas_buffer_new(w, h);
 }
@@ -2468,7 +2468,7 @@ _ecore_evas_cb_idle_flush(void *data)
 }
 
 static int
-_ecore_evas_async_events_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
+_ecore_evas_async_events_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    evas_async_events_process();
 

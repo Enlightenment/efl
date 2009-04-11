@@ -348,7 +348,7 @@ _ecore_evas_directfb_shaped_set(Ecore_Evas *ee, int shaped)
 }
 
 static void
-_ecore_evas_object_cursor_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_ecore_evas_object_cursor_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee;
 
@@ -437,17 +437,13 @@ _ecore_evas_directfb_fullscreen_set(Ecore_Evas *ee, int on)
 	if(ee->func.fn_resize) ee->func.fn_resize(ee);
      }
 }
-#endif
 
 static void *
 _ecore_evas_directfb_window_get(const Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_DIRECTFB
    return ee->engine.directfb.window;
-#else
-   return 0;
-#endif
 }
+#endif
 
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
 static const Ecore_Evas_Engine_Func _ecore_directfb_engine_func =
@@ -503,16 +499,10 @@ static const Ecore_Evas_Engine_Func _ecore_directfb_engine_func =
 /* api */
 /*******/
 
-Ecore_DirectFB_Window *
-ecore_evas_directfb_window_get(const Ecore_Evas *ee)
-{
-   return (Ecore_DirectFB_Window *) _ecore_evas_directfb_window_get(ee);
-}
-
+#ifdef BUILD_ECORE_EVAS_DIRECTFB
 EAPI Ecore_Evas *
 ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w, int h)
 {
-#ifdef BUILD_ECORE_EVAS_DIRECTFB
    Evas_Engine_Info_DirectFB *einfo;
    Ecore_Evas *ee;
    Ecore_DirectFB_Window *window;
@@ -565,9 +555,25 @@ ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w
    eina_hash_add(ecore_evases_hash, _ecore_evas_directfb_winid_str_get(ee->engine.directfb.window->id), ee);
 
    return ee;
-#else
-   disp_name = NULL;
-   windowed = x = y = w = h = 0;
-   return NULL;
-#endif
 }
+#else
+EAPI Ecore_Evas *
+ecore_evas_directfb_new(const char *disp_name __UNUSED__, int windowed __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
+{
+   return NULL;
+}
+#endif
+
+#ifdef BUILD_ECORE_EVAS_DIRECTFB
+EAPI Ecore_DirectFB_Window *
+ecore_evas_directfb_window_get(const Ecore_Evas *ee)
+{
+   return (Ecore_DirectFB_Window *) _ecore_evas_directfb_window_get(ee);
+}
+#else
+EAPI Ecore_DirectFB_Window *
+ecore_evas_directfb_window_get(const Ecore_Evas *ee __UNUSED__)
+{
+  return NULL;
+}
+#endif

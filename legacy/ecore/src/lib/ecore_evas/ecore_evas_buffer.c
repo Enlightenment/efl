@@ -414,6 +414,7 @@ static const Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      NULL,
      NULL,
      NULL,
+     NULL,
      NULL
 };
 #endif

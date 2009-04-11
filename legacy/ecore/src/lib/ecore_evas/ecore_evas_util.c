@@ -61,7 +61,7 @@ _evas_object_associate_del(Evas_Object *obj)
 /* Interceptors Callbacks */
 
 static void
-_ecore_evas_obj_intercept_move(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y)
+_ecore_evas_obj_intercept_move(void *data, Evas_Object *obj __UNUSED__, Evas_Coord x, Evas_Coord y)
 {
    Ecore_Evas *ee = data;
    // FIXME: account for frame
@@ -69,33 +69,33 @@ _ecore_evas_obj_intercept_move(void *data, Evas_Object *obj, Evas_Coord x, Evas_
 }
 
 static void
-_ecore_evas_obj_intercept_raise(void *data, Evas_Object *obj)
+_ecore_evas_obj_intercept_raise(void *data, Evas_Object *obj __UNUSED__)
 {
    Ecore_Evas *ee = data;
    ecore_evas_raise(ee);
 }
 
 static void
-_ecore_evas_obj_intercept_lower(void *data, Evas_Object *obj)
+_ecore_evas_obj_intercept_lower(void *data, Evas_Object *obj __UNUSED__)
 {
    Ecore_Evas *ee = data;
    ecore_evas_lower(ee);
 }
 
 static void
-_ecore_evas_obj_intercept_stack_above(void *data, Evas_Object *obj, Evas_Object *above)
+_ecore_evas_obj_intercept_stack_above(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Evas_Object *above __UNUSED__)
 {
    fprintf(stderr, "TODO: %s\n", __FUNCTION__);
 }
 
 static void
-_ecore_evas_obj_intercept_stack_below(void *data, Evas_Object *obj, Evas_Object *below)
+_ecore_evas_obj_intercept_stack_below(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Evas_Object *below __UNUSED__)
 {
    fprintf(stderr, "TODO: %s\n", __FUNCTION__);
 }
 
 static void
-_ecore_evas_obj_intercept_layer_set(void *data, Evas_Object *obj, int l)
+_ecore_evas_obj_intercept_layer_set(void *data, Evas_Object *obj __UNUSED__, int l)
 {
    Ecore_Evas *ee = data;
    ecore_evas_layer_set(ee, l);
@@ -104,21 +104,21 @@ _ecore_evas_obj_intercept_layer_set(void *data, Evas_Object *obj, int l)
 /* Event Callbacks */
 
 static void
-_ecore_evas_obj_callback_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_ecore_evas_obj_callback_show(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee = data;
    ecore_evas_show(ee);
 }
 
 static void
-_ecore_evas_obj_callback_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_ecore_evas_obj_callback_hide(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee = data;
    ecore_evas_hide(ee);
 }
 
 static void
-_ecore_evas_obj_callback_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_ecore_evas_obj_callback_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee = data;
    Evas_Coord ow, oh, w, h;
@@ -130,7 +130,7 @@ _ecore_evas_obj_callback_resize(void *data, Evas *e, Evas_Object *obj, void *eve
 }
 
 static void
-_ecore_evas_obj_callback_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_ecore_evas_obj_callback_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee = data;
    Evas_Coord w, h;
@@ -145,7 +145,7 @@ _ecore_evas_obj_callback_changed_size_hints(void *data, Evas *e, Evas_Object *ob
 }
 
 static void
-_ecore_evas_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_ecore_evas_obj_callback_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee = data;
    _ecore_evas_object_dissociate(ee, obj);
@@ -153,7 +153,7 @@ _ecore_evas_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_
 }
 
 static void
-_ecore_evas_obj_callback_del_dissociate(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_ecore_evas_obj_callback_del_dissociate(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee = data;
    _ecore_evas_object_dissociate(ee, obj);
@@ -463,7 +463,7 @@ _ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj)
  * when this option is executed.
  */
 unsigned char
-ecore_getopt_callback_ecore_evas_list_engines(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage)
+ecore_getopt_callback_ecore_evas_list_engines(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc __UNUSED__, const char *str __UNUSED__, void *data, Ecore_Getopt_Value *storage)
 {
    Eina_List  *lst, *n;
    const char *engine;

@@ -41,7 +41,7 @@ _ecore_evas_sdl_match(void)
 }
 
 static int
-_ecore_evas_sdl_event_got_focus(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_sdl_event_got_focus(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
 {
    Ecore_Evas                   *ee;
 
@@ -55,7 +55,7 @@ _ecore_evas_sdl_event_got_focus(void *data __UNUSED__, int type __UNUSED__, void
 }
 
 static int
-_ecore_evas_sdl_event_lost_focus(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_sdl_event_lost_focus(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
 {
    Ecore_Evas                   *ee;
 
@@ -168,7 +168,7 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
 }
 
 static int
-_ecore_evas_sdl_event(void *data)
+_ecore_evas_sdl_event(void *data __UNUSED__)
 {
    ecore_sdl_feed_events();
 
@@ -176,7 +176,7 @@ _ecore_evas_sdl_event(void *data)
 }
 
 static int
-_ecore_evas_sdl_init(int w, int h)
+_ecore_evas_sdl_init(int w __UNUSED__, int h __UNUSED__)
 {
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
@@ -264,7 +264,7 @@ _ecore_evas_move_resize(Ecore_Evas *ee, int x __UNUSED__, int y __UNUSED__, int 
 }
 
 static void
-_ecore_evas_object_cursor_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_ecore_evas_object_cursor_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee;
 
@@ -433,10 +433,10 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
 }
 #endif
 
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
 EAPI Ecore_Evas*
 ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha)
 {
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
    Ecore_Evas          *ee;
    int                  rmethod;
 
@@ -446,16 +446,20 @@ ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen, int hwsurface
    ee = _ecore_evas_internal_sdl_new(rmethod, name, w, h, fullscreen, hwsurface, noframe, alpha);
    ee->driver = "sdl";
    return ee;
+}
 #else
+EAPI Ecore_Evas*
+ecore_evas_sdl_new(const char* name __UNUSED__, int w __UNUSED__, int h __UNUSED__, int fullscreen __UNUSED__, int hwsurface __UNUSED__, int noframe __UNUSED__, int alpha __UNUSED__)
+{
    fprintf(stderr, "OUTCH !\n");
    return NULL;
-#endif
 }
+#endif
 
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
 EAPI Ecore_Evas*
 ecore_evas_sdl16_new(const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha)
 {
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
    Ecore_Evas          *ee;
    int                  rmethod;
 
@@ -465,8 +469,12 @@ ecore_evas_sdl16_new(const char* name, int w, int h, int fullscreen, int hwsurfa
    ee = _ecore_evas_internal_sdl_new(rmethod, name, w, h, fullscreen, hwsurface, noframe, alpha);
    ee->driver = "software_16_sdl";
    return ee;
+}
 #else
+EAPI Ecore_Evas*
+ecore_evas_sdl16_new(const char* name __UNUSED__, int w __UNUSED__, int h __UNUSED__, int fullscreen __UNUSED__, int hwsurface __UNUSED__, int noframe __UNUSED__, int alpha __UNUSED__)
+{
    fprintf(stderr, "OUTCH !\n");
    return NULL;
-#endif
 }
+#endif

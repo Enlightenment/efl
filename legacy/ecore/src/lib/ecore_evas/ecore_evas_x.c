@@ -1858,7 +1858,7 @@ _ecore_evas_x_size_step_set(Ecore_Evas *ee, int w, int h)
 }
 
 static void
-_ecore_evas_object_cursor_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_ecore_evas_object_cursor_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee;
 
@@ -2296,11 +2296,11 @@ static const Ecore_Evas_Engine_Func _ecore_x_engine_func =
  *
  * FIXME: To be fixed.
  */
+#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
 EAPI Ecore_Evas *
 ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 			    int x, int y, int w, int h)
 {
-#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
    Evas_Engine_Info_Software_X11 *einfo;
    Ecore_Evas *ee;
    int argb = 0;
@@ -2522,50 +2522,63 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
    ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
    ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
    return ee;
-#else
-   return NULL;
-#endif
 }
+#else
+EAPI Ecore_Evas *
+ecore_evas_software_x11_new(const char *disp_name __UNUSED__, Ecore_X_Window parent __UNUSED__,
+			    int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
+{
+   return NULL;
+}
+#endif
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
 EAPI Ecore_X_Window
 ecore_evas_software_x11_window_get(const Ecore_Evas *ee)
 {
-#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
    return (Ecore_X_Window) ecore_evas_window_get(ee);
-#else
-   return 0;
-#endif
 }
+#else
+EAPI Ecore_X_Window
+ecore_evas_software_x11_window_get(const Ecore_Evas *ee __UNUSED__)
+{
+   return 0;
+}
+#endif
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
 EAPI Ecore_X_Window
 ecore_evas_software_x11_subwindow_get(const Ecore_Evas *ee)
 {
-#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
    return (Ecore_X_Window) ecore_evas_window_get(ee);
-#else
-   return 0;
-#endif
 }
+#else
+EAPI Ecore_X_Window
+ecore_evas_software_x11_subwindow_get(const Ecore_Evas *ee __UNUSED__)
+{
+   return 0;
+}
+#endif
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
 EAPI void
 ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, int on)
 {
-#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
    ee->engine.x.direct_resize = on;
    if (ee->prop.avoid_damage)
      {
@@ -2585,35 +2598,42 @@ ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, int on)
  */
 	  }
      }
-#else
-   return;
-#endif
 }
+#else
+EAPI void
+ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee __UNUSED__, int on __UNUSED__)
+{
+}
+#endif
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
 EAPI int
 ecore_evas_software_x11_direct_resize_get(const Ecore_Evas *ee)
 {
-#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
    return ee->engine.x.direct_resize;
-#else
-   return 0;
-#endif
 }
+#else
+EAPI int
+ecore_evas_software_x11_direct_resize_get(const Ecore_Evas *ee __UNUSED__)
+{
+   return 0;
+}
+#endif
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
 EAPI void
 ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win)
 {
-#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
    Ecore_X_Window *winp;
 
    winp = malloc(sizeof(Ecore_X_Window));
@@ -2623,20 +2643,24 @@ ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window wi
 	ee->engine.x.win_extra = eina_list_append(ee->engine.x.win_extra, winp);
 	ecore_event_window_register(win, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
      }
-#else
-#endif
 }
+#else
+EAPI void
+ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee __UNUSED__, Ecore_X_Window win __UNUSED__)
+{
+}
+#endif
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
 EAPI Ecore_Evas *
 ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 		      int x, int y, int w, int h)
 {
-#ifdef BUILD_ECORE_EVAS_OPENGL_X11
 # ifdef HAVE_ECORE_X_XCB
    Ecore_Evas *ee = NULL;
 # else
@@ -2703,97 +2727,119 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 # endif /* HAVE_ECORE_X_XCB */
 
    return ee;
-#else
-   disp_name = NULL;
-   parent = 0;
-   x = y = w = h = 0;
-   return NULL;
-#endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 }
+#else
+EAPI Ecore_Evas *
+ecore_evas_gl_x11_new(const char *disp_name __UNUSED__, Ecore_X_Window parent __UNUSED__,
+		      int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
+{
+   return NULL;
+}
+#endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
 EAPI Ecore_X_Window
 ecore_evas_gl_x11_window_get(const Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_OPENGL_X11
    return (Ecore_X_Window) ecore_evas_window_get(ee);
-#else
-   return 0;
-#endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 }
+#else
+EAPI Ecore_X_Window
+ecore_evas_gl_x11_window_get(const Ecore_Evas *ee __UNUSED__)
+{
+   return 0;
+}
+#endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
 EAPI Ecore_X_Window
 ecore_evas_gl_x11_subwindow_get(const Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_OPENGL_X11
    return (Ecore_X_Window) ecore_evas_window_get(ee);
-#else
-   return 0;
-#endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 }
+#else
+EAPI Ecore_X_Window
+ecore_evas_gl_x11_subwindow_get(const Ecore_Evas *ee __UNUSED__)
+{
+   return 0;
+}
+#endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
 EAPI void
 ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee, int on)
 {
-#ifdef BUILD_ECORE_EVAS_OPENGL_X11
    ee->engine.x.direct_resize = on;
-#else
-   return;
-#endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 }
+#else
+EAPI void
+ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee __UNUSED__, int on __UNUSED__)
+{
+}
+#endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
 EAPI int
 ecore_evas_gl_x11_direct_resize_get(const Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_OPENGL_X11
    return ee->engine.x.direct_resize;
-#else
-   return 0;
-#endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 }
+#else
+EAPI int
+ecore_evas_gl_x11_direct_resize_get(const Ecore_Evas *ee __UNUSED__)
+{
+   return 0;
+}
+#endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
 EAPI void
 ecore_evas_gl_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win)
 {
-#ifdef BUILD_ECORE_EVAS_OPENGL_X11
    ecore_evas_software_x11_extra_event_window_add(ee, win);
-#endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 }
+#else
+EAPI void
+ecore_evas_gl_x11_extra_event_window_add(Ecore_Evas *ee __UNUSED__, Ecore_X_Window win __UNUSED__)
+{
+}
+#endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
 EAPI Ecore_Evas *
 ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 		      int x, int y, int w, int h)
 {
-#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
    Evas_Engine_Info_XRender_X11 *einfo;
    Ecore_Evas *ee;
    int rmethod;
@@ -2937,96 +2983,119 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
    ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
    ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
    return ee;
-#else
-   return NULL;
-#endif /* ! BUILD_ECORE_EVAS_XRENDER_X11 && ! BUILD_ECORE_EVAS_XRENDER_XCB */
 }
+#else
+EAPI Ecore_Evas *
+ecore_evas_xrender_x11_new(const char *disp_name __UNUSED__, Ecore_X_Window parent __UNUSED__,
+                           int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
+{
+   return NULL;
+}
+#endif /* ! BUILD_ECORE_EVAS_XRENDER_X11 && ! BUILD_ECORE_EVAS_XRENDER_XCB */
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
 EAPI Ecore_X_Window
 ecore_evas_xrender_x11_window_get(const Ecore_Evas *ee)
 {
-#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
    return (Ecore_X_Window) ecore_evas_window_get(ee);
-#else
-   return 0;
-#endif /* ! BUILD_ECORE_EVAS_XRENDER_X11 && ! BUILD_ECORE_EVAS_XRENDER_XCB */
 }
+#else
+EAPI Ecore_X_Window
+ecore_evas_xrender_x11_window_get(const Ecore_Evas *ee __UNUSED__)
+{
+   return 0;
+}
+#endif /* ! BUILD_ECORE_EVAS_XRENDER_X11 && ! BUILD_ECORE_EVAS_XRENDER_XCB */
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
 EAPI Ecore_X_Window
 ecore_evas_xrender_x11_subwindow_get(const Ecore_Evas *ee)
 {
-#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
    return (Ecore_X_Window) ecore_evas_window_get(ee);
-#else
-   return 0;
-#endif /* ! BUILD_ECORE_EVAS_XRENDER_X11 && ! BUILD_ECORE_EVAS_XRENDER_XCB */
 }
+#else
+EAPI Ecore_X_Window
+ecore_evas_xrender_x11_subwindow_get(const Ecore_Evas *ee __UNUSED__)
+{
+   return 0;
+}
+#endif /* ! BUILD_ECORE_EVAS_XRENDER_X11 && ! BUILD_ECORE_EVAS_XRENDER_XCB */
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
 EAPI void
 ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee, int on)
 {
-#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
    ee->engine.x.direct_resize = on;
-#else
-   return;
-#endif /* ! BUILD_ECORE_EVAS_XRENDER_X11 && ! BUILD_ECORE_EVAS_XRENDER_XCB */
 }
+#else
+EAPI void
+ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee __UNUSED__, int on __UNUSED__)
+{
+}
+#endif /* ! BUILD_ECORE_EVAS_XRENDER_X11 && ! BUILD_ECORE_EVAS_XRENDER_XCB */
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
 EAPI int
 ecore_evas_xrender_x11_direct_resize_get(const Ecore_Evas *ee)
 {
-#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
    return ee->engine.x.direct_resize;
-#else
-   return 0;
-#endif /* ! BUILD_ECORE_EVAS_XRENDER_X11 && ! BUILD_ECORE_EVAS_XRENDER_XCB */
 }
+#else
+EAPI int
+ecore_evas_xrender_x11_direct_resize_get(const Ecore_Evas *ee __UNUSED__)
+{
+   return 0;
+}
+#endif /* ! BUILD_ECORE_EVAS_XRENDER_X11 && ! BUILD_ECORE_EVAS_XRENDER_XCB */
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
 EAPI void
 ecore_evas_xrender_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win)
 {
-#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
    ecore_evas_software_x11_extra_event_window_add(ee, win);
-#else
-   return;
-#endif /* ! BUILD_ECORE_EVAS_XRENDER_X11 && ! BUILD_ECORE_EVAS_XRENDER_XCB */
 }
+#else
+EAPI void
+ecore_evas_xrender_x11_extra_event_window_add(Ecore_Evas *ee __UNUSED__, Ecore_X_Window win __UNUSED__)
+{
+}
+#endif /* ! BUILD_ECORE_EVAS_XRENDER_X11 && ! BUILD_ECORE_EVAS_XRENDER_XCB */
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
 EAPI Ecore_Evas *
 ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
                                int x, int y, int w, int h)
 {
-#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
    Evas_Engine_Info_Software_16_X11 *einfo;
    Ecore_Evas *ee;
    int argb = 0;
@@ -3142,50 +3211,63 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
    ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
    ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
    return ee;
-#else
-   return NULL;
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 }
+#else
+EAPI Ecore_Evas *
+ecore_evas_software_x11_16_new(const char *disp_name __UNUSED__, Ecore_X_Window parent __UNUSED__,
+                               int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
+{
+   return NULL;
+}
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
 EAPI Ecore_X_Window
 ecore_evas_software_x11_16_window_get(const Ecore_Evas *ee)
 {
-#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
    return (Ecore_X_Window) ecore_evas_window_get(ee);
-#else
-   return 0;
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 }
+#else
+EAPI Ecore_X_Window
+ecore_evas_software_x11_16_window_get(const Ecore_Evas *ee __UNUSED__)
+{
+   return 0;
+}
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
 EAPI Ecore_X_Window
 ecore_evas_software_x11_16_subwindow_get(const Ecore_Evas *ee)
 {
-#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
    return (Ecore_X_Window) ecore_evas_window_get(ee);
-#else
-   return 0;
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 }
+#else
+EAPI Ecore_X_Window
+ecore_evas_software_x11_16_subwindow_get(const Ecore_Evas *ee __UNUSED__)
+{
+   return 0;
+}
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
 EAPI void
 ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee, int on)
 {
-#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
    ee->engine.x.direct_resize = on;
    if (ee->prop.avoid_damage)
      {
@@ -3205,35 +3287,42 @@ ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee, int on)
  */
 	  }
      }
-#else
-   return;
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 }
+#else
+EAPI void
+ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee __UNUSED__, int on __UNUSED__)
+{
+}
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
 EAPI int
 ecore_evas_software_x11_16_direct_resize_get(const Ecore_Evas *ee)
 {
-#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
    return ee->engine.x.direct_resize;
-#else
-   return 0;
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 }
+#else
+EAPI int
+ecore_evas_software_x11_16_direct_resize_get(const Ecore_Evas *ee __UNUSED__)
+{
+   return 0;
+}
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
  */
+#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
 EAPI void
 ecore_evas_software_x11_16_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win)
 {
-#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
    Ecore_X_Window *winp;
 
    winp = malloc(sizeof(Ecore_X_Window));
@@ -3243,6 +3332,10 @@ ecore_evas_software_x11_16_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window
 	ee->engine.x.win_extra = eina_list_append(ee->engine.x.win_extra, winp);
 	ecore_event_window_register(win, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
      }
-#else
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 }
+#else
+EAPI void
+ecore_evas_software_x11_16_extra_event_window_add(Ecore_Evas *ee __UNUSED__, Ecore_X_Window win __UNUSED__)
+{
+}
+#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */

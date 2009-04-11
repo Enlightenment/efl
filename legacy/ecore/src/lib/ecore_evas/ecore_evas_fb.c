@@ -441,7 +441,7 @@ _ecore_evas_rotation_set(Ecore_Evas *ee, int rotation)
 }
 
 static void
-_ecore_evas_object_cursor_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_ecore_evas_object_cursor_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee;
 
@@ -610,10 +610,10 @@ static const Ecore_Evas_Engine_Func _ecore_fb_engine_func =
  *
  * FIXME: To be fixed.
  */
+#ifdef BUILD_ECORE_EVAS_FB
 EAPI Ecore_Evas *
 ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
 {
-#ifdef BUILD_ECORE_EVAS_FB
    Evas_Engine_Info_FB *einfo;
    Ecore_Evas *ee;
 
@@ -698,9 +698,11 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
 
    ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
    return ee;
-#else
-   disp_name = NULL;
-   rotation = w = h = 0;
-   return NULL;
-#endif
 }
+#else
+EAPI Ecore_Evas *
+ecore_evas_fb_new(const char *disp_name __UNUSED__, int rotation __UNUSED__, int w __UNUSED__, int h __UNUSED__)
+{
+   return NULL;
+}
+#endif
