@@ -1,3 +1,10 @@
+2009-04-11  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_fcntl.c:
+	* src/lib/evil_fcntl.h:
+	support of F_GETFD in fcntl() (does nothing, actually
+	needed for last ecore change)
+
 2009-04-08  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_stdlib.c:

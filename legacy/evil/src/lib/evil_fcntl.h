@@ -32,6 +32,7 @@
  * can be satisfied.
  */
 
+# define F_GETFD    1
 # define F_SETFD    2
 # define F_SETLK    6
 # define F_SETLKW   7

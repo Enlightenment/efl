@@ -40,6 +40,18 @@ int fcntl(int fd, int cmd, ...)
    if (h == INVALID_HANDLE_VALUE)
      return -1;
 
+   if (cmd == F_GETFD)
+     {
+#if ! ( defined(__CEGCC__) || defined(__MINGW32CE__) )
+        DWORD flag;
+
+	if (!GetHandleInformation(h, &flag))
+	  return -1;
+
+	res = 0;
+#endif /* __CEGCC__ || __MINGW32CE__ */
+     }
+
    if (cmd == F_SETFD)
      {
         long flag;
