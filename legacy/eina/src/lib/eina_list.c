@@ -913,7 +913,7 @@ eina_list_remove_list(Eina_List *list, Eina_List *remove_list)
  * @return A NULL pointer
  *
  * This function frees all the nodes of @p list. It does not free the
- * data of the nodes. To free them, use #EINA_LIST_FOREACH.
+ * data of the nodes. To free them, use #EINA_LIST_FREE.
  */
 EAPI Eina_List *
 eina_list_free(Eina_List *list)
