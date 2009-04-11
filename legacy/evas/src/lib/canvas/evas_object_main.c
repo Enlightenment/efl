@@ -1202,7 +1202,6 @@ evas_object_color_set(Evas_Object *obj, int r, int g, int b, int a)
    obj->cur.color.r = r;
    obj->cur.color.g = g;
    obj->cur.color.b = b;
-   evas_object_clip_dirty(obj);
    if ((obj->cur.color.a == 0) && (a == 0)) return;
    obj->cur.color.a = a;
    evas_object_change(obj);
