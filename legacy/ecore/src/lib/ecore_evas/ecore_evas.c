@@ -9,11 +9,11 @@
 #include <string.h>
 
 #include "Ecore.h"
-#include "Ecore_Evas.h"
 #include "Ecore_Input.h"
 
 #include "ecore_private.h"
 #include "ecore_evas_private.h"
+#include "Ecore_Evas.h"
 
 static int _ecore_evas_init_count = 0;
 static Ecore_Fd_Handler *_ecore_evas_async_events_fd = NULL;
