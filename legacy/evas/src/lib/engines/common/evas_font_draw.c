@@ -2,8 +2,16 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+/* Internationalization (RTL and Arabic contextualizing)
+ * was added by Tom Hacohen (tom@stosb.com)
+ */
+
+
 #include "evas_common.h"
 #include "evas_blend_private.h"
+
+#include "evas_intl_utils.h" /*defines INTERNATIONAL_SUPPORT if possible */
+
 
 EAPI RGBA_Font_Glyph *
 evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
@@ -166,6 +174,8 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
    return 0;
 }
 
+
+
 static void
 evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const char *text,
                                RGBA_Gfx_Func func, int ext_x, int ext_y, int ext_w, int ext_h, RGBA_Font_Int *fi,
@@ -178,12 +188,28 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
    FT_UInt prev_index;
    DATA32 *im;
    int c;
+   int char_index = 0; /* the index of the current char */
+   
+#ifdef INTERNATIONAL_SUPPORT
+   int bidi_err = 0;
+   /*FIXME: should get the direction by parmater */
+   FriBidiCharType direction = FRIBIDI_TYPE_ON;
+   FriBidiLevel *level_list;
+
+   /* change the text to visual ordering and update the level list
+    * for as minimum impact on the code as possible just use text as an
+    * holder, will change in the future.*/
+   {
+      char *tmp = evas_intl_utf8_to_visual(text, &bidi_err, &direction, &level_list);
+      text = (tmp) ? tmp : text;
+   }
+#endif
 
    pen_x = x;
    pen_y = y;
    prev_index = 0;
    im = dst->image.data;
-   for (c = 0, chr = 0; text[chr];)
+   for (char_index = 0, c = 0, chr = 0; text[chr]; char_index++)
      {
 	FT_UInt index;
 	RGBA_Font_Glyph *fg;
@@ -196,10 +222,24 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 	/* hmmm kerning means i can't sanely do my own cached metric tables! */
 	/* grrr - this means font face sharing is kinda... not an option if */
 	/* you want performance */
-        if ((use_kerning) && (prev_index) && (index) &&
-	    (pface == fi->src->ft.face))
-	  if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
-	    pen_x += kern;
+	  if ((use_kerning) && (prev_index) && (index) &&
+	     (pface == fi->src->ft.face)) {		  
+#ifdef INTERNATIONAL_SUPPORT
+	    /* if it's rtl, the kerning matching should be reversed, i.e prev
+	    * index is now the index and the other way around. */
+	    if (evas_intl_is_rtl_char(level_list, char_index)) {
+	      if (evas_common_font_query_kerning(fi, index, prev_index, &kern)) 
+  	       pen_x += kern;
+  	    }
+	    else
+#endif
+
+	    {
+
+	      if (evas_common_font_query_kerning(fi, prev_index, index, &kern)) 
+	        pen_x += kern;  
+	    }
+	  }
 
 	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
@@ -347,6 +387,12 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 	pen_x += fg->glyph->advance.x >> 16;
 	prev_index = index;
      }
+#ifdef INTERNATIONAL_SUPPORT
+   if (bidi_err < 0) {
+   	free(level_list);
+   	free(text);
+   }
+#endif
 }
 
 EAPI void
