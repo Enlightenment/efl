@@ -53,14 +53,12 @@ _on_focus_hook(void *data, Evas_Object *obj)
 static char *
 _buf_append(char *buf, const char *str, int *len, int *alloc)
 {
-   int len2;
-   
-   len2 = strlen(str);
+   int len2 = strlen(str);
    if ((*len + len2) >= *alloc)
      {
 	char *buf2;
 	
-	buf2 = realloc(buf, *alloc + 512);
+	buf2 = realloc(buf, *alloc + len2 + 512);
 	if (!buf2) return NULL;
 	buf = buf2;
 	*alloc += 512;
