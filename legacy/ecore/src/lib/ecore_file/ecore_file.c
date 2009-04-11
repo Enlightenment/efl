@@ -250,6 +250,18 @@ ecore_file_recursive_rm(const char *dir)
    return 1;
 }
 
+static inline int
+_ecore_file_mkpath_if_not_exists(const char *path)
+{
+   struct stat st;
+   if (stat(path, &st) < 0)
+     return ecore_file_mkdir(path);
+   else if (!S_ISDIR(st.st_mode))
+     return 0;
+   else
+     return 1;
+}
+
 /**
  * Create a complete path
  * @param  path The path to create
@@ -261,27 +273,23 @@ EAPI int
 ecore_file_mkpath(const char *path)
 {
    char ss[PATH_MAX];
-   int  i;
+   unsigned int i;
 
-   ss[0] = 0;
-   i = 0;
-   while (path[i])
+   if (ecore_file_is_dir(path))
+     return 1;
+
+   for (i = 0; path[i] != '\0'; ss[i] = path[i], i++)
      {
 	if (i == sizeof(ss) - 1) return 0;
-	ss[i] = path[i];
-	ss[i + 1] = 0;
-	if (path[i] == '/')
+	if ((path[i] == '/') && (i > 0))
 	  {
-	     ss[i] = 0;
-	     if ((ecore_file_exists(ss)) && (!ecore_file_is_dir(ss))) return 0;
-	     else if (!ecore_file_exists(ss)) ecore_file_mkdir(ss);
-	     ss[i] = '/';
+	     ss[i] = '\0';
+	     if (!_ecore_file_mkpath_if_not_exists(ss))
+	       return 0;
 	  }
-	i++;
      }
-   if ((ecore_file_exists(ss)) && (!ecore_file_is_dir(ss))) return 0;
-   else if (!ecore_file_exists(ss)) ecore_file_mkdir(ss);
-   return 1;
+   ss[i] = '\0';
+   return _ecore_file_mkpath_if_not_exists(ss);
 }
 
 /**
