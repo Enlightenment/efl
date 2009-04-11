@@ -8,9 +8,6 @@
 # include <config.h>
 #endif
 
-#include "ecore_private.h"
-#include "Ecore_Data.h"
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -20,6 +17,9 @@
 #endif
 
 #include <Evas.h>
+#include <ecore_private.h>
+#include <Ecore_Data.h>
+#include <Ecore_Input.h>
 
 #define ECORE_MAGIC_EVAS 0x76543211
 
