@@ -6,6 +6,7 @@
 # include <config.h>
 #endif
 
+#include <Ecore_Str.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
@@ -170,6 +171,100 @@ ecore_file_mkdirs(const char **dirs)
    for (; *dirs != NULL; dirs++)
      if (ecore_file_mkdir(*dirs))
        i++;
+   return i;
+}
+
+/**
+ * Create complete list of sub-directories in a batch (optimized).
+ *
+ * @param base the base directory to act on, will be created if does
+ *     not exists.
+ * @param subdirs list of directories, null terminated. These are
+ *     created similarly to ecore_file_mkdir(), so same mode and whole
+ *     path to that point must exists. So if creating base/a/b/c,
+ *     provide subdirs with "a", "a/b" and "a/b/c" in that order!
+ *
+ * @return number of successfull directories created, -1 if subdirs or
+ *     base is NULL or invalid.
+ *
+ * @see ecore_file_mkdir() and ecore_file_mkpaths()
+ */
+EAPI int
+ecore_file_mksubdirs(const char *base, const char **subdirs)
+{
+#ifndef HAVE_ATFILE_SOURCE
+   char buf[PATH_MAX];
+   int baselen;
+#else
+   int fd;
+   DIR *dir;
+#endif
+   int i;
+
+   if (!subdirs) return -1;
+   if ((!base) || (base[0] == '\0')) return -1;
+
+   if ((!ecore_file_is_dir(base)) && (!ecore_file_mkpath(base)))
+     return 0;
+
+#ifndef HAVE_ATFILE_SOURCE
+   baselen = ecore_strlcpy(buf, base, sizeof(buf));
+   if ((baselen < 1) || (baselen + 1 >= (int)sizeof(buf)))
+     return 0;
+
+   if (buf[baselen - 1] != '/')
+     {
+	buf[baselen] = '/';
+	baselen++;
+     }
+#else
+   dir = opendir(base);
+   if (!dir)
+     return 0;
+   fd = dirfd(dir);
+#endif
+
+   i = 0;
+   for (; *subdirs != NULL; subdirs++)
+     {
+	struct stat st;
+
+#ifndef HAVE_ATFILE_SOURCE
+	ecore_strlcpy(buf + baselen, *subdirs, sizeof(buf) - baselen);
+	printf("no atfile: %s\n", buf);
+	if (stat(buf, &st) == 0)
+#else
+	  printf("atfile: %s/%s\n", base, *subdirs);
+	if (fstatat(fd, *subdirs, &st, 0) == 0)
+#endif
+	  {
+	     if (S_ISDIR(st.st_mode))
+	       {
+		  i++;
+		  continue;
+	       }
+	  }
+	else
+	  {
+	     if (errno == ENOENT)
+	       {
+#ifndef HAVE_ATFILE_SOURCE
+		  if (mkdir(buf, default_mode) == 0)
+#else
+		  if (mkdirat(fd, *subdirs, default_mode) == 0)
+#endif
+		    {
+		       i++;
+		       continue;
+		    }
+		 }
+	    }
+     }
+
+#ifdef HAVE_ATFILE_SOURCE
+   closedir(dir);
+#endif
+
    return i;
 }
 

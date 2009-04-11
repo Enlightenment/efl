@@ -11,6 +11,7 @@ AC_ISC_POSIX
 
 AM_INIT_AUTOMAKE(1.6 dist-bzip2)
 AM_CONFIG_HEADER(config.h)
+AC_GNU_SOURCE
 
 AC_LIBTOOL_WIN32_DLL
 define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
@@ -669,6 +670,25 @@ AC_SUBST(lt_enable_auto_import)
 AC_FUNC_ALLOCA
 AC_CHECK_FUNCS(gettimeofday strlcpy)
 
+have_atfile_source=auto
+AC_ARG_ENABLE(atfile-source,
+        AC_HELP_STRING([--disable-atfile-source],
+                       [disable use of atfile source functions as openat and mkdirat @<:@default=detect@:>@]),
+        [have_atfile_source=$enableval], [have_atfile_source=auto])
+
+if test "x$have_atfile_source" != "xno"; then
+        AC_CHECK_FUNCS(mkdirat,
+                [
+                have_atfile_source=yes
+                AC_DEFINE(HAVE_ATFILE_SOURCE, 1, [mkdirat exists])
+                ],
+                [
+                if test "x$have_atfile_source" = "xyes"; then
+                        AC_MSG_ERROR([required atfile-source but no mkdirat()])
+                fi
+                have_atfile_source=no
+                ])
+fi
 
 ### Ecore modules
 

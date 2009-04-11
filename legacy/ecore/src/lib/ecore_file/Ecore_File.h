@@ -70,6 +70,7 @@ extern "C" {
    EAPI int         ecore_file_is_dir       (const char *file);
    EAPI int         ecore_file_mkdir        (const char *dir);
    EAPI int         ecore_file_mkdirs       (const char **dirs);
+   EAPI int         ecore_file_mksubdirs    (const char *base, const char **subdirs);
    EAPI int         ecore_file_rmdir        (const char *dir);
    EAPI int         ecore_file_recursive_rm (const char *dir);
    EAPI int         ecore_file_mkpath       (const char *path);
