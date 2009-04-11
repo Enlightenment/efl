@@ -69,9 +69,11 @@ extern "C" {
    EAPI int         ecore_file_exists       (const char *file);
    EAPI int         ecore_file_is_dir       (const char *file);
    EAPI int         ecore_file_mkdir        (const char *dir);
+   EAPI int         ecore_file_mkdirs       (const char **dirs);
    EAPI int         ecore_file_rmdir        (const char *dir);
    EAPI int         ecore_file_recursive_rm (const char *dir);
    EAPI int         ecore_file_mkpath       (const char *path);
+   EAPI int         ecore_file_mkpaths      (const char **paths);
    EAPI int         ecore_file_cp           (const char *src, const char *dst);
    EAPI int         ecore_file_mv           (const char *src, const char *dst);
    EAPI int         ecore_file_symlink      (const char *src, const char *dest);

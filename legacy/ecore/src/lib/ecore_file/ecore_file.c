@@ -155,6 +155,25 @@ ecore_file_mkdir(const char *dir)
 }
 
 /**
+ * Create complete directory in a batch.
+ *
+ * @param dirs list of directories, null terminated.
+ * @return number of successfull directories created, -1 if dirs is NULL.
+ *
+ * @see ecore_file_mkdir() and ecore_file_mkpaths()
+ */
+EAPI int
+ecore_file_mkdirs(const char **dirs)
+{
+   if (!dirs) return -1;
+   int i = 0;
+   for (; *dirs != NULL; dirs++)
+     if (ecore_file_mkdir(*dirs))
+       i++;
+   return i;
+}
+
+/**
  * Delete the given dir
  * @param  dir The name of the directory to delete
  * @return 1 on success, 0 on failure
@@ -235,6 +254,8 @@ ecore_file_recursive_rm(const char *dir)
  * Create a complete path
  * @param  path The path to create
  * @return 1 on success, 0 on failure
+ *
+ * @see ecore_file_mkpaths() and ecore_file_mkdir()
  */
 EAPI int
 ecore_file_mkpath(const char *path)
@@ -261,6 +282,25 @@ ecore_file_mkpath(const char *path)
    if ((ecore_file_exists(ss)) && (!ecore_file_is_dir(ss))) return 0;
    else if (!ecore_file_exists(ss)) ecore_file_mkdir(ss);
    return 1;
+}
+
+/**
+ * Create complete paths in a batch.
+ *
+ * @param paths list of paths, null terminated.
+ * @return number of successfull paths created, -1 if paths is NULL.
+ *
+ * @see ecore_file_mkpath() and ecore_file_mkdirs()
+ */
+EAPI int
+ecore_file_mkpaths(const char **paths)
+{
+   if (!paths) return -1;
+   int i = 0;
+   for (; *paths != NULL; paths++)
+     if (ecore_file_mkpath(*paths))
+       i++;
+   return i;
 }
 
 /**
