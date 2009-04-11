@@ -2557,25 +2557,6 @@ ecore_evas_software_x11_window_get(const Ecore_Evas *ee __UNUSED__)
  * FIXME: To be fixed.
  */
 #if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
-EAPI Ecore_X_Window
-ecore_evas_software_x11_subwindow_get(const Ecore_Evas *ee)
-{
-   return (Ecore_X_Window) ecore_evas_window_get(ee);
-}
-#else
-EAPI Ecore_X_Window
-ecore_evas_software_x11_subwindow_get(const Ecore_Evas *ee __UNUSED__)
-{
-   return 0;
-}
-#endif
-
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- */
-#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
 EAPI void
 ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, int on)
 {
@@ -2751,25 +2732,6 @@ ecore_evas_gl_x11_window_get(const Ecore_Evas *ee)
 #else
 EAPI Ecore_X_Window
 ecore_evas_gl_x11_window_get(const Ecore_Evas *ee __UNUSED__)
-{
-   return 0;
-}
-#endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
-
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- */
-#ifdef BUILD_ECORE_EVAS_OPENGL_X11
-EAPI Ecore_X_Window
-ecore_evas_gl_x11_subwindow_get(const Ecore_Evas *ee)
-{
-   return (Ecore_X_Window) ecore_evas_window_get(ee);
-}
-#else
-EAPI Ecore_X_Window
-ecore_evas_gl_x11_subwindow_get(const Ecore_Evas *ee __UNUSED__)
 {
    return 0;
 }
@@ -3018,25 +2980,6 @@ ecore_evas_xrender_x11_window_get(const Ecore_Evas *ee __UNUSED__)
  * FIXME: To be fixed.
  */
 #if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
-EAPI Ecore_X_Window
-ecore_evas_xrender_x11_subwindow_get(const Ecore_Evas *ee)
-{
-   return (Ecore_X_Window) ecore_evas_window_get(ee);
-}
-#else
-EAPI Ecore_X_Window
-ecore_evas_xrender_x11_subwindow_get(const Ecore_Evas *ee __UNUSED__)
-{
-   return 0;
-}
-#endif /* ! BUILD_ECORE_EVAS_XRENDER_X11 && ! BUILD_ECORE_EVAS_XRENDER_XCB */
-
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- */
-#if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
 EAPI void
 ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee, int on)
 {
@@ -3235,25 +3178,6 @@ ecore_evas_software_x11_16_window_get(const Ecore_Evas *ee)
 #else
 EAPI Ecore_X_Window
 ecore_evas_software_x11_16_window_get(const Ecore_Evas *ee __UNUSED__)
-{
-   return 0;
-}
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
-
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- */
-#if BUILD_ECORE_EVAS_SOFTWARE_16_X11
-EAPI Ecore_X_Window
-ecore_evas_software_x11_16_subwindow_get(const Ecore_Evas *ee)
-{
-   return (Ecore_X_Window) ecore_evas_window_get(ee);
-}
-#else
-EAPI Ecore_X_Window
-ecore_evas_software_x11_16_subwindow_get(const Ecore_Evas *ee __UNUSED__)
 {
    return 0;
 }
