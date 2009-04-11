@@ -231,10 +231,8 @@ ecore_file_mksubdirs(const char *base, const char **subdirs)
 
 #ifndef HAVE_ATFILE_SOURCE
 	ecore_strlcpy(buf + baselen, *subdirs, sizeof(buf) - baselen);
-	printf("no atfile: %s\n", buf);
 	if (stat(buf, &st) == 0)
 #else
-	  printf("atfile: %s/%s\n", base, *subdirs);
 	if (fstatat(fd, *subdirs, &st, 0) == 0)
 #endif
 	  {
