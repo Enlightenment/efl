@@ -182,6 +182,30 @@ _elm_win_xwin_update(Elm_Win *win)
 	     if (win->xwin) 
 	       ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_DIALOG);
 	     break;
+	   case ELM_WIN_DESKTOP:
+	      if (win->xwin)
+		ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_DESKTOP);
+	      break;
+	   case ELM_WIN_DOCK:
+	      if (win->xwin)
+		ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_DOCK);
+	      break;
+	   case ELM_WIN_TOOLBAR:
+	      if (win->xwin)
+		ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_TOOLBAR);
+	      break;
+	   case ELM_WIN_MENU:
+	      if (win->xwin)
+		ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_MENU);
+	      break;
+	   case ELM_WIN_UTILITY:
+	      if (win->xwin)
+		ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_UTILITY);
+	      break;
+	   case ELM_WIN_SPLASH:
+	      if (win->xwin)
+		ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_SPLASH);
+	      break;
 	   default:
 	     break;
 	  }

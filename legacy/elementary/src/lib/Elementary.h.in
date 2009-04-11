@@ -142,7 +142,13 @@ extern "C" {
    typedef enum _Elm_Win_Type
      {
 	ELM_WIN_BASIC,
-	  ELM_WIN_DIALOG_BASIC
+	ELM_WIN_DIALOG_BASIC,
+	ELM_WIN_DESKTOP,
+	ELM_WIN_DOCK,
+	ELM_WIN_TOOLBAR,
+	ELM_WIN_MENU,
+	ELM_WIN_UTILITY,
+	ELM_WIN_SPLASH
      } Elm_Win_Type;
 
    typedef enum _Elm_Win_Keyboard_Mode
