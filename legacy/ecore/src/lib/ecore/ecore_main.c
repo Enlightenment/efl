@@ -29,6 +29,10 @@
 # endif
 #endif
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "ecore_private.h"
 #include "Ecore.h"
 
