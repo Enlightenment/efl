@@ -55,7 +55,7 @@ ecore_file_init()
 //     goto error;
    return init;
 
-error:
+//error:
 
    ecore_file_monitor_shutdown();
    ecore_file_path_shutdown();
