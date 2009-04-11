@@ -13,6 +13,9 @@ AM_CPPFLAGS	     = -I. \
 		       @EET_CFLAGS@ @pthread_cflags@ \
 		       @WIN32_CFLAGS@ @EINA_CFLAGS@
 
+libevas_engine_common_la_CFLAGS  = @FRIBIDI_CFLAGS@ 
+libevas_engine_common_la_LDFLAGS  = @FRIBIDI_LIBS@
+
 noinst_LTLIBRARIES      = libevas_engine_common.la
 libevas_engine_common_la_SOURCES  = \
 evas_op_copy_main_.c \
@@ -63,7 +66,9 @@ evas_scale_smooth.c \
 evas_scale_span.c \
 evas_tiler.c \
 evas_regionbuf.c \
-evas_pipe.c
+evas_pipe.c \
+evas_intl_utils.c \
+evas_intl/evas_intl_arabic.c
 
 EXTRA_DIST = \
 evas_blend.h \
@@ -98,7 +103,7 @@ evas_scale_smooth_scaler_downy.c \
 evas_scale_smooth_scaler_noscale.c \
 evas_scale_smooth_scaler_up.c \
 evas_scale_span.h \
-evas_pipe.h
+evas_pipe.h 
 
 libevas_engine_common_la_DEPENDENCIES = \
 $(top_builddir)/config.h

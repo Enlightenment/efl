@@ -138,6 +138,10 @@ AC_ARG_ENABLE(strict,
   [use_strict="no"]
 )
 
+##################################################################
+#fribidi support - OPTIONAL!
+PKG_CHECK_MODULES([FRIBIDI], [fribidi], ,HAS_BIDI=0)
+AC_CHECK_HEADERS(fribidi/fribidi.h)
 #####################################################################
 # Check evas strong dependencie
 
