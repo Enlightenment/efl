@@ -76,11 +76,10 @@ ethumb_shutdown(void)
    if (initcount == 0)
      {
 	eina_stringshare_shutdown();
-	eina_stringshare_init();
-	evas_init();
-	ecore_init();
-	ecore_evas_init();
-	edje_init();
+	evas_shutdown();
+	ecore_shutdown();
+	ecore_evas_shutdown();
+	edje_shutdown();
      }
 
    return initcount;
