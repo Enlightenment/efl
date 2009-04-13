@@ -241,3 +241,62 @@ ecore_str_split(const char *str, const char *delim, int max_tokens)
 
    return str_array;
 }
+
+/**
+ * Join two strings of known length and store the result in @a dst buffer.
+ *
+ * @param dst where to store the result.
+ * @param size byte size of dst, will write at most (size - 1)
+ *     characters and then the '\0' (null terminator).
+ * @param sep separator character to use.
+ * @param a first string to use, before @a sep.
+ * @param a_len length of @a a, not including '\0' (strlen()-like)
+ * @param b second string to use, after @a sep.
+ * @param b_len length of @a b, not including '\0' (strlen()-like)
+ *
+ * @return the number of characters printed (not including the
+ *     trailing '\0' used to end output to strings). Just like
+ *     snprintf(), it will not write more than @a size bytes, thus a
+ *     return value of @a size or more means that the output was
+ *     truncated.
+ *
+ * @see ecore_str_join() and ecore_str_join_static()
+ */
+size_t
+ecore_str_join_len(char *dst, size_t size, char sep, const char *a, size_t a_len, const char *b, size_t b_len)
+{
+   size_t ret = a_len + b_len + 1;
+   size_t off;
+
+   if (size < 1) return ret;
+
+   if (size <= a_len)
+     {
+	memcpy(dst, a, size - 1);
+	dst[size - 1] = '\0';
+	return ret;
+     }
+
+   memcpy(dst, a, a_len);
+   off = a_len;
+
+   if (size <= off + 1)
+     {
+	dst[size - 1] = '\0';
+	return ret;
+     }
+
+   dst[off] = sep;
+   off++;
+
+   if (size <= off + b_len + 1)
+     {
+	memcpy(dst + off, b, size - off - 1);
+	dst[size - 1] = '\0';
+	return ret;
+     }
+
+   memcpy(dst + off, b, b_len);
+   dst[off + b_len] = '\0';
+   return ret;
+}
