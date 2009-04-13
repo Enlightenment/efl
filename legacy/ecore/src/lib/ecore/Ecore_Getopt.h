@@ -382,6 +382,7 @@ extern "C" {
 
   /* helper functions to be used with ECORE_GETOPT_CALLBACK_*() */
   EAPI unsigned char ecore_getopt_callback_geometry_parse(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage);
+  EAPI unsigned char ecore_getopt_callback_size_parse(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage);
 
 
 #ifdef __cplusplus

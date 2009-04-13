@@ -1666,3 +1666,28 @@ ecore_getopt_callback_geometry_parse(const Ecore_Getopt *parser __UNUSED__, cons
 
    return 1;
 }
+
+/**
+ * Helper ecore_getopt callback to parse geometry size (WxH).
+ *
+ * Storage must be a pointer to @c Eina_Rectangle and will be used to
+ * store the two values passed in the given string and 0 in the x and y
+ * fields.
+ *
+ * @c callback_data value is ignored, you can safely use @c NULL.
+ */
+unsigned char
+ecore_getopt_callback_size_parse(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage)
+{
+   Eina_Rectangle *v = (Eina_Rectangle *)storage->ptrp;
+
+   if (sscanf(str, "%dx%d", &v->w, &v->h) != 2)
+     {
+	fprintf(stderr, "ERROR: incorrect size value '%s'\n", str);
+	return 0;
+     }
+   v->x = 0;
+   v->y = 0;
+
+   return 1;
+}
