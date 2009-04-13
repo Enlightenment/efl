@@ -20,173 +20,42 @@
  *
  * @author Rafael Antognolli <antognolli@profusion.mobi>
  */
+#include <config.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <getopt.h>
 #include <string.h>
+#include <limits.h>
 #include <Ethumb.h>
 #include <Eina.h>
+#include <Ecore_Getopt.h>
 
-static const char short_options[] = "s:f:a:d:c:t:h";
-
-static const struct option long_options[] = {
-       {"size", 1, NULL, 's'},
-       {"format", 1, NULL, 'f'},
-       {"aspect", 1, NULL, 'a'},
-       {"directory", 1, NULL, 'd'},
-       {"category", 1, NULL, 'c'},
-       {"theme", 1, NULL, 't'},
-       {"help", 0, NULL, 'h'},
-       {NULL, 0, 0, 0}
+const char *aspect_opt[] = { "keep", "ignore", "crop", NULL };
+const char *format_opt[] = { "png", "jpg", NULL };
+struct frame
+{
+   const char *file;
+   const char *group;
+   const char *swallow;
 };
 
-static const char *help_texts[] = {
-     "size expected",
-     "file format to save",
-     "original image aspect ratio",
-     "directory to save thumbnails",
-     "thumbnails category",
-     "path to theme file, group and swallow part",
-     "this message",
-     NULL
-};
-
-static void
-show_help(const char *prg_name)
+static unsigned char
+_ethumb_getopt_callback_frame_parse(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage)
 {
-   const struct option *lo;
-   const char **help;
-   int largest;
-
-   fprintf(stderr,
-	   "\nUsage:\n"
-	   "\t%s [options] <image> [thumbnail path]\n"
-	   "where options are:\n",
-	   prg_name);
-
-   lo = long_options;
-
-   largest = 0;
-   for (; lo->name != NULL; lo++)
-     {
-	int len = strlen(lo->name) + 9;
-
-	if (lo->has_arg)
-	  len += sizeof("=ARG") - 1;
-
-	if (largest < len)
-	  largest = len;
-     }
-
-   lo = long_options;
-   help = help_texts;
-   for (; lo->name != NULL; lo++, help++)
-     {
-	int len, i;
-
-	fprintf(stderr, "\t-%c, --%s", lo->val, lo->name);
-	len = strlen(lo->name) + 7;
-	if (lo->has_arg)
-	  {
-	     fputs("=ARG", stderr);
-	     len += sizeof("=ARG") - 1;
-	  }
-
-	for (i = len; i < largest; i++)
-	  fputc(' ', stderr);
-
-	fputs("   ", stderr);
-	fputs(*help, stderr);
-	fputc('\n', stderr);
-     }
-   fputc('\n', stderr);
-}
-
-static int
-parse_size(const char *text, int *w, int *h)
-{
-   const char *sep;
-   char *p;
-
-   sep = strchr(text, 'x');
-   if (!sep)
-     {
-	fprintf(stderr,
-		"ERROR: invalid size format, must be WIDTHxHEIGHT, got '%s'\n",
-	      text);
-	return 0;
-     }
-   sep++;
-
-   *w = strtol(text, &p, 10);
-   if (text == p)
-     {
-	fprintf(stderr, "ERROR: could not parse size width '%s'\n", text);
-	return 0;
-     }
-
-   *h = strtol(sep, &p, 10);
-   if (sep == p)
-     {
-	fprintf(stderr, "ERROR: could not parse size height '%s'\n", text);
-	return 0;
-     }
-
-   return 1;
-}
-
-static int
-parse_format(const char *text, int *f)
-{
-   if (!strncmp(text, "png", 3))
-     *f = ETHUMB_THUMB_FDO;
-   else if (!strncmp(text, "jpg", 3))
-     *f = ETHUMB_THUMB_JPEG;
-   else
-     {
-	fprintf(stderr, "ERROR: invalid format specified: %s\n", text);
-	fprintf(stderr, "valid options: \"png\" and \"jpg\"\n");
-	return 0;
-     }
-
-   return 1;
-}
-
-static int
-parse_aspect(const char *text, int *a)
-{
-   if (!strncmp(text, "keep", sizeof("keep")))
-     *a = ETHUMB_THUMB_KEEP_ASPECT;
-   else if (!strncmp(text, "ignore", sizeof("ignore")))
-     *a = ETHUMB_THUMB_IGNORE_ASPECT;
-   else if (!strncmp(text, "crop", sizeof("crop")))
-     *a = ETHUMB_THUMB_CROP;
-   else
-     {
-	fprintf(stderr, "ERROR: invalid aspect option: %s\n", text);
-	fprintf(stderr, "valid options: \"keep\", \"ignore\" and \"crop\"\n");
-	return 0;
-     }
-
-   return 1;
-}
-
-static int
-parse_theme(const char *text, const char **file, const char **group, const char **swallow)
-{
-   char *sep;
+   struct frame *f = (struct frame *)storage->ptrp;
    const char *tfile, *tgroup, *tswallow;
+   char *text;
+   char *sep;
 
    tfile = NULL;
    tgroup = NULL;
    tswallow = NULL;
 
+   text = strdup(str);
+
    sep = strchr(text, ':');
    if (!sep)
      {
-	fprintf(stderr, "ERROR: invalid theme: %s\n"
-			"format: '<filename>:<group>:<swallow part>'\n",
-			text);
+	fprintf(stderr, "ERROR: invalid theme: '%s'\n", text);
 	goto error;
      }
    *sep = '\0';
@@ -197,9 +66,7 @@ parse_theme(const char *text, const char **file, const char **group, const char 
    sep = strchr(text, ':');
    if (!sep)
      {
-	fprintf(stderr, "ERROR: invalid theme: %s\n"
-			"format: '<filename>:<group>:<swallow part>'\n",
-			text);
+	fprintf(stderr, "ERROR: invalid theme: '%s'\n", text);
 	goto error;
      }
    *sep = '\0';
@@ -208,9 +75,9 @@ parse_theme(const char *text, const char **file, const char **group, const char 
    sep++;
    tswallow = eina_stringshare_add(sep);
 
-   *file = tfile;
-   *group = tgroup;
-   *swallow = tswallow;
+   f->file = tfile;
+   f->group = tgroup;
+   f->swallow = tswallow;
 
    return 1;
 
@@ -220,140 +87,124 @@ parse_theme(const char *text, const char **file, const char **group, const char 
    return 0;
 }
 
-static int
-parse_options(Ethumb *e, int argc, char *argv[])
-{
-   int opt_index;
-   const char *size, *format, *aspect, *directory;
-   const char *category, *theme;
-   int r;
-
-   size = NULL;
-   format = NULL;
-   aspect = NULL;
-   directory = NULL;
-   category = NULL;
-   theme = NULL;
-
-   optind = 0;
-   opterr = 0;
-   opt_index = 0;
-   while (1)
-     {
-	int c;
-
-	c = getopt_long(argc, argv, short_options, long_options, &opt_index);
-	if (c == -1)
-	  break;
-
-	switch (c)
-	  {
-	   case 's':
-	      size = optarg;
-	      break;
-	   case 'f':
-	      format = optarg;
-	      break;
-	   case 'a':
-	      aspect = optarg;
-	      break;
-	   case 'd':
-	      directory = optarg;
-	      break;
-	   case 'c':
-	      category = optarg;
-	      break;
-	   case 't':
-	      theme = optarg;
-	      break;
-	   default:
-	      break;
-	  }
-     }
-
-   if (size)
-     {
-	int w, h;
-	r = parse_size(size, &w, &h);
-	if (r)
-	  ethumb_thumb_size_set(e, w, h);
-	else
-	  return 0;
-     }
-
-   if (format)
-     {
-	int f;
-	r = parse_format(format, &f);
-	if (r)
-	  ethumb_thumb_format_set(e, f);
-	else
-	  return 0;
-     }
-
-   if (aspect)
-     {
-	int a;
-	r = parse_aspect(aspect, &a);
-	if (r)
-	  ethumb_thumb_aspect_set(e, a);
-	else
-	  return 0;
-     }
-
-   if (directory)
-     ethumb_thumb_dir_path_set(e, directory);
-
-   if (category)
-     ethumb_thumb_category_set(e, category);
-
-   if (theme)
-     {
-	const char *file, *group, *swallow;
-	r = parse_theme(theme, &file, &group, &swallow);
-	if (r)
-	  {
-	     ethumb_frame_set(e, file, group, swallow);
-	     eina_stringshare_del(file);
-	     eina_stringshare_del(group);
-	     eina_stringshare_del(swallow);
-	  }
-	else
-	  return 0;
-     }
-
-   return 1;
-}
+const Ecore_Getopt optdesc = {
+  "ethumb",
+  NULL,
+  PACKAGE_VERSION,
+  "(C) 2009 - ProFUSION embedded systems",
+  "LGPL v3 - GNU Lesser General Public License",
+  "Thumbnails generator.\n"
+     "\n"
+     "This program uses ethumb to create thumbnails from pictures. "
+     "It's an example of use and a test for ethumb.\n",
+  0,
+  {
+     ECORE_GETOPT_CALLBACK_ARGS
+     ('s', "size", "thumbnail size expected.",
+      "WxH", ecore_getopt_callback_size_parse, NULL),
+     ECORE_GETOPT_CHOICE
+     ('f', "format", "file format to save.", format_opt),
+     ECORE_GETOPT_CHOICE
+     ('a', "aspect", "original image aspect ratio.", aspect_opt),
+     ECORE_GETOPT_STORE_STR
+     ('d', "directory", "directory to save thumbnails."),
+     ECORE_GETOPT_STORE_STR
+     ('c', "category", "thumbnails category."),
+     ECORE_GETOPT_CALLBACK_ARGS
+     ('t', "theme", "path to theme file, group and swallow part.",
+      "file:group:swallow_part", _ethumb_getopt_callback_frame_parse, NULL),
+     ECORE_GETOPT_LICENSE('L', "license"),
+     ECORE_GETOPT_COPYRIGHT('C', "copyright"),
+     ECORE_GETOPT_VERSION('V', "version"),
+     ECORE_GETOPT_HELP('h', "help"),
+     ECORE_GETOPT_SENTINEL
+  }
+};
 
 int
 main(int argc, char *argv[])
 {
    Ethumb *e;
    Ethumb_File *ef;
-   int r;
+   Eina_Bool quit_option = 0;
+   Eina_Rectangle geometry = {-1, -1, -1, -1};
+   unsigned int format = 0, aspect = 0;
+   char *format_str = NULL;
+   char *aspect_str = NULL;
+   char *directory = NULL;
+   char *category = NULL;
+   struct frame frame = {NULL};
+   int arg_index;
+   int i;
+
+   int r = 1;
+   ethumb_init();
+
+   Ecore_Getopt_Value values[] = {
+	ECORE_GETOPT_VALUE_PTR_CAST(geometry),
+	ECORE_GETOPT_VALUE_PTR_CAST(format_str),
+	ECORE_GETOPT_VALUE_PTR_CAST(aspect_str),
+	ECORE_GETOPT_VALUE_STR(directory),
+	ECORE_GETOPT_VALUE_STR(category),
+	ECORE_GETOPT_VALUE_PTR_CAST(frame),
+	ECORE_GETOPT_VALUE_BOOL(quit_option),
+	ECORE_GETOPT_VALUE_BOOL(quit_option),
+	ECORE_GETOPT_VALUE_BOOL(quit_option),
+	ECORE_GETOPT_VALUE_BOOL(quit_option),
+	ECORE_GETOPT_VALUE_NONE
+   };
+
+   arg_index = ecore_getopt_parse(&optdesc, values, argc, argv);
+   if (arg_index < 0)
+     {
+	fprintf(stderr, "Could not parse arguments.\n");
+	r = 0;
+     }
+
+   for (i = 0; i < 2; i++)
+     if (format_opt[i] == format_str)
+       {
+	  format = i;
+	  break;
+       }
+
+   for (i = 0; i < 3; i++)
+     if (aspect_opt[i] == aspect_str)
+       {
+	  aspect = i;
+	  break;
+       }
 
    ef = NULL;
 
-   ethumb_init();
-
    e = ethumb_new();
 
-   r = parse_options(e, argc, argv);
+   ethumb_thumb_format_set(e, format);
+   ethumb_thumb_aspect_set(e, aspect);
+   if (directory) ethumb_thumb_dir_path_set(e, directory);
+   if (category) ethumb_thumb_category_set(e, category);
+   if (geometry.w > 0 && geometry.h > 0)
+     ethumb_thumb_size_set(e, geometry.w, geometry.h);
+   if (frame.file)
+     {
+	ethumb_frame_set(e, frame.file, frame.group, frame.swallow);
+	eina_stringshare_del(frame.file);
+	eina_stringshare_del(frame.group);
+	eina_stringshare_del(frame.swallow);
+     }
 
-   if (r && optind < argc)
-     ef = ethumb_file_new(e, argv[optind++]);
-   if (ef && optind < argc)
-     ethumb_file_thumb_path_set(ef, argv[optind++]);
+   if (r && arg_index < argc)
+     ef = ethumb_file_new(e, argv[arg_index++]);
+   if (ef && arg_index < argc)
+     ethumb_file_thumb_path_set(ef, argv[arg_index++]);
 
    if (ef)
      ethumb_file_generate(ef);
-   else
-     show_help(argv[0]);
 
    ethumb_file_free(ef);
    ethumb_free(e);
 
    ethumb_shutdown();
 
-   return 0;
+   return !r;
 }
