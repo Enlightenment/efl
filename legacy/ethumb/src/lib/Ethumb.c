@@ -23,6 +23,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#include <eina_safety_checks.h>
 #include "Ethumb.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -94,8 +95,7 @@ ethumb_new(void)
    Evas_Object *o, *img;
 
    ethumb = calloc(1, sizeof(Ethumb));
-   if (!ethumb)
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ethumb, NULL);
 
    ethumb->tw = THUMB_SIZE_NORMAL;
    ethumb->th = THUMB_SIZE_NORMAL;
@@ -185,8 +185,9 @@ ethumb_free(Ethumb *ethumb)
 EAPI void
 ethumb_thumb_fdo_set(Ethumb *e, Ethumb_Thumb_Size s)
 {
-   if (!e || (s != ETHUMB_THUMB_NORMAL && s != ETHUMB_THUMB_LARGE))
-     return;
+   EINA_SAFETY_ON_NULL_RETURN(e);
+   EINA_SAFETY_ON_FALSE_RETURN(s == ETHUMB_THUMB_NORMAL ||
+			       s == ETHUMB_THUMB_LARGE);
 
    if (s == ETHUMB_THUMB_NORMAL)
      {
@@ -212,81 +213,80 @@ ethumb_thumb_fdo_set(Ethumb *e, Ethumb_Thumb_Size s)
 EAPI void
 ethumb_thumb_size_set(Ethumb *e, int tw, int th)
 {
-   if (e && tw > 0 && th > 0)
-     {
-	e->tw = tw;
-	e->th = th;
-     }
+   EINA_SAFETY_ON_NULL_RETURN(e);
+   EINA_SAFETY_ON_FALSE_RETURN(tw > 0);
+   EINA_SAFETY_ON_FALSE_RETURN(th > 0);
+
+   e->tw = tw;
+   e->th = th;
 }
 
 EAPI void
 ethumb_thumb_size_get(const Ethumb *e, int *tw, int *th)
 {
-   if (e)
-     {
-	*tw = e->tw;
-	*th = e->th;
-     }
+   EINA_SAFETY_ON_NULL_RETURN(e);
+
+   if (tw) *tw = e->tw;
+   if (th) *th = e->th;
 }
 
 EAPI void
 ethumb_thumb_format_set(Ethumb *e, Ethumb_Thumb_Format f)
 {
-   if (e && (f == ETHUMB_THUMB_FDO || f == ETHUMB_THUMB_JPEG))
-     e->format = f;
+   EINA_SAFETY_ON_NULL_RETURN(e);
+   EINA_SAFETY_ON_FALSE_RETURN(f == ETHUMB_THUMB_FDO ||
+			       f == ETHUMB_THUMB_JPEG);
+
+   e->format = f;
 }
 
 EAPI Ethumb_Thumb_Format
 ethumb_thumb_format_get(const Ethumb *e)
 {
-   if (e)
-     return e->format;
-   else
-     return 0;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
+   return e->format;
 }
 
 EAPI void
 ethumb_thumb_aspect_set(Ethumb *e, Ethumb_Thumb_Aspect a)
 {
-   if (e && (a == ETHUMB_THUMB_KEEP_ASPECT || a == ETHUMB_THUMB_IGNORE_ASPECT
-	     || a == ETHUMB_THUMB_CROP))
-     e->aspect = a;
+   EINA_SAFETY_ON_NULL_RETURN(e);
+   EINA_SAFETY_ON_FALSE_RETURN(a == ETHUMB_THUMB_KEEP_ASPECT ||
+			       a == ETHUMB_THUMB_IGNORE_ASPECT ||
+			       a == ETHUMB_THUMB_CROP);
+
+   e->aspect = a;
 }
 
 EAPI Ethumb_Thumb_Aspect
 ethumb_thumb_aspect_get(const Ethumb *e)
 {
-   if (e)
-     return e->aspect;
-   else
-     return 0;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
+   return e->aspect;
 }
 
 EAPI void
 ethumb_thumb_crop_align_set(Ethumb *e, float x, float y)
 {
-   if (e)
-     {
-	e->crop_x = x;
-	e->crop_y = y;
-     }
+   EINA_SAFETY_ON_NULL_RETURN(e);
+
+   e->crop_x = x;
+   e->crop_y = y;
 }
 
 EAPI void
 ethumb_thumb_crop_align_get(Ethumb *e, float *x, float *y)
 {
-   if (e)
-     {
-	*x = e->crop_x;
-	*y = e->crop_y;
-     }
+   EINA_SAFETY_ON_NULL_RETURN(e);
+
+   if (x) *x = e->crop_x;
+   if (y) *y = e->crop_y;
 }
 
 EAPI int
 ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const char *swallow)
 {
-   if (!e)
-     return 0;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
 
    Ethumb_Frame *frame;
    frame = e->frame;
@@ -307,6 +307,7 @@ ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const cha
 	  {
 	     ERR("could not create edje frame object.\n");
 	     _ethumb_frame_free(frame);
+	     e->frame = NULL;
 	     return 0;
 	  }
      }
@@ -315,6 +316,7 @@ ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const cha
      {
 	ERR("could not load frame theme.\n");
 	_ethumb_frame_free(frame);
+	e->frame = NULL;
 	return 0;
      }
 
@@ -323,6 +325,7 @@ ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const cha
      {
 	ERR("could not swallow image to edje frame.\n");
 	_ethumb_frame_free(frame);
+	e->frame = NULL;
 	return 0;
      }
 
@@ -344,8 +347,7 @@ ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const cha
 EAPI void
 ethumb_thumb_dir_path_set(Ethumb *e, const char *path)
 {
-   if (!e)
-     return;
+   EINA_SAFETY_ON_NULL_RETURN(e);
 
    path = eina_stringshare_add(path);
    eina_stringshare_del(e->thumb_dir);
@@ -355,8 +357,7 @@ ethumb_thumb_dir_path_set(Ethumb *e, const char *path)
 EAPI const char *
 ethumb_thumb_dir_path_get(Ethumb *e)
 {
-   if (!e)
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
 
    return e->thumb_dir;
 }
@@ -364,8 +365,7 @@ ethumb_thumb_dir_path_get(Ethumb *e)
 EAPI void
 ethumb_thumb_category_set(Ethumb *e, const char *category)
 {
-   if (!e)
-     return;
+   EINA_SAFETY_ON_NULL_RETURN(e);
 
    category = eina_stringshare_add(category);
    eina_stringshare_del(e->category);
@@ -375,8 +375,7 @@ ethumb_thumb_category_set(Ethumb *e, const char *category)
 EAPI const char *
 ethumb_thumb_category_get(Ethumb *e)
 {
-   if (!e)
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
 
    return e->category;
 }
@@ -386,8 +385,8 @@ ethumb_file_new(Ethumb *e, const char *path)
 {
    Ethumb_File *ef;
 
-   if (!e)
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
 
    if (access(path, R_OK))
      {
@@ -396,6 +395,7 @@ ethumb_file_new(Ethumb *e, const char *path)
      }
 
    ef = calloc(1, sizeof(Ethumb_File));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ef, NULL);
    ef->ethumb = e;
    ef->src_path = eina_stringshare_add(path);
 
@@ -413,8 +413,7 @@ _ethumb_generate_hash(const char *file)
 
   char uri[PATH_MAX];
 
-  if (!file)
-    return NULL;
+  EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
   snprintf (uri, sizeof(uri), "file://%s", file);
 
   MD5Init (&ctx);
@@ -558,6 +557,8 @@ ethumb_file_thumb_path_set(Ethumb_File *ef, const char *path)
    char *real_path;
    char buf[PATH_MAX];
 
+   EINA_SAFETY_ON_NULL_RETURN(ef);
+
    if (ef->thumb_path)
      eina_stringshare_del(ef->thumb_path);
 
@@ -571,6 +572,7 @@ ethumb_file_thumb_path_set(Ethumb_File *ef, const char *path)
 EAPI const char *
 ethumb_file_thumb_path_get(Ethumb_File *ef)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ef, NULL);
    if (!ef->thumb_path)
      _ethumb_file_generate_path(ef);
 
@@ -691,11 +693,7 @@ ethumb_file_generate(Ethumb_File *ef)
    int r;
    char *dname;
 
-   if (!ef)
-     return 0;
-
-   eth = ef->ethumb;
-
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ef, 0);
 
    if (!_ethumb_image_load(ef))
      {
@@ -703,6 +701,7 @@ ethumb_file_generate(Ethumb_File *ef)
 	return 0;
      }
 
+   eth = ef->ethumb;
    evas_render(eth->sub_e);
 
    if (!ef->thumb_path)
