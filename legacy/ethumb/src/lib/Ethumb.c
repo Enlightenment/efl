@@ -602,8 +602,8 @@ _ethumb_calculate_fill(Ethumb *e, int iw, int ih, int *fx, int *fy, int *fw, int
 	else
 	  *fh = (e->tw * ih) / iw;
 
-	*fx = - e->crop_x * (*fw - iw);
-	*fy = - e->crop_y * (*fh - ih);
+	*fx = - e->crop_x * (*fw - e->tw);
+	*fy = - e->crop_y * (*fh - e->th);
      }
    else if (e->aspect == ETHUMB_THUMB_KEEP_ASPECT)
      {
