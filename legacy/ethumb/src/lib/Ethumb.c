@@ -36,11 +36,17 @@
 #define PATH_MAX 4096
 #endif
 
+#include <Eina.h>
 #include <Ecore.h>
 #include <Evas.h>
 #include <Ecore_Evas.h>
 #include <Ecore_File.h>
 #include <Edje.h>
+
+#define DBG(...) EINA_ERROR_PDBG(__VA_ARGS__)
+#define INF(...) EINA_ERROR_PINFO(__VA_ARGS__)
+#define WRN(...) EINA_ERROR_PWARN(__VA_ARGS__)
+#define ERR(...) EINA_ERROR_PERR(__VA_ARGS__)
 
 static int initcount = 0;
 
@@ -100,7 +106,7 @@ ethumb_new(void)
    e = ecore_evas_get(ee);
    if (!e)
      {
-	fputs("ERROR: could not create ecore evas buffer\n", stderr);
+	ERR("could not create ecore evas buffer\n");
 	return NULL;
      }
 
@@ -110,7 +116,7 @@ ethumb_new(void)
    o = ecore_evas_object_image_new(ee);
    if (!o)
      {
-	fputs("ERROR: could not create sub ecore evas buffer\n", stderr);
+	ERR("could not create sub ecore evas buffer\n");
 	ecore_evas_free(ee);
 	free(ethumb);
 	return NULL;
@@ -125,7 +131,7 @@ ethumb_new(void)
    img = evas_object_image_add(sub_e);
    if (!img)
      {
-	fputs("ERROR: could not create source objects.\n", stderr);
+	ERR("could not create source objects.\n");
 	ecore_evas_free(ee);
 	free(ethumb);
 	return NULL;
@@ -292,15 +298,14 @@ ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const cha
 	frame = calloc(1, sizeof(Ethumb_Frame));
 	if (!frame)
 	  {
-	     fputs("ERROR: could not allocate Ethumb_Frame structure.\n",
-		   stderr);
+	     ERR("could not allocate Ethumb_Frame structure.\n");
 	     return 0;
 	  }
 
 	frame->edje = edje_object_add(e->sub_e);
 	if (!frame->edje)
 	  {
-	     fputs("ERROR: could not create edje frame object.\n", stderr);
+	     ERR("could not create edje frame object.\n");
 	     _ethumb_frame_free(frame);
 	     return 0;
 	  }
@@ -308,7 +313,7 @@ ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const cha
 
    if (!edje_object_file_set(frame->edje, theme_file, group))
      {
-	fputs("ERROR: could not load frame theme.\n", stderr);
+	ERR("could not load frame theme.\n");
 	_ethumb_frame_free(frame);
 	return 0;
      }
@@ -316,7 +321,7 @@ ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const cha
    edje_object_part_swallow(frame->edje, swallow, e->img);
    if (!edje_object_part_swallow_get(frame->edje, swallow))
      {
-	fputs("ERROR: could not swallow image to edje frame.\n", stderr);
+	ERR("could not swallow image to edje frame.\n");
 	_ethumb_frame_free(frame);
 	return 0;
      }
@@ -386,7 +391,7 @@ ethumb_file_new(Ethumb *e, const char *path)
 
    if (access(path, R_OK))
      {
-	fprintf(stderr, "ERROR: couldn't access file \"%s\"\n", path);
+	ERR("couldn't access file \"%s\"\n", path);
 	return NULL;
      }
 
@@ -560,7 +565,7 @@ ethumb_file_thumb_path_set(Ethumb_File *ef, const char *path)
    if (errno == ENOENT || errno == ENOTDIR || real_path)
      ef->thumb_path = eina_stringshare_add(buf);
    else
-     fprintf(stderr, "could not set thumbnail path: %s\n", strerror(errno));
+     ERR("could not set thumbnail path: %s\n", strerror(errno));
 }
 
 EAPI const char *
@@ -641,8 +646,7 @@ _ethumb_image_load(Ethumb_File *ef)
    error = evas_object_image_load_error_get(img);
    if (error != EVAS_LOAD_ERROR_NONE)
      {
-	fprintf(stderr, "ERROR: could not load image '%s': %d\n",
-		ef->src_path, error);
+	ERR("could not load image '%s': %d\n", ef->src_path, error);
 	return 0;
      }
 
@@ -695,7 +699,7 @@ ethumb_file_generate(Ethumb_File *ef)
 
    if (!_ethumb_image_load(ef))
      {
-	fputs("ERROR: could not load input image.\n", stderr);
+	ERR("could not load input image.\n");
 	return 0;
      }
 
@@ -706,7 +710,7 @@ ethumb_file_generate(Ethumb_File *ef)
 
    if (!ef->thumb_path)
      {
-	fputs("ERROR: could not create file path...\n", stderr);
+	ERR("could not create file path...\n");
 	return 0;
      }
 
@@ -715,7 +719,7 @@ ethumb_file_generate(Ethumb_File *ef)
    free(dname);
    if (!r)
      {
-	fprintf(stderr, "ERROR: could not create directory '%s'\n", dname);
+	ERR("could not create directory '%s'\n", dname);
 	return 0;
      }
 
@@ -723,7 +727,7 @@ ethumb_file_generate(Ethumb_File *ef)
 
    if (!r)
      {
-	fputs("ERROR: could not save image.\n", stderr);
+	ERR("could not save image.\n");
 	return 0;
      }
 
