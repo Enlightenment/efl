@@ -50,6 +50,9 @@
 #define ERR(...) EINA_ERROR_PERR(__VA_ARGS__)
 
 static int initcount = 0;
+static const char *_home_thumb_dir = NULL;
+static const char *_thumb_category_normal = NULL;
+static const char *_thumb_category_large = NULL;
 
 static const int THUMB_SIZE_NORMAL = 128;
 static const int THUMB_SIZE_LARGE = 256;
@@ -57,6 +60,9 @@ static const int THUMB_SIZE_LARGE = 256;
 EAPI int
 ethumb_init(void)
 {
+   const char *home;
+   char buf[PATH_MAX];
+
    if (initcount)
      return ++initcount;
 
@@ -65,6 +71,13 @@ ethumb_init(void)
    ecore_init();
    ecore_evas_init();
    edje_init();
+
+   home = getenv("HOME");
+   snprintf(buf, sizeof(buf), "%s/.thumbnails", home);
+
+   _home_thumb_dir = eina_stringshare_add(buf);
+   _thumb_category_normal = eina_stringshare_add("normal");
+   _thumb_category_large = eina_stringshare_add("large");
 
    return ++initcount;
 }
@@ -75,6 +88,9 @@ ethumb_shutdown(void)
    initcount--;
    if (initcount == 0)
      {
+	eina_stringshare_del(_home_thumb_dir);
+	eina_stringshare_del(_thumb_category_normal);
+	eina_stringshare_del(_thumb_category_large);
 	eina_stringshare_shutdown();
 	evas_shutdown();
 	ecore_shutdown();
@@ -446,28 +462,24 @@ _ethumb_file_generate_custom_category(Ethumb_File *ef)
    Ethumb *e = ef->ethumb;
 
    if (e->aspect == ETHUMB_THUMB_KEEP_ASPECT)
-     aspect = eina_stringshare_add("keep_aspect");
+     aspect = "keep_aspect";
    else if (e->aspect == ETHUMB_THUMB_IGNORE_ASPECT)
-     aspect = eina_stringshare_add("ignore_aspect");
+     aspect = "ignore_aspect";
    else
-     aspect = eina_stringshare_add("crop");
+     aspect = "crop";
 
    if (e->format == ETHUMB_THUMB_FDO)
-     format = eina_stringshare_add("png");
+     format = "png";
    else
-     format = eina_stringshare_add("jpg");
+     format = "jpg";
 
    if (e->frame)
-     frame = eina_stringshare_add("-framed");
+     frame = "-framed";
    else
-     frame = eina_stringshare_add("");
+     frame = "";
 
    snprintf(buf, sizeof(buf), "%dx%d-%s%s-%s",
 	    e->tw, e->th, aspect, frame, format);
-
-   eina_stringshare_del(aspect);
-   eina_stringshare_del(format);
-   eina_stringshare_del(frame);
 
    return eina_stringshare_add(buf);
 }
@@ -488,32 +500,26 @@ _ethumb_file_generate_path(Ethumb_File *ef)
    fdo_format = _ethumb_file_check_fdo(e);
 
    if (e->thumb_dir)
-     thumb_dir = eina_stringshare_add(e->thumb_dir);
+     thumb_dir = eina_stringshare_ref(e->thumb_dir);
    else
-     {
-	const char *home;
-
-	home = getenv("HOME");
-	snprintf(buf, sizeof(buf), "%s/.thumbnails", home);
-	thumb_dir = eina_stringshare_add(buf);
-     }
+     thumb_dir = eina_stringshare_ref(_home_thumb_dir);
 
    if (e->category)
-     category = eina_stringshare_add(e->category);
+     category = eina_stringshare_ref(e->category);
    else if (!fdo_format)
      category = _ethumb_file_generate_custom_category(ef);
    else
      {
 	if (e->tw == THUMB_SIZE_NORMAL)
-	  category = eina_stringshare_add("normal");
+	  category = eina_stringshare_ref(_thumb_category_normal);
 	else if (e->tw == THUMB_SIZE_LARGE)
-	  category = eina_stringshare_add("large");
+	  category = eina_stringshare_ref(_thumb_category_large);
      }
 
    if (e->format == ETHUMB_THUMB_FDO)
-     ext = eina_stringshare_add("png");
+     ext = "png";
    else
-     ext = eina_stringshare_add("jpg");
+     ext = "jpg";
 
    fullname = ecore_file_realpath(ef->src_path);
    hash = _ethumb_generate_hash(fullname);
@@ -523,7 +529,6 @@ _ethumb_file_generate_path(Ethumb_File *ef)
 
    eina_stringshare_del(thumb_dir);
    eina_stringshare_del(category);
-   eina_stringshare_del(ext);
    eina_stringshare_del(hash);
 }
 
