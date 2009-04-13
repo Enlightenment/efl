@@ -329,15 +329,9 @@ ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const cha
 	return 0;
      }
 
-   theme_file = eina_stringshare_add(theme_file);
-   group = eina_stringshare_add(group);
-   swallow = eina_stringshare_add(swallow);
-   eina_stringshare_del(frame->file);
-   eina_stringshare_del(frame->group);
-   eina_stringshare_del(frame->swallow);
-   frame->file = theme_file;
-   frame->group = group;
-   frame->swallow = swallow;
+   eina_stringshare_replace(&frame->file, theme_file);
+   eina_stringshare_replace(&frame->group, group);
+   eina_stringshare_replace(&frame->swallow, swallow);
 
    e->frame = frame;
 
@@ -349,9 +343,7 @@ ethumb_thumb_dir_path_set(Ethumb *e, const char *path)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
 
-   path = eina_stringshare_add(path);
-   eina_stringshare_del(e->thumb_dir);
-   e->thumb_dir = path;
+   eina_stringshare_replace(&e->thumb_dir, path);
 }
 
 EAPI const char *
@@ -367,9 +359,7 @@ ethumb_thumb_category_set(Ethumb *e, const char *category)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
 
-   category = eina_stringshare_add(category);
-   eina_stringshare_del(e->category);
-   e->category = category;
+   eina_stringshare_replace(&e->category, category);
 }
 
 EAPI const char *
@@ -530,9 +520,7 @@ _ethumb_file_generate_path(Ethumb_File *ef)
    hash = _ethumb_generate_hash(fullname);
    snprintf(buf, sizeof(buf), "%s/%s/%s.%s", thumb_dir, category, hash, ext);
    free(fullname);
-   if (ef->thumb_path)
-     eina_stringshare_del(ef->thumb_path);
-   ef->thumb_path = eina_stringshare_add(buf);
+   eina_stringshare_replace(&ef->thumb_path, buf);
 
    eina_stringshare_del(thumb_dir);
    eina_stringshare_del(category);
