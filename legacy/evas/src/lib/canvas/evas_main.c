@@ -4,12 +4,28 @@
 extern Eina_List *evas_modules;
 static int initcount = 0;
 
+Eina_Mempool *_evas_rectangle_mp = NULL;
+
 EAPI int
 evas_init(void)
 {
    if (initcount == 0)
      {
+	const char *choice;
+
 	eina_init();
+
+	if (!(choice = getenv("EINA_MEMPOOL")))
+	  choice = "chained_mempool";
+
+	_evas_rectangle_mp = eina_mempool_new(choice, "evas_rectangle", NULL,
+					      sizeof (Evas_Rectangle), 42);
+	if (!_evas_rectangle_mp)
+	  {
+	     EINA_ERROR_PERR("ERROR: Mempool for rectangle cannot be allocated in list init.\n");
+	     abort();
+	  }
+
 	evas_module_init();
 	evas_async_events_init();
      }

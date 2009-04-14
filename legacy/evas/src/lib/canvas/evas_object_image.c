@@ -2070,6 +2070,7 @@ static void
 evas_object_image_free(Evas_Object *obj)
 {
    Evas_Object_Image *o;
+   Evas_Rectangle *r;
 
    /* frees private object data. very simple here */
    o = (Evas_Object_Image *)(obj->object_data);
@@ -2084,14 +2085,8 @@ evas_object_image_free(Evas_Object *obj)
 					       o->engine_data);
    o->engine_data = NULL;
    o->magic = 0;
-   while (o->pixel_updates)
-     {
-	Evas_Rectangle *r;
-
-	r = (Evas_Rectangle *)o->pixel_updates->data;
-	o->pixel_updates = eina_list_remove(o->pixel_updates, r);
-	free(r);
-     }
+   EINA_LIST_FREE(o->pixel_updates, r)
+     eina_mempool_free(_evas_rectangle_mp, r);
    free(o);
 }
 
@@ -2457,16 +2452,15 @@ evas_object_image_render_pre(Evas_Object *obj)
 	    (o->cur.border.t == 0) &&
 	    (o->cur.border.b == 0))
 	  {
-	     while (o->pixel_updates)
+	     Evas_Rectangle *rr;
+
+	     EINA_LIST_FREE(o->pixel_updates, rr)
 	       {
-		  Evas_Rectangle *rr;
 		  Evas_Coord idw, idh, idx, idy;
 		  int x, y, w, h;
 
-		  rr = o->pixel_updates->data;
-		  o->pixel_updates = eina_list_remove(o->pixel_updates, rr);
 		  obj->layer->evas->engine.func->image_dirty_region(obj->layer->evas->engine.data.output, o->engine_data, rr->x, rr->y, rr->w, rr->h);
-		  
+
 		  idx = evas_object_image_figure_x_fill(obj, o->cur.fill.x, o->cur.fill.w, &idw);
 		  idy = evas_object_image_figure_y_fill(obj, o->cur.fill.y, o->cur.fill.h, &idh);
 
@@ -2500,7 +2494,7 @@ evas_object_image_render_pre(Evas_Object *obj)
 		       idx += idw;
 		       idy = ydy;
 		    }
-		  free(rr);
+		  eina_mempool_free(_evas_rectangle_mp, rr);
 	       }
 	     goto done;
 	  }
@@ -2508,14 +2502,10 @@ evas_object_image_render_pre(Evas_Object *obj)
 	  {
 	     if (o->pixel_updates)
 	       {
-		  while (o->pixel_updates)
-		    {
-		       Evas_Rectangle *r;
+		  Evas_Rectangle *r;
 
-		       r = (Evas_Rectangle *)o->pixel_updates->data;
-		       o->pixel_updates = eina_list_remove(o->pixel_updates, r);
-		       free(r);
-		    }
+		  EINA_LIST_FREE(o->pixel_updates, r)
+		    eina_mempool_free(_evas_rectangle_mp, r);
 		  obj->layer->evas->engine.func->image_dirty_region(obj->layer->evas->engine.data.output, o->engine_data, 0, 0, o->cur.image.w, o->cur.image.h);
 		  evas_object_render_pre_prev_cur_add(&rects, obj);
 		  goto done;
@@ -2540,28 +2530,17 @@ static void
 evas_object_image_render_post(Evas_Object *obj)
 {
    Evas_Object_Image *o;
+   Evas_Rectangle *r;
 
    /* this moves the current data to the previous state parts of the object */
    /* in whatever way is safest for the object. also if we don't need object */
    /* data anymore we can free it if the object deems this is a good idea */
    o = (Evas_Object_Image *)(obj->object_data);
    /* remove those pesky changes */
-   while (obj->clip.changes)
-     {
-	Evas_Rectangle *r;
-
-	r = (Evas_Rectangle *)obj->clip.changes->data;
-	obj->clip.changes = eina_list_remove(obj->clip.changes, r);
-	free(r);
-     }
-   while (o->pixel_updates)
-     {
-	Evas_Rectangle *r;
-
-	r = (Evas_Rectangle *)o->pixel_updates->data;
-	o->pixel_updates = eina_list_remove(o->pixel_updates, r);
-	free(r);
-     }
+   EINA_LIST_FREE(obj->clip.changes, r)
+     eina_mempool_free(_evas_rectangle_mp, r);
+   EINA_LIST_FREE(o->pixel_updates, r)
+     eina_mempool_free(_evas_rectangle_mp, r);
    /* move cur to prev safely for object data */
    obj->prev = obj->cur;
    o->prev = o->cur;

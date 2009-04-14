@@ -85,12 +85,12 @@ MAGIC_CHECK_FAILED(o, t, m)
 #endif
 
 #define NEW_RECT(_r, _x, _y, _w, _h) \
-{(_r) = malloc(sizeof(Evas_Rectangle)); \
-if (_r) \
-{ \
-   (_r)->x = (_x); (_r)->y = (_y); \
-   (_r)->w = (_w); (_r)->h = (_h); \
-}}
+{(_r) = eina_mempool_alloc(_evas_rectangle_mp, sizeof(Evas_Rectangle)); \
+   if (_r)								\
+     {									\
+	(_r)->x = (_x); (_r)->y = (_y);					\
+	(_r)->w = (_w); (_r)->h = (_h);					\
+     }}
 
 #define MERR_NONE() _evas_alloc_error = EVAS_ALLOC_ERROR_NONE
 #define MERR_FATAL() _evas_alloc_error = EVAS_ALLOC_ERROR_FATAL
@@ -783,6 +783,7 @@ void _evas_object_text_rehint(Evas_Object *obj);
 void _evas_object_textblock_rehint(Evas_Object *obj);
 
 extern int _evas_alloc_error;
+extern Eina_Mempool *_evas_rectangle_mp;
 
 struct _Evas_Imaging_Image
 {

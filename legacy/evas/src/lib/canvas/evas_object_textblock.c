@@ -5511,15 +5511,6 @@ evas_object_textblock_render_pre(Evas_Object *obj)
      }
    if (o->changed)
      {
-/*
-	Evas_Rectangle *r;
-
-	r = malloc(sizeof(Evas_Rectangle));
-	r->x = 0; r->y = 0;
-	r->w = obj->cur.geometry.w;
-	r->h = obj->cur.geometry.h;
-	updates = eina_list_append(updates, r);
-*/
 	evas_object_render_pre_prev_cur_add(&rects, obj);
 	o->changed = 0;
      }
@@ -5531,20 +5522,15 @@ static void
 evas_object_textblock_render_post(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
+   Evas_Rectangle *r;
 
    /* this moves the current data to the previous state parts of the object */
    /* in whatever way is safest for the object. also if we don't need object */
    /* data anymore we can free it if the object deems this is a good idea */
    o = (Evas_Object_Textblock *)(obj->object_data);
    /* remove those pesky changes */
-   while (obj->clip.changes)
-     {
-	Evas_Rectangle *r;
-
-	r = (Evas_Rectangle *)obj->clip.changes->data;
-	obj->clip.changes = eina_list_remove(obj->clip.changes, r);
-	free(r);
-     }
+   EINA_LIST_FREE(obj->clip.changes, r)
+     eina_mempool_free(_evas_rectangle_mp, r);
    /* move cur to prev safely for object data */
    obj->prev = obj->cur;
 //   o->prev = o->cur;

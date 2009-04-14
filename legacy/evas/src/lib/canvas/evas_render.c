@@ -18,9 +18,8 @@ evas_damage_rectangle_add(Evas *e, int x, int y, int w, int h)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   r = malloc(sizeof(Evas_Rectangle));
+   NEW_RECT(r, x, y, w, h);
    if (!r) return;
-   r->x = x; r->y = y; r->w = w; r->h = h;
    e->damages = eina_list_append(e->damages, r);
    e->changed = 1;
 }
@@ -39,9 +38,8 @@ evas_obscured_rectangle_add(Evas *e, int x, int y, int w, int h)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   r = malloc(sizeof(Evas_Rectangle));
+   NEW_RECT(r, x, y, w, h);
    if (!r) return;
-   r->x = x; r->y = y; r->w = w; r->h = h;
    e->obscures = eina_list_append(e->obscures, r);
 }
 
@@ -54,17 +52,13 @@ evas_obscured_rectangle_add(Evas *e, int x, int y, int w, int h)
 EAPI void
 evas_obscured_clear(Evas *e)
 {
+   Evas_Rectangle *r;
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   while (e->obscures)
-     {
-	Evas_Rectangle *r;
-
-	r = (Evas_Rectangle *)e->obscures->data;
-	e->obscures = eina_list_remove(e->obscures, r);
-	free(r);
-     }
+   EINA_LIST_FREE(e->obscures, r)
+     eina_mempool_free(_evas_rectangle_mp, r);
 }
 
 static void
@@ -363,13 +357,11 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
      }
    eina_array_clean(&e->restack_objects);
    /* phase 3. add exposes */
-   while (e->damages)
+   EINA_LIST_FREE(e->damages, r)
      {
-	r = e->damages->data;
-	e->damages = eina_list_remove(e->damages, r);
 	e->engine.func->output_redraws_rect_add(e->engine.data.output,
 					       r->x, r->y, r->w, r->h);
-	free(r);
+	eina_mempool_free(_evas_rectangle_mp, r);
      }
    /* phase 4. output & viewport changes */
    if (e->viewport.changed)
