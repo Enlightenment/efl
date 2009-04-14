@@ -160,6 +160,7 @@ evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 ////   obj->cur.cache.geometry.validity = 0;
    o->changed = 1;
    evas_object_change(obj);
+   evas_object_clip_dirty(obj);
    evas_object_coords_recalc(obj);
    if (obj->layer->evas->events_frozen != 0)
      {
@@ -210,6 +211,7 @@ evas_object_polygon_points_clear(Evas_Object *obj)
 ////   obj->cur.cache.geometry.validity = 0;
    o->changed = 1;
    evas_object_change(obj);
+   evas_object_clip_dirty(obj);
    evas_object_coords_recalc(obj);
    is = evas_object_is_in_output_rect(obj,
 				      obj->layer->evas->pointer.x,

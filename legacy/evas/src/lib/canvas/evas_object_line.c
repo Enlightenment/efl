@@ -165,6 +165,7 @@ evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coo
    o->changed = 1;
    evas_object_change(obj);
    evas_object_coords_recalc(obj);
+   evas_object_clip_dirty(obj);
    if (obj->layer->evas->events_frozen <= 0)
      {
 	is = evas_object_is_in_output_rect(obj,

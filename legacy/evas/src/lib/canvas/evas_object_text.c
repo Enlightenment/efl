@@ -257,6 +257,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
      }
    o->changed = 1;
    evas_object_change(obj);
+   evas_object_clip_dirty(obj);
    evas_object_coords_recalc(obj);
    if (obj->layer->evas->events_frozen <= 0)
      {
@@ -361,6 +362,7 @@ evas_object_text_text_set(Evas_Object *obj, const char *text)
      }
    o->changed = 1;
    evas_object_change(obj);
+   evas_object_clip_dirty(obj);
    evas_object_coords_recalc(obj);
    is = evas_object_is_in_output_rect(obj,
 				      obj->layer->evas->pointer.x,
@@ -698,6 +700,7 @@ evas_object_text_style_set(Evas_Object *obj, Evas_Text_Style_Type style)
      obj->cur.geometry.w = 0;
    obj->cur.geometry.h += (t - pt) + (b - pb);
    evas_object_change(obj);
+   evas_object_clip_dirty(obj);
 }
 
 /**
@@ -1803,6 +1806,7 @@ _evas_object_text_rehint(Evas_Object *obj)
      }
    o->changed = 1;
    evas_object_change(obj);
+   evas_object_clip_dirty(obj);
    evas_object_coords_recalc(obj);
    is = evas_object_is_in_output_rect(obj,
 				      obj->layer->evas->pointer.x,
