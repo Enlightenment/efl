@@ -93,7 +93,9 @@ struct _Ethumb_File
 {
    Ethumb *ethumb;
    const char *src_path;
+   const char *src_key;
    const char *thumb_path;
+   const char *thumb_key;
    int w, h;
 };
 
@@ -128,9 +130,9 @@ EAPI const char * ethumb_thumb_dir_path_get(Ethumb *e) EINA_WARN_UNUSED_RESULT E
 EAPI void ethumb_thumb_category_set(Ethumb *e, const char *category) EINA_ARG_NONNULL(1);
 EAPI const char * ethumb_thumb_category_get(Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
-EAPI Ethumb_File * ethumb_file_new(Ethumb *e, const char *path) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
+EAPI Ethumb_File * ethumb_file_new(Ethumb *e, const char *path, const char *key) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
 EAPI void ethumb_file_free(Ethumb_File *ef);
-EAPI void ethumb_file_thumb_path_set(Ethumb_File *ef, const char *path) EINA_ARG_NONNULL(1);
+EAPI void ethumb_file_thumb_path_set(Ethumb_File *ef, const char *path, const char *key) EINA_ARG_NONNULL(1);
 EAPI const char * ethumb_file_thumb_path_get(Ethumb_File *ef) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 EAPI int ethumb_file_generate(Ethumb_File *ef) EINA_ARG_NONNULL(1);
 

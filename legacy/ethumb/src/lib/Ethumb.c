@@ -386,7 +386,7 @@ ethumb_thumb_category_get(Ethumb *e)
 }
 
 EAPI Ethumb_File *
-ethumb_file_new(Ethumb *e, const char *path)
+ethumb_file_new(Ethumb *e, const char *path, const char *key)
 {
    Ethumb_File *ef;
 
@@ -403,6 +403,9 @@ ethumb_file_new(Ethumb *e, const char *path)
    EINA_SAFETY_ON_NULL_RETURN_VAL(ef, NULL);
    ef->ethumb = e;
    ef->src_path = eina_stringshare_add(path);
+
+   if (key)
+     ef->src_key = eina_stringshare_add(key);
 
    return ef;
 }
@@ -539,24 +542,31 @@ ethumb_file_free(Ethumb_File *ef)
      return;
 
    eina_stringshare_del(ef->src_path);
+   eina_stringshare_del(ef->src_key);
    eina_stringshare_del(ef->thumb_path);
+   eina_stringshare_del(ef->thumb_key);
    free(ef);
 }
 
 EAPI void
-ethumb_file_thumb_path_set(Ethumb_File *ef, const char *path)
+ethumb_file_thumb_path_set(Ethumb_File *ef, const char *path, const char *key)
 {
    char *real_path;
    char buf[PATH_MAX];
 
    EINA_SAFETY_ON_NULL_RETURN(ef);
 
-   if (ef->thumb_path)
-     eina_stringshare_del(ef->thumb_path);
-
    real_path = realpath(path, buf);
-   if (errno == ENOENT || errno == ENOTDIR || real_path)
-     ef->thumb_path = eina_stringshare_add(buf);
+   if (!path)
+     {
+	eina_stringshare_replace(&ef->thumb_path, NULL);
+	eina_stringshare_replace(&ef->thumb_key, NULL);
+     }
+   else if (errno == ENOENT || errno == ENOTDIR || real_path)
+     {
+	eina_stringshare_replace(&ef->thumb_path, buf);
+	eina_stringshare_replace(&ef->thumb_key, key);
+     }
    else
      ERR("could not set thumbnail path: %s\n", strerror(errno));
 }
@@ -630,7 +640,7 @@ _ethumb_image_load(Ethumb_File *ef)
      evas_object_hide(img);
    evas_object_image_file_set(img, NULL, NULL);
    evas_object_image_load_size_set(img, eth->tw, eth->th);
-   evas_object_image_file_set(img, ef->src_path, NULL);
+   evas_object_image_file_set(img, ef->src_path, ef->src_key);
 
    if (eth->frame)
      evas_object_show(eth->frame->edje);
@@ -714,7 +724,8 @@ ethumb_file_generate(Ethumb_File *ef)
 	return 0;
      }
 
-   r = evas_object_image_save(eth->o, ef->thumb_path, NULL, "quality=85");
+   r = evas_object_image_save(eth->o, ef->thumb_path, ef->thumb_key,
+			      "quality=85");
 
    if (!r)
      {

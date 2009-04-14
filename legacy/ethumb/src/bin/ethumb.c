@@ -113,6 +113,8 @@ const Ecore_Getopt optdesc = {
      ECORE_GETOPT_CALLBACK_ARGS
      ('t', "theme", "path to theme file, group and swallow part.",
       "file:group:swallow_part", _ethumb_getopt_callback_frame_parse, NULL),
+     ECORE_GETOPT_STORE_STR
+     ('k', "key", "key inside eet file to read image from."),
      ECORE_GETOPT_LICENSE('L', "license"),
      ECORE_GETOPT_COPYRIGHT('C', "copyright"),
      ECORE_GETOPT_VERSION('V', "version"),
@@ -133,7 +135,10 @@ main(int argc, char *argv[])
    char *aspect_str = NULL;
    char *directory = NULL;
    char *category = NULL;
+   char *src_key = NULL;
    struct frame frame = {NULL};
+   const char *thumb_path = NULL;
+   const char *thumb_key = NULL;
    int arg_index;
    int i;
 
@@ -147,6 +152,7 @@ main(int argc, char *argv[])
 	ECORE_GETOPT_VALUE_STR(directory),
 	ECORE_GETOPT_VALUE_STR(category),
 	ECORE_GETOPT_VALUE_PTR_CAST(frame),
+	ECORE_GETOPT_VALUE_STR(src_key),
 	ECORE_GETOPT_VALUE_BOOL(quit_option),
 	ECORE_GETOPT_VALUE_BOOL(quit_option),
 	ECORE_GETOPT_VALUE_BOOL(quit_option),
@@ -194,10 +200,13 @@ main(int argc, char *argv[])
      }
 
    if (r && arg_index < argc)
-     ef = ethumb_file_new(e, argv[arg_index++]);
+     ef = ethumb_file_new(e, argv[arg_index++], src_key);
    if (ef && arg_index < argc)
-     ethumb_file_thumb_path_set(ef, argv[arg_index++]);
+     thumb_path = argv[arg_index++];
+   if (ef && arg_index < argc)
+     thumb_key = argv[arg_index];
 
+   ethumb_file_thumb_path_set(ef, thumb_path, thumb_key);
    if (ef)
      ethumb_file_generate(ef);
 
