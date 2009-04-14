@@ -463,7 +463,7 @@ _eet_test_ex_check(Eet_Test_Ex_Type *stuff, int offset)
 }
 
 static Eina_Bool
-func(__UNUSED__ const Eina_Hash *hash, const char *key, void *data, void *fdata)
+func(__UNUSED__ const Eina_Hash *hash, const void *key, void *data, void *fdata)
 {
    int *res = fdata;
 
@@ -475,7 +475,7 @@ func(__UNUSED__ const Eina_Hash *hash, const char *key, void *data, void *fdata)
 }
 
 static Eina_Bool
-func7(__UNUSED__ const Eina_Hash *hash, __UNUSED__ const char *key, void *data, void *fdata)
+func7(__UNUSED__ const Eina_Hash *hash, __UNUSED__ const void *key, void *data, void *fdata)
 {
    int *res = fdata;
    int *val;
@@ -866,16 +866,14 @@ START_TEST(eet_file_data_dump_test)
    etbt.list = eina_list_prepend(etbt.list, _eet_test_ex_set(NULL, 1));
    etbt.hash = eina_hash_string_superfast_new(NULL);
    eina_hash_add(etbt.hash, EET_TEST_KEY1, _eet_test_ex_set(NULL, 2));
-   etbt.hash = eina_hash_string_superfast_new(NULL);
    eina_hash_add(etbt.hash, EET_TEST_KEY2, _eet_test_ex_set(NULL, 2));
    etbt.ilist = eina_list_prepend(etbt.ilist, &i42);
    etbt.ilist = eina_list_prepend(etbt.ilist, &i42);
    etbt.ihash = eina_hash_string_superfast_new(NULL);
    eina_hash_add(etbt.ihash, EET_TEST_KEY1, &i7);
-   etbt.ihash = eina_hash_string_superfast_new(NULL);
    eina_hash_add(etbt.ihash, EET_TEST_KEY2, &i7);
    etbt.slist = eina_list_prepend(NULL, "test");
-   etbt.hash = eina_hash_string_superfast_new(NULL);
+   etbt.shash = eina_hash_string_superfast_new(NULL);
    eina_hash_add(etbt.shash, EET_TEST_KEY1, "test");
    memset(&etbt.charray, 0, sizeof(etbt.charray));
    etbt.charray[0] = "test";
@@ -1366,7 +1364,6 @@ START_TEST(eet_cipher_decipher_simple)
    char *test;
    char *file = strdup("/tmp/eet_suite_testXXXXXX");
    int size;
-   int fd;
 
    eet_init();
 
