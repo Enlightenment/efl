@@ -110,6 +110,7 @@ evas_new(void)
 EAPI void
 evas_free(Evas *e)
 {
+   Evas_Rectangle *r;
    Evas_Layer *lay;
    int i;
    int del;
@@ -161,16 +162,10 @@ evas_free(Evas *e)
    if (e->name_hash) eina_hash_free(e->name_hash);
    e->name_hash = NULL;
 
-   while (e->damages)
-     {
-	free(e->damages->data);
-	e->damages = eina_list_remove(e->damages, e->damages->data);
-     }
-   while (e->obscures)
-     {
-	free(e->obscures->data);
-	e->obscures = eina_list_remove(e->obscures, e->obscures->data);
-     }
+   EINA_LIST_FREE(e->damages, r)
+     eina_mempool_free(_evas_rectangle_mp, r);
+   EINA_LIST_FREE(e->obscures, r)
+     eina_mempool_free(_evas_rectangle_mp, r);
 
    evas_fonts_zero_free(e);
 
