@@ -3,7 +3,7 @@ Section: libs
 Priority: optional
 Maintainer: Falko Schmidt <falko@alphagemini.org>
 Build-Depends: debhelper (>= 6), cdbs, libeet-dev, libevas-dev, libssl-dev, libcurl4-openssl-dev, libxcursor-dev, libxss-dev, libxrender-dev, libxinerama-dev, libxrandr-dev, libxext-dev, libxp-dev, libxcomposite-dev, libjpeg62-dev, libxdamage-dev, doxygen
-Standards-Version: 3.7.3
+Standards-Version: 3.8.0
 Homepage: http://www.enlightenment.org
 
 Package: libecore0

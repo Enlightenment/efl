@@ -3,7 +3,7 @@ Priority: optional
 Section: libs
 Maintainer: Falko Schmidt <falko@alphagemini.org>
 Build-Depends: cdbs, debhelper (>= 6), pkg-config, libeet-dev, libevas-dev, libedje-dev, libecore-dev, libembryo-dev, libxine-dev (>=1.1.0), libgstreamer0.10-dev, libgstreamer-plugins-base0.10-dev
-Standards-Version: 3.7.3
+Standards-Version: 3.8.0
 Homepage: http://www.enlightenment.org
 
 Package: libemotion0
