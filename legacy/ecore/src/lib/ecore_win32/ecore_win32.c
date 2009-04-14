@@ -15,8 +15,9 @@
 #include <windowsx.h>
 
 #include <Eina.h>
+#include <Ecore.h>
+#include <Ecore_Input.h>
 
-#include "Ecore.h"
 #include "Ecore_Win32.h"
 #include "ecore_win32_private.h"
 
@@ -39,14 +40,8 @@ double              _ecore_win32_double_click_time = 0.25;
 double              _ecore_win32_event_last_time = 0.0;
 Ecore_Win32_Window *_ecore_win32_event_last_window = NULL;
 
-int ECORE_WIN32_EVENT_KEY_DOWN              = 0;
-int ECORE_WIN32_EVENT_KEY_UP                = 0;
-int ECORE_WIN32_EVENT_MOUSE_BUTTON_DOWN     = 0;
-int ECORE_WIN32_EVENT_MOUSE_BUTTON_UP       = 0;
-int ECORE_WIN32_EVENT_MOUSE_MOVE            = 0;
 int ECORE_WIN32_EVENT_MOUSE_IN              = 0;
 int ECORE_WIN32_EVENT_MOUSE_OUT             = 0;
-int ECORE_WIN32_EVENT_MOUSE_WHEEL           = 0;
 int ECORE_WIN32_EVENT_WINDOW_FOCUS_IN       = 0;
 int ECORE_WIN32_EVENT_WINDOW_FOCUS_OUT      = 0;
 int ECORE_WIN32_EVENT_WINDOW_DAMAGE         = 0;
@@ -128,16 +123,10 @@ ecore_win32_init()
         return 0;
      }
 
-   if (!ECORE_WIN32_EVENT_KEY_DOWN)
+   if (!ECORE_WIN32_EVENT_MOUSE_IN)
      {
-        ECORE_WIN32_EVENT_KEY_DOWN              = ecore_event_type_new();
-        ECORE_WIN32_EVENT_KEY_UP                = ecore_event_type_new();
-        ECORE_WIN32_EVENT_MOUSE_BUTTON_DOWN     = ecore_event_type_new();
-        ECORE_WIN32_EVENT_MOUSE_BUTTON_UP       = ecore_event_type_new();
-        ECORE_WIN32_EVENT_MOUSE_MOVE            = ecore_event_type_new();
         ECORE_WIN32_EVENT_MOUSE_IN              = ecore_event_type_new();
         ECORE_WIN32_EVENT_MOUSE_OUT             = ecore_event_type_new();
-        ECORE_WIN32_EVENT_MOUSE_WHEEL           = ecore_event_type_new();
         ECORE_WIN32_EVENT_WINDOW_FOCUS_IN       = ecore_event_type_new();
         ECORE_WIN32_EVENT_WINDOW_FOCUS_OUT      = ecore_event_type_new();
         ECORE_WIN32_EVENT_WINDOW_DAMAGE         = ecore_event_type_new();
@@ -149,6 +138,8 @@ ecore_win32_init()
         ECORE_WIN32_EVENT_WINDOW_RESIZE         = ecore_event_type_new();
         ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = ecore_event_type_new();
      }
+
+   ecore_event_init();
 
    _ecore_win32_init_count++;
 
@@ -162,7 +153,8 @@ ecore_win32_shutdown()
 
    _ecore_win32_init_count--;
    if (_ecore_win32_init_count > 0) return _ecore_win32_init_count;
-   if (!_ecore_win32_instance) return _ecore_win32_init_count;
+
+   ecore_event_shutdown(); 
 
    ecore_win32_dnd_shutdown();
    if (!UnregisterClass(ECORE_WIN32_WINDOW_CLASS, _ecore_win32_instance))

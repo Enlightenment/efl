@@ -121,14 +121,8 @@ typedef enum
 
 /* Events */
 
-typedef struct _Ecore_Win32_Event_Key_Down              Ecore_Win32_Event_Key_Down;
-typedef struct _Ecore_Win32_Event_Key_Up                Ecore_Win32_Event_Key_Up;
-typedef struct _Ecore_Win32_Event_Mouse_Button_Down     Ecore_Win32_Event_Mouse_Button_Down;
-typedef struct _Ecore_Win32_Event_Mouse_Button_Up       Ecore_Win32_Event_Mouse_Button_Up;
-typedef struct _Ecore_Win32_Event_Mouse_Move            Ecore_Win32_Event_Mouse_Move;
 typedef struct _Ecore_Win32_Event_Mouse_In              Ecore_Win32_Event_Mouse_In;
 typedef struct _Ecore_Win32_Event_Mouse_Out             Ecore_Win32_Event_Mouse_Out;
-typedef struct _Ecore_Win32_Event_Mouse_Wheel           Ecore_Win32_Event_Mouse_Wheel;
 typedef struct _Ecore_Win32_Event_Window_Focus_In       Ecore_Win32_Event_Window_Focus_In;
 typedef struct _Ecore_Win32_Event_Window_Focus_Out      Ecore_Win32_Event_Window_Focus_Out;
 typedef struct _Ecore_Win32_Event_Window_Damage         Ecore_Win32_Event_Window_Damage;
@@ -139,54 +133,6 @@ typedef struct _Ecore_Win32_Event_Window_Show           Ecore_Win32_Event_Window
 typedef struct _Ecore_Win32_Event_Window_Configure      Ecore_Win32_Event_Window_Configure;
 typedef struct _Ecore_Win32_Event_Window_Resize         Ecore_Win32_Event_Window_Resize;
 typedef struct _Ecore_Win32_Event_Window_Delete_Request Ecore_Win32_Event_Window_Delete_Request;
-
-struct _Ecore_Win32_Event_Key_Down
-{
-   Ecore_Win32_Window *window;
-   char               *keyname;
-   char               *keysymbol;
-   char               *keycompose;
-   double              time;
-};
-
-struct _Ecore_Win32_Event_Key_Up
-{
-   Ecore_Win32_Window *window;
-   char               *keyname;
-   char               *keysymbol;
-   char               *keycompose;
-   double              time;
-};
-
-struct _Ecore_Win32_Event_Mouse_Button_Down
-{
-   Ecore_Win32_Window *window;
-   int                 button;
-   int                 x;
-   int                 y;
-   double              time;
-   unsigned int        double_click : 1;
-   unsigned int        triple_click : 1;
-};
-
-struct _Ecore_Win32_Event_Mouse_Button_Up
-{
-   Ecore_Win32_Window *window;
-   int                 button;
-   int                 x;
-   int                 y;
-   double              time;
-   unsigned int        double_click : 1;
-   unsigned int        triple_click : 1;
-};
-
-struct _Ecore_Win32_Event_Mouse_Move
-{
-   Ecore_Win32_Window *window;
-   int                 x;
-   int                 y;
-   double              time;
-};
 
 struct _Ecore_Win32_Event_Mouse_In
 {
@@ -199,17 +145,6 @@ struct _Ecore_Win32_Event_Mouse_In
 struct _Ecore_Win32_Event_Mouse_Out
 {
    Ecore_Win32_Window *window;
-   int                 x;
-   int                 y;
-   double              time;
-};
-
-struct _Ecore_Win32_Event_Mouse_Wheel
-{
-   Ecore_Win32_Window *window;
-   int                 direction; /* 0 = default up/down wheel FIXME: more wheel types */
-   int                 z; /* ...,-2,-1 = down, 1,2,... = up */
-   int                 modifiers;
    int                 x;
    int                 y;
    double              time;
@@ -294,14 +229,8 @@ struct _Ecore_Win32_Event_Window_Delete_Request
 
 typedef int (*Ecore_Win32_Dnd_DropTarget_Callback)(void *window, int event, int pt_x, int pt_y, void *data, int size);
 
-EAPI extern int ECORE_WIN32_EVENT_KEY_DOWN;
-EAPI extern int ECORE_WIN32_EVENT_KEY_UP;
-EAPI extern int ECORE_WIN32_EVENT_MOUSE_BUTTON_DOWN;
-EAPI extern int ECORE_WIN32_EVENT_MOUSE_BUTTON_UP;
-EAPI extern int ECORE_WIN32_EVENT_MOUSE_MOVE;
 EAPI extern int ECORE_WIN32_EVENT_MOUSE_IN;
 EAPI extern int ECORE_WIN32_EVENT_MOUSE_OUT;
-EAPI extern int ECORE_WIN32_EVENT_MOUSE_WHEEL;
 EAPI extern int ECORE_WIN32_EVENT_WINDOW_FOCUS_IN;
 EAPI extern int ECORE_WIN32_EVENT_WINDOW_FOCUS_OUT;
 EAPI extern int ECORE_WIN32_EVENT_WINDOW_DAMAGE;

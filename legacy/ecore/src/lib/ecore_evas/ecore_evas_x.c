@@ -8,15 +8,15 @@
 
 #include <string.h>
 
-#include "Ecore.h"
-#include "Ecore_Evas.h"
-#include "Ecore_Input.h"
+#include <Ecore.h>
+#include <Ecore_Input.h>
 #ifdef BUILD_ECORE_EVAS_X11
-# include "Ecore_X.h"
-# include "Ecore_X_Atoms.h"
+# include <Ecore_X.h>
+# include <Ecore_X_Atoms.h>
 #endif
 
 #include "ecore_evas_private.h"
+#include "Ecore_Evas.h"
 
 #ifdef BUILD_ECORE_EVAS_X11
 static int _ecore_evas_init_count = 0;

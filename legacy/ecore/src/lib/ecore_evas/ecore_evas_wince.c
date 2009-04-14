@@ -8,19 +8,18 @@
 
 #include <stdlib.h> /* for NULL */
 
-#include "Ecore.h"
+#include <Ecore.h>
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
 # define WIN32_LEAN_AND_MEAN
 # include <windows.h>
 # undef WIN32_LEAN_AND_MEAN
-# include "Ecore_WinCE.h"
-# include "ecore_wince_private.h"
+# include <Ecore_WinCE.h>
+# include <ecore_wince_private.h>
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_16_WINCE */
-
-#include "Ecore_Evas.h"
 
 #include "ecore_private.h"
 #include "ecore_evas_private.h"
+#include "Ecore_Evas.h"
 
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
 

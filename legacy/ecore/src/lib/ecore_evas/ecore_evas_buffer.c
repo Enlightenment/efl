@@ -2,12 +2,12 @@
 # include <config.h>
 #endif
 
-#include "Ecore.h"
-#include "Ecore_Evas.h"
-#include "Ecore_Input.h"
+#include <Ecore.h>
+#include <Ecore_Input.h>
 
 #include "ecore_private.h"
 #include "ecore_evas_private.h"
+#include "Ecore_Evas.h"
 
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
 static int _ecore_evas_init_count = 0;

@@ -204,7 +204,6 @@ struct _Ecore_Evas_Engine
 #ifdef BUILD_ECORE_EVAS_WIN32
    struct {
       Ecore_Win32_Window *parent;
-      Ecore_Win32_Window *window;
      struct {
        unsigned char fullscreen : 1;
      } state;
