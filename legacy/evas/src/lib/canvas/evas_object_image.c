@@ -2537,8 +2537,7 @@ evas_object_image_render_post(Evas_Object *obj)
    /* data anymore we can free it if the object deems this is a good idea */
    o = (Evas_Object_Image *)(obj->object_data);
    /* remove those pesky changes */
-   EINA_LIST_FREE(obj->clip.changes, r)
-     eina_mempool_free(_evas_rectangle_mp, r);
+   evas_object_clip_changes_clean(obj);
    EINA_LIST_FREE(o->pixel_updates, r)
      eina_mempool_free(_evas_rectangle_mp, r);
    /* move cur to prev safely for object data */

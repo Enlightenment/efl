@@ -199,6 +199,16 @@ evas_object_render_pre_prev_cur_add(Evas_Rectangles *rects, Evas_Object *obj)
 }
 
 void
+evas_object_clip_changes_clean(Evas_Object *obj)
+{
+   Evas_Rectangle *r;
+
+   EINA_LIST_FREE(obj->clip.changes, r)
+     eina_mempool_free(_evas_rectangle_mp, r);
+}
+
+
+void
 evas_object_render_pre_effect_updates(Evas_Rectangles *rects, Evas_Object *obj, int is_v, int was_v)
 {
    Evas_Rectangle *r;
@@ -276,14 +286,10 @@ evas_object_render_pre_effect_updates(Evas_Rectangles *rects, Evas_Object *obj, 
      }
    else
      {
-	while (obj->clip.changes)
-	  {
-	     free(obj->clip.changes->data);
-	     obj->clip.changes = eina_list_remove(obj->clip.changes, obj->clip.changes->data);
-	  }
+	evas_object_clip_changes_clean(obj);
 	for (i = 0; i < rects->count; ++i)
 	  {
-	     r = malloc(sizeof(Evas_Rectangle));
+	     r = eina_mempool_alloc(_evas_rectangle_mp, sizeof (Evas_Rectangle));
 	     if (!r) goto end;
 
 	     *r = rects->array[i];

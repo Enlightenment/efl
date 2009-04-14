@@ -405,14 +405,7 @@ evas_object_line_render_post(Evas_Object *obj)
    /* data anymore we can free it if the object deems this is a good idea */
    o = (Evas_Object_Line *)(obj->object_data);
    /* remove those pesky changes */
-   while (obj->clip.changes)
-     {
-	Evas_Rectangle *r;
-
-	r = (Evas_Rectangle *)obj->clip.changes->data;
-	obj->clip.changes = eina_list_remove(obj->clip.changes, r);
-	free(r);
-     }
+   evas_object_clip_changes_clean(obj);
    /* move cur to prev safely for object data */
    obj->prev = obj->cur;
    o->prev = o->cur;

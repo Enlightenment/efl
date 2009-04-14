@@ -398,14 +398,7 @@ evas_object_gradient2_linear_render_post(Evas_Object *obj)
    o = (Evas_Object_Gradient2_Linear *)(obj->object_data);
    og = (Evas_Object_Gradient2 *)(o);
    /* remove those pesky changes */
-   while (obj->clip.changes)
-     {
-	Evas_Rectangle *r;
-
-	r = (Evas_Rectangle *)obj->clip.changes->data;
-	obj->clip.changes = eina_list_remove(obj->clip.changes, r);
-	free(r);
-     }
+   evas_object_clip_changes_clean(obj);
    /* move cur to prev safely for object data */
    obj->prev = obj->cur;
    obj->changed = 0;

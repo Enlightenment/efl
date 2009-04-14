@@ -5529,8 +5529,7 @@ evas_object_textblock_render_post(Evas_Object *obj)
    /* data anymore we can free it if the object deems this is a good idea */
    o = (Evas_Object_Textblock *)(obj->object_data);
    /* remove those pesky changes */
-   EINA_LIST_FREE(obj->clip.changes, r)
-     eina_mempool_free(_evas_rectangle_mp, r);
+   evas_object_clip_changes_clean(obj);
    /* move cur to prev safely for object data */
    obj->prev = obj->cur;
 //   o->prev = o->cur;

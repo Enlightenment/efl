@@ -703,6 +703,7 @@ void evas_object_free(Evas_Object *obj, int clean_layer);
 void evas_object_inject(Evas_Object *obj, Evas *e);
 void evas_object_release(Evas_Object *obj, int clean_layer);
 void evas_object_change(Evas_Object *obj);
+void evas_object_clip_changes_clean(Evas_Object *obj);
 void evas_object_render_pre_visible_change(Evas_Rectangles *rects, Evas_Object *obj, int is_v, int was_v);
 void evas_object_render_pre_clipper_change(Evas_Rectangles *rects, Evas_Object *obj);
 void evas_object_render_pre_prev_cur_add(Evas_Rectangles *rects, Evas_Object *obj);

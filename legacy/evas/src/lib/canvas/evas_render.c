@@ -423,12 +423,9 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 	       {
 		  Evas_Rectangle *rect;
 
-		  rect = malloc(sizeof(Evas_Rectangle));
+		  NEW_RECT(rect, ux, uy, uw, uh);
 		  if (rect)
-		    {
-		       rect->x = ux; rect->y = uy; rect->w = uw; rect->h = uh;
-		       updates = eina_list_append(updates, rect);
-		    }
+		    updates = eina_list_append(updates, rect);
 	       }
 	     off_x = cx - ux;
 	     off_y = cy - uy;
@@ -600,11 +597,10 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 EAPI void
 evas_render_updates_free(Eina_List *updates)
 {
-   while (updates)
-     {
-	free(updates->data);
-	updates = eina_list_remove(updates, updates->data);
-     }
+   Evas_Rectangle *r;
+
+   EINA_LIST_FREE(updates, r)
+     eina_mempool_free(_evas_rectangle_mp, r);
 }
 
 /**
