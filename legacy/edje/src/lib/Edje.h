@@ -247,6 +247,9 @@ extern "C" {
    EAPI void         edje_object_text_change_cb_set  (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, const char *part), void *data);
    EAPI void         edje_object_part_text_set       (Evas_Object *obj, const char *part, const char *text);
    EAPI const char  *edje_object_part_text_get       (const Evas_Object *obj, const char *part);
+   EAPI void         edje_object_part_text_unescaped_set(Evas_Object *obj, const char *part, const char *text_to_escape);
+   EAPI char        *edje_object_part_text_unescaped_get(const Evas_Object *obj, const char *part);
+
    EAPI const char  *edje_object_part_text_selection_get(const Evas_Object *obj, const char *part);
    EAPI void         edje_object_part_text_select_none(const Evas_Object *obj, const char *part);
    EAPI void         edje_object_part_text_select_all(const Evas_Object *obj, const char *part);

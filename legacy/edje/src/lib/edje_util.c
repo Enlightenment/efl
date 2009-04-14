@@ -884,23 +884,9 @@ edje_object_text_change_cb_set(Evas_Object *obj, void (*func) (void *data, Evas_
      }
 }
 
-/** Sets the text for an object part
- * @param obj A valid Evas Object handle
- * @param part The part name
- * @param text The text string
- */
-EAPI void
-edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
+static void
+_edje_object_part_text_raw_set(Evas_Object *obj, Edje_Real_Part *rp, const char *part, const char *text)
 {
-   Edje *ed;
-   Edje_Real_Part *rp;
-
-   ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, (char *)part);
-   if (!rp) return;
-   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
-       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)) return;
    if ((!rp->text.text) && (!text))
      return;
    if ((rp->text.text) && (text) &&
@@ -919,6 +905,26 @@ edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
    _edje_recalc(rp->edje);
    if (rp->edje->text_change.func)
      rp->edje->text_change.func(rp->edje->text_change.data, obj, part);
+}
+
+/** Sets the text for an object part
+ * @param obj A valid Evas Object handle
+ * @param part The part name
+ * @param text The text string
+ */
+EAPI void
+edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return;
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)) return;
+   _edje_object_part_text_raw_set(obj, rp, part, text);
 }
 
 /** Returns the text of the object part
@@ -945,9 +951,227 @@ edje_object_part_text_get(const Evas_Object *obj, const char *part)
    else
      {
 	if (rp->part->type == EDJE_PART_TYPE_TEXT) return rp->text.text;
+	if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+	  return evas_object_textblock_text_markup_get(rp->object);
      }
    return NULL;
 }
+static Eina_Bool
+_edje_strbuf_append(char **p_str, size_t *allocated, size_t *used, const char *news, size_t news_len)
+{
+   if (*used + news_len >= *allocated)
+     {
+	char *tmp;
+	size_t to_allocate = ((((*used + news_len) >> 4) + 1) << 4);
+
+	tmp = realloc(*p_str, to_allocate);
+	if (!tmp)
+	  {
+	     free(*p_str);
+	     *p_str = NULL;
+	     *allocated = 0;
+	     return 0;
+	  }
+
+	*p_str = tmp;
+	*allocated = to_allocate;
+     }
+
+   memcpy(*p_str + *used, news, news_len);
+   *used = *used + news_len;
+   return 1;
+}
+
+static char *
+_edje_text_escape(const char *text)
+{
+   char *ret;
+   const char *text_end;
+   size_t text_len, ret_len, used;
+
+   if (!text) return NULL;
+
+   text_len = strlen(text);
+   ret_len = (((text_len >> 4) + 1) << 4); /* rough guess */
+   ret = malloc(ret_len);
+   if (!ret) return NULL;
+
+   text_end = text + text_len;
+   used = 0;
+   while (text < text_end)
+     {
+	int advance, escaped_len;
+	const char *escaped = evas_textblock_string_escape_get(text, &advance);
+	if (!escaped)
+	  {
+	     escaped = text;
+	     escaped_len = 1;
+	     advance = 1;
+	  }
+	else
+	  escaped_len = strlen(escaped);
+
+	if (!_edje_strbuf_append(&ret, &ret_len, &used, escaped, escaped_len))
+	  return NULL;
+	text += advance;
+     }
+
+   if (!_edje_strbuf_append(&ret, &ret_len, &used, "", 1))
+     return NULL;
+   return ret;
+}
+
+static char *
+_edje_text_unescape(const char *text)
+{
+   char *ret;
+   const char *text_end, *last, *escape_start;
+   size_t text_len, ret_len, used;
+
+   if (!text) return NULL;
+
+   text_len = strlen(text);
+   ret_len = text_len;
+   ret = malloc(ret_len);
+   if (!ret) return NULL;
+
+   text_end = text + text_len;
+   used = 0;
+   last = text;
+   escape_start = NULL;
+   for (; text < text_end; text++)
+     {
+	if (*text == '&')
+	  {
+	     size_t len;
+	     const char *str;
+	     if (last)
+	       {
+		  len = text - last;
+		  str = last;
+	       }
+	     else
+	       {
+		  len = text - escape_start;
+		  str = escape_start;
+	       }
+
+	     if (len > 0)
+	       {
+		  if (!_edje_strbuf_append(&ret, &ret_len, &used, str, len))
+		    return NULL;
+	       }
+
+	     escape_start = text;
+	     last = NULL;
+	  }
+	else if ((*text == ';') && (escape_start))
+	  {
+	     size_t len;
+	     const char *str = evas_textblock_escape_string_range_get
+	       (escape_start, text);
+	     if (str)
+	       len = strlen(str);
+	     else
+	       {
+		  str = escape_start;
+		  len = text + 1 - escape_start;
+	       }
+
+	     if (!_edje_strbuf_append(&ret, &ret_len, &used, str, len))
+	       return NULL;
+
+	     escape_start = NULL;
+	     last = text + 1;
+	  }
+     }
+
+   if (!last && escape_start)
+     last = escape_start;
+
+   if (last && (text > last))
+     {
+	size_t len = text - last;
+	if (!_edje_strbuf_append(&ret, &ret_len, &used, last, len))
+	  return NULL;
+     }
+
+   if (!_edje_strbuf_append(&ret, &ret_len, &used, "", 1))
+     return NULL;
+   return ret;
+}
+
+/** Sets the raw (non escaped) text for an object part.
+ *
+ * This will do escape for you if it is a TEXTBLOCK part, that is, if
+ * text contain tags, these tags will not be interpreted/parsed by
+ * TEXTBLOCK.
+ *
+ * @param obj A valid Evas Object handle
+ * @param part The part name
+ * @param text The text string
+ */
+EAPI void
+edje_object_part_text_unescaped_set(Evas_Object *obj, const char *part, const char *text_to_escape)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return;
+   if (rp->part->type == EDJE_PART_TYPE_TEXT)
+     _edje_object_part_text_raw_set(obj, rp, part, text_to_escape);
+   else if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+     {
+	char *text = _edje_text_escape(text_to_escape);
+	_edje_object_part_text_raw_set(obj, rp, part, text);
+	free(text);
+     }
+}
+
+/** Returns the text of the object part, without escaping.
+ *
+ * Counterpart of edje_object_part_text_unescaped_set(). Please notice
+ * that the result is newly allocated memory and should be released
+ * with free() when done.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @return The @b allocated text string without escaping, or NULL on problems.
+ */
+EAPI char *
+edje_object_part_text_unescaped_get(const Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return NULL;
+
+   /* Need to recalc before providing the object. */
+   _edje_recalc_do(ed);
+
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return NULL;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+	const char *t = _edje_entry_text_get(rp);
+	return _edje_text_unescape(t);
+     }
+   else
+     {
+	if (rp->part->type == EDJE_PART_TYPE_TEXT) return strdup(rp->text.text);
+	if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+	  {
+	     const char *t = evas_object_textblock_text_markup_get(rp->object);
+	     return _edje_text_unescape(t);
+	  }
+     }
+   return NULL;
+}
+
 
 /** Returns the selection text of the object part
  * @param obj A valid Evas_Object handle
