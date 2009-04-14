@@ -691,7 +691,8 @@ extern "C" {
 
    EAPI const char                  *evas_textblock_escape_string_get(const char *escape) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI const char                  *evas_textblock_string_escape_get(const char *string, int *len_ret) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   
+   EAPI const char                  *evas_textblock_escape_string_range_get(const char *escape_start, const char *escape_end) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
+
    EAPI Evas_Textblock_Style        *evas_textblock_style_new(void) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
    EAPI void                         evas_textblock_style_free(Evas_Textblock_Style *ts) EINA_ARG_NONNULL(1);
    EAPI void                         evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text) EINA_ARG_NONNULL(1, 2);

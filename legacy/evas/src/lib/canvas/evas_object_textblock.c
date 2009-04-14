@@ -2705,6 +2705,17 @@ evas_textblock_escape_string_get(const char *escape)
  * @return to be documented.
  */
 EAPI const char *
+evas_textblock_escape_string_range_get(const char *escape_start, const char *escape_end)
+{
+   return _escaped_char_get(escape_start, escape_end);
+}
+
+/**
+ * to be documented.
+ * @param obj  to be documented.
+ * @return to be documented.
+ */
+EAPI const char *
 evas_textblock_string_escape_get(const char *string, int *len_ret)
 {
    /* & -> &amp; */
