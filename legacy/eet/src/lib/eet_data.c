@@ -1682,7 +1682,6 @@ struct _Node
    char  *name;
    char  *key;
    Node  *values;
-   Node  *prev;
    Node  *next;
    Node  *parent;
    union {
@@ -2046,7 +2045,6 @@ _eet_data_dump_parse(Eet_Dictionary *ed,
 							  if (!nn->next)
 							    {
 							       nn->next = n;
-							       n->prev = nn;
 							       break;
 							    }
 						       }
@@ -2100,7 +2098,6 @@ _eet_data_dump_parse(Eet_Dictionary *ed,
 						     if (!nn->next)
 						       {
 							  nn->next = n;
-							  n->prev = nn;
 							  break;
 						       }
 						  }
