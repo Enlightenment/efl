@@ -62,14 +62,7 @@ evas_object_free(Evas_Object *obj, int clean_layer)
    if (!was_smart_child) evas_object_release(obj, clean_layer);
    if (obj->clip.clipees)
      eina_list_free(obj->clip.clipees);
-   while (obj->clip.changes)
-     {
-	Evas_Rectangle *r;
-
-	r = (Evas_Rectangle *)obj->clip.changes->data;
-	obj->clip.changes = eina_list_remove(obj->clip.changes, r);
-	free(r);
-     }
+   evas_object_clip_changes_clean(obj);
    evas_object_event_callback_all_del(obj);
    evas_object_event_callback_cleanup(obj);
    while (obj->data.elements)
