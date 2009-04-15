@@ -1,4 +1,3 @@
-
 MAINTAINERCLEANFILES = Makefile.in
 
 SUBDIRS = canvas data cache file engines imaging include
