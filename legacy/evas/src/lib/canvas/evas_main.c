@@ -94,6 +94,7 @@ evas_new(void)
    eina_array_step_set(&e->obscuring_objects, 16);
    eina_array_step_set(&e->temporary_objects, 16);
    eina_array_step_set(&e->calculate_objects, 16);
+   eina_array_step_set(&e->clip_changes, 16);
 
    return e;
 }
@@ -194,6 +195,7 @@ evas_free(Evas *e)
    eina_array_flush(&e->obscuring_objects);
    eina_array_flush(&e->temporary_objects);
    eina_array_flush(&e->calculate_objects);
+   eina_array_flush(&e->clip_changes);
 
    e->magic = 0;
    free(e);

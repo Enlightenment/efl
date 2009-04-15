@@ -299,6 +299,7 @@ struct _Evas
    Eina_Array     obscuring_objects;
    Eina_Array     temporary_objects;
    Eina_Array     calculate_objects;
+   Eina_Array     clip_changes;
 
    int            delete_grabs;
    int            walking_grabs;
@@ -704,11 +705,11 @@ void evas_object_inject(Evas_Object *obj, Evas *e);
 void evas_object_release(Evas_Object *obj, int clean_layer);
 void evas_object_change(Evas_Object *obj);
 void evas_object_clip_changes_clean(Evas_Object *obj);
-void evas_object_render_pre_visible_change(Evas_Rectangles *rects, Evas_Object *obj, int is_v, int was_v);
-void evas_object_render_pre_clipper_change(Evas_Rectangles *rects, Evas_Object *obj);
-void evas_object_render_pre_prev_cur_add(Evas_Rectangles *rects, Evas_Object *obj);
-void evas_object_render_pre_effect_updates(Evas_Rectangles *rects, Evas_Object *obj, int is_v, int was_v);
-void evas_rects_return_difference_rects(Evas_Rectangles *rects, int x, int y, int w, int h, int xx, int yy, int ww, int hh);
+void evas_object_render_pre_visible_change(Eina_Array *rects, Evas_Object *obj, int is_v, int was_v);
+void evas_object_render_pre_clipper_change(Eina_Array *rects, Evas_Object *obj);
+void evas_object_render_pre_prev_cur_add(Eina_Array *rects, Evas_Object *obj);
+void evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *obj, int is_v, int was_v);
+void evas_rects_return_difference_rects(Eina_Array *rects, int x, int y, int w, int h, int xx, int yy, int ww, int hh);
 
 void evas_object_clip_dirty(Evas_Object *obj);
 void evas_object_recalc_clippees(Evas_Object *obj);

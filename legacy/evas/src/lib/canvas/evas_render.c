@@ -675,6 +675,7 @@ evas_render_idle_flush(Evas *e)
    eina_array_flush(&e->active_objects);
    eina_array_flush(&e->restack_objects);
    eina_array_flush(&e->render_objects);
+   eina_array_flush(&e->clip_changes);
 
    e->invalidate = 1;
 }

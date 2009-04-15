@@ -17,25 +17,12 @@ evas_object_was_visible(Evas_Object *obj)
 }
 
 static inline void
-evas_add_rect(Evas_Rectangles *rects, int x, int y, int w, int h)
+evas_add_rect(Eina_Array *rects, int x, int y, int w, int h)
 {
-   if ((rects->count + 1) > rects->total)
-     {
-	Evas_Rectangle *_add_rect;
-	unsigned int _tmp_total;
+   Evas_Rectangle *r;
 
-	_tmp_total = rects->total + 32;
-	_add_rect = (Evas_Rectangle *)realloc(rects->array, sizeof(Evas_Rectangle) * _tmp_total);
-	if (!_add_rect) return ;
-
-	rects->total = _tmp_total;
-	rects->array = _add_rect;
-     }
-   rects->array[rects->count].x = x;
-   rects->array[rects->count].y = y;
-   rects->array[rects->count].w = w;
-   rects->array[rects->count].h = h;
-   rects->count += 1;
+   NEW_RECT(r, x, y, w, h);
+   if (r) eina_array_push(rects, r);
 }
 
 static inline Cutout_Rect*

@@ -94,7 +94,7 @@ evas_object_change(Evas_Object *obj)
 }
 
 void
-evas_object_render_pre_visible_change(Evas_Rectangles *rects, Evas_Object *obj, int is_v, int was_v)
+evas_object_render_pre_visible_change(Eina_Array *rects, Evas_Object *obj, int is_v, int was_v)
 {
    if (obj->smart.smart) return ;
    if (is_v == was_v) return ;
@@ -117,7 +117,7 @@ evas_object_render_pre_visible_change(Evas_Rectangles *rects, Evas_Object *obj, 
 }
 
 void
-evas_object_render_pre_clipper_change(Evas_Rectangles *rects, Evas_Object *obj)
+evas_object_render_pre_clipper_change(Eina_Array *rects, Evas_Object *obj)
 {
    if (obj->smart.smart) return ;
    if (obj->cur.clipper == obj->prev.clipper) return ;
@@ -169,7 +169,7 @@ evas_object_render_pre_clipper_change(Evas_Rectangles *rects, Evas_Object *obj)
 }
 
 void
-evas_object_render_pre_prev_cur_add(Evas_Rectangles *rects, Evas_Object *obj)
+evas_object_render_pre_prev_cur_add(Eina_Array *rects, Evas_Object *obj)
 {
    evas_add_rect(rects,
 		 obj->cur.geometry.x,
@@ -202,12 +202,13 @@ evas_object_clip_changes_clean(Evas_Object *obj)
 
 
 void
-evas_object_render_pre_effect_updates(Evas_Rectangles *rects, Evas_Object *obj, int is_v, int was_v)
+evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *obj, int is_v, int was_v)
 {
    Evas_Rectangle *r;
    Evas_Object *clipper;
    Eina_List *l;
    unsigned int i;
+   Eina_Array_Iterator it;
    int x, y, w, h;
 
    if (obj->smart.smart) goto end;
@@ -215,13 +216,13 @@ evas_object_render_pre_effect_updates(Evas_Rectangles *rects, Evas_Object *obj, 
    was_v = 0;
    if (!obj->clip.clipees)
      {
-	for (i = 0; i < rects->count; ++i)
+	EINA_ARRAY_ITER_NEXT(rects, i, r, it)
 	  {
 	     /* get updates and clip to current clip */
-	     x = rects->array[i].x;
-	     y = rects->array[i].y;
-	     w = rects->array[i].w;
-	     h = rects->array[i].h;
+	     x = r->x;
+	     y = r->y;
+	     w = r->w;
+	     h = r->h;
 	     RECTS_CLIP_TO_RECT(x, y, w, h,
 				obj->cur.cache.clip.x,
 				obj->cur.cache.clip.y,
@@ -231,10 +232,10 @@ evas_object_render_pre_effect_updates(Evas_Rectangles *rects, Evas_Object *obj, 
 	       obj->layer->evas->engine.func->output_redraws_rect_add(obj->layer->evas->engine.data.output,
 								      x, y, w, h);
 	     /* get updates and clip to previous clip */
-	     x = rects->array[i].x;
-	     y = rects->array[i].y;
-	     w = rects->array[i].w;
-	     h = rects->array[i].h;
+	     x = r->x;
+	     y = r->y;
+	     w = r->w;
+	     h = r->h;
 	     RECTS_CLIP_TO_RECT(x, y, w, h,
 				obj->prev.cache.clip.x,
 				obj->prev.cache.clip.y,
@@ -280,21 +281,15 @@ evas_object_render_pre_effect_updates(Evas_Rectangles *rects, Evas_Object *obj, 
    else
      {
 	evas_object_clip_changes_clean(obj);
-	for (i = 0; i < rects->count; ++i)
-	  {
-	     r = eina_mempool_alloc(_evas_rectangle_mp, sizeof (Evas_Rectangle));
-	     if (!r) goto end;
-
-	     *r = rects->array[i];
-	     obj->clip.changes = eina_list_append(obj->clip.changes, r);
-	  }
+	EINA_ARRAY_ITER_NEXT(rects, i, r, it)
+	  obj->clip.changes = eina_list_append(obj->clip.changes, r);
+	eina_array_clean(rects);
      }
 
  end:
-   free(rects->array);
-   rects->array = NULL;
-   rects->count = 0;
-   rects->total = 0;
+   EINA_ARRAY_ITER_NEXT(rects, i, r, it)
+     eina_mempool_free(_evas_rectangle_mp, r);
+   eina_array_clean(rects);
 }
 
 int

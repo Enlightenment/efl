@@ -2,7 +2,7 @@
 #include "evas_private.h"
 
 void
-evas_rects_return_difference_rects(Evas_Rectangles *rects, int x, int y, int w, int h, int xx, int yy, int ww, int hh)
+evas_rects_return_difference_rects(Eina_Array *rects, int x, int y, int w, int h, int xx, int yy, int ww, int hh)
 {
    if (!RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh))
      {

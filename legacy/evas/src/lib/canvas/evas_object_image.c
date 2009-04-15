@@ -2300,7 +2300,6 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 static void
 evas_object_image_render_pre(Evas_Object *obj)
 {
-   Evas_Rectangles rects = { 0, 0, NULL };
    Evas_Object_Image *o;
    int is_v, was_v;
 
@@ -2335,17 +2334,17 @@ evas_object_image_render_pre(Evas_Object *obj)
    was_v = evas_object_was_visible(obj);
    if (is_v != was_v)
      {
-	evas_object_render_pre_visible_change(&rects, obj, is_v, was_v);
+	evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes, obj, is_v, was_v);
 	if (!o->pixel_updates) goto done;
      }
    /* it's not visible - we accounted for it appearing or not so just abort */
    if (!is_v) goto done;
    /* clipper changed this is in addition to anything else for obj */
-   evas_object_render_pre_clipper_change(&rects, obj);
+   evas_object_render_pre_clipper_change(&obj->layer->evas->clip_changes, obj);
    /* if we restacked (layer or just within a layer) and don't clip anyone */
    if (obj->restack)
      {
-	evas_object_render_pre_prev_cur_add(&rects, obj);
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
 	if (!o->pixel_updates) goto done;
      }
    /* if it changed color */
@@ -2354,19 +2353,19 @@ evas_object_image_render_pre(Evas_Object *obj)
        (obj->cur.color.b != obj->prev.color.b) ||
        (obj->cur.color.a != obj->prev.color.a))
      {
-	evas_object_render_pre_prev_cur_add(&rects, obj);
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
 	if (!o->pixel_updates) goto done;
      }
    /* if it changed render op */
    if (obj->cur.render_op != obj->prev.render_op)
      {
-	evas_object_render_pre_prev_cur_add(&rects, obj);
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
 	if (!o->pixel_updates) goto done;
      }
    /* if it changed anti_alias */
    if (obj->cur.anti_alias != obj->prev.anti_alias)
      {
-	evas_object_render_pre_prev_cur_add(&rects, obj);
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
 	if (!o->pixel_updates) goto done;
      }
    if (o->changed)
@@ -2377,7 +2376,7 @@ evas_object_image_render_pre(Evas_Object *obj)
 	    ((!o->cur.key) && (o->prev.key))
 	    )
 	  {
-	     evas_object_render_pre_prev_cur_add(&rects, obj);
+	     evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
 	     if (!o->pixel_updates) goto done;
 	  }
 	if ((o->cur.image.w != o->prev.image.w) ||
@@ -2386,7 +2385,7 @@ evas_object_image_render_pre(Evas_Object *obj)
 	    (o->cur.cspace != o->prev.cspace) ||
 	    (o->cur.smooth_scale != o->prev.smooth_scale))
 	  {
-	     evas_object_render_pre_prev_cur_add(&rects, obj);
+	     evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
 	     if (!o->pixel_updates) goto done;
 	  }
 	if ((o->cur.border.l != o->prev.border.l) ||
@@ -2394,12 +2393,12 @@ evas_object_image_render_pre(Evas_Object *obj)
 	    (o->cur.border.t != o->prev.border.t) ||
 	    (o->cur.border.b != o->prev.border.b))
 	  {
-	     evas_object_render_pre_prev_cur_add(&rects, obj);
+	     evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
 	     if (!o->pixel_updates) goto done;
 	  }
 	if (o->dirty_pixels)
 	  {
-	     evas_object_render_pre_prev_cur_add(&rects, obj);
+	     evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
 	     if (!o->pixel_updates) goto done;
 	  }
      }
@@ -2417,7 +2416,7 @@ evas_object_image_render_pre(Evas_Object *obj)
        (!o->pixel_updates)
        )
      {
-	evas_rects_return_difference_rects(&rects,
+	evas_rects_return_difference_rects(&obj->layer->evas->clip_changes,
 					   obj->cur.geometry.x,
 					   obj->cur.geometry.y,
 					   obj->cur.geometry.w,
@@ -2434,7 +2433,7 @@ evas_object_image_render_pre(Evas_Object *obj)
 	(obj->cur.geometry.h != obj->prev.geometry.h))
        )
      {
-	evas_object_render_pre_prev_cur_add(&rects, obj);
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
 	if (!o->pixel_updates) goto done;
      }
    if (o->changed)
@@ -2444,7 +2443,7 @@ evas_object_image_render_pre(Evas_Object *obj)
 	    (o->cur.fill.w != o->prev.fill.w) ||
 	    (o->cur.fill.h != o->prev.fill.h))
 	  {
-	     evas_object_render_pre_prev_cur_add(&rects, obj);
+	     evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
 	     if (!o->pixel_updates) goto done;
 	  }
 	if ((o->cur.border.l == 0) &&
@@ -2488,7 +2487,7 @@ evas_object_image_render_pre(Evas_Object *obj)
 			    r.h = ((rr->h + 2) * h) / o->cur.image.h;
 			    r.x += obj->cur.geometry.x + x;
 			    r.y += obj->cur.geometry.y + y;
-			    evas_add_rect(&rects, r.x, r.y, r.w, r.h);
+			    evas_add_rect(&obj->layer->evas->clip_changes, r.x, r.y, r.w, r.h);
 			    idy += h;
 			 }
 		       idx += idw;
@@ -2507,7 +2506,7 @@ evas_object_image_render_pre(Evas_Object *obj)
 		  EINA_LIST_FREE(o->pixel_updates, r)
 		    eina_mempool_free(_evas_rectangle_mp, r);
 		  obj->layer->evas->engine.func->image_dirty_region(obj->layer->evas->engine.data.output, o->engine_data, 0, 0, o->cur.image.w, o->cur.image.h);
-		  evas_object_render_pre_prev_cur_add(&rects, obj);
+		  evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
 		  goto done;
 	       }
 	  }
@@ -2523,7 +2522,7 @@ evas_object_image_render_pre(Evas_Object *obj)
 							    obj->cur.cache.clip.w,
 							    obj->cur.cache.clip.h);
    done:
-   evas_object_render_pre_effect_updates(&rects, obj, is_v, was_v);
+   evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, obj, is_v, was_v);
 }
 
 static void
