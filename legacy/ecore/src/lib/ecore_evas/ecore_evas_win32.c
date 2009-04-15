@@ -141,6 +141,7 @@ _ecore_evas_win32_init(void)
    ecore_evas_event_handlers[6]  = ecore_event_handler_add(ECORE_WIN32_EVENT_WINDOW_CONFIGURE, _ecore_evas_win32_event_window_configure, NULL);
    ecore_evas_event_handlers[7]  = ecore_event_handler_add(ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST, _ecore_evas_win32_event_window_delete_request, NULL);
 
+   ecore_event_evas_init();
    return _ecore_evas_init_count;
 }
 
@@ -157,6 +158,7 @@ _ecore_evas_win32_shutdown(void)
 	  ecore_event_handler_del(ecore_evas_event_handlers[i]);
 	ecore_idle_enterer_del(ecore_evas_idle_enterer);
 	ecore_evas_idle_enterer = NULL;
+	ecore_event_evas_shutdown();
      }
 
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
