@@ -169,49 +169,39 @@ _elm_win_xwin_update(Elm_Win *win)
 	       ecore_x_icccm_transient_for_set(win->xwin, win2->xwin);
 	  }
      }
-   
-   if (win->type == ELM_WIN_BASIC)
+
+   if (!win->xwin) return; /* nothing more to do */
+
+   switch (win->type)
      {
-	switch (win->type)
-          {
-	   case ELM_WIN_BASIC:
-	     if (win->xwin) 
-	       ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_NORMAL);
-	     break;
-	   case ELM_WIN_DIALOG_BASIC:
-	     if (win->xwin) 
-	       ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_DIALOG);
-	     break;
-	   case ELM_WIN_DESKTOP:
-	      if (win->xwin)
-		ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_DESKTOP);
-	      break;
-	   case ELM_WIN_DOCK:
-	      if (win->xwin)
-		ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_DOCK);
-	      break;
-	   case ELM_WIN_TOOLBAR:
-	      if (win->xwin)
-		ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_TOOLBAR);
-	      break;
-	   case ELM_WIN_MENU:
-	      if (win->xwin)
-		ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_MENU);
-	      break;
-	   case ELM_WIN_UTILITY:
-	      if (win->xwin)
-		ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_UTILITY);
-	      break;
-	   case ELM_WIN_SPLASH:
-	      if (win->xwin)
-		ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_SPLASH);
-	      break;
-	   default:
-	     break;
-	  }
+      case ELM_WIN_BASIC:
+	 ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_NORMAL);
+	 break;
+      case ELM_WIN_DIALOG_BASIC:
+	 ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_DIALOG);
+	 break;
+      case ELM_WIN_DESKTOP:
+	 ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_DESKTOP);
+	 break;
+      case ELM_WIN_DOCK:
+	 ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_DOCK);
+	 break;
+      case ELM_WIN_TOOLBAR:
+	 ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_TOOLBAR);
+	 break;
+      case ELM_WIN_MENU:
+	 ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_MENU);
+	 break;
+      case ELM_WIN_UTILITY:
+	 ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_UTILITY);
+	 break;
+      case ELM_WIN_SPLASH:
+	 ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_SPLASH);
+	 break;
+      default:
+	 break;
      }
-   if (win->xwin)
-     ecore_x_e_virtual_keyboard_state_set
+   ecore_x_e_virtual_keyboard_state_set
      (win->xwin, (Ecore_X_Virtual_Keyboard_State)win->kbdmode);
 #endif
 }
