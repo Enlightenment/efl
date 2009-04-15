@@ -852,7 +852,7 @@ _ecore_win32_event_char_get(int    key,
 {
   char kn[32];
   char ks[32];
-  char *kc;
+  char kc[32];
 
   *keyname = NULL;
   *keysymbol = NULL;
@@ -874,7 +874,7 @@ _ecore_win32_event_char_get(int    key,
        /* Line feed (Shift + Enter) */
        strncpy(kn, "LineFeed", 32);
        strncpy(ks, "LineFeed", 32);
-       kc = "";
+       strncpy(kc, "LineFeed", 32);
        break;
      case VK_RETURN:
        strncpy(kn, "Return", 32);
