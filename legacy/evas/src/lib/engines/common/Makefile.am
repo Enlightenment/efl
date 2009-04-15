@@ -11,10 +11,8 @@ AM_CPPFLAGS	     = -I. \
 		       -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 		       @FREETYPE_CFLAGS@ @VALGRIND_CFLAGS@ \
 		       @EET_CFLAGS@ @pthread_cflags@ \
-		       @WIN32_CFLAGS@ @EINA_CFLAGS@
-
-libevas_engine_common_la_CFLAGS  = @FRIBIDI_CFLAGS@ 
-libevas_engine_common_la_LDFLAGS  = @FRIBIDI_LIBS@
+		       @WIN32_CFLAGS@ @EINA_CFLAGS@ \
+                       @FRIBIDI_CFLAGS@
 
 noinst_LTLIBRARIES      = libevas_engine_common.la
 libevas_engine_common_la_SOURCES  = \
