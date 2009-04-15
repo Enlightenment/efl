@@ -173,7 +173,7 @@ ecore_quartz_feed_events(void)
          Ecore_Event_Key *ev;
          unsigned int     i;
 
-         ev = calloc(1, sizeof (Ecore_Quartz_Event_Key_Up));
+         ev = calloc(1, sizeof (Ecore_Event_Key));
          if (!ev) return;
          ev->timestamp = time;
 
@@ -198,10 +198,10 @@ ecore_quartz_feed_events(void)
          Ecore_Event_Key *evDown = NULL;
          Ecore_Event_Key *evUp = NULL;
 
-         evDown = calloc(1, sizeof (Ecore_Quartz_Event_Key_Down));
+         evDown = calloc(1, sizeof (Ecore_Event_Key));
          if (!evDown) return;
 
-         evUp = calloc(1, sizeof (Ecore_Quartz_Event_Key_Up));
+         evUp = calloc(1, sizeof (Ecore_Event_Key));
          if (!evUp)
            {
               free(evDown);
@@ -224,7 +224,7 @@ ecore_quartz_feed_events(void)
          {
             evDown->timestamp = time;
             evDown->string = "";
-            ecore_event_add(ECORE_QUARTZ_EVENT_KEY_DOWN, evDown, NULL, NULL);
+            ecore_event_add(ECORE_EVENT_KEY_DOWN, evDown, NULL, NULL);
             old_flags = flags;
             break;
          }
@@ -247,7 +247,7 @@ ecore_quartz_feed_events(void)
          {
             evUp->timestamp = time;
             evUp->string = "";
-            ecore_event_add(ECORE_QUARTZ_EVENT_KEY_UP, evUp, NULL, NULL);
+            ecore_event_add(ECORE_EVENT_KEY_UP, evUp, NULL, NULL);
             old_flags = flags;
             break;
          }
