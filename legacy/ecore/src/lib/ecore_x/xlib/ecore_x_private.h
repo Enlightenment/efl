@@ -169,6 +169,7 @@ extern void    *_ecore_window_grab_replay_data;
 extern Ecore_X_Window _ecore_x_private_win;
 
 void _ecore_x_error_handler_init(void);
+void _ecore_x_event_handle_any_event(XEvent *xevent);
 void _ecore_x_event_handle_key_press(XEvent *xevent);
 void _ecore_x_event_handle_key_release(XEvent *xevent);
 void _ecore_x_event_handle_button_press(XEvent *xevent);

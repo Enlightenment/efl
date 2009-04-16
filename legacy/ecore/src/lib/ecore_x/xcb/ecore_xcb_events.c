@@ -192,6 +192,15 @@ _ecore_x_event_free_selection_notify(void *data __UNUSED__, void *ev)
    free(e);
 }
 
+void
+_ecore_x_event_handle_any_event(xcb_generic_event_t *event)
+{
+   xcb_generic_event_t* ev = malloc(sizeof(xcb_generic_event_t));
+   memcpy(ev, event, sizeof(xcb_generic_event_t));
+
+   ecore_event_add(ECORE_X_EVENT_ANY, ev, NULL, NULL);
+}
+
 /* FIXME: handle this event */
 void
 _ecore_x_event_handle_key_press(xcb_generic_event_t *event)

@@ -755,6 +755,12 @@ struct _Ecore_X_Event_Desktop_Change
    int                         source;
 };
 
+EAPI extern int ECORE_X_EVENT_ANY; /**< low level event dependent on
+				        backend in use, if Xlib will be XEvent,
+					if XCB will be xcb_generic_event_t.
+
+					@warning avoid using it.
+				   */
 EAPI extern int ECORE_X_EVENT_MOUSE_IN;
 EAPI extern int ECORE_X_EVENT_MOUSE_OUT;
 EAPI extern int ECORE_X_EVENT_WINDOW_FOCUS_IN;

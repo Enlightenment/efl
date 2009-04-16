@@ -413,6 +413,15 @@ _ecore_mouse_button(int event,
 }
 
 void
+_ecore_x_event_handle_any_event(XEvent *xevent)
+{
+   XEvent* ev = malloc(sizeof(XEvent));
+   memcpy(ev, xevent, sizeof(XEvent));
+
+   ecore_event_add(ECORE_X_EVENT_ANY, ev, NULL, NULL);
+}
+
+void
 _ecore_x_event_handle_key_press(XEvent *xevent)
 {
    _ecore_key_press(ECORE_EVENT_KEY_DOWN, (XKeyEvent *) xevent);

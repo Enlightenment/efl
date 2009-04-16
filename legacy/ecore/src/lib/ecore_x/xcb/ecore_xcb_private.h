@@ -165,6 +165,7 @@ extern Ecore_X_Window      _ecore_xcb_private_window;
 
 void _ecore_x_error_handler_init(void);
 
+void _ecore_x_event_handle_any_event          (xcb_generic_event_t *event);
 void _ecore_x_event_handle_key_press          (xcb_generic_event_t *event);
 void _ecore_x_event_handle_key_release        (xcb_generic_event_t *event);
 void _ecore_x_event_handle_button_press       (xcb_generic_event_t *event);

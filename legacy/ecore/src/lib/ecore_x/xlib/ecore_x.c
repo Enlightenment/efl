@@ -22,6 +22,12 @@ static int _ecore_x_key_mask_get(KeySym sym);
 static int _ecore_x_event_modifier(unsigned int state);
 
 static Ecore_Fd_Handler *_ecore_x_fd_handler_handle = NULL;
+
+static const int AnyXEvent = 0; /* 0 can be used as there are no event types
+				 * with index 0 and 1 as they are used for
+				 * errors
+				 */
+
 static int _ecore_x_event_shape_id = 0;
 static int _ecore_x_event_screensaver_id = 0;
 static int _ecore_x_event_sync_id = 0;
@@ -54,6 +60,7 @@ Ecore_X_Window _ecore_x_private_win = 0;
 
 Ecore_X_Atom _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
 
+EAPI int ECORE_X_EVENT_ANY = 0;
 EAPI int ECORE_X_EVENT_MOUSE_IN = 0;
 EAPI int ECORE_X_EVENT_MOUSE_OUT = 0;
 EAPI int ECORE_X_EVENT_WINDOW_FOCUS_IN = 0;
@@ -224,6 +231,7 @@ ecore_x_init(const char *name)
 #ifdef ECORE_XCURSOR   
    _ecore_x_xcursor = XcursorSupportsARGB(_ecore_x_disp);
 #endif
+   _ecore_x_event_handlers[AnyXEvent]        = _ecore_x_event_handle_any_event;
    _ecore_x_event_handlers[KeyPress]         = _ecore_x_event_handle_key_press;
    _ecore_x_event_handlers[KeyRelease]       = _ecore_x_event_handle_key_release;
    _ecore_x_event_handlers[ButtonPress]      = _ecore_x_event_handle_button_press;
@@ -292,8 +300,9 @@ ecore_x_init(const char *name)
    while (0);
 #endif
    
-   if (!ECORE_X_EVENT_MOUSE_IN)
+   if (!ECORE_X_EVENT_ANY)
      {
+	ECORE_X_EVENT_ANY                      = ecore_event_type_new();
 	ECORE_X_EVENT_MOUSE_IN                 = ecore_event_type_new();
 	ECORE_X_EVENT_MOUSE_OUT                = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_FOCUS_IN          = ecore_event_type_new();
@@ -699,6 +708,9 @@ _ecore_x_fd_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 
 	if ((ev.type >= 0) && (ev.type < _ecore_x_event_handlers_num))
 	  {
+	     if (_ecore_x_event_handlers[AnyXEvent])
+	       _ecore_x_event_handlers[AnyXEvent] (&ev);
+
 	     if (_ecore_x_event_handlers[ev.type])
 	       _ecore_x_event_handlers[ev.type] (&ev);
 	  }

@@ -18,6 +18,11 @@ static void  _ecore_xcb_event_filter_end(void *data, void *loop_data);
 static Ecore_Fd_Handler *_ecore_xcb_fd_handler_handle = NULL;
 static Ecore_Event_Filter *_ecore_xcb_filter_handler = NULL;
 
+static const int AnyXEvent = 0; /* 0 can be used as there are no event types
+				 * with index 0 and 1 as they are used for
+				 * errors
+				 */
+
 #ifdef ECORE_XCB_DAMAGE
 static int _ecore_xcb_event_damage_id = 0;
 #endif /* ECORE_XCB_DAMAGE */
@@ -60,6 +65,7 @@ Ecore_X_Window      _ecore_xcb_private_window = 0;
 Ecore_X_Atom        _ecore_xcb_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
 
 
+EAPI int ECORE_X_EVENT_ANY                      = 0;
 EAPI int ECORE_X_EVENT_MOUSE_IN                 = 0;
 EAPI int ECORE_X_EVENT_MOUSE_OUT                = 0;
 EAPI int ECORE_X_EVENT_WINDOW_FOCUS_IN          = 0;
@@ -400,6 +406,7 @@ ecore_x_init(const char *name)
    _ecore_xcb_xcursor = XcursorSupportsARGB(_ecore_xcb_conn);
 #endif /* ECORE_XCB_CURSOR */
 
+   _ecore_xcb_event_handlers[AnyXEvent]             = _ecore_x_event_handle_any_event;
    _ecore_xcb_event_handlers[XCB_KEY_PRESS]         = _ecore_x_event_handle_key_press;
    _ecore_xcb_event_handlers[XCB_KEY_RELEASE]       = _ecore_x_event_handle_key_release;
    _ecore_xcb_event_handlers[XCB_BUTTON_PRESS]      = _ecore_x_event_handle_button_press;
@@ -462,8 +469,9 @@ ecore_x_init(const char *name)
      _ecore_xcb_event_handlers[_ecore_xcb_event_fixes_selection_id] = _ecore_x_event_handle_fixes_selection_notify;
 #endif /* ECORE_XCB_FIXES */
 
-   if (!ECORE_X_EVENT_MOUSE_IN)
+   if (!ECORE_X_EVENT_ANY)
      {
+	ECORE_X_EVENT_ANY                      = ecore_event_type_new();
 	ECORE_X_EVENT_MOUSE_IN                 = ecore_event_type_new();
 	ECORE_X_EVENT_MOUSE_OUT                = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_FOCUS_IN          = ecore_event_type_new();
@@ -826,6 +834,9 @@ handle_event(xcb_generic_event_t *ev)
 
    if (response_type < _ecore_xcb_event_handlers_num)
      {
+	if (_ecore_xcb_event_handlers[AnyXEvent])
+	  _ecore_xcb_event_handlers[AnyXEvent] (&ev);
+
 	if (_ecore_xcb_event_handlers[response_type])
 	  _ecore_xcb_event_handlers[response_type] (ev);
      }
