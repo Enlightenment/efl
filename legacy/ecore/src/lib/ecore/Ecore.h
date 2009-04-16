@@ -49,11 +49,11 @@
  * more details.
  */
 
-#ifndef _ECORE_PRIVATE_H
+#ifdef _WIN32
+# include <winsock2.h>
+#else
 # include <sys/types.h>
-# ifndef _WIN32
-#  include <signal.h>
-# endif
+# include <signal.h>
 #endif
 
 #ifndef TRUE
