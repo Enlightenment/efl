@@ -7,7 +7,8 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore_input \
 @EFL_ECORE_WIN32_BUILD@ \
 @EVAS_CFLAGS@ \
-@EINA_CFLAGS@
+@EINA_CFLAGS@ \
+@WIN32_CPPFLAGS@
 
 
 if BUILD_ECORE_WIN32
