@@ -5,13 +5,6 @@
 #ifndef _EET_PRIVATE_H
 #define _EET_PRIVATE_H
 
-#ifdef __GNUC__
-# if __GNUC__ >= 4
-// BROKEN in gcc 4 on amd64
-//#  pragma GCC visibility push(hidden)
-# endif
-#endif
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -55,6 +48,30 @@ struct _Eet_Dictionary
 
   const char   *start;
   const char   *end;
+};
+
+struct _Eet_Node
+{
+   int         type;
+   int         count;
+   const char *name;
+   const char *key;
+   Eet_Node   *values;
+   Eet_Node   *next;
+   Eet_Node   *parent;
+   union {
+      char                c;
+      short               s;
+      int                 i;
+      long long           l;
+      float               f;
+      double              d;
+      unsigned char       uc;
+      unsigned short      us;
+      unsigned int        ui;
+      unsigned long long  ul;
+      const char         *str;
+   } data;
 };
 
 Eet_Dictionary  *eet_dictionary_add(void);

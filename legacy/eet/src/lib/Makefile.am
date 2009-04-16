@@ -26,6 +26,7 @@ eet_data.c \
 eet_image.c \
 eet_cipher.c \
 eet_dictionary.c \
+eet_node.c \
 eet_utils.c
 
 libeet_la_CFLAGS = @EET_CFLAGS@ @DEBUG_CFLAGS@

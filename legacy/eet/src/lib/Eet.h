@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <Eina.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -104,6 +105,7 @@ extern "C" {
    typedef struct _Eet_Dictionary            Eet_Dictionary;
    typedef struct _Eet_Data_Descriptor       Eet_Data_Descriptor;
    typedef struct _Eet_Key                   Eet_Key;
+   typedef struct _Eet_Node                  Eet_Node;
 
    typedef struct _Eet_Data_Descriptor_Class Eet_Data_Descriptor_Class;
 
@@ -1355,6 +1357,30 @@ eet_dictionary_string_check    * example: values), and @p type is the basic data
      }
 
 /***************************************************************************/
+
+   EAPI Eet_Node *eet_node_char_new(const char *name, char c);
+   EAPI Eet_Node *eet_node_short_new(const char *name, short s);
+   EAPI Eet_Node *eet_node_int_new(const char *name, int i);
+   EAPI Eet_Node *eet_node_long_long_new(const char *name, long long l);
+   EAPI Eet_Node *eet_node_float_new(const char *name, float f);
+   EAPI Eet_Node *eet_node_double_new(const char *name, double d);
+   EAPI Eet_Node *eet_node_unsigned_char_new(const char *name, unsigned char uc);
+   EAPI Eet_Node *eet_node_unsigned_short_new(const char *name, unsigned short us);
+   EAPI Eet_Node *eet_node_unsigned_int_new(const char *name, unsigned int ui);
+   EAPI Eet_Node *eet_node_string_new(const char *name, const char *str);
+   EAPI Eet_Node *eet_node_inlined_string_new(const char *name, const char *str);
+   EAPI Eet_Node *eet_node_null_new(const char *name);
+   EAPI Eet_Node *eet_node_list_new(const char *name, Eina_List *nodes);
+   EAPI Eet_Node *eet_node_array_new(const char *name, int count, Eina_List *nodes);
+   EAPI Eet_Node *eet_node_var_array_new(const char *name, int count, Eina_List *nodes);
+   EAPI Eet_Node *eet_node_hash_new(const char *name, const char *key, Eina_List *nodes);
+   EAPI Eet_Node *eet_node_struct_new(const char *name, Eina_List *nodes);
+   EAPI void eet_node_del(Eet_Node *n);
+
+   EAPI void *eet_data_node_encode_cipher(Eet_Node *node, const char *key, int *size_ret);
+
+/***************************************************************************/
+
 #ifdef __cplusplus
 }
 #endif

@@ -9,6 +9,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 @EET_CPPFLAGS@ \
+@EINA_CFLAGS@ \
 @EVIL_CFLAGS@
 
 bin_PROGRAMS = eet
