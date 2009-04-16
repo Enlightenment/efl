@@ -388,7 +388,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 	prev_index = index;
      }
 #ifdef INTERNATIONAL_SUPPORT
-   if (bidi_err < 0) {
+   if (bidi_err >= 0) {
    	free(level_list);
    	free(text);
    }

@@ -29,8 +29,11 @@ evas_intl_utf8_to_visual(const char *text, int *ret_len, FriBidiCharType *direct
 
 	/* if there's nothing to do, return text
 	 * one char draws are quite common */
-	if (len <= 1)
-		return text;
+	if (len <= 1) {
+		*ret_len = len;
+		*embedding_level_list = NULL;
+		return strdup(text);
+	}
 	
 	byte_len = strlen(text); /* we need the actual number of bytes, not number of chars */
 	
