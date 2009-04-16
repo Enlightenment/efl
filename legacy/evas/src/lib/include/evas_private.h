@@ -85,7 +85,7 @@ MAGIC_CHECK_FAILED(o, t, m)
 #endif
 
 #define NEW_RECT(_r, _x, _y, _w, _h) \
-{(_r) = eina_mempool_alloc(_evas_rectangle_mp, sizeof(Evas_Rectangle)); \
+{(_r) = (Evas_Rectangle *)eina_mempool_alloc(_evas_rectangle_mp, sizeof(Evas_Rectangle)); \
    if (_r)								\
      {									\
 	(_r)->x = (_x); (_r)->y = (_y);					\
