@@ -3260,6 +3260,23 @@ _eet_data_descriptor_encode(Eet_Dictionary *ed,
    return cdata;
 }
 
+EAPI int
+eet_data_node_write_cipher(Eet_File *ef, const char *name, const char *key, Eet_Node *node, int compress)
+{
+   Eet_Dictionary       *ed;
+   void                 *data_enc;
+   int                   size;
+   int                   val;
+
+   ed = eet_dictionary_get(ef);
+
+   data_enc = _eet_data_dump_encode(ed, node, &size);
+   if (!data_enc) return 0;
+   val = eet_write_cipher(ef, name, data_enc, size, compress, key);
+   free(data_enc);
+   return val;
+}
+
 EAPI void *
 eet_data_node_encode_cipher(Eet_Node *node,
 			    const char *key,

@@ -1378,6 +1378,7 @@ eet_dictionary_string_check    * example: values), and @p type is the basic data
    EAPI void eet_node_del(Eet_Node *n);
 
    EAPI void *eet_data_node_encode_cipher(Eet_Node *node, const char *key, int *size_ret);
+   EAPI int eet_data_node_write_cipher(Eet_File *ef, const char *name, const char *key, Eet_Node *node, int compress);
 
 /***************************************************************************/
 
