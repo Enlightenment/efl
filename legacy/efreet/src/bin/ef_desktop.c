@@ -302,8 +302,8 @@ ef_cb_desktop_command_get(void)
 
     /* clean up */
     efreet_desktop_free(desktop);
-    files = eina_list_free(files);
-    expected = eina_list_free(expected);
+    eina_list_free(files);
+    eina_list_free(expected);
 
     ret = info->error > 0 ? 0 : 1;
     free(info);

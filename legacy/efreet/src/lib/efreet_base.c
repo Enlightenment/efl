@@ -108,7 +108,7 @@ efreet_config_home_get(void)
 
 /**
  * @return Returns the Eina_List of preference ordered extra config directories
- * @brief Returns the Eina_List of prefernece oredred extra config
+ * @brief Returns the Eina_List of prefernece ordered extra config
  * directories
  *
  * @note The returned list is static inside Efreet. If you add/remove from the

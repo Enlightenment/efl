@@ -1062,7 +1062,6 @@ efreet_icon_populate(Efreet_Icon *icon, const char *file)
 
         t = strdup(tmp);
         s = t;
-        p = t;
         while (s)
         {
             Efreet_Icon_Point *point;

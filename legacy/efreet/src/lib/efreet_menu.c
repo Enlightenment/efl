@@ -670,8 +670,6 @@ efreet_menu_parse(const char *path)
     internal->inline_header = 1;
     internal->inline_alias = 0;
 
-    search_dirs = efreet_config_dirs_get();
-
     efreet_menu_path_set(internal, path);
     if (!efreet_menu_handle_menu(internal, xml))
     {

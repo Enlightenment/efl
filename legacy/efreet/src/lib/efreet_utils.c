@@ -187,9 +187,6 @@ efreet_util_path_in_default(const char *section, const char *path)
 
     EINA_LIST_FREE(dirs, dir)
     {
-        size_t len;
-
-        len = strlen(dir);
         if (!strncmp(path, dir, strlen(dir)))
         {
             ret = dir;
