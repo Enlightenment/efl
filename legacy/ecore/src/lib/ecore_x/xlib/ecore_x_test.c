@@ -14,6 +14,7 @@
 
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
+#include <string.h>
 
 
 EAPI int
