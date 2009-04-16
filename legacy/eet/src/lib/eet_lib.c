@@ -1049,6 +1049,7 @@ eet_internal_read2(Eet_File *ef)
 #ifdef HAVE_SIGNATURE
 	const unsigned char *buffer = ((const unsigned char*) ef->data) + signature_base_offset;
 	ef->x509_der = eet_identity_check(ef->data, signature_base_offset,
+					  &ef->sha1, &ef->sha1_length,
 					  buffer, ef->data_size - signature_base_offset,
 					  &ef->signature, &ef->signature_length,
 					  &ef->x509_length);
@@ -1567,6 +1568,7 @@ eet_close(Eet_File *ef)
 
    eet_dictionary_free(ef->ed);
 
+   if (ef->sha1) free(ef->sha1);
    if (ef->data) munmap((void*)ef->data, ef->data_size);
    if (ef->fp) fclose(ef->fp);
    if (ef->readfp) fclose(ef->readfp);

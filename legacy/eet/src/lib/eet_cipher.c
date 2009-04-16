@@ -504,6 +504,7 @@ eet_identity_sign(FILE *fp, Eet_Key *key)
 
 const void*
 eet_identity_check(const void *data_base, unsigned int data_length,
+		   void **sha1, int *sha1_length,
 		   const void *signature_base, unsigned int signature_length,
 		   const void **raw_signature_base, unsigned int *raw_signature_length,
 		   int *x509_length)
@@ -534,8 +535,11 @@ eet_identity_check(const void *data_base, unsigned int data_length,
 
 # ifdef HAVE_GNUTLS
    gnutls_x509_crt_t cert;
+   gcry_md_hd_t md;
    gnutls_datum_t datum;
    gnutls_datum_t signature;
+   unsigned char *hash;
+   int err;
 
    /* Create an understanding certificate structure for gnutls */
    datum.data = (void *)cert_der;
@@ -547,10 +551,60 @@ eet_identity_check(const void *data_base, unsigned int data_length,
    signature.size = sign_len;
 
    /* Verify the signature */
+#  if EET_USE_NEW_GNUTLS_API
+   /*
+     I am waiting for my patch being accepted in GnuTLS release.
+     But we now have a way to prevent double computation of SHA1.
+    */
+   err = gcry_md_open (&md, GCRY_MD_SHA1, 0);
+   if (err < 0) return NULL;
+
+   gcry_md_write(md, data_base, data_length);
+
+   hash = gcry_md_read(md, GCRY_MD_SHA1);
+   if (hash == NULL)
+     {
+	gcry_md_close(md);
+	return NULL;
+     }
+
+   datum.size = gcry_md_get_algo_dlen(GCRY_MD_SHA1);
+   datum.data = hash;
+
+   if (!gnutls_x509_crt_verify_hash(cert, 0, &datum, &signature))
+     {
+	gcry_md_close(md);
+	return NULL;
+     }
+
+   if (sha1)
+     {
+	*sha1 = malloc(datum.size);
+	if (!*sha1)
+	  {
+	     gcry_md_close(md);
+	     return NULL;
+	  }
+
+	memcpy(*sha1, hash, datum.size);
+	*sha1_length = datum.size;
+     }
+
+   gcry_md_close(md);
+#  else
    datum.data = (void *)data_base;
    datum.size = data_length;
+
    if (!gnutls_x509_crt_verify_data(cert, 0, &datum, &signature))
      return NULL;
+
+   if (sha1)
+     {
+	*sha1 = NULL;
+	*sha1_length = -1;
+     }
+#  endif
+
 # else
    const unsigned char *tmp;
    EVP_PKEY *pkey;
@@ -579,6 +633,12 @@ eet_identity_check(const void *data_base, unsigned int data_length,
 
    X509_free(x509);
    EVP_PKEY_free(pkey);
+
+   if (sha1)
+     {
+	*sha1 = NULL;
+	*sha1_length = -1;
+     }
 
    if (err != 1)
      return NULL;
