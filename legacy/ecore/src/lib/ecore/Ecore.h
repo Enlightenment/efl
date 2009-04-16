@@ -278,6 +278,10 @@ extern "C" {
    EAPI void              *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
 
    EAPI void              ecore_main_loop_iterate(void);
+
+   EAPI void              ecore_main_loop_select_func_set(int (*func)(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout));
+   EAPI void             *ecore_main_loop_select_func_get(void);
+
    EAPI void              ecore_main_loop_begin(void);
    EAPI void              ecore_main_loop_quit(void);
    EAPI Ecore_Fd_Handler *ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, int (*func) (void *data, Ecore_Fd_Handler *fd_handler), const void *data, int (*buf_func) (void *buf_data, Ecore_Fd_Handler *fd_handler), const void *buf_data);

@@ -47,6 +47,7 @@ static int               in_main_loop = 0;
 static int               do_quit = 0;
 static Ecore_Fd_Handler *fd_handlers = NULL;
 static int               fd_handlers_delete_me = 0;
+static int (*main_loop_select)(int , fd_set *, fd_set *, fd_set *, struct timeval *) = select;
 
 static double            t1 = 0.0;
 static double            t2 = 0.0;
@@ -107,6 +108,37 @@ EAPI void
 ecore_main_loop_quit(void)
 {
    do_quit = 1;
+}
+
+/**
+ * Sets the function to use when monitoring multiple file descriptors,
+ * and waiting until one of more of the file descriptors before ready
+ * for some class of I/O operation.
+ *
+ * This function will be used instead of the system call select and
+ * could possible be used to integrate the Ecore event loop with an
+ * external event loop.
+ *
+ * @warning you don't know how to use, don't even try to use it.
+ *
+ * @ingroup Ecore_Main_Loop_Group
+ */
+EAPI void
+ecore_main_loop_select_func_set(int (*func)(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout))
+{
+   main_loop_select = func;
+}
+
+/**
+ * Gets the select function set by ecore_select_func_set(),
+ * or the native select function if none was set.
+ *
+ * @ingroup Ecore_Main_Loop_Group
+ */
+EAPI void *
+ecore_main_loop_select_func_get(void)
+{
+   return main_loop_select;
 }
 
 /**
@@ -361,7 +393,7 @@ _ecore_main_select(double timeout)
      }
    if (_ecore_signal_count_get()) return -1;
 
-   ret = select(max_fd + 1, &rfds, &wfds, &exfds, t);
+   ret = main_loop_select(max_fd + 1, &rfds, &wfds, &exfds, t);
    _ecore_loop_time = ecore_time_get();
    if (ret < 0)
      {
