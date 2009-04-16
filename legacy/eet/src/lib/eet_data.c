@@ -2164,6 +2164,30 @@ _eet_data_dump_parse(Eet_Dictionary *ed,
      Size -= (4 + Echnk.size + tmp);                    \
   }
 
+static const char *_dump_g_name[6] = {
+  "struct",
+  "array",
+  "var_array",
+  "list",
+  "hash",
+  "???"
+};
+
+static const char *_dump_t_name[14][2] = {
+  { "???: ", "???" },
+  { "char: ", "%hhi" },
+  { "short: ", "%hi" },
+  { "int: ", "%i" },
+  { "long_long: ", "%lli" },
+  { "float: ", "%1.25f" },
+  { "double: ", "%1.25f" },
+  { "uchar: ", "%hhu" },
+  { "ushort: ", "%i" },
+  { "uint: ", "%u" },
+  { "ulong_long: ", "%llu" },
+  { "null", "" }
+};
+
 static void *
 _eet_data_descriptor_decode(Eet_Free_Context *context,
 			    const Eet_Dictionary *ed,
@@ -2177,6 +2201,7 @@ _eet_data_descriptor_decode(Eet_Free_Context *context,
    void *data = NULL;
    char *p, tbuf[256];
    int size, i, dump;
+   int chnk_type;
    Eet_Data_Chunk chnk;
 
    if (words_bigendian == -1)
@@ -2218,7 +2243,7 @@ _eet_data_descriptor_decode(Eet_Free_Context *context,
      {
 	if (!edd->elements.hash.buckets) _eet_descriptor_hash_new(edd);
      }
-   if (dumpfunc)
+   else if (dumpfunc)
      {
 	dump = 1;
 	if (chnk.type == EET_T_UNKNOW)
@@ -2227,27 +2252,11 @@ _eet_data_descriptor_decode(Eet_Free_Context *context,
 	     dumpfunc(dumpdata, "group \"");
 	     _eet_data_dump_string_escape(dumpdata, dumpfunc, chnk.name);
 	     dumpfunc(dumpdata, "\" ");
-	     switch (chnk.group_type)
-	       {
-		case EET_G_UNKNOWN:
-		  dumpfunc(dumpdata, "struct");
-		  break;
-		case EET_G_ARRAY:
-		  dumpfunc(dumpdata, "array");
-		  break;
-		case EET_G_VAR_ARRAY:
-		  dumpfunc(dumpdata, "var_array");
-		  break;
-		case EET_G_LIST:
-		  dumpfunc(dumpdata, "list");
-		  break;
-		case EET_G_HASH:
-		  dumpfunc(dumpdata, "hash");
-		  break;
-		default:
-		  dumpfunc(dumpdata, "???");
-		  break;
-	       }
+
+	     chnk_type = (chnk.group_type >= EET_G_UNKNOWN && chnk.group_type <= EET_G_HASH) ?
+	       chnk.group_type : EET_G_LAST;
+
+	     dumpfunc(dumpdata, _dump_g_name[chnk_type - EET_G_UNKNOWN]);
 	     dumpfunc(dumpdata, " {\n");
 	  }
      }
@@ -2310,6 +2319,8 @@ _eet_data_descriptor_decode(Eet_Free_Context *context,
 
 		  if (IS_SIMPLE_TYPE(type))
 		    {
+		       const char *type_name = NULL;
+
 		       ret = eet_data_get_type(ed,
                                                type,
 					       echnk.data,
@@ -2321,73 +2332,44 @@ _eet_data_descriptor_decode(Eet_Free_Context *context,
 		       dumpfunc(dumpdata, "  value \"");
 		       _eet_data_dump_string_escape(dumpdata, dumpfunc, echnk.name);
 		       dumpfunc(dumpdata, "\" ");
+
+#define EET_T_TYPE(Eet_Type, Type)					\
+		       case Eet_Type:					\
+			 {						\
+			    dumpfunc(dumpdata, _dump_t_name[Eet_Type][0]); \
+			    snprintf(tbuf, sizeof (tbuf), _dump_t_name[Eet_Type][1], *((Type *)dd)); \
+			    dumpfunc(dumpdata, tbuf);			\
+			    break;					\
+			 }
+
 		       switch (type)
 			 {
-			  case EET_T_CHAR:
-			    dumpfunc(dumpdata, "char: ");
-			    snprintf(tbuf, sizeof(tbuf), "%hhi", *((char *)dd));
-			    dumpfunc(dumpdata, tbuf); break;
-			  case EET_T_SHORT:
-			    dumpfunc(dumpdata, "short: ");
-			    snprintf(tbuf, sizeof(tbuf), "%hi", *((short *)dd));
-			    dumpfunc(dumpdata, tbuf); break;
-			  case EET_T_INT:
-			    dumpfunc(dumpdata, "int: ");
-			    snprintf(tbuf, sizeof(tbuf), "%i", *((int *)dd));
-			    dumpfunc(dumpdata, tbuf); break;
-			  case EET_T_LONG_LONG:
-			    dumpfunc(dumpdata, "long_long: ");
-			    snprintf(tbuf, sizeof(tbuf), "%lli", *((long long *)dd));
-			    dumpfunc(dumpdata, tbuf); break;
-			  case EET_T_FLOAT:
-			    dumpfunc(dumpdata, "float: ");
-			    snprintf(tbuf, sizeof(tbuf), "%1.25f", *((float *)dd));
-			    dumpfunc(dumpdata, tbuf); break;
-			  case EET_T_DOUBLE:
-			    dumpfunc(dumpdata, "double: ");
-			    snprintf(tbuf, sizeof(tbuf), "%1.25f", *((double *)dd));
-			    dumpfunc(dumpdata, tbuf); break;
-			  case EET_T_UCHAR:
-			    dumpfunc(dumpdata, "uchar: ");
-			    snprintf(tbuf, sizeof(tbuf), "%hhu", *((unsigned char *)dd));
-			    dumpfunc(dumpdata, tbuf); break;
-			  case EET_T_USHORT:
-			    dumpfunc(dumpdata, "ushort: ");
-			    snprintf(tbuf, sizeof(tbuf), "%i", *((unsigned short *)dd));
-			    dumpfunc(dumpdata, tbuf); break;
-			  case EET_T_UINT:
-			    dumpfunc(dumpdata, "uint: ");
-			    snprintf(tbuf, sizeof(tbuf), "%u", *((unsigned int *)dd));
-			    dumpfunc(dumpdata, tbuf); break;
-			  case EET_T_ULONG_LONG:
-			    dumpfunc(dumpdata, "ulong_long: ");
-			    snprintf(tbuf, sizeof(tbuf), "%llu", *((unsigned long long *)dd));
-			    dumpfunc(dumpdata, tbuf); break;
+			    EET_T_TYPE(EET_T_CHAR, char);
+			    EET_T_TYPE(EET_T_SHORT, short);
+			    EET_T_TYPE(EET_T_INT, int);
+			    EET_T_TYPE(EET_T_LONG_LONG, long long);
+			    EET_T_TYPE(EET_T_FLOAT, float);
+			    EET_T_TYPE(EET_T_DOUBLE, double);
+			    EET_T_TYPE(EET_T_UCHAR, unsigned char);
+			    EET_T_TYPE(EET_T_USHORT, unsigned short);
+			    EET_T_TYPE(EET_T_UINT, unsigned int);
+			    EET_T_TYPE(EET_T_ULONG_LONG, unsigned long long);
 			  case EET_T_INLINED_STRING:
-			      {
-				 char *s;
-
-				 s = *((char **)dd);
-				 if (s)
-				   {
-				      dumpfunc(dumpdata, "inlined: \"");
-				      _eet_data_dump_string_escape(dumpdata, dumpfunc, s);
-				      dumpfunc(dumpdata, "\"");
-				   }
-			      }
-			    break;
+			     type_name = "inlined: \"";
 			  case EET_T_STRING:
-			      {
+			     if (!type_name) type_name = "string: \"";
+
+			     {
 				 char *s;
 
 				 s = *((char **)dd);
 				 if (s)
 				   {
-				      dumpfunc(dumpdata, "string: \"");
+				      dumpfunc(dumpdata, type_name);
 				      _eet_data_dump_string_escape(dumpdata, dumpfunc, s);
 				      dumpfunc(dumpdata, "\"");
 				   }
-			      }
+			     }
 			    break;
 			  case EET_T_NULL:
 			    dumpfunc(dumpdata, "null");
@@ -2417,22 +2399,11 @@ _eet_data_descriptor_decode(Eet_Free_Context *context,
 		  dumpfunc(dumpdata, "  group \"");
 		  _eet_data_dump_string_escape(dumpdata, dumpfunc, echnk.name);
 		  dumpfunc(dumpdata, "\" ");
-		  switch (echnk.group_type)
-		    {
-		     case EET_G_UNKNOWN:
-		       dumpfunc(dumpdata, "struct");break;
-		     case EET_G_ARRAY:
-		       dumpfunc(dumpdata, "array");break;
-		     case EET_G_VAR_ARRAY:
-		       dumpfunc(dumpdata, "var_array");break;
-		     case EET_G_LIST:
-		       dumpfunc(dumpdata, "list");break;
-		     case EET_G_HASH:
-		       dumpfunc(dumpdata, "hash");break;
-		     default:
-		       dumpfunc(dumpdata, "???");break;
-		       break;
-		    }
+
+		  chnk_type = (echnk.group_type >= EET_G_UNKNOWN && echnk.group_type <= EET_G_HASH) ?
+		    echnk.group_type : EET_G_LAST;
+
+		  dumpfunc(dumpdata, _dump_g_name[chnk_type - EET_G_UNKNOWN]);
 		  dumpfunc(dumpdata, " {\n");
 		  switch (group_type)
 		    {
