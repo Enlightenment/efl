@@ -86,6 +86,10 @@ _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_inf
      {
         evas_object_del(evas_object_top_get(win->evas));
      }
+   evas_image_cache_flush(win->evas);
+   evas_font_cache_flush(win->evas);
+   edje_file_cache_flush();
+   edje_collection_cache_flush();
 // FIXME: we are in the del handler for the object and delete the canvas
 // that lives under it from the handler... nasty. deferring doesnt help either
    ecore_job_add(_deferred_ecore_evas_free, win->ee);

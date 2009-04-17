@@ -56,12 +56,10 @@ _buf_append(char *buf, const char *str, int *len, int *alloc)
    int len2 = strlen(str);
    if ((*len + len2) >= *alloc)
      {
-	char *buf2;
-	
-	buf2 = realloc(buf, *alloc + len2 + 512);
+	char *buf2 = realloc(buf, *alloc + len2 + 512);
 	if (!buf2) return NULL;
 	buf = buf2;
-	*alloc += 512;
+	*alloc += 512 + len2;
      }
    strcpy(buf + *len, str);
    *len += len2;
@@ -73,7 +71,7 @@ _load_file(const char *file)
 {
    FILE *f;
    size_t size;
-   int alloc = 0, len = 0, pos;
+   int alloc = 0, len = 0;
    char *text = NULL, buf[4096];
    
    f = fopen(file, "rb");
