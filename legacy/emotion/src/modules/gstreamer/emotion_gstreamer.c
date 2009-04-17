@@ -6,11 +6,10 @@
 
 #include <Eina.h>
 
-#include "Emotion.h"
 #include "emotion_private.h"
 #include "emotion_gstreamer.h"
 #include "emotion_gstreamer_pipeline.h"
-
+#include "Emotion.h"
 
 /* Callbacks to get the eos */
 static int  _eos_timer_fct   (void *data);

@@ -1,5 +1,5 @@
-#include "Emotion.h"
 #include "emotion_private.h"
+#include "Emotion.h"
 
 #define E_SMART_OBJ_GET(smart, o, type) \
      { \

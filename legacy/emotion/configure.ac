@@ -29,6 +29,26 @@ SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
+EFL_EMOTION_BUILD=""
+case "$host_os" in
+   mingw* | cegcc*)
+      EFL_EMOTION_BUILD="-DEFL_EMOTION_BUILD"
+   ;;
+esac
+AC_SUBST(EFL_EMOTION_BUILD)
+
+### Checks for linker characteristics
+
+# use --enable-auto-import on Windows
+
+lt_enable_auto_import=""
+case "$host_os" in
+   mingw* | cegcc*)
+      lt_enable_auto_import="-Wl,--enable-auto-import"
+      ;;
+esac
+AC_SUBST(lt_enable_auto_import)
+
 PKG_CHECK_MODULES(EVAS, [evas >= 0.9.9])
 PKG_CHECK_MODULES(EDJE, [edje >= 0.5.0])
 PKG_CHECK_MODULES(ECORE, [ecore >= 0.9.9 ecore-evas >= 0.9.9 ecore-job >= 0.9.9])

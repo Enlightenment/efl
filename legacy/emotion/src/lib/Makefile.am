@@ -8,7 +8,8 @@ AM_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 @EVAS_CFLAGS@ \
-@ECORE_CFLAGS@
+@ECORE_CFLAGS@ \
+@EFL_EMOTION_BUILD@
 
 lib_LTLIBRARIES      = libemotion.la
 include_HEADERS      = Emotion.h
@@ -18,4 +19,4 @@ emotion_private.h
 
 libemotion_la_LIBADD       = @EVAS_LIBS@ @ECORE_LIBS@
 libemotion_la_DEPENDENCIES = $(top_builddir)/config.h
-libemotion_la_LDFLAGS      = -version-info @version_info@
+libemotion_la_LDFLAGS      = -no-undefined @lt_enable_auto_import@ -version-info @version_info@

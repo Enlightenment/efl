@@ -7,6 +7,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+@EFL_EMOTION_BUILD@ \
 @EVAS_CFLAGS@ \
 @ECORE_CFLAGS@ \
 @GST_CFLAGS@
@@ -27,7 +28,7 @@ emotion_gstreamer_pipeline_file.c \
 emotion_gstreamer_pipeline_uri.c \
 emotion_gstreamer_pipeline_v4l.c
 gstreamer_la_LIBADD  = @EVAS_LIBS@ @ECORE_LIBS@ @GST_LIBS@ $(top_builddir)/src/lib/libemotion.la
-gstreamer_la_LDFLAGS = -module -avoid-version
+gstreamer_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -module -avoid-version
 gstreamer_la_LIBTOOLFLAGS = --tag=disable-static
 gstreamer_la_DEPENDENCIES = $(top_builddir)/config.h
 

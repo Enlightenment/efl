@@ -23,7 +23,7 @@ emotion_xine.c \
 emotion_xine.h \
 emotion_xine_vo_out.c
 xine_la_LIBADD       = @EVAS_LIBS@ @ECORE_LIBS@ @XINE_LIBS@ $(top_builddir)/src/lib/libemotion.la -lpthread
-xine_la_LDFLAGS      = -module -avoid-version
+xine_la_LDFLAGS      = -no-undefined @lt_enable_auto_import@ -module -avoid-version
 xine_la_LIBTOOLFLAGS = --tag=disable-static
 xine_la_DEPENDENCIES = $(top_builddir)/config.h
 

@@ -22,7 +22,7 @@ vlc_la_SOURCES      = \
 emotion_vlc.c \
 emotion_vlc.h
 vlc_la_LIBADD       = @EVAS_LIBS@ @ECORE_LIBS@ @VLC_LIBS@ $(top_builddir)/src/lib/libemotion.la -lpthread
-vlc_la_LDFLAGS      = -module -avoid-version
+vlc_la_LDFLAGS      = -no-undefined @lt_enable_auto_import@ -module -avoid-version
 vlc_la_LIBTOOLFLAGS = --tag=disable-static
 vlc_la_DEPENDENCIES = $(top_builddir)/config.h
 
