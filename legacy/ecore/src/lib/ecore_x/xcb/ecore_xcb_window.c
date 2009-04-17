@@ -576,7 +576,7 @@ ecore_x_window_lower(Ecore_X_Window window)
 }
 
 /**
- * @defgroup Evas_X_Window_Change_Properties_Group X Window Change Property Functions
+ * @defgroup Ecore_X_Window_Change_Properties_Group X Window Change Property Functions
  *
  * Functions that change window properties.
  */

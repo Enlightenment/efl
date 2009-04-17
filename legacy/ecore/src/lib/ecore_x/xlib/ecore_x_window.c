@@ -190,7 +190,7 @@ ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h)
 }
 
 /**
- * @defgroup Evas_X_Window_Properties_Group X Window Property Functions
+ * @defgroup Ecore_X_Window_Properties_Group X Window Property Functions
  *
  * Functions that set window properties.
  */
@@ -202,7 +202,7 @@ ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h)
  * @c _NET_WM_PID.
  *
  * @param   win The given window.
- * @ingroup Evas_X_Window_Properties_Groups
+ * @ingroup Ecore_X_Window_Properties_Groups
  */
 EAPI void
 ecore_x_window_defaults_set(Ecore_X_Window win)
@@ -266,7 +266,7 @@ ecore_x_window_configure(Ecore_X_Window win,
 }
 
 /**
- * @defgroup Evas_X_Window_Destroy_Group X Window Destroy Functions
+ * @defgroup Ecore_X_Window_Destroy_Group X Window Destroy Functions
  *
  * Functions to destroy X windows.
  */
@@ -274,7 +274,7 @@ ecore_x_window_configure(Ecore_X_Window win,
 /**
  * Deletes the given window.
  * @param   win The given window.
- * @ingroup Evas_X_Window_Destroy_Group
+ * @ingroup Ecore_X_Window_Destroy_Group
  */
 EAPI void
 ecore_x_window_free(Ecore_X_Window win)
@@ -345,7 +345,7 @@ ecore_x_window_ignore_list(int *num)
 /**
  * Sends a delete request to the given window.
  * @param   win The given window.
- * @ingroup Evas_X_Window_Destroy_Group
+ * @ingroup Ecore_X_Window_Destroy_Group
  */
 EAPI void
 ecore_x_window_delete_request_send(Ecore_X_Window win)
@@ -370,7 +370,7 @@ ecore_x_window_delete_request_send(Ecore_X_Window win)
 }
 
 /**
- * @defgroup Evas_X_Window_Visibility_Group X Window Visibility Functions
+ * @defgroup Ecore_X_Window_Visibility_Group X Window Visibility Functions
  *
  * Functions to access and change the visibility of X windows.
  */
@@ -381,7 +381,7 @@ ecore_x_window_delete_request_send(Ecore_X_Window win)
  * Synonymous to "mapping" a window in X Window System terminology.
  *
  * @param   win The window to show.
- * @ingroup Evas_X_Window_Visibility
+ * @ingroup Ecore_X_Window_Visibility
  */
 EAPI void
 ecore_x_window_show(Ecore_X_Window win)
@@ -395,7 +395,7 @@ ecore_x_window_show(Ecore_X_Window win)
  * Synonymous to "unmapping" a window in X Window System terminology.
  *
  * @param   win The window to hide.
- * @ingroup Evas_X_Window_Visibility
+ * @ingroup Ecore_X_Window_Visibility
  */
 EAPI void
 ecore_x_window_hide(Ecore_X_Window win)
