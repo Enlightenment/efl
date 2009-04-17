@@ -154,92 +154,80 @@ main(int argc, char **argv)
    elm_quicklaunch_init(argc, argv);
    restart_time = ecore_time_get();
 
+   memset(&action, 0, sizeof(struct sigaction));
    action.sa_handler = SIG_DFL;
-   action.sa_restorer = NULL;
    action.sa_sigaction = NULL;
    action.sa_flags = SA_RESTART | SA_SIGINFO;
    sigemptyset(&action.sa_mask);
    sigaction(SIGINT, &action, &old_sigint);
    
    action.sa_handler = SIG_DFL;
-   action.sa_restorer = NULL;
    action.sa_sigaction = NULL;
    action.sa_flags = SA_RESTART | SA_SIGINFO;
    sigemptyset(&action.sa_mask);
    sigaction(SIGTERM, &action, &old_sigterm);
    
    action.sa_handler = SIG_DFL;
-   action.sa_restorer = NULL;
    action.sa_sigaction = NULL;
    action.sa_flags = SA_RESTART | SA_SIGINFO;
    sigemptyset(&action.sa_mask);
    sigaction(SIGQUIT, &action, &old_sigquit);
    
    action.sa_handler = SIG_DFL;
-   action.sa_restorer = NULL;
    action.sa_sigaction = NULL;
    action.sa_flags = SA_RESTART | SA_SIGINFO;
    sigemptyset(&action.sa_mask);
    sigaction(SIGALRM, &action, &old_sigalrm);
    
    action.sa_handler = SIG_DFL;
-   action.sa_restorer = NULL;
    action.sa_sigaction = NULL;
    action.sa_flags = SA_RESTART | SA_SIGINFO;
    sigemptyset(&action.sa_mask);
    sigaction(SIGUSR1, &action, &old_sigusr1);
    
    action.sa_handler = SIG_DFL;
-   action.sa_restorer = NULL;
    action.sa_sigaction = NULL;
    action.sa_flags = SA_RESTART | SA_SIGINFO;
    sigemptyset(&action.sa_mask);
    sigaction(SIGUSR2, &action, &old_sigusr2);
    
    action.sa_handler = SIG_DFL;
-   action.sa_restorer = NULL;
    action.sa_sigaction = NULL;
    action.sa_flags = SA_RESTART | SA_SIGINFO;
    sigemptyset(&action.sa_mask);
    sigaction(SIGHUP, &action, &old_sighup);
    
    action.sa_handler = NULL;
-   action.sa_restorer = NULL;
    action.sa_sigaction = child_handler;
    action.sa_flags = SA_RESTART | SA_SIGINFO;
    sigemptyset(&action.sa_mask);
    sigaction(SIGCHLD, &action, &old_sigchld);
 
    action.sa_handler = NULL;
-   action.sa_restorer = NULL;
    action.sa_sigaction = crash_handler;
    action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
    sigemptyset(&action.sa_mask);
    sigaction(SIGSEGV, &action, &old_sigsegv);
    
    action.sa_handler = NULL;
-   action.sa_restorer = NULL;
    action.sa_sigaction = crash_handler;
    action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
    sigemptyset(&action.sa_mask);
    sigaction(SIGILL, &action, &old_sigill);
    
    action.sa_handler = NULL;
-   action.sa_restorer = NULL;
    action.sa_sigaction = crash_handler;
    action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
    sigemptyset(&action.sa_mask);
    sigaction(SIGFPE, &action, &old_sigfpe);
    
    action.sa_handler = NULL;
-   action.sa_restorer = NULL;
    action.sa_sigaction = crash_handler;
    action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
    sigemptyset(&action.sa_mask);
    sigaction(SIGBUS, &action, &old_sigbus);
    
    action.sa_handler = NULL;
-   action.sa_restorer = NULL;
    action.sa_sigaction = crash_handler;
    action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
    sigemptyset(&action.sa_mask);
@@ -259,10 +247,14 @@ main(int argc, char **argv)
           {
              int bytes;
              char line[4096];
-
-             read(fd, &bytes, sizeof(unsigned long));
-             ecore_app_args_set(argc, (const char **)argv);
-             handle_run(fd, bytes);
+             int num;
+             
+             num = read(fd, &bytes, sizeof(unsigned long));
+             if (num == sizeof(unsigned long))
+               {
+                  ecore_app_args_set(argc, (const char **)argv);
+                  handle_run(fd, bytes);
+               }
           }
         elm_quicklaunch_sub_shutdown();
      }
