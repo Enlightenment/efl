@@ -99,6 +99,8 @@ eet_identity_open(const char *certificate_file, const char *private_key_file, Ee
 
   /* Init */
   if (!(key = malloc(sizeof(Eet_Key)))) goto on_error;
+  key->references = 1;
+
   if (gnutls_x509_crt_init(&(key->certificate))) goto on_error;
   if (gnutls_x509_privkey_init(&(key->private_key))) goto on_error;
 
@@ -604,6 +606,7 @@ eet_identity_check(const void *data_base, unsigned int data_length,
 	*sha1_length = -1;
      }
 #  endif
+  gnutls_x509_crt_deinit(cert);
 
 # else
    const unsigned char *tmp;
