@@ -206,9 +206,11 @@ main(int argc, char *argv[])
    if (ef && arg_index < argc)
      thumb_key = argv[arg_index];
 
-   ethumb_file_thumb_path_set(ef, thumb_path, thumb_key);
    if (ef)
-     ethumb_file_generate(ef);
+     {
+	ethumb_file_thumb_path_set(ef, thumb_path, thumb_key);
+	ethumb_file_generate(ef);
+     }
 
    ethumb_file_free(ef);
    ethumb_free(e);
