@@ -31,6 +31,7 @@
 #endif /* ! _WIN32 */
 #endif /* EAPI */
 
+#include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Evas.h>
 
@@ -63,6 +64,11 @@ enum _Ethumb_Thumb_Aspect
 
 typedef enum _Ethumb_Thumb_Aspect Ethumb_Thumb_Aspect;
 
+typedef struct _Ethumb_Frame Ethumb_Frame;
+typedef struct _Ethumb Ethumb;
+typedef struct _Ethumb_File Ethumb_File;
+typedef void (*ethumb_generate_callback_t)(Ethumb_File *ef, void *data);
+
 struct _Ethumb_Frame
 {
    const char *file;
@@ -70,8 +76,6 @@ struct _Ethumb_Frame
    const char *swallow;
    Evas_Object *edje;
 };
-
-typedef struct _Ethumb_Frame Ethumb_Frame;
 
 struct _Ethumb
 {
@@ -81,13 +85,19 @@ struct _Ethumb
    int format;
    int aspect;
    float crop_x, crop_y;
+   struct
+     {
+	double time;
+     } video;
    Ethumb_Frame *frame;
    Ecore_Evas *ee, *sub_ee;
    Evas *e, *sub_e;
    Evas_Object *o, *img;
+   Evas_Object *plugin_img;
+   Ecore_Idler *finished_idler;
+   ethumb_generate_callback_t finished_cb;
+   void *cb_data;
 };
-
-typedef struct _Ethumb Ethumb;
 
 struct _Ethumb_File
 {
@@ -98,8 +108,6 @@ struct _Ethumb_File
    const char *thumb_key;
    int w, h;
 };
-
-typedef struct _Ethumb_File Ethumb_File;
 
 
 EAPI int ethumb_init(void);
@@ -130,11 +138,13 @@ EAPI const char * ethumb_thumb_dir_path_get(Ethumb *e) EINA_WARN_UNUSED_RESULT E
 EAPI void ethumb_thumb_category_set(Ethumb *e, const char *category) EINA_ARG_NONNULL(1);
 EAPI const char * ethumb_thumb_category_get(Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
+EAPI void ethumb_video_time_set(Ethumb *e, float time) EINA_ARG_NONNULL(1);
+
 EAPI Ethumb_File * ethumb_file_new(Ethumb *e, const char *path, const char *key) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
 EAPI void ethumb_file_free(Ethumb_File *ef);
 EAPI void ethumb_file_thumb_path_set(Ethumb_File *ef, const char *path, const char *key) EINA_ARG_NONNULL(1);
 EAPI const char * ethumb_file_thumb_path_get(Ethumb_File *ef) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-EAPI int ethumb_file_generate(Ethumb_File *ef) EINA_ARG_NONNULL(1);
+EAPI int ethumb_file_generate(Ethumb_File *ef, ethumb_generate_callback_t finished_cb, void *data) EINA_ARG_NONNULL(1, 2);
 
 #ifdef __cplusplus
 }

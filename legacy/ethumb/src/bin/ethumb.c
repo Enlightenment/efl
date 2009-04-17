@@ -28,6 +28,7 @@
 #include <Ethumb.h>
 #include <Eina.h>
 #include <Ecore_Getopt.h>
+#include <Ecore.h>
 
 const char *aspect_opt[] = { "keep", "ignore", "crop", NULL };
 const char *format_opt[] = { "png", "jpg", NULL };
@@ -115,6 +116,8 @@ const Ecore_Getopt optdesc = {
       "file:group:swallow_part", _ethumb_getopt_callback_frame_parse, NULL),
      ECORE_GETOPT_STORE_STR
      ('k', "key", "key inside eet file to read image from."),
+     ECORE_GETOPT_STORE_DOUBLE
+     ('v', "video_time", "time of video frame to use as thumbnail."),
      ECORE_GETOPT_LICENSE('L', "license"),
      ECORE_GETOPT_COPYRIGHT('C', "copyright"),
      ECORE_GETOPT_VERSION('V', "version"),
@@ -122,6 +125,12 @@ const Ecore_Getopt optdesc = {
      ECORE_GETOPT_SENTINEL
   }
 };
+
+static void
+_finished_thumb(Ethumb_File *ef, void *data)
+{
+   ecore_main_loop_quit();
+}
 
 int
 main(int argc, char *argv[])
@@ -139,11 +148,13 @@ main(int argc, char *argv[])
    struct frame frame = {NULL};
    const char *thumb_path = NULL;
    const char *thumb_key = NULL;
+   double video_time = 0;
    int arg_index;
    int i;
 
    int r = 1;
    ethumb_init();
+   ecore_init();
 
    Ecore_Getopt_Value values[] = {
 	ECORE_GETOPT_VALUE_PTR_CAST(geometry),
@@ -153,6 +164,7 @@ main(int argc, char *argv[])
 	ECORE_GETOPT_VALUE_STR(category),
 	ECORE_GETOPT_VALUE_PTR_CAST(frame),
 	ECORE_GETOPT_VALUE_STR(src_key),
+	ECORE_GETOPT_VALUE_DOUBLE(video_time),
 	ECORE_GETOPT_VALUE_BOOL(quit_option),
 	ECORE_GETOPT_VALUE_BOOL(quit_option),
 	ECORE_GETOPT_VALUE_BOOL(quit_option),
@@ -198,6 +210,8 @@ main(int argc, char *argv[])
 	eina_stringshare_del(frame.group);
 	eina_stringshare_del(frame.swallow);
      }
+   if (video_time > 0)
+     ethumb_video_time_set(e, video_time);
 
    if (r && arg_index < argc)
      ef = ethumb_file_new(e, argv[arg_index++], src_key);
@@ -209,12 +223,16 @@ main(int argc, char *argv[])
    if (ef)
      {
 	ethumb_file_thumb_path_set(ef, thumb_path, thumb_key);
-	ethumb_file_generate(ef);
+	r = ethumb_file_generate(ef, _finished_thumb, NULL);
      }
+
+   if (r)
+     ecore_main_loop_begin();
 
    ethumb_file_free(ef);
    ethumb_free(e);
 
+   ecore_shutdown();
    ethumb_shutdown();
 
    return !r;

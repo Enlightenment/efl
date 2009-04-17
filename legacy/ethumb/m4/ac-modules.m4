@@ -22,7 +22,7 @@ define([_XTERM_COLORS],
         fi
 ])
 
-dnl AC_TCS_CHECK_PKG(name, lib [>= version], [action-if, [action-not]])
+dnl AC_ETH_CHECK_PKG(name, lib [>= version], [action-if, [action-not]])
 dnl   improved version of PKG_CHECK_MODULES, it does the same checking
 dnl   and defines HAVE_[name]=yes/no and also exports
 dnl   [name]_CFLAGS and [name]_LIBS.
@@ -38,7 +38,7 @@ dnl       - [name]_CFLAGS: if HAVE_[name]=yes
 dnl       - [name]_LIBS: if HAVE_[name]=yes
 dnl       - [name]_VERSION: if HAVE_[name]=yes
 dnl
-AC_DEFUN([AC_TCS_CHECK_PKG],
+AC_DEFUN([AC_ETH_CHECK_PKG],
 [
 # ----------------------------------------------------------------------
 # BEGIN: Check library with pkg-config: $1 (pkg-config=$2)
@@ -69,7 +69,7 @@ AC_DEFUN([AC_TCS_CHECK_PKG],
 # ----------------------------------------------------------------------
 ])
 
-dnl AC_TCS_OPTIONAL_MODULE(name, [initial-status, [check-if-enabled]])
+dnl AC_ETH_OPTIONAL_MODULE(name, [initial-status, [check-if-enabled]])
 dnl   Defines configure argument --<enable|disable>-[name] to enable an
 dnl   optional module called 'name'.
 dnl
@@ -94,7 +94,7 @@ dnl Provides:
 dnl     - USE_MODULE_[name]=true|false [make, shell]
 dnl     - USE_MODULE_[name]=1 if enabled [config.h]
 dnl
-AC_DEFUN([AC_TCS_OPTIONAL_MODULE],
+AC_DEFUN([AC_ETH_OPTIONAL_MODULE],
 [
 # ----------------------------------------------------------------------
 # BEGIN: Check for optional module: $1 (default: $2)

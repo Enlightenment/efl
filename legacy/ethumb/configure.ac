@@ -34,6 +34,11 @@ AC_DEFINE_UNQUOTED(THEMESDIR, ["$THEMESDIR"], [Where frame theme files are insta
 AS_AC_EXPAND(SYSCONFDIR, $sysconfdir)
 AC_DEFINE_UNQUOTED(SYSCONFDIR, ["$SYSCONFDIR"], [Where system configuration is stored])
 
+pluginsdir="${libdir}/ethumb/plugins"
+AC_SUBST(pluginsdir)
+AS_AC_EXPAND(PLUGINSDIR, $pluginsdir)
+AC_DEFINE_UNQUOTED(PLUGINSDIR, ["$PLUGINSDIR"], [Where plugins are installed.])
+
 PKG_CHECK_MODULES(EINA, [eina-0])
 PKG_CHECK_MODULES(EVAS, [evas])
 PKG_CHECK_MODULES(ECORE, [ecore])
@@ -43,6 +48,18 @@ PKG_CHECK_MODULES(EDJE, [edje])
 
 requirement_ethumb="eina-0 evas ecore ecore-evas ecore-file edje"
 
+AM_CONDITIONAL(HAVE_EMOTION, false)
+define([CHECK_MODULE_EMOTION],
+[
+        AC_ETH_CHECK_PKG(EMOTION, emotion, [], [EMOTION=false])
+])
+
+AC_ETH_OPTIONAL_MODULE([emotion], true, [CHECK_MODULE_EMOTION])
+
+if $USE_MODULE_EMOTION ; then
+        requirement_ethumb="$requirement_ethumb emotion"
+fi
+
 AC_SUBST(requirement_ethumb)
 
 AC_OUTPUT([
@@ -51,6 +68,8 @@ Makefile
 src/Makefile
 src/bin/Makefile
 src/lib/Makefile
+src/plugins/Makefile
+src/plugins/emotion/Makefile
 data/Makefile
 data/frames/Makefile
 m4/Makefile
