@@ -23,7 +23,7 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 @EINA_LIBS@ \
 @EVIL_LIBS@
 
-libecore_job_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
+libecore_job_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @ecore_job_release_info@
 
 endif
 

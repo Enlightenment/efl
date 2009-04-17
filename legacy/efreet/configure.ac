@@ -27,7 +27,13 @@ VMIN=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $2);}'`
 VMIC=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $3);}'`
 SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
+efreet_release_info="-release ver-pre-svn-00"
+efreet_mime_release_info="-release ver-pre-svn-00"
+efreet_trash_release_info="-release ver-pre-svn-00"
 AC_SUBST(version_info)
+AC_SUBST(efreet_release_info)
+AC_SUBST(efreet_mime_release_info)
+AC_SUBST(efreet_trash_release_info)
 
 AC_FUNC_ALLOCA
 

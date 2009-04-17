@@ -23,6 +23,6 @@ $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 @EVAS_LIBS@ \
 @EINA_LIBS@
 
-libecore_quartz_la_LDFLAGS = @quartz_ldflags@ -version-info @version_info@
+libecore_quartz_la_LDFLAGS = @quartz_ldflags@ -version-info @version_info@ @ecore_quartz_release_info@
 
 endif

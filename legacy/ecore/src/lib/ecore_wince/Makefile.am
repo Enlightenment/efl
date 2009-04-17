@@ -26,7 +26,7 @@ libecore_wince_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 @EINA_LIBS@
 
-libecore_wince_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
+libecore_wince_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @ecore_wince_release_info@
 
 endif
 

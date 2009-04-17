@@ -19,7 +19,7 @@ ecore_txt.c
 libecore_txt_la_LIBADD = @iconv_libs@ \
 @EINA_LIBS@
 
-libecore_txt_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
+libecore_txt_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @ecore_txt_release_info@
 
 
 endif

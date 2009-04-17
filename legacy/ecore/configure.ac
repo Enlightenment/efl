@@ -22,7 +22,43 @@ VMIN=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $2);}'`
 VMIC=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $3);}'`
 SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
+ecore_config_release_info="-release ver-pre-svn-00"
+ecore_con_release_info="-release ver-pre-svn-00"
+ecore_directfb_release_info="-release ver-pre-svn-00"
+ecore_evas_release_info="-release ver-pre-svn-00"
+ecore_fb_release_info="-release ver-pre-svn-00"
+ecore_file_release_info="-release ver-pre-svn-00"
+ecore_imf_evas_release_info="-release ver-pre-svn-00"
+ecore_imf_release_info="-release ver-pre-svn-00"
+ecore_input_release_info="-release ver-pre-svn-00"
+ecore_ipc_release_info="-release ver-pre-svn-00"
+ecore_job_release_info="-release ver-pre-svn-00"
+ecore_quartz_release_info="-release ver-pre-svn-00"
+ecore_release_info="-release ver-pre-svn-00"
+ecore_sdl_release_info="-release ver-pre-svn-00"
+ecore_txt_release_info="-release ver-pre-svn-00"
+ecore_win32_release_info="-release ver-pre-svn-00"
+ecore_wince_release_info="-release ver-pre-svn-00"
+ecore_x_release_info="-release ver-pre-svn-00"
 AC_SUBST(version_info)
+AC_SUBST(ecore_config_release_info)
+AC_SUBST(ecore_con_release_info)
+AC_SUBST(ecore_directfb_release_info)
+AC_SUBST(ecore_evas_release_info)
+AC_SUBST(ecore_fb_release_info)
+AC_SUBST(ecore_file_release_info)
+AC_SUBST(ecore_imf_evas_release_info)
+AC_SUBST(ecore_imf_release_info)
+AC_SUBST(ecore_input_release_info)
+AC_SUBST(ecore_ipc_release_info)
+AC_SUBST(ecore_job_release_info)
+AC_SUBST(ecore_quartz_release_info)
+AC_SUBST(ecore_release_info)
+AC_SUBST(ecore_sdl_release_info)
+AC_SUBST(ecore_txt_release_info)
+AC_SUBST(ecore_win32_release_info)
+AC_SUBST(ecore_wince_release_info)
+AC_SUBST(ecore_x_release_info)
 
 AC_DEFINE_UNQUOTED(SHARED_LIB_SUFFIX, "$shrext_cmds", [Suffix for shared objects])
 

@@ -62,7 +62,10 @@ installed_headersdir = $(prefix)/include/efreet
 installed_headers_DATA = $(EFREETHEADERS) $(EFREETMIMEHEADERS) $(EFREETTRASHHEADERS)
 
 libefreet_la_LIBADD = @EFREET_LIBS@
-libefreet_la_LDFLAGS = -version-info @version_info@
+libefreet_la_LDFLAGS = -version-info @version_info@ @efreet_release_info@
+
+libefreet_mime_la_LDFLAGS = -version-info @version_info@ @efreet_mime_release_info@
+libefreet_trash_la_LDFLAGS = -version-info @version_info@ @efreet_trash_release_info@
 
 libefreet_mime_la_LIBADD = @EFREET_LIBS@ libefreet.la
 libefreet_trash_la_LIBADD = @EFREET_LIBS@ libefreet.la
