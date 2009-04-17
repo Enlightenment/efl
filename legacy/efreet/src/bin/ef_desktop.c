@@ -184,8 +184,6 @@ ef_cb_desktop_command_get(void)
 
     info = NEW(Test_Info, 1);
     expected = NULL;
-    // FIXME: info->expected needs to be update.
-    info->expected = expected;
     info->error = 0;
 
     /* test single full path */
@@ -197,6 +195,7 @@ ef_cb_desktop_command_get(void)
     expected = eina_list_append(expected, "app '/tmp/absolute_uri'");
     expected = eina_list_append(expected, "app '/relative_uri'");
 
+    info->expected = expected;
     efreet_desktop_command_get(desktop, files, _cb_command, info);
     expected = eina_list_free(expected);
 
@@ -209,6 +208,7 @@ ef_cb_desktop_command_get(void)
     expected = eina_list_append(expected, "app 'file:///tmp/absolute_uri'");
     expected = eina_list_append(expected, "app 'file:///relative_uri'");
 
+    info->expected = expected;
     efreet_desktop_command_get(desktop, files, _cb_command, info);
     expected = eina_list_free(expected);
 
@@ -221,6 +221,7 @@ ef_cb_desktop_command_get(void)
     expected = eina_list_append(expected, "app '/tmp'");
     expected = eina_list_append(expected, "app '/'");
 
+    info->expected = expected;
     efreet_desktop_command_get(desktop, files, _cb_command, info);
     expected = eina_list_free(expected);
 
@@ -234,6 +235,7 @@ ef_cb_desktop_command_get(void)
     expected = eina_list_append(expected, "app 'absolute_uri'");
     expected = eina_list_append(expected, "app 'relative_uri'");
 
+    info->expected = expected;
     efreet_desktop_command_get(desktop, files, _cb_command, info);
     expected = eina_list_free(expected);
 
@@ -243,6 +245,7 @@ ef_cb_desktop_command_get(void)
     desktop->exec = strdup("app %F");
     expected = eina_list_append(expected, "app '/tmp/absolute_path' '/relative_path' '/tmp/absolute_uri' '/relative_uri'");
 
+    info->expected = expected;
     efreet_desktop_command_get(desktop, files, _cb_command, info);
     expected = eina_list_free(expected);
 
@@ -252,6 +255,7 @@ ef_cb_desktop_command_get(void)
     desktop->exec = strdup("app %U");
     expected = eina_list_append(expected, "app 'file:///tmp/absolute_path' 'file:///relative_path' 'file:///tmp/absolute_uri' 'file:///relative_uri'");
 
+    info->expected = expected;
     efreet_desktop_command_get(desktop, files, _cb_command, info);
     expected = eina_list_free(expected);
 
@@ -261,6 +265,7 @@ ef_cb_desktop_command_get(void)
     desktop->exec = strdup("app %D");
     expected = eina_list_append(expected, "app '/tmp' '/' '/tmp' '/'");
 
+    info->expected = expected;
     efreet_desktop_command_get(desktop, files, _cb_command, info);
     expected = eina_list_free(expected);
 
@@ -270,6 +275,7 @@ ef_cb_desktop_command_get(void)
     desktop->exec = strdup("app %N");
     expected = eina_list_append(expected, "app 'absolute_path' 'relative_path' 'absolute_uri' 'relative_uri'");
 
+    info->expected = expected;
     efreet_desktop_command_get(desktop, files, _cb_command, info);
     expected = eina_list_free(expected);
 
@@ -279,6 +285,7 @@ ef_cb_desktop_command_get(void)
     desktop->exec = strdup("app %i");
     expected = eina_list_append(expected, "app --icon 'icon.png'");
 
+    info->expected = expected;
     efreet_desktop_command_get(desktop, NULL, _cb_command, info);
     expected = eina_list_free(expected);
 
@@ -288,6 +295,7 @@ ef_cb_desktop_command_get(void)
     desktop->exec = strdup("app %c");
     expected = eina_list_append(expected, "app 'App Name'");
 
+    info->expected = expected;
     efreet_desktop_command_get(desktop, NULL, _cb_command, info);
     expected = eina_list_free(expected);
 
@@ -297,13 +305,13 @@ ef_cb_desktop_command_get(void)
     desktop->exec = strdup("app %k");
     expected = eina_list_append(expected, "app 'test.desktop'");
 
+    info->expected = expected;
     efreet_desktop_command_get(desktop, NULL, _cb_command, info);
     expected = eina_list_free(expected);
 
     /* clean up */
     efreet_desktop_free(desktop);
     eina_list_free(files);
-    eina_list_free(expected);
 
     ret = info->error > 0 ? 0 : 1;
     free(info);
