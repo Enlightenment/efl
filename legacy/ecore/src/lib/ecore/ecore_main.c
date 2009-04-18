@@ -472,7 +472,7 @@ _ecore_main_fd_handlers_cleanup(void)
 	l = l->next;
 	if (fdh->delete_me)
 	  {
-	     fprintf(stderr, "Removing fd %d\n", fdh->fd);
+//	     fprintf(stderr, "Removing fd %d\n", fdh->fd);
 	     fd_handlers = (Ecore_Fd_Handler *) eina_inlist_remove(EINA_INLIST_GET(fd_handlers),
 								   EINA_INLIST_GET(fdh));
 	     ECORE_MAGIC_SET(fdh, ECORE_MAGIC_NONE);
