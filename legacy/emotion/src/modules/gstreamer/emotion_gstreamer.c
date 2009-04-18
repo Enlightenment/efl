@@ -559,7 +559,7 @@ em_pos_set(void   *video,
    ev = (Emotion_Gstreamer_Video *)video;
 
    vsink = (Emotion_Video_Sink *)eina_list_nth(ev->video_sinks, ev->video_sink_nbr);
-   asink = (Emotion_Audio_Sink *)eina_list_nth(ev->video_sinks, ev->audio_sink_nbr);
+   asink = (Emotion_Audio_Sink *)eina_list_nth(ev->audio_sinks, ev->audio_sink_nbr);
 
    if (vsink)
      {
