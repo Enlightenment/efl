@@ -41,8 +41,8 @@ _ecore_x_composite_init_finalize(void)
                                           NULL);
    if (reply)
      {
-        if (reply->major_version = XCB_COMPOSITE_MAJOR_VERSION &&
-	    reply->minor_version >= XCB_COMPOSITE_MINOR_VERSION)
+        if ((reply->major_version == XCB_COMPOSITE_MAJOR_VERSION) &&
+	    (reply->minor_version >= XCB_COMPOSITE_MINOR_VERSION))
           _composite_available = 1;
         free(reply);
      }
