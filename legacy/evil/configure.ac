@@ -76,6 +76,7 @@ AC_C___ATTRIBUTE__
 
 win32_cppflags="-DEFL_EVIL_BUILD"
 win32_cflags=""
+win32_cxxflags=""
 have_wince="no"
 have_mingw32ce="no"
 have_cegcc="no"
@@ -93,11 +94,13 @@ case "$host_os" in
     ;;
   *)
     have_wince="no"
+    win32_cxxflags="-fno-rtti -fno-exceptions"
     win32_cppflags="${win32_cppflags} -D_WIN32_WINNT=0x0500 -DSECURITY_WIN32"
     ;;
 esac
 AC_SUBST(win32_cppflags)
 AC_SUBST(win32_cflags)
+AC_SUBST(win32_cxxflags)
 
 AM_CONDITIONAL(EVIL_HAVE_WINCE, test "x${have_wince}" = "xyes")
 AM_CONDITIONAL(EVIL_HAVE_MINGW32CE, test "x${have_mingw32ce}" = "xyes")
