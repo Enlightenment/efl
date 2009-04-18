@@ -61,7 +61,7 @@ main (int argc, char *argv[])
    d = (data *)malloc(sizeof (data));
    d->val = 14;
    d->fd_write = sockets[FDWRITE];
-   printf (" pointeur sent........: %p\n", d);
+   printf (" pointer sent........: %p\n", d);
 
    h = CreateThread(NULL, 0, thread, d, 0, &thread_id);
 
@@ -85,7 +85,7 @@ main (int argc, char *argv[])
              if (len == sizeof(buf))
                {
                   d = buf[0];
-                  printf (" pointeur received....: %p\n", d);
+                  printf (" pointer received....: %p\n", d);
                   j = d->val;
                   printf (" value (should be 14) : %d\n", j);
                }
