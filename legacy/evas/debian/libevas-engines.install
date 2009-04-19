@@ -1,0 +1,4 @@
+debian/tmp/usr/lib/evas/modules/engines/buffer/*/module.so
+debian/tmp/usr/lib/evas/modules/engines/software_generic/*/module.so
+debian/tmp/usr/lib/evas/modules/engines/software_x11/*/module.so
+debian/tmp/usr/lib/evas/modules/engines/xrender_x11/*/module.so

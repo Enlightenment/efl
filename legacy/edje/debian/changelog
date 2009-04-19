@@ -1,0 +1,91 @@
+edje (0.9.9.050+svn????????) UNRELEASED; urgency=low
+
+  * New SVN snapshot
+    - Drop patches, no longer needed:
+      + 0002-fix-library-soname.patch
+      + 0003-reapply-autofoo.patch
+    - Package renaming due to upstream SONAME change.
+      + Update shlibs and .install files as a consequence
+  * Update Standards-Version, no change needed
+  * Move libedje-dbg to the debug section
+
+ -- Albin Tonnerre <albin.tonnerre@gmail.com>  Sat, 18 Apr 2009 16:16:34 +0200
+
+ 
+
+ -- Albin Tonnerre <albin.tonnerre@gmail.com>  Sat, 18 Apr 2009 16:15:00 +0200
+
+edje (0.9.9.050+svn20090204-1) experimental; urgency=low
+
+  * New SVN snapshot
+   - tighten requirements on libeina-dev
+   - Bump shlibs due to functions added to the API
+   - Add --enable-doc to configure to get the doc built
+   - Update dependency on libevas-engines
+  * Make libedje-bin depend on a recent libembryo-bin
+    - Fixes a bug when using edje_cc while E is running, as it calls embryo_cc,
+      which uses environment variables set by E where it shouldn't
+  * Use a proper short description for libedje-dbg
+
+ -- Albin Tonnerre <albin.tonnerre@gmail.com>  Wed, 04 Feb 2009 00:48:09 +0100
+
+edje (0.9.9.050+svn20081206-2) experimental; urgency=low
+
+  * Remove version name from -dev packages name
+  * [lintian] Add ${misc:Depends} to libedje-doc too
+
+ -- Albin Tonnerre <albin.tonnerre@gmail.com>  Tue, 06 Jan 2009 22:03:51 +0100
+
+edje (0.9.9.050+svn20081206-1) experimental; urgency=low
+
+  * Upstream SVN snapshot
+    - Packages renamed due to API changes
+      + libedje-dev->libedje-0.9.9.050a-dev, libedje0->libedje-0.9.9.050a
+    - Add debian/patches/{01-fix-library-soname,02-reapply-autofoo}: Use release
+      instead of version-info to create libedje SONAME, to prevent things
+      from breaking when the ABI changes again.
+    - Build-depend and make libedje-0.9.9.050a-dev depend on libeina-0.0.1a-dev
+  * [lintian] Add ${misc:Depends} to package dependencies
+  * [lintian] Fix some escapes in debian/edje_cc.1 and debian/edje_recc.1
+  * Update Standards-Version to 3.8.0
+
+ -- Albin Tonnerre <albin.tonnerre@gmail.com>  Sat, 20 Dec 2008 21:18:58 +0100
+
+edje (0.9.9.050-1.1) experimental; urgency=low
+
+  * Non-maintainer upload.
+  * Fix FTBFS: Depend on suitable version of libevas-dev (Closes: #505235)
+
+ -- Joachim Breitner <nomeata@debian.org>  Tue, 11 Nov 2008 00:54:03 +0100
+
+edje (0.9.9.050-1) experimental; urgency=low
+
+  * New upstream release
+
+ -- Jan Lübbe <jluebbe@debian.org>  Mon, 10 Nov 2008 00:48:39 +0100
+
+edje (0.9.9.043-1) experimental; urgency=low
+
+  * New upstream release
+  * Docs are now prebuilt in the tarball
+
+ -- Jan Lübbe <jluebbe@debian.org>  Sun, 25 May 2008 18:59:51 +0200
+
+edje (0.5.0.042-2) experimental; urgency=low
+
+  [ Jan Luebbe ]
+  * Add support for keeping patches as git commits and build-depend on quilt
+  * Add workaround for libtool option reordering
+  * Enable -Wl,--as-needed
+
+ -- Jan Lübbe <jluebbe@debian.org>  Sun, 04 May 2008 22:33:41 +0200
+
+edje (0.5.0.042-1) experimental; urgency=low
+
+  * Initial Release (Closes: #468267)
+  * Apply patch from Niv Sardi <xaiki@debian.org> and change it to
+    document the license for data/* and doc/*. Also refer to
+    common-licenses on Debian.
+
+ -- Jan Lübbe <jluebbe@debian.org>  Wed, 19 Mar 2008 14:42:22 +0100
+

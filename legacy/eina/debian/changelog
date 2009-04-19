@@ -1,0 +1,45 @@
+eina (0.0.1~svn???????) UNRELEASED; urgency=low
+
+  * New SVN snapshot
+    - Drop patches, no longer needed
+    - Package renaming due to upstream SONAME change.
+      + Update shlibs and .install files
+  * Move libeina-dbg to the new debug section
+
+ -- Albin Tonnerre <albin.tonnerre@gmail.com>  Sun, 19 Apr 2009 11:45:06 +0200
+
+eina (0.0.1~svn20090323-1) experimental; urgency=low
+
+  * New SVN snapshot
+    - refresh patches
+    - Bump shlibs
+  * Update Standards-Version, no change required
+  * make the packaging copyright point to /usr/share/common-licenses/GPL-2
+    instead of /GPL
+
+ -- Albin Tonnerre <albin.tonnerre@gmail.com>  Mon, 23 Mar 2009 18:38:19 +0100
+
+eina (0.0.1~svn20090128-1) experimental; urgency=low
+
+  * New SVN snapshot
+    - libeina-0.0.1a is now libeina-0.0.1b, due to API break
+    - refresh patches
+  * Remove a part concerning libeina-dev from the description of libeina-0.0.1b
+
+ -- Albin Tonnerre <albin.tonnerre@gmail.com>  Wed, 28 Jan 2009 23:28:36 +0100
+
+eina (0.0.1~svn20081120-2) experimental; urgency=low
+
+  * Remove version number from -dev package name since it's not really useful
+  * [lintian] Fix W: copyright-with-old-dh-make-debian-copyright
+
+ -- Albin Tonnerre <albin.tonnerre@gmail.com>  Tue, 06 Jan 2009 22:11:01 +0100
+
+eina (0.0.1~svn20081120-1) experimental; urgency=low
+
+  * Initial Release (Closes: #506916)
+  * debian/patches/{01-fix-library-soname,02-reapply-autofoo}: Use release
+    instead of version-info to create the library SONAME, to prevent things
+    from breaking when the ABI changes.
+
+ -- Albin Tonnerre <albin.tonnerre@gmail.com>  Thu, 11 Dec 2008 20:52:23 +0100

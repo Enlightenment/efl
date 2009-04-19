@@ -1,0 +1,2 @@
+debian/tmp/usr/lib/libeina-*.so.*
+debian/tmp/usr/lib/eina/*/*.so

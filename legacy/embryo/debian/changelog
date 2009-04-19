@@ -1,0 +1,41 @@
+embryo (0.9.9.050+svn20090204-1) experimental; urgency=low
+
+  * New SVN snapshot
+    - Use new 'make doc' target to generate the documentation:
+      + Add --enable-doc to configure options
+      + use 'make doc'
+      + build-depend on doxygen
+  * Use a proper short description for libembryo-dbg
+  * [lintian] Add ${misc:Depends} to Depends
+
+ -- Albin Tonnerre <albin.tonnerre@gmail.com>  Wed, 04 Feb 2009 20:11:52 +0100
+
+embryo (0.9.9.050-1) experimental; urgency=low
+
+  * New upstream release
+  * Add libembryo0.symbols
+  * debian/control:
+    - Drop B-D on doxygen, no longer needed
+    - Update Standards-Version to 3.8.0
+    - B-D on dpkg-dev >= 1.14.8 as we use symbols support
+  * debian/rules:
+    - don't rm doc/man/man3/todo.3 as it's now shipped in the upstream tarball
+    - CFLAGS += -visibility=hidden to avoid exporting private symbols
+
+ -- Albin Tonnerre <albin.tonnerre@gmail.com>  Mon, 10 Nov 2008 00:20:43 +0100
+
+embryo (0.9.9.043-1) experimental; urgency=low
+
+  * New upstream release
+  * Docs are now prebuilt in the tarball
+  * debian/libevas-doc.doc-base: change Section to Programming/C
+
+ -- Jan Lübbe <jluebbe@debian.org>  Sat, 24 May 2008 23:17:29 +0200
+
+embryo (0.9.1.042+dfsg-1) experimental; urgency=low
+
+  * Initial Release (Closes: #468269)
+  * Resolve license problem by merging fix made in the upstream VCS with
+    permission from Greg Garner
+
+ -- Jan Luebbe <jluebbe@debian.org>  Tue, 04 Mar 2008 13:47:56 +0100

@@ -1,0 +1,85 @@
+This package was debianized by Albin Tonnerre <albin.tonnerre@gmail.com> on
+Sun, 10 Aug 2008 23:40:13 +0100, and uses parts of the work done by Falko
+Schmidt <falko@alphagemini.org>
+
+The source was downloaded from the trunk/eina module of the enlightenment SVN
+tree. For more information, see:
+
+	http://svn.enlightenment.org
+
+Upstream Authors:
+	Jorge Luis "turran" Zapata <jorgeluis.zapata@gmail.com>
+	Carsten Haitzler <raster@rasterman.com>
+	Corey "atmos" Donohoe <atmos@atmos.org>
+	Vincent "caro" Torri  <vtorri at univ-evry dot fr>
+	Gustavo Sverzut Barbieri <barbieri@gmail.com>
+	Tilman Sauerbeck <tilman@code-monkey.de>
+	Cedric Bail <cedric.bail@free.fr>
+	Peter "pfritz" Wehrfritz <peter.wehrfritz@web.de>
+	Arnaud de Turckheim "quarium" <quarium@gmail.com>
+	Alexandre "diaxen" Becoulet <diaxen@free.fr>
+
+Copyright: Copyright (C) 2008 Upstream Authors
+
+License:
+    This package is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
+
+    This package is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this package; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+
+On Debian systems, the complete text of the GNU Lesser General
+Public License can be found in `/usr/share/common-licenses/LGPL-2.1'.
+
+Additional copyrights and licenses:
+    src/lib/eina_stringshare.h and src/include/eina_stringshare.h:
+      This file incorporates work covered by the following copyright and
+      permission notice:
+
+      Copyright (C) 2008 Peter Wehrfritz
+
+   src/lib/eina_list.c:
+      This file incorporates work covered by the following copyright and
+      permission notice:
+
+      Copyright (C) 2006 Sebastian Dransfeld
+      Copyright (C) 2007 Christopher Michael
+
+   License for the parts of the files covered by these additionnal copyrights:
+       Permission is hereby granted, free of charge, to any person obtaining a copy
+       of this software and associated documentation files (the "Software"), to
+       deal in the Software without restriction, including without limitation the
+       rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+       sell copies of the Software, and to permit persons to whom the Software is
+       furnished to do so, subject to the following conditions:
+
+       The above copyright notice and this permission notice shall be included in
+       all copies of the Software and its Copyright notices. In addition publicly
+       documented acknowledgment must be given that this software has been used if no
+       source code of this software is made available publicly. This includes
+       acknowledgments in either Copyright notices, Manuals, Publicity and Marketing
+       documents or any documentation provided with any product containing this
+       software. This License does not apply to any software that links to the
+       libraries provided by this software (statically or dynamically), but only to
+       the software provided.
+
+       Please see the OLD-COPYING.PLAIN for a plain-english explanation of this notice
+       and it's intent.
+
+       THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+       IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+       FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+       THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+       IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+       CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+The Debian packaging is Copyright (C) 2008, Debian Pkg-e Team <pkg-e-devel@lists.alioth.debian.org>
+and is licensed under the GPL2, see `/usr/share/common-licenses/GPL-2'.

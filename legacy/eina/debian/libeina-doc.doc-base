@@ -1,0 +1,10 @@
+Document: eina
+Title: Eina Guide
+Author: Eina developers
+Abstract: This document describes Eina API
+ and provides sample C code.
+Section: Programming/C
+
+Format: HTML
+Index: /usr/share/doc/libeina-doc/html/index.html
+Files: /usr/share/doc/libeina-doc/html/*.html
