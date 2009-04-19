@@ -9,7 +9,7 @@ Build-Depends: dpkg-dev (>= 1.14.8), debhelper (>= 6), cdbs, libeina-dev (>= 0.0
  libcurl4-openssl-dev, libxcursor-dev, libxss-dev, libxrender-dev, libxinerama-dev,
  libxrandr-dev, libxext-dev, libxp-dev, libxcomposite-dev, libjpeg62-dev,
  libxdamage-dev, x11proto-xext-dev, libxtst-dev, doxygen
-Standards-Version: 3.8.0
+Standards-Version: 3.8.1
 Homepage: http://enlightenment.org
 Vcs-Git: git://git.debian.org/pkg-e/libs/ecore.git
 Vcs-Browser: http://git.debian.org/?p=pkg-e/libs/ecore.git
