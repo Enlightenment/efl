@@ -409,14 +409,33 @@ ecore_x_init(const char *name)
    if (!_ecore_xcb_event_handlers)
      {
         /* We get the replies of the QueryVersion request because we leave */
+#ifdef ECORE_XCB_DAMAGE
         _ecore_x_damage_init_finalize();
+#endif /* ECORE_XCB_DAMAGE */
+#ifdef ECORE_XCB_COMPOSITE
         _ecore_x_composite_init_finalize();
+#endif /* ECORE_XCB_COMPOSITE */
+#ifdef ECORE_XCB_DPMS
         _ecore_x_dpms_init_finalize();
+#endif /* ECORE_XCB_DPMS */
+#ifdef ECORE_XCB_RANDR
         _ecore_x_randr_init_finalize();
+#endif /* ECORE_XCB_RANDR */
+#ifdef ECORE_XCB_SCREENSAVER
+        _ecore_x_screensaver_init_finalize();
+#endif /* ECORE_XCB_SCREENSAVER */
+#ifdef ECORE_XCB_SHAPE
         _ecore_x_shape_init_finalize();
+#endif /* ECORE_XCB_SHAPE */
+#ifdef ECORE_XCB_SYNC
         _ecore_x_sync_init_finalize();
+#endif /* ECORE_XCB_SYNC */
+#ifdef ECORE_XCB_FIXES
         _ecore_x_xfixes_init_finalize();
+#endif /* ECORE_XCB_FIXES */
+#ifdef ECORE_XCB_XINERAMA
         _ecore_x_xinerama_init_finalize();
+#endif /* ECORE_XCB_XINERAMA */
 
         xcb_disconnect(_ecore_xcb_conn);
 	_ecore_xcb_fd_handler_handle = NULL;
@@ -585,14 +604,33 @@ ecore_x_init(const char *name)
    if (!_ecore_xcb_fd_handler_handle)
      {
         /* We get the replies of the QueryVersion request because we leave */
+#ifdef ECORE_XCB_DAMAGE
         _ecore_x_damage_init_finalize();
+#endif /* ECORE_XCB_DAMAGE */
+#ifdef ECORE_XCB_COMPOSITE
         _ecore_x_composite_init_finalize();
+#endif /* ECORE_XCB_COMPOSITE */
+#ifdef ECORE_XCB_DPMS
         _ecore_x_dpms_init_finalize();
+#endif /* ECORE_XCB_DPMS */
+#ifdef ECORE_XCB_RANDR
         _ecore_x_randr_init_finalize();
+#endif /* ECORE_XCB_RANDR */
+#ifdef ECORE_XCB_SCREENSAVER
+        _ecore_x_screensaver_init_finalize();
+#endif /* ECORE_XCB_SCREENSAVER */
+#ifdef ECORE_XCB_SHAPE
         _ecore_x_shape_init_finalize();
+#endif /* ECORE_XCB_SHAPE */
+#ifdef ECORE_XCB_SYNC
         _ecore_x_sync_init_finalize();
+#endif /* ECORE_XCB_SYNC */
+#ifdef ECORE_XCB_FIXES
         _ecore_x_xfixes_init_finalize();
+#endif /* ECORE_XCB_FIXES */
+#ifdef ECORE_XCB_XINERAMA
         _ecore_x_xinerama_init_finalize();
+#endif /* ECORE_XCB_XINERAMA */
 
 	xcb_disconnect(_ecore_xcb_conn);
 	free(_ecore_xcb_event_handlers);
@@ -615,14 +653,33 @@ ecore_x_init(const char *name)
    _ecore_xcb_private_window = ecore_x_window_override_new(0, -77, -777, 123, 456);
 
    /* We finally get the replies of the QueryVersion request */
+#ifdef ECORE_XCB_DAMAGE
    _ecore_x_damage_init_finalize();
+#endif /* ECORE_XCB_DAMAGE */
+#ifdef ECORE_XCB_COMPOSITE
    _ecore_x_composite_init_finalize();
+#endif /* ECORE_XCB_COMPOSITE */
+#ifdef ECORE_XCB_DPMS
    _ecore_x_dpms_init_finalize();
+#endif /* ECORE_XCB_DPMS */
+#ifdef ECORE_XCB_RANDR
    _ecore_x_randr_init_finalize();
+#endif /* ECORE_XCB_RANDR */
+#ifdef ECORE_XCB_SCREENSAVER
+   _ecore_x_screensaver_init_finalize();
+#endif /* ECORE_XCB_SCREENSAVER */
+#ifdef ECORE_XCB_SHAPE
    _ecore_x_shape_init_finalize();
+#endif /* ECORE_XCB_SHAPE */
+#ifdef ECORE_XCB_SYNC
    _ecore_x_sync_init_finalize();
+#endif /* ECORE_XCB_SYNC */
+#ifdef ECORE_XCB_FIXES
    _ecore_x_xfixes_init_finalize();
+#endif /* ECORE_XCB_FIXES */
+#ifdef ECORE_XCB_XINERAMA
    _ecore_x_xinerama_init_finalize();
+#endif /* ECORE_XCB_XINERAMA */
 
    return _ecore_xcb_init_count;
 }
