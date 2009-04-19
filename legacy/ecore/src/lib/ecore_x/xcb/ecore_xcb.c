@@ -268,7 +268,7 @@ ecore_x_init(const char *name)
 #endif /* ECORE_XCB_XPRINT */
 
    /* We init some components (not related to XCB) */
-   ecore_even_init();
+   ecore_event_init();
    _ecore_x_reply_init();
    _ecore_x_dnd_init();
    ecore_x_netwm_init();
