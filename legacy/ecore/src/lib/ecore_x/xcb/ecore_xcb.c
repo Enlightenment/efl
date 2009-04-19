@@ -2,9 +2,12 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#include <string.h>
+
 #include <X11/keysym.h>
 
-#include "Ecore.h"
+#include <Ecore.h>
+
 #include "ecore_xcb_private.h"
 #include "Ecore_X_Atoms.h"
 
@@ -371,14 +374,33 @@ ecore_x_init(const char *name)
    /*********************/
 
    /* We ask for the QueryVersion request of the extensions */
+#ifdef ECORE_XCB_DAMAGE
    _ecore_x_damage_init(reply_damage);
+#endif /* ECORE_XCB_DAMAGE */
+#ifdef ECORE_XCB_COMPOSITE
    _ecore_x_composite_init(reply_composite);
+#endif /* ECORE_XCB_COMPOSITE */
+#ifdef ECORE_XCB_DPMS
    _ecore_x_dpms_init(reply_dpms);
+#endif /* ECORE_XCB_DPMS */
+#ifdef ECORE_XCB_RANDR
    _ecore_x_randr_init(reply_randr);
+#endif /* ECORE_XCB_RANDR */
+#ifdef ECORE_XCB_SCREENSAVER
+   _ecore_x_screensaver_init(reply_screensaver);
+#endif /* ECORE_XCB_SCREENSAVER */
+#ifdef ECORE_XCB_SHAPE
    _ecore_x_shape_init(reply_shape);
+#endif /* ECORE_XCB_SHAPE */
+#ifdef ECORE_XCB_SYNC
    _ecore_x_sync_init(reply_sync);
+#endif /* ECORE_XCB_SYNC */
+#ifdef ECORE_XCB_FIXES
    _ecore_x_xfixes_init(reply_xfixes);
+#endif /* ECORE_XCB_FIXES */
+#ifdef ECORE_XCB_XINERAMA
    _ecore_x_xinerama_init(reply_xinerama);
+#endif /* ECORE_XCB_XINERAMA */
 
    /* we enable the Big Request extension if present */
    max_request_length = xcb_get_maximum_request_length(_ecore_xcb_conn);

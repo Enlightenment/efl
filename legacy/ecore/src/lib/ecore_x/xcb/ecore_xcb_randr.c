@@ -120,11 +120,13 @@ ecore_x_randr_events_select(Ecore_X_Window window,
 EAPI void
 ecore_x_randr_get_screen_info_prefetch(Ecore_X_Window window)
 {
+#ifdef ECORE_XCB_RANDR
    xcb_randr_get_screen_info_cookie_t cookie;
 
    cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn,
                                                 _xcb_randr_root_to_screen(window));
    _ecore_xcb_cookie_cache(cookie.sequence);
+#endif /* ECORE_XCB_RANDR */
 }
 
 
@@ -135,12 +137,14 @@ ecore_x_randr_get_screen_info_prefetch(Ecore_X_Window window)
 EAPI void
 ecore_x_randr_get_screen_info_fetch(void)
 {
+#ifdef ECORE_XCB_RANDR
    xcb_randr_get_screen_info_cookie_t cookie;
    xcb_randr_get_screen_info_reply_t *reply;
 
    cookie.sequence = _ecore_xcb_cookie_get();
    reply =xcb_randr_get_screen_info_reply(_ecore_xcb_conn, cookie, NULL);
    _ecore_xcb_reply_cache(reply);
+#endif /* ECORE_XCB_RANDR */
 }
 
 /**

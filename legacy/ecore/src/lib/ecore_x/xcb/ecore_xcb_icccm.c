@@ -9,10 +9,12 @@
  * client.
  */
 
-#include "ecore_xcb_private.h"
-#include "Ecore_X_Atoms.h"
+#include <string.h>
 
 #include <xcb/xcb_icccm.h>
+
+#include "ecore_xcb_private.h"
+#include "Ecore_X_Atoms.h"
 
 
 /**

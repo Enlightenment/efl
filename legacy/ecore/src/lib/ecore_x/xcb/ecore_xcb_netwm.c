@@ -6,7 +6,11 @@
  * _NET_WM... aka Extended Window Manager Hint (EWMH) functions.
  */
 
-#include "Ecore_Data.h"
+#include <stdio.h>
+#include <string.h>
+
+#include <Ecore_Data.h>
+
 #include "ecore_xcb_private.h"
 #include "Ecore_X_Atoms.h"
 

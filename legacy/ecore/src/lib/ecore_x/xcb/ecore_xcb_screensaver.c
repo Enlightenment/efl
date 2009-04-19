@@ -12,6 +12,46 @@
   */
 
 
+#ifdef ECORE_XCB_SCREENSAVER
+static int _screensaver_available = 0;
+static xcb_screensaver_query_version_cookie_t _ecore_xcb_screensaver_init_cookie;
+#endif /* ECORE_XCB_SCREENSAVER */
+
+
+/* To avoid round trips, the initialization is separated in 2
+   functions: _ecore_xcb_screensaver_init and
+   _ecore_xcb_screensaver_init_finalize. The first one gets the cookies and
+   the second one gets the replies and set the atoms. */
+
+void
+_ecore_x_screensaver_init(const xcb_query_extension_reply_t *reply)
+{
+#ifdef ECORE_XCB_SCREENSAVER
+   if (reply && (reply->present))
+      _ecore_xcb_screensaver_init_cookie = xcb_screensaver_query_version_unchecked(_ecore_xcb_conn, 1, 1);
+#endif /* ECORE_XCB_SCREENSAVER */
+}
+
+void
+_ecore_x_screensaver_init_finalize(void)
+{
+#ifdef ECORE_XCB_SCREENSAVER
+   xcb_screensaver_query_version_reply_t *reply;
+
+   reply = xcb_screensaver_query_version_reply(_ecore_xcb_conn,
+                                               _ecore_xcb_screensaver_init_cookie, NULL);
+
+   if (reply)
+     {
+        if ((reply->server_major_version >= 1) &&
+            (reply->server_minor_version >= 1))
+          _screensaver_available = 1;
+        free(reply);
+     }
+#endif /* ECORE_XCB_SCREENSAVER */
+}
+
+
 /**
  * Return whether the X server supports the ScreenSaver Extension.
  * @return 1 if the X ScreenSaver Extension is available, 0 otherwise.

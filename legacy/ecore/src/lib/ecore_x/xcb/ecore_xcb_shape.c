@@ -178,6 +178,7 @@ ecore_x_window_shape_rectangle_clip(Ecore_X_Window dest_win,
                                     int            width,
                                     int            height)
 {
+#ifdef ECORE_XCB_SHAPE
    xcb_rectangle_t rect;
    
    rect.x = x;
@@ -187,6 +188,7 @@ ecore_x_window_shape_rectangle_clip(Ecore_X_Window dest_win,
    xcb_shape_rectangles(_ecore_xcb_conn,
                         XCB_SHAPE_SO_INTERSECT, XCB_SHAPE_SK_BOUNDING,
                         0, dest_win, 0, 0, 1, &rect);
+#endif /* ECORE_XCB_SHAPE */
 }
 
 EAPI void
