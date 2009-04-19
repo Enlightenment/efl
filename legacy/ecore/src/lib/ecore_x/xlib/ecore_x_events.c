@@ -454,6 +454,7 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 	   case 5: e->direction = 0; e->z = 1; break;
 	   case 6: e->direction = 1; e->z = -1; break;
 	   case 7: e->direction = 1; e->z = 1; break;
+           default: e->direction = 0; e->z = 0; break;
 	  }
 
 	e->x = xevent->xbutton.x;
