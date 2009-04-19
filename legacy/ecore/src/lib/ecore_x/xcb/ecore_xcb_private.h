@@ -143,6 +143,14 @@ typedef struct _Ecore_X_DND_Target
    int will_accept;
 } Ecore_X_DND_Target;
 
+extern int ECORE_X_MODIFIER_SHIFT;
+extern int ECORE_X_MODIFIER_CTRL; 
+extern int ECORE_X_MODIFIER_ALT; 
+extern int ECORE_X_MODIFIER_WIN; 
+ 
+extern int ECORE_X_LOCK_SCROLL; 
+extern int ECORE_X_LOCK_NUM; 
+extern int ECORE_X_LOCK_CAPS; 
 
 extern Ecore_X_Connection *_ecore_xcb_conn;
 extern Ecore_X_Screen     *_ecore_xcb_screen;
