@@ -3,7 +3,7 @@ Section: x11
 Priority: optional
 Maintainer: quaker <quaker66@gmail.com>
 Build-Depends: debhelper (>= 6), cdbs, libecore-dev, libevas-dev, libeet-dev, libedje-dev
-Standards-Version: 3.8.0
+Standards-Version: 3.8.1
 Homepage: http://www.enlightenment.org
 
 Package: libelm-dev
