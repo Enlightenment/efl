@@ -42,6 +42,8 @@ evas_shutdown(void)
 	evas_font_dir_cache_free();
 	evas_common_shutdown();
 	evas_module_shutdown();
+        eina_mempool_delete(_evas_rectangle_mp);
+        _evas_rectangle_mp = NULL;
 	eina_shutdown();
      }
    return initcount;

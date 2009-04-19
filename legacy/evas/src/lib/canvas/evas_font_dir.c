@@ -48,6 +48,9 @@ static int evas_object_text_font_string_parse(char *buffer, char dest[14][256]);
 void
 evas_font_dir_cache_free(void)
 {
+#ifdef HAVE_FONTCONFIG
+   FcFini();
+#endif   
    if (!font_dirs) return;
 
    eina_hash_foreach(font_dirs, font_cache_dir_free, NULL);
@@ -157,6 +160,18 @@ evas_font_free(Evas *evas, void *font)
      }
 }
 
+static void
+evas_font_init(void)
+{
+   static int done = 0;
+   if (done) return;
+   done = 1;
+#ifdef HAVE_FONTCONFIG
+   FcInit();
+   FcConfigEnableHome(1);
+#endif   
+}
+
 void *
 evas_font_load(Evas *evas, const char *name, const char *source, int size)
 {
@@ -167,6 +182,8 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 
    if (!name) return NULL;
    if (name[0] == 0) return NULL;
+   
+   evas_font_init();
 
    EINA_LIST_FOREACH(fonts_cache, l, fd)
      {
@@ -409,6 +426,8 @@ evas_font_dir_available_list(const Evas *evas)
    FcObjectSet *os;
    int i;
 
+   evas_font_init();
+   
    p = FcPatternCreate();
    os = FcObjectSetBuild(FC_FAMILY, FC_STYLE, NULL);
 

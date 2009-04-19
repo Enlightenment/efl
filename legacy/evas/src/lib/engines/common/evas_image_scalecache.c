@@ -472,6 +472,8 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
 //             pops++;
              if (!ct)
                {
+                  // FIXME: static ct - nver can free on shutdown? not a leak
+                  // or real harm - just annoying valgrind bitch
                   ct = evas_common_draw_context_new();
                   evas_common_draw_context_set_render_op(ct, _EVAS_RENDER_COPY);
                }
@@ -495,6 +497,30 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
                      0, 0,
                      dst_region_w, dst_region_h);
                   sci->populate_me = 0;
+#if 0 // visual debug of cached images                  
+                    {
+                       int xx, yy;
+                       DATA32 *pp;
+                       
+                       pp = sci->im->image.data;
+                       for (yy = 0; yy < dst_region_h; yy++)
+                         {
+                            
+                            for (xx = 0; xx < dst_region_w; xx++)
+                              {
+                                 if (yy & 0x1)
+                                   {
+                                      if (xx & 0x1) *pp = 0;
+                                   }
+                                 else
+                                   { 
+                                      if (!(xx & 0x1)) *pp = 0;
+                                  }
+                                 pp++;
+                              }
+                         }
+                    }
+#endif                  
                }
              cache_size += sci->dst_w * sci->dst_h * 4;
 //             printf(" + %i @ flop: %i (%ix%i)\n", 
