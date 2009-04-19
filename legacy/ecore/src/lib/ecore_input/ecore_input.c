@@ -309,6 +309,8 @@ ecore_event_evas_shutdown(void)
      {
 	int i;
 
+        eina_hash_free(_window_hash);
+        _window_hash = NULL;
 	for (i = 0; i < sizeof(ecore_event_evas_handlers)/sizeof(Ecore_Event_Handler*); ++i)
 	  {
 	     ecore_event_handler_del(ecore_event_evas_handlers[i]);
