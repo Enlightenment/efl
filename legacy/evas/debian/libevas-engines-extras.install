@@ -1,3 +1,0 @@
-debian/tmp/usr/lib/evas/modules/engines/fb/*/*.so
-debian/tmp/usr/lib/evas/modules/engines/gl_x11/*/*.so
-debian/tmp/usr/lib/evas/modules/engines/directfb/*/*.so
