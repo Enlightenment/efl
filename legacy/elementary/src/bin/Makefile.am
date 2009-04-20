@@ -33,9 +33,11 @@ elementary_quicklaunch_SOURCES = quicklaunch.c
 elementary_quicklaunch_LDADD = $(top_builddir)/src/lib/libelementary.la
 elementary_quicklaunch_LDFLAGS = 
 
+if BUILD_RUN
 elementary_run_SOURCES = run.c
 elementary_run_LDADD = 
 elementary_run_LDFLAGS =
+endif
 
 ## This is how to build a quicklanch capable app
 # build the shared lib version - libtool produces a .a and .la file as well

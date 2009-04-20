@@ -51,6 +51,7 @@ case "$host_os" in
 dnl managed by evil
       AC_DEFINE(HAVE_DLADDR)
       requirement_elm="evil"
+      have_socket="no"
     ;;
    mingw*)
       PKG_CHECK_MODULES([EVIL], [evil])
@@ -59,6 +60,11 @@ dnl managed by evil
       ELM_WIN32_DEF="#define"
       have_windows="yes"
       requirement_elm="evil"
+      have_socket="no"
+      ;;
+   *solaris*)
+      have_socket="yes"
+      AC_CHECK_LIB([socket], [connect], [], [have_socket="no"])
       ;;
    *)
       ELM_UNIX_DEF="#define"
@@ -74,8 +80,10 @@ dnl managed by evil
           AC_MSG_ERROR(Cannot find dlopen)
         fi
       fi
+      have_socket="yes"
       ;;
 esac
+AM_CONDITIONAL([BUILD_RUN], [test "x$have_socket" = "xyes"])
 
 have_fork="no"
 AC_CHECK_FUNCS(fork, [
