@@ -29,4 +29,4 @@ doc:
 
 endif
 
-EXTRA_DIST = Doxyfile img e.css head.html foot.html evas.dox.in
+EXTRA_DIST = Doxyfile $(wildcard img/*.*) e.css head.html foot.html evas.dox.in
