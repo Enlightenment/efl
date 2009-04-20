@@ -12,8 +12,6 @@
  * @{
  */
 
-#include <Eina.h>
-
 /**
  * The possible contexts for an icon directory
  */

@@ -1,6 +1,16 @@
 /* vim: set sw=4 ts=4 sts=4 et: */
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <string.h>
+
+#include <Ecore_Str.h>
+
 #include "Efreet.h"
 #include "efreet_private.h"
+#include "efreet_xml.h"
 
 static int init = 0;
 static int efreet_parsed_locale = 0;

@@ -2,8 +2,6 @@
 #ifndef EFREET_UTILS_H
 #define EFREET_UTILS_H
 
-#include <Eina.h>
-
 typedef enum _Efreet_Desktop_Change Efreet_Desktop_Change;
 
 enum _Efreet_Desktop_Change

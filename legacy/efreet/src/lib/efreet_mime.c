@@ -1,11 +1,52 @@
 /* vim: set sw=4 ts=4 sts=4 et: */
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <sys/mman.h>
+#include <unistd.h>
+#include <time.h>
+#include <fcntl.h>
+#include <fnmatch.h>
+
+#ifdef _WIN32
+# include <winsock2.h>
+#endif
+
+#ifdef HAVE_ARPA_INET
+# include <arpa/inet.h>
+#endif
+
+#ifdef HAVE_ALLOCA_H
+# include <alloca.h>
+#elif defined __GNUC__
+# define alloca __builtin_alloca
+#elif defined _AIX
+# define alloca __alloca
+#elif defined _MSC_VER
+# include <malloc.h>
+# define alloca _alloca
+#else
+# include <stddef.h>
+# ifdef  __cplusplus
+extern "C"
+# endif
+void *alloca (size_t);
+#endif
+
+#include <Ecore.h>
+#include <Ecore_File.h>
+
 #include <Efreet.h>
 #include <Efreet_Mime.h>
 #include "efreet_private.h"
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/time.h>
-#include <time.h>
 
 static Eina_List *globs = NULL;     /* contains Efreet_Mime_Glob structs */
 static Eina_List *magics = NULL;    /* contains Efreet_Mime_Magic structs */
@@ -635,8 +676,10 @@ efreet_mime_special_check(const char *file)
         if (S_ISREG(s.st_mode))
             return NULL;
 
+#ifndef _WIN32
         if (S_ISLNK(s.st_mode))
             return "inode/symlink";
+#endif
 
         if (S_ISFIFO(s.st_mode))
             return "inode/fifo";
@@ -647,8 +690,10 @@ efreet_mime_special_check(const char *file)
         if (S_ISBLK(s.st_mode))
             return "inode/blockdevice";
 
+#ifndef _WIN32
         if (S_ISSOCK(s.st_mode))
             return "inode/socket";
+#endif
 
         if (S_ISDIR(s.st_mode))
         {

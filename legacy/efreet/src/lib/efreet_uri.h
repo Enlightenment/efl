@@ -9,8 +9,6 @@
  * @{
  */
 
-#include <Ecore.h>
-
 
 /**
  * Efreet_Uri

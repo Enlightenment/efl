@@ -1,4 +1,18 @@
 /* vim: set sw=4 ts=4 sts=4 et: */
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include <fnmatch.h>
+
+#include <Ecore.h>
+#include <Ecore_File.h>
+
 #include "Efreet.h"
 #include "efreet_private.h"
 

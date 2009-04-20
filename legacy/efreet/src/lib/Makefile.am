@@ -1,11 +1,6 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
-AM_CPPFLAGS = \
--I$(top_builddir) \
--I$(top_srcdir) \
-@EFREET_CFLAGS@
-
 lib_LTLIBRARIES = libefreet.la libefreet_mime.la libefreet_trash.la
 
 EFREETHEADERS = \
@@ -35,6 +30,13 @@ $(EFREETHEADERS)
 
 libefreet_la_SOURCES = \
 	$(EFREETSOURCES)
+libefreet_la_CPPFLAGS =  \
+-I$(top_builddir) \
+-I$(top_srcdir) \
+@EFL_EFREET_BUILD@ \
+@EFREET_CFLAGS@
+libefreet_la_LIBADD = @EFREET_LIBS@ @win32_libs@
+libefreet_la_LDFLAGS = -no-undefined -version-info @version_info@ @efreet_release_info@
 
 EFREETMIMEHEADERS = \
 Efreet_Mime.h
@@ -45,6 +47,11 @@ $(EFREETMIMEHEADERS)
 
 libefreet_mime_la_SOURCES = \
 $(EFREETMIMESOURCES)
+libefreet_mime_la_CPPFLAGS = \
+-I$(top_builddir) \
+-I$(top_srcdir) \
+@EFL_EFREET_MIME_BUILD@ \
+@EFREET_CFLAGS@
 
 
 EFREETTRASHHEADERS = \
@@ -56,16 +63,18 @@ $(EFREETTRASHHEADERS)
 
 libefreet_trash_la_SOURCES = \
 $(EFREETTRASHSOURCES)
+libefreet_trash_la_CPPFLAGS = \
+-I$(top_builddir) \
+-I$(top_srcdir) \
+@EFL_EFREET_TRASH_BUILD@ \
+@EFREET_CFLAGS@
 
 
 installed_headersdir = $(prefix)/include/efreet
 installed_headers_DATA = $(EFREETHEADERS) $(EFREETMIMEHEADERS) $(EFREETTRASHHEADERS)
 
-libefreet_la_LIBADD = @EFREET_LIBS@
-libefreet_la_LDFLAGS = -version-info @version_info@ @efreet_release_info@
+libefreet_mime_la_LDFLAGS = -no-undefined -version-info @version_info@ @efreet_mime_release_info@
+libefreet_trash_la_LDFLAGS = -no-undefined -version-info @version_info@ @efreet_trash_release_info@
 
-libefreet_mime_la_LDFLAGS = -version-info @version_info@ @efreet_mime_release_info@
-libefreet_trash_la_LDFLAGS = -version-info @version_info@ @efreet_trash_release_info@
-
-libefreet_mime_la_LIBADD = @EFREET_LIBS@ libefreet.la
+libefreet_mime_la_LIBADD = @EFREET_LIBS@ libefreet.la @win32_libs@
 libefreet_trash_la_LIBADD = @EFREET_LIBS@ libefreet.la

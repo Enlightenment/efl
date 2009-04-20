@@ -11,32 +11,6 @@
  * @{
  */
 
-#include "config.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <ctype.h>
-#include <fcntl.h>
-#include <sys/mman.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <fnmatch.h>
-#include <limits.h>
-
-#ifdef HAVE_ALLOCA_H
-#include <alloca.h>
-#endif
-
-#include <Eina.h>
-#include <Ecore.h>
-#include <Ecore_File.h>
-#include <Ecore_Str.h>
-
-#include "efreet_xml.h"
-#include "efreet_ini.h"
-
 /**
  * @def NEW(x, c)
  * Allocate and zero out c structures of type x

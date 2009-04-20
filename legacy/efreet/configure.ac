@@ -35,7 +35,30 @@ AC_SUBST(efreet_release_info)
 AC_SUBST(efreet_mime_release_info)
 AC_SUBST(efreet_trash_release_info)
 
+PKG_PROG_PKG_CONFIG
+
+EFL_EFREET_BUILD=""
+EFL_EFREET_MIME_BUILD=""
+EFL_EFREET_TRASH_BUILD=""
+win32_libs=""
+case "$host_os" in
+   mingw* | cegcc*)
+      PKG_CHECK_MODULES([EVIL], [evil])
+      AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if Evil library is installed])
+      EFL_EFREET_BUILD="-DEFL_EFREET_BUILD"
+      EFL_EFREET_MIME_BUILD="-DEFL_EFREET_MIME_BUILD"
+      EFL_EFREET_TRASH_BUILD="-DEFL_EFREET_TRASH_BUILD"
+      win32_libs="-lws2_32"
+   ;;
+esac
+AC_SUBST(EFL_EFREET_BUILD)
+AC_SUBST(EFL_EFREET_MIME_BUILD)
+AC_SUBST(EFL_EFREET_TRASH_BUILD)
+AC_SUBST(win32_libs)
+
 AC_FUNC_ALLOCA
+
+AC_CHECK_HEADERS([arpa/inet.h])
 
 PKG_CHECK_MODULES(EFREET, [eina-0 ecore >= 0.9.9 ecore-file >= 0.9.9])
 PKG_CHECK_MODULES(EINA, [eina-0])

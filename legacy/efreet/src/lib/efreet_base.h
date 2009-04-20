@@ -12,8 +12,6 @@
  * @{
  */
 
-#include <Eina.h>
-
 EAPI const char *efreet_data_home_get(void);
 EAPI Eina_List *efreet_data_dirs_get(void);
 
