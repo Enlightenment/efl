@@ -19,6 +19,11 @@ struct _Ethumb
    int format;
    int aspect;
    float crop_x, crop_y;
+   const char *src_path;
+   const char *src_key;
+   const char *thumb_path;
+   const char *thumb_key;
+   int rw, rh;
    struct
      {
 	double time;
@@ -34,16 +39,6 @@ struct _Ethumb
    Ecore_Idler *finished_idler;
    ethumb_generate_callback_t finished_cb;
    void *cb_data;
-};
-
-struct _Ethumb_File
-{
-   Ethumb *ethumb;
-   const char *src_path;
-   const char *src_key;
-   const char *thumb_path;
-   const char *thumb_key;
-   int w, h;
 };
 
 #endif /* __ETHUMB_PRIVATE_H__ */

@@ -15,9 +15,8 @@ _shutdown(Ethumb_Plugin *plugin)
 }
 
 static int
-_generate_thumb(Ethumb_File *ef)
+_generate_thumb(Ethumb *e)
 {
-   Ethumb *e = ef->ethumb;
    Epdf_Document *document;
    Epdf_Page *page;
    Evas_Object *o;
@@ -25,17 +24,17 @@ _generate_thumb(Ethumb_File *ef)
    int fx, fy, fw, fh;
    int npages;
 
-   document = epdf_document_new(ef->src_path);
+   document = epdf_document_new(e->src_path);
    if (!document)
      {
-	fprintf(stderr, "ERROR: could not read document: %s\n", ef->src_path);
+	fprintf(stderr, "ERROR: could not read document: %s\n", e->src_path);
 	return 0;
      }
 
    page = epdf_page_new(document);
    if (!page)
      {
-	fprintf(stderr, "ERROR: could not read document: %s\n", ef->src_path);
+	fprintf(stderr, "ERROR: could not read document: %s\n", e->src_path);
 	epdf_document_delete(document);
 	return 0;
      }
@@ -45,7 +44,7 @@ _generate_thumb(Ethumb_File *ef)
      epdf_page_page_set(page, e->document.page);
    epdf_page_size_get(page, &w, &h);
    ethumb_calculate_aspect(e, w, h, &ww, &hh);
-   ethumb_plugin_image_resize(ef, ww, hh);
+   ethumb_plugin_image_resize(e, ww, hh);
 
    o = evas_object_image_add(e->sub_e);
    epdf_page_render(page, o);
@@ -56,13 +55,13 @@ _generate_thumb(Ethumb_File *ef)
    evas_object_image_fill_set(o, fx, fy, fw, fh);
 
    evas_object_show(o);
-   ethumb_image_save(ef);
+   ethumb_image_save(e);
 
    evas_object_del(o);
    epdf_page_delete(page);
    epdf_document_delete(document);
 
-   ethumb_finished_callback_call(ef);
+   ethumb_finished_callback_call(e);
 
    return 1;
 }

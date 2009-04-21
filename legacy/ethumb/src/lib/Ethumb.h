@@ -66,8 +66,7 @@ typedef enum _Ethumb_Thumb_Aspect Ethumb_Thumb_Aspect;
 
 typedef struct _Ethumb_Frame Ethumb_Frame;
 typedef struct _Ethumb Ethumb;
-typedef struct _Ethumb_File Ethumb_File;
-typedef void (*ethumb_generate_callback_t)(Ethumb_File *ef, void *data);
+typedef void (*ethumb_generate_callback_t)(Ethumb *e, void *data);
 
 EAPI int ethumb_init(void);
 EAPI int ethumb_shutdown(void);
@@ -100,11 +99,11 @@ EAPI const char * ethumb_thumb_category_get(Ethumb *e) EINA_WARN_UNUSED_RESULT E
 EAPI void ethumb_video_time_set(Ethumb *e, float time) EINA_ARG_NONNULL(1);
 EAPI void ethumb_document_page_set(Ethumb *e, int page) EINA_ARG_NONNULL(1);
 
-EAPI Ethumb_File * ethumb_file_new(Ethumb *e, const char *path, const char *key) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
-EAPI void ethumb_file_free(Ethumb_File *ef);
-EAPI void ethumb_file_thumb_path_set(Ethumb_File *ef, const char *path, const char *key) EINA_ARG_NONNULL(1);
-EAPI const char * ethumb_file_thumb_path_get(Ethumb_File *ef) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-EAPI int ethumb_file_generate(Ethumb_File *ef, ethumb_generate_callback_t finished_cb, void *data) EINA_ARG_NONNULL(1, 2);
+EAPI int ethumb_file_set(Ethumb *e, const char *path, const char *key) EINA_ARG_NONNULL(1, 2);
+EAPI void ethumb_file_free(Ethumb *e) EINA_ARG_NONNULL(1);
+EAPI void ethumb_file_thumb_path_set(Ethumb *e, const char *path, const char *key) EINA_ARG_NONNULL(1);
+EAPI const char * ethumb_file_thumb_path_get(Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+EAPI int ethumb_file_generate(Ethumb *e, ethumb_generate_callback_t finished_cb, void *data) EINA_ARG_NONNULL(1, 2);
 
 #ifdef __cplusplus
 }

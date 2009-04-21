@@ -509,29 +509,24 @@ ethumb_document_page_set(Ethumb *e, int page)
    e->document.page = page;
 }
 
-EAPI Ethumb_File *
-ethumb_file_new(Ethumb *e, const char *path, const char *key)
+EAPI int
+ethumb_file_set(Ethumb *e, const char *path, const char *key)
 {
-   Ethumb_File *ef;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
 
    if (access(path, R_OK))
      {
 	ERR("couldn't access file \"%s\"\n", path);
-	return NULL;
+	return 0;
      }
 
-   ef = calloc(1, sizeof(Ethumb_File));
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ef, NULL);
-   ef->ethumb = e;
-   ef->src_path = eina_stringshare_add(path);
+   e->src_path = eina_stringshare_add(path);
 
    if (key)
-     ef->src_key = eina_stringshare_add(key);
+     e->src_key = eina_stringshare_add(key);
 
-   return ef;
+   return 1;
 }
 
 static const char *
@@ -581,12 +576,11 @@ _ethumb_file_check_fdo(Ethumb *e)
 }
 
 static const char *
-_ethumb_file_generate_custom_category(Ethumb_File *ef)
+_ethumb_file_generate_custom_category(Ethumb *e)
 {
    char buf[PATH_MAX];
    const char *aspect, *format;
    const char *frame;
-   Ethumb *e = ef->ethumb;
 
    if (e->aspect == ETHUMB_THUMB_KEEP_ASPECT)
      aspect = "keep_aspect";
@@ -612,18 +606,16 @@ _ethumb_file_generate_custom_category(Ethumb_File *ef)
 }
 
 static void
-_ethumb_file_generate_path(Ethumb_File *ef)
+_ethumb_file_generate_path(Ethumb *e)
 {
    char buf[PATH_MAX];
    char *fullname;
    const char *hash;
    const char *thumb_dir, *category;
    const char *ext;
-   Ethumb *e;
    int fdo_format;
 
 
-   e = ef->ethumb;
    fdo_format = _ethumb_file_check_fdo(e);
 
    if (e->thumb_dir)
@@ -634,7 +626,7 @@ _ethumb_file_generate_path(Ethumb_File *ef)
    if (e->category)
      category = eina_stringshare_ref(e->category);
    else if (!fdo_format)
-     category = _ethumb_file_generate_custom_category(ef);
+     category = _ethumb_file_generate_custom_category(e);
    else
      {
 	if (e->tw == THUMB_SIZE_NORMAL)
@@ -648,11 +640,11 @@ _ethumb_file_generate_path(Ethumb_File *ef)
    else
      ext = "jpg";
 
-   fullname = ecore_file_realpath(ef->src_path);
+   fullname = ecore_file_realpath(e->src_path);
    hash = _ethumb_generate_hash(fullname);
    snprintf(buf, sizeof(buf), "%s/%s/%s.%s", thumb_dir, category, hash, ext);
    free(fullname);
-   eina_stringshare_replace(&ef->thumb_path, buf);
+   eina_stringshare_replace(&e->thumb_path, buf);
 
    eina_stringshare_del(thumb_dir);
    eina_stringshare_del(category);
@@ -660,49 +652,47 @@ _ethumb_file_generate_path(Ethumb_File *ef)
 }
 
 EAPI void
-ethumb_file_free(Ethumb_File *ef)
+ethumb_file_free(Ethumb *e)
 {
-   if (!ef)
-     return;
+   EINA_SAFETY_ON_NULL_RETURN(e);
 
-   eina_stringshare_del(ef->src_path);
-   eina_stringshare_del(ef->src_key);
-   eina_stringshare_del(ef->thumb_path);
-   eina_stringshare_del(ef->thumb_key);
-   free(ef);
+   eina_stringshare_replace(&e->src_path, NULL);
+   eina_stringshare_replace(&e->src_key, NULL);
+   eina_stringshare_replace(&e->thumb_path, NULL);
+   eina_stringshare_replace(&e->thumb_key, NULL);
 }
 
 EAPI void
-ethumb_file_thumb_path_set(Ethumb_File *ef, const char *path, const char *key)
+ethumb_file_thumb_path_set(Ethumb *e, const char *path, const char *key)
 {
    char *real_path;
    char buf[PATH_MAX];
 
-   EINA_SAFETY_ON_NULL_RETURN(ef);
+   EINA_SAFETY_ON_NULL_RETURN(e);
 
    real_path = realpath(path, buf);
    if (!path)
      {
-	eina_stringshare_replace(&ef->thumb_path, NULL);
-	eina_stringshare_replace(&ef->thumb_key, NULL);
+	eina_stringshare_replace(&e->thumb_path, NULL);
+	eina_stringshare_replace(&e->thumb_key, NULL);
      }
    else if (errno == ENOENT || errno == ENOTDIR || real_path)
      {
-	eina_stringshare_replace(&ef->thumb_path, buf);
-	eina_stringshare_replace(&ef->thumb_key, key);
+	eina_stringshare_replace(&e->thumb_path, buf);
+	eina_stringshare_replace(&e->thumb_key, key);
      }
    else
      ERR("could not set thumbnail path: %s\n", strerror(errno));
 }
 
 EAPI const char *
-ethumb_file_thumb_path_get(Ethumb_File *ef)
+ethumb_file_thumb_path_get(Ethumb *e)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ef, NULL);
-   if (!ef->thumb_path)
-     _ethumb_file_generate_path(ef);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
+   if (!e->thumb_path)
+     _ethumb_file_generate_path(e);
 
-   return ef->thumb_path;
+   return e->thumb_path;
 }
 
 void
@@ -748,17 +738,16 @@ ethumb_calculate_fill(Ethumb *e, int iw, int ih, int *fx, int *fy, int *fw, int 
 }
 
 static int
-_ethumb_plugin_generate(Ethumb_File *ef)
+_ethumb_plugin_generate(Ethumb *e)
 {
    const char *ext;
    Ethumb_Plugin *plugin;
-   Ethumb *e;
    int r;
 
-   ext = strrchr(ef->src_path, '.');
+   ext = strrchr(e->src_path, '.');
    if (!ext)
      {
-	ERR("could not get extension for file \"%s\"\n", ef->src_path);
+	ERR("could not get extension for file \"%s\"\n", e->src_path);
 	return 0;
      }
 
@@ -769,33 +758,30 @@ _ethumb_plugin_generate(Ethumb_File *ef)
 	return 0;
      }
 
-   e = ef->ethumb;
    if (e->frame)
      evas_object_hide(e->frame->edje);
    else
      evas_object_hide(e->img);
 
-   r = plugin->generate_thumb(ef);
+   r = plugin->generate_thumb(e);
 
    return r;
 }
 
 int
-ethumb_plugin_image_resize(Ethumb_File *ef, int w, int h)
+ethumb_plugin_image_resize(Ethumb *e, int w, int h)
 {
-   Ethumb *eth;
    Evas_Object *img;
 
-   eth = ef->ethumb;
-   img = eth->img;
+   img = e->img;
 
-   if (eth->frame)
+   if (e->frame)
      {
 	edje_extern_object_min_size_set(img, w, h);
 	edje_extern_object_max_size_set(img, w, h);
-	edje_object_calc_force(eth->frame->edje);
-	evas_object_move(eth->frame->edje, 0, 0);
-	evas_object_resize(eth->frame->edje, w, h);
+	edje_object_calc_force(e->frame->edje);
+	evas_object_move(e->frame->edje, 0, 0);
+	evas_object_resize(e->frame->edje, w, h);
      }
    else
      {
@@ -803,35 +789,34 @@ ethumb_plugin_image_resize(Ethumb_File *ef, int w, int h)
 	evas_object_resize(img, w, h);
      }
 
-   evas_object_image_size_set(eth->o, w, h);
-   ecore_evas_resize(eth->sub_ee, w, h);
+   evas_object_image_size_set(e->o, w, h);
+   ecore_evas_resize(e->sub_ee, w, h);
 
-   ef->w = w;
-   ef->h = h;
+   e->rw = w;
+   e->rh = h;
 
    return 1;
 }
 
 int
-ethumb_image_save(Ethumb_File *ef)
+ethumb_image_save(Ethumb *e)
 {
    int r;
    char *dname;
-   Ethumb *eth = ef->ethumb;
 
-   evas_damage_rectangle_add(eth->sub_e, 0, 0, ef->w, ef->h);
-   evas_render(eth->sub_e);
+   evas_damage_rectangle_add(e->sub_e, 0, 0, e->rw, e->rh);
+   evas_render(e->sub_e);
 
-   if (!ef->thumb_path)
-     _ethumb_file_generate_path(ef);
+   if (!e->thumb_path)
+     _ethumb_file_generate_path(e);
 
-   if (!ef->thumb_path)
+   if (!e->thumb_path)
      {
 	ERR("could not create file path...\n");
 	return 0;
      }
 
-   dname = ecore_file_dir_get(ef->thumb_path);
+   dname = ecore_file_dir_get(e->thumb_path);
    r = ecore_file_mkpath(dname);
    free(dname);
    if (!r)
@@ -840,7 +825,7 @@ ethumb_image_save(Ethumb_File *ef)
 	return 0;
      }
 
-   r = evas_object_image_save(eth->o, ef->thumb_path, ef->thumb_key,
+   r = evas_object_image_save(e->o, e->thumb_path, e->thumb_key,
 			      "quality=85");
 
    if (!r)
@@ -853,33 +838,31 @@ ethumb_image_save(Ethumb_File *ef)
 }
 
 static int
-_ethumb_image_load(Ethumb_File *ef)
+_ethumb_image_load(Ethumb *e)
 {
-   Ethumb *eth;
    int error;
    Evas_Coord w, h, ww, hh, fx, fy, fw, fh;
    Evas_Object *img;
 
-   eth = ef->ethumb;
-   img = eth->img;
+   img = e->img;
 
-   if (eth->frame)
-     evas_object_hide(eth->frame->edje);
+   if (e->frame)
+     evas_object_hide(e->frame->edje);
    else
      evas_object_hide(img);
    evas_object_image_file_set(img, NULL, NULL);
-   evas_object_image_load_size_set(img, eth->tw, eth->th);
-   evas_object_image_file_set(img, ef->src_path, ef->src_key);
+   evas_object_image_load_size_set(img, e->tw, e->th);
+   evas_object_image_file_set(img, e->src_path, e->src_key);
 
-   if (eth->frame)
-     evas_object_show(eth->frame->edje);
+   if (e->frame)
+     evas_object_show(e->frame->edje);
    else
      evas_object_show(img);
 
    error = evas_object_image_load_error_get(img);
    if (error != EVAS_LOAD_ERROR_NONE)
      {
-	ERR("could not load image '%s': %d\n", ef->src_path, error);
+	ERR("could not load image '%s': %d\n", e->src_path, error);
 	return 0;
      }
 
@@ -887,15 +870,15 @@ _ethumb_image_load(Ethumb_File *ef)
    if ((w <= 0) || (h <= 0))
      return 0;
 
-   ethumb_calculate_aspect(eth, w, h, &ww, &hh);
+   ethumb_calculate_aspect(e, w, h, &ww, &hh);
 
-   if (eth->frame)
+   if (e->frame)
      {
 	edje_extern_object_min_size_set(img, ww, hh);
 	edje_extern_object_max_size_set(img, ww, hh);
-	edje_object_calc_force(eth->frame->edje);
-	evas_object_move(eth->frame->edje, 0, 0);
-	evas_object_resize(eth->frame->edje, ww, hh);
+	edje_object_calc_force(e->frame->edje);
+	evas_object_move(e->frame->edje, 0, 0);
+	evas_object_resize(e->frame->edje, ww, hh);
      }
    else
      {
@@ -903,14 +886,14 @@ _ethumb_image_load(Ethumb_File *ef)
 	evas_object_resize(img, ww, hh);
      }
 
-   ethumb_calculate_fill(eth, w, h, &fx, &fy, &fw, &fh);
+   ethumb_calculate_fill(e, w, h, &fx, &fy, &fw, &fh);
    evas_object_image_fill_set(img, fx, fy, fw, fh);
 
-   evas_object_image_size_set(eth->o, ww, hh);
-   ecore_evas_resize(eth->sub_ee, ww, hh);
+   evas_object_image_size_set(e->o, ww, hh);
+   ecore_evas_resize(e->sub_ee, ww, hh);
 
-   ef->w = ww;
-   ef->h = hh;
+   e->rw = ww;
+   e->rh = hh;
 
    return 1;
 }
@@ -918,10 +901,9 @@ _ethumb_image_load(Ethumb_File *ef)
 static int
 _ethumb_finished_idler_cb(void *data)
 {
-   Ethumb_File *ef = data;
-   Ethumb *e = ef->ethumb;
+   Ethumb *e = data;
 
-   e->finished_cb(ef, e->cb_data);
+   e->finished_cb(e, e->cb_data);
    e->finished_idler = NULL;
    e->finished_cb = NULL;
    e->cb_data = NULL;
@@ -930,25 +912,23 @@ _ethumb_finished_idler_cb(void *data)
 }
 
 void
-ethumb_finished_callback_call(Ethumb_File *ef)
+ethumb_finished_callback_call(Ethumb *e)
 {
-   Ethumb *e = ef->ethumb;
+   EINA_SAFETY_ON_NULL_RETURN(e);
 
    if (e->finished_idler)
      ecore_idler_del(e->finished_idler);
-   e->finished_idler = ecore_idler_add(_ethumb_finished_idler_cb, ef);
+   e->finished_idler = ecore_idler_add(_ethumb_finished_idler_cb, e);
 }
 
 EAPI int
-ethumb_file_generate(Ethumb_File *ef, ethumb_generate_callback_t finished_cb, void *data)
+ethumb_file_generate(Ethumb *e, ethumb_generate_callback_t finished_cb, void *data)
 {
    int r;
-   Ethumb *e;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ef, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e->src_path, 0);
    EINA_SAFETY_ON_NULL_RETURN_VAL(finished_cb, 0);
-
-   e = ef->ethumb;
 
    if (e->finished_idler)
      {
@@ -958,19 +938,19 @@ ethumb_file_generate(Ethumb_File *ef, ethumb_generate_callback_t finished_cb, vo
    e->finished_cb = finished_cb;
    e->cb_data = data;
 
-   r = _ethumb_plugin_generate(ef);
+   r = _ethumb_plugin_generate(e);
    if (r)
      return r;
 
-   if (!_ethumb_image_load(ef))
+   if (!_ethumb_image_load(e))
      {
 	ERR("could not load input image.\n");
 	return 0;
      }
 
-   r = ethumb_image_save(ef);
+   r = ethumb_image_save(e);
    if (r && finished_cb)
-     ethumb_finished_callback_call(ef);
+     ethumb_finished_callback_call(e);
 
    return r;
 }

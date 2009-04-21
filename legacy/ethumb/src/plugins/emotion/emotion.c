@@ -18,30 +18,28 @@ _shutdown(Ethumb_Plugin *plugin)
 static void
 _frame_resized_cb(void *data, Evas_Object *o, void *event_info)
 {
-   Ethumb_File *ef = data;
-   Ethumb *e = ef->ethumb;
+   Ethumb *e = data;
    Evas_Coord ww, hh;
    Evas_Coord mw, mh;
 
    emotion_object_size_get(o, &mw, &mh);
    ethumb_calculate_aspect(e, mw, mh, &ww, &hh);
-   ethumb_plugin_image_resize(ef, ww, hh);
+   ethumb_plugin_image_resize(e, ww, hh);
 
    evas_object_resize(o, ww, hh);
    evas_object_move(o, 0, 0);
 
-   ethumb_image_save(ef);
+   ethumb_image_save(e);
 
    evas_object_smart_callback_del(o, "frame_resize", _frame_resized_cb);
    emotion_object_play_set(o, 0);
    evas_object_del(o);
-   ethumb_finished_callback_call(ef);
+   ethumb_finished_callback_call(e);
 }
 
 static int
-_generate_thumb(Ethumb_File *ef)
+_generate_thumb(Ethumb *e)
 {
-   Ethumb *e = ef->ethumb;
    Evas_Object *o;
    int r;
 
@@ -55,11 +53,11 @@ _generate_thumb(Ethumb_File *ef)
 	return r;
      }
 
-   emotion_object_file_set(o, ef->src_path);
+   emotion_object_file_set(o, e->src_path);
    emotion_object_position_set(o, e->video.time);
    emotion_object_play_set(o, 1);
 
-   evas_object_smart_callback_add(o, "frame_resize", _frame_resized_cb, ef);
+   evas_object_smart_callback_add(o, "frame_resize", _frame_resized_cb, e);
 
    evas_object_show(o);
 

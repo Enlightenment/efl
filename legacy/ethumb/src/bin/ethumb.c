@@ -129,7 +129,7 @@ const Ecore_Getopt optdesc = {
 };
 
 static void
-_finished_thumb(Ethumb_File *ef, void *data)
+_finished_thumb(Ethumb *e, void *data)
 {
    ecore_main_loop_quit();
 }
@@ -138,7 +138,6 @@ int
 main(int argc, char *argv[])
 {
    Ethumb *e;
-   Ethumb_File *ef;
    Eina_Bool quit_option = 0;
    Eina_Rectangle geometry = {-1, -1, -1, -1};
    unsigned int format = 0, aspect = 0;
@@ -197,8 +196,6 @@ main(int argc, char *argv[])
 	  break;
        }
 
-   ef = NULL;
-
    e = ethumb_new();
 
    ethumb_thumb_format_set(e, format);
@@ -220,22 +217,22 @@ main(int argc, char *argv[])
      ethumb_document_page_set(e, page);
 
    if (r && arg_index < argc)
-     ef = ethumb_file_new(e, argv[arg_index++], src_key);
-   if (ef && arg_index < argc)
+     r = ethumb_file_set(e, argv[arg_index++], src_key);
+   if (r && arg_index < argc)
      thumb_path = argv[arg_index++];
-   if (ef && arg_index < argc)
+   if (r && arg_index < argc)
      thumb_key = argv[arg_index];
 
-   if (ef)
+   if (r)
      {
-	ethumb_file_thumb_path_set(ef, thumb_path, thumb_key);
-	r = ethumb_file_generate(ef, _finished_thumb, NULL);
+	ethumb_file_thumb_path_set(e, thumb_path, thumb_key);
+	r = ethumb_file_generate(e, _finished_thumb, NULL);
      }
 
    if (r && !quit_option)
      ecore_main_loop_begin();
 
-   ethumb_file_free(ef);
+   ethumb_file_free(e);
    ethumb_free(e);
 
    ecore_shutdown();
