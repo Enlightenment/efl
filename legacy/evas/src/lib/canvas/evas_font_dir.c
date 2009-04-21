@@ -45,11 +45,16 @@ static Evas_Font_Dir *object_text_font_cache_dir_add(char *dir);
 static void object_text_font_cache_dir_del(char *dir, Evas_Font_Dir *fd);
 static int evas_object_text_font_string_parse(char *buffer, char dest[14][256]);
 
+#ifdef HAVE_FONTCONFIG
+static int fc_init = 0;
+#endif
+
 void
 evas_font_dir_cache_free(void)
 {
 #ifdef HAVE_FONTCONFIG
-   FcFini();
+   fc_init--;
+   if (fc_init == 0) FcFini();
 #endif   
    if (!font_dirs) return;
 
@@ -167,8 +172,12 @@ evas_font_init(void)
    if (done) return;
    done = 1;
 #ifdef HAVE_FONTCONFIG
-   FcInit();
-   FcConfigEnableHome(1);
+   fc_init++;
+   if (fc_init == 1)
+     {
+        FcInit();
+        FcConfigEnableHome(1);
+     }
 #endif   
 }
 
