@@ -20,7 +20,7 @@
 # include <winsock2.h>
 #endif
 
-#ifdef HAVE_ARPA_INET
+#ifdef HAVE_ARPA_INET_H
 # include <arpa/inet.h>
 #endif
 
