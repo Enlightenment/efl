@@ -4,27 +4,18 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <Eina.h>
 #include <Evas.h>
 #include <Emotion.h>
-#include <Ecore.h>
-
-struct cb_data {
-     Ethumb_File *ef;
-     ethumb_generate_callback_t finished_cb;
-     void *data;
-};
 
 static Evas_Object *_emotion = NULL;
 
 static void
 _shutdown(Ethumb_Plugin *plugin)
 {
-   ecore_shutdown();
 }
 
 static void
-_frame_decoded_cb(void *data, Evas_Object *o, void *event_info)
+_frame_resized_cb(void *data, Evas_Object *o, void *event_info)
 {
    Ethumb_File *ef = data;
    Ethumb *e = ef->ethumb;
@@ -40,7 +31,7 @@ _frame_decoded_cb(void *data, Evas_Object *o, void *event_info)
 
    ethumb_image_save(ef);
 
-   evas_object_smart_callback_del(o, "frame_decode", _frame_decoded_cb);
+   evas_object_smart_callback_del(o, "frame_resize", _frame_resized_cb);
    emotion_object_play_set(o, 0);
    evas_object_del(o);
    ethumb_finished_callback_call(ef);
@@ -67,7 +58,7 @@ _generate_thumb(Ethumb_File *ef)
    emotion_object_position_set(o, e->video.time);
    emotion_object_play_set(o, 1);
 
-   evas_object_smart_callback_add(o, "frame_decode", _frame_decoded_cb, ef);
+   evas_object_smart_callback_add(o, "frame_resize", _frame_resized_cb, ef);
 
    evas_object_show(o);
 
@@ -86,8 +77,6 @@ ethumb_plugin_init(void)
 	_generate_thumb,
 	_shutdown
      };
-
-   ecore_init();
 
    return &plugin;
 }
