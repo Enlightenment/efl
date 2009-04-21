@@ -1091,7 +1091,7 @@ efreet_util_monitor_cb(void *data, Ecore_File_Monitor *monitor __UNUSED__,
             break;
         case ECORE_FILE_EVENT_DELETED_SELF:
             if (eina_list_data_find(monitors, em))
-                eina_list_remove(monitors, em);
+                monitors = eina_list_remove(monitors, em);
             efreet_util_monitor_free(em);
             break;
         case ECORE_FILE_EVENT_MODIFIED:
