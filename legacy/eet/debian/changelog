@@ -1,43 +1,5 @@
-eet (1.1.0-1) UNRELEASED; urgency=low
+eet (1.2.0+svnYYYYMMDD-1) unstable; urgency=low
 
-  * New upstream release
-  * debian/rules:
-    - No longer delete eet_docs.tar.gz in clean, we no longer generate it.
-    - Add support for building and running unit tests. They are disabled for
-      now, as they are not 100% functionnal yet.
-    - Stop removing doc/man/man3/todo.3, this is now shipped in the upstream
-      tarball. Explicitely list the manpages we want in DEB_INSTALL_MANPAGES
-      instead.
-    - CFLAGS += -fvisibility=hidden so that private symbols don't get exported
-  * debian/libeet1.symbols: Add a symbols file for libeet1.
-  * debian/control:
-    - Bump Standards-Version to 3.8.0
-    - Drop Build-Dependency on doxygen as docs are now in the upstream tarball.
-    - Build-Depend on dpkg-dev (>= 1.14.8) as we are using a symbols file
+  * Clean up changelog
 
- -- Albin Tonnerre <albin.tonnerre@gmail.com>  Sat, 27 Sep 2008 13:47:11 +0200
-
-eet (1.0.1-1) unstable; urgency=low
-
-  * New upstream release
-
- -- Jan Lübbe <jluebbe@debian.org>  Tue, 20 May 2008 18:21:30 +0200
-
-eet (1.0.0-1) unstable; urgency=low
-
-  [ Albin Tonnerre ]
-  * libeet-dev depends on libjpeg62-dev for static linking
-  * Handle soname change
-  * Upload to unstable
-
-  [ Jan Lübbe ]
-  * New upstream release
-  * Do not remove the documentation shipped in the tarball
-
- -- Jan Lübbe <jluebbe@debian.org>  Mon, 21 Apr 2008 11:32:41 +0200
-
-eet (0.9.10.042-1) experimental; urgency=low
-
-  * Initial release (Closes: #461950)
-
- -- Albin Tonnerre <albin.tonnerre@gmail.com>  Fri, 25 Jan 2008 12:21:30 +0100
+ -- quaker <quaker66@gmail.com>  Tue, 21 Apr 2009 19:13:08 +0100
