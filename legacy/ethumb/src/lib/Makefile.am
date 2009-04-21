@@ -5,7 +5,7 @@ AM_CPPFLAGS = \
 	-I$(top_builddir) \
 	@EVAS_CFLAGS@ @ECORE_EVAS_CFLAGS@ @ECORE_FILE_CFLAGS@ @EDJE_CFLAGS@
 
-include_HEADERS = Ethumb.h
+include_HEADERS = Ethumb.h Ethumb_Plugin.h
 noinst_HEADERS = md5.h
 
 lib_LTLIBRARIES = libethumb.la

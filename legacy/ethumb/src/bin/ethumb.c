@@ -118,6 +118,8 @@ const Ecore_Getopt optdesc = {
      ('k', "key", "key inside eet file to read image from."),
      ECORE_GETOPT_STORE_DOUBLE
      ('v', "video_time", "time of video frame to use as thumbnail."),
+     ECORE_GETOPT_STORE_INT
+     ('p', "document_page", "document page to use as thumbnail."),
      ECORE_GETOPT_LICENSE('L', "license"),
      ECORE_GETOPT_COPYRIGHT('C', "copyright"),
      ECORE_GETOPT_VERSION('V', "version"),
@@ -149,6 +151,7 @@ main(int argc, char *argv[])
    const char *thumb_path = NULL;
    const char *thumb_key = NULL;
    double video_time = 0;
+   int page = 0;
    int arg_index;
    int i;
 
@@ -165,6 +168,7 @@ main(int argc, char *argv[])
 	ECORE_GETOPT_VALUE_PTR_CAST(frame),
 	ECORE_GETOPT_VALUE_STR(src_key),
 	ECORE_GETOPT_VALUE_DOUBLE(video_time),
+	ECORE_GETOPT_VALUE_INT(page),
 	ECORE_GETOPT_VALUE_BOOL(quit_option),
 	ECORE_GETOPT_VALUE_BOOL(quit_option),
 	ECORE_GETOPT_VALUE_BOOL(quit_option),
@@ -212,6 +216,8 @@ main(int argc, char *argv[])
      }
    if (video_time > 0)
      ethumb_video_time_set(e, video_time);
+   if (page > 0)
+     ethumb_document_page_set(e, page);
 
    if (r && arg_index < argc)
      ef = ethumb_file_new(e, argv[arg_index++], src_key);
@@ -226,7 +232,7 @@ main(int argc, char *argv[])
 	r = ethumb_file_generate(ef, _finished_thumb, NULL);
      }
 
-   if (r)
+   if (r && !quit_option)
      ecore_main_loop_begin();
 
    ethumb_file_free(ef);

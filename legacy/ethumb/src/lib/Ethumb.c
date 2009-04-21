@@ -500,6 +500,14 @@ ethumb_video_time_set(Ethumb *e, float time)
    e->video.time = time;
 }
 
+EAPI void
+ethumb_document_page_set(Ethumb *e, int page)
+{
+   EINA_SAFETY_ON_NULL_RETURN(e);
+
+   e->document.page = page;
+}
+
 EAPI Ethumb_File *
 ethumb_file_new(Ethumb *e, const char *path, const char *key)
 {

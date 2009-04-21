@@ -60,6 +60,17 @@ if $USE_MODULE_EMOTION ; then
         requirement_ethumb="$requirement_ethumb emotion"
 fi
 
+AM_CONDITIONAL(HAVE_EPDF, false)
+define([CHECK_MODULE_EPDF],
+[
+        AC_ETH_CHECK_PKG(EPDF, epdf, [], [EPDF=false])
+])
+
+AC_ETH_OPTIONAL_MODULE([epdf], true, [CHECK_MODULE_EPDF])
+if $USE_MODULE_EPDF ; then
+        requirement_ethumb="$requirement_ethumb epdf"
+fi
+
 AC_SUBST(requirement_ethumb)
 
 AC_OUTPUT([
@@ -70,6 +81,7 @@ src/bin/Makefile
 src/lib/Makefile
 src/plugins/Makefile
 src/plugins/emotion/Makefile
+src/plugins/epdf/Makefile
 data/Makefile
 data/frames/Makefile
 m4/Makefile

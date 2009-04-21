@@ -89,11 +89,14 @@ struct _Ethumb
      {
 	double time;
      } video;
+   struct
+     {
+	int page;
+     } document;
    Ethumb_Frame *frame;
    Ecore_Evas *ee, *sub_ee;
    Evas *e, *sub_e;
    Evas_Object *o, *img;
-   Evas_Object *plugin_img;
    Ecore_Idler *finished_idler;
    ethumb_generate_callback_t finished_cb;
    void *cb_data;
@@ -139,6 +142,7 @@ EAPI void ethumb_thumb_category_set(Ethumb *e, const char *category) EINA_ARG_NO
 EAPI const char * ethumb_thumb_category_get(Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 EAPI void ethumb_video_time_set(Ethumb *e, float time) EINA_ARG_NONNULL(1);
+EAPI void ethumb_document_page_set(Ethumb *e, int page) EINA_ARG_NONNULL(1);
 
 EAPI Ethumb_File * ethumb_file_new(Ethumb *e, const char *path, const char *key) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
 EAPI void ethumb_file_free(Ethumb_File *ef);
