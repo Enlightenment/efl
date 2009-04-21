@@ -306,7 +306,7 @@ ethumb_free(Ethumb *ethumb)
 }
 
 EAPI void
-ethumb_thumb_fdo_set(Ethumb *e, Ethumb_Thumb_Size s)
+ethumb_thumb_fdo_set(Ethumb *e, Ethumb_Thumb_FDO_Size s)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
    EINA_SAFETY_ON_FALSE_RETURN(s == ETHUMB_THUMB_NORMAL ||

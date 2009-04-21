@@ -39,13 +39,13 @@
 extern "C" {
 #endif
 
-enum _Ethumb_Thumb_Size
+enum _Ethumb_Thumb_FDO_Size
 {
    ETHUMB_THUMB_NORMAL,
    ETHUMB_THUMB_LARGE
 };
 
-typedef enum _Ethumb_Thumb_Size Ethumb_Thumb_Size;
+typedef enum _Ethumb_Thumb_FDO_Size Ethumb_Thumb_FDO_Size;
 
 enum _Ethumb_Thumb_Format
 {
@@ -74,7 +74,7 @@ EAPI int ethumb_shutdown(void);
 EAPI Ethumb * ethumb_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 EAPI void ethumb_free(Ethumb *e);
 
-EAPI void ethumb_thumb_fdo_set(Ethumb *e, Ethumb_Thumb_Size s) EINA_ARG_NONNULL(1);
+EAPI void ethumb_thumb_fdo_set(Ethumb *e, Ethumb_Thumb_FDO_Size s) EINA_ARG_NONNULL(1);
 
 EAPI void ethumb_thumb_size_set(Ethumb *e, int tw, int th) EINA_ARG_NONNULL(1);
 EAPI void ethumb_thumb_size_get(const Ethumb *e, int *tw, int *th) EINA_ARG_NONNULL(1);
