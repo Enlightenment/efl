@@ -34,6 +34,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <dirent.h>
 #include <dlfcn.h>
 #include "md5.h"
@@ -513,18 +514,17 @@ EAPI int
 ethumb_file_set(Ethumb *e, const char *path, const char *key)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
 
-   if (access(path, R_OK))
+   if (path && access(path, R_OK))
      {
 	ERR("couldn't access file \"%s\"\n", path);
 	return 0;
      }
 
-   e->src_path = eina_stringshare_add(path);
-
-   if (key)
-     e->src_key = eina_stringshare_add(key);
+   eina_stringshare_replace(&e->src_path, path);
+   eina_stringshare_replace(&e->src_key, key);
+   eina_stringshare_replace(&e->thumb_path, NULL);
+   eina_stringshare_replace(&e->thumb_key, NULL);
 
    return 1;
 }
@@ -663,7 +663,7 @@ ethumb_file_free(Ethumb *e)
 }
 
 EAPI void
-ethumb_file_thumb_path_set(Ethumb *e, const char *path, const char *key)
+ethumb_thumb_path_set(Ethumb *e, const char *path, const char *key)
 {
    char *real_path;
    char buf[PATH_MAX];
@@ -686,7 +686,7 @@ ethumb_file_thumb_path_set(Ethumb *e, const char *path, const char *key)
 }
 
 EAPI const char *
-ethumb_file_thumb_path_get(Ethumb *e)
+ethumb_thumb_path_get(Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
    if (!e->thumb_path)
@@ -922,7 +922,7 @@ ethumb_finished_callback_call(Ethumb *e)
 }
 
 EAPI int
-ethumb_file_generate(Ethumb *e, ethumb_generate_callback_t finished_cb, void *data)
+ethumb_generate(Ethumb *e, ethumb_generate_callback_t finished_cb, void *data)
 {
    int r;
 
@@ -951,6 +951,32 @@ ethumb_file_generate(Ethumb *e, ethumb_generate_callback_t finished_cb, void *da
    r = ethumb_image_save(e);
    if (r && finished_cb)
      ethumb_finished_callback_call(e);
+
+   return r;
+}
+
+EAPI int
+ethumb_exists(Ethumb *e)
+{
+   struct stat thumb, src;
+   int r_thumb, r_src, r = 0;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e->src_path, 0);
+
+   if (!e->thumb_path)
+     _ethumb_file_generate_path(e);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e->thumb_path, 0);
+
+   r_thumb = stat(e->thumb_path, &thumb);
+   r_src = stat(e->src_path, &src);
+
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(r_src, 0);
+
+   if (r_thumb && errno != ENOENT)
+     ERR("could not access file \"%s\": %s\n", e->thumb_path, strerror(errno));
+   else if (!r_thumb && thumb.st_mtime > src.st_mtime)
+     r = 1;
 
    return r;
 }

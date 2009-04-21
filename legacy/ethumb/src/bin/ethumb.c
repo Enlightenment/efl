@@ -225,8 +225,14 @@ main(int argc, char *argv[])
 
    if (r)
      {
-	ethumb_file_thumb_path_set(e, thumb_path, thumb_key);
-	r = ethumb_file_generate(e, _finished_thumb, NULL);
+	ethumb_thumb_path_set(e, thumb_path, thumb_key);
+	if (ethumb_exists(e))
+	  {
+	     quit_option = 1;
+	     r = 1;
+	  }
+	else
+	  r = ethumb_generate(e, _finished_thumb, NULL);
      }
 
    if (r && !quit_option)
