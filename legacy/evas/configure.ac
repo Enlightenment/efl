@@ -28,10 +28,10 @@ VMIN=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $2);}'`
 VMIC=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $3);}'`
 SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
-release_info="-release ver-pre-svn-00"
+release="ver-pre-svn-00"
+release_info="-release $release"
 AC_SUBST(version_info)
 AC_SUBST(release_info)
-
 
 want_fontconfig="auto"
 
@@ -96,7 +96,7 @@ esac
 LT_PROG_RC
 AC_FUNC_ALLOCA
 
-MODULE_ARCH="$host_os-$host_cpu"
+MODULE_ARCH="$host_os-$host_cpu-$release"
 AC_SUBST(MODULE_ARCH)
 AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 

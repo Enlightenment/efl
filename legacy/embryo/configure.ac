@@ -22,7 +22,10 @@ VMIN=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $2);}'`
 VMIC=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $3);}'`
 SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
+release="ver-pre-svn-00"
+release_info="-release $release"
 AC_SUBST(version_info)
+AC_SUBST(release_info)
 
 
 ### Default options with respect to host
