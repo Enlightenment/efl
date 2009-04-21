@@ -1,4 +1,5 @@
 #include "Ethumb.h"
+#include "ethumb_private.h"
 #include "Ethumb_Plugin.h"
 #include "config.h"
 

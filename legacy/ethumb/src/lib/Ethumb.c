@@ -25,6 +25,7 @@
 #endif
 #include <eina_safety_checks.h>
 #include "Ethumb.h"
+#include "ethumb_private.h"
 #include "Ethumb_Plugin.h"
 #include <stdio.h>
 #include <stdlib.h>
