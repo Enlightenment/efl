@@ -169,3 +169,7 @@
 
 	* Fix eet pkg-config dependencies.
 	* Fix double init of gcry.
+
+2009-04-22  Carsten Haitzler (The Rasterman)
+
+	* Release eet 1.2.0
