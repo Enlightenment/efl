@@ -13,7 +13,6 @@ Standards-Version: 3.8.1
 Homepage: http://enlightenment.org
 
 Package: libecore-svn-01
-Conflicts: libecore0
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Description: Core abstraction layer for enlightenment DR 0.17
@@ -24,7 +23,6 @@ Description: Core abstraction layer for enlightenment DR 0.17
  applications.
 
 Package: libecore-con-svn-01
-Conflicts: libecore-con0
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Description: Ecore Connection Library
@@ -37,7 +35,6 @@ Description: Ecore Connection Library
  This package contains the Ecore Connection Library.
 
 Package: libecore-config-svn-01
-Conflicts: libecore-config0
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Description: Ecore Enlightened Property Library
@@ -50,7 +47,6 @@ Description: Ecore Enlightened Property Library
  This package contains the Enlightened Property Library.
 
 Package: libecore-evas-svn-01
-Conflicts: libecore-evas0
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Description: Ecore Evas Wrapper Library
@@ -63,7 +59,6 @@ Description: Ecore Evas Wrapper Library
  This package contains the Ecore Evas wrapper functions.
 
 Package: libecore-fb-svn-01
-Conflicts: libecore-fb0
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Description: Ecore frame buffer system functions
@@ -76,7 +71,6 @@ Description: Ecore frame buffer system functions
  This package contains the Ecore frame buffer system functions.
 
 Package: libecore-file-svn-01
-Conflicts: libecore-file0
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Description: Ecore File Library
@@ -89,7 +83,6 @@ Description: Ecore File Library
  This package contains the Ecore File Library.
 
 Package: libecore-imf-svn-01
-Conflicts: libecore-imf0
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Description: Ecore Input Method Framework module
@@ -102,8 +95,19 @@ Description: Ecore Input Method Framework module
  This package contains the Ecore Input Method Framework module, and the Evas
  helper functions for it.
 
+Package: libecore-input-svn-01
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Ecore input functions
+ This is the core event abstraction layer and X abstraction layer that makes
+ doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
+ handlers fast, optimized, and convenient. It's a separate library so anyone
+ can make use of the work put into Ecore to make this job easy for
+ applications.
+ .
+ This package contains the Ecore Input Library.
+
 Package: libecore-ipc-svn-01
-Conflicts: libecore-ipc0
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Description: Ecore inter-process communication functions
@@ -116,7 +120,6 @@ Description: Ecore inter-process communication functions
  This package contains the Ecore inter-process communication functions.
 
 Package: libecore-job-svn-01
-Conflicts: libecore-job0
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Description: Ecore job dealing functions
@@ -129,7 +132,6 @@ Description: Ecore job dealing functions
  This package contains functions for dealing with Ecore jobs.
 
 Package: libecore-txt-svn-01
-Conflicts: libecore-txt0
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Description: Ecore text encoding conversion functions
@@ -142,7 +144,6 @@ Description: Ecore text encoding conversion functions
  This package contains the Ecore text encoding conversion functions.
 
 Package: libecore-x-svn-01
-Conflicts: libecore-x0
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Description: Ecore functions for dealing with the X Windows System
@@ -166,6 +167,7 @@ Depends: ${misc:Depends}, libecore-svn-01 (= ${binary:Version}),
          libecore-fb-svn-01 (= ${binary:Version}),
          libecore-file-svn-01 (= ${binary:Version}),
          libecore-imf-svn-01 (= ${binary:Version}),
+         libecore-input-svn-01 (= ${binary:Version}),
          libecore-ipc-svn-01 (= ${binary:Version}),
          libecore-job-svn-01 (= ${binary:Version}),
          libecore-txt-svn-01 (= ${binary:Version}),
