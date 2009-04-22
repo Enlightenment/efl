@@ -1,3 +1,9 @@
+eina (0.0.2.060+svnYYYYMMDD-1) unstable; urgency=low
+
+  * Updated version
+
+ -- quaker <quaker66@gmail.com>  Thu, 22 Apr 2009 18:24:44 +0100
+
 eina (0.0.1+svnYYYYMMDD-1) unstable; urgency=low
 
   * Clean up changelog

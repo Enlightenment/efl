@@ -1,3 +1,9 @@
+edje (0.9.9.060+svnYYYYMMDD-1) unstable; urgency=low
+
+  * Updated version
+
+ -- quaker <quaker66@gmail.com>  Thu, 22 Apr 2009 18:18:23 +0100
+
 edje (0.9.9.050+svnYYYYMMDD-1) unstable; urgency=low
 
   * Clean up changelog

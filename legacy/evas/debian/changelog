@@ -1,3 +1,9 @@
+evas (0.9.9.060+svnYYYYMMDD-1) unstable; urgency=low
+
+  * Clean up changelog
+
+ -- quaker <quaker66@gmail.com>  Thu, 22 Apr 2009 18:27:21 +0100
+
 evas (0.9.9.050+svnYYYYMMDD-1) unstable; urgency=low
 
   * Clean up changelog
