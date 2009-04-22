@@ -24,7 +24,6 @@ Description: Various binaries for use with libedje
   - edje_recc: A convenience script to recompile EDC files.
 
 Package: libedje-svn-01
-Conflicts: libedje0
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Suggests: libedje-bin (= ${binary:Version})

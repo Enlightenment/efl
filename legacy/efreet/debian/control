@@ -9,7 +9,6 @@ Standards-Version: 3.8.1
 Homepage: http://www.enlightenment.org
 
 Package: libefreet-svn-01
-Conflicts: libefreet0
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Conflicts: libefreet0
