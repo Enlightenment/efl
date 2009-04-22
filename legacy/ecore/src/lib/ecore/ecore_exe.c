@@ -6,7 +6,7 @@
 # include <config.h>
 #endif
 
-#if defined (__FreeBSD__) || defined (__OpenBSD__)
+#if defined (__FreeBSD__) || defined (__OpenBSD__) || defined (__NetBSD__)
 #include <sys/time.h>
 #include <sys/resource.h>
 #endif
