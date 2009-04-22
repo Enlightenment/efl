@@ -211,7 +211,7 @@ ecore_poller_poll_interval_set(Ecore_Poller_Type type __UNUSED__, double poll_ti
 }
 
 /**
- * Gets the time between ticks (in seconds) for the fiven ticker clock.
+ * Gets the time between ticks (in seconds) for the given ticker clock.
  * @param   type The ticker type to query
  * @return  The time in seconds between ticks of the ticker clock
  * @ingroup Ecore_Poller_Group
