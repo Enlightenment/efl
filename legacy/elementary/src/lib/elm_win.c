@@ -602,7 +602,6 @@ struct _Widget_Data
 {
    Evas_Object *frm;
    Evas_Object *content;
-   const char *style;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -615,7 +614,6 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (wd->style) eina_stringshare_del(wd->style);
    free(wd);
 }
 
@@ -623,8 +621,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (wd->style) _elm_theme_set(wd->frm, "win", "inwin", wd->style);
-   else _elm_theme_set(wd->frm, "win", "inwin", "default");
+   _elm_theme_set(wd->frm, "win", "inwin", elm_widget_style_get(obj));
    if (wd->content)
      edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->content);
    _sizing_eval(obj);
@@ -694,11 +691,7 @@ elm_win_inwin_add(Evas_Object *obj)
 EAPI void
 elm_win_inwin_style_set(Evas_Object *obj, const char *style)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (wd->style) eina_stringshare_del(wd->style);
-   if (style) wd->style = eina_stringshare_add(style);
-   else wd->style = NULL;
-   _theme_hook(obj);
+   elm_widget_style_set(obj, style);
 }
 
 EAPI void

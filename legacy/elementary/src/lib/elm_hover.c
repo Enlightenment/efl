@@ -11,7 +11,6 @@ struct _Widget_Data
    Evas_Object *offset, *size;
    Evas_Object *parent, *target;
    Eina_List *subs;
-   const char *style;
 };
 
 struct _Subinfo
@@ -52,7 +51,6 @@ _del_pre_hook(Evas_Object *obj)
 	evas_stringshare_del(si->swallow);
 	free(si);
      }
-   if (wd->style) eina_stringshare_del(wd->style);
 }
 
 static void
@@ -67,8 +65,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    // FIXME: hover contents doesnt seem to propagate resizes properly
-   if (wd->style) _elm_theme_set(wd->cov, "hover", "base", wd->style);
-   else _elm_theme_set(wd->cov, "hover", "base", "default");
+   _elm_theme_set(wd->cov, "hover", "base", elm_widget_style_get(obj));
    edje_object_scale_set(wd->cov, elm_widget_scale_get(obj) * _elm_config->scale);
    _reval_content(obj);
    _sizing_eval(obj);
@@ -376,14 +373,8 @@ elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conten
 EAPI void
 elm_hover_style_set(Evas_Object *obj, const char *style)
 {
+   elm_widget_style_set(obj, style);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (wd->style) eina_stringshare_del(wd->style);
-   if (style) wd->style = eina_stringshare_add(style);
-   else wd->style = NULL;
-   if (wd->style) _elm_theme_set(wd->cov, "hover", "base", wd->style);
-   else _elm_theme_set(wd->cov, "hover", "base", "default");
-   _reval_content(obj);
-   _sizing_eval(obj);
 }
 
 EAPI const char *

@@ -103,6 +103,8 @@ EAPI void         elm_widget_scroll_freeze_pop(Evas_Object *obj);
 EAPI int          elm_widget_scroll_freeze_get(const Evas_Object *obj);
 EAPI void         elm_widget_scale_set(Evas_Object *obj, double scale);
 EAPI double       elm_widget_scale_get(const Evas_Object *obj);
+EAPI void         elm_widget_style_set(Evas_Object *obj, const char *style);
+EAPI const char  *elm_widget_style_get(const Evas_Object *obj);
 
 extern char *_elm_appname;
 extern Elm_Config *_elm_config;

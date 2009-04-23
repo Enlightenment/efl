@@ -29,7 +29,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   _elm_theme_set(wd->bbl, "bubble", "base", "default");
+   _elm_theme_set(wd->bbl, "bubble", "base", elm_widget_style_get(obj));
    edje_object_part_text_set(wd->bbl, "elm.text", wd->label);
    edje_object_part_text_set(wd->bbl, "elm.info", wd->info);
    edje_object_scale_set(wd->bbl, elm_widget_scale_get(obj) * _elm_config->scale);
@@ -164,7 +164,7 @@ elm_bubble_corner_set(Evas_Object *obj, const char *corner)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    
-   _elm_theme_set(wd->bbl, "bubble", corner, "default");
+   _elm_theme_set(wd->bbl, "bubble", corner, elm_widget_style_get(obj));
    if (wd->icon)
      edje_object_part_swallow(wd->bbl, "elm.swallow.icon", wd->icon);
    if (wd->content)

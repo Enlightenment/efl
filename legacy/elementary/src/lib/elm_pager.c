@@ -202,7 +202,7 @@ elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
    evas_object_resize(it->base, w, h);
    elm_widget_sub_object_add(obj, it->base); 
    elm_widget_sub_object_add(obj, it->content);
-   _elm_theme_set(it->base,  "pager", "base", "default");
+   _elm_theme_set(it->base,  "pager", "base", elm_widget_style_get(obj));
    edje_object_signal_callback_add(it->base, "elm,action,hide,finished", "", _signal_hide_finished, it);
    edje_object_part_swallow(it->base, "elm.swallow.content", it->content);
    edje_object_size_min_calc(it->base, &it->minw, &it->minh);

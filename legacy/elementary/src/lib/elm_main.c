@@ -646,6 +646,18 @@ elm_object_scale_get(const Evas_Object *obj)
    return elm_widget_scale_get(obj);
 }
 
+EAPI void
+elm_object_style_set(Evas_Object *obj, const char *style)
+{
+   elm_widget_style_set(obj, style);
+}
+
+EAPI const char *
+elm_object_style_get(const Evas_Object *obj)
+{
+   return elm_widget_style_get(obj);
+}
+
 EAPI double
 elm_scale_get(void)
 {

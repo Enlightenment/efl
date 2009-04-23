@@ -41,9 +41,9 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->horizontal)
-     _elm_theme_set(wd->slider, "slider", "horizontal", "default");
+     _elm_theme_set(wd->slider, "slider", "horizontal", elm_widget_style_get(obj));
    else
-     _elm_theme_set(wd->slider, "slider", "vertical", "default");
+     _elm_theme_set(wd->slider, "slider", "vertical", elm_widget_style_get(obj));
    if (wd->inverted)
      edje_object_signal_emit(wd->slider, "elm,state,inverted,on", "elm");
    else

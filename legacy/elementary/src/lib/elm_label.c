@@ -25,7 +25,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   _elm_theme_set(wd->lbl, "label", "base", "default");
+   _elm_theme_set(wd->lbl, "label", "base", elm_widget_style_get(obj));
    edje_object_part_text_set(wd->lbl, "elm.text", wd->label);
    edje_object_scale_set(wd->lbl, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);

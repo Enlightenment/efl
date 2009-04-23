@@ -105,7 +105,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Item_Block *itb;
-   elm_smart_scroller_theme_set(wd->scr, "scroller", "base", "default");
+   elm_smart_scroller_theme_set(wd->scr, "scroller", "base", elm_widget_style_get(obj));
    edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
    EINA_INLIST_FOREACH(wd->blocks, itb)
      {
@@ -320,7 +320,7 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
         else
           snprintf(buf, sizeof(buf), "%s/%s", "item", it->itc->item_style);
      }
-   _elm_theme_set(it->base, "genlist", buf, "default");
+   _elm_theme_set(it->base, "genlist", buf, elm_widget_style_get(it->wd->obj));
    it->spacer = evas_object_rectangle_add(evas_object_evas_get(it->wd->obj));
    evas_object_color_set(it->spacer, 0, 0, 0, 0);
    elm_widget_sub_object_add(it->wd->obj, it->spacer);

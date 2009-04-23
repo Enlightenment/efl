@@ -239,6 +239,7 @@ _fix_items(Evas_Object *obj)
    Evas_Coord minw[2] = { 0, 0 }, minh[2] = { 0, 0 };
    Evas_Coord mw, mh;
    int i, redo = 0;
+   const char *style = elm_widget_style_get(obj);
 
    EINA_LIST_FOREACH(wd->items, l, it)
      {
@@ -276,16 +277,16 @@ _fix_items(Evas_Object *obj)
              if (wd->mode == ELM_LIST_COMPRESS) 
                {
                   if (it->even)
-                    _elm_theme_set(it->base, "list", "item_compress", "default");
+                    _elm_theme_set(it->base, "list", "item_compress", style);
                   else
-                    _elm_theme_set(it->base, "list", "item_compress_odd", "default");
+                    _elm_theme_set(it->base, "list", "item_compress_odd", style);
                }
              else
                {
                   if (it->even)
-                    _elm_theme_set(it->base, "list", "item", "default");
+                    _elm_theme_set(it->base, "list", "item", style);
                   else
-                    _elm_theme_set(it->base, "list", "item_odd", "default");
+                    _elm_theme_set(it->base, "list", "item_odd", style);
                }
              stacking = edje_object_data_get(it->base, "stacking");
              if (stacking)

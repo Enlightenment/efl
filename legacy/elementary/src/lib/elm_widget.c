@@ -38,6 +38,7 @@ struct _Smart_Data
    int            scroll_hold;
    int            scroll_freeze;
    double         scale;
+   const char    *style;
    unsigned char  can_focus : 1;
    unsigned char  child_can_focus : 1;
    unsigned char  focused : 1;
@@ -765,6 +766,26 @@ elm_widget_scale_get(const Evas_Object *obj)
    API_ENTRY return 1.0;
    if (sd->scale == 0.0) return elm_widget_scale_get(sd->parent_obj);
    return sd->scale;
+}
+
+EAPI void
+elm_widget_style_set(Evas_Object *obj, const char *style)
+{
+   const char *old;
+   API_ENTRY return;
+   old = sd->style;
+   eina_stringshare_del(sd->style);
+   sd->style = eina_stringshare_add(style);
+   if (old != sd->style)
+     elm_widget_theme(obj);
+}
+
+EAPI const char *
+elm_widget_style_get(const Evas_Object *obj)
+{
+   API_ENTRY return "default";
+   if (sd->style) return sd->style;
+   return "default";
 }
 
 /* local subsystem functions */

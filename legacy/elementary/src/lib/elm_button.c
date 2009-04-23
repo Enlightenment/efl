@@ -8,7 +8,6 @@ struct _Widget_Data
    Evas_Object *btn;
    Evas_Object *icon;
    const char *label;
-   const char *style;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -24,7 +23,6 @@ _del_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->label) eina_stringshare_del(wd->label);
-   if (wd->style) eina_stringshare_del(wd->style);
    free(wd);
 }
 
@@ -33,8 +31,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->style) _elm_theme_set(wd->btn, "button", "base", wd->style);
-   else _elm_theme_set(wd->btn, "button", "base", "default");
+   _elm_theme_set(wd->btn, "button", "base", elm_widget_style_get(obj));
    if (wd->icon)
      edje_object_part_swallow(wd->btn, "elm.swallow.content", wd->icon);
    if (wd->label)
@@ -174,10 +171,5 @@ elm_button_icon_set(Evas_Object *obj, Evas_Object *icon)
 EAPI void
 elm_button_style_set(Evas_Object *obj, const char *style)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->style) eina_stringshare_del(wd->style);
-   if (style) wd->style = eina_stringshare_add(style);
-   else wd->style = NULL;
-   _theme_hook(obj);
+   elm_widget_style_set(obj, style);
 }

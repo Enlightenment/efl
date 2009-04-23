@@ -84,13 +84,15 @@ _theme_hook(Evas_Object *obj)
    const Eina_List *l;
    Elm_Toolbar_Item *it;
    Evas_Coord mw, mh;
+   const char *style = elm_widget_style_get(obj);
+
    edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
    EINA_LIST_FOREACH(wd->items, l, it)
      {
         edje_object_scale_set(it->base, elm_widget_scale_get(obj) * _elm_config->scale);
         if (it->selected)
           edje_object_signal_emit(it->base, "elm,state,selected", "elm");
-        _elm_theme_set(it->base, "toolbar", "item", "default");
+        _elm_theme_set(it->base, "toolbar", "item", style);
         if (it->icon)
           {
              edje_extern_object_min_size_set(it->icon, 
@@ -220,7 +222,7 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, voi
    it->func = func;
    it->data = data;
    it->base = edje_object_add(evas_object_evas_get(obj));
-   _elm_theme_set(it->base, "toolbar", "item", "default");
+   _elm_theme_set(it->base, "toolbar", "item", elm_widget_style_get(obj));
    edje_object_signal_callback_add(it->base, "elm,action,click", "elm",
                                    _select, it);
    elm_widget_sub_object_add(obj, it->base);

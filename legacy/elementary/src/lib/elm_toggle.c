@@ -35,7 +35,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   _elm_theme_set(wd->tgl, "toggle", "base", "default");
+   _elm_theme_set(wd->tgl, "toggle", "base", elm_widget_style_get(obj));
    if (wd->icon)
      edje_object_signal_emit(wd->tgl, "elm,state,icon,visible", "elm");
    else

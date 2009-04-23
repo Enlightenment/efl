@@ -934,7 +934,7 @@ elm_entry_single_line_set(Evas_Object *obj, Evas_Bool single_line)
    wd->single_line = single_line;
    wd->linewrap = 0;
    t = eina_stringshare_add(elm_entry_entry_get(obj));
-   _elm_theme_set(wd->ent, "entry", _getbase(obj), "default");
+   _elm_theme_set(wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
    elm_entry_entry_set(obj, t);
    eina_stringshare_del(t);
    _sizing_eval(obj);
@@ -950,7 +950,7 @@ elm_entry_password_set(Evas_Object *obj, Evas_Bool password)
    wd->single_line = 1;
    wd->linewrap = 0;
    t = eina_stringshare_add(elm_entry_entry_get(obj));
-   _elm_theme_set(wd->ent, "entry", _getbase(obj), "default");
+   _elm_theme_set(wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
    elm_entry_entry_set(obj, t);
    eina_stringshare_del(t);
    _sizing_eval(obj);
@@ -1007,7 +1007,7 @@ elm_entry_line_wrap_set(Evas_Object *obj, Evas_Bool wrap)
    if (wd->linewrap == wrap) return;
    wd->linewrap = wrap;
    t = eina_stringshare_add(elm_entry_entry_get(obj));
-   _elm_theme_set(wd->ent, "entry", _getbase(obj), "default");
+   _elm_theme_set(wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
    elm_entry_entry_set(obj, t);
    eina_stringshare_del(t);
    _sizing_eval(obj);
@@ -1021,7 +1021,7 @@ elm_entry_editable_set(Evas_Object *obj, Evas_Bool editable)
    if (wd->editable == editable) return;
    wd->editable = editable;
    t = eina_stringshare_add(elm_entry_entry_get(obj));
-   _elm_theme_set(wd->ent, "entry", _getbase(obj), "default");
+   _elm_theme_set(wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
    elm_entry_entry_set(obj, t);
    eina_stringshare_del(t);
    _sizing_eval(obj);

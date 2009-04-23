@@ -176,6 +176,7 @@ _time_update(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Edje_Message_Int msg;
    int ampm = 0;
+   const char *style = elm_widget_style_get(obj);
 
    if ((wd->cur.seconds != wd->seconds) || (wd->cur.am_pm != wd->am_pm) ||
        (wd->cur.edit != wd->edit))
@@ -198,13 +199,13 @@ _time_update(Evas_Object *obj)
 	  }
 	
 	if ((wd->seconds) && (wd->am_pm))
-	  _elm_theme_set(wd->clk, "clock", "base-all", "default");
+	  _elm_theme_set(wd->clk, "clock", "base-all", style);
 	else if (wd->seconds)
-	  _elm_theme_set(wd->clk, "clock", "base-seconds", "default");
+	  _elm_theme_set(wd->clk, "clock", "base-seconds", style);
 	else if (wd->am_pm)
-	  _elm_theme_set(wd->clk, "clock", "base-am_pm", "default");
+	  _elm_theme_set(wd->clk, "clock", "base-am_pm", style);
 	else
-	  _elm_theme_set(wd->clk, "clock", "base", "default");
+	  _elm_theme_set(wd->clk, "clock", "base", style);
         edje_object_scale_set(wd->clk, elm_widget_scale_get(obj) * _elm_config->scale);
 	
 	for (i = 0; i < 6; i++)
@@ -213,7 +214,7 @@ _time_update(Evas_Object *obj)
 
 	     if ((!wd->seconds) && (i >= 4)) break;
 	     wd->digit[i] = edje_object_add(evas_object_evas_get(wd->clk));
-	     _elm_theme_set(wd->digit[i], "clock", "flipdigit", "default");
+	     _elm_theme_set(wd->digit[i], "clock", "flipdigit", style);
              edje_object_scale_set(wd->digit[i], elm_widget_scale_get(obj) * _elm_config->scale);
 	     if (wd->edit)
 	       edje_object_signal_emit(wd->digit[i], "elm,state,edit,on", "elm");
@@ -233,7 +234,7 @@ _time_update(Evas_Object *obj)
 	if (wd->am_pm)
 	  {
 	     wd->ampm = edje_object_add(evas_object_evas_get(wd->clk));
-	     _elm_theme_set(wd->ampm, "clock", "flipampm", "default");
+	     _elm_theme_set(wd->ampm, "clock", "flipampm", style);
              edje_object_scale_set(wd->ampm, elm_widget_scale_get(obj) * _elm_config->scale);
 	     if (wd->edit)
 	       edje_object_signal_emit(wd->ampm, "elm,state,edit,on", "elm");
