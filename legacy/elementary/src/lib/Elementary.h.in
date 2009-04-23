@@ -407,12 +407,12 @@ extern "C" {
    EAPI void         elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void         elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
    EAPI void         elm_hover_style_set(Evas_Object *obj, const char *style);
+   EAPI const char  *elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_axis);
    /* available styles: 
     * default
     * popout
     * hoversel_vertical
     */
-   EAPI const char  *elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_axis);
    /* smart callbacks called:
     * "clicked" - the user clicked the empty space in the hover to dismiss
     */
@@ -674,6 +674,10 @@ extern "C" {
    EAPI void              elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode);
    EAPI void              elm_genlist_always_select_mode_set(Evas_Object *obj, Evas_Bool always_select);
    EAPI void              elm_genlist_no_select_mode_set(Evas_Object *obj, Evas_Bool no_select);
+   /* available item styles: 
+    * default
+    * double_label
+    */
    /* smart callbacks called:
     * "clicked" - when the user double-clicked an item
     * "selected" - when the user selected an item
