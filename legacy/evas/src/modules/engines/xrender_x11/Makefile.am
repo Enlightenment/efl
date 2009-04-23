@@ -35,7 +35,7 @@ evas_engine_xcb_ximage.c
 endif
 
 module_la_LIBADD = $(top_builddir)/src/lib/libevas.la @EINA_LIBS@ @evas_engine_xrender_xcb_libs@ @evas_engine_xrender_x11_libs@
-module_la_LDFLAGS = -module -avoid-version @lt_no_undefined@
+module_la_LDFLAGS = -no-undefined -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 
 include_HEADERS = Evas_Engine_XRender_X11.h

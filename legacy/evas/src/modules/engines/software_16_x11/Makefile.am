@@ -22,7 +22,7 @@ evas_engine.c \
 evas_x_buffer.c
 
 module_la_LIBADD = @EINA_LIBS@ @evas_engine_software_16_x11_libs@ $(top_builddir)/src/lib/libevas.la
-module_la_LDFLAGS = -module -avoid-version @lt_no_undefined@
+module_la_LDFLAGS = -no-undefined -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 
 include_HEADERS = Evas_Engine_Software_16_X11.h

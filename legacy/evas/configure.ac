@@ -11,8 +11,8 @@ AC_ISC_POSIX
 AM_INIT_AUTOMAKE(1.6 dist-bzip2)
 AM_CONFIG_HEADER(config.h)
 
-AC_PROG_CXX([icl g++])
-AC_PROG_CC([icl gcc]
+AC_PROG_CXX
+AC_PROG_CC
 AM_PROG_CC_STDC
 AC_HEADER_STDC
 AC_C_BIGENDIAN
@@ -112,7 +112,6 @@ AC_SUBST(CFLAGS)
 WIN32_CPPFLAGS=""
 WIN32_CFLAGS=""
 lt_enable_auto_import=""
-lt_no_undefined=""
 case "$host_os" in
         mingw*|cegcc*)
 		PKG_CHECK_MODULES(EVIL, evil)
@@ -128,14 +127,10 @@ case "$host_os" in
                         WIN32_CPPFLAGS="-D_WIN32_WCE=0x0420"
                 fi
                 ;;
-	*cygwin*)
-		lt_no_undefined="-no-undefined"
-		;;
 esac
 AC_SUBST(WIN32_CPPFLAGS)
 AC_SUBST(WIN32_CFLAGS)
 AC_SUBST(lt_enable_auto_import)
-AC_SUBST(lt_no_undefined)
 
 
 dnl when used, that option makes configure script fails when
