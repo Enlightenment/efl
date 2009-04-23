@@ -64,14 +64,6 @@ AC_CHECK_HEADERS([arpa/inet.h])
 PKG_CHECK_MODULES(EFREET, [eina-0 ecore >= 0.9.9 ecore-file >= 0.9.9])
 PKG_CHECK_MODULES(EINA, [eina-0])
 
-lt_no_undefined=""
-case "${host_os}" in
-    *cygwin*)
-        lt_no_undefined="-no-undefined"
-        ;;
-esac
-AC_SUBST(lt_no_undefined)
-
 requirements="ecore-file ecore eina-0"
 
 AC_ARG_ENABLE(strict-spec,
