@@ -241,7 +241,6 @@ extern "C" {
    EAPI Evas_Object *elm_win_inwin_add(Evas_Object *obj);
    EAPI void         elm_win_inwin_activate(Evas_Object *obj);
    EAPI void         elm_win_inwin_style_set(Evas_Object *obj, const char *style);
-   EAPI void         elm_win_inwin_activate(Evas_Object *obj);
    EAPI void         elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content);
    /* available styles: 
     * default
@@ -272,6 +271,30 @@ extern "C" {
    EAPI void         elm_icon_prescale_set(Evas_Object *obj, int size);
    /* smart callbacks called:
     * "clicked" - the user clicked the icon
+    */
+
+   typedef enum _Elm_Image_Orient
+     {
+	ELM_IMAGE_ORIENT_NONE,
+	ELM_IMAGE_ROTATE_90_CW,
+	ELM_IMAGE_ROTATE_180_CW,
+	ELM_IMAGE_ROTATE_90_CCW,
+	ELM_IMAGE_FLIP_HORIZONTAL,
+	ELM_IMAGE_FLIP_VERTICAL,
+	ELM_IMAGE_FLIP_TRANSPOSE,
+	ELM_IMAGE_FLIP_TRANSVERSE
+     } Elm_Image_Orient;
+
+   EAPI Evas_Object *elm_image_add(Evas_Object *parent);
+   EAPI Eina_Bool    elm_image_file_set(Evas_Object *obj, const char *file, const char *group);
+   EAPI void         elm_image_smooth_set(Evas_Object *obj, Evas_Bool smooth);
+   EAPI void         elm_image_no_scale_set(Evas_Object *obj, Evas_Bool no_scale);
+   EAPI void         elm_image_scale_set(Evas_Object *obj, Evas_Bool scale_up, Evas_Bool scale_down);
+   EAPI void         elm_image_fill_outside_set(Evas_Object *obj, Evas_Bool fill_outside);
+   EAPI void         elm_image_prescale_set(Evas_Object *obj, int size);
+   EAPI void         elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient orient);
+   /* smart callbacks called:
+    * "clicked" - the user clicked the image
     */
 
    EAPI Evas_Object *elm_box_add(Evas_Object *parent);

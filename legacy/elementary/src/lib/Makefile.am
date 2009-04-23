@@ -32,6 +32,7 @@ elm_win.c \
 elm_widget.c \
 elm_bg.c \
 elm_icon.c \
+elm_image.c \
 elm_box.c \
 elm_button.c \
 elm_scroller.c \
