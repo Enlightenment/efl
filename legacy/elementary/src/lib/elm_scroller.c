@@ -207,3 +207,28 @@ elm_scroller_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coor
    if (!wd) return;
    elm_smart_scroller_child_region_show(wd->scr, x, y, w, h);
 }
+
+EAPI void
+elm_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   const Elm_Scroller_Policy map[3] = 
+     {
+        ELM_SMART_SCROLLER_POLICY_AUTO,
+          ELM_SMART_SCROLLER_POLICY_ON,
+          ELM_SMART_SCROLLER_POLICY_OFF
+     };
+   if (!wd) return;
+   if ((policy_h < 0) || (policy_h >= 3) || (policy_v < 0) || (policy_v >= 3))
+     return;
+   elm_smart_scroller_policy_set(wd->scr, map[policy_h], map[policy_v]);
+}
+
+EAPI void
+elm_scroller_region_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if ((x) && (y)) elm_smart_scroller_child_pos_get(wd->scr, x, y);
+   if ((w) && (h)) elm_smart_scroller_child_viewport_size_get(wd->scr, w, h);
+}

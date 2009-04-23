@@ -322,11 +322,21 @@ extern "C" {
    /* smart callbacks called:
     * "clicked" - the user clicked the button
     */
+
+   typedef enum _Elm_Scroller_Policy
+     {
+        ELM_SCROLLER_POLICY_AUTO,
+          ELM_SCROLLER_POLICY_ON,
+          ELM_SCROLLER_POLICY_OFF
+     }
+   Elm_Scroller_Policy;
    
    EAPI Evas_Object *elm_scroller_add(Evas_Object *parent);
    EAPI void         elm_scroller_content_set(Evas_Object *obj, Evas_Object *child);
    EAPI void         elm_scroller_content_min_limit(Evas_Object *obj, Evas_Bool w, Evas_Bool h);
    EAPI void         elm_scroller_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+   EAPI void         elm_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
+   EAPI void         elm_scroller_region_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
    /* smart callbacks called:
     */
 

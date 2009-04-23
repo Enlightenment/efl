@@ -84,7 +84,7 @@ _elm_win_recalc_job(void *data)
    minminw = minw;
    edje_object_size_min_restricted_calc(wd->ent, &minw, &minh, resw, 0);
    evas_object_size_hint_min_set(data, minminw, minh);
-   evas_object_size_hint_max_set(data, minminw, maxh);
+   evas_object_size_hint_max_set(data, -1, maxh);
 }
 
 static void

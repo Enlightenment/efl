@@ -201,6 +201,18 @@ elm_smart_scroller_custom_edje_file_set(Evas_Object *obj, char *file, char *grou
    sd->vbar_visible = !sd->vbar_visible;
    sd->hbar_visible = !sd->hbar_visible;
    _smart_scrollbar_bar_visibility_adjust(sd);
+   if (sd->hbar_flags == ELM_SMART_SCROLLER_POLICY_ON)
+     edje_object_signal_emit(sd->edje_obj, "elm,action,show_always,hbar", "elm");
+   else if (sd->hbar_flags == ELM_SMART_SCROLLER_POLICY_OFF)
+     edje_object_signal_emit(sd->edje_obj, "elm,action,hide,hbar", "elm");
+   else
+     edje_object_signal_emit(sd->edje_obj, "elm,action,show_notalways,hbar", "elm");
+   if (sd->vbar_flags == ELM_SMART_SCROLLER_POLICY_ON)
+     edje_object_signal_emit(sd->edje_obj, "elm,action,show_always,vbar", "elm");
+   else if (sd->vbar_flags == ELM_SMART_SCROLLER_POLICY_OFF)
+     edje_object_signal_emit(sd->edje_obj, "elm,action,hide,vbar", "elm");
+   else
+     edje_object_signal_emit(sd->edje_obj, "elm,action,show_notalways,vbar", "elm");
 }
 
 void
@@ -314,6 +326,18 @@ elm_smart_scroller_policy_set(Evas_Object *obj, Elm_Smart_Scroller_Policy hbar, 
    if ((sd->hbar_flags == hbar) && (sd->vbar_flags == vbar)) return;
    sd->hbar_flags = hbar;
    sd->vbar_flags = vbar;
+   if (sd->hbar_flags == ELM_SMART_SCROLLER_POLICY_ON)
+     edje_object_signal_emit(sd->edje_obj, "elm,action,show_always,hbar", "elm");
+   else if (sd->hbar_flags == ELM_SMART_SCROLLER_POLICY_OFF)
+     edje_object_signal_emit(sd->edje_obj, "elm,action,hide,hbar", "elm");
+   else
+     edje_object_signal_emit(sd->edje_obj, "elm,action,show_notalways,hbar", "elm");
+   if (sd->vbar_flags == ELM_SMART_SCROLLER_POLICY_ON)
+     edje_object_signal_emit(sd->edje_obj, "elm,action,show_always,vbar", "elm");
+   else if (sd->vbar_flags == ELM_SMART_SCROLLER_POLICY_OFF)
+     edje_object_signal_emit(sd->edje_obj, "elm,action,hide,vbar", "elm");
+   else
+     edje_object_signal_emit(sd->edje_obj, "elm,action,show_notalways,vbar", "elm");
    _smart_scrollbar_size_adjust(sd);
 }
 
@@ -910,12 +934,17 @@ _smart_scrollbar_bar_v_visibility_adjust(Smart_Data *sd)
      }
    if (scroll_v_vis_change)
      {
-	if (sd->vbar_visible)
-	  edje_object_signal_emit(sd->edje_obj, "elm,action,show,vbar", "elm");
-	else
-	  edje_object_signal_emit(sd->edje_obj, "elm,action,hide,vbar", "elm");
-	edje_object_message_signal_process(sd->edje_obj);
-	_smart_scrollbar_size_adjust(sd);
+        if (sd->vbar_flags != ELM_SMART_SCROLLER_POLICY_OFF)
+          {
+             if (sd->vbar_visible)
+               edje_object_signal_emit(sd->edje_obj, "elm,action,show,vbar", "elm");
+             else
+               edje_object_signal_emit(sd->edje_obj, "elm,action,hide,vbar", "elm");
+             edje_object_message_signal_process(sd->edje_obj);
+             _smart_scrollbar_size_adjust(sd);
+          }
+        else
+          edje_object_signal_emit(sd->edje_obj, "elm,action,hide,vbar", "elm");
      }
    return scroll_v_vis_change;
 }
@@ -974,11 +1003,17 @@ _smart_scrollbar_bar_h_visibility_adjust(Smart_Data *sd)
      }
    if (scroll_h_vis_change)
      {
-	if (sd->hbar_visible)
-	  edje_object_signal_emit(sd->edje_obj, "elm,action,show,hbar", "elm");
-	else
-	  edje_object_signal_emit(sd->edje_obj, "elm,action,hide,hbar", "elm");
-	edje_object_message_signal_process(sd->edje_obj);
+        if (sd->hbar_flags != ELM_SMART_SCROLLER_POLICY_OFF)
+          {
+             if (sd->hbar_visible)
+               edje_object_signal_emit(sd->edje_obj, "elm,action,show,hbar", "elm");
+             else
+               edje_object_signal_emit(sd->edje_obj, "elm,action,hide,hbar", "elm");
+             edje_object_message_signal_process(sd->edje_obj);
+             _smart_scrollbar_size_adjust(sd);
+          }
+        else
+          edje_object_signal_emit(sd->edje_obj, "elm,action,hide,hbar", "elm");
 	_smart_scrollbar_size_adjust(sd);
      }
    return scroll_h_vis_change;

@@ -69,18 +69,24 @@ collections {
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/scroller/base/default";
       script {
-	 public sbvis_v, sbvis_h, sbvis_timer;
+	 public sbvis_v, sbvis_h, sbalways_v, sbalways_h, sbvis_timer;
 	 public timer0(val) {
 	    new v;
 	    v = get_int(sbvis_v);
 	    if (v) {
-	       emit("do-hide-vbar", "");
-	       set_int(sbvis_v, 0);
+               v = get_int(sbalways_v);
+               if (!v) {
+                  emit("do-hide-vbar", "");
+                  set_int(sbvis_v, 0);
+               }
 	    }
 	    v = get_int(sbvis_h);
 	    if (v) {
-	       emit("do-hide-hbar", "");
-	       set_int(sbvis_h, 0);
+               v = get_int(sbalways_h);
+               if (!v) {
+                  emit("do-hide-hbar", "");
+                  set_int(sbvis_h, 0);
+               }
 	    }
 	    set_int(sbvis_timer, 0);
 	    return 0;
@@ -132,7 +138,18 @@ collections {
 	       fill.smooth : 0;
 	    }
 	 }
+	 part { name: "sb_vbar_clip_master";
+	    type: RECT;
+	    mouse_events: 0;
+	    description { state: "default" 0.0;
+	    }
+	    description { state: "hidden" 0.0;
+	       visible: 0;
+	       color: 255 255 255 0;
+	    }
+	 }
 	 part { name: "sb_vbar_clip";
+            clip_to: "sb_vbar_clip_master";
 	    type: RECT;
 	    mouse_events: 0;
 	    description { state: "default" 0.0;
@@ -230,7 +247,18 @@ collections {
 	    }
 	 }
 	 
+	 part { name: "sb_hbar_clip_master";
+	    type: RECT;
+	    mouse_events: 0;
+	    description { state: "default" 0.0;
+	    }
+	    description { state: "hidden" 0.0;
+	       visible: 0;
+	       color: 255 255 255 0;
+	    }
+	 }
 	 part { name: "sb_hbar_clip";
+            clip_to: "sb_hbar_clip_master";
 	    type: RECT;
 	    mouse_events: 0;
 	    description { state: "default" 0.0;
@@ -337,27 +365,54 @@ collections {
 	       set_state(PART:"sb_vbar_clip", "hidden", 0.0);
 	       set_int(sbvis_h, 0);
 	       set_int(sbvis_v, 0);
+	       set_int(sbalways_v, 0);
+	       set_int(sbalways_h, 0);
 	       set_int(sbvis_timer, 0);
 	    }
 	 }
-/*	 
+         
 	 program { name: "vbar_show";
 	    signal: "elm,action,show,vbar";
 	    source: "elm";
+            action:  STATE_SET "default" 0.0;
+            target: "sb_vbar_clip_master";
 	 }
 	 program { name: "vbar_hide";
 	    signal: "elm,action,hide,vbar";
 	    source: "elm";
+            action:  STATE_SET "hidden" 0.0;
+            target: "sb_vbar_clip_master";
 	 }
-	 program { name: "hbar_show";
-	    signal: "elm,action,show,hbar";
+	 program { name: "vbar_show_always";
+	    signal: "elm,action,show_always,vbar";
 	    source: "elm";
+            script {
+               new v;
+               v = get_int(sbvis_v);
+               v |= get_int(sbalways_v);
+               if (!v) {
+                  set_int(sbalways_v, 1);
+                  emit("do-show-vbar", "");
+                  set_int(sbvis_v, 1);
+               }
+            }
 	 }
-	 program { name: "hbar_hide";
-	    signal: "elm,action,hide,hbar";
+	 program { name: "vbar_show_notalways";
+	    signal: "elm,action,show_notalways,vbar";
 	    source: "elm";
+            script {
+               new v;
+               v = get_int(sbalways_v);
+               if (v) {
+                  set_int(sbalways_v, 0);
+                  v = get_int(sbvis_v);
+                  if (!v) {
+                     emit("do-hide-vbar", "");
+                     set_int(sbvis_v, 0);
+                  }
+               }
+            }
 	 }
- */
 	 program { name: "sb_vbar_show";
 	    signal: "do-show-vbar";
 	    source: "";
@@ -371,6 +426,49 @@ collections {
 	    action:  STATE_SET "hidden" 0.0;
 	    transition: LINEAR 1.0;
 	    target: "sb_vbar_clip";
+	 }
+         
+	 program { name: "hbar_show";
+	    signal: "elm,action,show,hbar";
+	    source: "elm";
+            action:  STATE_SET "default" 0.0;
+            target: "sb_hbar_clip_master";
+	 }
+	 program { name: "hbar_hide";
+	    signal: "elm,action,hide,hbar";
+	    source: "elm";
+            action:  STATE_SET "hidden" 0.0;
+            target: "sb_hbar_clip_master";
+	 }
+	 program { name: "hbar_show_always";
+	    signal: "elm,action,show_always,hbar";
+	    source: "elm";
+            script {
+               new v;
+               v = get_int(sbvis_h);
+               v |= get_int(sbalways_h);
+               if (!v) {
+                  set_int(sbalways_h, 1);
+                  emit("do-show-hbar", "");
+                  set_int(sbvis_h, 1);
+               }
+            }
+	 }
+	 program { name: "hbar_show_notalways";
+	    signal: "elm,action,show_notalways,hbar";
+	    source: "elm";
+            script {
+               new v;
+               v = get_int(sbalways_h);
+               if (v) {
+                  set_int(sbalways_h, 0);
+                  v = get_int(sbvis_h);
+                  if (!v) {
+                     emit("do-hide-hbar", "");
+                     set_int(sbvis_h, 0);
+                  }
+               }
+            }
 	 }
 	 program { name: "sb_hbar_show";
 	    signal: "do-show-hbar";
@@ -386,21 +484,23 @@ collections {
 	    transition: LINEAR 1.0;
 	    target: "sb_hbar_clip";
 	 }
+         
 	 program { name: "scroll";
 	    signal: "elm,action,scroll";
 	    source: "elm";
-	    action:  STATE_SET "default" 0.0;
 	    script {
 	       new v;
 	       v = get_int(sbvis_v);
+               v |= get_int(sbalways_v);
 	       if (!v) {
-		  emit("do-show-vbar", "");
-		  set_int(sbvis_v, 1);
+                  emit("do-show-vbar", "");
+                  set_int(sbvis_v, 1);
 	       }
 	       v = get_int(sbvis_h);
+               v |= get_int(sbalways_h);
 	       if (!v) {
-		  emit("do-show-hbar", "");
-		  set_int(sbvis_h, 1);
+                  emit("do-show-hbar", "");
+                  set_int(sbvis_h, 1);
 	       }
 	       v = get_int(sbvis_timer);
 	       if (v > 0) cancel_timer(v);
@@ -3694,6 +3794,7 @@ collections {
 	       }
 	    }
 	 }
+/*         
 	 part { name: "sel";
 	    type: RECT;
             mouse_events: 0;
@@ -3708,6 +3809,7 @@ collections {
                color: 255 0 0 50;
             }
 	 }
+ */
       }
       programs {
 	 program { name: "focus";
@@ -3716,6 +3818,7 @@ collections {
 	    action: FOCUS_SET;
 	    target: "elm.text";
 	 }
+/*         
 	 program { name: "selmode0";
             signal: "elm,state,select,on";
 	    source: "elm";
@@ -3728,6 +3831,7 @@ collections {
 	    action: STATE_SET "default" 0.0;
 	    target: "sel";
 	 }
+ */
       }
    }
 

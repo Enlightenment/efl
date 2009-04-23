@@ -761,6 +761,7 @@ my_bt_14(void *data, Evas_Object *obj, void *event_info)
 
    sc = elm_scroller_add(win);
    elm_scroller_content_min_limit(sc, 0, 1);
+   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    evas_object_size_hint_weight_set(sc, 1.0, 0.0);
    evas_object_size_hint_align_set(sc, -1.0, -1.0);
    elm_box_pack_end(bx, sc);
@@ -778,6 +779,7 @@ my_bt_14(void *data, Evas_Object *obj, void *event_info)
    
    sc = elm_scroller_add(win);
    elm_scroller_content_min_limit(sc, 0, 1);
+   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    evas_object_size_hint_weight_set(sc, 1.0, 0.0);
    evas_object_size_hint_align_set(sc, -1.0, -1.0);
    elm_box_pack_end(bx, sc);
@@ -795,6 +797,7 @@ my_bt_14(void *data, Evas_Object *obj, void *event_info)
    sc = elm_scroller_add(win);
    evas_object_size_hint_weight_set(sc, 1.0, 1.0);
    evas_object_size_hint_align_set(sc, -1.0, -1.0);
+   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
    elm_box_pack_end(bx, sc);
    
    en = elm_entry_add(win);
