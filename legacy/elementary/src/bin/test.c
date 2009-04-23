@@ -2572,6 +2572,7 @@ my_bt_32(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bx);
 
    gl = elm_genlist_add(win);
+   elm_genlist_multi_select_set(gl, 1);
    evas_object_size_hint_align_set(gl, -1.0, -1.0);
    evas_object_size_hint_weight_set(gl, 1.0, 1.0);
    evas_object_show(gl);
@@ -3165,6 +3166,7 @@ my_bt_37(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bx);
 
    gl = elm_genlist_add(win);
+   elm_genlist_always_select_mode_set(gl, 1);
    evas_object_size_hint_align_set(gl, -1.0, -1.0);
    evas_object_size_hint_weight_set(gl, 1.0, 1.0);
    evas_object_show(gl);

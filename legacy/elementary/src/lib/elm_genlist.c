@@ -267,8 +267,9 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 	  {
 	     const Eina_List *l, *l_next;
 	     Elm_Genlist_Item *it2;
-	     EINA_LIST_FOREACH_SAFE(it->wd->selected, l, l_next, it2)
-	       if (it2 != it) _item_unselect(it2);
+             EINA_LIST_FOREACH_SAFE(it->wd->selected, l, l_next, it2)
+               if (it2 != it) _item_unselect(it2);
+	     _item_select(it);
           }
      }
 }

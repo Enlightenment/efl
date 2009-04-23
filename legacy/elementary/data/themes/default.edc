@@ -8605,6 +8605,7 @@ collections {
             target:  "fg1";
             target:  "fg2";
             target:  "elm.text";
+            target:  "elm.text.sub";
          }
          program {
             name:    "go_passive";
@@ -8615,6 +8616,7 @@ collections {
             target:  "fg1";
             target:  "fg2";
             target:  "elm.text";
+            target:  "elm.text.sub";
             transition: LINEAR 0.1;
          }
          program {
@@ -8887,6 +8889,7 @@ collections {
             target:  "fg1";
             target:  "fg2";
             target:  "elm.text";
+            target:  "elm.text.sub";
          }
          program {
             name:    "go_passive";
@@ -8897,6 +8900,7 @@ collections {
             target:  "fg1";
             target:  "fg2";
             target:  "elm.text";
+            target:  "elm.text.sub";
             transition: LINEAR 0.1;
          }
          program {
@@ -9222,6 +9226,7 @@ collections {
             target:  "fg1";
             target:  "fg2";
             target:  "elm.text";
+            target:  "elm.text.sub";
          }
          program {
             name:    "go_passive";
@@ -9232,6 +9237,7 @@ collections {
             target:  "fg1";
             target:  "fg2";
             target:  "elm.text";
+            target:  "elm.text.sub";
             transition: LINEAR 0.1;
          }
          program {
