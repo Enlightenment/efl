@@ -43,7 +43,7 @@ _elm_theme_theme_element_try(const char *home, const char *f, const char *group)
    if (file) return file;
    snprintf(buf, sizeof(buf), "%s/themes/%s.edj", _elm_data_dir, f);
    file = _elm_theme_find_try(buf, group);
-   if (file) return file;
+   return file;
 }
 
 static const char *

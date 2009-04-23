@@ -36,9 +36,16 @@ _del_pre_hook(Evas_Object *obj)
 static void
 _del_hook(Evas_Object *obj)
 {
+   Elm_Hoversel_Item *it;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_hoversel_hover_end(obj);
+   EINA_LIST_FREE(wd->items, it)
+     {
+        eina_stringshare_del(it->label);
+        eina_stringshare_del(it->icon_file);
+        free(it);
+     }
    free(wd);
 }
 
