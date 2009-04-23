@@ -73,6 +73,9 @@
 
 #ifdef BUILD_ECORE_EVAS_WIN32
 # include "Ecore_Win32.h"
+# ifdef BUILD_ECORE_EVAS_SOFTWARE_GDI
+#  include <Evas_Engine_Software_Gdi.h>
+# endif
 # ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
 #  include <Evas_Engine_Software_DDraw.h>
 # endif

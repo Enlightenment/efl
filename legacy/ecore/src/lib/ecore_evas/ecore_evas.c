@@ -68,6 +68,12 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 #else
 	return 0;
 #endif
+      case ECORE_EVAS_ENGINE_SOFTWARE_GDI:
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_GDI
+	return 1;
+#else
+	return 0;
+#endif
       case ECORE_EVAS_ENGINE_SOFTWARE_DDRAW:
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
 	return 1;
@@ -415,6 +421,14 @@ _ecore_evas_constructor_fb(int x __UNUSED__, int y __UNUSED__, int w, int h, con
 }
 #endif
 
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_GDI
+static Ecore_Evas *
+_ecore_evas_constructor_software_gdi(int x, int y, int w, int h, const char *extra_options)
+{
+   return ecore_evas_software_gdi_new(NULL, x, y, w, h);
+}
+#endif
+
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
 static Ecore_Evas *
 _ecore_evas_constructor_software_ddraw(int x, int y, int w, int h, const char *extra_options)
@@ -510,6 +524,9 @@ static const struct ecore_evas_engine _engines[] = {
 #endif
 
   /* windows */
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_GDI
+  {"software_gdi", _ecore_evas_constructor_software_gdi},
+#endif
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
   {"software_ddraw", _ecore_evas_constructor_software_ddraw},
 #endif

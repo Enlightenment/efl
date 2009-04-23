@@ -107,6 +107,7 @@ want_ecore_evas_opengl_x11="no"
 want_ecore_evas_software_16_x11="no"
 want_ecore_evas_software_xcb="no"
 want_ecore_evas_xrender_xcb="no"
+want_ecore_evas_software_gdi="no"
 want_ecore_evas_software_ddraw="no"
 want_ecore_evas_direct3d="no"
 want_ecore_evas_opengl_glew="no"
@@ -126,6 +127,7 @@ case "$host_os" in
       want_curl="yes"
       want_ecore_imf="yes"
       want_ecore_win32="yes"
+      want_ecore_evas_software_gdi="yes"
       want_ecore_evas_software_ddraw="yes"
       want_ecore_evas_direct3d="yes"
       want_ecore_evas_opengl_glew="yes"
@@ -957,6 +959,11 @@ fi
 
 # ecore_evas_win32
 
+ECORE_EVAS_CHECK_MODULE([software-gdi],
+   [${want_ecore_evas_software_gdi}],
+   [Software GDI],
+   [${have_ecore_win32}])
+
 ECORE_EVAS_CHECK_MODULE([software-ddraw],
    [${want_ecore_evas_software_ddraw}],
    [Software DirectDraw],
@@ -977,7 +984,8 @@ ECORE_EVAS_CHECK_MODULE([software-16-ddraw],
    [16 bpp Software DirectDraw],
    [${have_ecore_win32}])
 
-if test "x${have_ecore_evas_software_ddraw}" = "xyes" -o \
+if test "x${have_ecore_evas_software_gdi}" = "xyes" -o \
+        "x${have_ecore_evas_software_ddraw}" = "xyes" -o \
         "x${have_ecore_evas_direct3d}" = "xyes" -o \
         "x${have_ecore_evas_opengl_glew}" = "xyes" -o \
         "x${have_ecore_evas_software_16_ddraw}" = "xyes" ; then
@@ -1199,6 +1207,7 @@ if test "x${have_ecore_evas}" = "xyes" ; then
   echo "    OpenGL X11.................: $have_ecore_evas_opengl_x11"
   echo "    Software XCB...............: $have_ecore_evas_software_xcb"
   echo "    XRender XCB................: $have_ecore_evas_xrender_xcb"
+  echo "    Software GDI...............: $have_ecore_evas_software_gdi"
   echo "    Software DirectDraw........: $have_ecore_evas_software_ddraw"
   echo "    Direct3D...................: $have_ecore_evas_direct3d"
   echo "    OpenGL Glew................: $have_ecore_evas_opengl_glew"

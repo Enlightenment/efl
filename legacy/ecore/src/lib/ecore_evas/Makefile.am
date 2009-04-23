@@ -75,7 +75,8 @@ $(ECORE_QUARTZ_INC) \
 $(ECORE_WINCE_INC) \
 @EVAS_CFLAGS@ \
 @XCB_CFLAGS@ \
-@EINA_CFLAGS@
+@EINA_CFLAGS@ \
+@EVIL_CFLAGS@
 
 AM_CFLAGS = @WIN32_CFLAGS@
 
@@ -106,9 +107,10 @@ $(ECORE_SDL_LIB) \
 $(ECORE_SDL_LIBADD) \
 $(ECORE_QUARTZ_LIB) \
 $(ECORE_WINCE_LIB) \
-$(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_input/libecore_input.la \
-@EVAS_LIBS@
+$(top_builddir)/src/lib/ecore/libecore.la \
+@EVAS_LIBS@ \
+@EVIL_LIBS@
 
 libecore_evas_la_LDFLAGS = @quartz_ldflags@ -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @ecore_evas_release_info@
 

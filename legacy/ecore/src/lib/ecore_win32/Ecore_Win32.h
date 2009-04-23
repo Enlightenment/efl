@@ -38,7 +38,7 @@ extern "C" {
 #endif
 
 
-typedef void Ecore_Win32_Window;
+typedef struct _Ecore_Win32_Window Ecore_Win32_Window;
 typedef void Ecore_Win32_Cursor;
 
 /* Window state */

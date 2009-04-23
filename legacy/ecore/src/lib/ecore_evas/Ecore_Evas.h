@@ -76,6 +76,7 @@ typedef enum _Ecore_Evas_Engine_Type
    ECORE_EVAS_ENGINE_OPENGL_X11,
    ECORE_EVAS_ENGINE_SOFTWARE_XCB,
    ECORE_EVAS_ENGINE_XRENDER_XCB,
+   ECORE_EVAS_ENGINE_SOFTWARE_GDI,
    ECORE_EVAS_ENGINE_SOFTWARE_DDRAW,
    ECORE_EVAS_ENGINE_DIRECT3D,
    ECORE_EVAS_ENGINE_OPENGL_GLEW,
@@ -114,7 +115,7 @@ typedef struct _Ecore_DirectFB_Window Ecore_DirectFB_Window;
 #endif
 
 #ifndef __ECORE_WIN32_H__
-typedef void Ecore_Win32_Window;
+typedef struct _Ecore_Win32_Window Ecore_Win32_Window;
 #endif
 
 #ifndef __ECORE_WINCE_H__
@@ -174,6 +175,12 @@ EAPI Ecore_Evas     *ecore_evas_buffer_new(int w, int h);
 EAPI const void     *ecore_evas_buffer_pixels_get(Ecore_Evas *ee);
 
 EAPI Evas_Object    *ecore_evas_object_image_new(Ecore_Evas *ee_target);
+
+EAPI Ecore_Evas     *ecore_evas_software_gdi_new(Ecore_Win32_Window *parent,
+                                                 int                 x,
+                                                 int                 y,
+                                                 int                 width,
+                                                 int                 height);
 
 EAPI Ecore_Evas     *ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
                                                    int                 x,
