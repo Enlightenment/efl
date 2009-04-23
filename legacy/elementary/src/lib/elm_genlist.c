@@ -24,6 +24,8 @@ struct _Widget_Data
    Evas_Bool multi : 1;
    Evas_Bool min_w : 1;
    Evas_Bool min_h : 1;
+   Evas_Bool always_select : 1;
+   Evas_Bool no_select : 1;
 };
 
 struct _Item_Block
@@ -196,14 +198,20 @@ static void
 _item_select(Elm_Genlist_Item *it)
 {
    const char *selectraise;
+   if (it->wd->no_select) return;
    if (it->delete_me) return;
-   if (it->selected) return;
+   if (it->selected)
+     {
+        if (it->wd->always_select) goto call;
+        return;
+     }
    edje_object_signal_emit(it->base, "elm,state,selected", "elm");
    selectraise = edje_object_data_get(it->base, "selectraise");
    if ((selectraise) && (!strcmp(selectraise, "on")))
      evas_object_raise(it->base);
    it->selected = 1;
    it->wd->selected = eina_list_append(it->wd->selected, it);
+   call:
    if (it->func.func) it->func.func((void *)it->func.data, it->wd->obj, it);
    evas_object_smart_callback_call(it->wd->obj, "selected", it);
 }
@@ -1441,4 +1449,18 @@ elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
      elm_scroller_content_min_limit(wd->scr, 1, 0);
    else
      elm_scroller_content_min_limit(wd->scr, 0, 0);
+}
+
+EAPI void
+elm_genlist_always_select_mode_set(Evas_Object *obj, Evas_Bool always_select)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   wd->always_select = always_select;
+}
+
+EAPI void
+elm_genlist_no_select_mode_set(Evas_Object *obj, Evas_Bool no_select)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   wd->no_select = no_select;
 }

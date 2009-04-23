@@ -7098,6 +7098,15 @@ collections {
       }
       parts {
          part {
+            name:           "event";
+            type:           RECT;
+            repeat_events: 1;
+            description {
+               state: "default" 0.0;
+               color: 0 0 0 0;
+            }
+         }
+         part {
             name: "base_sh";
             mouse_events: 0;
             description {
@@ -7303,15 +7312,6 @@ collections {
                color: 255 255 255 64;
             }
          }
-         part {
-            name:           "event";
-            type:           RECT;
-            repeat_events: 1;
-            description {
-               state: "default" 0.0;
-               color: 0 0 0 0;
-            }
-         }
       }
       programs {
          // signal: elm,state,%s,active
@@ -7370,6 +7370,14 @@ collections {
          image: "ilist_2.png" COMP;
       }
       parts {
+         part { name: "event";
+            type: RECT;
+            repeat_events: 1;
+            description {
+               state: "default" 0.0;
+               color: 0 0 0 0;
+            }
+         }
          part {
             name: "base";
             mouse_events: 0;
@@ -7552,14 +7560,6 @@ collections {
                color: 255 255 255 64;
             }
          }
-         part { name: "event";
-            type: RECT;
-            repeat_events: 1;
-            description {
-               state: "default" 0.0;
-               color: 0 0 0 0;
-            }
-         }
       }
       programs {
          // signal: elm,state,%s,active
@@ -7622,6 +7622,15 @@ collections {
          image: "icon_arrow_down.png" COMP;
       }
       parts {
+         part {
+            name:           "event";
+            type:           RECT;
+            repeat_events: 1;
+            description {
+               state: "default" 0.0;
+               color: 0 0 0 0;
+            }
+         }
          part {
             name: "base_sh";
             mouse_events: 0;
@@ -7852,15 +7861,6 @@ collections {
                color: 255 255 255 64;
             }
          }
-         part {
-            name:           "event";
-            type:           RECT;
-            repeat_events: 1;
-            description {
-               state: "default" 0.0;
-               color: 0 0 0 0;
-            }
-         }
       }
       programs {
          // signal: elm,state,%s,active
@@ -7941,6 +7941,15 @@ collections {
          image: "icon_arrow_down.png" COMP;
       }
       parts {
+         part {
+            name:           "event";
+            type:           RECT;
+            repeat_events: 1;
+            description {
+               state: "default" 0.0;
+               color: 0 0 0 0;
+            }
+         }
          part {
             name: "base";
             mouse_events: 0;
@@ -8145,15 +8154,6 @@ collections {
             description { state: "disabled" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 64;
-            }
-         }
-         part {
-            name:           "event";
-            type:           RECT;
-            repeat_events: 1;
-            description {
-               state: "default" 0.0;
-               color: 0 0 0 0;
             }
          }
       }

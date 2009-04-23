@@ -641,6 +641,7 @@ extern "C" {
    EAPI Elm_Genlist_Item *elm_genlist_item_insert_before(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *before, Elm_Genlist_Item_Flags flags, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data);
    EAPI Elm_Genlist_Item *elm_genlist_item_insert_after(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *after, Elm_Genlist_Item_Flags flags, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data);
    EAPI void              elm_genlist_clear(Evas_Object *obj);
+   EAPI void              elm_genlist_multi_select_set(Evas_Object *obj, Evas_Bool multi);
    EAPI Elm_Genlist_Item *elm_genlist_selected_item_get(const Evas_Object *obj);
    EAPI const Eina_List  *elm_genlist_selected_items_get(const Evas_Object *obj);
    EAPI Elm_Genlist_Item *elm_genlist_first_item_get(const Evas_Object *obj);
@@ -661,6 +662,8 @@ extern "C" {
    EAPI const void       *elm_genlist_item_data_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_update(Elm_Genlist_Item *item);
    EAPI void              elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode);
+   EAPI void              elm_genlist_always_select_mode_set(Evas_Object *obj, Evas_Bool always_select);
+   EAPI void              elm_genlist_multi_select_set(Evas_Object *obj, Evas_Bool multi);
    /* smart callbacks called:
     * "clicked" - when the user double-clicked an item
     * "selected" - when the user selected an item
