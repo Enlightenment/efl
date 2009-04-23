@@ -8,6 +8,7 @@ debian/tmp/usr/lib/libecore_fb.so
 debian/tmp/usr/lib/libecore_file.so
 debian/tmp/usr/lib/libecore_imf_evas.so
 debian/tmp/usr/lib/libecore_imf.so
+debian/tmp/usr/lib/libecore_input.so
 debian/tmp/usr/lib/libecore_ipc.so
 debian/tmp/usr/lib/libecore_job.so
 debian/tmp/usr/lib/libecore_txt.so
