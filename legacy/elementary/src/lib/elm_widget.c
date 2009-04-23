@@ -74,6 +74,7 @@ _sub_obj_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
      {
         sd->subobjs = eina_list_remove(sd->subobjs, obj);
      }
+   if (sd->style) eina_stringshare_del(sd->style);
    evas_object_smart_callback_call(sd->obj, "sub-object-del", obj);
 }
 
@@ -774,16 +775,15 @@ elm_widget_style_set(Evas_Object *obj, const char *style)
    const char *old;
    API_ENTRY return;
    old = sd->style;
-   eina_stringshare_del(sd->style);
    sd->style = eina_stringshare_add(style);
-   if (old != sd->style)
-     elm_widget_theme(obj);
+   if (old) eina_stringshare_del(old);
+   if (old != sd->style) elm_widget_theme(obj);
 }
 
 EAPI const char *
 elm_widget_style_get(const Evas_Object *obj)
 {
-   API_ENTRY return "default";
+   API_ENTRY return "";
    if (sd->style) return sd->style;
    return "default";
 }

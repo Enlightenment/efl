@@ -569,7 +569,7 @@ my_bt_12(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bx);
 
    hv = elm_hover_add(win);
-   elm_hover_style_set(hv, "popout");
+   elm_object_style_set(hv, "popout");
    
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Button");
@@ -1815,7 +1815,7 @@ my_bt_25(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bg);
    
    inwin = elm_win_inwin_add(win);
-   elm_win_inwin_style_set(inwin, "minimal_vertical");
+   elm_object_style_set(inwin, "minimal_vertical");
    evas_object_show(inwin);
    
    lb = elm_label_add(win);
