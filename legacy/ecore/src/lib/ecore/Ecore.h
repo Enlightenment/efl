@@ -294,10 +294,12 @@ extern "C" {
    EAPI Ecore_Pipe  *ecore_pipe_add(void (*handler) (void *data, void *buffer, unsigned int nbyte), const void *data);
    EAPI void        *ecore_pipe_del(Ecore_Pipe *p);
    EAPI int          ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes);
+   EAPI void         ecore_pipe_close_write(Ecore_Pipe *p);
+   EAPI void         ecore_pipe_close_read(Ecore_Pipe *p);
 
    EAPI double ecore_time_get(void);
    EAPI double ecore_loop_time_get(void);
-       
+
    EAPI Ecore_Timer *ecore_timer_add(double in, int (*func) (void *data), const void *data);
    EAPI Ecore_Timer *ecore_timer_loop_add(double in, int (*func) (void *data), const void *data);
    EAPI void        *ecore_timer_del(Ecore_Timer *timer);
