@@ -1029,6 +1029,8 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	     _curs_update_from_curs(en->cursor, rp->object, en);
 	     _anchors_get(en->cursor, rp->object, en);
 	     _edje_emit(ed, "entry,changed", rp->part->name);
+	     _edje_emit(ed, "cursor,changed", rp->part->name);
+	     cursor_changed = 1;
 	     ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 	  }
         _edje_emit(ed, "entry,key,enter", rp->part->name);
@@ -1091,6 +1093,7 @@ _edje_part_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
    Evas_Textblock_Cursor *tc;
    Evas_Bool dosel = 0;
    if (!rp) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    en = rp->entry_data;
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_SELECTABLE))
@@ -1209,6 +1212,7 @@ _edje_part_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Evas_Bool dosel = 0;
    if (ev->button != 1) return;
    if (!rp) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    en = rp->entry_data;
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_SELECTABLE))

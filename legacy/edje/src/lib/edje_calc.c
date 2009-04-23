@@ -180,7 +180,6 @@ _edje_recalc_do(Edje *ed)
 	  _edje_part_recalc(ed, ep, (~ep->calculated) & FLAG_XY);
      }
    if (!ed->calc_only) ed->recalc = 0;
-   ed->calc_only = 0;
 }
 
 int
@@ -690,11 +689,11 @@ _edje_part_recalc_single(Edje *ed,
 		  evas_object_textblock_style_insets_get(ep->object, &ins_l, &ins_r, &ins_t, &ins_b);
 		  mw = ins_l + tw + ins_r;
 		  mh = ins_t + th + ins_b;
-		  if (chosen_desc->text.min_x)
+//		  if (chosen_desc->text.min_x)
 		    {
 		       if (mw > minw) minw = mw;
 		    }
-		  if (chosen_desc->text.min_y)
+//		  if (chosen_desc->text.min_y)
 		    {
 		       if (mh > minh) minh = mh;
 		    }
@@ -882,7 +881,6 @@ _edje_part_recalc_single(Edje *ed,
 	free(sfont);
 	params->text.size = size;
      }
-
    /* rememebr what our size is BEFORE we go limit it */
    params->req.x = params->x;
    params->req.y = params->y;
