@@ -663,7 +663,7 @@ extern "C" {
    EAPI void              elm_genlist_item_update(Elm_Genlist_Item *item);
    EAPI void              elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode);
    EAPI void              elm_genlist_always_select_mode_set(Evas_Object *obj, Evas_Bool always_select);
-   EAPI void              elm_genlist_multi_select_set(Evas_Object *obj, Evas_Bool multi);
+   EAPI void              elm_genlist_no_select_mode_set(Evas_Object *obj, Evas_Bool no_select);
    /* smart callbacks called:
     * "clicked" - when the user double-clicked an item
     * "selected" - when the user selected an item
