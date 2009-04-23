@@ -36,7 +36,7 @@ libefreet_la_CPPFLAGS =  \
 @EFL_EFREET_BUILD@ \
 @EFREET_CFLAGS@
 libefreet_la_LIBADD = @EFREET_LIBS@ @win32_libs@
-libefreet_la_LDFLAGS = -no-undefined -version-info @version_info@ @efreet_release_info@
+libefreet_la_LDFLAGS = -no-undefined -version-info @version_info@ @lt_no_undefined@ @efreet_release_info@
 
 EFREETMIMEHEADERS = \
 Efreet_Mime.h
@@ -73,8 +73,8 @@ libefreet_trash_la_CPPFLAGS = \
 installed_headersdir = $(prefix)/include/efreet
 installed_headers_DATA = $(EFREETHEADERS) $(EFREETMIMEHEADERS) $(EFREETTRASHHEADERS)
 
-libefreet_mime_la_LDFLAGS = -no-undefined -version-info @version_info@ @efreet_mime_release_info@
-libefreet_trash_la_LDFLAGS = -no-undefined -version-info @version_info@ @efreet_trash_release_info@
-
+libefreet_mime_la_LDFLAGS = -no-undefined -version-info @version_info@ @lt_no_undefined@ @efreet_mime_release_info@
 libefreet_mime_la_LIBADD = @EFREET_LIBS@ libefreet.la @win32_libs@
+
+libefreet_trash_la_LDFLAGS = -no-undefined -version-info @version_info@ @lt_no_undefined@ @efreet_trash_release_info@
 libefreet_trash_la_LIBADD = @EFREET_LIBS@ libefreet.la
