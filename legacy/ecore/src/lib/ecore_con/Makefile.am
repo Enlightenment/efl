@@ -24,7 +24,7 @@ libecore_con_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 @SSL_LIBS@ @CURL_LIBS@ @EINA_LIBS@ @TLS_LIBS@
 
-libecore_con_la_LDFLAGS = -version-info @version_info@ @lt_no_undefined@ @ecore_con_release_info@
+libecore_con_la_LDFLAGS = -no-undefined -version-info @version_info@ @ecore_con_release_info@
 
 endif
 

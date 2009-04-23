@@ -27,7 +27,7 @@ lib_LTLIBRARIES = libecore_config.la
 include_HEADERS = \
 Ecore_Config.h
 
-libecore_config_la_LDFLAGS = -version-info @version_info@ @lt_no_undefined@ @ecore_config_release_info@
+libecore_config_la_LDFLAGS = -no-undefined -version-info @version_info@ @ecore_config_release_info@
 
 #config_DATA = $(DB)
 #configdir = $(pkgdatadir)

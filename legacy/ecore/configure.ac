@@ -697,17 +697,12 @@ AC_SUBST(WIN32_CFLAGS)
 # use --enable-auto-import on Windows
 
 lt_enable_auto_import=""
-lt_no_undefined=""
 case "$host_os" in
    mingw* | cegcc*)
       lt_enable_auto_import="-Wl,--enable-auto-import"
       ;;
-   *cygwin*)
-      lt_no_undefined="-no-undefined"
-      ;;
 esac
 AC_SUBST(lt_enable_auto_import)
-AC_SUBST(lt_no_undefined)
 
 ### Checks for library functions
 AC_FUNC_ALLOCA
