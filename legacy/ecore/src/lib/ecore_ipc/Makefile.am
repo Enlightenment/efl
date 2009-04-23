@@ -24,7 +24,7 @@ $(top_builddir)/src/lib/ecore_con/libecore_con.la \
 @SSL_LIBS@ \
 @EINA_LIBS@
 
-libecore_ipc_la_LDFLAGS = -version-info @version_info@ @ecore_ipc_release_info@
+libecore_ipc_la_LDFLAGS = -version-info @version_info@ @lt_no_undefined@ @ecore_ipc_release_info@
 
 endif
 
