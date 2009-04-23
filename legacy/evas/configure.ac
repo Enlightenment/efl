@@ -11,8 +11,8 @@ AC_ISC_POSIX
 AM_INIT_AUTOMAKE(1.6 dist-bzip2)
 AM_CONFIG_HEADER(config.h)
 
-AC_PROG_CXX
-AC_PROG_CC
+AC_PROG_CXX([icl g++])
+AC_PROG_CC([icl gcc]
 AM_PROG_CC_STDC
 AC_HEADER_STDC
 AC_C_BIGENDIAN
@@ -42,6 +42,7 @@ want_evas_engine_gl_x11="no"
 want_evas_engine_cairo_x11="no"
 want_evas_engine_software_xcb="no"
 want_evas_engine_xrender_xcb="no"
+want_evas_engine_software_gdi="no"
 want_evas_engine_software_ddraw="no"
 want_evas_engine_direct3d="no"
 want_evas_engine_quartz="no"
@@ -76,6 +77,7 @@ case "$host_os" in
       want_evas_image_loader_tiff="no"
       ;;
    mingw*)
+      want_evas_engine_software_gdi="yes"
       want_evas_engine_software_ddraw="yes"
       want_evas_engine_direct3d="yes"
       want_evas_engine_software_16_ddraw="yes"
@@ -250,6 +252,8 @@ EVAS_CHECK_ENGINE([gl-x11], [${want_evas_engine_gl_x11}], [yes], [OpenGL X11])
 EVAS_CHECK_ENGINE([software-xcb], [${want_evas_engine_software_xcb}], [no], [Software XCB])
 
 EVAS_CHECK_ENGINE([xrender-xcb], [${want_evas_engine_xrender_xcb}], [no], [XRender XCB])
+
+EVAS_CHECK_ENGINE([software-gdi], [${want_evas_engine_software_gdi}], [no], [Software GDI])
 
 EVAS_CHECK_ENGINE([software-ddraw], [${want_evas_engine_software_ddraw}], [no], [Software DirectDraw])
 
@@ -1035,6 +1039,7 @@ evas-software-16-x11.pc
 evas-software-xcb.pc
 evas-xrender-x11.pc
 evas-xrender-xcb.pc
+evas-software-gdi.pc
 evas-software-ddraw.pc
 evas-software-16-ddraw.pc
 evas-direct3d.pc
@@ -1062,6 +1067,7 @@ src/lib/engines/common_16/Makefile
 src/modules/Makefile
 src/modules/engines/Makefile
 src/modules/engines/software_generic/Makefile
+src/modules/engines/software_gdi/Makefile
 src/modules/engines/software_ddraw/Makefile
 src/modules/engines/direct3d/Makefile
 src/modules/engines/software_16_wince/Makefile
@@ -1127,6 +1133,7 @@ echo "  Software X11...............: $have_evas_engine_software_x11 (XCB: $have_
 echo "  XRender X11................: $have_evas_engine_xrender_x11 (XCB: $have_evas_engine_xrender_xcb)"
 echo "  OpenGL X11.................: $have_evas_engine_gl_x11"
 #echo "  Cairo X11..................: $have_evas_engine_cairo_x11"
+echo "  Software GDI...............: $have_evas_engine_software_gdi"
 echo "  Software DirectDraw........: $have_evas_engine_software_ddraw"
 echo "  Direct3d...................: $have_evas_engine_direct3d"
 echo "  Quartz.....................: $have_evas_engine_quartz"

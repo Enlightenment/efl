@@ -8,7 +8,7 @@ fb \
 gl_common \
 gl_x11 \
 gl_glew \
-software_win32_gdi \
+software_gdi \
 software_ddraw \
 software_x11 \
 xrender_x11 \

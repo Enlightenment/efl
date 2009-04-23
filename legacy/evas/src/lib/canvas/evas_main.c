@@ -742,6 +742,9 @@ evas_render_method_list(void)
    Eina_List *methods = NULL;
 
    /* FIXME: get from modules - this is currently coded-in */
+#ifdef BUILD_ENGINE_SOFTWARE_GDI
+   methods = eina_list_append(methods, strdup("software_gdi"));
+#endif
 #ifdef BUILD_ENGINE_SOFTWARE_DDRAW
    methods = eina_list_append(methods, strdup("software_ddraw"));
 #endif

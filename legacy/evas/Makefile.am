@@ -32,6 +32,7 @@ evas-software-16-x11.pc \
 evas-software-xcb.pc \
 evas-xrender-x11.pc \
 evas-xrender-xcb.pc \
+evas-software-gdi.pc \
 evas-software-ddraw.pc \
 evas-software-16-ddraw.pc \
 evas-direct3d.pc \
@@ -70,6 +71,7 @@ evas-software-16-x11.pc.in \
 evas-software-xcb.pc.in \
 evas-xrender-x11.pc.in \
 evas-xrender-xcb.pc.in \
+evas-software-gdi.pc.in \
 evas-software-ddraw.pc.in \
 evas-software-16-ddraw.pc.in \
 evas-direct3d.pc.in \
@@ -129,6 +131,10 @@ if BUILD_ENGINE_XRENDER_XCB
 pxrenderxcb = evas-xrender-xcb.pc
 endif
 
+if BUILD_ENGINE_SOFTWARE_GDI
+psoftwaregdi = evas-software-gdi.pc
+endif
+
 if BUILD_ENGINE_SOFTWARE_DDRAW
 psoftwareddraw = evas-software-ddraw.pc
 endif
@@ -153,7 +159,7 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
 	evas.pc $(psoftwarex11) $(psoftwarexcb) $(pdirectfb) $(pfb) \
 	$(psoftwarebuffer) $(psoftwareqtopia) $(popenglx11) $(pquartz) $(pcairox11) \
-	$(pxrenderx11) $(pxrenderxcb) $(psoftwareddraw) $(psoftwaresdl) \
+	$(pxrenderx11) $(pxrenderxcb) $(psoftwaregdi) $(psoftwareddraw) $(psoftwaresdl) \
 	$(psoftware16x11) $(pdirect3d) $(psoftware16ddraw) $(psoftware16wince) $(popenglglew)
 
 .PHONY: doc

@@ -232,6 +232,33 @@ fi
 
 ])
 
+dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_GDI(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+
+AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_GDI],
+[
+
+have_dep="no"
+evas_engine_[]$1[]_cflags=""
+evas_engine_[]$1[]_libs=""
+
+AC_CHECK_HEADER([windows.h],
+   [
+    have_dep="yes"
+    evas_engine_[]$1[]_libs="-lgdi32"
+   ]
+)
+
+AC_SUBST([evas_engine_$1_cflags])
+AC_SUBST([evas_engine_$1_libs])
+
+if test "x${have_dep}" = "xyes" ; then
+  m4_default([$3], [:])
+else
+  m4_default([$4], [:])
+fi
+
+])
+
 dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_DDRAW(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_DDRAW],
