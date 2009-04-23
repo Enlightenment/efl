@@ -792,7 +792,7 @@ _ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, int on)
 #ifdef BUILD_ECORE_EVAS_SOFTWRE_DDRAW
         Evas_Engine_Info_Software_DDraw *einfo;
 
-        einfo = (Evas_Engine_Info_Direct3D *)evas_engine_info_get(ecore_evas_get(ee));
+        einfo = (Evas_Engine_Info_Software_DDraw *)evas_engine_info_get(ecore_evas_get(ee));
         if (einfo != NULL)
           {
              einfo->info.fullscreen = !!on;
