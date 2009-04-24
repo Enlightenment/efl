@@ -17,3 +17,4 @@ install/libefreet-doc::
 
 clean::
 	[ ! -f Makefile ] || make distclean
+	rm -f efreet-*.tar.bz2 efreet-*.cdbs-config_list

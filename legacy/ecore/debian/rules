@@ -24,3 +24,4 @@ install/libecore-doc::
 
 clean::
 	[ ! -f Makefile ] || make distclean
+	rm -f ecore-*.tar.bz2 ecore-*.tar.bz2.cdbs-config_list

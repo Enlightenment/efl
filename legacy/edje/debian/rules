@@ -19,3 +19,4 @@ install/libedje-doc::
 
 clean::
 	[ ! -f Makefile ] || make distclean
+	rm -f edje-*.tar.bz2 edje-*.tar.bz2.cdbs-config_list

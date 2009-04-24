@@ -20,3 +20,4 @@ install/libembryo-doc::
 
 clean::
 	[ ! -f Makefile ] || make distclean
+	rm -f embryo-*.tar.* embryo-*.cdbs-config_list
