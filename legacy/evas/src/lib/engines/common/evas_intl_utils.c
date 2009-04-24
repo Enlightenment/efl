@@ -102,6 +102,8 @@ error1:
 int
 evas_intl_is_rtl_char(FriBidiLevel *embedded_level_list, FriBidiStrIndex i)
 {
-	return fribidi_is_char_rtl(embedded_level_list, 0, i);
+	if(embedded_level_list || i < 0)
+		return 0;
+	return FRIBIDI_IS_RTL(embedded_level_list[i]);
 }
 #endif
