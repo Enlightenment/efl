@@ -489,10 +489,12 @@ ecore_win32_window_shape_set(Ecore_Win32_Window *window,
           {
              wnd->shape.layered = 0;
 #if defined(WS_EX_LAYERED)
-             if (!SetWindowLong(wnd->window, GWL_EXSTYLE,
-                                GetWindowLong(wnd->window, GWL_EXSTYLE) & (~WS_EX_LAYERED)))
+             SetLastError(0);
+             if (!SetWindowLongPtr(wnd->window, GWL_EXSTYLE,
+                                   GetWindowLong(wnd->window, GWL_EXSTYLE) & (~WS_EX_LAYERED)) &&
+                 (GetLastError() != 0))
                {
-                  EINA_ERROR_PERR("SetWindowLong() failed\n");
+                  EINA_ERROR_PERR("SetWindowLongPtr() failed\n");
                   return;
                }
              if (!RedrawWindow(wnd->window, NULL, NULL,
@@ -535,10 +537,12 @@ ecore_win32_window_shape_set(Ecore_Win32_Window *window,
    version_info.dwOSVersionInfoSize = sizeof(version_info);
    if (GetVersionEx(&version_info) == TRUE && version_info.dwMajorVersion == 5)
      {
-       if (!SetWindowLong(wnd->window, GWL_EXSTYLE,
-                          GetWindowLong(wnd->window, GWL_EXSTYLE) | WS_EX_LAYERED))
+       SetLastError(0);
+       if (!SetWindowLongPtr(wnd->window, GWL_EXSTYLE,
+                             GetWindowLong(wnd->window, GWL_EXSTYLE) | WS_EX_LAYERED) &&
+           (GetLastError() != 0))
             {
-               EINA_ERROR_PERR("SetWindowLong() failed\n");
+               EINA_ERROR_PERR("SetWindowLongPtr() failed\n");
                return;
             }
        wnd->shape.layered = 1;
@@ -605,18 +609,10 @@ ecore_win32_window_show(Ecore_Win32_Window *window)
 
    EINA_ERROR_PINFO("showing window\n");
 
-   if (!ShowWindow(((struct _Ecore_Win32_Window *)window)->window, SW_SHOWNORMAL))
-     {
-        EINA_ERROR_PERR("ShowWindow() failed\n");
-        return;
-     }
+   ShowWindow(((struct _Ecore_Win32_Window *)window)->window, SW_SHOWNORMAL);
    if (!UpdateWindow(((struct _Ecore_Win32_Window *)window)->window))
      {
         EINA_ERROR_PERR("UpdateWindow() failed\n");
-     }
-   if (!SendMessage(((struct _Ecore_Win32_Window *)window)->window, WM_SHOWWINDOW, 1, 0))
-     {
-        EINA_ERROR_PERR("SendMessage() failed\n");
      }
 }
 
@@ -628,14 +624,7 @@ ecore_win32_window_hide(Ecore_Win32_Window *window)
 
    EINA_ERROR_PINFO("hiding window\n");
 
-   if (!ShowWindow(((struct _Ecore_Win32_Window *)window)->window, SW_HIDE))
-     {
-        EINA_ERROR_PERR("ShowWindow() failed\n");
-     }
-   if (!SendMessage(((struct _Ecore_Win32_Window *)window)->window, WM_SHOWWINDOW, 0, 0))
-     {
-        EINA_ERROR_PERR("SendMessage() failed\n");
-     }
+   ShowWindow(((struct _Ecore_Win32_Window *)window)->window, SW_HIDE);
 }
 
 void
@@ -712,10 +701,7 @@ ecore_win32_window_iconified_set(Ecore_Win32_Window *window,
 
    EINA_ERROR_PINFO("iconifying window: %s\n", on ? "yes" : "no");
 
-   if (!ShowWindow(ew->window, on ? SW_MINIMIZE : SW_RESTORE))
-     {
-        EINA_ERROR_PERR("ShowWindow() failed\n");
-     }
+   ShowWindow(ew->window, on ? SW_MINIMIZE : SW_RESTORE);
    ew->iconified = on;
 }
 
@@ -735,14 +721,24 @@ ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
        ((!ew->borderless) && (!on)))
      return;
 
-   EINA_ERROR_PINFO("setting window border: %s\n", on ? "yes" : "no");
+   EINA_ERROR_PINFO("setting window without border: %s\n", on ? "yes" : "no");
 
    w = ew->window;
 
    style = GetWindowLong(w, GWL_STYLE);
    if (on)
      {
-        SetWindowLong(w, GWL_STYLE, style & ~WS_CAPTION);
+        if (!GetClientRect(w, &rect))
+          {
+             EINA_ERROR_PERR("GetClientRect() failed\n");
+             return;
+          }
+        SetLastError(0);
+        if (!SetWindowLongPtr(w, GWL_STYLE, style & ~WS_CAPTION) && (GetLastError() != 0))
+          {
+             EINA_ERROR_PERR("SetWindowLongPtr() failed\n");
+             return;
+          }
      }
    else
      {
@@ -757,9 +753,10 @@ ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
              EINA_ERROR_PERR("AdjustWindowRect() failed\n");
              return;
           }
-        if (!SetWindowLong(w, GWL_STYLE, style))
+        SetLastError(0);
+        if (!SetWindowLongPtr(w, GWL_STYLE, style) && (GetLastError() != 0))
           {
-             EINA_ERROR_PERR("SetWindowLong() failed\n");
+             EINA_ERROR_PERR("SetWindowLongPtr() failed\n");
              return;
           }
      }
@@ -809,14 +806,16 @@ ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
           }
         style = ew->style & ~WS_OVERLAPPEDWINDOW & ~WS_SIZEBOX;
         style |= WS_VISIBLE | WS_POPUP;
-        if (!SetWindowLong(w, GWL_STYLE, style))
+        SetLastError(0);
+        if (!SetWindowLongPtr(w, GWL_STYLE, style) && (GetLastError() != 0))
           {
-             EINA_ERROR_PERR("SetWindowLong() failed\n");
+             EINA_ERROR_PERR("SetWindowLongPtr() failed\n");
              return;
           }
-        if (!SetWindowLong(w, GWL_EXSTYLE, WS_EX_TOPMOST))
+        SetLastError(0);
+        if (!SetWindowLongPtr(w, GWL_EXSTYLE, WS_EX_TOPMOST) && (GetLastError() != 0))
           {
-             EINA_ERROR_PERR("SetWindowLong() failed\n");
+             EINA_ERROR_PERR("SetWindowLongPtr() failed\n");
              return;
           }
         if (!SetWindowPos(w, HWND_TOPMOST, 0, 0,
@@ -829,14 +828,16 @@ ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
      }
    else
      {
-        if (!SetWindowLong(w, GWL_STYLE, ew->style))
+        SetLastError(0);
+        if (!SetWindowLongPtr(w, GWL_STYLE, ew->style) && (GetLastError() != 0))
           {
-             EINA_ERROR_PERR("SetWindowLong() failed\n");
+             EINA_ERROR_PERR("SetWindowLongPtr() failed\n");
              return;
           }
-        if (!SetWindowLong(w, GWL_EXSTYLE, 0))
+        SetLastError(0);
+        if (!SetWindowLongPtr(w, GWL_EXSTYLE, 0) && (GetLastError() != 0))
           {
-             EINA_ERROR_PERR("SetWindowLong() failed\n");
+             EINA_ERROR_PERR("SetWindowLongPtr() failed\n");
              return;
           }
         if (!SetWindowPos(w, HWND_NOTOPMOST,
@@ -1169,9 +1170,9 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
      }
 
    SetLastError(0);
-   if (!SetWindowLong(w->window, GWL_USERDATA, (LONG)w) && (GetLastError() != 0))
+   if (!SetWindowLongPtr(w->window, GWL_USERDATA, (LONG)w) && (GetLastError() != 0))
      {
-        EINA_ERROR_PERR("SetWindowLong() failed\n");
+        EINA_ERROR_PERR("SetWindowLongPtr() failed\n");
         DestroyWindow(w->window);
         free(w);
         return NULL;

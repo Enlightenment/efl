@@ -772,24 +772,11 @@ _ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, int on)
                                    window->shape.mask);
    }
 
-   if (strcmp(ee->driver, "direct3d") == 0)
-     {
-#ifdef BUILD_ECORE_EVAS_DIRECT3D
-        Evas_Engine_Info_Direct3D *einfo;
+   /* Nothing to be done for the GDI backend at the evas level */
 
-        einfo = (Evas_Engine_Info_Direct3D *)evas_engine_info_get(ecore_evas_get(ee));
-        if (einfo != NULL)
-          {
-             einfo->info.fullscreen = !!on;
-             einfo->info.layered = window->shape.layered;
-             evas_engine_info_set(ecore_evas_get(ee), (Evas_Engine_Info *)einfo);
-          }
-#endif /* BUILD_ECORE_EVAS_DIRECT3D */
-     }
-
+#ifdef BUILD_ECORE_EVAS_SOFTWRE_DDRAW
    if (strcmp(ee->driver, "software_ddraw") == 0)
      {
-#ifdef BUILD_ECORE_EVAS_SOFTWRE_DDRAW
         Evas_Engine_Info_Software_DDraw *einfo;
 
         einfo = (Evas_Engine_Info_Software_DDraw *)evas_engine_info_get(ecore_evas_get(ee));
@@ -799,8 +786,23 @@ _ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, int on)
 /*           einfo->info.layered = window->shape.layered; */
              evas_engine_info_set(ecore_evas_get(ee), (Evas_Engine_Info *)einfo);
           }
-#endif /* BUILD_ECORE_EVAS_SOFTWARE_DDRAW */
      }
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_DDRAW */
+
+#ifdef BUILD_ECORE_EVAS_DIRECT3D
+   if (strcmp(ee->driver, "direct3d") == 0)
+     {
+        Evas_Engine_Info_Direct3D *einfo;
+
+        einfo = (Evas_Engine_Info_Direct3D *)evas_engine_info_get(ecore_evas_get(ee));
+        if (einfo != NULL)
+          {
+             einfo->info.fullscreen = !!on;
+             einfo->info.layered = window->shape.layered;
+             evas_engine_info_set(ecore_evas_get(ee), (Evas_Engine_Info *)einfo);
+          }
+     }
+#endif /* BUILD_ECORE_EVAS_DIRECT3D */
 }
 
 
