@@ -533,7 +533,7 @@ ethumb_file_set(Ethumb *e, const char *path, const char *key)
 EAPI void
 ethumb_file_get(Ethumb *e, const char **path, const char **key)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
+   EINA_SAFETY_ON_NULL_RETURN(e);
 
    if (path) *path = e->src_path;
    if (key) *key = e->src_key;
