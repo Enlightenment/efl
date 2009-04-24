@@ -294,10 +294,11 @@ _ethumb_frame_free(Ethumb_Frame *frame)
 EAPI void
 ethumb_free(Ethumb *ethumb)
 {
-   if (!ethumb)
-     return;
+   EINA_SAFETY_ON_NULL_RETURN(ethumb);
+
    if (ethumb->frame)
      _ethumb_frame_free(ethumb->frame);
+   ethumb_file_free(ethumb);
    ecore_evas_free(ethumb->ee);
    eina_stringshare_del(ethumb->thumb_dir);
    eina_stringshare_del(ethumb->category);
@@ -528,6 +529,16 @@ ethumb_file_set(Ethumb *e, const char *path, const char *key)
 
    return 1;
 }
+
+EAPI void
+ethumb_file_get(Ethumb *e, const char **path, const char **key)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
+
+   if (path) *path = e->src_path;
+   if (key) *key = e->src_key;
+}
+
 
 static const char *
 _ethumb_generate_hash(const char *file)
