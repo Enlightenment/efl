@@ -48,7 +48,7 @@ evas_common_font_ascent_get(RGBA_Font *fn)
    fi = fn->fonts->data;
    val = (int)fi->src->ft.face->size->metrics.ascender;
    if (fi->src->ft.face->units_per_EM == 0)
-     return val;  
+     return val;
    dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
    ret = (val * fi->src->ft.face->size->metrics.y_scale) / (dv * dv);
    return ret;
@@ -65,7 +65,7 @@ evas_common_font_descent_get(RGBA_Font *fn)
    fi = fn->fonts->data;
    val = -(int)fi->src->ft.face->size->metrics.descender;
    if (fi->src->ft.face->units_per_EM == 0)
-     return val;  
+     return val;
    dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
    ret = (val * fi->src->ft.face->size->metrics.y_scale) / (dv * dv);
    return ret;
@@ -82,7 +82,7 @@ evas_common_font_max_ascent_get(RGBA_Font *fn)
    fi = fn->fonts->data;
    val = (int)fi->src->ft.face->bbox.yMax;
    if (fi->src->ft.face->units_per_EM == 0)
-     return val;  
+     return val;
    dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
    ret = (val * fi->src->ft.face->size->metrics.y_scale) / (dv * dv);
    return ret;
@@ -99,7 +99,7 @@ evas_common_font_max_descent_get(RGBA_Font *fn)
    fi = fn->fonts->data;
    val = -(int)fi->src->ft.face->bbox.yMin;
    if (fi->src->ft.face->units_per_EM == 0)
-     return val;  
+     return val;
    dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
    ret = (val * fi->src->ft.face->size->metrics.y_scale) / (dv * dv);
    return ret;
@@ -116,7 +116,7 @@ evas_common_font_get_line_advance(RGBA_Font *fn)
    fi = fn->fonts->data;
    val = (int)fi->src->ft.face->size->metrics.height;
    if (fi->src->ft.face->units_per_EM == 0)
-     return val;  
+     return val;
    dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
    ret = (val * fi->src->ft.face->size->metrics.y_scale) / (dv * dv);
    return ret;
@@ -137,11 +137,11 @@ evas_common_font_utf8_get_next(const unsigned char *buf, int *iindex)
    d = buf[index++];
    if (!d)
      return 0;
-   
+
    while (buf[index] && ((buf[index] & 0xc0) == 0x80))
      index++;
    len = index - *iindex;
-   
+
    if (len == 1)
       r = d;
    else if (len == 2)
@@ -177,7 +177,7 @@ evas_common_font_utf8_get_next(const unsigned char *buf, int *iindex)
 	r <<= 6;
 	r |= (d4 & 0x3f);
      }
-   
+
    *iindex = index;
    return r;
 }
@@ -197,11 +197,11 @@ evas_common_font_utf8_get_prev(const unsigned char *buf, int *iindex)
    if (index <= 0)
      return 0;
    d = buf[index--];
-   
+
    while ((index > 0) && ((buf[index] & 0xc0) == 0x80))
      index--;
    len = *iindex - index;
-   
+
    if (len == 1)
       r = d;
    else if (len == 2)
@@ -237,7 +237,7 @@ evas_common_font_utf8_get_prev(const unsigned char *buf, int *iindex)
 	r <<= 6;
 	r |= (d4 & 0x3f);
      }
-   
+
    *iindex = index;
    return r;
 }

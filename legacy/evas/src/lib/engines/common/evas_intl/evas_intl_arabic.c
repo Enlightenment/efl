@@ -1,5 +1,5 @@
 /* Authors:
- * 	Tom Hacohen (tom@stsob.com)
+ *	Tom Hacohen (tom@stsob.com)
  */
 
 #include "../evas_intl_utils.h"
@@ -73,26 +73,26 @@
 #define ARABIC_ISOLATED_YODH		0xFEF1
 
 #define ARABIC_IS_SPECIAL_LETTER(c)	((c) == ARABIC_ISOLATED_ALEPH ||  \
-					  (c) == ARABIC_ISOLATED_DALET || \
-					  (c) == ARABIC_ISOLATED_DAL ||   \
-					  (c) == ARABIC_ISOLATED_RESH ||  \
-					  (c) == ARABIC_ISOLATED_ZAYIN || \
-					  (c) == ARABIC_ISOLATED_WAW  || \
-					  (c) == ARABIC_ISOLATED_TA_MARBUTA)
+      (c) == ARABIC_ISOLATED_DALET || \
+      (c) == ARABIC_ISOLATED_DAL ||   \
+      (c) == ARABIC_ISOLATED_RESH ||  \
+      (c) == ARABIC_ISOLATED_ZAYIN || \
+      (c) == ARABIC_ISOLATED_WAW  || \
+      (c) == ARABIC_ISOLATED_TA_MARBUTA)
 /* from the first to last (including all forms, and special cases
  * like aleph maqsura in some forms*/
 #define ARABIC_IS_CONTEXT(c)	(((c) >= ARABIC_ISOLATED_ALEPH && (c) <= ARABIC_ISOLATED_YODH + 3) || \
-				 ((c) >= ARABIC_ISOLATED_ALEPH_MADDA && (c) <= ARABIC_ISOLATED_ALEPH_MADDA + 3) || \
-				 (c) == 0xFBE8 || \
-				 (c) == 0xFBE9) 
+      ((c) >= ARABIC_ISOLATED_ALEPH_MADDA && (c) <= ARABIC_ISOLATED_ALEPH_MADDA + 3) || \
+      (c) == 0xFBE8 || \
+      (c) == 0xFBE9)
 #define ARABIC_IS_LETTER(c)	ARABIC_IS_CONTEXT(c)
 /* used for arabic context logic */
 /* each value is the offset from the regular char in unicode */
 enum _ArabicContext {
-		ARABIC_CONTEXT_ISOLATED = 0,
-		ARABIC_CONTEXT_FINAL = 1,
-		ARABIC_CONTEXT_INITIAL = 2,
-		ARABIC_CONTEXT_MEDIAL = 3
+     ARABIC_CONTEXT_ISOLATED = 0,
+     ARABIC_CONTEXT_FINAL = 1,
+     ARABIC_CONTEXT_INITIAL = 2,
+     ARABIC_CONTEXT_MEDIAL = 3
 };
 typedef enum _ArabicContext ArabicContext;
 
@@ -110,73 +110,74 @@ _evas_intl_arabic_general_to_isolated(FriBidiChar chr);
 int
 evas_intl_arabic_to_context(FriBidiChar *text)
 {
-	int i;
-	int len;
-	int start_of_context = 1; /* assume the first is special/non arabic */
-	int last_is_first = 0;
-	int last_letter = 0;
-	
-	/* check for empty string */
-	if (!*text)
-		return;
+   int i;
+   int len;
+   int start_of_context = 1; /* assume the first is special/non arabic */
+   int last_is_first = 0;
+   int last_letter = 0;
 
-	len = _evas_intl_arabic_text_to_isolated(text);
-	/*FIXME: make it skip vowels */
-	for (i = 0 ; i < len ; i++)  {
+   /* check for empty string */
+   if (!*text)
+     return;
 
-		if (! ARABIC_IS_LETTER(text[i])) {
-			/* mark so it won't be touched,
-			 * though start formating */
-			if (last_letter && !start_of_context) {
-				ArabicContext tmp = (last_is_first) ?
-					ARABIC_CONTEXT_ISOLATED
-					:
-					ARABIC_CONTEXT_FINAL;
-				text[i-1] = _evas_intl_arabic_isolated_to_context(
-					last_letter,
-					tmp);
-				
-			}
-			last_is_first = 0;
-			start_of_context = 1;
-			last_letter = 0;
-			continue;
-		}
-		/* adjust the last letter */
-		last_letter = text[i];
-		if (ARABIC_IS_SPECIAL_LETTER(text[i])) {
-			if (!start_of_context) 
-				text[i] = _evas_intl_arabic_isolated_to_context(text[i], ARABIC_CONTEXT_FINAL);
-			/* else: leave isolated */
-				
-			start_of_context = 1;
-			last_is_first = 0;
-			continue;
-		}
+   len = _evas_intl_arabic_text_to_isolated(text);
+   /*FIXME: make it skip vowels */
+   for (i = 0; i < len; i++)
+     {
+	if (!ARABIC_IS_LETTER(text[i]))
+	  {
+	     /* mark so it won't be touched,
+	      * though start formating */
+	     if (last_letter && !start_of_context)
+	       {
+		  ArabicContext tmp = (last_is_first) ?
+		     ARABIC_CONTEXT_ISOLATED : ARABIC_CONTEXT_FINAL;
+		  text[i-1] = _evas_intl_arabic_isolated_to_context(
+			last_letter,
+			tmp);
+	       }
+	     last_is_first = 0;
+	     start_of_context = 1;
+	     last_letter = 0;
+	     continue;
+	  }
+	/* adjust the last letter */
+	last_letter = text[i];
+	if (ARABIC_IS_SPECIAL_LETTER(text[i]))
+	  {
+	     if (!start_of_context)
+	       text[i] = _evas_intl_arabic_isolated_to_context(text[i], ARABIC_CONTEXT_FINAL);
+	     /* else: leave isolated */
 
-		if (start_of_context) {
-			text[i] = _evas_intl_arabic_isolated_to_context(text[i], ARABIC_CONTEXT_INITIAL);
-			last_is_first = 1;
-		}
-		else {
-			text[i] = _evas_intl_arabic_isolated_to_context(text[i], ARABIC_CONTEXT_MEDIAL);
-			last_is_first = 0;
-		}
-		/* spceial chars don't get here. */
-		start_of_context = 0;
-		
-	}
-	/* if it's arabic and not isolated, the last is always final */
-	i--;
-	if (last_letter && !start_of_context) {
-				ArabicContext tmp = (last_is_first) ? ARABIC_CONTEXT_ISOLATED : ARABIC_CONTEXT_FINAL;
-				/* because it's medial atm, and should be isolated */
-				text[i] = _evas_intl_arabic_isolated_to_context(
-					last_letter,
-					tmp);
-			}
+	     start_of_context = 1;
+	     last_is_first = 0;
+	     continue;
+	  }
 
-	return len;
+	if (start_of_context)
+	  {
+	     text[i] = _evas_intl_arabic_isolated_to_context(text[i], ARABIC_CONTEXT_INITIAL);
+	     last_is_first = 1;
+	  }
+	else
+	  {
+	     text[i] = _evas_intl_arabic_isolated_to_context(text[i], ARABIC_CONTEXT_MEDIAL);
+	     last_is_first = 0;
+	  }
+	/* spceial chars don't get here. */
+	start_of_context = 0;
+
+     }
+   /* if it's arabic and not isolated, the last is always final */
+   i--;
+   if (last_letter && !start_of_context)
+     {
+	ArabicContext tmp = (last_is_first) ? ARABIC_CONTEXT_ISOLATED : ARABIC_CONTEXT_FINAL;
+	/* because it's medial atm, and should be isolated */
+	text[i] = _evas_intl_arabic_isolated_to_context(last_letter, tmp);
+     }
+
+   return len;
 }
 
 /* I wish I could think about a simpler way to do it.
@@ -184,131 +185,136 @@ evas_intl_arabic_to_context(FriBidiChar *text)
 static FriBidiChar
 _evas_intl_arabic_general_to_isolated(FriBidiChar chr)
 {
-	switch (chr) {
-		case ARABIC_ALEPH_MADDA:
-			return ARABIC_ISOLATED_ALEPH_MADDA;
+   switch (chr)
+     {
+      case ARABIC_ALEPH_MADDA:
+	 return ARABIC_ISOLATED_ALEPH_MADDA;
 
-		case ARABIC_ALEPH:
-			return ARABIC_ISOLATED_ALEPH;
+      case ARABIC_ALEPH:
+	 return ARABIC_ISOLATED_ALEPH;
 
-		case ARABIC_TA_MARBUTA:
-			return ARABIC_ISOLATED_TA_MARBUTA;
-		case ARABIC_BET:
-			return ARABIC_ISOLATED_BET;
-		
-		case ARABIC_TAW:
-			return ARABIC_ISOLATED_TAW;
+      case ARABIC_TA_MARBUTA:
+	 return ARABIC_ISOLATED_TA_MARBUTA;
 
-		case ARABIC_TA:
-			return ARABIC_ISOLATED_TA;
-		
-		case ARABIC_GIMEL:
-			return ARABIC_ISOLATED_GIMEL;
-		
-		case ARABIC_HETH:
-			return ARABIC_ISOLATED_HETH;
-		
-		case ARABIC_HA:
-			return ARABIC_ISOLATED_HA;
-		
-		case ARABIC_DALET:
-			return ARABIC_ISOLATED_DALET;
-		
-		case ARABIC_DAL:
-			return ARABIC_ISOLATED_DAL;
-		
-		case ARABIC_RESH:
-			return ARABIC_ISOLATED_RESH;
-		
-		case ARABIC_ZAYIN:
-			return ARABIC_ISOLATED_ZAYIN;
-		
-		case ARABIC_SHIN:
-			return ARABIC_ISOLATED_SHIN;
-		
-		case ARABIC_SH:
-			return ARABIC_ISOLATED_SH;
-		
-		case ARABIC_TSADE:
-			return ARABIC_ISOLATED_TSADE;
-		
-		case ARABIC_DAD:
-			return ARABIC_ISOLATED_DAD;
-		
-		case ARABIC_TETH:
-			return ARABIC_ISOLATED_TETH;
-		
-		case ARABIC_ZA:
-			return ARABIC_ISOLATED_ZA;
-		
-		case ARABIC_AYIN:
-			return ARABIC_ISOLATED_AYIN;
-		
-		case ARABIC_GHAIN:
-			return ARABIC_ISOLATED_GHAIN;
-		
-		case ARABIC_PE:
-			return ARABIC_ISOLATED_PE;
-		
-		case ARABIC_QOPH:
-			return ARABIC_ISOLATED_QOPH;
-		
-		case ARABIC_KAPH:
-			return ARABIC_ISOLATED_KAPH;
-		
-		case ARABIC_LAMED:
-			return ARABIC_ISOLATED_LAMED;
+      case ARABIC_BET:
+	 return ARABIC_ISOLATED_BET;
 
-		case ARABIC_MEM:
-			return ARABIC_ISOLATED_MEM;
-		
-		case ARABIC_NUN:
-			return ARABIC_ISOLATED_NUN;
-		
-		case ARABIC_HE:
-			return ARABIC_ISOLATED_HE;
-		
-		case ARABIC_WAW:
-			return ARABIC_ISOLATED_WAW;
+      case ARABIC_TAW:
+	 return ARABIC_ISOLATED_TAW;
 
-		case ARABIC_ALEPH_MAQSURA:
-			return ARABIC_ISOLATED_ALEPH_MAQSURA;
-		
-		case ARABIC_YODH:
-			return ARABIC_ISOLATED_YODH;
-		default:
-			return chr;
-	}
+      case ARABIC_TA:
+	 return ARABIC_ISOLATED_TA;
+
+      case ARABIC_GIMEL:
+	 return ARABIC_ISOLATED_GIMEL;
+
+      case ARABIC_HETH:
+	 return ARABIC_ISOLATED_HETH;
+
+      case ARABIC_HA:
+	 return ARABIC_ISOLATED_HA;
+
+      case ARABIC_DALET:
+	 return ARABIC_ISOLATED_DALET;
+
+      case ARABIC_DAL:
+	 return ARABIC_ISOLATED_DAL;
+
+      case ARABIC_RESH:
+	 return ARABIC_ISOLATED_RESH;
+
+      case ARABIC_ZAYIN:
+	 return ARABIC_ISOLATED_ZAYIN;
+
+      case ARABIC_SHIN:
+	 return ARABIC_ISOLATED_SHIN;
+
+      case ARABIC_SH:
+	 return ARABIC_ISOLATED_SH;
+
+      case ARABIC_TSADE:
+	 return ARABIC_ISOLATED_TSADE;
+
+      case ARABIC_DAD:
+	 return ARABIC_ISOLATED_DAD;
+
+      case ARABIC_TETH:
+	 return ARABIC_ISOLATED_TETH;
+
+      case ARABIC_ZA:
+	 return ARABIC_ISOLATED_ZA;
+
+      case ARABIC_AYIN:
+	 return ARABIC_ISOLATED_AYIN;
+
+      case ARABIC_GHAIN:
+	 return ARABIC_ISOLATED_GHAIN;
+
+      case ARABIC_PE:
+	 return ARABIC_ISOLATED_PE;
+
+      case ARABIC_QOPH:
+	 return ARABIC_ISOLATED_QOPH;
+
+      case ARABIC_KAPH:
+	 return ARABIC_ISOLATED_KAPH;
+
+      case ARABIC_LAMED:
+	 return ARABIC_ISOLATED_LAMED;
+
+      case ARABIC_MEM:
+	 return ARABIC_ISOLATED_MEM;
+
+      case ARABIC_NUN:
+	 return ARABIC_ISOLATED_NUN;
+
+      case ARABIC_HE:
+	 return ARABIC_ISOLATED_HE;
+
+      case ARABIC_WAW:
+	 return ARABIC_ISOLATED_WAW;
+
+      case ARABIC_ALEPH_MAQSURA:
+	 return ARABIC_ISOLATED_ALEPH_MAQSURA;
+
+      case ARABIC_YODH:
+	 return ARABIC_ISOLATED_YODH;
+      default:
+	 return chr;
+     }
 }
 
 static FriBidiChar
 _evas_intl_arabic_isolated_to_context(FriBidiChar chr, ArabicContext context)
 {
-	if (ARABIC_IS_SPECIAL_LETTER(chr)) {
-		if (context == ARABIC_CONTEXT_INITIAL)
-			return chr;
-		else
-			return chr + ARABIC_CONTEXT_FINAL;
-	}
-	/* HACK AROUND ALIF MAQSURA */
-	else if (chr == ARABIC_ISOLATED_ALEPH_MAQSURA && context > 1) {
-		chr = 0xFBE8; /* the initial form */
-		context -= 2;
-	}
-	return chr + context;
+   if (ARABIC_IS_SPECIAL_LETTER(chr))
+     {
+	if (context == ARABIC_CONTEXT_INITIAL)
+	  return chr;
+	else
+	  return chr + ARABIC_CONTEXT_FINAL;
+     }
+   /* HACK AROUND ALIF MAQSURA */
+   else if (chr == ARABIC_ISOLATED_ALEPH_MAQSURA && context > 1)
+     {
+	chr = 0xFBE8; /* the initial form */
+	context -= 2;
+     }
+   return chr + context;
 }
 
 static int
 _evas_intl_arabic_text_to_isolated(FriBidiChar *text)
 {
-	int i=0;
-	while (*text) {
-		/* if it's not arabic/it's already in context
-		 * it's just returned the same */
-		*text = _evas_intl_arabic_general_to_isolated(*text);
-		text++;
-		i++;
-	}
-	return i;
+   int i = 0;
+   while (*text)
+     {
+	/* if it's not arabic/it's already in context
+	 * it's just returned the same */
+	*text = _evas_intl_arabic_general_to_isolated(*text);
+	text++;
+	i++;
+     }
+   return i;
 }
 #endif

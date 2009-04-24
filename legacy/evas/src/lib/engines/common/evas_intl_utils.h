@@ -22,8 +22,7 @@ int
 evas_intl_is_rtl_char(FriBidiLevel *embedded_level_list, FriBidiStrIndex i);
 
 char *
-evas_intl_utf8_to_visual(const char *text, int *ret_len, FriBidiCharType *direction,
-			FriBidiLevel **embedding_level_list);
+evas_intl_utf8_to_visual(const char *text, int *ret_len, FriBidiCharType *direction, FriBidiLevel **embedding_level_list);
 #endif
 
 #endif
