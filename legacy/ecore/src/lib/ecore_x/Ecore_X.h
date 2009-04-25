@@ -1211,6 +1211,7 @@ EAPI void            ecore_x_drawable_geometry_get_fetch(void);
 EAPI void            ecore_x_drawable_geometry_get(Ecore_X_Drawable d, int *x, int *y, int *w, int *h);
 EAPI int             ecore_x_drawable_border_width_get(Ecore_X_Drawable d);
 EAPI int             ecore_x_drawable_depth_get(Ecore_X_Drawable d);
+EAPI void            ecore_x_drawable_rectangle_fill(Ecore_X_Drawable d, Ecore_X_GC gc, int x, int y, int width, int height);
 
 EAPI int  ecore_x_cursor_color_supported_get(void);
 EAPI Ecore_X_Cursor ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int hot_y);

@@ -127,3 +127,24 @@ ecore_x_drawable_depth_get(Ecore_X_Drawable drawable __UNUSED__)
 
    return reply->depth;
 }
+
+/**
+ * Fill the specified rectangle on a drawable.
+ * @param d The given drawable.
+ * @param gc The graphic context that controls the fill rules.
+ * @param x The X coordinate of the top-left corner of the rectangle.
+ * @param y The Y coordinate of the top-left corner of the rectangle.
+ * @param width The width of the rectangle.
+ * @param height The height of the rectangle.
+ */
+EAPI void
+ecore_x_drawable_rectangle_fill(Ecore_X_Drawable d, Ecore_X_GC gc, int x, int y, int width, int height)
+{
+   xcb_rectangle_t rectangle;
+
+   rectangle.x = x;
+   rectangle.y = y;
+   rectangle.width = width;
+   rectangle.height = height;
+   xcb_poly_fill_rectangle(_ecore_xcb_conn, d, gc, 1, &rectangle);
+}
