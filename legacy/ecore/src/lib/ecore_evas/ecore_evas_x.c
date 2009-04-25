@@ -327,9 +327,6 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
 	  {
              unsigned int    foreground;
 	     Ecore_X_GC      gc;
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-             xcb_rectangle_t rectangle;
-# endif /* BUILD_ECORE_EVAS_SOFTWARE_XCB */
 
 	     if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
 	     ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
@@ -337,17 +334,8 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
              gc = ecore_x_gc_new(ee->engine.x.mask,
                                  ECORE_X_GC_VALUE_MASK_FOREGROUND,
                                  &foreground);
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-             rectangle.x = 0;
-             rectangle.y = 0;
-             rectangle.width = ee->w;
-             rectangle.height = ee->h;
-	     xcb_poly_fill_rectangle(ecore_x_connection_get(), ee->engine.x.mask, gc,
-                                     1, &rectangle);
-# else
-	     XFillRectangle(ecore_x_display_get(), ee->engine.x.mask, gc,
-			    0, 0, ee->w, ee->h);
-# endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
+             ecore_x_drawable_rectangle_fill(ee->engine.x.mask, gc,
+                                             0, 0, ee->w, ee->h);
              ecore_x_gc_del(gc);
 	     einfo->info.mask = ee->engine.x.mask;
 	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
@@ -365,9 +353,6 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
 	  {
              unsigned int    foreground;
 	     Ecore_X_GC      gc;
-# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
-             xcb_rectangle_t rectangle;
-# endif /* BUILD_ECORE_EVAS_XRENDER_XCB */
 
 	     if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
 	     ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
@@ -375,17 +360,8 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
              ecore_x_gc_new(ee->engine.x.mask,
                             ECORE_X_GC_VALUE_MASK_FOREGROUND,
                             &foreground);
-# ifdef BUILD_ECORE_EVAS_XRENDER_XCB
-             rectangle.x = 0;
-             rectangle.y = 0;
-             rectangle.width = ee->w;
-             rectangle.height = ee->h;
-	     xcb_poly_fill_rectangle(ecore_x_connection_get(), ee->engine.x.mask, gc,
-                                     1, &rectangle);
-# else
-	     XFillRectangle(ecore_x_display_get(), ee->engine.x.mask, gc,
-			    0, 0, ee->w, ee->h);
-# endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
+             ecore_x_drawable_rectangle_fill(ee->engine.x.mask, gc,
+                                             0, 0, ee->w, ee->h);
              ecore_x_gc_del(gc);
 	     einfo->info.mask = ee->engine.x.mask;
 	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
