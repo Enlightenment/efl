@@ -5,15 +5,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <Eina.h>
 #include <Evas.h>
 #include <Emotion.h>
 
 static Evas_Object *_emotion = NULL;
-
-static void
-_shutdown(Ethumb_Plugin *plugin)
-{
-}
 
 static void
 _frame_resized_cb(void *data, Evas_Object *o, void *event_info)
@@ -66,16 +62,29 @@ _generate_thumb(Ethumb *e)
    return 1;
 }
 
-Ethumb_Plugin *
-ethumb_plugin_init(void)
+EAPI Ethumb_Plugin *
+ethumb_plugin_get(void)
 {
    static const char *extensions[] = { "avi", NULL };
    static Ethumb_Plugin plugin =
      {
 	extensions,
 	_generate_thumb,
-	_shutdown
      };
 
    return &plugin;
 }
+
+Eina_Bool
+_module_init(void)
+{
+   return EINA_TRUE;
+}
+
+void
+_module_shutdown()
+{
+}
+
+EINA_MODULE_INIT(_module_init);
+EINA_MODULE_SHUTDOWN(_module_shutdown);

@@ -11,7 +11,6 @@ struct _Ethumb_Plugin
 {
    const char **extensions;
    int (*generate_thumb)(Ethumb *);
-   void (*shutdown)(Ethumb_Plugin *);
 };
 
 void ethumb_calculate_aspect(Ethumb *e, int iw, int ih, int *w, int *h);

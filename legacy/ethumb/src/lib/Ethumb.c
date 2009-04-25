@@ -55,12 +55,6 @@
 #define WRN(...) EINA_ERROR_PWARN(__VA_ARGS__)
 #define ERR(...) EINA_ERROR_PERR(__VA_ARGS__)
 
-struct _Ethumb_Plugin_Object
-{
-   Ethumb_Plugin *plugin;
-   void *dl_handle;
-};
-
 static int initcount = 0;
 static const char *_home_thumb_dir = NULL;
 static const char *_thumb_category_normal = NULL;
@@ -70,92 +64,60 @@ static const int THUMB_SIZE_NORMAL = 128;
 static const int THUMB_SIZE_LARGE = 256;
 
 static Eina_Hash *_plugins_ext = NULL;
-static Eina_List *_plugins = NULL;
+static Eina_Array *_plugins = NULL;
 
-static struct _Ethumb_Plugin_Object *
-_ethumb_plugin_load(const char *path)
+static Eina_Bool
+_ethumb_plugin_list_cb(Eina_Module *m, void *data)
 {
-   char *errmsg;
-   struct _Ethumb_Plugin_Object *p;
-   Ethumb_Plugin *(*init)(void);
+   const char *file;
+   const char **ext;
+   Ethumb_Plugin *plugin;
+   Ethumb_Plugin *(*plugin_get)(void);
 
-   p = calloc(1, sizeof(struct _Ethumb_Plugin_Object));
+   if (!eina_module_load(m))
+     return EINA_FALSE;
 
-   p->dl_handle = dlopen(path, RTLD_NOW | RTLD_LOCAL);
-   errmsg = dlerror();
-   if (errmsg)
+   plugin_get = eina_module_symbol_get(m, "ethumb_plugin_get");
+   if (!plugin_get)
      {
-	ERR("could not dlopen() %s\n", errmsg);
-	return NULL;
+	eina_module_unload(m);
+	return EINA_FALSE;
      }
 
-   init = dlsym(p->dl_handle, "ethumb_plugin_init");
-   errmsg = dlerror();
-   if (errmsg)
+   file = eina_module_file_get(m);
+
+   plugin = plugin_get();
+   if (!plugin)
      {
-	ERR("could not find plugin entry point %s\n", errmsg);
-	return NULL;
+	ERR("plugin \"%s\" failed to init.\n", file);
+	eina_module_unload(m);
+	return EINA_FALSE;
      }
 
-   p->plugin = init();
-   if (!p->plugin)
-     {
-	ERR("plugin \"%s\" failed to init.\n", path);
-	return NULL;
-     }
+   for (ext = plugin->extensions; *ext; ext++)
+     eina_hash_add(_plugins_ext, *ext, plugin);
 
-   return p;
+   return EINA_TRUE;
 }
 
 static void
 _ethumb_plugins_load(void)
 {
-   DIR *dir;
-   struct dirent *de;
-   char plugin_path[PATH_MAX];
-   struct _Ethumb_Plugin_Object *p;
-
    _plugins_ext = eina_hash_string_small_new(NULL);
    EINA_SAFETY_ON_NULL_RETURN(_plugins_ext);
 
-   dir = opendir(PLUGINSDIR);
-   EINA_SAFETY_ON_NULL_RETURN(dir);
-
-   while ((de = readdir(dir)))
-     {
-	const char **ext;
-	if (strncmp(de->d_name + strlen(de->d_name) - 3, ".so", 3))
-	  continue;
-	snprintf(plugin_path, 1024, "%s/%s", PLUGINSDIR, de->d_name);
-	p = _ethumb_plugin_load(plugin_path);
-	if (!p)
-	  {
-	     ERR("couldn't load plugin '%s'\n", plugin_path);
-	     continue;
-	  }
-	for (ext = p->plugin->extensions; *ext; ext++)
-	  eina_hash_add(_plugins_ext, *ext, p->plugin);
-
-	_plugins = eina_list_append(_plugins, p);
-     }
+   _plugins = eina_module_list_get(_plugins, PLUGINSDIR, 1,
+				   &_ethumb_plugin_list_cb, NULL);
 }
 
 static void
 _ethumb_plugins_unload(void)
 {
-   Eina_List *l;
-
    eina_hash_free(_plugins_ext);
    _plugins_ext = NULL;
-
-   l = _plugins;
-   for (l = _plugins; l; l = l->next)
-     {
-	struct _Ethumb_Plugin_Object *p = l->data;
-	p->plugin->shutdown(p->plugin);
-	dlclose(p->dl_handle);
-	free(p);
-     }
+   eina_module_list_unload(_plugins);
+   eina_module_list_delete(_plugins);
+   _plugins = NULL;
 }
 
 EAPI int
@@ -170,6 +132,7 @@ ethumb_init(void)
    eina_stringshare_init();
    eina_list_init();
    eina_hash_init();
+   eina_module_init();
    evas_init();
    ecore_init();
    ecore_evas_init();
@@ -199,6 +162,7 @@ ethumb_shutdown(void)
 	eina_stringshare_shutdown();
 	eina_list_shutdown();
 	eina_hash_shutdown();
+	eina_module_shutdown();
 	evas_shutdown();
 	ecore_shutdown();
 	ecore_evas_shutdown();

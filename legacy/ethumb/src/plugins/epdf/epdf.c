@@ -5,14 +5,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <Eina.h>
 #include <Evas.h>
 #include <Epdf.h>
-
-static void
-_shutdown(Ethumb_Plugin *plugin)
-{
-   epdf_shutdown();
-}
 
 static int
 _generate_thumb(Ethumb *e)
@@ -67,17 +62,31 @@ _generate_thumb(Ethumb *e)
 }
 
 Ethumb_Plugin *
-ethumb_plugin_init(void)
+ethumb_plugin_get(void)
 {
    static const char *extensions[] = { "pdf", NULL };
    static Ethumb_Plugin plugin =
      {
 	extensions,
 	_generate_thumb,
-	_shutdown
      };
-
-   epdf_init();
 
    return &plugin;
 }
+
+Eina_Bool
+_module_init(void)
+{
+   epdf_init();
+
+   return EINA_TRUE;
+}
+
+static void
+_module_shutdown(void)
+{
+   epdf_shutdown();
+}
+
+EINA_MODULE_INIT(_module_init);
+EINA_MODULE_SHUTDOWN(_module_shutdown);
