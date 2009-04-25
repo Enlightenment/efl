@@ -28,10 +28,6 @@ images {
   image: "pnl.png"                 COMP;
 }
 
-fonts {
-   font: "Vera.ttf"   "Vera";
-}
-
 collections {
    group {
       name: "background";
@@ -613,7 +609,7 @@ collections {
 	       color2:      0 0 0 255;
 	       text {
 		  text: "Video Progress";
-		  font: "Vera";
+		  font: "Sans";
 		  size: 6;
 		  align: 0.0 1.0;
 	       };
@@ -869,7 +865,7 @@ collections {
 	       color:       0 0 0 255;
 	       text {
 		  text: "Video Speed";
-		  font: "Vera";
+		  font: "Sans";
 		  size: 6;
 		  align: 1.0 0.5;
 	       };
@@ -1116,7 +1112,7 @@ collections {
 	       color2:      0 0 0 255;
 	       text {
 		  text: "XX:XX:XX / XX:XX:XX";
-		  font: "Vera";
+		  font: "Sans";
 		  size: 10;
 		  align: 1.0 1.0;
 		  min: 1 1;

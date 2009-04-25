@@ -31,7 +31,6 @@ video_frame_right.png \
 video_frame_top.png \
 whb.png \
 window_inner_shadow.png \
-Vera.ttf \
 theme.edc
 
 theme.edj: Makefile
