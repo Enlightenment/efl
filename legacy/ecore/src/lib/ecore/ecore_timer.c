@@ -184,6 +184,26 @@ ecore_timer_interval_set(Ecore_Timer *timer, double in)
 }
 
 /**
+ * Get the interval the timer ticks on.
+ *
+ * @param   timer The timer to retrieve the interval from
+ * @return  The interval on success. -1 on failure.
+ * @ingroup Ecore_Time_Group
+ */
+EAPI double
+ecore_timer_interval_get(Ecore_Timer *timer)
+{
+   if (!ECORE_MAGIC_CHECK(timer, ECORE_MAGIC_TIMER))
+     {
+	ECORE_MAGIC_FAIL(timer, ECORE_MAGIC_TIMER,
+			 "ecore_timer_interval_get");
+	return -1.0;
+     }
+
+   return timer->in;
+}
+
+/**
  * Add some delay for the next occurence of a timer.
  * This doesn't affect the interval of a timer.
  *

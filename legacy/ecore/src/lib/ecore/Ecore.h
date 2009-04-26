@@ -304,6 +304,7 @@ extern "C" {
    EAPI Ecore_Timer *ecore_timer_loop_add(double in, int (*func) (void *data), const void *data);
    EAPI void        *ecore_timer_del(Ecore_Timer *timer);
    EAPI void         ecore_timer_interval_set(Ecore_Timer *timer, double in);
+   EAPI double       ecore_timer_interval_get(Ecore_Timer *timer);
    EAPI void         ecore_timer_freeze(Ecore_Timer *timer);
    EAPI void         ecore_timer_thaw(Ecore_Timer *timer);
    EAPI void         ecore_timer_delay(Ecore_Timer *timer, double add);
