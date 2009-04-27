@@ -12,6 +12,7 @@ struct _Widget_Data
    Evas_Coord minw[2], minh[2];
    Evas_Bool on_hold : 1;
    Evas_Bool multi : 1;
+   Evas_Bool always_select : 1;
 };
 
 struct _Elm_List_Item
@@ -129,13 +130,18 @@ _item_select(Elm_List_Item *it)
 {
    Widget_Data *wd = elm_widget_data_get(it->obj);
    const char *selectraise;
-   if (it->selected) return;
+   if (it->selected)
+     {
+        if (wd->always_select) goto call;
+        return;
+     }
    edje_object_signal_emit(it->base, "elm,state,selected", "elm");
    selectraise = edje_object_data_get(it->base, "selectraise");
    if ((selectraise) && (!strcmp(selectraise, "on")))
      evas_object_raise(it->base);
    it->selected = 1;
    wd->selected = eina_list_append(wd->selected, it);
+   call:
    if (it->func) it->func((void *)it->data, it->obj, it);
    evas_object_smart_callback_call(it->obj, "selected", it);
 }
@@ -191,6 +197,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 	     Elm_List_Item *it2;
 	     EINA_LIST_FOREACH_SAFE(wd->selected, l, l_next, it2)
 	       if (it2 != it) _item_unselect(it2);
+             _item_select(it);
 	  }
      }
 }
@@ -464,6 +471,13 @@ elm_list_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
      elm_scroller_content_min_limit(wd->scroller, 1, 0);
    else
      elm_scroller_content_min_limit(wd->scroller, 0, 0);
+}
+
+EAPI void      
+elm_list_always_select_mode_set(Evas_Object *obj, Evas_Bool always_select)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   wd->always_select = always_select;
 }
 
 EAPI const Eina_List *

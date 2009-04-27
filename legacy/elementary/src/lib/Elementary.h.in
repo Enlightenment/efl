@@ -574,6 +574,7 @@ extern "C" {
    EAPI void         elm_list_go(Evas_Object *obj);
    EAPI void         elm_list_multi_select_set(Evas_Object *obj, Evas_Bool multi);
    EAPI void         elm_list_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode);
+   EAPI void         elm_list_always_select_mode_set(Evas_Object *obj, Evas_Bool always_select);
    EAPI const Eina_List     *elm_list_items_get(const Evas_Object *obj);
    EAPI Elm_List_Item       *elm_list_selected_item_get(const Evas_Object *obj);
    EAPI const Eina_List     *elm_list_selected_items_get(const Evas_Object *obj);
