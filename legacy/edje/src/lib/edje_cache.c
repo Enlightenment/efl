@@ -222,10 +222,10 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 	return edf;
      }
 
+   if (!coll) return edf;
+
    if (!edf->collection_hash)
      edf->collection_hash = eina_hash_string_small_new(NULL);
-
-   if (!coll) return edf;
 
    edc = eina_hash_find(edf->collection_hash, coll);
    if (edc)
@@ -321,6 +321,11 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
      }
    if (edc_ret) *edc_ret = edc;
 
+   if (eina_hash_population(edf->collection_hash) == 0)
+     {
+       eina_hash_free(edf->collection_hash);
+       edf->collection_hash = NULL;
+     }
    return edf;
 }
 
@@ -360,7 +365,7 @@ _edje_cache_coll_unref(Edje_File *edf, Edje_Part_Collection *edc)
    edc->references--;
    if (edc->references != 0) return;
    eina_hash_del(edf->collection_hash, edc->part, edc);
-   if (!eina_hash_population(edf->collection_hash))
+   if (eina_hash_population(edf->collection_hash) == 0)
      {
        eina_hash_free(edf->collection_hash);
        edf->collection_hash = NULL;
