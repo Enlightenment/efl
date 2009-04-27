@@ -2617,6 +2617,34 @@ edje_object_part_box_remove_all(Evas_Object *obj, const char *part, Evas_Bool cl
 
 }
 
+static void
+_edje_box_child_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *child __UNUSED__, void *einfo __UNUSED__)
+{
+   Edje_Real_Part *rp = data;
+   rp->edje->dirty = 1;
+   _edje_recalc(rp->edje);
+}
+
+static void
+_edje_box_child_add(Edje_Real_Part *rp, Evas_Object *child)
+{
+   evas_object_event_callback_add
+     (child, EVAS_CALLBACK_DEL, _edje_box_child_del_cb, rp);
+
+   rp->edje->dirty = 1;
+   _edje_recalc(rp->edje);
+}
+
+static void
+_edje_box_child_remove(Edje_Real_Part *rp, Evas_Object *child)
+{
+   evas_object_event_callback_del_full
+     (child, EVAS_CALLBACK_DEL, _edje_box_child_del_cb, rp);
+
+   rp->edje->dirty = 1;
+   _edje_recalc(rp->edje);
+}
+
 Evas_Bool
 _edje_real_part_box_append(Edje_Real_Part *rp, Evas_Object *child_obj)
 {
@@ -2624,6 +2652,8 @@ _edje_real_part_box_append(Edje_Real_Part *rp, Evas_Object *child_obj)
 
    opt = evas_object_box_append(rp->object, child_obj);
    if (!opt) return 0;
+
+   _edje_box_child_add(rp, child_obj);
 
    return 1;
 }
@@ -2636,6 +2666,8 @@ _edje_real_part_box_prepend(Edje_Real_Part *rp, Evas_Object *child_obj)
    opt = evas_object_box_prepend(rp->object, child_obj);
    if (!opt) return 0;
 
+   _edje_box_child_add(rp, child_obj);
+
    return 1;
 }
 
@@ -2646,6 +2678,8 @@ _edje_real_part_box_insert_before(Edje_Real_Part *rp, Evas_Object *child_obj, co
 
    opt = evas_object_box_insert_before(rp->object, child_obj, ref);
    if (!opt) return 0;
+
+   _edje_box_child_add(rp, child_obj);
 
    return 1;
 }
@@ -2658,6 +2692,8 @@ _edje_real_part_box_insert_at(Edje_Real_Part *rp, Evas_Object *child_obj, unsign
    opt = evas_object_box_insert_at(rp->object, child_obj, pos);
    if (!opt) return 0;
 
+   _edje_box_child_add(rp, child_obj);
+
    return 1;
 }
 
@@ -2665,9 +2701,9 @@ Evas_Object *
 _edje_real_part_box_remove(Edje_Real_Part *rp, Evas_Object *child_obj)
 {
    if (evas_object_data_get(child_obj, "\377 edje.box_item")) return NULL;
-   if (evas_object_box_remove(rp->object, child_obj))
-     return child_obj;
-   return NULL;
+   if (!evas_object_box_remove(rp->object, child_obj)) return NULL;
+   _edje_box_child_remove(rp, child_obj);
+   return child_obj;
 }
 
 Evas_Object *
@@ -2682,9 +2718,9 @@ _edje_real_part_box_remove_at(Edje_Real_Part *rp, unsigned int pos)
    if (!opt) return NULL;
    child_obj = opt->obj;
    if (evas_object_data_get(child_obj, "\377 edje.box_item")) return NULL;
-   if (evas_object_box_remove_at(rp->object, pos))
-     return child_obj;
-   return NULL;
+   if (!evas_object_box_remove_at(rp->object, pos)) return NULL;
+   _edje_box_child_remove(rp, child_obj);
+   return child_obj;
 }
 
 Evas_Bool
@@ -2693,13 +2729,12 @@ _edje_real_part_box_remove_all(Edje_Real_Part *rp, Evas_Bool clear)
    Eina_List *children;
    int i;
 
-   if (eina_list_count(rp->items) == 0)
-     return evas_object_box_remove_all(rp->object, clear);
    i = 0;
    children = evas_object_box_children_get(rp->object);
    while (children)
      {
 	Evas_Object *child_obj = children->data;
+	_edje_box_child_remove(rp, child_obj);
 	if (evas_object_data_get(child_obj, "\377 edje.box_item"))
 	  i++;
 	else
@@ -2712,6 +2747,34 @@ _edje_real_part_box_remove_all(Edje_Real_Part *rp, Evas_Bool clear)
 	children = eina_list_remove_list(children, children);
      }
    return 1;
+}
+
+static void
+_edje_table_child_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *child __UNUSED__, void *einfo __UNUSED__)
+{
+   Edje_Real_Part *rp = data;
+   rp->edje->dirty = 1;
+   _edje_recalc(rp->edje);
+}
+
+static void
+_edje_table_child_add(Edje_Real_Part *rp, Evas_Object *child)
+{
+   evas_object_event_callback_add
+     (child, EVAS_CALLBACK_DEL, _edje_table_child_del_cb, rp);
+
+   rp->edje->dirty = 1;
+   _edje_recalc(rp->edje);
+}
+
+static void
+_edje_table_child_remove(Edje_Real_Part *rp, Evas_Object *child)
+{
+   evas_object_event_callback_del_full
+     (child, EVAS_CALLBACK_DEL, _edje_table_child_del_cb, rp);
+
+   rp->edje->dirty = 1;
+   _edje_recalc(rp->edje);
 }
 
 /** Packs an object into the table
@@ -2829,13 +2892,22 @@ edje_object_part_table_clear(Evas_Object *obj, const char *part, Evas_Bool clear
 Evas_Bool
 _edje_real_part_table_pack(Edje_Real_Part *rp, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
 {
-   return evas_object_table_pack(rp->object, child_obj, col, row, colspan, rowspan);
+   Evas_Bool ret = evas_object_table_pack(rp->object, child_obj, col, row, colspan, rowspan);
+
+   _edje_table_child_add(rp, child_obj);
+
+   return ret;
 }
 
 Evas_Bool
 _edje_real_part_table_unpack(Edje_Real_Part *rp, Evas_Object *child_obj)
 {
-   return evas_object_table_unpack(rp->object, child_obj);
+   Evas_Bool ret = evas_object_table_unpack(rp->object, child_obj);
+
+   if (ret)
+     _edje_table_child_remove(rp, child_obj);
+
+   return ret;
 }
 
 void
@@ -2843,15 +2915,11 @@ _edje_real_part_table_clear(Edje_Real_Part *rp, Evas_Bool clear)
 {
    Eina_List *children;
 
-   if (eina_list_count(rp->items) == 0)
-     {
-	evas_object_table_clear(rp->object, clear);
-	return;
-     }
    children = evas_object_table_children_get(rp->object);
    while (children)
      {
 	Evas_Object *child_obj = children->data;
+	_edje_table_child_remove(rp, child_obj);
 	if (!evas_object_data_get(child_obj, "\377 edje.table_item"))
 	  {
 	     evas_object_table_unpack(rp->object, child_obj);
