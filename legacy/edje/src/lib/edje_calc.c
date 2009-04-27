@@ -1254,6 +1254,11 @@ _edje_table_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
    evas_object_table_homogeneous_set(ep->object, chosen_desc->table.homogeneous);
    evas_object_table_align_set(ep->object, chosen_desc->table.align.x, chosen_desc->table.align.y);
    evas_object_table_padding_set(ep->object, chosen_desc->table.padding.x, chosen_desc->table.padding.y);
+   if (evas_object_smart_need_recalculate_get(ep->object))
+     {
+	evas_object_smart_need_recalculate_set(ep->object, 0);
+	evas_object_smart_calculate(ep->object);
+     }
 }
 
 static void
