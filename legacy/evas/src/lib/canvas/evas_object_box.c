@@ -124,6 +124,7 @@ _on_child_del(void *data, Evas *evas __UNUSED__, Evas_Object *o, void *einfo __U
 
    if (!api->remove(box, priv, o))
      fputs("child removal failed\n", stderr);
+   evas_object_smart_changed(box);
 }
 
 static void
@@ -2092,6 +2093,8 @@ evas_object_box_remove_all(Evas_Object *o, Evas_Bool clear)
    if ((!api) || (!api->remove))
      return 0;
 
+   evas_object_smart_changed(o);
+
    while (priv->children)
      {
         Evas_Object_Box_Option *opt = priv->children->data;
@@ -2108,7 +2111,6 @@ evas_object_box_remove_all(Evas_Object *o, Evas_Bool clear)
         else return 0;
      }
 
-   evas_object_smart_changed(o);
    return 1;
 }
 
