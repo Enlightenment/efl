@@ -28,7 +28,7 @@ static const char *_ecore_fb_li_kbd_syms[128 * 6] =
  * size.
  *						- bigeasy
  */
-extern int long_has_neither_32_not_64_bits(void);
+extern int long_has_neither_32_nor_64_bits(void);
 static inline int test_bit(int bit, unsigned long *array)
 {
 	if (sizeof(long) == 4)
