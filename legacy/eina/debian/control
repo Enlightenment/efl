@@ -3,7 +3,7 @@ Section: libs
 Priority: optional
 Maintainer: Debian Pkg-e Team <pkg-e-devel@lists.alioth.debian.org>
 Uploaders: Albin Tonnerre <albin.tonnerre@gmail.com>, Jan Lübbe <jluebbe@debian.org>
-Build-Depends: debhelper (>= 6), cdbs, doxygen, pkg-config
+Build-Depends: debhelper (>= 6), cdbs, doxygen, pkg-config, libtool
 Standards-Version: 3.8.1
 Homepage: http://www.enlightenment.org
 
