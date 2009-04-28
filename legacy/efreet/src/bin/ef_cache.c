@@ -1,5 +1,6 @@
 #include "Efreet.h"
 #include <stdio.h>
+#include <Ecore.h>
 #include "ef_test.h"
 
 static int

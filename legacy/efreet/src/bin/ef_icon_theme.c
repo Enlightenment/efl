@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <Ecore.h>
 #include <Ecore_File.h>
 
 #ifndef PATH_MAX
