@@ -14,6 +14,7 @@
 # include <winsock2.h>
 #endif
 
+#include <Ecore.h>
 #include <Ecore_Str.h>
 #include <Ecore_File.h>
 
