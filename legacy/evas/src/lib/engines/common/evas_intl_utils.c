@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "evas_common.h"
 #include "evas_intl_utils.h"
 
 #ifdef USE_FRIBIDI
