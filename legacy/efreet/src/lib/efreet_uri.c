@@ -9,6 +9,10 @@
 #include <ctype.h>
 #include <limits.h>
 
+#ifndef _POSIX_HOST_NAME_MAX
+#define _POSIX_HOST_NAME_MAX 255
+#endif
+
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
