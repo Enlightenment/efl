@@ -455,7 +455,7 @@ ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length, cons
 	     sprintf(tmp, "Content-type: %s", content_type);
 	     url_con->headers = curl_slist_append(url_con->headers, tmp);
 	  }
-	sprintf(tmp, "Content-length: %d", length);
+	sprintf(tmp, "Content-length: %zu", length);
 	url_con->headers = curl_slist_append(url_con->headers, tmp);
      }
 
@@ -745,7 +745,7 @@ _ecore_con_url_read_cb(void *ptr, size_t size, size_t nitems, void *stream)
 	fclose((FILE*)stream);
 	return 0;
    }
-   fprintf(stderr, "*** We read %d bytes from file\n", retcode);
+   fprintf(stderr, "*** We read %zu bytes from file\n", retcode);
    return retcode;
 }
 
@@ -884,9 +884,11 @@ _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
 		  e = calloc(1, sizeof(Ecore_Con_Event_Url_Complete));
 		  if (e)
 		    {
+		       long status;	/* curl API uses long, not int */
 		       e->url_con = url_con;
 		       e->status = 0;
-		       curl_easy_getinfo(curlmsg->easy_handle, CURLINFO_RESPONSE_CODE, &e->status);
+		       curl_easy_getinfo(curlmsg->easy_handle, CURLINFO_RESPONSE_CODE, &status);
+		       e->status = status;
 		       _url_complete_push_event(ECORE_CON_EVENT_URL_COMPLETE, e);
 		    }
 		  curl_multi_remove_handle(curlm, url_con->curl_easy);
