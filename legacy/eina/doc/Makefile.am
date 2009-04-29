@@ -8,6 +8,7 @@ if EFL_BUILD_DOC
 doc: all
 	rm -rf html/ latex/ man/
 	$(efl_doxygen)
+	cp img/* html/
 
 else
 
@@ -19,4 +20,4 @@ endif
 clean-local:
 	@rm -rf html/ latex/ man/
 
-EXTRA_DIST = Doxyfile
+EXTRA_DIST = Doxyfile $(wildcard img/*.*) e.css head.html foot.html
