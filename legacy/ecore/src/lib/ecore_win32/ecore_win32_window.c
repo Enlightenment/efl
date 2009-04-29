@@ -734,7 +734,7 @@ ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
              return;
           }
         SetLastError(0);
-        if (!SetWindowLongPtr(w, GWL_STYLE, style & ~WS_CAPTION) && (GetLastError() != 0))
+        if (!SetWindowLongPtr(w, GWL_STYLE, style & ~(WS_CAPTION | WS_THICKFRAME)) && (GetLastError() != 0))
           {
              EINA_ERROR_PERR("SetWindowLongPtr() failed\n");
              return;
@@ -747,7 +747,7 @@ ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
              EINA_ERROR_PERR("GetWindowRect() failed\n");
              return;
           }
-        style |= WS_CAPTION;
+        style |= WS_CAPTION | WS_THICKFRAME;
         if (!AdjustWindowRect (&rect, style, FALSE))
           {
              EINA_ERROR_PERR("AdjustWindowRect() failed\n");
