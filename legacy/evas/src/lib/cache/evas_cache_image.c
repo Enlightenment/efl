@@ -18,6 +18,11 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
+#ifdef EVAS_CSERVE
+// FIXME: cache server and threaded preload clash badly atm - disable
+#undef BUILD_ASYNC_PRELOAD
+#endif
+
 #ifdef BUILD_ASYNC_PRELOAD
 #include <pthread.h>
 
@@ -801,8 +806,11 @@ evas_cache_image_dirty(Image_Entry *im, int x, int y, int w, int h)
    cache = im->cache;
    if (!(im->flags.dirty))
      {
+#ifndef EVAS_CSERVE
+// if ref 1 also copy if using shared cache as its read-only
         if (im->references == 1) im_dirty = im;
         else
+#endif
           {
              int        error;
 

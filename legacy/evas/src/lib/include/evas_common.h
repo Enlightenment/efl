@@ -471,6 +471,7 @@ struct _Image_Entry
 #endif
 
    Image_Entry_Flags      flags;
+   void                  *data1, *data2;
 };
 
 struct _Engine_Image_Entry

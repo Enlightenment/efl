@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = canvas data cache file engines imaging include
+SUBDIRS = canvas data cache cserve file engines imaging include
 
 AM_CPPFLAGS = \
 -I. \
@@ -30,6 +30,7 @@ data/libevas_data.la \
 file/libevas_file.la \
 cache/libevas_cache.la \
 imaging/libevas_imaging.la \
+cserve/libevas_cserve.la \
 engines/common/libevas_engine_common.la \
 @dlopen_libs@ \
 @FREETYPE_LIBS@ \
@@ -47,6 +48,7 @@ data/libevas_data.la \
 file/libevas_file.la \
 cache/libevas_cache.la \
 imaging/libevas_imaging.la \
+cserve/libevas_cserve.la \
 engines/common/libevas_engine_common.la
 
 if BUILD_ENGINE_SOFTWARE_16

@@ -4,6 +4,7 @@
 
 #include "evas_common.h"
 #include "evas_private.h"
+#include "evas_cs.h"
 
 extern Eina_List *evas_modules;
 
@@ -43,6 +44,16 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
    char                 *dot;
    int                   i;
 
+
+#ifdef EVAS_CSERVE
+   if (evas_cserve_use_get())
+     {
+        if (evas_cserve_image_load(ie, ie->file, ie->key, &(ie->load_opts)))
+          {
+             return 0;
+          }
+     }
+#endif   
    dot = strrchr (ie->file, '.');
    if (dot)
      {
@@ -89,7 +100,7 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 
    return -1;
 
-  ok:
+   ok:
    ie->info.module = (void*) em;
    ie->info.loader = (void*) evas_image_load_func;
    evas_module_ref((Evas_Module*) ie->info.module);
@@ -101,8 +112,29 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
 {
    Evas_Image_Load_Func *evas_image_load_func = NULL;
 
-   if (!ie->info.module) return -1;
    if (ie->flags.loaded) return -1;
+
+#ifdef EVAS_CSERVE
+   if (ie->data1)
+     {
+        if (evas_cserve_image_data_load(ie))
+          {
+             RGBA_Image *im = (RGBA_Image *)ie;
+             Mem *mem;
+             
+             mem = ie->data2;
+             if (mem)
+               {
+                  im->image.data = mem->data + mem->offset;
+                  im->image.no_free = 1;
+                  return 0;
+               }
+          }
+        return -1;
+     }
+#endif
+   
+   if (!ie->info.module) return -1;
 
    evas_image_load_func = ie->info.loader;
    evas_module_use((Evas_Module*) ie->info.module);

@@ -1,5 +1,6 @@
 #include "evas_common.h"
 #include "evas_private.h"
+#include "evas_cs.h"
 
 extern Eina_List *evas_modules;
 static int initcount = 0;
@@ -28,6 +29,9 @@ evas_init(void)
 
 	evas_module_init();
 	evas_async_events_init();
+#ifdef EVAS_CSERVE
+        if (getenv("EVAS_CSERVE")) evas_cserve_init();
+#endif        
      }
    return ++initcount;
 }
@@ -38,6 +42,9 @@ evas_shutdown(void)
    initcount--;
    if (initcount == 0)
      {
+#ifdef EVAS_CSERVE
+        if (getenv("EVAS_CSERVE")) evas_cserve_shutdown();
+#endif        
 	evas_async_events_shutdown();
 	evas_font_dir_cache_free();
 	evas_common_shutdown();

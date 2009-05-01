@@ -5,6 +5,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS	     = -I. \
 		       -I$(top_srcdir)/src/lib \
+		       -I$(top_srcdir)/src/lib/cserve \
 		       -I$(top_srcdir)/src/lib/include \
 		       -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 		       -DPACKAGE_LIB_DIR=\"$(libdir)\" \

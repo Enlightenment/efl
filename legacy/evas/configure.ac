@@ -137,10 +137,29 @@ dnl when used, that option makes configure script fails when
 dnl a requirement is selected, but not met.
 AC_ARG_ENABLE(strict,
   AC_HELP_STRING(
-    [enable strict mode]),
+    [--enable-strict],
+    [enable strict checking mode. [[default==disabled]]]),
   [use_strict="yes"],
   [use_strict="no"]
 )
+
+#######################################
+## CACHE SERVER (CSERVE / CS)
+want_evas_cserve="yes"
+AC_MSG_CHECKING(whether to build shared cache server and support)
+AC_ARG_ENABLE(evas-cserve,
+  AC_HELP_STRING(
+    [--disable-evas-cserve],
+    [disable shared cache server support. [[default=enabled]]]
+  ),
+  [ want_evas_cserve="$enableval" ]
+)
+AC_MSG_RESULT($want_evas_cserve)
+
+AM_CONDITIONAL(EVAS_CSERVE, test "x$want_evas_cserve" = "xyes")
+if test "x$want_evas_cserve" = "xyes"; then
+  AC_DEFINE(EVAS_CSERVE, 1, [Shared caceh server.])
+fi
 
 ##################################################################
 #fribidi support - OPTIONAL!
@@ -1044,12 +1063,14 @@ evas.pc
 doc/evas.dox
 doc/Makefile
 src/Makefile
+src/bin/Makefile
 src/lib/Makefile
 src/lib/canvas/Makefile
 src/lib/data/Makefile
 src/lib/file/Makefile
 src/lib/imaging/Makefile
 src/lib/cache/Makefile
+src/lib/cserve/Makefile
 src/lib/engines/Makefile
 src/lib/engines/common/Makefile
 src/lib/engines/common/evas_op_add/Makefile
@@ -1172,11 +1193,13 @@ echo "  SSE.....................: $build_cpu_sse"
 echo "  ALTIVEC.................: $build_cpu_altivec"
 echo "  NEON....................: $build_cpu_neon"
 echo "  Thread Support..........: $build_pthreads"
+echo "Features:"
 echo "  MAGIC_DEBUG.............: $want_evas_magic_debug"
+echo "  Cache Server............: $want_evas_cserve"
 echo
-echo "Threaded Pipe Rendering...: $build_pipe_render"
-echo "Async Events..............: $build_async_events"
-echo "Async Image Preload.......: $build_async_preload"
+echo "  Threaded Pipe Rendering.: $build_pipe_render"
+echo "  Async Events............: $build_async_events"
+echo "  Async Image Preload.....: $build_async_preload"
 echo
 echo "ARGB Software Engine Options:"
 echo "  Sampling Scaler.........: $scaler_sample"
