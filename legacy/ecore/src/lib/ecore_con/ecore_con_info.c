@@ -197,7 +197,7 @@ ecore_con_info_get(Ecore_Con_Server *svr,
    if ((cbdata->pid = fork()) == 0)
      {
         Ecore_Con_Info *container;
-	struct addrinfo *result;
+	struct addrinfo *result = NULL;
 	char service[NI_MAXSERV];
 	char hbuf[NI_MAXHOST];
 	char sbuf[NI_MAXSERV];
@@ -239,6 +239,8 @@ ecore_con_info_get(Ecore_Con_Server *svr,
 	  }
 
 on_error:
+	if (result)
+	  freeaddrinfo(result);
 	err = write(fd[1], "", 1);
 	close(fd[1]);
 # ifdef __USE_ISOC99
