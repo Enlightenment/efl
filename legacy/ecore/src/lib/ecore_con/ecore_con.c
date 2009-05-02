@@ -1728,7 +1728,7 @@ _ecore_con_event_server_add_free(void *data __UNUSED__, void *ev)
    e = ev;
    e->server->event_count--;
    if ((e->server->event_count == 0) && (e->server->delete_me))
-     ecore_con_server_del(e->server);
+     _ecore_con_server_free(e->server);
    free(e);
 }
 
@@ -1740,7 +1740,7 @@ _ecore_con_event_server_del_free(void *data __UNUSED__, void *ev)
    e = ev;
    e->server->event_count--;
    if ((e->server->event_count == 0) && (e->server->delete_me))
-     ecore_con_server_del(e->server);
+     _ecore_con_server_free(e->server);
    free(e);
 }
 
@@ -1753,6 +1753,6 @@ _ecore_con_event_server_data_free(void *data __UNUSED__, void *ev)
    e->server->event_count--;
    if (e->data) free(e->data);
    if ((e->server->event_count == 0) && (e->server->delete_me))
-     ecore_con_server_del(e->server);
+     _ecore_con_server_free(e->server);
    free(e);
 }
