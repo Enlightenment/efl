@@ -822,14 +822,20 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
    sep = strchr(sig, ':');
    if (sep)
      {
+        size_t length;
+        char *part;
        /* the signal contains a colon, split the signal into "group:signal",
 	* and deliver it to "group"
 	*/
-       char *part = strdupa(sig);
+       length = strlen(sig) + 1;
+       part = alloca(length);
        if (part)
 	 {
-	    char *newsig = part + (sep - sig);
+            char *newsig;
 	    int i;
+
+            memcpy(part, sig, length);
+            newsig = part + (sep - sig);
 	    *newsig = '\0';
 	    newsig++;
 
