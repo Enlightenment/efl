@@ -34,7 +34,7 @@ static struct ext_loader_s	loaders[] = {
    { "pnm", "pmaps" }
 };
 
-int
+EAPI int
 evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 {
    Evas_Image_Load_Func *evas_image_load_func = NULL;
@@ -107,7 +107,7 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
    return 0;
 }
 
-int
+EAPI int
 evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
 {
    Evas_Image_Load_Func *evas_image_load_func = NULL;

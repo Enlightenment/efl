@@ -48,4 +48,9 @@ EAPI void
                                        int src_region_w, int src_region_h,
                                        int dst_region_x, int dst_region_y,
                                        int dst_region_w, int dst_region_h);
+
+
+EAPI int evas_common_load_rgba_image_module_from_file (Image_Entry *im);
+EAPI int evas_common_load_rgba_image_data_from_file   (Image_Entry *im);
+
 #endif /* _EVAS_IMAGE_H */
