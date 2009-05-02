@@ -1923,6 +1923,7 @@ _ecore_x_event_handle_randr_notify(XEvent *xevent)
 {
    const XRRNotifyEvent *randr_event;
 
+   _ecore_x_last_event_mouse_move = 0;
    randr_event = (const XRRNotifyEvent *)xevent;
    switch (randr_event->subtype)
      {
