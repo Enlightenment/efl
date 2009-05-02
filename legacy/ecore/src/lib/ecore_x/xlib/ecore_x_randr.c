@@ -10,30 +10,57 @@
 
 #include "ecore_x_private.h"
 
-EAPI int
-ecore_x_randr_query()
+static int _randr_available = 0;
+#ifdef ECORE_XRANDR
+static int _randr_major, _randr_minor, _randr_version;
+#define RANDR_1_2 ((1 << 16) | 2)
+#define RANDR_1_3 ((1 << 16) | 3)
+#endif
+
+void
+_ecore_x_randr_init(void)
 {
 #ifdef ECORE_XRANDR
-   int randr_base = 0;
-   int randr_err_base = 0;
+   _randr_major = 1;
+   _randr_minor = 3;
+   _randr_version = 0;
 
-   if (XRRQueryExtension(_ecore_x_disp, &randr_base, &randr_err_base))
-     return 1;
+   if (XRRQueryVersion(_ecore_x_disp, &_randr_major, &_randr_minor))
+     {
+	_randr_version = (_randr_major << 16) | _randr_minor;
+	_randr_available = 1;
+     }
    else
-     return 0;
+     _randr_available = 0;
 #else
-   return 0;
+   _randr_available = 0;
 #endif
+}
+
+EAPI int
+ecore_x_randr_query(void)
+{
+   return _randr_available;
 }
 
 EAPI int
 ecore_x_randr_events_select(Ecore_X_Window win, int on)
 {
 #ifdef ECORE_XRANDR
-   if (on)
-     XRRSelectInput(_ecore_x_disp, win, RRScreenChangeNotifyMask);
+   int mask;
+
+   if (!on)
+     mask = 0;
    else
-     XRRSelectInput(_ecore_x_disp, win, 0);
+     {
+	mask = RRScreenChangeNotifyMask;
+	if (_randr_version >= RANDR_1_2)
+	  mask |= (RRCrtcChangeNotifyMask |
+		   RROutputChangeNotifyMask |
+		   RROutputPropertyNotifyMask);
+     }
+
+   XRRSelectInput(_ecore_x_disp, win, mask);
 
    return 1;
 #else

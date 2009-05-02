@@ -208,6 +208,7 @@ void _ecore_x_event_handle_sync_counter(XEvent *xevent);
 void _ecore_x_event_handle_sync_alarm(XEvent *xevent);
 #ifdef ECORE_XRANDR
 void _ecore_x_event_handle_randr_change(XEvent *xevent);
+void _ecore_x_event_handle_randr_notify(XEvent *xevent);
 #endif
 #ifdef ECORE_XFIXES
 void _ecore_x_event_handle_fixes_selection_notify(XEvent *xevent);
@@ -248,6 +249,7 @@ void _ecore_x_fixes_init(void);
 void _ecore_x_damage_init(void);
 void _ecore_x_composite_init(void);
 void _ecore_x_dpms_init(void);
+void _ecore_x_randr_init(void);
 
 void _ecore_x_atoms_init(void);
     

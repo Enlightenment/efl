@@ -67,6 +67,11 @@ typedef void         Ecore_X_Screen;
 typedef Ecore_X_ID   Ecore_X_Sync_Counter;
 typedef Ecore_X_ID   Ecore_X_Sync_Alarm;
 
+typedef Ecore_X_ID     Ecore_X_Randr_Output;
+typedef Ecore_X_ID     Ecore_X_Randr_Crtc;
+typedef Ecore_X_ID     Ecore_X_Randr_Mode;
+typedef unsigned short Ecore_X_Randr_Size_ID;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -167,6 +172,21 @@ typedef enum _Ecore_X_Randr_Rotation {
    ECORE_X_RANDR_FLIP_X = (1 << 4),
    ECORE_X_RANDR_FLIP_Y = (1 << 5)
 } Ecore_X_Randr_Rotation;
+
+typedef enum _Ecore_X_Randr_Connection {
+  ECORE_X_RANDR_CONNECTED = 0,
+  ECORE_X_RANDR_DISCONNECTED = 1,
+  ECORE_X_RANDR_UNKNOWN_CONNECTION = 2
+} Ecore_X_Randr_Connection;
+
+typedef enum _Ecore_X_Render_Subpixel_Order {
+   ECORE_X_RENDER_SUBPIXEL_ORDER_UNKNOWN = 0,
+   ECORE_X_RENDER_SUBPIXEL_ORDER_HORIZONTAL_RGB = 1,
+   ECORE_X_RENDER_SUBPIXEL_ORDER_HORIZONTAL_BGR = 2,
+   ECORE_X_RENDER_SUBPIXEL_ORDER_VERTICAL_RGB = 3,
+   ECORE_X_RENDER_SUBPIXEL_ORDER_VERTICAL_BGR = 4,
+   ECORE_X_RENDER_SUBPIXEL_ORDER_NONE = 5
+} Ecore_X_Render_Subpixel_Order;
 
 #define ECORE_X_SELECTION_TARGET_TARGETS "TARGETS"
 #define ECORE_X_SELECTION_TARGET_TEXT "TEXT"
@@ -299,6 +319,9 @@ typedef struct _Ecore_X_Event_Screensaver_Notify       Ecore_X_Event_Screensaver
 typedef struct _Ecore_X_Event_Sync_Counter             Ecore_X_Event_Sync_Counter;
 typedef struct _Ecore_X_Event_Sync_Alarm               Ecore_X_Event_Sync_Alarm;
 typedef struct _Ecore_X_Event_Screen_Change            Ecore_X_Event_Screen_Change;
+typedef struct _Ecore_X_Event_Randr_Crtc_Change        Ecore_X_Event_Randr_Crtc_Change;
+typedef struct _Ecore_X_Event_Randr_Output_Change       Ecore_X_Event_Randr_Output_Change;
+typedef struct _Ecore_X_Event_Randr_Output_Property_Notify Ecore_X_Event_Randr_Output_Property_Notify;
 
 typedef struct _Ecore_X_Event_Window_Delete_Request                Ecore_X_Event_Window_Delete_Request;
 typedef struct _Ecore_X_Event_Window_Prop_Title_Change             Ecore_X_Event_Window_Prop_Title_Change;
@@ -647,8 +670,49 @@ struct _Ecore_X_Event_Sync_Alarm
 
 struct _Ecore_X_Event_Screen_Change
 {
-   Ecore_X_Window win, root;
-   int            width, height;
+   Ecore_X_Window                win;
+   Ecore_X_Window                root;
+   int                           width;
+   int                           height;
+   Ecore_X_Time                  time;
+   Ecore_X_Time                  config_time;
+   int                           mm_width;   /* in millimeters */
+   int                           mm_height;  /* in millimeters */
+   Ecore_X_Randr_Rotation        rotation;
+   Ecore_X_Render_Subpixel_Order subpixel_order;
+   Ecore_X_Randr_Size_ID         size_id;
+};
+
+struct _Ecore_X_Event_Randr_Crtc_Change
+{
+   Ecore_X_Window                win;
+   Ecore_X_Randr_Crtc            crtc;
+   Ecore_X_Randr_Mode            mode;
+   Ecore_X_Randr_Rotation        rotation;
+   int                           x;
+   int                           y;
+   int                           width;
+   int                           height;
+};
+
+struct _Ecore_X_Event_Randr_Output_Change
+{
+   Ecore_X_Window                win;
+   Ecore_X_Randr_Output          output;
+   Ecore_X_Randr_Crtc            crtc;
+   Ecore_X_Randr_Mode            mode;
+   Ecore_X_Randr_Rotation        rotation;
+   Ecore_X_Randr_Connection      connection;
+   Ecore_X_Render_Subpixel_Order subpixel_order;
+};
+
+struct _Ecore_X_Event_Randr_Output_Property_Notify
+{
+   Ecore_X_Window                win;
+   Ecore_X_Randr_Output          output;
+   Ecore_X_Atom                  property;
+   Ecore_X_Time                  time;
+   int                           state; /* NewValue, Deleted */
 };
 
 struct _Ecore_X_Event_Window_Delete_Request
@@ -792,6 +856,9 @@ EAPI extern int ECORE_X_EVENT_SCREENSAVER_NOTIFY;
 EAPI extern int ECORE_X_EVENT_SYNC_COUNTER;
 EAPI extern int ECORE_X_EVENT_SYNC_ALARM;
 EAPI extern int ECORE_X_EVENT_SCREEN_CHANGE;
+EAPI extern int ECORE_X_EVENT_RANDR_CRTC_CHANGE;
+EAPI extern int ECORE_X_EVENT_RANDR_OUTPUT_CHANGE;
+EAPI extern int ECORE_X_EVENT_RANDR_OUTPUT_PROPERTY_NOTIFY;
 EAPI extern int ECORE_X_EVENT_DAMAGE_NOTIFY;
 
 EAPI extern int ECORE_X_EVENT_WINDOW_DELETE_REQUEST;
@@ -1566,7 +1633,7 @@ struct _Ecore_X_Screen_Refresh_Rate
    int rate;
 };
 
-EAPI int                     ecore_x_randr_query();
+EAPI int                     ecore_x_randr_query(void);
 EAPI int                     ecore_x_randr_events_select(Ecore_X_Window win, int on);
 EAPI void                    ecore_x_randr_get_screen_info_prefetch(Ecore_X_Window window);
 EAPI void                    ecore_x_randr_get_screen_info_fetch(void);

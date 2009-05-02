@@ -1852,7 +1852,94 @@ _ecore_x_event_handle_randr_change(XEvent *xevent)
    e->root = randr_event->root;
    e->width = randr_event->width;
    e->height = randr_event->height;
+   e->time = randr_event->timestamp;
+   e->config_time = randr_event->config_timestamp;
+   e->mm_width = randr_event->mwidth;
+   e->mm_height = randr_event->mheight;
+   e->rotation = randr_event->rotation;
+   e->subpixel_order = randr_event->subpixel_order;
    ecore_event_add(ECORE_X_EVENT_SCREEN_CHANGE, e, NULL, NULL);
+}
+
+static void
+_ecore_x_event_handle_randr_notify_crtc_change(const XRRNotifyEvent *xevent)
+{
+   const XRRCrtcChangeNotifyEvent *randr_event;
+   Ecore_X_Event_Randr_Crtc_Change *e;
+
+   randr_event = (const XRRCrtcChangeNotifyEvent *)xevent;
+
+   e = calloc(1, sizeof(Ecore_X_Event_Randr_Crtc_Change));
+   if (!e) return;
+   e->win = randr_event->window;
+   e->crtc = randr_event->crtc;
+   e->mode = randr_event->mode;
+   e->rotation = randr_event->rotation;
+   e->x = randr_event->x;
+   e->y = randr_event->y;
+   e->width = randr_event->width;
+   e->height = randr_event->height;
+   ecore_event_add(ECORE_X_EVENT_RANDR_CRTC_CHANGE, e, NULL, NULL);
+}
+
+static void
+_ecore_x_event_handle_randr_notify_output_change(const XRRNotifyEvent *xevent)
+{
+   const XRROutputChangeNotifyEvent *randr_event;
+   Ecore_X_Event_Randr_Output_Change *e;
+
+   randr_event = (const XRROutputChangeNotifyEvent *)xevent;
+
+   e = calloc(1, sizeof(Ecore_X_Event_Randr_Output_Change));
+   if (!e) return;
+   e->win = randr_event->window;
+   e->output = randr_event->output;
+   e->crtc = randr_event->crtc;
+   e->mode = randr_event->mode;
+   e->rotation = randr_event->rotation;
+   e->connection = randr_event->connection;
+   e->subpixel_order = randr_event->subpixel_order;
+}
+
+static void
+_ecore_x_event_handle_randr_notify_output_property(const XRRNotifyEvent *xevent)
+{
+   const XRROutputPropertyNotifyEvent *randr_event;
+   Ecore_X_Event_Randr_Output_Property_Notify *e;
+
+   randr_event = (const XRROutputPropertyNotifyEvent *)xevent;
+
+   e = calloc(1, sizeof(Ecore_X_Event_Randr_Output_Property_Notify));
+   if (!e) return;
+   e->win = randr_event->window;
+   e->output = randr_event->output;
+   e->property = randr_event->property;
+   e->time = randr_event->timestamp;
+   e->state = randr_event->state;
+}
+
+void
+_ecore_x_event_handle_randr_notify(XEvent *xevent)
+{
+   const XRRNotifyEvent *randr_event;
+
+   randr_event = (const XRRNotifyEvent *)xevent;
+   switch (randr_event->subtype)
+     {
+      case RRNotify_CrtcChange:
+	 _ecore_x_event_handle_randr_notify_crtc_change(randr_event);
+	 break;
+      case RRNotify_OutputChange:
+	 _ecore_x_event_handle_randr_notify_output_change(randr_event);
+	 break;
+      case RRNotify_OutputProperty:
+	 _ecore_x_event_handle_randr_notify_output_property(randr_event);
+	 break;
+      default:
+	 fprintf(stderr, "ERROR: unknown XRandR RRNotify subtype: %d.\n",
+		 randr_event->subtype);
+	 break;
+     }
 }
 #endif
 

@@ -93,7 +93,9 @@ EAPI int ECORE_X_EVENT_SYNC_COUNTER = 0;
 EAPI int ECORE_X_EVENT_SYNC_ALARM = 0;
 EAPI int ECORE_X_EVENT_SCREEN_CHANGE = 0;
 EAPI int ECORE_X_EVENT_DAMAGE_NOTIFY = 0;
-
+EAPI int ECORE_X_EVENT_RANDR_CRTC_CHANGE = 0;
+EAPI int ECORE_X_EVENT_RANDR_OUTPUT_CHANGE = 0;
+EAPI int ECORE_X_EVENT_RANDR_OUTPUT_PROPERTY_NOTIFY = 0;
 EAPI int ECORE_X_EVENT_WINDOW_DELETE_REQUEST = 0;
 /*
 EAPI int ECORE_X_EVENT_WINDOW_PROP_TITLE_CHANGE = 0;
@@ -175,19 +177,23 @@ ecore_x_init(const char *name)
    if (!_ecore_x_disp) return 0;
    _ecore_x_error_handler_init();
    _ecore_x_event_handlers_num = LASTEvent;
-   
+
+#define ECORE_X_EVENT_HANDLERS_GROW(ext_base, ext_num_events)		\
+   do {									\
+     if (_ecore_x_event_handlers_num < (ext_base + ext_num_events))	\
+       _ecore_x_event_handlers_num = (ext_base + ext_num_events);	\
+   } while (0)
+
    if (XShapeQueryExtension(_ecore_x_disp, &shape_base, &shape_err_base))
-     _ecore_x_event_shape_id = shape_base + ShapeNotify;
-   if (_ecore_x_event_shape_id >= _ecore_x_event_handlers_num)
-     _ecore_x_event_handlers_num = _ecore_x_event_shape_id + 1;
-   
+     _ecore_x_event_shape_id = shape_base;
+   ECORE_X_EVENT_HANDLERS_GROW(shape_base, ShapeNumberEvents);
+
 #ifdef ECORE_XSS
    if (XScreenSaverQueryExtension(_ecore_x_disp, &screensaver_base, &screensaver_err_base))
-     _ecore_x_event_screensaver_id = screensaver_base + ScreenSaverNotify;
-#endif   
-   if (_ecore_x_event_screensaver_id >= _ecore_x_event_handlers_num)
-     _ecore_x_event_handlers_num = _ecore_x_event_screensaver_id + 1;
-   
+     _ecore_x_event_screensaver_id = screensaver_base;
+#endif
+   ECORE_X_EVENT_HANDLERS_GROW(screensaver_base, ScreenSaverNumberEvents);
+
    if (XSyncQueryExtension(_ecore_x_disp, &sync_base, &sync_err_base))
      {
 	int major, minor;
@@ -196,28 +202,24 @@ ecore_x_init(const char *name)
 	if (!XSyncInitialize(_ecore_x_disp, &major, &minor))
 	  _ecore_x_event_sync_id = 0;
      }
-   if (_ecore_x_event_sync_id + XSyncAlarmNotify >= _ecore_x_event_handlers_num)
-     _ecore_x_event_handlers_num = _ecore_x_event_sync_id + XSyncAlarmNotify + 1;
-   
+   ECORE_X_EVENT_HANDLERS_GROW(sync_base, XSyncNumberEvents);
+
 #ifdef ECORE_XRANDR
    if (XRRQueryExtension(_ecore_x_disp, &randr_base, &randr_err_base))
-     _ecore_x_event_randr_id = randr_base + RRScreenChangeNotify;
-   if (_ecore_x_event_randr_id >= _ecore_x_event_handlers_num)
-     _ecore_x_event_handlers_num = _ecore_x_event_randr_id + 1;
+     _ecore_x_event_randr_id = randr_base;
+   ECORE_X_EVENT_HANDLERS_GROW(randr_base, RRNumberEvents);
 #endif
 
 #ifdef ECORE_XFIXES
    if (XFixesQueryExtension(_ecore_x_disp, &fixes_base, &fixes_err_base))
-     _ecore_x_event_fixes_selection_id = fixes_base + XFixesSelectionNotify;
-   if (_ecore_x_event_fixes_selection_id >= _ecore_x_event_handlers_num)
-     _ecore_x_event_handlers_num = _ecore_x_event_fixes_selection_id + 1;
+     _ecore_x_event_fixes_selection_id = fixes_base;
+   ECORE_X_EVENT_HANDLERS_GROW(fixes_base, XFixesNumberEvents);
 #endif
 
 #ifdef ECORE_XDAMAGE
    if (XDamageQueryExtension(_ecore_x_disp, &damage_base, &damage_err_base))
-     _ecore_x_event_damage_id = damage_base + XDamageNotify;
-   if (_ecore_x_event_damage_id >= _ecore_x_event_handlers_num)
-     _ecore_x_event_handlers_num = _ecore_x_event_damage_id + 1;
+     _ecore_x_event_damage_id = damage_base;
+   ECORE_X_EVENT_HANDLERS_GROW(damage_base, XDamageNumberEvents);
 #endif
 
    _ecore_x_event_handlers = calloc(_ecore_x_event_handlers_num, sizeof(void *));
@@ -277,7 +279,10 @@ ecore_x_init(const char *name)
      }
 #ifdef ECORE_XRANDR
    if (_ecore_x_event_randr_id)
-     _ecore_x_event_handlers[_ecore_x_event_randr_id] = _ecore_x_event_handle_randr_change;
+     {
+	_ecore_x_event_handlers[_ecore_x_event_randr_id + RRScreenChangeNotify] = _ecore_x_event_handle_randr_change;
+	_ecore_x_event_handlers[_ecore_x_event_randr_id + RRNotify] = _ecore_x_event_handle_randr_notify;
+     }
 #endif
 #ifdef ECORE_XFIXES
    if (_ecore_x_event_fixes_selection_id)
@@ -334,6 +339,9 @@ ecore_x_init(const char *name)
 	ECORE_X_EVENT_SYNC_COUNTER             = ecore_event_type_new();
 	ECORE_X_EVENT_SYNC_ALARM               = ecore_event_type_new();
 	ECORE_X_EVENT_SCREEN_CHANGE            = ecore_event_type_new();
+	ECORE_X_EVENT_RANDR_CRTC_CHANGE        = ecore_event_type_new();
+	ECORE_X_EVENT_RANDR_OUTPUT_CHANGE      = ecore_event_type_new();
+	ECORE_X_EVENT_RANDR_OUTPUT_PROPERTY_NOTIFY = ecore_event_type_new();
 	ECORE_X_EVENT_DAMAGE_NOTIFY            = ecore_event_type_new();
 	
 	ECORE_X_EVENT_WINDOW_DELETE_REQUEST                = ecore_event_type_new();
@@ -426,7 +434,8 @@ ecore_x_init(const char *name)
    _ecore_x_damage_init();
    _ecore_x_composite_init();
    _ecore_x_dpms_init();
-   
+   _ecore_x_randr_init();
+
    _ecore_x_init_count++;
    
    _ecore_x_private_win = ecore_x_window_override_new(0, -77, -777, 123, 456);
