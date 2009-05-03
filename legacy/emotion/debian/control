@@ -2,7 +2,7 @@ Source: emotion
 Priority: optional
 Section: libs
 Maintainer: Falko Schmidt <falko@alphagemini.org>
-Build-Depends: cdbs, debhelper (>= 6), pkg-config, libeet-dev, libevas-dev, libedje-dev, libecore-dev, libembryo-dev, libxine-dev (>=1.1.0), libgstreamer0.10-dev, libgstreamer-plugins-base0.10-dev
+Build-Depends: cdbs, debhelper (>= 6), pkg-config, libeet-dev, libevas-dev, libedje-dev, libecore-dev, libembryo-dev, libxine-dev (>=1.1.0), libgstreamer0.10-dev, libgstreamer-plugins-base0.10-dev, libtool
 Standards-Version: 3.8.1
 Homepage: http://www.enlightenment.org
 
