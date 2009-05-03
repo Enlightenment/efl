@@ -191,8 +191,8 @@ ecore_x_init(const char *name)
 #ifdef ECORE_XSS
    if (XScreenSaverQueryExtension(_ecore_x_disp, &screensaver_base, &screensaver_err_base))
      _ecore_x_event_screensaver_id = screensaver_base;
-#endif
    ECORE_X_EVENT_HANDLERS_GROW(screensaver_base, ScreenSaverNumberEvents);
+#endif
 
    if (XSyncQueryExtension(_ecore_x_disp, &sync_base, &sync_err_base))
      {
