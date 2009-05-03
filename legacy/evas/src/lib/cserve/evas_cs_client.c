@@ -1,6 +1,32 @@
 #include "evas_cs.h"
+#include <signal.h>
 
 #ifdef EVAS_CSERVE
+
+static void
+pipe_handler(int x, siginfo_t *info, void *data)
+{
+}
+
+static void
+pipe_handle(int push)
+{
+   static struct sigaction old_action;
+   struct sigaction action;
+
+   if (push)
+     {
+        action.sa_handler = NULL;
+        action.sa_sigaction = pipe_handler;
+        action.sa_flags = SA_RESTART | SA_SIGINFO;
+        sigemptyset(&action.sa_mask);
+        sigaction(SIGPIPE, &action, &old_action);
+     }
+   else
+     {
+        sigaction(SIGPIPE, &old_action, &action);
+     }
+}
 
 static Server *
 server_connect(void)
@@ -52,12 +78,22 @@ server_send(Server *s, int opcode, int size, unsigned char *data)
    int ints[2];
    int num;
    
+   pipe_handle(1);
    ints[0] = size;
    ints[1] = opcode;
    num = write(s->fd, ints, (sizeof(int) * 2));
-   if (num < 0) return 0;
+   if (num < 0)
+     {
+        pipe_handle(0);
+        return 0;
+     }
    num = write(s->fd, data, size);
-   if (num < 0) return 0;
+   if (num < 0)
+     {
+        pipe_handle(0);
+        return 0;
+     }
+   pipe_handle(0);
    return 1;
 }
 
@@ -158,6 +194,7 @@ evas_cserve_image_load(Image_Entry *ie, const char *file, const char *key, RGBA_
    Op_Load msg;
    Op_Load_Reply *rep;
    unsigned char *buf;
+   char fbuf[PATH_MAX], wd[PATH_MAX];
    int flen, klen;
    int opcode;
    int size;
@@ -171,6 +208,15 @@ evas_cserve_image_load(Image_Entry *ie, const char *file, const char *key, RGBA_
    msg.lopt.dpi = lopt->dpi;
    msg.lopt.w = lopt->w;
    msg.lopt.h = lopt->h;
+   if (file[0] != '/')
+     {
+        if (getcwd(wd, sizeof(wd)))
+          {
+             snprintf(fbuf, "%s/%s", wd, file);
+             file = fbuf;
+          }
+     }
+   if (!realpath(file, wd)) file = wd;
    flen = strlen(file) + 1;
    klen = strlen(key) + 1;
    buf = malloc(sizeof(msg) + flen + klen);

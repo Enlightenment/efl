@@ -123,6 +123,7 @@ evas_cserve_mem_close(Mem *m)
 EAPI Eina_Bool
 evas_cserve_mem_resize(Mem *m, int size)
 {
+   if (m->size == size) return 1;
    if (m->write)
      {
         if (ftruncate(m->fd, size) < 0) return 0;

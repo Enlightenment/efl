@@ -1,11 +1,9 @@
 #include "Evas.h"
 #include "evas_cs.h"
+#include <signal.h>
 
 // fixme:'s
 // 
-// sigint/term - catch and shut down cleanly (server)
-// sigpipe - catch and ignore (both)
-// cwd for loading files needs to be put into a full path (client)
 // add ops to get/set cache size, check time and cache time (both)
 // add ops to get internal state (both)
 // preload - make it work (both)
@@ -658,6 +656,66 @@ parse_args(int argc, char **argv)
      }
 }
 
+static exit_flag = 0;
+
+static void
+exit_handler(int x, siginfo_t *info, void *data)
+{
+   exit_flag = 1;
+}
+
+static void
+pipe_handler(int x, siginfo_t *info, void *data)
+{
+}
+
+static void
+signal_init(void)
+{
+   struct sigaction action, old_action;
+   
+   action.sa_handler = NULL;
+   action.sa_sigaction = exit_handler;
+   action.sa_flags = SA_RESTART | SA_SIGINFO;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGINT, &action, &old_action);
+
+   action.sa_handler = NULL;
+   action.sa_sigaction = exit_handler;
+   action.sa_flags = SA_RESTART | SA_SIGINFO;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGTERM, &action, &old_action);
+
+   action.sa_handler = NULL;
+   action.sa_sigaction = exit_handler;
+   action.sa_flags = SA_RESTART | SA_SIGINFO;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGQUIT, &action, &old_action);
+
+   action.sa_handler = NULL;
+   action.sa_sigaction = pipe_handler;
+   action.sa_flags = SA_RESTART | SA_SIGINFO;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGPIPE, &action, &old_action);
+
+   // SIGUSR1
+   // SIGUSR2
+   // SIGHUP
+
+   // SIGCHLD
+   
+   // SIGSEGV
+   // SIGILL
+   // SIGBUS
+   // SIGFPE
+   // SIGABRT
+}
+
+static void
+signal_shutdown(void)
+{
+}
+
 int
 main(int argc, char **argv)
 {
@@ -670,6 +728,7 @@ main(int argc, char **argv)
    evas_init();
 
    img_init();
+   signal_init();
    s = evas_cserve_server_add();
    if (!s)
      {
@@ -706,7 +765,9 @@ main(int argc, char **argv)
      {
         /* fixme: timeout 0 only her - future use timeouts for timed
          * housekeping */
+        if (exit_flag) break;
         evas_cserve_server_wait(s, t_next * 1000000);
+        if (exit_flag) break;
         t = time(NULL);
         t_next = t - last_check;
         if ((t_next) > cache_item_timeout_check)
@@ -720,6 +781,12 @@ main(int argc, char **argv)
           t_next = 1;
      }
    error:
+   printf("clean shutdown\n");
+   if (stat_mem)
+     {
+        stat_clean(stat_mem);
+     }
+   signal_shutdown();
    img_shutdown();
    if (stat_mem)
      {
