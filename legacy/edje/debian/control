@@ -6,7 +6,7 @@ Uploaders: Albin Tonnerre <albin.tonnerre@gmail.com>,
  Xavier Oswald <x.oswald@free.fr>, Jan Lübbe <jluebbe@debian.org>
 Build-Depends: debhelper (>= 6), cdbs, quilt, libeet-dev, libevas-dev (>= 0.9.9.060+svnYYYYMMDD),
  libecore-dev (>= 0.9.9.060+svnYYYYMMDD), libembryo-dev, libeina-dev (>= 0.0.2.060+svnYYYYMMDD),
- doxygen, libtool
+ doxygen, pkg-config, libtool
 Standards-Version: 3.8.1
 Homepage: http://enlightenment.org
 
