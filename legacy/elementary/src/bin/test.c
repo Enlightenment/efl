@@ -2095,6 +2095,7 @@ my_bt_29(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bg);
    
    gl = elm_genlist_add(win);
+   elm_genlist_horizontal_mode_set(gl, ELM_LIST_LIMIT);
    elm_win_resize_object_add(win, gl);
    evas_object_size_hint_weight_set(gl, 1.0, 1.0);
    evas_object_show(gl);
@@ -3150,7 +3151,7 @@ my_bt_37(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *win, *bg, *gl, *bx, *bx2, *bt;
    static Testitem tit[3];
    int i;
-   
+
    win = elm_win_add(NULL, "genlist-5", ELM_WIN_BASIC);
    elm_win_title_set(win, "Genlist 5");
    elm_win_autodel_set(win, 1);
@@ -3170,7 +3171,6 @@ my_bt_37(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(gl, -1.0, -1.0);
    evas_object_size_hint_weight_set(gl, 1.0, 1.0);
    evas_object_show(gl);
-
    itc5.item_style     = "double_label";
    itc5.func.label_get = gl5_label_get;
    itc5.func.icon_get  = gl5_icon_get;

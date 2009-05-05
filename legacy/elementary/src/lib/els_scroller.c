@@ -648,8 +648,8 @@ _smart_onhold_animator(void *data)
    if (sd->down.onhold_tlast > 0.0)
      {
         td = t - sd->down.onhold_tlast;
-        vx = sd->down.onhold_vx * td * _elm_config->thumbscroll_threshhold * 2.0;
-        vy = sd->down.onhold_vy * td * _elm_config->thumbscroll_threshhold * 2.0;
+        vx = sd->down.onhold_vx * td * (double)_elm_config->thumbscroll_threshhold * 2.0;
+        vy = sd->down.onhold_vy * td * (double)_elm_config->thumbscroll_threshhold * 2.0;
         elm_smart_scroller_child_pos_get(sd->smart_obj, &ox, &oy);
         sd->down.onhold_vxe += vx;
         sd->down.onhold_vye += vy;
@@ -744,7 +744,7 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj, void *event_info)
                   double vx = 0.0, vy = 0.0;
                   
                   evas_object_geometry_get(sd->event_obj, &ex, &ey, &ew, &eh); 
-                  x = ev->cur.canvas.y - ex;
+                  x = ev->cur.canvas.x - ex;
                   y = ev->cur.canvas.y - ey;
                   if (x < _elm_config->thumbscroll_threshhold)
                     {
