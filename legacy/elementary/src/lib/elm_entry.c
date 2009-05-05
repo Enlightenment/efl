@@ -14,6 +14,7 @@ struct _Widget_Data
    const char *cut_sel;
    Evas_Coord lastw;
    Evas_Coord downx, downy;
+   Evas_Coord cx, cy, cw, ch;
    Evas_Bool changed : 1;
    Evas_Bool linewrap : 1;
    Evas_Bool single_line : 1;
@@ -22,6 +23,7 @@ struct _Widget_Data
    Evas_Bool selection_asked : 1;
    Evas_Bool have_selection : 1;
    Evas_Bool selmode : 1;
+   Evas_Bool deferred_cur : 1;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -85,6 +87,8 @@ _elm_win_recalc_job(void *data)
    edje_object_size_min_restricted_calc(wd->ent, &minw, &minh, resw, 0);
    evas_object_size_hint_min_set(data, minminw, minh);
    evas_object_size_hint_max_set(data, -1, maxh);
+   if (wd->deferred_cur)
+     elm_widget_show_region_set(data, wd->cx, wd->cy, wd->cw, wd->ch);
 }
 
 static void
@@ -587,9 +591,9 @@ static void
 _signal_entry_changed(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   evas_object_smart_callback_call(data, "changed", NULL);
    wd->changed = 1;
    _sizing_eval(data);
+   evas_object_smart_callback_call(data, "changed", NULL);
 }
 
 static void
@@ -733,7 +737,16 @@ _signal_cursor_changed(void *data, Evas_Object *obj, const char *emission, const
    Evas_Coord cx, cy, cw, ch;
    evas_object_smart_callback_call(data, "cursor,changed", NULL);
    edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text", &cx, &cy, &cw, &ch);
-   elm_widget_show_region_set(data, cx, cy, cw, ch);
+   if (!wd->deferred_recalc_job)
+     elm_widget_show_region_set(data, cx, cy, cw, ch);
+   else
+     {
+        wd->deferred_cur = 1;
+        wd->cx = cx;
+        wd->cy = cy;
+        wd->cw = cw;
+        wd->ch = ch;
+     }
 }
 
 static void
