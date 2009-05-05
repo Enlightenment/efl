@@ -566,6 +566,17 @@ ecore_x_fd_get(void)
 }
 
 /**
+ * Retrieves the Ecore_X_Screen handle used for the current X connection.
+ * @return  The current default screen.
+ * @ingroup Ecore_Xcb_Display_Attr_Group
+ */
+EAPI Ecore_X_Screen*
+ecore_x_default_screen_get(void)
+{
+   return (Ecore_X_Screen*) DefaultScreenOfDisplay(_ecore_x_disp);
+}
+
+/**
  * Sets the timeout for a double and triple clicks to be flagged.
  * 
  * This sets the time between clicks before the double_click flag is
