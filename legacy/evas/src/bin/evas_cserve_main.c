@@ -1,11 +1,15 @@
 #include "Evas.h"
 #include "evas_cs.h"
 #include <signal.h>
+#include <sys/time.h>
+#include <time.h>
+#ifdef _WIN32
+# include <windows.h>
+#endif
 
 // fixme:'s
 // 
-// add ops to get/set cache size, check time and cache time (both)
-// add ops to get internal state (both)
+// add ops to get internal cache state (both)
 // preload - make it work (both)
 // monitor /proc/meminfo and if mem low - free items until cache empty (server)
 // 
@@ -35,6 +39,10 @@ struct _Img
       time_t modtime;
       time_t last_stat;
    } file;
+   struct {
+      int load1saved, load2saved;
+      double load1, load2;
+   } stats;
    Lopt load_opts;
    struct {
       int w, h;
@@ -57,11 +65,115 @@ static Eina_List *cache_images = NULL;
 static int cache_usage = 0;
 static int cache_max_usage = 1 * 1024 * 1024;
 static int cache_item_timeout = -1;
-static int cache_item_timeout_check = 10;
+static int cache_item_timeout_check = -1;
 static Mem *stat_mem = NULL;
 
 static int stat_mem_num = 0;
 static Eina_List *stat_mems = NULL;
+
+#ifndef _WIN32
+static double
+get_time(void)
+{
+   struct timeval      timev;
+   
+   gettimeofday(&timev, NULL);
+   return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
+}
+#else
+static double
+get_time(void)
+{
+   return (double)GetTickCount()/1000.0;
+}
+#endif
+
+
+static int stats_dirty = 0;
+static int saved_loads = 0;
+static double saved_load_time = 0;
+static double saved_load_lifetime = 0;
+
+static int saved_loaddatas = 0;
+static double saved_loaddata_time = 0;
+static double saved_loaddata_lifetime = 0;
+
+static int saved_memory = 0;
+static int saved_memory_peak = 0;
+static int alloced_memory = 0;
+static int alloced_memory_peak = 0;
+static int real_memory = 0;
+static int real_memory_peak = 0;
+
+static Eina_Bool
+stats_hash_image_cb(const Eina_Hash *hash __UNUSED__, 
+                   const void *key __UNUSED__,
+                   void *data, void *fdata __UNUSED__)
+{
+   Img *img = data;
+   
+   saved_load_time += img->stats.load1 * img->stats.load1saved;
+   saved_loaddata_time += img->stats.load2 * img->stats.load2saved;
+   if (img->ref > 1)
+     saved_memory += img->image.w * img->image.h * sizeof(DATA32) * (img->ref - 1);
+   if (img->mem)
+     {
+        alloced_memory += img->image.w * img->image.h * sizeof(DATA32);
+        real_memory += (((img->image.w * img->image.h * sizeof(DATA32)) + 4095) >> 12) << 12;
+     }
+   return 1;
+}
+
+static void
+stats_calc(void)
+{
+   Img *img;
+   Eina_List *l;
+   
+   if (!stats_dirty) return;
+   stats_dirty = 0;
+   saved_loads = 0;
+   saved_load_time = 0;
+   saved_loaddatas = 0;
+   saved_loaddata_time = 0;
+   saved_memory = 0;
+   alloced_memory = 0;
+   real_memory = 0;
+   
+   if (active_images)
+     eina_hash_foreach(active_images, stats_hash_image_cb, NULL);
+   EINA_LIST_FOREACH(cache_images, l, img)
+     {
+        saved_loads += img->stats.load1saved;
+        saved_load_time += img->stats.load1 * img->stats.load1saved;
+        saved_loaddatas += img->stats.load2saved;
+        saved_loaddata_time += img->stats.load2 * img->stats.load2saved;
+        if (img->mem)
+          {
+             alloced_memory += img->image.w * img->image.h * sizeof(DATA32);
+             real_memory += (((img->image.w * img->image.h * sizeof(DATA32)) + 4095) >> 12) << 12;
+          }
+     }
+   if (saved_memory > saved_memory_peak)
+     saved_memory_peak = saved_memory;
+   if (real_memory > real_memory_peak)
+     real_memory_peak = real_memory;
+   if (alloced_memory > alloced_memory_peak)
+     alloced_memory_peak = alloced_memory;
+}
+
+static void
+stats_update(void)
+{
+   stats_dirty = 1;
+}
+
+static void
+stats_lifetime_update(Img *img)
+{
+   saved_load_lifetime += img->stats.load1 * img->stats.load1saved;
+   saved_loaddata_lifetime += img->stats.load2 * img->stats.load2saved;
+}
 
 static void
 stat_clean(Mem *m)
@@ -279,12 +391,16 @@ img_new(const char *file, const char *key, RGBA_Image_Loadopts *load_opts, const
    int ret;
    Image_Entry *ie;
    int err = 0;
+   double t;
    
    ret = stat(file, &st);
    if (ret < 0) return NULL;
+   t = get_time();
    ie = evas_cache_image_request(cache, file, key, load_opts, &err);
+   t = get_time() - t;
    if (!ie) return NULL;
    img = (Img *)ie;
+   img->stats.load1 = t;
    img->key = eina_stringshare_add(bufkey);
    img->file.modtime = st.st_mtime;
    img->file.file = eina_stringshare_add(file);
@@ -309,8 +425,13 @@ img_new(const char *file, const char *key, RGBA_Image_Loadopts *load_opts, const
 static void
 img_loaddata(Img *img)
 {
+   double t;
+   
    // fixme: load img data
+   t = get_time();
    evas_cache_image_load_data((Image_Entry *)img);
+   t = get_time() - t;
+   img->stats.load2 = t;
    if (img->image.data)
      msync(img->image.data, img->image.w * img->image.h * sizeof(DATA32), MS_SYNC | MS_INVALIDATE);
    img->usage += 
@@ -321,6 +442,8 @@ img_loaddata(Img *img)
 static void
 img_free(Img *img)
 {
+   stats_lifetime_update(img);
+   stats_update();
    eina_stringshare_del(img->key);
    eina_stringshare_del(img->file.file);
    eina_stringshare_del(img->file.key);
@@ -437,7 +560,9 @@ img_load(const char *file, const char *key, RGBA_Image_Loadopts *load_opts)
    img = eina_hash_find(active_images, buf);
    if ((img) && (img_ok(img)))
      {
+        img->stats.load1saved++;
         img->ref++;
+        stats_update();
         return img;
      }
    
@@ -448,9 +573,11 @@ img_load(const char *file, const char *key, RGBA_Image_Loadopts *load_opts)
           {
              if (img_ok(img))
                {
+                  img->stats.load1saved++;
                   img->ref++;
                   cache_images = eina_list_remove_list(cache_images, l);
                   eina_hash_direct_add(active_images, img->key, img);
+                  stats_update();
                   return img;
                }
           }
@@ -546,6 +673,8 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                   msg.mem.id = img->mem->id;
                   msg.mem.offset = img->mem->offset;
                   msg.mem.size = img->mem->size;
+                  img->stats.load2saved++;
+                  stats_update();
                }
              else
                msg.mem.id = msg.mem.offset = msg.mem.size = 0;
@@ -574,12 +703,16 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              Op_Loaddata *rep;
              Op_Loaddata_Reply msg;
              Img *img;
-// fixme: handle loadopts on loaddata             
-//             RGBA_Image_Loadopts lopt = {0, 0.0, 0, 0};
              
              rep = (Op_Loaddata *)data;
              img = rep->handle;
-             img_loaddata(img);
+             if (img->mem)
+               {
+                  img->stats.load2saved++;
+                  stats_update();
+               }
+             else
+               img_loaddata(img);
              memset(&msg, 0, sizeof(msg));
              if (img->mem)
                {
@@ -612,6 +745,57 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              img = rep->handle;
              c->data = eina_list_remove(c->data, img);
              img_forcedunload(img);
+          } 
+        break;
+     case OP_GETCONFIG:
+          {
+             Op_Getconfig_Reply msg;
+             
+             msg.cache_max_usage = cache_max_usage;
+             msg.cache_item_timeout = cache_item_timeout;
+             msg.cache_item_timeout_check = cache_item_timeout_check;
+             evas_cserve_client_send(c, OP_GETCONFIG, sizeof(msg), (unsigned char *)(&msg));
+          } 
+        break;
+     case OP_SETCONFIG:
+          {
+             Op_Setconfig *rep;
+             
+             rep = (Op_Setconfig *)data;
+             cache_max_usage = rep->cache_max_usage;
+             cache_item_timeout = rep->cache_item_timeout;
+             cache_item_timeout_check = rep->cache_item_timeout_check;
+             cache_clean();
+          } 
+        break;
+     case OP_GETSTATS:
+          {
+             Op_Getstats_Reply msg;
+
+             stats_calc();
+             msg.saved_memory = saved_memory;
+             msg.wasted_memory = (real_memory - alloced_memory);
+             msg.saved_memory_peak = saved_memory_peak;
+             msg.wasted_memory_peak = (real_memory_peak - alloced_memory_peak);
+             msg.saved_time_image_header_load = saved_load_lifetime + saved_load_time;
+             msg.saved_time_image_data_load = saved_loaddata_lifetime + saved_loaddata_time;
+             evas_cserve_client_send(c, OP_GETSTATS, sizeof(msg), (unsigned char *)(&msg));
+          } 
+        break;
+     case OP_GETINFO:
+          {
+// get a list of all images in active hash and cache list, and their info like
+//  file + key
+//  width, height and alpha flag
+//  refcount
+//  data loaded flag
+//  active ot cached
+//  last active timestamp
+//  dead
+//  mod time
+//  last checked mod time time
+//  memory footprint
+//             Op_Getstats_Reply msg;
           } 
         break;
      default:

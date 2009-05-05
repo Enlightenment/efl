@@ -19,7 +19,7 @@ AM_CPPFLAGS = \
 
 AM_CFLAGS = @WIN32_CFLAGS@
 
-bin_PROGRAMS = evas_cserve evas_cserve_test
+bin_PROGRAMS = evas_cserve evas_cserve_tool
 
 evas_cserve_SOURCES = \
 evas_cserve_main.c
@@ -27,14 +27,14 @@ evas_cserve_main.c
 evas_cserve_LDADD = \
 $(top_builddir)/src/lib/libevas.la
 
-evas_cserve_test_LDFLAGS =
+evas_cserve_tool_LDFLAGS =
 
-evas_cserve_test_SOURCES = \
-evas_cserve_test_main.c
+evas_cserve_tool_SOURCES = \
+evas_cserve_tool.c
 
-evas_cserve_test_LDADD = \
+evas_cserve_tool_LDADD = \
 $(top_builddir)/src/lib/libevas.la
 
-evas_cserve_test_LDFLAGS =
+evas_cserve_tool_LDFLAGS =
 
 endif

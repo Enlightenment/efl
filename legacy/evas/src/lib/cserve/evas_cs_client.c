@@ -194,7 +194,7 @@ evas_cserve_image_load(Image_Entry *ie, const char *file, const char *key, RGBA_
    Op_Load msg;
    Op_Load_Reply *rep;
    unsigned char *buf;
-   char fbuf[PATH_MAX], wd[PATH_MAX];
+   char fbuf[PATH_MAX], wdb[PATH_MAX];
    int flen, klen;
    int opcode;
    int size;
@@ -210,13 +210,13 @@ evas_cserve_image_load(Image_Entry *ie, const char *file, const char *key, RGBA_
    msg.lopt.h = lopt->h;
    if (file[0] != '/')
      {
-        if (getcwd(wd, sizeof(wd)))
+        if (getcwd(wdb, sizeof(wdb)))
           {
-             snprintf(fbuf, "%s/%s", wd, file);
+             snprintf(fbuf, sizeof(buf), "%s/%s", wdb, file);
              file = fbuf;
           }
      }
-   if (!realpath(file, wd)) file = wd;
+   if (!realpath(file, wdb)) file = wdb;
    flen = strlen(file) + 1;
    klen = strlen(key) + 1;
    buf = malloc(sizeof(msg) + flen + klen);
@@ -286,6 +286,54 @@ evas_cserve_image_free(Image_Entry *ie)
    ie->data2 = NULL;
    server_send(cserve, OP_UNLOAD, sizeof(msg), (unsigned char *)(&msg));
    ie->data1 = NULL;
+}
+
+EAPI Eina_Bool
+evas_cserve_config_get(Op_Getconfig_Reply *config)
+{
+   Op_Getconfig_Reply *rep;
+   int opcode;
+   int size;
+   if (csrve_init > 0) server_reinit();
+   else return 0;
+   if (!cserve) return 0;
+   if (!server_send(cserve, OP_GETCONFIG, 0, NULL)) return 0;
+   rep = (Op_Getconfig_Reply *)server_read(cserve, &opcode, &size);
+   if ((rep) && (opcode == OP_GETCONFIG) && (size == sizeof(Op_Getconfig_Reply)))
+     {
+        memcpy(config, rep, sizeof(Op_Getconfig_Reply));
+        return 1;
+     }
+   return 0;
+}
+
+EAPI Eina_Bool
+evas_cserve_config_set(Op_Setconfig *config)
+{
+   if (csrve_init > 0) server_reinit();
+   else return 0;
+   if (!cserve) return 0;
+   if (!server_send(cserve, OP_SETCONFIG, sizeof(Op_Setconfig), (unsigned char *)config)) return 0;
+   return 1;
+}
+
+EAPI Eina_Bool
+evas_cserve_stats_get(Op_Getstats_Reply *stats)
+{
+   Op_Getstats_Reply *rep;
+   int opcode;
+   int size;
+   if (csrve_init > 0) server_reinit();
+   else return 0;
+   if (!cserve) return 0;
+   if (!server_send(cserve, OP_GETSTATS, 0, NULL)) return 0;
+   rep = (Op_Getstats_Reply *)server_read(cserve, &opcode, &size);
+   if ((rep) && (opcode == OP_GETSTATS) && (size == sizeof(Op_Getstats_Reply)))
+     {
+        memcpy(stats, rep, sizeof(Op_Getstats_Reply));
+        return 1;
+     }
+   return 0;
 }
 
 #endif

@@ -92,35 +92,6 @@ struct _Mem
 };
 
 //// for comms
-// for clients to connect to cserve
-EAPI Eina_Bool evas_cserve_init(void);
-EAPI int       evas_cserve_use_get(void);
-EAPI void      evas_cserve_shutdown(void);
-EAPI Eina_Bool evas_cserve_image_load(Image_Entry *ie, const char *file, const char *key, RGBA_Image_Loadopts *lopt);
-EAPI Eina_Bool evas_cserve_image_data_load(Image_Entry *ie);
-EAPI void      evas_cserve_image_free(Image_Entry *ie);
-    
-// for the server
-EAPI Server *evas_cserve_server_add(void);
-EAPI void evas_cserve_server_del(Server *s);
-EAPI void evas_cserve_client_send(Client *c, int opcode, int size, unsigned char *data);
-EAPI void evas_cserve_server_message_handler_set(Server *s, int (*func) (void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *data), void *data);
-EAPI void evas_cserve_server_wait(Server *s, int timeout);
-    
-//// for memory
-// for server
-EAPI Mem *evas_cserve_mem_new(int size, const char *name);
-EAPI void evas_cserve_mem_free(Mem *m);
-    
-// for client
-EAPI Mem *evas_cserve_mem_open(int pid, int id, const char *name, int size, int write);
-EAPI void evas_cserve_mem_close(Mem *m);
-
-// for both
-EAPI Eina_Bool evas_cserve_mem_resize(Mem *m, int size);
-EAPI void      evas_cserve_mem_del(int pid, int id);
-    
-
 enum
 {
    OP_NOP, // 0
@@ -131,6 +102,11 @@ enum
      OP_LOADDATA, // 4
      OP_PRELOAD, // 5
      OP_FORCEDUNLOAD, // 6
+     
+     OP_GETCONFIG, // 7
+     OP_SETCONFIG, // 8
+     OP_GETSTATS, // 9
+     OP_GETINFO, // 10
      
    OP_INVALID // 6
 };
@@ -193,6 +169,59 @@ typedef struct
 {
    void *handle;
 } Op_Forcedunload;
+typedef struct
+{
+   int cache_max_usage;
+   int cache_item_timeout;
+   int cache_item_timeout_check;
+} Op_Getconfig_Reply;
+typedef struct
+{
+   int cache_max_usage;
+   int cache_item_timeout;
+   int cache_item_timeout_check;
+} Op_Setconfig;
+typedef struct
+{
+   int saved_memory;
+   int wasted_memory;
+   int saved_memory_peak;
+   int wasted_memory_peak;
+   double saved_time_image_header_load;
+   double saved_time_image_data_load;
+} Op_Getstats_Reply;
+
+
+// for clients to connect to cserve
+EAPI Eina_Bool evas_cserve_init(void);
+EAPI int       evas_cserve_use_get(void);
+EAPI void      evas_cserve_shutdown(void);
+EAPI Eina_Bool evas_cserve_image_load(Image_Entry *ie, const char *file, const char *key, RGBA_Image_Loadopts *lopt);
+EAPI Eina_Bool evas_cserve_image_data_load(Image_Entry *ie);
+EAPI void      evas_cserve_image_free(Image_Entry *ie);
+EAPI Eina_Bool evas_cserve_config_get(Op_Getconfig_Reply *config);
+EAPI Eina_Bool evas_cserve_config_set(Op_Setconfig *config);
+EAPI Eina_Bool evas_cserve_stats_get(Op_Getstats_Reply *stats);
+    
+// for the server
+EAPI Server *evas_cserve_server_add(void);
+EAPI void evas_cserve_server_del(Server *s);
+EAPI void evas_cserve_client_send(Client *c, int opcode, int size, unsigned char *data);
+EAPI void evas_cserve_server_message_handler_set(Server *s, int (*func) (void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *data), void *data);
+EAPI void evas_cserve_server_wait(Server *s, int timeout);
+    
+//// for memory
+// for server
+EAPI Mem *evas_cserve_mem_new(int size, const char *name);
+EAPI void evas_cserve_mem_free(Mem *m);
+    
+// for client
+EAPI Mem *evas_cserve_mem_open(int pid, int id, const char *name, int size, int write);
+EAPI void evas_cserve_mem_close(Mem *m);
+
+// for both
+EAPI Eina_Bool evas_cserve_mem_resize(Mem *m, int size);
+EAPI void      evas_cserve_mem_del(int pid, int id);
 
 #endif
 
