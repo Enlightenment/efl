@@ -158,9 +158,10 @@ endif
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
 	evas.pc $(psoftwarex11) $(psoftwarexcb) $(pdirectfb) $(pfb) \
-	$(psoftwarebuffer) $(psoftwareqtopia) $(popenglx11) $(pquartz) $(pcairox11) \
+	$(psoftwarebuffer) $(popenglx11) $(pquartz) \
 	$(pxrenderx11) $(pxrenderxcb) $(psoftwaregdi) $(psoftwareddraw) $(psoftwaresdl) \
 	$(psoftware16x11) $(pdirect3d) $(psoftware16ddraw) $(psoftware16wince) $(popenglglew)
+# $(psoftwareqtopia) $(pcairox11)
 
 .PHONY: doc
 

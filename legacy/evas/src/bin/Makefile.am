@@ -35,6 +35,4 @@ evas_cserve_tool.c
 evas_cserve_tool_LDADD = \
 $(top_builddir)/src/lib/libevas.la
 
-evas_cserve_tool_LDFLAGS =
-
 endif

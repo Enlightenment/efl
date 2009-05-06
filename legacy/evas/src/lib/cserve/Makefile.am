@@ -25,5 +25,5 @@ evas_cs_mem.c
 
 libevas_cserve_la_LIBADD = @EINA_LIBS@ -lrt
 
-libevas_la_DEPENDENCIES = \
+libevas_cserve_la_DEPENDENCIES = \
 $(top_builddir)/config.h
