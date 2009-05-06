@@ -18,6 +18,7 @@ struct _Elm_Win
    Elm_Win_Keyboard_Mode kbdmode;
    Evas_Bool             autodel : 1;
    int                   *autodel_clear;
+   int                    rot;
 };
 
 static void _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -555,7 +556,12 @@ elm_win_rotation_set(Evas_Object *obj, int rotation)
 {
    Elm_Win *win = elm_widget_data_get(obj);
    if (!win) return;
+   if (win->rot == rotation) return;
+   win->rot = rotation;
    ecore_evas_rotation_set(win->ee, rotation);
+   evas_object_size_hint_min_set(obj, -1, -1);
+   evas_object_size_hint_max_set(obj, -1, -1);
+   _elm_win_eval_subobjs(obj);
    _elm_win_xwin_update(win);
 }
 
