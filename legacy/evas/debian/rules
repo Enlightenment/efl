@@ -16,8 +16,6 @@ endif
 
 ifeq (amd64,$(DEB_HOST_ARCH))
 	arch_flags += --enable-cpu-sse
-else
-	arch_flags += --disable-cpu-sse
 endif
 
 DEB_CONFIGURE_EXTRA_FLAGS := --enable-strict \
