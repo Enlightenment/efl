@@ -100,15 +100,17 @@ enum
      OP_LOAD, // 2
      OP_UNLOAD, // 3
      OP_LOADDATA, // 4
-     OP_PRELOAD, // 5
-     OP_FORCEDUNLOAD, // 6
+     OP_UNLOADDATA, // 5
+     OP_USELESSDATA, // 6
+     OP_PRELOAD, // 7
+     OP_FORCEDUNLOAD, // 8
      
-     OP_GETCONFIG, // 7
-     OP_SETCONFIG, // 8
-     OP_GETSTATS, // 9
-     OP_GETINFO, // 10
+     OP_GETCONFIG, // 9
+     OP_SETCONFIG, // 10
+     OP_GETSTATS, // 11
+     OP_GETINFO, // 12
      
-   OP_INVALID // 6
+   OP_INVALID // 13
 };
 
 typedef struct
@@ -140,6 +142,10 @@ typedef struct
 {
    void *handle;
 } Op_Unload;
+typedef struct
+{
+   void *handle;
+} Op_Unloaddata;
 typedef struct
 {
    void *handle;
@@ -198,6 +204,8 @@ EAPI int       evas_cserve_use_get(void);
 EAPI void      evas_cserve_shutdown(void);
 EAPI Eina_Bool evas_cserve_image_load(Image_Entry *ie, const char *file, const char *key, RGBA_Image_Loadopts *lopt);
 EAPI Eina_Bool evas_cserve_image_data_load(Image_Entry *ie);
+EAPI void      evas_cserve_image_unload(Image_Entry *ie);
+EAPI void      evas_cserve_image_useless(Image_Entry *ie);
 EAPI void      evas_cserve_image_free(Image_Entry *ie);
 EAPI Eina_Bool evas_cserve_config_get(Op_Getconfig_Reply *config);
 EAPI Eina_Bool evas_cserve_config_set(Op_Setconfig *config);

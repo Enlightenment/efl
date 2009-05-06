@@ -173,8 +173,9 @@ evas_common_rgba_image_unload(Image_Entry *ie)
    evas_cache_image_preload_cancel(ie, NULL);
    
    if (!ie->flags.loaded) return;
-   if (!ie->info.module) return;
+   if ((!ie->info.module) && (!ie->data1)) return;
    if (!ie->file) return;
+   
    ie->flags.loaded = 0;
 
    if ((im->cs.data) && (im->image.data))
@@ -190,6 +191,17 @@ evas_common_rgba_image_unload(Image_Entry *ie)
      }
    im->cs.data = NULL;
 
+#ifdef EVAS_CSERVE
+   if (ie->data1)
+     {
+        evas_cserve_image_useless(ie);
+        im->image.data = NULL;
+        ie->allocated.w = 0;
+        ie->allocated.h = 0;
+        return;
+     }
+#endif   
+   
    if (im->image.data && !im->image.no_free)
      free(im->image.data);
    im->image.data = NULL;

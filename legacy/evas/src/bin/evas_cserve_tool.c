@@ -19,10 +19,10 @@ main(int argc, char **argv)
             (!strcmp(argv[i], "--help")))
           {
              printf("Options:\n"
-                    "\t-h                                  This help\n"
-                    "\tgetconfig                           Get configuration values\n"
-                    "\tsetconfig csize ctimeout ctimecheck Set the config values\n"
-                    "\tgetstats                            Get current cache statistics\n"
+                    "\t-h                               This help\n"
+                    "\tgetconfig                        Get configuration values\n"
+                    "\tsetconfig CSIZE CTIME CTIMECHECK Set the config values\n"
+                    "\tgetstats                         Get current cache statistics\n"
                     );
              exit(0);
           }
@@ -35,7 +35,7 @@ main(int argc, char **argv)
                   printf("ERROR: cannot fetch config.\n");
                   exit(-1);
                }
-             printf("csize: %i\n", config.cache_max_usage / 1024);
+             printf("csize: %i\n", config.cache_max_usage);
              printf("ctime: %i\n", config.cache_item_timeout);
              printf("ctimecheck: %i\n", config.cache_item_timeout_check);
              printf("-OK-\n");
@@ -45,7 +45,7 @@ main(int argc, char **argv)
              Op_Setconfig config;
              
              i++;
-             config.cache_max_usage = atoi(argv[i]) * 1024;
+             config.cache_max_usage = atoi(argv[i]);
              i++;
              config.cache_item_timeout = atoi(argv[i]);
              i++;

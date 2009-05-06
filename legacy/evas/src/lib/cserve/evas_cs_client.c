@@ -282,10 +282,41 @@ evas_cserve_image_free(Image_Entry *ie)
    if (ie->data1 == NULL) return;
    memset(&msg, 0, sizeof(msg));
    msg.handle = ie->data1;
-   if (ie->data2) evas_cserve_mem_close(ie->data2);
-   ie->data2 = NULL;
+   if (ie->data2) evas_cserve_image_unload(ie);
    server_send(cserve, OP_UNLOAD, sizeof(msg), (unsigned char *)(&msg));
    ie->data1 = NULL;
+}
+
+EAPI void
+evas_cserve_image_unload(Image_Entry *ie)
+{
+   Op_Unloaddata msg;
+   
+   if (csrve_init > 0) server_reinit();
+   else return;
+   if (!cserve) return;
+   if (ie->data1 == NULL) return;
+   memset(&msg, 0, sizeof(msg));
+   msg.handle = ie->data1;
+   if (ie->data2) evas_cserve_mem_close(ie->data2);
+   ie->data2 = NULL;
+   server_send(cserve, OP_UNLOADDATA, sizeof(msg), (unsigned char *)(&msg));
+}
+
+EAPI void
+evas_cserve_image_useless(Image_Entry *ie)
+{
+   Op_Unloaddata msg;
+   
+   if (csrve_init > 0) server_reinit();
+   else return;
+   if (!cserve) return;
+   if (ie->data1 == NULL) return;
+   memset(&msg, 0, sizeof(msg));
+   msg.handle = ie->data1;
+   if (ie->data2) evas_cserve_mem_close(ie->data2);
+   ie->data2 = NULL;
+   server_send(cserve, OP_USELESSDATA, sizeof(msg), (unsigned char *)(&msg));
 }
 
 EAPI Eina_Bool

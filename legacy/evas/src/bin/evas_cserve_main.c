@@ -11,7 +11,7 @@
 // 
 // add ops to get internal cache state (both)
 // preload - make it work (both)
-// monitor /proc/meminfo and if mem low - free items until cache empty (server)
+
 // 
 // pants!
 
@@ -29,6 +29,7 @@ struct _Img
 {
    Image_Entry ie;
    int ref;
+   int dref;
    int usage;
    Mem *mem;
    const char *key;
@@ -51,6 +52,7 @@ struct _Img
    } image;
    Eina_Bool dead : 1;
    Eina_Bool active : 1;
+   Eina_Bool useless : 1;
 };
 
 // config
@@ -63,7 +65,8 @@ static Evas_Cache_Image *cache = NULL;
 static Eina_Hash *active_images = NULL;
 static Eina_List *cache_images = NULL;
 static int cache_usage = 0;
-static int cache_max_usage = 1 * 1024 * 1024;
+static int cache_max_usage = 1 * 1024;
+static int cache_max_adjust = 0;
 static int cache_item_timeout = -1;
 static int cache_item_timeout_check = -1;
 static Mem *stat_mem = NULL;
@@ -88,6 +91,35 @@ get_time(void)
 }
 #endif
 
+static int mem_total = 0;
+static int mem_free = 0;
+static int mem_buffers = 0;
+static int mem_cached = 0;
+
+static void
+meminfo_check(void)
+{
+   FILE *f;
+   char buf[1024];
+   int v;
+   
+   f = fopen("/proc/meminfo", "r");
+   if (!f) return;
+   if (!fgets(buf, sizeof(buf), f)) goto done;
+   v = 0; if (sscanf(buf, "%*s %i %*s", &v) != 1) goto done;
+   mem_total = v;
+   if (!fgets(buf, sizeof(buf), f)) goto done;
+   v = 0; if (sscanf(buf, "%*s %i %*s", &v) != 1) goto done;
+   mem_free = v;
+   if (!fgets(buf, sizeof(buf), f)) goto done;
+   v = 0; if (sscanf(buf, "%*s %i %*s", &v) != 1) goto done;
+   mem_buffers = v;
+   if (!fgets(buf, sizeof(buf), f)) goto done;
+   v = 0; if (sscanf(buf, "%*s %i %*s", &v) != 1) goto done;
+   mem_cached = v;
+   done:
+   fclose(f);
+}
 
 static int stats_dirty = 0;
 static int saved_loads = 0;
@@ -427,7 +459,6 @@ img_loaddata(Img *img)
 {
    double t;
    
-   // fixme: load img data
    t = get_time();
    evas_cache_image_load_data((Image_Entry *)img);
    t = get_time() - t;
@@ -453,7 +484,7 @@ img_free(Img *img)
 static void
 cache_clean(void)
 {
-   while ((cache_usage > cache_max_usage) && (cache_images))
+   while ((cache_usage > ((cache_max_usage + cache_max_adjust) * 1024)) && (cache_images))
      {
         Img *img;
         Eina_List *l;
@@ -487,6 +518,26 @@ cache_timeout(time_t t)
 }
 
 static void
+mem_cache_adjust(void)
+{
+   int pval = cache_max_adjust;
+   int max = 0;
+
+   if (mem_total <= 0) return;
+   if ((mem_free + mem_cached + mem_buffers) < mem_total)
+     cache_max_adjust += mem_total - (mem_free + mem_cached + mem_buffers);
+
+   max = (mem_free / 8) - cache_max_usage;
+   if (max < 0) max = 0;
+   if (max > cache_max_usage) max = cache_max_usage;
+   cache_max_adjust = max - cache_max_usage;
+   
+   if (cache_max_adjust < -cache_max_usage) 
+     cache_max_adjust = -cache_max_usage;
+   if (pval != cache_max_adjust) cache_clean();
+}
+
+static void
 img_cache(Img *img)
 {
    eina_hash_del(active_images, img->key, img);
@@ -499,7 +550,7 @@ img_cache(Img *img)
    cache_images = eina_list_prepend(cache_images, img);
    img->cached = t_now;
    cache_usage += img->usage;
-   if (cache_usage > cache_max_usage)
+   if (cache_usage > ((cache_max_usage + cache_max_adjust) * 1024))
      cache_clean();
 }
 
@@ -593,6 +644,31 @@ img_unload(Img *img)
      {
         img_cache(img);
      }
+}
+
+static void
+img_unloaddata(Img *img)
+{
+   if ((img->dref <= 0) && (img->useless))
+     {
+        Image_Entry *ie = (Image_Entry *)img;
+        
+        evas_cserve_mem_free(img->mem);
+        img->mem = NULL;
+        img->image.data = NULL;
+        img->dref = 0;
+        
+        ie->flags.loaded = 0;
+        ie->allocated.w = 0;
+        ie->allocated.h = 0;
+     }
+}
+
+static void
+img_useless(Img *img)
+{
+   img->useless = 1;
+   if (img->dref <= 0) img_unloaddata(img);
 }
 
 static void
@@ -725,6 +801,28 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              evas_cserve_client_send(c, OP_LOADDATA, sizeof(msg), (unsigned char *)(&msg));
           }
         break;
+     case OP_UNLOADDATA:
+          {
+             Op_Unloaddata *rep;
+             Img *img;
+             
+             rep = (Op_Unloaddata *)data;
+             img = rep->handle;
+             img->dref--;
+             img_unloaddata(img);
+          } 
+        break;
+     case OP_USELESSDATA:
+          {
+             Op_Unloaddata *rep;
+             Img *img;
+             
+             rep = (Op_Unloaddata *)data;
+             img = rep->handle;
+             img->dref--;
+             img_useless(img);
+          } 
+        break;
      case OP_PRELOAD:
           {
              Op_Preload *rep;
@@ -825,7 +923,7 @@ parse_args(int argc, char **argv)
         else if ((!strcmp(argv[i], "-csize")) && (i < (argc - 1)))
           {
              i++;
-             cache_max_usage = atoi(argv[i]) * 1024;
+             cache_max_usage = atoi(argv[i]);
           }
         else if ((!strcmp(argv[i], "-ctime")) && (i < (argc - 1)))
           {
@@ -954,18 +1052,19 @@ main(int argc, char **argv)
         if (exit_flag) break;
         t = time(NULL);
         t_next = t - last_check;
-        if ((t_next) > cache_item_timeout_check)
+        if ((t_next) >= cache_item_timeout_check)
           {
              t_next = cache_item_timeout_check;
              
              last_check = t;
              cache_timeout(t);
+             meminfo_check();
+             mem_cache_adjust();
           }
         if ((t_next <= 0) && (cache_item_timeout_check > 0))
           t_next = 1;
      }
    error:
-   printf("clean shutdown\n");
    if (stat_mem)
      {
         stat_clean(stat_mem);
