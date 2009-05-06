@@ -58,6 +58,172 @@ evas_software_xlib_x_write_mask_line(Outbuf *buf, X_Output_Buffer *xob, DATA32 *
      }
 }
 
+void
+evas_software_xlib_x_write_mask_line_rev(Outbuf *buf, X_Output_Buffer *xob, DATA32 *src, int w, int y)
+{
+   int x;
+   DATA32 *src_ptr;
+   DATA8 *dst_ptr;
+   int bpl = 0;
+
+   src_ptr = src + w - 1;
+   dst_ptr = evas_software_xlib_x_output_buffer_data(xob, &bpl);
+   dst_ptr = dst_ptr + (bpl * y);
+   w -= 7;
+   if (buf->priv.x11.xlib.bit_swap)
+     {
+	for (x = 0; x < w; x += 8)
+	  {
+	     *dst_ptr =
+	       ((A_VAL(&(src_ptr[ 0])) >> 7) << 7) |
+	       ((A_VAL(&(src_ptr[-1])) >> 7) << 6) |
+	       ((A_VAL(&(src_ptr[-2])) >> 7) << 5) |
+	       ((A_VAL(&(src_ptr[-3])) >> 7) << 4) |
+	       ((A_VAL(&(src_ptr[-4])) >> 7) << 3) |
+	       ((A_VAL(&(src_ptr[-5])) >> 7) << 2) |
+	       ((A_VAL(&(src_ptr[-6])) >> 7) << 1) |
+	       ((A_VAL(&(src_ptr[-7])) >> 7) << 0);
+	     src_ptr -= 8;
+	     dst_ptr++;
+	  }
+     }
+   else
+     {
+	for (x = 0; x < w; x += 8)
+	  {
+	     *dst_ptr =
+	       ((A_VAL(&(src_ptr[ 0])) >> 7) << 0) |
+	       ((A_VAL(&(src_ptr[-1])) >> 7) << 1) |
+	       ((A_VAL(&(src_ptr[-2])) >> 7) << 2) |
+	       ((A_VAL(&(src_ptr[-3])) >> 7) << 3) |
+	       ((A_VAL(&(src_ptr[-4])) >> 7) << 4) |
+	       ((A_VAL(&(src_ptr[-5])) >> 7) << 5) |
+	       ((A_VAL(&(src_ptr[-6])) >> 7) << 6) |
+	       ((A_VAL(&(src_ptr[-7])) >> 7) << 7);
+	     src_ptr -= 8;
+	     dst_ptr++;
+	  }
+     }
+   w += 7;
+   for (; x < w; x ++)
+     {
+	XPutPixel(xob->xim, x, y, A_VAL(src_ptr) >> 7);
+	src_ptr--;
+     }
+}
+
+void
+evas_software_xlib_x_write_mask_line_vert(Outbuf *buf, X_Output_Buffer *xob, 
+                                          DATA32 *src, 
+                                          int h, int ym, int w)
+{
+   int y;
+   DATA32 *src_ptr;
+   DATA8 *dst_ptr;
+   int bpl = 0;
+
+   src_ptr = src;
+   dst_ptr = evas_software_xlib_x_output_buffer_data(xob, &bpl);
+   dst_ptr = dst_ptr + (bpl * ym);
+   h -= 7;
+   if (buf->priv.x11.xlib.bit_swap)
+     {
+	for (y = 0; y < h; y += 8)
+	  {
+	     *dst_ptr =
+	       ((A_VAL(&(src_ptr[0 * w])) >> 7) << 7) |
+	       ((A_VAL(&(src_ptr[1 * w])) >> 7) << 6) |
+	       ((A_VAL(&(src_ptr[2 * w])) >> 7) << 5) |
+	       ((A_VAL(&(src_ptr[3 * w])) >> 7) << 4) |
+	       ((A_VAL(&(src_ptr[4 * w])) >> 7) << 3) |
+	       ((A_VAL(&(src_ptr[5 * w])) >> 7) << 2) |
+	       ((A_VAL(&(src_ptr[6 * w])) >> 7) << 1) |
+	       ((A_VAL(&(src_ptr[7 * w])) >> 7) << 0);
+	     src_ptr += 8 * w;
+	     dst_ptr++;
+	  }
+     }
+   else
+     {
+	for (y = 0; y < h; y += 8)
+	  {
+	     *dst_ptr =
+	       ((A_VAL(&(src_ptr[0 * w])) >> 7) << 0) |
+	       ((A_VAL(&(src_ptr[1 * w])) >> 7) << 1) |
+	       ((A_VAL(&(src_ptr[2 * w])) >> 7) << 2) |
+	       ((A_VAL(&(src_ptr[3 * w])) >> 7) << 3) |
+	       ((A_VAL(&(src_ptr[4 * w])) >> 7) << 4) |
+	       ((A_VAL(&(src_ptr[5 * w])) >> 7) << 5) |
+	       ((A_VAL(&(src_ptr[6 * w])) >> 7) << 6) |
+	       ((A_VAL(&(src_ptr[7 * w])) >> 7) << 7);
+	     src_ptr += 8 * w;
+	     dst_ptr++;
+	  }
+     }
+   h += 7;
+   for (; y < h; y ++)
+     {
+	XPutPixel(xob->xim, y, ym, A_VAL(src_ptr) >> 7);
+	src_ptr += w;
+     }
+}
+
+void
+evas_software_xlib_x_write_mask_line_vert_rev(Outbuf *buf, X_Output_Buffer *xob, 
+                                              DATA32 *src, 
+                                              int h, int ym, int w)
+{
+   int y;
+   DATA32 *src_ptr;
+   DATA8 *dst_ptr;
+   int bpl = 0;
+
+   src_ptr = src + ((h - 1) * w);
+   dst_ptr = evas_software_xlib_x_output_buffer_data(xob, &bpl);
+   dst_ptr = dst_ptr + (bpl * ym);
+   h -= 7;
+   if (buf->priv.x11.xlib.bit_swap)
+     {
+	for (y = 0; y < h; y += 8)
+	  {
+	     *dst_ptr =
+	       ((A_VAL(&(src_ptr[ 0 * w])) >> 7) << 7) |
+	       ((A_VAL(&(src_ptr[-1 * w])) >> 7) << 6) |
+	       ((A_VAL(&(src_ptr[-2 * w])) >> 7) << 5) |
+	       ((A_VAL(&(src_ptr[-3 * w])) >> 7) << 4) |
+	       ((A_VAL(&(src_ptr[-4 * w])) >> 7) << 3) |
+	       ((A_VAL(&(src_ptr[-5 * w])) >> 7) << 2) |
+	       ((A_VAL(&(src_ptr[-6 * w])) >> 7) << 1) |
+	       ((A_VAL(&(src_ptr[-7 * w])) >> 7) << 0);
+	     src_ptr -= 8 * w;
+	     dst_ptr++;
+	  }
+     }
+   else
+     {
+	for (y = 0; y < h; y += 8)
+	  {
+	     *dst_ptr =
+	       ((A_VAL(&(src_ptr[ 0 * w])) >> 7) << 0) |
+	       ((A_VAL(&(src_ptr[-1 * w])) >> 7) << 1) |
+	       ((A_VAL(&(src_ptr[-2 * w])) >> 7) << 2) |
+	       ((A_VAL(&(src_ptr[-3 * w])) >> 7) << 3) |
+	       ((A_VAL(&(src_ptr[-4 * w])) >> 7) << 4) |
+	       ((A_VAL(&(src_ptr[-5 * w])) >> 7) << 5) |
+	       ((A_VAL(&(src_ptr[-6 * w])) >> 7) << 6) |
+	       ((A_VAL(&(src_ptr[-7 * w])) >> 7) << 7);
+	     src_ptr -= 8 * w;
+	     dst_ptr++;
+	  }
+     }
+   h += 7;
+   for (; y < h; y ++)
+     {
+	XPutPixel(xob->xim, y, ym, A_VAL(src_ptr) >> 7);
+	src_ptr -= w;
+     }
+}
+
 int
 evas_software_xlib_x_can_do_shm(Display *d)
 {

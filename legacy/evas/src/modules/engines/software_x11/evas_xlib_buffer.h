@@ -21,6 +21,9 @@ struct _X_Output_Buffer
 };
 
 void evas_software_xlib_x_write_mask_line               (Outbuf *buf, X_Output_Buffer *xob, DATA32 *src, int w, int y);
+void evas_software_xlib_x_write_mask_line_rev           (Outbuf *buf, X_Output_Buffer *xob, DATA32 *src, int w, int y);
+void evas_software_xlib_x_write_mask_line_vert          (Outbuf *buf, X_Output_Buffer *xob, DATA32 *src, int h, int ym, int w);
+void evas_software_xlib_x_write_mask_line_vert_rev      (Outbuf *buf, X_Output_Buffer *xob, DATA32 *src, int h, int ym, int w);
 
 int evas_software_xlib_x_can_do_shm                     (Display *d);
 
