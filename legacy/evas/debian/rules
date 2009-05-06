@@ -27,7 +27,6 @@ DEB_CONFIGURE_EXTRA_FLAGS := --enable-strict \
 	--enable-buffer \
 	--enable-gl-x11 \
 	--enable-xrender-x11 \
-	--enable-directfb \
 	--enable-image-loader-gif \
 	--enable-image-loader-png \
 	--enable-image-loader-jpeg \
@@ -40,7 +39,6 @@ DEB_CONFIGURE_EXTRA_FLAGS := --enable-strict \
 	--enable-scale-smooth \
 	--enable-convert-yuv \
 	--enable-small-dither-mask \
-	--enable-no-dither-mask \
 	--enable-convert-8-rgb-332 \
 	--enable-convert-8-rgb-666 \
 	--enable-convert-8-rgb-232 \
