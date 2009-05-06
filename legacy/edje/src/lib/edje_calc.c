@@ -56,7 +56,7 @@ _edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *name,
    Edje_Part_Description *ret = NULL;
    Edje_Part_Description *d;
    Eina_List *l;
-   double min_dst = 999.0;
+   double min_dst = 99999.0;
 
    if (!strcmp(name, "default") && val == 0.0)
      return ep->default_desc;
@@ -654,7 +654,7 @@ _edje_part_recalc_single(Edje *ed,
 
 	if (ep->part->scale)
 	  evas_object_scale_set(ep->object, sc);
-	
+
 	if (stl)
 	  {
 	     const char *ptxt;
