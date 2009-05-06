@@ -1852,6 +1852,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	      c->marginl - c->marginr)))
 	  {
 	     wrap = _layout_text_cutoff_get(c, fmt, it);
+             if (wrap == 0) wrap = 1;
 	     if (wrap > 0)
 	       {
 		  if (fmt->wrap_word)
