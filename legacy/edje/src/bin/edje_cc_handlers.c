@@ -154,6 +154,7 @@ static void st_collections_group_parts_part_description_image_normal(void);
 static void st_collections_group_parts_part_description_image_tween(void);
 static void st_collections_group_parts_part_description_image_border(void);
 static void st_collections_group_parts_part_description_image_middle(void);
+static void st_collections_group_parts_part_description_image_scale_hint(void);
 static void st_collections_group_parts_part_description_fill_smooth(void);
 static void st_collections_group_parts_part_description_fill_origin_relative(void);
 static void st_collections_group_parts_part_description_fill_origin_offset(void);
@@ -349,6 +350,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.image.images.image", st_images_image}, /* dup */
      {"collections.group.parts.part.description.image.border", st_collections_group_parts_part_description_image_border},
      {"collections.group.parts.part.description.image.middle", st_collections_group_parts_part_description_image_middle},
+     {"collections.group.parts.part.description.image.scale_hint", st_collections_group_parts_part_description_image_scale_hint},
      {"collections.group.parts.part.description.fill.smooth", st_collections_group_parts_part_description_fill_smooth},
      {"collections.group.parts.part.description.fill.origin.relative", st_collections_group_parts_part_description_fill_origin_relative},
      {"collections.group.parts.part.description.fill.origin.offset", st_collections_group_parts_part_description_fill_origin_offset},
@@ -3898,6 +3900,47 @@ st_collections_group_parts_part_description_image_middle(void)
                                     "0", 1,
                                     "NONE", 1,
                                     "SOLID", 2,
+                                    NULL);
+}
+
+/**
+    @page edcref
+    @property
+        scale_hint
+    @parameters
+        0, NANE, DYNAMIC, STATIC
+    @effect
+      Sets the evas image scale hint letting the engine more efectively save
+      cached copies of the scaled image if it maks sense
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_image_scale_hint(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_IMAGE)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"image attributes in non-IMAGE part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
+   ed->image.scale_hint =  parse_enum(0,
+                                    "NONE", EVAS_IMAGE_SCALE_HINT_NONE,
+                                    "DYNAMIC", EVAS_IMAGE_SCALE_HINT_DYNAMIC,
+                                    "STATIC", EVAS_IMAGE_SCALE_HINT_STATIC,
+                                    "0", EVAS_IMAGE_SCALE_HINT_NONE,
                                     NULL);
 }
 

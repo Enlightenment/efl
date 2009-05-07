@@ -1270,7 +1270,6 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
    evas_object_image_fill_set(ep->object, p3->fill.x, p3->fill.y,
 			      p3->fill.w, p3->fill.h);
    evas_object_image_smooth_scale_set(ep->object, p3->smooth);
-
    evas_object_image_border_set(ep->object, p3->border.l, p3->border.r,
 				p3->border.t, p3->border.b);
    if (chosen_desc->border.no_fill == 0)
@@ -1551,6 +1550,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	  {
 	   case EDJE_PART_TYPE_RECTANGLE:
 	   case EDJE_PART_TYPE_IMAGE:
+             evas_object_image_scale_hint_set(ep->object, 
+                                              chosen_desc->image.scale_hint);
 	   case EDJE_PART_TYPE_TEXTBLOCK:
 	   case EDJE_PART_TYPE_GRADIENT:
 	   case EDJE_PART_TYPE_BOX:

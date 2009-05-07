@@ -524,6 +524,7 @@ struct _Edje_Part_Description
    struct {
       Eina_List     *tween_list; /* list of Edje_Part_Image_Id */
       int            id; /* the image id to use */
+      int            scale_hint; /* evas scale hint */
    } image;
 
    struct {
@@ -581,24 +582,24 @@ struct _Edje_Part_Description
       unsigned char  min_y; /* if text size should be part min size */
       unsigned char  max_x; /* if text size should be part max size */
       unsigned char  max_y; /* if text size should be part max size */
-
    } text;
 
    struct {
       char          *layout, *alt_layout;
       Edje_Alignment align;
       struct {
-	      int x, y;
+         int x, y;
       } padding;
       struct {
-              Eina_Bool h, v;
+         Eina_Bool h, v;
       } min;
    } box;
+   
    struct {
       unsigned char  homogeneous;
       Edje_Alignment align;
       struct {
-	      int x, y;
+         int x, y;
       } padding;
    } table;
 
