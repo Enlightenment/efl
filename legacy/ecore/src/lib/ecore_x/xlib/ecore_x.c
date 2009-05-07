@@ -439,7 +439,8 @@ ecore_x_init(const char *name)
    _ecore_x_init_count++;
    
    _ecore_x_private_win = ecore_x_window_override_new(0, -77, -777, 123, 456);
-   
+
+#ifdef ENABLE_XIM
    /* Setup XIM */
    if (!_ecore_x_ic && XSupportsLocale())
      {
@@ -473,7 +474,7 @@ _im_create_error:
 	XCloseIM(im);
      }
 _im_create_end:
-
+#endif
    return _ecore_x_init_count;
 }
 
@@ -483,6 +484,8 @@ _ecore_x_shutdown(int close_display)
    _ecore_x_init_count--;
    if (_ecore_x_init_count > 0) return _ecore_x_init_count;
    if (!_ecore_x_disp) return _ecore_x_init_count;
+
+#ifdef ENABLE_XIM
    if (_ecore_x_ic)
      {
 	XIM xim;
@@ -491,6 +494,7 @@ _ecore_x_shutdown(int close_display)
 	XCloseIM(xim);
 	_ecore_x_ic = NULL;
      }
+#endif
    if (close_display)
       XCloseDisplay(_ecore_x_disp);
    else
@@ -723,8 +727,10 @@ _ecore_x_fd_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	
 	XNextEvent(d, &ev);
 
+#ifdef ENABLE_XIM
 	/* Filter event for XIM */
 	if (XFilterEvent(&ev, ev.xkey.window)) continue;
+#endif
 
 	if ((ev.type >= 0) && (ev.type < _ecore_x_event_handlers_num))
 	  {
