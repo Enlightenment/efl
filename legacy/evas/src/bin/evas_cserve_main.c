@@ -1161,6 +1161,8 @@ main(int argc, char **argv)
    server_id = rand();
    
    parse_args(argc, argv);
+   
+   unsetenv("EVAS_CSERVE");
 
    eina_init();
    evas_init();
