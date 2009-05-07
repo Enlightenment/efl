@@ -622,6 +622,17 @@ evas_engine_sdl_image_draw(void *data, void *context, void *surface, void *image
 }
 
 static void
+evas_engine_sdl_image_scale_hint_set(void *data __UNUSED__, void *image, int hint)
+{
+}
+
+static int
+evas_engine_sdl_image_scale_hint_get(void *data __UNUSED__, void *image)
+{
+   return EVAS_IMAGE_SCALE_HINT_NONE;
+}
+
+static void
 evas_engine_sdl_image_cache_flush(void *data)
 {
    Render_Engine        *re = (Render_Engine*) data;
@@ -856,6 +867,10 @@ EAPI int module_open(Evas_Module *em)
    ORD(rectangle_draw);
    ORD(polygon_draw);
    ORD(gradient_draw);
+   
+   ORD(image_scale_hint_set);
+   ORD(image_scale_hint_get);
+   
    /* now advertise out own api */
    em->functions = (void *)(&func);
    return 1;

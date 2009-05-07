@@ -376,6 +376,17 @@ eng_image_border_get(void *data, void *image, int *l, int *r, int *t, int *b)
 }
 
 static void
+eng_image_scale_hint_set(void *data __UNUSED__, void *image, int hint)
+{
+}
+
+static int
+eng_image_scale_hint_get(void *data __UNUSED__, void *image)
+{
+   return EVAS_IMAGE_SCALE_HINT_NONE;
+}
+
+static void
 eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text)
 {
    Render_Engine *re = (Render_Engine *)data;
@@ -558,6 +569,10 @@ module_open(Evas_Module *em)
    ORD(image_border_get);
    ORD(font_draw);
    ORD(font_free);
+
+   ORD(image_scale_hint_set);
+   ORD(image_scale_hint_get);
+
 /*
    ORD(gradient2_color_np_stop_insert);
    ORD(gradient2_clear);

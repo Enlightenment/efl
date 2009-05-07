@@ -63,6 +63,7 @@ struct _Server
    int (*func) (void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *data);
    void *data;
    pid_t pid;
+   int server_id;
 };
 
 struct _Client
@@ -116,6 +117,7 @@ enum
 typedef struct
 {
    pid_t pid;
+   int server_id;
 } Op_Init;
 typedef struct
 {
@@ -128,6 +130,7 @@ typedef struct
 typedef struct
 {
    void *handle;
+   int server_id;
    struct {
       int id;
       int offset;
@@ -141,14 +144,17 @@ typedef struct
 typedef struct
 {
    void *handle;
+   int server_id;
 } Op_Unload;
 typedef struct
 {
    void *handle;
+   int server_id;
 } Op_Unloaddata;
 typedef struct
 {
    void *handle;
+   int server_id;
 } Op_Loaddata;
 typedef struct
 {
@@ -161,6 +167,7 @@ typedef struct
 typedef struct
 {
    void *handle;
+   int server_id;
 } Op_Preload;
 typedef struct
 {
@@ -174,6 +181,7 @@ typedef struct
 typedef struct
 {
    void *handle;
+   int server_id;
 } Op_Forcedunload;
 typedef struct
 {
@@ -196,6 +204,31 @@ typedef struct
    double saved_time_image_header_load;
    double saved_time_image_data_load;
 } Op_Getstats_Reply;
+typedef struct
+{
+   struct {
+      int mem_total;
+      int count;
+   } active, cached;
+} Op_Getinfo_Reply; // + N active Info Items + N cached items
+typedef struct
+{
+   int file_key_size;
+   int w, h;
+   time_t file_mod_time;
+   time_t file_checked_time;
+   time_t cached_time;
+   int refcount;
+   int data_refcount;
+   int memory_footprint;
+   double head_load_time;
+   double data_load_time;
+   Eina_Bool alpha : 1;
+   Eina_Bool data_loaded : 1;
+   Eina_Bool active : 1;
+   Eina_Bool dead : 1;
+   Eina_Bool useless : 1;
+} Op_Getinfo_Item; // + "file""key"
 
 
 // for clients to connect to cserve
@@ -210,6 +243,7 @@ EAPI void      evas_cserve_image_free(Image_Entry *ie);
 EAPI Eina_Bool evas_cserve_config_get(Op_Getconfig_Reply *config);
 EAPI Eina_Bool evas_cserve_config_set(Op_Setconfig *config);
 EAPI Eina_Bool evas_cserve_stats_get(Op_Getstats_Reply *stats);
+EAPI Op_Getinfo_Reply *evas_cserve_info_get(void);
     
 // for the server
 EAPI Server *evas_cserve_server_add(void);

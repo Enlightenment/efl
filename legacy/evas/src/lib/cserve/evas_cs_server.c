@@ -60,7 +60,15 @@ evas_cserve_server_add(void)
 EAPI void
 evas_cserve_server_del(Server *s)
 {
-   /* FIXME: del clients! */
+   Client *c;
+   
+   EINA_LIST_FREE(s->clients, c)
+     {
+        close(c->fd);
+        if (c->buf) free(c->buf);
+        if (c->inbuf) free(c->inbuf);
+        free(c);
+     }
    close(s->fd);
    unlink(s->socket_path);
    free(s->socket_path);
@@ -102,7 +110,7 @@ client_flush(Client *c)
         c->dead = 1;
         return;
      }
-   if (num != c->bufsize)
+   if (num < c->bufsize)
      {
         unsigned char *buf;
         
@@ -130,11 +138,11 @@ client_buf_add(Client *c, unsigned char *data, int size)
 {
    int newsize;
    unsigned char *buf;
-   
-   newsize = c->bufalloc + size;
+
+   newsize = c->bufsize + size;
    if (newsize > c->bufalloc)
      {
-        c->bufalloc + newsize + 1024;
+        c->bufalloc = newsize + 16384;
         buf = realloc(c->buf, c->bufalloc);
         if (buf) c->buf = buf;
         else return;
@@ -148,9 +156,16 @@ client_write(Client *c, unsigned char *data, int size)
 {
    int num;
    
-   num = write(c->fd, data, size);
-   if (num != size)
-     client_buf_add(c, data + num, size - num);
+   if (!c->buf)
+     {
+        num = write(c->fd, data, size);
+        if (num != size)
+          client_buf_add(c, data + num, size - num);
+     }
+   else
+     {
+        client_buf_add(c, data, size);
+     }
 }
 
 EAPI void

@@ -682,6 +682,8 @@ struct _Evas_Func
 
 /*    void (*image_rotation_set)              (void *data, void *image); */
 
+   void (*image_scale_hint_set)            (void *data, void *image, int hint);
+   int  (*image_scale_hint_get)            (void *data, void *image);
 };
 
 struct _Evas_Image_Load_Func

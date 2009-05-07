@@ -53,6 +53,8 @@ struct _Evas_Object_Image
       void             *get_pixels_data;
    } func;
 
+   Evas_Image_Scale_Hint scale_hint;
+   
    void             *engine_data;
 
    unsigned char     changed : 1;
@@ -1809,6 +1811,42 @@ evas_object_image_native_surface_get(const Evas_Object *obj)
  *
  */
 EAPI void
+evas_object_image_scale_hint_set(Evas_Object *obj, Evas_Image_Scale_Hint hint)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return;
+   MAGIC_CHECK_END();
+   o->scale_hint = hint;
+}
+
+EAPI Evas_Image_Scale_Hint
+evas_object_image_scale_hint_get(const Evas_Object *obj)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return EVAS_IMAGE_SCALE_HINT_NONE;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return EVAS_IMAGE_SCALE_HINT_NONE;
+   MAGIC_CHECK_END();
+   return o->scale_hint;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+EAPI void
 evas_image_cache_flush(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -2137,6 +2175,9 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 	       }
 	     o->dirty_pixels = 0;
 	  }
+        obj->layer->evas->engine.func->image_scale_hint_set(output,
+                                                            o->engine_data,
+                                                            o->scale_hint);
 	o->engine_data = obj->layer->evas->engine.func->image_border_set(output, o->engine_data,
 									 o->cur.border.l, o->cur.border.r,
 									 o->cur.border.t, o->cur.border.b);

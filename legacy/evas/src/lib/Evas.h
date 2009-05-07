@@ -296,6 +296,13 @@ typedef enum _Evas_Border_Fill_Mode
    EVAS_BORDER_FILL_SOLID = 2
 } Evas_Border_Fill_Mode;
 
+typedef enum _Evas_Image_Scale_Hint
+{
+   EVAS_IMAGE_SCALE_HINT_NONE = 0,
+   EVAS_IMAGE_SCALE_HINT_DYNAMIC = 1,
+   EVAS_IMAGE_SCALE_HINT_STATIC = 2
+} Evas_Image_Scale_Hint;
+
 struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
 {
    int magic; /**< Magic number */
@@ -599,6 +606,8 @@ extern "C" {
    EAPI Evas_Colorspace   evas_object_image_colorspace_get         (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI void                 evas_object_image_native_surface_set  (Evas_Object *obj, Evas_Native_Surface *surf) EINA_ARG_NONNULL(1, 2);
    EAPI Evas_Native_Surface *evas_object_image_native_surface_get  (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+   EAPI void                  evas_object_image_scale_hint_set     (Evas_Object *obj, Evas_Image_Scale_Hint hint) EINA_ARG_NONNULL(1);
+   EAPI Evas_Image_Scale_Hint evas_object_image_scale_hint_get     (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /* image cache */
    EAPI void              evas_image_cache_flush            (Evas *e) EINA_ARG_NONNULL(1);

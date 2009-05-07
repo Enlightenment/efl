@@ -884,6 +884,17 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 }
 
 static void
+eng_image_scale_hint_set(void *data __UNUSED__, void *image, int hint)
+{
+}
+
+static int
+eng_image_scale_hint_get(void *data __UNUSED__, void *image)
+{
+   return EVAS_IMAGE_SCALE_HINT_NONE;
+}
+
+static void
 eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text)
 {
    Render_Engine *re;
@@ -984,6 +995,10 @@ module_open(Evas_Module *em)
    ORD(image_native_set);
    ORD(image_native_get);
    ORD(font_draw);
+   
+   ORD(image_scale_hint_set);
+   ORD(image_scale_hint_get);
+   
    /* now advertise out own api */
    em->functions = (void *)(&func);
    return 1;

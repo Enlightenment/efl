@@ -95,7 +95,9 @@ static void *eng_image_native_get(void *data, void *image);
 static void eng_image_cache_flush(void *data);
 static void eng_image_cache_set(void *data, int bytes);
 static int eng_image_cache_get(void *data);
-
+static void eng_image_scale_hint_set(void *data __UNUSED__, void *image, int hint);
+static int eng_image_scale_hint_get(void *data __UNUSED__, void *image);
+    
 static void *eng_font_load(void *data, char *name, int size);
 static void *eng_font_memory_load(void *data, char *name, int size, const void *fdata, int fdata_size);
 static void *eng_font_add(void *data, void *font, char *name, int size);
@@ -239,7 +241,10 @@ static Evas_Func eng_func =
      eng_font_cache_get,
                               
      eng_font_hinting_set,
-     eng_font_hinting_can_hint
+     eng_font_hinting_can_hint,
+     
+     eng_image_scale_hint_set,
+     eng_image_scale_hint_get
 };
 
 static void *
@@ -1255,6 +1260,17 @@ eng_image_cache_get(void *data)
 
    re = (Render_Engine *)data;
    return evas_common_image_get_cache();
+}
+
+static void
+eng_image_scale_hint_set(void *data __UNUSED__, void *image, int hint)
+{
+}
+
+static int
+eng_image_scale_hint_get(void *data __UNUSED__, void *image)
+{
+   return EVAS_IMAGE_SCALE_HINT_NONE;
 }
 
 static void *

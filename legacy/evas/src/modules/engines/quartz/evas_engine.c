@@ -1101,6 +1101,18 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
       CGContextDrawImage(re->ctx, CGRectMake(dst_x, dst_y, dst_w, dst_h), im->cgim);
 }
 
+static void
+eng_image_scale_hint_set(void *data __UNUSED__, void *image, int hint)
+{
+}
+
+static int
+eng_image_scale_hint_get(void *data __UNUSED__, void *image)
+{
+   return EVAS_IMAGE_SCALE_HINT_NONE;
+}
+
+
 #pragma mark Text Manipulation & Drawing
 
 static Evas_Quartz_Font *
@@ -1491,6 +1503,9 @@ module_open(Evas_Module *em)
    ORD(rectangle_draw);
    ORD(setup);
 
+   ORD(image_scale_hint_set);
+   ORD(image_scale_hint_get);
+   
    /* now advertise out our api */
    em->functions = (void *)(&func);
    return 1;

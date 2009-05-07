@@ -778,6 +778,26 @@ eng_image_draw(void *data __UNUSED__, void *context, void *surface, void *image,
 }
 
 static void
+eng_image_scale_hint_set(void *data __UNUSED__, void *image, int hint)
+{
+   Image_Entry *im;
+
+   if (!image) return;
+   im = image;
+   im->scale_hint = hint;
+}
+
+static int
+eng_image_scale_hint_get(void *data __UNUSED__, void *image)
+{
+   Image_Entry *im;
+
+   if (!image) return EVAS_IMAGE_SCALE_HINT_NONE;
+   im = image;
+   return im->scale_hint;
+}
+
+static void
 eng_image_cache_flush(void *data __UNUSED__)
 {
    int tmp_size;
@@ -1087,7 +1107,9 @@ static Evas_Func func =
      eng_font_cache_get,
      /* font hinting functions */
      eng_font_hinting_set,
-     eng_font_hinting_can_hint
+     eng_font_hinting_can_hint,
+     eng_image_scale_hint_set,
+     eng_image_scale_hint_get
      /* FUTURE software generic calls go here */
 };
 

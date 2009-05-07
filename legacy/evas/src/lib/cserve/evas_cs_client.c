@@ -3,6 +3,9 @@
 
 #ifdef EVAS_CSERVE
 
+static Server *cserve = NULL;
+static int csrve_init = 0;
+
 static void
 pipe_handler(int x, siginfo_t *info, void *data)
 {
@@ -85,12 +88,16 @@ server_send(Server *s, int opcode, int size, unsigned char *data)
    if (num < 0)
      {
         pipe_handle(0);
+        if (cserve) server_disconnect(cserve);
+        cserve = NULL;
         return 0;
      }
    num = write(s->fd, data, size);
    if (num < 0)
      {
         pipe_handle(0);
+        if (cserve) server_disconnect(cserve);
+        cserve = NULL;
         return 0;
      }
    pipe_handle(0);
@@ -100,21 +107,37 @@ server_send(Server *s, int opcode, int size, unsigned char *data)
 static unsigned char *
 server_read(Server *s, int *opcode, int *size)
 {
-   int ints[2], num;
+   int ints[2], num, left;
    unsigned char *data;
    
    num = read(s->fd, ints, sizeof(int) * 2);
-   if (num != (sizeof(int) * 2)) return NULL;
+   if (num != (sizeof(int) * 2))
+     {
+        if (cserve) server_disconnect(cserve);
+        cserve = NULL;
+        return NULL;
+     }
    *size = ints[0];
    *opcode = ints[1];
    if ((*size < 0) || (*size > (1024 * 1024))) return NULL;
    data = malloc(*size);
    if (!data) return NULL;
    num = read(s->fd, data, *size);
-   if (num != *size)
+   if (num < 0)
      {
         free(data);
         return NULL;
+     }
+   left = *size - num;
+   while (left > 0)
+     {
+        num = read(s->fd, data + (*size - left), left);
+        if (num < 0)
+          {
+             free(data);
+             return NULL;
+          }
+        left -= num;
      }
    return data;
 }
@@ -127,19 +150,20 @@ server_init(Server *s)
    int size;
    
    msg.pid = getpid();
+   msg.server_id = 0;
    if (!server_send(s, OP_INIT, sizeof(msg), (unsigned char *)(&msg)))
      return 0;
    rep = (Op_Init *)server_read(s, &opcode, &size);
-   if (rep)
+   if ((rep) && (opcode == OP_INIT) && (size == sizeof(Op_Init)))
      {
         s->pid = rep->pid;
+        s->server_id = rep->server_id;
         free(rep);
+        return 1;
      }
-   return 1;
+   if (rep) free(rep);
+   return 0;
 }
-
-static Server *cserve = NULL;
-static int csrve_init = 0;
 
 EAPI Eina_Bool
 evas_cserve_init(void)
@@ -150,7 +174,7 @@ evas_cserve_init(void)
    if (!cserve) return 0;
    if (!server_init(cserve))
      {
-        server_disconnect(cserve);
+        if (cserve) server_disconnect(cserve);
         cserve = NULL;
         return 0;
      }
@@ -182,7 +206,7 @@ server_reinit(void)
      {
         if (!server_init(cserve))
           {
-             server_disconnect(cserve);
+             if (cserve) server_disconnect(cserve);
              cserve = NULL;
           }
      }
@@ -241,7 +265,10 @@ evas_cserve_image_load(Image_Entry *ie, const char *file, const char *key, RGBA_
         ie->flags.alpha = rep->image.alpha;
         ie->data1 = rep->handle;
      }
+   if (rep) free(rep);
    if (ie->data1 == NULL) return 0;
+   if (cserve)
+     ie->server_id = cserve->server_id;
    return 1;
 }
 
@@ -256,18 +283,31 @@ evas_cserve_image_data_load(Image_Entry *ie)
    else return 0;
    if (!cserve) return 0;
    if (ie->data1 == NULL) return 0;
+   if (cserve->server_id != ie->server_id)
+     {
+        ie->data1 = NULL;
+        if (!evas_cserve_image_load(ie, ie->file, ie->key, &(ie->load_opts)))
+          return 0;
+     }
    memset(&msg, 0, sizeof(msg));
    msg.handle = ie->data1;
+   msg.server_id = cserve->server_id;
    if (!server_send(cserve, OP_LOADDATA, sizeof(msg), (unsigned char *)(&msg)))
      return 0;
    if (!cserve) return 0;
    rep = (Op_Loaddata_Reply *)server_read(cserve, &opcode, &size);
    if ((rep) && (opcode == OP_LOADDATA) && (size == sizeof(Op_Loaddata_Reply)))
      {
-        if (rep->mem.size <= 0) return 0;
+        if (rep->mem.size <= 0)
+          {
+             free(rep);
+             return 0;
+          }
         ie->data2 = evas_cserve_mem_open(cserve->pid, rep->mem.id, NULL, rep->mem.size, 0);
+        free(rep);
         return 1;
      }
+   if (rep) free(rep);
    return 0;
 }
 
@@ -282,8 +322,13 @@ evas_cserve_image_free(Image_Entry *ie)
    if (ie->data1 == NULL) return;
    memset(&msg, 0, sizeof(msg));
    msg.handle = ie->data1;
+   msg.server_id = cserve->server_id;
    if (ie->data2) evas_cserve_image_unload(ie);
-   server_send(cserve, OP_UNLOAD, sizeof(msg), (unsigned char *)(&msg));
+   if (cserve)
+     {
+        if (ie->server_id == cserve->server_id)
+          server_send(cserve, OP_UNLOAD, sizeof(msg), (unsigned char *)(&msg));
+     }
    ie->data1 = NULL;
 }
 
@@ -298,9 +343,11 @@ evas_cserve_image_unload(Image_Entry *ie)
    if (ie->data1 == NULL) return;
    memset(&msg, 0, sizeof(msg));
    msg.handle = ie->data1;
+   msg.server_id = cserve->server_id;
    if (ie->data2) evas_cserve_mem_close(ie->data2);
    ie->data2 = NULL;
-   server_send(cserve, OP_UNLOADDATA, sizeof(msg), (unsigned char *)(&msg));
+   if (ie->server_id == cserve->server_id)
+     server_send(cserve, OP_UNLOADDATA, sizeof(msg), (unsigned char *)(&msg));
 }
 
 EAPI void
@@ -314,9 +361,11 @@ evas_cserve_image_useless(Image_Entry *ie)
    if (ie->data1 == NULL) return;
    memset(&msg, 0, sizeof(msg));
    msg.handle = ie->data1;
+   msg.server_id = cserve->server_id;
    if (ie->data2) evas_cserve_mem_close(ie->data2);
    ie->data2 = NULL;
-   server_send(cserve, OP_USELESSDATA, sizeof(msg), (unsigned char *)(&msg));
+   if (ie->server_id == cserve->server_id)
+     server_send(cserve, OP_USELESSDATA, sizeof(msg), (unsigned char *)(&msg));
 }
 
 EAPI Eina_Bool
@@ -333,8 +382,10 @@ evas_cserve_config_get(Op_Getconfig_Reply *config)
    if ((rep) && (opcode == OP_GETCONFIG) && (size == sizeof(Op_Getconfig_Reply)))
      {
         memcpy(config, rep, sizeof(Op_Getconfig_Reply));
+        free(rep);
         return 1;
      }
+   if (rep) free(rep);
    return 0;
 }
 
@@ -362,9 +413,30 @@ evas_cserve_stats_get(Op_Getstats_Reply *stats)
    if ((rep) && (opcode == OP_GETSTATS) && (size == sizeof(Op_Getstats_Reply)))
      {
         memcpy(stats, rep, sizeof(Op_Getstats_Reply));
+        free(rep);
         return 1;
      }
+   if (rep) free(rep);
    return 0;
+}
+
+EAPI Op_Getinfo_Reply *
+evas_cserve_info_get(void)
+{
+   Op_Getinfo_Reply *rep;
+   int opcode;
+   int size;
+   if (csrve_init > 0) server_reinit();
+   else return NULL;
+   if (!cserve) return NULL;
+   if (!server_send(cserve, OP_GETINFO, 0, NULL)) return NULL;
+   rep = (Op_Getinfo_Reply *)server_read(cserve, &opcode, &size);
+   if ((rep) && (opcode == OP_GETINFO) && (size >= sizeof(Op_Getinfo_Reply)))
+     {
+        return rep;
+     }
+   if (rep) free(rep);
+   return NULL;
 }
 
 #endif

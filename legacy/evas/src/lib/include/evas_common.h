@@ -471,7 +471,9 @@ struct _Image_Entry
 #endif
 
    Image_Entry_Flags      flags;
+   Evas_Image_Scale_Hint  scale_hint;
    void                  *data1, *data2;
+   int                    server_id;
 };
 
 struct _Engine_Image_Entry

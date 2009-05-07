@@ -250,7 +250,7 @@ _cache_prune(Scaleitem *notsci, Evas_Bool copies_only)
         if (copies_only)
           {
              while ((sci) && (!sci->parent_im->image.data))
-               sci = ((Eina_Inlist *)sci)->next;
+               sci = (Scaleitem *)(((Eina_Inlist *)sci)->next);
              if (!sci) return;
           }
         if (sci == notsci) return;
@@ -352,6 +352,7 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst,
 //          dst_region_x, dst_region_y, dst_region_w, dst_region_h,
 //          smooth);
    if ((sci->usage >= MIN_SCALE_USES)
+       && (ie->scale_hint != EVAS_IMAGE_SCALE_HINT_DYNAMIC)
 //       && (sci->usage_count > (use_counter - MIN_SCALE_AGE_GAP))
        )
      {
@@ -475,8 +476,10 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
         int size, osize, used;
         
         size = dst_region_w * dst_region_h;
-        if (((dst_region_w > 640) || (dst_region_h > 640)) &&
-            (size > (480 * 480)))
+        if (((((dst_region_w > 640) || (dst_region_h > 640)) &&
+             (size > (480 * 480))) ||
+             (ie->scale_hint == EVAS_IMAGE_SCALE_HINT_STATIC)) &&
+            (ie->scale_hint != EVAS_IMAGE_SCALE_HINT_DYNAMIC))
           {
              Eina_List *l;
              Scaleitem *sci2;
