@@ -328,7 +328,7 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
              unsigned int    foreground;
 	     Ecore_X_GC      gc;
 
-	     if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+	     if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 	     ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
              foreground = 0;
              gc = ecore_x_gc_new(ee->engine.x.mask,
@@ -336,7 +336,7 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
                                  &foreground);
              ecore_x_drawable_rectangle_fill(ee->engine.x.mask, gc,
                                              0, 0, ee->w, ee->h);
-             ecore_x_gc_del(gc);
+             ecore_x_gc_free(gc);
 	     einfo->info.mask = ee->engine.x.mask;
 	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 	     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
@@ -354,7 +354,7 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
              unsigned int    foreground;
 	     Ecore_X_GC      gc;
 
-	     if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+	     if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 	     ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
              foreground = 0;
              ecore_x_gc_new(ee->engine.x.mask,
@@ -362,7 +362,7 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
                             &foreground);
              ecore_x_drawable_rectangle_fill(ee->engine.x.mask, gc,
                                              0, 0, ee->w, ee->h);
-             ecore_x_gc_del(gc);
+             ecore_x_gc_free(gc);
 	     einfo->info.mask = ee->engine.x.mask;
 	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 	     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
@@ -382,7 +382,7 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
 	     GC gc;
 	     XGCValues gcv;
 
-	     if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+	     if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 	     ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
 	     einfo->info.mask = ee->engine.x.mask;
 	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
@@ -1061,9 +1061,9 @@ static void
 _ecore_evas_x_free(Ecore_Evas *ee)
 {
    ecore_x_window_free(ee->prop.window);
-   if (ee->engine.x.pmap) ecore_x_pixmap_del(ee->engine.x.pmap);
-   if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
-   if (ee->engine.x.gc) ecore_x_gc_del(ee->engine.x.gc);
+   if (ee->engine.x.pmap) ecore_x_pixmap_free(ee->engine.x.pmap);
+   if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
+   if (ee->engine.x.gc) ecore_x_gc_free(ee->engine.x.gc);
 #ifdef HAVE_ECORE_X_XCB
 # warning [XCB] No Region code
 #else
@@ -1389,7 +1389,7 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
                                       &foreground);
                   ecore_x_drawable_rectangle_fill(ee->engine.x.mask, gc,
                                                   0, 0, ee->w, ee->h);
-                  ecore_x_gc_del(gc);
+                  ecore_x_gc_free(gc);
 		  einfo->info.mask = ee->engine.x.mask;
 		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 		  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
@@ -1397,7 +1397,7 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 	       }
 	     else
 	       {
-		  if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+		  if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 		  ee->engine.x.mask = 0;
 		  einfo->info.mask = 0;
 		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
@@ -1429,7 +1429,7 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
                                       &foreground);
                   ecore_x_drawable_rectangle_fill(ee->engine.x.mask, gc,
                                                   0, 0, ee->w, ee->h);
-                  ecore_x_gc_del(gc);
+                  ecore_x_gc_free(gc);
 		  einfo->info.mask = ee->engine.x.mask;
 		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 		  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
@@ -1437,7 +1437,7 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 	       }
 	     else
 	       {
-		  if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+		  if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 		  ee->engine.x.mask = 0;
 		  einfo->info.mask = 0;
 		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
@@ -1469,7 +1469,7 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 	       }
 	     else
 	       {
-		  if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+		  if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 		  ee->engine.x.mask = 0;
 		  einfo->info.mask = 0;
 		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
@@ -1527,7 +1527,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	       ee->prop.window = ecore_x_window_override_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
 	     else
 	       ee->prop.window = ecore_x_window_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
-	     if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+	     if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 	     ee->engine.x.mask = 0;
 	     ecore_x_window_shape_input_mask_set(ee->prop.window, 0);
 	  }
@@ -1552,7 +1552,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	einfo->info.depth = att.depth;
 # endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
 
-//	if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+//	if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 //	ee->engine.x.mask = 0;
 	einfo->info.mask = ee->engine.x.mask;
 	einfo->info.drawable = ee->prop.window;
@@ -1599,7 +1599,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	       ee->prop.window = ecore_x_window_override_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
 	     else
 	       ee->prop.window = ecore_x_window_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
-	     if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+	     if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 	     ee->engine.x.mask = 0;
 	     ecore_x_window_shape_input_mask_set(ee->prop.window, 0);
 	  }
@@ -1617,7 +1617,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	einfo->info.visual = att.visual;
 # endif /* ! BUILD_ECORE_EVAS_XRENDER_XCB */
 
-//	if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+//	if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 //	ee->engine.x.mask = 0;
         einfo->info.mask = ee->engine.x.mask;
 	einfo->info.drawable = ee->prop.window;
@@ -1663,7 +1663,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	       ee->prop.window = ecore_x_window_override_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
 	     else
 	       ee->prop.window = ecore_x_window_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
-	     if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+	     if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 	     ee->engine.x.mask = 0;
 	     ecore_x_window_shape_input_mask_set(ee->prop.window, 0);
 	  }
@@ -1673,7 +1673,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 # endif /* XXX no alpha window support for software_16_x11 */
 
 # if 0 /* XXX no shaped window support for software_16_x11 */
-//	if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+//	if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 //	ee->engine.x.mask = 0;
         einfo->info.mask = ee->engine.x.mask;
 # endif /* XXX no shaped window support for software_16_x11 */
@@ -2104,8 +2104,8 @@ _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 	       }
 	     else
 	       {
-		  if (ee->engine.x.pmap) ecore_x_pixmap_del(ee->engine.x.pmap);
-		  if (ee->engine.x.gc) ecore_x_gc_del(ee->engine.x.gc);
+		  if (ee->engine.x.pmap) ecore_x_pixmap_free(ee->engine.x.pmap);
+		  if (ee->engine.x.gc) ecore_x_gc_free(ee->engine.x.gc);
 		  if (ee->engine.x.using_bg_pixmap)
 		    {
 		       ecore_x_window_pixmap_set(ee->prop.window, 0);
@@ -2149,8 +2149,8 @@ _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 	       }
 	     else
 	       {
-		  if (ee->engine.x.pmap) ecore_x_pixmap_del(ee->engine.x.pmap);
-		  if (ee->engine.x.gc) ecore_x_gc_del(ee->engine.x.gc);
+		  if (ee->engine.x.pmap) ecore_x_pixmap_free(ee->engine.x.pmap);
+		  if (ee->engine.x.gc) ecore_x_gc_free(ee->engine.x.gc);
 		  if (ee->engine.x.using_bg_pixmap)
 		    {
 		       ecore_x_window_pixmap_set(ee->prop.window, 0);

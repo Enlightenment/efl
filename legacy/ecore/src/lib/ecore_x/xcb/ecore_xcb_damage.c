@@ -103,7 +103,7 @@ ecore_x_damage_new(Ecore_X_Drawable            drawable,
  * @ingroup Ecore_X_Damage_Group
  */
 EAPI void
-ecore_x_damage_del(Ecore_X_Damage damage)
+ecore_x_damage_free(Ecore_X_Damage damage)
 {
 #ifdef ECORE_XCB_DAMAGE
    xcb_damage_destroy(_ecore_xcb_conn, damage);

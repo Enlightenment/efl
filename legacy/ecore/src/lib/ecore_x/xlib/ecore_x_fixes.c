@@ -143,7 +143,7 @@ ecore_x_region_new_from_picture(Ecore_X_Picture picture)
 }
 
 EAPI void
-ecore_x_region_del(Ecore_X_Region region)
+ecore_x_region_free(Ecore_X_Region region)
 {
 #ifdef ECORE_XFIXES
    XFixesDestroyRegion(_ecore_x_disp, region);

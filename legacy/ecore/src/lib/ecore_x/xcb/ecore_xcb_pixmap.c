@@ -52,7 +52,7 @@ ecore_x_pixmap_new(Ecore_X_Window win,
  * @ingroup Ecore_X_Pixmap_Group
  */
 EAPI void
-ecore_x_pixmap_del(Ecore_X_Pixmap pmap)
+ecore_x_pixmap_free(Ecore_X_Pixmap pmap)
 {
    xcb_free_pixmap(_ecore_xcb_conn, pmap);
 }

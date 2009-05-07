@@ -1259,13 +1259,13 @@ EAPI void               ecore_x_window_shape_events_select(Ecore_X_Window win, i
 EAPI void               ecore_x_window_shape_input_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask);
 
 EAPI Ecore_X_Pixmap   ecore_x_pixmap_new(Ecore_X_Window win, int w, int h, int dep);
-EAPI void             ecore_x_pixmap_del(Ecore_X_Pixmap pmap);
+EAPI void             ecore_x_pixmap_free(Ecore_X_Pixmap pmap);
 EAPI void             ecore_x_pixmap_paste(Ecore_X_Pixmap pmap, Ecore_X_Drawable dest, Ecore_X_GC gc, int sx, int sy, int w, int h, int dx, int dy);
 EAPI void             ecore_x_pixmap_geometry_get(Ecore_X_Pixmap pmap, int *x, int *y, int *w, int *h);
 EAPI int              ecore_x_pixmap_depth_get(Ecore_X_Pixmap pmap);
 
 EAPI Ecore_X_GC       ecore_x_gc_new(Ecore_X_Drawable draw, Ecore_X_GC_Value_Mask value_mask, const unsigned int *value_list);
-EAPI void             ecore_x_gc_del(Ecore_X_GC gc);
+EAPI void             ecore_x_gc_free(Ecore_X_GC gc);
 
 EAPI int              ecore_x_client_message32_send(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Event_Mask mask, long d0, long d1, long d2, long d3, long d4);
 EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom type, const void *data, int len);
@@ -1665,7 +1665,7 @@ EAPI Ecore_X_Region ecore_x_region_new_from_bitmap(Ecore_X_Pixmap bitmap);
 EAPI Ecore_X_Region ecore_x_region_new_from_window(Ecore_X_Window win, Ecore_X_Region_Type type);
 EAPI Ecore_X_Region ecore_x_region_new_from_gc(Ecore_X_GC gc);
 EAPI Ecore_X_Region ecore_x_region_new_from_picture(Ecore_X_Picture picture);
-EAPI void           ecore_x_region_del(Ecore_X_Region region);
+EAPI void           ecore_x_region_free(Ecore_X_Region region);
 EAPI void           ecore_x_region_set(Ecore_X_Region region, Ecore_X_Rectangle *rects, int num);
 EAPI void           ecore_x_region_copy(Ecore_X_Region dest, Ecore_X_Region source);
 EAPI void           ecore_x_region_combine(Ecore_X_Region dest, Ecore_X_Region source1, Ecore_X_Region source2);
@@ -1714,7 +1714,7 @@ typedef struct _Ecore_X_Event_Damage  Ecore_X_Event_Damage;
 
 EAPI int               ecore_x_damage_query(void);
 EAPI Ecore_X_Damage    ecore_x_damage_new(Ecore_X_Drawable d, Ecore_X_Damage_Report_Level level);
-EAPI void              ecore_x_damage_del(Ecore_X_Damage damage);
+EAPI void              ecore_x_damage_free(Ecore_X_Damage damage);
 EAPI void              ecore_x_damage_subtract(Ecore_X_Damage damage, Ecore_X_Region repair, Ecore_X_Region parts);
 
 EAPI int               ecore_x_screen_is_composited(int screen);

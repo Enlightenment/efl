@@ -137,7 +137,7 @@ ecore_x_gc_new(Ecore_X_Drawable draw, Ecore_X_GC_Value_Mask value_mask, const un
  * @param gc The given graphics context.
  */
 EAPI void
-ecore_x_gc_del(Ecore_X_GC gc)
+ecore_x_gc_free(Ecore_X_GC gc)
 {
    XFreeGC(_ecore_x_disp, gc);
 }

@@ -197,7 +197,7 @@ ecore_x_region_new_from_picture(Ecore_X_Picture picture)
  * @ingroup Ecore_X_Fixes_Group
  */
 EAPI void
-ecore_x_region_del(Ecore_X_Region region)
+ecore_x_region_free(Ecore_X_Region region)
 {
 #ifdef ECORE_XCB_FIXES
    xcb_xfixes_destroy_region(_ecore_xcb_conn, region);

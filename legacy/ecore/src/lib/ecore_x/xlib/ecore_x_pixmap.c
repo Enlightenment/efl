@@ -46,7 +46,7 @@ ecore_x_pixmap_new(Ecore_X_Window win, int w, int h, int dep)
  * @ingroup Ecore_X_Pixmap_Group
  */
 EAPI void
-ecore_x_pixmap_del(Ecore_X_Pixmap pmap)
+ecore_x_pixmap_free(Ecore_X_Pixmap pmap)
 {
    XFreePixmap(_ecore_x_disp, pmap);
 }

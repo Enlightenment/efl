@@ -51,7 +51,7 @@ ecore_x_damage_new(Ecore_X_Drawable d, Ecore_X_Damage_Report_Level level)
 }
 
 EAPI void
-ecore_x_damage_del(Ecore_X_Damage damage)
+ecore_x_damage_free(Ecore_X_Damage damage)
 {
 #ifdef ECORE_XDAMAGE
    XDamageDestroy(_ecore_x_disp, damage);

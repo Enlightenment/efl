@@ -42,7 +42,7 @@ ecore_x_gc_new(Ecore_X_Drawable drawable, Ecore_X_GC_Value_Mask value_mask, cons
  * storage.
  */
 EAPI void
-ecore_x_gc_del(Ecore_X_GC gc)
+ecore_x_gc_free(Ecore_X_GC gc)
 {
    xcb_free_gc(_ecore_xcb_conn, gc);
 }
