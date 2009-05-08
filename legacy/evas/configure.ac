@@ -156,26 +156,27 @@ AC_ARG_ENABLE(evas-cserve,
 )
 AC_MSG_RESULT($want_evas_cserve)
 
-AC_MSG_CHECKING([whether shm_open() is present])
-LIBS_save=${LIBS}
-LIBS="$LIBS -lrt"
-AC_LINK_IFELSE(
-   [AC_LANG_PROGRAM(
-      [[
+if test "x${want_evas_cserve}" = "xyes" ; then
+   AC_MSG_CHECKING([whether shm_open() is present])
+   LIBS_save=${LIBS}
+   LIBS="$LIBS -lrt"
+   AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM(
+         [[
 #include <sys/types.h>
 #include <sys/mman.h>
 #include <fcntl.h>
-      ]],
-      [[
+         ]],
+         [[
 int fd;
 fd = shm_open("/", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
 shm_unlink("/");
-      ]])],
-   [want_evas_cserve="yes"],
-   [want_evas_cserve="no"])
-LIBS=${LIBS_save}
-AC_MSG_RESULT([$want_evas_cserve])
-
+         ]])],
+      [want_evas_cserve="yes"],
+      [want_evas_cserve="no"])
+   LIBS=${LIBS_save}
+   AC_MSG_RESULT([$want_evas_cserve])
+fi
 
 AM_CONDITIONAL(EVAS_CSERVE, test "x$want_evas_cserve" = "xyes")
 if test "x$want_evas_cserve" = "xyes"; then
