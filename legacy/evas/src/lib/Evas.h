@@ -1,6 +1,8 @@
 #ifndef _EVAS_H
 #define _EVAS_H
 
+#include <time.h>
+
 #include <Eina.h>
 
 #ifdef EAPI
