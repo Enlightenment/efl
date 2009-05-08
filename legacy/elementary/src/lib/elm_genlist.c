@@ -623,10 +623,10 @@ _pan_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    if (ow < 0) ow = 0;
    oh = sd->wd->minh - oh;
    if (oh < 0) oh = 0;
-   if (x < 0) x = 0;
-   if (y < 0) y = 0;
-   if (x > ow) x = ow;
-   if (y > oh) y = oh;
+//   if (x < 0) x = 0;
+//   if (y < 0) y = 0;
+//   if (x > ow) x = ow;
+//   if (y > oh) y = oh;
    if ((x == sd->wd->pan_x) && (y == sd->wd->pan_y)) return;
    sd->wd->pan_x = x;
    sd->wd->pan_y = y;
@@ -750,6 +750,8 @@ elm_genlist_add(Evas_Object *parent)
    
    wd->scr = elm_smart_scroller_add(e);
    elm_widget_resize_object_set(obj, wd->scr);
+   
+   elm_smart_scroller_bounce_allow_set(wd->scr, 0, 1);
    
    wd->obj = obj;
    wd->mode = ELM_LIST_SCROLL;

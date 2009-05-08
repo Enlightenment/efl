@@ -87,10 +87,10 @@ void
 _elm_smart_pan_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    API_ENTRY return;
-   if (x > (sd->child_w - sd->w)) x = sd->child_w - sd->w;
-   if (y > (sd->child_h - sd->h)) y = sd->child_h - sd->h;
-   if (x < 0) x = 0;
-   if (y < 0) y = 0;
+//   if (x > (sd->child_w - sd->w)) x = sd->child_w - sd->w;
+//   if (y > (sd->child_h - sd->h)) y = sd->child_h - sd->h;
+//   if (x < 0) x = 0;
+//   if (y < 0) y = 0;
    if ((x == sd->px) && (y == sd->py)) return;
    sd->px = x;
    sd->py = y;

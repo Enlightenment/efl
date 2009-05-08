@@ -162,7 +162,12 @@ _els_smart_box_unpack(Evas_Object *obj)
    if (!sd) return;
    sd->items = eina_list_remove(sd->items, obj);
    _smart_disown(obj);
-   if (!sd->deleting) _smart_reconfigure(sd);
+   if (!sd->deleting)
+     {
+        if (!evas_object_clipees_get(sd->clip))
+          evas_object_hide(sd->clip);
+        _smart_reconfigure(sd);
+     }
 }
 
 /* local subsystem functions */

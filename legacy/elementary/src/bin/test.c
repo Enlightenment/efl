@@ -1130,6 +1130,40 @@ my_anchorblock_anchor(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+my_anchorblock_edge_left(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("left\n");
+}
+
+static void
+my_anchorblock_edge_right(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("right\n");
+}
+
+static void
+my_anchorblock_edge_top(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("top\n");
+}
+
+static void
+my_anchorblock_edge_bottom(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("bottom\n");
+}
+
+static void
+my_anchorblock_scroll(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Coord x, y, w, h, vw, vh;
+   
+   elm_scroller_region_get(obj, &x, &y, &w, &h);
+   elm_scroller_child_size_get(obj, &vw, &vh);
+   printf("scroll %ix%i +%i+%i in %ix%i\n", w, h, x, y, vw, vh);
+}
+
+static void
 my_bt_17(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *av, *sc, *bx, *bb, *ic;
@@ -1147,6 +1181,12 @@ my_bt_17(void *data, Evas_Object *obj, void *event_info)
    sc = elm_scroller_add(win);
    evas_object_size_hint_weight_set(sc, 1.0, 1.0);
    elm_win_resize_object_add(win, sc);
+   
+   evas_object_smart_callback_add(sc, "edge_left", my_anchorblock_edge_left, NULL);
+   evas_object_smart_callback_add(sc, "edge_right", my_anchorblock_edge_right, NULL);
+   evas_object_smart_callback_add(sc, "edge_top", my_anchorblock_edge_top, NULL);
+   evas_object_smart_callback_add(sc, "edge_bottom", my_anchorblock_edge_bottom, NULL);
+   evas_object_smart_callback_add(sc, "scroll", my_anchorblock_scroll, NULL);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, 1.0, 0.0);
@@ -1576,9 +1616,15 @@ my_bt_20(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+my_li2_clear(void *data, Evas_Object *obj, void *event_info)
+{
+   elm_list_clear(data);
+}
+
+static void
 my_bt_21(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *li, *ic, *ic2, *bx;
+   Evas_Object *win, *bg, *li, *ic, *ic2, *bx, *bx2, *bt;
    char buf[PATH_MAX];
    
    win = elm_win_add(NULL, "list-2", ELM_WIN_BASIC);
@@ -1586,12 +1632,19 @@ my_bt_21(void *data, Evas_Object *obj, void *event_info)
    elm_win_autodel_set(win, 1);
 
    bg = elm_bg_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", PACKAGE_DATA_DIR);
+   elm_bg_file_set(bg, buf, NULL);
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
 
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
    li = elm_list_add(win);
-   elm_win_resize_object_add(win, li);
+   evas_object_size_hint_align_set(li, -1.0, -1.0);
    evas_object_size_hint_weight_set(li, 1.0, 1.0);
    elm_list_horizontal_mode_set(li, ELM_LIST_LIMIT);
    elm_list_multi_select_set(li, 1);
@@ -1618,15 +1671,15 @@ my_bt_21(void *data, Evas_Object *obj, void *event_info)
    elm_icon_scale_set(ic2, 0, 0);
    elm_list_item_append(li, "How", ic, ic2,  NULL, NULL);
    
-   bx = elm_box_add(win);
-   elm_box_horizontal_set(bx, 1);
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, 1);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.5);
-   elm_box_pack_end(bx, ic);
+   elm_box_pack_end(bx2, ic);
    evas_object_show(ic);
    
    ic = elm_icon_add(win);
@@ -1634,9 +1687,9 @@ my_bt_21(void *data, Evas_Object *obj, void *event_info)
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.0);
-   elm_box_pack_end(bx, ic);
+   elm_box_pack_end(bx2, ic);
    evas_object_show(ic);
-   elm_list_item_append(li, "are", bx, NULL,  NULL, NULL);
+   elm_list_item_append(li, "are", bx2, NULL,  NULL, NULL);
    
    elm_list_item_append(li, "you", NULL, NULL,  NULL, NULL);
    elm_list_item_append(li, "doing", NULL, NULL,  NULL, NULL);
@@ -1653,8 +1706,26 @@ my_bt_21(void *data, Evas_Object *obj, void *event_info)
 
    elm_list_go(li);
    
+   elm_box_pack_end(bx, li);
    evas_object_show(li);
    
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, 1);
+   elm_box_homogenous_set(bx2, 1);
+   evas_object_size_hint_weight_set(bx2, 1.0, 0.0);
+   evas_object_size_hint_align_set(bx2, -1.0, -1.0);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Clear");
+   evas_object_smart_callback_add(bt, "clicked", my_li2_clear, li);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+   
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
    evas_object_resize(win, 320, 300);
    evas_object_show(win);
 }
@@ -2216,6 +2287,7 @@ my_bt_30(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *gl, *bx, *bx2, *bt;
    Elm_Genlist_Item *gli[10];
+   char buf[PATH_MAX];
    int i;
    
    win = elm_win_add(NULL, "genlist-2", ELM_WIN_BASIC);
@@ -2223,6 +2295,8 @@ my_bt_30(void *data, Evas_Object *obj, void *event_info)
    elm_win_autodel_set(win, 1);
 
    bg = elm_bg_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", PACKAGE_DATA_DIR);
+   elm_bg_file_set(bg, buf, NULL);
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);

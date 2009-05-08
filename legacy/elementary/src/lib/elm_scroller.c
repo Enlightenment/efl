@@ -137,6 +137,36 @@ _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
    _sizing_eval(data);
 }
 
+static void
+_edge_left(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "edge_left", NULL);
+}
+
+static void
+_edge_right(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "edge_right", NULL);
+}
+
+static void
+_edge_top(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "edge_top", NULL);
+}
+
+static void
+_edge_bottom(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "edge_bottom", NULL);
+}
+
+static void
+_scroll(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "scroll", NULL);
+}
+
 EAPI Evas_Object *
 elm_scroller_add(Evas_Object *parent)
 {
@@ -166,6 +196,12 @@ elm_scroller_add(Evas_Object *parent)
    evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-on", _freeze_on, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-off", _freeze_off, obj);
+   
+   evas_object_smart_callback_add(wd->scr, "edge,left", _edge_left, obj);
+   evas_object_smart_callback_add(wd->scr, "edge,right", _edge_right, obj);
+   evas_object_smart_callback_add(wd->scr, "edge,top", _edge_top, obj);
+   evas_object_smart_callback_add(wd->scr, "edge,bottom", _edge_bottom, obj);
+   evas_object_smart_callback_add(wd->scr, "scroll", _scroll, obj);
    
    _sizing_eval(obj);
    return obj;
@@ -231,4 +267,20 @@ elm_scroller_region_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coo
    if (!wd) return;
    if ((x) && (y)) elm_smart_scroller_child_pos_get(wd->scr, x, y);
    if ((w) && (h)) elm_smart_scroller_child_viewport_size_get(wd->scr, w, h);
+}
+
+EAPI void
+elm_scroller_child_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   evas_object_geometry_get(wd->content, NULL, NULL, w, h);
+}
+
+EAPI void
+elm_scroller_bounce_set(Evas_Object *obj, Evas_Bool h_bounce, Evas_Bool v_bounce)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
 }

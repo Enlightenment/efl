@@ -91,6 +91,8 @@ elm_shutdown(void)
 static const char *elm_engine, *elm_scale, *elm_theme, *elm_prefix, *elm_data_dir;
 static const char *elm_font_hinting, *elm_font_path, *elm_image_cache;
 static const char *elm_font_cache, *elm_finger_size, *elm_fps;
+static const char *elm_thumbscroll_enabled, *elm_thumbscroll_threshhold;
+static const char *elm_thumbscroll_momentum_threshhold, *elm_thumbscroll_friction;
 
 EAPI void
 elm_quicklaunch_init(int argc, char **argv)
@@ -121,6 +123,10 @@ elm_quicklaunch_init(int argc, char **argv)
    elm_font_cache = getenv("ELM_FONT_CACHE");
    elm_finger_size = getenv("ELM_FINGER_SIZE");
    elm_fps = getenv("ELM_FPS");
+   elm_thumbscroll_enabled = getenv("ELM_THUMBSCROLL_ENABLE");
+   elm_thumbscroll_threshhold = getenv("ELM_THUMBSCROLL_THRESHOLD");
+   elm_thumbscroll_momentum_threshhold = getenv("ELM_THUMBSCROLL_MOMENTUM_THRESHOLD");
+   elm_thumbscroll_friction = getenv("ELM_THUMBSCROLL_FRICTION");
    
    if (!_elm_data_dir)
      {
@@ -174,7 +180,9 @@ elm_quicklaunch_init(int argc, char **argv)
    _elm_config->thumbscroll_enable = 1;
    _elm_config->thumbscroll_threshhold = 24;
    _elm_config->thumbscroll_momentum_threshhold = 100.0;
-   _elm_config->thumbscroll_friction = 20.0;
+   _elm_config->thumbscroll_friction = 1.0;
+   _elm_config->thumbscroll_bounce_friction = 0.5;
+   _elm_config->thumbscroll_bounce_enable = 1;
    _elm_config->scale = 1.0;
    _elm_config->font_hinting = 2;
    _elm_config->font_dirs = NULL;
@@ -220,6 +228,16 @@ elm_quicklaunch_init(int argc, char **argv)
                  (!strcasecmp(elm_engine, "software_16_wince_gdi")))
           _elm_config->engine = ELM_SOFTWARE_16_WINCE;
      }
+   
+   if (elm_thumbscroll_enabled)
+     _elm_config->thumbscroll_enable = atoi(elm_thumbscroll_enabled);
+   if (elm_thumbscroll_threshhold)
+     _elm_config->thumbscroll_threshhold = atoi(elm_thumbscroll_threshhold);
+   // FIXME: floatformat locale issues here 1.0 vs 1,0 - should just be 1.0
+   if (elm_thumbscroll_momentum_threshhold)
+     _elm_config->thumbscroll_momentum_threshhold = atof(elm_thumbscroll_momentum_threshhold);
+   if (elm_thumbscroll_friction)
+     _elm_config->thumbscroll_friction = atof(elm_thumbscroll_friction);
    
    if (elm_theme)
      _elm_theme_parse(elm_theme);
@@ -349,7 +367,8 @@ elm_quicklaunch_sub_shutdown(void)
         ecore_event_handler_del(_elm_event_property_change);
         _elm_event_property_change = NULL;
         ecore_x_disconnect();
-#endif        
+#endif
+        evas_cserve_disconnect();
      }
 }
 

@@ -370,6 +370,8 @@ elm_list_add(Evas_Object *parent)
    wd->scroller = elm_scroller_add(parent);
    elm_widget_resize_object_set(obj, wd->scroller);
    
+   elm_scroller_bounce_set(wd->scroller, 0, 1);
+   
    wd->box = elm_box_add(parent);
    elm_box_homogenous_set(wd->box, 1);
    evas_object_size_hint_weight_set(wd->box, 1.0, 0.0);

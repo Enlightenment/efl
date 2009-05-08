@@ -356,6 +356,7 @@ _smart_add(Evas_Object *obj)
    sd = calloc(1, sizeof(Smart_Data));
    if (!sd) return;
    sd->obj = evas_object_image_add(evas_object_evas_get(obj));
+   evas_object_image_scale_hint_set(sd->obj, EVAS_IMAGE_SCALE_HINT_STATIC);
    sd->x = 0;
    sd->y = 0;
    sd->w = 0;
