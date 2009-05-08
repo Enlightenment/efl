@@ -234,16 +234,18 @@ typedef struct
 // for clients to connect to cserve
 EAPI Eina_Bool evas_cserve_init(void);
 EAPI int       evas_cserve_use_get(void);
+EAPI Eina_Bool evas_cserve_have_get(void);
 EAPI void      evas_cserve_shutdown(void);
+EAPI void      evas_cserve_discon(void);
 EAPI Eina_Bool evas_cserve_image_load(Image_Entry *ie, const char *file, const char *key, RGBA_Image_Loadopts *lopt);
 EAPI Eina_Bool evas_cserve_image_data_load(Image_Entry *ie);
 EAPI void      evas_cserve_image_unload(Image_Entry *ie);
 EAPI void      evas_cserve_image_useless(Image_Entry *ie);
 EAPI void      evas_cserve_image_free(Image_Entry *ie);
-EAPI Eina_Bool evas_cserve_config_get(Op_Getconfig_Reply *config);
-EAPI Eina_Bool evas_cserve_config_set(Op_Setconfig *config);
-EAPI Eina_Bool evas_cserve_stats_get(Op_Getstats_Reply *stats);
-EAPI Op_Getinfo_Reply *evas_cserve_info_get(void);
+EAPI Eina_Bool evas_cserve_raw_config_get(Op_Getconfig_Reply *config);
+EAPI Eina_Bool evas_cserve_raw_config_set(Op_Setconfig *config);
+EAPI Eina_Bool evas_cserve_raw_stats_get(Op_Getstats_Reply *stats);
+EAPI Op_Getinfo_Reply *evas_cserve_raw_info_get(void);
     
 // for the server
 EAPI Server *evas_cserve_server_add(void);

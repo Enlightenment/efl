@@ -955,6 +955,64 @@ extern "C" {
    EAPI void              evas_object_intercept_clip_unset_callback_add  (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), const void *data) EINA_ARG_NONNULL(1, 2);
    EAPI void             *evas_object_intercept_clip_unset_callback_del  (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj)) EINA_ARG_NONNULL(1, 2);
 
+   typedef struct _Evas_Cserve_Stats Evas_Cserve_Stats;
+   typedef struct _Evas_Cserve_Image_Cache Evas_Cserve_Image_Cache;
+   typedef struct _Evas_Cserve_Image Evas_Cserve_Image;
+   typedef struct _Evas_Cserve_Config Evas_Cserve_Config;
+   
+   struct _Evas_Cserve_Stats
+     {
+        int saved_memory;
+        int wasted_memory;
+        int saved_memory_peak;
+        int wasted_memory_peak;
+        double saved_time_image_header_load;
+        double saved_time_image_data_load;
+     };
+   
+   struct _Evas_Cserve_Image_Cache
+     {
+        struct {
+           int mem_total;
+           int count;
+        } active, cached;
+        Eina_List *images;
+     };
+   
+   struct _Evas_Cserve_Image
+     {
+        const char *file, *key;
+        int w, h;
+        time_t file_mod_time;
+        time_t file_checked_time;
+        time_t cached_time;
+        int refcount;
+        int data_refcount;
+        int memory_footprint;
+        double head_load_time;
+        double data_load_time;
+        Eina_Bool alpha : 1;
+        Eina_Bool data_loaded : 1;
+        Eina_Bool active : 1;
+        Eina_Bool dead : 1;
+        Eina_Bool useless : 1;
+     };
+   
+    struct _Evas_Cserve_Config
+     {
+        int cache_max_usage;
+        int cache_item_timeout;
+        int cache_item_timeout_check;
+     };
+   
+   EAPI Eina_Bool         evas_cserve_want_get                   (void) EINA_WARN_UNUSED_RESULT EINA_PURE;
+   EAPI Eina_Bool         evas_cserve_connected_get              (void) EINA_WARN_UNUSED_RESULT EINA_PURE;
+   EAPI Eina_Bool         evas_cserve_stats_get                  (Evas_Cserve_Stats *stats) EINA_WARN_UNUSED_RESULT EINA_PURE;
+   EAPI void              evas_cserve_image_cache_contents_clean (Evas_Cserve_Image_Cache *cache) EINA_PURE;
+   EAPI Eina_Bool         evas_cserve_config_get                 (Evas_Cserve_Config *config) EINA_WARN_UNUSED_RESULT EINA_PURE;
+   EAPI Eina_Bool         evas_cserve_config_set                 (Evas_Cserve_Config *config) EINA_WARN_UNUSED_RESULT EINA_PURE;
+   EAPI void              evas_cserve_disconnect                 (void) EINA_WARN_UNUSED_RESULT EINA_PURE;
+       
 /* Evas utility routines for color space conversions */
 /* hsv color space has h in the range 0.0 to 360.0, and s,v in the range 0.0 to 1.0 */
 /* rgb color space has r,g,b in the range 0 to 255 */

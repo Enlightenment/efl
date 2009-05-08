@@ -45,15 +45,35 @@ static LK(cache_lock);
 #endif
 static Eina_Inlist *cache_list = NULL;
 static int cache_size = 0;
+static int init = 0;
+
 static int max_cache_size = SCALE_CACHE_SIZE;
+static int max_dimension = MAX_SCALECACHE_DIM;
+static int max_flop_count = MAX_FLOP_COUNT;
+static int max_scale_items = MAX_SCALEITEMS;
+static int min_scale_uses = MIN_SCALE_USES;
 #endif
 
 void
 evas_common_scalecache_init(void)
 {
 #ifdef SCALECACHE
+   const char *s;
+
+   init++;
+   if (init > 1) return;
    use_counter = 0;
    LKI(cache_lock);
+   s = getenv("EVAS_SCALECACHE_SIZE");
+   if (s) max_cache_size = atoi(s) * 1024;
+   s = getenv("EVAS_SCALECACHE_MAX_DIMENSION");
+   if (s) max_dimension = atoi(s);
+   s = getenv("EVAS_SCALECACHE_MAX_FLOP_COUNT");
+   if (s) max_flop_count = atoi(s);
+   s = getenv("EVAS_SCALECACHE_MAX_ITEMS");
+   if (s) max_scale_items = atoi(s);
+   s = getenv("EVAS_SCALECACHE_MIN_USES");
+   if (s) min_scale_uses = atoi(s);
 #endif
 }
 
@@ -61,6 +81,7 @@ void
 evas_common_scalecache_shutdown(void)
 {
 #ifdef SCALECACHE
+   init--;
    LKD(cache_lock);
 #endif
 }
@@ -197,7 +218,7 @@ _sci_find(RGBA_Image *im,
              return sci;
           }
      }
-   if (eina_list_count(im->cache.list) > MAX_SCALEITEMS)
+   if (eina_list_count(im->cache.list) > max_scale_items)
      {
         l = eina_list_last(im->cache.list);
         sci = l->data;
@@ -351,17 +372,17 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst,
 //          src_region_x, src_region_y, src_region_w, src_region_h,
 //          dst_region_x, dst_region_y, dst_region_w, dst_region_h,
 //          smooth);
-   if ((sci->usage >= MIN_SCALE_USES)
+   if ((sci->usage >= min_scale_uses)
        && (ie->scale_hint != EVAS_IMAGE_SCALE_HINT_DYNAMIC)
 //       && (sci->usage_count > (use_counter - MIN_SCALE_AGE_GAP))
        )
      {
         if (!sci->im)
           {
-             if ((sci->dst_w < MAX_SCALECACHE_DIM) && 
-                 (sci->dst_h < MAX_SCALECACHE_DIM))
+             if ((sci->dst_w < max_dimension) && 
+                 (sci->dst_h < max_dimension))
                {
-                  if (sci->flop <= MAX_FLOP_COUNT)
+                  if (sci->flop <= max_flop_count)
                     {
                        sci->populate_me = 1;
                        im->cache.populate_count++;

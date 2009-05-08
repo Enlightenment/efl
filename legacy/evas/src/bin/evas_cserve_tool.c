@@ -31,7 +31,7 @@ main(int argc, char **argv)
           {
              Op_Getconfig_Reply config;
              
-             if (!evas_cserve_config_get(&config))
+             if (!evas_cserve_raw_config_get(&config))
                {
                   printf("ERROR: cannot fetch config.\n");
                   exit(-1);
@@ -52,7 +52,7 @@ main(int argc, char **argv)
              config.cache_item_timeout = atoi(argv[i]);
              i++;
              config.cache_item_timeout_check = atoi(argv[i]);
-             if (!evas_cserve_config_set(&config))
+             if (!evas_cserve_raw_config_set(&config))
                {
                   printf("ERROR: cannot set config.\n");
                   exit(-1);
@@ -62,7 +62,7 @@ main(int argc, char **argv)
           {
              Op_Getstats_Reply stats;
              
-             if (!evas_cserve_stats_get(&stats))
+             if (!evas_cserve_raw_stats_get(&stats))
                {
                   printf("ERROR: cannot fetch stats.\n");
                   exit(-1);
@@ -83,7 +83,7 @@ main(int argc, char **argv)
              unsigned char *p;
              int i, j;
              
-             info = evas_cserve_info_get();
+             info = evas_cserve_raw_info_get();
              if (!info)
                {
                   printf("ERROR: cannot fetch info.\n");

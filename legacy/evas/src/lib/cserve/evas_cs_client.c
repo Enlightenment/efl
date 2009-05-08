@@ -187,6 +187,13 @@ evas_cserve_use_get(void)
    return csrve_init;
 }
 
+EAPI Eina_Bool
+evas_cserve_have_get(void)
+{
+   if (cserve) return 1;
+   return 0;
+}
+
 EAPI void
 evas_cserve_shutdown(void)
 {
@@ -195,6 +202,16 @@ evas_cserve_shutdown(void)
    if (!cserve) return;
    server_disconnect(cserve);
    cserve = NULL;
+}
+
+EAPI void
+evas_cserve_discon(void)
+{
+   if (cserve)
+     {
+        server_disconnect(cserve);
+        cserve = NULL;
+     }
 }
 
 static void
@@ -369,7 +386,7 @@ evas_cserve_image_useless(Image_Entry *ie)
 }
 
 EAPI Eina_Bool
-evas_cserve_config_get(Op_Getconfig_Reply *config)
+evas_cserve_raw_config_get(Op_Getconfig_Reply *config)
 {
    Op_Getconfig_Reply *rep;
    int opcode;
@@ -390,7 +407,7 @@ evas_cserve_config_get(Op_Getconfig_Reply *config)
 }
 
 EAPI Eina_Bool
-evas_cserve_config_set(Op_Setconfig *config)
+evas_cserve_raw_config_set(Op_Setconfig *config)
 {
    if (csrve_init > 0) server_reinit();
    else return 0;
@@ -400,7 +417,7 @@ evas_cserve_config_set(Op_Setconfig *config)
 }
 
 EAPI Eina_Bool
-evas_cserve_stats_get(Op_Getstats_Reply *stats)
+evas_cserve_raw_stats_get(Op_Getstats_Reply *stats)
 {
    Op_Getstats_Reply *rep;
    int opcode;
@@ -421,7 +438,7 @@ evas_cserve_stats_get(Op_Getstats_Reply *stats)
 }
 
 EAPI Op_Getinfo_Reply *
-evas_cserve_info_get(void)
+evas_cserve_raw_info_get(void)
 {
    Op_Getinfo_Reply *rep;
    int opcode;
