@@ -1013,7 +1013,7 @@ extern "C" {
    EAPI void              evas_cserve_image_cache_contents_clean (Evas_Cserve_Image_Cache *cache) EINA_PURE;
    EAPI Eina_Bool         evas_cserve_config_get                 (Evas_Cserve_Config *config) EINA_WARN_UNUSED_RESULT EINA_PURE;
    EAPI Eina_Bool         evas_cserve_config_set                 (Evas_Cserve_Config *config) EINA_WARN_UNUSED_RESULT EINA_PURE;
-   EAPI void              evas_cserve_disconnect                 (void) EINA_WARN_UNUSED_RESULT EINA_PURE;
+   EAPI void              evas_cserve_disconnect                 (void) EINA_PURE;
        
 /* Evas utility routines for color space conversions */
 /* hsv color space has h in the range 0.0 to 360.0, and s,v in the range 0.0 to 1.0 */
