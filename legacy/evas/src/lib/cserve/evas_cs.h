@@ -1,6 +1,8 @@
 #ifndef EVAS_CS_H
 #define EVAS_CS_H 1
 
+#ifdef EVAS_CSERVE
+
 #include <sys/select.h>
 #include <sys/time.h>
 #include <sys/types.h>
@@ -46,8 +48,6 @@
 #  define EAPI
 # endif
 #endif /* ! _WIN32 */
-
-#ifdef EVAS_CSERVE
 
 #define LENGTH_OF_SOCKADDR_UN(s) (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
 

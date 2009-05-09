@@ -15,7 +15,12 @@ AM_CPPFLAGS = \
 @FONTCONFIG_CFLAGS@ \
 @pthread_cflags@
 
+if EVAS_CSERVE
+
 noinst_LTLIBRARIES = libevas_cserve.la
+
+endif
+
 libevas_cserve_la_SOURCES = \
 evas_cs.h \
 evas_cs_main.c \

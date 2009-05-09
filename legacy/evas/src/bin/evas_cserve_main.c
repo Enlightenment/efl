@@ -1,11 +1,16 @@
-#include "Evas.h"
-#include "evas_cs.h"
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <signal.h>
 #include <sys/time.h>
 #include <time.h>
 #ifdef _WIN32
 # include <windows.h>
 #endif
+
+#include "Evas.h"
+#include "evas_cs.h"
 
 // fixme:'s
 // 

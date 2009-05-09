@@ -24,13 +24,19 @@ include_HEADERS = Evas.h Evas_Data.h
 
 libevas_la_SOURCES = main.c
 
+if EVAS_CSERVE
+
+libevas_cserve_la = cserve/libevas_cserve.la
+
+endif
+
 libevas_la_LIBADD = \
 canvas/libevas_canvas.la \
 data/libevas_data.la \
 file/libevas_file.la \
 cache/libevas_cache.la \
 imaging/libevas_imaging.la \
-cserve/libevas_cserve.la \
+$(libevas_cserve_la) \
 engines/common/libevas_engine_common.la \
 @dlopen_libs@ \
 @FREETYPE_LIBS@ \
@@ -42,13 +48,12 @@ engines/common/libevas_engine_common.la \
 -lm
 
 libevas_la_DEPENDENCIES = \
-$(top_builddir)/config.h \
 canvas/libevas_canvas.la \
 data/libevas_data.la \
 file/libevas_file.la \
 cache/libevas_cache.la \
 imaging/libevas_imaging.la \
-cserve/libevas_cserve.la \
+$(libevas_cserve_la) \
 engines/common/libevas_engine_common.la
 
 if BUILD_ENGINE_SOFTWARE_16
