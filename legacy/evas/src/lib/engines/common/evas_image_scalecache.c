@@ -246,6 +246,8 @@ _sci_find(RGBA_Image *im,
    sci->usage = 0;
    sci->usage_count = 0;
    sci->populate_me = 0;
+   sci->smooth = smooth;
+   sci->forced_unload = 0;
    sci->flop = 0;
    sci->im = NULL;
    sci->src_x = src_region_x;
@@ -254,7 +256,6 @@ _sci_find(RGBA_Image *im,
    sci->src_h = src_region_h;
    sci->dst_w = dst_region_w;
    sci->dst_h = dst_region_h;
-   sci->smooth = smooth;
    im->cache.list = eina_list_prepend(im->cache.list, sci);
    return sci;
 }
@@ -299,6 +300,7 @@ _cache_prune(Scaleitem *notsci, Evas_Bool copies_only)
 EAPI void
 evas_common_rgba_image_scalecache_size_set(int size)
 {
+#ifdef SCALECACHE
    LKL(cache_lock);
    if (size != max_cache_size)
      {
@@ -306,21 +308,27 @@ evas_common_rgba_image_scalecache_size_set(int size)
         _cache_prune(NULL, 1);
      }
    LKU(cache_lock);
+#endif   
 }
 
 EAPI int
 evas_common_rgba_image_scalecache_size_get(void)
 {
+#ifdef SCALECACHE
    int t;
    LKL(cache_lock);
    t = max_cache_size;
    LKU(cache_lock);
    return t;
+#else
+   return 0;
+#endif   
 }
 
 EAPI void
 evas_common_rgba_image_scalecache_flush(void)
 {
+#ifdef SCALECACHE
    int t;
    LKL(cache_lock);
    t = max_cache_size;
@@ -328,6 +336,7 @@ evas_common_rgba_image_scalecache_flush(void)
    _cache_prune(NULL, 1);
    max_cache_size = t;
    LKU(cache_lock);
+#endif   
 }
 
 EAPI void

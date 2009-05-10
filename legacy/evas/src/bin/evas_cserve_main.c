@@ -455,7 +455,6 @@ img_new(const char *file, const char *key, RGBA_Image_Loadopts *load_opts, const
    img->image.alpha = ie->flags.alpha;
    img->ref = 1;
    img->active = 1;
-
    img->usage = sizeof(Img) + strlen(img->key) + 1 + 
      strlen(img->file.file) + 1;
    if (img->file.key) img->usage += strlen(img->file.key) + 1;

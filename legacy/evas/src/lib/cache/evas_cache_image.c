@@ -676,7 +676,6 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
 
         ok = 1;
         t = time(NULL);
-
         if ((t - im->laststat) > STAT_GAP)
           {
              stat_done = 1;
@@ -730,8 +729,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
      }
 
    im = _evas_cache_image_entry_new(cache, hkey, st.st_mtime, file, key, lo, error);
-   if (!im)
-     return NULL;
+   if (!im) return NULL;
 
    if (cache->func.debug)
      cache->func.debug("request", im);
@@ -814,6 +812,18 @@ evas_cache_image_dirty(Image_Entry *im, int x, int y, int w, int h)
           {
              int        error;
 
+             im_dirty = evas_cache_image_copied_data
+               (cache, im->w, im->h, 
+                evas_cache_image_pixels(im), 
+                im->flags.alpha, 
+                im->space);
+             if (!im_dirty) goto on_error;
+             if (cache->func.debug)
+               cache->func.debug("dirty-src", im);
+             error = cache->func.dirty(im_dirty, im);
+             if (cache->func.debug)
+               cache->func.debug("dirty-out", im_dirty);
+/*             
              im_dirty = _evas_cache_image_entry_new(cache, NULL, im->timestamp, im->file, im->key, &im->load_opts, &error);
              if (!im_dirty) goto on_error;
 
@@ -824,7 +834,7 @@ evas_cache_image_dirty(Image_Entry *im, int x, int y, int w, int h)
                cache->func.debug("dirty-out", im_dirty);
 
              if (error != 0) goto on_error;
-
+ */
              im_dirty->references = 1;
 
              evas_cache_image_drop(im);
@@ -869,6 +879,18 @@ evas_cache_image_alone(Image_Entry *im)
      {
         int     error;
 
+        im_dirty = evas_cache_image_copied_data
+          (cache, im->w, im->h, 
+           evas_cache_image_pixels(im), 
+           im->flags.alpha, 
+           im->space);
+        if (!im_dirty) goto on_error;
+        if (cache->func.debug)
+          cache->func.debug("dirty-src", im);
+        error = cache->func.dirty(im_dirty, im);
+        if (cache->func.debug)
+          cache->func.debug("dirty-out", im_dirty);
+/*        
         im_dirty = _evas_cache_image_entry_new(cache, NULL, im->timestamp, im->file, im->key, &im->load_opts, &error);
         if (!im_dirty) goto on_error;
 
@@ -879,7 +901,7 @@ evas_cache_image_alone(Image_Entry *im)
           cache->func.debug("dirty-out", im_dirty);
 
         if (error != 0) goto on_error;
-
+ */
         im_dirty->references = 1;
 
         evas_cache_image_drop(im);

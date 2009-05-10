@@ -1588,6 +1588,7 @@ evas_object_image_load_dpi_set(Evas_Object *obj, double dpi)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
+   if (dpi == o->load_opts.dpi) return;
    o->load_opts.dpi = dpi;
    if (o->cur.file)
      {
@@ -1637,6 +1638,7 @@ evas_object_image_load_size_set(Evas_Object *obj, int w, int h)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
+   if ((o->load_opts.w == w) && (o->load_opts.h == h)) return;
    o->load_opts.w = w;
    o->load_opts.h = h;
    if (o->cur.file)
@@ -1682,6 +1684,7 @@ evas_object_image_load_scale_down_set(Evas_Object *obj, int scale_down)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
+   if (o->load_opts.scale_down_by == scale_down) return;
    o->load_opts.scale_down_by = scale_down;
    if (o->cur.file)
      {
