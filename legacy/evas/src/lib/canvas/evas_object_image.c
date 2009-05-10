@@ -63,7 +63,7 @@ struct _Evas_Object_Image
 };
 
 /* private methods for image objects */
-static void evas_object_image_unload(Evas_Object *obj);
+static void evas_object_image_unload(Evas_Object *obj, Evas_Bool dirty);
 static void evas_object_image_load(Evas_Object *obj);
 static Evas_Coord evas_object_image_figure_x_fill(Evas_Object *obj, Evas_Coord start, Evas_Coord size, Evas_Coord *size_ret);
 static Evas_Coord evas_object_image_figure_y_fill(Evas_Object *obj, Evas_Coord start, Evas_Coord size, Evas_Coord *size_ret);
@@ -1321,7 +1321,7 @@ evas_object_image_reload(Evas_Object *obj)
        (o->pixels_checked_out > 0)) return;
    if (o->engine_data)
      o->engine_data = obj->layer->evas->engine.func->image_dirty_region(obj->layer->evas->engine.data.output, o->engine_data, 0, 0, o->cur.image.w, o->cur.image.h);
-   evas_object_image_unload(obj);
+   evas_object_image_unload(obj, 1);
    evas_object_image_load(obj);
    o->changed = 1;
    evas_object_change(obj);
@@ -1592,7 +1592,7 @@ evas_object_image_load_dpi_set(Evas_Object *obj, double dpi)
    o->load_opts.dpi = dpi;
    if (o->cur.file)
      {
-	evas_object_image_unload(obj);
+	evas_object_image_unload(obj, 0);
 	evas_object_image_load(obj);
 	o->changed = 1;
 	evas_object_change(obj);
@@ -1643,7 +1643,7 @@ evas_object_image_load_size_set(Evas_Object *obj, int w, int h)
    o->load_opts.h = h;
    if (o->cur.file)
      {
-	evas_object_image_unload(obj);
+	evas_object_image_unload(obj, 0);
 	evas_object_image_load(obj);
 	o->changed = 1;
 	evas_object_change(obj);
@@ -1688,7 +1688,7 @@ evas_object_image_load_scale_down_set(Evas_Object *obj, int scale_down)
    o->load_opts.scale_down_by = scale_down;
    if (o->cur.file)
      {
-	evas_object_image_unload(obj);
+	evas_object_image_unload(obj, 0);
 	evas_object_image_load(obj);
 	o->changed = 1;
 	evas_object_change(obj);
@@ -1886,7 +1886,7 @@ evas_image_cache_reload(Evas *e)
 	     o = (Evas_Object_Image *)(obj->object_data);
 	     if (o->magic == MAGIC_OBJ_IMAGE)
 	       {
-		  evas_object_image_unload(obj);
+		  evas_object_image_unload(obj, 1);
 	       }
 	  }
      }
@@ -1951,7 +1951,7 @@ evas_image_cache_get(const Evas *e)
 /* all nice and private */
 
 static void
-evas_object_image_unload(Evas_Object *obj)
+evas_object_image_unload(Evas_Object *obj, Evas_Bool dirty)
 {
    Evas_Object_Image *o;
 
@@ -1959,11 +1959,14 @@ evas_object_image_unload(Evas_Object *obj)
 
    if ((!o->cur.file) ||
        (o->pixels_checked_out > 0)) return;
-   if (o->engine_data)
-     o->engine_data = obj->layer->evas->engine.func->image_dirty_region(obj->layer->evas->engine.data.output,
-									o->engine_data,
-									0, 0,
-									o->cur.image.w, o->cur.image.h);
+   if (dirty)
+     {
+        if (o->engine_data)
+          o->engine_data = obj->layer->evas->engine.func->image_dirty_region(obj->layer->evas->engine.data.output,
+                                                                             o->engine_data,
+                                                                             0, 0,
+                                                                             o->cur.image.w, o->cur.image.h);
+     }
    if (o->engine_data)
      obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output,
 					       o->engine_data);
