@@ -428,6 +428,8 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
 static void
 _item_unrealize(Elm_Genlist_Item *it)
 {
+   Evas_Object *icon;
+   
    if (!it->realized) return;
    evas_object_del(it->base);
    it->base = NULL;
@@ -439,9 +441,7 @@ _item_unrealize(Elm_Genlist_Item *it)
    it->icons = NULL;
    _stringlist_free(it->states);
 
-   Evas_Object *icon;
-   EINA_LIST_FREE(it->icon_objs, icon)
-        evas_object_del(icon);
+   EINA_LIST_FREE(it->icon_objs, icon) evas_object_del(icon);
 
    it->states = NULL;
    it->realized = 0;
@@ -483,7 +483,7 @@ _item_block_recalc(Item_Block *itb, int in)
 }
 
 static void
-_item_block_realize(Item_Block *itb, int in)
+_item_block_realize(Item_Block *itb, int in, int full)
 {
    const Eina_List *l;
    Elm_Genlist_Item *it;
@@ -491,7 +491,7 @@ _item_block_realize(Item_Block *itb, int in)
    EINA_LIST_FOREACH(itb->items, l, it)
      {
         if (it->delete_me) continue;
-        _item_realize(it, in, 0);
+        if (full) _item_realize(it, in, 0);
         in++;
      }
    itb->realized = 1;
@@ -512,28 +512,43 @@ _item_block_unrealize(Item_Block *itb)
 }
 
 static void
-_item_block_position(Item_Block *itb)
+_item_block_position(Item_Block *itb, int in)
 {
    const Eina_List *l;
    Elm_Genlist_Item *it;
-   Evas_Coord y = 0, ox, oy;
+   Evas_Coord y = 0, ox, oy, ow, oh;
+   int vis;
    
-   evas_object_geometry_get(itb->wd->pan_smart, &ox, &oy, NULL, NULL);
+   evas_object_geometry_get(itb->wd->pan_smart, &ox, &oy, &ow, &oh);
    EINA_LIST_FOREACH(itb->items, l, it)
      {
         if (it->delete_me) continue;
         it->x = 0;
         it->y = y;
         it->w = itb->w;
+        vis = (ELM_RECTS_INTERSECT(itb->x + it->x - itb->wd->pan_x, 
+                                   itb->y + it->y - itb->wd->pan_y, 
+                                   it->w, it->h,
+                                   0, 0, ow, oh));
+        if ((itb->realized) && (!it->realized))
+          {
+             if (vis) _item_realize(it, in, 0);
+          }
         if (it->realized)
           {
-             evas_object_resize(it->base, it->w, it->h);
-             evas_object_move(it->base, 
-                              ox + itb->x + it->x - itb->wd->pan_x,
-                              oy + itb->y + it->y - itb->wd->pan_y);
-             evas_object_show(it->base);
+             if (vis)
+               {
+                  evas_object_resize(it->base, it->w, it->h);
+                  evas_object_move(it->base, 
+                                   ox + itb->x + it->x - itb->wd->pan_x,
+                                   oy + itb->y + it->y - itb->wd->pan_y);
+                  evas_object_show(it->base);
+               }
+             else
+               _item_unrealize(it);
           }
         y += it->h;
+        in++;
      }
 }
 
@@ -617,12 +632,12 @@ static void
 _pan_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    Pan *sd = evas_object_smart_data_get(obj);
-   Evas_Coord ow, oh;
-   evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
-   ow = sd->wd->minw - ow;
-   if (ow < 0) ow = 0;
-   oh = sd->wd->minh - oh;
-   if (oh < 0) oh = 0;
+//   Evas_Coord ow, oh;
+//   evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
+//   ow = sd->wd->minw - ow;
+//   if (ow < 0) ow = 0;
+//   oh = sd->wd->minh - oh;
+//   if (oh < 0) oh = 0;
 //   if (x < 0) x = 0;
 //   if (y < 0) y = 0;
 //   if (x > ow) x = ow;
@@ -717,9 +732,9 @@ _pan_calculate(Evas_Object *obj)
           {
              if ((!itb->realized) || (itb->changed))
                {
-                  _item_block_realize(itb, in);
+                  _item_block_realize(itb, in, 0);
                }
-             _item_block_position(itb);
+             _item_block_position(itb,  in);
           }
         else
           {
@@ -1427,7 +1442,7 @@ elm_genlist_item_update(Elm_Genlist_Item *it)
         _item_unrealize(it);
         _item_realize(it, num, 0);
         _item_block_recalc(it->block, numb);
-        _item_block_position(it->block);
+        _item_block_position(it->block, num);
      }
    else
      {
