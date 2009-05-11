@@ -723,78 +723,79 @@ struct _Edje
 
 struct _Edje_Real_Part
 {
-   Edje                     *edje;
-   Evas_Object              *object;
-   Eina_List                *extra_objects;
-   Evas_Object              *swallowed_object;
-   Eina_List                *items;
-   void                     *entry_data;
-   Evas_Object              *cursorbg_object;
-   Evas_Object              *cursorfg_object;
-   // FIXME: add selection objects
-   Edje_Part                *part;
-   int                       x, y, w, h;
-   Edje_Rectangle            req;
-   Edje_Position             offset;
+   Edje                     *edje; // 4
+   Edje_Part                *part; // 4
+   Evas_Object              *object; // 4
+   Eina_List                *extra_objects; // 4
+   Evas_Object              *swallowed_object; // 4 // FIXME: move with swallow_params data
+   Eina_List                *items; // 4 //FIXME: only if table/box
+   void                     *entry_data; // 4 // FIXME: move to entry section
+   Evas_Object              *cursorbg_object; // 4 // FIXME: move to entry section
+   Evas_Object              *cursorfg_object; // 4 // FIXME: move to entry section
+   int                       x, y, w, h; // 16
+   Edje_Rectangle            req; // 16
+   Edje_Position             offset; // 8 // FIXME: move to text section
    struct {
-      Edje_Size min, max;
-      Edje_Aspect aspect;
-   } swallow_params;
+      Edje_Size min, max; // 16
+      Edje_Aspect aspect; // 12
+   } swallow_params; // 28 // FIXME: only if type SWALLOW
    struct {
-      double        x, y;
-      Edje_Position_Scale val, size, step, page;
+      double        x, y; // 16
+      Edje_Position_Scale val, size, step, page; // 64
       struct {
-	 unsigned int count;
-	 int  x, y;
+	 unsigned int count; // 4
+	 int  x, y; // 8
       } down;
       struct {
-	 int  x, y;
+	 int  x, y; // 8
       } tmp;
-      unsigned char need_reset : 1;
-   } drag;
+      unsigned char need_reset : 1; // 4
+   } drag; // 104 // FIME: make drag pointer to struct optional
    struct {
-      Edje_Real_Part        *source;
-      Edje_Real_Part        *text_source;
-      const char            *text;
-      const char	    *font;
-      const char	    *style;
-      int                    size;
+      Edje_Real_Part        *source; // 4
+      Edje_Real_Part        *text_source; // 4
+      const char            *text; // 4
+      const char	    *font; // 4 text only
+      const char	    *style; // 4 text only
+      int                    size; // 4 text only
       struct {
-	 double              in_w, in_h;
-	 int                 in_size;
-	 const char	    *in_str;
-	 const char         *out_str;
-	 int                 out_size;
-	 double              align_x, align_y;
-	 double              elipsis;
-	 int                 fit_x, fit_y;
-      } cache;
-   } text;
+	 double              in_w, in_h; // 16 text only
+	 int                 in_size; // 4 text only
+	 const char	    *in_str; // 4 text only
+	 const char         *out_str; // 4 text only
+	 int                 out_size; // 4 text only
+	 double              align_x, align_y; // 16 text only
+	 double              elipsis; // 8 text only
+	 int                 fit_x, fit_y; // 8 text only
+      } cache; // 64
+   } text; // 86 // FIXME make text a potiner to struct and alloc at end
+                 // if part type is TEXT move common members textblock +
+                 // text to front and have smaller struct for textblock
 
-   double                    description_pos;
-   Edje_Part_Description    *chosen_description;
+   double                    description_pos; // 8
+   Edje_Part_Description    *chosen_description; // 4
    struct {
-      Edje_Part_Description *description;
-      Edje_Real_Part        *rel1_to_x;
-      Edje_Real_Part        *rel1_to_y;
-      Edje_Real_Part        *rel2_to_x;
-      Edje_Real_Part        *rel2_to_y;
-   } param1, param2, custom;
+      Edje_Part_Description *description; // 4
+      Edje_Real_Part        *rel1_to_x; // 4
+      Edje_Real_Part        *rel1_to_y; // 4
+      Edje_Real_Part        *rel2_to_x; // 4
+      Edje_Real_Part        *rel2_to_y; // 4
+   } param1, param2, custom; // 60 // FIXME: custom should be alloced on demand - 20--
 
-   Edje_Real_Part           *confine_to;
-   Edje_Real_Part           *clip_to;
+   Edje_Real_Part           *confine_to; // 4 // fixme - make part of drag
+   Edje_Real_Part           *clip_to; // 4
 
-   Edje_Running_Program     *program;
-   Edje_Real_Part           *events_to;
+   Edje_Running_Program     *program; // 4
+   Edje_Real_Part           *events_to; // 4
 
-   int                       clicked_button;
-   int                       gradient_id;
+   int                       clicked_button; // 4
+   int                       gradient_id; // 4
 
-   unsigned char             calculated;
-   unsigned char             calculating;
+   unsigned char             calculated; // 1
+   unsigned char             calculating; // 1
 
-   unsigned char             still_in   : 1;
-};
+   unsigned char             still_in   : 1; // 2
+}; //  394
 
 struct _Edje_Running_Program
 {
