@@ -10,6 +10,8 @@
 
 static Server *cserve = NULL;
 static int csrve_init = 0;
+static int connect_num = 0;
+static int cserve_discon = 0;
 
 static void
 pipe_handler(int x, siginfo_t *info, void *data)
@@ -164,6 +166,7 @@ server_init(Server *s)
         s->pid = rep->pid;
         s->server_id = rep->server_id;
         free(rep);
+        connect_num++;
         return 1;
      }
    if (rep) free(rep);
@@ -216,6 +219,7 @@ evas_cserve_discon(void)
      {
         server_disconnect(cserve);
         cserve = NULL;
+        cserve_discon = 1;
      }
 }
 
@@ -223,6 +227,7 @@ static void
 server_reinit(void)
 {
    if (cserve) return;
+   if (cserve_discon) return;
    cserve = server_connect();
    if (cserve)
      {
@@ -289,6 +294,7 @@ evas_cserve_image_load(Image_Entry *ie, const char *file, const char *key, RGBA_
      }
    if (rep) free(rep);
    if (ie->data1 == NULL) return 0;
+   ie->connect_num = connect_num;
    if (cserve)
      ie->server_id = cserve->server_id;
    return 1;
@@ -311,6 +317,7 @@ evas_cserve_image_data_load(Image_Entry *ie)
         if (!evas_cserve_image_load(ie, ie->file, ie->key, &(ie->load_opts)))
           return 0;
      }
+   if (ie->connect_num != connect_num) return 0;
    memset(&msg, 0, sizeof(msg));
    msg.handle = ie->data1;
    msg.server_id = cserve->server_id;
@@ -348,10 +355,14 @@ evas_cserve_image_free(Image_Entry *ie)
    if (ie->data2) evas_cserve_image_unload(ie);
    if (cserve)
      {
-        if (ie->server_id == cserve->server_id)
-          server_send(cserve, OP_UNLOAD, sizeof(msg), (unsigned char *)(&msg));
+        if (ie->connect_num == connect_num)
+          {
+             if (ie->server_id == cserve->server_id)
+               server_send(cserve, OP_UNLOAD, sizeof(msg), (unsigned char *)(&msg));
+          }
      }
    ie->data1 = NULL;
+   ie->data2 = NULL;
 }
 
 EAPI void
@@ -363,13 +374,17 @@ evas_cserve_image_unload(Image_Entry *ie)
    else return;
    if (!cserve) return;
    if (ie->data1 == NULL) return;
+   if (ie->connect_num != connect_num) return 0;
    memset(&msg, 0, sizeof(msg));
    msg.handle = ie->data1;
    msg.server_id = cserve->server_id;
    if (ie->data2) evas_cserve_mem_close(ie->data2);
    ie->data2 = NULL;
-   if (ie->server_id == cserve->server_id)
-     server_send(cserve, OP_UNLOADDATA, sizeof(msg), (unsigned char *)(&msg));
+   if (ie->connect_num == connect_num)
+     {
+        if (ie->server_id == cserve->server_id)
+          server_send(cserve, OP_UNLOADDATA, sizeof(msg), (unsigned char *)(&msg));
+     }
 }
 
 EAPI void
@@ -381,13 +396,17 @@ evas_cserve_image_useless(Image_Entry *ie)
    else return;
    if (!cserve) return;
    if (ie->data1 == NULL) return;
+   if (ie->connect_num != connect_num) return 0;
    memset(&msg, 0, sizeof(msg));
    msg.handle = ie->data1;
    msg.server_id = cserve->server_id;
    if (ie->data2) evas_cserve_mem_close(ie->data2);
    ie->data2 = NULL;
-   if (ie->server_id == cserve->server_id)
-     server_send(cserve, OP_USELESSDATA, sizeof(msg), (unsigned char *)(&msg));
+   if (ie->connect_num == connect_num)
+     {
+        if (ie->server_id == cserve->server_id)
+          server_send(cserve, OP_USELESSDATA, sizeof(msg), (unsigned char *)(&msg));
+     }
 }
 
 EAPI Eina_Bool

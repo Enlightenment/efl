@@ -207,10 +207,10 @@ server_parse(Server *s, Client *c)
    int *ints;
    unsigned char *data, *newbuf;
    
-   if (c->inbufsize < sizeof(int)) return;
+   if (c->inbufsize < sizeof(int)) return 0;
    ints = (int *)((c->inbuf));
    if ((ints[0] < 0) || (ints[0] > (1024 * 1024)))
-     return;
+     return 0;
    if (c->inbufsize < (ints[0] + (sizeof(int) * 2)))
      {
         return 0;

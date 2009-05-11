@@ -474,6 +474,7 @@ struct _Image_Entry
    Evas_Image_Scale_Hint  scale_hint;
    void                  *data1, *data2;
    int                    server_id;
+   int                    connect_num;
 };
 
 struct _Engine_Image_Entry
