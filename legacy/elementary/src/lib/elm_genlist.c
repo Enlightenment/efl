@@ -66,6 +66,7 @@ struct _Elm_Genlist_Item
    
    Evas_Bool realized : 1;
    Evas_Bool selected : 1;
+   Evas_Bool hilighted : 1;
    Evas_Bool expanded : 1; // FIXME: not done yet
    Evas_Bool disabled : 1;
    Evas_Bool mincalcd : 1;
@@ -184,14 +185,17 @@ _stringlist_free(Eina_List *list)
 }
 
 static void
-_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+_item_hilight(Elm_Genlist_Item *it)
 {
-   Elm_Genlist_Item *it = data;
-   Evas_Event_Mouse_Down *ev = event_info;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) it->wd->on_hold = 1;
-   else it->wd->on_hold = 0;
-   if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     evas_object_smart_callback_call(it->wd->obj, "clicked", it);
+   const char *selectraise;
+   if (it->wd->no_select) return;
+   if (it->delete_me) return;
+   if (it->hilighted) return;
+   edje_object_signal_emit(it->base, "elm,state,selected", "elm");
+   selectraise = edje_object_data_get(it->base, "selectraise");
+   if ((selectraise) && (!strcmp(selectraise, "on")))
+     evas_object_raise(it->base);
+   it->hilighted = 1;
 }
 
 static void
@@ -205,10 +209,6 @@ _item_select(Elm_Genlist_Item *it)
         if (it->wd->always_select) goto call;
         return;
      }
-   edje_object_signal_emit(it->base, "elm,state,selected", "elm");
-   selectraise = edje_object_data_get(it->base, "selectraise");
-   if ((selectraise) && (!strcmp(selectraise, "on")))
-     evas_object_raise(it->base);
    it->selected = 1;
    it->wd->selected = eina_list_append(it->wd->selected, it);
    call:
@@ -221,7 +221,7 @@ _item_unselect(Elm_Genlist_Item *it)
 {
    const char *stacking, *selectraise;
    if (it->delete_me) return;
-   if (!it->selected) return;
+   if (!it->hilighted) return;
    edje_object_signal_emit(it->base, "elm,state,unselected", "elm");
    stacking = edje_object_data_get(it->base, "stacking");
    selectraise = edje_object_data_get(it->base, "selectraise");
@@ -230,9 +230,40 @@ _item_unselect(Elm_Genlist_Item *it)
         if ((stacking) && (!strcmp(stacking, "below")))
           evas_object_lower(it->base);
      }
-   it->selected = 0;
-   it->wd->selected = eina_list_remove(it->wd->selected, it);
-   evas_object_smart_callback_call(it->wd->obj, "unselected", it);
+   it->hilighted = 0;
+   if (it->selected)
+     {
+        it->selected = 0;
+        it->wd->selected = eina_list_remove(it->wd->selected, it);
+        evas_object_smart_callback_call(it->wd->obj, "unselected", it);
+     }
+}
+
+static void
+_mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+{
+   Elm_Genlist_Item *it = data;
+   Evas_Event_Mouse_Move *ev = event_info;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+     {
+        if (!it->wd->on_hold)
+          {
+             it->wd->on_hold = 1;
+             _item_unselect(it);
+          }
+     }
+}
+
+static void
+_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+{
+   Elm_Genlist_Item *it = data;
+   Evas_Event_Mouse_Down *ev = event_info;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) it->wd->on_hold = 1;
+   else it->wd->on_hold = 0;
+   _item_hilight(it);
+   if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
+     evas_object_smart_callback_call(it->wd->obj, "clicked", it);
 }
 
 static void
@@ -353,6 +384,8 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
                                        _mouse_down, it);
         evas_object_event_callback_add(it->base, EVAS_CALLBACK_MOUSE_UP,
                                        _mouse_up, it);
+        evas_object_event_callback_add(it->base, EVAS_CALLBACK_MOUSE_MOVE,
+                                       _mouse_move, it);
         if (it->selected)
           edje_object_signal_emit(it->base, "elm,state,selected", "elm");
         if (it->disabled)
