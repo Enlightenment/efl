@@ -336,6 +336,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    
    win->evas = ecore_evas_get(win->ee);
    win->win_obj = elm_widget_add(win->evas);
+   elm_widget_type_set(win->win_obj, "win");
    elm_widget_data_set(win->win_obj, win);
    evas_object_color_set(win->win_obj, 0, 0, 0, 0);
    evas_object_move(win->win_obj, 0, 0);
@@ -676,6 +677,8 @@ elm_win_inwin_add(Evas_Object *obj)
    if (!win) return NULL;
    wd = ELM_NEW(Widget_Data);
    obj2 = elm_widget_add(win->evas);
+   elm_widget_type_set(obj2, "inwin");
+   elm_widget_sub_object_add(obj, obj2);
    evas_object_size_hint_weight_set(obj2, 1.0, 1.0);
    evas_object_size_hint_align_set(obj2, -1.0, -1.0);
    elm_win_resize_object_add(obj, obj2);

@@ -3734,7 +3734,7 @@ collections {
       styles
 	{
 	   style { name: "entry_textblock_style";
-	      base: "font=Sans font_size=10 align=left color=#000 wrap=word";
+ 	      base: "font=Sans font_size=10 align=left color=#000 wrap=word";
 	      tag:  "br" "\n";
 	      tag:  "tab" "\t";
 	      tag:  "em" "+ font=Sans:style=Oblique";

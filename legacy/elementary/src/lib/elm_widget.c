@@ -16,6 +16,7 @@ typedef struct _Smart_Data Smart_Data;
 struct _Smart_Data
 { 
    Evas_Object   *obj;
+   const char    *type;
    Evas_Object   *parent_obj;
    Evas_Coord     x, y, w, h;
    Eina_List     *subobjs;
@@ -74,7 +75,6 @@ _sub_obj_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
      {
         sd->subobjs = eina_list_remove(sd->subobjs, obj);
      }
-   if (sd->style) eina_stringshare_del(sd->style);
    evas_object_smart_callback_call(sd->obj, "sub-object-del", obj);
 }
 
@@ -788,6 +788,24 @@ elm_widget_style_get(const Evas_Object *obj)
    return "default";
 }
 
+EAPI void
+elm_widget_type_set(Evas_Object *obj, const char *type)
+{
+   const char *old;
+   API_ENTRY return;
+   old = sd->type;
+   sd->type = eina_stringshare_add(type);
+   if (old) eina_stringshare_del(old);
+}
+
+EAPI const char *
+elm_widget_type_get(const Evas_Object *obj)
+{
+   API_ENTRY return "";
+   if (sd->type) return sd->type;
+   return "";
+}
+
 /* local subsystem functions */
 static void
 _smart_reconfigure(Smart_Data *sd)
@@ -850,6 +868,8 @@ _smart_del(Evas_Object *obj)
 	evas_object_del(sobj);
      }
    if (sd->del_func) sd->del_func(obj);
+   if (sd->style) eina_stringshare_del(sd->style);
+   if (sd->type) eina_stringshare_del(sd->type);
    free(sd);
 }
 

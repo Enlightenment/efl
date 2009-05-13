@@ -126,13 +126,13 @@ _on_focus_hook(void *data, Evas_Object *obj)
      {
         evas_object_focus_set(wd->ent, 1);
         edje_object_signal_emit(wd->ent, "elm,action,focus", "elm");
-        elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
+        if (top) elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
      }
    else
      {
         edje_object_signal_emit(wd->ent, "elm,action,unfocus", "elm");
         evas_object_focus_set(wd->ent, 0);
-        elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
+        if (top) elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
      }
 }
 
@@ -205,10 +205,13 @@ _paste(void *data, Evas_Object *obj, void *event_info)
    if (wd->sel_notify_handler)
      {
 #ifdef HAVE_ELEMENTARY_X
-        if (elm_win_xwindow_get(elm_widget_top_get(data)))
+        Evas_Object *top;
+        
+        top = elm_widget_top_get(data);
+        if ((top) && (elm_win_xwindow_get(top)))
           {
              ecore_x_selection_primary_request
-               (elm_win_xwindow_get(elm_widget_top_get(data)),
+               (elm_win_xwindow_get(top), 
                 ECORE_X_SELECTION_TARGET_UTF8_STRING);
              wd->selection_asked = 1;
           }
@@ -265,11 +268,13 @@ static int
 _long_press(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   Evas_Object *top;
    if (wd->hoversel) evas_object_del(wd->hoversel);
    wd->hoversel = elm_hoversel_add(data);
    elm_widget_sub_object_add(data, wd->hoversel);
    elm_hoversel_label_set(wd->hoversel, "Text");
-   elm_hoversel_hover_parent_set(wd->hoversel, elm_widget_top_get(data));
+   top = elm_widget_top_get(data);
+   if (top) elm_hoversel_hover_parent_set(wd->hoversel, top);
    evas_object_smart_callback_add(wd->hoversel, "dismissed", _dismissed, data);
    if (!wd->selmode)
      {
@@ -614,10 +619,12 @@ _signal_selection_start(void *data, Evas_Object *obj, const char *emission, cons
         if (txt)
           {
 #ifdef HAVE_ELEMENTARY_X
-             if (elm_win_xwindow_get(elm_widget_top_get(data)))
-                 ecore_x_selection_primary_set
-                 (elm_win_xwindow_get(elm_widget_top_get(data)),
-                  txt, strlen(txt));
+             Evas_Object *top;
+             
+             top = elm_widget_top_get(data);
+             if ((top) && (elm_win_xwindow_get(top)))
+               ecore_x_selection_primary_set
+               (elm_win_xwindow_get(top), txt, strlen(txt));
 #endif             
              free(txt);
           }
@@ -636,10 +643,12 @@ _signal_selection_changed(void *data, Evas_Object *obj, const char *emission, co
         if (txt)
           {
 #ifdef HAVE_ELEMENTARY_X
-             if (elm_win_xwindow_get(elm_widget_top_get(data)))
+             Evas_Object *top;
+             
+             top = elm_widget_top_get(data);
+             if ((top) && (elm_win_xwindow_get(top)))
                ecore_x_selection_primary_set
-               (elm_win_xwindow_get(elm_widget_top_get(data)),
-                txt, strlen(txt));
+               (elm_win_xwindow_get(top), txt, strlen(txt));
 #endif             
              free(txt);
           }
@@ -658,7 +667,10 @@ _signal_selection_cleared(void *data, Evas_Object *obj, const char *emission, co
         if (wd->cut_sel)
           {
 #ifdef HAVE_ELEMENTARY_X
-             if (elm_win_xwindow_get(elm_widget_top_get(data)))
+             Evas_Object *top;
+             
+             top = elm_widget_top_get(data);
+             if ((top) && (elm_win_xwindow_get(top)))
                {
                   char *t;
                   
@@ -666,8 +678,7 @@ _signal_selection_cleared(void *data, Evas_Object *obj, const char *emission, co
                   if (t)
                     {
                        ecore_x_selection_primary_set
-                         (elm_win_xwindow_get(elm_widget_top_get(data)),
-                          t, strlen(t));
+                         (elm_win_xwindow_get(top), t, strlen(t));
                        free(t);
                     }
                }
@@ -678,7 +689,10 @@ _signal_selection_cleared(void *data, Evas_Object *obj, const char *emission, co
         else
           {
 #ifdef HAVE_ELEMENTARY_X
-             if (elm_win_xwindow_get(elm_widget_top_get(data)))
+             Evas_Object *top;
+             
+             top = elm_widget_top_get(data);
+             if ((top) && (elm_win_xwindow_get(top)))
                ecore_x_selection_primary_clear();
 #endif        
           }
@@ -693,10 +707,13 @@ _signal_entry_paste_request(void *data, Evas_Object *obj, const char *emission, 
    if (wd->sel_notify_handler)
      {
 #ifdef HAVE_ELEMENTARY_X
-        if (elm_win_xwindow_get(elm_widget_top_get(data)))
+        Evas_Object *top;
+        
+        top = elm_widget_top_get(data);
+        if ((top) && (elm_win_xwindow_get(top)))
           {
              ecore_x_selection_primary_request
-               (elm_win_xwindow_get(elm_widget_top_get(data)),
+               (elm_win_xwindow_get(top),
                 ECORE_X_SELECTION_TARGET_UTF8_STRING);
              wd->selection_asked = 1;
           }
@@ -880,13 +897,15 @@ _event_selection_clear(void *data, int type, void *event)
 EAPI Evas_Object *
 elm_entry_add(Evas_Object *parent)
 {
-   Evas_Object *obj;
+   Evas_Object *obj, *top;
    Evas *e;
    Widget_Data *wd;
    
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
+   elm_widget_type_set(obj, "entry");
+   elm_widget_sub_object_add(parent, obj);
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
@@ -923,7 +942,8 @@ elm_entry_add(Evas_Object *parent)
    _sizing_eval(obj);
 
 #ifdef HAVE_ELEMENTARY_X
-   if (elm_win_xwindow_get(elm_widget_top_get(parent)) != 0)
+   top = elm_widget_top_get(obj);
+   if ((top) && (elm_win_xwindow_get(top)))
      {
         wd->sel_notify_handler = 
           ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY,
