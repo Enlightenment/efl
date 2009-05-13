@@ -27,10 +27,12 @@ void *alloca (size_t);
 
 #include "edje_private.h"
 
+#ifdef ECORE_IMF
 static int _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx, char **text, int *cursor_pos);
 static int _edje_entry_imf_event_commit_cb(void *data, int type, void *event);
 static int _edje_entry_imf_event_changed_cb(void *data, int type, void *event);
 static int _edje_entry_imf_event_delete_surrounding_cb(void *data, int type, void *event);
+#endif
 
 typedef struct _Entry Entry;
 typedef struct _Sel Sel;

@@ -145,10 +145,12 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 AM_PATH_PYTHON([2.5], , [:])
 AM_CONDITIONAL([HAVE_PYTHON], [test "$PYTHON" != : ])
 
-
-### Checks for libraries
+# pkg-config
 
 PKG_PROG_PKG_CONFIG
+
+
+### Checks for libraries
 
 # Evil library for compilation on Windows
 
@@ -171,12 +173,11 @@ PKG_CHECK_MODULES([EDJE],
     eet >= 1.0.1
     evas >= 0.9.9
     ecore >= 0.9.9
-    ecore-imf >= 0.9.9
-    ecore-imf-evas >= 0.9.9
     ecore-job >= 0.9.9
     embryo >= 0.9.1
-   ]
-)
+   ])
+
+requirement_edje="embryo ecore-job ecore evas eet eina-0 ${requirement_edje}"
 
 have_ecore_imf="no"
 PKG_CHECK_MODULES([ECORE_IMF],
@@ -189,10 +190,8 @@ PKG_CHECK_MODULES([ECORE_IMF],
     have_ecore_imf="yes"
     requirement_edje="ecore-imf ecore-imf-evas ${requirement_edje}"
    ],
-   [have_ecore_imf="yes"]
-)
-
-requirement_edje="embryo ecore-job ecore evas eet eina-0 ${requirement_edje}"
+   [have_ecore_imf="yes"],
+   [have_ecore_imf="no"])
 
 # Dependencies for the binaries
 
@@ -282,17 +281,17 @@ echo "------------------------------------------------------------------------"
 echo
 echo "Configuration Options Summary:"
 echo
+echo "  Ecore IMF............: $have_ecore_imf"
+echo
 echo "  EDJE_PROGRAM_CACHE...: $want_edje_program_cache"
 echo
 echo "  Build binaries.......: $have_edje_cc"
 echo
-echo "  Documentation........: ${enable_doc}"
+echo "  Documentation........: ${build_doc}"
 echo
 echo "  Compilation..........: make"
 echo
 echo "  Installation.........: make install"
 echo
 echo "    prefix.............: $prefix"
-echo
-echo "  Ecore IMF............: $have_ecore_imf"
 echo
