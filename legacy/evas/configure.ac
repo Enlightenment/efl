@@ -28,10 +28,21 @@ VMIN=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $2);}'`
 VMIC=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $3);}'`
 SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
-release="ver-pre-svn-01"
-release_info="-release $release"
 AC_SUBST(version_info)
+
+release="ver-pre-svn-01"
+case "$host_os" in
+   mingw32ce* | cegcc*)
+      MODULE_ARCH="$host_os-$host_cpu"
+      ;;
+   *)
+      release_info="-release $release"
+      MODULE_ARCH="$host_os-$host_cpu-$release"
+      ;;
+esac
 AC_SUBST(release_info)
+AC_SUBST(MODULE_ARCH)
+AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 
 want_fontconfig="auto"
 
@@ -97,10 +108,6 @@ esac
 
 LT_PROG_RC
 AC_FUNC_ALLOCA
-
-MODULE_ARCH="$host_os-$host_cpu-$release"
-AC_SUBST(MODULE_ARCH)
-AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 
 PKG_PROG_PKG_CONFIG
 
