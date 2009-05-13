@@ -2259,12 +2259,22 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, in
      {
 	Evas_Object_Textblock_Format_Item *fit;
 	Evas_Object_Textblock_Item *it;
-
+        Evas_Object_Textblock_Line *lnn;
+        
+        lnn = (Evas_Object_Textblock_Line *)(((Eina_Inlist *)ln)->next);
 	EINA_INLIST_FOREACH(ln->items, it)
 	  {
 	     if (it->source_node == n)
 	       {
-		  if ((int)(it->source_pos + strlen(it->text)) >= pos)
+                  Evas_Object_Textblock_Item *itn;
+                  int p;
+                  
+                  itn = (Evas_Object_Textblock_Item *)(((Eina_Inlist *)it)->next);
+                  p = (int)(it->source_pos + strlen(it->text));
+		  if ((p > pos) || 
+                      ((p == pos) && (!lnn) &&
+                       ((!itn)  |
+                        ((itn) && (itn->source_node != n)))))
 		    {
 		       *lnr = ln;
 		       *itr = it;

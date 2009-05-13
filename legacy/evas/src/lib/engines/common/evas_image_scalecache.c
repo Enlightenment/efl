@@ -197,7 +197,7 @@ _sci_find(RGBA_Image *im,
 {
    Eina_List *l;
    Scaleitem *sci;
-   
+
    EINA_LIST_FOREACH(im->cache.list, l, sci)
      {
         if (
@@ -236,9 +236,14 @@ _sci_find(RGBA_Image *im,
 //             printf(" 1- %i\n", sci->dst_w * sci->dst_h * 4);
              cache_list = eina_inlist_remove(cache_list, (Eina_Inlist *)sci);
           }
+        if (max_scale_items < 1) return NULL;
      }
    else
      {
+        if (max_scale_items < 1) return NULL;
+
+        if (eina_list_count(im->cache.list) > (max_scale_items - 1))
+          return NULL;
         sci = malloc(sizeof(Scaleitem));
         memset(sci, 0, sizeof(Eina_Inlist));
         sci->parent_im = im;
@@ -376,6 +381,12 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst,
    sci = _sci_find(im, dc, smooth, 
                    src_region_x, src_region_y, src_region_w, src_region_h, 
                    dst_region_w, dst_region_h);
+   if (!sci)
+     {
+        LKU(cache_lock);
+        LKU(im->cache.lock);
+        return;
+     }
 //   printf("%10i | %4i %4i %4ix%4i -> %4i %4i %4ix%4i | %i\n",
 //          (int)use_counter,
 //          src_region_x, src_region_y, src_region_w, src_region_h,
