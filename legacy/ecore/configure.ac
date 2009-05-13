@@ -22,26 +22,32 @@ VMIN=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $2);}'`
 VMIC=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $3);}'`
 SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
-release="ver-pre-svn-01"
-ecore_config_release_info="-release $release"
-ecore_con_release_info="-release $release"
-ecore_directfb_release_info="-release $release"
-ecore_evas_release_info="-release $release"
-ecore_fb_release_info="-release $release"
-ecore_file_release_info="-release $release"
-ecore_imf_evas_release_info="-release $release"
-ecore_imf_release_info="-release $release"
-ecore_input_release_info="-release $release"
-ecore_ipc_release_info="-release $release"
-ecore_job_release_info="-release $release"
-ecore_quartz_release_info="-release $release"
-ecore_release_info="-release $release"
-ecore_sdl_release_info="-release $release"
-ecore_txt_release_info="-release $release"
-ecore_win32_release_info="-release $release"
-ecore_wince_release_info="-release $release"
-ecore_x_release_info="-release $release"
 AC_SUBST(version_info)
+
+release="ver-pre-svn-01"
+case "$host_os" in
+   mingw32ce* | cegcc*)
+      ;;
+   *)
+      ecore_config_release_info="-release $release"
+      ecore_con_release_info="-release $release"
+      ecore_directfb_release_info="-release $release"
+      ecore_evas_release_info="-release $release"
+      ecore_fb_release_info="-release $release"
+      ecore_file_release_info="-release $release"
+      ecore_imf_evas_release_info="-release $release"
+      ecore_imf_release_info="-release $release"
+      ecore_input_release_info="-release $release"
+      ecore_ipc_release_info="-release $release"
+      ecore_job_release_info="-release $release"
+      ecore_quartz_release_info="-release $release"
+      ecore_release_info="-release $release"
+      ecore_sdl_release_info="-release $release"
+      ecore_txt_release_info="-release $release"
+      ecore_win32_release_info="-release $release"
+      ecore_x_release_info="-release $release"
+      ;;
+esac
 AC_SUBST(ecore_config_release_info)
 AC_SUBST(ecore_con_release_info)
 AC_SUBST(ecore_directfb_release_info)
