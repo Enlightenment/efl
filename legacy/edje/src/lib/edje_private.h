@@ -20,7 +20,9 @@
 
 #include "Edje.h"
 #include "Edje_Edit.h"
-
+#ifdef HAVE_ECORE_IMF
+#include <Ecore_IMF.h>
+#endif
 
 #ifdef __GNUC__
 # if __GNUC__ >= 4

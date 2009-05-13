@@ -164,9 +164,25 @@ PKG_CHECK_MODULES([EDJE],
     eet >= 1.0.1
     evas >= 0.9.9
     ecore >= 0.9.9
+    ecore-imf >= 0.9.9
+    ecore-imf-evas >= 0.9.9
     ecore-job >= 0.9.9
     embryo >= 0.9.1
    ]
+)
+
+have_ecore_imf="no"
+PKG_CHECK_MODULES([ECORE_IMF],
+   [
+    ecore-imf >= 0.9.9
+    ecore-imf-evas >= 0.9.9
+   ],
+   [
+    AC_DEFINE(HAVE_ECORE_IMF, 1, [Input Method Support for Edje Entry])
+    have_ecore_imf="yes"
+    requirement_edje="ecore-imf ecore-imf-evas ${requirement_edje}"
+   ],
+   [have_ecore_imf="yes"]
 )
 
 requirement_edje="embryo ecore-job ecore evas eet eina-0 ${requirement_edje}"
@@ -270,4 +286,6 @@ echo
 echo "  Installation.........: make install"
 echo
 echo "    prefix.............: $prefix"
+echo
+echo "  Ecore IMF............: $have_ecore_imf"
 echo

@@ -10,5 +10,5 @@ Description: Enlightened graphical design and layout engine.
 Requires: @requirement_edje@
 Version: @VERSION@
 Libs: -L${libdir} -ledje
-Libs.private: @EDJE_LIBS@ @EVIL_LIBS@
+Libs.private: @EDJE_LIBS@ @EVIL_LIBS@ @ECORE_IMF_LIBS@
 Cflags: -I${includedir}
