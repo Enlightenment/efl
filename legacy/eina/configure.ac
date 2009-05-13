@@ -22,16 +22,23 @@ VMIN=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $2);}'`
 VMIC=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $3);}'`
 SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
-release="ver-pre-svn-01"
-release_info="-release $release"
 AC_SUBST(VMAJ)
 AC_SUBST(version_info)
-AC_SUBST(release_info)
 
 
 ### Needed information
 
-MODULE_ARCH="$host_os-$host_cpu-$release"
+release="ver-pre-svn-01"
+case "$host_os" in
+   mingw32ce* | cegcc*)
+      MODULE_ARCH="$host_os-$host_cpu"
+      ;;
+   *)
+      release_info="-release $release"
+      MODULE_ARCH="$host_os-$host_cpu-$release"
+      ;;
+esac
+AC_SUBST(release_info)
 AC_SUBST(MODULE_ARCH)
 AC_DEFINE_UNQUOTED(MODULE_ARCH, "${MODULE_ARCH}", "Module architecture")
 
