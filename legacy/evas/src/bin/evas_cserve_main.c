@@ -1064,12 +1064,15 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              
              D("OP_GETINFO %i\n", c->pid);
              len = sizeof(Op_Getinfo_Reply);
+             D("... foreach\n");
              if (active_images)
                eina_hash_foreach(active_images, getinfo_hash_image_cb, &imgs);
+             D("... walk foreach list output\n");
              EINA_LIST_FOREACH(cache_images, l, img)
                {
                   imgs = eina_list_append(imgs, img);
                }
+             D("... walk image cache\n");
              EINA_LIST_FOREACH(imgs, l, img)
                {
                   len += sizeof(Op_Getinfo_Item);
@@ -1078,11 +1081,13 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                   if (img->file.key) len += strlen(img->file.key);
                   len++;
                }
+             D("... malloc msg\n");
              msg = malloc(len);
              if (msg)
                {
                   unsigned char *p;
                   
+                  D("...   init msg\n");
                   memset(msg, 0, len);
                   p = (unsigned char *)msg;
                   msg->active.mem_total = 0;
@@ -1090,10 +1095,12 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                   msg->cached.mem_total = 0;
                   msg->cached.count = 0;
                   p += sizeof(Op_Getinfo_Reply);
+                  D("...   walk all imgs\n");
                   EINA_LIST_FOREACH(imgs, l, img)
                     {
                        Op_Getinfo_Item *itt, it;
 
+                       D("...   img %p\n", img);
                        memset(&it, 0, sizeof(Op_Getinfo_Item));
                        itt = (Op_Getinfo_Item *)p;
                        it.file_key_size = 0;
@@ -1127,7 +1134,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                        it.data_load_time = img->stats.load2;
                        it.alpha = img->image.alpha;
                        if (img->image.data)
-                        it.data_loaded = 1;
+                         it.data_loaded = 1;
                        else
                          it.data_loaded = 0;
                        it.active = img->active;
@@ -1143,9 +1150,13 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                          }
                        it.dead = img->dead;
                        it.useless = img->useless;
+                       D("...   memcpy %p %p %i \n", 
+                         itt, &it, sizeof(Op_Getinfo_Item));
                        memcpy(itt, &it, sizeof(Op_Getinfo_Item));
+                       D("...   memcpy done n\n", img);
                        p += sizeof(Op_Getinfo_Item) + it.file_key_size;
                     }
+                  D("...   walk all imgs done\n");
                   msg->active.mem_total = 
                     (msg->active.mem_total + 1023) / 1024;
                   msg->cached.mem_total = 
@@ -1164,7 +1175,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
           } 
         break;
      default:
-        D("OP_... UNKNOWN??? %i opcoe: %i\n", c->pid, opcode);
+        D("OP_... UNKNOWN??? %i opcode: %i\n", c->pid, opcode);
         break;
      }
 }

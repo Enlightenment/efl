@@ -27,20 +27,23 @@ typedef struct _Evas_Object_Textblock_Format      Evas_Object_Textblock_Format;
 #define  NODE_FORMAT 1
 
 struct _Evas_Object_Style_Tag
-{  EINA_INLIST;
+{
+   EINA_INLIST;
    char *tag;
    char *replace;
 };
 
 struct _Evas_Object_Textblock_Node
-{  EINA_INLIST;
+{
+   EINA_INLIST;
    char *text;
    int   type;
    int   len, alloc;
 };
 
 struct _Evas_Object_Textblock_Line
-{  EINA_INLIST;
+{
+   EINA_INLIST;
    Evas_Object_Textblock_Item        *items;
    Evas_Object_Textblock_Format_Item *format_items;
    int                                x, y, w, h;
@@ -49,7 +52,8 @@ struct _Evas_Object_Textblock_Line
 };
 
 struct _Evas_Object_Textblock_Item
-{  EINA_INLIST;
+{
+   EINA_INLIST;
    char                         *text;
    Evas_Object_Textblock_Format *format;
    Evas_Object_Textblock_Node   *source_node;
@@ -60,7 +64,8 @@ struct _Evas_Object_Textblock_Item
 };
 
 struct _Evas_Object_Textblock_Format_Item
-{  EINA_INLIST;
+{
+   EINA_INLIST;
    const char                   *item;
    Evas_Object_Textblock_Node   *source_node;
    int                           x, w;
@@ -111,6 +116,7 @@ struct _Evas_Textblock_Cursor
    Evas_Object                *obj;
    int                         pos;
    Evas_Object_Textblock_Node *node;
+   Eina_Bool                   eol : 1;
 };
 
 struct _Evas_Object_Textblock
@@ -2246,7 +2252,7 @@ _relayout(const Evas_Object *obj)
 }
 
 static void
-_find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, int pos, Evas_Object_Textblock_Line **lnr, Evas_Object_Textblock_Item **itr)
+_find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, int pos, int eol, Evas_Object_Textblock_Line **lnr, Evas_Object_Textblock_Item **itr)
 {
    Evas_Object_Textblock_Line *ln;
 /*    Evas_Object_Textblock_Node *nn; */
@@ -2255,6 +2261,13 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, in
    o = (Evas_Object_Textblock *)(obj->object_data);
 /*    EINA_INLIST_FOREACH(o->nodes, nn) */
 /*      ; */
+   if ((eol) && (n->type == NODE_TEXT))
+     {
+        int pos2 = pos;
+        
+        evas_common_font_utf8_get_prev(n->text, &pos2);
+        if (pos2 < pos) pos = pos2;
+     }
    EINA_INLIST_FOREACH(o->lines, ln)
      {
 	Evas_Object_Textblock_Format_Item *fit;
@@ -3127,6 +3140,7 @@ evas_object_textblock_cursor_new(Evas_Object *obj)
    cur->obj = obj;
    cur->node = o->nodes;
    cur->pos = 0;
+   cur->eol = 0;
    o->cursors = eina_list_append(o->cursors, cur);
    return cur;
 }
@@ -3162,6 +3176,7 @@ evas_textblock_cursor_node_first(Evas_Textblock_Cursor *cur)
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    cur->node = o->nodes;
    cur->pos = 0;
+   cur->eol = 0;
 }
 
 /**
@@ -3180,12 +3195,14 @@ evas_textblock_cursor_node_last(Evas_Textblock_Cursor *cur)
      {
 	cur->node = (Evas_Object_Textblock_Node *)((EINA_INLIST_GET(o->nodes))->last);
 	cur->pos = 0;
+        cur->eol = 0;  // 1
 	evas_textblock_cursor_char_last(cur);
      }
    else
      {
 	cur->node = NULL;
 	cur->pos = 0;
+        cur->eol = 0; // 1
      }
 }
 
@@ -3206,6 +3223,7 @@ evas_textblock_cursor_node_next(Evas_Textblock_Cursor *cur)
      {
 	cur->node = (Evas_Object_Textblock_Node *)((EINA_INLIST_GET(cur->node))->next);
 	cur->pos = 0;
+        cur->eol = 0;
 	return 1;
      }
    return 0;
@@ -3243,6 +3261,7 @@ evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur)
 {
    Evas_Object_Textblock *o;
    int index, tindex, ch;
+   int at_start_of_line = 0;
    
    if (!cur) return 0;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
@@ -3250,11 +3269,24 @@ evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur)
    if (cur->node->type == NODE_FORMAT) return 0;
    if (!cur->node->text) return 0;
    index = cur->pos;
+
+   if (cur->node->type == NODE_TEXT)
+     {
+        Evas_Object_Textblock_Line *ln = NULL;
+        Evas_Object_Textblock_Item *it = NULL;
+        int pos;
+        
+	_find_layout_item_line_match(cur->obj, cur->node, cur->pos, cur->eol, &ln, &it);
+        pos = cur->pos - it->source_pos;
+        if (pos <= 0) index -= pos;
+     }
+   
    ch = evas_common_font_utf8_get_next((unsigned char *)(cur->node->text), &index);
    if ((ch == 0) || (index < 0)) return 0;
    if (cur->node->text[index] == 0) return 0;
    tindex = index;
    cur->pos = index;
+   cur->eol = 0; // 1
    return 1;
 }
 
@@ -3268,6 +3300,8 @@ evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *cur)
 {
    Evas_Object_Textblock *o;
    int index, ch;
+   int at_end_of_line = 0;
+   int at_start_of_line = 0;
    
    if (!cur) return 0;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
@@ -3276,9 +3310,42 @@ evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *cur)
    if (!cur->node->text) return 0;
    index = cur->pos;
    if (index == 0) return 0;
+   
+   // XXX: FIXME: determine at_end_of_line and at_start_of_line
+  
+   if (cur->node->type == NODE_TEXT)
+     {
+        Evas_Object_Textblock_Line *ln = NULL;
+        Evas_Object_Textblock_Item *it = NULL;
+        int pos;
+        
+	_find_layout_item_line_match(cur->obj, cur->node, cur->pos, cur->eol, &ln, &it);
+        if (it)
+          {
+             pos = cur->pos - it->source_pos;
+             if (pos <= 0) at_start_of_line = 1;
+             if (it->text)
+               {
+                  int plast;
+                  
+                  plast = evas_common_font_utf8_get_last(it->text, strlen(it->text));
+                  if ((index - it->source_pos) == plast) at_end_of_line = 1;
+               }
+          }
+     }
+   
+   if ((cur->eol) && (at_end_of_line))
+     {
+        cur->eol = 0;
+        return 1;
+     }
    ch = evas_common_font_utf8_get_prev((unsigned char *)(cur->node->text), &index);
    if (/*(ch == 0) || */(index < 0)) return 0;
    cur->pos = index;
+   if (at_start_of_line)
+     cur->eol =1;
+   else
+     cur->eol = 0;
    return 1;
 }
 
@@ -3292,6 +3359,7 @@ evas_textblock_cursor_char_first(Evas_Textblock_Cursor *cur)
 {
    if (!cur) return;
    cur->pos = 0;
+   cur->eol = 0;
 }
 
 /**
@@ -3314,6 +3382,7 @@ evas_textblock_cursor_char_last(Evas_Textblock_Cursor *cur)
    index = evas_common_font_utf8_get_last((unsigned char *)cur->node->text, cur->node->len);
    if (index < 0) cur->pos = 0;
    cur->pos = index;
+   cur->eol = 0; // 1
 }
 
 /**
@@ -3333,10 +3402,11 @@ evas_textblock_cursor_line_first(Evas_Textblock_Cursor *cur)
    if (!cur->node) return;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
+   cur->eol = 0;
    if (cur->node->type == NODE_FORMAT)
      _find_layout_format_item_line_match(cur->obj, cur->node, &ln, &fi);
    else
-     _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln, &it);
+     _find_layout_item_line_match(cur->obj, cur->node, cur->pos, cur->eol, &ln, &it);
    if (!ln) return;
    it = (Evas_Object_Textblock_Item *)ln->items;
    fi = (Evas_Object_Textblock_Format_Item *)ln->format_items;
@@ -3374,10 +3444,11 @@ evas_textblock_cursor_line_last(Evas_Textblock_Cursor *cur)
    if (!cur->node) return;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
+   cur->eol = 1;
    if (cur->node->type == NODE_FORMAT)
      _find_layout_format_item_line_match(cur->obj, cur->node, &ln, &fi);
    else
-     _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln, &it);
+     _find_layout_item_line_match(cur->obj, cur->node, cur->pos, cur->eol, &ln, &it);
    if (!ln) return;
    if (ln->items)
      it = (Evas_Object_Textblock_Item *)((EINA_INLIST_GET(ln->items))->last);
@@ -3404,6 +3475,7 @@ evas_textblock_cursor_line_last(Evas_Textblock_Cursor *cur)
    else if (fi)
      {
 	cur->pos = 0;
+        cur->eol = 0;
 	cur->node = fi->source_node;
      }
 }
@@ -3435,6 +3507,7 @@ evas_textblock_cursor_pos_set(Evas_Textblock_Cursor *cur, int pos)
    if (pos < 0) pos = 0;
    else if (pos > cur->node->len) pos = cur->node->len;
    cur->pos = pos;
+   cur->eol = 0;
 }
 
 /**
@@ -3467,13 +3540,16 @@ evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line)
    if (it)
      {
 	cur->pos = it->source_pos;
+        cur->eol = 0;
 	cur->node = it->source_node;
      }
    else if (fi)
      {
 	cur->pos = 0;
+        cur->eol = 0;
 	cur->node = fi->source_node;
      }
+   cur->eol = 0;
    return 1;
 }
 
@@ -3496,10 +3572,12 @@ evas_textblock_cursor_compare(const Evas_Textblock_Cursor *cur1, const Evas_Text
      {
 	if (cur1->pos < cur2->pos) return -1; /* cur1 < cur2 */
 	else if (cur1->pos > cur2->pos) return 1; /* cur2 < cur1 */
-	return 0; /* cur1 == cur2 */
+        if ((cur1->eol) == (cur1->eol)) return 0; /* cur1 == cur2 */
+        if (cur1->eol) return 1; /* cur2 < cur1 */
+	return -1; /* cur1 < cur2 */
      }
    for (l1 = EINA_INLIST_GET(cur1->node),
-	  l2 = EINA_INLIST_GET(cur1->node); (l1) || (l2);)
+        l2 = EINA_INLIST_GET(cur1->node); (l1) || (l2);)
      {
 	if (l1 == EINA_INLIST_GET(cur2->node)) return 1; /* cur2 < cur 1 */
 	else if (l2 == EINA_INLIST_GET(cur2->node)) return -1; /* cur1 < cur 2 */
@@ -3525,6 +3603,7 @@ evas_textblock_cursor_copy(const Evas_Textblock_Cursor *cur, Evas_Textblock_Curs
    if (cur->obj != cur_dest->obj) return;
    cur_dest->pos = cur->pos;
    cur_dest->node = cur->node;
+   cur_dest->eol = cur->eol;
 }
 
 
@@ -3593,6 +3672,7 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text)
      n->text = _strbuf_append(n->text, (char *)text, &(n->len), &(n->alloc));
    else
      n->text = _strbuf_insert(n->text, (char *)text, cur->pos, &(n->len), &(n->alloc));
+// XXX: This makes no sense?   
    cur->pos += strlen(text);
    o->formatted.valid = 0;
    o->native.valid = 0;
@@ -3747,6 +3827,7 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
 	  }
      }
    cur->node = n;
+// XXX: This makes no sense   
    cur->pos = 0;
    o->formatted.valid = 0;
    o->native.valid = 0;
@@ -3883,6 +3964,7 @@ evas_textblock_cursor_node_delete(Evas_Textblock_Cursor *cur)
 	       {
 		  o->cursor->node = cur->node;
 		  o->cursor->pos = cur->pos;
+                  o->cursor->eol = cur->eol;
 	       }
 	  }
 	EINA_LIST_FOREACH(o->cursors, l, data)
@@ -3893,6 +3975,7 @@ evas_textblock_cursor_node_delete(Evas_Textblock_Cursor *cur)
 		    {
 		       data->node = cur->node;
 		       data->pos = cur->pos;
+                       data->eol = cur->eol;
 		    }
 	       }
 	  }
@@ -4551,7 +4634,7 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
      }
    else
      {
-	_find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln, &it);
+	_find_layout_item_line_match(cur->obj, cur->node, cur->pos, cur->eol, &ln, &it);
      }
    if (!ln)
      {
@@ -4561,6 +4644,15 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
      {
 	pos = cur->pos - it->source_pos;
 	ret = -1;
+        if (cur->eol)
+          {
+             int pos2;
+             
+             pos2 = pos;
+             evas_common_font_utf8_get_next((unsigned char *)(it->text), &pos2);
+             if (pos2 > pos) pos = pos2;
+          }
+        if (pos < 0) pos = 0;
 	if (it->format->font.font)
 	  ret = cur->ENFN->font_char_coords_get(cur->ENDT, it->format->font.font,
 						it->text,
@@ -4627,7 +4719,7 @@ evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
    if (cur->node->type == NODE_FORMAT)
      _find_layout_format_item_line_match(cur->obj, cur->node, &ln, &fi);
    else
-     _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln, &it);
+     _find_layout_item_line_match(cur->obj, cur->node, cur->pos, cur->eol, &ln, &it);
    if (!ln) return -1;
    x = ln->x;
    y = ln->y;
@@ -4697,6 +4789,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
 		  if (((fi->x + ln->x) <= x) && (((fi->x + ln->x) + fi->w) > x))
 		    {
 		       cur->pos = 0;
+                       cur->eol = 0;
 		       cur->node = fi->source_node;
 		       return 1;
 		    }
@@ -4705,6 +4798,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
 	       {
 		  it = it_break;
 		  cur->pos = it->source_pos;
+                  cur->eol = 0;
 		  cur->node = it->source_node;
 		  return 1;
 	       }
@@ -4841,6 +4935,21 @@ evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, cons
    return rects;
 }
 
+EAPI Eina_Bool
+evas_textblock_cursor_eol_get(const Evas_Textblock_Cursor *cur)
+{
+   if (!cur) return 0;
+   return cur->eol;
+}
+
+EAPI void
+evas_textblock_cursor_eol_set(Evas_Textblock_Cursor *cur, Eina_Bool eol)
+{
+   if (!cur) return;
+   cur->eol = eol;
+}
+
+
 /* general controls */
 /**
  * to be documented.
@@ -4882,10 +4991,12 @@ evas_object_textblock_clear(Evas_Object *obj)
    _nodes_clear(obj);
    o->cursor->node = NULL;
    o->cursor->pos = 0;
+   o->cursor->eol = 0;
    EINA_LIST_FOREACH(o->cursors, l, cur)
      {
 	cur->node = NULL;
 	cur->pos = 0;
+        cur->eol = 0;
      }
    if (o->lines)
      {
