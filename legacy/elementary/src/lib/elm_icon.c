@@ -54,7 +54,8 @@ _sizing_eval(Evas_Object *obj)
    if (wd->no_scale) _els_smart_icon_scale_set(wd->img, 1.0);
    else
      {
-	_els_smart_icon_scale_set(wd->img, elm_widget_scale_get(obj) * _elm_config->scale);
+	_els_smart_icon_scale_set(wd->img, elm_widget_scale_get(obj) * 
+                                  _elm_config->scale);
 	_els_smart_icon_size_get(wd->img, &w, &h);
      }
    if (!wd->scale_down)
@@ -74,7 +75,7 @@ _sizing_eval(Evas_Object *obj)
 static void
 _mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   evas_object_smart_callback_call(data, "clicked", NULL);
+   evas_object_smart_callback_call(data, "clicked", event_info);
 }
 
 EAPI Evas_Object *
