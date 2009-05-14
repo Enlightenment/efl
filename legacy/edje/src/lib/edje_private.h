@@ -14,15 +14,14 @@
 #include <Ecore.h>
 #include <Ecore_Str.h>
 #include <Ecore_Job.h>
+#ifdef HAVE_ECORE_IMF
+# include <Ecore_IMF.h>
+#endif
 #include <Eet.h>
 #include <Embryo.h>
-#include <eina_stringshare.h>
 
 #include "Edje.h"
 #include "Edje_Edit.h"
-#ifdef HAVE_ECORE_IMF
-#include <Ecore_IMF.h>
-#endif
 
 #ifdef __GNUC__
 # if __GNUC__ >= 4
