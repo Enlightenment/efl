@@ -190,7 +190,6 @@ PKG_CHECK_MODULES([ECORE_IMF],
     have_ecore_imf="yes"
     requirement_edje="ecore-imf ecore-imf-evas ${requirement_edje}"
    ],
-   [have_ecore_imf="yes"],
    [have_ecore_imf="no"])
 
 # Dependencies for the binaries
