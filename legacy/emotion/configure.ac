@@ -150,6 +150,17 @@ AM_CONDITIONAL([BUILD_VLC_MODULE], [test "$HAVE_VLC" = yes])
 AM_CONDITIONAL([BUILD_XINE_MODULE], [test "$HAVE_XINE" = yes])
 AM_CONDITIONAL([BUILD_GSTREAMER_MODULE], [test "$HAVE_GSTREAMER" = yes])
 
+AC_ARG_WITH(edje-cc,
+[  --with-edje-cc=PATH              specify a specific path to edje_cc],
+[
+  v=$withval;
+  edje_cc=$v
+  echo "  Enlightenment edje_cc explicitly set to "$edje_cc;
+],[
+  edje_cc=$(pkg-config --variable=prefix edje)/bin/edje_cc
+])
+AC_SUBST(edje_cc)
+
 AC_OUTPUT([
 Makefile
 emotion.pc
@@ -184,6 +195,8 @@ echo "    Gstreamer..........: $HAVE_GSTREAMER"
 echo "    Gstreamer plugins..: $GSTPLUG_MSG"
 echo "    Gstreamer FFmpeg...: $HAVE_GSTFFMPEG"
 echo "    Gstreamer CDDA.....: $GSTCDDA_MSG"
+echo
+echo "  edje_cc..............: ${edje_cc}"
 echo
 echo "  Compilation..........: make"
 echo
