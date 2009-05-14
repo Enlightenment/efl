@@ -11,6 +11,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 @EVIL_CFLAGS@ \
 @EDJE_CFLAGS@ \
+@ECORE_IMF_CFLAGS@ \
 @EFL_EDJE_BUILD@
 
 lib_LTLIBRARIES = libedje.la
@@ -41,5 +42,5 @@ edje_edit.c \
 edje_script_only.c \
 edje_entry.c
 
-libedje_la_LIBADD = @EDJE_LIBS@ -lm
+libedje_la_LIBADD = @EDJE_LIBS@ @ECORE_IMF_LIBS@ -lm
 libedje_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
