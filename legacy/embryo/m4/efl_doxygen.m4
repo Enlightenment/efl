@@ -25,13 +25,15 @@ AC_ARG_ENABLE([doc],
        efl_enable_doc="no"
     fi
    ],
-   [efl_enable_doc="yes"]
-)
+   [efl_enable_doc="yes"])
+
+AC_MSG_CHECKING([whether to build documentation])
+AC_MSG_RESULT([${efl_enable_doc}])
 
 if test "x${efl_enable_doc}" = "xyes" ; then
 
 dnl
-dnl Specify the full file name, with path
+dnl Specify the file name, without path
 dnl
 
    efl_doxygen="doxygen"
@@ -51,10 +53,10 @@ dnl
        if test "x${efl_have_doxygen}" = "xno" ; then
           echo "WARNING:"
           echo "The doxygen program you specified:"
-          echo "$efl_doxygen"
+          echo "${efl_doxygen}"
           echo "was not found.  Please check the path and make sure "
           echo "the program exists and is executable."
-          AC_MSG_WARN([Warning: no doxygen detected. Documentation will not be built])
+          AC_MSG_WARN([no doxygen detected. Documentation will not be built])
        fi
       ],
       [AC_CHECK_PROG([efl_have_doxygen],
@@ -63,17 +65,16 @@ dnl
           [no])
        if test "x${efl_have_doxygen}" = "xno" ; then
           echo "WARNING:"
-          echo "The doxygen program was not found in your execute"
+          echo "The doxygen program was not found in your execute path."
           echo "You may have doxygen installed somewhere not covered by your path."
           echo ""
           echo "If this is the case make sure you have the packages installed, AND"
           echo "that the doxygen program is in your execute path (see your"
           echo "shell manual page on setting the \$PATH environment variable), OR"
           echo "alternatively, specify the program to use with --with-doxygen."
-          AC_MSG_WARN([Warning: no doxygen detected. Documentation will not be built])
+          AC_MSG_WARN([no doxygen detected. Documentation will not be built])
        fi
-      ]
-   )
+      ])
 fi
 
 dnl
@@ -88,9 +89,9 @@ fi
 AM_CONDITIONAL(EFL_BUILD_DOC, test "x${efl_enable_doc}" = "xyes")
 
 if test "x${efl_enable_doc}" = "xyes" ; then
-  ifelse([$1], , :, [$1])
+  m4_default([$1], [:])
 else
-  ifelse([$2], , :, [$2])
+  m4_default([$2], [:])
 fi
 
 ])
