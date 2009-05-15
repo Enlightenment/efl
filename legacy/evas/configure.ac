@@ -1120,7 +1120,6 @@ src/modules/engines/software_16_wince/Makefile
 src/modules/engines/software_x11/Makefile
 src/modules/engines/fb/Makefile
 src/modules/engines/buffer/Makefile
-src/modules/engines/software_win32_gdi/Makefile
 src/modules/engines/directfb/Makefile
 src/modules/engines/gl_common/Makefile
 src/modules/engines/gl_glew/Makefile
