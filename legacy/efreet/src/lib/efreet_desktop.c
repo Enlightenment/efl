@@ -429,7 +429,7 @@ efreet_desktop_save(Efreet_Desktop *desktop)
     Efreet_Ini *ini;
     int ok = 1;
 
-    ini = efreet_ini_new(desktop->orig_path);
+    ini = efreet_ini_new(NULL);
     efreet_ini_section_add(ini, "Desktop Entry");
     efreet_ini_section_set(ini, "Desktop Entry");
 
@@ -1837,4 +1837,49 @@ efreet_desktop_command_path_absolute(const char *path)
 
     /* just dup an already absolute buffer */
     return strdup(path);
+}
+
+EAPI Eina_Bool
+efreet_desktop_x_field_set(Efreet_Desktop *desktop, const char *key, const char *data)
+{
+   if (!desktop || strncmp(key, "X-", 2))
+      return EINA_FALSE;
+
+   if (!desktop->x)
+     desktop->x = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
+   
+   eina_hash_del(desktop->x, key, NULL);
+   eina_hash_add(desktop->x, key, eina_stringshare_add(data));
+   
+   return EINA_TRUE;
+}
+
+EAPI const char *
+efreet_desktop_x_field_get(Efreet_Desktop *desktop, const char *key)
+{
+   const char *ret;
+   
+   if (!desktop || strncmp(key, "X-", 2))
+      return NULL;
+   
+   if (!desktop->x)
+      return NULL;
+   
+   ret = eina_hash_find(desktop->x, key);
+   if (!ret)
+      return NULL;
+   
+   return eina_stringshare_add(ret);
+}
+
+EAPI Eina_Bool
+efreet_desktop_x_field_del(Efreet_Desktop *desktop, const char *key)
+{
+   if (!desktop || strncmp(key, "X-", 2))
+      return EINA_FALSE;
+   
+   if (!desktop->x)
+      return EINA_FALSE;
+   
+   return eina_hash_del(desktop->x, key, NULL);
 }

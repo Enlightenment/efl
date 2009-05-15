@@ -136,6 +136,10 @@ EAPI void             *efreet_desktop_type_data_get(Efreet_Desktop *desktop);
 EAPI Eina_List        *efreet_desktop_string_list_parse(const char *string);
 EAPI char             *efreet_desktop_string_list_join(Eina_List *list);
 
+EAPI Eina_Bool         efreet_desktop_x_field_set(Efreet_Desktop *desktop, const char *key, const char *data);
+EAPI const char *      efreet_desktop_x_field_get(Efreet_Desktop *desktop, const char *key);
+EAPI Eina_Bool         efreet_desktop_x_field_del(Efreet_Desktop *desktop, const char *key);
+
 EAPI void              efreet_desktop_cache_flush(void);
 
 /**
