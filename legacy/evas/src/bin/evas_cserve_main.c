@@ -858,7 +858,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              lopt.h = rep->lopt.h;
              D("... img_load '%s'\n", file);
              if (key) D("'%s'\n", key);
-             else D("   '%s'\n");
+             else D("   '%s'\n", NULL);
              D("   lopt { %i %1.1f %i %i}\n", 
                lopt.scale_down_by, lopt.dpi, lopt.w, lopt.h);
              img = img_load(file, key, &lopt);
@@ -1178,6 +1178,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
         D("OP_... UNKNOWN??? %i opcode: %i\n", c->pid, opcode);
         break;
      }
+   return 0;
 }
 
 static void
