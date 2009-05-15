@@ -1,7 +1,7 @@
 # get rid of that stupid cache mechanism
 rm -f config.cache
 
-AC_INIT(embryo, 0.9.9.060, enlightenment-devel@lists.sourceforge.net)
+AC_INIT([embryo], [0.9.9.060], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
@@ -51,10 +51,12 @@ AC_PROG_CC
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
-
-### Checks for libraries
+# pkg-config
 
 PKG_PROG_PKG_CONFIG
+
+
+### Checks for libraries
 
 # Evil library for compilation on Windows
 
