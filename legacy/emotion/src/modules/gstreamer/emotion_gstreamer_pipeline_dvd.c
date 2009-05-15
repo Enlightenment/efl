@@ -101,6 +101,7 @@ emotion_pipeline_dvd_build(void *video, const char *device)
 		  GstCaps            *sink_caps;
 
 		  asink = (Emotion_Audio_Sink *)eina_list_data_get(alist);
+		  alist = eina_list_next(alist);
 		  sink_pad = gst_element_get_pad(gst_bin_get_by_name(GST_BIN(ev->pipeline), "a52dec"), "src");
 		  sink_caps = gst_pad_get_caps(sink_pad);
 
@@ -165,7 +166,7 @@ dvd_pad_added_cb(GstElement *dvddemuxer,
 	vsink = (Emotion_Video_Sink *)malloc(sizeof(Emotion_Video_Sink));
 	if (!vsink) return;
 	ev->video_sinks = eina_list_append(ev->video_sinks, vsink);
-	if (!eina_list_data_find(ev->video_sinks, vsink))
+	if (eina_error_get())
 	  {
 	     free(vsink);
 	     return;
@@ -203,7 +204,7 @@ dvd_pad_added_cb(GstElement *dvddemuxer,
 	asink = (Emotion_Audio_Sink *)malloc(sizeof(Emotion_Audio_Sink));
 	if (!asink) return;
 	ev->audio_sinks = eina_list_append(ev->audio_sinks, asink);
-	if (!eina_list_data_find(ev->audio_sinks, asink))
+	if (eina_error_get())
 	  {
 	     free(asink);
 	     return;

@@ -108,7 +108,7 @@ _emotion_audio_sink_new(Emotion_Gstreamer_Video *ev)
    if (!asink) return NULL;
 
    ev->audio_sinks = eina_list_append(ev->audio_sinks, asink);
-   if (!eina_list_data_find(ev->audio_sinks, asink))
+   if (eina_error_get())
      {
 	free(asink);
 	return NULL;

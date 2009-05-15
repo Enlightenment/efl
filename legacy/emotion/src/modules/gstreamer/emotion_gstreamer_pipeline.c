@@ -97,7 +97,7 @@ file_new_decoded_pad_cb(GstElement *decodebin,
 	vsink = (Emotion_Video_Sink *)calloc(1, sizeof(Emotion_Video_Sink));
 	if (!vsink) return;
 	ev->video_sinks = eina_list_append(ev->video_sinks, vsink);
-	if (!eina_list_data_find(ev->video_sinks, vsink))
+	if (eina_error_get())
 	  {
 	     free(vsink);
 	     return;
@@ -126,14 +126,13 @@ file_new_decoded_pad_cb(GstElement *decodebin,
 	asink = (Emotion_Audio_Sink *)calloc(1, sizeof(Emotion_Audio_Sink));
 	if (!asink) return;
 	ev->audio_sinks = eina_list_append(ev->audio_sinks, asink);
-	if (!eina_list_data_find(ev->audio_sinks, asink))
+	if (eina_error_get())
 	  {
 	     free(asink);
 	     return;
 	  }
 
-	for (index = 0; asink != eina_list_nth(ev->audio_sinks, index); index++)
-	  ;
+	index = eina_list_count(ev->audio_sinks);
 	asink->sink = emotion_audio_sink_create(ev, index);
 	gst_bin_add(GST_BIN(ev->pipeline), asink->sink);
 	audiopad = gst_element_get_pad(asink->sink, "sink");
@@ -155,7 +154,7 @@ emotion_video_sink_new(Emotion_Gstreamer_Video *ev)
    if (!vsink) return NULL;
 
    ev->video_sinks = eina_list_append(ev->video_sinks, vsink);
-   if (!eina_list_data_find(ev->video_sinks, vsink))
+   if (eina_error_get())
      {
 	free(vsink);
 	return NULL;
