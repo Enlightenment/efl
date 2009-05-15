@@ -1,6 +1,6 @@
 rm -f config.cache
 
-AC_INIT(efreet, 0.5.0.060, enlightenment-devel@lists.sourceforge.net)
+AC_INIT([efreet], [0.5.0.060], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
