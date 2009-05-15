@@ -1622,10 +1622,19 @@ my_li2_clear(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+my_li2_sel(void *data, Evas_Object *obj, void *event_info)
+{
+   Elm_List_Item *it = elm_list_selected_item_get(obj);
+   elm_list_item_selected_set(it, 0);
+//   elm_list_item_selected_set(event_info, 0);
+}
+
+static void
 my_bt_21(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *li, *ic, *ic2, *bx, *bx2, *bt;
    char buf[PATH_MAX];
+   Elm_List_Item *it;
    
    win = elm_win_add(NULL, "list-2", ELM_WIN_BASIC);
    elm_win_title_set(win, "List 2");
@@ -1647,12 +1656,13 @@ my_bt_21(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(li, -1.0, -1.0);
    evas_object_size_hint_weight_set(li, 1.0, 1.0);
    elm_list_horizontal_mode_set(li, ELM_LIST_LIMIT);
-   elm_list_multi_select_set(li, 1);
+//   elm_list_multi_select_set(li, 1);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   elm_list_item_append(li, "Hello", ic, NULL,  NULL, NULL);
+   it = elm_list_item_append(li, "Hello", ic, NULL,  my_li2_sel, NULL);
+   elm_list_item_selected_set(it, 1);
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_scale_set(ic, 0, 0);
@@ -1689,7 +1699,7 @@ my_bt_21(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(ic, 0.5, 0.0);
    elm_box_pack_end(bx2, ic);
    evas_object_show(ic);
-   elm_list_item_append(li, "are", bx2, NULL,  NULL, NULL);
+   elm_list_item_append(li, "are", bx2, NULL, NULL, NULL);
    
    elm_list_item_append(li, "you", NULL, NULL,  NULL, NULL);
    elm_list_item_append(li, "doing", NULL, NULL,  NULL, NULL);

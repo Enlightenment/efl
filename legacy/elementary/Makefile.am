@@ -1,4 +1,4 @@
-SUBDIRS = src data
+SUBDIRS = src data doc
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
                        config.h.in config.sub configure install-sh \
@@ -12,3 +12,10 @@ pkgconfig_DATA = elementary.pc
 
 installed_headersdir = $(prefix)/include/elementary
 installed_headers_DATA = elementary_config.h
+
+.PHONY: doc
+
+doc:
+	@echo "entering doc/"
+	$(MAKE) -C doc doc
+                

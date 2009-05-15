@@ -1,9 +1,9 @@
 # get rid of that stupid cache mechanism
 rm -f config.cache
 
-AC_INIT(elementary, 0.3.0.0, enlightenment-devel@lists.sourceforge.net)
+AC_INIT(elementary, 0.4.0.0, enlightenment-devel@lists.sourceforge.net)
 AC_PREREQ(2.52)
-AC_CONFIG_SRCDIR(configure.in)
+AC_CONFIG_SRCDIR(configure.ac)
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 
@@ -200,9 +200,13 @@ my_libs="-lm"
 AC_SUBST(my_libs)
 AC_SUBST(requirement_elm)
 
+EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
+
 AC_OUTPUT([
 Makefile
 elementary.pc
+doc/elementary.dox
+doc/Makefile
 src/Makefile
 src/lib/Makefile
 src/lib/Elementary.h

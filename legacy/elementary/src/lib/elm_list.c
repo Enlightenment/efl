@@ -219,7 +219,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 	if (!it->selected)
 	  {
 	     while (wd->selected)
-	       _item_unselect(wd->selected->data);
+               _item_unselect(wd->selected->data);
 	     _item_select(it);
           }
 	else
@@ -370,6 +370,16 @@ _fix_items(Evas_Object *obj)
                   elm_coords_finger_size_adjust(1, &mw, 1, &mh);
                   evas_object_size_hint_min_set(it->base, mw, mh);
                   evas_object_show(it->base);
+               }
+             if ((it->selected) || (it->hilighted))
+               {
+                  const char *selectraise;
+                  
+                  edje_object_signal_emit(it->base, "elm,state,selected", "elm");
+                  selectraise = edje_object_data_get(it->base, "selectraise");
+                  if ((selectraise) && (!strcmp(selectraise, "on")))
+                    evas_object_raise(it->base);
+                  stacking = edje_object_data_get(it->base, "stacking");
                }
              it->fixed = 1;
              it->is_even = it->even;
@@ -552,8 +562,9 @@ elm_list_item_selected_set(Elm_List_Item *it, Evas_Bool selected)
         if (!wd->multi)
           {
 	     while (wd->selected)
-	       _item_unselect(wd->selected->data);
+               _item_unselect(wd->selected->data);
           }
+        _item_hilight(it);
         _item_select(it);
      }
    else

@@ -1333,6 +1333,7 @@ elm_genlist_item_selected_set(Elm_Genlist_Item *it, Evas_Bool selected)
 	     while (wd->selected)
 	       _item_unselect(wd->selected->data);
           }
+	_item_hilight(it);
 	_item_select(it);
      }
    else
