@@ -1323,6 +1323,8 @@ evas_object_image_reload(Evas_Object *obj)
      o->engine_data = obj->layer->evas->engine.func->image_dirty_region(obj->layer->evas->engine.data.output, o->engine_data, 0, 0, o->cur.image.w, o->cur.image.h);
    evas_object_image_unload(obj, 1);
    evas_object_image_load(obj);
+   o->prev.file = NULL;
+   o->prev.key = NULL;
    o->changed = 1;
    evas_object_change(obj);
 }
