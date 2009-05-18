@@ -384,8 +384,19 @@ ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const cha
    frame = e->frame;
 
    if (frame)
-     edje_object_part_unswallow(frame->edje, e->img);
-   else
+     {
+	edje_object_part_unswallow(frame->edje, e->img);
+	if (!theme_file)
+	  _ethumb_frame_free(frame);
+     }
+
+   if (!theme_file)
+     {
+	e->frame = NULL;
+	return 1;
+     }
+
+   if (!frame)
      {
 	frame = calloc(1, sizeof(Ethumb_Frame));
 	if (!frame)
