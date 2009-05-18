@@ -2179,7 +2179,6 @@ _eet_data_descriptor_decode(Eet_Free_Context *context,
    void *data = NULL;
    char *p;
    int size, i, dump;
-   int chnk_type;
    Eet_Data_Chunk chnk;
 
    if (words_bigendian == -1)
@@ -2290,7 +2289,7 @@ _eet_data_descriptor_decode(Eet_Free_Context *context,
 	  {
 	     ret = eet_group_codec[group_type - 100].get(context,
 							 ed, edd, ede, &echnk,
-							 type, group_type, ede ? ((char *)data) + ede->offset : dd,
+							 type, group_type, ede ? (void*) (((char *)data) + ede->offset) : dd,
 							 level, dumpfunc, dumpdata,
 							 &p, &size);
 	     if (ret <= 0) goto error;
@@ -2699,7 +2698,7 @@ eet_data_dump_simple_type(int type, const char *name, void *dd,
 	 dumpfunc(dumpdata, "null");
 	 break;
       default:
-	 dumpfunc(dumpdata, "???: ???"); break;
+	 dumpfunc(dumpdata, "???: ???");
 	 break;
      }
    dumpfunc(dumpdata, ";\n");
