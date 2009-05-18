@@ -117,6 +117,7 @@ _ethumb_plugins_unload(void)
    _plugins_ext = NULL;
    eina_module_list_unload(_plugins);
    eina_module_list_delete(_plugins);
+   eina_array_free(_plugins);
    _plugins = NULL;
 }
 
@@ -242,9 +243,11 @@ _ethumb_frame_free(Ethumb_Frame *frame)
      return;
 
    if (frame->swallow && frame->edje)
+     {
      o = edje_object_part_swallow_get(frame->edje, frame->swallow);
-   if (o)
-     edje_object_part_unswallow(frame->edje, o);
+     if (o)
+       edje_object_part_unswallow(frame->edje, o);
+     }
    eina_stringshare_del(frame->file);
    eina_stringshare_del(frame->group);
    eina_stringshare_del(frame->swallow);
@@ -672,27 +675,54 @@ ethumb_file_free(Ethumb *e)
    eina_stringshare_replace(&e->thumb_key, NULL);
 }
 
+static void
+_ethumb_build_absolute_path(const char *path, char buf[])
+{
+   char *p;
+   int len;
+
+   p = buf;
+
+   if (path[0] == '/')
+     strcpy(p, path);
+   else if (path[0] == '~')
+     {
+	strcpy(p, getenv("HOME"));
+	len = strlen(p);
+	p += len;
+	p[0] = '/';
+	p++;
+	strcpy(p, path + 2);
+     }
+   else
+     {
+	getcwd(p, PATH_MAX);
+	len = strlen(p);
+	p += len;
+	p[0] = '/';
+	p++;
+	strcpy(p, path);
+     }
+}
+
 EAPI void
 ethumb_thumb_path_set(Ethumb *e, const char *path, const char *key)
 {
-   char *real_path;
    char buf[PATH_MAX];
 
    EINA_SAFETY_ON_NULL_RETURN(e);
 
-   real_path = realpath(path, buf);
    if (!path)
      {
 	eina_stringshare_replace(&e->thumb_path, NULL);
 	eina_stringshare_replace(&e->thumb_key, NULL);
      }
-   else if (errno == ENOENT || errno == ENOTDIR || real_path)
+   else
      {
+	_ethumb_build_absolute_path(path, buf);
 	eina_stringshare_replace(&e->thumb_path, buf);
 	eina_stringshare_replace(&e->thumb_key, key);
      }
-   else
-     ERR("could not set thumbnail path: %s\n", strerror(errno));
 }
 
 EAPI const char *
