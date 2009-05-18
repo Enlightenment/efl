@@ -1,5 +1,4 @@
 #include "Ethumb.h"
-#include "ethumb_private.h"
 #include "Ethumb_Plugin.h"
 #include "config.h"
 
@@ -38,8 +37,10 @@ _generate_thumb(Ethumb *e)
 {
    Evas_Object *o;
    int r;
+   const char *file;
+   float time;
 
-   o = emotion_object_add(e->sub_e);
+   o = emotion_object_add(ethumb_evas_get(e));
    r = emotion_object_init(o, "xine");
    if (!r)
      {
@@ -49,8 +50,11 @@ _generate_thumb(Ethumb *e)
 	return r;
      }
 
-   emotion_object_file_set(o, e->src_path);
-   emotion_object_position_set(o, e->video.time);
+   ethumb_file_get(e, &file, NULL);
+   time = ethumb_video_time_get(e);
+
+   emotion_object_file_set(o, file);
+   emotion_object_position_set(o, time);
    emotion_object_play_set(o, 1);
 
    evas_object_smart_callback_add(o, "frame_resize", _frame_resized_cb, e);

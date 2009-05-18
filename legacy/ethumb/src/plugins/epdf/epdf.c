@@ -1,5 +1,4 @@
 #include "Ethumb.h"
-#include "ethumb_private.h"
 #include "Ethumb_Plugin.h"
 #include "config.h"
 
@@ -18,6 +17,7 @@ _generate_thumb(Ethumb *e)
    int w, h, ww, hh;
    int fx, fy, fw, fh;
    int npages;
+   int pagenum;
 
    document = epdf_document_new(e->src_path);
    if (!document)
@@ -35,13 +35,14 @@ _generate_thumb(Ethumb *e)
      }
 
    npages = epdf_document_page_count_get(document);
-   if (e->document.page < npages)
-     epdf_page_page_set(page, e->document.page);
+   pagenum = ethumb_document_page_get(e);
+   if (pagenum < npages)
+     epdf_page_page_set(page, pagenum);
    epdf_page_size_get(page, &w, &h);
    ethumb_calculate_aspect(e, w, h, &ww, &hh);
    ethumb_plugin_image_resize(e, ww, hh);
 
-   o = evas_object_image_add(e->sub_e);
+   o = evas_object_image_add(ethumb_evas_get(e));
    epdf_page_render(page, o);
    evas_object_resize(o, ww, hh);
    evas_object_move(o, 0, 0);

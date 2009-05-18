@@ -428,6 +428,25 @@ ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const cha
 }
 
 EAPI void
+ethumb_frame_get(const Ethumb *e, const char **theme_file, const char **group, const char **swallow)
+{
+   EINA_SAFETY_ON_NULL_RETURN(e);
+
+   if (e->frame)
+     {
+	if (theme_file) *theme_file = e->frame->file;
+	if (group) *group = e->frame->group;
+	if (swallow) *swallow = e->frame->swallow;
+     }
+   else
+     {
+	if (theme_file) *theme_file = NULL;
+	if (group) *group = NULL;
+	if (swallow) *swallow = NULL;
+     }
+}
+
+EAPI void
 ethumb_thumb_dir_path_set(Ethumb *e, const char *path)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -467,12 +486,28 @@ ethumb_video_time_set(Ethumb *e, float time)
    e->video.time = time;
 }
 
+EAPI float
+ethumb_video_time_get(const Ethumb *e)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
+
+   return e->video.time;
+}
+
 EAPI void
 ethumb_document_page_set(Ethumb *e, int page)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
 
    e->document.page = page;
+}
+
+EAPI int
+ethumb_document_page_get(const Ethumb *e)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
+
+   return e->document.page;
 }
 
 EAPI int
@@ -954,4 +989,12 @@ ethumb_exists(Ethumb *e)
      r = 1;
 
    return r;
+}
+
+Evas *
+ethumb_evas_get(Ethumb *e)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
+
+   return e->sub_e;
 }
