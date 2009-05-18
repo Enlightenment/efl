@@ -174,9 +174,9 @@ _ecore_evas_wince_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, voi
    EINA_ERROR_PINFO("mouse in\n");
 
    e = event;
-   ee = ecore_event_window_match(e->window);
+   ee = ecore_event_window_match((Ecore_Window)e->window);
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
-   if (e->window != ee->prop.window) return 1;
+   if (e->window != (Ecore_WinCE_Window *)ee->prop.window) return 1;
 
    if (ee->func.fn_mouse_in) ee->func.fn_mouse_in(ee);
    /* FIXME to do */
@@ -196,9 +196,9 @@ _ecore_evas_wince_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, vo
    EINA_ERROR_PINFO("mouse out\n");
 
    e = event;
-   ee = ecore_event_window_match(e->window);
+   ee = ecore_event_window_match((Ecore_Window)e->window);
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
-   if (e->window != ee->prop.window) return 1;
+   if (e->window != (Ecore_WinCE_Window *)ee->prop.window) return 1;
 
    /* FIXME to do */
 /*    _ecore_evas_x_modifier_locks_update(ee, e->modifiers); */
@@ -220,9 +220,9 @@ _ecore_evas_wince_event_window_damage(void *data __UNUSED__, int type __UNUSED__
    EINA_ERROR_PINFO("window damage\n");
 
    e = event;
-   ee = ecore_event_window_match(e->window);
+   ee = ecore_event_window_match((Ecore_Window)e->window);
    if (!ee) return 1; /* pass on event */
-   if (e->window != ee->prop.window) return 1;
+   if (e->window != (Ecore_WinCE_Window *)ee->prop.window) return 1;
 
    if (ee->prop.avoid_damage)
      {
@@ -268,9 +268,9 @@ _ecore_evas_wince_event_window_destroy(void *data __UNUSED__, int type __UNUSED_
    EINA_ERROR_PINFO("window destroy\n");
 
    e = event;
-   ee = ecore_event_window_match(e->window);
+   ee = ecore_event_window_match((Ecore_Window)e->window);
    if (!ee) return 1; /* pass on event */
-   if (e->window != ee->prop.window) return 1;
+   if (e->window != (Ecore_WinCE_Window *)ee->prop.window) return 1;
    if (ee->func.fn_destroy) ee->func.fn_destroy(ee);
    ecore_evas_free(ee);
 
@@ -286,9 +286,9 @@ _ecore_evas_wince_event_window_show(void *data __UNUSED__, int type __UNUSED__, 
    EINA_ERROR_PINFO("window show\n");
 
    e = event;
-   ee = ecore_event_window_match(e->window);
+   ee = ecore_event_window_match((Ecore_Window)e->window);
    if (!ee) return 1; /* pass on event */
-   if (e->window != ee->prop.window) return 1;
+   if (e->window != (Ecore_WinCE_Window *)ee->prop.window) return 1;
    if (ee->visible) return 0; /* dont pass it on */
    ee->visible = 1;
    if (ee->func.fn_show) ee->func.fn_show(ee);
@@ -305,9 +305,9 @@ _ecore_evas_wince_event_window_hide(void *data __UNUSED__, int type __UNUSED__, 
    EINA_ERROR_PINFO("window hide\n");
 
    e = event;
-   ee = ecore_event_window_match(e->window);
+   ee = ecore_event_window_match((Ecore_Window)e->window);
    if (!ee) return 1; /* pass on event */
-   if (e->window != ee->prop.window) return 1;
+   if (e->window != (Ecore_WinCE_Window *)ee->prop.window) return 1;
    if (!ee->visible) return 0; /* dont pass it on */
    ee->visible = 0;
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
@@ -324,9 +324,9 @@ _ecore_evas_wince_event_window_delete_request(void *data __UNUSED__, int type __
    EINA_ERROR_PINFO("window delete request\n");
 
    e = event;
-   ee = ecore_event_window_match(e->window);
+   ee = ecore_event_window_match((Ecore_Window)e->window);
    if (!ee) return 1; /* pass on event */
-   if (e->window != ee->prop.window) return 1;
+   if (e->window != (Ecore_WinCE_Window *)ee->prop.window) return 1;
    if (ee->func.fn_delete_request) ee->func.fn_delete_request(ee);
 
    return 1;
@@ -340,7 +340,7 @@ _ecore_evas_wince_free(Ecore_Evas *ee)
 {
    EINA_ERROR_PINFO("ecore evas free\n");
 
-   ecore_wince_window_free(ee->prop.window);
+   ecore_wince_window_free((Ecore_WinCE_Window *)ee->prop.window);
    ecore_event_window_unregister(ee->prop.window);
    ecore_evases = _ecore_list2_remove(ecore_evases, ee);
    _ecore_evas_wince_shutdown();
@@ -363,7 +363,7 @@ _ecore_evas_wince_move(Ecore_Evas *ee, int x, int y)
      {
         ee->x = x;
         ee->y = y;
-        ecore_wince_window_move(ee->prop.window, x, y);
+        ecore_wince_window_move((Ecore_WinCE_Window *)ee->prop.window, x, y);
         if (ee->func.fn_move) ee->func.fn_move(ee);
      }
 }
@@ -377,7 +377,7 @@ _ecore_evas_wince_resize(Ecore_Evas *ee, int width, int height)
      {
         ee->w = width;
         ee->h = height;
-        ecore_wince_window_resize(ee->prop.window, width, height);
+        ecore_wince_window_resize((Ecore_WinCE_Window *)ee->prop.window, width, height);
         if ((ee->rotation == 90) || (ee->rotation == 270))
           {
              evas_output_size_set(ee->evas, ee->h, ee->w);
@@ -411,7 +411,7 @@ _ecore_evas_wince_move_resize(Ecore_Evas *ee, int x, int y, int width, int heigh
         ee->y = y;
         ee->w = width;
         ee->h = height;
-        ecore_wince_window_move_resize(ee->prop.window, x, y, width, height);
+        ecore_wince_window_move_resize((Ecore_WinCE_Window *)ee->prop.window, x, y, width, height);
         if ((ee->rotation == 90) || (ee->rotation == 270))
           {
              evas_output_size_set(ee->evas, ee->h, ee->w);
@@ -514,7 +514,7 @@ _ecore_evas_wince_show(Ecore_Evas *ee)
    ee->should_be_visible = 1;
    if (ee->prop.avoid_damage)
      _ecore_evas_wince_render(ee);
-   ecore_wince_window_show(ee->prop.window);
+   ecore_wince_window_show((Ecore_WinCE_Window *)ee->prop.window);
 /*    if (ee->prop.fullscreen) */
 /*      ecore_wince_window_focus(ee->prop.window); */
 }
@@ -524,7 +524,7 @@ _ecore_evas_wince_hide(Ecore_Evas *ee)
 {
    EINA_ERROR_PINFO("ecore evas hide\n");
 
-   ecore_wince_window_hide(ee->prop.window);
+   ecore_wince_window_hide((Ecore_WinCE_Window *)ee->prop.window);
    ee->should_be_visible = 0;
 }
 
@@ -554,7 +554,7 @@ _ecore_evas_wince_title_set(Ecore_Evas *ee, const char *title)
    if (ee->prop.title) free(ee->prop.title);
    ee->prop.title = NULL;
    if (title) ee->prop.title = strdup(title);
-   ecore_wince_window_title_set(ee->prop.window, ee->prop.title);
+   ecore_wince_window_title_set((Ecore_WinCE_Window *)ee->prop.window, ee->prop.title);
 }
 
 /* static void */
@@ -681,7 +681,7 @@ _ecore_evas_wince_fullscreen_set(Ecore_Evas *ee, int on)
    if (on != 0)
    {
 /*       ecore_win32_window_shape_set(ee->engine.win32.window, 0, 0, NULL); */
-      ecore_wince_window_fullscreen_set(ee->prop.window, on);
+      ecore_wince_window_fullscreen_set((Ecore_WinCE_Window *)ee->prop.window, on);
       ee->w = GetSystemMetrics(SM_CXSCREEN);
       ee->h = GetSystemMetrics(SM_CYSCREEN);
       evas_output_size_set(ee->evas, ee->w, ee->h);
@@ -692,8 +692,8 @@ _ecore_evas_wince_fullscreen_set(Ecore_Evas *ee, int on)
       int w;
       int h;
 
-      ecore_wince_window_fullscreen_set(ee->prop.window, on);
-      ecore_wince_window_size_get(ee->prop.window, &w, &h);
+      ecore_wince_window_fullscreen_set((Ecore_WinCE_Window *)ee->prop.window, on);
+      ecore_wince_window_size_get((Ecore_WinCE_Window *)ee->prop.window, &w, &h);
       ee->w = w;
       ee->h = h;
       evas_output_size_set(ee->evas, ee->w, ee->h);
@@ -818,7 +818,7 @@ ecore_evas_software_wince_new_internal(int                 backend,
    ee->prop.sticky = 0;
    /* FIXME: sticky to add */
 
-   ee->prop.window = ecore_wince_window_new(parent, x, y, width, height);
+   ee->prop.window = (Ecore_Window)ecore_wince_window_new((Ecore_WinCE_Window *)parent, x, y, width, height);
    if (!ee->prop.window)
      {
         _ecore_evas_wince_shutdown();
@@ -827,7 +827,7 @@ ecore_evas_software_wince_new_internal(int                 backend,
         return NULL;
      }
 
-   ecore_wince_window_fullscreen_set(ee->prop.window, fullscreen);
+   ecore_wince_window_fullscreen_set((Ecore_WinCE_Window *)ee->prop.window, fullscreen);
 
    /* init evas here */
    ee->evas = evas_new();
@@ -848,13 +848,13 @@ ecore_evas_software_wince_new_internal(int                 backend,
         einfo->info.fullscreen = fullscreen;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 
-        ecore_wince_window_backend_set(ee->prop.window, backend);
-        ecore_wince_window_suspend_set(ee->prop.window, einfo->func.suspend);
-        ecore_wince_window_resume_set(ee->prop.window, einfo->func.resume);
+        ecore_wince_window_backend_set((Ecore_WinCE_Window *)ee->prop.window, backend);
+        ecore_wince_window_suspend_set((Ecore_WinCE_Window *)ee->prop.window, einfo->func.suspend);
+        ecore_wince_window_resume_set((Ecore_WinCE_Window *)ee->prop.window, einfo->func.resume);
      }
 
    ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
-   ecore_event_window_register(ee->prop.window, ee, ee->evas, _ecore_evas_mouse_move_process);
+   ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process);
 
    return ee;
 }
