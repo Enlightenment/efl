@@ -653,12 +653,37 @@ elm_exit(void)
    ecore_main_loop_quit();
 }
 
+/**
+ * @defgroup Scaling Selective Widget Scaling
+ * 
+ * Different widgets can be scaled independently. These functions allow you to
+ * manipulate this scaling on a per-widget basis. The object and all its 
+ * children get their scaling factors multiplied by the scale factor set. 
+ * This is multiplicative, in that if a child also has a scale size set it is
+ * in turn multiplied by its parent's scale size. 1.0 means “don't scale”,
+ * 2.0 is double size, 0.5 is half etc.
+ */
+
+/**
+ * Set the scaling factor
+ * 
+ * @param obj The object
+ * @param scale Scale factor (from 0.0 up, with 1.0 == no scaling)
+ * @ingroup Scaling
+ */
 EAPI void
 elm_object_scale_set(Evas_Object *obj, double scale)
 {
    return elm_widget_scale_set(obj, scale);
 }
 
+/**
+ * Get the scaling factor
+ * 
+ * @param obj The object
+ * @return The scaling factor set by elm_object_scale_set()
+ * @ingroup Scaling
+ */
 EAPI double
 elm_object_scale_get(const Evas_Object *obj)
 {
