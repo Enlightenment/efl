@@ -282,7 +282,11 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    if (it->disabled) return;
    if (it->wd->multi)
      {
-        if (!it->selected) _item_select(it);
+        if (!it->selected)
+          {
+             _item_hilight(it);
+             _item_select(it);
+          }
         else _item_unselect(it);
      }
    else
@@ -292,6 +296,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 	     Widget_Data *wd = it->wd;
 	     while (wd->selected)
 	       _item_unselect(wd->selected->data);
+             _item_hilight(it);
 	     _item_select(it);
 	  }
 	else
@@ -300,6 +305,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 	     Elm_Genlist_Item *it2;
              EINA_LIST_FOREACH_SAFE(it->wd->selected, l, l_next, it2)
                if (it2 != it) _item_unselect(it2);
+             _item_hilight(it);
 	     _item_select(it);
           }
      }
