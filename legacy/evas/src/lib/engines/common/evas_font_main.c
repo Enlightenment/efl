@@ -196,12 +196,13 @@ evas_common_font_utf8_get_prev(const unsigned char *buf, int *iindex)
 
    if (index <= 0)
      return 0;
-   d = buf[index--];
+   index--;
 
    while ((index > 0) && ((buf[index] & 0xc0) == 0x80))
      index--;
    len = *iindex - index;
-
+   d = buf[index];
+   
    if (len == 1)
       r = d;
    else if (len == 2)

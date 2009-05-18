@@ -1540,17 +1540,15 @@ _layout_item_new(Ctxt *c __UNUSED__, Evas_Object_Textblock_Format *fmt, char *st
 static int
 _layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Item *it)
 {
-   int cx, cy, cw, ch;
-
    if (fmt->font.font)
-     return c->ENFN->font_char_at_coords_get(c->ENDT, fmt->font.font, it->text,
+     return c->ENFN->font_last_up_to_pos(c->ENDT, fmt->font.font, it->text,
 					     c->w - 
 					     c->o->style_pad.l - 
 					     c->o->style_pad.r - 
 					     c->marginl - 
 					     c->marginr -
 					     c->x,
-					     0, &cx, &cy, &cw, &ch);
+					     0);
    return -1;
 }
 
@@ -1590,7 +1588,6 @@ _layout_word_start(char *str, int start)
 	if (_is_white(chr)) break;
 	tp = p;
      }
-   p = tp;
    if (p < 0) p = 0;
    if ((p >= 0) && (_is_white(chr)))
      evas_common_font_utf8_get_next((unsigned char *)(str), &p);
@@ -1858,11 +1855,14 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	      c->marginl - c->marginr)))
 	  {
 	     wrap = _layout_text_cutoff_get(c, fmt, it);
-             if (wrap == 0) wrap = 1;
+	     /* next line is instead of that awful wrap = 1*/
+             if (wrap == 0)
+	     	evas_common_font_utf8_get_next((unsigned char *)str, &wrap);
 	     if (wrap > 0)
 	       {
+
 		  if (fmt->wrap_word)
-		    {
+		    {		       
 		       index = wrap;
 		       ch = evas_common_font_utf8_get_next((unsigned char *)str, &index);
 		       if (!_is_white(ch))
@@ -1876,7 +1876,10 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 			      {
 				 _layout_item_text_cutoff(c, it, wrap);
 				 twrap = wrap;
-				 ch = evas_common_font_utf8_get_next((unsigned char *)str, &twrap);
+				 /*we don't want to move next, that's why it's
+				  * commented out.
+				  * ch = evas_common_font_utf8_get_next((unsigned char *)str, &twrap);
+				  */
 				 str = str + twrap;
 			      }
 			    /* intersects a word */

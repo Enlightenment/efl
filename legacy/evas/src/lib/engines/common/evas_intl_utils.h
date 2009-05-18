@@ -4,25 +4,44 @@
 #include "config.h"
 
 #ifdef HAVE_FRIBIDI_FRIBIDI_H
-#define USE_FRIBIDI 1
+#define USE_FRIBIDI
 #define INTERNATIONAL_SUPPORT
 #endif
 
 #ifdef USE_FRIBIDI
 #include <fribidi/fribidi.h>
 
+/* abstract fribidi */
+typedef FriBidiChar	EvasIntlChar;
+typedef FriBidiCharType	EvasIntlParType;
+typedef FriBidiStrIndex EvasIntlStrIndex;
+typedef FriBidiLevel	EvasIntlLevel;
+
+
 /* whether should fix arabic specifix issues */
-#define ARABIC_SUPPORT 1
+#define ARABIC_SUPPORT
 
 #ifdef ARABIC_SUPPORT
 #include "evas_intl/evas_intl_arabic.h"
 #endif
 
+#define evas_intl_position_logical_to_visual(list, position) \
+		(list) ? list[position] : position;
+
+#define evas_intl_position_visual_to_logical(list, position) \
+		(list) ? list[position] : position;
+				
+
 int
-evas_intl_is_rtl_char(FriBidiLevel *embedded_level_list, FriBidiStrIndex i);
+evas_intl_is_rtl_char(EvasIntlLevel *embedded_level_list, EvasIntlStrIndex i);
 
 char *
-evas_intl_utf8_to_visual(const char *text, int *ret_len, FriBidiCharType *direction, FriBidiLevel **embedding_level_list);
+evas_intl_utf8_to_visual(const char *text,
+			int *ret_len,
+			EvasIntlParType *direction,
+			EvasIntlStrIndex **position_L_to_V_list,
+			EvasIntlStrIndex **position_V_to_L_list,
+			EvasIntlLevel **embedding_level_list);
 #endif
 
 #endif

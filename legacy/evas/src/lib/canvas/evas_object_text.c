@@ -614,6 +614,40 @@ evas_object_text_char_pos_get(const Evas_Object *obj, int pos, Evas_Coord *cx, E
    return ret;
 }
 
+
+/**
+ * Returns the logical position of the last char in the text
+ * up to the pos given. this is NOT the position of the last char
+ * because of the possibilty of RTL in the text.
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+EAPI int
+evas_object_text_last_up_to_pos(const Evas_Object *obj, Evas_Coord x, Evas_Coord y)
+{
+   Evas_Object_Text *o;
+   int inset;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return -1;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Text *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
+   return -1;
+   MAGIC_CHECK_END();
+   if (!o->engine_data) return -1;
+   if (!o->cur.text) return -1;
+   inset =
+     ENFN->font_inset_get(ENDT, o->engine_data, o->cur.text);
+   return ENFN->font_last_up_to_pos(ENDT,
+				       o->engine_data,
+				       o->cur.text,
+				       x + inset,
+				       y - o->max_ascent);	
+}
+
 /**
  * To be documented.
  *
