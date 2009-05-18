@@ -44,11 +44,6 @@ typedef void Ecore_WinCE_Window;
 
 /* Events */
 
-typedef struct _Ecore_WinCE_Event_Key_Down              Ecore_WinCE_Event_Key_Down;
-typedef struct _Ecore_WinCE_Event_Key_Up                Ecore_WinCE_Event_Key_Up;
-typedef struct _Ecore_WinCE_Event_Mouse_Button_Down     Ecore_WinCE_Event_Mouse_Button_Down;
-typedef struct _Ecore_WinCE_Event_Mouse_Button_Up       Ecore_WinCE_Event_Mouse_Button_Up;
-typedef struct _Ecore_WinCE_Event_Mouse_Move            Ecore_WinCE_Event_Mouse_Move;
 typedef struct _Ecore_WinCE_Event_Mouse_In              Ecore_WinCE_Event_Mouse_In;
 typedef struct _Ecore_WinCE_Event_Mouse_Out             Ecore_WinCE_Event_Mouse_Out;
 typedef struct _Ecore_WinCE_Event_Window_Focus_In       Ecore_WinCE_Event_Window_Focus_In;
@@ -59,54 +54,6 @@ typedef struct _Ecore_WinCE_Event_Window_Destroy        Ecore_WinCE_Event_Window
 typedef struct _Ecore_WinCE_Event_Window_Hide           Ecore_WinCE_Event_Window_Hide;
 typedef struct _Ecore_WinCE_Event_Window_Show           Ecore_WinCE_Event_Window_Show;
 typedef struct _Ecore_WinCE_Event_Window_Delete_Request Ecore_WinCE_Event_Window_Delete_Request;
-
-struct _Ecore_WinCE_Event_Key_Down
-{
-   Ecore_WinCE_Window *window;
-   char               *keyname;
-   char               *keysymbol;
-   char               *keycompose;
-   double              time;
-};
-
-struct _Ecore_WinCE_Event_Key_Up
-{
-   Ecore_WinCE_Window *window;
-   char               *keyname;
-   char               *keysymbol;
-   char               *keycompose;
-   double              time;
-};
-
-struct _Ecore_WinCE_Event_Mouse_Button_Down
-{
-   Ecore_WinCE_Window *window;
-   int                 button;
-   int                 x;
-   int                 y;
-   double              time;
-   unsigned int        double_click : 1;
-   unsigned int        triple_click : 1;
-};
-
-struct _Ecore_WinCE_Event_Mouse_Button_Up
-{
-   Ecore_WinCE_Window *window;
-   int                 button;
-   int                 x;
-   int                 y;
-   double              time;
-   unsigned int        double_click : 1;
-   unsigned int        triple_click : 1;
-};
-
-struct _Ecore_WinCE_Event_Mouse_Move
-{
-   Ecore_WinCE_Window *window;
-   int                 x;
-   int                 y;
-   double              time;
-};
 
 struct _Ecore_WinCE_Event_Mouse_In
 {
@@ -177,11 +124,6 @@ struct _Ecore_WinCE_Event_Window_Delete_Request
 };
 
 
-EAPI extern int ECORE_WINCE_EVENT_KEY_DOWN;
-EAPI extern int ECORE_WINCE_EVENT_KEY_UP;
-EAPI extern int ECORE_WINCE_EVENT_MOUSE_BUTTON_DOWN;
-EAPI extern int ECORE_WINCE_EVENT_MOUSE_BUTTON_UP;
-EAPI extern int ECORE_WINCE_EVENT_MOUSE_MOVE;
 EAPI extern int ECORE_WINCE_EVENT_MOUSE_IN;
 EAPI extern int ECORE_WINCE_EVENT_MOUSE_OUT;
 EAPI extern int ECORE_WINCE_EVENT_WINDOW_FOCUS_IN;

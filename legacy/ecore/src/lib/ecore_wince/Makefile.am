@@ -2,9 +2,13 @@ MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_input \
 @EFL_ECORE_WINCE_BUILD@ \
-@EINA_CFLAGS@
+@EVAS_CFLAGS@ \
+@EINA_CFLAGS@ \
+@WIN32_CPPFLAGS@
 
 AM_CFLAGS = @WIN32_CFLAGS@
 
@@ -23,7 +27,9 @@ ecore_wince_window.c
 
 libecore_wince_la_LIBADD = \
 @WIN32_LIBS@ \
+$(top_builddir)/src/lib/ecore_input/libecore_input.la \
 $(top_builddir)/src/lib/ecore/libecore.la \
+@EVAS_LIBS@ \
 @EINA_LIBS@
 
 libecore_wince_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @ecore_wince_release_info@

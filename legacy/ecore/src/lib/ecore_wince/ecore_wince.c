@@ -14,8 +14,9 @@
 #undef WIN32_LEAN_AND_MEAN
 
 #include <Eina.h>
+#include <Ecore.h>
+#include <Ecore_Input.h>
 
-#include "Ecore.h"
 #include "Ecore_WinCE.h"
 #include "ecore_wince_private.h"
 
@@ -27,11 +28,6 @@ double              _ecore_wince_event_last_time = 0.0;
 Ecore_WinCE_Window *_ecore_wince_event_last_window = NULL;
 HINSTANCE           _ecore_wince_instance = NULL;
 
-int ECORE_WINCE_EVENT_KEY_DOWN              = 0;
-int ECORE_WINCE_EVENT_KEY_UP                = 0;
-int ECORE_WINCE_EVENT_MOUSE_BUTTON_DOWN     = 0;
-int ECORE_WINCE_EVENT_MOUSE_BUTTON_UP       = 0;
-int ECORE_WINCE_EVENT_MOUSE_MOVE            = 0;
 int ECORE_WINCE_EVENT_MOUSE_IN              = 0;
 int ECORE_WINCE_EVENT_MOUSE_OUT             = 0;
 int ECORE_WINCE_EVENT_WINDOW_FOCUS_IN       = 0;
@@ -106,13 +102,8 @@ ecore_wince_init()
         return 0;
      }
 
-   if (!ECORE_WINCE_EVENT_KEY_DOWN)
+   if (!ECORE_WINCE_EVENT_MOUSE_IN)
      {
-        ECORE_WINCE_EVENT_KEY_DOWN              = ecore_event_type_new();
-        ECORE_WINCE_EVENT_KEY_UP                = ecore_event_type_new();
-        ECORE_WINCE_EVENT_MOUSE_BUTTON_DOWN     = ecore_event_type_new();
-        ECORE_WINCE_EVENT_MOUSE_BUTTON_UP       = ecore_event_type_new();
-        ECORE_WINCE_EVENT_MOUSE_MOVE            = ecore_event_type_new();
         ECORE_WINCE_EVENT_MOUSE_IN              = ecore_event_type_new();
         ECORE_WINCE_EVENT_MOUSE_OUT             = ecore_event_type_new();
         ECORE_WINCE_EVENT_WINDOW_FOCUS_IN       = ecore_event_type_new();
@@ -124,6 +115,8 @@ ecore_wince_init()
         ECORE_WINCE_EVENT_WINDOW_HIDE           = ecore_event_type_new();
         ECORE_WINCE_EVENT_WINDOW_DELETE_REQUEST = ecore_event_type_new();
      }
+
+   ecore_event_init();
 
    _ecore_wince_init_count++;
 
@@ -139,7 +132,8 @@ ecore_wince_shutdown()
 
    _ecore_wince_init_count--;
    if (_ecore_wince_init_count > 0) return _ecore_wince_init_count;
-   if (!_ecore_wince_instance) return _ecore_wince_init_count;
+
+   ecore_event_shutdown();
 
    /* force task bar to be shown (in case the application exits */
    /* while being fullscreen) */
