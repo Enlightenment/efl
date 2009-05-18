@@ -129,7 +129,8 @@ _ecore_evas_wince_init(void)
 
    ecore_evas_idle_enterer = ecore_idle_enterer_add(_ecore_evas_wince_idle_enter, NULL);
 
-   ecore_evas_event_handlers[0]  = ecore_event_handler_add(ECORE_WINCE_EVENT_MOUSE_OUT, _ecore_evas_wince_event_mouse_out, NULL);
+   ecore_evas_event_handlers[0]  = ecore_event_handler_add(ECORE_WINCE_EVENT_MOUSE_IN, _ecore_evas_wince_event_mouse_in, NULL);
+   ecore_evas_event_handlers[1]  = ecore_event_handler_add(ECORE_WINCE_EVENT_MOUSE_OUT, _ecore_evas_wince_event_mouse_out, NULL);
    ecore_evas_event_handlers[2]  = ecore_event_handler_add(ECORE_WINCE_EVENT_WINDOW_DAMAGE, _ecore_evas_wince_event_window_damage, NULL);
    ecore_evas_event_handlers[3]  = ecore_event_handler_add(ECORE_WINCE_EVENT_WINDOW_DESTROY, _ecore_evas_wince_event_window_destroy, NULL);
    ecore_evas_event_handlers[4]  = ecore_event_handler_add(ECORE_WINCE_EVENT_WINDOW_SHOW, _ecore_evas_wince_event_window_show, NULL);
