@@ -66,6 +66,6 @@ EAPI int               evas_common_font_query_inset          (RGBA_Font *fn, con
 EAPI void              evas_common_font_query_advance        (RGBA_Font *fn, const char *text, int *h_adv, int *v_adv);
 EAPI int               evas_common_font_query_char_coords    (RGBA_Font *fn, const char *text, int pos, int *cx, int *cy, int *cw, int *ch);
 EAPI int               evas_common_font_query_text_at_pos    (RGBA_Font *fn, const char *text, int x, int y, int *cx, int *cy, int *cw, int *ch);
-
+EAPI int               evas_common_font_query_last_up_to_pos (RGBA_Font *fn, const char *text, int x, int y);
 
 #endif /* _EVAS_FONT_H */
