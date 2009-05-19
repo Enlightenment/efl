@@ -15,6 +15,151 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Start Getting Started
+ * 
+ * To write an Elementary app, you can get started with the following:
+ * 
+ * @code
+ * #include <Elementary.h>
+ * #ifndef ELM_LIB_QUICKLAUNCH
+ * EAPI int
+ * elm_main(int argc, char **argv)
+ * {
+ *    // create window(s) here and do any application init
+ *    elm_run(); // run main loop
+ *    elm_shutdown(); // after mainloop finishes running, shutdown
+ *    return 0; // exit 0 for exit code
+ * }
+ * #endif
+ * ELM_MAIN()
+ * @endcode
+ * 
+ * To take full advantage of the quicklaunch architecture for launching processes as quickly as possible (saving time at startup time like connecting to X11, loading and linking shared libraries) you may want to use the following configure.in/configure.ac and Makefile.am and autogen.sh script to generate your files. It is assumed your application uses the main.c file for its code.
+ * 
+ * configure.in/configure.ac:
+ * 
+@verbatim
+AC_INIT(myapp, 0.0.0, myname@mydomain.com)
+AC_PREREQ(2.52)
+AC_CONFIG_SRCDIR(configure.in)
+
+AM_INIT_AUTOMAKE(1.6 dist-bzip2)
+AM_CONFIG_HEADER(config.h)
+
+AC_C_BIGENDIAN
+AC_ISC_POSIX
+AC_PROG_CC
+AM_PROG_CC_STDC
+AC_HEADER_STDC
+AC_C_CONST
+
+AC_LIBTOOL_WIN32_DLL
+define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
+define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
+AC_PROG_LIBTOOL
+
+PKG_CHECK_MODULES([ELEMENTARY], elementary)
+
+AC_OUTPUT(Makefile)
+@endverbatim
+ * 
+ * Makefile.am:
+ * 
+@verbatim
+AUTOMAKE_OPTIONS     = 1.4 foreign
+MAINTAINERCLEANFILES = Makefile.in
+
+INCLUDES = -I$(top_srcdir) @ELEMENTARY_CFLAGS@
+
+bin_PROGRAMS      = myapp
+myapp_LTLIBRARIES = myapp.la
+
+myappdir = $(libdir)
+
+myapp_la_SOURCES = main.c
+myapp_la_LIBADD = @ELEMENTARY_LIBS@
+myapp_la_CFLAGS =
+myapp_la_LDFLAGS = -module -avoid-version -no-undefined
+
+myapp_SOURCES = main.c
+myapp_LDADD = @ELEMENTARY_LIBS@
+myapp_CFLAGS = -DELM_LIB_QUICKLAUNCH=1
+@endverbatim
+ * 
+ * autogen.sh:
+ * 
+@verbatim
+#!/bin/sh
+rm -rf autom4te.cache
+rm -f aclocal.m4 ltmain.sh
+rm -rf m4
+mkdir m4
+
+touch README
+echo "Running aclocal..." ; aclocal $ACLOCAL_FLAGS -I m4 || exit 1
+echo "Running autoheader..." ; autoheader || exit 1
+echo "Running autoconf..." ; autoconf || exit 1
+echo "Running libtoolize..." ; (libtoolize --copy --automake || glibtoolize --automake) || exit 1
+echo "Running automake..." ; automake --add-missing --copy --gnu || exit 1
+
+if [ -z "$NOCONFIGURE" ]; then
+  ./configure "$@"
+fi
+@endverbatim
+ * 
+ * The above will build a library - libmyapp.so and install in the target library directory (default is /usr/local/lib). You will also get a myapp.a and myapp.la - these are useless and can be deleted. Libtool likes to generate these all the time. You will also get a binary in the target binary directory (default is /usr/local/bin). This is a "debug binary". This will run and dlopen() the myapp.so and then jump to it's elm_main function. This allows for easy debugging with GDB and Valgrind. When you are ready to go to production do the following:
+ * 
+ * 1. delete the myapp binary. i.e. rm /usr/local/bin/myapp
+ * 
+ * 2. symlink the myapp binary to elementary_run (supplied by elementary). i.e. ln -s elmentary_run /usr/local/bin/myapp
+ * 
+ * 3. run elementary_quicklaunch as part of your graphical login session and keep it running.
+ * 
+ * This will man elementary_quicklaunch does pre-initialization before the application needs to be run, saving the effort at the time the application is needed, thus speeding up the time it takes to appear.
+ * 
+ * If you don't want to use the quicklaunch infrastructure (which is optional), you can execute the old fashioned way by just running the myapp binary loader than will load the myapp.so for you, or you can remove the split-file binary and put it into one binary as things always have been with the following configure.in/configure.ac and Makfile.am files:
+ * 
+ * configure.in/configure.ac:
+ * 
+@verbatim
+AC_INIT(myapp, 0.0.0, myname@mydomain.com)
+AC_PREREQ(2.52)
+AC_CONFIG_SRCDIR(configure.in)
+
+AM_INIT_AUTOMAKE(1.6 dist-bzip2)
+AM_CONFIG_HEADER(config.h)
+
+AC_C_BIGENDIAN
+AC_ISC_POSIX
+AC_PROG_CC
+AM_PROG_CC_STDC
+AC_HEADER_STDC
+AC_C_CONST
+
+PKG_CHECK_MODULES([ELEMENTARY], elementary)
+
+AC_OUTPUT(Makefile)
+@endverbatim
+ * 
+ * Makefile.am:
+ * 
+@verbatim
+AUTOMAKE_OPTIONS     = 1.4 foreign
+MAINTAINERCLEANFILES = Makefile.in
+
+INCLUDES = -I$(top_srcdir) @ELEMENTARY_CFLAGS@
+
+bin_PROGRAMS      = myapp
+
+myapp_SOURCES = main.c
+myapp_LDADD = @ELEMENTARY_LIBS@
+myapp_CFLAGS = 
+@endverbatim
+ * 
+ * Notice that they ae the same as before, just with libtool and library building sections removed. Both ways work for building elementary applications. It is up to you to decide what is best for you. If you just follow the template above, you can do it both ways and can decide at build time. The more advanced of you may suggest making it a configure option. That is perfectly valid, bu has been left out here for simplicity, as our aim to have an Elementary (and EFL) tutorial, not an autoconf & automake document.
+ * 
+ */
 
 static int _elm_signal_exit(void *data, int ev_type, void *ev);
 #ifdef HAVE_ELEMENTARY_X
@@ -74,6 +219,17 @@ _elm_rescale(void)
    _elm_win_rescale();
 }
 
+/**
+ * @defgroup General General
+ */
+
+/**
+ * Inititalise Elementary
+ * 
+ * This call is exported only for use by the ELM_MAIN() macro. There is no 
+ * need to use this if you use this macro (which is highly advisable).
+ * @ingroup General
+ */
 EAPI void
 elm_init(int argc, char **argv)
 {
@@ -81,6 +237,15 @@ elm_init(int argc, char **argv)
    elm_quicklaunch_sub_init(argc, argv);
 }
 
+/**
+ * Shut down Elementary
+ * 
+ * This should be called at the end of your application just before it ceases
+ * to do any more processing. This will clean up any permanent resources your
+ * application may have allocated via Elementary that would otherwise persist
+ * on an exit without this call.
+ * @ingroup General
+ */
 EAPI void
 elm_shutdown(void)
 {
@@ -641,12 +806,27 @@ elm_quicklaunch_exe_path_get(const char *exe)
    return NULL;
 }
 
+/**
+ * Run the main loop
+ * 
+ * This call should be called just after all initialization is complete. This
+ * function will not return until elm_exit() is called. It will keep looping
+ * running the main event/processing loop for Elementary.
+ * @ingroup General
+ */
 EAPI void
 elm_run(void)
 {
    ecore_main_loop_begin();
 }
 
+/**
+ * Exit the main loop
+ * 
+ * If this call is called, it will flag the main loop to cease processing and
+ * return back to its parent function.
+ * @ingroup General
+ */
 EAPI void
 elm_exit(void)
 {
@@ -669,7 +849,6 @@ elm_exit(void)
  * 
  * @param obj The object
  * @param scale Scale factor (from 0.0 up, with 1.0 == no scaling)
- * 
  * @ingroup Scaling
  */
 EAPI void
@@ -683,7 +862,6 @@ elm_object_scale_set(Evas_Object *obj, double scale)
  * 
  * @param obj The object
  * @return The scaling factor set by elm_object_scale_set()
- * 
  * @ingroup Scaling
  */
 EAPI double
@@ -692,24 +870,67 @@ elm_object_scale_get(const Evas_Object *obj)
    return elm_widget_scale_get(obj);
 }
 
+/**
+ * @defgroup Styles Styles
+ * 
+ * Widgets can have different styles of look. These generic API's set
+ * styles of widgets, if they support them (and if the theme(s) do).
+ */
+
+/**
+ * Set the style
+ * 
+ * This sets the name of the style
+ * @param obj The object
+ * @param style The style name to use
+ * @ingroup Styles
+ */
 EAPI void
 elm_object_style_set(Evas_Object *obj, const char *style)
 {
    elm_widget_style_set(obj, style);
 }
 
+/**
+ * Get the style
+ * 
+ * This gets the style being used for that widget. Note that the string
+ * pointer is only valid as longas the object is valid and the style doesn't 
+ * change.
+ * 
+ * @param obj The object
+ * @return The style name
+ */
 EAPI const char *
 elm_object_style_get(const Evas_Object *obj)
 {
    return elm_widget_style_get(obj);
 }
 
+/**
+ * Get the global scaling factor
+ * 
+ * This gets the globally configured scaling factor that is applied to all
+ * objects.
+ * 
+ * @return The scaling factor
+ * @ingroup Scaling
+ */
 EAPI double
 elm_scale_get(void)
 {
    return _elm_config->scale;
 }
 
+/**
+ * Set the global scaling factor
+ * 
+ * This sets the globally configured scaling factor that is applied to all
+ * objects.
+ * 
+ * @param scale The scaling factor to set
+ * @ingroup Scaling
+ */
 EAPI void
 elm_scale_set(double scale)
 {
@@ -718,12 +939,36 @@ elm_scale_set(double scale)
    _elm_rescale();
 }
 
+/**
+ * @defgroup Fingers Fingers
+ * 
+ * Elementary is designed to be finger-friendly for touchscreens, and so in
+ * addition to scaling for display resolution, it can also scale based on
+ * finger "resoltion" (or size).
+ */
+
+/**
+ * Get the configured finger size
+ * 
+ * This gets the globally configured finger size in pixels
+ * 
+ * @return The finger size
+ * @ingroup Fingers
+ */
 EAPI Evas_Coord
 elm_finger_size_get(void)
 {
    return _elm_config->finger_size;
 }
 
+/**
+ * Set the configured finger size
+ * 
+ * This sets the globally configured finger size in pixels
+ * 
+ * @paramsize The finger size
+ * @ingroup Fingers
+ */
 EAPI void
 elm_finger_size_set(Evas_Coord size)
 {
@@ -733,12 +978,20 @@ elm_finger_size_set(Evas_Coord size)
    _elm_rescale();
 }
 
-EAPI void
-elm_object_focus(Evas_Object *obj)
-{
-   elm_widget_focus_set(obj, 1);
-}
-
+/**
+ * Adjust size of an element for finger usage 
+ * 
+ * This takes width and height sizes (in pixels) as input and a size multiple
+ * (which is how many fingers you want to place within the area), and adjusts
+ * the size tobe large enough to accomodate finger. On return the w and h
+ * sizes poiner do by these parameters will be modified.
+ * 
+ * @param times_w How many fingers should fit horizontally
+ * @param w Pointer to the width size to adjust
+ * @param times_h How many fingers should fit vertically
+ * @param h Pointer to the height size to adjust
+ * @ingroup Fingers
+ */
 EAPI void
 elm_coords_finger_size_adjust(int times_w, Evas_Coord *w, int times_h, Evas_Coord *h)
 {
@@ -746,4 +999,25 @@ elm_coords_finger_size_adjust(int times_w, Evas_Coord *w, int times_h, Evas_Coor
      *w = _elm_config->finger_size * times_w;
    if ((h) && (*h < (_elm_config->finger_size * times_h)))
      *h = _elm_config->finger_size * times_h;
+}
+
+/**
+ * @defgroup Focus Focus
+ * 
+ * Object have focus. This is what determines where the keyboard input goes to
+ * within the application window.
+ */
+
+/**
+ * Set the focus to the object
+ * 
+ * This sets the focus target forkeyboard input to be the object indicated.
+ * 
+ * @param obj The object
+ * @ingroup Focus
+ */
+EAPI void
+elm_object_focus(Evas_Object *obj)
+{
+   elm_widget_focus_set(obj, 1);
 }

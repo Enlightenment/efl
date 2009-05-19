@@ -7,7 +7,7 @@
 @mainpage Elementary
 @image html  elementary.png
 @version @PACKAGE_VERSION@
-@author Carsten Haitzler <raster\@rasterman.com>
+@author Carsten Haitzler <raster@rasterman.com>
 @author Gustavo Sverzut Barbieri <barbieri@profusion.mobi>
 @author Cedric Bail <cedric.bail@free.fr>
 @author Vincent Torri <vtorri@univ-evry.fr>
