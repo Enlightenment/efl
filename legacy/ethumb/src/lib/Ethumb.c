@@ -794,7 +794,6 @@ _ethumb_plugin_generate(Ethumb *e)
 {
    const char *ext;
    Ethumb_Plugin *plugin;
-   int r;
 
    ext = strrchr(e->src_path, '.');
    if (!ext)
@@ -815,9 +814,9 @@ _ethumb_plugin_generate(Ethumb *e)
    else
      evas_object_hide(e->img);
 
-   r = plugin->generate_thumb(e);
+   plugin->generate_thumb(e);
 
-   return r;
+   return 1;
 }
 
 int
@@ -955,7 +954,7 @@ _ethumb_finished_idler_cb(void *data)
 {
    Ethumb *e = data;
 
-   e->finished_cb(e, e->cb_data);
+   e->finished_cb(e, e->cb_result, e->cb_data);
    e->finished_idler = NULL;
    e->finished_cb = NULL;
    e->cb_data = NULL;
@@ -964,10 +963,11 @@ _ethumb_finished_idler_cb(void *data)
 }
 
 void
-ethumb_finished_callback_call(Ethumb *e)
+ethumb_finished_callback_call(Ethumb *e, int result)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
 
+   e->cb_result = result;
    if (e->finished_idler)
      ecore_idler_del(e->finished_idler);
    e->finished_idler = ecore_idler_add(_ethumb_finished_idler_cb, e);
@@ -992,19 +992,20 @@ ethumb_generate(Ethumb *e, ethumb_generate_callback_t finished_cb, void *data)
 
    r = _ethumb_plugin_generate(e);
    if (r)
-     return r;
+     return 1;
 
    if (!_ethumb_image_load(e))
      {
 	ERR("could not load input image.\n");
-	return 0;
+	ethumb_finished_callback_call(e, 0);
+	return 1;
      }
 
    r = ethumb_image_save(e);
-   if (r && finished_cb)
-     ethumb_finished_callback_call(e);
 
-   return r;
+   ethumb_finished_callback_call(e, r);
+
+   return 1;
 }
 
 EAPI int

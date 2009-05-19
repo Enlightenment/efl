@@ -8,7 +8,7 @@
 #include <Evas.h>
 #include <Epdf.h>
 
-static int
+static void
 _generate_thumb(Ethumb *e)
 {
    Epdf_Document *document;
@@ -23,7 +23,8 @@ _generate_thumb(Ethumb *e)
    if (!document)
      {
 	fprintf(stderr, "ERROR: could not read document: %s\n", e->src_path);
-	return 0;
+	ethumb_finished_callback_call(e, 0);
+	return;
      }
 
    page = epdf_page_new(document);
@@ -31,7 +32,8 @@ _generate_thumb(Ethumb *e)
      {
 	fprintf(stderr, "ERROR: could not read document: %s\n", e->src_path);
 	epdf_document_delete(document);
-	return 0;
+	ethumb_finished_callback_call(e, 0);
+	return;
      }
 
    npages = epdf_document_page_count_get(document);
@@ -57,9 +59,7 @@ _generate_thumb(Ethumb *e)
    epdf_page_delete(page);
    epdf_document_delete(document);
 
-   ethumb_finished_callback_call(e);
-
-   return 1;
+   ethumb_finished_callback_call(e, 1);
 }
 
 Ethumb_Plugin *

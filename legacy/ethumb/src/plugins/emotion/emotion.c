@@ -29,10 +29,10 @@ _frame_resized_cb(void *data, Evas_Object *o, void *event_info)
    evas_object_smart_callback_del(o, "frame_resize", _frame_resized_cb);
    emotion_object_play_set(o, 0);
    evas_object_del(o);
-   ethumb_finished_callback_call(e);
+   ethumb_finished_callback_call(e, 1);
 }
 
-static int
+static void
 _generate_thumb(Ethumb *e)
 {
    Evas_Object *o;
@@ -47,7 +47,8 @@ _generate_thumb(Ethumb *e)
 	fprintf(stderr, "ERROR: could not start emotion using gstreamer"
 		" plugin.\n");
 	evas_object_del(o);
-	return r;
+	ethumb_finished_callback_call(e, 0);
+	return;
      }
 
    ethumb_file_get(e, &file, NULL);
@@ -63,7 +64,6 @@ _generate_thumb(Ethumb *e)
 
    _emotion = o;
 
-   return 1;
 }
 
 EAPI Ethumb_Plugin *

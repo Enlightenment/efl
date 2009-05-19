@@ -66,7 +66,7 @@ typedef enum _Ethumb_Thumb_Aspect Ethumb_Thumb_Aspect;
 
 typedef struct _Ethumb_Frame Ethumb_Frame;
 typedef struct _Ethumb Ethumb;
-typedef void (*ethumb_generate_callback_t)(Ethumb *e, void *data);
+typedef void (*ethumb_generate_callback_t)(Ethumb *e, int result, void *data);
 
 EAPI int ethumb_init(void);
 EAPI int ethumb_shutdown(void);
