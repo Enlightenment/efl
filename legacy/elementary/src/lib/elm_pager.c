@@ -1,6 +1,14 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Pager Pager
+ * 
+ * The pager is an object that allows flipping (with animation) between 1 or more “pages” of objects, much like a stack of windows within the window. 
+ * 
+ * Objects can be pushed or popped from he stack or deleted as normal. Pushes an pops will animate (and a pop will delete the object once the animation is finished). Any object in the pager can be promoted to the top (from its current stacking position) as well. Objects are pushed to the top with elm_pager_content_push() and when the top item is no longer wanted, simply pop it with elm_pager_content_pop() and it will also be deleted. Any object you wish to promote to the top that is already in the pager, simply use elm_pager_content_promote(). If an object is no longer needed and is not the top item, just delete it as normal. You can query which objects are the top and bottom with elm_pager_content_bottom_get() and elm_pager_content_top_get()
+ */
+
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Item Item;
 
@@ -163,6 +171,14 @@ _signal_hide_finished(void *data, Evas_Object *obj, const char *emission, const 
    _sizing_eval(obj2);
 }
 
+/**
+ *  XXX
+ *
+ * @param xxx XXX
+ * @return XXX
+ *
+ * @ingroup Pager
+ */
 EAPI Evas_Object *
 elm_pager_add(Evas_Object *parent)
 {
@@ -188,6 +204,14 @@ elm_pager_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ *  XXX
+ *
+ * @param xxx XXX
+ * @return XXX
+ *
+ * @ingroup Pager
+ */
 EAPI void
 elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
 {
@@ -216,6 +240,14 @@ elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
    _sizing_eval(obj);
 }
 
+/**
+ *  XXX
+ *
+ * @param xxx XXX
+ * @return XXX
+ *
+ * @ingroup Pager
+ */
 EAPI void
 elm_pager_content_pop(Evas_Object *obj)
 {
@@ -253,6 +285,14 @@ elm_pager_content_pop(Evas_Object *obj)
      }
 }
 
+/**
+ *  XXX
+ *
+ * @param xxx XXX
+ * @return XXX
+ *
+ * @ingroup Pager
+ */
 EAPI void
 elm_pager_content_promote(Evas_Object *obj, Evas_Object *content)
 {
@@ -271,6 +311,14 @@ elm_pager_content_promote(Evas_Object *obj, Evas_Object *content)
      }
 }
 
+/**
+ *  XXX
+ *
+ * @param xxx XXX
+ * @return XXX
+ *
+ * @ingroup Pager
+ */
 EAPI Evas_Object *
 elm_pager_content_bottom_get(Evas_Object *obj)
 {
@@ -281,6 +329,14 @@ elm_pager_content_bottom_get(Evas_Object *obj)
    return it->content;
 }
 
+/**
+ *  XXX
+ *
+ * @param xxx XXX
+ * @return XXX
+ *
+ * @ingroup Pager
+ */
 EAPI Evas_Object *
 elm_pager_content_top_get(Evas_Object *obj)
 {

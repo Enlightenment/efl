@@ -1,6 +1,40 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Slider Slider
+ * 
+ * The slider adds a dragable “slider” widget for selecting the value of
+ * something within a range. 
+ * 
+ * Signals that you can add callbacks for are:
+ * 
+ * changed - Whenever the slider value is changed by the user.
+ * 
+ * delay,changed - A short time after the value is changed by the user. 
+ * This will be called only when the user stops dragging for a very short
+ * period or when they release their finger/mouse, so it avoids possibly 
+ * expensive reactions to the value change.
+ * 
+ * A slider can be horizontal or vertical. It can contain an Icon and has a 
+ * primary label as well as a units label (that is formatted with floating 
+ * point values and thus accepts a printf-style format string, like 
+ * “%1.2f units”. There is also an indicator string that may be somewhere 
+ * else (like on the slider itself) that also accepts a format string like 
+ * units. Label, Icon Unit and Indicator strings/objects are optional.
+ * 
+ * A slider may be inverted which means values invert, with high vales being 
+ * on the left or top and low values on the right or bottom (as opposed to 
+ * normally being low on the left or top and high on the bottom and right).
+ * 
+ * The slider should have its minimum and maximum values set by the
+ * application with  elm_slider_min_max_set() and value should also be set by
+ * the application before use with  elm_slider_value_set(). The span of the
+ * slider is its length (horizontally or vertically). This will be scaled by
+ * the object or applications scaling factor. At any point code can query the
+ * slider for its value with elm_slider_value_get().
+ */
+
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -208,6 +242,14 @@ _drag_stop(void *data, Evas_Object *obj, const char *emission, const char *sourc
    _indicator_set(data);
 }
 
+/**
+ * Add a new slider to the parent
+ * 
+ * @param parent The parent object
+ * @return The new object or NULL if it cannot be created
+ * 
+ * @ingroup Slider
+ */
 EAPI Evas_Object *
 elm_slider_add(Evas_Object *parent)
 {
@@ -252,6 +294,14 @@ elm_slider_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * Set the label of the slider
+ * 
+ * @param obj The slider object
+ * @param label The UTF-8 Text string for the label
+ * 
+ * @ingroup Slider
+ */
 EAPI void
 elm_slider_label_set(Evas_Object *obj, const char *label)
 {
@@ -274,6 +324,14 @@ elm_slider_label_set(Evas_Object *obj, const char *label)
    _sizing_eval(obj);
 }
 
+/**
+ * XXX
+ * 
+ * @param xxx XXX
+ * @return XXX
+ * 
+ * @ingroup Slider
+ */
 EAPI void
 elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
@@ -292,6 +350,14 @@ elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon)
      }
 }
 
+/**
+ * XXX
+ * 
+ * @param xxx XXX
+ * @return XXX
+ * 
+ * @ingroup Slider
+ */
 EAPI void
 elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size)
 {
@@ -306,6 +372,14 @@ elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size)
    _sizing_eval(obj);
 }
 
+/**
+ * XXX
+ * 
+ * @param xxx XXX
+ * @return XXX
+ * 
+ * @ingroup Slider
+ */
 EAPI void
 elm_slider_unit_format_set(Evas_Object *obj, const char *units)
 {
@@ -327,6 +401,14 @@ elm_slider_unit_format_set(Evas_Object *obj, const char *units)
    _sizing_eval(obj);
 }
 
+/**
+ * XXX
+ * 
+ * @param xxx XXX
+ * @return XXX
+ * 
+ * @ingroup Slider
+ */
 EAPI void
 elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator)
 {
@@ -337,6 +419,14 @@ elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator)
    _indicator_set(obj);
 }
 
+/**
+ * XXX
+ * 
+ * @param xxx XXX
+ * @return XXX
+ * 
+ * @ingroup Slider
+ */
 EAPI void
 elm_slider_horizontal_set(Evas_Object *obj, Evas_Bool horizontal)
 {
@@ -347,6 +437,14 @@ elm_slider_horizontal_set(Evas_Object *obj, Evas_Bool horizontal)
    _theme_hook(obj);
 }
 
+/**
+ * XXX
+ * 
+ * @param xxx XXX
+ * @return XXX
+ * 
+ * @ingroup Slider
+ */
 EAPI void
 elm_slider_min_max_set(Evas_Object *obj, double min, double max)
 {
@@ -361,6 +459,14 @@ elm_slider_min_max_set(Evas_Object *obj, double min, double max)
    _indicator_set(obj);
 }
 
+/**
+ * XXX
+ * 
+ * @param xxx XXX
+ * @return XXX
+ * 
+ * @ingroup Slider
+ */
 EAPI void
 elm_slider_value_set(Evas_Object *obj, double val)
 {
@@ -374,6 +480,14 @@ elm_slider_value_set(Evas_Object *obj, double val)
    _indicator_set(obj);
 }
 
+/**
+ * XXX
+ * 
+ * @param xxx XXX
+ * @return XXX
+ * 
+ * @ingroup Slider
+ */
 EAPI double
 elm_slider_value_get(const Evas_Object *obj)
 {
@@ -381,6 +495,14 @@ elm_slider_value_get(const Evas_Object *obj)
    return wd->val;
 }
 
+/**
+ * XXX
+ * 
+ * @param xxx XXX
+ * @return XXX
+ * 
+ * @ingroup Slider
+ */
 EAPI void
 elm_slider_inverted_set(Evas_Object *obj, Evas_Bool inverted)
 {

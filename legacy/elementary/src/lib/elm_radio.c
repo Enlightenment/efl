@@ -1,6 +1,18 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Radio Radio
+ * 
+ * The radio button allows for 1 or more selectors to be created to select 1 of a set of options.
+ * 
+ * Signals that you can add callbacks for are:
+ * 
+ * changed - This is called whenever the user changes the state of one of the radio objects within the group of radio objects that work together.
+ * 
+ * A radio object contains an indicator, an optional Label and an optional icon object. They work normally in groups of 2 or more. When you create a radio (if it is not the first member of the group), simply add it to the group by adding it to any other member of the group that already exists (or the first member) with elm_radio_group_add() with the second parameter being the existing group member. The radio object(s) will select from one of a set of integer values, so any value they are configuring needs to be mapped to a set of integers. To configure what value that radio object represents, use  elm_radio_state_value_set() to set the integer it represents. To set the value the whole group is to indicate use elm_radio_value_set() on any group member, and to get the groups value use elm_radio_value_get(). For convenience the radio objects are also able to directly set an integer (int) to the value that is selected. To specify the pointer to this integer to modify, use elm_radio_value_pointer_set(). The radio objects will modify this directly. That implies the pointer must point to valid memory for as long as the radio objects exist.
+ */
+
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Group Group;
 
@@ -141,6 +153,14 @@ _signal_radio_on(void *data, Evas_Object *obj, const char *emission, const char 
    evas_object_smart_callback_call(data, "changed", NULL);
 }
 
+/**
+  * Add a new radio to the parent
+  *
+  * @param parent The parent object
+  * @return The new object or NULL if it cannot be created
+  *
+  * @ingroup Radio
+  */
 EAPI Evas_Object *
 elm_radio_add(Evas_Object *parent)
 {
@@ -173,6 +193,14 @@ elm_radio_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ *  XXX
+ *
+ * @param xxx XXX
+ * @return XXX
+ *
+ * @ingroup Radio
+ */
 EAPI void
 elm_radio_label_set(Evas_Object *obj, const char *label)
 {
@@ -196,6 +224,14 @@ elm_radio_label_set(Evas_Object *obj, const char *label)
    _sizing_eval(obj);
 }
 
+/**
+ *  XXX
+ *
+ * @param xxx XXX
+ * @return XXX
+ *
+ * @ingroup Radio
+ */
 EAPI void
 elm_radio_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
@@ -214,6 +250,14 @@ elm_radio_icon_set(Evas_Object *obj, Evas_Object *icon)
      }
 }
 
+/**
+ *  XXX
+ *
+ * @param xxx XXX
+ * @return XXX
+ *
+ * @ingroup Radio
+ */
 EAPI void
 elm_radio_group_add(Evas_Object *obj, Evas_Object *group)
 {
@@ -229,6 +273,14 @@ elm_radio_group_add(Evas_Object *obj, Evas_Object *group)
    else _state_set(obj, 0);
 }
 
+/**
+ *  XXX
+ *
+ * @param xxx XXX
+ * @return XXX
+ *
+ * @ingroup Radio
+ */
 EAPI void
 elm_radio_state_value_set(Evas_Object *obj, int value)
 {
@@ -239,6 +291,14 @@ elm_radio_state_value_set(Evas_Object *obj, int value)
    else _state_set(obj, 0);
 }
 
+/**
+ *  XXX
+ *
+ * @param xxx XXX
+ * @return XXX
+ *
+ * @ingroup Radio
+ */
 EAPI void
 elm_radio_value_set(Evas_Object *obj, int value)
 {
@@ -251,6 +311,14 @@ elm_radio_value_set(Evas_Object *obj, int value)
    _state_set_all(wd);
 }
 
+/**
+ *  XXX
+ *
+ * @param xxx XXX
+ * @return XXX
+ *
+ * @ingroup Radio
+ */
 EAPI int
 elm_radio_value_get(const Evas_Object *obj)
 {
@@ -258,6 +326,14 @@ elm_radio_value_get(const Evas_Object *obj)
    return wd->group->value;
 }
 
+/**
+ *  XXX
+ *
+ * @param xxx XXX
+ * @return XXX
+ *
+ * @ingroup Radio
+ */
 EAPI void
 elm_radio_value_pointer_set(Evas_Object *obj, int *valuep)
 {

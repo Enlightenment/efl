@@ -1,6 +1,17 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ *  @defgroup Check Check
+ * 
+ * The check widget allows for toggling a value between true or false (1or 0).
+ * 
+ * Signals that you can add callbacks for are:
+ * 
+ * changed - This is called whenever the user changes the state of one of the check object.
+ * 
+ * Check objects are a lot like radio objects in layout and functionality except they do not work as a group, but independently and only toggle the value of a boolean from false to true (0 or 1). elm_check_state_set() sets the boolean state (1 for true, 0 for false), and elm_check_state_get() returns the current state. For convenience, like the radio objects, you can set a pointer to a boolean directly with elm_check_state_pointer_set() for it to modify.
+ */ 
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -124,6 +135,14 @@ _signal_check_toggle(void *data, Evas_Object *obj, const char *emission, const c
    evas_object_smart_callback_call(data, "changed", NULL);
 }
 
+/**
+ *  XXX
+ *
+ * @param xxx XXX
+ * @return XXX
+ *
+ * @ingroup Check
+ */
 EAPI Evas_Object *
 elm_check_add(Evas_Object *parent)
 {
@@ -153,6 +172,14 @@ elm_check_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ *  XXX
+ *
+ * @param xxx XXX
+ * @return XXX
+ *
+ * @ingroup Check
+ */
 EAPI void
 elm_check_label_set(Evas_Object *obj, const char *label)
 {
@@ -176,6 +203,14 @@ elm_check_label_set(Evas_Object *obj, const char *label)
    _sizing_eval(obj);
 }
 
+/**
+ *  XXX
+ *
+ * @param xxx XXX
+ * @return XXX
+ *
+ * @ingroup Check
+ */
 EAPI void
 elm_check_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
@@ -194,6 +229,14 @@ elm_check_icon_set(Evas_Object *obj, Evas_Object *icon)
      }
 }
 
+/**
+ *  XXX
+ *
+ * @param xxx XXX
+ * @return XXX
+ *
+ * @ingroup Check
+ */
 EAPI void
 elm_check_state_set(Evas_Object *obj, Evas_Bool state)
 {
@@ -209,6 +252,14 @@ elm_check_state_set(Evas_Object *obj, Evas_Bool state)
      }
 }
 
+/**
+ *  XXX
+ *
+ * @param xxx XXX
+ * @return XXX
+ *
+ * @ingroup Check
+ */
 EAPI Evas_Bool
 elm_check_state_get(const Evas_Object *obj)
 {
@@ -216,6 +267,14 @@ elm_check_state_get(const Evas_Object *obj)
    return wd->state;
 }
 
+/**
+ *  XXX
+ *
+ * @param xxx XXX
+ * @return XXX
+ *
+ * @ingroup Check
+ */
 EAPI void
 elm_check_state_pointer_set(Evas_Object *obj, Evas_Bool *statep)
 {

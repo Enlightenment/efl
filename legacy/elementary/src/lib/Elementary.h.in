@@ -38,6 +38,13 @@
  * 
  */
 
+/**
+ * @file Elementary.h
+ * @brief Elementary's API
+ *
+ * Elementary API.
+ */
+
 @ELM_UNIX_DEF@ ELM_UNIX
 @ELM_WIN32_DEF@ ELM_WIN32
 @ELM_WINCE_DEF@ ELM_WINCE

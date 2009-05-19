@@ -669,6 +669,7 @@ elm_exit(void)
  * 
  * @param obj The object
  * @param scale Scale factor (from 0.0 up, with 1.0 == no scaling)
+ * 
  * @ingroup Scaling
  */
 EAPI void
@@ -682,6 +683,7 @@ elm_object_scale_set(Evas_Object *obj, double scale)
  * 
  * @param obj The object
  * @return The scaling factor set by elm_object_scale_set()
+ * 
  * @ingroup Scaling
  */
 EAPI double

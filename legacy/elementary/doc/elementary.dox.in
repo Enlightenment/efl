@@ -1,13 +1,20 @@
 /**
+@file elementary.dox
+@brief Elementary Widget Library
+*/
 
+/**
 @mainpage Elementary
-@image latex evas_big.eps width=5cm
-@image html  evas.png
+@image html  elementary.png
 @version @PACKAGE_VERSION@
 @author Carsten Haitzler <raster\@rasterman.com>
-@author FIXME: get from Elementary.h
+@author Gustavo Sverzut Barbieri <barbieri@profusion.mobi>
+@author Cedric Bail <cedric.bail@free.fr>
+@author Vincent Torri <vtorri@univ-evry.fr>
+@author Daniel Kolesa <quaker6667@hotmail.com>
+@author Jaime Thomas <avi.thomas@gmail.com>
+@author Swisscom - http://www.swisscom.ch/
 @date 2008-2009
-
 
 @section intro What is Elementary?
 
@@ -16,5 +23,4 @@ BLAH BLAH Blah blah ...
 @verbatim
 Pants
 @endverbatim
-
 */
