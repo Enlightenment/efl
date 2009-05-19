@@ -143,10 +143,10 @@ _signal_check_toggle(void *data, Evas_Object *obj, const char *emission, const c
 }
 
 /**
- *  XXX
+ * Add a new Check object
  *
- * @param xxx XXX
- * @return XXX
+ * @param parent The parent object
+ * @return The new object or NUL if it cannot be created
  *
  * @ingroup Check
  */
