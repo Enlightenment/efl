@@ -78,6 +78,34 @@ _ecore_evas_directfb_idle_enter(void *data __UNUSED__)
    return 1;
 }
 
+static char *
+_ecore_evas_directfb_winid_str_get(Ecore_X_Window win)
+{
+   const char *vals = "qWeRtYuIoP5$&<~";
+   static char id[9];
+   unsigned int val;
+   val = (unsigned int)win;
+   id[0] = vals[(val >> 28) & 0xf];
+   id[1] = vals[(val >> 24) & 0xf];
+   id[2] = vals[(val >> 20) & 0xf];
+   id[3] = vals[(val >> 16) & 0xf];
+   id[4] = vals[(val >> 12) & 0xf];
+   id[5] = vals[(val >>  8) & 0xf];
+   id[6] = vals[(val >>  4) & 0xf];
+   id[7] = vals[(val      ) & 0xf];
+   id[8] = 0;
+   return id;
+}
+
+static Ecore_Evas *
+_ecore_evas_directfb_match(DFBWindowID win)
+{
+   Ecore_Evas *ee;
+   
+   ee = eina_hash_find(ecore_evases_hash, _ecore_evas_directfb_winid_str_get(win));
+   return ee;
+}
+
 static int
 _ecore_evas_directfb_event_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
