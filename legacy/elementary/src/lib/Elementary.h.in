@@ -4,40 +4,6 @@
 #ifndef ELEMENTARY_H
 #define ELEMENTARY_H
 
-/* What is this?: This is a VERY SIMPLE toolkit. It is not meant for writing
- * extensive desktop applications (yet). Small simple ones with simple needs.
- * It is meant to make the programmers work almost brainless but give them
- * lots of flexibility.
- * 
- * License: LGPL v2 (see COPYING in the base of Elementary's source). This
- * applies to all files in the source here.
- * 
- * Acknowledgements: There is a lot that goes into making a widget set, and
- * they don't happen out of nothing. It's like trying to make everyone
- * everywhere happy, regardless of age, gender, race or nationality - and
- * that is really tough. So thanks to people and organisations behind this,
- * and here are some of them (if you think you've been missed out please
- * email enlightenment-devel@lists.sourceforge.net with the information):
- * 
- * Organisations:
- * 
- *  Swisscom - http://www.swisscom.ch/
- * 
- * Individuals:
- * 
- * (Enlightenment Developers)
- *  Carsten Haitzler         <raster@rasterman.com>
- *  Gustavo Sverzut Barbieri <barbieri@profusion.mobi>
- *  Cedric Bail              <cedric.bail@free.fr>
- *  Vincent Torri            <vtorri@univ-evry.fr>
- *  Daniel Kolesa            <quaker6667@hotmail.com>
- *  Jaime Thomas             <avi.thomas@gmail.com>
- * (Others)
- * 
- * < if you contribute to elementary please add your name and email above >
- * 
- */
-
 /**
  * @file Elementary.h
  * @brief Elementary's API
