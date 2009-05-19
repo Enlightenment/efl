@@ -14,15 +14,17 @@ _generate_thumb(Ethumb *e)
    Epdf_Document *document;
    Epdf_Page *page;
    Evas_Object *o;
+   const char *src_path;
    int w, h, ww, hh;
    int fx, fy, fw, fh;
    int npages;
    int pagenum;
 
-   document = epdf_document_new(e->src_path);
+   ethumb_file_get(e, &src_path, NULL);
+   document = epdf_document_new(src_path);
    if (!document)
      {
-	fprintf(stderr, "ERROR: could not read document: %s\n", e->src_path);
+	fprintf(stderr, "ERROR: could not read document: %s\n", src_path);
 	ethumb_finished_callback_call(e, 0);
 	return;
      }
@@ -30,7 +32,7 @@ _generate_thumb(Ethumb *e)
    page = epdf_page_new(document);
    if (!page)
      {
-	fprintf(stderr, "ERROR: could not read document: %s\n", e->src_path);
+	fprintf(stderr, "ERROR: could not read document: %s\n", src_path);
 	epdf_document_delete(document);
 	ethumb_finished_callback_call(e, 0);
 	return;
