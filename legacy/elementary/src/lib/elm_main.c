@@ -900,6 +900,7 @@ elm_object_style_set(Evas_Object *obj, const char *style)
  * 
  * @param obj The object
  * @return The style name
+ * @ingroup Styles
  */
 EAPI const char *
 elm_object_style_get(const Evas_Object *obj)
