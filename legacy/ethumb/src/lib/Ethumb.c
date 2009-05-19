@@ -367,7 +367,7 @@ ethumb_thumb_crop_align_set(Ethumb *e, float x, float y)
 }
 
 EAPI void
-ethumb_thumb_crop_align_get(Ethumb *e, float *x, float *y)
+ethumb_thumb_crop_align_get(const Ethumb *e, float *x, float *y)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
 
@@ -469,7 +469,7 @@ ethumb_thumb_dir_path_set(Ethumb *e, const char *path)
 }
 
 EAPI const char *
-ethumb_thumb_dir_path_get(Ethumb *e)
+ethumb_thumb_dir_path_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
 
@@ -485,7 +485,7 @@ ethumb_thumb_category_set(Ethumb *e, const char *category)
 }
 
 EAPI const char *
-ethumb_thumb_category_get(Ethumb *e)
+ethumb_thumb_category_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
 
@@ -544,7 +544,7 @@ ethumb_file_set(Ethumb *e, const char *path, const char *key)
 }
 
 EAPI void
-ethumb_file_get(Ethumb *e, const char **path, const char **key)
+ethumb_file_get(const Ethumb *e, const char **path, const char **key)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
 
@@ -736,14 +736,15 @@ ethumb_thumb_path_set(Ethumb *e, const char *path, const char *key)
      }
 }
 
-EAPI const char *
-ethumb_thumb_path_get(Ethumb *e)
+EAPI void
+ethumb_thumb_path_get(Ethumb *e, const char **path, const char **key)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
    if (!e->thumb_path)
      _ethumb_file_generate_path(e);
 
-   return e->thumb_path;
+   if (*path) *path = e->thumb_path;
+   if (*key) *key = e->thumb_key;
 }
 
 void
@@ -1033,7 +1034,7 @@ ethumb_exists(Ethumb *e)
 }
 
 Evas *
-ethumb_evas_get(Ethumb *e)
+ethumb_evas_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
 
