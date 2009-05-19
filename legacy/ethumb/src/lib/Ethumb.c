@@ -743,8 +743,8 @@ ethumb_thumb_path_get(Ethumb *e, const char **path, const char **key)
    if (!e->thumb_path)
      _ethumb_file_generate_path(e);
 
-   if (*path) *path = e->thumb_path;
-   if (*key) *key = e->thumb_key;
+   if (path) *path = e->thumb_path;
+   if (key) *key = e->thumb_key;
 }
 
 void
