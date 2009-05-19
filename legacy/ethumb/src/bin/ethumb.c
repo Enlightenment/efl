@@ -129,7 +129,7 @@ const Ecore_Getopt optdesc = {
 };
 
 static void
-_finished_thumb(Ethumb *e, Eina_Bool result, void *data)
+_finished_thumb(Ethumb *e, Eina_Bool success, void *data)
 {
    ecore_main_loop_quit();
 }
