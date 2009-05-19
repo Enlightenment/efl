@@ -4,13 +4,20 @@
 /**
  *  @defgroup Check Check
  * 
- * The check widget allows for toggling a value between true or false (1or 0).
+ * The check widget allows for toggling a value between true or false (1 or 0).
  * 
  * Signals that you can add callbacks for are:
  * 
- * changed - This is called whenever the user changes the state of one of the check object.
+ * changed - This is called whenever the user changes the state of one of the
+ * check object.
  * 
- * Check objects are a lot like radio objects in layout and functionality except they do not work as a group, but independently and only toggle the value of a boolean from false to true (0 or 1). elm_check_state_set() sets the boolean state (1 for true, 0 for false), and elm_check_state_get() returns the current state. For convenience, like the radio objects, you can set a pointer to a boolean directly with elm_check_state_pointer_set() for it to modify.
+ * Check objects are a lot like radio objects in layout and functionality 
+ * except they do not work as a group, but independently and only toggle the
+ * value of a boolean from false to true (0 or 1). elm_check_state_set() sets
+ * the boolean state (1 for true, 0 for false), and elm_check_state_get()
+ * returns the current state. For convenience, like the radio objects, you
+ * can set a pointer to a boolean directly with elm_check_state_pointer_set()
+ * for it to modify.
  */ 
 typedef struct _Widget_Data Widget_Data;
 

@@ -35,7 +35,12 @@
  * ELM_MAIN()
  * @endcode
  * 
- * To take full advantage of the quicklaunch architecture for launching processes as quickly as possible (saving time at startup time like connecting to X11, loading and linking shared libraries) you may want to use the following configure.in/configure.ac and Makefile.am and autogen.sh script to generate your files. It is assumed your application uses the main.c file for its code.
+ * To take full advantage of the quicklaunch architecture for launching
+ * processes as quickly as possible (saving time at startup time like
+ * connecting to X11, loading and linking shared libraries) you may want to
+ * use the following configure.in/configure.ac and Makefile.am and autogen.sh
+ * script to generate your files. It is assumed your application uses the
+ * main.c file for its code.
  * 
  * configure.in/configure.ac:
  * 
@@ -108,17 +113,33 @@ if [ -z "$NOCONFIGURE" ]; then
 fi
 @endverbatim
  * 
- * The above will build a library - libmyapp.so and install in the target library directory (default is /usr/local/lib). You will also get a myapp.a and myapp.la - these are useless and can be deleted. Libtool likes to generate these all the time. You will also get a binary in the target binary directory (default is /usr/local/bin). This is a "debug binary". This will run and dlopen() the myapp.so and then jump to it's elm_main function. This allows for easy debugging with GDB and Valgrind. When you are ready to go to production do the following:
+ * The above will build a library - libmyapp.so and install in the target
+ * library directory (default is /usr/local/lib). You will also get a
+ * myapp.a and myapp.la - these are useless and can be deleted. Libtool likes
+ * to generate these all the time. You will also get a binary in the target
+ * binary directory (default is /usr/local/bin). This is a "debug binary".
+ * This will run and dlopen() the myapp.so and then jump to it's elm_main
+ * function. This allows for easy debugging with GDB and Valgrind. When you
+ * are ready to go to production do the following:
  * 
  * 1. delete the myapp binary. i.e. rm /usr/local/bin/myapp
  * 
- * 2. symlink the myapp binary to elementary_run (supplied by elementary). i.e. ln -s elmentary_run /usr/local/bin/myapp
+ * 2. symlink the myapp binary to elementary_run (supplied by elementary).
+ * i.e. ln -s elmentary_run /usr/local/bin/myapp
  * 
- * 3. run elementary_quicklaunch as part of your graphical login session and keep it running.
+ * 3. run elementary_quicklaunch as part of your graphical login session and
+ * keep it running.
  * 
- * This will man elementary_quicklaunch does pre-initialization before the application needs to be run, saving the effort at the time the application is needed, thus speeding up the time it takes to appear.
+ * This will man elementary_quicklaunch does pre-initialization before the
+ * application needs to be run, saving the effort at the time the application
+ * is needed, thus speeding up the time it takes to appear.
  * 
- * If you don't want to use the quicklaunch infrastructure (which is optional), you can execute the old fashioned way by just running the myapp binary loader than will load the myapp.so for you, or you can remove the split-file binary and put it into one binary as things always have been with the following configure.in/configure.ac and Makfile.am files:
+ * If you don't want to use the quicklaunch infrastructure (which is
+ * optional), you can execute the old fashioned way by just running the
+ * myapp binary loader than will load the myapp.so for you, or you can
+ * remove the split-file binary and put it into one binary as things always
+ * have been with the following configure.in/configure.ac and Makfile.am
+ * files:
  * 
  * configure.in/configure.ac:
  * 
@@ -157,7 +178,14 @@ myapp_LDADD = @ELEMENTARY_LIBS@
 myapp_CFLAGS = 
 @endverbatim
  * 
- * Notice that they ae the same as before, just with libtool and library building sections removed. Both ways work for building elementary applications. It is up to you to decide what is best for you. If you just follow the template above, you can do it both ways and can decide at build time. The more advanced of you may suggest making it a configure option. That is perfectly valid, bu has been left out here for simplicity, as our aim to have an Elementary (and EFL) tutorial, not an autoconf & automake document.
+ * Notice that they ae the same as before, just with libtool and library
+ * building sections removed. Both ways work for building elementary
+ * applications. It is up to you to decide what is best for you. If you just
+ * follow the template above, you can do it both ways and can decide at build
+ * time. The more advanced of you may suggest making it a configure option.
+ * That is perfectly valid, bu has been left out here for simplicity, as our\
+ * aim to have an Elementary (and EFL) tutorial, not an autoconf & automake
+ * document.
  * 
  */
 
