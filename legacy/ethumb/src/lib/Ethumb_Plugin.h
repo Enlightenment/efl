@@ -15,8 +15,8 @@ struct _Ethumb_Plugin
 
 void ethumb_calculate_aspect(Ethumb *e, int iw, int ih, int *w, int *h);
 void ethumb_calculate_fill(Ethumb *e, int iw, int ih, int *fx, int *fy, int *fw, int *fh);
-int ethumb_plugin_image_resize(Ethumb *e, int w, int h);
-int ethumb_image_save(Ethumb *e);
+Eina_Bool ethumb_plugin_image_resize(Ethumb *e, int w, int h);
+Eina_Bool ethumb_image_save(Ethumb *e);
 void ethumb_finished_callback_call(Ethumb *e, int result);
 Evas * ethumb_evas_get(const Ethumb *e);
 

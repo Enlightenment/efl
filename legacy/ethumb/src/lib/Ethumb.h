@@ -34,6 +34,7 @@
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Evas.h>
+#include <Eina.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,7 +67,7 @@ typedef enum _Ethumb_Thumb_Aspect Ethumb_Thumb_Aspect;
 
 typedef struct _Ethumb_Frame Ethumb_Frame;
 typedef struct _Ethumb Ethumb;
-typedef void (*ethumb_generate_callback_t)(Ethumb *e, int result, void *data);
+typedef void (*ethumb_generate_callback_t)(Ethumb *e, Eina_Bool result, void *data);
 
 EAPI int ethumb_init(void);
 EAPI int ethumb_shutdown(void);
@@ -88,7 +89,7 @@ EAPI Ethumb_Thumb_Aspect ethumb_thumb_aspect_get(const Ethumb *e) EINA_WARN_UNUS
 EAPI void ethumb_thumb_crop_align_set(Ethumb *e, float x, float y) EINA_ARG_NONNULL(1);
 EAPI void ethumb_thumb_crop_align_get(const Ethumb *e, float *x, float *y) EINA_ARG_NONNULL(1);
 
-EAPI int ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const char *swallow) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const char *swallow) EINA_ARG_NONNULL(1);
 EAPI void ethumb_frame_get(const Ethumb *e, const char **theme_file, const char **group, const char **swallow) EINA_ARG_NONNULL(1);
 
 EAPI void ethumb_thumb_dir_path_set(Ethumb *e, const char *path) EINA_ARG_NONNULL(1);
@@ -103,13 +104,13 @@ EAPI float ethumb_video_time_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_A
 EAPI void ethumb_document_page_set(Ethumb *e, int page) EINA_ARG_NONNULL(1);
 EAPI int ethumb_document_page_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
-EAPI int ethumb_file_set(Ethumb *e, const char *path, const char *key) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool ethumb_file_set(Ethumb *e, const char *path, const char *key) EINA_ARG_NONNULL(1, 2);
 EAPI void ethumb_file_get(const Ethumb *e, const char **path, const char **key) EINA_ARG_NONNULL(1);
 EAPI void ethumb_file_free(Ethumb *e) EINA_ARG_NONNULL(1);
 EAPI void ethumb_thumb_path_set(Ethumb *e, const char *path, const char *key) EINA_ARG_NONNULL(1);
 EAPI void ethumb_thumb_path_get(Ethumb *e, const char **path, const char **key) EINA_ARG_NONNULL(1);
-EAPI int ethumb_generate(Ethumb *e, ethumb_generate_callback_t finished_cb, void *data) EINA_ARG_NONNULL(1, 2);
-EAPI int ethumb_exists(Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+EAPI Eina_Bool ethumb_generate(Ethumb *e, ethumb_generate_callback_t finished_cb, void *data) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool ethumb_exists(Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 #ifdef __cplusplus
 }
