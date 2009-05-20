@@ -1,3 +1,11 @@
+2009-05-20  Vincent Torri  <doursse at users dot sf dot net>
+
+	reviewed by: Vincent Torri
+	patch by: Lance Fetters
+
+	* src/lib/evil_unistd.c:
+	make evil_pipe() non blocking
+
 2009-04-18  Vincent Torri  <doursse at users dot sf dot net>
 
 	* configure.ac:
