@@ -3,7 +3,7 @@
 
 #include "config.h"
 
-#ifdef HAVE_FRIBIDI_FRIBIDI_H
+#ifdef HAVE_FRIBIDI
 #define USE_FRIBIDI
 #define INTERNATIONAL_SUPPORT
 #endif

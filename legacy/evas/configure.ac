@@ -46,6 +46,7 @@ AC_SUBST(MODULE_ARCH)
 AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 
 want_fontconfig="auto"
+want_fribidi="auto"
 
 want_evas_engine_buffer="yes"
 want_evas_engine_software_x11="no"
@@ -193,8 +194,32 @@ fi
 
 ##################################################################
 #fribidi support - OPTIONAL!
-PKG_CHECK_MODULES([FRIBIDI], [fribidi], ,HAS_BIDI=0)
-AC_CHECK_HEADERS(fribidi/fribidi.h)
+
+have_fribidi="no"
+AC_ARG_ENABLE(fribidi,
+  AC_HELP_STRING(
+    [--disable-fribidi],
+    [disable bidirectional text support. [[default=enabled]]]
+  ),
+  [ want_fribidi=$enableval ]
+)
+
+if test "x$want_fribidi" = "xyes" -o "x$want_fribidi" = "xauto" ; then
+  # Check if really available
+  PKG_CHECK_MODULES(FRIBIDI, fribidi,
+    [
+      have_fribidi="yes"
+      AC_DEFINE(HAVE_FRIBIDI, 1, [have fribidi support])
+    ],
+    [
+      if test "x$want_fribidi" = "xyes" -a "x$use_strict" = "xyes" ; then
+        AC_MSG_ERROR([Fribidi not found (strict dependencies checking)])
+      fi
+    ])
+fi
+if test "x$have_fribidi" = "xno"; then
+  HAS_BIDI=0
+fi
 #####################################################################
 # Check evas strong dependencie
 
@@ -1212,6 +1237,7 @@ echo "  EET.....................: $have_evas_font_loader_eet"
 echo
 echo "Font Searching Systems:"
 echo "  Fontconfig..............: $have_fontconfig"
+echo "  Fribidi.................: $have_fribidi"
 # FIXME: add non freetype2 font engine support
 # FIXME: make freetype2 optional
 echo
