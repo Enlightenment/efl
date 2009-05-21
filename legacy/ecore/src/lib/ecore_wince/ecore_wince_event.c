@@ -773,25 +773,28 @@ _ecore_wince_event_keystroke_get(int    key,
        kc = "";
        break;
      case VK_F20:
-       kn = "F20";
-       ks = "F20";
-       kc = "";
-       break;
+       /*
+       * VK_F20 indicates that an arrow key came from a rocker.
+       * This can safely be ignored.
+       */
+       return 0;
      case VK_F21:
-       kn = "F21";
-       ks = "F21";
-       kc = "";
-       break;
+       /*
+       * VK_F21 indicates that an arrow key came from a directional
+       * pad. This can safely be ignored.
+       */
+       return 0;
      case VK_F22:
        kn = "F22";
        ks = "F22";
        kc = "";
        break;
      case VK_F23:
-       kn = "F23";
-       ks = "F23";
-       kc = "";
-       break;
+       /*
+       * Sent with VK_RETURN when doing an action (usually the middle
+       * button on a directional pad. This can safely be ignored.
+       */
+       return 0;
      case VK_F24:
        kn = "F24";
        ks = "F24";
