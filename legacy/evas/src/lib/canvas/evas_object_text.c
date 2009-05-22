@@ -967,9 +967,12 @@ evas_object_text_outline_color_get(const Evas_Object *obj, int *r, int *g, int *
 }
 
 /**
- * To be documented.
+ * Gets the text style pad.
  *
- * FIXME: To be fixed.
+ * @param l The left pad (or NULL).
+ * @param r The right pad (or NULL).
+ * @param t The top pad (or NULL).
+ * @param b The bottom pad (or NULL).
  *
  */
 EAPI void
