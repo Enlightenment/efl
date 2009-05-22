@@ -39,6 +39,7 @@ static void _ecore_win32_event_free_key_up(void *data,
                                            void *ev);
 
 static int  _ecore_win32_event_keystroke_get(int    key,
+                                             int    is_extended,
                                              char **keyname,
                                              char **keysymbol,
                                              char **keycompose);
@@ -65,6 +66,7 @@ _ecore_win32_event_handle_key_press(Ecore_Win32_Callback_Data *msg,
    if (is_keystroke)
      {
         if (!_ecore_win32_event_keystroke_get(LOWORD(msg->window_param),
+                                              msg->data_param & 0x01000000,
                                               (char **)&e->keyname,
                                               (char **)&e->key,
                                               (char **)&e->string))
@@ -114,6 +116,7 @@ _ecore_win32_event_handle_key_release(Ecore_Win32_Callback_Data *msg,
    if (is_keystroke)
      {
         if (!_ecore_win32_event_keystroke_get(LOWORD(msg->window_param),
+                                              msg->data_param & 0x01000000,
                                               (char **)&e->keyname,
                                               (char **)&e->key,
                                               (char **)&e->string))
@@ -633,6 +636,7 @@ _ecore_win32_event_free_key_up(void *data,
 
 static int
 _ecore_win32_event_keystroke_get(int    key,
+                                 int    is_extended,
                                  char **keyname,
                                  char **keysymbol,
                                  char **keycompose)
@@ -649,54 +653,144 @@ _ecore_win32_event_keystroke_get(int    key,
      {
        /* Keystroke */
      case VK_PRIOR:
-       kn = "KP_Prior";
-       ks = "KP_9";
-       kc = "KP_Prior";
+       if (is_extended)
+         {
+            kn = "Prior";
+            ks = "Prior";
+            kc = "Prior";
+         }
+       else
+         {
+            kn = "KP_Prior";
+            ks = "KP_9";
+            kc = "KP_Prior";
+         }
        break;
      case VK_NEXT:
-       kn = "KP_Next";
-       ks = "KP_3";
-       kc = "KP_Next";
+       if (is_extended)
+         {
+            kn = "Next";
+            ks = "Next";
+            kc = "Next";
+         }
+       else
+         {
+            kn = "KP_Next";
+            ks = "KP_3";
+            kc = "KP_Next";
+         }
        break;
      case VK_END:
-       kn = "KP_End";
-       ks = "KP_1";
-       kc = "KP_End";
+       if (is_extended)
+         {
+            kn = "End";
+            ks = "End";
+            kc = "End";
+         }
+       else
+         {
+            kn = "KP_End";
+            ks = "KP_1";
+            kc = "KP_End";
+         }
        break;
      case VK_HOME:
-       kn = "KP_Home";
-       ks = "KP_7";
-       kc = "KP_Home";
+       if (is_extended)
+         {
+            kn = "Home";
+            ks = "Home";
+            kc = "Home";
+         }
+       else
+         {
+            kn = "KP_Home";
+            ks = "KP_7";
+            kc = "KP_Home";
+         }
        break;
      case VK_LEFT:
-       kn = "KP_Left";
-       ks = "KP_4";
-       kc = "KP_Left";
+       if (is_extended)
+         {
+            kn = "Left";
+            ks = "Left";
+            kc = "Left";
+         }
+       else
+         {
+            kn = "KP_Left";
+            ks = "KP_4";
+            kc = "KP_Left";
+         }
        break;
      case VK_UP:
-       kn = "KP_Up";
-       ks = "KP_8";
-       kc = "KP_Up";
+       if (is_extended)
+         {
+            kn = "Up";
+            ks = "Up";
+            kc = "Up";
+         }
+       else
+         {
+            kn = "KP_Up";
+            ks = "KP_8";
+            kc = "KP_Up";
+         }
        break;
      case VK_RIGHT:
-       kn = "KP_Right";
-       ks = "KP_6";
-       kc = "KP_Right";
+       if (is_extended)
+         {
+           kn = "Right";
+           ks = "Right";
+           kc = "Right";
+         }
+       else
+         {
+           kn = "KP_Right";
+           ks = "KP_6";
+           kc = "KP_Right";
+         }
        break;
      case VK_DOWN:
-       kn = "KP_Down";
-       ks = "KP_2";
-       kc = "KP_Down";
+       if (is_extended)
+         {
+           kn = "Down";
+           ks = "Down";
+           kc = "Down";
+         }
+       else
+         {
+           kn = "KP_Down";
+           ks = "KP_2";
+           kc = "KP_Down";
+         }
        break;
      case VK_INSERT:
-       kn = "KP_Insert";
-       ks = "KP_0";
-       kc = "KP_Insert";
+       if (is_extended)
+         {
+           kn = "Insert";
+           ks = "Insert";
+           kc = "Insert";
+         }
+       else
+         {
+           kn = "KP_Insert";
+           ks = "KP_0";
+           kc = "KP_Insert";
+         }
        break;
      case VK_DELETE:
-       kn = "KP_Delete";
-       ks = "KP_Decimal";
-       kc = "KP_Delete";
+       if (is_extended)
+         {
+           kn = "Delete";
+           ks = "Delete";
+           kc = "Delete";
+         }
+       else
+         {
+           kn = "KP_Delete";
+           ks = "KP_Decimal";
+           kc = "KP_Delete";
+         }
        break;
      case VK_F1:
        kn = "F1";
