@@ -684,6 +684,7 @@ struct _Evas_Func
 
    void (*image_scale_hint_set)            (void *data, void *image, int hint);
    int  (*image_scale_hint_get)            (void *data, void *image);
+   int  (*font_last_up_to_pos)             (void *data, void *font, const char *text, int x, int y);
 };
 
 struct _Evas_Image_Load_Func
