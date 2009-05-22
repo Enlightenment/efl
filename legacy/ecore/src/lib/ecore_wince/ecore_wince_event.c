@@ -628,54 +628,54 @@ _ecore_wince_event_keystroke_get(int    key,
      {
        /* Keystroke */
      case VK_PRIOR:
-       kn = "KP_Prior";
-       ks = "KP_Prior";
-       kc = "";
+       kn = "Prior";
+       ks = "Prior";
+       kc = "Prior";
        break;
      case VK_NEXT:
-       kn = "KP_Next";
-       ks = "KP_Next";
-       kc = "";
+       kn = "Next";
+       ks = "Next";
+       kc = "Next";
        break;
      case VK_END:
-       kn = "KP_End";
-       ks = "KP_End";
-       kc = "";
+       kn = "End";
+       ks = "End";
+       kc = "End";
        break;
      case VK_HOME:
-       kn = "KP_Home";
-       ks = "KP_Home";
-       kc = "";
+       kn = "Home";
+       ks = "Home";
+       kc = "Home";
        break;
      case VK_LEFT:
-       kn = "KP_Left";
-       ks = "KP_Left";
-       kc = "";
+       kn = "Left";
+       ks = "Left";
+       kc = "Left";
        break;
      case VK_UP:
-       kn = "KP_Up";
-       ks = "KP_Up";
-       kc = "";
+       kn = "Up";
+       ks = "Up";
+       kc = "Up";
        break;
      case VK_RIGHT:
-       kn = "KP_Right";
-       ks = "KP_Right";
-       kc = "";
+       kn = "Right";
+       ks = "Right";
+       kc = "Right";
        break;
      case VK_DOWN:
-       kn = "KP_Down";
-       ks = "KP_Down";
-       kc = "";
+       kn = "Down";
+       ks = "Down";
+       kc = "Down";
        break;
      case VK_INSERT:
-       kn = "KP_Insert";
-       ks = "KP_Insert";
-       kc = "";
+       kn = "Insert";
+       ks = "Insert";
+       kc = "Insert";
        break;
      case VK_DELETE:
-       kn = "KP_Delete";
-       ks = "KP_Delete";
-       kc = "";
+       kn = "Delete";
+       ks = "Delete";
+       kc = "Delete";
        break;
      case VK_F1:
        kn = "F1";
