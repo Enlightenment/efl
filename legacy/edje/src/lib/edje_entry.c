@@ -795,6 +795,7 @@ _anchors_clear(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 	     free(sel);
 	     an->sel = eina_list_remove_list(an->sel, an->sel);
 	  }
+        free(an->name);
 	free(an);
 	en->anchors = eina_list_remove_list(en->anchors, en->anchors);
      }
@@ -1676,6 +1677,9 @@ _edje_entry_real_part_shutdown(Edje_Real_Part *rp)
              ecore_imf_context_del(en->imf_context);
              en->imf_context = NULL;
           }
+        
+        edje_object_signal_callback_del(rp->edje->obj, "focus,part,in", rp->part->name, _edje_entry_focus_in_cb);
+        edje_object_signal_callback_del(rp->edje->obj, "focus,part,out", rp->part->name, _edje_entry_focus_out_cb);
         ecore_imf_shutdown();
      }
 #endif
