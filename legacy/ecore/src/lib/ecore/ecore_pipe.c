@@ -352,8 +352,6 @@ ecore_pipe_del(Ecore_Pipe *p)
 EAPI void
 ecore_pipe_read_close(Ecore_Pipe *p)
 {
-   void *data;
-
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
 	ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE,
@@ -375,8 +373,6 @@ ecore_pipe_read_close(Ecore_Pipe *p)
 EAPI void
 ecore_pipe_write_close(Ecore_Pipe *p)
 {
-   void *data;
-
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
 	ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE,
