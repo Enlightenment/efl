@@ -917,12 +917,6 @@ eng_font_char_at_coords_get(void *data __UNUSED__, void *font, const char *text,
    return evas_common_font_query_text_at_pos(font, text, x, y, cx, cy, cw, ch);
 }
 
-static int
-eng_font_last_up_to_pos(void *data __UNUSED__, void *font, const char *text, int x, int y)
-{
-   return evas_common_font_query_last_up_to_pos(font, text, x, y);
-}
-
 static void
 eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const char *text)
 {
@@ -1115,11 +1109,8 @@ static Evas_Func func =
      eng_font_hinting_set,
      eng_font_hinting_can_hint,
      eng_image_scale_hint_set,
-     eng_image_scale_hint_get,
-     /* more font draw functions */
-     eng_font_last_up_to_pos
+     eng_image_scale_hint_get
      /* FUTURE software generic calls go here */
-
 };
 
 /*
