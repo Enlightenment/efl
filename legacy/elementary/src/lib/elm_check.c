@@ -2,7 +2,7 @@
 #include "elm_priv.h"
 
 /**
- *  @defgroup Check Check
+ * @defgroup Check Check
  * 
  * The check widget allows for toggling a value between true or false (1 or 0).
  * 
@@ -146,7 +146,7 @@ _signal_check_toggle(void *data, Evas_Object *obj, const char *emission, const c
  * Add a new Check object
  *
  * @param parent The parent object
- * @return The new object or NUL if it cannot be created
+ * @return The new object or NULL if it cannot be created
  *
  * @ingroup Check
  */
@@ -180,10 +180,10 @@ elm_check_add(Evas_Object *parent)
 }
 
 /**
- *  XXX
+ * Set the text label of the check object
  *
- * @param xxx XXX
- * @return XXX
+ * @param obj The check object
+ * @param label The text label string in UTF-8
  *
  * @ingroup Check
  */
@@ -211,10 +211,15 @@ elm_check_label_set(Evas_Object *obj, const char *label)
 }
 
 /**
- *  XXX
+ * Set the icon object of the check object
  *
- * @param xxx XXX
- * @return XXX
+ * Once the icon object is set, it will become a child of the check object and
+ * be deleted when the check object is deleted. If another icon object is set
+ * then the previous one becomes orophaned and will no longer be deleted along
+ * with the check.
+ * 
+ * @param obj The check object
+ * @param icon The icon object
  *
  * @ingroup Check
  */
@@ -237,10 +242,13 @@ elm_check_icon_set(Evas_Object *obj, Evas_Object *icon)
 }
 
 /**
- *  XXX
+ * Set the on/off state of the check object
  *
- * @param xxx XXX
- * @return XXX
+ * This sets the state of the check and will also set the value if pointed to
+ * to the state supplied, but will not call any callbacks.
+ * 
+ * @param obj The check object
+ * @param state The state to use (1 == on, 0 == off)
  *
  * @ingroup Check
  */
@@ -260,10 +268,10 @@ elm_check_state_set(Evas_Object *obj, Evas_Bool state)
 }
 
 /**
- *  XXX
+ * Get the state of the check object
  *
- * @param xxx XXX
- * @return XXX
+ * @param obj The check object
+ * @return The boolean state
  *
  * @ingroup Check
  */
@@ -275,10 +283,17 @@ elm_check_state_get(const Evas_Object *obj)
 }
 
 /**
- *  XXX
+ * Set a convenience pointer to a boolean to change
+ * 
+ * This sets a pointer to a boolean, that, in addition to the check objects
+ * state will also be modified directly. To stop setting the object pointed
+ * to simply use NULL as the statep parameter. If statep is not NULL, then
+ * when this is called, the check objects state will also be modified to
+ * reflect the value of the boolean statep points to, just like calling
+ * elm_check_state_set().
  *
- * @param xxx XXX
- * @return XXX
+ * @param obj The check object
+ * @param statep Pointer to the boolean to modify
  *
  * @ingroup Check
  */

@@ -4,13 +4,30 @@
 /**
  * @defgroup Radio Radio
  * 
- * The radio button allows for 1 or more selectors to be created to select 1 of a set of options.
+ * The radio button allows for 1 or more selectors to be created to select 1 
+ * of a set of options.
  * 
  * Signals that you can add callbacks for are:
  * 
- * changed - This is called whenever the user changes the state of one of the radio objects within the group of radio objects that work together.
+ * changed - This is called whenever the user changes the state of one of the 
+ * radio objects within the group of radio objects that work together.
  * 
- * A radio object contains an indicator, an optional Label and an optional icon object. They work normally in groups of 2 or more. When you create a radio (if it is not the first member of the group), simply add it to the group by adding it to any other member of the group that already exists (or the first member) with elm_radio_group_add() with the second parameter being the existing group member. The radio object(s) will select from one of a set of integer values, so any value they are configuring needs to be mapped to a set of integers. To configure what value that radio object represents, use  elm_radio_state_value_set() to set the integer it represents. To set the value the whole group is to indicate use elm_radio_value_set() on any group member, and to get the groups value use elm_radio_value_get(). For convenience the radio objects are also able to directly set an integer (int) to the value that is selected. To specify the pointer to this integer to modify, use elm_radio_value_pointer_set(). The radio objects will modify this directly. That implies the pointer must point to valid memory for as long as the radio objects exist.
+ * A radio object contains an indicator, an optional Label and an optional 
+ * icon object. They work normally in groups of 2 or more. When you create a 
+ * radio (if it is not the first member of the group), simply add it to the 
+ * group by adding it to any other member of the group that already exists 
+ * (or the first member) with elm_radio_group_add() with the second parameter
+ * being the existing group member. The radio object(s) will select from one
+ * of a set of integer values, so any value they are configuring needs to be
+ * mapped to a set of integers. To configure what value that radio object
+ * represents, use  elm_radio_state_value_set() to set the integer it
+ * represents. To set the value the whole group is to indicate use
+ * elm_radio_value_set() on any group member, and to get the groups value use
+ * elm_radio_value_get(). For convenience the radio objects are also able to
+ * directly set an integer (int) to the value that is selected. To specify
+ * the pointer to this integer to modify, use elm_radio_value_pointer_set().
+ * The radio objects will modify this directly. That implies the pointer must
+ * point to valid memory for as long as the radio objects exist.
  */
 
 typedef struct _Widget_Data Widget_Data;
@@ -194,10 +211,10 @@ elm_radio_add(Evas_Object *parent)
 }
 
 /**
- *  XXX
+ * Set the text label of the radio object
  *
- * @param xxx XXX
- * @return XXX
+ * @param obj The radio object
+ * @param label The text label string in UTF-8
  *
  * @ingroup Radio
  */
@@ -225,10 +242,15 @@ elm_radio_label_set(Evas_Object *obj, const char *label)
 }
 
 /**
- *  XXX
+ * Set the icon object of the radio object
  *
- * @param xxx XXX
- * @return XXX
+ * Once the icon object is set, it will become a child of the radio object and
+ * be deleted when the radio object is deleted. If another icon object is set
+ * then the previous one becomes orophaned and will no longer be deleted along
+ * with the radio.
+ *
+ * @param obj The radio object
+ * @param icon The icon object
  *
  * @ingroup Radio
  */
@@ -251,10 +273,15 @@ elm_radio_icon_set(Evas_Object *obj, Evas_Object *icon)
 }
 
 /**
- *  XXX
+ * Add this radio to a group of other radio objects
+ * 
+ * Radio objects work in groups. Each member should have a different integer
+ * value assigned. In order ro have them work as a group, they need to know
+ * about eacthother. This adds the given radio object to the group of which
+ * the group object indicated is a member.
  *
- * @param xxx XXX
- * @return XXX
+ * @param obj The radio object
+ * @param group The object whose group the object is to join
  *
  * @ingroup Radio
  */
@@ -274,10 +301,12 @@ elm_radio_group_add(Evas_Object *obj, Evas_Object *group)
 }
 
 /**
- *  XXX
+ * Set the integer value that this radio object represents
  *
- * @param xxx XXX
- * @return XXX
+ * This sets the value of the radio.
+ *
+ * @param obj The radio object
+ * @param value The value to use if this radio object is selected
  *
  * @ingroup Radio
  */
@@ -292,10 +321,13 @@ elm_radio_state_value_set(Evas_Object *obj, int value)
 }
 
 /**
- *  XXX
- *
- * @param xxx XXX
- * @return XXX
+ * Set the value the radio
+ * 
+ * This sets the value of the radio group and will also set the value if
+ * pointed to, to the value supplied, but will not call any callbacks.
+ * 
+ * @param obj The radio object
+ * @param state The value to use for the group
  *
  * @ingroup Radio
  */
@@ -312,10 +344,10 @@ elm_radio_value_set(Evas_Object *obj, int value)
 }
 
 /**
- *  XXX
+ * Get the state of the radio object
  *
- * @param xxx XXX
- * @return XXX
+ * @param obj The radio object
+ * @return The integer state
  *
  * @ingroup Radio
  */
@@ -327,10 +359,17 @@ elm_radio_value_get(const Evas_Object *obj)
 }
 
 /**
- *  XXX
+ * Set a convenience pointer to a integer to change
  *
- * @param xxx XXX
- * @return XXX
+ * This sets a pointer to a integer, that, in addition to the radio objects
+ * state will also be modified directly. To stop setting the object pointed
+ * to simply use NULL as the valuep parameter. If valuep is not NULL, then
+ * when this is called, the radio objects state will also be modified to
+ * reflect the value of the integer valuep points to, just like calling
+ * elm_radio_value_set().
+ *
+ * @param obj The radio object
+ * @param valuep Pointer to the integer to modify
  *
  * @ingroup Radio
  */

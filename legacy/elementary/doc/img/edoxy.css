@@ -368,8 +368,8 @@ HR {
 	margin-left: 3px;
 } 
 .memnav { 
-	background-color: #e8eef2;
-	border: 1px solid #84b0c7;
+	background-color: #eeeeee;
+	border: 1px solid #dddddd;
 	text-align: center;
 	margin: 2px;
 	margin-right: 15px;
@@ -377,36 +377,39 @@ HR {
 }
 .memitem {
 	padding: 4px;
-	background-color: #eef3f5;
+	background-color: #eeeeee;
 	border-width: 1px;
 	border-style: solid;
-	border-color: #dedeee;
-	-moz-border-radius: 8px 8px 8px 8px;
+	border-color: #dddddd;
+	-moz-border-radius: 4px 4px 4px 4px;
 }
 .memname {
 	white-space: nowrap;
 	font-weight: bold;
+        color: #ffffff;
 }
 .memdoc{
 	padding-left: 10px;
 }
 .memproto {
-	background-color: #d5e1e8;
+	background-color: #111111;
 	width: 100%;
 	border-width: 1px;
 	border-style: solid;
-	border-color: #84b0c7;
+	border-color: #000000;
 	font-weight: bold;
-	-moz-border-radius: 8px 8px 8px 8px;
+	-moz-border-radius: 4px 4px 4px 4px;
 }
 .paramkey {
 	text-align: right;
+	color: #ffffff;
 }
 .paramtype {
 	white-space: nowrap;
+	color: #aaaaaa;
 }
 .paramname {
-	color: #602020;
+	color: #ff0000;
 	font-style: italic;
 	white-space: nowrap;
 }

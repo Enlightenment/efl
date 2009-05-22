@@ -4,9 +4,20 @@
 /**
  * @defgroup Pager Pager
  * 
- * The pager is an object that allows flipping (with animation) between 1 or more “pages” of objects, much like a stack of windows within the window. 
+ * The pager is an object that allows flipping (with animation) between 1 or
+ * more “pages” of objects, much like a stack of windows within the window. 
  * 
- * Objects can be pushed or popped from he stack or deleted as normal. Pushes an pops will animate (and a pop will delete the object once the animation is finished). Any object in the pager can be promoted to the top (from its current stacking position) as well. Objects are pushed to the top with elm_pager_content_push() and when the top item is no longer wanted, simply pop it with elm_pager_content_pop() and it will also be deleted. Any object you wish to promote to the top that is already in the pager, simply use elm_pager_content_promote(). If an object is no longer needed and is not the top item, just delete it as normal. You can query which objects are the top and bottom with elm_pager_content_bottom_get() and elm_pager_content_top_get()
+ * Objects can be pushed or popped from he stack or deleted as normal.
+ * Pushes and pops will animate (and a pop will delete the object once the
+ * animation is finished). Any object in the pager can be promoted to the top
+ * (from its current stacking position) as well. Objects are pushed to the
+ * top with elm_pager_content_push() and when the top item is no longer
+ * wanted, simply pop it with elm_pager_content_pop() and it will also be
+ * deleted. Any object you wish to promote to the top that is already in the
+ * pager, simply use elm_pager_content_promote(). If an object is no longer
+ * needed and is not the top item, just delete it as normal. You can query
+ * which objects are the top and bottom with elm_pager_content_bottom_get()
+ * and elm_pager_content_top_get().
  */
 
 typedef struct _Widget_Data Widget_Data;
@@ -172,10 +183,10 @@ _signal_hide_finished(void *data, Evas_Object *obj, const char *emission, const 
 }
 
 /**
- *  XXX
+ * Add a new pager to the parent
  *
- * @param xxx XXX
- * @return XXX
+ * @param parent The parent object
+ * @return The new object or NULL if it cannot be created
  *
  * @ingroup Pager
  */
@@ -205,10 +216,13 @@ elm_pager_add(Evas_Object *parent)
 }
 
 /**
- *  XXX
+ * Push an object to the top of the pager stack (and show it)
+ * 
+ * The object pushed becomes a child of the pager and will be controlled
+ * it and deleted when the pager is deleted.
  *
- * @param xxx XXX
- * @return XXX
+ * @param obj The pager object
+ * @param content The object to push
  *
  * @ingroup Pager
  */
@@ -241,10 +255,13 @@ elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
 }
 
 /**
- *  XXX
+ * Pop the object that is on top of the stack
  *
- * @param xxx XXX
- * @return XXX
+ * This pops the object that is on top (visible) in the pager, makes it
+ * disappear, then deletes the object. The object that was underneath it
+ * on the stack will become visible.
+ * 
+ * @param obj The pager object
  *
  * @ingroup Pager
  */
@@ -286,10 +303,14 @@ elm_pager_content_pop(Evas_Object *obj)
 }
 
 /**
- *  XXX
+ * Promote an object already in the pager stack to the top of the stack
  *
- * @param xxx XXX
- * @return XXX
+ * This will take the indicated object and promote it to the top of the stack
+ * as if it had been pushed there. The object must already be inside the
+ * pager stack to work.
+ * 
+ * @param obj The pager object
+ * @param content The object to promote
  *
  * @ingroup Pager
  */
@@ -312,10 +333,10 @@ elm_pager_content_promote(Evas_Object *obj, Evas_Object *content)
 }
 
 /**
- *  XXX
+ * Return the object at the bottom of the pager stack
  *
- * @param xxx XXX
- * @return XXX
+ * @param obj The pager object
+ * @return The bottom object or NULL if none
  *
  * @ingroup Pager
  */
@@ -330,10 +351,10 @@ elm_pager_content_bottom_get(Evas_Object *obj)
 }
 
 /**
- *  XXX
+ * Return the object at the top of the pager stack
  *
- * @param xxx XXX
- * @return XXX
+ * @param obj The pager object
+ * @return The top object or NULL if none
  *
  * @ingroup Pager
  */

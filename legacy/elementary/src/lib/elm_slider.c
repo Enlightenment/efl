@@ -298,7 +298,7 @@ elm_slider_add(Evas_Object *parent)
  * Set the label of the slider
  * 
  * @param obj The slider object
- * @param label The UTF-8 Text string for the label
+ * @param label The text label string in UTF-8
  * 
  * @ingroup Slider
  */
@@ -325,10 +325,15 @@ elm_slider_label_set(Evas_Object *obj, const char *label)
 }
 
 /**
- * XXX
- * 
- * @param xxx XXX
- * @return XXX
+ * Set the icon object of the slider object
+ *
+ * Once the icon object is set, it will become a child of the slider object and
+ * be deleted when the slider object is deleted. If another icon object is set
+ * then the previous one becomes orophaned and will no longer be deleted along
+ * with the slider.
+ *
+ * @param obj The slider object
+ * @param icon The icon object
  * 
  * @ingroup Slider
  */
@@ -351,10 +356,15 @@ elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon)
 }
 
 /**
- * XXX
+ * Set the length of the dragable region of the slider
  * 
- * @param xxx XXX
- * @return XXX
+ * Thois sets the minimum width or height (depending on orientation) of the
+ * area of the slider that allows the slider to be dragged around. This in
+ * turn affects the objects minimum size (along with icon label and unit
+ * text). Note that this will also get multiplied by the scale factor.
+ * 
+ * @param obj The slider object
+ * @param size The length of the slider area
  * 
  * @ingroup Slider
  */
@@ -373,10 +383,15 @@ elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size)
 }
 
 /**
- * XXX
+ * Set the format string of the unit area
  * 
- * @param xxx XXX
- * @return XXX
+ * If NULL, this disabls the unit area display. If not it sets the format
+ * string for the unit text. The unit text is provided a floating point
+ * value, so the unit text can display up to 1 floating point falue. Note that
+ * this is optional. Use a format string such as "%1.2f meters" for example.
+ * 
+ * @param obj The slider object
+ * @param units The format string for the units display
  * 
  * @ingroup Slider
  */
@@ -402,10 +417,15 @@ elm_slider_unit_format_set(Evas_Object *obj, const char *units)
 }
 
 /**
- * XXX
+ * Set the format string for the inducator area
  * 
- * @param xxx XXX
- * @return XXX
+ * The slider may also display a value (the value of the slider) somewhere
+ * (for example above the slider knob that is dragged around). This sets the
+ * format string for this. See elm_slider_unit_format_set() for more
+ * information on how this works.
+ * 
+ * @param obj The slider object
+ * @param units The format string for the indicator display
  * 
  * @ingroup Slider
  */
@@ -420,10 +440,10 @@ elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator)
 }
 
 /**
- * XXX
+ * Set orientation of the slider
  * 
- * @param xxx XXX
- * @return XXX
+ * @param obj The slider object
+ * @param horizontal If set, the slider will be horizontal
  * 
  * @ingroup Slider
  */
@@ -438,10 +458,13 @@ elm_slider_horizontal_set(Evas_Object *obj, Evas_Bool horizontal)
 }
 
 /**
- * XXX
+ * Set the minimum and maximum values for the slider
  * 
- * @param xxx XXX
- * @return XXX
+ * Maximum mut be greater than minimum.
+ * 
+ * @param obj The slider object
+ * @param min The minimum value
+ * @param max The maximum value
  * 
  * @ingroup Slider
  */
@@ -460,10 +483,10 @@ elm_slider_min_max_set(Evas_Object *obj, double min, double max)
 }
 
 /**
- * XXX
+ * Set the value the slider indicates
  * 
- * @param xxx XXX
- * @return XXX
+ * @param obj The slider object
+ * @param val The value (must be beween min and max for the slider)
  * 
  * @ingroup Slider
  */
@@ -481,10 +504,10 @@ elm_slider_value_set(Evas_Object *obj, double val)
 }
 
 /**
- * XXX
+ * Get the value the slider has
  * 
- * @param xxx XXX
- * @return XXX
+ * @param obj The slider object
+ * @return The value of the slider
  * 
  * @ingroup Slider
  */
@@ -496,10 +519,15 @@ elm_slider_value_get(const Evas_Object *obj)
 }
 
 /**
- * XXX
+ * Invert the slider display
  * 
- * @param xxx XXX
- * @return XXX
+ * Normally the slider will display and interpret values from low to high
+ * and when horizontal that is left to right. When vertical that is top
+ * to bottom. This inverts this (so from right to left or bottom to top) if
+ * inverted is set to 1.
+ * 
+ * @param obj The slider object
+ * @param inverted The inverted flag. 1 == inverted, 0 == normal
  * 
  * @ingroup Slider
  */

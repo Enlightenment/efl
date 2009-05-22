@@ -113,6 +113,72 @@ if [ -z "$NOCONFIGURE" ]; then
 fi
 @endverbatim
  * 
+ * To gnerate all the things needed to bootstrap just run:
+ * 
+@verbatim
+./autogen.sh
+@endverbatim
+ *
+ * This will generate Makefile.in's, the confgure script and everything else.
+ * After this it works like all normal autotools projects:
+@verbatim
+./configure
+make
+sudo make install
+@endverbatim
+ * 
+ * Note sudo was assumed to get root permissions, as this would install in
+ * /usr/local which is system-owned. Ue any way you like to gain root, or
+ * specify a different prefix with configure:
+ * 
+@verbatim
+./confiugre --prefix=$HOME/mysoftware
+@endverbatim
+ * 
+ * Also remember that autotools buys you some useful commands like:
+@verbatim
+make uninstall
+@endverbatim
+ * 
+ * This uninstalls the software after it was installed with "make install".
+ * It is very useful to clear up what you built if you wish to clean the
+ * system.
+ * 
+@verbatim
+make distcheck
+@endverbatim
+ * 
+ * This firstly checks if your build tree is "clean" and ready for
+ * distribution. It also builds a tarball (myapp-0.0.0.tar.gz) that is
+ * ready to upload and distribute to the world, that contains the generated
+ * Makefile.in's and configure script. The users do not need to run
+ * autogen.sh - just configure and on. They don't need autotools installed.
+ * This tarball also builds cleanly, has all the sources it needs to build
+ * included (that is sources for your application, not libraries it depends
+ * on like Elementary). It builds cleanly in a buildroot and does not
+ * contain any files that are temporarily generated like binaries and other
+ * build-gnerated files, so the tarball is clean, and no need to worry
+ * about cleaning up your tree before packaging.
+ * 
+@verbatim
+make clean
+@endverbatim
+ * 
+ * This cleans up all build files (binaries, objects etc.) from the tree.
+ * 
+@verbatim
+make distclean
+@endverbatim
+ * 
+ * This cleans out all files from the build and from configure's output too.
+ * 
+@verbatim
+make maintainer-clean
+@endverbatim
+ * 
+ * This deletes all the files autogen.sh will produce so the tree is clean
+ * to be put into a revision-control system (like CVS, SVN or GIT for example).
+ * 
  * The above will build a library - libmyapp.so and install in the target
  * library directory (default is /usr/local/lib). You will also get a
  * myapp.a and myapp.la - these are useless and can be deleted. Libtool likes
@@ -178,12 +244,12 @@ myapp_LDADD = @ELEMENTARY_LIBS@
 myapp_CFLAGS = 
 @endverbatim
  * 
- * Notice that they ae the same as before, just with libtool and library
+ * Notice that they are the same as before, just with libtool and library
  * building sections removed. Both ways work for building elementary
  * applications. It is up to you to decide what is best for you. If you just
  * follow the template above, you can do it both ways and can decide at build
  * time. The more advanced of you may suggest making it a configure option.
- * That is perfectly valid, bu has been left out here for simplicity, as our\
+ * That is perfectly valid, bu has been left out here for simplicity, as our
  * aim to have an Elementary (and EFL) tutorial, not an autoconf & automake
  * document.
  * 
@@ -1033,7 +1099,7 @@ elm_coords_finger_size_adjust(int times_w, Evas_Coord *w, int times_h, Evas_Coor
 /**
  * @defgroup Focus Focus
  * 
- * Object have focus. This is what determines where the keyboard input goes to
+ * Objects have focus. This is what determines where the keyboard input goes to
  * within the application window.
  */
 
