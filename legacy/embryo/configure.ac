@@ -176,7 +176,7 @@ echo "------------------------------------------------------------------------"
 echo
 echo "Configuration Options Summary:"
 echo
-echo "  Documentation........: ${enable_doc}"
+echo "  Documentation........: ${build_doc}"
 echo
 echo "  Compilation..........: make"
 echo
