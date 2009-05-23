@@ -1,9 +1,10 @@
 # get rid of that stupid cache mechanism
 rm -f config.cache
 
-AC_INIT(elementary, 0.4.0.0, enlightenment-devel@lists.sourceforge.net)
+AC_INIT([elementary], [0.4.0.0], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ(2.52)
-AC_CONFIG_SRCDIR(configure.ac)
+AC_CONFIG_SRCDIR([configure.ac])
+AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 
@@ -32,6 +33,18 @@ SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
+release="ver-pre-svn-01"
+case "$host_os" in
+  mingw32ce* | cegcc*)
+    MODULE_ARCH="$host_os-$host_cpu"
+    ;;
+  *)
+    release_info="-release $release"
+    MODULE_ARCH="$host_os-$host_cpu-$release"
+    ;;
+esac
+AC_SUBST(release_info)
+                                    
 requirement_elm=""
 
 PKG_PROG_PKG_CONFIG

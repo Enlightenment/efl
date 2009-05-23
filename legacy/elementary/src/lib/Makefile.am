@@ -74,4 +74,4 @@ els_icon.h
 
 libelementary_la_CFLAGS =
 libelementary_la_LIBADD = @my_libs@ @dlopen_libs@ @ELEMENTARY_LIBS@ @ELEMENTARY_X_LIBS@ @ELEMENTARY_FB_LIBS@ @ELEMENTARY_WIN32_LIBS@ @ELEMENTARY_WINCE_LIBS@ @ELEMENTARY_EDBUS_LIBS@
-libelementary_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
+libelementary_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
