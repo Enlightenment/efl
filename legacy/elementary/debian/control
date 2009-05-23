@@ -9,11 +9,11 @@ Homepage: http://www.enlightenment.org
 Package: libelm-dev
 Section: libdevel
 Architecture: any
-Depends: libelm0 (= ${binary:Version}), libecore-dev, libevas-dev, libeet-dev, libedje-dev
+Depends: libelm-svn-01 (= ${binary:Version}), libecore-dev, libevas-dev, libeet-dev, libedje-dev
 Description: Elementary - a basic widget set that is easy to use based on EFL for mobile
  This package contains devel content.
 
-Package: libelm0
+Package: libelm-svn-01
 Architecture: any
 Depends: ${shlibs:Depends}, libelm-bin
 Description: Elementary - a basic widget set that is easy to use based on EFL for mobile
