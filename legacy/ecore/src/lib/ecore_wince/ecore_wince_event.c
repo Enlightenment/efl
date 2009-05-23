@@ -854,9 +854,9 @@ _ecore_wince_event_char_get(int    key,
      {
      case VK_APP3:
      case VK_BACK:
-       strncpy(kn, "Backspace", 32);
-       strncpy(ks, "Backspace", 32);
-       strncpy(kc, "Backspace", 32);
+       strncpy(kn, "BackSpace", 32);
+       strncpy(ks, "BackSpace", 32);
+       strncpy(kc, "BackSpace", 32);
        break;
      case VK_APP4:
      case VK_TAB:
