@@ -72,14 +72,16 @@ edje_object_file_get(const Evas_Object *obj, const char **file, const char **gro
  * @param obj A valid Evas_Object handle
  *
  * @return The Edje load error:\n
- * 0: No Error\n
- * 1: Generic Error\n
- * 2: Does not Exist\n
- * 3: Permission Denied\n
- * 4: Resource Allocation Failed\n
- * 5: Corrupt File\n
- * 6: Unknown Format\n
- * 7: Incompatible File
+ * EDJE_LOAD_ERROR_NONE: No Error\n
+ * EDJE_LOAD_ERROR_GENERIC: Generic Error\n
+ * EDJE_LOAD_ERROR_DOES_NOT_EXIST: Does not Exist\n
+ * EDJE_LOAD_ERROR_PERMISSION_DENIED: Permission Denied\n
+ * EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED: Resource Allocation Failed\n
+ * EDJE_LOAD_ERROR_CORRUPT_FILE: Corrupt File\n
+ * EDJE_LOAD_ERROR_UNKNOWN_FORMAT: Unknown Format\n
+ * EDJE_LOAD_ERROR_INCOMPATIBLE_FILE: Incompatible File\n
+ * EDJE_LOAD_ERROR_UNKNOWN_COLLECTION: Unknown Collection\n
+ * EDJE_LOAD_ERROR_RECURSIVE_REFERENCE: Recursive Reference\n
  */
 EAPI int
 edje_object_load_error_get(const Evas_Object *obj)
