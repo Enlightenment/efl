@@ -23,6 +23,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#include <Eina.h>
 #include <eina_safety_checks.h>
 #include "Ethumb.h"
 #include "ethumb_private.h"
@@ -43,7 +44,6 @@
 #define PATH_MAX 4096
 #endif
 
-#include <Eina.h>
 #include <Ecore.h>
 #include <Evas.h>
 #include <Ecore_Evas.h>
@@ -460,11 +460,48 @@ ethumb_frame_get(const Ethumb *e, const char **theme_file, const char **group, c
      }
 }
 
+static const char *
+_ethumb_build_absolute_path(const char *path, char buf[])
+{
+   char *p;
+   int len;
+
+   if (!path)
+     return NULL;
+
+   p = buf;
+
+   if (path[0] == '/')
+     strcpy(p, path);
+   else if (path[0] == '~')
+     {
+	strcpy(p, getenv("HOME"));
+	len = strlen(p);
+	p += len;
+	p[0] = '/';
+	p++;
+	strcpy(p, path + 2);
+     }
+   else
+     {
+	getcwd(p, PATH_MAX);
+	len = strlen(p);
+	p += len;
+	p[0] = '/';
+	p++;
+	strcpy(p, path);
+     }
+
+   return buf;
+}
+
 EAPI void
 ethumb_thumb_dir_path_set(Ethumb *e, const char *path)
 {
+   char buf[PATH_MAX];
    EINA_SAFETY_ON_NULL_RETURN(e);
 
+   path = _ethumb_build_absolute_path(path, buf);
    eina_stringshare_replace(&e->thumb_dir, path);
 }
 
@@ -527,7 +564,8 @@ ethumb_document_page_get(const Ethumb *e)
 EAPI Eina_Bool
 ethumb_file_set(Ethumb *e, const char *path, const char *key)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
+   char buf[PATH_MAX];
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
 
    if (path && access(path, R_OK))
      {
@@ -535,6 +573,7 @@ ethumb_file_set(Ethumb *e, const char *path, const char *key)
 	return EINA_FALSE;
      }
 
+   path = _ethumb_build_absolute_path(path, buf);
    eina_stringshare_replace(&e->src_path, path);
    eina_stringshare_replace(&e->src_key, key);
    eina_stringshare_replace(&e->thumb_path, NULL);
@@ -669,6 +708,8 @@ _ethumb_file_generate_path(Ethumb *e)
    snprintf(buf, sizeof(buf), "%s/%s/%s.%s", thumb_dir, category, hash, ext);
    free(fullname);
    eina_stringshare_replace(&e->thumb_path, buf);
+   eina_stringshare_del(e->thumb_key);
+   e->thumb_key = NULL;
 
    eina_stringshare_del(thumb_dir);
    eina_stringshare_del(category);
@@ -686,36 +727,6 @@ ethumb_file_free(Ethumb *e)
    eina_stringshare_replace(&e->thumb_key, NULL);
 }
 
-static void
-_ethumb_build_absolute_path(const char *path, char buf[])
-{
-   char *p;
-   int len;
-
-   p = buf;
-
-   if (path[0] == '/')
-     strcpy(p, path);
-   else if (path[0] == '~')
-     {
-	strcpy(p, getenv("HOME"));
-	len = strlen(p);
-	p += len;
-	p[0] = '/';
-	p++;
-	strcpy(p, path + 2);
-     }
-   else
-     {
-	getcwd(p, PATH_MAX);
-	len = strlen(p);
-	p += len;
-	p[0] = '/';
-	p++;
-	strcpy(p, path);
-     }
-}
-
 EAPI void
 ethumb_thumb_path_set(Ethumb *e, const char *path, const char *key)
 {
@@ -730,8 +741,8 @@ ethumb_thumb_path_set(Ethumb *e, const char *path, const char *key)
      }
    else
      {
-	_ethumb_build_absolute_path(path, buf);
-	eina_stringshare_replace(&e->thumb_path, buf);
+	path = _ethumb_build_absolute_path(path, buf);
+	eina_stringshare_replace(&e->thumb_path, path);
 	eina_stringshare_replace(&e->thumb_key, key);
      }
 }
@@ -739,7 +750,7 @@ ethumb_thumb_path_set(Ethumb *e, const char *path, const char *key)
 EAPI void
 ethumb_thumb_path_get(Ethumb *e, const char **path, const char **key)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
+   EINA_SAFETY_ON_NULL_RETURN(e);
    if (!e->thumb_path)
      _ethumb_file_generate_path(e);
 
@@ -979,8 +990,8 @@ ethumb_generate(Ethumb *e, ethumb_generate_callback_t finished_cb, void *data)
    int r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(e->src_path, 0);
    EINA_SAFETY_ON_NULL_RETURN_VAL(finished_cb, 0);
+
 
    if (e->finished_idler)
      {
@@ -989,6 +1000,13 @@ ethumb_generate(Ethumb *e, ethumb_generate_callback_t finished_cb, void *data)
      }
    e->finished_cb = finished_cb;
    e->cb_data = data;
+
+   if (!e->src_path)
+     {
+	ERR("no file set.\n");
+	ethumb_finished_callback_call(e, 0);
+	return EINA_TRUE;
+     }
 
    r = _ethumb_plugin_generate(e);
    if (r)

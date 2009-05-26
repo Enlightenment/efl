@@ -218,6 +218,8 @@ main(int argc, char *argv[])
 
    if (r && arg_index < argc)
      r = ethumb_file_set(e, argv[arg_index++], src_key);
+   else
+     r = 0;
    if (r && arg_index < argc)
      thumb_path = argv[arg_index++];
    if (r && arg_index < argc)
