@@ -11,7 +11,8 @@ DEB_CONFIGURE_EXTRA_FLAGS := --enable-ecore-fb \
 	--disable-ecore-evas-dfb \
 	--enable-ecore-evas-fb \
 	--disable-rpath \
-	--enable-openssl \
+	--disable-openssl \
+	--enable-gnutls \
 	--enable-doc
 DEB_MAKE_CLEAN_TARGET := distclean
 
