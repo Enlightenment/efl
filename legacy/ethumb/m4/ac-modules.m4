@@ -122,8 +122,6 @@ AC_DEFUN([AC_ETH_OPTIONAL_MODULE],
                 MODNAME=false
         fi
 
-        USE_MODULE_[]MODNAME=[$]MODNAME
-
         _XTERM_COLORS
 
         # Check list for optional module $1
@@ -157,6 +155,7 @@ echo
 
         AM_CONDITIONAL(USE_MODULE_[]MODNAME, test x[$]MODNAME = xtrue)
         AC_SUBST(USE_MODULE_[]MODNAME)
+        USE_MODULE_[]MODNAME=[$]MODNAME
 
         m4_popdef([HELP_STR])dnl
         m4_popdef([DISABLE_HELP])dnl
