@@ -7,6 +7,8 @@ include /usr/share/cdbs/1/rules/simple-patchsys.mk
 DEB_CONFIGURE_EXTRA_FLAGS := --disable-rpath --enable-doc
 DEB_CONFIGURE_SCRIPT := ./autogen.sh
 DEB_MAKE_CLEAN_TARGET := distclean
+CFLAGS += -fvisibility=hidden
+LDFLAGS += -fvisibility=hidden
 
 build/libefreet-doc::
 	cd $(DEB_SRCDIR)/doc && make doc

@@ -5,6 +5,8 @@ include /usr/share/cdbs/1/rules/debhelper.mk
 
 DEB_CONFIGURE_SCRIPT := ./autogen.sh
 DEB_MAKE_CLEAN_TARGET := distclean
+CFLAGS += -fvisibility=hidden -ffast-math
+LDFLAGS += -fvisibility=hidden
 
 DEB_DH_STRIP_ARGS := --dbg-package=libevas-dbg
 

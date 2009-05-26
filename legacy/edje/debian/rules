@@ -7,7 +7,9 @@ DEB_CONFIGURE_SCRIPT := ./autogen.sh
 DEB_MAKE_CLEAN_TARGET := distclean
 DEB_DH_STRIP_ARGS := --dbg-package=libedje-dbg
 DEB_CONFIGURE_EXTRA_FLAGS := --disable-rpath --enable-doc
-DEB_SOURCE_VERSION := $(shell grep AC_INIT $(DEB_SRCDIR)/configure.ac|sed -e 's/AC_INIT(edje,\ \(.*\),\ .*@.*)/\1/g')
+DEB_SOURCE_VERSION := $(shell grep AC_INIT $(DEB_SRCDIR)/configure.ac | cut -d, -f2 | tr -d ' []')
+CFLAGS += -fvisibility=hidden -ffast-math
+LDFLAGS += -fvisibility=hidden
 
 build/libedje-doc::
 	cd $(DEB_SRCDIR)/doc && make doc

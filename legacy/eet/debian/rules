@@ -4,6 +4,7 @@ include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/autotools.mk
 
 CFLAGS += -fvisibility=hidden
+LDFLAGS += -fvisibility=hidden
 
 DEB_INSTALL_MANPAGES_libeet-doc := $(DEB_SRCDIR)/doc/man/man3/E*.3 $(DEB_SRCDIR)/doc/man/man3/e*.3
 DEB_INSTALL_MANPAGES_libeet-bin := $(DEB_SRCDIR)/debian/eet.1
