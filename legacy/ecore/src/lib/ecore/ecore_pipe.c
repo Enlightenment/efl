@@ -35,6 +35,9 @@
 
 # define pipe_write(fd, buffer, size) send((fd), (char *)(buffer), size, 0)
 # define pipe_read(fd, buffer, size)  recv((fd), (char *)(buffer), size, 0)
+# define pipe_close(fd)               closesocket(fd)
+# define PIPE_FD_INVALID              INVALID_SOCKET
+# define PIPE_FD_ERROR                SOCKET_ERROR
 
 #else
 
@@ -43,6 +46,9 @@
 
 # define pipe_write(fd, buffer, size) write((fd), buffer, size)
 # define pipe_read(fd, buffer, size)  read((fd), buffer, size)
+# define pipe_close(fd)               close(fd)
+# define pipe_fd_invalid              -1
+# define PIPE_FD_ERROR                -1
 
 #endif /* ! _WIN32 */
 
@@ -334,10 +340,10 @@ ecore_pipe_del(Ecore_Pipe *p)
      }
    if(p->fd_handler != NULL)
      ecore_main_fd_handler_del(p->fd_handler);
-   if(p->fd_read != -1)
-     close(p->fd_read);
-   if(p->fd_write != -1)
-     close(p->fd_write);
+   if(p->fd_read != PIPE_FD_INVALID)
+     pipe_close(p->fd_read);
+   if(p->fd_write != PIPE_FD_INVALID)
+     pipe_close(p->fd_write);
    data = (void *)p->data;
    free (p);
    return data;
@@ -360,8 +366,8 @@ ecore_pipe_read_close(Ecore_Pipe *p)
      }
    ecore_main_fd_handler_del(p->fd_handler);
    p->fd_handler = NULL;
-   close(p->fd_read);
-   p->fd_read = -1;
+   pipe_close(p->fd_read);
+   p->fd_read = PIPE_FD_INVALID;
 }
 
 /**
@@ -379,8 +385,8 @@ ecore_pipe_write_close(Ecore_Pipe *p)
 	      "ecore_pipe_write_close");
 	return;
      }
-   close(p->fd_write);
-   p->fd_write = -1;
+   pipe_close(p->fd_write);
+   p->fd_write = PIPE_FD_INVALID;
 }
 
 /**
@@ -406,7 +412,7 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
 	return FALSE;
      }
 
-   if(p->fd_write == -1)
+   if(p->fd_write == PIPE_FD_INVALID)
      return FALSE;
 
    /* First write the len into the pipe */
@@ -425,13 +431,13 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
 		  " to the pipe\n");
 	     return FALSE;
 	  }
-	else if (ret == -1 && errno == EPIPE)
+	else if (ret == PIPE_FD_ERROR && errno == EPIPE)
 	  {
-	     close(p->fd_write);
-	     p->fd_write = -1;
+	     pipe_close(p->fd_write);
+	     p->fd_write = PIPE_FD_INVALID;
 	     return FALSE;
 	  }
-	else if (ret == -1 && errno == EINTR)
+	else if (ret == PIPE_FD_ERROR && errno == EINTR)
 	  /* try it again */
 	  ;
 	else
@@ -460,13 +466,13 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
 	     already_written -= ret;
 	     continue;
 	  }
-	else if (ret == -1 && errno == EPIPE)
+	else if (ret == PIPE_FD_ERROR && errno == EPIPE)
 	  {
-	     close(p->fd_write);
-	     p->fd_write = -1;
+	     pipe_close(p->fd_write);
+	     p->fd_write = PIPE_FD_INVALID;
 	     return FALSE;
 	  }
-	else if (ret == -1 && errno == EINTR)
+	else if (ret == PIPE_FD_ERROR && errno == EINTR)
 	  /* try it again */
 	  ;
 	else
@@ -516,12 +522,12 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	     else if (ret == 0)
 	       {
 		  p->handler((void *)p->data, NULL, 0);
-		  close(p->fd_read);
-		  p->fd_read = -1;
+		  pipe_close(p->fd_read);
+		  p->fd_read = PIPE_FD_INVALID;
 		  p->fd_handler = NULL;
 		  return ECORE_CALLBACK_CANCEL;
 	       }
-	     else if ((ret == -1) && ((errno == EINTR) || (errno == EAGAIN)))
+	     else if ((ret == PIPE_FD_ERROR) && ((errno == EINTR) || (errno == EAGAIN)))
 	       return ECORE_CALLBACK_RENEW;
 	     else
 	       {
@@ -558,12 +564,12 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	else if (ret == 0)
 	  {
 	     p->handler((void *)p->data, NULL, 0);
-	     close(p->fd_read);
-	     p->fd_read = -1;
+	     pipe_close(p->fd_read);
+	     p->fd_read = PIPE_FD_INVALID;
 	     p->fd_handler = NULL;
 	     return ECORE_CALLBACK_CANCEL;
 	  }
-	else if (ret == -1 && (errno == EINTR || errno == EAGAIN))
+	else if (ret == PIPE_FD_ERROR && (errno == EINTR || errno == EAGAIN))
 	  return ECORE_CALLBACK_RENEW;
 	else
 	  {
