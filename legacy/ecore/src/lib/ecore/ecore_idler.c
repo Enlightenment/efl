@@ -83,7 +83,9 @@ _ecore_idler_shutdown(void)
 int
 _ecore_idler_call(void)
 {
-   Ecore_List2 *l;
+   Ecore_List2 *l, *last;
+
+   last = idlers ? ((Ecore_List2 *)idlers)->last : NULL;
 
    for (l = (Ecore_List2 *)idlers; l; l = l->next)
      {
@@ -94,6 +96,8 @@ _ecore_idler_call(void)
 	  {
 	     if (!ie->func(ie->data)) ecore_idler_del(ie);
 	  }
+
+	if (l == last) break;
      }
    if (idlers_delete_me)
      {
