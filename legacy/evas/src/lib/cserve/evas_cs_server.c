@@ -178,13 +178,15 @@ evas_cserve_client_send(Client *c, int opcode, int size, unsigned char *data)
    unsigned char *data2;
    int *ints;
    
-   data2 = malloc(size + (sizeof(int) * 2));
+   data2 = malloc(size + (sizeof(int) * 3));
    if (!data2) return;
    ints = (int *)data2;
    ints[0] = size;
    ints[1] = opcode;
-   memcpy(data2 + (sizeof(int) * 2), data, size);
-   client_write(c, data2, size + (sizeof(int) * 2));
+   c->req_to++;
+   ints[2] = c->req_to;
+   memcpy(data2 + (sizeof(int) * 3), data, size);
+   client_write(c, data2, size + (sizeof(int) * 3));
    free(data2);
 }
 
@@ -211,13 +213,22 @@ server_parse(Server *s, Client *c)
    ints = (int *)((c->inbuf));
    if ((ints[0] < 0) || (ints[0] > (1024 * 1024)))
      return 0;
-   if (c->inbufsize < (ints[0] + (sizeof(int) * 2)))
+   if (c->inbufsize < (ints[0] + (sizeof(int) * 3)))
      {
         return 0;
      }
-   data = c->inbuf + (sizeof(int) * 2);
+   data = c->inbuf + (sizeof(int) * 3);
+   if (ints[2] != (c->req_from + 1))
+     {
+        printf("EEK! sequence number mismatch from client with pid: %i\n"
+               "---- num %i is not 1 more than %i\n"
+               ,
+               c->pid, ints[2], c->req_from);
+        return 0;
+     }
+   c->req_from++;
    server_message_handle(s, c, ints[1], ints[0], data);
-   c->inbufalloc -= ints[0] + (sizeof(int) * 2);
+   c->inbufalloc -= ints[0] + (sizeof(int) * 3);
    if (c->inbufalloc == 0)
      {
         free(c->inbuf);
@@ -228,12 +239,12 @@ server_parse(Server *s, Client *c)
    newbuf = malloc(c->inbufalloc);
    if (!newbuf)
      {
-        c->inbufalloc += ints[0] + (sizeof(int) * 2);
+        c->inbufalloc += ints[0] + (sizeof(int) * 3);
         /* fixme - bad situation */
         return 0;
      }
-   memcpy(newbuf, c->inbuf + ints[0] + (sizeof(int) * 2), c->inbufalloc);
-   c->inbufsize -= ints[0] + (sizeof(int) * 2);
+   memcpy(newbuf, c->inbuf + ints[0] + (sizeof(int) * 3), c->inbufalloc);
+   c->inbufsize -= ints[0] + (sizeof(int) * 3);
    free(c->inbuf);
    c->inbuf = newbuf;
    return 1;

@@ -64,6 +64,7 @@ struct _Server
    void *data;
    pid_t pid;
    int server_id;
+   int req_from, req_to;
 };
 
 struct _Client
@@ -78,6 +79,7 @@ struct _Client
    void (*func) (void *fdata, Client *c);
    void *data;
    pid_t pid;
+   int req_from, req_to;
 };
 
 struct _Mem

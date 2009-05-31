@@ -85,13 +85,15 @@ server_disconnect(Server *s)
 static int
 server_send(Server *s, int opcode, int size, unsigned char *data)
 {
-   int ints[2];
+   int ints[3];
    int num;
    
    pipe_handle(1);
    ints[0] = size;
    ints[1] = opcode;
-   num = write(s->fd, ints, (sizeof(int) * 2));
+   s->req_to++;
+   ints[2] = s->req_to;
+   num = write(s->fd, ints, (sizeof(int) * 3));
    if (num < 0)
      {
         pipe_handle(0);
@@ -114,11 +116,11 @@ server_send(Server *s, int opcode, int size, unsigned char *data)
 static unsigned char *
 server_read(Server *s, int *opcode, int *size)
 {
-   int ints[2], num, left;
+   int ints[3], num, left;
    unsigned char *data;
    
-   num = read(s->fd, ints, sizeof(int) * 2);
-   if (num != (sizeof(int) * 2))
+   num = read(s->fd, ints, sizeof(int) * 3);
+   if (num != (sizeof(int) * 3))
      {
         if (cserve) server_disconnect(cserve);
         cserve = NULL;
@@ -127,6 +129,15 @@ server_read(Server *s, int *opcode, int *size)
    *size = ints[0];
    *opcode = ints[1];
    if ((*size < 0) || (*size > (1024 * 1024))) return NULL;
+   if (ints[2] != (s->req_from + 1))
+     {
+        printf("EEK! sequence number mismatch from serer with pid: %i\n"
+               "---- num %i is not 1 more than %i\n"
+               ,
+               s->pid, ints[2], s->req_from);
+        return NULL;
+     }
+   s->req_from++;
    data = malloc(*size);
    if (!data) return NULL;
    num = read(s->fd, data, *size);
