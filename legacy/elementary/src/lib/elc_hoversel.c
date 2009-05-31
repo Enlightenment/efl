@@ -1,6 +1,24 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Hoversel
+ * 
+ * A hoversel is a button that pops up a list of items (automatically
+ * choosing the direction to display) that have a lable and/or an icon to
+ * select from. It is a convenience widget to avoid the need to do all the
+ * piecing together yourself. It is intended for a small numbr of items in
+ * the hoversel menu (no more than 8), though is capable of many more.
+ * 
+ * Signals that you can add callbacks for are:
+ * 
+ * clicked  - the user clicked the hoversel button and popped up the sel
+ * 
+ * selected - an item in the hoversel list is selected. event_info is the item
+ * selected - Elm_Hoversel_Item
+ * 
+ * dismissed - the hover is dismissed
+ */
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -149,6 +167,14 @@ _parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
    wd->hover_parent = NULL;
 }
 
+/**
+ * Add a new Hoversel object
+ *
+ * @param parent The parent object
+ * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Hoversel
+ */
 EAPI Evas_Object *
 elm_hoversel_add(Evas_Object *parent)
 {
@@ -175,6 +201,16 @@ elm_hoversel_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * Set the Hover parent
+ * 
+ * Sets the hover parent object. See Hover objects for more information.
+ *
+ * @param obj The hoversel object
+ * @param parent The parent to use
+ *
+ * @ingroup Hoversel
+ */
 EAPI void
 elm_hoversel_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
@@ -187,6 +223,17 @@ elm_hoversel_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
      evas_object_event_callback_add(wd->hover_parent, EVAS_CALLBACK_DEL, _parent_del, obj);
 }
 
+/**
+ * Set the hoversel button label
+ * 
+ * This sets the label of the button that is always visible (before it is
+ * clicked and expanded). Also see elm_button_label_set().
+ *
+ * @param obj The hoversel object
+ * @param label The label text.
+ *
+ * @ingroup Hoversel
+ */
 EAPI void
 elm_hoversel_label_set(Evas_Object *obj, const char *label)
 {
@@ -195,6 +242,17 @@ elm_hoversel_label_set(Evas_Object *obj, const char *label)
    elm_button_label_set(wd->btn, label);
 }
 
+/**
+ * Set the icon of the hoversel button
+ * 
+ * Sets the icon of the button that is always visible (before it is clicked
+ * and expanded). Also see elm_button_icon_set().
+ *
+ * @param obj The hoversel object
+ * @param icon The icon object
+ *
+ * @ingroup Hoversel
+ */
 EAPI void
 elm_hoversel_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
@@ -203,6 +261,15 @@ elm_hoversel_icon_set(Evas_Object *obj, Evas_Object *icon)
    elm_button_icon_set(wd->btn, icon);
 }
 
+/**
+ * Trigger the hoversel popup from code
+ * 
+ * This makes the hoversel popup activate with the items added being listed.
+ *
+ * @param obj The hoversel object
+ *
+ * @ingroup Hoversel
+ */
 EAPI void
 elm_hoversel_hover_begin(Evas_Object *obj)
 {
@@ -212,6 +279,15 @@ elm_hoversel_hover_begin(Evas_Object *obj)
    _activate(obj);
 }
 
+/**
+ * This ends the hoversel popup.
+ * 
+ * This will close the hoversel popup, making it disappear, if it was active.
+ *
+ * @param obj The hoversel object
+ *
+ * @ingroup Hoversel
+ */
 EAPI void
 elm_hoversel_hover_end(Evas_Object *obj)
 {
@@ -225,6 +301,22 @@ elm_hoversel_hover_end(Evas_Object *obj)
      }
 }
 
+/**
+ * Add an item to the hoversel button
+ * 
+ * This adds an item to the hoversel to show when it is clicked
+ *
+ * @param obj The hoversel object
+ * @param label The text abel to use for the item (NULL if not desired)
+ * @param icon_file A image file path on disk to use for the icon  or standard
+ * icon name(NULL if not desired)
+ * @param icon_type The icon type if relevant
+ * @param func Convenience function to call when this item is selected
+ * @param data Data to pass to the conveience function
+ * @return A handle to the item added.
+ *
+ * @ingroup Hoversel
+ */
 EAPI Elm_Hoversel_Item *
 elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
@@ -242,6 +334,16 @@ elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file
    return it;
 }
 
+/**
+ * Delete an item from the hoversel
+ * 
+ * This deletes the item from the hoversel (should not be called while the
+ * hoversel is active).
+ *
+ * @param it The item to delete
+ *
+ * @ingroup Hoversel
+ */
 EAPI void
 elm_hoversel_item_del(Elm_Hoversel_Item *it)
 {
@@ -254,6 +356,17 @@ elm_hoversel_item_del(Elm_Hoversel_Item *it)
    free(it);
 }
 
+/**
+ * Get the data pointer passed to the item add function
+ * 
+ * This returns the data pointer supplied with elm_hoversel_item_add() that
+ * will be passed to the select function callback.
+ *
+ * @param it The item to get the data from
+ * @return The data pointer set with elm_hoversel_item_add()
+ *
+ * @ingroup Hoversel
+ */
 EAPI void *
 elm_hoversel_item_data_get(Elm_Hoversel_Item *it)
 {

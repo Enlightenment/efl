@@ -1,6 +1,17 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Anchorview Anchorview
+ * 
+ * This is just like the Anchorblock object, but provides a scroller to hold
+ * the text automatically.
+ * 
+ * Signals that you can add callbacks for are:
+ * 
+ * anchor,clicked - achor called was clicked. event_info is anchor info -
+ * Elm_Entry_Anchorview_Info
+ */
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -108,6 +119,14 @@ _parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
    wd->hover_parent = NULL;
 }
 
+/**
+ * Add a new Anchorview object
+ *
+ * @param parent The parent object
+ * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Anchorview
+ */
 EAPI Evas_Object *
 elm_anchorview_add(Evas_Object *parent)
 {
@@ -144,6 +163,19 @@ elm_anchorview_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+  * Set the text markup of the anchorview
+  *
+  * This sets the text of the anchorview to be the text given as @p text. This
+  * text is in markup format with \<a href=XXX\> beginning an achor with the
+  * string link of 'XXX', and \</\> or \</a\> ending the link. Other markup can
+  * be used dependign on the style support.
+  *
+  * @param obj The anchorview object
+  * @param text The text to set, or NULL to clear
+  *
+  * @ingroup Anchorview
+  */
 EAPI void
 elm_anchorview_text_set(Evas_Object *obj, const char *text)
 {
@@ -156,6 +188,17 @@ elm_anchorview_text_set(Evas_Object *obj, const char *text)
    _sizing_eval(obj);
 }
 
+/**
+  * Set the parent of the hover popup
+  *
+  * This sets the parent of the hover that anchorview will create. See hover
+  * objects for more information on this.
+  *
+  * @param obj The anchorview object
+  * @param parent The parent the hover should use
+  *
+  * @ingroup Anchorview
+  */
 EAPI void
 elm_anchorview_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
@@ -167,6 +210,17 @@ elm_anchorview_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
      evas_object_event_callback_add(wd->hover_parent, EVAS_CALLBACK_DEL, _parent_del, obj);
 }
 
+/**
+  * Set the style that the hover should use
+  *
+  * This sets the style for the hover that anchorview will create. See hover
+  * objects for more information
+  *
+  * @param obj The anchorview object
+  * @param style The style to use
+  *
+  * @ingroup Anchorview
+  */
 EAPI void
 elm_anchorview_hover_style_set(Evas_Object *obj, const char *style)
 {
@@ -176,6 +230,15 @@ elm_anchorview_hover_style_set(Evas_Object *obj, const char *style)
    if (style) wd->hover_style = eina_stringshare_add(style);
 }  
 
+/**
+  * Stop the hover popup in the anchorview
+  *
+  * This will stop the hover popup in the anchorview if it is currently active.
+  *
+  * @param obj The anchorview object
+  *
+  * @ingroup Anchorview
+  */
 EAPI void
 elm_anchorview_hover_end(Evas_Object *obj)
 {

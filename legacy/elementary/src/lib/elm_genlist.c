@@ -1307,10 +1307,19 @@ _item_queue(Widget_Data *wd, Elm_Genlist_Item *it)
 }
 
 /**
- *  XXX
+ * Append item to the end of the genlist
  *
- * @param xxx XXX
- * @return XXX
+ * This appends the given item to the end of the list or the end of the
+ * children if the parent is given.
+ * 
+ * @param obj The genlist object
+ * @param itc The item class for the item
+ * @param data The item data
+ * @param parent The parent item, or NULL if none
+ * @param flags Item flags
+ * @param func Convenience function called when item selected
+ * @param func_data Data passed to @p func above.
+ * @return A handle to the item added or NULL if not possible
  *
  * @ingroup Genlist
  */
@@ -1346,10 +1355,19 @@ elm_genlist_item_append(Evas_Object *obj, const Elm_Genlist_Item_Class *itc,
 }
 
 /**
- *  XXX
+ * Prepend item at start of the genlist
  *
- * @param xxx XXX
- * @return XXX
+ * This adds an item to the beginning of the list or beginning of the children
+ * of the parent if given.
+ * 
+ * @param obj The genlist object
+ * @param itc The item class for the item
+ * @param data The item data
+ * @param parent The parent item, or NULL if none
+ * @param flags Item flags
+ * @param func Convenience function called when item selected
+ * @param func_data Data passed to @p func above.
+ * @return A handle to the item added or NULL if not possible
  *
  * @ingroup Genlist
  */
@@ -1375,10 +1393,19 @@ elm_genlist_item_prepend(Evas_Object *obj, const Elm_Genlist_Item_Class *itc,
 }
 
 /**
- *  XXX
+ * Insert item before another in the genlist
+ * 
+ * This inserts an item before another in the list. It will be in the same tree
+ * level as the item it is inseted before.
  *
- * @param xxx XXX
- * @return XXX
+ * @param obj The genlist object
+ * @param itc The item class for the item
+ * @param data The item data
+ * @param before The item to insert before
+ * @param flags Item flags
+ * @param func Convenience function called when item selected
+ * @param func_data Data passed to @p func above.
+ * @return A handle to the item added or NULL if not possible
  *
  * @ingroup Genlist
  */
@@ -1405,10 +1432,19 @@ elm_genlist_item_insert_before(Evas_Object *obj, const Elm_Genlist_Item_Class *i
 }
 
 /**
- *  XXX
+ * Insert and item after another in the genlst
  *
- * @param xxx XXX
- * @return XXX
+ * This inserts an item after another in the list. It will be in the same tree
+ * level as the item it is inseted after.
+ *
+ * @param obj The genlist object
+ * @param itc The item class for the item
+ * @param data The item data
+ * @param after The item to insert after
+ * @param flags Item flags
+ * @param func Convenience function called when item selected
+ * @param func_data Data passed to @p func above.
+ * @return A handle to the item added or NULL if not possible
  *
  * @ingroup Genlist
  */
@@ -1435,10 +1471,11 @@ elm_genlist_item_insert_after(Evas_Object *obj, const Elm_Genlist_Item_Class *it
 }
 
 /**
- *  XXX
+ * Clear the genlist
  *
- * @param xxx XXX
- * @return XXX
+ * This clears all items in the list, leaving it empty.
+ * 
+ * @param obj The genlist object
  *
  * @ingroup Genlist
  */
@@ -1492,10 +1529,13 @@ elm_genlist_clear(Evas_Object *obj)
 }
 
 /**
- *  XXX
+ * Enable or disable multi-select in the genlist
  *
- * @param xxx XXX
- * @return XXX
+ * This enables (1) or disableds (0) multi-select in the list. This allows
+ * more than 1 item to be selected.
+ * 
+ * @param obj The genlist object
+ * @param multi Multi-select enable/disable
  *
  * @ingroup Genlist
  */
@@ -1507,10 +1547,16 @@ elm_genlist_multi_select_set(Evas_Object *obj, Evas_Bool multi)
 }
 
 /**
- *  XXX
+ * Get the selectd item in the genlist
  *
- * @param xxx XXX
- * @return XXX
+ * This gets the selected item in the list (if multi-select is enabled only
+ * the first item in the list is selected - which is not very useful, so see
+ * elm_genlist_selected_items_get()for when multi-select is used).
+ * 
+ * If no item is selected, NULL is returned.
+ * 
+ * @param obj The genlist object
+ * @return The selected item, or NULL if none.
  *
  * @ingroup Genlist
  */
@@ -1523,10 +1569,14 @@ elm_genlist_selected_item_get(const Evas_Object *obj)
 }
 
 /**
- *  XXX
+ * Get a list of selected items in the genlist
  *
- * @param xxx XXX
- * @return XXX
+ * This retgurns a list of the selected items. This list pointer is only valid
+ * so long as no items are selected or unselected (or unselected implicitly
+ * by deletion). The list contains Elm_Genlist_Item pointers.
+ * 
+ * @param obj The genlist object
+ * @return The list of selected items, nor NUL if none are selected.
  *
  * @ingroup Genlist
  */
@@ -1538,10 +1588,12 @@ elm_genlist_selected_items_get(const Evas_Object *obj)
 }
 
 /**
- *  XXX
+ * Get the first item in the genlist
  *
- * @param xxx XXX
- * @return XXX
+ * This returns the first item in the list.
+ * 
+ * @param obj The genlist object
+ * @return The first item, or NULL if none
  *
  * @ingroup Genlist
  */
@@ -1556,10 +1608,11 @@ elm_genlist_first_item_get(const Evas_Object *obj)
 }
 
 /**
- *  XXX
+ * Get the last item in the genlist
  *
- * @param xxx XXX
- * @return XXX
+ * This returns the last item in the list.
+ * 
+ * @return The last item, or NULL if none
  *
  * @ingroup Genlist
  */
@@ -1575,10 +1628,12 @@ elm_genlist_last_item_get(const Evas_Object *obj)
 }
 
 /**
- *  XXX
+ * Get the next item in the genlist
  *
- * @param xxx XXX
- * @return XXX
+ * This returns the item after the item @p it. 
+ * 
+ * @param it The item
+ * @return The item after @p it, or NULL if none
  *
  * @ingroup Genlist
  */
@@ -1594,10 +1649,12 @@ elm_genlist_item_next_get(const Elm_Genlist_Item *it)
 }
 
 /**
- *  XXX
+ * Get the previous item in the genlist
  *
- * @param xxx XXX
- * @return XXX
+ * This returns the item before the item @p it. 
+ * 
+ * @param it The item
+ * @return The item before @p it, or NULL if none
  *
  * @ingroup Genlist
  */
@@ -1613,10 +1670,12 @@ elm_genlist_item_prev_get(const Elm_Genlist_Item *it)
 }
 
 /**
- *  XXX
+ * Get the genlist object from an item
  *
- * @param xxx XXX
- * @return XXX
+ * This returns the genlist object itself that an item belongs to.
+ * 
+ * @param it The item
+ * @return The genlist object
  *
  * @ingroup Genlist
  */
@@ -1628,10 +1687,12 @@ elm_genlist_item_genlist_get(const Elm_Genlist_Item *it)
 }
 
 /**
- *  XXX
+ * Get the parent item of the given item
  *
- * @param xxx XXX
- * @return XXX
+ * This returns the prent item of the item @p it given.
+ * 
+ * @param it The item
+ * @return The parent of the item or NULL if none
  *
  * @ingroup Genlist
  */
@@ -1643,10 +1704,12 @@ elm_genlist_item_parent_get(const Elm_Genlist_Item *it)
 }
 
 /**
- *  XXX
+ * Clear all sub-items (children) of the given item
+ * 
+ * This clears all items that are children (or their descendants) of the
+ * given item @p it.
  *
- * @param xxx XXX
- * @return XXX
+ * @param it The item
  *
  * @ingroup Genlist
  */
@@ -1664,10 +1727,13 @@ elm_genlist_item_subitems_clear(Elm_Genlist_Item *it)
 }
 
 /**
- *  XXX
+ * Set the selected state of an item
+ * 
+ * This sets the selected state (1 selected, 0 not selected) of the given
+ * item @p it.
  *
- * @param xxx XXX
- * @return XXX
+ * @param it The item
+ * @param selcted The slected state
  *
  * @ingroup Genlist
  */
@@ -1696,10 +1762,12 @@ elm_genlist_item_selected_set(Elm_Genlist_Item *it, Evas_Bool selected)
 }
 
 /**
- *  XXX
- *
- * @param xxx XXX
- * @return XXX
+ * Get the selected state of an item
+ * 
+ * This gets the selected state of an item (1 selected, 0 not selected).
+ * 
+ * @param it The item
+ * @return The selected state
  *
  * @ingroup Genlist
  */
@@ -1711,10 +1779,13 @@ elm_genlist_item_selected_get(const Elm_Genlist_Item *it)
 }
 
 /**
- *  XXX
+ * Sets the expanded state of an item (if it's a parent)
+ * 
+ * This expands or contracts a parent iterm (thus showing or hiding the
+ * children).
  *
- * @param xxx XXX
- * @return XXX
+ * @param it The item
+ * @param expanded The expanded state (1 expanded, 0 not expanded).
  *
  * @ingroup Genlist
  */
@@ -1739,10 +1810,12 @@ elm_genlist_item_expanded_set(Elm_Genlist_Item *it, Evas_Bool expanded)
 }
 
 /**
- *  XXX
+ * Get the expanded state of an item
  *
- * @param xxx XXX
- * @return XXX
+ * This gets the expanded state of an item
+ * 
+ * @param it The item
+ * @return Thre expanded state
  *
  * @ingroup Genlist
  */
@@ -1754,10 +1827,14 @@ elm_genlist_item_expanded_get(const Elm_Genlist_Item *it)
 }
     
 /**
- *  XXX
+ * Sets the disabled state of an item.
+ * 
+ * A disabled item cannot be selected or unselected. It will also change
+ * appearance to appear disabled. This sets the disabled state (1 disabled, 0
+ * not disabled).
  *
- * @param xxx XXX
- * @return XXX
+ * @param it The item
+ * @param disabled The disabled state
  *
  * @ingroup Genlist
  */
@@ -1778,10 +1855,12 @@ elm_genlist_item_disabled_set(Elm_Genlist_Item *it, Evas_Bool disabled)
 }
 
 /**
- *  XXX
+ * Get the disabled state of an item
  *
- * @param xxx XXX
- * @return XXX
+ * This gets the disabld state of the given item.
+ * 
+ * @param it The item
+ * @return The disabled state
  *
  * @ingroup Genlist
  */
@@ -1794,10 +1873,12 @@ elm_genlist_item_disabled_get(const Elm_Genlist_Item *it)
 }
 
 /**
- *  XXX
+ * Show the given item
  *
- * @param xxx XXX
- * @return XXX
+ * This causes genlist to jump to the given item @p it and show it (by scrolling),
+ * if it is not fully visible.
+ * 
+ * @param it The item
  *
  * @ingroup Genlist
  */
@@ -1855,10 +1936,13 @@ elm_genlist_item_del(Elm_Genlist_Item *it)
 }
 
 /**
- *  XXX
+ * Get the data item from the genlist item
  *
- * @param xxx XXX
- * @return XXX
+ * This returns the data value passed on the elm_genlist_item_append() and
+ * related item addition calls.
+ * 
+ * @param it The item
+ * @return The data pointer provided when created
  *
  * @ingroup Genlist
  */
@@ -1869,10 +1953,13 @@ elm_genlist_item_data_get(const Elm_Genlist_Item *it)
 }
 
 /**
- *  XXX
+ * Update the contents of an item
  *
- * @param xxx XXX
- * @return XXX
+ * This updates an item by calling all the item class functions again to get
+ * the icons, labels and states. Use this when he original item data has
+ * changed and the changes are desired to be reflected.
+ * 
+ * @param it The item
  *
  * @ingroup Genlist
  */
@@ -1921,10 +2008,17 @@ elm_genlist_item_update(Elm_Genlist_Item *it)
 }
 
 /**
- *  XXX
+ * This sets the horizontal stretching mode
  *
- * @param xxx XXX
- * @return XXX
+ * This sets the mode used for sizing items horizontally. Valid modes are
+ * ELM_LIST_LIMIT and ELM_LIST_SCROLL. The default is ELM_LIST_SCROLL. This
+ * mode means that if items are too wide to fit, the scroller will scroll
+ * horizontally. Otherwise items are expanded to fill the width of the
+ * viewport of the scroller. If it is ELM_LIST_LIMIT, Items will be expanded
+ * to the viewport width and limited to that size.
+ * 
+ * @param obj The genlist object
+ * @param mode The mode to use
  *
  * @ingroup Genlist
  */
@@ -1941,10 +2035,15 @@ elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
 }
 
 /**
- *  XXX
+ * Set the always select mode.
+ * 
+ * Items will only call their selection func and callback when first becoming
+ * selected. Any further clicks will do nothing, unless you enable always
+ * select with elm_genlist_always_select_mode_set(). This means even if
+ * selected, every click will make the selected callbacks be called.
  *
- * @param xxx XXX
- * @return XXX
+ * @param obj The genlist object
+ * @param always_select The always select mode (1 on, 2 off)
  *
  * @ingroup Genlist
  */
@@ -1956,10 +2055,13 @@ elm_genlist_always_select_mode_set(Evas_Object *obj, Evas_Bool always_select)
 }
 
 /**
- *  XXX
+ * Set no select mode
  *
- * @param xxx XXX
- * @return XXX
+ * This will turn off the ability to select items entirely and they will
+ * neither appear selected nor call selected callback functions.
+ * 
+ * @param obj The genlist object
+ * @param no_select The no select mode (1 on, 2 off)
  *
  * @ingroup Genlist
  */

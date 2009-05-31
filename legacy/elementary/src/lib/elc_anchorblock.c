@@ -1,6 +1,20 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Anchorblock Anchorblock
+ * 
+ * Anchorblock is for displaying tet that contains markup with anchors like:
+ * \<a href=1234\>something\</\> in it. These will be drawn differently and will
+ * be able to be clicked on by the user to display a popup. This popup then
+ * is intended to contain extra options such as "call", "add to contacts",
+ * "open web page" etc.
+ * 
+ * Signals that you can add callbacks for are:
+ * 
+ * anchor,clicked - achor called was clicked. event_info is anchor info -
+ * Elm_Entry_Anchorview_Info
+ */
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -119,6 +133,14 @@ _parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
    wd->hover_parent = NULL;
 }
 
+/**
+ * Add a new Anchorblock object
+ * 
+ * @param parent The parent object
+ * @return The new object or NULL if it cannot be created
+ * 
+ * @ingroup Anchorblock
+ */
 EAPI Evas_Object *
 elm_anchorblock_add(Evas_Object *parent)
 {
@@ -152,6 +174,19 @@ elm_anchorblock_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * Set the text markup of the anchorblock
+ * 
+ * This sets the text of the anchorblock to be the text given as @p text. This
+ * text is in markup format with \<a href=XXX\> beginning an achor with the
+ * string link of 'XXX', and \</\> or \</a\> ending the link. Other markup can
+ * be used dependign on the style support.
+ * 
+ * @param obj The anchorblock object
+ * @param text The text to set, or NULL to clear
+ * 
+ * @ingroup Anchorblock
+ */
 EAPI void
 elm_anchorblock_text_set(Evas_Object *obj, const char *text)
 {
@@ -164,6 +199,17 @@ elm_anchorblock_text_set(Evas_Object *obj, const char *text)
    _sizing_eval(obj);
 }
 
+/**
+ * Set the parent of the hover popup
+ * 
+ * This sets the parent of the hover that anchorblock will create. See hover
+ * objects for more information on this.
+ * 
+ * @param obj The anchorblock object
+ * @param parent The parent the hover should use
+ * 
+ * @ingroup Anchorblock
+ */
 EAPI void
 elm_anchorblock_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
@@ -175,6 +221,17 @@ elm_anchorblock_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
      evas_object_event_callback_add(wd->hover_parent, EVAS_CALLBACK_DEL, _parent_del, obj);
 }
 
+/**
+ * Set the style that the hover should use
+ * 
+ * This sets the style for the hover that anchorblock will create. See hover
+ * objects for more information
+ * 
+ * @param obj The anchorblock object
+ * @param style The style to use
+ * 
+ * @ingroup Anchorblock
+ */
 EAPI void
 elm_anchorblock_hover_style_set(Evas_Object *obj, const char *style)
 {
@@ -184,6 +241,15 @@ elm_anchorblock_hover_style_set(Evas_Object *obj, const char *style)
    if (style) wd->hover_style = eina_stringshare_add(style);
 }  
 
+/**
+ * Stop the hover popup in the anchorblock
+ * 
+ * This will stop the hover popup in the anchorblock if it is currently active.
+ * 
+ * @param obj The anchorblock object
+ * 
+ * @ingroup Anchorblock
+ */
 EAPI void
 elm_anchorblock_hover_end(Evas_Object *obj)
 {
