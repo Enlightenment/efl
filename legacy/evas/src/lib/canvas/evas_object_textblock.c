@@ -1858,7 +1858,8 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	      c->marginl - c->marginr)))
 	  {
 	     wrap = _layout_text_cutoff_get(c, fmt, it);
-             if (wrap == 0) wrap = 1;
+             if (wrap == 0)
+               evas_common_font_utf8_get_next((unsigned char *)str, &wrap);
 	     if (wrap > 0)
 	       {
 		  if (fmt->wrap_word)
@@ -1897,11 +1898,14 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 				      if (it->text) free(it->text);
 				      _format_free(c->obj, it->format);
 				      free(it);
-				      it = (Evas_Object_Textblock_Item *)(EINA_INLIST_GET(c->ln->items))->last;
-				      _layout_strip_trailing_whitespace(c, fmt, it);
-				      twrap = _layout_word_end(str, wrap);
-				      ch = evas_common_font_utf8_get_next((unsigned char *)str, &twrap);
-				      str = str + twrap;
+                                      if (c->ln->items)
+                                        {
+                                           it = (Evas_Object_Textblock_Item *)(EINA_INLIST_GET(c->ln->items))->last;
+                                           _layout_strip_trailing_whitespace(c, fmt, it);
+                                           twrap = _layout_word_end(str, wrap);
+                                           ch = evas_common_font_utf8_get_next((unsigned char *)str, &twrap);
+                                           str = str + twrap;
+                                        }
 				   }
 			      }
 			 }
