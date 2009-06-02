@@ -2297,6 +2297,7 @@ _eet_data_descriptor_decode(Eet_Free_Context *context,
 	/* advance to next chunk */
         NEXT_CHUNK(p, size, echnk, ed);
      }
+
    _eet_freelist_all_unref(context);
    if (dumpfunc)
      {

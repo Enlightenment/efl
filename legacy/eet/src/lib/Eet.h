@@ -1367,13 +1367,14 @@ eet_dictionary_string_check    * example: values), and @p type is the basic data
    EAPI Eet_Node *eet_node_unsigned_char_new(const char *name, unsigned char uc);
    EAPI Eet_Node *eet_node_unsigned_short_new(const char *name, unsigned short us);
    EAPI Eet_Node *eet_node_unsigned_int_new(const char *name, unsigned int ui);
+   EAPI Eet_Node *eet_node_unsigned_long_long_new(const char *name, unsigned long long l);
    EAPI Eet_Node *eet_node_string_new(const char *name, const char *str);
    EAPI Eet_Node *eet_node_inlined_string_new(const char *name, const char *str);
    EAPI Eet_Node *eet_node_null_new(const char *name);
    EAPI Eet_Node *eet_node_list_new(const char *name, Eina_List *nodes);
    EAPI Eet_Node *eet_node_array_new(const char *name, int count, Eina_List *nodes);
-   EAPI Eet_Node *eet_node_var_array_new(const char *name, int count, Eina_List *nodes);
-   EAPI Eet_Node *eet_node_hash_new(const char *name, const char *key, Eina_List *nodes);
+   EAPI Eet_Node *eet_node_var_array_new(const char *name, Eina_List *nodes);
+   EAPI Eet_Node *eet_node_hash_new(const char *name, const char *key, Eet_Node *node);
    EAPI Eet_Node *eet_node_struct_new(const char *name, Eina_List *nodes);
    EAPI void eet_node_del(Eet_Node *n);
 

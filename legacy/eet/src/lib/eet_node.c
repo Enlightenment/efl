@@ -68,6 +68,7 @@ EET_NODE_NEW(EET_T_DOUBLE, double, d, double);
 EET_NODE_NEW(EET_T_UCHAR, unsigned_char, uc, unsigned char);
 EET_NODE_NEW(EET_T_USHORT, unsigned_short, us, unsigned short);
 EET_NODE_NEW(EET_T_UINT, unsigned_int, ui, unsigned int);
+EET_NODE_NEW(EET_T_ULONG_LONG, unsigned_long_long, ul, unsigned long long);
 EET_NODE_STR_NEW(EET_T_STRING, string, str, const char *);
 EET_NODE_STR_NEW(EET_T_INLINED_STRING, inlined_string, str, const char *);
 
@@ -113,14 +114,14 @@ eet_node_array_new(const char *name, int count, Eina_List *nodes)
 }
 
 Eet_Node *
-eet_node_var_array_new(const char *name, int count, Eina_List *nodes)
+eet_node_var_array_new(const char *name, Eina_List *nodes)
 {
    Eet_Node *n;
 
    n = _eet_node_new(name, EET_G_VAR_ARRAY);
    if (!n) return NULL;
 
-   n->count = count;
+   n->count = eina_list_count(nodes);
 
    _eet_node_append(n, nodes);
 
@@ -128,14 +129,18 @@ eet_node_var_array_new(const char *name, int count, Eina_List *nodes)
 }
 
 Eet_Node *
-eet_node_hash_new(const char *name, const char *key, Eina_List *nodes)
+eet_node_hash_new(const char *name, const char *key, Eet_Node *node)
 {
+   Eina_List *nodes;
    Eet_Node *n;
+
+   if (!node) return NULL;
 
    n = _eet_node_new(name, EET_G_HASH);
    if (!n) return NULL;
 
    n->key = eina_stringshare_add(key);
+   nodes = eina_list_append(NULL, node);
 
    _eet_node_append(n, nodes);
 
@@ -194,4 +199,162 @@ eet_node_del(Eet_Node *n)
 
    eina_stringshare_del(n->name);
    free(n);
+}
+
+
+static const char *eet_node_dump_g_name[6] = {
+  "struct",
+  "array",
+  "var_array",
+  "list",
+  "hash",
+  "???"
+};
+
+static const char *eet_node_dump_t_name[14][2] = {
+  { "???: ", "???" },
+  { "char: ", "%hhi" },
+  { "short: ", "%hi" },
+  { "int: ", "%i" },
+  { "long_long: ", "%lli" },
+  { "float: ", "%1.25f" },
+  { "double: ", "%1.25f" },
+  { "uchar: ", "%hhu" },
+  { "ushort: ", "%i" },
+  { "uint: ", "%u" },
+  { "ulong_long: ", "%llu" },
+  { "null", "" }
+};
+
+static void
+eet_node_dump_level(int level, void (*dumpfunc) (void *data, const char *str), void *dumpdata)
+{
+   int i;
+
+   for (i = 0; i < level; i++) dumpfunc(dumpdata, "  ");
+}
+
+static char *
+eet_node_string_escape(const char *str)
+{
+   char *s, *sp;
+   const char *strp;
+   int sz = 0;
+
+   for (strp = str; *strp; strp++)
+     {
+	if (*strp == '\"') sz += 2;
+	else if (*strp == '\\') sz += 2;
+	else sz += 1;
+     }
+   s = malloc(sz + 1);
+   if (!s) return NULL;
+   for (strp = str, sp = s; *strp; strp++, sp++)
+     {
+	if (*strp == '\"')
+	  {
+	     *sp = '\\';
+	     sp++;
+	  }
+	else if (*strp == '\\')
+	  {
+	     *sp = '\\';
+	     sp++;
+	  }
+	*sp = *strp;
+     }
+   *sp = 0;
+   return s;
+}
+
+static void
+eet_node_dump_string_escape(void *dumpdata, void dumpfunc(void *data, const char *str), const char *str)
+{
+   char *s;
+
+   s = eet_node_string_escape(str);
+   if (!s) return ;
+
+   dumpfunc(dumpdata, s);
+   free(s);
+}
+
+static void
+eet_node_dump_simple_type(Eet_Node *n, int level,
+			  void (*dumpfunc) (void *data, const char *str), void *dumpdata)
+{
+   const char *type_name = NULL;
+   char tbuf[256];
+
+   eet_node_dump_level(level, dumpfunc, dumpdata);
+   dumpfunc(dumpdata, "  value \"");
+   eet_node_dump_string_escape(dumpdata, dumpfunc, n->name);
+   dumpfunc(dumpdata, "\" ");
+
+#define EET_T_TYPE(Eet_Type, Type)					\
+   case Eet_Type:							\
+     {									\
+	dumpfunc(dumpdata, eet_node_dump_t_name[Eet_Type][0]);		\
+	snprintf(tbuf, sizeof (tbuf), eet_node_dump_t_name[Eet_Type][1], n->data.Type); \
+	dumpfunc(dumpdata, tbuf);					\
+	break;								\
+     }
+
+   switch (n->type)
+     {
+	EET_T_TYPE(EET_T_CHAR, c);
+	EET_T_TYPE(EET_T_SHORT, s);
+	EET_T_TYPE(EET_T_INT, i);
+	EET_T_TYPE(EET_T_LONG_LONG, l);
+	EET_T_TYPE(EET_T_FLOAT, f);
+	EET_T_TYPE(EET_T_DOUBLE, d);
+	EET_T_TYPE(EET_T_UCHAR, uc);
+	EET_T_TYPE(EET_T_USHORT, us);
+	EET_T_TYPE(EET_T_UINT, ui);
+	EET_T_TYPE(EET_T_ULONG_LONG, ul);
+      case EET_T_INLINED_STRING:
+	 type_name = "inlined: \"";
+      case EET_T_STRING:
+	 if (!type_name) type_name = "string: \"";
+
+	 dumpfunc(dumpdata, type_name);
+	 eet_node_dump_string_escape(dumpdata, dumpfunc, n->data.str);
+	 dumpfunc(dumpdata, "\"");
+	 break;
+      case EET_T_NULL:
+	 dumpfunc(dumpdata, "null");
+	 break;
+      default:
+	 dumpfunc(dumpdata, "???: ???");
+	 break;
+     }
+
+   dumpfunc(dumpdata, ";\n");
+}
+
+void
+eet_node_dump(Eet_Node *n, int dumplevel, void (*dumpfunc) (void *data, const char *str), void *dumpdata)
+{
+   switch (n->type)
+     {
+      case EET_G_HASH:
+      case EET_G_UNKNOWN:
+      case EET_G_VAR_ARRAY:
+      case EET_G_ARRAY:
+      case EET_G_LIST:
+	 break;
+      case EET_T_STRING:
+      case EET_T_INLINED_STRING:
+      case EET_T_CHAR:
+      case EET_T_SHORT:
+      case EET_T_INT:
+      case EET_T_LONG_LONG:
+      case EET_T_FLOAT:
+      case EET_T_DOUBLE:
+      case EET_T_UCHAR:
+      case EET_T_USHORT:
+      case EET_T_UINT:
+	 eet_node_dump_simple_type(n, dumplevel, dumpfunc, dumpdata);
+	 break;
+     }
 }
