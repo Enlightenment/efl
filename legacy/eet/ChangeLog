@@ -173,3 +173,11 @@
 2009-04-22  Carsten Haitzler (The Rasterman)
 
 	* Release eet 1.2.0
+
+2009-05-18  Cedric BAIL
+
+	* Cleanup Eet_Data code.
+
+2009-06-02  Cedric BAIL
+
+	* Make eet_node API usable.
