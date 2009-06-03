@@ -1548,10 +1548,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	/* Common move, resize and color_set for all part. */
 	switch (ep->part->type)
 	  {
-	   case EDJE_PART_TYPE_RECTANGLE:
 	   case EDJE_PART_TYPE_IMAGE:
              evas_object_image_scale_hint_set(ep->object, 
                                               chosen_desc->image.scale_hint);
+	   case EDJE_PART_TYPE_RECTANGLE:
 	   case EDJE_PART_TYPE_TEXTBLOCK:
 	   case EDJE_PART_TYPE_GRADIENT:
 	   case EDJE_PART_TYPE_BOX:
