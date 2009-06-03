@@ -165,11 +165,11 @@ struct _Evas_Smart_Class /** a smart object class */
    void  (*del)         (Evas_Object *o);
    void  (*move)        (Evas_Object *o, Evas_Coord x, Evas_Coord y);
    void  (*resize)      (Evas_Object *o, Evas_Coord w, Evas_Coord h); 
-   void  (*show)        (Evas_Object *o); // FIXME: DELETE ME
-   void  (*hide)        (Evas_Object *o); // FIXME: DELETE ME
-   void  (*color_set)   (Evas_Object *o, int r, int g, int b, int a); // FIXME: DELETE ME
-   void  (*clip_set)    (Evas_Object *o, Evas_Object *clip); // FIXME: DELETE ME
-   void  (*clip_unset)  (Evas_Object *o); // FIXME: DELETE ME
+   void  (*show)        (Evas_Object *o);
+   void  (*hide)        (Evas_Object *o);
+   void  (*color_set)   (Evas_Object *o, int r, int g, int b, int a);
+   void  (*clip_set)    (Evas_Object *o, Evas_Object *clip);
+   void  (*clip_unset)  (Evas_Object *o);
    void  (*calculate)   (Evas_Object *o);
    void  (*member_add)  (Evas_Object *o, Evas_Object *child);
    void  (*member_del)  (Evas_Object *o, Evas_Object *child);
