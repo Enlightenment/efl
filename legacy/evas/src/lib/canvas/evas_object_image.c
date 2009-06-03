@@ -2675,22 +2675,104 @@ evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    Evas_Object_Image *o;
    DATA32 *data;
-   int w, h, stride;
+   int w, h, stride, iw, ih;
    int a;
 
    o = (Evas_Object_Image *)(obj->object_data);
 
    x -= obj->cur.cache.clip.x;
    y -= obj->cur.cache.clip.y;
-   w = o->cur.image.w;
-   h = o->cur.image.h;
+   w = obj->cur.geometry.w;
+   h = obj->cur.geometry.h;
+   iw = o->cur.image.w;
+   ih = o->cur.image.h;
 
-   if ((x > w) || (y > h))
-     return 0;
+   if ((x < 0) || (y < 0) || (x >= w) || (y >= h)) return 0;
+   if (!o->cur.has_alpha) return 1;
 
-   if (!o->cur.has_alpha)
-     return 1;
+   w = o->cur.fill.w;
+   h = o->cur.fill.h;
+   x -= o->cur.fill.x;
+   y -= o->cur.fill.y;
+   x %= w;
+   y %= h;
+   
+   if (x < 0) x += w;
+   if (y < 0) y += h;
+   
+   if (o->cur.border.fill != EVAS_BORDER_FILL_DEFAULT)
+     {
+        if ((x > o->cur.border.l) && (x < (w - o->cur.border.r)) &&
+            (y > o->cur.border.t) && (y < (h - o->cur.border.b)))
+          {
+             if (o->cur.border.fill == EVAS_BORDER_FILL_SOLID) return 1;
+             return 0;
+          }
+     }
+   if (x < o->cur.border.l)
+     {
+        if (y < o->cur.border.t)
+          {
+             // nothing. x & y stay as-is
+          }
+        else if (y > (h - o->cur.border.b))
+          {
+             y = ih - (h - y);
+          }
+        else if ((o->cur.border.t + o->cur.border.b) < ih)
+          {
+             y = ((y - o->cur.border.t) * ih) / (ih - o->cur.border.t - o->cur.border.b);
+          }
+        else
+          return 1;
+     }
+   else if (x > (w - o->cur.border.r))
+     {
+        x = iw - (w - x);
+        if (y < o->cur.border.t)
+          {
+             // nothing. x & y stay as-is
+          }
+        else if (y > (h - o->cur.border.b))
+          {
+             y = ih - (h - y);
+          }
+        else if ((o->cur.border.t + o->cur.border.b) < ih)
+          {
+             y = ((y - o->cur.border.t) * ih) / (ih - o->cur.border.t - o->cur.border.b);
+          }
+        else
+          return 1;
+     }
+   else
+     {
+        if ((o->cur.border.l + o->cur.border.r) < iw)
+          {
+             x = ((x - o->cur.border.l) * iw) / (iw - o->cur.border.l - o->cur.border.r);
+          }
+        else
+          x = o->cur.border.l;
+        if (y < o->cur.border.t)
+          {
+             // nothing. x & y stay as-is
+          }
+        else if (y > (h - o->cur.border.b))
+          {
+             y = ih - (h - y);
+          }
+        else if ((o->cur.border.t + o->cur.border.b) < ih)
+          {
+             y = ((y - o->cur.border.t) * ih) / (ih - o->cur.border.t - o->cur.border.b);
+          }
+        else
+          return 1;
+     }
 
+   if (x < 0) x = 0;
+   if (y < 0) y = 0;
+   if (x >= iw) x = iw - 1;
+   if (y >= ih) y = ih - 1;
+   
    stride = o->cur.image.stride;
 
    o->engine_data = obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
