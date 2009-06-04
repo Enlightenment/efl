@@ -21,6 +21,7 @@
 # include "config.h"
 #endif
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #ifdef _MSC_VER
@@ -664,7 +665,11 @@ EAPI int
 eina_hash_init(void)
 {
    if (!_eina_hash_init_count)
-     eina_error_init();
+     if (!eina_error_init())
+       {
+	  fprintf(stderr, "Could not initialize eina error module\n");
+	  return 0;
+       }
 
    return ++_eina_hash_init_count;
 }

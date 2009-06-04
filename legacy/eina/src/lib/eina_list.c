@@ -446,9 +446,23 @@ eina_list_init(void)
 
    if (!_eina_list_init_count)
      {
-       eina_error_init();
-       eina_magic_string_init();
-       eina_mempool_init();
+	if (!eina_error_init())
+	  {
+	     fprintf(stderr, "Could not initialize eina error module\n");
+	     return 0;
+	  }
+
+	if (!eina_magic_string_init())
+	  {
+	     EINA_ERROR_PERR("ERROR: Could not initialize eina magic string module.\n");
+	     goto on_magic_string_fail;
+	  }
+
+	if (!eina_mempool_init())
+	  {
+	     EINA_ERROR_PERR("ERROR: Could not initialize eina mempool module.\n");
+	     goto on_mempool_fail;
+	  }
 
 #ifdef EINA_DEFAULT_MEMPOOL
        choice = "pass_through";
@@ -462,14 +476,15 @@ eina_list_init(void)
        if (!_eina_list_mp)
          {
            EINA_ERROR_PERR("ERROR: Mempool for list cannot be allocated in list init.\n");
-           abort();
+	   goto on_init_fail;
          }
        _eina_list_accounting_mp = eina_mempool_new(choice, "list_accounting", NULL,
 						   sizeof (Eina_List_Accounting), 80);
        if (!_eina_list_accounting_mp)
          {
            EINA_ERROR_PERR("ERROR: Mempool for list accounting cannot be allocated in list init.\n");
-           abort();
+	   eina_mempool_delete(_eina_list_mp);
+	   goto on_init_fail;
          }
 
        eina_magic_string_set(EINA_MAGIC_ITERATOR,
@@ -487,6 +502,14 @@ eina_list_init(void)
      }
 
    return ++_eina_list_init_count;
+
+ on_init_fail:
+   eina_mempool_shutdown();
+ on_mempool_fail:
+   eina_magic_string_shutdown();
+ on_magic_string_fail:
+   eina_error_shutdown();
+   return 0;
 }
 
 /**
