@@ -1,5 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
+SUBDIRS = .
+
 AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	-I$(top_builddir) \
@@ -18,3 +20,8 @@ libethumb_la_DEPENDENCIES = $(top_builddir)/config.h
 libethumb_la_LIBADD = \
 	@EVAS_LIBS@ @ECORE_EVAS_LIBS@ @ECORE_FILE_LIBS@ @EDJE_LIBS@
 libethumb_la_LDFLAGS = -version-info @version_info@
+
+
+if USE_MODULE_ETHUMBD
+SUBDIRS += client
+endif

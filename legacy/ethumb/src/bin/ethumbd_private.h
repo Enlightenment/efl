@@ -1,0 +1,34 @@
+#ifndef __ETHUMBD_PRIVATE_H__
+#define __ETHUMBD_PRIVATE_H__ 1
+
+
+enum Ethumbd_Operations
+{
+   ETHUMBD_OP_NEW,
+   ETHUMBD_OP_GENERATE,
+   ETHUMBD_OP_SETUP,
+   ETHUMBD_OP_DEL
+};
+
+enum Ethubmd_Setup_Option
+{
+   ETHUMBD_FDO,
+   ETHUMBD_SIZE_W,
+   ETHUMBD_SIZE_H,
+   ETHUMBD_FORMAT,
+   ETHUMBD_ASPECT,
+   ETHUMBD_CROP_X,
+   ETHUMBD_CROP_Y,
+   ETHUMBD_DIRECTORY,
+   ETHUMBD_CATEGORY,
+   ETHUMBD_FRAME_FILE,
+   ETHUMBD_FRAME_GROUP,
+   ETHUMBD_FRAME_SWALLOW,
+   ETHUMBD_VIDEO_TIME,
+   ETHUMBD_DOCUMENT_PAGE,
+   ETHUMBD_SETUP_FINISHED
+};
+
+void ethumbd_child_start(int pipein, int pipeout);
+
+#endif

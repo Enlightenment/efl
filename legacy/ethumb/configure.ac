@@ -47,6 +47,7 @@ PKG_CHECK_MODULES(ECORE_FILE, [ecore-file])
 PKG_CHECK_MODULES(EDJE, [edje])
 
 requirement_ethumb="eina-0 evas ecore ecore-evas ecore-file edje"
+requirement_ethumb_client="ethumb edbus"
 
 AM_CONDITIONAL(HAVE_EMOTION, false)
 define([CHECK_MODULE_EMOTION],
@@ -71,17 +72,40 @@ if $USE_MODULE_EPDF ; then
         requirement_ethumb="$requirement_ethumb epdf"
 fi
 
+AM_CONDITIONAL(HAVE_EDBUS, false)
+define([CHECK_MODULE_ETHUMBD],
+[
+        AC_ETH_CHECK_PKG(EDBUS, edbus, [], [ETHUMBD=false])
+])
+
+AC_ETH_OPTIONAL_MODULE([ethumbd], true, [CHECK_MODULE_ETHUMBD])
+if $USE_MODULE_ETHUMBD ; then
+        dbusservicedir=`$PKG_CONFIG --variable=session_bus_services_dir dbus-1`
+        AC_ARG_WITH([dbus-services],
+                    AC_HELP_STRING([--with-dbus-services=DBUS_SERVICES], [specify a directory to store dbus service files.]),
+                    [
+                      dbusservicedir=$withval
+                    ]
+                   )
+fi
+
 AC_SUBST(requirement_ethumb)
+AC_SUBST(requirement_ethumb_client)
+AC_SUBST(dbusservicedir)
 
 AC_OUTPUT([
 ethumb.pc
+ethumb_client.pc
+org.enlightenment.Ethumb.service
 Makefile
 src/Makefile
 src/bin/Makefile
 src/lib/Makefile
+src/lib/client/Makefile
 src/plugins/Makefile
 src/plugins/emotion/Makefile
 src/plugins/epdf/Makefile
+src/tests/Makefile
 data/Makefile
 data/frames/Makefile
 m4/Makefile

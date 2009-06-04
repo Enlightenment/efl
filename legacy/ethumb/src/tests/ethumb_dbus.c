@@ -1,0 +1,135 @@
+/**
+ * @file
+ *
+ * Copyright (C) 2009 by ProFUSION embedded systems
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,  but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the  GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
+ *
+ * @author Rafael Antognolli <antognolli@profusion.mobi>
+ */
+#include <config.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <dirent.h>
+#include <Ethumb.h>
+#include <Ethumb_Client.h>
+#include <Eina.h>
+#include <Ecore_Getopt.h>
+#include <Ecore.h>
+
+static void
+_on_server_die_cb(Ethumb_Client *client, void *data)
+{
+   ecore_main_loop_quit();
+}
+
+static void
+_queue_add_cb(long id, const char *file, const char *key, Eina_Bool success, void *data)
+{
+   fprintf(stderr, ">>> file ready: %s; id = %ld\n", file, id);
+}
+
+static void
+_disconnect(Ethumb_Client *client)
+{
+   ethumb_client_disconnect(client);
+}
+
+static void
+_request_thumbnails(Ethumb_Client *client, void *data)
+{
+   const char *path = data;
+   DIR *dir;
+   struct dirent *de;
+   char buf[PATH_MAX];
+   int i;
+
+   dir = opendir(path);
+   if (!dir)
+     {
+	fprintf(stderr, "ERROR: could not open directory: %s\n", path);
+	return;
+     }
+
+   ethumb_client_format_set(client, ETHUMB_THUMB_JPEG);
+   ethumb_client_aspect_set(client, ETHUMB_THUMB_CROP);
+   ethumb_client_crop_align_set(client, 0.2, 0.2);
+   ethumb_client_size_set(client, 192, 192);
+   ethumb_client_category_set(client, "custom");
+
+   while ((de = readdir(dir)))
+     {
+	if (de->d_type != DT_REG)
+	  continue;
+	snprintf(buf, sizeof(buf), "%s/%s", path, de->d_name);
+	ethumb_client_file_set(client, buf, NULL);
+	ethumb_client_generate(client, _queue_add_cb, NULL);
+     }
+
+   for (i = 100; i < 200; i++)
+     {
+	ethumb_client_queue_remove(client, i, NULL, NULL);
+     }
+
+   closedir(dir);
+}
+
+static void
+_connect_cb(Ethumb_Client *client, Eina_Bool success, void *data)
+{
+   fprintf(stderr, "connected: %d\n", success);
+   if (!success)
+     {
+	ecore_main_loop_quit();
+	return;
+     }
+
+   _request_thumbnails(client, data);
+}
+
+int
+main(int argc, char *argv[])
+{
+   Ethumb_Client *client;
+
+   if (argc < 2)
+     {
+	fprintf(stderr, "ERROR: directory not specified.\n");
+	fprintf(stderr, "usage:\n\tethumb_dbus <images directory>\n");
+	return -2;
+     }
+
+   ethumb_client_init();
+   client = ethumb_client_connect(_connect_cb, argv[1]);
+   if (!client)
+     {
+	fprintf(stderr, "ERROR: couldn't connect to server.\n");
+	ethumb_client_shutdown();
+	return -1;
+     }
+   ethumb_client_on_server_die_callback_set(client, _on_server_die_cb, NULL);
+
+   fprintf(stderr, "*** debug\n");
+   ecore_main_loop_begin();
+
+   _disconnect(client);
+
+   ethumb_client_shutdown();
+
+   return 0;
+}
