@@ -1671,6 +1671,8 @@ _eet_data_dump_encode(Eet_Dictionary *ed,
 	else words_bigendian = 0;
      }
 
+   if (node == NULL) return NULL;
+
    ds = eet_data_stream_new();
    if (!ds) return NULL;
 
