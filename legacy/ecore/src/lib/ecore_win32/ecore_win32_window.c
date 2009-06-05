@@ -207,7 +207,7 @@ ecore_win32_window_resize(Ecore_Win32_Window *window,
    if (!MoveWindow(w->window, x, y,
                    rect.right - rect.left,
                    rect.bottom - rect.top,
-                   FALSE))
+                   TRUE))
      {
         EINA_ERROR_PERR("MoveWindow() failed\n");
      }
