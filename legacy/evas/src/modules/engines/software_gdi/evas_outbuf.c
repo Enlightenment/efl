@@ -304,7 +304,7 @@ evas_software_gdi_outbuf_new_region_for_update(Outbuf *buf,
           obr->gdiob = _find_gdiob(buf->priv.gdi.dc,
                                    buf->priv.gdi.bitmap_info,
                                    buf->priv.gdi.depth,
-                                   w, h, NULL);
+                                   h, w, NULL);
 /*
           obr->gdiob = evas_software_x11_x_output_buffer_new(buf->priv.dd.disp,
                                                            buf->priv.dd.vis,
