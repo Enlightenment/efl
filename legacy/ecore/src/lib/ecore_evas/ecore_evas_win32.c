@@ -499,80 +499,99 @@ _ecore_evas_win32_move_resize(Ecore_Evas *ee, int x, int y, int width, int heigh
 }
 
 static void
-_ecore_evas_win32_rotation_set(Ecore_Evas *ee, int rotation)
+_ecore_evas_win32_rotation_set_internal(Ecore_Evas *ee, int rotation)
 {
    int rot_dif;
 
-   EINA_ERROR_PINFO("ecore evas rotation: %s\n", rotation ? "yes" : "no");
-
-   if (ee->rotation == rotation) return;
    rot_dif = ee->rotation - rotation;
    if (rot_dif < 0) rot_dif = -rot_dif;
 
+   if (rot_dif != 180)
+     {
+        int minw, minh, maxw, maxh, basew, baseh, stepw, steph;
+
+        if (!ee->prop.fullscreen)
+          {
+             ecore_win32_window_resize(ee->prop.window, ee->h, ee->w);
+             ee->expecting_resize.w = ee->h;
+             ee->expecting_resize.h = ee->w;
+          }
+        else
+          {
+             int w, h;
+
+             ecore_win32_window_size_get(ee->prop.window, &w, &h);
+             ecore_win32_window_resize(ee->prop.window, h, w);
+             if ((rotation == 0) || (rotation == 180))
+               {
+                  evas_output_size_set(ee->evas, ee->w, ee->h);
+                  evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+               }
+             else
+               {
+                  evas_output_size_set(ee->evas, ee->h, ee->w);
+                  evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+               }
+             if (ee->func.fn_resize) ee->func.fn_resize(ee);
+          }
+        ecore_evas_size_min_get(ee, &minw, &minh);
+        ecore_evas_size_max_get(ee, &maxw, &maxh);
+        ecore_evas_size_base_get(ee, &basew, &baseh);
+        ecore_evas_size_step_get(ee, &stepw, &steph);
+        ee->rotation = rotation;
+        ecore_evas_size_min_set(ee, minh, minw);
+        ecore_evas_size_max_set(ee, maxh, maxw);
+        ecore_evas_size_base_set(ee, baseh, basew);
+        ecore_evas_size_step_set(ee, steph, stepw);
+        _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
+                                       ecore_win32_current_time_get());
+     }
+   else
+     {
+        ee->rotation = rotation;
+        _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
+                                       ecore_win32_current_time_get());
+        if (ee->func.fn_resize) ee->func.fn_resize(ee);
+     }
+
+   if ((ee->rotation == 90) || (ee->rotation == 270))
+     evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
+   else
+     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+}
+
+static void
+_ecore_evas_win32_rotation_set(Ecore_Evas *ee, int rotation)
+{
+   EINA_ERROR_PINFO("ecore evas rotation: %s\n", rotation ? "yes" : "no");
+
+   if (ee->rotation == rotation) return;
+
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_GDI
+   if (!strcmp(ee->driver, "software_gdi"))
+     {
+        Evas_Engine_Info_Software_Gdi *einfo;
+
+        einfo = (Evas_Engine_Info_Software_Gdi *)evas_engine_info_get(ee->evas);
+        if (!einfo) return;
+        einfo->info.rotation = rotation;
+        evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+	_ecore_evas_win32_rotation_set_internal(ee, rotation);
+     }
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_GDI */
+
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
    if (!strcmp(ee->driver, "software_ddraw"))
      {
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
         Evas_Engine_Info_Software_DDraw *einfo;
 
         einfo = (Evas_Engine_Info_Software_DDraw *)evas_engine_info_get(ee->evas);
         if (!einfo) return;
-        if (rot_dif != 180)
-          {
-             int minw, minh, maxw, maxh, basew, baseh, stepw, steph;
-
-             einfo->info.rotation = rotation;
-             evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-             if (!ee->prop.fullscreen)
-               {
-                  ecore_win32_window_resize(ee->prop.window, ee->h, ee->w);
-                  ee->expecting_resize.w = ee->h;
-                  ee->expecting_resize.h = ee->w;
-               }
-             else
-               {
-                  int w, h;
-
-                  ecore_win32_window_size_get(ee->prop.window, &w, &h);
-                  ecore_win32_window_resize(ee->prop.window, h, w);
-                  if ((rotation == 0) || (rotation == 180))
-                    {
-                       evas_output_size_set(ee->evas, ee->w, ee->h);
-                       evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
-                    }
-                  else
-                    {
-                       evas_output_size_set(ee->evas, ee->h, ee->w);
-                       evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
-                    }
-                  if (ee->func.fn_resize) ee->func.fn_resize(ee);
-               }
-             ecore_evas_size_min_get(ee, &minw, &minh);
-             ecore_evas_size_max_get(ee, &maxw, &maxh);
-             ecore_evas_size_base_get(ee, &basew, &baseh);
-             ecore_evas_size_step_get(ee, &stepw, &steph);
-             ee->rotation = rotation;
-             ecore_evas_size_min_set(ee, minh, minw);
-             ecore_evas_size_max_set(ee, maxh, maxw);
-             ecore_evas_size_base_set(ee, baseh, basew);
-             ecore_evas_size_step_set(ee, steph, stepw);
-             _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
-                                            ecore_win32_current_time_get());
-          }
-        else
-          {
-             einfo->info.rotation = rotation;
-             evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-             ee->rotation = rotation;
-             _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
-                                                  ecore_win32_current_time_get());
-             if (ee->func.fn_resize) ee->func.fn_resize(ee);
-          }
-        if ((ee->rotation == 90) || (ee->rotation == 270))
-          evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
-        else
-          evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-#endif /* BUILD_ECORE_EVAS_SOFTWARE_DDRAW */
+        einfo->info.rotation = rotation;
+        evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+	_ecore_evas_win32_rotation_set_internal(ee, rotation);
      }
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_DDRAW */
 }
 
 static void
