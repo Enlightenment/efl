@@ -545,8 +545,6 @@ _ecore_main_loop_iterate_internal(int once_only)
         while (_ecore_timer_call(now));
 	_ecore_timer_cleanup();
      }
-   /* any timers re-added as a result of these are allowed to go */
-   _ecore_timer_enable_new();
    /* process signals into events .... */
    while (_ecore_signal_count_get()) _ecore_signal_call();
    if (_ecore_event_exist())
@@ -596,6 +594,8 @@ _ecore_main_loop_iterate_internal(int once_only)
 	  _ecore_fps_debug_runtime_add(t2 - t1);
      }
    start_loop:
+   /* any timers re-added as a result of these are allowed to go */
+   _ecore_timer_enable_new();
    if (do_quit)
      {
 	in_main_loop--;
