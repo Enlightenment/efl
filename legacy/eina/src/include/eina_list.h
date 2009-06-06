@@ -48,7 +48,7 @@
 
 /**
  * @typedef Eina_List
- * Type for a generic single linked list.
+ * Type for a generic double linked list.
  */
 typedef struct _Eina_List Eina_List;
 
@@ -56,7 +56,7 @@ typedef struct _Eina_List_Accounting Eina_List_Accounting;
 
 /**
  * @struct _Eina_List
- * Type for a generic single linked list.
+ * Type for a generic double linked list.
  */
 struct _Eina_List /** A linked list node */
 {
