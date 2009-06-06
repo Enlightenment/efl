@@ -825,23 +825,33 @@ eina_stringshare_init(void)
     */
    if (!_eina_stringshare_init_count)
      {
-	share = calloc(1, sizeof(Eina_Stringshare));
-	if (!share)
-	  return 0;
+        share = calloc(1, sizeof(Eina_Stringshare));
+        if (!share)
+          return 0;
 
-	eina_error_init();
-	eina_magic_string_init();
+        if (!eina_error_init())
+          {
+             fprintf(stderr, "Could not initialize eina error module.\n");
+             return 0;
+          }
 
-	eina_magic_string_set(EINA_MAGIC_STRINGSHARE,
-			      "Eina Stringshare");
-	eina_magic_string_set(EINA_MAGIC_STRINGSHARE_HEAD,
-			      "Eina Stringshare Head");
-	eina_magic_string_set(EINA_MAGIC_STRINGSHARE_NODE,
-			      "Eina Stringshare Node");
-       	EINA_MAGIC_SET(share, EINA_MAGIC_STRINGSHARE);
+        if (!eina_magic_string_init())
+          {
+             EINA_ERROR_PERR("ERROR: Could not initialize eina magic string module.\n");
+             eina_error_shutdown();
+             return 0;
+          }
 
-	_eina_stringshare_small_init();
-	_eina_stringshare_population_init();
+        eina_magic_string_set(EINA_MAGIC_STRINGSHARE,
+                              "Eina Stringshare");
+        eina_magic_string_set(EINA_MAGIC_STRINGSHARE_HEAD,
+                              "Eina Stringshare Head");
+        eina_magic_string_set(EINA_MAGIC_STRINGSHARE_NODE,
+                              "Eina Stringshare Node");
+        EINA_MAGIC_SET(share, EINA_MAGIC_STRINGSHARE);
+
+        _eina_stringshare_small_init();
+        _eina_stringshare_population_init();
      }
 
    return ++_eina_stringshare_init_count;

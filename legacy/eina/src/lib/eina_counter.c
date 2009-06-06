@@ -252,12 +252,16 @@ eina_counter_init(void)
 
    if (_eina_counter_init_count == 1)
      {
-	eina_error_init();
+        if (!eina_error_init())
+          {
+             fprintf(stderr, "Could not initialize eina error module.\n");
+             return 0;
+          }
 #ifdef _WIN32
         if (!QueryPerformanceFrequency(&_eina_counter_frequency))
           {
              EINA_COUNTER_ERROR_WINDOWS = eina_error_msg_register("Change your OS, you moron !");
-             _eina_counter_init_count--;
+             eina_error_shutdown();
              return 0;
           }
 #endif /* _WIN2 */

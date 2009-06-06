@@ -20,6 +20,7 @@
 # include "config.h"
 #endif
 
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "eina_rectangle.h"
@@ -353,8 +354,16 @@ eina_rectangle_init(void)
 
    if (_eina_rectangle_init_count > 1) return _eina_rectangle_init_count;
 
-   eina_error_init();
-   eina_mempool_init();
+   if (!eina_error_init())
+     {
+        fprintf(stderr, "Could not initialize eina error module.\n");
+        return 0;
+     }
+   if (!eina_mempool_init())
+     {
+        EINA_ERROR_PERR("Could not initialize eina mempool module.\n");
+        goto mempool_init_error;
+     }
 
 #ifdef EINA_DEFAULT_MEMPOOL
    choice = "pass_through";
@@ -364,14 +373,21 @@ eina_rectangle_init(void)
 #endif
 
    _eina_rectangle_mp = eina_mempool_new(choice, "rectangle", NULL,
-					 sizeof (Eina_Rectangle_Alloc) + sizeof (Eina_Rectangle), 42);
+                                         sizeof (Eina_Rectangle_Alloc) + sizeof (Eina_Rectangle), 42);
    if (!_eina_rectangle_mp)
      {
-	EINA_ERROR_PERR("ERROR: Mempool for rectangle cannot be allocated in list init.\n");
-	abort();
+        EINA_ERROR_PERR("ERROR: Mempool for rectangle cannot be allocated in list init.\n");
+        goto init_error;
      }
 
    return _eina_rectangle_init_count;
+
+ init_error:
+   eina_mempool_shutdown();
+ mempool_init_error:
+   eina_error_shutdown();
+
+   return 0;
 }
 
 EAPI int

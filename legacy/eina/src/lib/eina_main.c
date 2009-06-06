@@ -16,6 +16,8 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdio.h>
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
@@ -47,18 +49,72 @@ eina_init(void)
 {
    if (_eina_main_count) goto finish_init;
 
-   eina_error_init();
-   eina_hash_init();
-   eina_stringshare_init();
-   eina_list_init();
-   eina_array_init();
-   eina_counter_init();
-   eina_benchmark_init();
-   eina_magic_string_init();
-   eina_rectangle_init();
+   if (!eina_error_init())
+     {
+        fprintf(stderr, "Could not initialize eina error module.\n");
+        return 0;
+     }
+   if (!eina_hash_init())
+     {
+        EINA_ERROR_PERR("Could not initialize eina hash module.\n");
+        goto hash_init_error;
+     }
+   if (!eina_stringshare_init())
+     {
+        EINA_ERROR_PERR("Could not initialize eina stringshare module.\n");
+        goto stringshare_init_error;
+     }
+   if (!eina_list_init())
+     {
+        EINA_ERROR_PERR("Could not initialize eina list module.\n");
+        goto list_init_error;
+     }
+   if (!eina_array_init())
+     {
+        EINA_ERROR_PERR("Could not initialize eina array module.\n");
+        goto array_init_error;
+     }
+   if (!eina_counter_init())
+     {
+        EINA_ERROR_PERR("Could not initialize eina counter module.\n");
+        goto counter_init_error;
+     }
+   if (!eina_benchmark_init())
+     {
+        EINA_ERROR_PERR("Could not initialize eina benchmark module.\n");
+        goto benchmark_init_error;
+     }
+   if (!eina_magic_string_init())
+     {
+        EINA_ERROR_PERR("Could not initialize eina magic string module.\n");
+        goto magic_string_init_error;
+     }
+   if (!eina_rectangle_init())
+     {
+        EINA_ERROR_PERR("Could not initialize eina rectangle module.\n");
+        goto rectangle_init_error;
+     }
 
  finish_init:
    return ++_eina_main_count;
+
+ rectangle_init_error:
+   eina_magic_string_shutdown();
+ magic_string_init_error:
+   eina_benchmark_shutdown();
+ benchmark_init_error:
+   eina_counter_shutdown();
+ counter_init_error:
+   eina_array_shutdown();
+ array_init_error:
+   eina_list_shutdown();
+ list_init_error:
+   eina_stringshare_shutdown();
+ stringshare_init_error:
+   eina_hash_shutdown();
+ hash_init_error:
+   eina_error_shutdown();
+   return 0;
 }
 
 EAPI int

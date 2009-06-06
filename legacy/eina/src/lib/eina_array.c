@@ -148,6 +148,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "eina_types.h"
 #include "eina_error.h"
@@ -358,24 +359,34 @@ eina_array_grow(Eina_Array *array)
 EAPI int
 eina_array_init(void)
 {
-  if (!_eina_array_init_count)
-    {
-      eina_error_init();
-      eina_magic_string_init();
+   if (!_eina_array_init_count)
+     {
+        if (!eina_error_init())
+          {
+             fprintf(stderr, "Could not initialize eina error module.\n");
+             return 0;
+          }
 
-      eina_magic_string_set(EINA_MAGIC_ITERATOR,
-			    "Eina Iterator");
-      eina_magic_string_set(EINA_MAGIC_ACCESSOR,
-			    "Eina Accessor");
-      eina_magic_string_set(EINA_MAGIC_ARRAY,
-			    "Eina Array");
-      eina_magic_string_set(EINA_MAGIC_ARRAY_ITERATOR,
-			    "Eina Array Iterator");
-      eina_magic_string_set(EINA_MAGIC_ARRAY_ACCESSOR,
-			    "Eina Array Accessor");
-    }
+        if (!eina_magic_string_init())
+          {
+             EINA_ERROR_PERR("ERROR: Could not initialize eina magic string module.\n");
+             eina_error_shutdown();
+             return 0;
+          }
 
-  return ++_eina_array_init_count;
+        eina_magic_string_set(EINA_MAGIC_ITERATOR,
+                              "Eina Iterator");
+        eina_magic_string_set(EINA_MAGIC_ACCESSOR,
+                              "Eina Accessor");
+        eina_magic_string_set(EINA_MAGIC_ARRAY,
+                              "Eina Array");
+        eina_magic_string_set(EINA_MAGIC_ARRAY_ITERATOR,
+                              "Eina Array Iterator");
+        eina_magic_string_set(EINA_MAGIC_ARRAY_ACCESSOR,
+                              "Eina Array Accessor");
+     }
+
+   return ++_eina_array_init_count;
 }
 
 /**

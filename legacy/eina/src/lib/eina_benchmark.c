@@ -145,11 +145,29 @@ eina_benchmark_init(void)
 
    if (_eina_benchmark_count > 1) return _eina_benchmark_count;
 
-   eina_error_init();
-   eina_array_init();
-   eina_counter_init();
+   if (!eina_error_init())
+     {
+        fprintf(stderr, "Could not initialize eina error module.\n");
+        return 0;
+     }
+   if (!eina_array_init())
+     {
+        EINA_ERROR_PERR("Could not initialize eina array module.\n");
+        goto array_init_error;
+     }
+   if (!eina_counter_init())
+     {
+        EINA_ERROR_PERR("Could not initialize eina counter module.\n");
+        goto counter_init_error;
+     }
 
    return _eina_benchmark_count;
+
+ counter_init_error:
+   eina_array_shutdown();
+ array_init_error:
+   eina_error_shutdown();
+   return 0;
 }
 
 /**
