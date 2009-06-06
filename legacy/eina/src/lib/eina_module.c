@@ -139,7 +139,8 @@ static void _dir_list_cb(const char *name, const char *path, void *data)
 		if (!m)
 			return;
 		/* call the user provided cb on this module */
-		cb_data->cb(m, cb_data->data);
+		if (!cb_data->cb(m, cb_data->data))
+		  eina_module_delete(m);
 	}
 }
 static int _eina_module_count = 0;
