@@ -58,6 +58,7 @@ struct _Ethumb_Client
    E_DBus_Signal_Handler *name_owner_changed_handler;
    E_DBus_Signal_Handler *generated_signal;
    DBusPendingCall *pending_get_name_owner;
+   DBusPendingCall *pending_start_service_by_name;
    const char *unique_name;
    DBusPendingCall *pending_new;
    ec_connect_callback_t connect_cb;
@@ -73,6 +74,7 @@ struct _Ethumb_Client
 
    Eina_Bool ethumb_dirty : 1;
    Eina_Bool connected : 1;
+   Eina_Bool server_started : 1;
 };
 
 struct _ethumb_pending_add
@@ -119,6 +121,7 @@ static const char fdo_path[] = "/org/freedesktop/DBus";
 static int _initcount = 0;
 
 static void _ethumb_client_generated_cb(void *data, DBusMessage *msg);
+static void _ethumb_client_get_name_owner(void *data, DBusMessage *msg, DBusError *err);
 
 static inline bool
 __dbus_callback_check_and_init(const char *file, int line, const char *function, DBusMessage *msg, DBusMessageIter *itr, DBusError *err)
@@ -266,6 +269,77 @@ _ethumb_client_call_new(Ethumb_Client *client)
 }
 
 static void
+_ethumb_client_start_server_cb(void *data, DBusMessage *msg, DBusError *err)
+{
+   Ethumb_Client *client = data;
+   DBusMessageIter iter;
+   unsigned int ret;
+   int t;
+
+   client->pending_start_service_by_name = NULL;
+
+   if (!_dbus_callback_check_and_init(msg, &iter, err))
+     goto error;
+
+   t = dbus_message_iter_get_arg_type(&iter);
+   if (!_dbus_iter_type_check(t, DBUS_TYPE_UINT32))
+     goto error;
+
+   dbus_message_iter_get_basic(&iter, &ret);
+   if ((ret != 1) && (ret != 2))
+     {
+	ERR("Error starting Ethumbd DBus service by its name: retcode %u\n",
+	    ret);
+	goto error;
+     }
+
+   client->server_started = 1;
+   DBG("Ethumbd DBus service started successfully (%d), now request its name\n",
+       ret);
+
+   if (client->pending_get_name_owner)
+     {
+	DBG("already requesting name owner, cancel and try again\n");
+	dbus_pending_call_cancel(client->pending_get_name_owner);
+     }
+
+   client->pending_get_name_owner = e_dbus_get_name_owner
+     (client->conn, _ethumb_dbus_bus_name, _ethumb_client_get_name_owner,
+      client);
+   if (!client->pending_get_name_owner)
+     {
+	ERR("could not create a get_name_owner request.\n");
+	goto error;
+     }
+
+   return;
+
+ error:
+   ERR("failed to start Ethumbd DBus service by its name.\n");
+   client->connect_cb(client, 0, client->connect_cb_data);
+}
+
+static void
+_ethumb_client_start_server(Ethumb_Client *client)
+{
+   if (client->pending_start_service_by_name)
+     {
+	DBG("already pending start service by name.\n");
+	return;
+     }
+
+   client->server_started = 0;
+   client->pending_start_service_by_name = e_dbus_start_service_by_name
+     (client->conn, _ethumb_dbus_bus_name, 0, _ethumb_client_start_server_cb,
+      client);
+   if (!client->pending_start_service_by_name)
+     {
+	ERR("could not start service by name!\n");
+	client->connect_cb(client, 0, client->connect_cb_data);
+     }
+}
+
+static void
 _ethumb_client_get_name_owner(void *data, DBusMessage *msg, DBusError *err)
 {
    DBusMessageIter iter;
@@ -274,6 +348,13 @@ _ethumb_client_get_name_owner(void *data, DBusMessage *msg, DBusError *err)
    int t;
 
    client->pending_get_name_owner = NULL;
+
+   if (dbus_error_is_set(err) && (!client->server_started))
+     {
+	DBG("could not find server (%s), try to start it...\n", err->message);
+	_ethumb_client_start_server(client);
+	return;
+     }
 
    if (!_dbus_callback_check_and_init(msg, &iter, err))
      goto error;
@@ -419,6 +500,9 @@ end_connection:
 
    if (client->pending_get_name_owner)
      dbus_pending_call_cancel(client->pending_get_name_owner);
+
+   if (client->pending_start_service_by_name)
+     dbus_pending_call_cancel(client->pending_start_service_by_name);
 
    ethumb_free(client->ethumb);
 
