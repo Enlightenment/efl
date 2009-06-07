@@ -52,8 +52,6 @@
 struct _Ethumb_Client
 {
    Ethumb *ethumb;
-   int ethumb_dirty;
-   int connected;
    long id_count;
 
    E_DBus_Connection *conn;
@@ -72,6 +70,9 @@ struct _Ethumb_Client
    void (*on_server_die_cb)(Ethumb_Client *client, void *data);
    void *on_server_die_cb_data;
    const char *object_path;
+
+   Eina_Bool ethumb_dirty : 1;
+   Eina_Bool connected : 1;
 };
 
 struct _ethumb_pending_add
