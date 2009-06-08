@@ -460,9 +460,9 @@ elm_quicklaunch_init(int argc, char **argv)
                  (!strcasecmp(s, "opengl-x11")) ||
                  (!strcasecmp(s, "opengl_x11")))
           _elm_config->engine = ELM_OPENGL_X11;
-        else if ((!strcasecmp(s, "ddraw")) ||
-                 (!strcasecmp(s, "software-ddraw")) ||
-                 (!strcasecmp(s, "software_ddraw")))
+        else if ((!strcasecmp(s, "gdi")) ||
+                 (!strcasecmp(s, "software-gdi")) ||
+                 (!strcasecmp(s, "software_gdi")))
           _elm_config->engine = ELM_SOFTWARE_WIN32;
         else if ((!strcasecmp(s, "wince-gdi")) ||
                  (!strcasecmp(s, "software-16-wince-gdi")) ||
