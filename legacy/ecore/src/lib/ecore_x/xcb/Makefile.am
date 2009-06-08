@@ -47,6 +47,7 @@ ecore_xcb_mwm.c \
 ecore_xcb_netwm.c \
 ecore_xcb_pixmap.c \
 ecore_xcb_randr.c \
+ecore_xcb_region.c \
 ecore_xcb_reply.c \
 ecore_xcb_screensaver.c \
 ecore_xcb_selection.c \

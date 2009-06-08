@@ -56,7 +56,8 @@ ecore_x_dpms.c \
 ecore_x_drawable.c \
 ecore_x_cursor.c \
 ecore_x_test.c \
-ecore_x_atoms.c
+ecore_x_atoms.c \
+ecore_x_region.c
 
 libecore_x_xlib_la_LIBADD = \
 @Xcursor_libs@ \

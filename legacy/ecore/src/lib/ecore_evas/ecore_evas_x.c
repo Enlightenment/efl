@@ -176,47 +176,44 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 	  }
 	else
 	  {
-#ifdef HAVE_ECORE_X_XCB
-#warning [XCB] No Region code
-#else
 	     EINA_LIST_FOREACH(updates, l, r)
 	       {
-		  XRectangle xr;
-		  Region tmpr;
+		  Ecore_X_Rectangle rect;
+		  Ecore_X_XRegion  *tmpr;
 
 		  if (!ee->engine.x.damages)
-		    ee->engine.x.damages = XCreateRegion();
-		  tmpr = XCreateRegion();
+		    ee->engine.x.damages = ecore_x_xregion_new();
+		  tmpr = ecore_x_xregion_new();
 		  if (ee->rotation == 0)
 		    {
-		       xr.x = r->x;
-		       xr.y = r->y;
-		       xr.width = r->w;
-		       xr.height = r->h;
+		       rect.x = r->x;
+		       rect.y = r->y;
+		       rect.width = r->w;
+		       rect.height = r->h;
 		    }
 		  else if (ee->rotation == 90)
 		    {
-		       xr.x = r->y;
-		       xr.y = ee->h - r->x - r->w;
-		       xr.width = r->h;
-		       xr.height = r->w;
+		       rect.x = r->y;
+		       rect.y = ee->h - r->x - r->w;
+		       rect.width = r->h;
+		       rect.height = r->w;
 		    }
 		  else if (ee->rotation == 180)
 		    {
-		       xr.x = ee->w - r->x - r->w;
-		       xr.y = ee->h - r->y - r->h;
-		       xr.width = r->w;
-		       xr.height = r->h;
+		       rect.x = ee->w - r->x - r->w;
+		       rect.y = ee->h - r->y - r->h;
+		       rect.width = r->w;
+		       rect.height = r->h;
 		    }
 		  else if (ee->rotation == 270)
 		    {
-		       xr.x = ee->w - r->y - r->h;
-		       xr.y = r->x;
-		       xr.width = r->h;
-		       xr.height = r->w;
+		       rect.x = ee->w - r->y - r->h;
+		       rect.y = r->x;
+		       rect.width = r->h;
+		       rect.height = r->w;
 		    }
-		  XUnionRectWithRegion(&xr, ee->engine.x.damages, tmpr);
-		  XDestroyRegion(ee->engine.x.damages);
+                  ecore_x_xregion_union_rect(tmpr, ee->engine.x.damages, &rect);
+		  ecore_x_xregion_free(ee->engine.x.damages);
 		  ee->engine.x.damages = tmpr;
 	       }
 	     if (ee->engine.x.damages)
@@ -256,7 +253,7 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 					 ECORE_X_EVENT_MASK_WINDOW_PROPERTY |
 					 ECORE_X_EVENT_MASK_WINDOW_COLORMAP
 					 );
-		  XSetRegion(ecore_x_display_get(), ee->engine.x.gc, ee->engine.x.damages);
+		  ecore_x_xregion_set(ee->engine.x.damages, ee->engine.x.gc);
 		  /* debug rendering */
 		  /*
 		   XSetForeground(ecore_x_display_get(), ee->engine.x.gc, rand());
@@ -268,10 +265,9 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 		   */
 		  ecore_x_pixmap_paste(ee->engine.x.pmap, ee->prop.window, ee->engine.x.gc,
 				       0, 0, ee->w, ee->h, 0, 0);
-		  XDestroyRegion(ee->engine.x.damages);
-		  ee->engine.x.damages = 0;
+		  ecore_x_xregion_free(ee->engine.x.damages);
+		  ee->engine.x.damages = NULL;
 	       }
-#endif /* HAVE_ECORE_X_XCB */
 	     if (updates)
 	       {
 		  evas_render_updates_free(updates);
@@ -663,37 +659,33 @@ _ecore_evas_x_event_window_damage(void *data __UNUSED__, int type __UNUSED__, vo
 //   printf("EXPOSE %p [%i] %i %i %ix%i\n", ee, ee->prop.avoid_damage, e->x, e->y, e->w, e->h);
    if (ee->prop.avoid_damage)
      {
-#ifdef HAVE_ECORE_X_XCB
-# warning [XCB] No Region code
-#else
-	XRectangle xr;
-	Region tmpr;
-
-	if (!ee->engine.x.damages) ee->engine.x.damages = XCreateRegion();
-	tmpr = XCreateRegion();
-	xr.x = e->x;
-	xr.y = e->y;
-	xr.width = e->w;
-	xr.height = e->h;
-	XUnionRectWithRegion(&xr, ee->engine.x.damages, tmpr);
-	XDestroyRegion(ee->engine.x.damages);
-	ee->engine.x.damages = tmpr;
-/* no - this breaks things badly. disable. Ecore_X_Rectangle != XRectangle - see
- *  the typedefs in x's headers and ecore_x's. also same with Region - it's a pointer in x - not an X ID
 	Ecore_X_Rectangle rect;
-	Ecore_X_Region    tmpr;
+	Ecore_X_XRegion  *tmpr;
 
-	if (!ee->engine.x.damages) ee->engine.x.damages = XCreateRegion();
-	tmpr = XCreateRegion();
+	if (!ee->engine.x.damages) ee->engine.x.damages = ecore_x_xregion_new();
+	tmpr = ecore_x_xregion_new();
 	rect.x = e->x;
 	rect.y = e->y;
 	rect.width = e->w;
 	rect.height = e->h;
-	XUnionRectWithRegion(&rect, ee->engine.x.damages, tmpr);
-	XDestroyRegion(ee->engine.x.damages);
+	ecore_x_xregion_union_rect(tmpr, ee->engine.x.damages, &rect);
+	ecore_x_xregion_free(ee->engine.x.damages);
+	ee->engine.x.damages = tmpr;
+/* no - this breaks things badly. disable. Ecore_X_Rectangle != XRectangle - see
+ *  the typedefs in x's headers and ecore_x's. also same with Region - it's a pointer in x - not an X ID
+	Ecore_X_Rectangle rect;
+	Ecore_X_XRegion  *tmpr;
+
+	if (!ee->engine.x.damages) ee->engine.x.damages = ecore_x_xregion_new();
+	tmpr = ecore_x_xregion_new();
+	rect.x = e->x;
+	rect.y = e->y;
+	rect.width = e->w;
+	rect.height = e->h;
+	ecore_x_xregion_union_rect(tmpr, ee->engine.x.damages, &rect);
+	ecore_x_xregion_free(ee->engine.x.damages);
 	ee->engine.x.damages = tmpr;
  */
-#endif /* ! HAVE_ECORE_X_XCB */
      }
    else
      {
@@ -1064,19 +1056,11 @@ _ecore_evas_x_free(Ecore_Evas *ee)
    if (ee->engine.x.pmap) ecore_x_pixmap_free(ee->engine.x.pmap);
    if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
    if (ee->engine.x.gc) ecore_x_gc_free(ee->engine.x.gc);
-#ifdef HAVE_ECORE_X_XCB
-# warning [XCB] No Region code
-#else
-   if (ee->engine.x.damages) XDestroyRegion(ee->engine.x.damages);
-#endif /* ! HAVE_ECORE_X_XCB */
+   if (ee->engine.x.damages) ecore_x_xregion_free(ee->engine.x.damages);
    ee->engine.x.pmap = 0;
    ee->engine.x.mask = 0;
    ee->engine.x.gc = 0;
-#ifdef HAVE_ECORE_X_XCB
-#warning [XCB] No Region code
-#else
-   ee->engine.x.damages = 0;
-#endif /* ! HAVE_ECORE_X_XCB */
+   ee->engine.x.damages = NULL;
 	ecore_event_window_unregister(ee->prop.window);
    while (ee->engine.x.win_extra)
      {

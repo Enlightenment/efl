@@ -164,11 +164,7 @@ struct _Ecore_Evas_Engine
       Ecore_X_Pixmap pmap;
       Ecore_X_Pixmap mask;
       Ecore_X_GC     gc;
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-# warning [XCB] No Region code
-#else
-      Region         damages;
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_XCB */
+      Ecore_X_XRegion *damages;
       int            px, py, pw, ph;
       unsigned char  direct_resize : 1;
       unsigned char  using_bg_pixmap : 1;

@@ -66,6 +66,7 @@ typedef void         Ecore_X_Connection;
 typedef void         Ecore_X_Screen;
 typedef Ecore_X_ID   Ecore_X_Sync_Counter;
 typedef Ecore_X_ID   Ecore_X_Sync_Alarm;
+typedef void         Ecore_X_XRegion;
 
 typedef Ecore_X_ID     Ecore_X_Randr_Output;
 typedef Ecore_X_ID     Ecore_X_Randr_Crtc;
@@ -1615,6 +1616,19 @@ EAPI void ecore_x_pointer_last_xy_get(int *x, int *y);
 EAPI void ecore_x_pointer_xy_get_prefetch(Ecore_X_Window window);
 EAPI void ecore_x_pointer_xy_get_fetch(void);
 EAPI void ecore_x_pointer_xy_get(Ecore_X_Window win, int *x, int *y);
+
+/* ecore_x_region.c */
+EAPI Ecore_X_XRegion *ecore_x_xregion_new();
+EAPI void             ecore_x_xregion_free(Ecore_X_XRegion *region);
+EAPI int              ecore_x_xregion_set(Ecore_X_XRegion *region, Ecore_X_GC gc);
+EAPI void             ecore_x_xregion_translate(Ecore_X_XRegion *region, int x, int y);
+EAPI int              ecore_x_xregion_intersect(Ecore_X_XRegion *dst, Ecore_X_XRegion *r1, Ecore_X_XRegion *r2);
+EAPI int              ecore_x_xregion_union(Ecore_X_XRegion *dst, Ecore_X_XRegion *r1, Ecore_X_XRegion *r2);
+EAPI int              ecore_x_xregion_union_rect(Ecore_X_XRegion *dst, Ecore_X_XRegion *src, Ecore_X_Rectangle *rect);
+EAPI int              ecore_x_xregion_subtract(Ecore_X_XRegion *dst, Ecore_X_XRegion *r1, Ecore_X_XRegion *r2);
+EAPI int              ecore_x_xregion_is_empty(Ecore_X_XRegion *region);
+EAPI int              ecore_x_xregion_point_contain(Ecore_X_XRegion *region, int x, int y);
+EAPI int              ecore_x_xregion_rect_contain(Ecore_X_XRegion *region, Ecore_X_Rectangle *rect);
 
 /* ecore_x_sync.c */
 EAPI Ecore_X_Sync_Alarm ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter);
