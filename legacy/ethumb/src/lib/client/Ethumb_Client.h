@@ -39,7 +39,9 @@ extern "C" {
 
 typedef struct _Ethumb_Client Ethumb_Client;
 typedef void (*ec_connect_callback_t)(Ethumb_Client *client, Eina_Bool success, void *data);
-typedef void (*generated_callback_t)(long id, const char *file, const char *key, Eina_Bool success, void *data);
+typedef void (*generated_callback_t)(long id, const char *file, const char *key,
+                                     const char *thumb_path, const char *thumb_key,
+                                     Eina_Bool success, void *data);
 
 EAPI int ethumb_client_init(void);
 EAPI int ethumb_client_shutdown(void);

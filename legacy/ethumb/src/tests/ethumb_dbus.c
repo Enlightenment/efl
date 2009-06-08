@@ -39,9 +39,9 @@ _on_server_die_cb(Ethumb_Client *client, void *data)
 }
 
 static void
-_queue_add_cb(long id, const char *file, const char *key, Eina_Bool success, void *data)
+_queue_add_cb(long id, const char *file, const char *key, const char *thumb_path, const char *thumb_key, Eina_Bool success, void *data)
 {
-   fprintf(stderr, ">>> file ready: %s; id = %ld\n", file, id);
+   fprintf(stderr, ">>> file ready: %s; thumb ready: %s; id = %ld\n", file, thumb_path, id);
 }
 
 static void

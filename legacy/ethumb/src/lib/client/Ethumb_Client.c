@@ -736,8 +736,9 @@ _ethumb_client_generated_cb(void *data, DBusMessage *msg)
    if (found)
      {
 	client->pending_gen = eina_list_remove_list(client->pending_gen, l);
-	pending->generated_cb(id, pending->file, pending->key, success,
-			pending->data);
+	pending->generated_cb(id, pending->file, pending->key,
+                              pending->thumb, pending->thumb_key,
+                              success, pending->data);
 	eina_stringshare_del(pending->file);
 	eina_stringshare_del(pending->key);
 	eina_stringshare_del(pending->thumb);
