@@ -18,6 +18,10 @@
 
 #ifndef EINA_SAFETY_CHECKS_H_
 #define EINA_SAFETY_CHECKS_H_
+
+
+#include "eina_config.h"
+
 #ifdef EINA_SAFETY_CHECKS
 
 #include "eina_error.h"

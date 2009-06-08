@@ -19,6 +19,12 @@
 #ifndef EINA_TYPES_H_
 #define EINA_TYPES_H_
 
+/**
+ * @defgroup Eina_Types_Group Types
+ *
+ * @{
+ */
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -44,6 +50,8 @@
 #  define EAPI
 # endif
 #endif
+
+#include "eina_config.h"
 
 #ifdef EINA_WARN_UNUSED_RESULT
 # undef EINA_WARN_UNUSED_RESULT
@@ -173,7 +181,17 @@
 #endif
 
 typedef unsigned char Eina_Bool;
+
+/**
+ * @def EINA_FALSE
+ * boolean value FALSE (numerical value 0)
+ */
 #define EINA_FALSE ((Eina_Bool)0)
+
+/**
+ * @def EINA_TRUE
+ * boolean value TRUE (numerical value 1)
+ */
 #define EINA_TRUE ((Eina_Bool)1)
 
 EAPI extern const unsigned int eina_prime_table[];
@@ -191,5 +209,9 @@ typedef Eina_Bool (*Eina_Each)(const void *container,
 
 typedef void (*Eina_Free_Cb)(void *data);
 #define EINA_FREE_CB(Function) ((Eina_Free_Cb)Function)
+
+/**
+ * @}
+ */
 
 #endif /* EINA_TYPES_H_ */

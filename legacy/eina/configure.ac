@@ -54,83 +54,82 @@ EFL_CHECK_PTHREAD([have_pthread="yes"], [have_pthread="no"])
 
 # Magic debug
 AC_ARG_ENABLE([magic-debug],
-   [AC_HELP_STRING([--enable-magic-debug], [enable magic debug of eina structure])],
+   [AC_HELP_STRING([--disable-magic-debug], [disable magic debug of eina structure [default=enabled]])],
    [
     if test "x${enableval}" = "xyes" ; then
-       enable_magic_debug="yes"
+       have_magic_debug="yes"
     else
-       enable_magic_debug="no"
+       have_magic_debug="no"
     fi
    ],
-   [enable_magic_debug="yes"]
-)
-AC_MSG_CHECKING([whether magic debug is enable])
-AC_MSG_RESULT([${enable_magic_debug}])
+   [have_magic_debug="yes"])
 
-EINA_MAGIC_DEBUG=0
-if test "x${enable_magic_debug}" = "xyes" ; then
-   EINA_MAGIC_DEBUG=1
+AC_MSG_CHECKING([whether magic debug is enable])
+AC_MSG_RESULT([${have_magic_debug}])
+
+if test "x${have_magic_debug}" = "xyes" ; then
+   EINA_CONFIGURE_MAGIC_DEBUG="#define EINA_MAGIC_DEBUG"
 fi
-AC_SUBST(EINA_MAGIC_DEBUG)
+AC_SUBST(EINA_CONFIGURE_MAGIC_DEBUG)
 
 # Safety checks (avoid crashes on wrong api usage)
-want_safety_checks="yes"
-AC_MSG_CHECKING(whether to do safety checking on api parameters)
 AC_ARG_ENABLE(safety-checks,
-  AC_HELP_STRING(
-    [--disable-safety-checks],
-    [disable safety checks for NULL pointers and like. [[default=enabled]]]
-  ),
-  [ want_safety_checks="$enableval" ]
-)
-AC_MSG_RESULT($want_safety_checks)
+   [AC_HELP_STRING([--disable-safety-checks], [disable safety checks for NULL pointers and like. [default=enabled]])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       have_safety_checks="yes"
+    else
+       have_safety_checks="no"
+    fi
+   ],
+   [have_safety_checks="yes"])
 
-AM_CONDITIONAL(SAFETY_CHECKS, test "x$want_safety_checks" = "xyes")
-if test "x$want_safety_checks" = "xyes"; then
+AC_MSG_CHECKING(whether to do safety checking on api parameters)
+AC_MSG_RESULT($have_safety_checks)
+
+AM_CONDITIONAL(SAFETY_CHECKS, test "x$have_safety_checks" = "xyes")
+if test "x$have_safety_checks" = "xyes"; then
   AC_DEFINE(EINA_SAFETY_CHECKS, 1, [disable safety checks for NULL pointers and like.])
-  EINA_SAFETY_CHECKS=1
-else
-  EINA_SAFETY_CHECKS=0
+  EINA_CONFIGURE_SAFETY_CHECKS="#define EINA_SAFETY_CHECKS"
 fi
-AC_SUBST(EINA_SAFETY_CHECKS)
+AC_SUBST(EINA_CONFIGURE_SAFETY_CHECKS)
 
 # Choose best memory pool
 AC_ARG_ENABLE([default-mempool],
-   [AC_HELP_STRING([--enable-default-mempool], [Default memory allocator could be faster for some computer])],
+   [AC_HELP_STRING([--enable-default-mempool], [Default memory allocator could be faster for some computer. [default=disabled]])],
    [
     if test "x${enableval}" = "xyes"; then
-       enable_default_mempool="yes"
+       have_default_mempool="yes"
     else
-       enable_default_mempool="no"
+       have_default_mempool="no"
     fi
    ],
-   [enable_default_mempool="no"]
+   [have_default_mempool="no"]
 )
 AC_MSG_CHECKING([whether to use default mempool allocator])
-AC_MSG_RESULT([${enable_default_mempool}])
+AC_MSG_RESULT([${have_default_mempool}])
 
-EINA_DEFAULT_MEMPOOL=0
-if test "x${enable_default_mempool}" = "xyes" ; then
-   EINA_DEFAULT_MEMPOOL=1
+if test "x${have_default_mempool}" = "xyes" ; then
+   EINA_CONFIGURE_DEFAULT_MEMPOOL="#define EINA_DEFAULT_MEMPOOL"
 fi
-AC_SUBST(EINA_DEFAULT_MEMPOOL)
+AC_SUBST(EINA_CONFIGURE_DEFAULT_MEMPOOL)
 
 # Report stringshare usage
 AC_ARG_ENABLE([stringshare-usage],
-   [AC_HELP_STRING([--enable-stringshare-usage], [Report stringshare usage on stringshare shutdown])],
+   [AC_HELP_STRING([--enable-stringshare-usage], [Report stringshare usage on stringshare shutdown. [default=disabled]])],
    [
     if test "x${enableval}" = "xyes"; then
-       enable_stringshare_usage="yes"
+       have_stringshare_usage="yes"
     else
-       enable_stringshare_usage="no"
+       have_stringshare_usage="no"
     fi
    ],
-   [enable_stringshare_usage="no"]
+   [have_stringshare_usage="no"]
 )
 AC_MSG_CHECKING([whether to report stringshare usage])
-AC_MSG_RESULT([${enable_stringshare_usage}])
+AC_MSG_RESULT([${have_stringshare_usage}])
 
-if test "x${enable_stringshare_usage}" = "xyes"; then
+if test "x${have_stringshare_usage}" = "xyes"; then
    AC_DEFINE(EINA_STRINGSHARE_USAGE, 1, [Report Eina stringshare usage pattern])
 fi
 
@@ -158,15 +157,12 @@ EINA_CHECK_STATIC([ememoa-unknown], [ememoa unknown])
 EINA_CHECK_STATIC([pass-through], [pass through])
 EINA_CHECK_STATIC([fixed-bitmap], [fixed bitmap])
 
-# Unit tests, coverage and benchmarking
-
-EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
-EFL_CHECK_COVERAGE([${enable_tests}], [enable_coverage="yes"], [enable_coverage="no"])
-EFL_CHECK_BENCHMARK([enable_benchmark="yes"], [enable_benchmark="no"])
-
 
 ### Checks for programs
 AC_PROG_CC
+
+# pkg-config
+PKG_PROG_PKG_CONFIG
 
 # doxygen program for documentation building
 
@@ -174,8 +170,6 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 
 ### Checks for libraries
-
-PKG_PROG_PKG_CONFIG
 
 # Evil library for compilation on Windows CE
 
@@ -382,6 +376,12 @@ AC_SUBST(dlopen_libs)
 
 ### Make the debug preprocessor configurable
 
+### Unit tests, coverage and benchmarking
+
+EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
+EFL_CHECK_COVERAGE([${enable_tests}], [enable_coverage="yes"], [enable_coverage="no"])
+EFL_CHECK_BENCHMARK([enable_benchmark="yes"], [enable_benchmark="no"])
+
 AC_CONFIG_FILES([
 Makefile
 eina-0.pc
@@ -416,6 +416,12 @@ echo
 echo
 echo "Configuration Options Summary:"
 echo
+echo "  Magic debug..........: ${have_magic_debug}"
+echo "  Safety checks........: ${have_safety_checks}"
+echo "  Report string usage..: ${have_stringshare_usage}"
+echo "  Default mempool......: ${have_default_mempool}"
+echo "  Thread Support.......: ${have_pthread}"
+echo
 echo "  Documentation........: ${build_doc}"
 echo "  Tests................: ${enable_tests}"
 echo "  Coverage.............: ${enable_coverage}"
@@ -433,14 +439,6 @@ echo "  MMX..................: ${have_mmx}"
 echo "  SSE..................: ${have_sse}"
 echo "  SSE2.................: ${have_sse2}"
 echo "  ALTIVEC..............: ${have_altivec}"
-echo
-echo "  Thread Support.......: ${have_pthread}"
-echo
-echo "  Magic debug..........: ${enable_magic_debug}"
-echo
-echo "  Report string usage..: ${enable_stringshare_usage}"
-echo
-echo "  Default mempool......: ${enable_default_mempool}"
 echo
 echo "  Memory pool:"
 echo "    Ememoa.............: ${enable_ememoa}"

@@ -72,6 +72,7 @@
 # include <Evil.h>
 #endif
 
+#include "eina_config.h"
 #include "eina_error.h"
 #include "eina_list.h"
 #include "eina_mempool.h"

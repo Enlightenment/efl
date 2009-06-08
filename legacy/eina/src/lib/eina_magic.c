@@ -27,10 +27,8 @@
 # include <Evil.h>
 #endif
 
-#define EINA_MAGIC_DEBUG
-#include "eina_magic.h"
-
 #include "eina_config.h"
+#include "eina_magic.h"
 #include "eina_private.h"
 #include "eina_error.h"
 #include "eina_inlist.h"
@@ -38,6 +36,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+
+#ifdef EINA_MAGIC_DEBUG
 
 typedef struct _Eina_Magic_String Eina_Magic_String;
 struct _Eina_Magic_String
@@ -51,6 +51,8 @@ struct _Eina_Magic_String
 static int _eina_magic_string_count = 0;
 static Eina_Inlist *strings = NULL;
 
+#endif
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -62,14 +64,19 @@ static Eina_Inlist *strings = NULL;
 EAPI int
 eina_magic_string_init(void)
 {
+#ifdef EINA_MAGIC_DEBUG
    ++_eina_magic_string_count;
 
    return _eina_magic_string_count;
+#else
+   return 1;
+#endif
 }
 
 EAPI int
 eina_magic_string_shutdown(void)
 {
+#ifdef EINA_MAGIC_DEBUG
    --_eina_magic_string_count;
 
    if (_eina_magic_string_count == 0)
@@ -88,7 +95,12 @@ eina_magic_string_shutdown(void)
      }
 
    return _eina_magic_string_count;
+#else
+   return 0;
+#endif
 }
+
+#ifdef EINA_MAGIC_DEBUG
 
 EAPI const char*
 eina_magic_string_get(Eina_Magic magic)
@@ -172,3 +184,4 @@ eina_magic_fail(void *d, Eina_Magic m, Eina_Magic req_m, const char *file, const
    if (getenv("EINA_ERROR_ABORT")) abort();
 }
 
+#endif

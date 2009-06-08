@@ -19,9 +19,16 @@
 #ifndef EINA_MAGIC_H_
 #define EINA_MAGIC_H_
 
-#ifdef EINA_MAGIC_DEBUG
 
+#include "eina_config.h"
 #include "eina_types.h"
+
+
+EAPI int eina_magic_string_init(void);
+EAPI int eina_magic_string_shutdown(void);
+
+
+#ifdef EINA_MAGIC_DEBUG
 
 #define EINA_MAGIC_NONE            0x1234fedc
 
@@ -32,9 +39,6 @@
 #define EINA_MAGIC_FAIL(d, m)      eina_magic_fail((void*)(d), (d) ? (d)->__magic : 0, (m), __FILE__, __FUNCTION__, __LINE__);
 
 typedef unsigned int               Eina_Magic;
-
-EAPI int eina_magic_string_init(void);
-EAPI int eina_magic_string_shutdown(void);
 
 EAPI const char* eina_magic_string_get(Eina_Magic magic) EINA_PURE EINA_WARN_UNUSED_RESULT;
 EAPI void eina_magic_string_set(Eina_Magic magic, const char *magic_name) EINA_ARG_NONNULL(2);
@@ -52,8 +56,6 @@ EAPI void eina_magic_fail(void *d, Eina_Magic m, Eina_Magic req_m,
 #define eina_magic_string_get(Magic)                  (NULL)
 #define eina_magic_string_set(Magic, Magic_Name)      ((void) 0)
 #define eina_magic_fail(d, m, req_m, file, fnx, line) ((void) 0)
-#define eina_magic_string_init()   do {} while(0)
-#define eina_magic_string_shutdown() do {} while(0)
 
 #endif
 
