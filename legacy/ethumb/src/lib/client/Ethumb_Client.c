@@ -793,10 +793,6 @@ _ethumb_client_queue_add(Ethumb_Client *client, const char *file, const char *ke
    DBusMessageIter iter;
    struct _ethumb_pending_add *pending;
 
-
-   if (!client->id_count) 
-       client->id_count++;
-
    pending = calloc(1, sizeof(*pending));
    pending->id = client->id_count;
    pending->file = eina_stringshare_add(file);
@@ -1155,7 +1151,7 @@ ethumb_client_generate(Ethumb_Client *client, generated_callback_t generated_cb,
    if (!file)
      {
 	ERR("no file set.\n");
-	return 0;
+	return -1;
      }
 
    ethumb_thumb_path_get(client->ethumb, &thumb, &thumb_key);
