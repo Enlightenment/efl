@@ -330,7 +330,7 @@ _ethumb_client_start_server(Ethumb_Client *client)
 
    client->server_started = 0;
    client->pending_start_service_by_name = e_dbus_start_service_by_name
-     (client->conn, _ethumb_dbus_bus_name, 0, _ethumb_client_start_server_cb,
+     (client->conn, _ethumb_dbus_bus_name, _ethumb_client_start_server_cb,
       client);
    if (!client->pending_start_service_by_name)
      {
@@ -792,6 +792,9 @@ _ethumb_client_queue_add(Ethumb_Client *client, const char *file, const char *ke
    DBusMessageIter iter;
    struct _ethumb_pending_add *pending;
 
+
+   if (!client->id_count) 
+       client->id_count++;
 
    pending = calloc(1, sizeof(*pending));
    pending->id = client->id_count;
