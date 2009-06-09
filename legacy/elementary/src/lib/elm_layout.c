@@ -29,7 +29,7 @@ _del_hook(Evas_Object *obj)
    Subinfo *si;
    EINA_LIST_FREE(wd->subs, si)
      {
-	evas_stringshare_del(si->swallow);
+	eina_stringshare_del(si->swallow);
 	free(si);
      }
    free(wd);
@@ -85,7 +85,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 	     evas_object_event_callback_del
 	       (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
 	     wd->subs = eina_list_remove_list(wd->subs, l);
-	     evas_stringshare_del(si->swallow);
+	     eina_stringshare_del(si->swallow);
 	     free(si);
 	     break;
 	  }
@@ -150,7 +150,7 @@ elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conte
 	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
 	si = ELM_NEW(Subinfo);
-	si->swallow = evas_stringshare_add(swallow);
+	si->swallow = eina_stringshare_add(swallow);
 	si->obj = content;
 	wd->subs = eina_list_append(wd->subs, si);
 	_sizing_eval(obj);

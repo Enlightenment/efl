@@ -23,7 +23,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (wd->file) evas_stringshare_del(wd->file);
+   if (wd->file) eina_stringshare_del(wd->file);
    if (wd->delay_write)
      {
 	ecore_timer_del(wd->delay_write);
@@ -249,9 +249,9 @@ elm_notepad_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
 	wd->delay_write = NULL;
      }
    _save(obj);
-   if (wd->file) evas_stringshare_del(wd->file);
+   if (wd->file) eina_stringshare_del(wd->file);
    wd->file = NULL;
-   if (file) wd->file = evas_stringshare_add(file);
+   if (file) wd->file = eina_stringshare_add(file);
    wd->format = format;
    _load(obj);
 }
