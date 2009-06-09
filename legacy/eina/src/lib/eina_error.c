@@ -530,7 +530,6 @@ EAPI int eina_error_init(void)
 	{
 		char *level;
 		/* TODO register the eina's basic errors */
-		/* TODO load the environment variable for getting the log level */
 		if ((level = getenv("EINA_ERROR_LEVEL")))
 		{
 			_error_level = atoi(level);
