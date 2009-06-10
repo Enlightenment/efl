@@ -3908,7 +3908,7 @@ st_collections_group_parts_part_description_image_middle(void)
     @property
         scale_hint
     @parameters
-        0, NANE, DYNAMIC, STATIC
+        0, NONE, DYNAMIC, STATIC
     @effect
       Sets the evas image scale hint letting the engine more efectively save
       cached copies of the scaled image if it maks sense
