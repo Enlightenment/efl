@@ -1,3 +1,10 @@
+2009-06-10  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_langinfo.c:
+	* src/lib/evil_langinfo.h:
+	add minimal RADIXCHAR support. Must be fixed in
+	a better way.
+
 2009-05-20  Vincent Torri  <doursse at users dot sf dot net>
 
 	reviewed by: Vincent Torri

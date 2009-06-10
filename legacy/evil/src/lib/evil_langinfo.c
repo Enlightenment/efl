@@ -42,6 +42,11 @@ nl_langinfo(nl_item index)
 
            return result;
         }
+      case RADIXCHAR:
+        {
+           /* FIXME: better returned value... */
+           return ".";
+        }
      }
 
    return nothing;

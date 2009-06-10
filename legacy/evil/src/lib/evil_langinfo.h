@@ -18,7 +18,8 @@ enum {
    * LC_CTYPE category...
    * Character set classification items.
    */
-  _NL_CTYPE_CODESET = __NL_ITEM( LC_CTYPE, 0 ),
+  _NL_CTYPE_CODESET     = __NL_ITEM( LC_CTYPE, 0 ),
+  _NL_NUMERIC_RADIXCHAR = __NL_ITEM( LC_NUMERIC, 0 ),
 
   /*
    * Dummy entry, to terminate the list.
@@ -30,6 +31,7 @@ enum {
  * Define the public aliases for the enumerated classification indices...
  */
 # define CODESET       _NL_CTYPE_CODESET
+# define RADIXCHAR     _NL_NUMERIC_RADIXCHAR
 
 EAPI char *nl_langinfo(nl_item index);
 
