@@ -306,16 +306,16 @@ case "${host_os}" in
       EINA_LIBS="${EINA_LIBS} -ldl ${EVIL_LIBS} -lm"
       lt_enable_auto_import="-Wl,--enable-auto-import"
    ;;
-   *openbsd*)
+   dragonfly*|openbsd*)
       EINA_LIBS="${EINA_LIBS} -lm"
    ;;
-   *bsd*)
+   freebsd*|netbsd*)
       EINA_LIBS="${EINA_LIBS} -lrt -lm"
    ;;
-   *darwin*)
+   darwin*)
       EINA_LIBS="${EINA_LIBS} -lm"
    ;;
-   *cygwin*)
+   cygwin*)
       EINA_LIBS="${EINA_LIBS} -ldl -lm"
    ;;
    *)
