@@ -1276,6 +1276,9 @@ ecore_evas_rotation_set(Ecore_Evas *ee, int rot)
    while (rot < 0) rot += 360;
    while (rot >= 360) rot -= 360;
    IFC(ee, fn_rotation_set) (ee, rot);
+   /* make sure everything gets redrawn */
+   evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+   evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
    IFE;
 }
 
