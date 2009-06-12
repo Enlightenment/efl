@@ -499,7 +499,7 @@ elm_quicklaunch_init(int argc, char **argv)
    s = getenv("ELM_FONT_PATH");
    if (s)
      {
-        const char *p, *pp, *s;
+        const char *p, *pp;
         char *buf;
         
         buf = alloca(strlen(s) + 1);
