@@ -765,7 +765,13 @@ EAPI double
 elm_widget_scale_get(const Evas_Object *obj)
 {
    API_ENTRY return 1.0;
-   if (sd->scale == 0.0) return elm_widget_scale_get(sd->parent_obj);
+   if (sd->scale == 0.0)
+     {
+	if (sd->parent_obj)
+	  return elm_widget_scale_get(sd->parent_obj);
+	else
+	  return elm_scale_get();
+     }
    return sd->scale;
 }
 
