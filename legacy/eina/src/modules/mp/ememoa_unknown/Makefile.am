@@ -12,7 +12,7 @@ if EINA_ENABLE_EMEMOA
 
 if !EINA_STATIC_BUILD_EMEMOA_UNKNOWN
 
-controllerdir = $(libdir)/eina/mp/
+controllerdir = $(libdir)/eina/mp
 controller_LTLIBRARIES = eina_ememoa_unknown.la
 
 eina_ememoa_unknown_la_SOURCES = \

@@ -8,7 +8,7 @@ AM_CPPFLAGS = \
 
 if !EINA_STATIC_BUILD_FIXED_BITMAP
 
-controllerdir = $(libdir)/eina/mp/
+controllerdir = $(libdir)/eina/mp
 controller_LTLIBRARIES = eina_fixed_bitmap.la
 
 eina_fixed_bitmap_la_SOURCES = \
