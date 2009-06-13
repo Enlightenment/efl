@@ -487,5 +487,4 @@ evas_common_draw_func_copy_get(int pixels, int reverse)
 #else
    return NULL;
 #endif
-   pixels = 0;
 }

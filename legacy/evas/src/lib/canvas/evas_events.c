@@ -238,7 +238,7 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
 	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_DOWN, &ev);
 	if (e->delete_me) break;
      }
-   if (copy) copy = eina_list_free(copy);
+   if (copy) eina_list_free(copy);
    e->last_mouse_down_counter++;
    _evas_unwalk(e);
 }

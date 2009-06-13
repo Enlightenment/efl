@@ -268,7 +268,6 @@ _sci_find(RGBA_Image *im,
 static void
 _cache_prune(Scaleitem *notsci, Evas_Bool copies_only)
 {
-   RGBA_Image *im;
    Scaleitem *sci;
    while (cache_size > max_cache_size)
      {
@@ -281,7 +280,6 @@ _cache_prune(Scaleitem *notsci, Evas_Bool copies_only)
              if (!sci) return;
           }
         if (sci == notsci) return;
-        im = sci->parent_im;
         if (sci->im)
           {
              evas_common_rgba_image_free(&sci->im->cache_entry);
