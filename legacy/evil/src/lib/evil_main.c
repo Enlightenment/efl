@@ -58,6 +58,9 @@ evil_init()
      return 0;
    _evil_time_count = count.QuadPart;
 
+   if(!evil_sockets_init())
+     return 0;
+
    _evil_init_count++;
 
    return _evil_init_count;

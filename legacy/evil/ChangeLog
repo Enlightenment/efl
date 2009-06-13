@@ -1,3 +1,8 @@
+2009-06-13  Lars Munch  <lars at segv dot dk>
+
+	* src/lib/evil_main.c:
+	initiate use of the Winsock DLL in evil_init()
+
 2009-06-10  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_langinfo.c:
