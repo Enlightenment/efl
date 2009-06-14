@@ -1724,22 +1724,16 @@ static void *evas_object_text_engine_data_get(Evas_Object *obj)
 static int
 evas_object_text_is_opaque(Evas_Object *obj)
 {
-   Evas_Object_Text *o;
-
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fulyl opque over the entire gradient it occupies */
-   o = (Evas_Object_Text *)(obj->object_data);
    return 0;
 }
 
 static int
 evas_object_text_was_opaque(Evas_Object *obj)
 {
-   Evas_Object_Text *o;
-
    /* this returns 1 if the internal object data implies that the object was */
    /* currently fulyl opque over the entire gradient it occupies */
-   o = (Evas_Object_Text *)(obj->object_data);
    return 0;
 }
 

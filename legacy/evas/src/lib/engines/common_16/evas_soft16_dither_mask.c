@@ -283,11 +283,10 @@ soft16_image_convert_from_rgb(Soft16_Image *im, const DATA32 *src)
 {
    const DATA32 *sp;
    DATA16 *dp;
-   int y, pad;
+   int y;
 
    sp = src;
    dp = im->pixels;
-   pad = im->stride - im->cache_entry.w;
 
    for (y = 0; y < im->cache_entry.h; y++, sp += im->cache_entry.w, dp += im->stride)
      _soft16_convert_from_rgb_scanline(sp, dp, y, im->cache_entry.w);

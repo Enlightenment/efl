@@ -467,9 +467,6 @@ _line_free(const Evas_Object *obj, Evas_Object_Textblock_Line *ln)
 static void
 _lines_clear(const Evas_Object *obj, Evas_Object_Textblock_Line *lines)
 {
-   Evas_Object_Textblock *o;
-
-   o = (Evas_Object_Textblock *)(obj->object_data);
    while (lines)
      {
 	Evas_Object_Textblock_Line *ln;
@@ -750,7 +747,6 @@ _clean_white(int clean_start, int clean_end, char *str)
    p = str;
    p2 = str2;
    white = 0;
-   pwhite = 0;
    start = 1;
    ok = 1;
    while (*p != 0)
@@ -3218,10 +3214,7 @@ evas_textblock_cursor_node_last(Evas_Textblock_Cursor *cur)
 EAPI Evas_Bool
 evas_textblock_cursor_node_next(Evas_Textblock_Cursor *cur)
 {
-   Evas_Object_Textblock *o;
-   
    if (!cur) return 0;
-   o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!cur->node) return 0;
    if ((EINA_INLIST_GET(cur->node))->next)
      {
@@ -3241,10 +3234,7 @@ evas_textblock_cursor_node_next(Evas_Textblock_Cursor *cur)
 EAPI Evas_Bool
 evas_textblock_cursor_node_prev(Evas_Textblock_Cursor *cur)
 {
-   Evas_Object_Textblock *o;
-   
    if (!cur) return 0;
-   o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!cur->node) return 0;
    if ((EINA_INLIST_GET(cur->node))->prev)
      {
@@ -3263,12 +3253,10 @@ evas_textblock_cursor_node_prev(Evas_Textblock_Cursor *cur)
 EAPI Evas_Bool
 evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur)
 {
-   Evas_Object_Textblock *o;
-   int index, tindex, ch;
+   int index, ch;
    int at_start_of_line = 0;
    
    if (!cur) return 0;
-   o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!cur->node) return 0;
    if (cur->node->type == NODE_FORMAT) return 0;
    if (!cur->node->text) return 0;
@@ -3288,7 +3276,6 @@ evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur)
    ch = evas_common_font_utf8_get_next((unsigned char *)(cur->node->text), &index);
    if ((ch == 0) || (index < 0)) return 0;
    if (cur->node->text[index] == 0) return 0;
-   tindex = index;
    cur->pos = index;
    cur->eol = 0; // 1
    return 1;
@@ -3302,13 +3289,11 @@ evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur)
 EAPI Evas_Bool
 evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *cur)
 {
-   Evas_Object_Textblock *o;
-   int index, ch;
+   int index;
    int at_end_of_line = 0;
    int at_start_of_line = 0;
    
    if (!cur) return 0;
-   o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!cur->node) return 0;
    if (cur->node->type == NODE_FORMAT) return 0;
    if (!cur->node->text) return 0;
@@ -3343,7 +3328,7 @@ evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *cur)
         cur->eol = 0;
         return 1;
      }
-   ch = evas_common_font_utf8_get_prev((unsigned char *)(cur->node->text), &index);
+   evas_common_font_utf8_get_prev((unsigned char *)(cur->node->text), &index);
    if (/*(ch == 0) || */(index < 0)) return 0;
    cur->pos = index;
    if (at_start_of_line)
@@ -3701,7 +3686,6 @@ evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text)
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Node *n, *nrel;
-   int index;
    
    if (!cur) return;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
@@ -3747,7 +3731,6 @@ evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text)
 	  o->nodes = (Evas_Object_Textblock_Node *)eina_inlist_prepend(EINA_INLIST_GET(o->nodes), EINA_INLIST_GET(n));
      }
    cur->node = n;
-   index = cur->pos;
    if (cur->pos > (n->len - 1))
      n->text = _strbuf_append(n->text, (char *)text, &(n->len), &(n->alloc));
    else
@@ -4313,7 +4296,7 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 		  free(n2);
 	       }
 	  }
-	if (format_hump) format_hump = eina_list_free(format_hump);
+	if (format_hump) eina_list_free(format_hump);
 	cur1->node = tcur.node;
 	cur1->pos = tcur.pos;
 	cur2->node = tcur.node;
@@ -4423,19 +4406,11 @@ evas_textblock_cursor_node_format_is_visible_get(const Evas_Textblock_Cursor *cu
      {
 	char *s;
 	char *item;
-	int push = 0;
-	int pop = 0;
 	int visible = 0;
 	
 	s = n->text;
-	if (s[0] == '+')
+	if (s[0] == '+' || s[0] == '-')
 	  {
-	     push = 1;
-	     s++;
-	  }
-	else if (s[0] == '-')
-	  {
-	     pop = 1;
 	     s++;
 	  }
 	while ((item = _format_parse(&s)))
@@ -4466,8 +4441,8 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Node *n1, *n2, *n;
    char *txt = NULL, *s;
-   int txt_len = 0, txt_alloc = 0, chr, index;
-   
+   int txt_len = 0, txt_alloc = 0, index;
+
    if (!cur1) return NULL;
    if (!cur2) return NULL;
    if (cur1->obj != cur2->obj) return NULL;
@@ -4475,7 +4450,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
    if (evas_textblock_cursor_compare(cur1, cur2) > 0)
      {
 	const Evas_Textblock_Cursor *tc;
-	
+
 	tc = cur1;
 	cur1 = cur2;
 	cur2 = tc;
@@ -4483,7 +4458,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
    n1 = cur1->node;
    n2 = cur2->node;
    index = cur2->pos;
-   chr = evas_common_font_utf8_get_next((unsigned char *)n2->text, &index);
+   evas_common_font_utf8_get_next((unsigned char *)n2->text, &index);
    EINA_INLIST_FOREACH(n1, n)
      {
 	if (n->type == NODE_TEXT)
@@ -4492,7 +4467,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 	     if (format == EVAS_TEXTBLOCK_TEXT_MARKUP)
 	       {
 		  char *p, *ps, *pe;
-	
+
 		  if (n->text)
 		    {
 		       if ((n == n1) && (n == n2))
@@ -4520,7 +4495,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 			 {
 			    const char *escape;
 			    int adv;
-			    
+
 			    escape = _escaped_char_match(p, &adv);
 			    if (escape)
 			      {
@@ -4530,7 +4505,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 			    else
 			      {
 				 char str[2];
-				 
+
 				 str[0] = *p;
 				 str[1] = 0;
 				 txt = _strbuf_append(txt, str, &txt_len, &txt_alloc);
@@ -4588,7 +4563,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
 		    {
 		       int push = 0;
 		       int pop = 0;
-		       
+
 		       // FIXME: need to escape
 		       s = n->text;
 		       if (*s == '+') push = 1;
@@ -4848,7 +4823,6 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
 EAPI Eina_List *
 evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2)
 {
-   Evas_Object_Textblock *o;
    Eina_List *rects = NULL;
    Evas_Coord cx, cy, cw, ch, lx, ly, lw, lh;
    Evas_Textblock_Rectangle *tr;
@@ -4857,7 +4831,6 @@ evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, cons
    if (!cur1) return NULL;
    if (!cur2) return NULL;
    if (cur1->obj != cur2->obj) return NULL;
-   o = (Evas_Object_Textblock *)(cur1->obj->object_data);
    if (evas_textblock_cursor_compare(cur1, cur2) > 0)
      {
 	const Evas_Textblock_Cursor *tc;
@@ -5657,17 +5630,17 @@ evas_object_textblock_render_pre(Evas_Object *obj)
 static void
 evas_object_textblock_render_post(Evas_Object *obj)
 {
-   Evas_Object_Textblock *o;
+/*   Evas_Object_Textblock *o; */
 
    /* this moves the current data to the previous state parts of the object */
    /* in whatever way is safest for the object. also if we don't need object */
    /* data anymore we can free it if the object deems this is a good idea */
-   o = (Evas_Object_Textblock *)(obj->object_data);
+/*   o = (Evas_Object_Textblock *)(obj->object_data); */
    /* remove those pesky changes */
    evas_object_clip_changes_clean(obj);
    /* move cur to prev safely for object data */
    obj->prev = obj->cur;
-//   o->prev = o->cur;
+/*   o->prev = o->cur; */
 /*   o->changed = 0; */
 }
 
@@ -5701,22 +5674,16 @@ static void *evas_object_textblock_engine_data_get(Evas_Object *obj)
 static int
 evas_object_textblock_is_opaque(Evas_Object *obj)
 {
-   Evas_Object_Textblock *o;
-
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fulyl opque over the entire gradient it occupies */
-   o = (Evas_Object_Textblock *)(obj->object_data);
    return 0;
 }
 
 static int
 evas_object_textblock_was_opaque(Evas_Object *obj)
 {
-   Evas_Object_Textblock *o;
-
    /* this returns 1 if the internal object data implies that the object was */
    /* currently fulyl opque over the entire gradient it occupies */
-   o = (Evas_Object_Textblock *)(obj->object_data);
    return 0;
 }
 
@@ -5737,9 +5704,6 @@ evas_object_textblock_coords_recalc(Evas_Object *obj)
 static void
 evas_object_textblock_scale_update(Evas_Object *obj)
 {
-   Evas_Object_Textblock *o;
-
-   o = (Evas_Object_Textblock *)(obj->object_data);
    _relayout(obj);
 }
 

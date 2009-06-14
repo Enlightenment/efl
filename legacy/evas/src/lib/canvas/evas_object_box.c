@@ -1663,7 +1663,7 @@ _evas_object_box_layout_flow_vertical_col_info_collect(Evas_Object_Box_Data *pri
 void
 evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
 {
-   int n_children, h_justify;
+   int n_children;
    int c, col_count;
    int min_w = 0, min_h = 0;
    int max_w, inc_x;
@@ -1689,7 +1689,6 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv,
      (priv, h, &col_count, col_max_w, col_break, col_height, &off_x, &max_w);
 
    inc_x = 0;
-   h_justify = 0;
    remain_x = w - (off_x + max_w);
 
    if (remain_x > 0)

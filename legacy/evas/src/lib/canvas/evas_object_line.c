@@ -441,46 +441,34 @@ static void *evas_object_line_engine_data_get(Evas_Object *obj)
 static int
 evas_object_line_is_opaque(Evas_Object *obj)
 {
-   Evas_Object_Line *o;
-
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fully opaque over the entire line it occupies */
-   o = (Evas_Object_Line *)(obj->object_data);
    return 0;
 }
 
 static int
 evas_object_line_was_opaque(Evas_Object *obj)
 {
-   Evas_Object_Line *o;
-
    /* this returns 1 if the internal object data implies that the object was */
    /* previously fully opaque over the entire line it occupies */
-   o = (Evas_Object_Line *)(obj->object_data);
    return 0;
 }
 
 static int
 evas_object_line_is_inside(Evas_Object *obj, Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__)
 {
-   Evas_Object_Line *o;
-
    /* this returns 1 if the canvas co-ordinates are inside the object based */
    /* on object private data. not much use for rects, but for polys, images */
    /* and other complex objects it might be */
-   o = (Evas_Object_Line *)(obj->object_data);
    return 1;
 }
 
 static int
 evas_object_line_was_inside(Evas_Object *obj, Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__)
 {
-   Evas_Object_Line *o;
-
    /* this returns 1 if the canvas co-ordinates were inside the object based */
    /* on object private data. not much use for rects, but for polys, images */
    /* and other complex objects it might be */
-   o = (Evas_Object_Line *)(obj->object_data);
    return 1;
 }
 
