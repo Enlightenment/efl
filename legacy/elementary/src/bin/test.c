@@ -1456,7 +1456,7 @@ my_bt_19(void *data, Evas_Object *obj, void *event_info)
    elm_hoversel_item_add(bt, "Item 1", NULL, ELM_ICON_NONE, NULL, NULL);
    elm_hoversel_item_add(bt, "Item 2", NULL, ELM_ICON_NONE, NULL, NULL);
    elm_hoversel_item_add(bt, "Item 3", NULL, ELM_ICON_NONE, NULL, NULL);
-   elm_hoversel_item_add(bt, "Item 4", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(bt, "Item 4 - Long Label Here", NULL, ELM_ICON_NONE, NULL, NULL);
    evas_object_size_hint_weight_set(bt, 0.0, 0.0);
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_box_pack_end(bx, bt);

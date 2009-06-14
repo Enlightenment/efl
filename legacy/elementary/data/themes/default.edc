@@ -3503,9 +3503,24 @@ collections {
 	 part { name: "button_image";
 	    mouse_events: 1;
 	    description { state: "default" 0.0;
-	       rel1.to: "elm.swallow.slot.top";
+	       rel1.to_x: "elm.swallow.slot.top";
+	       rel1.to_y: "elm.swallow.slot.top";
                rel1.offset: -2 -6;
-	       rel2.to: "elm.swallow.slot.bottom";
+	       rel2.to_x: "elm.swallow.slot.top";
+	       rel2.to_y: "elm.swallow.slot.bottom";
+               rel2.offset: 1 5;
+	       image {
+		  normal: "bt_base2.png";
+		  border: 7 7 7 7;
+	       }
+               image.middle: SOLID;
+	    }
+	    description { state: "bottom" 0.0;
+	       rel1.to_x: "elm.swallow.slot.bottom";
+	       rel1.to_y: "elm.swallow.slot.top";
+               rel1.offset: -2 -6;
+	       rel2.to_x: "elm.swallow.slot.bottom";
+	       rel2.to_y: "elm.swallow.slot.bottom";
                rel2.offset: 1 5;
 	       image {
 		  normal: "bt_base2.png";
@@ -3690,6 +3705,12 @@ collections {
 	    transition: DECELERATE 0.5;
 	    target: "elm.swallow.slot.top";
 	 }
+	 program { name: "topshow3";
+            signal: "elm,action,slot,top,show";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
+	    target: "button_image";
+	 }
 	 program { name: "tophide";
             signal: "elm,action,slot,top,hide";
 	    source: "elm";
@@ -3713,6 +3734,12 @@ collections {
 	    action: STATE_SET "visible" 0.0;
 	    transition: DECELERATE 0.5;
 	    target: "elm.swallow.slot.bottom";
+	 }
+	 program { name: "bottomshow3";
+            signal: "elm,action,slot,bottom,show";
+	    source: "elm";
+	    action: STATE_SET "bottom" 0.0;
+	    target: "button_image";
 	 }
 	 program { name: "bottomhide";
             signal: "elm,action,slot,bottom,hide";
