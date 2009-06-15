@@ -1,6 +1,6 @@
 rm -f config.cache
 
-AC_INIT([efreet], [0.5.0.060], [enlightenment-devel@lists.sourceforge.net])
+AC_INIT([efreet], [0.5.0.061], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
@@ -27,7 +27,7 @@ VMIN=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $2);}'`
 VMIC=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $3);}'`
 SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
-release="ver-pre-svn-01"
+release="ver-svn-02"
 efreet_release_info="-release $release"
 efreet_mime_release_info="-release $release"
 efreet_trash_release_info="-release $release"
