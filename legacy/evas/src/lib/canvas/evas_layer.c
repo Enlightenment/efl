@@ -71,7 +71,19 @@ evas_layer_free(Evas_Layer *lay)
 	obj = (Evas_Object *)lay->objects;
 	evas_object_free(obj, 0);
      }
-   free(lay);
+}
+
+void
+evas_layer_clean(Evas *e)
+{
+   Evas_Layer *tmp;
+
+   while (e->layers)
+     {
+	tmp = e->layers;
+	evas_layer_del(tmp);
+	free(tmp);
+     }
 }
 
 Evas_Layer *
@@ -122,6 +134,9 @@ evas_layer_del(Evas_Layer *lay)
 
 /**
  * Sets the layer of the evas that the given object will be part of.
+ *
+ * It is not possible to change the layer of a smart object's child.
+ *
  * @param   obj The given evas object.
  * @param   l   The number of the layer to place the object on.
  */
@@ -170,6 +185,11 @@ evas_object_layer_set(Evas_Object *obj, short l)
 
 /**
  * Retrieves the layer of the evas that the given object is part of.
+ *
+ * Be carefull, it doesn't make sense to change the layer of smart object's
+ * child. So the returned value could be wrong in some case. Don't rely on
+ * it's accuracy.
+ *
  * @param   obj The given evas object.
  * @return  Number of the layer.
  */

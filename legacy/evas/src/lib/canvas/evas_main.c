@@ -158,12 +158,10 @@ evas_free(Evas *e)
 	       }
 	  }
      }
-   while (e->layers)
-     {
-	lay = e->layers;
-	evas_layer_del(lay);
-	evas_layer_free(lay);
-     }
+   EINA_INLIST_FOREACH(e->layers, lay)
+     evas_layer_free(lay);
+   evas_layer_clean(e);
+
    e->walking_list--;
 
    evas_font_path_clear(e);
