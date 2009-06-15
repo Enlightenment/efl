@@ -20,6 +20,7 @@ evas_common_font_init(void)
 	initialised--;
 	return;
      }
+   evas_common_font_load_init();
 }
 
 EAPI void
@@ -30,6 +31,7 @@ evas_common_font_shutdown(void)
    initialised--;
    if (initialised != 0) return;
 
+   evas_common_font_load_shutdown();
    evas_common_font_cache_set(0);
    evas_common_font_flush();
 

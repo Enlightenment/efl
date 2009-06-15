@@ -800,8 +800,6 @@ struct _RGBA_Font
 
 struct _RGBA_Font_Int
 {
-   EINA_INLIST;
-
    RGBA_Font_Source *src;
 
    int               size;
@@ -814,7 +812,7 @@ struct _RGBA_Font_Int
    Eina_Hash       *glyphs;
 
    LK(ft_mutex);
-   
+
    Eina_Hash       *kerning;
    Eina_Hash       *indexes;
 
@@ -822,12 +820,11 @@ struct _RGBA_Font_Int
    Font_Hint_Flags hinting;
 
    int              references;
+
 };
 
 struct _RGBA_Font_Source
 {
-   EINA_INLIST;
-
    const char       *name;
    const char       *file;
 
