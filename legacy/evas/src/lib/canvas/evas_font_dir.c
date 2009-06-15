@@ -120,16 +120,34 @@ evas_fonts_zero_free(Evas *evas)
 {
    Fndat *fd;
 
-   while (fonts_zero)
+   EINA_LIST_FREE(fonts_zero, fd)
+     {
+	if (fd->name) eina_stringshare_del(fd->name);
+	if (fd->source) eina_stringshare_del(fd->source);
+	evas->engine.func->font_free(evas->engine.data.output, fd->font);
+	free(fd);
+     }
+}
+
+void
+evas_fonts_zero_presure(Evas *evas)
+{
+   Fndat *fd;
+
+   while (fonts_zero
+	  && eina_list_count(fonts_zero) > 4) /* 4 is arbitrary */
      {
 	fd = eina_list_data_get(fonts_zero);
+
+	if (fd->ref != 0) break;
+	fonts_zero = eina_list_remove_list(fonts_zero, fonts_zero);
 
 	if (fd->name) eina_stringshare_del(fd->name);
 	if (fd->source) eina_stringshare_del(fd->source);
 	evas->engine.func->font_free(evas->engine.data.output, fd->font);
 	free(fd);
 
-	fonts_zero = eina_list_remove_list(fonts_zero, fonts_zero);
+	if (eina_list_count(fonts_zero) < 5) break;
      }
 }
 
@@ -152,16 +170,20 @@ evas_font_free(Evas *evas, void *font)
 	     break;
 	  }
      }
-   while ((fonts_zero) &&
-	  (eina_list_count(fonts_zero) > 4)) /* 4 is arbitrary */
+   while (fonts_zero
+	  && eina_list_count(fonts_zero) > 42) /* 42 is arbitrary */
      {
 	fd = eina_list_data_get(fonts_zero);
+
 	if (fd->ref != 0) break;
 	fonts_zero = eina_list_remove_list(fonts_zero, fonts_zero);
+
 	if (fd->name) eina_stringshare_del(fd->name);
 	if (fd->source) eina_stringshare_del(fd->source);
 	evas->engine.func->font_free(evas->engine.data.output, fd->font);
 	free(fd);
+
+	if (eina_list_count(fonts_zero) < 43) break;
      }
 }
 

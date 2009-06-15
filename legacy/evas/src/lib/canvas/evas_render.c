@@ -667,6 +667,8 @@ evas_render_idle_flush(Evas *e)
    return;
    MAGIC_CHECK_END();
 
+   evas_fonts_zero_presure(e);
+
    if ((e->engine.func) && (e->engine.func->output_idle_flush) &&
        (e->engine.data.output))
      e->engine.func->output_idle_flush(e->engine.data.output);
