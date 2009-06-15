@@ -20,7 +20,7 @@ evas_init(void)
 	  choice = "chained_mempool";
 
 	_evas_rectangle_mp = eina_mempool_new(choice, "evas_rectangle", NULL,
-					      sizeof (Evas_Rectangle), 42);
+					      sizeof (Evas_Rectangle), 256);
 	if (!_evas_rectangle_mp)
 	  {
 	     EINA_ERROR_PERR("ERROR: Mempool for rectangle cannot be allocated in list init.\n");
