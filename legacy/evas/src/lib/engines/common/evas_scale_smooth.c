@@ -6,19 +6,27 @@
 #include "evas_scale_smooth.h"
 #include "evas_blend_private.h"
 
+#define SCALE_CALC_X_POINTS(P, SW, DW)		\
+  P = alloca((DW + 1) * sizeof (int));		\
+  scale_calc_x_points(P, SW, DW);
 
-static DATA32 **scale_calc_y_points(DATA32 *src, int sw, int sh, int dh);
-static int     *scale_calc_x_points(int sw, int dw);
-static int     *scale_calc_a_points(int s, int d);
+#define SCALE_CALC_Y_POINTS(P, SRC, SW, SH, DH)	\
+  P = alloca((DH + 1) * sizeof (DATA32 *));	\
+  scale_calc_y_points(P, SRC, SW, SH, DH);
 
-static DATA32 **
-scale_calc_y_points(DATA32 *src, int sw, int sh, int dh)
+#define SCALE_CALC_A_POINTS(P, S, D)		\
+  P = alloca(D * sizeof (int));			\
+  scale_calc_a_points(P, S, D);
+
+static void scale_calc_y_points(DATA32** p, DATA32 *src, int sw, int sh, int dh);
+static void scale_calc_x_points(int *p, int sw, int dw);
+static void scale_calc_a_points(int *p, int s, int d);
+
+static void
+scale_calc_y_points(DATA32** p, DATA32 *src, int sw, int sh, int dh)
 {
-   DATA32 **p;
    int i, val, inc;
 
-   p = malloc((dh + 1) * sizeof(DATA32 *));
-   if (!p) return NULL;
    val = 0;
    inc = (sh << 16) / dh;
    for (i = 0; i < dh; i++)
@@ -27,17 +35,13 @@ scale_calc_y_points(DATA32 *src, int sw, int sh, int dh)
 	val += inc;
      }
    p[i] = p[i - 1];
-   return p;
 }
 
-static int *
-scale_calc_x_points(int sw, int dw)
+static void
+scale_calc_x_points(int *p, int sw, int dw)
 {
-   int *p;
    int i, val, inc;
 
-   p = malloc((dw + 1) * sizeof(int));
-   if (!p) return NULL;
    val = 0;
    inc = (sw << 16) / dw;
    for (i = 0; i < dw; i++)
@@ -46,17 +50,13 @@ scale_calc_x_points(int sw, int dw)
 	val += inc;
      }
    p[i] = p[i - 1];
-   return p;
 }
 
-static int *
-scale_calc_a_points(int s, int d)
+static void
+scale_calc_a_points(int *p, int s, int d)
 {
-   int *p;
    int i, val, inc;
 
-   p = malloc(d * sizeof(int));
-   if (!p) return NULL;
    if (d >= s)
      {
 	val = 0;
@@ -83,7 +83,6 @@ scale_calc_a_points(int s, int d)
 	  }
      }
 //   sleep(1);
-   return p;
 }
 
 #ifdef BUILD_SCALE_SMOOTH

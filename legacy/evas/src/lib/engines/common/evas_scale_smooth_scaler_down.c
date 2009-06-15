@@ -9,12 +9,10 @@
 
    src_data = src->image.data;
 
-   xpoints = scale_calc_x_points(src_region_w, dst_region_w);
-   ypoints = scale_calc_y_points(src_data, src_w, src_region_h, dst_region_h);
-   xapoints = scale_calc_a_points(src_region_w, dst_region_w);
-   yapoints = scale_calc_a_points(src_region_h, dst_region_h);
-   if ( (!xpoints) || (!ypoints) || (!xapoints) || (!yapoints) )
-	goto done_scale_down;
+   SCALE_CALC_X_POINTS(xpoints, src_region_w, dst_region_w);
+   SCALE_CALC_Y_POINTS(ypoints, src_data, src_w, src_region_h, dst_region_h);
+   SCALE_CALC_A_POINTS(xapoints, src_region_w, dst_region_w);
+   SCALE_CALC_A_POINTS(yapoints, src_region_h, dst_region_h);
 
    /* a scanline buffer */
    buf = alloca(dst_clip_w * sizeof(DATA32));
@@ -41,10 +39,4 @@
      {
 #include "evas_scale_smooth_scaler_downx_downy.c"
      }
-
-   done_scale_down:
-   if (xpoints) free(xpoints);
-   if (ypoints) free(ypoints);
-   if (xapoints) free(xapoints);
-   if (yapoints) free(yapoints);
 }
