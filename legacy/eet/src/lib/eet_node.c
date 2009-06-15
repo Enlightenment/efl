@@ -160,6 +160,22 @@ eet_node_struct_new(const char *name, Eina_List *nodes)
    return n;
 }
 
+Eet_Node *
+eet_node_struct_child_new(const char *parent, Eet_Node *child)
+{
+   Eet_Node *n;
+
+   if (child->type != EET_G_UNKNOWN)
+     return child;
+
+   n = _eet_node_new(parent, EET_G_UNKNOWN);
+   if (!n) return NULL;
+
+   _eet_node_append(n, eina_list_prepend(NULL, child));
+
+   return n;
+}
+
 void
 eet_node_del(Eet_Node *n)
 {
