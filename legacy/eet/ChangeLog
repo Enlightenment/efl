@@ -181,3 +181,8 @@
 2009-06-02  Cedric BAIL
 
 	* Make eet_node API usable.
+
+2009-06-14  Carsten Haitzler (The Rasterman)
+
+	* Release eet 1.2.1
+
