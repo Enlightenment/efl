@@ -63,3 +63,27 @@ endif
 #if !EVAS_STATIC_BUILD_SOFTWARE_QTOPIA
 #SUBDIRS += software_qtopia
 #endif
+
+DIST_SUBDIRS = \
+software_generic \
+buffer \
+direct3d \
+directfb \
+fb \
+gl_common \
+gl_glew \
+gl_x11 \
+quartz \
+software_16 \
+software_16_ddraw \
+software_16_wince \
+software_16_x11 \
+software_16_sdl \
+software_sdl \
+software_ddraw \
+software_gdi \
+software_x11 \
+xrender_x11
+#cairo_common \
+#cairo_x11 \
+#software_qtopia

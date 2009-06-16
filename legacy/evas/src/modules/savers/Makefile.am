@@ -31,3 +31,4 @@ endif
 endif
 
 SUBDIRS = $(edb_subdir) $(eet_subdir) $(jpeg_subdir) $(png_subdir) $(tiff_subdir)
+DIST_SUBDIRS = edb eet jpeg png tiff
