@@ -210,12 +210,14 @@ EAPI Eina_Bool eina_module_load(Eina_Module *m)
 
 	if (m->handle) goto loaded;
 
-	eina_error_set(EINA_ERROR_WRONG_MODULE);
-
 	dl_handle = dlopen(m->file, RTLD_NOW);
-	if (!dl_handle) return EINA_FALSE;
-
-	eina_error_set(EINA_ERROR_MODULE_INIT_FAILED);
+	if (!dl_handle)
+	  {
+	     EINA_ERROR_PDBG("could not dlopen(\"%s\", RTLD_NOW): %s\n",
+			     m->file, dlerror());
+	     eina_error_set(EINA_ERROR_WRONG_MODULE);
+	     return EINA_FALSE;
+	  }
 
 	initcall = dlsym(dl_handle, EINA_MODULE_SYMBOL_INIT);
 	if ((!initcall) || (!(*initcall)))
@@ -223,6 +225,7 @@ EAPI Eina_Bool eina_module_load(Eina_Module *m)
 	if ((*initcall)() == EINA_TRUE)
 		goto ok;
 
+	eina_error_set(EINA_ERROR_MODULE_INIT_FAILED);
 	dlclose(dl_handle);
 	return EINA_FALSE;
 ok:
