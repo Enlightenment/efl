@@ -5,9 +5,9 @@
 #include <jpeglib.h>
 #include <setjmp.h>
 
-int evas_image_save_file_jpeg(RGBA_Image *im, const char *file, const char *key, int quality, int compress);
+static int evas_image_save_file_jpeg(RGBA_Image *im, const char *file, const char *key, int quality, int compress);
 
-Evas_Image_Save_Func evas_image_save_jpeg_func =
+static Evas_Image_Save_Func evas_image_save_jpeg_func =
 {
    evas_image_save_file_jpeg
 };
@@ -111,12 +111,12 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
    return 1;
 }
 
-int evas_image_save_file_jpeg(RGBA_Image *im, const char *file, const char *key __UNUSED__, int quality, int compress __UNUSED__)
+static int evas_image_save_file_jpeg(RGBA_Image *im, const char *file, const char *key __UNUSED__, int quality, int compress __UNUSED__)
 {
    return save_image_jpeg(im, file, quality);
 }
 
-EAPI int
+static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
@@ -124,16 +124,25 @@ module_open(Evas_Module *em)
    return 1;
 }
 
-EAPI void
-module_close(void)
+static void
+module_close(Evas_Module *em)
 {
-   
 }
 
-EAPI Evas_Module_Api evas_modapi =
+static Evas_Module_Api evas_modapi =
 {
    EVAS_MODULE_API_VERSION,
-     EVAS_MODULE_TYPE_IMAGE_SAVER,
-     "jpeg",
-     "none"
+   "jpeg",
+   "none",
+   {
+     module_open,
+     module_close
+   }
 };
+
+EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_IMAGE_SAVER, image_saver, jpeg);
+
+#ifndef EVAS_STATIC_BUILD_JPEG
+EVAS_EINA_MODULE_DEFINE(image_saver, jpeg);
+#endif
+

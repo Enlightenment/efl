@@ -12,10 +12,7 @@ AM_CPPFLAGS = \
 
 if BUILD_ENGINE_DIRECT3D
 
-pkgdir = $(libdir)/evas/modules/engines/direct3d/$(MODULE_ARCH)
-
-pkg_LTLIBRARIES = module.la
-module_la_SOURCES = \
+DIRECT3D_SOURCES = \
 evas_engine.c \
 evas_direct3d_context.cpp \
 evas_direct3d_device.cpp \
@@ -30,13 +27,29 @@ evas_direct3d_scene.cpp \
 evas_direct3d_shader_pack.cpp \
 evas_direct3d_vertex_buffer_cache.cpp
 
-module_la_CXXFLAGS = -fno-exceptions
-module_la_LIBADD = $(top_builddir)/src/lib/libevas.la @EINA_LIBS@ @evas_engine_direct3d_libs@
-module_la_LDFLAGS = -no-undefined -module -avoid-version
-module_la_LIBTOOLFLAGS = --tag=disable-static
+DIRECT3D_LIBADD = @evas_engine_direct3d_libs@
+
+pkgdir = $(libdir)/evas/modules/engines/direct3d/$(MODULE_ARCH)
 
 include_HEADERS = Evas_Engine_Direct3D.h
 
+if !EVAS_STATIC_BUILD_DIRECT3D
+
+pkg_LTLIBRARIES = module.la
+module_la_SOURCES = $(DIRECT3D_SOURCES)
+module_la_CXXFLAGS = -fno-exceptions
+module_la_LIBADD = $(top_builddir)/src/lib/libevas.la $(DIRECT3D_LIBADD) @EINA_LIBS@
+module_la_LDFLAGS = -no-undefined -module -avoid-version
+module_la_LIBTOOLFLAGS = --tag=disable-static
+
+else
+
+noinst_LTLIBRARIES = libevas_engine_direct3d.la
+
+libevas_engine_direct3d_la_SOURCES = $(DIRECT3D_SOURCES)
+libevas_engine_direct3d_la_LIBADD = $(DIRECT3D_LIBADD)
+
+endif
 endif
 
 EXTRA_DIST = \

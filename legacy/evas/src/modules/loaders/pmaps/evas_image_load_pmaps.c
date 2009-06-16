@@ -539,7 +539,7 @@ pmaps_buffer_plain_bw_get(Pmaps_Buffer *b, DATA32 *val)
 }
 
 /* external functions */
-EAPI int
+static int
 module_open(Evas_Module *em)
 {
    if (!em)
@@ -548,16 +548,23 @@ module_open(Evas_Module *em)
    return 1;
 }
 
-EAPI void
-module_close(void)
+static void
+module_close(Evas_Module *em)
 {
-
 }
 
-EAPI Evas_Module_Api evas_modapi = {
+static Evas_Module_Api evas_modapi = {
    EVAS_MODULE_API_VERSION,
-   EVAS_MODULE_TYPE_IMAGE_LOADER,
    "pmaps",
-   "none"
+   "none",
+   {
+     module_open,
+     module_close
+   }
 };
 
+EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_IMAGE_LOADER, image_loader, pmaps);
+
+#ifndef EVAS_STATIC_BUILD_PMAPS
+EVAS_EINA_MODULE_DEFINE(image_loader, pmaps);
+#endif

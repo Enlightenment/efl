@@ -613,7 +613,7 @@ eng_output_idle_flush(void *data)
 
 
 /* module advertising code */
-EAPI int
+static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
@@ -641,15 +641,25 @@ module_open(Evas_Module *em)
    return 1;
 }
 
-EAPI void
-module_close(void)
+static void
+module_close(Evas_Module *em)
 {
 }
 
-EAPI Evas_Module_Api evas_modapi =
+static Evas_Module_Api evas_modapi =
 {
    EVAS_MODULE_API_VERSION,
-     EVAS_MODULE_TYPE_ENGINE,
-     "software_x11",
-     "none"
+   "software_x11",
+   "none",
+   {
+     module_open,
+     module_close
+   }
 };
+
+EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_ENGINE, engine, software_x11);
+
+#ifndef EVAS_STATIC_BUILD_SOFTWARE_X11
+EVAS_EINA_MODULE_DEFINE(engine, software_x11);
+#endif
+

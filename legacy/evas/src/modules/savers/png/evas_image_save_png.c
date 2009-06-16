@@ -26,9 +26,9 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-int evas_image_save_file_png(RGBA_Image *im, const char *file, const char *key, int quality, int compress);
+static int evas_image_save_file_png(RGBA_Image *im, const char *file, const char *key, int quality, int compress);
 
-Evas_Image_Save_Func evas_image_save_png_func =
+static Evas_Image_Save_Func evas_image_save_png_func =
 {
    evas_image_save_file_png
 };
@@ -153,12 +153,12 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
    return 0;
 }
 
-int evas_image_save_file_png(RGBA_Image *im, const char *file, const char *key __UNUSED__, int quality __UNUSED__, int compress)
+static int evas_image_save_file_png(RGBA_Image *im, const char *file, const char *key __UNUSED__, int quality __UNUSED__, int compress)
 {
    return save_image_png(im, file, compress, 0);
 }
 
-EAPI int
+static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
@@ -166,16 +166,25 @@ module_open(Evas_Module *em)
    return 1;
 }
 
-EAPI void
-module_close(void)
+static void
+module_close(Evas_Module *em)
 {
-
 }
 
-EAPI Evas_Module_Api evas_modapi =
+static Evas_Module_Api evas_modapi =
 {
    EVAS_MODULE_API_VERSION,
-     EVAS_MODULE_TYPE_IMAGE_SAVER,
-     "png",
-     "none"
+   "png",
+   "none",
+   {
+     module_open,
+     module_close
+   }
 };
+
+EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_IMAGE_SAVER, image_saver, png);
+
+#ifndef EVAS_STATIC_BUILD_PNG
+EVAS_EINA_MODULE_DEFINE(image_saver, png);
+#endif
+

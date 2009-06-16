@@ -10,15 +10,14 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-int evas_image_load_file_head_xpm(Image_Entry *ie, const char *file, const char *key);
-int evas_image_load_file_data_xpm(Image_Entry *ie, const char *file, const char *key);
+static int evas_image_load_file_head_xpm(Image_Entry *ie, const char *file, const char *key);
+static int evas_image_load_file_data_xpm(Image_Entry *ie, const char *file, const char *key);
 
-Evas_Image_Load_Func evas_image_load_xpm_func =
+static Evas_Image_Load_Func evas_image_load_xpm_func =
 {
   evas_image_load_file_head_xpm,
   evas_image_load_file_data_xpm
 };
-
 
 static FILE *rgb_txt = NULL;
 
@@ -617,22 +616,19 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
    return 1;
 }
 
-
-int
+static int
 evas_image_load_file_head_xpm(Image_Entry *ie, const char *file, const char *key)
 {
   return evas_image_load_file_xpm(ie, file, key, 0);
 }
 
-int
+static int
 evas_image_load_file_data_xpm(Image_Entry *ie, const char *file, const char *key)
 {
   return evas_image_load_file_xpm(ie, file, key, 1);
 }
 
-
-
-EAPI int
+static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
@@ -640,16 +636,24 @@ module_open(Evas_Module *em)
    return 1;
 }
 
-EAPI void
-module_close(void)
+static void
+module_close(Evas_Module *em)
 {
-
 }
 
-EAPI Evas_Module_Api evas_modapi =
+static Evas_Module_Api evas_modapi =
 {
    EVAS_MODULE_API_VERSION,
-     EVAS_MODULE_TYPE_IMAGE_LOADER,
-     "xpm",
-     "none"
+   "xpm",
+   "none",
+   {
+     module_open,
+     module_close
+   }
 };
+
+EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_IMAGE_LOADER, image_loader, xpm);
+
+#ifndef EVAS_STATIC_BUILD_XPM
+EVAS_EINA_MODULE_DEFINE(image_loader, xpm);
+#endif

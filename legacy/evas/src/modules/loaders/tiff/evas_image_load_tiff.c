@@ -13,11 +13,10 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
+static int evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *key);
+static int evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *key);
 
-int evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *key);
-int evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *key);
-
-Evas_Image_Load_Func evas_image_load_tiff_func =
+static Evas_Image_Load_Func evas_image_load_tiff_func =
 {
   evas_image_load_file_head_tiff,
   evas_image_load_file_data_tiff
@@ -118,7 +117,7 @@ raster(TIFFRGBAImage_Extra * img, uint32 * rast,
      }
 }
 
-int
+static int
 evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *key __UNUSED__)
 {
    char                txt[1024];
@@ -188,7 +187,7 @@ evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *ke
    return 1;
 }
 
-int
+static int
 evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *key __UNUSED__)
 {
    char                txt[1024];
@@ -325,7 +324,7 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
    return 1;
 }
 
-EAPI int
+static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
@@ -333,16 +332,25 @@ module_open(Evas_Module *em)
    return 1;
 }
 
-EAPI void
-module_close(void)
+static void
+module_close(Evas_Module *em)
 {
 
 }
 
-EAPI Evas_Module_Api evas_modapi =
+static Evas_Module_Api evas_modapi =
 {
    EVAS_MODULE_API_VERSION,
-     EVAS_MODULE_TYPE_IMAGE_LOADER,
-     "tiff",
-     "none"
+   "tiff",
+   "none",
+   {
+     module_open,
+     module_close
+   }
 };
+
+EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_IMAGE_LOADER, image_loader, tiff);
+
+#ifndef EVAS_STATIC_BUILD_TIFF
+EVAS_EINA_MODULE_DEFINE(image_loader, tiff);
+#endif

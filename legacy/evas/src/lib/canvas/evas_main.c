@@ -2,7 +2,6 @@
 #include "evas_private.h"
 #include "evas_cs.h"
 
-extern Eina_List *evas_modules;
 static int initcount = 0;
 
 Eina_Mempool *_evas_rectangle_mp = NULL;
@@ -250,7 +249,6 @@ evas_free(Evas *e)
 EAPI void
 evas_output_method_set(Evas *e, int render_method)
 {
-   Eina_List *l;
    Evas_Module *em;
 
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -261,27 +259,22 @@ evas_output_method_set(Evas *e, int render_method)
    if (render_method == RENDER_METHOD_INVALID) return;
    /* if the engine is already set up - abort */
    if (e->output.render_method != RENDER_METHOD_INVALID) return;
-   /* iterate trough the list to find the id */
-   EINA_LIST_FOREACH(evas_modules, l, em)
-     {
-	Evas_Module_Engine *eme;
+   /* Request the right engine. */
+   em = evas_module_engine_get(render_method);
+   if (!em) return ;
+   if (em->id_engine != render_method) return;
+   if (!evas_module_load(em)) return;
 
-	if (em->type != EVAS_MODULE_TYPE_ENGINE) continue;
-	if (!em->data) continue;
-	eme = (Evas_Module_Engine *)em->data;
-	if (eme->id != render_method) continue;
-	if (!evas_module_load(em)) return;
-	/* set the correct render */
-	e->output.render_method = render_method;
-	e->engine.func = (em->functions);
-	evas_module_use(em);
-	if (e->engine.module) evas_module_unref(e->engine.module);
-	e->engine.module = em;
-	evas_module_ref(em);
-	/* get the engine info struct */
-	if (e->engine.func->info) e->engine.info = e->engine.func->info(e);
-	return;
-     }
+   /* set the correct render */
+   e->output.render_method = render_method;
+   e->engine.func = (em->functions);
+   evas_module_use(em);
+   if (e->engine.module) evas_module_unref(e->engine.module);
+   e->engine.module = em;
+   evas_module_ref(em);
+   /* get the engine info struct */
+   if (e->engine.func->info) e->engine.info = e->engine.func->info(e);
+   return;
 }
 
 /**
@@ -689,25 +682,14 @@ evas_coord_world_y_to_screen(const Evas *e, Evas_Coord y)
 EAPI int
 evas_render_method_lookup(const char *name)
 {
-   static int i = 1;
    Evas_Module *em;
-   Evas_Module_Engine *eem;
-   
+
    if (!name) return RENDER_METHOD_INVALID;
    /* search on the engines list for the name */
    em = evas_module_find_type(EVAS_MODULE_TYPE_ENGINE, name);
-   
    if (!em) return RENDER_METHOD_INVALID;
-   
-   eem = (Evas_Module_Engine *)em->data;
-   if (!eem)
-     {
-	eem = malloc(sizeof(Evas_Module_Engine));
-	em->data = eem;
-	eem->id = i;
-	i++;
-     }
-   return eem->id;
+
+   return em->id_engine;
 }
 
 /**
@@ -748,58 +730,58 @@ evas_render_method_list(void)
 
    /* FIXME: get from modules - this is currently coded-in */
 #ifdef BUILD_ENGINE_SOFTWARE_GDI
-   methods = eina_list_append(methods, strdup("software_gdi"));
+   methods = eina_list_append(methods, "software_gdi");
 #endif
 #ifdef BUILD_ENGINE_SOFTWARE_DDRAW
-   methods = eina_list_append(methods, strdup("software_ddraw"));
+   methods = eina_list_append(methods, "software_ddraw");
 #endif
 #ifdef BUILD_ENGINE_SOFTWARE_16_DDRAW
-   methods = eina_list_append(methods, strdup("software_16_ddraw"));
+   methods = eina_list_append(methods, "software_16_ddraw");
 #endif
 #ifdef BUILD_ENGINE_DIRECT3D
-   methods = eina_list_append(methods, strdup("direct3d"));
+   methods = eina_list_append(methods, "direct3d");
 #endif
 #ifdef BUILD_ENGINE_SOFTWARE_16_WINCE
-   methods = eina_list_append(methods, strdup("software_16_wince"));
+   methods = eina_list_append(methods, "software_16_wince");
 #endif
 #ifdef BUILD_ENGINE_SOFTWARE_X11
-   methods = eina_list_append(methods, strdup("software_x11"));
+   methods = eina_list_append(methods, "software_x11");
 #endif
 #ifdef BUILD_ENGINE_XRENDER_X11
-   methods = eina_list_append(methods, strdup("xrender_x11"));
+   methods = eina_list_append(methods, "xrender_x11");
 #endif
 #ifdef BUILD_ENGINE_XRENDER_XCB
-   methods = eina_list_append(methods, strdup("xrender_xcb"));
+   methods = eina_list_append(methods, "xrender_xcb");
 #endif
 #ifdef BUILD_ENGINE_SOFTWARE_16_X11
-   methods = eina_list_append(methods, strdup("software_16_x11"));
+   methods = eina_list_append(methods, "software_16_x11");
 #endif
 #ifdef BUILD_ENGINE_GL_X11
-   methods = eina_list_append(methods, strdup("gl_x11"));
+   methods = eina_list_append(methods, "gl_x11");
 #endif
 #ifdef BUILD_ENGINE_GL_GLEW
-   methods = eina_list_append(methods, strdup("gl_glew"));
+   methods = eina_list_append(methods, "gl_glew");
 #endif
 #ifdef BUILD_ENGINE_CAIRO_X11
-   methods = eina_list_append(methods, strdup("cairo_x11"));
+   methods = eina_list_append(methods, "cairo_x11");
 #endif
 #ifdef BUILD_ENGINE_DIRECTFB
-   methods = eina_list_append(methods, strdup("directfb"));
+   methods = eina_list_append(methods, "directfb");
 #endif
 #ifdef BUILD_ENGINE_FB
-   methods = eina_list_append(methods, strdup("fb"));
+   methods = eina_list_append(methods, "fb");
 #endif
 #ifdef BUILD_ENGINE_BUFFER
-   methods = eina_list_append(methods, strdup("buffer"));
+   methods = eina_list_append(methods, "buffer");
 #endif
 #ifdef BUILD_ENGINE_SOFTWARE_WIN32_GDI
-   methods = eina_list_append(methods, strdup("software_win32_gdi"));
+   methods = eina_list_append(methods, "software_win32_gdi");
 #endif
 #ifdef BUILD_ENGINE_SOFTWARE_QTOPIA
-   methods = eina_list_append(methods, strdup("software_qtopia"));
+   methods = eina_list_append(methods, "software_qtopia");
 #endif
 #ifdef BUILD_ENGINE_SOFTWARE_SDL
-   methods = eina_list_append(methods, strdup("software_sdl"));
+   methods = eina_list_append(methods, "software_sdl");
 #endif
 
    return methods;
@@ -835,11 +817,7 @@ evas_render_method_list(void)
 EAPI void
 evas_render_method_list_free(Eina_List *list)
 {
-   while (list)
-     {
-	free(list->data);
-	list = eina_list_remove(list, list->data);
-     }
+   eina_list_free(list);
 }
 
 /**

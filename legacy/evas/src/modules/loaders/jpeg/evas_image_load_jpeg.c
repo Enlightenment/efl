@@ -31,10 +31,10 @@ static int evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f);
 static int evas_image_load_file_data_jpeg_alpha_internal(Image_Entry *ie, FILE *f);
 #endif
 
-int evas_image_load_file_head_jpeg(Image_Entry *ie, const char *file, const char *key);
-int evas_image_load_file_data_jpeg(Image_Entry *ie, const char *file, const char *key);
+static int evas_image_load_file_head_jpeg(Image_Entry *ie, const char *file, const char *key);
+static int evas_image_load_file_data_jpeg(Image_Entry *ie, const char *file, const char *key);
 
-Evas_Image_Load_Func evas_image_load_jpeg_func =
+static Evas_Image_Load_Func evas_image_load_jpeg_func =
 {
   evas_image_load_file_head_jpeg,
   evas_image_load_file_data_jpeg
@@ -251,7 +251,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f)
 
    if (!(((cinfo.out_color_space == JCS_RGB) &&
           ((cinfo.output_components == 3) || (cinfo.output_components == 1))) ||
-         (cinfo.out_color_space == JCS_CMYK) && (cinfo.output_components == 4)))
+         ((cinfo.out_color_space == JCS_CMYK) && (cinfo.output_components == 4))))
      {
 	jpeg_destroy_decompress(&cinfo);
 	return 0;
@@ -473,7 +473,7 @@ evas_image_load_file_data_jpeg_alpha_internal(Image_Entry *ie, FILE *f)
 }
 #endif
 
-int
+static int
 evas_image_load_file_head_jpeg(Image_Entry *ie, const char *file, const char *key)
 {
    int val;
@@ -488,7 +488,7 @@ evas_image_load_file_head_jpeg(Image_Entry *ie, const char *file, const char *ke
    key = 0;
 }
 
-int
+static int
 evas_image_load_file_data_jpeg(Image_Entry *ie, const char *file, const char *key)
 {
    int val;
@@ -503,7 +503,7 @@ evas_image_load_file_data_jpeg(Image_Entry *ie, const char *file, const char *ke
    key = 0;
 }
 
-EAPI int
+static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
@@ -511,16 +511,25 @@ module_open(Evas_Module *em)
    return 1;
 }
 
-EAPI void
-module_close(void)
+static void
+module_close(Evas_Module *em)
 {
-
 }
 
-EAPI Evas_Module_Api evas_modapi =
+static Evas_Module_Api evas_modapi =
 {
    EVAS_MODULE_API_VERSION,
-     EVAS_MODULE_TYPE_IMAGE_LOADER,
-     "jpeg",
-     "none"
+   "jpeg",
+   "none",
+   {
+     module_open,
+     module_close
+   }
 };
+
+EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_IMAGE_LOADER, image_loader, jpeg);
+
+#ifndef EVAS_STATIC_BUILD_JPEG
+EVAS_EINA_MODULE_DEFINE(image_loader, jpeg);
+#endif
+

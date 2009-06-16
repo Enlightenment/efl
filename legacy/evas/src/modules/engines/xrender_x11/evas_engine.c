@@ -1398,12 +1398,13 @@ eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y
 }
 
 /* module advertising code */
-EAPI int
+static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
+   
    /* store it for later use */
    func = pfunc;
    /* now to override methods */
@@ -1500,15 +1501,24 @@ module_open(Evas_Module *em)
    return 1;
 }
 
-EAPI void
-module_close(void)
+static void
+module_close(Evas_Module *em)
 {
 }
 
-EAPI Evas_Module_Api evas_modapi =
+static Evas_Module_Api evas_modapi =
 {
    EVAS_MODULE_API_VERSION,
-     EVAS_MODULE_TYPE_ENGINE,
-     "xrender_x11",
-     "none"
+   "xrender_x11",
+   "none",
+   {
+     module_open,
+     module_close
+   }
 };
+
+EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_ENGINE, engine, xrender_x11);
+
+#ifndef EVAS_STATIC_BUILD_XRENDER_X11
+EVAS_EINA_MODULE_DEFINE(engine, xrender_x11);
+#endif

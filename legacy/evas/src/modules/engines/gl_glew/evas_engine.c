@@ -922,8 +922,7 @@ eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y
      }
 }
 
-
-EAPI int
+static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
@@ -1004,16 +1003,24 @@ module_open(Evas_Module *em)
    return 1;
 }
 
-EAPI void
-module_close(void)
+static void
+module_close(Evas_Module *em)
 {
-
 }
 
-EAPI Evas_Module_Api evas_modapi =
+static Evas_Module_Api evas_modapi =
 {
    EVAS_MODULE_API_VERSION,
-   EVAS_MODULE_TYPE_ENGINE,
    "gl_glew",
-   "none"
+   "none",
+   {
+     module_open,
+     module_close
+   }
 };
+
+EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_ENGINE, engine, gl_glew);
+
+#ifndef EVAS_STATIC_BUILD_GL_GLEW
+EVAS_EINA_MODULE_DEFINE(engine, gl_glew);
+#endif

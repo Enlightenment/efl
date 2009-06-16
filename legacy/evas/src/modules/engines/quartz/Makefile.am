@@ -11,18 +11,30 @@ AM_CPPFLAGS = \
 
 if BUILD_ENGINE_QUARTZ
 
+QUARTZ_SOURCES = evas_engine.c
+QUARTZ_LIBADD = @evas_engine_quartz_libs@
+
 pkgdir = $(libdir)/evas/modules/engines/quartz/$(MODULE_ARCH)
-
-pkg_LTLIBRARIES = module.la
-
-module_la_SOURCES  = evas_engine.c
-
-module_la_LIBADD = @EINA_LIBS@ @evas_engine_quartz_libs@ $(top_builddir)/src/lib/libevas.la
-module_la_LDFLAGS = -module -avoid-version
-module_la_LIBTOOLFLAGS = --tag=disable-static
 
 include_HEADERS = Evas_Engine_Quartz.h
 
+if !EVAS_STATIC_BUILD_QUARTZ
+
+pkg_LTLIBRARIES = module.la
+
+module_la_SOURCES = $(QUARTZ_SOURCES)
+module_la_LIBADD = @EINA_LIBS@ $(QUARTZ_LIBADD) $(top_builddir)/src/lib/libevas.la
+module_la_LDFLAGS = -module -avoid-version
+module_la_LIBTOOLFLAGS = --tag=disable-static
+
+else
+
+noinst_LTLIBRARIES = libevas_engine_quartz.la
+
+libevas_engine_quartz_la_SOURCES = $(QUARTZ_SOURCES)
+libevas_engine_quartz_la_LIBADD = $(QUARTZ_LIBADD)
+
+endif
 endif
 
 EXTRA_DIST = \

@@ -13,20 +13,18 @@ AM_CPPFLAGS = \
 
 if BUILD_ENGINE_SOFTWARE_X11
 
-pkgdir = $(libdir)/evas/modules/engines/software_x11/$(MODULE_ARCH)
-
-pkg_LTLIBRARIES	= module.la
-
-module_la_SOURCES = \
+SOFTWARE_X11_SOURCES = \
 evas_engine.c \
 evas_xlib_outbuf.c \
 evas_xlib_buffer.c \
 evas_xlib_color.c \
 evas_xlib_main.c
 
+SOFTWARE_X11_LIBADD = @evas_engine_software_x11_libs@ @evas_engine_software_xcb_libs@
+
 if BUILD_ENGINE_SOFTWARE_XCB
 
-module_la_SOURCES += \
+SOFTWARE_X11_SOURCES +=\
 evas_xcb_outbuf.c \
 evas_xcb_buffer.c \
 evas_xcb_color.c \
@@ -34,12 +32,27 @@ evas_xcb_main.c
 
 endif
 
-module_la_LIBADD = $(top_builddir)/src/lib/libevas.la @EINA_LIBS@ @evas_engine_software_x11_libs@ @evas_engine_software_xcb_libs@
-module_la_LDFLAGS = -no-undefined -module -avoid-version
-module_la_LIBTOOLFLAGS = --tag=disable-static
+pkgdir = $(libdir)/evas/modules/engines/software_x11/$(MODULE_ARCH)
 
 include_HEADERS = Evas_Engine_Software_X11.h
 
+if !EVAS_STATIC_BUILD_SOFTWARE_X11
+
+pkg_LTLIBRARIES	= module.la
+
+module_la_SOURCES = $(SOFTWARE_X11_SOURCES)
+module_la_LIBADD = $(top_builddir)/src/lib/libevas.la @EINA_LIBS@ $(SOFTWARE_X11_LIBADD)
+module_la_LDFLAGS = -no-undefined -module -avoid-version
+module_la_LIBTOOLFLAGS = --tag=disable-static
+
+else
+
+noinst_LTLIBRARIES = libevas_engine_software_x11.la
+
+libevas_engine_software_x11_la_SOURCES = $(SOFTWARE_X11_SOURCES)
+libevas_engine_software_x11_la_LIBADD = $(SOFTWARE_X11_LIBADD)
+
+endif
 endif
 
 EXTRA_DIST = \

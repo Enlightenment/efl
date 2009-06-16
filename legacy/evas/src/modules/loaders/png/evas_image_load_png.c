@@ -32,17 +32,16 @@
 #define PNG_BYTES_TO_CHECK 4
 
 
-int evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key);
-int evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key);
+static int evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key);
+static int evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key);
 
-Evas_Image_Load_Func evas_image_load_png_func =
+static Evas_Image_Load_Func evas_image_load_png_func =
 {
   evas_image_load_file_head_png,
   evas_image_load_file_data_png
 };
 
-
-int
+static int
 evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key)
 {
    png_uint_32 w32, h32;
@@ -108,7 +107,7 @@ evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key
    key = 0;
 }
 
-int
+static int
 evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key)
 {
    unsigned char *surface;
@@ -217,7 +216,7 @@ evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key
    key = 0;
 }
 
-EAPI int
+static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
@@ -225,16 +224,24 @@ module_open(Evas_Module *em)
    return 1;
 }
 
-EAPI void
-module_close(void)
+static void
+module_close(Evas_Module *em)
 {
-
 }
 
-EAPI Evas_Module_Api evas_modapi =
+static Evas_Module_Api evas_modapi =
 {
    EVAS_MODULE_API_VERSION,
-     EVAS_MODULE_TYPE_IMAGE_LOADER,
-     "png",
-     "none"
+   "png",
+   "none",
+   {
+     module_open,
+     module_close
+   }
 };
+
+EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_IMAGE_LOADER, image_loader, png);
+
+#ifndef EVAS_STATIC_BUILD_PNG
+EVAS_EINA_MODULE_DEFINE(image_loader, png);
+#endif

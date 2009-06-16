@@ -1611,7 +1611,7 @@ evas_engine_dfb_image_scale_hint_get(void *data __UNUSED__, void *image)
    return EVAS_IMAGE_SCALE_HINT_NONE;
 }
 
-EAPI int
+static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
@@ -1666,15 +1666,24 @@ module_open(Evas_Module *em)
    return 1;
 }
 
-EAPI void
-module_close(void)
+static void
+module_close(Evas_Module *em)
 {
 }
 
-EAPI Evas_Module_Api evas_modapi =
+static Evas_Module_Api evas_modapi =
 {
-   EVAS_MODULE_API_VERSION,
-   EVAS_MODULE_TYPE_ENGINE,
-   "directfb",
-   "ProFUSION embedded systems"
+  EVAS_MODULE_API_VERSION,
+  "directfb",
+  "ProFUSION embedded systems",
+  {
+    module_open,
+    module_close
+  }
 };
+
+EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_ENGINE, engine, directfb);
+
+#ifndef EVAS_STATIC_BUILD_DIRECTFB
+EVAS_EINA_MODULE_DEFINE(engine, directfb);
+#endif

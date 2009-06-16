@@ -6,8 +6,6 @@
 #include "evas_private.h"
 #include "evas_cs.h"
 
-extern Eina_List *evas_modules;
-
 struct ext_loader_s {
    const char*	extention;
    const char*	loader;
@@ -34,12 +32,30 @@ static struct ext_loader_s	loaders[] = {
    { "pnm", "pmaps" }
 };
 
+static Eina_Bool
+_evas_image_foreach_loader(const Eina_Hash *hash, const char *key, Evas_Module *em, Image_Entry *ie)
+{
+   Evas_Image_Load_Func *evas_image_load_func = NULL;
+
+   if (!evas_module_load(em)) return EINA_TRUE;
+   evas_image_load_func = em->functions;
+   evas_module_use(em);
+   if (evas_image_load_func && evas_image_load_func->file_head(ie, ie->file, ie->key))
+     {
+	ie->info.module = (void*) em;
+	ie->info.loader = (void*) evas_image_load_func;
+	evas_module_ref((Evas_Module*) ie->info.module);
+	return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
 EAPI int
 evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 {
    Evas_Image_Load_Func *evas_image_load_func = NULL;
    const char           *loader = NULL;
-   Eina_List            *l;
    Evas_Module          *em;
    char                 *dot;
    int                   i;
@@ -82,21 +98,9 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 	  }
      }
 
-   EINA_LIST_FOREACH(evas_modules, l, em)
-     {
-	if (em->type != EVAS_MODULE_TYPE_IMAGE_LOADER) continue;
-	if (!evas_module_load(em)) continue;
-        evas_image_load_func = em->functions;
-	evas_module_use(em);
-	if (evas_image_load_func && evas_image_load_func->file_head(ie, ie->file, ie->key))
-	  {
-	     if (evas_modules != l)
-	       {
-		  evas_modules = eina_list_promote_list(evas_modules, l);
-	       }
-	     goto ok;
-	  }
-     }
+   /* FIXME: We don't try not loaded module yet, changed behaviour with previous one. */
+   evas_module_foreach_image_loader(_evas_image_foreach_loader, ie);
+   if (ie->info.module) return 0;
 
    return -1;
 

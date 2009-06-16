@@ -817,7 +817,7 @@ evas_engine_sdl_gradient_draw(void *data __UNUSED__, void *context, void *surfac
      SDL_UnlockSurface(eim->surface);
 }
 
-EAPI int module_open(Evas_Module *em)
+static int module_open(Evas_Module *em)
 {
    if (!em) return 0;
    /* get whatever engine module we inherit from */
@@ -876,18 +876,27 @@ EAPI int module_open(Evas_Module *em)
    return 1;
 }
 
-EAPI void module_close(void)
+static void module_close(Evas_Module *em)
 {
 
 }
 
-EAPI Evas_Module_Api evas_modapi =
+static Evas_Module_Api evas_modapi =
 {
-   EVAS_MODULE_API_VERSION,
-   EVAS_MODULE_TYPE_ENGINE,
-   "software_sdl",
-   "none"
+  EVAS_MODULE_API_VERSION,
+  "software_sdl",
+  "none",
+  {
+    module_open,
+    module_close
+  }
 };
+
+EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_ENGINE, engine, software_sdl);
+
+#ifndef EVAS_STATIC_BUILD_SOFTWARE_SDL
+EVAS_EINA_MODULE_DEFINE(engine, software_sdl);
+#endif
 
 /* Private routines. */
 

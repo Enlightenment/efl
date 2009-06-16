@@ -7,14 +7,14 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-int evas_image_save_file_eet(RGBA_Image *im, const char *file, const char *key, int quality, int compress);
+static int evas_image_save_file_eet(RGBA_Image *im, const char *file, const char *key, int quality, int compress);
 
-Evas_Image_Save_Func evas_image_save_eet_func =
+static Evas_Image_Save_Func evas_image_save_eet_func =
 {
    evas_image_save_file_eet
 };
 
-int
+static int
 evas_image_save_file_eet(RGBA_Image *im, const char *file, const char *key, int quality, int compress)
 {
    Eet_File            *ef;
@@ -51,7 +51,7 @@ evas_image_save_file_eet(RGBA_Image *im, const char *file, const char *key, int 
    return ok;
 }
 
-EAPI int
+static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
@@ -59,16 +59,25 @@ module_open(Evas_Module *em)
    return 1;
 }
 
-EAPI void
-module_close(void)
+static void
+module_close(Evas_Module *em)
 {
-   
 }
 
-EAPI Evas_Module_Api evas_modapi =
+static Evas_Module_Api evas_modapi =
 {
    EVAS_MODULE_API_VERSION,
-     EVAS_MODULE_TYPE_IMAGE_SAVER,
-     "eet",
-     "none"
+   "eet",
+   "none",
+   {
+     module_open,
+     module_close
+   }
 };
+
+EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_IMAGE_SAVER, image_saver, eet);
+
+#ifndef EVAS_STATIC_BUILD_EET
+EVAS_EINA_MODULE_DEFINE(image_saver, eet);
+#endif
+

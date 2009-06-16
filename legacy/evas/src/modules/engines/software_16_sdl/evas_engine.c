@@ -1019,7 +1019,7 @@ evas_engine_sdl16_image_stride_get(void *data __UNUSED__, void *image, int *stri
 }
 
 /* module advertising code */
-EAPI int
+static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
@@ -1079,18 +1079,27 @@ module_open(Evas_Module *em)
    return 1;
 }
 
-EAPI void
-module_close(void)
+static void
+module_close(Evas_Module *em)
 {
 }
 
-EAPI Evas_Module_Api evas_modapi = 
+static Evas_Module_Api evas_modapi =
 {
-   EVAS_MODULE_API_VERSION, 
-     EVAS_MODULE_TYPE_ENGINE,
-     "software_16_sdl",
-     "none"
+   EVAS_MODULE_API_VERSION,
+   "software_16_sdl",
+   "none",
+   {
+     module_open,
+     module_close
+   }
 };
+
+EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_ENGINE, engine, software_16_sdl);
+
+#ifndef EVAS_STATIC_BUILD_SOFTWARE_SDL
+EVAS_EINA_MODULE_DEFINE(engine, software_16_sdl);
+#endif
 
 static Engine_Image_Entry*
 _sdl16_image_alloc(void)

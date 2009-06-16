@@ -1086,7 +1086,7 @@ eng_best_depth_get(Display *disp, int screen)
    return _evas_gl_x11_vi->depth;
 }
 
-EAPI int
+static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
@@ -1189,16 +1189,24 @@ module_open(Evas_Module *em)
    return 1;
 }
 
-EAPI void
-module_close(void)
+static void
+module_close(Evas_Module *em)
 {
-
 }
 
-EAPI Evas_Module_Api evas_modapi =
+static Evas_Module_Api evas_modapi =
 {
    EVAS_MODULE_API_VERSION,
-     EVAS_MODULE_TYPE_ENGINE,
-     "gl_x11",
-     "none"
+   "gl_x11",
+   "none",
+   {
+     module_open,
+     module_close
+   }
 };
+
+EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_ENGINE, engine, gl_x11);
+
+#ifndef EVAS_STATIC_BUILD_GL_X11
+EVAS_EINA_MODULE_DEFINE(engine, gl_x11);
+#endif

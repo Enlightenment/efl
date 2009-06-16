@@ -8,17 +8,16 @@
 #define SWAP32(x) (x) = ((((x) & 0x000000ff ) << 24) | (((x) & 0x0000ff00 ) << 8) | (((x) & 0x00ff0000 ) >> 8) | (((x) & 0xff000000 ) >> 24))
 
 
-int evas_image_load_file_head_edb(Image_Entry *ie, const char *file, const char *key);
-int evas_image_load_file_data_edb(Image_Entry *ie, const char *file, const char *key);
+static int evas_image_load_file_head_edb(Image_Entry *ie, const char *file, const char *key);
+static int evas_image_load_file_data_edb(Image_Entry *ie, const char *file, const char *key);
 
-Evas_Image_Load_Func evas_image_load_edb_func =
+static Evas_Image_Load_Func evas_image_load_edb_func =
 {
   evas_image_load_file_head_edb,
   evas_image_load_file_data_edb
 };
 
-
-int
+static int
 evas_image_load_file_head_edb(Image_Entry *ie, const char *file, const char *key)
 {
    int                  w, h, alpha, compression, size;
@@ -80,7 +79,7 @@ evas_image_load_file_head_edb(Image_Entry *ie, const char *file, const char *key
    return 1;
 }
 
-int
+static int
 evas_image_load_file_data_edb(Image_Entry *ie, const char *file, const char *key)
 {
    int                  w, h, alpha, compression, size;
@@ -181,7 +180,7 @@ evas_image_load_file_data_edb(Image_Entry *ie, const char *file, const char *key
    return 1;
 }
 
-EAPI int
+static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
@@ -189,16 +188,24 @@ module_open(Evas_Module *em)
    return 1;
 }
 
-EAPI void
-module_close(void)
+static void
+module_close(Evas_Module *em)
 {
-   
 }
 
-EAPI Evas_Module_Api evas_modapi =
+static Evas_Module_Api evas_modapi =
 {
    EVAS_MODULE_API_VERSION,
-     EVAS_MODULE_TYPE_IMAGE_LOADER,
-     "edb",
-     "none"
+   "edb",
+   "none",
+   {
+     module_open,
+     module_close
+   }
 };
+
+EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_IMAGE_LOADER, image_saver, edb);
+
+#ifndef EVAS_STATIC_BUILD_EDB
+EVAS_EINA_MODULE_DEFINE(image_saver, edb);
+#endif

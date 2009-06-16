@@ -304,6 +304,23 @@ fi
 
 AM_CONDITIONAL(BUILD_LOADER_[]UP, [test "x${have_evas_image_loader_[]DOWN}" = "xyes"])
 
+want_static_[]DOWN="no"
+have_static_evas_image_loader_[]DOWN=""
+
+AC_ARG_ENABLE([static-image-loader-[]DOWN],
+   [AC_HELP_STRING([--enable-static-image-loader-[]DOWN], [Build $1 image loader inside evas library])],
+   [want_static_[]DOWN=${enableval}]
+)
+AC_MSG_CHECKING([whether to build inside evas library $1 image loader])
+AC_MSG_RESULT([${want_static_[]DOWN}])
+
+AM_CONDITIONAL(EVAS_STATIC_BUILD_[]UP, [test "x${want_static_[]DOWN}" = "xyes" -a "x${have_evas_image_loader_[]DOWN}" = "xyes"])
+
+if test "x${want_static_[]DOWN}" = "xyes" -a "x${have_evas_image_loader_[]DOWN}" = "xyes"; then
+   have_static_evas_image_loader_[]DOWN="(static)"
+   AC_DEFINE(EVAS_STATIC_BUILD_[]UP, [1], [Build $1 image loader inside libevas])
+fi
+
 m4_popdef([UP])
 m4_popdef([DOWN])
 
