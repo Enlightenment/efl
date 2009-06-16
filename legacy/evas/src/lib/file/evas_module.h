@@ -74,8 +74,8 @@ void         evas_module_unref      (Evas_Module *em);
 void         evas_module_use        (Evas_Module *em);
 void         evas_module_clean      (void);
 void         evas_module_shutdown   (void);
-Eina_Bool    evas_module_register   (const Evas_Module_Api *module, Evas_Module_Type type);
-Eina_Bool    evas_module_unregister (const Evas_Module_Api *module, Evas_Module_Type type);
+EAPI Eina_Bool    evas_module_register   (const Evas_Module_Api *module, Evas_Module_Type type);
+EAPI Eina_Bool    evas_module_unregister (const Evas_Module_Api *module, Evas_Module_Type type);
 
 #define EVAS_MODULE_DEFINE(Type, Tn, Name)		\
   Eina_Bool evas_##Tn##_##Name##_init(void)		\
