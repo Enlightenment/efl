@@ -40,8 +40,8 @@ _evas_module_append(Eina_List *list, char *path)
 void
 evas_module_paths_init(void)
 {
-   char *prefix;
-   char *path;
+   char *path, *path2;
+   const char *path3;
 
    /* 1. ~/.evas/modules/ */
    path = eina_module_environment_path_get("HOME", "/.evas/modules");
@@ -52,17 +52,21 @@ evas_module_paths_init(void)
    evas_module_paths = _evas_module_append(evas_module_paths, path);
 
    /* 3. libevas.so/../evas/modules/ */
-   path = eina_module_symbol_path_get(evas_module_paths_init, "/evas/modules");
-   evas_module_paths = _evas_module_append(evas_module_paths, path);
+   path2 = eina_module_symbol_path_get(evas_module_paths_init, "/evas/modules");
+   if (path2 && path && (strcmp(path, path2) == 0))
+     free(path2);
+   else
+     evas_module_paths = _evas_module_append(evas_module_paths, path2);
 
    /* 4. PREFIX/evas/modules/ */
-   prefix = PACKAGE_LIB_DIR;
-   path = malloc(strlen(prefix) + 1 + strlen("/evas/modules"));
-   if (path)
+   path3 = PACKAGE_LIB_DIR "/evas/modules";
+   if ((path && (strcmp(path, path3) != 0)) ||
+       (path2 && (strcmp(path2, path3) != 0)) ||
+       (!path && !path2))
      {
-	strcpy(path, prefix);
-	strcat(path, "/evas/modules");
-	evas_module_paths = _evas_module_append(evas_module_paths, path);
+	path = strdup(path3);
+	if (path)
+	  evas_module_paths = _evas_module_append(evas_module_paths, path);
      }
 }
 
