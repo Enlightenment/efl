@@ -102,7 +102,7 @@ _ecore_evas_wince_idle_enter(void *data __UNUSED__)
      {
 	t1 = ecore_time_get();
      }
-   EINA_INLIST_FOREACH(ecore_evases, l)
+   EINA_INLIST_FOREACH(ecore_evases, ee)
 	_ecore_evas_wince_render(ee);
 
    if (_ecore_evas_fps_debug)

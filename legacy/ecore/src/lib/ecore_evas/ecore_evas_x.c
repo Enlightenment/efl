@@ -995,7 +995,7 @@ _ecore_evas_x_layer_update(Ecore_Evas *ee)
 static int
 _ecore_evas_x_idle_enter(void *data __UNUSED__)
 {
-   Ecore_Evas *l;
+   Ecore_Evas *ee;
    double t1 = 0.0;
    double t2 = 0.0;
    int rend = 0;
@@ -1005,8 +1005,8 @@ _ecore_evas_x_idle_enter(void *data __UNUSED__)
      {
 	t1 = ecore_time_get();
      }
-   EINA_INLIST_FOREACH(ecore_evases, l)
-	rend |= _ecore_evas_x_render(l);
+   EINA_INLIST_FOREACH(ecore_evases, ee)
+	rend |= _ecore_evas_x_render(ee);
    ecore_x_flush();
    if (_ecore_evas_fps_debug)
      {

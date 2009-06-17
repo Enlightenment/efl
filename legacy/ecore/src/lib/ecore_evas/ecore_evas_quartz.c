@@ -58,7 +58,7 @@ static NSWindow * main_window;
    {
       Ecore_evas  *ee;
 
-      EINA_INLIST_FOREACH(ecore_evases, l)
+      EINA_INLIST_FOREACH(ecore_evases, ee)
       {
          if (ee->visible)
             evas_damage_rectangle_add(ee->evas, 0, 0, 400, 400);
@@ -143,11 +143,11 @@ _ecore_evas_quartz_event_video_expose(void *data __UNUSED__, int type __UNUSED__
 static int
 _ecore_evas_idle_enter(void *data __UNUSED__)
 {
-   Ecore_Evas  *l;
+   Ecore_Evas  *ee;
    double       t1 = 0.;
    double       t2 = 0.;
 
-   EINA_INLIST_FOREACH(ecore_evases, l)
+   EINA_INLIST_FOREACH(ecore_evases, ee)
    {
       if (ee->visible)
          evas_render(ee->evas);

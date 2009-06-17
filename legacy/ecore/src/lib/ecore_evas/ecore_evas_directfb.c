@@ -54,7 +54,7 @@ _ecore_evas_directfb_render(Ecore_Evas *ee)
 static int
 _ecore_evas_directfb_idle_enter(void *data __UNUSED__)
 {
-   Ecore_Evas *l;
+   Ecore_Evas *ee;
    double t1 = 0.0;
    double t2 = 0.0;
 
@@ -63,7 +63,7 @@ _ecore_evas_directfb_idle_enter(void *data __UNUSED__)
      {
 	t1 = ecore_time_get();
      }
-   EINA_INLIST_FOREACH(ecore_evases, l)
+   EINA_INLIST_FOREACH(ecore_evases, ee)
 	_ecore_evas_directfb_render(ee);
    if (_ecore_evas_fps_debug)
      {
