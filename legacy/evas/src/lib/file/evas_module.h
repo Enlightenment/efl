@@ -39,7 +39,7 @@ struct _Evas_Module_Api
 /* the module structure */
 struct _Evas_Module
 {
-   const Evas_Module_Api *public;
+   const Evas_Module_Api *definition;
 
    void		*functions;	/* this are the functions exported by the module */
    int           id_engine;	/* some internal data for the module i.e the id for engines */

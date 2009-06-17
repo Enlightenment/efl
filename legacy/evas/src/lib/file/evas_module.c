@@ -256,7 +256,7 @@ evas_module_register(const Evas_Module_Api *module, Evas_Module_Type type)
    em = calloc(1, sizeof (Evas_Module));
    if (!em) return EINA_FALSE;
 
-   em->public = module;
+   em->definition = module;
 
    if (type == EVAS_MODULE_TYPE_ENGINE)
      {
@@ -278,7 +278,7 @@ evas_module_unregister(const Evas_Module_Api *module, Evas_Module_Type type)
    if (!module) return EINA_FALSE;
 
    em = eina_hash_find(evas_modules[type], module->name);
-   if (!em || em->public != module) return EINA_FALSE;
+   if (!em || em->definition != module) return EINA_FALSE;
 
    if (type == EVAS_MODULE_TYPE_ENGINE)
      eina_array_data_set(evas_engines, em->id_engine, NULL);
@@ -374,9 +374,9 @@ int
 evas_module_load(Evas_Module *em)
 {
    if (em->loaded) return 1;
-   if (em->public == NULL) return 0;
+   if (em->definition == NULL) return 0;
 
-   if (!em->public->func.open(em)) return 0;
+   if (!em->definition->func.open(em)) return 0;
    em->loaded = 1;
 
 #ifdef BUILD_ASYNC_PRELOAD
@@ -390,10 +390,10 @@ evas_module_unload(Evas_Module *em)
 {
    if (!em->loaded)
      return;
-   if (em->public == NULL)
+   if (em->definition == NULL)
      return ;
 
-   em->public->func.close(em);
+   em->definition->func.close(em);
    em->loaded = 0;
 
 #ifdef BUILD_ASYNC_PRELOAD
