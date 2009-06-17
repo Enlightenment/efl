@@ -298,15 +298,15 @@ _ecore_event_shutdown(void)
    while (events) _ecore_event_del(events);
    for (i = 0; i < event_handlers_num; i++)
      {
-	while (event_handlers[i])
+	while ((eh = event_handlers[i]))
 	  {
 	     event_handlers[i] = (Ecore_Event_Handler *) eina_inlist_remove(EINA_INLIST_GET(event_handlers[i]), EINA_INLIST_GET(event_handlers[i]));
-	     ECORE_MAGIC_SET(event_handlers[i], ECORE_MAGIC_NONE);
-	     free(event_handlers[i]);
+	     ECORE_MAGIC_SET(eh, ECORE_MAGIC_NONE);
+	     if (!eh->delete_me) free(eh);
 	  }
      }
    EINA_LIST_FREE(event_handlers_delete_list, eh)
-	free(eh);
+     free(eh);
    if (event_handlers) free(event_handlers);
    event_handlers = NULL;
    event_handlers_num = 0;
