@@ -927,15 +927,12 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
 	       {
 		  while (e->delete_grabs > 0)
 		    {
-		       Evas_List *l;
+		       Eina_List *l, *l_next;
+		       Evas_Key_Grab *g;
 
 		       e->delete_grabs--;
-		       for (l = e->grabs; l;)
+		       EINA_LIST_FOREACH_SAFE(e->grabs, l, l_next, g)
 			 {
-			    Evas_Key_Grab *g;
-
-			    g = eina_list_data_get(l);
-			    l = eina_list_next(l);
 			    if (g->delete_me)
 			      evas_key_grab_free(g->object, g->keyname, g->modifiers, g->not_modifiers);
 			 }
