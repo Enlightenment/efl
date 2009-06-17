@@ -31,7 +31,7 @@ $(EFREETHEADERS)
 libefreet_la_SOURCES = \
 	$(EFREETSOURCES)
 libefreet_la_CPPFLAGS =  \
--DDATADIR=\"$(datadir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)\" \
 -I$(top_builddir) \
 -I$(top_srcdir) \
 @EFL_EFREET_BUILD@ \

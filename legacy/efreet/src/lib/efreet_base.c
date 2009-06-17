@@ -98,7 +98,7 @@ efreet_data_dirs_get(void)
 {
     if (xdg_data_dirs) return xdg_data_dirs;
     xdg_data_dirs = efreet_dirs_get("XDG_DATA_DIRS",
-                            DATADIR ":/usr/share");
+                            PACKAGE_DATA_DIR ":/usr/share");
     return xdg_data_dirs;
 }
 

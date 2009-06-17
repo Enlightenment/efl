@@ -13,10 +13,6 @@
 #include <unistd.h>
 #include <sys/mman.h>
 
-#ifdef HAVE_EVIL
-# include <Evil.h>
-#endif
-
 #include <Ecore_File.h>
 
 #include "Efreet.h"
