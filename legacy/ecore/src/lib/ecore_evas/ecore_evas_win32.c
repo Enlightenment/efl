@@ -104,7 +104,7 @@ _ecore_evas_win32_idle_enter(void *data __UNUSED__)
      {
         t1 = ecore_time_get();
      }
-   EINA_INLIST_FOREACH(ecore_evases, l)
+   EINA_INLIST_FOREACH(ecore_evases, ee)
         _ecore_evas_win32_render(ee);
 
    /*    ecore_x_flush(); */
