@@ -32,7 +32,7 @@ typedef struct _CB_Data CB_Data;
 
 struct _CB_Data
 {
-   Ecore_List2 __list_data;
+   EINA_INLIST;
    Ecore_Con_Info_Cb cb_done;
    void *data;
    Ecore_Fd_Handler *fdh;
@@ -48,7 +48,7 @@ static int _ecore_con_info_data_handler(void *data, Ecore_Fd_Handler *fd_handler
 static int _ecore_con_info_exit_handler(void *data, int type __UNUSED__, void *event);
 
 static int info_init = 0;
-static Ecore_List2 *info_slaves = NULL;
+static CB_Data *info_slaves = NULL;
 
 EAPI int
 ecore_con_info_init(void)
@@ -63,7 +63,7 @@ ecore_con_info_shutdown(void)
    info_init--;
    if (info_init == 0)
      {
-	while (info_slaves) _ecore_con_info_slave_free((CB_Data *)info_slaves);
+	while (info_slaves) _ecore_con_info_slave_free(info_slaves);
      }
    return info_init;
 }
@@ -259,7 +259,7 @@ on_error:
 	close(fd[0]);
 	return 0;
      }
-   info_slaves = _ecore_list2_append(info_slaves, cbdata);
+   info_slaves = (CB_Data *) eina_inlist_append(EINA_INLIST_GET(info_slaves), EINA_INLIST_GET(cbdata));
    return 1;
 }
 
@@ -310,7 +310,7 @@ _ecore_con_info_readdata(CB_Data *cbdata)
 static void
 _ecore_con_info_slave_free(CB_Data *cbdata)
 {
-   info_slaves = _ecore_list2_remove(info_slaves, cbdata);
+   info_slaves = (CB_Data *) eina_inlist_remove(EINA_INLIST_GET(info_slaves), EINA_INLIST_GET(cbdata));
    close(ecore_main_fd_handler_fd_get(cbdata->fdh));
    ecore_main_fd_handler_del(cbdata->fdh);
    ecore_event_handler_del(cbdata->handler);

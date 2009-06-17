@@ -51,7 +51,7 @@ typedef struct _CB_Data CB_Data;
 
 struct _CB_Data
 {
-   Ecore_List2 __list_data;
+   EINA_INLIST;
    void (*cb_done) (void *data, struct hostent *hostent);
    void *data;
    Ecore_Fd_Handler *fdh;
@@ -66,7 +66,7 @@ static int _ecore_con_dns_data_handler(void *data, Ecore_Fd_Handler *fd_handler)
 static int _ecore_con_dns_exit_handler(void *data, int type __UNUSED__, void *event);
 
 static int dns_init = 0;
-static Ecore_List2 *dns_slaves = NULL;
+static CB_Data *dns_slaves = NULL;
 
 int
 ecore_con_dns_init(void)
@@ -81,7 +81,7 @@ ecore_con_dns_shutdown(void)
    dns_init--;
    if (dns_init == 0)
      {
-	while (dns_slaves) _ecore_con_dns_slave_free((CB_Data *)dns_slaves);
+	while (dns_slaves) _ecore_con_dns_slave_free(dns_slaves);
      }
    return dns_init;
 }
@@ -151,7 +151,7 @@ ecore_con_dns_lookup(const char *name,
 	close(fd[0]);
 	return 0;
      }
-   dns_slaves = _ecore_list2_append(dns_slaves, cbdata);
+   dns_slaves = (CB_Data *) eina_inlist_append(EINA_INLIST_GET(dns_slaves), EINA_INLIST_GET(cbdata));
    return 1;
 }
 
@@ -181,7 +181,7 @@ _ecore_con_dns_readdata(CB_Data *cbdata)
 static void
 _ecore_con_dns_slave_free(CB_Data *cbdata)
 {
-   dns_slaves = _ecore_list2_remove(dns_slaves, cbdata);
+   dns_slaves = (CB_Data *) eina_inlist_remove(EINA_INLIST_GET(dns_slaves), EINA_INLIST_GET(cbdata));
    close(ecore_main_fd_handler_fd_get(cbdata->fdh));
    ecore_main_fd_handler_del(cbdata->fdh);
    ecore_event_handler_del(cbdata->handler);
