@@ -41,8 +41,6 @@
  * @todo finish api documentation
  */
 
-#include <Evas_Data.h>
-
 typedef enum _Evas_Callback_Type
 {
    EVAS_CALLBACK_MOUSE_IN, /**< Mouse In Event */

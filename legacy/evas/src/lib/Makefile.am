@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = canvas data cache cserve file engines imaging include
+SUBDIRS = canvas cache cserve file engines imaging include
 EVAS_STATIC_MODULE =
 EVAS_STATIC_LIBADD =
 
@@ -178,7 +178,7 @@ AM_CFLAGS = @WIN32_CFLAGS@
 
 lib_LTLIBRARIES = libevas.la
 
-include_HEADERS = Evas.h Evas_Data.h
+include_HEADERS = Evas.h
 
 libevas_la_SOURCES = main.c
 
@@ -190,7 +190,6 @@ endif
 
 libevas_la_LIBADD = \
 canvas/libevas_canvas.la \
-data/libevas_data.la \
 file/libevas_file.la \
 cache/libevas_cache.la \
 imaging/libevas_imaging.la \
@@ -209,7 +208,6 @@ $(EVAS_STATIC_LIBADD) \
 
 libevas_la_DEPENDENCIES = \
 canvas/libevas_canvas.la \
-data/libevas_data.la \
 file/libevas_file.la \
 cache/libevas_cache.la \
 imaging/libevas_imaging.la \
