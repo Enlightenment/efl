@@ -120,21 +120,6 @@ EAPI void ecore_print_warning(const char *function, const char *sparam);
 
 typedef unsigned int              Ecore_Magic;
 
-typedef struct _Ecore_List2       Ecore_List2;
-typedef struct _Ecore_List2_Data  Ecore_List2_Data;
-
-struct _Ecore_List2
-{
-   Ecore_List2  *next, *prev;
-   Ecore_List2  *last;
-};
-
-struct _Ecore_List2_Data
-{
-   Ecore_List2   __list_data;
-   void *data;
-};
-
 #ifndef _ECORE_H
 enum _Ecore_Fd_Handler_Flags
 {
