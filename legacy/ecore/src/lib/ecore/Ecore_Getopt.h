@@ -149,6 +149,7 @@ extern "C" {
 	const char *const *choices; /* NULL terminated. */
 	const Ecore_Getopt_Type append_type;
 	const Ecore_Getopt_Desc_Callback callback;
+	const void *dummy;
      } action_param;
   };
 
@@ -328,7 +329,8 @@ extern "C" {
        {.append_type = type}}
 
 #define ECORE_GETOPT_COUNT(shortname, longname, help)		        \
-  {shortname, longname, help, NULL, ECORE_GETOPT_ACTION_COUNT}
+  {shortname, longname, help, NULL, ECORE_GETOPT_ACTION_COUNT,		\
+       {.dummy = NULL}}
 
 #define ECORE_GETOPT_CALLBACK_FULL(shortname, longname, help, metavar, callback_func, callback_data, argument_requirement, default_value) \
   {shortname, longname, help, metavar, ECORE_GETOPT_ACTION_CALLBACK,	\
@@ -347,17 +349,25 @@ extern "C" {
 
 #define ECORE_GETOPT_HELP(shortname, longname)		                \
   {shortname, longname, "show this message.", NULL,			\
-       ECORE_GETOPT_ACTION_HELP}
+       ECORE_GETOPT_ACTION_HELP,					\
+       {.dummy = NULL}}
+
 #define ECORE_GETOPT_VERSION(shortname, longname)	                \
   {shortname, longname, "show program version.", NULL,			\
-       ECORE_GETOPT_ACTION_VERSION}
+       ECORE_GETOPT_ACTION_VERSION,					\
+       {.dummy = NULL}}
+
 #define ECORE_GETOPT_COPYRIGHT(shortname, longname)	                \
   {shortname, longname, "show copyright.", NULL,			\
-       ECORE_GETOPT_ACTION_COPYRIGHT}
+       ECORE_GETOPT_ACTION_COPYRIGHT,					\
+       {.dummy = NULL}}
+
 #define ECORE_GETOPT_LICENSE(shortname, longname)	                \
   {shortname, longname, "show license.", NULL,				\
-       ECORE_GETOPT_ACTION_LICENSE}
-#define ECORE_GETOPT_SENTINEL {0, NULL}
+       ECORE_GETOPT_ACTION_LICENSE,					\
+       {.dummy = NULL}}
+
+#define ECORE_GETOPT_SENTINEL {0, NULL, NULL, NULL, 0, {.dummy = NULL}}
 
 #define ECORE_GETOPT_VALUE_STR(val)      {.strp = &(val)}
 #define ECORE_GETOPT_VALUE_BOOL(val)     {.boolp = &(val)}
