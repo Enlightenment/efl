@@ -258,7 +258,7 @@ extern "C" {
    EAPI const Eina_List *edje_object_part_text_anchor_list_get(const Evas_Object *obj, const char *part);
    EAPI const Eina_List *edje_object_part_text_anchor_geometry_get(const Evas_Object *obj, const char *part, const char *anchor);
    EAPI void             edje_object_part_text_cursor_geometry_get(const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
-   EAPI void             edje_object_part_text_select_allow_set(const Evas_Object *obj, const char *part, Evas_Bool allow);
+   EAPI void             edje_object_part_text_select_allow_set(const Evas_Object *obj, const char *part, Eina_Bool allow);
    EAPI void             edje_object_part_text_select_abort(const Evas_Object *obj, const char *part);
        
    EAPI void         edje_object_part_swallow        (Evas_Object *obj, const char *part, Evas_Object *obj_swallow);
@@ -276,17 +276,17 @@ extern "C" {
    EAPI void         edje_object_part_drag_page_get  (const Evas_Object *obj, const char *part, double *dx, double *dy);
    EAPI void         edje_object_part_drag_step      (Evas_Object *obj, const char *part, double dx, double dy);
    EAPI void         edje_object_part_drag_page      (Evas_Object *obj, const char *part, double dx, double dy);
-   EAPI Evas_Bool    edje_object_part_box_append     (Evas_Object *obj, const char *part, Evas_Object *child);
-   EAPI Evas_Bool    edje_object_part_box_prepend    (Evas_Object *obj, const char *part, Evas_Object *child);
-   EAPI Evas_Bool    edje_object_part_box_insert_before (Evas_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference);
-   EAPI Evas_Bool    edje_object_part_box_insert_at  (Evas_Object *obj, const char *part, Evas_Object *child, unsigned int pos);
+   EAPI Eina_Bool    edje_object_part_box_append     (Evas_Object *obj, const char *part, Evas_Object *child);
+   EAPI Eina_Bool    edje_object_part_box_prepend    (Evas_Object *obj, const char *part, Evas_Object *child);
+   EAPI Eina_Bool    edje_object_part_box_insert_before (Evas_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference);
+   EAPI Eina_Bool    edje_object_part_box_insert_at  (Evas_Object *obj, const char *part, Evas_Object *child, unsigned int pos);
    EAPI Evas_Object *edje_object_part_box_remove     (Evas_Object *obj, const char *part, Evas_Object *child);
    EAPI Evas_Object *edje_object_part_box_remove_at  (Evas_Object *obj, const char *part, unsigned int pos);
-   EAPI Evas_Bool    edje_object_part_box_remove_all (Evas_Object *obj, const char *part, Evas_Bool clear);
-   EAPI Evas_Bool    edje_object_part_table_pack     (Evas_Object *obj, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
-   EAPI Evas_Bool    edje_object_part_table_unpack   (Evas_Object *obj, const char *part, Evas_Object *child_obj);
-   EAPI Evas_Bool    edje_object_part_table_col_row_size_get (const Evas_Object *obj, const char *part, int *cols, int *rows);
-   EAPI Evas_Bool    edje_object_part_table_clear    (Evas_Object *obj, const char *part, Evas_Bool clear);
+   EAPI Eina_Bool    edje_object_part_box_remove_all (Evas_Object *obj, const char *part, Eina_Bool clear);
+   EAPI Eina_Bool    edje_object_part_table_pack     (Evas_Object *obj, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
+   EAPI Eina_Bool    edje_object_part_table_unpack   (Evas_Object *obj, const char *part, Evas_Object *child_obj);
+   EAPI Eina_Bool    edje_object_part_table_col_row_size_get (const Evas_Object *obj, const char *part, int *cols, int *rows);
+   EAPI Eina_Bool    edje_object_part_table_clear    (Evas_Object *obj, const char *part, Eina_Bool clear);
 
    /* edje_message_queue.c */
    EAPI void         edje_object_message_send           (Evas_Object *obj, Edje_Message_Type type, int id, void *msg);

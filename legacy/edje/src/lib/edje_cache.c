@@ -28,7 +28,7 @@ void *alloca (size_t);
 
 #include "edje_private.h"
 
-static Evas_Hash   *_edje_file_hash = NULL;
+static Eina_Hash   *_edje_file_hash = NULL;
 static int          _edje_file_cache_size = 16;
 static Eina_List   *_edje_file_cache = NULL;
 

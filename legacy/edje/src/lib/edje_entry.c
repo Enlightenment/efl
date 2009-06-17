@@ -50,16 +50,16 @@ struct _Entry
    Eina_List *anchors;
    Eina_List *anchorlist;
    char *selection;
-   Evas_Bool selecting : 1;
-   Evas_Bool have_selection : 1;
-   Evas_Bool select_allow : 1;
-   Evas_Bool select_mod_start : 1;
-   Evas_Bool select_mod_end : 1;
-   Evas_Bool had_sel : 1;
+   Eina_Bool selecting : 1;
+   Eina_Bool have_selection : 1;
+   Eina_Bool select_allow : 1;
+   Eina_Bool select_mod_start : 1;
+   Eina_Bool select_mod_end : 1;
+   Eina_Bool had_sel : 1;
 
 #ifdef HAVE_ECORE_IMF   
    int	comp_len;
-   Evas_Bool have_composition : 1;
+   Eina_Bool have_composition : 1;
    Ecore_IMF_Context *imf_context;
 
    Ecore_Event_Handler *imf_ee_handler_commit;
@@ -367,7 +367,7 @@ _sel_start(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
    en->sel_end = evas_object_textblock_cursor_new(o);
    evas_textblock_cursor_copy(c, en->sel_end);
 
-   en->have_selection = 0;
+   en->have_selection = EINA_FALSE;
    if (en->selection)
      {
 	free(en->selection);
@@ -379,7 +379,7 @@ static void
 _sel_enable(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 {
    if (en->have_selection) return;
-   en->have_selection = 1;
+   en->have_selection = EINA_TRUE;
    if (en->selection)
      {
 	free(en->selection);
@@ -421,7 +421,7 @@ _sel_preextend(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 static void
 _sel_clear(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 {
-   en->had_sel = 0;
+   en->had_sel = EINA_FALSE;
    if (en->sel_start)
      {
 	evas_textblock_cursor_free(en->sel_start);
@@ -448,7 +448,7 @@ _sel_clear(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
      }
    if (en->have_selection)
      {
-        en->have_selection = 0;
+        en->have_selection = EINA_FALSE;
 	_edje_emit(en->rp->edje, "selection,cleared", en->rp->part->name);
      }
 }
@@ -930,9 +930,9 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Evas_Event_Key_Down *ev = event_info;
    Edje_Real_Part *rp = ed->focused_part;
    Entry *en;
-   Evas_Bool control, alt, shift;
-   Evas_Bool multiline;
-   Evas_Bool cursor_changed;
+   Eina_Bool control, alt, shift;
+   Eina_Bool multiline;
+   Eina_Bool cursor_changed;
    Evas_Textblock_Cursor *tc;
    if (!rp) return;
    en = rp->entry_data;
@@ -962,7 +962,7 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
    shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
    multiline = rp->part->multiline;
-   cursor_changed = 0;
+   cursor_changed = EINA_FALSE;
    if (!strcmp(ev->key, "Escape"))
      {
 	// dead keys here. Escape for now (should emit these)
@@ -1188,7 +1188,7 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	     _anchors_get(en->cursor, rp->object, en);
 	     _edje_emit(ed, "entry,changed", rp->part->name);
 	     _edje_emit(ed, "cursor,changed", rp->part->name);
-	     cursor_changed = 1;
+	     cursor_changed = EINA_TRUE;
 	     ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 	  }
         _edje_emit(ed, "entry,key,enter", rp->part->name);
@@ -1217,7 +1217,7 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	     _anchors_get(en->cursor, rp->object, en);
 	     _edje_emit(ed, "entry,changed", rp->part->name);
 	     _edje_emit(ed, "cursor,changed", rp->part->name);
-	     cursor_changed = 1;
+	     cursor_changed = EINA_TRUE;
 	     ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 	  }
      }
@@ -1272,9 +1272,9 @@ _edje_part_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
    Evas_Event_Mouse_Down *ev = event_info;
    Entry *en;
    Evas_Coord x, y, w, h;
-   Evas_Bool multiline;
+   Eina_Bool multiline;
    Evas_Textblock_Cursor *tc;
-   Evas_Bool dosel = 0;
+   Eina_Bool dosel = EINA_FALSE;
    if (!rp) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    en = rp->entry_data;
@@ -1287,13 +1287,13 @@ _edje_part_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
         return;
      }
    if (ev->button != 1) return;
-   en->select_mod_start = 0;
-   en->select_mod_end = 0;
+   en->select_mod_start = EINA_FALSE;
+   en->select_mod_end = EINA_FALSE;
    if (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_DEFAULT)
-     dosel = 1;
+     dosel = EINA_TRUE;
    else if (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_EXPLICIT)
      {
-        if (en->select_allow) dosel = 1;
+        if (en->select_allow) dosel = EINA_TRUE;
      }
    if (dosel)
      {
@@ -1364,23 +1364,23 @@ _edje_part_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
                     {
                        if (d1 <= d)
                          {
-                            en->select_mod_start = 1;
-                            en->selecting = 1;
+                            en->select_mod_start = EINA_TRUE;
+                            en->selecting = EINA_TRUE;
                          }
                     }
                   else
                     {
                        if (d2 <= d)
                          {
-                            en->select_mod_end = 1;
-                            en->selecting = 1;
+                            en->select_mod_end = EINA_TRUE;
+                            en->selecting = EINA_TRUE;
                          }
                     }
                }
           }
         else
           {
-             en->selecting = 1;
+             en->selecting = EINA_TRUE;
              _sel_clear(en->cursor, rp->object, en);
              _sel_start(en->cursor, rp->object, en);
           }
@@ -1408,9 +1408,9 @@ _edje_part_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Evas_Event_Mouse_Up *ev = event_info;
    Entry *en;
    Evas_Coord x, y, w, h;
-   Evas_Bool multiline;
+   Eina_Bool multiline;
    Evas_Textblock_Cursor *tc;
-   Evas_Bool dosel = 0;
+   Eina_Bool dosel = EINA_FALSE;
    if (ev->button != 1) return;
    if (!rp) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
@@ -1456,8 +1456,8 @@ _edje_part_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    if (en->selecting)
      {
         if (en->have_selection)
-          en->had_sel = 1;
-        en->selecting = 0;
+          en->had_sel = EINA_TRUE;
+        en->selecting = EINA_FALSE;
      }
    if (evas_textblock_cursor_compare(tc, en->cursor))
      _edje_emit(rp->edje, "cursor,changed", rp->part->name);
@@ -1473,7 +1473,7 @@ _edje_part_mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
    Entry *en;
    Evas_Coord x, y, w, h;
    Evas_Textblock_Cursor *tc;
-   Evas_Bool multiline;
+   Eina_Bool multiline;
    if (!rp) return;
    en = rp->entry_data;
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
@@ -1867,7 +1867,7 @@ _edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Coord *
 }
 
 void
-_edje_entry_select_allow_set(Edje_Real_Part *rp, Evas_Bool allow)
+_edje_entry_select_allow_set(Edje_Real_Part *rp, Eina_Bool allow)
 {
    Entry *en = rp->entry_data;
    en->select_allow = allow;
@@ -1879,7 +1879,7 @@ _edje_entry_select_abort(Edje_Real_Part *rp)
    Entry *en = rp->entry_data;
    if (en->selecting)
      {
-        en->selecting = 0;
+        en->selecting = EINA_FALSE;
         _edje_entry_real_part_configure(rp);
      }
 }
@@ -1921,8 +1921,8 @@ _edje_entry_imf_event_commit_cb(void *data, int type, void *event)
    Ecore_IMF_Event_Commit *ev = event;
    int cursor_pos, composition_pos;
    int start_pos, end_pos;
-   Evas_Bool selecting;
-   Evas_Bool changed = 0;
+   Eina_Bool selecting;
+   Eina_Bool changed = EINA_FALSE;
    int i;
    
    if (!rp) return 1;
@@ -1939,7 +1939,7 @@ _edje_entry_imf_event_commit_cb(void *data, int type, void *event)
 	for (i = 0; i < en->comp_len; i++)
 	  _backspace(en->cursor, rp->object, en);
 	_sel_clear(en->cursor, rp->object, en);
-	en->have_composition = 0;
+	en->have_composition = EINA_FALSE;
      }
 
    evas_textblock_cursor_text_prepend(en->cursor, ev->str);
@@ -1961,8 +1961,8 @@ _edje_entry_imf_event_changed_cb(void *data, int type, void *event)
    int cursor_pos;
    int composition_pos, length;
    int start_pos, end_pos;
-   Evas_Bool selecting = 0;
-   Evas_Bool changed = 0;
+   Eina_Bool selecting = EINA_FALSE;
+   Eina_Bool changed = EINA_FALSE;
    Ecore_IMF_Event_Commit *ev = event;
    Evas_Textblock_Cursor *start_cur, *end_cur;
    int i;
@@ -2000,7 +2000,7 @@ _edje_entry_imf_event_changed_cb(void *data, int type, void *event)
    _sel_enable(en->cursor, rp->object, en);
    _sel_start(en->cursor, rp->object, en);
 
-   en->have_composition = 1;
+   en->have_composition = EINA_TRUE;
 
    evas_textblock_cursor_text_prepend(en->cursor, preedit_string);
 

@@ -1143,18 +1143,18 @@ void              _edje_object_part_swallow_free_cb(void *data, Evas *e, Evas_Ob
 void              _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow);
 void              _edje_box_init(void);
 void              _edje_box_shutdown(void);
-Evas_Bool         _edje_box_layout_find(const char *name, Evas_Object_Box_Layout *cb, void **data, void (**free_data)(void *data));
+Eina_Bool         _edje_box_layout_find(const char *name, Evas_Object_Box_Layout *cb, void **data, void (**free_data)(void *data));
 
-Evas_Bool         _edje_real_part_box_append(Edje_Real_Part *rp, Evas_Object *child_obj);
-Evas_Bool         _edje_real_part_box_prepend(Edje_Real_Part *rp, Evas_Object *child_obj);
-Evas_Bool         _edje_real_part_box_insert_before(Edje_Real_Part *rp, Evas_Object *child_obj, const Evas_Object *ref);
-Evas_Bool         _edje_real_part_box_insert_at(Edje_Real_Part *rp, Evas_Object *child_obj, unsigned int pos);
+Eina_Bool         _edje_real_part_box_append(Edje_Real_Part *rp, Evas_Object *child_obj);
+Eina_Bool         _edje_real_part_box_prepend(Edje_Real_Part *rp, Evas_Object *child_obj);
+Eina_Bool         _edje_real_part_box_insert_before(Edje_Real_Part *rp, Evas_Object *child_obj, const Evas_Object *ref);
+Eina_Bool         _edje_real_part_box_insert_at(Edje_Real_Part *rp, Evas_Object *child_obj, unsigned int pos);
 Evas_Object      *_edje_real_part_box_remove(Edje_Real_Part *rp, Evas_Object *child_obj);
 Evas_Object      *_edje_real_part_box_remove_at(Edje_Real_Part *rp, unsigned int pos);
-Evas_Bool         _edje_real_part_box_remove_all(Edje_Real_Part *rp, Evas_Bool clear);
-Evas_Bool         _edje_real_part_table_pack(Edje_Real_Part *rp, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
-Evas_Bool         _edje_real_part_table_unpack(Edje_Real_Part *rp, Evas_Object *child_obj);
-void              _edje_real_part_table_clear(Edje_Real_Part *rp, Evas_Bool clear);
+Eina_Bool         _edje_real_part_box_remove_all(Edje_Real_Part *rp, Eina_Bool clear);
+Eina_Bool         _edje_real_part_table_pack(Edje_Real_Part *rp, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
+Eina_Bool         _edje_real_part_table_unpack(Edje_Real_Part *rp, Evas_Object *child_obj);
+void              _edje_real_part_table_clear(Edje_Real_Part *rp, Eina_Bool clear);
 
 void          _edje_embryo_script_init      (Edje *ed);
 void          _edje_embryo_script_shutdown  (Edje *ed);
@@ -1309,7 +1309,7 @@ void _edje_entry_select_all(Edje_Real_Part *rp);
 const Eina_List *_edje_entry_anchor_geometry_get(Edje_Real_Part *rp, const char *anchor);
 const Eina_List *_edje_entry_anchors_list(Edje_Real_Part *rp);
 void _edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
-void _edje_entry_select_allow_set(Edje_Real_Part *rp, Evas_Bool allow);
+void _edje_entry_select_allow_set(Edje_Real_Part *rp, Eina_Bool allow);
 void _edje_entry_select_abort(Edje_Real_Part *rp);
 
 #endif
