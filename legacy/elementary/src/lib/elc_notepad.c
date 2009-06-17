@@ -9,8 +9,8 @@ struct _Widget_Data
    const char *file;
    Elm_Text_Format format;
    Ecore_Timer *delay_write;
-   Evas_Bool can_write : 1;
-   Evas_Bool auto_write : 1;
+   Eina_Bool can_write : 1;
+   Eina_Bool auto_write : 1;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -233,7 +233,7 @@ elm_notepad_add(Evas_Object *parent)
    elm_entry_entry_set(wd->entry, "");
    evas_object_smart_callback_add(wd->entry, "changed", _entry_changed, obj);
    
-   wd->auto_write = 1;
+   wd->auto_write = EINA_TRUE;
    
    _sizing_eval(obj);
    return obj;

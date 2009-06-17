@@ -9,11 +9,11 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *img;
-   Evas_Bool    scale_up : 1;
-   Evas_Bool    scale_down : 1;
-   Evas_Bool    smooth : 1;
-   Evas_Bool    fill_outside : 1;
-   Evas_Bool    no_scale : 1;
+   Eina_Bool    scale_up : 1;
+   Eina_Bool    scale_down : 1;
+   Eina_Bool    smooth : 1;
+   Eina_Bool    fill_outside : 1;
+   Eina_Bool    no_scale : 1;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -100,9 +100,9 @@ elm_image_add(Evas_Object *parent)
    evas_object_repeat_events_set(wd->img, 1);
    elm_widget_resize_object_set(obj, wd->img);   
 
-   wd->smooth = 1;
-   wd->scale_up = 1;
-   wd->scale_down = 1;
+   wd->smooth = EINA_TRUE;
+   wd->scale_up = EINA_TRUE;
+   wd->scale_down = EINA_TRUE;
    
    _els_smart_icon_scale_size_set(wd->img, 0);
 
@@ -115,10 +115,10 @@ elm_image_file_set(Evas_Object *obj, const char *file, const char *group)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_Bool ret;
-   if (!wd) return 0;
+   if (!wd) return EINA_FALSE;
    const char *p;
 
-   if (!file) return 0;
+   if (!file) return EINA_FALSE;
    if (((p = strrchr(file, '.'))) && (!strcasecmp(p, ".edj")))
      ret = _els_smart_icon_file_edje_set(wd->img, file, group);
    else
@@ -128,7 +128,7 @@ elm_image_file_set(Evas_Object *obj, const char *file, const char *group)
 }
 
 EAPI void
-elm_image_smooth_set(Evas_Object *obj, Evas_Bool smooth)
+elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -137,7 +137,7 @@ elm_image_smooth_set(Evas_Object *obj, Evas_Bool smooth)
 }
 
 EAPI void
-elm_image_no_scale_set(Evas_Object *obj, Evas_Bool no_scale)
+elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -146,7 +146,7 @@ elm_image_no_scale_set(Evas_Object *obj, Evas_Bool no_scale)
 }
 
 EAPI void
-elm_image_scale_set(Evas_Object *obj, Evas_Bool scale_up, Evas_Bool scale_down)
+elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -156,7 +156,7 @@ elm_image_scale_set(Evas_Object *obj, Evas_Bool scale_up, Evas_Bool scale_down)
 }
 
 EAPI void
-elm_image_fill_outside_set(Evas_Object *obj, Evas_Bool fill_outside)
+elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;

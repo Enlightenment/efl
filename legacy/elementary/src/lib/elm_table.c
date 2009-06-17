@@ -81,7 +81,7 @@ elm_table_add(Evas_Object *parent)
 }
 
 EAPI void
-elm_table_homogenous_set(Evas_Object *obj, Evas_Bool homogenous)
+elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    _els_smart_table_homogenous_set(wd->tbl, homogenous);

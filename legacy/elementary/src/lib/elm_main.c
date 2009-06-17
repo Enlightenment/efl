@@ -670,7 +670,7 @@ elm_quicklaunch_seed(void)
 static void *qr_handle = NULL;
 static int (*qr_main) (int argc, char **argv) = NULL;
 
-EAPI Evas_Bool
+EAPI Eina_Bool
 elm_quicklaunch_prepare(int argc, char **argv)
 {
 #ifdef HAVE_FORK
@@ -678,7 +678,7 @@ elm_quicklaunch_prepare(int argc, char **argv)
    if (!exe)
      {
         printf("ERROR: %s does not exist\n", argv[0]);
-        return 0;
+        return EINA_FALSE;
      }
    else
      {
@@ -706,17 +706,17 @@ elm_quicklaunch_prepare(int argc, char **argv)
      }
    qr_handle = dlopen(exe, RTLD_NOW | RTLD_GLOBAL);
    free(exe);
-   if (!qr_handle) return 0;
+   if (!qr_handle) return EINA_FALSE;
    qr_main = dlsym(qr_handle, "elm_main");
    if (!qr_main)
      {
         dlclose(qr_handle);
         qr_handle = NULL;
-        return 0;
+        return EINA_FALSE;
      }
-   return 1;
+   return EINA_TRUE;
 #else
-   return 0;
+   return EINA_FALSE;
 #endif
 }
 
@@ -744,7 +744,7 @@ save_env(void)
 }
 #endif
 
-EAPI Evas_Bool
+EAPI Eina_Bool
 elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (postfork_func) (void *data), void *postfork_data)
 {
 #ifdef HAVE_FORK
@@ -761,11 +761,11 @@ elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (postfork_func) (voi
         char **args;
         
         child = fork();
-        if (child > 0) return 1;
+        if (child > 0) return EINA_TRUE;
 	else if (child < 0)
 	  {
 	     perror("could not fork");
-	     return 0;
+	     return EINA_FALSE;
 	  }
         setsid();
         if (chdir(cwd) != 0)
@@ -777,11 +777,11 @@ elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (postfork_func) (voi
         exit(execvp(argv[0], args));
      }
    child = fork();
-   if (child > 0) return 1;
+   if (child > 0) return EINA_TRUE;
    else if (child < 0)
      {
 	perror("could not fork");
-	return 0;
+	return EINA_FALSE;
      }
    if (postfork_func) postfork_func(postfork_data);
 
@@ -804,9 +804,9 @@ elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (postfork_func) (voi
    ecore_app_args_set(argc, (const char **)argv);
    ret = qr_main(argc, argv);
    exit(ret);
-   return 1;
+   return EINA_TRUE;
 #else
-   return 0;
+   return EINA_FALSE;
 #endif   
 }
 

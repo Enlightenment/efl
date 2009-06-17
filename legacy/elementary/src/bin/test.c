@@ -2145,9 +2145,9 @@ Evas_Object *gl_icon_get(const void *data, Evas_Object *obj, const char *part)
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    return ic;
 }
-Evas_Bool gl_state_get(const void *data, Evas_Object *obj, const char *part)
+Eina_Bool gl_state_get(const void *data, Evas_Object *obj, const char *part)
 {
-   return 0;
+   return EINA_FALSE;
 }
 void gl_del(const void *data, Evas_Object *obj)
 {
@@ -2475,9 +2475,9 @@ Evas_Object *gl2_icon_get(const void *data, Evas_Object *obj, const char *part)
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    return ic;
 }
-Evas_Bool gl2_state_get(const void *data, Evas_Object *obj, const char *part)
+Eina_Bool gl2_state_get(const void *data, Evas_Object *obj, const char *part)
 {
-   return 0;
+   return EINA_FALSE;
 }
 void gl2_del(const void *data, Evas_Object *obj)
 {
@@ -2627,9 +2627,9 @@ Evas_Object *gl3_icon_get(const void *data, Evas_Object *obj, const char *part)
      }
    return NULL;
 }
-Evas_Bool gl3_state_get(const void *data, Evas_Object *obj, const char *part)
+Eina_Bool gl3_state_get(const void *data, Evas_Object *obj, const char *part)
 {
-   return 0;
+   return EINA_FALSE;
 }
 void gl3_del(const void *data, Evas_Object *obj)
 {
@@ -3070,9 +3070,9 @@ Evas_Object *gl4_icon_get(const void *data, Evas_Object *obj, const char *part)
      }
    return NULL;
 }
-Evas_Bool gl4_state_get(const void *data, Evas_Object *obj, const char *part)
+Eina_Bool gl4_state_get(const void *data, Evas_Object *obj, const char *part)
 {
-   return 0;
+   return EINA_FALSE;
 }
 void gl4_del(const void *data, Evas_Object *obj)
 {
@@ -3221,9 +3221,9 @@ Evas_Object *gl5_icon_get(const void *data, Evas_Object *obj, const char *part)
      }
    return NULL;
 }
-Evas_Bool gl5_state_get(const void *data, Evas_Object *obj, const char *part)
+Eina_Bool gl5_state_get(const void *data, Evas_Object *obj, const char *part)
 {
-   return 0;
+   return EINA_FALSE;
 }
 void gl5_del(const void *data, Evas_Object *obj)
 {

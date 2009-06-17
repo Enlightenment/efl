@@ -25,8 +25,8 @@ struct _Widget_Data
 {
    Evas_Object *chk;
    Evas_Object *icon;
-   Evas_Bool state;
-   Evas_Bool *statep;
+   Eina_Bool state;
+   Eina_Bool *statep;
    const char *label;
 };
 
@@ -113,7 +113,7 @@ static void
 _signal_check_off(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   wd->state = 0;
+   wd->state = EINA_FALSE;
    if (wd->statep) *wd->statep = wd->state;
    edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
    evas_object_smart_callback_call(data, "changed", NULL);
@@ -123,7 +123,7 @@ static void
 _signal_check_on(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   wd->state = 1;
+   wd->state = EINA_TRUE;
    if (wd->statep) *wd->statep = wd->state;
    edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
    evas_object_smart_callback_call(data, "changed", NULL);
@@ -253,7 +253,7 @@ elm_check_icon_set(Evas_Object *obj, Evas_Object *icon)
  * @ingroup Check
  */
 EAPI void
-elm_check_state_set(Evas_Object *obj, Evas_Bool state)
+elm_check_state_set(Evas_Object *obj, Eina_Bool state)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (state != wd->state)
@@ -275,7 +275,7 @@ elm_check_state_set(Evas_Object *obj, Evas_Bool state)
  *
  * @ingroup Check
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 elm_check_state_get(const Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -298,7 +298,7 @@ elm_check_state_get(const Evas_Object *obj)
  * @ingroup Check
  */
 EAPI void
-elm_check_state_pointer_set(Evas_Object *obj, Evas_Bool *statep)
+elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 

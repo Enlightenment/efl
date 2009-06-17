@@ -233,12 +233,12 @@ struct _Widget_Data
    Eina_List *selected;
    Elm_Genlist_Item *show_item;
    Elm_List_Mode mode;
-   Evas_Bool on_hold : 1;
-   Evas_Bool multi : 1;
-   Evas_Bool min_w : 1;
-   Evas_Bool min_h : 1;
-   Evas_Bool always_select : 1;
-   Evas_Bool no_select : 1;
+   Eina_Bool on_hold : 1;
+   Eina_Bool multi : 1;
+   Eina_Bool min_w : 1;
+   Eina_Bool min_h : 1;
+   Eina_Bool always_select : 1;
+   Eina_Bool no_select : 1;
 };
 
 struct _Item_Block
@@ -248,8 +248,8 @@ struct _Item_Block
    Widget_Data *wd;
    Eina_List *items;
    Evas_Coord x, y, w, h, minw, minh;
-   Evas_Bool realized : 1;
-   Evas_Bool changed : 1;
+   Eina_Bool realized : 1;
+   Eina_Bool changed : 1;
 };
 
 struct _Elm_Genlist_Item
@@ -275,17 +275,17 @@ struct _Elm_Genlist_Item
    
    Elm_Genlist_Item *rel;
    int relcount;
-   Evas_Bool before : 1;
+   Eina_Bool before : 1;
    
-   Evas_Bool realized : 1;
-   Evas_Bool selected : 1;
-   Evas_Bool hilighted : 1;
-   Evas_Bool expanded : 1; // FIXME: not done yet
-   Evas_Bool disabled : 1;
-   Evas_Bool mincalcd : 1;
-   Evas_Bool queued : 1;
-   Evas_Bool showme : 1;
-   Evas_Bool delete_me : 1;
+   Eina_Bool realized : 1;
+   Eina_Bool selected : 1;
+   Eina_Bool hilighted : 1;
+   Eina_Bool expanded : 1; // FIXME: not done yet
+   Eina_Bool disabled : 1;
+   Eina_Bool mincalcd : 1;
+   Eina_Bool queued : 1;
+   Eina_Bool showme : 1;
+   Eina_Bool delete_me : 1;
 };
 
 struct _Pan
@@ -331,10 +331,10 @@ _theme_hook(Evas_Object *obj)
 	Elm_Genlist_Item *it;
 	EINA_LIST_FOREACH(itb->items, l, it)
           {
-             it->mincalcd = 0;
+             it->mincalcd = EINA_FALSE;
           }
 
-        itb->changed = 1;
+        itb->changed = EINA_TRUE;
      }
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
@@ -408,7 +408,7 @@ _item_hilight(Elm_Genlist_Item *it)
    selectraise = edje_object_data_get(it->base, "selectraise");
    if ((selectraise) && (!strcmp(selectraise, "on")))
      evas_object_raise(it->base);
-   it->hilighted = 1;
+   it->hilighted = EINA_TRUE;
 }
 
 static void
@@ -422,7 +422,7 @@ _item_select(Elm_Genlist_Item *it)
         if (it->wd->always_select) goto call;
         return;
      }
-   it->selected = 1;
+   it->selected = EINA_TRUE;
    it->wd->selected = eina_list_append(it->wd->selected, it);
    call:
    if (it->func.func) it->func.func((void *)it->func.data, it->wd->obj, it);
@@ -443,10 +443,10 @@ _item_unselect(Elm_Genlist_Item *it)
         if ((stacking) && (!strcmp(stacking, "below")))
           evas_object_lower(it->base);
      }
-   it->hilighted = 0;
+   it->hilighted = EINA_FALSE;
    if (it->selected)
      {
-        it->selected = 0;
+        it->selected = EINA_FALSE;
         it->wd->selected = eina_list_remove(it->wd->selected, it);
         evas_object_smart_callback_call(it->wd->obj, "unselected", it);
      }
@@ -461,7 +461,7 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
      {
         if (!it->wd->on_hold)
           {
-             it->wd->on_hold = 1;
+             it->wd->on_hold = EINA_TRUE;
              _item_unselect(it);
           }
      }
@@ -472,8 +472,8 @@ _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 {
    Elm_Genlist_Item *it = data;
    Evas_Event_Mouse_Down *ev = event_info;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) it->wd->on_hold = 1;
-   else it->wd->on_hold = 0;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) it->wd->on_hold = EINA_TRUE;
+   else it->wd->on_hold = EINA_FALSE;
    _item_hilight(it);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      evas_object_smart_callback_call(it->wd->obj, "clicked", it);
@@ -485,11 +485,11 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    Elm_Genlist_Item *it = data;
    Evas_Event_Mouse_Up *ev = event_info;
    Eina_List *l;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) it->wd->on_hold = 1;
-   else it->wd->on_hold = 0;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) it->wd->on_hold = EINA_TRUE;
+   else it->wd->on_hold = EINA_FALSE;
    if (it->wd->on_hold)
      {
-        it->wd->on_hold = 0;
+        it->wd->on_hold = EINA_FALSE;
         return;
      }
    if (it->disabled) return;
@@ -655,7 +655,7 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
         it->states = _stringlist_get(edje_object_data_get(it->base, "states"));
 	EINA_LIST_FOREACH(it->states, l, key)
           {
-             Evas_Bool on = it->itc->func.state_get(it->data, it->wd->obj, l->data);
+             Eina_Bool on = it->itc->func.state_get(it->data, it->wd->obj, l->data);
              if (on)
                {
                   snprintf(buf, sizeof(buf), "elm,state,%s,active", key);
@@ -671,10 +671,10 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
         elm_coords_finger_size_adjust(1, &mw, 1, &mh);
         it->w = it->minw = mw;
         it->h = it->minh = mh;
-        it->mincalcd = 1;
+        it->mincalcd = EINA_TRUE;
      }
    if (!calc) evas_object_show(it->base);
-   it->realized = 1;
+   it->realized = EINA_TRUE;
 }
 
 static void
@@ -696,7 +696,7 @@ _item_unrealize(Elm_Genlist_Item *it)
    EINA_LIST_FREE(it->icon_objs, icon) evas_object_del(icon);
 
    it->states = NULL;
-   it->realized = 0;
+   it->realized = EINA_FALSE;
 }
 
 static int
@@ -728,7 +728,7 @@ _item_block_recalc(Item_Block *itb, int in)
      }
    itb->minw = minw;
    itb->minh = minh;
-   itb->changed = 0;
+   itb->changed = EINA_FALSE;
    /* force an evas norender to garbage collect deleted objects */
    evas_norender(evas_object_evas_get(itb->wd->obj));
    return showme;
@@ -746,7 +746,7 @@ _item_block_realize(Item_Block *itb, int in, int full)
         if (full) _item_realize(it, in, 0);
         in++;
      }
-   itb->realized = 1;
+   itb->realized = EINA_TRUE;
 }
 
 static void
@@ -760,7 +760,7 @@ _item_block_unrealize(Item_Block *itb)
      {
         _item_unrealize(it);
      }
-   itb->realized = 0;
+   itb->realized = EINA_FALSE;
 }
 
 static void
@@ -1092,7 +1092,7 @@ _item_block_del(Elm_Genlist_Item *it)
    
    itb->items = eina_list_remove(itb->items, it);
    itb->count--;
-   itb->changed = 1;
+   itb->changed = EINA_TRUE;
    if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
    it->wd->calc_job = ecore_job_add(_calc_job, it->wd);
    if (itb->count < 1)
@@ -1104,7 +1104,7 @@ _item_block_del(Elm_Genlist_Item *it)
         else
           it->wd->blocks = eina_inlist_remove(it->wd->blocks, il);
         free(itb);
-        if (itbn) itbn->changed = 1;
+        if (itbn) itbn->changed = EINA_TRUE;
      }
    else
      {
@@ -1121,7 +1121,7 @@ _item_block_del(Elm_Genlist_Item *it)
                        it2->block = itbp;
                        itbp->items = eina_list_append(itbp->items, it2);
                        itbp->count++;
-                       itbp->changed = 1;
+                       itbp->changed = EINA_TRUE;
                     }
                   it->wd->blocks = eina_inlist_remove(it->wd->blocks, EINA_INLIST_GET(itb));
                   free(itb);
@@ -1136,7 +1136,7 @@ _item_block_del(Elm_Genlist_Item *it)
                        itb->items = eina_list_remove_list(itb->items, last);
                        itbn->items = eina_list_prepend(itbn->items, it2);
                        itbn->count++;
-                       itbn->changed = 1;
+                       itbn->changed = EINA_TRUE;
                     }
                   it->wd->blocks = eina_inlist_remove(it->wd->blocks, EINA_INLIST_GET(itb));
                   free(itb);
@@ -1154,7 +1154,7 @@ _item_del(Elm_Genlist_Item *it)
    if (it->realized) _item_unrealize(it);
    if (it->block) _item_block_del(it);
    if ((!it->delete_me) && (it->itc->func.del)) it->itc->func.del(it->data, it->wd->obj);
-   it->delete_me = 1;
+   it->delete_me = EINA_TRUE;
    if (it->queued)
      it->wd->queue = eina_list_remove(it->wd->queue, it);
    it->wd->items = eina_inlist_remove(it->wd->items, EINA_INLIST_GET(it));
@@ -1256,7 +1256,7 @@ _item_block_add(Widget_Data *wd, Elm_Genlist_Item *it)
           itb->items = eina_list_append_relative(itb->items, it, it->rel);
      }
    itb->count++;
-   itb->changed = 1;
+   itb->changed = EINA_TRUE;
    it->block = itb;
    if (itb->wd->calc_job) ecore_job_del(itb->wd->calc_job);
    itb->wd->calc_job = ecore_job_add(_calc_job, itb->wd);
@@ -1281,7 +1281,7 @@ _item_idler(void *data)
         
         it = wd->queue->data;
         wd->queue = eina_list_remove_list(wd->queue, wd->queue);
-        it->queued = 0;
+        it->queued = EINA_FALSE;
         _item_block_add(wd, it);
      }
    if (n > 0)
@@ -1302,7 +1302,7 @@ _item_queue(Widget_Data *wd, Elm_Genlist_Item *it)
 {
    if (it->queued) return;
    if (!wd->queue_idler) wd->queue_idler = ecore_idler_add(_item_idler, wd);
-   it->queued = 1;
+   it->queued = EINA_TRUE;
    wd->queue = eina_list_append(wd->queue, it);
 }
 
@@ -1540,7 +1540,7 @@ elm_genlist_clear(Evas_Object *obj)
  * @ingroup Genlist
  */
 EAPI void
-elm_genlist_multi_select_set(Evas_Object *obj, Evas_Bool multi)
+elm_genlist_multi_select_set(Evas_Object *obj, Eina_Bool multi)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->multi = multi;
@@ -1738,7 +1738,7 @@ elm_genlist_item_subitems_clear(Elm_Genlist_Item *it)
  * @ingroup Genlist
  */
 EAPI void
-elm_genlist_item_selected_set(Elm_Genlist_Item *it, Evas_Bool selected)
+elm_genlist_item_selected_set(Elm_Genlist_Item *it, Eina_Bool selected)
 {
    Widget_Data *wd = elm_widget_data_get(it->wd->obj);
 
@@ -1771,10 +1771,10 @@ elm_genlist_item_selected_set(Elm_Genlist_Item *it, Evas_Bool selected)
  *
  * @ingroup Genlist
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 elm_genlist_item_selected_get(const Elm_Genlist_Item *it)
 {
-   if (!it) return 0;
+   if (!it) return EINA_FALSE;
    return it->selected;
 }
 
@@ -1790,7 +1790,7 @@ elm_genlist_item_selected_get(const Elm_Genlist_Item *it)
  * @ingroup Genlist
  */
 EAPI void
-elm_genlist_item_expanded_set(Elm_Genlist_Item *it, Evas_Bool expanded)
+elm_genlist_item_expanded_set(Elm_Genlist_Item *it, Eina_Bool expanded)
 {
    if (!it) return;
    if (it->expanded == expanded) return;
@@ -1819,10 +1819,10 @@ elm_genlist_item_expanded_set(Elm_Genlist_Item *it, Evas_Bool expanded)
  *
  * @ingroup Genlist
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 elm_genlist_item_expanded_get(const Elm_Genlist_Item *it)
 {
-   if (!it) return 0;
+   if (!it) return EINA_FALSE;
    return it->expanded;
 }
     
@@ -1839,7 +1839,7 @@ elm_genlist_item_expanded_get(const Elm_Genlist_Item *it)
  * @ingroup Genlist
  */
 EAPI void
-elm_genlist_item_disabled_set(Elm_Genlist_Item *it, Evas_Bool disabled)
+elm_genlist_item_disabled_set(Elm_Genlist_Item *it, Eina_Bool disabled)
 {
    if (!it) return;
    if (it->disabled == disabled) return;
@@ -1864,11 +1864,11 @@ elm_genlist_item_disabled_set(Elm_Genlist_Item *it, Evas_Bool disabled)
  *
  * @ingroup Genlist
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 elm_genlist_item_disabled_get(const Elm_Genlist_Item *it)
 {
-   if (!it) return 0;
-   if (it->delete_me) return 0;
+   if (!it) return EINA_FALSE;
+   if (it->delete_me) return EINA_FALSE;
    return it->disabled;
 }
 
@@ -1890,12 +1890,12 @@ elm_genlist_item_show(Elm_Genlist_Item *it)
    if ((it->queued) || (!it->mincalcd))
      {
         it->wd->show_item = it;
-        it->showme = 1;
+        it->showme = EINA_TRUE;
         return;
      }
    if (it->wd->show_item)
      {
-        it->wd->show_item->showme = 0;
+        it->wd->show_item->showme = EINA_FALSE;
         it->wd->show_item = NULL;
      }
    elm_smart_scroller_child_region_show(it->wd->scr,
@@ -1919,13 +1919,13 @@ elm_genlist_item_del(Elm_Genlist_Item *it)
    if (it->relcount > 0)
      {
         elm_genlist_item_subitems_clear(it);
-        it->delete_me = 1;
+        it->delete_me = EINA_TRUE;
         if (it->wd->show_item == it) it->wd->show_item = NULL;
         if (it->selected) it->wd->selected = eina_list_remove(it->wd->selected, it);
         if (it->block)
           {
              if (it->realized) _item_unrealize(it);
-             it->block->changed = 1;
+             it->block->changed = EINA_TRUE;
              if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
              it->wd->calc_job = ecore_job_add(_calc_job, it->wd);
           }
@@ -1975,7 +1975,7 @@ elm_genlist_item_update(Elm_Genlist_Item *it)
    if (it->delete_me) return;
    minw = it->wd->minw;
    minh = it->minh;
-   it->mincalcd = 0;
+   it->mincalcd = EINA_FALSE;
    EINA_INLIST_FOREACH(it->wd->blocks, itb)
      {
         if (itb == it->block) break;
@@ -2001,7 +2001,7 @@ elm_genlist_item_update(Elm_Genlist_Item *it)
      }
    if ((it->minw > minw) || (it->minh != minh))
      {
-        it->block->changed = 1;
+        it->block->changed = EINA_TRUE;
         if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
         it->wd->calc_job = ecore_job_add(_calc_job, it->wd);
      }
@@ -2048,7 +2048,7 @@ elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
  * @ingroup Genlist
  */
 EAPI void
-elm_genlist_always_select_mode_set(Evas_Object *obj, Evas_Bool always_select)
+elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->always_select = always_select;
@@ -2066,7 +2066,7 @@ elm_genlist_always_select_mode_set(Evas_Object *obj, Evas_Bool always_select)
  * @ingroup Genlist
  */
 EAPI void
-elm_genlist_no_select_mode_set(Evas_Object *obj, Evas_Bool no_select)
+elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->no_select = no_select;

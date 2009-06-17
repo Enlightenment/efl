@@ -7,8 +7,8 @@ struct _Widget_Data
 {
    Evas_Object *tgl;
    Evas_Object *icon;
-   Evas_Bool state;
-   Evas_Bool *statep;
+   Eina_Bool state;
+   Eina_Bool *statep;
    const char *label;
    const char *ontext, *offtext;
 };
@@ -202,7 +202,7 @@ elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *
 }
 
 EAPI void
-elm_toggle_state_set(Evas_Object *obj, Evas_Bool state)
+elm_toggle_state_set(Evas_Object *obj, Eina_Bool state)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (state != wd->state)
@@ -216,7 +216,7 @@ elm_toggle_state_set(Evas_Object *obj, Evas_Bool state)
      }
 }
 
-EAPI Evas_Bool
+EAPI Eina_Bool
 elm_toggle_state_get(const Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -224,7 +224,7 @@ elm_toggle_state_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_toggle_state_pointer_set(Evas_Object *obj, Evas_Bool *statep)
+elm_toggle_state_pointer_set(Evas_Object *obj, Eina_Bool *statep)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 

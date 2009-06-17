@@ -8,7 +8,7 @@ struct _Widget_Data
    Evas_Object *scr, *bx;
    Eina_List *items;
    int icon_size;
-   Evas_Bool scrollable : 1;
+   Eina_Bool scrollable : 1;
 };
 
 struct _Elm_Toolbar_Item
@@ -19,7 +19,7 @@ struct _Elm_Toolbar_Item
    Evas_Object *icon;
    void (*func) (void *data, Evas_Object *obj, void *event_info);
    const void *data;
-   Evas_Bool selected : 1;
+   Eina_Bool selected : 1;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -49,12 +49,12 @@ _item_select(Elm_Toolbar_Item *it)
      {
         if (it2->selected)
           {
-             it2->selected = 0;
+             it2->selected = EINA_FALSE;
              edje_object_signal_emit(it2->base, "elm,state,unselected", "elm");
              break;
           }
      }
-   it->selected = 1;
+   it->selected = EINA_TRUE;
    edje_object_signal_emit(it->base, "elm,state,selected", "elm");
    _item_show(it);
    obj2 = it->obj;
@@ -195,7 +195,7 @@ elm_toolbar_add(Evas_Object *parent)
                                  ELM_SMART_SCROLLER_POLICY_OFF);
    
    wd->icon_size = 32;
-   wd->scrollable = 1;
+   wd->scrollable = EINA_TRUE;
    
    wd->bx = _els_smart_box_add(e);
    _els_smart_box_orientation_set(wd->bx, 1);
@@ -273,7 +273,7 @@ elm_toolbar_item_select(Elm_Toolbar_Item *item)
 }
 
 EAPI void
-elm_toolbar_scrollable_set(Evas_Object *obj, Evas_Bool scrollable)
+elm_toolbar_scrollable_set(Evas_Object *obj, Eina_Bool scrollable)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->scrollable = scrollable;

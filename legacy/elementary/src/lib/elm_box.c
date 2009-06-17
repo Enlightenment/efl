@@ -81,14 +81,14 @@ elm_box_add(Evas_Object *parent)
 }
 
 EAPI void
-elm_box_horizontal_set(Evas_Object *obj, Evas_Bool horizontal)
+elm_box_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    _els_smart_box_orientation_set(wd->box, horizontal);
 }
 
 EAPI void
-elm_box_homogenous_set(Evas_Object *obj, Evas_Bool homogenous)
+elm_box_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    _els_smart_box_homogenous_set(wd->box, homogenous);

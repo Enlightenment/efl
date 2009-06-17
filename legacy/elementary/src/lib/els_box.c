@@ -9,10 +9,10 @@ struct _Smart_Data
    Evas_Coord       x, y, w, h;
    Evas_Object     *obj;
    Evas_Object     *clip;
-   Evas_Bool        changed : 1;
-   Evas_Bool        horizontal : 1;
-   Evas_Bool        homogenous : 1;
-   Evas_Bool        deleting : 1;
+   Eina_Bool        changed : 1;
+   Eina_Bool        horizontal : 1;
+   Eina_Bool        homogenous : 1;
+   Eina_Bool        deleting : 1;
    Eina_List       *items;
 }; 
 
@@ -487,7 +487,7 @@ _smart_del(Evas_Object *obj)
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   sd->deleting = 1;
+   sd->deleting = EINA_TRUE;
    while (sd->items)
      {
 	Evas_Object *child;

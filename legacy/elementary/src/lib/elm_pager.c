@@ -33,7 +33,7 @@ struct _Item
 {
    Evas_Object *obj, *base, *content;
    Evas_Coord minw, minh;
-   Evas_Bool popme : 1;
+   Eina_Bool popme : 1;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -273,7 +273,7 @@ elm_pager_content_pop(Evas_Object *obj)
    Item *it;
    if (!wd->stack) return;
    it = eina_list_last(wd->stack)->data;
-   it->popme = 1;
+   it->popme = EINA_TRUE;
    ll = eina_list_last(wd->stack);
    if (ll)
      {

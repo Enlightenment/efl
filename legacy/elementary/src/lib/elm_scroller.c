@@ -7,8 +7,8 @@ struct _Widget_Data
 {
    Evas_Object *scr;
    Evas_Object *content;
-   Evas_Bool min_w : 1;
-   Evas_Bool min_h : 1;
+   Eina_Bool min_w : 1;
+   Eina_Bool min_h : 1;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -229,7 +229,7 @@ elm_scroller_content_set(Evas_Object *obj, Evas_Object *content)
 }
 
 EAPI void
-elm_scroller_content_min_limit(Evas_Object *obj, Evas_Bool w, Evas_Bool h)
+elm_scroller_content_min_limit(Evas_Object *obj, Eina_Bool w, Eina_Bool h)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -280,7 +280,7 @@ elm_scroller_child_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 }
 
 EAPI void
-elm_scroller_bounce_set(Evas_Object *obj, Evas_Bool h_bounce, Evas_Bool v_bounce)
+elm_scroller_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;

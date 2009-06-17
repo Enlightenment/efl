@@ -7,11 +7,11 @@ struct _Widget_Data
 {
    Evas_Object *img;
    const char  *stdicon;
-   Evas_Bool    scale_up : 1;
-   Evas_Bool    scale_down : 1;
-   Evas_Bool    smooth : 1;
-   Evas_Bool    fill_outside : 1;
-   Evas_Bool    no_scale : 1;
+   Eina_Bool    scale_up : 1;
+   Eina_Bool    scale_down : 1;
+   Eina_Bool    smooth : 1;
+   Eina_Bool    fill_outside : 1;
+   Eina_Bool    no_scale : 1;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -101,9 +101,9 @@ elm_icon_add(Evas_Object *parent)
    evas_object_repeat_events_set(wd->img, 1);
    elm_widget_resize_object_set(obj, wd->img);   
 
-   wd->smooth = 1;
-   wd->scale_up = 1;
-   wd->scale_down = 1;
+   wd->smooth = EINA_TRUE;
+   wd->scale_up = EINA_TRUE;
+   wd->scale_down = EINA_TRUE;
    
    _sizing_eval(obj);
    return obj;
@@ -142,7 +142,7 @@ elm_icon_standard_set(Evas_Object *obj, const char *name)
 }
 
 EAPI void
-elm_icon_smooth_set(Evas_Object *obj, Evas_Bool smooth)
+elm_icon_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -151,7 +151,7 @@ elm_icon_smooth_set(Evas_Object *obj, Evas_Bool smooth)
 }
 
 EAPI void
-elm_icon_no_scale_set(Evas_Object *obj, Evas_Bool no_scale)
+elm_icon_no_scale_set(Evas_Object *obj, Eina_Bool no_scale)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -160,7 +160,7 @@ elm_icon_no_scale_set(Evas_Object *obj, Evas_Bool no_scale)
 }
 
 EAPI void
-elm_icon_scale_set(Evas_Object *obj, Evas_Bool scale_up, Evas_Bool scale_down)
+elm_icon_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -170,7 +170,7 @@ elm_icon_scale_set(Evas_Object *obj, Evas_Bool scale_up, Evas_Bool scale_down)
 }
 
 EAPI void
-elm_icon_fill_outside_set(Evas_Object *obj, Evas_Bool fill_outside)
+elm_icon_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;

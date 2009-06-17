@@ -46,7 +46,7 @@ struct _Widget_Data
    Evas_Object *icon;
    int value;
    const char *label;
-   Evas_Bool state;
+   Eina_Bool state;
    Group *group;
 };
 
@@ -132,7 +132,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_state_set(Evas_Object *obj, Evas_Bool state)
+_state_set(Evas_Object *obj, Eina_Bool state)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (state != wd->state)
@@ -290,7 +290,7 @@ elm_radio_group_add(Evas_Object *obj, Evas_Object *group)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Widget_Data *wd2 = elm_widget_data_get(group);
-   Evas_Bool state = 0;
+   Eina_Bool state = EINA_FALSE;
    if (wd->group == wd2->group) return;
    wd->group->radios = eina_list_remove(wd->group->radios, obj);
    if (!wd->group->radios) free(wd->group);

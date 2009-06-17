@@ -10,14 +10,14 @@ struct _Widget_Data
    Eina_List *selected;
    Elm_List_Mode mode;
    Evas_Coord minw[2], minh[2];
-   Evas_Bool on_hold : 1;
-   Evas_Bool multi : 1;
-   Evas_Bool always_select : 1;
+   Eina_Bool on_hold : 1;
+   Eina_Bool multi : 1;
+   Eina_Bool always_select : 1;
 };
 
 struct _Elm_List_Item
 {
-   Evas_List *node;
+   Eina_List *node;
    Evas_Object *obj;
    Evas_Object *base;
    const char *label;
@@ -25,13 +25,13 @@ struct _Elm_List_Item
    void (*func) (void *data, Evas_Object *obj, void *event_info);
    void (*del_cb) (void *data, Evas_Object *obj, void *event_info);
    const void *data;
-   Evas_Bool even : 1;
-   Evas_Bool is_even : 1;
-   Evas_Bool fixed : 1;
-   Evas_Bool selected : 1;
-   Evas_Bool hilighted : 1;
-   Evas_Bool dummy_icon : 1;
-   Evas_Bool dummy_end : 1;
+   Eina_Bool even : 1;
+   Eina_Bool is_even : 1;
+   Eina_Bool fixed : 1;
+   Eina_Bool selected : 1;
+   Eina_Bool hilighted : 1;
+   Eina_Bool dummy_icon : 1;
+   Eina_Bool dummy_end : 1;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -124,7 +124,7 @@ _item_hilight(Elm_List_Item *it)
    selectraise = edje_object_data_get(it->base, "selectraise");
    if ((selectraise) && (!strcmp(selectraise, "on")))
      evas_object_raise(it->base);
-   it->hilighted = 1;
+   it->hilighted = EINA_TRUE;
 }
 
 static void
@@ -137,7 +137,7 @@ _item_select(Elm_List_Item *it)
         if (wd->always_select) goto call;
         return;
      }
-   it->selected = 1;
+   it->selected = EINA_TRUE;
    wd->selected = eina_list_append(wd->selected, it);
    call:
    if (it->func) it->func((void *)it->data, it->obj, it);
@@ -158,10 +158,10 @@ _item_unselect(Elm_List_Item *it)
         if ((stacking) && (!strcmp(stacking, "below")))
           evas_object_lower(it->base);
      }
-   it->hilighted = 0;
+   it->hilighted = EINA_FALSE;
    if (it->selected)
      {
-        it->selected = 0;
+        it->selected = EINA_FALSE;
         wd->selected = eina_list_remove(wd->selected, it);
         evas_object_smart_callback_call(it->obj, "unselected", it);
      }
@@ -177,7 +177,7 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
      {
         if (!wd->on_hold)
           {
-             wd->on_hold = 1;
+             wd->on_hold = EINA_TRUE;
              _item_unselect(it);
           }
      }
@@ -189,8 +189,8 @@ _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    Elm_List_Item *it = data;
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Event_Mouse_Down *ev = event_info;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) wd->on_hold = 1;
-   else wd->on_hold = 0;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) wd->on_hold = EINA_TRUE;
+   else wd->on_hold = EINA_FALSE;
    _item_hilight(it);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      evas_object_smart_callback_call(it->obj, "clicked", it);
@@ -202,11 +202,11 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    Elm_List_Item *it = data;
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Event_Mouse_Up *ev = event_info;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) wd->on_hold = 1;
-   else wd->on_hold = 0;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) wd->on_hold = EINA_TRUE;
+   else wd->on_hold = EINA_FALSE;
    if (wd->on_hold)
      {
-        wd->on_hold = 0;
+        wd->on_hold = EINA_FALSE;
         return;
      }
    if (wd->multi)
@@ -347,13 +347,13 @@ _fix_items(Evas_Object *obj)
                {
                   it->icon = evas_object_rectangle_add(evas_object_evas_get(it->base));
                   evas_object_color_set(it->icon, 0, 0, 0, 0);
-                  it->dummy_icon = 1;
+                  it->dummy_icon = EINA_TRUE;
                }
              if ((!it->end) && (minh[1] > 0))
                {
                   it->end = evas_object_rectangle_add(evas_object_evas_get(it->base));
                   evas_object_color_set(it->end, 0, 0, 0, 0);
-                  it->dummy_end = 1;
+                  it->dummy_end = EINA_TRUE;
                }
              if (it->icon)
                {
@@ -387,7 +387,7 @@ _fix_items(Evas_Object *obj)
                     evas_object_raise(it->base);
                   stacking = edje_object_data_get(it->base, "stacking");
                }
-             it->fixed = 1;
+             it->fixed = EINA_TRUE;
              it->is_even = it->even;
           }
 	i++;
@@ -508,7 +508,7 @@ elm_list_go(Evas_Object *obj)
 }
 
 EAPI void
-elm_list_multi_select_set(Evas_Object *obj, Evas_Bool multi)
+elm_list_multi_select_set(Evas_Object *obj, Eina_Bool multi)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->multi = multi;
@@ -527,7 +527,7 @@ elm_list_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
 }
 
 EAPI void      
-elm_list_always_select_mode_set(Evas_Object *obj, Evas_Bool always_select)
+elm_list_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->always_select = always_select;
@@ -556,7 +556,7 @@ elm_list_selected_items_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_list_item_selected_set(Elm_List_Item *it, Evas_Bool selected)
+elm_list_item_selected_set(Elm_List_Item *it, Eina_Bool selected)
 {
    Widget_Data *wd = elm_widget_data_get(it->obj);
 

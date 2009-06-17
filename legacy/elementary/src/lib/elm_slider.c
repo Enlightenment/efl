@@ -45,8 +45,8 @@ struct _Widget_Data
    const char *label;
    const char *units;
    const char *indicator;
-   Evas_Bool horizontal : 1;
-   Evas_Bool inverted : 1;
+   Eina_Bool horizontal : 1;
+   Eina_Bool inverted : 1;
    double val, val_min, val_max;
    Ecore_Timer *delay;
    Evas_Coord size;
@@ -266,7 +266,7 @@ elm_slider_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    
-   wd->horizontal = 1;
+   wd->horizontal = EINA_TRUE;
    wd->val = 0.0;
    wd->val_min = 0.0;
    wd->val_max = 1.0;
@@ -448,7 +448,7 @@ elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator)
  * @ingroup Slider
  */
 EAPI void
-elm_slider_horizontal_set(Evas_Object *obj, Evas_Bool horizontal)
+elm_slider_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    horizontal = !!horizontal;
@@ -532,7 +532,7 @@ elm_slider_value_get(const Evas_Object *obj)
  * @ingroup Slider
  */
 EAPI void
-elm_slider_inverted_set(Evas_Object *obj, Evas_Bool inverted)
+elm_slider_inverted_set(Evas_Object *obj, Eina_Bool inverted)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    inverted = !!inverted;

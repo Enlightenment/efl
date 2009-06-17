@@ -605,16 +605,16 @@ elm_smart_scroller_edje_object_get(Evas_Object *obj)
 }
 
 void
-elm_smart_scroller_single_dir_set(Evas_Object *obj, Evas_Bool single_dir)
+elm_smart_scroller_single_dir_set(Evas_Object *obj, Eina_Bool single_dir)
 {
    API_ENTRY return;
    sd->one_dir_at_a_time = single_dir;
 }
 
-Evas_Bool
+Eina_Bool
 elm_smart_scroller_single_dir_get(Evas_Object *obj)
 {
-   API_ENTRY return 0;
+   API_ENTRY return EINA_FALSE;
    return sd->one_dir_at_a_time;
 }
 
@@ -631,14 +631,14 @@ elm_smart_scroller_theme_set(Evas_Object *obj, const char *clas, const char *gro
 }
 
 void
-elm_smart_scroller_hold_set(Evas_Object *obj, Evas_Bool hold)
+elm_smart_scroller_hold_set(Evas_Object *obj, Eina_Bool hold)
 {
    API_ENTRY return;
    sd->hold = hold;
 }
 
 void
-elm_smart_scroller_freeze_set(Evas_Object *obj, Evas_Bool freeze)
+elm_smart_scroller_freeze_set(Evas_Object *obj, Eina_Bool freeze)
 {
    API_ENTRY return;
    sd->freeze = freeze;
@@ -653,7 +653,7 @@ elm_smart_scroller_freeze_set(Evas_Object *obj, Evas_Bool freeze)
 }
 
 void
-elm_smart_scroller_bounce_allow_set(Evas_Object *obj, Evas_Bool horiz, Evas_Bool vert)
+elm_smart_scroller_bounce_allow_set(Evas_Object *obj, Eina_Bool horiz, Eina_Bool vert)
 {
    API_ENTRY return;
    sd->bounce_horiz = horiz;

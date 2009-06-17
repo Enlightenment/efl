@@ -16,7 +16,7 @@ struct _Elm_Win
    
    Elm_Win_Type          type;
    Elm_Win_Keyboard_Mode kbdmode;
-   Evas_Bool             autodel : 1;
+   Eina_Bool             autodel : 1;
    int                   *autodel_clear;
    int                    rot;
 };
@@ -107,8 +107,8 @@ _elm_win_delete_request(Ecore_Evas *ee)
    win->autodel_clear = &autodel;
    evas_object_smart_callback_call(win->win_obj, "delete-request", NULL);
    // FIXME: if above callback deletes - then the below will be invalid
-   if (autodel == 1) evas_object_del(win->win_obj);
-   else if (autodel == 0) win->autodel_clear = NULL;
+   if (autodel) evas_object_del(win->win_obj);
+   else win->autodel_clear = NULL;
 }
 
 static void
@@ -427,7 +427,7 @@ elm_win_title_set(Evas_Object *obj, const char *title)
 }
   
 EAPI void
-elm_win_autodel_set(Evas_Object *obj, Evas_Bool autodel)
+elm_win_autodel_set(Evas_Object *obj, Eina_Bool autodel)
 {
    Elm_Win *win = elm_widget_data_get(obj);
    if (!win) return;
@@ -459,7 +459,7 @@ elm_win_raise(Evas_Object *obj)
 }
 
 EAPI void
-elm_win_borderless_set(Evas_Object *obj, Evas_Bool borderless)
+elm_win_borderless_set(Evas_Object *obj, Eina_Bool borderless)
 {
    Elm_Win *win = elm_widget_data_get(obj);
    if (!win) return;
@@ -468,7 +468,7 @@ elm_win_borderless_set(Evas_Object *obj, Evas_Bool borderless)
 }
 
 EAPI void
-elm_win_shaped_set(Evas_Object *obj, Evas_Bool shaped)
+elm_win_shaped_set(Evas_Object *obj, Eina_Bool shaped)
 {
    Elm_Win *win = elm_widget_data_get(obj);
    if (!win) return;
@@ -477,7 +477,7 @@ elm_win_shaped_set(Evas_Object *obj, Evas_Bool shaped)
 }
 
 EAPI void
-elm_win_alpha_set(Evas_Object *obj, Evas_Bool alpha)
+elm_win_alpha_set(Evas_Object *obj, Eina_Bool alpha)
 {
    Elm_Win *win = elm_widget_data_get(obj);
    if (!win) return;
@@ -499,7 +499,7 @@ elm_win_alpha_set(Evas_Object *obj, Evas_Bool alpha)
 }
 
 EAPI void
-elm_win_override_set(Evas_Object *obj, Evas_Bool override)
+elm_win_override_set(Evas_Object *obj, Eina_Bool override)
 {
    Elm_Win *win = elm_widget_data_get(obj);
    if (!win) return;
@@ -508,7 +508,7 @@ elm_win_override_set(Evas_Object *obj, Evas_Bool override)
 }
 
 EAPI void
-elm_win_fullscreen_set(Evas_Object *obj, Evas_Bool fullscreen)
+elm_win_fullscreen_set(Evas_Object *obj, Eina_Bool fullscreen)
 {
    Elm_Win *win = elm_widget_data_get(obj);
    if (!win) return;
@@ -526,7 +526,7 @@ elm_win_fullscreen_set(Evas_Object *obj, Evas_Bool fullscreen)
 }
 
 EAPI void
-elm_win_maximized_set(Evas_Object *obj, Evas_Bool maximized)
+elm_win_maximized_set(Evas_Object *obj, Eina_Bool maximized)
 {
    Elm_Win *win = elm_widget_data_get(obj);
    if (!win) return;
@@ -535,7 +535,7 @@ elm_win_maximized_set(Evas_Object *obj, Evas_Bool maximized)
 }
 
 EAPI void
-elm_win_iconified_set(Evas_Object *obj, Evas_Bool iconified)
+elm_win_iconified_set(Evas_Object *obj, Eina_Bool iconified)
 {
    Elm_Win *win = elm_widget_data_get(obj);
    if (!win) return;
@@ -591,7 +591,7 @@ elm_win_keyboard_mode_set(Evas_Object *obj, Elm_Win_Keyboard_Mode mode)
 }
 
 EAPI void
-elm_win_keyboard_win_set(Evas_Object *obj, Evas_Bool is_keyboard)
+elm_win_keyboard_win_set(Evas_Object *obj, Eina_Bool is_keyboard)
 {
    Elm_Win *win = elm_widget_data_get(obj);
    if (!win) return;

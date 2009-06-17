@@ -141,6 +141,7 @@ static Eina_Bool
 _cache_free_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata)
 {
    eina_stringshare_del(data);
+   return EINA_TRUE;
 }
 
 int
