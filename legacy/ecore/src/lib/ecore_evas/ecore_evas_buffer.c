@@ -29,7 +29,7 @@ _ecore_evas_buffer_init(void)
 static void
 _ecore_evas_buffer_free(Ecore_Evas *ee)
 {
-   ecore_evases = _ecore_list2_remove(ecore_evases, ee);
+   ecore_evases = (Ecore_Evas *) eina_inlist_remove(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    _ecore_evas_buffer_shutdown();
    if (ee->engine.buffer.image)
      {
@@ -90,7 +90,7 @@ _ecore_evas_buffer_shutdown(void)
      {
 	while (ecore_evases)
 	  {
-	     _ecore_evas_free((Ecore_Evas *)ecore_evases);
+	     _ecore_evas_free(ecore_evases);
 	  }
 	if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
      }
@@ -496,7 +496,7 @@ ecore_evas_buffer_new(int w, int h)
 
    evas_event_feed_mouse_in(ee->evas, 0, NULL);
 
-   ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
+   ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    return ee;
 #else
    return NULL;

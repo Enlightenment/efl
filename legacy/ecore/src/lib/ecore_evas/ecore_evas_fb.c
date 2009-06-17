@@ -76,17 +76,12 @@ _ecore_evas_fb_match(void)
 static void
 _ecore_evas_fb_lose(void *data __UNUSED__)
 {
-   Ecore_List2 *l;
+   Ecore_Evas *ee;
    Eina_List *ll;
    Ecore_Fb_Input_Device *dev;
 
-   for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
-     {
-	Ecore_Evas *ee;
-
-	ee = (Ecore_Evas *)l;
+   EINA_INLIST_FOREACH(ecore_evases, ee)
 	ee->visible = 0;
-     }
 
    EINA_LIST_FOREACH(ecore_evas_input_devices, ll, dev)
      ecore_fb_input_device_listen(dev, 0);
@@ -95,15 +90,12 @@ _ecore_evas_fb_lose(void *data __UNUSED__)
 static void
 _ecore_evas_fb_gain(void *data __UNUSED__)
 {
-   Ecore_List2 *l;
+   Ecore_Evas *ee;
    Eina_List *ll;
    Ecore_Fb_Input_Device *dev;
 
-   for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
+   EINA_INLIST_FOREACH(ecore_evases,ee)
      {
-	Ecore_Evas *ee;
-
-	ee = (Ecore_Evas *)l;
 	ee->visible = 1;
 	if ((ee->rotation == 90) || (ee->rotation == 270))
 	  evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
@@ -201,7 +193,7 @@ _ecore_evas_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *
 static int
 _ecore_evas_idle_enter(void *data __UNUSED__)
 {
-   Ecore_List2 *l;
+   Ecore_Evas *ee;
    double t1 = 0.0;
    double t2 = 0.0;
 
@@ -210,11 +202,8 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
      {
 	t1 = ecore_time_get();
      }
-   for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
+   EINA_INLIST_FOREACH(ecore_evases, ee)
      {
-	Ecore_Evas *ee;
-
-	ee = (Ecore_Evas *)l;
 	if (ee->visible)
 	  {
 	     Eina_List *updates;
@@ -333,7 +322,7 @@ _ecore_evas_fb_init(int w, int h)
 static void
 _ecore_evas_fb_free(Ecore_Evas *ee)
 {
-   ecore_evases = _ecore_list2_remove(ecore_evases, ee);
+   ecore_evases = (Ecore_Evas *) eina_inlist_remove(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    _ecore_evas_fb_shutdown();
    ecore_fb_shutdown();
 }
@@ -685,7 +674,7 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
 
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
 
-   ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
+   ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    return ee;
 }
 #else

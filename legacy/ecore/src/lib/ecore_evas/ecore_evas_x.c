@@ -995,7 +995,7 @@ _ecore_evas_x_layer_update(Ecore_Evas *ee)
 static int
 _ecore_evas_x_idle_enter(void *data __UNUSED__)
 {
-   Ecore_List2 *l;
+   Ecore_Evas *l;
    double t1 = 0.0;
    double t2 = 0.0;
    int rend = 0;
@@ -1005,13 +1005,8 @@ _ecore_evas_x_idle_enter(void *data __UNUSED__)
      {
 	t1 = ecore_time_get();
      }
-   for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
-     {
-	Ecore_Evas *ee;
-
-	ee = (Ecore_Evas *)l;
-	rend |= _ecore_evas_x_render(ee);
-     }
+   EINA_INLIST_FOREACH(ecore_evases, l)
+	rend |= _ecore_evas_x_render(l);
    ecore_x_flush();
    if (_ecore_evas_fps_debug)
      {
@@ -1068,7 +1063,7 @@ _ecore_evas_x_free(Ecore_Evas *ee)
 	ecore_event_window_unregister(*winp);
 	free(winp);
      }
-   ecore_evases = _ecore_list2_remove(ecore_evases, ee);
+   ecore_evases = (Ecore_Evas *) eina_inlist_remove(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    _ecore_evas_x_shutdown();
    ecore_x_shutdown();
 }
@@ -2450,7 +2445,7 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
 
-   ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
+   ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
    return ee;
 }
@@ -2634,7 +2629,7 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 //	putenv((char*)"DESKTOP_STARTUP_ID=");
      }
 
-   ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
+   ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
 # endif /* HAVE_ECORE_X_XCB */
 
@@ -2873,7 +2868,7 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
 
-   ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
+   ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
    return ee;
 }
@@ -3082,7 +3077,7 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
 
-   ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
+   ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
    return ee;
 }

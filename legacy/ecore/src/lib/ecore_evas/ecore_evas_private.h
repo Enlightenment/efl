@@ -222,7 +222,7 @@ struct _Ecore_Evas_Engine
 
 struct _Ecore_Evas
 {
-   Ecore_List  __list_data;
+   EINA_INLIST;
    ECORE_MAGIC;
    Evas       *evas;
    const char *driver;

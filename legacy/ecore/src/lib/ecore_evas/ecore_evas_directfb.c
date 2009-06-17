@@ -54,7 +54,7 @@ _ecore_evas_directfb_render(Ecore_Evas *ee)
 static int
 _ecore_evas_directfb_idle_enter(void *data __UNUSED__)
 {
-   Ecore_List2 *l;
+   Ecore_Evas *l;
    double t1 = 0.0;
    double t2 = 0.0;
 
@@ -63,13 +63,8 @@ _ecore_evas_directfb_idle_enter(void *data __UNUSED__)
      {
 	t1 = ecore_time_get();
      }
-   for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
-     {
-	Ecore_Evas *ee;
-
-	ee = (Ecore_Evas *)l;
+   EINA_INLIST_FOREACH(ecore_evases, l)
 	_ecore_evas_directfb_render(ee);
-     }
    if (_ecore_evas_fps_debug)
      {
 	t2 = ecore_time_get();
@@ -312,7 +307,7 @@ _ecore_evas_directfb_free(Ecore_Evas *ee)
 {
    eina_hash_del(ecore_evases_hash, _ecore_evas_directfb_winid_str_get(ee->engine.directfb.window->id), ee);
    ecore_directfb_window_free(ee->engine.directfb.window);
-   ecore_evases = _ecore_list2_remove(ecore_evases, ee);
+   ecore_evases = (Ecore_Evas *) eina_inlist_remove(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    _ecore_evas_directfb_shutdown();
    ecore_directfb_shutdown();
 }
@@ -577,7 +572,7 @@ ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w
 	einfo->info.surface = window->surface;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
-   ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
+   ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    if (!ecore_evases_hash)
      ecore_evases_hash = eina_hash_string_superfast_new(NULL);
    eina_hash_add(ecore_evases_hash, _ecore_evas_directfb_winid_str_get(ee->engine.directfb.window->id), ee);

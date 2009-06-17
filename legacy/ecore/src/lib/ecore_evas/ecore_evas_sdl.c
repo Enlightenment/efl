@@ -115,7 +115,7 @@ _ecore_evas_render(Ecore_Evas *ee)
 static int
 _ecore_evas_idle_enter(void *data __UNUSED__)
 {
-   Ecore_List2  *l;
+   Ecore_Evas  *ee;
    double       t1 = 0.0;
    double       t2 = 0.0;
 
@@ -126,17 +126,12 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
 	t1 = ecore_time_get();
      }
 #endif /* _WIN32 */
-   for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
+   EINA_INLIST_FOREACH(ecore_evases, ee)
      {
-	Ecore_Evas *ee;
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
 	Eina_List *ll;
 	Ecore_Evas *ee2;
-#endif
 
-	ee = (Ecore_Evas *)l;
-
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
 	EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
 	  {
 	     if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
@@ -229,7 +224,7 @@ _ecore_evas_sdl_shutdown(void)
 static void
 _ecore_evas_sdl_free(Ecore_Evas *ee)
 {
-   ecore_evases = _ecore_list2_remove(ecore_evases, ee);
+   ecore_evases = (Ecore_Evas *) eina_inlist_remove(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    ecore_event_window_unregister(0);
    _ecore_evas_sdl_shutdown();
    ecore_sdl_shutdown();
@@ -422,13 +417,13 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
 
    _ecore_evas_sdl_init(w, h);
 
-   ecore_event_window_register(0, ee, ee->evas, _ecore_evas_mouse_move_process);
+   ecore_event_window_register(0, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
 
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
 
    SDL_ShowCursor(SDL_DISABLE);
 
-   ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
+   ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    return ee;
 }
 #endif

@@ -93,7 +93,7 @@ _ecore_evas_wince_render(Ecore_Evas *ee)
 static int
 _ecore_evas_wince_idle_enter(void *data __UNUSED__)
 {
-   Ecore_List2 *l;
+   Ecore_Evas *ee;
    double       t1 = 0.0;
    double       t2 = 0.0;
 
@@ -102,13 +102,9 @@ _ecore_evas_wince_idle_enter(void *data __UNUSED__)
      {
 	t1 = ecore_time_get();
      }
-   for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
-     {
-	Ecore_Evas *ee;
-
-	ee = (Ecore_Evas *)l;
+   EINA_INLIST_FOREACH(ecore_evases, l)
 	_ecore_evas_wince_render(ee);
-     }
+
    if (_ecore_evas_fps_debug)
      {
 	t2 = ecore_time_get();
@@ -342,7 +338,7 @@ _ecore_evas_wince_free(Ecore_Evas *ee)
 
    ecore_wince_window_free((Ecore_WinCE_Window *)ee->prop.window);
    ecore_event_window_unregister(ee->prop.window);
-   ecore_evases = _ecore_list2_remove(ecore_evases, ee);
+   ecore_evases = (Ecore_Evas *) eina_inlist_remove(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    _ecore_evas_wince_shutdown();
    ecore_wince_shutdown();
 }
@@ -853,7 +849,7 @@ ecore_evas_software_wince_new_internal(int                 backend,
         ecore_wince_window_resume_set((Ecore_WinCE_Window *)ee->prop.window, einfo->func.resume);
      }
 
-   ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
+   ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process);
 
    return ee;

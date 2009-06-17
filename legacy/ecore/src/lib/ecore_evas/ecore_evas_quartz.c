@@ -56,13 +56,10 @@ static NSWindow * main_window;
 {
    if(ctx != NULL)
    {
-      Ecore_List2  *l;
+      Ecore_evas  *ee;
 
-      for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
+      EINA_INLIST_FOREACH(ecore_evases, l)
       {
-         Ecore_Evas *ee;
-
-         ee = (Ecore_Evas *)l;
          if (ee->visible)
             evas_damage_rectangle_add(ee->evas, 0, 0, 400, 400);
       }
@@ -146,14 +143,12 @@ _ecore_evas_quartz_event_video_expose(void *data __UNUSED__, int type __UNUSED__
 static int
 _ecore_evas_idle_enter(void *data __UNUSED__)
 {
-   Ecore_List2  *l;
+   Ecore_Evas  *l;
    double       t1 = 0.;
    double       t2 = 0.;
 
-   for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
+   EINA_INLIST_FOREACH(ecore_evases, l)
    {
-      Ecore_Evas *ee = (Ecore_Evas *)l;
-
       if (ee->visible)
          evas_render(ee->evas);
       else
@@ -214,7 +209,7 @@ _ecore_evas_quartz_shutdown(void)
 static void
 _ecore_evas_quartz_free(Ecore_Evas *ee)
 {
-   ecore_evases = _ecore_list2_remove(ecore_evases, ee);
+   ecore_evases = (Ecore_Evas *) eina_inlist_remove(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    ecore_event_window_unregister(0);
    _ecore_evas_quartz_shutdown();
    ecore_quartz_shutdown();
@@ -435,7 +430,7 @@ ecore_evas_quartz_new(const char* name, int w, int h)
 
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
 
-   ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
+   ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    return ee;
 
  free_window:
