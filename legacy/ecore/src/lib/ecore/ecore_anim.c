@@ -46,7 +46,7 @@ ecore_animator_add(int (*func) (void *data), const void *data)
    ECORE_MAGIC_SET(animator, ECORE_MAGIC_ANIMATOR);
    animator->func = func;
    animator->data = (void *)data;
-   animators = _ecore_list2_append(animators, animator);
+   animators = (Ecore_Animator *) eina_inlist_append(EINA_INLIST_GET(animators), EINA_INLIST_GET(animator));
    if (!timer)
      timer = ecore_timer_add(animators_frametime, _ecore_animator, NULL);
    return animator;
@@ -125,7 +125,7 @@ _ecore_animator_shutdown(void)
 	Ecore_Animator *animator;
 
 	animator = animators;
-	animators = _ecore_list2_remove(animators, animator);
+	animators = (Ecore_Animator *) eina_inlist_remove(EINA_INLIST_GET(animators), EINA_INLIST_GET(animators));
 	ECORE_MAGIC_SET(animator, ECORE_MAGIC_NONE);
 	free(animator);
      }
@@ -134,14 +134,10 @@ _ecore_animator_shutdown(void)
 static int
 _ecore_animator(void *data __UNUSED__)
 {
-   Ecore_List2 *l;
+   Ecore_Animator *animator;
 
-   for (l = (Ecore_List2 *)animators; l;)
+   EINA_INLIST_FOREACH(animators, animator)
      {
-	Ecore_Animator *animator;
-
-	animator = (Ecore_Animator *)l;
-	l = l->next;
 	if (!animator->delete_me)
 	  {
 	     if (!animator->func(animator->data))
@@ -153,15 +149,14 @@ _ecore_animator(void *data __UNUSED__)
      }
    if (animators_delete_me)
      {
-	for (l = (Ecore_List2 *)animators; l;)
+	Ecore_Animator *l;
+	for(l = animators; l;)
 	  {
-	     Ecore_Animator *animator;
-
-	     animator = (Ecore_Animator *)l;
-	     l = l->next;
+	     animator = l;
+	     l = (Ecore_Animator *) EINA_INLIST_GET(l)->next;
 	     if (animator->delete_me)
 	       {
-		  animators = _ecore_list2_remove(animators, animator);
+		  animators = (Ecore_Animator *) eina_inlist_remove(EINA_INLIST_GET(animators), EINA_INLIST_GET(animator));
 		  ECORE_MAGIC_SET(animator, ECORE_MAGIC_NONE);
 		  free(animator);
 		  animators_delete_me--;

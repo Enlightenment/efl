@@ -240,7 +240,7 @@ typedef struct _Ecore_Poller        Ecore_Poller;
 #ifndef _WIN32
 struct _Ecore_Exe
 {
-   Ecore_List2   __list_data;
+   EINA_INLIST;
    ECORE_MAGIC;
    pid_t        pid;
    void        *data;
@@ -276,7 +276,7 @@ struct _Ecore_Exe
 
 struct _Ecore_Timer
 {
-   Ecore_List2     __list_data;
+   EINA_INLIST;
    ECORE_MAGIC;
    double          in;
    double          at;
@@ -290,7 +290,7 @@ struct _Ecore_Timer
 
 struct _Ecore_Idler
 {
-   Ecore_List2   __list_data;
+   EINA_INLIST;
    ECORE_MAGIC;
    int          delete_me : 1;
    int        (*func) (void *data);
@@ -299,7 +299,7 @@ struct _Ecore_Idler
 
 struct _Ecore_Idle_Enterer
 {
-   Ecore_List2   __list_data;
+   EINA_INLIST;
    ECORE_MAGIC;
    int          delete_me : 1;
    int        (*func) (void *data);
@@ -308,7 +308,7 @@ struct _Ecore_Idle_Enterer
 
 struct _Ecore_Idle_Exiter
 {
-   Ecore_List2   __list_data;
+   EINA_INLIST;
    ECORE_MAGIC;
    int          delete_me : 1;
    int        (*func) (void *data);
@@ -335,7 +335,7 @@ struct _Ecore_Fd_Handler
 
 struct _Ecore_Event_Handler
 {
-   Ecore_List2   __list_data;
+   EINA_INLIST;
    ECORE_MAGIC;
    int          type;
    int          delete_me : 1;
@@ -345,7 +345,7 @@ struct _Ecore_Event_Handler
 
 struct _Ecore_Event_Filter
 {
-   Ecore_List2   __list_data;
+   EINA_INLIST;
    ECORE_MAGIC;
    int          delete_me : 1;
    void *     (*func_start) (void *data);
@@ -357,7 +357,7 @@ struct _Ecore_Event_Filter
 
 struct _Ecore_Event
 {
-   Ecore_List2   __list_data;
+   EINA_INLIST;
    ECORE_MAGIC;
    int          type;
    void        *event;
@@ -368,7 +368,7 @@ struct _Ecore_Event
 
 struct _Ecore_Animator
 {
-   Ecore_List2   __list_data;
+   EINA_INLIST;
    ECORE_MAGIC;
    unsigned char delete_me : 1;
    int           (*func) (void *data);
@@ -377,7 +377,7 @@ struct _Ecore_Animator
 
 struct _Ecore_Poller
 {
-   Ecore_List2   __list_data;
+   EINA_INLIST;
    ECORE_MAGIC;
    int           ibit;
    unsigned char delete_me : 1;

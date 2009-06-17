@@ -582,7 +582,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 		       }
 		    }
 
-		  exes = _ecore_list2_append(exes, exe);
+		  exes = (Ecore_Exe *) eina_inlist_append(EINA_INLIST_GET(exes), EINA_INLIST_GET(exe));
 		  n = 0;
 	       }
 	     else
@@ -959,7 +959,7 @@ ecore_exe_free(Ecore_Exe * exe)
    IF_FREE(exe->error_data_buf);
    IF_FREE(exe->cmd);
 
-   exes = _ecore_list2_remove(exes, exe);
+   exes = (Ecore_Exe *) eina_inlist_remove(EINA_INLIST_GET(exes), EINA_INLIST_GET(exe));
    ECORE_MAGIC_SET(exe, ECORE_MAGIC_NONE);
    IF_FREE(exe->tag);
    free(exe);
@@ -1302,13 +1302,9 @@ _ecore_exe_shutdown(void)
 Ecore_Exe          *
 _ecore_exe_find(pid_t pid)
 {
-   Ecore_List2        *l;
-
-   for (l = (Ecore_List2 *) exes; l; l = l->next)
+   Ecore_Exe *exe;
+   EINA_INLIST_FOREACH(exes, exe)
      {
-	Ecore_Exe          *exe;
-
-	exe = (Ecore_Exe *) l;
 	if (exe->pid == pid)
 	   return exe;
      }

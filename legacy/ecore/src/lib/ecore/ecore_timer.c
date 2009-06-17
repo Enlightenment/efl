@@ -227,7 +227,7 @@ ecore_timer_delay(Ecore_Timer *timer, double add)
      }
    else
      {
-	timers = _ecore_list2_remove(timers, timer);
+	timers = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
 	_ecore_timer_set(timer, timer->at + add, timer->in, timer->func, timer->data);
      }
 }
@@ -277,8 +277,8 @@ ecore_timer_freeze(Ecore_Timer *timer)
    if (timer->frozen)
      return ;
 
-   timers = _ecore_list2_remove(timers, timer);
-   suspended = _ecore_list2_prepend(suspended, timer);
+   timers = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
+   suspended = (Ecore_Timer *) eina_inlist_prepend(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
 
    now = ecore_time_get();
 
@@ -303,7 +303,7 @@ ecore_timer_thaw(Ecore_Timer *timer)
    if (!timer->frozen)
      return ;
 
-   suspended = _ecore_list2_remove(suspended, timer);
+   suspended = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
    now = ecore_time_get();
 
    _ecore_timer_set(timer, timer->pending + now, timer->in, timer->func, timer->data);
@@ -312,22 +312,18 @@ ecore_timer_thaw(Ecore_Timer *timer)
 void
 _ecore_timer_shutdown(void)
 {
-   while (timers)
-     {
-	Ecore_Timer *timer;
+   Ecore_Timer *timer;
 
-	timer = timers;
-	timers = _ecore_list2_remove(timers, timer);
+   while ((timer = timers))
+     {
+	timers = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timers));
 	ECORE_MAGIC_SET(timer, ECORE_MAGIC_NONE);
 	free(timer);
      }
 
-   while (suspended)
+   while ((timer = suspended))
      {
-        Ecore_Timer *timer;
-
-        timer = suspended;
-        suspended = _ecore_list2_remove(suspended, timer);
+        suspended = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(suspended));
         ECORE_MAGIC_SET(timer, ECORE_MAGIC_NONE);
         free(timer);
      }
@@ -336,33 +332,31 @@ _ecore_timer_shutdown(void)
 void
 _ecore_timer_cleanup(void)
 {
-   Ecore_List2 *l;
+   Ecore_Timer *l;
 
    if (!timers_delete_me) return;
-   for (l = (Ecore_List2 *)timers; l;)
+   for (l = timers; l;)
      {
-	Ecore_Timer *timer;
+	Ecore_Timer *timer = l;
 
-	timer = (Ecore_Timer *)l;
-	l = l->next;
+	l = (Ecore_Timer *) EINA_INLIST_GET(l)->next;
 	if (timer->delete_me)
 	  {
-	     timers = _ecore_list2_remove(timers, timer);
+	     timers = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
 	     ECORE_MAGIC_SET(timer, ECORE_MAGIC_NONE);
 	     free(timer);
 	     timers_delete_me--;
 	     if (timers_delete_me == 0) return;
 	  }
      }
-   for (l = (Ecore_List2 *)suspended; l;)
+   for (l = suspended; l;)
      {
-	Ecore_Timer *timer;
+	Ecore_Timer *timer = l;
 
-	timer = (Ecore_Timer *)l;
-	l = l->next;
+	l = (Ecore_Timer *) EINA_INLIST_GET(l)->next;
 	if (timer->delete_me)
 	  {
-	     suspended = _ecore_list2_remove(suspended, timer);
+	     suspended = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
 	     ECORE_MAGIC_SET(timer, ECORE_MAGIC_NONE);
 	     free(timer);
 	     timers_delete_me--;
@@ -375,26 +369,21 @@ _ecore_timer_cleanup(void)
 void
 _ecore_timer_enable_new(void)
 {
-   Ecore_List2 *l;
+   Ecore_Timer *timer;
 
    if (!timers_added) return;
    timers_added = 0;
-   for (l = (Ecore_List2 *)timers; l; l = l->next)
-     {
-	Ecore_Timer *timer;
-
-	timer = (Ecore_Timer *)l;
+   EINA_INLIST_FOREACH(timers, timer)
 	timer->just_added = 0;
-     }
 }
 
 static inline Ecore_Timer *
 _ecore_timer_first_get(void)
 {
-   Ecore_Timer *timer = (Ecore_Timer *)timers;
+   Ecore_Timer *timer = timers;
 
    while ((timer) && ((timer->delete_me) || (timer->just_added)))
-     timer = (Ecore_Timer *)((Ecore_List2 *)timer)->next;
+     timer = (Ecore_Timer *) EINA_INLIST_GET(timer)->next;
 
    return timer;
 }
@@ -402,11 +391,11 @@ _ecore_timer_first_get(void)
 static inline Ecore_Timer *
 _ecore_timer_after_get(Ecore_Timer *base)
 {
-   Ecore_Timer *timer = (Ecore_Timer *)((Ecore_List2 *)base)->next;
+   Ecore_Timer *timer = (Ecore_Timer *) EINA_INLIST_GET(base)->next;
    double maxtime = base->at + precision;
 
    while ((timer) && ((timer->delete_me) || (timer->just_added)) && (timer->at <= maxtime))
-     timer = (Ecore_Timer *)((Ecore_List2 *)timer)->next;
+     timer = (Ecore_Timer *) EINA_INLIST_GET(timer)->next;
 
    if ((!timer) || (timer->at > maxtime))
      return NULL;
@@ -437,28 +426,25 @@ _ecore_timer_next_get(void)
 int
 _ecore_timer_call(double when)
 {
-   Ecore_List2 *l;
-   Ecore_Timer *timer;
+   Ecore_Timer *timer, *l;
 
    if (!timers) return 0;
    if (last_check > when)
      {
 	/* User set time backwards */
-	for (l = (Ecore_List2 *)timers; l; l = l->next)
-	  {
-	     timer = (Ecore_Timer *)l;
+	EINA_INLIST_FOREACH(timers, timer)
 	     timer->at -= (last_check - when);
-	  }
      }
    last_check = when;
-   for (l = (Ecore_List2 *)timers; l; l = l->next)
+   for (l = timers; l;)
      {
-	timer = (Ecore_Timer *)l;
+	timer = l;
+	l = (Ecore_Timer *) EINA_INLIST_GET(l)->next;
 	if ((timer->at <= when) &&
 	    (timer->just_added == 0) &&
 	    (timer->delete_me == 0))
 	  {
-	     timers = _ecore_list2_remove(timers, timer);
+	     timers = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
 	     _ecore_timer_call(when);
 	     if ((!timer->delete_me) && (timer->func(timer->data)))
 	       {
@@ -492,7 +478,7 @@ _ecore_timer_call(double when)
 static void
 _ecore_timer_set(Ecore_Timer *timer, double at, double in, int (*func) (void *data), void *data)
 {
-   Ecore_List2 *l;
+   Ecore_Timer *t2;
 
    timers_added = 1;
    timer->at = at;
@@ -504,17 +490,14 @@ _ecore_timer_set(Ecore_Timer *timer, double at, double in, int (*func) (void *da
    timer->pending = 0.0;
    if (timers)
      {
-	for (l = ((Ecore_List2 *)(timers))->last; l; l = l->prev)
+	EINA_INLIST_REVERSE_FOREACH(EINA_INLIST_GET(timers), t2)
 	  {
-	     Ecore_Timer *t2;
-
-	     t2 = (Ecore_Timer *)l;
 	     if (timer->at > t2->at)
 	       {
-		  timers = _ecore_list2_append_relative(timers, timer, t2);
+		  timers = (Ecore_Timer *) eina_inlist_append_relative(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer), EINA_INLIST_GET(t2));
 		  return;
 	       }
 	  }
      }
-   timers = _ecore_list2_prepend(timers, timer);
+   timers = (Ecore_Timer *) eina_inlist_prepend(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
 }
