@@ -21,9 +21,18 @@ int ecore_file_monitor_shutdown(void);
 
 #define ECORE_FILE_MONITOR(x) ((Ecore_File_Monitor *)(x))
 
+typedef struct _Ecore_File Ecore_File;
+struct _Ecore_File
+{
+   EINA_INLIST;
+   char          *name;
+   int            mtime;
+   unsigned char  is_dir;
+};
+
 struct _Ecore_File_Monitor
 {
-   Ecore_List2 __list_data;
+   EINA_INLIST;
    void (*func) (void *data,
 		 Ecore_File_Monitor *ecore_file_monitor,
 		 Ecore_File_Event event,
@@ -31,7 +40,7 @@ struct _Ecore_File_Monitor
 
    char               *path;
    void               *data;
-   Ecore_List2        *files;
+   Ecore_File         *files;
 };
 
 #ifdef HAVE_INOTIFY

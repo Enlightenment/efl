@@ -47,7 +47,7 @@ struct _Ecore_File_Monitor_Inotify
 };
 
 static Ecore_Fd_Handler *_fdh = NULL;
-static Ecore_List2    *_monitors = NULL;
+static Ecore_File_Monitor    *_monitors = NULL;
 
 static int                 _ecore_file_monitor_inotify_handler(void *data, Ecore_Fd_Handler *fdh);
 static Ecore_File_Monitor *_ecore_file_monitor_inotify_monitor_find(int wd);
@@ -81,16 +81,9 @@ int
 ecore_file_monitor_inotify_shutdown(void)
 {
    int fd;
-   Ecore_List2 *l;
 
-   for (l = _monitors; l;)
-     {
-	Ecore_File_Monitor *em;
-
-	em = ECORE_FILE_MONITOR(l);
-	l = l->next;
-	ecore_file_monitor_inotify_del(em);
-     }
+   while(_monitors)
+	ecore_file_monitor_inotify_del(_monitors);
 
    if (_fdh)
      {
@@ -122,7 +115,7 @@ ecore_file_monitor_inotify_add(const char *path,
    if (em->path[len - 1] == '/' && strcmp(em->path, "/"))
      em->path[len - 1] = 0;
 
-   _monitors = _ecore_list2_append(_monitors, em);
+   _monitors = ECORE_FILE_MONITOR(eina_inlist_append(EINA_INLIST_GET(_monitors), EINA_INLIST_GET(em)));
 
    if (ecore_file_exists(em->path))
      {
@@ -143,7 +136,7 @@ ecore_file_monitor_inotify_del(Ecore_File_Monitor *em)
 {
    int fd;
 
-   _monitors = _ecore_list2_remove(_monitors, em);
+   _monitors = ECORE_FILE_MONITOR(eina_inlist_remove(EINA_INLIST_GET(_monitors), EINA_INLIST_GET(em)));
 
    fd = ecore_main_fd_handler_fd_get(_fdh);
    if (ECORE_FILE_MONITOR_INOTIFY(em)->wd)
@@ -181,16 +174,12 @@ _ecore_file_monitor_inotify_handler(void *data __UNUSED__, Ecore_Fd_Handler *fdh
 static Ecore_File_Monitor *
 _ecore_file_monitor_inotify_monitor_find(int wd)
 {
-   Ecore_List2 *l;
+   Ecore_File_Monitor *l;
 
-   for (l = _monitors; l; l = l->next)
+   EINA_INLIST_FOREACH(_monitors, l)
      {
-	Ecore_File_Monitor *em;
-
-	em = ECORE_FILE_MONITOR(l);
-
-	if (ECORE_FILE_MONITOR_INOTIFY(em)->wd == wd)
-	  return em;
+	if (ECORE_FILE_MONITOR_INOTIFY(l)->wd == wd)
+	  return l;
      }
    return NULL;
 }
