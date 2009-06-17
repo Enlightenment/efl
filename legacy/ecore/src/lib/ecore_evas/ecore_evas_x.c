@@ -353,9 +353,9 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
 	     if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 	     ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
              foreground = 0;
-             ecore_x_gc_new(ee->engine.x.mask,
-                            ECORE_X_GC_VALUE_MASK_FOREGROUND,
-                            &foreground);
+             gc = ecore_x_gc_new(ee->engine.x.mask,
+				 ECORE_X_GC_VALUE_MASK_FOREGROUND,
+				 &foreground);
              ecore_x_drawable_rectangle_fill(ee->engine.x.mask, gc,
                                              0, 0, ee->w, ee->h);
              ecore_x_gc_free(gc);
@@ -375,9 +375,6 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
 	einfo = (Evas_Engine_Info_Software_16_X11 *)evas_engine_info_get(ee->evas);
 	if (einfo)
 	  {
-	     GC gc;
-	     XGCValues gcv;
-
 	     if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 	     ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->w, ee->h, 1);
 	     einfo->info.mask = ee->engine.x.mask;
