@@ -2022,15 +2022,14 @@ evas_object_box_insert_at(Evas_Object *o, Evas_Object *child, unsigned int pos)
  * Remove an object @a child from the box @a o. On error, @c 0 is
  * returned.
  */
-Evas_Bool
+Eina_Bool
 evas_object_box_remove(Evas_Object *o, Evas_Object *child)
 {
    const Evas_Object_Box_Api *api;
    Evas_Object *obj;
 
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, 0);
-   if (!child)
-     return 0;
+   if (!child) return EINA_FALSE;
 
    api = priv->api;
    if ((!api) || (!api->remove))
@@ -2043,17 +2042,17 @@ evas_object_box_remove(Evas_Object *o, Evas_Object *child)
         _evas_object_box_child_callbacks_unregister(obj);
         evas_object_smart_member_del(obj);
         evas_object_smart_changed(o);
-        return 1;
+        return EINA_TRUE;
      }
 
-   return 0;
+   return EINA_FALSE;
 }
 
 /**
  * Remove an object from the box @a o which occupies position @a
  * pos. On error, @c 0 is returned.
  */
-Evas_Bool
+Eina_Bool
 evas_object_box_remove_at(Evas_Object *o, unsigned int pos)
 {
    const Evas_Object_Box_Api *api;
@@ -2061,8 +2060,7 @@ evas_object_box_remove_at(Evas_Object *o, unsigned int pos)
 
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, 0);
    api = priv->api;
-   if ((!api) || (!api->remove_at))
-     return 0;
+   if ((!api) || (!api->remove_at)) return EINA_FALSE;
 
    obj = api->remove_at(o, priv, pos);
 
@@ -2071,26 +2069,25 @@ evas_object_box_remove_at(Evas_Object *o, unsigned int pos)
         _evas_object_box_child_callbacks_unregister(obj);
         evas_object_smart_member_del(obj);
         evas_object_smart_changed(o);
-        return 1;
+        return EINA_TRUE;
      }
 
-   return 0;
+   return EINA_FALSE;
 }
 
 /**
  * Remove all child objects.
  * @return 0 on errors
  */
-Evas_Bool
-evas_object_box_remove_all(Evas_Object *o, Evas_Bool clear)
+Eina_Bool
+evas_object_box_remove_all(Evas_Object *o, Eina_Bool clear)
 {
    const Evas_Object_Box_Api *api;
 
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, 0);
 
    api = priv->api;
-   if ((!api) || (!api->remove))
-     return 0;
+   if ((!api) || (!api->remove)) return EINA_FALSE;
 
    evas_object_smart_changed(o);
 
@@ -2107,10 +2104,10 @@ evas_object_box_remove_all(Evas_Object *o, Evas_Bool clear)
              if (clear)
                evas_object_del(obj);
           }
-        else return 0;
+        else return EINA_FALSE;
      }
 
-   return 1;
+   return EINA_TRUE;
 }
 
 /**
@@ -2239,10 +2236,10 @@ evas_object_box_option_property_id_get(Evas_Object *o, const char *name)
  * must be the last arguments and their type *must* match that of the
  * property itself. On error, @c 0 is returned.
  */
-Evas_Bool
+Eina_Bool
 evas_object_box_option_property_set(Evas_Object *o, Evas_Object_Box_Option *opt, int property, ...)
 {
-   Evas_Bool ret;
+   Eina_Bool ret;
    va_list args;
 
    va_start(args, property);
@@ -2260,24 +2257,23 @@ evas_object_box_option_property_set(Evas_Object *o, Evas_Object_Box_Option *opt,
  * is returned.
  */
 
-Evas_Bool
+Eina_Bool
 evas_object_box_option_property_vset(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args)
 {
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, 0);
    const Evas_Object_Box_Api *api;
 
-   if (!opt)
-     return 0;
+   if (!opt) return EINA_FALSE;
 
    api = priv->api;
    if ((!api) || (!api->property_set))
-     return 0;
+     return EINA_FALSE;
 
    if (!api->property_set(o, opt, property, args))
-     return 0;
+     return EINA_FALSE;
 
    evas_object_smart_changed(o);
-   return 1;
+   return EINA_TRUE;
 }
 
 /**
@@ -2286,10 +2282,10 @@ evas_object_box_option_property_vset(Evas_Object *o, Evas_Object_Box_Option *opt
  * be addresses of variables with the same type of that property. On
  * error, @c 0 is returned.
  */
-Evas_Bool
+Eina_Bool
 evas_object_box_option_property_get(Evas_Object *o, Evas_Object_Box_Option *opt, int property, ...)
 {
-   Evas_Bool ret;
+   Eina_Bool ret;
    va_list args;
 
    va_start(args, property);
@@ -2305,18 +2301,17 @@ evas_object_box_option_property_get(Evas_Object *o, Evas_Object_Box_Option *opt,
  * va_list @a args is initialized with must be addresses of variables
  * with the same type of that property. On error, @c 0 is returned.
  */
-Evas_Bool
+Eina_Bool
 evas_object_box_option_property_vget(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args)
 {
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, 0);
    const Evas_Object_Box_Api *api;
 
-   if (!opt)
-     return 0;
+   if (!opt) return EINA_FALSE;
 
    api = priv->api;
    if ((!api) || (!api->property_get))
-     return 0;
+     return EINA_FALSE;
 
    return api->property_get(o, opt, property, args);
 }

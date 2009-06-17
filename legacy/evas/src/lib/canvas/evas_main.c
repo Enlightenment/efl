@@ -966,7 +966,7 @@ evas_pointer_button_down_mask_get(const Evas *e)
  * else printf("Mouse is out!\n");
  * @endcode
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_pointer_inside_get(const Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);

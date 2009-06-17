@@ -14,13 +14,13 @@
 	((((s) << 3) & 0xf8) | (((s) >> 2) & 0x7))
 
 static inline void *
-evas_common_convert_argb8888_to_rgb565_a5p(void *data __UNUSED__, int w __UNUSED__, int h __UNUSED__, int stride __UNUSED__, Evas_Bool has_alpha __UNUSED__)
+evas_common_convert_argb8888_to_rgb565_a5p(void *data __UNUSED__, int w __UNUSED__, int h __UNUSED__, int stride __UNUSED__, Eina_Bool has_alpha __UNUSED__)
 {
    return NULL;
 }
 
 static inline void *
-evas_common_convert_rgb565_a5p_to_argb8888(void *data, int w, int h, int stride, Evas_Bool has_alpha)
+evas_common_convert_rgb565_a5p_to_argb8888(void *data, int w, int h, int stride, Eina_Bool has_alpha)
 {
    DATA16 *src, *end;
    DATA32 *ret, *dst;
@@ -48,7 +48,7 @@ evas_common_convert_rgb565_a5p_to_argb8888(void *data, int w, int h, int stride,
 }
 
 EAPI void *
-evas_common_convert_argb8888_to(void *data, int w, int h, int stride, Evas_Bool has_alpha, Evas_Colorspace cspace)
+evas_common_convert_argb8888_to(void *data, int w, int h, int stride, Eina_Bool has_alpha, Evas_Colorspace cspace)
 {
    switch (cspace)
      {
@@ -61,7 +61,7 @@ evas_common_convert_argb8888_to(void *data, int w, int h, int stride, Evas_Bool 
 }
 
 EAPI void *
-evas_common_convert_rgb565_a5p_to(void *data, int w, int h, int stride, Evas_Bool has_alpha, Evas_Colorspace cspace)
+evas_common_convert_rgb565_a5p_to(void *data, int w, int h, int stride, Eina_Bool has_alpha, Evas_Colorspace cspace)
 {
    switch (cspace)
      {

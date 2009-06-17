@@ -6,8 +6,8 @@
 #define _EVAS_CONVERT_COLORSPACE_H
 
 
-EAPI void *evas_common_convert_argb8888_to                         (void *data, int w, int h, int stride, Evas_Bool has_alpha, Evas_Colorspace cspace);
-EAPI void *evas_common_convert_rgb565_a5p_to                       (void *data, int w, int h, int stride, Evas_Bool has_alpha, Evas_Colorspace cspace);
+EAPI void *evas_common_convert_argb8888_to                         (void *data, int w, int h, int stride, Eina_Bool has_alpha, Evas_Colorspace cspace);
+EAPI void *evas_common_convert_rgb565_a5p_to                       (void *data, int w, int h, int stride, Eina_Bool has_alpha, Evas_Colorspace cspace);
 
 
 #endif /* _EVAS_CONVERT_COLORSPACE_H */

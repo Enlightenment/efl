@@ -63,7 +63,7 @@ struct _Evas_Object_Image
 };
 
 /* private methods for image objects */
-static void evas_object_image_unload(Evas_Object *obj, Evas_Bool dirty);
+static void evas_object_image_unload(Evas_Object *obj, Eina_Bool dirty);
 static void evas_object_image_load(Evas_Object *obj);
 static Evas_Coord evas_object_image_figure_x_fill(Evas_Object *obj, Evas_Coord start, Evas_Coord size, Evas_Coord *size_ret);
 static Evas_Coord evas_object_image_figure_y_fill(Evas_Object *obj, Evas_Coord start, Evas_Coord size, Evas_Coord *size_ret);
@@ -478,7 +478,7 @@ evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Border_Fill_Mode
  * @return 1 if it is tracking, 0 if not and evas_object_fill_set()
  * must be called manually.
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_object_image_filled_get(const Evas_Object *obj)
 {
    Evas_Object_Image *o;
@@ -508,7 +508,7 @@ evas_object_image_filled_get(const Evas_Object *obj)
  * @see evas_object_image_fill_set()
  */
 EAPI void
-evas_object_image_filled_set(Evas_Object *obj, Evas_Bool setting)
+evas_object_image_filled_set(Evas_Object *obj, Eina_Bool setting)
 {
    Evas_Object_Image *o;
 
@@ -1026,7 +1026,7 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
  * @return The raw image data.
  */
 EAPI void *
-evas_object_image_data_get(const Evas_Object *obj, Evas_Bool for_writing)
+evas_object_image_data_get(const Evas_Object *obj, Eina_Bool for_writing)
 {
    Evas_Object_Image *o;
    DATA32 *data;
@@ -1068,7 +1068,7 @@ evas_object_image_data_get(const Evas_Object *obj, Evas_Bool for_writing)
  * @param cancel 0 means add to the workqueue, 1 remove it.
  */
 EAPI void
-evas_object_image_preload(Evas_Object *obj, Evas_Bool cancel)
+evas_object_image_preload(Evas_Object *obj, Eina_Bool cancel)
 {
    Evas_Object_Image *o;
 
@@ -1194,7 +1194,7 @@ evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h)
  * @param has_alpha Whether to use alpha channel data or not.
  */
 EAPI void
-evas_object_image_alpha_set(Evas_Object *obj, Evas_Bool has_alpha)
+evas_object_image_alpha_set(Evas_Object *obj, Eina_Bool has_alpha)
 {
    Evas_Object_Image *o;
 
@@ -1229,7 +1229,7 @@ evas_object_image_alpha_set(Evas_Object *obj, Evas_Bool has_alpha)
  * @param obj The given image object.
  * @return Whether the alpha channel data is being used.
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_object_image_alpha_get(const Evas_Object *obj)
 {
    Evas_Object_Image *o;
@@ -1256,7 +1256,7 @@ evas_object_image_alpha_get(const Evas_Object *obj)
  * @param smooth_scale Whether to use smooth scale or not.
  */
 EAPI void
-evas_object_image_smooth_scale_set(Evas_Object *obj, Evas_Bool smooth_scale)
+evas_object_image_smooth_scale_set(Evas_Object *obj, Eina_Bool smooth_scale)
 {
    Evas_Object_Image *o;
 
@@ -1284,7 +1284,7 @@ evas_object_image_smooth_scale_set(Evas_Object *obj, Evas_Bool smooth_scale)
  * @param obj The given image object.
  * @return Whether smooth scale is being used.
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_object_image_smooth_scale_get(const Evas_Object *obj)
 {
    Evas_Object_Image *o;
@@ -1346,7 +1346,7 @@ evas_object_image_reload(Evas_Object *obj)
  * @param key The image key in file, or NULL.
  * @param flags String containing the flags to be used.
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_object_image_save(const Evas_Object *obj, const char *file, const char *key, const char *flags)
 {
    Evas_Object_Image *o;
@@ -1418,7 +1418,7 @@ evas_object_image_save(const Evas_Object *obj, const char *file, const char *key
  * FIXME: To be fixed.
  *
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_object_image_pixels_import(Evas_Object *obj, Evas_Pixel_Import_Source *pixels)
 {
    Evas_Object_Image *o;
@@ -1533,7 +1533,7 @@ evas_object_image_pixels_get_callback_set(Evas_Object *obj, void (*func) (void *
  * @param dirty Whether the image is dirty.
  */
 EAPI void
-evas_object_image_pixels_dirty_set(Evas_Object *obj, Evas_Bool dirty)
+evas_object_image_pixels_dirty_set(Evas_Object *obj, Eina_Bool dirty)
 {
    Evas_Object_Image *o;
 
@@ -1556,7 +1556,7 @@ evas_object_image_pixels_dirty_set(Evas_Object *obj, Evas_Bool dirty)
  * @param obj The given image object.
  * @return Whether the image is dirty.
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_object_image_pixels_dirty_get(const Evas_Object *obj)
 {
    Evas_Object_Image *o;
@@ -1953,7 +1953,7 @@ evas_image_cache_get(const Evas *e)
 /* all nice and private */
 
 static void
-evas_object_image_unload(Evas_Object *obj, Evas_Bool dirty)
+evas_object_image_unload(Evas_Object *obj, Eina_Bool dirty)
 {
    Evas_Object_Image *o;
 

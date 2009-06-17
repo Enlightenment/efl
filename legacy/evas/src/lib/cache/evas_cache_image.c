@@ -44,7 +44,7 @@ static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t mutex_surface_alloc = PTHREAD_MUTEX_INITIALIZER;
 static pthread_t tid = 0;
 
-static Evas_Bool running = 0;
+static Eina_Bool running = EINA_FALSE;
 
 static void* _evas_cache_background_load(void *);
 #endif
@@ -362,13 +362,13 @@ _evas_cache_image_entry_preload_add(Image_Entry *ie,
 	       {
 		  if (tid)
 		    {
-		       running = 1;
+		       running = EINA_TRUE;
 		       pthread_cond_signal(&cond_new);
 		    }
 		  else
 		    {
 		       if (pthread_create(&tid, NULL, _evas_cache_background_load, NULL) == 0)
-			 running = 1;
+			 running = EINA_TRUE;
 		    }
 	       }
 
@@ -500,14 +500,14 @@ evas_cache_image_init(const Evas_Cache_Image_Func *cb)
    return new;
 }
 
-static Evas_Bool
+static Eina_Bool
 _evas_cache_image_free_cb(__UNUSED__ const Eina_Hash *hash, __UNUSED__ const void *key, void *data, void *fdata)
 {
    Eina_List **delete_list = fdata;
 
    *delete_list = eina_list_prepend(*delete_list, data);
 
-   return 1;
+   return EINA_TRUE;
 }
 
 #ifdef BUILD_ASYNC_PRELOAD
@@ -1297,7 +1297,7 @@ _evas_cache_background_load(void *data)
 	goto restart;
      }
 
-   running = 0;
+   running = EINA_FALSE;
    pthread_mutex_unlock(&mutex);
 
    pthread_mutex_lock(&mutex_new);

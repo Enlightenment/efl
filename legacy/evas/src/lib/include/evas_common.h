@@ -410,16 +410,16 @@ struct _RGBA_Image_Loadopts
 
 struct _Image_Entry_Flags
 {
-   Evas_Bool loaded       : 1;
-   Evas_Bool dirty        : 1;
-   Evas_Bool activ        : 1;
-   Evas_Bool need_data    : 1;
-   Evas_Bool lru_nodata   : 1;
-   Evas_Bool cached       : 1;
-   Evas_Bool alpha        : 1;
-   Evas_Bool alpha_sparse : 1;
+   Eina_Bool loaded       : 1;
+   Eina_Bool dirty        : 1;
+   Eina_Bool activ        : 1;
+   Eina_Bool need_data    : 1;
+   Eina_Bool lru_nodata   : 1;
+   Eina_Bool cached       : 1;
+   Eina_Bool alpha        : 1;
+   Eina_Bool alpha_sparse : 1;
 #ifdef BUILD_ASYNC_PRELOAD
-   Evas_Bool preload      : 1;
+   Eina_Bool preload      : 1;
 #endif
 };
 
@@ -490,11 +490,11 @@ struct _Engine_Image_Entry
 
    struct
    {
-     Evas_Bool                   cached : 1;
-     Evas_Bool                   activ : 1;
-     Evas_Bool                   dirty : 1;
-     Evas_Bool                   loaded : 1;
-     Evas_Bool                   need_parent : 1;
+     Eina_Bool                   cached : 1;
+     Eina_Bool                   activ : 1;
+     Eina_Bool                   dirty : 1;
+     Eina_Bool                   loaded : 1;
+     Eina_Bool                   need_parent : 1;
    } flags;
 
    int                           references;
@@ -524,7 +524,7 @@ struct _Evas_Common_Transform
 struct _RGBA_Draw_Context
 {
    struct {
-      Evas_Bool use : 1;
+      Eina_Bool use : 1;
       DATA32 col;
    } mul;
    struct {
@@ -532,7 +532,7 @@ struct _RGBA_Draw_Context
    } col;
    struct RGBA_Draw_Context_clip {
       int    x, y, w, h;
-      Evas_Bool use : 1;
+      Eina_Bool use : 1;
    } clip;
    Cutout_Rects cutout;
    struct {
@@ -550,7 +550,7 @@ struct _RGBA_Draw_Context
       int y, h;
    } sli;
    int            render_op;
-   Evas_Bool anti_alias : 1;
+   Eina_Bool anti_alias : 1;
 };
 
 #ifdef BUILD_PIPE_RENDER
@@ -633,14 +633,14 @@ struct _RGBA_Image
    /* Colorspace stuff. */
    struct {
       void              *data;
-      Evas_Bool          no_free : 1;
-      Evas_Bool          dirty : 1;
+      Eina_Bool          no_free : 1;
+      Eina_Bool          dirty : 1;
    } cs;
 
    /* RGBA stuff */
    struct {
       DATA32            *data;
-      Evas_Bool          no_free : 1;
+      Eina_Bool          no_free : 1;
    } image;
    
    struct {
@@ -677,7 +677,7 @@ struct _RGBA_Gradient
 	float          angle;
 	int            direction;
 	float          offset;
-	Evas_Bool      has_alpha : 1;
+	Eina_Bool      has_alpha : 1;
      } map;
 
    struct {
@@ -709,8 +709,8 @@ struct _RGBA_Gradient
 
    int references;
 
-   Evas_Bool imported_data : 1;
-   Evas_Bool has_alpha : 1;
+   Eina_Bool imported_data : 1;
+   Eina_Bool has_alpha : 1;
 };
 
 struct _RGBA_Gradient_Type
@@ -741,7 +741,7 @@ struct _RGBA_Gradient2
      {
 	DATA32        *data;
 	int            len;
-	Evas_Bool      has_alpha : 1;
+	Eina_Bool      has_alpha : 1;
      } map;
 
    struct {
@@ -766,7 +766,7 @@ struct _RGBA_Gradient2
 
    int references;
 
-   Evas_Bool has_alpha : 1;
+   Eina_Bool has_alpha : 1;
 };
 
 struct _RGBA_Gradient2_Type
@@ -831,7 +831,9 @@ struct _RGBA_Font_Source
    void             *data;
    int               data_size;
    int               current_size;
+#if 0 /* FIXME: charmap user is disabled and use a deprecated data type. */
    Evas_Array_Hash  *charmap;
+#endif
 
    struct {
       int           orig_upem;
@@ -951,12 +953,12 @@ struct _Tilebuf
 
 struct _Tilebuf_Tile
 {
-   Evas_Bool redraw : 1;
+   Eina_Bool redraw : 1;
 /* FIXME: need these flags later - but not now */
 /*
-   Evas_Bool done   : 1;
-   Evas_Bool edge   : 1;
-   Evas_Bool from   : 1;
+   Eina_Bool done   : 1;
+   Eina_Bool edge   : 1;
+   Eina_Bool from   : 1;
 
    struct {
       int dx, dy;

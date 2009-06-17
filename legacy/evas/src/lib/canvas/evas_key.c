@@ -95,7 +95,7 @@ evas_key_lock_get(const Evas *e)
  *
  * @return 1 if the @p keyname is on, 0 otherwise.
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_key_modifier_is_set(const Evas_Modifier *m, const char *keyname)
 {
    Evas_Modifier_Mask num;
@@ -126,7 +126,7 @@ evas_key_modifier_is_set(const Evas_Modifier *m, const char *keyname)
  * 
  * @param 1 if the @p keyname kock is set, 0 otherwise.
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_key_lock_is_set(const Evas_Lock *l, const char *keyname)
 {
    Evas_Modifier_Mask num;

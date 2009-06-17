@@ -110,6 +110,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 
 	fi = l->data;
 
+#if 0 /* FIXME: charmap user is disabled and use a deprecated data type. */
 	if (fi->src->charmap) /* Charmap loaded, FI/FS blank */
 	  {
 	     index = evas_array_hash_search(fi->src->charmap, gl);
@@ -125,7 +126,9 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 		  return index;
 	       }
 	  }
-	else if (!fi->src->ft.face) /* Charmap not loaded, FI/FS blank */
+	else
+#endif
+	  if (!fi->src->ft.face) /* Charmap not loaded, FI/FS blank */
 	  {
 	     if (evas_common_font_source_load_complete(fi->src))
 	       return 0;

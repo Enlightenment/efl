@@ -1153,7 +1153,7 @@ evas_object_hide(Evas_Object *obj)
  * @return  @c 1 if the object is visible.  @c 0 otherwise.
  * @ingroup Evas_Object_Group
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_object_visible_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -1244,7 +1244,7 @@ evas_object_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
  * @ingroup Evas_Object_Group
  */
 EAPI void
-evas_object_anti_alias_set(Evas_Object *obj, Evas_Bool anti_alias)
+evas_object_anti_alias_set(Evas_Object *obj, Eina_Bool anti_alias)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -1263,7 +1263,7 @@ evas_object_anti_alias_set(Evas_Object *obj, Evas_Bool anti_alias)
  * @return  @c 1 if the object is to be anti_aliased.  @c 0 otherwise.
  * @ingroup Evas_Object_Group
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_object_anti_alias_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -1409,7 +1409,7 @@ evas_object_evas_get(const Evas_Object *obj)
  * FIXME: To be fixed.
  */
 EAPI Evas_Object *
-evas_object_top_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
+evas_object_top_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Evas_Layer *lay;
    int xx, yy;
@@ -1457,7 +1457,7 @@ evas_object_top_at_pointer_get(const Evas *e)
  * FIXME: To be fixed.
  */
 EAPI Evas_Object *
-evas_object_top_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
+evas_object_top_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Evas_Layer *lay;
    int xx, yy, ww, hh;
@@ -1499,7 +1499,7 @@ evas_object_top_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas
  * FIXME: To be fixed.
  */
 EAPI Eina_List *
-evas_objects_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
+evas_objects_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Eina_List *in = NULL;
    Evas_Layer *lay;
@@ -1536,7 +1536,7 @@ evas_objects_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool incl
  * FIXME: To be fixed.
  */
 EAPI Eina_List *
-evas_objects_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
+evas_objects_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Eina_List *in = NULL;
    Evas_Layer *lay;
@@ -1595,7 +1595,7 @@ evas_object_type_get(const Evas_Object *obj)
  * The default value is false.
  */
 EAPI void
-evas_object_precise_is_inside_set(Evas_Object *obj, Evas_Bool precise)
+evas_object_precise_is_inside_set(Evas_Object *obj, Eina_Bool precise)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -1607,7 +1607,7 @@ evas_object_precise_is_inside_set(Evas_Object *obj, Evas_Bool precise)
  * Determine whether an object is set to use a precise point collision detection.
  * @param obj The given object.
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_object_precise_is_inside_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);

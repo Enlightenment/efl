@@ -239,7 +239,7 @@ evas_object_gradient_clear(Evas_Object *obj)
  * @param   has_alpha A flag indicating if the data has alpha or not.
  */
 EAPI void
-evas_object_gradient_color_data_set(Evas_Object *obj, void *data, int len, Evas_Bool has_alpha)
+evas_object_gradient_color_data_set(Evas_Object *obj, void *data, int len, Eina_Bool has_alpha)
 {
    Evas_Object_Gradient *o;
 

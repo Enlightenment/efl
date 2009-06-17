@@ -16,8 +16,8 @@ static Eina_Hash * fonts_src = NULL;
 static Eina_Hash * fonts = NULL;
 static Eina_List * fonts_lru = NULL;
 
-static Evas_Bool font_modify_cache_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata);
-static Evas_Bool font_flush_free_glyph_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata);
+static Eina_Bool font_modify_cache_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata);
+static Eina_Bool font_flush_free_glyph_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 
 static unsigned int
 _evas_font_cache_int_length(const RGBA_Font_Int *key)
@@ -50,7 +50,9 @@ static void
 _evas_common_font_source_free(RGBA_Font_Source *fs)
 {
    FT_Done_Face(fs->ft.face);
+#if 0 /* FIXME: Disable as it is only used by dead code using deprecated datatype. */
    if (fs->charmap) evas_array_hash_free(fs->charmap);
+#endif
    if (fs->name) eina_stringshare_del(fs->name);
    free(fs);
 }
@@ -560,7 +562,7 @@ evas_common_font_hinting_set(RGBA_Font *fn, Font_Hint_Flags hinting)
      fi->hinting = fn->hinting;
 }
 
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_common_hinting_available(Font_Hint_Flags hinting)
 {
    switch (hinting)
@@ -568,7 +570,7 @@ evas_common_hinting_available(Font_Hint_Flags hinting)
       case FONT_NO_HINT:
       case FONT_AUTO_HINT:
 	 /* these two hinting modes are always available */
-	 return 1;
+	 return EINA_TRUE;
       case FONT_BYTECODE_HINT:
 	 /* Only use the bytecode interpreter if support for the _patented_
 	  * algorithms is available because the free bytecode
@@ -587,12 +589,12 @@ evas_common_hinting_available(Font_Hint_Flags hinting)
 	  *
 	  * so, assume it is. o_O
 	  */
-	 return 1;
+	 return EINA_TRUE;
 #endif
      }
 
    /* shouldn't get here - need to add another case statement */
-   return 0;
+   return EINA_FALSE;
 }
 
 EAPI RGBA_Font *

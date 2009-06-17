@@ -143,7 +143,7 @@ struct _Evas_GL_Polygon
 {
    Eina_List *points;
    GLuint     dl;
-   Evas_Bool  changed : 1;
+   Eina_Bool  changed : 1;
 };
 
 struct _Evas_GL_Polygon_Point

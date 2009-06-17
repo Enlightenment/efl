@@ -123,14 +123,14 @@ evas_async_events_process(void)
 #endif
 }
 
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_info, void (*func)(void *target, Evas_Callback_Type type, void *event_info))
 {
 #ifdef BUILD_ASYNC_EVENTS
    Evas_Event_Async new;
    ssize_t check;
    int offset = 0;
-   Evas_Bool result = 0;
+   Eina_Bool result = EINA_FALSE;
 
    if (!func) return 0;
    if (_fd_write == -1) return 0;
@@ -150,7 +150,7 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
    } while (offset != sizeof(new) && (errno == EINTR || errno == EAGAIN));
 
    if (offset == sizeof(new))
-     result = 1;
+     result = EINA_TRUE;
    else
      switch (errno)
        {
@@ -167,7 +167,7 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
 #else
    func(target, type, event_info);
 
-   return 1;
+   return EINA_TRUE;
 #endif
 }
 

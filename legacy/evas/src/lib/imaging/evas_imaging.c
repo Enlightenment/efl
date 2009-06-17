@@ -47,12 +47,12 @@ evas_imaging_image_size_get(const Evas_Imaging_Image *im, int *w, int *h)
    if (h) *h = im->image->cache_entry.h;
 }
 
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_imaging_image_alpha_get(const Evas_Imaging_Image *im)
 {
-   if (!im) return 0;
-   if (im->image->cache_entry.flags.alpha) return 1;
-   return 0;
+   if (!im) return EINA_FALSE;
+   if (im->image->cache_entry.flags.alpha) return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 EAPI void
@@ -81,7 +81,7 @@ evas_imaging_font_hinting_get(void)
    return _evas_hinting;
 }
 
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_imaging_font_hinting_can_hint(Evas_Font_Hinting_Flags hinting)
 {
    return evas_common_hinting_available(hinting);

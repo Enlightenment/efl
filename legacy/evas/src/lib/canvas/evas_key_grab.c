@@ -171,8 +171,8 @@ evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask mod
  * @param exclusive request that the @p obj is the only object receiving the @p keyname events.
  * @return Boolean indicating whether the grab succeeded
  */
-EAPI Evas_Bool
-evas_object_key_grab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Evas_Bool exclusive)
+EAPI Eina_Bool
+evas_object_key_grab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive)
 {
    /* MEM OK */
    Evas_Key_Grab *g;

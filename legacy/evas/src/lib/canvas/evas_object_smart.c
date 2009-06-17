@@ -12,8 +12,8 @@ struct _Evas_Object_Smart
    Eina_List        *callbacks;
    Eina_Inlist *contained;
    int               walking_list;
-   Evas_Bool         deletions_waiting : 1;
-   Evas_Bool         need_recalculate : 1;
+   Eina_Bool         deletions_waiting : 1;
+   Eina_Bool         need_recalculate : 1;
 };
 
 struct _Evas_Smart_Callback
@@ -471,7 +471,7 @@ evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI void
-evas_object_smart_need_recalculate_set(Evas_Object *obj, Evas_Bool value)
+evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_Bool value)
 {
    Evas_Object_Smart *o;
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -516,7 +516,7 @@ evas_object_smart_need_recalculate_set(Evas_Object *obj, Evas_Bool value)
  *
  * @ingroup Evas_Smart_Object_Group
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_object_smart_need_recalculate_get(const Evas_Object *obj)
 {
    Evas_Object_Smart *o;

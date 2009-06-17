@@ -13,8 +13,8 @@ struct _DirectFB_Engine_Image_Entry
 
    struct
    {
-      Evas_Bool                   engine_surface : 1;
-      Evas_Bool                   is_locked : 1;
+      Eina_Bool                   engine_surface : 1;
+      Eina_Bool                   is_locked : 1;
    } flags;
 };
 
@@ -35,7 +35,7 @@ struct _Render_Engine
    unsigned int                  update_regions_count;
    unsigned int                  update_regions_limit;
 
-   Evas_Bool                     end : 1;
+   Eina_Bool                     end : 1;
 };
 
 int _dfb_surface_set_color_from_context(IDirectFBSurface *surface, RGBA_Draw_Context *dc);

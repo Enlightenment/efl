@@ -3211,19 +3211,19 @@ evas_textblock_cursor_node_last(Evas_Textblock_Cursor *cur)
  * @param cur  to be documented.
  * @return to be documented.
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_textblock_cursor_node_next(Evas_Textblock_Cursor *cur)
 {
-   if (!cur) return 0;
-   if (!cur->node) return 0;
+   if (!cur) return EINA_FALSE;
+   if (!cur->node) return EINA_FALSE;
    if ((EINA_INLIST_GET(cur->node))->next)
      {
 	cur->node = (Evas_Object_Textblock_Node *)((EINA_INLIST_GET(cur->node))->next);
 	cur->pos = 0;
         cur->eol = 0;
-	return 1;
+	return EINA_TRUE;
      }
-   return 0;
+   return EINA_FALSE;
 }
 
 /**
@@ -3231,18 +3231,18 @@ evas_textblock_cursor_node_next(Evas_Textblock_Cursor *cur)
  * @param cur  to be documented.
  * @return to be documented.
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_textblock_cursor_node_prev(Evas_Textblock_Cursor *cur)
 {
-   if (!cur) return 0;
-   if (!cur->node) return 0;
+   if (!cur) return EINA_FALSE;
+   if (!cur->node) return EINA_FALSE;
    if ((EINA_INLIST_GET(cur->node))->prev)
      {
 	cur->node = (Evas_Object_Textblock_Node *)((EINA_INLIST_GET(cur->node))->prev);
 	evas_textblock_cursor_char_last(cur);
-	return 1;
+	return EINA_TRUE;
      }
-   return 0;
+   return EINA_FALSE;
 }
 
 /**
@@ -3250,16 +3250,16 @@ evas_textblock_cursor_node_prev(Evas_Textblock_Cursor *cur)
  * @param cur  to be documented.
  * @return to be documented.
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur)
 {
    int index, ch;
    int at_start_of_line = 0;
    
-   if (!cur) return 0;
-   if (!cur->node) return 0;
-   if (cur->node->type == NODE_FORMAT) return 0;
-   if (!cur->node->text) return 0;
+   if (!cur) return EINA_FALSE;
+   if (!cur->node) return EINA_FALSE;
+   if (cur->node->type == NODE_FORMAT) return EINA_FALSE;
+   if (!cur->node->text) return EINA_FALSE;
    index = cur->pos;
 
    if (cur->node->type == NODE_TEXT)
@@ -3274,11 +3274,11 @@ evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur)
      }
    
    ch = evas_common_font_utf8_get_next((unsigned char *)(cur->node->text), &index);
-   if ((ch == 0) || (index < 0)) return 0;
-   if (cur->node->text[index] == 0) return 0;
+   if ((ch == 0) || (index < 0)) return EINA_FALSE;
+   if (cur->node->text[index] == 0) return EINA_FALSE;
    cur->pos = index;
    cur->eol = 0; // 1
-   return 1;
+   return EINA_TRUE;
 }
 
 /**
@@ -3286,19 +3286,19 @@ evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur)
  * @param cur  to be documented.
  * @return to be documented.
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *cur)
 {
    int index;
    int at_end_of_line = 0;
    int at_start_of_line = 0;
    
-   if (!cur) return 0;
-   if (!cur->node) return 0;
-   if (cur->node->type == NODE_FORMAT) return 0;
-   if (!cur->node->text) return 0;
+   if (!cur) return EINA_FALSE;
+   if (!cur->node) return EINA_FALSE;
+   if (cur->node->type == NODE_FORMAT) return EINA_FALSE;
+   if (!cur->node->text) return EINA_FALSE;
    index = cur->pos;
-   if (index == 0) return 0;
+   if (index == 0) return EINA_FALSE;
    
    // XXX: FIXME: determine at_end_of_line and at_start_of_line
   
@@ -3326,16 +3326,16 @@ evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *cur)
    if ((cur->eol) && (at_end_of_line))
      {
         cur->eol = 0;
-        return 1;
+        return EINA_TRUE;
      }
    evas_common_font_utf8_get_prev((unsigned char *)(cur->node->text), &index);
-   if (/*(ch == 0) || */(index < 0)) return 0;
+   if (/*(ch == 0) || */(index < 0)) return EINA_FALSE;
    cur->pos = index;
    if (at_start_of_line)
      cur->eol =1;
    else
      cur->eol = 0;
-   return 1;
+   return EINA_TRUE;
 }
 
 /**
@@ -3505,7 +3505,7 @@ evas_textblock_cursor_pos_set(Evas_Textblock_Cursor *cur, int pos)
  * @param int to be documented.
  * @return to be documented.
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line)
 {
    Evas_Object_Textblock *o;
@@ -3513,12 +3513,12 @@ evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line)
    Evas_Object_Textblock_Item *it;
    Evas_Object_Textblock_Format_Item *fi;
    
-   if (!cur) return 0;
+   if (!cur) return EINA_FALSE;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
 
    ln = _find_layout_line_num(cur->obj, line);
-   if (!ln) return 0;
+   if (!ln) return EINA_FALSE;
    it = (Evas_Object_Textblock_Item *)ln->items;
    fi = (Evas_Object_Textblock_Format_Item *)ln->format_items;
    if ((it) && (fi))
@@ -3539,7 +3539,7 @@ evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line)
 	cur->node = fi->source_node;
      }
    cur->eol = 0;
-   return 1;
+   return EINA_TRUE;
 }
 
 /**
@@ -4393,16 +4393,16 @@ evas_textblock_cursor_node_format_get(const Evas_Textblock_Cursor *cur)
  * @param cur to be documented.
  * @return to be documented.
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_textblock_cursor_node_format_is_visible_get(const Evas_Textblock_Cursor *cur)
 {
    Evas_Object_Textblock_Node *n;
    
-   if (!cur) return 0;
+   if (!cur) return EINA_FALSE;
    n = cur->node;
-   if (!n) return 0;
-   if (n->type != NODE_FORMAT) return 0;
-   if (!n->text) return 0;
+   if (!n) return EINA_FALSE;
+   if (n->type != NODE_FORMAT) return EINA_FALSE;
+   if (!n->text) return EINA_FALSE;
      {
 	char *s;
 	char *item;
@@ -4422,10 +4422,10 @@ evas_textblock_cursor_node_format_is_visible_get(const Evas_Textblock_Cursor *cu
 	     else if ((!strcmp(item, "\t")) || (!strcmp(item, "\\t")))
 	       visible = 1;
 	     *s = tmp_delim;
-	     if (visible) return 1;
+	     if (visible) return EINA_TRUE;
 	  }
      }
-   return 0;
+   return EINA_FALSE;
 }
 
 /**
@@ -4718,7 +4718,7 @@ evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
  * @param y to be documented.
  * @return to be documented.
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, Evas_Coord y)
 {
    Evas_Object_Textblock *o;
@@ -4726,7 +4726,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
    Evas_Object_Textblock_Item *it = NULL, *it_break = NULL;
    Evas_Object_Textblock_Format_Item *fi = NULL;
    
-   if (!cur) return 0;
+   if (!cur) return EINA_FALSE;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
    x += o->style_pad.l;
@@ -4756,7 +4756,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
 								  x - it->x - ln->x, 0,
 								  &cx, &cy, &cw, &ch);
 		       if (pos < 0)
-			 return 0;
+			 return EINA_FALSE;
 		       cur->pos = pos + it->source_pos;
 		       cur->node = it->source_node;
 		       return 1;
@@ -4770,7 +4770,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
 		       cur->pos = 0;
                        cur->eol = 0;
 		       cur->node = fi->source_node;
-		       return 1;
+		       return EINA_TRUE;
 		    }
 	       }
 	     if (it_break)
@@ -4779,11 +4779,11 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
 		  cur->pos = it->source_pos;
                   cur->eol = 0;
 		  cur->node = it->source_node;
-		  return 1;
+		  return EINA_TRUE;
 	       }
 	  }
      }
-   return 0;
+   return EINA_FALSE;
 }
 
 /**
@@ -4915,7 +4915,7 @@ evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, cons
 EAPI Eina_Bool
 evas_textblock_cursor_eol_get(const Evas_Textblock_Cursor *cur)
 {
-   if (!cur) return 0;
+   if (!cur) return EINA_FALSE;
    return cur->eol;
 }
 
@@ -4938,19 +4938,19 @@ evas_textblock_cursor_eol_set(Evas_Textblock_Cursor *cur, Eina_Bool eol)
  * @param ch to be documented.
  * @return to be documented.
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_object_textblock_line_number_geometry_get(const Evas_Object *obj, int line, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Evas_Object_Textblock_Line *ln;
    
    TB_HEAD_RETURN(0);
    ln = _find_layout_line_num(obj, line);
-   if (!ln) return 0;
+   if (!ln) return EINA_FALSE;
    if (cx) *cx = ln->x;
    if (cy) *cy = ln->y;
    if (cw) *cw = ln->w;
    if (ch) *ch = ln->h;
-   return 1;
+   return EINA_TRUE;
 }
 
 /**

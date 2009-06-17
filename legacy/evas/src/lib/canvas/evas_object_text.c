@@ -1085,7 +1085,7 @@ evas_font_hinting_get(const Evas *e)
    return e->hinting;
 }
 
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_font_hinting_can_hint(const Evas *e, Evas_Font_Hinting_Flags hinting)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -1094,7 +1094,7 @@ evas_font_hinting_can_hint(const Evas *e, Evas_Font_Hinting_Flags hinting)
    if (e->engine.func->font_hinting_can_hint)
      return e->engine.func->font_hinting_can_hint(e->engine.data.output,
 						  hinting);
-   return 0;
+   return EINA_FALSE;
 }
 
 

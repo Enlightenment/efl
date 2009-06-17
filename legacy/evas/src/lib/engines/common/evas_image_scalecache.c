@@ -266,7 +266,7 @@ _sci_find(RGBA_Image *im,
 }
 
 static void
-_cache_prune(Scaleitem *notsci, Evas_Bool copies_only)
+_cache_prune(Scaleitem *notsci, Eina_Bool copies_only)
 {
    Scaleitem *sci;
    while (cache_size > max_cache_size)

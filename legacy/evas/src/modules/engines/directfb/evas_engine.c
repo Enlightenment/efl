@@ -689,7 +689,7 @@ evas_engine_dfb_info_free(Evas *e __UNUSED__, void *in)
    free(info);
 }
 
-static Evas_Bool
+static Eina_Bool
 _is_dfb_data_ok(IDirectFB *idfb, IDirectFBSurface *surface, int w, int h)
 {
    DFBResult r;
@@ -698,14 +698,14 @@ _is_dfb_data_ok(IDirectFB *idfb, IDirectFBSurface *surface, int w, int h)
    if (!idfb)
      {
 	fputs("ERROR: missing IDirectFB\n", stderr);
-	return 0;
+	return EINA_FALSE;
      }
    dfb = idfb;
 
    if (!surface)
      {
 	fputs("ERROR: missing IDirectFBSurface\n", stderr);
-	return 0;
+	return EINA_FALSE;
      }
 
    r = surface->GetSize(surface, &sw, &sh);
@@ -713,7 +713,7 @@ _is_dfb_data_ok(IDirectFB *idfb, IDirectFBSurface *surface, int w, int h)
      {
 	fprintf(stderr, "ERROR: could not get surface %p size: %s\n",
 		surface, DirectFBErrorString(r));
-	return 0;
+	return EINA_FALSE;
      }
 
    if ((w > sw) || (h > sh))
@@ -721,7 +721,7 @@ _is_dfb_data_ok(IDirectFB *idfb, IDirectFBSurface *surface, int w, int h)
 	fprintf(stderr,
 		"ERROR: requested size is larger than surface: %dx%d > %dx%d\n",
 		w, h, sw, sh);
-	return 0;
+	return EINA_FALSE;
      }
    else if ((w <= 0) || (h <= 0))
      {
@@ -729,7 +729,7 @@ _is_dfb_data_ok(IDirectFB *idfb, IDirectFBSurface *surface, int w, int h)
 	h = sh;
      }
 
-   return 1;
+   return EINA_TRUE;
 }
 
 static void

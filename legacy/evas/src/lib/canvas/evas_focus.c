@@ -26,7 +26,7 @@
  * @see evas_object_key_ungrab
  */
 EAPI void
-evas_object_focus_set(Evas_Object *obj, Evas_Bool focus)
+evas_object_focus_set(Evas_Object *obj, Eina_Bool focus)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -65,7 +65,7 @@ evas_object_focus_set(Evas_Object *obj, Evas_Bool focus)
  *
  * @return 1 if the object has the focus, 0 otherwise.
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_object_focus_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);

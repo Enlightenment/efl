@@ -391,8 +391,8 @@ struct _Evas_Object
 	 struct {
 	    int            x, y, w, h;
 	    unsigned char  r, g, b, a;
-	    Evas_Bool      visible : 1;
-	    Evas_Bool      dirty : 1;
+	    Eina_Bool      visible : 1;
+	    Eina_Bool      dirty : 1;
 	 } clip;
       } cache;
       double scale;
@@ -402,9 +402,9 @@ struct _Evas_Object
       } color;
       Evas_Object      *clipper;
       short             layer;
-      Evas_Bool         visible : 1;
-      Evas_Bool         have_clipees : 1;
-      Evas_Bool         anti_alias : 1;
+      Eina_Bool         visible : 1;
+      Eina_Bool         have_clipees : 1;
+      Eina_Bool         anti_alias : 1;
       unsigned char     interpolation_color_space : 1;
       Evas_Render_Op    render_op : 4;
    } cur, prev;
@@ -443,23 +443,23 @@ struct _Evas_Object
 
    Evas_Object_Pointer_Mode    pointer_mode : 1;
 
-   Evas_Bool                   store : 1;
-   Evas_Bool                   pass_events : 1;
-   Evas_Bool                   parent_pass_events : 1;
-   Evas_Bool                   parent_cache_valid : 1;
-   Evas_Bool                   repeat_events : 1;
-   Evas_Bool                   restack : 1;
-   Evas_Bool                   changed : 1;
-   Evas_Bool                   is_active : 1;
-   Evas_Bool                   render_pre : 1;
-   Evas_Bool                   rect_del : 1;
-   Evas_Bool                   mouse_in : 1;
-   Evas_Bool                   pre_render_done : 1;
-   Evas_Bool                   intercepted : 1;
-   Evas_Bool                   focused : 1;
-   Evas_Bool                   in_layer : 1;
-   Evas_Bool                   no_propagate : 1;
-   Evas_Bool                   precise_is_inside : 1;
+   Eina_Bool                   store : 1;
+   Eina_Bool                   pass_events : 1;
+   Eina_Bool                   parent_pass_events : 1;
+   Eina_Bool                   parent_cache_valid : 1;
+   Eina_Bool                   repeat_events : 1;
+   Eina_Bool                   restack : 1;
+   Eina_Bool                   changed : 1;
+   Eina_Bool                   is_active : 1;
+   Eina_Bool                   render_pre : 1;
+   Eina_Bool                   rect_del : 1;
+   Eina_Bool                   mouse_in : 1;
+   Eina_Bool                   pre_render_done : 1;
+   Eina_Bool                   intercepted : 1;
+   Eina_Bool                   focused : 1;
+   Eina_Bool                   in_layer : 1;
+   Eina_Bool                   no_propagate : 1;
+   Eina_Bool                   precise_is_inside : 1;
 
    unsigned char               delete_me;
 };

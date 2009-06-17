@@ -89,10 +89,10 @@ _evas_render_phase1_direct(Evas *e, Eina_Array *render_objects)
      }
 }
 
-static Evas_Bool
+static Eina_Bool
 _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Eina_Array *active_objects, Eina_Array *restack_objects, Eina_Array *delete_objects, Eina_Array *render_objects, int restack)
 {
-   int clean_them = 0;
+   Eina_Bool clean_them = EINA_FALSE;
    int is_active;
 
    obj->rect_del = 0;
@@ -106,7 +106,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Eina_Array *active
    else if (obj->delete_me != 0) obj->delete_me++;
    /* If the object will be removed, we should not cache anything during this run. */
    if (obj->delete_me != 0)
-     clean_them = 1;
+     clean_them = EINA_TRUE;
 
    /* build active object list */
    is_active = evas_object_is_active(obj);
@@ -120,7 +120,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Eina_Array *active
 	  eina_array_push(&e->pending_objects, obj);
 	obj->restack = 1;
 	obj->changed = 1;
-	clean_them = 1;
+	clean_them = EINA_TRUE;
      }
    if (obj->changed)
      {
@@ -192,11 +192,11 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Eina_Array *active
    return clean_them;
 }
 
-static Evas_Bool
+static Eina_Bool
 _evas_render_phase1_process(Evas *e, Eina_Array *active_objects, Eina_Array *restack_objects, Eina_Array *delete_objects, Eina_Array *render_objects)
 {
    Evas_Layer *lay;
-   int clean_them = 0;
+   Eina_Bool clean_them = EINA_FALSE;
 
    EINA_INLIST_FOREACH(e->layers, lay)
      {
@@ -314,7 +314,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
    Eina_List *updates = NULL;
    Eina_List *ll;
    void *surface;
-   Evas_Bool clean_them = 0;
+   Eina_Bool clean_them = EINA_FALSE;
    Evas_Rectangle *r;
    int ux, uy, uw, uh;
    int cx, cy, cw, ch;

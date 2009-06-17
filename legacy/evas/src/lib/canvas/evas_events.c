@@ -1008,7 +1008,7 @@ evas_event_feed_hold(Evas *e, int hold, unsigned int timestamp, const void *data
  * @ingroup Evas_Object_Event_Flags_Group
  */
 EAPI void
-evas_object_pass_events_set(Evas_Object *obj, Evas_Bool pass)
+evas_object_pass_events_set(Evas_Object *obj, Eina_Bool pass)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -1036,7 +1036,7 @@ evas_object_pass_events_set(Evas_Object *obj, Evas_Bool pass)
  *
  * @ingroup Evas_Object_Event_Flags_Group
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_object_pass_events_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -1060,7 +1060,7 @@ evas_object_pass_events_get(const Evas_Object *obj)
  * @ingroup Evas_Object_Event_Flags_Group
  */
 EAPI void
-evas_object_repeat_events_set(Evas_Object *obj, Evas_Bool repeat)
+evas_object_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -1087,7 +1087,7 @@ evas_object_repeat_events_set(Evas_Object *obj, Evas_Bool repeat)
  *
  * @ingroup Evas_Object_Event_Flags_Group
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_object_repeat_events_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -1115,7 +1115,7 @@ evas_object_repeat_events_get(const Evas_Object *obj)
  * @ingroup Evas_Object_Event_Flags_Group
  */
 EAPI void
-evas_object_propagate_events_set(Evas_Object *obj, Evas_Bool prop)
+evas_object_propagate_events_set(Evas_Object *obj, Eina_Bool prop)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -1130,7 +1130,7 @@ evas_object_propagate_events_set(Evas_Object *obj, Evas_Bool prop)
  *
  * @ingroup Evas_Object_Event_Flags_Group
  */
-EAPI Evas_Bool
+EAPI Eina_Bool
 evas_object_propagate_events_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);

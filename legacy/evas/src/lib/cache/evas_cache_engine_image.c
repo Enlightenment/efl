@@ -238,14 +238,14 @@ evas_cache_engine_image_dup(const Evas_Cache_Engine_Image_Func *cb, Evas_Cache_E
    return new;
 }
 
-static Evas_Bool
+static Eina_Bool
 _evas_cache_engine_image_free_cb(__UNUSED__ const Eina_Hash *hash, __UNUSED__ const void *key, void *data, void *fdata)
 {
    Eina_List **delete_list = fdata;
 
    *delete_list = eina_list_prepend(*delete_list, data);
 
-   return 1;
+   return EINA_TRUE;
 }
 
 EAPI void
