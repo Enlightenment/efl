@@ -18,7 +18,7 @@ static double         em_fps_get                 (void *ef);
 static double         em_pos_get                 (void *ef);
 static void           em_vis_set                 (void *ef, Emotion_Vis vis);
 static Emotion_Vis    em_vis_get                 (void *ef);
-static Evas_Bool      em_vis_supported           (void *ef, Emotion_Vis vis);
+static Eina_Bool      em_vis_supported           (void *ef, Emotion_Vis vis);
 static double         em_ratio_get               (void *ef);
 static int            em_seekable                (void *ef);
 static void           em_frame_done              (void *ef);
@@ -572,10 +572,10 @@ em_vis_get(void *ef)
    return ev->vis;
 }
 
-static Evas_Bool
+static Eina_Bool
 em_vis_supported(void *ef, Emotion_Vis vis)
 {
-   return 0;
+   return EINA_FALSE;
 }
 
 static double

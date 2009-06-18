@@ -364,12 +364,12 @@ static Emotion_Vis em_vis_get(void *ef)
 	return ev->vis;
 }
 
-static Evas_Bool em_vis_supported(void *ef, Emotion_Vis vis)
+static Eina_Bool em_vis_supported(void *ef, Emotion_Vis vis)
 {
 	Emotion_Vlc_Video *ev;
 
 	ev = (Emotion_Vlc_Video *)ef;
-	return 0;
+	return EINA_FALSE;
 }
 
 static double em_ratio_get(void *ef)

@@ -188,7 +188,7 @@ emotion_object_module_option_set(Evas_Object *obj, const char *opt, const char *
      }
 }
 
-EAPI Evas_Bool
+EAPI Eina_Bool
 emotion_object_init(Evas_Object *obj, const char *module_filename)
 {
    Smart_Data *sd;
@@ -218,10 +218,10 @@ emotion_object_init(Evas_Object *obj, const char *module_filename)
      {
 	if (!_emotion_module_open(module_filename, obj,
 				  &sd->module, &sd->video))
-	  return 0;
+	  return EINA_FALSE;
      }
 
-   return 1;
+   return EINA_TRUE;
 }
 
 EAPI void
@@ -272,7 +272,7 @@ emotion_object_file_get(Evas_Object *obj)
 }
 
 EAPI void
-emotion_object_play_set(Evas_Object *obj, Evas_Bool play)
+emotion_object_play_set(Evas_Object *obj, Eina_Bool play)
 {
    Smart_Data *sd;
 
@@ -285,13 +285,13 @@ emotion_object_play_set(Evas_Object *obj, Evas_Bool play)
    else sd->module->stop(sd->video);
 }
 
-EAPI Evas_Bool
+EAPI Eina_Bool
 emotion_object_play_get(Evas_Object *obj)
 {
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->video) return 0;
+   if (!sd->video) return EINA_FALSE;
 
    return sd->play;
 }
@@ -324,36 +324,36 @@ emotion_object_position_get(Evas_Object *obj)
    return sd->pos;
 }
 
-EAPI Evas_Bool
+EAPI Eina_Bool
 emotion_object_seekable_get(Evas_Object *obj)
 {
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return 0;
-   if (!sd->video) return 0;
+   if (!sd->module) return EINA_FALSE;
+   if (!sd->video) return EINA_FALSE;
    return sd->module->seekable(sd->video);
 }
 
-EAPI Evas_Bool
+EAPI Eina_Bool
 emotion_object_video_handled_get(Evas_Object *obj)
 {
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return 0;
-   if (!sd->video) return 0;
+   if (!sd->module) return EINA_FALSE;
+   if (!sd->video) return EINA_FALSE;
    return sd->module->video_handled(sd->video);
 }
 
-EAPI Evas_Bool
+EAPI Eina_Bool
 emotion_object_audio_handled_get(Evas_Object *obj)
 {
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return 0;
-   if (!sd->video) return 0;
+   if (!sd->module) return EINA_FALSE;
+   if (!sd->video) return EINA_FALSE;
    return sd->module->audio_handled(sd->video);
 }
 
@@ -381,7 +381,7 @@ emotion_object_size_get(Evas_Object *obj, int *iw, int *ih)
 }
 
 EAPI void
-emotion_object_smooth_scale_set(Evas_Object *obj, Evas_Bool smooth)
+emotion_object_smooth_scale_set(Evas_Object *obj, Eina_Bool smooth)
 {
    Smart_Data *sd;
 
@@ -389,7 +389,7 @@ emotion_object_smooth_scale_set(Evas_Object *obj, Evas_Bool smooth)
    evas_object_image_smooth_scale_set(sd->obj, smooth);
 }
 
-EAPI Evas_Bool
+EAPI Eina_Bool
 emotion_object_smooth_scale_get(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -443,7 +443,7 @@ emotion_object_audio_volume_get(Evas_Object *obj)
 }
 
 EAPI void
-emotion_object_audio_mute_set(Evas_Object *obj, Evas_Bool mute)
+emotion_object_audio_mute_set(Evas_Object *obj, Eina_Bool mute)
 {
    Smart_Data *sd;
 
@@ -453,14 +453,14 @@ emotion_object_audio_mute_set(Evas_Object *obj, Evas_Bool mute)
    sd->module->audio_channel_mute_set(sd->video, mute);
 }
 
-EAPI Evas_Bool
+EAPI Eina_Bool
 emotion_object_audio_mute_get(Evas_Object *obj)
 {
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return 0;
-   if (!sd->video) return 0;
+   if (!sd->module) return EINA_FALSE;
+   if (!sd->video) return EINA_FALSE;
    return sd->module->audio_channel_mute_get(sd->video);
 }
 
@@ -509,7 +509,7 @@ emotion_object_audio_channel_get(Evas_Object *obj)
 }
 
 EAPI void
-emotion_object_video_mute_set(Evas_Object *obj, Evas_Bool mute)
+emotion_object_video_mute_set(Evas_Object *obj, Eina_Bool mute)
 {
    Smart_Data *sd;
 
@@ -519,14 +519,14 @@ emotion_object_video_mute_set(Evas_Object *obj, Evas_Bool mute)
    sd->module->video_channel_mute_set(sd->video, mute);
 }
 
-EAPI Evas_Bool
+EAPI Eina_Bool
 emotion_object_video_mute_get(Evas_Object *obj)
 {
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return 0;
-   if (!sd->video) return 0;
+   if (!sd->module) return EINA_FALSE;
+   if (!sd->video) return EINA_FALSE;
    return sd->module->video_channel_mute_get(sd->video);
 }
 
@@ -536,8 +536,8 @@ emotion_object_video_channel_count(Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return 0;
-   if (!sd->video) return 0;
+   if (!sd->module) return EINA_FALSE;
+   if (!sd->video) return EINA_FALSE;
    return sd->module->video_channel_count(sd->video);
 }
 
@@ -575,7 +575,7 @@ emotion_object_video_channel_get(Evas_Object *obj)
 }
 
 EAPI void
-emotion_object_spu_mute_set(Evas_Object *obj, Evas_Bool mute)
+emotion_object_spu_mute_set(Evas_Object *obj, Eina_Bool mute)
 {
    Smart_Data *sd;
 
@@ -585,14 +585,14 @@ emotion_object_spu_mute_set(Evas_Object *obj, Evas_Bool mute)
    sd->module->spu_channel_mute_set(sd->video, mute);
 }
 
-EAPI Evas_Bool
+EAPI Eina_Bool
 emotion_object_spu_mute_get(Evas_Object *obj)
 {
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return 0;
-   if (!sd->video) return 0;
+   if (!sd->module) return EINA_FALSE;
+   if (!sd->video) return EINA_FALSE;
    return sd->module->spu_channel_mute_get(sd->video);
 }
 
@@ -841,15 +841,15 @@ emotion_object_vis_get(Evas_Object *obj)
    return sd->module->vis_get(sd->video);
 }
 
-EAPI Evas_Bool
+EAPI Eina_Bool
 emotion_object_vis_supported(Evas_Object *obj, Emotion_Vis visualization)
 {
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return 0;
-   if (!sd->video) return 0;
-   if (!sd->module->vis_supported) return 0;
+   if (!sd->module) return EINA_FALSE;
+   if (!sd->video) return EINA_FALSE;
+   if (!sd->module->vis_supported) return EINA_FALSE;
    return sd->module->vis_supported(sd->video, visualization);
 }
 

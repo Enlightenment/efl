@@ -118,38 +118,38 @@ extern "C" {
 /* api calls available */
 EAPI Evas_Object *emotion_object_add                   (Evas *evas);
 EAPI void         emotion_object_module_option_set     (Evas_Object *obj, const char *opt, const char *val);
-EAPI Evas_Bool    emotion_object_init                  (Evas_Object *obj, const char *module_filename);
+EAPI Eina_Bool    emotion_object_init                  (Evas_Object *obj, const char *module_filename);
 EAPI void         emotion_object_file_set              (Evas_Object *obj, const char *filename);
 EAPI const char  *emotion_object_file_get              (Evas_Object *obj);
-EAPI void         emotion_object_play_set              (Evas_Object *obj, Evas_Bool play);
-EAPI Evas_Bool    emotion_object_play_get              (Evas_Object *obj);
+EAPI void         emotion_object_play_set              (Evas_Object *obj, Eina_Bool play);
+EAPI Eina_Bool    emotion_object_play_get              (Evas_Object *obj);
 EAPI void         emotion_object_position_set          (Evas_Object *obj, double sec);
 EAPI double       emotion_object_position_get          (Evas_Object *obj);
-EAPI Evas_Bool    emotion_object_video_handled_get     (Evas_Object *obj);
-EAPI Evas_Bool    emotion_object_audio_handled_get     (Evas_Object *obj);
-EAPI Evas_Bool    emotion_object_seekable_get          (Evas_Object *obj);
+EAPI Eina_Bool    emotion_object_video_handled_get     (Evas_Object *obj);
+EAPI Eina_Bool    emotion_object_audio_handled_get     (Evas_Object *obj);
+EAPI Eina_Bool    emotion_object_seekable_get          (Evas_Object *obj);
 EAPI double       emotion_object_play_length_get       (Evas_Object *obj);
 EAPI void         emotion_object_size_get              (Evas_Object *obj, int *iw, int *ih);
-EAPI void         emotion_object_smooth_scale_set      (Evas_Object *obj, Evas_Bool smooth);
-EAPI Evas_Bool    emotion_object_smooth_scale_get      (Evas_Object *obj);
+EAPI void         emotion_object_smooth_scale_set      (Evas_Object *obj, Eina_Bool smooth);
+EAPI Eina_Bool    emotion_object_smooth_scale_get      (Evas_Object *obj);
 EAPI double       emotion_object_ratio_get             (Evas_Object *obj);
 EAPI void         emotion_object_event_simple_send     (Evas_Object *obj, Emotion_Event ev);
 EAPI void         emotion_object_audio_volume_set      (Evas_Object *obj, double vol);
 EAPI double       emotion_object_audio_volume_get      (Evas_Object *obj);
-EAPI void         emotion_object_audio_mute_set        (Evas_Object *obj, Evas_Bool mute);
-EAPI Evas_Bool    emotion_object_audio_mute_get        (Evas_Object *obj);
+EAPI void         emotion_object_audio_mute_set        (Evas_Object *obj, Eina_Bool mute);
+EAPI Eina_Bool    emotion_object_audio_mute_get        (Evas_Object *obj);
 EAPI int          emotion_object_audio_channel_count   (Evas_Object *obj);
 EAPI const char  *emotion_object_audio_channel_name_get(Evas_Object *obj, int channel);
 EAPI void         emotion_object_audio_channel_set     (Evas_Object *obj, int channel);
 EAPI int          emotion_object_audio_channel_get     (Evas_Object *obj);
-EAPI void         emotion_object_video_mute_set        (Evas_Object *obj, Evas_Bool mute);
-EAPI Evas_Bool    emotion_object_video_mute_get        (Evas_Object *obj);
+EAPI void         emotion_object_video_mute_set        (Evas_Object *obj, Eina_Bool mute);
+EAPI Eina_Bool    emotion_object_video_mute_get        (Evas_Object *obj);
 EAPI int          emotion_object_video_channel_count   (Evas_Object *obj);
 EAPI const char  *emotion_object_video_channel_name_get(Evas_Object *obj, int channel);
 EAPI void         emotion_object_video_channel_set     (Evas_Object *obj, int channel);
 EAPI int          emotion_object_video_channel_get     (Evas_Object *obj);
-EAPI void         emotion_object_spu_mute_set          (Evas_Object *obj, Evas_Bool mute);
-EAPI Evas_Bool    emotion_object_spu_mute_get          (Evas_Object *obj);
+EAPI void         emotion_object_spu_mute_set          (Evas_Object *obj, Eina_Bool mute);
+EAPI Eina_Bool    emotion_object_spu_mute_get          (Evas_Object *obj);
 EAPI int          emotion_object_spu_channel_count     (Evas_Object *obj);
 EAPI const char  *emotion_object_spu_channel_name_get  (Evas_Object *obj, int channel);
 EAPI void         emotion_object_spu_channel_set       (Evas_Object *obj, int channel);
@@ -172,7 +172,7 @@ EAPI const char  *emotion_object_meta_info_get         (Evas_Object *obj, Emotio
 
 EAPI void         emotion_object_vis_set               (Evas_Object *obj, Emotion_Vis visualization);
 EAPI Emotion_Vis  emotion_object_vis_get               (Evas_Object *obj);
-EAPI Evas_Bool    emotion_object_vis_supported         (Evas_Object *obj, Emotion_Vis visualization);
+EAPI Eina_Bool    emotion_object_vis_supported         (Evas_Object *obj, Emotion_Vis visualization);
 
 #ifdef __cplusplus
 }

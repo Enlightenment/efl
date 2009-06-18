@@ -59,7 +59,7 @@ struct _Emotion_Video_Module
    double         (*pos_get) (void *ef);
    void           (*vis_set) (void *ef, Emotion_Vis vis);
    Emotion_Vis    (*vis_get) (void *ef);
-   Evas_Bool      (*vis_supported) (void *ef, Emotion_Vis vis);
+   Eina_Bool      (*vis_supported) (void *ef, Emotion_Vis vis);
    double         (*ratio_get) (void *ef);
    int            (*video_handled) (void *ef);
    int            (*audio_handled) (void *ef);

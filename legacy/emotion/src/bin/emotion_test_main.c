@@ -352,7 +352,7 @@ bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_info)
 
 	EINA_LIST_FOREACH(video_objs, l, o)
 	  {
-	     Evas_Bool supported;
+	     Eina_Bool supported;
 
 	     supported = emotion_object_vis_supported(o, vis);
 	     if (supported)

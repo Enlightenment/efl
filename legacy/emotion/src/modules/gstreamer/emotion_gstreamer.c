@@ -59,7 +59,7 @@ static void           em_vis_set                  (void            *video,
 
 static Emotion_Vis    em_vis_get                  (void            *video);
 
-static Evas_Bool      em_vis_supported            (void            *video,
+static Eina_Bool      em_vis_supported            (void            *video,
                                                    Emotion_Vis      vis);
 
 static double         em_ratio_get                (void            *video);
@@ -714,25 +714,25 @@ em_vis_get(void *video)
    return ev->vis;
 }
 
-static Evas_Bool
+static Eina_Bool
 em_vis_supported(void *ef, Emotion_Vis vis)
 {
    const char *name;
    GstElementFactory *factory;
 
    if (vis == EMOTION_VIS_NONE)
-     return 1;
+     return EINA_TRUE;
 
    name = emotion_visualization_element_name_get(vis);
    if (!name)
-     return 0;
+     return EINA_FALSE;
 
    factory = gst_element_factory_find(name);
    if (!factory)
-     return 0;
+     return EINA_FALSE;
 
    gst_object_unref(factory);
-   return 1;
+   return EINA_TRUE;
 }
 
 static double
