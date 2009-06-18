@@ -845,6 +845,7 @@ struct _RGBA_Font_Source
 
 struct _RGBA_Font_Glyph
 {
+   FT_UInt         index;
    FT_Glyph        glyph;
    FT_BitmapGlyph  glyph_out;
    /* this is a problem - only 1 engine at a time can extend such a font... grrr */

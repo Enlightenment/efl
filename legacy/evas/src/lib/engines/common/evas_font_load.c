@@ -19,12 +19,6 @@ static Eina_List * fonts_lru = NULL;
 static Eina_Bool font_modify_cache_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 static Eina_Bool font_flush_free_glyph_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 
-static unsigned int
-_evas_font_cache_int_length(const RGBA_Font_Int *key)
-{
-   return 0;
-}
-
 static int
 _evas_font_cache_int_cmp(const RGBA_Font_Int *k1, int k1_length,
 			 const RGBA_Font_Int *k2, int k2_length)
@@ -103,7 +97,7 @@ void
 evas_common_font_load_init(void)
 {
    fonts_src = eina_hash_string_small_new(EINA_FREE_CB(_evas_common_font_source_free));
-   fonts = eina_hash_new(EINA_KEY_LENGTH(_evas_font_cache_int_length),
+   fonts = eina_hash_new(NULL,
 			 EINA_KEY_CMP(_evas_font_cache_int_cmp),
 			 EINA_KEY_HASH(_evas_font_cache_int_hash),
 			 EINA_FREE_CB(_evas_common_font_int_free),
@@ -239,18 +233,6 @@ evas_common_font_size_use(RGBA_Font *fn)
      }
 }
 
-static unsigned int
-_evas_common_font_int_length(const void *key __UNUSED__)
-{
-   return sizeof (int);
-}
-
-static unsigned int
-_evas_common_font_double_int_length(const void *key __UNUSED__)
-{
-   return sizeof (int) * 2;
-}
-
 static int
 _evas_common_font_int_cmp(const int *key1, __UNUSED__ int key1_length,
 			  const int *key2, __UNUSED__ int key2_length)
@@ -282,11 +264,11 @@ static void
 _evas_common_font_int_cache_init(RGBA_Font_Int *fi)
 {
    /* Add some font kerning cache. */
-   fi->indexes = eina_hash_new(EINA_KEY_LENGTH(_evas_common_font_int_length),
+   fi->indexes = eina_hash_new(NULL,
 			       EINA_KEY_CMP(_evas_common_font_int_cmp),
 			       EINA_KEY_HASH(eina_hash_int32),
 			       free, 3);
-   fi->kerning = eina_hash_new(EINA_KEY_LENGTH(_evas_common_font_double_int_length),
+   fi->kerning = eina_hash_new(NULL,
 			       EINA_KEY_CMP(_evas_common_font_double_int_cmp),
 			       EINA_KEY_HASH(_evas_common_font_double_int_hash),
 			       free, 3);
@@ -358,7 +340,11 @@ EAPI RGBA_Font_Int *
 evas_common_font_int_load_init(RGBA_Font_Int *fi)
 {
    fi->ft.size = NULL;
-   fi->glyphs = eina_hash_int32_new(NULL);
+   fi->glyphs = eina_hash_new(NULL,
+			      EINA_KEY_CMP(_evas_common_font_int_cmp),
+			      EINA_KEY_HASH(eina_hash_int32),
+			      NULL,
+			      6);
    fi->usage = 0;
    fi->references = 1;
 
