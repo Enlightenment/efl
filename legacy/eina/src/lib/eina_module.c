@@ -66,11 +66,11 @@ void *alloca (size_t);
  * @cond LOCAL
  */
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__CYGWIN__)
 # define MODULE_EXTENSION ".dll"
 #else
 # define MODULE_EXTENSION ".so"
-#endif /* ! _WIN32 */
+#endif /* !defined(_WIN32) && !defined(__CYGWIN__) */
 
 #define EINA_MODULE_SYMBOL_INIT "__eina_module_init"
 #define EINA_MODULE_SYMBOL_SHUTDOWN "__eina_module_shutdown"
