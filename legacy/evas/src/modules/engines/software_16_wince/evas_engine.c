@@ -741,7 +741,7 @@ module_close(Evas_Module *em)
 static Evas_Module_Api evas_modapi =
 {
    EVAS_MODULE_API_VERSION,
-   "software_16_wince_fb",
+   "software_16_wince",
    "none",
    {
      module_open,
@@ -749,8 +749,8 @@ static Evas_Module_Api evas_modapi =
    }
 };
 
-EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_ENGINE, engine, software_16_wince_fb);
+EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_ENGINE, engine, software_16_wince);
 
-#ifndef EVAS_STATIC_BUILD_SOFTWARE_16_WINCE_FB
-EVAS_EINA_MODULE_DEFINE(engine, software_16_wince_fb);
+#ifndef EVAS_STATIC_BUILD_SOFTWARE_16_WINCE
+EVAS_EINA_MODULE_DEFINE(engine, software_16_wince);
 #endif
