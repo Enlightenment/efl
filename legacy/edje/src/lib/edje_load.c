@@ -281,6 +281,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
    Eina_List *parts = NULL;
    Eina_List *old_swallows;
    int group_path_started = 0;
+   int entries = 0;
 
    ed = _edje_fetch(obj);
    if (!ed) return 0;
@@ -290,6 +291,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 	(ed->group) && (!strcmp(group, ed->group)))
      return 1;
 
+   //**//
+   _edje_entry_shutdown(ed);
    old_swallows = _edje_swallows_collect(ed);
 
    if (_edje_script_only(ed)) _edje_script_only_shutdown(ed);
@@ -480,7 +483,10 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		       if (rp->param1.description->text.id_text_source >= 0)
 			 rp->text.text_source = ed->table_parts[rp->param1.description->text.id_text_source % ed->table_parts_size];
 		       if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-			 _edje_entry_real_part_init(rp);
+                         {
+                            _edje_entry_real_part_init(rp);
+                            entries++;
+                         }
 		    }
 	       }
 	     
@@ -707,11 +713,14 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                     }
                }
 	  }
+        //**//
+        if (entries > 0) _edje_entry_init(ed);
 	return 1;
      }
    else
      return 0;
    ed->load_error = EDJE_LOAD_ERROR_NONE;
+   if (entries > 0) _edje_entry_init(ed);
    return 1;
 }
 

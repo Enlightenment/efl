@@ -68,7 +68,7 @@ _edje_smart_add(Evas_Object *obj)
    evas_object_geometry_get(obj, &(ed->x), &(ed->y), &(ed->w), &(ed->h));
    ed->obj = obj;
    _edje_edjes = eina_list_append(_edje_edjes, obj);
-   _edje_entry_init(ed);
+//**//   _edje_entry_init(ed);
 /*
      {
 	Eina_List *l;
@@ -93,7 +93,7 @@ _edje_smart_del(Evas_Object * obj)
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
    _edje_block_violate(ed);
-   _edje_entry_shutdown(ed);
+//**//   _edje_entry_shutdown(ed);
    ed->delete_me = 1;
    _edje_clean_objects(ed);
    _edje_edjes = eina_list_remove(_edje_edjes, obj);
