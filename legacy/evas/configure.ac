@@ -1148,7 +1148,6 @@ src/Makefile
 src/bin/Makefile
 src/lib/Makefile
 src/lib/canvas/Makefile
-src/lib/data/Makefile
 src/lib/file/Makefile
 src/lib/imaging/Makefile
 src/lib/cache/Makefile

@@ -224,4 +224,4 @@ endif
 
 libevas_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
-DIST_SUBDIRS = canvas data cache cserve file engines imaging include
+DIST_SUBDIRS = canvas cache cserve file engines imaging include
