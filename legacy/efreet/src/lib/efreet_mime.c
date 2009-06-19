@@ -366,7 +366,7 @@ efreet_mime_type_cache_clear(void)
         eina_hash_free(mime_icons);
         mime_icons_lru = NULL;
     }
-    mime_icons = eina_hash_pointer_new(EINA_FREE_CB(efreet_mime_icon_entry_head_free));
+    mime_icons = eina_hash_stringshared_new(EINA_FREE_CB(efreet_mime_icon_entry_head_free));
 }
 
 EAPI void
