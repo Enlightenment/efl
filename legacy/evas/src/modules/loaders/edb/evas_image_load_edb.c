@@ -204,8 +204,8 @@ static Evas_Module_Api evas_modapi =
    }
 };
 
-EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_IMAGE_LOADER, image_saver, edb);
+EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_IMAGE_LOADER, image_loader, edb);
 
 #ifndef EVAS_STATIC_BUILD_EDB
-EVAS_EINA_MODULE_DEFINE(image_saver, edb);
+EVAS_EINA_MODULE_DEFINE(image_loader, edb);
 #endif

@@ -32,7 +32,6 @@ SUBDIRS += \
 	../modules/engines/gl_common \
 	../modules/engines/gl_glew
 EVAS_STATIC_MODULE += \
-	../modules/engines/gl_common/libevas_engine_gl_common.la \
 	../modules/engines/gl_glew/libevas_engine_gl_glew.la
 EVAS_STATIC_LIBADD += @evas_engine_gl_common_libs@ @evas_engine_gl_glew_libs@
 endif
@@ -41,7 +40,6 @@ SUBDIRS += \
 	../modules/engines/gl_common \
 	../modules/engines/gl_x11
 EVAS_STATIC_MODULE += \
-	../modules/engines/gl_common/libevas_engine_gl_common.la \
 	../modules/engines/gl_x11/libevas_engine_gl_x11.la
 EVAS_STATIC_LIBADD += @evas_engine_gl_common_libs@ @evas_engine_gl_x11_libs@
 endif

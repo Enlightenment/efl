@@ -22,7 +22,7 @@ evas_gl_polygon.c \
 evas_gl_rectangle.c \
 evas_gl_texture.c
 
-libevas_engine_gl_common_la_LIBADD = @EINA_LIBS@ @evas_engine_gl_common_libs@ $(top_builddir)/src/lib/libevas.la
+libevas_engine_gl_common_la_LIBADD = @EINA_LIBS@ @evas_engine_gl_common_libs@
 endif
 
 EXTRA_DIST = \
