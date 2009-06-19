@@ -74,6 +74,7 @@ EAPI Eina_Hash * eina_hash_string_small_new(Eina_Free_Cb data_free_cb);
 EAPI Eina_Hash * eina_hash_int32_new(Eina_Free_Cb data_free_cb);
 EAPI Eina_Hash * eina_hash_int64_new(Eina_Free_Cb data_free_cb);
 EAPI Eina_Hash * eina_hash_pointer_new(Eina_Free_Cb data_free_cb);
+EAPI Eina_Hash * eina_hash_stringshared_new(Eina_Free_Cb data_free_cb);
 
 EAPI Eina_Bool   eina_hash_add(Eina_Hash *hash, const void *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
 EAPI Eina_Bool   eina_hash_direct_add(Eina_Hash *hash, const void *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);

@@ -439,6 +439,13 @@ _eina_string_key_cmp(const char *key1, __UNUSED__ int key1_length,
    return strcmp(key1, key2);
 }
 
+static int
+_eina_stringshared_key_cmp(const char *key1, __UNUSED__ int key1_length,
+			   const char *key2, __UNUSED__ int key2_length)
+{
+   return key1 - key2;
+}
+
 static unsigned int
 _eina_int32_key_length(__UNUSED__ const uint32_t *key)
 {
@@ -788,6 +795,16 @@ eina_hash_pointer_new(Eina_Free_Cb data_free_cb)
 			data_free_cb,
 			EINA_HASH_BUCKET_SIZE);
 #endif
+}
+
+EAPI Eina_Hash *
+eina_hash_stringshared_new(Eina_Free_Cb data_free_cb)
+{
+   return eina_hash_new(NULL,
+			EINA_KEY_CMP(_eina_stringshared_key_cmp),
+			EINA_KEY_HASH(eina_hash_superfast),
+			data_free_cb,
+			EINA_HASH_BUCKET_SIZE);
 }
 
 /**
