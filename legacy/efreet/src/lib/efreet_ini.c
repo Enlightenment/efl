@@ -110,6 +110,8 @@ efreet_ini_parse(const char *file)
     struct stat file_stat;
     int line_length, left;
 
+    if (!file) return NULL;
+
     f = fopen(file, "rb");
     if (!f) return NULL;
 
