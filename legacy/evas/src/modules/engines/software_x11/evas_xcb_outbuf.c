@@ -366,7 +366,7 @@ evas_software_xcb_outbuf_setup_x(int               w,
 		       buf->priv.mask.r,
 		       buf->priv.mask.g,
 		       buf->priv.mask.b,
-		       buf->priv.pal->colors);
+		       buf->priv.pal ? buf->priv.pal->colors : -1);
 	     }
 	}
       evas_software_xcb_outbuf_drawable_set(buf, draw);

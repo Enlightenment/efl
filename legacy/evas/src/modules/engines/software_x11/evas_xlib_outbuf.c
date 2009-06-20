@@ -325,7 +325,7 @@ evas_software_xlib_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 		       buf->priv.mask.r,
 		       buf->priv.mask.g,
 		       buf->priv.mask.b,
-		       buf->priv.pal ? buf->priv.pal->colors: -1);
+		       buf->priv.pal ? buf->priv.pal->colors : -1);
 	     }
 	}
       evas_software_xlib_outbuf_drawable_set(buf, draw);
