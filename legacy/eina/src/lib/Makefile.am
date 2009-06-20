@@ -59,7 +59,7 @@ endif
 
 if EINA_STATIC_BUILD_PASS_THROUGH
 
-libeina_la_SOURCES += $(top_srcdir)/src/modules/mp/pass_through/pass_through.c
+libeina_la_SOURCES += $(top_srcdir)/src/modules/mp/pass_through/eina_pass_through.c
 
 endif
 
