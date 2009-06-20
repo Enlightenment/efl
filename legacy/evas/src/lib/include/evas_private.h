@@ -717,7 +717,7 @@ void evas_object_clip_dirty(Evas_Object *obj);
 void evas_object_recalc_clippees(Evas_Object *obj);
 Evas_Layer *evas_layer_new(Evas *e);
 void evas_layer_pre_free(Evas_Layer *lay);
-void evas_layer_free(Evas_Layer *lay);
+void evas_layer_free_objects(Evas_Layer *lay);
 void evas_layer_clean(Evas *e);
 Evas_Layer *evas_layer_find(Evas *e, short layer_num);
 void evas_layer_add(Evas_Layer *lay);

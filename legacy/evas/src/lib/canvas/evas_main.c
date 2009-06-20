@@ -158,7 +158,7 @@ evas_free(Evas *e)
 	  }
      }
    EINA_INLIST_FOREACH(e->layers, lay)
-     evas_layer_free(lay);
+     evas_layer_free_objects(lay);
    evas_layer_clean(e);
 
    e->walking_list--;

@@ -1,6 +1,8 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
+static void _evas_layer_free(Evas_Layer *lay);
+
 void
 evas_object_inject(Evas_Object *obj, Evas *e)
 {
@@ -31,7 +33,7 @@ evas_object_release(Evas_Object *obj, int clean_layer)
 	if (obj->layer->usage <= 0)
 	  {
 	     evas_layer_del(obj->layer);
-	     evas_layer_free(obj->layer);
+	     _evas_layer_free(obj->layer);
 	  }
      }
    obj->layer = NULL;
@@ -49,6 +51,12 @@ evas_layer_new(Evas *e)
    return lay;
 }
 
+static void
+_evas_layer_free(Evas_Layer *lay)
+{
+   free(lay);
+}
+
 void
 evas_layer_pre_free(Evas_Layer *lay)
 {
@@ -62,7 +70,7 @@ evas_layer_pre_free(Evas_Layer *lay)
 }
 
 void
-evas_layer_free(Evas_Layer *lay)
+evas_layer_free_objects(Evas_Layer *lay)
 {
    while (lay->objects)
      {
@@ -82,7 +90,7 @@ evas_layer_clean(Evas *e)
      {
 	tmp = e->layers;
 	evas_layer_del(tmp);
-	free(tmp);
+	_evas_layer_free(tmp);
      }
 }
 
