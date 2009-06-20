@@ -11,6 +11,7 @@
 #ifndef _WIN32
 #include <signal.h>
 #include <setjmp.h>
+#include <errno.h>
 
 static sigjmp_buf detect_buf;
 #endif
@@ -255,7 +256,11 @@ evas_common_cpu_count(void)
 
    if (cpus != 0) return cpus;
 
-   sched_getaffinity(getpid(), sizeof(cpu), &cpu);
+   if (sched_getaffinity(0, sizeof(cpu), &cpu) != 0)
+     {
+	printf("[Evas] could not get cpu affinity: %s\n", strerror(errno));
+	return 1;
+     }
    for (i = 0; i < TH_MAX; i++)
      {
 	if (CPU_ISSET(i, &cpu)) cpus = i + 1;
