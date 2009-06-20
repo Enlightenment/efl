@@ -54,7 +54,7 @@ EFL_CHECK_PTHREAD([have_pthread="yes"], [have_pthread="no"])
 
 # Magic debug
 AC_ARG_ENABLE([magic-debug],
-   [AC_HELP_STRING([--disable-magic-debug], [disable magic debug of eina structure [default=enabled]])],
+   [AC_HELP_STRING([--disable-magic-debug], [disable magic debug of eina structure @<:@default=enabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        have_magic_debug="yes"
@@ -74,7 +74,7 @@ AC_SUBST(EINA_CONFIGURE_MAGIC_DEBUG)
 
 # Safety checks (avoid crashes on wrong api usage)
 AC_ARG_ENABLE(safety-checks,
-   [AC_HELP_STRING([--disable-safety-checks], [disable safety checks for NULL pointers and like. [default=enabled]])],
+   [AC_HELP_STRING([--disable-safety-checks], [disable safety checks for NULL pointers and like. @<:@default=enabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        have_safety_checks="yes"
@@ -96,7 +96,7 @@ AC_SUBST(EINA_CONFIGURE_SAFETY_CHECKS)
 
 # Choose best memory pool
 AC_ARG_ENABLE([default-mempool],
-   [AC_HELP_STRING([--enable-default-mempool], [Default memory allocator could be faster for some computer. [default=disabled]])],
+   [AC_HELP_STRING([--enable-default-mempool], [Default memory allocator could be faster for some computer. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes"; then
        have_default_mempool="yes"
@@ -116,7 +116,7 @@ AC_SUBST(EINA_CONFIGURE_DEFAULT_MEMPOOL)
 
 # Report stringshare usage
 AC_ARG_ENABLE([stringshare-usage],
-   [AC_HELP_STRING([--enable-stringshare-usage], [Report stringshare usage on stringshare shutdown. [default=disabled]])],
+   [AC_HELP_STRING([--enable-stringshare-usage], [Report stringshare usage on stringshare shutdown. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes"; then
        have_stringshare_usage="yes"
@@ -132,30 +132,6 @@ AC_MSG_RESULT([${have_stringshare_usage}])
 if test "x${have_stringshare_usage}" = "xyes"; then
    AC_DEFINE(EINA_STRINGSHARE_USAGE, 1, [Report Eina stringshare usage pattern])
 fi
-
-# Ememoa memory pool
-
-AC_ARG_ENABLE([ememoa],
-   [AC_HELP_STRING([--enable-ememoa], [build ememoa memory pool module @<:@default=yes@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       enable_ememoa="yes"
-    else
-       enable_ememoa="no"
-    fi
-   ],
-   [enable_ememoa="yes"]
-)
-AC_MSG_CHECKING([whether to use ememoa for memory pool])
-AC_MSG_RESULT([$enable_ememoa])
-
-# Static linking
-
-EINA_CHECK_STATIC([chained-pool], [chained pool])
-EINA_CHECK_STATIC([ememoa-fixed], [ememoa fixed])
-EINA_CHECK_STATIC([ememoa-unknown], [ememoa unknown])
-EINA_CHECK_STATIC([pass-through], [pass through])
-EINA_CHECK_STATIC([fixed-bitmap], [fixed bitmap])
 
 
 ### Checks for programs
@@ -237,6 +213,20 @@ AC_MSG_RESULT([${enable_benchmark_e17}])
 AM_CONDITIONAL(EINA_ENABLE_BENCHMARK_E17, test "x${enable_benchmark_e17}" = "xyes")
 
 # Check ememoa memory pool library
+
+AC_ARG_ENABLE([ememoa],
+   [AC_HELP_STRING([--enable-ememoa], [build ememoa memory pool module @<:@default=yes@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       enable_ememoa="yes"
+    else
+       enable_ememoa="no"
+    fi
+   ],
+   [enable_ememoa="yes"]
+)
+AC_MSG_CHECKING([whether to use ememoa for memory pool])
+AC_MSG_RESULT([$enable_ememoa])
 
 if test "x${enable_ememoa}" = "xyes" ; then
    PKG_CHECK_MODULES([EMEMOA],
@@ -356,6 +346,23 @@ dnl nothing on mingw platform
 esac
 AC_SUBST(dlopen_libs)
 
+### Modules
+
+EINA_CHECK_MODULE([chained-pool], [yes], [chained pool])
+EINA_CHECK_MODULE([ememoa-fixed], [${enable_ememoa}], [ememoa fixed])
+EINA_CHECK_MODULE([ememoa-unknown], [${enable_ememoa}], [ememoa unknown])
+EINA_CHECK_MODULE([fixed-bitmap], [yes], [fixed bitmap])
+EINA_CHECK_MODULE([pass-through], [yes], [pass through])
+
+
+### Make the debug preprocessor configurable
+
+### Unit tests, coverage and benchmarking
+
+EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
+EFL_CHECK_COVERAGE([${enable_tests}], [enable_coverage="yes"], [enable_coverage="no"])
+EFL_CHECK_BENCHMARK([enable_benchmark="yes"], [enable_benchmark="no"])
+
 
 ### Create the .pc.in file according to the major version
 #cat > ${srcdir}/eina-${VMAJ}.pc.in << EOF
@@ -372,15 +379,6 @@ AC_SUBST(dlopen_libs)
 #Libs.private: -ldl
 #Cflags: -I${includedir}/eina-@VMAJ@ -I${includedir}/eina-@VMAJ@/eina
 #EOF
-
-
-### Make the debug preprocessor configurable
-
-### Unit tests, coverage and benchmarking
-
-EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
-EFL_CHECK_COVERAGE([${enable_tests}], [enable_coverage="yes"], [enable_coverage="no"])
-EFL_CHECK_BENCHMARK([enable_benchmark="yes"], [enable_benchmark="no"])
 
 AC_CONFIG_FILES([
 Makefile
@@ -440,14 +438,12 @@ echo "  SSE..................: ${have_sse}"
 echo "  SSE2.................: ${have_sse2}"
 echo "  ALTIVEC..............: ${have_altivec}"
 echo
-echo "  Memory pool:"
-echo "    Ememoa.............: ${enable_ememoa}"
-echo
-echo "  Static build of memory pools:"
-echo "    Chained pool.......: ${enable_static_chained_pool}"
-echo "    Ememoa fixed.......: ${enable_static_ememoa_fixed}"
-echo "    Ememoa unknown.....: ${enable_static_ememoa_unknown}"
-echo "    Pass through.......: ${enable_static_pass_through}"
+echo "  Memory pools:"
+echo "    Chained pool.......: ${enable_chained_pool}"
+echo "    Ememoa fixed.......: ${enable_ememoa_fixed}"
+echo "    Ememoa unknown.....: ${enable_ememoa_unknown}"
+echo "    Fixed bitmap.......: ${enable_fixed_bitmap}"
+echo "    Pass through.......: ${enable_pass_through}"
 echo
 echo "  Installation.........: make install"
 echo

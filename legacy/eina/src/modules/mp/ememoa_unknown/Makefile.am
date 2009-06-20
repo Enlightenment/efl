@@ -8,8 +8,7 @@ AM_CPPFLAGS = \
 @EINA_CFLAGS@ \
 @EMEMOA_CFLAGS@
 
-if EINA_ENABLE_EMEMOA
-
+if EINA_BUILD_EMEMOA_UNKNOWN
 if !EINA_STATIC_BUILD_EMEMOA_UNKNOWN
 
 controllerdir = $(libdir)/eina/mp
@@ -23,7 +22,6 @@ eina_ememoa_unknown_la_LDFLAGS      = -no-undefined @lt_enable_auto_import@ -mod
 eina_ememoa_unknown_la_LIBTOOLFLAGS = --tag=disable-static
 
 endif
-
 endif
 
 clean-local:

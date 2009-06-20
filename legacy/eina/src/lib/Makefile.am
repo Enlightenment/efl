@@ -51,6 +51,12 @@ libeina_la_SOURCES += $(top_srcdir)/src/modules/mp/ememoa_unknown/eina_ememoa_un
 
 endif
 
+if EINA_STATIC_BUILD_FIXED_BITMAP
+
+libeina_la_SOURCES += $(top_srcdir)/src/modules/mp/fixed_bitmap/eina_fixed_bitmap.c
+
+endif
+
 if EINA_STATIC_BUILD_PASS_THROUGH
 
 libeina_la_SOURCES += $(top_srcdir)/src/modules/mp/pass_through/pass_through.c
