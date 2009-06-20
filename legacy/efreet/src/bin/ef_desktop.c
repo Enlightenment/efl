@@ -343,6 +343,7 @@ _cb_command(void *data, Efreet_Desktop *desktop __UNUSED__,
       info->error++;
     }
   }
+  free(exec);
   return NULL;
 }
 
