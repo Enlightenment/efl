@@ -45,6 +45,9 @@ ef_cb_efreet_icon_theme(void)
 
     efreet_shutdown();
     unsetenv("HOME");
+#ifdef _WIN32
+    unsetenv("USERPROFILE");
+#endif
     efreet_init();
 
     tmp = efreet_icon_user_dir_get();

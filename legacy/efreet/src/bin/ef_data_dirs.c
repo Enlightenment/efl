@@ -39,6 +39,9 @@ ef_cb_efreet_data_home(void)
     efreet_shutdown();
     unsetenv("XDG_DATA_HOME");
     unsetenv("HOME");
+#ifdef _WIN32
+    unsetenv("USERPROFILE");
+#endif
     efreet_init();
 
     tmp = efreet_data_home_get();
@@ -88,6 +91,9 @@ ef_cb_efreet_config_home(void)
     efreet_shutdown();
     unsetenv("XDG_CONFIG_HOME");
     unsetenv("HOME");
+#ifdef _WIN32
+    unsetenv("USERPROFILE");
+#endif
     efreet_init();
 
     tmp = efreet_config_home_get();
@@ -137,6 +143,9 @@ ef_cb_efreet_cache_home(void)
     efreet_shutdown();
     unsetenv("XDG_CACHE_HOME");
     unsetenv("HOME");
+#ifdef _WIN32
+    unsetenv("USERPROFILE");
+#endif
     efreet_init();
 
     tmp = efreet_cache_home_get();

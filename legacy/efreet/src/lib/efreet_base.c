@@ -10,6 +10,12 @@
 #include "Efreet.h"
 #include "efreet_private.h"
 
+#ifdef _WIN32
+# define EFREET_PATH_SEP ';'
+#else
+# define EFREET_PATH_SEP ':'
+#endif
+
 static const char *efreet_home_dir = NULL;
 static const char *xdg_data_home = NULL;
 static const char *xdg_config_home = NULL;
@@ -70,6 +76,10 @@ efreet_home_dir_get(void)
     if (efreet_home_dir) return efreet_home_dir;
 
     efreet_home_dir = getenv("HOME");
+#ifdef _WIN32
+    if (!efreet_home_dir || efreet_home_dir[0] == '\0')
+        efreet_home_dir = getenv("USERPROFILE");
+#endif
     if (!efreet_home_dir || efreet_home_dir[0] == '\0')
         efreet_home_dir = "/tmp";
 
@@ -102,9 +112,19 @@ efreet_data_home_get(void)
 EAPI Eina_List *
 efreet_data_dirs_get(void)
 {
+#ifdef _WIN32
+    char buf[4096];
+#endif
+
     if (xdg_data_dirs) return xdg_data_dirs;
+
+#ifdef _WIN32
+    snprintf(buf, 4096, "%s\\Efl;" PACKAGE_DATA_DIR ";/usr/share", getenv("APPDATA"));
+    xdg_data_dirs = efreet_dirs_get("XDG_DATA_DIRS", buf);
+#else
     xdg_data_dirs = efreet_dirs_get("XDG_DATA_DIRS",
                             PACKAGE_DATA_DIR ":/usr/share");
+#endif
     return xdg_data_dirs;
 }
 
@@ -205,7 +225,7 @@ efreet_dirs_get(const char *key, const char *fallback)
 
     tmp = strdup(path);
     s = tmp;
-    p = strchr(s, ':');
+    p = strchr(s, EFREET_PATH_SEP);
     while (p)
     {
         *p = '\0';
@@ -213,7 +233,7 @@ efreet_dirs_get(const char *key, const char *fallback)
             dirs = eina_list_append(dirs, (void *)eina_stringshare_add(s));
 
         s = ++p;
-        p = strchr(s, ':');
+        p = strchr(s, EFREET_PATH_SEP);
     }
     if (!eina_list_search_unsorted(dirs, EINA_COMPARE_CB(strcmp), s))
       dirs = eina_list_append(dirs, (void *)eina_stringshare_add(s));
