@@ -79,15 +79,15 @@ static int _eina_counter_init_count = 0;
 static inline int
 _eina_counter_time_get(Eina_Nano_Time *tp)
 {
-#if defined(CLOCK_PROCESS_CPUTIME_ID)
+# if defined(CLOCK_PROCESS_CPUTIME_ID)
    return clock_gettime(CLOCK_PROCESS_CPUTIME_ID, tp);
-#elif defined(CLOCK_PROF)
+# elif defined(CLOCK_PROF)
    return clock_gettime(CLOCK_PROF, tp);
-#elif defined(CLOCK_REALTIME)
+# elif defined(CLOCK_REALTIME)
    return clock_gettime(CLOCK_REALTIME, tp);
-#else
+# else
    return gettimeofday(tp, NULL);
-#endif
+# endif
 }
 #else
 static int EINA_COUNTER_ERROR_WINDOWS = 0;
@@ -239,11 +239,10 @@ _eina_counter_asiprintf(char *base, int *position, const char *format, ...)
  *
  * This function allocates the memory needed by the counter, which
  * means that it sets up the error module of Eina, and only on Windows
- * it initializes the high precision timer. It also registers the errors
- * #EINA_ERROR_OUT_OF_MEMORY and, if on Windows,
- * #EINA_COUNTER_ERROR_WINDOWS. It is also called by eina_init(). It
- * returns 0 on failure, otherwise it returns the number of times it
- * has already been called.
+ * it initializes the high precision timer. It also registers, only on
+ * Windows, the error #EINA_COUNTER_ERROR_WINDOWS. It is also called
+ * by eina_init(). It returns 0 on failure, otherwise it returns the
+ * number of times it has already been called.
  */
 EAPI int
 eina_counter_init(void)
