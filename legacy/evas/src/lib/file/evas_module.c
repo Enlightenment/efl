@@ -505,6 +505,9 @@ evas_module_shutdown(void)
 
    EINA_LIST_FREE(evas_module_paths, path)
      free(path);
+
+   eina_array_free(evas_engines);
+   evas_engines = NULL;
 }
 
 EAPI int
