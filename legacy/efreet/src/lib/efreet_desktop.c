@@ -1222,9 +1222,12 @@ efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Eina_List *files,
     if (command->num_pending == 0)
     {
         Eina_List *execs;
+        char *exec;
+
         execs = efreet_desktop_command_build(command);
         ret = efreet_desktop_command_execs_process(command, execs);
-	eina_list_free(execs);
+        EINA_LIST_FREE(execs, exec)
+            free(exec);
         efreet_desktop_command_free(command);
     }
 

@@ -1949,7 +1949,10 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
 
         /* if the .desktop has categories it isn't legacy */
         if (efreet_desktop_category_count_get(desktop) != 0)
+        {
+            efreet_desktop_free(desktop);
             continue;
+        }
 
         /* XXX: This will disappear when the .desktop is free'd */
         efreet_desktop_category_add(desktop, "Legacy");
@@ -2547,9 +2550,12 @@ efreet_menu_entry_new(void)
 EAPI void
 efreet_menu_free(Efreet_Menu *entry)
 {
+    Efreet_Menu *sub;
+
     IF_RELEASE(entry->name);
     IF_RELEASE(entry->icon);
-    entry->entries = eina_list_free(entry->entries);
+    EINA_LIST_FREE(entry->entries, sub)
+        efreet_menu_free(sub);
     IF_RELEASE(entry->id);
     if (entry->desktop) efreet_desktop_free(entry->desktop);
     FREE(entry);
@@ -3420,7 +3426,10 @@ efreet_menu_app_dir_scan(Efreet_Menu_Internal *internal, const char *path, const
             if (eina_list_search_unsorted(internal->app_pool,
                                           EINA_COMPARE_CB(efreet_menu_cb_md_compare_ids),
                                           buf2))
+            {
+                if (desktop) efreet_desktop_free(desktop);
                 continue;
+            }
 
             menu_desktop = efreet_menu_desktop_new();
             menu_desktop->desktop = desktop;
