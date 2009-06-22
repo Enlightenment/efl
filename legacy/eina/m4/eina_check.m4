@@ -7,7 +7,7 @@ m4_pushdef([DOWN], m4_translit([$1], [-A-Z], [_a-z]))dnl
 want_module="$2"
 
 AC_ARG_ENABLE([$1],
-   [AC_HELP_STRING([--enable-$1@<:@=yes|static|no@:>@], [enable build of $3 @<:@default=yes@:>@])],
+   [AC_HELP_STRING([--enable-$1], [enable build of $3 @<:@default=yes@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        enable_module="yes"
