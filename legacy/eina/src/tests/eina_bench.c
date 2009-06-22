@@ -41,6 +41,7 @@ static const Eina_Benchmark_Case etc[] = {
   { "Convert", eina_bench_convert },
   { "Sort", eina_bench_sort },
   { "Mempool", eina_bench_mempool },
+  { "Rectangle_Pool", eina_bench_rectangle_pool },
   { NULL, NULL }
 };
 
