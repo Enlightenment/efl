@@ -13,10 +13,10 @@ AM_CPPFLAGS = \
 
 AM_CFLAGS = @WIN32_CFLAGS@
 
-pkgdir = $(libdir)/evas/modules/loaders/pmaps/$(MODULE_ARCH)
-
+if BUILD_LOADER_PMAPS
 if !EVAS_STATIC_BUILD_PMAPS
 
+pkgdir = $(libdir)/evas/modules/loaders/pmaps/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES = evas_image_load_pmaps.c
@@ -31,4 +31,5 @@ noinst_LTLIBRARIES = libevas_loader_pmaps.la
 libevas_loader_pmaps_la_SOURCES = evas_image_load_pmaps.c
 libevas_loader_pmaps_la_LIBADD = @evas_image_loader_pmaps_libs@
 
+endif
 endif

@@ -13,9 +13,9 @@ AM_CPPFLAGS = \
 
 AM_CFLAGS = @WIN32_CFLAGS@
 
-pkgdir = $(libdir)/evas/modules/loaders/xpm/$(MODULE_ARCH)
-
+if BUILD_LOADER_XPM
 if !EVAS_STATIC_BUILD_XPM
+pkgdir = $(libdir)/evas/modules/loaders/xpm/$(MODULE_ARCH)
 
 pkg_LTLIBRARIES = module.la
 
@@ -33,4 +33,4 @@ libevas_loader_xpm_la_SOURCES = evas_image_load_xpm.c
 libevas_loader_xpm_la_LIBADD = @evas_image_loader_xpm_libs@
 
 endif
-
+endif

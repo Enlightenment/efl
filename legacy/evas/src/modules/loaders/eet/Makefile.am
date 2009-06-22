@@ -11,10 +11,11 @@ AM_CPPFLAGS = \
 
 AM_CFLAGS = @WIN32_CFLAGS@
 
-pkgdir = $(libdir)/evas/modules/loaders/eet/$(MODULE_ARCH)
 
+if BUILD_LOADER_EET
 if !EVAS_STATIC_BUILD_EET
 
+pkgdir = $(libdir)/evas/modules/loaders/eet/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES = evas_image_load_eet.c
@@ -30,4 +31,5 @@ noinst_LTLIBRARIES = libevas_loader_eet.la
 libevas_loader_eet_la_SOURCES = evas_image_load_eet.c
 libevas_loader_eet_la_LIBADD = @evas_image_loader_eet_libs@
 
+endif
 endif

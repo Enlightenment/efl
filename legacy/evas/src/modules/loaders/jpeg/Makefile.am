@@ -13,10 +13,10 @@ AM_CPPFLAGS = \
 
 AM_CFLAGS = @WIN32_CFLAGS@
 
-pkgdir = $(libdir)/evas/modules/loaders/jpeg/$(MODULE_ARCH)
-
+if BUILD_LOADER_JPEG
 if !EVAS_STATIC_BUILD_JPEG
 
+pkgdir = $(libdir)/evas/modules/loaders/jpeg/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES = evas_image_load_jpeg.c
@@ -31,4 +31,5 @@ noinst_LTLIBRARIES = libevas_loader_jpeg.la
 libevas_loader_jpeg_la_SOURCES = evas_image_load_jpeg.c
 libevas_loader_jpeg_la_LIBADD = @evas_image_loader_jpeg_libs@
 
+endif
 endif

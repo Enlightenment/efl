@@ -11,10 +11,10 @@ AM_CPPFLAGS = \
 
 AM_CFLAGS = @WIN32_CFLAGS@
 
-pkgdir = $(libdir)/evas/modules/loaders/svg/$(MODULE_ARCH)
-
+if BUILD_LOADER_SVG
 if !EVAS_STATIC_BUILD_SVG
 
+pkgdir = $(libdir)/evas/modules/loaders/svg/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES = evas_image_load_svg.c
@@ -29,4 +29,5 @@ noinst_LTLIBRARIES = libevas_loader_svg.la
 libevas_loader_svg_la_SOURCES = evas_image_load_svg.c
 libevas_loader_svg_la_LIBADD = @evas_image_loader_svg_libs@
 
+endif
 endif

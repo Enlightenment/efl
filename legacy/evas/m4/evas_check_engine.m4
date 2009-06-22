@@ -590,50 +590,61 @@ m4_pushdef([UP], m4_translit([$1], [-a-z], [_A-Z]))dnl
 m4_pushdef([DOWN], m4_translit([$1], [-A-Z], [_a-z]))dnl
 
 want_engine="$2"
+want_static_engine="no"
+have_engine="no"
 have_evas_engine_[]DOWN="no"
 
 AC_ARG_ENABLE([$1],
    [AC_HELP_STRING([--enable-$1], [enable $4 rendering backend])],
-   [want_engine=${enableval}]
-)
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_engine="yes"
+    else
+       if test "x${enableval}" = "xstatic" ; then
+          want_engine="static"
+       else
+          want_engine="no"
+       fi
+    fi
+   ])
 
 AC_MSG_CHECKING([whether to enable $4 rendering backend])
 AC_MSG_RESULT([${want_engine}])
 
-if test "x${want_engine}" = "xyes" -o "x${want_engine}" = "xauto"; then
-   m4_default([EVAS_CHECK_ENGINE_DEP_]m4_defn([UP]))(DOWN, $3, [have_evas_engine_[]DOWN="yes"], [have_evas_engine_[]DOWN="no"])
+if test "x${want_engine}" = "xyes" -o "x${want_engine}" = "xstatic" -o "x${want_engine}" = "xauto" ; then
+   m4_default([EVAS_CHECK_ENGINE_DEP_]m4_defn([UP]))(DOWN, $3, [have_engine="yes"], [have_engine="no"])
 fi
 
-if test "x${have_evas_engine_[]DOWN}" = "xno" -a "x${want_engine}" = "xyes" -a "x${use_strict}" = "xyes" ; then
+if test "x${have_engine}" = "xno" -a "x${want_engine}" = "xyes" -a "x${use_strict}" = "xyes" ; then
    AC_MSG_ERROR([$4 dependencies not found (strict dependencies checking)])
 fi
 
 AC_MSG_CHECKING([whether $4 rendering backend will be built])
-AC_MSG_RESULT([${have_evas_engine_[]DOWN}])
+AC_MSG_RESULT([${have_engine}])
 
-if test "x${have_evas_engine_[]DOWN}" = "xyes" ; then
+if test "x${have_engine}" = "xyes" ; then
+   if test "x${want_engine}" = "xstatic" ; then
+      have_evas_engine_[]DOWN="static"
+      want_static_engine="yes"
+   else
+      have_evas_engine_[]DOWN="yes"
+   fi
+fi
+
+AC_MSG_CHECKING([whether to statically include $4 rendering backend inside evas library])
+AC_MSG_RESULT([${want_static_engine}])
+
+if test "x${have_engine}" = "xyes" ; then
    AC_DEFINE(BUILD_ENGINE_[]UP, [1], [$4 rendering backend])
 fi
 
-AM_CONDITIONAL(BUILD_ENGINE_[]UP, [test "x${have_evas_engine_[]DOWN}" = "xyes"])
+AM_CONDITIONAL(BUILD_ENGINE_[]UP, [test "x${have_engine}" = "xyes"])
 
-want_static="no"
-have_static_evas_engine_[]DOWN=""
-
-AC_ARG_ENABLE([static-$1],
-   [AC_HELP_STRING([--enable-static-$1], [enable static build of $4 rendering backend])],
-   [want_static=${enableval}]
-)
-
-AC_MSG_CHECKING([whether to statically include $4 rendering backend inside evas library])
-AC_MSG_RESULT([${want_static}])
-
-AM_CONDITIONAL(EVAS_STATIC_BUILD_[]UP, [test "x${want_static}" = "xyes" -a "x${have_evas_engine_[]DOWN}" = "xyes"])
-
-if test "x${want_static}" = "xyes" -a "x${have_evas_engine_[]DOWN}" = "xyes"; then
-   have_static_evas_engine_[]DOWN="(static)"
+if test "x${want_static_engine}" = "xyes" ; then
    AC_DEFINE(EVAS_STATIC_BUILD_[]UP, [1], [Build $1 engine inside libevas])
 fi
+
+AM_CONDITIONAL(EVAS_STATIC_BUILD_[]UP, [test "x${want_static_engine}" = "xyes"])
 
 m4_popdef([UP])
 m4_popdef([DOWN])
