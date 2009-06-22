@@ -55,15 +55,24 @@ static inline void eina_rectangle_rescale_out(const Eina_Rectangle *out, const E
 EAPI int eina_rectangle_init(void);
 EAPI int eina_rectangle_shutdown(void);
 
-EAPI Eina_Rectangle_Pool *eina_rectangle_pool_add(int w, int h) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Rectangle_Pool *eina_rectangle_pool_new(int w, int h) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Rectangle_Pool *eina_rectangle_pool_get(Eina_Rectangle *rect) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 EAPI Eina_Bool eina_rectangle_pool_geometry_get(Eina_Rectangle_Pool *pool, int *w, int *h) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 EAPI void *eina_rectangle_pool_data_get(Eina_Rectangle_Pool *pool) EINA_PURE EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 EAPI void eina_rectangle_pool_data_set(Eina_Rectangle_Pool *pool, const void *data) EINA_ARG_NONNULL(1);
-EAPI void eina_rectangle_pool_delete(Eina_Rectangle_Pool *pool) EINA_ARG_NONNULL(1);
+EAPI void eina_rectangle_pool_free(Eina_Rectangle_Pool *pool) EINA_ARG_NONNULL(1);
 EAPI int eina_rectangle_pool_count(Eina_Rectangle_Pool *pool) EINA_PURE EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Rectangle *eina_rectangle_pool_request(Eina_Rectangle_Pool *pool, int w, int h) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 EAPI void eina_rectangle_pool_release(Eina_Rectangle *rect) EINA_ARG_NONNULL(1);
+
+#define EINA_RECTANGLE_SET(Rectangle, X, Y, W, H) \
+  Rectangle->x = X;				  \
+  Rectangle->y = Y;				  \
+  Rectangle->w = W;				  \
+  Rectangle->h = H;
+
+EAPI Eina_Rectangle *eina_rectangle_new(int x, int y, int w, int h);
+EAPI void eina_rectangle_free(Eina_Rectangle *rect);
 
 #include "eina_inline_rectangle.x"
 
