@@ -77,6 +77,7 @@ eina_bench_sort_eina(int request)
 }
 
 #ifdef EINA_BENCH_HAVE_EVAS
+#if 0
 static void
 eina_bench_sort_evas(int request)
 {
@@ -106,6 +107,7 @@ eina_bench_sort_evas(int request)
 
    evas_shutdown();
 }
+#endif
 #endif
 
 #ifdef EINA_BENCH_HAVE_GLIB
@@ -228,7 +230,9 @@ void eina_bench_sort(Eina_Benchmark *bench)
    eina_benchmark_register(bench, "ecore-heap", EINA_BENCHMARK(eina_bench_sort_ecore_heap), 10, 10000, 100);
 #endif
 #ifdef EINA_BENCH_HAVE_EVAS
+#if 0
    eina_benchmark_register(bench, "evas", EINA_BENCHMARK(eina_bench_sort_evas), 10, 10000, 100);
+#endif
 #endif
 }
 

@@ -561,6 +561,7 @@ eina_bench_gptrarray_4evas_render(int request)
 #endif
 
 #ifdef EINA_BENCH_HAVE_EVAS
+#if 0
 static void
 eina_bench_evas_list_4evas_render(int request)
 {
@@ -629,6 +630,7 @@ eina_bench_evas_list_4evas_render(int request)
 
    evas_shutdown();
 }
+#endif
 #endif
 
 #ifdef EINA_BENCH_HAVE_ECORE
@@ -710,7 +712,9 @@ void eina_bench_array(Eina_Benchmark *bench)
    eina_benchmark_register(bench, "gptrarray", EINA_BENCHMARK(eina_bench_gptrarray_4evas_render), 200, 4000, 100);
 #endif
 #ifdef EINA_BENCH_HAVE_EVAS
+#if 0
    eina_benchmark_register(bench, "evas", EINA_BENCHMARK(eina_bench_evas_list_4evas_render), 200, 4000, 100);
+#endif
 #endif
 #ifdef EINA_BENCH_HAVE_ECORE
 #if 0

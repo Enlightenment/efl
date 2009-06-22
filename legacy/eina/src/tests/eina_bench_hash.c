@@ -281,6 +281,7 @@ eina_bench_lookup_ghash(int request)
 #endif
 
 #ifdef EINA_BENCH_HAVE_EVAS
+#if 0
 static void
 eina_bench_lookup_evas(int request)
 {
@@ -328,6 +329,7 @@ eina_bench_lookup_evas(int request)
 
    eina_array_free(array);
 }
+#endif
 #endif
 
 #ifdef EINA_BENCH_HAVE_ECORE
@@ -389,7 +391,9 @@ void eina_bench_hash(Eina_Benchmark *bench)
    eina_benchmark_register(bench, "ghash-lookup", EINA_BENCHMARK(eina_bench_lookup_ghash), 10, 3000, 10);
 #endif
 #ifdef EINA_BENCH_HAVE_EVAS
+#if 0
    eina_benchmark_register(bench, "evas-lookup", EINA_BENCHMARK(eina_bench_lookup_evas), 10, 3000, 10);
+#endif
 #endif
 #ifdef EINA_BENCH_HAVE_ECORE
    eina_benchmark_register(bench, "ecore-lookup", EINA_BENCHMARK(eina_bench_lookup_ecore), 10, 3000, 10);

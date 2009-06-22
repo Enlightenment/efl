@@ -105,6 +105,7 @@ eina_bench_stringchunk_job(int request)
 #endif
 
 #ifdef EINA_BENCH_HAVE_EVAS
+#if 0
 static void
 eina_bench_evas_job(int request)
 {
@@ -137,6 +138,7 @@ eina_bench_evas_job(int request)
 /*    evas_stringshare_shutdown(); */
    evas_shutdown();
 }
+#endif
 #endif
 
 #ifdef EINA_BENCH_HAVE_ECORE
@@ -179,7 +181,9 @@ void eina_bench_stringshare(Eina_Benchmark *bench)
    eina_benchmark_register(bench, "stringchunk (glib)", EINA_BENCHMARK(eina_bench_stringchunk_job), 100, 20100, 500);
 #endif
 #ifdef EINA_BENCH_HAVE_EVAS
+#if 0
    eina_benchmark_register(bench, "stringshare (evas)", EINA_BENCHMARK(eina_bench_evas_job), 100, 20100, 500);
+#endif
 #endif
 #ifdef EINA_BENCH_HAVE_ECORE
    eina_benchmark_register(bench, "stringshare (ecore)", EINA_BENCHMARK(eina_bench_ecore_job), 100, 20100, 500);
