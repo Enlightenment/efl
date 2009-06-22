@@ -239,7 +239,7 @@ eina_rectangle_pool_new(int w, int h)
    if (!new) return NULL;
 
    new->head = NULL;
-   new->empty = eina_list_append(NULL, eina_rectangle_add(0, 0, w, h));
+   new->empty = eina_list_append(NULL, eina_rectangle_new(0, 0, w, h));
    new->references = 0;
    new->w = w;
    new->h = h;
