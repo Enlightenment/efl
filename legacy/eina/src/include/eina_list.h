@@ -129,7 +129,7 @@ EAPI Eina_Accessor *eina_list_accessor_new(const Eina_List *list) EINA_MALLOC EI
  * data of each element of the list. @p l is an #Eina_List that is
  * used as counter.
  *
- * This macro can be used for freeing the data of alist, like in
+ * This macro can be used for freeing the data of a list, like in
  * the following example:
  *
  * @code
@@ -148,7 +148,7 @@ EAPI Eina_Accessor *eina_list_accessor_new(const Eina_List *list) EINA_MALLOC EI
  *
  * @note this example is not optimal algorithm to release a list since
  *    it will walk the list twice, but it serves as an example. For
- *    optimized version use EINA_LIST_FREE()
+ *    optimized version use EINA_LIST_FREE().
  *
  * @warning do not delete list nodes, specially the current node,
  *    while iterating. If you wish to do so, use
@@ -169,7 +169,7 @@ EAPI Eina_Accessor *eina_list_accessor_new(const Eina_List *list) EINA_MALLOC EI
  * the data of each element of the list. @p l is an #Eina_List that is
  * used as counter.
  *
- * This macro can be used for freeing the data of alist, like in
+ * This macro can be used for freeing the data of a list, like in
  * the following example:
  *
  * @code

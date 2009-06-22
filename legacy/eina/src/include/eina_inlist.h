@@ -24,7 +24,20 @@
 #include "eina_accessor.h"
 
 /**
- * @defgroup Inline_List_Group Inline List
+ * @addtogroup Eina_Data_Types_Group Data Types
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Eina_Containers_Group Containers
+ *
+ * @{
+ */
+
+/**
+ * @defgroup Eina_Inline_List_Group Inline List
+ *
  * @{
  */
 
@@ -56,6 +69,16 @@ EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list) EINA_MA
 #define EINA_INLIST_FOREACH(list, l) for (l = (void*)list; l; l = (void*)(l->__in_list.next))
 #define EINA_INLIST_REVERSE_FOREACH(list, l) for (l = (list ? (void*)(list->last) : NULL); l; l = (void*)(l->__in_list.prev))
 
-/** @} */
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
 #endif /*EINA_INLIST_H_*/

@@ -71,13 +71,7 @@ void *alloca (size_t);
  *============================================================================*/
 
 /**
- * @addtogroup Eina_Tools_Group Tools
- *
- * @{
- */
-
-/**
- * @addtogroup Eina_File_Group Memory File
+ * @addtogroup Eina_File_Group File
  *
  * @brief Functions to traverse directories and split paths.
  *
@@ -275,10 +269,6 @@ eina_file_split(char *path)
 
 	return ea;
 }
-
-/**
- * @}
- */
 
 /**
  * @}

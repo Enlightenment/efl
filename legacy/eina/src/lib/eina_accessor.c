@@ -57,12 +57,6 @@
  *============================================================================*/
 
 /**
- * @addtogroup Eina_Content_Access_Group Content Access
- *
- * @{
- */
-
-/**
  * @addtogroup Eina_Accessor_Group Accessor Functions
  *
  * @brief These functions manage accessor on containers.
@@ -177,10 +171,6 @@ eina_accessor_over(Eina_Accessor *accessor,
    for (i = start; i < end && accessor->get_at(accessor, i, &data) == EINA_TRUE; ++i)
       if (cb(container, data, (void*) fdata) != EINA_TRUE) return ;
 }
-
-/**
- * @}
- */
 
 /**
  * @}

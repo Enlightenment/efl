@@ -25,6 +25,12 @@
 #include "eina_magic.h"
 
 /**
+ * @addtogroup Eina_Content_Access_Group Content Access
+ *
+ * @{
+ */
+
+/**
  * @defgroup Eina_Iterator_Group Iterator Functions
  *
  * @{
@@ -107,6 +113,10 @@ EAPI void eina_iterator_foreach        (Eina_Iterator *iterator,
  *    and fast as possible.
  */
 #define EINA_ITERATOR_FOREACH(itr, data) while (eina_iterator_next((itr), (void **)&(data)))
+
+/**
+ * @}
+ */
 
 /**
  * @}

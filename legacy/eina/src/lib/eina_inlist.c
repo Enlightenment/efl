@@ -34,6 +34,10 @@
  *                                  Local                                     *
  *============================================================================*/
 
+/**
+ * @cond LOCAL
+ */
+
 typedef struct _Eina_Iterator_Inlist Eina_Iterator_Inlist;
 typedef struct _Eina_Accessor_Inlist Eina_Accessor_Inlist;
 
@@ -126,6 +130,11 @@ eina_inlist_accessor_free(Eina_Accessor_Inlist *it) {
 	free(it);
 }
 
+/**
+ * @endcond
+ */
+
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -135,9 +144,13 @@ eina_inlist_accessor_free(Eina_Accessor_Inlist *it) {
  *============================================================================*/
 
 /**
- * To be documented
- * FIXME: To be fixed
+ * @addtogroup Eina_Inline_List_Group Inline List
+ *
+ * @brief These functions provide inline list management.
+ *
+ * @{
  */
+
 EAPI Eina_Inlist *
 eina_inlist_append(Eina_Inlist *list, Eina_Inlist *new_l)
 {
@@ -161,10 +174,7 @@ eina_inlist_append(Eina_Inlist *list, Eina_Inlist *new_l)
    list->last = new_l;
    return list;
 }
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI Eina_Inlist *
 eina_inlist_prepend(Eina_Inlist *list, Eina_Inlist *new_l)
 {
@@ -182,10 +192,7 @@ eina_inlist_prepend(Eina_Inlist *list, Eina_Inlist *new_l)
    list->last = NULL;
    return new_l;
 }
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI Eina_Inlist *
 eina_inlist_append_relative(Eina_Inlist *list,
 			    Eina_Inlist *new_l,
@@ -207,10 +214,7 @@ eina_inlist_append_relative(Eina_Inlist *list,
    }
    return eina_inlist_append(list, new_l);
 }
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI Eina_Inlist *
 eina_inlist_prepend_relative(Eina_Inlist *list,
 			     Eina_Inlist *new_l,
@@ -238,10 +242,7 @@ eina_inlist_prepend_relative(Eina_Inlist *list,
    }
    return eina_inlist_prepend(list, new_l);
 }
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI Eina_Inlist *
 eina_inlist_remove(Eina_Inlist *list, Eina_Inlist *item)
 {
@@ -268,10 +269,7 @@ eina_inlist_remove(Eina_Inlist *list, Eina_Inlist *item)
    item->prev = NULL;
    return return_l;
 }
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI Eina_Inlist *
 eina_inlist_promote(Eina_Inlist *list, Eina_Inlist *item)
 {
@@ -296,10 +294,7 @@ eina_inlist_promote(Eina_Inlist *list, Eina_Inlist *item)
 
    return item;
 }
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI Eina_Inlist *
 eina_inlist_demote(Eina_Inlist *list, Eina_Inlist *item)
 {
@@ -331,10 +326,7 @@ eina_inlist_demote(Eina_Inlist *list, Eina_Inlist *item)
    l->last = item;
    return l;
 }
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI Eina_Inlist *
 eina_inlist_find(Eina_Inlist *list, Eina_Inlist *item)
 {
@@ -420,3 +412,7 @@ eina_inlist_accessor_new(const Eina_Inlist *list)
 
    return &it->accessor;
 }
+
+/**
+ * @}
+ */

@@ -24,7 +24,14 @@
 #include "eina_error.h"
 
 /**
- * @defgroup Module_Group Module
+ * @addtogroup Eina_Tools_Group Tools
+ *
+ * @{
+ */
+
+/**
+ * @defgroup Eina_Module_Group Module
+ *
  * @{
  */
 

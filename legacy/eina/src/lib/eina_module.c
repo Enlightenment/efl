@@ -158,9 +158,13 @@ static int _eina_module_count = 0;
  *============================================================================*/
 
 /**
- * To be documented
- * FIXME: To be fixed
+ * @addtogroup Eina_Module_Group Module
+ *
+ * @brief These functions provide module management.
+ *
+ * @{
  */
+
 EAPI int
 eina_module_init(void)
 {
@@ -177,10 +181,7 @@ eina_module_init(void)
 end_init:
 	return _eina_module_count;
 }
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI int
 eina_module_shutdown(void)
 {
@@ -197,10 +198,7 @@ eina_module_shutdown(void)
 end_shutdown:
 	return _eina_module_count;
 }
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI Eina_Bool eina_module_load(Eina_Module *m)
 {
 	void *dl_handle;
@@ -236,10 +234,7 @@ loaded:
 	eina_error_set(0);
 	return EINA_TRUE;
 }
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI Eina_Bool eina_module_unload(Eina_Module *m)
 {
 	Eina_Module_Shutdown *shut;
@@ -257,10 +252,7 @@ EAPI Eina_Bool eina_module_unload(Eina_Module *m)
 	}
 	return EINA_FALSE;
 }
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI Eina_Module * eina_module_new(const char *file)
 {
 	Eina_Module *m;
@@ -276,10 +268,7 @@ EAPI Eina_Module * eina_module_new(const char *file)
 
 	return m;
 }
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI Eina_Bool eina_module_delete(Eina_Module *m)
 {
 	EINA_SAFETY_ON_NULL_RETURN_VAL(m, EINA_FALSE);
@@ -293,20 +282,14 @@ EAPI Eina_Bool eina_module_delete(Eina_Module *m)
 	free(m);
 	return EINA_TRUE;
 }
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI void * eina_module_symbol_get(Eina_Module *m, const char *symbol)
 {
 	EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
 	EINA_SAFETY_ON_NULL_RETURN_VAL(m->handle, NULL);
 	return dlsym(m->handle, symbol);
 }
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI const char * eina_module_file_get(Eina_Module *m)
 {
 	EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
@@ -408,6 +391,7 @@ EAPI Eina_Array * eina_module_list_get(Eina_Array *array, const char *path, unsi
 
 	return list_get_cb_data.array;
 }
+
 /**
  * Load every module on the list of modules
  * @param list The list of modules
@@ -423,10 +407,7 @@ EAPI void eina_module_list_load(Eina_Array *array)
 	EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
 		eina_module_load(m);
 }
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI void eina_module_list_unload(Eina_Array *array)
 {
 	Eina_Array_Iterator iterator;
@@ -438,6 +419,7 @@ EAPI void eina_module_list_unload(Eina_Array *array)
 	EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
 		eina_module_unload(m);
 }
+
 /**
  * Helper function that iterates over the list of modules and calls
  * eina_module_delete on each
@@ -455,3 +437,7 @@ EAPI void eina_module_list_delete(Eina_Array *array)
 
 	eina_array_flush(array);
 }
+
+/**
+ * @}
+ */

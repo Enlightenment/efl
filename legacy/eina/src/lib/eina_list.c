@@ -423,7 +423,7 @@ eina_list_sort_merge(Eina_List *a, Eina_List *b, Eina_Compare_Cb func)
 /**
  * @addtogroup Eina_List_Group List
  *
- * @brief These functions provide single linked list management.
+ * @brief These functions provide double linked list management.
  *
  * For more information, you can look at the @ref tutorial_list_page.
  *
@@ -435,10 +435,25 @@ eina_list_sort_merge(Eina_List *a, Eina_List *b, Eina_Compare_Cb func)
  *
  * @return 1 or greater on success, 0 on error.
  *
- * This function just sets up the error module or Eina. It is also
- * called by eina_init(). It returns 0 on failure, otherwise it
- * returns the number of times eina_error_init() has already been
- * called.
+ * This function sets up the error, magic and mempool modules of
+ * Eina. It is also called by eina_init(). It returns 0 on failure,
+ * otherwise it returns the number of times it has already been
+ * called. If Eina has been configured with the default memory pool,
+ * then the memory pool used in an Eina list will be
+ * "pass_through". Otherwise, the environment variable EINA_MEMPOOL is
+ * read and its value is chosen as memory pool ; if EINA_MEMPOOL is
+ * not defined, then the "chained_mempool" memory pool is chosen. If
+ * the memory pool is not found, then eina_list_init() return @c 0.
+ * See eina_error_init(), eina_magic_string_init() and
+ * eina_mempool_init() for the documentation of the initialisation of
+ * the dependency modules.
+ *
+ * When no more Eina lists are used, call eina_list_shutdown() to shut
+ * down the list module.
+ *
+ * @see eina_error_init()
+ * @see eina_magic_string_init()
+ * @see eina_mempool_init()
  */
 EAPI int
 eina_list_init(void)
@@ -516,13 +531,13 @@ eina_list_init(void)
 /**
  * @brief Shut down the list module.
  *
- * @return 0 when the error module is completely shut down, 1 or
+ * @return 0 when the list module is completely shut down, 1 or
  * greater otherwise.
  *
- * This function just shut down the error module set up by
- * eina_list_init(). It is also called by eina_shutdown(). It returns
- * 0 when it is called the same number of times than
- * eina_error_init().
+ * This function shuts down the mempool, magic and error modules set
+ * up by eina_list_init(). It is also called by eina_shutdown(). It
+ * returns 0 when it is called the same number of times than
+ * eina_list_init().
  */
 EAPI int
 eina_list_shutdown(void)

@@ -23,6 +23,18 @@
 #include "eina_config.h"
 #include "eina_types.h"
 
+/**
+ * @addtogroup Eina_Tools_Group Tools
+ *
+ * @{
+ */
+
+/**
+ * @defgroup Eina_Magic_Group Magic
+ *
+ * @{
+ */
+
 
 EAPI int eina_magic_string_init(void);
 EAPI int eina_magic_string_shutdown(void);
@@ -58,5 +70,13 @@ EAPI void eina_magic_fail(void *d, Eina_Magic m, Eina_Magic req_m,
 #define eina_magic_fail(d, m, req_m, file, fnx, line) ((void) 0)
 
 #endif
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
 #endif /* EINA_MAGIC_H_ */

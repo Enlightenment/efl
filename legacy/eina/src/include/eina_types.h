@@ -20,6 +20,12 @@
 #define EINA_TYPES_H_
 
 /**
+ * @addtogroup Eina_Core_Group Core
+ *
+ * @{
+ */
+
+/**
  * @defgroup Eina_Types_Group Types
  *
  * @{
@@ -209,6 +215,10 @@ typedef Eina_Bool (*Eina_Each)(const void *container,
 
 typedef void (*Eina_Free_Cb)(void *data);
 #define EINA_FREE_CB(Function) ((Eina_Free_Cb)Function)
+
+/**
+ * @}
+ */
 
 /**
  * @}

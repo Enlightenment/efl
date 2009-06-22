@@ -58,12 +58,6 @@
  *============================================================================*/
 
 /**
- * @addtogroup Eina_Content_Access_Group Content Access
- *
- * @{
- */
-
-/**
  * @addtogroup Eina_Iterator_Group Iterator Functions
  *
  * @brief These functions manage iterators on containers.
@@ -171,10 +165,6 @@ eina_iterator_foreach(Eina_Iterator *iterator,
       if (cb(container, data, (void*) fdata) != EINA_TRUE) return ;
    }
 }
-
-/**
- * @}
- */
 
 /**
  * @}

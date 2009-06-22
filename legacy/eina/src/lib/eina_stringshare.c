@@ -777,12 +777,6 @@ _eina_stringshare_node_alloc(int slen)
  *============================================================================*/
 
 /**
- * @addtogroup Eina_Data_Types_Group Data Types
- *
- * @{
- */
-
-/**
  * @addtogroup Eina_Stringshare_Group Stringshare
  *
  * These functions allow you to store one copy of a string, and use it
@@ -1289,10 +1283,6 @@ eina_stringshare_dump(void)
      fprintf(stderr, "DDD: %i strings of length %i, max strings: %i\n", population_group[i].count, i, population_group[i].max);
 #endif
 }
-
-/**
- * @}
- */
 
 /**
  * @}

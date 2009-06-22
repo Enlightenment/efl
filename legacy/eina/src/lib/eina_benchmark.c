@@ -61,6 +61,9 @@ void *alloca (size_t);
  * @cond LOCAL
  */
 
+#define EINA_BENCHMARK_FILENAME_MASK "bench_%s_%s.gnuplot"
+#define EINA_BENCHMARK_DATA_MASK "bench_%s_%s.%s.data"
+
 typedef struct _Eina_Run Eina_Run;
 struct _Eina_Run
 {
@@ -96,12 +99,6 @@ static int _eina_benchmark_count = 0;
  *============================================================================*/
 
 /**
- * @addtogroup Eina_Tools_Group Tools
- *
- * @{
- */
-
-/**
  * @addtogroup Eina_Benchmark_Group Benchmark
  *
  * These functions allow you to add benchmark framework in a project
@@ -135,8 +132,18 @@ static int _eina_benchmark_count = 0;
  *
  * This function sets up the error, array and counter modules or
  * Eina. It is also called by eina_init(). It returns 0 on failure,
- * otherwise it returns the number of times eina_error_init() has
- * already been called.
+ * otherwise it returns the number of times it has already been
+ * called. See eina_error_init(), eina_array_init() and
+ * eina_counter_init() for the documentation of the initialisation of
+ * the dependency modules.
+ *
+ * When no more Eina benchmarks are used, call
+ * eina_benchmark_shutdown() to shut down the benchmark module.
+ *
+ * @see eina_error_init()
+ * @see eina_array_init()
+ * @see eina_counter_init()
+ * @see eina_init()
  */
 EAPI int
 eina_benchmark_init(void)
@@ -178,7 +185,12 @@ eina_benchmark_init(void)
  *
  * This function shut down the error, array and counter modules set up
  * by eina_array_init(). It is also called by eina_shutdown(). It returns
- * 0 when it is called the same number of times than eina_error_init().
+ * 0 when it is called the same number of times than eina_benchmark_init().
+ *
+ * @see eina_error_shutdown()
+ * @see eina_array_shutdown()
+ * @see eina_counter_shutdown()
+ * @see eina_shutdown()
  */
 EAPI int
 eina_benchmark_shutdown(void)
@@ -326,8 +338,6 @@ eina_benchmark_register(Eina_Benchmark *bench, const char *name, Eina_Benchmark_
  * immediatly. Otherwise, it returns the list of the names of each
  * test.
  */
-#define EINA_BENCHMARK_FILENAME_MASK "bench_%s_%s.gnuplot"
-#define EINA_BENCHMARK_DATA_MASK "bench_%s_%s.%s.data"
 EAPI Eina_Array *
 eina_benchmark_run(Eina_Benchmark *bench)
 {
@@ -432,10 +442,6 @@ eina_benchmark_run(Eina_Benchmark *bench)
 
    return ea;
 }
-
-/**
- * @}
- */
 
 /**
  * @}

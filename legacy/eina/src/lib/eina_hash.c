@@ -613,18 +613,6 @@ _eina_hash_iterator_free(Eina_Iterator_Hash *it)
  *============================================================================*/
 
 /**
- * @addtogroup Eina_Data_Types_Group Data Types
- *
- * @{
- */
-
-/**
- * @addtogroup Eina_Containers_Group Containers
- *
- * @{
- */
-
-/**
  * @addtogroup Eina_Hash_Group Hash Table
  *
  * @brief give a small description here : what it is for, what it does
@@ -654,10 +642,16 @@ _eina_hash_iterator_free(Eina_Iterator_Hash *it)
  *
  * @return 1 or greater on success, 0 on error.
  *
- * This function just sets up the error module or Eina. It is also
- * called by eina_init(). It returns 0 on failure, otherwise it
- * returns the number of times eina_error_init() has already been
- * called.
+ * This function sets up the error module of Eina. It is also called
+ * by eina_init(). It returns 0 on failure, otherwise it returns the
+ * number of times it has already been called. See eina_error_init()
+ * for the documentation of the initialisation of the dependency
+ * module.
+ *
+ * When no more Eina hash tables are used, call eina_hash_shutdown()
+ * to shut down the array module.
+ *
+ * @see eina_error_init()
  */
 EAPI int
 eina_hash_init(void)
@@ -1501,14 +1495,6 @@ eina_hash_superfast(const char *key, int len)
 
    return hash;
 }
-
-/**
- * @}
- */
-
-/**
- * @}
- */
 
 /**
  * @}

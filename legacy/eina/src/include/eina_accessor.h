@@ -25,6 +25,12 @@
 #include "eina_magic.h"
 
 /**
+ * @addtogroup Eina_Content_Access_Group Content Access
+ *
+ * @{
+ */
+
+/**
  * @defgroup Eina_Accessor_Group Accessor Functions
  *
  * @{
@@ -71,11 +77,13 @@ EAPI void eina_accessor_over           (Eina_Accessor *accessor,
  * @brief Macro to iterate over all elements easily.
  *
  * @param accessor The accessor to use.
+ * @param counter A counter used by eina_accessor_data_get() when
+ * iterating over the container.
  * @param data Where to store * data, must be a pointer support getting
- *        its address since * eina_accessor_data_get() requires a pointer
- *        to pointer!
+ * its address since * eina_accessor_data_get() requires a pointer to
+ * pointer!
  *
- * This macro is a convenient way to loop over all elements in an
+ * This macro allows a convenient way to loop over all elements in an
  * accessor, very similar to EINA_LIST_FOREACH().
  *
  * This macro can be used for freeing the data of a list, like in the
@@ -114,6 +122,10 @@ EAPI void eina_accessor_over           (Eina_Accessor *accessor,
  *    and fast as possible.
  */
 #define EINA_ACCESSOR_FOREACH(accessor, counter, data) for ((counter) = 0; eina_accessor_data_get((accessor), (counter), (void **)&(data)); (counter)++)
+
+/**
+ * @}
+ */
 
 /**
  * @}

@@ -109,8 +109,8 @@ eina_array_data_get(const Eina_Array *array, unsigned int index)
  * @brief Return the data at a given position in an array.
  *
  * @param array The array.
- * @param index The potition of the data to retrieve.
- * @return The retrieved data.
+ * @param index The potition of the data to set.
+ * @param data The data to set.
  *
  * This function returns the data at the position @p index in @p
  * array. For performance reasons, there is no check of @p array or @p
@@ -123,7 +123,7 @@ eina_array_data_set(const Eina_Array *array, unsigned int index, const void *dat
 }
 
 /**
- * @brief Return the number of elements in the array.
+ * @brief Return the number of elements in an array.
  *
  * @param array The array.
  * @return The number of elements.

@@ -37,6 +37,10 @@
  *                                  Local                                     *
  *============================================================================*/
 
+/**
+ * @cond LOCAL
+ */
+
 #ifdef EINA_MAGIC_DEBUG
 
 typedef struct _Eina_Magic_String Eina_Magic_String;
@@ -53,6 +57,10 @@ static Eina_Inlist *strings = NULL;
 
 #endif
 
+/**
+ * @endcond
+ */
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -61,6 +69,28 @@ static Eina_Inlist *strings = NULL;
  *                                   API                                      *
  *============================================================================*/
 
+/**
+ * @addtogroup Eina_Magic_Group Magic
+ *
+ * @brief These functions provide magic checks management for projects.
+ *
+ * @{
+ */
+
+/**
+ * @brief Initialize the magic module.
+ *
+ * @return 1 or greater.
+ *
+ * This function just increases a reference counter. If the magic
+ * module is disabled at configure time, then it always returns @c 1.
+ *
+ * Once the magic module is not used anymore, then
+ * eina_magic_shutdown() must be called to shut down the magic
+ * module.
+ *
+ * @see eina_init()
+ */
 EAPI int
 eina_magic_string_init(void)
 {
@@ -73,6 +103,21 @@ eina_magic_string_init(void)
 #endif
 }
 
+/**
+ * @brief Shut down the magic module.
+ *
+ * @return 0 when the magic module is completely shut down, 1 or
+ * greater otherwise.
+ *
+ * This function shuts down the magic module set up by
+ * eina_magic_string_init(). It is called by eina_shutdown() and by
+ * all modules shutdown functions. It returns 0 when it is called the
+ * same number of times than eina_magic_string_init(). In that case it
+ * clears the magic list and return @c 0. If the magic module is
+ * disabled at configure time, then it always returns @c 0.
+ *
+ * @see eina_shutdown()
+ */
 EAPI int
 eina_magic_string_shutdown(void)
 {
@@ -102,6 +147,16 @@ eina_magic_string_shutdown(void)
 
 #ifdef EINA_MAGIC_DEBUG
 
+/**
+ * @brief Return the string associated to the given magic identifier.
+ *
+ * @param magic The magic identifier.
+ * @return The string associated to the identifier.
+ *
+ * This function returns the string associated to @p magic. If none
+ * are found, the this function returns @c NULL. The returned value
+ * must not be freed.
+ */
 EAPI const char*
 eina_magic_string_get(Eina_Magic magic)
 {
@@ -114,6 +169,17 @@ eina_magic_string_get(Eina_Magic magic)
    return NULL;
 }
 
+/**
+ * @brief Set the string associated to the given magic identifier.
+ *
+ * @param magic The magic identifier.
+ * @param The string associated to the identifier.
+ *
+ * This function sets the string @p magic_name to @p magic. If a
+ * string is already associated to @p magic, then it is freed and @p
+ * magic_name is duplicated. Otherwise, it is added to the list of
+ * magic strings.
+ */
 EAPI void
 eina_magic_string_set(Eina_Magic magic, const char *magic_name)
 {
@@ -131,6 +197,8 @@ eina_magic_string_set(Eina_Magic magic, const char *magic_name)
        }
 
    ems = malloc(sizeof (Eina_Magic_String));
+   if (!ems)
+     return;
    ems->magic = magic;
    if (magic_name)
      ems->string = strdup(magic_name);
@@ -140,6 +208,29 @@ eina_magic_string_set(Eina_Magic magic, const char *magic_name)
    strings = eina_inlist_prepend(strings, EINA_INLIST_GET(ems));
 }
 
+/**
+ * @brief Display a message or abort is a magic check failed.
+ *
+ * @param d The checked data pointer.
+ * @param m The magic identifer to check.
+ * @param req_m The requested magic identifier to check.
+ * @param file The file in which the magic check failed.
+ * @param fcn The function in which the magic check failed.
+ * @param line The line at which the magic check failed.
+ *
+ * This function displays an error message if a magic check has
+ * failed, using the following logic in the following order:
+ * @li If @p d is @c NULL, a message warns about a @c NULL pointer.
+ * @li Otherwise, if @p m is equal to #EINA_MAGIC_NONE, a message
+ * warns about a handle that was already freed.
+ * @li Otherwise, if @p m is equal to @p req_m, a message warns about
+ * a handle that is of wrong type.
+ * @li Otherwise, a message warns you about ab-using that function...
+ *
+ * If the environment variable EINA_ERROR_ABORT is set, abort() is
+ * called and the program stops. It is useful for debugging programs
+ * with gdb.
+ */
 EAPI void
 eina_magic_fail(void *d, Eina_Magic m, Eina_Magic req_m, const char *file, const char *fnc, int line)
 {
@@ -185,3 +276,7 @@ eina_magic_fail(void *d, Eina_Magic m, Eina_Magic req_m, const char *file, const
 }
 
 #endif
+
+/**
+ * @}
+ */

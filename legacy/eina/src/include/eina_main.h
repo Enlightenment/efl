@@ -19,8 +19,28 @@
 #ifndef EINA_MAIN_H_
 #define EINA_MAIN_H_
 
+/**
+ * @addtogroup Eina_Core_Group Core
+ *
+ * @{
+ */
+
+/**
+ * @defgroup Eina_Main_Group Main
+ *
+ * @{
+ */
+
 EAPI int eina_init(void);
 
 EAPI int eina_shutdown(void);
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
 #endif /* EINA_MAIN_H_ */

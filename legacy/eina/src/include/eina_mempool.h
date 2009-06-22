@@ -24,9 +24,17 @@
 #include "eina_module.h"
 
 /**
- * @defgroup Memory_Pool_Group Memory Pool
+ * @addtogroup Eina_Tools_Group Tools
+ *
  * @{
  */
+
+/**
+ * @defgroup Eina_Memory_Pool_Group Memory Pool
+ *
+ * @{
+ */
+
 typedef struct _Eina_Mempool Eina_Mempool;
 typedef struct _Eina_Mempool_Backend Eina_Mempool_Backend;
 
@@ -49,6 +57,13 @@ EAPI Eina_Bool eina_mempool_register(Eina_Mempool_Backend *be) EINA_ARG_NONNULL(
 EAPI void eina_mempool_unregister(Eina_Mempool_Backend *be) EINA_ARG_NONNULL(1);
 
 #include "eina_inline_mempool.x"
-/** @} */
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
 #endif /* EINA_MEMPOOL_H_ */

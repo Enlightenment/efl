@@ -351,10 +351,18 @@ eina_array_grow(Eina_Array *array)
  *
  * @return 1 or greater on success, 0 on error.
  *
- * This function just sets up the error module or Eina. It is also
- * called by eina_init(). It returns 0 on failure, otherwise it
- * returns the number of times eina_error_init() has already been
- * called.
+ * This function sets up the error and magic modules or Eina. It is
+ * also called by eina_init(). It returns 0 on failure, otherwise it
+ * returns the number of times it has already been called. See
+ * eina_error_init() and eina_magic_string_init() for the
+ * documentation of the initialisation of the dependency modules.
+ *
+ * When no more Eina arrays are used, call eina_array_shutdown() to shut
+ * down the array module.
+ *
+ * @see eina_error_init()
+ * @see eina_magic_string_init()
+ * @see eina_init()
  */
 EAPI int
 eina_array_init(void)
@@ -392,13 +400,19 @@ eina_array_init(void)
 /**
  * @brief Shut down the array module.
  *
- * @return 0 when the error module is completely shut down, 1 or
+ * @return 0 when the list module is completely shut down, 1 or
  * greater otherwise.
  *
- * This function just shut down the error module set up by
- * eina_array_init(). It is also called by eina_shutdown(). It returns
- * 0 when it is called the same number of times than
- * eina_error_init().
+ * This function shuts down the array module. It returns 0 when it has
+ * been called the same number of times than eina_array_init(). In
+ * that case it shut down the magic and error modules. This function
+ * is also called by eina_shutdown(). See eina_error_shutdown() and
+ * eina_magic_string_shutdown() for the documentation of the
+ * shutting down of the dependency modules.
+ *
+ * @see eina_error_shutdown()
+ * @see eina_magic_string_shutdown()
+ * @see eina_shutdown()
  */
 EAPI int
 eina_array_shutdown(void)
@@ -714,4 +728,3 @@ eina_array_accessor_new(const Eina_Array *array)
 /**
  * @}
  */
-

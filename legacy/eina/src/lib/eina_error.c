@@ -420,12 +420,6 @@ static const char *_colors[EINA_ERROR_LEVELS] = {
  *============================================================================*/
 
 /**
- * @addtogroup Eina_Tools_Group Tools
- *
- * @{
- */
-
-/**
  * @addtogroup Eina_Error_Group Error
  *
  * @brief These functions provide error management for projects.
@@ -501,14 +495,14 @@ EAPI Eina_Error EINA_ERROR_OUT_OF_MEMORY = 0;
  */
 
 /**
- * @brief Initialize the error system.
+ * @brief Initialize the error module.
  *
  * @return 1 or greater on success, 0 on error.
  *
- * This function sets up the error system or Eina. It is called by
- * eina_init() and by all subsystems initialization functions. It
- * returns 0 on failure, otherwise it returns the number of times it
- * is called.
+ * This function sets up the error module of Eina. It is called by
+ * eina_init() and by all modules initialization functions. It returns
+ * @c 0 on failure, otherwise it returns the number of times it is
+ * called.
  *
  * The default error level value is set by default to
  * #EINA_ERROR_LEVEL_DBG if Eina is compiled with debug mode, or to
@@ -520,9 +514,13 @@ EAPI Eina_Error EINA_ERROR_OUT_OF_MEMORY = 0;
  * #EINA_ERROR_LEVEL_INFO and #EINA_ERROR_LEVEL_DBG. That value can
  * also be set later with eina_error_log_level_set().
  *
- * If you call explicitly this function and once the error subsystem
- * is not used anymore, then eina_error_shutdown() must be called to
- * shut down the error system.
+ * This function registers the error #EINA_ERROR_OUT_OF_MEMORY.
+ *
+ * Once the error module is not used anymore, then
+ * eina_error_shutdown() must be called to shut down the error
+ * module.
+ *
+ * @see eina_init()
  */
 EAPI int eina_error_init(void)
 {
@@ -541,16 +539,18 @@ EAPI int eina_error_init(void)
 }
 
 /**
- * @brief Shut down the error system.
+ * @brief Shut down the error module.
  *
- * @return 0 when the error system is completely shut down, 1 or
+ * @return 0 when the error module is completely shut down, 1 or
  * greater otherwise.
  *
- * This function shut down the error system set up by
+ * This function shuts down the error module set up by
  * eina_error_init(). It is called by eina_shutdown() and by all
- * subsystems shutdown functions. It returns 0 when it is called the
- * same number of times than eina_error_init() and it clears the error
- * list.
+ * modules shutdown functions. It returns 0 when it is called the
+ * same number of times than eina_error_init(). In that case it clears
+ * the error list.
+ *
+ * @see eina_shutdown()
  */
 EAPI int eina_error_shutdown(void)
 {
@@ -794,10 +794,6 @@ EAPI void eina_error_log_level_set(Eina_Error_Level level)
 {
 	_error_level = level;
 }
-
-/**
- * @}
- */
 
 /**
  * @}

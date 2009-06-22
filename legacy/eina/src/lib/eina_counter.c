@@ -147,12 +147,6 @@ _eina_counter_asiprintf(char *base, int *position, const char *format, ...)
  *============================================================================*/
 
 /**
- * @addtogroup Eina_Tools_Group Tools
- *
- * @{
- */
-
-/**
  * @addtogroup Eina_Counter_Group Counter
  *
  * @brief These functions allow you to get the time spent in a part of a code.
@@ -237,12 +231,20 @@ _eina_counter_asiprintf(char *base, int *position, const char *format, ...)
  *
  * @return 1 or greater on success, 0 on error.
  *
- * This function allocates the memory needed by the counter, which
- * means that it sets up the error module of Eina, and only on Windows
+ * This function sets up the error module of Eina and only on Windows,
  * it initializes the high precision timer. It also registers, only on
  * Windows, the error #EINA_COUNTER_ERROR_WINDOWS. It is also called
  * by eina_init(). It returns 0 on failure, otherwise it returns the
- * number of times it has already been called.
+ * number of times it has already been called. See eina_error_init()
+ * for the documentation of the initialisation of the dependency
+ * modules.
+ *
+ * Once the counter module is not used anymore, then
+ * eina_counter_shutdown() must be called to shut down the counter
+ * module.
+ *
+ * @see eina_error_init()
+ * @see eina_init()
  */
 EAPI int
 eina_counter_init(void)
@@ -275,9 +277,13 @@ eina_counter_init(void)
  * @return 0 when the counter module is completely shut down, 1 or
  * greater otherwise.
  *
- * This function just shuts down the error module. It is also called by
- * eina_shutdown(). It returns 0 when it is called the same number of
- * times than eina_counter_init().
+ * This function shuts down the counter module set up by
+ * eina_counter_init(). It is called by eina_shutdown(). It
+ * returns 0 when it is called the same number of times than
+ * eina_counter_init().
+ *
+ * @see eina_error_shutdown()
+ * @see eina_shutdown()
  */
 EAPI int
 eina_counter_shutdown(void)
@@ -475,10 +481,6 @@ eina_counter_dump(Eina_Counter *counter)
 
    return result;
 }
-
-/**
- * @}
- */
 
 /**
  * @}

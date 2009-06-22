@@ -35,6 +35,10 @@
  *                                  Local                                     *
  *============================================================================*/
 
+/**
+ * @cond LOCAL
+ */
+
 static Eina_Hash *_backends;
 static Eina_Array *_modules;
 static int _init_count = 0;
@@ -93,6 +97,10 @@ Eina_Bool fixed_bitmap_init(void);
 void fixed_bitmap_shutdown(void);
 #endif
 
+/**
+ * @endcond
+ */
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -111,11 +119,16 @@ EAPI void eina_mempool_unregister(Eina_Mempool_Backend *be)
  *                                   API                                      *
  *============================================================================*/
 
+/**
+ * @addtogroup Eina_Memory_Pool_Group Memory Pool
+ *
+ * @brief These functions provide memory pool management.
+ *
+ * @{
+ */
+
 EAPI Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE = 0;
 
-/**
- *
- */
 EAPI int
 eina_mempool_init(void)
 {
@@ -184,9 +197,6 @@ eina_mempool_init(void)
 
 }
 
-/**
- *
- */
 EAPI int
 eina_mempool_shutdown(void)
 {
@@ -220,9 +230,6 @@ eina_mempool_shutdown(void)
 	return 0;
 }
 
-/**
- *
- */
 EAPI Eina_Mempool *
 eina_mempool_new(const char *name, const char *context, const char *options, ...)
 {
@@ -238,9 +245,6 @@ eina_mempool_new(const char *name, const char *context, const char *options, ...
 	return mp;
 }
 
-/**
- *
- */
 EAPI void eina_mempool_delete(Eina_Mempool *mp)
 {
         EINA_SAFETY_ON_NULL_RETURN(mp);
@@ -262,3 +266,7 @@ EAPI void eina_mempool_statistics(Eina_Mempool *mp)
         EINA_SAFETY_ON_NULL_RETURN(mp->backend.statistics);
 	mp->backend.statistics(mp->backend_data);
 }
+
+/**
+ * @}
+ */
