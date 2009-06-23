@@ -2,7 +2,7 @@
 #include "evas_soft16_scanline_fill.c"
 
 static inline int
-_is_empty_rectangle(const Evas_Rectangle *r)
+_is_empty_rectangle(const Eina_Rectangle *r)
 {
    return (r->w < 1) || (r->h < 1);
 }
@@ -38,7 +38,7 @@ _soft16_rectangle_draw_transp_solid(Soft16_Image *dst, int offset, int w, int h,
 
 static void
 _soft16_rectangle_draw_int(Soft16_Image *dst, RGBA_Draw_Context *dc,
-                           Evas_Rectangle dr)
+                           Eina_Rectangle dr)
 {
    int dst_offset;
 
@@ -80,17 +80,14 @@ void
 soft16_rectangle_draw(Soft16_Image *dst, RGBA_Draw_Context *dc,
                       int x, int y, int w, int h)
 {
-   Evas_Rectangle dr;
+   Eina_Rectangle dr;
    Cutout_Rects *rects;
    Cutout_Rect  *r;
    struct RGBA_Draw_Context_clip c_bkp;
    int i;
 
    /* handle cutouts here! */
-   dr.x = x;
-   dr.y = y;
-   dr.w = w;
-   dr.h = h;
+   EINA_RECTANGLE_SET(&dr, x, y, w, h);
 
    if (_is_empty_rectangle(&dr)) return;
    if (!(RECTS_INTERSECT(dr.x, dr.y, dr.w, dr.h, 0, 0, dst->cache_entry.w, dst->cache_entry.h)))

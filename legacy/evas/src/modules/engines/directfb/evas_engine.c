@@ -29,15 +29,6 @@ static IDirectFB *dfb = NULL; /* XXX HACK to work around evas image cache
  * Evas helpers
  **********************************************************************/
 static void
-_rect_set(Evas_Rectangle *r, int x, int y, int w, int h)
-{
-   r->x = x;
-   r->y = y;
-   r->w = w;
-   r->h = h;
-}
-
-static void
 _context_get_color(RGBA_Draw_Context *dc, int *r, int *g, int *b, int *a)
 {
    DATA32 col;
@@ -1070,7 +1061,7 @@ evas_engine_dfb_font_draw(void *data, void *context, void *surface, void *font, 
 static void
 _cb_draw_line(IDirectFBSurface *surface, RGBA_Draw_Context *dc __UNUSED__, const DFBRegion *region __UNUSED__, void *data)
 {
-   const Evas_Rectangle *r = data;
+   const Eina_Rectangle *r = data;
 
    surface->DrawLine(surface, r->x, r->y, r->w, r->h); /* x2, y2 really */
 }
@@ -1079,12 +1070,12 @@ static void
 evas_engine_dfb_line_draw(void *data __UNUSED__, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
    IDirectFBSurface *screen = surface;
-   Evas_Rectangle r;
+   Eina_Rectangle r;
 
    if (!_dfb_surface_set_color_from_context(screen, context))
      return;
 
-   _rect_set(&r, x1, y1, x2, y2); /* x2, y2 (ab)used as w, h */
+   EINA_RECTANGLE_SET(&r, x1, y1, x2, y2); /* x2, y2 (ab)used as w, h */
    _dfb_surface_for_each_cutout(screen, context, _cb_draw_line, &r);
 }
 
@@ -1092,7 +1083,7 @@ evas_engine_dfb_line_draw(void *data __UNUSED__, void *context, void *surface, i
 static void
 _cb_draw_rectangle(IDirectFBSurface *surface, RGBA_Draw_Context *dc __UNUSED__, const DFBRegion *region __UNUSED__, void *data)
 {
-   const Evas_Rectangle *r = data;
+   const Eina_Rectangle *r = data;
 
    surface->FillRectangle(surface, r->x, r->y, r->w, r->h);
 }
@@ -1101,12 +1092,12 @@ static void
 evas_engine_dfb_rectangle_draw(void *data __UNUSED__, void *context, void *surface, int x, int y, int w, int h)
 {
    IDirectFBSurface *screen = surface;
-   Evas_Rectangle r;
+   Eina_Rectangle r;
 
    if (!_dfb_surface_set_color_from_context(screen, context))
      return;
 
-   _rect_set(&r, x, y, w, h);
+   EINA_RECTANGLE_SET(&r, x, y, w, h);
    _dfb_surface_for_each_cutout(screen, context, _cb_draw_rectangle, &r);
 }
 #else

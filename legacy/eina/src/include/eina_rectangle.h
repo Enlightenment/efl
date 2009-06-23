@@ -32,10 +32,10 @@
  */
 typedef struct _Eina_Rectangle
 {
-	int	x;
-	int	y;
-	int	w;
-	int	h;
+   int x; /**< top-left x co-ordinate of rectangle */
+   int y; /**< top-left y co-ordinate of rectangle */
+   int w; /**< width of rectangle */
+   int h; /**< height of rectangle */
 } Eina_Rectangle;
 
 typedef struct _Eina_Rectangle_Pool Eina_Rectangle_Pool;
@@ -66,13 +66,13 @@ EAPI Eina_Rectangle *eina_rectangle_pool_request(Eina_Rectangle_Pool *pool, int 
 EAPI void eina_rectangle_pool_release(Eina_Rectangle *rect) EINA_ARG_NONNULL(1);
 
 #define EINA_RECTANGLE_SET(Rectangle, X, Y, W, H) \
-  Rectangle->x = X;				  \
-  Rectangle->y = Y;				  \
-  Rectangle->w = W;				  \
-  Rectangle->h = H;
+  (Rectangle)->x = X;				  \
+  (Rectangle)->y = Y;				  \
+  (Rectangle)->w = W;				  \
+  (Rectangle)->h = H;
 
-EAPI Eina_Rectangle *eina_rectangle_new(int x, int y, int w, int h);
-EAPI void eina_rectangle_free(Eina_Rectangle *rect);
+EAPI Eina_Rectangle *eina_rectangle_new(int x, int y, int w, int h) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+EAPI void eina_rectangle_free(Eina_Rectangle *rect) EINA_ARG_NONNULL(1);
 
 #include "eina_inline_rectangle.x"
 

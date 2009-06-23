@@ -421,9 +421,9 @@ _soft16_image_draw_scaled_mul(Soft16_Image *src, Soft16_Image *dst,
 void
 soft16_image_draw_scaled_sampled(Soft16_Image *src, Soft16_Image *dst,
 				 RGBA_Draw_Context *dc,
-				 const Evas_Rectangle sr,
-				 const Evas_Rectangle dr,
-				 const Evas_Rectangle cr)
+				 const Eina_Rectangle sr,
+				 const Eina_Rectangle dr,
+				 const Eina_Rectangle cr)
 {
    int x, y, dst_offset, *offset_x, *offset_y;
    DATA16 mul_rgb565;

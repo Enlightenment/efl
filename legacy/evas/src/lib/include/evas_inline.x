@@ -19,7 +19,7 @@ evas_object_was_visible(Evas_Object *obj)
 static inline void
 evas_add_rect(Eina_Array *rects, int x, int y, int w, int h)
 {
-   Evas_Rectangle *r;
+   Eina_Rectangle *r;
 
    NEW_RECT(r, x, y, w, h);
    if (r) eina_array_push(rects, r);

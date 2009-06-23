@@ -121,7 +121,7 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
    updates = evas_render_updates(ee->evas);
    if (ee->engine.buffer.image)
      {
-        Evas_Rectangle *r;
+        Eina_Rectangle *r;
 
 	EINA_LIST_FOREACH(updates, l, r)
 	  if (ee->engine.buffer.image)

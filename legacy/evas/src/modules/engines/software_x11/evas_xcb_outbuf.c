@@ -395,14 +395,12 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
 
    if ((buf->onebuf) && (buf->priv.x11.xcb.shm))
      {
-	Evas_Rectangle *rect;
+	Eina_Rectangle *rect;
 
-	rect = malloc(sizeof(Evas_Rectangle));
 	RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, buf->w, buf->h);
-	rect->x = x;
-	rect->y = y;
-	rect->w = w;
-	rect->h = h;
+	rect = eina_rectangle_new(x, y, w, h);
+	if (!rect) return NULL;
+
 	buf->priv.onebuf_regions = eina_list_append(buf->priv.onebuf_regions, rect);
 	if (buf->priv.onebuf)
 	  {
@@ -617,7 +615,7 @@ evas_software_xcb_outbuf_flush(Outbuf *buf)
         pixman_region_init(&tmpr);
 	while (buf->priv.onebuf_regions)
 	  {
-	     Evas_Rectangle *rect;
+	     Eina_Rectangle *rect;
 
 	     rect = buf->priv.onebuf_regions->data;
 	     buf->priv.onebuf_regions = eina_list_remove_list(buf->priv.onebuf_regions, buf->priv.onebuf_regions);
@@ -627,7 +625,7 @@ evas_software_xcb_outbuf_flush(Outbuf *buf)
 	     if (buf->priv.debug)
 	       evas_software_xcb_outbuf_debug_show(buf, buf->priv.x11.xcb.win,
 						   rect->x, rect->y, rect->w, rect->h);
-	     free(rect);
+	     eina_rectangle_free(rect);
 	  }
         xcb_set_clip_rectangles(buf->priv.x11.xcb.conn, XCB_CLIP_ORDERING_YX_BANDED,
                                 buf->priv.x11.xcb.gc,

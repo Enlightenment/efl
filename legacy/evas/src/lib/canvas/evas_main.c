@@ -4,27 +4,12 @@
 
 static int initcount = 0;
 
-Eina_Mempool *_evas_rectangle_mp = NULL;
-
 EAPI int
 evas_init(void)
 {
    if (initcount == 0)
      {
-	const char *choice;
-
 	eina_init();
-
-	if (!(choice = getenv("EINA_MEMPOOL")))
-	  choice = "chained_mempool";
-
-	_evas_rectangle_mp = eina_mempool_new(choice, "evas_rectangle", NULL,
-					      sizeof (Evas_Rectangle), 256);
-	if (!_evas_rectangle_mp)
-	  {
-	     EINA_ERROR_PERR("ERROR: Mempool for rectangle cannot be allocated in list init.\n");
-	     abort();
-	  }
 
 	evas_module_init();
 	evas_async_events_init();
@@ -48,8 +33,6 @@ evas_shutdown(void)
 	evas_font_dir_cache_free();
 	evas_common_shutdown();
 	evas_module_shutdown();
-        eina_mempool_delete(_evas_rectangle_mp);
-        _evas_rectangle_mp = NULL;
 	eina_shutdown();
      }
    return initcount;
@@ -119,7 +102,7 @@ evas_new(void)
 EAPI void
 evas_free(Evas *e)
 {
-   Evas_Rectangle *r;
+   Eina_Rectangle *r;
    Evas_Layer *lay;
    int i;
    int del;
@@ -170,9 +153,9 @@ evas_free(Evas *e)
    e->name_hash = NULL;
 
    EINA_LIST_FREE(e->damages, r)
-     eina_mempool_free(_evas_rectangle_mp, r);
+     eina_rectangle_free(r);
    EINA_LIST_FREE(e->obscures, r)
-     eina_mempool_free(_evas_rectangle_mp, r);
+     eina_rectangle_free(r);
 
    evas_fonts_zero_free(e);
 

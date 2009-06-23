@@ -102,7 +102,6 @@ typedef enum _Evas_Object_Table_Homogeneous_Mode
 } Evas_Object_Table_Homogeneous_Mode;
 
 typedef struct _Evas_Transform Evas_Transform; /**< An Evas projective or affine transform */
-typedef struct _Evas_Rectangle        Evas_Rectangle; /**< A generic rectangle handle */
 typedef struct _Evas_Coord_Rectangle  Evas_Coord_Rectangle; /**< A generic rectangle handle */
 typedef struct _Evas_Smart_Class      Evas_Smart_Class; /**< A smart object base class */
 
@@ -124,14 +123,6 @@ struct _Evas_Transform /** An affine or projective coordinate transformation mat
    float mxx, mxy, mxz;
    float myx, myy, myz;
    float mzx, mzy, mzz;
-};
-
-struct _Evas_Rectangle /** A rectangle */
-{
-   int x; /**< top-left x co-ordinate of rectangle */
-   int y; /**< top-left y co-ordinate of rectangle */
-   int w; /**< width of rectangle */
-   int h; /**< height of rectangle */
 };
 
 struct _Evas_Coord_Rectangle /** A rectangle in Evas_Coord */

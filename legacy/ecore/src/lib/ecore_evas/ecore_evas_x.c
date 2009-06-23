@@ -141,7 +141,7 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
 static int
 _ecore_evas_x_render(Ecore_Evas *ee)
 {
-   Evas_Rectangle *r;
+   Eina_Rectangle *r;
    Eina_List *updates, *l;
    int rend = 0;
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER

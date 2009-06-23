@@ -345,14 +345,12 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
 
    if ((buf->onebuf) && (buf->priv.x11.xlib.shm))
      {
-	Evas_Rectangle *rect;
+	Eina_Rectangle *rect;
 
-	rect = malloc(sizeof(Evas_Rectangle));
 	RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, buf->w, buf->h);
-	rect->x = x;
-	rect->y = y;
-	rect->w = w;
-	rect->h = h;
+	rect = eina_rectangle_new(x, y, w, h);
+	if (!rect) return NULL;
+
 	buf->priv.onebuf_regions = eina_list_append(buf->priv.onebuf_regions, rect);
 	if (buf->priv.onebuf)
 	  {
@@ -613,7 +611,7 @@ evas_software_xlib_outbuf_flush(Outbuf *buf)
 	tmpr = XCreateRegion();
 	while (buf->priv.onebuf_regions)
 	  {
-	     Evas_Rectangle *rect;
+	     Eina_Rectangle *rect;
 	     XRectangle xr;
 
 	     rect = buf->priv.onebuf_regions->data;
@@ -626,7 +624,7 @@ evas_software_xlib_outbuf_flush(Outbuf *buf)
 	     if (buf->priv.debug)
 	       evas_software_xlib_outbuf_debug_show(buf, buf->priv.x11.xlib.win,
 						   rect->x, rect->y, rect->w, rect->h);
-	     free(rect);
+	     eina_rectangle_free(rect);
 	  }
 	XSetRegion(buf->priv.x11.xlib.disp, buf->priv.x11.xlib.gc, tmpr);
 	evas_software_xlib_x_output_buffer_paste(obr->xob, buf->priv.x11.xlib.win,

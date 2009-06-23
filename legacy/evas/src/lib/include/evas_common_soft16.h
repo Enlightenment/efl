@@ -74,8 +74,8 @@ EAPI Evas_Cache_Image   *evas_common_soft16_image_cache_get(void);
 EAPI void                soft16_image_draw(Soft16_Image *src, Soft16_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h, int smooth);
 EAPI Soft16_Image       *soft16_image_alpha_set(Soft16_Image *im, int have_alpha);
 
-void                     soft16_image_draw_unscaled(Soft16_Image *src, Soft16_Image *dst, RGBA_Draw_Context *dc, const Evas_Rectangle sr, const Evas_Rectangle dr, const Evas_Rectangle cr);
-void                     soft16_image_draw_scaled_sampled(Soft16_Image *src, Soft16_Image *dst, RGBA_Draw_Context *dc, const Evas_Rectangle sr, const Evas_Rectangle dr, const Evas_Rectangle cr);
+void                     soft16_image_draw_unscaled(Soft16_Image *src, Soft16_Image *dst, RGBA_Draw_Context *dc, const Eina_Rectangle sr, const Eina_Rectangle dr, const Eina_Rectangle cr);
+void                     soft16_image_draw_scaled_sampled(Soft16_Image *src, Soft16_Image *dst, RGBA_Draw_Context *dc, const Eina_Rectangle sr, const Eina_Rectangle dr, const Eina_Rectangle cr);
 
 /* convert/dither functions */
 void                     soft16_image_convert_from_rgb(Soft16_Image *im, const DATA32 *src);

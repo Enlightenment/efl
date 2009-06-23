@@ -194,17 +194,17 @@ evas_object_render_pre_prev_cur_add(Eina_Array *rects, Evas_Object *obj)
 void
 evas_object_clip_changes_clean(Evas_Object *obj)
 {
-   Evas_Rectangle *r;
+   Eina_Rectangle *r;
 
    EINA_LIST_FREE(obj->clip.changes, r)
-     eina_mempool_free(_evas_rectangle_mp, r);
+     eina_rectangle_free(r);
 }
 
 
 void
 evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *obj, int is_v, int was_v)
 {
-   Evas_Rectangle *r;
+   Eina_Rectangle *r;
    Evas_Object *clipper;
    Eina_List *l;
    unsigned int i;
@@ -288,7 +288,7 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *obj, int i
 
  end:
    EINA_ARRAY_ITER_NEXT(rects, i, r, it)
-     eina_mempool_free(_evas_rectangle_mp, r);
+     eina_rectangle_free(r);
    eina_array_clean(rects);
 }
 

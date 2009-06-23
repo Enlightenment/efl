@@ -103,21 +103,15 @@ _glyph_scanline_mask_transp_solid(DATA16 *dst,
 
 static inline void
 _calc_ext(const Soft16_Image *dst, const RGBA_Draw_Context *dc,
-	  Evas_Rectangle *ext)
+	  Eina_Rectangle *ext)
 {
-   ext->x = 0;
-   ext->y = 0;
-   ext->w = dst->cache_entry.w;
-   ext->h = dst->cache_entry.h;
+   EINA_RECTANGLE_SET(ext, 0, 0, dst->cache_entry.w, dst->cache_entry.h);
 
    if (dc->clip.use)
      {
 	int v;
 
-	ext->x = dc->clip.x;
-	ext->y = dc->clip.y;
-	ext->w = dc->clip.w;
-	ext->h = dc->clip.h;
+	EINA_RECTANGLE_SET(ext, dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
 	if (ext->x < 0)
 	  {
 	     ext->w += ext->x;
@@ -139,7 +133,7 @@ _calc_ext(const Soft16_Image *dst, const RGBA_Draw_Context *dc,
 
 static inline void
 _glyph_scanline(Soft16_Image *dst, const DATA8 *p_mask,
-		const Evas_Rectangle ext, int dx, int dy, int max_x, int max_y,
+		const Eina_Rectangle ext, int dx, int dy, int max_x, int max_y,
 		int w, DATA8 alpha, const DATA16 rgb565,
 		const DATA32 rgb565_unpack)
 {
@@ -186,7 +180,7 @@ static void
 _soft16_font_glyph_draw_grayscale(Soft16_Image *dst,
 				  RGBA_Draw_Context *dc __UNUSED__, RGBA_Font_Glyph *fg __UNUSED__,
 				  int x, int y, DATA8 alpha, DATA16 rgb565,
-				  const Evas_Rectangle ext, int bw, int bh,
+				  const Eina_Rectangle ext, int bw, int bh,
 				  int bpitch, const DATA8 *bitmap)
 {
    const DATA32 rgb565_unpack = RGB_565_UNPACK(rgb565);
@@ -225,7 +219,7 @@ static void
 _soft16_font_glyph_draw_mono(Soft16_Image *dst,
 			     RGBA_Draw_Context *dc __UNUSED__, RGBA_Font_Glyph *fg __UNUSED__,
 			     int x, int y, DATA8 alpha, DATA16 rgb565,
-			     const Evas_Rectangle ext, int bw, int bh,
+			     const Eina_Rectangle ext, int bw, int bh,
 			     int bpitch, const DATA8 *bitmap)
 {
    const DATA32 rgb565_unpack = RGB_565_UNPACK(rgb565);
@@ -253,7 +247,7 @@ soft16_font_glyph_draw(void *data, void *dest __UNUSED__, void *context,
    const DATA8 *bitmap;
    DATA8 alpha, r, g, b;
    DATA16 rgb565;
-   Evas_Rectangle ext;
+   Eina_Rectangle ext;
    int bpitch, bw, bh;
 
    dst = data;

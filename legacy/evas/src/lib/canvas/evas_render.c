@@ -13,7 +13,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 EAPI void
 evas_damage_rectangle_add(Evas *e, int x, int y, int w, int h)
 {
-   Evas_Rectangle *r;
+   Eina_Rectangle *r;
 
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -33,7 +33,7 @@ evas_damage_rectangle_add(Evas *e, int x, int y, int w, int h)
 EAPI void
 evas_obscured_rectangle_add(Evas *e, int x, int y, int w, int h)
 {
-   Evas_Rectangle *r;
+   Eina_Rectangle *r;
 
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -52,13 +52,13 @@ evas_obscured_rectangle_add(Evas *e, int x, int y, int w, int h)
 EAPI void
 evas_obscured_clear(Evas *e)
 {
-   Evas_Rectangle *r;
+   Eina_Rectangle *r;
 
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
    EINA_LIST_FREE(e->obscures, r)
-     eina_mempool_free(_evas_rectangle_mp, r);
+     eina_rectangle_free(r);
 }
 
 static void
@@ -315,7 +315,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
    Eina_List *ll;
    void *surface;
    Eina_Bool clean_them = EINA_FALSE;
-   Evas_Rectangle *r;
+   Eina_Rectangle *r;
    int ux, uy, uw, uh;
    int cx, cy, cw, ch;
    unsigned int i, j;
@@ -361,7 +361,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
      {
 	e->engine.func->output_redraws_rect_add(e->engine.data.output,
 					       r->x, r->y, r->w, r->h);
-	eina_mempool_free(_evas_rectangle_mp, r);
+	eina_rectangle_free(r);
      }
    /* phase 4. output & viewport changes */
    if (e->viewport.changed)
@@ -421,7 +421,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 
 	     if (make_updates)
 	       {
-		  Evas_Rectangle *rect;
+		  Eina_Rectangle *rect;
 
 		  NEW_RECT(rect, ux, uy, uw, uh);
 		  if (rect)
@@ -597,10 +597,10 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 EAPI void
 evas_render_updates_free(Eina_List *updates)
 {
-   Evas_Rectangle *r;
+   Eina_Rectangle *r;
 
    EINA_LIST_FREE(updates, r)
-     eina_mempool_free(_evas_rectangle_mp, r);
+     eina_rectangle_free(r);
 }
 
 /**

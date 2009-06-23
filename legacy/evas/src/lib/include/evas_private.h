@@ -48,7 +48,6 @@ typedef struct _Evas_Intercept_Func_Color   Evas_Intercept_Func_Color;
 typedef struct _Evas_Key_Grab               Evas_Key_Grab;
 typedef struct _Evas_Callbacks              Evas_Callbacks;
 typedef struct _Evas_Format                 Evas_Format;
-typedef struct _Evas_Rectangles             Evas_Rectangles;
 
 #define MAGIC_EVAS          0x70777770
 #define MAGIC_OBJ           0x71777770
@@ -84,13 +83,7 @@ MAGIC_CHECK_FAILED(o, t, m)
 # define MAGIC_CHECK_END() }}
 #endif
 
-#define NEW_RECT(_r, _x, _y, _w, _h) \
-{(_r) = (Evas_Rectangle *)eina_mempool_alloc(_evas_rectangle_mp, sizeof(Evas_Rectangle)); \
-   if (_r)								\
-     {									\
-	(_r)->x = (_x); (_r)->y = (_y);					\
-	(_r)->w = (_w); (_r)->h = (_h);					\
-     }}
+#define NEW_RECT(_r, _x, _y, _w, _h) (_r) = eina_rectangle_new(_x, _y, _w, _h);
 
 #define MERR_NONE() _evas_alloc_error = EVAS_ALLOC_ERROR_NONE
 #define MERR_FATAL() _evas_alloc_error = EVAS_ALLOC_ERROR_FATAL
@@ -333,13 +326,6 @@ struct _Evas_Layer
    void             *engine_data;
    int               usage;
    unsigned char     delete_me : 1;
-};
-
-struct _Evas_Rectangles
-{
-   unsigned int    total;
-   unsigned int    count;
-   Evas_Rectangle *array;
 };
 
 struct _Evas_Size
@@ -789,7 +775,6 @@ void _evas_object_text_rehint(Evas_Object *obj);
 void _evas_object_textblock_rehint(Evas_Object *obj);
 
 extern int _evas_alloc_error;
-extern Eina_Mempool *_evas_rectangle_mp;
 
 struct _Evas_Imaging_Image
 {

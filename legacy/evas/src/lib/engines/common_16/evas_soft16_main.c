@@ -319,14 +319,11 @@ _evas_common_load_soft16_image_data_from_file(Image_Entry *ie)
 
 static inline void
 _get_clip(const RGBA_Draw_Context *dc, const Soft16_Image *im,
-	  Evas_Rectangle *clip)
+	  Eina_Rectangle *clip)
 {
    if (dc->clip.use)
      {
-	clip->x = dc->clip.x;
-	clip->y = dc->clip.y;
-	clip->w = dc->clip.w;
-	clip->h = dc->clip.h;
+	EINA_RECTANGLE_SET(clip, dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
 	if (clip->x < 0)
 	  {
 	     clip->w += clip->x;
@@ -342,15 +339,12 @@ _get_clip(const RGBA_Draw_Context *dc, const Soft16_Image *im,
      }
    else
      {
-	clip->x = 0;
-	clip->y = 0;
-	clip->w = im->cache_entry.w;
-	clip->h = im->cache_entry.h;
+	EINA_RECTANGLE_SET(clip, 0, 0, im->cache_entry.w, im->cache_entry.h);
      }
 }
 
 static inline int
-_is_empty_rectangle(const Evas_Rectangle *r)
+_is_empty_rectangle(const Eina_Rectangle *r)
 {
    return (r->w < 1) || (r->h < 1);
 }
@@ -373,11 +367,11 @@ _shrink(int *s_pos, int *s_size, int pos, int size)
 }
 
 static int
-_soft16_adjust_areas(Evas_Rectangle *src,
+_soft16_adjust_areas(Eina_Rectangle *src,
 		     int src_max_x, int src_max_y,
-		     Evas_Rectangle *dst,
+		     Eina_Rectangle *dst,
 		     int dst_max_x, int dst_max_y,
-		     Evas_Rectangle *dst_clip)
+		     Eina_Rectangle *dst_clip)
 {
    if (_is_empty_rectangle(src) ||
        _is_empty_rectangle(dst) ||
@@ -449,9 +443,9 @@ _soft16_adjust_areas(Evas_Rectangle *src,
 static void
 _soft16_image_draw_sampled_int(Soft16_Image *src, Soft16_Image *dst,
 			       RGBA_Draw_Context *dc,
-			       Evas_Rectangle sr, Evas_Rectangle dr)
+			       Eina_Rectangle sr, Eina_Rectangle dr)
 {
-   Evas_Rectangle cr;
+   Eina_Rectangle cr;
 
    if (!(RECTS_INTERSECT(dr.x, dr.y, dr.w, dr.h, 0, 0, dst->cache_entry.w, dst->cache_entry.h)))
      return;
@@ -477,26 +471,20 @@ soft16_image_draw(Soft16_Image *src, Soft16_Image *dst,
 		  int dst_region_w, int dst_region_h,
 		  int smooth __UNUSED__)
 {
-   Evas_Rectangle sr, dr;
+   Eina_Rectangle sr, dr;
    Cutout_Rects *rects;
    Cutout_Rect  *r;
    struct RGBA_Draw_Context_clip clip_bkp;
    int i;
 
    /* handle cutouts here! */
-   dr.x = dst_region_x;
-   dr.y = dst_region_y;
-   dr.w = dst_region_w;
-   dr.h = dst_region_h;
+   EINA_RECTANGLE_SET(&dr, dst_region_x, dst_region_y, dst_region_w, dst_region_h);
 
    if (_is_empty_rectangle(&dr)) return;
    if (!(RECTS_INTERSECT(dr.x, dr.y, dr.w, dr.h, 0, 0, dst->cache_entry.w, dst->cache_entry.h)))
      return;
 
-   sr.x = src_region_x;
-   sr.y = src_region_y;
-   sr.w = src_region_w;
-   sr.h = src_region_h;
+   EINA_RECTANGLE_SET(&sr, src_region_x, src_region_y, src_region_w, src_region_h);
 
    if (_is_empty_rectangle(&sr)) return;
    if (!(RECTS_INTERSECT(sr.x, sr.y, sr.w, sr.h, 0, 0, src->cache_entry.w, src->cache_entry.h)))
