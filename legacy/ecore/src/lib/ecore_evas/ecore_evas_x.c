@@ -2571,7 +2571,6 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 # ifdef HAVE_ECORE_X_XCB
    Ecore_Evas *ee = NULL;
 # else
-   Evas_Engine_Info_GL_X11 *einfo;
    Ecore_Evas *ee;
    int rmethod;
 
@@ -2613,12 +2612,9 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 
    if (parent == 0) parent = DefaultRootWindow(ecore_x_display_get());
    ee->engine.x.win_root = parent;
-   einfo = (Evas_Engine_Info_GL_X11 *)evas_engine_info_get(ee->evas);
-   if (einfo)
-     {
-	ee->prop.window = _ecore_evas_x_gl_window_new(ee, ee->engine.x.win_root, x, y, w, h, 0);
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-     }
+
+   ee->prop.window = _ecore_evas_x_gl_window_new(ee, ee->engine.x.win_root, x, y, w, h, 0);
+
    if (getenv("DESKTOP_STARTUP_ID"))
      {
 	ecore_x_netwm_startup_id_set(ee->prop.window,
