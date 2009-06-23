@@ -38,7 +38,7 @@ evas_intl_utf8_to_visual(const char *text, int *ret_len, FriBidiCharType *direct
 
    byte_len = strlen(text); /* we need the actual number of bytes, not number of chars */
 
-   unicode_in = (FriBidiChar *)malloc(sizeof(FriBidiChar) * (len + 1));
+   unicode_in = (FriBidiChar *)alloca(sizeof(FriBidiChar) * (len + 1));
    if (!unicode_in)
      {
 	len = -1;
@@ -47,18 +47,18 @@ evas_intl_utf8_to_visual(const char *text, int *ret_len, FriBidiCharType *direct
 
    len = fribidi_utf8_to_unicode(text, byte_len, unicode_in);
 
-   unicode_out = (FriBidiChar *)malloc(sizeof(FriBidiChar) * (len + 1));
+   unicode_out = (FriBidiChar *)alloca(sizeof(FriBidiChar) * (len + 1));
    if (!unicode_out)
      {
 	len = -2;
-	goto error2;
+	goto error1;
      }
 
    *embedding_level_list = (FriBidiLevel *)malloc(sizeof(FriBidiLevel) * len);
    if (!*embedding_level_list)
      {
 	len = -3;
-	goto error3;
+	goto error2;
      }
 
 #ifdef ARABIC_SUPPORT
@@ -69,31 +69,24 @@ evas_intl_utf8_to_visual(const char *text, int *ret_len, FriBidiCharType *direct
 	    unicode_out, NULL, NULL, *embedding_level_list))
      {
 	len = -4;
-	goto error3;
+	goto error2;
      }
 
    text_out = malloc(UTF8_BYTES_PER_CHAR * len + 1);
    if (!text_out)
      {
 	len = -5;
-	goto error4;
+	goto error2;
      }
 
    fribidi_unicode_to_utf8(unicode_out, len, text_out);
-
-   free(unicode_in);
-   free(unicode_out);
 
    *ret_len = len;
    return text_out;
 
    /* ERROR HANDLING */
-error4:
-   free(unicode_out);
-error3:
-   free(*embedding_level_list);
 error2:
-   free(unicode_in);
+   free(*embedding_level_list);
 error1:
 
    *ret_len = len;
