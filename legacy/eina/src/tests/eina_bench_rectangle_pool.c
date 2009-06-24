@@ -50,12 +50,13 @@ eina_bench_eina_rectangle_pool(int request)
 	       {
 		  rect = eina_list_data_get(list);
 		  list = eina_list_remove_list(list, list);
-		  eina_rectangle_pool_release(rect);
+		  if (rect) eina_rectangle_pool_release(rect);
 	       }
 	     else
 	       {
 		  list = eina_list_append(list, rect);
 	       }
+	     if (!(i & 0xFF)) break;
 	  }
      }
 
@@ -68,7 +69,7 @@ eina_bench_eina_rectangle_pool(int request)
 
 void eina_bench_rectangle_pool(Eina_Benchmark *bench)
 {
-   eina_benchmark_register(bench, "eina", EINA_BENCHMARK(eina_bench_eina_rectangle_pool), 10, 5000, 100);
+   eina_benchmark_register(bench, "eina", EINA_BENCHMARK(eina_bench_eina_rectangle_pool), 10, 4000, 100);
 }
 
 

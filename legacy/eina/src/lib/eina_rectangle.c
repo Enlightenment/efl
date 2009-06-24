@@ -54,6 +54,8 @@ struct _Eina_Rectangle_Pool
    unsigned int references;
    int w;
    int h;
+
+   Eina_Bool sorted;
    EINA_MAGIC
 };
 
@@ -80,122 +82,122 @@ static int _eina_rectangle_init_count = 0;
 static Eina_Mempool *_eina_rectangle_alloc_mp = NULL;
 static Eina_Mempool *_eina_rectangle_mp = NULL;
 
-static inline Eina_Bool
-_eina_rectangle_pool_collide(Eina_Rectangle_Alloc *head, Eina_Rectangle_Alloc *current, Eina_Rectangle *test)
+static int
+_eina_rectangle_cmp(const Eina_Rectangle *r1, const Eina_Rectangle *r2)
 {
-   Eina_Rectangle_Alloc *collide;
-
-   EINA_INLIST_FOREACH(head, collide)
-     {
-	Eina_Rectangle *colliding_rect = (Eina_Rectangle*) (collide + 1);
-
-	if (collide == current) continue;
-	if (eina_rectangles_intersect(colliding_rect, test))
-	  return EINA_TRUE;
-     }
-
-   return EINA_FALSE;
+   return (r2->w * r2->h) - (r1->w * r1->h);
 }
 
-static Eina_Bool
-_eina_rectangle_pool_find(Eina_Rectangle_Alloc *head, int poolw, int poolh, int w, int h, int *x, int *y)
+static Eina_List *
+_eina_rectangle_merge_list(Eina_List *empty, Eina_Rectangle *r)
 {
-   Eina_Rectangle_Alloc *item;
-   Eina_Rectangle tmp = { 0, 0, 0, 0 };
+   Eina_Rectangle *match;
+   Eina_List *l;
 
-   if (head == NULL) goto on_intersect;
-
-   EINA_INLIST_FOREACH(head, item)
+   if (r->w == 0 || r->h == 0)
      {
-	Eina_Rectangle *rect = (Eina_Rectangle*) (item + 1);
-	Eina_Bool t1 = EINA_TRUE;
-	Eina_Bool t2 = EINA_TRUE;
-	Eina_Bool t3 = EINA_TRUE;
-	Eina_Bool t4 = EINA_TRUE;
+	eina_rectangle_free(r);
+	return empty;
+     }
 
-	if ((rect->x + rect->w + w) > poolw) t1 = EINA_FALSE;
-	if ((rect->y + h) > poolh) t1 = EINA_FALSE;
-	if ((rect->y + rect->h + h) > poolh) t2 = EINA_FALSE;
-	if ((rect->x + w) > poolw) t2 = EINA_FALSE;
-	if ((rect->x - w) < 0) t3 = EINA_FALSE;
-	if ((rect->y + h) > poolh) t3 = EINA_FALSE;
-	if ((rect->x + w) > poolw) t4 = EINA_FALSE;
-	if ((rect->y - h) < 0) t4 = EINA_FALSE;
-
-	if (t1)
+   EINA_LIST_FOREACH(empty, l, match)
+     {
+	if (match->x == r->x && match->w == r->w)
 	  {
-	     Eina_Bool intersects;
-	     /* 1. try here:
-	      * +----++--+
-	      * |AAAA||??|
-	      * |AAAA|+--+
-	      * |AAAA|
-	      * +----+
-	      */
-	     eina_rectangle_coords_from(&tmp, rect->x + rect->w, rect->y, w, h);
-	     intersects = _eina_rectangle_pool_collide(head, item, &tmp);
+	     if (match->y > r->y)
+	       match->y = r->y;
+	     match->h += r->h;
 
-	     if (!intersects) goto on_intersect;
+	     eina_rectangle_free(r);
+
+	     empty = eina_list_remove_list(empty, l);
+
+	     return _eina_rectangle_merge_list(empty, match);
 	  }
-	if (t2)
+	else if (match->y == r->y && match->h == r->h)
 	  {
-	     Eina_Bool intersects;
-	     /* 2. try here:
-	      * +----+
-	      * |AAAA|
-	      * |AAAA|
-	      * |AAAA|
-	      * +----+
-	      * +--+
-	      * |??|
-	      * +--+
-	      */
-	     eina_rectangle_coords_from(&tmp, rect->x, rect->y + rect->h, w, h);
-	     intersects = _eina_rectangle_pool_collide(head, item, &tmp);
+	     if (match->x > r->x)
+	       match->x = r->x;
+	     match->w += r->w;
 
-	     if (!intersects) goto on_intersect;
-	  }
-	if (t3)
-	  {
-	     Eina_Bool intersects;
-	     /* 3. try here:
-	      * +--++----+
-	      * |??||AAAA|
-	      * +--+|AAAA|
-	      *     |AAAA|
-	      *     +----+
-	      */
-	     eina_rectangle_coords_from(&tmp, rect->x - w, rect->y, w, h);
-	     intersects = _eina_rectangle_pool_collide(head, item, &tmp);
+	     eina_rectangle_free(r);
 
-	     if (!intersects) goto on_intersect;
-	  }
-	if (t4)
-	  {
-	     Eina_Bool intersects;
-	     /* 2. try here:
-	      * +--+
-	      * |??|
-	      * +--+
-	      * +----+
-	      * |AAAA|
-	      * |AAAA|
-	      * |AAAA|
-	      * +----+
-	      */
-	     eina_rectangle_coords_from(&tmp, rect->x, rect->y - h, w, h);
-	     intersects = _eina_rectangle_pool_collide(head, item, &tmp);
+	     empty = eina_list_remove_list(empty, l);
 
-	     if (!intersects) goto on_intersect;
+	     return _eina_rectangle_merge_list(empty, match);
 	  }
      }
 
-   return EINA_FALSE;
+   return eina_list_append(empty, r);
+}
 
- on_intersect:
-   *x = tmp.x;
-   *y = tmp.y;
-   return EINA_TRUE;
+static Eina_List *
+_eina_rectangle_empty_space_find(Eina_List *empty, int w, int h, int *x, int *y)
+{
+   Eina_Rectangle *r;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(empty, l, r)
+     {
+	if (r->w >= w && r->h >= h)
+	  {
+	     /* Remove l from empty */
+	     empty = eina_list_remove_list(empty, l);
+	     /* Remember x and y */
+	     *x = r->x;
+	     *y = r->y;
+	     /* Split r in 2 rectangle if needed (only the empty one) and insert them */
+	     if (r->w == w)
+	       {
+		  r->y += h;
+		  r->h -= h;
+		  empty = _eina_rectangle_merge_list(empty, r);
+	       }
+	     else if (r->h == h)
+	       {
+		  r->x += w;
+		  r->w -= w;
+		  empty = _eina_rectangle_merge_list(empty, r);
+	       }
+	     else
+	       {
+		  int x1, y1, w1, h1;
+		  int x2, y2, w2, h2;
+
+		  x1 = r->x + w;
+		  y1 = r->y;
+		  w1 = r->w - w;
+		  /* h1 could be h or r->h */
+		  x2 = r->x;
+		  y2 = r->y + h;
+		  /* w2 could be w or r->w */
+		  h2 = r->h - h;
+
+		  if (w1 * r->h > h2 * r->w)
+		    {
+		       h1 = r->h;
+		       w2 = w;
+		    }
+		  else
+		    {
+		       h1 = h;
+		       w2 = r->w;
+		    }
+
+		  EINA_RECTANGLE_SET(r, x1, y1, w1, h1);
+		  empty = _eina_rectangle_merge_list(empty, r);
+
+		  r = eina_rectangle_new(x2, y2, w2, h2);
+		  if (r) empty = _eina_rectangle_merge_list(empty, r);
+	       }
+	     /* Return empty */
+	     return empty;
+	  }
+     }
+
+   *x = -1;
+   *y = -1;
+   return empty;
 }
 
 /**
@@ -280,16 +282,24 @@ eina_rectangle_pool_request(Eina_Rectangle_Pool *pool, int w, int h)
 {
    Eina_Rectangle_Alloc *new;
    Eina_Rectangle *rect;
-   Eina_Bool test;
    int x;
    int y;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(pool, NULL);
 
+   if (w <= 0 || h <= 0) return NULL;
    if (w > pool->w || h > pool->h) return NULL;
 
-   test = _eina_rectangle_pool_find((Eina_Rectangle_Alloc*) pool->head, pool->w, pool->h, w, h, &x, &y);
-   if (!test) return NULL;
+   /* Sort empty if dirty */
+   if (pool->sorted)
+     {
+	pool->empty = eina_list_sort(pool->empty, 0, EINA_COMPARE_CB(_eina_rectangle_cmp));
+	pool->sorted = EINA_TRUE;
+     }
+
+   pool->empty = _eina_rectangle_empty_space_find(pool->empty, w, h, &x, &y);
+   if (x == -1) return NULL;
+   pool->sorted = EINA_FALSE;
 
    new = eina_mempool_alloc(_eina_rectangle_alloc_mp,
 			    sizeof (Eina_Rectangle_Alloc) + sizeof (Eina_Rectangle));
@@ -312,6 +322,7 @@ EAPI void
 eina_rectangle_pool_release(Eina_Rectangle *rect)
 {
    Eina_Rectangle_Alloc *era = ((Eina_Rectangle_Alloc *) rect) - 1;
+   Eina_Rectangle *r;
 
    EINA_SAFETY_ON_NULL_RETURN(rect);
 
@@ -320,6 +331,13 @@ eina_rectangle_pool_release(Eina_Rectangle *rect)
 
    era->pool->references--;
    era->pool->head = eina_inlist_remove(era->pool->head, EINA_INLIST_GET(era));
+
+   r = eina_rectangle_new(rect->x, rect->y, rect->w, rect->h);
+   if (r)
+     {
+	era->pool->empty = _eina_rectangle_merge_list(era->pool->empty, r);
+	era->pool->sorted = EINA_FALSE;
+     }
 
    EINA_MAGIC_SET(era, EINA_MAGIC_NONE);
    eina_mempool_free(_eina_rectangle_alloc_mp, era);
@@ -381,7 +399,7 @@ eina_rectangle_init(void)
 
    if (!eina_error_init())
      {
-        fprintf(stderr, "Could not initialize eina error module.\n");
+        EINA_ERROR_PERR("Could not initialize eina error module.\n");
         return 0;
      }
    if (!eina_mempool_init())
