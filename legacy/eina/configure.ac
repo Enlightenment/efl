@@ -159,7 +159,14 @@ esac
 # Glib library for comparison in the benchmark
 
 have_glib="no"
-if test "x${enable_benchmark}" = "xyes" ; then
+want_glib="yes"
+
+AC_ARG_ENABLE(glib,
+   [AC_HELP_STRING([--disable-glib], [disable benchmarking against glib])],
+   [want_glib=${enableval}]
+)
+
+if test "x${enable_benchmark}" = "xyes" -a "x${want_glib}" = "xyes"; then
    PKG_CHECK_MODULES([GLIB],
       [glib-2.0],
       [have_glib="yes"],
@@ -172,7 +179,14 @@ AM_CONDITIONAL(EINA_HAVE_GLIB, test "x${have_glib}" = "xyes")
 # Evas library for comparison in the benchmark
 
 have_evas="no"
-if test "x${enable_benchmark}" = "xyes" ; then
+want_evas="yes"
+
+AC_ARG_ENABLE(evas,
+   [AC_HELP_STRING([--disable-evas], [disable benchmarking against evas])],
+   [want_evas=${enableval}]
+)
+
+if test "x${enable_benchmark}" = "xyes" -a "x${want_evas}" = "xyes"; then
    PKG_CHECK_MODULES([EVAS],
       [evas],
       [have_evas="yes"],
@@ -185,7 +199,14 @@ AM_CONDITIONAL(EINA_HAVE_EVAS, test "x${have_evas}" = "xyes")
 # Ecore library for comparison in the benchmark
 
 have_ecore="no"
-if test "x${enable_benchmark}" = "xyes" ; then
+want_ecore="yes"
+
+AC_ARG_ENABLE(ecore,
+   [AC_HELP_STRING([--disable-ecore], [disable benchmarking against ecore])],
+   [want_ecore=${enableval}]
+)
+
+if test "x${enable_benchmark}" = "xyes" -a "x${want_ecore}" = "xyes"; then
    PKG_CHECK_MODULES([ECORE],
       [ecore],
       [have_ecore="yes"],
