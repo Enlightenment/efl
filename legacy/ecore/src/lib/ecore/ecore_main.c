@@ -43,11 +43,21 @@ static void _ecore_main_fd_handlers_call(void);
 static int  _ecore_main_fd_handlers_buf_call(void);
 static void _ecore_main_loop_iterate_internal(int once_only);
 
+#ifdef _WIN32
+static int _ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
+				    fd_set *exceptfds, struct timeval *timeout);
+#endif
+
 static int               in_main_loop = 0;
 static int               do_quit = 0;
 static Ecore_Fd_Handler *fd_handlers = NULL;
 static int               fd_handlers_delete_me = 0;
+
+#ifdef _WIN32
+static int (*main_loop_select)(int , fd_set *, fd_set *, fd_set *, struct timeval *) = _ecore_main_win32_select;
+#else
 static int (*main_loop_select)(int , fd_set *, fd_set *, fd_set *, struct timeval *) = select;
+#endif
 
 static double            t1 = 0.0;
 static double            t2 = 0.0;
@@ -347,11 +357,6 @@ _ecore_main_select(double timeout)
      {
 	int sec, usec;
 
-#if _WIN32
-        if (timeout > 0.05)
-          timeout = 0.05;
-#endif
-
 #ifdef FIX_HZ
 	timeout += (0.5 / HZ);
 	sec = (int)timeout;
@@ -394,12 +399,18 @@ _ecore_main_select(double timeout)
    if (_ecore_signal_count_get()) return -1;
 
    ret = main_loop_select(max_fd + 1, &rfds, &wfds, &exfds, t);
+
    _ecore_loop_time = ecore_time_get();
    if (ret < 0)
      {
+#ifdef _WIN32
+       fprintf(stderr, "main_loop_select error %d\n", WSAGetLastError());
+	if (WSAEINTR == WSAGetLastError()) return -1;
+#else
 	if (errno == EINTR) return -1;
 	else if (errno == EBADF)
 	     _ecore_main_fd_handlers_bads_rem();
+#endif
      }
    if (ret > 0)
      {
@@ -680,40 +691,6 @@ _ecore_main_loop_iterate_internal(int once_only)
 	_ecore_main_fd_handlers_cleanup();
      }
    while (_ecore_main_fd_handlers_buf_call());
-#if _WIN32
-   {
-      MSG msg;
-      BOOL ret;
-      UINT_PTR TmrID = 0;
-      if ((next_time > 0) && ((UINT) (next_time * 1000.0) > USER_TIMER_MINIMUM))
-
-        {
-           TmrID = SetTimer(NULL, 0, (UINT) (next_time * 1000.0), NULL);
-           ret = GetMessage(&msg, NULL, 0, 0);
-        }
-      else
-        {
-           ret = PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);
-        }
-
-      if (ret)
-        {
-           do
-             {
-                TranslateMessage(&msg);
-                DispatchMessageW(&msg);
-                Sleep(0); /* Give other threads a chance to run */
-             } while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE));
-        }
-
-      if (TmrID)
-        {
-           KillTimer(NULL, TmrID);
-           TmrID = 0;
-        }
-   }
-#endif
-
 
 /* ok - too much optimising. let's call idle enterers more often. if we
  * have events that place more events or jobs etc. on the event queue
@@ -723,3 +700,105 @@ _ecore_main_loop_iterate_internal(int once_only)
      _ecore_idle_enterer_call();
    in_main_loop--;
 }
+
+#ifdef _WIN32
+static int
+_ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
+			 fd_set *exceptfds, struct timeval *tv)
+{
+   HANDLE* events[MAXIMUM_WAIT_OBJECTS];
+   int     sockets[MAXIMUM_WAIT_OBJECTS];
+   int     events_nbr = 0;
+   DWORD   result;
+   DWORD   timeout;
+   MSG     msg;
+   int     i;
+   int     res;
+
+   /* Create an event object per socket */
+   for(i = 0; i < nfds; i++)
+     {
+        WSAEVENT event;
+        long network_event;
+
+        network_event = 0;
+        if(FD_ISSET(i, readfds))
+	  network_event |= FD_READ;
+        if(FD_ISSET(i, writefds))
+	  network_event |= FD_WRITE;
+        if(FD_ISSET(i, exceptfds))
+	  network_event |= FD_OOB;
+
+        if(network_event)
+	  {
+             event = WSACreateEvent();
+	     WSAEventSelect(i, event, network_event);
+	     events[events_nbr] = event;
+	     sockets[events_nbr] = i;
+	     events_nbr++;
+          }
+     }
+
+   /* Empty the queue before waiting */
+   while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+     {
+	TranslateMessage(&msg);
+	DispatchMessage(&msg);
+     }
+
+   /* Wait for any message sent or posted to this queue */
+   /* or for one of the passed handles be set to signaled. */
+   if(tv == NULL)
+     timeout = INFINITE;
+   else
+     timeout = (DWORD)(tv->tv_sec * 1000.0 + tv->tv_usec / 1000.0);
+
+   result = MsgWaitForMultipleObjects(events_nbr, events, FALSE,
+				      timeout, QS_ALLINPUT);
+
+   FD_ZERO(readfds);
+   FD_ZERO(writefds);
+   FD_ZERO(exceptfds);
+
+   /* The result tells us the type of event we have. */
+   if (result == WAIT_TIMEOUT)
+     {
+        res = 0;
+     }
+   else if (result == (WAIT_OBJECT_0 + events_nbr))
+     {
+        while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+	  {
+	     TranslateMessage(&msg);
+	     DispatchMessage(&msg);
+	  }
+
+        res = 0;
+     }
+   else if ((result >= 0) && (result < WAIT_OBJECT_0 + events_nbr))
+     {
+        WSANETWORKEVENTS network_event;
+
+        WSAEnumNetworkEvents(sockets[result], events[result], &network_event);
+
+        if(network_event.lNetworkEvents & FD_READ)
+	  FD_SET(sockets[result], readfds);
+        if(network_event.lNetworkEvents & FD_WRITE)
+	  FD_SET(sockets[result], writefds);
+        if(network_event.lNetworkEvents & FD_OOB)
+	  FD_SET(sockets[result], exceptfds);
+
+        res = 1;
+     }
+   else
+     {
+        fprintf(stderr, "unknown result...\n");
+     }
+
+   /* Remove event objects again */
+   for(i = 0; i < events_nbr; i++)
+     WSACloseEvent(events[i]);
+
+   return res;
+}
+#endif
