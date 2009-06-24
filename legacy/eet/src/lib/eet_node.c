@@ -59,18 +59,18 @@ _eet_node_append(Eet_Node *n, Eina_List *nodes)
      return n;						\
   }
 
-EET_NODE_NEW(EET_T_CHAR, char, c, char);
-EET_NODE_NEW(EET_T_SHORT, short, s, short);
-EET_NODE_NEW(EET_T_INT, int, i, int);
-EET_NODE_NEW(EET_T_LONG_LONG, long_long, l, long long);
-EET_NODE_NEW(EET_T_FLOAT, float, f, float);
-EET_NODE_NEW(EET_T_DOUBLE, double, d, double);
-EET_NODE_NEW(EET_T_UCHAR, unsigned_char, uc, unsigned char);
-EET_NODE_NEW(EET_T_USHORT, unsigned_short, us, unsigned short);
-EET_NODE_NEW(EET_T_UINT, unsigned_int, ui, unsigned int);
-EET_NODE_NEW(EET_T_ULONG_LONG, unsigned_long_long, ul, unsigned long long);
-EET_NODE_STR_NEW(EET_T_STRING, string, str, const char *);
-EET_NODE_STR_NEW(EET_T_INLINED_STRING, inlined_string, str, const char *);
+EET_NODE_NEW(EET_T_CHAR, char, c, char)
+EET_NODE_NEW(EET_T_SHORT, short, s, short)
+EET_NODE_NEW(EET_T_INT, int, i, int)
+EET_NODE_NEW(EET_T_LONG_LONG, long_long, l, long long)
+EET_NODE_NEW(EET_T_FLOAT, float, f, float)
+EET_NODE_NEW(EET_T_DOUBLE, double, d, double)
+EET_NODE_NEW(EET_T_UCHAR, unsigned_char, uc, unsigned char)
+EET_NODE_NEW(EET_T_USHORT, unsigned_short, us, unsigned short)
+EET_NODE_NEW(EET_T_UINT, unsigned_int, ui, unsigned int)
+EET_NODE_NEW(EET_T_ULONG_LONG, unsigned_long_long, ul, unsigned long long)
+EET_NODE_STR_NEW(EET_T_STRING, string, str, const char *)
+EET_NODE_STR_NEW(EET_T_INLINED_STRING, inlined_string, str, const char *)
 
 Eet_Node *
 eet_node_null_new(const char *name)
