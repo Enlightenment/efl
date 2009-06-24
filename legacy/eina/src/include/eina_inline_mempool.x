@@ -45,7 +45,7 @@ eina_mempool_realloc(Eina_Mempool *mp, void *element, unsigned int size)
 }
 
 static inline void *
-eina_mempool_alloc(Eina_Mempool *mp, unsigned int size)
+eina_mempool_malloc(Eina_Mempool *mp, unsigned int size)
 {
    return mp->backend.alloc(mp->backend_data, size);
 }

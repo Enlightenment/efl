@@ -97,7 +97,7 @@ eina_bench_e17_stringshare(Eina_Stringshare_Test *str)
 {
    Eina_Counter *cnt;
 
-   cnt = eina_counter_add(str->name);
+   cnt = eina_counter_new(str->name);
 
    eina_counter_start(cnt);
 
@@ -112,7 +112,7 @@ eina_bench_e17_stringshare(Eina_Stringshare_Test *str)
    fprintf(stderr, "For `%s`:\n", str->name);
    eina_counter_dump(cnt);
 
-   eina_counter_delete(cnt);
+   eina_counter_free(cnt);
 }
 #endif
 

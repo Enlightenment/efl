@@ -140,7 +140,7 @@ static void _dir_list_cb(const char *name, const char *path, void *data)
 			return;
 		/* call the user provided cb on this module */
 		if (!cb_data->cb(m, cb_data->data))
-		  eina_module_delete(m);
+		  eina_module_free(m);
 	}
 }
 static int _eina_module_count = 0;
@@ -269,7 +269,7 @@ EAPI Eina_Module * eina_module_new(const char *file)
 	return m;
 }
 
-EAPI Eina_Bool eina_module_delete(Eina_Module *m)
+EAPI Eina_Bool eina_module_free(Eina_Module *m)
 {
 	EINA_SAFETY_ON_NULL_RETURN_VAL(m, EINA_FALSE);
 
@@ -422,7 +422,7 @@ EAPI void eina_module_list_unload(Eina_Array *array)
 
 /**
  * Helper function that iterates over the list of modules and calls
- * eina_module_delete on each
+ * eina_module_free on each
  */
 EAPI void eina_module_list_delete(Eina_Array *array)
 {
@@ -433,7 +433,7 @@ EAPI void eina_module_list_delete(Eina_Array *array)
 	EINA_SAFETY_ON_NULL_RETURN(array);
 
 	EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
-		eina_module_delete(m);
+		eina_module_free(m);
 
 	eina_array_flush(array);
 }

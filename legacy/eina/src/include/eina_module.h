@@ -51,7 +51,7 @@ EAPI int eina_module_init(void);
 EAPI int eina_module_shutdown(void);
 
 EAPI Eina_Module * eina_module_new(const char *file) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
-EAPI Eina_Bool eina_module_delete(Eina_Module *m) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool eina_module_free(Eina_Module *m) EINA_ARG_NONNULL(1);
 EAPI Eina_Bool eina_module_load(Eina_Module *module) EINA_ARG_NONNULL(1);
 EAPI Eina_Bool eina_module_unload(Eina_Module *m) EINA_ARG_NONNULL(1);
 EAPI void *eina_module_symbol_get(Eina_Module *module, const char *symbol) EINA_PURE EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;

@@ -81,7 +81,7 @@ EAPI Eina_Lalloc * eina_lalloc_new(void *data, Eina_Lalloc_Alloc alloc_cb, Eina_
 	return a;
 }
 
-EAPI void eina_lalloc_delete(Eina_Lalloc *a)
+EAPI void eina_lalloc_free(Eina_Lalloc *a)
 {
 	EINA_SAFETY_ON_NULL_RETURN(a);
 	EINA_SAFETY_ON_NULL_RETURN(a->free_cb);

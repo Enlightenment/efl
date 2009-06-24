@@ -160,7 +160,7 @@ _eina_list_mempool_accounting_new(__UNUSED__ Eina_List *list)
 {
    Eina_List_Accounting *tmp;
 
-   tmp = eina_mempool_alloc(_eina_list_accounting_mp, sizeof (Eina_List_Accounting));
+   tmp = eina_mempool_malloc(_eina_list_accounting_mp, sizeof (Eina_List_Accounting));
    if (!tmp) return NULL;
 
    EINA_MAGIC_SET(tmp, EINA_MAGIC_LIST_ACCOUNTING);
@@ -181,7 +181,7 @@ _eina_list_mempool_list_new(__UNUSED__ Eina_List *list)
 {
    Eina_List *tmp;
 
-   tmp = eina_mempool_alloc(_eina_list_mp, sizeof (Eina_List));
+   tmp = eina_mempool_malloc(_eina_list_mp, sizeof (Eina_List));
    if (!tmp) return NULL;
 
    EINA_MAGIC_SET(tmp, EINA_MAGIC_LIST);
@@ -487,19 +487,19 @@ eina_list_init(void)
 	 choice = "chained_mempool";
 #endif
 
-       _eina_list_mp = eina_mempool_new(choice, "list", NULL,
+       _eina_list_mp = eina_mempool_add(choice, "list", NULL,
 					sizeof (Eina_List), 320);
        if (!_eina_list_mp)
          {
            EINA_ERROR_PERR("ERROR: Mempool for list cannot be allocated in list init.\n");
 	   goto on_init_fail;
          }
-       _eina_list_accounting_mp = eina_mempool_new(choice, "list_accounting", NULL,
+       _eina_list_accounting_mp = eina_mempool_add(choice, "list_accounting", NULL,
 						   sizeof (Eina_List_Accounting), 80);
        if (!_eina_list_accounting_mp)
          {
            EINA_ERROR_PERR("ERROR: Mempool for list accounting cannot be allocated in list init.\n");
-	   eina_mempool_delete(_eina_list_mp);
+	   eina_mempool_del(_eina_list_mp);
 	   goto on_init_fail;
          }
 
@@ -546,8 +546,8 @@ eina_list_shutdown(void)
 
    if (!_eina_list_init_count)
      {
-	eina_mempool_delete(_eina_list_accounting_mp);
-	eina_mempool_delete(_eina_list_mp);
+	eina_mempool_del(_eina_list_accounting_mp);
+	eina_mempool_del(_eina_list_mp);
 
 	eina_mempool_shutdown();
 	eina_magic_string_shutdown();

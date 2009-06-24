@@ -42,8 +42,8 @@ typedef struct _Eina_Counter Eina_Counter;
 EAPI int eina_counter_init(void);
 EAPI int eina_counter_shutdown(void);
 
-EAPI Eina_Counter *eina_counter_add(const char *name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
-EAPI void eina_counter_delete(Eina_Counter *counter) EINA_ARG_NONNULL(1);
+EAPI Eina_Counter *eina_counter_new(const char *name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EAPI void eina_counter_free(Eina_Counter *counter) EINA_ARG_NONNULL(1);
 
 EAPI void eina_counter_start(Eina_Counter *counter) EINA_ARG_NONNULL(1);
 EAPI void eina_counter_stop(Eina_Counter *counter, int specimen) EINA_ARG_NONNULL(1);

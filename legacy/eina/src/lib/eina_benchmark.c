@@ -405,7 +405,7 @@ eina_benchmark_run(Eina_Benchmark *bench)
 
 	eina_array_push(ea, strdup(buffer));
 
-	counter = eina_counter_add(run->name);
+	counter = eina_counter_new(run->name);
 
 	for (i = run->start; i < run->end; i += run->step)
 	  {
@@ -424,7 +424,7 @@ eina_benchmark_run(Eina_Benchmark *bench)
 	     free(result);
 	  }
 
-	eina_counter_delete(counter);
+	eina_counter_free(counter);
 
 	fclose(current_data);
 

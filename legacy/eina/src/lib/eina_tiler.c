@@ -1111,7 +1111,7 @@ EAPI Eina_Tiler *eina_tiler_new(int w, int h)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void eina_tiler_del(Eina_Tiler *t)
+EAPI void eina_tiler_free(Eina_Tiler *t)
 {
 	EINA_MAGIC_CHECK_TILER(t);
 	_splitter_del(t);

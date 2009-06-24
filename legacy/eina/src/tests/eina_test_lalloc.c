@@ -74,7 +74,7 @@ START_TEST(eina_lalloc_simple)
 
    fail_if(eina_lalloc_elements_add(test, 50) != EINA_FALSE);
 
-   eina_lalloc_delete(test);
+   eina_lalloc_free(test);
 }
 END_TEST
 

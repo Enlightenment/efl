@@ -231,7 +231,7 @@ eina_mempool_shutdown(void)
 }
 
 EAPI Eina_Mempool *
-eina_mempool_new(const char *name, const char *context, const char *options, ...)
+eina_mempool_add(const char *name, const char *context, const char *options, ...)
 {
 	Eina_Mempool *mp;
 	va_list args;
@@ -245,7 +245,7 @@ eina_mempool_new(const char *name, const char *context, const char *options, ...
 	return mp;
 }
 
-EAPI void eina_mempool_delete(Eina_Mempool *mp)
+EAPI void eina_mempool_del(Eina_Mempool *mp)
 {
         EINA_SAFETY_ON_NULL_RETURN(mp);
 	EINA_SAFETY_ON_NULL_RETURN(mp->backend.shutdown);

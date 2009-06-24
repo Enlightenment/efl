@@ -42,7 +42,7 @@ _eina_mempool_bench(Eina_Mempool *mp, int request)
      {
 	for (j = 0; j < request; ++j)
 	  {
-	     eina_array_push(array, eina_mempool_alloc(mp, sizeof (int)));
+	     eina_array_push(array, eina_mempool_malloc(mp, sizeof (int)));
 	  }
 
 	for (j = 0; j < request; ++j)
@@ -60,9 +60,9 @@ eina_mempool_chained_mempool(int request)
 {
    Eina_Mempool *mp;
 
-   mp = eina_mempool_new("chained_mempool", "test", NULL, sizeof (int), 256);
+   mp = eina_mempool_add("chained_mempool", "test", NULL, sizeof (int), 256);
    _eina_mempool_bench(mp, request);
-   eina_mempool_delete(mp);
+   eina_mempool_del(mp);
 }
 
 static void
@@ -70,9 +70,9 @@ eina_mempool_pass_through(int request)
 {
    Eina_Mempool *mp;
 
-   mp = eina_mempool_new("pass_through", "test", NULL, sizeof (int), 8, 0);
+   mp = eina_mempool_add("pass_through", "test", NULL, sizeof (int), 8, 0);
    _eina_mempool_bench(mp, request);
-   eina_mempool_delete(mp);
+   eina_mempool_del(mp);
 }
 
 static void
@@ -80,9 +80,9 @@ eina_mempool_fixed_bitmap(int request)
 {
    Eina_Mempool *mp;
 
-   mp = eina_mempool_new("fixed_bitmap", "test", NULL, sizeof (int));
+   mp = eina_mempool_add("fixed_bitmap", "test", NULL, sizeof (int));
    _eina_mempool_bench(mp, request);
-   eina_mempool_delete(mp);
+   eina_mempool_del(mp);
 }
 
 #ifdef EINA_EMEMOA_SUPPORT
@@ -91,9 +91,9 @@ eina_mempool_ememoa_fixed(int request)
 {
    Eina_Mempool *mp;
 
-   mp = eina_mempool_new("ememoa_fixed", "test", NULL, sizeof (int), 8, 0);
+   mp = eina_mempool_add("ememoa_fixed", "test", NULL, sizeof (int), 8, 0);
    _eina_mempool_bench(mp, request);
-   eina_mempool_delete(mp);
+   eina_mempool_del(mp);
 }
 
 static void
@@ -101,9 +101,9 @@ eina_mempool_ememoa_unknown(int request)
 {
    Eina_Mempool *mp;
 
-   mp = eina_mempool_new("ememoa_unknown", "test", NULL, 0, 2, sizeof (int), 8, sizeof (int) * 2, 8);
+   mp = eina_mempool_add("ememoa_unknown", "test", NULL, 0, 2, sizeof (int), 8, sizeof (int) * 2, 8);
    _eina_mempool_bench(mp, request);
-   eina_mempool_delete(mp);
+   eina_mempool_del(mp);
 }
 #endif
 

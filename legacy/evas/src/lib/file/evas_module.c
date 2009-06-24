@@ -339,7 +339,7 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
 
 	if (!eina_module_load(en))
 	  {
-	     eina_module_delete(en);
+	     eina_module_free(en);
 	     continue;
 	  }
 
@@ -350,7 +350,7 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
 	     return em;
 	  }
 
-	eina_module_delete(en);
+	eina_module_free(en);
      }
 
    return NULL;
@@ -496,7 +496,7 @@ evas_module_shutdown(void)
      evas_static_module[i].shutdown();
 
    EINA_LIST_FREE(eina_evas_modules, en)
-     eina_module_delete(en);
+     eina_module_free(en);
 
    eina_hash_free(evas_modules[EVAS_MODULE_TYPE_ENGINE]);
    eina_hash_free(evas_modules[EVAS_MODULE_TYPE_IMAGE_LOADER]);

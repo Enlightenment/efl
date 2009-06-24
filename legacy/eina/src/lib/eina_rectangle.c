@@ -217,7 +217,7 @@ eina_rectangle_new(int x, int y, int w, int h)
 {
    Eina_Rectangle *rect;
 
-   rect = eina_mempool_alloc(_eina_rectangle_mp, sizeof (Eina_Rectangle));
+   rect = eina_mempool_malloc(_eina_rectangle_mp, sizeof (Eina_Rectangle));
    if (!rect) return NULL;
 
    EINA_RECTANGLE_SET(rect, x, y, w, h);
@@ -301,8 +301,8 @@ eina_rectangle_pool_request(Eina_Rectangle_Pool *pool, int w, int h)
    if (x == -1) return NULL;
    pool->sorted = EINA_FALSE;
 
-   new = eina_mempool_alloc(_eina_rectangle_alloc_mp,
-			    sizeof (Eina_Rectangle_Alloc) + sizeof (Eina_Rectangle));
+   new = eina_mempool_malloc(_eina_rectangle_alloc_mp,
+			     sizeof (Eina_Rectangle_Alloc) + sizeof (Eina_Rectangle));
    if (!new) return NULL;
 
    rect = (Eina_Rectangle*) (new + 1);
@@ -415,7 +415,7 @@ eina_rectangle_init(void)
      choice = "chained_mempool";
 #endif
 
-   _eina_rectangle_alloc_mp = eina_mempool_new(choice, "rectangle-alloc", NULL,
+   _eina_rectangle_alloc_mp = eina_mempool_add(choice, "rectangle-alloc", NULL,
                                          sizeof (Eina_Rectangle_Alloc) + sizeof (Eina_Rectangle), 42);
    if (!_eina_rectangle_alloc_mp)
      {
@@ -423,7 +423,7 @@ eina_rectangle_init(void)
         goto init_error;
      }
 
-   _eina_rectangle_mp = eina_mempool_new(choice, "rectangle", NULL, sizeof (Eina_Rectangle), 256);
+   _eina_rectangle_mp = eina_mempool_add(choice, "rectangle", NULL, sizeof (Eina_Rectangle), 256);
    if (!_eina_rectangle_mp)
      {
         EINA_ERROR_PERR("ERROR: Mempool for rectangle cannot be allocated in list init.\n");
@@ -447,8 +447,8 @@ eina_rectangle_shutdown(void)
 
    if (_eina_rectangle_init_count) return _eina_rectangle_init_count;
 
-   eina_mempool_delete(_eina_rectangle_alloc_mp);
-   eina_mempool_delete(_eina_rectangle_mp);
+   eina_mempool_del(_eina_rectangle_alloc_mp);
+   eina_mempool_del(_eina_rectangle_mp);
 
    eina_mempool_shutdown();
    eina_error_shutdown();

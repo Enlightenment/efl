@@ -52,7 +52,7 @@ _eina_mempool_test(Eina_Mempool *mp, Eina_Bool with_realloc, Eina_Bool with_gc)
 
    for (i = 0; i < 512; ++i)
      {
-	tbl[i] = eina_mempool_alloc(mp, sizeof (int));
+	tbl[i] = eina_mempool_malloc(mp, sizeof (int));
 	fail_if(!tbl[i]);
 	*tbl[i] = i;
      }
@@ -74,7 +74,7 @@ _eina_mempool_test(Eina_Mempool *mp, Eina_Bool with_realloc, Eina_Bool with_gc)
 	eina_mempool_statistics(mp);
      }
 
-   eina_mempool_delete(mp);
+   eina_mempool_del(mp);
 }
 
 START_TEST(eina_mempool_init_shutdown)
@@ -83,7 +83,7 @@ START_TEST(eina_mempool_init_shutdown)
 
    _mempool_init();
 
-   mp = eina_mempool_new("test", "test", NULL);
+   mp = eina_mempool_add("test", "test", NULL);
    fail_if(mp != NULL);
 
    _mempool_shutdown();
@@ -96,7 +96,7 @@ START_TEST(eina_mempool_chained_mempool)
 
    _mempool_init();
 
-   mp = eina_mempool_new("chained_mempool", "test", NULL, sizeof (int), 256);
+   mp = eina_mempool_add("chained_mempool", "test", NULL, sizeof (int), 256);
    _eina_mempool_test(mp, EINA_FALSE, EINA_FALSE);
 
    _mempool_shutdown();
@@ -109,7 +109,7 @@ START_TEST(eina_mempool_pass_through)
 
    _mempool_init();
 
-   mp = eina_mempool_new("pass_through", "test", NULL, sizeof (int), 8, 0);
+   mp = eina_mempool_add("pass_through", "test", NULL, sizeof (int), 8, 0);
    _eina_mempool_test(mp, EINA_TRUE, EINA_FALSE);
 
    _mempool_shutdown();
@@ -122,7 +122,7 @@ START_TEST(eina_mempool_fixed_bitmap)
 
    _mempool_init();
 
-   mp = eina_mempool_new("fixed_bitmap", "test", NULL, sizeof (int));
+   mp = eina_mempool_add("fixed_bitmap", "test", NULL, sizeof (int));
    _eina_mempool_test(mp, EINA_FALSE, EINA_FALSE);
 
    _mempool_shutdown();
@@ -136,7 +136,7 @@ START_TEST(eina_mempool_ememoa_fixed)
 
    _mempool_init();
 
-   mp = eina_mempool_new("ememoa_fixed", "test", NULL, sizeof (int), 8, 0);
+   mp = eina_mempool_add("ememoa_fixed", "test", NULL, sizeof (int), 8, 0);
    _eina_mempool_test(mp, EINA_FALSE, EINA_TRUE);
 
    _mempool_shutdown();
@@ -149,7 +149,7 @@ START_TEST(eina_mempool_ememoa_unknown)
 
    _mempool_init();
 
-   mp = eina_mempool_new("ememoa_unknown", "test", NULL, 0, 2, sizeof (int), 8, sizeof (int) * 2, 8);
+   mp = eina_mempool_add("ememoa_unknown", "test", NULL, 0, 2, sizeof (int), 8, sizeof (int) * 2, 8);
    _eina_mempool_test(mp, EINA_TRUE, EINA_TRUE);
 
    _mempool_shutdown();

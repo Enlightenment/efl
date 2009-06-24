@@ -153,7 +153,7 @@ _eina_counter_asiprintf(char *base, int *position, const char *format, ...)
  *
  * The counter system must be initialized with eina_counter_init() and
  * shut down with eina_counter_shutdown(). The create a counter, use
- * eina_counter_add(). To free it, use eina_counter_delete().
+ * eina_counter_new(). To free it, use eina_counter_free().
  *
  * To time a part of a code, call eina_counter_start() just before it,
  * and eina_counter_stop() just after it. Each time you start to time
@@ -193,7 +193,7 @@ _eina_counter_asiprintf(char *base, int *position, const char *format, ...)
  *        return EXIT_FAILURE;
  *    }
  *
- *    counter = eina_counter_add("malloc");
+ *    counter = eina_counter_new("malloc");
  *
  *    eina_counter_start(counter);
  *    test_malloc();
@@ -201,7 +201,7 @@ _eina_counter_asiprintf(char *base, int *position, const char *format, ...)
  *
  *    eina_counter_dump(counter);
  *
- *    eina_counter_delete(counter);
+ *    eina_counter_free(counter);
  *    eina_counter_shutdown();
  *
  *    return EXIT_SUCCESS;
@@ -306,7 +306,7 @@ eina_counter_shutdown(void)
  * error is set to #EINA_ERROR_OUT_OF_MEMORY.
  */
 EAPI Eina_Counter *
-eina_counter_add(const char *name)
+eina_counter_new(const char *name)
 {
    Eina_Counter *counter;
    size_t length;
@@ -340,7 +340,7 @@ eina_counter_add(const char *name)
  * immediatly.
  */
 EAPI void
-eina_counter_delete(Eina_Counter *counter)
+eina_counter_free(Eina_Counter *counter)
 {
    EINA_SAFETY_ON_NULL_RETURN(counter);
 

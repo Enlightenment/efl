@@ -47,7 +47,7 @@ START_TEST(eina_counter_simple)
 
    eina_counter_init();
 
-   cnt = eina_counter_add("eina_test");
+   cnt = eina_counter_new("eina_test");
    fail_if(!cnt);
 
    eina_counter_start(cnt);
@@ -71,7 +71,7 @@ START_TEST(eina_counter_simple)
 
    free(dump);
 
-   eina_counter_delete(cnt);
+   eina_counter_free(cnt);
 
    eina_counter_shutdown();
 }
@@ -84,12 +84,12 @@ START_TEST(eina_counter_break)
 
    eina_counter_init();
 
-   cnt = eina_counter_add("eina_test");
+   cnt = eina_counter_new("eina_test");
    fail_if(!cnt);
 
    eina_counter_stop(cnt, 10);
 
-   eina_counter_delete(cnt);
+   eina_counter_free(cnt);
 
    dump = eina_counter_dump(NULL);
    fail_if(dump);
