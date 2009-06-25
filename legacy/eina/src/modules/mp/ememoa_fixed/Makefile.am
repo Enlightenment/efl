@@ -1,10 +1,10 @@
-MAINTAINERCLEANFILES = \
-Makefile.in
+MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
 -I. \
 -I$(top_srcdir)/src/include \
 -I$(top_builddir)/src/include \
+@EINA_CPPFLAGS@ \
 @EINA_CFLAGS@ \
 @EMEMOA_CFLAGS@
 

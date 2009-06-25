@@ -281,6 +281,16 @@ AC_C_INLINE
 AC_C___ATTRIBUTE__
 AC_PROG_CC_STDC
 
+EINA_CPPFLAGS=""
+case "$host_os" in
+   mingw32ce* | cegcc*)
+      EET_CPPFLAGS="-D_WIN32_WCE=0x0420"
+      ;;
+   mingw*)
+      EET_CPPFLAGS="-D_WIN32_WINNT=0x0500"
+      ;;
+esac
+
 EINA_CFLAGS="${EFL_COVERAGE_CFLAGS}"
 case "${host_os}" in
    cegcc*)
@@ -305,6 +315,7 @@ if test "$GCC_MAJOR_VERSION" = "3" ; then
    EINA_CFLAGS="${EINA_CFLAGS} -fno-strict-aliasing"
 fi
 
+AC_SUBST(EINA_CPPFLAGS)
 AC_SUBST(EINA_CFLAGS)
 
 

@@ -4,6 +4,7 @@ AM_CPPFLAGS = \
 -I. \
 -I$(top_srcdir)/src/include \
 -I$(top_builddir)/src/include \
+@EINA_CPPFLAGS@ \
 @EINA_CFLAGS@
 
 if EINA_BUILD_FIXED_BITMAP

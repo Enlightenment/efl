@@ -5,7 +5,8 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/include \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\"
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+@EINA_CPPFLAGS@
 
 lib_LTLIBRARIES = libeina.la
 
