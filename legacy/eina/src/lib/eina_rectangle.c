@@ -102,7 +102,8 @@ _eina_rectangle_merge_list(Eina_List *empty, Eina_Rectangle *r)
 
    EINA_LIST_FOREACH(empty, l, match)
      {
-	if (match->x == r->x && match->w == r->w)
+	if (match->x == r->x && match->w == r->w
+	    && (match->y == r->y + r->h || r->y == match->y + match->h))
 	  {
 	     if (match->y > r->y)
 	       match->y = r->y;
@@ -114,7 +115,8 @@ _eina_rectangle_merge_list(Eina_List *empty, Eina_Rectangle *r)
 
 	     return _eina_rectangle_merge_list(empty, match);
 	  }
-	else if (match->y == r->y && match->h == r->h)
+	else if (match->y == r->y && match->h == r->h
+		 && (match->x == r->x + r->w || r->x == match->x + match->w))
 	  {
 	     if (match->x > r->x)
 	       match->x = r->x;
