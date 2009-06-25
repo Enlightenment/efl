@@ -434,38 +434,38 @@ struct _Image_Entry
    EINA_INLIST;
 
    Evas_Cache_Image      *cache;
-   
+
    const char            *cache_key;
-   
+
    const char            *file;
    const char            *key;
-   
+
    Evas_Cache_Target     *targets;
-   
+
    time_t                 timestamp;
    time_t                 laststat;
-   
+
    int                    references;
-   
+
    unsigned char          scale;
-   
+
    RGBA_Image_Loadopts    load_opts;
    int                    space;
    int                    w;
    int                    h;
-   
+
    struct
      {
         int		 w;
         int		 h;
      } allocated;
-   
+
    struct
      {
         void		*module;
         void		*loader;
      } info;
-   
+
 #ifdef BUILD_ASYNC_PRELOAD
    LK(lock);
 #endif
@@ -615,9 +615,9 @@ struct _RGBA_Image
    RGBA_Image_Flags     flags;
    struct
      {
-/* 	void           *module; */
-/* 	void           *loader; */
-/* 	char           *real_file; */
+/*	void           *module; */
+/*	void           *loader; */
+/*	char           *real_file; */
 	char           *comment;
 //	int             format;
      } info;
@@ -625,7 +625,7 @@ struct _RGBA_Image
    void                *extended_info;
 #ifdef BUILD_PIPE_RENDER
    RGBA_Pipe           *pipe;
-#endif   
+#endif
    int                  ref;
 
 /*    unsigned char        scale; */
@@ -642,7 +642,7 @@ struct _RGBA_Image
       DATA32            *data;
       Eina_Bool          no_free : 1;
    } image;
-   
+
    struct {
       LK(lock);
       Eina_List *list;
@@ -1130,7 +1130,7 @@ Tilebuf_Rect *evas_common_regionbuf_rects_get (Regionbuf *rb);
 #ifdef BUILD_PIPE_RENDER
 # include "../engines/common/evas_pipe.h"
 #endif
-   
+
 void              evas_font_dir_cache_free(void);
 
 /****/
@@ -1141,8 +1141,8 @@ void              evas_font_dir_cache_free(void);
 #ifdef BUILD_NEON
 # include <arm_neon.h>
 #endif
-#endif   
-   
+#endif
+
 #ifdef __cplusplus
 }
 #endif
