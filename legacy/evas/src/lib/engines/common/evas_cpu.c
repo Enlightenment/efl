@@ -256,6 +256,7 @@ evas_common_cpu_count(void)
 
    if (cpus != 0) return cpus;
 
+   CPU_ZERO(&cpu);
    if (sched_getaffinity(0, sizeof(cpu), &cpu) != 0)
      {
 	printf("[Evas] could not get cpu affinity: %s\n", strerror(errno));
