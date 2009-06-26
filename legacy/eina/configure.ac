@@ -133,6 +133,24 @@ if test "x${have_stringshare_usage}" = "xyes"; then
    AC_DEFINE(EINA_STRINGSHARE_USAGE, 1, [Report Eina stringshare usage pattern])
 fi
 
+# Check if we want to benchmark on real data
+enable_benchmark_e17="no"
+AC_ARG_ENABLE([e17],
+   [AC_HELP_STRING([--enable-e17], [enable heavy benchmark @<:@default=no@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       enable_benchmark_e17="yes"
+    else
+       enable_benchmark_e17="no"
+    fi
+   ],
+   [enable_benchmark_e17="no"])
+
+AC_MSG_CHECKING([whether e17 real data benchmark are built])
+AC_MSG_RESULT([${enable_benchmark_e17}])
+
+AM_CONDITIONAL(EINA_ENABLE_BENCHMARK_E17, test "x${enable_benchmark_e17}" = "xyes")
+
 
 ### Checks for programs
 AC_PROG_CC
@@ -155,23 +173,6 @@ case "$host_os" in
    AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
    ;;
 esac
-
-# Check if we want to benchmark on real data
-enable_benchmark_e17="no"
-AC_ARG_ENABLE([e17],
-   [AC_HELP_STRING([--enable-e17], [enable heavy benchmark @<:@default=no@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       enable_benchmark_e17="yes"
-    else
-       enable_benchmark_e17="no"
-    fi
-   ],
-   [enable_benchmark_e17="no"]
-)
-AC_MSG_CHECKING([whether e17 real data benchmark are built])
-AC_MSG_RESULT([${enable_benchmark_e17}])
-AM_CONDITIONAL(EINA_ENABLE_BENCHMARK_E17, test "x${enable_benchmark_e17}" = "xyes")
 
 # Check ememoa memory pool library
 
@@ -224,10 +225,10 @@ AC_PROG_CC_STDC
 EINA_CPPFLAGS=""
 case "$host_os" in
    mingw32ce* | cegcc*)
-      EET_CPPFLAGS="-D_WIN32_WCE=0x0420"
+      EINA_CPPFLAGS="-D_WIN32_WCE=0x0420"
       ;;
    mingw*)
-      EET_CPPFLAGS="-D_WIN32_WINNT=0x0500"
+      EINA_CPPFLAGS="-D_WIN32_WINNT=0x0500"
       ;;
 esac
 
