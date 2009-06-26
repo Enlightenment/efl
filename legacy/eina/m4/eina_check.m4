@@ -19,8 +19,7 @@ AC_ARG_ENABLE([$1],
        fi
     fi
    ],
-   [enable_module="yes"]
-)
+   [enable_module="yes"])
 
 have_module="no"
 if test "x${enable_module}" = "xyes" -o "x${enable_module}" = "xstatic" ; then

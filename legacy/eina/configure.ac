@@ -156,66 +156,6 @@ case "$host_os" in
    ;;
 esac
 
-# Glib library for comparison in the benchmark
-
-have_glib="no"
-want_glib="yes"
-
-AC_ARG_ENABLE(glib,
-   [AC_HELP_STRING([--disable-glib], [disable benchmarking against glib])],
-   [want_glib=${enableval}]
-)
-
-if test "x${enable_benchmark}" = "xyes" -a "x${want_glib}" = "xyes"; then
-   PKG_CHECK_MODULES([GLIB],
-      [glib-2.0],
-      [have_glib="yes"],
-      [have_glib="no"]
-   )
-fi
-
-AM_CONDITIONAL(EINA_HAVE_GLIB, test "x${have_glib}" = "xyes")
-
-# Evas library for comparison in the benchmark
-
-have_evas="no"
-want_evas="yes"
-
-AC_ARG_ENABLE(evas,
-   [AC_HELP_STRING([--disable-evas], [disable benchmarking against evas])],
-   [want_evas=${enableval}]
-)
-
-if test "x${enable_benchmark}" = "xyes" -a "x${want_evas}" = "xyes"; then
-   PKG_CHECK_MODULES([EVAS],
-      [evas],
-      [have_evas="yes"],
-      [have_evas="no"]
-   )
-fi
-
-AM_CONDITIONAL(EINA_HAVE_EVAS, test "x${have_evas}" = "xyes")
-
-# Ecore library for comparison in the benchmark
-
-have_ecore="no"
-want_ecore="yes"
-
-AC_ARG_ENABLE(ecore,
-   [AC_HELP_STRING([--disable-ecore], [disable benchmarking against ecore])],
-   [want_ecore=${enableval}]
-)
-
-if test "x${enable_benchmark}" = "xyes" -a "x${want_ecore}" = "xyes"; then
-   PKG_CHECK_MODULES([ECORE],
-      [ecore],
-      [have_ecore="yes"],
-      [have_ecore="no"]
-   )
-fi
-
-AM_CONDITIONAL(EINA_HAVE_ECORE, test "x${have_ecore}" = "xyes")
-
 # Check if we want to benchmark on real data
 enable_benchmark_e17="no"
 AC_ARG_ENABLE([e17],
@@ -394,7 +334,9 @@ EINA_CHECK_MODULE([pass-through], [yes], [pass through])
 EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
 EFL_CHECK_COVERAGE([${enable_tests}], [enable_coverage="yes"], [enable_coverage="no"])
 EFL_CHECK_BENCHMARK([enable_benchmark="yes"], [enable_benchmark="no"])
-
+EINA_BENCH_MODULE([evas], [${enable_benchmark}], [evas], [enable_benchmark_evas="yes"], [enable_benchmark_evas="no"])
+EINA_BENCH_MODULE([ecore], [${enable_benchmark}], [ecore], [enable_benchmark_ecore="yes"], [enable_benchmark_ecore="no"])
+EINA_BENCH_MODULE([glib], [${enable_benchmark}], [glib-2.0], [enable_benchmark_glib="yes"], [enable_benchmark_glib="no"])
 
 ### Create the .pc.in file according to the major version
 #cat > ${srcdir}/eina-${VMAJ}.pc.in << EOF
@@ -457,9 +399,9 @@ echo "  Tests................: ${enable_tests}"
 echo "  Coverage.............: ${enable_coverage}"
 echo "  Benchmark............: ${enable_benchmark}"
 if test "x${enable_benchmark}" = "xyes" ; then
-echo "    Glib...............: ${have_glib}"
-echo "    Evas...............: ${have_evas}"
-echo "    Ecore..............: ${have_ecore}"
+echo "    Glib...............: ${enable_benchmark_glib}"
+echo "    Evas...............: ${enable_benchmark_evas}"
+echo "    Ecore..............: ${enable_benchmark_ecore}"
 echo "    E17 real data......: ${enable_benchmark_e17}"
 fi
 echo

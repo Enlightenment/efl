@@ -26,7 +26,19 @@ AUTHORS \
 COPYING \
 OLD-COPYING.PLAIN \
 README \
-$(pkgconfig_DATA)
+$(pkgconfig_DATA) \
+autogen.sh \
+eina-0.pc.in \
+eina.spec \
+eina.spec.in \
+m4/efl_benchmark.m4 \
+m4/efl_coverage.m4 \
+m4/efl_cpu.m4 \
+m4/efl_doxygen.m4 \
+m4/efl_pthread.m4 \
+m4/efl_tests.m4 \
+m4/eina_bench.m4 \
+m4/eina_check.m4
 
 .PHONY: doc coverage benchmark
 
