@@ -414,17 +414,6 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
                   free(xcb_get_input_focus_reply(buf->priv.x11.xcb.conn, xcb_get_input_focus_unchecked(buf->priv.x11.xcb.conn), NULL));
 		  buf->priv.synced = 1;
 	       }
-	     if ((buf->priv.x11.xcb.mask) || (buf->priv.destination_alpha))
-	       {
-		  int yy;
-
-		  im = buf->priv.onebuf;
-		  for (yy = y; yy < (y + h); yy++)
-		    {
-		       memset(im->image.data + (im->cache_entry.w * yy) + x,
-			      0, w * sizeof(DATA32));
-		    }
-	       }
 	     return buf->priv.onebuf;
 	  }
 	obr = calloc(1, sizeof(Outbuf_Region));
@@ -1048,4 +1037,10 @@ evas_software_xcb_outbuf_debug_show(Outbuf        *buf,
         /* we sync */
         free(xcb_get_input_focus_reply(buf->priv.x11.xcb.conn, xcb_get_input_focus_unchecked(buf->priv.x11.xcb.conn), NULL));
      }
+}
+
+Eina_Bool
+evas_software_xcb_outbuf_alpha_get (Outbuf *buf)
+{
+   return buf->priv.x11.xcb.mask;
 }

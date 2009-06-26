@@ -322,6 +322,17 @@ eng_output_idle_flush(void *data)
    re = (Render_Engine *)data;
 }
 
+static Eina_Bool
+eng_canvas_alpha_get(void *data)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   if (re->ob->priv.back_buf)
+     return re->ob->priv.back_buf->cache_entry.flags.alpha;
+   return EINA_TRUE;
+}
+
 /* module advertising code */
 static int
 module_open(Evas_Module *em)
@@ -336,6 +347,7 @@ module_open(Evas_Module *em)
    ORD(info);
    ORD(info_free);
    ORD(setup);
+   ORD(canvas_alpha_get);
    ORD(output_free);
    ORD(output_resize);
    ORD(output_tile_size_set);

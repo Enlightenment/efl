@@ -81,18 +81,6 @@ evas_buffer_outbuf_buf_new_region_for_update(Outbuf *buf, int x, int y, int w, i
    if (buf->priv.back_buf)
      {
 	*cx = x; *cy = y; *cw = w; *ch = h;
-	if (buf->priv.back_buf->cache_entry.flags.alpha)
-	  {
-	     int  ww = w;
-	     ptr = buf->priv.back_buf->image.data + (y * buf->priv.back_buf->cache_entry.w) + x;
-	     while (h--)
-	       {
-		  while (w--)
-		    *ptr++ = 0;
-		  w = ww;
-		  ptr += (buf->priv.back_buf->cache_entry.w - w);
-	       }
-	  }
 	return buf->priv.back_buf;
      }
    else
@@ -106,10 +94,6 @@ evas_buffer_outbuf_buf_new_region_for_update(Outbuf *buf, int x, int y, int w, i
 	       {
 		  im->cache_entry.flags.alpha = 1;
                   im = (RGBA_Image *) evas_cache_image_size_set(&im->cache_entry, w, h);
-                  if (im)
-                    {
-                       memset(im->image.data, 0, w * h * sizeof(DATA32));
-                    }
                }
           }
      }

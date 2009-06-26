@@ -542,6 +542,7 @@ struct _Evas_Func
    void (*output_idle_flush)               (void *data);
 
    void *(*context_new)                    (void *data);
+   Eina_Bool (*canvas_alpha_get)           (void *data, void *context);
    void (*context_free)                    (void *data, void *context);
    void (*context_clip_set)                (void *data, void *context, int x, int y, int w, int h);
    void (*context_clip_clip)               (void *data, void *context, int x, int y, int w, int h);

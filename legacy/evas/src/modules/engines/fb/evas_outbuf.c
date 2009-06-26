@@ -220,10 +220,6 @@ evas_fb_outbuf_fb_new_region_for_update(Outbuf *buf, int x, int y, int w, int h,
         im->cache_entry.flags.alpha = 1;
         im = (RGBA_Image *) evas_cache_image_size_set(&im->cache_entry, w, h);
 
-        /* handle framebuffers with alpha channel */
-        if (buf->priv.fb.fb->fb_var.transp.length > 0) {
-           memset(im->image.data, 0, w * h * sizeof(DATA32));
-        }
         return im;
      }
    return NULL;

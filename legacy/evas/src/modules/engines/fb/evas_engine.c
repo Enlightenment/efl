@@ -247,6 +247,15 @@ eng_output_idle_flush(void *data)
    re = (Render_Engine *)data;
 }
 
+static Eina_Bool
+eng_canvas_alpha_get(void *data, void *context)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   return (re->ob->priv.fb.fb->fb_var.transp.length > 0);
+}
+
 /* module advertising code */
 static int
 module_open(Evas_Module *em)
@@ -261,6 +270,7 @@ module_open(Evas_Module *em)
    ORD(info);
    ORD(info_free);
    ORD(setup);
+   ORD(canvas_alpha_get);
    ORD(output_free);
    ORD(output_resize);
    ORD(output_tile_size_set);

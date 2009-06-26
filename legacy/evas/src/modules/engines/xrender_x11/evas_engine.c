@@ -369,7 +369,7 @@ eng_info_free(Evas *e __UNUSED__, void *info)
 static void
 eng_setup(Evas *e, void *in)
 {
-   Render_Engine *re;
+   Render_Engine *re = NULL;
    Evas_Engine_Info_XRender_X11 *info;
    int resize = 1;
 
@@ -559,14 +559,6 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 
    *x = ux; *y = uy; *w = uw; *h = uh;
    *cx = 0; *cy = 0; *cw = uw; *ch = uh;
-   if ((re->destination_alpha) || (re->x11.mask))
-     {
-	Xrender_Surface *surface;
-
-	surface = re->render_surface_new(re->xinf, uw, uh, re->xinf->x11.fmt32, 1);
-	re->render_surface_solid_rectangle_set(surface, 0, 0, 0, 0, 0, 0, uw, uh);
-	return surface;
-     }
 // use target format to avoid conversion to depth when copying to screen
 //   return _xr_render_surface_new(re->xinf, uw, uh, re->xinf->fmtdef, 0);
 // use 24/32bpp for tmp buf for better quality. rendering in 24/32bpp
@@ -1397,6 +1389,15 @@ eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y
    evas_cache_image_drop(&im->cache_entry);
 }
 
+static Eina_Bool
+eng_canvas_alpha_get(void *data, void *context)
+{
+   Render_Engine        *re;
+
+   re = (Render_Engine *)data;
+   return (re->destination_alpha) || (re->x11.mask);
+}
+
 /* module advertising code */
 static int
 module_open(Evas_Module *em)
@@ -1412,6 +1413,7 @@ module_open(Evas_Module *em)
    ORD(info);
    ORD(info_free);
    ORD(setup);
+   ORD(canvas_alpha_get);
    ORD(output_free);
    ORD(output_resize);
    ORD(output_tile_size_set);

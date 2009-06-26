@@ -28,7 +28,7 @@ static int shmcountlimit = 32;
 static X_Output_Buffer *
 _find_xob(Display *d, Visual *v, int depth, int w, int h, int shm, void *data)
 {
-   Eina_List *l, *xl;
+   Eina_List *l, *xl = NULL;
    X_Output_Buffer *xob = NULL;
    X_Output_Buffer *xob2;
    int fitness = 0x7fffffff;
@@ -363,17 +363,6 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
 		  XSync(buf->priv.x11.xlib.disp, False);
 		  buf->priv.synced = 1;
 	       }
-	     if ((buf->priv.x11.xlib.mask) || (buf->priv.destination_alpha))
-	       {
-		  int yy;
-
-		  im = buf->priv.onebuf;
-		  for (yy = y; yy < (y + h); yy++)
-		    {
-		       memset(im->image.data + (im->cache_entry.w * yy) + x,
-			      0, w * sizeof(DATA32));
-		    }
-	       }
 	     return buf->priv.onebuf;
 	  }
 	obr = calloc(1, sizeof(Outbuf_Region));
@@ -450,6 +439,8 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
                                                                        NULL);
                }
 	  }
+	/* FIXME: We should be able to remove this memset, but somewhere in the process
+	   we copy too much to the destination surface and some area are not cleaned before copy. */
 	if (alpha)
           /* FIXME: faster memset! */
           memset(im->image.data, 0, w * h * sizeof(DATA32));
@@ -581,6 +572,8 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
 							    NULL);
  */
      }
+   /* FIXME: We should be able to remove this memset, but somewhere in the process
+      we copy too much to the destination surface and some area are not cleaned before copy. */
    if ((buf->priv.x11.xlib.mask) || (buf->priv.destination_alpha))
      /* FIXME: faster memset! */
      memset(im->image.data, 0, w * h * sizeof(DATA32));
@@ -1036,4 +1029,10 @@ evas_software_xlib_outbuf_debug_show(Outbuf * buf, Drawable draw, int x, int y, 
 //	  XDestroyImage(xim);
 	XSync(buf->priv.x11.xlib.disp, False);
      }
+}
+
+Eina_Bool
+evas_software_xlib_outbuf_alpha_get(Outbuf *buf)
+{
+   return buf->priv.x11.xlib.mask;
 }

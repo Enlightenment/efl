@@ -368,8 +368,6 @@ evas_engine_sdl16_output_redraws_next_update_get(void *data,
    rect.w = *w;
    rect.h = *h;
 
-   SDL_FillRect(re->soft16_engine_image->surface, &rect, 0);
-
    /* Return the "fake" surface so it is passed to the drawing routines. */
    return re->soft16_engine_image;
 }
@@ -1018,6 +1016,12 @@ evas_engine_sdl16_image_stride_get(void *data __UNUSED__, void *image, int *stri
    if (stride) *stride = ((Soft16_Image*) eim->cache_entry.src)->stride;
 }
 
+static Eina_Bool
+evas_engine_sdl16_canvas_alpha_get(void *data, void *context)
+{
+   return EINA_FALSE;
+}
+
 /* module advertising code */
 static int
 module_open(Evas_Module *em)
@@ -1032,6 +1036,7 @@ module_open(Evas_Module *em)
    ORD(info);
    ORD(info_free);
    ORD(setup);
+   ORD(canvas_alpha_get);
    ORD(output_free);
    ORD(output_resize);
    ORD(output_tile_size_set);

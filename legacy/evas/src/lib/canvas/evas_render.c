@@ -315,6 +315,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
    Eina_List *ll;
    void *surface;
    Eina_Bool clean_them = EINA_FALSE;
+   Eina_Bool alpha;
    Eina_Rectangle *r;
    int ux, uy, uw, uh;
    int cx, cy, cw, ch;
@@ -412,6 +413,8 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
      {
 	unsigned int offset = 0;
 
+	alpha = e->engine.func->canvas_alpha_get(e->engine.data.output, e->engine.data.context);
+
 	while ((surface =
 		e->engine.func->output_redraws_next_update_get(e->engine.data.output,
 							       &ux, &uy, &uw, &uh,
@@ -436,8 +439,58 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 
 		  obj = (Evas_Object *) eina_array_data_get(&e->obscuring_objects, i);
 		  if (evas_object_is_in_output_rect(obj, ux, uy, uw, uh))
-		    eina_array_push(&e->temporary_objects, obj);
+		    {
+		       eina_array_push(&e->temporary_objects, obj);
+
+		       /* reset the background of the area if needed (using cutout and engine alpha flag to help) */
+		       if (alpha)
+			 {
+			    if (evas_object_is_opaque(obj))
+			      e->engine.func->context_cutout_add(e->engine.data.output,
+								 e->engine.data.context,
+								 obj->cur.cache.clip.x + off_x,
+								 obj->cur.cache.clip.y + off_y,
+								 obj->cur.cache.clip.w,
+								 obj->cur.cache.clip.h);
+			    else
+			      {
+				 if (obj->func->get_opaque_rect)
+				   {
+				      Evas_Coord obx, oby, obw, obh;
+
+				      obj->func->get_opaque_rect(obj, &obx, &oby, &obw, &obh);
+				      if ((obw > 0) && (obh > 0))
+					{
+					   obx += off_x;
+					   oby += off_y;
+					   RECTS_CLIP_TO_RECT(obx, oby, obw, obh,
+							      obj->cur.cache.clip.x + off_x,
+							      obj->cur.cache.clip.y + off_y,
+							      obj->cur.cache.clip.w,
+							      obj->cur.cache.clip.h);
+					   e->engine.func->context_cutout_add(e->engine.data.output,
+									      e->engine.data.context,
+									      obx, oby,
+									      obw, obh);
+					}
+				   }
+			      }
+			 }
+		    }
 	       }
+	     if (alpha)
+	       {
+		  e->engine.func->context_color_set(e->engine.data.output, e->engine.data.context, 0, 0, 0, 0);
+		  e->engine.func->context_multiplier_unset(e->engine.data.output, e->engine.data.context);
+		  e->engine.func->context_render_op_set(e->engine.data.output, e->engine.data.context, EVAS_RENDER_COPY);
+		  e->engine.func->rectangle_draw(e->engine.data.output,
+						 e->engine.data.context,
+						 surface,
+						 cx, cy, cw, ch);
+		  e->engine.func->context_cutout_clear(e->engine.data.output,
+						       e->engine.data.context);
+	       }
+
 	     /* render all object that intersect with rect */
              for (i = 0; i < e->active_objects.count; ++i)
 	       {

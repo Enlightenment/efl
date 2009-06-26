@@ -23,6 +23,7 @@ static void eng_output_redraws_next_update_push(void *data, void *surface, int x
 static void eng_output_flush(void *data);
 
 static void *eng_context_new(void *data);
+static Eina_Bool eng_canvas_alpha_get(void *data, void *context);
 static void eng_context_free(void *data, void *context);
 static void eng_context_clip_set(void *data, void *context, int x, int y, int w, int h);
 static void eng_context_clip_clip(void *data, void *context, int x, int y, int w, int h);
@@ -144,6 +145,7 @@ static Evas_Func eng_func =
      eng_output_flush,
      /* draw context virtual methods */
      eng_context_new,
+     eng_canvas_alpha_get,
      eng_context_free,
      eng_context_clip_set,
      eng_context_clip_clip,
@@ -1476,6 +1478,12 @@ eng_font_hinting_can_hint(void *data, int hinting)
    
    /* FIXME, use cairo font subsystem */
    re = (Render_Engine *)data;
+}
+
+static Eina_Bool
+eng_canvas_alpha_get(void *data, void *context)
+{
+   return EINA_FALSE;
 }
 
 static int

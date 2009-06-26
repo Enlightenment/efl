@@ -255,8 +255,6 @@ evas_engine_sdl_output_redraws_next_update_get	(void *data,
    rect.w = *w;
    rect.h = *h;
 
-   SDL_FillRect(re->rgba_engine_image->surface, &rect, 0);
-
    /* Return the "fake" surface so it is passed to the drawing routines. */
    return re->rgba_engine_image;
 }

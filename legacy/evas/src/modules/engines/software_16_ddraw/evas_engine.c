@@ -562,6 +562,11 @@ eng_output_idle_flush(void *data)
      }
 }
 
+static Eina_Bool
+eng_canvas_alpha_get(void *data, void *context)
+{
+   return EINA_FALSE;
+}
 
 /* module advertising code */
 static int
@@ -577,6 +582,7 @@ module_open(Evas_Module *em)
    ORD(info);
    ORD(info_free);
    ORD(setup);
+   ORD(canvas_alpha_get);
    ORD(output_free);
    ORD(output_resize);
    ORD(output_tile_size_set);

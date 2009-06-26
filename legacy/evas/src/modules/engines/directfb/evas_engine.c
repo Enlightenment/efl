@@ -941,8 +941,6 @@ evas_engine_dfb_output_redraws_next_update_get(void *data, int *x, int *y, int *
 	re->end = 1;
      }
 
-   _image_clear(re->screen_image, *x, *y, *w, *h );
-
    return re->screen_image->surface;
 }
 
@@ -1600,6 +1598,14 @@ static int
 evas_engine_dfb_image_scale_hint_get(void *data __UNUSED__, void *image)
 {
    return EVAS_IMAGE_SCALE_HINT_NONE;
+}
+
+static Eina_Bool
+evas_engine_dfb_canvas_alpha_get(void *data, void *context)
+{
+   Render_Engine *re = data;
+
+   return re->screen_image->cache_entry.src->flags.alpha
 }
 
 static int

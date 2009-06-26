@@ -83,4 +83,7 @@ void         evas_software_xcb_outbuf_debug_show (Outbuf  *buf,
                                                   int      w,
                                                   int      h);
 
+Eina_Bool   evas_software_xcb_outbuf_alpha_get (Outbuf *buf);
+
+
 #endif

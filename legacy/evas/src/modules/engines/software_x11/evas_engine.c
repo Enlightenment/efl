@@ -34,6 +34,7 @@ struct _Render_Engine
    void        (*outbuf_free_region_for_update)(Outbuf *ob, RGBA_Image *update);
    void        (*outbuf_flush)(Outbuf *ob);
    void        (*outbuf_idle_flush)(Outbuf *ob);
+   Eina_Bool   (*outbuf_alpha_get)(Outbuf *ob);
 };
 
 /* prototypes we will use here */
@@ -380,6 +381,7 @@ eng_setup(Evas *e, void *in)
              re->outbuf_free_region_for_update = evas_software_xlib_outbuf_free_region_for_update;
              re->outbuf_flush = evas_software_xlib_outbuf_flush;
              re->outbuf_idle_flush = evas_software_xlib_outbuf_idle_flush;
+	     re->outbuf_alpha_get = evas_software_xlib_outbuf_alpha_get;
           }
 
 #ifdef BUILD_ENGINE_SOFTWARE_XCB
@@ -409,6 +411,7 @@ eng_setup(Evas *e, void *in)
              re->outbuf_free_region_for_update = evas_software_xcb_outbuf_free_region_for_update;
              re->outbuf_flush = evas_software_xcb_outbuf_flush;
              re->outbuf_idle_flush = evas_software_xcb_outbuf_idle_flush;
+	     re->outbuf_alpha_get = evas_software_xcb_outbuf_alpha_get;
           }
 #endif
 
@@ -611,6 +614,14 @@ eng_output_idle_flush(void *data)
    re->outbuf_idle_flush(re->ob);
 }
 
+static Eina_Bool
+eng_canvas_alpha_get(void *data, void *context)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   return (re->ob->priv.destination_alpha) || (re->outbuf_alpha_get(re->ob));
+}
 
 /* module advertising code */
 static int
@@ -626,6 +637,7 @@ module_open(Evas_Module *em)
    ORD(info);
    ORD(info_free);
    ORD(setup);
+   ORD(canvas_alpha_get);
    ORD(output_free);
    ORD(output_resize);
    ORD(output_tile_size_set);

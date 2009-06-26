@@ -961,6 +961,11 @@ eng_font_hinting_can_hint(void *data __UNUSED__, int hinting)
    return evas_common_hinting_available(hinting);
 }
 
+static Eina_Bool
+eng_canvas_alpha_get(void *data __UNUSED__, void *info __UNUSED__)
+{
+   return EINA_TRUE;
+}
 
 /*
  *****
@@ -987,6 +992,7 @@ static Evas_Func func =
      NULL,
      /* draw context virtual methods */
      eng_context_new,
+     eng_canvas_alpha_get,
      eng_context_free,
      eng_context_clip_set,
      eng_context_clip_clip,
