@@ -388,23 +388,6 @@ if test "x${sdl_primitive}" = "xyes" ; then
    AC_DEFINE([ENGINE_SDL_PRIMITIVE], [1], [Use SDL primitive when possible])
 fi
 
-# if software 16 x11 is enabled - build software_16 (the generic 16bit
-# engine). later enable it fb_16 or other "16" bit engines are enabled.
-have_evas_engine_software_16="no"
-if test "x$have_evas_engine_software_16_x11" = "xyes"; then
-   have_evas_engine_software_16="yes"
-fi
-if test "x$have_evas_engine_software_sdl" = "xyes"; then
-   have_evas_engine_software_16="yes"
-fi
-if test "x$have_evas_engine_software_16_ddraw" = "xyes"; then
-   have_evas_engine_software_16="yes"
-fi
-if test "x$have_evas_engine_software_16_wince" = "xyes"; then
-   have_evas_engine_software_16="yes"
-fi
-AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_16, test "x$have_evas_engine_software_16" = "xyes")
-
 # if software generic need to be build as part of libevas.so
 have_static_software_generic="no"
 AC_ARG_ENABLE([static-software-generic],
@@ -418,6 +401,23 @@ AM_CONDITIONAL(EVAS_STATIC_BUILD_SOFTWARE_GENERIC, test "x${have_static_software
 if test "x${have_static_software_generic}" = "xyes"; then
    AC_DEFINE(EVAS_STATIC_BUILD_SOFTWARE_GENERIC, [1], [Build software generic engine as part of libevas])
 fi
+
+# if software 16 x11 is enabled - build software_16 (the generic 16bit
+# engine). later enable it fb_16 or other "16" bit engines are enabled.
+have_evas_engine_software_16="no"
+if test "x$have_evas_engine_software_16_x11" = "xyes" -o "x$have_evas_engine_software_16_x11" = "xstatic"; then
+   have_evas_engine_software_16="yes"
+fi
+if test "x$have_evas_engine_software_sdl" = "xyes" -o "x$have_evas_engine_software_sdl" = "xstatic"; then
+   have_evas_engine_software_16="yes"
+fi
+if test "x$have_evas_engine_software_16_ddraw" = "xyes" -o "x$have_evas_engine_software_16_ddraw" = "xstatic"; then
+   have_evas_engine_software_16="yes"
+fi
+if test "x$have_evas_engine_software_16_wince" = "xyes" -o "x$have_evas_engine_software_16_wince" = "xstatic"; then
+   have_evas_engine_software_16="yes"
+fi
+AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_16, test "x$have_evas_engine_software_16" = "xyes")
 
 # if software 16 need to be build as part of libevas.so
 have_static_software_16="no"
