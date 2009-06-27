@@ -12,14 +12,6 @@ AC_ISC_POSIX
 AM_INIT_AUTOMAKE(1.6 dist-bzip2)
 AM_CONFIG_HEADER(config.h)
 
-AC_PROG_CXX
-AC_PROG_CC
-AM_PROG_CC_STDC
-AC_HEADER_STDC
-AC_C_BIGENDIAN
-AC_C_CONST
-AC_C___ATTRIBUTE__
-
 AC_LIBTOOL_WIN32_DLL
 define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
 AC_PROG_LIBTOOL
@@ -30,6 +22,9 @@ VMIC=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $3);}'`
 SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
+
+
+### Needed information
 
 release="ver-pre-svn-02"
 case "$host_os" in
@@ -45,8 +40,14 @@ AC_SUBST(release_info)
 AC_SUBST(MODULE_ARCH)
 AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 
+# weird debian etch bug where pthread_barrier doesn't work without adding
+# this.
+CFLAGS="${CFLAGS=} -D_GNU_SOURCE"
+AC_SUBST(CFLAGS)
+
 want_fontconfig="auto"
 want_fribidi="auto"
+want_evas_cserve="yes"
 
 want_evas_engine_buffer="yes"
 want_evas_engine_software_x11="no"
@@ -108,170 +109,199 @@ case "$host_os" in
       ;;
 esac
 
-LT_PROG_RC
-AC_FUNC_ALLOCA
 
+### Additional options to configure
+
+# when used, that option makes configure script fails when
+# a requirement is selected, but not met.
+use_strict="no"
+AC_ARG_ENABLE([strict],
+   AC_HELP_STRING([--enable-strict], [enable strict checking mode. @<:@default==disabled@:>@]),
+   [use_strict="yes"],
+   [use_strict="no"])
+
+# Simple X11 build/link
+AC_ARG_ENABLE([simple-x11],
+   AC_HELP_STRING([--enable-simple-x11], [enable simple x11 linking]),
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_evas_simple_x11="yes"
+    else
+       want_evas_simple_x11="no"
+    fi
+   ])
+
+
+### Checks for programs
+
+AC_PROG_CXX
+AC_PROG_CC
+
+# pkg-config
 PKG_PROG_PKG_CONFIG
 
-dnl wierd debian etch bug where pthread_barrier doesn't work without adding
-dnl this.
-CFLAGS="${CFLAGS=} -D_GNU_SOURCE"
-AC_SUBST(CFLAGS)
+# doxygen program for documentation building
+EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
+
+
+### Checks for libraries
+
+# Evil library for compilation on Windows CE
+
+case "$host_os" in
+   mingw* | cegcc*)
+   PKG_CHECK_MODULES([EVIL], [evil])
+   AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
+   ;;
+esac
+
+## strong dependencies
+
+# Eina
+PKG_CHECK_MODULES([EINA], [eina-0])
+
+# Freetype
+PKG_CHECK_MODULES([FREETYPE], [freetype2 >= 9.3.0])
+
+## optional dependencies
+
+# FontConfig
+have_fontconfig="no"
+AC_ARG_ENABLE([fontconfig],
+   AC_HELP_STRING([--disable-fontconfig],
+      [disable fontconfig for finding fonts. @<:@default=enabled@:>@]),
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_fontconfig="yes"
+    else
+       want_fontconfig="no"
+    fi
+   ])
+
+
+if test "x${want_fontconfig}" = "xyes" -o "x${want_fontconfig}" = "xauto" ; then
+   PKG_CHECK_MODULES([FONTCONFIG],
+      [fontconfig],
+      [
+       have_fontconfig="yes"
+       AC_DEFINE(HAVE_FONTCONFIG, 1, [have fontconfig searching capabilities])
+      ],
+      [
+       if test "x${want_fontconfig}" = "xyes" -a "x${use_strict}" = "xyes" ; then
+          AC_MSG_ERROR([Fontconfig not found (strict dependencies checking)])
+       fi
+      ])
+fi
+
+# fribidi support
+have_fribidi="no"
+AC_ARG_ENABLE([fribidi],
+   AC_HELP_STRING([--disable-fribidi],
+      [disable bidirectional text support. @<:@default=enabled@:>@]),
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_fribidi="yes"
+    else
+       want_fribidi="no"
+    fi
+   ])
+
+if test "x${want_fribidi}" = "xyes" -o "x${want_fribidi}" = "xauto" ; then
+   PKG_CHECK_MODULES([FRIBIDI],
+      [fribidi],
+      [
+       have_fribidi="yes"
+       AC_DEFINE(HAVE_FRIBIDI, 1, [have fribidi support])
+      ],
+      [
+       if test "x$want_fribidi" = "xyes" -a "x$use_strict" = "xyes" ; then
+          AC_MSG_ERROR([Fribidi not found (strict dependencies checking)])
+       fi
+      ])
+fi
+
+if test "x${have_fribidi}" = "xno"; then
+  HAS_BIDI=0
+fi
+
+### Checks for header files
+AC_HEADER_STDC
+
+# fnmatch.h
+AC_CHECK_HEADER([fnmatch.h],
+   [dummy="yes"],
+   [AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file. MinGW users: see the INSTALL file])])
+
+
+### Checks for types
+
+
+### Checks for structures
+
+
+### Checks for compiler characteristics
+AC_C_CONST
+AC_C_BIGENDIAN
+AC_C___ATTRIBUTE__
+AM_PROG_CC_STDC
 
 WIN32_CPPFLAGS=""
-WIN32_CFLAGS=""
-lt_enable_auto_import=""
 case "$host_os" in
-        mingw*|cegcc*)
-		PKG_CHECK_MODULES(EVIL, evil)
-		AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
-		dnl needed for correct definition of EAPI
-		AC_DEFINE(EFL_EVAS_BUILD, 1, [Define to mention that evas is built])
-                if test "$host_os" = "cegcc" ; then
-                        WIN32_CPPFLAGS="-D_WIN32_WCE=0x0420"
-                        WIN32_CFLAGS="-mwin32"
-			lt_enable_auto_import="-Wl,--enable-auto-import"
-                fi
-                if test "$host_os" = "mingw32ce" ; then
-                        WIN32_CPPFLAGS="-D_WIN32_WCE=0x0420"
-                fi
-                ;;
+   mingw32ce* | cegcc*)
+      WIN32_CPPFLAGS="-D_WIN32_WCE=0x0420"
+      ;;
+   mingw*)
+      WIN32_CPPFLAGS="-D_WIN32_WINNT=0x0500"
+      ;;
 esac
 AC_SUBST(WIN32_CPPFLAGS)
+
+WIN32_CFLAGS=""
+case "${host_os}" in
+   cegcc*)
+      WIN32_CFLAGS="-mwin32"
+   ;;
+esac
 AC_SUBST(WIN32_CFLAGS)
+
+
+### Checks for linker characteristics
+lt_enable_auto_import=""
+case "${host_os}" in
+   mingw* | cegcc*)
+      AC_DEFINE(EFL_EVAS_BUILD, 1, [Define to mention that evas is built])
+      lt_enable_auto_import="-Wl,--enable-auto-import"
+   ;;
+esac
 AC_SUBST(lt_enable_auto_import)
 
 
-dnl when used, that option makes configure script fails when
-dnl a requirement is selected, but not met.
-AC_ARG_ENABLE(strict,
-  AC_HELP_STRING(
-    [--enable-strict],
-    [enable strict checking mode. [[default==disabled]]]),
-  [use_strict="yes"],
-  [use_strict="no"]
-)
+### Checks for library functions
 
-#######################################
-## CACHE SERVER (CSERVE / CS)
-want_evas_cserve="yes"
-AC_MSG_CHECKING(whether to build shared cache server and support)
-AC_ARG_ENABLE(evas-cserve,
-  AC_HELP_STRING(
-    [--disable-evas-cserve],
-    [disable shared cache server support. [[default=enabled]]]
-  ),
-  [ want_evas_cserve="$enableval" ]
-)
-AC_MSG_RESULT($want_evas_cserve)
+# alloca
+AC_FUNC_ALLOCA
 
-if test "x${want_evas_cserve}" = "xyes" ; then
-   AC_MSG_CHECKING([whether shm_open() is present])
-   LIBS_save=${LIBS}
-   LIBS="$LIBS -lrt"
-   AC_LINK_IFELSE(
-      [AC_LANG_PROGRAM(
-         [[
-#include <sys/types.h>
-#include <sys/mman.h>
-#include <fcntl.h>
-         ]],
-         [[
-int fd;
-fd = shm_open("/", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
-shm_unlink("/");
-         ]])],
-      [want_evas_cserve="yes"],
-      [want_evas_cserve="no"])
-   LIBS=${LIBS_save}
-   AC_MSG_RESULT([$want_evas_cserve])
+# fnmatch
+AC_CHECK_FUNCS([fnmatch], [res="yes"], [res="no"])
+if test "x$res" = "xno"; then
+   AC_SEARCH_LIBS([fnmatch],
+      [fnmatch evil iberty],
+      [res="yes"],
+      [res="no"])
+   if test "x$res" = "xno"; then
+      AC_MSG_ERROR([Cannot find fnmatch() in neither libc nor libfnmatch, nor libiberty, nor libevil])
+   fi
 fi
 
-AM_CONDITIONAL(EVAS_CSERVE, test "x$want_evas_cserve" = "xyes")
-if test "x$want_evas_cserve" = "xyes"; then
-  AC_DEFINE(EVAS_CSERVE, 1, [Shared caceh server.])
-fi
-
-##################################################################
-#fribidi support - OPTIONAL!
-
-have_fribidi="no"
-AC_ARG_ENABLE(fribidi,
-  AC_HELP_STRING(
-    [--disable-fribidi],
-    [disable bidirectional text support. [[default=enabled]]]
-  ),
-  [ want_fribidi=$enableval ]
-)
-
-if test "x$want_fribidi" = "xyes" -o "x$want_fribidi" = "xauto" ; then
-  # Check if really available
-  PKG_CHECK_MODULES(FRIBIDI, fribidi,
-    [
-      have_fribidi="yes"
-      AC_DEFINE(HAVE_FRIBIDI, 1, [have fribidi support])
-    ],
-    [
-      if test "x$want_fribidi" = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR([Fribidi not found (strict dependencies checking)])
-      fi
-    ])
-fi
-if test "x$have_fribidi" = "xno"; then
-  HAS_BIDI=0
-fi
-#####################################################################
-# Check evas strong dependencie
-
-PKG_CHECK_MODULES([EINA], [eina-0])
-
-PKG_CHECK_MODULES([FREETYPE], [freetype2 >= 9.3.0])
-
-#######################################
-## Simple X11 build/link
-
-AC_ARG_ENABLE(simple-x11,
-  AC_HELP_STRING([--enable-simple-x11], [enable simple x11 linking]),
-  [ want_evas_simple_x11=$enableval ]
-)
-
-#######################################
-## FontConfig
-
-have_fontconfig="no"
-AC_ARG_ENABLE(fontconfig,
-  AC_HELP_STRING(
-    [--disable-fontconfig],
-    [disable fontconfig for finding fonts. [[default=enabled]]]
-  ),
-  [ want_fontconfig=$enableval ]
-)
-
-if test "x$want_fontconfig" = "xyes" -o "x$want_fontconfig" = "xauto" ; then
-  # Check if really available
-  PKG_CHECK_MODULES(FONTCONFIG, fontconfig,
-    [
-      have_fontconfig="yes"
-      AC_DEFINE(HAVE_FONTCONFIG, 1, [have fontconfig searching capabilities])
-    ],
-    [
-      if test "x$want_fontconfig" = "xyes" -a "x$use_strict" = "xyes" ; then
-        AC_MSG_ERROR([Fontconfig not found (strict dependencies checking)])
-      fi
-    ])
-fi
-
-###############
-## dlopen
-
+# dlopen
 dlopen_libs=""
 case "$host_os" in
   mingw32ce* | cegcc*)
-dnl managed by evil
+# managed by evil
     AC_DEFINE(HAVE_DLADDR)
   ;;
   mingw*)
-dnl nothing on mingw platform
+# nothing on mingw platform
   ;;
   *)
     AC_CHECK_FUNCS(dlopen, res=yes, res=no)
@@ -289,20 +319,49 @@ dnl nothing on mingw platform
 esac
 AC_SUBST(dlopen_libs)
 
-AC_CHECK_HEADER([fnmatch.h],
-   [dummy="yes"],
-   [AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file. MinGW users: see the INSTALL file])])
+# (shm_open (for cache server)
+AC_ARG_ENABLE([evas-cserve],
+   AC_HELP_STRING([--disable-evas-cserve],
+      [disable shared cache server support. @<:@default=enabled@:>@]),
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_evas_cserve="yes"
+    else
+       want_evas_cserve="no"
+    fi
+   ])
+AC_MSG_CHECKING(whether to build shared cache server and support)
+AC_MSG_RESULT(${want_evas_cserve})
 
-AC_CHECK_FUNCS([fnmatch], [res="yes"], [res="no"])
-if test "x$res" = "xno"; then
-   AC_SEARCH_LIBS([fnmatch],
-      [fnmatch evil iberty],
-      [res="yes"],
-      [res="no"])
-   if test "x$res" = "xno"; then
-      AC_MSG_ERROR([Cannot find fnmatch() in neither libc nor libfnmatch, nor libiberty, nor libevil])
-   fi
+if test "x${want_evas_cserve}" = "xyes" ; then
+   AC_MSG_CHECKING([whether shm_open() is present])
+   LIBS_save=${LIBS}
+   LIBS="${LIBS} -lrt"
+   AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM(
+         [[
+#include <sys/types.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+         ]],
+         [[
+int fd;
+fd = shm_open("/", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+shm_unlink("/");
+         ]])],
+      [want_evas_cserve="yes"],
+      [want_evas_cserve="no"])
+   LIBS=${LIBS_save}
+   AC_MSG_RESULT([${want_evas_cserve}])
 fi
+
+if test "x${want_evas_cserve}" = "xyes" ; then
+  AC_DEFINE(EVAS_CSERVE, 1, [Shared caceh server.])
+fi
+
+AM_CONDITIONAL([EVAS_CSERVE], [test "x${want_evas_cserve}" = "xyes"])
+
+
 
 #####################################################################
 ## Engines
@@ -777,7 +836,6 @@ AC_ARG_ENABLE(cpu-neon,
 
 #######################################
 ## C
-build_cpu_c="no"
 build_cpu_c="yes"
 AC_MSG_CHECKING(whether to build c code)
 AC_ARG_ENABLE(cpu-c,
@@ -822,51 +880,9 @@ fi
 
 #######################################
 ## Nearest sampling scaler
-scaler_sample="no"
-scaler_sample="yes"
-AC_MSG_CHECKING(whether to build sampling scaler)
-AC_ARG_ENABLE(scale-sample,
-  AC_HELP_STRING([--enable-scale-sample], [enable sampling scaler code]),
-  [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_SCALE_SAMPLE, 1, [Sampling Scaler Support])
-        scaler_sample="yes"
-      else
-        AC_MSG_RESULT(no)
-        scaler_sample="no"
-      fi
-  ], [
-      AC_MSG_RESULT($scaler_sample)
-      if test "x$scaler_sample" = "xyes" ; then
-        AC_DEFINE(BUILD_SCALE_SAMPLE, 1, [Sampling Scaler Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CHECK_SCALER([scale-sample], [sampling scaler], [scaler_sample="yes"], [scaler_sample="no"])
 ## Smooth super and sub sampling scaler
-scaler_smooth="no"
-scaler_smooth="yes"
-AC_MSG_CHECKING(whether to build smooth scaler)
-AC_ARG_ENABLE(scale-smooth,
-  AC_HELP_STRING([--enable-scale-smooth], [enable smooth scaler code]),
-  [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_SCALE_SMOOTH, 1, [Smooth Scaler Support])
-        scaler_smooth="yes"
-      else
-        AC_MSG_RESULT(no)
-        scaler_smooth="no"
-      fi
-  ], [
-      AC_MSG_RESULT($scaler_smooth)
-      if test "x$scaler_smooth" = "xyes" ; then
-        AC_DEFINE(BUILD_SCALE_SMOOTH, 1, [Smooth Scaler Support])
-      fi
-  ]
-)
+EVAS_CHECK_SCALER([scale-smooth], [smooth scaler], [scaler_smooth="yes"], [scaler_smooth="no"])
 
 #######################################
 ## YUV -> ARGB converter
@@ -897,72 +913,11 @@ AC_ARG_ENABLE(convert-yuv,
 
 #######################################
 ## Small dither mask instead of big one (lower quality)
-conv_small_dither="no"
-AC_MSG_CHECKING(whether to build small dither mask code)
-AC_ARG_ENABLE(small-dither-mask,
-  AC_HELP_STRING([--enable-small-dither-mask], [enable small dither mask code]),
-  [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_SMALL_DITHER_MASK, 1, [Small Dither Mask Support])
-        conv_small_dither="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_small_dither="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_small_dither)
-      if test "x$conv_small_dither" = "xyes" ; then
-        AC_DEFINE(BUILD_SMALL_DITHER_MASK, 1, [Small Dither Mask Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CHECK_DITHER([small-dither-mask], [small dither mask], [conv_small_dither="yes"], [conv_small_dither="no"])
 ## Alternate Line dither mask instead of big one (lower quality - but fastest)
-conv_line_dither="no"
-AC_MSG_CHECKING(whether to build line dither mask code)
-AC_ARG_ENABLE(line-dither-mask,
-  AC_HELP_STRING([--enable-line-dither-mask], [enable line dither mask code]),
-  [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_LINE_DITHER_MASK, 1, [Line Dither Mask Support])
-        conv_line_dither="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_line_dither="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_line_dither)
-      if test "x$conv_line_dither" = "xyes" ; then
-        AC_DEFINE(BUILD_LINE_DITHER_MASK, 1, [Line Dither Mask Support])
-      fi
-  ]
-)
-
-#######################################
+EVAS_CHECK_DITHER([line-dither-mask], [line dither mask], [conv_line_dither="yes"], [conv_line_dither="no"])
 ## No dither mask at all for 16bpp
-conv_no_dither="no"
-AC_MSG_CHECKING(whether to build without dither mask for 16bpp)
-AC_ARG_ENABLE(no-dither-mask,
-  AC_HELP_STRING([--enable-no-dither-mask], [enable conversion to 16bpp without dither mask]),
-  [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_NO_DITHER_MASK, 1, [No Dither Mask Support])
-        conv_no_dither="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_no_dither="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_no_dither)
-      if test "x$conv_no_dither" = "xyes" ; then
-        AC_DEFINE(BUILD_NO_DITHER_MASK, 1, [No Dither Mask Support])
-      fi
-  ]
-)
+EVAS_CHECK_DITHER([no-dither-mask], [conversion to 16bpp without dither mask], [conv_no_dither="yes"], [conv_no_dither="no"])
 
 #######################################
 ## Convert to 8bpp RGB 332
@@ -1110,7 +1065,6 @@ if test x$want_valgrind = "xyes"; then
   )
 fi
 
-EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 #####################################################################
 ## Fill in flags
 
@@ -1225,7 +1179,7 @@ echo "Configuration Options Summary:"
 echo
 echo "Engines:"
 echo "  Software Memory Buffer.....: $have_evas_engine_buffer $have_static_evas_engine_buffer"
-echo "  Software X11...............: $have_evas_engine_software_x11  $have_static_evas_engine_software_x11 (XCB: $have_evas_engine_software_xcb)"
+echo "  Software X11...............: $have_evas_engine_software_x11 $have_static_evas_engine_software_x11 (XCB: $have_evas_engine_software_xcb)"
 echo "  XRender X11................: $have_evas_engine_xrender_x11 $have_static_evas_engine_xrender_x11 (XCB: $have_evas_engine_xrender_xcb)"
 echo "  OpenGL X11.................: $have_evas_engine_gl_x11 $have_static_evas_engine_gl_x11"
 #echo "  Cairo X11..................: $have_evas_engine_cairo_x11 $have_static_evas_engine_cairo_x11"
@@ -1274,6 +1228,7 @@ echo "  SSE.....................: $build_cpu_sse"
 echo "  ALTIVEC.................: $build_cpu_altivec"
 echo "  NEON....................: $build_cpu_neon"
 echo "  Thread Support..........: $build_pthreads"
+echo
 echo "Features:"
 echo "  MAGIC_DEBUG.............: $want_evas_magic_debug"
 echo "  Cache Server............: $want_evas_cserve"
