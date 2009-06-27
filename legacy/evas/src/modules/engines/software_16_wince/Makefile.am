@@ -11,9 +11,6 @@ AM_CPPFLAGS = \
 @FREETYPE_CFLAGS@ \
 @evas_engine_software_16_wince_cflags@
 
-.rc.lo:
-	$(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --tag=RC --mode=compile $(RC) $(RCFLAGS) $< -o $@
-
 if BUILD_ENGINE_SOFTWARE_16_WINCE
 
 SOFTWARE_16_WINCE_SOURCE = \
@@ -21,8 +18,7 @@ evas_engine.c \
 evas_wince_ddraw_buffer.cpp \
 evas_wince_fb_buffer.c \
 evas_wince_gapi_buffer.c \
-evas_wince_gdi_buffer.c \
-evas_wince_gapi.rc
+evas_wince_gdi_buffer.c
 
 SOFTWARE_16_WINCE_LIBADD = @evas_engine_software_16_wince_libs@
 
