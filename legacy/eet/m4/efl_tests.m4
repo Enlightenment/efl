@@ -13,7 +13,7 @@ AC_DEFUN([EFL_CHECK_TESTS],
 dnl configure option
 
 AC_ARG_ENABLE([tests],
-   [AC_HELP_STRING([--enable-tests], [enable tests @<:@default=no@:>@])],
+   [AC_HELP_STRING([--enable-tests], [enable tests @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        _efl_enable_tests="yes"
@@ -21,8 +21,8 @@ AC_ARG_ENABLE([tests],
        _efl_enable_tests="no"
     fi
    ],
-   [_efl_enable_tests="no"]
-)
+   [_efl_enable_tests="no"])
+
 AC_MSG_CHECKING([whether tests are built])
 AC_MSG_RESULT([${_efl_enable_tests}])
 
@@ -32,15 +32,16 @@ if test "x${_efl_enable_tests}" = "xyes" ; then
    PKG_CHECK_MODULES([CHECK],
       [check >= 0.9.5],
       [dummy="yes"],
-      [_efl_enable_tests="no"]
-   )
+      [_efl_enable_tests="no"])
 fi
 
 AM_CONDITIONAL(EFL_ENABLE_TESTS, test "x${_efl_enable_tests}" = "xyes")
 
 if test "x${_efl_enable_tests}" = "xyes" ; then
-   ifelse([$1], , :, [$1])
+   m4_default([$1], [:])
 else
-   ifelse([$2], , :, [$2])
+   m4_default([$2], [:])
 fi
 ])
+
+dnl End of efl_tests.m4

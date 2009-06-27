@@ -16,7 +16,7 @@ AC_DEFUN([EFL_CHECK_COVERAGE],
 dnl configure option
 
 AC_ARG_ENABLE([coverage],
-   [AC_HELP_STRING([--enable-coverage], [compile with coverage profiling instrumentation @<:@default=no@:>@])],
+   [AC_HELP_STRING([--enable-coverage], [enable coverage profiling instrumentation @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        _efl_enable_coverage="yes"
@@ -24,8 +24,8 @@ AC_ARG_ENABLE([coverage],
        _efl_enable_coverage="no"
     fi
    ],
-   [_efl_enable_coverage="no"]
-)
+   [_efl_enable_coverage="no"])
+
 AC_MSG_CHECKING([whether to use profiling instrumentation])
 AC_MSG_RESULT([$_efl_enable_coverage])
 
@@ -57,8 +57,10 @@ AC_SUBST(EFL_COVERAGE_LIBS)
 AM_CONDITIONAL(EFL_ENABLE_COVERAGE, test "x${_efl_enable_coverage}" = "xyes")
 
 if test "x${_efl_enable_coverage}" = "xyes" ; then
-   ifelse([$2], , :, [$2])
+   m4_default([$2], [:])
 else
-   ifelse([$3], , :, [$3])
+   m4_default([$3], [:])
 fi
 ])
+
+dnl End of efl_coverage.m4

@@ -12,7 +12,7 @@ AC_DEFUN([EFL_CHECK_BENCHMARK],
 dnl configure option
 
 AC_ARG_ENABLE([benchmark],
-   [AC_HELP_STRING([--enable-benchmark], [enable tests @<:@default=no@:>@])],
+   [AC_HELP_STRING([--enable-benchmark], [enable benchmarking @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        _efl_enable_benchmark="yes"
@@ -20,16 +20,18 @@ AC_ARG_ENABLE([benchmark],
        _efl_enable_benchmark="no"
     fi
    ],
-   [_efl_enable_benchmark="no"]
-)
+   [_efl_enable_benchmark="no"])
+
 AC_MSG_CHECKING([whether benchmark are built])
 AC_MSG_RESULT([${_efl_enable_benchmark}])
 
 AM_CONDITIONAL(EFL_ENABLE_BENCHMARK, test "x${_efl_enable_benchmark}" = "xyes")
 
 if test "x${_efl_enable_benchmark}" = "xyes" ; then
-   ifelse([$1], , :, [$1])
+   m4_default([$1], [:])
 else
-   ifelse([$2], , :, [$2])
+   m4_default([$2], [:])
 fi
 ])
+
+dnl End of efl_benchmark.m4

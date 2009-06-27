@@ -32,9 +32,7 @@ AC_MSG_RESULT([${efl_enable_doc}])
 
 if test "x${efl_enable_doc}" = "xyes" ; then
 
-dnl
 dnl Specify the file name, without path
-dnl
 
    efl_doxygen="doxygen"
 
@@ -42,9 +40,9 @@ dnl
       [AC_HELP_STRING(
           [--with-doxygen=FILE],
           [doxygen program to use @<:@default=doxygen@:>@])],
-dnl
+
 dnl Check the given doxygen program.
-dnl
+
       [efl_doxygen=${withval}
        AC_CHECK_PROG([efl_have_doxygen],
           [${efl_doxygen}],
@@ -96,4 +94,4 @@ fi
 
 ])
 
-dnl End of doxygen.m4
+dnl End of efl_doxygen.m4
