@@ -35,7 +35,16 @@
  * @{
  */
 
+/**
+ * @typedef Eina_Mempool
+ * Mempool type.
+ */
 typedef struct _Eina_Mempool Eina_Mempool;
+
+/**
+ * @typedef Eina_Mempool_Backend
+ * Mempool backend type.
+ */
 typedef struct _Eina_Mempool_Backend Eina_Mempool_Backend;
 
 EAPI extern Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE;

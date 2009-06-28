@@ -65,6 +65,8 @@ EAPI void eina_module_list_load(Eina_Array *list) EINA_ARG_NONNULL(1);
 EAPI void eina_module_list_unload(Eina_Array *list) EINA_ARG_NONNULL(1);
 EAPI void eina_module_list_delete(Eina_Array *list) EINA_ARG_NONNULL(1);
 
-/** @} */
+/**
+ * @}
+ */
 
 #endif /*EINA_MODULE_H_*/

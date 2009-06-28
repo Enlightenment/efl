@@ -73,7 +73,18 @@ static int _eina_main_count = 0;
  * This function sets up all the eina modules. It returns 0 on
  * failure (that is, when one of the module fails to initialize),
  * otherwise it returns the number of times it has already been
- * called.
+ * called. The list of initialisation functions that are called are
+ * (in that order):
+ *
+ * @li eina_error_init()
+ * @li eina_hash_init()
+ * @li eina_stringshare_init()
+ * @li eina_list_init()
+ * @li eina_array_init()
+ * @li eina_counter_init()
+ * @li eina_benchmark_init()
+ * @li eina_magic_string_init()
+ * @li eina_rectangle_init()
  *
  * When Eina is not used anymore, call eina_shutdown() to shut down
  * the Eina library.
@@ -159,7 +170,18 @@ eina_init(void)
  *
  * This function shuts down the Eina library. It returns 0 when it has
  * been called the same number of times than eina_init(). In that case
- * it shut down all the Eina modules.
+ * it shut down all the Eina modules. The list of shut down functions
+ * that are called are (in that order):
+ *
+ * @li eina_rectangle_init()
+ * @li eina_magic_string_init()
+ * @li eina_benchmark_init()
+ * @li eina_counter_init()
+ * @li eina_array_init()
+ * @li eina_list_init()
+ * @li eina_stringshare_init()
+ * @li eina_hash_init()
+ * @li eina_error_init()
  *
  * Once this function succeeds (that is, @c 0 is returned), you must
  * not call any of the Eina function anymore. You must call

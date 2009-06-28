@@ -219,6 +219,9 @@ eina_benchmark_shutdown(void)
  * This function return a valid benchmark on success, or @c NULL if
  * memory allocation fails. In that case, the error is set to
  * #EINA_ERROR_OUT_OF_MEMORY.
+ *
+ * When the new module is not needed anymore, use
+ * eina_benchmark_free() to free the allocated memory.
  */
 EAPI Eina_Benchmark *
 eina_benchmark_new(const char *name, const char *run)

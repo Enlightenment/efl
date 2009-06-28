@@ -300,7 +300,7 @@ case "$host_os" in
       AC_DEFINE(HAVE_DLADDR)
       ;;
    mingw*)
-dnl nothing on mingw platform
+# nothing on mingw platform
       ;;
    *)
       AC_CHECK_FUNCS([dlopen], [res="yes"], [res="no"])

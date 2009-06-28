@@ -304,6 +304,9 @@ eina_counter_shutdown(void)
  * name. If @p name is @c NULL, the function returns @c NULL
  * immediatly. If memory allocation fails, @c NULL is returned and the
  * error is set to #EINA_ERROR_OUT_OF_MEMORY.
+ *
+ * Whe the new counter is not needed anymore, use eina_counter_free() to
+ * free the allocated memory.
  */
 EAPI Eina_Counter *
 eina_counter_new(const char *name)
@@ -336,7 +339,7 @@ eina_counter_new(const char *name)
  *
  * This function remove the clock of @p counter from the used clocks
  * (see eina_counter_start()) and frees the memory allocated for
- * @p counter. If @p counter is @c NULL, the functions returns
+ * @p counter. If @p counter is @c NULL, the function returns
  * immediatly.
  */
 EAPI void

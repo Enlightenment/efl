@@ -214,6 +214,74 @@ _eina_rectangle_empty_space_find(Eina_List *empty, int w, int h, int *x, int *y)
  *                                   API                                      *
  *============================================================================*/
 
+EAPI int
+eina_rectangle_init(void)
+{
+   const char *choice;
+
+   _eina_rectangle_init_count++;
+
+   if (_eina_rectangle_init_count > 1) return _eina_rectangle_init_count;
+
+   if (!eina_error_init())
+     {
+        EINA_ERROR_PERR("Could not initialize eina error module.\n");
+        return 0;
+     }
+   if (!eina_mempool_init())
+     {
+        EINA_ERROR_PERR("Could not initialize eina mempool module.\n");
+        goto mempool_init_error;
+     }
+
+#ifdef EINA_DEFAULT_MEMPOOL
+   choice = "pass_through";
+#else
+   if (!(choice = getenv("EINA_MEMPOOL")))
+     choice = "chained_mempool";
+#endif
+
+   _eina_rectangle_alloc_mp = eina_mempool_add(choice, "rectangle-alloc", NULL,
+                                         sizeof (Eina_Rectangle_Alloc) + sizeof (Eina_Rectangle), 42);
+   if (!_eina_rectangle_alloc_mp)
+     {
+        EINA_ERROR_PERR("ERROR: Mempool for rectangle cannot be allocated in list init.\n");
+        goto init_error;
+     }
+
+   _eina_rectangle_mp = eina_mempool_add(choice, "rectangle", NULL, sizeof (Eina_Rectangle), 256);
+   if (!_eina_rectangle_mp)
+     {
+        EINA_ERROR_PERR("ERROR: Mempool for rectangle cannot be allocated in list init.\n");
+        goto init_error;
+     }
+
+   return _eina_rectangle_init_count;
+
+ init_error:
+   eina_mempool_shutdown();
+ mempool_init_error:
+   eina_error_shutdown();
+
+   return 0;
+}
+
+EAPI int
+eina_rectangle_shutdown(void)
+{
+   --_eina_rectangle_init_count;
+
+   if (_eina_rectangle_init_count) return _eina_rectangle_init_count;
+
+   eina_mempool_del(_eina_rectangle_alloc_mp);
+   eina_mempool_del(_eina_rectangle_mp);
+
+   eina_mempool_shutdown();
+   eina_error_shutdown();
+
+   return 0;
+}
+
 EAPI Eina_Rectangle *
 eina_rectangle_new(int x, int y, int w, int h)
 {
@@ -388,73 +456,5 @@ eina_rectangle_pool_geometry_get(Eina_Rectangle_Pool *pool, int *w, int *h)
    if (h) *h = pool->h;
 
    return EINA_TRUE;
-}
-
-EAPI int
-eina_rectangle_init(void)
-{
-   const char *choice;
-
-   _eina_rectangle_init_count++;
-
-   if (_eina_rectangle_init_count > 1) return _eina_rectangle_init_count;
-
-   if (!eina_error_init())
-     {
-        EINA_ERROR_PERR("Could not initialize eina error module.\n");
-        return 0;
-     }
-   if (!eina_mempool_init())
-     {
-        EINA_ERROR_PERR("Could not initialize eina mempool module.\n");
-        goto mempool_init_error;
-     }
-
-#ifdef EINA_DEFAULT_MEMPOOL
-   choice = "pass_through";
-#else
-   if (!(choice = getenv("EINA_MEMPOOL")))
-     choice = "chained_mempool";
-#endif
-
-   _eina_rectangle_alloc_mp = eina_mempool_add(choice, "rectangle-alloc", NULL,
-                                         sizeof (Eina_Rectangle_Alloc) + sizeof (Eina_Rectangle), 42);
-   if (!_eina_rectangle_alloc_mp)
-     {
-        EINA_ERROR_PERR("ERROR: Mempool for rectangle cannot be allocated in list init.\n");
-        goto init_error;
-     }
-
-   _eina_rectangle_mp = eina_mempool_add(choice, "rectangle", NULL, sizeof (Eina_Rectangle), 256);
-   if (!_eina_rectangle_mp)
-     {
-        EINA_ERROR_PERR("ERROR: Mempool for rectangle cannot be allocated in list init.\n");
-        goto init_error;
-     }
-
-   return _eina_rectangle_init_count;
-
- init_error:
-   eina_mempool_shutdown();
- mempool_init_error:
-   eina_error_shutdown();
-
-   return 0;
-}
-
-EAPI int
-eina_rectangle_shutdown(void)
-{
-   --_eina_rectangle_init_count;
-
-   if (_eina_rectangle_init_count) return _eina_rectangle_init_count;
-
-   eina_mempool_del(_eina_rectangle_alloc_mp);
-   eina_mempool_del(_eina_rectangle_mp);
-
-   eina_mempool_shutdown();
-   eina_error_shutdown();
-
-   return 0;
 }
 
