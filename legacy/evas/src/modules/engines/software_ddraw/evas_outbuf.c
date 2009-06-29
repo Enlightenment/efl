@@ -402,7 +402,7 @@ evas_software_ddraw_outbuf_flush(Outbuf *buf)
           eina_list_remove_list(buf->priv.prev_pending_writes,
                                 buf->priv.prev_pending_writes);
         obr = im->extended_info;
-        evas_cache_image_drop((Image_Entry *)im);
+        evas_cache_image_drop(&im->cache_entry);
         if (obr->ddob) _unfind_ddob(obr->ddob);
 /*
 	     if (obr->ddob) evas_software_x11_x_output_buffer_free(obr->ddob);
