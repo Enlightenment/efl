@@ -428,3 +428,10 @@ echo "Now type 'make' ('gmake' on some systems) to compile $PACKAGE,"
 echo "and then afterwards as root (or the user who will install this), type"
 echo "'make install'. Change users with 'su' or 'sudo' appropriately."
 echo
+if test "x${have_static_module}" = "xyes" ; then
+echo -e "\0033\01331;31mWarning\0033\01331;0m: You are trying to link statically one or more modules to Eina."
+echo "         You must know what you are doing, or else you will have a lot of problems."
+echo "         And dolphins will disappear from the earth."
+echo "         Think about that."
+echo
+fi

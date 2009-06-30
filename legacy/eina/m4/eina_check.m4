@@ -42,14 +42,12 @@ if test "x${want_module}" = "xyes" -a "x${enable_module}" = "xstatic" ; then
    static_module="yes"
 fi
 
-AC_MSG_CHECKING([whether to statically link $3])
-AC_MSG_RESULT([${static_module}])
-
 AM_CONDITIONAL(EINA_BUILD_[]UP, [test "x${build_module}" = "xyes"])
 AM_CONDITIONAL(EINA_STATIC_BUILD_[]UP, [test "x${static_module}" = "xyes"])
 
 if test "x${static_module}" = "xyes" ; then
    AC_DEFINE(EINA_STATIC_BUILD_[]UP, 1, [Set to 1 if $2 is statically built])
+   have_static_module="yes"
 fi
 
 enable_[]DOWN="no"
