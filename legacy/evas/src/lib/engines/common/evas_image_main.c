@@ -649,25 +649,13 @@ evas_common_image_alpha_line_buffer_release(RGBA_Image *im)
 EAPI void
 evas_common_image_premul(Image_Entry *ie)
 {
-   DATA32  *s, *se;
    DATA32  nas = 0;
 
    if (!ie) return ;
    if (!evas_cache_image_pixels(ie)) return ;
    if (!ie->flags.alpha) return;
 
-   s = evas_cache_image_pixels(ie);
-   se = s + (ie->w * ie->h);
-   while (s < se)
-     {
-	DATA32  a = 1 + (*s >> 24);
-
-	*s = (*s & 0xff000000) + (((((*s) >> 8) & 0xff) * a) & 0xff00) +
-			 (((((*s) & 0x00ff00ff) * a) >> 8) & 0x00ff00ff);
-	s++;
-	if ((a == 1) || (a == 256))
-	   nas++;
-     }
+   nas = evas_common_convert_argb_premul(evas_cache_image_pixels(ie), ie->w * ie->h);
    if ((ALPHA_SPARSE_INV_FRACTION * nas) >= (ie->w * ie->h))
      ie->flags.alpha_sparse = 1;
 }
