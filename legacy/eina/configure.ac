@@ -295,12 +295,9 @@ AC_FUNC_ALLOCA
 #dlopen and dladdr
 dlopen_libs=""
 case "$host_os" in
-   mingw32ce* | cegcc*)
+   mingw* | cegcc*)
 # managed by evil
       AC_DEFINE(HAVE_DLADDR)
-      ;;
-   mingw*)
-# nothing on mingw platform
       ;;
    *)
       AC_CHECK_FUNCS([dlopen], [res="yes"], [res="no"])
