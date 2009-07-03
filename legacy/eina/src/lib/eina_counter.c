@@ -90,7 +90,7 @@ _eina_counter_time_get(Eina_Nano_Time *tp)
 # endif
 }
 #else
-static int EINA_COUNTER_ERROR_WINDOWS = 0;
+static int EINA_ERROR_COUNTER_WINDOWS = 0;
 static LARGE_INTEGER _eina_counter_frequency;
 
 static inline int
@@ -233,7 +233,7 @@ _eina_counter_asiprintf(char *base, int *position, const char *format, ...)
  *
  * This function sets up the error module of Eina and only on Windows,
  * it initializes the high precision timer. It also registers, only on
- * Windows, the error #EINA_COUNTER_ERROR_WINDOWS. It is also called
+ * Windows, the error #EINA_ERROR_COUNTER_WINDOWS. It is also called
  * by eina_init(). It returns 0 on failure, otherwise it returns the
  * number of times it has already been called. See eina_error_init()
  * for the documentation of the initialisation of the dependency
@@ -259,9 +259,10 @@ eina_counter_init(void)
              return 0;
           }
 #ifdef _WIN32
+	EINA_ERROR_COUNTER_WINDOWS = eina_error_msg_register("Change your OS, you moron !");
         if (!QueryPerformanceFrequency(&_eina_counter_frequency))
           {
-             EINA_COUNTER_ERROR_WINDOWS = eina_error_msg_register("Change your OS, you moron !");
+	     eina_error_set(EINA_ERROR_COUNTER_WINDOWS);
              eina_error_shutdown();
              return 0;
           }
