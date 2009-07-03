@@ -4,7 +4,18 @@
 /**
  * @defgroup Box Box
  *
- * BLAH
+ * A box object arranges objects in a single row within a box. Sub objects can
+ * be added at the start, end or before or after any existing object in the
+ * box already. It can have its orientation changed too. How a child object is
+ * sized and otherwise arranged within the box depends on evas hints.
+ * evas_object_size_hint_align_set() will set either the alignment within its
+ * region if the region allocated is bigger than the object size. If you want
+ * the sub object sized up to fill the allocated region, use -1.0 for the
+ * apporpriate horizontal or vertical axes. evas_object_size_hint_weight_set()
+ * will set the packing weight. The weights of all items being packed are added
+ * up and if items are to be sized up to fit, those with the higher weights get
+ * proportionally more space.
+ * 
  */
 typedef struct _Widget_Data Widget_Data;
 
