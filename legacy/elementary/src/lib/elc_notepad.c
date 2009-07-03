@@ -1,6 +1,21 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-
+/**
+ * @defgroup Notepad Notepad
+ *
+ * The notepad is an object for quickly loading a text file, displaying it,
+ * allowing editing of it and saving of changes back to the file loaded.
+ * 
+ * Signals that you can add callbacks for are:
+ * 
+ * NONE
+ * 
+ * A notepad object contains a scroller and an entry. It is a convenience
+ * widget that loads a text file indicated, puts it int he scrollable entry
+ * and allows the user to edit it. Changes are written back to the original
+ * file after a short delay. The file to load and save to is specificed by
+ * elm_notepad_file_set().
+ */ 
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -205,6 +220,14 @@ _entry_changed(void *data, Evas_Object *obj, void *event_info)
    wd->delay_write = ecore_timer_add(2.0, _delay_write, data);
 }
     
+/**
+ * Add a new notepad to the parent
+ *
+ * @param parent The parent object
+ * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Notepad
+ */
 EAPI Evas_Object *
 elm_notepad_add(Evas_Object *parent)
 {
@@ -239,6 +262,18 @@ elm_notepad_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * Set the file to load  text from and save text back to
+ * 
+ * @param obj The notepad object
+ * @param file The path to the file to load and save
+ * @param format The file format
+ * 
+ * This sets the file (and implicitly loads it) for the text to display and
+ * then edit. All changes are written back to the file after a short delay.
+ * 
+ * @ingroup Notepad
+ */
 EAPI void
 elm_notepad_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
 {
