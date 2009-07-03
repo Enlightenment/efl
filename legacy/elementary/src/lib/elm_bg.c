@@ -3,6 +3,13 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Bg Bg
+ *
+ * The bg object is used for setting a solid background to a window or packing
+ * into any container object.
+ */
+
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -51,6 +58,14 @@ _custom_resize(void *data, Evas *a, Evas_Object *obj, void *event_info)
    evas_object_image_fill_set(obj, x, y, w, h);
 }
 
+/**
+ * Add a new background to the parent
+ *
+ * @param parent The parent object
+ * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Bg
+ */
 EAPI Evas_Object *
 elm_bg_add(Evas_Object *parent)
 {
@@ -74,6 +89,19 @@ elm_bg_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * Set the file (image or edje) used for the background
+ *
+ * @param obj The bg object
+ * @param file The file path
+ * @param group Optional key (group in Edje) within the file
+ * 
+ * This sets the image file used in the background object. The image (or edje)
+ * will be stretched (retaining aspect if its an image file) to completely fill
+ * the bg object. This may mean some parts arte not visible.
+ *
+ * @ingroup Bg
+ */
 EAPI void
 elm_bg_file_set(Evas_Object *obj, const char *file, const char *group)
 {
