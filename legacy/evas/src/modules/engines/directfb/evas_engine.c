@@ -1605,7 +1605,7 @@ evas_engine_dfb_canvas_alpha_get(void *data, void *context)
 {
    Render_Engine *re = data;
 
-   return re->screen_image->cache_entry.src->flags.alpha
+   return re->screen_image->cache_entry.src->flags.alpha;
 }
 
 static int
