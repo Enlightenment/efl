@@ -3,10 +3,10 @@
 
 /**
  * @defgroup Pager Pager
- * 
+ *
  * The pager is an object that allows flipping (with animation) between 1 or
- * more “pages” of objects, much like a stack of windows within the window. 
- * 
+ * more “pages” of objects, much like a stack of windows within the window.
+ *
  * Objects can be pushed or popped from he stack or deleted as normal.
  * Pushes and pops will animate (and a pop will delete the object once the
  * animation is finished). Any object in the pager can be promoted to the top
@@ -69,8 +69,8 @@ _sizing_eval(Evas_Object *obj)
    Item *it;
    EINA_LIST_FOREACH(wd->stack, l, it)
      {
-        if (it->minw > minw) minw = it->minw;
-        if (it->minh > minh) minh = it->minh;
+	if (it->minw > minw) minw = it->minw;
+	if (it->minh > minh) minh = it->minh;
      }
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
@@ -94,30 +94,30 @@ _eval_top(Evas_Object *obj)
    ittop = eina_list_last(wd->stack)->data;
    if (ittop != wd->top)
      {
-        Evas_Object *o;
-        const char *onshow, *onhide;
+	Evas_Object *o;
+	const char *onshow, *onhide;
 
-        if (wd->top)
-          {
-             o = wd->top->base;
-             edje_object_signal_emit(o, "elm,action,hide", "elm");
-             onhide = edje_object_data_get(o, "onhide");
-             if (onhide)
-               {
-                  if (!strcmp(onhide, "raise")) evas_object_raise(o);
-                  else if (!strcmp(onhide, "lower")) evas_object_lower(o);
-               }
-          }
-        wd->top = ittop;
-        o = wd->top->base;
-        evas_object_show(o);
-        edje_object_signal_emit(o, "elm,action,show", "elm");
-        onshow = edje_object_data_get(o, "onshow");
-        if (onshow)
-          {
-             if (!strcmp(onshow, "raise")) evas_object_raise(o);
-             else if (!strcmp(onshow, "lower")) evas_object_lower(o);
-          }
+	if (wd->top)
+	  {
+	     o = wd->top->base;
+	     edje_object_signal_emit(o, "elm,action,hide", "elm");
+	     onhide = edje_object_data_get(o, "onhide");
+	     if (onhide)
+	       {
+		  if (!strcmp(onhide, "raise")) evas_object_raise(o);
+		  else if (!strcmp(onhide, "lower")) evas_object_lower(o);
+	       }
+	  }
+	wd->top = ittop;
+	o = wd->top->base;
+	evas_object_show(o);
+	edje_object_signal_emit(o, "elm,action,show", "elm");
+	onshow = edje_object_data_get(o, "onshow");
+	if (onshow)
+	  {
+	     if (!strcmp(onshow, "raise")) evas_object_raise(o);
+	     else if (!strcmp(onshow, "lower")) evas_object_lower(o);
+	  }
      }
 }
 
@@ -142,18 +142,18 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
    Item *it;
    EINA_LIST_FOREACH(wd->stack, l, it)
      {
-        if (it->content == sub)
-          {
-             wd->stack = eina_list_remove_list(wd->stack, l);
-             evas_object_event_callback_del
-               (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
-             evas_object_del(it->base);
-             _eval_top(it->obj);
-             free(it);
-             return;
-          }
+	if (it->content == sub)
+	  {
+	     wd->stack = eina_list_remove_list(wd->stack, l);
+	     evas_object_event_callback_del
+	       (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
+	     evas_object_del(it->base);
+	     _eval_top(it->obj);
+	     free(it);
+	     return;
+	  }
      }
-}    
+}
 
 static void
 _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
@@ -177,7 +177,7 @@ _signal_hide_finished(void *data, Evas_Object *obj, const char *emission, const 
    edje_object_message_signal_process(it->base);
    if (it->popme)
      {
-        evas_object_del(it->content);
+	evas_object_del(it->content);
      }
    _sizing_eval(obj2);
 }
@@ -196,7 +196,7 @@ elm_pager_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -205,19 +205,19 @@ elm_pager_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
-   
+
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _move, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, obj);
-   
+
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
-   
+
    _sizing_eval(obj);
    return obj;
 }
 
 /**
  * Push an object to the top of the pager stack (and show it)
- * 
+ *
  * The object pushed becomes a child of the pager and will be controlled
  * it and deleted when the pager is deleted.
  *
@@ -240,7 +240,7 @@ elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    evas_object_move(it->base, x, y);
    evas_object_resize(it->base, w, h);
-   elm_widget_sub_object_add(obj, it->base); 
+   elm_widget_sub_object_add(obj, it->base);
    elm_widget_sub_object_add(obj, it->content);
    _elm_theme_set(it->base,  "pager", "base", elm_widget_style_get(obj));
    edje_object_signal_callback_add(it->base, "elm,action,hide,finished", "", _signal_hide_finished, it);
@@ -248,7 +248,7 @@ elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
    edje_object_size_min_calc(it->base, &it->minw, &it->minh);
    evas_object_show(it->content);
    evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                  _changed_size_hints, it);
+				  _changed_size_hints, it);
    wd->stack = eina_list_append(wd->stack, it);
    _eval_top(obj);
    _sizing_eval(obj);
@@ -260,7 +260,7 @@ elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
  * This pops the object that is on top (visible) in the pager, makes it
  * disappear, then deletes the object. The object that was underneath it
  * on the stack will become visible.
- * 
+ *
  * @param obj The pager object
  *
  * @ingroup Pager
@@ -277,28 +277,28 @@ elm_pager_content_pop(Evas_Object *obj)
    ll = eina_list_last(wd->stack);
    if (ll)
      {
-        ll = ll->prev;
-        if (!ll)
-          {
-             Evas_Object *o;
-             const char *onhide;
-             
-             wd->top = it;
-             o = wd->top->base;
-             edje_object_signal_emit(o, "elm,action,hide", "elm");
-             onhide = edje_object_data_get(o, "onhide");
-             if (onhide)
-               {
-                  if (!strcmp(onhide, "raise")) evas_object_raise(o);
-                  else if (!strcmp(onhide, "lower")) evas_object_lower(o);
-               }
-             wd->top = NULL;
-          }
-        else
-          {
-             it = ll->data;
-             elm_pager_content_promote(obj, it->content);
-          }
+	ll = ll->prev;
+	if (!ll)
+	  {
+	     Evas_Object *o;
+	     const char *onhide;
+
+	     wd->top = it;
+	     o = wd->top->base;
+	     edje_object_signal_emit(o, "elm,action,hide", "elm");
+	     onhide = edje_object_data_get(o, "onhide");
+	     if (onhide)
+	       {
+		  if (!strcmp(onhide, "raise")) evas_object_raise(o);
+		  else if (!strcmp(onhide, "lower")) evas_object_lower(o);
+	       }
+	     wd->top = NULL;
+	  }
+	else
+	  {
+	     it = ll->data;
+	     elm_pager_content_promote(obj, it->content);
+	  }
      }
 }
 
@@ -308,7 +308,7 @@ elm_pager_content_pop(Evas_Object *obj)
  * This will take the indicated object and promote it to the top of the stack
  * as if it had been pushed there. The object must already be inside the
  * pager stack to work.
- * 
+ *
  * @param obj The pager object
  * @param content The object to promote
  *
@@ -322,13 +322,13 @@ elm_pager_content_promote(Evas_Object *obj, Evas_Object *content)
    Item *it;
    EINA_LIST_FOREACH(wd->stack, l, it)
      {
-        if (it->content == content)
-          {
-             wd->stack = eina_list_remove_list(wd->stack, l);
-             wd->stack = eina_list_append(wd->stack, it);
-             _eval_top(obj);
-             return;
-          }
+	if (it->content == content)
+	  {
+	     wd->stack = eina_list_remove_list(wd->stack, l);
+	     wd->stack = eina_list_append(wd->stack, it);
+	     _eval_top(obj);
+	     return;
+	  }
      }
 }
 
@@ -367,4 +367,3 @@ elm_pager_content_top_get(Evas_Object *obj)
    it = eina_list_last(wd->stack)->data;
    return it->content;
 }
-

@@ -174,7 +174,7 @@ elm_scroller_add(Evas_Object *parent)
    Evas *e;
    Widget_Data *wd;
    Evas_Coord vw, vh, minw, minh;
-   
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -183,11 +183,11 @@ elm_scroller_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
-   
+
    wd->scr = elm_smart_scroller_add(e);
    elm_widget_resize_object_set(obj, wd->scr);
-   evas_object_event_callback_add(wd->scr, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
-                                  _changed_size_hints, obj);
+   evas_object_event_callback_add(wd->scr, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+				  _changed_size_hints, obj);
 
    edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
@@ -198,13 +198,13 @@ elm_scroller_add(Evas_Object *parent)
    evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-on", _freeze_on, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-off", _freeze_off, obj);
-   
+
    evas_object_smart_callback_add(wd->scr, "edge,left", _edge_left, obj);
    evas_object_smart_callback_add(wd->scr, "edge,right", _edge_right, obj);
    evas_object_smart_callback_add(wd->scr, "edge,top", _edge_top, obj);
    evas_object_smart_callback_add(wd->scr, "edge,bottom", _edge_bottom, obj);
    evas_object_smart_callback_add(wd->scr, "scroll", _scroll, obj);
-   
+
    _sizing_eval(obj);
    return obj;
 }
@@ -222,7 +222,7 @@ elm_scroller_content_set(Evas_Object *obj, Evas_Object *content)
 	elm_widget_on_show_region_hook_set(content, _show_region_hook, obj);
 	elm_widget_sub_object_add(obj, content);
 	elm_smart_scroller_child_set(wd->scr, content);
-	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
+	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
 	_sizing_eval(obj);
      }
@@ -250,11 +250,11 @@ EAPI void
 elm_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   const Elm_Scroller_Policy map[3] = 
+   const Elm_Scroller_Policy map[3] =
      {
-        ELM_SMART_SCROLLER_POLICY_AUTO,
-          ELM_SMART_SCROLLER_POLICY_ON,
-          ELM_SMART_SCROLLER_POLICY_OFF
+	ELM_SMART_SCROLLER_POLICY_AUTO,
+	  ELM_SMART_SCROLLER_POLICY_ON,
+	  ELM_SMART_SCROLLER_POLICY_OFF
      };
    if (!wd) return;
    if ((policy_h < 0) || (policy_h >= 3) || (policy_v < 0) || (policy_v >= 3))

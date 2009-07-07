@@ -197,7 +197,7 @@ _time_update(Evas_Object *obj)
 	     evas_object_del(wd->ampm);
 	     wd->ampm = NULL;
 	  }
-	
+
 	if ((wd->seconds) && (wd->am_pm))
 	  _elm_theme_set(wd->clk, "clock", "base-all", style);
 	else if (wd->seconds)
@@ -206,8 +206,8 @@ _time_update(Evas_Object *obj)
 	  _elm_theme_set(wd->clk, "clock", "base-am_pm", style);
 	else
 	  _elm_theme_set(wd->clk, "clock", "base", style);
-        edje_object_scale_set(wd->clk, elm_widget_scale_get(obj) * _elm_config->scale);
-	
+	edje_object_scale_set(wd->clk, elm_widget_scale_get(obj) * _elm_config->scale);
+
 	for (i = 0; i < 6; i++)
 	  {
 	     char buf[16];
@@ -215,17 +215,17 @@ _time_update(Evas_Object *obj)
 	     if ((!wd->seconds) && (i >= 4)) break;
 	     wd->digit[i] = edje_object_add(evas_object_evas_get(wd->clk));
 	     _elm_theme_set(wd->digit[i], "clock", "flipdigit", style);
-             edje_object_scale_set(wd->digit[i], elm_widget_scale_get(obj) * _elm_config->scale);
+	     edje_object_scale_set(wd->digit[i], elm_widget_scale_get(obj) * _elm_config->scale);
 	     if (wd->edit)
 	       edje_object_signal_emit(wd->digit[i], "elm,state,edit,on", "elm");
 	     edje_object_signal_callback_add(wd->digit[i], "elm,action,up", "",
 					     _signal_clock_val_up, obj);
 	     edje_object_signal_callback_add(wd->digit[i], "elm,action,down", "",
 					     _signal_clock_val_down, obj);
-             mw = mh = -1;
-             elm_coords_finger_size_adjust(1, &mw, 2, &mh);
+	     mw = mh = -1;
+	     elm_coords_finger_size_adjust(1, &mw, 2, &mh);
 	     edje_object_size_min_restricted_calc(wd->digit[i], &mw, &mh, mw, mh);
-             elm_coords_finger_size_adjust(1, &mw, 2, &mh);
+	     elm_coords_finger_size_adjust(1, &mw, 2, &mh);
 	     edje_extern_object_min_size_set(wd->digit[i], mw, mh);
 	     snprintf(buf, sizeof(buf), "d%i", i);
 	     edje_object_part_swallow(wd->clk , buf, wd->digit[i]);
@@ -235,22 +235,22 @@ _time_update(Evas_Object *obj)
 	  {
 	     wd->ampm = edje_object_add(evas_object_evas_get(wd->clk));
 	     _elm_theme_set(wd->ampm, "clock", "flipampm", style);
-             edje_object_scale_set(wd->ampm, elm_widget_scale_get(obj) * _elm_config->scale);
+	     edje_object_scale_set(wd->ampm, elm_widget_scale_get(obj) * _elm_config->scale);
 	     if (wd->edit)
 	       edje_object_signal_emit(wd->ampm, "elm,state,edit,on", "elm");
 	     edje_object_signal_callback_add(wd->ampm, "elm,action,up", "",
 					     _signal_clock_val_up, obj);
 	     edje_object_signal_callback_add(wd->ampm, "elm,action,down", "",
 					     _signal_clock_val_down, obj);
-             mw = mh = -1;
-             elm_coords_finger_size_adjust(1, &mw, 2, &mh);
+	     mw = mh = -1;
+	     elm_coords_finger_size_adjust(1, &mw, 2, &mh);
 	     edje_object_size_min_restricted_calc(wd->ampm, &mw, &mh, mw, mh);
-             elm_coords_finger_size_adjust(1, &mw, 2, &mh);
+	     elm_coords_finger_size_adjust(1, &mw, 2, &mh);
 	     edje_extern_object_min_size_set(wd->ampm, mw, mh);
 	     edje_object_part_swallow(wd->clk , "ampm", wd->ampm);
 	     evas_object_show(wd->ampm);
 	  }
-	
+
 	edje_object_size_min_calc(wd->clk, &mw, &mh);
 	evas_object_size_hint_min_set(obj, mw, mh);
 
@@ -296,7 +296,7 @@ _time_update(Evas_Object *obj)
    if (wd->min != wd->cur.min)
      {
 	int d1, d2, dc1, dc2;
-	
+
 	d1 = wd->min / 10;
 	d2 = wd->min % 10;
 	dc1 = wd->cur.min / 10;
@@ -318,7 +318,7 @@ _time_update(Evas_Object *obj)
 	if (wd->sec != wd->cur.sec)
 	  {
 	     int d1, d2, dc1, dc2;
-	     
+
 	     d1 = wd->sec / 10;
 	     d2 = wd->sec % 10;
 	     dc1 = wd->cur.sec / 10;
@@ -337,15 +337,15 @@ _time_update(Evas_Object *obj)
 	  }
      }
    else
-     wd->cur.sec = -1; 
-   
+     wd->cur.sec = -1;
+
    if (wd->am_pm)
      {
 	if (wd->hrs >= 12) ampm = 1;
 	if (ampm != wd->cur.ampm)
 	  {
 	     int d1, d2, dc1, dc2;
-	     
+
 	     if (wd->cur.ampm != ampm)
 	       {
 		  msg.val = ampm;
@@ -364,7 +364,7 @@ elm_clock_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -373,7 +373,7 @@ elm_clock_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
-   
+
    wd->clk = edje_object_add(e);
    elm_widget_resize_object_set(obj, wd->clk);
 
@@ -381,10 +381,10 @@ elm_clock_add(Evas_Object *parent)
    wd->cur.seconds = EINA_TRUE;
    wd->cur.am_pm = EINA_TRUE;
    wd->cur.edit = EINA_TRUE;
-   
+
    _time_update(obj);
    _ticker(obj);
-   
+
    return obj;
 }
 

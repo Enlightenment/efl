@@ -44,7 +44,7 @@ case "$host_os" in
     ;;
 esac
 AC_SUBST(release_info)
-                                    
+
 requirement_elm=""
 
 PKG_PROG_PKG_CONFIG
@@ -83,15 +83,15 @@ dnl managed by evil
       ELM_UNIX_DEF="#define"
       AC_CHECK_FUNCS(dlopen, res=yes, res=no)
       if test "x$res" = "xyes"; then
-        AC_CHECK_FUNCS(dladdr, AC_DEFINE(HAVE_DLADDR))
+	AC_CHECK_FUNCS(dladdr, AC_DEFINE(HAVE_DLADDR))
       else
-        AC_CHECK_LIB(dl, dlopen, res=yes, res=no)
-        if test "x$res" = "xyes"; then
-          AC_CHECK_LIB(dl, dladdr, AC_DEFINE(HAVE_DLADDR))
-          dlopen_libs=-ldl
-        else
-          AC_MSG_ERROR(Cannot find dlopen)
-        fi
+	AC_CHECK_LIB(dl, dlopen, res=yes, res=no)
+	if test "x$res" = "xyes"; then
+	  AC_CHECK_LIB(dl, dladdr, AC_DEFINE(HAVE_DLADDR))
+	  dlopen_libs=-ldl
+	else
+	  AC_MSG_ERROR(Cannot find dlopen)
+	fi
       fi
       have_socket="yes"
       ;;

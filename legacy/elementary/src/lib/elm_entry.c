@@ -8,7 +8,7 @@ struct _Widget_Data
    Evas_Object *ent;
    Evas_Object *hoversel;
    Ecore_Job *deferred_recalc_job;
-   Ecore_Event_Handler *sel_notify_handler; 
+   Ecore_Event_Handler *sel_notify_handler;
    Ecore_Event_Handler *sel_clear_handler;
    Ecore_Timer *longpress_timer;
    const char *cut_sel;
@@ -51,7 +51,7 @@ _del_hook(Evas_Object *obj)
 #ifdef HAVE_ELEMENTARY_X
    ecore_event_handler_del(wd->sel_notify_handler);
    ecore_event_handler_del(wd->sel_clear_handler);
-#endif   
+#endif
    if (wd->cut_sel) eina_stringshare_del(wd->cut_sel);
    if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
    if (wd->longpress_timer) ecore_timer_del(wd->longpress_timer);
@@ -77,7 +77,7 @@ _elm_win_recalc_job(void *data)
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    Evas_Coord resw, resh, minminw;
-   
+
    wd->deferred_recalc_job = NULL;
    evas_object_geometry_get(wd->ent, NULL, NULL, &resw, &resh);
    resh = 0;
@@ -124,15 +124,15 @@ _on_focus_hook(void *data, Evas_Object *obj)
    if (!wd->editable) return;
    if (elm_widget_focus_get(obj))
      {
-        evas_object_focus_set(wd->ent, 1);
-        edje_object_signal_emit(wd->ent, "elm,action,focus", "elm");
-        if (top) elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
+	evas_object_focus_set(wd->ent, 1);
+	edje_object_signal_emit(wd->ent, "elm,action,focus", "elm");
+	if (top) elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
      }
    else
      {
-        edje_object_signal_emit(wd->ent, "elm,action,unfocus", "elm");
-        evas_object_focus_set(wd->ent, 0);
-        if (top) elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
+	edje_object_signal_emit(wd->ent, "elm,action,unfocus", "elm");
+	evas_object_focus_set(wd->ent, 0);
+	if (top) elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
      }
 }
 
@@ -142,18 +142,18 @@ _hoversel_position(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord cx, cy, cw, ch, x, y, mw, mh;
    evas_object_geometry_get(wd->ent, &x, &y, NULL, NULL);
-   edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text", 
-                                             &cx, &cy, &cw, &ch);
+   edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text",
+					     &cx, &cy, &cw, &ch);
    evas_object_size_hint_min_get(wd->hoversel, &mw, &mh);
    if (cw < mw)
      {
-        cx += (cw - mw) / 2;
-        cw = mw;
+	cx += (cw - mw) / 2;
+	cw = mw;
      }
    if (ch < mh)
      {
-        cy += (ch - mh) / 2;
-        ch = mh;
+	cy += (ch - mh) / 2;
+	ch = mh;
      }
    evas_object_move(wd->hoversel, x + cx, y + cy);
    evas_object_resize(wd->hoversel, cw, ch);
@@ -205,17 +205,17 @@ _paste(void *data, Evas_Object *obj, void *event_info)
    if (wd->sel_notify_handler)
      {
 #ifdef HAVE_ELEMENTARY_X
-        Evas_Object *top;
-        
-        top = elm_widget_top_get(data);
-        if ((top) && (elm_win_xwindow_get(top)))
-          {
-             ecore_x_selection_primary_request
-               (elm_win_xwindow_get(top), 
-                ECORE_X_SELECTION_TARGET_UTF8_STRING);
-             wd->selection_asked = EINA_TRUE;
-          }
-#endif        
+	Evas_Object *top;
+
+	top = elm_widget_top_get(data);
+	if ((top) && (elm_win_xwindow_get(top)))
+	  {
+	     ecore_x_selection_primary_request
+	       (elm_win_xwindow_get(top),
+		ECORE_X_SELECTION_TARGET_UTF8_STRING);
+	     wd->selection_asked = EINA_TRUE;
+	  }
+#endif
      }
 }
 
@@ -278,20 +278,20 @@ _long_press(void *data)
    evas_object_smart_callback_add(wd->hoversel, "dismissed", _dismissed, data);
    if (!wd->selmode)
      {
-        elm_hoversel_item_add(wd->hoversel, "Select", NULL, ELM_ICON_NONE, _select, data);
-        elm_hoversel_item_add(wd->hoversel, "Paste", NULL, ELM_ICON_NONE, _paste, data);
+	elm_hoversel_item_add(wd->hoversel, "Select", NULL, ELM_ICON_NONE, _select, data);
+	elm_hoversel_item_add(wd->hoversel, "Paste", NULL, ELM_ICON_NONE, _paste, data);
      }
    else
      {
-        elm_hoversel_item_add(wd->hoversel, "Copy", NULL, ELM_ICON_NONE, _copy, data);
-        elm_hoversel_item_add(wd->hoversel, "Cut", NULL, ELM_ICON_NONE, _cut, data);
-        elm_hoversel_item_add(wd->hoversel, "Cancel", NULL, ELM_ICON_NONE, _cancel, data);
+	elm_hoversel_item_add(wd->hoversel, "Copy", NULL, ELM_ICON_NONE, _copy, data);
+	elm_hoversel_item_add(wd->hoversel, "Cut", NULL, ELM_ICON_NONE, _cut, data);
+	elm_hoversel_item_add(wd->hoversel, "Cancel", NULL, ELM_ICON_NONE, _cancel, data);
      }
    if (wd->hoversel)
      {
-        _hoversel_position(data);
-        evas_object_show(wd->hoversel);
-        elm_hoversel_hover_begin(wd->hoversel);
+	_hoversel_position(data);
+	evas_object_show(wd->hoversel);
+	elm_hoversel_hover_begin(wd->hoversel);
      }
    wd->longpress_timer = NULL;
    edje_object_part_text_select_allow_set(wd->ent, "elm.text", 0);
@@ -322,9 +322,9 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    if (ev->button != 1) return;
    if (wd->longpress_timer)
      {
-        elm_widget_scroll_freeze_pop(data);
-        ecore_timer_del(wd->longpress_timer);
-        wd->longpress_timer = NULL;
+	elm_widget_scroll_freeze_pop(data);
+	ecore_timer_del(wd->longpress_timer);
+	wd->longpress_timer = NULL;
      }
 }
 
@@ -335,49 +335,49 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    Evas_Event_Mouse_Move *ev = event_info;
    if (!wd->selmode)
      {
-        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
-          {
-             if (wd->longpress_timer)
-               {
-                  elm_widget_scroll_freeze_pop(data);
-                  ecore_timer_del(wd->longpress_timer);
-                  wd->longpress_timer = NULL;
-               }
-          }
-        else if (wd->longpress_timer)
-          {
-             Evas_Coord dx, dy;
-             
-             dx = wd->downx - ev->cur.canvas.x;
-             dx *= dx;
-             dy = wd->downy - ev->cur.canvas.y;
-             dy *= dy;
-             if ((dx + dy) > 
-                 ((_elm_config->finger_size / 2) * 
-                  (_elm_config->finger_size / 2)))
-               {
-                  elm_widget_scroll_freeze_pop(data);
-                  ecore_timer_del(wd->longpress_timer);
-                  wd->longpress_timer = NULL;
-               }
-          }     
+	if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+	  {
+	     if (wd->longpress_timer)
+	       {
+		  elm_widget_scroll_freeze_pop(data);
+		  ecore_timer_del(wd->longpress_timer);
+		  wd->longpress_timer = NULL;
+	       }
+	  }
+	else if (wd->longpress_timer)
+	  {
+	     Evas_Coord dx, dy;
+
+	     dx = wd->downx - ev->cur.canvas.x;
+	     dx *= dx;
+	     dy = wd->downy - ev->cur.canvas.y;
+	     dy *= dy;
+	     if ((dx + dy) >
+		 ((_elm_config->finger_size / 2) *
+		  (_elm_config->finger_size / 2)))
+	       {
+		  elm_widget_scroll_freeze_pop(data);
+		  ecore_timer_del(wd->longpress_timer);
+		  wd->longpress_timer = NULL;
+	       }
+	  }
      }
    else if (wd->longpress_timer)
      {
-        Evas_Coord dx, dy;
-        
-        dx = wd->downx - ev->cur.canvas.x;
-        dx *= dx;
-        dy = wd->downy - ev->cur.canvas.y;
-        dy *= dy;
-        if ((dx + dy) > 
-            ((_elm_config->finger_size / 2) * 
-             (_elm_config->finger_size / 2)))
-          {
-             elm_widget_scroll_freeze_pop(data);
-             ecore_timer_del(wd->longpress_timer);
-             wd->longpress_timer = NULL;
-          }
+	Evas_Coord dx, dy;
+
+	dx = wd->downx - ev->cur.canvas.x;
+	dx *= dx;
+	dy = wd->downy - ev->cur.canvas.y;
+	dy *= dy;
+	if ((dx + dy) >
+	    ((_elm_config->finger_size / 2) *
+	     (_elm_config->finger_size / 2)))
+	  {
+	     elm_widget_scroll_freeze_pop(data);
+	     ecore_timer_del(wd->longpress_timer);
+	     wd->longpress_timer = NULL;
+	  }
      }
 }
 
@@ -421,14 +421,14 @@ _str_append(char *str, const char *txt, int *len, int *alloc)
    if (txt_len <= 0) return str;
    if ((*len + txt_len) >= *alloc)
      {
-        char *str2;
-        int alloc2;
-        
-        alloc2 = *alloc + txt_len + 128;
-        str2 = realloc(str, alloc2);
-        if (!str2) return str;
-        *alloc = alloc2;
-        str = str2;
+	char *str2;
+	int alloc2;
+
+	alloc2 = *alloc + txt_len + 128;
+	str2 = realloc(str, alloc2);
+	if (!str2) return str;
+	*alloc = alloc2;
+	str = str2;
      }
    strcpy(str + *len, txt);
    *len += txt_len;
@@ -442,121 +442,121 @@ _mkup_to_text(const char *mkup)
    int str_len = 0, str_alloc = 0;
    char *s, *p;
    char *tag_start, *tag_end, *esc_start, *esc_end, *ts;
-   
+
    if (!mkup) return NULL;
    tag_start = tag_end = esc_start = esc_end = NULL;
    p = (char *)mkup;
    s = p;
    for (;;)
      {
-        if ((*p == 0) ||
-            (tag_end) || (esc_end) ||
-            (tag_start) || (esc_start))
-          {
-             if (tag_end)
-               {
-                  char *ttag, *match;
-                  
-                  ttag = malloc(tag_end - tag_start);
-                  if (ttag)
-                    {
-                       strncpy(ttag, tag_start + 1, tag_end - tag_start - 1);
-                       ttag[tag_end - tag_start - 1] = 0;
-                       if (!strcmp(ttag, "br"))
-                         str = _str_append(str, "\n", &str_len, &str_alloc);
-                       else if (!strcmp(ttag, "\n"))
-                         str = _str_append(str, "\n", &str_len, &str_alloc);
-                       else if (!strcmp(ttag, "\\n"))
-                         str = _str_append(str, "\n", &str_len, &str_alloc);
-                       else if (!strcmp(ttag, "\t"))
-                         str = _str_append(str, "\t", &str_len, &str_alloc);
-                       else if (!strcmp(ttag, "\\t"))
-                         str = _str_append(str, "\t", &str_len, &str_alloc);
-                       free(ttag);
-                    }
-                  tag_start = tag_end = NULL;
-               }
-             else if (esc_end)
-               {
-                  ts = malloc(esc_end - esc_start + 1);
-                  if (ts)
-                    {
-                       const char *esc;
-                       strncpy(ts, esc_start, esc_end - esc_start); 
-                       ts[esc_end - esc_start] = 0;
-                       esc = evas_textblock_escape_string_get(ts);
-                       if (esc)
-                         str = _str_append(str, esc, &str_len, &str_alloc);
-                       free(ts);
-                    }
-                  esc_start = esc_end = NULL;
-               }
-             else if (*p == 0)
-               {
-                  ts = malloc(p - s + 1);
-                  if (ts)
-                    {
-                       strncpy(ts, s, p - s);
-                       ts[p - s] = 0;
-                       str = _str_append(str, ts, &str_len, &str_alloc);
-                       free(ts);
-                    }
-                  s = NULL;
-               }
-             if (*p == 0)
-               break;
-          }
-        if (*p == '<')
-          {
-             if (!esc_start)
-               {
-                  tag_start = p;
-                  tag_end = NULL;
-                  ts = malloc(p - s + 1);
-                  if (ts)
-                    {
-                       strncpy(ts, s, p - s);
-                       ts[p - s] = 0;
-                       str = _str_append(str, ts, &str_len, &str_alloc);
-                       free(ts);
-                    }
-                  s = NULL;
-               }
-          }
-        else if (*p == '>')
-          {
-             if (tag_start)
-               {
-                  tag_end = p;
-                  s = p + 1;
-               }
-          }
-        else if (*p == '&')
-          {
-             if (!tag_start)
-               {
-                  esc_start = p;
-                  esc_end = NULL;
-                  ts = malloc(p - s + 1);
-                  if (ts)
-                    {
-                       strncpy(ts, s, p - s);
-                       ts[p - s] = 0;
-                       str = _str_append(str, ts, &str_len, &str_alloc);
-                       free(ts);
-                    }
-                  s = NULL;
-               }
-          }
-        else if (*p == ';')
-          {
-             if (esc_start)
-               {
-                  esc_end = p;
-                  s = p + 1;
-               }
-          }
-        p++;
+	if ((*p == 0) ||
+	    (tag_end) || (esc_end) ||
+	    (tag_start) || (esc_start))
+	  {
+	     if (tag_end)
+	       {
+		  char *ttag, *match;
+
+		  ttag = malloc(tag_end - tag_start);
+		  if (ttag)
+		    {
+		       strncpy(ttag, tag_start + 1, tag_end - tag_start - 1);
+		       ttag[tag_end - tag_start - 1] = 0;
+		       if (!strcmp(ttag, "br"))
+			 str = _str_append(str, "\n", &str_len, &str_alloc);
+		       else if (!strcmp(ttag, "\n"))
+			 str = _str_append(str, "\n", &str_len, &str_alloc);
+		       else if (!strcmp(ttag, "\\n"))
+			 str = _str_append(str, "\n", &str_len, &str_alloc);
+		       else if (!strcmp(ttag, "\t"))
+			 str = _str_append(str, "\t", &str_len, &str_alloc);
+		       else if (!strcmp(ttag, "\\t"))
+			 str = _str_append(str, "\t", &str_len, &str_alloc);
+		       free(ttag);
+		    }
+		  tag_start = tag_end = NULL;
+	       }
+	     else if (esc_end)
+	       {
+		  ts = malloc(esc_end - esc_start + 1);
+		  if (ts)
+		    {
+		       const char *esc;
+		       strncpy(ts, esc_start, esc_end - esc_start);
+		       ts[esc_end - esc_start] = 0;
+		       esc = evas_textblock_escape_string_get(ts);
+		       if (esc)
+			 str = _str_append(str, esc, &str_len, &str_alloc);
+		       free(ts);
+		    }
+		  esc_start = esc_end = NULL;
+	       }
+	     else if (*p == 0)
+	       {
+		  ts = malloc(p - s + 1);
+		  if (ts)
+		    {
+		       strncpy(ts, s, p - s);
+		       ts[p - s] = 0;
+		       str = _str_append(str, ts, &str_len, &str_alloc);
+		       free(ts);
+		    }
+		  s = NULL;
+	       }
+	     if (*p == 0)
+	       break;
+	  }
+	if (*p == '<')
+	  {
+	     if (!esc_start)
+	       {
+		  tag_start = p;
+		  tag_end = NULL;
+		  ts = malloc(p - s + 1);
+		  if (ts)
+		    {
+		       strncpy(ts, s, p - s);
+		       ts[p - s] = 0;
+		       str = _str_append(str, ts, &str_len, &str_alloc);
+		       free(ts);
+		    }
+		  s = NULL;
+	       }
+	  }
+	else if (*p == '>')
+	  {
+	     if (tag_start)
+	       {
+		  tag_end = p;
+		  s = p + 1;
+	       }
+	  }
+	else if (*p == '&')
+	  {
+	     if (!tag_start)
+	       {
+		  esc_start = p;
+		  esc_end = NULL;
+		  ts = malloc(p - s + 1);
+		  if (ts)
+		    {
+		       strncpy(ts, s, p - s);
+		       ts[p - s] = 0;
+		       str = _str_append(str, ts, &str_len, &str_alloc);
+		       free(ts);
+		    }
+		  s = NULL;
+	       }
+	  }
+	else if (*p == ';')
+	  {
+	     if (esc_start)
+	       {
+		  esc_end = p;
+		  s = p + 1;
+	       }
+	  }
+	p++;
      }
    return str;
 }
@@ -567,27 +567,27 @@ _text_to_mkup(const char *text)
    char *str = NULL;
    int str_len = 0, str_alloc = 0;
    int ch, pos = 0, pos2 = 0;
-   
+
    if (!text) return NULL;
    for (;;)
      {
-        // FIXME: use evas_string_char_next_get()
-        pos = pos2;
-        ch = evas_common_font_utf8_get_next((unsigned char *)(text), &pos2);
-        if (ch <= 0) break;
-        if (ch == '\n') str = _str_append(str, "<br>", &str_len, &str_alloc);
-        else if (ch == '\t') str = _str_append(str, "<\t>", &str_len, &str_alloc);
-        else if (ch == '<') str = _str_append(str, "&lt;", &str_len, &str_alloc);
-        else if (ch == '>') str = _str_append(str, "&gt;", &str_len, &str_alloc);
-        else if (ch == '&') str = _str_append(str, "&amp;", &str_len, &str_alloc);
-        else
-          {
-             char tstr[16];
-             
-             strncpy(tstr, text + pos, pos2 - pos);
-             tstr[pos2 - pos] = 0;
-             str = _str_append(str, tstr, &str_len, &str_alloc);
-          }
+	// FIXME: use evas_string_char_next_get()
+	pos = pos2;
+	ch = evas_common_font_utf8_get_next((unsigned char *)(text), &pos2);
+	if (ch <= 0) break;
+	if (ch == '\n') str = _str_append(str, "<br>", &str_len, &str_alloc);
+	else if (ch == '\t') str = _str_append(str, "<\t>", &str_len, &str_alloc);
+	else if (ch == '<') str = _str_append(str, "&lt;", &str_len, &str_alloc);
+	else if (ch == '>') str = _str_append(str, "&gt;", &str_len, &str_alloc);
+	else if (ch == '&') str = _str_append(str, "&amp;", &str_len, &str_alloc);
+	else
+	  {
+	     char tstr[16];
+
+	     strncpy(tstr, text + pos, pos2 - pos);
+	     tstr[pos2 - pos] = 0;
+	     str = _str_append(str, tstr, &str_len, &str_alloc);
+	  }
      }
    return str;
 }
@@ -609,26 +609,26 @@ _signal_selection_start(void *data, Evas_Object *obj, const char *emission, cons
    Evas_Object *entry;
    EINA_LIST_FOREACH(entries, l, entry)
      {
-        if (entry != data) elm_entry_select_none(entry);
+	if (entry != data) elm_entry_select_none(entry);
      }
    wd->have_selection = EINA_TRUE;
    evas_object_smart_callback_call(data, "selection,start", NULL);
    if (wd->sel_notify_handler)
      {
-        char *txt = _mkup_to_text(elm_entry_selection_get(data));
-        if (txt)
-          {
+	char *txt = _mkup_to_text(elm_entry_selection_get(data));
+	if (txt)
+	  {
 #ifdef HAVE_ELEMENTARY_X
-             Evas_Object *top;
-             
-             top = elm_widget_top_get(data);
-             if ((top) && (elm_win_xwindow_get(top)))
-               ecore_x_selection_primary_set
-               (elm_win_xwindow_get(top), txt, strlen(txt));
-#endif             
-             free(txt);
-          }
-     } 
+	     Evas_Object *top;
+
+	     top = elm_widget_top_get(data);
+	     if ((top) && (elm_win_xwindow_get(top)))
+	       ecore_x_selection_primary_set
+	       (elm_win_xwindow_get(top), txt, strlen(txt));
+#endif
+	     free(txt);
+	  }
+     }
 }
 
 static void
@@ -639,19 +639,19 @@ _signal_selection_changed(void *data, Evas_Object *obj, const char *emission, co
    evas_object_smart_callback_call(data, "selection,changed", NULL);
    if (wd->sel_notify_handler)
      {
-        char *txt = _mkup_to_text(elm_entry_selection_get(data));
-        if (txt)
-          {
+	char *txt = _mkup_to_text(elm_entry_selection_get(data));
+	if (txt)
+	  {
 #ifdef HAVE_ELEMENTARY_X
-             Evas_Object *top;
-             
-             top = elm_widget_top_get(data);
-             if ((top) && (elm_win_xwindow_get(top)))
-               ecore_x_selection_primary_set
-               (elm_win_xwindow_get(top), txt, strlen(txt));
-#endif             
-             free(txt);
-          }
+	     Evas_Object *top;
+
+	     top = elm_widget_top_get(data);
+	     if ((top) && (elm_win_xwindow_get(top)))
+	       ecore_x_selection_primary_set
+	       (elm_win_xwindow_get(top), txt, strlen(txt));
+#endif
+	     free(txt);
+	  }
      }
 }
 
@@ -664,38 +664,38 @@ _signal_selection_cleared(void *data, Evas_Object *obj, const char *emission, co
    evas_object_smart_callback_call(data, "selection,cleared", NULL);
    if (wd->sel_notify_handler)
      {
-        if (wd->cut_sel)
-          {
+	if (wd->cut_sel)
+	  {
 #ifdef HAVE_ELEMENTARY_X
-             Evas_Object *top;
-             
-             top = elm_widget_top_get(data);
-             if ((top) && (elm_win_xwindow_get(top)))
-               {
-                  char *t;
-                  
-                  t = _mkup_to_text(wd->cut_sel);
-                  if (t)
-                    {
-                       ecore_x_selection_primary_set
-                         (elm_win_xwindow_get(top), t, strlen(t));
-                       free(t);
-                    }
-               }
-#endif             
-             eina_stringshare_del(wd->cut_sel);
-             wd->cut_sel = NULL;
-          }
-        else
-          {
+	     Evas_Object *top;
+
+	     top = elm_widget_top_get(data);
+	     if ((top) && (elm_win_xwindow_get(top)))
+	       {
+		  char *t;
+
+		  t = _mkup_to_text(wd->cut_sel);
+		  if (t)
+		    {
+		       ecore_x_selection_primary_set
+			 (elm_win_xwindow_get(top), t, strlen(t));
+		       free(t);
+		    }
+	       }
+#endif
+	     eina_stringshare_del(wd->cut_sel);
+	     wd->cut_sel = NULL;
+	  }
+	else
+	  {
 #ifdef HAVE_ELEMENTARY_X
-             Evas_Object *top;
-             
-             top = elm_widget_top_get(data);
-             if ((top) && (elm_win_xwindow_get(top)))
-               ecore_x_selection_primary_clear();
-#endif        
-          }
+	     Evas_Object *top;
+
+	     top = elm_widget_top_get(data);
+	     if ((top) && (elm_win_xwindow_get(top)))
+	       ecore_x_selection_primary_clear();
+#endif
+	  }
      }
 }
 
@@ -707,17 +707,17 @@ _signal_entry_paste_request(void *data, Evas_Object *obj, const char *emission, 
    if (wd->sel_notify_handler)
      {
 #ifdef HAVE_ELEMENTARY_X
-        Evas_Object *top;
-        
-        top = elm_widget_top_get(data);
-        if ((top) && (elm_win_xwindow_get(top)))
-          {
-             ecore_x_selection_primary_request
-               (elm_win_xwindow_get(top),
-                ECORE_X_SELECTION_TARGET_UTF8_STRING);
-             wd->selection_asked = EINA_TRUE;
-          }
-#endif        
+	Evas_Object *top;
+
+	top = elm_widget_top_get(data);
+	if ((top) && (elm_win_xwindow_get(top)))
+	  {
+	     ecore_x_selection_primary_request
+	       (elm_win_xwindow_get(top),
+		ECORE_X_SELECTION_TARGET_UTF8_STRING);
+	     wd->selection_asked = EINA_TRUE;
+	  }
+#endif
      }
 }
 
@@ -739,8 +739,8 @@ _signal_entry_cut_notify(void *data, Evas_Object *obj, const char *emission, con
    txt = _mkup_to_text(elm_entry_selection_get(data));
    if (txt)
      {
-        wd->cut_sel = eina_stringshare_add(txt);
-        free(txt);
+	wd->cut_sel = eina_stringshare_add(txt);
+	free(txt);
      }
    edje_object_part_text_insert(wd->ent, "elm.text", "");
    wd->changed = EINA_TRUE;
@@ -758,11 +758,11 @@ _signal_cursor_changed(void *data, Evas_Object *obj, const char *emission, const
      elm_widget_show_region_set(data, cx, cy, cw, ch);
    else
      {
-        wd->deferred_cur = EINA_TRUE;
-        wd->cx = cx;
-        wd->cy = cy;
-        wd->cw = cw;
-        wd->ch = ch;
+	wd->deferred_cur = EINA_TRUE;
+	wd->cx = cx;
+	wd->cy = cy;
+	wd->cw = cw;
+	wd->ch = ch;
      }
 }
 
@@ -783,7 +783,7 @@ _signal_anchor_up(void *data, Evas_Object *obj, const char *emission, const char
    if (p)
      {
 	const Eina_List *geoms;
-	
+
 	n = p + 1;
 	p2 = p -1;
 	while (p2 >= emission)
@@ -809,7 +809,7 @@ _signal_anchor_up(void *data, Evas_Object *obj, const char *emission, const char
 	     evas_pointer_output_xy_get(evas_object_evas_get(wd->ent), &px, &py);
 	     EINA_LIST_FOREACH(geoms, l, r)
 	       {
-		  if (((r->x + x) <= px) && ((r->y + y) <= py) && 
+		  if (((r->x + x) <= px) && ((r->y + y) <= py) &&
 		      ((r->x + x + r->w) > px) && ((r->y + y + r->h) > py))
 		    {
 		       ei.x = r->x + x;
@@ -859,26 +859,26 @@ _event_selection_notify(void *data, int type, void *event)
    if ((ev->selection == ECORE_X_SELECTION_CLIPBOARD) ||
        (ev->selection == ECORE_X_SELECTION_PRIMARY))
      {
-        Ecore_X_Selection_Data_Text *text_data;
-        
-        text_data = ev->data;
-        if (text_data->data.content == ECORE_X_SELECTION_CONTENT_TEXT)
-          {
-             if (text_data->text)
-               {
-                  char *txt = _text_to_mkup(text_data->text);
-                  if (txt)
-                    {
-                       elm_entry_entry_insert(data, txt);
-                       free(txt);
-                    }
-               }
-          }
-        wd->selection_asked = EINA_FALSE;
+	Ecore_X_Selection_Data_Text *text_data;
+
+	text_data = ev->data;
+	if (text_data->data.content == ECORE_X_SELECTION_CONTENT_TEXT)
+	  {
+	     if (text_data->text)
+	       {
+		  char *txt = _text_to_mkup(text_data->text);
+		  if (txt)
+		    {
+		       elm_entry_entry_insert(data, txt);
+		       free(txt);
+		    }
+	       }
+	  }
+	wd->selection_asked = EINA_FALSE;
      }
    return 1;
 }
-    
+
 static int
 _event_selection_clear(void *data, int type, void *event)
 {
@@ -888,7 +888,7 @@ _event_selection_clear(void *data, int type, void *event)
    if ((ev->selection == ECORE_X_SELECTION_CLIPBOARD) ||
        (ev->selection == ECORE_X_SELECTION_PRIMARY))
      {
-        elm_entry_select_none(data);
+	elm_entry_select_none(data);
      }
    return 1;
 }
@@ -900,7 +900,7 @@ elm_entry_add(Evas_Object *parent)
    Evas_Object *obj, *top;
    Evas *e;
    Widget_Data *wd;
-   
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -914,14 +914,14 @@ elm_entry_add(Evas_Object *parent)
 
    wd->linewrap = EINA_TRUE;
    wd->editable = EINA_TRUE;
-   
+
    wd->ent = edje_object_add(e);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOVE, _move, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_RESIZE, _resize, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_UP, _mouse_up, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move, obj);
-					  
+
    _elm_theme_set(wd->ent, "entry", "base", "default");
    edje_object_signal_callback_add(wd->ent, "entry,changed", "elm.text", _signal_entry_changed, obj);
    edje_object_signal_callback_add(wd->ent, "selection,start", "elm.text", _signal_selection_start, obj);
@@ -945,15 +945,15 @@ elm_entry_add(Evas_Object *parent)
    top = elm_widget_top_get(obj);
    if ((top) && (elm_win_xwindow_get(top)))
      {
-        wd->sel_notify_handler = 
-          ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY,
-                                  _event_selection_notify, obj);
-        wd->sel_clear_handler = 
-          ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR,
-                                  _event_selection_clear, obj);
+	wd->sel_notify_handler =
+	  ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY,
+				  _event_selection_notify, obj);
+	wd->sel_clear_handler =
+	  ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR,
+				  _event_selection_clear, obj);
      }
 #endif
-   
+
    entries = eina_list_prepend(entries, obj);
    return obj;
 }
@@ -1004,7 +1004,7 @@ elm_entry_entry_set(Evas_Object *obj, const char *entry)
 	EINA_LIST_FOREACH(an, l, anchor)
 	  printf("ANCHOR: %s\n", anchor);
      }
-#endif   
+#endif
    wd->changed = EINA_TRUE;
    _sizing_eval(obj);
 }
@@ -1068,9 +1068,9 @@ elm_entry_select_none(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->selmode)
      {
-        wd->selmode = EINA_FALSE;
-        edje_object_part_text_select_allow_set(wd->ent, "elm.text", 0);
-        edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
+	wd->selmode = EINA_FALSE;
+	edje_object_part_text_select_allow_set(wd->ent, "elm.text", 0);
+	edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
      }
    wd->have_selection = EINA_FALSE;
    edje_object_part_text_select_none(wd->ent, "elm.text");
@@ -1082,9 +1082,9 @@ elm_entry_select_all(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->selmode)
      {
-        wd->selmode = EINA_FALSE;
-        edje_object_part_text_select_allow_set(wd->ent, "elm.text", 0);
-        edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
+	wd->selmode = EINA_FALSE;
+	edje_object_part_text_select_allow_set(wd->ent, "elm.text", 0);
+	edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
      }
    wd->have_selection = EINA_TRUE;
    edje_object_part_text_select_all(wd->ent, "elm.text");

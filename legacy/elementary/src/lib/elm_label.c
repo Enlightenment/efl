@@ -36,7 +36,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-   
+
    edje_object_size_min_calc(wd->lbl, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
@@ -48,7 +48,7 @@ elm_label_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -58,7 +58,7 @@ elm_label_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, 0);
-   
+
    wd->lbl = edje_object_add(e);
    _elm_theme_set(wd->lbl, "label", "base", "default");
    wd->label = eina_stringshare_add("<br>");

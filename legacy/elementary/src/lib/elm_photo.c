@@ -35,10 +35,10 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
- 
-   evas_object_size_hint_min_set(wd->img, 
-                                 wd->size * elm_widget_scale_get(obj) * _elm_config->scale,
-                                 wd->size * elm_widget_scale_get(obj) * _elm_config->scale);
+
+   evas_object_size_hint_min_set(wd->img,
+				 wd->size * elm_widget_scale_get(obj) * _elm_config->scale,
+				 wd->size * elm_widget_scale_get(obj) * _elm_config->scale);
    edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->img);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc(wd->frm, &minw, &minh, minw, minh);
@@ -61,7 +61,7 @@ elm_photo_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -75,7 +75,7 @@ elm_photo_add(Evas_Object *parent)
    wd->frm = edje_object_add(e);
    _elm_theme_set(wd->frm, "photo", "base", "default");
    elm_widget_resize_object_set(obj, wd->frm);
-   
+
    wd->img = _els_smart_icon_add(e);
    _els_smart_icon_scale_up_set(wd->img, 1);
    _els_smart_icon_scale_down_set(wd->img, 1);
@@ -88,9 +88,9 @@ elm_photo_add(Evas_Object *parent)
    edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->img);
    evas_object_show(wd->img);
    elm_widget_sub_object_add(obj, wd->img);
-   
+
    wd->size = 40;
-   
+
    _sizing_eval(obj);
    return obj;
 }

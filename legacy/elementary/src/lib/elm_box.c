@@ -15,7 +15,7 @@
  * will set the packing weight. The weights of all items being packed are added
  * up and if items are to be sized up to fit, those with the higher weights get
  * proportionally more space.
- * 
+ *
  */
 typedef struct _Widget_Data Widget_Data;
 
@@ -86,7 +86,7 @@ elm_box_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -94,20 +94,20 @@ elm_box_add(Evas_Object *parent)
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
-   
+
    wd->box = _els_smart_box_add(e);
    evas_object_event_callback_add(wd->box, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				  _changed_size_hints, obj);
    elm_widget_resize_object_set(obj, wd->box);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
-   
+
    return obj;
 }
 
 /**
  * Set the horizontal orientation
- * 
+ *
  * By default box object arrange their contents vertically from top to bottom.
  * By calling this and providing @p orizontal as true, the box will become
  * horizontal arranging contents left to right.
@@ -126,7 +126,7 @@ elm_box_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 
 /**
  * Set homogenous layout
- * 
+ *
  * If enabled, homogenous layout makes all items the same size. This size is
  * of course governed by the size of the largest item in the box.
  *
@@ -147,10 +147,10 @@ elm_box_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
  *
  * This will add the @p subobj to the box object indicated at the beginning
  * of the box (the left or top end).
- * 
+ *
  * @param obj The box object
  * @param subobj The object to add to the box
- * 
+ *
  * @ingroup Box
  */
 EAPI void
@@ -166,10 +166,10 @@ elm_box_pack_start(Evas_Object *obj, Evas_Object *subobj)
  *
  * This will add the @p subobj to the box object indicated at the end
  * of the box (the right or bottom end).
- * 
+ *
  * @param obj The box object
  * @param subobj The object to add to the box
- * 
+ *
  * @ingroup Box
  */
 EAPI void
@@ -187,7 +187,7 @@ elm_box_pack_end(Evas_Object *obj, Evas_Object *subobj)
  * indicated with @p before. If @p before is not already in the box, results
  * are undefined. Before means either to the left of the indicated object or
  * above it depending on orientation.
- * 
+ *
  * @param obj The box object
  * @param subobj The object to add to the box
  * @param before The object before which to add it
@@ -209,7 +209,7 @@ elm_box_pack_before(Evas_Object *obj, Evas_Object *subobj, Evas_Object *before)
  * indicated with @p after. If @p after is not already in the box, results
  * are undefined. After means either to the right of the indicated object or
  * below it depending on orientation.
- * 
+ *
  * @param obj The box object
  * @param subobj The object to add to the box
  * @param after The object after which to add it

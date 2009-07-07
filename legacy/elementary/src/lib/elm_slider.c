@@ -3,30 +3,30 @@
 
 /**
  * @defgroup Slider Slider
- * 
+ *
  * The slider adds a dragable “slider” widget for selecting the value of
- * something within a range. 
- * 
+ * something within a range.
+ *
  * Signals that you can add callbacks for are:
- * 
+ *
  * changed - Whenever the slider value is changed by the user.
- * 
- * delay,changed - A short time after the value is changed by the user. 
+ *
+ * delay,changed - A short time after the value is changed by the user.
  * This will be called only when the user stops dragging for a very short
- * period or when they release their finger/mouse, so it avoids possibly 
+ * period or when they release their finger/mouse, so it avoids possibly
  * expensive reactions to the value change.
- * 
- * A slider can be horizontal or vertical. It can contain an Icon and has a 
- * primary label as well as a units label (that is formatted with floating 
- * point values and thus accepts a printf-style format string, like 
- * “%1.2f units”. There is also an indicator string that may be somewhere 
- * else (like on the slider itself) that also accepts a format string like 
+ *
+ * A slider can be horizontal or vertical. It can contain an Icon and has a
+ * primary label as well as a units label (that is formatted with floating
+ * point values and thus accepts a printf-style format string, like
+ * “%1.2f units”. There is also an indicator string that may be somewhere
+ * else (like on the slider itself) that also accepts a format string like
  * units. Label, Icon Unit and Indicator strings/objects are optional.
- * 
- * A slider may be inverted which means values invert, with high vales being 
- * on the left or top and low values on the right or bottom (as opposed to 
+ *
+ * A slider may be inverted which means values invert, with high vales being
+ * on the left or top and low values on the right or bottom (as opposed to
  * normally being low on the left or top and high on the bottom and right).
- * 
+ *
  * The slider should have its minimum and maximum values set by the
  * application with  elm_slider_min_max_set() and value should also be set by
  * the application before use with  elm_slider_value_set(). The span of the
@@ -97,7 +97,7 @@ _theme_hook(Evas_Object *obj)
      edje_object_signal_emit(wd->slider, "elm,state,units,hidden", "elm");
    if (wd->horizontal)
      evas_object_size_hint_min_set(wd->spacer, (double)wd->size * elm_widget_scale_get(obj) * _elm_config->scale, 1);
-   else 
+   else
      evas_object_size_hint_min_set(wd->spacer, 1, (double)wd->size * elm_widget_scale_get(obj) * _elm_config->scale);
    edje_object_part_swallow(wd->slider, "elm.swallow.bar", wd->spacer);
    _units_set(obj);
@@ -111,7 +111,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-   
+
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc(wd->slider, &minw, &minh, minw, minh);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
@@ -157,19 +157,19 @@ _val_fetch(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    double posx = 0.0, posy = 0.0, pos = 0.0, val;
-   
-   edje_object_part_drag_value_get(wd->slider, "elm.dragable.slider", 
-                                   &posx, &posy);
+
+   edje_object_part_drag_value_get(wd->slider, "elm.dragable.slider",
+				   &posx, &posy);
    if (wd->horizontal) pos = posx;
    else pos = posy;
    if (wd->inverted) pos = 1.0 - pos;
    val = (pos * (wd->val_max - wd->val_min)) + wd->val_min;
    if (val != wd->val)
      {
-        wd->val = val;
-        evas_object_smart_callback_call(obj, "changed", NULL);
-        if (wd->delay) ecore_timer_del(wd->delay);
-        wd->delay = ecore_timer_add(0.2, _delay_change, obj);
+	wd->val = val;
+	evas_object_smart_callback_call(obj, "changed", NULL);
+	if (wd->delay) ecore_timer_del(wd->delay);
+	wd->delay = ecore_timer_add(0.2, _delay_change, obj);
      }
 }
 
@@ -194,10 +194,10 @@ _units_set(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->units)
      {
-        char buf[1024];
-        
-        snprintf(buf, sizeof(buf), wd->units, wd->val);
-        edje_object_part_text_set(wd->slider, "elm.units", buf);
+	char buf[1024];
+
+	snprintf(buf, sizeof(buf), wd->units, wd->val);
+	edje_object_part_text_set(wd->slider, "elm.units", buf);
      }
    else
      edje_object_part_text_set(wd->slider, "elm.units", NULL);
@@ -209,16 +209,16 @@ _indicator_set(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->indicator)
      {
-        char buf[1024];
-        
-        snprintf(buf, sizeof(buf), wd->indicator, wd->val);
-        edje_object_part_text_set(wd->slider, "elm.indicator", buf);
+	char buf[1024];
+
+	snprintf(buf, sizeof(buf), wd->indicator, wd->val);
+	edje_object_part_text_set(wd->slider, "elm.indicator", buf);
      }
    else
      edje_object_part_text_set(wd->slider, "elm.indicator", NULL);
 }
 
-static void 
+static void
 _drag(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    _val_fetch(data);
@@ -226,17 +226,17 @@ _drag(void *data, Evas_Object *obj, const char *emission, const char *source)
    _indicator_set(data);
 }
 
-static void 
+static void
 _drag_start(void *data, Evas_Object *obj, const char *emission, const char *source)
-{    
+{
    _val_fetch(data);
    _units_set(data);
    _indicator_set(data);
 }
 
-static void 
+static void
 _drag_stop(void *data, Evas_Object *obj, const char *emission, const char *source)
-{    
+{
    _val_fetch(data);
    _units_set(data);
    _indicator_set(data);
@@ -244,10 +244,10 @@ _drag_stop(void *data, Evas_Object *obj, const char *emission, const char *sourc
 
 /**
  * Add a new slider to the parent
- * 
+ *
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
- * 
+ *
  * @ingroup Slider
  */
 EAPI Evas_Object *
@@ -256,7 +256,7 @@ elm_slider_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -265,12 +265,12 @@ elm_slider_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
-   
+
    wd->horizontal = EINA_TRUE;
    wd->val = 0.0;
    wd->val_min = 0.0;
    wd->val_max = 1.0;
-   
+
    wd->slider = edje_object_add(e);
    _elm_theme_set(wd->slider, "slider", "horizontal", "default");
    elm_widget_resize_object_set(obj, wd->slider);
@@ -281,25 +281,25 @@ elm_slider_add(Evas_Object *parent)
    edje_object_signal_callback_add(wd->slider, "drag,page", "*", _drag_stop, obj);
 //   edje_object_signal_callback_add(wd->slider, "drag,set", "*", _drag_stop, obj);
    edje_object_part_drag_value_set(wd->slider, "elm.dragable.slider", 0.0, 0.0);
-   
+
    wd->spacer = evas_object_rectangle_add(e);
    evas_object_color_set(wd->spacer, 0, 0, 0, 0);
    evas_object_pass_events_set(wd->spacer, 1);
    elm_widget_sub_object_add(obj, wd->spacer);
    edje_object_part_swallow(wd->slider, "elm.swallow.bar", wd->spacer);
-   
+
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
-   
+
    _sizing_eval(obj);
    return obj;
 }
 
 /**
  * Set the label of the slider
- * 
+ *
  * @param obj The slider object
  * @param label The text label string in UTF-8
- * 
+ *
  * @ingroup Slider
  */
 EAPI void
@@ -310,13 +310,13 @@ elm_slider_label_set(Evas_Object *obj, const char *label)
    if (wd->label) eina_stringshare_del(wd->label);
    if (label)
      {
-        wd->label = eina_stringshare_add(label);
+	wd->label = eina_stringshare_add(label);
 	edje_object_signal_emit(wd->slider, "elm,state,text,visible", "elm");
 	edje_object_message_signal_process(wd->slider);
      }
    else
      {
-        wd->label = NULL;
+	wd->label = NULL;
 	edje_object_signal_emit(wd->slider, "elm,state,text,hidden", "elm");
 	edje_object_message_signal_process(wd->slider);
      }
@@ -334,7 +334,7 @@ elm_slider_label_set(Evas_Object *obj, const char *label)
  *
  * @param obj The slider object
  * @param icon The icon object
- * 
+ *
  * @ingroup Slider
  */
 EAPI void
@@ -357,15 +357,15 @@ elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon)
 
 /**
  * Set the length of the dragable region of the slider
- * 
+ *
  * Thois sets the minimum width or height (depending on orientation) of the
  * area of the slider that allows the slider to be dragged around. This in
  * turn affects the objects minimum size (along with icon label and unit
  * text). Note that this will also get multiplied by the scale factor.
- * 
+ *
  * @param obj The slider object
  * @param size The length of the slider area
- * 
+ *
  * @ingroup Slider
  */
 EAPI void
@@ -376,7 +376,7 @@ elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size)
    wd->size = size;
    if (wd->horizontal)
      evas_object_size_hint_min_set(wd->spacer, (double)wd->size * elm_widget_scale_get(obj) * _elm_config->scale, 1);
-   else 
+   else
      evas_object_size_hint_min_set(wd->spacer, 1, (double)wd->size * elm_widget_scale_get(obj) * _elm_config->scale);
    edje_object_part_swallow(wd->slider, "elm.swallow.bar", wd->spacer);
    _sizing_eval(obj);
@@ -384,15 +384,15 @@ elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size)
 
 /**
  * Set the format string of the unit area
- * 
+ *
  * If NULL, this disabls the unit area display. If not it sets the format
  * string for the unit text. The unit text is provided a floating point
  * value, so the unit text can display up to 1 floating point falue. Note that
  * this is optional. Use a format string such as "%1.2f meters" for example.
- * 
+ *
  * @param obj The slider object
  * @param units The format string for the units display
- * 
+ *
  * @ingroup Slider
  */
 EAPI void
@@ -402,13 +402,13 @@ elm_slider_unit_format_set(Evas_Object *obj, const char *units)
    if (wd->units) eina_stringshare_del(wd->units);
    if (units)
      {
-        wd->units = eina_stringshare_add(units);
+	wd->units = eina_stringshare_add(units);
 	edje_object_signal_emit(wd->slider, "elm,state,units,visible", "elm");
 	edje_object_message_signal_process(wd->slider);
      }
    else
      {
-        wd->units = NULL;
+	wd->units = NULL;
 	edje_object_signal_emit(wd->slider, "elm,state,units,hidden", "elm");
 	edje_object_message_signal_process(wd->slider);
      }
@@ -418,15 +418,15 @@ elm_slider_unit_format_set(Evas_Object *obj, const char *units)
 
 /**
  * Set the format string for the inducator area
- * 
+ *
  * The slider may also display a value (the value of the slider) somewhere
  * (for example above the slider knob that is dragged around). This sets the
  * format string for this. See elm_slider_unit_format_set() for more
  * information on how this works.
- * 
+ *
  * @param obj The slider object
  * @param units The format string for the indicator display
- * 
+ *
  * @ingroup Slider
  */
 EAPI void
@@ -441,10 +441,10 @@ elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator)
 
 /**
  * Set orientation of the slider
- * 
+ *
  * @param obj The slider object
  * @param horizontal If set, the slider will be horizontal
- * 
+ *
  * @ingroup Slider
  */
 EAPI void
@@ -459,13 +459,13 @@ elm_slider_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 
 /**
  * Set the minimum and maximum values for the slider
- * 
+ *
  * Maximum mut be greater than minimum.
- * 
+ *
  * @param obj The slider object
  * @param min The minimum value
  * @param max The maximum value
- * 
+ *
  * @ingroup Slider
  */
 EAPI void
@@ -484,10 +484,10 @@ elm_slider_min_max_set(Evas_Object *obj, double min, double max)
 
 /**
  * Set the value the slider indicates
- * 
+ *
  * @param obj The slider object
  * @param val The value (must be beween min and max for the slider)
- * 
+ *
  * @ingroup Slider
  */
 EAPI void
@@ -505,10 +505,10 @@ elm_slider_value_set(Evas_Object *obj, double val)
 
 /**
  * Get the value the slider has
- * 
+ *
  * @param obj The slider object
  * @return The value of the slider
- * 
+ *
  * @ingroup Slider
  */
 EAPI double
@@ -520,15 +520,15 @@ elm_slider_value_get(const Evas_Object *obj)
 
 /**
  * Invert the slider display
- * 
+ *
  * Normally the slider will display and interpret values from low to high
  * and when horizontal that is left to right. When vertical that is top
  * to bottom. This inverts this (so from right to left or bottom to top) if
  * inverted is set to 1.
- * 
+ *
  * @param obj The slider object
  * @param inverted The inverted flag. 1 == inverted, 0 == normal
- * 
+ *
  * @ingroup Slider
  */
 EAPI void

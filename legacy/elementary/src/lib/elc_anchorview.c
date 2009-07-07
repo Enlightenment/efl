@@ -3,12 +3,12 @@
 
 /**
  * @defgroup Anchorview Anchorview
- * 
+ *
  * This is just like the Anchorblock object, but provides a scroller to hold
  * the text automatically.
- * 
+ *
  * Signals that you can add callbacks for are:
- * 
+ *
  * anchor,clicked - achor called was clicked. event_info is anchor info -
  * Elm_Entry_Anchorview_Info
  */
@@ -73,11 +73,11 @@ _anchor_clicked(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *hover_parent;
    Elm_Entry_Anchorview_Info ei;
    Evas_Coord x, w, y, h, px, py;
-   
+
    wd->pop = elm_icon_add(obj);
    evas_object_move(wd->pop, info->x, info->y);
    evas_object_resize(wd->pop, info->w, info->h);
-   
+
    wd->hover = elm_hover_add(obj);
    if (wd->hover_style) elm_hover_style_set(wd->hover, wd->hover_style);
    hover_parent = wd->hover_parent;
@@ -100,13 +100,13 @@ _anchor_clicked(void *data, Evas_Object *obj, void *event_info)
    px = info->x + (info->w / 2);
    py = info->y + (info->h / 2);
    ei.hover_left = 1;
-   if (px < (x + (w / 3))) ei.hover_left = 0; 
+   if (px < (x + (w / 3))) ei.hover_left = 0;
    ei.hover_right = 1;
-   if (px > (x + ((w * 2) / 3))) ei.hover_right = 0; 
+   if (px > (x + ((w * 2) / 3))) ei.hover_right = 0;
    ei.hover_top = 1;
-   if (py < (y + (h / 3))) ei.hover_top = 0; 
+   if (py < (y + (h / 3))) ei.hover_top = 0;
    ei.hover_bottom = 1;
-   if (py > (y + ((h * 2) / 3))) ei.hover_bottom = 0; 
+   if (py > (y + ((h * 2) / 3))) ei.hover_bottom = 0;
    evas_object_smart_callback_call(data, "anchor,clicked", &ei);
    evas_object_smart_callback_add(wd->hover, "clicked", _hover_clicked, data);
    evas_object_show(wd->hover);
@@ -133,7 +133,7 @@ elm_anchorview_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -142,7 +142,7 @@ elm_anchorview_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_del_hook_set(obj, _del_hook);
-   
+
    wd->scroller = elm_scroller_add(parent);
    elm_widget_resize_object_set(obj, wd->scroller);
    wd->entry = elm_entry_add(parent);
@@ -151,14 +151,14 @@ elm_anchorview_add(Evas_Object *parent)
    evas_object_size_hint_align_set(wd->entry, -1.0, -1.0);
    elm_scroller_content_set(wd->scroller, wd->entry);
    evas_object_show(wd->entry);
-   
+
    evas_object_event_callback_add(wd->entry, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				  _changed_size_hints, obj);
-   
+
    elm_entry_entry_set(wd->entry, "");
-   
+
    evas_object_smart_callback_add(wd->entry, "anchor,clicked", _anchor_clicked, obj);
-   
+
    _sizing_eval(obj);
    return obj;
 }
@@ -228,7 +228,7 @@ elm_anchorview_hover_style_set(Evas_Object *obj, const char *style)
    if (wd->hover_style) eina_stringshare_del(wd->hover_style);
    wd->hover_style = NULL;
    if (style) wd->hover_style = eina_stringshare_add(style);
-}  
+}
 
 /**
   * Stop the hover popup in the anchorview

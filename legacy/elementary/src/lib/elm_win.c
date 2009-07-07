@@ -13,7 +13,7 @@ struct _Elm_Win
    Ecore_X_Window  xwin;
    Ecore_Job      *deferred_resize_job;
    Ecore_Job      *deferred_child_eval_job;
-   
+
    Elm_Win_Type          type;
    Elm_Win_Keyboard_Mode kbdmode;
    Eina_Bool             autodel : 1;
@@ -25,7 +25,7 @@ static void _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, voi
 static void _elm_win_resize(Ecore_Evas *ee);
 static void _elm_win_delete_request(Ecore_Evas *ee);
 static void _elm_win_resize_job(void *data);
-#ifdef HAVE_ELEMENTARY_X   
+#ifdef HAVE_ELEMENTARY_X
 static void _elm_win_xwin_update(Elm_Win *win);
 #endif
 static void _elm_win_eval_subobjs(Evas_Object *obj);
@@ -80,12 +80,12 @@ _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_inf
    while (evas_object_bottom_get(win->evas) &&
 	  (evas_object_bottom_get(win->evas) != obj))
      {
-        evas_object_del(evas_object_bottom_get(win->evas));
+	evas_object_del(evas_object_bottom_get(win->evas));
      }
    while (evas_object_top_get(win->evas) &&
 	  (evas_object_top_get(win->evas) != obj))
      {
-        evas_object_del(evas_object_top_get(win->evas));
+	evas_object_del(evas_object_top_get(win->evas));
      }
    evas_image_cache_flush(win->evas);
    evas_font_cache_flush(win->evas);
@@ -118,7 +118,7 @@ _elm_win_resize_job(void *data)
    const Eina_List *l;
    Evas_Object *obj;
    int w, h;
-   
+
    win->deferred_resize_job = NULL;
    ecore_evas_geometry_get(win->ee, NULL, NULL, &w, &h);
    evas_object_resize(win->win_obj, w, h);
@@ -161,12 +161,12 @@ _elm_win_xwindow_get(Elm_Win *win)
 static void
 _elm_win_xwin_update(Elm_Win *win)
 {
-#ifdef HAVE_ELEMENTARY_X   
+#ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(win);
    if (win->parent)
      {
 	Elm_Win *win2;
-	
+
 	win2 = elm_widget_data_get(win->parent);
 	if (win2)
 	  {
@@ -226,13 +226,13 @@ _elm_win_eval_subobjs(Evas_Object *obj)
 	evas_object_size_hint_weight_get(child, &wx, &wy);
 	if (wx == 0.0) xx = 0;
 	if (wy == 0.0) xy = 0;
-	
+
 	evas_object_size_hint_min_get(child, &w, &h);
 	if (w < 1) w = -1;
 	if (h < 1) h = -1;
 	if (w > minw) minw = w;
 	if (h > minh) minh = h;
-	
+
 	evas_object_size_hint_max_get(child, &w, &h);
 	if (w < 1) w = -1;
 	if (h < 1) h = -1;
@@ -290,7 +290,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    Elm_Win *win;
    const Eina_List *l;
    const char *fontpath;
-   
+
    win = ELM_NEW(Elm_Win);
    switch (_elm_config->engine)
      {
@@ -328,12 +328,12 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    if (_elm_config->bgpixmap && !_elm_config->compositing)
      ecore_evas_avoid_damage_set(win->ee, ECORE_EVAS_AVOID_DAMAGE_EXPOSE);
 // bg pixmap done by x - has other issues like can be redrawn by x before it
-// is filled/ready by app   
+// is filled/ready by app
 //     ecore_evas_avoid_damage_set(win->ee, ECORE_EVAS_AVOID_DAMAGE_BUILT_IN);
-   
+
    win->type = type;
    win->parent = parent;
-   
+
    win->evas = ecore_evas_get(win->ee);
    win->win_obj = elm_widget_add(win->evas);
    elm_widget_type_set(win->win_obj, "win");
@@ -345,12 +345,12 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    evas_object_pass_events_set(win->win_obj, 1);
 
    ecore_evas_object_associate(win->ee, win->win_obj,
-                               ECORE_EVAS_OBJECT_ASSOCIATE_BASE |
-                               ECORE_EVAS_OBJECT_ASSOCIATE_STACK |
-                               ECORE_EVAS_OBJECT_ASSOCIATE_LAYER);
+			       ECORE_EVAS_OBJECT_ASSOCIATE_BASE |
+			       ECORE_EVAS_OBJECT_ASSOCIATE_STACK |
+			       ECORE_EVAS_OBJECT_ASSOCIATE_LAYER);
    evas_object_event_callback_add(win->win_obj, EVAS_CALLBACK_DEL,
-                                  _elm_win_obj_callback_del, win);
-   
+				  _elm_win_obj_callback_del, win);
+
    ecore_evas_name_class_set(win->ee, name, _elm_appname);
    ecore_evas_callback_delete_request_set(win->ee, _elm_win_delete_request);
    ecore_evas_callback_resize_set(win->ee, _elm_win_resize);
@@ -372,12 +372,12 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    _elm_win_xwin_update(win);
 
    _elm_win_list = eina_list_append(_elm_win_list, win->win_obj);
-   
+
    switch (_elm_config->engine)
      {
       case ELM_SOFTWARE_16_WINCE:
       case ELM_SOFTWARE_FB:
-        ecore_evas_fullscreen_set(win->ee, 1);
+	ecore_evas_fullscreen_set(win->ee, 1);
 	break;
       case ELM_SOFTWARE_X11:
       case ELM_SOFTWARE_16_X11:
@@ -425,7 +425,7 @@ elm_win_title_set(Evas_Object *obj, const char *title)
    if (!win) return;
    ecore_evas_title_set(win->ee, title);
 }
-  
+
 EAPI void
 elm_win_autodel_set(Evas_Object *obj, Eina_Bool autodel)
 {
@@ -516,12 +516,12 @@ elm_win_fullscreen_set(Evas_Object *obj, Eina_Bool fullscreen)
      {
      case ELM_SOFTWARE_16_WINCE:
      case ELM_SOFTWARE_FB:
-        // these engines... can ONLY be fullscreen
-        break;
+	// these engines... can ONLY be fullscreen
+	break;
      default:
-        ecore_evas_fullscreen_set(win->ee, fullscreen);
-        _elm_win_xwin_update(win);
-        break;
+	ecore_evas_fullscreen_set(win->ee, fullscreen);
+	_elm_win_xwin_update(win);
+	break;
      }
 }
 
@@ -583,11 +583,11 @@ elm_win_keyboard_mode_set(Evas_Object *obj, Elm_Win_Keyboard_Mode mode)
    if (mode == win->kbdmode) return;
    _elm_win_xwindow_get(win);
    win->kbdmode = mode;
-#ifdef HAVE_ELEMENTARY_X   
+#ifdef HAVE_ELEMENTARY_X
    if (win->xwin)
      ecore_x_e_virtual_keyboard_state_set
      (win->xwin, (Ecore_X_Virtual_Keyboard_State)win->kbdmode);
-#endif   
+#endif
 }
 
 EAPI void
@@ -596,11 +596,11 @@ elm_win_keyboard_win_set(Evas_Object *obj, Eina_Bool is_keyboard)
    Elm_Win *win = elm_widget_data_get(obj);
    if (!win) return;
    _elm_win_xwindow_get(win);
-#ifdef HAVE_ELEMENTARY_X   
+#ifdef HAVE_ELEMENTARY_X
    if (win->xwin)
      ecore_x_e_virtual_keyboard_set
      (win->xwin, is_keyboard);
-#endif   
+#endif
 }
 
 typedef struct _Widget_Data Widget_Data;
@@ -639,7 +639,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-   
+
    evas_object_size_hint_min_get(wd->content, &minw, &minh);
    edje_object_size_min_calc(wd->frm, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
@@ -661,10 +661,10 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *sub = event_info;
    if (sub == wd->content)
      {
-        evas_object_event_callback_del
-          (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
-        wd->content = NULL;
-        _sizing_eval(obj);
+	evas_object_event_callback_del
+	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
+	wd->content = NULL;
+	_sizing_eval(obj);
      }
 }
 
@@ -682,17 +682,17 @@ elm_win_inwin_add(Evas_Object *obj)
    evas_object_size_hint_weight_set(obj2, 1.0, 1.0);
    evas_object_size_hint_align_set(obj2, -1.0, -1.0);
    elm_win_resize_object_add(obj, obj2);
-   
+
    elm_widget_data_set(obj2, wd);
    elm_widget_del_hook_set(obj2, _del_hook);
    elm_widget_theme_hook_set(obj2, _theme_hook);
-   
+
    wd->frm = edje_object_add(win->evas);
    _elm_theme_set(wd->frm, "win", "inwin", "default");
    elm_widget_resize_object_set(obj2, wd->frm);
-   
+
    evas_object_smart_callback_add(obj2, "sub-object-del", _sub_del, obj2);
-   
+
    _sizing_eval(obj2);
    return obj2;
 }
@@ -722,11 +722,11 @@ elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content)
    wd->content = content;
    if (content)
      {
-        elm_widget_sub_object_add(obj, content);
-        edje_object_part_swallow(wd->frm, "elm.swallow.content", content);
-        evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints, obj);
-        _sizing_eval(obj);
+	elm_widget_sub_object_add(obj, content);
+	edje_object_part_swallow(wd->frm, "elm.swallow.content", content);
+	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+				       _changed_size_hints, obj);
+	_sizing_eval(obj);
      }
 }
 

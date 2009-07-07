@@ -50,14 +50,14 @@ _del_hook(Evas_Object *obj)
    EINA_LIST_FREE(wd->items, it)
      {
 	if (it->del_cb) it->del_cb((void *)it->data, it->obj, it);
-        eina_stringshare_del(it->label);
-        if (!it->fixed)
-          {
-             if (it->icon) evas_object_del(it->icon);
-             if (it->end) evas_object_del(it->end);
-          }
-        if (it->base) evas_object_del(it->base);
-        free(it);
+	eina_stringshare_del(it->label);
+	if (!it->fixed)
+	  {
+	     if (it->icon) evas_object_del(it->icon);
+	     if (it->end) evas_object_del(it->end);
+	  }
+	if (it->base) evas_object_del(it->base);
+	free(it);
      }
    eina_list_free(wd->selected);
    free(wd);
@@ -68,7 +68,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-   
+
    evas_object_size_hint_min_get(wd->scroller, &minw, &minh);
    evas_object_size_hint_max_get(wd->scroller, &maxw, &maxh);
    evas_object_size_hint_min_set(obj, minw, minh);
@@ -91,7 +91,7 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 //   _sizing_eval(data);
 }
 
-static void 
+static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -101,16 +101,16 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 
    EINA_LIST_FOREACH(wd->items, l, it)
      {
-        if ((sub == it->icon) || (sub == it->end))
-          {
-             if (it->icon == sub) it->icon = NULL;
-             if (it->end == sub) it->end = NULL;
-             evas_object_event_callback_del
-               (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
-             _fix_items(obj);
-             _sizing_eval(obj);
-             break;
-          }
+	if ((sub == it->icon) || (sub == it->end))
+	  {
+	     if (it->icon == sub) it->icon = NULL;
+	     if (it->end == sub) it->end = NULL;
+	     evas_object_event_callback_del
+	       (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
+	     _fix_items(obj);
+	     _sizing_eval(obj);
+	     break;
+	  }
      }
 }
 
@@ -134,8 +134,8 @@ _item_select(Elm_List_Item *it)
    const char *selectraise;
    if (it->selected)
      {
-        if (wd->always_select) goto call;
-        return;
+	if (wd->always_select) goto call;
+	return;
      }
    it->selected = EINA_TRUE;
    wd->selected = eina_list_append(wd->selected, it);
@@ -155,15 +155,15 @@ _item_unselect(Elm_List_Item *it)
    selectraise = edje_object_data_get(it->base, "selectraise");
    if ((selectraise) && (!strcmp(selectraise, "on")))
      {
-        if ((stacking) && (!strcmp(stacking, "below")))
-          evas_object_lower(it->base);
+	if ((stacking) && (!strcmp(stacking, "below")))
+	  evas_object_lower(it->base);
      }
    it->hilighted = EINA_FALSE;
    if (it->selected)
      {
-        it->selected = EINA_FALSE;
-        wd->selected = eina_list_remove(wd->selected, it);
-        evas_object_smart_callback_call(it->obj, "unselected", it);
+	it->selected = EINA_FALSE;
+	wd->selected = eina_list_remove(wd->selected, it);
+	evas_object_smart_callback_call(it->obj, "unselected", it);
      }
 }
 
@@ -175,11 +175,11 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    Evas_Event_Mouse_Move *ev = event_info;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
-        if (!wd->on_hold)
-          {
-             wd->on_hold = EINA_TRUE;
-             _item_unselect(it);
-          }
+	if (!wd->on_hold)
+	  {
+	     wd->on_hold = EINA_TRUE;
+	     _item_unselect(it);
+	  }
      }
 }
 
@@ -206,35 +206,35 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    else wd->on_hold = EINA_FALSE;
    if (wd->on_hold)
      {
-        wd->on_hold = EINA_FALSE;
-        return;
+	wd->on_hold = EINA_FALSE;
+	return;
      }
    if (wd->multi)
      {
-        if (!it->selected)
-          {
-             _item_hilight(it);
-             _item_select(it);
-          }
-        else _item_unselect(it);
+	if (!it->selected)
+	  {
+	     _item_hilight(it);
+	     _item_select(it);
+	  }
+	else _item_unselect(it);
      }
    else
      {
 	if (!it->selected)
 	  {
 	     while (wd->selected)
-               _item_unselect(wd->selected->data);
-             _item_hilight(it);
+	       _item_unselect(wd->selected->data);
+	     _item_hilight(it);
 	     _item_select(it);
-          }
+	  }
 	else
 	  {
 	     const Eina_List *l, *l_next;
 	     Elm_List_Item *it2;
 	     EINA_LIST_FOREACH_SAFE(wd->selected, l, l_next, it2)
 	       if (it2 != it) _item_unselect(it2);
-             _item_hilight(it);
-             _item_select(it);
+	     _item_hilight(it);
+	     _item_select(it);
 	  }
      }
 }
@@ -244,7 +244,7 @@ _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *e
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_List_Item *it;
-   
+
    it = calloc(1, sizeof(Elm_List_Item));
    it->obj = obj;
    it->label = eina_stringshare_add(label);
@@ -254,24 +254,24 @@ _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *e
    it->data = data;
    it->base = edje_object_add(evas_object_evas_get(obj));
    evas_object_event_callback_add(it->base, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _mouse_down, it);
+				  _mouse_down, it);
    evas_object_event_callback_add(it->base, EVAS_CALLBACK_MOUSE_UP,
-                                  _mouse_up, it);
+				  _mouse_up, it);
    evas_object_event_callback_add(it->base, EVAS_CALLBACK_MOUSE_MOVE,
-                                  _mouse_move, it);
+				  _mouse_move, it);
    evas_object_size_hint_weight_set(it->base, 1.0, 1.0);
    evas_object_size_hint_align_set(it->base, -1.0, -1.0);
    if (it->icon)
      {
-        elm_widget_sub_object_add(obj, it->icon);
-        evas_object_event_callback_add(it->icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints, obj);
+	elm_widget_sub_object_add(obj, it->icon);
+	evas_object_event_callback_add(it->icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+				       _changed_size_hints, obj);
      }
    if (it->end)
      {
-        elm_widget_sub_object_add(obj, it->end);
-        evas_object_event_callback_add(it->end, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints, obj);
+	elm_widget_sub_object_add(obj, it->end);
+	evas_object_event_callback_add(it->end, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+				       _changed_size_hints, obj);
      }
    return it;
 }
@@ -289,107 +289,107 @@ _fix_items(Evas_Object *obj)
 
    EINA_LIST_FOREACH(wd->items, l, it)
      {
-        Evas_Coord mw, mh;
-        if (it->icon)
-          {
-             evas_object_size_hint_min_get(it->icon, &mw, &mh);
-             if (mw > minw[0]) minw[0] = mw;
-             if (mh > minh[0]) minh[0] = mh;
-          }
-        if (it->end)
-          {
-             evas_object_size_hint_min_get(it->end, &mw, &mh);
-             if (mw > minw[1]) minw[1] = mw;
-             if (mh > minh[1]) minh[1] = mh;
-          }
+	Evas_Coord mw, mh;
+	if (it->icon)
+	  {
+	     evas_object_size_hint_min_get(it->icon, &mw, &mh);
+	     if (mw > minw[0]) minw[0] = mw;
+	     if (mh > minh[0]) minh[0] = mh;
+	  }
+	if (it->end)
+	  {
+	     evas_object_size_hint_min_get(it->end, &mw, &mh);
+	     if (mw > minw[1]) minw[1] = mw;
+	     if (mh > minh[1]) minh[1] = mh;
+	  }
      }
-   if ((minw[0] != wd->minw[0]) || (minw[1] != wd->minw[1]) || 
+   if ((minw[0] != wd->minw[0]) || (minw[1] != wd->minw[1]) ||
        (minw[0] != wd->minh[0]) || (minh[1] != wd->minh[1]))
      {
-        wd->minw[0] = minw[0];
-        wd->minw[1] = minw[1];
-        wd->minh[0] = minh[0];
-        wd->minh[1] = minh[1];
-        redo = 1;
+	wd->minw[0] = minw[0];
+	wd->minw[1] = minw[1];
+	wd->minh[0] = minh[0];
+	wd->minh[1] = minh[1];
+	redo = 1;
      }
    i = 0;
    EINA_LIST_FOREACH(wd->items, l, it)
      {
-        it->even = i & 0x1;
-        if ((it->even != it->is_even) || (!it->fixed) || (redo))
-          {
-             const char *stacking;
-             
-             if (wd->mode == ELM_LIST_COMPRESS) 
-               {
-                  if (it->even)
-                    _elm_theme_set(it->base, "list", "item_compress", style);
-                  else
-                    _elm_theme_set(it->base, "list", "item_compress_odd", style);
-               }
-             else
-               {
-                  if (it->even)
-                    _elm_theme_set(it->base, "list", "item", style);
-                  else
-                    _elm_theme_set(it->base, "list", "item_odd", style);
-               }
-             stacking = edje_object_data_get(it->base, "stacking");
-             if (stacking)
-               {
-                  if (!strcmp(stacking, "below"))
-                    evas_object_lower(it->base);
-                  else if (!strcmp(stacking, "above"))
-                    evas_object_raise(it->base);
-               }
-             edje_object_part_text_set(it->base, "elm.text", it->label);
-             if ((!it->icon) && (minh[0] > 0))
-               {
-                  it->icon = evas_object_rectangle_add(evas_object_evas_get(it->base));
-                  evas_object_color_set(it->icon, 0, 0, 0, 0);
-                  it->dummy_icon = EINA_TRUE;
-               }
-             if ((!it->end) && (minh[1] > 0))
-               {
-                  it->end = evas_object_rectangle_add(evas_object_evas_get(it->base));
-                  evas_object_color_set(it->end, 0, 0, 0, 0);
-                  it->dummy_end = EINA_TRUE;
-               }
-             if (it->icon)
-               {
-                  evas_object_size_hint_min_set(it->icon, minw[0], minh[0]);
-                  evas_object_size_hint_max_set(it->icon, 99999, 99999);
-                  edje_object_part_swallow(it->base, "elm.swallow.icon", it->icon);
-               }
-             if (it->end)
-               {
-                  evas_object_size_hint_min_set(it->end, minw[1], minh[1]);
-                  evas_object_size_hint_max_set(it->end, 99999, 99999);
-                  edje_object_part_swallow(it->base, "elm.swallow.end", it->end);
-               }
-             if (!it->fixed)
-               {
-                  edje_object_message_signal_process(it->base);
-                  mw = mh = -1;
-                  elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-                  edje_object_size_min_restricted_calc(it->base, &mw, &mh, mw, mh);
-                  elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-                  evas_object_size_hint_min_set(it->base, mw, mh);
-                  evas_object_show(it->base);
-               }
-             if ((it->selected) || (it->hilighted))
-               {
-                  const char *selectraise;
-                  
-                  edje_object_signal_emit(it->base, "elm,state,selected", "elm");
-                  selectraise = edje_object_data_get(it->base, "selectraise");
-                  if ((selectraise) && (!strcmp(selectraise, "on")))
-                    evas_object_raise(it->base);
-                  stacking = edje_object_data_get(it->base, "stacking");
-               }
-             it->fixed = EINA_TRUE;
-             it->is_even = it->even;
-          }
+	it->even = i & 0x1;
+	if ((it->even != it->is_even) || (!it->fixed) || (redo))
+	  {
+	     const char *stacking;
+
+	     if (wd->mode == ELM_LIST_COMPRESS)
+	       {
+		  if (it->even)
+		    _elm_theme_set(it->base, "list", "item_compress", style);
+		  else
+		    _elm_theme_set(it->base, "list", "item_compress_odd", style);
+	       }
+	     else
+	       {
+		  if (it->even)
+		    _elm_theme_set(it->base, "list", "item", style);
+		  else
+		    _elm_theme_set(it->base, "list", "item_odd", style);
+	       }
+	     stacking = edje_object_data_get(it->base, "stacking");
+	     if (stacking)
+	       {
+		  if (!strcmp(stacking, "below"))
+		    evas_object_lower(it->base);
+		  else if (!strcmp(stacking, "above"))
+		    evas_object_raise(it->base);
+	       }
+	     edje_object_part_text_set(it->base, "elm.text", it->label);
+	     if ((!it->icon) && (minh[0] > 0))
+	       {
+		  it->icon = evas_object_rectangle_add(evas_object_evas_get(it->base));
+		  evas_object_color_set(it->icon, 0, 0, 0, 0);
+		  it->dummy_icon = EINA_TRUE;
+	       }
+	     if ((!it->end) && (minh[1] > 0))
+	       {
+		  it->end = evas_object_rectangle_add(evas_object_evas_get(it->base));
+		  evas_object_color_set(it->end, 0, 0, 0, 0);
+		  it->dummy_end = EINA_TRUE;
+	       }
+	     if (it->icon)
+	       {
+		  evas_object_size_hint_min_set(it->icon, minw[0], minh[0]);
+		  evas_object_size_hint_max_set(it->icon, 99999, 99999);
+		  edje_object_part_swallow(it->base, "elm.swallow.icon", it->icon);
+	       }
+	     if (it->end)
+	       {
+		  evas_object_size_hint_min_set(it->end, minw[1], minh[1]);
+		  evas_object_size_hint_max_set(it->end, 99999, 99999);
+		  edje_object_part_swallow(it->base, "elm.swallow.end", it->end);
+	       }
+	     if (!it->fixed)
+	       {
+		  edje_object_message_signal_process(it->base);
+		  mw = mh = -1;
+		  elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+		  edje_object_size_min_restricted_calc(it->base, &mw, &mh, mw, mh);
+		  elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+		  evas_object_size_hint_min_set(it->base, mw, mh);
+		  evas_object_show(it->base);
+	       }
+	     if ((it->selected) || (it->hilighted))
+	       {
+		  const char *selectraise;
+
+		  edje_object_signal_emit(it->base, "elm,state,selected", "elm");
+		  selectraise = edje_object_data_get(it->base, "selectraise");
+		  if ((selectraise) && (!strcmp(selectraise, "on")))
+		    evas_object_raise(it->base);
+		  stacking = edje_object_data_get(it->base, "stacking");
+	       }
+	     it->fixed = EINA_TRUE;
+	     it->is_even = it->even;
+	  }
 	i++;
      }
    mw = 0; mh = 0;
@@ -407,7 +407,7 @@ elm_list_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -417,12 +417,12 @@ elm_list_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_can_focus_set(obj, 1);
-   
+
    wd->scroller = elm_scroller_add(parent);
    elm_widget_resize_object_set(obj, wd->scroller);
-   
+
    elm_scroller_bounce_set(wd->scroller, 0, 1);
-   
+
    wd->box = elm_box_add(parent);
    elm_box_homogenous_set(wd->box, 1);
    evas_object_size_hint_weight_set(wd->box, 1.0, 0.0);
@@ -433,7 +433,7 @@ elm_list_add(Evas_Object *parent)
    wd->mode = ELM_LIST_SCROLL;
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
-   
+
    _sizing_eval(obj);
    return obj;
 }
@@ -526,7 +526,7 @@ elm_list_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
      elm_scroller_content_min_limit(wd->scroller, 0, 0);
 }
 
-EAPI void      
+EAPI void
 elm_list_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -565,13 +565,13 @@ elm_list_item_selected_set(Elm_List_Item *it, Eina_Bool selected)
 
    if (selected)
      {
-        if (!wd->multi)
-          {
+	if (!wd->multi)
+	  {
 	     while (wd->selected)
-               _item_unselect(wd->selected->data);
-          }
-        _item_hilight(it);
-        _item_select(it);
+	       _item_unselect(wd->selected->data);
+	  }
+	_item_hilight(it);
+	_item_select(it);
      }
    else
      _item_unselect(it);

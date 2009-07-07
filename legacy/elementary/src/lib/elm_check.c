@@ -3,22 +3,22 @@
 
 /**
  * @defgroup Check Check
- * 
+ *
  * The check widget allows for toggling a value between true or false (1 or 0).
- * 
+ *
  * Signals that you can add callbacks for are:
- * 
+ *
  * changed - This is called whenever the user changes the state of one of the
  * check object.
- * 
- * Check objects are a lot like radio objects in layout and functionality 
+ *
+ * Check objects are a lot like radio objects in layout and functionality
  * except they do not work as a group, but independently and only toggle the
  * value of a boolean from false to true (0 or 1). elm_check_state_set() sets
  * the boolean state (1 for true, 0 for false), and elm_check_state_get()
  * returns the current state. For convenience, like the radio objects, you
  * can set a pointer to a boolean directly with elm_check_state_pointer_set()
  * for it to modify.
- */ 
+ */
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -75,7 +75,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-   
+
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc(wd->chk, &minw, &minh, minw, minh);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
@@ -156,7 +156,7 @@ elm_check_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -165,7 +165,7 @@ elm_check_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
-   
+
    wd->chk = edje_object_add(e);
    _elm_theme_set(wd->chk, "check", "base", "default");
    edje_object_signal_callback_add(wd->chk, "elm,action,check,on", "", _signal_check_on, obj);
@@ -174,7 +174,7 @@ elm_check_add(Evas_Object *parent)
    elm_widget_resize_object_set(obj, wd->chk);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
-   
+
    _sizing_eval(obj);
    return obj;
 }
@@ -196,13 +196,13 @@ elm_check_label_set(Evas_Object *obj, const char *label)
    if (wd->label) eina_stringshare_del(wd->label);
    if (label)
      {
-        wd->label = eina_stringshare_add(label);
+	wd->label = eina_stringshare_add(label);
 	edje_object_signal_emit(wd->chk, "elm,state,text,visible", "elm");
 	edje_object_message_signal_process(wd->chk);
      }
    else
      {
-        wd->label = NULL;
+	wd->label = NULL;
 	edje_object_signal_emit(wd->chk, "elm,state,text,hidden", "elm");
 	edje_object_message_signal_process(wd->chk);
      }
@@ -217,7 +217,7 @@ elm_check_label_set(Evas_Object *obj, const char *label)
  * be deleted when the check object is deleted. If another icon object is set
  * then the previous one becomes orophaned and will no longer be deleted along
  * with the check.
- * 
+ *
  * @param obj The check object
  * @param icon The icon object
  *
@@ -246,7 +246,7 @@ elm_check_icon_set(Evas_Object *obj, Evas_Object *icon)
  *
  * This sets the state of the check and will also set the value if pointed to
  * to the state supplied, but will not call any callbacks.
- * 
+ *
  * @param obj The check object
  * @param state The state to use (1 == on, 0 == off)
  *
@@ -284,7 +284,7 @@ elm_check_state_get(const Evas_Object *obj)
 
 /**
  * Set a convenience pointer to a boolean to change
- * 
+ *
  * This sets a pointer to a boolean, that, in addition to the check objects
  * state will also be modified directly. To stop setting the object pointed
  * to simply use NULL as the statep parameter. If statep is not NULL, then
@@ -316,6 +316,6 @@ elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep)
      }
    else
      {
-        wd->statep = NULL;
+	wd->statep = NULL;
      }
 }

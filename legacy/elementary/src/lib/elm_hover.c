@@ -78,7 +78,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord x = 0, y = 0, w = 0, h = 0, x2 = 0, y2 = 0, w2 = 0, h2 = 0;
-   
+
    if (wd->parent) evas_object_geometry_get(wd->parent, &x, &y, &w, &h);
    if (wd->hov) evas_object_geometry_get(wd->hov, &x2, &y2, &w2, &h2);
    evas_object_move(wd->cov, x, y);
@@ -134,7 +134,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 	     break;
 	  }
      }
-}    
+}
 
 static void
 _hov_show_do(Evas_Object *obj)
@@ -152,7 +152,7 @@ _hov_show_do(Evas_Object *obj)
 	char buf[1024];
 	if (!strncmp(si->swallow, "elm.swallow.slot.", 17))
 	  {
-	     snprintf(buf, sizeof(buf), "elm,action,slot,%s,show", 
+	     snprintf(buf, sizeof(buf), "elm,action,slot,%s,show",
 		      si->swallow + 17);
 	     edje_object_signal_emit(wd->cov, buf, "elm");
 	  }
@@ -193,7 +193,7 @@ _hov_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	char buf[1024];
 	if (!strncmp(si->swallow, "elm.swallow.slot.", 17))
 	  {
-	     snprintf(buf, sizeof(buf), "elm,action,slot,%s,hide", 
+	     snprintf(buf, sizeof(buf), "elm,action,slot,%s,hide",
 		      si->swallow + 17);
 	     edje_object_signal_emit(wd->cov, buf, "elm");
 	  }
@@ -254,7 +254,7 @@ elm_hover_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -273,27 +273,27 @@ elm_hover_add(Evas_Object *parent)
    evas_object_event_callback_add(wd->hov, EVAS_CALLBACK_RESIZE, _hov_resize, obj);
    evas_object_event_callback_add(wd->hov, EVAS_CALLBACK_SHOW, _hov_show, obj);
    evas_object_event_callback_add(wd->hov, EVAS_CALLBACK_HIDE, _hov_hide, obj);
-   
+
    wd->cov = edje_object_add(e);
    _elm_theme_set(wd->cov, "hover", "base", "default");
    elm_widget_sub_object_add(obj, wd->cov);
    edje_object_signal_callback_add(wd->cov, "elm,action,dismiss", "", _signal_dismiss, obj);
-   
+
    wd->offset = evas_object_rectangle_add(e);
    evas_object_pass_events_set(wd->offset, 1);
    evas_object_color_set(wd->offset, 0, 0, 0, 0);
    elm_widget_sub_object_add(obj, wd->offset);
-   
+
    wd->size = evas_object_rectangle_add(e);
    evas_object_pass_events_set(wd->size, 1);
    evas_object_color_set(wd->size, 0, 0, 0, 0);
    elm_widget_sub_object_add(obj, wd->size);
-   
+
    edje_object_part_swallow(wd->cov, "elm.swallow.offset", wd->offset);
    edje_object_part_swallow(wd->cov, "elm.swallow.size", wd->size);
-   
+
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
-   
+
    _sizing_eval(obj);
    return obj;
 }
@@ -385,7 +385,7 @@ elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord x = 0, y = 0, w = 0, h = 0, x2 = 0, y2 = 0, w2 = 0, h2 = 0;
    Evas_Coord spc_l, spc_r, spc_t, spc_b;
-     
+
    if (wd->parent) evas_object_geometry_get(wd->parent, &x, &y, &w, &h);
    if (wd->target) evas_object_geometry_get(wd->target, &x2, &y2, &w2, &h2);
    spc_l = x2 - x;
@@ -398,19 +398,19 @@ elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_
    if (spc_b < 0) spc_b = 0;
    if (pref_axis == ELM_HOVER_AXIS_HORIZONTAL)
      {
-        if (spc_l < spc_r) return "right";
-        else return "left";
+	if (spc_l < spc_r) return "right";
+	else return "left";
      }
    else if (pref_axis == ELM_HOVER_AXIS_VERTICAL)
      {
-        if (spc_t < spc_b) return "bottom";
-        else return "top";
+	if (spc_t < spc_b) return "bottom";
+	else return "top";
      }
    if (spc_l < spc_r)
      {
-        if (spc_t > spc_r) return "top";
-        else if (spc_b > spc_r) return "bottom";
-        return "right";
+	if (spc_t > spc_r) return "top";
+	else if (spc_b > spc_r) return "bottom";
+	return "right";
      }
    if (spc_t > spc_r) return "top";
    else if (spc_b > spc_r) return "bottom";

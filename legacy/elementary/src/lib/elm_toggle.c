@@ -61,7 +61,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-   
+
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc(wd->tgl, &minw, &minh, minw, minh);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
@@ -119,7 +119,7 @@ elm_toggle_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -128,7 +128,7 @@ elm_toggle_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
-   
+
    wd->tgl = edje_object_add(e);
    _elm_theme_set(wd->tgl, "toggle", "base", "default");
    wd->ontext = eina_stringshare_add("ON");
@@ -140,7 +140,7 @@ elm_toggle_add(Evas_Object *parent)
    edje_object_part_text_set(wd->tgl, "elm.offtext", wd->offtext);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
-   
+
    _sizing_eval(obj);
    return obj;
 }
@@ -154,13 +154,13 @@ elm_toggle_label_set(Evas_Object *obj, const char *label)
    if (wd->label) eina_stringshare_del(wd->label);
    if (label)
      {
-        wd->label = eina_stringshare_add(label);
+	wd->label = eina_stringshare_add(label);
 	edje_object_signal_emit(wd->tgl, "elm,state,text,visible", "elm");
 	edje_object_message_signal_process(wd->tgl);
      }
    else
      {
-        wd->label = NULL;
+	wd->label = NULL;
 	edje_object_signal_emit(wd->tgl, "elm,state,text,hidden", "elm");
 	edje_object_message_signal_process(wd->tgl);
      }
@@ -242,6 +242,6 @@ elm_toggle_state_pointer_set(Evas_Object *obj, Eina_Bool *statep)
      }
    else
      {
-        wd->statep = NULL;
+	wd->statep = NULL;
      }
 }

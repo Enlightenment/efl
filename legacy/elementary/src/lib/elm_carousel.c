@@ -32,7 +32,7 @@ _item_show(Elm_Carousel_Item *it)
 {
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Coord x, y, w, h, bx, by;
-   
+
    evas_object_geometry_get(wd->bx, &bx, &by, NULL, NULL);
    evas_object_geometry_get(it->base, &x, &y, &w, &h);
    elm_smart_scroller_child_region_show(wd->scr, x - bx, y - by, w, h);
@@ -48,12 +48,12 @@ _item_select(Elm_Carousel_Item *it)
    if (it->selected) return;
    EINA_LIST_FOREACH(wd->items, l, it2)
      {
-        if (it2->selected)
-          {
-             it2->selected = EINA_FALSE;
-             edje_object_signal_emit(it2->base, "elm,state,unselected", "elm");
-             break;
-          }
+	if (it2->selected)
+	  {
+	     it2->selected = EINA_FALSE;
+	     edje_object_signal_emit(it2->base, "elm,state,unselected", "elm");
+	     break;
+	  }
      }
    it->selected = EINA_TRUE;
    edje_object_signal_emit(it->base, "elm,state,selected", "elm");
@@ -79,21 +79,21 @@ _theme_hook(Evas_Object *obj)
    Evas_Coord mw, mh;
    EINA_LIST_FOREACH(wd->items, l, it)
      {
-        if (it->selected)
-          edje_object_signal_emit(it->base, "elm,state,selected", "elm");
-        _elm_theme_set(it->base, "carousel", "item", elm_widget_style_get(obj));
-        edje_object_scale_set(it->base, elm_widget_scale_get(obj) * _elm_config->scale);
-        if (it->icon)
-          {
-             edje_extern_object_min_size_set(it->icon, 
-                                             (double)wd->icon_size * _elm_config->scale, 
-                                             (double)wd->icon_size * _elm_config->scale);
-             edje_object_part_swallow(it->base, "elm.swallow.icon", it->icon);
-          }
-        edje_object_part_text_set(it->base, "elm.text", it->label);
-        edje_object_size_min_calc(it->base, &mw, &mh);
-        evas_object_size_hint_min_set(it->base, mw, mh);
-        evas_object_size_hint_max_set(it->base, 9999, mh);
+	if (it->selected)
+	  edje_object_signal_emit(it->base, "elm,state,selected", "elm");
+	_elm_theme_set(it->base, "carousel", "item", elm_widget_style_get(obj));
+	edje_object_scale_set(it->base, elm_widget_scale_get(obj) * _elm_config->scale);
+	if (it->icon)
+	  {
+	     edje_extern_object_min_size_set(it->icon,
+					     (double)wd->icon_size * _elm_config->scale,
+					     (double)wd->icon_size * _elm_config->scale);
+	     edje_object_part_swallow(it->base, "elm.swallow.icon", it->icon);
+	  }
+	edje_object_part_text_set(it->base, "elm.text", it->label);
+	edje_object_size_min_calc(it->base, &mw, &mh);
+	evas_object_size_hint_min_set(it->base, mw, mh);
+	evas_object_size_hint_max_set(it->base, 9999, mh);
      }
    _sizing_eval(obj);
 }
@@ -123,23 +123,23 @@ _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Evas_Coord mw, mh, vw, vh, w, h;
    const Eina_List *l;
    Elm_Carousel_Item *it;
-   
+
    elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
    evas_object_size_hint_min_get(wd->bx, &mw, &mh);
    evas_object_geometry_get(wd->bx, NULL, NULL, &w, &h);
    if (vw >= mw)
      {
-        if (w != vw) evas_object_resize(wd->bx, vw, h);
+	if (w != vw) evas_object_resize(wd->bx, vw, h);
      }
    EINA_LIST_FOREACH(wd->items, l, it)
      {
-        if (it->selected)
-          {
-             _item_show(it);
-             break;
-          }
+	if (it->selected)
+	  {
+	     _item_show(it);
+	     break;
+	  }
      }
-   
+
 }
 
 static void
@@ -154,7 +154,7 @@ elm_carousel_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -164,16 +164,16 @@ elm_carousel_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, 0);
-   
+
    wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_theme_set(wd->scr, "carousel", "base", "default");
    elm_widget_resize_object_set(obj, wd->scr);
-   elm_smart_scroller_policy_set(wd->scr, 
-                                 ELM_SMART_SCROLLER_POLICY_AUTO,
-                                 ELM_SMART_SCROLLER_POLICY_OFF);
-   
+   elm_smart_scroller_policy_set(wd->scr,
+				 ELM_SMART_SCROLLER_POLICY_AUTO,
+				 ELM_SMART_SCROLLER_POLICY_OFF);
+
    wd->icon_size = 32;
-   
+
    wd->bx = _els_smart_box_add(e);
    _els_smart_box_orientation_set(wd->bx, 1);
    _els_smart_box_homogenous_set(wd->bx, 1);
@@ -182,8 +182,8 @@ elm_carousel_add(Evas_Object *parent)
    evas_object_show(wd->bx);
 
    evas_object_event_callback_add(wd->scr, EVAS_CALLBACK_RESIZE,
-                                  _resize, obj);
-   
+				  _resize, obj);
+
    _sizing_eval(obj);
    return obj;
 }
@@ -204,16 +204,16 @@ elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, vo
    it->base = edje_object_add(evas_object_evas_get(obj));
    _elm_theme_set(it->base, "carousel", "item", elm_widget_style_get(obj));
    edje_object_signal_callback_add(it->base, "elm,action,click", "elm",
-                                   _select, it);
+				   _select, it);
    elm_widget_sub_object_add(obj, it->base);
    if (it->icon)
      {
-        edje_extern_object_min_size_set(it->icon, 
-                                        (double)wd->icon_size * _elm_config->scale, 
-                                        (double)wd->icon_size * _elm_config->scale);
-        edje_object_part_swallow(it->base, "elm.swallow.icon", it->icon);
-        evas_object_show(it->icon);
-        elm_widget_sub_object_add(obj, it->icon);
+	edje_extern_object_min_size_set(it->icon,
+					(double)wd->icon_size * _elm_config->scale,
+					(double)wd->icon_size * _elm_config->scale);
+	edje_object_part_swallow(it->base, "elm.swallow.icon", it->icon);
+	evas_object_show(it->icon);
+	elm_widget_sub_object_add(obj, it->icon);
      }
    edje_object_part_text_set(it->base, "elm.text", it->label);
    edje_object_size_min_calc(it->base, &mw, &mh);

@@ -15,7 +15,7 @@ static void
 my_bt_1(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg;
-   
+
    win = elm_win_add(NULL, "bg-plain", ELM_WIN_BASIC);
    elm_win_title_set(win, "Bg Plain");
    elm_win_autodel_set(win, 1);
@@ -25,7 +25,7 @@ my_bt_1(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
-   
+
    /* set size hints. a minimum size for the bg. this should propagate back
     * to the window thus limiting its size based off the bg as the bg is one
     * of the window's resize objects. */
@@ -46,7 +46,7 @@ my_bt_2(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "bg-image", ELM_WIN_BASIC);
    elm_win_title_set(win, "Bg Image");
    elm_win_autodel_set(win, 1);
@@ -57,7 +57,7 @@ my_bt_2(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
-   
+
    evas_object_size_hint_min_set(bg, 160, 160);
    evas_object_size_hint_max_set(bg, 640, 640);
    evas_object_resize(win, 320, 320);
@@ -69,7 +69,7 @@ my_bt_3(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *ic;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "icon-transparent", ELM_WIN_BASIC);
    elm_win_title_set(win, "Icon Transparent");
    elm_win_autodel_set(win, 1);
@@ -81,7 +81,7 @@ my_bt_3(void *data, Evas_Object *obj, void *event_info)
    elm_icon_scale_set(ic, 0, 0);
    elm_win_resize_object_add(win, ic);
    evas_object_show(ic);
-   
+
    evas_object_show(win);
 }
 
@@ -90,7 +90,7 @@ my_bt_4(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *ic;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "box-vert", ELM_WIN_BASIC);
    elm_win_title_set(win, "Box Vert");
    elm_win_autodel_set(win, 1);
@@ -99,7 +99,7 @@ my_bt_4(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
@@ -112,7 +112,7 @@ my_bt_4(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(ic, 0.5, 0.5);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
@@ -120,7 +120,7 @@ my_bt_4(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(ic, 0.0, 0.5);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
@@ -128,7 +128,7 @@ my_bt_4(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(ic, 1.0, 0.5);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
-   
+
    evas_object_show(win);
 }
 
@@ -137,7 +137,7 @@ my_bt_5(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *ic;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "box-horiz", ELM_WIN_BASIC);
    elm_win_title_set(win, "Box Horiz");
    elm_win_autodel_set(win, 1);
@@ -146,7 +146,7 @@ my_bt_5(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    elm_box_horizontal_set(bx, 1);
    elm_win_resize_object_add(win, bx);
@@ -160,7 +160,7 @@ my_bt_5(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(ic, 0.5, 0.5);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
@@ -168,7 +168,7 @@ my_bt_5(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(ic, 0.5, 0.0);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
@@ -176,7 +176,7 @@ my_bt_5(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(ic, 0.0, 1.0);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
-   
+
    evas_object_show(win);
 }
 
@@ -185,7 +185,7 @@ my_bt_6(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *ic, *bt;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "buttons", ELM_WIN_BASIC);
    elm_win_title_set(win, "Buttons");
    elm_win_autodel_set(win, 1);
@@ -194,7 +194,7 @@ my_bt_6(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
    elm_win_resize_object_add(win, bx);
@@ -210,7 +210,7 @@ my_bt_6(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_show(ic);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
@@ -221,12 +221,12 @@ my_bt_6(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_show(ic);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Label Only");
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
@@ -236,7 +236,7 @@ my_bt_6(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_show(ic);
-   
+
    evas_object_show(win);
 }
 
@@ -245,7 +245,7 @@ my_bt_7(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *ic, *tg;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "toggles", ELM_WIN_BASIC);
    elm_win_title_set(win, "Toggles");
    elm_win_autodel_set(win, 1);
@@ -254,7 +254,7 @@ my_bt_7(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
    elm_win_resize_object_add(win, bx);
@@ -274,7 +274,7 @@ my_bt_7(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
    evas_object_show(ic);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
@@ -301,7 +301,7 @@ my_bt_7(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
    evas_object_show(ic);
-   
+
    evas_object_show(win);
 }
 
@@ -309,7 +309,7 @@ static void
 my_bt_8(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *tb, *bt;
-   
+
    win = elm_win_add(NULL, "table", ELM_WIN_BASIC);
    elm_win_title_set(win, "Table");
    elm_win_autodel_set(win, 1);
@@ -318,54 +318,54 @@ my_bt_8(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
-   
+
    tb = elm_table_add(win);
    elm_win_resize_object_add(win, tb);
    evas_object_size_hint_weight_set(tb, 1.0, 1.0);
    evas_object_show(tb);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Button 1");
    evas_object_size_hint_weight_set(bt, 1.0, 1.0);
    evas_object_size_hint_align_set(bt, -1.0, -1.0);
    elm_table_pack(tb, bt, 0, 0, 1, 1);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Button 2");
    evas_object_size_hint_weight_set(bt, 1.0, 1.0);
    evas_object_size_hint_align_set(bt, -1.0, -1.0);
    elm_table_pack(tb, bt, 1, 0, 1, 1);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Button 3");
    evas_object_size_hint_weight_set(bt, 1.0, 1.0);
    evas_object_size_hint_align_set(bt, -1.0, -1.0);
    elm_table_pack(tb, bt, 2, 0, 1, 1);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Button 4");
    evas_object_size_hint_weight_set(bt, 1.0, 1.0);
    evas_object_size_hint_align_set(bt, -1.0, -1.0);
    elm_table_pack(tb, bt, 0, 1, 2, 1);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Button 5");
    evas_object_size_hint_weight_set(bt, 1.0, 1.0);
    evas_object_size_hint_align_set(bt, -1.0, -1.0);
    elm_table_pack(tb, bt, 2, 1, 1, 3);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Button 6");
    evas_object_size_hint_weight_set(bt, 1.0, 1.0);
    evas_object_size_hint_align_set(bt, -1.0, -1.0);
    elm_table_pack(tb, bt, 0, 2, 2, 2);
    evas_object_show(bt);
-   
+
    evas_object_show(win);
 }
 
@@ -373,7 +373,7 @@ static void
 my_bt_9(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *ck;
-   
+
    win = elm_win_add(NULL, "clock", ELM_WIN_BASIC);
    elm_win_title_set(win, "Clock");
    elm_win_autodel_set(win, 1);
@@ -382,7 +382,7 @@ my_bt_9(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
    elm_win_resize_object_add(win, bx);
@@ -391,23 +391,23 @@ my_bt_9(void *data, Evas_Object *obj, void *event_info)
    ck = elm_clock_add(win);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
-   
+
    ck = elm_clock_add(win);
    elm_clock_show_am_pm_set(ck, 1);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
-   
+
    ck = elm_clock_add(win);
    elm_clock_show_seconds_set(ck, 1);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
-   
+
    ck = elm_clock_add(win);
    elm_clock_show_seconds_set(ck, 1);
    elm_clock_show_am_pm_set(ck, 1);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
-   
+
    ck = elm_clock_add(win);
    elm_clock_edit_set(ck, 1);
    elm_clock_show_seconds_set(ck, 1);
@@ -415,7 +415,7 @@ my_bt_9(void *data, Evas_Object *obj, void *event_info)
    elm_clock_time_set(ck, 10, 11, 12);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
-   
+
    evas_object_show(win);
 }
 
@@ -424,7 +424,7 @@ my_bt_10(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *ly, *bt;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "layout", ELM_WIN_BASIC);
    elm_win_title_set(win, "Layout");
    elm_win_autodel_set(win, 1);
@@ -433,29 +433,29 @@ my_bt_10(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    ly = elm_layout_add(win);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
    elm_layout_file_set(ly, buf, "layout");
    evas_object_size_hint_weight_set(ly, 1.0, 1.0);
    elm_win_resize_object_add(win, ly);
    evas_object_show(ly);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Button 1");
    elm_layout_content_set(ly, "element1", bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Button 2");
    elm_layout_content_set(ly, "element2", bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Button 3");
    elm_layout_content_set(ly, "element3", bt);
    evas_object_show(bt);
-   
+
    evas_object_show(win);
 }
 
@@ -463,7 +463,7 @@ static void
 my_hover_bt_1(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *hv = data;
-   
+
    evas_object_show(hv);
 }
 
@@ -472,7 +472,7 @@ my_bt_11(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *bt, *hv, *ic;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "hover", ELM_WIN_BASIC);
    elm_win_title_set(win, "Hover");
    elm_win_autodel_set(win, 1);
@@ -481,14 +481,14 @@ my_bt_11(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
    hv = elm_hover_add(win);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Button");
    evas_object_smart_callback_add(bt, "clicked", my_hover_bt_1, hv);
@@ -503,7 +503,7 @@ my_bt_11(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bt);
 
    bx = elm_box_add(win);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
@@ -531,12 +531,12 @@ my_bt_11(void *data, Evas_Object *obj, void *event_info)
    elm_button_label_set(bt, "Bottom");
    elm_hover_content_set(hv, "bottom", bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Left");
    elm_hover_content_set(hv, "left", bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Right");
    elm_hover_content_set(hv, "right", bt);
@@ -553,7 +553,7 @@ my_bt_12(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *bt, *hv, *ic;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "hover2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Hover 2");
    elm_win_autodel_set(win, 1);
@@ -562,7 +562,7 @@ my_bt_12(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
    elm_win_resize_object_add(win, bx);
@@ -570,7 +570,7 @@ my_bt_12(void *data, Evas_Object *obj, void *event_info)
 
    hv = elm_hover_add(win);
    elm_object_style_set(hv, "popout");
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Button");
    evas_object_smart_callback_add(bt, "clicked", my_hover_bt_1, hv);
@@ -578,14 +578,14 @@ my_bt_12(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bt);
    elm_hover_parent_set(hv, win);
    elm_hover_target_set(hv, bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Popup");
    elm_hover_content_set(hv, "middle", bt);
    evas_object_show(bt);
 
    bx = elm_box_add(win);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
@@ -611,17 +611,17 @@ my_bt_12(void *data, Evas_Object *obj, void *event_info)
    elm_button_label_set(bt, "Bot");
    elm_hover_content_set(hv, "bottom", bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Left");
    elm_hover_content_set(hv, "left", bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Right");
    elm_hover_content_set(hv, "right", bt);
    evas_object_show(bt);
-   
+
    evas_object_size_hint_min_set(bg, 160, 160);
    evas_object_size_hint_max_set(bg, 640, 640);
    evas_object_resize(win, 320, 320);
@@ -665,7 +665,7 @@ my_bt_13(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *bx2, *bt, *en;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
    elm_win_title_set(win, "Entry");
    elm_win_autodel_set(win, 1);
@@ -674,7 +674,7 @@ my_bt_13(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
    elm_win_resize_object_add(win, bx);
@@ -699,7 +699,7 @@ my_bt_13(void *data, Evas_Object *obj, void *event_info)
    elm_box_horizontal_set(bx2, 1);
    evas_object_size_hint_weight_set(bx2, 1.0, 0.0);
    evas_object_size_hint_align_set(bx2, -1.0, -1.0);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Clear");
    evas_object_smart_callback_add(bt, "clicked", my_entry_bt_1, en);
@@ -715,7 +715,7 @@ my_bt_13(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Selection");
    evas_object_smart_callback_add(bt, "clicked", my_entry_bt_3, en);
@@ -723,7 +723,7 @@ my_bt_13(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Insert");
    evas_object_smart_callback_add(bt, "clicked", my_entry_bt_4, en);
@@ -731,7 +731,7 @@ my_bt_13(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
@@ -744,7 +744,7 @@ my_bt_14(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *bx2, *bt, *en, *sc;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "entry-scrolled", ELM_WIN_BASIC);
    elm_win_title_set(win, "Entry Scrolled");
    elm_win_autodel_set(win, 1);
@@ -753,7 +753,7 @@ my_bt_14(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
    elm_win_resize_object_add(win, bx);
@@ -765,7 +765,7 @@ my_bt_14(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(sc, 1.0, 0.0);
    evas_object_size_hint_align_set(sc, -1.0, -1.0);
    elm_box_pack_end(bx, sc);
-   
+
    en = elm_entry_add(win);
    elm_entry_single_line_set(en, 1);
    elm_entry_entry_set(en, "This is a single line");
@@ -776,14 +776,14 @@ my_bt_14(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(en);
 
    evas_object_show(sc);
-   
+
    sc = elm_scroller_add(win);
    elm_scroller_content_min_limit(sc, 0, 1);
    elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    evas_object_size_hint_weight_set(sc, 1.0, 0.0);
    evas_object_size_hint_align_set(sc, -1.0, -1.0);
    elm_box_pack_end(bx, sc);
-   
+
    en = elm_entry_add(win);
    elm_entry_password_set(en, 1);
    elm_entry_entry_set(en, "Password here");
@@ -793,13 +793,13 @@ my_bt_14(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(en);
 
    evas_object_show(sc);
-   
+
    sc = elm_scroller_add(win);
    evas_object_size_hint_weight_set(sc, 1.0, 1.0);
    evas_object_size_hint_align_set(sc, -1.0, -1.0);
    elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
    elm_box_pack_end(bx, sc);
-   
+
    en = elm_entry_add(win);
    elm_entry_entry_set(en,
 		       "This is an entry widget in this window that<br>"
@@ -815,12 +815,12 @@ my_bt_14(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(en);
 
    evas_object_show(sc);
-   
+
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
    evas_object_size_hint_weight_set(bx2, 1.0, 0.0);
    evas_object_size_hint_align_set(bx2, -1.0, -1.0);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Clear");
    evas_object_smart_callback_add(bt, "clicked", my_entry_bt_1, en);
@@ -836,7 +836,7 @@ my_bt_14(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Selection");
    evas_object_smart_callback_add(bt, "clicked", my_entry_bt_3, en);
@@ -844,7 +844,7 @@ my_bt_14(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Insert");
    evas_object_smart_callback_add(bt, "clicked", my_entry_bt_4, en);
@@ -852,12 +852,12 @@ my_bt_14(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
    evas_object_resize(win, 320, 300);
-   
+
    elm_object_focus(win);
    evas_object_show(win);
 }
@@ -885,7 +885,7 @@ my_bt_15(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *bx2, *bt, *ic, *np;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "notepad", ELM_WIN_BASIC);
    elm_win_title_set(win, "Notepad");
    elm_win_autodel_set(win, 1);
@@ -894,7 +894,7 @@ my_bt_15(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
    elm_win_resize_object_add(win, bx);
@@ -906,13 +906,13 @@ my_bt_15(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(np, -1.0, -1.0);
    elm_box_pack_end(bx, np);
    evas_object_show(np);
-   
+
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
    elm_box_homogenous_set(bx2, 1);
    evas_object_size_hint_weight_set(bx2, 1.0, 0.0);
    evas_object_size_hint_align_set(bx2, -1.0, -1.0);
-   
+
    bt = elm_button_add(win);
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "arrow_left");
@@ -924,7 +924,7 @@ my_bt_15(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "close");
@@ -936,7 +936,7 @@ my_bt_15(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "arrow_right");
@@ -948,12 +948,12 @@ my_bt_15(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
    evas_object_resize(win, 320, 300);
-   
+
    elm_object_focus(win);
    evas_object_show(win);
 }
@@ -971,7 +971,7 @@ my_anchorview_anchor(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *av = data;
    Elm_Entry_Anchorview_Info *ei = event_info;
    Evas_Object *bt, *bx;
-   
+
    bt = elm_button_add(obj);
    elm_button_label_set(bt, ei->name);
    elm_hover_content_set(ei->hover, "middle", bt);
@@ -1030,7 +1030,7 @@ my_bt_16(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *av;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "anchorview", ELM_WIN_BASIC);
    elm_win_title_set(win, "Anchorview");
    elm_win_autodel_set(win, 1);
@@ -1039,7 +1039,7 @@ my_bt_16(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    av = elm_anchorview_add(win);
    elm_anchorview_hover_style_set(av, "popout");
    elm_anchorview_hover_parent_set(av, win);
@@ -1057,7 +1057,7 @@ my_bt_16(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(av);
 
    evas_object_resize(win, 320, 300);
-   
+
    elm_object_focus(win);
    evas_object_show(win);
 }
@@ -1075,7 +1075,7 @@ my_anchorblock_anchor(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *av = data;
    Elm_Entry_Anchorblock_Info *ei = event_info;
    Evas_Object *bt, *bx;
-   
+
    bt = elm_button_add(obj);
    elm_button_label_set(bt, ei->name);
    elm_hover_content_set(ei->hover, "middle", bt);
@@ -1157,7 +1157,7 @@ static void
 my_anchorblock_scroll(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Coord x, y, w, h, vw, vh;
-   
+
    elm_scroller_region_get(obj, &x, &y, &w, &h);
    elm_scroller_child_size_get(obj, &vw, &vh);
    printf("scroll %ix%i +%i+%i in %ix%i\n", w, h, x, y, vw, vh);
@@ -1168,7 +1168,7 @@ my_bt_17(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *av, *sc, *bx, *bb, *ic;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "anchorblock", ELM_WIN_BASIC);
    elm_win_title_set(win, "Anchorblock");
    elm_win_autodel_set(win, 1);
@@ -1177,11 +1177,11 @@ my_bt_17(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    sc = elm_scroller_add(win);
    evas_object_size_hint_weight_set(sc, 1.0, 1.0);
    elm_win_resize_object_add(win, sc);
-   
+
    evas_object_smart_callback_add(sc, "edge_left", my_anchorblock_edge_left, NULL);
    evas_object_smart_callback_add(sc, "edge_right", my_anchorblock_edge_right, NULL);
    evas_object_smart_callback_add(sc, "edge_top", my_anchorblock_edge_top, NULL);
@@ -1193,13 +1193,13 @@ my_bt_17(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bx, -1.0, -1.0);
    elm_scroller_content_set(sc, bx);
    evas_object_show(bx);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-   
+
    bb = elm_bubble_add(win);
    elm_bubble_label_set(bb, "Message 3");
    elm_bubble_info_set(bb, "10:32 4/11/2008");
@@ -1219,12 +1219,12 @@ my_bt_17(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(av);
    elm_box_pack_end(bx, bb);
    evas_object_show(bb);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-   
+
    bb = elm_bubble_add(win);
    elm_bubble_label_set(bb, "Message 2");
    elm_bubble_info_set(bb, "7:16 27/10/2008");
@@ -1254,13 +1254,13 @@ my_bt_17(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(av);
    elm_box_pack_end(bx, bb);
    evas_object_show(bb);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-   
+
    bb = elm_bubble_add(win);
    elm_bubble_label_set(bb, "Message 1");
    elm_bubble_info_set(bb, "20:47 18/6/2008");
@@ -1278,11 +1278,11 @@ my_bt_17(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(av);
    elm_box_pack_end(bx, bb);
    evas_object_show(bb);
-   
+
    evas_object_show(sc);
 
    evas_object_resize(win, 320, 300);
-   
+
    elm_object_focus(win);
    evas_object_show(win);
 }
@@ -1331,7 +1331,7 @@ my_bt_18(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *win, *bg, *bx, *tb, *ic, *ph;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "toolbar", ELM_WIN_BASIC);
    elm_win_title_set(win, "Toolbar");
    elm_win_autodel_set(win, 1);
@@ -1340,7 +1340,7 @@ my_bt_18(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
@@ -1354,32 +1354,32 @@ my_bt_18(void *data, Evas_Object *obj, void *event_info)
    ph2 = elm_photo_add(win);
    ph3 = elm_photo_add(win);
    ph4 = elm_photo_add(win);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    elm_toolbar_item_add(tb, ic, "Hello", tb_1, ph1);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    elm_toolbar_item_add(tb, ic, "World", tb_2, ph1);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    elm_toolbar_item_add(tb, ic, "Here", tb_3, ph4);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    elm_toolbar_item_add(tb, ic, "Comes", tb_4, ph4);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    elm_toolbar_item_add(tb, ic, "Elementary", tb_5, ph4);
-   
+
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
 
@@ -1387,7 +1387,7 @@ my_bt_18(void *data, Evas_Object *obj, void *event_info)
 //   elm_table_homogenous_set(tb, 1);
    evas_object_size_hint_weight_set(tb, 0.0, 1.0);
    evas_object_size_hint_align_set(tb, -1.0, -1.0);
-   
+
    ph = ph1;
    elm_photo_size_set(ph, 40);
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", PACKAGE_DATA_DIR);
@@ -1396,14 +1396,14 @@ my_bt_18(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(ph, 0.5, 0.5);
    elm_table_pack(tb, ph, 0, 0, 1, 1);
    evas_object_show(ph);
-   
+
    ph = ph2;
    elm_photo_size_set(ph, 80);
    evas_object_size_hint_weight_set(ph, 1.0, 1.0);
    evas_object_size_hint_align_set(ph, 0.5, 0.5);
    elm_table_pack(tb, ph, 1, 0, 1, 1);
    evas_object_show(ph);
-   
+
    ph = ph3;
    elm_photo_size_set(ph, 20);
    snprintf(buf, sizeof(buf), "%s/images/sky_01.jpg", PACKAGE_DATA_DIR);
@@ -1412,7 +1412,7 @@ my_bt_18(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(ph, 0.5, 0.5);
    elm_table_pack(tb, ph, 0, 1, 1, 1);
    evas_object_show(ph);
-   
+
    ph = ph4;
    elm_photo_size_set(ph, 60);
    snprintf(buf, sizeof(buf), "%s/images/sky_02.jpg", PACKAGE_DATA_DIR);
@@ -1421,12 +1421,12 @@ my_bt_18(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(ph, 0.5, 0.5);
    elm_table_pack(tb, ph, 1, 1, 1, 1);
    evas_object_show(ph);
-   
+
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
-   
+
    evas_object_resize(win, 320, 300);
-   
+
    evas_object_show(win);
 }
 
@@ -1435,7 +1435,7 @@ my_bt_19(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *bt, *ic;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "hoversel", ELM_WIN_BASIC);
    elm_win_title_set(win, "Hoversel");
    elm_win_autodel_set(win, 1);
@@ -1461,7 +1461,7 @@ my_bt_19(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   
+
    bt = elm_hoversel_add(win);
    elm_hoversel_hover_parent_set(bt, win);
    elm_hoversel_label_set(bt, "Some Icons");
@@ -1473,7 +1473,7 @@ my_bt_19(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   
+
    bt = elm_hoversel_add(win);
    elm_hoversel_hover_parent_set(bt, win);
    elm_hoversel_label_set(bt, "All Icons");
@@ -1485,7 +1485,7 @@ my_bt_19(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   
+
    bt = elm_hoversel_add(win);
    elm_hoversel_hover_parent_set(bt, win);
    elm_hoversel_label_set(bt, "All Icons");
@@ -1498,7 +1498,7 @@ my_bt_19(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   
+
    bt = elm_hoversel_add(win);
    elm_hoversel_hover_parent_set(bt, win);
    elm_hoversel_label_set(bt, "Icon + Label");
@@ -1508,7 +1508,7 @@ my_bt_19(void *data, Evas_Object *obj, void *event_info)
    elm_icon_file_set(ic, buf, NULL);
    elm_hoversel_icon_set(bt, ic);
    evas_object_show(ic);
-   
+
    elm_hoversel_item_add(bt, "Item 1", "apps", ELM_ICON_STANDARD, NULL, NULL);
    elm_hoversel_item_add(bt, "Item 2", "arrow_down", ELM_ICON_STANDARD, NULL, NULL);
    elm_hoversel_item_add(bt, "Item 3", "home", ELM_ICON_STANDARD, NULL, NULL);
@@ -1517,9 +1517,9 @@ my_bt_19(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   
+
    evas_object_resize(win, 320, 300);
-   
+
    evas_object_show(win);
 }
 
@@ -1528,7 +1528,7 @@ my_bt_20(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *li, *ic, *ic2, *bx;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
    elm_win_title_set(win, "List");
    elm_win_autodel_set(win, 1);
@@ -1556,7 +1556,7 @@ my_bt_20(void *data, Evas_Object *obj, void *event_info)
    elm_icon_standard_set(ic, "edit");
    elm_icon_scale_set(ic, 0, 0);
    elm_list_item_append(li, ".", ic, NULL,  NULL, NULL);
-   
+
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "delete");
    elm_icon_scale_set(ic, 0, 0);
@@ -1564,7 +1564,7 @@ my_bt_20(void *data, Evas_Object *obj, void *event_info)
    elm_icon_standard_set(ic2, "clock");
    elm_icon_scale_set(ic2, 0, 0);
    elm_list_item_append(li, "How", ic, ic2,  NULL, NULL);
-   
+
    bx = elm_box_add(win);
    elm_box_horizontal_set(bx, 1);
 
@@ -1575,7 +1575,7 @@ my_bt_20(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(ic, 0.5, 0.5);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
@@ -1583,7 +1583,7 @@ my_bt_20(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(ic, 0.5, 0.0);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
@@ -1592,7 +1592,7 @@ my_bt_20(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
    elm_list_item_append(li, "are", bx, NULL,  NULL, NULL);
-   
+
    elm_list_item_append(li, "you", NULL, NULL,  NULL, NULL);
    elm_list_item_append(li, "doing", NULL, NULL,  NULL, NULL);
    elm_list_item_append(li, "out", NULL, NULL,  NULL, NULL);
@@ -1608,9 +1608,9 @@ my_bt_20(void *data, Evas_Object *obj, void *event_info)
    elm_list_item_append(li, "Maybe this one is even longer so we can test long long items.", NULL, NULL,  NULL, NULL);
 
    elm_list_go(li);
-   
+
    evas_object_show(li);
-   
+
    evas_object_resize(win, 320, 300);
    evas_object_show(win);
 }
@@ -1635,7 +1635,7 @@ my_bt_21(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *win, *bg, *li, *ic, *ic2, *bx, *bx2, *bt;
    char buf[PATH_MAX];
    Elm_List_Item *it;
-   
+
    win = elm_win_add(NULL, "list-2", ELM_WIN_BASIC);
    elm_win_title_set(win, "List 2");
    elm_win_autodel_set(win, 1);
@@ -1672,7 +1672,7 @@ my_bt_21(void *data, Evas_Object *obj, void *event_info)
    elm_icon_standard_set(ic, "edit");
    elm_icon_scale_set(ic, 0, 0);
    elm_list_item_append(li, ".", ic, NULL,  NULL, NULL);
-   
+
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "delete");
    elm_icon_scale_set(ic, 0, 0);
@@ -1680,7 +1680,7 @@ my_bt_21(void *data, Evas_Object *obj, void *event_info)
    elm_icon_standard_set(ic2, "clock");
    elm_icon_scale_set(ic2, 0, 0);
    elm_list_item_append(li, "How", ic, ic2,  NULL, NULL);
-   
+
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
 
@@ -1691,7 +1691,7 @@ my_bt_21(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(ic, 0.5, 0.5);
    elm_box_pack_end(bx2, ic);
    evas_object_show(ic);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
@@ -1700,7 +1700,7 @@ my_bt_21(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx2, ic);
    evas_object_show(ic);
    elm_list_item_append(li, "are", bx2, NULL, NULL, NULL);
-   
+
    elm_list_item_append(li, "you", NULL, NULL,  NULL, NULL);
    elm_list_item_append(li, "doing", NULL, NULL,  NULL, NULL);
    elm_list_item_append(li, "out", NULL, NULL,  NULL, NULL);
@@ -1715,16 +1715,16 @@ my_bt_21(void *data, Evas_Object *obj, void *event_info)
    elm_list_item_append(li, "Longer label.", NULL, NULL,  NULL, NULL);
 
    elm_list_go(li);
-   
+
    elm_box_pack_end(bx, li);
    evas_object_show(li);
-   
+
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
    elm_box_homogenous_set(bx2, 1);
    evas_object_size_hint_weight_set(bx2, 1.0, 0.0);
    evas_object_size_hint_align_set(bx2, -1.0, -1.0);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Clear");
    evas_object_smart_callback_add(bt, "clicked", my_li2_clear, li);
@@ -1732,7 +1732,7 @@ my_bt_21(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
@@ -1745,7 +1745,7 @@ my_bt_22(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *li, *ic, *ic2, *bx;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "list-3", ELM_WIN_BASIC);
    elm_win_title_set(win, "List 3");
    elm_win_autodel_set(win, 1);
@@ -1773,7 +1773,7 @@ my_bt_22(void *data, Evas_Object *obj, void *event_info)
    elm_icon_standard_set(ic, "edit");
    elm_icon_scale_set(ic, 0, 0);
    elm_list_item_append(li, ".", ic, NULL,  NULL, NULL);
-   
+
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "delete");
    elm_icon_scale_set(ic, 0, 0);
@@ -1781,7 +1781,7 @@ my_bt_22(void *data, Evas_Object *obj, void *event_info)
    elm_icon_standard_set(ic2, "clock");
    elm_icon_scale_set(ic2, 0, 0);
    elm_list_item_append(li, "How", ic, ic2,  NULL, NULL);
-   
+
    bx = elm_box_add(win);
    elm_box_horizontal_set(bx, 1);
 
@@ -1792,7 +1792,7 @@ my_bt_22(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(ic, 0.5, 0.5);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
@@ -1800,7 +1800,7 @@ my_bt_22(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(ic, 0.5, 0.0);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
@@ -1809,7 +1809,7 @@ my_bt_22(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
    elm_list_item_append(li, "are", bx, NULL,  NULL, NULL);
-   
+
    elm_list_item_append(li, "you", NULL, NULL,  NULL, NULL);
    elm_list_item_append(li, "doing", NULL, NULL,  NULL, NULL);
    elm_list_item_append(li, "out", NULL, NULL,  NULL, NULL);
@@ -1825,9 +1825,9 @@ my_bt_22(void *data, Evas_Object *obj, void *event_info)
    elm_list_item_append(li, "Maybe this one is even longer so we can test long long items.", NULL, NULL,  NULL, NULL);
 
    elm_list_go(li);
-   
+
    evas_object_show(li);
-   
+
    evas_object_resize(win, 320, 300);
    evas_object_show(win);
 }
@@ -1837,7 +1837,7 @@ my_bt_23(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "carousel", ELM_WIN_BASIC);
    elm_win_title_set(win, "Carousel");
    elm_win_autodel_set(win, 1);
@@ -1846,7 +1846,7 @@ my_bt_23(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    evas_object_resize(win, 320, 240);
    evas_object_show(win);
 }
@@ -1856,7 +1856,7 @@ my_bt_24(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *inwin, *lb;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "inwin", ELM_WIN_BASIC);
    elm_win_title_set(win, "Inwin");
    elm_win_autodel_set(win, 1);
@@ -1865,20 +1865,20 @@ my_bt_24(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    inwin = elm_win_inwin_add(win);
    evas_object_show(inwin);
-   
+
    lb = elm_label_add(win);
    elm_label_label_set(lb,
-                       "This is an \"inwin\" - a window in a<br>"
-                       "window. This is handy for quick popups<br>"
-                       "you want centered, taking over the window<br>"
-                       "until dismissed somehow. Unlike hovers they<br>"
-                       "don't hover over their target.");
+		       "This is an \"inwin\" - a window in a<br>"
+		       "window. This is handy for quick popups<br>"
+		       "you want centered, taking over the window<br>"
+		       "until dismissed somehow. Unlike hovers they<br>"
+		       "don't hover over their target.");
    elm_win_inwin_content_set(inwin, lb);
    evas_object_show(lb);
-   
+
    evas_object_resize(win, 320, 240);
    evas_object_show(win);
 }
@@ -1888,7 +1888,7 @@ my_bt_25(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *inwin, *lb;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "inwin", ELM_WIN_BASIC);
    elm_win_title_set(win, "Inwin");
    elm_win_autodel_set(win, 1);
@@ -1897,24 +1897,24 @@ my_bt_25(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    inwin = elm_win_inwin_add(win);
    elm_object_style_set(inwin, "minimal_vertical");
    evas_object_show(inwin);
-   
+
    lb = elm_label_add(win);
    elm_label_label_set(lb,
-                       "This is an \"inwin\" - a window in a<br>"
-                       "window. This is handy for quick popups<br>"
-                       "you want centered, taking over the window<br>"
-                       "until dismissed somehow. Unlike hovers they<br>"
-                       "don't hover over their target.<br>"
-                       "<br>"
-                       "This inwin style compacts itself vertically<br>"
-                       "to the size of its contents minimum size.");
+		       "This is an \"inwin\" - a window in a<br>"
+		       "window. This is handy for quick popups<br>"
+		       "you want centered, taking over the window<br>"
+		       "until dismissed somehow. Unlike hovers they<br>"
+		       "don't hover over their target.<br>"
+		       "<br>"
+		       "This inwin style compacts itself vertically<br>"
+		       "to the size of its contents minimum size.");
    elm_win_inwin_content_set(inwin, lb);
    evas_object_show(lb);
-   
+
    evas_object_resize(win, 320, 240);
    evas_object_show(win);
 }
@@ -1924,7 +1924,7 @@ my_bt_26(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *bt;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "scaling", ELM_WIN_BASIC);
    elm_win_title_set(win, "Scaling");
    elm_win_autodel_set(win, 1);
@@ -1938,43 +1938,43 @@ my_bt_26(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Scale: 0.5");
    elm_object_scale_set(bt, 0.5);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Scale: 0.75");
    elm_object_scale_set(bt, 0.75);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Scale: 1.0");
    elm_object_scale_set(bt, 1.0);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Scale: 1.5");
    elm_object_scale_set(bt, 1.5);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Scale: 2.0");
    elm_object_scale_set(bt, 2.0);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Scale: 3.0");
    elm_object_scale_set(bt, 3.0);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   
+
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
 }
@@ -1984,7 +1984,7 @@ my_bt_27(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *fr, *lb;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "scaling-2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Scaling 2");
    elm_win_autodel_set(win, 1);
@@ -2004,40 +2004,40 @@ my_bt_27(void *data, Evas_Object *obj, void *event_info)
    elm_frame_label_set(fr, "Scale: 0.5");
    lb = elm_label_add(win);
    elm_label_label_set(lb,
-                       "Parent frame scale<br>"
-                       "is 0.5. Child should<br>"
-                       "inherit it.");
+		       "Parent frame scale<br>"
+		       "is 0.5. Child should<br>"
+		       "inherit it.");
    elm_frame_content_set(fr, lb);
    evas_object_show(lb);
    elm_box_pack_end(bx, fr);
    evas_object_show(fr);
-   
+
    fr = elm_frame_add(win);
    elm_frame_label_set(fr, "Scale: 1.0");
    lb = elm_label_add(win);
    elm_label_label_set(lb,
-                       "Parent frame scale<br>"
-                       "is 1.0. Child should<br>"
-                       "inherit it.");
+		       "Parent frame scale<br>"
+		       "is 1.0. Child should<br>"
+		       "inherit it.");
    elm_frame_content_set(fr, lb);
    evas_object_show(lb);
    elm_object_scale_set(fr, 1.0);
    elm_box_pack_end(bx, fr);
    evas_object_show(fr);
-   
+
    fr = elm_frame_add(win);
    elm_frame_label_set(fr, "Scale: 2.0");
    lb = elm_label_add(win);
    elm_label_label_set(lb,
-                       "Parent frame scale<br>"
-                       "is 2.0. Child should<br>"
-                       "inherit it.");
+		       "Parent frame scale<br>"
+		       "is 2.0. Child should<br>"
+		       "inherit it.");
    elm_frame_content_set(fr, lb);
    evas_object_show(lb);
    elm_object_scale_set(fr, 2.0);
    elm_box_pack_end(bx, fr);
    evas_object_show(fr);
-   
+
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
 }
@@ -2047,7 +2047,7 @@ my_bt_28(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *sl, *ic;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "slider", ELM_WIN_BASIC);
    elm_win_title_set(win, "Slider");
    elm_win_autodel_set(win, 1);
@@ -2056,7 +2056,7 @@ my_bt_28(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
    elm_win_resize_object_add(win, bx);
@@ -2091,7 +2091,7 @@ my_bt_28(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, sl);
    evas_object_show(ic);
    evas_object_show(sl);
-   
+
    sl = elm_slider_add(win);
    elm_slider_label_set(sl, "Label 3");
    elm_slider_unit_format_set(sl, "units");
@@ -2106,7 +2106,7 @@ my_bt_28(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, sl);
    evas_object_show(ic);
    evas_object_show(sl);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
@@ -2125,7 +2125,7 @@ my_bt_28(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, sl);
    evas_object_show(ic);
    evas_object_show(sl);
-   
+
    evas_object_show(win);
 }
 
@@ -2165,7 +2165,7 @@ my_bt_29(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *win, *bg, *gl;
    Elm_Genlist_Item *gli;
    int i;
-   
+
    win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
    elm_win_title_set(win, "Genlist");
    elm_win_autodel_set(win, 1);
@@ -2174,13 +2174,13 @@ my_bt_29(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    gl = elm_genlist_add(win);
    elm_genlist_horizontal_mode_set(gl, ELM_LIST_LIMIT);
    elm_win_resize_object_add(win, gl);
    evas_object_size_hint_weight_set(gl, 1.0, 1.0);
    evas_object_show(gl);
-   
+
    itc1.item_style     = "default";
    itc1.func.label_get = gl_label_get;
    itc1.func.icon_get  = gl_icon_get;
@@ -2189,12 +2189,12 @@ my_bt_29(void *data, Evas_Object *obj, void *event_info)
 
    for (i = 0; i < 2000; i++)
      {
-        gli = elm_genlist_item_append(gl, &itc1, 
-                                      (void *)i/* item data */, 
-                                      NULL/* parent */, 
-                                      ELM_GENLIST_ITEM_NONE, 
-                                      gl_sel/* func */, 
-                                      (void *)(i * 10)/* func data */);
+	gli = elm_genlist_item_append(gl, &itc1,
+				      (void *)i/* item data */,
+				      NULL/* parent */,
+				      ELM_GENLIST_ITEM_NONE,
+				      gl_sel/* func */,
+				      (void *)(i * 10)/* func data */);
      }
    evas_object_resize(win, 480, 800);
    evas_object_show(win);
@@ -2220,12 +2220,12 @@ my_gl_add(void *data, Evas_Object *obj, void *event_info)
    itc1.func.state_get = gl_state_get;
    itc1.func.del       = gl_del;
 
-   gli = elm_genlist_item_append(gl, &itc1, 
-                                 (void *)i/* item data */, 
-                                 NULL/* parent */, 
-                                 ELM_GENLIST_ITEM_NONE, 
-                                 gl_sel/* func */, 
-                                 (void *)(i * 10)/* func data */);
+   gli = elm_genlist_item_append(gl, &itc1,
+				 (void *)i/* item data */,
+				 NULL/* parent */,
+				 ELM_GENLIST_ITEM_NONE,
+				 gl_sel/* func */,
+				 (void *)(i * 10)/* func data */);
    i++;
 }
 
@@ -2236,8 +2236,8 @@ my_gl_del(void *data, Evas_Object *obj, void *event_info)
    Elm_Genlist_Item *gli = elm_genlist_selected_item_get(gl);
    if (!gli)
      {
-        printf("no item selected\n");
-        return;
+	printf("no item selected\n");
+	return;
      }
    elm_genlist_item_del(gli);
 }
@@ -2249,8 +2249,8 @@ my_gl_disable(void *data, Evas_Object *obj, void *event_info)
    Elm_Genlist_Item *gli = elm_genlist_selected_item_get(gl);
    if (!gli)
      {
-        printf("no item selected\n");
-        return;
+	printf("no item selected\n");
+	return;
      }
    elm_genlist_item_disabled_set(gli, 1);
    elm_genlist_item_selected_set(gli, 0);
@@ -2265,10 +2265,10 @@ my_gl_update_all(void *data, Evas_Object *obj, void *event_info)
    Elm_Genlist_Item *it = elm_genlist_first_item_get(gl);
    while (it)
      {
-        elm_genlist_item_update(it);
-        printf("%i\n", i);
-        i++;
-        it = elm_genlist_item_next_get(it);
+	elm_genlist_item_update(it);
+	printf("%i\n", i);
+	i++;
+	it = elm_genlist_item_next_get(it);
      }
 }
 
@@ -2299,7 +2299,7 @@ my_bt_30(void *data, Evas_Object *obj, void *event_info)
    Elm_Genlist_Item *gli[10];
    char buf[PATH_MAX];
    int i;
-   
+
    win = elm_win_add(NULL, "genlist-2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Genlist 2");
    elm_win_autodel_set(win, 1);
@@ -2310,7 +2310,7 @@ my_bt_30(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
    elm_win_resize_object_add(win, bx);
@@ -2327,36 +2327,36 @@ my_bt_30(void *data, Evas_Object *obj, void *event_info)
    itc1.func.state_get = gl_state_get;
    itc1.func.del       = gl_del;
 
-   gli[0] = elm_genlist_item_append(gl, &itc1, 
-                                    (void *)1001/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */, 
-                                    (void *)1001/* func data */);
-   gli[1] = elm_genlist_item_append(gl, &itc1, 
-                                    (void *)1002/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */, 
-                                    (void *)1002/* func data */);
-   gli[2] = elm_genlist_item_append(gl, &itc1, 
-                                    (void *)1003/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */, 
-                                    (void *)1003/* func data */);
-   gli[3] = elm_genlist_item_prepend(gl, &itc1, 
-                                     (void *)1004/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */, 
-                                     (void *)1004/* func data */);
-   gli[4] = elm_genlist_item_prepend(gl, &itc1, 
-                                     (void *)1005/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */, 
-                                     (void *)1005/* func data */);
-   gli[5] = elm_genlist_item_insert_before(gl, &itc1, 
-                                           (void *)1006/* item data */, gli[2]/* rel */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
-                                           (void *)1006/* func data */);
-   gli[6] = elm_genlist_item_insert_after(gl, &itc1, 
-                                          (void *)1007/* item data */, gli[2]/* rel */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
-                                          (void *)1007/* func data */);
-   
+   gli[0] = elm_genlist_item_append(gl, &itc1,
+				    (void *)1001/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+				    (void *)1001/* func data */);
+   gli[1] = elm_genlist_item_append(gl, &itc1,
+				    (void *)1002/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+				    (void *)1002/* func data */);
+   gli[2] = elm_genlist_item_append(gl, &itc1,
+				    (void *)1003/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+				    (void *)1003/* func data */);
+   gli[3] = elm_genlist_item_prepend(gl, &itc1,
+				     (void *)1004/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+				     (void *)1004/* func data */);
+   gli[4] = elm_genlist_item_prepend(gl, &itc1,
+				     (void *)1005/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+				     (void *)1005/* func data */);
+   gli[5] = elm_genlist_item_insert_before(gl, &itc1,
+					   (void *)1006/* item data */, gli[2]/* rel */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+					   (void *)1006/* func data */);
+   gli[6] = elm_genlist_item_insert_after(gl, &itc1,
+					  (void *)1007/* item data */, gli[2]/* rel */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+					  (void *)1007/* func data */);
+
    elm_box_pack_end(bx, gl);
-   
+
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
    elm_box_homogenous_set(bx2, 1);
    evas_object_size_hint_weight_set(bx2, 1.0, 0.0);
    evas_object_size_hint_align_set(bx2, -1.0, -1.0);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "/\\");
    evas_object_smart_callback_add(bt, "clicked", my_gl_first, gl);
@@ -2364,7 +2364,7 @@ my_bt_30(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "\\/");
    evas_object_smart_callback_add(bt, "clicked", my_gl_last, gl);
@@ -2372,7 +2372,7 @@ my_bt_30(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "#");
    evas_object_smart_callback_add(bt, "clicked", my_gl_disable, gl);
@@ -2380,7 +2380,7 @@ my_bt_30(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "U");
    evas_object_smart_callback_add(bt, "clicked", my_gl_update_all, gl);
@@ -2388,7 +2388,7 @@ my_bt_30(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
@@ -2397,7 +2397,7 @@ my_bt_30(void *data, Evas_Object *obj, void *event_info)
    elm_box_homogenous_set(bx2, 1);
    evas_object_size_hint_weight_set(bx2, 1.0, 0.0);
    evas_object_size_hint_align_set(bx2, -1.0, -1.0);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "X");
    evas_object_smart_callback_add(bt, "clicked", my_gl_clear, gl);
@@ -2405,7 +2405,7 @@ my_bt_30(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "+");
    evas_object_smart_callback_add(bt, "clicked", my_gl_add, gl);
@@ -2413,7 +2413,7 @@ my_bt_30(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "-");
    evas_object_smart_callback_add(bt, "clicked", my_gl_del, gl);
@@ -2421,7 +2421,7 @@ my_bt_30(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
@@ -2450,27 +2450,27 @@ Evas_Object *gl2_icon_get(const void *data, Evas_Object *obj, const char *part)
    Evas_Object *ic = elm_icon_add(obj);
    if (!strcmp(part, "elm.swallow.icon"))
      {
-        if ((tit->mode & 0x3) == 0)
-          snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-        else if ((tit->mode & 0x3) == 1)
-          snprintf(buf, sizeof(buf), "%s/images/logo.png", PACKAGE_DATA_DIR);
-        else if ((tit->mode & 0x3) == 2)
-          snprintf(buf, sizeof(buf), "%s/images/panel_01.jpg", PACKAGE_DATA_DIR);
-        else if ((tit->mode & 0x3) == 3)
-          snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", PACKAGE_DATA_DIR);
-        elm_icon_file_set(ic, buf, NULL);
+	if ((tit->mode & 0x3) == 0)
+	  snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+	else if ((tit->mode & 0x3) == 1)
+	  snprintf(buf, sizeof(buf), "%s/images/logo.png", PACKAGE_DATA_DIR);
+	else if ((tit->mode & 0x3) == 2)
+	  snprintf(buf, sizeof(buf), "%s/images/panel_01.jpg", PACKAGE_DATA_DIR);
+	else if ((tit->mode & 0x3) == 3)
+	  snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", PACKAGE_DATA_DIR);
+	elm_icon_file_set(ic, buf, NULL);
      }
    else if (!strcmp(part, "elm.swallow.end"))
      {
-        if ((tit->mode & 0x3) == 0)
-          snprintf(buf, sizeof(buf), "%s/images/sky_01.jpg", PACKAGE_DATA_DIR);
-        else if ((tit->mode & 0x3) == 1)
-          snprintf(buf, sizeof(buf), "%s/images/sky_02.jpg", PACKAGE_DATA_DIR);
-        else if ((tit->mode & 0x3) == 2)
-          snprintf(buf, sizeof(buf), "%s/images/sky_03.jpg", PACKAGE_DATA_DIR);
-        else if ((tit->mode & 0x3) == 3)
-          snprintf(buf, sizeof(buf), "%s/images/sky_04.jpg", PACKAGE_DATA_DIR);
-        elm_icon_file_set(ic, buf, NULL);
+	if ((tit->mode & 0x3) == 0)
+	  snprintf(buf, sizeof(buf), "%s/images/sky_01.jpg", PACKAGE_DATA_DIR);
+	else if ((tit->mode & 0x3) == 1)
+	  snprintf(buf, sizeof(buf), "%s/images/sky_02.jpg", PACKAGE_DATA_DIR);
+	else if ((tit->mode & 0x3) == 2)
+	  snprintf(buf, sizeof(buf), "%s/images/sky_03.jpg", PACKAGE_DATA_DIR);
+	else if ((tit->mode & 0x3) == 3)
+	  snprintf(buf, sizeof(buf), "%s/images/sky_04.jpg", PACKAGE_DATA_DIR);
+	elm_icon_file_set(ic, buf, NULL);
      }
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    return ic;
@@ -2497,7 +2497,7 @@ my_bt_31(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *win, *bg, *gl, *bx, *bx2, *bt;
    static Testitem tit[3];
    int i;
-   
+
    win = elm_win_add(NULL, "genlist-3", ELM_WIN_BASIC);
    elm_win_title_set(win, "Genlist 3");
    elm_win_autodel_set(win, 1);
@@ -2506,7 +2506,7 @@ my_bt_31(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
    elm_win_resize_object_add(win, bx);
@@ -2524,27 +2524,27 @@ my_bt_31(void *data, Evas_Object *obj, void *event_info)
    itc2.func.del       = gl2_del;
 
    tit[0].mode = 0;
-   tit[0].item = elm_genlist_item_append(gl, &itc2, 
-                                         &(tit[0])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
-                                         NULL/* func data */);
+   tit[0].item = elm_genlist_item_append(gl, &itc2,
+					 &(tit[0])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+					 NULL/* func data */);
    tit[1].mode = 1;
-   tit[1].item = elm_genlist_item_append(gl, &itc2, 
-                                         &(tit[1])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
-                                         NULL/* func data */);
+   tit[1].item = elm_genlist_item_append(gl, &itc2,
+					 &(tit[1])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+					 NULL/* func data */);
    tit[2].mode = 2;
-   tit[2].item = elm_genlist_item_append(gl, &itc2, 
-                                         &(tit[2])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
-                                         NULL/* func data */);
-   
+   tit[2].item = elm_genlist_item_append(gl, &itc2,
+					 &(tit[2])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+					 NULL/* func data */);
+
    elm_box_pack_end(bx, gl);
    evas_object_show(bx2);
-   
+
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
    elm_box_homogenous_set(bx2, 1);
    evas_object_size_hint_weight_set(bx2, 1.0, 0.0);
    evas_object_size_hint_align_set(bx2, -1.0, -1.0);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "[1]");
    evas_object_smart_callback_add(bt, "clicked", my_gl_update, &(tit[0]));
@@ -2552,7 +2552,7 @@ my_bt_31(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "[2]");
    evas_object_smart_callback_add(bt, "clicked", my_gl_update, &(tit[1]));
@@ -2560,7 +2560,7 @@ my_bt_31(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "[3]");
    evas_object_smart_callback_add(bt, "clicked", my_gl_update, &(tit[2]));
@@ -2568,7 +2568,7 @@ my_bt_31(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
@@ -2598,32 +2598,32 @@ Evas_Object *gl3_icon_get(const void *data, Evas_Object *obj, const char *part)
    char buf[PATH_MAX];
    if (!strcmp(part, "elm.swallow.icon"))
      {
-        Evas_Object *bx = elm_box_add(obj);
-        Evas_Object *ic;
-        elm_box_horizontal_set(bx, 1);
-        ic = elm_icon_add(obj);
-        snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-        elm_icon_file_set(ic, buf, NULL);
-        elm_icon_scale_set(ic, 0, 0);
-        evas_object_show(ic);
-        elm_box_pack_end(bx, ic);
-        ic = elm_icon_add(obj);
-        elm_icon_file_set(ic, buf, NULL);
-        elm_icon_scale_set(ic, 0, 0);
-        evas_object_show(ic);
-        elm_box_pack_end(bx, ic);
-        evas_object_show(bx);
-        return bx;
+	Evas_Object *bx = elm_box_add(obj);
+	Evas_Object *ic;
+	elm_box_horizontal_set(bx, 1);
+	ic = elm_icon_add(obj);
+	snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+	elm_icon_file_set(ic, buf, NULL);
+	elm_icon_scale_set(ic, 0, 0);
+	evas_object_show(ic);
+	elm_box_pack_end(bx, ic);
+	ic = elm_icon_add(obj);
+	elm_icon_file_set(ic, buf, NULL);
+	elm_icon_scale_set(ic, 0, 0);
+	evas_object_show(ic);
+	elm_box_pack_end(bx, ic);
+	evas_object_show(bx);
+	return bx;
      }
    else if (!strcmp(part, "elm.swallow.end"))
      {
-        Evas_Object *ck;
-        ck = elm_check_add(obj);
-        evas_object_propagate_events_set(ck, 0);
-        elm_check_state_set(ck, tit->onoff);
-        evas_object_smart_callback_add(ck, "changed", my_gl_item_check_changed, data);
-        evas_object_show(ck);
-        return ck;
+	Evas_Object *ck;
+	ck = elm_check_add(obj);
+	evas_object_propagate_events_set(ck, 0);
+	elm_check_state_set(ck, tit->onoff);
+	evas_object_smart_callback_add(ck, "changed", my_gl_item_check_changed, data);
+	evas_object_show(ck);
+	return ck;
      }
    return NULL;
 }
@@ -2641,7 +2641,7 @@ my_bt_32(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *win, *bg, *gl, *bx, *bx2, *bt;
    static Testitem tit[3];
    int i;
-   
+
    win = elm_win_add(NULL, "genlist-4", ELM_WIN_BASIC);
    elm_win_title_set(win, "Genlist 4");
    elm_win_autodel_set(win, 1);
@@ -2650,7 +2650,7 @@ my_bt_32(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
    elm_win_resize_object_add(win, bx);
@@ -2669,27 +2669,27 @@ my_bt_32(void *data, Evas_Object *obj, void *event_info)
    itc3.func.del       = gl3_del;
 
    tit[0].mode = 0;
-   tit[0].item = elm_genlist_item_append(gl, &itc3, 
-                                         &(tit[0])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
-                                         NULL/* func data */);
+   tit[0].item = elm_genlist_item_append(gl, &itc3,
+					 &(tit[0])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+					 NULL/* func data */);
    tit[1].mode = 1;
-   tit[1].item = elm_genlist_item_append(gl, &itc3, 
-                                         &(tit[1])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
-                                         NULL/* func data */);
+   tit[1].item = elm_genlist_item_append(gl, &itc3,
+					 &(tit[1])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+					 NULL/* func data */);
    tit[2].mode = 2;
-   tit[2].item = elm_genlist_item_append(gl, &itc3, 
-                                         &(tit[2])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
-                                         NULL/* func data */);
-   
+   tit[2].item = elm_genlist_item_append(gl, &itc3,
+					 &(tit[2])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+					 NULL/* func data */);
+
    elm_box_pack_end(bx, gl);
    evas_object_show(bx2);
-   
+
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
    elm_box_homogenous_set(bx2, 1);
    evas_object_size_hint_weight_set(bx2, 1.0, 0.0);
    evas_object_size_hint_align_set(bx2, -1.0, -1.0);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "[1]");
    evas_object_smart_callback_add(bt, "clicked", my_gl_update, &(tit[0]));
@@ -2697,7 +2697,7 @@ my_bt_32(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "[2]");
    evas_object_smart_callback_add(bt, "clicked", my_gl_update, &(tit[1]));
@@ -2705,7 +2705,7 @@ my_bt_32(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "[3]");
    evas_object_smart_callback_add(bt, "clicked", my_gl_update, &(tit[2]));
@@ -2713,7 +2713,7 @@ my_bt_32(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
@@ -2726,7 +2726,7 @@ my_bt_33(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *ic, *ck;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "check", ELM_WIN_BASIC);
    elm_win_title_set(win, "Checks");
    elm_win_autodel_set(win, 1);
@@ -2735,7 +2735,7 @@ my_bt_33(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
    elm_win_resize_object_add(win, bx);
@@ -2754,7 +2754,7 @@ my_bt_33(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
    evas_object_show(ic);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
@@ -2780,7 +2780,7 @@ my_bt_33(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
    evas_object_show(ic);
-   
+
    evas_object_show(win);
 }
 
@@ -2789,7 +2789,7 @@ my_bt_34(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *ic, *rd, *rdg;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "radio", ELM_WIN_BASIC);
    elm_win_title_set(win, "Radios");
    elm_win_autodel_set(win, 1);
@@ -2798,7 +2798,7 @@ my_bt_34(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
    elm_win_resize_object_add(win, bx);
@@ -2818,7 +2818,7 @@ my_bt_34(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(rd);
    evas_object_show(ic);
    rdg = rd;
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
@@ -2850,9 +2850,9 @@ my_bt_34(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, rd);
    evas_object_show(rd);
    evas_object_show(ic);
-   
+
    elm_radio_value_set(rdg, 2);
-   
+
    evas_object_show(win);
 }
 
@@ -2897,7 +2897,7 @@ my_bt_35(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *win, *bg, *pg, *bx, *lb, *bt;
    char buf[PATH_MAX];
    static Pginfo info;
-   
+
    win = elm_win_add(NULL, "pager", ELM_WIN_BASIC);
    elm_win_title_set(win, "Pager");
    elm_win_autodel_set(win, 1);
@@ -2906,32 +2906,32 @@ my_bt_35(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    pg = elm_pager_add(win);
    elm_win_resize_object_add(win, pg);
    evas_object_show(pg);
-   
+
    info.pager = pg;
-   
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
    evas_object_show(bx);
-   
+
    lb = elm_label_add(win);
    elm_label_label_set(lb,
-                       "This is page 1 in a pager stack.<br>"
-                       "<br>"
-                       "So what is a pager stack? It is a stack<br>"
-                       "of pages that hold widgets in it. The<br>"
-                       "pages can be pushed and popped on and<br>"
-                       "off the stack, activated and otherwise<br>"
-                       "activated if already in the stack<br>"
-                       "(activated means promoted to the top of<br>"
-                       "the stack).<br>"
-                       "<br>"
-                       "The theme may define the animation how<br>"
-                       "show and hide of pages."
-                       );
+		       "This is page 1 in a pager stack.<br>"
+		       "<br>"
+		       "So what is a pager stack? It is a stack<br>"
+		       "of pages that hold widgets in it. The<br>"
+		       "pages can be pushed and popped on and<br>"
+		       "off the stack, activated and otherwise<br>"
+		       "activated if already in the stack<br>"
+		       "(activated means promoted to the top of<br>"
+		       "the stack).<br>"
+		       "<br>"
+		       "The theme may define the animation how<br>"
+		       "show and hide of pages."
+		       );
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
    bt = elm_button_add(win);
@@ -2952,11 +2952,11 @@ my_bt_35(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bx);
    lb = elm_label_add(win);
    elm_label_label_set(lb,
-                       "This is page 2 in a pager stack.<br>"
-                       "<br>"
-                       "This is just like the previous page in<br>"
-                       "the pager stack."
-                       );
+		       "This is page 2 in a pager stack.<br>"
+		       "<br>"
+		       "This is just like the previous page in<br>"
+		       "the pager stack."
+		       );
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
    bt = elm_button_add(win);
@@ -2977,11 +2977,11 @@ my_bt_35(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bx);
    lb = elm_label_add(win);
    elm_label_label_set(lb,
-                       "This is page 3 in a pager stack.<br>"
-                       "<br>"
-                       "This is just like the previous page in<br>"
-                       "the pager stack."
-                       );
+		       "This is page 3 in a pager stack.<br>"
+		       "<br>"
+		       "This is just like the previous page in<br>"
+		       "the pager stack."
+		       );
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
    bt = elm_button_add(win);
@@ -3013,15 +3013,15 @@ gl4_exp(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *gl = elm_genlist_item_genlist_get(it);
    int val = (int)elm_genlist_item_data_get(it);
    val *= 10;
-   elm_genlist_item_append(gl, &itc4, 
-                           (void *)(val + 1)/* item data */, it/* parent */, ELM_GENLIST_ITEM_NONE, gl4_sel/* func */,
-                           NULL/* func data */);
-   elm_genlist_item_append(gl, &itc4, 
-                           (void *)(val + 2)/* item data */, it/* parent */, ELM_GENLIST_ITEM_NONE, gl4_sel/* func */,
-                           NULL/* func data */);
-   elm_genlist_item_append(gl, &itc4, 
-                           (void *)(val + 3)/* item data */, it/* parent */, ELM_GENLIST_ITEM_SUBITEMS, gl4_sel/* func */,
-                           NULL/* func data */);
+   elm_genlist_item_append(gl, &itc4,
+			   (void *)(val + 1)/* item data */, it/* parent */, ELM_GENLIST_ITEM_NONE, gl4_sel/* func */,
+			   NULL/* func data */);
+   elm_genlist_item_append(gl, &itc4,
+			   (void *)(val + 2)/* item data */, it/* parent */, ELM_GENLIST_ITEM_NONE, gl4_sel/* func */,
+			   NULL/* func data */);
+   elm_genlist_item_append(gl, &itc4,
+			   (void *)(val + 3)/* item data */, it/* parent */, ELM_GENLIST_ITEM_SUBITEMS, gl4_sel/* func */,
+			   NULL/* func data */);
 }
 static void
 gl4_con(void *data, Evas_Object *obj, void *event_info)
@@ -3054,19 +3054,19 @@ Evas_Object *gl4_icon_get(const void *data, Evas_Object *obj, const char *part)
    char buf[PATH_MAX];
    if (!strcmp(part, "elm.swallow.icon"))
      {
-        Evas_Object *ic = elm_icon_add(obj);
-        snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-        elm_icon_file_set(ic, buf, NULL);
-        evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-        evas_object_show(ic);
-        return ic;
+	Evas_Object *ic = elm_icon_add(obj);
+	snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+	elm_icon_file_set(ic, buf, NULL);
+	evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+	evas_object_show(ic);
+	return ic;
      }
    else if (!strcmp(part, "elm.swallow.end"))
      {
-        Evas_Object *ck;
-        ck = elm_check_add(obj);
-        evas_object_show(ck);
-        return ck;
+	Evas_Object *ck;
+	ck = elm_check_add(obj);
+	evas_object_show(ck);
+	return ck;
      }
    return NULL;
 }
@@ -3082,7 +3082,7 @@ static void
 my_bt_36(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *gl, *bx, *bx2, *bt;
-   
+
    win = elm_win_add(NULL, "genlist-tree", ELM_WIN_BASIC);
    elm_win_title_set(win, "Genlist Tree");
    elm_win_autodel_set(win, 1);
@@ -3091,7 +3091,7 @@ my_bt_36(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
    elm_win_resize_object_add(win, bx);
@@ -3108,30 +3108,30 @@ my_bt_36(void *data, Evas_Object *obj, void *event_info)
    itc4.func.state_get = gl4_state_get;
    itc4.func.del       = gl4_del;
 
-   elm_genlist_item_append(gl, &itc4, 
-                           (void *)1/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_SUBITEMS, gl4_sel/* func */,
-                           NULL/* func data */);
-   elm_genlist_item_append(gl, &itc4, 
-                           (void *)2/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_SUBITEMS, gl4_sel/* func */,
-                           NULL/* func data */);
-   elm_genlist_item_append(gl, &itc4, 
-                           (void *)3/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl4_sel/* func */,
-                           NULL/* func data */);
-   
+   elm_genlist_item_append(gl, &itc4,
+			   (void *)1/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_SUBITEMS, gl4_sel/* func */,
+			   NULL/* func data */);
+   elm_genlist_item_append(gl, &itc4,
+			   (void *)2/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_SUBITEMS, gl4_sel/* func */,
+			   NULL/* func data */);
+   elm_genlist_item_append(gl, &itc4,
+			   (void *)3/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl4_sel/* func */,
+			   NULL/* func data */);
+
    evas_object_smart_callback_add(gl, "expand,request", gl4_exp_req, gl);
    evas_object_smart_callback_add(gl, "contract,request", gl4_con_req, gl);
    evas_object_smart_callback_add(gl, "expanded", gl4_exp, gl);
    evas_object_smart_callback_add(gl, "contracted", gl4_con, gl);
-   
+
    elm_box_pack_end(bx, gl);
    evas_object_show(bx2);
-   
+
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
    elm_box_homogenous_set(bx2, 1);
    evas_object_size_hint_weight_set(bx2, 1.0, 0.0);
    evas_object_size_hint_align_set(bx2, -1.0, -1.0);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "[1]");
 //   evas_object_smart_callback_add(bt, "clicked", my_gl_update, &(tit[0]));
@@ -3139,7 +3139,7 @@ my_bt_36(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "[2]");
 //   evas_object_smart_callback_add(bt, "clicked", my_gl_update, &(tit[1]));
@@ -3147,7 +3147,7 @@ my_bt_36(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "[3]");
 //   evas_object_smart_callback_add(bt, "clicked", my_gl_update, &(tit[2]));
@@ -3155,7 +3155,7 @@ my_bt_36(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
@@ -3178,11 +3178,11 @@ char *gl5_label_get(const void *data, Evas_Object *obj, const char *part)
    char buf[256];
    if (!strcmp(part, "elm.text"))
      {
-        snprintf(buf, sizeof(buf), "Item mode %i", tit->mode);
+	snprintf(buf, sizeof(buf), "Item mode %i", tit->mode);
      }
    else if (!strcmp(part, "elm.text.sub"))
      {
-        snprintf(buf, sizeof(buf), "%i bottles on the wall", tit->mode);
+	snprintf(buf, sizeof(buf), "%i bottles on the wall", tit->mode);
      }
    return strdup(buf);
 }
@@ -3192,32 +3192,32 @@ Evas_Object *gl5_icon_get(const void *data, Evas_Object *obj, const char *part)
    char buf[PATH_MAX];
    if (!strcmp(part, "elm.swallow.icon"))
      {
-        Evas_Object *bx = elm_box_add(obj);
-        Evas_Object *ic;
-        elm_box_horizontal_set(bx, 1);
-        ic = elm_icon_add(obj);
-        snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-        elm_icon_file_set(ic, buf, NULL);
-        elm_icon_scale_set(ic, 0, 0);
-        evas_object_show(ic);
-        elm_box_pack_end(bx, ic);
-        ic = elm_icon_add(obj);
-        elm_icon_file_set(ic, buf, NULL);
-        elm_icon_scale_set(ic, 0, 0);
-        evas_object_show(ic);
-        elm_box_pack_end(bx, ic);
-        evas_object_show(bx);
-        return bx;
+	Evas_Object *bx = elm_box_add(obj);
+	Evas_Object *ic;
+	elm_box_horizontal_set(bx, 1);
+	ic = elm_icon_add(obj);
+	snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+	elm_icon_file_set(ic, buf, NULL);
+	elm_icon_scale_set(ic, 0, 0);
+	evas_object_show(ic);
+	elm_box_pack_end(bx, ic);
+	ic = elm_icon_add(obj);
+	elm_icon_file_set(ic, buf, NULL);
+	elm_icon_scale_set(ic, 0, 0);
+	evas_object_show(ic);
+	elm_box_pack_end(bx, ic);
+	evas_object_show(bx);
+	return bx;
      }
    else if (!strcmp(part, "elm.swallow.end"))
      {
-        Evas_Object *ck;
-        ck = elm_check_add(obj);
-        evas_object_propagate_events_set(ck, 0);
-        elm_check_state_set(ck, tit->onoff);
-        evas_object_smart_callback_add(ck, "changed", my_gl_item_check_changed2, data);
-        evas_object_show(ck);
-        return ck;
+	Evas_Object *ck;
+	ck = elm_check_add(obj);
+	evas_object_propagate_events_set(ck, 0);
+	elm_check_state_set(ck, tit->onoff);
+	evas_object_smart_callback_add(ck, "changed", my_gl_item_check_changed2, data);
+	evas_object_show(ck);
+	return ck;
      }
    return NULL;
 }
@@ -3244,7 +3244,7 @@ my_bt_37(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
    elm_win_resize_object_add(win, bx);
@@ -3262,27 +3262,27 @@ my_bt_37(void *data, Evas_Object *obj, void *event_info)
    itc5.func.del       = gl5_del;
 
    tit[0].mode = 0;
-   tit[0].item = elm_genlist_item_append(gl, &itc5, 
-                                         &(tit[0])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
-                                         NULL/* func data */);
+   tit[0].item = elm_genlist_item_append(gl, &itc5,
+					 &(tit[0])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+					 NULL/* func data */);
    tit[1].mode = 1;
-   tit[1].item = elm_genlist_item_append(gl, &itc5, 
-                                         &(tit[1])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
-                                         NULL/* func data */);
+   tit[1].item = elm_genlist_item_append(gl, &itc5,
+					 &(tit[1])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+					 NULL/* func data */);
    tit[2].mode = 2;
-   tit[2].item = elm_genlist_item_append(gl, &itc5, 
-                                         &(tit[2])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
-                                         NULL/* func data */);
-   
+   tit[2].item = elm_genlist_item_append(gl, &itc5,
+					 &(tit[2])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+					 NULL/* func data */);
+
    elm_box_pack_end(bx, gl);
    evas_object_show(bx2);
-   
+
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
    elm_box_homogenous_set(bx2, 1);
    evas_object_size_hint_weight_set(bx2, 1.0, 0.0);
    evas_object_size_hint_align_set(bx2, -1.0, -1.0);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "[1]");
    evas_object_smart_callback_add(bt, "clicked", my_gl_update, &(tit[0]));
@@ -3290,7 +3290,7 @@ my_bt_37(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "[2]");
    evas_object_smart_callback_add(bt, "clicked", my_gl_update, &(tit[1]));
@@ -3298,7 +3298,7 @@ my_bt_37(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "[3]");
    evas_object_smart_callback_add(bt, "clicked", my_gl_update, &(tit[2]));
@@ -3306,7 +3306,7 @@ my_bt_37(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
@@ -3380,18 +3380,18 @@ my_bt_38(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_show(bg);
    evas_object_data_set(win, "bg", bg);
-   
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
-   
+
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
    elm_box_homogenous_set(bx2, 1);
    evas_object_size_hint_weight_set(bx2, 1.0, 0.0);
    evas_object_size_hint_align_set(bx2, -1.0, -1.0);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Alpha On");
    evas_object_smart_callback_add(bt, "clicked", my_bt_38_alpha_on, win);
@@ -3399,7 +3399,7 @@ my_bt_38(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Alpha Off");
    evas_object_smart_callback_add(bt, "clicked", my_bt_38_alpha_off, win);
@@ -3410,13 +3410,13 @@ my_bt_38(void *data, Evas_Object *obj, void *event_info)
 
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
-   
+
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
    elm_box_homogenous_set(bx2, 1);
    evas_object_size_hint_weight_set(bx2, 1.0, 1.0);
    evas_object_size_hint_align_set(bx2, -1.0, -1.0);
-   
+
    sl = elm_slider_add(win);
    elm_slider_label_set(sl, "Test");
    elm_slider_span_size_set(sl, 100);
@@ -3428,16 +3428,16 @@ my_bt_38(void *data, Evas_Object *obj, void *event_info)
    elm_slider_inverted_set(sl, 1);
    elm_box_pack_end(bx2, sl);
    evas_object_show(sl);
-   
+
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
-   
+
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
    elm_box_homogenous_set(bx2, 1);
    evas_object_size_hint_weight_set(bx2, 1.0, 0.0);
    evas_object_size_hint_align_set(bx2, -1.0, -1.0);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Rot 0");
    evas_object_smart_callback_add(bt, "clicked", my_bt_38_rot_0, win);
@@ -3445,7 +3445,7 @@ my_bt_38(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Rot 90");
    evas_object_smart_callback_add(bt, "clicked", my_bt_38_rot_90, win);
@@ -3453,7 +3453,7 @@ my_bt_38(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Rot 180");
    evas_object_smart_callback_add(bt, "clicked", my_bt_38_rot_180, win);
@@ -3461,7 +3461,7 @@ my_bt_38(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Rot 270");
    evas_object_smart_callback_add(bt, "clicked", my_bt_38_rot_270, win);
@@ -3469,7 +3469,7 @@ my_bt_38(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, 1.0, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-   
+
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
@@ -3481,7 +3481,7 @@ static void
 my_win_main(void)
 {
    Evas_Object *win, *bg, *bx0, *lb, *li, *fr;
-  
+
    /* 1 create an elm window - it returns an evas object. this is a little
     * special as the object lives in the canvas that is inside the window
     * so what is returned is really inside the window, but as you manipulate
@@ -3497,14 +3497,14 @@ my_win_main(void)
    win = elm_win_add(NULL, "main", ELM_WIN_BASIC);
    /* set the title of the window - this is in the titlebar */
    elm_win_title_set(win, "Elementary Tests");
-   
+
    /* set a callback on the window when "delete-request" is emitted as
-    * a callback. when this happens my_win_del() is called and the 
+    * a callback. when this happens my_win_del() is called and the
     * data pointer (first param) is passed the final param here (in this
     * case it is NULL). This is how you can pass specific things to a
     * callback like objects or data layered on top */
    evas_object_smart_callback_add(win, "delete-request", my_win_del, NULL);
-   
+
    /* add a background to our window. this just uses the standard theme set
     * background. without a backgorund, you could make a window seem
     * transparent with elm_win_alpha_set(win, 1); for example. if you have
@@ -3523,36 +3523,36 @@ my_win_main(void)
    elm_win_resize_object_add(win, bg);
    /* and show the background */
    evas_object_show(bg);
-   
+
    /* add a box layout widget to the window */
    bx0 = elm_box_add(win);
    /* allow base box (bx0) to expand in x and y */
    evas_object_size_hint_weight_set(bx0, 1.0, 1.0);
-   /* tell the window that the box affects window size and also will be 
+   /* tell the window that the box affects window size and also will be
     * resized when the window is */
    elm_win_resize_object_add(win, bx0);
    evas_object_show(bx0);
-   
+
    fr = elm_frame_add(win);
    elm_frame_label_set(fr, "Information");
    elm_box_pack_end(bx0, fr);
    evas_object_show(fr);
-   
+
    lb = elm_label_add(win);
-   elm_label_label_set(lb, 
-                       "Please select a test from the list below<br>"
-                       "by clicking the test button to show the<br>"
-                       "test window.");
+   elm_label_label_set(lb,
+		       "Please select a test from the list below<br>"
+		       "by clicking the test button to show the<br>"
+		       "test window.");
    elm_frame_content_set(fr, lb);
    evas_object_show(lb);
-   
+
    li = elm_list_add(win);
    elm_list_always_select_mode_set(li, 1);
    evas_object_size_hint_weight_set(li, 1.0, 1.0);
    evas_object_size_hint_align_set(li, -1.0, -1.0);
    elm_box_pack_end(bx0, li);
    evas_object_show(li);
-   
+
    elm_list_item_append(li, "Bg Plain", NULL, NULL, my_bt_1, NULL);
    elm_list_item_append(li, "Bg Image", NULL, NULL, my_bt_2, NULL);
    elm_list_item_append(li, "Icon Transparent", NULL, NULL, my_bt_3, NULL);
@@ -3591,9 +3591,9 @@ my_win_main(void)
    elm_list_item_append(li, "Genlist Tree", NULL, NULL, my_bt_36, NULL);
    elm_list_item_append(li, "Genlist 5", NULL, NULL, my_bt_37, NULL);
    elm_list_item_append(li, "Window States", NULL, NULL, my_bt_38, NULL);
-   
+
    elm_list_go(li);
-   
+
    /* set an initial window size */
    evas_object_resize(win, 240, 480);
    /* show the window */

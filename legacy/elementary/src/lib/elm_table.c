@@ -26,7 +26,7 @@ _sizing_eval(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    Evas_Coord w, h;
-   
+
    evas_object_size_hint_min_get(wd->tbl, &minw, &minh);
    evas_object_size_hint_max_get(wd->tbl, &maxw, &maxh);
    evas_object_size_hint_min_set(obj, minw, minh);
@@ -61,7 +61,7 @@ elm_table_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -69,14 +69,14 @@ elm_table_add(Evas_Object *parent)
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
-   
+
    wd->tbl = _els_smart_table_add(e);
    evas_object_event_callback_add(wd->tbl, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				  _changed_size_hints, obj);
    elm_widget_resize_object_set(obj, wd->tbl);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
-   
+
    return obj;
 }
 

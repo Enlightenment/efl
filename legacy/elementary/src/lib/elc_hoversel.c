@@ -3,20 +3,20 @@
 
 /**
  * @defgroup Hoversel
- * 
+ *
  * A hoversel is a button that pops up a list of items (automatically
  * choosing the direction to display) that have a lable and/or an icon to
  * select from. It is a convenience widget to avoid the need to do all the
  * piecing together yourself. It is intended for a small numbr of items in
  * the hoversel menu (no more than 8), though is capable of many more.
- * 
+ *
  * Signals that you can add callbacks for are:
- * 
+ *
  * clicked  - the user clicked the hoversel button and popped up the sel
- * 
+ *
  * selected - an item in the hoversel list is selected. event_info is the item
  * selected - Elm_Hoversel_Item
- * 
+ *
  * dismissed - the hover is dismissed
  */
 typedef struct _Widget_Data Widget_Data;
@@ -60,9 +60,9 @@ _del_hook(Evas_Object *obj)
    elm_hoversel_hover_end(obj);
    EINA_LIST_FREE(wd->items, it)
      {
-        eina_stringshare_del(it->label);
-        eina_stringshare_del(it->icon_file);
-        free(it);
+	eina_stringshare_del(it->label);
+	eina_stringshare_del(it->icon_file);
+	free(it);
      }
    free(wd);
 }
@@ -122,25 +122,25 @@ _activate(Evas_Object *obj)
 
    EINA_LIST_FOREACH(wd->items, l, it)
      {
-        bt = elm_button_add(wd->hover);
-        elm_button_style_set(bt, "hoversel_vertical_entry");
-        elm_button_label_set(bt, it->label);
-        if (it->icon_file)
-          {
-             ic = elm_icon_add(obj);
-             elm_icon_scale_set(ic, 0, 1);
-             if (it->icon_type == ELM_ICON_FILE)
-               elm_icon_file_set(ic, it->icon_file, NULL);
-             else if (it->icon_type == ELM_ICON_STANDARD)
-               elm_icon_standard_set(ic, it->icon_file);
-             elm_button_icon_set(bt, ic);
-             evas_object_show(ic);
-          }
-        evas_object_size_hint_weight_set(bt, 1.0, 0.0);
-        evas_object_size_hint_align_set(bt, -1.0, -1.0);
-        elm_box_pack_end(bx, bt);
-        evas_object_smart_callback_add(bt, "clicked", _item_clicked, it);
-        evas_object_show(bt);
+	bt = elm_button_add(wd->hover);
+	elm_button_style_set(bt, "hoversel_vertical_entry");
+	elm_button_label_set(bt, it->label);
+	if (it->icon_file)
+	  {
+	     ic = elm_icon_add(obj);
+	     elm_icon_scale_set(ic, 0, 1);
+	     if (it->icon_type == ELM_ICON_FILE)
+	       elm_icon_file_set(ic, it->icon_file, NULL);
+	     else if (it->icon_type == ELM_ICON_STANDARD)
+	       elm_icon_standard_set(ic, it->icon_file);
+	     elm_button_icon_set(bt, ic);
+	     evas_object_show(ic);
+	  }
+	evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+	evas_object_size_hint_align_set(bt, -1.0, -1.0);
+	elm_box_pack_end(bx, bt);
+	evas_object_smart_callback_add(bt, "clicked", _item_clicked, it);
+	evas_object_show(bt);
      }
 
    elm_hover_content_set
@@ -148,7 +148,7 @@ _activate(Evas_Object *obj)
       elm_hover_best_content_location_get(wd->hover, ELM_HOVER_AXIS_VERTICAL),
       bx);
    evas_object_show(bx);
-   
+
    evas_object_show(wd->hover);
    evas_object_smart_callback_call(obj, "clicked", NULL);
 }
@@ -156,7 +156,7 @@ _activate(Evas_Object *obj)
 static void
 _button_clicked(void *data, Evas_Object *obj, void *event_info)
 {
-  _activate(data); 
+  _activate(data);
 }
 
 static void
@@ -181,7 +181,7 @@ elm_hoversel_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -190,7 +190,7 @@ elm_hoversel_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_del_hook_set(obj, _del_hook);
-   
+
    wd->btn = elm_button_add(parent);
    elm_button_style_set(wd->btn, "hoversel_vertical");
    elm_widget_resize_object_set(obj, wd->btn);
@@ -203,7 +203,7 @@ elm_hoversel_add(Evas_Object *parent)
 
 /**
  * Set the Hover parent
- * 
+ *
  * Sets the hover parent object. See Hover objects for more information.
  *
  * @param obj The hoversel object
@@ -225,7 +225,7 @@ elm_hoversel_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 
 /**
  * Set the hoversel button label
- * 
+ *
  * This sets the label of the button that is always visible (before it is
  * clicked and expanded). Also see elm_button_label_set().
  *
@@ -244,7 +244,7 @@ elm_hoversel_label_set(Evas_Object *obj, const char *label)
 
 /**
  * Set the icon of the hoversel button
- * 
+ *
  * Sets the icon of the button that is always visible (before it is clicked
  * and expanded). Also see elm_button_icon_set().
  *
@@ -263,7 +263,7 @@ elm_hoversel_icon_set(Evas_Object *obj, Evas_Object *icon)
 
 /**
  * Trigger the hoversel popup from code
- * 
+ *
  * This makes the hoversel popup activate with the items added being listed.
  *
  * @param obj The hoversel object
@@ -281,7 +281,7 @@ elm_hoversel_hover_begin(Evas_Object *obj)
 
 /**
  * This ends the hoversel popup.
- * 
+ *
  * This will close the hoversel popup, making it disappear, if it was active.
  *
  * @param obj The hoversel object
@@ -295,15 +295,15 @@ elm_hoversel_hover_end(Evas_Object *obj)
    if (!wd) return;
    if (wd->hover)
      {
-        evas_object_del(wd->hover);
-        wd->hover = NULL;
-        evas_object_smart_callback_call(obj, "dismissed", NULL);
+	evas_object_del(wd->hover);
+	wd->hover = NULL;
+	evas_object_smart_callback_call(obj, "dismissed", NULL);
      }
 }
 
 /**
  * Add an item to the hoversel button
- * 
+ *
  * This adds an item to the hoversel to show when it is clicked
  *
  * @param obj The hoversel object
@@ -336,7 +336,7 @@ elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file
 
 /**
  * Delete an item from the hoversel
- * 
+ *
  * This deletes the item from the hoversel (should not be called while the
  * hoversel is active).
  *
@@ -358,7 +358,7 @@ elm_hoversel_item_del(Elm_Hoversel_Item *it)
 
 /**
  * Get the data pointer passed to the item add function
- * 
+ *
  * This returns the data pointer supplied with elm_hoversel_item_add() that
  * will be passed to the select function callback.
  *

@@ -58,7 +58,7 @@
 # endif
 #endif
 
-  
+
 /* EFL headers */
 #include <Eina.h>
 #include <Eet.h>
@@ -109,8 +109,8 @@ extern "C" {
 
 /* handy macros */
 #define ELM_RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh) (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && (((x) + (w)) > (xx)) && (((y) + (h)) > (yy)))
-   
-/**************************************************************************/   
+
+/**************************************************************************/
    /* Objects */
    typedef enum _Elm_Win_Type
      {
@@ -127,30 +127,30 @@ extern "C" {
    typedef enum _Elm_Win_Keyboard_Mode
      {
 	ELM_WIN_KEYBOARD_UNKNOWN,
-          ELM_WIN_KEYBOARD_OFF,
-          ELM_WIN_KEYBOARD_ON,
-          ELM_WIN_KEYBOARD_ALPHA,
-          ELM_WIN_KEYBOARD_NUMERIC,
-          ELM_WIN_KEYBOARD_PIN,
-          ELM_WIN_KEYBOARD_PHONE_NUMBER,
-          ELM_WIN_KEYBOARD_HEX,
-          ELM_WIN_KEYBOARD_TERMINAL,
-          ELM_WIN_KEYBOARD_PASSWORD
+	  ELM_WIN_KEYBOARD_OFF,
+	  ELM_WIN_KEYBOARD_ON,
+	  ELM_WIN_KEYBOARD_ALPHA,
+	  ELM_WIN_KEYBOARD_NUMERIC,
+	  ELM_WIN_KEYBOARD_PIN,
+	  ELM_WIN_KEYBOARD_PHONE_NUMBER,
+	  ELM_WIN_KEYBOARD_HEX,
+	  ELM_WIN_KEYBOARD_TERMINAL,
+	  ELM_WIN_KEYBOARD_PASSWORD
      } Elm_Win_Keyboard_Mode;
 
-#ifndef ELM_LIB_QUICKLAUNCH   
+#ifndef ELM_LIB_QUICKLAUNCH
 #define ELM_MAIN() int main(int argc, char **argv) {elm_init(argc, argv); return elm_main(argc, argv);}
 #else
 #define ELM_MAIN() int main(int argc, char **argv) {return elm_quicklaunch_fallback(argc, argv);}
 #endif
-   
-/**************************************************************************/   
+
+/**************************************************************************/
    /* General calls */
    EAPI void         elm_init(int argc, char **argv);
    EAPI void         elm_shutdown(void);
    EAPI void         elm_run(void);
    EAPI void         elm_exit(void);
-   
+
    EAPI void         elm_quicklaunch_init(int argc, char **argv);
    EAPI void         elm_quicklaunch_sub_init(int argc, char **argv);
    EAPI void         elm_quicklaunch_sub_shutdown(void);
@@ -161,7 +161,7 @@ extern "C" {
    EAPI void         elm_quicklaunch_cleanup(void);
    EAPI int          elm_quicklaunch_fallback(int argc, char **argv);
    EAPI char        *elm_quicklaunch_exe_path_get(const char *exe);
-       
+
    EAPI void         elm_object_scale_set(Evas_Object *obj, double scale);
    EAPI double       elm_object_scale_get(const Evas_Object *obj);
    EAPI void         elm_object_style_set(Evas_Object *obj, const char *style);
@@ -171,14 +171,14 @@ extern "C" {
    EAPI void         elm_scale_set(double scale);
    EAPI Evas_Coord   elm_finger_size_get(void);
    EAPI void         elm_finger_size_set(Evas_Coord size);
-       
+
    EAPI void         elm_object_focus(Evas_Object *obj);
-   
+
    EAPI void         elm_coords_finger_size_adjust(int times_w, Evas_Coord *w, int times_h, Evas_Coord *h);
-   
+
    EAPI void         elm_theme_overlay_add(const char *item);
    EAPI void         elm_theme_extension_add(const char *item);
-       
+
    EAPI Evas_Object *elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type);
    EAPI void         elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj);
    EAPI void         elm_win_resize_object_del(Evas_Object *obj, Evas_Object *subobj);
@@ -206,7 +206,7 @@ extern "C" {
     * ecore_x_icccm_window_role_set -> role (add to ecore_evas)
     * ecore_x_icccm_transient_for_set -> forwin (add to ecore_evas)
     * ecore_x_netwm_window_type_set -> type (add to ecore_evas)
-    * 
+    *
     * (add to ecore_x) set netwm argb icon! (add to ecore_evas)
     * (blank mouse, private mouse obj, defaultmouse)
     *
@@ -218,14 +218,14 @@ extern "C" {
    EAPI void         elm_win_inwin_activate(Evas_Object *obj);
    EAPI void         elm_win_inwin_style_set(Evas_Object *obj, const char *style);
    EAPI void         elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content);
-   /* available styles: 
+   /* available styles:
     * default
     * minimal
     * minimal_vertical
     */
-       
+
    /* X specific calls - won't work on non-x engines (return 0) */
-   EAPI Ecore_X_Window elm_win_xwindow_get(const Evas_Object *obj);   
+   EAPI Ecore_X_Window elm_win_xwindow_get(const Evas_Object *obj);
    /* smart callbacks called:
     * "delete-request" - the user requested to delete the window
     * "focus-in" - window got focus
@@ -282,14 +282,14 @@ extern "C" {
    EAPI void         elm_box_pack_after(Evas_Object *obj, Evas_Object *subobj, Evas_Object *after);
    /* smart callbacks called:
     */
-   
+
    EAPI Evas_Object *elm_button_add(Evas_Object *parent);
    EAPI void         elm_button_label_set(Evas_Object *obj, const char *label);
    EAPI void         elm_button_icon_set(Evas_Object *obj, Evas_Object *icon);
    EAPI void         elm_button_style_set(Evas_Object *obj, const char *style);
-   /* available styles: 
-    * default 
-    * hoversel_vertical 
+   /* available styles:
+    * default
+    * hoversel_vertical
     * hoversel_vertical_entry
     */
    /* smart callbacks called:
@@ -298,12 +298,12 @@ extern "C" {
 
    typedef enum _Elm_Scroller_Policy
      {
-        ELM_SCROLLER_POLICY_AUTO,
-          ELM_SCROLLER_POLICY_ON,
-          ELM_SCROLLER_POLICY_OFF
+	ELM_SCROLLER_POLICY_AUTO,
+	  ELM_SCROLLER_POLICY_ON,
+	  ELM_SCROLLER_POLICY_OFF
      }
    Elm_Scroller_Policy;
-   
+
    EAPI Evas_Object *elm_scroller_add(Evas_Object *parent);
    EAPI void         elm_scroller_content_set(Evas_Object *obj, Evas_Object *child);
    EAPI void         elm_scroller_content_min_limit(Evas_Object *obj, Eina_Bool w, Eina_Bool h);
@@ -324,7 +324,7 @@ extern "C" {
    EAPI void         elm_label_label_set(Evas_Object *obj, const char *label);
    /* smart callbacks called:
     */
-       
+
    EAPI Evas_Object *elm_toggle_add(Evas_Object *parent);
    EAPI void         elm_toggle_label_set(Evas_Object *obj, const char *label);
    EAPI void         elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon);
@@ -335,7 +335,7 @@ extern "C" {
    /* smart callbacks called:
     * "changed" - the user toggled the state
     */
-   
+
    EAPI Evas_Object *elm_frame_add(Evas_Object *parent);
    EAPI void         elm_frame_label_set(Evas_Object *obj, const char *label);
    EAPI void         elm_frame_content_set(Evas_Object *obj, Evas_Object *content);
@@ -351,13 +351,13 @@ extern "C" {
     */
    /* smart callbacks called:
     */
-       
+
    EAPI Evas_Object *elm_table_add(Evas_Object *parent);
    EAPI void         elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous);
    EAPI void         elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h);
    /* smart callbacks called:
     */
-   
+
    EAPI Evas_Object *elm_clock_add(Evas_Object *parent);
    EAPI void         elm_clock_time_set(Evas_Object *obj, int hrs, int min, int sec);
    EAPI void         elm_clock_time_get(const Evas_Object *obj, int *hrs, int *min, int *sec);
@@ -374,13 +374,13 @@ extern "C" {
    EAPI Evas_Object *elm_layout_edje_get(const Evas_Object *obj);
    /* smart callbacks called:
     */
-   
+
    typedef enum _Elm_Hover_Axis
      {
 	ELM_HOVER_AXIS_NONE,
-          ELM_HOVER_AXIS_HORIZONTAL,
-          ELM_HOVER_AXIS_VERTICAL,
-          ELM_HOVER_AXIS_BOTH
+	  ELM_HOVER_AXIS_HORIZONTAL,
+	  ELM_HOVER_AXIS_VERTICAL,
+	  ELM_HOVER_AXIS_BOTH
      } Elm_Hover_Axis;
    EAPI Evas_Object *elm_hover_add(Evas_Object *parent);
    EAPI void         elm_hover_target_set(Evas_Object *obj, Evas_Object *target);
@@ -388,7 +388,7 @@ extern "C" {
    EAPI void         elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
    EAPI void         elm_hover_style_set(Evas_Object *obj, const char *style);
    EAPI const char  *elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_axis);
-   /* available styles: 
+   /* available styles:
     * default
     * popout
     * hoversel_vertical
@@ -417,7 +417,7 @@ extern "C" {
    EAPI void         elm_entry_select_all(Evas_Object *obj);
    EAPI char        *elm_entry_markup_to_utf8(const char *s);
    EAPI char        *elm_entry_utf8_to_markup(const char *s);
-       
+
    /* smart callbacks called:
     * "changed" - the text content changed
     * "selection,start" - the user started selecting text
@@ -430,7 +430,7 @@ extern "C" {
     * "anchor,clicked" - achor called was clicked | event_info = Elm_Entry_Anchor_Info
     * "activated" - when the enter key is pressed (useful for single line)
     */
-   
+
    /* composite widgets - these basically put together basic widgets above
     * in convenient packages that do more than basic stuff */
 
@@ -466,7 +466,7 @@ extern "C" {
    /* smart callbacks called:
     * "anchor,clicked" - achor called was clicked | event_info = Elm_Entry_Anchorview_Info
     */
-       
+
    typedef struct _Elm_Entry_Anchorblock_Info Elm_Entry_Anchorblock_Info;
    struct _Elm_Entry_Anchorblock_Info
      {
@@ -489,7 +489,7 @@ extern "C" {
    /* smart callbacks called:
     * "anchor,clicked" - achor called was clicked | event_info = Elm_Entry_Anchorblock_Info
     */
-       
+
    EAPI Evas_Object *elm_bubble_add(Evas_Object *parent);
    EAPI void         elm_bubble_label_set(Evas_Object *obj, const char *label);
    EAPI void         elm_bubble_info_set(Evas_Object *obj, const char *info);
@@ -508,9 +508,9 @@ extern "C" {
 
    typedef enum _Elm_Icon_Type
      {
-        ELM_ICON_NONE,
-          ELM_ICON_FILE,
-          ELM_ICON_STANDARD
+	ELM_ICON_NONE,
+	  ELM_ICON_FILE,
+	  ELM_ICON_STANDARD
      } Elm_Icon_Type;
    typedef struct _Elm_Hoversel_Item Elm_Hoversel_Item;
    EAPI Evas_Object *elm_hoversel_add(Evas_Object *parent);
@@ -527,7 +527,7 @@ extern "C" {
     * "selected" - an item in the hoversel list is selected
     * "dismissed" - the hover is dismissed
     */
-   
+
    typedef struct _Elm_Toolbar_Item Elm_Toolbar_Item;
    EAPI Evas_Object *elm_toolbar_add(Evas_Object *parent);
    EAPI Elm_Toolbar_Item *elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
@@ -540,9 +540,9 @@ extern "C" {
 
    typedef enum _Elm_List_Mode
      {
-        ELM_LIST_COMPRESS,
-        ELM_LIST_SCROLL,
-        ELM_LIST_LIMIT
+	ELM_LIST_COMPRESS,
+	ELM_LIST_SCROLL,
+	ELM_LIST_LIMIT
      } Elm_List_Mode;
    typedef struct _Elm_List_Item Elm_List_Item;
    EAPI Evas_Object *elm_list_add(Evas_Object *parent);
@@ -585,7 +585,7 @@ extern "C" {
    /* smart callbacks called:
     * "clicked" - when the user clicks on a carousel item and becomes selected
     */
-   
+
    EAPI Evas_Object *elm_slider_add(Evas_Object *parent);
    EAPI void         elm_slider_label_set(Evas_Object *obj, const char *label);
    EAPI void         elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon);
@@ -601,11 +601,11 @@ extern "C" {
     * "changed" - when the slider value changes
     * "delay,changed" - when the slider value changed, but a small time after a change (use this if you only want to respond to a change once the slider is held still for a short while).
     */
-       
+
    typedef enum _Elm_Genlist_Item_Flags
      {
-        ELM_GENLIST_ITEM_NONE = 0,
-        ELM_GENLIST_ITEM_SUBITEMS = (1 << 0)
+	ELM_GENLIST_ITEM_NONE = 0,
+	ELM_GENLIST_ITEM_SUBITEMS = (1 << 0)
      } Elm_Genlist_Item_Flags;
    typedef struct _Elm_Genlist_Item_Class Elm_Genlist_Item_Class;
    typedef struct _Elm_Genlist_Item       Elm_Genlist_Item;
@@ -614,16 +614,16 @@ extern "C" {
    typedef Evas_Object *(*GenlistItemIconGetFunc)  (const void *data, Evas_Object *obj, const char *part);
    typedef Eina_Bool    (*GenlistItemStateGetFunc) (const void *data, Evas_Object *obj, const char *part);
    typedef void         (*GenlistItemDelFunc)      (const void *data, Evas_Object *obj);
-                                               
+
    struct _Elm_Genlist_Item_Class
      {
-        const char *item_style;
-        struct _Elm_Genlist_Item_Class_Func {
-           GenlistItemLabelGetFunc label_get;
-           GenlistItemIconGetFunc icon_get;
-           GenlistItemStateGetFunc state_get;
-           GenlistItemDelFunc del;
-        } func;
+	const char *item_style;
+	struct _Elm_Genlist_Item_Class_Func {
+	   GenlistItemLabelGetFunc label_get;
+	   GenlistItemIconGetFunc icon_get;
+	   GenlistItemStateGetFunc state_get;
+	   GenlistItemDelFunc del;
+	} func;
      };
 
    EAPI Evas_Object      *elm_genlist_add(Evas_Object *parent);
@@ -655,7 +655,7 @@ extern "C" {
    EAPI void              elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode);
    EAPI void              elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
    EAPI void              elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
-   /* available item styles: 
+   /* available item styles:
     * default
     * double_label
     */
@@ -668,7 +668,7 @@ extern "C" {
     * "expand,request" - when the user requested to expand an item
     * "contract,request" - when the user requested to expand an item
     */
-   
+
    EAPI Evas_Object *elm_check_add(Evas_Object *parent);
    EAPI void         elm_check_label_set(Evas_Object *obj, const char *label);
    EAPI void         elm_check_icon_set(Evas_Object *obj, Evas_Object *icon);
@@ -678,7 +678,7 @@ extern "C" {
    /* smart callbacks called:
     * "changed" - the user toggled the state
     */
-        
+
    EAPI Evas_Object *elm_radio_add(Evas_Object *parent);
    EAPI void         elm_radio_label_set(Evas_Object *obj, const char *label);
    EAPI void         elm_radio_icon_set(Evas_Object *obj, Evas_Object *icon);
@@ -690,7 +690,7 @@ extern "C" {
    /* smart callbacks called:
     * "changed" - the user toggled the state
     */
-   
+
    EAPI Evas_Object *elm_pager_add(Evas_Object *parent);
    EAPI void         elm_pager_content_push(Evas_Object *obj, Evas_Object *content);
    EAPI void         elm_pager_content_pop(Evas_Object *obj);
@@ -699,7 +699,7 @@ extern "C" {
    EAPI Evas_Object *elm_pager_content_top_get(Evas_Object *obj);
    /* smart callbacks called:
     */
-        
+
 #ifdef __cplusplus
 }
 #endif
@@ -707,20 +707,20 @@ extern "C" {
   ////////////////////////////////////////////////////////////////////////////
  /// FIXME: TODO LIST ///////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
-// 
+//
 //// (bugs - high priority)
 // * scale change for hover doesnt seem to do new size alloc nicely
 // * left/right arrow broken with password mode for entry + utf8 chars...
 // * bubble doesnt handle child size changes right
 // * table doesnt do homogenous properly
-// 
+//
 //// (incomplete - medium priority)
 // * disabled not supported
 // * on the fly theme changes - test (should work)
 // * need a hold-scroll counter in elm_widget
 // * hoversel only vertical right now - make horizontal
 // * when entries are in a scroller and change size, the scroller shows scrollbars. fix. same for selecting. for 1 line entries in a scroller should only have scroll arrow indicators.
-// 
+//
 //// (more widgets/features - medium priority)
 // * multiple genlist item styles (multi-label, 1 icon + 2 line label, header etc.)
 // * carousel selector widget
@@ -746,7 +746,7 @@ extern "C" {
 // * status widget (busy, stalled, running, etc.)
 // * full window in window widget (so move/resize of window object does as you'd expect a child window to do within the canvas)
 // * window frame widget for borderless windows that want the app to do its own frame (move, resize as well etc.)
-// 
+//
 //// (improvements - low priority)
 // * test for all bubble styles
 // * test for all frame styles
@@ -784,6 +784,6 @@ extern "C" {
 // * win should emit signals based on vkbd type - if it gets a message and is a vkbd win
 // * win needs a way of setting aspect too
 // * use the wrong call on the wrong widget and *BOOM* ... crashland
-// 
+//
 //////////////////////////////////////////////////////////////////////////////
 #endif

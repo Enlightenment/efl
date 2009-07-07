@@ -45,7 +45,7 @@ _sizing_eval(Evas_Object *obj)
    if (!wd) return;
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    int w, h;
- 
+
    _els_smart_icon_size_get(wd->img, &w, &h);
    _els_smart_icon_scale_up_set(wd->img, wd->scale_up);
    _els_smart_icon_scale_down_set(wd->img, wd->scale_down);
@@ -54,8 +54,8 @@ _sizing_eval(Evas_Object *obj)
    if (wd->no_scale) _els_smart_icon_scale_set(wd->img, 1.0);
    else
      {
-	_els_smart_icon_scale_set(wd->img, elm_widget_scale_get(obj) * 
-                                  _elm_config->scale);
+	_els_smart_icon_scale_set(wd->img, elm_widget_scale_get(obj) *
+				  _elm_config->scale);
 	_els_smart_icon_size_get(wd->img, &w, &h);
      }
    if (!wd->scale_down)
@@ -84,7 +84,7 @@ elm_icon_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -94,17 +94,17 @@ elm_icon_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, 0);
-   
+
    wd->img = _els_smart_icon_add(e);
    evas_object_event_callback_add(wd->img, EVAS_CALLBACK_MOUSE_UP,
 				  _mouse_up, obj);
    evas_object_repeat_events_set(wd->img, 1);
-   elm_widget_resize_object_set(obj, wd->img);   
+   elm_widget_resize_object_set(obj, wd->img);
 
    wd->smooth = EINA_TRUE;
    wd->scale_up = EINA_TRUE;
    wd->scale_down = EINA_TRUE;
-   
+
    _sizing_eval(obj);
    return obj;
 }
@@ -133,7 +133,7 @@ elm_icon_standard_set(Evas_Object *obj, const char *name)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   
+
    if (!name) return;
    if (wd->stdicon) eina_stringshare_del(wd->stdicon);
    wd->stdicon = eina_stringshare_add(name);

@@ -72,7 +72,7 @@ elm_bg_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -82,10 +82,10 @@ elm_bg_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, 0);
-   
+
    wd->img = edje_object_add(e);
    _elm_theme_set(wd->img, "bg", "base", "default");
-   elm_widget_resize_object_set(obj, wd->img);   
+   elm_widget_resize_object_set(obj, wd->img);
    return obj;
 }
 
@@ -95,7 +95,7 @@ elm_bg_add(Evas_Object *parent)
  * @param obj The bg object
  * @param file The file path
  * @param group Optional key (group in Edje) within the file
- * 
+ *
  * This sets the image file used in the background object. The image (or edje)
  * will be stretched (retaining aspect if its an image file) to completely fill
  * the bg object. This may mean some parts arte not visible.
@@ -107,7 +107,7 @@ elm_bg_file_set(Evas_Object *obj, const char *file, const char *group)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    const char *p;
-   
+
    if (wd->custom_img)
      {
 	evas_object_del(wd->custom_img);
@@ -125,7 +125,7 @@ elm_bg_file_set(Evas_Object *obj, const char *file, const char *group)
 	wd->custom_img = edje_object_add(evas_object_evas_get(wd->img));
 	edje_object_file_set(wd->custom_img, file, group);
      }
-   else 
+   else
      {
 	wd->custom_img = evas_object_image_add(evas_object_evas_get(wd->img));
 	evas_object_event_callback_add(wd->custom_img, EVAS_CALLBACK_RESIZE, _custom_resize, wd);

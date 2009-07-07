@@ -3,19 +3,19 @@
 
 /**
  * @defgroup Radio Radio
- * 
- * The radio button allows for 1 or more selectors to be created to select 1 
+ *
+ * The radio button allows for 1 or more selectors to be created to select 1
  * of a set of options.
- * 
+ *
  * Signals that you can add callbacks for are:
- * 
- * changed - This is called whenever the user changes the state of one of the 
+ *
+ * changed - This is called whenever the user changes the state of one of the
  * radio objects within the group of radio objects that work together.
- * 
- * A radio object contains an indicator, an optional Label and an optional 
- * icon object. They work normally in groups of 2 or more. When you create a 
- * radio (if it is not the first member of the group), simply add it to the 
- * group by adding it to any other member of the group that already exists 
+ *
+ * A radio object contains an indicator, an optional Label and an optional
+ * icon object. They work normally in groups of 2 or more. When you create a
+ * radio (if it is not the first member of the group), simply add it to the
+ * group by adding it to any other member of the group that already exists
  * (or the first member) with elm_radio_group_add() with the second parameter
  * being the existing group member. The radio object(s) will select from one
  * of a set of integer values, so any value they are configuring needs to be
@@ -97,7 +97,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-   
+
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc(wd->chk, &minw, &minh, minw, minh);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
@@ -137,11 +137,11 @@ _state_set(Evas_Object *obj, Eina_Bool state)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (state != wd->state)
      {
-        wd->state = state;
-        if (wd->state)
-          edje_object_signal_emit(wd->chk, "elm,state,radio,on", "elm");
-        else
-          edje_object_signal_emit(wd->chk, "elm,state,radio,off", "elm");
+	wd->state = state;
+	if (wd->state)
+	  edje_object_signal_emit(wd->chk, "elm,state,radio,on", "elm");
+	else
+	  edje_object_signal_emit(wd->chk, "elm,state,radio,off", "elm");
      }
 }
 
@@ -153,9 +153,9 @@ _state_set_all(Widget_Data *wd)
 
    EINA_LIST_FOREACH(wd->group->radios, l, child)
      {
-        Widget_Data *wd2 = elm_widget_data_get(child);
-        if (wd2->value == wd->group->value) _state_set(child, 1);
-        else _state_set(child, 0);
+	Widget_Data *wd2 = elm_widget_data_get(child);
+	if (wd2->value == wd->group->value) _state_set(child, 1);
+	else _state_set(child, 0);
      }
 }
 
@@ -184,7 +184,7 @@ elm_radio_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -193,7 +193,7 @@ elm_radio_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
-   
+
    wd->chk = edje_object_add(e);
    _elm_theme_set(wd->chk, "radio", "base", "default");
    edje_object_signal_callback_add(wd->chk, "elm,action,radio,on", "", _signal_radio_on, obj);
@@ -205,7 +205,7 @@ elm_radio_add(Evas_Object *parent)
    wd->group = calloc(1, sizeof(Group));
    wd->group->radios = eina_list_append(wd->group->radios, obj);
    wd->state = 0;
-   
+
    _sizing_eval(obj);
    return obj;
 }
@@ -227,13 +227,13 @@ elm_radio_label_set(Evas_Object *obj, const char *label)
    if (wd->label) eina_stringshare_del(wd->label);
    if (label)
      {
-        wd->label = eina_stringshare_add(label);
+	wd->label = eina_stringshare_add(label);
 	edje_object_signal_emit(wd->chk, "elm,state,text,visible", "elm");
 	edje_object_message_signal_process(wd->chk);
      }
    else
      {
-        wd->label = NULL;
+	wd->label = NULL;
 	edje_object_signal_emit(wd->chk, "elm,state,text,hidden", "elm");
 	edje_object_message_signal_process(wd->chk);
      }
@@ -274,7 +274,7 @@ elm_radio_icon_set(Evas_Object *obj, Evas_Object *icon)
 
 /**
  * Add this radio to a group of other radio objects
- * 
+ *
  * Radio objects work in groups. Each member should have a different integer
  * value assigned. In order ro have them work as a group, they need to know
  * about eacthother. This adds the given radio object to the group of which
@@ -322,10 +322,10 @@ elm_radio_state_value_set(Evas_Object *obj, int value)
 
 /**
  * Set the value the radio
- * 
+ *
  * This sets the value of the radio group and will also set the value if
  * pointed to, to the value supplied, but will not call any callbacks.
- * 
+ *
  * @param obj The radio object
  * @param state The value to use for the group
  *
@@ -380,18 +380,18 @@ elm_radio_value_pointer_set(Evas_Object *obj, int *valuep)
 
    if (valuep)
      {
-        wd->group->valuep = valuep;
+	wd->group->valuep = valuep;
 	if (*(wd->group->valuep) != wd->group->value)
 	  {
-             const Eina_List *l;
+	     const Eina_List *l;
 	     Evas_Object *child;
 
-             wd->group->value = *(wd->group->valuep);
+	     wd->group->value = *(wd->group->valuep);
 	     _state_set_all(wd);
-          }
+	  }
      }
    else
      {
-        wd->group->valuep = NULL;
+	wd->group->valuep = NULL;
      }
 }
