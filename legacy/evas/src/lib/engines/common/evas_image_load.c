@@ -11,7 +11,7 @@ struct ext_loader_s {
    const char*	loader;
 };
 
-static struct ext_loader_s	loaders[] = {
+static struct ext_loader_s	const loaders[] = {
    { "png", "png" },
    { "jpg", "jpeg" },
    { "jpeg", "jpeg" },
@@ -30,6 +30,10 @@ static struct ext_loader_s	loaders[] = {
    { "pgm", "pmaps" },
    { "ppm", "pmaps" },
    { "pnm", "pmaps" }
+};
+
+static const char *loaders_name[] = {
+  "png", "jpeg", "eet", "xpm", "tiff", "gif", "svg", "pmaps", "edb"
 };
 
 static Eina_Bool
@@ -94,13 +98,31 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 		  evas_image_load_func = em->functions;
 		  if (evas_image_load_func->file_head(ie, ie->file, ie->key))
 		    goto ok;
+		  evas_module_unload(em);
 	       }
 	  }
      }
 
-   /* FIXME: We don't try not loaded module yet, changed behaviour with previous one. */
    evas_module_foreach_image_loader(_evas_image_foreach_loader, ie);
    if (ie->info.module) return 0;
+
+   /* This is our last chance, try all known image loader. */
+   /* FIXME: We could use eina recursive module search ability. */
+   for (i = 0; i < sizeof (loaders_name) / sizeof (char *); ++i)
+     {
+	em = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loaders_name[i]);
+	if (em)
+	  {
+	     if (evas_module_load(em))
+	       {
+		  evas_module_use(em);
+		  evas_image_load_func = em->functions;
+		  if (evas_image_load_func->file_head(ie, ie->file, ie->key))
+		    goto ok;
+		  evas_module_unload(em);
+	       }
+	  }
+     }
 
    return -1;
 
