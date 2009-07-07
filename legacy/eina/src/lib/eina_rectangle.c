@@ -93,6 +93,8 @@ _eina_rectangle_merge_list(Eina_List *empty, Eina_Rectangle *r)
 {
    Eina_Rectangle *match;
    Eina_List *l;
+   int xw;
+   int yh;
 
    if (r->w == 0 || r->h == 0)
      {
@@ -100,10 +102,14 @@ _eina_rectangle_merge_list(Eina_List *empty, Eina_Rectangle *r)
 	return empty;
      }
 
+ start_again:
+   xw = r->x + r->w;
+   yh = r->y + r->h;
+
    EINA_LIST_FOREACH(empty, l, match)
      {
 	if (match->x == r->x && match->w == r->w
-	    && (match->y == r->y + r->h || r->y == match->y + match->h))
+	    && (match->y == yh || r->y == match->y + match->h))
 	  {
 	     if (match->y > r->y)
 	       match->y = r->y;
@@ -113,10 +119,12 @@ _eina_rectangle_merge_list(Eina_List *empty, Eina_Rectangle *r)
 
 	     empty = eina_list_remove_list(empty, l);
 
-	     return _eina_rectangle_merge_list(empty, match);
+	     r = match;
+
+	     goto start_again;
 	  }
 	else if (match->y == r->y && match->h == r->h
-		 && (match->x == r->x + r->w || r->x == match->x + match->w))
+		 && (match->x == xw || r->x == match->x + match->w))
 	  {
 	     if (match->x > r->x)
 	       match->x = r->x;
@@ -126,7 +134,9 @@ _eina_rectangle_merge_list(Eina_List *empty, Eina_Rectangle *r)
 
 	     empty = eina_list_remove_list(empty, l);
 
-	     return _eina_rectangle_merge_list(empty, match);
+	     r = match;
+
+	     goto start_again;
 	  }
      }
 
@@ -153,13 +163,11 @@ _eina_rectangle_empty_space_find(Eina_List *empty, int w, int h, int *x, int *y)
 	       {
 		  r->y += h;
 		  r->h -= h;
-		  empty = _eina_rectangle_merge_list(empty, r);
 	       }
 	     else if (r->h == h)
 	       {
 		  r->x += w;
 		  r->w -= w;
-		  empty = _eina_rectangle_merge_list(empty, r);
 	       }
 	     else
 	       {
@@ -190,8 +198,8 @@ _eina_rectangle_empty_space_find(Eina_List *empty, int w, int h, int *x, int *y)
 		  empty = _eina_rectangle_merge_list(empty, r);
 
 		  r = eina_rectangle_new(x2, y2, w2, h2);
-		  if (r) empty = _eina_rectangle_merge_list(empty, r);
 	       }
+	     if (r) empty = _eina_rectangle_merge_list(empty, r);
 	     /* Return empty */
 	     return empty;
 	  }
@@ -242,7 +250,7 @@ eina_rectangle_init(void)
 #endif
 
    _eina_rectangle_alloc_mp = eina_mempool_add(choice, "rectangle-alloc", NULL,
-                                         sizeof (Eina_Rectangle_Alloc) + sizeof (Eina_Rectangle), 42);
+                                         sizeof (Eina_Rectangle_Alloc) + sizeof (Eina_Rectangle), 256);
    if (!_eina_rectangle_alloc_mp)
      {
         EINA_ERROR_PERR("ERROR: Mempool for rectangle cannot be allocated in list init.\n");
