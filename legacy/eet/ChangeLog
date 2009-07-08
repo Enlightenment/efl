@@ -186,3 +186,7 @@
 
 	* Release eet 1.2.1
 
+2009-07-08  Cedric BAIL
+
+	* Reorder gcry init to be used during gnutls init.
+
