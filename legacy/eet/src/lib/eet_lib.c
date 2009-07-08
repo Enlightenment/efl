@@ -731,8 +731,6 @@ eet_init(void)
    if (eet_initcount > 1) return eet_initcount;
 
 #ifdef HAVE_GNUTLS
-   if (gnutls_global_init())
-     return --eet_initcount;
    /* Before the library can be used, it must initialize itself if needed. */
    if (gcry_control (GCRYCTL_ANY_INITIALIZATION_P) == 0)
      {
@@ -740,10 +738,7 @@ eet_init(void)
 	/* Disable warning messages about problems with the secure memory subsystem.
 	   This command should be run right after gcry_check_version. */
 	if (gcry_control(GCRYCTL_DISABLE_SECMEM_WARN))
-	  {
-	     gnutls_global_deinit();
-	     return --eet_initcount;
-	  }
+	  return --eet_initcount;
 	/* This command is used to allocate a pool of secure memory and thus
 	   enabling the use of secure memory. It also drops all extra privileges the
 	   process has (i.e. if it is run as setuid (root)). If the argument nbytes
@@ -751,11 +746,10 @@ eet_init(void)
 	   allocated is currently 16384 bytes; you may thus use a value of 1 to
 	   request that default size. */
 	if (gcry_control(GCRYCTL_INIT_SECMEM, 16384, 0))
-	  {
-	     gnutls_global_deinit();
-	     return --eet_initcount;
-	  }
+	  return --eet_initcount;
      }
+   if (gnutls_global_init())
+     return --eet_initcount;
 #endif
 #ifdef HAVE_OPENSSL
    ERR_load_crypto_strings();
