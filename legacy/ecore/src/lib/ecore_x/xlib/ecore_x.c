@@ -1022,31 +1022,6 @@ ecore_x_window_client_sniff(Ecore_X_Window win)
    XShapeSelectInput(_ecore_x_disp, win, ShapeNotifyMask);
 }
 
-/**
- * Retrieves the atom value associated with the given name.
- * @param  name The given name.
- * @return Associated atom value.
- */
-EAPI Ecore_X_Atom    
-ecore_x_atom_get(const char *name)
-{
-   if (!_ecore_x_disp) return 0;
-   return XInternAtom(_ecore_x_disp, name, False);
-}
-
-EAPI void
-ecore_x_atoms_get(const char **names, int num, Ecore_X_Atom *atoms)
-{
-   Atom *atoms_int;
-   int i;
-   
-   if (!_ecore_x_disp) return;
-   atoms_int = alloca(num * sizeof(Atom));
-   XInternAtoms(_ecore_x_disp, (char **)names, num, False, atoms_int);
-   for (i = 0; i < num; i++)
-     atoms[i] = atoms_int[i];
-}
-
 
 
 
