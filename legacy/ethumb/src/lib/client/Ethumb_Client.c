@@ -474,7 +474,7 @@ ethumb_client_disconnect(Ethumb_Client *client)
    while (l)
      {
 	struct _ethumb_pending_remove *pending = l->data;
-	l = eina_list_remove_list(l, l);
+	client->pending_remove = eina_list_remove_list(client->pending_remove, l);
 	dbus_pending_call_cancel(pending->pending_call);
 	dbus_pending_call_unref(pending->pending_call);
 	free(pending);
@@ -484,7 +484,7 @@ ethumb_client_disconnect(Ethumb_Client *client)
    while (l)
      {
 	struct _ethumb_pending_gen *pending = l->data;
-	l = eina_list_remove_list(l, l);
+	client->pending_gen = eina_list_remove_list(client->pending_gen, l);
 	free(pending);
      }
 
@@ -888,7 +888,7 @@ ethumb_client_queue_remove(Ethumb_Client *client, long id, void (*queue_remove_c
 	     l = l->next;
 	     continue;
 	  }
-	l = eina_list_remove_list(l, l);
+	client->pending_add = eina_list_remove_list(client->pending_add, l);
 	eina_stringshare_del(pending->file);
 	eina_stringshare_del(pending->key);
 	eina_stringshare_del(pending->thumb);
@@ -912,7 +912,7 @@ ethumb_client_queue_remove(Ethumb_Client *client, long id, void (*queue_remove_c
 	     l = l->next;
 	     continue;
 	  }
-	l = eina_list_remove_list(l, l);
+	client->pending_gen = eina_list_remove_list(client->pending_gen, l);
 	eina_stringshare_del(pending->file);
 	eina_stringshare_del(pending->key);
 	eina_stringshare_del(pending->thumb);
