@@ -52,7 +52,7 @@
 struct _Ethumb_Client
 {
    Ethumb *ethumb;
-   long id_count;
+   int id_count;
 
    E_DBus_Connection *conn;
    E_DBus_Signal_Handler *name_owner_changed_handler;
@@ -80,7 +80,7 @@ struct _Ethumb_Client
 
 struct _ethumb_pending_add
 {
-   long id;
+   dbus_int32_t id;
    const char *file;
    const char *key;
    const char *thumb;
@@ -94,7 +94,7 @@ struct _ethumb_pending_add
 
 struct _ethumb_pending_remove
 {
-   long id;
+   dbus_int32_t id;
    void (*remove_cb)(Eina_Bool result, void *data);
    void *data;
    DBusPendingCall *pending_call;
@@ -103,7 +103,7 @@ struct _ethumb_pending_remove
 
 struct _ethumb_pending_gen
 {
-   long id;
+   dbus_int32_t id;
    const char *file;
    const char *key;
    const char *thumb;
@@ -279,7 +279,7 @@ _ethumb_client_start_server_cb(void *data, DBusMessage *msg, DBusError *err)
 {
    Ethumb_Client *client = data;
    DBusMessageIter iter;
-   unsigned int ret;
+   dbus_uint32_t ret;
    int t;
 
    client->pending_start_service_by_name = NULL;
@@ -538,7 +538,8 @@ static void
 _ethumb_client_ethumb_setup_cb(void *data, DBusMessage *msg, DBusError *error)
 {
    DBusMessageIter iter;
-   int t, result = 0;
+   int t;
+   dbus_bool_t result = 0;
    Ethumb_Client *client = data;
 
    client->pending_setup = NULL;
@@ -598,12 +599,13 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
    DBusMessageIter iter, aiter, diter, viter, vaiter;
    Ethumb *e = client->ethumb;
    const char *entry;
-   int tw, th, format, aspect, quality, compress;
+   dbus_int32_t tw, th, format, aspect, quality, compress;
    float cx, cy;
+   double t;
    const char *theme_file, *group, *swallow;
    const char *directory, *category;
-   float video_time;
-   int document_page;
+   double video_time;
+   dbus_int32_t document_page;
 
    EINA_SAFETY_ON_NULL_RETURN(client);
    client->ethumb_dirty = 0;
@@ -649,8 +651,10 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
    _open_variant_iter("crop", "(dd)", viter);
    dbus_message_iter_open_container(&viter, DBUS_TYPE_STRUCT, NULL, &vaiter);
    ethumb_thumb_crop_align_get(e, &cx, &cy);
-   dbus_message_iter_append_basic(&vaiter, DBUS_TYPE_DOUBLE, &cx);
-   dbus_message_iter_append_basic(&vaiter, DBUS_TYPE_DOUBLE, &cy);
+   t = cx;
+   dbus_message_iter_append_basic(&vaiter, DBUS_TYPE_DOUBLE, &t);
+   t = cy;
+   dbus_message_iter_append_basic(&vaiter, DBUS_TYPE_DOUBLE, &t);
    dbus_message_iter_close_container(&viter, &vaiter);
    _close_variant_iter(viter);
 
@@ -708,12 +712,12 @@ static void
 _ethumb_client_generated_cb(void *data, DBusMessage *msg)
 {
    DBusMessageIter iter;
-   long id = -1;
+   dbus_int32_t id = -1;
    const char *thumb;
    const char *thumb_key;
    Ethumb_Client *client = data;
    int t;
-   int success;
+   dbus_bool_t success;
    Eina_List *l;
    int found;
    struct _ethumb_pending_gen *pending;
@@ -721,7 +725,7 @@ _ethumb_client_generated_cb(void *data, DBusMessage *msg)
    dbus_message_iter_init(msg, &iter);
 
    t = dbus_message_iter_get_arg_type(&iter);
-   if (!_dbus_iter_type_check(t, DBUS_TYPE_INT64))
+   if (!_dbus_iter_type_check(t, DBUS_TYPE_INT32))
      goto end;
    dbus_message_iter_get_basic(&iter, &id);
    dbus_message_iter_next(&iter);
@@ -781,7 +785,7 @@ _ethumb_client_queue_add_cb(void *data, DBusMessage *msg, DBusError *error)
 {
    DBusMessageIter iter;
    int t;
-   long id = -1;
+   dbus_int32_t id = -1;
    struct _ethumb_pending_add *pending = data;
    struct _ethumb_pending_gen *generating;
    Ethumb_Client *client = pending->client;
@@ -792,7 +796,7 @@ _ethumb_client_queue_add_cb(void *data, DBusMessage *msg, DBusError *error)
      goto end;
 
    t = dbus_message_iter_get_arg_type(&iter);
-   if (!_dbus_iter_type_check(t, DBUS_TYPE_INT64))
+   if (!_dbus_iter_type_check(t, DBUS_TYPE_INT32))
      goto end;
 
    dbus_message_iter_get_basic(&iter, &id);
@@ -838,7 +842,7 @@ _ethumb_client_queue_add(Ethumb_Client *client, const char *file, const char *ke
 				      "queue_add");
 
    dbus_message_iter_init_append(msg, &iter);
-   dbus_message_iter_append_basic(&iter, DBUS_TYPE_INT64, &pending->id);
+   dbus_message_iter_append_basic(&iter, DBUS_TYPE_INT32, &pending->id);
    _ethumb_client_dbus_append_bytearray(&iter, file);
    _ethumb_client_dbus_append_bytearray(&iter, key);
    _ethumb_client_dbus_append_bytearray(&iter, thumb);
@@ -858,7 +862,7 @@ _ethumb_client_queue_remove_cb(void *data, DBusMessage *msg, DBusError *error)
 {
    DBusMessageIter iter;
    int t;
-   int success = 0;
+   dbus_bool_t success = 0;
    struct _ethumb_pending_remove *pending = data;
    Ethumb_Client *client = pending->client;
 
@@ -880,12 +884,13 @@ end:
 }
 
 EAPI void
-ethumb_client_queue_remove(Ethumb_Client *client, long id, void (*queue_remove_cb)(Eina_Bool success, void *data), void *data)
+ethumb_client_queue_remove(Ethumb_Client *client, int id, void (*queue_remove_cb)(Eina_Bool success, void *data), void *data)
 {
    DBusMessage *msg;
    struct _ethumb_pending_remove *pending;
    Eina_List *l;
    int found;
+   dbus_int32_t id32 = id;
    EINA_SAFETY_ON_NULL_RETURN(client);
 
    pending = calloc(1, sizeof(*pending));
@@ -899,7 +904,7 @@ ethumb_client_queue_remove(Ethumb_Client *client, long id, void (*queue_remove_c
 				      _ethumb_dbus_objects_interface,
 				      "queue_remove");
 
-   dbus_message_append_args(msg, DBUS_TYPE_INT64, &id, DBUS_TYPE_INVALID);
+   dbus_message_append_args(msg, DBUS_TYPE_INT32, &id32, DBUS_TYPE_INVALID);
    pending->pending_call = e_dbus_message_send(client->conn, msg,
 					       _ethumb_client_queue_remove_cb,
 					       -1, pending);
@@ -910,7 +915,7 @@ ethumb_client_queue_remove(Ethumb_Client *client, long id, void (*queue_remove_c
    while (l)
      {
 	struct _ethumb_pending_add *pending = l->data;
-	if (pending->id != id)
+	if (pending->id != id32)
 	  {
 	     l = l->next;
 	     continue;
@@ -934,7 +939,7 @@ ethumb_client_queue_remove(Ethumb_Client *client, long id, void (*queue_remove_c
    while (l)
      {
 	struct _ethumb_pending_gen *pending = l->data;
-	if (pending->id != id)
+	if (pending->id != id32)
 	  {
 	     l = l->next;
 	     continue;

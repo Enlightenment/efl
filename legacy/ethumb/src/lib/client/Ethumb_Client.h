@@ -50,7 +50,7 @@ EAPI Ethumb_Client * ethumb_client_connect(ec_connect_callback_t connect_cb, voi
 EAPI void ethumb_client_disconnect(Ethumb_Client *client);
 EAPI void ethumb_client_on_server_die_callback_set(Ethumb_Client *client, void (*on_server_die_cb)(Ethumb_Client *client, void *data), void *data);
 
-EAPI void ethumb_client_queue_remove(Ethumb_Client *client, long id, void (*queue_remove_cb)(Eina_Bool success, void *data), void *data);
+EAPI void ethumb_client_queue_remove(Ethumb_Client *client, int id, void (*queue_remove_cb)(Eina_Bool success, void *data), void *data);
 EAPI void ethumb_client_queue_clear(Ethumb_Client *client);
 
 EAPI void ethumb_client_fdo_set(Ethumb_Client *client, Ethumb_Thumb_FDO_Size s);

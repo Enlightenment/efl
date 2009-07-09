@@ -90,7 +90,7 @@ struct _Ethumb_Setup
 
 struct _Ethumb_Request
 {
-   long id;
+   int id;
    const char *file, *key;
    const char *thumb, *thumb_key;
    struct _Ethumb_Setup setup;
@@ -103,9 +103,9 @@ struct _Ethumb_Object
    const char *client;
    Eina_List *queue;
    int nqueue;
-   long id_count;
-   long max_id;
-   long min_id;
+   int id_count;
+   int max_id;
+   int min_id;
    E_DBus_Object *dbus_obj;
 };
 
@@ -178,7 +178,7 @@ const Ecore_Getopt optdesc = {
   }
 };
 
-static void _ethumb_dbus_generated_signal(struct _Ethumbd *ed, long *id, const char *thumb_path, const char *thumb_key, Eina_Bool success);
+static void _ethumb_dbus_generated_signal(struct _Ethumbd *ed, int *id, const char *thumb_path, const char *thumb_key, Eina_Bool success);
 
 static int
 _ethumbd_timeout_cb(void *data)
@@ -212,7 +212,7 @@ _ethumbd_timeout_stop(struct _Ethumbd *ed)
 }
 
 static int
-_ethumb_dbus_check_id(struct _Ethumb_Object *eobject, long id)
+_ethumb_dbus_check_id(struct _Ethumb_Object *eobject, int id)
 {
    if (id < 0 || id > MAX_ID)
      return 0;
@@ -226,7 +226,7 @@ _ethumb_dbus_check_id(struct _Ethumb_Object *eobject, long id)
 }
 
 static void
-_ethumb_dbus_inc_max_id(struct _Ethumb_Object *eobject, long id)
+_ethumb_dbus_inc_max_id(struct _Ethumb_Object *eobject, int id)
 {
    if (eobject->min_id < 0 && eobject->max_id < 0)
      eobject->min_id = id;
@@ -913,7 +913,7 @@ _ethumb_dbus_queue_add_cb(E_DBus_Object *object, DBusMessage *msg)
    struct _Ethumb_Object *eobject;
    struct _Ethumbd *ed;
    struct _Ethumb_Request *request;
-   long id = -1;
+   dbus_int32_t id = -1;
 
    dbus_message_iter_init(msg, &iter);
    dbus_message_iter_get_basic(&iter, &id);
@@ -959,7 +959,7 @@ _ethumb_dbus_queue_add_cb(E_DBus_Object *object, DBusMessage *msg)
 end:
    reply = dbus_message_new_method_return(msg);
    dbus_message_iter_init_append(reply, &iter);
-   dbus_message_iter_append_basic(&iter, DBUS_TYPE_INT64, &id);
+   dbus_message_iter_append_basic(&iter, DBUS_TYPE_INT32, &id);
    return reply;
 }
 
@@ -968,12 +968,12 @@ _ethumb_dbus_queue_remove_cb(E_DBus_Object *object, DBusMessage *msg)
 {
    DBusMessage *reply;
    DBusMessageIter iter;
-   long id;
+   dbus_int32_t id;
    struct _Ethumb_Object_Data *odata;
    struct _Ethumb_Object *eobject;
    struct _Ethumb_Request *request;
    struct _Ethumbd *ed;
-   int r = 0;
+   dbus_bool_t r = 0;
    Eina_List *l;
 
    dbus_message_iter_init(msg, &iter);
@@ -1083,10 +1083,10 @@ static int
 _ethumb_dbus_fdo_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
-   int fdo;
+   dbus_int32_t fdo;
 
    type = dbus_message_iter_get_arg_type(iter);
-   if (type != DBUS_TYPE_INT32 && type != DBUS_TYPE_INT64)
+   if (type != DBUS_TYPE_INT32)
      {
 	ERR("invalid param for fdo_set.\n");
 	return 0;
@@ -1103,7 +1103,7 @@ _ethumb_dbus_size_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, str
 {
    DBusMessageIter oiter;
    int type;
-   int w, h;
+   dbus_int32_t w, h;
 
    type = dbus_message_iter_get_arg_type(iter);
    if (type != DBUS_TYPE_STRUCT)
@@ -1128,10 +1128,10 @@ static int
 _ethumb_dbus_format_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
-   int format;
+   dbus_int32_t format;
 
    type = dbus_message_iter_get_arg_type(iter);
-   if (type != DBUS_TYPE_INT32 && type != DBUS_TYPE_INT64)
+   if (type != DBUS_TYPE_INT32)
      {
 	ERR("invalid param for format_set.\n");
 	return 0;
@@ -1149,10 +1149,10 @@ static int
 _ethumb_dbus_aspect_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
-   int aspect;
+   dbus_int32_t aspect;
 
    type = dbus_message_iter_get_arg_type(iter);
-   if (type != DBUS_TYPE_INT32 && type != DBUS_TYPE_INT64)
+   if (type != DBUS_TYPE_INT32)
      {
 	ERR("invalid param for aspect_set.\n");
 	return 0;
@@ -1171,7 +1171,7 @@ _ethumb_dbus_crop_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, str
 {
    DBusMessageIter oiter;
    int type;
-   float x, y;
+   double x, y;
 
    type = dbus_message_iter_get_arg_type(iter);
    if (type != DBUS_TYPE_STRUCT)
@@ -1196,10 +1196,10 @@ static int
 _ethumb_dbus_quality_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
-   int quality;
+   dbus_int32_t quality;
 
    type = dbus_message_iter_get_arg_type(iter);
-   if (type != DBUS_TYPE_INT32 && type != DBUS_TYPE_INT64)
+   if (type != DBUS_TYPE_INT32)
      {
 	ERR("invalid param for quality_set.\n");
 	return 0;
@@ -1218,10 +1218,10 @@ static int
 _ethumb_dbus_compress_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
-   int compress;
+   dbus_int32_t compress;
 
    type = dbus_message_iter_get_arg_type(iter);
-   if (type != DBUS_TYPE_INT32 && type != DBUS_TYPE_INT64)
+   if (type != DBUS_TYPE_INT32)
      {
 	ERR("invalid param for compress_set.\n");
 	return 0;
@@ -1331,10 +1331,10 @@ static int
 _ethumb_dbus_document_page_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
-   int document_page;
+   dbus_int32_t document_page;
 
    type = dbus_message_iter_get_arg_type(iter);
-   if (type != DBUS_TYPE_INT32 && type != DBUS_TYPE_INT64)
+   if (type != DBUS_TYPE_INT32)
      {
 	ERR("invalid param for document_page_set.\n");
 	return 0;
@@ -1406,7 +1406,7 @@ _ethumb_dbus_ethumb_setup_cb(E_DBus_Object *object, DBusMessage *msg)
    struct _Ethumbd *ed;
    struct _Ethumb_Object *eobject;
    struct _Ethumb_Request *request;
-   int r = 0;
+   dbus_bool_t r = 0;
    int atype;
 
    dbus_message_iter_init(msg, &iter);
@@ -1453,15 +1453,17 @@ end:
 }
 
 static void
-_ethumb_dbus_generated_signal(struct _Ethumbd *ed, long *id, const char *thumb_path, const char *thumb_key, Eina_Bool success)
+_ethumb_dbus_generated_signal(struct _Ethumbd *ed, int *id, const char *thumb_path, const char *thumb_key, Eina_Bool success)
 {
    DBusMessage *signal;
    int current;
    const char *opath;
    DBusMessageIter iter;
-   Eina_Bool value;
+   dbus_bool_t value;
+   dbus_int32_t id32;
 
    value = success;
+   id32 = *id;
 
    current = ed->queue.current;
    opath = ed->queue.table[current].path;
@@ -1469,7 +1471,7 @@ _ethumb_dbus_generated_signal(struct _Ethumbd *ed, long *id, const char *thumb_p
 				    "generated");
 
    dbus_message_iter_init_append(signal, &iter);
-   dbus_message_iter_append_basic(&iter, DBUS_TYPE_INT64, id);
+   dbus_message_iter_append_basic(&iter, DBUS_TYPE_INT32, &id32);
    _ethumb_dbus_append_bytearray(&iter, thumb_path);
    _ethumb_dbus_append_bytearray(&iter, thumb_key);
    dbus_message_iter_append_basic(&iter, DBUS_TYPE_BOOLEAN, &value);
@@ -1480,8 +1482,8 @@ _ethumb_dbus_generated_signal(struct _Ethumbd *ed, long *id, const char *thumb_p
 
 static struct _Ethumb_DBus_Method_Table _ethumb_dbus_objects_methods[] =
 {
-     { "queue_add", "xayayayay", "x", _ethumb_dbus_queue_add_cb },
-     { "queue_remove", "x", "b", _ethumb_dbus_queue_remove_cb },
+     { "queue_add", "iayayayay", "i", _ethumb_dbus_queue_add_cb },
+     { "queue_remove", "i", "b", _ethumb_dbus_queue_remove_cb },
      { "clear_queue", "", "", _ethumb_dbus_queue_clear_cb },
      { "ethumb_setup", "a{sv}", "b", _ethumb_dbus_ethumb_setup_cb },
      { "delete", "", "", _ethumb_dbus_delete_cb },
