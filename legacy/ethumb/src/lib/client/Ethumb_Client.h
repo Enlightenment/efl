@@ -46,7 +46,7 @@ typedef void (*generated_callback_t)(long id, const char *file, const char *key,
 EAPI int ethumb_client_init(void);
 EAPI int ethumb_client_shutdown(void);
 
-EAPI Ethumb_Client * ethumb_client_connect(ec_connect_callback_t connect_cb, void *data);
+EAPI Ethumb_Client * ethumb_client_connect(ec_connect_callback_t connect_cb, void *data, void (*free_data)(void *));
 EAPI void ethumb_client_disconnect(Ethumb_Client *client);
 EAPI void ethumb_client_on_server_die_callback_set(Ethumb_Client *client, void (*on_server_die_cb)(Ethumb_Client *client, void *data), void *data);
 
@@ -79,7 +79,7 @@ EAPI void ethumb_client_file_free(Ethumb_Client *client);
 EAPI void ethumb_client_thumb_path_set(Ethumb_Client *client, const char *path, const char *key);
 EAPI void ethumb_client_thumb_path_get(Ethumb_Client *client, const char **path, const char **key);
 EAPI Eina_Bool ethumb_client_thumb_exists(Ethumb_Client *client);
-EAPI long ethumb_client_generate(Ethumb_Client *client, generated_callback_t generated_cb, void *data);
+EAPI long ethumb_client_generate(Ethumb_Client *client, generated_callback_t generated_cb, void *data, void (*free_data)(void *));
 
 #ifdef __cplusplus
 }

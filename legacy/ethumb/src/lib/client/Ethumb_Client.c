@@ -63,6 +63,7 @@ struct _Ethumb_Client
    DBusPendingCall *pending_new;
    ec_connect_callback_t connect_cb;
    void *connect_cb_data;
+   void (*connect_cb_free_data)(void *);
    Eina_List *pending_add;
    Eina_List *pending_remove;
    Eina_List *pending_gen;
@@ -86,6 +87,7 @@ struct _ethumb_pending_add
    const char *thumb_key;
    generated_callback_t generated_cb;
    void *data;
+   void (*free_data)(void *);
    DBusPendingCall *pending_call;
    Ethumb_Client *client;
 };
@@ -108,6 +110,7 @@ struct _ethumb_pending_gen
    const char *thumb_key;
    generated_callback_t generated_cb;
    void *data;
+   void (*free_data)(void *);
 };
 
 static const char _ethumb_dbus_bus_name[] = "org.enlightenment.Ethumb";
@@ -248,11 +251,14 @@ _ethumb_client_new_cb(void *data, DBusMessage *msg, DBusError *error)
       _ethumb_client_generated_cb, client);
 
    client->connect_cb(client, 1, client->connect_cb_data);
+   if (client->connect_cb_free_data)
+     client->connect_cb_free_data(client->connect_cb_data);
    return;
 
 end_error:
    client->connect_cb(client, 0, client->connect_cb_data);
-   return;
+   if (client->connect_cb_free_data)
+     client->connect_cb_free_data(client->connect_cb_data);
 }
 
 static void
@@ -317,6 +323,8 @@ _ethumb_client_start_server_cb(void *data, DBusMessage *msg, DBusError *err)
  error:
    ERR("failed to start Ethumbd DBus service by its name.\n");
    client->connect_cb(client, 0, client->connect_cb_data);
+   if (client->connect_cb_free_data)
+     client->connect_cb_free_data(client->connect_cb_data);
 }
 
 static void
@@ -336,6 +344,8 @@ _ethumb_client_start_server(Ethumb_Client *client)
      {
 	ERR("could not start service by name!\n");
 	client->connect_cb(client, 0, client->connect_cb_data);
+	if (client->connect_cb_free_data)
+	  client->connect_cb_free_data(client->connect_cb_data);
      }
 }
 
@@ -379,6 +389,8 @@ _ethumb_client_get_name_owner(void *data, DBusMessage *msg, DBusError *err)
 
 error:
    client->connect_cb(client, 0, client->connect_cb_data);
+   if (client->connect_cb_free_data)
+     client->connect_cb_free_data(client->connect_cb_data);
 }
 
 EAPI int
@@ -406,7 +418,7 @@ ethumb_client_shutdown(void)
 }
 
 EAPI Ethumb_Client *
-ethumb_client_connect(ec_connect_callback_t connect_cb, void *data)
+ethumb_client_connect(ec_connect_callback_t connect_cb, void *data, void (*free_data)(void *))
 {
    Ethumb_Client *eclient;
 
@@ -421,6 +433,7 @@ ethumb_client_connect(ec_connect_callback_t connect_cb, void *data)
 
    eclient->connect_cb = connect_cb;
    eclient->connect_cb_data = data;
+   eclient->connect_cb_free_data = free_data;
 
    eclient->ethumb = ethumb_new();
    if (!eclient->ethumb)
@@ -739,6 +752,8 @@ _ethumb_client_generated_cb(void *data, DBusMessage *msg)
 	pending->generated_cb(id, pending->file, pending->key,
                               pending->thumb, pending->thumb_key,
                               success, pending->data);
+        if (pending->free_data)
+	  pending->free_data(pending->data);
 	eina_stringshare_del(pending->file);
 	eina_stringshare_del(pending->key);
 	eina_stringshare_del(pending->thumb);
@@ -780,6 +795,7 @@ _ethumb_client_queue_add_cb(void *data, DBusMessage *msg, DBusError *error)
    generating->thumb_key = pending->thumb_key;
    generating->generated_cb = pending->generated_cb;
    generating->data = pending->data;
+   generating->free_data = pending->free_data;
    client->pending_gen = eina_list_append(client->pending_gen, generating);
 
 end:
@@ -787,7 +803,7 @@ end:
 }
 
 static long
-_ethumb_client_queue_add(Ethumb_Client *client, const char *file, const char *key, const char *thumb, const char *thumb_key, generated_callback_t generated_cb, void *data)
+_ethumb_client_queue_add(Ethumb_Client *client, const char *file, const char *key, const char *thumb, const char *thumb_key, generated_callback_t generated_cb, void *data, void (*free_data)(void *))
 {
    DBusMessage *msg;
    DBusMessageIter iter;
@@ -801,6 +817,7 @@ _ethumb_client_queue_add(Ethumb_Client *client, const char *file, const char *ke
    pending->thumb_key = eina_stringshare_add(thumb_key);
    pending->generated_cb = generated_cb;
    pending->data = data;
+   pending->free_data = free_data;
    pending->client = client;
 
    client->id_count = (client->id_count + 1) % MAX_ID;
@@ -1141,7 +1158,7 @@ ethumb_client_thumb_exists(Ethumb_Client *client)
 }
 
 EAPI long
-ethumb_client_generate(Ethumb_Client *client, generated_callback_t generated_cb, void *data)
+ethumb_client_generate(Ethumb_Client *client, generated_callback_t generated_cb, void *data, void (*free_data)(void *))
 {
    const char *file, *key, *thumb, *thumb_key;
    long id;
@@ -1159,7 +1176,7 @@ ethumb_client_generate(Ethumb_Client *client, generated_callback_t generated_cb,
    if (client->ethumb_dirty)
      ethumb_client_ethumb_setup(client);
    id = _ethumb_client_queue_add(client, file, key, thumb, thumb_key,
-				 generated_cb, data);
+				 generated_cb, data, free_data);
 
    return id;
 }

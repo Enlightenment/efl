@@ -966,9 +966,12 @@ _ethumb_finished_idler_cb(void *data)
    Ethumb *e = data;
 
    e->finished_cb(e, e->cb_result, e->cb_data);
+   if (e->cb_data_free)
+     e->cb_data_free(e->cb_data);
    e->finished_idler = NULL;
    e->finished_cb = NULL;
    e->cb_data = NULL;
+   e->cb_data_free = NULL;
 
    return 0;
 }
@@ -985,7 +988,7 @@ ethumb_finished_callback_call(Ethumb *e, int result)
 }
 
 EAPI Eina_Bool
-ethumb_generate(Ethumb *e, ethumb_generate_callback_t finished_cb, void *data)
+ethumb_generate(Ethumb *e, ethumb_generate_callback_t finished_cb, void *data, void (*free_data)(void *))
 {
    int r;
 
@@ -1000,6 +1003,7 @@ ethumb_generate(Ethumb *e, ethumb_generate_callback_t finished_cb, void *data)
      }
    e->finished_cb = finished_cb;
    e->cb_data = data;
+   e->cb_data_free = free_data;
 
    if (!e->src_path)
      {

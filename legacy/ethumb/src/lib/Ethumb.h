@@ -109,7 +109,7 @@ EAPI void ethumb_file_get(const Ethumb *e, const char **path, const char **key) 
 EAPI void ethumb_file_free(Ethumb *e) EINA_ARG_NONNULL(1);
 EAPI void ethumb_thumb_path_set(Ethumb *e, const char *path, const char *key) EINA_ARG_NONNULL(1);
 EAPI void ethumb_thumb_path_get(Ethumb *e, const char **path, const char **key) EINA_ARG_NONNULL(1);
-EAPI Eina_Bool ethumb_generate(Ethumb *e, ethumb_generate_callback_t finished_cb, void *data) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool ethumb_generate(Ethumb *e, ethumb_generate_callback_t finished_cb, void *data, void (*free_data)(void *)) EINA_ARG_NONNULL(1, 2);
 EAPI Eina_Bool ethumb_exists(Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 #ifdef __cplusplus

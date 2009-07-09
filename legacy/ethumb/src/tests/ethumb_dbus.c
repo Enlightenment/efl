@@ -57,7 +57,6 @@ _request_thumbnails(Ethumb_Client *client, void *data)
    DIR *dir;
    struct dirent *de;
    char buf[PATH_MAX];
-   int i;
 
    dir = opendir(path);
    if (!dir)
@@ -78,12 +77,7 @@ _request_thumbnails(Ethumb_Client *client, void *data)
 	  continue;
 	snprintf(buf, sizeof(buf), "%s/%s", path, de->d_name);
 	ethumb_client_file_set(client, buf, NULL);
-	ethumb_client_generate(client, _queue_add_cb, NULL);
-     }
-
-   for (i = 100; i < 200; i++)
-     {
-	ethumb_client_queue_remove(client, i, NULL, NULL);
+	ethumb_client_generate(client, _queue_add_cb, NULL, NULL);
      }
 
    closedir(dir);
@@ -115,7 +109,7 @@ main(int argc, char *argv[])
      }
 
    ethumb_client_init();
-   client = ethumb_client_connect(_connect_cb, argv[1]);
+   client = ethumb_client_connect(_connect_cb, argv[1], NULL);
    if (!client)
      {
 	fprintf(stderr, "ERROR: couldn't connect to server.\n");

@@ -268,7 +268,7 @@ _ec_op_generate(struct _Ethumbd_Child *ec)
    ethumb_file_set(ec->ethumbt[index], path, key);
    ethumb_thumb_path_set(ec->ethumbt[index], thumb_path, thumb_key);
    ethumb_generate(ec->ethumbt[index], _ec_op_generated_cb,
-		   ec);
+		   ec, NULL);
 
    free(path);
    free(key);

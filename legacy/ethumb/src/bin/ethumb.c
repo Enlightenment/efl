@@ -234,7 +234,7 @@ main(int argc, char *argv[])
 	     r = 1;
 	  }
 	else
-	  r = ethumb_generate(e, _finished_thumb, NULL);
+	  r = ethumb_generate(e, _finished_thumb, NULL, NULL);
      }
 
    if (r && !quit_option)

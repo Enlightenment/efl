@@ -39,6 +39,7 @@ struct _Ethumb
    Ecore_Idler *finished_idler;
    ethumb_generate_callback_t finished_cb;
    void *cb_data;
+   void (*cb_data_free)(void *);
    int cb_result;
 };
 
