@@ -51,7 +51,8 @@ typedef enum _Ethumb_Thumb_FDO_Size Ethumb_Thumb_FDO_Size;
 enum _Ethumb_Thumb_Format
 {
    ETHUMB_THUMB_FDO,
-   ETHUMB_THUMB_JPEG
+   ETHUMB_THUMB_JPEG,
+   ETHUMB_THUMB_EET
 };
 
 typedef enum _Ethumb_Thumb_Format Ethumb_Thumb_Format;

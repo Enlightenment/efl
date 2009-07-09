@@ -329,7 +329,8 @@ ethumb_thumb_format_set(Ethumb *e, Ethumb_Thumb_Format f)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
    EINA_SAFETY_ON_FALSE_RETURN(f == ETHUMB_THUMB_FDO ||
-			       f == ETHUMB_THUMB_JPEG);
+			       f == ETHUMB_THUMB_JPEG ||
+			       f == ETHUMB_THUMB_EET);
 
    e->format = f;
 }
@@ -686,8 +687,10 @@ _ethumb_file_generate_custom_category(Ethumb *e)
 
    if (e->format == ETHUMB_THUMB_FDO)
      format = "png";
-   else
+   else if (e->format == ETHUMB_THUMB_JPEG)
      format = "jpg";
+   else
+     format = "eet";
 
    if (e->frame)
      frame = "-framed";
@@ -732,16 +735,24 @@ _ethumb_file_generate_path(Ethumb *e)
 
    if (e->format == ETHUMB_THUMB_FDO)
      ext = "png";
-   else
+   else if (e->format == ETHUMB_THUMB_JPEG)
      ext = "jpg";
+   else
+     ext = "eet";
+
 
    fullname = ecore_file_realpath(e->src_path);
    hash = _ethumb_generate_hash(fullname);
    snprintf(buf, sizeof(buf), "%s/%s/%s.%s", thumb_dir, category, hash, ext);
    free(fullname);
    eina_stringshare_replace(&e->thumb_path, buf);
-   eina_stringshare_del(e->thumb_key);
-   e->thumb_key = NULL;
+   if (e->format == ETHUMB_THUMB_EET)
+     eina_stringshare_replace(&e->thumb_key, "thumbnail");
+   else
+     {
+	eina_stringshare_del(e->thumb_key);
+	e->thumb_key = NULL;
+     }
 
    eina_stringshare_del(thumb_dir);
    eina_stringshare_del(category);
