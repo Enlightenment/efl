@@ -598,7 +598,7 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
    DBusMessageIter iter, aiter, diter, viter, vaiter;
    Ethumb *e = client->ethumb;
    const char *entry;
-   int tw, th, format, aspect;
+   int tw, th, format, aspect, quality, compress;
    float cx, cy;
    const char *theme_file, *group, *swallow;
    const char *directory, *category;
@@ -652,6 +652,16 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
    dbus_message_iter_append_basic(&vaiter, DBUS_TYPE_DOUBLE, &cx);
    dbus_message_iter_append_basic(&vaiter, DBUS_TYPE_DOUBLE, &cy);
    dbus_message_iter_close_container(&viter, &vaiter);
+   _close_variant_iter(viter);
+
+   _open_variant_iter("quality", "i", viter);
+   quality = ethumb_thumb_quality_get(e);
+   dbus_message_iter_append_basic(&viter, DBUS_TYPE_INT32, &quality);
+   _close_variant_iter(viter);
+
+   _open_variant_iter("compress", "i", viter);
+   compress = ethumb_thumb_compress_get(e);
+   dbus_message_iter_append_basic(&viter, DBUS_TYPE_INT32, &compress);
    _close_variant_iter(viter);
 
    _open_variant_iter("frame", "(ayayay)", viter);
@@ -1046,6 +1056,38 @@ ethumb_client_crop_align_get(const Ethumb_Client *client, float *x, float *y)
    EINA_SAFETY_ON_NULL_RETURN(client);
 
    ethumb_thumb_crop_align_get(client->ethumb, x, y);
+}
+
+EAPI void
+ethumb_client_quality_set(Ethumb_Client *client, int quality)
+{
+   EINA_SAFETY_ON_NULL_RETURN(client);
+
+   ethumb_thumb_quality_set(client->ethumb, quality);
+}
+
+EAPI int
+ethumb_client_quality_get(const Ethumb_Client *client)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(client, 0);
+
+   return ethumb_thumb_quality_get(client->ethumb);
+}
+
+EAPI void
+ethumb_client_compress_set(Ethumb_Client *client, int compress)
+{
+   EINA_SAFETY_ON_NULL_RETURN(client);
+
+   ethumb_thumb_compress_set(client->ethumb, compress);
+}
+
+EAPI int
+ethumb_client_compress_get(const Ethumb_Client *client)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(client, 0);
+
+   return ethumb_thumb_compress_get(client->ethumb);
 }
 
 EAPI Eina_Bool

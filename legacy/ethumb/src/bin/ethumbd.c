@@ -64,6 +64,8 @@ struct _Ethumb_Setup
 	int format : 1;
 	int aspect : 1;
 	int crop : 1;
+	int quality : 1;
+	int compress : 1;
 	int directory : 1;
 	int category : 1;
 	int frame : 1;
@@ -75,6 +77,8 @@ struct _Ethumb_Setup
    int format;
    int aspect;
    float cx, cy;
+   int quality;
+   int compress;
    const char *directory;
    const char *category;
    const char *theme_file;
@@ -468,6 +472,8 @@ _ethumbd_pipe_write_setup(int fd, int type, const void *data)
       case ETHUMBD_FDO:
       case ETHUMBD_FORMAT:
       case ETHUMBD_ASPECT:
+      case ETHUMBD_QUALITY:
+      case ETHUMBD_COMPRESS:
       case ETHUMBD_SIZE_W:
       case ETHUMBD_SIZE_H:
       case ETHUMBD_DOCUMENT_PAGE:
@@ -522,6 +528,10 @@ _process_setup(struct _Ethumbd *ed)
 	_ethumbd_pipe_write_setup(fd, ETHUMBD_CROP_X, &setup->cx);
 	_ethumbd_pipe_write_setup(fd, ETHUMBD_CROP_Y, &setup->cy);
      }
+   if (setup->flags.quality)
+     _ethumbd_pipe_write_setup(fd, ETHUMBD_QUALITY, &setup->quality);
+   if (setup->flags.compress)
+     _ethumbd_pipe_write_setup(fd, ETHUMBD_COMPRESS, &setup->compress);
    if (setup->flags.directory)
      _ethumbd_pipe_write_setup(fd, ETHUMBD_DIRECTORY, setup->directory);
    if (setup->flags.category)
@@ -1183,6 +1193,49 @@ _ethumb_dbus_crop_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, str
 }
 
 static int
+_ethumb_dbus_quality_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+{
+   int type;
+   int quality;
+
+   type = dbus_message_iter_get_arg_type(iter);
+   if (type != DBUS_TYPE_INT32 && type != DBUS_TYPE_INT64)
+     {
+	ERR("invalid param for quality_set.\n");
+	return 0;
+     }
+
+   dbus_message_iter_get_basic(iter, &quality);
+   DBG("setting quality to: %d\n", quality);
+   request->setup.flags.quality = 1;
+   request->setup.quality = quality;
+
+   return 1;
+}
+
+
+static int
+_ethumb_dbus_compress_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+{
+   int type;
+   int compress;
+
+   type = dbus_message_iter_get_arg_type(iter);
+   if (type != DBUS_TYPE_INT32 && type != DBUS_TYPE_INT64)
+     {
+	ERR("invalid param for compress_set.\n");
+	return 0;
+     }
+
+   dbus_message_iter_get_basic(iter, &compress);
+   DBG("setting compress to: %d\n", compress);
+   request->setup.flags.compress = 1;
+   request->setup.compress = compress;
+
+   return 1;
+}
+
+static int
 _ethumb_dbus_frame_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    DBusMessageIter oiter;
@@ -1305,6 +1358,8 @@ static struct
        { "format", _ethumb_dbus_format_set },
        { "aspect", _ethumb_dbus_aspect_set },
        { "crop", _ethumb_dbus_crop_set },
+       { "quality", _ethumb_dbus_quality_set },
+       { "compress", _ethumb_dbus_compress_set },
        { "frame", _ethumb_dbus_frame_set },
        { "directory", _ethumb_dbus_directory_set },
        { "category", _ethumb_dbus_category_set },

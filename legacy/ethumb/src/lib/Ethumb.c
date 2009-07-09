@@ -188,6 +188,8 @@ ethumb_new(void)
    ethumb->th = THUMB_SIZE_NORMAL;
    ethumb->crop_x = 0.5;
    ethumb->crop_y = 0.5;
+   ethumb->quality = 80;
+   ethumb->compress = 9;
 
    ee = ecore_evas_buffer_new(1, 1);
    e = ecore_evas_get(ee);
@@ -373,6 +375,36 @@ ethumb_thumb_crop_align_get(const Ethumb *e, float *x, float *y)
 
    if (x) *x = e->crop_x;
    if (y) *y = e->crop_y;
+}
+
+EAPI void
+ethumb_thumb_quality_set(Ethumb *e, int quality)
+{
+   EINA_SAFETY_ON_NULL_RETURN(e);
+
+   e->quality = quality;
+}
+
+EAPI int
+ethumb_thumb_quality_get(const Ethumb *e)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
+   return e->quality;
+}
+
+EAPI void
+ethumb_thumb_compress_set(Ethumb *e, int compress)
+{
+   EINA_SAFETY_ON_NULL_RETURN(e);
+
+   e->compress = compress;
+}
+
+EAPI int
+ethumb_thumb_compress_get(const Ethumb *e)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
+   return e->compress;
 }
 
 EAPI Eina_Bool
@@ -865,6 +897,7 @@ ethumb_image_save(Ethumb *e)
 {
    Eina_Bool r;
    char *dname;
+   char flags[256];
 
    evas_damage_rectangle_add(e->sub_e, 0, 0, e->rw, e->rh);
    evas_render(e->sub_e);
@@ -887,8 +920,9 @@ ethumb_image_save(Ethumb *e)
 	return EINA_FALSE;
      }
 
-   r = evas_object_image_save(e->o, e->thumb_path, e->thumb_key,
-			      "quality=85");
+   snprintf(flags, sizeof(flags), "quality=%d compress=%d",
+	    e->quality, e->compress);
+   r = evas_object_image_save(e->o, e->thumb_path, e->thumb_key, flags);
 
    if (!r)
      {

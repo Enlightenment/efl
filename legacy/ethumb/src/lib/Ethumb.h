@@ -89,6 +89,12 @@ EAPI Ethumb_Thumb_Aspect ethumb_thumb_aspect_get(const Ethumb *e) EINA_WARN_UNUS
 EAPI void ethumb_thumb_crop_align_set(Ethumb *e, float x, float y) EINA_ARG_NONNULL(1);
 EAPI void ethumb_thumb_crop_align_get(const Ethumb *e, float *x, float *y) EINA_ARG_NONNULL(1);
 
+EAPI void ethumb_thumb_quality_set(Ethumb *e, int quality) EINA_ARG_NONNULL(1);
+EAPI int ethumb_thumb_quality_get(const Ethumb *e) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
+
+EAPI void ethumb_thumb_compress_set(Ethumb *e, int compress) EINA_ARG_NONNULL(1);
+EAPI int ethumb_thumb_compress_get(const Ethumb *e) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
+
 EAPI Eina_Bool ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const char *swallow) EINA_ARG_NONNULL(1);
 EAPI void ethumb_frame_get(const Ethumb *e, const char **theme_file, const char **group, const char **swallow) EINA_ARG_NONNULL(1);
 

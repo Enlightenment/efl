@@ -62,6 +62,10 @@ EAPI void ethumb_client_aspect_set(Ethumb_Client *client, Ethumb_Thumb_Aspect a)
 EAPI Ethumb_Thumb_Aspect ethumb_client_aspect_get(const Ethumb_Client *client);
 EAPI void ethumb_client_crop_align_set(Ethumb_Client *client, float x, float y);
 EAPI void ethumb_client_crop_align_get(const Ethumb_Client *client, float *x, float *y);
+EAPI void ethumb_client_quality_set(Ethumb_Client *client, int quality);
+EAPI int ethumb_client_quality_get(const Ethumb_Client *client);
+EAPI void ethumb_client_compress_set(Ethumb_Client *client, int compress);
+EAPI int ethumb_client_compress_get(const Ethumb_Client *client);
 EAPI Eina_Bool ethumb_client_frame_set(Ethumb_Client *client, const char *file, const char *group, const char *swallow);
 EAPI void ethumb_client_dir_path_set(Ethumb_Client *client, const char *path);
 EAPI const char * ethumb_client_dir_path_get(const Ethumb_Client *client);
