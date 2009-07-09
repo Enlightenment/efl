@@ -791,45 +791,77 @@ ethumb_thumb_path_get(Ethumb *e, const char **path, const char **key)
 }
 
 void
-ethumb_calculate_aspect(Ethumb *e, int iw, int ih, int *w, int *h)
+ethumb_calculate_aspect_from_ratio(Ethumb *e, float ia, int *w, int *h)
 {
+   float a;
+
    *w = e->tw;
    *h = e->th;
 
+   if (ia == 0)
+     return;
+
+   a = e->tw / (float)e->th;
+
    if (e->aspect == ETHUMB_THUMB_KEEP_ASPECT)
      {
-	if ((iw > ih && e->tw > 0) || e->th <= 0)
-	  *h = (e->tw * ih) / iw;
+	if ((ia > a && e->tw > 0) || e->th <= 0)
+	  *h = e->tw / ia;
 	else
-	  *w = (e->th * iw) / ih;
+	  *w = e->th * ia;
      }
 }
 
 void
-ethumb_calculate_fill(Ethumb *e, int iw, int ih, int *fx, int *fy, int *fw, int *fh)
+ethumb_calculate_aspect(Ethumb *e, int iw, int ih, int *w, int *h)
 {
+   float ia;
+
+   ia = iw / (float)ih;
+
+   ethumb_calculate_aspect_from_ratio(e, ia, w, h);
+}
+
+void
+ethumb_calculate_fill_from_ratio(Ethumb *e, float ia, int *fx, int *fy, int *fw, int *fh)
+{
+   float a;
+
+   if (ia == 0)
+     return;
+
    *fw = e->tw;
    *fh = e->th;
    *fx = 0;
    *fy = 0;
+   a = e->tw / (float)e->th;
 
    if (e->aspect == ETHUMB_THUMB_CROP)
      {
-	if ((iw > ih && e->tw > 0) || e->th <= 0)
-	  *fw = (e->th * iw) / ih;
+	if ((ia > a && e->tw > 0) || e->th <= 0)
+	  *fw = e->th * ia;
 	else
-	  *fh = (e->tw * ih) / iw;
+	  *fh = e->tw / ia;
 
 	*fx = - e->crop_x * (*fw - e->tw);
 	*fy = - e->crop_y * (*fh - e->th);
      }
    else if (e->aspect == ETHUMB_THUMB_KEEP_ASPECT)
      {
-	if ((iw > ih && e->tw > 0) || e->th <= 0)
-	  *fh = (e->tw * ih) / iw;
+	if ((ia > a && e->tw > 0) || e->th <= 0)
+	  *fh = e->tw / ia;
 	else
-	  *fw = (e->th * iw) / ih;
+	  *fw = e->th * ia;
      }
+}
+
+void
+ethumb_calculate_fill(Ethumb *e, int iw, int ih, int *fx, int *fy, int *fw, int *fh)
+{
+   float ia;
+   ia = iw / (float)ih;
+
+   ethumb_calculate_fill_from_ratio(e, ia, fx, fy, fw, fh);
 }
 
 static Eina_Bool
@@ -1098,4 +1130,12 @@ ethumb_evas_get(const Ethumb *e)
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
 
    return e->sub_e;
+}
+
+Ecore_Evas *
+ethumb_ecore_evas_get(const Ethumb *e)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
+
+   return e->sub_ee;
 }
