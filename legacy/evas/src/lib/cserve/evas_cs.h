@@ -80,6 +80,7 @@ struct _Client
    void *data;
    pid_t pid;
    int req_from, req_to;
+   LK(lock);
 };
 
 struct _Mem

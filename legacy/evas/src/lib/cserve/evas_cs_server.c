@@ -68,9 +68,11 @@ evas_cserve_server_del(Server *s)
    
    EINA_LIST_FREE(s->clients, c)
      {
+        LKL(c->lock);
         close(c->fd);
         if (c->buf) free(c->buf);
         if (c->inbuf) free(c->inbuf);
+        LKD(c->lock);
         free(c);
      }
    close(s->fd);
@@ -100,6 +102,7 @@ server_accept(Server *s)
      }
    c->server = s;
    c->fd = new_fd;
+   LKI(c->lock);
    s->clients = eina_list_append(s->clients, c);
 }
 
@@ -183,10 +186,12 @@ evas_cserve_client_send(Client *c, int opcode, int size, unsigned char *data)
    ints = (int *)data2;
    ints[0] = size;
    ints[1] = opcode;
+//   LKL(c->lock);
    c->req_to++;
    ints[2] = c->req_to;
    memcpy(data2 + (sizeof(int) * 3), data, size);
    client_write(c, data2, size + (sizeof(int) * 3));
+//   LKU(c->lock);
    free(data2);
 }
 
@@ -361,11 +366,13 @@ evas_cserve_server_wait(Server *s, int timeout)
      }
    EINA_LIST_FREE(dead, c)
      {
+        LKL(c->lock);
         if (c->func) c->func(c->data, c);
         s->clients = eina_list_remove(s->clients, c);
         close(c->fd);
         if (c->buf) free(c->buf);
         if (c->inbuf) free(c->inbuf);
+        LKD(c->lock);
         free(c);
      }
 }

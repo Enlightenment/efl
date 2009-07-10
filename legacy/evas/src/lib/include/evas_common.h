@@ -94,6 +94,7 @@
 # define LKI(x) pthread_mutex_init(&(x), NULL);
 # define LKD(x) pthread_mutex_destroy(&(x));
 # define LKL(x) pthread_mutex_lock(&(x));
+# define LKT(x) pthread_mutex_trylock(&(x));
 # define LKU(x) pthread_mutex_unlock(&(x));
 # define TH(x)  pthread_t x
 # define THI(x) int x
@@ -108,6 +109,7 @@
 # define LKI(x)
 # define LKD(x)
 # define LKL(x)
+# define LKT(x) 0
 # define LKU(x)
 # define TH(x)
 # define THI(x)
