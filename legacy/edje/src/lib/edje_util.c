@@ -2732,11 +2732,11 @@ _edje_real_part_box_remove_all(Edje_Real_Part *rp, Eina_Bool clear)
    while (children)
      {
 	Evas_Object *child_obj = children->data;
-	_edje_box_child_remove(rp, child_obj);
 	if (evas_object_data_get(child_obj, "\377 edje.box_item"))
 	  i++;
 	else
 	  {
+	     _edje_box_child_remove(rp, child_obj);
 	     if (!evas_object_box_remove_at(rp->object, i))
 	       return EINA_FALSE;
 	     if (clear)
