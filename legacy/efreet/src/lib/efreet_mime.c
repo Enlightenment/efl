@@ -1272,6 +1272,12 @@ efreet_mime_magic_check_priority(const char *file,
                 }
             }
         }
+
+        if (match)
+        {
+            fclose(f);
+            return last_mime;
+        }
     }
     fclose(f);
 
