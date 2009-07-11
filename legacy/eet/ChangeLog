@@ -190,3 +190,6 @@
 
 	* Reorder gcry init to be used during gnutls init.
 
+2009-07-11  Hanspeter Portner
+
+	* Improve docs/examples in Eet.h

@@ -187,6 +187,7 @@ extern "C" {
     * @code
     * #include <Eet.h>
     * #include <stdio.h>
+    * #include <string.h>
     *
     * int
     * main(int argc, char **argv)
@@ -194,6 +195,8 @@ extern "C" {
     *   Eet_File *ef;
     *   char buf[1024], *ret, **list;
     *   int size, num, i;
+    *
+    *   eet_init();
     *
     *   strcpy(buf, "Here is a string of data to save!");
     *
@@ -219,6 +222,8 @@ extern "C" {
     *       free(ret);
     *     }
     *   eet_close(ef);
+    *
+    *   eet_shutdown();
     *
     *   return 0;
     * }
@@ -874,6 +879,8 @@ extern "C" {
     *    FILE *f;
     *    Blah *blah_in;
     *
+    *    eet_init();
+    *
     *    edd3 = eet_data_descriptor_new("blah3", sizeof(Blah3),
     *                                   eina_list_next,
     *                                   eina_list_append,
@@ -959,6 +966,8 @@ extern "C" {
     *    eet_data_descriptor_free(edd);
     *    eet_data_descriptor_free(edd2);
     *    eet_data_descriptor_free(edd3);
+    *
+    *    eet_shutdown();
     *
     *   return 0;
     * }
