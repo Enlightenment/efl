@@ -1049,6 +1049,7 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
             ptr = ++val;
 
             while (*ptr != '\n') ptr++;
+            ptr++;
         }
         else
         {
@@ -1070,7 +1071,6 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
                 entry->range_len = 1;
                 entry->mask = NULL;
                 entry->value = NULL;
-                ptr++;
 
                 mime->entries = eina_list_append(mime->entries, entry);
            }
