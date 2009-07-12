@@ -1132,6 +1132,8 @@ evas_object_hide(Evas_Object *obj)
                        ev.data = NULL;
                        ev.modifiers = &(obj->layer->evas->modifiers);
                        ev.locks = &(obj->layer->evas->locks);
+		       ev.timestamp = obj->layer->evas->last_timestamp;
+		       ev.event_flags = EVAS_EVENT_FLAG_NONE;
                        evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 		    }
 	       }
