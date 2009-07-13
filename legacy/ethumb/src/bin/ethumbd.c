@@ -59,18 +59,18 @@ struct _Ethumb_Setup
 {
    struct
      {
-	int fdo : 1;
-	int size : 1;
-	int format : 1;
-	int aspect : 1;
-	int crop : 1;
-	int quality : 1;
-	int compress : 1;
-	int directory : 1;
-	int category : 1;
-	int frame : 1;
-	int video_time : 1;
-	int document_page : 1;
+	Eina_Bool fdo : 1;
+	Eina_Bool size : 1;
+	Eina_Bool format : 1;
+	Eina_Bool aspect : 1;
+	Eina_Bool crop : 1;
+	Eina_Bool quality : 1;
+	Eina_Bool compress : 1;
+	Eina_Bool directory : 1;
+	Eina_Bool category : 1;
+	Eina_Bool frame : 1;
+	Eina_Bool video_time : 1;
+	Eina_Bool document_page : 1;
      } flags;
    int fdo;
    int tw, th;
