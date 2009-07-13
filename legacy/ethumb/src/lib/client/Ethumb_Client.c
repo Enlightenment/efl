@@ -604,8 +604,8 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
    double t;
    const char *theme_file, *group, *swallow;
    const char *directory, *category;
-   double video_time;
-   dbus_int32_t document_page;
+   double video_time, video_start, video_interval;
+   dbus_int32_t video_ntimes, video_fps, document_page;
 
    EINA_SAFETY_ON_NULL_RETURN(client);
    client->ethumb_dirty = 0;
@@ -690,6 +690,26 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
    _open_variant_iter("video_time", "d", viter);
    video_time = ethumb_video_time_get(e);
    dbus_message_iter_append_basic(&viter, DBUS_TYPE_DOUBLE, &video_time);
+   _close_variant_iter(viter);
+
+   _open_variant_iter("video_start", "d", viter);
+   video_start = ethumb_video_start_get(e);
+   dbus_message_iter_append_basic(&viter, DBUS_TYPE_DOUBLE, &video_start);
+   _close_variant_iter(viter);
+
+   _open_variant_iter("video_interval", "d", viter);
+   video_interval = ethumb_video_interval_get(e);
+   dbus_message_iter_append_basic(&viter, DBUS_TYPE_DOUBLE, &video_interval);
+   _close_variant_iter(viter);
+
+   _open_variant_iter("video_ntimes", "i", viter);
+   video_ntimes = ethumb_video_ntimes_get(e);
+   dbus_message_iter_append_basic(&viter, DBUS_TYPE_INT32, &video_ntimes);
+   _close_variant_iter(viter);
+
+   _open_variant_iter("video_fps", "i", viter);
+   video_fps = ethumb_video_fps_get(e);
+   dbus_message_iter_append_basic(&viter, DBUS_TYPE_INT32, &video_fps);
    _close_variant_iter(viter);
 
    _open_variant_iter("document_page", "i", viter);
@@ -1145,6 +1165,42 @@ ethumb_client_video_time_set(Ethumb_Client *client, float time)
 
    client->ethumb_dirty = 1;
    ethumb_video_time_set(client->ethumb, time);
+}
+
+EAPI void
+ethumb_client_video_start_set(Ethumb_Client *client, float start)
+{
+   EINA_SAFETY_ON_NULL_RETURN(client);
+
+   client->ethumb_dirty = 1;
+   ethumb_video_start_set(client->ethumb, start);
+}
+
+EAPI void
+ethumb_client_video_interval_set(Ethumb_Client *client, float interval)
+{
+   EINA_SAFETY_ON_NULL_RETURN(client);
+
+   client->ethumb_dirty = 1;
+   ethumb_video_interval_set(client->ethumb, interval);
+}
+
+EAPI void
+ethumb_client_video_ntimes_set(Ethumb_Client *client, int ntimes)
+{
+   EINA_SAFETY_ON_NULL_RETURN(client);
+
+   client->ethumb_dirty = 1;
+   ethumb_video_ntimes_set(client->ethumb, ntimes);
+}
+
+EAPI void
+ethumb_client_video_fps_set(Ethumb_Client *client, int fps)
+{
+   EINA_SAFETY_ON_NULL_RETURN(client);
+
+   client->ethumb_dirty = 1;
+   ethumb_video_fps_set(client->ethumb, fps);
 }
 
 EAPI void

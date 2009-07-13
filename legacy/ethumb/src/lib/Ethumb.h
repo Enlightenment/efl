@@ -105,8 +105,18 @@ EAPI const char * ethumb_thumb_dir_path_get(const Ethumb *e) EINA_WARN_UNUSED_RE
 EAPI void ethumb_thumb_category_set(Ethumb *e, const char *category) EINA_ARG_NONNULL(1);
 EAPI const char * ethumb_thumb_category_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
+
+EAPI void ethumb_video_start_set(Ethumb *e, float start) EINA_ARG_NONNULL(1);
+EAPI float ethumb_video_start_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 EAPI void ethumb_video_time_set(Ethumb *e, float time) EINA_ARG_NONNULL(1);
 EAPI float ethumb_video_time_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+EAPI void ethumb_video_interval_set(Ethumb *e, float interval) EINA_ARG_NONNULL(1);
+EAPI float ethumb_video_interval_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+EAPI void ethumb_video_ntimes_set(Ethumb *e, int ntimes) EINA_ARG_NONNULL(1);
+EAPI int ethumb_video_ntimes_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+EAPI void ethumb_video_fps_set(Ethumb *e, int fps) EINA_ARG_NONNULL(1);
+EAPI int ethumb_video_fps_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
 
 EAPI void ethumb_document_page_set(Ethumb *e, int page) EINA_ARG_NONNULL(1);
 EAPI int ethumb_document_page_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;

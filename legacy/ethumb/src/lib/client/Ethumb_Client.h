@@ -72,6 +72,10 @@ EAPI const char * ethumb_client_dir_path_get(const Ethumb_Client *client);
 EAPI void ethumb_client_category_set(Ethumb_Client *client, const char *category);
 EAPI const char * ethumb_client_category_get(const Ethumb_Client *client);
 EAPI void ethumb_client_video_time_set(Ethumb_Client *client, float time);
+EAPI void ethumb_client_video_start_set(Ethumb_Client *client, float start);
+EAPI void ethumb_client_video_interval_set(Ethumb_Client *client, float interval);
+EAPI void ethumb_client_video_ntimes_set(Ethumb_Client *client, int ntimes);
+EAPI void ethumb_client_video_fps_set(Ethumb_Client *client, int fps);
 EAPI void ethumb_client_document_page_set(Ethumb_Client *client, int page);
 
 EAPI void ethumb_client_ethumb_setup(Ethumb_Client *client);

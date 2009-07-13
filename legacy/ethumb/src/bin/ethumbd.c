@@ -70,6 +70,10 @@ struct _Ethumb_Setup
 	Eina_Bool category : 1;
 	Eina_Bool frame : 1;
 	Eina_Bool video_time : 1;
+	Eina_Bool video_start : 1;
+	Eina_Bool video_interval : 1;
+	Eina_Bool video_ntimes : 1;
+	Eina_Bool video_fps : 1;
 	Eina_Bool document_page : 1;
      } flags;
    int fdo;
@@ -85,6 +89,10 @@ struct _Ethumb_Setup
    const char *group;
    const char *swallow;
    float video_time;
+   float video_start;
+   float video_interval;
+   int video_ntimes;
+   int video_fps;
    int document_page;
 };
 
@@ -477,12 +485,16 @@ _ethumbd_pipe_write_setup(int fd, int type, const void *data)
       case ETHUMBD_SIZE_W:
       case ETHUMBD_SIZE_H:
       case ETHUMBD_DOCUMENT_PAGE:
+      case ETHUMBD_VIDEO_NTIMES:
+      case ETHUMBD_VIDEO_FPS:
 	 i_value = data;
 	 _ethumbd_write_safe(fd, i_value, sizeof(*i_value));
 	 break;
       case ETHUMBD_CROP_X:
       case ETHUMBD_CROP_Y:
       case ETHUMBD_VIDEO_TIME:
+      case ETHUMBD_VIDEO_START:
+      case ETHUMBD_VIDEO_INTERVAL:
 	 f_value = data;
 	 _ethumbd_write_safe(fd, f_value, sizeof(*f_value));
 	 break;
@@ -544,6 +556,15 @@ _process_setup(struct _Ethumbd *ed)
      }
    if (setup->flags.video_time)
      _ethumbd_pipe_write_setup(fd, ETHUMBD_VIDEO_TIME, &setup->video_time);
+   if (setup->flags.video_start)
+     _ethumbd_pipe_write_setup(fd, ETHUMBD_VIDEO_START, &setup->video_start);
+   if (setup->flags.video_interval)
+     _ethumbd_pipe_write_setup(fd, ETHUMBD_VIDEO_INTERVAL,
+			       &setup->video_interval);
+   if (setup->flags.video_ntimes)
+     _ethumbd_pipe_write_setup(fd, ETHUMBD_VIDEO_NTIMES, &setup->video_ntimes);
+   if (setup->flags.video_fps)
+     _ethumbd_pipe_write_setup(fd, ETHUMBD_VIDEO_FPS, &setup->video_fps);
    if (setup->flags.document_page)
      _ethumbd_pipe_write_setup(fd, ETHUMBD_DOCUMENT_PAGE,
 			       &setup->document_page);
@@ -1328,6 +1349,90 @@ _ethumb_dbus_video_time_set(struct _Ethumb_Object *eobject, DBusMessageIter *ite
 }
 
 static int
+_ethumb_dbus_video_start_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+{
+   int type;
+   double video_start;
+
+   type = dbus_message_iter_get_arg_type(iter);
+   if (type != DBUS_TYPE_DOUBLE)
+     {
+	ERR("invalid param for video_start_set.\n");
+	return 0;
+     }
+
+   dbus_message_iter_get_basic(iter, &video_start);
+   DBG("setting video_start to: %3.2f\n", video_start);
+   request->setup.flags.video_start = 1;
+   request->setup.video_start = video_start;
+
+   return 1;
+}
+
+static int
+_ethumb_dbus_video_interval_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+{
+   int type;
+   double video_interval;
+
+   type = dbus_message_iter_get_arg_type(iter);
+   if (type != DBUS_TYPE_DOUBLE)
+     {
+	ERR("invalid param for video_interval_set.\n");
+	return 0;
+     }
+
+   dbus_message_iter_get_basic(iter, &video_interval);
+   DBG("setting video_interval to: %3.2f\n", video_interval);
+   request->setup.flags.video_interval = 1;
+   request->setup.video_interval = video_interval;
+
+   return 1;
+}
+
+static int
+_ethumb_dbus_video_ntimes_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+{
+   int type;
+   int video_ntimes;
+
+   type = dbus_message_iter_get_arg_type(iter);
+   if (type != DBUS_TYPE_INT32)
+     {
+	ERR("invalid param for video_ntimes_set.\n");
+	return 0;
+     }
+
+   dbus_message_iter_get_basic(iter, &video_ntimes);
+   DBG("setting video_ntimes to: %3.2d\n", video_ntimes);
+   request->setup.flags.video_ntimes = 1;
+   request->setup.video_ntimes = video_ntimes;
+
+   return 1;
+}
+
+static int
+_ethumb_dbus_video_fps_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+{
+   int type;
+   int video_fps;
+
+   type = dbus_message_iter_get_arg_type(iter);
+   if (type != DBUS_TYPE_INT32)
+     {
+	ERR("invalid param for video_fps_set.\n");
+	return 0;
+     }
+
+   dbus_message_iter_get_basic(iter, &video_fps);
+   DBG("setting video_fps to: %3.2d\n", video_fps);
+   request->setup.flags.video_fps = 1;
+   request->setup.video_fps = video_fps;
+
+   return 1;
+}
+
+static int
 _ethumb_dbus_document_page_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
@@ -1364,6 +1469,10 @@ static struct
        { "directory", _ethumb_dbus_directory_set },
        { "category", _ethumb_dbus_category_set },
        { "video_time", _ethumb_dbus_video_time_set },
+       { "video_start", _ethumb_dbus_video_start_set },
+       { "video_interval", _ethumb_dbus_video_interval_set },
+       { "video_ntimes", _ethumb_dbus_video_ntimes_set },
+       { "video_fps", _ethumb_dbus_video_fps_set },
        { "document_page", _ethumb_dbus_document_page_set },
        { NULL, NULL}
 };

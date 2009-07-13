@@ -1,0 +1,40 @@
+collections {
+
+   group {
+      name: "movie/thumb";
+
+      parts {
+         part {
+            name: "image";
+            type: IMAGE;
+            description {
+               state: "default" 0.0;
+            }
+         }
+      }
+
+      programs {
+         program {
+            name: "animate";
+            signal: "animate";
+            action: STATE_SET "default" 0.0;
+            transition: LINEAR 3.0;
+            target: "image";
+         }
+         program {
+            name: "animate_loop";
+            signal: "animate_loop";
+            action: STATE_SET "default" 0.0;
+            transition: LINEAR 3.0;
+            target: "image";
+            after: "animate_loop";
+         }
+         program {
+            name: "animate_stop";
+            signal: "animate_stop";
+            action: ACTION_STOP;
+            target: "animate_loop";
+         }
+      }
+   }
+}

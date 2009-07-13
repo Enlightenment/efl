@@ -31,7 +31,7 @@
 #include <Ecore.h>
 
 const char *aspect_opt[] = { "keep", "ignore", "crop", NULL };
-const char *format_opt[] = { "png", "jpg", NULL };
+const char *format_opt[] = { "png", "jpg", "eet", NULL };
 struct frame
 {
    const char *file;
@@ -182,7 +182,7 @@ main(int argc, char *argv[])
 	r = 0;
      }
 
-   for (i = 0; i < 2; i++)
+   for (i = 0; i < 3; i++)
      if (format_opt[i] == format_str)
        {
 	  format = i;

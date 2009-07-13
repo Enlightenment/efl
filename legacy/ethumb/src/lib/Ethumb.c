@@ -190,6 +190,11 @@ ethumb_new(void)
    ethumb->crop_y = 0.5;
    ethumb->quality = 80;
    ethumb->compress = 9;
+   ethumb->video.start = 0.1;
+   ethumb->video.time = 3;
+   ethumb->video.interval = 0.05;
+   ethumb->video.ntimes = 3;
+   ethumb->video.fps = 10;
 
    ee = ecore_evas_buffer_new(1, 1);
    e = ecore_evas_get(ee);
@@ -563,6 +568,22 @@ ethumb_thumb_category_get(const Ethumb *e)
 }
 
 EAPI void
+ethumb_video_start_set(Ethumb *e, float start)
+{
+   EINA_SAFETY_ON_NULL_RETURN(e);
+
+   e->video.start = start;
+}
+
+EAPI float
+ethumb_video_start_get(const Ethumb *e)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
+
+   return e->video.start;
+}
+
+EAPI void
 ethumb_video_time_set(Ethumb *e, float time)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -576,6 +597,54 @@ ethumb_video_time_get(const Ethumb *e)
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
 
    return e->video.time;
+}
+
+EAPI void
+ethumb_video_interval_set(Ethumb *e, float interval)
+{
+   EINA_SAFETY_ON_NULL_RETURN(e);
+
+   e->video.interval = interval;
+}
+
+EAPI float
+ethumb_video_interval_get(const Ethumb *e)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
+
+   return e->video.interval;
+}
+
+EAPI void
+ethumb_video_ntimes_set(Ethumb *e, int ntimes)
+{
+   EINA_SAFETY_ON_NULL_RETURN(e);
+
+   e->video.ntimes = ntimes;
+}
+
+EAPI int
+ethumb_video_ntimes_get(const Ethumb *e)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
+
+   return e->video.ntimes;
+}
+
+EAPI void
+ethumb_video_fps_set(Ethumb *e, int fps)
+{
+   EINA_SAFETY_ON_NULL_RETURN(e);
+
+   e->video.fps = fps;
+}
+
+EAPI int
+ethumb_video_fps_get(const Ethumb *e)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
+
+   return e->video.fps;
 }
 
 EAPI void

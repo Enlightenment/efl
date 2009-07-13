@@ -476,6 +476,66 @@ _ec_video_time_set(struct _Ethumbd_Child *ec, Ethumb *e)
 }
 
 static int
+_ec_video_start_set(struct _Ethumbd_Child *ec, Ethumb *e)
+{
+   int r;
+   float value;
+
+   r = _ec_read_safe(ec->pipein, &value, sizeof(value));
+   if (!r)
+     return 0;
+   ethumb_video_start_set(e, value);
+   DBG("video_start = %f\n", value);
+
+   return 1;
+}
+
+static int
+_ec_video_interval_set(struct _Ethumbd_Child *ec, Ethumb *e)
+{
+   int r;
+   float value;
+
+   r = _ec_read_safe(ec->pipein, &value, sizeof(value));
+   if (!r)
+     return 0;
+   ethumb_video_interval_set(e, value);
+   DBG("video_interval = %f\n", value);
+
+   return 1;
+}
+
+static int
+_ec_video_ntimes_set(struct _Ethumbd_Child *ec, Ethumb *e)
+{
+   int r;
+   int value;
+
+   r = _ec_read_safe(ec->pipein, &value, sizeof(value));
+   if (!r)
+     return 0;
+   ethumb_video_ntimes_set(e, value);
+   DBG("video_ntimes = %d\n", value);
+
+   return 1;
+}
+
+static int
+_ec_video_fps_set(struct _Ethumbd_Child *ec, Ethumb *e)
+{
+   int r;
+   int value;
+
+   r = _ec_read_safe(ec->pipein, &value, sizeof(value));
+   if (!r)
+     return 0;
+   ethumb_video_fps_set(e, value);
+   DBG("video_fps = %d\n", value);
+
+   return 1;
+}
+
+static int
 _ec_document_page_set(struct _Ethumbd_Child *ec, Ethumb *e)
 {
    int r;
@@ -531,6 +591,18 @@ _ec_setup_process(struct _Ethumbd_Child *ec, int index, int type)
 	 break;
       case ETHUMBD_VIDEO_TIME:
 	 _ec_video_time_set(ec, e);
+	 break;
+      case ETHUMBD_VIDEO_START:
+	 _ec_video_start_set(ec, e);
+	 break;
+      case ETHUMBD_VIDEO_INTERVAL:
+	 _ec_video_interval_set(ec, e);
+	 break;
+      case ETHUMBD_VIDEO_NTIMES:
+	 _ec_video_ntimes_set(ec, e);
+	 break;
+      case ETHUMBD_VIDEO_FPS:
+	 _ec_video_fps_set(ec, e);
 	 break;
       case ETHUMBD_DOCUMENT_PAGE:
 	 _ec_document_page_set(ec, e);

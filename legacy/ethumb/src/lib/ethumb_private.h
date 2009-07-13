@@ -28,7 +28,8 @@ struct _Ethumb
    int rw, rh;
    struct
      {
-	double time;
+	double start, time, interval;
+	int ntimes, fps;
      } video;
    struct
      {
