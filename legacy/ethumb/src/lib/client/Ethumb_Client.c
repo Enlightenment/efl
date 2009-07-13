@@ -469,6 +469,7 @@ connection_err:
 ethumb_new_err:
    free(eclient);
 err:
+   connect_cb(NULL, EINA_FALSE, data);
    return NULL;
 }
 
