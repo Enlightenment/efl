@@ -1575,6 +1575,21 @@ edje_edit_image_add(
    const char* path        ///< The name of the image file to include in the edje
 );
 
+/**Add an image entry to the image collection
+ *
+ * This function adds the given image entry to the edje image collection. The
+ * image needs to be inside the eet already, with key name "images/id". After
+ * you have to create a new image_part that use this image, referring to it as
+ * "name". Note that all the parts in the edje share the same image collection,
+ * thus you can/must use the same image for different part.
+ */
+EAPI unsigned char        /// @return TRUE on success or FALSE on failure
+edje_edit_image_data_add(
+   Evas_Object *obj,      ///< The edje object
+   const char *name,      ///< The image entry name
+   int id                 ///< The image id
+);
+
 /**Get normal image name for a given part state. Remember to free the returned string using edje_edit_string_free().*/
 EAPI const char *          ///@return The name of the image used by state
 edje_edit_state_image_get(

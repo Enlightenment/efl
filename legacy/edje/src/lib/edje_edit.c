@@ -3443,6 +3443,53 @@ edje_edit_image_add(Evas_Object *obj, const char* path)
    return 1;
 }
 
+EAPI unsigned char
+edje_edit_image_data_add(Evas_Object *obj, const char *name, int id)
+{
+   Eina_List *l;
+   Edje_Image_Directory_Entry *de;
+   Edje_Image_Directory_Entry *i, *t;
+   int free_id = 0;
+
+   GET_ED_OR_RETURN(0);
+
+   if (!name) return 0;
+   if (!ed->file) return 0;
+   if (!ed->path) return 0;
+
+   /* Create Image_Directory if not exist */
+   if (!ed->file->image_dir)
+     ed->file->image_dir = mem_alloc(sizeof(Edje_Image_Directory));
+
+   /* Loop trough image directory to find if image exist */
+   t = NULL;
+   EINA_LIST_FOREACH(ed->file->image_dir->entries, l, i)
+     {
+	if (!i) return 0;
+	if (i->id == id) t = i;
+     }
+
+   /* Create Image Entry */
+   if (!t)
+     de = mem_alloc(sizeof(Edje_Image_Directory_Entry));
+   else
+     {
+	de = t;
+	free(de->entry);
+     }
+   de->entry = mem_strdup(name);
+   de->id = id;
+   de->source_type = 1;
+   de->source_param = 1;
+
+   /* Add image to Image Directory */
+   if (!t)
+     ed->file->image_dir->entries =
+	eina_list_append(ed->file->image_dir->entries, de);
+
+   return 1;
+}
+
 EAPI int
 edje_edit_image_id_get(Evas_Object *obj, const char *image_name)
 {
