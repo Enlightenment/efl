@@ -19,9 +19,9 @@ fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_X11(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_XLIB(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
-AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_X11],
+AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_XLIB],
 [
 
 have_dep="no"
@@ -631,9 +631,6 @@ if test "x${have_engine}" = "xyes" ; then
    fi
 fi
 
-AC_MSG_CHECKING([whether to statically include $4 rendering backend inside evas library])
-AC_MSG_RESULT([${want_static_engine}])
-
 if test "x${have_engine}" = "xyes" ; then
    AC_DEFINE(BUILD_ENGINE_[]UP, [1], [$4 rendering backend])
 fi
@@ -642,6 +639,7 @@ AM_CONDITIONAL(BUILD_ENGINE_[]UP, [test "x${have_engine}" = "xyes"])
 
 if test "x${want_static_engine}" = "xyes" ; then
    AC_DEFINE(EVAS_STATIC_BUILD_[]UP, [1], [Build $1 engine inside libevas])
+   have_static_module="yes"
 fi
 
 AM_CONDITIONAL(EVAS_STATIC_BUILD_[]UP, [test "x${want_static_engine}" = "xyes"])

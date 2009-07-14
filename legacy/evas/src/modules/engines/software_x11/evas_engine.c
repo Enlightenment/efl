@@ -4,8 +4,11 @@
 #include "Evas_Engine_Software_X11.h"
 
 #include "evas_engine.h"
-#include "evas_xlib_outbuf.h"
-#include "evas_xlib_color.h"
+
+#ifdef BUILD_ENGINE_SOFTWARE_XLIB
+# include "evas_xlib_outbuf.h"
+# include "evas_xlib_color.h"
+#endif
 
 #ifdef BUILD_ENGINE_SOFTWARE_XCB
 # include "evas_xcb_outbuf.h"
@@ -61,6 +64,7 @@ static void eng_output_idle_flush(void *data);
 
 /* internal engine routines */
 
+#ifdef BUILD_ENGINE_SOFTWARE_XLIB
 static void *
 _output_xlib_setup(int      w,
                    int      h,
@@ -128,6 +132,7 @@ _output_xlib_setup(int      w,
    evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
    return re;
 }
+#endif
 
 #ifdef BUILD_ENGINE_SOFTWARE_XCB
 static void *
@@ -206,13 +211,15 @@ _best_visual_get(int backend, void *connection, int screen)
 {
    if (!connection) return NULL;
 
-   if (backend == 0)
+#ifdef BUILD_ENGINE_SOFTWARE_XLIB
+   if (backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)
      {
         return DefaultVisual((Display *)connection, screen);
      }
+#endif
 
 #ifdef BUILD_ENGINE_SOFTWARE_XCB
-   if (backend == 1)
+   if (backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XCB)
      {
         xcb_screen_iterator_t iter_screen;
         xcb_depth_iterator_t  iter_depth;
@@ -249,13 +256,15 @@ _best_colormap_get(int backend, void *connection, int screen)
 {
    if (!connection) return 0;
 
-   if (backend == 0)
+#ifdef BUILD_ENGINE_SOFTWARE_XLIB
+   if (backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)
      {
         return DefaultColormap((Display *)connection, screen);
      }
+#endif
 
 #ifdef BUILD_ENGINE_SOFTWARE_XCB
-   if (backend == 1)
+   if (backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XCB)
      {
         xcb_screen_iterator_t iter_screen;
         xcb_screen_t          *s;
@@ -280,13 +289,15 @@ _best_depth_get(int backend, void *connection, int screen)
 {
    if (!connection) return 0;
 
-   if (backend == 0)
+#ifdef BUILD_ENGINE_SOFTWARE_XLIB
+   if (backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)
      {
         return DefaultDepth((Display *)connection, screen);
      }
+#endif
 
 #ifdef BUILD_ENGINE_SOFTWARE_XCB
-   if (backend == 1)
+   if (backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XCB)
      {
         xcb_screen_iterator_t iter_screen;
         xcb_screen_t          *s;
@@ -356,7 +367,8 @@ eng_setup(Evas *e, void *in)
         evas_common_draw_init();
         evas_common_tilebuf_init();
 
-        if (info->info.backend == 0)
+#ifdef BUILD_ENGINE_SOFTWARE_XLIB
+        if (info->info.backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)
           {
              re = _output_xlib_setup(e->output.w,
                                      e->output.h,
@@ -383,9 +395,10 @@ eng_setup(Evas *e, void *in)
              re->outbuf_idle_flush = evas_software_xlib_outbuf_idle_flush;
 	     re->outbuf_alpha_get = evas_software_xlib_outbuf_alpha_get;
           }
+#endif
 
 #ifdef BUILD_ENGINE_SOFTWARE_XCB
-        if (info->info.backend == 1)
+        if (info->info.backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XCB)
           {
              re = _output_xcb_setup(e->output.w,
                                     e->output.h,
@@ -424,7 +437,8 @@ eng_setup(Evas *e, void *in)
 	re = e->engine.data.output;
 	ponebuf = re->ob->onebuf;
 
-        if (info->info.backend == 0)
+#ifdef BUILD_ENGINE_SOFTWARE_XLIB
+        if (info->info.backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)
           {
              evas_software_xlib_outbuf_free(re->ob);
              re->ob = evas_software_xlib_outbuf_setup_x(e->output.w,
@@ -443,9 +457,10 @@ eng_setup(Evas *e, void *in)
                                                         info->info.destination_alpha);
              evas_software_xlib_outbuf_debug_set(re->ob, info->info.debug);
           }
+#endif
 
 #ifdef BUILD_ENGINE_SOFTWARE_XCB
-        if (info->info.backend == 1)
+        if (info->info.backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XCB)
           {
              evas_software_xcb_outbuf_free(re->ob);
              re->ob = evas_software_xcb_outbuf_setup_x(e->output.w,

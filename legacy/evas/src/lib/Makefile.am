@@ -89,7 +89,7 @@ endif
 if EVAS_STATIC_BUILD_SOFTWARE_X11
 SUBDIRS += ../modules/engines/software_x11/
 EVAS_STATIC_MODULE += ../modules/engines/software_x11/libevas_engine_software_x11.la
-EVAS_STATIC_LIBADD += @evas_engine_software_x11_libs@ @evas_engine_software_xcb_libs@
+EVAS_STATIC_LIBADD += @evas_engine_software_xlib_libs@ @evas_engine_software_xcb_libs@
 endif
 if EVAS_STATIC_BUILD_XRENDER_X11
 SUBDIRS += ../modules/engines/xrender_x11/

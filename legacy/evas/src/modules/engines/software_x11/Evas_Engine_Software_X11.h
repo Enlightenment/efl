@@ -1,8 +1,6 @@
 #ifndef _EVAS_ENGINE_SOFTWARE_X11_H
 #define _EVAS_ENGINE_SOFTWARE_X11_H
 
-#include <X11/Xlib.h>
-
 typedef enum
 {
   EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB,

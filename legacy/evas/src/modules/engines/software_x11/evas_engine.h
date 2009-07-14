@@ -4,10 +4,12 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/Xatom.h>
-#include <X11/extensions/XShm.h>
+#ifdef BUILD_ENGINE_SOFTWARE_XLIB
+# include <X11/Xlib.h>
+# include <X11/Xutil.h>
+# include <X11/Xatom.h>
+# include <X11/extensions/XShm.h>
+#endif
 
 #ifdef BUILD_ENGINE_SOFTWARE_XCB
 # include <xcb/xcb.h>
@@ -41,6 +43,7 @@ struct _Outbuf
    struct {
       Convert_Pal *pal;
       union {
+#ifdef BUILD_ENGINE_SOFTWARE_XLIB
          struct {
             Display          *disp;
             Window            win;
@@ -54,6 +57,7 @@ struct _Outbuf
             unsigned char     swap     : 1;
             unsigned char     bit_swap : 1;
          } xlib;
+#endif
 #ifdef BUILD_ENGINE_SOFTWARE_XCB
          struct {
             xcb_connection_t *conn;

@@ -50,7 +50,7 @@ want_fribidi="auto"
 want_evas_cserve="yes"
 
 want_evas_engine_buffer="yes"
-want_evas_engine_software_x11="no"
+want_evas_engine_software_xlib="no"
 want_evas_engine_xrender_x11="no"
 want_evas_engine_gl_x11="no"
 want_evas_engine_cairo_x11="no"
@@ -99,11 +99,11 @@ case "$host_os" in
       want_evas_image_loader_svg="no"
       ;;
    darwin*)
-      want_evas_engine_software_x11="auto"
+      want_evas_engine_software_xlib="auto"
       want_evas_engine_quartz="auto"
       ;;
    *)
-      want_evas_engine_software_x11="auto"
+      want_evas_engine_software_xlib="auto"
       want_evas_engine_xrender_x11="auto"
       want_evas_engine_software_16_x11="auto"
       ;;
@@ -368,7 +368,7 @@ AM_CONDITIONAL([EVAS_CSERVE], [test "x${want_evas_cserve}" = "xyes"])
 
 EVAS_CHECK_ENGINE([buffer], [${want_evas_engine_buffer}], [no], [Buffer])
 
-EVAS_CHECK_ENGINE([software-x11], [${want_evas_engine_software_x11}], [yes], [Software X11])
+EVAS_CHECK_ENGINE([software-xlib], [${want_evas_engine_software_xlib}], [yes], [Software Xlib])
 
 EVAS_CHECK_ENGINE([xrender-x11], [${want_evas_engine_xrender_x11}], [yes], [XRender X11])
 
@@ -460,6 +460,38 @@ AM_CONDITIONAL(EVAS_STATIC_BUILD_SOFTWARE_GENERIC, test "x${have_static_software
 if test "x${have_static_software_generic}" = "xyes"; then
    AC_DEFINE(EVAS_STATIC_BUILD_SOFTWARE_GENERIC, [1], [Build software generic engine as part of libevas])
 fi
+
+# if software_xlib or software_xcb are available, define everything needed for X11
+have_evas_engine_software_x11="no"
+if test "x$have_evas_engine_software_xlib" = "xstatic" -o "x$have_evas_engine_software_xcb" = "xstatic" ; then
+   have_evas_engine_software_x11="static"
+else
+   if test "x$have_evas_engine_software_xlib" = "xyes" -o "x$have_evas_engine_software_xcb" = "xyes" ; then
+      have_evas_engine_software_x11="yes"
+   fi
+fi
+
+if test "x$have_evas_engine_software_xlib" = "xstatic" ; then
+   have_evas_engine_software_xlib="yes"
+fi
+
+if test "x$have_evas_engine_software_xcb" = "xstatic" ; then
+   have_evas_engine_software_xcb="yes"
+fi
+
+if test "x$have_evas_engine_software_x11" = "xyes" -o "x$have_evas_engine_software_x11" = "xstatic" ; then
+   AC_DEFINE(BUILD_ENGINE_SOFTWARE_X11, [1], [Build software X11 engines])
+fi
+
+if test "x$have_evas_engine_software_x11" = "xstatic" ; then
+   AC_DEFINE(EVAS_STATIC_BUILD_SOFTWARE_X11, [1], [Build software X11 engines as part of libevas])
+fi
+
+AM_CONDITIONAL([BUILD_ENGINE_SOFTWARE_X11], [test "x${have_evas_engine_software_x11}" = "xyes" -o "x${have_evas_engine_software_x11}" = "xstatic"])
+AM_CONDITIONAL([EVAS_STATIC_BUILD_SOFTWARE_X11], [test "x${have_evas_engine_software_x11}" = "xstatic"])
+
+AC_SUBST(have_evas_engine_software_xlib)
+AC_SUBST(have_evas_engine_software_xcb)
 
 # if software 16 x11 is enabled - build software_16 (the generic 16bit
 # engine). later enable it fb_16 or other "16" bit engines are enabled.
@@ -1086,7 +1118,6 @@ evas-quartz.pc
 evas-software-buffer.pc
 evas-software-x11.pc
 evas-software-16-x11.pc
-evas-software-xcb.pc
 evas-xrender-x11.pc
 evas-xrender-xcb.pc
 evas-software-gdi.pc
@@ -1178,37 +1209,37 @@ echo
 echo "Configuration Options Summary:"
 echo
 echo "Engines:"
-echo "  Software Memory Buffer.....: $have_evas_engine_buffer $have_static_evas_engine_buffer"
-echo "  Software X11...............: $have_evas_engine_software_x11 $have_static_evas_engine_software_x11 (XCB: $have_evas_engine_software_xcb)"
-echo "  XRender X11................: $have_evas_engine_xrender_x11 $have_static_evas_engine_xrender_x11 (XCB: $have_evas_engine_xrender_xcb)"
-echo "  OpenGL X11.................: $have_evas_engine_gl_x11 $have_static_evas_engine_gl_x11"
-#echo "  Cairo X11..................: $have_evas_engine_cairo_x11 $have_static_evas_engine_cairo_x11"
-echo "  Software GDI...............: $have_evas_engine_software_gdi $have_static_evas_engine_gdi"
-echo "  Software DirectDraw........: $have_evas_engine_software_ddraw $have_static_evas_engine_ddraw"
-echo "  Direct3d...................: $have_evas_engine_direct3d $have_static_evas_engine_direct3d"
-echo "  Quartz.....................: $have_evas_engine_quartz $have_static_evas_engine_quartz"
-echo "  OpenGL Glew................: $have_evas_engine_gl_glew $have_static_evas_engine_gl_glew"
-echo "  Software SDL...............: $have_evas_engine_software_sdl $have_static_evas_engine_software_sdl (primitive: $sdl_primitive)"
-echo "  Software Framebuffer.......: $have_evas_engine_fb $have_static_evas_engine_fb"
-echo "  DirectFB...................: $have_evas_engine_directfb $have_static_evas_engine_directfb"
-#echo "  Software Qtopia............: $have_evas_engine_software_qtopia $have_static_evas_engine_software_qtopia"
-echo "  Software 16bit ............: $have_evas_engine_software_16 $have_static_evas_engine_software_16"
-echo "  Software 16bit X11.........: $have_evas_engine_software_16_x11 $have_static_evas_engine_software_16_x11"
-echo "  Software 16bit Directdraw..: $have_evas_engine_software_16_ddraw $have_static_evas_engine_ddraw"
-echo "  Software 16bit WinCE.......: $have_evas_engine_software_16_wince $have_static_evas_engine_wince"
-echo "  Software 16bit SDL.........: $have_evas_engine_software_sdl $have_static_evas_engine_software_sdl (primitive: $sdl_primitive)"
+echo "  Software Memory Buffer.....: $have_evas_engine_buffer"
+echo "  Software X11...............: $have_evas_engine_software_x11 (Xlib: $have_evas_engine_software_xlib) (XCB: $have_evas_engine_software_xcb)"
+echo "  XRender X11................: $have_evas_engine_xrender_x11 (XCB: $have_evas_engine_xrender_xcb)"
+echo "  OpenGL X11.................: $have_evas_engine_gl_x11"
+#echo "  Cairo X11..................: $have_evas_engine_cairo_x11"
+echo "  Software GDI...............: $have_evas_engine_software_gdi"
+echo "  Software DirectDraw........: $have_evas_engine_software_ddraw"
+echo "  Direct3d...................: $have_evas_engine_direct3d"
+echo "  Quartz.....................: $have_evas_engine_quartz"
+echo "  OpenGL Glew................: $have_evas_engine_gl_glew"
+echo "  Software SDL...............: $have_evas_engine_software_sdl (primitive: $sdl_primitive)"
+echo "  Software Framebuffer.......: $have_evas_engine_fb"
+echo "  DirectFB...................: $have_evas_engine_directfb"
+#echo "  Software Qtopia............: $have_evas_engine_software_qtopia"
+echo "  Software 16bit ............: $have_evas_engine_software_16"
+echo "  Software 16bit X11.........: $have_evas_engine_software_16_x11"
+echo "  Software 16bit Directdraw..: $have_evas_engine_software_16_ddraw"
+echo "  Software 16bit WinCE.......: $have_evas_engine_software_16_wince"
+echo "  Software 16bit SDL.........: $have_evas_engine_software_sdl (primitive: $sdl_primitive)"
 # FIXME: opengl engine needs to be fixed and tested lots for all drivers
 echo
 echo "Image Loaders:"
-echo "  EDB.....................: $have_evas_image_loader_edb $have_static_evas_image_loader_edb"
-echo "  EET.....................: $have_evas_image_loader_eet $have_static_evas_image_loader_eet"
-echo "  GIF.....................: $have_evas_image_loader_gif $have_static_evas_image_loader_gif"
-echo "  JPEG....................: $have_evas_image_loader_jpeg $have_static_evas_image_loader_jpeg"
-echo "  PMAPS...................: $have_evas_image_loader_pmaps $have_static_evas_image_loader_pmaps"
-echo "  PNG.....................: $have_evas_image_loader_png $have_static_evas_image_loader_png"
-echo "  SVG.....................: $have_evas_image_loader_svg $have_static_evas_image_loader_svg"
-echo "  TIFF....................: $have_evas_image_loader_tiff $have_static_evas_image_loader_tiff"
-echo "  XPM.....................: $have_evas_image_loader_xpm $have_static_evas_image_loader_xpm"
+echo "  EDB.....................: $have_evas_image_loader_edb"
+echo "  EET.....................: $have_evas_image_loader_eet"
+echo "  GIF.....................: $have_evas_image_loader_gif"
+echo "  JPEG....................: $have_evas_image_loader_jpeg"
+echo "  PMAPS...................: $have_evas_image_loader_pmaps"
+echo "  PNG.....................: $have_evas_image_loader_png"
+echo "  SVG.....................: $have_evas_image_loader_svg"
+echo "  TIFF....................: $have_evas_image_loader_tiff"
+echo "  XPM.....................: $have_evas_image_loader_xpm"
 # FIXME: need to add modular image loader system
 # FIXME: add more image loader modules
 echo
@@ -1291,3 +1322,10 @@ echo "Now type 'make' ('gmake' on some systems) to compile $PACKAGE,"
 echo "and then afterwards as root (or the user who will install this), type"
 echo "'make install'. Change users with 'su' or 'sudo' appropriately."
 echo
+if test "x${have_static_module}" = "xyes" ; then
+echo -e "\0033\01331;31mWarning\0033\01331;0m: You are trying to link statically one or more modules to Evas."
+echo "         You must know what you are doing, or else you will have a lot of problems."
+echo "         And Kenny will be killed."
+echo "         Think about that."
+echo
+fi

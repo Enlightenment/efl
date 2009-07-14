@@ -322,9 +322,6 @@ if test "x${have_loader}" = "xyes" ; then
    fi
 fi
 
-AC_MSG_CHECKING([whether to build inside evas library $1 image loader])
-AC_MSG_RESULT([${want_static_loader}])
-
 if test "x${have_loader}" = "xyes" ; then
    AC_DEFINE(BUILD_LOADER_[]UP, [1], [UP Image Loader Support])
 fi
@@ -333,6 +330,7 @@ AM_CONDITIONAL(BUILD_LOADER_[]UP, [test "x${have_loader}" = "xyes"])
 
 if test "x${want_static_loader}" = "xyes" ; then
    AC_DEFINE(EVAS_STATIC_BUILD_[]UP, [1], [Build $1 image loader inside libevas])
+   have_static_module="yes"
 fi
 
 AM_CONDITIONAL(EVAS_STATIC_BUILD_[]UP, [test "x${want_static_loader}" = "xyes"])

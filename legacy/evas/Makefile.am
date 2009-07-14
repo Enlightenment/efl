@@ -29,7 +29,6 @@ evas-software-buffer.pc \
 evas-software-qtopia.pc \
 evas-software-x11.pc \
 evas-software-16-x11.pc \
-evas-software-xcb.pc \
 evas-xrender-x11.pc \
 evas-xrender-xcb.pc \
 evas-software-gdi.pc \
@@ -68,7 +67,6 @@ evas-software-buffer.pc.in \
 evas-software-qtopia.pc.in \
 evas-software-x11.pc.in \
 evas-software-16-x11.pc.in \
-evas-software-xcb.pc.in \
 evas-xrender-x11.pc.in \
 evas-xrender-xcb.pc.in \
 evas-software-gdi.pc.in \
@@ -79,89 +77,80 @@ evas-software-16-wince.pc.in \
 evas-software-sdl.pc.in \
 evas.spec.in evas.spec
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = evas.pc
+
 if BUILD_ENGINE_SOFTWARE_X11
-psoftwarex11 = evas-software-x11.pc
+pkgconfig_DATA += evas-software-x11.pc
 endif
 
 if BUILD_ENGINE_SOFTWARE_16_X11
-psoftware16x11 = evas-software-16-x11.pc
-endif
-
-if BUILD_ENGINE_SOFTWARE_XCB
-psoftwarexcb = evas-software-xcb.pc
+pkgconfig_DATA += evas-software-16-x11.pc
 endif
 
 if BUILD_ENGINE_DIRECTFB
-pdirectfb = evas-directfb.pc
+pkgconfig_DATA += evas-directfb.pc
 endif
 
 if BUILD_ENGINE_FB
-pfb = evas-fb.pc
+pkgconfig_DATA += evas-fb.pc
 endif
 
 if BUILD_ENGINE_BUFFER
-psoftwarebuffer = evas-software-buffer.pc
+pkgconfig_DATA += evas-software-buffer.pc
 endif
 
 #if BUILD_ENGINE_SOFTWARE_QTOPIA
-#psoftwareqtopia = evas-software-qtopia.pc
+#pkgconfig_DATA += evas-software-qtopia.pc
 #endif
 
 if BUILD_ENGINE_GL_X11
-popenglx11 = evas-opengl-x11.pc
+pkgconfig_DATA += evas-opengl-x11.pc
 endif
 
 if BUILD_ENGINE_QUARTZ
-pquartz = evas-quartz.pc
+pkgconfig_DATA += evas-quartz.pc
 endif
 
 if BUILD_ENGINE_GL_GLEW
-popenglglew = evas-opengl-glew.pc
+pkgconfig_DATA += evas-opengl-glew.pc
 endif
 
 #if BUILD_ENGINE_CAIRO_X11
-#pcairox11 = evas-cairo-x11.pc
+#pkgconfig_DATA += evas-cairo-x11.pc
 #endif
 
 if BUILD_ENGINE_XRENDER_X11
-pxrenderx11 = evas-xrender-x11.pc
+pkgconfig_DATA += evas-xrender-x11.pc
 endif
 
 if BUILD_ENGINE_XRENDER_XCB
-pxrenderxcb = evas-xrender-xcb.pc
+pkgconfig_DATA += evas-xrender-xcb.pc
 endif
 
 if BUILD_ENGINE_SOFTWARE_GDI
-psoftwaregdi = evas-software-gdi.pc
+pkgconfig_DATA += evas-software-gdi.pc
 endif
 
 if BUILD_ENGINE_SOFTWARE_DDRAW
-psoftwareddraw = evas-software-ddraw.pc
+pkgconfig_DATA += evas-software-ddraw.pc
 endif
 
 if BUILD_ENGINE_SOFTWARE_16_DDRAW
-psoftware16ddraw = evas-software-16-ddraw.pc
+pkgconfig_DATA += evas-software-16-ddraw.pc
 endif
 
 if BUILD_ENGINE_DIRECT3D
-pdirect3d = evas-direct3d.pc
+pkgconfig_DATA += evas-direct3d.pc
 endif
 
 if BUILD_ENGINE_SOFTWARE_16_WINCE
-psoftware16wince = evas-software-16-wince.pc
+pkgconfig_DATA += evas-software-16-wince.pc
 endif
 
 if BUILD_ENGINE_SOFTWARE_SDL
-psoftwaresdl = evas-software-sdl.pc
+pkgconfig_DATA += evas-software-sdl.pc
 endif
-
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = \
-	evas.pc $(psoftwarex11) $(psoftwarexcb) $(pdirectfb) $(pfb) \
-	$(psoftwarebuffer) $(popenglx11) $(pquartz) \
-	$(pxrenderx11) $(pxrenderxcb) $(psoftwaregdi) $(psoftwareddraw) $(psoftwaresdl) \
-	$(psoftware16x11) $(pdirect3d) $(psoftware16ddraw) $(psoftware16wince) $(popenglglew)
-# $(psoftwareqtopia) $(pcairox11)
 
 .PHONY: doc
 
