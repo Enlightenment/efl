@@ -251,6 +251,8 @@ eina_inlist_remove(Eina_Inlist *list, Eina_Inlist *item)
    /* checkme */
    EINA_SAFETY_ON_NULL_RETURN_VAL(list, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(item, list);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL
+     ((item != list) && (item->prev == NULL) && (item->next == NULL), list);
 
    if (item->next)
      item->next->prev = item->prev;
