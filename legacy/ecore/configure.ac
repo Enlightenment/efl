@@ -898,15 +898,23 @@ ECORE_EVAS_CHECK_MODULE([software-buffer],
 
 # ecore_evas_software_x11
 
-ecore_evas_xlib_deps="no"
-if test "x${have_ecore_x}" = "xyes" -a "x${have_ecore_x_xlib}" = "xyes" ; then
-   ecore_evas_xlib_deps="yes"
-fi
-
 ECORE_EVAS_CHECK_MODULE([software-x11],
    [${want_ecore_evas_software_x11}],
-   [Software Xlib],
-   [${ecore_evas_xlib_deps}])
+   [Software X11],
+   [${have_ecore_x}])
+
+have_ecore_evas_software_xlib=no"
+have_ecore_evas_software_xcb=no"
+if test "x$have_ecore_evas_software_x11" = "xyes" ; then
+   have_ecore_evas_software_xlib=`${PKG_CONFIG} --variable=Xlib evas-software-x11`
+   if test "x${have_ecore_evas_software_xlib}" = "xyes" -a "x${have_ecore_x_xlib}" = "xyes" ; then
+      AC_DEFINE(BUILD_ECORE_EVAS_SOFTWARE_XLIB, 1, [Evas Software Xlib Engine Support])
+   fi
+   have_ecore_evas_software_xcb=`${PKG_CONFIG} --variable=XCB evas-software-x11`
+   if test "x$have_ecore_evas_software_xcb" = "xyes" -a "x${have_ecore_x_xcb}" = "xyes" ; then
+      AC_DEFINE(BUILD_ECORE_EVAS_SOFTWARE_XCB, 1, [Evas Software XCB Engine Support])
+   fi
+fi
 
 # ecore_evas_xrender_x11
 
@@ -928,18 +936,6 @@ ECORE_EVAS_CHECK_MODULE([software-16-x11],
    [${want_ecore_evas_software_16_x11}],
    [Software Xlib 16 bits],
    [${ecore_evas_xlib_deps}])
-
-# ecore_evas_software_xcb
-
-ecore_evas_xcb_deps="no"
-if test "x${have_ecore_x}" = "xyes" -a "x${have_ecore_x_xcb}" = "xyes" ; then
-   ecore_evas_xcb_deps="yes"
-fi
-
-ECORE_EVAS_CHECK_MODULE([software-xcb],
-   [${want_ecore_evas_software_xcb}],
-   [Software XCB],
-   [${ecore_evas_xcb_deps}])
 
 # ecore_evas_xrender_xcb
 
@@ -1203,10 +1199,18 @@ echo
 echo "  Ecore_Evas...................: $have_ecore_evas"
 if test "x${have_ecore_evas}" = "xyes" ; then
   echo "    Software Memory Buffer.....: $have_ecore_evas_software_buffer"
-  echo "    Software X11...............: $have_ecore_evas_software_x11"
+  if test "x${have_ecore_evas_software_x11}" = "xyes" ; then
+    if test "x${have_ecore_evas_software_xlib}" = "xyes" ; then
+      echo "    Software X11...............: $have_ecore_evas_software_x11 (Xlib)"
+    fi
+    if test "x${have_ecore_evas_software_xcb}" = "xyes" ; then
+      echo "    Software X11...............: $have_ecore_evas_software_x11 (XCB)"
+    fi
+  else
+    echo "    Software X11...............: $have_ecore_evas_software_x11"
+  fi
   echo "    XRender X11................: $have_ecore_evas_xrender_x11"
   echo "    OpenGL X11.................: $have_ecore_evas_opengl_x11"
-  echo "    Software XCB...............: $have_ecore_evas_software_xcb"
   echo "    XRender XCB................: $have_ecore_evas_xrender_xcb"
   echo "    Software GDI...............: $have_ecore_evas_software_gdi"
   echo "    Software DirectDraw........: $have_ecore_evas_software_ddraw"

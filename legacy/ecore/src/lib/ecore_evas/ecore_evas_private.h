@@ -42,7 +42,7 @@
 # ifdef HAVE_ECORE_X_XLIB
 #  include <X11/Xlib.h>
 #  include <X11/Xutil.h>
-#  ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
+#  ifdef BUILD_ECORE_EVAS_SOFTWARE_XLIB
 #   include <Evas_Engine_Software_X11.h>
 #  endif
 #  ifdef BUILD_ECORE_EVAS_XRENDER_X11
@@ -157,7 +157,7 @@ struct _Ecore_Evas_Engine
 {
    Ecore_Evas_Engine_Func *func;
 
-#if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_SOFTWARE_XCB)
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
    struct {
       Ecore_X_Window win_root;
       Eina_List     *win_extra;

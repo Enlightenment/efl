@@ -38,8 +38,8 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 #else
 	return 0;
 #endif
-      case ECORE_EVAS_ENGINE_SOFTWARE_X11:
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
+      case ECORE_EVAS_ENGINE_SOFTWARE_XLIB:
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_XLIB
 	return 1;
 #else
 	return 0;
@@ -506,9 +506,6 @@ static const struct ecore_evas_engine _engines[] = {
 #endif
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
   {"opengl_x11", _ecore_evas_constructor_opengl_x11},
-#endif
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_XCB
-  {"software_xcb", _ecore_evas_constructor_software_x11},
 #endif
 #ifdef BUILD_ECORE_EVAS_XRENDER_XCB
   {"xrender_xcb", _ecore_evas_constructor_xrender_x11},
