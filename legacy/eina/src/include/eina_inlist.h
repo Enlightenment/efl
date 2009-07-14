@@ -22,6 +22,7 @@
 #include "eina_types.h"
 #include "eina_iterator.h"
 #include "eina_accessor.h"
+#include <stddef.h>
 
 /**
  * @addtogroup Eina_Data_Types_Group Data Types
