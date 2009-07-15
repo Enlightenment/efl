@@ -693,6 +693,20 @@ ethumb_file_get(const Ethumb *e, const char **path, const char **key)
    if (key) *key = e->src_key;
 }
 
+static const char ACCEPTABLE_URI_CHARS[96] = {
+     /*      !    "    #    $    %    &    '    (    )    *    +    ,    -    .    / */ 
+     0x00,0x3F,0x20,0x20,0x28,0x00,0x2C,0x3F,0x3F,0x3F,0x3F,0x2A,0x28,0x3F,0x3F,0x1C,
+     /* 0    1    2    3    4    5    6    7    8    9    :    ;    <    =    >    ? */
+     0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x38,0x20,0x20,0x2C,0x20,0x20,
+     /* @    A    B    C    D    E    F    G    H    I    J    K    L    M    N    O */
+     0x38,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,
+     /* P    Q    R    S    T    U    V    W    X    Y    Z    [    \    ]    ^    _ */
+     0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x20,0x20,0x20,0x20,0x3F,
+     /* `    a    b    c    d    e    f    g    h    i    j    k    l    m    n    o */
+     0x20,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,
+     /* p    q    r    s    t    u    v    w    x    y    z    {    |    }    ~  DEL */
+     0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x20,0x20,0x20,0x3F,0x20
+};
 
 static const char *
 _ethumb_generate_hash(const char *file)
@@ -703,10 +717,33 @@ _ethumb_generate_hash(const char *file)
   unsigned char hash[MD5_HASHBYTES];
   static const char hex[] = "0123456789abcdef";
 
-  char uri[PATH_MAX];
+  char *uri;
+  char *t;
+  const char *c;
+
+#define _check_uri_char(c) \
+  ((c) >= 32 && (c) < 128 && (ACCEPTABLE_URI_CHARS[(c) - 32] & 0x08))
 
   EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
-  snprintf (uri, sizeof(uri), "file://%s", file);
+
+  uri = alloca(3 * strlen(file) + 9);
+  strncpy(uri, "file://", sizeof(uri));
+  t = uri + 7;
+
+  for (c = file; *c != '\0'; c++)
+    {
+       if (!_check_uri_char(*c))
+	 {
+	    *t++ = '%';
+	    *t++ = hex[*c >> 4];
+	    *t++ = hex[*c & 15];
+	 }
+       else
+	 *t++ = *c;
+    }
+  *t = '\0';
+
+#undef _check_uri_char
 
   MD5Init (&ctx);
   MD5Update (&ctx, (unsigned char const*)uri, (unsigned)strlen (uri));
