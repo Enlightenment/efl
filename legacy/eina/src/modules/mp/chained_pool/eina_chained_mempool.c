@@ -34,6 +34,7 @@
 #include "eina_error.h"
 #include "eina_module.h"
 #include "eina_mempool.h"
+#include "eina_trash.h"
 
 #include "eina_private.h"
 
@@ -54,7 +55,7 @@ typedef struct _Chained_Pool Chained_Pool;
 struct _Chained_Pool
 {
    EINA_INLIST;
-   void *base;
+   Eina_Trash *base;
    int usage;
 };
 
@@ -62,20 +63,16 @@ static inline Chained_Pool *
 _eina_chained_mp_pool_new(Chained_Mempool *pool)
 {
    Chained_Pool *p;
-   void **ptr;
+   unsigned char *ptr;
    int item_alloc, i;
 
    item_alloc = ((pool->item_size + sizeof(void *) - 1) / sizeof(void *)) * sizeof(void *);
    p = malloc(sizeof(Chained_Pool) + (pool->pool_size * item_alloc));
-   ptr = (void **)(((unsigned char *)p) + sizeof(Chained_Pool));
+   ptr = (unsigned char *) (p + 1);
    p->usage = 0;
-   p->base = ptr;
-   for (i = 0; i < pool->pool_size - 1; i++)
-     {
-	*ptr = (void **)(((unsigned char *)ptr) + item_alloc);
-	ptr = *ptr;
-     }
-   *ptr = NULL;
+   p->base = NULL;
+   for (i = 0; i < pool->pool_size; ++i, ptr += item_alloc)
+     eina_trash_push(&p->base, ptr);
    return p;
 }
 
@@ -120,10 +117,8 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
 	  }
 	pool->first = eina_inlist_prepend(pool->first, EINA_INLIST_GET(p));
      }
-   // this points to the next free block - so take it
-   mem = p->base;
-   // base now points to the next free block
-   p->base = *((void **)mem);
+   // Request a free pointer
+   mem = eina_trash_pop(&p->base);
    // move to end - it just filled up
    if (!p->base)
      {
@@ -162,9 +157,8 @@ eina_chained_mempool_free(void *data, void *ptr)
 	if ((ptr >= pmem) && ((unsigned char *)ptr < (((unsigned char *)pmem) + psize)))
 	  {
 	     // freed node points to prev free node
-	     *((void **)ptr) = p->base;
+	     eina_trash_push(&p->base, ptr);
 	     // next free node is now the one we freed
-	     p->base = ptr;
 	     p->usage--;
 	     pool->usage--;
 	     if (p->usage == 0)

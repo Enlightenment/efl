@@ -36,6 +36,7 @@
  *       <li> @ref eina_hash_subsubsec
  *       <li> @ref eina_inlist_subsubsec
  *       <li> @ref eina_rbtree_subsubsec
+ *       <li> @ref eina_trash_subsubsec
  *       <li> @ref eina_list_subsubsec
  *     </ul>
  *     <li> @ref eina_stringshare_subsec
@@ -92,6 +93,10 @@
  *
  * @subsubsection eina_rbtree_subsubsec Inlined Red Black Tree
  *
+ * @subsubsection eina_trash_subsubsec Trash
+ *
+ * @subsubsection eina_trash_subsubsec Trash
+ *
  * @subsubsection eina_list_subsubsec List
  *
  * @subsection eina_stringshare_subsec Shared String
@@ -145,6 +150,7 @@ extern "C" {
 #include "eina_file.h"
 #include "eina_list.h"
 #include "eina_hash.h"
+#include "eina_trash.h"
 #include "eina_lalloc.h"
 #include "eina_module.h"
 #include "eina_mempool.h"
