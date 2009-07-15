@@ -1028,6 +1028,8 @@ ethumb_client_size_set(Ethumb_Client *client, int tw, int th)
 EAPI void
 ethumb_client_size_get(const Ethumb_Client *client, int *tw, int *th)
 {
+   if (tw) *tw = 0;
+   if (th) *th = 0;
    EINA_SAFETY_ON_NULL_RETURN(client);
 
    ethumb_thumb_size_get(client->ethumb, tw, th);
@@ -1079,6 +1081,8 @@ ethumb_client_crop_align_set(Ethumb_Client *client, float x, float y)
 EAPI void
 ethumb_client_crop_align_get(const Ethumb_Client *client, float *x, float *y)
 {
+   if (x) *x = 0.0;
+   if (y) *y = 0.0;
    EINA_SAFETY_ON_NULL_RETURN(client);
 
    ethumb_thumb_crop_align_get(client->ethumb, x, y);
@@ -1224,6 +1228,8 @@ ethumb_client_file_set(Ethumb_Client *client, const char *path, const char *key)
 EAPI void
 ethumb_client_file_get(Ethumb_Client *client, const char **path, const char **key)
 {
+   if (path) *path = NULL;
+   if (key) *key = NULL;
    EINA_SAFETY_ON_NULL_RETURN(client);
 
    ethumb_file_get(client->ethumb, path, key);
@@ -1248,6 +1254,8 @@ ethumb_client_thumb_path_set(Ethumb_Client *client, const char *path, const char
 EAPI void
 ethumb_client_thumb_path_get(Ethumb_Client *client, const char **path, const char **key)
 {
+   if (path) *path = NULL;
+   if (key) *key = NULL;
    EINA_SAFETY_ON_NULL_RETURN(client);
 
    ethumb_thumb_path_get(client->ethumb, path, key);
