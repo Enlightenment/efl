@@ -1,0 +1,25 @@
+ * documentation (based on python bindings)
+   * Ethumb
+   * Ethumb_Client
+
+ * memory handling:
+   * zero pointer parameters before failing on SAFETY macros (file_get, etc)
+   * Ethumb_Client:
+      * call free_data() on clear() and queue_remove()
+      * check other places to ensure free_data() on requests.
+   * disconnect() should cancel everything, regardless of being connected
+   * disconnect() cannot call clear() as it is asynchronous (maybe block?)
+   * disconnect() should cancel all clear_pending
+
+ * callback:
+   * const void *data on function registration, cast when call.
+   * give generated_cb the Ethumb_Client parameter.
+
+ * unit tests, be them in C or Python, covering:
+   * thumbnail generation respect parameters (size, format...)
+   * respect fdo standards (hash, location, etc, uri with spaces...)
+   * server died recovery, just add timeout and kill server before expires
+
+ * examples:
+   * simple client example in C, see 01-simple.py
+   * error handling, including reconnection.
