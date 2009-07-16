@@ -2148,7 +2148,7 @@ _ecore_evas_x_shutdown(void)
    _ecore_evas_init_count--;
    if (_ecore_evas_init_count == 0)
      {
-	int i;
+	unsigned int i;
 
 	while (ecore_evases) _ecore_evas_free(ecore_evases);
 	for (i = 0; i < sizeof(ecore_evas_event_handlers) / sizeof(Ecore_Event_Handler*); i++)
