@@ -29,8 +29,6 @@ _ecore_evas_buffer_init(void)
 static void
 _ecore_evas_buffer_free(Ecore_Evas *ee)
 {
-   ecore_evases = (Ecore_Evas *) eina_inlist_remove(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
-   _ecore_evas_buffer_shutdown();
    if (ee->engine.buffer.image)
      {
 	Ecore_Evas *ee2;
@@ -40,7 +38,12 @@ _ecore_evas_buffer_free(Ecore_Evas *ee)
 	ee2->sub_ecore_evas = eina_list_remove(ee2->sub_ecore_evas, ee);
      }
    else
-     free(ee->engine.buffer.pixels);
+     {
+	ecore_evases = (Ecore_Evas *) eina_inlist_remove(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
+
+	free(ee->engine.buffer.pixels);
+     }
+   _ecore_evas_buffer_shutdown();
 }
 
 static void
