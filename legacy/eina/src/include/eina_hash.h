@@ -120,6 +120,7 @@ EAPI int eina_hash_superfast(const char *key, int len) EINA_ARG_NONNULL(1);
 
 /* Hash function first reported by dan bernstein many years ago in comp.lang.c */
 static inline int eina_hash_djb2(const char *key, int len) EINA_ARG_NONNULL(1);
+static inline int eina_hash_djb2_len(const char *key, int *plen) EINA_ARG_NONNULL(1, 2);
 
 /* Hash function from http://www.concentric.net/~Ttwang/tech/inthash.htm */
 static inline int eina_hash_int32(const unsigned int *pkey, int len) EINA_ARG_NONNULL(1);
