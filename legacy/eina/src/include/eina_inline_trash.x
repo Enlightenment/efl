@@ -57,7 +57,7 @@ eina_trash_push(Eina_Trash **trash, void *data)
 {
    Eina_Trash *tmp;
 
-   tmp = data;
+   tmp = (Eina_Trash *)data;
    tmp->next = *trash;
    *trash = tmp;
 }
