@@ -64,7 +64,7 @@ _generate_thumb(Ethumb *e)
    ethumb_finished_callback_call(e, 1);
 }
 
-Ethumb_Plugin *
+EAPI Ethumb_Plugin *
 ethumb_plugin_get(void)
 {
    static const char *extensions[] = { "pdf", NULL };
@@ -77,7 +77,7 @@ ethumb_plugin_get(void)
    return &plugin;
 }
 
-Eina_Bool
+static Eina_Bool
 _module_init(void)
 {
    epdf_init();

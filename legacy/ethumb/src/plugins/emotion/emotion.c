@@ -49,13 +49,13 @@ _resize_movie(struct _emotion_plugin *_plugin)
 }
 
 static void
-_frame_resized_cb(void *data, Evas_Object *o, void *event_info)
+_frame_resized_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    _resize_movie(data);
 }
 
 static void
-_video_stopped_cb(void *data, Evas_Object *o, void *event_info)
+_video_stopped_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    struct _emotion_plugin *_plugin = data;
 
@@ -350,14 +350,14 @@ ethumb_plugin_get(void)
    return &plugin;
 }
 
-Eina_Bool
+static Eina_Bool
 _module_init(void)
 {
    return EINA_TRUE;
 }
 
-void
-_module_shutdown()
+static void
+_module_shutdown(void)
 {
 }
 
