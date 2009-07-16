@@ -340,7 +340,7 @@ _generate_thumb(Ethumb *e)
 EAPI Ethumb_Plugin *
 ethumb_plugin_get(void)
 {
-   static const char *extensions[] = { "avi", "mp4", "ogv", NULL };
+   static const char *extensions[] = { "avi", "mp4", "ogv", "mov", NULL };
    static Ethumb_Plugin plugin =
      {
 	extensions,
