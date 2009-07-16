@@ -67,7 +67,7 @@ static Eina_Hash *_plugins_ext = NULL;
 static Eina_Array *_plugins = NULL;
 
 static Eina_Bool
-_ethumb_plugin_list_cb(Eina_Module *m, void *data)
+_ethumb_plugin_list_cb(Eina_Module *m, void *data __UNUSED__)
 {
    const char *file;
    const char **ext;
@@ -719,7 +719,7 @@ _ethumb_generate_hash(const char *file)
 
   char *uri;
   char *t;
-  const char *c;
+  const unsigned char *c;
 
 #define _check_uri_char(c) \
   ((c) >= 32 && (c) < 128 && (ACCEPTABLE_URI_CHARS[(c) - 32] & 0x08))
@@ -730,7 +730,7 @@ _ethumb_generate_hash(const char *file)
   strncpy(uri, "file://", sizeof(uri));
   t = uri + 7;
 
-  for (c = file; *c != '\0'; c++)
+  for (c = (const unsigned char *)file; *c != '\0'; c++)
     {
        if (!_check_uri_char(*c))
 	 {

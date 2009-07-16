@@ -980,7 +980,7 @@ end:
 }
 
 static void
-_ethumb_client_queue_clear_cb(void *data, DBusMessage *msg, DBusError *error)
+_ethumb_client_queue_clear_cb(void *data, DBusMessage *msg __UNUSED__, DBusError *error __UNUSED__)
 {
    Ethumb_Client *client = data;
 

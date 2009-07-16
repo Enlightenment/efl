@@ -14,6 +14,7 @@ AC_PROG_CC
 AM_PROG_CC_STDC
 AM_PROG_CC_C_O
 AC_HEADER_STDC
+AC_C___ATTRIBUTE__
 dnl AC_C_CONST is bogus, its tests fails on -Wall -O1 ( uninitialized values)
 dnl AC_C_CONST
 
