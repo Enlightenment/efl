@@ -40,7 +40,7 @@ struct frame
 };
 
 static unsigned char
-_ethumb_getopt_callback_frame_parse(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage)
+_ethumb_getopt_callback_frame_parse(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc __UNUSED__, const char *str, void *data __UNUSED__, Ecore_Getopt_Value *storage)
 {
    struct frame *f = (struct frame *)storage->ptrp;
    const char *tfile, *tgroup, *tswallow;
@@ -120,6 +120,9 @@ const Ecore_Getopt optdesc = {
      ('v', "video_time", "time of video frame to use as thumbnail."),
      ECORE_GETOPT_STORE_INT
      ('p', "document_page", "document page to use as thumbnail."),
+     ECORE_GETOPT_STORE_INT('D', "debug", "debug level (see -Q and -V)"),
+     ECORE_GETOPT_COUNT('Q', "quiet", "print out less information"),
+     ECORE_GETOPT_COUNT('V', "verbose", "print out more information"),
      ECORE_GETOPT_LICENSE('L', "license"),
      ECORE_GETOPT_COPYRIGHT('C', "copyright"),
      ECORE_GETOPT_VERSION('V', "version"),
@@ -129,8 +132,20 @@ const Ecore_Getopt optdesc = {
 };
 
 static void
-_finished_thumb(Ethumb *e, Eina_Bool success, void *data)
+_thumb_report(const char *mode, Ethumb *e)
 {
+   const char *ap, *ak, *gp, *gk;
+   ethumb_file_get(e, &ap, &ak);
+   ethumb_thumb_path_get(e, &gp, &gk);
+   printf("%s '%s' '%s' => '%s' '%s'\n",
+	  mode, ap, ak ? ak : "", gp, gk ? gk : "");
+}
+
+static void
+_finished_thumb(Ethumb *e, Eina_Bool success, void *data __UNUSED__)
+{
+   const char *mode = success ? "GENERATED" : "FAILED";
+   _thumb_report(mode, e);
    ecore_main_loop_quit();
 }
 
@@ -146,11 +161,12 @@ main(int argc, char *argv[])
    char *directory = NULL;
    char *category = NULL;
    char *src_key = NULL;
-   struct frame frame = {NULL};
+   struct frame frame = {NULL, NULL, NULL};
    const char *thumb_path = NULL;
    const char *thumb_key = NULL;
    double video_time = 0;
    int page = 0;
+   int debug_level = EINA_ERROR_LEVEL_WARN;
    int arg_index;
    int i;
 
@@ -168,6 +184,9 @@ main(int argc, char *argv[])
 	ECORE_GETOPT_VALUE_STR(src_key),
 	ECORE_GETOPT_VALUE_DOUBLE(video_time),
 	ECORE_GETOPT_VALUE_INT(page),
+	ECORE_GETOPT_VALUE_INT(debug_level),
+	ECORE_GETOPT_VALUE_INT(debug_level),
+	ECORE_GETOPT_VALUE_INT(debug_level),
 	ECORE_GETOPT_VALUE_BOOL(quit_option),
 	ECORE_GETOPT_VALUE_BOOL(quit_option),
 	ECORE_GETOPT_VALUE_BOOL(quit_option),
@@ -179,7 +198,16 @@ main(int argc, char *argv[])
    if (arg_index < 0)
      {
 	fprintf(stderr, "Could not parse arguments.\n");
-	r = 0;
+	ecore_shutdown();
+	ethumb_shutdown();
+	return -1;
+     }
+
+   if (quit_option)
+     {
+	ecore_shutdown();
+	ethumb_shutdown();
+	return 0;
      }
 
    for (i = 0; i < 3; i++)
@@ -230,6 +258,7 @@ main(int argc, char *argv[])
 	ethumb_thumb_path_set(e, thumb_path, thumb_key);
 	if (ethumb_exists(e))
 	  {
+	     _thumb_report("EXISTS", e);
 	     quit_option = 1;
 	     r = 1;
 	  }
