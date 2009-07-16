@@ -74,17 +74,22 @@ _ethumb_plugin_list_cb(Eina_Module *m, void *data __UNUSED__)
    Ethumb_Plugin *plugin;
    Ethumb_Plugin *(*plugin_get)(void);
 
+   file = eina_module_file_get(m);
    if (!eina_module_load(m))
-     return EINA_FALSE;
+     {
+	ERR("could not load module \"%s\": %s\n",
+	    file, eina_error_msg_get(eina_error_get()));
+	return EINA_FALSE;
+     }
 
    plugin_get = eina_module_symbol_get(m, "ethumb_plugin_get");
    if (!plugin_get)
      {
+	ERR("could not find ethumb_plugin_get() in module \"%s\": %s\n",
+	    file, eina_error_msg_get(eina_error_get()));
 	eina_module_unload(m);
 	return EINA_FALSE;
      }
-
-   file = eina_module_file_get(m);
 
    plugin = plugin_get();
    if (!plugin)
@@ -94,8 +99,12 @@ _ethumb_plugin_list_cb(Eina_Module *m, void *data __UNUSED__)
 	return EINA_FALSE;
      }
 
+   DBG("loaded plugin \"%s\" (%p) with extensions:\n", file, plugin);
    for (ext = plugin->extensions; *ext; ext++)
-     eina_hash_add(_plugins_ext, *ext, plugin);
+     {
+	DBG("   extension \"%s\"\n", *ext);
+	eina_hash_add(_plugins_ext, *ext, plugin);
+     }
 
    return EINA_TRUE;
 }
