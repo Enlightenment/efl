@@ -31,7 +31,7 @@
 #endif /* ! _WIN32 */
 #endif /* EAPI */
 
-#include "Ethumb.h"
+#include <Ethumb.h>
 
 #ifdef __cplusplus
 extern "C" {
