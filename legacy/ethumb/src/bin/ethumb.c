@@ -205,6 +205,12 @@ main(int argc, char *argv[])
 
    if (quit_option)
      {
+	if (frame.file)
+	  {
+	     eina_stringshare_del(frame.file);
+	     eina_stringshare_del(frame.group);
+	     eina_stringshare_del(frame.swallow);
+	  }
 	ecore_shutdown();
 	ethumb_shutdown();
 	return 0;
