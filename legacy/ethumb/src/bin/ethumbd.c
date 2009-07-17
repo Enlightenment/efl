@@ -58,24 +58,24 @@ static const char fdo_path[] = "/org/freedesktop/DBus";
 struct _Ethumb_Setup
 {
    struct
-     {
-	Eina_Bool fdo : 1;
-	Eina_Bool size : 1;
-	Eina_Bool format : 1;
-	Eina_Bool aspect : 1;
-	Eina_Bool crop : 1;
-	Eina_Bool quality : 1;
-	Eina_Bool compress : 1;
-	Eina_Bool directory : 1;
-	Eina_Bool category : 1;
-	Eina_Bool frame : 1;
-	Eina_Bool video_time : 1;
-	Eina_Bool video_start : 1;
-	Eina_Bool video_interval : 1;
-	Eina_Bool video_ntimes : 1;
-	Eina_Bool video_fps : 1;
-	Eina_Bool document_page : 1;
-     } flags;
+   {
+      Eina_Bool fdo : 1;
+      Eina_Bool size : 1;
+      Eina_Bool format : 1;
+      Eina_Bool aspect : 1;
+      Eina_Bool crop : 1;
+      Eina_Bool quality : 1;
+      Eina_Bool compress : 1;
+      Eina_Bool directory : 1;
+      Eina_Bool category : 1;
+      Eina_Bool frame : 1;
+      Eina_Bool video_time : 1;
+      Eina_Bool video_start : 1;
+      Eina_Bool video_interval : 1;
+      Eina_Bool video_ntimes : 1;
+      Eina_Bool video_fps : 1;
+      Eina_Bool document_page : 1;
+   } flags;
    int fdo;
    int tw, th;
    int format;
@@ -171,18 +171,18 @@ const Ecore_Getopt optdesc = {
   "(C) 2009 - ProFUSION embedded systems",
   "LGPL v3 - GNU Lesser General Public License",
   "Ethumb daemon.\n"
-     "\n"
-     "ethumbd uses the Ethumb library to create thumbnails for any "
-     "program that requests it (now just by dbus).\n",
+  "\n"
+  "ethumbd uses the Ethumb library to create thumbnails for any "
+  "program that requests it (now just by dbus).\n",
   0,
   {
-     ECORE_GETOPT_STORE_DOUBLE
-     ('t', "timeout", "finish ethumbd after <timeout> seconds of no activity."),
-     ECORE_GETOPT_LICENSE('L', "license"),
-     ECORE_GETOPT_COPYRIGHT('C', "copyright"),
-     ECORE_GETOPT_VERSION('V', "version"),
-     ECORE_GETOPT_HELP('h', "help"),
-     ECORE_GETOPT_SENTINEL
+    ECORE_GETOPT_STORE_DOUBLE
+    ('t', "timeout", "finish ethumbd after <timeout> seconds of no activity."),
+    ECORE_GETOPT_LICENSE('L', "license"),
+    ECORE_GETOPT_COPYRIGHT('C', "copyright"),
+    ECORE_GETOPT_VERSION('V', "version"),
+    ECORE_GETOPT_HELP('h', "help"),
+    ECORE_GETOPT_SENTINEL
   }
 };
 
@@ -423,8 +423,8 @@ _generated_cb(struct _Ethumbd *ed, Eina_Bool success, const char *thumb_path, co
    DBG("thumbnail ready at: \"%s:%s\"\n", thumb_path, thumb_key);
 
    if (ed->queue.table[i].used)
-     _ethumb_dbus_generated_signal(ed, &ed->processing->id, thumb_path,
-				   thumb_key, success);
+     _ethumb_dbus_generated_signal
+       (ed, &ed->processing->id, thumb_path, thumb_key, success);
    eina_stringshare_del(ed->processing->file);
    eina_stringshare_del(ed->processing->key);
    eina_stringshare_del(ed->processing->thumb);
@@ -584,9 +584,9 @@ _process_setup(struct _Ethumbd *ed)
 static void
 _process_file(struct _Ethumbd *ed)
 {
-   _ethumbd_child_write_op_generate(ed, ed->queue.current, ed->processing->file,
-				    ed->processing->key, ed->processing->thumb,
-				    ed->processing->thumb_key);
+   _ethumbd_child_write_op_generate
+     (ed, ed->queue.current, ed->processing->file,
+      ed->processing->key, ed->processing->thumb, ed->processing->thumb_key);
 }
 
 static int
@@ -641,7 +641,7 @@ _process_queue_cb(void *data)
    eobject->queue = eina_list_remove_list(eobject->queue, eobject->queue);
    ed->queue.current = i;
    DBG("processing file: \"%s:%s\"...\n", request->file,
-	   request->key);
+       request->key);
    ed->processing = request;
 
    if (request->id < 0)
@@ -795,13 +795,13 @@ _name_owner_changed_cb(void *data, DBusMessage *msg)
 
    dbus_error_init(&err);
    if (!dbus_message_get_args(msg, &err,
-       DBUS_TYPE_STRING, &name,
-       DBUS_TYPE_STRING, &from,
-       DBUS_TYPE_STRING, &to,
-       DBUS_TYPE_INVALID))
+			      DBUS_TYPE_STRING, &name,
+			      DBUS_TYPE_STRING, &from,
+			      DBUS_TYPE_STRING, &to,
+			      DBUS_TYPE_INVALID))
      {
 	ERR("could not get NameOwnerChanged arguments: %s: %s\n",
-		err.name, err.message);
+	    err.name, err.message);
 	dbus_error_free(&err);
 	return;
      }
@@ -825,8 +825,8 @@ _name_owner_changed_cb(void *data, DBusMessage *msg)
 static void
 _ethumb_dbus_add_name_owner_changed_cb(struct _Ethumbd *ed)
 {
-   ed->name_owner_changed_handler = e_dbus_signal_handler_add(
-      ed->conn, fdo_bus_name, fdo_path, fdo_interface, "NameOwnerChanged",
+   ed->name_owner_changed_handler = e_dbus_signal_handler_add
+     (ed->conn, fdo_bus_name, fdo_path, fdo_interface, "NameOwnerChanged",
       _name_owner_changed_cb, ed);
 }
 
@@ -871,7 +871,7 @@ _ethumb_dbus_ethumb_new_cb(E_DBus_Object *object, DBusMessage *msg)
    _ethumbd_child_write_op_new(ed, i);
    _ethumbd_timeout_stop(ed);
 
-end_new:
+ end_new:
    reply = dbus_message_new_method_return(msg);
    dbus_message_iter_init_append(reply, &iter);
    dbus_message_iter_append_basic(&iter, DBUS_TYPE_OBJECT_PATH,
@@ -880,10 +880,10 @@ end_new:
 }
 
 static struct _Ethumb_DBus_Method_Table _ethumb_dbus_methods[] =
-{
-     { "new", "", "o", _ethumb_dbus_ethumb_new_cb },
-     { }
-};
+  {
+    {"new", "", "o", _ethumb_dbus_ethumb_new_cb},
+    {NULL, NULL, NULL, NULL}
+  };
 
 static const char *
 _ethumb_dbus_get_bytearray(DBusMessageIter *iter)
@@ -918,8 +918,8 @@ _ethumb_dbus_append_bytearray(DBusMessageIter *iter, const char *string)
      string = "";
 
    dbus_message_iter_open_container(iter, DBUS_TYPE_ARRAY, "y", &viter);
-   dbus_message_iter_append_fixed_array(&viter, DBUS_TYPE_BYTE, &string,
-					strlen(string) + 1);
+   dbus_message_iter_append_fixed_array
+     (&viter, DBUS_TYPE_BYTE, &string, strlen(string) + 1);
    dbus_message_iter_close_container(iter, &viter);
 }
 
@@ -977,7 +977,7 @@ _ethumb_dbus_queue_add_cb(E_DBus_Object *object, DBusMessage *msg)
 
    _process_queue_start(ed);
 
-end:
+ end:
    reply = dbus_message_new_method_return(msg);
    dbus_message_iter_init_append(reply, &iter);
    dbus_message_iter_append_basic(&iter, DBUS_TYPE_INT32, &id);
@@ -1032,7 +1032,7 @@ _ethumb_dbus_queue_remove_cb(E_DBus_Object *object, DBusMessage *msg)
 	_ethumb_dbus_inc_min_id(eobject);
      }
 
-end:
+ end:
    reply = dbus_message_new_method_return(msg);
    dbus_message_iter_init_append(reply, &iter);
    dbus_message_iter_append_basic(&iter, DBUS_TYPE_BOOLEAN, &r);
@@ -1071,7 +1071,7 @@ _ethumb_dbus_queue_clear_cb(E_DBus_Object *object, DBusMessage *msg)
    ed->queue.nqueue -= eobject->nqueue;
    eobject->nqueue = 0;
 
-end:
+ end:
    reply = dbus_message_new_method_return(msg);
    return reply;
 }
@@ -1101,7 +1101,7 @@ _ethumb_dbus_delete_cb(E_DBus_Object *object, DBusMessage *msg)
 }
 
 static int
-_ethumb_dbus_fdo_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+_ethumb_dbus_fdo_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request __UNUSED__)
 {
    int type;
    dbus_int32_t fdo;
@@ -1120,7 +1120,7 @@ _ethumb_dbus_fdo_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, stru
 }
 
 static int
-_ethumb_dbus_size_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+_ethumb_dbus_size_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    DBusMessageIter oiter;
    int type;
@@ -1146,7 +1146,7 @@ _ethumb_dbus_size_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, str
 }
 
 static int
-_ethumb_dbus_format_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+_ethumb_dbus_format_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
    dbus_int32_t format;
@@ -1167,7 +1167,7 @@ _ethumb_dbus_format_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, s
 }
 
 static int
-_ethumb_dbus_aspect_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+_ethumb_dbus_aspect_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
    dbus_int32_t aspect;
@@ -1188,7 +1188,7 @@ _ethumb_dbus_aspect_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, s
 }
 
 static int
-_ethumb_dbus_crop_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+_ethumb_dbus_crop_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    DBusMessageIter oiter;
    int type;
@@ -1214,7 +1214,7 @@ _ethumb_dbus_crop_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, str
 }
 
 static int
-_ethumb_dbus_quality_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+_ethumb_dbus_quality_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
    dbus_int32_t quality;
@@ -1236,7 +1236,7 @@ _ethumb_dbus_quality_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, 
 
 
 static int
-_ethumb_dbus_compress_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+_ethumb_dbus_compress_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
    dbus_int32_t compress;
@@ -1257,7 +1257,7 @@ _ethumb_dbus_compress_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter,
 }
 
 static int
-_ethumb_dbus_frame_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+_ethumb_dbus_frame_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    DBusMessageIter oiter;
    int type;
@@ -1286,7 +1286,7 @@ _ethumb_dbus_frame_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, st
 }
 
 static int
-_ethumb_dbus_directory_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+_ethumb_dbus_directory_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
    const char *directory;
@@ -1307,7 +1307,7 @@ _ethumb_dbus_directory_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter
 }
 
 static int
-_ethumb_dbus_category_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+_ethumb_dbus_category_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
    const char *category;
@@ -1328,7 +1328,7 @@ _ethumb_dbus_category_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter,
 }
 
 static int
-_ethumb_dbus_video_time_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+_ethumb_dbus_video_time_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
    double video_time;
@@ -1349,7 +1349,7 @@ _ethumb_dbus_video_time_set(struct _Ethumb_Object *eobject, DBusMessageIter *ite
 }
 
 static int
-_ethumb_dbus_video_start_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+_ethumb_dbus_video_start_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
    double video_start;
@@ -1370,7 +1370,7 @@ _ethumb_dbus_video_start_set(struct _Ethumb_Object *eobject, DBusMessageIter *it
 }
 
 static int
-_ethumb_dbus_video_interval_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+_ethumb_dbus_video_interval_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
    double video_interval;
@@ -1391,7 +1391,7 @@ _ethumb_dbus_video_interval_set(struct _Ethumb_Object *eobject, DBusMessageIter 
 }
 
 static int
-_ethumb_dbus_video_ntimes_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+_ethumb_dbus_video_ntimes_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
    int video_ntimes;
@@ -1412,7 +1412,7 @@ _ethumb_dbus_video_ntimes_set(struct _Ethumb_Object *eobject, DBusMessageIter *i
 }
 
 static int
-_ethumb_dbus_video_fps_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+_ethumb_dbus_video_fps_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
    int video_fps;
@@ -1433,7 +1433,7 @@ _ethumb_dbus_video_fps_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter
 }
 
 static int
-_ethumb_dbus_document_page_set(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request)
+_ethumb_dbus_document_page_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
    dbus_int32_t document_page;
@@ -1458,23 +1458,23 @@ static struct
    const char *option;
    int (*setup_func)(struct _Ethumb_Object *eobject, DBusMessageIter *iter, struct _Ethumb_Request *request);
 } _option_cbs[] = {
-       { "fdo", _ethumb_dbus_fdo_set },
-       { "size", _ethumb_dbus_size_set },
-       { "format", _ethumb_dbus_format_set },
-       { "aspect", _ethumb_dbus_aspect_set },
-       { "crop", _ethumb_dbus_crop_set },
-       { "quality", _ethumb_dbus_quality_set },
-       { "compress", _ethumb_dbus_compress_set },
-       { "frame", _ethumb_dbus_frame_set },
-       { "directory", _ethumb_dbus_directory_set },
-       { "category", _ethumb_dbus_category_set },
-       { "video_time", _ethumb_dbus_video_time_set },
-       { "video_start", _ethumb_dbus_video_start_set },
-       { "video_interval", _ethumb_dbus_video_interval_set },
-       { "video_ntimes", _ethumb_dbus_video_ntimes_set },
-       { "video_fps", _ethumb_dbus_video_fps_set },
-       { "document_page", _ethumb_dbus_document_page_set },
-       { NULL, NULL}
+  {"fdo", _ethumb_dbus_fdo_set},
+  {"size", _ethumb_dbus_size_set},
+  {"format", _ethumb_dbus_format_set},
+  {"aspect", _ethumb_dbus_aspect_set},
+  {"crop", _ethumb_dbus_crop_set},
+  {"quality", _ethumb_dbus_quality_set},
+  {"compress", _ethumb_dbus_compress_set},
+  {"frame", _ethumb_dbus_frame_set},
+  {"directory", _ethumb_dbus_directory_set},
+  {"category", _ethumb_dbus_category_set},
+  {"video_time", _ethumb_dbus_video_time_set},
+  {"video_start", _ethumb_dbus_video_start_set},
+  {"video_interval", _ethumb_dbus_video_interval_set},
+  {"video_ntimes", _ethumb_dbus_video_ntimes_set},
+  {"video_fps", _ethumb_dbus_video_fps_set},
+  {"document_page", _ethumb_dbus_document_page_set},
+  {NULL, NULL}
 };
 
 static int
@@ -1553,7 +1553,7 @@ _ethumb_dbus_ethumb_setup_cb(E_DBus_Object *object, DBusMessage *msg)
    eobject->nqueue++;
    ed->queue.nqueue++;
 
-end:
+ end:
    reply = dbus_message_new_method_return(msg);
    dbus_message_iter_init_append(reply, &iter);
    dbus_message_iter_append_basic(&iter, DBUS_TYPE_BOOLEAN, &r);
@@ -1576,8 +1576,8 @@ _ethumb_dbus_generated_signal(struct _Ethumbd *ed, int *id, const char *thumb_pa
 
    current = ed->queue.current;
    opath = ed->queue.table[current].path;
-   signal = dbus_message_new_signal(opath, _ethumb_dbus_objects_interface,
-				    "generated");
+   signal = dbus_message_new_signal
+     (opath, _ethumb_dbus_objects_interface, "generated");
 
    dbus_message_iter_init_append(signal, &iter);
    dbus_message_iter_append_basic(&iter, DBUS_TYPE_INT32, &id32);
@@ -1589,45 +1589,43 @@ _ethumb_dbus_generated_signal(struct _Ethumbd *ed, int *id, const char *thumb_pa
    dbus_message_unref(signal);
 }
 
-static struct _Ethumb_DBus_Method_Table _ethumb_dbus_objects_methods[] =
-{
-     { "queue_add", "iayayayay", "i", _ethumb_dbus_queue_add_cb },
-     { "queue_remove", "i", "b", _ethumb_dbus_queue_remove_cb },
-     { "clear_queue", "", "", _ethumb_dbus_queue_clear_cb },
-     { "ethumb_setup", "a{sv}", "b", _ethumb_dbus_ethumb_setup_cb },
-     { "delete", "", "", _ethumb_dbus_delete_cb },
-     { }
+static struct _Ethumb_DBus_Method_Table _ethumb_dbus_objects_methods[] = {
+  {"queue_add", "iayayayay", "i", _ethumb_dbus_queue_add_cb},
+  {"queue_remove", "i", "b", _ethumb_dbus_queue_remove_cb},
+  {"clear_queue", "", "", _ethumb_dbus_queue_clear_cb},
+  {"ethumb_setup", "a{sv}", "b", _ethumb_dbus_ethumb_setup_cb},
+  {"delete", "", "", _ethumb_dbus_delete_cb},
+  {NULL, NULL, NULL, NULL}
 };
 
-static struct _Ethumb_DBus_Signal_Table _ethumb_dbus_objects_signals[] =
-{
-     { "generated",	"xayayb" },
-     { }
+static struct _Ethumb_DBus_Signal_Table _ethumb_dbus_objects_signals[] = {
+  {"generated", "xayayb"},
+  {NULL, NULL}
 };
 
 static int
 _ethumb_dbus_interface_elements_add(E_DBus_Interface *iface, struct _Ethumb_DBus_Method_Table *mtable, struct _Ethumb_DBus_Signal_Table *stable)
 {
-    int i = -1;
-    while (mtable && mtable[++i].name != NULL)
-      if (!e_dbus_interface_method_add(iface,
-				       mtable[i].name,
-				       mtable[i].signature,
-				       mtable[i].reply,
-				       mtable[i].function))
-	return 0;
+   int i = -1;
+   while (mtable && mtable[++i].name != NULL)
+     if (!e_dbus_interface_method_add(iface,
+				      mtable[i].name,
+				      mtable[i].signature,
+				      mtable[i].reply,
+				      mtable[i].function))
+       return 0;
 
-    i = -1;
-    while (stable && stable[++i].name != NULL)
-      if (!e_dbus_interface_signal_add(iface,
-				       stable[i].name,
-				       stable[i].signature))
-	return 0;
-    return 1;
+   i = -1;
+   while (stable && stable[++i].name != NULL)
+     if (!e_dbus_interface_signal_add(iface,
+				      stable[i].name,
+				      stable[i].signature))
+       return 0;
+   return 1;
 }
 
 static void
-_ethumb_dbus_request_name_cb(void *data, DBusMessage *msg, DBusError *err)
+_ethumb_dbus_request_name_cb(void *data, DBusMessage *msg __UNUSED__, DBusError *err)
 {
    E_DBus_Object *dbus_object;
    struct _Ethumbd *ed = data;
@@ -1686,9 +1684,8 @@ _ethumb_dbus_request_name_cb(void *data, DBusMessage *msg, DBusError *err)
 static int
 _ethumb_dbus_setup(struct _Ethumbd *ed)
 {
-
-   e_dbus_request_name(ed->conn, _ethumb_dbus_bus_name, 0,
-		       _ethumb_dbus_request_name_cb, ed);
+   e_dbus_request_name
+     (ed->conn, _ethumb_dbus_bus_name, 0, _ethumb_dbus_request_name_cb, ed);
 
    return 1;
 }
@@ -1745,8 +1742,8 @@ _ethumbd_spawn(struct _Ethumbd *ed)
 	close(pchild[1]);
 	ed->pipeout = pparent[1];
 	ed->pipein = pchild[0];
-	ed->fd_handler = ecore_main_fd_handler_add(
-	   ed->pipein, ECORE_FD_READ | ECORE_FD_ERROR,
+	ed->fd_handler = ecore_main_fd_handler_add
+	  (ed->pipein, ECORE_FD_READ | ECORE_FD_ERROR,
 	   _ethumbd_fd_handler, ed, NULL, NULL);
 	return 1;
      }
@@ -1758,10 +1755,11 @@ main(int argc, char *argv[])
    Eina_Bool quit_option = 0;
    int exit_value = 0;
    int arg_index;
-   struct _Ethumbd ed = {0};
+   struct _Ethumbd ed;
    int child;
    double timeout = -1;
 
+   memset(&ed, 0, sizeof(ed));
    ecore_init();
    eina_stringshare_init();
 
@@ -1788,12 +1786,12 @@ main(int argc, char *argv[])
      }
 
    Ecore_Getopt_Value values[] = {
-	ECORE_GETOPT_VALUE_DOUBLE(timeout),
-	ECORE_GETOPT_VALUE_BOOL(quit_option),
-	ECORE_GETOPT_VALUE_BOOL(quit_option),
-	ECORE_GETOPT_VALUE_BOOL(quit_option),
-	ECORE_GETOPT_VALUE_BOOL(quit_option),
-	ECORE_GETOPT_VALUE_NONE
+     ECORE_GETOPT_VALUE_DOUBLE(timeout),
+     ECORE_GETOPT_VALUE_BOOL(quit_option),
+     ECORE_GETOPT_VALUE_BOOL(quit_option),
+     ECORE_GETOPT_VALUE_BOOL(quit_option),
+     ECORE_GETOPT_VALUE_BOOL(quit_option),
+     ECORE_GETOPT_VALUE_NONE
    };
 
    arg_index = ecore_getopt_parse(&optdesc, values, argc, argv);
@@ -1828,9 +1826,9 @@ main(int argc, char *argv[])
    ecore_main_loop_begin();
    _ethumb_dbus_finish(&ed);
 
-finish_edbus:
+ finish_edbus:
    e_dbus_shutdown();
-finish:
+ finish:
    ethumb_shutdown();
    eina_stringshare_init();
    ecore_shutdown();
