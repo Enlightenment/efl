@@ -125,7 +125,7 @@ _ethumb_plugins_unload(void)
    eina_hash_free(_plugins_ext);
    _plugins_ext = NULL;
    eina_module_list_unload(_plugins);
-   eina_module_list_delete(_plugins);
+   eina_module_list_flush(_plugins);
    eina_array_free(_plugins);
    _plugins = NULL;
 }
