@@ -476,30 +476,51 @@ err:
 EAPI void
 ethumb_client_disconnect(Ethumb_Client *client)
 {
-   Eina_List *l;
+   void *data;
 
    EINA_SAFETY_ON_NULL_RETURN(client);
 
    if (!client->connected)
      goto end_connection;
 
-   ethumb_client_queue_clear(client);
-   l = client->pending_remove;
-   while (l)
+   EINA_LIST_FREE(client->pending_add, data)
      {
-	struct _ethumb_pending_remove *pending = l->data;
-	client->pending_remove = eina_list_remove_list(client->pending_remove, l);
+	struct _ethumb_pending_add *pending = data;
+	eina_stringshare_del(pending->file);
+	eina_stringshare_del(pending->key);
+	eina_stringshare_del(pending->thumb);
+	eina_stringshare_del(pending->thumb_key);
+	dbus_pending_call_cancel(pending->pending_call);
+	dbus_pending_call_unref(pending->pending_call);
+	if (pending->free_data)
+	  pending->free_data(pending->data);
+	free(pending);
+     }
+
+   EINA_LIST_FREE(client->pending_gen, data)
+     {
+	struct _ethumb_pending_gen *pending = data;
+	eina_stringshare_del(pending->file);
+	eina_stringshare_del(pending->key);
+	eina_stringshare_del(pending->thumb);
+	eina_stringshare_del(pending->thumb_key);
+	if (pending->free_data)
+	  pending->free_data(pending->data);
+	free(pending);
+     }
+
+   EINA_LIST_FREE(client->pending_remove, data)
+     {
+	struct _ethumb_pending_remove *pending = data;
 	dbus_pending_call_cancel(pending->pending_call);
 	dbus_pending_call_unref(pending->pending_call);
 	free(pending);
      }
 
-   l = client->pending_gen;
-   while (l)
+   if (client->pending_clear)
      {
-	struct _ethumb_pending_gen *pending = l->data;
-	client->pending_gen = eina_list_remove_list(client->pending_gen, l);
-	free(pending);
+	dbus_pending_call_cancel(client->pending_clear);
+	dbus_pending_call_unref(client->pending_clear);
      }
 
 end_connection:
@@ -948,6 +969,8 @@ ethumb_client_queue_remove(Ethumb_Client *client, int id, void (*queue_remove_cb
 	eina_stringshare_del(pending->thumb_key);
 	dbus_pending_call_cancel(pending->pending_call);
 	dbus_pending_call_unref(pending->pending_call);
+	if (pending->free_data)
+	  pending->free_data(pending->data);
 	free(pending);
 	found = 1;
 	break;
@@ -970,6 +993,8 @@ ethumb_client_queue_remove(Ethumb_Client *client, int id, void (*queue_remove_cb
 	eina_stringshare_del(pending->key);
 	eina_stringshare_del(pending->thumb);
 	eina_stringshare_del(pending->thumb_key);
+	if (pending->free_data)
+	  pending->free_data(pending->data);
 	free(pending);
 	found = 1;
 	break;
@@ -991,10 +1016,37 @@ EAPI void
 ethumb_client_queue_clear(Ethumb_Client *client)
 {
    DBusMessage *msg;
+   void *data;
    EINA_SAFETY_ON_NULL_RETURN(client);
 
    if (client->pending_clear)
      return;
+
+   EINA_LIST_FREE(client->pending_add, data)
+     {
+	struct _ethumb_pending_add *pending = data;
+	eina_stringshare_del(pending->file);
+	eina_stringshare_del(pending->key);
+	eina_stringshare_del(pending->thumb);
+	eina_stringshare_del(pending->thumb_key);
+	dbus_pending_call_cancel(pending->pending_call);
+	dbus_pending_call_unref(pending->pending_call);
+	if (pending->free_data)
+	  pending->free_data(pending->data);
+	free(pending);
+     }
+
+   EINA_LIST_FREE(client->pending_gen, data)
+     {
+	struct _ethumb_pending_gen *pending = data;
+	eina_stringshare_del(pending->file);
+	eina_stringshare_del(pending->key);
+	eina_stringshare_del(pending->thumb);
+	eina_stringshare_del(pending->thumb_key);
+	if (pending->free_data)
+	  pending->free_data(pending->data);
+	free(pending);
+     }
 
    msg = dbus_message_new_method_call(_ethumb_dbus_bus_name,
 				      client->object_path,
@@ -1004,6 +1056,7 @@ ethumb_client_queue_clear(Ethumb_Client *client)
    client->pending_clear = e_dbus_message_send(client->conn, msg,
 					       _ethumb_client_queue_clear_cb,
 					       -1, client);
+
    dbus_message_unref(msg);
 }
 
