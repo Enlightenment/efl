@@ -217,7 +217,7 @@ eina_mempool_shutdown(void)
 	ememoa_fixed_shutdown();
 #endif
 	/* dynamic backends */
-	eina_module_list_delete(_modules);
+	eina_module_list_flush(_modules);
 	if (_modules)
 	   eina_array_free(_modules);
 

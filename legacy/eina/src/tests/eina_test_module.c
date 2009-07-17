@@ -70,7 +70,7 @@ START_TEST(eina_module_load_unload)
    fail_if(!_modules);
    eina_module_list_load(_modules);
    eina_module_list_unload(_modules);
-   eina_module_list_delete(_modules);
+   eina_module_list_flush(_modules);
    /* TODO delete the list */
    eina_module_shutdown();
 }

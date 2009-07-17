@@ -250,7 +250,7 @@ eina_rectangle_init(void)
 #endif
 
    _eina_rectangle_alloc_mp = eina_mempool_add(choice, "rectangle-alloc", NULL,
-                                         sizeof (Eina_Rectangle_Alloc) + sizeof (Eina_Rectangle), 256);
+                                         sizeof (Eina_Rectangle_Alloc) + sizeof (Eina_Rectangle), 1024);
    if (!_eina_rectangle_alloc_mp)
      {
         EINA_ERROR_PERR("ERROR: Mempool for rectangle cannot be allocated in list init.\n");

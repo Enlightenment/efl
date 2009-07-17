@@ -545,7 +545,7 @@ EAPI void eina_module_list_unload(Eina_Array *array)
  * Helper function that iterates over the list of modules and calls
  * eina_module_free on each
  */
-EAPI void eina_module_list_delete(Eina_Array *array)
+EAPI void eina_module_list_flush(Eina_Array *array)
 {
 	Eina_Array_Iterator iterator;
 	Eina_Module *m;
