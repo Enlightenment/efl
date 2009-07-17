@@ -19,6 +19,7 @@
  * USA.
  *
  * @author Rafael Antognolli <antognolli@profusion.mobi>
+ * @author Gustavo Sverzut Barbieri <barbieri@profusion.mobi>
  */
 #include <config.h>
 #include <stdio.h>
@@ -43,48 +44,41 @@ static unsigned char
 _ethumb_getopt_callback_frame_parse(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc __UNUSED__, const char *str, void *data __UNUSED__, Ecore_Getopt_Value *storage)
 {
    struct frame *f = (struct frame *)storage->ptrp;
-   const char *tfile, *tgroup, *tswallow;
-   char *text;
-   char *sep;
+   const char *tfile, *tgroup, *tswallow, *base, *sep;
 
-   tfile = NULL;
-   tgroup = NULL;
-   tswallow = NULL;
+   base = str;
+   sep = strchr(base, ':');
+   if (!sep)
+	goto error;
+   tfile = eina_stringshare_add_length(base, sep - base);
+   base = sep + 1;
 
-   text = strdup(str);
-
-   sep = strchr(text, ':');
+   sep = strchr(base, ':');
    if (!sep)
      {
-	fprintf(stderr, "ERROR: invalid theme: '%s'\n", text);
+	eina_stringshare_del(tfile);
 	goto error;
      }
-   *sep = '\0';
-   tfile = eina_stringshare_add(text);
-
-   sep++;
-   text = sep;
-   sep = strchr(text, ':');
-   if (!sep)
+   tgroup = eina_stringshare_add_length(base, sep - base);
+   base = sep + 1;
+   if (base[0] == '\0')
      {
-	fprintf(stderr, "ERROR: invalid theme: '%s'\n", text);
+	eina_stringshare_del(tfile);
+	eina_stringshare_del(tgroup);
 	goto error;
      }
-   *sep = '\0';
-   tgroup = eina_stringshare_add(text);
-
-   sep++;
-   tswallow = eina_stringshare_add(sep);
+   tswallow = eina_stringshare_add(base);
 
    f->file = tfile;
    f->group = tgroup;
    f->swallow = tswallow;
-
    return 1;
 
  error:
-   eina_stringshare_del(tfile);
-
+   fprintf(stderr,
+	   "ERROR: invalid theme, not in format "
+	   "'file:group:swallow_part': '%s'\n",
+	   str);
    return 0;
 }
 
@@ -198,6 +192,12 @@ main(int argc, char *argv[])
    if (arg_index < 0)
      {
 	fprintf(stderr, "Could not parse arguments.\n");
+	if (frame.file)
+	  {
+	     eina_stringshare_del(frame.file);
+	     eina_stringshare_del(frame.group);
+	     eina_stringshare_del(frame.swallow);
+	  }
 	ecore_shutdown();
 	ethumb_shutdown();
 	return -1;
