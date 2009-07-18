@@ -162,6 +162,10 @@ enum
      EDJE_LOAD_ERROR_RECURSIVE_REFERENCE = 9
 };
 
+typedef void (*Edje_Signal_Cb) (void *data, Evas_Object *obj, const char *emission, const char *source);
+typedef void (*Edje_Text_Change_Cb) (void *data, Evas_Object *obj, const char *part);
+typedef void (*Edje_Message_Handler_Cb) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -222,8 +226,8 @@ extern "C" {
    EAPI const char  *edje_load_error_str             (int error);
 
    /* edje_program.c */
-   EAPI void         edje_object_signal_callback_add (Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *obj, const char *emission, const char *source), void *data);
-   EAPI void        *edje_object_signal_callback_del (Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *obj, const char *emission, const char *source));
+   EAPI void         edje_object_signal_callback_add (Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
+   EAPI void        *edje_object_signal_callback_del (Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func);
    EAPI void         edje_object_signal_emit         (Evas_Object *obj, const char *emission, const char *source);
    EAPI void         edje_object_play_set            (Evas_Object *obj, int play);
    EAPI int          edje_object_play_get            (const Evas_Object *obj);
@@ -244,7 +248,7 @@ extern "C" {
    EAPI int          edje_object_part_exists         (const Evas_Object *obj, const char *part);
    EAPI const Evas_Object *edje_object_part_object_get     (const Evas_Object *obj, const char *part);
    EAPI void         edje_object_part_geometry_get   (const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
-   EAPI void         edje_object_text_change_cb_set  (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, const char *part), void *data);
+   EAPI void         edje_object_text_change_cb_set  (Evas_Object *obj, Edje_Text_Change_Cb func, void *data);
    EAPI void         edje_object_part_text_set       (Evas_Object *obj, const char *part, const char *text);
    EAPI const char  *edje_object_part_text_get       (const Evas_Object *obj, const char *part);
    EAPI void         edje_object_part_text_unescaped_set(Evas_Object *obj, const char *part, const char *text_to_escape);
@@ -290,7 +294,7 @@ extern "C" {
 
    /* edje_message_queue.c */
    EAPI void         edje_object_message_send           (Evas_Object *obj, Edje_Message_Type type, int id, void *msg);
-   EAPI void         edje_object_message_handler_set    (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg), void *data);
+   EAPI void         edje_object_message_handler_set    (Evas_Object *obj, Edje_Message_Handler_Cb func, void *data);
    EAPI void         edje_object_message_signal_process (Evas_Object *obj);
 
    EAPI void         edje_message_signal_process        (void);
