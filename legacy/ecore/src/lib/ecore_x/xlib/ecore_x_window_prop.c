@@ -63,22 +63,26 @@ ecore_x_window_prop_card32_get(Ecore_X_Window win, Ecore_X_Atom atom,
    int                 num;
 
    prop_ret = NULL;
-   XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
-		      XA_CARDINAL, &type_ret, &format_ret, &num_ret,
-		      &bytes_after, &prop_ret);
-   if (prop_ret && type_ret == XA_CARDINAL && format_ret == 32)
-     {
-	if (num_ret < len)
-	   len = num_ret;
+   if (XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
+			  XA_CARDINAL, &type_ret, &format_ret, &num_ret,
+			  &bytes_after, &prop_ret) != Success)
+      return -1;
 
-	for (i = 0; i < len; i++)
-	   val[i] = ((unsigned long*)prop_ret)[i];
-	
-	num = len;
+   if (type_ret != XA_CARDINAL || format_ret != 32)
+     {
+	num = -1;
+     }
+   else if (num_ret == 0 || !prop_ret)
+     {
+	num = 0;
      }
    else
      {
-	num = -1;
+	if (num_ret < len)
+	   len = num_ret;
+	for (i = 0; i < len; i++)
+	   val[i] = ((unsigned long *)prop_ret)[i];
+	num = len;
      }
    if (prop_ret)
       XFree(prop_ret);
@@ -104,29 +108,28 @@ ecore_x_window_prop_card32_list_get(Ecore_X_Window win, Ecore_X_Atom atom,
    unsigned int        i, *val;
    int                 num;
 
+   *plst = NULL;
    prop_ret = NULL;
    if (XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
 			  XA_CARDINAL, &type_ret, &format_ret, &num_ret,
 			  &bytes_after, &prop_ret) != Success)
       return -1;
 
-   if (type_ret == None || num_ret == 0)
+   if (type_ret != XA_CARDINAL || format_ret != 32)
+     {
+	num = -1;
+     }
+   else if (num_ret == 0 || !prop_ret)
      {
 	num = 0;
-	*plst = NULL;
      }
-   else if (prop_ret && type_ret == XA_CARDINAL && format_ret == 32)
+   else
      {
 	val = malloc(num_ret * sizeof(unsigned int));
 	for (i = 0; i < num_ret; i++)
 	   val[i] = ((unsigned long *)prop_ret)[i];
 	num = num_ret;
 	*plst = val;
-     }
-   else
-     {
-	num = -1;
-	*plst = NULL;
      }
    if (prop_ret)
       XFree(prop_ret);
@@ -186,21 +189,21 @@ ecore_x_window_prop_xid_get(Ecore_X_Window win, Ecore_X_Atom atom,
 			  &bytes_after, &prop_ret) != Success)
       return -1;
 
-   if (type_ret == None)
+   if (type_ret != type || format_ret != 32)
+     {
+	num = -1;
+     }
+   else if (num_ret == 0 || !prop_ret)
      {
 	num = 0;
      }
-   else if (prop_ret && type_ret == type && format_ret == 32)
+   else
      {
 	if (num_ret < len)
 	   len = num_ret;
 	for (i = 0; i < len; i++)
 	   lst[i] = ((unsigned long *)prop_ret)[i];
 	num = len;
-     }
-   else
-     {
-	num = -1;
      }
    if (prop_ret)
       XFree(prop_ret);
@@ -235,21 +238,21 @@ ecore_x_window_prop_xid_list_get(Ecore_X_Window win, Ecore_X_Atom atom,
 			  &bytes_after, &prop_ret) != Success)
       return -1;
 
-   if (type_ret == None || num_ret == 0)
+   if (type_ret != type || format_ret != 32)
+     {
+	num = -1;
+     }
+   else if (num_ret == 0 || !prop_ret)
      {
 	num = 0;
      }
-   else if (prop_ret && type_ret == type && format_ret == 32)
+   else
      {
 	alst = malloc(num_ret * sizeof(Ecore_X_ID));
 	for (i = 0; i < num_ret; i++)
 	   alst[i] = ((unsigned long *)prop_ret)[i];
-	*val = alst;
 	num = num_ret;
-     }
-   else
-     {
-	num = -1;
+	*val = alst;
      }
    if (prop_ret)
       XFree(prop_ret);
