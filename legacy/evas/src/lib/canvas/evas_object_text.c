@@ -565,9 +565,9 @@ evas_object_text_vert_advance_get(const Evas_Object *obj)
  * @param cw	A pointer to an @c Evas_Coord to store the Width value in (can be NULL).
  * @param ch	A pointer to an @c Evas_Coord to store the Height value in (can be NULL).
  *
- * @returns 0 on error, 1 on success.
+ * @returns EINA_FALSE on error, EINA_TRUE on success.
  */
-EAPI int
+EAPI Eina_Bool
 evas_object_text_char_pos_get(const Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Evas_Object_Text *o;
@@ -576,14 +576,14 @@ evas_object_text_char_pos_get(const Evas_Object *obj, int pos, Evas_Coord *cx, E
    int inset;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return 0;
+   return EINA_FALSE;
    MAGIC_CHECK_END();
    o = (Evas_Object_Text *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
-   return 0;
+   return EINA_FALSE;
    MAGIC_CHECK_END();
-   if (!o->engine_data) return 0;
-   if (!o->cur.text) return 0;
+   if (!o->engine_data) return EINA_FALSE;
+   if (!o->cur.text) return EINA_FALSE;
    inset =
      ENFN->font_inset_get(ENDT, o->engine_data, o->cur.text);
    ret = ENFN->font_char_coords_get(ENDT, o->engine_data, o->cur.text,
