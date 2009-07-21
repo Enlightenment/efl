@@ -8,7 +8,8 @@ filesdir = $(themesdir)
 files_DATA = default.edj
 
 EXTRA_DIST = \
-	default.edc
+	default.edc \
+	images/border-0.jpg
 
 default.edj: Makefile $(EXTRADIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
