@@ -242,6 +242,12 @@ eina_rectangle_init(void)
         goto mempool_init_error;
      }
 
+   if (!eina_list_init())
+     {
+	EINA_ERROR_PERR("Could not initialize eina list module.\n");
+	goto list_init_error;
+     }
+
 #ifdef EINA_DEFAULT_MEMPOOL
    choice = "pass_through";
 #else
@@ -267,6 +273,8 @@ eina_rectangle_init(void)
    return _eina_rectangle_init_count;
 
  init_error:
+   eina_list_shutdown();
+ list_init_error:
    eina_mempool_shutdown();
  mempool_init_error:
    eina_error_shutdown();
@@ -280,6 +288,8 @@ eina_rectangle_shutdown(void)
    --_eina_rectangle_init_count;
 
    if (_eina_rectangle_init_count) return _eina_rectangle_init_count;
+
+   eina_list_shutdown();
 
    eina_mempool_del(_eina_rectangle_alloc_mp);
    eina_mempool_del(_eina_rectangle_mp);
