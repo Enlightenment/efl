@@ -1649,6 +1649,8 @@ eina_list_search_sorted_near_list(const Eina_List *list, Eina_Compare_Cb func, c
    unsigned int inf, sup, cur, tmp;
    int part;
 
+   if (!list) return NULL;
+
    inf = 0;
    sup = eina_list_count(list) ;
    cur = sup >> 1;
