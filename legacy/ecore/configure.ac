@@ -796,7 +796,7 @@ if test "x${have_ecore_file}" = "xyes" ; then
    ECORE_CHECK_INOTIFY([${want_inotify}], [have_inotify="yes"], [have_inotify="no"])
 
    if test "x${have_ecore_con}" = "xyes" ; then
-      requirements_ecore_file="${requirements_ecore_con} ${requirements_ecore_file}"
+      requirements_ecore_file="ecore-con ${requirements_ecore_file}"
    fi
 fi
 
