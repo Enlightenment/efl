@@ -746,7 +746,7 @@ eet_init(void)
 	   allocated is currently 16384 bytes; you may thus use a value of 1 to
 	   request that default size. */
 	if (gcry_control(GCRYCTL_INIT_SECMEM, 16384, 0))
-	  return --eet_initcount;
+	  fprintf(stderr, "BIG FAT WARNING: I AM UNABLE TO REQUEST SECMEM, Cryptographic operation are at risk !");
      }
    if (gnutls_global_init())
      return --eet_initcount;
