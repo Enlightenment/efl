@@ -921,21 +921,21 @@ fi
 ECORE_EVAS_CHECK_MODULE([xrender-x11],
    [${want_ecore_evas_xrender_x11}],
    [XRender Xlib],
-   [${ecore_evas_xlib_deps}])
+   [${have_ecore_x_xlib}])
 
 # ecore_evas_opengl_x11
 
 ECORE_EVAS_CHECK_MODULE([opengl-x11],
    [${want_ecore_evas_opengl_x11}],
    [OpenGL Xlib],
-   [${ecore_evas_xlib_deps}])
+   [${have_ecore_x_xlib}])
 
 # ecore_evas_software_x11 16 bits
 
 ECORE_EVAS_CHECK_MODULE([software-16-x11],
    [${want_ecore_evas_software_16_x11}],
    [Software Xlib 16 bits],
-   [${ecore_evas_xlib_deps}])
+   [${have_ecore_x_xlib}])
 
 # ecore_evas_xrender_xcb
 
