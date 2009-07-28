@@ -41,8 +41,6 @@ struct _Render_Engine
 };
 
 /* prototypes we will use here */
-static void *_output_xlib_setup(int w, int h, int rot, Display *disp, Drawable draw, Visual *vis, Colormap cmap, int depth, int debug, int grayscale, int max_colors, Pixmap mask, int shape_dither, int destination_alpha);
-
 static void        *_best_visual_get   (int backend, void *connection, int screen);
 static unsigned int _best_colormap_get (int backend, void *connection, int screen);
 static int          _best_depth_get    (int backend, void *connection, int screen);
