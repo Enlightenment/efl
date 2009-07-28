@@ -1,34 +1,33 @@
 MAINTAINERCLEANFILES = Makefile.in
 
+SUBDIRS =
+
 if BUILD_LOADER_EDB
 if !EVAS_STATIC_BUILD_EDB
-edb_subdir = edb
+SUBDIRS += edb
 endif
 endif
 
 if BUILD_LOADER_EET
 if !EVAS_STATIC_BUILD_EET
-eet_subdir = eet
+SUBDIRS += eet
 endif
 endif
 
 if BUILD_SAVER_JPEG
 if !EVAS_STATIC_BUILD_JPEG
-jpeg_subdir = jpeg
+SUBDIRS += jpeg
 endif
 endif
 
 if BUILD_LOADER_PNG
 if !EVAS_STATIC_BUILD_PNG
-png_subdir = png
+SUBDIRS += png
 endif
 endif
 
 if BUILD_LOADER_TIFF
 if !EVAS_STATIC_BUILD_TIFF
-tiff_subdir = tiff
+SUBDIRS += tiff
 endif
 endif
-
-SUBDIRS = $(edb_subdir) $(eet_subdir) $(jpeg_subdir) $(png_subdir) $(tiff_subdir)
-DIST_SUBDIRS = edb eet jpeg png tiff
