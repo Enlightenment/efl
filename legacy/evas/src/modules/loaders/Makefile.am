@@ -56,6 +56,3 @@ SUBDIRS += xpm
 endif
 endif
 
-
-SUBDIRS = $(edb_subdir) $(eet_subdir) $(gif_subdir) $(jpeg_subdir) $(pmaps_subdir) $(png_subdir) $(svg_subdir) $(tiff_subdir) $(xpm_subdir)
-DIST_SUBDIRS = edb eet gif jpeg pmaps png svg tiff xpm
