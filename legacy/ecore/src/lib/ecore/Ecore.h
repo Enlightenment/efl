@@ -51,6 +51,8 @@
 
 #ifdef _WIN32
 # include <winsock2.h>
+#elif defined (__FreeBSD__) && (__FreeBSD_version >= 420001)
+# include <select.h>
 #else
 # include <sys/types.h>
 # include <sys/time.h>
