@@ -203,19 +203,19 @@ static const struct {
 #ifdef EVAS_STATIC_BUILD_EDB
   EVAS_EINA_STATIC_MODULE_USE(image_loader, edb),
 #endif
-#ifdef EVAS_STATIC_BUILD_
+#ifdef EVAS_STATIC_BUILD_EDB
   EVAS_EINA_STATIC_MODULE_USE(image_saver, edb),
 #endif
-#ifdef EVAS_STATIC_BUILD_
+#ifdef EVAS_STATIC_BUILD_EET
   EVAS_EINA_STATIC_MODULE_USE(image_saver, eet),
 #endif
-#ifdef EVAS_STATIC_BUILD_
+#ifdef EVAS_STATIC_BUILD_JPEG
   EVAS_EINA_STATIC_MODULE_USE(image_saver, jpeg),
 #endif
-#ifdef EVAS_STATIC_BUILD_
+#ifdef EVAS_STATIC_BUILD_PNG
   EVAS_EINA_STATIC_MODULE_USE(image_saver, png),
 #endif
-#ifdef EVAS_STATIC_BUILD_
+#ifdef EVAS_STATIC_BUILD_TIFF
   EVAS_EINA_STATIC_MODULE_USE(image_saver, tiff),
 #endif
   { NULL, NULL }
