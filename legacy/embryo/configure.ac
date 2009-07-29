@@ -1,7 +1,7 @@
 # get rid of that stupid cache mechanism
 rm -f config.cache
 
-AC_INIT([embryo], [0.9.9.061], [enlightenment-devel@lists.sourceforge.net])
+AC_INIT([embryo], [0.9.9.062], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
@@ -24,7 +24,7 @@ SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
-release="ver-pre-svn-02"
+release="ver-svn-03"
 case "$host_os" in
    mingw32ce* | cegcc*)
       ;;
