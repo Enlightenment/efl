@@ -385,7 +385,7 @@ evas_cserve_image_unload(Image_Entry *ie)
    else return;
    if (!cserve) return;
    if (ie->data1 == NULL) return;
-   if (ie->connect_num != connect_num) return 0;
+   if (ie->connect_num != connect_num) return;
    memset(&msg, 0, sizeof(msg));
    msg.handle = ie->data1;
    msg.server_id = cserve->server_id;
@@ -407,7 +407,7 @@ evas_cserve_image_useless(Image_Entry *ie)
    else return;
    if (!cserve) return;
    if (ie->data1 == NULL) return;
-   if (ie->connect_num != connect_num) return 0;
+   if (ie->connect_num != connect_num) return;
    memset(&msg, 0, sizeof(msg));
    msg.handle = ie->data1;
    msg.server_id = cserve->server_id;
