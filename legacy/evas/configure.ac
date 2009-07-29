@@ -26,7 +26,7 @@ AC_SUBST(version_info)
 
 ### Needed information
 
-release="ver-svn-03"
+release="ver-pre-svn-04"
 case "$host_os" in
    mingw32ce* | cegcc*)
       MODULE_ARCH="$host_os-$host_cpu"
