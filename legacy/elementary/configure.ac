@@ -33,7 +33,7 @@ SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
-release="ver-pre-svn-02"
+release="ver-pre-svn-04"
 case "$host_os" in
   mingw32ce* | cegcc*)
     MODULE_ARCH="$host_os-$host_cpu"
