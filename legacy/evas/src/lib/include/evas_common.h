@@ -1069,7 +1069,6 @@ int  evas_common_cpu_have_cpuid                         (void);
 int  evas_common_cpu_has_feature                        (unsigned int feature);
 EAPI void evas_common_cpu_can_do                        (int *mmx, int *sse, int *sse2);
 EAPI void evas_common_cpu_end_opt                       (void);
-EAPI int evas_common_cpu_count                          (void);
 
 /****/
 #include "../engines/common/evas_blend.h"

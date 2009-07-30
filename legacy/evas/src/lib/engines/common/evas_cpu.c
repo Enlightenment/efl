@@ -245,30 +245,3 @@ evas_common_cpu_end_opt(void)
 {
 }
 #endif
-
-EAPI int
-evas_common_cpu_count(void)
-{
-#ifdef BUILD_PTHREAD
-   cpu_set_t cpu;
-   int i;
-   static int cpus = 0;
-
-   if (cpus != 0) return cpus;
-
-   CPU_ZERO(&cpu);
-   if (sched_getaffinity(0, sizeof(cpu), &cpu) != 0)
-     {
-	printf("[Evas] could not get cpu affinity: %s\n", strerror(errno));
-	return 1;
-     }
-   for (i = 0; i < TH_MAX; i++)
-     {
-	if (CPU_ISSET(i, &cpu)) cpus = i + 1;
-	else break;
-     }
-   return cpus;
-#else
-   return 1;
-#endif
-}

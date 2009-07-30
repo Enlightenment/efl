@@ -20,6 +20,14 @@
 # include "config.h"
 #endif
 
+#ifdef EFL_HAVE_PTHREAD
+# define _GNU_SOURCE
+# include <sched.h>
+# include <pthread.h>
+
+# define TH_MAX 8
+#endif
+
 #include "eina_cpu.h"
 
 /*============================================================================*
@@ -98,4 +106,27 @@ EAPI Eina_Cpu_Features eina_cpu_features_get(void)
 	_x86_simd(&ecf);
 #endif
 	return ecf;
+}
+
+EAPI int eina_cpu_count(void)
+{
+#ifdef EFL_HAVE_PTHREAD
+   cpu_set_t cpu;
+   int i;
+   static int cpus = 0;
+
+   if (cpus != 0) return cpus;
+
+   CPU_ZERO(&cpu);
+   if (sched_getaffinity(0, sizeof(cpu), &cpu) != 0)
+     return 1;
+   for (i = 0; i < TH_MAX; i++)
+     {
+	if (CPU_ISSET(i, &cpu)) cpus = i + 1;
+	else break;
+     }
+   return cpus;
+#else
+   return 1;
+#endif
 }

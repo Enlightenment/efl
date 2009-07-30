@@ -1132,7 +1132,7 @@ module_open(Evas_Module *em)
 {
    if (!em) return 0;
    em->functions = (void *)(&func);
-   cpunum = evas_common_cpu_count();
+   cpunum = eina_cpu_count();
    return 1;
 }
 

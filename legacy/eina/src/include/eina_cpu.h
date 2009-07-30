@@ -34,5 +34,6 @@ typedef enum _Eina_Cpu_Features
 } Eina_Cpu_Features;
 
 EAPI Eina_Cpu_Features eina_cpu_features_get(void);
+EAPI int eina_cpu_count(void);
 
 #endif /* EINA_CPU_H_ */

@@ -126,7 +126,7 @@ evas_common_pipe_begin(RGBA_Image *im)
      {
 	int cpunum;
 
-	cpunum = evas_common_cpu_count();
+	cpunum = eina_cpu_count();
 	thread_num = cpunum;
 	if (thread_num == 1) return;
 	pthread_barrier_init(&(thbarrier[0]), NULL, thread_num + 1);
