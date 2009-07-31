@@ -59,6 +59,8 @@
 # include <signal.h>
 #endif
 
+#include <Eina.h>
+
 #ifndef TRUE
 # define TRUE 1
 #endif
@@ -299,6 +301,8 @@ extern "C" {
    EAPI int          ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes);
    EAPI void         ecore_pipe_write_close(Ecore_Pipe *p);
    EAPI void         ecore_pipe_read_close(Ecore_Pipe *p);
+
+   EAPI Eina_Bool ecore_thread_run(void (*func_heavy)(void *data), void (*func_end)(void *data), const void *data);
 
    EAPI double ecore_time_get(void);
    EAPI double ecore_loop_time_get(void);

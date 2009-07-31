@@ -197,6 +197,12 @@ requirements_ecore_x=""
 requirements_ecore_win32=""
 requirements_ecore_wince=""
 
+# basic pthread support
+AC_CHECK_HEADER(pthread.h,
+  [
+     AC_DEFINE(BUILD_PTHREAD, 1, [Build thread worker])
+  ]
+)
 
 ### Additional options to configure
 

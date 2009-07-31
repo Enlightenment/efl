@@ -34,7 +34,8 @@ ecore_strbuf.c \
 ecore_time.c \
 ecore_timer.c \
 ecore_tree.c \
-ecore_value.c
+ecore_value.c \
+ecore_thread.c
 
 libecore_la_LIBADD = @dlopen_libs@ @EINA_LIBS@ @EVIL_LIBS@ @WIN32_LIBS@ -lm
 libecore_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @ecore_release_info@
