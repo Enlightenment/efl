@@ -216,7 +216,7 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
 	p0_in = (IN_RECT(x0, y0, clx, cly, clw, clh) ? 1 : 0);
 	p1_in = (IN_RECT(x1, y1, clx, cly, clw, clh) ? 1 : 0);
 
-	if (dx > 0)
+	if (dy > 0)
 	  {
 	    if (!p0_in)
 	      {
@@ -247,25 +247,25 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
 	  {
 	    if (!p0_in)
 	      {
-		x0 = x0 - (ty - y0);
-		y0 = ty;
-		if (x0 < lx) return;
-		if (x0 > rx)
+		x0 = x0 - (by - y0);
+		y0 = by;
+		if (x0 > rx) return;
+		if (x0 < lx)
 		  {
-		    y0 = y0 - (rx - x0);
-		    x0 = rx;
+		    y0 = y0 - (lx - x0);
+		    x0 = lx;
 		    if ((y0 < ty) || (y0 > by)) return;
 		  }
 	      }
 	    if (!p1_in)
 	      {
-		x1 = x0 - (by - y0);
-		y1 = by;
-		if (x1 > rx) return;
-		if (x1 < lx)
+		x1 = x0 - (ty - y0);
+		y1 = ty;
+		if (x1 < lx) return;
+		if (x1 > rx)
 		  {
-		    y1 = y0 - (lx - x0);
-		    x1 = lx;
+		    y1 = y0 - (rx - x0);
+		    x1 = rx;
 		    if ((y1 < ty) || (y1 > by)) return;
 		  }
 	      }
