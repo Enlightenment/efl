@@ -139,7 +139,7 @@ ecore_thread_init(void)
    if (_ecore_thread_init > 1) return _ecore_thread_init;
 
    _ecore_thread_count_max = eina_cpu_count();
-   if (_ecore_thread_count_max < 0)
+   if (_ecore_thread_count_max <= 0)
      _ecore_thread_count_max = 1;
 
    ECORE_THREAD_PIPE_DEL = ecore_event_type_new();
