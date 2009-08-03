@@ -197,13 +197,6 @@ requirements_ecore_x=""
 requirements_ecore_win32=""
 requirements_ecore_wince=""
 
-# basic pthread support
-AC_CHECK_HEADER(pthread.h,
-  [
-     AC_DEFINE(BUILD_PTHREAD, 1, [Build thread worker])
-  ]
-)
-
 ### Additional options to configure
 
 # abstract sockets (ecore_con.c)
@@ -670,6 +663,13 @@ if test "x${have_gnu_objc}" = "xyes" ; then
 fi
 
 AC_SUBST(quartz_ldflags)
+
+# basic pthread support
+AC_CHECK_HEADER(pthread.h,
+  [
+     AC_DEFINE(BUILD_PTHREAD, 1, [Build thread worker])
+  ]
+)
 
 ### Checks for types
 AC_CHECK_SIZEOF(int, 4)
