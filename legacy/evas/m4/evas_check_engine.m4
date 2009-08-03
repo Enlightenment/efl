@@ -34,6 +34,14 @@ AC_PATH_XTRA
 AC_CHECK_HEADER([X11/X.h], [have_dep="yes"])
 
 if test "x${have_dep}" = "xyes" ; then
+   AC_CHECK_LIB([X11], [XCreateImage], [have_dep="yes"], [have_dep="no"])
+fi
+
+if test "x${have_dep}" = "xyes" ; then
+   AC_CHECK_LIB([Xext], [XShmCreateImage], [have_dep="yes"], [have_dep="no"])
+fi
+
+if test "x${have_dep}" = "xyes" ; then
    if test "x$2" = "xyes" ; then
       x_libs="${x_libs} -lX11 -lXext"
    else
@@ -72,6 +80,18 @@ AC_CHECK_HEADERS([X11/X.h X11/extensions/Xrender.h],
    [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then
+   AC_CHECK_LIB([X11], [XCreateImage], [have_dep="yes"], [have_dep="no"])
+fi
+
+if test "x${have_dep}" = "xyes" ; then
+   AC_CHECK_LIB([Xext], [XShmCreateImage], [have_dep="yes"], [have_dep="no"])
+fi
+
+if test "x${have_dep}" = "xyes" ; then
+   AC_CHECK_LIB([Xrender], [XRenderCreatePicture], [have_dep="yes"], [have_dep="no"])
+fi
+
+if test "x${have_dep}" = "xyes" ; then
    if test "x$2" = "xyes" ; then
       x_libs="${x_libs} -lX11 -lXext"
    else
@@ -105,9 +125,21 @@ evas_engine_[]$1[]_libs=""
 AC_PATH_X
 AC_PATH_XTRA
 
-AC_CHECK_HEADERS([GL/gl.h GL/glu.h X11/X.h],
+AC_CHECK_HEADERS([GL/gl.h GL/glu.h GL/glx.h X11/X.h],
    [have_dep="yes"],
    [have_dep="no"])
+
+if test "x${have_dep}" = "xyes" ; then
+   AC_CHECK_LIB([X11], [XCreateColormap], [have_dep="yes"], [have_dep="no"])
+fi
+
+if test "x${have_dep}" = "xyes" ; then
+   AC_CHECK_LIB([GL], [glXCreateContext], [have_dep="yes"], [have_dep="no"])
+fi
+
+if test "x${have_dep}" = "xyes" ; then
+   AC_CHECK_LIB([GLU], [gluNewTess], [have_dep="yes"], [have_dep="no"])
+fi
 
 if test "x${have_dep}" = "xyes" ; then
    if test "x$2" = "xyes" ; then
@@ -115,7 +147,7 @@ if test "x${have_dep}" = "xyes" ; then
    else
       x_dir=${x_dir:-/usr/X11R6}
       x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
-      x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
+      x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11"
    fi
    evas_engine_[]$1[]_cflags="-I/usr/include ${x_cflags}"
    evas_engine_[]$1[]_libs="${x_libs} -lGL -lGLU -lpthread"
@@ -509,6 +541,14 @@ AC_PATH_X
 AC_PATH_XTRA
 
 AC_CHECK_HEADER([X11/X.h], [have_dep="yes"])
+
+if test "x${have_dep}" = "xyes" ; then
+   AC_CHECK_LIB([X11], [XCreateImage], [have_dep="yes"], [have_dep="no"])
+fi
+
+if test "x${have_dep}" = "xyes" ; then
+   AC_CHECK_LIB([Xext], [XShmCreateImage], [have_dep="yes"], [have_dep="no"])
+fi
 
 if test "x${have_dep}" = "xyes" ; then
    if test "x$2" = "xyes" ; then
