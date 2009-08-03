@@ -196,7 +196,10 @@ ecore_thread_run(void (*func_heavy)(void *data),
    _ecore_thread = eina_list_append(_ecore_thread, work);
 
    if (_ecore_thread_count == _ecore_thread_count_max)
-     return EINA_TRUE;
+     {
+	pthread_mutex_unlock(&_mutex);
+	return EINA_TRUE;
+     }
 
    pthread_mutex_unlock(&_mutex);
 
