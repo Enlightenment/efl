@@ -1,6 +1,8 @@
 #ifndef _ECORE_H
 #define _ECORE_H
 
+#include <Eina.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -58,8 +60,6 @@
 # include <sys/time.h>
 # include <signal.h>
 #endif
-
-#include <Eina.h>
 
 #ifndef TRUE
 # define TRUE 1

@@ -117,7 +117,7 @@ _ecore_thread_worker(Ecore_Pipe *p)
 }
 
 static void
-_ecore_thread_handler(__UNUSED__ void *data, void *buffer, unsigned int nbyte)
+_ecore_thread_handler(void *data __UNUSED__, void *buffer, unsigned int nbyte)
 {
    Ecore_Pthread_Worker *work;
 
