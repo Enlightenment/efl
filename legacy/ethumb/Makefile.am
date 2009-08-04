@@ -11,8 +11,7 @@ MAINTAINERCLEANFILES = \
 	ltmain.sh \
 	missing
 
-EXTRA_DIST = config.rpath \
-	m4/Makefile.in \
+EXTRA_DIST = m4/Makefile.in \
 	README \
 	AUTHORS \
 	COPYING
