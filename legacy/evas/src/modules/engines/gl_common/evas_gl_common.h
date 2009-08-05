@@ -167,7 +167,7 @@ struct _Evas_GL_Font_Texture
    int                                   aw, ah;
    GLuint                                texture;
    Evas_GL_Font_Texture_Pool            *pool;
-   Evas_GL_Font_Texture_Pool_Allocation *alloc;
+   Eina_Rectangle                       *alloc;
 };
 
 struct _Evas_GL_Font_Texture_Pool
@@ -175,15 +175,7 @@ struct _Evas_GL_Font_Texture_Pool
    Evas_GL_Context *gc;
    int              w, h;
    GLuint           texture;
-   int              references;
    unsigned char    rectangle : 1;
-   Eina_List       *allocations;
-};
-
-struct _Evas_GL_Font_Texture_Pool_Allocation
-{
-   Evas_GL_Font_Texture_Pool *pool;
-   int x, y, w, h;
 };
 
 Evas_GL_Context  *evas_gl_common_context_new(void);

@@ -1,8 +1,8 @@
 #include "evas_gl_private.h"
 
-static Evas_GL_Font_Texture_Pool_Allocation *_evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h);
-static void                                  _evas_gl_font_texture_pool_relinquish(Evas_GL_Font_Texture_Pool_Allocation *fa);
-static int                                   _evas_gl_font_texture_pool_rect_find(Evas_GL_Font_Texture_Pool *fp, int w, int h, int *x, int *y);
+static Eina_Rectangle *_evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h);
+static void           _evas_gl_font_texture_pool_relinquish(Eina_Rectangle *er);
+static int            _evas_gl_font_texture_pool_rect_find(Evas_GL_Font_Texture_Pool *fp, int w, int h, int *x, int *y);
 
 Evas_GL_Font_Texture *
 evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
@@ -110,7 +110,7 @@ evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
      }
    ft->x = ft->alloc->x;
    ft->y = ft->alloc->y;
-   ft->pool = ft->alloc->pool;
+   ft->pool = eina_rectangle_pool_data_get(eina_rectangle_pool_get(ft->alloc));
    ft->texture =  ft->pool->texture;
    if (ft->pool->rectangle)
      {
@@ -215,39 +215,23 @@ evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface __UNUSED__, RGBA_Dr
    /* 28 */
 }
 
-static Evas_GL_Font_Texture_Pool_Allocation *
+static Eina_Rectangle *
 _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
 {
-   Eina_List *l;
-   Evas_GL_Font_Texture_Pool_Allocation *fa;
    Evas_GL_Font_Texture_Pool *fp;
+   Eina_Rectangle_Pool *rp;
+   Eina_Rectangle *er;
+   Eina_List *l;
    int minw = 256;
    int minh = 256;
    int shift;
 
-   EINA_LIST_FOREACH(gc->tex_pool, l, fp)
+   EINA_LIST_FOREACH(gc->tex_pool, l, rp)
      {
-	int x, y;
-
-	if (_evas_gl_font_texture_pool_rect_find(fp, w, h, &x, &y))
-	  {
-	     fa = calloc(1, sizeof(Evas_GL_Font_Texture_Pool_Allocation));
-	     if (!fa) return NULL;
-	     fa->pool = fp;
-	     fa->x = x;
-	     fa->y = y;
-	     fa->w = w;
-	     fa->h = h;
-	     fp->allocations = eina_list_prepend(fp->allocations, fa);
-	     if (eina_error_get())
-	       {
-		  free(fa);
-		  return NULL;
-	       }
-	     fp->references++;
-	     return fa;
-	  }
+	er = eina_rectangle_pool_request(rp, w, h);
+	if (er) return er;
      }
+
    /* need new font texture pool entry */
    /* minimum size either minw x minh OR the size of glyph up to power 2 */
    if (w > minw)
@@ -261,11 +245,20 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
 	shift = 1; while (minh > shift) shift = shift << 1; minh = shift;
      }
 
+   rp = eina_rectangle_pool_new(minw, minh);
+   if (!rp) return NULL;
+
    fp = calloc(1, sizeof(Evas_GL_Font_Texture_Pool));
-   if (!fp) return NULL;
-   gc->tex_pool = eina_list_append(gc->tex_pool, fp);
+   if (!fp)
+     {
+	eina_rectangle_pool_free(rp);
+	return NULL;
+     }
+
+   gc->tex_pool = eina_list_append(gc->tex_pool, rp);
    if (eina_error_get())
      {
+	eina_rectangle_pool_free(rp);
 	free(fp);
 	return NULL;
      }
@@ -273,6 +266,8 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
    fp->w = minw;
    fp->h = minh;
    if (gc->ext.nv_texture_rectangle) fp->rectangle = 1;
+
+   eina_rectangle_pool_data_set(rp, fp);
 
    /* we dont want this mipmapped if sgis_generate_mipmap will mipmap it */
    if (gc->ext.sgis_generate_mipmap)
@@ -312,152 +307,36 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
      }
 
    /* new allocation entirely */
-   fa = calloc(1, sizeof(Evas_GL_Font_Texture_Pool_Allocation));
-   if (!fa)
+   er = eina_rectangle_pool_request(rp, w, h);
+   if (!er)
      {
-	gc->tex_pool = eina_list_remove(gc->tex_pool, fp);
+	gc->tex_pool = eina_list_remove(gc->tex_pool, rp);
+	eina_rectangle_pool_free(rp);
 	glDeleteTextures(1, &(fp->texture));
 	free(fp);
 	return NULL;
      }
-   fa->pool = fp;
-   fa->x = 0;
-   fa->y = 0;
-   fa->w = w;
-   fa->h = h;
-   fp->allocations = eina_list_prepend(fp->allocations, fa);
-   if (eina_error_get())
-     {
-	printf("alloc prob\n");
-	gc->tex_pool = eina_list_remove(gc->tex_pool, fp);
-	glDeleteTextures(1, &(fp->texture));
-	free(fa);
-	free(fp);
-	return NULL;
-     }
-   fp->references++;
-   return fa;
+
+   return er;
 }
 
 static void
-_evas_gl_font_texture_pool_relinquish(Evas_GL_Font_Texture_Pool_Allocation *fa)
+_evas_gl_font_texture_pool_relinquish(Eina_Rectangle *er)
 {
-   fa->pool->allocations = eina_list_remove(fa->pool->allocations, fa);
-   fa->pool->references--;
-   if (fa->pool->references <= 0)
+   Evas_GL_Font_Texture_Pool *fp;
+   Eina_Rectangle_Pool *pool;
+
+   pool = eina_rectangle_pool_get(er);
+   fp = eina_rectangle_pool_data_get(pool);
+
+   eina_rectangle_pool_release(er);
+
+   if (eina_rectangle_pool_count(pool) == 0)
      {
-	fa->pool->gc->tex_pool =
-	  eina_list_remove(fa->pool->gc->tex_pool, fa->pool);
-	glDeleteTextures(1, &(fa->pool->texture));
-	free(fa->pool);
+	fp->gc->tex_pool = eina_list_remove(fp->gc->tex_pool, pool);
+	eina_rectangle_pool_free(pool);
+	glDeleteTextures(1, &(fp->texture));
+	free(fp);
      }
-   free(fa);
 }
 
-static int
-_evas_gl_font_texture_pool_rect_find(Evas_GL_Font_Texture_Pool *fp,
-				     int w, int h,
-				     int *x, int *y)
-{
-   Eina_List *l;
-   Evas_GL_Font_Texture_Pool_Allocation *fa;
-
-   if ((w > fp->w) || (h > fp->h)) return 0;
-   EINA_LIST_FOREACH(fp->allocations, l, fa)
-     {
-	Eina_List *l2;
-	Evas_GL_Font_Texture_Pool_Allocation *fa2;
-	int tx, ty, tw, th;
-	int t1, t2;
-	int intersects;
-
-	t1 = t2 = 1;
-	if ((fa->x + fa->w + w) > fp->w) t1 = 0;
-	if ((fa->y + h) > fp->h) t1 = 0;
-	if ((fa->y + fa->h + h) > fp->h) t2 = 0;
-	if ((fa->x + w) > fp->w) t2 = 0;
-	intersects = 0;
-	if (t1)
-	  {
-	     /* 1. try here:
-	      * +----++--+
-	      * |AAAA||??|
-	      * |AAAA|+--+
-	      * |AAAA|
-	      * +----+
-	      */
-	     tx = fa->x + fa->w;
-	     ty = fa->y;
-	     tw = w;
-	     th = h;
-	     EINA_LIST_FOREACH(fp->allocations, l2, fa2)
-	       {
-		  int rx, ry, rw, rh;
-
-		  /* dont do the rect we are just using as our offset */
-		  if (l2 == l) continue;
-		  rx = fa2->x;
-		  ry = fa2->y;
-		  rw = fa2->w;
-		  rh = fa2->h;
-		  if (RECTS_INTERSECT(tx, ty, tw, th, rx, ry, rw, rh))
-		    {
-		       intersects = 1;
-		       break;
-		    }
-	       }
-	     if (!intersects)
-	       {
-		  *x = tx;
-		  *y = ty;
-		  return 1;
-	       }
-	  }
-	intersects = 0;
-	if (t2)
-	  {
-	     /* 2. try here:
-	      * +----+
-	      * |AAAA|
-	      * |AAAA|
-	      * |AAAA|
-	      * +----+
-	      * +--+
-	      * |??|
-	      * +--+
-	      */
-	     tx = fa->x;
-	     ty = fa->y + fa->h;
-	     tw = w;
-	     th = h;
-	     EINA_LIST_FOREACH(fp->allocations, l2, fa2)
-	       {
-		  int rx, ry, rw, rh;
-
-		  /* dont do the rect we are just using as our offset */
-		  if (l2 == l) continue;
-		  /* hmmm crash here on mga... l2->data seems broken */
-		  /* so far it looks like memory corruption, but i can't */
-		  /* use valgrind to inspect any further due to the dri */
-		  /* hardware stuff :( */
-
-		  rx = fa2->x;
-		  ry = fa2->y;
-		  rw = fa2->w;
-		  rh = fa2->h;
-		  if (RECTS_INTERSECT(tx, ty, tw, th, rx, ry, rw, rh))
-		    {
-		       intersects = 1;
-		       break;
-		    }
-	       }
-	     if (!intersects)
-	       {
-		  *x = tx;
-		  *y = ty;
-		  return 1;
-	       }
-	  }
-     }
-   return 0;
-}
