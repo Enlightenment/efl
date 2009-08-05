@@ -331,6 +331,7 @@ eina_rectangle_pool_new(int w, int h)
    new->head = NULL;
    new->empty = eina_list_append(NULL, eina_rectangle_new(0, 0, w, h));
    new->references = 0;
+   new->sorted = EINA_FALSE;
    new->w = w;
    new->h = h;
 
