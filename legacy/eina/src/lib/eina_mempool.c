@@ -185,6 +185,9 @@ eina_mempool_init(void)
 #ifdef EINA_STATIC_BUILD_EMEMOA_FIXED
 		ememoa_fixed_init();
 #endif
+#ifdef EINA_STATIC_BUILD_FIXED_BITMAP
+		fixed_bitmap_init();
+#endif
 	}
 	return ++_init_count;
 
@@ -215,6 +218,9 @@ eina_mempool_shutdown(void)
 #endif
 #ifdef EINA_STATIC_BUILD_EMEMOA_FIXED
 	ememoa_fixed_shutdown();
+#endif
+#ifdef EINA_STATIC_BUILD_FIXED_BITMAP
+	fixed_bitmap_shutdown();
 #endif
 	/* dynamic backends */
 	eina_module_list_flush(_modules);
