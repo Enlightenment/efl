@@ -1678,6 +1678,11 @@ eina_list_sorted_merge(Eina_List *left, Eina_List *right, Eina_Compare_Cb func)
  * @param list The list to search for data, @b must be sorted.
  * @param func A function pointer that can handle comparing the list data nodes.
  * @param data reference value to search.
+ * @param result_cmp if provided returns the result of
+ * func(node->data, data) node being the last (returned) node. If node
+ * was found (exact match), then it is 0. If returned node is smaller
+ * than requested data, it is less than 0 and if it's bigger it's
+ * greater than 0. It is the last value returned by func().
  * @return the nearest node, NULL if not found.
  *
  * This can be used to check if some value is inside the list and get
@@ -1701,42 +1706,50 @@ eina_list_sorted_merge(Eina_List *left, Eina_List *right, Eina_Compare_Cb func)
  * @see eina_list_sorted_merge()
  */
 EAPI Eina_List *
-eina_list_search_sorted_near_list(const Eina_List *list, Eina_Compare_Cb func, const void *data)
+eina_list_search_sorted_near_list(const Eina_List *list, Eina_Compare_Cb func, const void *data, int *result_cmp)
 {
    const Eina_List *ct;
    void *d;
    unsigned int inf, sup, cur, tmp;
    int part;
 
-   if (!list) return NULL;
+   if (!list)
+     {
+	if (result_cmp) *result_cmp = 0;
+	return NULL;
+     }
 
    inf = 0;
-   sup = eina_list_count(list) ;
+   sup = list->accounting->count;
    cur = sup >> 1;
-   ct = eina_list_nth_list(list, cur);
-   d = eina_list_data_get(ct);
+
+   for (tmp = 0, ct = list; tmp != cur; tmp++, ct = ct->next);
+   d = ct->data;
 
    while ((part = func(d, data)))
      {
        if (inf == sup
 	   || (part < 0 && inf == cur)
 	   || (part > 0 && sup == cur))
-	 return (Eina_List*) ct;
-       if (part < 0)
-          inf = (sup + inf) >> 1;
-       else
-          sup = (sup + inf) >> 1;
-       /* Faster to move directly from where we are to the new position than using eina_list_nth_list. */
+	 goto end;
+
        tmp = (sup + inf) >> 1;
+       if (part < 0)
+          inf = tmp;
+       else
+          sup = tmp;
+       /* Faster to move directly from where we are to the new position than using eina_list_nth_list. */
        if (tmp < cur)
-	 for (; cur != tmp; cur--, ct = eina_list_prev(ct))
+	 for (; cur != tmp; cur--, ct = ct->prev)
 	   ;
        else
-	 for (; cur != tmp; cur++, ct = eina_list_next(ct))
+	 for (; cur != tmp; cur++, ct = ct->next)
 	   ;
-       d = eina_list_data_get(ct);
+       d = ct->data;
      }
 
+ end:
+   if (result_cmp) *result_cmp = part;
    return (Eina_List*) ct;
 }
 
@@ -1772,11 +1785,12 @@ eina_list_search_sorted_list(const Eina_List *list, Eina_Compare_Cb func, const 
 {
    Eina_List *lnear;
    void      *d;
+   int       cmp;
 
-   lnear = eina_list_search_sorted_near_list(list, func, data);
+   lnear = eina_list_search_sorted_near_list(list, func, data, &cmp);
    if (!lnear) return NULL;
    d = eina_list_data_get(lnear);
-   if (!func(d, data))
+   if (cmp == 0)
      return lnear;
    return NULL;
 }
