@@ -1512,25 +1512,52 @@ eina_list_sort(Eina_List *list, unsigned int size, Eina_Compare_Cb func)
  *
  * Both left and right does not exist anymore after the merge.
  *
+ * @note merge cost is O(n), being @b n the size of the smallest
+ * list. This is due the need to fix accounting of that segment,
+ * making count and last access O(1).
  */
 EAPI Eina_List *
 eina_list_merge(Eina_List *left, Eina_List *right)
 {
+   unsigned int n_left, n_right;
+
    if (!left) return right;
    if (!right) return left;
 
    left->accounting->last->next = right;
    right->prev = left->accounting->last;
 
-   left->accounting->last = right->accounting->last;
-   left->accounting->count += right->accounting->count;
+   n_left = left->accounting->count;
+   n_right = right->accounting->count;
 
-   _eina_list_mempool_accounting_free(right->accounting);
-
-   while (right)
+   if (n_left >= n_right)
      {
-	right->accounting = left->accounting;
-	right = right->next;
+	Eina_List *itr = right;
+	left->accounting->last = right->accounting->last;
+	left->accounting->count += n_right;
+
+	_eina_list_mempool_accounting_free(right->accounting);
+
+	do
+	  {
+	     itr->accounting = left->accounting;
+	     itr = itr->next;
+	  }
+	while (itr);
+     }
+   else
+     {
+	Eina_List *itr = left->accounting->last;
+	right->accounting->count += n_left;
+
+	_eina_list_mempool_accounting_free(left->accounting);
+
+	do
+	  {
+	     itr->accounting = right->accounting;
+	     itr = itr->prev;
+	  }
+	while (itr);
      }
 
    return left;

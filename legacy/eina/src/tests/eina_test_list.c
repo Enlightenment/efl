@@ -205,10 +205,40 @@ START_TEST(eina_test_merge)
    l1 = eina_list_append(NULL, &data[0]);
    l1 = eina_list_append(l1, &data[1]);
    l1 = eina_list_append(l1, &data[2]);
+   l1 = eina_list_append(l1, &data[3]);
+   fail_if(l1 == NULL);
 
-   l2 = eina_list_append(NULL, &data[3]);
+   l2 = eina_list_append(NULL, &data[4]);
+   l2 = eina_list_append(l2, &data[5]);
+   fail_if(l2 == NULL);
+
+   l1 = eina_list_merge(l1, l2);
+   fail_if(l1 == NULL);
+   fail_if(eina_list_count(l1) != 6);
+   for (i = 0, l2 = l1; ((l2 != NULL) && (i < 6)); ++i, l2 = l2->next)
+     fail_if(l2->data != &data[i]);
+   fail_if(i != 6);
+   fail_if(l2 != NULL);
+
+   eina_list_free(l1);
+
+   l1 = eina_list_append(NULL, &data[0]);
+   l1 = eina_list_append(l1, &data[1]);
+   fail_if(l1 == NULL);
+
+   l2 = eina_list_append(NULL, &data[2]);
+   l2 = eina_list_append(l2, &data[3]);
    l2 = eina_list_append(l2, &data[4]);
    l2 = eina_list_append(l2, &data[5]);
+   fail_if(l2 == NULL);
+
+   l1 = eina_list_merge(l1, l2);
+   fail_if(l1 == NULL);
+   fail_if(eina_list_count(l1) != 6);
+   for (i = 0, l2 = l1; ((l2 != NULL) && (i < 6)); ++i, l2 = l2->next)
+     fail_if(l2->data != &data[i]);
+   fail_if(i != 6);
+   fail_if(l2 != NULL);
 
    l3 = eina_list_append(NULL, &data[6]);
    l3 = eina_list_append(l3, &data[7]);
@@ -221,12 +251,6 @@ START_TEST(eina_test_merge)
    l5 = eina_list_append(NULL, &data[12]);
    l5 = eina_list_append(l5, &data[13]);
    l5 = eina_list_append(l5, &data[14]);
-
-   l1 = eina_list_merge(l1, l2);
-   fail_if(l1 == NULL);
-   fail_if(eina_list_count(l1) != 6);
-   for (i = 0; i < 6; ++i)
-     fail_if(eina_list_nth(l1, i) != &data[i]);
 
    l1 = eina_list_sort(l1, -1, eina_int_cmp);
    l3 = eina_list_sort(l3, -1, eina_int_cmp);
