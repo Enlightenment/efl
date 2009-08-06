@@ -1412,6 +1412,10 @@ eina_list_clone(const Eina_List *list)
  * @note @b in-place: this will change the given list, so you should
  * now point to the new list head that is returned by this function.
  *
+ * @note worst case is O(n * log2(n)), O(n) average case. That means
+ * that for 1,000,000 list elements, sort will usually do 1,000,000
+ * comparisons, but may do up to 20,000,000.
+ *
  * Example:
  * @code
  * int
@@ -1641,6 +1645,34 @@ eina_list_sorted_merge(Eina_List *left, Eina_List *right, Eina_Compare_Cb func)
    return ret;
 }
 
+/**
+ * @brief Returns node nearest to data is in the sorted list.
+ *
+ * @param list The list to search for data, @b must be sorted.
+ * @param func A function pointer that can handle comparing the list data nodes.
+ * @param data reference value to search.
+ * @return the nearest node, NULL if not found.
+ *
+ * This can be used to check if some value is inside the list and get
+ * the nearest container node in this case. It should be used when list is
+ * known to be sorted as it will do binary search for results.
+ *
+ * Example: imagine user gives a string, you check if it's in the list
+ * before duplicating its contents, otherwise you want to insert it
+ * sorted. In this case you get the result of this function and either
+ * append or prepend the value.
+ *
+ * @note O(log2(n)) average/worst case performance, for 1,000,000
+ * elements it will do a maximum of 20 comparisons. This is much
+ * faster than the 1,000,000 comparisons made naively walking the list
+ * from head to tail, so depending on the number of searches and
+ * insertions, it may be worth to eina_list_sort() the list and do he
+ * searches later.
+ *
+ * @see eina_list_search_sorted_list()
+ * @see eina_list_sort()
+ * @see eina_list_sorted_merge()
+ */
 EAPI Eina_List *
 eina_list_search_sorted_near_list(const Eina_List *list, Eina_Compare_Cb func, const void *data)
 {
@@ -1681,6 +1713,33 @@ eina_list_search_sorted_near_list(const Eina_List *list, Eina_Compare_Cb func, c
    return (Eina_List*) ct;
 }
 
+/**
+ * @brief Returns node if data is in the sorted list.
+ *
+ * @param list The list to search for data, @b must be sorted.
+ * @param func A function pointer that can handle comparing the list data nodes.
+ * @param data reference value to search.
+ * @return the node if func(node->data, data) == 0, NULL if not found.
+ *
+ * This can be used to check if some value is inside the list and get
+ * the container node in this case. It should be used when list is
+ * known to be sorted as it will do binary search for results.
+ *
+ * Example: imagine user gives a string, you check if it's in the list
+ * before duplicating its contents.
+ *
+ * @note O(log2(n)) average/worst case performance, for 1,000,000
+ * elements it will do a maximum of 20 comparisons. This is much
+ * faster than the 1,000,000 comparisons made by
+ * eina_list_search_unsorted_list(), so depending on the number of
+ * searches and insertions, it may be worth to eina_list_sort() the
+ * list and do he searches later.
+ *
+ * @see eina_list_search_sorted()
+ * @see eina_list_sort()
+ * @see eina_list_sorted_merge()
+ * @see eina_list_search_unsorted_list()
+ */
 EAPI Eina_List *
 eina_list_search_sorted_list(const Eina_List *list, Eina_Compare_Cb func, const void *data)
 {
@@ -1695,12 +1754,62 @@ eina_list_search_sorted_list(const Eina_List *list, Eina_Compare_Cb func, const 
    return NULL;
 }
 
+
+/**
+ * @brief Returns node data if it is in the sorted list.
+ *
+ * @param list The list to search for data, @b must be sorted.
+ * @param func A function pointer that can handle comparing the list data nodes.
+ * @param data reference value to search.
+ * @return the node value (@c node->data) if func(node->data, data) == 0,
+ * NULL if not found.
+ *
+ * This can be used to check if some value is inside the list and get
+ * the existing instance in this case. It should be used when list is
+ * known to be sorted as it will do binary search for results.
+ *
+ * Example: imagine user gives a string, you check if it's in the list
+ * before duplicating its contents.
+ *
+ * @note O(log2(n)) average/worst case performance, for 1,000,000
+ * elements it will do a maximum of 20 comparisons. This is much
+ * faster than the 1,000,000 comparisons made by
+ * eina_list_search_unsorted(), so depending on the number of
+ * searches and insertions, it may be worth to eina_list_sort() the
+ * list and do he searches later.
+ *
+ * @see eina_list_search_sorted_list()
+ * @see eina_list_sort()
+ * @see eina_list_sorted_merge()
+ * @see eina_list_search_unsorted_list()
+ */
 EAPI void *
 eina_list_search_sorted(const Eina_List *list, Eina_Compare_Cb func, const void *data)
 {
    return eina_list_data_get(eina_list_search_sorted_list(list, func, data));
 }
 
+/**
+ * @brief Returns node if data is in the unsorted list.
+ *
+ * @param list The list to search for data, may be unsorted.
+ * @param func A function pointer that can handle comparing the list data nodes.
+ * @param data reference value to search.
+ * @return the node if func(node->data, data) == 0, NULL if not found.
+ *
+ * This can be used to check if some value is inside the list and get
+ * the container node in this case.
+ *
+ * Example: imagine user gives a string, you check if it's in the list
+ * before duplicating its contents.
+ *
+ * @note this is expensive and may walk the whole list, it's order-N,
+ * that is for 1,000,000 elements list it may walk and compare
+ * 1,000,000 nodes.
+ *
+ * @see eina_list_search_sorted_list()
+ * @see eina_list_search_unsorted()
+ */
 EAPI Eina_List *
 eina_list_search_unsorted_list(const Eina_List *list, Eina_Compare_Cb func, const void *data)
 {
@@ -1715,6 +1824,28 @@ eina_list_search_unsorted_list(const Eina_List *list, Eina_Compare_Cb func, cons
    return NULL;
 }
 
+/**
+ * @brief Returns node data if it is in the unsorted list.
+ *
+ * @param list The list to search for data, may be unsorted.
+ * @param func A function pointer that can handle comparing the list data nodes.
+ * @param data reference value to search.
+ * @return the node value (@c node->data) if func(node->data, data) == 0,
+ * NULL if not found.
+ *
+ * This can be used to check if some value is inside the list and get
+ * the existing instance in this case.
+ *
+ * Example: imagine user gives a string, you check if it's in the list
+ * before duplicating its contents.
+ *
+ * @note this is expensive and may walk the whole list, it's order-N,
+ * that is for 1,000,000 elements list it may walk and compare
+ * 1,000,000 nodes.
+ *
+ * @see eina_list_search_sorted()
+ * @see eina_list_search_unsorted_list()
+ */
 EAPI void *
 eina_list_search_unsorted(const Eina_List *list, Eina_Compare_Cb func, const void *data)
 {
