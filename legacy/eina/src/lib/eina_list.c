@@ -863,6 +863,37 @@ eina_list_prepend_relative_list(Eina_List *list, const void *data, Eina_List *re
 }
 
 /**
+ * @brief Insert a new node into a sorted list.
+ *
+ * @param list The given linked list, @b must be sorted.
+ * @param data The data to insert sorted.
+ * @return A list pointer.
+ *
+ * This function inserts values into a linked list assuming it was
+ * sorted and the result will be sorted. If @p list is @c NULLL, a new
+ * list is returned. On success, a new list pointer that should be
+ * used in place of the one given to this function is
+ * returned. Otherwise, the old pointer is returned. See eina_error_get().
+ *
+ * @note O(log2(n)) average/worst case performance as it uses
+ * eina_list_search_sorted_near_list() and thus is bounded to that.
+ */
+EAPI Eina_List *
+eina_list_sorted_insert(Eina_List *list, Eina_Compare_Cb func, const void *data)
+{
+   Eina_List *lnear;
+   int cmp;
+
+   if (!list) return eina_list_append(NULL, data);
+
+   lnear = eina_list_search_sorted_near_list(list, func, data, &cmp);
+   if (cmp < 0)
+     return eina_list_append_relative_list(list, data, lnear);
+   else
+     return eina_list_prepend_relative_list(list, data, lnear);
+}
+
+/**
  * @brief Remove the first instance of the specified data from the given list.
  *
  * @param list The given list.
@@ -1709,9 +1740,8 @@ EAPI Eina_List *
 eina_list_search_sorted_near_list(const Eina_List *list, Eina_Compare_Cb func, const void *data, int *result_cmp)
 {
    const Eina_List *ct;
-   void *d;
-   unsigned int inf, sup, cur, tmp;
-   int part;
+   unsigned int inf, sup, cur;
+   int cmp;
 
    if (!list)
      {
@@ -1719,38 +1749,61 @@ eina_list_search_sorted_near_list(const Eina_List *list, Eina_Compare_Cb func, c
 	return NULL;
      }
 
-   inf = 0;
-   sup = list->accounting->count;
-   cur = sup >> 1;
-
-   for (tmp = 0, ct = list; tmp != cur; tmp++, ct = ct->next);
-   d = ct->data;
-
-   while ((part = func(d, data)))
+   if (list->accounting->count == 1)
      {
-       if (inf == sup
-	   || (part < 0 && inf == cur)
-	   || (part > 0 && sup == cur))
-	 goto end;
+	if (result_cmp) *result_cmp = func(list->data, data);
+	return (Eina_List *)list;
+     }
 
-       tmp = (sup + inf) >> 1;
-       if (part < 0)
-          inf = tmp;
-       else
-          sup = tmp;
-       /* Faster to move directly from where we are to the new position than using eina_list_nth_list. */
-       if (tmp < cur)
-	 for (; cur != tmp; cur--, ct = ct->prev)
-	   ;
-       else
-	 for (; cur != tmp; cur++, ct = ct->next)
-	   ;
-       d = ct->data;
+   /* list walk is expensive, do quick check: tail */
+   ct = list->accounting->last;
+   cmp = func(ct->data, data);
+   if (cmp <= 0)
+     goto end;
+
+   /* list walk is expensive, do quick check: head */
+   ct = list;
+   cmp = func(ct->data, data);
+   if (cmp >= 0)
+     goto end;
+
+   /* inclusive bounds */
+   inf = 1;
+   sup = list->accounting->count - 2;
+   cur = 1;
+   ct = list->next;
+
+   /* no loop, just compare if comparison value is important to caller */
+   if (inf > sup)
+     {
+	if (result_cmp) cmp = func(ct->data, data);
+	goto end;
+     }
+
+   while (inf <= sup)
+     {
+	unsigned int tmp = cur;
+	cur = inf + ((sup - inf) >> 1);
+	if      (tmp < cur) for (; tmp != cur; tmp++, ct = ct->next);
+	else if (tmp > cur) for (; tmp != cur; tmp--, ct = ct->prev);
+
+	cmp = func(ct->data, data);
+	if (cmp == 0)
+	  break;
+	else if (cmp < 0)
+	  inf = cur + 1;
+	else if (cmp > 0)
+	  {
+	     if (cur > 0)
+	       sup = cur - 1;
+	     else break;
+	  }
+	else break;
      }
 
  end:
-   if (result_cmp) *result_cmp = part;
-   return (Eina_List*) ct;
+   if (result_cmp) *result_cmp = cmp;
+   return (Eina_List *)ct;
 }
 
 /**
@@ -1784,12 +1837,10 @@ EAPI Eina_List *
 eina_list_search_sorted_list(const Eina_List *list, Eina_Compare_Cb func, const void *data)
 {
    Eina_List *lnear;
-   void      *d;
-   int       cmp;
+   int cmp;
 
    lnear = eina_list_search_sorted_near_list(list, func, data, &cmp);
    if (!lnear) return NULL;
-   d = eina_list_data_get(lnear);
    if (cmp == 0)
      return lnear;
    return NULL;

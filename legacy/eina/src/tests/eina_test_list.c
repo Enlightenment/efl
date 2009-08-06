@@ -25,6 +25,27 @@
 #include "eina_list.h"
 #include "eina_suite.h"
 
+static Eina_Bool eina_list_sorted_check(const Eina_List *list)
+{
+   const Eina_List *n;
+   void *d;
+   int last = *(int *)list->data;
+
+   EINA_LIST_FOREACH(list->next, n, d)
+     {
+	int current = *(int *)d;
+	if (last > current)
+	  {
+	     fprintf(stderr, "list is not sorted: last=%d, current=%d\n",
+		     last, current);
+	     return 0;
+	  }
+	last = current;
+     }
+
+   return 1;
+}
+
 static int eina_int_cmp(const void *a, const void *b)
 {
    const int *ia = a;
@@ -196,8 +217,6 @@ START_TEST(eina_test_merge)
    Eina_List *l4;
    Eina_List *l5;
    int data[] = { 6, 9, 42, 1, 7, 9, 81, 1664, 1337, 3, 21, 10, 0, 5, 2008 };
-   int *prev;
-   int *current;
    int i;
 
    eina_list_init();
@@ -269,13 +288,56 @@ START_TEST(eina_test_merge)
    fail_if(l1 == NULL);
    fail_if(eina_list_count(l1) != 15);
 
-   prev = eina_list_data_get(l1);
-   for (i = 1; i < eina_list_count(l1); ++i)
-     {
-	current = eina_list_nth(l1, i);
-	fail_if (*prev > *current);
-	prev = current;
-     }
+   fail_if(!eina_list_sorted_check(l1));
+
+   eina_list_shutdown();
+}
+END_TEST
+
+START_TEST(eina_test_sorted_insert)
+{
+   const int data[] = {6, 9, 42, 1, 7, 9, 81, 1664, 1337, 3, 21, 10, 0, 5, 2008};
+   const int data2[] = {5, 0, 3, 2, 1, 0, 1, 2, 3, 4, 5};
+   int i, count;
+   Eina_List *l1, *l2, *itr;
+   void *d;
+
+   eina_list_init();
+
+   count = sizeof(data)/sizeof(data[0]);
+
+   l1 = NULL;
+   for (i = 0; i < count; i++)
+     l1 = eina_list_sorted_insert(l1, eina_int_cmp, data + i);
+
+   fail_if(l1 == NULL);
+   fail_if(!eina_list_sorted_check(l1));
+
+   l2 = NULL;
+   EINA_LIST_FOREACH(l1, itr, d)
+     l2 = eina_list_sorted_insert(l2, eina_int_cmp, d);
+
+   fail_if(l2 == NULL);
+   fail_if(!eina_list_sorted_check(l2));
+   eina_list_free(l2);
+
+   l2 = NULL;
+   EINA_LIST_REVERSE_FOREACH(l1, itr, d)
+     l2 = eina_list_sorted_insert(l2, eina_int_cmp, d);
+
+   fail_if(l2 == NULL);
+   fail_if(!eina_list_sorted_check(l2));
+   eina_list_free(l2);
+   eina_list_free(l1);
+
+   count = sizeof(data2)/sizeof(data2[0]);
+   l1 = NULL;
+   for (i = 0; i < count; i++)
+     l1 = eina_list_sorted_insert(l1, eina_int_cmp, data2 + i);
+
+   fail_if(l1 == NULL);
+   fail_if(!eina_list_sorted_check(l1));
+   eina_list_free(l1);
 
    eina_list_shutdown();
 }
@@ -286,4 +348,5 @@ eina_test_list(TCase *tc)
 {
    tcase_add_test(tc, eina_test_simple);
    tcase_add_test(tc, eina_test_merge);
+   tcase_add_test(tc, eina_test_sorted_insert);
 }
