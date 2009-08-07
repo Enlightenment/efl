@@ -875,8 +875,12 @@ eina_list_prepend_relative_list(Eina_List *list, const void *data, Eina_List *re
  * used in place of the one given to this function is
  * returned. Otherwise, the old pointer is returned. See eina_error_get().
  *
- * @note O(log2(n)) average/worst case performance as it uses
- * eina_list_search_sorted_near_list() and thus is bounded to that.
+ * @note O(log2(n)) comparisons (calls to func) average/worst case
+ * performance as it uses eina_list_search_sorted_near_list() and thus
+ * is bounded to that. As said in eina_list_search_sorted_near_list(),
+ * lists do not have O(1) access time, so walking to the correct node
+ * can be costly, consider worst case to be almost O(n) pointer
+ * dereference (list walk).
  */
 EAPI Eina_List *
 eina_list_sorted_insert(Eina_List *list, Eina_Compare_Cb func, const void *data)
@@ -1443,9 +1447,10 @@ eina_list_clone(const Eina_List *list)
  * @note @b in-place: this will change the given list, so you should
  * now point to the new list head that is returned by this function.
  *
- * @note worst case is O(n * log2(n)), O(n) average case. That means
- * that for 1,000,000 list elements, sort will usually do 1,000,000
- * comparisons, but may do up to 20,000,000.
+ * @note worst case is O(n * log2(n)) comparisons (calls to func()),
+ * O(n) comparisons average case. That means that for 1,000,000 list
+ * elements, sort will usually do 1,000,000 comparisons, but may do up
+ * to 20,000,000.
  *
  * Example:
  * @code
@@ -1730,7 +1735,9 @@ eina_list_sorted_merge(Eina_List *left, Eina_List *right, Eina_Compare_Cb func)
  * faster than the 1,000,000 comparisons made naively walking the list
  * from head to tail, so depending on the number of searches and
  * insertions, it may be worth to eina_list_sort() the list and do he
- * searches later.
+ * searches later. As lists do not have O(1) access time, walking to
+ * the correct node can be costly, consider worst case to be almost
+ * O(n) pointer dereference (list walk).
  *
  * @see eina_list_search_sorted_list()
  * @see eina_list_sort()
@@ -1826,12 +1833,16 @@ eina_list_search_sorted_near_list(const Eina_List *list, Eina_Compare_Cb func, c
  * faster than the 1,000,000 comparisons made by
  * eina_list_search_unsorted_list(), so depending on the number of
  * searches and insertions, it may be worth to eina_list_sort() the
- * list and do he searches later.
+ * list and do he searches later. As said in
+ * eina_list_search_sorted_near_list(), lists do not have O(1) access
+ * time, so walking to the correct node can be costly, consider worst
+ * case to be almost O(n) pointer dereference (list walk).
  *
  * @see eina_list_search_sorted()
  * @see eina_list_sort()
  * @see eina_list_sorted_merge()
  * @see eina_list_search_unsorted_list()
+ * @see eina_list_search_sorted_near_list()
  */
 EAPI Eina_List *
 eina_list_search_sorted_list(const Eina_List *list, Eina_Compare_Cb func, const void *data)
@@ -1868,7 +1879,10 @@ eina_list_search_sorted_list(const Eina_List *list, Eina_Compare_Cb func, const 
  * faster than the 1,000,000 comparisons made by
  * eina_list_search_unsorted(), so depending on the number of
  * searches and insertions, it may be worth to eina_list_sort() the
- * list and do he searches later.
+ * list and do he searches later. As said in
+ * eina_list_search_sorted_near_list(), lists do not have O(1) access
+ * time, so walking to the correct node can be costly, consider worst
+ * case to be almost O(n) pointer dereference (list walk).
  *
  * @see eina_list_search_sorted_list()
  * @see eina_list_sort()
