@@ -760,10 +760,10 @@ evas_render_object_recalc(Evas_Object *obj)
 
    if ((!obj->changed) && (obj->delete_me < 2))
      {
-	Evas	*e;
+	Evas *e;
 
 	e = obj->layer->evas;
-	if (!e || e->cleanup) return ;
+	if ((!e) || (e->cleanup)) return;
 
 	if (!obj->changed)
 	  eina_array_push(&e->pending_objects, obj);
