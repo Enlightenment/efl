@@ -295,7 +295,7 @@ eina_list_accessor_get_at(Eina_Accessor_List *it, unsigned int index, void **dat
 
    EINA_MAGIC_CHECK_LIST_ACCESSOR(it, EINA_FALSE);
 
-   if (index > eina_list_count(it->head)) return EINA_FALSE;
+   if (index >= eina_list_count(it->head)) return EINA_FALSE;
 
    if (it->index == index)
      {
