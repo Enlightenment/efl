@@ -511,14 +511,18 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 					      obj->layer->evas->pointer.x,
 					      obj->layer->evas->pointer.y, 1, 1);
      }
+
    obj->cur.geometry.w = w;
    obj->cur.geometry.h = h;
 ////   obj->cur.cache.geometry.validity = 0;
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
-   evas_object_recalc_clippees(obj);
+   /* NB: evas_object_recalc_clippees was here previously ( < 08/07/2009) */
    if (obj->layer->evas->events_frozen <= 0)
      {
+        /* NB: If this creates glitches on screen then move to above position */
+        evas_object_recalc_clippees(obj);
+
 	//   if (obj->func->coords_recalc) obj->func->coords_recalc(obj);
 	if (!pass)
 	  {
