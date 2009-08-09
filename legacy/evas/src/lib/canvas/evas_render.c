@@ -298,7 +298,8 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *e)
      }
 }
 
-Eina_Bool pending_change(void *data, __UNUSED__ void *gdata)
+Eina_Bool 
+pending_change(void *data, __UNUSED__ void *gdata)
 {
    Evas_Object *obj;
 
