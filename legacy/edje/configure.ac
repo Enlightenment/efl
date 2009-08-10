@@ -50,8 +50,6 @@ case "$host_os" in
       ;;
 esac
 
-want_edje_program_cache="no"
-
 requirement_edje=""
 
 
@@ -86,6 +84,8 @@ AC_SUBST(EDJE_DECC_PRG)
 AC_SUBST(EDJE_RECC_PRG)
 
 # Optional EDJE_PROGRAM_CACHE (use much more ram, but increase speed in some cases)
+want_edje_program_cache="no"
+
 AC_ARG_ENABLE([edje-program-cache],
    [AC_HELP_STRING(
        [--enable-edje-program-cache],
