@@ -707,6 +707,8 @@ struct _Edje
    } message;
    int                      processing_messages;
 
+   int                   state;
+
    unsigned short        dirty : 1;
    unsigned short        recalc : 1;
    unsigned short        walking_callbacks : 1;
@@ -720,7 +722,40 @@ struct _Edje
    unsigned short        block_break : 1;
    unsigned short        delete_me : 1;
    unsigned short        postponed : 1;
+#ifdef EDJE_CALC_CACHE
+   unsigned short        text_part_change : 1;
+   unsigned short        all_part_change : 1;
+#endif
 };
+
+struct _Edje_Calc_Params
+{
+   int              x, y, w, h; // 16
+   Edje_Rectangle   req; // 16
+   Edje_Rectangle   req_drag; // 16
+   struct {
+      int           x, y, w, h; // 16
+      int           angle; // 4
+      int           spread; // 4
+   } fill;
+   Edje_Color color, color2, color3; // 12
+   union {
+      struct {
+	 int           l, r, t, b; // 16
+      } border; // 16
+      struct {
+	 Edje_Alignment align; /* text alignment within bounds */ // 16
+	 double         elipsis; // 8
+	 int            size; // 4
+      } text; // 28
+      struct {
+	 int             id; // 4
+	 char           *type; // 4
+      } gradient; // 8
+   } type; // 28
+   unsigned char    visible : 1;
+   unsigned char    smooth : 1; // 4
+}; // 116
 
 struct _Edje_Real_Part
 {
@@ -781,7 +816,17 @@ struct _Edje_Real_Part
       Edje_Real_Part        *rel1_to_y; // 4
       Edje_Real_Part        *rel2_to_x; // 4
       Edje_Real_Part        *rel2_to_y; // 4
+#ifdef EDJE_CALC_CACHE
+      Edje_Calc_Params       p; // 116
+      int                    state; // 4
+#endif
    } param1, param2, custom; // 60 // FIXME: custom should be alloced on demand - 20--
+   // WITH EDJE_CALC_CACHE: 180
+
+#ifdef EDJE_CALC_CACHE
+   Edje_Calc_Params          p;
+   int                       state;
+#endif
 
    Edje_Real_Part           *confine_to; // 4 // fixme - make part of drag
    Edje_Real_Part           *clip_to; // 4
@@ -796,7 +841,11 @@ struct _Edje_Real_Part
    unsigned char             calculating; // 1
 
    unsigned char             still_in   : 1; // 2
+#ifdef EDJE_CALC_CACHE
+   unsigned char             invalidate : 1;
+#endif
 }; //  394
+// WITH EDJE_CALC_CACHE: 514
 
 struct _Edje_Running_Program
 {
@@ -814,35 +863,6 @@ struct _Edje_Signal_Callback
    void  *data;
    unsigned char just_added : 1;
    unsigned char delete_me : 1;
-};
-
-struct _Edje_Calc_Params
-{
-   int              x, y, w, h;
-   Edje_Rectangle   req;
-   Edje_Rectangle   req_drag;
-   struct {
-      int           x, y, w, h;
-      int           angle;
-      int           spread;
-   } fill;
-   Edje_Color color, color2, color3;
-   union {
-      struct {
-	 int           l, r, t, b;
-      } border;
-      struct {
-	 Edje_Alignment align; /* text alignment within bounds */
-	 double         elipsis;
-	 int            size;
-      } text;
-      struct {
-	 int             id;
-	 char           *type;
-      } gradient;
-   } type;
-   unsigned char    visible : 1;
-   unsigned char    smooth : 1;
 };
 
 struct _Edje_Pending_Program

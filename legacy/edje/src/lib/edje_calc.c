@@ -46,6 +46,9 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos)
    ep->description_pos = npos;
 
    ed->dirty = 1;
+#ifdef EDJE_CALC_CACHE
+   ep->invalidate = 1;
+#endif
 }
 
 Edje_Part_Description *
@@ -132,6 +135,9 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
      ep->chosen_description = ep->param2.description;
 
    ed->dirty = 1;
+#ifdef EDJE_CALC_CACHE
+   ep->invalidate = 1;
+#endif
 }
 
 void
@@ -163,6 +169,7 @@ _edje_recalc_do(Edje *ed)
 	return;
      }
    ed->dirty = 0;
+   ed->state++;
    for (i = 0; i < ed->table_parts_size; i++)
      {
 	Edje_Real_Part *ep;
@@ -180,6 +187,10 @@ _edje_recalc_do(Edje *ed)
 	  _edje_part_recalc(ed, ep, (~ep->calculated) & FLAG_XY);
      }
    if (!ed->calc_only) ed->recalc = 0;
+#ifdef EDJE_CALC_CACHE
+   ed->all_part_change = 0;
+   ed->text_part_change = 0;
+#endif
 }
 
 int
@@ -252,6 +263,9 @@ _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, double x, double y)
 	ed->dirty = 1;
      }
 
+#ifdef EDJE_CALC_CACHE
+   ep->invalidate = 1;
+#endif
    _edje_recalc(ed); /* won't do anything if dirty flag isn't set */
 }
 
@@ -1381,7 +1395,14 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 static void
 _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 {
-   Edje_Calc_Params p1, p3, *pf;
+#ifdef EDJE_CALC_CACHE
+   int state1 = -1;
+   int state2 = -1;
+   int statec = -1;
+#else
+   Edje_Calc_Params lp1, lp2;
+#endif
+   Edje_Calc_Params *p1, *pf;
    Edje_Part_Description *chosen_desc;
    double pos = 0.0;
 
@@ -1421,20 +1442,80 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
    if (flags & FLAG_X)
      {
 	ep->calculating |= flags & FLAG_X;
-	if (ep->param1.rel1_to_x)  _edje_part_recalc(ed, ep->param1.rel1_to_x, FLAG_X);
-	if (ep->param1.rel2_to_x)  _edje_part_recalc(ed, ep->param1.rel2_to_x, FLAG_X);
-	if (ep->param2.rel1_to_x)  _edje_part_recalc(ed, ep->param2.rel1_to_x, FLAG_X);
-	if (ep->param2.rel2_to_x)  _edje_part_recalc(ed, ep->param2.rel2_to_x, FLAG_X);
+	if (ep->param1.rel1_to_x)
+	  {
+	     _edje_part_recalc(ed, ep->param1.rel1_to_x, FLAG_X);
+#ifdef EDJE_CALC_CACHE
+	     state1 = ep->param1.rel1_to_x->state;
+#endif
+	  }
+	if (ep->param1.rel2_to_x)
+	  {
+	     _edje_part_recalc(ed, ep->param1.rel2_to_x, FLAG_X);
+#ifdef EDJE_CALC_CACHE
+	     if (state1 < ep->param1.rel2_to_x->state)
+	       state1 = ep->param1.rel2_to_x->state;
+#endif
+	  }
+	if (ep->param2.rel1_to_x)
+	  {
+	     _edje_part_recalc(ed, ep->param2.rel1_to_x, FLAG_X);
+#ifdef EDJE_CALC_CACHE
+	     state2 = ep->param2.rel1_to_x->state;
+#endif
+	  }
+	if (ep->param2.rel2_to_x)
+	  {
+	     _edje_part_recalc(ed, ep->param2.rel2_to_x, FLAG_X);
+#ifdef EDJE_CALC_CACHE
+	     if (state2 < ep->param2.rel2_to_x->state)
+	       state2 = ep->param2.rel2_to_x->state;
+#endif
+	  }
      }
    if (flags & FLAG_Y)
      {
 	ep->calculating |= flags & FLAG_Y;
-	if (ep->param1.rel1_to_y)  _edje_part_recalc(ed, ep->param1.rel1_to_y, FLAG_Y);
-	if (ep->param1.rel2_to_y)  _edje_part_recalc(ed, ep->param1.rel2_to_y, FLAG_Y);
-	if (ep->param2.rel1_to_y)  _edje_part_recalc(ed, ep->param2.rel1_to_y, FLAG_Y);
-	if (ep->param2.rel2_to_y)  _edje_part_recalc(ed, ep->param2.rel2_to_y, FLAG_Y);
+	if (ep->param1.rel1_to_y)
+	  {
+	     _edje_part_recalc(ed, ep->param1.rel1_to_y, FLAG_Y);
+#ifdef EDJE_CALC_CACHE
+	     if (state1 < ep->param1.rel1_to_y->state)
+	       state1 = ep->param1.rel1_to_y->state;
+#endif
+	  }
+	if (ep->param1.rel2_to_y)
+	  {
+	     _edje_part_recalc(ed, ep->param1.rel2_to_y, FLAG_Y);
+#ifdef EDJE_CALC_CACHE
+	     if (state1 < ep->param1.rel2_to_y->state)
+	       state1 = ep->param1.rel2_to_y->state;
+#endif
+	  }
+	if (ep->param2.rel1_to_y)
+	  {
+	     _edje_part_recalc(ed, ep->param2.rel1_to_y, FLAG_Y);
+#ifdef EDJE_CALC_CACHE
+	     if (state2 < ep->param2.rel1_to_y->state)
+	       state2 = ep->param2.rel1_to_y->state;
+#endif
+	  }
+	if (ep->param2.rel2_to_y)
+	  {
+	     _edje_part_recalc(ed, ep->param2.rel2_to_y, FLAG_Y);
+#ifdef EDJE_CALC_CACHE
+	     if (state2 < ep->param2.rel2_to_y->state)
+	       state2 = ep->param2.rel2_to_y->state;
+#endif
+	  }
      }
-   if (ep->confine_to)        _edje_part_recalc(ed, ep->confine_to, flags);
+   if (ep->confine_to)
+     {
+	_edje_part_recalc(ed, ep->confine_to, flags);
+#ifdef EDJE_CALC_CACHE
+	statec = ep->confine_to->state;
+#endif
+     }
 //   if (ep->text.source)       _edje_part_recalc(ed, ep->text.source, flags);
 //   if (ep->text.text_source)  _edje_part_recalc(ed, ep->text.text_source, flags);
 
@@ -1446,113 +1527,162 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	ep->calculated |= flags;
 	return;
      }
+
+#ifndef EDJE_CALC_CACHE
+   p1 = &lp1;
+#else
+   p1 = ep->param2.description ? &ep->param1.p : &ep->p;
+#endif
+
    if (ep->param1.description)
-     _edje_part_recalc_single(ed, ep, ep->param1.description, chosen_desc,
-			      ep->param1.rel1_to_x, ep->param1.rel1_to_y, ep->param1.rel2_to_x, ep->param1.rel2_to_y,
-			      ep->confine_to,
-			      &p1,
-			      flags);
+     {
+#ifdef EDJE_CALC_CACHE
+	if (ed->all_part_change ||
+ 	    ep->invalidate ||
+ 	    state1 >= ep->param1.state ||
+ 	    statec >= ep->param1.state ||
+ 	    ((ep->part->type == EDJE_PART_TYPE_TEXT || ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) && ed->text_part_change))
+#endif
+ 	  {
+ 	     _edje_part_recalc_single(ed, ep, ep->param1.description, chosen_desc,
+ 				      ep->param1.rel1_to_x, ep->param1.rel1_to_y, ep->param1.rel2_to_x, ep->param1.rel2_to_y,
+ 				      ep->confine_to,
+ 				      p1,
+ 				      flags);
+#ifdef EDJE_CALC_CACHE
+ 	     ep->param1.state = ed->state;
+#endif
+ 	  }
+     }
    if (ep->param2.description)
      {
 	int beginning_pos, part_type;
-	Edje_Calc_Params p2;
+	Edje_Calc_Params *p2, *p3;
+#ifndef EDJE_CALC_CACHE
+	Edje_Calc_Params lp3;
 
-	_edje_part_recalc_single(ed, ep, ep->param2.description, chosen_desc,
-				 ep->param2.rel1_to_x, ep->param2.rel1_to_y, ep->param2.rel2_to_x, ep->param2.rel2_to_y,
-				 ep->confine_to,
-				 &p2,
-				 flags);
+ 	p2 = &lp2;
+ 	p3 = &lp3;
+#else
+ 	p2 = &ep->param2.p;
+ 	p3 = &ep->p;
 
-	pos = ep->description_pos;
-	beginning_pos = (pos < 0.5);
-	part_type = ep->part->type;
+	if (ed->all_part_change ||
+ 	    ep->invalidate ||
+ 	    state2 >= ep->param2.state ||
+ 	    statec >= ep->param2.state ||
+ 	    ((ep->part->type == EDJE_PART_TYPE_TEXT || ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) && ed->text_part_change))
+#endif
+ 	  {
+ 	     _edje_part_recalc_single(ed, ep, ep->param2.description, chosen_desc,
+ 				      ep->param2.rel1_to_x, ep->param2.rel1_to_y, ep->param2.rel2_to_x, ep->param2.rel2_to_y,
+ 				      ep->confine_to,
+				      p2,
+ 				      flags);
+#ifdef EDJE_CALC_CACHE
+ 	     ep->param2.state = ed->state;
+#endif
+ 	  }
 
-	/* visible is special */
-	if ((p1.visible) && (!p2.visible))
-	  p3.visible = (pos != 1.0);
-	else if ((!p1.visible) && (p2.visible))
-	  p3.visible = (pos != 0.0);
-	else
-	  p3.visible = p1.visible;
+  	pos = ep->description_pos;
+  	beginning_pos = (pos < 0.5);
+  	part_type = ep->part->type;
 
-	p3.smooth = (beginning_pos) ? p1.smooth : p2.smooth;
+  	/* visible is special */
+ 	if ((p1->visible) && (!p2->visible))
+ 	  p3->visible = (pos != 1.0);
+ 	else if ((!p1->visible) && (p2->visible))
+ 	  p3->visible = (pos != 0.0);
+  	else
+ 	  p3->visible = p1->visible;
 
-	/* FIXME: do x and y separately base on flag */
+	p3->smooth = (beginning_pos) ? p1->smooth : p2->smooth;
+
+  	/* FIXME: do x and y separately base on flag */
 #define INTP(_x1, _x2, _p) (((_x1) == (_x2)) ? (_x1) : ((_x1) + (((_x2) - (_x1)) * (_p))))
-	p3.x = INTP(p1.x, p2.x, pos);
-	p3.y = INTP(p1.y, p2.y, pos);
-	p3.w = INTP(p1.w, p2.w, pos);
-	p3.h = INTP(p1.h, p2.h, pos);
+ 	p3->x = INTP(p1->x, p2->x, pos);
+ 	p3->y = INTP(p1->y, p2->y, pos);
+ 	p3->w = INTP(p1->w, p2->w, pos);
+ 	p3->h = INTP(p1->h, p2->h, pos);
 
-	p3.req.x = INTP(p1.req.x, p2.req.x, pos);
-	p3.req.y = INTP(p1.req.y, p2.req.y, pos);
-	p3.req.w = INTP(p1.req.w, p2.req.w, pos);
-	p3.req.h = INTP(p1.req.h, p2.req.h, pos);
+ 	p3->req.x = INTP(p1->req.x, p2->req.x, pos);
+ 	p3->req.y = INTP(p1->req.y, p2->req.y, pos);
+ 	p3->req.w = INTP(p1->req.w, p2->req.w, pos);
+ 	p3->req.h = INTP(p1->req.h, p2->req.h, pos);
 
-	if (ep->part->dragable.x)
+ 	if (ep->part->dragable.x)
 	  {
-	     p3.req_drag.x = INTP(p1.req_drag.x, p2.req_drag.x, pos);
-	     p3.req_drag.w = INTP(p1.req_drag.w, p2.req_drag.w, pos);
-	  }
-	if (ep->part->dragable.y)
-	  {
-	     p3.req_drag.y = INTP(p1.req_drag.y, p2.req_drag.y, pos);
-	     p3.req_drag.h = INTP(p1.req_drag.h, p2.req_drag.h, pos);
-	  }
+	     p3->req_drag.x = INTP(p1->req_drag.x, p2->req_drag.x, pos);
+ 	     p3->req_drag.w = INTP(p1->req_drag.w, p2->req_drag.w, pos);
+  	  }
+  	if (ep->part->dragable.y)
+  	  {
+ 	     p3->req_drag.y = INTP(p1->req_drag.y, p2->req_drag.y, pos);
+ 	     p3->req_drag.h = INTP(p1->req_drag.h, p2->req_drag.h, pos);
+  	  }
 
-	p3.color.r = INTP(p1.color.r, p2.color.r, pos);
-	p3.color.g = INTP(p1.color.g, p2.color.g, pos);
-	p3.color.b = INTP(p1.color.b, p2.color.b, pos);
-	p3.color.a = INTP(p1.color.a, p2.color.a, pos);
+	p3->color.r = INTP(p1->color.r, p2->color.r, pos);
+ 	p3->color.g = INTP(p1->color.g, p2->color.g, pos);
+ 	p3->color.b = INTP(p1->color.b, p2->color.b, pos);
+ 	p3->color.a = INTP(p1->color.a, p2->color.a, pos);
 
-	switch (part_type)
-	  {
-	   case EDJE_PART_TYPE_IMAGE:
-	   case EDJE_PART_TYPE_GRADIENT:
-	      p3.fill.x = INTP(p1.fill.x, p2.fill.x, pos);
-	      p3.fill.y = INTP(p1.fill.y, p2.fill.y, pos);
-	      p3.fill.w = INTP(p1.fill.w, p2.fill.w, pos);
-	      p3.fill.h = INTP(p1.fill.h, p2.fill.h, pos);
-	      if (part_type == EDJE_PART_TYPE_GRADIENT)
-		{
-		   p3.fill.angle = INTP(p1.fill.angle, p2.fill.angle, pos);
-		   p3.fill.spread = (beginning_pos) ? p1.fill.spread : p2.fill.spread;
-		   p3.type.gradient = (beginning_pos) ? p1.type.gradient : p2.type.gradient;
-		}
-	      else
-		{
-		   p3.type.border.l = INTP(p1.type.border.l, p2.type.border.l, pos);
-		   p3.type.border.r = INTP(p1.type.border.r, p2.type.border.r, pos);
-		   p3.type.border.t = INTP(p1.type.border.t, p2.type.border.t, pos);
-		   p3.type.border.b = INTP(p1.type.border.b, p2.type.border.b, pos);
-		}
-	      break;
-	   case EDJE_PART_TYPE_TEXT:
-	      p3.type.text.size = INTP(p1.type.text.size, p2.type.text.size, pos);
-	   case EDJE_PART_TYPE_TEXTBLOCK:
-	      p3.color2.r = INTP(p1.color2.r, p2.color2.r, pos);
-	      p3.color2.g = INTP(p1.color2.g, p2.color2.g, pos);
-	      p3.color2.b = INTP(p1.color2.b, p2.color2.b, pos);
-	      p3.color2.a = INTP(p1.color2.a, p2.color2.a, pos);
+  	switch (part_type)
+  	  {
+  	   case EDJE_PART_TYPE_IMAGE:
+  	   case EDJE_PART_TYPE_GRADIENT:
+ 	      p3->fill.x = INTP(p1->fill.x, p2->fill.x, pos);
+ 	      p3->fill.y = INTP(p1->fill.y, p2->fill.y, pos);
+ 	      p3->fill.w = INTP(p1->fill.w, p2->fill.w, pos);
+ 	      p3->fill.h = INTP(p1->fill.h, p2->fill.h, pos);
+  	      if (part_type == EDJE_PART_TYPE_GRADIENT)
+  		{
+ 		   p3->fill.angle = INTP(p1->fill.angle, p2->fill.angle, pos);
+ 		   p3->fill.spread = (beginning_pos) ? p1->fill.spread : p2->fill.spread;
+ 		   p3->type.gradient = (beginning_pos) ? p1->type.gradient : p2->type.gradient;
+  		}
+  	      else
+  		{
+ 		   p3->type.border.l = INTP(p1->type.border.l, p2->type.border.l, pos);
+ 		   p3->type.border.r = INTP(p1->type.border.r, p2->type.border.r, pos);
+ 		   p3->type.border.t = INTP(p1->type.border.t, p2->type.border.t, pos);
+ 		   p3->type.border.b = INTP(p1->type.border.b, p2->type.border.b, pos);
+  		}
+  	      break;
+  	   case EDJE_PART_TYPE_TEXT:
+ 	      p3->type.text.size = INTP(p1->type.text.size, p2->type.text.size, pos);
+  	   case EDJE_PART_TYPE_TEXTBLOCK:
+ 	      p3->color2.r = INTP(p1->color2.r, p2->color2.r, pos);
+ 	      p3->color2.g = INTP(p1->color2.g, p2->color2.g, pos);
+	      p3->color2.b = INTP(p1->color2.b, p2->color2.b, pos);
+ 	      p3->color2.a = INTP(p1->color2.a, p2->color2.a, pos);
 
-	      p3.color3.r = INTP(p1.color3.r, p2.color3.r, pos);
-	      p3.color3.g = INTP(p1.color3.g, p2.color3.g, pos);
-	      p3.color3.b = INTP(p1.color3.b, p2.color3.b, pos);
-	      p3.color3.a = INTP(p1.color3.a, p2.color3.a, pos);
+ 	      p3->color3.r = INTP(p1->color3.r, p2->color3.r, pos);
+	      p3->color3.g = INTP(p1->color3.g, p2->color3.g, pos);
+	      p3->color3.b = INTP(p1->color3.b, p2->color3.b, pos);
+	      p3->color3.a = INTP(p1->color3.a, p2->color3.a, pos);
 
-	      p3.type.text.align.x = INTP(p1.type.text.align.x, p2.type.text.align.x, pos);
-	      p3.type.text.align.y = INTP(p1.type.text.align.y, p2.type.text.align.y, pos);
-	      p3.type.text.elipsis = INTP(p1.type.text.elipsis, p2.type.text.elipsis, pos);
-	      break;
-	  }
+	      p3->type.text.align.x = INTP(p1->type.text.align.x, p2->type.text.align.x, pos);
+	      p3->type.text.align.y = INTP(p1->type.text.align.y, p2->type.text.align.y, pos);
+	      p3->type.text.elipsis = INTP(p1->type.text.elipsis, p2->type.text.elipsis, pos);
+  	      break;
+  	  }
 
-	pf = &p3;
+	pf = p3;
+#ifdef EDJE_CALC_CACHE
+ 	ep->state = ed->state;
+#endif
      }
    else
      {
-	pf = &p1;
+ 	pf = p1;
+#ifdef EDJE_CALC_CACHE
+ 	ep->state = ep->param1.state;
+#endif
      }
 
+#ifdef EDJE_CALC_CACHE
+   ep->invalidate = 0;
+#endif
    ep->req = pf->req;
 
    if (ep->drag.need_reset)

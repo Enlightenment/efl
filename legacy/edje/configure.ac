@@ -99,6 +99,22 @@ if test "x${want_edje_program_cache}" = "xyes" ; then
    AC_DEFINE(EDJE_PROGRAM_CACHE, 1, [Cache result of program glob matches - this uses up extra ram with the gain of faster program matching])
 fi
 
+# Optional EDJE_CALC_CACHE (use more ram, but increase speed by reducing the need to recalculate static stuff)
+want_edje_calc_cache="no"
+
+AC_ARG_ENABLE([edje-calc-cache],
+   [AC_HELP_STRING(
+       [--enable-edje-calc-cache],
+       [enable EDJE_CALC_CACHE support. [[default=disabled]]]
+    )],
+   [want_edje_calc_cache=$enableval]
+)
+AM_CONDITIONAL(EDJE_CALC_CACHE, test "x${want_edje_calc_cache}" = "xyes")
+
+if test "x${want_edje_calc_cache}" = "xyes" ; then
+   AC_DEFINE(EDJE_CALC_CACHE, 1, [Cache result of edje_part_recalc - this uses up extra ram with the gain of reducing CPU usage when edje object are not resized])
+fi
+
 install_vim="yes"
 AC_ARG_WITH([vim],
     [AC_HELP_STRING([--with-vim=DIR], [Location of Vim data files [[autodetect]]])],
@@ -283,6 +299,8 @@ echo
 echo "  Ecore IMF............: $have_ecore_imf"
 echo
 echo "  EDJE_PROGRAM_CACHE...: $want_edje_program_cache"
+echo
+echo "  EDJE_CALC_CACHE......: $want_edje_calc_cache"
 echo
 echo "  Build binaries.......: $have_edje_cc"
 echo

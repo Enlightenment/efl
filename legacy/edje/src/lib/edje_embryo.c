@@ -675,6 +675,9 @@ _edje_embryo_fn_set_min_size(Embryo_Program *ep, Embryo_Cell *params)
    ed->collection->prop.min.w = w;
    ed->collection->prop.min.h = h;
    ed->dirty = 1;
+#ifdef EDJE_CALC_CACHE
+   ed->all_part_change = 1;
+#endif
    _edje_recalc(ed);
    return 0;
 }
@@ -699,6 +702,9 @@ _edje_embryo_fn_set_max_size(Embryo_Program *ep, Embryo_Cell *params)
    ed->collection->prop.max.w = w;
    ed->collection->prop.max.h = h;
    ed->dirty = 1;
+#ifdef EDJE_CALC_CACHE
+   ed->all_part_change = 1;
+#endif
    _edje_recalc(ed);
 
    return 0;
@@ -1875,6 +1881,9 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
 	 break;
      }
 
+#ifdef EDJE_CALC_CACHE
+   rp->invalidate = 1;
+#endif
    ed->dirty=1;
    return 0;
 }

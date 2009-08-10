@@ -164,6 +164,9 @@ _edje_smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h)
    if ((w == ed->w) && (h == ed->h)) return;
    ed->w = w;
    ed->h = h;
+#ifdef EDJE_CALC_CACHE
+   ed->all_part_change = 1;
+#endif
    if (_edje_script_only(ed))
      {
 	_edje_script_only_resize(ed);

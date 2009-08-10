@@ -116,6 +116,9 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 		  _edje_emit(ed, buf, events->part->name);
 	       }
 	     ed->dirty = 1;
+#ifdef EDJE_CALC_CACHE
+	     rp->invalidate = 1;
+#endif
 	  }
 	_edje_recalc_do(ed);
 /*
@@ -138,6 +141,9 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 		  if (!ignored)
 		    _edje_emit(ed, "drag", rp->part->name);
 		  ed->dirty = 1;
+#ifdef EDJE_CALC_CACHE
+		  rp->invalidate = 1;
+#endif
 		  rp->drag.need_reset = 1;
 		  _edje_recalc_do(ed);
 	       }
@@ -213,6 +219,9 @@ _edje_mouse_up_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	       {
 		  rp->drag.need_reset = 1;
 		  ed->dirty = 1;
+#ifdef EDJE_CALC_CACHE
+		  rp->invalidate = 1;
+#endif
 		  if (!ignored)
 		    _edje_emit(ed, "drag,stop", rp->part->name);
 	       }
@@ -281,6 +290,9 @@ _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	     if (rp->part->dragable.y)
 	       rp->drag.tmp.y = ev->cur.canvas.y - rp->drag.down.y;
 	     ed->dirty = 1;
+#ifdef EDJE_CALC_CACHE
+	     rp->invalidate = 1;
+#endif
 	  }
 	_edje_recalc_do(ed);
      }
@@ -299,6 +311,9 @@ _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 		  if (!ignored)
 		    _edje_emit(ed, "drag", rp->part->name);
 		  ed->dirty = 1;
+#ifdef EDJE_CALC_CACHE
+		  rp->invalidate = 1;
+#endif
 		  _edje_recalc_do(ed);
 	       }
 	  }

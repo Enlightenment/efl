@@ -524,6 +524,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		  _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
 	       }
 	     ed->dirty = 1;
+#ifdef EDJE_CALC_CACHE
+	     ed->all_part_change = 1;
+#endif
 	     if ((evas_object_clipees_get(ed->clipper)) &&
 		 (evas_object_visible_get(obj)))
 	       evas_object_show(ed->clipper);
