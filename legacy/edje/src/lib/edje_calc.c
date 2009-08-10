@@ -1381,7 +1381,7 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 static void
 _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 {
-   Edje_Calc_Params p1, p2, p3, *pf;
+   Edje_Calc_Params p1, p2, *pf;
    Edje_Part_Description *chosen_desc;
    double pos = 0.0;
 
@@ -1447,12 +1447,21 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	return;
      }
    if (ep->param1.description)
-     _edje_part_recalc_single(ed, ep, ep->param1.description, chosen_desc, ep->param1.rel1_to_x, ep->param1.rel1_to_y, ep->param1.rel2_to_x, ep->param1.rel2_to_y, ep->confine_to, &p1, flags);
+     _edje_part_recalc_single(ed, ep, ep->param1.description, chosen_desc,
+			      ep->param1.rel1_to_x, ep->param1.rel1_to_y, ep->param1.rel2_to_x, ep->param1.rel2_to_y,
+			      ep->confine_to,
+			      &p1,
+			      flags);
    if (ep->param2.description)
      {
 	int beginning_pos, part_type;
+	Edje_Calc_Params p3;
 
-	_edje_part_recalc_single(ed, ep, ep->param2.description, chosen_desc, ep->param2.rel1_to_x, ep->param2.rel1_to_y, ep->param2.rel2_to_x, ep->param2.rel2_to_y, ep->confine_to, &p2, flags);
+	_edje_part_recalc_single(ed, ep, ep->param2.description, chosen_desc,
+				 ep->param2.rel1_to_x, ep->param2.rel1_to_y, ep->param2.rel2_to_x, ep->param2.rel2_to_y,
+				 ep->confine_to,
+				 &p2,
+				 flags);
 
 	pos = ep->description_pos;
 	beginning_pos = (pos < 0.5);
