@@ -827,18 +827,20 @@ struct _Edje_Calc_Params
       int           spread;
    } fill;
    Edje_Color color, color2, color3;
-   struct {
-      int           l, r, t, b;
-   } border;
-   struct {
-      Edje_Alignment align; /* text alignment within bounds */
-      double         elipsis;
-      int            size;
-   } text;
-   struct {
-     int             id;
-     char           *type;
-   } gradient;
+   union {
+      struct {
+	 int           l, r, t, b;
+      } border;
+      struct {
+	 Edje_Alignment align; /* text alignment within bounds */
+	 double         elipsis;
+	 int            size;
+      } text;
+      struct {
+	 int             id;
+	 char           *type;
+      } gradient;
+   } type;
    unsigned char    visible : 1;
    unsigned char    smooth : 1;
 };

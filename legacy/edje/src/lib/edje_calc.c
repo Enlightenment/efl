@@ -879,7 +879,7 @@ _edje_part_recalc_single(Edje *ed,
 
 	font = _edje_text_class_font_get(ed, desc, &size, &sfont);
 	free(sfont);
-	params->text.size = size;
+	params->type.text.size = size;
      }
    /* rememebr what our size is BEFORE we go limit it */
    params->req.x = params->x;
@@ -1148,32 +1148,48 @@ _edje_part_recalc_single(Edje *ed,
 	  }
      }
 
-
    /* visible */
    params->visible = desc->visible;
-   /* border */
-   if (flags & FLAG_X)
+
+   switch (ep->part->type)
      {
-	params->border.l = desc->border.l;
-	params->border.r = desc->border.r;
+      case EDJE_PART_TYPE_IMAGE:
+	 /* border */
+	 if (flags & FLAG_X)
+	   {
+	      params->type.border.l = desc->border.l;
+	      params->type.border.r = desc->border.r;
+	   }
+	 if (flags & FLAG_Y)
+	   {
+	      params->type.border.t = desc->border.t;
+	      params->type.border.b = desc->border.b;
+	   }
+	 break;
+      case EDJE_PART_TYPE_GRADIENT:
+	 params->type.gradient.id = desc->gradient.id;
+	 params->type.gradient.type = desc->gradient.type;
+	 break;
+      case EDJE_PART_TYPE_TEXT:
+      case EDJE_PART_TYPE_TEXTBLOCK:
+	 /* text.align */
+	 if (flags & FLAG_X)
+	   {
+	      params->type.text.align.x = desc->text.align.x;
+	   }
+	 if (flags & FLAG_Y)
+	   {
+	      params->type.text.align.y = desc->text.align.y;
+	   }
+	 params->type.text.elipsis = desc->text.elipsis;
+	 break;
+      case EDJE_PART_TYPE_RECTANGLE:
+      case EDJE_PART_TYPE_BOX:
+      case EDJE_PART_TYPE_TABLE:
+      case EDJE_PART_TYPE_SWALLOW:
+      case EDJE_PART_TYPE_GROUP:
+	 break;
      }
-   if (flags & FLAG_Y)
-     {
-	params->border.t = desc->border.t;
-	params->border.b = desc->border.b;
-     }
-   /* text.align */
-   if (flags & FLAG_X)
-     {
-	params->text.align.x = desc->text.align.x;
-     }
-   if (flags & FLAG_Y)
-     {
-	params->text.align.y = desc->text.align.y;
-     }
-   params->text.elipsis = desc->text.elipsis;
-   params->gradient.id = desc->gradient.id;
-   params->gradient.type = desc->gradient.type;
 }
 
 static void
@@ -1184,17 +1200,17 @@ _edje_gradient_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, 
    evas_object_gradient_fill_set(ep->object, p3->fill.x, p3->fill.y,
 				 p3->fill.w, p3->fill.h);
 
-   if (p3->gradient.type && p3->gradient.type[0])
-     evas_object_gradient_type_set(ep->object, p3->gradient.type, NULL);
+   if (p3->type.gradient.type && p3->type.gradient.type[0])
+     evas_object_gradient_type_set(ep->object, p3->type.gradient.type, NULL);
 
    if (ed->file->spectrum_dir && ed->file->spectrum_dir->entries &&
-       p3->gradient.id != ep->gradient_id)
+       p3->type.gradient.id != ep->gradient_id)
      {
 	Edje_Spectrum_Directory_Entry *se;
 	Edje_Spectrum_Color *sc;
 	Eina_List *l;
 
-	se = eina_list_nth(ed->file->spectrum_dir->entries, p3->gradient.id);
+	se = eina_list_nth(ed->file->spectrum_dir->entries, p3->type.gradient.id);
 	if (se)
 	  {
 	     evas_object_gradient_clear(ep->object);
@@ -1206,7 +1222,7 @@ _edje_gradient_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, 
 		  evas_object_gradient_alpha_stop_add(ep->object,
 						      sc->a, sc->d);
 	       }
-	     ep->gradient_id = p3->gradient.id;
+	     ep->gradient_id = p3->type.gradient.id;
 	  }
      }
 }
@@ -1270,8 +1286,8 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
    evas_object_image_fill_set(ep->object, p3->fill.x, p3->fill.y,
 			      p3->fill.w, p3->fill.h);
    evas_object_image_smooth_scale_set(ep->object, p3->smooth);
-   evas_object_image_border_set(ep->object, p3->border.l, p3->border.r,
-				p3->border.t, p3->border.b);
+   evas_object_image_border_set(ep->object, p3->type.border.l, p3->type.border.r,
+				p3->type.border.t, p3->type.border.b);
    if (chosen_desc->border.no_fill == 0)
      evas_object_image_border_center_fill_set(ep->object, EVAS_BORDER_FILL_DEFAULT);
    else if (chosen_desc->border.no_fill == 1)
@@ -1492,18 +1508,18 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 		{
 		   p3.fill.angle = INTP(p1.fill.angle, p2.fill.angle, pos);
 		   p3.fill.spread = (beginning_pos) ? p1.fill.spread : p2.fill.spread;
-		   p3.gradient = (beginning_pos) ? p1.gradient : p2.gradient;
+		   p3.type.gradient = (beginning_pos) ? p1.type.gradient : p2.type.gradient;
 		}
 	      else
 		{
-		   p3.border.l = INTP(p1.border.l, p2.border.l, pos);
-		   p3.border.r = INTP(p1.border.r, p2.border.r, pos);
-		   p3.border.t = INTP(p1.border.t, p2.border.t, pos);
-		   p3.border.b = INTP(p1.border.b, p2.border.b, pos);
+		   p3.type.border.l = INTP(p1.type.border.l, p2.type.border.l, pos);
+		   p3.type.border.r = INTP(p1.type.border.r, p2.type.border.r, pos);
+		   p3.type.border.t = INTP(p1.type.border.t, p2.type.border.t, pos);
+		   p3.type.border.b = INTP(p1.type.border.b, p2.type.border.b, pos);
 		}
 	      break;
 	   case EDJE_PART_TYPE_TEXT:
-	      p3.text.size = INTP(p1.text.size, p2.text.size, pos);
+	      p3.type.text.size = INTP(p1.type.text.size, p2.type.text.size, pos);
 	   case EDJE_PART_TYPE_TEXTBLOCK:
 	      p3.color2.r = INTP(p1.color2.r, p2.color2.r, pos);
 	      p3.color2.g = INTP(p1.color2.g, p2.color2.g, pos);
@@ -1515,9 +1531,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	      p3.color3.b = INTP(p1.color3.b, p2.color3.b, pos);
 	      p3.color3.a = INTP(p1.color3.a, p2.color3.a, pos);
 
-	      p3.text.align.x = INTP(p1.text.align.x, p2.text.align.x, pos);
-	      p3.text.align.y = INTP(p1.text.align.y, p2.text.align.y, pos);
-	      p3.text.elipsis = INTP(p1.text.elipsis, p2.text.elipsis, pos);
+	      p3.type.text.align.x = INTP(p1.type.text.align.x, p2.type.text.align.x, pos);
+	      p3.type.text.align.y = INTP(p1.type.text.align.y, p2.type.text.align.y, pos);
+	      p3.type.text.elipsis = INTP(p1.type.text.elipsis, p2.type.text.elipsis, pos);
 	      break;
 	  }
 
