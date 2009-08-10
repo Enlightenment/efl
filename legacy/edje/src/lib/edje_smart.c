@@ -171,7 +171,7 @@ _edje_smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h)
      }
 //   evas_object_resize(ed->clipper, ed->w, ed->h);
    ed->dirty = 1;
-   _edje_recalc_do(ed);
+   _edje_recalc(ed);
    _edje_emit(ed, "resize", NULL);
 }
 
