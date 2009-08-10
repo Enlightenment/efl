@@ -821,11 +821,11 @@ struct _Edje_Real_Part
       int                    state; // 4
 #endif
    } param1, param2, custom; // 60 // FIXME: custom should be alloced on demand - 20--
-   // WITH EDJE_CALC_CACHE: 180
+   // WITH EDJE_CALC_CACHE: 420
 
 #ifdef EDJE_CALC_CACHE
-   Edje_Calc_Params          p;
-   int                       state;
+   Edje_Calc_Params          p; // 116
+   int                       state; // 4
 #endif
 
    Edje_Real_Part           *confine_to; // 4 // fixme - make part of drag
@@ -845,7 +845,7 @@ struct _Edje_Real_Part
    unsigned char             invalidate : 1;
 #endif
 }; //  394
-// WITH EDJE_CALC_CACHE: 514
+// WITH EDJE_CALC_CACHE: 874
 
 struct _Edje_Running_Program
 {
