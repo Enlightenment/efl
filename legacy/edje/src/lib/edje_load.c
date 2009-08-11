@@ -360,35 +360,44 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		  rp->chosen_description = rp->param1.description;
 		  if (!rp->param1.description)
 		    printf("EDJE ERROR: no default part description!\n");
-		  if (ep->type == EDJE_PART_TYPE_RECTANGLE)
-		    rp->object = evas_object_rectangle_add(ed->evas);
-		  else if (ep->type == EDJE_PART_TYPE_IMAGE)
-		    rp->object = evas_object_image_add(ed->evas);
-		  else if (ep->type == EDJE_PART_TYPE_TEXT)
+
+		  switch (ep->type)
 		    {
-		       _edje_text_part_on_add(ed, rp);
-		       rp->object = evas_object_text_add(ed->evas);
-		       evas_object_text_font_source_set(rp->object, ed->path);
+		     case EDJE_PART_TYPE_RECTANGLE:
+			rp->object = evas_object_rectangle_add(ed->evas);
+			break;
+		     case EDJE_PART_TYPE_IMAGE:
+			rp->object = evas_object_image_add(ed->evas);
+			break;
+		     case EDJE_PART_TYPE_TEXT:
+			_edje_text_part_on_add(ed, rp);
+			rp->object = evas_object_text_add(ed->evas);
+			evas_object_text_font_source_set(rp->object, ed->path);
+			break;
+		     case EDJE_PART_TYPE_SWALLOW:
+		     case EDJE_PART_TYPE_GROUP:
+			rp->object = evas_object_rectangle_add(ed->evas);
+			evas_object_color_set(rp->object, 0, 0, 0, 0);
+			evas_object_pass_events_set(rp->object, 1);
+			evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
+			break;
+		     case EDJE_PART_TYPE_TEXTBLOCK:
+			rp->object = evas_object_textblock_add(ed->evas);
+			break;
+		     case EDJE_PART_TYPE_GRADIENT:
+			rp->object = evas_object_gradient_add(ed->evas);
+			break;
+		     case EDJE_PART_TYPE_BOX:
+			rp->object = evas_object_box_add(ed->evas);
+			break;
+		     case EDJE_PART_TYPE_TABLE:
+			rp->object = evas_object_table_add(ed->evas);
+			break;
+		     default:
+			printf("EDJE ERROR: wrong part type %i!\n", ep->type);
+			break;
 		    }
-		  else if (ep->type == EDJE_PART_TYPE_SWALLOW || ep->type == EDJE_PART_TYPE_GROUP)
-		    {
-		       rp->object = evas_object_rectangle_add(ed->evas);
-		       evas_object_color_set(rp->object, 0, 0, 0, 0);
-		       evas_object_pass_events_set(rp->object, 1);
-		       evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
-		    }
-		  else if (ep->type == EDJE_PART_TYPE_TEXTBLOCK)
-		    rp->object = evas_object_textblock_add(ed->evas);
-		  else if (ep->type == EDJE_PART_TYPE_GRADIENT)
-		    rp->object = evas_object_gradient_add(ed->evas);
-		  else if (ep->type == EDJE_PART_TYPE_BOX)
-		    {
-		       rp->object = evas_object_box_add(ed->evas);
-		    }
-		  else if (ep->type == EDJE_PART_TYPE_TABLE)
-		    rp->object = evas_object_table_add(ed->evas);
-		  else
-		    printf("EDJE ERROR: wrong part type %i!\n", ep->type);
+
 		  if (rp->object)
 		    {
 		       evas_object_smart_member_add(rp->object, ed->obj);
@@ -443,7 +452,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			 rp->param1.rel2_to_x = ed->table_parts[rp->param1.description->rel2.id_x % ed->table_parts_size];
 		       if (rp->param1.description->rel2.id_y >= 0)
 			 rp->param1.rel2_to_y = ed->table_parts[rp->param1.description->rel2.id_y % ed->table_parts_size];
-		       _edje_text_part_on_add_clippers(ed, rp);
 		       if (rp->part->clip_to_id >= 0)
 			 {
 			    rp->clip_to = ed->table_parts[rp->part->clip_to_id % ed->table_parts_size];
@@ -785,7 +793,6 @@ _edje_file_del(Edje *ed)
 	       _edje_entry_real_part_shutdown(rp);
 	     if (rp->object)
 	       {
-		  _edje_text_real_part_on_del(ed, rp);
 		  _edje_callbacks_del(rp->object);
 		  evas_object_del(rp->object);
 	       }
@@ -836,10 +843,7 @@ _edje_file_del(Edje *ed)
 
 	_edje_textblock_styles_del(ed);
 	EINA_LIST_FOREACH(ed->collection->parts, l, ep)
-	  {
-	     _edje_text_part_on_del(ed, ep);
-	     _edje_color_class_on_del(ed, ep);
-	  }
+	  _edje_color_class_on_del(ed, ep);
 	_edje_cache_coll_unref(ed->file, ed->collection);
 	ed->collection = NULL;
      }

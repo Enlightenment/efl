@@ -137,19 +137,6 @@ _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
 	     evas_object_geometry_get(ep->swallowed_object, &ox, &oy, NULL, NULL);
 	     evas_object_move(ep->swallowed_object, ed->x + ep->x + ep->offset.x, ed->y + ep->y +ep->offset.y);
 	  }
-	if (ep->extra_objects)
-	  {
-	     Eina_List *el;
-	     Evas_Object *o;
-
-	     EINA_LIST_FOREACH(ep->extra_objects, el, o)
-	       {
-		  Evas_Coord oox, ooy;
-
-		  evas_object_geometry_get(o, &oox, &ooy, NULL, NULL);
-		  evas_object_move(o, ed->x + ep->x + ep->offset.x + (oox - ox), ed->y + ep->y + ep->offset.y + (ooy - oy));
-	       }
-	  }
      }
 //   _edje_emit(ed, "move", NULL);
 }

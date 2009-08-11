@@ -762,7 +762,6 @@ struct _Edje_Real_Part
    Edje                     *edje; // 4
    Edje_Part                *part; // 4
    Evas_Object              *object; // 4
-   Eina_List                *extra_objects; // 4
    Evas_Object              *swallowed_object; // 4 // FIXME: move with swallow_params data
    Eina_List                *items; // 4 //FIXME: only if table/box
    void                     *entry_data; // 4 // FIXME: move to entry section
@@ -1131,9 +1130,7 @@ void  _edje_callbacks_patterns_clean(Edje *ed);
 
 void           _edje_text_init(void);
 void           _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep);
-void           _edje_text_part_on_add_clippers(Edje *ed, Edje_Real_Part *ep);
 void           _edje_text_part_on_del(Edje *ed, Edje_Part *ep);
-void           _edje_text_real_part_on_del(Edje *ed, Edje_Real_Part *ep);
 void           _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *params, Edje_Part_Description *chosen_desc);
 Evas_Font_Size _edje_text_size_calc(Evas_Font_Size size, Edje_Text_Class *tc);
 const char *   _edje_text_class_font_get(Edje *ed, Edje_Part_Description *chosen_desc, int *size, char **free_later);

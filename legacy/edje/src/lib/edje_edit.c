@@ -179,17 +179,8 @@ _edje_real_part_free(Edje_Real_Part *rp)
 
    if (rp->object)
      {
-	_edje_text_real_part_on_del(rp->edje, rp);
 	_edje_callbacks_del(rp->object);
 	evas_object_del(rp->object);
-     }
-
-   l = rp->extra_objects;
-   while (rp->extra_objects)
-     {
-        evas_object_del(eina_list_data_get(rp->extra_objects));
-	rp->extra_objects = eina_list_remove_list(rp->extra_objects,
-						  rp->extra_objects);
      }
 
    if (rp->swallowed_object)

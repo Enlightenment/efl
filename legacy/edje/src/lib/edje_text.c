@@ -57,26 +57,6 @@ _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep)
 }
 
 void
-_edje_text_part_on_add_clippers(Edje *ed, Edje_Real_Part *ep)
-{
-   Eina_List *l;
-   Evas_Object *o;
-
-   EINA_LIST_FOREACH(ep->extra_objects, l, o)
-     {
-	if (ep->part->clip_to_id >= 0)
-	  {
-	     ep->clip_to = ed->table_parts[ep->part->clip_to_id % ed->table_parts_size];
-	     if (ep->clip_to)
-	       {
-		  evas_object_pass_events_set(ep->clip_to->object, 1);
-		  evas_object_clip_set(o, ep->clip_to->object);
-	       }
-	  }
-     }
-}
-
-void
 _edje_text_part_on_del(Edje *ed, Edje_Part *pt)
 {
    Eina_List *tmp;
@@ -88,19 +68,6 @@ _edje_text_part_on_del(Edje *ed, Edje_Part *pt)
    EINA_LIST_FOREACH(pt->other_desc, tmp, desc)
      if (desc->text.text_class)
        _edje_text_class_member_del(ed, desc->text.text_class);
-}
-
-void
-_edje_text_real_part_on_del(Edje *ed, Edje_Real_Part *ep)
-{
-   while (ep->extra_objects)
-     {
-	Evas_Object *o;
-
-	o = eina_list_data_get(ep->extra_objects);
-	ep->extra_objects = eina_list_remove(ep->extra_objects, o);
-	evas_object_del(o);
-     }
 }
 
 static void
