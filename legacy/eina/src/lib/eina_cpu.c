@@ -21,12 +21,25 @@
 #endif
 
 #ifdef EFL_HAVE_PTHREAD
-# define _GNU_SOURCE
-# include <sched.h>
+# ifdef _WIN32
+#  define WIN32_LEAN_AND_MEAN
+#  include <windows.h>
+# elif defined (__SUNPRO_C)
+#  include <unistd.h>
+# elif defined (__FreeBSD) || defined (__OpenBSD__) || defined (__NetBSD__) || defined (__DragonFly__) || defined (__MacOSX__)
+#  include <unistd.h>
+# elif defined (__linux__)
+#  define _GNU_SOURCE
+#  include <sched.h>
+# endif
 # include <pthread.h>
 
 # define TH_MAX 8
 #endif
+
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
 
 #include "eina_cpu.h"
 
@@ -111,6 +124,34 @@ EAPI Eina_Cpu_Features eina_cpu_features_get(void)
 EAPI int eina_cpu_count(void)
 {
 #ifdef EFL_HAVE_PTHREAD
+
+# if   defined (_WIN32)
+   SYSTEM_INFO sysinfo;
+
+   GetSystemInfo(&sysinfo);
+   return sysinfo.dwNumberOfProcessors;
+
+# elif defined (__SUNPRO_C)
+   return sysconf(_SC_NPROCESSORS_ONLN);
+
+# elif defined (__FreeBSD) || defined (__OpenBSD__) || defined (__NetBSD__) || defined (__DragonFly__) || defined (__MacOSX__)
+   int    mib[4];
+   size_t len;
+   int    cpus;
+
+   mib[0] = CTL_HW;
+   mib[1] = HM_AVAILCPU;
+   sysctl(mib, 2, &cpus, &len, NULL, 0);
+   if (cpus < 1)
+     {
+	mib[1] = HW_NCPU;
+	sysctl(mib, 2, &cpus, &len, NULL, 0);
+	if (cpus < 1)
+	  cpus = 1;
+     }
+   return cpus;
+
+# elif defined (__linux__)
    cpu_set_t cpu;
    int i;
    static int cpus = 0;
@@ -119,13 +160,20 @@ EAPI int eina_cpu_count(void)
 
    CPU_ZERO(&cpu);
    if (sched_getaffinity(0, sizeof(cpu), &cpu) != 0)
-     return 1;
+     {
+	fprintf(stderr, "[Eina] could not get cpu affinity: %s\n", strerror(errno));
+	return 1;
+     }
    for (i = 0; i < TH_MAX; i++)
      {
 	if (CPU_ISSET(i, &cpu)) cpus = i + 1;
 	else break;
      }
    return cpus;
+
+# else
+#  error "eina_cpu_count() error: Platform not supported"
+# endif
 #else
    return 1;
 #endif
