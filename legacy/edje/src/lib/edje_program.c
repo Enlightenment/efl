@@ -671,15 +671,15 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 	     if (pt->id >= 0)
 	       {
 		  rp = ed->table_parts[pt->id % ed->table_parts_size];
-		  if ((rp) && (rp->drag.down.count == 0))
+		  if ((rp) && (rp->drag) && (rp->drag->down.count == 0))
 		    {
-		       rp->drag.val.x = pr->value;
-		       rp->drag.val.y = pr->value2;
-		       if      (rp->drag.val.x < 0.0) rp->drag.val.x = 0.0;
-		       else if (rp->drag.val.x > 1.0) rp->drag.val.x = 1.0;
-		       if      (rp->drag.val.y < 0.0) rp->drag.val.y = 0.0;
-		       else if (rp->drag.val.y > 1.0) rp->drag.val.y = 1.0;
-		       _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
+		       rp->drag->val.x = pr->value;
+		       rp->drag->val.y = pr->value2;
+		       if      (rp->drag->val.x < 0.0) rp->drag->val.x = 0.0;
+		       else if (rp->drag->val.x > 1.0) rp->drag->val.x = 1.0;
+		       if      (rp->drag->val.y < 0.0) rp->drag->val.y = 0.0;
+		       else if (rp->drag->val.y > 1.0) rp->drag->val.y = 1.0;
+		       _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
 		       _edje_emit(ed, "drag,set", rp->part->name);
 		       if (_edje_block_break(ed)) goto break_prog;
 		    }
@@ -697,15 +697,15 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 	     if (pt->id >= 0)
 	       {
 		  rp = ed->table_parts[pt->id % ed->table_parts_size];
-		  if ((rp) && (rp->drag.down.count == 0))
+		  if ((rp) && (rp->drag) && (rp->drag->down.count == 0))
 		    {
-		       rp->drag.val.x += pr->value * rp->drag.step.x * rp->part->dragable.x;
-		       rp->drag.val.y += pr->value2 * rp->drag.step.y * rp->part->dragable.y;
-		       if      (rp->drag.val.x < 0.0) rp->drag.val.x = 0.0;
-		       else if (rp->drag.val.x > 1.0) rp->drag.val.x = 1.0;
-		       if      (rp->drag.val.y < 0.0) rp->drag.val.y = 0.0;
-		       else if (rp->drag.val.y > 1.0) rp->drag.val.y = 1.0;
-		       _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
+		       rp->drag->val.x += pr->value * rp->drag->step.x * rp->part->dragable.x;
+		       rp->drag->val.y += pr->value2 * rp->drag->step.y * rp->part->dragable.y;
+		       if      (rp->drag->val.x < 0.0) rp->drag->val.x = 0.0;
+		       else if (rp->drag->val.x > 1.0) rp->drag->val.x = 1.0;
+		       if      (rp->drag->val.y < 0.0) rp->drag->val.y = 0.0;
+		       else if (rp->drag->val.y > 1.0) rp->drag->val.y = 1.0;
+		       _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
 		       _edje_emit(ed, "drag,step", rp->part->name);
 		       if (_edje_block_break(ed)) goto break_prog;
 		    }
@@ -723,15 +723,15 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 	     if (pt->id >= 0)
 	       {
 		  rp = ed->table_parts[pt->id % ed->table_parts_size];
-		  if ((rp) && (rp->drag.down.count == 0))
+		  if ((rp) && (rp->drag) && (rp->drag->down.count == 0))
 		    {
-		       rp->drag.val.x += pr->value * rp->drag.page.x * rp->part->dragable.x;
-		       rp->drag.val.y += pr->value2 * rp->drag.page.y * rp->part->dragable.y;
-		       if      (rp->drag.val.x < 0.0) rp->drag.val.x = 0.0;
-		       else if (rp->drag.val.x > 1.0) rp->drag.val.x = 1.0;
-		       if      (rp->drag.val.y < 0.0) rp->drag.val.y = 0.0;
-		       else if (rp->drag.val.y > 1.0) rp->drag.val.y = 1.0;
-		       _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
+		       rp->drag->val.x += pr->value * rp->drag->page.x * rp->part->dragable.x;
+		       rp->drag->val.y += pr->value2 * rp->drag->page.y * rp->part->dragable.y;
+		       if      (rp->drag->val.x < 0.0) rp->drag->val.x = 0.0;
+		       else if (rp->drag->val.x > 1.0) rp->drag->val.x = 1.0;
+		       if      (rp->drag->val.y < 0.0) rp->drag->val.y = 0.0;
+		       else if (rp->drag->val.y > 1.0) rp->drag->val.y = 1.0;
+		       _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
 		       _edje_emit(ed, "drag,page", rp->part->name);
 		       if (_edje_block_break(ed)) goto break_prog;
 		    }

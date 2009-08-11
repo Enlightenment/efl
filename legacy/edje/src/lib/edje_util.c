@@ -2156,7 +2156,8 @@ edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, d
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return;
-   if (rp->drag.down.count > 0) return;
+   if (!rp->drag) return;
+   if (rp->drag->down.count > 0) return;
    if (rp->part->dragable.confine_id != -1)
      {
 	dx = CLAMP(dx, 0.0, 1.0);
@@ -2164,9 +2165,9 @@ edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, d
      }
    if (rp->part->dragable.x < 0) dx = 1.0 - dx;
    if (rp->part->dragable.y < 0) dy = 1.0 - dy;
-   if ((rp->drag.val.x == dx) && (rp->drag.val.y == dy)) return;
-   rp->drag.val.x = dx;
-   rp->drag.val.y = dy;
+   if ((rp->drag->val.x == dx) && (rp->drag->val.y == dy)) return;
+   rp->drag->val.x = dx;
+   rp->drag->val.y = dy;
 #ifdef EDJE_CALC_CACHE
    rp->invalidate = 1;
 #endif
@@ -2202,14 +2203,14 @@ edje_object_part_drag_value_get(const Evas_Object *obj, const char *part, double
    _edje_recalc_do(ed);
 
    rp = _edje_real_part_recursive_get(ed, (char *)part);
-   if (!rp)
+   if (!rp || !rp->drag)
      {
 	if (dx) *dx = 0;
 	if (dy) *dy = 0;
 	return;
      }
-   ddx = rp->drag.val.x;
-   ddy = rp->drag.val.y;
+   ddx = rp->drag->val.x;
+   ddy = rp->drag->val.y;
    if (rp->part->dragable.x < 0) ddx = 1.0 - ddx;
    if (rp->part->dragable.y < 0) ddy = 1.0 - ddy;
    if (dx) *dx = ddx;
@@ -2234,13 +2235,14 @@ edje_object_part_drag_size_set(Evas_Object *obj, const char *part, double dw, do
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return;
+   if (!rp->drag) return;
    if (dw < 0.0) dw = 0.0;
    else if (dw > 1.0) dw = 1.0;
    if (dh < 0.0) dh = 0.0;
    else if (dh > 1.0) dh = 1.0;
-   if ((rp->drag.size.x == dw) && (rp->drag.size.y == dh)) return;
-   rp->drag.size.x = dw;
-   rp->drag.size.y = dh;
+   if ((rp->drag->size.x == dw) && (rp->drag->size.y == dh)) return;
+   rp->drag->size.x = dw;
+   rp->drag->size.y = dh;
    rp->edje->dirty = 1;
 #ifdef EDJE_CALC_CACHE
    rp->invalidate = 1;
@@ -2274,14 +2276,14 @@ edje_object_part_drag_size_get(const Evas_Object *obj, const char *part, double 
    _edje_recalc_do(ed);
 
    rp = _edje_real_part_recursive_get(ed, (char *)part);
-   if (!rp)
+   if (!rp || !rp->drag)
      {
 	if (dw) *dw = 0;
 	if (dh) *dh = 0;
 	return;
      }
-   if (dw) *dw = rp->drag.size.x;
-   if (dh) *dh = rp->drag.size.y;
+   if (dw) *dw = rp->drag->size.x;
+   if (dh) *dh = rp->drag->size.y;
 }
 
 /** Sets the drag step increment
@@ -2302,12 +2304,13 @@ edje_object_part_drag_step_set(Evas_Object *obj, const char *part, double dx, do
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return;
+   if (!rp->drag) return;
    if (dx < 0.0) dx = 0.0;
    else if (dx > 1.0) dx = 1.0;
    if (dy < 0.0) dy = 0.0;
    else if (dy > 1.0) dy = 1.0;
-   rp->drag.step.x = dx;
-   rp->drag.step.y = dy;
+   rp->drag->step.x = dx;
+   rp->drag->step.y = dy;
 #ifdef EDJE_CALC_CACHE
    rp->invalidate = 1;
 #endif
@@ -2339,14 +2342,14 @@ edje_object_part_drag_step_get(const Evas_Object *obj, const char *part, double 
    _edje_recalc_do(ed);
 
    rp = _edje_real_part_recursive_get(ed, (char *)part);
-   if (!rp)
+   if (!rp || !rp->drag)
      {
 	if (dx) *dx = 0;
 	if (dy) *dy = 0;
 	return;
      }
-   if (dx) *dx = rp->drag.step.x;
-   if (dy) *dy = rp->drag.step.y;
+   if (dx) *dx = rp->drag->step.x;
+   if (dy) *dy = rp->drag->step.y;
 }
 
 /** Sets the page step increments
@@ -2367,12 +2370,13 @@ edje_object_part_drag_page_set(Evas_Object *obj, const char *part, double dx, do
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return;
+   if (!rp->drag) return;
    if (dx < 0.0) dx = 0.0;
    else if (dx > 1.0) dx = 1.0;
    if (dy < 0.0) dy = 0.0;
    else if (dy > 1.0) dy = 1.0;
-   rp->drag.page.x = dx;
-   rp->drag.page.y = dy;
+   rp->drag->page.x = dx;
+   rp->drag->page.y = dy;
 #ifdef EDJE_CALC_CACHE
    rp->invalidate = 1;
 #endif
@@ -2404,14 +2408,14 @@ edje_object_part_drag_page_get(const Evas_Object *obj, const char *part, double 
    _edje_recalc_do(ed);
 
    rp = _edje_real_part_recursive_get(ed, (char *)part);
-   if (!rp)
+   if (!rp || !rp->drag)
      {
 	if (dx) *dx = 0;
 	if (dy) *dy = 0;
 	return;
      }
-   if (dx) *dx = rp->drag.page.x;
-   if (dy) *dy = rp->drag.page.y;
+   if (dx) *dx = rp->drag->page.x;
+   if (dy) *dy = rp->drag->page.y;
 }
 
 /** Steps the dragable x,y steps
@@ -2434,18 +2438,19 @@ edje_object_part_drag_step(Evas_Object *obj, const char *part, double dx, double
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return;
-   if (rp->drag.down.count > 0) return;
-   px = rp->drag.val.x;
-   py = rp->drag.val.y;
-   rp->drag.val.x += dx * rp->drag.step.x * rp->part->dragable.x;
-   rp->drag.val.y += dy * rp->drag.step.y * rp->part->dragable.y;
-   rp->drag.val.x = CLAMP (rp->drag.val.x, 0.0, 1.0);
-   rp->drag.val.y = CLAMP (rp->drag.val.y, 0.0, 1.0);
-   if ((px == rp->drag.val.x) && (py == rp->drag.val.y)) return;
+   if (!rp->drag) return;
+   if (rp->drag->down.count > 0) return;
+   px = rp->drag->val.x;
+   py = rp->drag->val.y;
+   rp->drag->val.x += dx * rp->drag->step.x * rp->part->dragable.x;
+   rp->drag->val.y += dy * rp->drag->step.y * rp->part->dragable.y;
+   rp->drag->val.x = CLAMP (rp->drag->val.x, 0.0, 1.0);
+   rp->drag->val.y = CLAMP (rp->drag->val.y, 0.0, 1.0);
+   if ((px == rp->drag->val.x) && (py == rp->drag->val.y)) return;
 #ifdef EDJE_CALC_CACHE
    rp->invalidate = 1;
 #endif
-   _edje_dragable_pos_set(rp->edje, rp, rp->drag.val.x, rp->drag.val.y);
+   _edje_dragable_pos_set(rp->edje, rp, rp->drag->val.x, rp->drag->val.y);
    _edje_emit(rp->edje, "drag,step", rp->part->name);
 }
 
@@ -2469,18 +2474,19 @@ edje_object_part_drag_page(Evas_Object *obj, const char *part, double dx, double
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return;
-   if (rp->drag.down.count > 0) return;
-   px = rp->drag.val.x;
-   py = rp->drag.val.y;
-   rp->drag.val.x += dx * rp->drag.page.x * rp->part->dragable.x;
-   rp->drag.val.y += dy * rp->drag.page.y * rp->part->dragable.y;
-   rp->drag.val.x = CLAMP (rp->drag.val.x, 0.0, 1.0);
-   rp->drag.val.y = CLAMP (rp->drag.val.y, 0.0, 1.0);
-   if ((px == rp->drag.val.x) && (py == rp->drag.val.y)) return;
+   if (!rp->drag) return;
+   if (rp->drag->down.count > 0) return;
+   px = rp->drag->val.x;
+   py = rp->drag->val.y;
+   rp->drag->val.x += dx * rp->drag->page.x * rp->part->dragable.x;
+   rp->drag->val.y += dy * rp->drag->page.y * rp->part->dragable.y;
+   rp->drag->val.x = CLAMP (rp->drag->val.x, 0.0, 1.0);
+   rp->drag->val.y = CLAMP (rp->drag->val.y, 0.0, 1.0);
+   if ((px == rp->drag->val.x) && (py == rp->drag->val.y)) return;
 #ifdef EDJE_CALC_CACHE
    rp->invalidate = 1;
 #endif
-   _edje_dragable_pos_set(rp->edje, rp, rp->drag.val.x, rp->drag.val.y);
+   _edje_dragable_pos_set(rp->edje, rp, rp->drag->val.x, rp->drag->val.y);
    _edje_emit(rp->edje, "drag,page", rp->part->name);
 }
 

@@ -1549,8 +1549,6 @@ edje_edit_part_add(Evas_Object *obj, const char* name, unsigned char type)
 	  }
 	evas_object_clip_set(rp->object, ed->clipper);
      }
-   rp->drag.step.x = ep->dragable.step_x;
-   rp->drag.step.y = ep->dragable.step_y;
    rp->gradient_id = -1;
 
 
@@ -1937,6 +1935,21 @@ edje_edit_part_drag_x_set(Evas_Object *obj, const char *part, int drag)
    GET_RP_OR_RETURN();
    printf("Set dragX for part: %s\n", part);
    rp->part->dragable.x = drag;
+
+   if (!drag && !rp->part->dragable.y)
+     {
+	free(rp->drag);
+	rp->drag = NULL;
+	return ;
+     }
+
+   if (rp->drag) return;
+
+   rp->drag = mem_alloc(sizeof (Edje_Real_Part_Drag));
+   if (!rp->drag) return;
+
+   rp->drag->step.x = rp->part->dragable.step_x;
+   rp->drag->step.y = rp->part->dragable.step_y;
 }
 
 EAPI int
@@ -1953,6 +1966,21 @@ edje_edit_part_drag_y_set(Evas_Object *obj, const char *part, int drag)
    GET_RP_OR_RETURN();
    printf("Set dragY for part: %s\n", part);
    rp->part->dragable.y = drag;
+
+   if (!drag && !rp->part->dragable.x)
+     {
+	free(rp->drag);
+	rp->drag = NULL;
+	return ;
+     }
+
+   if (rp->drag) return;
+
+   rp->drag = mem_alloc(sizeof (Edje_Real_Part_Drag));
+   if (!rp->drag) return;
+
+   rp->drag->step.x = rp->part->dragable.step_x;
+   rp->drag->step.y = rp->part->dragable.step_y;
 }
 
 EAPI int

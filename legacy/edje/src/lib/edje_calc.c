@@ -196,9 +196,9 @@ _edje_recalc_do(Edje *ed)
 int
 _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, double *x, double *y)
 {
-   if ((ep->part->dragable.x != 0) || (ep->part->dragable.y != 0))
+   if (ep->drag)
      {
-	if (ep->drag.confine_to)
+	if (ep->drag->confine_to)
 	  {
 	     double dx, dy, dw, dh;
 	     int ret = 0;
@@ -208,13 +208,13 @@ _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, double *x, double *y)
 	     else if (ep->part->dragable.x != 0) ret = 1;
 	     else if (ep->part->dragable.y != 0) ret = 2;
 
-	     dx = ep->x - ep->drag.confine_to->x;
-	     dw = ep->drag.confine_to->w - ep->w;
+	     dx = ep->x - ep->drag->confine_to->x;
+	     dw = ep->drag->confine_to->w - ep->w;
 	     if (dw != 0.0) dx /= dw;
 	     else dx = 0.0;
 
-	     dy = ep->y - ep->drag.confine_to->y;
-	     dh = ep->drag.confine_to->h - ep->h;
+	     dy = ep->y - ep->drag->confine_to->y;
+	     dh = ep->drag->confine_to->h - ep->h;
 	     if (dh != 0) dy /= dh;
 	     else dy = 0.0;
 
@@ -225,8 +225,8 @@ _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, double *x, double *y)
 	  }
 	else
 	  {
-	     if (x) *x = (double)(ep->drag.tmp.x + ep->drag.x);
-	     if (y) *y = (double)(ep->drag.tmp.y + ep->drag.y);
+	     if (x) *x = (double)(ep->drag->tmp.x + ep->drag->x);
+	     if (y) *y = (double)(ep->drag->tmp.y + ep->drag->y);
 	     return 0;
 	  }
      }
@@ -240,26 +240,26 @@ void
 _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, double x, double y)
 {
    /* check whether this part is dragable at all */
-   if (!ep->part->dragable.x && !ep->part->dragable.y) return;
+   if (!ep->drag) return ;
 
    /* instead of checking for equality, we really should check that
     * the difference is greater than foo, but I have no idea what
     * value we would set foo to, because it would depend on the
     * size of the dragable...
     */
-   if (ep->drag.x != x || ep->drag.tmp.x)
+   if (ep->drag->x != x || ep->drag->tmp.x)
      {
-	ep->drag.x = x;
-	ep->drag.tmp.x = 0;
-	ep->drag.need_reset = 0;
+	ep->drag->x = x;
+	ep->drag->tmp.x = 0;
+	ep->drag->need_reset = 0;
 	ed->dirty = 1;
      }
 
-   if (ep->drag.y != y || ep->drag.tmp.y)
+   if (ep->drag->y != y || ep->drag->tmp.y)
      {
-	ep->drag.y = y;
-	ep->drag.tmp.y = 0;
-	ep->drag.need_reset = 0;
+	ep->drag->y = y;
+	ep->drag->tmp.y = 0;
+	ep->drag->need_reset = 0;
 	ed->dirty = 1;
      }
 
@@ -950,106 +950,110 @@ _edje_part_recalc_single(Edje *ed,
 	       }
 	  }
      }
-   /* confine */
-   if (confine_to)
+
+   if (ep->drag)
      {
-	int offset;
-	int step;
-	double v;
-
-	/* complex dragable params */
-	if (flags & FLAG_X)
+	/* confine */
+	if (confine_to)
 	  {
-	     v = ep->drag.size.x * confine_to->w;
+	     int offset;
+	     int step;
+	     double v;
 
-	     if ((minw > 0) && (v < minw)) params->w = minw;
-	     else if ((maxw >= 0) && (v > maxw)) params->w = maxw;
-	     else params->w = v;
+	     /* complex dragable params */
+	     if (flags & FLAG_X)
+	       {
+		  v = ep->drag->size.x * confine_to->w;
 
-	     offset = (ep->drag.x * (confine_to->w - params->w)) +
-	       ep->drag.tmp.x;
-	     if (ep->part->dragable.step_x > 0)
-	       {
-		  params->x = confine_to->x +
-		    ((offset / ep->part->dragable.step_x) * ep->part->dragable.step_x);
+		  if ((minw > 0) && (v < minw)) params->w = minw;
+		  else if ((maxw >= 0) && (v > maxw)) params->w = maxw;
+		  else params->w = v;
+
+		  offset = (ep->drag->x * (confine_to->w - params->w)) +
+		    ep->drag->tmp.x;
+		  if (ep->part->dragable.step_x > 0)
+		    {
+		       params->x = confine_to->x +
+			 ((offset / ep->part->dragable.step_x) * ep->part->dragable.step_x);
+		    }
+		  else if (ep->part->dragable.count_x > 0)
+		    {
+		       step = (confine_to->w - params->w) / ep->part->dragable.count_x;
+		       if (step < 1) step = 1;
+		       params->x = confine_to->x +
+			 ((offset / step) * step);
+		    }
+		  params->req_drag.x = params->x;
+		  params->req_drag.w = params->w;
 	       }
-	     else if (ep->part->dragable.count_x > 0)
+	     if (flags & FLAG_Y)
 	       {
-		  step = (confine_to->w - params->w) / ep->part->dragable.count_x;
-		  if (step < 1) step = 1;
-		  params->x = confine_to->x +
-		    ((offset / step) * step);
+		  v = ep->drag->size.y * confine_to->h;
+
+		  if ((minh > 0) && (v < minh)) params->h = minh;
+		  else if ((maxh >= 0) && (v > maxh)) params->h = maxh;
+		  else params->h = v;
+
+		  offset = (ep->drag->y * (confine_to->h - params->h)) +
+		    ep->drag->tmp.y;
+		  if (ep->part->dragable.step_y > 0)
+		    {
+		       params->y = confine_to->y +
+			 ((offset / ep->part->dragable.step_y) * ep->part->dragable.step_y);
+		    }
+		  else if (ep->part->dragable.count_y > 0)
+		    {
+		       step = (confine_to->h - params->h) / ep->part->dragable.count_y;
+		       if (step < 1) step = 1;
+		       params->y = confine_to->y +
+			 ((offset / step) * step);
+		    }
+		  params->req_drag.y = params->y;
+		  params->req_drag.h = params->h;
 	       }
-	     params->req_drag.x = params->x;
-	     params->req_drag.w = params->w;
+	     /* limit to confine */
+	     if (flags & FLAG_X)
+	       {
+		  if (params->x < confine_to->x)
+		    {
+		       params->x = confine_to->x;
+		    }
+		  if ((params->x + params->w) > (confine_to->x + confine_to->w))
+		    {
+		       params->x = confine_to->x + (confine_to->w - params->w);
+		    }
+	       }
+	     if (flags & FLAG_Y)
+	       {
+		  if (params->y < confine_to->y)
+		    {
+		       params->y = confine_to->y;
+		    }
+		  if ((params->y + params->h) > (confine_to->y + confine_to->h))
+		    {
+		       params->y = confine_to->y + (confine_to->h - params->h);
+		    }
+	       }
 	  }
-	if (flags & FLAG_Y)
+	else
 	  {
-	     v = ep->drag.size.y * confine_to->h;
-
-	     if ((minh > 0) && (v < minh)) params->h = minh;
-	     else if ((maxh >= 0) && (v > maxh)) params->h = maxh;
-	     else params->h = v;
-
-	     offset = (ep->drag.y * (confine_to->h - params->h)) +
-	       ep->drag.tmp.y;
-	     if (ep->part->dragable.step_y > 0)
+	     /* simple dragable params */
+	     if (flags & FLAG_X)
 	       {
-		  params->y = confine_to->y +
-		    ((offset / ep->part->dragable.step_y) * ep->part->dragable.step_y);
+		  params->x += ep->drag->x + ep->drag->tmp.x;
+		  params->req_drag.x = params->x;
+		  params->req_drag.w = params->w;
 	       }
-	     else if (ep->part->dragable.count_y > 0)
+	     if (flags & FLAG_Y)
 	       {
-		  step = (confine_to->h - params->h) / ep->part->dragable.count_y;
-		  if (step < 1) step = 1;
-		  params->y = confine_to->y +
-		    ((offset / step) * step);
-	       }
-	     params->req_drag.y = params->y;
-	     params->req_drag.h = params->h;
-	  }
-	/* limit to confine */
-	if (flags & FLAG_X)
-	  {
-	     if (params->x < confine_to->x)
-	       {
-		  params->x = confine_to->x;
-	       }
-	     if ((params->x + params->w) > (confine_to->x + confine_to->w))
-	       {
-		  params->x = confine_to->x + (confine_to->w - params->w);
-	       }
-	  }
-	if (flags & FLAG_Y)
-	  {
-	     if (params->y < confine_to->y)
-	       {
-		  params->y = confine_to->y;
-	       }
-	     if ((params->y + params->h) > (confine_to->y + confine_to->h))
-	       {
-		  params->y = confine_to->y + (confine_to->h - params->h);
+		  params->y += ep->drag->y + ep->drag->tmp.y;
+		  params->req_drag.y = params->y;
+		  params->req_drag.h = params->h;
 	       }
 	  }
      }
-   else
-     {
-	/* simple dragable params */
-	if (flags & FLAG_X)
-	  {
-	     params->x += ep->drag.x + ep->drag.tmp.x;
-	     params->req_drag.x = params->x;
-	     params->req_drag.w = params->w;
-	  }
-	if (flags & FLAG_Y)
-	  {
-	     params->y += ep->drag.y + ep->drag.tmp.y;
-	     params->req_drag.y = params->y;
-	     params->req_drag.h = params->h;
-	  }
-     }
+
    /* fill */
-
    if (ep->part->type == EDJE_PART_TYPE_GRADIENT && desc->gradient.use_rel && (!desc->gradient.type || !strcmp(desc->gradient.type, "linear")))
      {
 	int x2, y2;
@@ -1404,6 +1408,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 #endif
    Edje_Calc_Params *p1, *pf;
    Edje_Part_Description *chosen_desc;
+   Edje_Real_Part *confine_to = NULL;
    double pos = 0.0;
 
    if ((ep->calculated & FLAG_XY) == FLAG_XY)
@@ -1509,11 +1514,12 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 #endif
 	  }
      }
-   if (ep->drag.confine_to)
+   if (ep->drag && ep->drag->confine_to)
      {
-	_edje_part_recalc(ed, ep->drag.confine_to, flags);
+	confine_to = ep->drag->confine_to;
+	_edje_part_recalc(ed, confine_to, flags);
 #ifdef EDJE_CALC_CACHE
-	statec = ep->drag.confine_to->state;
+	statec = confine_to->state;
 #endif
      }
 //   if (ep->text.source)       _edje_part_recalc(ed, ep->text.source, flags);
@@ -1546,7 +1552,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
  	  {
  	     _edje_part_recalc_single(ed, ep, ep->param1.description, chosen_desc,
  				      ep->param1.rel1_to_x, ep->param1.rel1_to_y, ep->param1.rel2_to_x, ep->param1.rel2_to_y,
- 				      ep->drag.confine_to,
+ 				      confine_to,
  				      p1,
  				      flags);
 #ifdef EDJE_CALC_CACHE
@@ -1576,7 +1582,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
  	  {
  	     _edje_part_recalc_single(ed, ep, ep->param2.description, chosen_desc,
  				      ep->param2.rel1_to_x, ep->param2.rel1_to_y, ep->param2.rel2_to_x, ep->param2.rel2_to_y,
- 				      ep->drag.confine_to,
+ 				      confine_to,
 				      p2,
  				      flags);
 #ifdef EDJE_CALC_CACHE
@@ -1685,18 +1691,18 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 #endif
    ep->req = pf->req;
 
-   if (ep->drag.need_reset)
+   if (ep->drag && ep->drag->need_reset)
      {
 	double dx, dy;
 
 	dx = 0;
 	dy = 0;
 	_edje_part_dragable_calc(ed, ep, &dx, &dy);
-        ep->drag.x = dx;
-	ep->drag.y = dy;
-	ep->drag.tmp.x = 0;
-	ep->drag.tmp.y = 0;
-	ep->drag.need_reset = 0;
+        ep->drag->x = dx;
+	ep->drag->y = dy;
+	ep->drag->tmp.x = 0;
+	ep->drag->tmp.y = 0;
+	ep->drag->need_reset = 0;
      }
    if (!ed->calc_only)
      {

@@ -352,6 +352,21 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		       ed->load_error = EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 		       return 0;
 		    }
+
+		  if ((ep->dragable.x != 0) || (ep->dragable.y != 0))
+		    {
+		       rp->drag = calloc(1, sizeof (Edje_Real_Part_Drag));
+		       if (!rp->drag)
+			 {
+			    ed->load_error = EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+			    free(rp);
+			    return 0;
+			 }
+
+		       rp->drag->step.x = ep->dragable.step_x;
+		       rp->drag->step.y = ep->dragable.step_y;
+		    }
+
 		  rp->edje = ed;
 		  _edje_ref(rp->edje);
 		  rp->part = ep;
@@ -424,8 +439,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		       if (rp->part->clip_to_id < 0)
 			 evas_object_clip_set(rp->object, ed->clipper);
 		    }
-		  rp->drag.step.x = ep->dragable.step_x;
-		  rp->drag.step.y = ep->dragable.step_y;
 		  rp->gradient_id = -1;
 	       }
 	     if (n > 0)
@@ -462,20 +475,23 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 				 evas_object_clip_set(rp->object, rp->clip_to->object);
 			      }
 			 }
-		       if (rp->part->dragable.confine_id >= 0)
-			 rp->drag.confine_to = ed->table_parts[rp->part->dragable.confine_id % ed->table_parts_size];
-		       
-		       /* replay events for dragable */
-		       if (rp->part->dragable.events_id >= 0)
+		       if (rp->drag)
 			 {
-			    rp->drag.events_to =
-			      ed->table_parts[rp->part->dragable.events_id % ed->table_parts_size];
-			    /* events_to may be used only with dragable */
-			    if (!rp->drag.events_to->part->dragable.x &&
-				!rp->drag.events_to->part->dragable.y)
-			      rp->drag.events_to = NULL;
+			    if (rp->part->dragable.confine_id >= 0)
+			      rp->drag->confine_to = ed->table_parts[rp->part->dragable.confine_id % ed->table_parts_size];
+
+			    /* replay events for dragable */
+			    if (rp->part->dragable.events_id >= 0)
+			      {
+				 rp->drag->events_to =
+				   ed->table_parts[rp->part->dragable.events_id % ed->table_parts_size];
+				 /* events_to may be used only with dragable */
+				 if (!rp->drag->events_to->part->dragable.x &&
+				     !rp->drag->events_to->part->dragable.y)
+				   rp->drag->events_to = NULL;
+			      }
 			 }
-		       
+
 		       rp->swallow_params.min.w = 0;
 		       rp->swallow_params.min.w = 0;
 		       rp->swallow_params.max.w = -1;
@@ -527,9 +543,12 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		  rp = ed->table_parts[i];
 		  evas_object_show(rp->object);
 		  if (_edje_block_break(ed)) break;
-		  if (rp->part->dragable.x < 0) rp->drag.val.x = 1.0;
-		  if (rp->part->dragable.y < 0) rp->drag.val.x = 1.0;
-		  _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
+		  if (rp->drag)
+		    {
+		       if (rp->part->dragable.x < 0) rp->drag->val.x = 1.0;
+		       if (rp->part->dragable.y < 0) rp->drag->val.x = 1.0;
+		       _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
+		    }
 	       }
 	     ed->dirty = 1;
 #ifdef EDJE_CALC_CACHE
