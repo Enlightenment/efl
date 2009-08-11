@@ -553,21 +553,25 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		  const char *source = NULL;
 		  
 		  rp = ed->table_parts[i];
-		  if (rp->part->type != EDJE_PART_TYPE_GROUP &&
-		      rp->part->type != EDJE_PART_TYPE_BOX &&
-		      rp->part->type != EDJE_PART_TYPE_TABLE) continue;
-		  if (rp->part->type == EDJE_PART_TYPE_GROUP)
-		    source = rp->part->source;
-		  else if (rp->part->type == EDJE_PART_TYPE_BOX ||
-			   rp->part->type == EDJE_PART_TYPE_TABLE)
+
+		  switch (rp->part->type)
 		    {
-		       if (rp->part->items)
-			 {
-			    curr_item = rp->part->items;
-			    pack_it = curr_item->data;
-			    source = pack_it->source;
-			 }
+		     case EDJE_PART_TYPE_GROUP:
+			source = rp->part->source;
+			break;
+		     case EDJE_PART_TYPE_BOX:
+		     case EDJE_PART_TYPE_TABLE:
+			if (rp->part->items)
+			  {
+			     curr_item = rp->part->items;
+			     pack_it = curr_item->data;
+			     source = pack_it->source;
+			  }
+			break;
+		     default:
+			continue;
 		    }
+
 		  while (source)
 		    {
 		       Eina_List *l;
@@ -663,11 +667,10 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 	     
 	     if (group_path_started)
 	       {
-		  while (group_path)
-		    {
-		       eina_stringshare_del(eina_list_data_get(group_path));
-		       group_path = eina_list_remove_list(group_path, group_path);
-		    }
+		  const char *str;
+
+		  EINA_LIST_FREE(group_path, str)
+		    eina_stringshare_del(str);
 	       }
 	     
 	     /* reswallow any swallows that existed before setting the file */
@@ -816,13 +819,8 @@ _edje_file_del(Edje *ed)
 	       }
 	     if (rp->items)
 	       {
-		  /* all internal, for now */
-		  while (rp->items)
-		    {
-		       /* evas_box/table handles deletion of objects */
-		       /*evas_object_del(rp->items->data);*/
-		       rp->items = eina_list_remove_list(rp->items, rp->items);
-		    }
+		  /* evas_box/table handles deletion of objects */
+		  rp->items = eina_list_free(rp->items);
 	       }
 	     if (rp->text.text) eina_stringshare_del(rp->text.text);
 	     if (rp->text.font) eina_stringshare_del(rp->text.font);
@@ -854,25 +852,21 @@ _edje_file_del(Edje *ed)
      }
    if (ed->actions)
      {
-	while (ed->actions)
-	  {
-	     Edje_Running_Program *runp;
+	Edje_Running_Program *runp;
 
+	EINA_LIST_FREE(ed->actions, runp)
+	  {
 	     _edje_anim_count--;
-	     runp = eina_list_data_get(ed->actions);
-	     ed->actions = eina_list_remove(ed->actions, runp);
 	     free(runp);
 	  }
      }
    _edje_animators = eina_list_remove(_edje_animators, ed);
    if (ed->pending_actions)
      {
-	while (ed->pending_actions)
-	  {
-	     Edje_Pending_Program *pp;
+	Edje_Pending_Program *pp;
 
-	     pp = eina_list_data_get(ed->pending_actions);
-	     ed->pending_actions = eina_list_remove(ed->pending_actions, pp);
+	EINA_LIST_FREE(ed->pending_actions, pp)
+	  {
 	     ecore_timer_del(pp->timer);
 	     free(pp);
 	  }
@@ -900,15 +894,15 @@ static Eina_Bool data_cache_free(const Eina_Hash *hash, const void *key, void *d
 void
 _edje_file_free(Edje_File *edf)
 {
+   Edje_Color_Class *ecc;
+   Edje_Data *edt;
+
    if (edf->font_dir)
      {
-	while (edf->font_dir->entries)
-	  {
-	     Edje_Font_Directory_Entry *fe;
+	Edje_Font_Directory_Entry *fe;
 
-	     fe = eina_list_data_get(edf->font_dir->entries);
-	     edf->font_dir->entries =
-	       eina_list_remove_list(edf->font_dir->entries, edf->font_dir->entries);
+	EINA_LIST_FREE(edf->font_dir->entries, fe)
+	  {
 	     eina_hash_del(edf->font_hash, fe->entry, edf);
 	     if (edf->free_strings && fe->path) eina_stringshare_del(fe->path);
 	     free(fe);
@@ -922,13 +916,10 @@ _edje_file_free(Edje_File *edf)
      }
    if (edf->image_dir)
      {
-	while (edf->image_dir->entries)
-	  {
-	     Edje_Image_Directory_Entry *ie;
+	Edje_Image_Directory_Entry *ie;
 
-	     ie = eina_list_data_get(edf->image_dir->entries);
-	     edf->image_dir->entries =
-	       eina_list_remove_list(edf->image_dir->entries, edf->image_dir->entries);
+	EINA_LIST_FREE(edf->image_dir->entries, ie)
+	  {
 	     if (edf->free_strings && ie->entry) eina_stringshare_del(ie->entry);
 	     free(ie);
 	  }
@@ -936,13 +927,10 @@ _edje_file_free(Edje_File *edf)
      }
    if (edf->collection_dir)
      {
-	while (edf->collection_dir->entries)
-	  {
-	     Edje_Part_Collection_Directory_Entry *ce;
+	Edje_Part_Collection_Directory_Entry *ce;
 
-	     ce = eina_list_data_get(edf->collection_dir->entries);
-	     edf->collection_dir->entries =
-	       eina_list_remove_list(edf->collection_dir->entries, edf->collection_dir->entries);
+	EINA_LIST_FREE(edf->collection_dir->entries, ce)
+	  {
 	     if (edf->free_strings && ce->entry) eina_stringshare_del(ce->entry);
 	     free(ce);
 	  }
@@ -950,19 +938,15 @@ _edje_file_free(Edje_File *edf)
      }
    if (edf->spectrum_dir)
      {
-	while (edf->spectrum_dir->entries)
-	  {
-	     Edje_Spectrum_Directory_Entry *se;
+	Edje_Spectrum_Directory_Entry *se;
 
-	     se = eina_list_data_get(edf->spectrum_dir->entries);
-	     edf->spectrum_dir->entries =
-	       eina_list_remove_list(edf->spectrum_dir->entries, edf->spectrum_dir->entries);
-	     while (se->color_list)
-	       {
-		 free(eina_list_data_get(se->color_list));
-		  se->color_list =
-                    eina_list_remove_list(se->color_list, se->color_list);
-	       }
+	EINA_LIST_FREE(edf->spectrum_dir->entries, se)
+	  {
+	     Edje_Spectrum_Color *sc;
+
+	     EINA_LIST_FREE(se->color_list, sc)
+	       free(sc);
+
              if (edf->free_strings)
                {
                   if (se->entry) eina_stringshare_del(se->entry);
@@ -972,12 +956,9 @@ _edje_file_free(Edje_File *edf)
 	  }
 	free(edf->spectrum_dir);
      }
-   while (edf->data)
-     {
-	Edje_Data *edt;
 
-	edt = eina_list_data_get(edf->data);
-	edf->data = eina_list_remove(edf->data, edt);
+   EINA_LIST_FREE(edf->data, edt)
+     {
         if (edf->free_strings)
           {
              if (edt->key) eina_stringshare_del(edt->key);
@@ -992,13 +973,8 @@ _edje_file_free(Edje_File *edf)
 	edf->data_cache = NULL;
      }
 
-   while (edf->color_classes)
+   EINA_LIST_FREE(edf->color_classes, ecc)
      {
-	Edje_Color_Class *ecc;
-
-	ecc = eina_list_data_get(edf->color_classes);
-	edf->color_classes =
-          eina_list_remove_list(edf->color_classes, edf->color_classes);
 	if (edf->free_strings && ecc->name) eina_stringshare_del(ecc->name);
 	free(ecc);
      }
@@ -1031,12 +1007,14 @@ _edje_file_free(Edje_File *edf)
 void
 _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
 {
-   while (ec->programs)
-     {
-	Edje_Program *pr;
+   Edje_Program *pr;
+   Edje_Part *ep;
 
-	pr = eina_list_data_get(ec->programs);
-	ec->programs = eina_list_remove_list(ec->programs, ec->programs);
+   EINA_LIST_FREE(ec->programs, pr)
+     {
+	Edje_Program_Target *prt;
+	Edje_Program_After *pa;
+
         if (edf->free_strings)
           {
              if (pr->name) eina_stringshare_del(pr->name);
@@ -1045,54 +1023,32 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
              if (pr->state) eina_stringshare_del(pr->state);
              if (pr->state2) eina_stringshare_del(pr->state2);
           }
-	while (pr->targets)
-	  {
-	     Edje_Program_Target *prt;
-
-	     prt = eina_list_data_get(pr->targets);
-	     pr->targets = eina_list_remove_list(pr->targets, pr->targets);
-	     free(prt);
-	  }
-	while (pr->after)
-	  {
-	     Edje_Program_After *pa;
-
-	     pa = eina_list_data_get(pr->after);
-	     pr->after = eina_list_remove_list(pr->after, pr->after);
-	     free(pa);
-	  }
+	EINA_LIST_FREE(pr->targets, prt)
+	  free(prt);
+	EINA_LIST_FREE(pr->after, pa)
+	  free(pa);
 	free(pr);
      }
-   while (ec->parts)
+   EINA_LIST_FREE(ec->parts, ep)
      {
-	Edje_Part *ep;
+	Edje_Part_Description *desc;
 
-	ep = eina_list_data_get(ec->parts);
-	ec->parts = eina_list_remove(ec->parts, ep);
 	if (edf->free_strings && ep->name) eina_stringshare_del(ep->name);
 	if (ep->default_desc)
 	  {
 	     _edje_collection_free_part_description_free(ep->default_desc, edf->free_strings);
 	     ep->default_desc = NULL;
 	  }
-	while (ep->other_desc)
-	  {
-	     Edje_Part_Description *desc;
-
-	     desc = eina_list_data_get(ep->other_desc);
-	     ep->other_desc = eina_list_remove(ep->other_desc, desc);
-	     _edje_collection_free_part_description_free(desc, edf->free_strings);
-	  }
+	EINA_LIST_FREE(ep->other_desc, desc)
+	  _edje_collection_free_part_description_free(desc, edf->free_strings);
 	free(ep);
      }
    if (ec->data)
      {
-	while (ec->data)
-	  {
-	     Edje_Data *edt;
+	Edje_Data *edt;
 
-	     edt = eina_list_data_get(ec->data);
-	     ec->data = eina_list_remove(ec->data, edt);
+	EINA_LIST_FREE(ec->data, edt)
+	  {
              if (edf->free_strings)
                {
                   if (edt->key) eina_stringshare_del(edt->key);
@@ -1119,14 +1075,10 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
 void
 _edje_collection_free_part_description_free(Edje_Part_Description *desc, unsigned int free_strings)
 {
-   while (desc->image.tween_list)
-     {
-	Edje_Part_Image_Id *pi;
+   Edje_Part_Image_Id *pi;
 
-	pi = eina_list_data_get(desc->image.tween_list);
-	desc->image.tween_list = eina_list_remove(desc->image.tween_list, pi);
-	free(pi);
-     }
+   EINA_LIST_FREE(desc->image.tween_list, pi)
+     free(pi);
    if (free_strings)
      {
 	if (desc->color_class)     eina_stringshare_del(desc->color_class);
