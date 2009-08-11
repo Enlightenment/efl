@@ -89,12 +89,12 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	_edje_emit(ed, buf, rp->part->name);
      }
 
-   if (rp->events_to)
+   if (rp->drag.events_to)
      {
 	int x = 0, y = 0;
 	Edje_Real_Part *events;
 
-	events = rp->events_to;
+	events = rp->drag.events_to;
 	evas_object_geometry_get(rp->object, &x, &y, NULL, NULL);
 
 	if ((events->part->dragable.x) || (events->part->dragable.y))
@@ -200,9 +200,9 @@ _edje_mouse_up_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	_edje_emit(ed, buf, rp->part->name);
      }
 
-   if (rp->events_to)
+   if (rp->drag.events_to)
      {
-	rp = rp->events_to;
+	rp = rp->drag.events_to;
 	if (!ignored)
 	  {
 	     snprintf(buf, sizeof(buf), "mouse,up,%i", ev->button);
@@ -254,7 +254,7 @@ _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    ed = data;
    rp = evas_object_data_get(obj, "real_part");
    if (!rp) return;
-   if (rp->events_to) rp = rp->events_to;
+   if (rp->drag.events_to) rp = rp->drag.events_to;
 
    ignored = rp->part->ignore_flags & ev->event_flags;
 

@@ -615,6 +615,7 @@ struct _Edje_Part_Description
 
 typedef struct _Edje Edje;
 typedef struct _Edje_Real_Part_State Edje_Real_Part_State;
+typedef struct _Edje_Real_Part_Drag Edje_Real_Part_Drag;
 typedef struct _Edje_Real_Part Edje_Real_Part;
 typedef struct _Edje_Running_Program Edje_Running_Program;
 typedef struct _Edje_Signal_Callback Edje_Signal_Callback;
@@ -772,6 +773,21 @@ struct _Edje_Real_Part_State
 }; // 20
 // WITH EDJE_CALC_CACHE 140
 
+struct _Edje_Real_Part_Drag
+{
+   double		 x, y; // 16
+   Edje_Position_Scale	 val, size, step, page; // 64
+   struct {
+      unsigned int	 count; // 4
+      int		 x, y; // 8
+   } down;
+   struct {
+      int		 x, y; // 8
+   } tmp;
+   unsigned char	 need_reset : 1; // 4
+   Edje_Real_Part	*events_to; // 4
+}; // 104 // FIME: make drag pointer to struct optional
+
 struct _Edje_Real_Part
 {
    Edje                     *edje; // 4
@@ -789,18 +805,7 @@ struct _Edje_Real_Part
       Edje_Size min, max; // 16
       Edje_Aspect aspect; // 12
    } swallow_params; // 28 // FIXME: only if type SWALLOW
-   struct {
-      double        x, y; // 16
-      Edje_Position_Scale val, size, step, page; // 64
-      struct {
-	 unsigned int count; // 4
-	 int  x, y; // 8
-      } down;
-      struct {
-	 int  x, y; // 8
-      } tmp;
-      unsigned char need_reset : 1; // 4
-   } drag; // 104 // FIME: make drag pointer to struct optional
+   Edje_Real_Part_Drag drag; // 104 // FIME: make drag pointer to struct optional
    struct {
       Edje_Real_Part        *source; // 4
       Edje_Real_Part        *text_source; // 4
@@ -836,10 +841,9 @@ struct _Edje_Real_Part
    Edje_Real_Part           *clip_to; // 4
 
    Edje_Running_Program     *program; // 4
-   Edje_Real_Part           *events_to; // 4
 
    int                       clicked_button; // 4
-   int                       gradient_id; // 4
+   int                       gradient_id; // 4 // FIXME: only for gradient
 
    unsigned char             calculated; // 1
    unsigned char             calculating; // 1
