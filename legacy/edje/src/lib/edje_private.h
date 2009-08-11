@@ -785,9 +785,8 @@ struct _Edje_Real_Part_Drag
       int		 x, y; // 8
    } tmp;
    unsigned char	 need_reset : 1; // 4
-   Edje_Real_Part	*events_to; // 4
    Edje_Real_Part       *confine_to; // 4
-}; // 104 // FIME: make drag pointer to struct optional
+}; // 104
 
 struct _Edje_Real_Part
 {
@@ -809,6 +808,7 @@ struct _Edje_Real_Part
    } swallow_params; // 28 // FIXME: only if type SWALLOW
 
    Edje_Real_Part_Drag      *drag; // 4
+   Edje_Real_Part	    *events_to; // 4
 
    struct {
       Edje_Real_Part        *source; // 4
@@ -856,8 +856,8 @@ struct _Edje_Real_Part
 #ifdef EDJE_CALC_CACHE
    unsigned char             invalidate : 1;
 #endif
-}; //  294
-// WITH EDJE_CALC_CACHE: 774
+}; //  298
+// WITH EDJE_CALC_CACHE: 778
 
 struct _Edje_Running_Program
 {

@@ -479,17 +479,17 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			 {
 			    if (rp->part->dragable.confine_id >= 0)
 			      rp->drag->confine_to = ed->table_parts[rp->part->dragable.confine_id % ed->table_parts_size];
+			 }
 
-			    /* replay events for dragable */
-			    if (rp->part->dragable.events_id >= 0)
-			      {
-				 rp->drag->events_to =
-				   ed->table_parts[rp->part->dragable.events_id % ed->table_parts_size];
-				 /* events_to may be used only with dragable */
-				 if (!rp->drag->events_to->part->dragable.x &&
-				     !rp->drag->events_to->part->dragable.y)
-				   rp->drag->events_to = NULL;
-			      }
+		       /* replay events for dragable */
+		       if (rp->part->dragable.events_id >= 0)
+			 {
+			    rp->events_to =
+			      ed->table_parts[rp->part->dragable.events_id % ed->table_parts_size];
+			    /* events_to may be used only with dragable */
+			    if (!rp->events_to->part->dragable.x &&
+				!rp->events_to->part->dragable.y)
+			      rp->events_to = NULL;
 			 }
 
 		       rp->swallow_params.min.w = 0;
