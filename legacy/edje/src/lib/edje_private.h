@@ -786,6 +786,7 @@ struct _Edje_Real_Part_Drag
    } tmp;
    unsigned char	 need_reset : 1; // 4
    Edje_Real_Part	*events_to; // 4
+   Edje_Real_Part       *confine_to; // 4
 }; // 104 // FIME: make drag pointer to struct optional
 
 struct _Edje_Real_Part
@@ -793,23 +794,27 @@ struct _Edje_Real_Part
    Edje                     *edje; // 4
    Edje_Part                *part; // 4
    Evas_Object              *object; // 4
-   Evas_Object              *swallowed_object; // 4 // FIXME: move with swallow_params data
+   int                       x, y, w, h; // 16
+   Edje_Rectangle            req; // 16
+
    Eina_List                *items; // 4 //FIXME: only if table/box
    void                     *entry_data; // 4 // FIXME: move to entry section
    Evas_Object              *cursorbg_object; // 4 // FIXME: move to entry section
    Evas_Object              *cursorfg_object; // 4 // FIXME: move to entry section
-   int                       x, y, w, h; // 16
-   Edje_Rectangle            req; // 16
-   Edje_Position             offset; // 8 // FIXME: move to text section
+
+   Evas_Object              *swallowed_object; // 4 // FIXME: move with swallow_params data
    struct {
       Edje_Size min, max; // 16
       Edje_Aspect aspect; // 12
    } swallow_params; // 28 // FIXME: only if type SWALLOW
+
    Edje_Real_Part_Drag drag; // 104 // FIME: make drag pointer to struct optional
+
    struct {
       Edje_Real_Part        *source; // 4
       Edje_Real_Part        *text_source; // 4
       const char            *text; // 4
+      Edje_Position          offset; // 8 text only
       const char	    *font; // 4 text only
       const char	    *style; // 4 text only
       int                    size; // 4 text only
@@ -837,7 +842,6 @@ struct _Edje_Real_Part
    int                       state; // 4
 #endif
 
-   Edje_Real_Part           *confine_to; // 4 // fixme - make part of drag
    Edje_Real_Part           *clip_to; // 4
 
    Edje_Running_Program     *program; // 4

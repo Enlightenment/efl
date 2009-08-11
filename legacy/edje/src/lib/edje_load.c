@@ -463,7 +463,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			      }
 			 }
 		       if (rp->part->dragable.confine_id >= 0)
-			 rp->confine_to = ed->table_parts[rp->part->dragable.confine_id % ed->table_parts_size];
+			 rp->drag.confine_to = ed->table_parts[rp->part->dragable.confine_id % ed->table_parts_size];
 		       
 		       /* replay events for dragable */
 		       if (rp->part->dragable.events_id >= 0)

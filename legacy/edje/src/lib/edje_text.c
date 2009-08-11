@@ -550,12 +550,12 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    evas_object_text_font_set(ep->object, font, size);
    evas_object_text_text_set(ep->object, text);
    part_get_geometry(ep, &tw, &th);
-   ep->offset.x = ((sw - tw) * params->type.text.align.x);
-   ep->offset.y = ((sh - th) * params->type.text.align.y);
+   ep->text.offset.x = ((sw - tw) * params->type.text.align.x);
+   ep->text.offset.y = ((sh - th) * params->type.text.align.y);
 
    evas_object_move(ep->object,
-		    ed->x + params->x + ep->offset.x,
-		    ed->y + params->y + ep->offset.y);
+		    ed->x + params->x + ep->text.offset.x,
+		    ed->y + params->y + ep->text.offset.y);
 
    if (params->visible) evas_object_show(ep->object);
    else evas_object_hide(ep->object);

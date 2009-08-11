@@ -198,7 +198,7 @@ _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, double *x, double *y)
 {
    if ((ep->part->dragable.x != 0) || (ep->part->dragable.y != 0))
      {
-	if (ep->confine_to)
+	if (ep->drag.confine_to)
 	  {
 	     double dx, dy, dw, dh;
 	     int ret = 0;
@@ -208,13 +208,13 @@ _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, double *x, double *y)
 	     else if (ep->part->dragable.x != 0) ret = 1;
 	     else if (ep->part->dragable.y != 0) ret = 2;
 
-	     dx = ep->x - ep->confine_to->x;
-	     dw = ep->confine_to->w - ep->w;
+	     dx = ep->x - ep->drag.confine_to->x;
+	     dw = ep->drag.confine_to->w - ep->w;
 	     if (dw != 0.0) dx /= dw;
 	     else dx = 0.0;
 
-	     dy = ep->y - ep->confine_to->y;
-	     dh = ep->confine_to->h - ep->h;
+	     dy = ep->y - ep->drag.confine_to->y;
+	     dh = ep->drag.confine_to->h - ep->h;
 	     if (dh != 0) dy /= dh;
 	     else dy = 0.0;
 
@@ -1509,11 +1509,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 #endif
 	  }
      }
-   if (ep->confine_to)
+   if (ep->drag.confine_to)
      {
-	_edje_part_recalc(ed, ep->confine_to, flags);
+	_edje_part_recalc(ed, ep->drag.confine_to, flags);
 #ifdef EDJE_CALC_CACHE
-	statec = ep->confine_to->state;
+	statec = ep->drag.confine_to->state;
 #endif
      }
 //   if (ep->text.source)       _edje_part_recalc(ed, ep->text.source, flags);
@@ -1546,7 +1546,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
  	  {
  	     _edje_part_recalc_single(ed, ep, ep->param1.description, chosen_desc,
  				      ep->param1.rel1_to_x, ep->param1.rel1_to_y, ep->param1.rel2_to_x, ep->param1.rel2_to_y,
- 				      ep->confine_to,
+ 				      ep->drag.confine_to,
  				      p1,
  				      flags);
 #ifdef EDJE_CALC_CACHE
@@ -1576,7 +1576,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
  	  {
  	     _edje_part_recalc_single(ed, ep, ep->param2.description, chosen_desc,
  				      ep->param2.rel1_to_x, ep->param2.rel1_to_y, ep->param2.rel2_to_x, ep->param2.rel2_to_y,
- 				      ep->confine_to,
+ 				      ep->drag.confine_to,
 				      p2,
  				      flags);
 #ifdef EDJE_CALC_CACHE
