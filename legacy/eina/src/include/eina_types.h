@@ -154,7 +154,29 @@
 # define EINA_UNLIKELY(exp) exp
 # define EINA_LIKELY(exp) exp
 
-#else /* ! __GNUC__ && ! _WIN32 */
+#elif defined(__SUNPRO_C)
+# define EINA_WARN_UNUSED_RESULT
+# define EINA_ARG_NONNULL(...)
+# define EINA_DEPRECATED
+# if __SUNPRO_C >= 0x590
+#  define EINA_MALLOC __attribute__ ((malloc))
+#  define EINA_PURE __attribute__ ((pure))
+# else
+#  define EINA_MALLOC
+#  define EINA_PURE
+# endif
+# define EINA_PRINTF(fmt, arg)
+# define EINA_SCANF(fmt, arg)
+# define EINA_FORMAT(fmt)
+# if __SUNPRO_C >= 0x590
+#  define EINA_CONST __attribute__ ((const))
+# else
+#  define EINA_CONST
+# endif
+# define EINA_UNLIKELY(exp) exp
+# define EINA_LIKELY(exp) exp
+
+#else /* ! __GNUC__ && ! _WIN32 && ! __SUNPRO_C */
 # define EINA_WARN_UNUSED_RESULT
 # define EINA_ARG_NONNULL(idx, ...)
 # define EINA_DEPRECATED
@@ -166,7 +188,7 @@
 # define EINA_CONST
 # define EINA_UNLIKELY(exp) exp
 # define EINA_LIKELY(exp) exp
-#endif /* ! __GNUC__ && ! _WIN32 */
+#endif /* ! __GNUC__ && ! _WIN32 && ! __SUNPRO_C */
 
 
 /* remove this TRUE/FALSE redifinitions */
