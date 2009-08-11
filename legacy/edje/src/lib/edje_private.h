@@ -614,6 +614,7 @@ struct _Edje_Part_Description
 
 
 typedef struct _Edje Edje;
+typedef struct _Edje_Real_Part_State Edje_Real_Part_State;
 typedef struct _Edje_Real_Part Edje_Real_Part;
 typedef struct _Edje_Running_Program Edje_Running_Program;
 typedef struct _Edje_Signal_Callback Edje_Signal_Callback;
@@ -757,6 +758,20 @@ struct _Edje_Calc_Params
    unsigned char    smooth : 1; // 4
 }; // 116
 
+struct _Edje_Real_Part_State
+{
+   Edje_Part_Description *description; // 4
+   Edje_Real_Part        *rel1_to_x; // 4
+   Edje_Real_Part        *rel1_to_y; // 4
+   Edje_Real_Part        *rel2_to_x; // 4
+   Edje_Real_Part        *rel2_to_y; // 4
+#ifdef EDJE_CALC_CACHE
+   Edje_Calc_Params       p; // 116
+   int                    state; // 4
+#endif
+}; // 20
+// WITH EDJE_CALC_CACHE 140
+
 struct _Edje_Real_Part
 {
    Edje                     *edje; // 4
@@ -809,17 +824,7 @@ struct _Edje_Real_Part
 
    double                    description_pos; // 8
    Edje_Part_Description    *chosen_description; // 4
-   struct {
-      Edje_Part_Description *description; // 4
-      Edje_Real_Part        *rel1_to_x; // 4
-      Edje_Real_Part        *rel1_to_y; // 4
-      Edje_Real_Part        *rel2_to_x; // 4
-      Edje_Real_Part        *rel2_to_y; // 4
-#ifdef EDJE_CALC_CACHE
-      Edje_Calc_Params       p; // 116
-      int                    state; // 4
-#endif
-   } param1, param2, custom; // 60 // FIXME: custom should be alloced on demand - 20--
+   Edje_Real_Part_State      param1, param2, custom; // 60 // FIXME: custom should be alloced on demand - 20--
    // WITH EDJE_CALC_CACHE: 420
 
 #ifdef EDJE_CALC_CACHE
