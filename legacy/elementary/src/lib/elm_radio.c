@@ -242,6 +242,23 @@ elm_radio_label_set(Evas_Object *obj, const char *label)
 }
 
 /**
+ * Get the text label of the radio object
+ *
+ * @param obj The radio object
+ * @return The text label string in UTF-8
+ *
+ * @ingroup Radio
+ */
+EAPI const char*
+elm_radio_label_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   return wd->label;
+}
+
+/**
  * Set the icon object of the radio object
  *
  * Once the icon object is set, it will become a child of the radio object and

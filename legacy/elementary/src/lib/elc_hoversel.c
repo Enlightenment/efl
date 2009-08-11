@@ -243,6 +243,23 @@ elm_hoversel_label_set(Evas_Object *obj, const char *label)
 }
 
 /**
+ * Get the hoversel button label
+ *
+ * @param obj The hoversel object
+ * @return The label text.
+ *
+ * @ingroup Hoversel
+ */
+EAPI const char*
+elm_hoversel_label_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd || !wd->btn) return NULL;
+
+   return elm_button_label_get(wd->btn);
+}
+
+/**
  * Set the icon of the hoversel button
  *
  * Sets the icon of the button that is always visible (before it is clicked

@@ -325,6 +325,23 @@ elm_slider_label_set(Evas_Object *obj, const char *label)
 }
 
 /**
+ * Get the label of the slider
+ *
+ * @param obj The slider object
+ * @return The text label string in UTF-8
+ *
+ * @ingroup Slider
+ */
+EAPI const char*
+elm_slider_label_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   return wd->label;
+}
+
+/**
  * Set the icon object of the slider object
  *
  * Once the icon object is set, it will become a child of the slider object and

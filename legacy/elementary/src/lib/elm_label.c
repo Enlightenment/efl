@@ -78,3 +78,12 @@ elm_label_label_set(Evas_Object *obj, const char *label)
    edje_object_part_text_set(wd->lbl, "elm.text", label);
    _sizing_eval(obj);
 }
+
+EAPI const char*
+elm_label_label_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   return wd->label;
+}

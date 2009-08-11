@@ -100,6 +100,14 @@ elm_frame_label_set(Evas_Object *obj, const char *label)
    _sizing_eval(obj);
 }
 
+EAPI const char*
+elm_frame_label_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd || !wd->frm) return NULL;
+   return edje_object_part_text_get(wd->frm, "elm.text");
+}
+
 EAPI void
 elm_frame_content_set(Evas_Object *obj, Evas_Object *content)
 {

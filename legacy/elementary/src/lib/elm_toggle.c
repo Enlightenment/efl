@@ -168,6 +168,15 @@ elm_toggle_label_set(Evas_Object *obj, const char *label)
    _sizing_eval(obj);
 }
 
+EAPI const char*
+elm_toggle_label_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   return wd->label;
+}
+
 EAPI void
 elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon)
 {

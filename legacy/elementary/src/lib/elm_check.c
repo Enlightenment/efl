@@ -211,6 +211,23 @@ elm_check_label_set(Evas_Object *obj, const char *label)
 }
 
 /**
+ * Get the text label of the check object
+ *
+ * @param obj The check object
+ * @return The text label string in UTF-8
+ *
+ * @ingroup Check
+ */
+EAPI const char*
+elm_check_label_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   return wd->label;
+}
+
+/**
  * Set the icon object of the check object
  *
  * Once the icon object is set, it will become a child of the check object and
