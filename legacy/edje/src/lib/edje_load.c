@@ -849,6 +849,8 @@ _edje_file_del(Edje *ed)
 	     if (rp->custom.description)
 	       _edje_collection_free_part_description_free(rp->custom.description, ed->file->free_strings);
 
+	     free(rp->drag);
+
 	     _edje_unref(rp->edje);
 	     free(rp);
 	  }
