@@ -830,6 +830,7 @@ _edje_part_recalc_single_text(double sc,
      }
 
    /* FIXME: Do we really need to call it twice if chosen_desc ? */
+   sfont = NULL;
    font = _edje_text_class_font_get(ed, desc, &size, &sfont);
    free(sfont);
    params->type.text.size = size;
