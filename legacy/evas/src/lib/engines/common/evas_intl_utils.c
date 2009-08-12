@@ -46,6 +46,7 @@ evas_intl_utf8_to_visual(const char *text, int *ret_len, FriBidiCharType *direct
      }
 
    len = fribidi_utf8_to_unicode(text, byte_len, unicode_in);
+   unicode_in[len] = 0;
 
    unicode_out = (FriBidiChar *)alloca(sizeof(FriBidiChar) * (len + 1));
    if (!unicode_out)
