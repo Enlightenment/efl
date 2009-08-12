@@ -54,13 +54,13 @@ elm_genlist.c \
 elm_check.c \
 elm_radio.c \
 elm_pager.c \
-elm_fileselector.c \
 elm_progressbar.c \
 \
 elc_notepad.c \
 elc_anchorview.c \
 elc_anchorblock.c \
 elc_hoversel.c \
+elc_fileselector.c \
 \
 els_pan.c \
 els_pan.h \
