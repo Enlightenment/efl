@@ -361,7 +361,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
 
    type = compl_type & ECORE_CON_TYPE;
 
-   if ((type == ECORE_CON_REMOTE_TCP || type == ECORE_CON_REMOTE_UDP) && (port < 0)) return NULL;
+   if ((type == ECORE_CON_REMOTE_TCP || type == ECORE_CON_REMOTE_UDP || ECORE_CON_REMOTE_BROADCAST) && (port < 0)) return NULL;
 
    if ((type == ECORE_CON_LOCAL_USER) || (type == ECORE_CON_LOCAL_SYSTEM) ||
        (type == ECORE_CON_LOCAL_ABSTRACT))
@@ -457,7 +457,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
         /* TCP */
         if (!ecore_con_info_tcp_connect(svr, _ecore_con_cb_tcp_connect, svr)) goto error;
      }
-   else if (type == ECORE_CON_REMOTE_UDP)
+   else if (type == ECORE_CON_REMOTE_UDP || type == ECORE_CON_REMOTE_BROADCAST)
      {
         /* UDP and MCAST */
         if (!ecore_con_info_udp_connect(svr, _ecore_con_cb_udp_connect, svr)) goto error;
@@ -1080,7 +1080,7 @@ _ecore_con_cb_udp_connect(void *data, Ecore_Con_Info *net_info)
 {
    Ecore_Con_Server   *svr;
    int                 curstate = 0;
-
+   int		       broadcast = 1;
    svr = data;
 
    if (!net_info) goto error;
@@ -1088,8 +1088,16 @@ _ecore_con_cb_udp_connect(void *data, Ecore_Con_Info *net_info)
    if (svr->fd < 0) goto error;
    if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
    if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
-   if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0)
-     goto error;
+
+   if(svr->type == ECORE_CON_REMOTE_BROADCAST)
+     {
+       if (setsockopt(svr->fd, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast)) < 0) goto error;
+     }
+   else
+     {
+       if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0) goto error;
+     }
+
    if (connect(svr->fd, net_info->info.ai_addr, net_info->info.ai_addrlen) < 0)
      goto error;
    else
