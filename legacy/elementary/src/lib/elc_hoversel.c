@@ -390,3 +390,20 @@ elm_hoversel_item_data_get(Elm_Hoversel_Item *it)
    if (!it) return NULL;
    return it->data;
 }
+
+/**
+ * Get the text label of an hoversel item
+ *
+ * This returns the text of the label of the given hoversel item
+ *
+ * @param it The item to get the label
+ * @return The text label of the hoversel item
+ *
+ * @ingroup Hoversel
+ */
+EAPI const char *
+elm_hoversel_item_label_get(Elm_Hoversel_Item *it)
+{
+   if (!it) return NULL;
+   return it->label;
+}
