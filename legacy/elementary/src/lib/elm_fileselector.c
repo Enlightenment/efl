@@ -6,7 +6,6 @@
  *  save mode (you can type a name somewhere)
  *  show/Hide hidden files
  *  double click to choose a file
- *  find a way to 'sort directory first'
  *  multiselection
  *  write docs
  */
@@ -232,13 +231,14 @@ static void
 _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   
+
    DIR *dir;
    struct dirent *dp;
    char buf[PATH_MAX];
    char *real;
+   Eina_List *files = NULL, *dirs = NULL, *l;
 
-   if (!ecore_file_is_dir(path)) return;
+   if (!wd || !ecore_file_is_dir(path)) return;
 
    dir = opendir(path);
    if (!dir) return;
@@ -253,19 +253,44 @@ _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent)
 
    while ((dp = readdir(dir)) != NULL)
      {
-        if (dp->d_name[0] == '.') continue; // TODO make this configurable
+	if (dp->d_name[0] == '.') continue; // TODO make this configurable
+
 	snprintf(buf, sizeof(buf), "%s/%s", path, dp->d_name);
 	real = ecore_file_realpath(buf); //TODO this will resolv symlinks...I dont like it
-	//~ printf("FILE: %s\n", real);
+
+	if (ecore_file_is_dir(real))
+	  dirs = eina_list_append(dirs, real);
+	else
+	  files = eina_list_append(files, real);
+     }
+   closedir(dir);
+
+   files = eina_list_sort(files, ECORE_SORT_MIN, ECORE_COMPARE_CB(strcoll));
+   dirs = eina_list_sort(dirs, ECORE_SORT_MIN, ECORE_COMPARE_CB(strcoll));
+
+   EINA_LIST_FOREACH(dirs, l, real)
+   {
+	// printf("DIR: %s\n", real);
 	elm_genlist_item_append(wd->list, &itc,
 				eina_stringshare_add(real), /* item data */
 				parent,
-				(wd->expand && ecore_file_is_dir(real)) ? 
-				  ELM_GENLIST_ITEM_SUBITEMS : ELM_GENLIST_ITEM_NONE,
+				wd->expand ? ELM_GENLIST_ITEM_SUBITEMS :
+					     ELM_GENLIST_ITEM_NONE,
 				NULL, NULL);
 	free(real);
-     }
-   closedir(dir);
+   }
+   eina_list_free(dirs);
+   
+   EINA_LIST_FOREACH(files, l, real)
+   {
+	// printf("FILE: %s\n", real);
+	elm_genlist_item_append(wd->list, &itc,
+				eina_stringshare_add(real), /* item data */
+				parent, ELM_GENLIST_ITEM_NONE,
+				NULL, NULL);
+	free(real);
+   }
+   eina_list_free(files);
 }
 
 
@@ -390,7 +415,7 @@ elm_fileselector_add(Evas_Object *parent)
    evas_object_smart_callback_add(bt, "clicked", _ok, obj);
    evas_object_show(bt);
 
-   // Is this the right way to show sub-objs ?? or use the show/hode cbs ??
+   // Is this the right way to show sub-objs ?? or use the show/hide cbs ??
    //~ evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _show, obj);
    //~ evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       //~ _changed_size_hints, obj);

@@ -3693,6 +3693,12 @@ my_bt_40(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *win, *fs, *bg;
    char buf[PATH_MAX];
 
+   /* Set the locale according to the system pref.
+    * If you dont do so the file selector will order the files list in
+    * a case sensitive manner
+    */
+   setlocale(LC_ALL, "");
+
    win = elm_win_add(NULL, "fileselector", ELM_WIN_BASIC);
    elm_win_title_set(win, "File Selector");
    elm_win_autodel_set(win, 1);
