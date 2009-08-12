@@ -234,11 +234,43 @@ ecore_con_url_new(const char *url)
 
    url_con->fd = -1;
    url_con->write_fd = -1;
+   url_con->additional_headers = NULL;
 
    return url_con;
 #else
    return NULL;
    url = NULL;
+#endif
+}
+
+/**
+ * Creates and initializes a new Ecore_Con_Url for a custom request (e.g. HEAD,
+ * SUBSCRIBE and other obscure HTTP requests). This object should be used like
+ * one created with ecore_con_url_new().
+ *
+ * @return  NULL on error, a new Ecore_Con_Url on success.
+ * @ingroup Ecore_Con_Url_Group
+ */
+EAPI Ecore_Con_Url *
+ecore_con_url_custom_new(const char *url, const char *custom_request)
+{
+#ifdef HAVE_CURL
+   if (!url) return NULL;
+   if (!custom_request) return NULL;
+
+   Ecore_Con_Url *url_con;
+
+   url_con = ecore_con_url_new(url);
+
+   if (!url_con) return NULL;
+
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_CUSTOMREQUEST, custom_request);
+
+   return url_con;
+#else
+   return NULL;
+   url = NULL;
+   custom_request = NULL;
 #endif
 }
 
@@ -251,6 +283,8 @@ EAPI void
 ecore_con_url_destroy(Ecore_Con_Url *url_con)
 {
 #ifdef HAVE_CURL
+   char *s;
+
    if (!url_con) return;
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
      {
@@ -276,6 +310,8 @@ ecore_con_url_destroy(Ecore_Con_Url *url_con)
      }
    _url_con_list = eina_list_remove(_url_con_list, url_con);
    curl_slist_free_all(url_con->headers);
+   EINA_LIST_FREE(url_con->additional_headers, s)
+     free(s);
    free(url_con->url);
    free(url_con);
 #else
@@ -334,6 +370,50 @@ ecore_con_url_data_set(Ecore_Con_Url *url_con, void *data)
    return;
    url_con = NULL;
    data = NULL;
+#endif
+}
+
+EAPI void
+ecore_con_url_additional_header_add(Ecore_Con_Url *url_con, const char *key, const char *value)
+{
+#ifdef HAVE_CURL
+   char *tmp;
+
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+	ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_additional_header_add");
+	return;
+     }
+
+   tmp = malloc(strlen(key) + strlen(value) + 3);
+   if (!tmp) return ;
+   sprintf(tmp, "%s: %s", key, value);
+   url_con->additional_headers = eina_list_append(url_con->additional_headers, tmp);
+#else
+   return;
+   url_con = NULL;
+   key = NULL;
+   value = NULL;
+#endif
+}
+
+EAPI void
+ecore_con_url_additional_headers_clear(Ecore_Con_Url *url_con)
+{
+#ifdef HAVE_CURL
+   char *s;
+
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+	ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_additional_headers_clear");
+	return;
+     }
+
+   EINA_LIST_FREE(url_con->additional_headers, s)
+     free(s);
+#else
+   return;
+   url_con = NULL;
 #endif
 }
 
@@ -431,6 +511,8 @@ EAPI int
 ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length, const char *content_type)
 {
 #ifdef HAVE_CURL
+   Eina_List *l;
+   const char *s;
    char tmp[256];
 
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
@@ -478,9 +560,19 @@ ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length, cons
 	 break;
      }
 
+   /* Additional headers */
+   EINA_LIST_FOREACH(url_con->additional_headers, l, s)
+     {
+	fprintf(stderr, "ECORE appending header %s\n", s);
+	url_con->headers = curl_slist_append(url_con->headers, s);
+     }
+
    curl_easy_setopt(url_con->curl_easy, CURLOPT_HTTPHEADER, url_con->headers);
 
    url_con->received = 0;
+
+   /* FIXME: Check if curl will leak memory or correctly destroy the headers */
+   url_con->headers = NULL;
 
    return _ecore_con_url_perform(url_con);
 #else
