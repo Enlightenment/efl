@@ -10075,6 +10075,7 @@ collections {
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// FIXME: this doesn't look too hot. need to fix it up
    group { name: "elm/progressbar/horizontal/default";
       images {
          image: "bt_basew.png" COMP;
