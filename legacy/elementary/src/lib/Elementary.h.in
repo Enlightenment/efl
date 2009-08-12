@@ -719,6 +719,18 @@ extern "C" {
     * "done" - the user click on the ok or cancel buttons
     */
 
+   EAPI Evas_Object *elm_progressbar_add(Evas_Object *parent);
+   EAPI void         elm_progressbar_label_set(Evas_Object *obj, const char *label);
+   EAPI void         elm_progressbar_icon_set(Evas_Object *obj, Evas_Object *icon);
+   EAPI void         elm_progressbar_span_size_set(Evas_Object *obj, Evas_Coord size);
+   EAPI void         elm_progressbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
+   EAPI void         elm_progressbar_inverted_set(Evas_Object *obj, Eina_Bool inverted);
+   EAPI void         elm_progressbar_pulse_set(Evas_Object *obj, Eina_Bool pulse);
+   EAPI void         elm_progressbar_pulse(Evas_Object *obj, Eina_Bool state);
+   EAPI void         elm_progressbar_unit_format_set(Evas_Object *obj, const char *format);
+   EAPI void         elm_progressbar_value_set(Evas_Object *obj, double val);
+   EAPI double       elm_progressbar_value_get(const Evas_Object *obj);
+
 #ifdef __cplusplus
 }
 #endif
@@ -760,7 +772,6 @@ extern "C" {
 // * tiled image + zoom widget (tiled map viewer)
 // * dialpad widget - need one with a phone dialpad
 // * file selector widget
-// * progress bar widget
 // * generic "tacho" widget (set min/max labels - and up to 3 intermediate labels etc.)
 // * status widget (busy, stalled, running, etc.)
 // * full window in window widget (so move/resize of window object does as you'd expect a child window to do within the canvas)
