@@ -259,6 +259,22 @@ elm_check_icon_set(Evas_Object *obj, Evas_Object *icon)
 }
 
 /**
+ * Get the icon object of the check object
+ *
+ * @param obj The check object
+ * @return The icon object
+ *
+ * @ingroup Check
+ */
+EAPI Evas_Object *
+elm_check_icon_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->icon;
+}
+
+/**
  * Set the on/off state of the check object
  *
  * This sets the state of the check and will also set the value if pointed to

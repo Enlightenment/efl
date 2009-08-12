@@ -373,6 +373,22 @@ elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon)
 }
 
 /**
+ * Get the icon object of the slider object
+ *
+ * @param obj The slider object
+ * @return The icon object
+ *
+ * @ingroup Slider
+ */
+EAPI Evas_Object *
+elm_slider_icon_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->icon;
+}
+
+/**
  * Set the length of the dragable region of the slider
  *
  * Thois sets the minimum width or height (depending on orientation) of the

@@ -279,6 +279,25 @@ elm_hoversel_icon_set(Evas_Object *obj, Evas_Object *icon)
 }
 
 /**
+ * Get the icon of the hoversel button
+ *
+ * Get the icon of the button that is always visible (before it is clicked
+ * and expanded). Also see elm_button_icon_get().
+ *
+ * @param obj The hoversel object
+ * @return The icon object
+ *
+ * @ingroup Hoversel
+ */
+EAPI Evas_Object *
+elm_hoversel_icon_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd || !wd->btn) return NULL;
+   return elm_button_icon_get(wd->btn);
+}
+
+/**
  * Trigger the hoversel popup from code
  *
  * This makes the hoversel popup activate with the items added being listed.

@@ -179,6 +179,14 @@ elm_button_icon_set(Evas_Object *obj, Evas_Object *icon)
      wd->icon = icon;
 }
 
+EAPI Evas_Object *
+elm_button_icon_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->icon;
+}
+
 EAPI void
 elm_button_style_set(Evas_Object *obj, const char *style)
 {

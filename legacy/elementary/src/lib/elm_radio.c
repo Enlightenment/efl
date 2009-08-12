@@ -290,6 +290,22 @@ elm_radio_icon_set(Evas_Object *obj, Evas_Object *icon)
 }
 
 /**
+ * Get the icon object of the radio object
+ *
+ * @param obj The radio object
+ * @return The icon object
+ *
+ * @ingroup Radio
+ */
+EAPI Evas_Object *
+elm_radio_icon_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->icon;
+}
+
+/**
  * Add this radio to a group of other radio objects
  *
  * Radio objects work in groups. Each member should have a different integer

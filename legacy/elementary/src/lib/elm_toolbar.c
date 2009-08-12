@@ -253,6 +253,20 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, voi
    return it;
 }
 
+EAPI Evas_Object *
+elm_toolbar_item_icon_get(Elm_Toolbar_Item *item)
+{
+   if (!item) return NULL;
+   return item->icon;
+}
+
+EAPI const char *
+elm_toolbar_item_label_get(Elm_Toolbar_Item *item)
+{
+   if (!item) return NULL;
+   return item->label;
+}
+
 EAPI void
 elm_toolbar_item_del(Elm_Toolbar_Item *it)
 {

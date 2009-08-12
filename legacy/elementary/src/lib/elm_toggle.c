@@ -195,6 +195,14 @@ elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon)
      }
 }
 
+EAPI Evas_Object *
+elm_toggle_icon_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->icon;
+}
+
 EAPI void
 elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *offlabel)
 {

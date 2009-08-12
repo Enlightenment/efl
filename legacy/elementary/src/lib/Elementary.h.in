@@ -287,6 +287,7 @@ extern "C" {
    EAPI void         elm_button_label_set(Evas_Object *obj, const char *label);
    EAPI const char  *elm_button_label_get(Evas_Object *obj);
    EAPI void         elm_button_icon_set(Evas_Object *obj, Evas_Object *icon);
+   EAPI Evas_Object *elm_button_icon_get(Evas_Object *obj);
    EAPI void         elm_button_style_set(Evas_Object *obj, const char *style);
    /* available styles:
     * default
@@ -331,6 +332,7 @@ extern "C" {
    EAPI void         elm_toggle_label_set(Evas_Object *obj, const char *label);
    EAPI const char  *elm_toggle_label_get(Evas_Object *obj);
    EAPI void         elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon);
+   EAPI Evas_Object *elm_toggle_icon_get(Evas_Object *obj);
    EAPI void         elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *offlabel);
    EAPI void         elm_toggle_state_set(Evas_Object *obj, Eina_Bool state);
    EAPI Eina_Bool    elm_toggle_state_get(const Evas_Object *obj);
@@ -500,6 +502,7 @@ extern "C" {
    EAPI void         elm_bubble_info_set(Evas_Object *obj, const char *info);
    EAPI void         elm_bubble_content_set(Evas_Object *obj, Evas_Object *content);
    EAPI void         elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon);
+   EAPI Evas_Object *elm_bubble_icon_get(Evas_Object *obj);
    EAPI void         elm_bubble_corner_set(Evas_Object *obj, const char *corner);
    /* smart callbacks called:
     */
@@ -523,6 +526,7 @@ extern "C" {
    EAPI void         elm_hoversel_label_set(Evas_Object *obj, const char *label);
    EAPI const char  *elm_hoversel_label_get(Evas_Object *obj);
    EAPI void         elm_hoversel_icon_set(Evas_Object *obj, Evas_Object *icon);
+   EAPI Evas_Object *elm_hoversel_icon_get(Evas_Object *obj);
    EAPI void         elm_hoversel_hover_begin(Evas_Object *obj);
    EAPI void         elm_hoversel_hover_end(Evas_Object *obj);
    EAPI Elm_Hoversel_Item *elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
@@ -538,6 +542,8 @@ extern "C" {
    typedef struct _Elm_Toolbar_Item Elm_Toolbar_Item;
    EAPI Evas_Object *elm_toolbar_add(Evas_Object *parent);
    EAPI Elm_Toolbar_Item *elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
+   EAPI Evas_Object *elm_toolbar_item_icon_get(Elm_Toolbar_Item *item);
+   EAPI const char  *elm_toolbar_item_label_get(Elm_Toolbar_Item *item);
    EAPI void         elm_toolbar_item_del(Elm_Toolbar_Item *item);
    EAPI void         elm_toolbar_item_select(Elm_Toolbar_Item *item);
    EAPI void         elm_toolbar_scrollable_set(Evas_Object *obj, Eina_Bool scrollable);
@@ -597,6 +603,7 @@ extern "C" {
    EAPI void         elm_slider_label_set(Evas_Object *obj, const char *label);
    EAPI const char  *elm_slider_label_get(Evas_Object *obj);
    EAPI void         elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon);
+   EAPI Evas_Object *elm_slider_icon_get(Evas_Object *obj);
    EAPI void         elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size);
    EAPI void         elm_slider_unit_format_set(Evas_Object *obj, const char *format);
    EAPI void         elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator);
@@ -681,6 +688,7 @@ extern "C" {
    EAPI void         elm_check_label_set(Evas_Object *obj, const char *label);
    EAPI const char  *elm_check_label_get(Evas_Object *obj);
    EAPI void         elm_check_icon_set(Evas_Object *obj, Evas_Object *icon);
+   EAPI Evas_Object *elm_check_icon_get(Evas_Object *obj);
    EAPI void         elm_check_state_set(Evas_Object *obj, Eina_Bool state);
    EAPI Eina_Bool    elm_check_state_get(const Evas_Object *obj);
    EAPI void         elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep);
@@ -692,6 +700,7 @@ extern "C" {
    EAPI void         elm_radio_label_set(Evas_Object *obj, const char *label);
    EAPI const char  *elm_radio_label_get(Evas_Object *obj);
    EAPI void         elm_radio_icon_set(Evas_Object *obj, Evas_Object *icon);
+   EAPI Evas_Object *elm_radio_icon_get(Evas_Object *obj);
    EAPI void         elm_radio_group_add(Evas_Object *obj, Evas_Object *group);
    EAPI void         elm_radio_state_value_set(Evas_Object *obj, int value);
    EAPI void         elm_radio_value_set(Evas_Object *obj, int value);

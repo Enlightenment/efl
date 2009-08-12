@@ -170,6 +170,14 @@ elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon)
    _sizing_eval(obj);
 }
 
+EAPI Evas_Object *
+elm_bubble_icon_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->icon;
+}
+
 EAPI void
 elm_bubble_corner_set(Evas_Object *obj, const char *corner)
 {
