@@ -3794,7 +3794,6 @@ my_win_main(void)
    elm_box_pack_end(bx0, li);
    evas_object_show(li);
 
-   elm_list_item_append(li, "File Selector", NULL, NULL, my_bt_39, NULL);
    elm_list_item_append(li, "Bg Plain", NULL, NULL, my_bt_1, NULL);
    elm_list_item_append(li, "Bg Image", NULL, NULL, my_bt_2, NULL);
    elm_list_item_append(li, "Icon Transparent", NULL, NULL, my_bt_3, NULL);
