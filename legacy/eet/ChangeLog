@@ -201,3 +201,11 @@
 2009-07-29  Carsten Haitzler (The Rasterman)
 
         * Release eet 1.2.2
+
+2009-08-13  Cedric BAIL
+
+	* Deprecating eet_data_descriptor*_new.
+	* Add eet_data_descriptor_stream_new and eet_data_descriptor_file_new.
+	* Add eina helper.
+	* Cleanup Eet_Data_Descriptor code.
+

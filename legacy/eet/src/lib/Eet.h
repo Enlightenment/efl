@@ -976,15 +976,117 @@ extern "C" {
     *
     * @since 1.0.0
     */
-   EAPI Eet_Data_Descriptor *eet_data_descriptor_new(const char *name, int size, void *(*func_list_next) (void *l), void *(*func_list_append) (void *l, void *d), void *(*func_list_data) (void *l), void *(*func_list_free) (void *l), void  (*func_hash_foreach) (void *h, int (*func) (void *h, const char *k, void *dt, void *fdt), void *fdt), void *(*func_hash_add) (void *h, const char *k, void *d), void  (*func_hash_free) (void *h));
+   EAPI Eet_Data_Descriptor *eet_data_descriptor_new(const char *name, int size, void *(*func_list_next) (void *l), void *(*func_list_append) (void *l, void *d), void *(*func_list_data) (void *l), void *(*func_list_free) (void *l), void  (*func_hash_foreach) (void *h, int (*func) (void *h, const char *k, void *dt, void *fdt), void *fdt), void *(*func_hash_add) (void *h, const char *k, void *d), void  (*func_hash_free) (void *h)) EINA_DEPRECATED;
    /*
     * FIXME:
     *
     * moving to this api from the old above. this will break things when the
     * move happens - but be warned
     */
-   EAPI Eet_Data_Descriptor *eet_data_descriptor2_new(Eet_Data_Descriptor_Class *eddc);
-   EAPI Eet_Data_Descriptor *eet_data_descriptor3_new(Eet_Data_Descriptor_Class *eddc);
+   EAPI Eet_Data_Descriptor *eet_data_descriptor2_new(const Eet_Data_Descriptor_Class *eddc) EINA_DEPRECATED;
+   EAPI Eet_Data_Descriptor *eet_data_descriptor3_new(const Eet_Data_Descriptor_Class *eddc) EINA_DEPRECATED;
+
+   /**
+    * This function creates a new data descriptore and returns a handle to the
+    * new data descriptor. On creation it will be empty, containing no contents
+    * describing anything other than the shell of the data structure.
+    * @param edd The data descriptor to free.
+    *
+    * You add structure members to the data descriptor using the macros
+    * EET_DATA_DESCRIPTOR_ADD_BASIC(), EET_DATA_DESCRIPTOR_ADD_SUB() and
+    * EET_DATA_DESCRIPTOR_ADD_LIST(), depending on what type of member you are
+    * adding to the description.
+    *
+    * Once you have described all the members of a struct you want loaded, or
+    * saved eet can load and save those members for you, encode them into
+    * endian-independant serialised data chunks for transmission across a
+    * a network or more.
+    *
+    * This function specially ignore str_direct_alloc and str_direct_free. It
+    * is usefull when the eet_data you are reading don't have a dictionnary
+    * like network stream or ipc. It also mean that all string will be allocated
+    * and duplicated in memory.
+    *
+    * @since 1.3.0
+    */
+   EAPI Eet_Data_Descriptor *eet_data_descriptor_stream_new(const Eet_Data_Descriptor_Class *eddc);
+
+  /**
+    * This function creates a new data descriptore and returns a handle to the
+    * new data descriptor. On creation it will be empty, containing no contents
+    * describing anything other than the shell of the data structure.
+    * @param edd The data descriptor to free.
+    *
+    * You add structure members to the data descriptor using the macros
+    * EET_DATA_DESCRIPTOR_ADD_BASIC(), EET_DATA_DESCRIPTOR_ADD_SUB() and
+    * EET_DATA_DESCRIPTOR_ADD_LIST(), depending on what type of member you are
+    * adding to the description.
+    *
+    * Once you have described all the members of a struct you want loaded, or
+    * saved eet can load and save those members for you, encode them into
+    * endian-independant serialised data chunks for transmission across a
+    * a network or more.
+    *
+    * This function use str_direct_alloc and str_direct_free. It is usefull when
+    * the eet_data you are reading come from a file and have a dictionnary. This
+    * will reduce memory use, improve the possibility for the OS to page this
+    * string out. But be carrefull all EET_T_STRING are pointer to a mmapped area
+    * and it will point to nowhere if you close the file. So as long as you use
+    * this strings, you need to have the Eet_File open.
+    *
+    * @since 1.3.0
+    */
+   EAPI Eet_Data_Descriptor *eet_data_descriptor_file_new(const Eet_Data_Descriptor_Class *eddc);
+
+   /**
+    * This function is an helper that set all the parameter of an Eet_Data_Descriptor_Class
+    * correctly when you use Eina data type with a stream.
+    * @param class The Eet_Data_Descriptor_Class you want to set.
+    * @param name The name of the structure described by this class.
+    * @param size The size of the structure described by this class.
+    * @return EINA_TRUE if the structure was correctly set (The only reason that could make
+    * it fail is if you did give wrong parameter).
+    *
+    * @since 1.3.0
+    */
+   EAPI Eina_Bool eina_stream_data_descriptor_set(Eet_Data_Descriptor_Class *class, const char *name, int size);
+
+   /**
+    * This macro is an helper that set all the parameter of an Eet_Data_Descriptor_Class
+    * correctly when you use Eina data type with stream.
+    * @param class The Eet_Data_Descriptor_Class you want to set.
+    * @param type The type of the structure described by this class.
+    * @return EINA_TRUE if the structure was correctly set (The only reason that could make
+    * it fail is if you did give wrong parameter).
+    *
+    * @since 1.3.0
+    */
+#define EINA_STREAM_DATA_DESCRIPTOR_SET(Class, Type) eina_stream_data_descriptor_set(Class, #Type , sizeof (Type));
+
+   /**
+    * This function is an helper that set all the parameter of an Eet_Data_Descriptor_Class
+    * correctly when you use Eina data type with a file.
+    * @param class The Eet_Data_Descriptor_Class you want to set.
+    * @param name The name of the structure described by this class.
+    * @param size The size of the structure described by this class.
+    * @return EINA_TRUE if the structure was correctly set (The only reason that could make
+    * it fail is if you did give wrong parameter).
+    *
+    * @since 1.3.0
+    */
+   EAPI Eina_Bool eina_file_data_descriptor_set(Eet_Data_Descriptor_Class *class, const char *name, int size);
+
+   /**
+    * This macro is an helper that set all the parameter of an Eet_Data_Descriptor_Class
+    * correctly when you use Eina data type with file.
+    * @param class The Eet_Data_Descriptor_Class you want to set.
+    * @param type The type of the structure described by this class.
+    * @return EINA_TRUE if the structure was correctly set (The only reason that could make
+    * it fail is if you did give wrong parameter).
+    *
+    * @since 1.3.0
+    */
+#define EINA_FILE_DATA_DESCRIPTOR_SET(Class, Type) eina_file_data_descriptor_set(Class, #Type , sizeof (Type));
 
    /**
     * This function frees a data descriptor when it is not needed anymore.

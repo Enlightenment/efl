@@ -1011,7 +1011,108 @@ _eet_str_free(const char *str)
    free((char *)str);
 }
 
+static Eina_Hash *
+_eet_eina_hash_add_alloc(Eina_Hash *hash, const char *key, void *data)
+{
+   if (!hash) hash = eina_hash_string_small_new(NULL);
+   if (!hash) return NULL;
+
+   eina_hash_add(hash, key, data);
+   return hash;
+}
+
+static char *
+_edje_str_direct_alloc(const char *str)
+{
+   return (char *)str;
+}
+
+static void
+_edje_str_direct_free(const char *str)
+{
+}
+
 /*---*/
+EAPI Eina_Bool
+eina_stream_data_descriptor_set(Eet_Data_Descriptor_Class *class, const char *name, int size)
+{
+   if (!class || !name) return EINA_FALSE;
+
+   class->name = name;
+   class->size = size;
+   class->version = 1;
+
+   class->func.mem_alloc = _eet_mem_alloc;
+   class->func.mem_free = _eet_mem_free;
+   class->func.str_alloc = (char *(*)(const char *))eina_stringshare_add;
+   class->func.str_free = eina_stringshare_del;
+   class->func.list_next = (void *(*)(void *))eina_list_next;
+   class->func.list_append = (void *(*)(void *, void *))eina_list_append;
+   class->func.list_data = (void *(*)(void *))eina_list_data_get;
+   class->func.list_free = (void *(*)(void *))eina_list_free;
+   class->func.hash_foreach = (void (*)(void *, int (*)(void *, const char *, void *, void *), void *))eina_hash_foreach;
+   class->func.hash_add = (void* (*)(void *, const char *, void *)) _eet_eina_hash_add_alloc;
+   class->func.hash_free = (void (*)(void *))eina_hash_free;
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+eina_file_data_descriptor_set(Eet_Data_Descriptor_Class *class, const char *name, int size)
+{
+   if (!eina_stream_data_descriptor_set(class, name, size))
+     return EINA_FALSE;
+
+   class->version = 2;
+
+   class->func.str_direct_alloc = _edje_str_direct_alloc;
+   class->func.str_direct_free = _edje_str_direct_free;
+
+   return EINA_TRUE;
+}
+
+static Eet_Data_Descriptor *
+_eet_data_descriptor_new(const Eet_Data_Descriptor_Class *eddc, int version)
+{
+   Eet_Data_Descriptor *edd;
+
+   if (!eddc) return NULL;
+   if (eddc->version < version) return NULL;
+
+   edd = calloc(1, sizeof (Eet_Data_Descriptor));
+   if (!edd) return NULL;
+
+   edd->name = eddc->name;
+   edd->ed = NULL;
+   edd->size = eddc->size;
+   edd->func.mem_alloc = _eet_mem_alloc;
+   edd->func.mem_free = _eet_mem_free;
+   edd->func.str_alloc = _eet_str_alloc;
+   edd->func.str_free = _eet_str_free;
+   if (eddc->func.mem_alloc)
+     edd->func.mem_alloc = eddc->func.mem_alloc;
+   if (eddc->func.mem_free)
+     edd->func.mem_free = eddc->func.mem_free;
+   if (eddc->func.str_alloc)
+     edd->func.str_alloc = eddc->func.str_alloc;
+   if (eddc->func.str_free)
+     edd->func.str_free = eddc->func.str_free;
+   edd->func.list_next = eddc->func.list_next;
+   edd->func.list_append = eddc->func.list_append;
+   edd->func.list_data = eddc->func.list_data;
+   edd->func.list_free = eddc->func.list_free;
+   edd->func.hash_foreach = eddc->func.hash_foreach;
+   edd->func.hash_add = eddc->func.hash_add;
+   edd->func.hash_free = eddc->func.hash_free;
+
+   if (version > 1)
+     {
+	edd->func.str_direct_alloc = eddc->func.str_direct_alloc;
+	edd->func.str_direct_free = eddc->func.str_direct_free;
+     }
+
+   return edd;
+}
 
 EAPI Eet_Data_Descriptor *
 eet_data_descriptor_new(const char *name,
@@ -1024,104 +1125,49 @@ eet_data_descriptor_new(const char *name,
 			void *(*func_hash_add) (void *h, const char *k, void *d),
 			void  (*func_hash_free) (void *h))
 {
-   Eet_Data_Descriptor *edd;
+   Eet_Data_Descriptor_Class eddc;
 
    if (!name) return NULL;
-   edd = calloc(1, sizeof(Eet_Data_Descriptor));
-   if (!edd) return NULL;
 
-   edd->name = name;
-   edd->ed = NULL;
-   edd->size = size;
-   edd->func.mem_alloc = _eet_mem_alloc;
-   edd->func.mem_free = _eet_mem_free;
-   edd->func.str_alloc = _eet_str_alloc;
-   edd->func.str_direct_alloc = NULL;
-   edd->func.str_direct_free = NULL;
-   edd->func.str_free = _eet_str_free;
-   edd->func.list_next = func_list_next;
-   edd->func.list_append = func_list_append;
-   edd->func.list_data = func_list_data;
-   edd->func.list_free = func_list_free;
-   edd->func.hash_foreach = func_hash_foreach;
-   edd->func.hash_add = func_hash_add;
-   edd->func.hash_free = func_hash_free;
-   return edd;
-}
+   eddc.name = name;
+   eddc.size = size;
+   eddc.version = 0;
 
-/* new replcement */
-EAPI Eet_Data_Descriptor *
-eet_data_descriptor2_new(Eet_Data_Descriptor_Class *eddc)
-{
-   Eet_Data_Descriptor *edd;
+   memset(&eddc, 0, sizeof (Eet_Data_Descriptor_Class));
 
-   if (!eddc) return NULL;
-   if (eddc->version < 1) return NULL;
-   edd = calloc(1, sizeof(Eet_Data_Descriptor));
-   if (!edd) return NULL;
+   eddc.func.list_next = func_list_next;
+   eddc.func.list_append = func_list_append;
+   eddc.func.list_data = func_list_data;
+   eddc.func.list_free = func_list_free;
+   eddc.func.hash_foreach = func_hash_foreach;
+   eddc.func.hash_add = func_hash_add;
+   eddc.func.hash_free = func_hash_free;
 
-   edd->name = eddc->name;
-   edd->ed = NULL;
-   edd->size = eddc->size;
-   edd->func.mem_alloc = _eet_mem_alloc;
-   edd->func.mem_free = _eet_mem_free;
-   edd->func.str_alloc = _eet_str_alloc;
-   edd->func.str_free = _eet_str_free;
-   if (eddc->func.mem_alloc)
-     edd->func.mem_alloc = eddc->func.mem_alloc;
-   if (eddc->func.mem_free)
-     edd->func.mem_free = eddc->func.mem_free;
-   if (eddc->func.str_alloc)
-     edd->func.str_alloc = eddc->func.str_alloc;
-   if (eddc->func.str_free)
-     edd->func.str_free = eddc->func.str_free;
-   edd->func.list_next = eddc->func.list_next;
-   edd->func.list_append = eddc->func.list_append;
-   edd->func.list_data = eddc->func.list_data;
-   edd->func.list_free = eddc->func.list_free;
-   edd->func.hash_foreach = eddc->func.hash_foreach;
-   edd->func.hash_add = eddc->func.hash_add;
-   edd->func.hash_free = eddc->func.hash_free;
-
-   return edd;
+   return _eet_data_descriptor_new(&eddc, 0);
 }
 
 EAPI Eet_Data_Descriptor *
-eet_data_descriptor3_new(Eet_Data_Descriptor_Class *eddc)
+eet_data_descriptor2_new(const Eet_Data_Descriptor_Class *eddc)
 {
-   Eet_Data_Descriptor *edd;
+   return _eet_data_descriptor_new(eddc, 1);
+}
 
-   if (!eddc) return NULL;
-   if (eddc->version < 2) return NULL;
-   edd = calloc(1, sizeof(Eet_Data_Descriptor));
-   if (!edd) return NULL;
+EAPI Eet_Data_Descriptor *
+eet_data_descriptor3_new(const Eet_Data_Descriptor_Class *eddc)
+{
+   return _eet_data_descriptor_new(eddc, 2);
+}
 
-   edd->name = eddc->name;
-   edd->ed = NULL;
-   edd->size = eddc->size;
-   edd->func.mem_alloc = _eet_mem_alloc;
-   edd->func.mem_free = _eet_mem_free;
-   edd->func.str_alloc = _eet_str_alloc;
-   edd->func.str_free = _eet_str_free;
-   if (eddc->func.mem_alloc)
-     edd->func.mem_alloc = eddc->func.mem_alloc;
-   if (eddc->func.mem_free)
-     edd->func.mem_free = eddc->func.mem_free;
-   if (eddc->func.str_alloc)
-     edd->func.str_alloc = eddc->func.str_alloc;
-   if (eddc->func.str_free)
-     edd->func.str_free = eddc->func.str_free;
-   edd->func.list_next = eddc->func.list_next;
-   edd->func.list_append = eddc->func.list_append;
-   edd->func.list_data = eddc->func.list_data;
-   edd->func.list_free = eddc->func.list_free;
-   edd->func.hash_foreach = eddc->func.hash_foreach;
-   edd->func.hash_add = eddc->func.hash_add;
-   edd->func.hash_free = eddc->func.hash_free;
-   edd->func.str_direct_alloc = eddc->func.str_direct_alloc;
-   edd->func.str_direct_free = eddc->func.str_direct_free;
+EAPI Eet_Data_Descriptor *
+eet_data_descriptor_stream_new(const Eet_Data_Descriptor_Class *eddc)
+{
+   return _eet_data_descriptor_new(eddc, 1);
+}
 
-   return edd;
+EAPI Eet_Data_Descriptor *
+eet_data_descriptor_file_new(const Eet_Data_Descriptor_Class *eddc)
+{
+   return _eet_data_descriptor_new(eddc, 2);
 }
 
 EAPI void
