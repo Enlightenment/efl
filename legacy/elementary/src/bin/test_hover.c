@@ -1,7 +1,7 @@
 #include <Elementary.h>
 
 static void
-my_hover_bt_1(void *data, Evas_Object *obj, void *event_info)
+my_hover_bt(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *hv = data;
 
@@ -32,7 +32,7 @@ test_hover(void *data, Evas_Object *obj, void *event_info)
 
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Button");
-   evas_object_smart_callback_add(bt, "clicked", my_hover_bt_1, hv);
+   evas_object_smart_callback_add(bt, "clicked", my_hover_bt, hv);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    elm_hover_parent_set(hv, win);
@@ -114,7 +114,7 @@ test_hover2(void *data, Evas_Object *obj, void *event_info)
 
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Button");
-   evas_object_smart_callback_add(bt, "clicked", my_hover_bt_1, hv);
+   evas_object_smart_callback_add(bt, "clicked", my_hover_bt, hv);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    elm_hover_parent_set(hv, win);

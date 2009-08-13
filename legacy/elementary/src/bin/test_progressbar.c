@@ -15,7 +15,7 @@ typedef struct Progressbar
 static Progressbar _test_progressbar;
 
 static int
-_my_bt_39_progressbar_value_set (void *data)
+_my_progressbar_value_set (void *data)
 {
    double progress;
 
@@ -32,19 +32,19 @@ _my_bt_39_progressbar_value_set (void *data)
 }
 
 static void
-my_bt_39_test_start(void *data, Evas_Object *obj, void *event_info)
+my_progressbar_test_start(void *data, Evas_Object *obj, void *event_info)
 {
    elm_progressbar_pulse(_test_progressbar.pb2, EINA_TRUE);
    elm_progressbar_pulse(_test_progressbar.pb5, EINA_TRUE);
    if (!_test_progressbar.run)
      {
-        _test_progressbar.timer = ecore_timer_add(0.1, _my_bt_39_progressbar_value_set, NULL);
+        _test_progressbar.timer = ecore_timer_add(0.1, _my_progressbar_value_set, NULL);
         _test_progressbar.run = EINA_TRUE;
      }
 }
 
 static void
-my_bt_39_test_stop(void *data, Evas_Object *obj, void *event_info)
+my_progressbar_test_stop(void *data, Evas_Object *obj, void *event_info)
 {
    elm_progressbar_pulse(_test_progressbar.pb2, EINA_FALSE);
    elm_progressbar_pulse(_test_progressbar.pb5, EINA_FALSE);
@@ -56,9 +56,9 @@ my_bt_39_test_stop(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_bt_39_destroy(void *data, Evas_Object *obj, void *event_info)
+my_progressbar_destroy(void *data, Evas_Object *obj, void *event_info)
 {
-   my_bt_39_test_stop(NULL, NULL, NULL);
+   my_progressbar_test_stop(NULL, NULL, NULL);
    evas_object_del(obj);
 }
 
@@ -71,7 +71,7 @@ test_progressbar(void *data, Evas_Object *obj, void *event_info)
 
    win = elm_win_add(NULL, "progressbar", ELM_WIN_BASIC);
    elm_win_title_set(win, "Progressbar");
-   evas_object_smart_callback_add(win, "delete-request", my_bt_39_destroy, test);
+   evas_object_smart_callback_add(win, "delete-request", my_progressbar_destroy, test);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -173,13 +173,13 @@ test_progressbar(void *data, Evas_Object *obj, void *event_info)
 
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Start");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_39_test_start, NULL);
+   evas_object_smart_callback_add(bt, "clicked", my_progressbar_test_start, NULL);
    elm_box_pack_end(bt_bx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Stop");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_39_test_stop, NULL);
+   evas_object_smart_callback_add(bt, "clicked", my_progressbar_test_stop, NULL);
    elm_box_pack_end(bt_bx, bt);
    evas_object_show(bt);
 

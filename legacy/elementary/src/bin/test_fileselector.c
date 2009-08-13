@@ -1,7 +1,7 @@
 #include <Elementary.h>
 
 static void
-my_bt_40_done(void *data, Evas_Object *obj, void *event_info)
+my_fileselector_done(void *data, Evas_Object *obj, void *event_info)
 {
    /* event_info conatin the full path of the selected file
     * or NULL if none is selected or cancel is pressed */
@@ -14,7 +14,7 @@ my_bt_40_done(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_bt_40_selected(void *data, Evas_Object *obj, void *event_info)
+my_fileselector_selected(void *data, Evas_Object *obj, void *event_info)
 {
    /* event_info conatin the full path of the selected file */
    const char *selected = event_info;
@@ -54,8 +54,8 @@ test_fileselector(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, fs);
    evas_object_show(fs);
    /* the 'done' cb is called when the user press ok/cancel */
-   evas_object_smart_callback_add(fs, "done", my_bt_40_done, win);
-   evas_object_smart_callback_add(fs, "selected", my_bt_40_selected, win);
+   evas_object_smart_callback_add(fs, "done", my_fileselector_done, win);
+   evas_object_smart_callback_add(fs, "selected", my_fileselector_selected, win);
 
    evas_object_resize(win, 240, 350);
    evas_object_show(win);
