@@ -166,6 +166,7 @@ extern "C" {
 #include "eina_convert.h"
 #include "eina_cpu.h"
 #include "eina_tiler.h"
+#include "eina_hamster.h"
 
 #ifdef __cplusplus
 }
