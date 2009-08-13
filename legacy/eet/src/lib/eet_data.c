@@ -1022,19 +1022,19 @@ _eet_eina_hash_add_alloc(Eina_Hash *hash, const char *key, void *data)
 }
 
 static char *
-_edje_str_direct_alloc(const char *str)
+_eet_str_direct_alloc(const char *str)
 {
    return (char *)str;
 }
 
 static void
-_edje_str_direct_free(const char *str)
+_eet_str_direct_free(const char *str)
 {
 }
 
 /*---*/
 EAPI Eina_Bool
-eina_stream_data_descriptor_set(Eet_Data_Descriptor_Class *class, const char *name, int size)
+eet_eina_stream_data_descriptor_class_set(Eet_Data_Descriptor_Class *class, const char *name, int size)
 {
    if (!class || !name) return EINA_FALSE;
 
@@ -1058,15 +1058,15 @@ eina_stream_data_descriptor_set(Eet_Data_Descriptor_Class *class, const char *na
 }
 
 EAPI Eina_Bool
-eina_file_data_descriptor_set(Eet_Data_Descriptor_Class *class, const char *name, int size)
+eet_eina_file_data_descriptor_class_set(Eet_Data_Descriptor_Class *class, const char *name, int size)
 {
-   if (!eina_stream_data_descriptor_set(class, name, size))
+   if (!eet_eina_stream_data_descriptor_class_set(class, name, size))
      return EINA_FALSE;
 
    class->version = 2;
 
-   class->func.str_direct_alloc = _edje_str_direct_alloc;
-   class->func.str_direct_free = _edje_str_direct_free;
+   class->func.str_direct_alloc = _eet_str_direct_alloc;
+   class->func.str_direct_free = _eet_str_direct_free;
 
    return EINA_TRUE;
 }

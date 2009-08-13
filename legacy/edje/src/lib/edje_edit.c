@@ -5475,12 +5475,12 @@ source_edd(void)
 {
    Eet_Data_Descriptor_Class eddc;
 
-   eina_stream_data_descriptor_set(&eddc, "srcfile", sizeof(SrcFile));
+   eet_eina_stream_data_descriptor_class_set(&eddc, "srcfile", sizeof(SrcFile));
    _srcfile_edd = eet_data_descriptor_stream_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_srcfile_edd, SrcFile, "name", name, EET_T_INLINED_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_srcfile_edd, SrcFile, "file", file, EET_T_INLINED_STRING);
 
-   eina_stream_data_descriptor_set(&eddc, "srcfile_list", sizeof(SrcFile_List));
+   eet_eina_stream_data_descriptor_class_set(&eddc, "srcfile_list", sizeof(SrcFile_List));
    _srcfile_list_edd = eet_data_descriptor_stream_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_LIST(_srcfile_list_edd, SrcFile_List, "list", list, _srcfile_edd);
 }
