@@ -1129,11 +1129,11 @@ eet_data_descriptor_new(const char *name,
 
    if (!name) return NULL;
 
+   memset(&eddc, 0, sizeof (Eet_Data_Descriptor_Class));
+
    eddc.name = name;
    eddc.size = size;
    eddc.version = 0;
-
-   memset(&eddc, 0, sizeof (Eet_Data_Descriptor_Class));
 
    eddc.func.list_next = func_list_next;
    eddc.func.list_append = func_list_append;
