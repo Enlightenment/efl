@@ -143,8 +143,9 @@ ecore_thread_init(void)
      _ecore_thread_count_max = 1;
 
    ECORE_THREAD_PIPE_DEL = ecore_event_type_new();
+#ifdef BUILD_PTHREAD
    del_handler = ecore_event_handler_add(ECORE_THREAD_PIPE_DEL, _ecore_thread_pipe_del, NULL);
-
+#endif
    return _ecore_thread_init;
 }
 
