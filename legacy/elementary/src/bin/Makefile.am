@@ -24,7 +24,12 @@ if BUILD_QUICKLAUNCH
 bin_PROGRAMS += elementary_quicklaunch elementary_run elementary_testql
 endif
 
-elementary_test_SOURCES = test.c
+elementary_test_SOURCES = test.c test_bg.c test_icon.c test_box.c \
+test_button.c test_toggle.c test_table.c test_clock.c test_layout.c \
+test_hover.c test_entry.c test_notepad.c test_anchorview.c test_anchorblock.c \
+test_toolbar.c test_hoversel.c test_list.c test_carousel.c test_inwin.c \
+test_scaling.c test_slider.c test_genlist.c test_check.c test_pager.c \
+test_radio.c test_win_state.c test_progressbar.c test_fileselector.c
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la
 elementary_test_LDFLAGS =
 
