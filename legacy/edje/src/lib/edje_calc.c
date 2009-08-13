@@ -1019,19 +1019,19 @@ _edje_part_recalc_single_fill(Edje_Real_Part *ep,
 	double m;
 	int angle;
 
-	params->fill.x = desc->gradient.rel1.offset_x + (params->w * desc->gradient.rel1.relative_x);
-	params->fill.y = desc->gradient.rel1.offset_y + (params->h * desc->gradient.rel1.relative_y);
+	params->type.common.fill.x = desc->gradient.rel1.offset_x + (params->w * desc->gradient.rel1.relative_x);
+	params->type.common.fill.y = desc->gradient.rel1.offset_y + (params->h * desc->gradient.rel1.relative_y);
 
 	x2 = desc->gradient.rel2.offset_x + (params->w * desc->gradient.rel2.relative_x);
 	y2 = desc->gradient.rel2.offset_y + (params->h * desc->gradient.rel2.relative_y);
 
-	params->fill.w = 1; /* doesn't matter for linear grads */
+	params->type.common.fill.w = 1; /* doesn't matter for linear grads */
 
-	dy = y2 - params->fill.y;
-	dx = x2 - params->fill.x;
-	params->fill.h = sqrt(dx * dx + dy * dy);
+	dy = y2 - params->type.common.fill.y;
+	dx = x2 - params->type.common.fill.x;
+	params->type.common.fill.h = sqrt(dx * dx + dy * dy);
 
-	params->fill.spread = desc->fill.spread;
+	params->type.common.fill.spread = desc->fill.spread;
 
 	if (dx == 0 && dy == 0)
 	  {
@@ -1056,7 +1056,7 @@ _edje_part_recalc_single_fill(Edje_Real_Part *ep,
 	     else
 	       angle = 360 - angle;
 	  }
-	params->fill.angle = angle;
+	params->type.common.fill.angle = angle;
      }
    else
      {
@@ -1070,8 +1070,8 @@ _edje_part_recalc_single_fill(Edje_Real_Part *ep,
 	     else
 	       fw = params->w;
 
-	     params->fill.x = desc->fill.pos_abs_x + (fw * desc->fill.pos_rel_x);
-	     params->fill.w = desc->fill.abs_x + (fw * desc->fill.rel_x);
+	     params->type.common.fill.x = desc->fill.pos_abs_x + (fw * desc->fill.pos_rel_x);
+	     params->type.common.fill.w = desc->fill.abs_x + (fw * desc->fill.rel_x);
 	  }
 	if (flags & FLAG_Y)
 	  {
@@ -1081,11 +1081,11 @@ _edje_part_recalc_single_fill(Edje_Real_Part *ep,
 	     else
 	       fh = params->h;
 
-	     params->fill.y = desc->fill.pos_abs_y + (fh * desc->fill.pos_rel_y);
-	     params->fill.h = desc->fill.abs_y + (fh * desc->fill.rel_y);
+	     params->type.common.fill.y = desc->fill.pos_abs_y + (fh * desc->fill.pos_rel_y);
+	     params->type.common.fill.h = desc->fill.abs_y + (fh * desc->fill.rel_y);
 	  }
-	params->fill.angle = desc->fill.angle;
-	params->fill.spread = desc->fill.spread;
+	params->type.common.fill.angle = desc->fill.angle;
+	params->type.common.fill.spread = desc->fill.spread;
      }
 
 }
@@ -1266,18 +1266,18 @@ _edje_part_recalc_single(Edje *ed,
 	 /* border */
 	 if (flags & FLAG_X)
 	   {
-	      params->type.border.l = desc->border.l;
-	      params->type.border.r = desc->border.r;
+	      params->type.common.spec.image.l = desc->border.l;
+	      params->type.common.spec.image.r = desc->border.r;
 	   }
 	 if (flags & FLAG_Y)
 	   {
-	      params->type.border.t = desc->border.t;
-	      params->type.border.b = desc->border.b;
+	      params->type.common.spec.image.t = desc->border.t;
+	      params->type.common.spec.image.b = desc->border.b;
 	   }
 	 break;
       case EDJE_PART_TYPE_GRADIENT:
-	 params->type.gradient.id = desc->gradient.id;
-	 params->type.gradient.type = desc->gradient.type;
+	 params->type.common.spec.gradient.id = desc->gradient.id;
+	 params->type.common.spec.gradient.type = desc->gradient.type;
 	 break;
       case EDJE_PART_TYPE_TEXT:
       case EDJE_PART_TYPE_TEXTBLOCK:
@@ -1328,22 +1328,22 @@ _edje_part_recalc_single(Edje *ed,
 static void
 _edje_gradient_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description *chosen_desc)
 {
-   evas_object_gradient_fill_angle_set(ep->object, p3->fill.angle);
-   evas_object_gradient_fill_spread_set(ep->object, p3->fill.spread);
-   evas_object_gradient_fill_set(ep->object, p3->fill.x, p3->fill.y,
-				 p3->fill.w, p3->fill.h);
+   evas_object_gradient_fill_angle_set(ep->object, p3->type.common.fill.angle);
+   evas_object_gradient_fill_spread_set(ep->object, p3->type.common.fill.spread);
+   evas_object_gradient_fill_set(ep->object, p3->type.common.fill.x, p3->type.common.fill.y,
+				 p3->type.common.fill.w, p3->type.common.fill.h);
 
-   if (p3->type.gradient.type && p3->type.gradient.type[0])
-     evas_object_gradient_type_set(ep->object, p3->type.gradient.type, NULL);
+   if (p3->type.common.spec.gradient.type && p3->type.common.spec.gradient.type[0])
+     evas_object_gradient_type_set(ep->object, p3->type.common.spec.gradient.type, NULL);
 
    if (ed->file->spectrum_dir && ed->file->spectrum_dir->entries &&
-       p3->type.gradient.id != ep->gradient_id)
+       p3->type.common.spec.gradient.id != ep->gradient_id)
      {
 	Edje_Spectrum_Directory_Entry *se;
 	Edje_Spectrum_Color *sc;
 	Eina_List *l;
 
-	se = eina_list_nth(ed->file->spectrum_dir->entries, p3->type.gradient.id);
+	se = eina_list_nth(ed->file->spectrum_dir->entries, p3->type.common.spec.gradient.id);
 	if (se)
 	  {
 	     evas_object_gradient_clear(ep->object);
@@ -1355,7 +1355,7 @@ _edje_gradient_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, 
 		  evas_object_gradient_alpha_stop_add(ep->object,
 						      sc->a, sc->d);
 	       }
-	     ep->gradient_id = p3->type.gradient.id;
+	     ep->gradient_id = p3->type.common.spec.gradient.id;
 	  }
      }
 }
@@ -1416,11 +1416,11 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
    int image_id;
    int image_count, image_num;
 
-   evas_object_image_fill_set(ep->object, p3->fill.x, p3->fill.y,
-			      p3->fill.w, p3->fill.h);
+   evas_object_image_fill_set(ep->object, p3->type.common.fill.x, p3->type.common.fill.y,
+			      p3->type.common.fill.w, p3->type.common.fill.h);
    evas_object_image_smooth_scale_set(ep->object, p3->smooth);
-   evas_object_image_border_set(ep->object, p3->type.border.l, p3->type.border.r,
-				p3->type.border.t, p3->type.border.b);
+   evas_object_image_border_set(ep->object, p3->type.common.spec.image.l, p3->type.common.spec.image.r,
+				p3->type.common.spec.image.t, p3->type.common.spec.image.b);
    if (chosen_desc->border.no_fill == 0)
      evas_object_image_border_center_fill_set(ep->object, EVAS_BORDER_FILL_DEFAULT);
    else if (chosen_desc->border.no_fill == 1)
@@ -1751,22 +1751,22 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
   	  {
   	   case EDJE_PART_TYPE_IMAGE:
   	   case EDJE_PART_TYPE_GRADIENT:
- 	      p3->fill.x = INTP(p1->fill.x, p2->fill.x, pos);
- 	      p3->fill.y = INTP(p1->fill.y, p2->fill.y, pos);
- 	      p3->fill.w = INTP(p1->fill.w, p2->fill.w, pos);
- 	      p3->fill.h = INTP(p1->fill.h, p2->fill.h, pos);
+ 	      p3->type.common.fill.x = INTP(p1->type.common.fill.x, p2->type.common.fill.x, pos);
+ 	      p3->type.common.fill.y = INTP(p1->type.common.fill.y, p2->type.common.fill.y, pos);
+ 	      p3->type.common.fill.w = INTP(p1->type.common.fill.w, p2->type.common.fill.w, pos);
+ 	      p3->type.common.fill.h = INTP(p1->type.common.fill.h, p2->type.common.fill.h, pos);
   	      if (part_type == EDJE_PART_TYPE_GRADIENT)
   		{
- 		   p3->fill.angle = INTP(p1->fill.angle, p2->fill.angle, pos);
- 		   p3->fill.spread = (beginning_pos) ? p1->fill.spread : p2->fill.spread;
- 		   p3->type.gradient = (beginning_pos) ? p1->type.gradient : p2->type.gradient;
+ 		   p3->type.common.fill.angle = INTP(p1->type.common.fill.angle, p2->type.common.fill.angle, pos);
+ 		   p3->type.common.fill.spread = (beginning_pos) ? p1->type.common.fill.spread : p2->type.common.fill.spread;
+ 		   p3->type.common.spec.gradient = (beginning_pos) ? p1->type.common.spec.gradient : p2->type.common.spec.gradient;
   		}
   	      else
   		{
- 		   p3->type.border.l = INTP(p1->type.border.l, p2->type.border.l, pos);
- 		   p3->type.border.r = INTP(p1->type.border.r, p2->type.border.r, pos);
- 		   p3->type.border.t = INTP(p1->type.border.t, p2->type.border.t, pos);
- 		   p3->type.border.b = INTP(p1->type.border.b, p2->type.border.b, pos);
+ 		   p3->type.common.spec.image.l = INTP(p1->type.common.spec.image.l, p2->type.common.spec.image.l, pos);
+ 		   p3->type.common.spec.image.r = INTP(p1->type.common.spec.image.r, p2->type.common.spec.image.r, pos);
+ 		   p3->type.common.spec.image.t = INTP(p1->type.common.spec.image.t, p2->type.common.spec.image.t, pos);
+ 		   p3->type.common.spec.image.b = INTP(p1->type.common.spec.image.b, p2->type.common.spec.image.b, pos);
   		}
   	      break;
   	   case EDJE_PART_TYPE_TEXT:

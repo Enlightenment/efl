@@ -735,30 +735,35 @@ struct _Edje_Calc_Params
    int              x, y, w, h; // 16
    Edje_Rectangle   req; // 16
    Edje_Rectangle   req_drag; // 16
-   struct {
-      int           x, y, w, h; // 16
-      int           angle; // 4
-      int           spread; // 4
-   } fill;
-   Edje_Color color; // 4
+   Edje_Color       color; // 4
    union {
       struct {
-	 int           l, r, t, b; // 16
-      } border; // 16
+	 struct {
+	    int           x, y, w, h; // 16
+	    int           angle; // 4
+	    int           spread; // 4
+	 } fill; // 24
+
+	 union {
+	    struct {
+	       int           l, r, t, b; // 16
+	    } image; // 16
+	    struct {
+	       int           id; // 4
+	       char         *type; // 4
+	    } gradient; // 8
+	 } spec; // 16
+      } common; // 40
       struct {
 	 Edje_Alignment align; /* text alignment within bounds */ // 16
 	 double         elipsis; // 8
 	 int            size; // 4
 	 Edje_Color     color2, color3; // 8
       } text; // 36
-      struct {
-	 int             id; // 4
-	 char           *type; // 4
-      } gradient; // 8
-   } type; // 36
+   } type; // 40
    unsigned char    visible : 1;
    unsigned char    smooth : 1; // 4
-}; // 116
+}; // 96
 
 struct _Edje_Real_Part_State
 {
