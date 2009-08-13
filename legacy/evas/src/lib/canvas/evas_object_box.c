@@ -1399,7 +1399,7 @@ _evas_object_box_layout_flow_horizontal_row_info_collect(Evas_Object_Box_Data *p
         child_h += padding_t + padding_b;
 
         remain_w -= child_w;
-        if (remain_w >= 0)
+        if (remain_w + priv->pad.h >= 0)
 	  { /* continue "line" */
 	     if (child_h > max_h)
 	       max_h = child_h;
@@ -1522,6 +1522,8 @@ evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *pri
 	  inc_y = remain_y / row_count;
      }
 
+   inc_y += priv->pad.v;
+
    for (i = 0, r = 0, l = priv->children; r <= row_count; r++)
      {
         int row_justify = 0, just_inc = 0, sub_pixel = 0;
@@ -1538,6 +1540,8 @@ evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *pri
 	       _fixed_point_divide_and_decompose_integer
 		 (remain_x, row_size, &row_justify, &just_inc);
 	  }
+
+        row_justify += priv->pad.h;
 
         for (; i <= row_break[r]; i++, l = l->next)
 	  {
@@ -1605,7 +1609,7 @@ _evas_object_box_layout_flow_vertical_col_info_collect(Evas_Object_Box_Data *pri
         child_h += padding_t + padding_b + priv->pad.v;
 
         remain_h -= child_h;
-        if (remain_h >= 0)
+        if (remain_h + priv->pad.v >= 0)
 	  { /* continue "col" */
 	     if (child_w > max_w)
 	       max_w = child_w;
@@ -1701,6 +1705,8 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv,
 	  inc_x = remain_x / col_count;
      }
 
+   inc_x += priv->pad.h;
+
    for (i = 0, c = 0, l = priv->children; c <= col_count; c++)
      {
         int col_justify = 0, just_inc = 0, sub_pixel = 0;
@@ -1717,6 +1723,8 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv,
 	       _fixed_point_divide_and_decompose_integer
 		 (remain_y, col_size, &col_justify, &just_inc);
 	  }
+
+        col_justify += priv->pad.v;
 
         for (; i <= col_break[c]; i++, l = l->next)
 	  {
