@@ -5467,31 +5467,6 @@ _edje_generate_source(Evas_Object *obj)
 /*  SAVING ROUTINES  */
 /*********************/
 ////////////////////////////////////////
-static char *
-_edje_edit_str_direct_alloc(const char *str)
-{
-   return (char *)str;
-}
-
-static void
-_edje_edit_str_direct_free(const char *str)
-{
-}
-
-static void *
-_edje_eina_hash_add_alloc(void *hash, const void *key, void *data)
-{
-   Eina_Hash *result = hash;
-
-   if (!result) result = eina_hash_string_small_new(NULL);
-   if (!result) return NULL;
-
-   eina_hash_add(result, key, data);
-
-   return result;
-}
-
-
 static Eet_Data_Descriptor *_srcfile_edd = NULL;
 static Eet_Data_Descriptor *_srcfile_list_edd = NULL;
 
@@ -5500,30 +5475,13 @@ source_edd(void)
 {
    Eet_Data_Descriptor_Class eddc;
 
-   eddc.version = EET_DATA_DESCRIPTOR_CLASS_VERSION;
-   eddc.func.mem_alloc = NULL;
-   eddc.func.mem_free = NULL;
-   eddc.func.str_alloc = eina_stringshare_add;
-   eddc.func.str_free = eina_stringshare_del;
-   eddc.func.list_next = eina_list_next;
-   eddc.func.list_append = eina_list_append;
-   eddc.func.list_data = eina_list_data_get;
-   eddc.func.list_free = eina_list_free;
-   eddc.func.hash_foreach = eina_hash_foreach;
-   eddc.func.hash_add = _edje_eina_hash_add_alloc;
-   eddc.func.hash_free = eina_hash_free;
-   eddc.func.str_direct_alloc = _edje_edit_str_direct_alloc;
-   eddc.func.str_direct_free = _edje_edit_str_direct_free;
-
-   eddc.name = "srcfile"; 
-   eddc.size = sizeof(SrcFile);
-   _srcfile_edd = eet_data_descriptor3_new(&eddc);
+   eina_stream_data_descriptor_set(&eddc, "srcfile", sizeof(SrcFile));
+   _srcfile_edd = eet_data_descriptor_stream_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_srcfile_edd, SrcFile, "name", name, EET_T_INLINED_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_srcfile_edd, SrcFile, "file", file, EET_T_INLINED_STRING);
 
-   eddc.name = "srcfile_list"; 
-   eddc.size = sizeof(SrcFile_List);
-   _srcfile_list_edd = eet_data_descriptor3_new(&eddc);
+   eina_stream_data_descriptor_set(&eddc, "srcfile_list", sizeof(SrcFile_List));
+   _srcfile_list_edd = eet_data_descriptor_stream_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_LIST(_srcfile_list_edd, SrcFile_List, "list", list, _srcfile_edd);
 }
 /////////////////////////////////////////
