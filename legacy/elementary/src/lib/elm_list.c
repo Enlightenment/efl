@@ -623,11 +623,51 @@ elm_list_item_icon_get(const Elm_List_Item *it)
    return it->icon;
 }
 
+EAPI void
+elm_list_item_icon_set(Elm_List_Item *it, Evas_Object *icon)
+{
+   if (it->icon == icon)
+     return;
+   if (it->dummy_icon && !icon)
+     return;
+   if (it->dummy_icon)
+     evas_object_del(it->icon);
+   if (!icon)
+     {
+	icon = evas_object_rectangle_add(evas_object_evas_get(it->obj));
+	evas_object_color_set(icon, 0, 0, 0, 0);
+	it->dummy_icon = EINA_TRUE;
+     }
+   it->icon = icon;
+   if (it->base)
+     edje_object_part_swallow(it->base, "elm.swallow.icon", icon);
+}
+
 EAPI Evas_Object *
 elm_list_item_end_get(const Elm_List_Item *it)
 {
    if (it->dummy_end) return NULL;
    return it->end;
+}
+
+EAPI void
+elm_list_item_end_set(Elm_List_Item *it, Evas_Object *end)
+{
+   if (it->end == end)
+     return;
+   if (it->dummy_end && !end)
+     return;
+   if (it->dummy_end)
+     evas_object_del(it->end);
+   if (!end)
+     {
+	end = evas_object_rectangle_add(evas_object_evas_get(it->obj));
+	evas_object_color_set(end, 0, 0, 0, 0);
+	it->dummy_end = EINA_TRUE;
+     }
+   it->end = end;
+   if (it->base)
+     edje_object_part_swallow(it->base, "elm.swallow.end", end);
 }
 
 EAPI Evas_Object *
@@ -640,6 +680,15 @@ EAPI const char *
 elm_list_item_label_get(const Elm_List_Item *it)
 {
    return it->label;
+}
+
+EAPI void
+elm_list_item_label_set(Elm_List_Item *it, const char *text)
+{
+   if (!eina_stringshare_replace(&it->label, text))
+     return;
+   if (it->base)
+     edje_object_part_text_set(it->base, "elm.text", it->label);
 }
 
 EAPI Elm_List_Item *
