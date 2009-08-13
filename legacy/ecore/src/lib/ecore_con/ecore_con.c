@@ -94,13 +94,9 @@ ecore_con_init(void)
    ECORE_CON_EVENT_SERVER_DATA = ecore_event_type_new();
 
    /* TODO Remember return value, if it fails, use gethostbyname() */
-   /* TODO: check sub modules init success, consider if module is available
-    * before even trying to initialize it (ie: url might be disabled)
-    */
    ecore_con_ssl_init();
    ecore_con_dns_init();
    ecore_con_info_init();
-   ecore_con_url_init();
 
    return init_count;
 }
@@ -119,7 +115,6 @@ ecore_con_shutdown(void)
    while (servers)
      _ecore_con_server_free(eina_list_data_get(servers));
 
-   ecore_con_url_shutdown();
    ecore_con_info_shutdown();
    ecore_con_dns_shutdown();
    ecore_con_ssl_shutdown();
