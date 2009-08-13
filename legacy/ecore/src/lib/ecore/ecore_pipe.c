@@ -59,15 +59,14 @@ struct _Ecore_Pipe
    int               fd_write;
    Ecore_Fd_Handler *fd_handler;
    const void       *data;
-   void (*handler)  (void *data, void *buffer, unsigned int nbyte);
+   void            (*handler) (void *data, void *buffer, unsigned int nbyte);
    unsigned int      len;
    size_t            already_read;
    void             *passed_data;
 };
 
 
-static int _ecore_pipe_read(void             *data,
-                            Ecore_Fd_Handler *fd_handler);
+static int _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler);
 
 /**
  * @defgroup Ecore_Pipe_Group Pipe wrapper
@@ -289,12 +288,10 @@ ecore_pipe_add(void (*handler) (void *data, void *buffer, unsigned int nbyte),
    Ecore_Pipe *p;
    int         fds[2];
 
-   if(!handler)
-     return NULL;
+   if (!handler) return NULL;
 
    p = (Ecore_Pipe *)calloc(1, sizeof(Ecore_Pipe));
-   if (!p)
-     return NULL;
+   if (!p) return NULL;
 
    if (pipe(fds))
      {
@@ -316,7 +313,6 @@ ecore_pipe_add(void (*handler) (void *data, void *buffer, unsigned int nbyte),
                                           _ecore_pipe_read,
                                           p,
                                           NULL, NULL);
-
    return p;
 }
 
@@ -334,18 +330,14 @@ ecore_pipe_del(Ecore_Pipe *p)
 
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
-	ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE,
-	      "ecore_pipe_del");
+	ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_del");
 	return NULL;
      }
-   if(p->fd_handler != NULL)
-     ecore_main_fd_handler_del(p->fd_handler);
-   if(p->fd_read != PIPE_FD_INVALID)
-     pipe_close(p->fd_read);
-   if(p->fd_write != PIPE_FD_INVALID)
-     pipe_close(p->fd_write);
+   if (p->fd_handler != NULL) ecore_main_fd_handler_del(p->fd_handler);
+   if (p->fd_read != PIPE_FD_INVALID) pipe_close(p->fd_read);
+   if (p->fd_write != PIPE_FD_INVALID) pipe_close(p->fd_write);
    data = (void *)p->data;
-   free (p);
+   free(p);
    return data;
 }
 
@@ -360,8 +352,7 @@ ecore_pipe_read_close(Ecore_Pipe *p)
 {
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
-	ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE,
-	      "ecore_pipe_read_close");
+	ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_read_close");
 	return;
      }
    ecore_main_fd_handler_del(p->fd_handler);
@@ -381,8 +372,7 @@ ecore_pipe_write_close(Ecore_Pipe *p)
 {
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
-	ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE,
-	      "ecore_pipe_write_close");
+	ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_write_close");
 	return;
      }
    pipe_close(p->fd_write);
@@ -407,13 +397,11 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
 
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
-	ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE,
-	      "ecore_pipe_write");
+	ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_write");
 	return FALSE;
      }
 
-   if(p->fd_write == PIPE_FD_INVALID)
-     return FALSE;
+   if (p->fd_write == PIPE_FD_INVALID) return FALSE;
 
    /* First write the len into the pipe */
    do
@@ -428,7 +416,7 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
 	  {
 	     /* XXX What should we do here? */
 	     fprintf(stderr, "The length of the data was not written complete"
-		  " to the pipe\n");
+                     " to the pipe\n");
 	     return FALSE;
 	  }
 	else if (ret == PIPE_FD_ERROR && errno == EPIPE)
@@ -443,22 +431,21 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
 	else
 	  {
 	     fprintf(stderr, "An unhandled error (ret: %d errno: %d)"
-		   "occured while writing to the pipe the length\n",
-		   ret, errno);
+                     "occured while writing to the pipe the length\n",
+                     ret, errno);
 	  }
      }
    while (retry--);
 
-   if (retry != ECORE_PIPE_WRITE_RETRY)
-     return FALSE;
+   if (retry != ECORE_PIPE_WRITE_RETRY) return FALSE;
 
    /* and now pass the data to the pipe */
    do
      {
 	ret = pipe_write(p->fd_write,
-	      ((unsigned char *)buffer) + already_written,
-	      nbytes - already_written);
-
+                         ((unsigned char *)buffer) + already_written,
+                         nbytes - already_written);
+        
 	if (ret == (ssize_t)(nbytes - already_written))
 	  return TRUE;
 	else if (ret >= 0)
@@ -478,8 +465,8 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
 	else
 	  {
 	     fprintf(stderr, "An unhandled error (ret: %d errno: %d)"
-		   "occured while writing to the pipe the length\n",
-		   ret, errno);
+                     "occured while writing to the pipe the length\n",
+                     ret, errno);
 	  }
      }
    while (retry--);
@@ -517,7 +504,7 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	       {
 		  /* XXX What should we do here? */
 		  fprintf(stderr, "Only read %d bytes from the pipe, although"
-			" we need to read %d bytes.\n", ret, sizeof(p->len));
+                          " we need to read %d bytes.\n", ret, sizeof(p->len));
 	       }
 	     else if (ret == 0)
 	       {
@@ -532,8 +519,8 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	     else
 	       {
 		  fprintf(stderr, "An unhandled error (ret: %d errno: %d)"
-			"occured while reading from the pipe the length\n",
-			ret, errno);
+                          "occured while reading from the pipe the length\n",
+                          ret, errno);
 		  return ECORE_CALLBACK_RENEW;
 	       }
 	  }
@@ -543,9 +530,9 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 
 	/* and read the passed data */
 	ret = pipe_read(p->fd_read,
-	      ((unsigned char *)p->passed_data) + p->already_read,
-	      p->len - p->already_read);
-
+                        ((unsigned char *)p->passed_data) + p->already_read,
+                        p->len - p->already_read);
+        
 	/* catch the non error case first */
 	if (ret == (ssize_t)(p->len - p->already_read))
 	  {
@@ -574,12 +561,12 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	else
 	  {
 	     fprintf(stderr, "An unhandled error (ret: %d errno: %d)"
-		   "occured while reading from the pipe the data\n",
-		   ret, errno);
+                     "occured while reading from the pipe the data\n",
+                     ret, errno);
 	     return ECORE_CALLBACK_RENEW;
 	  }
      }
    while (ecore_time_get() - start_time < ecore_animator_frametime_get());
-
+   
    return ECORE_CALLBACK_RENEW;
 }
