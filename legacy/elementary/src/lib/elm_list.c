@@ -610,10 +610,10 @@ elm_list_item_del_cb_set(Elm_List_Item *it, void (*func)(void *data, Evas_Object
    it->del_cb = func;
 }
 
-EAPI const void *
+EAPI void *
 elm_list_item_data_get(const Elm_List_Item *it)
 {
-   return it->data;
+   return (void *)it->data;
 }
 
 EAPI Evas_Object *

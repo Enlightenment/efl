@@ -1946,10 +1946,10 @@ elm_genlist_item_del(Elm_Genlist_Item *it)
  *
  * @ingroup Genlist
  */
-EAPI const void *
+EAPI void *
 elm_genlist_item_data_get(const Elm_Genlist_Item *it)
 {
-   return it->data;
+   return (void *)it->data;
 }
 
 /**

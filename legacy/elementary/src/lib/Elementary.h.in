@@ -575,7 +575,7 @@ extern "C" {
    EAPI void         elm_list_item_show(Elm_List_Item *item);
    EAPI void         elm_list_item_del(Elm_List_Item *item);
    EAPI void         elm_list_item_del_cb_set(Elm_List_Item *item, void (*func)(void *data, Evas_Object *obj, void *event_info));
-   EAPI const void  *elm_list_item_data_get(const Elm_List_Item *item);
+   EAPI  void       *elm_list_item_data_get(const Elm_List_Item *item);
    EAPI Evas_Object *elm_list_item_icon_get(const Elm_List_Item *item);
    EAPI Evas_Object *elm_list_item_end_get(const Elm_List_Item *item);
    EAPI Evas_Object *elm_list_item_base_get(const Elm_List_Item *item);
@@ -665,7 +665,7 @@ extern "C" {
    EAPI Eina_Bool         elm_genlist_item_disabled_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_show(Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_del(Elm_Genlist_Item *item);
-   EAPI const void       *elm_genlist_item_data_get(const Elm_Genlist_Item *item);
+   EAPI void             *elm_genlist_item_data_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_update(Elm_Genlist_Item *item);
    EAPI void              elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode);
    EAPI void              elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
