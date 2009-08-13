@@ -1295,25 +1295,25 @@ _edje_part_recalc_single(Edje *ed,
 	 /* text colors */
 	 if (cc)
 	   {
-	     params->color2.r = (((int)cc->r2 + 1) * desc->color2.r) >> 8;
-	     params->color2.g = (((int)cc->g2 + 1) * desc->color2.g) >> 8;
-	     params->color2.b = (((int)cc->b2 + 1) * desc->color2.b) >> 8;
-	     params->color2.a = (((int)cc->a2 + 1) * desc->color2.a) >> 8;
-	     params->color3.r = (((int)cc->r3 + 1) * desc->color3.r) >> 8;
-	     params->color3.g = (((int)cc->g3 + 1) * desc->color3.g) >> 8;
-	     params->color3.b = (((int)cc->b3 + 1) * desc->color3.b) >> 8;
-	     params->color3.a = (((int)cc->a3 + 1) * desc->color3.a) >> 8;
+	     params->type.text.color2.r = (((int)cc->r2 + 1) * desc->color2.r) >> 8;
+	     params->type.text.color2.g = (((int)cc->g2 + 1) * desc->color2.g) >> 8;
+	     params->type.text.color2.b = (((int)cc->b2 + 1) * desc->color2.b) >> 8;
+	     params->type.text.color2.a = (((int)cc->a2 + 1) * desc->color2.a) >> 8;
+	     params->type.text.color3.r = (((int)cc->r3 + 1) * desc->color3.r) >> 8;
+	     params->type.text.color3.g = (((int)cc->g3 + 1) * desc->color3.g) >> 8;
+	     params->type.text.color3.b = (((int)cc->b3 + 1) * desc->color3.b) >> 8;
+	     params->type.text.color3.a = (((int)cc->a3 + 1) * desc->color3.a) >> 8;
 	   }
 	 else
 	   {
-	      params->color2.r = desc->color2.r;
-	      params->color2.g = desc->color2.g;
-	      params->color2.b = desc->color2.b;
-	      params->color2.a = desc->color2.a;
-	      params->color3.r = desc->color3.r;
-	      params->color3.g = desc->color3.g;
-	      params->color3.b = desc->color3.b;
-	      params->color3.a = desc->color3.a;
+	      params->type.text.color2.r = desc->color2.r;
+	      params->type.text.color2.g = desc->color2.g;
+	      params->type.text.color2.b = desc->color2.b;
+	      params->type.text.color2.a = desc->color2.a;
+	      params->type.text.color3.r = desc->color3.r;
+	      params->type.text.color3.g = desc->color3.g;
+	      params->type.text.color3.b = desc->color3.b;
+	      params->type.text.color3.a = desc->color3.a;
 	   }
 	 break;
       case EDJE_PART_TYPE_RECTANGLE:
@@ -1772,15 +1772,15 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
   	   case EDJE_PART_TYPE_TEXT:
  	      p3->type.text.size = INTP(p1->type.text.size, p2->type.text.size, pos);
   	   case EDJE_PART_TYPE_TEXTBLOCK:
- 	      p3->color2.r = INTP(p1->color2.r, p2->color2.r, pos);
- 	      p3->color2.g = INTP(p1->color2.g, p2->color2.g, pos);
-	      p3->color2.b = INTP(p1->color2.b, p2->color2.b, pos);
- 	      p3->color2.a = INTP(p1->color2.a, p2->color2.a, pos);
+ 	      p3->type.text.color2.r = INTP(p1->type.text.color2.r, p2->type.text.color2.r, pos);
+ 	      p3->type.text.color2.g = INTP(p1->type.text.color2.g, p2->type.text.color2.g, pos);
+	      p3->type.text.color2.b = INTP(p1->type.text.color2.b, p2->type.text.color2.b, pos);
+ 	      p3->type.text.color2.a = INTP(p1->type.text.color2.a, p2->type.text.color2.a, pos);
 
- 	      p3->color3.r = INTP(p1->color3.r, p2->color3.r, pos);
-	      p3->color3.g = INTP(p1->color3.g, p2->color3.g, pos);
-	      p3->color3.b = INTP(p1->color3.b, p2->color3.b, pos);
-	      p3->color3.a = INTP(p1->color3.a, p2->color3.a, pos);
+ 	      p3->type.text.color3.r = INTP(p1->type.text.color3.r, p2->type.text.color3.r, pos);
+	      p3->type.text.color3.g = INTP(p1->type.text.color3.g, p2->type.text.color3.g, pos);
+	      p3->type.text.color3.b = INTP(p1->type.text.color3.b, p2->type.text.color3.b, pos);
+	      p3->type.text.color3.a = INTP(p1->type.text.color3.a, p2->type.text.color3.a, pos);
 
 	      p3->type.text.align.x = INTP(p1->type.text.align.x, p2->type.text.align.x, pos);
 	      p3->type.text.align.y = INTP(p1->type.text.align.y, p2->type.text.align.y, pos);

@@ -740,7 +740,7 @@ struct _Edje_Calc_Params
       int           angle; // 4
       int           spread; // 4
    } fill;
-   Edje_Color color, color2, color3; // 12
+   Edje_Color color; // 4
    union {
       struct {
 	 int           l, r, t, b; // 16
@@ -749,12 +749,13 @@ struct _Edje_Calc_Params
 	 Edje_Alignment align; /* text alignment within bounds */ // 16
 	 double         elipsis; // 8
 	 int            size; // 4
-      } text; // 28
+	 Edje_Color     color2, color3; // 8
+      } text; // 36
       struct {
 	 int             id; // 4
 	 char           *type; // 4
       } gradient; // 8
-   } type; // 28
+   } type; // 36
    unsigned char    visible : 1;
    unsigned char    smooth : 1; // 4
 }; // 116
