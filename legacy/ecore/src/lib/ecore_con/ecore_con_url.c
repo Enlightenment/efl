@@ -571,9 +571,6 @@ ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length, cons
 
    url_con->received = 0;
 
-   /* FIXME: Check if curl will leak memory or correctly destroy the headers */
-   url_con->headers = NULL;
-
    return _ecore_con_url_perform(url_con);
 #else
    return 0;
