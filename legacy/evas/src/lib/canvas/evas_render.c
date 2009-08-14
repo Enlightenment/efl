@@ -444,7 +444,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 		       eina_array_push(&e->temporary_objects, obj);
 
 		       /* reset the background of the area if needed (using cutout and engine alpha flag to help) */
-/* 		       if (alpha) */
+		       if (alpha)
 			 {
 			    if (evas_object_is_opaque(obj))
 			      e->engine.func->context_cutout_add(e->engine.data.output,
@@ -479,12 +479,12 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 			 }
 		    }
 	       }
-/* 	     if (alpha) */
+	     if (alpha)
 	       {
 		  e->engine.func->context_clip_set(e->engine.data.output,
 						   e->engine.data.context,
 						   ux, uy, uw, uh);
-		  e->engine.func->context_color_set(e->engine.data.output, e->engine.data.context, 0, 0, 0, alpha ? 0 : 255);
+		  e->engine.func->context_color_set(e->engine.data.output, e->engine.data.context, 0, 0, 0, 0);
 		  e->engine.func->context_multiplier_unset(e->engine.data.output, e->engine.data.context);
 		  e->engine.func->context_render_op_set(e->engine.data.output, e->engine.data.context, EVAS_RENDER_COPY);
 		  e->engine.func->rectangle_draw(e->engine.data.output,
