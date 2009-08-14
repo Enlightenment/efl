@@ -100,7 +100,7 @@ if test "x${want_edje_program_cache}" = "xyes" ; then
 fi
 
 # Optional EDJE_CALC_CACHE (use more ram, but increase speed by reducing the need to recalculate static stuff)
-want_edje_calc_cache="no"
+want_edje_calc_cache="yes"
 
 AC_ARG_ENABLE([edje-calc-cache],
    [AC_HELP_STRING(
