@@ -408,6 +408,19 @@ _dfb_surface_for_each_cutout(IDirectFBSurface *surface, RGBA_Draw_Context *dc, _
    int i;
 
    rects = evas_common_draw_context_apply_cutouts(dc);
+   if (!rects)
+     {
+	DFBRegion cr;
+	cr.x1 = 0;
+	cr.y1 = 0;
+	surface->GetSize(surface, &cr.x2, &cr.y2);
+	cr.x2 -= 1;
+	cr.y2 -= 1;
+	surface->SetClip(surface, NULL);
+	cb(surface, dc, &cr, data);
+	return;
+     }
+
    for (i = 0; i < rects->active; ++i)
      {
 	Cutout_Rect *r;
@@ -1087,13 +1100,22 @@ _cb_draw_rectangle(IDirectFBSurface *surface, RGBA_Draw_Context *dc __UNUSED__, 
 }
 
 static void
-evas_engine_dfb_rectangle_draw(void *data __UNUSED__, void *context, void *surface, int x, int y, int w, int h)
+evas_engine_dfb_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
 {
    IDirectFBSurface *screen = surface;
+   Render_Engine *re = data;
+   RGBA_Draw_Context *dc = context;
    Eina_Rectangle r;
 
    if (!_dfb_surface_set_color_from_context(screen, context))
-     return;
+     {
+	if (dc->render_op != EVAS_RENDER_COPY)
+	  return;
+	if (!re->screen_image->cache_entry.src->flags.alpha)
+	  return;
+	screen->SetColor(screen, 0, 0, 0, 0);
+	screen->SetDrawingFlags(screen, DSDRAW_NOFX);
+     }
 
    EINA_RECTANGLE_SET(&r, x, y, w, h);
    _dfb_surface_for_each_cutout(screen, context, _cb_draw_rectangle, &r);
@@ -1621,6 +1643,7 @@ module_open(Evas_Module *em)
    ORD(info);
    ORD(info_free);
    ORD(setup);
+   ORD(canvas_alpha_get);
    ORD(output_free);
    ORD(output_resize);
    ORD(output_tile_size_set);
