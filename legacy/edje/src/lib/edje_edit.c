@@ -205,11 +205,15 @@ _edje_real_part_free(Edje_Real_Part *rp)
    if (rp->text.cache.in_str) eina_stringshare_del(rp->text.cache.in_str);
    if (rp->text.cache.out_str) eina_stringshare_del(rp->text.cache.out_str);
 
-   if (rp->custom.description)
-     _edje_collection_free_part_description_free(rp->custom.description, 0);
+   if (rp->custom)
+     _edje_collection_free_part_description_free(rp->custom->description, 0);
+
+   free(rp->drag);
+   eina_mempool_free(_edje_real_part_state_mp, rp->param2);
+   eina_mempool_free(_edje_real_part_state_mp, rp->custom);
 
    _edje_unref(rp->edje);
-   free(rp);
+   eina_mempool_free(_edje_real_part_mp, rp);
 }
 
 static unsigned char
@@ -1603,22 +1607,29 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
 	if (real->param1.rel2_to_x == rp) real->param1.rel2_to_x = NULL;
 	if (real->param1.rel2_to_y == rp) real->param1.rel2_to_y = NULL;
 
-	if (real->param2.rel1_to_x == rp) real->param2.rel1_to_x = NULL;
-	if (real->param2.rel1_to_y == rp) real->param2.rel1_to_y = NULL;
-	if (real->param2.rel2_to_x == rp) real->param2.rel2_to_x = NULL;
-	if (real->param2.rel2_to_y == rp) real->param2.rel2_to_y = NULL;
+	if (real->param2)
+	  {
+	     if (real->param2->rel1_to_x == rp) real->param2->rel1_to_x = NULL;
+	     if (real->param2->rel1_to_y == rp) real->param2->rel1_to_y = NULL;
+	     if (real->param2->rel2_to_x == rp) real->param2->rel2_to_x = NULL;
+	     if (real->param2->rel2_to_y == rp) real->param2->rel2_to_y = NULL;
+	  }
 
-	if (real->custom.rel1_to_x == rp) real->custom.rel1_to_x = NULL;
-	if (real->custom.rel1_to_y == rp) real->custom.rel1_to_y = NULL;
-	if (real->custom.rel2_to_x == rp) real->custom.rel2_to_x = NULL;
-	if (real->custom.rel2_to_y == rp) real->custom.rel2_to_y = NULL;
+	if (real->custom)
+	  {
+	     if (real->custom->rel1_to_x == rp) real->custom->rel1_to_x = NULL;
+	     if (real->custom->rel1_to_y == rp) real->custom->rel1_to_y = NULL;
+	     if (real->custom->rel2_to_x == rp) real->custom->rel2_to_x = NULL;
+	     if (real->custom->rel2_to_y == rp) real->custom->rel2_to_y = NULL;
+	  }
 
 	if (real->clip_to == rp)
 	  {
 	     evas_object_clip_set(real->object, ed->clipper);
 	     real->clip_to = NULL;
 	  }
-	//TODO confine ??
+	if (real->drag && real->drag->confine_to == rp)
+	  real->drag->confine_to = NULL;
      }
 
    /* Unlink all the parts and descriptions that refer to id */

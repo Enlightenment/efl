@@ -840,11 +840,11 @@ struct _Edje_Real_Part
 
    double                    description_pos; // 8
    Edje_Part_Description    *chosen_description; // 4
-   Edje_Real_Part_State      param1, param2, custom; // 60 // FIXME: custom should be alloced on demand - 20--
-   // WITH EDJE_CALC_CACHE: 420
+   Edje_Real_Part_State      param1; // 20
+   // WITH EDJE_CALC_CACHE: 140
+   Edje_Real_Part_State     *param2, *custom; // 8
 
 #ifdef EDJE_CALC_CACHE
-   Edje_Calc_Params          p; // 116
    int                       state; // 4
 #endif
 
@@ -862,8 +862,8 @@ struct _Edje_Real_Part
 #ifdef EDJE_CALC_CACHE
    unsigned char             invalidate : 1;
 #endif
-}; //  298
-// WITH EDJE_CALC_CACHE: 778
+}; //  260
+// WITH EDJE_CALC_CACHE: 400
 
 struct _Edje_Running_Program
 {
@@ -1100,6 +1100,9 @@ extern char            *_edje_fontset_append;
 extern double           _edje_scale;
 extern int              _edje_freeze_val;
 extern int              _edje_freeze_calc_count;
+
+extern Eina_Mempool *_edje_real_part_mp;
+extern Eina_Mempool *_edje_real_part_state_mp;
 
 void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos);
 Edje_Part_Description *_edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *name, double val);

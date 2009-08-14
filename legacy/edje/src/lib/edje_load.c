@@ -346,12 +346,14 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		  Edje_Real_Part *rp;
 
 		  ep = eina_list_data_get(l);
-		  rp = calloc(1, sizeof(Edje_Real_Part));
+		  rp = eina_mempool_malloc(_edje_real_part_mp, sizeof(Edje_Real_Part));
 		  if (!rp)
 		    {
 		       ed->load_error = EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 		       return 0;
 		    }
+
+		  memset(rp, 0, sizeof (Edje_Real_Part));
 
 		  if ((ep->dragable.x != 0) || (ep->dragable.y != 0))
 		    {
@@ -846,13 +848,17 @@ _edje_file_del(Edje *ed)
 	     if (rp->text.cache.in_str) eina_stringshare_del(rp->text.cache.in_str);
 	     if (rp->text.cache.out_str) eina_stringshare_del(rp->text.cache.out_str);
 
-	     if (rp->custom.description)
-	       _edje_collection_free_part_description_free(rp->custom.description, ed->file->free_strings);
+	     if (rp->custom)
+	       _edje_collection_free_part_description_free(rp->custom->description, ed->file->free_strings);
 
+	     /* Cleanup optional part. */
 	     free(rp->drag);
 
+	     eina_mempool_free(_edje_real_part_state_mp, rp->param2);
+	     eina_mempool_free(_edje_real_part_state_mp, rp->custom);
+
 	     _edje_unref(rp->edje);
-	     free(rp);
+	     eina_mempool_free(_edje_real_part_mp, rp);
 	  }
      }
    if ((ed->file) && (ed->collection))

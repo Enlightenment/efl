@@ -65,7 +65,7 @@ _edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *name,
      return ep->default_desc;
 
    if (!strcmp(name, "custom"))
-     return rp->custom.description;
+     return rp->custom ? rp->custom->description : NULL;
 
    if (!strcmp(name, "default"))
      {
@@ -93,14 +93,32 @@ _edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *name,
 void
 _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, double v1, const char *d2, double v2)
 {
+   Edje_Part_Description *epd1;
+   Edje_Part_Description *epd2;
+
    if (!d1) d1 = "default";
    if (!d2) d2 = "default";
 
-   ep->param1.description = _edje_part_description_find(ed, ep, d1, v1);
-   if (!ep->param1.description)
-     ep->param1.description = ep->part->default_desc; /* never NULL */
+   epd1 = _edje_part_description_find(ed, ep, d1, v1);
+   if (!epd1)
+     epd1 = ep->part->default_desc; /* never NULL */
 
-   ep->param2.description = _edje_part_description_find(ed, ep, d2, v2);
+   epd2 = _edje_part_description_find(ed, ep, d2, v2);
+
+   if (epd2 != NULL && epd1 != epd2)
+     {
+	if (!ep->param2)
+	  ep->param2 = eina_mempool_malloc(_edje_real_part_state_mp, sizeof (Edje_Real_Part_State));
+     }
+   else
+     if (ep->param2)
+       {
+	  eina_mempool_free(_edje_real_part_state_mp, ep->param2);
+	  ep->param2 = NULL;
+       }
+
+   ep->param1.description = epd1;
+   ep->chosen_description = epd1;
 
    ep->param1.rel1_to_x = ep->param1.rel1_to_y = NULL;
    ep->param1.rel2_to_x = ep->param1.rel2_to_y = NULL;
@@ -114,25 +132,28 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
    if (ep->param1.description->rel2.id_y >= 0)
      ep->param1.rel2_to_y = ed->table_parts[ep->param1.description->rel2.id_y % ed->table_parts_size];
 
-   ep->param2.rel1_to_x = ep->param2.rel1_to_y = NULL;
-   ep->param2.rel2_to_x = ep->param2.rel2_to_y = NULL;
-
-   if (ep->param2.description)
+   if (ep->param2)
      {
-	if (ep->param2.description->rel1.id_x >= 0)
-	  ep->param2.rel1_to_x = ed->table_parts[ep->param2.description->rel1.id_x % ed->table_parts_size];
-	if (ep->param2.description->rel1.id_y >= 0)
-	  ep->param2.rel1_to_y = ed->table_parts[ep->param2.description->rel1.id_y % ed->table_parts_size];
-	if (ep->param2.description->rel2.id_x >= 0)
-	  ep->param2.rel2_to_x = ed->table_parts[ep->param2.description->rel2.id_x % ed->table_parts_size];
-	if (ep->param2.description->rel2.id_y >= 0)
-	  ep->param2.rel2_to_y = ed->table_parts[ep->param2.description->rel2.id_y % ed->table_parts_size];
-     }
+	ep->param2->description = epd2;
 
-   if (ep->description_pos == 0.0)
-     ep->chosen_description = ep->param1.description;
-   else
-     ep->chosen_description = ep->param2.description;
+	ep->param2->rel1_to_x = ep->param2->rel1_to_y = NULL;
+	ep->param2->rel2_to_x = ep->param2->rel2_to_y = NULL;
+
+	if (ep->param2->description)
+	  {
+	     if (ep->param2->description->rel1.id_x >= 0)
+	       ep->param2->rel1_to_x = ed->table_parts[ep->param2->description->rel1.id_x % ed->table_parts_size];
+	     if (ep->param2->description->rel1.id_y >= 0)
+	       ep->param2->rel1_to_y = ed->table_parts[ep->param2->description->rel1.id_y % ed->table_parts_size];
+	     if (ep->param2->description->rel2.id_x >= 0)
+	       ep->param2->rel2_to_x = ed->table_parts[ep->param2->description->rel2.id_x % ed->table_parts_size];
+	     if (ep->param2->description->rel2.id_y >= 0)
+	       ep->param2->rel2_to_y = ed->table_parts[ep->param2->description->rel2.id_y % ed->table_parts_size];
+	  }
+
+	if (ep->description_pos != 0.0)
+	  ep->chosen_description = epd2;
+     }
 
    ed->dirty = 1;
 #ifdef EDJE_CALC_CACHE
@@ -1444,23 +1465,27 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
    else
      {
 	image_count = 2;
-	if (ep->param2.description)
-	  image_count += eina_list_count(ep->param2.description->image.tween_list);
+	if (ep->param2)
+	  image_count += eina_list_count(ep->param2->description->image.tween_list);
 	image_num = (pos * ((double)image_count - 0.5));
 	if (image_num > (image_count - 1))
 	  image_num = image_count - 1;
 	if (image_num == 0)
 	  image_id = ep->param1.description->image.id;
-	else if (image_num == (image_count - 1))
-	  image_id = ep->param2.description->image.id;
 	else
-	  {
-	     Edje_Part_Image_Id *imid;
+	  if (ep->param2)
+	    {
+	       if (image_num == (image_count - 1))
+		 image_id = ep->param2->description->image.id;
+	       else
+		 {
+		    Edje_Part_Image_Id *imid;
 
-	     imid = eina_list_nth(ep->param2.description->image.tween_list,
-				  image_num - 1);
-	     if (imid) image_id = imid->id;
-	  }
+		    imid = eina_list_nth(ep->param2->description->image.tween_list,
+					 image_num - 1);
+		    if (imid) image_id = imid->id;
+		 }
+	    }
 	if (image_id < 0)
 	  {
 	     printf("EDJE ERROR: part \"%s\" has description, "
@@ -1525,6 +1550,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
    Edje_Part_Description *chosen_desc;
    Edje_Real_Part *confine_to = NULL;
    double pos = 0.0;
+   Edje_Calc_Params lp3;
 
    if ((ep->calculated & FLAG_XY) == FLAG_XY)
      {
@@ -1559,6 +1585,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 #endif
 	return;
      }
+#ifdef EDJE_CALC_CACHE
+   if (ep->state == ed->state)
+     return ;
+#endif
+
    if (flags & FLAG_X)
      {
 	ep->calculating |= flags & FLAG_X;
@@ -1577,20 +1608,23 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	       state1 = ep->param1.rel2_to_x->state;
 #endif
 	  }
-	if (ep->param2.rel1_to_x)
+	if (ep->param2)
 	  {
-	     _edje_part_recalc(ed, ep->param2.rel1_to_x, FLAG_X);
+	     if (ep->param2->rel1_to_x)
+	       {
+		  _edje_part_recalc(ed, ep->param2->rel1_to_x, FLAG_X);
 #ifdef EDJE_CALC_CACHE
-	     state2 = ep->param2.rel1_to_x->state;
+		  state2 = ep->param2->rel1_to_x->state;
 #endif
-	  }
-	if (ep->param2.rel2_to_x)
-	  {
-	     _edje_part_recalc(ed, ep->param2.rel2_to_x, FLAG_X);
+	       }
+	     if (ep->param2->rel2_to_x)
+	       {
+		  _edje_part_recalc(ed, ep->param2->rel2_to_x, FLAG_X);
 #ifdef EDJE_CALC_CACHE
-	     if (state2 < ep->param2.rel2_to_x->state)
-	       state2 = ep->param2.rel2_to_x->state;
+		  if (state2 < ep->param2->rel2_to_x->state)
+		    state2 = ep->param2->rel2_to_x->state;
 #endif
+	       }
 	  }
      }
    if (flags & FLAG_Y)
@@ -1612,21 +1646,24 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	       state1 = ep->param1.rel2_to_y->state;
 #endif
 	  }
-	if (ep->param2.rel1_to_y)
+	if (ep->param2)
 	  {
-	     _edje_part_recalc(ed, ep->param2.rel1_to_y, FLAG_Y);
+	     if (ep->param2->rel1_to_y)
+	       {
+		  _edje_part_recalc(ed, ep->param2->rel1_to_y, FLAG_Y);
 #ifdef EDJE_CALC_CACHE
-	     if (state2 < ep->param2.rel1_to_y->state)
-	       state2 = ep->param2.rel1_to_y->state;
+		  if (state2 < ep->param2->rel1_to_y->state)
+		    state2 = ep->param2->rel1_to_y->state;
 #endif
-	  }
-	if (ep->param2.rel2_to_y)
-	  {
-	     _edje_part_recalc(ed, ep->param2.rel2_to_y, FLAG_Y);
+	       }
+	     if (ep->param2->rel2_to_y)
+	       {
+		  _edje_part_recalc(ed, ep->param2->rel2_to_y, FLAG_Y);
 #ifdef EDJE_CALC_CACHE
-	     if (state2 < ep->param2.rel2_to_y->state)
-	       state2 = ep->param2.rel2_to_y->state;
+		  if (state2 < ep->param2->rel2_to_y->state)
+		    state2 = ep->param2->rel2_to_y->state;
 #endif
+	       }
 	  }
      }
    if (ep->drag && ep->drag->confine_to)
@@ -1652,7 +1689,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 #ifndef EDJE_CALC_CACHE
    p1 = &lp1;
 #else
-   p1 = ep->param2.description ? &ep->param1.p : &ep->p;
+   p1 = &ep->param1.p;
 #endif
 
    if (ep->param1.description)
@@ -1675,33 +1712,32 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 #endif
  	  }
      }
-   if (ep->param2.description)
+   if (ep->param2 && ep->description_pos != 0.0)
      {
 	int beginning_pos, part_type;
 	Edje_Calc_Params *p2, *p3;
-#ifndef EDJE_CALC_CACHE
-	Edje_Calc_Params lp3;
 
- 	p2 = &lp2;
  	p3 = &lp3;
+
+#ifndef EDJE_CALC_CACHE
+ 	p2 = &lp2;
 #else
- 	p2 = &ep->param2.p;
- 	p3 = &ep->p;
+ 	p2 = &ep->param2->p;
 
 	if (ed->all_part_change ||
  	    ep->invalidate ||
- 	    state2 >= ep->param2.state ||
- 	    statec >= ep->param2.state ||
+ 	    state2 >= ep->param2->state ||
+ 	    statec >= ep->param2->state ||
  	    ((ep->part->type == EDJE_PART_TYPE_TEXT || ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) && ed->text_part_change))
 #endif
  	  {
- 	     _edje_part_recalc_single(ed, ep, ep->param2.description, chosen_desc,
- 				      ep->param2.rel1_to_x, ep->param2.rel1_to_y, ep->param2.rel2_to_x, ep->param2.rel2_to_y,
+ 	     _edje_part_recalc_single(ed, ep, ep->param2->description, chosen_desc,
+ 				      ep->param2->rel1_to_x, ep->param2->rel1_to_y, ep->param2->rel2_to_x, ep->param2->rel2_to_y,
  				      confine_to,
 				      p2,
  				      flags);
 #ifdef EDJE_CALC_CACHE
- 	     ep->param2.state = ed->state;
+ 	     ep->param2->state = ed->state;
 #endif
  	  }
 
@@ -1789,21 +1825,12 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
   	  }
 
 	pf = p3;
-#ifdef EDJE_CALC_CACHE
- 	ep->state = ed->state;
-#endif
      }
    else
      {
  	pf = p1;
-#ifdef EDJE_CALC_CACHE
- 	ep->state = ep->param1.state;
-#endif
      }
 
-#ifdef EDJE_CALC_CACHE
-   ep->invalidate = 0;
-#endif
    ep->req = pf->req;
 
    if (ep->drag && ep->drag->need_reset)
@@ -1912,4 +1939,13 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 
    ep->calculated |= flags;
    ep->calculating = FLAG_NONE;
+
+#ifdef EDJE_CALC_CACHE
+   if (ep->calculated == FLAG_XY)
+     {
+	ep->state = ed->state;
+	ep->invalidate = 0;
+     }
+#endif
+
 }

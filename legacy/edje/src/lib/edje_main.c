@@ -7,6 +7,8 @@
 #include "edje_private.h"
 
 static int initted = 0;
+Eina_Mempool *_edje_real_part_mp = NULL;
+Eina_Mempool *_edje_real_part_state_mp = NULL;
 
 /************************** API Routines **************************/
 
@@ -20,6 +22,8 @@ edje_init(void)
    initted++;
    if (initted == 1)
      {
+	const char *choice;
+
 	eina_init();
         ecore_job_init();
 	srand(time(NULL));
@@ -28,9 +32,34 @@ edje_init(void)
 	_edje_box_init();
 	embryo_init();
 	eet_init();
+
+	_edje_real_part_mp = eina_mempool_add("chained_mempool",
+					      "Edje_Real_Part", NULL,
+					      sizeof (Edje_Real_Part), 128);
+	if (!_edje_real_part_mp)
+	  {
+	     EINA_ERROR_PERR("ERROR: Mempool for Edje_Real_Part cannot be allocated.\n");
+	     goto on_error;
+	  }
+
+	_edje_real_part_state_mp = eina_mempool_add("chained_mempool",
+					      "Edje_Real_Part_State", NULL,
+					      sizeof (Edje_Real_Part_State), 256);
+	if (!_edje_real_part_state_mp)
+	  {
+	     EINA_ERROR_PERR("ERROR: Mempool for Edje_Real_Part_State cannot be allocated.\n");
+	     goto on_error;
+	  }
      }
    _edje_message_init();
    return initted;
+
+ on_error:
+   eina_mempool_del(_edje_real_part_state_mp);
+   eina_mempool_del(_edje_real_part_mp);
+   _edje_real_part_state_mp = NULL;
+   _edje_real_part_mp = NULL;
+   return 0;
 }
 
 /** Shutdown the EDJE library.
@@ -55,6 +84,12 @@ edje_shutdown(void)
    _edje_text_class_members_free();
    _edje_text_class_hash_free();
    _edje_box_shutdown();
+
+   eina_mempool_del(_edje_real_part_state_mp);
+   eina_mempool_del(_edje_real_part_mp);
+   _edje_real_part_state_mp = NULL;
+   _edje_real_part_mp = NULL;
+
    embryo_shutdown();
    ecore_job_shutdown();
    eet_shutdown();
