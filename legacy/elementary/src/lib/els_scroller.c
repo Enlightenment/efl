@@ -754,14 +754,24 @@ _smart_event_wheel(void *data, Evas *e, Evas_Object *obj, void *event_info)
 
    sd = data;
    ev = event_info;
+   if (evas_key_modifier_is_set(ev->modifiers, "Control") ||
+       evas_key_modifier_is_set(ev->modifiers, "Alt") ||
+       evas_key_modifier_is_set(ev->modifiers, "Shift") ||
+       evas_key_modifier_is_set(ev->modifiers, "Meta") ||
+       evas_key_modifier_is_set(ev->modifiers, "Hyper") ||
+       evas_key_modifier_is_set(ev->modifiers, "Super"))
+     return;
    elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
-   y += ev->z * sd->step.y;
    if (sd->down.bounce_y_animator)
      {
         ecore_animator_del(sd->down.bounce_y_animator);
         sd->down.bounce_y_animator = NULL;
         sd->bouncemey = 0;
      }
+   if (ev->direction == 0)
+     y += ev->z * sd->step.y;
+   else if (ev->direction == 1)
+     x += ev->z * sd->step.x;
    elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
 }
 
