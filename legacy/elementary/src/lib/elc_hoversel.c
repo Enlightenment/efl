@@ -33,6 +33,7 @@ struct _Elm_Hoversel_Item
    Evas_Object *obj;
    const char *label;
    const char *icon_file;
+   const char *icon_group;
    Elm_Icon_Type icon_type;
    void (*func) (void *data, Evas_Object *obj, void *event_info);
    void *data;
@@ -62,6 +63,7 @@ _del_hook(Evas_Object *obj)
      {
 	eina_stringshare_del(it->label);
 	eina_stringshare_del(it->icon_file);
+	eina_stringshare_del(it->icon_group);
 	free(it);
      }
    free(wd);
@@ -130,7 +132,7 @@ _activate(Evas_Object *obj)
 	     ic = elm_icon_add(obj);
 	     elm_icon_scale_set(ic, 0, 1);
 	     if (it->icon_type == ELM_ICON_FILE)
-	       elm_icon_file_set(ic, it->icon_file, NULL);
+	       elm_icon_file_set(ic, it->icon_file, it->icon_group);
 	     else if (it->icon_type == ELM_ICON_STANDARD)
 	       elm_icon_standard_set(ic, it->icon_file);
 	     elm_button_icon_set(bt, ic);
@@ -338,9 +340,32 @@ elm_hoversel_hover_end(Evas_Object *obj)
 }
 
 /**
+ * Remove all the items from the given hoversel object.
+ *
+ * This will remove all the children items from the hoversel. (should not be
+ * called while the hoversel is active).
+ * 
+ * @param obj The hoversel object
+ *
+ * @ingroup Hoversel
+ */
+EAPI void
+elm_hoversel_clear(Evas_Object *obj)
+{
+   Elm_Hoversel_Item *it;
+   Eina_List *l, *ll;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   EINA_LIST_FOREACH_SAFE(wd->items, l, ll, it)
+      elm_hoversel_item_del(it);
+}
+
+/**
  * Add an item to the hoversel button
  *
- * This adds an item to the hoversel to show when it is clicked
+ * This adds an item to the hoversel to show when it is clicked. Note: if you
+ * need to use an icon from an edje file then use elm_hoversel_item_icon_set()
+ * right after the this function, and set icon_file to NULL here.
  *
  * @param obj The hoversel object
  * @param label The text abel to use for the item (NULL if not desired)
@@ -389,6 +414,7 @@ elm_hoversel_item_del(Elm_Hoversel_Item *it)
    wd->items = eina_list_remove(wd->items, it);
    eina_stringshare_del(it->label);
    eina_stringshare_del(it->icon_file);
+   eina_stringshare_del(it->icon_group);
    free(it);
 }
 
@@ -426,3 +452,33 @@ elm_hoversel_item_label_get(Elm_Hoversel_Item *it)
    if (!it) return NULL;
    return it->label;
 }
+
+/**
+ * Set the icon of the hoversel item
+ *
+ * This set the icon for the given hoversel item. The icon can be loaded from
+ * the standard set, from an image file or from an edje file.
+ *
+ * @param it The item to set the icon
+ * @param icon_file An image file path on disk to use for the icon or standard
+ * icon name
+ * @param icon_group The edje group to use if @p icon_file is an edje file. Set this
+ * to NULL if the icon is not an edje file
+ * @param icon_type The icon type
+ *
+ * @ingroup Hoversel
+ */
+EAPI void
+elm_hoversel_item_icon_set(Elm_Hoversel_Item *it, const char *icon_file, const char *icon_group, Elm_Icon_Type icon_type)
+{
+   if (!it) return;
+
+   if (it->icon_file) eina_stringshare_del(it->icon_file);
+   it->icon_file = eina_stringshare_add(icon_file);
+
+   if (it->icon_group) eina_stringshare_del(it->icon_group);
+   it->icon_group = eina_stringshare_add(icon_group);
+
+   it->icon_type = icon_type;
+}
+
