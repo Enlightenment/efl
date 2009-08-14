@@ -596,7 +596,7 @@ elm_list_item_del(Elm_List_Item *it)
    Widget_Data *wd = elm_widget_data_get(it->obj);
    if (it->del_cb) it->del_cb((void *)it->data, it->obj, it);
    if (it->selected) _item_unselect(it);
-   wd->items = eina_list_remove(wd->items, it);
+   wd->items = eina_list_remove_list(wd->items, it->node);
    eina_stringshare_del(it->label);
    if (it->icon) evas_object_del(it->icon);
    if (it->end) evas_object_del(it->end);
