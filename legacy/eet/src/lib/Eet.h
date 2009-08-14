@@ -1061,7 +1061,7 @@ extern "C" {
     *
     * @since 1.3.0
     */
-#define EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(Clas, Type) eet_eina_stream_data_descriptor_class_set(Clas, #Type , sizeof (Type));
+#define EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(Clas, Type) (eet_eina_stream_data_descriptor_class_set(Clas, #Type , sizeof (Type)))
 
    /**
     * This function is an helper that set all the parameter of an Eet_Data_Descriptor_Class
@@ -1086,7 +1086,7 @@ extern "C" {
     *
     * @since 1.3.0
     */
-#define EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(Clas, Type) eet_eina_file_data_descriptor_class_set(Clas, #Type , sizeof (Type));
+#define EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(Clas, Type) (eet_eina_file_data_descriptor_class_set(Clas, #Type , sizeof (Type)))
 
    /**
     * This function frees a data descriptor when it is not needed anymore.
