@@ -1953,6 +1953,19 @@ elm_genlist_item_data_get(const Elm_Genlist_Item *it)
    return it->data;
 }
 
+/**
+ * Set the data item from the genlist item
+ *
+ * This set the data value passed on the elm_genlist_item_append() and
+ * related item addition calls. This function will also call
+ * elm_genlist_item_update() so the item will be updated to reflect the
+ * new data.
+ *
+ * @param it The item
+ * @param data The new data pointer to set
+ *
+ * @ingroup Genlist
+ */
 EAPI void
 elm_genlist_item_data_set(Elm_Genlist_Item *it, void *data)
 {
