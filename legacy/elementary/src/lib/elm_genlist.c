@@ -1949,7 +1949,16 @@ elm_genlist_item_del(Elm_Genlist_Item *it)
 EAPI void *
 elm_genlist_item_data_get(const Elm_Genlist_Item *it)
 {
-   return (void *)it->data;
+   if (!it) return;
+   return it->data;
+}
+
+EAPI void
+elm_genlist_item_data_set(Elm_Genlist_Item *it, void *data)
+{
+   if (!it) return;
+   it->data = data;
+   elm_genlist_item_update(it);
 }
 
 /**
