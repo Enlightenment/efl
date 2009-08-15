@@ -228,7 +228,7 @@ elm_progressbar_add(Evas_Object *parent)
    return obj;
 }
 
-/*
+/**
  * Normally the progressbar will display and interpret values from low to high.
  * This display a progressbar for jobs with unknow state of progression,
  * (the cursor pulse right to left and left to right, and loop) if pulse is set to 1.
@@ -248,7 +248,7 @@ elm_progressbar_pulse_set (Evas_Object *obj, Eina_Bool pulse)
    _theme_hook(obj);
 }
 
-/*
+/**
  * Normally the progressbar will display and interpret values from low to high.
  * This display a progressbar for jobs with unknow state of progression,
  * (the cursor pulse right to left and left to right, and loop) if pulse is set to 1.
@@ -271,7 +271,7 @@ elm_progressbar_pulse (Evas_Object *obj, Eina_Bool state)
      edje_object_signal_emit(wd->progressbar, "elm,state,pulse,stop", "elm");
 }
 
-/*
+/**
  * Set the value the progressbar indicates
  *
  * @param obj The progressbar object
@@ -292,7 +292,7 @@ elm_progressbar_value_set (Evas_Object *obj, double val)
 }
 
 
-/*
+/**
  * Get the value the progressbar has
  *
  * @param obj The progressbar object
@@ -337,7 +337,7 @@ elm_progressbar_label_set(Evas_Object *obj, const char *label)
    _sizing_eval(obj);
 }
 
-/*
+/**
  * Set the icon object of the progressbar object
  *
  * Once the icon object is set, it will become a child of the progressbar object and
@@ -368,7 +368,7 @@ elm_progressbar_icon_set(Evas_Object *obj, Evas_Object *icon)
      }
 }
 
-/*
+/**
  * Set the length of the progression region of the progressbar
  *
  * This sets the minimum width or height (depending on orientation) of the
@@ -395,7 +395,7 @@ elm_progressbar_span_size_set(Evas_Object *obj, Evas_Coord size)
    _sizing_eval(obj);
 }
 
-/*
+/**
  * Set the format string of the unit area
  *
  * If NULL, this disabls the unit area display. If not it sets the format
@@ -429,7 +429,7 @@ elm_progressbar_unit_format_set(Evas_Object *obj, const char *units)
    _sizing_eval(obj);
 }
 
-/*
+/**
  * Set orientation of the progressbar
  *
  * @param obj The progressbar object
@@ -447,7 +447,7 @@ elm_progressbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
    _theme_hook(obj);
 }
 
-/*
+/**
  * Invert the progressbar display
  *
  * Normally the progressbar will display and interpret values from low to high
