@@ -209,3 +209,8 @@
 	* Add eina helper.
 	* Cleanup Eet_Data_Descriptor code.
 
+2009-08-16  Carsten Haitzler (The Rasterman)
+
+	* Fix eet data encode to encode empty structs etc. so save saves
+          something as opposed to nothing
+
