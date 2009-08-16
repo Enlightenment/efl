@@ -42,6 +42,29 @@ test_button(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bt);
    evas_object_show(ic);
 
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Disabled Button");
+   elm_button_icon_set(bt, ic);
+   elm_object_disabled_set(bt, 1);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+   evas_object_show(ic);
+   
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   bt = elm_button_add(win);
+   elm_button_icon_set(bt, ic);
+   elm_object_disabled_set(bt, 1);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+   evas_object_show(ic);
+   
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Label Only");
    elm_box_pack_end(bx, bt);

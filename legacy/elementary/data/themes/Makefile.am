@@ -23,6 +23,8 @@ bt_sm_base1.png \
 bt_sm_base2.png \
 bt_sm_hilight.png \
 bt_sm_shine.png \
+bt_dis_base.png \
+bt_dis_hilight.png \
 dia_botshad.png \
 dia_grad.png \
 dia_topshad.png \

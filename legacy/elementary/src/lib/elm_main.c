@@ -986,6 +986,36 @@ elm_object_style_get(const Evas_Object *obj)
 }
 
 /**
+ * Set the disable state
+ *
+ * This sets the disable state for the widget.
+ *
+ * @param obj The object
+ * @param disabled The state
+ * @ingroup Styles
+ */
+EAPI void
+elm_object_disabled_set(Evas_Object *obj, Eina_Bool disabled)
+{
+   elm_widget_disabled_set(obj, disabled);
+}
+
+/**
+ * Get the disable state
+ *
+ * This gets the disable state for the widget.
+ *
+ * @param obj The object
+ * @return True, if the widget is disabled
+ * @ingroup Styles
+ */
+EAPI Eina_Bool
+elm_object_disabled_get(const Evas_Object *obj)
+{
+   return elm_widget_disabled_get(obj);
+}
+
+/**
  * Get the global scaling factor
  *
  * This gets the globally configured scaling factor that is applied to all
