@@ -679,6 +679,7 @@ extern "C" {
    /* available item styles:
     * default
     * double_label
+    * icon_top_text_bottom
     */
    /* smart callbacks called:
     * "clicked" - when the user double-clicked an item
@@ -724,7 +725,7 @@ extern "C" {
    EAPI Evas_Object *elm_pager_content_top_get(Evas_Object *obj);
    /* smart callbacks called:
     */
-    
+
    EAPI Evas_Object *elm_fileselector_add(Evas_Object *parent);
    EAPI const char*  elm_fileselector_selected_get(Evas_Object *obj);
    EAPI void         elm_fileselector_path_set(Evas_Object *obj, const char *path);
