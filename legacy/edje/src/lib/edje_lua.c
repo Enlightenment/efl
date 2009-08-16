@@ -164,7 +164,9 @@ _edje_lua_error(lua_State *L, int err_code)
 	break;
      }
    fprintf(stderr, "Lua %s error: %s\n", err_type, lua_tostring(L, -1));
-   exit(-1);
+   // don't exit. this is BAD. lua script bugs will cause thngs like e to
+   // exit mysteriously endig your x session. bad!
+   // exit(-1);
 }
 
 lua_State *
