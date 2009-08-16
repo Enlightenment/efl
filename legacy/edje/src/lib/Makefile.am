@@ -23,6 +23,7 @@ edje_calc.c \
 edje_callbacks.c \
 edje_data.c \
 edje_embryo.c \
+edje_lua.c \
 edje_load.c \
 edje_main.c \
 edje_misc.c \
@@ -40,6 +41,7 @@ edje_match.c \
 edje_textblock_styles.c \
 edje_edit.c \
 edje_script_only.c \
+edje_lua_script_only.c \
 edje_entry.c
 
 libedje_la_LIBADD = @EDJE_LIBS@ @ECORE_IMF_LIBS@ -lm

@@ -183,6 +183,18 @@ AC_SUBST(EFL_EDJE_BUILD)
 
 # Dependencies for the library
 
+# Lua pkg-config hack for different naming conventions
+requirement_lua=""
+PKG_CHECK_MODULES([LUA], [lua >= 5.1.0], requirement_lua="lua",
+	[PKG_CHECK_MODULES([LUA], [lua5.1 >= 5.1.0], requirement_lua="lua5.1",
+		[PKG_CHECK_MODULES([LUA], [lua-5.1 >= 5.1.0], requirement_lua="lua-5.1",
+			[PKG_CHECK_MODULES([LUA], [lua51 >= 5.1.0], requirement_lua="lua51",
+				AC_MSG_ERROR([unable to find Lua])
+			)
+		])
+	])
+])
+
 PKG_CHECK_MODULES([EDJE],
    [
     eina-0
@@ -193,7 +205,11 @@ PKG_CHECK_MODULES([EDJE],
     embryo >= 0.9.1
    ])
 
+EDJE_LIBS="$EDJE_LIBS $LUA_LIBS"
+EDJE_CFLAGS="$EDJE_CFLAGS $LUA_CFLAGS"
+
 requirement_edje="embryo ecore-job ecore evas eet eina-0 ${requirement_edje}"
+requirement_edje="${requirement_lua} ${requirement_edje}"
 
 have_ecore_imf="no"
 PKG_CHECK_MODULES([ECORE_IMF],

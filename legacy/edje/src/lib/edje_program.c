@@ -752,6 +752,43 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 	if (_edje_block_break(ed)) goto break_prog;
 	_edje_recalc_do(ed);
      }
+   else if (pr->action == EDJE_ACTION_TYPE_LUA_SCRIPT)
+     {
+	//printf ("running Lua program script %i\n", pr->id);
+
+//	_edje_emit(ed, "program,start", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+	
+	if (ed->L == NULL) /* private state does not yet exist, create it */
+	  {
+	     ed->L = _edje_lua_new_thread(ed->collection->L);
+	     _edje_lua_new_reg(ed->collection->L, -1, ed->L); // freed in edje_load.c::_edje_file_del
+	     lua_pop(ed->collection->L, 1);
+	  }
+	lua_State *L = ed->L;
+	lua_pushnumber(L, pr->id);
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	if (!lua_isnil(L, -1))
+	  {
+	     lua_pushvalue(L, LUA_GLOBALSINDEX); /* set function environment from collection thread to edje object thread */
+	     lua_setfenv(L, -2);
+	     _edje_lua_get_reg(L, ed);
+	     if (lua_isnil(L, -1)) /* group object does not yet exist, create it */
+	       {
+		  lua_pop(L, 1);
+		  _edje_lua_group_fn_new (ed);
+	       }
+	     lua_pushstring(L, ssig);
+	     lua_pushstring(L, ssrc);
+	     int err_code;
+	     if (err_code = lua_pcall(L, 3, 0, 0))
+	       _edje_lua_error(L, err_code);
+	  }
+
+	//	_edje_emit(ed, "program,stop", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+	_edje_recalc_do(ed);
+     }
    else if (pr->action == EDJE_ACTION_TYPE_FOCUS_SET)
      {
 	if (!pr->targets)

@@ -15,7 +15,7 @@ endif
 syn keyword	cStructure	images data fonts collections group
 syn keyword	cStructure	part parts dragable description rel1 rel2
 syn keyword	cStatement	text image font fill origin size tag
-syn keyword	cStructure	programs program script styles style base
+syn keyword	cStructure	programs program script script_only lua_script lua_script_only styles style base
 syn keyword	cStructure	spectra spectrum
 syn match	cType		"+ + +;" contained 
 
@@ -35,6 +35,7 @@ syn keyword	cConstant 	TEXT IMAGE RECT SWALLOW
 syn keyword	cConstant 	NONE PLAIN OUTLINE SOFT_OUTLINE SHADOW
 syn keyword	cConstant 	SOFT_SHADOW OUTLINE_SHADOW OUTLINE_SOFT_SHADOW
 syn keyword	cConstant 	STATE_SET ACTION_STOP SIGNAL_EMIT
+syn keyword	cConstant 	SCRIPT LUA_SCRIPT
 syn keyword	cConstant	DRAG_VAL_SET DRAG_VAL_STEP DRAG_VAL_PAGE
 syn keyword	cConstant	LINEAR SINUSOIDAL ACCELERATE DECELERATE
 syn keyword	cConstant	"default"

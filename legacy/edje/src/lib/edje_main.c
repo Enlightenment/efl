@@ -30,6 +30,7 @@ edje_init(void)
 	_edje_edd_setup();
 	_edje_text_init();
 	_edje_box_init();
+	_edje_lua_init();
 	embryo_init();
 	eet_init();
 
@@ -91,6 +92,7 @@ edje_shutdown(void)
    _edje_real_part_mp = NULL;
 
    embryo_shutdown();
+   _edje_lua_shutdown();
    ecore_job_shutdown();
    eet_shutdown();
    eina_shutdown();

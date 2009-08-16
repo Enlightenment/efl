@@ -78,12 +78,14 @@ static void ob_collections(void);
 static void ob_collections_group(void);
 static void st_collections_group_name(void);
 static void st_collections_group_script_only(void);
+static void st_collections_group_lua_script_only(void);
 static void st_collections_group_alias(void);
 static void st_collections_group_min(void);
 static void st_collections_group_max(void);
 static void st_collections_group_data_item(void);
 
 static void ob_collections_group_script(void);
+static void ob_collections_group_lua_script(void);
 
 static void ob_collections_group_parts_part(void);
 static void st_collections_group_parts_part_name(void);
@@ -205,6 +207,7 @@ static void st_collections_group_programs_program_target(void);
 static void st_collections_group_programs_program_after(void);
 
 static void ob_collections_group_programs_program_script(void);
+static void ob_collections_group_programs_program_lua_script(void);
 
 /*****/
 
@@ -237,6 +240,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.color_classes.color_class.color3", st_color_class_color3}, /* dup */
      {"collections.group.name", st_collections_group_name},
      {"collections.group.script_only", st_collections_group_script_only},
+     {"collections.group.lua_script_only", st_collections_group_lua_script_only},
      {"collections.group.alias", st_collections_group_alias},
      {"collections.group.min", st_collections_group_min},
      {"collections.group.max", st_collections_group_max},
@@ -504,6 +508,7 @@ New_Object_Handler object_handlers[] =
      {"collections.group", ob_collections_group},
      {"collections.group.data", NULL},
      {"collections.group.script", ob_collections_group_script},
+     {"collections.group.lua_script", ob_collections_group_lua_script},
      {"collections.group.images", NULL}, /* dup */
      {"collections.group.fonts", NULL}, /* dup */
      {"collections.group.styles", NULL}, /* dup */
@@ -554,36 +559,48 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.color_classes.color_class", ob_color_class}, /* dup */
      {"collections.group.parts.part.description.program", ob_collections_group_programs_program}, /* dup */
      {"collections.group.parts.part.description.program.script", ob_collections_group_programs_program_script}, /* dup */
+     {"collections.group.parts.part.description.program.lua_script", ob_collections_group_programs_program_lua_script}, /* dup */
      {"collections.group.parts.part.description.programs", NULL}, /* dup */
      {"collections.group.parts.part.description.programs.images", NULL}, /* dup */
      {"collections.group.parts.part.description.programs.fonts", NULL}, /* dup */
      {"collections.group.parts.part.description.programs.program", ob_collections_group_programs_program}, /* dup */
      {"collections.group.parts.part.description.programs.program.script", ob_collections_group_programs_program_script}, /* dup */
+     {"collections.group.parts.part.description.programs.program.lua_script", ob_collections_group_programs_program_lua_script}, /* dup */
      {"collections.group.parts.part.description.script", ob_collections_group_script}, /* dup */
+     {"collections.group.parts.part.description.lua_script", ob_collections_group_lua_script}, /* dup */
      {"collections.group.parts.part.program", ob_collections_group_programs_program}, /* dup */
      {"collections.group.parts.part.program.script", ob_collections_group_programs_program_script}, /* dup */
+     {"collections.group.parts.part.program.lua_script", ob_collections_group_programs_program_lua_script}, /* dup */
      {"collections.group.parts.part.programs", NULL}, /* dup */
      {"collections.group.parts.part.programs.images", NULL}, /* dup */
      {"collections.group.parts.part.programs.fonts", NULL}, /* dup */
      {"collections.group.parts.part.programs.program", ob_collections_group_programs_program}, /* dup */
      {"collections.group.parts.part.programs.program.script", ob_collections_group_programs_program_script}, /* dup */
+     {"collections.group.parts.part.programs.program.lua_script", ob_collections_group_programs_program_lua_script}, /* dup */
      {"collections.group.parts.part.script", ob_collections_group_script}, /* dup */
+     {"collections.group.parts.part.lua_script", ob_collections_group_lua_script}, /* dup */
      {"collections.group.parts.program", ob_collections_group_programs_program}, /* dup */
      {"collections.group.parts.program.script", ob_collections_group_programs_program_script}, /* dup */
+     {"collections.group.parts.program.lua_script", ob_collections_group_programs_program_lua_script}, /* dup */
      {"collections.group.parts.programs", NULL}, /* dup */
      {"collections.group.parts.programs.images", NULL}, /* dup */
      {"collections.group.parts.programs.fonts", NULL}, /* dup */
      {"collections.group.parts.programs.program", ob_collections_group_programs_program}, /* dup */
      {"collections.group.parts.programs.program.script", ob_collections_group_programs_program_script}, /* dup */
+     {"collections.group.parts.programs.program.lua_script", ob_collections_group_programs_program_lua_script}, /* dup */
      {"collections.group.parts.script", ob_collections_group_script}, /* dup */
+     {"collections.group.parts.lua_script", ob_collections_group_lua_script}, /* dup */
      {"collections.group.program", ob_collections_group_programs_program}, /* dup */
      {"collections.group.program.script", ob_collections_group_programs_program_script}, /* dup */
+     {"collections.group.program.lua_script", ob_collections_group_programs_program_lua_script}, /* dup */
      {"collections.group.programs", NULL},
      {"collections.group.programs.images", NULL}, /* dup */
      {"collections.group.programs.fonts", NULL}, /* dup */
      {"collections.group.programs.program", ob_collections_group_programs_program},
      {"collections.group.programs.program.script", ob_collections_group_programs_program_script},
-     {"collections.group.programs.script", ob_collections_group_script} /* dup */
+     {"collections.group.programs.program.lua_script", ob_collections_group_programs_program_lua_script},
+     {"collections.group.programs.script", ob_collections_group_script}, /* dup */
+     {"collections.group.programs.lua_script", ob_collections_group_lua_script} /* dup */
 };
 
 /*****/
@@ -1368,6 +1385,17 @@ st_collections_group_script_only(void)
    pc->script_only = parse_bool(0);
 }
 
+static void
+st_collections_group_lua_script_only(void)
+{
+   Edje_Part_Collection *pc;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   pc->lua_script_only = parse_bool(0);
+}
+
 /**
     @page edcref
     @property
@@ -1494,6 +1522,39 @@ ob_collections_group_script(void)
 		  exit(-1);
 	       }
 	     cd->shared = s;
+	     cd->is_lua = 0;
+	     set_verbatim(NULL, 0, 0);
+	  }
+     }
+}
+
+static void
+ob_collections_group_lua_script(void)
+{
+   Edje_Part_Collection *pc;
+   Code *cd;
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   cd = eina_list_data_get(eina_list_last(codes));
+
+   if (!is_verbatim()) track_verbatim(1);
+   else
+     {
+	char *s;
+
+	s = get_verbatim();
+	if (s)
+	  {
+	     cd->l1 = get_verbatim_line1();
+	     cd->l2 = get_verbatim_line2();
+	     if (cd->shared)
+	       {
+		  fprintf(stderr, "%s: Error. parse error %s:%i. There is already an existing script section for the group\n",
+			  progname, file_in, line - 1);
+		  exit(-1);
+	       }
+	     cd->shared = s;
+	     cd->is_lua = 1;
 	     set_verbatim(NULL, 0, 0);
 	  }
      }
@@ -5604,6 +5665,7 @@ st_collections_group_programs_program_action(void)
 			   "DRAG_VAL_STEP", EDJE_ACTION_TYPE_DRAG_VAL_STEP,
 			   "DRAG_VAL_PAGE", EDJE_ACTION_TYPE_DRAG_VAL_PAGE,
 			   "SCRIPT", EDJE_ACTION_TYPE_SCRIPT,
+			   "LUA_SCRIPT", EDJE_ACTION_TYPE_LUA_SCRIPT,
 			   "FOCUS_SET", EDJE_ACTION_TYPE_FOCUS_SET,
 			   NULL);
    if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
@@ -5639,6 +5701,10 @@ st_collections_group_programs_program_action(void)
 	break;
       case EDJE_ACTION_TYPE_SCRIPT:
 	/* this is implicitly set by script {} so this is here just for
+	 * completeness */
+	break;
+      case EDJE_ACTION_TYPE_LUA_SCRIPT:
+	/* this is implicitly set by lua_script {} so this is here just for
 	 * completeness */
 	break;
       case EDJE_ACTION_TYPE_FOCUS_SET:
@@ -5797,9 +5863,56 @@ ob_collections_group_programs_program_script(void)
 	     cp->l2 = get_verbatim_line2();
 	     cp->id = ep->id;
 	     cp->script = s;
+	     if (cd->shared && cd->is_lua)
+	       {
+		  fprintf(stderr, "%s: Error. parse error %s:%i. You're trying to mix Embryo and Lua scripting in the same group\n",
+			progname, file_in, line - 1);
+		  exit(-1);
+	       }
+	     cd->is_lua = 0;
 	     cd->programs = eina_list_append(cd->programs, cp);
 	     set_verbatim(NULL, 0, 0);
 	     ep->action = EDJE_ACTION_TYPE_SCRIPT;
+	  }
+     }
+}
+
+static void
+ob_collections_group_programs_program_lua_script(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Program *ep;
+   Code *cd;
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->programs));
+   cd = eina_list_data_get(eina_list_last(codes));
+
+   if (!is_verbatim()) track_verbatim(1);
+   else
+     {
+	char *s;
+
+	s = get_verbatim();
+	if (s)
+	  {
+	     Code_Program *cp;
+
+	     cp = mem_alloc(SZ(Code_Program));
+	     cp->l1 = get_verbatim_line1();
+	     cp->l2 = get_verbatim_line2();
+	     cp->id = ep->id;
+	     cp->script = s;
+	     if (cd->shared && !cd->is_lua)
+	       {
+		  fprintf(stderr, "%s: Error. parse error %s:%i. You're trying to mix Embryo and Lua scripting in the same group\n",
+			progname, file_in, line - 1);
+		  exit(-1);
+	       }
+	     cd->is_lua = 1;
+	     cd->programs = eina_list_append(cd->programs, cp);
+	     set_verbatim(NULL, 0, 0);
+	     ep->action = EDJE_ACTION_TYPE_LUA_SCRIPT;
 	  }
      }
 }

@@ -33,6 +33,9 @@ void *alloca (size_t);
 #include "edje_cc.h"
 #include "edje_prefix.h"
 
+#include <lua.h>
+#include <lauxlib.h>
+
 typedef struct _Part_Lookup Part_Lookup;
 typedef struct _Program_Lookup Program_Lookup;
 typedef struct _Group_Lookup Group_Lookup;
@@ -769,7 +772,9 @@ data_write_scripts(Eet_File *ef)
      {
 	int fd;
 	Code *cd = eina_list_data_get(l);
-
+	
+	if (cd->is_lua)
+	  continue;
 	if ((!cd->shared) && (!cd->programs))
 	  continue;
 
@@ -798,6 +803,142 @@ data_write_scripts(Eet_File *ef)
 
 	unlink(tmpn);
 	unlink(tmpo);
+     }
+}
+
+typedef struct _Edje_Lua_Script_Writer_Struct Edje_Lua_Script_Writer_Struct;
+
+struct _Edje_Lua_Script_Writer_Struct {
+   void *buf;
+   int size;
+};
+
+static int
+_edje_lua_script_writer (lua_State *L, const void* chunk_buf, size_t chunk_size, void* _data)
+{
+   Edje_Lua_Script_Writer_Struct *data = _data;
+   void *old = data->buf;
+   data->buf = malloc (data->size + chunk_size);
+   memcpy (data->buf, old, data->size);
+   memcpy (&((data->buf)[data->size]), chunk_buf, chunk_size);
+   if (old)
+     free (old);
+   data->size += chunk_size;
+   return 0;
+}
+
+void
+_edje_lua_error_and_abort(lua_State * L, int err_code, Edje_File *ef)
+{
+   char *err_type;
+   switch (err_code)
+     {
+     case LUA_ERRRUN:
+	err_type = "runtime";
+	break;
+     case LUA_ERRSYNTAX:
+	err_type = "syntax";
+	break;
+     case LUA_ERRMEM:
+	err_type = "memory allocation";
+	break;
+     case LUA_ERRERR:
+	err_type = "error handler";
+	break;
+     default:
+	err_type = "unknown";
+	break;
+     }
+   error_and_abort(ef, "Lua %s error: %s\n", err_type, lua_tostring(L, -1));
+}
+
+
+static void
+data_write_lua_scripts(Eet_File *ef)
+{
+   Eina_List *l;
+   Eina_List *ll;
+   Code_Program *cp;
+   int i;
+
+   for (i = 0, l = codes; l; l = eina_list_next(l), i++)
+     {
+	Code *cd = eina_list_data_get(l);
+	if (!cd->is_lua)
+	  continue;
+	if ((!cd->shared) && (!cd->programs))
+	  continue;
+	
+	lua_State *L = luaL_newstate();
+	if (!L)
+	  error_and_abort(ef, "Lua error: Lua state could not be initialized\n");
+
+	int ln = 1;
+	luaL_Buffer b;
+	luaL_buffinit(L, &b);
+
+	Edje_Lua_Script_Writer_Struct data;
+	data.buf = NULL;
+	data.size = 0;
+	if (cd->shared)
+	  {
+	     while (ln < (cd->l1 - 1))
+	       {
+		  luaL_addchar(&b, '\n');
+		  ln++;
+	       }
+	     luaL_addstring(&b, cd->shared);
+	     ln += cd->l2 - cd->l1;
+	  }
+
+	EINA_LIST_FOREACH(cd->programs, ll, cp)
+	  {
+	     if (cp->script)
+	       {
+		  while (ln < (cp->l1 - 1))
+		    {
+		       luaL_addchar(&b, '\n');
+		       ln++;
+		    }
+		  luaL_addstring(&b, "_G[");
+		  lua_pushnumber(L, cp->id);
+		  luaL_addvalue(&b);
+		  luaL_addstring(&b, "] = function (ed, signal, source)");
+		  luaL_addstring(&b, cp->script);
+		  luaL_addstring(&b, "end\n");
+		  ln += cp->l2 - cp->l1 + 1;
+	       }
+	  }
+	luaL_pushresult(&b);
+#ifdef LUA_BINARY
+	int err_code;
+	if (err_code = luaL_loadstring(L, lua_tostring (L, -1)))
+	  _edje_lua_error_and_abort(L, err_code, ef);
+	lua_dump(L, _edje_lua_script_writer, &data);
+#else // LUA_PLAIN_TEXT
+	data.buf = lua_tostring(L, -1);
+	data.size = strlen(data.buf);
+#endif
+	//printf("lua chunk size: %d\n", data.size);
+
+	/* 
+	 * TODO load and test Lua chunk
+	 */
+
+	/*
+	   if (luaL_loadbuffer(L, globbuf, globbufsize, "edje_lua_script"))
+	   printf("lua load error: %s\n", lua_tostring (L, -1));
+	   if (lua_pcall(L, 0, 0, 0))
+	   printf("lua call error: %s\n", lua_tostring (L, -1));
+	 */
+	
+	char buf[4096];
+	snprintf(buf, sizeof(buf), "lua_scripts/%i", i);
+	eet_write(ef, buf, data.buf, data.size, 1);
+#ifdef LUA_BINARY
+	free(data.buf);
+#endif
+	lua_close(L);
      }
 }
 
@@ -834,6 +975,7 @@ data_write(void)
 
    total_bytes += data_write_groups(ef, &collection_num);
    data_write_scripts(ef);
+   data_write_lua_scripts(ef);
 
    src_bytes = source_append(ef);
    total_bytes += src_bytes;
@@ -1325,7 +1467,7 @@ data_process_scripts(void)
 	     Eina_List *ll;
 	     Code_Program *cp;
 
-	     if (cd->shared)
+	     if ((cd->shared) && (!cd->is_lua))
 	       {
 		  data_process_string(pc, "PART",    cd->shared, _data_queue_part_lookup);
 		  data_process_string(pc, "PROGRAM", cd->shared, _data_queue_program_lookup);

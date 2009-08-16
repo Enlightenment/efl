@@ -99,6 +99,7 @@ _edje_smart_del(Evas_Object * obj)
    _edje_edjes = eina_list_remove(_edje_edjes, obj);
    evas_object_smart_data_set(obj, NULL);
    if (_edje_script_only(ed)) _edje_script_only_shutdown(ed);
+   if (_edje_lua_script_only(ed)) _edje_lua_script_only_shutdown(ed);
    _edje_file_del(ed);
    _edje_unref(ed);
 }
@@ -121,6 +122,11 @@ _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
 	_edje_script_only_move(ed);
 	return;
      }
+   if (_edje_lua_script_only(ed))
+   {
+      _edje_lua_script_only_move(ed);
+      return;
+   }
    
    for (i = 0; i < ed->table_parts_size; i++)
      {
@@ -159,6 +165,11 @@ _edje_smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h)
 	_edje_script_only_resize(ed);
 	return;
      }
+   if (_edje_lua_script_only(ed))
+     {
+	_edje_lua_script_only_resize(ed);
+	return;
+     }
 //   evas_object_resize(ed->clipper, ed->w, ed->h);
    ed->dirty = 1;
    _edje_recalc_do(ed);
@@ -180,6 +191,11 @@ _edje_smart_show(Evas_Object * obj)
 	_edje_script_only_show(ed);
 	return;
      }
+   if (_edje_lua_script_only(ed))
+   {
+      _edje_lua_script_only_show(ed);
+      return;
+   }
    _edje_emit(ed, "show", NULL);
 }
 
@@ -198,6 +214,11 @@ _edje_smart_hide(Evas_Object * obj)
 	_edje_script_only_hide(ed);
 	return;
      }
+   if (_edje_lua_script_only(ed))
+   {
+      _edje_lua_script_only_hide(ed);
+      return;
+   }
    _edje_emit(ed, "hide", NULL);
 }
 

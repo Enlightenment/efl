@@ -558,10 +558,15 @@ _edje_message_process(Edje_Message *em)
 	return;
      }
    /* now this message is destined for the script message handler fn */
-   if (!((em->edje->collection) && (em->edje->collection->script))) return;
-   if (_edje_script_only(em->edje))
+   if (!(em->edje->collection)) return;
+   if ((em->edje->collection->script) && _edje_script_only (em->edje))
      {
 	_edje_script_only_message(em->edje, em);
+	return;
+     }
+   if (em->edje->collection->L)
+     {
+	_edje_lua_script_only_message(em->edje, em);
 	return;
      }
    fn = embryo_program_function_find(em->edje->collection->script, "message");

@@ -50,6 +50,7 @@ struct _Code
    int       l1, l2;
    char      *shared;
    Eina_List *programs;
+   int		is_lua;
 };
 
 struct _Code_Program

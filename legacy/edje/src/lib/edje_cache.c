@@ -67,6 +67,28 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
 	free(data);
      }
 
+   snprintf(buf, sizeof(buf), "lua_scripts/%i", id);
+   data = eet_read(edf->ef, buf, &size);
+
+   if (data)
+     {
+	//printf("lua chunk size: %d\n", size);
+	edc->L = _edje_lua_new_thread(_edje_lua_state_get()); // gets freed in 'edje_load::_edje_collection_free'
+	_edje_lua_new_reg(edc->L, -1, edc); // gets freed in 'edje_load::_edje_collectoin_free'
+
+	int err_code;
+	if (err_code = luaL_loadbuffer(edc->L, data, size, "edje_lua_script"));
+	  {
+	     if (err_code == LUA_ERRSYNTAX)
+	       printf("lua load syntax error: %s\n", lua_tostring(edc->L, -1));
+	     else if (err_code == LUA_ERRMEM)
+	       printf("lua load memory allocation error: %s\n", lua_tostring(edc->L, -1));
+	  }
+	if (lua_pcall(edc->L, 0, 0, 0))
+	  printf("lua call error: %s\n", lua_tostring(edc->L, -1));
+	free(data);
+     }
+   
    edc->part = eina_stringshare_add(coll);
    edc->references = 1;
    if (!edf->collection_hash)

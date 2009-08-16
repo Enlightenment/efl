@@ -23,6 +23,8 @@
 #include "Edje.h"
 #include "Edje_Edit.h"
 
+#include <lua.h>
+
 #ifdef __GNUC__
 # if __GNUC__ >= 4
 // BROKEN in gcc 4 on amd64
@@ -179,7 +181,8 @@ typedef struct _Edje_Patterns                        Edje_Patterns;
 #define EDJE_ACTION_TYPE_DRAG_VAL_PAGE 6
 #define EDJE_ACTION_TYPE_SCRIPT        7
 #define EDJE_ACTION_TYPE_FOCUS_SET     8
-#define EDJE_ACTION_TYPE_LAST          9
+#define EDJE_ACTION_TYPE_LUA_SCRIPT    9
+#define EDJE_ACTION_TYPE_LAST          10
 
 #define EDJE_TWEEN_MODE_NONE       0
 #define EDJE_TWEEN_MODE_LINEAR     1
@@ -447,10 +450,12 @@ struct _Edje_Part_Collection
 #endif
 
    Embryo_Program   *script; /* all the embryo script code for this group */
-
    const char       *part;
    
    unsigned char    script_only;
+
+   unsigned char	lua_script_only;
+   lua_State		*L;
 };
 
 struct _Edje_Part
@@ -728,6 +733,7 @@ struct _Edje
    unsigned short        text_part_change : 1;
    unsigned short        all_part_change : 1;
 #endif
+   lua_State *L;
 };
 
 struct _Edje_Calc_Params
@@ -1333,6 +1339,27 @@ void _edje_script_only_hide(Edje *ed);
 void _edje_script_only_move(Edje *ed);
 void _edje_script_only_resize(Edje *ed);
 void _edje_script_only_message(Edje *ed, Edje_Message *em);
+
+lua_State *_edje_lua_state_get();
+lua_State *_edje_lua_new_thread(lua_State *L);
+void _edje_lua_free_thread(lua_State *L);
+void _edje_lua_new_reg(lua_State *L, int index, void *ptr);
+void _edje_lua_get_reg(lua_State *L, void *ptr);
+void _edje_lua_free_reg(lua_State *L, void *ptr);
+void _edje_lua_script_fn_new(Edje *ed);
+void _edje_lua_group_fn_new(Edje *ed);
+void _edje_lua_init();
+void _edje_lua_shutdown();
+void _edje_lua_error(lua_State *L, int err_code);
+
+int  _edje_lua_script_only(Edje *ed);
+void _edje_lua_script_only_init(Edje *ed);
+void _edje_lua_script_only_shutdown(Edje *ed);
+void _edje_lua_script_only_show(Edje *ed);
+void _edje_lua_script_only_hide(Edje *ed);
+void _edje_lua_script_only_move(Edje *ed);
+void _edje_lua_script_only_resize(Edje *ed);
+void _edje_lua_script_only_message(Edje *ed, Edje_Message *em);
 
 void _edje_entry_init(Edje *ed);
 void _edje_entry_shutdown(Edje *ed);
