@@ -868,7 +868,10 @@ eet_data_chunk_put(Eet_Dictionary *ed, Eet_Data_Chunk *chnk, Eet_Data_Stream *ds
    int   string_ret = 0;
    unsigned char buf[4] = "CHK";
 
-   if (!chnk->data && chnk->type != EET_T_NULL) return;
+   /* disable this check - it will allow empty chunks to be written. this is
+    * right for corner-cases when y have a struct with empty fields (empty
+    * strings or empty list ptrs etc.) */
+   /* if (!chnk->data && chnk->type != EET_T_NULL) return; */
    /* chunk head */
 
 /*   eet_data_stream_write(ds, "CHnK", 4);*/
@@ -896,7 +899,8 @@ eet_data_chunk_put(Eet_Dictionary *ed, Eet_Data_Chunk *chnk, Eet_Data_Stream *ds
    eet_data_stream_write(ds, string, string_ret);
 
    /* write payload */
-   eet_data_stream_write(ds, chnk->data, chnk->size);
+   if (chnk->data)
+     eet_data_stream_write(ds, chnk->data, chnk->size);
 
    free(string);
  on_error:
