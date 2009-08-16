@@ -119,24 +119,22 @@ EAPI Eina_Accessor *eina_list_accessor_new(const Eina_List *list) EINA_MALLOC EI
 
 /**
  * @def EINA_LIST_FOREACH
- * @brief Macro to iterate over a list easily.
+ * @brief Macro to iterate over a list.
  *
  * @param list The list to iterate over.
- * @param l A list that is used as loop index.
- * @param data The data.
+ * @param l A list that is used as an iterator and points to the current node.
+ * @param data Current item's data.
  *
- * This macro allow the iteration over @p list in an easy way. It
- * iterates from the first element to the last one. @p data is the
- * data of each element of the list. @p l is an #Eina_List that is
- * used as counter.
+ * This macro iterates over @p list from the first element to
+ * the last. @p data is the data related to the current element.
+ * @p l is an #Eina_List used as the list iterator.
  *
- * This macro can be used for freeing the data of a list, like in
- * the following example:
+ * It can be used to free list data, as in the following example:
  *
  * @code
  * Eina_List *list;
  * Eina_List *l;
- * char       *data;
+ * char      *data;
  *
  * // list is already filled,
  * // its elements are just duplicated strings,
@@ -147,36 +145,39 @@ EAPI Eina_Accessor *eina_list_accessor_new(const Eina_List *list) EINA_MALLOC EI
  * eina_list_free(list);
  * @endcode
  *
- * @note this example is not optimal algorithm to release a list since
- *    it will walk the list twice, but it serves as an example. For
- *    optimized version use EINA_LIST_FREE().
+ * @note This is not the optimal way to release memory allocated to
+ *       a list, since it iterates over the list twice.
+ *       For an optimized algorithm, use EINA_LIST_FREE().
  *
- * @warning do not delete list nodes, specially the current node,
- *    while iterating. If you wish to do so, use
- *    EINA_LIST_FOREACH_SAFE().
+ * @warning Be careful when deleting list nodes.
+ *          If you remove the current node and continue iterating,
+ *          the code will fail because the macro will not be able
+ *          to get the next node. Notice that it's OK to remove any
+ *          node if you stop the loop after that.
+ *          For destructive operations such as this, consider
+ *          using EINA_LIST_FOREACH_SAFE().
  */
 #define EINA_LIST_FOREACH(list, l, data) for (l = list, data = eina_list_data_get(l); l; l = eina_list_next(l), data = eina_list_data_get(l))
 
 /**
  * @def EINA_LIST_REVERSE_FOREACH
- * @brief Macro to iterate over a list easily in the reverse order.
+ * @brief Macro to iterate over a list in the reverse order.
  *
  * @param list The list to iterate over.
- * @param l A list that is used as loop index.
- * @param data The data.
+ * @param l A list that is used as an iterator and points to the current node.
+ * @param data Current item's data.
  *
- * This macro allow the reversed iteration over @p list in an easy
- * way. It iterates from the last element to the first one. @p data is
- * the data of each element of the list. @p l is an #Eina_List that is
- * used as counter.
+ * This macro works like EINA_LIST_FOREACH, but iterates from the
+ * last element of a list to the first.
+ * @p data is the data related to the current element, while @p l
+ * is an #Eina_List that is used as the list iterator.
  *
- * This macro can be used for freeing the data of a list, like in
- * the following example:
+ * It can be used to free list data, as in the following example:
  *
  * @code
  * Eina_List *list;
  * Eina_List *l;
- * char       *data;
+ * char      *data;
  *
  * // list is already filled,
  * // its elements are just duplicated strings,
@@ -187,42 +188,43 @@ EAPI Eina_Accessor *eina_list_accessor_new(const Eina_List *list) EINA_MALLOC EI
  * eina_list_free(list);
  * @endcode
  *
- * @note this example is not optimal algorithm to release a list since
- *    it will walk the list twice, but it serves as an example. For
- *    optimized version use EINA_LIST_FREE()
+ * @note This is not the optimal way to release memory allocated to
+ *       a list, since it iterates over the list twice.
+ *       For an optimized algorithm, use EINA_LIST_FREE().
  *
- * @warning do not delete list nodes, specially the current node,
- *    while iterating. If you wish to do so, use
- *    EINA_LIST_REVERSE_FOREACH_SAFE().
+ * @warning Be careful when deleting list nodes.
+ *          If you remove the current node and continue iterating,
+ *          the code will fail because the macro will not be able
+ *          to get the next node. Notice that it's OK to remove any
+ *          node if you stop the loop after that.
+ *          For destructive operations such as this, consider
+ *          using EINA_LIST_REVERSE_FOREACH_SAFE().
  */
 #define EINA_LIST_REVERSE_FOREACH(list, l, data) for (l = eina_list_last(list), data = eina_list_data_get(l); l; l = eina_list_prev(l), data = eina_list_data_get(l))
 
 /**
  * @def EINA_LIST_FOREACH_SAFE
- * @brief Macro to iterate over a list easily, supporting deletion.
+ * @brief Macro to iterate over a list with support for node deletion.
  *
  * @param list The list to iterate over.
- * @param l A list that is used as loop index.
- * @param l_next A second list that is used as loop next index.
- * @param data The data.
+ * @param l A list that is used as an iterator and points to the current node.
+ * @param l_next A list that is used as an iterator and points to the next node.
+ * @param data Current item's data.
  *
- * This macro allow the iteration over @p list in an easy way. It
- * iterates from the first element to the last one. @p data is the
- * data of each element of the list. @p l is an #Eina_List that is
- * used as counter.
+ * This macro iterates over @p list from the first element to
+ * the last. @p data is the data related to the current element.
+ * @p l is an #Eina_List used as the list iterator.
  *
- * This is the safe version, which stores the next pointer in @p l_next
- * before proceeding, so deletion of @b current node is safe. If you wish
- * to remove anything else, remember to set @p l_next accordingly.
+ * Since this macro stores a pointer to the next list node in @p l_next,
+ * deleting the current node and continuing looping is safe.
  *
- * This macro can be used for freeing list nodes, like in
- * the following example:
+ * This macro can be used to free list nodes, as in the following example:
  *
  * @code
  * Eina_List *list;
  * Eina_List *l;
  * Eina_List *l_next;
- * char       *data;
+ * char      *data;
  *
  * // list is already filled,
  * // its elements are just duplicated strings,
@@ -239,26 +241,23 @@ EAPI Eina_Accessor *eina_list_accessor_new(const Eina_List *list) EINA_MALLOC EI
 
 /**
  * @def EINA_LIST_REVERSE_FOREACH_SAFE
- * @brief Macro to iterate over a list easily in the reverse order,
- * supporting deletion.
+ * @brief Macro to iterate over a list in the reverse order with support
+ *        for deletion.
  *
  * @param list The list to iterate over.
- * @param l A list that is used as loop index.
- * @param l_prev A second list that is used as loop previous index.
- * @param data The data.
+ * @param l A list that is used as an iterator and points to the current node.
+ * @param l_prev A list that is used as an iterator and points to the previous node.
+ * @param data Current item's data.
  *
- * This macro allow the reversed iteration over @p list in an easy
- * way. It iterates from the last element to the first one. @p data is
- * the data of each element of the list. @p l is an #Eina_List that is
- * used as counter.
+ * This macro works like EINA_LIST_FOREACH_SAFE, but iterates from the
+ * last element of a list to the first.
+ * @p data is the data related to the current element, while @p l
+ * is an #Eina_List that is used as the list iterator.
  *
- * This is the safe version, which stores the previous pointer in @p
- * l_prev before proceeding, so deletion of @b current node is
- * safe. If you wish to remove anything else, remember to set @p
- * l_prev accordingly.
+ * Since this macro stores a pointer to the previous list node in @p l_prev,
+ * deleting the current node and continuing looping is safe.
  *
- * This macro can be used for freeing list nodes, like in
- * the following example:
+ * This macro can be used to free list nodes, as in the following example:
  *
  * @code
  * Eina_List *list;
@@ -280,11 +279,20 @@ EAPI Eina_Accessor *eina_list_accessor_new(const Eina_List *list) EINA_MALLOC EI
 #define EINA_LIST_REVERSE_FOREACH_SAFE(list, l, l_prev, data) for (l = list, l_prev = eina_list_prev(l), data = eina_list_data_get(l); l; l = l_prev, l_prev = eina_list_prev(l), data = eina_list_data_get(l))
 
 /**
- * Easy way to free the while list while being able to release its pointed data.
+ * @def EINA_LIST_FREE
+ * @brief Macro to remove each list node while having access to each node's data.
+ *
+ * @param list The list that will be cleared.
+ * @param data Current node's data.
+ *
+ * This macro will call #eina_list_remove_list for each list node, and store
+ * the data contained in the current node in @p data.
+ *
+ * If you do not need to release node data, it is easier to call #eina_list_free().
  *
  * @code
  * Eina_List *list;
- * char *data;
+ * char      *data;
  *
  * // list is already filled,
  * // its elements are just duplicated strings,
@@ -293,11 +301,9 @@ EAPI Eina_Accessor *eina_list_accessor_new(const Eina_List *list) EINA_MALLOC EI
  *   free(data);
  * @endcode
  *
- * If you do not need to release node data then use eina_list_free().
- *
  * @see eina_list_free()
  */
-#define EINA_LIST_FREE(list, data) for (data = list ? eina_list_data_get(list) : NULL; list; list = eina_list_remove_list(list, list), data = list ? eina_list_data_get(list) : NULL)
+#define EINA_LIST_FREE(list, data) for (data = eina_list_data_get(list); list; list = eina_list_remove_list(list, list), data = eina_list_data_get(list))
 
 #include "eina_inline_list.x"
 

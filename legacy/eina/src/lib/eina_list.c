@@ -919,7 +919,7 @@ eina_list_remove(Eina_List *list, const void *data)
    if (list) EINA_MAGIC_CHECK_LIST(list, NULL);
 
    l = eina_list_data_find_list(list, data);
-             return eina_list_remove_list(list, l);
+   return eina_list_remove_list(list, l);
 }
 
 /**
@@ -935,7 +935,9 @@ eina_list_remove(Eina_List *list, const void *data)
  * @c NULL, it returns @p list, otherwise, a new list pointer that
  * should be used in place of the one passed to this function.
  *
- * The following code gives an example.
+ * The following code gives an example (notice we use EINA_LIST_FOREACH
+ * instead of EINA_LIST_FOREACH_SAFE because we stop the loop after
+ * removing the current node).
  *
  * @code
  * extern Eina_List *list;
