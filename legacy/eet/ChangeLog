@@ -214,3 +214,8 @@
 	* Fix eet data encode to encode empty structs etc. so save saves
           something as opposed to nothing
 
+2009-08-16  Carsten Haitzler (The Rasterman)
+
+	* Fix documentation of eet_data_write() and eet_write() for return
+          value to return # of bytes written, not 1 or 0
+

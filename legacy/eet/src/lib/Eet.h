@@ -413,7 +413,7 @@ extern "C" {
     * @param data Pointer to the data to be stored.
     * @param size Length in bytes in the data to be stored.
     * @param compress Compression flags (1 == compress, 0 = don't compress).
-    * @return Success or failure of the write.
+    * @return bytes written on successful write, 0 on failure.
     *
     * This function will write the specified chunk of data to the eet file
     * and return greater than 0 on success. 0 will be returned on failure.
@@ -1146,7 +1146,7 @@ extern "C" {
     * @param name The key to store the data under in the eet file.
     * @param data A pointer to the data structure to ssave and encode.
     * @param compress Compression flags for storage.
-    * @return 1 on successful write, 0 on failure.
+    * @return bytes written on successful write, 0 on failure.
     *
     * This function is the reverse of eet_data_read(), saving a data structure
     * to an eet file.
