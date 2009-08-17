@@ -22,8 +22,6 @@ edje_init(void)
    initted++;
    if (initted == 1)
      {
-	const char *choice;
-
 	eina_init();
         ecore_job_init();
 	srand(time(NULL));

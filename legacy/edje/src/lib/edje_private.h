@@ -24,6 +24,7 @@
 #include "Edje_Edit.h"
 
 #include <lua.h>
+#include <lauxlib.h>
 
 #ifdef __GNUC__
 # if __GNUC__ >= 4

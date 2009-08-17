@@ -440,10 +440,11 @@ _edje_lua_look_get(lua_State *L)
    lua_rawget(L, -2);		// .get[key]
    if (lua_iscfunction(L, -1))
      {
-	lua_pushvalue(L, 1);
 	int err_code;
 
-	if (err_code = lua_pcall(L, 1, 1, 0))
+	lua_pushvalue(L, 1);
+
+	if ((err_code = lua_pcall(L, 1, 1, 0)))
 	   _edje_lua_error(L, err_code);
 	return 1;
      }
@@ -462,11 +463,12 @@ _edje_lua_look_set(lua_State *L)
    lua_rawget(L, -2);		// .set[key]
    if (lua_iscfunction(L, -1))
      {
-	lua_pushvalue(L, 1);	// obj
-	lua_pushvalue(L, 3);	// value
 	int err_code;
 
-	if (err_code = lua_pcall(L, 2, 0, 0))	// .set[key](obj,key,value)
+	lua_pushvalue(L, 1);	// obj
+	lua_pushvalue(L, 3);	// value
+
+	if ((err_code = lua_pcall(L, 2, 0, 0)))	// .set[key](obj,key,value)
 	   _edje_lua_error(L, err_code);
 	return 1;
      }
@@ -599,14 +601,16 @@ _edje_lua_class_fn_get(lua_State *L)
 static int
 _edje_lua_class_itr_call(lua_State *L, int id)
 {
+   int err_code;
+
    _edje_lua_checkudata(L, 1, &mClass);
    lua_getmetatable(L, 1);	// mt
    lua_rawgeti(L, -1, id);
    lua_remove(L, -2);		// mt
    lua_getglobal(L, "pairs");
    lua_insert(L, -2);
-   int err_code;
-   if (err_code = lua_pcall(L, 1, 3, 0))
+
+   if ((err_code = lua_pcall(L, 1, 3, 0)))
       _edje_lua_error(L, err_code);
    return 3;
 }
@@ -635,12 +639,14 @@ _edje_lua_class_fn_fpairs(lua_State *L)
 static int
 _edje_lua_class_fn_pairs(lua_State *L)
 {
+   int err_code;
+
    _edje_lua_checkudata(L, 1, &mClass);
    lua_getfenv(L, 1);
    lua_getglobal(L, "pairs");
    lua_insert(L, -2);
-   int err_code;
-   if (err_code = lua_pcall(L, 1, 3, 0))
+
+   if ((err_code = lua_pcall(L, 1, 3, 0)))
       _edje_lua_error(L, err_code);
    return 3;
 }
@@ -648,12 +654,14 @@ _edje_lua_class_fn_pairs(lua_State *L)
 static int
 _edje_lua_class_fn_ipairs(lua_State *L)
 {
+   int err_code;
+
    _edje_lua_checkudata(L, 1, &mClass);
    lua_getfenv(L, 1);
    lua_getglobal(L, "ipairs");
    lua_insert(L, -2);
-   int err_code;
-   if (err_code = lua_pcall(L, 1, 3, 0))
+
+   if ((err_code = lua_pcall(L, 1, 3, 0)))
       _edje_lua_error(L, err_code);
    return 3;
 }
@@ -704,12 +712,16 @@ _edje_lua_timer_cb(void *data)
 {
    Edje_Lua_Timer *obj = data;
    lua_State *L = obj->L;
+   int err_code;
+   int res;
+
    _edje_lua_get_ref(L, obj->cb);	// callback function
    _edje_lua_get_reg(L, obj);
-   int err_code;
-   if (err_code = lua_pcall(L, 1, 1, 0))
+
+   if ((err_code = lua_pcall(L, 1, 1, 0)))
       _edje_lua_error(L, err_code);
-   int res = luaL_checkint(L, -1);
+
+   res = luaL_checkint(L, -1);
    lua_pop(L, 1);		// -- res
    if (res == ECORE_CALLBACK_CANCEL)
      {
@@ -719,7 +731,7 @@ _edje_lua_timer_cb(void *data)
 	lua_pushstring(L, "del");
 	lua_gettable(L, -2);
 	lua_insert(L, -2);
-	if (err_code = lua_pcall(L, 1, 0, 0))
+	if ((err_code = lua_pcall(L, 1, 0, 0)))
 	   _edje_lua_error(L, err_code);
      }
    return res;
@@ -867,7 +879,7 @@ _edje_lua_animator_cb(void *data)
    _edje_lua_get_ref(L, obj->cb);
    _edje_lua_get_reg(L, obj);
 
-   if (err = lua_pcall(L, 1, 1, 0))
+   if ((err = lua_pcall(L, 1, 1, 0)))
      _edje_lua_error(L, err);
 
    res = luaL_checkint(L, -1);
@@ -880,7 +892,7 @@ _edje_lua_animator_cb(void *data)
 	lua_pushstring(L, "del");
 	lua_gettable(L, -2);
 	lua_insert(L, -2);
-	if (err = lua_pcall(L, 1, 0, 0))
+	if ((err = lua_pcall(L, 1, 0, 0)))
 	  _edje_lua_error(L, err);
      }
 
@@ -959,7 +971,7 @@ _edje_lua_poller_cb(void *data)
    _edje_lua_get_ref(L, obj->cb);
    _edje_lua_get_reg(L, obj);
 
-   if (err = lua_pcall(L, 1, 1, 0))
+   if ((err = lua_pcall(L, 1, 1, 0)))
      _edje_lua_error(L, err);
 
    res = luaL_checkint(L, -1);
@@ -972,7 +984,7 @@ _edje_lua_poller_cb(void *data)
 	lua_pushstring(L, "del");
 	lua_gettable(L, -2);
 	lua_insert(L, -2);
-	if (err = lua_pcall(L, 1, 0, 0))
+	if ((err = lua_pcall(L, 1, 0, 0)))
 	  _edje_lua_error(L, err);
      }
 
@@ -1924,12 +1936,14 @@ _edje_lua_object_cb_mouse_in(void *data, Evas * e, Evas_Object * obj,
 {
    OBJECT_CB_MACRO("mouse_in");
    Evas_Event_Mouse_In * ev = event_info;
+   int err_code;
+
    lua_pushnumber(L, ev->output.x);
    lua_pushnumber(L, ev->output.y);
    lua_pushnumber(L, ev->canvas.x);
    lua_pushnumber(L, ev->canvas.y);
-   int err_code;
-   if (err_code = lua_pcall(L, 5, 0, 0))
+
+   if ((err_code = lua_pcall(L, 5, 0, 0)))
       _edje_lua_error(L, err_code);
 }
 
@@ -1939,12 +1953,14 @@ _edje_lua_object_cb_mouse_out(void *data, Evas * e, Evas_Object * obj,
 {
    OBJECT_CB_MACRO("mouse_out");
    Evas_Event_Mouse_In * ev = event_info;
+   int err_code;
+
    lua_pushnumber(L, ev->output.x);
    lua_pushnumber(L, ev->output.y);
    lua_pushnumber(L, ev->canvas.x);
    lua_pushnumber(L, ev->canvas.y);
-   int err_code;
-   if (err_code = lua_pcall(L, 5, 0, 0))
+
+   if ((err_code = lua_pcall(L, 5, 0, 0)))
       _edje_lua_error(L, err_code);
 }
 
@@ -1954,13 +1970,15 @@ _edje_lua_object_cb_mouse_down(void *data, Evas * e, Evas_Object * obj,
 {
    OBJECT_CB_MACRO("mouse_down");
    Evas_Event_Mouse_Down * ev = event_info;
+   int err_code;
+
    lua_pushnumber(L, ev->button);
    lua_pushnumber(L, ev->output.x);
    lua_pushnumber(L, ev->output.y);
    lua_pushnumber(L, ev->canvas.x);
    lua_pushnumber(L, ev->canvas.y);
-   int err_code;
-   if (err_code = lua_pcall(L, 6, 0, 0))
+
+   if ((err_code = lua_pcall(L, 6, 0, 0)))
       _edje_lua_error(L, err_code);
 }
 
@@ -1970,13 +1988,15 @@ _edje_lua_object_cb_mouse_up(void *data, Evas * e, Evas_Object * obj,
 {
    OBJECT_CB_MACRO("mouse_up");
    Evas_Event_Mouse_Up * ev = event_info;
+   int err_code;
+
    lua_pushnumber(L, ev->button);
    lua_pushnumber(L, ev->output.x);
    lua_pushnumber(L, ev->output.y);
    lua_pushnumber(L, ev->canvas.x);
    lua_pushnumber(L, ev->canvas.y);
-   int err_code;
-   if (err_code = lua_pcall(L, 6, 0, 0))
+
+   if ((err_code = lua_pcall(L, 6, 0, 0)))
       _edje_lua_error(L, err_code);
 }
 
@@ -1986,13 +2006,15 @@ _edje_lua_object_cb_mouse_move(void *data, Evas * e, Evas_Object * obj,
 {
    OBJECT_CB_MACRO("mouse_move");
    Evas_Event_Mouse_Move * ev = event_info;
+   int err_code;
+
    lua_pushnumber(L, ev->buttons);
    lua_pushnumber(L, ev->cur.output.x);
    lua_pushnumber(L, ev->cur.output.y);
    lua_pushnumber(L, ev->cur.canvas.x);
    lua_pushnumber(L, ev->cur.canvas.y);
-   int err_code;
-   if (err_code = lua_pcall(L, 6, 0, 0))
+
+   if ((err_code = lua_pcall(L, 6, 0, 0)))
       _edje_lua_error(L, err_code);
 }
 
@@ -2002,13 +2024,15 @@ _edje_lua_object_cb_mouse_wheel(void *data, Evas * e, Evas_Object * obj,
 {
    OBJECT_CB_MACRO("mouse_wheel");
    Evas_Event_Mouse_Wheel * ev = event_info;
+   int err_code;
+
    lua_pushnumber(L, ev->z);
    lua_pushnumber(L, ev->output.x);
    lua_pushnumber(L, ev->output.y);
    lua_pushnumber(L, ev->canvas.x);
    lua_pushnumber(L, ev->canvas.y);
-   int err_code;
-   if (err_code = lua_pcall(L, 6, 0, 0))
+
+   if ((err_code = lua_pcall(L, 6, 0, 0)))
       _edje_lua_error(L, err_code);
 }
 
@@ -2713,6 +2737,7 @@ _edje_lua_description_get_image(lua_State *L)
    if ((obj->rp->part->type != EDJE_PART_TYPE_IMAGE))
       return 0;
    // TODO
+   return 0;
 }
 
 static int
@@ -4361,11 +4386,13 @@ _edje_lua_group_text_change_cb(void* data, Evas_Object *obj, const char* part)
 {
    Edje_Lua_Ref *ref = data;
    lua_State *L = ref->L;
+   int err_code;
+
    _edje_lua_get_ref(L, ref);
    _edje_lua_get_reg(L, obj);
    lua_pushstring(L, part);
-   int err_code;
-   if (err_code = lua_pcall(L, 2, 0, 0))
+
+   if ((err_code = lua_pcall(L, 2, 0, 0)))
      _edje_lua_error(L, err_code);
 }
 
@@ -4680,12 +4707,14 @@ _edje_lua_group_signal_callback(void *data, Evas_Object * edj,
    _edje_lua_get_ref(L, cb);	// signal callback function
    if (lua_isfunction(L, -1))
      {
+	int err_code;
+
 	_edje_lua_get_reg(L, edj);
 	lua_pushstring(L, signal);	// signal
 	lua_pushstring(L, source);	// source
-	int err_code;
-	if (err_code = lua_pcall(L, 3, 0, 0))
-	   _edje_lua_error(L, err_code);
+
+	if ((err_code = lua_pcall(L, 3, 0, 0)))
+	  _edje_lua_error(L, err_code);
      }
 }
 
@@ -4779,35 +4808,35 @@ const Edje_Lua_Reg *cScript[] = {
 /*
  * macro for adding an evas_object in the lua_script_only object
  */
-#define _EDJE_LUA_SCRIPT_FN_ADD(DEF, CLASS, FUNC) \
-static int \
-DEF (lua_State *L) \
-{ \
-   int set = lua_gettop (L) == 2; \
-   Edje_Lua_Evas_Object *obj = _edje_lua_checkudata (L, 1, &mScript); \
-   Edje_Lua_Evas_Object *tar = lua_newuserdata (L, sizeof (Edje_Lua_Evas_Object)); \
-   _edje_lua_set_class (L, -1, CLASS); \
-   tar->eo = FUNC (obj->ed->evas); \
-   tar->ed = obj->ed; \
-   tar->L = L; \
-   tar->cb = NULL; \
-   evas_object_move (tar->eo, obj->ed->x, obj->ed->y); \
-   _edje_lua_new_reg (L, -1, tar); /* freed in _edje_lua_object_del_cb */ \
-   _edje_lua_new_reg (L, -1, tar->eo); /* freed in _edje_lua_object_del_cb */ \
-   evas_object_smart_member_add (tar->eo, obj->eo); \
-   evas_object_clip_set (tar->eo, obj->ed->clipper); \
-   evas_object_event_callback_add (tar->eo, EVAS_CALLBACK_DEL, _edje_lua_object_del_cb, L); \
-   if (set) \
-   { \
-      lua_getfield (L, -1, "set"); \
-      lua_pushvalue (L, -2); \
-      lua_pushvalue (L, 2); \
-      int err_code; \
-      if (err_code = lua_pcall (L, 2, 0, 0)) \
-	 _edje_lua_error (L, err_code); \
-   } \
-   return 1; \
-}
+#define _EDJE_LUA_SCRIPT_FN_ADD(DEF, CLASS, FUNC)			\
+  static int								\
+  DEF (lua_State *L)							\
+  {									\
+     int set = lua_gettop (L) == 2;					\
+     Edje_Lua_Evas_Object *obj = _edje_lua_checkudata (L, 1, &mScript); \
+     Edje_Lua_Evas_Object *tar = lua_newuserdata (L, sizeof (Edje_Lua_Evas_Object)); \
+     _edje_lua_set_class (L, -1, CLASS);				\
+     tar->eo = FUNC (obj->ed->evas);					\
+     tar->ed = obj->ed;							\
+     tar->L = L;							\
+     tar->cb = NULL;							\
+     evas_object_move (tar->eo, obj->ed->x, obj->ed->y);		\
+     _edje_lua_new_reg (L, -1, tar); /* freed in _edje_lua_object_del_cb */ \
+     _edje_lua_new_reg (L, -1, tar->eo); /* freed in _edje_lua_object_del_cb */ \
+     evas_object_smart_member_add (tar->eo, obj->eo);			\
+     evas_object_clip_set (tar->eo, obj->ed->clipper);			\
+     evas_object_event_callback_add (tar->eo, EVAS_CALLBACK_DEL, _edje_lua_object_del_cb, L); \
+     if (set)								\
+       {								\
+	  int err_code;							\
+	  lua_getfield (L, -1, "set");					\
+	  lua_pushvalue (L, -2);					\
+	  lua_pushvalue (L, 2);						\
+	  if ((err_code = lua_pcall (L, 2, 0, 0)))			\
+	    _edje_lua_error (L, err_code);				\
+       }								\
+     return 1;								\
+  }
 
 _EDJE_LUA_SCRIPT_FN_ADD(_edje_lua_script_fn_rectangle,
 			cRectangle,

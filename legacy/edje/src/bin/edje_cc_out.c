@@ -809,7 +809,7 @@ data_write_scripts(Eet_File *ef)
 typedef struct _Edje_Lua_Script_Writer_Struct Edje_Lua_Script_Writer_Struct;
 
 struct _Edje_Lua_Script_Writer_Struct {
-   void *buf;
+   char *buf;
    int size;
 };
 
@@ -828,7 +828,7 @@ _edje_lua_script_writer (lua_State *L, const void* chunk_buf, size_t chunk_size,
 }
 
 void
-_edje_lua_error_and_abort(lua_State * L, int err_code, Edje_File *ef)
+_edje_lua_error_and_abort(lua_State * L, int err_code, Eet_File *ef)
 {
    char *err_type;
    switch (err_code)

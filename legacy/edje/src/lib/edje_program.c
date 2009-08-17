@@ -770,6 +770,8 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 	lua_gettable(L, LUA_GLOBALSINDEX);
 	if (!lua_isnil(L, -1))
 	  {
+	     int err_code;
+
 	     lua_pushvalue(L, LUA_GLOBALSINDEX); /* set function environment from collection thread to edje object thread */
 	     lua_setfenv(L, -2);
 	     _edje_lua_get_reg(L, ed);
@@ -780,8 +782,8 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 	       }
 	     lua_pushstring(L, ssig);
 	     lua_pushstring(L, ssrc);
-	     int err_code;
-	     if (err_code = lua_pcall(L, 3, 0, 0))
+
+	     if ((err_code = lua_pcall(L, 3, 0, 0)))
 	       _edje_lua_error(L, err_code);
 	  }
 
