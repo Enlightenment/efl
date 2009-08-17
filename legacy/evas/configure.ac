@@ -1072,6 +1072,27 @@ EVAS_CONVERT_ROT(32, RGB, 270)
 ## Convert to 32bpp RGB with rotation of 90
 EVAS_CONVERT_ROT(32, RGB, 90)
 
+#######################################
+## Convert to 8bpp grayscale, 64-palette
+conv_8_grayscale_64="yes"
+AC_MSG_CHECKING(whether to build 8bpp grayscale 64-palette converter code)
+AC_ARG_ENABLE(convert-8-grayscale-64,
+  AC_HELP_STRING([--disable-convert-8-grayscale-64], [disable 8bpp grayscale 64-palette converter code]),
+  [
+     if test "$enableval" = "xyes"; then
+       AC_DEFINE(BUILD_CONVERT_8_GRAYSCALE_64, 1, [8bpp Grayscale 64-palette Converter Support])
+       conv_8_grayscale_64="yes"
+     else
+       conv_8_grayscale_64="no"
+     fi
+  ], [
+     if test "x$conv_8_grayscale_64" = "xyes"; then
+       AC_DEFINE(BUILD_CONVERT_8_GRAYSCALE_64, 1, [32bpp Grayscale 64-palette Converter Support])
+     fi
+  ]
+)
+AC_MSG_RESULT($conv_8_grayscale_64)
+
 ## valgrind
 want_valgrind="no"
 have_valgrind="no"
@@ -1286,6 +1307,7 @@ echo "  8bpp RGB 222............: $conv_8_rgb_222"
 echo "  8bpp RGB 221............: $conv_8_rgb_221"
 echo "  8bpp RGB 121............: $conv_8_rgb_121"
 echo "  8bpp RGB 111............: $conv_8_rgb_111"
+echo "  8bpp Grayscale 64-pal...: $conv_8_grayscale_64"
 # FIXME: add grayscale and B&W support
 echo "  16bpp RGB 565...........: $conv_16_rgb_565"
 echo "  16bpp BGR 565...........: $conv_16_bgr_565"

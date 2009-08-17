@@ -35,6 +35,7 @@ evas_convert_rgb_16.c \
 evas_convert_rgb_24.c \
 evas_convert_rgb_32.c \
 evas_convert_rgb_8.c \
+evas_convert_grypal_6.c \
 evas_convert_yuv.c \
 evas_cpu.c \
 evas_draw_main.c \
@@ -78,6 +79,7 @@ evas_convert_colorspace.h \
 evas_convert_gry_1.h \
 evas_convert_gry_4.h \
 evas_convert_gry_8.h \
+evas_convert_grypal_6.h \
 evas_convert_main.h \
 evas_convert_rgb_16.h \
 evas_convert_rgb_24.h \
