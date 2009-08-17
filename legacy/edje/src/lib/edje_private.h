@@ -780,11 +780,11 @@ struct _Edje_Real_Part_State
    Edje_Real_Part        *rel2_to_x; // 4
    Edje_Real_Part        *rel2_to_y; // 4
 #ifdef EDJE_CALC_CACHE
-   Edje_Calc_Params       p; // 116
    int                    state; // 4
+   Edje_Calc_Params       p; // 96
 #endif
 }; // 20
-// WITH EDJE_CALC_CACHE 140
+// WITH EDJE_CALC_CACHE 120
 
 struct _Edje_Real_Part_Drag
 {
