@@ -70,19 +70,6 @@ _alloc(size_t size)
    return NULL;
 }
 
-static char *
-_strdup(const char *s)
-{
-   void *str;
-
-   str = strdup(s);
-   if (str) return str;
-   fprintf(stderr, "Edje_Edit: Error. memory allocation of %i bytes failed. %s."
-           "string being duplicated: \"%s\"\n", (int)strlen(s) + 1, strerror(errno), s);
-   return NULL;
-}
-
-
 /*************/
 /* INTERNALS */
 /*************/
@@ -696,7 +683,7 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    /* Init Edje_Part_Collection_Directory_Entry */
    printf(" new id: %d\n", id);
    de->id = id;
-   de->entry = _strdup(name);
+   de->entry = strdup(name);
    ed->file->collection_dir->entries = eina_list_append(ed->file->collection_dir->entries, de);
 
    /* Init Edje_Part_Collection */
@@ -3320,8 +3307,8 @@ edje_edit_font_add(Evas_Object *obj, const char* path)
      {
 	fnt = _alloc(sizeof(Edje_Font_Directory_Entry));
 	if (!fnt) return 0;
-	fnt->entry = _strdup(name);
-	fnt->path = _strdup(buf);
+	fnt->entry = strdup(name);
+	fnt->path = strdup(buf);
 
 	ed->file->font_dir->entries = eina_list_append(ed->file->font_dir->entries, fnt);
 	if (!ed->file->font_hash)
@@ -3445,7 +3432,7 @@ edje_edit_image_add(Evas_Object *obj, const char* path)
    if (!de) return 0;
    if ((name = strrchr(path, '/'))) name++;
    else name = (char *)path;
-   de->entry = _strdup(name);
+   de->entry = strdup(name);
    de->id = free_id;
    de->source_type = 1;
    de->source_param = 1;
@@ -3497,7 +3484,7 @@ edje_edit_image_data_add(Evas_Object *obj, const char *name, int id)
 	de = t;
 	free(de->entry);
      }
-   de->entry = _strdup(name);
+   de->entry = strdup(name);
    de->id = id;
    de->source_type = 1;
    de->source_param = 1;
@@ -5585,7 +5572,7 @@ edje_edit_save(Evas_Object *obj)
    //open the temp file and put the contents in SrcFile
    sf = _alloc(sizeof(SrcFile));
    if (!sf) return 0;
-   sf->name = _strdup("generated_source.edc");
+   sf->name = strdup("generated_source.edc");
 
    f = fopen(source_file, "rb");
    if (!f)
