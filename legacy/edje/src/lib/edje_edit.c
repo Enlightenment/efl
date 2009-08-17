@@ -5,8 +5,9 @@
 /*
  * TODO
  * -----------------------------------------------------------------
- * Modify edje so that also ebryo source is included in the eet file
+ * Add LUA Support :)
  * Remove images/fonts
+ * Clean the saving routines
  *
  */
 
@@ -19,12 +20,13 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <errno.h>
+
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
 #endif
 
 #include "edje_private.h"
-#include "edje_cc.h"
+
 
 /* Get ed(Edje*) from obj(Evas_Object*) */
 #define GET_ED_OR_RETURN(RET) \
@@ -538,7 +540,7 @@ _edje_if_string_free(Edje *ed, const char *str)
    str = NULL;
 }
 
-Edje_Spectrum_Directory_Entry *
+static Edje_Spectrum_Directory_Entry *
 _edje_edit_spectrum_entry_get(Edje *ed, const char* spectra)
 {
    Edje_Spectrum_Directory_Entry *s;
@@ -554,7 +556,7 @@ _edje_edit_spectrum_entry_get(Edje *ed, const char* spectra)
    return NULL;
 }
 
-Edje_Spectrum_Directory_Entry *
+static Edje_Spectrum_Directory_Entry *
 _edje_edit_spectrum_entry_get_by_id(Edje *ed, int spectra_id)
 {
    Edje_Spectrum_Directory_Entry *s;
@@ -3749,7 +3751,6 @@ edje_edit_spectrum_list_get(Evas_Object *obj)
    return spectrum;
 }
 
-
 EAPI unsigned char
 edje_edit_spectra_add(Evas_Object *obj, const char* name)
 {
@@ -5033,7 +5034,6 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, FILE *f)
    fprintf(f, I3 "}\n");
 }
 
-
 static void
 _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *state, FILE *f)
 {
@@ -5471,6 +5471,20 @@ _edje_generate_source(Evas_Object *obj)
 /*  SAVING ROUTINES  */
 /*********************/
 ////////////////////////////////////////
+typedef struct _SrcFile               SrcFile;
+typedef struct _SrcFile_List          SrcFile_List;
+
+struct _SrcFile
+{
+   char *name;
+   char *file;
+};
+
+struct _SrcFile_List
+{
+   Eina_List *list;
+};
+
 static Eet_Data_Descriptor *_srcfile_edd = NULL;
 static Eet_Data_Descriptor *_srcfile_list_edd = NULL;
 
