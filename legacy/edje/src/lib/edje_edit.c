@@ -56,29 +56,27 @@
    epr = _edje_program_get_byname(obj, prog); \
    if (!epr) return RET;
 
-void *
-mem_alloc(size_t size)
+static void *
+_alloc(size_t size)
 {
    void *mem;
 
    mem = calloc(1, size);
    if (mem) return mem;
    fprintf(stderr, "Edje_Edit: Error. memory allocation of %i bytes failed. %s\n",
-           size, strerror(errno));
-   exit(-1);
+           (int)size, strerror(errno));
    return NULL;
 }
 
-char *
-mem_strdup(const char *s)
+static char *
+_strdup(const char *s)
 {
    void *str;
 
    str = strdup(s);
    if (str) return str;
    fprintf(stderr, "Edje_Edit: Error. memory allocation of %i bytes failed. %s."
-           "string being duplicated: \"%s\"\n", strlen(s) + 1, strerror(errno), s);
-   exit(-1);
+           "string being duplicated: \"%s\"\n", (int)strlen(s) + 1, strerror(errno), s);
    return NULL;
 }
 
@@ -661,10 +659,10 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
        return 0;
 
    /* Create structs */
-   de = mem_alloc(SZ(Edje_Part_Collection_Directory_Entry));
+   de = _alloc(SZ(Edje_Part_Collection_Directory_Entry));
    if (!de) return 0;
 
-   pc = mem_alloc(SZ(Edje_Part_Collection));
+   pc = _alloc(SZ(Edje_Part_Collection));
    if (!pc)
      {
 	free(de);
@@ -696,7 +694,7 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    /* Init Edje_Part_Collection_Directory_Entry */
    printf(" new id: %d\n", id);
    de->id = id;
-   de->entry = mem_strdup(name);
+   de->entry = _strdup(name);
    ed->file->collection_dir->entries = eina_list_append(ed->file->collection_dir->entries, de);
 
    /* Init Edje_Part_Collection */
@@ -708,7 +706,7 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    pc->script = NULL;
    pc->part = eina_stringshare_add(name);
 
-   //cd = mem_alloc(SZ(Code));
+   //cd = _alloc(SZ(Code));
    //codes = eina_list_append(codes, cd);
 
    if (!ed->file->collection_hash)
@@ -949,7 +947,7 @@ edje_edit_data_add(Evas_Object *obj, const char *itemname, const char *value)
      if (strcmp(dd->key, itemname) == 0)
        return 0;
 
-   d = mem_alloc(sizeof(Edje_Data));
+   d = _alloc(sizeof(Edje_Data));
    if (!d) return 0;
 
    d->key = (char*)eina_stringshare_add(itemname);
@@ -1154,7 +1152,7 @@ edje_edit_color_class_add(Evas_Object *obj, const char *name)
      if (strcmp(cc->name, name) == 0)
        return 0;
 
-   c = mem_alloc(sizeof(Edje_Color_Class));
+   c = _alloc(sizeof(Edje_Color_Class));
    if (!c) return 0;
 
    c->name = (char*)eina_stringshare_add(name);
@@ -1245,7 +1243,7 @@ edje_edit_style_add(Evas_Object * obj, const char* style)
    s = _edje_edit_style_get(ed, style);
    if (s) return 0;
 
-   s = mem_alloc(sizeof(Edje_Style));
+   s = _alloc(sizeof(Edje_Style));
    if (!s) return 0;
    s->name = (char*)eina_stringshare_add(style);
    s->tags = NULL;
@@ -1377,7 +1375,7 @@ edje_edit_style_tag_add(Evas_Object * obj, const char* style, const char* tag_na
    s = _edje_edit_style_get(ed, style);
    if (!s) return 0;
 
-   t = mem_alloc(sizeof(Edje_Style_Tag));
+   t = _alloc(sizeof(Edje_Style_Tag));
    if (!t) return 0;
    t->key = eina_stringshare_add(tag_name);
    t->value = NULL;
@@ -1467,11 +1465,11 @@ edje_edit_part_add(Evas_Object *obj, const char* name, unsigned char type)
      return FALSE;
 
    /* Alloc Edje_Part or return */
-   ep = mem_alloc(sizeof(Edje_Part));
+   ep = _alloc(sizeof(Edje_Part));
    if (!ep) return FALSE;
 
    /* Alloc Edje_Real_Part or return */
-   rp = mem_alloc(sizeof(Edje_Real_Part));
+   rp = _alloc(sizeof(Edje_Real_Part));
    if (!rp)
      {
 	free(ep);
@@ -1956,7 +1954,7 @@ edje_edit_part_drag_x_set(Evas_Object *obj, const char *part, int drag)
 
    if (rp->drag) return;
 
-   rp->drag = mem_alloc(sizeof (Edje_Real_Part_Drag));
+   rp->drag = _alloc(sizeof (Edje_Real_Part_Drag));
    if (!rp->drag) return;
 
    rp->drag->step.x = rp->part->dragable.step_x;
@@ -1987,7 +1985,7 @@ edje_edit_part_drag_y_set(Evas_Object *obj, const char *part, int drag)
 
    if (rp->drag) return;
 
-   rp->drag = mem_alloc(sizeof (Edje_Real_Part_Drag));
+   rp->drag = _alloc(sizeof (Edje_Real_Part_Drag));
    if (!rp->drag) return;
 
    rp->drag->step.x = rp->part->dragable.step_x;
@@ -2238,7 +2236,8 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name)
 
    printf("ADD STATE: %s TO PART: %s\n", name , part);
 
-   pd = mem_alloc(sizeof(Edje_Part_Description));
+   pd = _alloc(sizeof(Edje_Part_Description));
+   if (!pd) return;
 
    if (!rp->part->default_desc)
      rp->part->default_desc = pd;
@@ -3257,17 +3256,20 @@ edje_edit_font_add(Evas_Object *obj, const char* path)
 
    /* Create Font_Directory if not exist */
    if (!ed->file->font_dir)
-     ed->file->font_dir = mem_alloc(sizeof(Edje_Font_Directory));
+   {
+     ed->file->font_dir = _alloc(sizeof(Edje_Font_Directory));
+     if (!ed->file->font_dir) return 0;
+   }
 
    /* Create Font */
-   fn = mem_alloc(sizeof(Font));
+   fn = _alloc(sizeof(Font));
    if (!fn) return 0;
 
    if ((name = strrchr(path, '/'))) name ++;
    else name = (char *)path;
 
-   fn->file = mem_strdup(name);
-   fn->name = mem_strdup(name);
+   fn->file = _strdup(name);
+   fn->name = _strdup(name);
 
    /*{
       Eina_List *l;
@@ -3339,9 +3341,10 @@ edje_edit_font_add(Evas_Object *obj, const char* path)
    /* Create Edje_Font_Directory_Entry */
    if (ed->file->font_dir)
      {
-	fnt = mem_alloc(sizeof(Edje_Font_Directory_Entry));
-	fnt->entry = mem_strdup(fn->name);
-	fnt->path = mem_strdup(buf);
+	fnt = _alloc(sizeof(Edje_Font_Directory_Entry));
+	if (!fnt) return 0;
+	fnt->entry = _strdup(fn->name);
+	fnt->path = _strdup(buf);
 
 	ed->file->font_dir->entries = eina_list_append(ed->file->font_dir->entries, fnt);
 	if (!ed->file->font_hash)
@@ -3440,7 +3443,10 @@ edje_edit_image_add(Evas_Object *obj, const char* path)
 
    /* Create Image_Directory if not exist */
    if (!ed->file->image_dir)
-     ed->file->image_dir = mem_alloc(sizeof(Edje_Image_Directory));
+     {
+	ed->file->image_dir = _alloc(sizeof(Edje_Image_Directory));
+	if (!ed->file->image_dir) return 0;
+     }
 
    /* Loop trough image directory to find if image exist */
    printf("Add Image '%s' (total %d)\n", path,
@@ -3458,10 +3464,11 @@ edje_edit_image_add(Evas_Object *obj, const char* path)
       return 0;
 
    /* Create Image Entry */
-   de = mem_alloc(sizeof(Edje_Image_Directory_Entry));
+   de = _alloc(sizeof(Edje_Image_Directory_Entry));
+   if (!de) return 0;
    if ((name = strrchr(path, '/'))) name++;
    else name = (char *)path;
-   de->entry = mem_strdup(name);
+   de->entry = _strdup(name);
    de->id = free_id;
    de->source_type = 1;
    de->source_param = 1;
@@ -3489,7 +3496,10 @@ edje_edit_image_data_add(Evas_Object *obj, const char *name, int id)
 
    /* Create Image_Directory if not exist */
    if (!ed->file->image_dir)
-     ed->file->image_dir = mem_alloc(sizeof(Edje_Image_Directory));
+     {
+	ed->file->image_dir = _alloc(sizeof(Edje_Image_Directory));
+	if (!ed->file->image_dir) return 0;
+     }
 
    /* Loop trough image directory to find if image exist */
    t = NULL;
@@ -3501,13 +3511,16 @@ edje_edit_image_data_add(Evas_Object *obj, const char *name, int id)
 
    /* Create Image Entry */
    if (!t)
-     de = mem_alloc(sizeof(Edje_Image_Directory_Entry));
+     {
+	de = _alloc(sizeof(Edje_Image_Directory_Entry));
+	if (!de) return 0;
+     }
    else
      {
 	de = t;
 	free(de->entry);
      }
-   de->entry = mem_strdup(name);
+   de->entry = _strdup(name);
    de->id = id;
    de->source_type = 1;
    de->source_param = 1;
@@ -3650,7 +3663,7 @@ edje_edit_state_tween_add(Evas_Object *obj, const char *part, const char *state,
    if (id < 0) return 0;
 
    /* alloc Edje_Part_Image_Id */
-   i = mem_alloc(SZ(Edje_Part_Image_Id));
+   i = _alloc(SZ(Edje_Part_Image_Id));
    if (!i) return 0;
    i->id = id;
 
@@ -3776,9 +3789,13 @@ edje_edit_spectra_add(Evas_Object *obj, const char* name)
    if (_edje_edit_spectrum_entry_get(ed, name)) return 0;
 
    if (!ed->file->spectrum_dir)
-     ed->file->spectrum_dir = mem_alloc(SZ(Edje_Spectrum_Directory));
+     {
+	ed->file->spectrum_dir = _alloc(SZ(Edje_Spectrum_Directory));
+	if (!ed->file->spectrum_dir) return 0;
+     }
 
-   s = mem_alloc(SZ(Edje_Spectrum_Directory_Entry));
+   s = _alloc(SZ(Edje_Spectrum_Directory_Entry));
+   if (!s) return 0;
    ed->file->spectrum_dir->entries = eina_list_append(ed->file->spectrum_dir->entries, s);
    s->id = eina_list_count(ed->file->spectrum_dir->entries) - 1; //TODO Search for id holes
    s->entry = (char*)eina_stringshare_add(name);
@@ -3873,7 +3890,8 @@ edje_edit_spectra_stop_num_set(Evas_Object *obj, const char* spectra, int num)
    //... and recreate (TODO we should optimize this function)
    while (num)
      {
-        color = mem_alloc(SZ(Edje_Spectrum_Color));
+        color = _alloc(SZ(Edje_Spectrum_Color));
+        if (!color) return 0;
         s->color_list = eina_list_append(s->color_list, color);
         color->r = 255;
         color->g = 255;
@@ -4239,7 +4257,7 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
      return 0;
 
    //Alloc Edje_Program or return
-   epr = mem_alloc(SZ(Edje_Program));
+   epr = _alloc(SZ(Edje_Program));
    if (!epr) return 0;
 
    //Add program to group
@@ -4766,7 +4784,7 @@ edje_edit_program_target_add(Evas_Object *obj, const char *prog, const char *tar
    else
      return 0;
 
-   t = mem_alloc(SZ(Edje_Program_Target));
+   t = _alloc(SZ(Edje_Program_Target));
    if (!t) return 0;
 
    t->id = id;
@@ -4827,7 +4845,7 @@ edje_edit_program_after_add(Evas_Object *obj, const char *prog, const char *afte
    af = _edje_program_get_byname(obj, after);
    if (!af) return 0;
 
-   a = mem_alloc(SZ(Edje_Program_After));
+   a = _alloc(SZ(Edje_Program_After));
    if (!a) return 0;
 
    a->id = af->id;
@@ -5576,8 +5594,9 @@ edje_edit_save(Evas_Object *obj)
    printf("** Writing EDC Source [from: %s]\n", source_file);
 
    //open the temp file and put the contents in SrcFile
-   sf = mem_alloc(SZ(SrcFile));
-   sf->name = mem_strdup("generated_source.edc");
+   sf = _alloc(SZ(SrcFile));
+   if (!sf) return 0;
+   sf->name = _strdup("generated_source.edc");
 
    f = fopen(source_file, "rb");
    if (!f)
@@ -5592,14 +5611,14 @@ edje_edit_save(Evas_Object *obj)
    sz = ftell(f);
    fseek(f, 0, SEEK_SET);
 
-   sf->file = mem_alloc(sz + 1);
+   sf->file = _alloc(sz + 1); //TODO check result and return nicely
    fread(sf->file, sz, 1, f);
    sf->file[sz] = '\0';
    fseek(f, 0, SEEK_SET);
    fclose(f);
 
    //create the needed list of source files (only one)
-   sfl = mem_alloc(SZ(SrcFile_List));
+   sfl = _alloc(SZ(SrcFile_List)); //TODO check result and return nicely
    sfl->list = NULL;
    sfl->list = eina_list_append(sfl->list, sf);
 
