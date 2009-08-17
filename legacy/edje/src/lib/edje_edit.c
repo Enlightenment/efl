@@ -518,7 +518,7 @@ _edje_fix_parts_id(Edje *ed)
    count = eina_list_count(ed->collection->parts);
    if (count != ed->table_parts_size)
      {
-	ed->table_parts = realloc(ed->table_parts, SZ(Edje_Real_Part *) * count);
+	ed->table_parts = realloc(ed->table_parts, sizeof(Edje_Real_Part *) * count);
 	ed->table_parts_size = count;
      }
 
@@ -659,10 +659,10 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
        return 0;
 
    /* Create structs */
-   de = _alloc(SZ(Edje_Part_Collection_Directory_Entry));
+   de = _alloc(sizeof(Edje_Part_Collection_Directory_Entry));
    if (!de) return 0;
 
-   pc = _alloc(SZ(Edje_Part_Collection));
+   pc = _alloc(sizeof(Edje_Part_Collection));
    if (!pc)
      {
 	free(de);
@@ -706,7 +706,7 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    pc->script = NULL;
    pc->part = eina_stringshare_add(name);
 
-   //cd = _alloc(SZ(Code));
+   //cd = _alloc(sizeof(Code));
    //codes = eina_list_append(codes, cd);
 
    if (!ed->file->collection_hash)
@@ -744,7 +744,7 @@ edje_edit_group_del(Evas_Object *obj)
 	        "for writing output\n", ed->file->path);
 	return 0;
      }
-   snprintf(buf, SZ(buf), "collections/%d", g->id);
+   snprintf(buf, sizeof(buf), "collections/%d", g->id);
    eet_delete(eetf, buf);
    eet_close(eetf);
 
@@ -3663,7 +3663,7 @@ edje_edit_state_tween_add(Evas_Object *obj, const char *part, const char *state,
    if (id < 0) return 0;
 
    /* alloc Edje_Part_Image_Id */
-   i = _alloc(SZ(Edje_Part_Image_Id));
+   i = _alloc(sizeof(Edje_Part_Image_Id));
    if (!i) return 0;
    i->id = id;
 
@@ -3790,11 +3790,11 @@ edje_edit_spectra_add(Evas_Object *obj, const char* name)
 
    if (!ed->file->spectrum_dir)
      {
-	ed->file->spectrum_dir = _alloc(SZ(Edje_Spectrum_Directory));
+	ed->file->spectrum_dir = _alloc(sizeof(Edje_Spectrum_Directory));
 	if (!ed->file->spectrum_dir) return 0;
      }
 
-   s = _alloc(SZ(Edje_Spectrum_Directory_Entry));
+   s = _alloc(sizeof(Edje_Spectrum_Directory_Entry));
    if (!s) return 0;
    ed->file->spectrum_dir->entries = eina_list_append(ed->file->spectrum_dir->entries, s);
    s->id = eina_list_count(ed->file->spectrum_dir->entries) - 1; //TODO Search for id holes
@@ -3890,7 +3890,7 @@ edje_edit_spectra_stop_num_set(Evas_Object *obj, const char* spectra, int num)
    //... and recreate (TODO we should optimize this function)
    while (num)
      {
-        color = _alloc(SZ(Edje_Spectrum_Color));
+        color = _alloc(sizeof(Edje_Spectrum_Color));
         if (!color) return 0;
         s->color_list = eina_list_append(s->color_list, color);
         color->r = 255;
@@ -4257,7 +4257,7 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
      return 0;
 
    //Alloc Edje_Program or return
-   epr = _alloc(SZ(Edje_Program));
+   epr = _alloc(sizeof(Edje_Program));
    if (!epr) return 0;
 
    //Add program to group
@@ -4784,7 +4784,7 @@ edje_edit_program_target_add(Evas_Object *obj, const char *prog, const char *tar
    else
      return 0;
 
-   t = _alloc(SZ(Edje_Program_Target));
+   t = _alloc(sizeof(Edje_Program_Target));
    if (!t) return 0;
 
    t->id = id;
@@ -4845,7 +4845,7 @@ edje_edit_program_after_add(Evas_Object *obj, const char *prog, const char *afte
    af = _edje_program_get_byname(obj, after);
    if (!af) return 0;
 
-   a = _alloc(SZ(Edje_Program_After));
+   a = _alloc(sizeof(Edje_Program_After));
    if (!a) return 0;
 
    a->id = af->id;
@@ -5594,7 +5594,7 @@ edje_edit_save(Evas_Object *obj)
    printf("** Writing EDC Source [from: %s]\n", source_file);
 
    //open the temp file and put the contents in SrcFile
-   sf = _alloc(SZ(SrcFile));
+   sf = _alloc(sizeof(SrcFile));
    if (!sf) return 0;
    sf->name = _strdup("generated_source.edc");
 
@@ -5618,7 +5618,7 @@ edje_edit_save(Evas_Object *obj)
    fclose(f);
 
    //create the needed list of source files (only one)
-   sfl = _alloc(SZ(SrcFile_List)); //TODO check result and return nicely
+   sfl = _alloc(sizeof(SrcFile_List)); //TODO check result and return nicely
    sfl->list = NULL;
    sfl->list = eina_list_append(sfl->list, sf);
 
