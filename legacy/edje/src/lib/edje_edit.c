@@ -3235,7 +3235,6 @@ EAPI unsigned char
 edje_edit_font_add(Evas_Object *obj, const char* path)
 {
    char buf[PATH_MAX];
-   Font *fn;
    Edje_Font_Directory_Entry *fnt;
    Eet_File *eetf;
    struct stat st;
@@ -3261,32 +3260,8 @@ edje_edit_font_add(Evas_Object *obj, const char* path)
      if (!ed->file->font_dir) return 0;
    }
 
-   /* Create Font */
-   fn = _alloc(sizeof(Font));
-   if (!fn) return 0;
-
    if ((name = strrchr(path, '/'))) name ++;
    else name = (char *)path;
-
-   fn->file = _strdup(name);
-   fn->name = _strdup(name);
-
-   /*{
-      Eina_List *l;
-      Font *lfn;
-
-      EINA_LIST_FOREACH(fonts, l, lfn)
-      {
-         if (!strcmp(lfn->name, fn->name))
-         {
-            free(fn->file);
-            free(fn->name);
-            free(fn);
-            return;
-         }
-      }
-   }
-   */
 
    /* Read font data from file */
    f = fopen(path, "rb");
@@ -3311,7 +3286,7 @@ edje_edit_font_add(Evas_Object *obj, const char* path)
 	fclose(f);
      }
    /* Write font to edje file */
-   snprintf(buf, sizeof(buf), "fonts/%s", fn->name);
+   snprintf(buf, sizeof(buf), "fonts/%s", name);
 
    if (fdata)
      {
@@ -3343,7 +3318,7 @@ edje_edit_font_add(Evas_Object *obj, const char* path)
      {
 	fnt = _alloc(sizeof(Edje_Font_Directory_Entry));
 	if (!fnt) return 0;
-	fnt->entry = _strdup(fn->name);
+	fnt->entry = _strdup(name);
 	fnt->path = _strdup(buf);
 
 	ed->file->font_dir->entries = eina_list_append(ed->file->font_dir->entries, fnt);
