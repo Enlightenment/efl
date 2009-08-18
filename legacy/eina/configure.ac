@@ -246,13 +246,31 @@ if test "x$enable_coverage" = "xyes" ; then
    EINA_CFLAGS="${EINA_CFLAGS} ${EFL_DEBUG_CFLAGS}"
 fi
 
-if ! test "${VMIC}" = "x" ; then
-   EINA_CFLAGS="${EINA_CFLAGS} -Wall -W" # -Werror
+if ! test "x${VMIC}" = "x" ; then
+   CFLAGS_save="${CFLAGS}"
+   CFLAGS="${CFLAGS} -Wall -W"
+   AC_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([[]])],
+      [have_Wall="yes"],
+      [have_Wall="no"])
+   AC_MSG_CHECKING([whether the compiler supports -Wall])
+   AC_MSG_RESULT([${have_Wall}])
+   CFLAGS="${CFLAGS_save}"
+   if test "x${have_Wall}" = "xyes" ; then
+      EINA_CFLAGS="${EINA_CFLAGS} -Wall -W" # -Werror
+   fi
 fi
 
-GCC_MAJOR_VERSION=`$CC -dumpversion | sed "s/\..*//"`
-
-if test "$GCC_MAJOR_VERSION" = "3" ; then
+CFLAGS_save="${CFLAGS}"
+CFLAGS="${CFLAGS} -fno-strict-aliasing"
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM([[]])],
+   [have_no_strict_aliasing="yes"],
+   [have_no_strict_aliasing="no"])
+AC_MSG_CHECKING([whether the compiler supports -fno-strict-aliasing])
+AC_MSG_RESULT([${have_no_strict_aliasing}])
+CFLAGS="${CFLAGS_save}"
+if test "x${have_no_strict_aliasing}" = "xyes" ; then
    EINA_CFLAGS="${EINA_CFLAGS} -fno-strict-aliasing"
 fi
 
