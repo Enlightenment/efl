@@ -31,6 +31,7 @@
 #include "eina_safety_checks.h"
 #include "eina_mempool.h"
 #include "eina_list.h"
+#include "eina_trash.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -43,6 +44,8 @@
 #define EINA_RECTANGLE_POOL_MAGIC 0x1578FCB0
 #define EINA_RECTANGLE_ALLOC_MAGIC 0x1578FCB1
 
+#define BUCKET_THRESHOLD 110
+
 typedef struct _Eina_Rectangle_Alloc Eina_Rectangle_Alloc;
 
 struct _Eina_Rectangle_Pool
@@ -50,6 +53,9 @@ struct _Eina_Rectangle_Pool
    Eina_Inlist *head;
    Eina_List *empty;
    void *data;
+
+   Eina_Trash *bucket;
+   unsigned int bucket_count;
 
    unsigned int references;
    int w;
@@ -81,6 +87,9 @@ struct _Eina_Rectangle_Alloc
 static int _eina_rectangle_init_count = 0;
 static Eina_Mempool *_eina_rectangle_alloc_mp = NULL;
 static Eina_Mempool *_eina_rectangle_mp = NULL;
+
+static Eina_Trash *_eina_rectangles = NULL;
+static unsigned int _eina_rectangles_count = 0;
 
 static int
 _eina_rectangle_cmp(const Eina_Rectangle *r1, const Eina_Rectangle *r2)
@@ -285,11 +294,17 @@ eina_rectangle_init(void)
 EAPI int
 eina_rectangle_shutdown(void)
 {
+   Eina_Rectangle *del;
+
    --_eina_rectangle_init_count;
 
    if (_eina_rectangle_init_count) return _eina_rectangle_init_count;
 
    eina_list_shutdown();
+
+   while (del = eina_trash_pop(&_eina_rectangles))
+     eina_mempool_free(_eina_rectangle_mp, del);
+   _eina_rectangles_count = 0;
 
    eina_mempool_del(_eina_rectangle_alloc_mp);
    eina_mempool_del(_eina_rectangle_mp);
@@ -305,7 +320,15 @@ eina_rectangle_new(int x, int y, int w, int h)
 {
    Eina_Rectangle *rect;
 
-   rect = eina_mempool_malloc(_eina_rectangle_mp, sizeof (Eina_Rectangle));
+   if (_eina_rectangles)
+     {
+	rect = eina_trash_pop(&_eina_rectangles);
+	_eina_rectangles_count--;
+     }
+   else
+     {
+	rect = eina_mempool_malloc(_eina_rectangle_mp, sizeof (Eina_Rectangle));
+     }
    if (!rect) return NULL;
 
    EINA_RECTANGLE_SET(rect, x, y, w, h);
@@ -317,7 +340,16 @@ EAPI void
 eina_rectangle_free(Eina_Rectangle *rect)
 {
    EINA_SAFETY_ON_NULL_RETURN(rect);
-   eina_mempool_free(_eina_rectangle_mp, rect);
+
+   if (_eina_rectangles_count > BUCKET_THRESHOLD)
+     {
+	eina_mempool_free(_eina_rectangle_mp, rect);
+     }
+   else
+     {
+	eina_trash_push(&_eina_rectangles, rect);
+	_eina_rectangles_count++;
+     }
 }
 
 EAPI Eina_Rectangle_Pool *
@@ -334,6 +366,8 @@ eina_rectangle_pool_new(int w, int h)
    new->sorted = EINA_FALSE;
    new->w = w;
    new->h = h;
+   new->bucket = NULL;
+   new->bucket_count = 0;
 
    EINA_MAGIC_SET(new, EINA_RECTANGLE_POOL_MAGIC);
 
@@ -353,6 +387,12 @@ eina_rectangle_pool_free(Eina_Rectangle_Pool *pool)
 	pool->head = (EINA_INLIST_GET(del))->next;
 
 	EINA_MAGIC_SET(del, EINA_MAGIC_NONE);
+	eina_mempool_free(_eina_rectangle_alloc_mp, del);
+     }
+
+   while (pool->bucket)
+     {
+	del = eina_trash_pop(&pool->bucket);
 	eina_mempool_free(_eina_rectangle_alloc_mp, del);
      }
 
@@ -390,8 +430,16 @@ eina_rectangle_pool_request(Eina_Rectangle_Pool *pool, int w, int h)
    if (x == -1) return NULL;
    pool->sorted = EINA_FALSE;
 
-   new = eina_mempool_malloc(_eina_rectangle_alloc_mp,
-			     sizeof (Eina_Rectangle_Alloc) + sizeof (Eina_Rectangle));
+   if (pool->bucket_count > 0)
+     {
+	new = eina_trash_pop(&pool->bucket);
+	pool->bucket_count--;
+     }
+   else
+     {
+	new = eina_mempool_malloc(_eina_rectangle_alloc_mp,
+				  sizeof (Eina_Rectangle_Alloc) + sizeof (Eina_Rectangle));
+     }
    if (!new) return NULL;
 
    rect = (Eina_Rectangle*) (new + 1);
@@ -428,8 +476,20 @@ eina_rectangle_pool_release(Eina_Rectangle *rect)
 	era->pool->sorted = EINA_FALSE;
      }
 
-   EINA_MAGIC_SET(era, EINA_MAGIC_NONE);
-   eina_mempool_free(_eina_rectangle_alloc_mp, era);
+   if (era->pool->bucket_count < BUCKET_THRESHOLD)
+     {
+	Eina_Rectangle_Pool *pool;
+
+	pool = era->pool;
+
+	pool->bucket_count++;
+	eina_trash_push(&pool->bucket, era);
+     }
+   else
+     {
+	EINA_MAGIC_SET(era, EINA_MAGIC_NONE);
+	eina_mempool_free(_eina_rectangle_alloc_mp, era);
+     }
 }
 
 EAPI Eina_Rectangle_Pool *
