@@ -219,3 +219,6 @@
 	* Fix documentation of eet_data_write() and eet_write() for return
           value to return # of bytes written, not 1 or 0
 
+2009-08-16  Vincent Torri
+
+	* Fix build with suncc (missing alloca() declaration in eet_cipher.c)
