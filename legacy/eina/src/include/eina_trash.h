@@ -49,7 +49,7 @@ typedef struct _Eina_Trash Eina_Trash;
  */
 struct _Eina_Trash
 {
-   Eina_Trash *next;
+   Eina_Trash *next; /**< next item in trash. */
 };
 
 static inline void eina_trash_init(Eina_Trash **trash) EINA_ARG_NONNULL(1);
@@ -57,7 +57,7 @@ static inline void eina_trash_push(Eina_Trash **trash, void *data) EINA_ARG_NONN
 static inline void *eina_trash_pop(Eina_Trash **trash) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @def EINA_TRASH_FOREACH
+ * @def EINA_TRASH_CLEAN
  * @brief Macro to remove all pointer from the trash.
  *
  * @param trash The trash to clean.

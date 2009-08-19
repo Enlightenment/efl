@@ -22,6 +22,7 @@
 /**
  * @mainpage Eina
  * @author Jorge Luis Zapata Muga
+ * @author Cedric Bail
  * @date 2008
  *
  * @section eina_toc_sec Table of contents
@@ -52,6 +53,8 @@
  *     <li> @ref eina_counter_subsec
  *     <li> @ref eina_error_subsec
  *   </ul>
+ *   <li> @ref thread_safety_sec
+ *   <li> @ref debugging_sec
  * </ul>
  *
  * @section eina_intro_sec Introduction
@@ -131,6 +134,14 @@
  * Take a look at the API of @ref Eina_Error_Group.
  *
  * Take a look at the @ref tutorial_error_page.
+ *
+ * @section thread_safety_sec Thread safety
+ *
+ * Add some stuff for thread safety doc
+ *
+ * @section debugging_sec Debugging
+ *
+ * Add some stuff for the debug doc
  *
  * @todo add debug function
  * @todo add magic function

@@ -19,12 +19,19 @@
 #ifndef EINA_RECTANGLE_H_
 #define EINA_RECTANGLE_H_
 
+#include "eina_types.h"
+
 /**
- * @file
+ * @addtogroup Eina_Tools_Group Tools
+ *
  * @{
  */
 
-#include "eina_types.h"
+/**
+ * @defgroup Eina_Rectangle_Group Rectangle
+ *
+ * @{
+ */
 
 /**
  * To be documented
@@ -65,6 +72,20 @@ EAPI int eina_rectangle_pool_count(Eina_Rectangle_Pool *pool) EINA_PURE EINA_ARG
 EAPI Eina_Rectangle *eina_rectangle_pool_request(Eina_Rectangle_Pool *pool, int w, int h) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 EAPI void eina_rectangle_pool_release(Eina_Rectangle *rect) EINA_ARG_NONNULL(1);
 
+/**
+ * @def EINA_RECTANGLE_SET
+ * @brief Macro to set the values of a #Eina_Rectangle.
+ *
+ * @param Rectangle The rectangle to set the values.
+ * @param X The X coordinate of the top left corner of the rectangle.
+ * @param Y The Y coordinate of the top left corner of the rectangle.
+ * @param W The width of the rectangle.
+ * @param H The height of the rectangle.
+ *
+ * This macro set the values of @p Rectangle. (@p X, @p Y) is the
+ * coordinates of the top left corner of @p Rectangle, @p W is its
+ * width and @p H is its height.
+ */
 #define EINA_RECTANGLE_SET(Rectangle, X, Y, W, H) \
   (Rectangle)->x = X;				  \
   (Rectangle)->y = Y;				  \
@@ -76,6 +97,12 @@ EAPI void eina_rectangle_free(Eina_Rectangle *rect) EINA_ARG_NONNULL(1);
 
 #include "eina_inline_rectangle.x"
 
-/** @} */
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
 #endif /*_EINA_RECTANGLE_H_*/

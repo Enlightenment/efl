@@ -75,9 +75,6 @@ void *alloca (size_t);
 #define EINA_MODULE_SYMBOL_INIT "__eina_module_init"
 #define EINA_MODULE_SYMBOL_SHUTDOWN "__eina_module_shutdown"
 
-EAPI Eina_Error EINA_ERROR_WRONG_MODULE = 0;
-EAPI Eina_Error EINA_ERROR_MODULE_INIT_FAILED = 0;
-
 struct _Eina_Module
 {
 	char *file;
@@ -164,6 +161,17 @@ static int _eina_module_count = 0;
  * @brief These functions provide module management.
  *
  * @{
+ */
+
+/**
+ * @cond LOCAL
+ */
+
+EAPI Eina_Error EINA_ERROR_WRONG_MODULE = 0;
+EAPI Eina_Error EINA_ERROR_MODULE_INIT_FAILED = 0;
+
+/**
+ * @endcond
  */
 
 /**
@@ -385,7 +393,7 @@ EAPI Eina_Bool eina_module_unload(Eina_Module *m)
 /**
  * @brief Retrive the data associated to a symbol.
  *
- * @param The module.
+ * @param m The module.
  * @param symbol The symbol.
  * @return The data associated to the symbol, or @c NULL on failure.
  *
@@ -488,6 +496,7 @@ EAPI char *eina_module_environment_path_get(const char *env, const char *sub_dir
 /**
  * Get a list of modules found on the directory path
  *
+ * @param array The array that stores the list of the modules.
  * @param path The directory's path to search for modules
  * @param recursive Iterate recursively on the path
  * @param cb Callback function to call, if the return value of the callback is zero
@@ -515,7 +524,7 @@ EAPI Eina_Array * eina_module_list_get(Eina_Array *array, const char *path, unsi
 
 /**
  * Load every module on the list of modules
- * @param list The list of modules
+ * @param array The array of modules to load
  */
 EAPI void eina_module_list_load(Eina_Array *array)
 {
@@ -529,6 +538,10 @@ EAPI void eina_module_list_load(Eina_Array *array)
 		eina_module_load(m);
 }
 
+/**
+ * Unload every module on the list of modules
+ * @param array The array of modules to unload
+ */
 EAPI void eina_module_list_unload(Eina_Array *array)
 {
 	Eina_Array_Iterator iterator;
