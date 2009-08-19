@@ -41,10 +41,19 @@ typedef Eina_Bool (*Eina_Module_Cb)(Eina_Module *m, void *data);
 typedef Eina_Bool (*Eina_Module_Init)(void);
 typedef void (*Eina_Module_Shutdown)(void);
 
-#define EINA_MODULE_INIT(f) EAPI Eina_Module_Init __eina_module_init = &f;
-#define EINA_MODULE_SHUTDOWN(f) EAPI Eina_Module_Shutdown __eina_module_shutdown = &f;
+#define EINA_MODULE_INIT(f) EAPI Eina_Module_Init __eina_module_init = &f
+#define EINA_MODULE_SHUTDOWN(f) EAPI Eina_Module_Shutdown __eina_module_shutdown = &f
 
+/**
+ * @var EINA_ERROR_WRONG_MODULE
+ * Error identifier corresponding to a wrong module.
+ */
 extern EAPI Eina_Error EINA_ERROR_WRONG_MODULE;
+
+/**
+ * @var EINA_ERROR_MODULE_INIT_FAILED
+ * Error identifier corresponding to a failure during the initialisation of a module.
+ */
 extern EAPI Eina_Error EINA_ERROR_MODULE_INIT_FAILED;
 
 EAPI int eina_module_init(void);
@@ -64,6 +73,10 @@ EAPI Eina_Array * eina_module_list_get(Eina_Array *array, const char *path, unsi
 EAPI void eina_module_list_load(Eina_Array *list) EINA_ARG_NONNULL(1);
 EAPI void eina_module_list_unload(Eina_Array *list) EINA_ARG_NONNULL(1);
 EAPI void eina_module_list_flush(Eina_Array *list) EINA_ARG_NONNULL(1);
+
+/**
+ * @}
+ */
 
 /**
  * @}
