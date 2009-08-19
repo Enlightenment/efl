@@ -16,23 +16,14 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
 
+#include <stdio.h>
+#include <string.h>
+
 #include "eina_types.h"
-#include "eina_main.h"
-#include "eina_error.h"
-#include "eina_hash.h"
-#include "eina_stringshare.h"
-#include "eina_list.h"
-#include "eina_array.h"
-#include "eina_counter.h"
-#include "eina_benchmark.h"
-#include "eina_magic.h"
-#include "eina_rectangle.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -94,17 +85,17 @@ eina_hamster_count(void)
                   const char *mons[] =
                     {
                        "Jan",
-                         "Feb",
-                         "Mar",
-                         "Apr",
-                         "May",
-                         "Jun",
-                         "Jul",
-                         "Aug",
-                         "Sep",
-                         "Oct",
-                         "Nov",
-                         "Dec"
+                       "Feb",
+                       "Mar",
+                       "Apr",
+                       "May",
+                       "Jun",
+                       "Jul",
+                       "Aug",
+                       "Sep",
+                       "Oct",
+                       "Nov",
+                       "Dec"
                     };
                   
                   for (i = 0; i < 12; i++)
