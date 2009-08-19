@@ -1179,7 +1179,7 @@ evas_font_available_list_free(Evas *e, Eina_List *available)
    return;
    MAGIC_CHECK_END();
 
-   return evas_font_dir_available_list_free(available); 
+   evas_font_dir_available_list_free(available); 
 }
 
 /**
