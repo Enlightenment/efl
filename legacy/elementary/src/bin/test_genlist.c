@@ -113,6 +113,66 @@ my_gl_add(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+my_gl_insert_before(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *gl = data;
+   Elm_Genlist_Item *gli;
+   static int i = 0;
+   Elm_Genlist_Item *gli_selected;
+
+   itc1.item_style     = "default";
+   itc1.func.label_get = gl_label_get;
+   itc1.func.icon_get  = gl_icon_get;
+   itc1.func.state_get = gl_state_get;
+   itc1.func.del       = gl_del;
+
+   gli_selected = elm_genlist_selected_item_get(gl);
+   if(!gli_selected)
+   {
+       printf("no item selected\n");
+       return ;
+   }
+
+   gli = elm_genlist_item_insert_before(gl, &itc1,
+				 (void *)i/* item data */,
+				 gli_selected /* item before */,
+				 ELM_GENLIST_ITEM_NONE,
+				 gl_sel/* func */,
+				 (void *)(i * 10)/* func data */);
+   i++;
+}
+
+static void
+my_gl_insert_after(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *gl = data;
+   Elm_Genlist_Item *gli;
+   static int i = 0;
+   Elm_Genlist_Item *gli_selected;
+
+   itc1.item_style     = "default";
+   itc1.func.label_get = gl_label_get;
+   itc1.func.icon_get  = gl_icon_get;
+   itc1.func.state_get = gl_state_get;
+   itc1.func.del       = gl_del;
+
+   gli_selected = elm_genlist_selected_item_get(gl);
+   if(!gli_selected)
+   {
+       printf("no item selected\n");
+       return ;
+   }
+
+   gli = elm_genlist_item_insert_after(gl, &itc1,
+				 (void *)i/* item data */,
+				 gli_selected /* item after */,
+				 ELM_GENLIST_ITEM_NONE,
+				 gl_sel/* func */,
+				 (void *)(i * 10)/* func data */);
+   i++;
+}
+
+static void
 my_gl_del(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *gl = data;
@@ -178,7 +238,7 @@ my_gl_last(void *data, Evas_Object *obj, void *event_info)
 void
 test_genlist2(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *gl, *bx, *bx2, *bt;
+   Evas_Object *win, *bg, *gl, *bx, *bx2, *bx3, *bt;
    Elm_Genlist_Item *gli[10];
    char buf[PATH_MAX];
    int i;
@@ -307,6 +367,32 @@ test_genlist2(void *data, Evas_Object *obj, void *event_info)
 
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
+
+   bx3 = elm_box_add(win);
+   elm_box_horizontal_set(bx3, 1);
+   elm_box_homogenous_set(bx3, 1);
+   evas_object_size_hint_weight_set(bx3, 1.0, 0.0);
+   evas_object_size_hint_align_set(bx3, -1.0, -1.0);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "+ before");
+   evas_object_smart_callback_add(bt, "clicked", my_gl_insert_before, gl);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+   elm_box_pack_end(bx3, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "+ after");
+   evas_object_smart_callback_add(bt, "clicked", my_gl_insert_after, gl);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+   elm_box_pack_end(bx3, bt);
+   evas_object_show(bt);
+
+   elm_box_pack_end(bx, bx3);
+   evas_object_show(bx3);
+
 
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
