@@ -1120,7 +1120,7 @@ echo "  Ecore_Job....................: $have_ecore_job"
 echo "  Ecore_Txt....................: $have_ecore_txt"
 echo "  Ecore_Con....................: $have_ecore_con"
 if test "x$have_ecore_con" = "xyes" ; then
-  echo -n "    OpenSSL....................: $have_openssl"
+  echo $ECHO_N "    OpenSSL....................: $have_openssl $ECHO_C"
 if test "x$have_gnutls" = "xyes" ; then
   echo " (disabled)"
 else
@@ -1132,7 +1132,7 @@ fi
 fi
 echo "  Ecore_Ipc....................: $have_ecore_ipc"
 if test "x$have_ecore_ipc" = "xyes" ; then
-  echo -n "    OpenSSL....................: $have_openssl"
+  echo $ECHO_N "    OpenSSL....................: $have_openssl $ECHO_C"
 if test "x$have_gnutls" = "xyes" ; then
   echo " (disabled)"
 else
