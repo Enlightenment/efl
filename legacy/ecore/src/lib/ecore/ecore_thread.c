@@ -6,7 +6,9 @@
 # include <Evil.h>
 #endif
 
-#include <pthread.h>
+#ifdef BUILD_PTHREAD
+# include <pthread.h>
+#endif
 
 #include "ecore_private.h"
 #include "Ecore.h"
@@ -30,9 +32,9 @@ static Eina_List *_ecore_thread = NULL;
 static int ECORE_THREAD_PIPE_DEL = 0;
 static Ecore_Event_Handler *del_handler = NULL;
 
+#ifdef BUILD_PTHREAD
 static pthread_mutex_t _mutex = PTHREAD_MUTEX_INITIALIZER;
 
-#ifdef BUILD_PTHREAD
 static void
 _ecore_thread_pipe_free(void *data __UNUSED__, void *event)
 {
