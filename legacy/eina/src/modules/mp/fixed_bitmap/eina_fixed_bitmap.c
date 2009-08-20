@@ -65,7 +65,7 @@ _eina_rbtree_inlist_delta(void)
    void *a = &tmp.__rbtree;
    void *b = &tmp.__in_list;
 
-   return a - b;
+   return (char *)a - (char *)b;
 }
 
 static Eina_Rbtree_Direction
@@ -85,7 +85,7 @@ _eina_fixed_cmp_key(const Eina_Rbtree *node, const void *key, __UNUSED__ int len
    int limit;
 
    limit = sizeof (Eina_Fixed_Bitmap_Pool) + mp->item_size * 32;
-   delta = a - b;
+   delta = (char *)a - (char *)b;
 
    if (delta > 0)
      return 1;
@@ -157,7 +157,7 @@ eina_fixed_bitmap_free(void *data, void *ptr)
    if (pool->bitmask != 0xFFFFFFFF) push_front = EINA_TRUE;
 
    a = pool;
-   delta = (ptr - a - sizeof (Eina_Fixed_Bitmap_Pool)) / mp->item_size;
+   delta = ((char *)ptr - (char *)a - sizeof (Eina_Fixed_Bitmap_Pool)) / mp->item_size;
 
    assert(delta >= 0 && delta < 32);
 
