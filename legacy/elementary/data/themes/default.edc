@@ -11225,9 +11225,10 @@ collections {
 // FIXME: this doesn't look too hot. need to fix it up
    group { name: "elm/progressbar/horizontal/default";
       images {
-         image: "bt_basew.png" COMP;
-         image: "bt_bases.png" COMP;
-         image: "bt_base1.png" COMP;
+         image: "shelf_inset.png" COMP;
+         image: "bt_sm_base2.png" COMP;
+         image: "bt_sm_hilight.png" COMP;
+         image: "bt_sm_shine.png" COMP;
       }
       parts {
          part { name: "elm.background.progressbar";
@@ -11330,9 +11331,38 @@ collections {
                   offset: -1 -1;
                }
                image {
-                  normal: "bt_basew.png";
-                  border: 8 8 8 8;
+                  normal: "shelf_inset.png";
+                  border: 7 7 7 7;
                }
+            }
+         }
+
+         part { name: "elm.text.background";
+            type: TEXT;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               visible: 1;
+               rel1 {
+                  to: "background";
+                  relative: 0.5 0.5;
+               }
+               rel2 {
+                  to: "background";
+                  relative: 0.5 0.5;
+               }
+               text {
+                  font: "Sans:style=Bold,Edje-Vera-Bold";
+                  size: 10;
+                  min: 1 1;
+                  align: 0.5 0.0;
+               }
+               color: 0 0 0 255;
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               text.min: 0 0;
             }
          }
 
@@ -11351,8 +11381,8 @@ collections {
                   offset: -1 -1;
                }
                image {
-                  normal: "bt_base1.png";
-                  border: 8 8 8 8;
+                  normal: "bt_sm_base2.png";
+                  border: 6 6 6 6;
                }
             }
             description {
@@ -11394,6 +11424,32 @@ collections {
             }
          }
 
+         part { name: "over1";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "elm.progress.progressbar";
+               rel2.to: "elm.progress.progressbar";
+               rel2.relative: 1.0 0.5;
+               image {
+                  normal: "bt_sm_hilight.png";
+                  border: 6 6 6 0;
+               }
+            }
+         }
+
+         part { name: "over2";
+            mouse_events: 1;
+            repeat_events: 1;
+            description { state: "default" 0.0;
+               rel1.to: "elm.progress.progressbar";
+               rel2.to: "elm.progress.progressbar";
+               image {
+                  normal: "bt_sm_shine.png";
+                  border: 6 6 6 0;
+               }
+            }
+         }
+
          part { name: "elm.cur.progressbar";
             mouse_events: 0;
             dragable {
@@ -11410,52 +11466,30 @@ collections {
                rel2.to: "background";
            }
          }
-         part { name: "elm.text.box";
+         part { name: "elm.progress.rectangle";
             mouse_events: 0;
-            description { state: "default" 0.0;
-               visible: 1;
-               rel1 {
-                  to: "elm.text.content";
-                  offset: -6 -4;
-               }
-               rel2 {
-                  to: "elm.text.content";
-                  offset: 6 4;
-               }
-               image {
-                  normal: "bt_basew.png";
-                  border: 8 8 8 8;
-               }
-               fill.smooth: 0;
-            }
-            description { state: "hidden" 0.0;
-               inherit: "default" 0.0;
-               visible: 0;
+            description {
+               state: "default" 0.0;
+               rel1.to: "elm.progress.progressbar";
+               rel2.to: "elm.progress.progressbar";
             }
          }
-         part { name: "elm.text.content";
+         part { name: "elm.text.bar";
             type: TEXT;
             mouse_events: 0;
+            clip_to: "elm.progress.rectangle";
             description { state: "default" 0.0;
                fixed: 1 1;
                visible: 1;
-               rel1 {
-                  to: "background";
-                  relative: 0.5 0.5;
-                  offset: -3 -1;
-               }
-               rel2 {
-                  to: "background";
-                  relative: 0.5 0.5;
-                  offset: 3 -1;
-               }
+               rel1.to: "elm.text.background";
+               rel2.to: "elm.text.background";
                text {
-                  font: "Sans,Edje-Vera";
+                  font: "Sans:style=Bold,Edje-Vera-Bold";
                   size: 10;
                   min: 1 1;
                   align: 0.5 0.0;
                }
-               color: 0 0 0 255;
+               color: 224 224 224 255;
             }
             description { state: "hidden" 0.0;
                inherit: "default" 0.0;
@@ -11493,15 +11527,15 @@ collections {
             signal: "elm,state,units,visible";
             source: "elm";
             action:  STATE_SET "default" 0.0;
-            target: "elm.text.content";
-            target: "elm.text.box";
+            target: "elm.text.bar";
+            target: "elm.text.background";
          }
          program { name: "units_hide";
             signal: "elm,state,units,hidden";
             source: "elm";
             action:  STATE_SET "hidden" 0.0;
-            target: "elm.text.content";
-            target: "elm.text.box";
+            target: "elm.text.bar";
+            target: "elm.text.background";
          }
          program { name: "slide_to_end";
             action:  STATE_SET "state_end" 0.0;
@@ -11565,9 +11599,10 @@ collections {
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/progressbar/vertical/default";
       images {
-         image: "bt_basew.png" COMP;
-         image: "bt_bases.png" COMP;
-         image: "bt_base1.png" COMP;
+         image: "shelf_inset.png" COMP;
+         image: "bt_sm_base2.png" COMP;
+         image: "bt_sm_hilight.png" COMP;
+         image: "bt_sm_shine.png" COMP;
       }
       parts {
          part { name: "elm.background.progressbar";
@@ -11673,8 +11708,8 @@ collections {
                   offset: -1 -1;
                }
                image {
-                  normal: "bt_basew.png";
-                  border: 8 8 8 8;
+                  normal: "shelf_inset.png";
+                  border: 7 7 7 7;
                }
             }
          }
@@ -11694,8 +11729,8 @@ collections {
                   offset: -1 -1;
                }
                image {
-                  normal: "bt_base1.png";
-                  border: 8 8 8 8;
+                  normal: "bt_sm_base2.png";
+                  border: 6 6 6 6;
                }
             }
             description {
@@ -11737,6 +11772,32 @@ collections {
             }
          }
 
+         part { name: "over1";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "elm.progress.progressbar";
+               rel2.to: "elm.progress.progressbar";
+               rel2.relative: 1.0 0.5;
+               image {
+                  normal: "bt_sm_hilight.png";
+                  border: 6 6 6 0;
+               }
+            }
+         }
+
+         part { name: "over2";
+            mouse_events: 1;
+            repeat_events: 1;
+            description { state: "default" 0.0;
+               rel1.to: "elm.progress.progressbar";
+               rel2.to: "elm.progress.progressbar";
+               image {
+                  normal: "bt_sm_shine.png";
+                  border: 6 6 6 0;
+               }
+            }
+         }
+
          part { name: "elm.cur.progressbar";
             mouse_events: 0;
             dragable {
@@ -11756,6 +11817,7 @@ collections {
 
          part { name: "elm.text.box";
             mouse_events: 0;
+            type: RECT;
             description { state: "default" 0.0;
                visible: 0;
                rel1 {
@@ -11766,11 +11828,7 @@ collections {
                   to: "elm.text.content";
                   offset: 2 2;
                }
-               image {
-                  normal: "bt_basew.png";
-                  border: 8 8 8 8;
-               }
-               fill.smooth: 0;
+               color: 255 255 255 0;
             }
             description { state: "visible" 0.0;
                inherit: "default" 0.0;
@@ -11791,7 +11849,7 @@ collections {
                rel2.offset: -2 0;
                color: 0 0 0 255;
                text {
-                  font: "Sans,Edje-Vera";
+                  font: "Sans:style=Bold,Edje-Vera-Bold";
                   size: 10;
                   min: 0 0;
                   align: 0.5 0.0;

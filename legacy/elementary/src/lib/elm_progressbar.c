@@ -175,10 +175,22 @@ _units_set(Evas_Object *obj)
         char buf[1024];
 
         snprintf(buf, sizeof(buf), wd->units, 100 * wd->val);
-        edje_object_part_text_set(wd->progressbar, "elm.text.content", buf);
+	if (wd->horizontal)
+	  {
+	    edje_object_part_text_set(wd->progressbar, "elm.text.bar", buf);
+            edje_object_part_text_set(wd->progressbar, "elm.text.background", buf);
+	  }
+	else
+	  edje_object_part_text_set(wd->progressbar, "elm.text.content", buf);
      }
    else
-     edje_object_part_text_set(wd->progressbar, "elm.text.content", NULL);
+	if (wd->horizontal)
+	  {
+	    edje_object_part_text_set(wd->progressbar, "elm.text.bar", NULL);
+	    edje_object_part_text_set(wd->progressbar, "elm.text.background", NULL);
+	  }
+	else
+	  edje_object_part_text_set(wd->progressbar, "elm.text.content", NULL);
 }
 
 /**
