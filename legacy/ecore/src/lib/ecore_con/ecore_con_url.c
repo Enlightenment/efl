@@ -79,18 +79,18 @@ static size_t _ecore_con_url_read_cb(void *ptr, size_t size, size_t nitems, void
 static void _ecore_con_event_url_free(void *data __UNUSED__, void *ev);
 static int _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match);
 
-static Ecore_Idler	*_fd_idler_handler = NULL;
-static Eina_List	*_url_con_list = NULL;
-static CURLM		*curlm = NULL;
-static fd_set		 _current_fd_set;
-static int		 init_count = 0;
+static Ecore_Idler *_fd_idler_handler = NULL;
+static Eina_List *_url_con_list = NULL;
+static CURLM *curlm = NULL;
+static fd_set _current_fd_set;
+static int init_count = 0;
 
+typedef struct _Ecore_Con_Url_Event Ecore_Con_Url_Event;
 struct _Ecore_Con_Url_Event
 {
-  int    type;
-  void  *ev;
+   int type;
+   void  *ev;
 };
-typedef struct _Ecore_Con_Url_Event Ecore_Con_Url_Event;
 
 static int
 _url_complete_idler_cb(void *data)
@@ -98,7 +98,6 @@ _url_complete_idler_cb(void *data)
    Ecore_Con_Url_Event *lev;
 
    lev = data;
-
    ecore_event_add(lev->type, lev->ev, _ecore_con_event_url_free, NULL);
    free(lev);
 
@@ -170,8 +169,7 @@ EAPI int
 ecore_con_url_shutdown(void)
 {
 #ifdef HAVE_CURL
-   if (!init_count)
-     return 0;
+   if (!init_count) return 0;
 
    init_count--;
    while (_url_con_list)
@@ -215,10 +213,12 @@ ecore_con_url_new(const char *url)
 
    ecore_con_url_url_set(url_con, url);
 
-   curl_easy_setopt(url_con->curl_easy, CURLOPT_WRITEFUNCTION, _ecore_con_url_data_cb);
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_WRITEFUNCTION, 
+                    _ecore_con_url_data_cb);
    curl_easy_setopt(url_con->curl_easy, CURLOPT_WRITEDATA, url_con);
 
-   curl_easy_setopt(url_con->curl_easy, CURLOPT_PROGRESSFUNCTION, _ecore_con_url_progress_cb);
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_PROGRESSFUNCTION, 
+                    _ecore_con_url_progress_cb);
    curl_easy_setopt(url_con->curl_easy, CURLOPT_PROGRESSDATA, url_con);
    curl_easy_setopt(url_con->curl_easy, CURLOPT_NOPROGRESS, FALSE);
 
@@ -255,10 +255,10 @@ EAPI Ecore_Con_Url *
 ecore_con_url_custom_new(const char *url, const char *custom_request)
 {
 #ifdef HAVE_CURL
+   Ecore_Con_Url *url_con;
+
    if (!url) return NULL;
    if (!custom_request) return NULL;
-
-   Ecore_Con_Url *url_con;
 
    url_con = ecore_con_url_new(url);
 
@@ -544,28 +544,29 @@ ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length, cons
    switch (url_con->condition)
      {
       case ECORE_CON_URL_TIME_NONE:
-	 curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION, CURL_TIMECOND_NONE);
+	 curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION, 
+                          CURL_TIMECOND_NONE);
 	 break;
       case ECORE_CON_URL_TIME_IFMODSINCE:
-	 curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFMODSINCE);
+	 curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION, 
+                          CURL_TIMECOND_IFMODSINCE);
 	 curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMEVALUE, url_con->time);
 	 break;
       case ECORE_CON_URL_TIME_IFUNMODSINCE:
-	 curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFUNMODSINCE);
+	 curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION, 
+                          CURL_TIMECOND_IFUNMODSINCE);
 	 curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMEVALUE, url_con->time);
 	 break;
       case ECORE_CON_URL_TIME_LASTMOD:
-	 curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION, CURL_TIMECOND_LASTMOD);
+	 curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION, 
+                          CURL_TIMECOND_LASTMOD);
 	 curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMEVALUE, url_con->time);
 	 break;
      }
 
    /* Additional headers */
    EINA_LIST_FOREACH(url_con->additional_headers, l, s)
-     {
-	fprintf(stderr, "ECORE appending header %s\n", s);
-	url_con->headers = curl_slist_append(url_con->headers, s);
-     }
+     url_con->headers = curl_slist_append(url_con->headers, s);
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_HTTPHEADER, url_con->headers);
 
@@ -608,21 +609,25 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename, const cha
 	if (stat(filename, &file_info)) return 0;
 	fd = fopen(filename, "rb");
 	if (upload_dir)
-	   snprintf(url, sizeof(url), "ftp://%s/%s/%s", url_con->url, upload_dir, basename(filename));
+	   snprintf(url, sizeof(url), "ftp://%s/%s/%s", url_con->url, 
+                    upload_dir, basename(filename));
 	else
-	   snprintf(url, sizeof(url), "ftp://%s/%s", url_con->url, basename(filename));
+	   snprintf(url, sizeof(url), "ftp://%s/%s", url_con->url, 
+                    basename(filename));
 	snprintf(userpwd, sizeof(userpwd), "%s:%s", user, pass);
-	curl_easy_setopt(url_con->curl_easy, CURLOPT_INFILESIZE_LARGE, (curl_off_t)file_info.st_size);
+	curl_easy_setopt(url_con->curl_easy, CURLOPT_INFILESIZE_LARGE, 
+                         (curl_off_t)file_info.st_size);
 	curl_easy_setopt(url_con->curl_easy, CURLOPT_USERPWD, userpwd);
 	curl_easy_setopt(url_con->curl_easy, CURLOPT_UPLOAD, 1);
-	curl_easy_setopt(url_con->curl_easy, CURLOPT_READFUNCTION, _ecore_con_url_read_cb);
+	curl_easy_setopt(url_con->curl_easy, CURLOPT_READFUNCTION, 
+                         _ecore_con_url_read_cb);
 	curl_easy_setopt(url_con->curl_easy, CURLOPT_READDATA, fd);
 	ecore_con_url_url_set(url_con, url);
 
 	return _ecore_con_url_perform(url_con);
      }
    else
-	return 0;
+     return 0;
 #else
    return 0;
    url_con = NULL;
@@ -651,9 +656,9 @@ ecore_con_url_verbose_set(Ecore_Con_Url *url_con, int verbose)
    if (url_con->active) return;
    if (!url_con->url) return;
    if (verbose == TRUE)
-	curl_easy_setopt(url_con->curl_easy, CURLOPT_VERBOSE, 1);
+     curl_easy_setopt(url_con->curl_easy, CURLOPT_VERBOSE, 1);
    else
-	curl_easy_setopt(url_con->curl_easy, CURLOPT_VERBOSE, 0);
+     curl_easy_setopt(url_con->curl_easy, CURLOPT_VERBOSE, 0);
 #endif
 }
 
@@ -675,9 +680,9 @@ ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con, int use_epsv)
    if (url_con->active) return;
    if (!url_con->url) return;
    if (use_epsv == TRUE)
-	curl_easy_setopt(url_con->curl_easy, CURLOPT_FTP_USE_EPSV, 1);
+     curl_easy_setopt(url_con->curl_easy, CURLOPT_FTP_USE_EPSV, 1);
    else
-	curl_easy_setopt(url_con->curl_easy, CURLOPT_FTP_USE_EPSV, 0);
+     curl_easy_setopt(url_con->curl_easy, CURLOPT_FTP_USE_EPSV, 0);
 #endif
 }
 
@@ -685,12 +690,11 @@ ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con, int use_epsv)
 static int
 _ecore_con_url_suspend_fd_handler(void)
 {
-   Eina_List		*l;
-   Ecore_Con_Url	*url_con;
-   int			 deleted = 0;
+   Eina_List *l;
+   Ecore_Con_Url *url_con;
+   int deleted = 0;
 
-   if (!_url_con_list)
-     return 0;
+   if (!_url_con_list) return 0;
 
    EINA_LIST_FOREACH(_url_con_list, l, url_con)
      {
@@ -708,21 +712,20 @@ _ecore_con_url_suspend_fd_handler(void)
 static int
 _ecore_con_url_restart_fd_handler(void)
 {
-   Eina_List		*l;
-   Ecore_Con_Url	*url_con;
-   int			 activated = 0;
+   Eina_List *l;
+   Ecore_Con_Url *url_con;
+   int activated = 0;
 
-   if (!_url_con_list)
-     return 0;
+   if (!_url_con_list) return 0;
 
    EINA_LIST_FOREACH(_url_con_list, l, url_con)
      {
 	if (url_con->fd_handler == NULL && url_con->fd != -1)
 	  {
-	     url_con->fd_handler = ecore_main_fd_handler_add(url_con->fd,
-							     url_con->flags,
-							     _ecore_con_url_fd_handler,
-							     NULL, NULL, NULL);
+	     url_con->fd_handler = 
+               ecore_main_fd_handler_add(url_con->fd, url_con->flags,
+                                         _ecore_con_url_fd_handler,
+                                         NULL, NULL, NULL);
 	     activated++;
 	  }
      }
@@ -763,16 +766,15 @@ _ecore_con_url_data_cb(void *buffer, size_t size, size_t nitems, void *userp)
    else
      {
 	ssize_t	count = 0;
-	size_t	total_size = real_size;
-	size_t	offset = 0;
+	size_t total_size = real_size;
+	size_t offset = 0;
 
 	while (total_size > 0)
 	  {
 	     count = write(url_con->write_fd, (char*) buffer + offset, total_size);
 	     if (count < 0)
 	       {
-		  if (errno != EAGAIN && errno != EINTR)
-		    return -1;
+		  if (errno != EAGAIN && errno != EINTR) return -1;
 	       }
 	     else
 	       {
@@ -805,7 +807,7 @@ static int
 _ecore_con_url_progress_cb(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
 {
    Ecore_Con_Event_Url_Progress	*e;
-   Ecore_Con_Url		*url_con;
+   Ecore_Con_Url *url_con;
 
    url_con = clientp;
 
@@ -817,7 +819,8 @@ _ecore_con_url_progress_cb(void *clientp, double dltotal, double dlnow, double u
 	e->down.now = dlnow;
 	e->up.total = ultotal;
 	e->up.now = ulnow;
-	ecore_event_add(ECORE_CON_EVENT_URL_PROGRESS, e, _ecore_con_event_url_free, NULL);
+	ecore_event_add(ECORE_CON_EVENT_URL_PROGRESS, e, 
+                        _ecore_con_event_url_free, NULL);
      }
 
    return 0;
@@ -827,13 +830,17 @@ static size_t
 _ecore_con_url_read_cb(void *ptr, size_t size, size_t nitems, void *stream)
 {
    size_t retcode = fread(ptr, size, nitems, stream);
-   if (ferror((FILE*)stream)) {
-	fclose(stream);
-	return CURL_READFUNC_ABORT;
-   } else if ((retcode == 0) || (retcode < nitems)) {
-	fclose((FILE*)stream);
-	return 0;
-   }
+
+   if (ferror((FILE*)stream)) 
+     {
+        fclose(stream);
+        return CURL_READFUNC_ABORT;
+     } 
+   else if ((retcode == 0) || (retcode < nitems)) 
+     {
+        fclose((FILE*)stream);
+        return 0;
+     }
    fprintf(stderr, "*** We read %zu bytes from file\n", retcode);
    return retcode;
 }
@@ -842,10 +849,8 @@ static int
 _ecore_con_url_perform(Ecore_Con_Url *url_con)
 {
    fd_set read_set, write_set, exc_set;
-   int fd_max;
-   int fd;
-   int flags;
-   int still_running;
+   int fd_max, fd;
+   int flags, still_running;
    int completed_immediately = 0;
 
    _url_con_list = eina_list_append(_url_con_list, url_con);
@@ -879,9 +884,10 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
 		       FD_SET(fd, &_current_fd_set);
 		       url_con->fd = fd;
 		       url_con->flags = flags;
-		       url_con->fd_handler = ecore_main_fd_handler_add(fd, flags,
-								       _ecore_con_url_fd_handler,
-								       NULL, NULL, NULL);
+		       url_con->fd_handler = 
+                         ecore_main_fd_handler_add(fd, flags, 
+                                                   _ecore_con_url_fd_handler,
+                                                   NULL, NULL, NULL);
 		       break;
 		    }
 	       }
@@ -902,9 +908,8 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
 static int
 _ecore_con_url_idler_handler(void *data __UNUSED__)
 {
-   double	start;
-   int		done = 1;
-   int		still_running;
+   double start;
+   int done = 1, still_running;
 
    start = ecore_time_get();
    while (curl_multi_perform(curlm, &still_running) == CURLM_CALL_MULTI_PERFORM)
@@ -959,7 +964,7 @@ _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
 	     if (curlmsg->easy_handle == url_con->curl_easy)
 	       {
 		  if (url_con_to_match && (url_con == url_con_to_match))
-		       job_matched = 1;
+                    job_matched = 1;
 		  if(url_con->fd != -1)
 		    {
 		       FD_CLR(url_con->fd, &_current_fd_set);
@@ -974,6 +979,7 @@ _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
 		  if (e)
 		    {
 		       long status;	/* curl API uses long, not int */
+
 		       e->url_con = url_con;
 		       e->status = 0;
 		       curl_easy_getinfo(curlmsg->easy_handle, CURLINFO_RESPONSE_CODE, &status);
