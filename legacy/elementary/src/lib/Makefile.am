@@ -55,7 +55,7 @@ elm_check.c \
 elm_radio.c \
 elm_pager.c \
 elm_progressbar.c \
-elm_separator.c
+elm_separator.c \
 \
 elc_notepad.c \
 elc_anchorview.c \
