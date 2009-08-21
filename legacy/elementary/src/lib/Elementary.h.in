@@ -751,6 +751,7 @@ extern "C" {
 
    EAPI Evas_Object *elm_separator_add(Evas_Object *parent);
    EAPI void         elm_separator_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
+   EAPI Eina_Bool    elm_separator_horizontal_get(Evas_Object *obj);
 
 #ifdef __cplusplus
 }
@@ -767,7 +768,7 @@ extern "C" {
 // * table doesnt do homogenous properly
 //
 //// (incomplete - medium priority)
-// * disabled not supported
+// * disabled supported only for buttons atm
 // * on the fly theme changes - test (should work)
 // * need a hold-scroll counter in elm_widget
 // * hoversel only vertical right now - make horizontal
@@ -782,7 +783,6 @@ extern "C" {
 // * [ toggle with 2x labelled button for 2 states ]
 // * [ poker spinner with numbers + labels ]
 // * [ wrapping text button bar ]
-// * separator widget (h/v)
 // * slide-open "panel" that can hold stuff and optionally scroll
 // * calendar widget (select date)
 // * range selector (select range of values from X to Y over an interval)
@@ -792,7 +792,7 @@ extern "C" {
 // * imageview widget (for large not iconic images)
 // * tiled image + zoom widget (tiled map viewer)
 // * dialpad widget - need one with a phone dialpad
-// * file selector widget
+// * file selector widget - needs look and functionality improvement :)
 // * generic "tacho" widget (set min/max labels - and up to 3 intermediate labels etc.)
 // * status widget (busy, stalled, running, etc.)
 // * full window in window widget (so move/resize of window object does as you'd expect a child window to do within the canvas)
@@ -818,7 +818,7 @@ extern "C" {
 // * use evas's table instead of a table smart
 // * use stack for win widget
 // * determine prefix of app dynamically and export calls to get prefix info
-// * load config from file
+// * load config from file - currently being done
 // * load config from x property
 // * handle finger size property and on-the-fly changes like scaling does
 // * somehow a pdf(ps) viewer widget that doesnt make it gpl (lgpl)

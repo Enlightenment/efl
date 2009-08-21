@@ -77,3 +77,10 @@ elm_separator_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
    wd->horizontal = horizontal;
    _theme_hook(obj);
 }
+
+EAPI Eina_Bool
+elm_separator_horizontal_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->horizontal;
+}
