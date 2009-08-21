@@ -336,6 +336,9 @@ efreet_mime_type_icon_get(const char *mime, const char *theme, unsigned int size
     {
         *ppp = '\0';
 
+        snprintf(buf, sizeof(buf), "%s-x-generic", pp);
+        icons = eina_list_append(icons, strdup(buf));
+
         snprintf(buf, sizeof(buf), "%s-generic", pp);
         icons = eina_list_append(icons, strdup(buf));
 
