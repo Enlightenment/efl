@@ -119,7 +119,9 @@ check.png \
 check2.png \
 radio_base.png \
 radio.png \
-radio2.png
+radio2.png \
+separator_h.png \
+separator_v.png
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
