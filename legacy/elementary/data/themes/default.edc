@@ -11337,7 +11337,7 @@ collections {
             }
          }
 
-         part { name: "elm.text.background";
+         part { name: "elm.text.status";
             type: TEXT;
             mouse_events: 0;
             description { state: "default" 0.0;
@@ -11371,6 +11371,7 @@ collections {
             clip_to: "elm.background.progressbar";
             description {
                state: "default" 0.0;
+               min: 14 28;
                rel1 {
                   to: "elm.swallow.bar";
                   relative: 0.0 0.0;
@@ -11423,6 +11424,35 @@ collections {
                }
             }
          }
+         part { name: "text-bar";
+            type: TEXT;
+            mouse_events: 0;
+            clip_to: "progress-rect";
+            effect: SOFT_SHADOW;
+            scale: 1;
+            description { state: "default" 0.0;
+               align: 0.0 0.0;
+               fixed: 1 1;
+               visible: 1;
+               rel1.to: "elm.text.status";
+               rel1.offset: -1 -1;
+               rel2.to: "elm.text.status";
+               text {
+                  text_source: "elm.text.status";
+                  font: "Sans:style=Bold,Edje-Vera-Bold";
+                  size: 10;
+                  min: 1 1;
+                  align: 0.0 0.0;
+               }
+               color: 224 224 224 255;
+               color3: 0 0 0 64;
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               text.min: 0 0;
+            }
+         }
 
          part { name: "over1";
             mouse_events: 0;
@@ -11466,35 +11496,12 @@ collections {
                rel2.to: "background";
            }
          }
-         part { name: "elm.progress.rectangle";
+         part { name: "progress-rect";
             mouse_events: 0;
             description {
                state: "default" 0.0;
                rel1.to: "elm.progress.progressbar";
                rel2.to: "elm.progress.progressbar";
-            }
-         }
-         part { name: "elm.text.bar";
-            type: TEXT;
-            mouse_events: 0;
-            clip_to: "elm.progress.rectangle";
-            description { state: "default" 0.0;
-               fixed: 1 1;
-               visible: 1;
-               rel1.to: "elm.text.background";
-               rel2.to: "elm.text.background";
-               text {
-                  font: "Sans:style=Bold,Edje-Vera-Bold";
-                  size: 10;
-                  min: 1 1;
-                  align: 0.5 0.0;
-               }
-               color: 224 224 224 255;
-            }
-            description { state: "hidden" 0.0;
-               inherit: "default" 0.0;
-               visible: 0;
-               text.min: 0 0;
             }
          }
       }
@@ -11527,15 +11534,15 @@ collections {
             signal: "elm,state,units,visible";
             source: "elm";
             action:  STATE_SET "default" 0.0;
-            target: "elm.text.bar";
-            target: "elm.text.background";
+            target: "text-bar";
+            target: "elm.text.status";
          }
          program { name: "units_hide";
             signal: "elm,state,units,hidden";
             source: "elm";
             action:  STATE_SET "hidden" 0.0;
-            target: "elm.text.bar";
-            target: "elm.text.background";
+            target: "text-bar";
+            target: "elm.text.status";
          }
          program { name: "slide_to_end";
             action:  STATE_SET "state_end" 0.0;
@@ -11719,6 +11726,7 @@ collections {
             clip_to: "elm.background.progressbar";
             description {
                state: "default" 0.0;
+               min: 28 14;
                rel1 {
                   to: "elm.swallow.bar";
                   relative: 0.0 0.0;

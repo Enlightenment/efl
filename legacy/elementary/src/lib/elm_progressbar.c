@@ -49,6 +49,7 @@ static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void _units_set(Evas_Object *obj);
+static void _val_set(Evas_Object *obj);
 
 static void
 _del_hook(Evas_Object *obj)
@@ -98,6 +99,7 @@ _theme_hook(Evas_Object *obj)
    _units_set(obj);
    edje_object_message_signal_process(wd->progressbar);
    edje_object_scale_set(wd->progressbar, elm_widget_scale_get(obj) * _elm_config->scale);
+   _val_set(obj);
    _sizing_eval(obj);
 }
 
@@ -173,24 +175,12 @@ _units_set(Evas_Object *obj)
    if (wd->units)
      {
         char buf[1024];
-
+        
         snprintf(buf, sizeof(buf), wd->units, 100 * wd->val);
-	if (wd->horizontal)
-	  {
-	    edje_object_part_text_set(wd->progressbar, "elm.text.bar", buf);
-            edje_object_part_text_set(wd->progressbar, "elm.text.background", buf);
-	  }
-	else
-	  edje_object_part_text_set(wd->progressbar, "elm.text.content", buf);
+        edje_object_part_text_set(wd->progressbar, "elm.text.status", buf);
      }
    else
-	if (wd->horizontal)
-	  {
-	    edje_object_part_text_set(wd->progressbar, "elm.text.bar", NULL);
-	    edje_object_part_text_set(wd->progressbar, "elm.text.background", NULL);
-	  }
-	else
-	  edje_object_part_text_set(wd->progressbar, "elm.text.content", NULL);
+     edje_object_part_text_set(wd->progressbar, "elm.text.status", NULL);
 }
 
 /**
@@ -236,6 +226,7 @@ elm_progressbar_add(Evas_Object *parent)
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    _units_set(obj);
+   _val_set(obj);
    _sizing_eval(obj);
    return obj;
 }
