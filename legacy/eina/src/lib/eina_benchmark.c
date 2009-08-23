@@ -28,10 +28,6 @@
 # include "config.h"
 #endif
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
 #elif defined __GNUC__
@@ -48,6 +44,10 @@ extern "C"
 # endif
 void *alloca (size_t);
 #endif
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "eina_benchmark.h"
 #include "eina_inlist.h"

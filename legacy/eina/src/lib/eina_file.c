@@ -20,20 +20,9 @@
 # include <config.h>
 #endif
 
-#include <string.h>
-
 #ifndef _WIN32
 # define _GNU_SOURCE
-# include <sys/types.h>
-# include <sys/stat.h>
-# include <unistd.h>
-# include <dirent.h>
-#else
-# define WIN32_LEAN_AND_MEAN
-# include <windows.h>
-# undef WIN32_LEAN_AND_MEAN
-# include <Evil.h>
-#endif /* _WIN2 */
+#endif
 
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
@@ -51,6 +40,20 @@ extern "C"
 # endif
 void *alloca (size_t);
 #endif
+
+#include <string.h>
+
+#ifndef _WIN32
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <unistd.h>
+# include <dirent.h>
+#else
+# define WIN32_LEAN_AND_MEAN
+# include <windows.h>
+# undef WIN32_LEAN_AND_MEAN
+# include <Evil.h>
+#endif /* _WIN2 */
 
 #ifndef _WIN32
 # define PATH_DELIM '/'

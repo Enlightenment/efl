@@ -21,13 +21,8 @@
 #endif
 
 #ifdef HAVE_DLADDR
-#define _GNU_SOURCE
+# define _GNU_SOURCE
 #endif
-
-#include <stdio.h>
-#include <sys/types.h>
-#include <dirent.h>
-#include <string.h>
 
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
@@ -45,6 +40,11 @@ extern "C"
 # endif
 void *alloca (size_t);
 #endif
+
+#include <stdio.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include <string.h>
 
 #include <dlfcn.h>
 
