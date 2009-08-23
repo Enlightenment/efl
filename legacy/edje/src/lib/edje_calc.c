@@ -1145,7 +1145,7 @@ _edje_part_recalc_single_min_max(double sc,
 	   else
 	     {
 		*maxw = desc->max.w;
-		if (maxw > 0)
+		if (*maxw > 0)
 		  {
 		     if (ep->part->scale) *maxw = (int)(((double)*maxw) * sc);
 		     if (*maxw < 1) *maxw = 1;
