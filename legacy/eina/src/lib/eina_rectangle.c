@@ -302,7 +302,7 @@ eina_rectangle_shutdown(void)
 
    eina_list_shutdown();
 
-   while (del = eina_trash_pop(&_eina_rectangles))
+   while ((del = eina_trash_pop(&_eina_rectangles)))
      eina_mempool_free(_eina_rectangle_mp, del);
    _eina_rectangles_count = 0;
 
