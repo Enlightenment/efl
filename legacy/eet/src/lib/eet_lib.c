@@ -70,7 +70,7 @@ void *alloca (size_t);
 #include "Eet_private.h"
 
 #ifdef HAVE_REALPATH
-#undef HAVE_REALPATH
+# undef HAVE_REALPATH
 #endif
 
 #define EET_MAGIC_FILE                  0x1ee7ff00

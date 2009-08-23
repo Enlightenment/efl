@@ -5,10 +5,6 @@
 #ifndef _EET_PRIVATE_H
 #define _EET_PRIVATE_H
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
 typedef struct _Eet_String              Eet_String;
 
 struct _Eet_String
