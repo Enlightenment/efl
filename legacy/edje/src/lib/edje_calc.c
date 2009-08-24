@@ -52,7 +52,7 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos)
 }
 
 Edje_Part_Description *
-_edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *name,
+_edje_part_description_find(Edje *ed __UNUSED__, Edje_Real_Part *rp, const char *name,
                             double val)
 {
    Edje_Part *ep = rp->part;
@@ -293,7 +293,7 @@ _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, double x, double y)
 
 static void
 _edje_part_recalc_single_rel(Edje *ed,
-			     Edje_Real_Part *ep,
+			     Edje_Real_Part *ep __UNUSED__,
 			     Edje_Part_Description *desc,
 			     Edje_Real_Part *rel1_to_x,
 			     Edje_Real_Part *rel1_to_y,
@@ -1118,7 +1118,7 @@ _edje_part_recalc_single_min_max(double sc,
 				 Edje_Part_Description *desc,
 				 int *minw, int *minh,
 				 int *maxw, int *maxh,
-				 int flags)
+				 int flags __UNUSED__)
 {
 //   if (flags & FLAG_X)
    {
@@ -1348,7 +1348,7 @@ _edje_part_recalc_single(Edje *ed,
 }
 
 static void
-_edje_gradient_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description *chosen_desc)
+_edje_gradient_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description *chosen_desc __UNUSED__)
 {
    evas_object_gradient_fill_angle_set(ep->object, p3->type.common.fill.angle);
    evas_object_gradient_fill_spread_set(ep->object, p3->type.common.fill.spread);
@@ -1383,7 +1383,7 @@ _edje_gradient_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, 
 }
 
 static void
-_edje_box_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description *chosen_desc)
+_edje_box_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description *chosen_desc)
 {
    Evas_Object_Box_Layout layout;
    void (*free_data)(void *data);
@@ -1420,7 +1420,7 @@ _edje_box_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_
 }
 
 static void
-_edje_table_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description *chosen_desc)
+_edje_table_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep, Edje_Calc_Params *p3 __UNUSED__, Edje_Part_Description *chosen_desc)
 {
    evas_object_table_homogeneous_set(ep->object, chosen_desc->table.homogeneous);
    evas_object_table_align_set(ep->object, chosen_desc->table.align.x, chosen_desc->table.align.y);

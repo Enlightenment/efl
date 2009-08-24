@@ -44,7 +44,7 @@ _edje_var_timer_cb(void *data)
 }
 
 static int
-_edje_var_anim_cb(void *data)
+_edje_var_anim_cb(void *data __UNUSED__)
 {
    Eina_List *l, *tl = NULL;
    double t;
@@ -253,7 +253,7 @@ _edje_var_string_id_get(Edje *ed, const char *string)
 }
 
 int
-_edje_var_var_int_get(Edje *ed, Edje_Var *var)
+_edje_var_var_int_get(Edje *ed __UNUSED__, Edje_Var *var)
 {
    /* auto-cast */
    if (var->type == EDJE_VAR_STRING)
@@ -290,7 +290,7 @@ _edje_var_var_int_get(Edje *ed, Edje_Var *var)
 }
 
 void
-_edje_var_var_int_set(Edje *ed, Edje_Var *var, int v)
+_edje_var_var_int_set(Edje *ed __UNUSED__, Edje_Var *var, int v)
 {
    /* auto-cast */
    if (var->type == EDJE_VAR_STRING)
@@ -322,7 +322,7 @@ _edje_var_var_int_set(Edje *ed, Edje_Var *var, int v)
 }
 
 double
-_edje_var_var_float_get(Edje *ed, Edje_Var *var)
+_edje_var_var_float_get(Edje *ed __UNUSED__, Edje_Var *var)
 {
    /* auto-cast */
    if (var->type == EDJE_VAR_STRING)
@@ -359,7 +359,7 @@ _edje_var_var_float_get(Edje *ed, Edje_Var *var)
 }
 
 void
-_edje_var_var_float_set(Edje *ed, Edje_Var *var, double v)
+_edje_var_var_float_set(Edje *ed __UNUSED__, Edje_Var *var, double v)
 {
    /* auto-cast */
    if (var->type == EDJE_VAR_STRING)
@@ -392,7 +392,7 @@ _edje_var_var_float_set(Edje *ed, Edje_Var *var, double v)
 }
 
 const char *
-_edje_var_var_str_get(Edje *ed, Edje_Var *var)
+_edje_var_var_str_get(Edje *ed __UNUSED__, Edje_Var *var)
 {
    /* auto-cast */
    if (var->type == EDJE_VAR_INT)
@@ -428,7 +428,7 @@ _edje_var_var_str_get(Edje *ed, Edje_Var *var)
 }
 
 void
-_edje_var_var_str_set(Edje *ed, Edje_Var *var, const char *str)
+_edje_var_var_str_set(Edje *ed __UNUSED__, Edje_Var *var, const char *str)
 {
    /* auto-cast */
    if (var->type == EDJE_VAR_STRING)

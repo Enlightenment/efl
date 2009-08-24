@@ -931,7 +931,7 @@ _edje_file_del(Edje *ed)
  * Used to free the cached data values that are stored in the data_cache
  * hash table.
  */
-static Eina_Bool data_cache_free(const Eina_Hash *hash, const void *key, void *data, void *fdata)
+static Eina_Bool data_cache_free(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata)
 {
    Edje_File    *edf;
 
@@ -1148,7 +1148,7 @@ _edje_collection_free_part_description_free(Edje_Part_Description *desc, unsigne
 }
 
 static Eina_Bool
-_edje_file_collection_hash_foreach(const Eina_Hash *hash, const void *key, void *data, void *fdata)
+_edje_file_collection_hash_foreach(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata)
 {
    Edje_File *edf;
    Edje_Part_Collection *coll;

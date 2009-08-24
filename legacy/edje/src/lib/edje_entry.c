@@ -84,7 +84,7 @@ struct _Anchor
 
 #ifdef HAVE_ECORE_IMF   
 static void 
-_edje_entry_focus_in_cb(void *data, Evas_Object *o, const char *emission, const char *source)
+_edje_entry_focus_in_cb(void *data, Evas_Object *o __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Edje_Real_Part *rp = data;
    if (!rp) return;
@@ -104,7 +104,7 @@ _edje_entry_focus_in_cb(void *data, Evas_Object *o, const char *emission, const 
 }
 
 static void
-_edje_entry_focus_out_cb(void *data, Evas_Object *o, const char *emission, const char *source)
+_edje_entry_focus_out_cb(void *data, Evas_Object *o __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Edje_Real_Part *rp = data;
    if (!rp) return;
@@ -120,7 +120,7 @@ _edje_entry_focus_out_cb(void *data, Evas_Object *o, const char *emission, const
 #endif
 
 static void
-_edje_focus_in_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_focus_in_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Edje *ed = data;
 #ifdef HAVE_ECORE_IMF   
@@ -147,7 +147,7 @@ _edje_focus_in_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
     
 static void
-_edje_focus_out_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_focus_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Edje *ed = data;
 #ifdef HAVE_ECORE_IMF
@@ -175,7 +175,7 @@ _edje_focus_out_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_curs_update_from_curs(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+_curs_update_from_curs(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__, Entry *en)
 {
    Evas_Coord cx, cy, cw, ch;
    evas_textblock_cursor_char_geometry_get(c, &cx, &cy, &cw, &ch);
@@ -271,7 +271,7 @@ _curs_next(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 }
 
 static int
-_curs_line_last_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+_curs_line_last_get(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en __UNUSED__)
 {
    Evas_Textblock_Cursor *cc;
    int ln;
@@ -376,7 +376,7 @@ _sel_start(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 }
 
 static void
-_sel_enable(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+_sel_enable(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o __UNUSED__, Entry *en)
 {
    if (en->have_selection) return;
    en->have_selection = EINA_TRUE;
@@ -419,7 +419,7 @@ _sel_preextend(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 }
 
 static void
-_sel_clear(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+_sel_clear(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o __UNUSED__, Entry *en)
 {
    en->had_sel = EINA_FALSE;
    if (en->sel_start)
@@ -454,7 +454,7 @@ _sel_clear(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 }
 
 static void
-_sel_update(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+_sel_update(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en)
 {
    Eina_List *range = NULL, *l;
    Sel *sel;
@@ -544,7 +544,7 @@ _sel_update(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 }
 
 static void
-_edje_anchor_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_anchor_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Anchor *an = data;
    Evas_Event_Mouse_Down *ev = event_info;
@@ -576,7 +576,7 @@ _edje_anchor_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_in
 }
 
 static void
-_edje_anchor_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_anchor_mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Anchor *an = data;
    Evas_Event_Mouse_Up *ev = event_info;
@@ -603,7 +603,7 @@ _edje_anchor_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
 }
 
 static void
-_edje_anchor_mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_anchor_mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Anchor *an = data;
    Evas_Event_Mouse_Move *ev = event_info;
@@ -630,7 +630,7 @@ _edje_anchor_mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_in
 }
 
 static void
-_edje_anchor_mouse_in_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_anchor_mouse_in_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Anchor *an = data;
    Evas_Event_Mouse_In *ev = event_info;
@@ -652,7 +652,7 @@ _edje_anchor_mouse_in_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
 }
 
 static void
-_edje_anchor_mouse_out_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_anchor_mouse_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Anchor *an = data;
    Evas_Event_Mouse_Out *ev = event_info;
@@ -674,7 +674,7 @@ _edje_anchor_mouse_out_cb(void *data, Evas *e, Evas_Object *obj, void *event_inf
 }
 
 static void
-_anchors_update(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+_anchors_update(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en)
 {
    Eina_List *l, *ll, *range;
    Evas_Coord x, y, w, h;
@@ -771,7 +771,7 @@ _anchors_update(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 }
 
 static void
-_anchors_clear(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+_anchors_clear(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o __UNUSED__, Entry *en)
 {
    while (en->anchorlist)
      {
@@ -876,7 +876,7 @@ _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 
 
 static void
-_range_del(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
+_range_del(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en)
 {
    Evas_Textblock_Cursor *c1;
    
@@ -924,7 +924,7 @@ _backspace(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 }
 
 static void
-_edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Edje *ed = data;
    Evas_Event_Key_Down *ev = event_info;
@@ -1238,7 +1238,7 @@ _edje_key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_edje_key_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_key_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Edje *ed = data;
    Edje_Real_Part *rp = ed->focused_part;
@@ -1266,7 +1266,7 @@ _edje_key_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_edje_part_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Edje_Real_Part *rp = data;
    Evas_Event_Mouse_Down *ev = event_info;
@@ -1402,7 +1402,7 @@ _edje_part_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
 }
 
 static void
-_edje_part_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_part_mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Edje_Real_Part *rp = data;
    Evas_Event_Mouse_Up *ev = event_info;
@@ -1410,7 +1410,6 @@ _edje_part_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Evas_Coord x, y, w, h;
    Eina_Bool multiline;
    Evas_Textblock_Cursor *tc;
-   Eina_Bool dosel = EINA_FALSE;
    if (ev->button != 1) return;
    if (!rp) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
@@ -1466,7 +1465,7 @@ _edje_part_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_edje_part_mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_part_mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Edje_Real_Part *rp = data;
    Evas_Event_Mouse_Move *ev = event_info;
@@ -1554,7 +1553,6 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
 #ifdef HAVE_ECORE_IMF
    const char *ctx_id;
    const Ecore_IMF_Context_Info *ctx_info;
-   Evas *evas;
 #endif
    
    en = calloc(1, sizeof(Entry));
@@ -1890,7 +1888,7 @@ _edje_entry_select_abort(Edje_Real_Part *rp)
 
 #ifdef HAVE_ECORE_IMF
 static int
-_edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx, char **text, int *cursor_pos)
+_edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx __UNUSED__, char **text, int *cursor_pos)
 {
    Edje_Real_Part *rp = data;
    Entry *en;
@@ -1917,16 +1915,12 @@ _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx, char
 }
 
 static int 
-_edje_entry_imf_event_commit_cb(void *data, int type, void *event)
+_edje_entry_imf_event_commit_cb(void *data, int type __UNUSED__, void *event)
 {
    Edje* ed = data;
    Edje_Real_Part *rp = ed->focused_part;
    Entry *en;
    Ecore_IMF_Event_Commit *ev = event;
-   int cursor_pos, composition_pos;
-   int start_pos, end_pos;
-   Eina_Bool selecting;
-   Eina_Bool changed = EINA_FALSE;
    int i;
    
    if (!rp) return 1;
@@ -1957,18 +1951,14 @@ _edje_entry_imf_event_commit_cb(void *data, int type, void *event)
 }
 
 static int 
-_edje_entry_imf_event_changed_cb(void *data, int type, void *event)
+_edje_entry_imf_event_changed_cb(void *data, int type __UNUSED__, void *event)
 {
    Edje* ed = data;
    Edje_Real_Part *rp = ed->focused_part;
    Entry *en;
    int cursor_pos;
-   int composition_pos, length;
-   int start_pos, end_pos;
-   Eina_Bool selecting = EINA_FALSE;
-   Eina_Bool changed = EINA_FALSE;
+   int length;
    Ecore_IMF_Event_Commit *ev = event;
-   Evas_Textblock_Cursor *start_cur, *end_cur;
    int i;
    char *preedit_string;
 
@@ -2019,7 +2009,7 @@ _edje_entry_imf_event_changed_cb(void *data, int type, void *event)
 }
 
 static int
-_edje_entry_imf_event_delete_surrounding_cb(void *data, int type, void *event)
+_edje_entry_imf_event_delete_surrounding_cb(void *data, int type __UNUSED__, void *event)
 {
    Edje *ed = data;
    Edje_Real_Part *rp = ed->focused_part;

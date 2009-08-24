@@ -421,7 +421,7 @@ edje_color_class_list(void)
 }
 
 static Eina_Bool
-_edje_color_class_list_foreach(const Eina_Hash *hash, const void *key, void *data, void *fdata)
+_edje_color_class_list_foreach(const Eina_Hash *hash __UNUSED__, const void *key, void *data __UNUSED__, void *fdata)
 {
    Edje_List_Foreach_Data *fd;
 
@@ -710,7 +710,7 @@ edje_text_class_list(void)
 }
 
 static Eina_Bool
-_edje_text_class_list_foreach(const Eina_Hash *hash, const void *key, void *data, void *fdata)
+_edje_text_class_list_foreach(const Eina_Hash *hash __UNUSED__, const void *key, void *data __UNUSED__, void *fdata)
 {
    Edje_List_Foreach_Data *fd;
 
@@ -1756,7 +1756,7 @@ edje_box_layout_register(const char *name, Evas_Object_Box_Layout func, void *(*
  * Causes the edje to regurgitate a previously swallowed object.  :)
  */
 EAPI void
-edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
+edje_object_part_unswallow(Evas_Object *obj __UNUSED__, Evas_Object *obj_swallow)
 {
    Edje_Real_Part *rp;
 
@@ -3139,7 +3139,7 @@ _edje_color_class_member_del(Edje *ed, const char *color_class)
  * and color_class hashtables.
  */
 static Eina_Bool
-member_list_free(const Eina_Hash *hash, const void *key, void *data, void *fdata)
+member_list_free(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__)
 {
    eina_list_free(data);
    return EINA_TRUE;
@@ -3155,7 +3155,7 @@ _edje_color_class_members_free(void)
 }
 
 static Eina_Bool
-color_class_hash_list_free(const Eina_Hash *hash, const void *key, void *data, void *fdata)
+color_class_hash_list_free(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__)
 {
    Edje_Color_Class *cc;
 
@@ -3249,7 +3249,7 @@ _edje_text_class_members_free(void)
 }
 
 static Eina_Bool
-text_class_hash_list_free(const Eina_Hash *hash, const void *key, void *data, void *fdata)
+text_class_hash_list_free(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__)
 {
    Edje_Text_Class *tc;
 

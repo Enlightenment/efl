@@ -160,8 +160,6 @@ _edje_image_name_find(Evas_Object *obj, int image_id)
 static void
 _edje_real_part_free(Edje_Real_Part *rp)
 {
-   Eina_List *l;
-
    if (!rp) return;
 
    if (rp->object)
@@ -1281,7 +1279,7 @@ EAPI Eina_List *
 edje_edit_style_tags_list_get(Evas_Object * obj, const char* style)
 {
    Eina_List *tags = NULL;
-   Eina_List *l, *ll;
+   Eina_List *l;
    Edje_Style *s;
    Edje_Style_Tag *t;
 
@@ -1292,7 +1290,7 @@ edje_edit_style_tags_list_get(Evas_Object * obj, const char* style)
    s = _edje_edit_style_get(ed, style);
 
    printf("GET STYLE TAG LIST %d\n", eina_list_count(s->tags));
-   EINA_LIST_FOREACH(s->tags, ll, t)
+   EINA_LIST_FOREACH(s->tags, l, t)
       tags = eina_list_append(tags, eina_stringshare_add(t->key));
 
    return tags;
@@ -3450,7 +3448,6 @@ edje_edit_image_data_add(Evas_Object *obj, const char *name, int id)
    Eina_List *l;
    Edje_Image_Directory_Entry *de;
    Edje_Image_Directory_Entry *i, *t;
-   int free_id = 0;
 
    GET_ED_OR_RETURN(0);
 

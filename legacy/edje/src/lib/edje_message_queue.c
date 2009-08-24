@@ -91,13 +91,13 @@ edje_message_signal_process(void)
 }
 
 static int
-_edje_dummy_timer(void *data)
+_edje_dummy_timer(void *data __UNUSED__)
 {
    return 0;
 }
 
 static void
-_edje_job(void *data)
+_edje_job(void *data __UNUSED__)
 {
    if (job_loss_timer)
      {
@@ -109,7 +109,7 @@ _edje_job(void *data)
 }
 
 static int
-_edje_job_loss_timer(void *data)
+_edje_job_loss_timer(void *data __UNUSED__)
 {
    job_loss_timer = NULL;
    if (job) job = NULL;

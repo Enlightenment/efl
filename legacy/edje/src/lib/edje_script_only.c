@@ -191,8 +191,7 @@ _oid_free(Oid * oid)
 }
 
 static Eina_Bool
-_oid_freeall_cb(const Eina_Hash * hash, const void *key, void *data,
-		void *fdata)
+_oid_freeall_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__)
 {
    Oid *oid = data;
 
@@ -213,8 +212,7 @@ _oid_freeall(Edje * ed)
 }
 
 static Eina_Bool
-_oid_moveall_cb(const Eina_Hash * hash, const void *key, void *data,
-		void *fdata)
+_oid_moveall_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__)
 {
    Oid *oid = data;
 
@@ -252,7 +250,7 @@ _exp_e_obj_del(Embryo_Program * ep, Embryo_Cell * params)
 }
 
 static Embryo_Cell
-_exp_e_obj_rect_add(Embryo_Program * ep, Embryo_Cell * params)
+_exp_e_obj_rect_add(Embryo_Program * ep, Embryo_Cell * params __UNUSED__)
 {
    Edje *ed = embryo_program_data_get(ep);
 
