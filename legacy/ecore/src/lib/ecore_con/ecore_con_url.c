@@ -947,8 +947,6 @@ _ecore_con_url_header_cb(void *ptr, size_t size, size_t nitems, void *stream)
    memcpy(header, ptr, real_size);
    header[real_size] = '\0';
 
-   fprintf(stderr, "Found header %s\n", header);
-
    url_con->response_headers = eina_list_append(url_con->response_headers,
 					        header);
 
