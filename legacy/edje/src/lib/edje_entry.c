@@ -86,14 +86,13 @@ struct _Anchor
 static void 
 _edje_entry_focus_in_cb(void *data, Evas_Object *o __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Edje_Real_Part *rp = data;
-   if (!rp) return;
-   Entry *en = rp->entry_data;
+   Edje_Real_Part *rp;
+   Entry *en;
    
-   if (!en) return;
+   rp = data;
+   if (!rp || !rp->entry_data || !rp->edje || !rp->edje->obj) return;
 
-   if (!rp->edje || !rp->edje->obj) return;
-   
+   en = rp->entry_data;
    if (!en->imf_context) return;
 
    if (evas_object_focus_get(rp->edje->obj))
@@ -106,11 +105,13 @@ _edje_entry_focus_in_cb(void *data, Evas_Object *o __UNUSED__, const char *emiss
 static void
 _edje_entry_focus_out_cb(void *data, Evas_Object *o __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Edje_Real_Part *rp = data;
-   if (!rp) return;
-   Entry *en = rp->entry_data;
-   if (!en) return;
+   Edje_Real_Part *rp;
+   Entry *en;
 
+   rp = data;
+   if (!rp || !rp->entry_data) return;
+
+   en = rp->entry_data;
    if (!en->imf_context) return;
 
    ecore_imf_context_reset(en->imf_context);
