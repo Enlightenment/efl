@@ -11372,6 +11372,7 @@ collections {
             description {
                state: "default" 0.0;
                min: 14 28;
+               fixed: 1 1;
                rel1 {
                   to: "elm.swallow.bar";
                   relative: 0.0 0.0;
@@ -11727,6 +11728,7 @@ collections {
             description {
                state: "default" 0.0;
                min: 28 14;
+               fixed: 1 1;
                rel1 {
                   to: "elm.swallow.bar";
                   relative: 0.0 0.0;
