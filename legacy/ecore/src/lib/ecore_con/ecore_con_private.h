@@ -103,6 +103,7 @@ struct _Ecore_Con_Url
    CURL              *curl_easy;
    struct curl_slist *headers;
    Eina_List         *additional_headers;
+   Eina_List         *response_headers;
    char              *url;
 
    Ecore_Con_Url_Time condition;

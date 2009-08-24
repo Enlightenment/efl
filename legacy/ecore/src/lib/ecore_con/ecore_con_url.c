@@ -73,6 +73,7 @@ int ECORE_CON_EVENT_URL_PROGRESS = 0;
 #ifdef HAVE_CURL
 static int _ecore_con_url_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_con_url_perform(Ecore_Con_Url *url_con);
+static size_t _ecore_con_url_header_cb(void *ptr, size_t size, size_t nitems, void *stream);
 static size_t _ecore_con_url_data_cb(void *buffer, size_t size, size_t nitems, void *userp);
 static int _ecore_con_url_progress_cb(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
 static size_t _ecore_con_url_read_cb(void *ptr, size_t size, size_t nitems, void *stream);
@@ -187,9 +188,20 @@ ecore_con_url_shutdown(void)
 }
 
 /**
- * Creates and initializes a new Ecore_Con_Url.
- * @return  NULL on error, a new Ecore_Con_Url on success.
+ * Creates and initializes a new Ecore_Con_Url connection object.
+ *
+ * Creates and initializes a new Ecore_Con_Url connection object that can be
+ * uesd for sending requests.
+ *
+ * @param url URL that will receive requests. Can be changed using
+ *            ecore_con_url_url_set.
+ *
+ * @return NULL on error, a new Ecore_Con_Url on success.
+ *
  * @ingroup Ecore_Con_Url_Group
+ *
+ * @see ecore_con_url_custom_new()
+ * @see ecore_con_url_url_set()
  */
 EAPI Ecore_Con_Url *
 ecore_con_url_new(const char *url)
@@ -222,6 +234,9 @@ ecore_con_url_new(const char *url)
    curl_easy_setopt(url_con->curl_easy, CURLOPT_PROGRESSDATA, url_con);
    curl_easy_setopt(url_con->curl_easy, CURLOPT_NOPROGRESS, FALSE);
 
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_HEADERFUNCTION, _ecore_con_url_header_cb);
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_HEADERDATA, url_con);
+
    /*
     * FIXME: Check that these timeouts are sensible defaults
     * FIXME: Provide a means to change these timeouts
@@ -235,6 +250,7 @@ ecore_con_url_new(const char *url)
    url_con->fd = -1;
    url_con->write_fd = -1;
    url_con->additional_headers = NULL;
+   url_con->response_headers = NULL;
 
    return url_con;
 #else
@@ -244,12 +260,21 @@ ecore_con_url_new(const char *url)
 }
 
 /**
+ * Creates a custom connection object.
+ *
  * Creates and initializes a new Ecore_Con_Url for a custom request (e.g. HEAD,
  * SUBSCRIBE and other obscure HTTP requests). This object should be used like
  * one created with ecore_con_url_new().
  *
- * @return  NULL on error, a new Ecore_Con_Url on success.
+ * @param url URL that will receive requests
+ * @param custom_request Custom request (e.g. GET, POST, HEAD, PUT, etc)
+ *
+ * @return NULL on error, a new Ecore_Con_Url on success.
+ *
  * @ingroup Ecore_Con_Url_Group
+ *
+ * @see ecore_con_url_new()
+ * @see ecore_con_url_url_set()
  */
 EAPI Ecore_Con_Url *
 ecore_con_url_custom_new(const char *url, const char *custom_request)
@@ -275,9 +300,11 @@ ecore_con_url_custom_new(const char *url, const char *custom_request)
 }
 
 /**
- * Frees the Ecore_Con_Url.
- * @return  FIXME: To be documented.
+ * Destroys a Ecore_Con_Url connection object.
+ *
  * @ingroup Ecore_Con_Url_Group
+ *
+ * @see ecore_con_url_new()
  */
 EAPI void
 ecore_con_url_destroy(Ecore_Con_Url *url_con)
@@ -312,6 +339,8 @@ ecore_con_url_destroy(Ecore_Con_Url *url_con)
    curl_slist_free_all(url_con->headers);
    EINA_LIST_FREE(url_con->additional_headers, s)
      free(s);
+   EINA_LIST_FREE(url_con->response_headers, s)
+     free(s);
    free(url_con->url);
    free(url_con);
 #else
@@ -321,8 +350,13 @@ ecore_con_url_destroy(Ecore_Con_Url *url_con)
 }
 
 /**
- * FIXME: To be documented.
- * @return  FIXME: To be documented.
+ * Sets the URL to send the request to.
+ *
+ * @param url_con Connection object through which the request will be sent.
+ * @param url URL that will receive the request
+ *
+ * @return 1 on success, 0 on error.
+ *
  * @ingroup Ecore_Con_Url_Group
  */
 EAPI int
@@ -351,9 +385,17 @@ ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url)
 }
 
 /**
- * FIXME: To be documented.
- * @return  FIXME: To be documented.
+ * Associates data with a connection object.
+ *
+ * Associates data with a connection object, which can be retrieved later with
+ * ecore_con_url_data_get()).
+ *
+ * @param url_con Connection object to associate data.
+ * @param data Data to be set.
+ *
  * @ingroup Ecore_Con_Url_Group
+ *
+ * @see ecore_con_url_data_get()
  */
 EAPI void
 ecore_con_url_data_set(Ecore_Con_Url *url_con, void *data)
@@ -373,6 +415,21 @@ ecore_con_url_data_set(Ecore_Con_Url *url_con, void *data)
 #endif
 }
 
+/**
+ * Adds an additional header to the request connection object.
+ *
+ * Adds an additional header to the request connection object. This addition
+ * will be valid for only one ecore_con_url_send() call.
+ *
+ * @param url_con Connection object
+ * @param key Header key
+ * @param value Header value
+ *
+ * @ingroup Ecore_Con_Url_Group
+ *
+ * @see ecore_con_url_send()
+ * @see ecore_con_url_additional_headers_clear()
+ */
 EAPI void
 ecore_con_url_additional_header_add(Ecore_Con_Url *url_con, const char *key, const char *value)
 {
@@ -397,6 +454,19 @@ ecore_con_url_additional_header_add(Ecore_Con_Url *url_con, const char *key, con
 #endif
 }
 
+/*
+ * Cleans additional headers.
+ *
+ * Cleans additional headers associated with a connection object (previously
+ * added with ecore_con_url_additional_header_add()).
+ *
+ * @param url_con Connection object to clean additional headers.
+ *
+ * @ingroup Ecore_Con_Url_Group
+ *
+ * @see ecore_con_url_additional_header_add()
+ * @see ecore_con_url_send()
+ */
 EAPI void
 ecore_con_url_additional_headers_clear(Ecore_Con_Url *url_con)
 {
@@ -418,9 +488,18 @@ ecore_con_url_additional_headers_clear(Ecore_Con_Url *url_con)
 }
 
 /**
- * FIXME: To be documented.
- * @return  FIXME: To be documented.
+ * Retrieves data associated with a Ecore_Con_Url connection object.
+ *
+ * Retrieves data associated with a Ecore_Con_Url connection object (previously
+ * set with ecore_con_url_data_set()).
+ *
+ * @param Connection object to retrieve data from.
+ *
+ * @return Data associated with the given object.
+ *
  * @ingroup Ecore_Con_Url_Group
+ *
+ * @see ecore_con_url_data_set()
  */
 EAPI void *
 ecore_con_url_data_get(Ecore_Con_Url *url_con)
@@ -465,8 +544,15 @@ ecore_con_url_time(Ecore_Con_Url *url_con, Ecore_Con_Url_Time condition, time_t 
 }
 
 /**
- * FIXME: To be documented.
- * @return  FIXME: To be documented.
+ * Setup a file for receiving request data.
+ *
+ * Setups a file to have response data written into. Note that
+ * ECORE_CON_EVENT_URL_DATA events will not be emitted if a file has been set to
+ * receive the response data.
+ *
+ * @param url_con Connection object to set file
+ * @param fd File descriptor associated with the file
+ *
  * @ingroup Ecore_Con_Url_Group
  */
 EAPI void
@@ -483,9 +569,18 @@ ecore_con_url_fd_set(Ecore_Con_Url *url_con, int fd)
 }
 
 /**
- * FIXME: To be documented.
- * @return  FIXME: To be documented.
+ * Retrieves the number of bytes received.
+ *
+ * Retrieves the number of bytes received on the last request of the given
+ * connection object.
+ *
+ * @param url_con Connection object which the request was sent on.
+ *
+ * @return Number of bytes received on request.
+ *
  * @ingroup Ecore_Con_Url_Group
+ *
+ * @see ecore_con_url_send()
  */
 EAPI int
 ecore_con_url_received_bytes_get(Ecore_Con_Url *url_con)
@@ -503,9 +598,43 @@ ecore_con_url_received_bytes_get(Ecore_Con_Url *url_con)
 }
 
 /**
- * FIXME: To be documented.
- * @return  FIXME: To be documented.
+ * Retrieves headers from last request sent.
+ *
+ * Retrieves a list containing the response headers. This function should be
+ * used after an ECORE_CON_EVENT_URL_COMPLETE event (headers should normally be
+ * ready at that time).
+ *
+ * @param url_con Connection object to retrieve response headers from.
+ *
+ * @return List of response headers. This list must not be modified by the user.
+ *
  * @ingroup Ecore_Con_Url_Group
+ */
+EAPI const Eina_List *
+ecore_con_url_response_headers_get(Ecore_Con_Url *url_con)
+{
+   return url_con->response_headers;
+}
+
+/**
+ * Sends a request.
+ *
+ * @param url_con Connection object to perform a request on, previously created
+ *                with ecore_con_url_new() or ecore_con_url_custom_new().
+ * @param data Payload (data sent on the request)
+ * @param length  Payload length
+ * @param content_type Content type of the payload (e.g. text/xml)
+ *
+ * @return 1 on success, 0 on error.
+ *
+ * @ingroup Ecore_Con_Url_Group
+ *
+ * @see ecore_con_url_custom_new()
+ * @see ecore_con_url_additional_headers_clear()
+ * @see ecore_con_url_additional_header_add()
+ * @see ecore_con_url_data_set()
+ * @see ecore_con_url_data_get()
+ * @see ecore_con_url_response_headers_get()
  */
 EAPI int
 ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length, const char *content_type)
@@ -523,6 +652,10 @@ ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length, cons
 
    if (url_con->active) return 0;
    if (!url_con->url) return 0;
+
+   /* Free response headers from previous send() calls */
+   EINA_LIST_FREE(url_con->response_headers, s) free((char *)s);
+   url_con->response_headers = NULL;
 
    curl_slist_free_all(url_con->headers);
    url_con->headers = NULL;
@@ -801,6 +934,25 @@ _ecore_con_url_data_cb(void *buffer, size_t size, size_t nitems, void *userp)
 	     ecore_event_add(Event, e, _ecore_con_event_url_free, NULL); \
 	  } \
      } \
+}
+
+static size_t
+_ecore_con_url_header_cb(void *ptr, size_t size, size_t nitems, void *stream)
+{
+   size_t real_size = size * nitems;
+   Ecore_Con_Url *url_con = stream;
+
+   char *header = malloc(sizeof(char)*(real_size + 1));
+   if (!header) return real_size;
+   memcpy(header, ptr, real_size);
+   header[real_size] = '\0';
+
+   fprintf(stderr, "Found header %s\n", header);
+
+   url_con->response_headers = eina_list_append(url_con->response_headers,
+					        header);
+
+   return real_size;
 }
 
 static int
