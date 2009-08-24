@@ -6,7 +6,7 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *sep;
-   Eina_Bool horizontal : 1;
+   Eina_Bool horizontal;
 };
 
 static void _del_hook(Evas_Object *obj);
