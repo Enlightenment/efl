@@ -12,6 +12,7 @@ lib_LTLIBRARIES = libeina.la
 
 libeina_la_SOURCES = \
 eina_error.c \
+eina_log.c \
 eina_hash.c \
 eina_lalloc.c \
 eina_inlist.c \

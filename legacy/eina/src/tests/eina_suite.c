@@ -23,6 +23,7 @@
 #include "eina_suite.h"
 #include "eina_mempool.h"
 #include <stdio.h>
+#include <string.h>
 
 typedef struct _Eina_Test_Case Eina_Test_Case;
 struct _Eina_Test_Case
@@ -34,6 +35,7 @@ struct _Eina_Test_Case
 static const Eina_Test_Case etc[] = {
   { "Array", eina_test_array },
   { "String Share", eina_test_stringshare },
+  { "Log", eina_test_log },
   { "Error", eina_test_error },
   { "Magic", eina_test_magic },
   { "Inlist", eina_test_inlist },

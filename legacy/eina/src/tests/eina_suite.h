@@ -23,6 +23,7 @@
 
 void eina_test_stringshare(TCase *tc);
 void eina_test_array(TCase *tc);
+void eina_test_log(TCase *tc);
 void eina_test_error(TCase *tc);
 void eina_test_magic(TCase *tc);
 void eina_test_inlist(TCase *tc);

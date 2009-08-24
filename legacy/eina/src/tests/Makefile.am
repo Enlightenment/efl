@@ -48,7 +48,8 @@ eina_suite_SOURCES = 	\
 eina_suite.c 		\
 eina_test_stringshare.c \
 eina_test_array.c 	\
-eina_test_error.c 	\
+eina_test_error.c	\
+eina_test_log.c 	\
 eina_test_magic.c 	\
 eina_test_inlist.c 	\
 eina_test_main.c 	\
