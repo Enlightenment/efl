@@ -1400,7 +1400,7 @@ evas_object_evas_get(const Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
-   if (obj->delete_me) return 0;
+   if (obj->delete_me) return NULL;
    return obj->layer->evas;
 }
 
