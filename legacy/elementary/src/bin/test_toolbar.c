@@ -43,6 +43,7 @@ test_toolbar(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *tb, *ic, *ph;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
+   Elm_Toolbar_Item *item;
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "toolbar", ELM_WIN_BASIC);
@@ -71,7 +72,8 @@ test_toolbar(void *data, Evas_Object *obj, void *event_info)
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   elm_toolbar_item_add(tb, ic, "Hello", tb_1, ph1);
+   item = elm_toolbar_item_add(tb, ic, "Hello", tb_1, ph1);
+   elm_toolbar_item_disabled_set(item, EINA_TRUE);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);

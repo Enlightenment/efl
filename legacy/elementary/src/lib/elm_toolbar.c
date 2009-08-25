@@ -20,8 +20,12 @@ struct _Elm_Toolbar_Item
    void (*func) (void *data, Evas_Object *obj, void *event_info);
    const void *data;
    Eina_Bool selected : 1;
+   Eina_Bool disabled : 1;
 };
 
+static void _item_show(Elm_Toolbar_Item *it);
+static void _item_select(Elm_Toolbar_Item *it);
+static void _item_disable(Elm_Toolbar_Item *it, Eina_Bool disabled);
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -44,7 +48,8 @@ _item_select(Elm_Toolbar_Item *it)
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Object *obj2;
    const Eina_List *l;
-   if (it->selected) return;
+
+   if ((it->selected) || (it->disabled)) return;
    EINA_LIST_FOREACH(wd->items, l, it2)
      {
 	if (it2->selected)
@@ -62,11 +67,26 @@ _item_select(Elm_Toolbar_Item *it)
    evas_object_smart_callback_call(obj2, "clicked", it);
 }
 
+static void 
+_item_disable(Elm_Toolbar_Item *it, Eina_Bool disabled)
+{
+   Widget_Data *wd = elm_widget_data_get(it->obj);
+
+   if (it->disabled == disabled) return;
+   it->disabled = disabled;
+   if (it->disabled) 
+     edje_object_signal_emit(it->base, "elm,state,disabled", "elm");
+   else
+     edje_object_signal_emit(it->base, "elm,state,enabled", "elm");
+//   _item_show(it);
+}
+
 static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Toolbar_Item *it;
+
    EINA_LIST_FREE(wd->items, it)
      {
 	eina_stringshare_del(it->label);
@@ -90,8 +110,10 @@ _theme_hook(Evas_Object *obj)
    EINA_LIST_FOREACH(wd->items, l, it)
      {
 	edje_object_scale_set(it->base, elm_widget_scale_get(obj) * _elm_config->scale);
-	if (it->selected)
+	if (it->selected) 
 	  edje_object_signal_emit(it->base, "elm,state,selected", "elm");
+        if (it->disabled)
+          edje_object_signal_emit(it->base, "elm,state,disabled", "elm");
 	_elm_theme_set(it->base, "toolbar", "item", style);
 	if (it->icon)
 	  {
@@ -217,6 +239,7 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, voi
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord mw, mh;
    Elm_Toolbar_Item *it = calloc(1, sizeof(Elm_Toolbar_Item));
+
    if (!it) return NULL;
    wd->items = eina_list_append(wd->items, it);
    it->obj = obj;
@@ -272,6 +295,7 @@ elm_toolbar_item_del(Elm_Toolbar_Item *it)
 {
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Object *obj2 = it->obj;
+
    wd->items = eina_list_remove(wd->items, it);
    eina_stringshare_del(it->label);
    if (it->icon) evas_object_del(it->icon);
@@ -286,10 +310,24 @@ elm_toolbar_item_select(Elm_Toolbar_Item *item)
    _item_select(item);
 }
 
+EAPI Eina_Bool 
+elm_toolbar_item_disabled_get(Elm_Toolbar_Item *item) 
+{
+   if (!item) return EINA_FALSE;
+   return item->disabled;
+}
+
+EAPI void 
+elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled) 
+{
+   _item_disable(item, disabled);
+}
+
 EAPI void
 elm_toolbar_scrollable_set(Evas_Object *obj, Eina_Bool scrollable)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    wd->scrollable = scrollable;
    _sizing_eval(obj);
 }

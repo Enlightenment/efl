@@ -550,6 +550,8 @@ extern "C" {
    EAPI const char  *elm_toolbar_item_label_get(Elm_Toolbar_Item *item);
    EAPI void         elm_toolbar_item_del(Elm_Toolbar_Item *item);
    EAPI void         elm_toolbar_item_select(Elm_Toolbar_Item *item);
+   EAPI Eina_Bool    elm_toolbar_item_disabled_get(Elm_Toolbar_Item *item);
+   EAPI void         elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled);
    EAPI void         elm_toolbar_scrollable_set(Evas_Object *obj, Eina_Bool scrollable);
    /* smart callbacks called:
     * "clicked" - when the user clicks on a toolbar item and becomes selected
