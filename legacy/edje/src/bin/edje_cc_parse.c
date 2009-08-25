@@ -641,12 +641,12 @@ compile(void)
    int fd;
    off_t size;
    char *data, *p;
-   const char *tmpdir;
 
+   if (!tmp_dir)
 #ifdef HAVE_EVIL
-   tmpdir = evil_tmpdir_get();
+     tmp_dir = evil_tmpdir_get();
 #else
-   tmpdir = "/tmp";
+     tmp_dir = "/tmp";
 #endif
 
    strncpy(inc, file_in, 4000);
@@ -654,7 +654,8 @@ compile(void)
    p = strrchr(inc, '/');
    if (!p) strcpy(inc, "./");
    else *p = 0;
-   snprintf (tmpn, PATH_MAX, "%s/edje_cc.edc-tmp-XXXXXX", tmpdir);
+   snprintf (tmpn, PATH_MAX, "%s/edje_cc.edc-tmp-XXXXXX", tmp_dir);
+        printf("%s\n", tmpn);
    fd = mkstemp(tmpn);
    if (fd >= 0)
      {

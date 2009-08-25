@@ -124,6 +124,7 @@ char   *mem_strdup(const char *s);
 extern Eina_List             *img_dirs;
 extern Eina_List             *fnt_dirs;
 extern char                  *file_in;
+extern char                  *tmp_dir;
 extern char                  *file_out;
 extern char                  *progname;
 extern int                    verbose;

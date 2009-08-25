@@ -762,10 +762,11 @@ data_write_scripts(Eet_File *ef)
    Eina_List *l;
    int i;
 
+   if (!tmp_dir)
 #ifdef HAVE_EVIL
-   char *tmpdir = evil_tmpdir_get();
+     tmp_dir = evil_tmpdir_get();
 #else
-   char *tmpdir = "/tmp";
+     tmp_dir = "/tmp";
 #endif
 
    for (i = 0, l = codes; l; l = eina_list_next(l), i++)
@@ -779,7 +780,8 @@ data_write_scripts(Eet_File *ef)
 	  continue;
 
 	char tmpn[4096];
-	snprintf(tmpn, PATH_MAX, "%s/edje_cc.sma-tmp-XXXXXX", tmpdir);
+	snprintf(tmpn, PATH_MAX, "%s/edje_cc.sma-tmp-XXXXXX", tmp_dir);
+        printf("%s\n", tmpn);
 	fd = mkstemp(tmpn);
 	if (fd < 0)
 	  error_and_abort(ef, "Unable to open temp file \"%s\" for script "
@@ -789,7 +791,8 @@ data_write_scripts(Eet_File *ef)
 	close(fd);
 
 	char tmpo[4096];
-	snprintf(tmpo, PATH_MAX, "%s/edje_cc.amx-tmp-XXXXXX", tmpdir);
+	snprintf(tmpo, PATH_MAX, "%s/edje_cc.amx-tmp-XXXXXX", tmp_dir);
+        printf("%s\n", tmpn);
 	fd = mkstemp(tmpo);
 	if (fd < 0)
 	  {
