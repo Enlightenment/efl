@@ -4902,6 +4902,10 @@ collections {
       images.image: "icon_edit.png" COMP; parts { part { name: "base";
 	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_edit.png"; } } } }
+   group { name: "elm/icon/refresh/default"; min: 32 32;
+      images.image: "icon_refresh.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
+	    image.normal: "icon_refresh.png"; } } } }
 
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/toolbar/base/default";
