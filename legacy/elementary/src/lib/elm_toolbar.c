@@ -289,6 +289,15 @@ elm_toolbar_item_label_get(Elm_Toolbar_Item *item)
    return item->label;
 }
 
+EAPI void 
+elm_toolbar_item_label_set(Elm_Toolbar_Item *item, const char *label) 
+{
+   if (!item) return;
+   eina_stringshare_del(item->label);
+   item->label = eina_stringshare_add(label);
+   edje_object_part_text_set(item->base, "elm.text", item->label);
+}
+
 EAPI void
 elm_toolbar_item_del(Elm_Toolbar_Item *it)
 {
