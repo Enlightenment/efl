@@ -97,6 +97,7 @@ icon_chat.png \
 icon_clock.png \
 icon_delete.png \
 icon_edit.png \
+icon_refresh.png \
 ilist_1.png \
 ilist_2.png \
 ilist_item_shadow.png \
