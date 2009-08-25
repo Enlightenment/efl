@@ -770,7 +770,7 @@ extern "C" {
 // * table doesnt do homogenous properly
 //
 //// (incomplete - medium priority)
-// * disabled supported only for buttons atm
+// * disabled supported only for buttons & toolbar items atm
 // * on the fly theme changes - test (should work)
 // * need a hold-scroll counter in elm_widget
 // * hoversel only vertical right now - make horizontal
