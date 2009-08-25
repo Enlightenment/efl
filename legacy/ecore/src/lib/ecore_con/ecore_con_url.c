@@ -593,8 +593,9 @@ ecore_con_url_received_bytes_get(Ecore_Con_Url *url_con)
      }
 
    return url_con->received;
-#endif
+#else
    return 0;
+#endif
 }
 
 /**
@@ -613,7 +614,11 @@ ecore_con_url_received_bytes_get(Ecore_Con_Url *url_con)
 EAPI const Eina_List *
 ecore_con_url_response_headers_get(Ecore_Con_Url *url_con)
 {
+#ifdef HAVE_CURL
    return url_con->response_headers;
+#else
+   return NULL;
+#endif
 }
 
 /**
