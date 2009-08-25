@@ -250,7 +250,7 @@ eina_list_iterator_next(Eina_Iterator_List *it, void **data)
    EINA_MAGIC_CHECK_LIST_ITERATOR(it, EINA_FALSE);
 
    if (it->current == NULL) return EINA_FALSE;
-   if (data) *data = eina_list_data_get(it->current);
+   *data = eina_list_data_get(it->current);
 
    it->current = eina_list_next(it->current);
 
@@ -263,7 +263,7 @@ eina_list_iterator_prev(Eina_Iterator_List *it, void **data)
    EINA_MAGIC_CHECK_LIST_ITERATOR(it, EINA_FALSE);
 
    if (it->current == NULL) return EINA_FALSE;
-   if (data) *data = eina_list_data_get(it->current);
+   *data = eina_list_data_get(it->current);
 
    it->current = eina_list_prev(it->current);
 
@@ -351,7 +351,7 @@ eina_list_accessor_get_at(Eina_Accessor_List *it, unsigned int index, void **dat
    it->current = over;
    it->index = index;
 
-   if (data) *data = eina_list_data_get(it->current);
+   *data = eina_list_data_get(it->current);
    return EINA_TRUE;
 }
 

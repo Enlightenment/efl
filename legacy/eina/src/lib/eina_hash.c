@@ -578,7 +578,7 @@ _eina_hash_iterator_next(Eina_Iterator_Hash *it, void **data)
    it->index++;
    it->bucket = bucket;
 
-   if (ok && data)
+   if (ok)
      *data = it->get_content(it);
 
    return ok;

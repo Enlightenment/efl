@@ -156,7 +156,7 @@ _eina_rbtree_iterator_next(Eina_Iterator_Rbtree *it, void **data)
    return _eina_rbtree_iterator_next(it, data);
 
  onfix:
-   if (data) *data = tree;
+   *data = tree;
    return EINA_TRUE;
 }
 
