@@ -125,8 +125,6 @@ evas_software_xcb_x_output_buffer_new(xcb_connection_t *c,
    xcbob->w = w;
    xcbob->h = h;
 
-   try_shm = 0;
-
    if (try_shm > 0)
      {
         xcbob->shm_info = malloc(sizeof(xcb_shm_segment_info_t));
