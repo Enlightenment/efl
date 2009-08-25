@@ -32,7 +32,7 @@ static Xcb_Output_Buffer *
 _find_xcbob(xcb_connection_t *conn, int depth, int w, int h, int shm, void *data)
 {
    Eina_List         *l;
-   Eina_List         *xl;
+   Eina_List         *xl = NULL;
    Xcb_Output_Buffer *xcbob = NULL;
    Xcb_Output_Buffer *xcbob2;
    int                fitness = 0x7fffffff;
@@ -458,23 +458,36 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
              evas_cache_image_surface_alloc(&im->cache_entry, buf->w, buf->h);
 	     im->extended_info = obr;
 	     if ((buf->rot == 0) || (buf->rot == 180))
-	       obr->xcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x11.xcb.conn,
-                                                                  buf->priv.x11.xcb.depth,
-                                                                  buf->w, buf->h,
-                                                                  use_shm,
-                                                                  NULL);
+               {
+                  obr->xcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x11.xcb.conn,
+                                                                     buf->priv.x11.xcb.depth,
+                                                                     buf->w, buf->h,
+                                                                     use_shm,
+                                                                     NULL);
+                  if (buf->priv.x11.xcb.mask)
+                    obr->mxcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x11.xcb.conn,
+                                                                       buf->priv.x11.xcb.depth,
+                                                                       buf->w, buf->h,
+                                                                       use_shm,
+                                                                       NULL);
+               }
 	     else if ((buf->rot == 90) || (buf->rot == 270))
-	       obr->xcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x11.xcb.conn,
-                                                                  buf->priv.x11.xcb.depth,
-                                                                  buf->h, buf->w,
-                                                                  use_shm,
-                                                                  NULL);
-	     if (buf->priv.x11.xcb.mask)
-	       obr->mxcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x11.xcb.conn,
-                                                                   1, buf->w, buf->h,
-                                                                   use_shm,
-                                                                   NULL);
+               {
+                  obr->xcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x11.xcb.conn,
+                                                                     buf->priv.x11.xcb.depth,
+                                                                     buf->h, buf->w,
+                                                                     use_shm,
+                                                                     NULL);
+                  if (buf->priv.x11.xcb.mask)
+                    obr->mxcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x11.xcb.conn,
+                                                                       buf->priv.x11.xcb.depth,
+                                                                       buf->h, buf->w,
+                                                                       use_shm,
+                                                                       NULL);
+               }
 	  }
+	/* FIXME: We should be able to remove this memset, but somewhere in the process
+	   we copy too much to the destination surface and some area are not cleaned before copy. */
 	if (alpha)
           /* FIXME: faster memset! */
           memset(im->image.data, 0, w * h * sizeof(DATA32));
@@ -520,7 +533,8 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
 	im->extended_info = obr;
 	if (buf->priv.x11.xcb.mask)
 	  obr->mxcbob = _find_xcbob(buf->priv.x11.xcb.conn,
-                                    1, w, h,
+                                    buf->priv.x11.xcb.depth,
+                                    w, h,
                                     use_shm,
                                     NULL);
 /*	  obr->mxcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x11.xcb.conn, */
@@ -537,11 +551,19 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
         evas_cache_image_surface_alloc(&im->cache_entry, w, h);
 	im->extended_info = obr;
 	if ((buf->rot == 0) || (buf->rot == 180))
-	  obr->xcbob = _find_xcbob(buf->priv.x11.xcb.conn,
-                                   buf->priv.x11.xcb.depth,
-                                   w, h,
-                                   use_shm,
-                                   NULL);
+          {
+             obr->xcbob = _find_xcbob(buf->priv.x11.xcb.conn,
+                                      buf->priv.x11.xcb.depth,
+                                      w, h,
+                                      use_shm,
+                                      NULL);
+             if (buf->priv.x11.xcb.mask)
+               obr->mxcbob = _find_xcbob(buf->priv.x11.xcb.conn,
+                                         buf->priv.x11.xcb.depth,
+                                          w, h,
+                                         use_shm,
+                                         NULL);
+          }
 /*	   obr->xcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x11.xcb.conn, */
 /*							      buf->priv.x11.xcb.depth, */
 /*							      w, */
@@ -549,22 +571,32 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
 /*							      use_shm, */
 /*							      NULL); */
 	else if ((buf->rot == 90) || (buf->rot == 270))
-	  obr->xcbob = _find_xcbob(buf->priv.x11.xcb.conn,
-                                   buf->priv.x11.xcb.depth,
-                                   h, w,
-                                   use_shm,
-                                   NULL);
+          {
+             obr->xcbob = _find_xcbob(buf->priv.x11.xcb.conn,
+                                      buf->priv.x11.xcb.depth,
+                                      h, w,
+                                      use_shm,
+                                      NULL);
+             if (buf->priv.x11.xcb.mask)
+               obr->mxcbob = _find_xcbob(buf->priv.x11.xcb.conn,
+                                         buf->priv.x11.xcb.depth,
+                                         h, w,
+                                         use_shm,
+                                         NULL);
+          }
 /*	  obr->xcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x11.xcb.conn, */
 /*							     buf->priv.x11.xcb.depth, */
 /*							     h, */
 /*							     w, */
 /*							     use_shm, */
 /*							     NULL); */
+/*
 	if (buf->priv.x11.xcb.mask)
 	  obr->mxcbob = _find_xcbob(buf->priv.x11.xcb.conn,
                                     1, w, h,
                                     use_shm,
                                     NULL);
+*/
 /*	  obr->mxcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x11.xcb.conn, */
 /*							      1, */
 /*							      w, */
@@ -572,6 +604,8 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
 /*							      use_shm, */
 /*							      NULL); */
      }
+   /* FIXME: We should be able to remove this memset, but somewhere in the process
+      we copy too much to the destination surface and some area are not cleaned before copy. */
    if ((buf->priv.x11.xcb.mask) || (buf->priv.destination_alpha))
 	/* FIXME: faster memset! */
      memset(im->image.data, 0, w * h * sizeof(DATA32));
@@ -874,11 +908,42 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf     *buf,
 #endif
    if (obr->mxcbob)
      {
-	for (yy = 0; yy < obr->h; yy++)
-	  evas_software_xcb_x_write_mask_line(buf, obr->mxcbob,
-					      src_data + (yy * obr->w),
-                                              obr->w,
-                                              yy);
+        if (buf->rot == 0)
+          {
+             for (yy = 0; yy < obr->h; yy++)
+               evas_software_xcb_x_write_mask_line(buf, obr->mxcbob,
+                                                   src_data + (yy * obr->w),
+                                                   obr->w,
+                                                   yy);
+          }
+        else if (buf->rot == 90)
+          {
+             for (yy = 0; yy < obr->h; yy++)
+               evas_software_xcb_x_write_mask_line_vert(buf, obr->mxcbob,
+                                                        src_data + yy, 
+                                                        h,  // h
+                                                        obr->h - yy - 1, // ym
+                                                        w); // w
+          }
+        else if (buf->rot == 180)
+          {
+             for (yy = 0; yy < obr->h; yy++)
+               {
+                  evas_software_xcb_x_write_mask_line_rev(buf, obr->mxcbob,
+                                                          src_data + (yy * obr->w), 
+                                                          obr->w,
+                                                          obr->h - yy - 1);
+               }
+          }
+        else if (buf->rot == 270)
+          {
+             for (yy = 0; yy < obr->h; yy++)
+               evas_software_xcb_x_write_mask_line_vert_rev(buf, obr->mxcbob,
+                                                            src_data + yy,
+                                                            h,  // h
+                                                            yy, // ym
+                                                            w); // w
+          }
 #if 1
 #else
 	/* XX async push */

@@ -761,7 +761,7 @@ evas_software_xlib_outbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, i
    Outbuf_Region      *obr;
    DATA32             *src_data;
    void               *data;
-   int                 bpl = 0, xx, yy;
+   int                 bpl = 0, yy;
 
    obr = update->extended_info;
    if (buf->priv.pal)

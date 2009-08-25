@@ -24,6 +24,23 @@ void               evas_software_xcb_x_write_mask_line         (Outbuf          
 								DATA32            *src,
 								int                w,
 								int                y);
+void               evas_software_xcb_x_write_mask_line_rev     (Outbuf            *buf,
+                                                                Xcb_Output_Buffer *xcbob,
+                                                                DATA32            *src,
+                                                                int                w,
+                                                                int                y);
+void               evas_software_xcb_x_write_mask_line_vert    (Outbuf            *buf,
+                                                                Xcb_Output_Buffer *xcbob,
+                                                                DATA32            *src,
+                                                                int                h,
+                                                                int                ym,
+                                                                int                w);
+void               evas_software_xcb_x_write_mask_line_vert_rev(Outbuf            *buf,
+                                                                Xcb_Output_Buffer *xcbob,
+                                                                DATA32            *src,
+                                                                int                h,
+                                                                int                ym,
+                                                                int                w);
 int                evas_software_xcb_x_can_do_shm              (xcb_connection_t *c,
                                                                 xcb_screen_t     *screen);
 Xcb_Output_Buffer *evas_software_xcb_x_output_buffer_new       (xcb_connection_t *c,

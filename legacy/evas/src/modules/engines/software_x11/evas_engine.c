@@ -628,7 +628,7 @@ eng_output_idle_flush(void *data)
 }
 
 static Eina_Bool
-eng_canvas_alpha_get(void *data, void *context)
+eng_canvas_alpha_get(void *data, void *context __UNUSED__)
 {
    Render_Engine *re;
 
@@ -667,7 +667,7 @@ module_open(Evas_Module *em)
 }
 
 static void
-module_close(Evas_Module *em)
+module_close(Evas_Module *em __UNUSED__)
 {
 }
 
