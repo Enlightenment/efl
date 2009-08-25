@@ -78,7 +78,6 @@ _item_disable(Elm_Toolbar_Item *it, Eina_Bool disabled)
      edje_object_signal_emit(it->base, "elm,state,disabled", "elm");
    else
      edje_object_signal_emit(it->base, "elm,state,enabled", "elm");
-//   _item_show(it);
 }
 
 static void
