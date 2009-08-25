@@ -25,6 +25,7 @@
 #include "eina_types.h"
 #include "eina_main.h"
 #include "eina_error.h"
+#include "eina_log.h"
 #include "eina_hash.h"
 #include "eina_stringshare.h"
 #include "eina_list.h"
@@ -99,6 +100,13 @@ eina_init(void)
         fprintf(stderr, "Could not initialize eina error module.\n");
         return 0;
      }
+
+   if (!eina_log_init())
+     {
+	fprintf(stderr, "Could not initialize eina log module.\n");
+	goto log_init_error;
+     }
+
    if (!eina_hash_init())
      {
         EINA_ERROR_PERR("Could not initialize eina hash module.\n");
@@ -158,7 +166,10 @@ eina_init(void)
  stringshare_init_error:
    eina_hash_shutdown();
  hash_init_error:
+   eina_log_shutdown();
+ log_init_error:
    eina_error_shutdown();
+
    return 0;
 }
 
@@ -200,6 +211,7 @@ eina_shutdown(void)
    eina_list_shutdown();
    eina_stringshare_shutdown();
    eina_hash_shutdown();
+   eina_log_shutdown();
    eina_error_shutdown();
 
  finish_shutdown:
