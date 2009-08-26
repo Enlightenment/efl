@@ -36,6 +36,7 @@ _item_show(Elm_Toolbar_Item *it)
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Coord x, y, w, h, bx, by;
 
+   if (!wd) return;
    evas_object_geometry_get(wd->bx, &bx, &by, NULL, NULL);
    evas_object_geometry_get(it->base, &x, &y, &w, &h);
    elm_smart_scroller_child_region_show(wd->scr, x - bx, y - by, w, h);
@@ -49,6 +50,7 @@ _item_select(Elm_Toolbar_Item *it)
    Evas_Object *obj2;
    const Eina_List *l;
 
+   if (!wd) return;
    if ((it->selected) || (it->disabled)) return;
    EINA_LIST_FOREACH(wd->items, l, it2)
      {
@@ -72,6 +74,7 @@ _item_disable(Elm_Toolbar_Item *it, Eina_Bool disabled)
 {
    Widget_Data *wd = elm_widget_data_get(it->obj);
 
+   if (!wd) return;
    if (it->disabled == disabled) return;
    it->disabled = disabled;
    if (it->disabled) 
@@ -86,6 +89,7 @@ _del_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Toolbar_Item *it;
 
+   if (!wd) return;
    EINA_LIST_FREE(wd->items, it)
      {
 	eina_stringshare_del(it->label);
@@ -105,6 +109,7 @@ _theme_hook(Evas_Object *obj)
    Evas_Coord mw, mh;
    const char *style = elm_widget_style_get(obj);
 
+   if (!wd) return;
    edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
    EINA_LIST_FOREACH(wd->items, l, it)
      {
@@ -139,6 +144,7 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    Evas_Coord vw = 0, vh = 0;
 
+   if (!wd) return;
    edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), &minw, &minh);
    evas_object_resize(wd->scr, 500, 500);
    evas_object_size_hint_min_get(wd->bx, &minw, &minh);
@@ -166,6 +172,7 @@ _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
    const Eina_List *l;
    Elm_Toolbar_Item *it;
 
+   if (!wd) return;
    elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
    evas_object_size_hint_min_get(wd->bx, &mw, &mh);
    evas_object_geometry_get(wd->bx, NULL, NULL, &w, &h);
@@ -237,6 +244,7 @@ elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
+   if (!wd) return;
    if (icon_size > 48) return;
    if (wd->icon_size == icon_size) return;
    wd->icon_size = icon_size;
@@ -248,6 +256,7 @@ elm_toolbar_icon_size_get(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
+   if (!wd) return 0;
    return wd->icon_size;
 }
 
@@ -258,7 +267,7 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, voi
    Evas_Coord mw, mh;
    Elm_Toolbar_Item *it = calloc(1, sizeof(Elm_Toolbar_Item));
 
-   if (!it) return NULL;
+   if ((!it) || (!wd)) return NULL;
    wd->items = eina_list_append(wd->items, it);
    it->obj = obj;
    it->label = eina_stringshare_add(label);
@@ -323,6 +332,7 @@ elm_toolbar_item_del(Elm_Toolbar_Item *it)
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Object *obj2 = it->obj;
 
+   if (!wd) return;
    wd->items = eina_list_remove(wd->items, it);
    eina_stringshare_del(it->label);
    if (it->icon) evas_object_del(it->icon);
@@ -356,6 +366,7 @@ elm_toolbar_scrollable_set(Evas_Object *obj, Eina_Bool scrollable)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
+   if (!wd) return;
    wd->scrollable = scrollable;
    _sizing_eval(obj);
 }
