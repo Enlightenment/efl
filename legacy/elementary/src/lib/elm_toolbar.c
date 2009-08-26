@@ -232,6 +232,15 @@ elm_toolbar_add(Evas_Object *parent)
    return obj;
 }
 
+EAPI void 
+elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size) 
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   wd->icon_size = icon_size;
+   _theme_hook(obj);
+}
+
 EAPI Elm_Toolbar_Item *
 elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
