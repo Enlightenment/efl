@@ -24,10 +24,12 @@ struct _Widget_Data
    Eina_Bool have_selection : 1;
    Eina_Bool selmode : 1;
    Eina_Bool deferred_cur : 1;
+   Eina_Bool disabled : 1;
 };
 
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
+static void _disable_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _on_focus_hook(void *data, Evas_Object *obj);
 static void _resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -69,6 +71,22 @@ _theme_hook(Evas_Object *obj)
    eina_stringshare_del(t);
    edje_object_scale_set(wd->ent, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
+}
+
+static void
+_disable_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (elm_widget_disabled_get(obj))
+     {
+	edje_object_signal_emit(wd->ent, "elm,state,disabled", "elm");
+	wd->disabled = EINA_TRUE;
+     }
+   else
+     {
+	edje_object_signal_emit(wd->ent, "elm,state,enabled", "elm");
+	wd->disabled = EINA_FALSE;
+     }
 }
 
 static void
@@ -820,7 +838,8 @@ _signal_anchor_up(void *data, Evas_Object *obj, const char *emission, const char
 		    }
 	       }
 	  }
-	evas_object_smart_callback_call(data, "anchor,clicked", &ei);
+	if (!wd->disabled)
+	  evas_object_smart_callback_call(data, "anchor,clicked", &ei);
      }
 }
 
@@ -910,10 +929,12 @@ elm_entry_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_can_focus_set(obj, 1);
 
    wd->linewrap = EINA_TRUE;
    wd->editable = EINA_TRUE;
+   wd->disabled = EINA_FALSE;
 
    wd->ent = edje_object_add(e);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOVE, _move, obj);

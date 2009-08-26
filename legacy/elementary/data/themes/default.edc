@@ -3854,6 +3854,15 @@ collections {
 	      tag:  "link" "+ color=#800 underline=on underline_color=#8008";
 	      tag:  "hilight" "+ font=Sans:style=Bold";
 	   }
+	   style { name: "entry_textblock_disabled_style";
+ 	      base: "font=Sans font_size=10 align=left color=#00000080 wrap=word";
+	      tag:  "br" "\n";
+	      tag:  "tab" "\t";
+	      tag:  "em" "+ font=Sans:style=Oblique";
+	      tag:  "b" "+ font=Sans:style=Bold";
+	      tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
+	      tag:  "hilight" "+ font=Sans:style=Bold";
+	   }
 	}
       parts {
 	 part { name: "elm.text";
@@ -3875,6 +3884,13 @@ collections {
 		  min: 0 1;
 	       }
 	    }
+	    description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+	       text {
+		  style: "entry_textblock_disabled_style";
+		  min: 0 1;
+	       }
+	    }
 	 }
       }
       programs {
@@ -3882,6 +3898,18 @@ collections {
             signal: "load";
 	    source: "";
 	    action: FOCUS_SET;
+	    target: "elm.text";
+	 }
+	 program { name: "disable";
+	    signal: "elm,state,disabled";
+	    source: "elm";
+	    action: STATE_SET "disabled" 0.0;
+	    target: "elm.text";
+	 }
+	 program { name: "enable";
+	    signal: "elm,state,enabled";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
 	    target: "elm.text";
 	 }
       }
@@ -3903,6 +3931,13 @@ collections {
 	       text {
 		  style: "entry_textblock_style";
 		  min: 1 1;
+	       }
+	    }
+	    description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+	       text {
+		  style: "entry_textblock_disabled_style";
+		  min: 0 1;
 	       }
 	    }
 	 }
@@ -3928,6 +3963,18 @@ collections {
             signal: "load";
 	    source: "";
 	    action: FOCUS_SET;
+	    target: "elm.text";
+	 }
+	 program { name: "disable";
+	    signal: "elm,state,disabled";
+	    source: "elm";
+	    action: STATE_SET "disabled" 0.0;
+	    target: "elm.text";
+	 }
+	 program { name: "enable";
+	    signal: "elm,state,enabled";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
 	    target: "elm.text";
 	 }
 /*
@@ -3959,6 +4006,15 @@ collections {
 	      tag:  "link" "+ color=#800 underline=on underline_color=#8008";
 	      tag:  "hilight" "+ font=Sans:style=Bold";
 	   }
+	   style { name: "entry_single_textblock_disabled_style";
+ 	      base: "font=Sans font_size=10 align=left color=#00000080 wrap=none";
+	      tag:  "br" "\n";
+	      tag:  "tab" "\t";
+	      tag:  "em" "+ font=Sans:style=Oblique";
+	      tag:  "b" "+ font=Sans:style=Bold";
+	      tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
+	      tag:  "hilight" "+ font=Sans:style=Bold";
+	   }
 	}
       parts {
 	 part { name: "elm.text";
@@ -3977,6 +4033,13 @@ collections {
 		  min: 1 1;
 	       }
 	    }
+	    description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+	       text {
+		  style: "entry_single_textblock_disabled_style";
+		  min: 0 1;
+	       }
+	    }
 	 }
       }
       programs {
@@ -3984,6 +4047,18 @@ collections {
             signal: "load";
 	    source: "";
 	    action: FOCUS_SET;
+	    target: "elm.text";
+	 }
+	 program { name: "disable";
+	    signal: "elm,state,disabled";
+	    source: "elm";
+	    action: STATE_SET "disabled" 0.0;
+	    target: "elm.text";
+	 }
+	 program { name: "enable";
+	    signal: "elm,state,enabled";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
 	    target: "elm.text";
 	 }
       }
@@ -4006,6 +4081,13 @@ collections {
 		  min: 1 1;
 	       }
 	    }
+	    description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+	       text {
+		  style: "entry_single_textblock_disabled_style";
+		  min: 0 1;
+	       }
+	    }
 	 }
       }
       programs {
@@ -4013,6 +4095,18 @@ collections {
             signal: "load";
 	    source: "";
 	    action: FOCUS_SET;
+	    target: "elm.text";
+	 }
+	 program { name: "disable";
+	    signal: "elm,state,disabled";
+	    source: "elm";
+	    action: STATE_SET "disabled" 0.0;
+	    target: "elm.text";
+	 }
+	 program { name: "enable";
+	    signal: "elm,state,enabled";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
 	    target: "elm.text";
 	 }
       }
@@ -4035,6 +4129,13 @@ collections {
 		  min: 0 1;
 	       }
 	    }
+	    description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+	       text {
+		  style: "entry_textblock_disabled_style";
+		  min: 0 1;
+	       }
+	    }
 	 }
       }
       programs {
@@ -4042,6 +4143,18 @@ collections {
             signal: "load";
 	    source: "";
 	    action: FOCUS_SET;
+	    target: "elm.text";
+	 }
+	 program { name: "disable";
+	    signal: "elm,state,disabled";
+	    source: "elm";
+	    action: STATE_SET "disabled" 0.0;
+	    target: "elm.text";
+	 }
+	 program { name: "enable";
+	    signal: "elm,state,enabled";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
 	    target: "elm.text";
 	 }
       }
@@ -4064,6 +4177,13 @@ collections {
 		  min: 1 1;
 	       }
 	    }
+	    description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+	       text {
+		  style: "entry_textblock_disabled_style";
+		  min: 0 1;
+	       }
+	    }
 	 }
       }
       programs {
@@ -4071,6 +4191,18 @@ collections {
             signal: "load";
 	    source: "";
 	    action: FOCUS_SET;
+	    target: "elm.text";
+	 }
+	 program { name: "disable";
+	    signal: "elm,state,disabled";
+	    source: "elm";
+	    action: STATE_SET "disabled" 0.0;
+	    target: "elm.text";
+	 }
+	 program { name: "enable";
+	    signal: "elm,state,enabled";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
 	    target: "elm.text";
 	 }
       }
@@ -4095,6 +4227,13 @@ collections {
 		  min: 1 1;
 	       }
 	    }
+	    description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+	       text {
+		  style: "entry_single_textblock_disabled_style";
+		  min: 0 1;
+	       }
+	    }
 	 }
       }
       programs {
@@ -4102,6 +4241,18 @@ collections {
             signal: "load";
 	    source: "";
 	    action: FOCUS_SET;
+	    target: "elm.text";
+	 }
+	 program { name: "disable";
+	    signal: "elm,state,disabled";
+	    source: "elm";
+	    action: STATE_SET "disabled" 0.0;
+	    target: "elm.text";
+	 }
+	 program { name: "enable";
+	    signal: "elm,state,enabled";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
 	    target: "elm.text";
 	 }
       }
