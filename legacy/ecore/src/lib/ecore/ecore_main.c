@@ -753,7 +753,7 @@ _ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
    else
      timeout = (DWORD)(tv->tv_sec * 1000.0 + tv->tv_usec / 1000.0);
 
-   result = MsgWaitForMultipleObjects(events_nbr, events, FALSE,
+   result = MsgWaitForMultipleObjects(events_nbr, (const HANDLE *)events, FALSE,
 				      timeout, QS_ALLINPUT);
 
    FD_ZERO(readfds);

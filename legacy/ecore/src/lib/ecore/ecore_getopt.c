@@ -1677,7 +1677,7 @@ ecore_getopt_callback_geometry_parse(const Ecore_Getopt *parser __UNUSED__, cons
  * @c callback_data value is ignored, you can safely use @c NULL.
  */
 unsigned char
-ecore_getopt_callback_size_parse(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage)
+ecore_getopt_callback_size_parse(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc __UNUSED__, const char *str, void *data __UNUSED__, Ecore_Getopt_Value *storage)
 {
    Eina_Rectangle *v = (Eina_Rectangle *)storage->ptrp;
 

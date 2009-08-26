@@ -89,7 +89,7 @@ ecore_path_group_remove(Ecore_Path_Group *group, const char *path)
    /*
     * Find the path in the list of available paths
     */
-   found = eina_list_search_unsorted(group->paths, strcmp, path);
+   found = eina_list_search_unsorted(group->paths, EINA_COMPARE_CB(strcmp), path);
 
    /*
     * If the path is found, remove and free it
