@@ -71,6 +71,17 @@ test_hoversel(void *data, Evas_Object *obj, void *event_info)
 
    bt = elm_hoversel_add(win);
    elm_hoversel_hover_parent_set(bt, win);
+   elm_hoversel_label_set(bt, "Disabled Hoversel");
+   elm_hoversel_item_add(bt, "Item 1", "apps", ELM_ICON_STANDARD, NULL, NULL);
+   elm_hoversel_item_add(bt, "Item 2", "close", ELM_ICON_STANDARD, NULL, NULL);
+   elm_object_disabled_set(bt, 1);
+   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
+   evas_object_size_hint_align_set(bt, 0.5, 0.5);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_hoversel_add(win);
+   elm_hoversel_hover_parent_set(bt, win);
    elm_hoversel_label_set(bt, "Icon + Label");
 
    ic = elm_icon_add(win);

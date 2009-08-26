@@ -41,6 +41,7 @@ struct _Elm_Hoversel_Item
 
 static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
+static void _disable_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -67,6 +68,16 @@ _del_hook(Evas_Object *obj)
 	free(it);
      }
    free(wd);
+}
+
+static void
+_disable_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (elm_widget_disabled_get(obj))
+     elm_widget_disabled_set(wd->btn, 1);
+   else
+     elm_widget_disabled_set(wd->btn, 0);
 }
 
 static void
@@ -112,6 +123,9 @@ _activate(Evas_Object *obj)
    Evas_Object *bt, *bx, *ic;
    const Eina_List *l;
    const Elm_Hoversel_Item *it;
+
+   if (elm_widget_disabled_get(obj))
+       return;
 
    wd->hover = elm_hover_add(obj);
    elm_hover_style_set(wd->hover, "hoversel_vertical");
@@ -192,6 +206,7 @@ elm_hoversel_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_disable_hook_set(obj, _disable_hook);
 
    wd->btn = elm_button_add(parent);
    elm_button_style_set(wd->btn, "hoversel_vertical");

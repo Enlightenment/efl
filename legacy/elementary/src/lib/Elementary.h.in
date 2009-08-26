@@ -773,7 +773,7 @@ extern "C" {
 // * table doesnt do homogenous properly
 //
 //// (incomplete - medium priority)
-// * need to add support for disabled in all widgets. Button, toolbar and entry are currently done.
+// * need to add support for disabled in all widgets. Button, toolbar, hoversel and entry are currently done.
 // * on the fly theme changes - test (should work)
 // * need a hold-scroll counter in elm_widget
 // * hoversel only vertical right now - make horizontal
