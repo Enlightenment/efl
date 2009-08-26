@@ -347,6 +347,7 @@ elm_toolbar_item_disabled_get(Elm_Toolbar_Item *item)
 EAPI void 
 elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled) 
 {
+   if (!item) return;
    _item_disable(item, disabled);
 }
 
