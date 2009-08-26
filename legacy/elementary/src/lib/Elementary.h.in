@@ -545,7 +545,8 @@ extern "C" {
 
    typedef struct _Elm_Toolbar_Item Elm_Toolbar_Item;
    EAPI Evas_Object *elm_toolbar_add(Evas_Object *parent);
-   EAPI void         elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size);
+   EAPI void        elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size);
+   EAPI int         elm_toolbar_icon_size_get(Evas_Object *obj);
    EAPI Elm_Toolbar_Item *elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
    EAPI Evas_Object *elm_toolbar_item_icon_get(Elm_Toolbar_Item *item);
    EAPI const char  *elm_toolbar_item_label_get(Elm_Toolbar_Item *item);
