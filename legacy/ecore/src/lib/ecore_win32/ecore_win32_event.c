@@ -609,7 +609,7 @@ _ecore_win32_event_handle_delete_request(Ecore_Win32_Callback_Data *msg)
 /***** Private functions definitions *****/
 
 static void
-_ecore_win32_event_free_key_down(void *data,
+_ecore_win32_event_free_key_down(void *data __UNUSED__,
                                  void *ev)
 {
    Ecore_Event_Key *e;
@@ -622,7 +622,7 @@ _ecore_win32_event_free_key_down(void *data,
 }
 
 static void
-_ecore_win32_event_free_key_up(void *data,
+_ecore_win32_event_free_key_up(void *data __UNUSED__,
                                void *ev)
 {
    Ecore_Event_Key *e;
