@@ -159,8 +159,10 @@ ecore_thread_shutdown(void)
    if (!_ecore_thread_init)
      {
 	/* FIXME: If function are still running in the background, should we kill them ? */
+#ifdef BUILD_PTHREAD
 	ecore_event_handler_del(del_handler);
 	del_handler = NULL;
+#endif
      }
 
    return _ecore_thread_init;
