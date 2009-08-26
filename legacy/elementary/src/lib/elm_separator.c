@@ -78,7 +78,6 @@ elm_separator_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
    if (wd->horizontal == horizontal) return;
    wd->horizontal = horizontal;
    _theme_hook(obj);
-   _sizing_eval(obj);
 }
 
 EAPI Eina_Bool
