@@ -269,6 +269,7 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, voi
 
    if (!wd) return NULL;
    it = calloc(1, sizeof(Elm_Toolbar_Item));
+   if (!it) return NULL;
    wd->items = eina_list_append(wd->items, it);
    it->obj = obj;
    it->label = eina_stringshare_add(label);
