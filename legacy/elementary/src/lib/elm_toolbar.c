@@ -265,9 +265,10 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, voi
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord mw, mh;
-   Elm_Toolbar_Item *it = calloc(1, sizeof(Elm_Toolbar_Item));
+   Elm_Toolbar_Item *it;
 
-   if ((!it) || (!wd)) return NULL;
+   if (!wd) return NULL;
+   it = = calloc(1, sizeof(Elm_Toolbar_Item));
    wd->items = eina_list_append(wd->items, it);
    it->obj = obj;
    it->label = eina_stringshare_add(label);
@@ -332,7 +333,7 @@ elm_toolbar_item_del(Elm_Toolbar_Item *it)
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Object *obj2 = it->obj;
 
-   if (!wd) return;
+   if ((!wd) || (!it)) return;
    wd->items = eina_list_remove(wd->items, it);
    eina_stringshare_del(it->label);
    if (it->icon) evas_object_del(it->icon);
