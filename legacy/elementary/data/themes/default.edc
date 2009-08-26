@@ -5142,6 +5142,14 @@ collections {
       images.image: "icon_refresh.png" COMP; parts { part { name: "base";
 	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_refresh.png"; } } } }
+   group { name: "elm/icon/folder/default"; min: 32 32;
+      images.image: "icon_folder.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
+	    image.normal: "icon_folder.png"; } } } }
+   group { name: "elm/icon/file/default"; min: 32 32;
+      images.image: "icon_file.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
+	    image.normal: "icon_file.png"; } } } }
 
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/toolbar/base/default";

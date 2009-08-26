@@ -14,7 +14,6 @@
 #include <Ecore_Str.h>
 #include "elm_priv.h"
 
-
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -27,7 +26,6 @@ struct _Widget_Data
 Elm_Genlist_Item_Class itc;
 
 static void _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent);
-
 
 /***  ELEMENTARY WIDGET  ***/
 static void
@@ -47,7 +45,7 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_min_get(wd->vbox, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
 
-   printf("***** SIZING EVAL [min %d %d] *************\n", minw, minh);
+//   printf("***** SIZING EVAL [min %d %d] *************\n", minw, minh);
 }
 
 /***  GENLIST "MODEL"  ***/
@@ -69,9 +67,9 @@ _itc_icon_get(const void *data, Evas_Object *obj, const char *source)
      {
 	ic = elm_icon_add(obj);
 	if (ecore_file_is_dir((char*)data))
-	  elm_icon_standard_set(ic, "apps");   // TODO we need at least a standard 'folder' and 'file' icon
+	  elm_icon_standard_set(ic, "folder");   // TODO we need at least a standard 'folder' and 'file' icon
 	else
-	  elm_icon_standard_set(ic, "chat");
+	  elm_icon_standard_set(ic, "file");
 	evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 	evas_object_show(ic);
 	return ic;
@@ -99,7 +97,7 @@ _expand(void *data, Evas_Object *obj, void *event_info)
    Elm_Genlist_Item *it = event_info;
    const char *path = elm_genlist_item_data_get(it);
 
-   printf("EXPAND %s\n", path);
+//   printf("EXPAND %s\n", path);
    _populate(data, path, it);
 }
 
@@ -109,7 +107,7 @@ _contract(void *data, Evas_Object *obj, void *event_info)
    Elm_Genlist_Item *it = event_info;
    const char *path = elm_genlist_item_data_get(it);
 
-   printf("CONTRACT %s\n", path);
+//   printf("CONTRACT %s\n", path);
    elm_genlist_item_subitems_clear(it);
 }
 
@@ -136,7 +134,7 @@ _sel(void *data, Evas_Object *obj, void *event_info)
 
    if (ecore_file_is_dir(path))
      {
-	printf("SELECTED DIR: %s\n", path);
+//	printf("SELECTED DIR: %s\n", path);
 	// keep a ref to path 'couse it will be destroyed by _populate
 	p = eina_stringshare_add(path);
 	_populate(data, p, NULL);
@@ -184,7 +182,7 @@ _anchor_clicked(void *data, Evas_Object *obj, void *event_info)
    Elm_Entry_Anchor_Info *info = event_info;
    const char *p;
 
-   printf("ANCHOR CLICKED %s\n", info->name);
+//   printf("ANCHOR CLICKED %s\n", info->name);
 
   // keep a ref to path 'couse it will be destroyed by _populate
   p = eina_stringshare_add(info->name);
