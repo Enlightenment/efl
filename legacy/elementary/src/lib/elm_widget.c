@@ -645,8 +645,7 @@ EAPI void
 elm_widget_disabled_set(Evas_Object *obj, int disabled)
 {
    API_ENTRY return;
-   if (((sd->disabled) && (disabled)) ||
-       ((!sd->disabled) && (!disabled))) return;
+   if (sd->disabled == disabled) return;
    sd->disabled = disabled;
    if (sd->focused)
      {
