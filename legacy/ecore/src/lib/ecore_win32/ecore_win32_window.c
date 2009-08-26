@@ -931,25 +931,30 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
                                       Ecore_Win32_Window_State state,
                                       unsigned int             set)
 {
-   if (!window)
-     return;
+   struct _Ecore_Win32_Window *ew;
+   HWND                        w;
+
+   if (!window) return;
+
+   ew = (struct _Ecore_Win32_Window *)window;
+   w = ew->window;
 
    EINA_ERROR_PINFO("sending cursor state\n");
 
    switch (state)
      {
       case ECORE_WIN32_WINDOW_STATE_ICONIFIED:
-         if (((struct _Ecore_Win32_Window *)window)->state.iconified)
+         if (ew->state.iconified)
            ecore_win32_window_iconified_set(window, set);
          break;
       case ECORE_WIN32_WINDOW_STATE_MODAL:
-         ((struct _Ecore_Win32_Window *)window)->state.modal = 1;
+         ew->state.modal = 1;
          break;
       case ECORE_WIN32_WINDOW_STATE_STICKY:
-         ((struct _Ecore_Win32_Window *)window)->state.sticky = 1;
+         ew->state.sticky = 1;
          break;
       case ECORE_WIN32_WINDOW_STATE_MAXIMIZED_VERT:
-         if (((struct _Ecore_Win32_Window *)window)->state.maximized_vert)
+         if (ew->state.maximized_vert)
            {
               RECT rect;
               int  y;
@@ -964,14 +969,13 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
               y = rect.top;
               height = rect.bottom - rect.top;
 
-              if (!GetClientRect(((struct _Ecore_Win32_Window *)window)->window,
-                                 &rect))
+              if (!GetClientRect(w, &rect))
                 {
                    EINA_ERROR_PERR("GetClientRect() failed\n");
                    break;
                 }
 
-              if (!MoveWindow(window, rect.left, y,
+              if (!MoveWindow(w, rect.left, y,
                               rect.right - rect.left,
                               height,
                               TRUE))
@@ -981,18 +985,17 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
            }
          break;
       case ECORE_WIN32_WINDOW_STATE_MAXIMIZED_HORZ:
-         if (((struct _Ecore_Win32_Window *)window)->state.maximized_horz)
+         if (ew->state.maximized_horz)
            {
               RECT rect;
 
-              if (!GetClientRect(((struct _Ecore_Win32_Window *)window)->window,
-                                 &rect))
+              if (!GetClientRect(w, &rect))
                 {
                    EINA_ERROR_PERR("GetClientRect() failed\n");
                    break;
                 }
 
-              if (!MoveWindow(window, 0, rect.top,
+              if (!MoveWindow(w, 0, rect.top,
                               GetSystemMetrics(SM_CXSCREEN),
                               rect.bottom - rect.top,
                               TRUE))
@@ -1002,8 +1005,7 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
            }
          break;
       case ECORE_WIN32_WINDOW_STATE_MAXIMIZED:
-         if (((struct _Ecore_Win32_Window *)window)->state.maximized_vert &&
-             ((struct _Ecore_Win32_Window *)window)->state.maximized_horz)
+         if (ew->state.maximized_vert && ew->state.maximized_horz)
            {
               RECT rect;
 
@@ -1014,7 +1016,7 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
                    break;
                 }
 
-              if (!MoveWindow(window, 0, 0,
+              if (!MoveWindow(w, 0, 0,
                               GetSystemMetrics(SM_CXSCREEN),
                               rect.bottom - rect.top,
                               TRUE))
@@ -1024,19 +1026,18 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
            }
          break;
       case ECORE_WIN32_WINDOW_STATE_SHADED:
-         ((struct _Ecore_Win32_Window *)window)->state.shaded = 1;
+         ew->state.shaded = 1;
          break;
       case ECORE_WIN32_WINDOW_STATE_HIDDEN:
-         ((struct _Ecore_Win32_Window *)window)->state.hidden = 1;
+         ew->state.hidden = 1;
          break;
       case ECORE_WIN32_WINDOW_STATE_FULLSCREEN:
-         if (((struct _Ecore_Win32_Window *)window)->state.fullscreen)
+         if (ew->state.fullscreen)
            ecore_win32_window_fullscreen_set(window, set);
          break;
       case ECORE_WIN32_WINDOW_STATE_ABOVE:
-         if (((struct _Ecore_Win32_Window *)window)->state.above)
-           if (!SetWindowPos(((struct _Ecore_Win32_Window *)window)->window,
-                             HWND_TOP,
+         if (ew->state.above)
+           if (!SetWindowPos(w, HWND_TOP,
                              0, 0,
                              0, 0,
                              SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW))
@@ -1045,9 +1046,8 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
              }
          break;
       case ECORE_WIN32_WINDOW_STATE_BELOW:
-         if (((struct _Ecore_Win32_Window *)window)->state.below)
-           if (!SetWindowPos(((struct _Ecore_Win32_Window *)window)->window,
-                             HWND_BOTTOM,
+         if (ew->state.below)
+           if (!SetWindowPos(w, HWND_BOTTOM,
                              0, 0,
                              0, 0,
                              SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW))
@@ -1056,7 +1056,7 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
              }
          break;
       case ECORE_WIN32_WINDOW_STATE_DEMANDS_ATTENTION:
-         ((struct _Ecore_Win32_Window *)window)->state.demands_attention = 1;
+         ew->state.demands_attention = 1;
          break;
       case ECORE_WIN32_WINDOW_STATE_UNKNOWN:
          /* nothing to be done */
