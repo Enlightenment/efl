@@ -92,7 +92,7 @@ _itc_del(const void *data, Evas_Object *obj)
 }
 
 static void
-_expand(void *data, Evas_Object *obj, void *event_info)
+_expand_done(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Genlist_Item *it = event_info;
    const char *path = elm_genlist_item_data_get(it);
@@ -102,7 +102,7 @@ _expand(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_contract(void *data, Evas_Object *obj, void *event_info)
+_contract_done(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Genlist_Item *it = event_info;
    const char *path = elm_genlist_item_data_get(it);
@@ -387,8 +387,8 @@ elm_fileselector_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->list, "selected", _sel, obj);
    evas_object_smart_callback_add(wd->list, "expand,request", _expand_req, obj);
    evas_object_smart_callback_add(wd->list, "contract,request", _contract_req, obj);
-   evas_object_smart_callback_add(wd->list, "expanded", _expand, obj);
-   evas_object_smart_callback_add(wd->list, "contracted", _contract, obj);
+   evas_object_smart_callback_add(wd->list, "expanded", _expand_done, obj);
+   evas_object_smart_callback_add(wd->list, "contracted", _contract_done, obj);
 
    // buttons box
    box = elm_box_add(parent);
