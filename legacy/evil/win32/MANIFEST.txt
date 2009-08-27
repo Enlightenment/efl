@@ -14,12 +14,15 @@
      fnmatch_private.h            - fnmatch private header
 
    vs8                          - Visual Studio 8 project files
-     start.bat                    - batch script to start work with the solution
      evil.sln                     - Evil MSVC solution
      libdlfcn.vcproj              - libdlfcn project
      libevil.vcproj               - libevil project
-     libmman.vcproj               - libmman project
 
-   set_env.bat                  - common environment startup
+   vs9                          - Visual Studio 9 project files
+     evil.sln                     - Evil MSVC solution
+     libdlfcn.vcproj              - libdlfcn project
+     libevil.vcproj               - libevil project
+
+   start.bat                    - batch script to start work with the solution
    MANIFEST.txt                 - this file
    README.txt                   - about this folder

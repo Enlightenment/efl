@@ -1,8 +1,8 @@
 #include <stdlib.h>
 
-#if defined(__CEGCC__) || defined(__MINGW32CE__)
+#if defined(__CEGCC__) || defined(__MINGW32CE__) || defined(_MSC_VER)
 # include <limits.h>
-#endif /* __CEGCC__ || __MINGW32CE__ */
+#endif /* __CEGCC__ || __MINGW32CE__ || _MSC_VER */
 
 #include "../Evil.h"
 
@@ -20,8 +20,8 @@ static void
 get_last_error(char *desc)
 {
    char  *str;
-   int    l1;
-   int    l2;
+   size_t l1;
+   size_t l2;
 
    str = evil_last_error_get();
 
@@ -57,9 +57,9 @@ dlopen(const char* path, int mode __UNUSED__)
      }
    else
      {
-        char *new_path;
-        int   l;
-        int   i;
+        char        *new_path;
+        size_t       l;
+        unsigned int i;
 
         /* according to MSDN, we must change the slash to backslash */
         l = strlen(path);
@@ -137,11 +137,11 @@ dlsym(void *handle, const char *symbol)
 int
 dladdr (const void *addr __UNUSED__, Dl_info *info)
 {
-   TCHAR tpath[PATH_MAX];
-   char *path;
-   char *tmp;
-   int   length;
-   int   ret = 0;
+   TCHAR  tpath[PATH_MAX];
+   char  *path;
+   char  *tmp;
+   size_t length;
+   int    ret = 0;
 
   if (!info)
     return 0;

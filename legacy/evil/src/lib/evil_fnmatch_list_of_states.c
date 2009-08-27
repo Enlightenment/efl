@@ -22,7 +22,8 @@ fnmatch_list_of_states_alloc(size_t n,
   unsigned char *has;
   size_t         i;
 
-  if (! (l = malloc(n * struct_size)))
+  l = malloc(n * struct_size);
+  if (!l)
     return 0;
 
   states = (unsigned char *) (l + n);

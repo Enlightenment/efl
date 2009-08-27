@@ -1,3 +1,42 @@
+2009-08-27  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/dlfcn/dlfcn.c:
+	fix warnings
+
+	* src/lib/evil_fnmatch_list_of_states.c:
+	fix vc++ warning
+
+	* win32/MANIFEST.txt:
+	* win32/README.txt:
+	* win32/start.bat:
+	* win32/vs9/evil.sln:
+	* win32/vs9/libdlfcn.vcproj:
+	* win32/vs9/libevil.vcproj:
+	* win32/vs9/test/out/update_deps.bat:
+	* win32/vs9/test/start.bat:
+	* win32/vs9/test/test.sln:
+	* win32/vs9/test/test.vcproj:
+	* win32/vs9/test/test_fnmatch.cpp:
+	* win32/vs9 (added):
+	* win32/vs9/test (added):
+	* win32/vs9/test/test_fnmatch.cpp (added):
+	* win32/vs9/test/test.vcproj (added):
+	* win32/vs9/test/start.bat (added):
+	* win32/vs9/test/out (added):
+	* win32/vs9/test/out/update_deps.bat (added):
+	* win32/vs9/test/test.sln (added):
+	* win32/vs9/libdlfcn.vcproj (added):
+	* win32/vs9/libevil.vcproj (added):
+	* win32/vs9/evil.sln (added):
+	* win32/start.bat (added):
+	* win32/vs8/libmman.vcproj (deleted):
+	* win32/vs8/start.bat (deleted):
+	* win32/set_env.bat (deleted):
+	update the Visual Studio environment. Now, there is only one
+	script to launch (start.bat) in win32/. It detects automatically
+	the latest Visual Studio environment which is installed and launch
+	the solution. Currently	supported VS are 2005 and 2008.
+
 2009-06-13  Lars Munch  <lars at segv dot dk>
 
 	* src/lib/evil_main.c:
