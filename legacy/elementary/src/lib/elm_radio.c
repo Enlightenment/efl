@@ -50,8 +50,10 @@ struct _Widget_Data
    Group *group;
 };
 
+static void _state_set(Evas_Object *obj, Eina_Bool state);
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
+static void _disable_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
@@ -90,6 +92,19 @@ _theme_hook(Evas_Object *obj)
    edje_object_message_signal_process(wd->chk);
    edje_object_scale_set(wd->chk, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
+}
+
+static void
+_disable_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (elm_widget_disabled_get(obj))
+     {
+        edje_object_signal_emit(wd->chk, "elm,state,disabled", "elm");
+        if (wd->state) _state_set(obj, 0);
+     }
+   else
+     edje_object_signal_emit(wd->chk, "elm,state,enabled", "elm");
 }
 
 static void
@@ -135,7 +150,7 @@ static void
 _state_set(Evas_Object *obj, Eina_Bool state)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (state != wd->state)
+   if ((state != wd->state) && (!elm_widget_disabled_get(obj)))
      {
 	wd->state = state;
 	if (wd->state)
@@ -149,14 +164,22 @@ static void
 _state_set_all(Widget_Data *wd)
 {
    const Eina_List *l;
-   Evas_Object *child;
+   Evas_Object *child, *selected;
+   Eina_Bool disabled = EINA_FALSE;
 
    EINA_LIST_FOREACH(wd->group->radios, l, child)
      {
 	Widget_Data *wd2 = elm_widget_data_get(child);
-	if (wd2->value == wd->group->value) _state_set(child, 1);
+        if (wd2->state) selected = child;
+	if (wd2->value == wd->group->value)
+          {
+             _state_set(child, 1);
+             if (!wd2->state) disabled = EINA_TRUE;
+          }
 	else _state_set(child, 0);
      }
+
+   if (disabled) _state_set(selected, 1);
 }
 
 static void
@@ -193,6 +216,7 @@ elm_radio_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_disable_hook_set(obj, _disable_hook);
 
    wd->chk = edje_object_add(e);
    _elm_theme_set(wd->chk, "radio", "base", "default");
