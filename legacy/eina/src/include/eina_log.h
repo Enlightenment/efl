@@ -20,7 +20,6 @@
 #define EINA_LOG_H_
 
 #include <stdarg.h>
-#include <stdint.h>
 
 #include "eina_types.h"
 
@@ -159,7 +158,7 @@ typedef enum _Eina_Log_Level
 	EINA_LOG_LEVEL_INFO,               /**< Information log level */
 	EINA_LOG_LEVEL_DBG,                /**< Debug log level */
 	EINA_LOG_LEVELS,                   /**< Count of default log levels */
-	EINA_LOG_LEVEL_UNKNOWN = INT32_MIN /**< Unknown level */
+	EINA_LOG_LEVEL_UNKNOWN = (-2147483647-1) /**< Unknown level */
 } Eina_Log_Level;
 
 /**
