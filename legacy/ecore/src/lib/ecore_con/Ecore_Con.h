@@ -215,6 +215,7 @@ extern "C" {
    EAPI void             *ecore_con_url_data_get(Ecore_Con_Url *url_con);
    EAPI void              ecore_con_url_additional_header_add(Ecore_Con_Url *url_con, const char *key, const char *value);
    EAPI void              ecore_con_url_additional_headers_clear(Ecore_Con_Url *url_con);
+   EAPI const Eina_List  *ecore_con_url_response_headers_get(Ecore_Con_Url *url_con);
    EAPI int               ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url);
    EAPI void		  ecore_con_url_fd_set(Ecore_Con_Url *url_con, int fd);
    EAPI int		  ecore_con_url_received_bytes_get(Ecore_Con_Url *url_con);
