@@ -132,6 +132,16 @@ EAPI int eina_cpu_count(void)
    return sysinfo.dwNumberOfProcessors;
 
 # elif defined (__SUNPRO_C)
+   /*
+    * _SC_NPROCESSORS_ONLN: number of processors that are online, that
+                            is available when sysconf is called. The number
+                            of cpu can change by admins.
+    * _SC_NPROCESSORS_CONF: maximum number of processors that are available
+                            to the current OS instance. That number can be
+                            change after a reboot.
+    * _SC_NPROCESSORS_MAX : maximum number of processors that are on the
+                            motherboard.
+    */
    return sysconf(_SC_NPROCESSORS_ONLN);
 
 # elif defined (__FreeBSD) || defined (__OpenBSD__) || defined (__NetBSD__) || defined (__DragonFly__) || defined (__MacOSX__)

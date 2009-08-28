@@ -25,10 +25,10 @@
 
 #include <stdlib.h>
 
+#include "eina_config.h"
 #include "eina_private.h"
-
-#include "eina_iterator.h"
 #include "eina_safety_checks.h"
+#include "eina_iterator.h"
 
 /*============================================================================*
  *                                  Local                                     *

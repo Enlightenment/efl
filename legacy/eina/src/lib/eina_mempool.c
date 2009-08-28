@@ -25,11 +25,12 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "eina_config.h"
+#include "eina_private.h"
+#include "eina_safety_checks.h"
 #include "eina_mempool.h"
 #include "eina_hash.h"
 #include "eina_module.h"
-#include "eina_private.h"
-#include "eina_safety_checks.h"
 
 /*============================================================================*
  *                                  Local                                     *

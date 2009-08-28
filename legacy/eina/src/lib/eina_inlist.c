@@ -23,10 +23,11 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "eina_inlist.h"
-#include "eina_error.h"
+#include "eina_config.h"
 #include "eina_private.h"
 #include "eina_safety_checks.h"
+#include "eina_inlist.h"
+#include "eina_error.h"
 
 /* FIXME: TODO please, refactor this :) */
 

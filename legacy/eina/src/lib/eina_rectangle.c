@@ -24,11 +24,11 @@
 #include <stdlib.h>
 
 #include "eina_config.h"
+#include "eina_private.h"
+#include "eina_safety_checks.h"
 #include "eina_rectangle.h"
 #include "eina_magic.h"
 #include "eina_inlist.h"
-#include "eina_private.h"
-#include "eina_safety_checks.h"
 #include "eina_mempool.h"
 #include "eina_list.h"
 #include "eina_trash.h"

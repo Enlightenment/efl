@@ -24,8 +24,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "eina_convert.h"
+#include "eina_config.h"
 #include "eina_safety_checks.h"
+#include "eina_convert.h"
 
 /*============================================================================*
  *                                  Local                                     *

@@ -52,11 +52,12 @@ void *alloca (size_t);
 # include <Evil.h>
 #endif
 
+#include "eina_config.h"
+#include "eina_private.h"
+#include "eina_safety_checks.h"
 #include "eina_error.h"
 #include "eina_module.h"
 #include "eina_file.h"
-#include "eina_private.h"
-#include "eina_safety_checks.h"
 
 /*============================================================================*
  *                                  Local                                     *

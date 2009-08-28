@@ -61,9 +61,10 @@ void *alloca (size_t);
 # define PATH_DELIM '\\'
 #endif
 
-#include "eina_file.h"
+#include "eina_config.h"
 #include "eina_private.h"
 #include "eina_safety_checks.h"
+#include "eina_file.h"
 
 /*============================================================================*
  *                                 Global                                     *

@@ -29,8 +29,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "eina_tiler.h"
+#include "eina_config.h"
 #include "eina_private.h"
+#include "eina_tiler.h"
 
 /*============================================================================*
  *                                  Local                                     *

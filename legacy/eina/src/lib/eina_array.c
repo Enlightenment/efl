@@ -150,12 +150,12 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "eina_types.h"
+#include "eina_config.h"
+#include "eina_private.h"
+#include "eina_safety_checks.h"
 #include "eina_error.h"
 #include "eina_array.h"
 #include "eina_inline_array.x"
-#include "eina_private.h"
-#include "eina_safety_checks.h"
 
 /*============================================================================*
  *                                  Local                                     *

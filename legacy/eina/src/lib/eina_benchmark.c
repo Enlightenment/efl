@@ -53,6 +53,7 @@ void *alloca (size_t);
 # include <Evil.h>
 #endif
 
+#include "eina_config.h"
 #include "eina_benchmark.h"
 #include "eina_inlist.h"
 #include "eina_counter.h"

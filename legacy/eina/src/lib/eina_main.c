@@ -22,6 +22,7 @@
 # include "config.h"
 #endif
 
+#include "eina_config.h"
 #include "eina_types.h"
 #include "eina_main.h"
 #include "eina_error.h"

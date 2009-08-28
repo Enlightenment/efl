@@ -289,10 +289,11 @@
 # include <Evil.h>
 #endif
 
-#include "eina_log.h"
-#include "eina_inlist.h"
+#include "eina_config.h"
 #include "eina_private.h"
 #include "eina_safety_checks.h"
+#include "eina_log.h"
+#include "eina_inlist.h"
 
 /* TODO
  * + printing logs to stdout or stderr can be implemented

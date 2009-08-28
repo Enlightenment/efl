@@ -24,10 +24,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "eina_rbtree.h"
-#include "eina_array.h"
+#include "eina_config.h"
 #include "eina_private.h"
 #include "eina_safety_checks.h"
+#include "eina_rbtree.h"
+#include "eina_array.h"
 
 /*============================================================================*
  *                                  Local                                     *

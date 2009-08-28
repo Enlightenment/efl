@@ -28,10 +28,10 @@
 #endif
 
 #include "eina_config.h"
-#include "eina_magic.h"
 #include "eina_private.h"
 #include "eina_error.h"
 #include "eina_inlist.h"
+#include "eina_magic.h"
 
 /*============================================================================*
  *                                  Local                                     *
