@@ -209,6 +209,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\lib\eet_node.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\lib\eet_utils.c"
 				>
 			</File>
