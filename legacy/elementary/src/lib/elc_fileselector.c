@@ -10,8 +10,8 @@
  *  write docs
  */
 
-#include <Elementary.h>
 #include <Ecore_Str.h>
+#include <Elementary.h>
 #include "elm_priv.h"
 
 typedef struct _Widget_Data Widget_Data;
