@@ -781,7 +781,6 @@ data_write_scripts(Eet_File *ef)
 
 	char tmpn[4096];
 	snprintf(tmpn, PATH_MAX, "%s/edje_cc.sma-tmp-XXXXXX", tmp_dir);
-        printf("%s\n", tmpn);
 	fd = mkstemp(tmpn);
 	if (fd < 0)
 	  error_and_abort(ef, "Unable to open temp file \"%s\" for script "
@@ -792,7 +791,6 @@ data_write_scripts(Eet_File *ef)
 
 	char tmpo[4096];
 	snprintf(tmpo, PATH_MAX, "%s/edje_cc.amx-tmp-XXXXXX", tmp_dir);
-        printf("%s\n", tmpn);
 	fd = mkstemp(tmpo);
 	if (fd < 0)
 	  {
