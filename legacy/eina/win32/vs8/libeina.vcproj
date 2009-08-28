@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="eina"
+	Name="libeina"
 	ProjectGUID="{689B4F2B-666D-439F-9BF3-1203D813DE3F}"
 	RootNamespace="eina"
 	Keyword="Win32Proj"
