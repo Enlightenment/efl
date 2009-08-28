@@ -221,6 +221,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\lib\eina_hamster.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\lib\eina_hash.c"
 				>
 			</File>
@@ -238,6 +242,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\lib\eina_list.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\eina_log.c"
 				>
 			</File>
 			<File
