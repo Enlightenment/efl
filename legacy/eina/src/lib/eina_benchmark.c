@@ -49,6 +49,10 @@ void *alloca (size_t);
 #include <stdio.h>
 #include <string.h>
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "eina_benchmark.h"
 #include "eina_inlist.h"
 #include "eina_counter.h"
