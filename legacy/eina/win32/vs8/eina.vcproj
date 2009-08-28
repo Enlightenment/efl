@@ -331,6 +331,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\include\eina_hamster.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\include\eina_hash.h"
 				>
 			</File>
@@ -348,6 +352,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\include\eina_list.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\include\eina_log.h"
 				>
 			</File>
 			<File
@@ -379,11 +387,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\include\eina_safety_checks.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\include\eina_stringshare.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\include\eina_tiler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\include\eina_trash.h"
 				>
 			</File>
 			<File
