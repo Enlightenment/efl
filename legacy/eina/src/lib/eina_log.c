@@ -375,8 +375,11 @@ eina_log_domain_str_get(const char *name, const char *color)
 
    if (color)
      {
-	int name_len = strlen(name);
-	int color_len = strlen(color);
+	size_t name_len;
+	size_t color_len;
+
+	name_len = strlen(name);
+	color_len = strlen(color);
 	d = malloc(sizeof(char) * (color_len + name_len + strlen(EINA_COLOR_RESET) + 1));
 	if (!d) return NULL;
 	memcpy((char *)d, color, color_len);
@@ -452,7 +455,8 @@ eina_log_domain_parse_pendings(void)
 	Eina_Log_Domain_Level_Pending *p;
 	char *end = NULL;
 	char *tmp = NULL;
-	int level;
+	long int level;
+
 	end = strchr(start, ':');
 	if (!end) break;
 
@@ -593,10 +597,10 @@ EAPI int EINA_LOG_DOMAIN_GLOBAL = 0;
 EAPI int
 eina_log_init(void)
 {
-   if (_eina_log_init_count) return ++_eina_log_init_count;
-
    char *level;
    char *tmp;
+
+   if (_eina_log_init_count) return ++_eina_log_init_count;
 
    // Check if color is disabled
    if ((tmp = getenv(EINA_LOG_ENV_COLOR_DISABLE)) && (atoi(tmp) == 1))
@@ -640,9 +644,9 @@ eina_log_init(void)
 EAPI int
 eina_log_shutdown(void)
 {
-   if (_eina_log_init_count != 1) return --_eina_log_init_count;
-
    Eina_Inlist *tmp;
+
+   if (_eina_log_init_count != 1) return --_eina_log_init_count;
 
    while (_log_domains_count--)
      {
@@ -695,10 +699,10 @@ EAPI void eina_log_level_set(Eina_Log_Level level)
 EAPI int
 eina_log_domain_register(const char *name, const char *color)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(name, -1);
-
    Eina_Log_Domain_Level_Pending *pending = NULL;
    int i;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(name, -1);
 
    for (i = 0; i < _log_domains_count; i++)
      {
@@ -754,9 +758,11 @@ finish_register:
 EAPI void
 eina_log_domain_unregister(int domain)
 {
+   Eina_Log_Domain *d;
+
    if (domain >= _log_domains_count) return;
 
-   Eina_Log_Domain *d = &_log_domains[domain];
+   d = &_log_domains[domain];
    eina_log_domain_free(d);
    d->deleted = 1;
 }
@@ -785,11 +791,13 @@ eina_log_print_cb_file(const Eina_Log_Domain *d, __UNUSED__ Eina_Log_Level level
 		const char *file, const char *fnc, int line, const char *fmt,
 		void *data, va_list args)
 {
+   FILE *f;
+
    EINA_SAFETY_ON_NULL_RETURN(file);
    EINA_SAFETY_ON_NULL_RETURN(fnc);
    EINA_SAFETY_ON_NULL_RETURN(fmt);
 
-   FILE *f = data;
+   f = data;
    fprintf(f, "%s %s:%d %s() ", d->name, file, line, fnc);
    vfprintf(f, fmt, args);
 }
@@ -798,6 +806,9 @@ EAPI void
 eina_log_print(int domain, Eina_Log_Level level, const char *file,
 		const char *fnc, int line, const char *fmt, ...)
 {
+   Eina_Log_Domain *d;
+   va_list args;
+
    EINA_SAFETY_ON_NULL_RETURN(file);
    EINA_SAFETY_ON_NULL_RETURN(fnc);
    EINA_SAFETY_ON_NULL_RETURN(fmt);
@@ -805,11 +816,9 @@ eina_log_print(int domain, Eina_Log_Level level, const char *file,
    if (domain >= _log_domains_count) return;
    if (domain < 0) return;
 
-   Eina_Log_Domain *d = &_log_domains[domain];
+   d = &_log_domains[domain];
 
    if (level > d->level) return;
-
-   va_list args;
 
    va_start(args, fmt);
    _print_cb(d, level, file, fnc, line, fmt, _print_cb_data, args);
