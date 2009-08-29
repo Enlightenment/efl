@@ -160,7 +160,8 @@ ecore_file_monitor_poll_del(Ecore_File_Monitor *em)
 	  }
      }
 
-   _monitors = ECORE_FILE_MONITOR(eina_inlist_remove(EINA_INLIST_GET(_monitors), EINA_INLIST_GET(em)));
+   if (_monitors)
+     _monitors = ECORE_FILE_MONITOR(eina_inlist_remove(EINA_INLIST_GET(_monitors), EINA_INLIST_GET(em)));
 
    free(em->path);
    free(em);
