@@ -151,7 +151,7 @@ EAPI int eina_cpu_count(void)
    int    cpus;
 
    mib[0] = CTL_HW;
-   mib[1] = HM_NCPU;
+   mib[1] = HW_NCPU;
    sysctl(mib, 2, &cpus, &len, NULL, 0);
    if (cpus < 1)
      {
