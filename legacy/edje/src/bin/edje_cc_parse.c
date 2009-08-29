@@ -655,7 +655,6 @@ compile(void)
    if (!p) strcpy(inc, "./");
    else *p = 0;
    snprintf (tmpn, PATH_MAX, "%s/edje_cc.edc-tmp-XXXXXX", tmp_dir);
-        printf("%s\n", tmpn);
    fd = mkstemp(tmpn);
    if (fd >= 0)
      {
