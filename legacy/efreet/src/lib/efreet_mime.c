@@ -4,6 +4,23 @@
 # include <config.h>
 #endif
 
+#ifdef HAVE_ALLOCA_H
+# include <alloca.h>
+#elif defined __GNUC__
+# define alloca __builtin_alloca
+#elif defined _AIX
+# define alloca __alloca
+#elif defined _MSC_VER
+# include <malloc.h>
+# define alloca _alloca
+#else
+# include <stddef.h>
+# ifdef  __cplusplus
+extern "C"
+# endif
+void *alloca (size_t);
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -22,23 +39,6 @@
 
 #ifdef HAVE_ARPA_INET_H
 # include <arpa/inet.h>
-#endif
-
-#ifdef HAVE_ALLOCA_H
-# include <alloca.h>
-#elif defined __GNUC__
-# define alloca __builtin_alloca
-#elif defined _AIX
-# define alloca __alloca
-#elif defined _MSC_VER
-# include <malloc.h>
-# define alloca _alloca
-#else
-# include <stddef.h>
-# ifdef  __cplusplus
-extern "C"
-# endif
-void *alloca (size_t);
 #endif
 
 #include <Ecore.h>
@@ -490,10 +490,10 @@ efreet_mime_monitor_add(const char *file)
         return;
 
     if ((fm = ecore_file_monitor_add(file, efreet_mime_cb_update_file, NULL)))
-      {
-	 eina_hash_del(monitors, file, NULL);
-	 eina_hash_add(monitors, file, fm);
-      }
+    {
+        eina_hash_del(monitors, file, NULL);
+        eina_hash_add(monitors, file, fm);
+    }
 }
 
 /**
@@ -528,8 +528,8 @@ efreet_mime_load_globs(Eina_List *datadirs, const char *datahome)
     efreet_mime_mime_types_load("/etc/mime.types");
 
     datadir = datahome;
-        snprintf(buf, sizeof(buf), "%s/mime/globs", datadir);
-        efreet_mime_shared_mimeinfo_globs_load(buf);
+    snprintf(buf, sizeof(buf), "%s/mime/globs", datadir);
+    efreet_mime_shared_mimeinfo_globs_load(buf);
 
     EINA_LIST_FOREACH(datadirs, l, datadir)
     {
@@ -559,8 +559,8 @@ efreet_mime_load_magics(Eina_List *datadirs, const char *datahome)
     }
 
     datadir = datahome;
-        snprintf(buf, sizeof(buf), "%s/mime/magic", datadir);
-        efreet_mime_shared_mimeinfo_magic_load(buf);
+    snprintf(buf, sizeof(buf), "%s/mime/magic", datadir);
+    efreet_mime_shared_mimeinfo_magic_load(buf);
 
     EINA_LIST_FOREACH(datadirs, l, datadir)
     {
@@ -628,8 +628,8 @@ efreet_mime_init_files(void)
      * We watch the directories so we can watch for new files
      */
     datadir = datahome;
-        snprintf(buf, PATH_MAX, "%s/mime", datadir);
-        efreet_mime_monitor_add(buf);
+    snprintf(buf, PATH_MAX, "%s/mime", datadir);
+    efreet_mime_monitor_add(buf);
 
     EINA_LIST_FOREACH(datadirs, l, datadir)
     {
@@ -780,13 +780,13 @@ efreet_mime_glob_remove(const char *glob)
     Efreet_Mime_Glob *mime = NULL;
 
     if ((mime = eina_list_search_unsorted(globs, EINA_COMPARE_CB(strcmp), glob)))
-        {
+    {
         globs = eina_list_remove(globs, mime);
-            IF_RELEASE(mime->glob);
-            IF_RELEASE(mime->mime);
-            FREE(mime);
-            return 1;
-        }
+        IF_RELEASE(mime->glob);
+        IF_RELEASE(mime->mime);
+        FREE(mime);
+        return 1;
+    }
 
     return 0;
 }
