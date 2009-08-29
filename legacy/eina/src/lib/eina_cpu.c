@@ -151,15 +151,15 @@ EAPI int eina_cpu_count(void)
    int    cpus;
 
    mib[0] = CTL_HW;
+#ifdef HW_AVAILCPU
+   mib[1] = HW_AVAILCPU;
+#else
    mib[1] = HW_NCPU;
+#end
    sysctl(mib, 2, &cpus, &len, NULL, 0);
    if (cpus < 1)
-     {
-	mib[1] = HW_NCPU;
-	sysctl(mib, 2, &cpus, &len, NULL, 0);
-	if (cpus < 1)
-	  cpus = 1;
-     }
+     cpus = 1;
+
    return cpus;
 
 # elif defined (__linux__)
