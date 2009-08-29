@@ -155,7 +155,7 @@ EAPI int eina_cpu_count(void)
    mib[1] = HW_AVAILCPU;
 #else
    mib[1] = HW_NCPU;
-#end
+#endif
    sysctl(mib, 2, &cpus, &len, NULL, 0);
    if (cpus < 1)
      cpus = 1;
