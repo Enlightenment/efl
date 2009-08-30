@@ -144,16 +144,8 @@ _theme_hook(Evas_Object *obj)
 	elm_coords_finger_size_adjust(1, &mw, 1, &mh);
 	edje_object_size_min_restricted_calc(it->base, &mw, &mh, mw, mh);
 	elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-//        if (!it->separator) 
-//          {
-             evas_object_size_hint_min_set(it->base, mw, mh);
-             evas_object_size_hint_max_set(it->base, 9999, mh);
-//          }
-//        else 
-//          {
-//             evas_object_size_hint_min_set(it->base, 10, mh);
-//             evas_object_size_hint_max_set(it->base, 10, mh);
-//          }
+        evas_object_size_hint_min_set(it->base, mw, mh);
+        evas_object_size_hint_max_set(it->base, 9999, mh);
      }
    _sizing_eval(obj);
 }
