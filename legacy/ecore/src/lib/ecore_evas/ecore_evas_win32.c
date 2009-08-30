@@ -23,7 +23,7 @@
 
 #ifdef BUILD_ECORE_EVAS_WIN32
 
-#define ECORE_EVAS_EVENT_COUNT 6
+#define ECORE_EVAS_EVENT_COUNT 8
 
 static int _ecore_evas_init_count = 0;
 static int _ecore_evas_fps_debug  = 0;
