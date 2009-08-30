@@ -21,6 +21,7 @@ struct _Elm_Toolbar_Item
    const void *data;
    Eina_Bool selected : 1;
    Eina_Bool disabled : 1;
+   Eina_Bool separator : 1;
 };
 
 static void _item_show(Elm_Toolbar_Item *it);
@@ -51,7 +52,7 @@ _item_select(Elm_Toolbar_Item *it)
    const Eina_List *l;
 
    if (!wd) return;
-   if ((it->selected) || (it->disabled)) return;
+   if ((it->selected) || (it->disabled) || (it->separator)) return;
    EINA_LIST_FOREACH(wd->items, l, it2)
      {
 	if (it2->selected)
@@ -106,37 +107,53 @@ _theme_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    const Eina_List *l;
    Elm_Toolbar_Item *it;
-   Evas_Coord mw, mh;
    const char *style = elm_widget_style_get(obj);
+   int scale = 0;
 
    if (!wd) return;
-   edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * 
-                         _elm_config->scale);
+   scale = (elm_widget_scale_get(obj) * _elm_config->scale);
+   edje_object_scale_set(wd->scr, scale);
    EINA_LIST_FOREACH(wd->items, l, it)
      {
-	edje_object_scale_set(it->base, elm_widget_scale_get(obj) * 
-                              _elm_config->scale);
-	if (it->selected) 
-	  edje_object_signal_emit(it->base, "elm,state,selected", "elm");
-        if (it->disabled)
-          edje_object_signal_emit(it->base, "elm,state,disabled", "elm");
-	_elm_theme_set(it->base, "toolbar", "item", style);
-	if (it->icon)
-	  {
-             int ms = 0;
+        Evas_Coord mw, mh;
 
-             ms = ((double)wd->icon_size * _elm_config->scale);
-	     edje_extern_object_min_size_set(it->icon,
-					     ms, ms);
-	     edje_object_part_swallow(it->base, "elm.swallow.icon", it->icon);
-	  }
-	edje_object_part_text_set(it->base, "elm.text", it->label);
+	edje_object_scale_set(it->base, scale);
+        if (!it->separator) 
+          {
+             if (it->selected) 
+               edje_object_signal_emit(it->base, "elm,state,selected", "elm");
+             if (it->disabled)
+               edje_object_signal_emit(it->base, "elm,state,disabled", "elm");
+             _elm_theme_set(it->base, "toolbar", "item", style);
+             if (it->icon)
+               {
+                  int ms = 0;
+
+                  ms = ((double)wd->icon_size * _elm_config->scale);
+                  edje_extern_object_min_size_set(it->icon, ms, ms);
+                  edje_object_part_swallow(it->base, "elm.swallow.icon", 
+                                           it->icon);
+               }
+             edje_object_part_text_set(it->base, "elm.text", it->label);
+          }
+        else 
+          {
+             _elm_theme_set(it->base, "toolbar", "separator", style);
+          }
 	mw = mh = -1;
 	elm_coords_finger_size_adjust(1, &mw, 1, &mh);
 	edje_object_size_min_restricted_calc(it->base, &mw, &mh, mw, mh);
 	elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-	evas_object_size_hint_min_set(it->base, mw, mh);
-	evas_object_size_hint_max_set(it->base, 9999, mh);
+//        if (!it->separator) 
+//          {
+             evas_object_size_hint_min_set(it->base, mw, mh);
+             evas_object_size_hint_max_set(it->base, 9999, mh);
+//          }
+//        else 
+//          {
+//             evas_object_size_hint_min_set(it->base, 10, mh);
+//             evas_object_size_hint_max_set(it->base, 10, mh);
+//          }
      }
    _sizing_eval(obj);
 }
@@ -279,6 +296,7 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, voi
    it->icon = icon;
    it->func = func;
    it->data = data;
+   it->separator = EINA_FALSE;
    it->base = edje_object_add(evas_object_evas_get(obj));
    _elm_theme_set(it->base, "toolbar", "item", elm_widget_style_get(obj));
    edje_object_signal_callback_add(it->base, "elm,action,click", "elm",
@@ -366,6 +384,22 @@ elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled)
 {
    if (!item) return;
    _item_disable(item, disabled);
+}
+
+EAPI void 
+elm_toolbar_item_separator_set(Elm_Toolbar_Item *item, Eina_Bool separator) 
+{
+   if (!item) return;
+   if (item->separator == separator) return;
+   item->separator = separator;
+   _theme_hook(item->obj);
+}
+
+EAPI Eina_Bool 
+elm_toolbar_item_separator_get(Elm_Toolbar_Item *item) 
+{
+   if (!item) return EINA_FALSE;
+   return item->separator;
 }
 
 EAPI void

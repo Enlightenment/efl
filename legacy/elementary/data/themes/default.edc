@@ -5488,6 +5488,28 @@ collections {
       }
    }
 
+   group { name: "elm/toolbar/separator/default";
+      images {
+         image: "toolbar_separator_v.png" COMP;
+      }
+      parts {
+         part { name: "separator"; // separator group
+            description { state: "default" 0.0;
+               min: 2 2;
+               max: 2 9999;
+	       rel1.offset: 4 4;
+	       rel2.offset: -5 -5;
+	       image {
+	          normal: "toolbar_separator_v.png";
+	       }
+	       fill {
+	          smooth: 0;
+	       }
+	    }
+	 }
+      }
+   }
+
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/win/inwin/default";
       images {
