@@ -173,7 +173,6 @@ typedef void (*Eina_Log_Print_Cb)(const Eina_Log_Domain *d, Eina_Log_Level level
  * @var EINA_LOG_OUT_OF_MEMORY
  * Log identifier corresponding to a lack of memory.
  */
-EAPI extern int EINA_ERROR_OUT_OF_MEMORY;
 
 EAPI int eina_log_init(void);
 EAPI int eina_log_shutdown(void);
