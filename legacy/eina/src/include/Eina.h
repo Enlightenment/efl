@@ -156,6 +156,8 @@ extern "C" {
 #include "eina_types.h"
 #include "eina_main.h"
 #include "eina_f16p16.h"
+#include "eina_f8p24.h"
+#include "eina_f32p32.h"
 #include "eina_rectangle.h"
 #include "eina_inlist.h"
 #include "eina_file.h"
