@@ -1073,7 +1073,7 @@ AC_ARG_ENABLE([gettext],
 )
 
 have_gettext="no"
-if test "x${want_gettext}" = "xno"; then
+if test "x${want_gettext}" != "xno"; then
    AC_CHECK_HEADER([libintl.h], [have_gettext="yes"], [have_gettext="no"])
 fi
 
