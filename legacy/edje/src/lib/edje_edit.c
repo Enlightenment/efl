@@ -5472,7 +5472,7 @@ struct _SrcFile_List
 static Eet_Data_Descriptor *_srcfile_edd = NULL;
 static Eet_Data_Descriptor *_srcfile_list_edd = NULL;
 
-void
+static void
 source_edd(void)
 {
    Eet_Data_Descriptor_Class eddc;
