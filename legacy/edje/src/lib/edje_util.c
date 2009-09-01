@@ -2618,8 +2618,7 @@ edje_object_part_box_insert_at(Evas_Object *obj, const char *part, Evas_Object *
  * @param part The part name
  * @param child The object to remove
  *
- * @return 1: Successfully removed.\n
- * 0: An error occured.
+ * @return Pointer to the object removed, or NULL.
  *
  * Removes child from the box indicated by part.\n
  */
@@ -2644,8 +2643,7 @@ edje_object_part_box_remove(Evas_Object *obj, const char *part, Evas_Object *chi
  * @param part The part name
  * @param pos
  *
- * @return 1: Successfully removed.\n
- * 0: An error occured.
+ * @return Pointer to the object removed, or NULL.
  *
  * Removes from the box indicated by part, the object in the position pos.\n
  */
