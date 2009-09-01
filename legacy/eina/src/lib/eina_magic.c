@@ -41,8 +41,6 @@
  * @cond LOCAL
  */
 
-#ifdef EINA_MAGIC_DEBUG
-
 typedef struct _Eina_Magic_String Eina_Magic_String;
 struct _Eina_Magic_String
 {
@@ -54,8 +52,6 @@ struct _Eina_Magic_String
 
 static int _eina_magic_string_count = 0;
 static Eina_Inlist *strings = NULL;
-
-#endif
 
 /**
  * @endcond
@@ -94,13 +90,9 @@ static Eina_Inlist *strings = NULL;
 EAPI int
 eina_magic_string_init(void)
 {
-#ifdef EINA_MAGIC_DEBUG
    ++_eina_magic_string_count;
 
    return _eina_magic_string_count;
-#else
-   return 1;
-#endif
 }
 
 /**
@@ -121,7 +113,6 @@ eina_magic_string_init(void)
 EAPI int
 eina_magic_string_shutdown(void)
 {
-#ifdef EINA_MAGIC_DEBUG
    --_eina_magic_string_count;
 
    if (_eina_magic_string_count == 0)
@@ -140,12 +131,7 @@ eina_magic_string_shutdown(void)
      }
 
    return _eina_magic_string_count;
-#else
-   return 0;
-#endif
 }
-
-#ifdef EINA_MAGIC_DEBUG
 
 /**
  * @brief Return the string associated to the given magic identifier.
@@ -207,6 +193,10 @@ eina_magic_string_set(Eina_Magic magic, const char *magic_name)
 
    strings = eina_inlist_prepend(strings, EINA_INLIST_GET(ems));
 }
+
+#ifdef eina_magic_fail
+# undef eina_magic_fail
+#endif
 
 /**
  * @brief Display a message or abort is a magic check failed.
@@ -274,8 +264,6 @@ eina_magic_fail(void *d, Eina_Magic m, Eina_Magic req_m, const char *file, const
 			  "\n");
    if (getenv("EINA_ERROR_ABORT")) abort();
 }
-
-#endif
 
 /**
  * @}

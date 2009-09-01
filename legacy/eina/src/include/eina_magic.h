@@ -35,12 +35,17 @@
  * @{
  */
 
+typedef unsigned int               Eina_Magic;
 
 EAPI int eina_magic_string_init(void);
 EAPI int eina_magic_string_shutdown(void);
 
-
-#ifdef EINA_MAGIC_DEBUG
+/**
+ * @typedef Eina_Magic
+ * An abstract type for a magic number.
+ */
+EAPI const char* eina_magic_string_get(Eina_Magic magic) EINA_PURE EINA_WARN_UNUSED_RESULT;
+EAPI void eina_magic_string_set(Eina_Magic magic, const char *magic_name) EINA_ARG_NONNULL(2);
 
 /**
  * @def EINA_MAGIC_NONE
@@ -51,6 +56,8 @@ EAPI int eina_magic_string_shutdown(void);
  * @c 0.
  */
 #define EINA_MAGIC_NONE            0x1234fedc
+
+#ifdef EINA_MAGIC_DEBUG
 
 /**
  * @def EINA_MAGIC
@@ -106,14 +113,6 @@ EAPI int eina_magic_string_shutdown(void);
  */
 #define EINA_MAGIC_FAIL(d, m)      eina_magic_fail((void*)(d), (d) ? (d)->__magic : 0, (m), __FILE__, __FUNCTION__, __LINE__);
 
-/**
- * @typedef Eina_Magic
- * An abstract type for a magic number.
- */
-typedef unsigned int               Eina_Magic;
-
-EAPI const char* eina_magic_string_get(Eina_Magic magic) EINA_PURE EINA_WARN_UNUSED_RESULT;
-EAPI void eina_magic_string_set(Eina_Magic magic, const char *magic_name) EINA_ARG_NONNULL(2);
 EAPI void eina_magic_fail(void *d, Eina_Magic m, Eina_Magic req_m,
 			  const char *file, const char *fnc, int line) EINA_ARG_NONNULL(4, 5);
 
@@ -123,14 +122,11 @@ EAPI void eina_magic_fail(void *d, Eina_Magic m, Eina_Magic req_m,
  * @cond LOCAL
  */
 
-#define EINA_MAGIC_NONE            ((void) 0)
 #define EINA_MAGIC
 #define EINA_MAGIC_SET(d, m)       ((void) 0)
 #define EINA_MAGIC_CHECK(d, m)	   (1)
 #define EINA_MAGIC_FAIL(d, m)      ((void) 0)
 
-#define eina_magic_string_get(Magic)                  (NULL)
-#define eina_magic_string_set(Magic, Magic_Name)      ((void) 0)
 #define eina_magic_fail(d, m, req_m, file, fnx, line) ((void) 0)
 
 /**

@@ -65,6 +65,7 @@ START_TEST(eina_magic_simple)
    fail_if(eina_magic_string_get(EINA_MAGIC_TEST) == NULL);
    fail_if(strcmp(eina_magic_string_get(EINA_MAGIC_TEST), EINA_MAGIC_STRING) != 0);
 
+#ifdef EINA_MAGIC_DEBUG
    fail_if(EINA_MAGIC_CHECK(ems, EINA_MAGIC_TEST));
    EINA_MAGIC_FAIL(ems, EINA_MAGIC_TEST);
 
@@ -79,6 +80,7 @@ START_TEST(eina_magic_simple)
 
    EINA_MAGIC_SET(ems, 42424242);
    EINA_MAGIC_FAIL(ems, EINA_MAGIC_TEST);
+#endif
 
    eina_magic_string_shutdown();
 }
