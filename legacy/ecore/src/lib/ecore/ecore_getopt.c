@@ -394,7 +394,7 @@ _ecore_getopt_help_desc_store(FILE *fp, const int base, const int total, int use
      }
 
    used = _ecore_getopt_help_line
-     (fp, base, total, used, "Type: ", sizeof("Type: ") - 1);
+     (fp, base, total, used, _("Type: "), strlen(_("Type: ")));
    used = _ecore_getopt_help_line(fp, base, total, used, str, len);
 
    if (store->arg_req == ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES)
@@ -410,8 +410,8 @@ _ecore_getopt_help_desc_store(FILE *fp, const int base, const int total, int use
 	 len = str ? strlen(str) : 0;
 	 break;
       case ECORE_GETOPT_TYPE_BOOL:
-	 str = store->def.boolv ? "TRUE" : "FALSE";
-	 len = store->def.boolv ? sizeof("TRUE") - 1 : sizeof("FALSE") - 1;
+	 str = store->def.boolv ? _("true") : _("false");
+	 len = strlen(str);
 	 break;
       case ECORE_GETOPT_TYPE_SHORT:
 	 str = buf;
@@ -461,7 +461,7 @@ _ecore_getopt_help_desc_store(FILE *fp, const int base, const int total, int use
      }
 
    used = _ecore_getopt_help_line
-     (fp, base, total, used, "Default: ", sizeof("Default: ") - 1);
+     (fp, base, total, used, _("Default: "), strlen(_("Default: ")));
    used = _ecore_getopt_help_line(fp, base, total, used, str, len);
 
  end:
@@ -484,7 +484,7 @@ _ecore_getopt_help_desc_choices(FILE *fp, const int base, const int total, int u
      fputc(' ', fp);
 
    used = _ecore_getopt_help_line
-     (fp, base, total, used, "Choices: ", sizeof("Choices: ") - 1);
+     (fp, base, total, used, _("Choices: "), strlen(_("Choices: ")));
 
    for (itr = desc->action_param.choices; *itr != NULL; itr++)
      {
@@ -790,12 +790,15 @@ _ecore_getopt_parse_bool(const char *str, unsigned char *v)
        (strcasecmp(str, "f") == 0) ||
        (strcasecmp(str, "false") == 0) ||
        (strcasecmp(str, "no") == 0) ||
-       (strcasecmp(str, "off") == 0) ||
-
+       (strcasecmp(str, "off") == 0)
+#ifdef HAVE_GETTEXT
+       ||
        (strcasecmp(str, _("f")) == 0) ||
        (strcasecmp(str, _("false")) == 0) ||
        (strcasecmp(str, _("no")) == 0) ||
-       (strcasecmp(str, _("off")) == 0))
+       (strcasecmp(str, _("off")) == 0)
+#endif
+       )
      {
 	*v = 0;
 	return 1;
@@ -804,12 +807,15 @@ _ecore_getopt_parse_bool(const char *str, unsigned char *v)
 	    (strcasecmp(str, "t") == 0) ||
 	    (strcasecmp(str, "true") == 0) ||
 	    (strcasecmp(str, "yes") == 0) ||
-	    (strcasecmp(str, "on") == 0) ||
-
+	    (strcasecmp(str, "on") == 0)
+#ifdef HAVE_GETTEXT
+	    ||
 	    (strcasecmp(str, _("t")) == 0) ||
 	    (strcasecmp(str, _("true")) == 0) ||
 	    (strcasecmp(str, _("yes")) == 0) ||
-	    (strcasecmp(str, _("on")) == 0))
+	    (strcasecmp(str, _("on")) == 0)
+#endif
+	    )
      {
 	*v = 1;
 	return 1;
