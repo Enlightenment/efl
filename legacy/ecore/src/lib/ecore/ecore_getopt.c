@@ -13,7 +13,7 @@
 
 #ifdef HAVE_GETTEXT
 #include <libintl.h>
-#else HAVE_GETTEXT
+#else
 #define gettext(x) (x)
 #define dgettext(domain, x) (x)
 #endif
@@ -232,7 +232,7 @@ _ecore_getopt_copyright(FILE *fp, const Ecore_Getopt *parser)
 {
    const char *txt = gettext(parser->copyright);
    fputs(_("Copyright:"), fp);
-   fputs(_("\n   ", fp);
+   fputs(_("\n   "), fp);
    _ecore_getopt_help_line
      (fp, 3, cols, 3, txt, strlen(txt));
    fputc('\n', fp);

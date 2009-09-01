@@ -4,6 +4,13 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = doc src
 
+if ECORE_HAVE_GETTEXT
+SUBDIRS += po
+endif
+
+DIST_SUBDIRS = doc src po
+
+
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
                        config.h.in config.sub configure install-sh \
 		       ltconfig ltmain.sh missing mkinstalldirs \
@@ -39,7 +46,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 
 bin_SCRIPTS = 
 
-EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN \
+EXTRA_DIST = config.rpath  AUTHORS COPYING COPYING-PLAIN \
 	     autogen.sh ecore.supp \
 	     ecore.pc.in \
 	     ecore-con.pc.in \
