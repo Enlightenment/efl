@@ -11,11 +11,11 @@
 #include <stdarg.h>
 #include <ctype.h>
 
-#ifdef HAVE_GETTEXT
-#include <libintl.h>
+#ifdef ENABLE_NLS
+# include <libintl.h>
 #else
-#define gettext(x) (x)
-#define dgettext(domain, x) (x)
+# define gettext(x) (x)
+# define dgettext(domain, x) (x)
 #endif
 
 #define _(x) dgettext("ecore", x)

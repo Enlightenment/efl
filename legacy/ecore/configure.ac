@@ -24,6 +24,9 @@ SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
+AM_GNU_GETTEXT_VERSION([0.12.1])
+AM_GNU_GETTEXT([external])
+
 release="ver-pre-svn-04"
 case "$host_os" in
    mingw32ce* | cegcc*)
@@ -82,7 +85,6 @@ want_signature="no"
 want_poll="yes"
 want_inotify="no"
 want_tslib="no"
-want_gettext="auto"
 
 # core modules
 want_ecore_job="yes"
@@ -1059,39 +1061,6 @@ AC_SUBST(requirements_ecore_txt)
 AC_SUBST(requirements_ecore_x)
 AC_SUBST(requirements_ecore_win32)
 AC_SUBST(requirements_ecore_wince)
-
-
-AC_ARG_ENABLE([gettext],
-   [AC_HELP_STRING([--disable-gettext], [disable gettext support and usage.])],
-   [if test "x${enableval}" = "xyes"; then
-       want_gettext="yes"
-    else
-       want_gettext="no"
-    fi
-   ],
-   [want_gettext="auto"]
-)
-
-have_gettext="no"
-if test "x${want_gettext}" != "xno"; then
-   AC_CHECK_HEADER([libintl.h], [have_gettext="yes"], [have_gettext="no"])
-fi
-
-if test "x${have_gettext}" = "xno"; then
-   if test "x${want_gettext}" = "xyes"; then
-      AC_MSG_ERROR([Want gettext support but libintl.h was not found!"])
-   else
-      AC_MSG_WARN([libintl.h was not found, gettext support disabled."])
-   fi
-else
-   AC_DEFINE_UNQUOTED(HAVE_GETTEXT, 1, [Gettext/libintl.h was found and enabled])
-   AM_GNU_GETTEXT([external])
-   AM_GNU_GETTEXT_VERSION([0.12.1])
-   if test "x$LIBINTL" = "x"; then
-      LIBINTL="$INTLLIBS"
-   fi
-fi
-AM_CONDITIONAL(ECORE_HAVE_GETTEXT, test "x${have_gettext}" = "xyes")
 
 AC_OUTPUT([
 Makefile
