@@ -307,6 +307,12 @@ extern "C" {
 	  ELM_SCROLLER_POLICY_OFF
      }
    Elm_Scroller_Policy;
+   typedef enum _Elm_Scroller_Axis
+     {
+	ELM_SCROLLER_AXIS_HORIZONTAL,
+	  ELM_SCROLLER_AXIS_VERTICAL
+     }
+   Elm_Scroller_Axis;
 
    EAPI Evas_Object *elm_scroller_add(Evas_Object *parent);
    EAPI void         elm_scroller_content_set(Evas_Object *obj, Evas_Object *child);
@@ -316,12 +322,19 @@ extern "C" {
    EAPI void         elm_scroller_region_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
    EAPI void         elm_scroller_child_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
    EAPI void         elm_scroller_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+   EAPI void         elm_scroller_index_set(Evas_Object *obj, Eina_Bool h_index, Eina_Bool v_index);
+   EAPI void         elm_scroller_index_clear(Evas_Object *obj, Eina_Bool h_index, Eina_Bool v_index);
+   EAPI void         elm_scroller_index_add(Evas_Object *obj, Elm_Scroller_Axis axis, const char *label, Evas_Object *icon, Evas_Coord position, Evas_Coord size);
    /* smart callbacks called:
     * "edge_left"
     * "edge_right"
     * "edge_top"
     * "edge_bottom"
     * "scroll"
+    * "scroll_anim_start"
+    * "scroll_anim_stop"
+    * "scroll_drag_start"
+    * "scroll_drag_stop"
     */
 
    EAPI Evas_Object *elm_label_add(Evas_Object *parent);
@@ -601,6 +614,7 @@ extern "C" {
     * "clicked" - when the user double-clicked an item
     * "selected" - when the user selected an item
     * "unselected" - when the user selected an item
+    * "longpressed" - an item in the hoversel list is long-pressed
     */
 
    // FIXME: incomplete - carousel
@@ -694,6 +708,7 @@ extern "C" {
     * "clicked" - when the user double-clicked an item
     * "selected" - when the user selected an item
     * "unselected" - when the user selected an item
+    * "longpressed" - an item in the hoversel list is long-pressed
     * "expanded" - when the user expanded an item
     * "contracted" - when the user contracted an item
     * "expand,request" - when the user requested to expand an item

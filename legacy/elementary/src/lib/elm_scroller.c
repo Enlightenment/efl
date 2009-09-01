@@ -1,6 +1,35 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Scroller Scroller
+ *
+ * A scroller holds a single object and "scrolls it around". This means that
+ * it allows the user to use a scrollbar (or a finger) to drag the viewable
+ * region around, allowing to move through a much larger object that is
+ * contained in the scroller. The scroiller will always have a small minimum
+ * size by default as it won't be limited by the contents of the scroller.
+ * 
+ * Signals that you can add callbacks for are:
+ * 
+ * edge_left - the left edge of the content has been reached
+ * 
+ * edge_right - the right edge of the content has been reached
+ * 
+ * edge_top - the top edge of the content has been reached
+ * 
+ * edge_bottom - the bottom edge of the content has been reached
+ * 
+ * scroll - the content has been scrolled (moved)
+ * 
+ * scroll_anim_start - scrolling animation has started
+ * 
+ * scroll_anim_stop - scrolling animation has stopped
+ * 
+ * scroll_drag_start - dragging the contents around has started
+ * 
+ * scroll_drag_stop - dragging the contents around has stopped
+ */
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -9,6 +38,8 @@ struct _Widget_Data
    Evas_Object *content;
    Eina_Bool min_w : 1;
    Eina_Bool min_h : 1;
+   double pagerel_h, pagerel_v;
+   Evas_Coord pagesize_h, pagesize_v;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -167,6 +198,38 @@ _scroll(void *data, Evas *e, Evas_Object *obj, void *event_info)
    evas_object_smart_callback_call(data, "scroll", NULL);
 }
 
+static void
+_scroll_anim_start(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "scroll_anim_start", NULL);
+}
+
+static void
+_scroll_anim_stop(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "scroll_anim_stop", NULL);
+}
+
+static void
+_scroll_drag_start(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "scroll_drag_start", NULL);
+}
+
+static void
+_scroll_drag_stop(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "scroll_drag_stop", NULL);
+}
+
+/**
+ * Add a new scroller to the parent
+ *
+ * @param parent The parent object
+ * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Scroller
+ */
 EAPI Evas_Object *
 elm_scroller_add(Evas_Object *parent)
 {
@@ -204,11 +267,26 @@ elm_scroller_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->scr, "edge,top", _edge_top, obj);
    evas_object_smart_callback_add(wd->scr, "edge,bottom", _edge_bottom, obj);
    evas_object_smart_callback_add(wd->scr, "scroll", _scroll, obj);
+   evas_object_smart_callback_add(wd->scr, "animate,start", _scroll_anim_start, obj);
+   evas_object_smart_callback_add(wd->scr, "animate,start", _scroll_anim_stop, obj);
+   evas_object_smart_callback_add(wd->scr, "drag,start", _scroll_drag_start, obj);
+   evas_object_smart_callback_add(wd->scr, "drag,start", _scroll_drag_stop, obj);
 
    _sizing_eval(obj);
    return obj;
 }
 
+
+/**
+ * Set the content object
+ *
+ * XXX
+ *
+ * @param obj The scroller object
+ * @param content The new content object
+ *
+ * @ingroup Scroller
+ */
 EAPI void
 elm_scroller_content_set(Evas_Object *obj, Evas_Object *content)
 {
@@ -228,6 +306,19 @@ elm_scroller_content_set(Evas_Object *obj, Evas_Object *content)
      }
 }
 
+/**
+ * Make the scroller minimum size limited to the minimum size of the content
+ *
+ * By default the scroller will be as small as its design allows, irrespective
+ * of its content. This will make the scroller minimum size the right size
+ * horizontally and/or vertically to perfectly fit its content.
+ *
+ * @param obj The scroller object
+ * @param w Enable limiting minimum size horizontally
+ * @param h Enable limiting minimum size vertically
+ *
+ * @ingroup Scroller
+ */
 EAPI void
 elm_scroller_content_min_limit(Evas_Object *obj, Eina_Bool w, Eina_Bool h)
 {
@@ -238,6 +329,21 @@ elm_scroller_content_min_limit(Evas_Object *obj, Eina_Bool w, Eina_Bool h)
    _sizing_eval(obj);
 }
 
+/**
+ * Show a specific virtual region within the scroller content object
+ *
+ * This will ensure all (or part if it does not fit) of the designated
+ * region in the virtual content object (0, 0 starting at the top-left of the
+ * virtual content object) is shown within the scroller.
+ *
+ * @param obj The scroller object
+ * @param x X coordinate of the region
+ * @param y Y coordinate of the region
+ * @param w Width of the region
+ * @param h Height of the region
+ *
+ * @ingroup Scroller
+ */
 EAPI void
 elm_scroller_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
@@ -246,6 +352,21 @@ elm_scroller_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coor
    elm_smart_scroller_child_region_show(wd->scr, x, y, w, h);
 }
 
+/**
+ * Set the scroller scrollbar policy
+ *
+ * This sets the scrollbar visibility policy for the given scroller. 
+ * ELM_SMART_SCROLLER_POLICY_AUTO means the scrollber is made visible if it
+ * is needed, and otherwise kept hidden. ELM_SMART_SCROLLER_POLICY_ON turns
+ * it on all the time, and ELM_SMART_SCROLLER_POLICY_OFF always keeps it off.
+ * This applies respectively for the horizontal and vertical scrollbars.
+ *
+ * @param obj The scroller object
+ * @param policy_h Horizontal scrollbar policy
+ * @param policy_v Vertical scrollbar policy
+ *
+ * @ingroup Scroller
+ */
 EAPI void
 elm_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v)
 {
@@ -262,6 +383,21 @@ elm_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scro
    elm_smart_scroller_policy_set(wd->scr, map[policy_h], map[policy_v]);
 }
 
+/**
+ * Get the currently visible content region
+ *
+ * This gets the current region in the content object that is visible through
+ * the scroller. Also see elm_scroller_region_show(). The region co-ordinates
+ * are returned in the @p x, @p y, @p w, @p h values pointed to.
+ *
+ * @param obj The scroller object
+ * @param x X coordinate of the region
+ * @param y Y coordinate of the region
+ * @param w Width of the region
+ * @param h Height of the region
+ *
+ * @ingroup Scroller
+ */
 EAPI void
 elm_scroller_region_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
@@ -271,6 +407,19 @@ elm_scroller_region_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coo
    if ((w) && (h)) elm_smart_scroller_child_viewport_size_get(wd->scr, w, h);
 }
 
+/**
+ * Get the size of the content child object
+ *
+ * This gets the size of the child object of the scroller. Actually the
+ * content of a scroller doesn't specifically need to be an actual object
+ * as it can be virtual and defined purely by callbacks.
+ *
+ * @param obj The scroller object
+ * @param w Width return
+ * @param h Height return
+ *
+ * @ingroup Scroller
+ */
 EAPI void
 elm_scroller_child_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
@@ -279,10 +428,119 @@ elm_scroller_child_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
    evas_object_geometry_get(wd->content, NULL, NULL, w, h);
 }
 
+/**
+ * Set bouncing behavior
+ *
+ * When scrolling, the scroller may "bounce" when reaching an edge of the child
+ * object. This is a visual way to indicate the end has been reached. This is
+ * enabled by default for both axes. This will set if it is enabled for that
+ * axis with the boolean parameers for each axis.
+ *
+ * @param obj The scroller object
+ * @param h_bounce Will the scroller bounce horizontally or not
+ * @param v_bounce Will the scroller bounce vertically or not
+ *
+ * @ingroup Scroller
+ */
 EAPI void
 elm_scroller_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
+}
+
+/**
+ * Enable quick-index jump on each axis
+ *
+ * This enabled a quick jump list along a specific axis. This is, for example
+ * "A, B, C, D ... X, Y, Z" along an axis that will jump to the item beginning
+ * with that letter as a quick way to jump to the position desired.
+ *
+ * @param obj The scroller object
+ * @param h_index Will the index be available horizontally
+ * @param v_index Will the index be available vertically
+ *
+ * @ingroup Scroller
+ */
+EAPI void
+elm_scroller_index_set(Evas_Object *obj, Eina_Bool h_index, Eina_Bool v_index)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   // XXX
+}
+
+/**
+ * XXX
+ *
+ * xx
+ * 
+ * @param obj The scroller object
+ *
+ * @ingroup Scroller
+ */
+EAPI void
+elm_scroller_index_clear(Evas_Object *obj, Eina_Bool h_index, Eina_Bool v_index)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   // XXX
+}
+
+/**
+ * XXX
+ *
+ * xx
+ * 
+ * @param obj The scroller object
+ *
+ * @ingroup Scroller
+ */
+EAPI void
+elm_scroller_index_add(Evas_Object *obj, Elm_Scroller_Axis axis, const char *label, Evas_Object *icon, Evas_Coord position, Evas_Coord size)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   // XXX
+}
+
+/**
+ * XXX
+ *
+ * xx
+ * 
+ * @param obj The scroller object
+ *
+ * @ingroup Scroller
+ */
+EAPI void
+elm_scroller_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->pagerel_h = h_pagerel;
+   wd->pagerel_v = v_pagerel;
+   elm_smart_scroller_paging_set(wd->scr, wd->pagerel_h, wd->pagerel_v,
+                                 wd->pagesize_h, wd->pagesize_v);
+}
+
+/**
+ * XXX
+ *
+ * xx
+ * 
+ * @param obj The scroller object
+ *
+ * @ingroup Scroller
+ */
+EAPI void
+elm_scroller_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->pagesize_h = h_pagesize;
+   wd->pagesize_v = v_pagesize;
+   elm_smart_scroller_paging_set(wd->scr, wd->pagerel_h, wd->pagerel_v,
+                                 wd->pagesize_h, wd->pagesize_v);
 }

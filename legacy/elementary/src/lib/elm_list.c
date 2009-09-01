@@ -13,6 +13,8 @@ struct _Widget_Data
    Eina_Bool on_hold : 1;
    Eina_Bool multi : 1;
    Eina_Bool always_select : 1;
+   Eina_Bool longpressed : 1;
+   Eina_Bool wasselected : 1;
 };
 
 struct _Elm_List_Item
@@ -25,6 +27,7 @@ struct _Elm_List_Item
    void (*func) (void *data, Evas_Object *obj, void *event_info);
    void (*del_cb) (void *data, Evas_Object *obj, void *event_info);
    const void *data;
+   Ecore_Timer *long_timer;
    Eina_Bool even : 1;
    Eina_Bool is_even : 1;
    Eina_Bool fixed : 1;
@@ -50,6 +53,7 @@ _del_hook(Evas_Object *obj)
    EINA_LIST_FREE(wd->items, it)
      {
 	if (it->del_cb) it->del_cb((void *)it->data, it->obj, it);
+        if (it->long_timer) ecore_timer_del(it->long_timer);
 	eina_stringshare_del(it->label);
 	if (!it->fixed)
 	  {
@@ -183,17 +187,33 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
      }
 }
 
+static int
+_long_press(void *data)
+{
+   Elm_List_Item *it = data;
+   Widget_Data *wd = elm_widget_data_get(it->obj);
+   it->long_timer = NULL;
+   wd->longpressed = EINA_TRUE;
+   evas_object_smart_callback_call(it->obj, "longpressed", it);
+   return 0;
+}
+
 static void
 _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 {
    Elm_List_Item *it = data;
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Event_Mouse_Down *ev = event_info;
+   if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) wd->on_hold = EINA_TRUE;
    else wd->on_hold = EINA_FALSE;
+   wd->wasselected = it->selected;
    _item_hilight(it);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      evas_object_smart_callback_call(it->obj, "clicked", it);
+   wd->longpressed = EINA_FALSE;
+   if (it->long_timer) ecore_timer_del(it->long_timer);
+   it->long_timer = ecore_timer_add(1.0, _long_press, it);
 }
 
 static void
@@ -202,12 +222,26 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    Elm_List_Item *it = data;
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Event_Mouse_Up *ev = event_info;
+   if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) wd->on_hold = EINA_TRUE;
    else wd->on_hold = EINA_FALSE;
+   if (it->long_timer)
+     {
+        ecore_timer_del(it->long_timer);
+        it->long_timer = NULL;
+     }
    if (wd->on_hold)
      {
 	wd->on_hold = EINA_FALSE;
 	return;
+     }
+   if (wd->longpressed)
+     {
+        wd->longpressed = EINA_FALSE;
+        if (!wd->wasselected)
+          _item_unselect(it);
+        wd->wasselected = 0;
+        return;
      }
    if (wd->multi)
      {

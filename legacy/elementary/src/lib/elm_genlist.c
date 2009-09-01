@@ -238,6 +238,8 @@ struct _Widget_Data
    Eina_Bool min_w : 1;
    Eina_Bool min_h : 1;
    Eina_Bool always_select : 1;
+   Eina_Bool longpressed : 1;
+   Eina_Bool wasselected : 1;
    Eina_Bool no_select : 1;
 };
 
@@ -257,11 +259,11 @@ struct _Elm_Genlist_Item
    EINA_INLIST;
    Widget_Data *wd;
    Item_Block *block;
-   Eina_List *items; // FIXME: not done yet
+   Eina_List *items;
    Evas_Coord x, y, w, h, minw, minh;
    const Elm_Genlist_Item_Class *itc;
    const void *data;
-   Elm_Genlist_Item *parent; // not done yet
+   Elm_Genlist_Item *parent;
    Elm_Genlist_Item_Flags flags;
    struct {
       void (*func) (void *data, Evas_Object *obj, void *event_info);
@@ -272,7 +274,8 @@ struct _Elm_Genlist_Item
    Evas_Object *spacer;
    Eina_List *labels, *icons, *states;
    Eina_List *icon_objs;
-
+   Ecore_Timer *long_timer;
+   
    Elm_Genlist_Item *rel;
    int relcount;
    Eina_Bool before : 1;
@@ -280,7 +283,7 @@ struct _Elm_Genlist_Item
    Eina_Bool realized : 1;
    Eina_Bool selected : 1;
    Eina_Bool hilighted : 1;
-   Eina_Bool expanded : 1; // FIXME: not done yet
+   Eina_Bool expanded : 1;
    Eina_Bool disabled : 1;
    Eina_Bool mincalcd : 1;
    Eina_Bool queued : 1;
@@ -467,16 +470,31 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
      }
 }
 
+static int
+_long_press(void *data)
+{
+   Elm_Genlist_Item *it = data;
+   it->long_timer = NULL;
+   if (it->disabled) return 0;
+   it->wd->longpressed = EINA_TRUE;
+   evas_object_smart_callback_call(it->wd->obj, "longpressed", it);
+   return 0;
+}            
+
 static void
 _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 {
    Elm_Genlist_Item *it = data;
    Evas_Event_Mouse_Down *ev = event_info;
+   if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) it->wd->on_hold = EINA_TRUE;
    else it->wd->on_hold = EINA_FALSE;
+   it->wd->wasselected = it->selected;
    _item_hilight(it);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      evas_object_smart_callback_call(it->wd->obj, "clicked", it);
+   if (it->long_timer) ecore_timer_del(it->long_timer);
+   it->long_timer = ecore_timer_add(1.0, _long_press, it);
 }
 
 static void
@@ -485,12 +503,26 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    Elm_Genlist_Item *it = data;
    Evas_Event_Mouse_Up *ev = event_info;
    Eina_List *l;
+   if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) it->wd->on_hold = EINA_TRUE;
    else it->wd->on_hold = EINA_FALSE;
+   if (it->long_timer)
+     {
+        ecore_timer_del(it->long_timer);
+        it->long_timer = NULL;
+     }
    if (it->wd->on_hold)
      {
 	it->wd->on_hold = EINA_FALSE;
 	return;
+     }
+   if (it->wd->longpressed)
+     {
+        it->wd->longpressed = EINA_FALSE;
+        if (!it->wd->wasselected)
+          _item_unselect(it);
+        it->wd->wasselected = 0;
+        return;
      }
    if (it->disabled) return;
    if (it->wd->multi)
@@ -1149,6 +1181,7 @@ static void
 _item_del(Elm_Genlist_Item *it)
 {
    elm_genlist_item_subitems_clear(it);
+   if (it->long_timer) ecore_timer_del(it->long_timer);
    if (it->wd->show_item == it) it->wd->show_item = NULL;
    if (it->selected) it->wd->selected = eina_list_remove(it->wd->selected, it);
    if (it->realized) _item_unrealize(it);
