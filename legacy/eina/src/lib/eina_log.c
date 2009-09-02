@@ -338,6 +338,7 @@ static int _eina_log_init_count = 0;
 // Disable color flag (can be changed through the env var
 // EINA_LOG_ENV_COLOR_DISABLE).
 static Eina_Bool _disable_color = EINA_FALSE;
+static Eina_Bool _abort_on_critical = EINA_FALSE;
 
 // List of domains registered
 static Eina_Log_Domain *_log_domains = NULL;
@@ -345,7 +346,7 @@ static int _log_domains_count = 0;
 static int _log_domains_allocated = 0;
 
 // Default function for printing on domains
-static Eina_Log_Print_Cb _print_cb = eina_log_print_cb_stdout;
+static Eina_Log_Print_Cb _print_cb = eina_log_print_cb_stderr;
 static void *_print_cb_data = NULL;
 
 #ifdef DEBUG
@@ -593,6 +594,14 @@ EAPI int EINA_LOG_DOMAIN_GLOBAL = 0;
  * eina_log_shutdown() must be called to shut down the log
  * module.
  *
+ * The default logging method is eina_log_print_cb_stderr(), which
+ * will output fancy colored messages to standard error stream. See
+ * its documentation on how to disable coloring.
+ *
+ * This module will optionally abort program execution if message
+ * level is below or equal to @c EINA_LOG_LEVEL_CRITICAL and
+ * @c EINA_LOG_ABORT=1.
+ *
  * @see eina_init()
  */
 EAPI int
@@ -606,6 +615,9 @@ eina_log_init(void)
    // Check if color is disabled
    if ((tmp = getenv(EINA_LOG_ENV_COLOR_DISABLE)) && (atoi(tmp) == 1))
      _disable_color = EINA_TRUE;
+
+   if ((tmp = getenv(EINA_LOG_ENV_ABORT)) && (atoi(tmp) == 1))
+     _abort_on_critical = EINA_TRUE;
 
    // Global log level
    if ((level = getenv(EINA_LOG_ENV_LEVEL)))
@@ -670,6 +682,11 @@ eina_log_shutdown(void)
    return --_eina_log_init_count;
 }
 
+/**
+ * Sets logging method to use.
+ *
+ * By default, eina_log_print_cb_stderr() is used.
+ */
 EAPI void
 eina_log_print_cb_set(Eina_Log_Print_Cb cb, void *data)
 {
@@ -768,6 +785,40 @@ eina_log_domain_unregister(int domain)
    d->deleted = 1;
 }
 
+/**
+ * Default logging method, this will output to standard error stream.
+ *
+ * This method will colorize output based on domain provided color and
+ * message logging level. To disable color, set environment variable
+ * EINA_LOG_COLOR_DISABLE=1
+ */
+EAPI void
+eina_log_print_cb_stderr(const Eina_Log_Domain *d, Eina_Log_Level level,
+		const char *file, const char *fnc, int line, const char *fmt,
+		__UNUSED__ void *data, va_list args)
+{
+   EINA_SAFETY_ON_NULL_RETURN(d);
+
+   // Normalize levels for printing. Negative leveled messages go will have
+   // same color as CRITICAL and higher than debug will be regular blue.
+   if (level < 0) level = 0;
+   else if (level > 4) level = 5;
+
+   fprintf(stderr,
+	   "%s %s%s:%d %s()%s ", d->domain_str,
+	   (!_disable_color) ? _colors[level] : "",
+	   file, line, fnc,
+	   (!_disable_color) ? EINA_COLOR_RESET: "");
+   vprintf(fmt, args);
+}
+
+/**
+ * Alternative logging method, this will output to standard output stream.
+ *
+ * This method will colorize output based on domain provided color and
+ * message logging level. To disable color, set environment variable
+ * EINA_LOG_COLOR_DISABLE=1
+ */
 EAPI void
 eina_log_print_cb_stdout(const Eina_Log_Domain *d, Eina_Log_Level level,
 		const char *file, const char *fnc, int line, const char *fmt,
@@ -787,6 +838,11 @@ eina_log_print_cb_stdout(const Eina_Log_Domain *d, Eina_Log_Level level,
    vprintf(fmt, args);
 }
 
+/**
+ * Alternative logging method, this will output to given file stream.
+ *
+ * This method will never output color.
+ */
 EAPI void
 eina_log_print_cb_file(const Eina_Log_Domain *d, __UNUSED__ Eina_Log_Level level,
 		const char *file, const char *fnc, int line, const char *fmt,
@@ -814,8 +870,8 @@ eina_log_print(int domain, Eina_Log_Level level, const char *file,
    EINA_SAFETY_ON_NULL_RETURN(fnc);
    EINA_SAFETY_ON_NULL_RETURN(fmt);
 
-   if (domain >= _log_domains_count) return;
-   if (domain < 0) return;
+   if (EINA_UNLIKELY(domain >= _log_domains_count)) return;
+   if (EINA_UNLIKELY(domain < 0)) return;
 
    d = &_log_domains[domain];
 
@@ -825,6 +881,7 @@ eina_log_print(int domain, Eina_Log_Level level, const char *file,
    _print_cb(d, level, file, fnc, line, fmt, _print_cb_data, args);
    va_end(args);
 
-   if ((getenv(EINA_LOG_ENV_ABORT) && level <= EINA_LOG_LEVEL_CRITICAL))
+   if (EINA_UNLIKELY(_abort_on_critical) &&
+       EINA_UNLIKELY(level <= EINA_LOG_LEVEL_CRITICAL))
      abort();
 }
