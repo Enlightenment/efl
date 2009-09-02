@@ -1028,11 +1028,6 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
 	       _range_del(en->cursor, rp->object, en);
 	     else
 	       _backspace(en->cursor, rp->object, en);
-
-#ifdef HAVE_ECORE_IMF
-	     if (en->have_composition)
-	       _backspace(en->cursor, rp->object, en);
-#endif
 	  }
 	_sel_clear(en->cursor, rp->object, en);
 	_curs_update_from_curs(en->cursor, rp->object, en);
