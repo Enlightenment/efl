@@ -40,8 +40,7 @@ _edje_str_escape(const char *str)
 static void
 _edje_format_param_parse(char *item, char **key, char **val)
 {
-   char *p;
-   char *k, *v;
+   char *p, *k, *v;
 
    p = strchr(item, '=');
    k = malloc(p - item + 1);
@@ -57,8 +56,7 @@ static char *
 _edje_format_parse(const char **s)
 {
    char *item, *ds;
-   const char *p;
-   const char *ss;
+   const char *p, *ss;
    const char *s1 = NULL;
    const char *s2 = NULL;
 
@@ -111,8 +109,7 @@ _edje_format_is_param(char *item)
 static char *
 _edje_strbuf_append(char *s, const char *s2, int *len, int *alloc)
 {
-   int l2;
-   int tlen;
+   int l2, tlen;
 
    if (!s2) return s;
    l2 = strlen(s2);
@@ -139,8 +136,7 @@ _edje_strbuf_append_escaped(char *s, const char *unescaped_s, int *len, int *all
    char *tmp;
 
    tmp = _edje_str_escape(unescaped_s);
-   if (!tmp)
-     return s;
+   if (!tmp) return s;
 
    s = _edje_strbuf_append(s, tmp, len, alloc);
    free(tmp);
@@ -151,8 +147,7 @@ _edje_strbuf_append_escaped(char *s, const char *unescaped_s, int *len, int *all
 static char *
 _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
 {
-   char *s2;
-   char *item;
+   char *s2, *item;
    char *newstr = NULL;
    const char *s;
    int newlen = 0, newalloc = 0;
@@ -185,12 +180,13 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
 		    {
 		       if (_edje_font_is_embedded(edf, val))
 			 {
-			    char     *tmpstr = NULL;
-			    int       tmplen = 0;
-			    int       tmpalloc = 0;
+			    char *tmpstr = NULL;
+			    int tmplen = 0, tmpalloc = 0;
 
-			    tmpstr = _edje_strbuf_append(tmpstr, "fonts/", &tmplen, &tmpalloc);
-			    tmpstr = _edje_strbuf_append(tmpstr, val, &tmplen, &tmpalloc);
+			    tmpstr = _edje_strbuf_append(tmpstr, "fonts/", 
+                                                         &tmplen, &tmpalloc);
+			    tmpstr = _edje_strbuf_append(tmpstr, val, 
+                                                         &tmplen, &tmpalloc);
 			    (*tag_ret)->font = eina_stringshare_add(tmpstr);
 			    free(tmpstr);
 			 }
@@ -237,22 +233,17 @@ _edje_textblock_style_all_update(Edje *ed)
 
    EINA_LIST_FOREACH(ed->file->styles, l, stl)
      {
-
 	Edje_Style_Tag *tag;
 	Edje_Text_Class *tc;
-	char *buf = NULL;
-	int bufalloc = 0;
-	int buflen = 0;
-	int found = 0;
-	char *fontset = NULL, *fontsource = NULL;
+	int bufalloc = 0, buflen = 0, found = 0;
+	char *buf = NULL, *fontset = NULL, *fontsource = NULL;
 
 	/* Make sure the style is already defined */
 	if (!stl->style) break;
 
 	/* Make sure the style contains a text_class */
 	EINA_LIST_FOREACH(stl->tags, ll, tag)
-	  if (tag->text_class)
-	    found = 1;
+	  if (tag->text_class) found = 1;
 
 	/* No text classes , goto next style */
 	if (!found) continue;
