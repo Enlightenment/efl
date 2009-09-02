@@ -84,9 +84,9 @@ static int EINA_MODULE_LOG_DOM = -1;
 
 struct _Eina_Module
 {
-   char *file;
    void *handle;
    int ref;
+   const char file[];
 };
 
 typedef struct _Dir_List_Get_Cb_Data
@@ -291,13 +291,20 @@ eina_module_shutdown(void)
 EAPI Eina_Module *eina_module_new(const char *file)
 {
    Eina_Module *m;
+   size_t len;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
    /* TODO check that the file exists. Update doc too */
 
-   m = malloc(sizeof(Eina_Module));
-   /* TODO add the magic */
-   m->file = strdup(file);
+   len = strlen(file);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(len > 0, NULL);
+
+   m = malloc(sizeof(Eina_Module) + len + 1);
+   if (!m) {
+      ERR("could not malloc(%lu)\n", sizeof(Eina_Module) + len + 1);
+      return NULL;
+   }
+   memcpy((char *)m->file, file, len + 1);
    m->ref = 0;
    m->handle = NULL;
    DBG("m=%p, file=%s\n", m, file);
@@ -327,7 +334,6 @@ EAPI Eina_Bool eina_module_free(Eina_Module *m)
 	if (eina_module_unload(m) == EINA_FALSE)
 	  return EINA_FALSE;
      }
-   free(m->file);
    free(m);
    return EINA_TRUE;
 }
