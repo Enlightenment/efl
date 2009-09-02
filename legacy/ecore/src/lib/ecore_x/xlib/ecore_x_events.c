@@ -602,13 +602,14 @@ _ecore_x_event_handle_button_release(XEvent *xevent)
 void
 _ecore_x_event_handle_motion_notify(XEvent *xevent)
 {
+/*   
    if (_ecore_x_last_event_mouse_move)
      {
         ecore_event_del(_ecore_x_last_event_mouse_move_event);
         _ecore_x_last_event_mouse_move = 0;
         _ecore_x_last_event_mouse_move_event = NULL;
      }
-
+ */
    _ecore_mouse_move(xevent->xmotion.time, xevent->xmotion.state,
 		     xevent->xmotion.x, xevent->xmotion.y,
 		     xevent->xmotion.x_root, xevent->xmotion.y_root,

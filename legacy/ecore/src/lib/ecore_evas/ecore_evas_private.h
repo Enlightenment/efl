@@ -165,6 +165,7 @@ struct _Ecore_Evas_Engine
       Ecore_X_Pixmap mask;
       Ecore_X_GC     gc;
       Ecore_X_XRegion *damages;
+      int            screen_num;
       int            px, py, pw, ph;
       unsigned char  direct_resize : 1;
       unsigned char  using_bg_pixmap : 1;

@@ -499,7 +499,12 @@ _ecore_evas_x_event_visibility_change(void *data __UNUSED__, int type __UNUSED__
    if (!ee) return 1; /* pass on event */
    if (e->win != ee->prop.window) return 1;
 //   printf("VIS CHANGE OBSCURED: %p %i\n", ee, e->fully_obscured);
-   if (e->fully_obscured) ee->draw_ok = 0;
+   if (e->fully_obscured)
+     {
+        /* FIXME: round trip */
+        if (!ecore_x_screen_is_composited(ee->engine.x.screen_num))
+          ee->draw_ok = 0;
+     }
    else ee->draw_ok = 1;
    return 1;
 }
@@ -2270,8 +2275,11 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
    evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
    ee->engine.x.win_root = parent;
+   ee->engine.x.screen_num = 0;
+   
    if (parent != 0)
      {
+        ee->engine.x.screen_num = 1; /* FIXME: get real scren # */
        /* FIXME: round trip in ecore_x_window_argb_get */
 	if (ecore_x_window_argb_get(parent))
 	  {
