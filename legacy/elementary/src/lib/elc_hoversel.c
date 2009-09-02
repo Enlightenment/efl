@@ -71,6 +71,17 @@ _del_hook(Evas_Object *obj)
 }
 
 static void
+_theme_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   char buf[4096];
+   if (!wd) return;
+   
+   snprintf(buf, sizeof(buf), "hoversel_vertical/%s", elm_widget_style_get(obj));
+   elm_button_style_set(wd->btn, buf);
+}
+
+static void
 _disable_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -123,12 +134,14 @@ _activate(Evas_Object *obj)
    Evas_Object *bt, *bx, *ic;
    const Eina_List *l;
    const Elm_Hoversel_Item *it;
+   char buf[4096];
 
    if (elm_widget_disabled_get(obj))
        return;
 
    wd->hover = elm_hover_add(obj);
-   elm_hover_style_set(wd->hover, "hoversel_vertical");
+   snprintf(buf, sizeof(buf), "hoversel_vertical/%s", elm_widget_style_get(obj));
+   elm_hover_style_set(wd->hover, buf);
    evas_object_smart_callback_add(wd->hover, "clicked", _hover_clicked, obj);
    elm_hover_parent_set(wd->hover, wd->hover_parent);
    elm_hover_target_set(wd->hover, wd->btn);
@@ -136,10 +149,11 @@ _activate(Evas_Object *obj)
    bx = elm_box_add(wd->hover);
    elm_box_homogenous_set(bx, 1);
 
+   snprintf(buf, sizeof(buf), "hoversel_vertical_entry/%s", elm_widget_style_get(obj));
    EINA_LIST_FOREACH(wd->items, l, it)
      {
 	bt = elm_button_add(wd->hover);
-	elm_button_style_set(bt, "hoversel_vertical_entry");
+	elm_button_style_set(bt, buf);
 	elm_button_label_set(bt, it->label);
 	if (it->icon_file)
 	  {

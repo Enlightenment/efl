@@ -427,6 +427,13 @@ extern "C" {
 	int button;
 	Evas_Coord x, y, w, h;
      };
+   typedef enum _Elm_Icon_Type
+     {
+	ELM_ICON_NONE,
+	  ELM_ICON_FILE,
+	  ELM_ICON_STANDARD
+     } Elm_Icon_Type;
+   typedef struct _Elm_Hoversel_Item Elm_Hoversel_Item;
    EAPI Evas_Object *elm_entry_add(Evas_Object *parent);
    EAPI void         elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line);
    EAPI void         elm_entry_password_set(Evas_Object *obj, Eina_Bool password);
@@ -438,6 +445,8 @@ extern "C" {
    EAPI void         elm_entry_editable_set(Evas_Object *obj, Eina_Bool editable);
    EAPI void         elm_entry_select_none(Evas_Object *obj);
    EAPI void         elm_entry_select_all(Evas_Object *obj);
+   EAPI void         elm_entry_context_menu_clear(Evas_Object *obj);
+   EAPI void         elm_entry_context_menu_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
    EAPI char        *elm_entry_markup_to_utf8(const char *s);
    EAPI char        *elm_entry_utf8_to_markup(const char *s);
 
@@ -531,13 +540,6 @@ extern "C" {
     * "clicked" - the user clicked the icon
     */
 
-   typedef enum _Elm_Icon_Type
-     {
-	ELM_ICON_NONE,
-	  ELM_ICON_FILE,
-	  ELM_ICON_STANDARD
-     } Elm_Icon_Type;
-   typedef struct _Elm_Hoversel_Item Elm_Hoversel_Item;
    EAPI Evas_Object *elm_hoversel_add(Evas_Object *parent);
    EAPI void         elm_hoversel_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void         elm_hoversel_label_set(Evas_Object *obj, const char *label);

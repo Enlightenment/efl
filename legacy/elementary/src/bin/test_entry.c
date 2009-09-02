@@ -181,6 +181,8 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, sc);
 
    en = elm_entry_add(win);
+   elm_entry_context_menu_item_add(en, "Hello", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_entry_context_menu_item_add(en, "World", NULL, ELM_ICON_NONE, NULL, NULL);
    elm_entry_entry_set(en,
 		       "Multi-line disabled entry widget :)<br>"
 		       "We can use markup <b>like this</> for styling and<br>"

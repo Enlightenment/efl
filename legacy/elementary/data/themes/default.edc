@@ -826,7 +826,8 @@ collections {
       }
    }
 
-   group { name: "elm/button/base/hoversel_vertical";
+   group { name: "elm/button/base/hoversel_vertical/default";
+      alias: "elm/button/base/hoversel_vertical/entry";
       images {
 	 image: "bt_base1.png" COMP;
 	 image: "bt_base2.png" COMP;
@@ -1135,7 +1136,8 @@ collections {
       }
    }
 
-   group { name: "elm/button/base/hoversel_vertical_entry";
+   group { name: "elm/button/base/hoversel_vertical_entry/default";
+      alias: "elm/button/base/hoversel_vertical_entry/entry";
       images {
          image: "hoversel_entry_bg.png" COMP;
       }
@@ -3629,7 +3631,8 @@ collections {
       }
    }
 
-   group { name: "elm/hover/base/hoversel_vertical";
+   group { name: "elm/hover/base/hoversel_vertical/default";
+      alias: "elm/hover/base/hoversel_vertical/entry";
       images {
 //	 image: "shad_circ.png" COMP;
 	 image: "bt_base2.png" COMP;

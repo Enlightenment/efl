@@ -19,10 +19,11 @@ test_scroller(void *data, Evas_Object *obj, void *event_info)
    tb = elm_table_add(win);
    evas_object_size_hint_weight_set(tb, 1.0, 1.0);
 
-   for (j = 0; j < 24; j++)
+   for (j = 0; j < 96; j++)
      {
-        for (i = 0; i < 12; i++)
+        for (i = 0; i < 48; i++)
           {
+             if ((((i * j) / 3) & 0xf) <= 0xa) continue;
              snprintf(buf, sizeof(buf), "[%02i, %02i]\n", i, j);
              bt = elm_button_add(win);
              elm_button_label_set(bt, buf);

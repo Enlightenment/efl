@@ -2,6 +2,7 @@
 #include "elm_priv.h"
 
 typedef struct _Widget_Data Widget_Data;
+typedef struct _Elm_Entry_Context_Menu_Item Elm_Entry_Context_Menu_Item;
 
 struct _Widget_Data
 {
@@ -15,6 +16,7 @@ struct _Widget_Data
    Evas_Coord lastw;
    Evas_Coord downx, downy;
    Evas_Coord cx, cy, cw, ch;
+   Eina_List *items;
    Eina_Bool changed : 1;
    Eina_Bool linewrap : 1;
    Eina_Bool single_line : 1;
@@ -25,6 +27,17 @@ struct _Widget_Data
    Eina_Bool selmode : 1;
    Eina_Bool deferred_cur : 1;
    Eina_Bool disabled : 1;
+};
+
+struct _Elm_Entry_Context_Menu_Item
+{
+   Evas_Object *obj;
+   const char *label;
+   const char *icon_file;
+   const char *icon_group;
+   Elm_Icon_Type icon_type;
+   void (*func) (void *data, Evas_Object *obj, void *event_info);
+   void *data;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -49,6 +62,8 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_List *l;
+   Elm_Entry_Context_Menu_Item *it;
    entries = eina_list_remove(entries, obj);
 #ifdef HAVE_ELEMENTARY_X
    ecore_event_handler_del(wd->sel_notify_handler);
@@ -57,6 +72,13 @@ _del_hook(Evas_Object *obj)
    if (wd->cut_sel) eina_stringshare_del(wd->cut_sel);
    if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
    if (wd->longpress_timer) ecore_timer_del(wd->longpress_timer);
+   EINA_LIST_FREE(wd->items, it)
+     {
+        eina_stringshare_del(it->label);
+        eina_stringshare_del(it->icon_file);
+        eina_stringshare_del(it->icon_group);
+        free(it);
+     }
    free(wd);
 }
 
@@ -282,13 +304,24 @@ _cancel(void *data, Evas_Object *obj, void *event_info)
    edje_object_part_text_select_none(wd->ent, "elm.text");
 }
 
+static void
+_item_clicked(void *data, Evas_Object *obj, void *event_info)
+{
+   Elm_Entry_Context_Menu_Item *it = data;
+   Evas_Object *obj2 = it->obj;
+   if (it->func) it->func(it->data, obj2, NULL);
+}
+
 static int
 _long_press(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Object *top;
+   const Eina_List *l;
+   const Elm_Entry_Context_Menu_Item *it;
    if (wd->hoversel) evas_object_del(wd->hoversel);
    wd->hoversel = elm_hoversel_add(data);
+   elm_object_style_set(wd->hoversel, "entry");
    elm_widget_sub_object_add(data, wd->hoversel);
    elm_hoversel_label_set(wd->hoversel, "Text");
    top = elm_widget_top_get(data);
@@ -304,6 +337,10 @@ _long_press(void *data)
 	elm_hoversel_item_add(wd->hoversel, "Copy", NULL, ELM_ICON_NONE, _copy, data);
 	elm_hoversel_item_add(wd->hoversel, "Cut", NULL, ELM_ICON_NONE, _cut, data);
 	elm_hoversel_item_add(wd->hoversel, "Cancel", NULL, ELM_ICON_NONE, _cancel, data);
+     }
+   EINA_LIST_FOREACH(wd->items, l, it)
+     {
+        elm_hoversel_item_add(wd->hoversel, it->label, it->icon_file, it->icon_type, _item_clicked, it);
      }
    if (wd->hoversel)
      {
@@ -1109,6 +1146,39 @@ elm_entry_select_all(Evas_Object *obj)
      }
    wd->have_selection = EINA_TRUE;
    edje_object_part_text_select_all(wd->ent, "elm.text");
+}
+
+EAPI void
+elm_entry_context_menu_clear(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_List *l;
+   Elm_Entry_Context_Menu_Item *it;
+   if (!wd) return;
+   EINA_LIST_FREE(wd->items, it)
+     {
+        eina_stringshare_del(it->label);
+        eina_stringshare_del(it->icon_file);
+        eina_stringshare_del(it->icon_group);
+        free(it);
+     }
+}
+
+EAPI void
+elm_entry_context_menu_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Elm_Entry_Context_Menu_Item *it;
+   if (!wd) return;
+   it = calloc(1, sizeof(Elm_Entry_Context_Menu_Item));
+   if (!it) return;
+   wd->items = eina_list_append(wd->items, it);
+   it->obj = obj;
+   it->label = eina_stringshare_add(label);
+   it->icon_file = eina_stringshare_add(icon_file);
+   it->icon_type = icon_type;
+   it->func = func;
+   it->data = (void *)data;
 }
 
 EAPI char *
