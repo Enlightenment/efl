@@ -1001,6 +1001,7 @@ eina_log_print_cb_stderr(const Eina_Log_Domain *d, Eina_Log_Level level,
      }
  end:
    vfprintf(stderr, fmt, args);
+   putc('\n', stderr);
 }
 
 /**
@@ -1079,6 +1080,7 @@ eina_log_print_cb_stdout(const Eina_Log_Domain *d, Eina_Log_Level level,
      }
  end:
    vprintf(fmt, args);
+   putchar('\n');
 }
 
 /**
@@ -1110,6 +1112,7 @@ eina_log_print_cb_file(const Eina_Log_Domain *d, __UNUSED__ Eina_Log_Level level
    fprintf(f, "%s %s:%d %s() ", d->name, file, line, fnc);
  end:
    vfprintf(f, fmt, args);
+   putc('\n', f);
 }
 
 static inline void
@@ -1159,7 +1162,8 @@ eina_log_print_unlocked(int domain, Eina_Log_Level level, const char *file, cons
  * @param file filename that originated the call, must @b not be @c NULL.
  * @param fnc function that originated the call, must @b not be @c NULL.
  * @param line originating line in @a file.
- * @param fmt printf-like format to use.
+ * @param fmt printf-like format to use. Should not provide trailing
+ *        '\n' as it is automatically included.
  *
  * @note MT: this function may be called from different threads if
  *       eina_log_threads_enable() was called before.
