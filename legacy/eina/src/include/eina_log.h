@@ -28,6 +28,7 @@
 #define EINA_COLOR_BLUE      "\033[34;1m"
 #define EINA_COLOR_GREEN     "\033[32;1m"
 #define EINA_COLOR_YELLOW    "\033[33;1m"
+#define EINA_COLOR_ORANGE    "\033[0;33m"
 #define EINA_COLOR_WHITE     "\033[37;1m"
 #define EINA_COLOR_LIGHTBLUE "\033[36;1m"
 #define EINA_COLOR_RESET     "\033[0m"
@@ -177,6 +178,7 @@ typedef void (*Eina_Log_Print_Cb)(const Eina_Log_Domain *d, Eina_Log_Level level
 
 EAPI int eina_log_init(void);
 EAPI int eina_log_shutdown(void);
+EAPI void eina_log_threads_enable(void);
 
 /*
  * Customization

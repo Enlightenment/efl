@@ -342,6 +342,48 @@ static int _eina_log_init_count = 0;
 static Eina_Bool _disable_color = EINA_FALSE;
 static Eina_Bool _abort_on_critical = EINA_FALSE;
 
+#ifdef EFL_HAVE_PTHREAD
+#include <pthread.h>
+static Eina_Bool _threads_enabled = EINA_FALSE;
+static pthread_t _main_thread;
+static pthread_spinlock_t _log_lock;
+#define LOCK()								\
+  do {									\
+     if (0)								\
+       fprintf(stderr, "+++LOG LOCKED!   [%s, %lu]\n",			\
+	       __FUNCTION__, pthread_self());				\
+     if (EINA_UNLIKELY(_threads_enabled))				\
+       pthread_spin_lock(&_log_lock);					\
+  } while (0)
+#define UNLOCK()							\
+  do {									\
+     if (EINA_UNLIKELY(_threads_enabled))				\
+       pthread_spin_unlock(&_log_lock);					\
+     if (0)								\
+       fprintf(stderr,							\
+	       "---LOG UNLOCKED! [%s, %lu]\n",				\
+	       __FUNCTION__, pthread_self());				\
+  } while (0)
+#define IS_MAIN(t)  pthread_equal(t, _main_thread)
+#define IS_OTHER(t) EINA_UNLIKELY(!IS_MAIN(t))
+#define CHECK_MAIN(...)							\
+  do {									\
+     if (!IS_MAIN(pthread_self())) {					\
+	fprintf(stderr,							\
+		"ERR: not main thread! current=%lu, main=%lu\n",	\
+		pthread_self(), _main_thread);				\
+	return __VA_ARGS__;						\
+     }									\
+  } while (0)
+#else
+#define LOCK() do {} while (0)
+#define UNLOCK() do {} while (0)
+#define IS_MAIN(t)  (1)
+#define IS_OTHER(t) (0)
+#define CHECK_MAIN(...) do {} while (0)
+#endif
+
+
 // List of domains registered
 static Eina_Log_Domain *_log_domains = NULL;
 static int _log_domains_count = 0;
@@ -613,6 +655,10 @@ EAPI int EINA_LOG_DOMAIN_GLOBAL = 0;
  * @c EINA_LOG_ABORT=1.
  *
  * @see eina_init()
+ *
+ * @warning Not-MT: just call this function from main thread! The
+ *          place where this function was called the first time is
+ *          considered the main thread.
  */
 EAPI int
 eina_log_init(void)
@@ -624,6 +670,11 @@ eina_log_init(void)
 
    assert((sizeof(_names)/sizeof(_names[0])) == EINA_LOG_LEVELS);
    assert((sizeof(_colors)/sizeof(_colors[0])) == EINA_LOG_LEVELS + 1);
+
+#ifdef EFL_HAVE_PTHREAD
+   _main_thread = pthread_self();
+   pthread_spin_init(&_log_lock, PTHREAD_PROCESS_PRIVATE);
+#endif
 
    // Check if color is disabled
    if ((tmp = getenv(EINA_LOG_ENV_COLOR_DISABLE)) && (atoi(tmp) == 1))
@@ -666,11 +717,17 @@ eina_log_init(void)
  * the log list.
  *
  * @see eina_shutdown()
+ *
+ * @warning Not-MT: just call this function from main thread! The
+ *          place where eina_log_init() was called the first time is
+ *          considered the main thread.
  */
 EAPI int
 eina_log_shutdown(void)
 {
    Eina_Inlist *tmp;
+
+   CHECK_MAIN(0);
 
    if (_eina_log_init_count != 1) return --_eina_log_init_count;
 
@@ -692,19 +749,57 @@ eina_log_shutdown(void)
 	free(tmp);
      }
 
+#ifdef EFL_HAVE_PTHREAD
+   pthread_spin_destroy(&_log_lock);
+   _threads_enabled = 0;
+#endif
+
    return --_eina_log_init_count;
+}
+
+/**
+ * Enable logging module to handle threads.
+ *
+ * There is no disable option on purpose, if it is enabled, there is
+ * no way back until you call the last eina_log_shutdown().
+ *
+ * There is no function to retrieve if threads are enabled as one is
+ * not supposed to know this from outside.
+ *
+ * After this call is executed at least once, if Eina was compiled
+ * with threads support then logging will lock around debug messages
+ * and threads that are not the main thread will have its identifier
+ * printed.
+ *
+ * The main thread is considered the thread where the first
+ * eina_log_init() was called.
+ */
+EAPI void
+eina_log_threads_enable(void)
+{
+#ifdef EFL_HAVE_PTHREAD
+   _threads_enabled = 1;
+#endif
 }
 
 /**
  * Sets logging method to use.
  *
  * By default, eina_log_print_cb_stderr() is used.
+ *
+ * @note MT: safe to call from any thread.
+ *
+ * @note MT: given function @a cb will be called protected by mutex.
+ *       This means you're safe from other calls but you should never
+ *       call eina_log_print(), directly or indirectly.
  */
 EAPI void
 eina_log_print_cb_set(Eina_Log_Print_Cb cb, void *data)
 {
+   LOCK();
    _print_cb = cb;
    _print_cb_data = data;
+   UNLOCK();
 }
 
 /**
@@ -715,25 +810,17 @@ eina_log_print_cb_set(Eina_Log_Print_Cb cb, void *data)
  * This function sets the log log level @p level. It is used in
  * eina_log_print().
  */
-EAPI void eina_log_level_set(Eina_Log_Level level)
+EAPI void
+eina_log_level_set(Eina_Log_Level level)
 {
-	_log_level = level;
+   _log_level = level;
 }
 
-/*
- * @param name Domain name
- * @param color Color of the domain name
- *
- * @return Domain index that will be used as the DOMAIN parameter on log
- *         macros. A negative return value means an log ocurred.
- */
-EAPI int
-eina_log_domain_register(const char *name, const char *color)
+static inline int
+eina_log_domain_register_unlocked(const char *name, const char *color)
 {
    Eina_Log_Domain_Level_Pending *pending = NULL;
    int i;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(name, -1);
 
    for (i = 0; i < _log_domains_count; i++)
      {
@@ -786,8 +873,31 @@ finish_register:
    return i;
 }
 
-EAPI void
-eina_log_domain_unregister(int domain)
+/**
+ * @param name Domain name
+ * @param color Color of the domain name
+ *
+ * @return Domain index that will be used as the DOMAIN parameter on log
+ *         macros. A negative return value means an log ocurred.
+ *
+ * @note MT: safe to call from any thread.
+ */
+EAPI int
+eina_log_domain_register(const char *name, const char *color)
+{
+   int r;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(name, -1);
+
+   LOCK();
+   r = eina_log_domain_register_unlocked(name, color);
+   UNLOCK();
+   return r;
+}
+
+
+static inline void
+eina_log_domain_unregister_unlocked(int domain)
 {
    Eina_Log_Domain *d;
 
@@ -799,11 +909,32 @@ eina_log_domain_unregister(int domain)
 }
 
 /**
+ * Forget about a logging domain registered by eina_log_domain_register()
+ *
+ * @param domain domain identifier as reported by eina_log_domain_register(),
+ *        must be >= 0.
+ *
+ * @note MT: safe to call from any thread.
+ */
+EAPI void
+eina_log_domain_unregister(int domain)
+{
+   EINA_SAFETY_ON_FALSE_RETURN(domain >= 0);
+   LOCK();
+   eina_log_domain_unregister_unlocked(domain);
+   UNLOCK();
+}
+
+/**
  * Default logging method, this will output to standard error stream.
  *
  * This method will colorize output based on domain provided color and
  * message logging level. To disable color, set environment variable
  * EINA_LOG_COLOR_DISABLE=1
+ *
+ * @note MT: if threads are enabled, this function is called within locks.
+ * @note MT: Threads different from main thread will have thread id
+ *       appended to domain name.
  */
 EAPI void
 eina_log_print_cb_stderr(const Eina_Log_Domain *d, Eina_Log_Level level,
@@ -832,14 +963,43 @@ eina_log_print_cb_stderr(const Eina_Log_Domain *d, Eina_Log_Level level,
      }
 
    if (EINA_UNLIKELY(_disable_color))
-     fprintf(stderr,
-	     "%s:%s %s:%d %s() ",
-	     name, d->domain_str, file, line, fnc);
+     {
+#ifdef EFL_HAVE_PTHREAD
+	if (_threads_enabled)
+	  {
+	     pthread_t cur = pthread_self();
+	     if (IS_OTHER(cur))
+	       {
+		  fprintf(stderr, "%s:%s[T:%lu] %s:%d %s() ",
+			 name, d->domain_str, cur, file, line, fnc);
+		  goto end;
+	       }
+	  }
+#endif
+	fprintf(stderr, "%s:%s %s:%d %s() ",
+	       name, d->domain_str, file, line, fnc);
+     }
    else
-     fprintf(stderr,
-	     "%s%s" EINA_COLOR_RESET ":%s %s:%d "
-	     EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
-	     color, name, d->domain_str, file, line, fnc);
+     {
+#ifdef EFL_HAVE_PTHREAD
+	if (_threads_enabled)
+	  {
+	     pthread_t cur = pthread_self();
+	     if (IS_OTHER(cur))
+	       {
+		  fprintf(stderr, "%s%s" EINA_COLOR_RESET ":%s[T:"
+			 EINA_COLOR_ORANGE "%lu" EINA_COLOR_RESET "] %s:%d "
+			 EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
+			 color, name, d->domain_str, cur, file, line, fnc);
+		  goto end;
+	       }
+	  }
+#endif
+	fprintf(stderr, "%s%s" EINA_COLOR_RESET ":%s %s:%d "
+	       EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
+	       color, name, d->domain_str, file, line, fnc);
+     }
+ end:
    vfprintf(stderr, fmt, args);
 }
 
@@ -849,6 +1009,10 @@ eina_log_print_cb_stderr(const Eina_Log_Domain *d, Eina_Log_Level level,
  * This method will colorize output based on domain provided color and
  * message logging level. To disable color, set environment variable
  * EINA_LOG_COLOR_DISABLE=1
+ *
+ * @note MT: if threads are enabled, this function is called within locks.
+ * @note MT: Threads different from main thread will have thread id
+ *       appended to domain name.
  */
 EAPI void
 eina_log_print_cb_stdout(const Eina_Log_Domain *d, Eina_Log_Level level,
@@ -877,12 +1041,43 @@ eina_log_print_cb_stdout(const Eina_Log_Domain *d, Eina_Log_Level level,
      }
 
    if (EINA_UNLIKELY(_disable_color))
-     printf("%s:%s %s:%d %s() ",
-	    name, d->domain_str, file, line, fnc);
+     {
+#ifdef EFL_HAVE_PTHREAD
+	if (_threads_enabled)
+	  {
+	     pthread_t cur = pthread_self();
+	     if (IS_OTHER(cur))
+	       {
+		  printf("%s:%s[T:%lu] %s:%d %s() ",
+			 name, d->domain_str, cur, file, line, fnc);
+		  goto end;
+	       }
+	  }
+#endif
+	printf("%s:%s %s:%d %s() ",
+	       name, d->domain_str, file, line, fnc);
+     }
    else
-     printf("%s%s" EINA_COLOR_RESET ":%s %s:%d "
-	    EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
-	    color, name, d->domain_str, file, line, fnc);
+     {
+#ifdef EFL_HAVE_PTHREAD
+	if (_threads_enabled)
+	  {
+	     pthread_t cur = pthread_self();
+	     if (IS_OTHER(cur))
+	       {
+		  printf("%s%s" EINA_COLOR_RESET ":%s[T:"
+			 EINA_COLOR_ORANGE "%lu" EINA_COLOR_RESET "] %s:%d "
+			 EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
+			 color, name, d->domain_str, cur, file, line, fnc);
+		  goto end;
+	       }
+	  }
+#endif
+	printf("%s%s" EINA_COLOR_RESET ":%s %s:%d "
+	       EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
+	       color, name, d->domain_str, file, line, fnc);
+     }
+ end:
    vprintf(fmt, args);
 }
 
@@ -890,6 +1085,10 @@ eina_log_print_cb_stdout(const Eina_Log_Domain *d, Eina_Log_Level level,
  * Alternative logging method, this will output to given file stream.
  *
  * This method will never output color.
+ *
+ * @note MT: if threads are enabled, this function is called within locks.
+ * @note MT: Threads different from main thread will have thread id
+ *       appended to domain name.
  */
 EAPI void
 eina_log_print_cb_file(const Eina_Log_Domain *d, __UNUSED__ Eina_Log_Level level,
@@ -897,33 +1096,28 @@ eina_log_print_cb_file(const Eina_Log_Domain *d, __UNUSED__ Eina_Log_Level level
 		void *data, va_list args)
 {
    FILE *f = data;
+#ifdef EFL_HAVE_PTHREAD
+   if (_threads_enabled)
+     {
+	pthread_t cur = pthread_self();
+	if (IS_OTHER(cur))
+	  {
+	     fprintf(f, "%s[T:%lu] %s:%d %s() ", d->name, cur, file, line, fnc);
+	     goto end;
+	  }
+     }
+#endif
    fprintf(f, "%s %s:%d %s() ", d->name, file, line, fnc);
+ end:
    vfprintf(f, fmt, args);
 }
 
-EAPI void
-eina_log_print(int domain, Eina_Log_Level level, const char *file,
-		const char *fnc, int line, const char *fmt, ...)
+static inline void
+eina_log_print_unlocked(int domain, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, va_list args)
 {
    Eina_Log_Domain *d;
-   va_list args;
 
 #ifdef EINA_SAFETY_CHECKS
-   if (EINA_UNLIKELY(file == NULL))
-     {
-	fputs("ERR: eina_log_print() file == NULL\n", stderr);
-	return;
-     }
-   if (EINA_UNLIKELY(fnc == NULL))
-     {
-	fputs("ERR: eina_log_print() fnc == NULL\n", stderr);
-	return;
-     }
-   if (EINA_UNLIKELY(fmt == NULL))
-     {
-	fputs("ERR: eina_log_print() fmt == NULL\n", stderr);
-	return;
-     }
    if (EINA_UNLIKELY(domain >= _log_domains_count) ||
        EINA_UNLIKELY(domain < 0))
      {
@@ -942,11 +1136,60 @@ eina_log_print(int domain, Eina_Log_Level level, const char *file,
 
    if (level > d->level) return;
 
-   va_start(args, fmt);
    _print_cb(d, level, file, fnc, line, fmt, _print_cb_data, args);
-   va_end(args);
 
    if (EINA_UNLIKELY(_abort_on_critical) &&
        EINA_UNLIKELY(level <= EINA_LOG_LEVEL_CRITICAL))
      abort();
+}
+
+/**
+ * Print out log message using given domain and level.
+ *
+ * @note Usually you'll not use this function directly but the helper
+ *       macros EINA_LOG(), EINA_LOG_DOM_CRIT(), EINA_LOG_CRIT() and
+ *       so on. See eina_log.h
+ *
+ * @param domain logging domain to use or @c EINA_LOG_DOMAIN_GLOBAL if
+ *        you registered none. It is recommended that modules and
+ *        applications have their own logging domain.
+ * @param level message level, those with level greater than user
+ *        specified value (eina_log_level_set() or environment
+ *        variables EINA_LOG_LEVEL, EINA_LOG_LEVELS) will be ignored.
+ * @param file filename that originated the call, must @b not be @c NULL.
+ * @param fnc function that originated the call, must @b not be @c NULL.
+ * @param line originating line in @a file.
+ * @param fmt printf-like format to use.
+ *
+ * @note MT: this function may be called from different threads if
+ *       eina_log_threads_enable() was called before.
+ */
+EAPI void
+eina_log_print(int domain, Eina_Log_Level level, const char *file,
+		const char *fnc, int line, const char *fmt, ...)
+{
+   va_list args;
+
+#ifdef EINA_SAFETY_CHECKS
+   if (EINA_UNLIKELY(file == NULL))
+     {
+	fputs("ERR: eina_log_print() file == NULL\n", stderr);
+	return;
+     }
+   if (EINA_UNLIKELY(fnc == NULL))
+     {
+	fputs("ERR: eina_log_print() fnc == NULL\n", stderr);
+	return;
+     }
+   if (EINA_UNLIKELY(fmt == NULL))
+     {
+	fputs("ERR: eina_log_print() fmt == NULL\n", stderr);
+	return;
+     }
+#endif
+   va_start(args, fmt);
+   LOCK();
+   eina_log_print_unlocked(domain, level, file, fnc, line, fmt, args);
+   UNLOCK();
+   va_end(args);
 }
