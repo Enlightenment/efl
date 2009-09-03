@@ -295,6 +295,8 @@
 #include "eina_log.h"
 #include "eina_inlist.h"
 
+#include <assert.h>
+
 /* TODO
  * + printing logs to stdout or stderr can be implemented
  * using a queue, useful for multiple threads printing
@@ -358,13 +360,21 @@ static Eina_Log_Level _log_level = EINA_LOG_LEVEL_ERR;
 #endif
 
 // Default colors and levels
-static const char *_colors[EINA_LOG_LEVELS + 1] = { // + 1 for higher than debug
+static const char *_colors[] = { // + 1 for higher than debug
   EINA_COLOR_LIGHTRED, // EINA_LOG_LEVEL_CRITICAL
   EINA_COLOR_RED, // EINA_LOG_LEVEL_ERR
   EINA_COLOR_YELLOW, // EINA_LOG_LEVEL_WARN
   EINA_COLOR_GREEN, // EINA_LOG_LEVEL_INFO
   EINA_COLOR_LIGHTBLUE, // EINA_LOG_LEVEL_DBG
   EINA_COLOR_BLUE, // Higher than DEBUG
+};
+
+static const char *_names[] = {
+  "CRI",
+  "ERR",
+  "WRN",
+  "INF",
+  "DBG",
 };
 
 /*
@@ -612,6 +622,9 @@ eina_log_init(void)
 
    if (_eina_log_init_count) return ++_eina_log_init_count;
 
+   assert((sizeof(_names)/sizeof(_names[0])) == EINA_LOG_LEVELS);
+   assert((sizeof(_colors)/sizeof(_colors[0])) == EINA_LOG_LEVELS + 1);
+
    // Check if color is disabled
    if ((tmp = getenv(EINA_LOG_ENV_COLOR_DISABLE)) && (atoi(tmp) == 1))
      _disable_color = EINA_TRUE;
@@ -797,19 +810,37 @@ eina_log_print_cb_stderr(const Eina_Log_Domain *d, Eina_Log_Level level,
 		const char *file, const char *fnc, int line, const char *fmt,
 		__UNUSED__ void *data, va_list args)
 {
-   EINA_SAFETY_ON_NULL_RETURN(d);
+   const char *color, *name;
+   char buf[4];
 
-   // Normalize levels for printing. Negative leveled messages go will have
-   // same color as CRITICAL and higher than debug will be regular blue.
-   if (level < 0) level = 0;
-   else if (level > 4) level = 5;
+   if (EINA_UNLIKELY(level < 0))
+     {
+	color = _colors[0];
+	snprintf(buf, sizeof(buf), "%03d", level);
+	name = buf;
+     }
+   else if (EINA_UNLIKELY(level > EINA_LOG_LEVELS))
+     {
+	color = _colors[EINA_LOG_LEVELS];
+	snprintf(buf, sizeof(buf), "%03d", level);
+	name = buf;
+     }
+   else
+     {
+	color = _colors[level];
+	name = _names[level];
+     }
 
-   fprintf(stderr,
-	   "%s %s%s:%d %s()%s ", d->domain_str,
-	   (!_disable_color) ? _colors[level] : "",
-	   file, line, fnc,
-	   (!_disable_color) ? EINA_COLOR_RESET: "");
-   vprintf(fmt, args);
+   if (EINA_UNLIKELY(_disable_color))
+     fprintf(stderr,
+	     "%s:%s %s:%d %s() ",
+	     name, d->domain_str, file, line, fnc);
+   else
+     fprintf(stderr,
+	     "%s%s" EINA_COLOR_RESET ":%s %s:%d "
+	     EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
+	     color, name, d->domain_str, file, line, fnc);
+   vfprintf(stderr, fmt, args);
 }
 
 /**
@@ -824,17 +855,34 @@ eina_log_print_cb_stdout(const Eina_Log_Domain *d, Eina_Log_Level level,
 		const char *file, const char *fnc, int line, const char *fmt,
 		__UNUSED__ void *data, va_list args)
 {
-   EINA_SAFETY_ON_NULL_RETURN(d);
+   const char *color, *name;
+   char buf[4];
 
-   // Normalize levels for printing. Negative leveled messages go will have
-   // same color as CRITICAL and higher than debug will be regular blue.
-   if (level < 0) level = 0;
-   else if (level > 4) level = 5;
+   if (EINA_UNLIKELY(level < 0))
+     {
+	color = _colors[0];
+	snprintf(buf, sizeof(buf), "%03d", level);
+	name = buf;
+     }
+   else if (EINA_UNLIKELY(level > EINA_LOG_LEVELS))
+     {
+	color = _colors[EINA_LOG_LEVELS];
+	snprintf(buf, sizeof(buf), "%03d", level);
+	name = buf;
+     }
+   else
+     {
+	color = _colors[level];
+	name = _names[level];
+     }
 
-   printf("%s %s%s:%d %s()%s ", d->domain_str,
-				(!_disable_color) ? _colors[level] : "",
-				file, line, fnc,
-				(!_disable_color) ? EINA_COLOR_RESET: "");
+   if (EINA_UNLIKELY(_disable_color))
+     printf("%s:%s %s:%d %s() ",
+	    name, d->domain_str, file, line, fnc);
+   else
+     printf("%s%s" EINA_COLOR_RESET ":%s %s:%d "
+	    EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
+	    color, name, d->domain_str, file, line, fnc);
    vprintf(fmt, args);
 }
 

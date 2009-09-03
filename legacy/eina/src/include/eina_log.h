@@ -31,6 +31,7 @@
 #define EINA_COLOR_WHITE     "\033[37;1m"
 #define EINA_COLOR_LIGHTBLUE "\033[36;1m"
 #define EINA_COLOR_RESET     "\033[0m"
+#define EINA_COLOR_HIGH      "\033[1m"
 
 /**
  * @addtogroup Eina_Tools_Group Tools
