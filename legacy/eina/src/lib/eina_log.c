@@ -896,13 +896,7 @@ eina_log_print_cb_file(const Eina_Log_Domain *d, __UNUSED__ Eina_Log_Level level
 		const char *file, const char *fnc, int line, const char *fmt,
 		void *data, va_list args)
 {
-   FILE *f;
-
-   EINA_SAFETY_ON_NULL_RETURN(file);
-   EINA_SAFETY_ON_NULL_RETURN(fnc);
-   EINA_SAFETY_ON_NULL_RETURN(fmt);
-
-   f = data;
+   FILE *f = data;
    fprintf(f, "%s %s:%d %s() ", d->name, file, line, fnc);
    vfprintf(f, fmt, args);
 }
@@ -914,14 +908,37 @@ eina_log_print(int domain, Eina_Log_Level level, const char *file,
    Eina_Log_Domain *d;
    va_list args;
 
-   EINA_SAFETY_ON_NULL_RETURN(file);
-   EINA_SAFETY_ON_NULL_RETURN(fnc);
-   EINA_SAFETY_ON_NULL_RETURN(fmt);
-
-   if (EINA_UNLIKELY(domain >= _log_domains_count)) return;
-   if (EINA_UNLIKELY(domain < 0)) return;
-
-   d = &_log_domains[domain];
+#ifdef EINA_SAFETY_CHECKS
+   if (EINA_UNLIKELY(file == NULL))
+     {
+	fputs("ERR: eina_log_print() file == NULL\n", stderr);
+	return;
+     }
+   if (EINA_UNLIKELY(fnc == NULL))
+     {
+	fputs("ERR: eina_log_print() fnc == NULL\n", stderr);
+	return;
+     }
+   if (EINA_UNLIKELY(fmt == NULL))
+     {
+	fputs("ERR: eina_log_print() fmt == NULL\n", stderr);
+	return;
+     }
+   if (EINA_UNLIKELY(domain >= _log_domains_count) ||
+       EINA_UNLIKELY(domain < 0))
+     {
+	fprintf(stderr, "ERR: eina_log_print() unknown domain %d\n", domain);
+	return;
+     }
+#endif
+   d = _log_domains + domain;
+#ifdef EINA_SAFETY_CHECKS
+   if (EINA_UNLIKELY(d->deleted))
+     {
+	fprintf(stderr, "ERR: eina_log_print() domain %d is deleted\n", domain);
+	return;
+     }
+#endif
 
    if (level > d->level) return;
 
