@@ -24,14 +24,14 @@
 
 #ifdef EINA_SAFETY_CHECKS
 
-#include "eina_error.h"
+#include "eina_log.h"
 
 #define EINA_SAFETY_ON_NULL_RETURN(exp)					\
   do									\
     {									\
        if (EINA_UNLIKELY((exp) == NULL))				\
 	 {								\
-	    EINA_ERROR_PERR("%s", "safety check failed: " #exp " == NULL\n"); \
+	    EINA_LOG_ERR("%s", "safety check failed: " #exp " == NULL"); \
 	    return;							\
 	 }								\
     }									\
@@ -42,7 +42,7 @@
     {									\
        if (EINA_UNLIKELY((exp) == NULL))				\
 	 {								\
-	    EINA_ERROR_PERR("%s", "safety check failed: " #exp " == NULL\n"); \
+	    EINA_LOG_ERR("%s", "safety check failed: " #exp " == NULL"); \
 	    return (val);						\
 	 }								\
     }									\
@@ -53,7 +53,7 @@
     {									\
        if (EINA_UNLIKELY(exp))						\
 	 {								\
-	    EINA_ERROR_PERR("%s", "safety check failed: " #exp " is true\n"); \
+	    EINA_LOG_ERR("%s", "safety check failed: " #exp " is true"); \
 	    return;							\
 	 }								\
     }									\
@@ -64,7 +64,7 @@
     {									\
        if (EINA_UNLIKELY(exp))						\
 	 {								\
-	    EINA_ERROR_PERR("%s", "safety check failed: " #exp " is true\n"); \
+	    EINA_LOG_ERR("%s", "safety check failed: " #exp " is true"); \
 	    return val;							\
 	 }								\
     }									\
@@ -75,7 +75,7 @@
     {									\
        if (EINA_UNLIKELY(!(exp)))					\
 	 {								\
-	    EINA_ERROR_PERR("%s", "safety check failed: " #exp " is false\n"); \
+	    EINA_LOG_ERR("%s", "safety check failed: " #exp " is false"); \
 	    return;							\
 	 }								\
     }									\
@@ -86,7 +86,7 @@
     {									\
        if (EINA_UNLIKELY(!(exp)))					\
 	 {								\
-	    EINA_ERROR_PERR("%s", "safety check failed: " #exp " is false\n"); \
+	    EINA_LOG_ERR("%s", "safety check failed: " #exp " is false"); \
 	    return val;							\
 	 }								\
     }									\
