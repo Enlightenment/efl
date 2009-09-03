@@ -30,7 +30,7 @@ test_hover.c test_entry.c test_notepad.c test_anchorview.c test_anchorblock.c \
 test_toolbar.c test_hoversel.c test_list.c test_carousel.c test_inwin.c \
 test_scaling.c test_slider.c test_genlist.c test_check.c test_pager.c \
 test_radio.c test_win_state.c test_progressbar.c test_fileselector.c \
-test_separator.c test_scroller.c
+test_separator.c test_scroller.c test_spinner.c
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la
 elementary_test_LDFLAGS =
 

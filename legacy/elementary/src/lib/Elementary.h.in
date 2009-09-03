@@ -324,9 +324,10 @@ extern "C" {
    EAPI void         elm_scroller_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
    EAPI void         elm_scroller_index_set(Evas_Object *obj, Eina_Bool h_index, Eina_Bool v_index);
    EAPI void         elm_scroller_index_clear(Evas_Object *obj, Eina_Bool h_index, Eina_Bool v_index);
-   EAPI void         elm_scroller_index_add(Evas_Object *obj, Elm_Scroller_Axis axis, const char *label, Evas_Object *icon, Evas_Coord position, Evas_Coord size);
+   EAPI void         elm_scroller_index_add(Evas_Object *obj, Elm_Scroller_Axis axis, const char *label, Evas_Object *icon, Evas_Coord position, Evas_Coord size, int level);
    EAPI void         elm_scroller_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel);
    EAPI void         elm_scroller_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize);
+   EAPI void         elm_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
    /* smart callbacks called:
     * "edge_left"
     * "edge_right"
@@ -779,6 +780,18 @@ extern "C" {
    EAPI void         elm_separator_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
    EAPI Eina_Bool    elm_separator_horizontal_get(Evas_Object *obj);
 
+   EAPI Evas_Object *elm_spinner_add(Evas_Object *parent);
+   EAPI void	     elm_spinner_label_format_set(Evas_Object *obj, const char *fmt);
+   EAPI const char  *elm_spinner_label_format_get(Evas_Object *obj);
+   EAPI void         elm_spinner_min_max_set(Evas_Object *obj, double min, double max);
+   EAPI void	     elm_spinner_step_set(Evas_Object *obj, double step);
+   EAPI void	     elm_spinner_value_set(Evas_Object *obj, double val);
+   EAPI double	     elm_spinner_value_get(const Evas_Object *obj);
+   EAPI void         elm_spinner_wrap_set(Evas_Object *obj, Eina_Bool wrap);
+   /* smart callbacks called:
+    * "changed" - when the spinner value changes
+    * "delay,changed" - when the spinner value changed, but a small time after a change (use this if you only want to respond to a change once the spinner is held still for a short while).
+    */
 #ifdef __cplusplus
 }
 #endif
@@ -794,7 +807,7 @@ extern "C" {
 // * table doesnt do homogenous properly
 //
 //// (incomplete - medium priority)
-// * need to add support for disabled in all widgets. Button, toolbar, hoversel, radio, check and entry are currently done.
+// * need to add support for disabled in all widgets. Button, toolbar, hoversel, radio, check, spinner and entry are currently done.
 // * on the fly theme changes - test (should work)
 // * need a hold-scroll counter in elm_widget
 // * hoversel only vertical right now - make horizontal

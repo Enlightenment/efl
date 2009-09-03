@@ -28,3 +28,5 @@ void elm_smart_scroller_hold_set                (Evas_Object *obj, Eina_Bool hol
 void elm_smart_scroller_freeze_set              (Evas_Object *obj, Eina_Bool freeze);
 void elm_smart_scroller_bounce_allow_set        (Evas_Object *obj, Eina_Bool horiz, Eina_Bool vert);
 void elm_smart_scroller_paging_set              (Evas_Object *obj, double pagerel_h, double pagerel_v, Evas_Coord pagesize_h, Evas_Coord pagesize_v);
+void elm_smart_scroller_region_bring_in         (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+  

@@ -420,7 +420,7 @@ elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size)
  *
  * If NULL, this disabls the unit area display. If not it sets the format
  * string for the unit text. The unit text is provided a floating point
- * value, so the unit text can display up to 1 floating point falue. Note that
+ * value, so the unit text can display up to 1 floating point value. Note that
  * this is optional. Use a format string such as "%1.2f meters" for example.
  *
  * @param obj The slider object

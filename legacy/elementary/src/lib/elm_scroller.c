@@ -38,6 +38,8 @@ struct _Widget_Data
    Evas_Object *content;
    Eina_Bool min_w : 1;
    Eina_Bool min_h : 1;
+   Eina_Bool index_h : 1;
+   Eina_Bool index_v : 1;
    double pagerel_h, pagerel_v;
    Evas_Coord pagesize_h, pagesize_v;
 };
@@ -438,7 +440,11 @@ elm_scroller_child_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
  *
  * @param obj The scroller object
  * @param h_bounce Will the scroller bounce horizontally or not
- * @param v_bounce Will the scroller bounce vertically or not
+ y Y coordinate of the region
+ w Width of the region
+ h Height of the region
+ 
+ EAPI void elm_scroller_region_show ( Evas_Object *  obj, * @param v_bounce Will the scroller bounce vertically or not
  *
  * @ingroup Scroller
  */
@@ -468,15 +474,20 @@ elm_scroller_index_set(Evas_Object *obj, Eina_Bool h_index, Eina_Bool v_index)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   // XXX
+   wd->index_h = h_index;
+   wd->index_v = v_index;
+   // XXX eval index and show/hide
 }
 
 /**
- * XXX
+ * Clear specific indexes for the scroller
  *
- * xx
+ * This clears the horizontal and/or vertical indexes for the scroller. After
+ * this the indicated index(es) will be empty.
  * 
  * @param obj The scroller object
+ * @param h_index Clear the horizontal index (or not)
+ * @param v_index Clear the vertical index (or not)
  *
  * @ingroup Scroller
  */
@@ -485,32 +496,57 @@ elm_scroller_index_clear(Evas_Object *obj, Eina_Bool h_index, Eina_Bool v_index)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   // XXX
+   // XXX eval index and show/hide
 }
 
 /**
- * XXX
+ * Add a scroller index member
  *
- * xx
+ * This adds an item in the scroller index, giving it a position in the
+ * virtual content region along a specific axis and a size (the area that
+ * index item consumes). This is used to determine how to display the
+ * index item, if at all, and where it will "jump to". If an icon is used,
+ * the icon object becomes owned by the scroller and will be deleted if the
+ * scroller is deleted or the index cleared. The index level can indicate
+ * to use the main index (0) or sub-indexes for more accurate positioning.
+ * These are optional and may not function if not supported. Icons used for
+ * non-functioning index levels will be deleted.
  * 
  * @param obj The scroller object
+ * @param axis The axis this item is to be asigned to
+ * @param label A string label for this index item
+ * @param icon An icon to display on the index item
+ * @param position The virtual position of the item
+ * @param size The virtual size of the item
+ * @param level Index level. 0 is the main. Others (1, 2, etc.) are optional.
  *
  * @ingroup Scroller
  */
 EAPI void
-elm_scroller_index_add(Evas_Object *obj, Elm_Scroller_Axis axis, const char *label, Evas_Object *icon, Evas_Coord position, Evas_Coord size)
+elm_scroller_index_add(Evas_Object *obj, Elm_Scroller_Axis axis, const char *label, Evas_Object *icon, Evas_Coord position, Evas_Coord size, int level)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   // XXX
+   // XXX eval index and show/hide
 }
 
 /**
- * XXX
+ * Set scroll page size relative to viewport size
  *
- * xx
+ * The scroller is sapale of limiting scrolling by the user to "pages". That
+ * is to jump by and only show a "whole page" at a time as if the continuous
+ * area of the scroller conent is split into page sized pieces. This sets
+ * the size of a page relative to the viewport of the scroller. 1.0 is "1
+ * viewport" is size (horizontally or vertically). 0.0 turns it off in that
+ * axis. This is mutually exclusive with page size
+ * (see elm_scroller_page_size_set()  for more information). likewise 0.5
+ * is "half a viewport". Sane usable valus are normally between 0.0 and 1.0
+ * including 1.0. If you only want 1 axis to be page "limited", use 0.0 for
+ * the other axis.
  * 
  * @param obj The scroller object
+ * @param h_pagerel The horizontal page relative size
+ * @param v_pagerel The vertical page relative size
  *
  * @ingroup Scroller
  */
@@ -526,11 +562,15 @@ elm_scroller_page_relative_set(Evas_Object *obj, double h_pagerel, double v_page
 }
 
 /**
- * XXX
+ * Set scroll page size
  *
- * xx
+ * See also elm_scroller_page_relative_set(). This, instead of a page size
+ * being relaive to the viewport, sets it to an absolute fixed value, with
+ * 0 turning it off for that axis.
  * 
  * @param obj The scroller object
+ * @param h_pagesize The horizontal page size
+ * @param v_pagesize The vertical page size
  *
  * @ingroup Scroller
  */
@@ -543,4 +583,31 @@ elm_scroller_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v
    wd->pagesize_v = v_pagesize;
    elm_smart_scroller_paging_set(wd->scr, wd->pagerel_h, wd->pagerel_v,
                                  wd->pagesize_h, wd->pagesize_v);
+}
+
+/**
+ * Show a specific virtual region within the scroller content object
+ *
+ * This will ensure all (or part if it does not fit) of the designated
+ * region in the virtual content object (0, 0 starting at the top-left of the
+ * virtual content object) is shown within the scroller. Unlike
+ * elm_scroller_region_show(), this allow the scroller to "smoothly slide"
+ * to this location (if configuration in general calls for transitions). It
+ * may not jump immediately to the new location and make take a while and
+ * show other content along the way.
+ *
+ * @param obj The scroller object
+ * @param x X coordinate of the region
+ * @param y Y coordinate of the region
+ * @param w Width of the region
+ * @param h Height of the region
+ *
+ * @ingroup Scroller
+ */
+EAPI void
+elm_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_smart_scroller_region_bring_in(wd->scr, x, y, w, h);
 }

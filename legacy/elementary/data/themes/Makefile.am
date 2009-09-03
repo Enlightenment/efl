@@ -98,6 +98,8 @@ icon_clock.png \
 icon_delete.png \
 icon_edit.png \
 icon_refresh.png \
+icon_folder.png \
+icon_file.png \
 ilist_1.png \
 ilist_2.png \
 ilist_item_shadow.png \
@@ -122,7 +124,10 @@ radio_base.png \
 radio.png \
 radio2.png \
 separator_h.png \
-separator_v.png
+separator_v.png \
+toolbar_separator_v.png \
+sp_bt_l.png \
+sp_bt_r.png
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
