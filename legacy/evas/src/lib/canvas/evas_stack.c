@@ -150,13 +150,13 @@ evas_object_lower(Evas_Object *obj)
 }
 
 /**
- * Stack @p obj immediately above @p above 
+ * Stack @p obj immediately above @p above
  *
  * If @p obj is a member of a smart object, then @p above must also be
  * a member of the same smart object.
  *
- * Similarly, if @p obj is not a member of smart object, @p above may 
- * not either. 
+ * Similarly, if @p obj is not a member of smart object, @p above may
+ * not either.
  *
  * @param obj the object to stack
  * @param above the object above which to stack
@@ -201,7 +201,7 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
 	  }
 	if (obj->in_layer)
 	  {
- 	     obj->layer->objects = (Evas_Object *)eina_inlist_remove(EINA_INLIST_GET(obj->layer->objects),
+	     obj->layer->objects = (Evas_Object *)eina_inlist_remove(EINA_INLIST_GET(obj->layer->objects),
 								     EINA_INLIST_GET(obj));
 	     obj->layer->objects = (Evas_Object *)eina_inlist_append_relative(EINA_INLIST_GET(obj->layer->objects),
 									      EINA_INLIST_GET(obj),
@@ -238,13 +238,13 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
 }
 
 /**
- * Stack @p obj immediately below @p below 
+ * Stack @p obj immediately below @p below
  *
  * If @p obj is a member of a smart object, then @p below must also be
  * a member of the same smart object.
  *
- * Similarly, if @p obj is not a member of smart object, @p below may 
- * not either. 
+ * Similarly, if @p obj is not a member of smart object, @p below may
+ * not either.
  *
  * @param obj the object to stack
  * @param below the object below which to stack
@@ -408,7 +408,7 @@ evas_object_bottom_get(const Evas *e)
    if (e->layers)
      {
 	Evas_Object *obj;
-	
+
 	obj = e->layers->objects;
 	while (obj)
 	  {

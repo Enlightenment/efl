@@ -22,7 +22,7 @@
  * provided callbacks. Callbacks that are unneeded (or marked DEPRECATED
  * below) should be set to NULL.
  *
- * Alternatively you can create an Evas_Smart_Class yourself and use 
+ * Alternatively you can create an Evas_Smart_Class yourself and use
  * evas_smart_class_new().
  *
  * @param name a unique name for the smart
@@ -33,8 +33,8 @@
  * @param func_lower DEPRECATED
  * @param func_stack_above DEPRECATED
  * @param func_stack_below DEPRECATED
- * @param func_move callback called when smart object is moved 
- * @param func_resize callback called when smart object is resized 
+ * @param func_move callback called when smart object is moved
+ * @param func_resize callback called when smart object is resized
  * @param func_show callback called when smart object is shown
  * @param func_hide callback called when smart object is hidden
  * @param func_color_set callback called when smart object has its color set
@@ -67,7 +67,7 @@ evas_smart_new(const char *name,
 
    printf("----- WARNING. evas_smart_new() will be deprecated and removed soon\n"
 	  "----- Please use evas_smart_class_new() instead\n");
-   
+
    if (!name) return NULL;
 
    s = evas_mem_calloc(sizeof(Evas_Smart));
@@ -135,7 +135,7 @@ evas_smart_class_new(const Evas_Smart_Class *sc)
 
    /* api does not match abi! for now refuse as we only have 1 version */
    if (sc->version != EVAS_SMART_CLASS_VERSION) return NULL;
-   
+
    s = evas_mem_calloc(sizeof(Evas_Smart));
    if (!s) return NULL;
 
@@ -164,11 +164,11 @@ evas_smart_class_get(const Evas_Smart *s)
 /**
  * Get the data pointer set on an Evas_Smart.
  *
- * This data pointer is set either as the final parameter to 
+ * This data pointer is set either as the final parameter to
  * evas_smart_new or as the data field in the Evas_Smart_Class passed
  * in to evas_smart_class_new
  *
- * @param Evas_Smart 
+ * @param Evas_Smart
  *
  */
 EAPI void *

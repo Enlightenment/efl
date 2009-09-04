@@ -73,26 +73,26 @@ evas_rects_return_difference_rects(Eina_Array *rects, int x, int y, int w, int h
 		    }
 	       }
 	  }
-/* 	if (tmp.count > 0) */
-/* 	  { */
-/* 	     unsigned int i; */
+/*	if (tmp.count > 0) */
+/*	  { */
+/*	     unsigned int i; */
 
-/* 	     for (i = 0; i < tmp.count; ++i) */
-/* 	       { */
-/* 		  if ((tmp.array[i].w > 0) && (tmp.array[i].h > 0)) */
-/* 		    { */
-/* 		       int intsec1, intsec2; */
+/*	     for (i = 0; i < tmp.count; ++i) */
+/*	       { */
+/*		  if ((tmp.array[i].w > 0) && (tmp.array[i].h > 0)) */
+/*		    { */
+/*		       int intsec1, intsec2; */
 
-/* 		       intsec1 = (RECTS_INTERSECT(tmp.array[i].x, tmp.array[i].y, tmp.array[i].w, tmp.array[i].h, x, y, w, h)); */
-/* 		       intsec2 = (RECTS_INTERSECT(tmp.array[i].x, tmp.array[i].y, tmp.array[i].w, tmp.array[i].h, xx, yy, ww, hh)); */
-/* 		       if (intsec1 ^ intsec2) */
-/* 			 { */
-/* 			    evas_add_rect(rects, tmp.array[i].x, tmp.array[i].y, tmp.array[i].w, tmp.array[i].h); */
-/* 			 } */
-/* 		    } */
-/* 	       } */
-/* 	     free(tmp.array); */
-/* 	  } */
+/*		       intsec1 = (RECTS_INTERSECT(tmp.array[i].x, tmp.array[i].y, tmp.array[i].w, tmp.array[i].h, x, y, w, h)); */
+/*		       intsec2 = (RECTS_INTERSECT(tmp.array[i].x, tmp.array[i].y, tmp.array[i].w, tmp.array[i].h, xx, yy, ww, hh)); */
+/*		       if (intsec1 ^ intsec2) */
+/*			 { */
+/*			    evas_add_rect(rects, tmp.array[i].x, tmp.array[i].y, tmp.array[i].w, tmp.array[i].h); */
+/*			 } */
+/*		    } */
+/*	       } */
+/*	     free(tmp.array); */
+/*	  } */
 
      }
 }

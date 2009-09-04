@@ -170,4 +170,3 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
    return EINA_TRUE;
 #endif
 }
-

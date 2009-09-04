@@ -9,7 +9,7 @@
 
 /**
  * Sets focus to the given object.
- * 
+ *
  * @param obj The object to be focused or unfocused.
  * @param focus set or remove focus to the object.
  *
@@ -54,10 +54,10 @@ evas_object_focus_set(Evas_Object *obj, Eina_Bool focus)
  * Test if the object has focus.
  *
  * @param obj The object to be tested.
- * 
+ *
  * If the passed object is the currently focused object 1 is returned,
  * 0 otherwise.
- * 
+ *
  * @see evas_object_focus_set
  * @see evas_focus_get
  * @see evas_object_key_grab
@@ -78,9 +78,9 @@ evas_object_focus_get(const Evas_Object *obj)
  * Retrieve the object that currently has focus.
  *
  * @param e The @c Evas canvas to query focus on.
- * 
+ *
  * Returns the object that currently has focus, NULL otherwise.
- * 
+ *
  * @see evas_object_focus_set
  * @see evas_object_focus_get
  * @see evas_object_key_grab

@@ -54,7 +54,7 @@ struct _Evas_Object_Image
    } func;
 
    Evas_Image_Scale_Hint scale_hint;
-   
+
    void             *engine_data;
 
    unsigned char     changed : 1;
@@ -1371,7 +1371,7 @@ evas_object_image_save(const Evas_Object *obj, const char *file, const char *key
      {
 	char *p, *pp;
 	char *tflags;
-	
+
 	tflags = alloca(strlen(flags) + 1);
 	strcpy(tflags, flags);
 	p = tflags;
@@ -2696,10 +2696,10 @@ evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    y -= o->cur.fill.y;
    x %= w;
    y %= h;
-   
+
    if (x < 0) x += w;
    if (y < 0) y += h;
-   
+
    if (o->cur.border.fill != EVAS_BORDER_FILL_DEFAULT)
      {
         if ((x > o->cur.border.l) && (x < (w - o->cur.border.r)) &&
@@ -2772,7 +2772,7 @@ evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    if (y < 0) y = 0;
    if (x >= iw) x = iw - 1;
    if (y >= ih) y = ih - 1;
-   
+
    stride = o->cur.image.stride;
 
    o->engine_data = obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
@@ -2805,13 +2805,13 @@ static int
 evas_object_image_has_opaque_rect(Evas_Object *obj)
 {
    Evas_Object_Image *o;
-   
+
    o = (Evas_Object_Image *)(obj->object_data);
    if (((o->cur.border.l | o->cur.border.r | o->cur.border.t | o->cur.border.b) != 0) &&
        (o->cur.border.fill == EVAS_BORDER_FILL_SOLID) &&
        (obj->cur.render_op == EVAS_RENDER_BLEND) &&
        (obj->cur.cache.clip.a == 255) &&
-       (o->cur.fill.x == 0) && 
+       (o->cur.fill.x == 0) &&
        (o->cur.fill.y == 0) &&
        (o->cur.fill.w == obj->cur.geometry.w) &&
        (o->cur.fill.h == obj->cur.geometry.h)
@@ -2823,7 +2823,7 @@ static int
 evas_object_image_get_opaque_rect(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    Evas_Object_Image *o;
-   
+
    o = (Evas_Object_Image *)(obj->object_data);
    *x = obj->cur.geometry.x + o->cur.border.l;
    *y = obj->cur.geometry.y + o->cur.border.t;

@@ -12,7 +12,7 @@ struct _Evas_Object_Polygon
 {
    DATA32            magic;
    Eina_List        *points;
-   
+
    void             *engine_data;
 
    char              changed : 1;

@@ -240,7 +240,7 @@ evas_object_gradient2_linear_free(Evas_Object *obj)
       obj->layer->evas->engine.func->gradient2_linear_free(obj->layer->evas->engine.data.output,
 							  o->engine_data);
    free(o);
-   obj->object_data = NULL; 
+   obj->object_data = NULL;
 }
 
 
@@ -333,7 +333,7 @@ evas_object_gradient2_linear_render_pre(Evas_Object *obj)
 	  }
 	og->cur.gradient_opaque = obj->layer->evas->engine.func->gradient2_linear_is_opaque(obj->layer->evas->engine.data.output,
 										   obj->layer->evas->engine.data.context,
-				  						   o->engine_data,
+										   o->engine_data,
 										   obj->cur.cache.clip.x, obj->cur.cache.clip.y,
 										   obj->cur.cache.clip.w, obj->cur.cache.clip.h);
 
@@ -372,7 +372,7 @@ evas_object_gradient2_linear_render_pre(Evas_Object *obj)
    /* it obviously didn't change - add a NO obscure - this "unupdates"  this */
    /* area so if there were updates for it they get wiped. don't do it if we */
    /* arent fully opaque and we are visible */
-   
+
    if (evas_object_is_visible(obj) &&
        evas_object_is_opaque(obj))
      obj->layer->evas->engine.func->output_redraws_rect_del(obj->layer->evas->engine.data.output,
@@ -380,7 +380,7 @@ evas_object_gradient2_linear_render_pre(Evas_Object *obj)
 							    obj->cur.cache.clip.y,
 							    obj->cur.cache.clip.w,
 							    obj->cur.cache.clip.h);
-   
+
    done:
    evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, obj, is_v, was_v);
 }

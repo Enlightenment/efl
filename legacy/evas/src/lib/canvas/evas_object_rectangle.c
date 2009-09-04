@@ -261,7 +261,7 @@ evas_object_rectangle_render_pre(Evas_Object *obj)
    /* it obviously didn't change - add a NO obscure - this "unupdates"  this */
    /* area so if there were updates for it they get wiped. don't do it if we */
    /* arent fully opaque and we are visible */
- /*   
+ /*
    if (evas_object_is_visible(obj) &&
        evas_object_is_opaque(obj) &&
        (!obj->clip.clipees))

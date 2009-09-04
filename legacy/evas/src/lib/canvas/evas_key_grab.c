@@ -153,7 +153,7 @@ evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask mod
  *
  * For a list of keynames for the Linux frame buffer, please refer to the
  * Ecore_FB documentation.
- * 
+ *
  * @p modifiers and @p not_modifiers are bit masks of all the modifiers that are required and
  * not required respectively for the new grab.  Modifiers can be things such as shift and ctrl
  * as well as user defigned types via evas_key_modifier_add.
@@ -163,7 +163,7 @@ evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask mod
  * @see evas_object_focus_get
  * @see evas_focus_get
  * @see evas_key_modifier_add
- * 
+ *
  * @param obj the object to direct @p keyname events to.
  * @param keyname the key to request events for.
  * @param modifiers a mask of modifiers that should be present to trigger the event.
@@ -193,10 +193,10 @@ evas_object_key_grab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask m
 
 /**
  * Request that the grab on @p obj be removed.
- * 
+ *
  * Removes the grab on @p obj if @p keyname, @p modifiers, and @p not_modifiers
  * match.
- * 
+ *
  * @see evas_object_key_grab
  * @see evas_object_focus_set
  * @see evas_object_focus_get

@@ -25,7 +25,7 @@ evas_cserve_stats_get(Evas_Cserve_Stats *stats)
 {
 #ifdef EVAS_CSERVE
    Op_Getstats_Reply st;
-   
+
    if (!evas_cserve_raw_stats_get(&st)) return 0;
    if (!stats) return 1;
    stats->saved_memory = st.saved_memory;
@@ -38,7 +38,7 @@ evas_cserve_stats_get(Evas_Cserve_Stats *stats)
    return 1;
 #else
    return 0;
-#endif   
+#endif
 }
 
 EAPI Eina_Bool
@@ -49,7 +49,7 @@ evas_cserve_image_cache_contents_get(Evas_Cserve_Image_Cache *cache)
    Op_Getinfo_Item *itt;
    unsigned char *p;
    int i, j;
-   
+
    if (!(info = evas_cserve_raw_info_get())) return 0;
    if (!cache)
      {
@@ -70,7 +70,7 @@ evas_cserve_image_cache_contents_get(Evas_Cserve_Image_Cache *cache)
         Op_Getinfo_Item it;
         char *file, *key, buf[512];
         struct tm *ltm;
-        
+
         itt = (Op_Getinfo_Item *)p;
         memcpy(&it, itt, sizeof(Op_Getinfo_Item));
         file = p + sizeof(Op_Getinfo_Item);
@@ -122,7 +122,7 @@ evas_cserve_image_cache_contents_get(Evas_Cserve_Image_Cache *cache)
    return 1;
 #else
    return 0;
-#endif   
+#endif
 }
 
 EAPI void
@@ -130,14 +130,14 @@ evas_cserve_image_cache_contents_clean(Evas_Cserve_Image_Cache *cache)
 {
 #ifdef EVAS_CSERVE
    Evas_Cserve_Image *im;
-   
+
    EINA_LIST_FREE(cache->images, im)
      {
         if (im->file) eina_stringshare_del(im->file);
         if (im->key) eina_stringshare_del(im->key);
         free(im);
      }
-#endif   
+#endif
 }
 
 EAPI Eina_Bool
@@ -145,7 +145,7 @@ evas_cserve_config_get(Evas_Cserve_Config *config)
 {
 #ifdef EVAS_CSERVE
    Op_Getconfig_Reply conf;
-   
+
    if (!evas_cserve_raw_config_get(&conf)) return 0;
    if (!config) return 1;
    config->cache_max_usage = conf.cache_max_usage;
@@ -154,7 +154,7 @@ evas_cserve_config_get(Evas_Cserve_Config *config)
    return 1;
 #else
    return 0;
-#endif   
+#endif
 }
 
 EAPI Eina_Bool
@@ -170,7 +170,7 @@ evas_cserve_config_set(Evas_Cserve_Config *config)
    return evas_cserve_raw_config_set(&conf);
 #else
    return 0;
-#endif   
+#endif
 }
 
 EAPI void
@@ -178,5 +178,5 @@ evas_cserve_disconnect(void)
 {
 #ifdef EVAS_CSERVE
    evas_cserve_discon();
-#endif   
+#endif
 }

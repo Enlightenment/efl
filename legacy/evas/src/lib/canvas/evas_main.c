@@ -15,7 +15,7 @@ evas_init(void)
 	evas_async_events_init();
 #ifdef EVAS_CSERVE
         if (getenv("EVAS_CSERVE")) evas_cserve_init();
-#endif        
+#endif
      }
    return ++initcount;
 }
@@ -28,7 +28,7 @@ evas_shutdown(void)
      {
 #ifdef EVAS_CSERVE
         if (getenv("EVAS_CSERVE")) evas_cserve_shutdown();
-#endif        
+#endif
 	evas_async_events_shutdown();
 	evas_font_dir_cache_free();
 	evas_common_shutdown();
@@ -960,7 +960,7 @@ evas_pointer_inside_get(const Evas *e)
 
 /**
  * Attaches a specific pointer to the evas for fetching later
- * 
+ *
  * @param e The canvas to attach the pointer to
  * @param data The pointer to attach
  */
@@ -975,7 +975,7 @@ evas_data_attach_set(Evas *e, void *data)
 
 /**
  * Returns the pointer attached by evas_data_attach_set()
- * 
+ *
  * @param e The canvas to attach the pointer to
  * @return The pointer attached
  */
@@ -1000,4 +1000,3 @@ _evas_unwalk(Evas *e)
    e->walking_list--;
    if ((e->walking_list == 0) && (e->delete_me)) evas_free(e);
 }
-

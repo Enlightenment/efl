@@ -31,7 +31,7 @@ struct _Evas_Object_Text
    float                max_ascent, max_descent;
 
    void                *engine_data;
-   
+
    char                 changed : 1;
 };
 
@@ -135,7 +135,7 @@ evas_object_text_font_source_set(Evas_Object *obj, const char *font_source)
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
    return;
    MAGIC_CHECK_END();
-   
+
    if ((o->cur.source) && (font_source) &&
        (!strcmp(o->cur.source, font_source)))
      return;
@@ -188,7 +188,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
    return;
    MAGIC_CHECK_END();
-   
+
    if ((o->cur.font) && (font) && (!strcmp(o->cur.font, font)))
      {
 	same_font = 1;
@@ -216,7 +216,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
 	o->prev.font = NULL;
      }
    o->cur.size = size;
-   o->engine_data = evas_font_load(obj->layer->evas, o->cur.font, o->cur.source, 
+   o->engine_data = evas_font_load(obj->layer->evas, o->cur.font, o->cur.source,
 				   (int)(((double)o->cur.size) * obj->cur.scale));
    evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
    if ((o->engine_data) && (o->cur.text))
@@ -284,7 +284,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
  * created with evas_object_text_add() to be queried. Be aware that the font
  * name string is still owned by Evas and should NOT have free() called on
  * it by the caller of the function.
- * 
+ *
  * @param obj	The evas text object to query for font information.
  * @param font	A pointer to the location to store the font name in (may be NULL).
  * @param size	A pointer to the location to store the font size in (may be NULL).
@@ -1020,7 +1020,7 @@ evas_font_path_prepend(Evas *e, const char *path)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   
+
    if (!path) return;
    e->font_path = eina_list_prepend(e->font_path, eina_stringshare_add(path));
 }
@@ -1165,7 +1165,7 @@ evas_font_available_list(const Evas *e)
 
    return evas_font_dir_available_list(e);
 }
-   
+
 /**
  * To be documented.
  *
@@ -1174,12 +1174,12 @@ evas_font_available_list(const Evas *e)
  */
 EAPI void
 evas_font_available_list_free(Evas *e, Eina_List *available)
-{ 
+{
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
 
-   evas_font_dir_available_list_free(available); 
+   evas_font_dir_available_list_free(available);
 }
 
 /**
@@ -1316,7 +1316,7 @@ evas_text_style_pad_get(Evas_Text_Style_Type style, int *l, int *r, int *t, int 
 	if (sr < 4) sr = 4;
 	if (sb < 4) sb = 4;
      }
-   
+
    if (l) *l = sl;
    if (r) *r = sr;
    if (t) *t = st;
@@ -1432,13 +1432,13 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 
 #define COLOR_SET_AMUL(object, sub, col, amul) \
         if (obj->cur.clipper) \
-  	    ENFN->context_color_set(output, context, \
+	    ENFN->context_color_set(output, context, \
 				(((int)object->sub.col.r) * ((int)obj->cur.clipper->cur.cache.clip.r) * (amul)) / 65025, \
 				(((int)object->sub.col.g) * ((int)obj->cur.clipper->cur.cache.clip.g) * (amul)) / 65025, \
 				(((int)object->sub.col.b) * ((int)obj->cur.clipper->cur.cache.clip.b) * (amul)) / 65025, \
 				(((int)object->sub.col.a) * ((int)obj->cur.clipper->cur.cache.clip.a) * (amul)) / 65025); \
         else \
-  	    ENFN->context_color_set(output, context, \
+	    ENFN->context_color_set(output, context, \
 				(((int)object->sub.col.r) * (amul)) / 255, \
 				(((int)object->sub.col.g) * (amul)) / 255, \
 				(((int)object->sub.col.b) * (amul)) / 255, \
@@ -1743,7 +1743,7 @@ evas_object_text_scale_update(Evas_Object *obj)
    Evas_Object_Text *o;
    int size;
    const char *font;
-   
+
    o = (Evas_Object_Text *)(obj->object_data);
    font = eina_stringshare_add(o->cur.font);
    size = o->cur.size;
@@ -1760,7 +1760,7 @@ _evas_object_text_rehint(Evas_Object *obj)
 {
    Evas_Object_Text *o;
    int is, was;
-   
+
    o = (Evas_Object_Text *)(obj->object_data);
    if (!o->engine_data) return;
    evas_font_load_hinting_set(obj->layer->evas, o->engine_data,
@@ -1774,7 +1774,7 @@ _evas_object_text_rehint(Evas_Object *obj)
      {
 	int w, h;
 	int l = 0, r = 0, t = 0, b = 0;
-	
+
 	ENFN->font_string_size_get(ENDT,
 				   o->engine_data,
 				   o->cur.text,
@@ -1787,7 +1787,7 @@ _evas_object_text_rehint(Evas_Object *obj)
    else
      {
 	int t = 0, b = 0;
-	
+
 	evas_text_style_pad_get(o->cur.style, NULL, NULL, &t, &b);
 	obj->cur.geometry.w = 0;
 	obj->cur.geometry.h = o->max_ascent + o->max_descent + t + b;

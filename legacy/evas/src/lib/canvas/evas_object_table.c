@@ -310,22 +310,22 @@ _evas_object_table_calculate_cell(const Evas_Object_Table_Option *opt, Evas_Coor
 /* { */
 /*    if (*align < 0.0) */
 /*      { */
-/* 	/\* assume expand and align to the center. */
-/* 	 * this is compatible with evas_object_box behavior and is the */
-/* 	 * same as weight > 0.0. */
-/* 	 *\/ */
-/* 	*align = 0.5; */
-/* 	return 0; */
+/*	/\* assume expand and align to the center. */
+/*	 * this is compatible with evas_object_box behavior and is the */
+/*	 * same as weight > 0.0. */
+/*	 *\/ */
+/*	*align = 0.5; */
+/*	return 0; */
 /*      } */
 /*    else if (min < 1) */
 /*      { */
-/* 	fprintf(stderr, */
-/* 		"WARNING: child %p [%s, %s] has no minimum width " */
-/* 		"and no %s expand (weight is not > 0.0). " */
-/* 		"Assuming weight > 0.0\n", */
-/* 		child, evas_object_type_get(child), evas_object_name_get(child), */
-/* 		axis_name); */
-/* 	return 0; */
+/*	fprintf(stderr, */
+/*		"WARNING: child %p [%s, %s] has no minimum width " */
+/*		"and no %s expand (weight is not > 0.0). " */
+/*		"Assuming weight > 0.0\n", */
+/*		child, evas_object_type_get(child), evas_object_name_get(child), */
+/*		axis_name); */
+/*	return 0; */
 /*      } */
 
 /*    return 1; */
@@ -373,13 +373,13 @@ _evas_object_table_calculate_hints_homogeneous(Evas_Object *o, Evas_Object_Table
 	     opt->expand_h = 1;
 	     expand_h = 1;
 	  }
-/* 	else if ((priv->homogeneous == EVAS_OBJECT_TABLE_HOMOGENEOUS_TABLE) && */
-/* 		 (!_evas_object_table_check_hints_homogeneous_table */
-/* 		  (child, &opt->align.h, opt->min.w, "horizontal"))) */
-/* 	  { */
-/* 	     opt->expand_h = 1; */
-/* 	     expand_h = 1; */
-/* 	  } */
+/*	else if ((priv->homogeneous == EVAS_OBJECT_TABLE_HOMOGENEOUS_TABLE) && */
+/*		 (!_evas_object_table_check_hints_homogeneous_table */
+/*		  (child, &opt->align.h, opt->min.w, "horizontal"))) */
+/*	  { */
+/*	     opt->expand_h = 1; */
+/*	     expand_h = 1; */
+/*	  } */
 
 
 	opt->expand_v = 0;
@@ -390,13 +390,13 @@ _evas_object_table_calculate_hints_homogeneous(Evas_Object *o, Evas_Object_Table
 	     opt->expand_v = 1;
 	     expand_v = 1;
 	  }
-/* 	else if ((priv->homogeneous == EVAS_OBJECT_TABLE_HOMOGENEOUS_TABLE) && */
-/* 		 (!_evas_object_table_check_hints_homogeneous_table */
-/* 		  (child, &opt->align.v, opt->min.h, "vertical"))) */
-/* 	  { */
-/* 	     opt->expand_v = 1; */
-/* 	     expand_v = 1; */
-/* 	  } */
+/*	else if ((priv->homogeneous == EVAS_OBJECT_TABLE_HOMOGENEOUS_TABLE) && */
+/*		 (!_evas_object_table_check_hints_homogeneous_table */
+/*		  (child, &opt->align.v, opt->min.h, "vertical"))) */
+/*	  { */
+/*	     opt->expand_v = 1; */
+/*	     expand_v = 1; */
+/*	  } */
 
 	if (opt->align.h < 0.0)
 	  opt->align.h = 0.5;

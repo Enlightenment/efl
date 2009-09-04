@@ -298,7 +298,7 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *e)
      }
 }
 
-Eina_Bool 
+Eina_Bool
 pending_change(void *data, void *gdata __UNUSED__)
 {
    Evas_Object *obj;
@@ -403,7 +403,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
                      (!obj->delete_me) &&
                      (obj->cur.cache.clip.visible) &&
                      (!obj->smart.smart)))
-/* 	  obscuring_objects = eina_list_append(obscuring_objects, obj); */
+/*	  obscuring_objects = eina_list_append(obscuring_objects, obj); */
 	  eina_array_push(&e->obscuring_objects, obj);
      }
    /* save this list */
@@ -545,7 +545,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
                                       if (obj2->func->get_opaque_rect)
                                         {
                                            Evas_Coord obx, oby, obw, obh;
-                                           
+
                                            obj2->func->get_opaque_rect
                                              (obj2, &obx, &oby, &obw, &obh);
                                            if ((obw > 0) && (obh > 0))
@@ -774,4 +774,3 @@ evas_render_object_recalc(Evas_Object *obj)
 	obj->changed = 1;
      }
 }
-

@@ -1,4 +1,3 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -55,7 +54,7 @@ evas_font_dir_cache_free(void)
 #ifdef HAVE_FONTCONFIG
    fc_init--;
    if (fc_init == 0) FcFini();
-#endif   
+#endif
    if (!font_dirs) return;
 
    eina_hash_foreach(font_dirs, font_cache_dir_free, NULL);
@@ -200,7 +199,7 @@ evas_font_init(void)
         FcInit();
         FcConfigEnableHome(1);
      }
-#endif   
+#endif
 }
 
 void *
@@ -213,7 +212,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 
    if (!name) return NULL;
    if (name[0] == 0) return NULL;
-   
+
    evas_font_init();
 
    EINA_LIST_FOREACH(fonts_cache, l, fd)
@@ -407,8 +406,8 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 	     FcPatternGet(set->fonts[i], FC_FILE, 0, &filename);
 
 	     if (font)
-	       evas->engine.func->font_add(evas->engine.data.output, font, (char *)filename.u.s, size);     	  
-	     else 	  
+	       evas->engine.func->font_add(evas->engine.data.output, font, (char *)filename.u.s, size);
+	     else
 	       font = evas->engine.func->font_load(evas->engine.data.output, (char *)filename.u.s, size);
 	  }
 
@@ -458,7 +457,7 @@ evas_font_dir_available_list(const Evas *evas)
    int i;
 
    evas_font_init();
-   
+
    p = FcPatternCreate();
    os = FcObjectSetBuild(FC_FAMILY, FC_STYLE, NULL);
 

@@ -587,7 +587,7 @@ static void
 _evas_object_size_hint_alloc(Evas_Object *obj)
 {
    if (obj->size_hints) return;
-   
+
    obj->size_hints = calloc(1, sizeof(Evas_Size_Hints));
    obj->size_hints->max.w = -1;
    obj->size_hints->max.h = -1;
@@ -1126,7 +1126,7 @@ evas_object_hide(Evas_Object *obj)
                   if (obj->mouse_in)
                     {
                        Evas_Event_Mouse_Out ev;
-                       
+
                        obj->mouse_in = 0;
                        ev.buttons = obj->layer->evas->pointer.button;
                        ev.output.x = obj->layer->evas->pointer.x;
@@ -1330,7 +1330,7 @@ evas_object_color_interpolation_set(Evas_Object *obj, int color_space)
    MAGIC_CHECK_END();
    if (obj->delete_me) return;
    if (obj->cur.interpolation_color_space == color_space)
-   	return;
+	return;
    obj->cur.interpolation_color_space = color_space;
    evas_object_change(obj);
 }
@@ -1366,7 +1366,7 @@ evas_object_render_op_set(Evas_Object *obj, Evas_Render_Op render_op)
    MAGIC_CHECK_END();
    if (obj->delete_me) return;
    if ((Evas_Render_Op)obj->cur.render_op == render_op)
-   	return;
+	return;
    obj->cur.render_op = render_op;
    evas_object_change(obj);
 }

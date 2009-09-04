@@ -101,7 +101,7 @@ evas_object_smart_data_set(Evas_Object *obj, void *data)
  * Retrieve user data stored on a smart object.
  *
  * @param obj The smart object
- * @return A pointer to data stored using evas_object_smart_data_set(), or 
+ * @return A pointer to data stored using evas_object_smart_data_set(), or
  *         NULL if none has been set.
  * @ingroup Evas_Smart_Object_Group
  */
@@ -148,7 +148,7 @@ evas_object_smart_smart_get(const Evas_Object *obj)
  * @param obj The member object
  * @param smart_obj The smart object
  *
- * Members will automatically be stacked and layered with the smart object. 
+ * Members will automatically be stacked and layered with the smart object.
  * The various stacking function will operate on members relative to the
  * other members instead of the entire canvas.
  *
@@ -193,7 +193,7 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
      }
 
    if (obj->smart.parent == smart_obj) return;
-   
+
    if (obj->smart.parent) evas_object_smart_member_del(obj);
 
    evas_object_release(obj, 1);
@@ -259,7 +259,7 @@ evas_object_smart_parent_get(const Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
-   
+
    return obj->smart.parent;
 }
 
@@ -275,7 +275,7 @@ evas_object_smart_members_get(const Evas_Object *obj)
    Evas_Object_Smart *o;
    Eina_List *members;
    Eina_Inlist *member;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
@@ -287,7 +287,7 @@ evas_object_smart_members_get(const Evas_Object *obj)
    members = NULL;
    for (member = o->contained; member; member = member->next)
       members = eina_list_append(members, member);
-   
+
    return members;
 }
 
@@ -427,7 +427,7 @@ evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event
    Eina_List *l;
    Evas_Smart_Callback *cb;
    const char *strshare;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -695,7 +695,7 @@ evas_object_smart_member_cache_invalidate(Evas_Object *obj)
    for (l = o->contained; l; l = l->next)
      {
 	Evas_Object *obj2;
-	
+
 	obj2 = (Evas_Object *)l;
 	evas_object_smart_member_cache_invalidate(obj2);
      }

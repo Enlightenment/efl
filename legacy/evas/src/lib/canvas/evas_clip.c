@@ -222,10 +222,10 @@ evas_object_clip_unset(Evas_Object *obj)
        if (obj->smart.smart->smart_class->clip_unset)
 	  obj->smart.smart->smart_class->clip_unset(obj);
      }
-   if (obj->cur.clipper) 
+   if (obj->cur.clipper)
      {
         obj->cur.clipper->clip.clipees = eina_list_remove(obj->cur.clipper->clip.clipees, obj);
-	if (!obj->cur.clipper->clip.clipees) 
+	if (!obj->cur.clipper->clip.clipees)
 	  obj->cur.clipper->cur.have_clipees = 0;
 	evas_object_change(obj->cur.clipper);
      }
