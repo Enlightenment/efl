@@ -147,6 +147,12 @@ struct _Eina_Stringshare_Head
 
 static Eina_Stringshare *share = NULL;
 static int _eina_stringshare_init_count = 0;
+static int _eina_stringshare_log_dom = -1;
+
+#define CRITICAL(...) EINA_LOG_DOM_CRIT(_eina_stringshare_log_dom, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_eina_stringshare_log_dom, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_eina_stringshare_log_dom, __VA_ARGS__)
+
 static const unsigned char _eina_stringshare_single[512] = {
   0,0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8,0,9,0,10,0,11,0,12,0,13,0,14,0,15,0,
   16,0,17,0,18,0,19,0,20,0,21,0,22,0,23,0,24,0,25,0,26,0,27,0,28,0,29,0,30,0,
@@ -592,8 +598,7 @@ _eina_stringshare_small_del(const char *str, unsigned char length)
    return;
 
  error:
-   EINA_ERROR_PWARN("EEEK trying to del non-shared stringshare \"%s\"\n", str);
-   if (getenv("EINA_ERROR_ABORT")) abort();
+   CRITICAL("EEEK trying to del non-shared stringshare \"%s\"", str);
 }
 
 static void
@@ -819,28 +824,40 @@ eina_stringshare_init(void)
     */
    if (!_eina_stringshare_init_count)
      {
+	if (!eina_log_init())
+	  {
+	     fprintf(stderr, "Could not initialize eina logging system.\n");
+	     return 0;
+	  }
+
+	_eina_stringshare_log_dom = eina_log_domain_register("eina_stringshare", EINA_LOG_COLOR_DEFAULT);
+	if (_eina_stringshare_log_dom < 0)
+	  {
+	     EINA_LOG_ERR("Could not register log domain: eina_stringshare");
+	     eina_log_shutdown();
+	     return 0;
+	  }
+
         share = calloc(1, sizeof(Eina_Stringshare));
         if (!share)
           return 0;
 
         if (!eina_error_init())
           {
-             fprintf(stderr, "Could not initialize eina error module.\n");
-             return 0;
+             ERR("Could not initialize eina error module.");
+	     goto error_init_error;
           }
 
 	if (!eina_safety_checks_init())
 	  {
-	     fprintf(stderr, "Could not initialize eina safety checks.\n");
-	     eina_error_shutdown();
-	     return 0;
+	     ERR("Could not initialize eina safety checks.");
+	     goto safety_checks_init_error;
 	  }
 
         if (!eina_magic_string_init())
           {
-             EINA_ERROR_PERR("ERROR: Could not initialize eina magic string module.\n");
-             eina_error_shutdown();
-             return 0;
+             ERR("ERROR: Could not initialize eina magic string module.");
+	     goto magic_string_init_error;
           }
 
         eina_magic_string_set(EINA_MAGIC_STRINGSHARE,
@@ -856,6 +873,16 @@ eina_stringshare_init(void)
      }
 
    return ++_eina_stringshare_init_count;
+
+ magic_string_init_error:
+   eina_safety_checks_shutdown();
+ safety_checks_init_error:
+   eina_error_shutdown();
+ error_init_error:
+   eina_log_domain_unregister(_eina_stringshare_log_dom);
+   _eina_stringshare_log_dom = -1;
+   eina_log_shutdown();
+   return 0;
 }
 
 /**
@@ -892,6 +919,9 @@ eina_stringshare_shutdown(void)
 	eina_magic_string_shutdown();
 	eina_safety_checks_shutdown();
 	eina_error_shutdown();
+	eina_log_domain_unregister(_eina_stringshare_log_dom);
+	_eina_stringshare_log_dom = -1;
+	eina_log_shutdown();
      }
 
    return _eina_stringshare_init_count;
@@ -1139,8 +1169,7 @@ eina_stringshare_del(const char *str)
 
  on_error:
    /* possible segfault happened before here, but... */
-   EINA_ERROR_PWARN("EEEK trying to del non-shared stringshare \"%s\"\n", str);
-   if (getenv("EINA_ERROR_ABORT")) abort();
+   CRITICAL("EEEK trying to del non-shared stringshare \"%s\"", str);
 }
 
 /**
