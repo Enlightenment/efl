@@ -94,6 +94,23 @@ if test "x$have_safety_checks" = "xyes"; then
 fi
 AC_SUBST(EINA_CONFIGURE_SAFETY_CHECKS)
 
+with_max_log_level="<unset>"
+AC_ARG_WITH(internal-maximum-log-level,
+   [AC_HELP_STRING([--with-internal-maximum-log-level=NUMBER],
+                   [limit eina internal log level to the given number, any call to EINA_LOG() with values greater than this will be compiled out, ignoring runtime settings, but saving function calls.])],
+   [
+    if test "x${withval}" != "xno"; then
+       if echo "${withval}" | grep '^[[0-9]]\+$' >/dev/null 2>/dev/null; then
+          AC_MSG_NOTICE([ignoring any EINA_LOG() with level greater than ${withval}])
+          AC_DEFINE_UNQUOTED(EINA_LOG_LEVEL_MAXIMUM, ${withval}, [if set, logging is limited to this amount.])
+          with_max_log_level="${withval}"
+       else
+          AC_MSG_ERROR([--with-internal-maximum-log-level takes a decimal number, got "${withval}" instead.])
+       fi
+    fi
+    ], [:])
+
+
 # Choose best memory pool
 AC_ARG_ENABLE([default-mempool],
    [AC_HELP_STRING([--enable-default-mempool], [Default memory allocator could be faster for some computer. @<:@default=disabled@:>@])],
@@ -409,6 +426,7 @@ echo "Configuration Options Summary:"
 echo
 echo "  Magic debug..........: ${have_magic_debug}"
 echo "  Safety checks........: ${have_safety_checks}"
+echo "  Maximum log level....: ${with_max_log_level}"
 echo "  Report string usage..: ${have_stringshare_usage}"
 echo "  Default mempool......: ${have_default_mempool}"
 echo "  Thread Support.......: ${have_pthread}"

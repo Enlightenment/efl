@@ -52,9 +52,28 @@ EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
 /**
  * @def EINA_LOG(DOM, LEVEL, fmt, ...)
  * Logs a message on the specified domain, level and format.
+ *
+ * @note if @c EINA_LOG_LEVEL_MAXIMUM is defined, then messages larger
+ *       than this value will be ignored regardless of current domain
+ *       level, the eina_log_print() is not even called! Most
+ *       compilers will just detect the two integers make the branch
+ *       impossible and remove the branch and function call all
+ *       together. Take this as optimization tip and possible remove
+ *       debug messages from binaries to be deployed, saving on hot
+ *       paths. Never define @c EINA_LOG_LEVEL_MAXIMUM on public
+ *       header files.
  */
+#ifdef EINA_LOG_LEVEL_MAXIMUM
+#define EINA_LOG(DOM, LEVEL, fmt, ...)					\
+  do {									\
+     if (LEVEL <= EINA_LOG_LEVEL_MAXIMUM)				\
+       eina_log_print(DOM, LEVEL, __FILE__, __FUNCTION__, __LINE__,	\
+		      fmt, ##__VA_ARGS__);				\
+  } while (0)
+#else
 #define EINA_LOG(DOM, LEVEL, fmt, ...) \
 	eina_log_print(DOM, LEVEL, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
+#endif
 
 /**
  * @def EINA_LOG_DOM_CRIT(DOM, fmt, ...)
