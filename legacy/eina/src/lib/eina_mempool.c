@@ -27,10 +27,11 @@
 
 #include "eina_config.h"
 #include "eina_private.h"
-#include "eina_safety_checks.h"
-#include "eina_mempool.h"
 #include "eina_hash.h"
 #include "eina_module.h"
+#include "eina_log.h"
+#include "eina_safety_checks.h"
+#include "eina_mempool.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -43,6 +44,11 @@
 static Eina_Hash *_backends;
 static Eina_Array *_modules;
 static int _init_count = 0;
+static int _log_dom = -1;
+
+#define ERR(...) EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
+
 
 static Eina_Mempool *
 _new_from_buffer(const char *name, const char *context, const char *options, va_list args)
@@ -106,14 +112,20 @@ void fixed_bitmap_shutdown(void);
  *                                 Global                                     *
  *============================================================================*/
 
-EAPI Eina_Bool eina_mempool_register(Eina_Mempool_Backend *be)
+EAPI Eina_Bool
+eina_mempool_register(Eina_Mempool_Backend *be)
 {
-	return eina_hash_add(_backends, be->name, be);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(be, 0);
+   DBG("be=%p, name=%p", be, be->name);
+   return eina_hash_add(_backends, be->name, be);
 }
 
-EAPI void eina_mempool_unregister(Eina_Mempool_Backend *be)
+EAPI void
+eina_mempool_unregister(Eina_Mempool_Backend *be)
 {
-	eina_hash_del(_backends, be->name, be);
+   EINA_SAFETY_ON_NULL_RETURN(be);
+   DBG("be=%p, name=%p", be, be->name);
+   eina_hash_del(_backends, be->name, be);
 }
 
 /*============================================================================*
@@ -137,20 +149,34 @@ eina_mempool_init(void)
 	{
 		char *path;
 
+		if (!eina_log_init())
+		  {
+		     fprintf(stderr, "Could not initialize eina logging system.\n");
+		     return 0;
+		  }
+
+		_log_dom = eina_log_domain_register("eina_mempool", EINA_LOG_COLOR_DEFAULT);
+		if (_log_dom < 0)
+		  {
+		     EINA_LOG_ERR("Could not register log domain: eina_mempool");
+		     eina_log_shutdown();
+		     return 0;
+		  }
+
 		if (!eina_safety_checks_init())
 		  {
-		     fprintf(stderr, "Could not initialize eina safety checks.\n");
-		     return 0;
+		     ERR("Could not initialize eina safety checks.");
+		     goto safety_checks_init_error;
 		  }
 
 		if (!eina_hash_init())
 		  {
-		     fprintf(stderr, "Could not initialize eina hash module.\n");
+		     ERR("Could not initialize eina hash module.");
 		     goto hash_init_error;
 		  }
 		if (!eina_module_init())
 		  {
-		     fprintf(stderr, "Could not initialize eina module module.\n");
+		     ERR("Could not initialize eina module module.");
 		     goto module_init_error;
 		  }
 
@@ -174,9 +200,9 @@ eina_mempool_init(void)
 
 		if (!_modules)
 		{
-			EINA_ERROR_PERR("ERROR: no mempool modules able to be loaded.\n");
-			eina_hash_free(_backends);
-			goto mempool_init_error;
+		   ERR("no mempool modules able to be loaded.");
+		   eina_hash_free(_backends);
+		   goto mempool_init_error;
 		}
 		eina_module_list_load(_modules);
 		/* builtin backends */
@@ -204,6 +230,9 @@ eina_mempool_init(void)
 	   eina_hash_shutdown();
 	hash_init_error:
 	   eina_safety_checks_shutdown();
+	safety_checks_init_error:
+	   eina_log_domain_unregister(_log_dom);
+	   eina_log_shutdown();
 
 	return 0;
 
@@ -243,6 +272,9 @@ eina_mempool_shutdown(void)
 
 	eina_hash_shutdown();
 	eina_safety_checks_shutdown();
+	eina_log_domain_unregister(_log_dom);
+	eina_log_shutdown();
+
 	return 0;
 }
 
@@ -253,10 +285,15 @@ eina_mempool_add(const char *name, const char *context, const char *options, ...
 	va_list args;
 
 	EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
+	DBG("name=%s, context=%s, options=%s",
+	    name, context ? context : "", options ? options : "");
 
 	va_start(args, options);
 	mp = _new_from_buffer(name, context, options, args);
 	va_end(args);
+
+	DBG("name=%s, context=%s, options=%s, mp=%p",
+	    name, context ? context : "", options ? options : "", mp);
 
 	return mp;
 }
@@ -265,6 +302,7 @@ EAPI void eina_mempool_del(Eina_Mempool *mp)
 {
         EINA_SAFETY_ON_NULL_RETURN(mp);
 	EINA_SAFETY_ON_NULL_RETURN(mp->backend.shutdown);
+	DBG("mp=%p", mp);
 	mp->backend.shutdown(mp->backend_data);
 	free(mp);
 }
@@ -273,6 +311,7 @@ EAPI void eina_mempool_gc(Eina_Mempool *mp)
 {
         EINA_SAFETY_ON_NULL_RETURN(mp);
         EINA_SAFETY_ON_NULL_RETURN(mp->backend.garbage_collect);
+	DBG("mp=%p", mp);
 	mp->backend.garbage_collect(mp->backend_data);
 }
 
@@ -280,6 +319,7 @@ EAPI void eina_mempool_statistics(Eina_Mempool *mp)
 {
         EINA_SAFETY_ON_NULL_RETURN(mp);
         EINA_SAFETY_ON_NULL_RETURN(mp->backend.statistics);
+	DBG("mp=%p", mp);
 	mp->backend.statistics(mp->backend_data);
 }
 
