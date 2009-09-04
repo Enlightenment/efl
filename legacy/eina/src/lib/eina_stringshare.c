@@ -957,6 +957,7 @@ eina_stringshare_add_length(const char *str, unsigned int slen)
    Eina_Stringshare_Node *el;
    int hash_num, hash;
 
+   DBG("str=%p (%.*s), slen=%u", str, slen, str ? str : "", slen);
    if (!str) return NULL;
 
    _eina_stringshare_population_add(slen);
@@ -964,7 +965,7 @@ eina_stringshare_add_length(const char *str, unsigned int slen)
    if (slen == 0)
      return "";
    else if (slen == 1)
-     return _eina_stringshare_single + ((*str) << 1);
+     return (const char *)_eina_stringshare_single + ((*str) << 1);
    else if (slen < 4)
      return _eina_stringshare_small_add(str, slen);
 
@@ -1064,6 +1065,7 @@ eina_stringshare_ref(const char *str)
    Eina_Stringshare_Node *node;
    int slen;
 
+   DBG("str=%p (%s)", str, str ? str : "");
    if (!str) return NULL;
 
    /* special cases */
@@ -1086,6 +1088,7 @@ eina_stringshare_ref(const char *str)
 
    node = _eina_stringshare_node_from_str(str);
    node->references++;
+   DBG("str=%p (%s) refs=%u", str, str, node->references);
 
    _eina_stringshare_population_add(node->length);
 
@@ -1114,6 +1117,7 @@ eina_stringshare_del(const char *str)
    Eina_Stringshare_Node *node;
    int hash_num, slen, hash;
 
+   DBG("str=%p (%s)", str, str ? str : "");
    if (!str) return;
 
    /* special cases */
@@ -1137,9 +1141,11 @@ eina_stringshare_del(const char *str)
    if (node->references > 1)
      {
 	node->references--;
+	DBG("str=%p (%s) refs=%u", str, str, node->references);
 	return;
      }
 
+   DBG("str=%p (%s) refs=0, delete.", str, str);
    node->references = 0;
    slen = node->length;
 
