@@ -210,6 +210,9 @@ struct _Eina_Accessor_Array
 };
 
 static int _eina_array_init_count = 0;
+static int _eina_array_log_dom = -1;
+#define ERR(...) EINA_LOG_DOM_ERR(_eina_array_log_dom, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_eina_array_log_dom, __VA_ARGS__)
 
 static void eina_array_iterator_free(Eina_Iterator_Array *it) EINA_ARG_NONNULL(1);
 static Eina_Array *eina_array_iterator_get_container(Eina_Iterator_Array *it) EINA_ARG_NONNULL(1);
@@ -369,24 +372,36 @@ eina_array_init(void)
 {
    if (!_eina_array_init_count)
      {
+	if (!eina_log_init())
+	  {
+	     fprintf(stderr, "Could not initialize eina logging system.\n");
+	     return 0;
+	  }
+
+	_eina_array_log_dom = eina_log_domain_register("eina_array", EINA_LOG_COLOR_DEFAULT);
+	if (_eina_array_log_dom < 0)
+	  {
+	     EINA_LOG_ERR("Could not register log domain: eina_array");
+	     eina_log_shutdown();
+	     return 0;
+	  }
+
         if (!eina_error_init())
           {
-             fprintf(stderr, "Could not initialize eina error module.\n");
-             return 0;
+             ERR("Could not initialize eina error module.");
+	     goto error_init_error;
           }
 
 	if (!eina_safety_checks_init())
 	  {
-	     fprintf(stderr, "Could not initialize eina safety checks.\n");
-	     eina_error_shutdown();
-	     return 0;
+	     ERR("Could not initialize eina safety checks.");
+	     goto safety_checks_init_error;
 	  }
 
         if (!eina_magic_string_init())
           {
-             EINA_ERROR_PERR("ERROR: Could not initialize eina magic string module.\n");
-             eina_error_shutdown();
-             return 0;
+             ERR("ERROR: Could not initialize eina magic string module.");
+	     goto magic_string_init_error;
           }
 
         eina_magic_string_set(EINA_MAGIC_ITERATOR,
@@ -402,6 +417,16 @@ eina_array_init(void)
      }
 
    return ++_eina_array_init_count;
+
+ magic_string_init_error:
+   eina_safety_checks_shutdown();
+ safety_checks_init_error:
+   eina_error_shutdown();
+ error_init_error:
+   eina_log_domain_unregister(_eina_array_log_dom);
+   _eina_array_log_dom = -1;
+   eina_log_shutdown();
+   return 0;
 }
 
 /**
@@ -430,6 +455,9 @@ eina_array_shutdown(void)
        eina_magic_string_shutdown();
        eina_safety_checks_shutdown();
        eina_error_shutdown();
+       eina_log_domain_unregister(_eina_array_log_dom);
+       _eina_array_log_dom = -1;
+       eina_log_shutdown();
      }
 
    return _eina_array_init_count;
@@ -468,6 +496,8 @@ eina_array_new(unsigned int step)
    array->count = 0;
    array->step = step;
 
+   DBG("array=%p", array);
+
    return array;
 }
 
@@ -489,6 +519,7 @@ eina_array_free(Eina_Array *array)
 
    EINA_MAGIC_CHECK_ARRAY(array);
    EINA_SAFETY_ON_NULL_RETURN(array);
+   DBG("array=%p", array);
    MAGIC_FREE(array);
 }
 
@@ -511,6 +542,7 @@ eina_array_step_set(Eina_Array *array, unsigned int step)
   array->count = 0;
   array->step = step;
   EINA_MAGIC_SET(array, EINA_MAGIC_ARRAY);
+  DBG("array=%p, step=%u", array, step);
 }
 
 /**
@@ -528,6 +560,7 @@ eina_array_clean(Eina_Array *array)
    EINA_MAGIC_CHECK_ARRAY(array);
    EINA_SAFETY_ON_NULL_RETURN(array);
    array->count = 0;
+   DBG("array=%p", array);
 }
 
 /**
@@ -545,6 +578,7 @@ eina_array_flush(Eina_Array *array)
 {
    EINA_MAGIC_CHECK_ARRAY(array);
    EINA_SAFETY_ON_NULL_RETURN(array);
+   DBG("array=%p", array);
    array->count = 0;
    array->total = 0;
 
@@ -582,6 +616,8 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata),
    EINA_MAGIC_CHECK_ARRAY(array);
    EINA_SAFETY_ON_NULL_RETURN_VAL(array, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(keep, EINA_FALSE);
+
+   DBG("array=%p, keep=%p, gdata=%p", array, keep, gdata);
 
    if (array->total == 0) return EINA_TRUE;
 
@@ -673,8 +709,6 @@ eina_array_iterator_new(const Eina_Array *array)
    EINA_MAGIC_CHECK_ARRAY(array);
    EINA_SAFETY_ON_NULL_RETURN_VAL(array, NULL);
 
-   if (eina_array_count_get(array) <= 0) return NULL;
-
    eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Array));
    if (!it) {
@@ -690,6 +724,8 @@ eina_array_iterator_new(const Eina_Array *array)
    it->iterator.next = FUNC_ITERATOR_NEXT(eina_array_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(eina_array_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(eina_array_iterator_free);
+
+   DBG("array=%p, iterator=%p", array, it);
 
    return &it->iterator;
 }
@@ -729,6 +765,8 @@ eina_array_accessor_new(const Eina_Array *array)
    it->accessor.get_at = FUNC_ACCESSOR_GET_AT(eina_array_accessor_get_at);
    it->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(eina_array_accessor_get_container);
    it->accessor.free = FUNC_ACCESSOR_FREE(eina_array_accessor_free);
+
+   DBG("array=%p, accessor=%p", array, it);
 
    return &it->accessor;
 }
