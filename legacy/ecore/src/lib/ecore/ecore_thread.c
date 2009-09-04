@@ -27,7 +27,7 @@ struct _Ecore_Pthread_Worker
 static int _ecore_thread_count_max = 0;
 static int _ecore_thread_count = 0;
 
-static int _ecore_thread_init = 0;
+static int _ecore_thread_initcount = 0;
 static Eina_List *_ecore_thread = NULL;
 static int ECORE_THREAD_PIPE_DEL = 0;
 static Ecore_Event_Handler *del_handler = NULL;
@@ -134,11 +134,11 @@ _ecore_thread_handler(void *data __UNUSED__, void *buffer, unsigned int nbyte)
 #endif
 
 int
-ecore_thread_init(void)
+_ecore_thread_init(void)
 {
-   _ecore_thread_init++;
+   _ecore_thread_initcount++;
 
-   if (_ecore_thread_init > 1) return _ecore_thread_init;
+   if (_ecore_thread_initcount > 1) return _ecore_thread_initcount;
 
    _ecore_thread_count_max = eina_cpu_count();
    if (_ecore_thread_count_max <= 0)
@@ -148,15 +148,15 @@ ecore_thread_init(void)
 #ifdef BUILD_PTHREAD
    del_handler = ecore_event_handler_add(ECORE_THREAD_PIPE_DEL, _ecore_thread_pipe_del, NULL);
 #endif
-   return _ecore_thread_init;
+   return _ecore_thread_initcount;
 }
 
 int
-ecore_thread_shutdown(void)
+_ecore_thread_shutdown(void)
 {
-   _ecore_thread_init--;
+   _ecore_thread_initcount--;
 
-   if (!_ecore_thread_init)
+   if (!_ecore_thread_initcount)
      {
 	/* FIXME: If function are still running in the background, should we kill them ? */
 #ifdef BUILD_PTHREAD
@@ -165,7 +165,7 @@ ecore_thread_shutdown(void)
 #endif
      }
 
-   return _ecore_thread_init;
+   return _ecore_thread_initcount;
 }
 
 /*
