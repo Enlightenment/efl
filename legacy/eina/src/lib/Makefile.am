@@ -69,8 +69,8 @@ libeina_la_SOURCES += $(top_srcdir)/src/modules/mp/pass_through/eina_pass_throug
 endif
 
 libeina_la_LIBADD = @EINA_LIBS@ @dlopen_libs@
-libeina_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
-libeina_la_CFLAGS = @EINA_CFLAGS@
+libeina_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@ @EFL_PTHREAD_LIBS@
+libeina_la_CFLAGS = @EINA_CFLAGS@ @EFL_PTHREAD_CFLAGS@
 
 clean-local:
 	rm -rf *.gcno
