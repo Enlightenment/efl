@@ -16,7 +16,7 @@
 #include "Evas.h"
 #include "evas_cs.h"
 
-#define D(fmt, args...) EINA_ERROR_PDBG(fmt, ##args)
+#define D(...) EINA_LOG_DBG(__VA_ARGS__)
 
 // fixme:'s
 // 
@@ -1348,7 +1348,7 @@ parse_args(int argc, char **argv)
           }
         else if (!strcmp(argv[i], "-debug"))
           {
-             eina_error_log_level_set(EINA_ERROR_LEVEL_DBG);
+	     eina_log_level_set(EINA_LOG_LEVEL_DBG);
           }
      }
 }
