@@ -232,20 +232,15 @@ case "$host_os" in
       ;;
 esac
 
-EFL_CHECK_COVERAGE([${enable_tests}], [enable_coverage="yes"], [enable_coverage="no"])
-EINA_CFLAGS="${EFL_COVERAGE_CFLAGS}"
+EINA_CFLAGS=
 case "${host_os}" in
    cegcc*)
-      EINA_CFLAGS="${EINA_CFLAGS} ${EVIL_CFLAGS} -mwin32"
+      EINA_CFLAGS="${EVIL_CFLAGS} -mwin32"
    ;;
    mingw*)
-      EINA_CFLAGS="${EINA_CFLAGS} ${EVIL_CFLAGS}"
+      EINA_CFLAGS="${EVIL_CFLAGS}"
    ;;
 esac
-
-if test "x$enable_coverage" = "xyes" ; then
-   EINA_CFLAGS="${EINA_CFLAGS} ${EFL_DEBUG_CFLAGS}"
-fi
 
 if ! test "x${VMIC}" = "x" ; then
    CFLAGS_save="${CFLAGS}"
@@ -280,28 +275,28 @@ AC_SUBST(EINA_CFLAGS)
 
 
 ### Checks for linker characteristics
-EINA_LIBS="${EFL_COVERAGE_LIBS}"
+EINA_LIBS=
 lt_enable_auto_import=""
 case "${host_os}" in
    mingw* | cegcc*)
       AC_DEFINE(EFL_EINA_BUILD, 1, [Define to mention that eina is built])
-      EINA_LIBS="${EINA_LIBS} -ldl ${EVIL_LIBS} -lm"
+      EINA_LIBS="-ldl ${EVIL_LIBS} -lm"
       lt_enable_auto_import="-Wl,--enable-auto-import"
    ;;
    dragonfly*|openbsd*)
-      EINA_LIBS="${EINA_LIBS} -lm"
+      EINA_LIBS="-lm"
    ;;
    freebsd*|netbsd*)
-      EINA_LIBS="${EINA_LIBS} -lrt -lm"
+      EINA_LIBS="-lrt -lm"
    ;;
    darwin*)
-      EINA_LIBS="${EINA_LIBS} -lm"
+      EINA_LIBS="-lm"
    ;;
    cygwin*)
-      EINA_LIBS="${EINA_LIBS} -ldl -lm"
+      EINA_LIBS="-ldl -lm"
    ;;
    *)
-      EINA_LIBS="${EINA_LIBS} -ldl -lrt -lm"
+      EINA_LIBS="-ldl -lrt -lm"
    ;;
 esac
 AC_SUBST(EINA_LIBS)
@@ -349,6 +344,14 @@ EINA_CHECK_MODULE([pass-through], [yes], [pass through])
 ### Unit tests, coverage and benchmarking
 
 EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
+
+EFL_CHECK_COVERAGE([${enable_tests}], [enable_coverage="yes"], [enable_coverage="no"])
+EINA_CFLAGS="${EINA_CFLAGS} ${EFL_COVERAGE_CFLAGS}"
+EINA_LIBS="${EINA_LIBS} ${EFL_COVERAGE_LIBS}"
+if test "x$enable_coverage" = "xyes" ; then
+   EINA_CFLAGS="${EINA_CFLAGS} ${EFL_DEBUG_CFLAGS}"
+fi
+
 EFL_CHECK_BENCHMARK([enable_benchmark="yes"], [enable_benchmark="no"])
 EINA_BENCH_MODULE([evas], [${enable_benchmark}], [evas], [enable_benchmark_evas="yes"], [enable_benchmark_evas="no"])
 EINA_BENCH_MODULE([ecore], [${enable_benchmark}], [ecore], [enable_benchmark_ecore="yes"], [enable_benchmark_ecore="no"])
