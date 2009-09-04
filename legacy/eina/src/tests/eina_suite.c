@@ -53,6 +53,7 @@ static const Eina_Test_Case etc[] = {
   { "Benchmark", eina_test_benchmark },
   { "Mempool", eina_test_mempool },
   { "Rectangle", eina_test_rectangle },
+  { "Matrix Sparse", eina_test_matrixsparse },
   { NULL, NULL }
 };
 

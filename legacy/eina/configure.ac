@@ -232,6 +232,7 @@ case "$host_os" in
       ;;
 esac
 
+EFL_CHECK_COVERAGE([${enable_tests}], [enable_coverage="yes"], [enable_coverage="no"])
 EINA_CFLAGS="${EFL_COVERAGE_CFLAGS}"
 case "${host_os}" in
    cegcc*)
@@ -348,7 +349,6 @@ EINA_CHECK_MODULE([pass-through], [yes], [pass through])
 ### Unit tests, coverage and benchmarking
 
 EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
-EFL_CHECK_COVERAGE([${enable_tests}], [enable_coverage="yes"], [enable_coverage="no"])
 EFL_CHECK_BENCHMARK([enable_benchmark="yes"], [enable_benchmark="no"])
 EINA_BENCH_MODULE([evas], [${enable_benchmark}], [evas], [enable_benchmark_evas="yes"], [enable_benchmark_evas="no"])
 EINA_BENCH_MODULE([ecore], [${enable_benchmark}], [ecore], [enable_benchmark_ecore="yes"], [enable_benchmark_ecore="no"])

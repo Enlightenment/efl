@@ -31,6 +31,7 @@
 #include "eina_hash.h"
 #include "eina_stringshare.h"
 #include "eina_list.h"
+#include "eina_matrixsparse.h"
 #include "eina_array.h"
 #include "eina_counter.h"
 #include "eina_benchmark.h"
@@ -89,6 +90,7 @@ static int _eina_log_dom = -1;
  * @li eina_hash_init()
  * @li eina_stringshare_init()
  * @li eina_list_init()
+ * @li eina_matrixsparse_init()
  * @li eina_array_init()
  * @li eina_counter_init()
  * @li eina_benchmark_init()
@@ -144,6 +146,11 @@ eina_init(void)
         ERR("Could not initialize eina list module.");
         goto list_init_error;
      }
+   if (!eina_matrixsparse_init())
+     {
+	ERR("Could not initialize eina matrixsparse module.");
+	goto matrixsparse_init_error;
+     }
    if (!eina_array_init())
      {
         ERR("Could not initialize eina array module.");
@@ -182,6 +189,8 @@ eina_init(void)
  counter_init_error:
    eina_array_shutdown();
  array_init_error:
+   eina_matrixsparse_shutdown();
+ matrixsparse_init_error:
    eina_list_shutdown();
  list_init_error:
    eina_stringshare_shutdown();
@@ -214,6 +223,7 @@ eina_init(void)
  * @li eina_benchmark_shutdown()
  * @li eina_counter_shutdown()
  * @li eina_array_shutdown()
+ * @li eina_matrixsparse_shutdown()
  * @li eina_list_shutdown()
  * @li eina_stringshare_shutdown()
  * @li eina_hash_shutdown()
@@ -235,6 +245,7 @@ eina_shutdown(void)
    eina_benchmark_shutdown();
    eina_counter_shutdown();
    eina_array_shutdown();
+   eina_matrixsparse_shutdown();
    eina_list_shutdown();
    eina_stringshare_shutdown();
    eina_hash_shutdown();

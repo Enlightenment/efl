@@ -19,6 +19,7 @@ eina_inlist.c \
 eina_file.c \
 eina_mempool.c \
 eina_list.c \
+eina_matrixsparse.c \
 eina_module.c \
 eina_value.c \
 eina_array.c \

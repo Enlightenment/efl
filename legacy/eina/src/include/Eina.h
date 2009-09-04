@@ -181,6 +181,7 @@ extern "C" {
 #include "eina_cpu.h"
 #include "eina_tiler.h"
 #include "eina_hamster.h"
+#include "eina_matrixsparse.h"
 
 #ifdef __cplusplus
 }
