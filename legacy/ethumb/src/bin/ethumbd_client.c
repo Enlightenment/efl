@@ -224,7 +224,7 @@ main(int argc, char *argv[])
 {
    Ethumb_Client *c;
    Eina_Bool quit_option = 0;
-   int debug_level = EINA_ERROR_LEVEL_WARN;
+   int debug_level = EINA_LOG_LEVEL_WARN;
    const char *format_str, *aspect_str;
    struct options opts = {
      {-1, -1, -1, -1},

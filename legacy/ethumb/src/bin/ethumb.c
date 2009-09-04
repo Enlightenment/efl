@@ -160,7 +160,7 @@ main(int argc, char *argv[])
    const char *thumb_key = NULL;
    double video_time = 0;
    int page = 0;
-   int debug_level = EINA_ERROR_LEVEL_WARN;
+   int debug_level = EINA_LOG_LEVEL_WARN;
    int arg_index;
    int i;
 
