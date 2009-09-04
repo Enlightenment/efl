@@ -220,8 +220,8 @@ _spin_value(void *data)
      _write_label(data);
 
    wd->interval = wd->interval / 1.05;
-   wd->spin = ecore_timer_add(wd->interval, _spin_value, data);
-   return ECORE_CALLBACK_CANCEL;
+   ecore_timer_interval_set(wd->spin, wd->interval);
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void
