@@ -214,8 +214,8 @@ EAPI void eina_log_domain_unregister(int domain);
 /*
  * Logging functions.
  */
-EAPI void eina_log_print(int domain, Eina_Log_Level level, const char *file, const char *function, int line, const char *fmt, ...) EINA_ARG_NONNULL(2, 3, 5);
-EAPI void eina_log_vprint(int domain, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, va_list args) EINA_ARG_NONNULL(2, 3, 5);
+EAPI void eina_log_print(int domain, Eina_Log_Level level, const char *file, const char *function, int line, const char *fmt, ...) EINA_ARG_NONNULL(3, 4, 6) EINA_PRINTF(6, 7) EINA_NOINSTRUMENT;
+EAPI void eina_log_vprint(int domain, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, va_list args) EINA_ARG_NONNULL(3, 4, 6) EINA_NOINSTRUMENT;
 
 
 /*

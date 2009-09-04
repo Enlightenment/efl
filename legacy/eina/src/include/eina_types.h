@@ -86,6 +86,9 @@
 #ifdef EINA_CONST
 # undef EINA_CONST
 #endif
+#ifdef EINA_NOINSTRUMENT
+# undef EINA_NOINSTRUMENT
+#endif
 #ifdef EINA_UNLIKELY
 # undef EINA_UNLIKELY
 #endif
@@ -126,6 +129,7 @@
 #  define EINA_SCANF(fmt, arg)  __attribute__((format (scanf, fmt, arg)))
 #  define EINA_FORMAT(fmt) __attribute__((format_arg(fmt)))
 #  define EINA_CONST __attribute__((const))
+#  define EINA_NOINSTRUMENT __attribute__((no_instrument_function))
 #  define EINA_UNLIKELY(exp) __builtin_expect((exp), 0)
 #  define EINA_LIKELY(exp) __builtin_expect((exp), 1)
 # else
@@ -133,6 +137,7 @@
 #  define EINA_SCANF(fmt, arg)
 #  define EINA_FORMAT(fmt)
 #  define EINA_CONST
+#  define EINA_NOINSTRUMENT
 #  define EINA_UNLIKELY(exp) exp
 #  define EINA_LIKELY(exp) exp
 # endif
@@ -151,6 +156,7 @@
 # define EINA_SCANF(fmt, arg)
 # define EINA_FORMAT(fmt)
 # define EINA_CONST
+# define EINA_NOINSTRUMENT
 # define EINA_UNLIKELY(exp) exp
 # define EINA_LIKELY(exp) exp
 
@@ -173,6 +179,7 @@
 # else
 #  define EINA_CONST
 # endif
+# define EINA_NOINSTRUMENT
 # define EINA_UNLIKELY(exp) exp
 # define EINA_LIKELY(exp) exp
 
@@ -186,6 +193,7 @@
 # define EINA_SCANF(fmt, arg)
 # define EINA_FORMAT(fmt)
 # define EINA_CONST
+# define EINA_NOINSTRUMENT
 # define EINA_UNLIKELY(exp) exp
 # define EINA_LIKELY(exp) exp
 #endif /* ! __GNUC__ && ! _WIN32 && ! __SUNPRO_C */
