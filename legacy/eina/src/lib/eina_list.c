@@ -468,6 +468,13 @@ eina_list_init(void)
 	     return 0;
 	  }
 
+	if (!eina_safety_checks_init())
+	  {
+	     fprintf(stderr, "Could not initialize eina safety checks.\n");
+	     eina_error_shutdown();
+	     return 0;
+	  }
+
 	if (!eina_magic_string_init())
 	  {
 	     EINA_ERROR_PERR("ERROR: Could not initialize eina magic string module.\n");
@@ -551,6 +558,7 @@ eina_list_shutdown(void)
 
 	eina_mempool_shutdown();
 	eina_magic_string_shutdown();
+	eina_safety_checks_shutdown();
 	eina_error_shutdown();
      }
 

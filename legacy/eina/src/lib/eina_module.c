@@ -215,6 +215,13 @@ eina_module_init(void)
 	return 0;
      }
 
+   if (!eina_safety_checks_init())
+     {
+	EINA_LOG_ERR("Could not initialize eina safety checks.");
+	eina_log_shutdown();
+	return 0;
+     }
+
    EINA_MODULE_LOG_DOM = eina_log_domain_register
      ("eina_module", EINA_LOG_COLOR_DEFAULT);
    if (EINA_MODULE_LOG_DOM < 0)
@@ -264,6 +271,8 @@ eina_module_shutdown(void)
    /* TODO should we store every module when "new" is called and
     * delete the list of modules here
     */
+
+   eina_safety_checks_shutdown();
 
    eina_log_domain_unregister(EINA_MODULE_LOG_DOM);
    EINA_MODULE_LOG_DOM = -1;

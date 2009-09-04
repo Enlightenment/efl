@@ -23,6 +23,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "eina_config.h"
 #include "eina_safety_checks.h"
@@ -222,6 +223,13 @@ eina_convert_init(void)
    EINA_ERROR_CONVERT_P_NOT_FOUND = eina_error_msg_register("Error during string convertion to float, First 'p' was not found.");
    EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = eina_error_msg_register("Error outrun string limit during convertion string convertion to float.");
 
+   if (!eina_safety_checks_init())
+     {
+	fprintf(stderr, "Could not initialize eina safety checks.\n");
+	eina_error_shutdown();
+	return 0;
+     }
+
  init_out:
    return _eina_convert_init_count;
 }
@@ -243,6 +251,7 @@ eina_convert_shutdown(void)
 
    if (_eina_convert_init_count > 0) goto shutdown_out;
 
+   eina_safety_checks_shutdown();
    eina_error_shutdown();
 
  shutdown_out:

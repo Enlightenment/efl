@@ -268,6 +268,14 @@ eina_counter_init(void)
              return 0;
           }
 #endif /* _WIN2 */
+
+
+	if (!eina_safety_checks_init())
+	  {
+	     fprintf(stderr, "Could not initialize eina safety checks.\n");
+	     eina_error_shutdown();
+	     return 0;
+	  }
      }
 
    return _eina_counter_init_count;
@@ -292,7 +300,11 @@ eina_counter_shutdown(void)
 {
    _eina_counter_init_count--;
 
-   if (_eina_counter_init_count == 0) eina_error_shutdown();
+   if (_eina_counter_init_count == 0)
+     {
+	eina_error_shutdown();
+	eina_safety_checks_shutdown();
+     }
 
    return _eina_counter_init_count;
 }

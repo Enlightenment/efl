@@ -26,6 +26,7 @@
 #include "eina_types.h"
 #include "eina_main.h"
 #include "eina_error.h"
+#include "eina_safety_checks.h"
 #include "eina_log.h"
 #include "eina_hash.h"
 #include "eina_stringshare.h"
@@ -79,6 +80,8 @@ static int _eina_main_count = 0;
  * (in that order):
  *
  * @li eina_error_init()
+ * @li eina_log_init()
+ * @li eina_safety_checks_init()
  * @li eina_hash_init()
  * @li eina_stringshare_init()
  * @li eina_list_init()
@@ -106,6 +109,12 @@ eina_init(void)
      {
 	fprintf(stderr, "Could not initialize eina log module.\n");
 	goto log_init_error;
+     }
+
+   if (!eina_safety_checks_init())
+     {
+        EINA_ERROR_PERR("Could not initialize eina safety checks module.\n");
+        goto safety_checks_init_error;
      }
 
    if (!eina_hash_init())
@@ -168,6 +177,8 @@ eina_init(void)
    eina_hash_shutdown();
  hash_init_error:
    eina_log_shutdown();
+ safety_checks_init_error:
+   eina_safety_checks_shutdown();
  log_init_error:
    eina_error_shutdown();
 
@@ -185,15 +196,17 @@ eina_init(void)
  * it shut down all the Eina modules. The list of shut down functions
  * that are called are (in that order):
  *
- * @li eina_rectangle_init()
- * @li eina_magic_string_init()
- * @li eina_benchmark_init()
- * @li eina_counter_init()
- * @li eina_array_init()
- * @li eina_list_init()
- * @li eina_stringshare_init()
- * @li eina_hash_init()
- * @li eina_error_init()
+ * @li eina_rectangle_shutdown()
+ * @li eina_magic_string_shutdown()
+ * @li eina_benchmark_shutdown()
+ * @li eina_counter_shutdown()
+ * @li eina_array_shutdown()
+ * @li eina_list_shutdown()
+ * @li eina_stringshare_shutdown()
+ * @li eina_hash_shutdown()
+ * @li eina_safety_checks_shutdown()
+ * @li eina_log_shutdown()
+ * @li eina_error_shutdown()
  *
  * Once this function succeeds (that is, @c 0 is returned), you must
  * not call any of the Eina function anymore. You must call
@@ -212,6 +225,7 @@ eina_shutdown(void)
    eina_list_shutdown();
    eina_stringshare_shutdown();
    eina_hash_shutdown();
+   eina_safety_checks_shutdown();
    eina_log_shutdown();
    eina_error_shutdown();
 

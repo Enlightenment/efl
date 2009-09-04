@@ -34,7 +34,8 @@ eina_rectangle.c \
 eina_stringshare.c \
 eina_cpu.c \
 eina_tiler.c \
-eina_hamster.c
+eina_hamster.c \
+eina_safety_checks.c
 
 if EINA_STATIC_BUILD_CHAINED_POOL
 

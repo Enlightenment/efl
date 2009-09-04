@@ -525,18 +525,25 @@ EAPI Eina_Error EINA_ERROR_OUT_OF_MEMORY = 0;
  */
 EAPI int eina_error_init(void)
 {
-	if (!_eina_error_init_count)
-	{
-		char *level;
-		/* TODO register the eina's basic errors */
-		if ((level = getenv("EINA_ERROR_LEVEL")))
-		{
-			_error_level = atoi(level);
-		}
-		EINA_ERROR_OUT_OF_MEMORY = eina_error_msg_register("Out of memory");
-	}
-	/* get all the modules */
-	return ++_eina_error_init_count;
+   const char *level;
+
+   _eina_error_init_count++;
+   if (_eina_error_init_count != 1)
+     return _eina_error_init_count;
+
+   /* TODO register the eina's basic errors */
+   if ((level = getenv("EINA_ERROR_LEVEL")))
+	_error_level = atoi(level);
+
+   EINA_ERROR_OUT_OF_MEMORY = eina_error_msg_register("Out of memory");
+
+   if (!eina_safety_checks_init())
+     {
+	fprintf(stderr, "Could not initialize eina safety checks.\n");
+	_eina_error_init_count = 0;
+	return 0;
+     }
+   return 1;
 }
 
 /**
@@ -569,6 +576,7 @@ EAPI int eina_error_shutdown(void)
 			free(tmp);
 		}
 		_error_list_count = 0;
+		eina_safety_checks_shutdown();
 	}
 	return _eina_error_init_count;
 }

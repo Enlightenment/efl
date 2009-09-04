@@ -658,11 +658,20 @@ EAPI int
 eina_hash_init(void)
 {
    if (!_eina_hash_init_count)
-     if (!eina_error_init())
-       {
-	  fprintf(stderr, "Could not initialize eina error module\n");
-	  return 0;
-       }
+     {
+	if (!eina_error_init())
+	  {
+	     fprintf(stderr, "Could not initialize eina error module\n");
+	     return 0;
+	  }
+
+	if (!eina_safety_checks_init())
+	  {
+	     fprintf(stderr, "Could not initialize eina safety checks.\n");
+	     eina_error_shutdown();
+	     return 0;
+	  }
+     }
 
    return ++_eina_hash_init_count;
 }
@@ -682,7 +691,10 @@ EAPI int
 eina_hash_shutdown(void)
 {
    if (_eina_hash_init_count == 1)
-     eina_error_shutdown();
+     {
+	eina_safety_checks_shutdown();
+	eina_error_shutdown();
+     }
    return --_eina_hash_init_count;
 }
 

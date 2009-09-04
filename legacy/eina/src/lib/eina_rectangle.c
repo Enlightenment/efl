@@ -245,6 +245,11 @@ eina_rectangle_init(void)
         EINA_ERROR_PERR("Could not initialize eina error module.\n");
         return 0;
      }
+   if (!eina_safety_checks_init())
+     {
+	fprintf(stderr, "Could not initialize eina safety checks.\n");
+	goto safety_checks_init_error;
+     }
    if (!eina_mempool_init())
      {
         EINA_ERROR_PERR("Could not initialize eina mempool module.\n");
@@ -286,6 +291,8 @@ eina_rectangle_init(void)
  list_init_error:
    eina_mempool_shutdown();
  mempool_init_error:
+   eina_safety_checks_shutdown();
+ safety_checks_init_error:
    eina_error_shutdown();
 
    return 0;
@@ -310,6 +317,7 @@ eina_rectangle_shutdown(void)
    eina_mempool_del(_eina_rectangle_mp);
 
    eina_mempool_shutdown();
+   eina_safety_checks_shutdown();
    eina_error_shutdown();
 
    return 0;

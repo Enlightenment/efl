@@ -663,10 +663,11 @@ EAPI int EINA_LOG_DOMAIN_GLOBAL = 0;
 EAPI int
 eina_log_init(void)
 {
-   char *level;
-   char *tmp;
+   const char *level, *tmp;
 
-   if (_eina_log_init_count) return ++_eina_log_init_count;
+   _eina_log_init_count++;
+   if (_eina_log_init_count != 1)
+     return _eina_log_init_count;
 
    assert((sizeof(_names)/sizeof(_names[0])) == EINA_LOG_LEVELS);
    assert((sizeof(_colors)/sizeof(_colors[0])) == EINA_LOG_LEVELS + 1);
@@ -695,13 +696,21 @@ eina_log_init(void)
    if (EINA_LOG_DOMAIN_GLOBAL < 0)
      {
 	fprintf(stderr, "Failed to create global logging domain.\n");
+	_eina_log_init_count = 0;
 	return 0;
      }
 
    // Parse pending domains passed through EINA_LOG_LEVELS
    eina_log_domain_parse_pendings();
 
-   return ++_eina_log_init_count;
+   if (!eina_safety_checks_init())
+     {
+	fprintf(stderr, "Could not initialize eina safety checks.\n");
+	eina_log_shutdown(); /* zero _eina_log_init_count and free stuff */
+	return 0;
+     }
+
+   return 1;
 }
 
 /**

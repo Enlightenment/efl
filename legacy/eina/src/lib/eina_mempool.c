@@ -137,10 +137,16 @@ eina_mempool_init(void)
 	{
 		char *path;
 
+		if (!eina_safety_checks_init())
+		  {
+		     fprintf(stderr, "Could not initialize eina safety checks.\n");
+		     return 0;
+		  }
+
 		if (!eina_hash_init())
 		  {
 		     fprintf(stderr, "Could not initialize eina hash module.\n");
-		     return 0;
+		     goto hash_init_error;
 		  }
 		if (!eina_module_init())
 		  {
@@ -196,6 +202,8 @@ eina_mempool_init(void)
 	   eina_module_shutdown();
 	module_init_error:
 	   eina_hash_shutdown();
+	hash_init_error:
+	   eina_safety_checks_shutdown();
 
 	return 0;
 
@@ -234,6 +242,7 @@ eina_mempool_shutdown(void)
 	   eina_hash_free(_backends);
 
 	eina_hash_shutdown();
+	eina_safety_checks_shutdown();
 	return 0;
 }
 
