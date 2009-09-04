@@ -227,6 +227,7 @@ eina_module_init(void)
    if (EINA_MODULE_LOG_DOM < 0)
      {
 	EINA_LOG_ERR("Could not register log domain: eina_module");
+	eina_safety_checks_shutdown();
 	eina_log_shutdown();
 	return 0;
      }
@@ -234,15 +235,29 @@ eina_module_init(void)
    if (!eina_error_init())
      {
 	ERR("Could not initialize eina error module.");
-	eina_log_shutdown();
-	return 0;
+	goto error_init_error;
      }
 
    EINA_ERROR_WRONG_MODULE = eina_error_msg_register("Wrong file format or no file module found");
    EINA_ERROR_MODULE_INIT_FAILED = eina_error_msg_register("Module initialisation function failed");
 
+   if (!eina_array_init())
+     {
+	ERR("Could not initialize eina array module.");
+	goto array_init_error;
+     }
+
  end_init:
    return _eina_module_count;
+
+ array_init_error:
+   eina_error_shutdown();
+ error_init_error:
+   eina_safety_checks_shutdown();
+   eina_log_domain_unregister(EINA_MODULE_LOG_DOM);
+   EINA_MODULE_LOG_DOM = -1;
+   eina_log_shutdown();
+   return 0;
 }
 
 /**
