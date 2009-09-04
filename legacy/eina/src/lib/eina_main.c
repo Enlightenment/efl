@@ -23,10 +23,10 @@
 #endif
 
 #include "eina_config.h"
+#include "eina_private.h"
 #include "eina_types.h"
 #include "eina_main.h"
 #include "eina_error.h"
-#include "eina_safety_checks.h"
 #include "eina_log.h"
 #include "eina_hash.h"
 #include "eina_stringshare.h"
@@ -36,6 +36,7 @@
 #include "eina_benchmark.h"
 #include "eina_magic.h"
 #include "eina_rectangle.h"
+#include "eina_safety_checks.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -46,6 +47,9 @@
  */
 
 static int _eina_main_count = 0;
+static int _eina_log_dom = -1;
+#define ERR(...) EINA_LOG_DOM_ERR(_eina_log_dom, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_eina_log_dom, __VA_ARGS__)
 
 /**
  * @endcond
@@ -79,8 +83,8 @@ static int _eina_main_count = 0;
  * called. The list of initialisation functions that are called are
  * (in that order):
  *
- * @li eina_error_init()
  * @li eina_log_init()
+ * @li eina_error_init()
  * @li eina_safety_checks_init()
  * @li eina_hash_init()
  * @li eina_stringshare_init()
@@ -99,62 +103,70 @@ eina_init(void)
 {
    if (_eina_main_count) goto finish_init;
 
-   if (!eina_error_init())
-     {
-        fprintf(stderr, "Could not initialize eina error module.\n");
-        return 0;
-     }
-
    if (!eina_log_init())
      {
-	fprintf(stderr, "Could not initialize eina log module.\n");
-	goto log_init_error;
+	fprintf(stderr, "Could not initialize eina logging system.\n");
+	return 0;
+     }
+
+   _eina_log_dom = eina_log_domain_register("eina", EINA_LOG_COLOR_DEFAULT);
+   if (_eina_log_dom < 0)
+     {
+	EINA_LOG_ERR("Could not register log domain: eina");
+	eina_log_shutdown();
+	return 0;
+     }
+
+   if (!eina_error_init())
+     {
+        ERR("Could not initialize eina error module.");
+	goto eina_init_error;
      }
 
    if (!eina_safety_checks_init())
      {
-        EINA_ERROR_PERR("Could not initialize eina safety checks module.\n");
+        ERR("Could not initialize eina safety checks module.");
         goto safety_checks_init_error;
      }
 
    if (!eina_hash_init())
      {
-        EINA_ERROR_PERR("Could not initialize eina hash module.\n");
+        ERR("Could not initialize eina hash module.");
         goto hash_init_error;
      }
    if (!eina_stringshare_init())
      {
-        EINA_ERROR_PERR("Could not initialize eina stringshare module.\n");
+        ERR("Could not initialize eina stringshare module.");
         goto stringshare_init_error;
      }
    if (!eina_list_init())
      {
-        EINA_ERROR_PERR("Could not initialize eina list module.\n");
+        ERR("Could not initialize eina list module.");
         goto list_init_error;
      }
    if (!eina_array_init())
      {
-        EINA_ERROR_PERR("Could not initialize eina array module.\n");
+        ERR("Could not initialize eina array module.");
         goto array_init_error;
      }
    if (!eina_counter_init())
      {
-        EINA_ERROR_PERR("Could not initialize eina counter module.\n");
+        ERR("Could not initialize eina counter module.");
         goto counter_init_error;
      }
    if (!eina_benchmark_init())
      {
-        EINA_ERROR_PERR("Could not initialize eina benchmark module.\n");
+        ERR("Could not initialize eina benchmark module.");
         goto benchmark_init_error;
      }
    if (!eina_magic_string_init())
      {
-        EINA_ERROR_PERR("Could not initialize eina magic string module.\n");
+        ERR("Could not initialize eina magic string module.");
         goto magic_string_init_error;
      }
    if (!eina_rectangle_init())
      {
-        EINA_ERROR_PERR("Could not initialize eina rectangle module.\n");
+        ERR("Could not initialize eina rectangle module.");
         goto rectangle_init_error;
      }
 
@@ -176,11 +188,12 @@ eina_init(void)
  stringshare_init_error:
    eina_hash_shutdown();
  hash_init_error:
-   eina_log_shutdown();
- safety_checks_init_error:
    eina_safety_checks_shutdown();
- log_init_error:
+ safety_checks_init_error:
    eina_error_shutdown();
+ eina_init_error:
+   _eina_log_dom = -1;
+   eina_log_shutdown();
 
    return 0;
 }
@@ -205,8 +218,8 @@ eina_init(void)
  * @li eina_stringshare_shutdown()
  * @li eina_hash_shutdown()
  * @li eina_safety_checks_shutdown()
- * @li eina_log_shutdown()
  * @li eina_error_shutdown()
+ * @li eina_log_shutdown()
  *
  * Once this function succeeds (that is, @c 0 is returned), you must
  * not call any of the Eina function anymore. You must call
@@ -226,8 +239,10 @@ eina_shutdown(void)
    eina_stringshare_shutdown();
    eina_hash_shutdown();
    eina_safety_checks_shutdown();
-   eina_log_shutdown();
    eina_error_shutdown();
+   eina_log_domain_unregister(_eina_log_dom);
+   _eina_log_dom = -1;
+   eina_log_shutdown();
 
  finish_shutdown:
    return --_eina_main_count;
