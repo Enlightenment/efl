@@ -444,7 +444,7 @@ _smart_init(void)
      {
 	static const Evas_Smart_Class sc =
 	  {
-	     "e_box",
+	     "els_box",
 	       EVAS_SMART_CLASS_VERSION,
 	       _smart_add,
 	       _smart_del,

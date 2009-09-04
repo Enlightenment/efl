@@ -38,8 +38,6 @@ struct _Widget_Data
    Evas_Object *content;
    Eina_Bool min_w : 1;
    Eina_Bool min_h : 1;
-   Eina_Bool index_h : 1;
-   Eina_Bool index_v : 1;
    double pagerel_h, pagerel_v;
    Evas_Coord pagesize_h, pagesize_v;
 };
@@ -454,80 +452,6 @@ elm_scroller_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
-}
-
-/**
- * Enable quick-index jump on each axis
- *
- * This enabled a quick jump list along a specific axis. This is, for example
- * "A, B, C, D ... X, Y, Z" along an axis that will jump to the item beginning
- * with that letter as a quick way to jump to the position desired.
- *
- * @param obj The scroller object
- * @param h_index Will the index be available horizontally
- * @param v_index Will the index be available vertically
- *
- * @ingroup Scroller
- */
-EAPI void
-elm_scroller_index_set(Evas_Object *obj, Eina_Bool h_index, Eina_Bool v_index)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   wd->index_h = h_index;
-   wd->index_v = v_index;
-   // XXX eval index and show/hide
-}
-
-/**
- * Clear specific indexes for the scroller
- *
- * This clears the horizontal and/or vertical indexes for the scroller. After
- * this the indicated index(es) will be empty.
- * 
- * @param obj The scroller object
- * @param h_index Clear the horizontal index (or not)
- * @param v_index Clear the vertical index (or not)
- *
- * @ingroup Scroller
- */
-EAPI void
-elm_scroller_index_clear(Evas_Object *obj, Eina_Bool h_index, Eina_Bool v_index)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   // XXX eval index and show/hide
-}
-
-/**
- * Add a scroller index member
- *
- * This adds an item in the scroller index, giving it a position in the
- * virtual content region along a specific axis and a size (the area that
- * index item consumes). This is used to determine how to display the
- * index item, if at all, and where it will "jump to". If an icon is used,
- * the icon object becomes owned by the scroller and will be deleted if the
- * scroller is deleted or the index cleared. The index level can indicate
- * to use the main index (0) or sub-indexes for more accurate positioning.
- * These are optional and may not function if not supported. Icons used for
- * non-functioning index levels will be deleted.
- * 
- * @param obj The scroller object
- * @param axis The axis this item is to be asigned to
- * @param label A string label for this index item
- * @param icon An icon to display on the index item
- * @param position The virtual position of the item
- * @param size The virtual size of the item
- * @param level Index level. 0 is the main. Others (1, 2, etc.) are optional.
- *
- * @ingroup Scroller
- */
-EAPI void
-elm_scroller_index_add(Evas_Object *obj, Elm_Scroller_Axis axis, const char *label, Evas_Object *icon, Evas_Coord position, Evas_Coord size, int level)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   // XXX eval index and show/hide
 }
 
 /**
