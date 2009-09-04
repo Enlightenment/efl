@@ -54,6 +54,8 @@ void *alloca (size_t);
 #endif
 
 #include "eina_config.h"
+#include "eina_private.h"
+#include "eina_log.h"
 #include "eina_benchmark.h"
 #include "eina_inlist.h"
 #include "eina_counter.h"
@@ -90,6 +92,10 @@ struct _Eina_Benchmark
 };
 
 static int _eina_benchmark_count = 0;
+static int _log_dom = -1;
+
+#define ERR(...) EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
 
 /**
  * @endcond
@@ -157,19 +163,33 @@ eina_benchmark_init(void)
 
    if (_eina_benchmark_count > 1) return _eina_benchmark_count;
 
+   if (!eina_log_init())
+     {
+	fprintf(stderr, "Could not initialize eina logging system.\n");
+	return 0;
+     }
+
+   _log_dom = eina_log_domain_register("eina_benchmark", EINA_LOG_COLOR_DEFAULT);
+   if (_log_dom < 0)
+     {
+	EINA_LOG_ERR("Could not register log domain: eina_benchmark");
+	eina_log_shutdown();
+	return 0;
+     }
+
    if (!eina_error_init())
      {
-        fprintf(stderr, "Could not initialize eina error module.\n");
-        return 0;
+        ERR("Could not initialize eina error module.");
+	goto error_init_error;
      }
    if (!eina_array_init())
      {
-        EINA_ERROR_PERR("Could not initialize eina array module.\n");
+        ERR("Could not initialize eina array module.");
         goto array_init_error;
      }
    if (!eina_counter_init())
      {
-        EINA_ERROR_PERR("Could not initialize eina counter module.\n");
+        ERR("Could not initialize eina counter module.");
         goto counter_init_error;
      }
 
@@ -179,6 +199,9 @@ eina_benchmark_init(void)
    eina_array_shutdown();
  array_init_error:
    eina_error_shutdown();
+ error_init_error:
+   eina_log_domain_unregister(_log_dom);
+   eina_log_shutdown();
    return 0;
 }
 
@@ -207,6 +230,8 @@ eina_benchmark_shutdown(void)
    eina_counter_shutdown();
    eina_array_shutdown();
    eina_error_shutdown();
+   eina_log_domain_unregister(_log_dom);
+   eina_log_shutdown();
 
    return 0;
 }
