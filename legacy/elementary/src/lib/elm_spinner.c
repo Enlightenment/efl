@@ -331,6 +331,7 @@ elm_spinner_add(Evas_Object *parent)
    wd->val_min = 0.0;
    wd->val_max = 100.0;
    wd->wrap = 0;
+   wd->step = 1.0;
    wd->entry_visible = 0;
 
    wd->spinner = edje_object_add(e);
