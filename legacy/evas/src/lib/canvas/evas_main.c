@@ -9,15 +9,26 @@ evas_init(void)
 {
    if (initcount == 0)
      {
-	eina_init();
-
+	if (!eina_init())
+	  return 0;
 	evas_module_init();
-	evas_async_events_init();
+#ifdef BUILD_ASYNC_EVENTS
+	if (!evas_async_events_init())
+	  goto shutdown_module;
+#endif
 #ifdef EVAS_CSERVE
         if (getenv("EVAS_CSERVE")) evas_cserve_init();
 #endif
      }
    return ++initcount;
+
+#ifdef BUILD_ASYNC_EVENTS
+ shutdown_module:
+   evas_module_shutdown();
+   eina_shutdown();
+
+   return 0;
+#endif
 }
 
 EAPI int
@@ -29,7 +40,9 @@ evas_shutdown(void)
 #ifdef EVAS_CSERVE
         if (getenv("EVAS_CSERVE")) evas_cserve_shutdown();
 #endif
+#ifdef BUILD_ASYNC_EVENTS
 	evas_async_events_shutdown();
+#endif
 	evas_font_dir_cache_free();
 	evas_common_shutdown();
 	evas_module_shutdown();

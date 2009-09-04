@@ -28,7 +28,6 @@ struct _Evas_Event_Async
 int
 evas_async_events_init(void)
 {
-#ifdef BUILD_ASYNC_EVENTS
    int filedes[2];
 
    _init_evas_event++;
@@ -46,15 +45,11 @@ evas_async_events_init(void)
    fcntl(_fd_read, F_SETFL, O_NONBLOCK);
 
    return _init_evas_event;
-#else
-   return 0;
-#endif
 }
 
 int
 evas_async_events_shutdown(void)
 {
-#ifdef BUILD_ASYNC_EVENTS
    _init_evas_event--;
    if (_init_evas_event > 0) return _init_evas_event;
 
@@ -64,9 +59,6 @@ evas_async_events_shutdown(void)
    _fd_write = -1;
 
    return _init_evas_event;
-#else
-   return 0;
-#endif
 }
 
 EAPI int
