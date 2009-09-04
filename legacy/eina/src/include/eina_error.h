@@ -36,72 +36,51 @@
  */
 
 /**
+ * @deprecated use EINA_LOG_ERR() instead.
  * @def EINA_ERROR_PERR(fmt, ...)
  * Print the error message described with the formatted string @a fmt
  * using the current print callback, file function and line, with the
  * error level EINA_ERROR_LEVEL_ERR.
  */
 #define EINA_ERROR_PERR(fmt, ...) \
-	eina_error_print(EINA_ERROR_LEVEL_ERR, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
+	eina_error_print(EINA_LOG_LEVEL_ERR, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
 
 /**
+ * @deprecated use EINA_LOG_INFO() instead.
  * @def EINA_ERROR_PINFO(fmt, ...)
  * Print the error message described with the formatted string @a fmt
  * using the current print callback, file function and line, with the
  * error level EINA_ERROR_LEVEL_INFO.
  */
 #define EINA_ERROR_PINFO(fmt, ...) \
-	eina_error_print(EINA_ERROR_LEVEL_INFO, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
+	eina_error_print(EINA_LOG_LEVEL_INFO, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
 
 /**
+ * @deprecated use EINA_LOG_WARN() instead.
  * @def EINA_ERROR_PWARN(fmt, ...)
  * Print the error message described with the formatted string @a fmt
  * using the current print callback, file function and line, with the
  * error level EINA_ERROR_LEVEL_WARN.
  */
 #define EINA_ERROR_PWARN(fmt, ...) \
-	eina_error_print(EINA_ERROR_LEVEL_WARN, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
+	eina_error_print(EINA_LOG_LEVEL_WARN, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
 
 /**
+ * @deprecated use EINA_LOG_DBG() instead.
  * @def EINA_ERROR_PDBG(fmt, ...)
  * Print the error message described with the formatted string @a fmt
  * using the current print callback, file function and line, with the
  * error level EINA_ERROR_LEVEL_DBG.
  */
 #define EINA_ERROR_PDBG(fmt, ...) \
-	eina_error_print(EINA_ERROR_LEVEL_DBG, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
+	eina_error_print(EINA_LOG_LEVEL_DBG, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
 
-/**
- * @typedef Eina_Error_Level
- * List of available error levels.
- */
-
-/**
- * @enum _Eina_Error_Level
- * List of available error levels.
- */
-typedef enum _Eina_Error_Level
-{
-	EINA_ERROR_LEVEL_ERR,   /**< Error error level */
-	EINA_ERROR_LEVEL_WARN,  /**< Warning error level */
-	EINA_ERROR_LEVEL_INFO,  /**< Information error level */
-	EINA_ERROR_LEVEL_DBG,   /**< Debug error level */
-	EINA_ERROR_LEVELS       /**< Count of error level */
-} Eina_Error_Level;
 
 /**
  * @typedef Eina_Error
  * Error type.
  */
 typedef int Eina_Error;
-
-/**
- * @typedef Eina_Error_Print_Cb
- * Type for print callbacks.
- */
-typedef void (*Eina_Error_Print_Cb)(Eina_Error_Level level, const char *file,
-                const char *fnc, int line, const char *fmt, void *data,
-		va_list args);
 
 /**
  * @var EINA_ERROR_OUT_OF_MEMORY
@@ -115,19 +94,11 @@ EAPI Eina_Error eina_error_msg_register(const char *msg) EINA_ARG_NONNULL(1);
 EAPI Eina_Error eina_error_get(void);
 EAPI void eina_error_set(Eina_Error err);
 EAPI const char * eina_error_msg_get(Eina_Error error) EINA_PURE;
-EAPI void eina_error_print(Eina_Error_Level level, const char *file,
-	        const char *function, int line, const char *fmt, ...) EINA_ARG_NONNULL(2, 3, 5) EINA_PRINTF(5, 6);
-EAPI void eina_error_vprint(Eina_Error_Level level, const char *file,
-	        const char *fnc, int line, const char *fmt, va_list args) EINA_ARG_NONNULL(2, 3, 5);
-
-EAPI void eina_error_print_cb_stdout(Eina_Error_Level level, const char *file,
-                const char *fnc, int line, const char *fmt, void *data,
-		va_list args);
-EAPI void eina_error_print_cb_file(Eina_Error_Level level, const char *file,
-                const char *fnc, int line, const char *fmt, void *data,
-                va_list args);
-EAPI void eina_error_print_cb_set(Eina_Error_Print_Cb cb, void *data) EINA_ARG_NONNULL(1);
-EAPI void eina_error_log_level_set(Eina_Error_Level level);
+EAPI void eina_error_print(int level, const char *file,
+	        const char *function, int line, const char *fmt, ...) EINA_ARG_NONNULL(2, 3, 5) EINA_PRINTF(5, 6) EINA_DEPRECATED;
+EAPI void eina_error_vprint(int level, const char *file,
+	        const char *fnc, int line, const char *fmt, va_list args) EINA_ARG_NONNULL(2, 3, 5) EINA_DEPRECATED;
+EAPI void eina_error_log_level_set(int level) EINA_DEPRECATED;
 
 /**
  * @}

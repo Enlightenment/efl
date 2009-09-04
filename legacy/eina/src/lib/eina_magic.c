@@ -31,6 +31,7 @@
 #include "eina_private.h"
 #include "eina_error.h"
 #include "eina_inlist.h"
+#include "eina_log.h"
 #include "eina_magic.h"
 
 /*============================================================================*
@@ -225,44 +226,47 @@ EAPI void
 eina_magic_fail(void *d, Eina_Magic m, Eina_Magic req_m, const char *file, const char *fnc, int line)
 {
    if (!d)
-     eina_error_print(EINA_ERROR_LEVEL_ERR, file, fnc, line,
-		      "*** Eina Magic Check Failed !!!\n"
-		      "    Input handle pointer is NULL !\n"
-		      "*** NAUGHTY PROGRAMMER!!!\n"
-	              "*** SPANK SPANK SPANK!!!\n"
-	              "*** Now go fix your code. Tut tut tut!\n"
-		      "\n");
+     eina_log_print(EINA_LOG_DOMAIN_GLOBAL, EINA_LOG_LEVEL_CRITICAL,
+		    file, fnc, line,
+		    "*** Eina Magic Check Failed !!!\n"
+		    "    Input handle pointer is NULL !\n"
+		    "*** NAUGHTY PROGRAMMER!!!\n"
+		    "*** SPANK SPANK SPANK!!!\n"
+		    "*** Now go fix your code. Tut tut tut!\n"
+		    "\n");
    else
      if (m == EINA_MAGIC_NONE)
-       eina_error_print(EINA_ERROR_LEVEL_ERR, file, fnc, line,
-			"*** Eina Magic Check Failed !!!\n"
-			"    Input handle has already been freed!\n"
-			"*** NAUGHTY PROGRAMMER!!!\n"
-			"*** SPANK SPANK SPANK!!!\n"
-			"*** Now go fix your code. Tut tut tut!\n"
-			"\n");
+       eina_log_print(EINA_LOG_DOMAIN_GLOBAL, EINA_LOG_LEVEL_CRITICAL,
+		      file, fnc, line,
+		      "*** Eina Magic Check Failed !!!\n"
+		      "    Input handle has already been freed!\n"
+		      "*** NAUGHTY PROGRAMMER!!!\n"
+		      "*** SPANK SPANK SPANK!!!\n"
+		      "*** Now go fix your code. Tut tut tut!\n"
+		      "\n");
      else
        if (m != req_m)
-	 eina_error_print(EINA_ERROR_LEVEL_ERR, file, fnc, line,
-			  "*** Eina Magic Check Failed !!!\n"
-			  "    Input handle is wrong type\n"
-			  "    Expected: %08x - %s\n"
-			  "    Supplied: %08x - %s\n"
-			  "*** NAUGHTY PROGRAMMER!!!\n"
-			  "*** SPANK SPANK SPANK!!!\n"
-			  "*** Now go fix your code. Tut tut tut!\n"
-			  "\n",
-			  req_m, eina_magic_string_get(req_m),
-			  m, eina_magic_string_get(m));
+       eina_log_print(EINA_LOG_DOMAIN_GLOBAL, EINA_LOG_LEVEL_CRITICAL,
+		      file, fnc, line,
+		      "*** Eina Magic Check Failed !!!\n"
+		      "    Input handle is wrong type\n"
+		      "    Expected: %08x - %s\n"
+		      "    Supplied: %08x - %s\n"
+		      "*** NAUGHTY PROGRAMMER!!!\n"
+		      "*** SPANK SPANK SPANK!!!\n"
+		      "*** Now go fix your code. Tut tut tut!\n"
+		      "\n",
+		      req_m, eina_magic_string_get(req_m),
+		      m, eina_magic_string_get(m));
        else
-	 eina_error_print(EINA_ERROR_LEVEL_ERR, file, fnc, line,
-			  "*** Eina Magic Check Failed !!!\n"
-			  "    Why did you call me !\n"
-			  "*** NAUGHTY PROGRAMMER!!!\n"
-			  "*** SPANK SPANK SPANK!!!\n"
-			  "*** Now go fix your code. Tut tut tut!\n"
-			  "\n");
-   if (getenv("EINA_ERROR_ABORT")) abort();
+       eina_log_print(EINA_LOG_DOMAIN_GLOBAL, EINA_LOG_LEVEL_CRITICAL,
+		      file, fnc, line,
+		      "*** Eina Magic Check Failed !!!\n"
+		      "    Why did you call me !\n"
+		      "*** NAUGHTY PROGRAMMER!!!\n"
+		      "*** SPANK SPANK SPANK!!!\n"
+		      "*** Now go fix your code. Tut tut tut!\n"
+		      "\n");
 }
 
 /**

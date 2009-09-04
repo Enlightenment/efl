@@ -61,26 +61,9 @@ START_TEST(eina_error_errno)
 }
 END_TEST
 
-START_TEST(eina_error_macro)
-{
-   eina_error_init();
-
-   eina_error_log_level_set(EINA_ERROR_LEVEL_DBG);
-   eina_error_print_cb_set(eina_error_print_cb_file, stderr);
-
-   EINA_ERROR_PERR("An error\n");
-   EINA_ERROR_PINFO("An info\n");
-   EINA_ERROR_PWARN("A warning\n");
-   EINA_ERROR_PDBG("A debug\n");
-
-   eina_error_shutdown();
-}
-END_TEST
-
 void
 eina_test_error(TCase *tc)
 {
    tcase_add_test(tc, eina_error_init_shutdown);
    tcase_add_test(tc, eina_error_errno);
-   tcase_add_test(tc, eina_error_macro);
 }
