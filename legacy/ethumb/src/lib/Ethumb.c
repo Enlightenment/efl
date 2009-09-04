@@ -50,10 +50,11 @@
 #include <Ecore_File.h>
 #include <Edje.h>
 
-#define DBG(...) EINA_ERROR_PDBG(__VA_ARGS__)
-#define INF(...) EINA_ERROR_PINFO(__VA_ARGS__)
-#define WRN(...) EINA_ERROR_PWARN(__VA_ARGS__)
-#define ERR(...) EINA_ERROR_PERR(__VA_ARGS__)
+static int _log_dom = -1;
+#define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_log_dom, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
 
 static int initcount = 0;
 static const char *_home_thumb_dir = NULL;
@@ -139,6 +140,19 @@ ethumb_init(void)
    if (initcount)
      return ++initcount;
 
+   if (!eina_log_init())
+     {
+	fprintf(stderr, "ERROR: Could not initialize log module.\n");
+	return 0;
+     }
+   _log_dom = eina_log_domain_register("ethumb", EINA_COLOR_GREEN);
+   if (_log_dom < 0)
+     {
+	EINA_LOG_ERR("Could not register log domain: ethumb");
+	eina_log_shutdown();
+	return 0;
+     }
+
    eina_stringshare_init();
    eina_list_init();
    eina_hash_init();
@@ -177,6 +191,9 @@ ethumb_shutdown(void)
 	ecore_shutdown();
 	ecore_evas_shutdown();
 	edje_shutdown();
+	eina_log_domain_unregister(_log_dom);
+	_log_dom = -1;
+	eina_log_shutdown();
      }
 
    return initcount;
@@ -247,6 +264,8 @@ ethumb_new(void)
    ethumb->o = o;
    ethumb->img = img;
 
+   DBG("ethumb=%p\n", ethumb);
+
    return ethumb;
 }
 
@@ -279,6 +298,8 @@ ethumb_free(Ethumb *ethumb)
 {
    EINA_SAFETY_ON_NULL_RETURN(ethumb);
 
+   DBG("ethumb=%p", ethumb);
+
    if (ethumb->frame)
      _ethumb_frame_free(ethumb->frame);
    ethumb_file_free(ethumb);
@@ -296,6 +317,7 @@ ethumb_thumb_fdo_set(Ethumb *e, Ethumb_Thumb_FDO_Size s)
    EINA_SAFETY_ON_NULL_RETURN(e);
    EINA_SAFETY_ON_FALSE_RETURN(s == ETHUMB_THUMB_NORMAL ||
 			       s == ETHUMB_THUMB_LARGE);
+   DBG("ethumb=%p, size=%d", e, s);
 
    if (s == ETHUMB_THUMB_NORMAL)
      {
@@ -325,6 +347,7 @@ ethumb_thumb_size_set(Ethumb *e, int tw, int th)
    EINA_SAFETY_ON_FALSE_RETURN(tw > 0);
    EINA_SAFETY_ON_FALSE_RETURN(th > 0);
 
+   DBG("ethumb=%p, w=%d, h=%d", e, tw, th);
    e->tw = tw;
    e->th = th;
 }
@@ -346,6 +369,7 @@ ethumb_thumb_format_set(Ethumb *e, Ethumb_Thumb_Format f)
 			       f == ETHUMB_THUMB_JPEG ||
 			       f == ETHUMB_THUMB_EET);
 
+   DBG("ethumb=%p, format=%d", e, f);
    e->format = f;
 }
 
@@ -364,6 +388,7 @@ ethumb_thumb_aspect_set(Ethumb *e, Ethumb_Thumb_Aspect a)
 			       a == ETHUMB_THUMB_IGNORE_ASPECT ||
 			       a == ETHUMB_THUMB_CROP);
 
+   DBG("ethumb=%p, aspect=%d", e, a);
    e->aspect = a;
 }
 
@@ -379,6 +404,7 @@ ethumb_thumb_crop_align_set(Ethumb *e, float x, float y)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
 
+   DBG("ethumb=%p, x=%f, y=%f", e, x, y);
    e->crop_x = x;
    e->crop_y = y;
 }
@@ -397,6 +423,7 @@ ethumb_thumb_quality_set(Ethumb *e, int quality)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
 
+   DBG("ethumb=%p, quality=%d", e, quality);
    e->quality = quality;
 }
 
@@ -412,6 +439,7 @@ ethumb_thumb_compress_set(Ethumb *e, int compress)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
 
+   DBG("ethumb=%p, compress=%d", e, compress);
    e->compress = compress;
 }
 
@@ -429,6 +457,10 @@ ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const cha
 
    Ethumb_Frame *frame;
    frame = e->frame;
+
+   DBG("ethumb=%p, theme_file=%s, group=%s, swallow=%s",
+       e, theme_file ? theme_file : "", group ? group : "",
+       swallow ? swallow : "");
 
    if (frame)
      {
@@ -548,6 +580,7 @@ ethumb_thumb_dir_path_set(Ethumb *e, const char *path)
    char buf[PATH_MAX];
    EINA_SAFETY_ON_NULL_RETURN(e);
 
+   DBG("ethumb=%p, path=%s", e, path ? path : "");
    path = _ethumb_build_absolute_path(path, buf);
    eina_stringshare_replace(&e->thumb_dir, path);
 }
@@ -565,6 +598,7 @@ ethumb_thumb_category_set(Ethumb *e, const char *category)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
 
+   DBG("ethumb=%p, category=%s", e, category ? category : "");
    eina_stringshare_replace(&e->category, category);
 }
 
@@ -581,6 +615,7 @@ ethumb_video_start_set(Ethumb *e, float start)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
 
+   DBG("ethumb=%p, video_start=%f", e, start);
    e->video.start = start;
 }
 
@@ -597,6 +632,7 @@ ethumb_video_time_set(Ethumb *e, float time)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
 
+   DBG("ethumb=%p, video_start=%f", e, time);
    e->video.time = time;
 }
 
@@ -613,6 +649,7 @@ ethumb_video_interval_set(Ethumb *e, float interval)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
 
+   DBG("ethumb=%p, video_interval=%f", e, interval);
    e->video.interval = interval;
 }
 
@@ -629,6 +666,7 @@ ethumb_video_ntimes_set(Ethumb *e, int ntimes)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
 
+   DBG("ethumb=%p, video_ntimes=%d", e, ntimes);
    e->video.ntimes = ntimes;
 }
 
@@ -645,6 +683,7 @@ ethumb_video_fps_set(Ethumb *e, int fps)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
 
+   DBG("ethumb=%p, video_fps=%d", e, fps);
    e->video.fps = fps;
 }
 
@@ -661,6 +700,7 @@ ethumb_document_page_set(Ethumb *e, int page)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
 
+   DBG("ethumb=%p, document_page=%d", e, page);
    e->document.page = page;
 }
 
@@ -678,6 +718,7 @@ ethumb_file_set(Ethumb *e, const char *path, const char *key)
    char buf[PATH_MAX];
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
 
+   DBG("ethumb=%p, path=%s, key=%s", e, path ? path : "", key ? key : "");
    if (path && access(path, R_OK))
      {
 	ERR("couldn't access file \"%s\"\n", path);
@@ -764,6 +805,8 @@ _ethumb_generate_hash(const char *file)
       md5out[2 * n + 1] = hex[hash[n] & 0x0f];
     }
   md5out[2 * n] = '\0';
+
+  DBG("md5=%s, file=%s\n", md5out, file);
   return eina_stringshare_add(md5out);
 }
 
@@ -860,6 +903,7 @@ _ethumb_file_generate_path(Ethumb *e)
    hash = _ethumb_generate_hash(fullname);
    snprintf(buf, sizeof(buf), "%s/%s/%s.%s", thumb_dir, category, hash, ext);
    free(fullname);
+   DBG("ethumb=%p, path=%s", e, buf);
    eina_stringshare_replace(&e->thumb_path, buf);
    if (e->format == ETHUMB_THUMB_EET)
      eina_stringshare_replace(&e->thumb_key, "thumbnail");
@@ -878,6 +922,7 @@ EAPI void
 ethumb_file_free(Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
+   DBG("ethumb=%p", e);
 
    eina_stringshare_replace(&e->src_path, NULL);
    eina_stringshare_replace(&e->src_key, NULL);
@@ -891,6 +936,7 @@ ethumb_thumb_path_set(Ethumb *e, const char *path, const char *key)
    char buf[PATH_MAX];
 
    EINA_SAFETY_ON_NULL_RETURN(e);
+   DBG("ethumb=%p, path=%s, key=%s", e, path ? path : "", key ? key : "");
 
    if (!path)
      {
@@ -1186,7 +1232,9 @@ ethumb_generate(Ethumb *e, ethumb_generate_callback_t finished_cb, void *data, v
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
    EINA_SAFETY_ON_NULL_RETURN_VAL(finished_cb, 0);
-
+   DBG("ethumb=%p, finished_cb=%p, data=%p, free_data=%p, path=%s, key=%s",
+       e, finished_cb, data, free_data,
+       e->src_path ? e->src_path : "", e->src_key ? e->src_key : "");
 
    if (e->finished_idler)
      {
@@ -1231,6 +1279,7 @@ ethumb_exists(Ethumb *e)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
    EINA_SAFETY_ON_NULL_RETURN_VAL(e->src_path, 0);
+   DBG("ethumb=%p, path=%s", e, e->src_path ? e->src_path : "");
 
    if (!e->thumb_path)
      _ethumb_file_generate_path(e);

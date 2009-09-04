@@ -44,10 +44,11 @@
 
 #define MAX_ID 2000000
 
-#define DBG(...) EINA_ERROR_PDBG(__VA_ARGS__)
-#define INF(...) EINA_ERROR_PINFO(__VA_ARGS__)
-#define WRN(...) EINA_ERROR_PWARN(__VA_ARGS__)
-#define ERR(...) EINA_ERROR_PERR(__VA_ARGS__)
+static int _log_dom = -1;
+#define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_log_dom, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
 
 struct _Ethumb_Client
 {
@@ -399,6 +400,19 @@ ethumb_client_init(void)
    if (_initcount)
      return ++_initcount;
 
+   if (!eina_log_init())
+     {
+	fprintf(stderr, "ERROR: Could not initialize log module.\n");
+	return 0;
+     }
+   _log_dom = eina_log_domain_register("ethumb_client", EINA_COLOR_YELLOW);
+   if (_log_dom < 0)
+     {
+	EINA_LOG_ERR("Could not register log domain: ethumb_client");
+	eina_log_shutdown();
+	return 0;
+     }
+
    ethumb_init();
    e_dbus_init();
 
@@ -414,6 +428,9 @@ ethumb_client_shutdown(void)
 
    e_dbus_shutdown();
    ethumb_shutdown();
+   eina_log_domain_unregister(_log_dom);
+   _log_dom = -1;
+   eina_log_shutdown();
    return _initcount;
 }
 

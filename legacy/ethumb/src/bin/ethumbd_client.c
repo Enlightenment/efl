@@ -131,9 +131,6 @@ const Ecore_Getopt optdesc = {
      ('v', "video_time", "time of video frame to use as thumbnail."),
      ECORE_GETOPT_STORE_INT
      ('p', "document_page", "document page to use as thumbnail."),
-     ECORE_GETOPT_STORE_INT('D', "debug", "debug level (see -Q and -V)"),
-     ECORE_GETOPT_COUNT('Q', "quiet", "print out less information"),
-     ECORE_GETOPT_COUNT('V', "verbose", "print out more information"),
      ECORE_GETOPT_LICENSE('L', "license"),
      ECORE_GETOPT_COPYRIGHT('C', "copyright"),
      ECORE_GETOPT_VERSION('V', "version"),
@@ -224,7 +221,6 @@ main(int argc, char *argv[])
 {
    Ethumb_Client *c;
    Eina_Bool quit_option = 0;
-   int debug_level = EINA_LOG_LEVEL_WARN;
    const char *format_str, *aspect_str;
    struct options opts = {
      {-1, -1, -1, -1},
@@ -251,9 +247,6 @@ main(int argc, char *argv[])
      ECORE_GETOPT_VALUE_STR(opts.src_key),
      ECORE_GETOPT_VALUE_DOUBLE(opts.video_time),
      ECORE_GETOPT_VALUE_INT(opts.page),
-     ECORE_GETOPT_VALUE_INT(debug_level),
-     ECORE_GETOPT_VALUE_INT(debug_level),
-     ECORE_GETOPT_VALUE_INT(debug_level),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
