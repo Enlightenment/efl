@@ -600,16 +600,16 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
    if (it->flags & ELM_GENLIST_ITEM_SUBITEMS)
      {
 	if (in & 0x1)
-	  snprintf(buf, sizeof(buf), "%s/%s", "tree_odd", it->itc->item_style);
+	  snprintf(buf, sizeof(buf), "tree_odd/%s", it->itc->item_style);
 	else
-	  snprintf(buf, sizeof(buf), "%s/%s", "tree", it->itc->item_style);
+	  snprintf(buf, sizeof(buf), "tree/%s", it->itc->item_style);
      }
    else
      {
 	if (in & 0x1)
-	  snprintf(buf, sizeof(buf), "%s/%s", "item_odd", it->itc->item_style);
+	  snprintf(buf, sizeof(buf), "item_odd/%s", it->itc->item_style);
 	else
-	  snprintf(buf, sizeof(buf), "%s/%s", "item", it->itc->item_style);
+	  snprintf(buf, sizeof(buf), "item/%s", it->itc->item_style);
      }
    _elm_theme_set(it->base, "genlist", buf, elm_widget_style_get(it->wd->obj));
    it->spacer = evas_object_rectangle_add(evas_object_evas_get(it->wd->obj));
@@ -618,13 +618,17 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
    for (it2 = it, depth = 0; it2->parent; it2 = it2->parent) depth += 1;
    treesize = edje_object_data_get(it->base, "treesize");
    if (treesize) tsize = atoi(treesize);
-   evas_object_size_hint_min_set(it->spacer, (depth * tsize) * _elm_config->scale, 1);
+   evas_object_size_hint_min_set(it->spacer, 
+                                 (depth * tsize) * _elm_config->scale, 1);
    edje_object_part_swallow(it->base, "elm.swallow.pad", it->spacer);
    if (!calc)
      {
-	edje_object_signal_callback_add(it->base, "elm,action,expand,toggle", "elm", _signal_expand_toggle, it);
-	edje_object_signal_callback_add(it->base, "elm,action,expand", "elm", _signal_expand, it);
-	edje_object_signal_callback_add(it->base, "elm,action,contract", "elm", _signal_contract, it);
+	edje_object_signal_callback_add(it->base, "elm,action,expand,toggle", 
+                                        "elm", _signal_expand_toggle, it);
+	edje_object_signal_callback_add(it->base, "elm,action,expand", "elm", 
+                                        _signal_expand, it);
+	edje_object_signal_callback_add(it->base, "elm,action,contract", 
+                                        "elm", _signal_contract, it);
 	stacking = edje_object_data_get(it->base, "stacking");
 	if (stacking)
 	  {
@@ -698,6 +702,7 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
    if (!it->mincalcd)
      {
 	Evas_Coord mw = -1, mh = -1;
+
 	elm_coords_finger_size_adjust(1, &mw, 1, &mh);
 	edje_object_size_min_restricted_calc(it->base, &mw, &mh, mw, mh);
 	elm_coords_finger_size_adjust(1, &mw, 1, &mh);
@@ -843,13 +848,12 @@ _calc_job(void *data)
    Item_Block *itb;
    Evas_Coord minw = -1, minh = 0, x = 0, y = 0, ow, oh;
    Item_Block *chb = NULL;
-   int in;
-   int minw_change = 0;
+   int in = 0, minw_change = 0;
 
-   in = 0;
    EINA_INLIST_FOREACH(wd->blocks, itb)
      {
 	int showme = 0;
+
 	if (chb)
 	  {
 	     if (itb->realized) _item_block_unrealize(itb);
@@ -1015,17 +1019,12 @@ _pan_calculate(Evas_Object *obj)
 				0, 0, ow, oh))
 	  {
 	     if ((!itb->realized) || (itb->changed))
-	       {
-		  _item_block_realize(itb, in, 0);
-	       }
+               _item_block_realize(itb, in, 0);
 	     _item_block_position(itb,  in);
 	  }
 	else
 	  {
-	     if (itb->realized)
-	       {
-		  _item_block_unrealize(itb);
-	       }
+	     if (itb->realized) _item_block_unrealize(itb);
 	  }
 	in += itb->count;
      }
@@ -1068,6 +1067,7 @@ elm_genlist_add(Evas_Object *parent)
    if (!smart)
      {
 	static Evas_Smart_Class sc;
+
 	evas_object_smart_clipped_smart_set(&_pan_sc);
 	sc = _pan_sc;
 	sc.name = "elm_genlist_pan";
@@ -1089,7 +1089,8 @@ elm_genlist_add(Evas_Object *parent)
 				     _pan_set, _pan_get,
 				     _pan_max_get, _pan_child_size_get);
 
-   edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), &minw, &minh);
+   edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), 
+                             &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
 
    _sizing_eval(obj);
@@ -1100,7 +1101,8 @@ static Elm_Genlist_Item *
 _item_new(Widget_Data *wd, const Elm_Genlist_Item_Class *itc,
 	  const void *data, Elm_Genlist_Item *parent,
 	  Elm_Genlist_Item_Flags flags,
-	  void (*func) (void *data, Evas_Object *obj, void *event_info), const void *func_data)
+	  void (*func) (void *data, Evas_Object *obj, void *event_info), 
+          const void *func_data)
 {
    Elm_Genlist_Item *it;
 
