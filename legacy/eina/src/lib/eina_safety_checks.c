@@ -113,8 +113,8 @@ eina_safety_checks_shutdown(void)
    if (_eina_safety_checks_init_count != 0)
      return _eina_safety_checks_init_count;
 
-#ifdef EINA_SAFETY_CHECKS
    eina_error_shutdown();
+#ifdef EINA_SAFETY_CHECKS
    eina_log_shutdown();
 #endif
    return 0;
