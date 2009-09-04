@@ -192,7 +192,16 @@ EAPI void eina_log_level_set(Eina_Log_Level level);
 EAPI int  eina_log_domain_register(const char *name, const char *color) EINA_ARG_NONNULL(1);
 EAPI void eina_log_domain_unregister(int domain);
 
+/*
+ * Logging functions.
+ */
 EAPI void eina_log_print(int domain, Eina_Log_Level level, const char *file, const char *function, int line, const char *fmt, ...) EINA_ARG_NONNULL(2, 3, 5);
+EAPI void eina_log_vprint(int domain, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, va_list args) EINA_ARG_NONNULL(2, 3, 5);
+
+
+/*
+ * Logging methods (change how logging is done).
+ */
 EAPI void eina_log_print_cb_stdout(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args);
 EAPI void eina_log_print_cb_stderr(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args);
 EAPI void eina_log_print_cb_file(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args);

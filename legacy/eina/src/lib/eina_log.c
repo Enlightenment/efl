@@ -1206,3 +1206,53 @@ eina_log_print(int domain, Eina_Log_Level level, const char *file,
    UNLOCK();
    va_end(args);
 }
+
+/**
+ * Print out log message using given domain and level.
+ *
+ * @note Usually you'll not use this function directly but the helper
+ *       macros EINA_LOG(), EINA_LOG_DOM_CRIT(), EINA_LOG_CRIT() and
+ *       so on. See eina_log.h
+ *
+ * @param domain logging domain to use or @c EINA_LOG_DOMAIN_GLOBAL if
+ *        you registered none. It is recommended that modules and
+ *        applications have their own logging domain.
+ * @param level message level, those with level greater than user
+ *        specified value (eina_log_level_set() or environment
+ *        variables EINA_LOG_LEVEL, EINA_LOG_LEVELS) will be ignored.
+ * @param file filename that originated the call, must @b not be @c NULL.
+ * @param fnc function that originated the call, must @b not be @c NULL.
+ * @param line originating line in @a file.
+ * @param fmt printf-like format to use. Should not provide trailing
+ *        '\n' as it is automatically included.
+ *
+ * @note MT: this function may be called from different threads if
+ *       eina_log_threads_enable() was called before.
+ *
+ * @see eina_log_print()
+ */
+EAPI void
+eina_log_vprint(int domain, Eina_Log_Level level, const char *file,
+		const char *fnc, int line, const char *fmt, va_list args)
+{
+#ifdef EINA_SAFETY_CHECKS
+   if (EINA_UNLIKELY(file == NULL))
+     {
+	fputs("ERR: eina_log_print() file == NULL\n", stderr);
+	return;
+     }
+   if (EINA_UNLIKELY(fnc == NULL))
+     {
+	fputs("ERR: eina_log_print() fnc == NULL\n", stderr);
+	return;
+     }
+   if (EINA_UNLIKELY(fmt == NULL))
+     {
+	fputs("ERR: eina_log_print() fmt == NULL\n", stderr);
+	return;
+     }
+#endif
+   LOCK();
+   eina_log_print_unlocked(domain, level, file, fnc, line, fmt, args);
+   UNLOCK();
+}
