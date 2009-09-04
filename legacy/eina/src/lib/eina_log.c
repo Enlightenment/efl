@@ -1133,7 +1133,11 @@ eina_log_print_unlocked(int domain, Eina_Log_Level level, const char *file, cons
    if (EINA_UNLIKELY(domain >= _log_domains_count) ||
        EINA_UNLIKELY(domain < 0))
      {
-	fprintf(stderr, "ERR: eina_log_print() unknown domain %d\n", domain);
+	if (file && fnc && fmt)
+	  fprintf(stderr, "CRI: %s:%d %s() eina_log_print() unknown domain %d, original message format '%s'\n", file, line, fnc, domain, fmt);
+	else
+	  fprintf(stderr, "CRI: eina_log_print() unknown domain %d, original message format '%s'\n", domain, fmt ? fmt : "");
+	if (_abort_on_critical) abort();
 	return;
      }
 #endif
