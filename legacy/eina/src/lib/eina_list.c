@@ -154,6 +154,10 @@ struct _Eina_Accessor_List
 static int _eina_list_init_count = 0;
 static Eina_Mempool *_eina_list_mp = NULL;
 static Eina_Mempool *_eina_list_accounting_mp = NULL;
+static int _eina_list_log_dom = -1;
+
+#define ERR(...) EINA_LOG_DOM_ERR(_eina_list_log_dom, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_eina_list_log_dom, __VA_ARGS__)
 
 static inline Eina_List_Accounting*
 _eina_list_mempool_accounting_new(__UNUSED__ Eina_List *list)
@@ -462,28 +466,41 @@ eina_list_init(void)
 
    if (!_eina_list_init_count)
      {
+	if (!eina_log_init())
+	  {
+	     fprintf(stderr, "Could not initialize eina logging system.\n");
+	     return 0;
+	  }
+
+	_eina_list_log_dom = eina_log_domain_register("eina_list", EINA_LOG_COLOR_DEFAULT);
+	if (_eina_list_log_dom < 0)
+	  {
+	     EINA_LOG_ERR("Could not register log domain: eina_list");
+	     eina_log_shutdown();
+	     return 0;
+	  }
+
 	if (!eina_error_init())
 	  {
-	     fprintf(stderr, "Could not initialize eina error module\n");
-	     return 0;
+	     ERR("Could not initialize eina error module.");
+	     goto on_error_fail;
 	  }
 
 	if (!eina_safety_checks_init())
 	  {
-	     fprintf(stderr, "Could not initialize eina safety checks.\n");
-	     eina_error_shutdown();
-	     return 0;
+	     ERR("Could not initialize eina safety checks.");
+	     goto on_safety_checks_fail;
 	  }
 
 	if (!eina_magic_string_init())
 	  {
-	     EINA_ERROR_PERR("ERROR: Could not initialize eina magic string module.\n");
+	     ERR("ERROR: Could not initialize eina magic string module.");
 	     goto on_magic_string_fail;
 	  }
 
 	if (!eina_mempool_init())
 	  {
-	     EINA_ERROR_PERR("ERROR: Could not initialize eina mempool module.\n");
+	     ERR("ERROR: Could not initialize eina mempool module.");
 	     goto on_mempool_fail;
 	  }
 
@@ -498,14 +515,14 @@ eina_list_init(void)
 					sizeof (Eina_List), 320);
        if (!_eina_list_mp)
          {
-           EINA_ERROR_PERR("ERROR: Mempool for list cannot be allocated in list init.\n");
+           ERR("ERROR: Mempool for list cannot be allocated in list init.");
 	   goto on_init_fail;
          }
        _eina_list_accounting_mp = eina_mempool_add(choice, "list_accounting", NULL,
 						   sizeof (Eina_List_Accounting), 80);
        if (!_eina_list_accounting_mp)
          {
-           EINA_ERROR_PERR("ERROR: Mempool for list accounting cannot be allocated in list init.\n");
+           ERR("ERROR: Mempool for list accounting cannot be allocated in list init.");
 	   eina_mempool_del(_eina_list_mp);
 	   goto on_init_fail;
          }
@@ -531,7 +548,13 @@ eina_list_init(void)
  on_mempool_fail:
    eina_magic_string_shutdown();
  on_magic_string_fail:
+   eina_safety_checks_shutdown();
+ on_safety_checks_fail:
    eina_error_shutdown();
+ on_error_fail:
+   eina_log_domain_unregister(_eina_list_log_dom);
+   _eina_list_log_dom = -1;
+   eina_log_shutdown();
    return 0;
 }
 
@@ -560,6 +583,9 @@ eina_list_shutdown(void)
 	eina_magic_string_shutdown();
 	eina_safety_checks_shutdown();
 	eina_error_shutdown();
+	eina_log_domain_unregister(_eina_list_log_dom);
+	_eina_list_log_dom = -1;
+	eina_log_shutdown();
      }
 
    return _eina_list_init_count;
