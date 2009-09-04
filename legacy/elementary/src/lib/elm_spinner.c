@@ -214,6 +214,8 @@ static int
 _spin_value(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return ECORE_CALLBACK_CANCEL;
+
    if (_value_set(data, wd->spin_speed))
      _write_label(data);
 
@@ -226,6 +228,7 @@ static void
 _val_inc_start(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
    wd->interval = 0.85;
    wd->spin_speed = wd->step;
    if (wd->spin) ecore_timer_del(wd->spin);
@@ -237,6 +240,7 @@ static void
 _val_inc_stop(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
    wd->interval = 0.85;
    wd->spin_speed = 0;
    if (wd->spin) ecore_timer_del(wd->spin);
@@ -247,6 +251,7 @@ static void
 _val_dec_start(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
    wd->interval = 0.85;
    wd->spin_speed = -wd->step;
    if (wd->spin) ecore_timer_del(wd->spin);
@@ -258,6 +263,7 @@ static void
 _val_dec_stop(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
    wd->interval = 0.85;
    wd->spin_speed = 0;
    if (wd->spin) ecore_timer_del(wd->spin);
@@ -268,6 +274,7 @@ static void
 _toggle_entry(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
    if (wd->dragging)
      {
         wd->dragging = 0;
