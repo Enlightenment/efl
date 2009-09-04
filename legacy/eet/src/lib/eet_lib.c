@@ -756,7 +756,17 @@ eet_init(void)
    OpenSSL_add_all_algorithms();
 #endif
 
-   eina_init();
+   if (!eina_init())
+     {
+#ifdef HAVE_GNUTLS
+	gnutls_global_deinit();
+#endif
+#ifdef HAVE_OPENSSL
+	EVP_cleanup();
+	ERR_free_strings();
+#endif
+	return 0;
+     }
 
    return eet_initcount;
 }
@@ -769,6 +779,8 @@ eet_shutdown(void)
    if (eet_initcount > 0) return eet_initcount;
 
    eet_clearcache();
+
+   eina_shutdown();
 #ifdef HAVE_GNUTLS
    gnutls_global_deinit();
 #endif
@@ -776,8 +788,6 @@ eet_shutdown(void)
    EVP_cleanup();
    ERR_free_strings();
 #endif
-
-   eina_shutdown();
 
    return eet_initcount;
 }
