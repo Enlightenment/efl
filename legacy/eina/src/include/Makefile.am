@@ -37,7 +37,8 @@ eina_iterator.h \
 eina_main.h \
 eina_cpu.h \
 eina_tiler.h \
-eina_hamster.h
+eina_hamster.h \
+eina_matrixsparse.h
 
 installed_mainheaderdir = $(includedir)/eina-@VMAJ@
 dist_installed_mainheader_DATA = Eina.h eina_config.h

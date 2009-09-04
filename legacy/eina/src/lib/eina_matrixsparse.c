@@ -183,6 +183,11 @@ struct _Eina_Matrixsparse_Iterator_Complete
  */
 
 static int _eina_matrixsparse_init_count = 0;
+static int _eina_matrixsparse_log_dom = -1;
+
+#define ERR(...) EINA_LOG_DOM_ERR(_eina_matrixsparse_log_dom, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_eina_matrixsparse_log_dom, __VA_ARGS__)
+
 static Eina_Mempool *_eina_matrixsparse_cell_mp = NULL;
 static Eina_Mempool *_eina_matrixsparse_row_mp = NULL;
 
@@ -200,7 +205,6 @@ static inline void
 _eina_matrixsparse_cell_unlink(Eina_Matrixsparse_Cell *c)
 {
    Eina_Matrixsparse_Row *r = c->parent;
-   long *tmp = c->data;
 
    if (r->last_used == c)
      {
@@ -681,7 +685,7 @@ _eina_matrixsparse_iterator_complete_next(Eina_Matrixsparse_Iterator_Complete *i
      return 0;
 
    if (it->dummy.col.data != NULL)
-     EINA_ERROR_PERR("Last iterator call changed dummy cell!\n");
+     ERR("Last iterator call changed dummy cell!");
 
    if ((it->ref.col) &&
        (it->ref.col->col == it->idx.col) &&
@@ -724,7 +728,7 @@ _eina_matrixsparse_iterator_complete_free(Eina_Matrixsparse_Iterator_Complete *i
    EINA_MAGIC_CHECK_MATRIXSPARSE_ITERATOR(it);
 
    if (it->dummy.col.data != NULL)
-     EINA_ERROR_PERR("Last iterator call changed dummy cell!\n");
+     ERR("Last iterator call changed dummy cell!");
 
    EINA_MAGIC_SET(it, EINA_MAGIC_NONE);
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_NONE);
@@ -785,21 +789,35 @@ eina_matrixsparse_init(void)
 
    if (!_eina_matrixsparse_init_count)
      {
+	if (!eina_log_init())
+	  {
+	     fprintf(stderr, "Could not initialize eina logging system.");
+	     return 0;
+	  }
+
+	_eina_matrixsparse_log_dom = eina_log_domain_register("eina_matrixsparse", EINA_LOG_COLOR_DEFAULT);
+	if (_eina_matrixsparse_log_dom < 0)
+	  {
+	     EINA_LOG_ERR("Could not register log domain: eina_matrixsparse");
+	     eina_log_shutdown();
+	     return 0;
+	  }
+
 	if (!eina_error_init())
 	  {
-	     fprintf(stderr, "Could not initialize eina error module\n");
-	     return 0;
+	     ERR("Could not initialize eina error module.");
+	     goto on_eina_error_fail;
 	  }
 
 	if (!eina_magic_string_init())
 	  {
-	     EINA_ERROR_PERR("ERROR: Could not initialize eina magic string module.\n");
+	     ERR("Could not initialize eina magic string module.");
 	     goto on_magic_string_fail;
 	  }
 
 	if (!eina_mempool_init())
 	  {
-	     EINA_ERROR_PERR("ERROR: Could not initialize eina mempool module.\n");
+	     ERR("Could not initialize eina mempool module.");
 	     goto on_mempool_fail;
 	  }
 
@@ -814,7 +832,7 @@ eina_matrixsparse_init(void)
 	 (choice, "matrixsparse_cell", NULL, sizeof (Eina_Matrixsparse_Cell), 120);
        if (!_eina_matrixsparse_cell_mp)
          {
-           EINA_ERROR_PERR("ERROR: Mempool for matrixsparse_cell cannot be allocated in matrixsparse init.\n");
+           ERR("Mempool for matrixsparse_cell cannot be allocated in matrixsparse init.");
 	   goto on_init_fail;
          }
 
@@ -822,7 +840,7 @@ eina_matrixsparse_init(void)
 	 (choice, "matrixsparse_row", NULL, sizeof (Eina_Matrixsparse_Row), 120);
        if (!_eina_matrixsparse_row_mp)
          {
-           EINA_ERROR_PERR("ERROR: Mempool for matrixsparse_row cannot be allocated in matrixsparse init.\n");
+           ERR("Mempool for matrixsparse_row cannot be allocated in matrixsparse init.");
 	   goto on_init_fail;
          }
 
@@ -855,6 +873,10 @@ eina_matrixsparse_init(void)
    eina_magic_string_shutdown();
  on_magic_string_fail:
    eina_error_shutdown();
+ on_eina_error_fail:
+   eina_log_domain_unregister(_eina_matrixsparse_log_dom);
+   _eina_matrixsparse_log_dom = -1;
+   eina_log_shutdown();
    return 0;
 }
 
@@ -882,6 +904,10 @@ eina_matrixsparse_shutdown(void)
 	eina_mempool_shutdown();
 	eina_magic_string_shutdown();
 	eina_error_shutdown();
+
+	eina_log_domain_unregister(_eina_matrixsparse_log_dom);
+	_eina_matrixsparse_log_dom = -1;
+	eina_log_shutdown();
      }
 
    return _eina_matrixsparse_init_count;
@@ -1048,9 +1074,9 @@ eina_matrixsparse_size_set(Eina_Matrixsparse *m, unsigned long rows, unsigned lo
 	  }
 	if (!c)
 	  {
+	     Eina_Matrixsparse_Row *r_aux = r;
 	     r->cols = NULL;
 	     r->last_col = NULL;
-	     Eina_Matrixsparse_Row *r_aux = r;
 	     if (r->next)
 	       r->next->prev = r->prev;
 	     else
