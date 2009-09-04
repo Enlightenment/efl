@@ -316,6 +316,8 @@
 #define EINA_LOG_ENV_LEVEL "EINA_LOG_LEVEL"
 #define EINA_LOG_ENV_LEVELS "EINA_LOG_LEVELS"
 #define EINA_LOG_ENV_COLOR_DISABLE "EINA_LOG_COLOR_DISABLE"
+#define EINA_LOG_ENV_FILE_DISABLE "EINA_LOG_FILE_DISABLE"
+#define EINA_LOG_ENV_FUNCTION_DISABLE "EINA_LOG_FUNCTION_DISABLE"
 
 
 // Structure for storing domain level settings passed from the command line
@@ -340,6 +342,8 @@ static int _eina_log_init_count = 0;
 // Disable color flag (can be changed through the env var
 // EINA_LOG_ENV_COLOR_DISABLE).
 static Eina_Bool _disable_color = EINA_FALSE;
+static Eina_Bool _disable_file = EINA_FALSE;
+static Eina_Bool _disable_function = EINA_FALSE;
 static Eina_Bool _abort_on_critical = EINA_FALSE;
 
 #ifdef EFL_HAVE_PTHREAD
@@ -418,6 +422,260 @@ static const char *_names[] = {
   "INF",
   "DBG",
 };
+
+static inline void
+eina_log_print_level_name_get(int level, const char **p_name)
+{
+   static char buf[4];
+   if (EINA_UNLIKELY(level < 0))
+     {
+	snprintf(buf, sizeof(buf), "%03d", level);
+	*p_name = buf;
+     }
+   else if (EINA_UNLIKELY(level > EINA_LOG_LEVELS))
+     {
+	snprintf(buf, sizeof(buf), "%03d", level);
+	*p_name = buf;
+     }
+   else
+	*p_name = _names[level];
+}
+
+static inline void
+eina_log_print_level_name_color_get(int level, const char **p_name, const char **p_color)
+{
+   static char buf[4];
+   if (EINA_UNLIKELY(level < 0))
+     {
+	snprintf(buf, sizeof(buf), "%03d", level);
+	*p_name = buf;
+	*p_color = _colors[0];
+     }
+   else if (EINA_UNLIKELY(level > EINA_LOG_LEVELS))
+     {
+	snprintf(buf, sizeof(buf), "%03d", level);
+	*p_name = buf;
+	*p_color = _colors[EINA_LOG_LEVELS];
+     }
+   else
+     {
+	*p_name = _names[level];
+	*p_color = _colors[level];
+     }
+}
+
+#define DECLARE_LEVEL_NAME(level) const char *name; eina_log_print_level_name_get(level, &name)
+#define DECLARE_LEVEL_NAME_COLOR(level) const char *name, *color; eina_log_print_level_name_color_get(level, &name, &color)
+
+/** No threads, No color */
+static void
+eina_log_print_prefix_NOthreads_NOcolor_file_func(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line)
+{
+   DECLARE_LEVEL_NAME(level);
+   fprintf(fp, "%s:%s %s:%d %s() ", name, d->domain_str, file, line, fnc);
+}
+
+static void
+eina_log_print_prefix_NOthreads_NOcolor_NOfile_func(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file __UNUSED__, const char *fnc, int line __UNUSED__)
+{
+   DECLARE_LEVEL_NAME(level);
+   fprintf(fp, "%s:%s %s() ", name, d->domain_str, fnc);
+}
+
+static void
+eina_log_print_prefix_NOthreads_NOcolor_file_NOfunc(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc __UNUSED__, int line)
+{
+   DECLARE_LEVEL_NAME(level);
+   fprintf(fp, "%s:%s %s:%d ", name, d->domain_str, file, line);
+}
+
+/* No threads, color */
+static void
+eina_log_print_prefix_NOthreads_color_file_func(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line)
+{
+   DECLARE_LEVEL_NAME_COLOR(level);
+   fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s %s:%d "
+	   EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
+	   color, name, d->domain_str, file, line, fnc);
+}
+
+static void
+eina_log_print_prefix_NOthreads_color_NOfile_func(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file __UNUSED__, const char *fnc, int line __UNUSED__)
+{
+   DECLARE_LEVEL_NAME_COLOR(level);
+   fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s "
+	   EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
+	   color, name, d->domain_str, fnc);
+}
+
+static void
+eina_log_print_prefix_NOthreads_color_file_NOfunc(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc __UNUSED__, int line)
+{
+   DECLARE_LEVEL_NAME_COLOR(level);
+   fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s %s:%d ",
+	   color, name, d->domain_str, file, line);
+}
+
+/** threads, No color */
+#ifdef EFL_HAVE_PTHREAD
+static void
+eina_log_print_prefix_threads_NOcolor_file_func(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line)
+{
+   DECLARE_LEVEL_NAME(level);
+   pthread_t cur = pthread_self();
+   if (IS_OTHER(cur))
+     {
+	fprintf(fp, "%s:%s[T:%lu] %s:%d %s() ",
+		name, d->domain_str, cur, file, line, fnc);
+	return;
+     }
+   fprintf(fp, "%s:%s %s:%d %s() ", name, d->domain_str, file, line, fnc);
+}
+
+static void
+eina_log_print_prefix_threads_NOcolor_NOfile_func(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file __UNUSED__, const char *fnc, int line __UNUSED__)
+{
+   DECLARE_LEVEL_NAME(level);
+   pthread_t cur = pthread_self();
+   if (IS_OTHER(cur))
+     {
+	fprintf(fp, "%s:%s[T:%lu] %s() ",
+		name, d->domain_str, cur, fnc);
+	return;
+     }
+   fprintf(fp, "%s:%s %s() ", name, d->domain_str, fnc);
+}
+
+static void
+eina_log_print_prefix_threads_NOcolor_file_NOfunc(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc __UNUSED__, int line)
+{
+   DECLARE_LEVEL_NAME(level);
+   pthread_t cur = pthread_self();
+   if (IS_OTHER(cur))
+     {
+	fprintf(fp, "%s:%s[T:%lu] %s:%d ",
+		name, d->domain_str, cur, file, line);
+	return;
+     }
+   fprintf(fp, "%s:%s %s:%d ", name, d->domain_str, file, line);
+}
+
+/* threads, color */
+static void
+eina_log_print_prefix_threads_color_file_func(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line)
+{
+   DECLARE_LEVEL_NAME_COLOR(level);
+   pthread_t cur = pthread_self();
+   if (IS_OTHER(cur))
+     {
+	fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s[T:"
+		EINA_COLOR_ORANGE "%lu" EINA_COLOR_RESET "] %s:%d "
+		EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
+		color, name, d->domain_str, cur, file, line, fnc);
+	return;
+     }
+   fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s %s:%d "
+	   EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
+	   color, name, d->domain_str, file, line, fnc);
+}
+
+static void
+eina_log_print_prefix_threads_color_NOfile_func(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file __UNUSED__, const char *fnc, int line __UNUSED__)
+{
+   DECLARE_LEVEL_NAME_COLOR(level);
+   pthread_t cur = pthread_self();
+   if (IS_OTHER(cur))
+     {
+	fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s[T:"
+		EINA_COLOR_ORANGE "%lu" EINA_COLOR_RESET "] "
+		EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
+		color, name, d->domain_str, cur, fnc);
+	return;
+     }
+   fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s "
+	   EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
+	   color, name, d->domain_str, fnc);
+}
+
+static void
+eina_log_print_prefix_threads_color_file_NOfunc(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc __UNUSED__, int line)
+{
+   DECLARE_LEVEL_NAME_COLOR(level);
+   pthread_t cur = pthread_self();
+   if (IS_OTHER(cur))
+     {
+	fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s[T:"
+		EINA_COLOR_ORANGE "%lu" EINA_COLOR_RESET "] %s:%d ",
+		color, name, d->domain_str, cur, file, line);
+	return;
+     }
+   fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s %s:%d ",
+	   color, name, d->domain_str, file, line);
+}
+#endif
+
+static void (*_eina_log_print_prefix)(FILE *fp, const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line) = eina_log_print_prefix_NOthreads_color_file_func;
+
+static inline void
+eina_log_print_prefix_update(void)
+{
+   if (_disable_file && _disable_function)
+     {
+	fprintf(stderr, "ERROR: cannot have " EINA_LOG_ENV_FILE_DISABLE " and "
+		EINA_LOG_ENV_FUNCTION_DISABLE " set at the same time, will "
+		"just disable function.\n");
+	_disable_file = 0;
+     }
+
+#define S(NOthread, NOcolor, NOfile, NOfunc) \
+   _eina_log_print_prefix = eina_log_print_prefix_##NOthread##threads_##NOcolor##color_##NOfile##file_##NOfunc##func
+
+#ifdef EFL_HAVE_PTHREAD
+   if (_threads_enabled)
+     {
+	if (_disable_color)
+	  {
+	     if (_disable_file)
+	       S(,NO,NO,);
+	     else if (_disable_function)
+	       S(,NO,,NO);
+	     else
+	       S(,NO,,);
+	  }
+	else
+	  {
+	     if (_disable_file)
+	       S(,,NO,);
+	     else if (_disable_function)
+	       S(,,,NO);
+	     else
+	       S(,,,);
+	  }
+	return;
+     }
+#endif
+
+   if (_disable_color)
+     {
+	if (_disable_file)
+	  S(NO,NO,NO,);
+	else if (_disable_function)
+	  S(NO,NO,,NO);
+	else
+	  S(NO,NO,,);
+     }
+   else
+     {
+	if (_disable_file)
+	  S(NO,,NO,);
+	else if (_disable_function)
+	  S(NO,,,NO);
+	else
+	  S(NO,,,);
+     }
+#undef S
+}
+
 
 /*
  * Creates a colored domain name string.
@@ -646,9 +904,11 @@ EAPI int EINA_LOG_DOMAIN_GLOBAL = 0;
  * eina_log_shutdown() must be called to shut down the log
  * module.
  *
- * The default logging method is eina_log_print_cb_stderr(), which
- * will output fancy colored messages to standard error stream. See
- * its documentation on how to disable coloring.
+ * Format and verbosity of messages depend on the logging method, see
+ * eina_log_print_cb_set(). The default logging method is
+ * eina_log_print_cb_stderr(), which will output fancy colored
+ * messages to standard error stream. See its documentation on how to
+ * disable coloring, function or file/line print.
  *
  * This module will optionally abort program execution if message
  * level is below or equal to @c EINA_LOG_LEVEL_CRITICAL and
@@ -681,8 +941,16 @@ eina_log_init(void)
    if ((tmp = getenv(EINA_LOG_ENV_COLOR_DISABLE)) && (atoi(tmp) == 1))
      _disable_color = EINA_TRUE;
 
+   if ((tmp = getenv(EINA_LOG_ENV_FILE_DISABLE)) && (atoi(tmp) == 1))
+     _disable_file = EINA_TRUE;
+
+   if ((tmp = getenv(EINA_LOG_ENV_FUNCTION_DISABLE)) && (atoi(tmp) == 1))
+     _disable_function = EINA_TRUE;
+
    if ((tmp = getenv(EINA_LOG_ENV_ABORT)) && (atoi(tmp) == 1))
      _abort_on_critical = EINA_TRUE;
+
+   eina_log_print_prefix_update();
 
    // Global log level
    if ((level = getenv(EINA_LOG_ENV_LEVEL)))
@@ -788,6 +1056,7 @@ eina_log_threads_enable(void)
 {
 #ifdef EFL_HAVE_PTHREAD
    _threads_enabled = 1;
+   eina_log_print_prefix_update();
 #endif
 }
 
@@ -808,6 +1077,7 @@ eina_log_print_cb_set(Eina_Log_Print_Cb cb, void *data)
    LOCK();
    _print_cb = cb;
    _print_cb_data = data;
+   eina_log_print_prefix_update();
    UNLOCK();
 }
 
@@ -939,7 +1209,13 @@ eina_log_domain_unregister(int domain)
  *
  * This method will colorize output based on domain provided color and
  * message logging level. To disable color, set environment variable
- * EINA_LOG_COLOR_DISABLE=1
+ * EINA_LOG_COLOR_DISABLE=1. Similarly, to disable file and line
+ * information, set EINA_LOG_FILE_DISABLE=1 or
+ * EINA_LOG_FUNCTION_DISABLE=1 to avoid function name in output. It is
+ * not acceptable to have both EINA_LOG_FILE_DISABLE and
+ * EINA_LOG_FUNCTION_DISABLE at the same time, in this case just
+ * EINA_LOG_FUNCTION_DISABLE will be considered and file information
+ * will be printed anyways.
  *
  * @note MT: if threads are enabled, this function is called within locks.
  * @note MT: Threads different from main thread will have thread id
@@ -950,65 +1226,7 @@ eina_log_print_cb_stderr(const Eina_Log_Domain *d, Eina_Log_Level level,
 		const char *file, const char *fnc, int line, const char *fmt,
 		__UNUSED__ void *data, va_list args)
 {
-   const char *color, *name;
-   char buf[4];
-
-   if (EINA_UNLIKELY(level < 0))
-     {
-	color = _colors[0];
-	snprintf(buf, sizeof(buf), "%03d", level);
-	name = buf;
-     }
-   else if (EINA_UNLIKELY(level > EINA_LOG_LEVELS))
-     {
-	color = _colors[EINA_LOG_LEVELS];
-	snprintf(buf, sizeof(buf), "%03d", level);
-	name = buf;
-     }
-   else
-     {
-	color = _colors[level];
-	name = _names[level];
-     }
-
-   if (EINA_UNLIKELY(_disable_color))
-     {
-#ifdef EFL_HAVE_PTHREAD
-	if (_threads_enabled)
-	  {
-	     pthread_t cur = pthread_self();
-	     if (IS_OTHER(cur))
-	       {
-		  fprintf(stderr, "%s:%s[T:%lu] %s:%d %s() ",
-			 name, d->domain_str, cur, file, line, fnc);
-		  goto end;
-	       }
-	  }
-#endif
-	fprintf(stderr, "%s:%s %s:%d %s() ",
-	       name, d->domain_str, file, line, fnc);
-     }
-   else
-     {
-#ifdef EFL_HAVE_PTHREAD
-	if (_threads_enabled)
-	  {
-	     pthread_t cur = pthread_self();
-	     if (IS_OTHER(cur))
-	       {
-		  fprintf(stderr, "%s%s" EINA_COLOR_RESET ":%s[T:"
-			 EINA_COLOR_ORANGE "%lu" EINA_COLOR_RESET "] %s:%d "
-			 EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
-			 color, name, d->domain_str, cur, file, line, fnc);
-		  goto end;
-	       }
-	  }
-#endif
-	fprintf(stderr, "%s%s" EINA_COLOR_RESET ":%s %s:%d "
-	       EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
-	       color, name, d->domain_str, file, line, fnc);
-     }
- end:
+   _eina_log_print_prefix(stderr, d, level, file, fnc, line);
    vfprintf(stderr, fmt, args);
    putc('\n', stderr);
 }
@@ -1018,7 +1236,13 @@ eina_log_print_cb_stderr(const Eina_Log_Domain *d, Eina_Log_Level level,
  *
  * This method will colorize output based on domain provided color and
  * message logging level. To disable color, set environment variable
- * EINA_LOG_COLOR_DISABLE=1
+ * EINA_LOG_COLOR_DISABLE=1. Similarly, to disable file and line
+ * information, set EINA_LOG_FILE_DISABLE=1 or
+ * EINA_LOG_FUNCTION_DISABLE=1 to avoid function name in output. It is
+ * not acceptable to have both EINA_LOG_FILE_DISABLE and
+ * EINA_LOG_FUNCTION_DISABLE at the same time, in this case just
+ * EINA_LOG_FUNCTION_DISABLE will be considered and file information
+ * will be printed anyways.
  *
  * @note MT: if threads are enabled, this function is called within locks.
  * @note MT: Threads different from main thread will have thread id
@@ -1029,65 +1253,7 @@ eina_log_print_cb_stdout(const Eina_Log_Domain *d, Eina_Log_Level level,
 		const char *file, const char *fnc, int line, const char *fmt,
 		__UNUSED__ void *data, va_list args)
 {
-   const char *color, *name;
-   char buf[4];
-
-   if (EINA_UNLIKELY(level < 0))
-     {
-	color = _colors[0];
-	snprintf(buf, sizeof(buf), "%03d", level);
-	name = buf;
-     }
-   else if (EINA_UNLIKELY(level > EINA_LOG_LEVELS))
-     {
-	color = _colors[EINA_LOG_LEVELS];
-	snprintf(buf, sizeof(buf), "%03d", level);
-	name = buf;
-     }
-   else
-     {
-	color = _colors[level];
-	name = _names[level];
-     }
-
-   if (EINA_UNLIKELY(_disable_color))
-     {
-#ifdef EFL_HAVE_PTHREAD
-	if (_threads_enabled)
-	  {
-	     pthread_t cur = pthread_self();
-	     if (IS_OTHER(cur))
-	       {
-		  printf("%s:%s[T:%lu] %s:%d %s() ",
-			 name, d->domain_str, cur, file, line, fnc);
-		  goto end;
-	       }
-	  }
-#endif
-	printf("%s:%s %s:%d %s() ",
-	       name, d->domain_str, file, line, fnc);
-     }
-   else
-     {
-#ifdef EFL_HAVE_PTHREAD
-	if (_threads_enabled)
-	  {
-	     pthread_t cur = pthread_self();
-	     if (IS_OTHER(cur))
-	       {
-		  printf("%s%s" EINA_COLOR_RESET ":%s[T:"
-			 EINA_COLOR_ORANGE "%lu" EINA_COLOR_RESET "] %s:%d "
-			 EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
-			 color, name, d->domain_str, cur, file, line, fnc);
-		  goto end;
-	       }
-	  }
-#endif
-	printf("%s%s" EINA_COLOR_RESET ":%s %s:%d "
-	       EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
-	       color, name, d->domain_str, file, line, fnc);
-     }
- end:
+   _eina_log_print_prefix(stdout, d, level, file, fnc, line);
    vprintf(fmt, args);
    putchar('\n');
 }
