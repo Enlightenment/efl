@@ -756,7 +756,7 @@ _item_block_recalc(Item_Block *itb, int in)
 	in++;
 	it->x = 0;
 	it->y = y;
-	y += it->minw;
+	y += it->h;
      }
    itb->minw = minw;
    itb->minh = minh;
