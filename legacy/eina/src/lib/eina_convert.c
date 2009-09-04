@@ -26,6 +26,8 @@
 #include <stdio.h>
 
 #include "eina_config.h"
+#include "eina_private.h"
+#include "eina_log.h"
 #include "eina_safety_checks.h"
 #include "eina_convert.h"
 
@@ -41,6 +43,10 @@ static const char look_up_table[] = {'0', '1', '2', '3', '4',
 				     '5', '6', '7', '8', '9',
 				     'a', 'b', 'c', 'd', 'e', 'f'};
 static int _eina_convert_init_count = 0;
+static int _eina_convert_log_dom = -1;
+
+#define ERR(...) EINA_LOG_DOM_ERR(_eina_convert_log_dom, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_eina_convert_log_dom, __VA_ARGS__)
 
 #define HEXA_TO_INT(Hexa) (Hexa >= 'a') ? Hexa - 'a' + 10 : Hexa - '0'
 
@@ -223,9 +229,26 @@ eina_convert_init(void)
    EINA_ERROR_CONVERT_P_NOT_FOUND = eina_error_msg_register("Error during string convertion to float, First 'p' was not found.");
    EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = eina_error_msg_register("Error outrun string limit during convertion string convertion to float.");
 
+   if (!eina_log_init())
+     {
+	fprintf(stderr, "Could not initialize eina logging system.\n");
+	eina_error_shutdown();
+	return 0;
+     }
+
+   _eina_convert_log_dom = eina_log_domain_register("eina_convert", EINA_LOG_COLOR_DEFAULT);
+   if (_eina_convert_log_dom < 0)
+     {
+	EINA_LOG_ERR("Could not register log domain: eina_convert");
+	eina_log_shutdown();
+	eina_error_shutdown();
+	return 0;
+     }
+
    if (!eina_safety_checks_init())
      {
-	fprintf(stderr, "Could not initialize eina safety checks.\n");
+	ERR("Could not initialize eina safety checks.");
+	eina_log_shutdown();
 	eina_error_shutdown();
 	return 0;
      }
@@ -252,6 +275,8 @@ eina_convert_shutdown(void)
    if (_eina_convert_init_count > 0) goto shutdown_out;
 
    eina_safety_checks_shutdown();
+   eina_log_domain_unregister(_eina_convert_log_dom);
+   eina_log_shutdown();
    eina_error_shutdown();
 
  shutdown_out:
@@ -408,7 +433,7 @@ eina_convert_atod(const char *src, int length, long long *m, long *e)
    if (strncmp(str, "0x", 2))
      {
 	eina_error_set(EINA_ERROR_CONVERT_0X_NOT_FOUND);
-	EINA_ERROR_PDBG("'0x' not found in '%s'\n", src);
+	DBG("'0x' not found in '%s'", src);
         return EINA_FALSE;
      }
 
@@ -436,7 +461,7 @@ eina_convert_atod(const char *src, int length, long long *m, long *e)
    if (*str != 'p')
      {
 	eina_error_set(EINA_ERROR_CONVERT_P_NOT_FOUND);
-	EINA_ERROR_PDBG("'p' not found in '%s'\n", src);
+	DBG("'p' not found in '%s'", src);
         return EINA_FALSE;
      }
    sign = +1;
