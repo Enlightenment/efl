@@ -93,6 +93,8 @@ struct _Evas_Object_Textblock_Format
       int               l, r;
    } margin;
    int                  tabstops;
+   int                  linesize;
+   double               linerelsize;
    unsigned char        style;
    unsigned char        wrap_word : 1;
    unsigned char        wrap_char : 1;
@@ -904,6 +906,8 @@ static const char *strikethroughstr;
 static const char *backingstr;
 static const char *stylestr;
 static const char *tabstopsstr;
+static const char *linesizestr;
+static const char *linerelsizestr;
 
 static void
 _format_command_init(void)
@@ -931,6 +935,8 @@ _format_command_init(void)
    backingstr = eina_stringshare_add("backing");
    stylestr = eina_stringshare_add("style");
    tabstopsstr = eina_stringshare_add("tabstops");
+   linesizestr = eina_stringshare_add("linesize");
+   linerelsizestr = eina_stringshare_add("linerelsize");
 }
 
 static void
@@ -959,6 +965,8 @@ _format_command_shutdown(void)
    eina_stringshare_del(backingstr);
    eina_stringshare_del(stylestr);
    eina_stringshare_del(tabstopsstr);
+   eina_stringshare_del(linesizestr);
+   eina_stringshare_del(linerelsizestr);
 }
 
 static void
@@ -1219,6 +1227,26 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
 	fmt->tabstops = atoi(tmp_param);
 	if (fmt->tabstops < 1) fmt->tabstops = 1;
      }
+   else if (cmd == linesizestr)
+     {
+        fmt->linesize = atoi(tmp_param);
+        fmt->linerelsize = 0.0;
+     }
+   else if (cmd == linerelsizestr)
+     {
+        if (strchr(tmp_param, '%'))
+          {
+	     char *ts, *p;
+	     
+	     ts = alloca(strlen(tmp_param) + 1);
+	     strcpy(ts, tmp_param);
+	     p = strchr(ts, '%');
+	     *p = 0;
+	     fmt->linerelsize = ((double)atoi(ts)) / 100.0;
+             fmt->linesize = 0;
+	     if (fmt->linerelsize < 0.0) fmt->linerelsize = 0.0;
+          }
+     }
    
    if (new_font)
      {
@@ -1405,6 +1433,19 @@ _layout_format_ascent_descent_adjust(Ctxt *c, Evas_Object_Textblock_Format *fmt)
      {
 	ascent = c->ENFN->font_max_ascent_get(c->ENDT, fmt->font.font);
 	descent = c->ENFN->font_max_descent_get(c->ENDT, fmt->font.font);
+        if (fmt->linesize > 0)
+          {
+             if ((ascent + descent) < fmt->linesize)
+               {
+                  ascent = ((fmt->linesize * ascent) / (ascent + descent));
+                  descent = fmt->linesize - ascent;
+               }
+          }
+        else if (fmt->linerelsize > 0.0)
+          {
+             descent = ((ascent + descent) * fmt->linerelsize) - (ascent * fmt->linerelsize);
+             ascent = ascent * fmt->linerelsize;
+          }
 	if (c->maxascent < ascent) c->maxascent = ascent;
 	if (c->maxdescent < descent) c->maxdescent = descent;
      }
@@ -1441,6 +1482,8 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 	fmt->valign = -1.0;
 	fmt->style = EVAS_TEXT_STYLE_PLAIN;
 	fmt->tabstops = 32;
+        fmt->linesize = 0;
+        fmt->linerelsize = 0.0;
      }
    return fmt;
 }
@@ -5213,21 +5256,18 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 	    (it->format->color.backing.b != b) ||
 	    (it->format->color.backing.a != a))
      {
-	if ((it->format->backing) && (!pback))
-	  {
-	     backx = it->x;
-	     r = it->format->color.backing.r;
-	     g = it->format->color.backing.g;
-	     b = it->format->color.backing.b;
-	     a = it->format->color.backing.a;
-	  }
-	x2 = it->x + it->w;
-	if (!it->format->backing)
-	  {
-	     x2 = it->x;
-	     pback = 0;
-	  }
-	if (x2 > backx)
+        if ((it->format->backing) && (!pback) && (!(EINA_INLIST_GET(it))->next))
+          {
+             r = it->format->color.backing.r;
+             g = it->format->color.backing.g;
+             b = it->format->color.backing.b;
+             a = it->format->color.backing.a;
+             pback = 1;
+             backx = it->x;
+          }
+        if (!it->format->backing) x2 = it->x;
+        else x2 = it->x + it->w;
+	if ((pback) && (x2 > backx))
 	  {
 	     ENFN->context_color_set(output,
 				     context,
@@ -5245,7 +5285,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 				  x2 - backx,
 				  ln->h);
 	  }
-	if (it->format->backing) pback = 1;
+        pback = it->format->backing;
 	backx = it->x;
 	r = it->format->color.backing.r;
 	g = it->format->color.backing.g;

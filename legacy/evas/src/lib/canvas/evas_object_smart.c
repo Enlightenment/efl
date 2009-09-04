@@ -426,7 +426,8 @@ evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event
    Evas_Object_Smart *o;
    Eina_List *l;
    Evas_Smart_Callback *cb;
-
+   const char *strshare;
+   
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -437,16 +438,18 @@ evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event
    if (!event) return;
    if (obj->delete_me) return;
    o->walking_list++;
+   strshare = eina_stringshare_add(event);
    EINA_LIST_FOREACH(o->callbacks, l, cb)
      {
 	if (!cb->delete_me)
 	  {
-	     if (!strcmp(cb->event, event))
+	     if (cb->event == strshare)
 	       cb->func(cb->func_data, obj, event_info);
 	  }
 	if (obj->delete_me)
 	  break;
      }
+   eina_stringshare_del(strshare);
    o->walking_list--;
    evas_object_smart_callbacks_clear(obj);
 }
