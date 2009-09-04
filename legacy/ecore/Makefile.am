@@ -5,38 +5,28 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = doc src po
 
 
-MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
-                       config.h.in config.sub configure install-sh \
-		       ltconfig ltmain.sh missing mkinstalldirs \
-		       stamp-h.in  build-stamp configure-stamp depcomp \
-		       README \
-		       ecore.spec \
-		       ecore-con.pc \
-		       ecore-config.pc \
-		       ecore-directfb.pc\
-		       ecore-evas.pc \
-		       ecore-fb.pc \
-		       ecore-file.pc \
-		       ecore-imf.pc \
-		       ecore-imf-evas.pc \
-		       ecore-ipc.pc \
-		       ecore-job.pc \
-		       ecore-txt.pc \
-		       ecore-x.pc \
-		       ecore-win32.pc \
-		       ecore-sdl.pc \
-		       ecore-input.pc \
-		       ecore-quartz.pc \
-		       ecore-wince.pc \
-		       ecore.pc \
-		       $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.gz \
-		       $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.bz2 \
-		       $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-doc.tar.bz2 \
-		       m4/libtool.m4 \
-		       m4/lt~obsolete.m4 \
-		       m4/ltoptions.m4 \
-		       m4/ltsugar.m4 \
-		       m4/ltversion.m4
+MAINTAINERCLEANFILES = \
+Makefile.in \
+aclocal.m4 \
+autom4te.cache \
+config.guess \
+config.h.in \
+config.rpath \
+config.sub \
+configure \
+depcomp \
+install-sh \
+ltmain.sh \
+missing \
+mkinstalldirs \
+$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.gz \
+$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.bz2 \
+$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-doc.tar.bz2 \
+m4/libtool.m4 \
+m4/lt~obsolete.m4 \
+m4/ltoptions.m4 \
+m4/ltsugar.m4 \
+m4/ltversion.m4
 
 bin_SCRIPTS = 
 
