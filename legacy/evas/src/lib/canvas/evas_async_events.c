@@ -23,8 +23,6 @@ struct _Evas_Event_Async
    Evas_Callback_Type	  type;
 };
 
-#endif
-
 int
 evas_async_events_init(void)
 {
@@ -60,6 +58,8 @@ evas_async_events_shutdown(void)
 
    return _init_evas_event;
 }
+
+#endif
 
 EAPI int
 evas_async_events_fd_get(void)
