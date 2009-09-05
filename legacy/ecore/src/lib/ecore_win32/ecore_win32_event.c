@@ -170,11 +170,11 @@ _ecore_win32_event_handle_button_press(Ecore_Win32_Callback_Data *msg,
         if (!e) return;
 
         e->window = (Ecore_Window)window;
-	e->direction = 0;
+        e->direction = 0;
         /* wheel delta is positive or negative, never 0 */
-	e->z = GET_WHEEL_DELTA_WPARAM(msg->window_param) > 0 ? -1 : 1;
-	e->x = GET_X_LPARAM(msg->data_param);
-	e->y = GET_Y_LPARAM(msg->data_param);
+        e->z = GET_WHEEL_DELTA_WPARAM(msg->window_param) > 0 ? -1 : 1;
+        e->x = GET_X_LPARAM(msg->data_param);
+        e->y = GET_Y_LPARAM(msg->data_param);
         e->timestamp = (double)msg->time / 1000.0;
 
         _ecore_win32_event_last_time = e->timestamp;

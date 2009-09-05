@@ -577,7 +577,7 @@ _ecore_evas_win32_rotation_set(Ecore_Evas *ee, int rotation)
         if (!einfo) return;
         einfo->info.rotation = rotation;
         evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-	_ecore_evas_win32_rotation_set_internal(ee, rotation);
+        _ecore_evas_win32_rotation_set_internal(ee, rotation);
      }
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_GDI */
 
@@ -590,7 +590,7 @@ _ecore_evas_win32_rotation_set(Ecore_Evas *ee, int rotation)
         if (!einfo) return;
         einfo->info.rotation = rotation;
         evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-	_ecore_evas_win32_rotation_set_internal(ee, rotation);
+        _ecore_evas_win32_rotation_set_internal(ee, rotation);
      }
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_DDRAW */
 }

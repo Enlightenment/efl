@@ -82,8 +82,8 @@ ecore_wince_init()
 
    if (_ecore_wince_init_count > 0)
      {
-	_ecore_wince_init_count++;
-	return _ecore_wince_init_count;
+        _ecore_wince_init_count++;
+        return _ecore_wince_init_count;
      }
 
    _ecore_wince_instance = GetModuleHandle(NULL);

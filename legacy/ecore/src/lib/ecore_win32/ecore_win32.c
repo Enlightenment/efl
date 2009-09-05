@@ -90,16 +90,16 @@ ecore_win32_init()
 
    if (_ecore_win32_log_dom < 0)
      {
-	EINA_LOG_ERR("Could not register log domain: ecore_win32");
-	return 0;
+        EINA_LOG_ERR("Could not register log domain: ecore_win32");
+        return 0;
      }
 
    MESSAGE_INFO("initializing ecore_win32 (current count: %d)\n", _ecore_win32_init_count);
 
    if (_ecore_win32_init_count > 0)
      {
-	_ecore_win32_init_count++;
-	return _ecore_win32_init_count;
+        _ecore_win32_init_count++;
+        return _ecore_win32_init_count;
      }
 
    _ecore_win32_instance = GetModuleHandle(NULL);
@@ -323,7 +323,7 @@ _ecore_win32_window_procedure(HWND   window,
             {
                POINT pt;
 
-	       MESSAGE_INFO("mouse in window\n");
+               MESSAGE_INFO("mouse in window\n");
 
                pt.x = GET_X_LPARAM(data_param);
                pt.y = GET_Y_LPARAM(data_param);
