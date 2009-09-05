@@ -48,6 +48,10 @@ extern Ecore_WinCE_Window *_ecore_wince_event_last_window;
 
 extern HINSTANCE           _ecore_wince_instance;
 
+extern int                 _ecore_wince_log_dom;
+#define MESSAGE_ERR(...) EINA_LOG_DOM_ERR(_ecore_wince_log_dom , __VA_ARGS__)
+#define MESSAGE_DBG(...) EINA_LOG_DOM_DBG(_ecore_wince_log_dom , __VA_ARGS__)
+#define MESSAGE_INFO(...) EINA_LOG_DOM_INFO(_ecore_wince_log_dom , __VA_ARGS__)
 
 void  _ecore_wince_event_handle_key_press(Ecore_WinCE_Callback_Data *msg, int is_keystroke);
 void  _ecore_wince_event_handle_key_release(Ecore_WinCE_Callback_Data *msg, int is_keystroke);

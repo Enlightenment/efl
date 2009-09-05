@@ -13,6 +13,12 @@ extern "C" {
 
 #define ECORE_WIN32_WINDOW_CLASS "Ecore_Win32_Window_Class"
 
+/* logging messages macros */
+extern int _ecore_win32_log_dom;
+
+#define MESSAGE_ERR(...) EINA_LOG_DOM_ERR(_ecore_win32_log_dom , __VA_ARGS__)
+#define MESSAGE_DBG(...) EINA_LOG_DOM_DBG(_ecore_win32_log_dom , __VA_ARGS__)
+#define MESSAGE_INFO(...) EINA_LOG_DOM_INFO(_ecore_win32_log_dom , __VA_ARGS__)
 
 typedef struct _Ecore_Win32_Callback_Data Ecore_Win32_Callback_Data;
 
