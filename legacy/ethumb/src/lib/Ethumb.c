@@ -140,23 +140,19 @@ ethumb_init(void)
    if (initcount)
      return ++initcount;
 
-   if (!eina_log_init())
+   if (!eina_init())
      {
-	fprintf(stderr, "ERROR: Could not initialize log module.\n");
+	fprintf(stderr, "ERROR: Could not initialize eina.\n");
 	return 0;
      }
    _log_dom = eina_log_domain_register("ethumb", EINA_COLOR_GREEN);
    if (_log_dom < 0)
      {
 	EINA_LOG_ERR("Could not register log domain: ethumb");
-	eina_log_shutdown();
+	eina_shutdown();
 	return 0;
      }
 
-   eina_stringshare_init();
-   eina_list_init();
-   eina_hash_init();
-   eina_module_init();
    evas_init();
    ecore_init();
    ecore_evas_init();
@@ -183,17 +179,13 @@ ethumb_shutdown(void)
 	eina_stringshare_del(_home_thumb_dir);
 	eina_stringshare_del(_thumb_category_normal);
 	eina_stringshare_del(_thumb_category_large);
-	eina_stringshare_shutdown();
-	eina_list_shutdown();
-	eina_hash_shutdown();
-	eina_module_shutdown();
 	evas_shutdown();
 	ecore_shutdown();
 	ecore_evas_shutdown();
 	edje_shutdown();
 	eina_log_domain_unregister(_log_dom);
 	_log_dom = -1;
-	eina_log_shutdown();
+	eina_shutdown();
      }
 
    return initcount;

@@ -450,7 +450,7 @@ efreet_menu_init(void)
         {NULL, NULL}
     };
 
-    if (!eina_stringshare_init()) return 0;
+    if (!eina_init()) return 0;
     if (!efreet_xml_init()) return 0;
 
     efreet_menu_handle_cbs = eina_hash_string_superfast_new(NULL);
@@ -571,7 +571,7 @@ efreet_menu_shutdown(void)
     IF_RELEASE(efreet_tag_menu);
 
     efreet_xml_shutdown();
-    eina_stringshare_shutdown();
+    eina_shutdown();
 }
 
 /**

@@ -1761,7 +1761,7 @@ main(int argc, char *argv[])
 
    memset(&ed, 0, sizeof(ed));
    ecore_init();
-   eina_stringshare_init();
+   eina_init();
 
    ethumb_init();
 
@@ -1830,7 +1830,7 @@ main(int argc, char *argv[])
    e_dbus_shutdown();
  finish:
    ethumb_shutdown();
-   eina_stringshare_init();
+   eina_init();
    ecore_shutdown();
    return exit_value;
 }

@@ -400,7 +400,7 @@ ethumb_client_init(void)
    if (_initcount)
      return ++_initcount;
 
-   if (!eina_log_init())
+   if (!eina_init())
      {
 	fprintf(stderr, "ERROR: Could not initialize log module.\n");
 	return 0;
@@ -409,7 +409,7 @@ ethumb_client_init(void)
    if (_log_dom < 0)
      {
 	EINA_LOG_ERR("Could not register log domain: ethumb_client");
-	eina_log_shutdown();
+	eina_shutdown();
 	return 0;
      }
 
@@ -430,7 +430,7 @@ ethumb_client_shutdown(void)
    ethumb_shutdown();
    eina_log_domain_unregister(_log_dom);
    _log_dom = -1;
-   eina_log_shutdown();
+   eina_shutdown();
    return _initcount;
 }
 

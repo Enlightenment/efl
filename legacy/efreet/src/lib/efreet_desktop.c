@@ -136,7 +136,7 @@ int
 efreet_desktop_init(void)
 {
     if (init++) return init;
-    if (!eina_stringshare_init()) return --init;
+    if (!eina_init()) return --init;
     if (!ecore_file_init()) return --init;
 
     efreet_desktop_cache = eina_hash_string_superfast_new(NULL);
@@ -167,7 +167,7 @@ efreet_desktop_shutdown(void)
 
     if (--init) return init;
     ecore_file_shutdown();
-    eina_stringshare_shutdown();
+    eina_shutdown();
 
     IF_RELEASE(desktop_environment);
     IF_FREE_HASH(efreet_desktop_cache);

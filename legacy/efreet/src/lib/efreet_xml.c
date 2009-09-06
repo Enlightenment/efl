@@ -47,7 +47,7 @@ int
 efreet_xml_init(void)
 {
     if (init++) return init;
-    if (!eina_stringshare_init()) return --init;
+    if (!eina_init()) return --init;
     return init;
 }
 
@@ -60,7 +60,7 @@ int
 efreet_xml_shutdown(void)
 {
     if (--init) return init;
-    eina_stringshare_shutdown();
+    eina_shutdown();
     return init;
 }
 

@@ -35,12 +35,7 @@ static Eina_List  *efreet_dirs_get(const char *key,
 int
 efreet_base_init(void)
 {
-    if (!eina_stringshare_init()) return 0;
-    if (!eina_list_init())
-    {
-        eina_stringshare_shutdown();
-        return 0;
-    }
+    if (!eina_init()) return 0;
 
     return 1;
 }
@@ -61,8 +56,7 @@ efreet_base_shutdown(void)
     IF_FREE_LIST(xdg_data_dirs, eina_stringshare_del);
     IF_FREE_LIST(xdg_config_dirs, eina_stringshare_del);
 
-    eina_list_shutdown();
-    eina_stringshare_shutdown();
+    eina_shutdown();
 }
 
 /**
