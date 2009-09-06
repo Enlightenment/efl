@@ -281,6 +281,7 @@ eina_module_shutdown(void)
    if (_eina_module_count != 0)
      goto end_shutdown;
 
+   eina_array_shutdown();
    eina_error_shutdown();
 
    /* TODO should we store every module when "new" is called and
