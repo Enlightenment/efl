@@ -1008,6 +1008,8 @@ eina_log_shutdown(void)
 
    if (_eina_log_init_count != 1) return --_eina_log_init_count;
 
+   eina_safety_checks_shutdown();
+
    while (_log_domains_count--)
      {
 	if (_log_domains[_log_domains_count].deleted)
