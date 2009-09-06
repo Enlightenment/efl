@@ -169,9 +169,10 @@
  * @cond LOCAL
  */
 
-static Eina_Inlist *_error_list = NULL;
-static int _error_list_count = 0;
-static Eina_Error _err;
+static const char **_eina_errors = NULL;
+static size_t _eina_errors_count = 0;
+static size_t _eina_errors_allocated = 0;
+static Eina_Error _eina_last_error;
 
 /**
  * @endcond
@@ -248,14 +249,16 @@ eina_error_init(void)
 Eina_Bool
 eina_error_shutdown(void)
 {
-   /* remove the error strings */
-   while (_error_list)
-     {
-	Eina_Inlist *tmp = _error_list;
-	_error_list = _error_list->next;
-	free(tmp);
-     }
-   _error_list_count = 0;
+   size_t i;
+
+   for (i = 0; i < _eina_errors_count; i++)
+     free((char *)_eina_errors[i]);
+
+   free(_eina_errors);
+   _eina_errors = NULL;
+   _eina_errors_count = 0;
+   _eina_errors_allocated = 0;
+
    return EINA_TRUE;
 }
 
@@ -270,23 +273,32 @@ eina_error_shutdown(void)
  * than 1. The description can be retrieve later by passing to
  * eina_error_msg_get() the returned value.
  */
-EAPI Eina_Error eina_error_msg_register(const char *msg)
+EAPI Eina_Error
+eina_error_msg_register(const char *msg)
 {
-	Eina_Inlist *tmp;
-	size_t length;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(msg, 0);
 
-	EINA_SAFETY_ON_NULL_RETURN_VAL(msg, 0);
+   if (_eina_errors_count == _eina_errors_allocated)
+     {
+	void *tmp;
+	size_t size;
 
-	length = strlen(msg) + 1;
+	if (EINA_UNLIKELY(_eina_errors_allocated == 0))
+	  size = 24;
+	else
+	  size = _eina_errors_allocated + 8;
 
-	tmp = malloc(sizeof (Eina_Inlist) + length);
-	if (!tmp) return 0;
+	tmp = realloc(_eina_errors, sizeof(char *) * size);
+	if (!tmp)
+	  return 0;
+	_eina_errors = tmp;
+	_eina_errors_allocated = size;
+     }
 
-	memcpy((char*)(tmp + 1), msg, length);
-
-	_error_list = eina_inlist_append(_error_list, tmp);
-
-	return ++_error_list_count;
+   _eina_errors[_eina_errors_count] = strdup(msg);
+   if (!_eina_errors[_eina_errors_count])
+     return 0;
+   return ++_eina_errors_count; /* identifier = index + 1 */
 }
 
 /**
@@ -299,14 +311,14 @@ EAPI Eina_Error eina_error_msg_register(const char *msg)
  * registered with eina_error_msg_register(). If an incorrect error is
  * given, then @c NULL is returned.
  */
-EAPI const char * eina_error_msg_get(Eina_Error error)
+EAPI const char *
+eina_error_msg_get(Eina_Error error)
 {
-	Eina_Inlist *tmp;
-	int i;
-
-	for (i = 0, tmp = _error_list; i < error - 1; ++i, tmp = tmp->next)
-		;
-	return (char*) (tmp + 1);
+   if (error < 1)
+     return NULL;
+   if ((size_t)error > _eina_errors_count)
+     return NULL;
+   return _eina_errors[error - 1];
 }
 
 /**
@@ -317,9 +329,10 @@ EAPI const char * eina_error_msg_get(Eina_Error error)
  * This function returns the last error set by eina_error_set(). The
  * description of the message is returned by eina_error_msg_get().
  */
-EAPI Eina_Error eina_error_get(void)
+EAPI Eina_Error
+eina_error_get(void)
 {
-	return _err;
+   return _eina_last_error;
 }
 
 /**
@@ -330,9 +343,10 @@ EAPI Eina_Error eina_error_get(void)
  * This function sets the last error identifier. The last error can be
  * retrieved with eina_error_get().
  */
-EAPI void eina_error_set(Eina_Error err)
+EAPI void
+eina_error_set(Eina_Error err)
 {
-	_err = err;
+   _eina_last_error = err;
 }
 
 /**
