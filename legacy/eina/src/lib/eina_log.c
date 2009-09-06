@@ -1056,17 +1056,23 @@ eina_log_domain_register_unlocked(const char *name, const char *color)
 
    if (_log_domains_count >= _log_domains_allocated)
      {
-	// Did not found a slot, realloc 8 more slots. Also works on the first time
-	// when the array doesn't exist yet.
-	Eina_Log_Domain *tmp = NULL;
+	Eina_Log_Domain *tmp;
+	size_t size;
 
-	tmp = realloc(_log_domains, sizeof(Eina_Log_Domain)*(_log_domains_allocated + 8));
+	if (!_log_domains)
+	  // special case for init, eina itself will allocate a dozen of domains
+	  size = 24;
+	else
+	  // grow 8 buckets to minimize reallocs
+	  size = _log_domains_allocated + 8;
+
+	tmp = realloc(_log_domains, sizeof(Eina_Log_Domain) * size);
 
 	if (tmp)
 	  {
 	     // Success!
 	     _log_domains = tmp;
-	     _log_domains_allocated += 8;
+	     _log_domains_allocated = size;
 	  }
 	else
 	   return -1;
