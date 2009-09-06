@@ -63,6 +63,8 @@ void *alloca (size_t);
 
 #include "eina_config.h"
 #include "eina_private.h"
+
+/* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
 #include "eina_file.h"
 
@@ -84,10 +86,6 @@ void *alloca (size_t);
  * file.
  * @li eina_file_split() split a path into all the subdirectories that
  * compose it, according to the separator of the file system.
- *
- * @warning eina_file_split() uses the @ref Eina_Array_Group module
- * but does not initialize it. eina_array_init() and
- * eina_array_shutdown() must be called if this function is used.
  *
  * @{
  */
@@ -238,10 +236,6 @@ eina_file_dir_list(const char *dir, Eina_Bool recursive, Eina_File_Dir_List_Cb c
  * filesystem. If  @p path is @c NULL or if the array can not be
  * created, @c NULL is returned, otherwise, an array with the
  * different parts of @p path is returned.
- *
- * @warning This function uses the @ref Eina_Array_Group module but
- * does not initialize it. eina_array_init() and eina_array_shutdown()
- * must be called if this function is used.
  */
 EAPI Eina_Array *
 eina_file_split(char *path)

@@ -54,70 +54,43 @@
 
 EAPI Eina_Error EINA_ERROR_SAFETY_FAILED = 0;
 
-static int _eina_safety_checks_init_count = 0;
-
 /**
  * @endcond
  */
 
 /**
+ * @internal
  * @brief Initialize the safety checks module.
  *
- * @return 1 or greater on success, 0 on error.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This function sets up the safety checks module of Eina. It is
- * called by eina_init() and by all modules initialization
- * functions. It returns @c 0 on failure, otherwise it returns the
- * number of times it is called.
+ * called by eina_init().
  *
  * @see eina_init()
  */
-EAPI int
+Eina_Bool
 eina_safety_checks_init(void)
 {
-   if (_eina_safety_checks_init_count > 0)
-     return ++_eina_safety_checks_init_count;
-
-#ifdef EINA_SAFETY_CHECKS
-   if (!eina_log_init())
-     return 0;
-#endif
-   if (!eina_error_init())
-     {
-	eina_log_shutdown();
-	return 0;
-     }
    EINA_ERROR_SAFETY_FAILED = eina_error_msg_register("Safety check failed.");
-   _eina_safety_checks_init_count = 1;
-   return 1;
+   return EINA_TRUE;
 }
 
 /**
+ * @internal
  * @brief Shut down the safety checks module.
  *
- * @return 0 when the error module is completely shut down, 1 or
- * greater otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This function shuts down the error module set up by
- * eina_safety_checks_init(). It is called by eina_shutdown() and by
- * all modules shutdown functions. It returns 0 when it is called the
- * same number of times than eina_safety_checks_init(). In that case
- * it clears the error list.
+ * eina_safety_checks_init(). It is called by eina_shutdown().
  *
  * @see eina_shutdown()
  */
-EAPI int
+Eina_Bool
 eina_safety_checks_shutdown(void)
 {
-   _eina_safety_checks_init_count--;
-   if (_eina_safety_checks_init_count != 0)
-     return _eina_safety_checks_init_count;
-
-   eina_error_shutdown();
-#ifdef EINA_SAFETY_CHECKS
-   eina_log_shutdown();
-#endif
-   return 0;
+   return EINA_TRUE;
 }
 
 /**

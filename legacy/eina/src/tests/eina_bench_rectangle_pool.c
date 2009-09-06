@@ -32,8 +32,8 @@ eina_bench_eina_rectangle_pool(int request)
    Eina_List *list = NULL;
    int i;
 
-   eina_list_init();
-   eina_rectangle_init();
+   eina_init();
+   eina_init();
 
    pool = eina_rectangle_pool_new(2048, 2048);
    if (!pool) return ;
@@ -63,8 +63,8 @@ eina_bench_eina_rectangle_pool(int request)
    eina_rectangle_pool_free(pool);
    eina_list_free(list);
 
-   eina_rectangle_shutdown();
-   eina_list_shutdown();
+   eina_shutdown();
+   eina_shutdown();
 }
 
 void eina_bench_rectangle_pool(Eina_Benchmark *bench)

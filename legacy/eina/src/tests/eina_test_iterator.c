@@ -23,12 +23,7 @@
 #include <stdio.h>
 
 #include "eina_suite.h"
-#include "eina_array.h"
-#include "eina_hash.h"
-#include "eina_inlist.h"
-#include "eina_list.h"
-#include "eina_rbtree.h"
-#include "eina_private.h"
+#include "Eina.h"
 
 static Eina_Bool
 eina_iterator_array_check(__UNUSED__ const Eina_Array *array,
@@ -47,7 +42,7 @@ START_TEST(eina_iterator_array_simple)
    int *tmp;
    int i;
 
-   eina_array_init();
+   eina_init();
 
    ea = eina_array_new(11);
    fail_if(!ea);
@@ -75,7 +70,7 @@ START_TEST(eina_iterator_array_simple)
 
    eina_array_free(ea);
 
-   eina_array_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -110,7 +105,7 @@ START_TEST(eina_iterator_hash_simple)
    Eina_Hash *hash;
    int array[] = { 1, 42, 7, 8, 6 };
 
-   eina_hash_init();
+   eina_init();
 
    hash = eina_hash_string_superfast_new(NULL);
    fail_if(hash == NULL);
@@ -135,7 +130,7 @@ START_TEST(eina_iterator_hash_simple)
 
    eina_hash_free(hash);
 
-   eina_hash_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -240,7 +235,7 @@ START_TEST(eina_iterator_list_simple)
    int data[] = { 6, 9, 42, 1, 7, 1337, 81, 1664 };
    int i = 0;
 
-   eina_list_init();
+   eina_init();
 
    list = eina_list_append(list, &data[0]);
    fail_if(list == NULL);

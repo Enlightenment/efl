@@ -91,7 +91,6 @@ struct _Eina_Benchmark
    Eina_Inlist *runs;
 };
 
-static int _eina_benchmark_count = 0;
 static int _log_dom = -1;
 
 #define ERR(...) EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
@@ -117,9 +116,9 @@ static int _log_dom = -1;
  * in Eina to compare the time used by eina, glib, evas and ecore data
  * types.
  *
- * The benchmark module must be initialized with eina_benchmark_init()
- * and shut down with eina_benchmark_shutdown(). A benchmark is
- * created with eina_benchmark_new() and freed with
+ * To use the benchmark module, Eina must be initialized with
+ * eina_init() and later shut down with eina_shutdown(). A benchmark
+ * is created with eina_benchmark_new() and freed with
  * eina_benchmark_free().
  *
  * eina_benchmark_register() adds a test to a benchmark. That test can
@@ -137,103 +136,46 @@ static int _log_dom = -1;
  */
 
 /**
+ * @internal
  * @brief Initialize the benchmark module.
  *
- * @return 1 or greater on success, 0 on error.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This function sets up the error, array and counter modules or
- * Eina. It is also called by eina_init(). It returns 0 on failure,
- * otherwise it returns the number of times it has already been
- * called. See eina_error_init(), eina_array_init() and
- * eina_counter_init() for the documentation of the initialisation of
- * the dependency modules.
+ * This function sets up the benchmark module of Eina. It is called by
+ * eina_init().
  *
- * When no more Eina benchmarks are used, call
- * eina_benchmark_shutdown() to shut down the benchmark module.
- *
- * @see eina_error_init()
- * @see eina_array_init()
- * @see eina_counter_init()
  * @see eina_init()
  */
-EAPI int
+Eina_Bool
 eina_benchmark_init(void)
 {
-   _eina_benchmark_count++;
-
-   if (_eina_benchmark_count > 1) return _eina_benchmark_count;
-
-   if (!eina_log_init())
-     {
-	fprintf(stderr, "Could not initialize eina logging system.\n");
-	return 0;
-     }
-
    _log_dom = eina_log_domain_register("eina_benchmark", EINA_LOG_COLOR_DEFAULT);
    if (_log_dom < 0)
      {
 	EINA_LOG_ERR("Could not register log domain: eina_benchmark");
-	eina_log_shutdown();
-	return 0;
+	return EINA_FALSE;
      }
 
-   if (!eina_error_init())
-     {
-        ERR("Could not initialize eina error module.");
-	goto error_init_error;
-     }
-   if (!eina_array_init())
-     {
-        ERR("Could not initialize eina array module.");
-        goto array_init_error;
-     }
-   if (!eina_counter_init())
-     {
-        ERR("Could not initialize eina counter module.");
-        goto counter_init_error;
-     }
-
-   return _eina_benchmark_count;
-
- counter_init_error:
-   eina_array_shutdown();
- array_init_error:
-   eina_error_shutdown();
- error_init_error:
-   eina_log_domain_unregister(_log_dom);
-   eina_log_shutdown();
-   return 0;
+   return EINA_TRUE;
 }
 
 /**
+ * @internal
  * @brief Shut down the benchmark module.
  *
- * @return 0 when the error module is completely shut down, 1 or
- * greater otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This function shut down the error, array and counter modules set up
- * by eina_array_init(). It is also called by eina_shutdown(). It returns
- * 0 when it is called the same number of times than eina_benchmark_init().
+ * This function shuts down the benchmark module set up by
+ * eina_benchmark_init(). It is called by eina_shutdown().
  *
- * @see eina_error_shutdown()
- * @see eina_array_shutdown()
- * @see eina_counter_shutdown()
  * @see eina_shutdown()
  */
-EAPI int
+Eina_Bool
 eina_benchmark_shutdown(void)
 {
-   _eina_benchmark_count--;
-
-   if (_eina_benchmark_count != 0) return _eina_benchmark_count;
-
-   eina_counter_shutdown();
-   eina_array_shutdown();
-   eina_error_shutdown();
    eina_log_domain_unregister(_log_dom);
-   eina_log_shutdown();
-
-   return 0;
+   _log_dom = -1;
+   return EINA_TRUE;
 }
 
 /**

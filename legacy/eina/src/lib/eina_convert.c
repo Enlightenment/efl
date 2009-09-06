@@ -28,6 +28,8 @@
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_log.h"
+
+/* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
 #include "eina_convert.h"
 
@@ -42,7 +44,6 @@
 static const char look_up_table[] = {'0', '1', '2', '3', '4',
 				     '5', '6', '7', '8', '9',
 				     'a', 'b', 'c', 'd', 'e', 'f'};
-static int _eina_convert_init_count = 0;
 static int _eina_convert_log_dom = -1;
 
 #define ERR(...) EINA_LOG_DOM_ERR(_eina_convert_log_dom, __VA_ARGS__)
@@ -93,8 +94,8 @@ EAPI Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = 0;
  * These functions allow you to convert integer or real numbers to
  * string or conversely.
  *
- * To use these function, you have to call eina_convert_init()
- * first, and eina_convert_shutdown() when they are not used anymore.
+ * To use these functions, you have to call eina_init()
+ * first, and eina_shutdown() when eina is not used anymore.
  *
  * @section Eina_Convert_From_Integer_To_Sring Conversion from integer to string
  *
@@ -115,9 +116,9 @@ EAPI Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = 0;
  * {
  *    char *tmp[128];
  *
- *    if (!eina_convert_init())
+ *    if (!eina_init())
  *    {
- *        printf ("Error during the initialization of eina_convert module\n");
+ *        printf ("Error during the initialization of eina.\n");
  *        return EXIT_FAILURE;
  *    }
  *
@@ -127,7 +128,7 @@ EAPI Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = 0;
  *    eina_convert_xtoa(0xA1, tmp);
  *    printf("value: %s\n", tmp);
  *
- *    eina_convert_shutdown();
+ *    eina_shutdown();
  *
  *    return EXIT_SUCCESS;
  * }
@@ -181,9 +182,9 @@ EAPI Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = 0;
  *    long int  e = 0;
  *    doule     r;
  *
- *    if (!eina_convert_init())
+ *    if (!eina_init())
  *    {
- *        printf ("Error during the initialization of eina_convert module\n");
+ *        printf ("Error during the initialization of eina.\n");
  *        return EXIT_FAILURE;
  *    }
  *
@@ -194,7 +195,7 @@ EAPI Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = 0;
  *    r = ldexp((double)m, e);
  *    printf("value: %s\n", tmp);
  *
- *    eina_convert_shutdown();
+ *    eina_shutdown();
  *
  *    return EXIT_SUCCESS;
  * }
@@ -206,81 +207,55 @@ EAPI Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = 0;
  */
 
 /**
- * @brief Initialize the eina convert internal structure.
+ * @internal
+ * @brief Initialize the convert module.
  *
- * @return 1 or greater on success, 0 on error.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function sets up the convert module of Eina. It is called by
+ * eina_init().
  *
  * This function sets up the error module of Eina and registers the
  * errors #EINA_ERROR_CONVERT_0X_NOT_FOUND,
  * #EINA_ERROR_CONVERT_P_NOT_FOUND and
- * #EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH. It is also called by
- * eina_init(). It returns 0 on failure, otherwise it returns the
- * number of times it has already been called.
+ * #EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH.
+ *
+ * @see eina_init()
  */
-EAPI int
+Eina_Bool
 eina_convert_init(void)
 {
-   _eina_convert_init_count++;
-
-   if (_eina_convert_init_count > 1) goto init_out;
-
-   eina_error_init();
-   EINA_ERROR_CONVERT_0X_NOT_FOUND = eina_error_msg_register("Error during string convertion to float, First '0x' was not found.");
-   EINA_ERROR_CONVERT_P_NOT_FOUND = eina_error_msg_register("Error during string convertion to float, First 'p' was not found.");
-   EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = eina_error_msg_register("Error outrun string limit during convertion string convertion to float.");
-
-   if (!eina_log_init())
-     {
-	fprintf(stderr, "Could not initialize eina logging system.\n");
-	eina_error_shutdown();
-	return 0;
-     }
-
    _eina_convert_log_dom = eina_log_domain_register("eina_convert", EINA_LOG_COLOR_DEFAULT);
    if (_eina_convert_log_dom < 0)
      {
 	EINA_LOG_ERR("Could not register log domain: eina_convert");
-	eina_log_shutdown();
-	eina_error_shutdown();
-	return 0;
+	return EINA_FALSE;
      }
 
-   if (!eina_safety_checks_init())
-     {
-	ERR("Could not initialize eina safety checks.");
-	eina_log_shutdown();
-	eina_error_shutdown();
-	return 0;
-     }
+   EINA_ERROR_CONVERT_0X_NOT_FOUND = eina_error_msg_register("Error during string convertion to float, First '0x' was not found.");
+   EINA_ERROR_CONVERT_P_NOT_FOUND = eina_error_msg_register("Error during string convertion to float, First 'p' was not found.");
+   EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = eina_error_msg_register("Error outrun string limit during convertion string convertion to float.");
 
- init_out:
-   return _eina_convert_init_count;
+   return EINA_TRUE;
 }
 
 /**
- * @brief Shut down the eina convert internal structures
+ * @internal
+ * @brief Shut down the convert module.
  *
- * @return 0 when the convert module is completely shut down, 1 or
- * greater otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This function just shuts down the error module. It is also called by
- * eina_shutdown(). It returns 0 when it is called the same number of
- * times than eina_convert_init().
+ * This function shuts down the convert module set up by
+ * eina_convert_init(). It is called by eina_shutdown().
+ *
+ * @see eina_shutdown()
  */
-EAPI int
+Eina_Bool
 eina_convert_shutdown(void)
 {
-   _eina_convert_init_count--;
-
-   if (_eina_convert_init_count > 0) goto shutdown_out;
-
-   eina_safety_checks_shutdown();
    eina_log_domain_unregister(_eina_convert_log_dom);
-   eina_log_shutdown();
-   eina_error_shutdown();
-
- shutdown_out:
-   return _eina_convert_init_count;
+   _eina_convert_log_dom = -1;
+   return EINA_TRUE;
 }
 
 /*

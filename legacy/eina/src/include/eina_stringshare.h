@@ -65,8 +65,6 @@
  * @{
  */
 
-EAPI int eina_stringshare_init(void);
-EAPI int eina_stringshare_shutdown(void);
 EAPI const char *eina_stringshare_add_length(const char *str, unsigned int slen) EINA_WARN_UNUSED_RESULT;
 EAPI const char *eina_stringshare_add(const char *str) EINA_WARN_UNUSED_RESULT;
 EAPI const char *eina_stringshare_ref(const char *str);

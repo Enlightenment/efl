@@ -23,10 +23,7 @@
 #include <stdio.h>
 
 #include "eina_suite.h"
-#include "eina_array.h"
-#include "eina_inlist.h"
-#include "eina_list.h"
-#include "eina_private.h"
+#include "Eina.h"
 
 static Eina_Bool
 eina_accessor_check(__UNUSED__ const Eina_Array *array,
@@ -45,7 +42,7 @@ START_TEST(eina_accessor_array_simple)
    int *tmp;
    int i;
 
-   eina_array_init();
+   eina_init();
 
    ea = eina_array_new(11);
    fail_if(!ea);
@@ -76,7 +73,7 @@ START_TEST(eina_accessor_array_simple)
 
    eina_array_free(ea);
 
-   eina_array_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -187,7 +184,7 @@ START_TEST(eina_accessor_list_simple)
    int *j;
    int i = 0;
 
-   eina_list_init();
+   eina_init();
 
    list = eina_list_append(list, &data[0]);
    fail_if(list == NULL);

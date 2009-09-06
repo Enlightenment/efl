@@ -37,8 +37,7 @@
 #endif
 
 #include "eina_bench.h"
-#include "eina_list.h"
-#include "eina_convert.h"
+#include "Eina.h"
 
 static int
 _eina_cmp_str(const char *a, const char *b)
@@ -52,7 +51,7 @@ eina_bench_sort_eina(int request)
    Eina_List *list = NULL;
    int i;
 
-   eina_list_init();
+   eina_init();
 
    srand(time(NULL));
 
@@ -73,7 +72,7 @@ eina_bench_sort_eina(int request)
 	list = eina_list_remove_list(list, list);
      }
 
-   eina_list_shutdown();
+   eina_shutdown();
 }
 
 #ifdef EINA_BENCH_HAVE_EVAS

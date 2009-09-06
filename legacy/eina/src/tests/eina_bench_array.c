@@ -72,7 +72,7 @@ eina_bench_array_4evas_render_inline(int request)
 
    srand(time(NULL));
 
-   eina_array_init();
+   eina_init();
 
    array = eina_array_new(64);
 
@@ -106,7 +106,7 @@ eina_bench_array_4evas_render_inline(int request)
 
    eina_array_free(array);
 
-   eina_array_shutdown();
+   eina_shutdown();
 }
 
 static Eina_Bool
@@ -136,7 +136,7 @@ eina_bench_array_4evas_render_iterator(int request)
 
    srand(time(NULL));
 
-   eina_array_init();
+   eina_init();
 
    array = eina_array_new(64);
 
@@ -173,7 +173,7 @@ eina_bench_array_4evas_render_iterator(int request)
 
    eina_array_free(array);
 
-   eina_array_shutdown();
+   eina_shutdown();
 }
 
 static void
@@ -185,7 +185,7 @@ eina_bench_list_4evas_render(int request)
    int i;
    int j;
 
-   eina_list_init();
+   eina_init();
 
    for (i = 0; i < 1000; ++i)
      {
@@ -242,7 +242,7 @@ eina_bench_list_4evas_render(int request)
 	list = eina_list_remove_list(list, list);
      }
 
-   eina_list_shutdown();
+   eina_shutdown();
 }
 
 static void
@@ -255,7 +255,7 @@ eina_bench_list_4evas_render_iterator(int request)
    int i;
    int j;
 
-   eina_list_init();
+   eina_init();
 
    for (i = 0; i < 1000; ++i)
      {
@@ -309,7 +309,7 @@ eina_bench_list_4evas_render_iterator(int request)
 	list = eina_list_remove_list(list, list);
      }
 
-   eina_list_shutdown();
+   eina_shutdown();
 }
 
 static void

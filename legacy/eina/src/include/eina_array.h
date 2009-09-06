@@ -73,9 +73,6 @@ struct _Eina_Array
    EINA_MAGIC
 };
 
-EAPI int          eina_array_init     (void);
-EAPI int          eina_array_shutdown (void);
-
 EAPI Eina_Array  *eina_array_new      (unsigned int step) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 EAPI void         eina_array_free     (Eina_Array *array) EINA_ARG_NONNULL(1);
 EAPI void         eina_array_step_set (Eina_Array *array, unsigned int step) EINA_ARG_NONNULL(1);

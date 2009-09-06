@@ -25,13 +25,15 @@
 
 #include "eina_config.h"
 #include "eina_private.h"
-#include "eina_safety_checks.h"
-#include "eina_rectangle.h"
 #include "eina_magic.h"
 #include "eina_inlist.h"
 #include "eina_mempool.h"
 #include "eina_list.h"
 #include "eina_trash.h"
+
+/* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
+#include "eina_safety_checks.h"
+#include "eina_rectangle.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -84,7 +86,6 @@ struct _Eina_Rectangle_Alloc
        EINA_MAGIC_FAIL((d), EINA_RECTANGLE_ALLOC_MAGIC);       \
   } while (0);
 
-static int _eina_rectangle_init_count = 0;
 static Eina_Mempool *_eina_rectangle_alloc_mp = NULL;
 static Eina_Mempool *_eina_rectangle_mp = NULL;
 
@@ -235,101 +236,57 @@ _eina_rectangle_empty_space_find(Eina_List *empty, int w, int h, int *x, int *y)
  *                                   API                                      *
  *============================================================================*/
 
-EAPI int
+Eina_Bool
 eina_rectangle_init(void)
 {
-   const char *choice;
-
-   _eina_rectangle_init_count++;
-
-   if (_eina_rectangle_init_count > 1) return _eina_rectangle_init_count;
-
-   if (!eina_log_init())
-     {
-	fprintf(stderr, "Could not initialize eina logging system.\n");
-	return 0;
-     }
+   const char *choice, *tmp;
 
    _eina_rectangle_log_dom = eina_log_domain_register("eina_rectangle", EINA_LOG_COLOR_DEFAULT);
    if (_eina_rectangle_log_dom < 0)
      {
 	EINA_LOG_ERR("Could not register log domain: eina_rectangle");
-	eina_log_shutdown();
-	return 0;
-     }
-
-   if (!eina_error_init())
-     {
-        ERR("Could not initialize eina error module.");
-	goto error_init_error;
-     }
-   if (!eina_safety_checks_init())
-     {
-	fprintf(stderr, "Could not initialize eina safety checks.");
-	goto safety_checks_init_error;
-     }
-   if (!eina_mempool_init())
-     {
-        ERR("Could not initialize eina mempool module.");
-        goto mempool_init_error;
-     }
-
-   if (!eina_list_init())
-     {
-	ERR("Could not initialize eina list module.");
-	goto list_init_error;
+	return EINA_FALSE;
      }
 
 #ifdef EINA_DEFAULT_MEMPOOL
    choice = "pass_through";
 #else
-   if (!(choice = getenv("EINA_MEMPOOL")))
-     choice = "chained_mempool";
+   choice = "chained_mempool";
 #endif
+   tmp = getenv("EINA_MEMPOOL");
+   if (tmp && tmp[0])
+     choice = tmp;
 
-   _eina_rectangle_alloc_mp = eina_mempool_add(choice, "rectangle-alloc", NULL,
-                                         sizeof (Eina_Rectangle_Alloc) + sizeof (Eina_Rectangle), 1024);
+   _eina_rectangle_alloc_mp = eina_mempool_add
+     (choice, "rectangle-alloc", NULL,
+      sizeof(Eina_Rectangle_Alloc) + sizeof(Eina_Rectangle), 1024);
    if (!_eina_rectangle_alloc_mp)
      {
         ERR("Mempool for rectangle cannot be allocated in rectangle init.");
         goto init_error;
      }
 
-   _eina_rectangle_mp = eina_mempool_add(choice, "rectangle", NULL, sizeof (Eina_Rectangle), 256);
+   _eina_rectangle_mp = eina_mempool_add
+     (choice, "rectangle", NULL, sizeof(Eina_Rectangle), 256);
    if (!_eina_rectangle_mp)
      {
         ERR("Mempool for rectangle cannot be allocated in rectangle init.");
         goto init_error;
      }
 
-   return _eina_rectangle_init_count;
+   return EINA_TRUE;
 
  init_error:
-   eina_list_shutdown();
- list_init_error:
-   eina_mempool_shutdown();
- mempool_init_error:
-   eina_safety_checks_shutdown();
- safety_checks_init_error:
-   eina_error_shutdown();
- error_init_error:
    eina_log_domain_unregister(_eina_rectangle_log_dom);
    _eina_rectangle_log_dom = -1;
-   eina_log_shutdown();
 
-   return 0;
+   return EINA_FALSE;
 }
 
-EAPI int
+Eina_Bool
 eina_rectangle_shutdown(void)
 {
    Eina_Rectangle *del;
-
-   --_eina_rectangle_init_count;
-
-   if (_eina_rectangle_init_count) return _eina_rectangle_init_count;
-
-   eina_list_shutdown();
 
    while ((del = eina_trash_pop(&_eina_rectangles)))
      eina_mempool_free(_eina_rectangle_mp, del);
@@ -338,14 +295,10 @@ eina_rectangle_shutdown(void)
    eina_mempool_del(_eina_rectangle_alloc_mp);
    eina_mempool_del(_eina_rectangle_mp);
 
-   eina_mempool_shutdown();
-   eina_safety_checks_shutdown();
-   eina_error_shutdown();
    eina_log_domain_unregister(_eina_rectangle_log_dom);
    _eina_rectangle_log_dom = -1;
-   eina_log_shutdown();
 
-   return 0;
+   return EINA_TRUE;
 }
 
 EAPI Eina_Rectangle *

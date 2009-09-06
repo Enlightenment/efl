@@ -75,9 +75,6 @@ struct _Eina_List_Accounting
    EINA_MAGIC
 };
 
-EAPI int eina_list_init(void);
-EAPI int eina_list_shutdown(void);
-
 EAPI Eina_List *eina_list_append (Eina_List *list, const void *data) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_List *eina_list_prepend (Eina_List *list, const void *data) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_List *eina_list_append_relative (Eina_List *list, const void *data, const void *relative) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;

@@ -51,7 +51,7 @@ static const Eina_Benchmark_Case etc[] = {
 static Eina_Array *_modules;
 static void _mempool_init(void)
 {
-    eina_mempool_init();
+    eina_init();
     /* force modules to be loaded in case they are not installed */
     _modules = eina_module_list_get(NULL, PACKAGE_BUILD_DIR"/src/modules", 1, NULL, NULL);
     eina_module_list_load(_modules);
@@ -61,7 +61,7 @@ static void _mempool_shutdown(void)
 {
    eina_module_list_flush(_modules);
    /* TODO delete the list */
-   eina_mempool_shutdown();
+   eina_shutdown();
 }
 
 int
@@ -75,7 +75,7 @@ main(int argc, char **argv)
 
    _mempool_init();
 
-   eina_benchmark_init();
+   eina_init();
 
    for (i = 0; etc[i].bench_case != NULL; ++i)
      {
@@ -102,7 +102,7 @@ main(int argc, char **argv)
 
    eina_bench_e17();
 
-   eina_benchmark_shutdown();
+   eina_shutdown();
 
    _mempool_shutdown();
    return 0;

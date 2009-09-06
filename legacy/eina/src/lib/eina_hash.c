@@ -32,10 +32,12 @@
 
 #include "eina_config.h"
 #include "eina_private.h"
-#include "eina_safety_checks.h"
-#include "eina_hash.h"
 #include "eina_rbtree.h"
 #include "eina_error.h"
+
+/* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
+#include "eina_safety_checks.h"
+#include "eina_hash.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -135,8 +137,6 @@ struct _Eina_Hash_Each
    const Eina_Hash_El *el;
    const void *data;
 };
-
-static int _eina_hash_init_count = 0;
 
 #undef get16bits
 #if (defined(__GNUC__) && defined(__i386__)) || defined(__WATCOMC__) \
@@ -637,66 +637,6 @@ _eina_hash_iterator_free(Eina_Iterator_Hash *it)
  *
  * @{
  */
-
-/**
- * @brief Initialize the hash table module.
- *
- * @return 1 or greater on success, 0 on error.
- *
- * This function sets up the error module of Eina. It is also called
- * by eina_init(). It returns 0 on failure, otherwise it returns the
- * number of times it has already been called. See eina_error_init()
- * for the documentation of the initialisation of the dependency
- * module.
- *
- * When no more Eina hash tables are used, call eina_hash_shutdown()
- * to shut down the array module.
- *
- * @see eina_error_init()
- */
-EAPI int
-eina_hash_init(void)
-{
-   if (!_eina_hash_init_count)
-     {
-	if (!eina_error_init())
-	  {
-	     fprintf(stderr, "Could not initialize eina error module\n");
-	     return 0;
-	  }
-
-	if (!eina_safety_checks_init())
-	  {
-	     fprintf(stderr, "Could not initialize eina safety checks.\n");
-	     eina_error_shutdown();
-	     return 0;
-	  }
-     }
-
-   return ++_eina_hash_init_count;
-}
-
-/**
- * @brief Shut down the hash table module.
- *
- * @return 0 when the error module is completely shut down, 1 or
- * greater otherwise.
- *
- * This function just shut down the error module set up by
- * eina_hash_init(). It is also called by eina_shutdown(). It returns
- * 0 when it is called the same number of times than
- * eina_error_init().
- */
-EAPI int
-eina_hash_shutdown(void)
-{
-   if (_eina_hash_init_count == 1)
-     {
-	eina_safety_checks_shutdown();
-	eina_error_shutdown();
-     }
-   return --_eina_hash_init_count;
-}
 
 EAPI Eina_Hash *
 eina_hash_new(Eina_Key_Length key_length_cb,

@@ -24,9 +24,8 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "eina_array.h"
 #include "eina_suite.h"
-#include "eina_rbtree.h"
+#include "Eina.h"
 
 static inline Eina_Bool
 _eina_rbtree_is_red(Eina_Rbtree *tree)
@@ -160,7 +159,7 @@ START_TEST(eina_rbtree_remove)
    Eina_Array_Iterator it;
    unsigned int i;
 
-   eina_array_init();
+   eina_init();
 
    ea =  eina_array_new(11);
    fail_if(!ea);
@@ -184,7 +183,7 @@ START_TEST(eina_rbtree_remove)
 
    fail_if(root != NULL);
 
-   eina_array_shutdown();
+   eina_shutdown();
 }
 END_TEST
 

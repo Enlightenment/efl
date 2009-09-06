@@ -52,6 +52,68 @@ static int _eina_log_dom = -1;
 #define ERR(...) EINA_LOG_DOM_ERR(_eina_log_dom, __VA_ARGS__)
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_log_dom, __VA_ARGS__)
 
+
+/* place module init/shutdown functions here to avoid other modules
+ * calling them by mistake.
+ */
+#define S(x) extern Eina_Bool eina_##x##_init(void); extern Eina_Bool eina_##x##_shutdown(void)
+S(log);
+S(error);
+S(safety_checks);
+S(magic_string);
+S(array);
+S(module);
+S(mempool);
+S(list);
+S(stringshare);
+S(matrixsparse);
+S(convert);
+S(counter);
+S(benchmark);
+S(rectangle);
+#undef S
+
+struct eina_desc_setup
+{
+   const char *name;
+   Eina_Bool (*init)(void);
+   Eina_Bool (*shutdown)(void);
+};
+
+static const struct eina_desc_setup _eina_desc_setup[] = {
+#define S(x) {#x, eina_##x##_init, eina_##x##_shutdown}
+  /* log is a special case as it needs printf */
+  S(error),
+  S(safety_checks),
+  S(magic_string),
+  S(array),
+  S(module),
+  S(mempool),
+  S(list),
+  S(stringshare),
+  S(matrixsparse),
+  S(convert),
+  S(counter),
+  S(benchmark),
+  S(rectangle)
+#undef S
+};
+static const size_t _eina_desc_setup_len = sizeof(_eina_desc_setup) / sizeof(_eina_desc_setup[0]);
+
+static void
+_eina_shutdown_from_desc(const struct eina_desc_setup *itr)
+{
+   for (itr--; itr >= _eina_desc_setup; itr--)
+     {
+	if (!itr->shutdown())
+	  ERR("Problems shutting down eina module '%s', ignored.", itr->name);
+     }
+
+   eina_log_domain_unregister(_eina_log_dom);
+   _eina_log_dom = -1;
+   eina_log_shutdown();
+}
+
 /**
  * @endcond
  */
@@ -81,21 +143,7 @@ static int _eina_log_dom = -1;
  * This function sets up all the eina modules. It returns 0 on
  * failure (that is, when one of the module fails to initialize),
  * otherwise it returns the number of times it has already been
- * called. The list of initialisation functions that are called are
- * (in that order):
- *
- * @li eina_log_init()
- * @li eina_error_init()
- * @li eina_safety_checks_init()
- * @li eina_hash_init()
- * @li eina_stringshare_init()
- * @li eina_list_init()
- * @li eina_matrixsparse_init()
- * @li eina_array_init()
- * @li eina_counter_init()
- * @li eina_benchmark_init()
- * @li eina_magic_string_init()
- * @li eina_rectangle_init()
+ * called.
  *
  * When Eina is not used anymore, call eina_shutdown() to shut down
  * the Eina library.
@@ -103,14 +151,16 @@ static int _eina_log_dom = -1;
 EAPI int
 eina_init(void)
 {
-   if (_eina_main_count) goto finish_init;
+   const struct eina_desc_setup *itr, *itr_end;
+
+   if (EINA_LIKELY(_eina_main_count > 0))
+     return ++_eina_main_count;
 
    if (!eina_log_init())
      {
 	fprintf(stderr, "Could not initialize eina logging system.\n");
 	return 0;
      }
-
    _eina_log_dom = eina_log_domain_register("eina", EINA_LOG_COLOR_DEFAULT);
    if (_eina_log_dom < 0)
      {
@@ -119,92 +169,20 @@ eina_init(void)
 	return 0;
      }
 
-   if (!eina_error_init())
+   itr = _eina_desc_setup;
+   itr_end = itr + _eina_desc_setup_len;
+   for (; itr < itr_end; itr++)
      {
-        ERR("Could not initialize eina error module.");
-	goto eina_init_error;
+	if (!itr->init())
+	  {
+	     ERR("Could not initialize eina module '%s'.", itr->name);
+	     _eina_shutdown_from_desc(itr);
+	     return 0;
+	  }
      }
 
-   if (!eina_safety_checks_init())
-     {
-        ERR("Could not initialize eina safety checks module.");
-        goto safety_checks_init_error;
-     }
-
-   if (!eina_hash_init())
-     {
-        ERR("Could not initialize eina hash module.");
-        goto hash_init_error;
-     }
-   if (!eina_stringshare_init())
-     {
-        ERR("Could not initialize eina stringshare module.");
-        goto stringshare_init_error;
-     }
-   if (!eina_list_init())
-     {
-        ERR("Could not initialize eina list module.");
-        goto list_init_error;
-     }
-   if (!eina_matrixsparse_init())
-     {
-	ERR("Could not initialize eina matrixsparse module.");
-	goto matrixsparse_init_error;
-     }
-   if (!eina_array_init())
-     {
-        ERR("Could not initialize eina array module.");
-        goto array_init_error;
-     }
-   if (!eina_counter_init())
-     {
-        ERR("Could not initialize eina counter module.");
-        goto counter_init_error;
-     }
-   if (!eina_benchmark_init())
-     {
-        ERR("Could not initialize eina benchmark module.");
-        goto benchmark_init_error;
-     }
-   if (!eina_magic_string_init())
-     {
-        ERR("Could not initialize eina magic string module.");
-        goto magic_string_init_error;
-     }
-   if (!eina_rectangle_init())
-     {
-        ERR("Could not initialize eina rectangle module.");
-        goto rectangle_init_error;
-     }
-
- finish_init:
-   return ++_eina_main_count;
-
- rectangle_init_error:
-   eina_magic_string_shutdown();
- magic_string_init_error:
-   eina_benchmark_shutdown();
- benchmark_init_error:
-   eina_counter_shutdown();
- counter_init_error:
-   eina_array_shutdown();
- array_init_error:
-   eina_matrixsparse_shutdown();
- matrixsparse_init_error:
-   eina_list_shutdown();
- list_init_error:
-   eina_stringshare_shutdown();
- stringshare_init_error:
-   eina_hash_shutdown();
- hash_init_error:
-   eina_safety_checks_shutdown();
- safety_checks_init_error:
-   eina_error_shutdown();
- eina_init_error:
-   _eina_log_dom = -1;
-   eina_log_shutdown();
-
-   return 0;
+   _eina_main_count = 1;
+   return 1;
 }
 
 /**
@@ -215,21 +193,7 @@ eina_init(void)
  *
  * This function shuts down the Eina library. It returns 0 when it has
  * been called the same number of times than eina_init(). In that case
- * it shut down all the Eina modules. The list of shut down functions
- * that are called are (in that order):
- *
- * @li eina_rectangle_shutdown()
- * @li eina_magic_string_shutdown()
- * @li eina_benchmark_shutdown()
- * @li eina_counter_shutdown()
- * @li eina_array_shutdown()
- * @li eina_matrixsparse_shutdown()
- * @li eina_list_shutdown()
- * @li eina_stringshare_shutdown()
- * @li eina_hash_shutdown()
- * @li eina_safety_checks_shutdown()
- * @li eina_error_shutdown()
- * @li eina_log_shutdown()
+ * it shut down all the Eina modules.
  *
  * Once this function succeeds (that is, @c 0 is returned), you must
  * not call any of the Eina function anymore. You must call
@@ -238,25 +202,10 @@ eina_init(void)
 EAPI int
 eina_shutdown(void)
 {
-   if (_eina_main_count != 1) goto finish_shutdown;
-
-   eina_rectangle_shutdown();
-   eina_magic_string_shutdown();
-   eina_benchmark_shutdown();
-   eina_counter_shutdown();
-   eina_array_shutdown();
-   eina_matrixsparse_shutdown();
-   eina_list_shutdown();
-   eina_stringshare_shutdown();
-   eina_hash_shutdown();
-   eina_safety_checks_shutdown();
-   eina_error_shutdown();
-   eina_log_domain_unregister(_eina_log_dom);
-   _eina_log_dom = -1;
-   eina_log_shutdown();
-
- finish_shutdown:
-   return --_eina_main_count;
+   _eina_main_count--;
+   if (EINA_UNLIKELY(_eina_main_count == 0))
+     _eina_shutdown_from_desc(_eina_desc_setup + _eina_desc_setup_len);
+   return _eina_main_count;
 }
 
 /**

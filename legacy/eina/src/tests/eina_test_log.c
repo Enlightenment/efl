@@ -25,27 +25,11 @@
 #include <string.h>
 
 #include "eina_suite.h"
-#include "eina_log.h"
-
-START_TEST(eina_log_init_shutdown)
-{
-   int initial_level = eina_log_init() - 1;
-   fail_if(!(initial_level+1));
-
-    fail_if(!eina_log_init());
-    fail_if(!eina_log_shutdown());
-    fail_if(!eina_log_init());
-     fail_if(!eina_log_init());
-     fail_if(!eina_log_shutdown());
-    fail_if(!eina_log_shutdown());
-
-   fail_if(initial_level != eina_log_shutdown());
-}
-END_TEST
+#include "Eina.h"
 
 START_TEST(eina_log_macro)
 {
-   fail_if(!eina_log_init());
+   fail_if(!eina_init());
 
    eina_log_level_set(EINA_LOG_LEVEL_DBG);
    eina_log_print_cb_set(eina_log_print_cb_file, stderr);
@@ -56,13 +40,13 @@ START_TEST(eina_log_macro)
    EINA_LOG_WARN("A warning\n");
    EINA_LOG_DBG("A debug\n");
 
-   eina_log_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
 START_TEST(eina_log_domains_macros)
 {
-   fail_if(!eina_log_init());
+   fail_if(!eina_init());
 
    int d = eina_log_domain_register("MyDomain", EINA_COLOR_GREEN);
    fail_if(d < 0);
@@ -73,13 +57,13 @@ START_TEST(eina_log_domains_macros)
    EINA_LOG_DOM_DBG(d, "A debug\n");
    EINA_LOG_DOM_INFO(d, "An info\n");
 
-   eina_log_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
 START_TEST(eina_log_domains_registry)
 {
-   fail_if(!eina_log_init());
+   fail_if(!eina_init());
 
    int i;
    int d[50];
@@ -93,13 +77,13 @@ START_TEST(eina_log_domains_registry)
    for (i = 0; i < 50; i++)
       eina_log_domain_unregister(d[i]);
 
-   eina_log_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
 START_TEST(eina_log_domains_slot_reuse)
 {
-   fail_if(!eina_log_init());
+   fail_if(!eina_init());
 
    // Create 9 domains
    int idx[9];
@@ -128,13 +112,13 @@ START_TEST(eina_log_domains_slot_reuse)
    // Check for slot reuse
    fail_if(new != removed);
 
-   eina_log_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
 START_TEST(eina_log_level_indexes)
 {
-   fail_if(!eina_log_init());
+   fail_if(!eina_init());
 
    int d = eina_log_domain_register("Levels", EINA_COLOR_GREEN);
    fail_if(d < 0);
@@ -145,7 +129,7 @@ START_TEST(eina_log_level_indexes)
    // Displayed only if user sets level 6 or higher
    EINA_LOG(d, 6, "Higher level debug\n");
 
-   eina_log_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -153,7 +137,6 @@ END_TEST
 void
 eina_test_log(TCase *tc)
 {
-   tcase_add_test(tc, eina_log_init_shutdown);
    tcase_add_test(tc, eina_log_macro);
    tcase_add_test(tc, eina_log_domains_macros);
    tcase_add_test(tc, eina_log_domains_registry);

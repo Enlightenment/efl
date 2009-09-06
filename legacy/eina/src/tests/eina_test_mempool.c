@@ -21,14 +21,14 @@
 #endif
 
 #include "eina_suite.h"
-#include "eina_mempool.h"
+#include "Eina.h"
 
 static Eina_Array *_modules;
 
 static void
 _mempool_init(void)
 {
-    eina_mempool_init();
+    eina_init();
     /* force modules to be loaded in case they are not installed */
     _modules = eina_module_list_get(NULL, PACKAGE_BUILD_DIR"/src/modules", 1, NULL, NULL);
     eina_module_list_load(_modules);
@@ -39,7 +39,7 @@ _mempool_shutdown(void)
 {
    eina_module_list_flush(_modules);
    /* TODO delete the list */
-   eina_mempool_shutdown();
+   eina_shutdown();
 }
 
 static void
@@ -76,19 +76,6 @@ _eina_mempool_test(Eina_Mempool *mp, Eina_Bool with_realloc, Eina_Bool with_gc)
 
    eina_mempool_del(mp);
 }
-
-START_TEST(eina_mempool_init_shutdown)
-{
-   Eina_Mempool *mp;
-
-   _mempool_init();
-
-   mp = eina_mempool_add("test", "test", NULL);
-   fail_if(mp != NULL);
-
-   _mempool_shutdown();
-}
-END_TEST
 
 START_TEST(eina_mempool_chained_mempool)
 {
@@ -160,7 +147,6 @@ END_TEST
 void
 eina_test_mempool(TCase *tc)
 {
-   tcase_add_test(tc, eina_mempool_init_shutdown);
    tcase_add_test(tc, eina_mempool_chained_mempool);
    tcase_add_test(tc, eina_mempool_pass_through);
    tcase_add_test(tc, eina_mempool_fixed_bitmap);

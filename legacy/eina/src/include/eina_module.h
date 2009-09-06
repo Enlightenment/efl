@@ -56,9 +56,6 @@ extern EAPI Eina_Error EINA_ERROR_WRONG_MODULE;
  */
 extern EAPI Eina_Error EINA_ERROR_MODULE_INIT_FAILED;
 
-EAPI int eina_module_init(void);
-EAPI int eina_module_shutdown(void);
-
 EAPI Eina_Module * eina_module_new(const char *file) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 EAPI Eina_Bool eina_module_free(Eina_Module *m) EINA_ARG_NONNULL(1);
 EAPI Eina_Bool eina_module_load(Eina_Module *module) EINA_ARG_NONNULL(1);

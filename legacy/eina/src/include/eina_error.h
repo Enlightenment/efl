@@ -89,8 +89,6 @@ typedef int Eina_Error;
  */
 EAPI extern Eina_Error EINA_ERROR_OUT_OF_MEMORY;
 
-EAPI int eina_error_init(void);
-EAPI int eina_error_shutdown(void);
 EAPI Eina_Error eina_error_msg_register(const char *msg) EINA_ARG_NONNULL(1);
 EAPI Eina_Error eina_error_get(void);
 EAPI void eina_error_set(Eina_Error err);

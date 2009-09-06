@@ -49,9 +49,6 @@ typedef struct _Eina_Mempool_Backend Eina_Mempool_Backend;
 
 EAPI extern Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE;
 
-EAPI int eina_mempool_init(void);
-EAPI int eina_mempool_shutdown(void);
-
 EAPI Eina_Mempool * eina_mempool_add(const char *module, const char *context, const char *options, ...) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 EAPI void eina_mempool_del(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
 

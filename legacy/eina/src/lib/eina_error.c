@@ -27,41 +27,6 @@
  * itself. Similar to libC's @c errno and strerror() facilities, this
  * is extensible and recommended for other libraries and applications.
  *
- * @section tutorial_error_basic_usage Basic Usage
- *
- * The first thing to do when using the error module is to initialize
- * it with eina_error_init() and, when the error module is not used
- * anymore, to shut down it with eina_error_shutdown(). So a basic
- * program would look like that:
- *
- * @code
- * #include <stdlib.h>
- * #include <stdio.h>
- *
- * #include <eina_error.h>
- *
- * int main(void)
- * {
- *    if (!eina_error_init())
- *    {
- *        printf ("Error during the initialization of eina_error module\n");
- *        return EXIT_FAILURE;
- *    }
- *
- *    eina_error_shutdown();
- *
- *    return EXIT_SUCCESS;
- * }
- * @endcode
- *
- * All program using any module of eina must be compiled with the
- * following command:
- *
- * @code
- * gcc -Wall -o my_exe my_source.c `pkg-config --cflags --libs eina`
- * @endcode
- *
- *
  * @section tutorial_error_registering_msg Registering messages
  *
  * The error module can provide a system that mimic the errno system
@@ -115,7 +80,7 @@
  * {
  *    void *data;
  *
- *    if (!eina_error_init())
+ *    if (!eina_init())
  *    {
  *       printf ("Error during the initialization of eina_error module\n");
  *       return EXIT_FAILURE;
@@ -155,7 +120,7 @@
  *                 eina_error_msg_get(err));
  *    }
  *
- *    eina_error_shutdown();
+ *    eina_shutdown();
  *
  *    return EXIT_SUCCESS;
  * }
@@ -179,10 +144,13 @@
 
 #include "eina_config.h"
 #include "eina_private.h"
-#include "eina_safety_checks.h"
-#include "eina_error.h"
 #include "eina_inlist.h"
 #include "eina_log.h" /* remove me when eina_error_print is removed! */
+
+
+/* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
+#include "eina_safety_checks.h"
+#include "eina_error.h"
 
 /* TODO
  * + printing errors to stdout or stderr can be implemented
@@ -201,7 +169,6 @@
  * @cond LOCAL
  */
 
-static int _eina_error_init_count = 0;
 static Eina_Inlist *_error_list = NULL;
 static int _error_list_count = 0;
 static Eina_Error _err;
@@ -224,10 +191,10 @@ static Eina_Error _err;
  *
  * @brief These functions provide error management for projects.
  *
- * The error system must be initialized with eina_error_init() and
- * shut down with eina_error_shutdown(). Error codes are registered
- * with eina_error_msg_register() and converted from identifier to
- * original message string with eina_error_msg_get().
+ * To use the error system Eina must be initialized with eina_init()
+ * and later shut down with eina_shutdown(). Error codes are
+ * registered with eina_error_msg_register() and converted from
+ * identifier to original message string with eina_error_msg_get().
  *
  * Logging functions are not in eina_error anymore, see
  * eina_log_print() instead.
@@ -247,84 +214,49 @@ EAPI Eina_Error EINA_ERROR_OUT_OF_MEMORY = 0;
  */
 
 /**
+ * @internal
  * @brief Initialize the error module.
  *
- * @return 1 or greater on success, 0 on error.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This function sets up the error module of Eina. It is called by
- * eina_init() and by all modules initialization functions. It returns
- * @c 0 on failure, otherwise it returns the number of times it is
- * called.
- *
- * The default error level value is set by default to
- * #EINA_ERROR_LEVEL_DBG if Eina is compiled with debug mode, or to
- * #EINA_ERROR_LEVEL_ERR otherwise. That value can be overwritten by
- * setting the environment variable EINA_ERROR_LEVEL. This function
- * checks the value of that environment variable in the first
- * call. Its value must be a number between 0 and 3, to match the
- * error levels #EINA_ERROR_LEVEL_ERR, #EINA_ERROR_LEVEL_WARN,
- * #EINA_ERROR_LEVEL_INFO and #EINA_ERROR_LEVEL_DBG. That value can
- * also be set later with eina_error_log_level_set().
+ * eina_init().
  *
  * This function registers the error #EINA_ERROR_OUT_OF_MEMORY.
  *
- * Once the error module is not used anymore, then
- * eina_error_shutdown() must be called to shut down the error
- * module.
- *
  * @see eina_init()
  */
-EAPI int eina_error_init(void)
+Eina_Bool
+eina_error_init(void)
 {
-   _eina_error_init_count++;
-   if (_eina_error_init_count != 1)
-     return _eina_error_init_count;
-
    /* TODO register the eina's basic errors */
    EINA_ERROR_OUT_OF_MEMORY = eina_error_msg_register("Out of memory");
-
-   if (!eina_safety_checks_init())
-     {
-	fprintf(stderr, "Could not initialize eina safety checks.\n");
-	_eina_error_init_count = 0;
-	return 0;
-     }
-   return 1;
+   return EINA_TRUE;
 }
 
 /**
+ * @internal
  * @brief Shut down the error module.
  *
- * @return 0 when the error module is completely shut down, 1 or
- * greater otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This function shuts down the error module set up by
- * eina_error_init(). It is called by eina_shutdown() and by all
- * modules shutdown functions. It returns 0 when it is called the
- * same number of times than eina_error_init(). In that case it clears
- * the error list.
+ * eina_error_init(). It is called by eina_shutdown().
  *
  * @see eina_shutdown()
  */
-EAPI int eina_error_shutdown(void)
+Eina_Bool
+eina_error_shutdown(void)
 {
-	Eina_Inlist *tmp;
-
-	_eina_error_init_count--;
-	if (!_eina_error_init_count)
-	{
-		/* remove the error strings */
-		while (_error_list)
-		{
-			tmp = _error_list;
-
-			_error_list = _error_list->next;
-			free(tmp);
-		}
-		_error_list_count = 0;
-		eina_safety_checks_shutdown();
-	}
-	return _eina_error_init_count;
+   /* remove the error strings */
+   while (_error_list)
+     {
+	Eina_Inlist *tmp = _error_list;
+	_error_list = _error_list->next;
+	free(tmp);
+     }
+   _error_list_count = 0;
+   return EINA_TRUE;
 }
 
 /**

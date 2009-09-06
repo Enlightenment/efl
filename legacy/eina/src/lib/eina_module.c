@@ -54,11 +54,13 @@ void *alloca (size_t);
 
 #include "eina_config.h"
 #include "eina_private.h"
-#include "eina_safety_checks.h"
 #include "eina_error.h"
-#include "eina_module.h"
 #include "eina_file.h"
 #include "eina_log.h"
+
+/* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
+#include "eina_safety_checks.h"
+#include "eina_module.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -147,7 +149,6 @@ static void _dir_list_cb(const char *name, const char *path, void *data)
 	  eina_module_free(m);
      }
 }
-static int _eina_module_count = 0;
 
 /**
  * @endcond
@@ -182,120 +183,58 @@ EAPI Eina_Error EINA_ERROR_MODULE_INIT_FAILED = 0;
  */
 
 /**
- * @brief Initialize the eina module internal structure.
+ * @internal
+ * @brief Initialize the module loader module.
  *
- * @return 1 or greater on success, 0 on error.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function sets up the module loader module of Eina. It is
+ * called by eina_init().
  *
  * This function sets up the module module of Eina. It also registers
  * the errors #EINA_ERROR_WRONG_MODULE and
- * #EINA_ERROR_MODULE_INIT_FAILED. It is also called by
- * eina_init(). It returns 0 on failure, otherwise it returns the
- * number of times it has already been called. See eina_error_init()
- * for the documentation of the initialisation of the dependency
- * modules.
+ * #EINA_ERROR_MODULE_INIT_FAILED.
  *
- * Once the module module is not used anymore, then
- * eina_module_shutdown() must be called to shut down the module
- * module.
- *
- * @see eina_error_init()
  * @see eina_init()
  */
-EAPI int
+Eina_Bool
 eina_module_init(void)
 {
-   _eina_module_count++;
-
-   if (_eina_module_count != 1)
-     goto end_init;
-
-   if (!eina_log_init())
-     {
-	fprintf(stderr, "Could not initialize eina logging module.\n");
-	return 0;
-     }
-
-   if (!eina_safety_checks_init())
-     {
-	EINA_LOG_ERR("Could not initialize eina safety checks.");
-	eina_log_shutdown();
-	return 0;
-     }
-
    EINA_MODULE_LOG_DOM = eina_log_domain_register
      ("eina_module", EINA_LOG_COLOR_DEFAULT);
    if (EINA_MODULE_LOG_DOM < 0)
      {
 	EINA_LOG_ERR("Could not register log domain: eina_module");
-	eina_safety_checks_shutdown();
-	eina_log_shutdown();
-	return 0;
-     }
-
-   if (!eina_error_init())
-     {
-	ERR("Could not initialize eina error module.");
-	goto error_init_error;
+	return EINA_FALSE;
      }
 
    EINA_ERROR_WRONG_MODULE = eina_error_msg_register("Wrong file format or no file module found");
    EINA_ERROR_MODULE_INIT_FAILED = eina_error_msg_register("Module initialisation function failed");
 
-   if (!eina_array_init())
-     {
-	ERR("Could not initialize eina array module.");
-	goto array_init_error;
-     }
-
- end_init:
-   return _eina_module_count;
-
- array_init_error:
-   eina_error_shutdown();
- error_init_error:
-   eina_safety_checks_shutdown();
-   eina_log_domain_unregister(EINA_MODULE_LOG_DOM);
-   EINA_MODULE_LOG_DOM = -1;
-   eina_log_shutdown();
-   return 0;
+   return EINA_TRUE;
 }
 
 /**
- * @brief Shut down the eina module internal structures
+ * @internal
+ * @brief Shut down the module loader module.
  *
- * @return 0 when the module module is completely shut down, 1 or
- * greater otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This function shuts down the module module set up by
- * eina_module_init(). It is called by eina_shutdown(). It
- * returns 0 when it is called the same number of times than
- * eina_module_init().
+ * This function shuts down the module loader module set up by
+ * eina_module_init(). It is called by eina_shutdown().
  *
- * @see eina_error_shutdown()
  * @see eina_shutdown()
  */
-EAPI int
+Eina_Bool
 eina_module_shutdown(void)
 {
-   _eina_module_count--;
-   if (_eina_module_count != 0)
-     goto end_shutdown;
-
-   eina_array_shutdown();
-   eina_error_shutdown();
-
    /* TODO should we store every module when "new" is called and
     * delete the list of modules here
     */
 
-   eina_safety_checks_shutdown();
-
    eina_log_domain_unregister(EINA_MODULE_LOG_DOM);
    EINA_MODULE_LOG_DOM = -1;
-   eina_log_shutdown();
-
- end_shutdown:
-   return _eina_module_count;
+   return EINA_TRUE;
 }
 
 /**

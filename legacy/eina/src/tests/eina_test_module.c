@@ -23,24 +23,7 @@
 #include <stdio.h>
 
 #include "eina_suite.h"
-#include "eina_module.h"
-
-START_TEST(eina_module_init_shutdown)
-{
-   eina_module_init();
-   eina_module_shutdown();
-   eina_module_init();
-    eina_module_init();
-     eina_module_init();
-     eina_module_shutdown();
-     eina_module_init();
-      eina_module_init();
-      eina_module_shutdown();
-     eina_module_shutdown();
-    eina_module_shutdown();
-   eina_module_shutdown();
-}
-END_TEST
+#include "Eina.h"
 
 static Eina_Bool list_cb(Eina_Module *m, void *data)
 {
@@ -65,20 +48,19 @@ START_TEST(eina_module_load_unload)
 {
    Eina_Array *_modules;
 
-   eina_module_init();
+   eina_init();
    _modules = eina_module_list_get(NULL, PACKAGE_BUILD_DIR"/src/tests/", 1, &list_cb, NULL);
    fail_if(!_modules);
    eina_module_list_load(_modules);
    eina_module_list_unload(_modules);
    eina_module_list_flush(_modules);
    /* TODO delete the list */
-   eina_module_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
 void
 eina_test_module(TCase *tc)
 {
-   tcase_add_test(tc, eina_module_init_shutdown);
    tcase_add_test(tc, eina_module_load_unload);
 }

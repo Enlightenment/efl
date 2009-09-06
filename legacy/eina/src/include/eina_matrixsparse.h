@@ -67,10 +67,6 @@ typedef struct _Eina_Matrixsparse_Item_Cell   Eina_Matrixsparse_Item_Cell;
 typedef struct _Eina_Matrixsparse_Item_Row    Eina_Matrixsparse_Item_Row;
 
 
-/* init */
-EAPI int                     eina_matrixsparse_init(void);
-EAPI int                     eina_matrixsparse_shutdown(void);
-
 /* constructors and destructors */
 EAPI Eina_Matrixsparse      *eina_matrixsparse_new(unsigned long rows, unsigned long cols, void (*free_func)(void *user_data, void *cell_data), const void *user_data);
 EAPI void                    eina_matrixsparse_free(Eina_Matrixsparse *m);

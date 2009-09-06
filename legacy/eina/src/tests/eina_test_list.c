@@ -22,8 +22,8 @@
 
 #include <stdio.h>
 
-#include "eina_list.h"
 #include "eina_suite.h"
+#include "Eina.h"
 
 static Eina_Bool eina_list_sorted_check(const Eina_List *list)
 {
@@ -65,7 +65,7 @@ START_TEST(eina_test_simple)
    int result[] = { 81, 9, 9, 7, 1 };
    int i;
 
-   eina_list_init();
+   eina_init();
 
    list = eina_list_append(list, &data[0]);
    fail_if(list == NULL);
@@ -205,7 +205,7 @@ START_TEST(eina_test_simple)
    list = eina_list_free(list);
    fail_if(list != NULL);
 
-   eina_list_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -219,7 +219,7 @@ START_TEST(eina_test_merge)
    int data[] = { 6, 9, 42, 1, 7, 9, 81, 1664, 1337, 3, 21, 10, 0, 5, 2008 };
    int i;
 
-   eina_list_init();
+   eina_init();
 
    l1 = eina_list_append(NULL, &data[0]);
    l1 = eina_list_append(l1, &data[1]);
@@ -290,7 +290,7 @@ START_TEST(eina_test_merge)
 
    fail_if(!eina_list_sorted_check(l1));
 
-   eina_list_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -302,7 +302,7 @@ START_TEST(eina_test_sorted_insert)
    Eina_List *l1, *l2, *itr;
    void *d;
 
-   eina_list_init();
+   eina_init();
 
    count = sizeof(data)/sizeof(data[0]);
 
@@ -339,7 +339,7 @@ START_TEST(eina_test_sorted_insert)
    fail_if(!eina_list_sorted_check(l1));
    eina_list_free(l1);
 
-   eina_list_shutdown();
+   eina_shutdown();
 }
 END_TEST
 

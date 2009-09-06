@@ -26,22 +26,7 @@
 #include <time.h>
 
 #include "eina_suite.h"
-#include "eina_stringshare.h"
-#include "eina_array.h"
-#include "eina_convert.h"
-
-START_TEST(eina_stringshare_init_shutdown)
-{
-   eina_stringshare_init();
-    eina_stringshare_init();
-    eina_stringshare_shutdown();
-    eina_stringshare_init();
-     eina_stringshare_init();
-     eina_stringshare_shutdown();
-    eina_stringshare_shutdown();
-   eina_stringshare_shutdown();
-}
-END_TEST
+#include "Eina.h"
 
 #define TEST0 "test/0"
 #define TEST1 "test/1"
@@ -51,7 +36,7 @@ START_TEST(eina_stringshare_simple)
    const char *t0;
    const char *t1;
 
-   eina_stringshare_init();
+   eina_init();
 
    t0 = eina_stringshare_add(TEST0);
    t1 = eina_stringshare_add(TEST1);
@@ -64,7 +49,7 @@ START_TEST(eina_stringshare_simple)
    eina_stringshare_del(t0);
    eina_stringshare_del(t1);
 
-   eina_stringshare_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -73,7 +58,7 @@ START_TEST(eina_stringshare_small)
    char buf[4];
    int i;
 
-   eina_stringshare_init();
+   eina_init();
 
    for (i = 0; i < 3; i++)
      {
@@ -99,7 +84,7 @@ START_TEST(eina_stringshare_small)
 	eina_stringshare_del(t1);
      }
 
-   eina_stringshare_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -109,7 +94,7 @@ START_TEST(eina_stringshare_test_share)
    const char *t0;
    const char *t1;
 
-   eina_stringshare_init();
+   eina_init();
 
    t0 = eina_stringshare_add(TEST0);
    t1 = eina_stringshare_add(TEST0);
@@ -123,7 +108,7 @@ START_TEST(eina_stringshare_test_share)
    eina_stringshare_del(t0);
    eina_stringshare_del(t1);
 
-   eina_stringshare_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -132,7 +117,7 @@ START_TEST(eina_stringshare_putstuff)
    const char *tmp;
    int i;
 
-   eina_stringshare_init();
+   eina_init();
 
    for (i = 10000; i > 0; --i)
      {
@@ -143,7 +128,7 @@ START_TEST(eina_stringshare_putstuff)
 	fail_if(tmp != eina_stringshare_add(build));
      }
 
-   eina_stringshare_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -155,7 +140,7 @@ START_TEST(eina_stringshare_collision)
 
    srand(time(NULL));
 
-   eina_stringshare_init();
+   eina_init();
 
    ea = eina_array_new(256);
    fail_if(!ea);
@@ -180,7 +165,7 @@ START_TEST(eina_stringshare_collision)
    for (i = 0; i < 1000; ++i)
      eina_stringshare_del(eina_array_pop(ea));
 
-   eina_stringshare_shutdown();
+   eina_shutdown();
 
    eina_array_free(ea);
 }
@@ -189,7 +174,6 @@ END_TEST
 void
 eina_test_stringshare(TCase *tc)
 {
-   tcase_add_test(tc, eina_stringshare_init_shutdown);
    tcase_add_test(tc, eina_stringshare_simple);
    tcase_add_test(tc, eina_stringshare_small);
    tcase_add_test(tc, eina_stringshare_test_share);

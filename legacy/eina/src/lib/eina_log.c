@@ -30,39 +30,7 @@
  *
  * @section tutorial_log_basic_usage Basic Usage
  *
- * The first thing to do when using the log module is to initialize
- * it with eina_log_init() and when the log module is not used
- * anymore, shut it down with eina_log_shutdown(). Here's a basic example:
- *
- * @code
- * #include <stdlib.h>
- * #include <stdio.h>
- *
- * #include <eina_log.h>
- *
- * int main(void)
- * {
- *    if (!eina_log_init())
- *    {
- *        printf ("Error initializing Eina Log module\n");
- *        return EXIT_FAILURE;
- *    }
- *
- *    eina_log_shutdown();
- *
- *    return EXIT_SUCCESS;
- * }
- * @endcode
- *
- * Every program using any module of eina must be compiled with the
- * following command:
- *
- * @code
- * gcc -Wall -o my_exe my_source.c `pkg-config --cflags --libs eina`
- * @endcode
- *
- * After the module has been initialized, log messages can be displayed using
- * the following macros:
+ * Log messages can be displayed using the following macros:
  *
  * @li EINA_LOG_ERR(),
  * @li EINA_LOG_INFO(),
@@ -75,35 +43,35 @@
  * #include <stdlib.h>
  * #include <stdio.h>
  *
- * #include <eina_log.h>
+ * #include <Eina.h>
  *
  * void test(int i)
  * {
- *    EINA_LOG_DBG("Entering test\n");
+ *    EINA_LOG_DBG("Entering test");
  *
  *    if (i < 0)
  *    {
- *        EINA_LOG_ERR("Argument is negative\n");
+ *        EINA_LOG_ERR("Argument is negative");
  *        return;
  *    }
  *
- *    EINA_LOG_INFO("argument non negative\n");
+ *    EINA_LOG_INFO("argument non negative");
  *
- *    EINA_LOG_DBG("Exiting test\n");
+ *    EINA_LOG_DBG("Exiting test");
  * }
  *
  * int main(void)
  * {
- *    if (!eina_log_init())
+ *    if (!eina_init())
  *    {
- *        printf ("log during the initialization of Eina_Log module\n");
+ *        printf("log during the initialization of Eina_Log module\n");
  *        return EXIT_FAILURE;
  *    }
  *
  *    test(-1);
  *    test(0);
  *
- *    eina_log_shutdown();
+ *    eina_shutdown();
  *
  *    return EXIT_SUCCESS;
  * }
@@ -173,7 +141,6 @@
  * The global level (EINA_LOG_LEVEL) can also be set through code, using
  * eina_log_level_set() function.
  *
- * // TODO rewrite this section
  * @section tutorial_log_advanced_display Advanced usage of print callbacks
  *
  * The log module allows the user to change the way
@@ -206,7 +173,8 @@
  *    int to_stderr;
  * };
  *
- * void print_cb(Eina_Log_Level level,
+ * void print_cb(const Eina_Log_Domain *domain,
+ *               Eina_Log_Level level,
  *               const char *file,
  *               const char *fnc,
  *               int line,
@@ -230,8 +198,10 @@
  *       str = "stdout";
  *    }
  *
- *    fprintf(output, "%s:%s (%d) %s: ", file, fnc, line, str);
+ *    fprintf(output, "%s:%s:%s (%d) %s: ",
+ *            domain->domain_str, file, fnc, line, str);
  *    vfprintf(output, fmt, args);
+ *    putc('\n', output);
  * }
  *
  * void test(Data *data, int i)
@@ -241,40 +211,59 @@
  *    else
  *       data->to_stderr = 1;
  *
- *    log("log message...\n");
+ *    log("log message...");
  * }
  *
  * int main(void)
  * {
- *    Data *data;
+ *    Data data;
  *
- *    if (!eina_log_init())
+ *    if (!eina_init())
  *    {
- *       printf ("log during the initialization of Eina_Log module\n");
+ *       printf("log during the initialization of Eina_Log module\n");
  *       return EXIT_FAILURE;
  *    }
  *
- *    data = (Data *)malloc(sizeof(Data));
- *    if (!data)
- *    {
- *       printf ("log during memory allocation\n");
- *       eina_log_shutdown();
- *       return EXIT_FAILURE;
- *    }
+ *    eina_log_print_cb_set(print_cb, &data);
  *
- *    eina_log_print_cb_set(print_cb, data);
+ *    test(&data, -1);
+ *    test(&data, 0);
  *
- *    test(data, -1);
- *    test(data, 0);
- *
- *    eina_log_shutdown();
+ *    eina_shutdown();
  *
  *    return EXIT_SUCCESS;
  * }
  * @endcode
  *
- * Of course, instead of printf(), eina_log_print() can be used to
- * have beautiful log messages.
+ * @addtogroup Eina_Log_Group Log
+ *
+ * @{
+ *
+ * The default log level value is set by default to
+ * #EINA_LOG_LEVEL_DBG if Eina is compiled with debug mode, or to
+ * #EINA_LOG_LEVEL_ERR otherwise. That value can be overwritten by
+ * setting the environment variable EINA_LOG_LEVEL. This function
+ * checks the value of that environment variable in the first
+ * call. Its value must be a number between 0 and 4, to match the log
+ * levels #EINA_LOG_LEVEL_CRITICAL, #EINA_LOG_LEVEL_ERR,
+ * #EINA_LOG_LEVEL_WARN, #EINA_LOG_LEVEL_INFO and
+ * #EINA_LOG_LEVEL_DBG. That value can also be set later with
+ * eina_log_log_level_set(). When logging domains are created, they
+ * will get either this value or specific value given with
+ * EINA_LOG_LEVELS that takes the format
+ * 'domain_name:level,another_name:other_level'.
+ *
+ * Format and verbosity of messages depend on the logging method, see
+ * eina_log_print_cb_set(). The default logging method is
+ * eina_log_print_cb_stderr(), which will output fancy colored
+ * messages to standard error stream. See its documentation on how to
+ * disable coloring, function or file/line print.
+ *
+ * This module will optionally abort program execution if message
+ * level is below or equal to @c EINA_LOG_LEVEL_CRITICAL and
+ * @c EINA_LOG_ABORT=1.
+ *
+ * @}
  */
 
 #ifdef HAVE_CONFIG_H
@@ -291,9 +280,11 @@
 
 #include "eina_config.h"
 #include "eina_private.h"
+#include "eina_inlist.h"
+
+/* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
 #include "eina_log.h"
-#include "eina_inlist.h"
 
 #include <assert.h>
 
@@ -301,7 +292,6 @@
  * + printing logs to stdout or stderr can be implemented
  * using a queue, useful for multiple threads printing
  * + add a wrapper for assert?
- * + improve doc
  */
 
 /*============================================================================*
@@ -335,9 +325,6 @@ struct _Eina_Log_Domain_Level_Pending
  * updates the domain levels on the first log and clears itself.
  */
 static Eina_Inlist *_pending_list = NULL;
-
-// Initialization counter
-static int _eina_log_init_count = 0;
 
 // Disable color flag (can be changed through the env var
 // EINA_LOG_ENV_COLOR_DISABLE).
@@ -810,11 +797,11 @@ eina_log_domain_parse_pendings(void)
  *
  * @brief These functions provide log management for projects.
  *
- * The log system must be initialized with eina_log_init() and
- * shut down with eina_log_shutdown(). The most generic way to print
+ * To use the log system Eina must be initialized with eina_init() and
+ * later shut down with eina_shutdown(). The most generic way to print
  * logs is to use eina_log_print() but the helper macros
- * EINA_LOG_ERR(), EINA_LOG_INFO(), EINA_LOG_WARN() and
- * EINA_LOG_DBG() should be used instead.
+ * EINA_LOG_ERR(), EINA_LOG_INFO(), EINA_LOG_WARN() and EINA_LOG_DBG()
+ * should be used instead.
  *
  * Here is a straightforward example:
  *
@@ -826,20 +813,20 @@ eina_log_domain_parse_pendings(void)
  *
  * void test_warn(void)
  * {
- *    EINA_LOG_WARN("Here is a warning message\n");
+ *    EINA_LOG_WARN("Here is a warning message");
  * }
  *
  * int main(void)
  * {
- *    if (!eina_log_init())
+ *    if (!eina_init())
  *    {
- *        printf ("log during the initialization of Eina_Log module\n");
+ *        printf("log during the initialization of Eina_Log module\n");
  *        return EXIT_FAILURE;
  *    }
  *
  *    test_warn();
  *
- *    eina_log_shutdown();
+ *    eina_shutdown();
  *
  *    return EXIT_SUCCESS;
  * }
@@ -859,7 +846,7 @@ eina_log_domain_parse_pendings(void)
  * with:
  *
  * @code
- * EINA_log_LEVEL=2 ./test_eina_log
+ * EINA_LOG_LEVEL=2 ./test_eina_log
  * @endcode
  *
  * You should see a message displayed in the terminal.
@@ -881,38 +868,13 @@ EAPI int EINA_LOG_DOMAIN_GLOBAL = 0;
  */
 
 /**
+ * @internal
  * @brief Initialize the log module.
  *
- * @return 1 or greater on success, 0 on log.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This function sets up the log module of Eina. It is called by
- * eina_init() and by all modules initialization functions. It returns
- * @c 0 on failure, otherwise it returns the number of times it is
- * called.
- *
- * The default log level value is set by default to
- * #EINA_LOG_LEVEL_DBG if Eina is compiled with debug mode, or to
- * #EINA_LOG_LEVEL_ERR otherwise. That value can be overwritten by
- * setting the environment variable EINA_log_LEVEL. This function
- * checks the value of that environment variable in the first
- * call. Its value must be a number between 0 and 3, to match the
- * log levels #EINA_LOG_LEVEL_ERR, #EINA_LOG_LEVEL_WARN,
- * #EINA_LOG_LEVEL_INFO and #EINA_LOG_LEVEL_DBG. That value can
- * also be set later with eina_log_log_level_set().
- *
- * Once the log module is not used anymore, then
- * eina_log_shutdown() must be called to shut down the log
- * module.
- *
- * Format and verbosity of messages depend on the logging method, see
- * eina_log_print_cb_set(). The default logging method is
- * eina_log_print_cb_stderr(), which will output fancy colored
- * messages to standard error stream. See its documentation on how to
- * disable coloring, function or file/line print.
- *
- * This module will optionally abort program execution if message
- * level is below or equal to @c EINA_LOG_LEVEL_CRITICAL and
- * @c EINA_LOG_ABORT=1.
+ * eina_init().
  *
  * @see eina_init()
  *
@@ -920,14 +882,10 @@ EAPI int EINA_LOG_DOMAIN_GLOBAL = 0;
  *          place where this function was called the first time is
  *          considered the main thread.
  */
-EAPI int
+Eina_Bool
 eina_log_init(void)
 {
    const char *level, *tmp;
-
-   _eina_log_init_count++;
-   if (_eina_log_init_count != 1)
-     return _eina_log_init_count;
 
    assert((sizeof(_names)/sizeof(_names[0])) == EINA_LOG_LEVELS);
    assert((sizeof(_colors)/sizeof(_colors[0])) == EINA_LOG_LEVELS + 1);
@@ -955,8 +913,6 @@ eina_log_init(void)
    // Global log level
    if ((level = getenv(EINA_LOG_ENV_LEVEL)))
       _log_level = atoi(level);
-   else
-      _log_level = EINA_LOG_LEVEL_ERR;
 
    // Register UNKNOWN domain, the default logger
    EINA_LOG_DOMAIN_GLOBAL = eina_log_domain_register("", NULL);
@@ -964,51 +920,36 @@ eina_log_init(void)
    if (EINA_LOG_DOMAIN_GLOBAL < 0)
      {
 	fprintf(stderr, "Failed to create global logging domain.\n");
-	_eina_log_init_count = 0;
-	return 0;
+	return EINA_FALSE;
      }
 
    // Parse pending domains passed through EINA_LOG_LEVELS
    eina_log_domain_parse_pendings();
 
-   if (!eina_safety_checks_init())
-     {
-	fprintf(stderr, "Could not initialize eina safety checks.\n");
-	eina_log_shutdown(); /* zero _eina_log_init_count and free stuff */
-	return 0;
-     }
-
-   return 1;
+   return EINA_TRUE;
 }
 
 /**
+ * @internal
  * @brief Shut down the log module.
  *
- * @return 0 when the log module is completely shut down, 1 or
- * greater otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This function shuts down the log module set up by
- * eina_log_init(). It is called by eina_shutdown() and by all
- * modules shutdown functions. It returns 0 when it is called the
- * same number of times than eina_log_init(). In that case it clears
- * the log list.
+ * eina_log_init(). It is called by eina_shutdown().
  *
  * @see eina_shutdown()
  *
  * @warning Not-MT: just call this function from main thread! The
- *          place where eina_log_init() was called the first time is
- *          considered the main thread.
+ *          place where eina_log_init() (eina_init()) was called the
+ *          first time is considered the main thread.
  */
-EAPI int
+Eina_Bool
 eina_log_shutdown(void)
 {
    Eina_Inlist *tmp;
 
    CHECK_MAIN(0);
-
-   if (_eina_log_init_count != 1) return --_eina_log_init_count;
-
-   eina_safety_checks_shutdown();
 
    while (_log_domains_count--)
      {
@@ -1033,14 +974,14 @@ eina_log_shutdown(void)
    _threads_enabled = 0;
 #endif
 
-   return --_eina_log_init_count;
+   return EINA_TRUE;
 }
 
 /**
  * Enable logging module to handle threads.
  *
  * There is no disable option on purpose, if it is enabled, there is
- * no way back until you call the last eina_log_shutdown().
+ * no way back until you call the last eina_shutdown().
  *
  * There is no function to retrieve if threads are enabled as one is
  * not supposed to know this from outside.
@@ -1051,7 +992,7 @@ eina_log_shutdown(void)
  * printed.
  *
  * The main thread is considered the thread where the first
- * eina_log_init() was called.
+ * eina_init() was called.
  */
 EAPI void
 eina_log_threads_enable(void)

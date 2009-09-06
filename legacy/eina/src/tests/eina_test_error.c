@@ -25,20 +25,7 @@
 #include <string.h>
 
 #include "eina_suite.h"
-#include "eina_error.h"
-
-START_TEST(eina_error_init_shutdown)
-{
-   eina_error_init();
-    eina_error_init();
-    eina_error_shutdown();
-    eina_error_init();
-     eina_error_init();
-     eina_error_shutdown();
-    eina_error_shutdown();
-   eina_error_shutdown();
-}
-END_TEST
+#include "Eina.h"
 
 #define TEST_TEXT "The big test\n"
 
@@ -48,7 +35,7 @@ START_TEST(eina_error_errno)
 
    setenv("EINA_ERROR_LEVEL", "1", 0);
 
-   eina_error_init();
+   eina_init();
 
    test = eina_error_msg_register(TEST_TEXT);
    fail_if(!eina_error_msg_get(test));
@@ -57,13 +44,12 @@ START_TEST(eina_error_errno)
    eina_error_set(test);
    fail_if(eina_error_get() != test);
 
-   eina_error_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
 void
 eina_test_error(TCase *tc)
 {
-   tcase_add_test(tc, eina_error_init_shutdown);
    tcase_add_test(tc, eina_error_errno);
 }

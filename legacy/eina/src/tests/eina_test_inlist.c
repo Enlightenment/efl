@@ -23,7 +23,7 @@
 #include <stdlib.h>
 
 #include "eina_suite.h"
-#include "eina_inlist.h"
+#include "Eina.h"
 
 typedef struct _Eina_Test_Inlist Eina_Test_Inlist;
 struct _Eina_Test_Inlist

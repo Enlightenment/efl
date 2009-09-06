@@ -74,10 +74,12 @@
 
 #include "eina_config.h"
 #include "eina_private.h"
-#include "eina_safety_checks.h"
 #include "eina_error.h"
-#include "eina_list.h"
 #include "eina_mempool.h"
+
+/* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
+#include "eina_safety_checks.h"
+#include "eina_list.h"
 
 
 /*============================================================================*
@@ -151,7 +153,6 @@ struct _Eina_Accessor_List
    EINA_MAGIC
 };
 
-static int _eina_list_init_count = 0;
 static Eina_Mempool *_eina_list_mp = NULL;
 static Eina_Mempool *_eina_list_accounting_mp = NULL;
 static int _eina_list_log_dom = -1;
@@ -435,160 +436,92 @@ eina_list_sort_merge(Eina_List *a, Eina_List *b, Eina_Compare_Cb func)
  */
 
 /**
+ * @internal
  * @brief Initialize the list module.
  *
- * @return 1 or greater on success, 0 on error.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This function sets up the error, magic and mempool modules of
- * Eina. It is also called by eina_init(). It returns 0 on failure,
- * otherwise it returns the number of times it has already been
- * called. If Eina has been configured with the default memory pool,
- * then the memory pool used in an Eina list will be
- * "pass_through". Otherwise, the environment variable EINA_MEMPOOL is
- * read and its value is chosen as memory pool ; if EINA_MEMPOOL is
- * not defined, then the "chained_mempool" memory pool is chosen. If
- * the memory pool is not found, then eina_list_init() return @c 0.
- * See eina_error_init(), eina_magic_string_init() and
- * eina_mempool_init() for the documentation of the initialisation of
- * the dependency modules.
+ * This function sets up the list module of Eina. It is called by
+ * eina_init().
  *
- * When no more Eina lists are used, call eina_list_shutdown() to shut
- * down the list module.
+ * This function creates mempool to speed up list node and accounting
+ * management, using EINA_MEMPOOL environment variable if it is set to
+ * choose the memory pool type to use.
  *
- * @see eina_error_init()
- * @see eina_magic_string_init()
- * @see eina_mempool_init()
+ * @see eina_init()
  */
-EAPI int
+Eina_Bool
 eina_list_init(void)
 {
-   const char *choice;
+   const char *choice, *tmp;
 
-   if (!_eina_list_init_count)
+   _eina_list_log_dom = eina_log_domain_register("eina_list", EINA_LOG_COLOR_DEFAULT);
+   if (_eina_list_log_dom < 0)
      {
-	if (!eina_log_init())
-	  {
-	     fprintf(stderr, "Could not initialize eina logging system.\n");
-	     return 0;
-	  }
-
-	_eina_list_log_dom = eina_log_domain_register("eina_list", EINA_LOG_COLOR_DEFAULT);
-	if (_eina_list_log_dom < 0)
-	  {
-	     EINA_LOG_ERR("Could not register log domain: eina_list");
-	     eina_log_shutdown();
-	     return 0;
-	  }
-
-	if (!eina_error_init())
-	  {
-	     ERR("Could not initialize eina error module.");
-	     goto on_error_fail;
-	  }
-
-	if (!eina_safety_checks_init())
-	  {
-	     ERR("Could not initialize eina safety checks.");
-	     goto on_safety_checks_fail;
-	  }
-
-	if (!eina_magic_string_init())
-	  {
-	     ERR("ERROR: Could not initialize eina magic string module.");
-	     goto on_magic_string_fail;
-	  }
-
-	if (!eina_mempool_init())
-	  {
-	     ERR("ERROR: Could not initialize eina mempool module.");
-	     goto on_mempool_fail;
-	  }
-
-#ifdef EINA_DEFAULT_MEMPOOL
-       choice = "pass_through";
-#else
-       if (!(choice = getenv("EINA_MEMPOOL")))
-	 choice = "chained_mempool";
-#endif
-
-       _eina_list_mp = eina_mempool_add(choice, "list", NULL,
-					sizeof (Eina_List), 320);
-       if (!_eina_list_mp)
-         {
-           ERR("ERROR: Mempool for list cannot be allocated in list init.");
-	   goto on_init_fail;
-         }
-       _eina_list_accounting_mp = eina_mempool_add(choice, "list_accounting", NULL,
-						   sizeof (Eina_List_Accounting), 80);
-       if (!_eina_list_accounting_mp)
-         {
-           ERR("ERROR: Mempool for list accounting cannot be allocated in list init.");
-	   eina_mempool_del(_eina_list_mp);
-	   goto on_init_fail;
-         }
-
-       eina_magic_string_set(EINA_MAGIC_ITERATOR,
-			     "Eina Iterator");
-       eina_magic_string_set(EINA_MAGIC_ACCESSOR,
-			     "Eina Accessor");
-       eina_magic_string_set(EINA_MAGIC_LIST,
-			     "Eina List");
-       eina_magic_string_set(EINA_MAGIC_LIST_ITERATOR,
-			     "Eina List Iterator");
-       eina_magic_string_set(EINA_MAGIC_LIST_ACCESSOR,
-			     "Eina List Accessor");
-       eina_magic_string_set(EINA_MAGIC_LIST_ACCOUNTING,
-			     "Eina List Accounting");
+	EINA_LOG_ERR("Could not register log domain: eina_list");
+	return EINA_FALSE;
      }
 
-   return ++_eina_list_init_count;
+#ifdef EINA_DEFAULT_MEMPOOL
+   choice = "pass_through";
+#else
+   choice = "chained_mempool";
+#endif
+   tmp = getenv("EINA_MEMPOOL");
+   if (tmp && tmp[0])
+     choice = tmp;
+
+   _eina_list_mp = eina_mempool_add
+     (choice, "list", NULL, sizeof(Eina_List), 320);
+   if (!_eina_list_mp)
+     {
+	ERR("ERROR: Mempool for list cannot be allocated in list init.");
+	goto on_init_fail;
+     }
+   _eina_list_accounting_mp = eina_mempool_add
+     (choice, "list_accounting", NULL, sizeof(Eina_List_Accounting), 80);
+   if (!_eina_list_accounting_mp)
+     {
+	ERR("ERROR: Mempool for list accounting cannot be allocated in list init.");
+	eina_mempool_del(_eina_list_mp);
+	goto on_init_fail;
+     }
+
+   eina_magic_string_set(EINA_MAGIC_ITERATOR, "Eina Iterator");
+   eina_magic_string_set(EINA_MAGIC_ACCESSOR, "Eina Accessor");
+   eina_magic_string_set(EINA_MAGIC_LIST, "Eina List");
+   eina_magic_string_set(EINA_MAGIC_LIST_ITERATOR, "Eina List Iterator");
+   eina_magic_string_set(EINA_MAGIC_LIST_ACCESSOR, "Eina List Accessor");
+   eina_magic_string_set(EINA_MAGIC_LIST_ACCOUNTING, "Eina List Accounting");
+
+   return EINA_TRUE;
 
  on_init_fail:
-   eina_mempool_shutdown();
- on_mempool_fail:
-   eina_magic_string_shutdown();
- on_magic_string_fail:
-   eina_safety_checks_shutdown();
- on_safety_checks_fail:
-   eina_error_shutdown();
- on_error_fail:
    eina_log_domain_unregister(_eina_list_log_dom);
    _eina_list_log_dom = -1;
-   eina_log_shutdown();
-   return 0;
+   return EINA_FALSE;
 }
 
 /**
+ * @internal
  * @brief Shut down the list module.
  *
- * @return 0 when the list module is completely shut down, 1 or
- * greater otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This function shuts down the mempool, magic and error modules set
- * up by eina_list_init(). It is also called by eina_shutdown(). It
- * returns 0 when it is called the same number of times than
- * eina_list_init().
+ * This function shuts down the list module set up by
+ * eina_list_init(). It is called by eina_shutdown().
+ *
+ * @see eina_shutdown()
  */
-EAPI int
+Eina_Bool
 eina_list_shutdown(void)
 {
-   --_eina_list_init_count;
+   eina_mempool_del(_eina_list_accounting_mp);
+   eina_mempool_del(_eina_list_mp);
 
-   if (!_eina_list_init_count)
-     {
-	eina_mempool_del(_eina_list_accounting_mp);
-	eina_mempool_del(_eina_list_mp);
-
-	eina_mempool_shutdown();
-	eina_magic_string_shutdown();
-	eina_safety_checks_shutdown();
-	eina_error_shutdown();
-	eina_log_domain_unregister(_eina_list_log_dom);
-	_eina_list_log_dom = -1;
-	eina_log_shutdown();
-     }
-
-   return _eina_list_init_count;
+   eina_log_domain_unregister(_eina_list_log_dom);
+   _eina_list_log_dom = -1;
+   return EINA_TRUE;
 }
 
 /**

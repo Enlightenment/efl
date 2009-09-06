@@ -22,8 +22,8 @@
 
 #include <stdio.h>
 
-#include "eina_rectangle.h"
 #include "eina_suite.h"
+#include "Eina.h"
 
 START_TEST(eina_rectangle_pool)
 {
@@ -34,7 +34,7 @@ START_TEST(eina_rectangle_pool)
    int w;
    int h;
 
-   fail_if(!eina_rectangle_init());
+   fail_if(!eina_init());
 
    pool = eina_rectangle_pool_new(256, 256);
    fail_if(pool == NULL);
@@ -68,7 +68,7 @@ START_TEST(eina_rectangle_pool)
 
    eina_rectangle_pool_free(pool);
 
-   eina_rectangle_shutdown();
+   eina_shutdown();
 }
 END_TEST
 

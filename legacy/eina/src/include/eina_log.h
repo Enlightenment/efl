@@ -162,10 +162,7 @@ struct _Eina_Log_Domain
    Eina_Bool deleted:1; /**< Flags deletion of domain, a free slot */
 };
 
-/**
- * @typedef Eina_Log_Level
- * List of available logging levels.
- */
+EAPI void eina_log_threads_enable(void);
 
 /**
  * @enum _Eina_Log_Level
@@ -189,15 +186,6 @@ typedef enum _Eina_Log_Level
 typedef void (*Eina_Log_Print_Cb)(const Eina_Log_Domain *d, Eina_Log_Level level,
 				  const char *file, const char *fnc, int line,
 				  const char *fmt, void *data, va_list args);
-
-/**
- * @var EINA_LOG_OUT_OF_MEMORY
- * Log identifier corresponding to a lack of memory.
- */
-
-EAPI int eina_log_init(void);
-EAPI int eina_log_shutdown(void);
-EAPI void eina_log_threads_enable(void);
 
 /*
  * Customization

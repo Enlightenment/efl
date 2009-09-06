@@ -23,8 +23,7 @@
 #include <stdio.h>
 
 #include "eina_suite.h"
-#include "eina_array.h"
-#include "eina_convert.h"
+#include "Eina.h"
 
 START_TEST(eina_array_simple)
 {
@@ -33,7 +32,7 @@ START_TEST(eina_array_simple)
    Eina_Array_Iterator it;
    unsigned int i;
 
-   eina_array_init();
+   eina_init();
 
    ea = eina_array_new(11);
    fail_if(!ea);
@@ -66,7 +65,7 @@ START_TEST(eina_array_simple)
    eina_array_flush(ea);
    eina_array_free(ea);
 
-   eina_array_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -77,7 +76,7 @@ START_TEST(eina_array_static)
    Eina_Array_Iterator it;
    unsigned int i;
 
-   eina_array_init();
+   eina_init();
 
    eina_array_step_set(&sea, 10);
 
@@ -104,7 +103,7 @@ START_TEST(eina_array_static)
    eina_array_clean(&sea);
    eina_array_flush(&sea);
 
-   eina_array_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -127,7 +126,7 @@ START_TEST(eina_array_remove_stuff)
    Eina_Array_Iterator it;
    unsigned int i;
 
-   eina_array_init();
+   eina_init();
 
    ea = eina_array_new(64);
    fail_if(!ea);
@@ -177,7 +176,7 @@ START_TEST(eina_array_remove_stuff)
 
    eina_array_free(ea);
 
-   eina_array_shutdown();
+   eina_shutdown();
 }
 END_TEST
 

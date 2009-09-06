@@ -68,9 +68,6 @@
 #include "eina_config.h"
 #include "eina_error.h"
 
-EAPI int eina_safety_checks_init(void);
-EAPI int eina_safety_checks_shutdown(void);
-
 /**
  * @var EINA_ERROR_SAFETY_FAILED
  * Error identifier corresponding to safety check failure.

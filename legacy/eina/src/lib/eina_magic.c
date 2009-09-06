@@ -51,7 +51,6 @@ struct _Eina_Magic_String
    Eina_Magic magic;
 };
 
-static int _eina_magic_string_count = 0;
 static Eina_Inlist *strings = NULL;
 
 /**
@@ -75,63 +74,47 @@ static Eina_Inlist *strings = NULL;
  */
 
 /**
- * @brief Initialize the magic module.
+ * @internal
+ * @brief Initialize the magic string module.
  *
- * @return 1 or greater.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This function just increases a reference counter. If the magic
- * module is disabled at configure time, then it always returns @c 1.
- *
- * Once the magic module is not used anymore, then
- * eina_magic_shutdown() must be called to shut down the magic
- * module.
+ * This function sets up the magic string module of Eina. It is called by
+ * eina_init().
  *
  * @see eina_init()
  */
-EAPI int
+Eina_Bool
 eina_magic_string_init(void)
 {
-   ++_eina_magic_string_count;
-
-   return _eina_magic_string_count;
+   return EINA_TRUE;
 }
 
 /**
- * @brief Shut down the magic module.
+ * @internal
+ * @brief Shut down the magic string module.
  *
- * @return 0 when the magic module is completely shut down, 1 or
- * greater otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This function shuts down the magic module set up by
- * eina_magic_string_init(). It is called by eina_shutdown() and by
- * all modules shutdown functions. It returns 0 when it is called the
- * same number of times than eina_magic_string_init(). In that case it
- * clears the magic list and return @c 0. If the magic module is
- * disabled at configure time, then it always returns @c 0.
+ * This function shuts down the magic string module set up by
+ * eina_magic string_init(). It is called by eina_shutdown().
  *
  * @see eina_shutdown()
  */
-EAPI int
+Eina_Bool
 eina_magic_string_shutdown(void)
 {
-   --_eina_magic_string_count;
-
-   if (_eina_magic_string_count == 0)
+   /* Free all strings. */
+   while (strings)
      {
-	/* Free all strings. */
-	while (strings)
-	  {
-	     Eina_Magic_String *tmp;
+	Eina_Magic_String *tmp = (Eina_Magic_String*) strings;
+	strings = eina_inlist_remove(strings, strings);
 
-	     tmp = (Eina_Magic_String*) strings;
-	     strings = eina_inlist_remove(strings, strings);
-
-	     free(tmp->string);
-	     free(tmp);
-	  }
+	free(tmp->string);
+	free(tmp);
      }
 
-   return _eina_magic_string_count;
+   return EINA_TRUE;
 }
 
 /**

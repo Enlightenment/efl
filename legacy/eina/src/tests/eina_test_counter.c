@@ -23,21 +23,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "eina_counter.h"
 #include "eina_suite.h"
-
-START_TEST(eina_counter_init_shutdown)
-{
-   eina_counter_init();
-    eina_counter_init();
-    eina_counter_shutdown();
-    eina_counter_init();
-     eina_counter_init();
-     eina_counter_shutdown();
-    eina_counter_shutdown();
-   eina_counter_shutdown();
-}
-END_TEST
+#include "Eina.h"
 
 START_TEST(eina_counter_simple)
 {
@@ -45,7 +32,7 @@ START_TEST(eina_counter_simple)
    char *dump;
    int i;
 
-   eina_counter_init();
+   eina_init();
 
    cnt = eina_counter_new("eina_test");
    fail_if(!cnt);
@@ -73,7 +60,7 @@ START_TEST(eina_counter_simple)
 
    eina_counter_free(cnt);
 
-   eina_counter_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -82,7 +69,7 @@ START_TEST(eina_counter_break)
    Eina_Counter *cnt;
    char *dump;
 
-   eina_counter_init();
+   eina_init();
 
    cnt = eina_counter_new("eina_test");
    fail_if(!cnt);
@@ -96,13 +83,12 @@ START_TEST(eina_counter_break)
 
    free(dump);
 
-   eina_counter_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
 void eina_test_counter(TCase *tc)
 {
-   tcase_add_test(tc, eina_counter_init_shutdown);
    tcase_add_test(tc, eina_counter_simple);
    tcase_add_test(tc, eina_counter_break);
 }

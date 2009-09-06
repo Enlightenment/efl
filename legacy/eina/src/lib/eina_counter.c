@@ -34,10 +34,12 @@
 
 #include "eina_config.h"
 #include "eina_private.h"
-#include "eina_safety_checks.h"
-#include "eina_counter.h"
 #include "eina_inlist.h"
 #include "eina_error.h"
+
+/* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
+#include "eina_safety_checks.h"
+#include "eina_counter.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -73,8 +75,6 @@ struct _Eina_Clock
 
    Eina_Bool valid;
 };
-
-static int _eina_counter_init_count = 0;
 
 #ifndef _WIN32
 static inline int
@@ -152,9 +152,10 @@ _eina_counter_asiprintf(char *base, int *position, const char *format, ...)
  *
  * @brief These functions allow you to get the time spent in a part of a code.
  *
- * The counter system must be initialized with eina_counter_init() and
- * shut down with eina_counter_shutdown(). The create a counter, use
- * eina_counter_new(). To free it, use eina_counter_free().
+ * Before using the counter system, Eina must be initialized with
+ * eina_init() and later shut down with eina_shutdown(). The create a
+ * counter, use eina_counter_new(). To free it, use
+ * eina_counter_free().
  *
  * To time a part of a code, call eina_counter_start() just before it,
  * and eina_counter_stop() just after it. Each time you start to time
@@ -188,9 +189,9 @@ _eina_counter_asiprintf(char *base, int *position, const char *format, ...)
  * {
  *    Eina_Counter *counter;
  *
- *    if (!eina_counter_init())
+ *    if (!eina_init())
  *    {
- *        printf("Error during the initialization of eina_counter module\n");
+ *        printf("Error during the initialization of eina\n");
  *        return EXIT_FAILURE;
  *    }
  *
@@ -203,7 +204,7 @@ _eina_counter_asiprintf(char *base, int *position, const char *format, ...)
  *    eina_counter_dump(counter);
  *
  *    eina_counter_free(counter);
- *    eina_counter_shutdown();
+ *    eina_shutdown();
  *
  *    return EXIT_SUCCESS;
  * }
@@ -228,85 +229,51 @@ _eina_counter_asiprintf(char *base, int *position, const char *format, ...)
  */
 
 /**
+ * @internal
  * @brief Initialize the eina counter internal structure.
  *
- * @return 1 or greater on success, 0 on error.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function shuts down the counter module set up by
+ * eina_counter_init(). It is called by eina_init().
  *
  * This function sets up the error module of Eina and only on Windows,
  * it initializes the high precision timer. It also registers, only on
  * Windows, the error #EINA_ERROR_COUNTER_WINDOWS. It is also called
  * by eina_init(). It returns 0 on failure, otherwise it returns the
- * number of times it has already been called. See eina_error_init()
- * for the documentation of the initialisation of the dependency
- * modules.
+ * number of times it has already been called.
  *
- * Once the counter module is not used anymore, then
- * eina_counter_shutdown() must be called to shut down the counter
- * module.
- *
- * @see eina_error_init()
  * @see eina_init()
  */
-EAPI int
+Eina_Bool
 eina_counter_init(void)
 {
-   _eina_counter_init_count++;
-
-   if (_eina_counter_init_count == 1)
-     {
-        if (!eina_error_init())
-          {
-             fprintf(stderr, "Could not initialize eina error module.\n");
-             return 0;
-          }
 #ifdef _WIN32
-	EINA_ERROR_COUNTER_WINDOWS = eina_error_msg_register("Change your OS, you moron !");
-        if (!QueryPerformanceFrequency(&_eina_counter_frequency))
-          {
-	     eina_error_set(EINA_ERROR_COUNTER_WINDOWS);
-             eina_error_shutdown();
-             return 0;
-          }
-#endif /* _WIN2 */
-
-
-	if (!eina_safety_checks_init())
-	  {
-	     fprintf(stderr, "Could not initialize eina safety checks.\n");
-	     eina_error_shutdown();
-	     return 0;
-	  }
+   EINA_ERROR_COUNTER_WINDOWS = eina_error_msg_register("Change your OS, you moron !");
+   if (!QueryPerformanceFrequency(&_eina_counter_frequency))
+     {
+	eina_error_set(EINA_ERROR_COUNTER_WINDOWS);
+	return EINA_FALSE;
      }
-
-   return _eina_counter_init_count;
+#endif /* _WIN2 */
+   return EINA_TRUE;
 }
 
 /**
- * @brief Shut down the eina counter internal structures
+ * @internal
+ * @brief Shut down the counter module.
  *
- * @return 0 when the counter module is completely shut down, 1 or
- * greater otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This function shuts down the counter module set up by
- * eina_counter_init(). It is called by eina_shutdown(). It
- * returns 0 when it is called the same number of times than
- * eina_counter_init().
+ * eina_counter_init(). It is called by eina_shutdown().
  *
- * @see eina_error_shutdown()
  * @see eina_shutdown()
  */
-EAPI int
+Eina_Bool
 eina_counter_shutdown(void)
 {
-   _eina_counter_init_count--;
-
-   if (_eina_counter_init_count == 0)
-     {
-	eina_error_shutdown();
-	eina_safety_checks_shutdown();
-     }
-
-   return _eina_counter_init_count;
+   return EINA_TRUE;
 }
 
 /**

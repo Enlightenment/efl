@@ -37,9 +37,6 @@
 
 typedef unsigned int               Eina_Magic;
 
-EAPI int eina_magic_string_init(void);
-EAPI int eina_magic_string_shutdown(void);
-
 /**
  * @typedef Eina_Magic
  * An abstract type for a magic number.

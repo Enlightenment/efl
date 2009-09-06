@@ -76,11 +76,13 @@
 
 #include "eina_config.h"
 #include "eina_private.h"
-#include "eina_safety_checks.h"
-#include "eina_stringshare.h"
 #include "eina_hash.h"
 #include "eina_rbtree.h"
 #include "eina_error.h"
+
+/* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
+#include "eina_safety_checks.h"
+#include "eina_stringshare.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -146,7 +148,6 @@ struct _Eina_Stringshare_Head
 };
 
 static Eina_Stringshare *share = NULL;
-static int _eina_stringshare_init_count = 0;
 static int _eina_stringshare_log_dom = -1;
 
 #define CRITICAL(...) EINA_LOG_DOM_CRIT(_eina_stringshare_log_dom, __VA_ARGS__)
@@ -806,125 +807,75 @@ _eina_stringshare_node_alloc(int slen)
  */
 
 /**
- * @brief Initialize the eina stringshare internal structure.
+ * @internal
+ * @brief Initialize the stringshare module.
  *
- * @return 1 or greater on success, 0 on error.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This function allocates the memory needed by the stringshare
- * internal structure and sets up the error module of Eina. It is also
- * called by eina_init(). It returns 0 on failure, otherwise it
- * returns the number of times it has already been called.
+ * This function sets up the stringshare module of Eina. It is called by
+ * eina_init().
+ *
+ * @see eina_init()
  */
-EAPI int
+Eina_Bool
 eina_stringshare_init(void)
 {
-   /*
-    * No strings have been loaded at this point, so create the hash
-    * table for storing string info for later.
-    */
-   if (!_eina_stringshare_init_count)
+   _eina_stringshare_log_dom = eina_log_domain_register("eina_stringshare", EINA_LOG_COLOR_DEFAULT);
+   if (_eina_stringshare_log_dom < 0)
      {
-	if (!eina_log_init())
-	  {
-	     fprintf(stderr, "Could not initialize eina logging system.\n");
-	     return 0;
-	  }
-
-	_eina_stringshare_log_dom = eina_log_domain_register("eina_stringshare", EINA_LOG_COLOR_DEFAULT);
-	if (_eina_stringshare_log_dom < 0)
-	  {
-	     EINA_LOG_ERR("Could not register log domain: eina_stringshare");
-	     eina_log_shutdown();
-	     return 0;
-	  }
-
-        share = calloc(1, sizeof(Eina_Stringshare));
-        if (!share)
-          return 0;
-
-        if (!eina_error_init())
-          {
-             ERR("Could not initialize eina error module.");
-	     goto error_init_error;
-          }
-
-	if (!eina_safety_checks_init())
-	  {
-	     ERR("Could not initialize eina safety checks.");
-	     goto safety_checks_init_error;
-	  }
-
-        if (!eina_magic_string_init())
-          {
-             ERR("ERROR: Could not initialize eina magic string module.");
-	     goto magic_string_init_error;
-          }
-
-        eina_magic_string_set(EINA_MAGIC_STRINGSHARE,
-                              "Eina Stringshare");
-        eina_magic_string_set(EINA_MAGIC_STRINGSHARE_HEAD,
-                              "Eina Stringshare Head");
-        eina_magic_string_set(EINA_MAGIC_STRINGSHARE_NODE,
-                              "Eina Stringshare Node");
-        EINA_MAGIC_SET(share, EINA_MAGIC_STRINGSHARE);
-
-        _eina_stringshare_small_init();
-        _eina_stringshare_population_init();
+	EINA_LOG_ERR("Could not register log domain: eina_stringshare");
+	return EINA_FALSE;
      }
 
-   return ++_eina_stringshare_init_count;
+   share = calloc(1, sizeof(Eina_Stringshare));
+   if (!share)
+     {
+	eina_log_domain_unregister(_eina_stringshare_log_dom);
+	_eina_stringshare_log_dom = -1;
+	return EINA_FALSE;
+     }
 
- magic_string_init_error:
-   eina_safety_checks_shutdown();
- safety_checks_init_error:
-   eina_error_shutdown();
- error_init_error:
-   eina_log_domain_unregister(_eina_stringshare_log_dom);
-   _eina_stringshare_log_dom = -1;
-   eina_log_shutdown();
-   return 0;
+   eina_magic_string_set(EINA_MAGIC_STRINGSHARE, "Eina Stringshare");
+   eina_magic_string_set(EINA_MAGIC_STRINGSHARE_HEAD, "Eina Stringshare Head");
+   eina_magic_string_set(EINA_MAGIC_STRINGSHARE_NODE, "Eina Stringshare Node");
+   EINA_MAGIC_SET(share, EINA_MAGIC_STRINGSHARE);
+
+   _eina_stringshare_small_init();
+   _eina_stringshare_population_init();
+   return EINA_TRUE;
 }
 
 /**
- * @brief Shut down the eina stringshare internal structures
+ * @internal
+ * @brief Shut down the stringshare module.
  *
- * @return 0 when the stringshare module is completely shut down, 1 or
- * greater otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This function frees the memory allocated by eina_stringshare_init()
- * and shuts down the error module. It is also called by
- * eina_shutdown(). It returns 0 when it is called the same number of
- * times than eina_stringshare_init().
+ * This function shuts down the stringshare module set up by
+ * eina_stringshare_init(). It is called by eina_shutdown().
+ *
+ * @see eina_shutdown()
  */
-EAPI int
+Eina_Bool
 eina_stringshare_shutdown(void)
 {
    unsigned int i;
 
    _eina_stringshare_population_stats();
 
-   --_eina_stringshare_init_count;
-   if (!_eina_stringshare_init_count)
+   /* remove any string still in the table */
+   for (i = 0; i < EINA_STRINGSHARE_BUCKETS; i++)
      {
-	/* remove any string still in the table */
-	for (i = 0; i < EINA_STRINGSHARE_BUCKETS; i++)
-	  {
-	     eina_rbtree_delete(EINA_RBTREE_GET(share->buckets[i]), EINA_RBTREE_FREE_CB(_eina_stringshare_head_free), NULL);
-	     share->buckets[i] = NULL;
-	  }
-	MAGIC_FREE(share);
-
-	_eina_stringshare_population_shutdown();
-	_eina_stringshare_small_shutdown();
-	eina_magic_string_shutdown();
-	eina_safety_checks_shutdown();
-	eina_error_shutdown();
-	eina_log_domain_unregister(_eina_stringshare_log_dom);
-	_eina_stringshare_log_dom = -1;
-	eina_log_shutdown();
+	eina_rbtree_delete(EINA_RBTREE_GET(share->buckets[i]), EINA_RBTREE_FREE_CB(_eina_stringshare_head_free), NULL);
+	share->buckets[i] = NULL;
      }
+   MAGIC_FREE(share);
 
-   return _eina_stringshare_init_count;
+   _eina_stringshare_population_shutdown();
+   _eina_stringshare_small_shutdown();
+   eina_log_domain_unregister(_eina_stringshare_log_dom);
+   _eina_stringshare_log_dom = -1;
+   return EINA_TRUE;
 }
 
 /**

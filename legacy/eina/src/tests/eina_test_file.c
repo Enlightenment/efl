@@ -24,13 +24,13 @@
 #include <string.h>
 
 #include "eina_suite.h"
-#include "eina_file.h"
+#include "Eina.h"
 
 START_TEST(eina_file_split_simple)
 {
    Eina_Array *ea;
 
-   eina_array_init();
+   eina_init();
 
    ea = eina_file_split(NULL);
    fail_if(ea);
@@ -60,7 +60,7 @@ START_TEST(eina_file_split_simple)
 
    eina_array_free(ea);
 
-   eina_array_shutdown();
+   eina_shutdown();
 }
 END_TEST
 

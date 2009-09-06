@@ -4,8 +4,8 @@
 
 #include <stdio.h>
 
-#include "eina_matrixsparse.h"
 #include "eina_suite.h"
+#include "Eina.h"
 
 #define MAX_ROWS 10
 #define MAX_COLS 10
@@ -98,7 +98,7 @@ START_TEST(eina_test_simple)
    value3 = -3;
    value4 = -4;
 
-   eina_matrixsparse_init();
+   eina_init();
 
    matrix = eina_matrixsparse_new(MAX_ROWS, MAX_COLS,
 				  eina_matrixsparse_free_cell_cb, data);
@@ -255,7 +255,7 @@ START_TEST(eina_test_simple)
    matrixsparse_check(matrix, data, MAX_ROWS, MAX_COLS);
    eina_matrixsparse_free(matrix);
 
-   eina_matrixsparse_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -274,7 +274,7 @@ START_TEST(eina_test_resize)
      for (j = 0; j < MAX_COLS; j++)
        data[i][j] = 0;
 
-   eina_matrixsparse_init();
+   eina_init();
 
    matrix = eina_matrixsparse_new(MAX_ROWS, MAX_COLS,
 				  eina_matrixsparse_free_cell_cb, data);
@@ -369,7 +369,7 @@ START_TEST(eina_test_resize)
 
    eina_matrixsparse_free(matrix);
 
-   eina_matrixsparse_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -396,7 +396,7 @@ START_TEST(eina_test_iterators)
 	printf("\n");
      }
 
-   eina_matrixsparse_init();
+   eina_init();
 
    matrix = eina_matrixsparse_new(MAX_ROWS, MAX_COLS,
 				  eina_matrixsparse_free_cell_cb, data);
@@ -468,7 +468,7 @@ START_TEST(eina_test_iterators)
 
    eina_matrixsparse_free(matrix);
 
-   eina_matrixsparse_shutdown();
+   eina_shutdown();
 }
 END_TEST
 

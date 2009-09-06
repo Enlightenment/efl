@@ -47,7 +47,7 @@ eina_bench_stringshare_job(int request)
    unsigned int j;
    int i;
 
-   eina_stringshare_init();
+   eina_init();
 
    for (i = 0; i < request; ++i)
      {
@@ -68,7 +68,7 @@ eina_bench_stringshare_job(int request)
 	  tmp = eina_stringshare_add(build);
        }
 
-   eina_stringshare_shutdown();
+   eina_shutdown();
 }
 
 #ifdef EINA_BENCH_HAVE_GLIB

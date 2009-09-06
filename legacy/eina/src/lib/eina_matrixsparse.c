@@ -38,12 +38,14 @@
 #endif
 
 #include "eina_config.h"
+#include "eina_private.h"
 #include "eina_error.h"
-#include "eina_matrixsparse.h"
 #include "eina_magic.h"
 #include "eina_mempool.h"
-#include "eina_private.h"
+
+/* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
+#include "eina_matrixsparse.h"
 
 
 /*============================================================================*
@@ -182,7 +184,6 @@ struct _Eina_Matrixsparse_Iterator_Complete
  * @todo Eina_Matrixsparse_Cell_Accessor: accessor over cells in row
  */
 
-static int _eina_matrixsparse_init_count = 0;
 static int _eina_matrixsparse_log_dom = -1;
 
 #define ERR(...) EINA_LOG_DOM_ERR(_eina_matrixsparse_log_dom, __VA_ARGS__)
@@ -757,160 +758,96 @@ _eina_matrixsparse_iterator_complete_free(Eina_Matrixsparse_Iterator_Complete *i
  *
  * @{
  */
+
 /**
+ * @internal
  * @brief Initialize the matrixsparse module.
  *
- * @return 1 or greater on success, 0 on error.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This function sets up the error, magic and mempool modules of
- * Eina. It is also called by eina_init(). It returns 0 on failure,
- * otherwise it returns the number of times it has already been
- * called. If Eina has been configured with the default memory pool,
- * then the memory pool used in an Eina matrixsparse will be
- * "pass_through". Otherwise, the environment variable EINA_MEMPOOL is
- * read and its value is chosen as memory pool ; if EINA_MEMPOOL is
- * not defined, then the "chained_mempool" memory pool is chosen. If
- * the memory pool is not found, then eina_matrixsparse_init() return @c 0.
- * See eina_error_init(), eina_magic_string_init() and
- * eina_mempool_init() for the documentation of the initialisation of
- * the dependency modules.
+ * This function sets up the matrixsparse module of Eina. It is called by
+ * eina_init().
  *
- * When no more Eina matrixsparse are used, call eina_matrixsparse_shutdown()
- * to shut down the matrixsparse module.
+ * This function creates mempool to speed up matrix rows and cells
+ * management, using EINA_MEMPOOL environment variable if it is set to
+ * choose the memory pool type to use.
  *
- * @see eina_error_init()
- * @see eina_magic_string_init()
- * @see eina_mempool_init()
+ * @see eina_init()
  */
-EAPI int
+Eina_Bool
 eina_matrixsparse_init(void)
 {
-   const char *choice;
+   const char *choice, *tmp;
 
-   if (!_eina_matrixsparse_init_count)
+   _eina_matrixsparse_log_dom = eina_log_domain_register("eina_matrixsparse", EINA_LOG_COLOR_DEFAULT);
+   if (_eina_matrixsparse_log_dom < 0)
      {
-	if (!eina_log_init())
-	  {
-	     fprintf(stderr, "Could not initialize eina logging system.");
-	     return 0;
-	  }
-
-	_eina_matrixsparse_log_dom = eina_log_domain_register("eina_matrixsparse", EINA_LOG_COLOR_DEFAULT);
-	if (_eina_matrixsparse_log_dom < 0)
-	  {
-	     EINA_LOG_ERR("Could not register log domain: eina_matrixsparse");
-	     eina_log_shutdown();
-	     return 0;
-	  }
-
-	if (!eina_error_init())
-	  {
-	     ERR("Could not initialize eina error module.");
-	     goto on_eina_error_fail;
-	  }
-
-	if (!eina_magic_string_init())
-	  {
-	     ERR("Could not initialize eina magic string module.");
-	     goto on_magic_string_fail;
-	  }
-
-	if (!eina_mempool_init())
-	  {
-	     ERR("Could not initialize eina mempool module.");
-	     goto on_mempool_fail;
-	  }
-
-#ifdef EINA_DEFAULT_MEMPOOL
-       choice = "pass_through";
-#else
-       if (!(choice = getenv("EINA_MEMPOOL")))
-	 choice = "chained_mempool";
-#endif
-
-       _eina_matrixsparse_cell_mp = eina_mempool_add
-	 (choice, "matrixsparse_cell", NULL, sizeof (Eina_Matrixsparse_Cell), 120);
-       if (!_eina_matrixsparse_cell_mp)
-         {
-           ERR("Mempool for matrixsparse_cell cannot be allocated in matrixsparse init.");
-	   goto on_init_fail;
-         }
-
-       _eina_matrixsparse_row_mp = eina_mempool_add
-	 (choice, "matrixsparse_row", NULL, sizeof (Eina_Matrixsparse_Row), 120);
-       if (!_eina_matrixsparse_row_mp)
-         {
-           ERR("Mempool for matrixsparse_row cannot be allocated in matrixsparse init.");
-	   goto on_init_fail;
-         }
-
-       eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE,
-			     "Eina Matrixsparse");
-       eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_ROW,
-			     "Eina Matrixsparse Row");
-       eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_CELL,
-			     "Eina Matrixsparse Cell");
-
-       eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_ITERATOR,
-			     "Eina Matrixsparse Iterator");
-
-       eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_ROW_ACCESSOR,
-			     "Eina Matrixsparse Row Accessor");
-       eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_ROW_ITERATOR,
-			     "Eina Matrixsparse Row Iterator");
-
-       eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_CELL_ACCESSOR,
-			     "Eina Matrixsparse Cell Accessor");
-       eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_CELL_ITERATOR,
-			     "Eina Matrixsparse Cell Iterator");
+	EINA_LOG_ERR("Could not register log domain: eina_matrixsparse");
+	return EINA_FALSE;
      }
 
-   return ++_eina_matrixsparse_init_count;
+#ifdef EINA_DEFAULT_MEMPOOL
+   choice = "pass_through";
+#else
+   choice = "chained_mempool";
+#endif
+   tmp = getenv("EINA_MEMPOOL");
+   if (tmp && tmp[0])
+     choice = tmp;
+
+   _eina_matrixsparse_cell_mp = eina_mempool_add
+     (choice, "matrixsparse_cell", NULL, sizeof (Eina_Matrixsparse_Cell), 120);
+   if (!_eina_matrixsparse_cell_mp)
+     {
+	ERR("Mempool for matrixsparse_cell cannot be allocated in matrixsparse init.");
+	goto on_init_fail;
+     }
+
+   _eina_matrixsparse_row_mp = eina_mempool_add
+     (choice, "matrixsparse_row", NULL, sizeof (Eina_Matrixsparse_Row), 120);
+   if (!_eina_matrixsparse_row_mp)
+     {
+	ERR("Mempool for matrixsparse_row cannot be allocated in matrixsparse init.");
+	goto on_init_fail;
+     }
+
+   eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE, "Eina Matrixsparse");
+   eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_ROW, "Eina Matrixsparse Row");
+   eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_CELL, "Eina Matrixsparse Cell");
+   eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_ITERATOR, "Eina Matrixsparse Iterator");
+   eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_ROW_ACCESSOR, "Eina Matrixsparse Row Accessor");
+   eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_ROW_ITERATOR, "Eina Matrixsparse Row Iterator");
+   eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_CELL_ACCESSOR, "Eina Matrixsparse Cell Accessor");
+   eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_CELL_ITERATOR, "Eina Matrixsparse Cell Iterator");
+
+   return EINA_TRUE;
 
  on_init_fail:
-   eina_mempool_shutdown();
- on_mempool_fail:
-   eina_magic_string_shutdown();
- on_magic_string_fail:
-   eina_error_shutdown();
- on_eina_error_fail:
    eina_log_domain_unregister(_eina_matrixsparse_log_dom);
    _eina_matrixsparse_log_dom = -1;
-   eina_log_shutdown();
-   return 0;
+   return EINA_FALSE;
 }
 
 /**
+ * @internal
  * @brief Shut down the matrixsparse module.
  *
- * @return 0 when the matrixsparse module is completely shut down, 1 or
- * greater otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This function shuts down the mempool, magic and error modules set
- * up by eina_matrixsparse_init(). It is also called by eina_shutdown(). It
- * returns 0 when it is called the same number of times than
- * eina_matrixsparse_init().
+ * This function shuts down the matrixsparse module set up by
+ * eina_matrixsparse_init(). It is called by eina_shutdown().
+ *
+ * @see eina_shutdown()
  */
-EAPI int
+Eina_Bool
 eina_matrixsparse_shutdown(void)
 {
-   --_eina_matrixsparse_init_count;
+   eina_mempool_del(_eina_matrixsparse_row_mp);
+   eina_mempool_del(_eina_matrixsparse_cell_mp);
 
-   if (!_eina_matrixsparse_init_count)
-     {
-	eina_mempool_del(_eina_matrixsparse_row_mp);
-	eina_mempool_del(_eina_matrixsparse_cell_mp);
-
-	eina_mempool_shutdown();
-	eina_magic_string_shutdown();
-	eina_error_shutdown();
-
-	eina_log_domain_unregister(_eina_matrixsparse_log_dom);
-	_eina_matrixsparse_log_dom = -1;
-	eina_log_shutdown();
-     }
-
-   return _eina_matrixsparse_init_count;
+   eina_log_domain_unregister(_eina_matrixsparse_log_dom);
+   _eina_matrixsparse_log_dom = -1;
+   return EINA_TRUE;
 }
 
 /**

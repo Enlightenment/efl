@@ -26,20 +26,7 @@
 #define EINA_MAGIC_DEBUG
 
 #include "eina_suite.h"
-#include "eina_magic.h"
-
-START_TEST(eina_magic_string_init_shutdown)
-{
-   eina_magic_string_init();
-    eina_magic_string_init();
-    eina_magic_string_shutdown();
-    eina_magic_string_init();
-     eina_magic_string_init();
-     eina_magic_string_shutdown();
-    eina_magic_string_shutdown();
-   eina_magic_string_shutdown();
-}
-END_TEST
+#include "Eina.h"
 
 #define EINA_MAGIC_TEST 0x7781fee7
 #define EINA_MAGIC_TEST2 0x42241664
@@ -55,7 +42,7 @@ START_TEST(eina_magic_simple)
 {
    Eina_Magic_Struct *ems = NULL;
 
-   eina_magic_string_init();
+   eina_init();
 
    eina_magic_string_set(EINA_MAGIC_TEST, EINA_MAGIC_STRING);
    eina_magic_string_set(EINA_MAGIC_TEST2, NULL);
@@ -82,13 +69,12 @@ START_TEST(eina_magic_simple)
    EINA_MAGIC_FAIL(ems, EINA_MAGIC_TEST);
 #endif
 
-   eina_magic_string_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
 void eina_test_magic(TCase *tc)
 {
-   tcase_add_test(tc, eina_magic_string_init_shutdown);
    tcase_add_test(tc, eina_magic_simple);
 }
 

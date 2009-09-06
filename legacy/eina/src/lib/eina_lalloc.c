@@ -24,6 +24,8 @@
 
 #include "eina_config.h"
 #include "eina_private.h"
+
+/* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
 #include "eina_lalloc.h"
 

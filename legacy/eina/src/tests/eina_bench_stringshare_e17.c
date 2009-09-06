@@ -36,8 +36,7 @@
 # include <Ecore_Data.h>
 #endif
 
-#include "eina_stringshare.h"
-#include "eina_counter.h"
+#include "Eina.h"
 
 #if EINA_ENABLE_BENCH_E17
 
@@ -55,10 +54,10 @@ struct _Eina_Stringshare_Test
 static const char *strings[30000];
 static Eina_Stringshare_Test eina_str = {
   "eina",
-  eina_stringshare_init,
+  eina_init,
   eina_stringshare_add,
   eina_stringshare_del,
-  eina_stringshare_shutdown
+  eina_shutdown
 };
 
 #ifdef EINA_BENCH_HAVE_EVAS
@@ -122,11 +121,11 @@ eina_bench_e17(void)
 #if EINA_ENABLE_BENCH_E17
    int i;
 
-   eina_counter_init();
+   eina_init();
 
    for (i = 0; str[i]; ++i)
      eina_bench_e17_stringshare(str[i]);
 
-   eina_counter_shutdown();
+   eina_shutdown();
 #endif
 }

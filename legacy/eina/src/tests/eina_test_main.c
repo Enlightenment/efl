@@ -22,13 +22,13 @@
 
 #include <stdio.h>
 
-#include "Eina.h"
 #include "eina_suite.h"
+#include "Eina.h"
 
 START_TEST(eina_simple)
 {
-   fail_if(eina_init() != 1);
-   fail_if(eina_shutdown() != 0);
+   fail_if(eina_init() != 2); /* one init by test suite */
+   fail_if(eina_shutdown() != 1);
 }
 END_TEST
 

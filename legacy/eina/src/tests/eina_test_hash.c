@@ -24,22 +24,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "eina_hash.h"
-#include "eina_convert.h"
 #include "eina_suite.h"
-
-START_TEST(eina_hash_init_shutdown)
-{
-   eina_hash_init();
-    eina_hash_init();
-    eina_hash_shutdown();
-    eina_hash_init();
-     eina_hash_init();
-     eina_hash_shutdown();
-    eina_hash_shutdown();
-   eina_hash_shutdown();
-}
-END_TEST
+#include "Eina.h"
 
 static Eina_Bool
 eina_foreach_check(__UNUSED__ const Eina_Hash *hash, const void *key, void *data, __UNUSED__ void *fdata)
@@ -62,7 +48,7 @@ START_TEST(eina_hash_simple)
    int array[] = { 1, 42, 4, 5, 6 };
 
    /* As mempool is already initialized and it use hash, we should have 2 init. */
-   fail_if(eina_hash_init() != 2);
+   fail_if(eina_init() != 2);
 
    hash = eina_hash_string_superfast_new(NULL);
    fail_if(hash == NULL);
@@ -108,8 +94,8 @@ START_TEST(eina_hash_simple)
 
    eina_hash_free(hash);
 
-   /* Same comment as eina_hash_init */
-   fail_if(eina_hash_shutdown() != 1);
+   /* Same comment as eina_init */
+   fail_if(eina_shutdown() != 1);
 }
 END_TEST
 
@@ -118,7 +104,7 @@ START_TEST(eina_hash_extended)
    Eina_Hash *hash = NULL;
    int i;
 
-   fail_if(eina_hash_init() != 2);
+   fail_if(eina_init() != 2);
 
    hash = eina_hash_string_djb2_new(NULL);
    fail_if(hash == NULL);
@@ -137,7 +123,7 @@ START_TEST(eina_hash_extended)
 
    eina_hash_free(hash);
 
-   fail_if(eina_hash_shutdown() != 1);
+   fail_if(eina_shutdown() != 1);
 }
 END_TEST
 
@@ -147,7 +133,7 @@ START_TEST(eina_hash_double_item)
    int i[] = { 7, 7 };
    int *test;
 
-   fail_if(eina_hash_init() != 2);
+   fail_if(eina_init() != 2);
 
    hash = eina_hash_string_superfast_new(NULL);
    fail_if(hash == NULL);
@@ -161,13 +147,12 @@ START_TEST(eina_hash_double_item)
 
    eina_hash_free(hash);
 
-   fail_if(eina_hash_shutdown() != 1);
+   fail_if(eina_shutdown() != 1);
 }
 END_TEST
 
 void eina_test_hash(TCase *tc)
 {
-   tcase_add_test(tc, eina_hash_init_shutdown);
    tcase_add_test(tc, eina_hash_simple);
    tcase_add_test(tc, eina_hash_extended);
    tcase_add_test(tc, eina_hash_double_item);

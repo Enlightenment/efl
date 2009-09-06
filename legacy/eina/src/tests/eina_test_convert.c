@@ -25,8 +25,8 @@
 #include <math.h>
 #include <float.h>
 
-#include "eina_convert.h"
 #include "eina_suite.h"
+#include "Eina.h"
 
 START_TEST(eina_convert_simple)
 {
@@ -83,7 +83,7 @@ START_TEST(eina_convert_double)
    long long int m = 0;
    long e = 0;
 
-   eina_convert_init();
+   eina_init();
 
    _eina_convert_check(EET_TEST_DOUBLE0, 20);
    _eina_convert_check(-EET_TEST_DOUBLE0, 21);
@@ -96,7 +96,7 @@ START_TEST(eina_convert_double)
    fail_if(eina_convert_atod("0xjo", 8, &m, &e) != EINA_FALSE);
    fail_if(eina_convert_atod("0xp", 8, &m, &e) != EINA_FALSE);
 
-   eina_convert_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
