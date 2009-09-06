@@ -134,29 +134,29 @@
  * @cond LOCAL
  */
 
-#define EINA_MAGIC_CHECK_ARRAY(d)				\
-   do {								\
-     if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ARRAY))		\
-       EINA_MAGIC_FAIL(d, EINA_MAGIC_ARRAY);			\
-   } while (0);
+#define EINA_MAGIC_CHECK_ARRAY(d)			\
+  do {							\
+     if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ARRAY))	\
+       EINA_MAGIC_FAIL(d, EINA_MAGIC_ARRAY);		\
+  } while (0);
 
-#define EINA_MAGIC_CHECK_ARRAY_ITERATOR(d, ...)		\
-   do {								\
+#define EINA_MAGIC_CHECK_ARRAY_ITERATOR(d, ...)			\
+  do {								\
      if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ARRAY_ITERATOR))	\
        {							\
           EINA_MAGIC_FAIL(d, EINA_MAGIC_ARRAY_ITERATOR);	\
-          return __VA_ARGS__;						\
+          return __VA_ARGS__;					\
        }							\
-   } while (0);
+  } while (0);
 
-#define EINA_MAGIC_CHECK_ARRAY_ACCESSOR(d, ...)		\
-   do {								\
+#define EINA_MAGIC_CHECK_ARRAY_ACCESSOR(d, ...)			\
+  do {								\
      if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ARRAY_ACCESSOR))	\
        {							\
           EINA_MAGIC_FAIL(d, EINA_MAGIC_ACCESSOR);		\
-          return __VA_ARGS__;						\
+          return __VA_ARGS__;					\
        }							\
-   } while (0);
+  } while (0);
 
 
 typedef struct _Eina_Iterator_Array Eina_Iterator_Array;
