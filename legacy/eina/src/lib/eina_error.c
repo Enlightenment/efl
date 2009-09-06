@@ -144,7 +144,6 @@
 
 #include "eina_config.h"
 #include "eina_private.h"
-#include "eina_inlist.h"
 #include "eina_log.h" /* remove me when eina_error_print is removed! */
 
 
