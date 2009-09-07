@@ -54,6 +54,17 @@
 /**
  * @cond LOCAL
  */
+
+static const char EINA_MAGIC_MATRIXSPARSE_STR[] = "Eina Matrixsparse";
+static const char EINA_MAGIC_MATRIXSPARSE_ROW_STR[] = "Eina Matrixsparse Row";
+static const char EINA_MAGIC_MATRIXSPARSE_CELL_STR[] = "Eina Matrixsparse Cell";
+static const char EINA_MAGIC_MATRIXSPARSE_ITERATOR_STR[] = "Eina Matrixsparse Iterator";
+static const char EINA_MAGIC_MATRIXSPARSE_ROW_ACCESSOR_STR[] = "Eina Matrixsparse Row Accessor";
+static const char EINA_MAGIC_MATRIXSPARSE_ROW_ITERATOR_STR[] = "Eina Matrixsparse Row Iterator";
+static const char EINA_MAGIC_MATRIXSPARSE_CELL_ACCESSOR_STR[] = "Eina Matrixsparse Cell Accessor";
+static const char EINA_MAGIC_MATRIXSPARSE_CELL_ITERATOR_STR[] = "Eina Matrixsparse Cell Iterator";
+
+
 #define EINA_MAGIC_CHECK_MATRIXSPARSE(d, ...)		\
   do {							\
      if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_MATRIXSPARSE))	\
@@ -811,14 +822,16 @@ eina_matrixsparse_init(void)
 	goto on_init_fail;
      }
 
-   eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE, "Eina Matrixsparse");
-   eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_ROW, "Eina Matrixsparse Row");
-   eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_CELL, "Eina Matrixsparse Cell");
-   eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_ITERATOR, "Eina Matrixsparse Iterator");
-   eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_ROW_ACCESSOR, "Eina Matrixsparse Row Accessor");
-   eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_ROW_ITERATOR, "Eina Matrixsparse Row Iterator");
-   eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_CELL_ACCESSOR, "Eina Matrixsparse Cell Accessor");
-   eina_magic_string_set(EINA_MAGIC_MATRIXSPARSE_CELL_ITERATOR, "Eina Matrixsparse Cell Iterator");
+#define EMS(n) eina_magic_string_static_set(n, n##_STR)
+   EMS(EINA_MAGIC_MATRIXSPARSE);
+   EMS(EINA_MAGIC_MATRIXSPARSE_ROW);
+   EMS(EINA_MAGIC_MATRIXSPARSE_CELL);
+   EMS(EINA_MAGIC_MATRIXSPARSE_ITERATOR);
+   EMS(EINA_MAGIC_MATRIXSPARSE_ROW_ACCESSOR);
+   EMS(EINA_MAGIC_MATRIXSPARSE_ROW_ITERATOR);
+   EMS(EINA_MAGIC_MATRIXSPARSE_CELL_ACCESSOR);
+   EMS(EINA_MAGIC_MATRIXSPARSE_CELL_ITERATOR);
+#undef EMS
 
    return EINA_TRUE;
 

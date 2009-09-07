@@ -48,7 +48,8 @@ typedef struct _Eina_Magic_String Eina_Magic_String;
 struct _Eina_Magic_String
 {
    Eina_Magic magic;
-   char *string;
+   Eina_Bool string_allocated;
+   const char *string;
 };
 
 static int _eina_magic_string_log_dom = -1;
@@ -74,6 +75,37 @@ _eina_magic_strings_find_cmp(const void *p1, const void *p2)
    Eina_Magic a = (long)p1;
    const Eina_Magic_String *b = p2;
    return a - b->magic;
+}
+
+static Eina_Magic_String *
+_eina_magic_strings_alloc(void)
+{
+   size_t idx;
+
+   if (_eina_magic_strings_count == _eina_magic_strings_allocated)
+     {
+	void *tmp;
+	size_t size;
+
+	if (EINA_UNLIKELY(_eina_magic_strings_allocated == 0))
+	  size = 48;
+	else
+	  size = _eina_magic_strings_allocated + 16;
+
+	tmp = realloc(_eina_magic_strings, sizeof(Eina_Magic_String) * size);
+	if (!tmp)
+	  {
+	     ERR("could not realloc magic_strings from %zu to %zu buckets.",
+		 _eina_magic_strings_allocated, size);
+	     return NULL;
+	  }
+	_eina_magic_strings = tmp;
+	_eina_magic_strings_allocated = size;
+     }
+
+   idx = _eina_magic_strings_count;
+   _eina_magic_strings_count++;
+   return _eina_magic_strings + idx;
 }
 
 /**
@@ -135,10 +167,14 @@ eina_magic_string_init(void)
 Eina_Bool
 eina_magic_string_shutdown(void)
 {
-   size_t i;
+   Eina_Magic_String *ems, *ems_end;
 
-   for (i = 0; i < _eina_magic_strings_count; i++)
-     free(_eina_magic_strings[i].string);
+   ems = _eina_magic_strings;
+   ems_end = ems + _eina_magic_strings_count;
+
+   for (; ems < ems_end; ems++)
+     if (ems->string_allocated)
+       free((char *)ems->string);
 
    free(_eina_magic_strings);
    _eina_magic_strings = NULL;
@@ -195,6 +231,8 @@ eina_magic_string_get(Eina_Magic magic)
  * This function sets the string @p magic_name to @p magic. It is not
  * checked if number or string are already set, then you might end
  * with duplicates in that case.
+ *
+ * @see eina_magic_string_static_set()
  */
 EAPI Eina_Bool
 eina_magic_string_set(Eina_Magic magic, const char *magic_name)
@@ -203,37 +241,55 @@ eina_magic_string_set(Eina_Magic magic, const char *magic_name)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(magic_name, EINA_FALSE);
 
-   if (_eina_magic_strings_count == _eina_magic_strings_allocated)
-     {
-	void *tmp;
-	size_t size;
+   ems = _eina_magic_strings_alloc();
+   if (!ems)
+     return EINA_FALSE;
 
-	if (EINA_UNLIKELY(_eina_magic_strings_allocated == 0))
-	  size = 48;
-	else
-	  size = _eina_magic_strings_allocated + 16;
-
-	tmp = realloc(_eina_magic_strings, sizeof(Eina_Magic_String) * size);
-	if (!tmp)
-	  {
-	     ERR("could not realloc magic_strings from %zu to %zu buckets.",
-		 _eina_magic_strings_allocated, size);
-	     return EINA_FALSE;
-	  }
-	_eina_magic_strings = tmp;
-	_eina_magic_strings_allocated = size;
-     }
-
-   ems = _eina_magic_strings + _eina_magic_strings_count;
    ems->magic = magic;
+   ems->string_allocated = EINA_TRUE;
    ems->string = strdup(magic_name);
    if (!ems->string)
      {
 	ERR("could not allocate string '%s'", magic_name);
+	_eina_magic_strings_count--;
 	return EINA_FALSE;
      }
 
-   _eina_magic_strings_count++;
+   _eina_magic_strings_dirty = 1;
+   return EINA_TRUE;
+}
+
+/**
+ * @brief Set the string associated to the given magic identifier.
+ *
+ * @param magic The magic identifier.
+ * @param The string associated to the identifier, must not be @c NULL,
+ *        it will not be duplcated, just referenced thus it must be live
+ *        during magic number usage.
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function sets the string @p magic_name to @p magic. It is not
+ * checked if number or string are already set, then you might end
+ * with duplicates in that case.
+ *
+ * @see eina_magic_string_set()
+ */
+EAPI Eina_Bool
+eina_magic_string_static_set(Eina_Magic magic, const char *magic_name)
+{
+   Eina_Magic_String *ems;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(magic_name, EINA_FALSE);
+
+   ems = _eina_magic_strings_alloc();
+   if (!ems)
+     return EINA_FALSE;
+
+   ems->magic = magic;
+   ems->string_allocated = EINA_FALSE;
+   ems->string = magic_name;
+
    _eina_magic_strings_dirty = 1;
    return EINA_TRUE;
 }

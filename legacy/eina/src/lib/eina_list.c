@@ -90,6 +90,12 @@
  * @cond LOCAL
  */
 
+static const char EINA_MAGIC_LIST_STR[] = "Eina List";
+static const char EINA_MAGIC_LIST_ITERATOR_STR[] = "Eina List Iterator";
+static const char EINA_MAGIC_LIST_ACCESSOR_STR[] = "Eina List Accessor";
+static const char EINA_MAGIC_LIST_ACCOUNTING_STR[] = "Eina List Accounting";
+
+
 #define EINA_MAGIC_CHECK_LIST(d, ...)				\
   do {								\
     if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_LIST))			\
@@ -487,10 +493,12 @@ eina_list_init(void)
 	goto on_init_fail;
      }
 
-   eina_magic_string_set(EINA_MAGIC_LIST, "Eina List");
-   eina_magic_string_set(EINA_MAGIC_LIST_ITERATOR, "Eina List Iterator");
-   eina_magic_string_set(EINA_MAGIC_LIST_ACCESSOR, "Eina List Accessor");
-   eina_magic_string_set(EINA_MAGIC_LIST_ACCOUNTING, "Eina List Accounting");
+#define EMS(n) eina_magic_string_static_set(n, n##_STR)
+   EMS(EINA_MAGIC_LIST);
+   EMS(EINA_MAGIC_LIST_ITERATOR);
+   EMS(EINA_MAGIC_LIST_ACCESSOR);
+   EMS(EINA_MAGIC_LIST_ACCOUNTING);
+#undef EMS
 
    return EINA_TRUE;
 

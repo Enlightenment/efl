@@ -40,6 +40,8 @@
  * @cond LOCAL
  */
 
+static const char EINA_MAGIC_ACCESSOR_STR[] = "Eina Accessor";
+
 #define EINA_MAGIC_CHECK_ACCESSOR(d)				\
   do {								\
     if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ACCESSOR))		\
@@ -92,7 +94,7 @@
 Eina_Bool
 eina_accessor_init(void)
 {
-   return eina_magic_string_set(EINA_MAGIC_ACCESSOR, "Eina Accessor");
+   return eina_magic_string_set(EINA_MAGIC_ACCESSOR, EINA_MAGIC_ACCESSOR_STR);
 }
 
 /**

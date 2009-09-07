@@ -40,6 +40,8 @@
  * @cond LOCAL
  */
 
+static const char EINA_MAGIC_ITERATOR_STR[] = "Eina Iterator";
+
 #define EINA_MAGIC_CHECK_ITERATOR(d)				\
   do {								\
     if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ITERATOR))		\
@@ -93,7 +95,7 @@
 Eina_Bool
 eina_iterator_init(void)
 {
-   return eina_magic_string_set(EINA_MAGIC_ITERATOR, "Eina Iterator");
+   return eina_magic_string_set(EINA_MAGIC_ITERATOR, EINA_MAGIC_ITERATOR_STR);
 }
 
 /**

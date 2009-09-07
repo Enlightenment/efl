@@ -54,6 +54,8 @@
 
 EAPI Eina_Error EINA_ERROR_SAFETY_FAILED = 0;
 
+static const char EINA_ERROR_SAFETY_FAILED_STR[] = "Safety check failed.";
+
 /**
  * @endcond
  */
@@ -72,7 +74,7 @@ EAPI Eina_Error EINA_ERROR_SAFETY_FAILED = 0;
 Eina_Bool
 eina_safety_checks_init(void)
 {
-   EINA_ERROR_SAFETY_FAILED = eina_error_msg_register("Safety check failed.");
+   EINA_ERROR_SAFETY_FAILED = eina_error_msg_static_register(EINA_ERROR_SAFETY_FAILED_STR);
    return EINA_TRUE;
 }
 

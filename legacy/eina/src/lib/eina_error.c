@@ -168,10 +168,44 @@
  * @cond LOCAL
  */
 
-static const char **_eina_errors = NULL;
+typedef struct _Eina_Error_Message Eina_Error_Message;
+struct _Eina_Error_Message
+{
+   Eina_Bool string_allocated;
+   const char *string;
+};
+
+static Eina_Error_Message *_eina_errors = NULL;
 static size_t _eina_errors_count = 0;
 static size_t _eina_errors_allocated = 0;
 static Eina_Error _eina_last_error;
+
+static Eina_Error_Message *
+_eina_error_msg_alloc(void)
+{
+   size_t idx;
+
+   if (_eina_errors_count == _eina_errors_allocated)
+     {
+	void *tmp;
+	size_t size;
+
+	if (EINA_UNLIKELY(_eina_errors_allocated == 0))
+	  size = 24;
+	else
+	  size = _eina_errors_allocated + 8;
+
+	tmp = realloc(_eina_errors, sizeof(Eina_Error_Message) * size);
+	if (!tmp)
+	  return NULL;
+	_eina_errors = tmp;
+	_eina_errors_allocated = size;
+     }
+
+   idx = _eina_errors_count;
+   _eina_errors_count++;
+   return _eina_errors + idx;
+}
 
 /**
  * @endcond
@@ -209,6 +243,8 @@ static Eina_Error _eina_last_error;
 
 EAPI Eina_Error EINA_ERROR_OUT_OF_MEMORY = 0;
 
+static const char EINA_ERROR_OUT_OF_MEMORY_STR[] = "Out of memory";
+
 /**
  * @endcond
  */
@@ -230,7 +266,7 @@ Eina_Bool
 eina_error_init(void)
 {
    /* TODO register the eina's basic errors */
-   EINA_ERROR_OUT_OF_MEMORY = eina_error_msg_register("Out of memory");
+   EINA_ERROR_OUT_OF_MEMORY = eina_error_msg_static_register(EINA_ERROR_OUT_OF_MEMORY_STR);
    return EINA_TRUE;
 }
 
@@ -248,10 +284,14 @@ eina_error_init(void)
 Eina_Bool
 eina_error_shutdown(void)
 {
-   size_t i;
+   Eina_Error_Message *eem, *eem_end;
 
-   for (i = 0; i < _eina_errors_count; i++)
-     free((char *)_eina_errors[i]);
+   eem = _eina_errors;
+   eem_end = eem + _eina_errors_count;
+
+   for (; eem < eem_end; eem++)
+     if (eem->string_allocated)
+       free((char *)eem->string);
 
    free(_eina_errors);
    _eina_errors = NULL;
@@ -264,40 +304,68 @@ eina_error_shutdown(void)
 /**
  * @brief Register a new error type.
  *
- * @param msg The description of the error.
+ * @param msg The description of the error. It will be duplicated using
+ *        strdup().
  * @return The unique number identifier for this error.
  *
  * This function stores in a list the error message described by
  * @p msg. The returned value is a unique identifier greater or equal
  * than 1. The description can be retrieve later by passing to
  * eina_error_msg_get() the returned value.
+ *
+ * @see eina_error_msg_static_register()
  */
 EAPI Eina_Error
 eina_error_msg_register(const char *msg)
 {
+   Eina_Error_Message *eem;
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(msg, 0);
 
-   if (_eina_errors_count == _eina_errors_allocated)
+   eem = _eina_error_msg_alloc();
+   if (!eem)
+     return 0;
+
+   eem->string_allocated = EINA_TRUE;
+   eem->string = strdup(msg);
+   if (!eem->string)
      {
-	void *tmp;
-	size_t size;
-
-	if (EINA_UNLIKELY(_eina_errors_allocated == 0))
-	  size = 24;
-	else
-	  size = _eina_errors_allocated + 8;
-
-	tmp = realloc(_eina_errors, sizeof(char *) * size);
-	if (!tmp)
-	  return 0;
-	_eina_errors = tmp;
-	_eina_errors_allocated = size;
+	_eina_errors_count--;
+	return 0;
      }
 
-   _eina_errors[_eina_errors_count] = strdup(msg);
-   if (!_eina_errors[_eina_errors_count])
+   return _eina_errors_count; /* identifier = index + 1 (== _count). */
+}
+
+/**
+ * @brief Register a new error type, statically allocated message.
+ *
+ * @param msg The description of the error. This string will not be
+ *        duplicated and thus the given pointer should live during
+ *        usage of eina_error.
+ * @return The unique number identifier for this error.
+ *
+ * This function stores in a list the error message described by
+ * @p msg. The returned value is a unique identifier greater or equal
+ * than 1. The description can be retrieve later by passing to
+ * eina_error_msg_get() the returned value.
+ *
+ * @see eina_error_msg_register()
+ */
+EAPI Eina_Error
+eina_error_msg_static_register(const char *msg)
+{
+   Eina_Error_Message *eem;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(msg, 0);
+
+   eem = _eina_error_msg_alloc();
+   if (!eem)
      return 0;
-   return ++_eina_errors_count; /* identifier = index + 1 */
+
+   eem->string_allocated = EINA_FALSE;
+   eem->string = msg;
+   return _eina_errors_count; /* identifier = index + 1 (== _count). */
 }
 
 /**
@@ -317,7 +385,7 @@ eina_error_msg_get(Eina_Error error)
      return NULL;
    if ((size_t)error > _eina_errors_count)
      return NULL;
-   return _eina_errors[error - 1];
+   return _eina_errors[error - 1].string;
 }
 
 /**

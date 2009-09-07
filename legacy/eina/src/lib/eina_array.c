@@ -134,6 +134,10 @@
  * @cond LOCAL
  */
 
+static const char EINA_MAGIC_ARRAY_STR[] = "Eina Array";
+static const char EINA_MAGIC_ARRAY_ITERATOR_STR[] = "Eina Array Iterator";
+static const char EINA_MAGIC_ARRAY_ACCESSOR_STR[] = "Eina Array Accessor";
+
 #define EINA_MAGIC_CHECK_ARRAY(d)			\
   do {							\
      if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ARRAY))	\
@@ -338,9 +342,11 @@ eina_array_init(void)
 	return EINA_FALSE;
      }
 
-   eina_magic_string_set(EINA_MAGIC_ARRAY, "Eina Array");
-   eina_magic_string_set(EINA_MAGIC_ARRAY_ITERATOR, "Eina Array Iterator");
-   eina_magic_string_set(EINA_MAGIC_ARRAY_ACCESSOR, "Eina Array Accessor");
+#define EMS(n) eina_magic_string_static_set(n, n##_STR)
+   EMS(EINA_MAGIC_ARRAY);
+   EMS(EINA_MAGIC_ARRAY_ITERATOR);
+   EMS(EINA_MAGIC_ARRAY_ACCESSOR);
+#undef EMS
    return EINA_TRUE;
 }
 

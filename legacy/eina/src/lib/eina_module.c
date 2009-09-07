@@ -175,6 +175,9 @@ static void _dir_list_cb(const char *name, const char *path, void *data)
  * @cond LOCAL
  */
 
+static const char EINA_ERROR_WRONG_MODULE_STR[] = "Wrong file format or no file module found";
+static const char EINA_ERROR_MODULE_INIT_FAILED_STR[] = "Module initialisation function failed";
+
 EAPI Eina_Error EINA_ERROR_WRONG_MODULE = 0;
 EAPI Eina_Error EINA_ERROR_MODULE_INIT_FAILED = 0;
 
@@ -208,8 +211,10 @@ eina_module_init(void)
 	return EINA_FALSE;
      }
 
-   EINA_ERROR_WRONG_MODULE = eina_error_msg_register("Wrong file format or no file module found");
-   EINA_ERROR_MODULE_INIT_FAILED = eina_error_msg_register("Module initialisation function failed");
+#define EEMR(n) n = eina_error_msg_static_register(n##_STR)
+   EEMR(EINA_ERROR_WRONG_MODULE);
+   EEMR(EINA_ERROR_MODULE_INIT_FAILED);
+#undef EEMR
 
    return EINA_TRUE;
 }

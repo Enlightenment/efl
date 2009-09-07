@@ -91,6 +91,7 @@ _eina_counter_time_get(Eina_Nano_Time *tp)
 # endif
 }
 #else
+static const char EINA_ERROR_COUNTER_WINDOWS_STR[] = "Change your OS, you moron !";
 static int EINA_ERROR_COUNTER_WINDOWS = 0;
 static LARGE_INTEGER _eina_counter_frequency;
 
@@ -249,7 +250,7 @@ Eina_Bool
 eina_counter_init(void)
 {
 #ifdef _WIN32
-   EINA_ERROR_COUNTER_WINDOWS = eina_error_msg_register("Change your OS, you moron !");
+   EINA_ERROR_COUNTER_WINDOWS = eina_error_msg_static_register(EINA_ERROR_COUNTER_WINDOWS_STR);
    if (!QueryPerformanceFrequency(&_eina_counter_frequency))
      {
 	eina_error_set(EINA_ERROR_COUNTER_WINDOWS);

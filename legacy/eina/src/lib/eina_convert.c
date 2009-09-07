@@ -84,6 +84,10 @@ EAPI Eina_Error EINA_ERROR_CONVERT_P_NOT_FOUND = 0;
 EAPI Eina_Error EINA_ERROR_CONVERT_0X_NOT_FOUND = 0;
 EAPI Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = 0;
 
+static const char EINA_ERROR_CONVERT_0X_NOT_FOUND_STR[] = "Error during string convertion to float, First '0x' was not found.";
+static const char EINA_ERROR_CONVERT_P_NOT_FOUND_STR[] = "Error during string convertion to float, First 'p' was not found.";
+static const char EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH_STR[] = "Error outrun string limit during convertion string convertion to float.";
+
 /**
  * @endcond
  */
@@ -232,9 +236,11 @@ eina_convert_init(void)
 	return EINA_FALSE;
      }
 
-   EINA_ERROR_CONVERT_0X_NOT_FOUND = eina_error_msg_register("Error during string convertion to float, First '0x' was not found.");
-   EINA_ERROR_CONVERT_P_NOT_FOUND = eina_error_msg_register("Error during string convertion to float, First 'p' was not found.");
-   EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = eina_error_msg_register("Error outrun string limit during convertion string convertion to float.");
+#define EEMR(n) n = eina_error_msg_static_register(n##_STR)
+   EEMR(EINA_ERROR_CONVERT_0X_NOT_FOUND);
+   EEMR(EINA_ERROR_CONVERT_P_NOT_FOUND);
+   EEMR(EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH);
+#undef EEMR
 
    return EINA_TRUE;
 }

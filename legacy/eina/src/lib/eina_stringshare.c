@@ -95,6 +95,11 @@
 #define EINA_STRINGSHARE_BUCKETS 256
 #define EINA_STRINGSHARE_MASK 0xFF
 
+static const char EINA_MAGIC_STRINGSHARE_STR[] = "Eina Stringshare";
+static const char EINA_MAGIC_STRINGSHARE_HEAD_STR[] = "Eina Stringshare Head";
+static const char EINA_MAGIC_STRINGSHARE_NODE_STR[] = "Eina Stringshare Node";
+
+
 #define EINA_MAGIC_CHECK_STRINGSHARE_HEAD(d, ...)		\
   do {								\
     if (!EINA_MAGIC_CHECK((d), EINA_MAGIC_STRINGSHARE_HEAD))	\
@@ -835,9 +840,11 @@ eina_stringshare_init(void)
 	return EINA_FALSE;
      }
 
-   eina_magic_string_set(EINA_MAGIC_STRINGSHARE, "Eina Stringshare");
-   eina_magic_string_set(EINA_MAGIC_STRINGSHARE_HEAD, "Eina Stringshare Head");
-   eina_magic_string_set(EINA_MAGIC_STRINGSHARE_NODE, "Eina Stringshare Node");
+#define EMS(n) eina_magic_string_static_set(n, n##_STR)
+   EMS(EINA_MAGIC_STRINGSHARE);
+   EMS(EINA_MAGIC_STRINGSHARE_HEAD);
+   EMS(EINA_MAGIC_STRINGSHARE_NODE);
+#undef EMS
    EINA_MAGIC_SET(share, EINA_MAGIC_STRINGSHARE);
 
    _eina_stringshare_small_init();

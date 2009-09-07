@@ -144,6 +144,8 @@ eina_mempool_unregister(Eina_Mempool_Backend *be)
 
 EAPI Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE = 0;
 
+static const char EINA_ERROR_NOT_MEMPOOL_MODULE_STR[] = "Not a memory pool module.";
+
 Eina_Bool
 eina_mempool_init(void)
 {
@@ -156,7 +158,7 @@ eina_mempool_init(void)
 	return 0;
      }
 
-   EINA_ERROR_NOT_MEMPOOL_MODULE = eina_error_msg_register("Not a memory pool module.");
+   EINA_ERROR_NOT_MEMPOOL_MODULE = eina_error_msg_static_register(EINA_ERROR_NOT_MEMPOOL_MODULE_STR);
    _backends = eina_hash_string_superfast_new(NULL);
 
    /* dynamic backends */
