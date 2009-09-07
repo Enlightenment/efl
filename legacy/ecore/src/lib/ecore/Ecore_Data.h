@@ -389,8 +389,8 @@ extern "C" {
    
    EAPI void *ecore_sheap_item(Ecore_Sheap *heap, int i);
    
-  #define ecore_string_init eina_stringshare_init
-  #define ecore_string_shutdown eina_stringshare_shutdown
+  #define ecore_string_init eina_init
+  #define ecore_string_shutdown eina_shutdown
   #define ecore_string_instance eina_stringshare_add
   #define ecore_string_release eina_stringshare_del
 
