@@ -66,6 +66,7 @@ struct _Img
    Eina_Bool dead : 1;
    Eina_Bool active : 1;
    Eina_Bool useless : 1;
+   Eina_Bool killme : 1;
 };
 
 struct _Load_Inf
@@ -81,6 +82,12 @@ static time_t t_now = 0;
 
 static int server_id = 0;
 
+LK(strshr_freeme_lock);
+static int strshr_freeme_count = 0;
+static int strshr_freeme_alloc = 0;
+static const char **strshr_freeme = NULL;
+
+static int cache_cleanme = 0;
 static Evas_Cache_Image *cache = NULL;
 
 static Eina_Hash *active_images = NULL;
@@ -293,6 +300,7 @@ _img_alloc(void)
    Img *img;
    
    img = calloc(1, sizeof(Img));
+   LKI(img->lock);
    return (Image_Entry *)img;
 }
 
@@ -300,6 +308,7 @@ static void
 _img_dealloc(Image_Entry *ie)
 {
    Img *img = (Img *)ie;
+   LKD(img->lock);
    free(img);
 }
 
@@ -433,6 +442,7 @@ img_init(void)
    active_images = eina_hash_string_superfast_new(NULL);
    cache = evas_cache_image_init(&cache_funcs);
    LKI(cache_lock);
+   LKI(strshr_freeme_lock);
 }
 
 static void
@@ -441,6 +451,8 @@ img_shutdown(void)
    evas_cache_image_shutdown(cache);
    cache = NULL;
    // FIXME: shutdown properly
+   LKD(strshr_freeme_lock);
+   LKI(cache_lock);
 }
 
 static Img *
@@ -521,9 +533,19 @@ img_free(Img *img)
      }
    stats_lifetime_update(img);
    stats_update();
-   eina_stringshare_del(img->key);
-   eina_stringshare_del(img->file.file);
-   eina_stringshare_del(img->file.key);
+   
+   LKL(strshr_freeme_lock);
+   strshr_freeme_count +=  3;
+   if (strshr_freeme_count > strshr_freeme_alloc)
+     {
+        strshr_freeme_alloc += 32;
+        strshr_freeme = realloc(strshr_freeme, strshr_freeme_alloc * sizeof(const char **));
+     }
+   strshr_freeme[strshr_freeme_count - 3] = img->key;
+   strshr_freeme[strshr_freeme_count - 2] = img->file.file;
+   strshr_freeme[strshr_freeme_count - 1] = img->file.key;
+   LKU(strshr_freeme_lock);
+   
    evas_cache_image_drop((Image_Entry *)img);
 }
 
@@ -538,18 +560,26 @@ cache_clean(void)
         Img *img;
         Eina_List *l;
         
-        LKL(img->lock);
         D("... clean loop %i > %i\n", cache_usage, (cache_max_usage + cache_max_adjust) * 1024);
-        l = eina_list_last(cache_images);
+        l = eina_list_last(cache_images); // THREAD: called from thread. happens to be safe as it uses no unlocked shared resources
         if (!l) break;
         img = l->data;
         if (!img) break;
+        LKL(img->lock);
         D("...   REMOVE %p '%s'\n", img, img->file.file);
-        cache_images = eina_list_remove_list(cache_images, l);
+#ifdef BUILD_PTHREAD
+        img->killme = 1;
+        img->useless = 1;
+        img->dead = 1;
+        cache_cleanme++;
+        LKU(img->lock);
+#else        
+        cache_images = eina_list_remove_list(cache_images, l); // FIXME: called from thread
         img->incache--;
         cache_usage -= img->usage;
         D("...   IMG FREE %p\n", img);
         img_free(img);
+#endif        
      }
    LKU(cache_lock);
 }
@@ -620,7 +650,7 @@ img_cache(Img *img)
      {
         D("... img %p '%s' dead\n", img , img->file.file);
         img_free(img);
-       return;
+        return;
      }
    if ((cache_usage + img->usage) > ((cache_max_usage + cache_max_adjust) * 1024))
      {
@@ -983,8 +1013,11 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                   c->data = eina_list_remove(c->data, img);
                   D("... unload %p\n", img);
                   LKL(img->lock);
+                  img->ref++;
                   img_unload(img);
+                  img->ref--;
                   LKU(img->lock);
+                  cache_clean();
                }
           } 
         break;
@@ -1133,8 +1166,11 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                   D("remove %p from list\n", img);
                   c->data = eina_list_remove(c->data, img);
                   D("... forced unload now\n");
+                  img->ref++;
                   img_forcedunload(img);
+                  img->ref--;
                   LKU(img->lock);
+                  cache_clean();
                }
           } 
         break;
@@ -1504,6 +1540,46 @@ main(int argc, char **argv)
         if ((t_next <= 0) && (cache_item_timeout_check > 0))
           t_next = 1;
         D("sleep for %isec...\n", t_next);
+        
+        LKL(strshr_freeme_lock);
+        if (strshr_freeme_count > 0)
+          {
+             int i;
+             
+             for (i = 0; i < strshr_freeme_count; i++)
+               eina_stringshare_del(strshr_freeme[i]);
+             strshr_freeme_count = 0;
+          }
+        LKU(strshr_freeme_lock);
+        
+        LKL(cache_lock);
+        if (cache_cleanme)
+          {
+             Eina_List *l;
+             Img *img;
+             Eina_List *kills = NULL;
+             
+             EINA_LIST_FOREACH(cache_images, l, img)
+               {
+                  LKL(img->lock);
+                  if (img->killme)
+                    kills = eina_list_append(kills, img);
+                  LKU(img->lock);
+               }
+             while (kills)
+               {
+                  img = kills->data;
+                  kills = eina_list_remove_list(kills, kills);
+                  LKL(img->lock);
+                  cache_images = eina_list_remove(cache_images, img);
+                  img->incache--;
+                  cache_usage -= img->usage;
+                  D("...   IMG FREE %p\n", img);
+                  img_free(img);
+               }
+             cache_cleanme = 0;
+          }
+        LKU(cache_lock);
      }
    D("end loop...\n");
    error:
