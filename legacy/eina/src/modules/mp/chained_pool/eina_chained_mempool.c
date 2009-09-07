@@ -241,7 +241,7 @@ eina_chained_mempool_shutdown(void *data)
    free(mp);
 }
 
-static Eina_Mempool_Backend mp_backend = {
+static Eina_Mempool_Backend _eina_chained_mp_backend = {
   .name ="chained_mempool",
   .init = &eina_chained_mempool_init,
   .shutdown = &eina_chained_mempool_shutdown,
@@ -252,12 +252,12 @@ static Eina_Mempool_Backend mp_backend = {
 
 Eina_Bool chained_init(void)
 {
-	return eina_mempool_register(&mp_backend);
+	return eina_mempool_register(&_eina_chained_mp_backend);
 }
 
 void chained_shutdown(void)
 {
-	eina_mempool_unregister(&mp_backend);
+	eina_mempool_unregister(&_eina_chained_mp_backend);
 }
 
 #ifndef EINA_STATIC_BUILD_CHAINED_POOL

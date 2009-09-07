@@ -110,6 +110,17 @@ AC_ARG_WITH(internal-maximum-log-level,
     fi
     ], [:])
 
+AC_ARG_ENABLE([amalgamation],
+   [AC_HELP_STRING([--enable-amalgamation], [generate one single file with all source code in it, helps compiler optimizations.])],
+   [if test "x${enableval}" = "xyes"; then
+       do_amalgamation="yes"
+    else
+       do_amalgamation="no"
+    fi
+   ],
+   [do_amalgamation="no"]
+)
+AM_CONDITIONAL(EINA_AMALGAMATION, test "x${do_amalgamation}" = "xyes")
 
 # Choose best memory pool
 AC_ARG_ENABLE([default-mempool],

@@ -138,7 +138,7 @@ eina_ememoa_unknown_size_shutdown(void *data)
    free(efm);
 }
 
-static Eina_Mempool_Backend mp_backend = {
+static Eina_Mempool_Backend _eina_ememoa_unknown_mp_backend = {
   .name = "ememoa_unknown",
   .init = &eina_ememoa_unknown_size_init,
   .shutdown = &eina_ememoa_unknown_size_shutdown,
@@ -151,12 +151,12 @@ static Eina_Mempool_Backend mp_backend = {
 
 Eina_Bool ememoa_unknown_init(void)
 {
-	return eina_mempool_register(&mp_backend);
+	return eina_mempool_register(&_eina_ememoa_unknown_mp_backend);
 }
 
 void ememoa_unknown_shutdown(void)
 {
-	eina_mempool_unregister(&mp_backend);
+	eina_mempool_unregister(&_eina_ememoa_unknown_mp_backend);
 }
 
 #ifndef EINA_STATIC_BUILD_EMEMOA_UNKNOWN

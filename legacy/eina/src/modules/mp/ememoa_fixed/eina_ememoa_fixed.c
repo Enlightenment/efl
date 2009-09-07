@@ -133,7 +133,7 @@ eina_ememoa_fixed_shutdown(void *data)
    free(efm);
 }
 
-static Eina_Mempool_Backend mp_backend = {
+static Eina_Mempool_Backend _eina_ememoa_mp_backend = {
   .name = "ememoa_fixed",
   .init = &eina_ememoa_fixed_init,
   .shutdown = &eina_ememoa_fixed_shutdown,
@@ -146,12 +146,12 @@ static Eina_Mempool_Backend mp_backend = {
 
 Eina_Bool ememoa_fixed_init(void)
 {
-	return eina_mempool_register(&mp_backend);
+	return eina_mempool_register(&_eina_ememoa_mp_backend);
 }
 
 void ememoa_fixed_shutdown(void)
 {
-	eina_mempool_unregister(&mp_backend);
+	eina_mempool_unregister(&_eina_ememoa_mp_backend);
 }
 
 

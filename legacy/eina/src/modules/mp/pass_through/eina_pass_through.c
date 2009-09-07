@@ -60,7 +60,7 @@ eina_pass_through_shutdown(__UNUSED__ void *data)
 }
 
 
-static Eina_Mempool_Backend mp_backend = {
+static Eina_Mempool_Backend _eina_pass_through_mp_backend = {
   .name = "pass_through",
   .init = &eina_pass_through_init,
   .shutdown = &eina_pass_through_shutdown,
@@ -73,12 +73,12 @@ static Eina_Mempool_Backend mp_backend = {
 
 Eina_Bool pass_through_init(void)
 {
-	return eina_mempool_register(&mp_backend);
+	return eina_mempool_register(&_eina_pass_through_mp_backend);
 }
 
 void pass_through_shutdown(void)
 {
-	eina_mempool_unregister(&mp_backend);
+	eina_mempool_unregister(&_eina_pass_through_mp_backend);
 }
 
 #ifndef EINA_STATIC_BUILD_PASS_THROUGH

@@ -203,7 +203,7 @@ eina_fixed_bitmap_shutdown(void *data)
    free(mp);
 }
 
-static Eina_Mempool_Backend mp_backend = {
+static Eina_Mempool_Backend _eina_fixed_bitmap_mp_backend = {
   .name ="fixed_bitmap",
   .init = &eina_fixed_bitmap_init,
   .shutdown = &eina_fixed_bitmap_shutdown,
@@ -214,12 +214,12 @@ static Eina_Mempool_Backend mp_backend = {
 
 Eina_Bool fixed_bitmap_init(void)
 {
-   return eina_mempool_register(&mp_backend);
+   return eina_mempool_register(&_eina_fixed_bitmap_mp_backend);
 }
 
 void fixed_bitmap_shutdown(void)
 {
-   eina_mempool_unregister(&mp_backend);
+   eina_mempool_unregister(&_eina_fixed_bitmap_mp_backend);
 }
 
 #ifndef EINA_STATIC_BUILD_FIXED_BITMAP
