@@ -961,6 +961,8 @@ eina_log_shutdown(void)
    free(_log_domains);
 
    _log_domains = NULL;
+   _log_domains_count = 0;
+   _log_domains_allocated = 0;
 
    while (_pending_list)
      {
