@@ -93,7 +93,14 @@ static Eina_Trash *_eina_rectangles = NULL;
 static unsigned int _eina_rectangles_count = 0;
 static int _eina_rectangle_log_dom = -1;
 
+#ifdef ERR
+#undef ERR
+#endif
 #define ERR(...) EINA_LOG_DOM_ERR(_eina_rectangle_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+#undef DBG
+#endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_rectangle_log_dom, __VA_ARGS__)
 
 static int

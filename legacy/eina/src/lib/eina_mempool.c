@@ -46,10 +46,17 @@
 
 static Eina_Hash *_backends;
 static Eina_Array *_modules;
-static int _log_dom = -1;
+static int _eina_mempool_log_dom = -1;
 
-#define ERR(...) EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
-#define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
+#ifdef ERR
+#undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_eina_mempool_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+#undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_eina_mempool_log_dom, __VA_ARGS__)
 
 
 static Eina_Mempool *
@@ -151,8 +158,8 @@ eina_mempool_init(void)
 {
    char *path;
 
-   _log_dom = eina_log_domain_register("eina_mempool", EINA_LOG_COLOR_DEFAULT);
-   if (_log_dom < 0)
+   _eina_mempool_log_dom = eina_log_domain_register("eina_mempool", EINA_LOG_COLOR_DEFAULT);
+   if (_eina_mempool_log_dom < 0)
      {
 	EINA_LOG_ERR("Could not register log domain: eina_mempool");
 	return 0;
@@ -203,8 +210,8 @@ eina_mempool_init(void)
    return EINA_TRUE;
 
  mempool_init_error:
-   eina_log_domain_unregister(_log_dom);
-   _log_dom = -1;
+   eina_log_domain_unregister(_eina_mempool_log_dom);
+   _eina_mempool_log_dom = -1;
 
    return EINA_FALSE;
 }
@@ -236,8 +243,8 @@ eina_mempool_shutdown(void)
    if (_backends)
      eina_hash_free(_backends);
 
-   eina_log_domain_unregister(_log_dom);
-   _log_dom = -1;
+   eina_log_domain_unregister(_eina_mempool_log_dom);
+   _eina_mempool_log_dom = -1;
 
    return EINA_TRUE;
 }

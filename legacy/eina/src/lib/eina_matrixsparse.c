@@ -197,7 +197,14 @@ struct _Eina_Matrixsparse_Iterator_Complete
 
 static int _eina_matrixsparse_log_dom = -1;
 
+#ifdef ERR
+#undef ERR
+#endif
 #define ERR(...) EINA_LOG_DOM_ERR(_eina_matrixsparse_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+#undef DBG
+#endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_matrixsparse_log_dom, __VA_ARGS__)
 
 static Eina_Mempool *_eina_matrixsparse_cell_mp = NULL;

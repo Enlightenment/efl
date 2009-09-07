@@ -163,7 +163,14 @@ static Eina_Mempool *_eina_list_mp = NULL;
 static Eina_Mempool *_eina_list_accounting_mp = NULL;
 static int _eina_list_log_dom = -1;
 
+#ifdef ERR
+#undef ERR
+#endif
 #define ERR(...) EINA_LOG_DOM_ERR(_eina_list_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+#undef DBG
+#endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_list_log_dom, __VA_ARGS__)
 
 static inline Eina_List_Accounting*

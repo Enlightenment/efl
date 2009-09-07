@@ -71,8 +71,19 @@ void *alloca (size_t);
  */
 
 static int EINA_MODULE_LOG_DOM = -1;
+#ifdef ERR
+#undef ERR
+#endif
 #define ERR(...) EINA_LOG_DOM_ERR(EINA_MODULE_LOG_DOM, __VA_ARGS__)
+
+#ifdef WRN
+#undef WRN
+#endif
 #define WRN(...) EINA_LOG_DOM_WARN(EINA_MODULE_LOG_DOM, __VA_ARGS__)
+
+#ifdef DBG
+#undef DBG
+#endif
 #define DBG(...) EINA_LOG_DOM_DBG(EINA_MODULE_LOG_DOM, __VA_ARGS__)
 
 #if defined(_WIN32) || defined(__CYGWIN__)

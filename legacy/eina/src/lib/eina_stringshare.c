@@ -155,8 +155,19 @@ struct _Eina_Stringshare_Head
 static Eina_Stringshare *share = NULL;
 static int _eina_stringshare_log_dom = -1;
 
+#ifdef CRITICAL
+#undef CRITICAL
+#endif
 #define CRITICAL(...) EINA_LOG_DOM_CRIT(_eina_stringshare_log_dom, __VA_ARGS__)
+
+#ifdef ERR
+#undef ERR
+#endif
 #define ERR(...) EINA_LOG_DOM_ERR(_eina_stringshare_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+#undef DBG
+#endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_stringshare_log_dom, __VA_ARGS__)
 
 static const unsigned char _eina_stringshare_single[512] = {

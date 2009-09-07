@@ -183,7 +183,15 @@ struct _Eina_Accessor_Array
 };
 
 static int _eina_array_log_dom = -1;
+
+#ifdef ERR
+#undef ERR
+#endif
 #define ERR(...) EINA_LOG_DOM_ERR(_eina_array_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+#undef DBG
+#endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_array_log_dom, __VA_ARGS__)
 
 static void eina_array_iterator_free(Eina_Iterator_Array *it) EINA_ARG_NONNULL(1);
