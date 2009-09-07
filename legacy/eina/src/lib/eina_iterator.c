@@ -80,6 +80,40 @@
  */
 
 /**
+ * @internal
+ * @brief Initialize the iterator module.
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function sets up the iterator module of Eina. It is called by
+ * eina_init().
+ *
+ * @see eina_init()
+ */
+Eina_Bool
+eina_iterator_init(void)
+{
+   return eina_magic_string_set(EINA_MAGIC_ITERATOR, "Eina Iterator");
+}
+
+/**
+ * @internal
+ * @brief Shut down the iterator module.
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function shuts down the iterator module set up by
+ * eina_iterator_init(). It is called by eina_shutdown().
+ *
+ * @see eina_shutdown()
+ */
+Eina_Bool
+eina_iterator_shutdown(void)
+{
+   return EINA_TRUE;
+}
+
+/**
  * @brief Free an iterator.
  *
  * @param iterator The iterator to free.

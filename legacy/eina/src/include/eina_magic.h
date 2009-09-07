@@ -42,7 +42,7 @@ typedef unsigned int               Eina_Magic;
  * An abstract type for a magic number.
  */
 EAPI const char* eina_magic_string_get(Eina_Magic magic) EINA_PURE EINA_WARN_UNUSED_RESULT;
-EAPI void eina_magic_string_set(Eina_Magic magic, const char *magic_name) EINA_ARG_NONNULL(2);
+EAPI Eina_Bool eina_magic_string_set(Eina_Magic magic, const char *magic_name) EINA_ARG_NONNULL(2);
 
 /**
  * @def EINA_MAGIC_NONE

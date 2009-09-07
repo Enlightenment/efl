@@ -61,6 +61,8 @@ S(log);
 S(error);
 S(safety_checks);
 S(magic_string);
+S(iterator);
+S(accessor);
 S(array);
 S(module);
 S(mempool);
@@ -86,6 +88,8 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
   S(error),
   S(safety_checks),
   S(magic_string),
+  S(iterator),
+  S(accessor),
   S(array),
   S(module),
   S(mempool),

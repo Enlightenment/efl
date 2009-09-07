@@ -338,8 +338,6 @@ eina_array_init(void)
 	return EINA_FALSE;
      }
 
-   eina_magic_string_set(EINA_MAGIC_ITERATOR, "Eina Iterator");
-   eina_magic_string_set(EINA_MAGIC_ACCESSOR, "Eina Accessor");
    eina_magic_string_set(EINA_MAGIC_ARRAY, "Eina Array");
    eina_magic_string_set(EINA_MAGIC_ARRAY_ITERATOR, "Eina Array Iterator");
    eina_magic_string_set(EINA_MAGIC_ARRAY_ACCESSOR, "Eina Array Accessor");

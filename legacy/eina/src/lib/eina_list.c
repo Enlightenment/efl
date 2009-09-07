@@ -487,8 +487,6 @@ eina_list_init(void)
 	goto on_init_fail;
      }
 
-   eina_magic_string_set(EINA_MAGIC_ITERATOR, "Eina Iterator");
-   eina_magic_string_set(EINA_MAGIC_ACCESSOR, "Eina Accessor");
    eina_magic_string_set(EINA_MAGIC_LIST, "Eina List");
    eina_magic_string_set(EINA_MAGIC_LIST_ITERATOR, "Eina List Iterator");
    eina_magic_string_set(EINA_MAGIC_LIST_ACCESSOR, "Eina List Accessor");

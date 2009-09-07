@@ -79,6 +79,40 @@
  */
 
 /**
+ * @internal
+ * @brief Initialize the accessor module.
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function sets up the accessor module of Eina. It is called by
+ * eina_init().
+ *
+ * @see eina_init()
+ */
+Eina_Bool
+eina_accessor_init(void)
+{
+   return eina_magic_string_set(EINA_MAGIC_ACCESSOR, "Eina Accessor");
+}
+
+/**
+ * @internal
+ * @brief Shut down the accessor module.
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function shuts down the accessor module set up by
+ * eina_accessor_init(). It is called by eina_shutdown().
+ *
+ * @see eina_shutdown()
+ */
+Eina_Bool
+eina_accessor_shutdown(void)
+{
+   return EINA_TRUE;
+}
+
+/**
  * @brief Free an accessor.
  *
  * @param accessor The accessor to free.

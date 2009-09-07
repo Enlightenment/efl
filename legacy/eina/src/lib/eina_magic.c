@@ -30,8 +30,10 @@
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_error.h"
-#include "eina_inlist.h"
 #include "eina_log.h"
+
+/* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
+#include "eina_safety_checks.h"
 #include "eina_magic.h"
 
 /*============================================================================*
@@ -45,13 +47,34 @@
 typedef struct _Eina_Magic_String Eina_Magic_String;
 struct _Eina_Magic_String
 {
-   EINA_INLIST;
-
-   char *string;
    Eina_Magic magic;
+   char *string;
 };
 
-static Eina_Inlist *strings = NULL;
+static int _eina_magic_string_log_dom = -1;
+
+#define ERR(...) EINA_LOG_DOM_ERR(_eina_magic_string_log_dom, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_eina_magic_string_log_dom, __VA_ARGS__)
+
+static Eina_Magic_String *_eina_magic_strings = NULL;
+static size_t _eina_magic_strings_count = 0;
+static size_t _eina_magic_strings_allocated = 0;
+static Eina_Bool _eina_magic_strings_dirty = 0;
+
+static int
+_eina_magic_strings_sort_cmp(const void *p1, const void *p2)
+{
+   const Eina_Magic_String *a = p1, *b = p2;
+   return a->magic - b->magic;
+}
+
+static int
+_eina_magic_strings_find_cmp(const void *p1, const void *p2)
+{
+   Eina_Magic a = (long)p1;
+   const Eina_Magic_String *b = p2;
+   return a - b->magic;
+}
 
 /**
  * @endcond
@@ -87,6 +110,14 @@ static Eina_Inlist *strings = NULL;
 Eina_Bool
 eina_magic_string_init(void)
 {
+   _eina_magic_string_log_dom = eina_log_domain_register
+     ("eina_magic_string", EINA_LOG_COLOR_DEFAULT);
+   if (_eina_magic_string_log_dom < 0)
+     {
+	EINA_LOG_ERR("Could not register log domain: eina_magic_string");
+	return EINA_FALSE;
+     }
+
    return EINA_TRUE;
 }
 
@@ -104,15 +135,18 @@ eina_magic_string_init(void)
 Eina_Bool
 eina_magic_string_shutdown(void)
 {
-   /* Free all strings. */
-   while (strings)
-     {
-	Eina_Magic_String *tmp = (Eina_Magic_String*) strings;
-	strings = eina_inlist_remove(strings, strings);
+   size_t i;
 
-	free(tmp->string);
-	free(tmp);
-     }
+   for (i = 0; i < _eina_magic_strings_count; i++)
+     free(_eina_magic_strings[i].string);
+
+   free(_eina_magic_strings);
+   _eina_magic_strings = NULL;
+   _eina_magic_strings_count = 0;
+   _eina_magic_strings_allocated = 0;
+
+   eina_log_domain_unregister(_eina_magic_string_log_dom);
+   _eina_magic_string_log_dom = -1;
 
    return EINA_TRUE;
 }
@@ -132,10 +166,21 @@ eina_magic_string_get(Eina_Magic magic)
 {
    Eina_Magic_String *ems;
 
-   EINA_INLIST_FOREACH(strings, ems)
-     if (ems->magic == magic)
-       return ems->string;
+   if (!_eina_magic_strings)
+     return NULL;
 
+   if (_eina_magic_strings_dirty)
+     {
+	qsort(_eina_magic_strings, _eina_magic_strings_count,
+	      sizeof(Eina_Magic_String), _eina_magic_strings_sort_cmp);
+	_eina_magic_strings_dirty = 0;
+     }
+
+   ems = bsearch((void *)(long)magic, _eina_magic_strings,
+		 _eina_magic_strings_count, sizeof(Eina_Magic_String),
+		 _eina_magic_strings_find_cmp);
+   if (ems)
+     return ems->string;
    return NULL;
 }
 
@@ -143,39 +188,54 @@ eina_magic_string_get(Eina_Magic magic)
  * @brief Set the string associated to the given magic identifier.
  *
  * @param magic The magic identifier.
- * @param The string associated to the identifier.
+ * @param The string associated to the identifier, must not be @c NULL.
  *
- * This function sets the string @p magic_name to @p magic. If a
- * string is already associated to @p magic, then it is freed and @p
- * magic_name is duplicated. Otherwise, it is added to the list of
- * magic strings.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function sets the string @p magic_name to @p magic. It is not
+ * checked if number or string are already set, then you might end
+ * with duplicates in that case.
  */
-EAPI void
+EAPI Eina_Bool
 eina_magic_string_set(Eina_Magic magic, const char *magic_name)
 {
    Eina_Magic_String *ems;
 
-   EINA_INLIST_FOREACH(strings, ems)
-     if (ems->magic == magic)
-       {
-	  free(ems->string);
-	  if (magic_name)
-	    ems->string = strdup(magic_name);
-	  else
-	    ems->string = NULL;
-	  return ;
-       }
+   EINA_SAFETY_ON_NULL_RETURN_VAL(magic_name, EINA_FALSE);
 
-   ems = malloc(sizeof (Eina_Magic_String));
-   if (!ems)
-     return;
+   if (_eina_magic_strings_count == _eina_magic_strings_allocated)
+     {
+	void *tmp;
+	size_t size;
+
+	if (EINA_UNLIKELY(_eina_magic_strings_allocated == 0))
+	  size = 48;
+	else
+	  size = _eina_magic_strings_allocated + 16;
+
+	tmp = realloc(_eina_magic_strings, sizeof(Eina_Magic_String) * size);
+	if (!tmp)
+	  {
+	     ERR("could not realloc magic_strings from %zu to %zu buckets.",
+		 _eina_magic_strings_allocated, size);
+	     return EINA_FALSE;
+	  }
+	_eina_magic_strings = tmp;
+	_eina_magic_strings_allocated = size;
+     }
+
+   ems = _eina_magic_strings + _eina_magic_strings_count;
    ems->magic = magic;
-   if (magic_name)
-     ems->string = strdup(magic_name);
-   else
-     ems->string = NULL;
+   ems->string = strdup(magic_name);
+   if (!ems->string)
+     {
+	ERR("could not allocate string '%s'", magic_name);
+	return EINA_FALSE;
+     }
 
-   strings = eina_inlist_prepend(strings, EINA_INLIST_GET(ems));
+   _eina_magic_strings_count++;
+   _eina_magic_strings_dirty = 1;
+   return EINA_TRUE;
 }
 
 #ifdef eina_magic_fail
