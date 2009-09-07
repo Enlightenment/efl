@@ -49,6 +49,13 @@ test_index(void *data, Evas_Object *obj, void *event_info)
         it = elm_genlist_item_append(gl, &itci,
                                      i/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, NULL/* func */,
                                      NULL/* func data */);
+        if ((i % 10) == 0)
+          {
+             char buf[32];
+             
+             snprintf(buf, sizeof(buf), "%i\n", i / 10);
+             elm_index_item_append(id, buf, it);
+          }
      }
 
    evas_object_resize(win, 320, 480);
