@@ -104,7 +104,7 @@ benchmark:
 else
 
 benchmark:
-	@echo "reconfigure with --enable-bench"
+	@echo "reconfigure with --enable-benchmark"
 endif
 
 clean-local:
