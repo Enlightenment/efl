@@ -593,6 +593,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    Elm_Genlist_Item *it = data;
    Evas_Event_Mouse_Up *ev = event_info;
    Eina_List *l;
+   Eina_Bool dragged = 0;
    if (ev->button != 1) return;
    it->down = 0;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) it->wd->on_hold = EINA_TRUE;
@@ -606,6 +607,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
      {
         it->dragging = 0;
         evas_object_smart_callback_call(it->wd->obj, "drag,stop", it);
+        dragged = 1;
      }
    if (it->wd->on_hold)
      {
@@ -622,6 +624,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
         return;
      }
    if (it->disabled) return;
+   if (dragged) return;
    if (it->wd->multi)
      {
 	if (!it->selected)

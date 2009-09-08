@@ -756,6 +756,42 @@ void gl5_del(const void *data, Evas_Object *obj)
 {
 }
 
+static void
+item_drag_up(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("drag up\n");
+}
+
+static void
+item_drag_down(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("drag down\n");
+}
+
+static void
+item_drag_left(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("drag left\n");
+}
+
+static void
+item_drag_right(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("drag right\n");
+}
+
+static void
+item_drag(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("drag\n");
+}
+
+static void
+item_drag_stop(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("drag stop\n");
+}
+
 void
 test_genlist5(void *data, Evas_Object *obj, void *event_info)
 {
@@ -804,6 +840,13 @@ test_genlist5(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, gl);
    elm_object_scroll_freeze_push(gl);
    evas_object_show(bx2);
+   
+   evas_object_smart_callback_add(gl, "drag,start,up", item_drag_up, NULL);
+   evas_object_smart_callback_add(gl, "drag,start,down", item_drag_down, NULL);
+   evas_object_smart_callback_add(gl, "drag,start,left", item_drag_left, NULL);
+   evas_object_smart_callback_add(gl, "drag,start,right", item_drag_right, NULL);
+   evas_object_smart_callback_add(gl, "drag", item_drag, NULL);
+   evas_object_smart_callback_add(gl, "drag,stop", item_drag_stop, NULL);
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
