@@ -698,8 +698,9 @@ extern "C" {
    EAPI Eina_Bool         elm_genlist_item_disabled_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_show(Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_del(Elm_Genlist_Item *item);
-   EAPI void             *elm_genlist_item_data_get(const Elm_Genlist_Item *item);
-   EAPI void              elm_genlist_item_data_set(Elm_Genlist_Item *it, void *data);
+   EAPI const void       *elm_genlist_item_data_get(const Elm_Genlist_Item *item);
+   EAPI void              elm_genlist_item_data_set(Elm_Genlist_Item *it, const void *data);
+   EAPI const Evas_Object *elm_genlist_item_object_get(const Elm_Genlist_Item *it);
    EAPI void              elm_genlist_item_update(Elm_Genlist_Item *item);
    EAPI void              elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode);
    EAPI void              elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);

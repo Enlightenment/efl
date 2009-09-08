@@ -14,7 +14,7 @@
  * Signals that you can add callbacks for are:
  *
  * clicked - This is called when a user has double-clicked an item. The
- * event_info parameter is the genlist item that as double-clicked.
+ * event_info parameter is the genlist item that was double-clicked.
  *
  * selected - This is called when a user has made an item selected. The
  * event_info parameter is the genlist item that was selected.
@@ -43,6 +43,12 @@
  * contract (has any children) and then call elm_genlist_item_expanded_set()
  * appropriately to set the state. The event_info parameter is the genlist
  * item that was indicated to contract.
+ *
+ * realized - This is called when the item in the list is created as a real
+ * evas object. event_info parameter is the genlist item that was created.
+ * The object may be deleted at any time, so it is up to the caller to
+ * not use the object pointer from elm_genlist_item_object_get() in a way
+ * where it may point to freed objects.
  *
  * Genlist has a fairly large API, mostly because it's relatively complex,
  * trying to be both expansive, powerful and efficient. First we will begin
@@ -755,7 +761,11 @@ _item_block_recalc(Item_Block *itb, int in)
 	     _item_unrealize(it);
 	  }
 	else
-	  _item_realize(it, in, 0);
+          {
+             if (!it->realized)
+               evas_object_smart_callback_call(it->wd->obj, "realized", it);
+             _item_realize(it, in, 0);
+          }
 	minh += it->minh;
 	if (minw < it->minw) minw = it->minw;
 	in++;
@@ -780,7 +790,12 @@ _item_block_realize(Item_Block *itb, int in, int full)
    EINA_LIST_FOREACH(itb->items, l, it)
      {
 	if (it->delete_me) continue;
-	if (full) _item_realize(it, in, 0);
+	if (full)
+          {
+             if (!it->realized)
+               evas_object_smart_callback_call(it->wd->obj, "realized", it);
+             _item_realize(it, in, 0);
+          }
 	in++;
      }
    itb->realized = EINA_TRUE;
@@ -821,7 +836,12 @@ _item_block_position(Item_Block *itb, int in)
 				   0, 0, ow, oh));
 	if ((itb->realized) && (!it->realized))
 	  {
-	     if (vis) _item_realize(it, in, 0);
+	     if (vis)
+               {
+                  if (!it->realized)
+                    evas_object_smart_callback_call(it->wd->obj, "realized", it);
+                  _item_realize(it, in, 0);
+               }
 	  }
 	if (it->realized)
 	  {
@@ -1981,10 +2001,10 @@ elm_genlist_item_del(Elm_Genlist_Item *it)
  *
  * @ingroup Genlist
  */
-EAPI void *
+EAPI const void *
 elm_genlist_item_data_get(const Elm_Genlist_Item *it)
 {
-   if (!it) return;
+   if (!it) return NULL;
    return it->data;
 }
 
@@ -2002,11 +2022,33 @@ elm_genlist_item_data_get(const Elm_Genlist_Item *it)
  * @ingroup Genlist
  */
 EAPI void
-elm_genlist_item_data_set(Elm_Genlist_Item *it, void *data)
+elm_genlist_item_data_set(Elm_Genlist_Item *it, const void *data)
 {
    if (!it) return;
    it->data = data;
    elm_genlist_item_update(it);
+}
+
+/**
+ * Get the real evas object of the genlist item
+ *
+ * This returns the actual evas object used for the specified genlist item.
+ * This may be NULL as it may not be created, and ma be deleted at any time
+ * by genlist. Do not modify this object (move, resize, show, hide etc.) as
+ * genlist is controlling it. This function is for querying, emitting
+ * custom signals or hooking lower level callbacks for events. Do not
+ * delete this object under any circumstances.
+ *
+ * @param it The item
+ * @return The objct pointer
+ *
+ * @ingroup Genlist
+ */
+EAPI const Evas_Object *
+elm_genlist_item_object_get(const Elm_Genlist_Item *it)
+{
+   if (!it) return NULL;
+   return it->base;
 }
 
 /**
@@ -2047,6 +2089,8 @@ elm_genlist_item_update(Elm_Genlist_Item *it)
    if (it->realized)
      {
 	_item_unrealize(it);
+        if (!it->realized)
+          evas_object_smart_callback_call(it->wd->obj, "realized", it);
 	_item_realize(it, num, 0);
 	_item_block_recalc(it->block, numb);
 	_item_block_position(it->block, num);
