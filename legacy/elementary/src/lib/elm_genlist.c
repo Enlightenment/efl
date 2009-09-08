@@ -65,6 +65,8 @@
  * drag,stop - This is called when the item in the list has stopped being
  * dragged.
  *
+ * drag - This is called when the item in the list is being dragged.
+ *
  * Genlist has a fairly large API, mostly because it's relatively complex,
  * trying to be both expansive, powerful and efficient. First we will begin
  * an overview o the theory behind genlist.
@@ -496,6 +498,11 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    if (!it->down) return;
    if (it->wd->on_hold) return;
    if (it->wd->longpressed) return;
+   if (it->dragging)
+     {
+        evas_object_smart_callback_call(it->wd->obj, "drag", it);
+        return;
+     }
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    x = ev->cur.canvas.x - x;
