@@ -23,6 +23,13 @@
 
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
 
+/* logging messages macros */
+int _ecore_evas_log_dom = -1;
+
+#define ECORE_EVAS_MSG_ERR(...) EINA_LOG_DOM_ERR(_ecore_evas_log_dom , __VA_ARGS__)
+#define ECORE_EVAS_MSG_DBG(...) EINA_LOG_DOM_DBG(_ecore_evas_log_dom , __VA_ARGS__)
+#define ECORE_EVAS_MSG_INFO(...) EINA_LOG_DOM_INFO(_ecore_evas_log_dom , __VA_ARGS__)
+
 #define ECORE_EVAS_EVENT_COUNT 7
 
 static int _ecore_evas_init_count = 0;
@@ -31,7 +38,6 @@ static int _ecore_evas_fps_debug  = 0;
 static Ecore_Event_Handler *ecore_evas_event_handlers[ECORE_EVAS_EVENT_COUNT];
 static Ecore_Idle_Enterer  *ecore_evas_idle_enterer = NULL;
 static Ecore_Evas          *ecore_evases = NULL;
-static Eina_Hash           *ecore_evases_hash = NULL;
 
 static int _ecore_evas_wince_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event);
 
@@ -167,7 +173,7 @@ _ecore_evas_wince_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, voi
    Ecore_Evas                 *ee;
    Ecore_WinCE_Event_Mouse_In *e;
 
-   EINA_ERROR_PINFO("mouse in\n");
+   ECORE_EVAS_MSG_INFO("mouse in\n");
 
    e = event;
    ee = ecore_event_window_match((Ecore_Window)e->window);
@@ -189,7 +195,7 @@ _ecore_evas_wince_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, vo
    Ecore_Evas                  *ee;
    Ecore_WinCE_Event_Mouse_Out *e;
 
-   EINA_ERROR_PINFO("mouse out\n");
+   ECORE_EVAS_MSG_INFO("mouse out\n");
 
    e = event;
    ee = ecore_event_window_match((Ecore_Window)e->window);
@@ -213,7 +219,7 @@ _ecore_evas_wince_event_window_damage(void *data __UNUSED__, int type __UNUSED__
    Ecore_Evas                      *ee;
    Ecore_WinCE_Event_Window_Damage *e;
 
-   EINA_ERROR_PINFO("window damage\n");
+   ECORE_EVAS_MSG_INFO("window damage\n");
 
    e = event;
    ee = ecore_event_window_match((Ecore_Window)e->window);
@@ -261,7 +267,7 @@ _ecore_evas_wince_event_window_destroy(void *data __UNUSED__, int type __UNUSED_
    Ecore_Evas                       *ee;
    Ecore_WinCE_Event_Window_Destroy *e;
 
-   EINA_ERROR_PINFO("window destroy\n");
+   ECORE_EVAS_MSG_INFO("window destroy\n");
 
    e = event;
    ee = ecore_event_window_match((Ecore_Window)e->window);
@@ -279,7 +285,7 @@ _ecore_evas_wince_event_window_show(void *data __UNUSED__, int type __UNUSED__, 
    Ecore_Evas                    *ee;
    Ecore_WinCE_Event_Window_Show *e;
 
-   EINA_ERROR_PINFO("window show\n");
+   ECORE_EVAS_MSG_INFO("window show\n");
 
    e = event;
    ee = ecore_event_window_match((Ecore_Window)e->window);
@@ -298,7 +304,7 @@ _ecore_evas_wince_event_window_hide(void *data __UNUSED__, int type __UNUSED__, 
    Ecore_Evas                    *ee;
    Ecore_WinCE_Event_Window_Hide *e;
 
-   EINA_ERROR_PINFO("window hide\n");
+   ECORE_EVAS_MSG_INFO("window hide\n");
 
    e = event;
    ee = ecore_event_window_match((Ecore_Window)e->window);
@@ -317,7 +323,7 @@ _ecore_evas_wince_event_window_delete_request(void *data __UNUSED__, int type __
    Ecore_Evas                              *ee;
    Ecore_WinCE_Event_Window_Delete_Request *e;
 
-   EINA_ERROR_PINFO("window delete request\n");
+   ECORE_EVAS_MSG_INFO("window delete request\n");
 
    e = event;
    ee = ecore_event_window_match((Ecore_Window)e->window);
@@ -334,7 +340,7 @@ _ecore_evas_wince_event_window_delete_request(void *data __UNUSED__, int type __
 static void
 _ecore_evas_wince_free(Ecore_Evas *ee)
 {
-   EINA_ERROR_PINFO("ecore evas free\n");
+   ECORE_EVAS_MSG_INFO("ecore evas free\n");
 
    ecore_wince_window_free((Ecore_WinCE_Window *)ee->prop.window);
    ecore_event_window_unregister(ee->prop.window);
@@ -353,7 +359,7 @@ _ecore_evas_wince_callback_delete_request_set(Ecore_Evas *ee,
 static void
 _ecore_evas_wince_move(Ecore_Evas *ee, int x, int y)
 {
-  EINA_ERROR_PINFO("ecore evas move (%dx%d)\n", x, y);
+  ECORE_EVAS_MSG_INFO("ecore evas move (%dx%d)\n", x, y);
 
    if ((x != ee->x) || (y != ee->y))
      {
@@ -367,7 +373,7 @@ _ecore_evas_wince_move(Ecore_Evas *ee, int x, int y)
 static void
 _ecore_evas_wince_resize(Ecore_Evas *ee, int width, int height)
 {
-   EINA_ERROR_PINFO("ecore evas resize (%dx%d)\n", width, height);
+   ECORE_EVAS_MSG_INFO("ecore evas resize (%dx%d)\n", width, height);
 
    if ((ee->w != width) || (ee->h != height))
      {
@@ -393,7 +399,7 @@ _ecore_evas_wince_resize(Ecore_Evas *ee, int width, int height)
 static void
 _ecore_evas_wince_move_resize(Ecore_Evas *ee, int x, int y, int width, int height)
 {
-   EINA_ERROR_PINFO("ecore evas resize (%dx%d %dx%d)\n", x, y, width, height);
+   ECORE_EVAS_MSG_INFO("ecore evas resize (%dx%d %dx%d)\n", x, y, width, height);
 
    if ((ee->w != width) || (ee->h != height) || (x != ee->x) || (y != ee->y))
      {
@@ -505,7 +511,7 @@ _ecore_evas_wince_move_resize(Ecore_Evas *ee, int x, int y, int width, int heigh
 static void
 _ecore_evas_wince_show(Ecore_Evas *ee)
 {
-   EINA_ERROR_PINFO("ecore evas show\n");
+   ECORE_EVAS_MSG_INFO("ecore evas show\n");
 
    ee->should_be_visible = 1;
    if (ee->prop.avoid_damage)
@@ -518,7 +524,7 @@ _ecore_evas_wince_show(Ecore_Evas *ee)
 static void
 _ecore_evas_wince_hide(Ecore_Evas *ee)
 {
-   EINA_ERROR_PINFO("ecore evas hide\n");
+   ECORE_EVAS_MSG_INFO("ecore evas hide\n");
 
    ecore_wince_window_hide((Ecore_WinCE_Window *)ee->prop.window);
    ee->should_be_visible = 0;
@@ -545,7 +551,7 @@ _ecore_evas_wince_hide(Ecore_Evas *ee)
 static void
 _ecore_evas_wince_title_set(Ecore_Evas *ee, const char *title)
 {
-   EINA_ERROR_PINFO("ecore evas title set\n");
+   ECORE_EVAS_MSG_INFO("ecore evas title set\n");
 
    if (ee->prop.title) free(ee->prop.title);
    ee->prop.title = NULL;
@@ -663,7 +669,7 @@ _ecore_evas_wince_fullscreen_set(Ecore_Evas *ee, int on)
    Evas_Engine_Info_Software_16_WinCE *einfo;
    struct _Ecore_WinCE_Window         *window;
 
-   EINA_ERROR_PINFO("ecore evas fullscreen set\n");
+   ECORE_EVAS_MSG_INFO("ecore evas fullscreen set\n");
 
    if ((ee->engine.wince.state.fullscreen && on) ||
       (!ee->engine.wince.state.fullscreen && !on))

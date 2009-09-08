@@ -11,14 +11,14 @@ extern "C" {
 #endif
 
 
-#define ECORE_WIN32_WINDOW_CLASS "Ecore_Win32_Window_Class"
-
 /* logging messages macros */
 extern int _ecore_win32_log_dom;
 
-#define MESSAGE_ERR(...) EINA_LOG_DOM_ERR(_ecore_win32_log_dom , __VA_ARGS__)
-#define MESSAGE_DBG(...) EINA_LOG_DOM_DBG(_ecore_win32_log_dom , __VA_ARGS__)
-#define MESSAGE_INFO(...) EINA_LOG_DOM_INFO(_ecore_win32_log_dom , __VA_ARGS__)
+#define ECORE_WIN32_MSG_ERR(...) EINA_LOG_DOM_ERR(_ecore_win32_log_dom , __VA_ARGS__)
+#define ECORE_WIN32_MSG_DBG(...) EINA_LOG_DOM_DBG(_ecore_win32_log_dom , __VA_ARGS__)
+#define ECORE_WIN32_MSG_INFO(...) EINA_LOG_DOM_INFO(_ecore_win32_log_dom , __VA_ARGS__)
+
+#define ECORE_WIN32_WINDOW_CLASS "Ecore_Win32_Window_Class"
 
 typedef struct _Ecore_Win32_Callback_Data Ecore_Win32_Callback_Data;
 
@@ -97,8 +97,6 @@ extern double              _ecore_win32_double_click_time;
 extern double              _ecore_win32_event_last_time;
 extern Ecore_Win32_Window *_ecore_win32_event_last_window;
 
-
-char *_ecore_win32_hwnd_str_get(HWND window);
 
 void  _ecore_win32_event_handle_key_press(Ecore_Win32_Callback_Data *msg, int is_keystroke);
 void  _ecore_win32_event_handle_key_release(Ecore_Win32_Callback_Data *msg, int is_keystroke);

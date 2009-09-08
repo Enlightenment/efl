@@ -44,7 +44,6 @@ int ECORE_WINCE_EVENT_WINDOW_DELETE_REQUEST = 0;
 /***** Private declarations *****/
 
 static int       _ecore_wince_init_count = 0;
-static int       _ecore_wince_log_dom = -1;
 
 LRESULT CALLBACK _ecore_wince_window_procedure(HWND   window,
                                                UINT   message,
@@ -68,17 +67,17 @@ ecore_wince_init()
 {
    WNDCLASS wc;
 
-   _ecore_wince_error_print_cb_set(_ecore_wince_error_print_cb, NULL);
+   eina_log_print_cb_set(_ecore_wince_error_print_cb, NULL);
 
    if(_ecore_wince_log_dom < 0)
-     _ecore_wince_log_dom = eina_log_domain_register("ecore_wince", EINA_LOG_COLOR_LIGHTBLUE);
+     _ecore_wince_log_dom = eina_log_domain_register("ecore_wince", EINA_COLOR_LIGHTBLUE);
    if(_ecore_wince_log_dom < 0)
      {
        EINA_LOG_ERR("Could not register log domain: ecore_wince");
        return 0;
      }
 
-   MESSAGE_INFO("initializing ecore_wince (current count: %d)\n", _ecore_wince_init_count);
+   ECORE_WINCE_MSG_INFO("initializing ecore_wince (current count: %d)\n", _ecore_wince_init_count);
 
    if (_ecore_wince_init_count > 0)
      {
@@ -89,7 +88,7 @@ ecore_wince_init()
    _ecore_wince_instance = GetModuleHandle(NULL);
    if (!_ecore_wince_instance)
      {
-        MESSAGE_ERR("GetModuleHandle() failed\n");
+        ECORE_WINCE_MSG_ERR("GetModuleHandle() failed\n");
         return 0;
      }
 
@@ -107,7 +106,7 @@ ecore_wince_init()
 
    if(!RegisterClass(&wc))
      {
-        MESSAGE_ERR("RegisterClass() failed\n");
+        ECORE_WINCE_MSG_ERR("RegisterClass() failed\n");
         FreeLibrary(_ecore_wince_instance);
         return 0;
      }
@@ -138,7 +137,7 @@ ecore_wince_shutdown()
 {
    HWND task_bar;
 
-   MESSAGE_INFO("shutting down ecore_wince (current count: %d)\n", _ecore_wince_init_count);
+   ECORE_WINCE_MSG_INFO("shutting down ecore_wince (current count: %d)\n", _ecore_wince_init_count);
 
    _ecore_wince_init_count--;
    if (_ecore_wince_init_count > 0) return _ecore_wince_init_count;
@@ -156,11 +155,11 @@ ecore_wince_shutdown()
 
    if (!UnregisterClass(ECORE_WINCE_WINDOW_CLASS, _ecore_wince_instance))
      {
-        MESSAGE_ERR("UnregisterClass() failed\n");
+        ECORE_WINCE_MSG_ERR("UnregisterClass() failed\n");
      }
    if (!FreeLibrary(_ecore_wince_instance))
      {
-        MESSAGE_ERR("FreeLibrary() failed\n");
+        ECORE_WINCE_MSG_ERR("FreeLibrary() failed\n");
      }
    _ecore_wince_instance = NULL;
 
@@ -276,7 +275,7 @@ _ecore_wince_window_procedure(HWND   window,
             {
                POINT pt;
 
-               MESSAGE_INFO("mouse in window\n");
+               ECORE_WINCE_MSG_INFO("mouse in window\n");
 
                pt.x = LOWORD(data_param);
                pt.y = HIWORD(data_param);
@@ -299,7 +298,7 @@ _ecore_wince_window_procedure(HWND   window,
             }
           else
             {
-               MESSAGE_ERR("GetClientRect() failed\n");
+               ECORE_WINCE_MSG_ERR("GetClientRect() failed\n");
             }
           _ecore_wince_event_handle_motion_notify(data);
 

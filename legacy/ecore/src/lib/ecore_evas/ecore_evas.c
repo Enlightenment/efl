@@ -463,25 +463,25 @@ _ecore_evas_constructor_software_16_ddraw(int x, int y, int w, int h, const char
 
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
 static Ecore_Evas *
-_ecore_evas_constructor_software_16_wince(int x, int y, int w, int h, const char *extra_options)
+_ecore_evas_constructor_software_16_wince(int x, int y, int w, int h, const char *extra_options __UNUSED__)
 {
    return ecore_evas_software_wince_new(NULL, x, y, w, h);
 }
 
 static Ecore_Evas *
-_ecore_evas_constructor_software_16_wince_fb(int x, int y, int w, int h, const char *extra_options)
+_ecore_evas_constructor_software_16_wince_fb(int x, int y, int w, int h, const char *extra_options __UNUSED__)
 {
    return ecore_evas_software_wince_fb_new(NULL, x, y, w, h);
 }
 
 static Ecore_Evas *
-_ecore_evas_constructor_software_16_wince_gapi(int x, int y, int w, int h, const char *extra_options)
+_ecore_evas_constructor_software_16_wince_gapi(int x, int y, int w, int h, const char *extra_options __UNUSED__)
 {
    return ecore_evas_software_wince_gapi_new(NULL, x, y, w, h);
 }
 
 static Ecore_Evas *
-_ecore_evas_constructor_software_16_wince_gdi(int x, int y, int w, int h, const char *extra_options)
+_ecore_evas_constructor_software_16_wince_gdi(int x, int y, int w, int h, const char *extra_options __UNUSED__)
 {
    return ecore_evas_software_wince_gdi_new(NULL, x, y, w, h);
 }

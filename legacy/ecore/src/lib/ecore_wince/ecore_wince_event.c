@@ -55,7 +55,7 @@ _ecore_wince_event_handle_key_press(Ecore_WinCE_Callback_Data *msg,
 {
    Ecore_Event_Key *e;
 
-   EINA_ERROR_PINFO("key pressed\n");
+   ECORE_WINCE_MSG_INFO("key pressed\n");
 
    e = (Ecore_Event_Key *)malloc(sizeof(Ecore_Event_Key));
    if (!e) return;
@@ -102,7 +102,7 @@ _ecore_wince_event_handle_key_release(Ecore_WinCE_Callback_Data *msg,
 {
    Ecore_Event_Key *e;
 
-   EINA_ERROR_PINFO("key released\n");
+   ECORE_WINCE_MSG_INFO("key released\n");
 
    e = (Ecore_Event_Key *)calloc(1, sizeof(Ecore_Event_Key));
    if (!e) return;
@@ -149,7 +149,7 @@ _ecore_wince_event_handle_button_press(Ecore_WinCE_Callback_Data *msg,
 {
    Ecore_WinCE_Window *window;
 
-   EINA_ERROR_PINFO("mouse button pressed\n");
+   ECORE_WINCE_MSG_INFO("mouse button pressed\n");
 
    window = (Ecore_WinCE_Window *)GetWindowLong(msg->window, GWL_USERDATA);
 
@@ -228,7 +228,7 @@ _ecore_wince_event_handle_button_release(Ecore_WinCE_Callback_Data *msg,
 {
    Ecore_WinCE_Window *window;
 
-   EINA_ERROR_PINFO("mouse button released\n");
+   ECORE_WINCE_MSG_INFO("mouse button released\n");
 
    window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
 
@@ -286,7 +286,7 @@ _ecore_wince_event_handle_motion_notify(Ecore_WinCE_Callback_Data *msg)
 {
    Ecore_Event_Mouse_Move *e;
 
-   EINA_ERROR_PINFO("mouse moved\n");
+   ECORE_WINCE_MSG_INFO("mouse moved\n");
 
    e = (Ecore_Event_Mouse_Move *)calloc(1, sizeof(Ecore_Event_Mouse_Move));
    if (!e) return;
@@ -304,7 +304,7 @@ _ecore_wince_event_handle_enter_notify(Ecore_WinCE_Callback_Data *msg)
 {
    Ecore_WinCE_Window *window;
 
-   EINA_ERROR_PINFO("mouse in\n");
+   ECORE_WINCE_MSG_INFO("mouse in\n");
 
    window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
 
@@ -347,7 +347,7 @@ _ecore_wince_event_handle_leave_notify(Ecore_WinCE_Callback_Data *msg)
 {
    Ecore_WinCE_Window *window;
 
-   EINA_ERROR_PINFO("mouse out\n");
+   ECORE_WINCE_MSG_INFO("mouse out\n");
 
    window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
 
@@ -391,7 +391,7 @@ _ecore_wince_event_handle_focus_in(Ecore_WinCE_Callback_Data *msg)
    Ecore_WinCE_Event_Window_Focus_In *e;
    struct _Ecore_WinCE_Window        *window;
 
-   EINA_ERROR_PINFO("focus in\n");
+   ECORE_WINCE_MSG_INFO("focus in\n");
 
    e = (Ecore_WinCE_Event_Window_Focus_In *)calloc(1, sizeof(Ecore_WinCE_Event_Window_Focus_In));
    if (!e) return;
@@ -420,7 +420,7 @@ _ecore_wince_event_handle_focus_out(Ecore_WinCE_Callback_Data *msg)
    Ecore_WinCE_Event_Window_Focus_Out *e;
    struct _Ecore_WinCE_Window         *window;
 
-   EINA_ERROR_PINFO("focus out\n");
+   ECORE_WINCE_MSG_INFO("focus out\n");
 
    e = (Ecore_WinCE_Event_Window_Focus_Out *)calloc(1, sizeof(Ecore_WinCE_Event_Window_Focus_Out));
    if (!e) return;
@@ -447,7 +447,7 @@ _ecore_wince_event_handle_expose(Ecore_WinCE_Callback_Data *msg)
 {
    Ecore_WinCE_Event_Window_Damage *e;
 
-   EINA_ERROR_PINFO("window expose\n");
+   ECORE_WINCE_MSG_INFO("window expose\n");
 
    e = (Ecore_WinCE_Event_Window_Damage *)calloc(1, sizeof(Ecore_WinCE_Event_Window_Damage));
    if (!e) return;
@@ -463,7 +463,7 @@ _ecore_wince_event_handle_expose(Ecore_WinCE_Callback_Data *msg)
    e->y = msg->update.top;
    e->width = msg->update.right - msg->update.left;
    e->height = msg->update.bottom - msg->update.top;
-   EINA_ERROR_PINFO("window expose size: %dx%d\n", e->width, e->height);
+   ECORE_WINCE_MSG_INFO("window expose size: %dx%d\n", e->width, e->height);
 
    e->time = _ecore_wince_event_last_time;
 
@@ -475,7 +475,7 @@ _ecore_wince_event_handle_create_notify(Ecore_WinCE_Callback_Data *msg)
 {
    Ecore_WinCE_Event_Window_Create *e;
 
-   EINA_ERROR_PINFO("window create notify\n");
+   ECORE_WINCE_MSG_INFO("window create notify\n");
 
    e = calloc(1, sizeof(Ecore_WinCE_Event_Window_Create));
    if (!e) return;
@@ -497,7 +497,7 @@ _ecore_wince_event_handle_destroy_notify(Ecore_WinCE_Callback_Data *msg)
 {
    Ecore_WinCE_Event_Window_Destroy *e;
 
-   EINA_ERROR_PINFO("window destroy notify\n");
+   ECORE_WINCE_MSG_INFO("window destroy notify\n");
 
    e = calloc(1, sizeof(Ecore_WinCE_Event_Window_Destroy));
    if (!e) return;
@@ -520,7 +520,7 @@ _ecore_wince_event_handle_map_notify(Ecore_WinCE_Callback_Data *msg)
 {
    Ecore_WinCE_Event_Window_Show *e;
 
-   EINA_ERROR_PINFO("window map notify\n");
+   ECORE_WINCE_MSG_INFO("window map notify\n");
 
    e = calloc(1, sizeof(Ecore_WinCE_Event_Window_Show));
    if (!e) return;
@@ -542,7 +542,7 @@ _ecore_wince_event_handle_unmap_notify(Ecore_WinCE_Callback_Data *msg)
 {
    Ecore_WinCE_Event_Window_Hide *e;
 
-   EINA_ERROR_PINFO("window unmap notify\n");
+   ECORE_WINCE_MSG_INFO("window unmap notify\n");
 
    e = calloc(1, sizeof(Ecore_WinCE_Event_Window_Hide));
    if (!e) return;
@@ -564,7 +564,7 @@ _ecore_wince_event_handle_delete_request(Ecore_WinCE_Callback_Data *msg)
 {
    Ecore_WinCE_Event_Window_Delete_Request *e;
 
-   EINA_ERROR_PINFO("window delete request\n");
+   ECORE_WINCE_MSG_INFO("window delete request\n");
 
    e = calloc(1, sizeof(Ecore_WinCE_Event_Window_Delete_Request));
    if (!e) return;

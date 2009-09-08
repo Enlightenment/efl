@@ -30,7 +30,7 @@ ecore_win32_cursor_new(const void *pixels_and,
    int                 cursor_width;
    int                 cursor_height;
 
-   MESSAGE_INFO("creating cursor\n");
+   ECORE_WIN32_MSG_INFO("creating cursor\n");
 
    cursor_width = GetSystemMetrics(SM_CXCURSOR);
    cursor_height = GetSystemMetrics(SM_CYCURSOR);
@@ -52,7 +52,7 @@ ecore_win32_cursor_new(const void *pixels_and,
 void
 ecore_win32_cursor_free(Ecore_Win32_Cursor *cursor)
 {
-   MESSAGE_INFO("destroying cursor\n");
+   ECORE_WIN32_MSG_INFO("destroying cursor\n");
 
    DestroyCursor(cursor);
 }
@@ -63,7 +63,7 @@ ecore_win32_cursor_shape_get(Ecore_Win32_Cursor_Shape shape)
    Ecore_Win32_Cursor *cursor = NULL;
    const char         *cursor_name;
 
-   MESSAGE_INFO("geting shape cursor\n");
+   ECORE_WIN32_MSG_INFO("geting shape cursor\n");
 
    switch (shape)
      {
@@ -125,7 +125,7 @@ ecore_win32_cursor_size_get(void)
    int width;
    int height;
 
-   MESSAGE_INFO("geting size cursor\n");
+   ECORE_WIN32_MSG_INFO("geting size cursor\n");
 
    width = GetSystemMetrics(SM_CXCURSOR);
    height = GetSystemMetrics(SM_CYCURSOR);
