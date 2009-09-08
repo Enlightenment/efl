@@ -23,6 +23,7 @@ struct _Widget_Data
    Evas_Object *bx[2]; // 2 - for now all that's supported
    Eina_List *items; // 1 list. yes N levels, but only 2 for now and # of items will be small
    int level;
+   Evas_Coord dx, dy;
    Eina_Bool horizontal : 1;
    Eina_Bool active : 1;
    Eina_Bool down : 1;
@@ -60,8 +61,8 @@ _theme_hook(Evas_Object *obj)
    else
      _elm_theme_set(wd->base, "index", "base/vertical", elm_widget_style_get(obj));
    edje_object_part_swallow(wd->base, "elm.swallow.event", wd->event);
-   edje_object_part_swallow(wd->base, "elm.swallow.content", wd->bx[0]);
-   if (edje_object_part_exists(wd->base, "elm.swallow.content.sub"))
+   edje_object_part_swallow(wd->base, "elm.swallow.index.0", wd->bx[0]);
+   if (edje_object_part_exists(wd->base, "elm.swallow.index.1"))
      {
         if (!wd->bx[1])
           {
@@ -70,7 +71,7 @@ _theme_hook(Evas_Object *obj)
              _els_smart_box_homogenous_set(wd->bx[1], 1);
              elm_widget_sub_object_add(obj, wd->bx[1]);
           }
-        edje_object_part_swallow(wd->base, "elm.swallow.content.sub", wd->bx[1]);
+        edje_object_part_swallow(wd->base, "elm.swallow.index.1", wd->bx[1]);
         evas_object_show(wd->bx[1]);
      }
    else if (wd->bx[1])
@@ -134,10 +135,58 @@ _item_free(Item *it)
    free(it);
 }
 
+// FIXME: always have index filled
 static void
 _index_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->active)
+     {
+        Eina_List *l;
+        Item *it;
+        Evas_Coord mw, mh;
+        int i;
+        
+        i = 0;
+        EINA_LIST_FOREACH(wd->items, l, it)
+          {
+             Evas_Object *o;
+             
+             if (it->level != wd->level) break;
+             o = edje_object_add(evas_object_evas_get(obj));
+             if (i & 0x1)
+               _elm_theme_set(o, "index", "item_odd/vertical", "default");
+             else
+               _elm_theme_set(o, "index", "item/vertical", "default");
+             edje_object_part_text_set(o, "elm.text", it->letter);
+             edje_object_size_min_restricted_calc(o, &mw, &mh, 0, 0);
+             evas_object_size_hint_min_set(o, mw, mh);
+             evas_object_size_hint_weight_set(o, 1.0, 1.0);
+             evas_object_size_hint_align_set(o, -1.0, -1.0);
+             elm_widget_sub_object_add(obj, o);
+             _els_smart_box_pack_end(wd->bx[0], o);
+             evas_object_show(o);
+             it->base = o;
+             i++;
+          }
+        edje_object_part_swallow(wd->base, "elm.swallow.index.0", wd->bx[0]);
+     }
+   else
+     {
+        Eina_List *l;
+        Item *it;
+        Evas_Coord mw, mh;
+        int i;
+        
+        i = 0;
+        EINA_LIST_FOREACH(wd->items, l, it)
+          {
+             if (!it->base) continue;
+             evas_object_del(it->base);
+             it->base = 0;
+          }
+        edje_object_part_swallow(wd->base, "elm.swallow.index.0", wd->bx[0]);
+     }
 }
 
 static void 
@@ -153,10 +202,14 @@ _mouse_down(void *data, Evas *e, Evas_Object *o, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Down *ev = event_info;
-   Evas_Object *obj = o;
+   Evas_Coord x, y;
    if (ev->button != 1) return;
    wd->down = 1;
    printf("down!\n");
+   evas_object_geometry_get(o, &x, &y, NULL, NULL);
+   wd->dx = ev->canvas.x - x;
+   wd->dy = ev->canvas.y - y;
+   elm_index_active_set(data, 1);
 }
 
 static void 
@@ -164,10 +217,10 @@ _mouse_up(void *data, Evas *e, Evas_Object *o, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Up *ev = event_info;
-   Evas_Object *obj = o;
    if (ev->button != 1) return;
    wd->down = 0;
    printf("up!\n");
+   elm_index_active_set(data, 0);
 }
 
 static void 
@@ -175,19 +228,26 @@ _mouse_move(void *data, Evas *e, Evas_Object *o, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Move *ev = event_info;
-   Evas_Object *obj = o;
-   Evas_Coord x, y, w, h;
+   Evas_Coord minw = 0, minh = 0, x, y, dx, dy, adx, ady;
 
    if (!wd->down) return;
-   evas_object_geometry_get(o, &x, &y, &w, &h);
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+   evas_object_geometry_get(o, &x, &y, NULL, NULL);
+   x = ev->cur.canvas.x - x;
+   y = ev->cur.canvas.y - y;
+   dx = x - wd->dx;
+   adx = dx;
+   if (adx < 0) adx = -dx;
+   dy = y - wd->dy;
+   ady = dy;
+   if (ady < 0) ady = -dy;
    if (wd->horizontal)
      {
      }
    else
      {
-        if (ev->cur.canvas.x < x)
+        if (adx > minw)
           {
-             printf("%i\n", wd->level);
              if (wd->level == 0)
                {
                   printf("level up\n");
@@ -255,16 +315,16 @@ elm_index_add(Evas_Object *parent)
    _els_smart_box_orientation_set(wd->bx[0], 0);
    _els_smart_box_homogenous_set(wd->bx[0], 1);
    elm_widget_sub_object_add(obj, wd->bx[0]);
-   edje_object_part_swallow(wd->base, "elm.swallow.content", wd->bx[0]);
+   edje_object_part_swallow(wd->base, "elm.swallow.index.0", wd->bx[0]);
    evas_object_show(wd->bx[0]);
 
-   if (edje_object_part_exists(wd->base, "elm.swallow.content.sub"))
+   if (edje_object_part_exists(wd->base, "elm.swallow.index.1"))
      {
         wd->bx[1] = _els_smart_box_add(e);
         _els_smart_box_orientation_set(wd->bx[1], 0);
         _els_smart_box_homogenous_set(wd->bx[1], 1);
         elm_widget_sub_object_add(obj, wd->bx[1]);
-        edje_object_part_swallow(wd->base, "elm.swallow.content.sub", wd->bx[1]);
+        edje_object_part_swallow(wd->base, "elm.swallow.index.1", wd->bx[1]);
         evas_object_show(wd->bx[1]);
      }
 

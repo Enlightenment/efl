@@ -785,10 +785,14 @@ extern "C" {
    EAPI void         elm_progressbar_unit_format_set(Evas_Object *obj, const char *format);
    EAPI void         elm_progressbar_value_set(Evas_Object *obj, double val);
    EAPI double       elm_progressbar_value_get(const Evas_Object *obj);
+   /* smart callbacks called:
+    */
 
    EAPI Evas_Object *elm_separator_add(Evas_Object *parent);
    EAPI void         elm_separator_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
    EAPI Eina_Bool    elm_separator_horizontal_get(Evas_Object *obj);
+   /* smart callbacks called:
+    */
 
    EAPI Evas_Object *elm_spinner_add(Evas_Object *parent);
    EAPI void	     elm_spinner_label_format_set(Evas_Object *obj, const char *fmt);
@@ -802,6 +806,20 @@ extern "C" {
     * "changed" - when the spinner value changes
     * "delay,changed" - when the spinner value changed, but a small time after a change (use this if you only want to respond to a change once the spinner is held still for a short while).
     */
+   
+   EAPI Evas_Object *elm_index_add(Evas_Object *parent);
+   EAPI void         elm_index_active_set(Evas_Object *obj, Eina_Bool active);
+   EAPI void         elm_index_item_level_set(Evas_Object *obj, int level);
+   EAPI int          elm_index_item_level_get(Evas_Object *obj);
+   EAPI const void  *elm_index_item_selected_get(Evas_Object *obj, int level);
+   EAPI void         elm_index_item_append(Evas_Object *obj, const char *letter, const void *item);
+   EAPI void         elm_index_item_prepend(Evas_Object *obj, const char *letter, const void *item);
+   EAPI void         elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const void *relative);
+   EAPI void         elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const void *relative);
+   EAPI void         elm_index_item_del(Evas_Object *obj, const void *item);
+   /* smart callbacks called:
+    */
+   
 #ifdef __cplusplus
 }
 #endif
@@ -819,7 +837,6 @@ extern "C" {
 //// (incomplete - medium priority)
 // * need to add support for disabled in all widgets. Button, toolbar, hoversel, radio, check, spinner and entry are currently done.
 // * on the fly theme changes - test (should work)
-// * need a hold-scroll counter in elm_widget
 // * hoversel only vertical right now - make horizontal
 // * when entries are in a scroller and change size, the scroller shows scrollbars. fix. same for selecting. for 1 line entries in a scroller should only have scroll arrow indicators.
 //
