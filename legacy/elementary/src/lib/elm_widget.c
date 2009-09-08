@@ -700,6 +700,7 @@ elm_widget_scroll_hold_push(Evas_Object *obj)
    if (sd->scroll_hold == 1)
      evas_object_smart_callback_call(obj, "scroll-hold-on", obj);
    if (sd->parent_obj) elm_widget_scroll_hold_push(sd->parent_obj);
+   // FIXME: on delete/reparent hold pop
 }
 
 EAPI void
@@ -728,6 +729,7 @@ elm_widget_scroll_freeze_push(Evas_Object *obj)
    if (sd->scroll_freeze == 1)
      evas_object_smart_callback_call(obj, "scroll-freeze-on", obj);
    if (sd->parent_obj) elm_widget_scroll_freeze_push(sd->parent_obj);
+   // FIXME: on delete/reparent freeze pop
 }
 
 EAPI void
