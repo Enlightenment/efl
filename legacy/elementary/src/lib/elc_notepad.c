@@ -20,7 +20,7 @@ typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
 {
-   Evas_Object *scroller, *entry;
+   Evas_Object *scr, *entry;
    const char *file;
    Elm_Text_Format format;
    Ecore_Timer *delay_write;
@@ -220,6 +220,38 @@ _entry_changed(void *data, Evas_Object *obj, void *event_info)
    wd->delay_write = ecore_timer_add(2.0, _delay_write, data);
 }
 
+static void
+_hold_on(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_widget_scroll_hold_push(wd->scr);
+}
+
+static void
+_hold_off(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_widget_scroll_hold_pop(wd->scr);
+}
+
+static void
+_freeze_on(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_widget_scroll_hold_push(wd->scr);
+}
+
+static void
+_freeze_off(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_widget_scroll_hold_pop(wd->scr);
+}
+
 /**
  * Add a new notepad to the parent
  *
@@ -245,17 +277,22 @@ elm_notepad_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_can_focus_set(obj, 1);
 
-   wd->scroller = elm_scroller_add(parent);
-   elm_widget_resize_object_set(obj, wd->scroller);
+   wd->scr = elm_scroller_add(parent);
+   elm_widget_resize_object_set(obj, wd->scr);
    wd->entry = elm_entry_add(parent);
    evas_object_size_hint_weight_set(wd->entry, 1.0, 1.0);
    evas_object_size_hint_align_set(wd->entry, -1.0, -1.0);
-   elm_scroller_content_set(wd->scroller, wd->entry);
+   elm_scroller_content_set(wd->scr, wd->entry);
    evas_object_show(wd->entry);
 
    elm_entry_entry_set(wd->entry, "");
    evas_object_smart_callback_add(wd->entry, "changed", _entry_changed, obj);
-
+   
+   evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
+   evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
+   evas_object_smart_callback_add(obj, "scroll-freeze-on", _freeze_on, obj);
+   evas_object_smart_callback_add(obj, "scroll-freeze-off", _freeze_off, obj);
+   
    wd->auto_write = EINA_TRUE;
 
    _sizing_eval(obj);

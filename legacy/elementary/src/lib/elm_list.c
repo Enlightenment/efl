@@ -5,7 +5,7 @@ typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
 {
-   Evas_Object *scroller, *box;
+   Evas_Object *scr, *box;
    Eina_List *items;
    Eina_List *selected;
    Elm_List_Mode mode;
@@ -73,8 +73,8 @@ _sizing_eval(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
-   evas_object_size_hint_min_get(wd->scroller, &minw, &minh);
-   evas_object_size_hint_max_get(wd->scroller, &maxw, &maxh);
+   evas_object_size_hint_min_get(wd->scr, &minw, &minh);
+   evas_object_size_hint_max_get(wd->scr, &maxw, &maxh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
@@ -429,10 +429,42 @@ _fix_items(Evas_Object *obj)
    mw = 0; mh = 0;
    evas_object_size_hint_min_get(wd->box, &mw, &mh);
    if (wd->mode == ELM_LIST_LIMIT)
-     elm_scroller_content_min_limit(wd->scroller, 1, 0);
+     elm_scroller_content_min_limit(wd->scr, 1, 0);
    else
-     elm_scroller_content_min_limit(wd->scroller, 0, 0);
+     elm_scroller_content_min_limit(wd->scr, 0, 0);
    _sizing_eval(obj);
+}
+
+static void
+_hold_on(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_widget_scroll_hold_push(wd->scr);
+}
+
+static void
+_hold_off(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_widget_scroll_hold_pop(wd->scr);
+}
+
+static void
+_freeze_on(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_widget_scroll_hold_push(wd->scr);
+}
+
+static void
+_freeze_off(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_widget_scroll_hold_pop(wd->scr);
 }
 
 EAPI Evas_Object *
@@ -452,22 +484,26 @@ elm_list_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_can_focus_set(obj, 1);
 
-   wd->scroller = elm_scroller_add(parent);
-   elm_widget_resize_object_set(obj, wd->scroller);
+   wd->scr = elm_scroller_add(parent);
+   elm_widget_resize_object_set(obj, wd->scr);
 
-   elm_scroller_bounce_set(wd->scroller, 0, 1);
+   elm_scroller_bounce_set(wd->scr, 0, 1);
 
    wd->box = elm_box_add(parent);
    elm_box_homogenous_set(wd->box, 1);
    evas_object_size_hint_weight_set(wd->box, 1.0, 0.0);
    evas_object_size_hint_align_set(wd->box, -1.0, 0.0);
-   elm_scroller_content_set(wd->scroller, wd->box);
+   elm_scroller_content_set(wd->scr, wd->box);
    evas_object_show(wd->box);
 
    wd->mode = ELM_LIST_SCROLL;
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
-
+   evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
+   evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
+   evas_object_smart_callback_add(obj, "scroll-freeze-on", _freeze_on, obj);
+   evas_object_smart_callback_add(obj, "scroll-freeze-off", _freeze_off, obj);
+   
    _sizing_eval(obj);
    return obj;
 }
@@ -555,9 +591,9 @@ elm_list_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
    if (wd->mode == mode) return;
    wd->mode = mode;
    if (wd->mode == ELM_LIST_LIMIT)
-     elm_scroller_content_min_limit(wd->scroller, 1, 0);
+     elm_scroller_content_min_limit(wd->scr, 1, 0);
    else
-     elm_scroller_content_min_limit(wd->scroller, 0, 0);
+     elm_scroller_content_min_limit(wd->scr, 0, 0);
 }
 
 EAPI void
@@ -621,7 +657,7 @@ elm_list_item_show(Elm_List_Item *it)
    evas_object_geometry_get(it->base, &x, &y, &w, &h);
    x -= bx;
    y -= by;
-   elm_scroller_region_show(wd->scroller, x, y, w, h);
+   elm_scroller_region_show(wd->scr, x, y, w, h);
 }
 
 EAPI void

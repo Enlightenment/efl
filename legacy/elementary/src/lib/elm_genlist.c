@@ -50,6 +50,21 @@
  * not use the object pointer from elm_genlist_item_object_get() in a way
  * where it may point to freed objects.
  *
+ * drag,start,up - This is called when the item in the list has been dragged
+ * (not scrolled) up.
+ *
+ * drag,start,down - This is called when the item in the list has been dragged
+ * (not scrolled) down.
+ *
+ * drag,start,left - This is called when the item in the list has been dragged
+ * (not scrolled) left.
+ *
+ * drag,start,right - This is called when the item in the list has been dragged
+ * (not scrolled) right.
+ *
+ * drag,stop - This is called when the item in the list has stopped being
+ * dragged.
+ *
  * Genlist has a fairly large API, mostly because it's relatively complex,
  * trying to be both expansive, powerful and efficient. First we will begin
  * an overview o the theory behind genlist.
@@ -281,6 +296,7 @@ struct _Elm_Genlist_Item
    Eina_List *labels, *icons, *states;
    Eina_List *icon_objs;
    Ecore_Timer *long_timer;
+   Evas_Coord dx, dy;
    
    Elm_Genlist_Item *rel;
    int relcount;
@@ -295,6 +311,8 @@ struct _Elm_Genlist_Item
    Eina_Bool queued : 1;
    Eina_Bool showme : 1;
    Eina_Bool delete_me : 1;
+   Eina_Bool down : 1;
+   Eina_Bool dragging : 1;
 };
 
 struct _Pan
@@ -466,6 +484,7 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 {
    Elm_Genlist_Item *it = data;
    Evas_Event_Mouse_Move *ev = event_info;
+   Evas_Coord minw = 0, minh = 0, x, y, dx, dy, adx, ady;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
 	if (!it->wd->on_hold)
@@ -473,6 +492,57 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 	     it->wd->on_hold = EINA_TRUE;
 	     _item_unselect(it);
 	  }
+     }
+   if (!it->down) return;
+   if (it->wd->on_hold) return;
+   if (it->wd->longpressed) return;
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+   evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+   x = ev->cur.canvas.x - x;
+   y = ev->cur.canvas.y - y;
+   dx = x - it->dx;
+   adx = dx;
+   if (adx < 0) adx = -dx;
+   dy = y - it->dy;
+   ady = dy;
+   if (ady < 0) ady = -dy;
+   minw /= 2;
+   minh /= 2;
+   if ((adx > minw) || (ady > minh))
+     {
+        it->dragging = 1;
+        if (it->long_timer)
+          {
+             ecore_timer_del(it->long_timer);
+             it->long_timer = NULL;
+          }
+        if (!it->wd->wasselected)
+          _item_unselect(it);
+        it->wd->wasselected = 0;
+        if (dy < 0)
+          {
+             if (ady > adx)
+               evas_object_smart_callback_call(it->wd->obj, "drag,start,up", it);
+             else
+               {
+                  if (dx < 0)
+                    evas_object_smart_callback_call(it->wd->obj, "drag,start,left", it);
+                  else
+                    evas_object_smart_callback_call(it->wd->obj, "drag,start,right", it);
+               }
+          }
+        else
+          {
+             if (ady > adx)
+               evas_object_smart_callback_call(it->wd->obj, "drag,start,down", it);
+             else
+               {
+                  if (dx < 0)
+                    evas_object_smart_callback_call(it->wd->obj, "drag,start,left", it);
+                  else
+                    evas_object_smart_callback_call(it->wd->obj, "drag,start,right", it);
+               }
+          }
      }
 }
 
@@ -482,6 +552,7 @@ _long_press(void *data)
    Elm_Genlist_Item *it = data;
    it->long_timer = NULL;
    if (it->disabled) return 0;
+   if (it->dragging) return 0;
    it->wd->longpressed = EINA_TRUE;
    evas_object_smart_callback_call(it->wd->obj, "longpressed", it);
    return 0;
@@ -492,7 +563,13 @@ _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 {
    Elm_Genlist_Item *it = data;
    Evas_Event_Mouse_Down *ev = event_info;
+   Evas_Coord x, y;
    if (ev->button != 1) return;
+   it->down = 1;
+   it->dragging  = 0;
+   evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+   it->dx = ev->canvas.x - x;
+   it->dy = ev->canvas.y - y;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) it->wd->on_hold = EINA_TRUE;
    else it->wd->on_hold = EINA_FALSE;
    it->wd->wasselected = it->selected;
@@ -510,6 +587,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    Evas_Event_Mouse_Up *ev = event_info;
    Eina_List *l;
    if (ev->button != 1) return;
+   it->down = 0;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) it->wd->on_hold = EINA_TRUE;
    else it->wd->on_hold = EINA_FALSE;
    if (it->long_timer)
@@ -517,8 +595,14 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
         ecore_timer_del(it->long_timer);
         it->long_timer = NULL;
      }
+   if (it->dragging)
+     {
+        it->dragging = 0;
+        evas_object_smart_callback_call(it->wd->obj, "drag,stop", it);
+     }
    if (it->wd->on_hold)
      {
+        it->wd->longpressed = EINA_FALSE;
 	it->wd->on_hold = EINA_FALSE;
 	return;
      }
@@ -1050,6 +1134,38 @@ _pan_calculate(Evas_Object *obj)
      }
 }
 
+static void
+_hold_on(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_smart_scroller_hold_set(wd->scr, 1);
+}
+
+static void
+_hold_off(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_smart_scroller_hold_set(wd->scr, 0);
+}
+
+static void
+_freeze_on(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_smart_scroller_freeze_set(wd->scr, 1);
+}
+
+static void
+_freeze_off(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_smart_scroller_freeze_set(wd->scr, 0);
+}
+
 /**
  * Add a new Genlist object
  *
@@ -1084,6 +1200,11 @@ elm_genlist_add(Evas_Object *parent)
    wd->obj = obj;
    wd->mode = ELM_LIST_SCROLL;
 
+   evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
+   evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
+   evas_object_smart_callback_add(obj, "scroll-freeze-on", _freeze_on, obj);
+   evas_object_smart_callback_add(obj, "scroll-freeze-off", _freeze_off, obj);
+   
    if (!smart)
      {
 	static Evas_Smart_Class sc;

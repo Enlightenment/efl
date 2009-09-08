@@ -305,6 +305,7 @@ _smart_scrollto_x(Smart_Data *sd, double t_in, Evas_Coord pos_x)
    Evas_Coord px, py, x, y, w, h;
    double t;
 
+   if (sd->freeze) return;
    if (t_in <= 0.0)
      {
         elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
@@ -369,6 +370,7 @@ _smart_scrollto_y(Smart_Data *sd, double t_in, Evas_Coord pos_y)
    Evas_Coord px, py, x, y, w, h;
    double t;
 
+   if (sd->freeze) return;
    if (t_in <= 0.0)
      {
         elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
@@ -598,6 +600,7 @@ bounce_eval(Smart_Data *sd)
 {
    Evas_Coord mx, my, px, py, bx, by, b2x, b2y;
 
+   if (sd->freeze) return;
    if ((!sd->bouncemex) && (!sd->bouncemey)) return;
    if (sd->down.now) return; // down bounce while still held down
    if (sd->down.onhold_animator)
@@ -1359,7 +1362,8 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info)
                          {
                             vel = sqrt((dx * dx) + (dy * dy)) / at;
                             if ((_elm_config->thumbscroll_friction > 0.0) &&
-                                (vel > _elm_config->thumbscroll_momentum_threshhold))
+                                (vel > _elm_config->thumbscroll_momentum_threshhold) &&
+                                (!sd->freeze))
                               {
                                  sd->down.dx = ((double)dx / at);
                                  sd->down.dy = ((double)dy / at);
@@ -1504,7 +1508,7 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj, void *event_info)
 		    }
                   if (faildir) sd->down.dir_none = 1;
 	       }
-             if (!sd->hold)
+             if ((!sd->hold) && (!sd->freeze))
                {
                   if ((sd->down.dragged) ||
                       (((x * x) + (y * y)) >
