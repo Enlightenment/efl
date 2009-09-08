@@ -267,7 +267,7 @@ eina_array_grow(Eina_Array *array)
    total = array->total + array->step;
    eina_error_set(0);
    tmp = realloc(array->data, sizeof (void*) * total);
-   if (UNLIKELY(!tmp)) {
+   if (EINA_UNLIKELY(!tmp)) {
       eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
       return 0;
    }

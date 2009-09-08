@@ -19,11 +19,6 @@
 #ifndef EINA_INLINE_ARRAY_X_
 #define EINA_INLINE_ARRAY_X_
 
-#ifdef __GNUC__
-# define UNLIKELY(x) __builtin_expect(!!(x), 0)
-#else
-# define UNLIKELY(x) (x)
-#endif
 
 /**
  * @cond LOCAL
@@ -62,7 +57,7 @@ eina_array_push(Eina_Array *array, const void *data)
 {
    if (!data) return EINA_FALSE;
 
-   if (UNLIKELY((array->count + 1) > array->total))
+   if (EINA_UNLIKELY((array->count + 1) > array->total))
      if (!eina_array_grow(array)) return EINA_FALSE;
 
    array->data[array->count++] = (void*) data;
