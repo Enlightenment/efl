@@ -1128,3 +1128,77 @@ elm_object_focus(Evas_Object *obj)
 {
    elm_widget_focus_set(obj, 1);
 }
+
+/**
+ * @defgroup Scrollhints Scrollhints
+ *
+ * Objects when inside a scroller can scroll, but this may not always be
+ * desireable in certain situations. This allows an object to hint to itself
+ * and parents to "not scroll" in one of 2 ways.
+ * 
+ * 1. To hold on scrolling. This means just flicking and dragging may no
+ * longer scroll, but pressing/dragging near an edge of the scroller will
+ * still scroll. This is automastically used by the entry object when
+ * selecting text.
+ * 2. To totally freeze scrolling. This means it stops. until popped/released.
+ */
+
+/**
+ * Push the scroll hold by 1
+ *
+ * This increments the scroll hold count by one. If it is more than 0 it will
+ * take effect on the parents of the indicated object.
+ *
+ * @param obj The object
+ * @ingroup Scrollhints
+ */
+EAPI void
+elm_object_scroll_hold_push(Evas_Object *obj)
+{
+   elm_widget_scroll_hold_push(obj);
+}
+
+/**
+ * Pop the scroll hold by 1
+ *
+ * This decrements the scroll hold count by one. If it is more than 0 it will
+ * take effect on the parents of the indicated object.
+ *
+ * @param obj The object
+ * @ingroup Scrollhints
+ */
+EAPI void
+elm_object_scroll_hold_pop(Evas_Object *obj)
+{
+   elm_widget_scroll_hold_pop(obj);
+}
+
+/**
+ * Push the scroll freeze by 1
+ *
+ * This increments the scroll freeze count by one. If it is more than 0 it will
+ * take effect on the parents of the indicated object.
+ *
+ * @param obj The object
+ * @ingroup Scrollhints
+ */
+EAPI void
+elm_object_scroll_freeze_push(Evas_Object *obj)
+{
+   elm_widget_scroll_freeze_push(obj);
+}
+
+/**
+ * Pop the scroll freeze by 1
+ *
+ * This decrements the scroll freeze count by one. If it is more than 0 it will
+ * take effect on the parents of the indicated object.
+ *
+ * @param obj The object
+ * @ingroup Scrollhints
+ */
+EAPI void
+elm_object_scroll_freeze_pop(Evas_Object *obj)
+{
+   elm_widget_scroll_freeze_pop(obj);
+}
