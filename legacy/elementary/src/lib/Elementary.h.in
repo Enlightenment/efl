@@ -267,6 +267,7 @@ extern "C" {
    EAPI Eina_Bool    elm_image_file_set(Evas_Object *obj, const char *file, const char *group);
    EAPI void         elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth);
    EAPI void         elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale);
+   EAPI void         elm_image_object_size_get(const Evas_Object *obj, int *w, int *h);
    EAPI void         elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down);
    EAPI void         elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside);
    EAPI void         elm_image_prescale_set(Evas_Object *obj, int size);

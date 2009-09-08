@@ -137,6 +137,13 @@ elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 }
 
 EAPI void
+elm_image_object_size_get(const Evas_Object *obj, int *w, int *h)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   _els_smart_icon_size_get(wd->img, w, h);
+}
+
+EAPI void
 elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
