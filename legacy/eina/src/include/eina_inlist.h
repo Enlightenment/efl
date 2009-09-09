@@ -68,11 +68,11 @@ EAPI Eina_Iterator *eina_inlist_iterator_new(const Eina_Inlist *in_list) EINA_MA
 EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /* This two macros are helpers for the _FOREACH ones, don't use them */
-#define INLIST_OFFSET(ref) ((char*)&(ref)->__in_list - (char*)(ref))
-#define INLIST_CONTAINER(ref, ptr) (void*)((char*)(ptr) - INLIST_OFFSET(ref))
+#define _EINA_INLIST_OFFSET(ref) ((char*)&(ref)->__in_list - (char*)(ref))
+#define _EINA_INLIST_CONTAINER(ref, ptr) (void*)((char*)(ptr) - _EINA_INLIST_OFFSET(ref))
 
-#define EINA_INLIST_FOREACH(list, l) for (l = (list ? INLIST_CONTAINER(l, list) : NULL); l; l = (EINA_INLIST_GET(l)->next ? INLIST_CONTAINER(l, EINA_INLIST_GET(l)->next) : NULL))
-#define EINA_INLIST_REVERSE_FOREACH(list, l) for (l = (list ? INLIST_CONTAINER(l, list->last) : NULL); l; l = (EINA_INLIST_GET(l)->prev ? INLIST_CONTAINER(l, EINA_INLIST_GET(l)->prev) : NULL))
+#define EINA_INLIST_FOREACH(list, l) for (l = (list ? _EINA_INLIST_CONTAINER(l, list) : NULL); l; l = (EINA_INLIST_GET(l)->next ? _EINA_INLIST_CONTAINER(l, EINA_INLIST_GET(l)->next) : NULL))
+#define EINA_INLIST_REVERSE_FOREACH(list, l) for (l = (list ? _EINA_INLIST_CONTAINER(l, list->last) : NULL); l; l = (EINA_INLIST_GET(l)->prev ? _EINA_INLIST_CONTAINER(l, EINA_INLIST_GET(l)->prev) : NULL))
 
 
 /**
