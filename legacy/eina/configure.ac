@@ -441,6 +441,7 @@ echo "  Maximum log level....: ${with_max_log_level}"
 echo "  Report string usage..: ${have_stringshare_usage}"
 echo "  Default mempool......: ${have_default_mempool}"
 echo "  Thread Support.......: ${have_pthread}"
+echo "  Amalgamation.........: ${do_amalgamation}"
 echo
 echo "  Documentation........: ${build_doc}"
 echo "  Tests................: ${enable_tests}"

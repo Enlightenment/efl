@@ -1,4 +1,5 @@
 MAINTAINERCLEANFILES = Makefile.in
+CLEANFILES = eina_amalgamation.c
 
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/include \
@@ -66,7 +67,7 @@ eina_sources_used = eina_amalgamation.c
 BUILT_SOURCES = eina_amalgamation.c
 
 $(builddir)/ eina_amalgamation.c: $(sources_used) Makefile
-	-rm $(builddir)/eina_amalgamation.c
+	-rm -f $(builddir)/eina_amalgamation.c
 
 	@echo "#ifdef HAVE_CONFIG_H" >> $(builddir)/eina_amalgamation.c
 	@echo "#include \"config.h\"" >> $(builddir)/eina_amalgamation.c
