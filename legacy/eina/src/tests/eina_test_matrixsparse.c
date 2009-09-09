@@ -10,10 +10,8 @@
 #define MAX_ROWS 10
 #define MAX_COLS 10
 
-static void eina_matrixsparse_free_cell_cb(void *user_data, void *cell_data)
+static void eina_matrixsparse_free_cell_cb(void *user_data __UNUSED__, void *cell_data __UNUSED__)
 {
-   long *value = cell_data;
-   long **data = user_data;
 }
 
 static void matrixsparse_initialize(Eina_Matrixsparse *matrix, long data[MAX_ROWS][MAX_COLS], unsigned long nrows, unsigned long ncols)
@@ -30,7 +28,7 @@ static void matrixsparse_initialize(Eina_Matrixsparse *matrix, long data[MAX_ROW
 	 }
 }
 
-static void matrixsparse_check(Eina_Matrixsparse *matrix, long data[MAX_ROWS][MAX_COLS], unsigned long nrows, unsigned long ncols)
+static void matrixsparse_check(Eina_Matrixsparse *matrix, long data[MAX_ROWS][MAX_COLS], unsigned long nrows __UNUSED__, unsigned long ncols __UNUSED__)
 {
    unsigned long i, j;
    long *test1;
@@ -58,7 +56,7 @@ START_TEST(eina_test_simple)
    Eina_Bool r;
    long *test1, value, value2, value3, value4;
    unsigned long i, j;
-   unsigned long nrows, ncols, row, col;
+   unsigned long row, col;
 
    long data[MAX_ROWS][MAX_COLS];
 
@@ -148,7 +146,7 @@ START_TEST(eina_test_simple)
    r = eina_matrixsparse_data_idx_set(matrix, 1, 9, &data[1][9]);
    fail_if(r == EINA_FALSE);
 
-   r = eina_matrixsparse_data_idx_replace(matrix, 4, 3, &value, &test1);
+   r = eina_matrixsparse_data_idx_replace(matrix, 4, 3, &value, (void**)&test1);
    fail_if(r == EINA_FALSE);
    fail_if(test1 == NULL);
    fail_if(*test1 != data[4][3]);
@@ -157,7 +155,7 @@ START_TEST(eina_test_simple)
    test1 = eina_matrixsparse_data_idx_get(matrix, 4, 3);
    fail_if(test1 == NULL || *test1 != value);
 
-   r = eina_matrixsparse_cell_data_replace(cell, &value2, &test1);
+   r = eina_matrixsparse_cell_data_replace(cell, &value2, (void**)&test1);
    fail_if(r == EINA_FALSE);
    fail_if(test1 == NULL);
    fail_if(*test1 != data[3][5]);
@@ -177,7 +175,7 @@ START_TEST(eina_test_simple)
    test1 = eina_matrixsparse_data_idx_get(matrix, 4, 2);
    fail_if(test1 == NULL || *test1 != value3);
 
-   r = eina_matrixsparse_data_idx_replace(matrix, 6, 5, &value4, &test1);
+   r = eina_matrixsparse_data_idx_replace(matrix, 6, 5, &value4, (void**)&test1);
    fail_if(r == EINA_FALSE || test1 != NULL);
    data[6][5] = value4;
 
@@ -262,9 +260,7 @@ END_TEST
 START_TEST(eina_test_resize)
 {
    Eina_Matrixsparse *matrix = NULL;
-   Eina_Matrixsparse_Cell *cell = NULL;
    Eina_Bool r;
-   long *test1;
    unsigned long i, j;
    unsigned long nrows, ncols;
 

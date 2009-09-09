@@ -149,14 +149,23 @@ START_TEST(eina_stringshare_collision)
      {
 	eina_convert_itoa(rand(), buffer);
 	eina_array_push(ea, (void*) eina_stringshare_add(buffer));
-	if (rand() > RAND_MAX / 2) eina_stringshare_add(buffer);
+	if (rand() > RAND_MAX / 2)
+	  {
+	     const char *r = eina_stringshare_add(buffer);
+	     fail_if(r == NULL);
+	  }
      }
 
    for (i = 0; i < 10000; ++i)
      {
+	const char *r;
+
 	eina_convert_itoa(60000 - i, buffer);
 	eina_array_push(ea, (void*) eina_stringshare_add(buffer));
-	eina_stringshare_add(buffer);
+	r = eina_stringshare_add(buffer);
+	fail_if(r == NULL);
+	r = eina_stringshare_add(buffer);
+	fail_if(r == NULL);
      }
 
    for (i = 0; i < 200; ++i)

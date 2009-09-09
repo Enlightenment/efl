@@ -25,7 +25,7 @@
 #include "eina_suite.h"
 #include "Eina.h"
 
-static Eina_Bool list_cb(Eina_Module *m, void *data)
+static Eina_Bool list_cb(Eina_Module *m, void *data __UNUSED__)
 {
    int *sym;
    const char *file;

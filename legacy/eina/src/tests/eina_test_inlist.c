@@ -24,6 +24,7 @@
 
 #include "eina_suite.h"
 #include "Eina.h"
+#include "eina_safety_checks.h"
 
 typedef struct _Eina_Test_Inlist Eina_Test_Inlist;
 struct _Eina_Test_Inlist
@@ -96,8 +97,16 @@ START_TEST(eina_inlist_simple)
 	++i;
      }
 
-   eina_inlist_remove(NULL, EINA_INLIST_GET(tmp));
+#ifdef EINA_SAFETY_CHECKS
+   {
+      Eina_Inlist *tmp2 = eina_inlist_remove(NULL, EINA_INLIST_GET(tmp));
+      fail_if(tmp2 != NULL);
+      fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
+   }
+
    lst = eina_inlist_remove(lst, NULL);
+   fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
+#endif
 
    tmp = (Eina_Test_Inlist*) lst;
    lst = eina_inlist_demote(lst, lst);

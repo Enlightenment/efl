@@ -142,7 +142,7 @@ main(int argc, char **argv)
 	  return 0;
        }
 
-   s = eina_build_suite(argc - 1, argv + 1);
+   s = eina_build_suite(argc - 1, (const char **)argv + 1);
    sr = srunner_create(s);
 
    _mempool_init();
