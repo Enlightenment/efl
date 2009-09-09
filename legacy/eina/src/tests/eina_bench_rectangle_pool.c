@@ -21,8 +21,7 @@
 #endif
 
 #include "eina_bench.h"
-#include "eina_rectangle.h"
-#include "eina_list.h"
+#include "Eina.h"
 
 static void
 eina_bench_eina_rectangle_pool(int request)
@@ -63,7 +62,6 @@ eina_bench_eina_rectangle_pool(int request)
    eina_rectangle_pool_free(pool);
    eina_list_free(list);
 
-   eina_shutdown();
    eina_shutdown();
 }
 

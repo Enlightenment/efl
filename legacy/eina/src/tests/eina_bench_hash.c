@@ -162,7 +162,7 @@ eina_bench_lookup_djb2(int request)
 
 	tmp_val = malloc(sizeof (int));
 
-	if (!tmp_key || !tmp_val) continue ;
+	if (!tmp_val) continue ;
 
 	eina_convert_itoa(i, tmp_key);
 	*tmp_val = i;

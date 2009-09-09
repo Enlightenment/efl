@@ -464,6 +464,7 @@ static inline int _split_fuzzy(list_t *dirty, const rect_t a, rect_t *b)
 	return action;
 }
 
+#if 0
 static void rect_list_node_pool_set_max(int max)
 {
 	int diff;
@@ -482,6 +483,7 @@ static void rect_list_node_pool_set_max(int max)
 
 	list_node_pool.max = max;
 }
+#endif
 
 static void rect_list_node_pool_flush(void)
 {
@@ -511,6 +513,7 @@ static inline void rect_list_node_pool_put(list_node_t *node)
 		free(node);
 }
 
+#if 0
 static void rect_print(const rect_t r)
 {
 	printf("<rect(%d, %d, %d, %d)>", r.left, r.top, r.width, r.height);
@@ -543,7 +546,7 @@ static void rect_list_print(const list_t rects)
 	}
 	printf("]\n");
 }
-
+#endif
 
 static inline list_node_t *
 rect_list_unlink_next(list_t *rects, list_node_t *parent_node)
@@ -643,6 +646,7 @@ static void rect_list_del_split_strict(list_t *rects, const rect_t del_r)
 	rect_list_concat(rects, &modified);
 }
 
+#if 0
 static void rect_list_add_split_strict(list_t *rects, list_node_t *node)
 {
 	list_t dirty = list_zeroed;
@@ -711,6 +715,7 @@ static void rect_list_add_split_strict(list_t *rects, list_node_t *node)
 		cur_node = cur_node->next;
 	}
 }
+#endif
 
 static list_node_t *
 rect_list_add_split_fuzzy(list_t *rects, list_node_t *node, int accepted_error)
@@ -984,7 +989,7 @@ static inline void _splitter_del(Eina_Tiler *t)
 	rect_list_node_pool_flush();
 }
 
-static inline void _splitter_tile_size_set(Eina_Tiler *t, int w, int h)
+static inline void _splitter_tile_size_set(Eina_Tiler *t, int w __UNUSED__, int h __UNUSED__)
 {
 	/* TODO are w and h used for something? */
 	t->splitter.rects = list_zeroed;

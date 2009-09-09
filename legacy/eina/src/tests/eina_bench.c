@@ -25,7 +25,7 @@
 #include <limits.h>
 
 #include "eina_bench.h"
-#include "eina_mempool.h"
+#include "Eina.h"
 
 typedef struct _Eina_Benchmark_Case Eina_Benchmark_Case;
 struct _Eina_Benchmark_Case
