@@ -25,6 +25,7 @@
 
 #include "eina_suite.h"
 #include "Eina.h"
+#include "eina_safety_checks.h"
 
 START_TEST(eina_counter_simple)
 {
@@ -73,7 +74,6 @@ END_TEST
 START_TEST(eina_counter_break)
 {
    Eina_Counter *cnt;
-   char *dump;
 
    eina_init();
 
@@ -84,10 +84,17 @@ START_TEST(eina_counter_break)
 
    eina_counter_free(cnt);
 
-   dump = eina_counter_dump(NULL);
-   fail_if(dump);
+#ifdef EINA_SAFETY_CHECKS
+   {
+      char *dump;
 
-   free(dump);
+      fprintf(stderr, "you should have a safety check failure below:\n");
+      dump = eina_counter_dump(NULL);
+      fail_if(dump);
+      fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
+      free(dump);
+   }
+#endif
 
    eina_shutdown();
 }

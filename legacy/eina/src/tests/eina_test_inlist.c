@@ -21,6 +21,7 @@
 #endif
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "eina_suite.h"
 #include "Eina.h"
@@ -98,12 +99,14 @@ START_TEST(eina_inlist_simple)
      }
 
 #ifdef EINA_SAFETY_CHECKS
+   fprintf(stderr, "you should have a safety check failure below:\n");
    {
       Eina_Inlist *tmp2 = eina_inlist_remove(NULL, EINA_INLIST_GET(tmp));
       fail_if(tmp2 != NULL);
       fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
    }
 
+   fprintf(stderr, "you should have a safety check failure below:\n");
    lst = eina_inlist_remove(lst, NULL);
    fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
 #endif

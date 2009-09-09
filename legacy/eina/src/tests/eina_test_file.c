@@ -21,10 +21,12 @@
 #endif
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "eina_suite.h"
 #include "Eina.h"
+#include "eina_safety_checks.h"
 
 START_TEST(eina_file_split_simple)
 {
@@ -32,8 +34,12 @@ START_TEST(eina_file_split_simple)
 
    eina_init();
 
+#ifdef EINA_SAFETY_CHECKS
+   fprintf(stderr, "you should have a safety check failure below:\n");
    ea = eina_file_split(NULL);
    fail_if(ea);
+   fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
+#endif
 
    ea = eina_file_split(strdup("/this/is/a/small/test"));
 
