@@ -91,10 +91,16 @@ $(builddir)/ eina_amalgamation.c: $(sources_used) Makefile
 	@echo "#include <string.h>" >> $(builddir)/eina_amalgamation.c
 
 	@for f in $(sources_used); do \
-	   echo "/* file: $$f */" >> $(builddir)/eina_amalgamation.c; \
-	   grep -v -e '^# *include \+.\(config\|eina_[a-z_]\+\|Evil\|stdio\|stdlib\|string\)[.]h.*' $$f >> $(builddir)/eina_amalgamation.c; \
+	   if [ `expr substr $$f 1 1` != '/' ]; then \
+		  file="$(srcdir)/$$f" ; \
+	   else \
+		  file="$$f" ; \
+	   fi ; \
+	   echo "/* file: $$file */" >> $(builddir)/eina_amalgamation.c; \
+	   grep -v -e '^# *include \+.\(config\|eina_[a-z_]\+\|Evil\|stdio\|stdlib\|string\)[.]h.*' $$file >> $(builddir)/eina_amalgamation.c; \
 	done
 	@echo "eina_amalgamation.c generated"
+
 
 else
 eina_sources_used = $(sources_used)
