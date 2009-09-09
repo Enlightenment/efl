@@ -30,8 +30,8 @@
 typedef struct _Eina_Test_Inlist Eina_Test_Inlist;
 struct _Eina_Test_Inlist
 {
-   EINA_INLIST;
    int i;
+   EINA_INLIST;
 };
 
 static Eina_Test_Inlist*
@@ -63,13 +63,13 @@ START_TEST(eina_inlist_simple)
    tmp = _eina_test_inlist_build(1664);
    lst = eina_inlist_append_relative(lst, EINA_INLIST_GET(tmp), lst);
    fail_if(!lst);
-   fail_if(((Eina_Test_Inlist*)lst)->i != 42);
+   fail_if(EINA_INLIST_CONTAINER_GET(lst, Eina_Test_Inlist)->i != 42);
 
    prev = tmp;
    tmp = _eina_test_inlist_build(3227);
    lst = eina_inlist_prepend_relative(lst, EINA_INLIST_GET(tmp), EINA_INLIST_GET(prev));
    fail_if(!lst);
-   fail_if(((Eina_Test_Inlist*)lst)->i != 42);
+   fail_if(EINA_INLIST_CONTAINER_GET(lst, Eina_Test_Inlist)->i != 42);
 
    lst = eina_inlist_remove(lst, EINA_INLIST_GET(tmp));
 
@@ -111,16 +111,17 @@ START_TEST(eina_inlist_simple)
    fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
 #endif
 
-   tmp = (Eina_Test_Inlist*) lst;
+   tmp = EINA_INLIST_CONTAINER_GET(lst, Eina_Test_Inlist);
    lst = eina_inlist_demote(lst, lst);
-   fail_if(lst == (Eina_Inlist*) tmp);
+   fail_if(EINA_INLIST_CONTAINER_GET(lst, Eina_Test_Inlist) == tmp);
 
    lst = eina_inlist_promote(lst, EINA_INLIST_GET(tmp));
-   fail_if(lst != (Eina_Inlist*) tmp);
+   fail_if(lst != EINA_INLIST_GET(tmp));
 
-   tmp = (Eina_Test_Inlist*) eina_inlist_find(lst, EINA_INLIST_GET(prev));
+   tmp = EINA_INLIST_CONTAINER_GET(eina_inlist_find(lst, EINA_INLIST_GET(prev)), Eina_Test_Inlist);
    lst = eina_inlist_remove(lst, EINA_INLIST_GET(tmp));
-   tmp = (Eina_Test_Inlist*) eina_inlist_find(lst, EINA_INLIST_GET(tmp));
+   prev = eina_inlist_find(lst, EINA_INLIST_GET(tmp));
+   tmp = prev ? EINA_INLIST_CONTAINER_GET(prev, Eina_Test_Inlist) : NULL;
    fail_if(tmp != NULL);
 
    while (lst)
