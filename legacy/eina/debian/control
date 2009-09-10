@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 6), cdbs, doxygen, pkg-config, libtool
 Standards-Version: 3.8.3
 Homepage: http://www.enlightenment.org
 
-Package: libeina-svn-01
+Package: libeina-svn-04
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Provides: libeina0
@@ -27,7 +27,7 @@ Description: Enlightenment Foundation Library providing optimized data types
 Package: libeina-dev
 Section: libdevel
 Architecture: any
-Depends: ${misc:Depends}, libeina-svn-01 (= ${binary:Version}), pkg-config
+Depends: ${misc:Depends}, libeina-svn-04 (= ${binary:Version}), pkg-config
 Recommends: libeina-doc
 Description: Development files for libeina
  Eina is a multi-platform library that provides optimized data types and a few
@@ -67,7 +67,7 @@ Description: Documentation for use with libeina
 Package: libeina-dbg
 Architecture: any
 Section: debug
-Depends: ${misc:Depends}, libeina-svn-01 (= ${binary:Version})
+Depends: ${misc:Depends}, libeina-svn-04 (= ${binary:Version})
 Priority: extra
 Description: debugging symbols for use with libeina
  Eina is a multi-platform library that provides optimized data types and a few
