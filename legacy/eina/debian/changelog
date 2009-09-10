@@ -1,3 +1,9 @@
+eina (0.0.2.062+svnYYYYMMDD-1.1) unstable; urgency=low
+
+  * Updated version
+
+ -- Simon Horman <horms@debian.org>  Thu, 10 Sep 2009 12:30:32 +1000
+
 eina (0.0.2.060+svnYYYYMMDD-1) unstable; urgency=low
 
   * Updated version
