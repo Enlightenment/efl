@@ -811,7 +811,7 @@ fi
 
 # ecore_config
 ecore_config_deps="no"
-if test "x$have_eet" = "xyes" -a "x$have_ecore_ipc" = "xyes" ; then
+if test "x$have_eet" = "xyes" -a "x$have_ecore_ipc" = "xyes" -a "x$have_evas" ; then
   ecore_config_deps="yes"
 fi
 
