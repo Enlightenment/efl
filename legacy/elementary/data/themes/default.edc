@@ -5762,7 +5762,6 @@ collections {
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/list/item/default";
       data.item: "stacking" "above";
-      data.item: "selectraise" "on";
       images {
          image: "bt_sm_base1.png" COMP;
          image: "bt_sm_shine.png" COMP;
@@ -13077,63 +13076,52 @@ collections {
 	 image: "bt_shine.png" COMP;
       }
       parts {
-         part { name: "0";
+         part { name: "clip";
             type: RECT;
 	    mouse_events:  0;
 	    description { state: "default" 0.0;
-               rel1.to: "elm.swallow.index.0";
-               rel1.offset: -1 -1;
-               rel2.to: "elm.swallow.index.0";
-               rel2.offset: 0 0;
-               color: 0 100 0 50;
+               visible:  0;
+               color: 255 255 255 0;
+	    }
+	    description { state: "active" 0.0;
+               visible:  1;
+               color: 255 255 255 255;
 	    }
 	 }
-         part { name: "1";
+         part { name: "clip2";
             type: RECT;
 	    mouse_events:  0;
+            clip_to: "clip";
 	    description { state: "default" 0.0;
-               rel1.to: "elm.swallow.index.1";
-               rel1.offset: -1 -1;
-               rel2.to: "elm.swallow.index.1";
-               rel2.offset: 0 0;
-               color: 100 0 0 50;
+               visible: 0;
+               color: 255 255 255 0;
+	    }
+	    description { state: "active" 0.0;
+               visible:  1;
+               color: 255 255 255 255;
 	    }
 	 }
 	 part { name: "elm.swallow.index.0";
 	    type: SWALLOW;
+            clip_to: "clip";
 	    description { state: "default" 0.0;
                align: 1.0 0.5;
                rel1 {
-                  relative: 1.0 0.0;
-                  offset: -3 2;
+                  relative: 1.0 0.5;
+                  offset: -1 5;
                }
                rel2 {
-                  relative: 1.0 1.0;
-                  offset: -3 -3;
-               }
-	    }
-	 }
-	 part { name: "elm.swallow.index.1";
-	    type: SWALLOW;
-	    description { state: "default" 0.0;
-               align: 1.0 0.5;
-               rel1 {
-                  to_x: "elm.swallow.index.0";
-                  relative: 0.0 0.0;
-                  offset: -3 2;
-               }
-               rel2 {
-                  to_x: "elm.swallow.index.0";
-                  relative: 0.0 1.0;
-                  offset: -3 -3;
+                  relative: 1.0 0.5;
+                  offset: -1 -6;
                }
 	    }
 	 }
 	 part { name: "button_image";
 	    mouse_events: 1;
+            clip_to: "clip";
 	    description { state: "default" 0.0;
                rel1 {
-                  to: "elm.text";
+                  to: "elm.text.body";
                   offset: -5 -5;
                }
                rel2 {
@@ -13147,28 +13135,59 @@ collections {
                image.middle: SOLID;
 	    }
 	 }
-         part { name: "elm.text";
+         part { name: "elm.text.body";
 	    type: TEXT;
 	    effect: SOFT_SHADOW;
 	    mouse_events: 0;
 	    scale: 1;
+            clip_to: "clip";
 	    description { state: "default" 0.0;
-               align: 0.0 0.5;
+               align: 1.0 0.5;
 	       rel1 {
-                  to: "elm.swallow.index.1";
-                  relative: 0.0 0.5;
-                  offset: -8 0;
+                  to: "elm.text";
+                  relative: 0.0 0.0;
+                  offset: 5 0;
                }
 	       rel2 {
-                  to: "elm.swallow.index.1";
-                  relative: 0.0 0.5;
-                  offset: -8 -1;
+                  to: "elm.text";
+                  relative: 0.0 1.0;
+                  offset: 5 -1;
                }
 	       color: 224 224 224 255;
 	       color3: 0 0 0 64;
 	       text {
 		  font:     "Sans,Edje-Vera";
-		  size:     10;
+		  size:     20;
+		  min:      1 1;
+		  align:    1.0 0.5;
+	       }
+	    }
+	 }
+         part { name: "elm.text";
+	    type: TEXT;
+	    effect: SOFT_SHADOW;
+	    mouse_events: 0;
+	    scale: 1;
+            clip_to: "clip";
+	    description { state: "default" 0.0;
+               align: 1.0 0.5;
+	       rel1 {
+                  to_x: "elm.swallow.event.0";
+                  to_y: "elm.dragable.pointer";
+                  relative: 0.0 0.5;
+                  offset: -16 0;
+               }
+	       rel2 {
+                  to_x: "elm.swallow.event.0";
+                  to_y: "elm.dragable.pointer";
+                  relative: 0.0 0.5;
+                  offset: -16 -1;
+               }
+	       color: 255 0 0 255;
+	       color3: 0 0 0 64;
+	       text {
+		  font:     "Sans,Edje-Vera";
+		  size:     20;
 		  min:      1 1;
 		  align:    1.0 0.5;
 	       }
@@ -13176,6 +13195,7 @@ collections {
 	 }
 	 part {	name: "over1";
 	    mouse_events: 0;
+            clip_to: "clip";
 	    description { state: "default" 0.0;
                rel1 {
                   to: "button_image";
@@ -13194,6 +13214,7 @@ collections {
 	    mouse_events: 1;
 	    repeat_events: 1;
             ignore_flags: ON_HOLD;
+            clip_to: "clip";
 	    description { state: "default" 0.0;
                rel1 {
                   to: "button_image";
@@ -13207,13 +13228,36 @@ collections {
 	       }
 	    }
 	 }
-	 part { name: "elm.swallow.event";
+	 part { name: "elm.dragable.pointer";
+            type: RECT;
+	    mouse_events: 0;
+	    dragable {
+	       x: 1 1 0;
+	       y: 1 1 0;
+	    }
+            clip_to: "clip";
+	    description { state: "default" 0.0;
+	       fixed: 1 1;
+	       min: 8 8;
+	       max: 8 8;
+	       rel1 {
+		  relative: 0.0 0.0;
+		  offset:   0 0;
+	       }
+	       rel2 {
+		  relative: 0.0 0.0;
+		  offset:   0 0;
+	       }
+               color: 0 0 255 128;
+	    }
+	 }
+	 part { name: "elm.swallow.event.0";
 	    type: SWALLOW;
 	    description { state: "default" 0.0;
                align: 1.0 0.5;
                rel1 {
                   relative: 1.0 0.0;
-                  offset: -1 9;
+                  offset: -1 0;
                }
                rel2 {
                   relative: 1.0 1.0;
@@ -13222,72 +13266,198 @@ collections {
 	    }
 	 }
       }
+      programs {
+	 program { name: "active";
+	    signal: "elm,state,active";
+	    source: "elm";
+	    action: STATE_SET "active" 0.0;
+            transition: DECELERATE 0.5;
+	    target: "clip";
+	 }
+	 program { name: "inactive";
+	    signal: "elm,state,inactive";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.5;
+	    target: "clip";
+	 }
+      }
    }
 
    group { name: "elm/index/item/vertical/default";
+      data.item: "stacking" "above";
+      data.item: "selectraise" "on";
       images {
+         image: "ilist_1.png" COMP;
+         image: "ilist_item_shadow.png" COMP;
       }
       parts {
-         part { name: "0";
-            type: RECT;
-	    mouse_events:  0;
-	    description { state: "default" 0.0;
-               color: 100 100 0 50;
-	    }
-	 }
+         part {
+            name: "base_sh";
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               align: 0.0 0.0;
+               min: 0 10;
+               fixed: 1 1;
+               rel1 {
+                  to: "base";
+                  relative: 0.0 1.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  to: "base";
+                  relative: 1.0 1.0;
+                  offset: -1 0;
+               }
+               image {
+                  normal: "ilist_item_shadow.png";
+               }
+               fill.smooth: 0;
+            }
+         }
+         part {
+            name: "base";
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               image {
+                  normal: "ilist_1.png";
+                  border: 2 2 2 2;
+               }
+               fill.smooth: 0;
+            }
+            description { state: "active" 0.0;
+               inherit: "default" 0.0;
+               rel1 {
+                  offset: -16 0;
+               }
+            }
+         }
          part { name: "elm.text";
-	    type: TEXT;
-	    mouse_events: 0;
-	    scale: 1;
-	    description { state: "default" 0.0;
-	       rel1 {
-                  offset: 1 1;
+            type:           TEXT;
+            mouse_events:   0;
+            scale: 1;
+            description {
+               state: "default" 0.0;
+//               min: 16 16;
+               rel1 {
+                  to: "base";
+                  relative: 0.0  0.0;
+                  offset:   4 4;
                }
-	       rel2 {
-                  offset: -2 -2;
+               rel2 {
+                  to: "base";
+                  relative: 1.0  1.0;
+                  offset:   -5 -5;
                }
-	       color: 0 0 0 255;
-	       text {
-		  font:     "Sans,Edje-Vera";
-		  size:     10;
-		  min:      1 1;
-		  align:    1.0 0.5;
-	       }
-	    }
+               color: 0 0 0 128;
+               text {
+                  font: "Sans";
+                  size: 10;
+                  min: 1 1;
+//                  min: 0 1;
+                  align: 0.0 0.5;
+               }
+            }
+            description { state: "active" 0.0;
+               inherit: "default" 0.0;
+               color: 0 0 0 255;
+            }
+         }
+      }
+      programs {
+	 program { name: "active";
+	    signal: "elm,state,active";
+	    source: "elm";
+	    action: STATE_SET "active" 0.0;
+            transition: DECELERATE 0.5;
+	    target: "elm.text";
+	    target: "base";
+	 }
+	 program { name: "inactive";
+	    signal: "elm,state,inactive";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.5;
+	    target: "elm.text";
+	    target: "base";
 	 }
       }
    }
 
    group { name: "elm/index/item_odd/vertical/default";
+      data.item: "stacking" "below";
       images {
+         image: "ilist_2.png" COMP;
       }
       parts {
-         part { name: "0";
-            type: RECT;
-	    mouse_events:  0;
-	    description { state: "default" 0.0;
-               color: 100 50 0 50;
-	    }
-	 }
+         part {
+            name: "base";
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               image {
+                  normal: "ilist_2.png";
+                  border: 2 2 2 2;
+               }
+               fill.smooth: 0;
+            }
+            description { state: "active" 0.0;
+               inherit: "default" 0.0;
+               rel1 {
+                  offset: -16 0;
+               }
+            }
+         }
          part { name: "elm.text";
-	    type: TEXT;
-	    mouse_events: 0;
-	    scale: 1;
-	    description { state: "default" 0.0;
-	       rel1 {
-                  offset: 1 1;
+            type:           TEXT;
+            mouse_events:   0;
+            scale: 1;
+            description {
+               state: "default" 0.0;
+//               min: 16 16;
+               rel1 {
+                  to: "base";
+                  relative: 0.0  0.0;
+                  offset:   4 4;
                }
-	       rel2 {
-                  offset: -2 -2;
+               rel2 {
+                  to: "base";
+                  relative: 1.0  1.0;
+                  offset:   -5 -5;
                }
-	       color: 0 0 0 255;
-	       text {
-		  font:     "Sans,Edje-Vera";
-		  size:     10;
-		  min:      1 1;
-		  align:    1.0 0.5;
-	       }
-	    }
+               color: 0 0 0 128;
+               text {
+                  font: "Sans";
+                  size: 10;
+                  min: 1 1;
+//                  min: 0 1;
+                  align: 0.0 0.5;
+               }
+            }
+            description { state: "active" 0.0;
+               inherit: "default" 0.0;
+               color: 0 0 0 255;
+            }
+         }
+      }
+      programs {
+	 program { name: "active";
+	    signal: "elm,state,active";
+	    source: "elm";
+	    action: STATE_SET "active" 0.0;
+            transition: DECELERATE 0.5;
+	    target: "elm.text";
+	    target: "base";
+	 }
+	 program { name: "inactive";
+	    signal: "elm,state,inactive";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.5;
+	    target: "elm.text";
+	    target: "base";
 	 }
       }
    }

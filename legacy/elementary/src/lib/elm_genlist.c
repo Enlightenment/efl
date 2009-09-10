@@ -264,6 +264,7 @@ struct _Widget_Data
    Eina_Bool longpressed : 1;
    Eina_Bool wasselected : 1;
    Eina_Bool no_select : 1;
+   Eina_Bool bring_in : 1;
 };
 
 struct _Item_Block
@@ -994,11 +995,18 @@ _calc_job(void *data)
 	if (showme)
 	  {
 	     wd->show_item->showme = 0;
-	     elm_smart_scroller_child_region_show(wd->scr,
-						  wd->show_item->x + wd->show_item->block->x,
-						  wd->show_item->y + wd->show_item->block->y,
-						  wd->show_item->block->w,
-						  wd->show_item->h);
+             if (wd->bring_in)
+               elm_smart_scroller_region_bring_in(wd->scr,
+                                                  wd->show_item->x + wd->show_item->block->x,
+                                                  wd->show_item->y + wd->show_item->block->y,
+                                                  wd->show_item->block->w,
+                                                  wd->show_item->h);
+             else
+               elm_smart_scroller_child_region_show(wd->scr,
+                                                    wd->show_item->x + wd->show_item->block->x,
+                                                    wd->show_item->y + wd->show_item->block->y,
+                                                    wd->show_item->block->w,
+                                                    wd->show_item->h);
 	     wd->show_item = NULL;
 	     showme = 0;
 	  }
@@ -2076,6 +2084,7 @@ elm_genlist_item_show(Elm_Genlist_Item *it)
    if ((it->queued) || (!it->mincalcd))
      {
 	it->wd->show_item = it;
+        it->wd->bring_in = 1;
 	it->showme = EINA_TRUE;
 	return;
      }
@@ -2091,10 +2100,117 @@ elm_genlist_item_show(Elm_Genlist_Item *it)
 }
 
 /**
- *  XXX
+ * Bring in the given item
  *
- * @param xxx XXX
- * @return XXX
+ * This causes genlist to jump to the given item @p it and show it (by scrolling),
+ * if it is not fully visible. This may use animation to do so and take a
+ * period of time
+ *
+ * @param it The item
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_item_bring_in(Elm_Genlist_Item *it)
+{
+   if (!it) return;
+   if (it->delete_me) return;
+   if ((it->queued) || (!it->mincalcd))
+     {
+	it->wd->show_item = it;
+        it->wd->bring_in = 1;
+	it->showme = EINA_TRUE;
+	return;
+     }
+   if (it->wd->show_item)
+     {
+	it->wd->show_item->showme = EINA_FALSE;
+	it->wd->show_item = NULL;
+     }
+   elm_smart_scroller_region_bring_in(it->wd->scr,
+                                      it->x + it->block->x,
+                                      it->y + it->block->y,
+                                      it->block->w, it->h);
+}
+
+/**
+ * Show the given item at the top
+ *
+ * This causes genlist to jump to the given item @p it and show it (by scrolling),
+ * if it is not fully visible.
+ *
+ * @param it The item
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_item_top_show(Elm_Genlist_Item *it)
+{
+   Evas_Coord ow, oh;
+   if (!it) return;
+   if (it->delete_me) return;
+   if ((it->queued) || (!it->mincalcd))
+     {
+	it->wd->show_item = it;
+        it->wd->bring_in = 1;
+	it->showme = EINA_TRUE;
+	return;
+     }
+   if (it->wd->show_item)
+     {
+	it->wd->show_item->showme = EINA_FALSE;
+	it->wd->show_item = NULL;
+     }
+   evas_object_geometry_get(it->wd->pan_smart, NULL, NULL, &ow, &oh);
+   elm_smart_scroller_child_region_show(it->wd->scr,
+					it->x + it->block->x,
+					it->y + it->block->y,
+					it->block->w, oh);
+}
+
+/**
+ * Bring in the given item at the top
+ *
+ * This causes genlist to jump to the given item @p it and show it (by scrolling),
+ * if it is not fully visible. This may use animation to do so and take a
+ * period of time
+ *
+ * @param it The item
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_item_top_bring_in(Elm_Genlist_Item *it)
+{
+   Evas_Coord ow, oh;
+   if (!it) return;
+   if (it->delete_me) return;
+   if ((it->queued) || (!it->mincalcd))
+     {
+	it->wd->show_item = it;
+        it->wd->bring_in = 1;
+	it->showme = EINA_TRUE;
+	return;
+     }
+   if (it->wd->show_item)
+     {
+	it->wd->show_item->showme = EINA_FALSE;
+	it->wd->show_item = NULL;
+     }
+   evas_object_geometry_get(it->wd->pan_smart, NULL, NULL, &ow, &oh);
+   elm_smart_scroller_region_bring_in(it->wd->scr,
+                                      it->x + it->block->x,
+                                      it->y + it->block->y,
+                                      it->block->w, oh);
+}
+
+/**
+ * Delete a given item
+ *
+ * This deletes the item from genlist and calls the genlist item del class
+ * callback defined in the item class, if it is set.
+ * 
+ * @param it The item
  *
  * @ingroup Genlist
  */

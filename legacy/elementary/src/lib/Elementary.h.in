@@ -703,6 +703,9 @@ extern "C" {
    EAPI void              elm_genlist_item_disabled_set(Elm_Genlist_Item *item, Eina_Bool disabled);
    EAPI Eina_Bool         elm_genlist_item_disabled_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_show(Elm_Genlist_Item *item);
+   EAPI void              elm_genlist_item_bring_in(Elm_Genlist_Item *item);
+   EAPI void              elm_genlist_item_top_show(Elm_Genlist_Item *item);
+   EAPI void              elm_genlist_item_top_bring_in(Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_del(Elm_Genlist_Item *item);
    EAPI const void       *elm_genlist_item_data_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_data_set(Elm_Genlist_Item *it, const void *data);
@@ -817,6 +820,8 @@ extern "C" {
    EAPI void         elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const void *relative);
    EAPI void         elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const void *relative);
    EAPI void         elm_index_item_del(Evas_Object *obj, const void *item);
+   EAPI void         elm_index_item_clear(Evas_Object *obj);
+   EAPI void         elm_index_item_go(Evas_Object *obj, int level);
    /* smart callbacks called:
     */
    
