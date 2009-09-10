@@ -12882,6 +12882,17 @@ collections {
                visible: 0;
 	    }
 	 }
+ 	 part { name: "disabler";
+	    type: RECT;
+	    description { state: "default" 0.0;
+	       color: 0 0 0 0;
+	       visible: 0;
+	    }
+	    description { state: "disabled" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
+	    }
+	 }
       }
       programs {
 	 program { name: "text_show";
@@ -12997,6 +13008,7 @@ collections {
 	    target: "right_bt";
 	    target: "right_over1";
 	    target: "right_over2";
+	    target: "disabler";
             after: "disable_text";
 	 }
          program { name: "disable_text";
@@ -13026,6 +13038,7 @@ collections {
 	    target: "right_bt";
 	    target: "right_over1";
 	    target: "right_over2";
+	    target: "disabler";
             after: "enable_text";
 	 }
          program { name: "enable_text";
