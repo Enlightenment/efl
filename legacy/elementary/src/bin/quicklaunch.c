@@ -29,6 +29,13 @@ static struct sigaction old_sigill;
 static struct sigaction old_sigfpe;
 static struct sigaction old_sigbus;
 static struct sigaction old_sigabrt;
+static int _log_dom = -1;
+
+#define CRITICAL(...) EINA_LOG_DOM_CRIT(_log_dom, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_log_dom, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
 
 static void
 post_fork(void *data)
@@ -46,6 +53,11 @@ post_fork(void *data)
    sigaction(SIGFPE, &old_sigfpe, NULL);
    sigaction(SIGBUS, &old_sigbus, NULL);
    sigaction(SIGABRT, &old_sigabrt, NULL);
+   if ((_log_dom > -1) && (_log_dom != EINA_LOG_DOMAIN_GLOBAL))
+     {
+	eina_log_domain_unregister(_log_dom);
+	_log_dom = -1;
+     }
 }
 
 static void
@@ -62,11 +74,11 @@ crash_handler(int x, siginfo_t *info, void *data)
 {
    double t;
 
-   EINA_ERROR_PERR("elementary_quicklaunch: crash detected. restarting.\n");
+   ERR("crash detected. restarting.");
    t = ecore_time_get();
    if ((t - restart_time) <= 2.0)
      {
-	EINA_ERROR_PERR("elementary_quicklaunch: crash too fast - less than 2 seconds. abort restart\n");
+	CRITICAL("crash too fast - less than 2 seconds. abort restart");
 	exit(-1);
      }
    ecore_app_restart();
@@ -107,9 +119,22 @@ main(int argc, char **argv)
    char buf[PATH_MAX];
    struct sigaction action;
 
+   if (!eina_init())
+     {
+	fprintf(stderr, "ERROR: failed to init eina.");
+	exit(-1);
+     }
+   _log_dom = eina_log_domain_register
+     ("elementary_quicklaunch", EINA_COLOR_CYAN);
+   if (_log_dom < 0)
+     {
+	EINA_LOG_ERR("could not register elementary_quicklaunch log domain.");
+	_log_dom = EINA_LOG_DOMAIN_GLOBAL;
+     }
+
    if (!getenv("DISPLAY"))
      {
-	EINA_ERROR_PERR("elementary_quicklaunch: DISPLAY env var not set\n");
+	CRITICAL("DISPLAY env var not set");
 	exit(-1);
      }
    snprintf(buf, sizeof(buf), "/tmp/elm-ql-%i", getuid());
@@ -119,22 +144,22 @@ main(int argc, char **argv)
    sock = socket(AF_UNIX, SOCK_STREAM, 0);
    if (sock < 0)
      {
-	perror("elementary_quicklaunch: socket(AF_UNIX, SOCK_STREAM, 0)");
-	EINA_ERROR_PERR("elementary_quicklaunch: cannot create socket for socket for '%s'\n", buf);
+	CRITICAL("cannot create socket for socket for '%s': %s",
+		 buf, strerror(errno));
 	exit(-1);
      }
    if (fcntl(sock, F_SETFD, FD_CLOEXEC) < 0)
      {
-	perror("elementary_quicklaunch: fcntl(sock, F_SETFD, FD_CLOEXEC)");
-	EINA_ERROR_PERR("elementary_quicklaunch: cannot set close on exec socket for '%s'\n", buf);
+	CRITICAL("cannot set close on exec socket for '%s' (fd=%d): %s",
+		 buf, sock, strerror(errno));
 	exit(-1);
      }
    lin.l_onoff = 1;
    lin.l_linger = 0;
    if (setsockopt(sock, SOL_SOCKET, SO_LINGER, &lin, sizeof(struct linger)) < 0)
      {
-	perror("elementary_quicklaunch: setsockopt(sock, SOL_SOCKET, SO_LINGER, &lin, sizeof(struct linger)) ");
-	EINA_ERROR_PERR("elementary_quicklaunch: cannot set linger for socket for '%s'\n", buf);
+	CRITICAL("cannot set linger for socket for '%s' (fd=%d): %s",
+		 buf, sock, strerror(errno));
 	exit(-1);
      }
    socket_unix.sun_family = AF_UNIX;
@@ -142,13 +167,13 @@ main(int argc, char **argv)
    socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
    if (bind(sock, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
      {
-	perror("elementary_quicklaunch: bind(sock, (struct sockaddr *)&socket_unix, socket_unix_len)");
-	EINA_ERROR_PERR("elementary_quicklaunch: cannot bind socket for '%s'\n", buf);
+	CRITICAL("cannot bind socket for '%s' (fd=%d): %s",
+		 buf, sock, strerror(errno));
 	exit(-1);
      }
    if (listen(sock, 4096) < 0)
      {
-	perror("elementary_quicklaunch: listen(sock, 4096)");
+	CRITICAL("listen(sock=%d, 4096): %s", sock, strerror(errno));
 	exit(-1);
      }
    elm_quicklaunch_init(argc, argv);
