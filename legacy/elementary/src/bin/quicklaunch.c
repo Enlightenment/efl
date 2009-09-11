@@ -284,5 +284,13 @@ main(int argc, char **argv)
 	elm_quicklaunch_sub_shutdown();
      }
    elm_quicklaunch_shutdown();
+
+   if ((_log_dom > -1) && (_log_dom != EINA_LOG_DOMAIN_GLOBAL))
+     {
+	eina_log_domain_unregister(_log_dom);
+	_log_dom = -1;
+     }
+   eina_shutdown();
+
    return 0;
 }
