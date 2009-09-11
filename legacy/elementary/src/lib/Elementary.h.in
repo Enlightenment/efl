@@ -828,7 +828,10 @@ extern "C" {
     * "delay,changed" - when the selected index item changes, but after some small idle period
     * "selected" - when the user releases heir finger and selects an item
     */
-   
+
+   EAPI Evas_Object *elm_photocam_add(Evas_Object *parent);
+   EAPI void         elm_photocam_file_set(Evas_Object *obj, const char *file);
+       
 #ifdef __cplusplus
 }
 #endif

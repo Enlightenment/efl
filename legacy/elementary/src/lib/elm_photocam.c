@@ -350,7 +350,7 @@ elm_photocam_add(Evas_Object *parent)
  *
  * @ingroup Photocam
  */
-EAPI Elm_Genlist_Item *
+EAPI void
 elm_photocam_file_set(Evas_Object *obj, const char *file)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
