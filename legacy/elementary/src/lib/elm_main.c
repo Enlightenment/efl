@@ -790,7 +790,7 @@ elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (postfork_func) (voi
 	args = alloca((argc + 1) * sizeof(char *));
 	for (i = 0; i < argc; i++) args[i] = argv[i];
 	args[argc] = NULL;
-	printf("WARNING: %s not quicklaunch capable\n", argv[0]);
+	WRN("%s not quicklaunch capable, fallback...", argv[0]);
 	exit(execvp(argv[0], args));
      }
    child = fork();
