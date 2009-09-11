@@ -883,7 +883,11 @@ _edje_file_del(Edje *ed)
 
 	_edje_textblock_styles_del(ed);
 	EINA_LIST_FOREACH(ed->collection->parts, l, ep)
-	  _edje_color_class_on_del(ed, ep);
+	  {
+	    _edje_text_part_on_del(ed, ep);
+	    _edje_color_class_on_del(ed, ep);
+	  }
+	
 	_edje_cache_coll_unref(ed->file, ed->collection);
 	ed->collection = NULL;
      }
