@@ -1140,7 +1140,7 @@ EAPI void eina_tiler_tile_size_set(Eina_Tiler *t, int w, int h)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, Eina_Rectangle *r)
+EAPI Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle *r)
 {
 	Eina_Rectangle tmp;
 
@@ -1158,7 +1158,7 @@ EAPI Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, Eina_Rectangle *r)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void eina_tiler_rect_del(Eina_Tiler *t, Eina_Rectangle *r)
+EAPI void eina_tiler_rect_del(Eina_Tiler *t, const Eina_Rectangle *r)
 {
 	Eina_Rectangle tmp;
 

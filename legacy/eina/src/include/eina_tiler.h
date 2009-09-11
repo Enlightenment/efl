@@ -28,8 +28,8 @@ typedef struct _Eina_Tiler Eina_Tiler;
 EAPI Eina_Tiler *eina_tiler_new(int w, int h);
 EAPI void eina_tiler_free(Eina_Tiler *t);
 EAPI void eina_tiler_tile_size_set(Eina_Tiler *t, int w, int h);
-EAPI Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, Eina_Rectangle *r);
-EAPI void eina_tiler_rect_del(Eina_Tiler *t, Eina_Rectangle *r);
+EAPI Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle *r);
+EAPI void eina_tiler_rect_del(Eina_Tiler *t, const Eina_Rectangle *r);
 EAPI void eina_tiler_clear(Eina_Tiler *t);
 EAPI Eina_Iterator * eina_tiler_iterator_new(const Eina_Tiler *t);
 
