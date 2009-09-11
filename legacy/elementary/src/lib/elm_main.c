@@ -264,6 +264,7 @@ static void _elm_rescale(void);
 char *_elm_appname = NULL;
 Elm_Config *_elm_config = NULL;
 const char *_elm_data_dir = NULL;
+int _elm_log_dom = -1;
 
 static Ecore_Event_Handler *_elm_exit_handler = NULL;
 static Ecore_Event_Handler *_elm_event_property_change = NULL;
@@ -353,6 +354,14 @@ elm_quicklaunch_init(int argc, char **argv)
    int i;
    char buf[PATH_MAX];
    char *s;
+
+   eina_init();
+   _elm_log_dom = eina_log_domain_register("elementary", EINA_COLOR_LIGHTBLUE);
+   if (!_elm_log_dom)
+     {
+	EINA_LOG_ERR("could not register elementary log domain.");
+	_elm_log_dom = EINA_LOG_DOMAIN_GLOBAL;
+     }
 
    eet_init();
    ecore_init();
@@ -564,7 +573,7 @@ elm_quicklaunch_sub_init(int argc, char **argv)
 
 	if (!ecore_x_init(NULL))
 	  {
-	     EINA_ERROR_PERR("elementary: ERROR. Cannot connect to X11 display. check $DISPLAY variable\n");
+	     ERR("Cannot connect to X11 display. check $DISPLAY variable");
 	     exit(1);
 	  }
 	if (!ecore_x_screen_is_composited(0))
@@ -638,6 +647,14 @@ elm_quicklaunch_shutdown(void)
    ecore_file_shutdown();
    ecore_shutdown();
    eet_shutdown();
+
+   if ((_elm_log_dom > -1) && (_elm_log_dom != EINA_LOG_DOMAIN_GLOBAL))
+     {
+	eina_log_domain_unregister(_elm_log_dom);
+	_elm_log_dom = -1;
+     }
+
+   eina_shutdown();
 }
 
 EAPI void

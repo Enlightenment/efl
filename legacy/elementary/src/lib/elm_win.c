@@ -303,6 +303,8 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    const Eina_List *l;
    const char *fontpath;
 
+   ERR("test");
+
    win = ELM_NEW(Elm_Win);
    switch (_elm_config->engine)
      {
@@ -332,7 +334,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
      }
    if (!win->ee)
      {
-	EINA_ERROR_PERR("elementary: ERROR. Cannot create window.\n");
+	ERR("Cannot create window.");
 	free(win);
 	return NULL;
      }
