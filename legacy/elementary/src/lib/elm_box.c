@@ -222,3 +222,19 @@ elm_box_pack_after(Evas_Object *obj, Evas_Object *subobj, Evas_Object *after)
    elm_widget_sub_object_add(obj, subobj);
    _els_smart_box_pack_after(wd->box, subobj, after);
 }
+
+/**
+ * This clears the box items
+ *
+ * This delete all members of the box object, but not the box itself.
+ *
+ * @param obj The box object
+ *
+ * @ingroup Box
+ */
+EAPI void
+elm_box_clear(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   _els_smart_box_clear(wd->box);
+}

@@ -170,6 +170,20 @@ _els_smart_box_unpack(Evas_Object *obj)
      }
 }
 
+void
+_els_smart_box_clear(Evas_Object *obj)
+{
+   Smart_Data *sd;
+
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+   while (sd->items)
+     {
+	Evas_Object *child = sd->items->data;
+        evas_object_del(child);
+     }
+}
+
 /* local subsystem functions */
 static void
 _smart_adopt(Smart_Data *sd, Evas_Object *obj)

@@ -258,8 +258,6 @@ struct _Widget_Data
    Elm_List_Mode mode;
    Eina_Bool on_hold : 1;
    Eina_Bool multi : 1;
-   Eina_Bool min_w : 1;
-   Eina_Bool min_h : 1;
    Eina_Bool always_select : 1;
    Eina_Bool longpressed : 1;
    Eina_Bool wasselected : 1;
@@ -343,6 +341,7 @@ _del_hook(Evas_Object *obj)
    elm_genlist_clear(obj);
    evas_object_del(wd->pan_smart);
    wd->pan_smart = NULL;
+   if (wd->calc_job) ecore_job_del(wd->calc_job);
    free(wd);
 }
 

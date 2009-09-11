@@ -47,6 +47,7 @@ void test_separator(void *data, Evas_Object *obj, void *event_info);
 void test_scroller(void *data, Evas_Object *obj, void *event_info);
 void test_spinner(void *data, Evas_Object *obj, void *event_info);
 void test_index(void *data, Evas_Object *obj, void *event_info);
+void test_photocam(void *data, Evas_Object *obj, void *event_info);
 
 static void
 my_win_del(void *data, Evas_Object *obj, void *event_info)
@@ -175,6 +176,7 @@ my_win_main(void)
    elm_list_item_append(li, "Scroller", NULL, NULL, test_scroller, NULL);
    elm_list_item_append(li, "Spinner", NULL, NULL, test_spinner, NULL);
    elm_list_item_append(li, "Index", NULL, NULL, test_index, NULL);
+   elm_list_item_append(li, "Photocam", NULL, NULL, test_photocam, NULL);
 
    elm_list_go(li);
 

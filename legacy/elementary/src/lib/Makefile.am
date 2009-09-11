@@ -58,6 +58,7 @@ elm_progressbar.c \
 elm_separator.c \
 elm_spinner.c \
 elm_index.c \
+elm_photocam.c \
 \
 elc_notepad.c \
 elc_anchorview.c \

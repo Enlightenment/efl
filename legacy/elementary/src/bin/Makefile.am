@@ -56,7 +56,8 @@ test_fileselector.c \
 test_separator.c \
 test_scroller.c \
 test_spinner.c \
-test_index.c
+test_index.c \
+test_photocam.c
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la
 elementary_test_LDFLAGS =
 

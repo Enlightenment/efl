@@ -7,3 +7,4 @@ int          _els_smart_box_pack_end          (Evas_Object *obj, Evas_Object *ch
 int          _els_smart_box_pack_before       (Evas_Object *obj, Evas_Object *child, Evas_Object *before);
 int          _els_smart_box_pack_after        (Evas_Object *obj, Evas_Object *child, Evas_Object *after);
 void         _els_smart_box_unpack            (Evas_Object *obj);
+void         _els_smart_box_clear             (Evas_Object *obj);
