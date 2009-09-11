@@ -85,7 +85,7 @@ evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key
    png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *) (&w32),
 		(png_uint_32 *) (&h32), &bit_depth, &color_type,
 		&interlace_type, NULL, NULL);
-   if ((w32 < 1) || (h32 < 1) || (w32 > 8192) || (h32 > 8192))
+   if ((w32 < 1) || (h32 < 1) || (w32 > IMG_MAX_SIZE) || (h32 > IMG_MAX_SIZE))
      {
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 	goto close_file;

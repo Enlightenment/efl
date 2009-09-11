@@ -104,7 +104,7 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie, FILE *f)
 /* head decoding */
    w = cinfo.output_width;
    h = cinfo.output_height;
-   if ((w < 1) || (h < 1) || (w > 8192) || (h > 8192))
+   if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE))
      {
         jpeg_destroy_decompress(&cinfo);
 	return 0;

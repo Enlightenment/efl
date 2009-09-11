@@ -20,7 +20,7 @@
 
 #ifdef EVAS_CSERVE
 // FIXME: cache server and threaded preload clash badly atm - disable
-#undef BUILD_ASYNC_PRELOAD
+//#undef BUILD_ASYNC_PRELOAD
 #endif
 
 #ifdef BUILD_ASYNC_PRELOAD
@@ -1243,7 +1243,6 @@ _evas_cache_background_load(void *data)
    while (preload)
      {
 	pthread_mutex_lock(&mutex);
-
 	if (preload)
 	  {
 	     Evas_Cache_Preload *tmp = (Evas_Cache_Preload*) preload;
@@ -1256,12 +1255,16 @@ _evas_cache_background_load(void *data)
 
 	pthread_mutex_unlock(&mutex);
 
+        printf("load loop!\n");
 	if (current)
 	  {
 	     Evas_Cache_Image *cache;
 	     int error;
+             int pchannel;
 
 	     LKL(current->lock);
+             pchannel = current->channel;
+             current->channel++;
 	     cache = current->cache;
 
 	     error = cache->func.load(current);
@@ -1281,11 +1284,13 @@ _evas_cache_background_load(void *data)
 
 	     current->flags.preload = 0;
 
+             current->channel = pchannel;
 	     LKU(current->lock);
 
 	     _evas_cache_image_async_call(current);
 	     current = NULL;
 	  }
+        printf("---\n");
 
 	pthread_cond_signal(&cond_done);
      }

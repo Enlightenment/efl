@@ -166,6 +166,7 @@ void *alloca (size_t);
 /* use exact rects for updates not tiles */
 /* #define RECTUPDATE */
 #define TILESIZE 8
+#define IMG_MAX_SIZE 65536
 
 #ifdef BUILD_SMALL_DITHER_MASK
 # define DM_TABLE     _evas_dither_44
@@ -477,6 +478,7 @@ struct _Image_Entry
    void                  *data1, *data2;
    int                    server_id;
    int                    connect_num;
+   int                    channel;
 };
 
 struct _Engine_Image_Entry

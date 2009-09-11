@@ -18,7 +18,7 @@ evas_cserve_server_add(void)
    
    s = calloc(1, sizeof(Server));
    if (!s) return NULL;
-   s->fd = -1;
+   s->ch[0].fd = -1;
    snprintf(buf, sizeof(buf), "/tmp/.evas-cserve-%x", getuid());
    s->socket_path = strdup(buf);
    if (!s->socket_path)
@@ -28,34 +28,34 @@ evas_cserve_server_add(void)
      }
    pmode = umask(~(S_IRUSR | S_IWUSR));
    start:
-   s->fd = socket(AF_UNIX, SOCK_STREAM, 0);
-   if (s->fd < 0) goto error;
-   if (fcntl(s->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
-   if (fcntl(s->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
+   s->ch[0].fd = socket(AF_UNIX, SOCK_STREAM, 0);
+   if (s->ch[0].fd < 0) goto error;
+   if (fcntl(s->ch[0].fd, F_SETFL, O_NONBLOCK) < 0) goto error;
+   if (fcntl(s->ch[0].fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
    lin.l_onoff = 1;
    lin.l_linger = 0;
-   if (setsockopt(s->fd, SOL_SOCKET, SO_LINGER, &lin, sizeof(struct linger)) < 0)
+   if (setsockopt(s->ch[0].fd, SOL_SOCKET, SO_LINGER, &lin, sizeof(struct linger)) < 0)
      goto error;
    socket_unix.sun_family = AF_UNIX;
    strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
    socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
-   if (bind(s->fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
+   if (bind(s->ch[0].fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
      {
-        if ((connect(s->fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0) &&
+        if ((connect(s->ch[0].fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0) &&
             (unlink(s->socket_path) >= 0))
           {
-             close(s->fd);
+             close(s->ch[0].fd);
              goto start;
           }
         else
           goto error;
      }
-   if (listen(s->fd, 4096) < 0) goto error;
+   if (listen(s->ch[0].fd, 4096) < 0) goto error;
    umask(pmode);
    return s;
    error:
    umask(pmode);
-   if (s->fd >= 0) close(s->fd);
+   if (s->ch[0].fd >= 0) close(s->ch[0].fd);
    free(s->socket_path);
    free(s);
    return NULL;
@@ -75,7 +75,7 @@ evas_cserve_server_del(Server *s)
         LKD(c->lock);
         free(c);
      }
-   close(s->fd);
+   close(s->ch[0].fd);
    unlink(s->socket_path);
    free(s->socket_path);
    free(s);
@@ -90,7 +90,7 @@ server_accept(Server *s)
    size_t size_in;
    
    size_in = sizeof(struct sockaddr_in);
-   new_fd = accept(s->fd, (struct sockaddr *)&incoming, (socklen_t *)&size_in);
+   new_fd = accept(s->ch[0].fd, (struct sockaddr *)&incoming, (socklen_t *)&size_in);
    if (new_fd < 0) return;
    fcntl(new_fd, F_SETFL, O_NONBLOCK);
    fcntl(new_fd, F_SETFD, FD_CLOEXEC);
@@ -315,8 +315,8 @@ evas_cserve_server_wait(Server *s, int timeout)
    FD_ZERO(&rset);
    FD_ZERO(&wset);
    FD_ZERO(&xset);
-   FD_SET(s->fd, &rset);
-   if (s->fd > maxfd) maxfd = s->fd;
+   FD_SET(s->ch[0].fd, &rset);
+   if (s->ch[0].fd > maxfd) maxfd = s->ch[0].fd;
    EINA_LIST_FOREACH(s->clients, l, c)
      {
         FD_SET(c->fd, &rset);
@@ -360,7 +360,7 @@ evas_cserve_server_wait(Server *s, int timeout)
              if (c->dead) dead = eina_list_append(dead, c);
           }
      }
-   if (FD_ISSET(s->fd, &rset))
+   if (FD_ISSET(s->ch[0].fd, &rset))
      {
         server_accept(s);
      }

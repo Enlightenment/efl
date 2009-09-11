@@ -465,16 +465,16 @@ img_new(const char *file, const char *key, RGBA_Image_Loadopts *load_opts, const
    int err = 0;
    double t;
    
-   D("... stat %s\n", file);
+   D("... stat %s", file);
    ret = stat(file, &st);
    if (ret < 0) return NULL;
-   D("... load header\n");
+   D("... load header");
    t = get_time();
    ie = evas_cache_image_request(cache, file, key, load_opts, &err);
    t = get_time() - t;
-   D("... header done\n");
+   D("... header done");
    if (!ie) return NULL;
-   D("... ie->cache = %p\n", ie->cache);
+   D("... ie->cache = %p", ie->cache);
    img = (Img *)ie;
    img->stats.load1 = t;
    img->key = eina_stringshare_add(bufkey);
@@ -552,21 +552,21 @@ img_free(Img *img)
 static void
 cache_clean(void)
 {
-   D("... cache clean!!! do\n");
+   D("... cache clean!!! do");
    LKL(cache_lock);
    while ((cache_usage > ((cache_max_usage + cache_max_adjust) * 1024)) && 
           (cache_images))
      {
         Img *img;
         Eina_List *l;
-        
-        D("... clean loop %i > %i\n", cache_usage, (cache_max_usage + cache_max_adjust) * 1024);
+
+        D("... clean loop %i > %i", cache_usage, (cache_max_usage + cache_max_adjust) * 1024);
         l = eina_list_last(cache_images); // THREAD: called from thread. happens to be safe as it uses no unlocked shared resources
         if (!l) break;
         img = l->data;
         if (!img) break;
         LKL(img->lock);
-        D("...   REMOVE %p '%s'\n", img, img->file.file);
+        D("...   REMOVE %p '%s'", img, img->file.file);
 #ifdef BUILD_PTHREAD
         img->killme = 1;
         img->useless = 1;
@@ -577,7 +577,7 @@ cache_clean(void)
         cache_images = eina_list_remove_list(cache_images, l); // FIXME: called from thread
         img->incache--;
         cache_usage -= img->usage;
-        D("...   IMG FREE %p\n", img);
+        D("...   IMG FREE %p", img);
         img_free(img);
 #endif        
      }
@@ -633,10 +633,10 @@ mem_cache_adjust(void)
    
    if (cache_max_adjust < -cache_max_usage) 
      cache_max_adjust = -cache_max_usage;
-   D("... cache_max_adjust = %i\n", cache_max_adjust);
+   D("... cache_max_adjust = %i", cache_max_adjust);
    if (pval != cache_max_adjust)
      {
-        D("... cache clean\n");
+        D("... cache clean");
         // FIXME lock problem
         cache_clean();
      }
@@ -648,17 +648,17 @@ img_cache(Img *img)
    eina_hash_del(active_images, img->key, img);
    if (img->dead)
      {
-        D("... img %p '%s' dead\n", img , img->file.file);
+        D("... img %p '%s' dead", img , img->file.file);
         img_free(img);
         return;
      }
    if ((cache_usage + img->usage) > ((cache_max_usage + cache_max_adjust) * 1024))
      {
-        D("... img %p '%s' too big for cache\n", img , img->file.file);
+        D("... img %p '%s' too big for cache", img , img->file.file);
         img_free(img);
         return;
      }
-   D("... img %p '%s' cached += %i\n", img , img->file.file, img->usage);
+   D("... img %p '%s' cached += %i", img , img->file.file, img->usage);
    if (img->incache > 0)
      {
         printf("EEEEEEEEEEEEEEEEK!\n");
@@ -726,8 +726,8 @@ img_load(const char *file, const char *key, RGBA_Image_Loadopts *load_opts)
    Eina_List *l, *l_next;
    
    if (!file) return NULL;
-   D("... img_load '%s'\n", file);
-   if (key) D("... ... key '%s'\n", key);
+   D("... img_load '%s'", file);
+   if (key) D("... ... key '%s'", key);
    if (key)
      snprintf(buf, sizeof(buf), "%s///::/%s/\001/%i/%1.8f/%ix%i",
               file, key, 
@@ -740,16 +740,16 @@ img_load(const char *file, const char *key, RGBA_Image_Loadopts *load_opts)
               load_opts->scale_down_by, 
               load_opts->dpi,
               load_opts->w, load_opts->h);
-   D("... find '%s'\n", buf);
+   D("... find '%s'", buf);
    img = eina_hash_find(active_images, buf);
    if ((img) && (img_ok(img)))
      {
-        D("... found!\n");
+        D("... found!");
         img->stats.load1saved++;
         img->ref++;
-        D("... sats update\n");
+        D("... sats update");
         stats_update();
-        D("... return %p\n", img);
+        D("... return %p", img);
         return img;
      }
    
@@ -762,7 +762,7 @@ img_load(const char *file, const char *key, RGBA_Image_Loadopts *load_opts)
              LKL(img->lock);
              if (img_ok(img))
                {
-                  D("... found cached\n");
+                  D("... found cached");
                   cache_images = eina_list_remove_list(cache_images, l);
                   img->incache--;
                   cache_usage -= img->usage;
@@ -770,9 +770,9 @@ img_load(const char *file, const char *key, RGBA_Image_Loadopts *load_opts)
                   img->stats.load1saved++;
                   img->ref++;
                   eina_hash_direct_add(active_images, img->key, img);
-                  D("... sats update\n");
+                  D("... sats update");
                   stats_update();
-                  D("... return %p\n", img);
+                  D("... return %p", img);
                   LKU(img->lock);
                   LKU(cache_lock);
                   return img;
@@ -781,7 +781,7 @@ img_load(const char *file, const char *key, RGBA_Image_Loadopts *load_opts)
           }
      }
    LKU(cache_lock);
-   D("... ned new img\n");
+   D("... ned new img");
    return img_new(file, key, load_opts, buf);
 }
 
@@ -797,10 +797,10 @@ img_unload(Img *img)
         return;
      }
    img->ref--;
-   D("... img ref-- = %i\n", img->ref);
+   D("... img ref-- = %i", img->ref);
    if (img->ref == 0)
      {
-        D("... img cache %p '%s'\n", img, img->file.file);
+        D("... img cache %p '%s'", img, img->file.file);
         img_cache(img);
      }
 }
@@ -808,12 +808,12 @@ img_unload(Img *img)
 static void
 img_unloaddata(Img *img)
 {
-   D("img_unloaddata() %p '%s'\n", img, img->file.file);
+   D("img_unloaddata() %p '%s'", img, img->file.file);
    if ((img->dref <= 0) && (img->useless) && (img->mem))
      {
         Image_Entry *ie = (Image_Entry *)img;
         
-        D("... really do forced unload\n");
+        D("... really do forced unload");
         if (!img->active) cache_usage -= img->usage;
         img->usage -= 
           (4096 * (((img->image.w * img->image.h * sizeof(DATA32)) + 4095) / 4096)) +
@@ -824,7 +824,7 @@ img_unloaddata(Img *img)
         img->mem = NULL;
         img->image.data = NULL;
         img->dref = 0;
-        D("... done\n");
+        D("... done");
         
         ie->flags.loaded = 0;
         ie->allocated.w = 0;
@@ -835,7 +835,7 @@ img_unloaddata(Img *img)
 static void
 img_useless(Img *img)
 {
-   D("img_useless() %p\n", img);
+   D("img_useless() %p", img);
    img->useless = 1;
    if (img->dref <= 0) img_unloaddata(img);
 }
@@ -843,7 +843,7 @@ img_useless(Img *img)
 static void
 img_forcedunload(Img *img)
 {
-   D("img_forcedunload() %p\n", img);
+   D("img_forcedunload() %p", img);
    img->dead = 1;
    img_unload(img);
 }
@@ -851,8 +851,7 @@ img_forcedunload(Img *img)
 static void
 img_preload(Img *img)
 {
-   D("img_preload() %p\n", img);
-   printf("preload '%s'\n", img->file.file);
+   D("img_preload() %p", img);
 }
 
 static void
@@ -862,12 +861,12 @@ client_del(void *data, Client *c)
    Img *img;
    
    images = data;
-   D("... CLIENT DEL %i\n", c->pid);
+   D("... CLIENT DEL %i", c->pid);
    EINA_LIST_FREE(images, img)
      {
-        D("... unloaddata img %p\n", img);
+        D("... unloaddata img %p", img);
         img_unloaddata(img);
-        D("... unload img %p\n", img);
+        D("... unload img %p", img);
         img_unload(img);
      }
 }
@@ -901,7 +900,7 @@ load_data_thread(void *data)
         msg.mem.id = img->mem->id;
         msg.mem.offset = img->mem->offset;
         msg.mem.size = img->mem->size;
-        D("... reply\n");
+        D("... reply");
         evas_cserve_client_send(c, OP_LOADDATA, sizeof(msg), (unsigned char *)(&msg));
         LKU(c->lock);
         return NULL;
@@ -917,7 +916,7 @@ load_data_thread(void *data)
    else
      msg.mem.id = msg.mem.offset = msg.mem.size = 0;
    LKU(img->lock);
-   D("... reply\n");
+   D("... reply");
    evas_cserve_client_send(c, OP_LOADDATA, sizeof(msg), (unsigned char *)(&msg));
    LKU(c->lock);
    return NULL;
@@ -928,7 +927,7 @@ static int
 message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *data)
 {
    t_now = time(NULL);
-   D("message @ %i...\n", (int)t_now);
+   D("message @ %i...", (int)t_now);
    switch (opcode)
      {
      case OP_INIT:
@@ -939,12 +938,17 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              memset(&msg, 0, sizeof(msg));
              msg.pid = getpid();
              msg.server_id = server_id;
+             msg.handle = c;
              rep = (Op_Init *)data;
              c->pid = rep->pid;
+             if (rep->server_id == 1) // 2nd channel conn
+               {
+                  c->client_main = rep->handle;
+               }
              c->func = client_del;
              c->data = NULL;
-             D("OP_INIT %i\n", c->pid);
-             D("... reply\n");
+             D("OP_INIT %i", c->pid);
+             D("... reply");
              evas_cserve_client_send(c, OP_INIT, sizeof(msg), (unsigned char *)(&msg));
           }
         break;
@@ -956,7 +960,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              RGBA_Image_Loadopts lopt = {0, 0.0, 0, 0};
              char *file = NULL, *key = NULL;
              
-             D("OP_LOAD %i\n", c->pid);
+             D("OP_LOAD %i", c->pid);
              rep = (Op_Load *)data;
              file = data + sizeof(Op_Load);
              key = file + strlen(file) + 1;
@@ -965,17 +969,20 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              lopt.dpi = rep->lopt.dpi;
              lopt.w = rep->lopt.w;
              lopt.h = rep->lopt.h;
-             D("... img_load '%s'\n", file);
-             if (key) D("'%s'\n", key);
-             else D("   '%s'\n", NULL);
-             D("   lopt { %i %1.1f %i %i}\n", 
+             D("... img_load '%s'", file);
+             if (key) D("'%s'", key);
+             else D("   '%s'", NULL);
+             D("   lopt { %i %1.1f %i %i}", 
                lopt.scale_down_by, lopt.dpi, lopt.w, lopt.h);
              img = img_load(file, key, &lopt);
-             D("... img_load = %p\n", img);
+             D("... img_load = %p", img);
              if (img)
                {
-                  D("... add image to client list\n");
-                  c->data = eina_list_append(c->data, img);
+                  D("... add image to client list");
+                  if (c->client_main)
+                    c->client_main->data = eina_list_append(c->client_main->data, img);
+                  else
+                    c->data = eina_list_append(c->data, img);
                }
              memset(&msg, 0, sizeof(msg));
              msg.handle = img;
@@ -995,7 +1002,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                   msg.image.h = img->image.h;
                   msg.image.alpha = img->image.alpha;
                }
-             D("... reply\n");
+             D("... reply");
              evas_cserve_client_send(c, OP_LOAD, sizeof(msg), (unsigned char *)(&msg)); 
          } 
         break;
@@ -1004,19 +1011,27 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              Op_Unload *rep;
              Img *img;
              
-             D("OP_UNLOAD %i\n", c->pid);
+             D("OP_UNLOAD %i", c->pid);
              rep = (Op_Unload *)data;
              img = rep->handle;
              if ((img) && (rep->server_id == server_id))
                {
-                  D("... remove %p from list\n", img);
-                  c->data = eina_list_remove(c->data, img);
-                  D("... unload %p\n", img);
+                  Eina_Bool doflush = 0;
+                  
+                  D("... remove %p from list", img);
+                  if (c->client_main)
+                    c->client_main->data = eina_list_remove(c->client_main->data, img);
+                  else
+                    c->data = eina_list_remove(c->data, img);
+                  D("... unload %p", img);
                   LKL(img->lock);
                   img->ref++;
                   img_unload(img);
                   img->ref--;
+                  if (img->ref == 0) doflush = 1;
                   LKU(img->lock);
+                  if (doflush)
+                    img_cache(img);
                   cache_clean();
                }
           } 
@@ -1027,14 +1042,14 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              Op_Loaddata_Reply msg;
              Img *img;
              
-             D("OP_LOADDATA %i\n", c->pid);
+             D("OP_LOADDATA %i", c->pid);
              rep = (Op_Loaddata *)data;
              img = rep->handle;
              if ((img) && (rep->server_id == server_id))
                {
                   if (img->mem)
                     {
-                       D("... load saved - cached %p\n", img);
+                       D("... load saved - cached %p", img);
                        img->stats.load2saved++;
                        stats_update();
                        memset(&msg, 0, sizeof(msg));
@@ -1046,7 +1061,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                          }
                        else
                          msg.mem.id = msg.mem.offset = msg.mem.size = 0;
-                       D("... reply\n");
+                       D("... reply");
                        evas_cserve_client_send(c, OP_LOADDATA, sizeof(msg), (unsigned char *)(&msg));
                     }
                   else
@@ -1056,7 +1071,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                        pthread_attr_t attr;
                        Load_Inf *li;
                        
-                       D("... load data %p\n", img);
+                       D("... load data %p", img);
                        pthread_attr_init(&attr);
                        li = calloc(1, sizeof(Load_Inf));
                        if (li)
@@ -1083,7 +1098,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                          }
                        else
                          msg.mem.id = msg.mem.offset = msg.mem.size = 0;
-                       D("... reply\n");
+                       D("... reply");
                        evas_cserve_client_send(c, OP_LOADDATA, sizeof(msg), (unsigned char *)(&msg));
 #endif
                     }
@@ -1100,16 +1115,16 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              Op_Unloaddata *rep;
              Img *img;
              
-             D("OP_UNLOADDATA %i\n", c->pid);
+             D("OP_UNLOADDATA %i", c->pid);
              rep = (Op_Unloaddata *)data;
              img = rep->handle;
              if ((img) && (rep->server_id == server_id))
                {
-                  D("... dref--\n");
+                  D("... dref--");
                   LKL(img->lock);
                   img->dref--;
                   if (img->dref < 0) img->dref = 0;
-                  D("... unload data %p '%s'\n", img, img->file.file);
+                  D("... unload data %p '%s'", img, img->file.file);
                   img_unloaddata(img);
                   LKU(img->lock);
                }
@@ -1120,16 +1135,16 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              Op_Unloaddata *rep;
              Img *img;
              
-             D("OP_USELESSDATA %i\n", c->pid);
+             D("OP_USELESSDATA %i", c->pid);
              rep = (Op_Unloaddata *)data;
              img = rep->handle;
              if ((img) && (rep->server_id == server_id))
                {
-                  D("... dref--\n");
+                  D("... dref--");
                   LKL(img->lock);
                   img->dref--;
                   if (img->dref < 0) img->dref = 0;
-                  D("... useless %p\n", img);
+                  D("... useless %p", img);
                   img_useless(img);
                   LKU(img->lock);
                }
@@ -1140,13 +1155,16 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              Op_Preload *rep;
              Img *img;
              
-             D("OP_PRELOAD %i\n", c->pid);
+             D("OP_PRELOAD %i", c->pid);
              rep = (Op_Preload *)data;
              img = rep->handle;
              if ((img) && (rep->server_id == server_id))
                {
                   LKL(img->lock);
-                  c->data = eina_list_remove(c->data, img);
+                  if (c->client_main)
+                    c->client_main->data = eina_list_remove(c->client_main->data, img);
+                  else
+                    c->data = eina_list_remove(c->data, img);
                   // FIXME: preload doesnt work async
                   img_preload(img);
                   LKU(img->lock);
@@ -1157,19 +1175,27 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              Op_Forcedunload *rep;
              Img *img;
              
-             D("OP_FORCEDUNLOAD %i\n", c->pid);
+             D("OP_FORCEDUNLOAD %i", c->pid);
              rep = (Op_Forcedunload *)data;
              img = rep->handle;
              if ((img) && (rep->server_id == server_id))
                {
+                  Eina_Bool doflush = 0;
+                  
                   LKL(img->lock);
-                  D("remove %p from list\n", img);
-                  c->data = eina_list_remove(c->data, img);
-                  D("... forced unload now\n");
+                  D("remove %p from list", img);
+                  if (c->client_main)
+                    c->client_main->data = eina_list_remove(c->client_main->data, img);
+                  else
+                    c->data = eina_list_remove(c->data, img);
+                  D("... forced unload now");
                   img->ref++;
                   img_forcedunload(img);
                   img->ref--;
+                  if (img->ref == 0) doflush = 1;
                   LKU(img->lock);
+                  if (doflush)
+                    img_cache(img);
                   cache_clean();
                }
           } 
@@ -1178,11 +1204,11 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
           {
              Op_Getconfig_Reply msg;
              
-             D("OP_GETCONFIG %i\n", c->pid);
+             D("OP_GETCONFIG %i", c->pid);
              msg.cache_max_usage = cache_max_usage;
              msg.cache_item_timeout = cache_item_timeout;
              msg.cache_item_timeout_check = cache_item_timeout_check;
-             D("... reply\n");
+             D("... reply");
              evas_cserve_client_send(c, OP_GETCONFIG, sizeof(msg), (unsigned char *)(&msg));
           } 
         break;
@@ -1190,14 +1216,14 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
           {
              Op_Setconfig *rep;
              
-             D("OP_SETCONFIG %i\n", c->pid);
+             D("OP_SETCONFIG %i", c->pid);
              rep = (Op_Setconfig *)data;
              cache_max_usage = rep->cache_max_usage;
              cache_item_timeout = rep->cache_item_timeout;
              cache_item_timeout_check = rep->cache_item_timeout_check;
-             D("... cache timeout\n");
+             D("... cache timeout");
              cache_timeout(t_now);
-             D("... cache clean\n");
+             D("... cache clean");
              cache_clean();
           } 
         break;
@@ -1205,7 +1231,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
           {
              Op_Getstats_Reply msg;
 
-             D("OP_GETSTATS %i\n", c->pid);
+             D("OP_GETSTATS %i", c->pid);
              stats_calc();
              msg.saved_memory = saved_memory;
              msg.wasted_memory = (real_memory - alloced_memory);
@@ -1213,7 +1239,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              msg.wasted_memory_peak = (real_memory_peak - alloced_memory_peak);
              msg.saved_time_image_header_load = saved_load_lifetime + saved_load_time;
              msg.saved_time_image_data_load = saved_loaddata_lifetime + saved_loaddata_time;
-             D("... reply\n");
+             D("... reply");
              evas_cserve_client_send(c, OP_GETSTATS, sizeof(msg), (unsigned char *)(&msg));
           } 
         break;
@@ -1224,19 +1250,19 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              Eina_List *imgs = NULL, *l;
              Img *img;
              
-             D("OP_GETINFO %i\n", c->pid);
+             D("OP_GETINFO %i", c->pid);
              len = sizeof(Op_Getinfo_Reply);
-             D("... foreach\n");
+             D("... foreach");
              if (active_images)
                eina_hash_foreach(active_images, getinfo_hash_image_cb, &imgs);
-             D("... walk foreach list output\n");
+             D("... walk foreach list output");
              LKL(cache_lock);
              EINA_LIST_FOREACH(cache_images, l, img)
                {
                   imgs = eina_list_append(imgs, img);
                }
              LKU(cache_lock);
-             D("... walk image cache\n");
+             D("... walk image cache");
              EINA_LIST_FOREACH(imgs, l, img)
                {
                   len += sizeof(Op_Getinfo_Item);
@@ -1245,13 +1271,13 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                   if (img->file.key) len += strlen(img->file.key);
                   len++;
                }
-             D("... malloc msg\n");
+             D("... malloc msg");
              msg = malloc(len);
              if (msg)
                {
                   unsigned char *p;
                   
-                  D("...   init msg\n");
+                  D("...   init msg");
                   memset(msg, 0, len);
                   p = (unsigned char *)msg;
                   msg->active.mem_total = 0;
@@ -1259,13 +1285,13 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                   msg->cached.mem_total = 0;
                   msg->cached.count = 0;
                   p += sizeof(Op_Getinfo_Reply);
-                  D("...   walk all imgs\n");
+                  D("...   walk all imgs");
                   EINA_LIST_FOREACH(imgs, l, img)
                     {
                        Op_Getinfo_Item *itt, it;
 
                        LKL(img->lock); 
-                       D("...   img %p\n", img);
+                       D("...   img %p", img);
                        memset(&it, 0, sizeof(Op_Getinfo_Item));
                        itt = (Op_Getinfo_Item *)p;
                        it.file_key_size = 0;
@@ -1315,33 +1341,33 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                          }
                        it.dead = img->dead;
                        it.useless = img->useless;
-                       D("...   memcpy %p %p %i \n", 
+                       D("...   memcpy %p %p %i ", 
                          itt, &it, sizeof(Op_Getinfo_Item));
                        memcpy(itt, &it, sizeof(Op_Getinfo_Item));
-                       D("...   memcpy done n\n", img);
+                       D("...   memcpy done n", img);
                        p += sizeof(Op_Getinfo_Item) + it.file_key_size;
                        LKU(img->lock); 
                     }
-                  D("...   walk all imgs done\n");
+                  D("...   walk all imgs done");
                   msg->active.mem_total = 
                     (msg->active.mem_total + 1023) / 1024;
                   msg->cached.mem_total = 
                     (msg->cached.mem_total + 1023) / 1024;
-                  D("... reply\n");
+                  D("... reply");
                   evas_cserve_client_send(c, OP_GETINFO, len, msg);
                   free(msg);
                }
              else
                {
-                  D("... reply empty\n");
+                  D("... reply empty");
                   evas_cserve_client_send(c, OP_GETINFO, 0, NULL);
                }
-               D("... free imgs list\n");
+               D("... free imgs list");
            if (imgs) eina_list_free(imgs);
           } 
         break;
      default:
-        D("OP_... UNKNOWN??? %i opcode: %i\n", c->pid, opcode);
+        D("OP_... UNKNOWN??? %i opcode: %i", c->pid, opcode);
         break;
      }
    return 0;
@@ -1466,59 +1492,59 @@ main(int argc, char **argv)
    
    unsetenv("EVAS_CSERVE");
 
-   D("eina init...\n");
+   D("eina init...");
    eina_init();
-   D("evas init...\n");
+   D("evas init...");
    evas_init();
 
    D("img init...");
    img_init();
-   D("signal init...\n");
+   D("signal init...");
    signal_init();
-   D("cserve add...\n");
+   D("cserve add...");
    s = evas_cserve_server_add();
    if (!s)
      {
-        printf("ERROR: server socket init fail. abort.\n");
+        printf("ERROR: server socket init fail. abort.");
         goto error;
      }
-   D("mem open (status)...\n");
+   D("mem open (status)...");
    stat_mem = evas_cserve_mem_open(0, 0, "status", sizeof(int), 0);
    if (stat_mem)
      {
-        printf("WARNING: previous evas_cserve left garbage. cleaning up.\n");
+        printf("WARNING: previous evas_cserve left garbage. cleaning up.");
         stat_clean(stat_mem);
         evas_cserve_mem_close(stat_mem);
         stat_mem = NULL;
      }
-   D("mem new (status)...\n");
+   D("mem new (status)...");
    stat_mem = evas_cserve_mem_new(sizeof(int), "status");
    if (!stat_mem)
      {
-        printf("ERROR: cannot create status shmseg. abort.\n");
+        printf("ERROR: cannot create status shmseg. abort.");
         goto error;
      }
-   D("init status...\n");
+   D("init status...");
    if (!stat_init(stat_mem))
      {
-        printf("ERROR: cannot init status shmseg. abort.\n");
+        printf("ERROR: cannot init status shmseg. abort.");
         evas_cserve_mem_free(stat_mem);
         stat_mem = NULL;
         goto error;
      }
    
-   D("cset server message handler...\n");
+   D("cset server message handler...");
    evas_cserve_server_message_handler_set(s, message, NULL);
    last_check = time(NULL);
    t_next = 0; 
    if (cache_item_timeout_check > 0) t_next = cache_item_timeout_check;
-   D("LOOP!!! ...\n");
+   D("LOOP!!! ...");
    for (;;)
      {
         /* fixme: timeout 0 only her - future use timeouts for timed
          * housekeping */
         if (exit_flag) break;
-        D("wait for messages...\n");
+        D("wait for messages...");
         evas_cserve_server_wait(s, t_next * 1000000);
         if (exit_flag) break;
         t = time(NULL);
@@ -1526,20 +1552,20 @@ main(int argc, char **argv)
         if ((cache_item_timeout_check > 0) &&
             ((t_next) >= cache_item_timeout_check))
           {
-             D("check timeout of items...\n");
+             D("check timeout of items...");
              t_next = cache_item_timeout_check;
              
              last_check = t;
-             D("cache timeout...\n");
+             D("cache timeout...");
              cache_timeout(t);
-             D("meminfo check...\n");
+             D("meminfo check...");
              meminfo_check();
-             D("mem cache adjust...\n");
+             D("mem cache adjust...");
              mem_cache_adjust();
           }
         if ((t_next <= 0) && (cache_item_timeout_check > 0))
           t_next = 1;
-        D("sleep for %isec...\n", t_next);
+        D("sleep for %isec...", t_next);
         
         LKL(strshr_freeme_lock);
         if (strshr_freeme_count > 0)
@@ -1558,7 +1584,7 @@ main(int argc, char **argv)
              Eina_List *l;
              Img *img;
              Eina_List *kills = NULL;
-             
+            
              EINA_LIST_FOREACH(cache_images, l, img)
                {
                   LKL(img->lock);
@@ -1574,40 +1600,40 @@ main(int argc, char **argv)
                   cache_images = eina_list_remove(cache_images, img);
                   img->incache--;
                   cache_usage -= img->usage;
-                  D("...   IMG FREE %p\n", img);
+                  D("...   IMG FREE %p", img);
                   img_free(img);
                }
              cache_cleanme = 0;
           }
         LKU(cache_lock);
      }
-   D("end loop...\n");
+   D("end loop...");
    error:
-   D("cleanup...\n");
+   D("cleanup...");
    if (stat_mem)
      {
-        D("clean mem stat...\n");
+        D("clean mem stat...");
         stat_clean(stat_mem);
      }
-   D("signal shutdown...\n");
+   D("signal shutdown...");
    signal_shutdown();
-   D("img shutdown...\n");
+   D("img shutdown...");
    img_shutdown();
    if (stat_mem)
      {
-        D("free stat mem...\n");
+        D("free stat mem...");
         evas_cserve_mem_free(stat_mem);
         stat_mem = NULL;
      }
    if (s)
      {
-        D("del server...\n");
+        D("del server...");
         evas_cserve_server_del(s);
      }
-   D("evas shutdown...\n");
+   D("evas shutdown...");
    evas_shutdown();
-   D("eina shutdown...\n");
+   D("eina shutdown...");
    eina_shutdown();
-   D("exit..\n");
+   D("exit..");
    return 0;
 }

@@ -227,19 +227,19 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
                             xpm_parse_done();
                             return 0;
                          }
-                       if ((w > 8192) || (w < 1))
+                       if ((w > IMG_MAX_SIZE) || (w < 1))
                          {
                             fprintf(stderr,
-                                    "XPM ERROR: Image width > 8192 or < 1 pixels for file\n");
+                                    "XPM ERROR: Image width > IMG_MAX_SIZE or < 1 pixels for file\n");
                             free(line);
                             fclose(f);
                             xpm_parse_done();
                             return 0;
                          }
-                       if ((h > 8192) || (h < 1))
+                       if ((h > IMG_MAX_SIZE) || (h < 1))
                          {
                             fprintf(stderr,
-                                    "XPM ERROR: Image height > 8192 or < 1 pixels for file\n");
+                                    "XPM ERROR: Image height > IMG_MAX_SIZE or < 1 pixels for file\n");
                             free(line);
                             fclose(f);
                             xpm_parse_done();

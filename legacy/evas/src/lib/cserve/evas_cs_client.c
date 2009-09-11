@@ -49,7 +49,8 @@ server_connect(void)
    
    s = calloc(1, sizeof(Server));
    if (!s) return NULL;
-   s->fd = -1;
+   s->ch[0].fd = -1;
+   s->ch[1].fd = -1;
    snprintf(buf, sizeof(buf), "/tmp/.evas-cserve-%x", getuid());
    s->socket_path = strdup(buf);
    if (!s->socket_path)
@@ -57,18 +58,30 @@ server_connect(void)
         free(s);
         return NULL;
      }
-   s->fd = socket(AF_UNIX, SOCK_STREAM, 0);
-   if (s->fd < 0) goto error;
-   if (fcntl(s->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
-   if (setsockopt(s->fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0)
+   s->ch[0].fd = socket(AF_UNIX, SOCK_STREAM, 0);
+   if (s->ch[0].fd < 0) goto error;
+   if (fcntl(s->ch[0].fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
+   if (setsockopt(s->ch[0].fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0)
      goto error;
    socket_unix.sun_family = AF_UNIX;
    strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
    socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
-   if (connect(s->fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0) goto error;
+   if (connect(s->ch[0].fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0) goto error;
+
+   s->ch[1].fd = socket(AF_UNIX, SOCK_STREAM, 0);
+   if (s->ch[1].fd < 0) goto error;
+   if (fcntl(s->ch[1].fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
+   if (setsockopt(s->ch[1].fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0)
+     goto error;
+   socket_unix.sun_family = AF_UNIX;
+   strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
+   socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
+   if (connect(s->ch[1].fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0) goto error;
+   
    return s;
    error:
-   if (s->fd >= 0) close(s->fd);
+   if (s->ch[0].fd >= 0) close(s->ch[0].fd);
+   if (s->ch[1].fd >= 0) close(s->ch[1].fd);
    free(s->socket_path);
    free(s);
    return NULL;
@@ -77,13 +90,14 @@ server_connect(void)
 static void
 server_disconnect(Server *s)
 {
-   close(s->fd);
+   close(s->ch[0].fd);
+   close(s->ch[1].fd);
    free(s->socket_path);
    free(s);
 }
 
 static int
-server_send(Server *s, int opcode, int size, unsigned char *data)
+server_send(Server *s, int channel, int opcode, int size, unsigned char *data)
 {
    int ints[3];
    int num;
@@ -91,9 +105,9 @@ server_send(Server *s, int opcode, int size, unsigned char *data)
    pipe_handle(1);
    ints[0] = size;
    ints[1] = opcode;
-   s->req_to++;
-   ints[2] = s->req_to;
-   num = write(s->fd, ints, (sizeof(int) * 3));
+   s->ch[channel].req_to++;
+   ints[2] = s->ch[channel].req_to;
+   num = write(s->ch[channel].fd, ints, (sizeof(int) * 3));
    if (num < 0)
      {
         pipe_handle(0);
@@ -101,7 +115,7 @@ server_send(Server *s, int opcode, int size, unsigned char *data)
         cserve = NULL;
         return 0;
      }
-   num = write(s->fd, data, size);
+   num = write(s->ch[channel].fd, data, size);
    if (num < 0)
      {
         pipe_handle(0);
@@ -114,12 +128,12 @@ server_send(Server *s, int opcode, int size, unsigned char *data)
 }
 
 static unsigned char *
-server_read(Server *s, int *opcode, int *size)
+server_read(Server *s, int channel, int *opcode, int *size)
 {
    int ints[3], num, left;
    unsigned char *data;
    
-   num = read(s->fd, ints, sizeof(int) * 3);
+   num = read(s->ch[channel].fd, ints, sizeof(int) * 3);
    if (num != (sizeof(int) * 3))
      {
         if (cserve) server_disconnect(cserve);
@@ -129,18 +143,18 @@ server_read(Server *s, int *opcode, int *size)
    *size = ints[0];
    *opcode = ints[1];
    if ((*size < 0) || (*size > (1024 * 1024))) return NULL;
-   if (ints[2] != (s->req_from + 1))
+   if (ints[2] != (s->ch[channel].req_from + 1))
      {
         printf("EEK! sequence number mismatch from serer with pid: %i\n"
                "---- num %i is not 1 more than %i\n"
                ,
-               s->pid, ints[2], s->req_from);
+               s->pid, ints[2], s->ch[channel].req_from);
         return NULL;
      }
-   s->req_from++;
+   s->ch[channel].req_from++;
    data = malloc(*size);
    if (!data) return NULL;
-   num = read(s->fd, data, *size);
+   num = read(s->ch[channel].fd, data, *size);
    if (num < 0)
      {
         free(data);
@@ -149,7 +163,7 @@ server_read(Server *s, int *opcode, int *size)
    left = *size - num;
    while (left > 0)
      {
-        num = read(s->fd, data + (*size - left), left);
+        num = read(s->ch[channel].fd, data + (*size - left), left);
         if (num < 0)
           {
              free(data);
@@ -169,16 +183,30 @@ server_init(Server *s)
    
    msg.pid = getpid();
    msg.server_id = 0;
-   if (!server_send(s, OP_INIT, sizeof(msg), (unsigned char *)(&msg)))
+   msg.handle = NULL;
+   if (!server_send(s, 0, OP_INIT, sizeof(msg), (unsigned char *)(&msg)))
      return 0;
-   rep = (Op_Init *)server_read(s, &opcode, &size);
+   rep = (Op_Init *)server_read(s, 0, &opcode, &size);
    if ((rep) && (opcode == OP_INIT) && (size == sizeof(Op_Init)))
      {
         s->pid = rep->pid;
         s->server_id = rep->server_id;
-        free(rep);
+        s->main_handle = rep->handle;
         connect_num++;
-        return 1;
+        msg.pid = getpid();
+        msg.server_id = 1;
+        msg.handle = rep->handle;
+        free(rep);
+        if (!server_send(s, 1, OP_INIT, sizeof(msg), (unsigned char *)(&msg)))
+          return 0;
+        rep = (Op_Init *)server_read(s, 1, &opcode, &size);
+        if ((rep) && (opcode == OP_INIT) && (size == sizeof(Op_Init)))
+          {
+             free(rep);
+             return 1;
+          }
+        if (rep) free(rep);
+        return 0;
      }
    if (rep) free(rep);
    return 0;
@@ -286,7 +314,7 @@ evas_cserve_image_load(Image_Entry *ie, const char *file, const char *key, RGBA_
    strcpy(buf + sizeof(msg), file);
    strcpy(buf + sizeof(msg) + flen, key);
    if (!buf) return 0;
-   if (!server_send(cserve, OP_LOAD, 
+   if (!server_send(cserve, ie->channel, OP_LOAD, 
                     sizeof(msg) + flen + klen,
                     buf))
      {
@@ -295,7 +323,7 @@ evas_cserve_image_load(Image_Entry *ie, const char *file, const char *key, RGBA_
      }
    free(buf);
    if (!cserve) return 0;
-   rep = (Op_Load_Reply *)server_read(cserve, &opcode, &size);
+   rep = (Op_Load_Reply *)server_read(cserve, ie->channel, &opcode, &size);
    if ((rep) && (opcode == OP_LOAD) && (size == sizeof(Op_Load_Reply)))
      {
         ie->w = rep->image.w;
@@ -332,10 +360,10 @@ evas_cserve_image_data_load(Image_Entry *ie)
    memset(&msg, 0, sizeof(msg));
    msg.handle = ie->data1;
    msg.server_id = cserve->server_id;
-   if (!server_send(cserve, OP_LOADDATA, sizeof(msg), (unsigned char *)(&msg)))
+   if (!server_send(cserve, ie->channel, OP_LOADDATA, sizeof(msg), (unsigned char *)(&msg)))
      return 0;
    if (!cserve) return 0;
-   rep = (Op_Loaddata_Reply *)server_read(cserve, &opcode, &size);
+   rep = (Op_Loaddata_Reply *)server_read(cserve, ie->channel, &opcode, &size);
    if ((rep) && (opcode == OP_LOADDATA) && (size == sizeof(Op_Loaddata_Reply)))
      {
         if (rep->mem.size <= 0)
@@ -369,7 +397,7 @@ evas_cserve_image_free(Image_Entry *ie)
         if (ie->connect_num == connect_num)
           {
              if (ie->server_id == cserve->server_id)
-               server_send(cserve, OP_UNLOAD, sizeof(msg), (unsigned char *)(&msg));
+               server_send(cserve, ie->channel, OP_UNLOAD, sizeof(msg), (unsigned char *)(&msg));
           }
      }
    ie->data1 = NULL;
@@ -394,7 +422,7 @@ evas_cserve_image_unload(Image_Entry *ie)
    if (ie->connect_num == connect_num)
      {
         if (ie->server_id == cserve->server_id)
-          server_send(cserve, OP_UNLOADDATA, sizeof(msg), (unsigned char *)(&msg));
+          server_send(cserve, ie->channel, OP_UNLOADDATA, sizeof(msg), (unsigned char *)(&msg));
      }
 }
 
@@ -416,7 +444,7 @@ evas_cserve_image_useless(Image_Entry *ie)
    if (ie->connect_num == connect_num)
      {
         if (ie->server_id == cserve->server_id)
-          server_send(cserve, OP_USELESSDATA, sizeof(msg), (unsigned char *)(&msg));
+          server_send(cserve, ie->channel, OP_USELESSDATA, sizeof(msg), (unsigned char *)(&msg));
      }
 }
 
@@ -429,8 +457,8 @@ evas_cserve_raw_config_get(Op_Getconfig_Reply *config)
    if (csrve_init > 0) server_reinit();
    else return 0;
    if (!cserve) return 0;
-   if (!server_send(cserve, OP_GETCONFIG, 0, NULL)) return 0;
-   rep = (Op_Getconfig_Reply *)server_read(cserve, &opcode, &size);
+   if (!server_send(cserve, 0, OP_GETCONFIG, 0, NULL)) return 0;
+   rep = (Op_Getconfig_Reply *)server_read(cserve, 0, &opcode, &size);
    if ((rep) && (opcode == OP_GETCONFIG) && (size == sizeof(Op_Getconfig_Reply)))
      {
         memcpy(config, rep, sizeof(Op_Getconfig_Reply));
@@ -447,7 +475,7 @@ evas_cserve_raw_config_set(Op_Setconfig *config)
    if (csrve_init > 0) server_reinit();
    else return 0;
    if (!cserve) return 0;
-   if (!server_send(cserve, OP_SETCONFIG, sizeof(Op_Setconfig), (unsigned char *)config)) return 0;
+   if (!server_send(cserve, 0, OP_SETCONFIG, sizeof(Op_Setconfig), (unsigned char *)config)) return 0;
    return 1;
 }
 
@@ -460,8 +488,8 @@ evas_cserve_raw_stats_get(Op_Getstats_Reply *stats)
    if (csrve_init > 0) server_reinit();
    else return 0;
    if (!cserve) return 0;
-   if (!server_send(cserve, OP_GETSTATS, 0, NULL)) return 0;
-   rep = (Op_Getstats_Reply *)server_read(cserve, &opcode, &size);
+   if (!server_send(cserve, 0, OP_GETSTATS, 0, NULL)) return 0;
+   rep = (Op_Getstats_Reply *)server_read(cserve, 0, &opcode, &size);
    if ((rep) && (opcode == OP_GETSTATS) && (size == sizeof(Op_Getstats_Reply)))
      {
         memcpy(stats, rep, sizeof(Op_Getstats_Reply));
@@ -481,8 +509,8 @@ evas_cserve_raw_info_get(void)
    if (csrve_init > 0) server_reinit();
    else return NULL;
    if (!cserve) return NULL;
-   if (!server_send(cserve, OP_GETINFO, 0, NULL)) return NULL;
-   rep = (Op_Getinfo_Reply *)server_read(cserve, &opcode, &size);
+   if (!server_send(cserve, 0, OP_GETINFO, 0, NULL)) return NULL;
+   rep = (Op_Getinfo_Reply *)server_read(cserve, 0, &opcode, &size);
    if ((rep) && (opcode == OP_GETINFO) && (size >= sizeof(Op_Getinfo_Reply)))
      {
         return rep;

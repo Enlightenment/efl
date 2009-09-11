@@ -85,7 +85,7 @@ evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key
    rsvg_handle_get_dimensions(rsvg, &dim);
    w = dim.width;
    h = dim.height;
-   if ((w < 1) || (h < 1) || (w > 8192) || (h > 8192))
+   if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE))
      {
 //	rsvg_handle_close(rsvg, NULL);
 	g_object_unref(rsvg);
@@ -183,7 +183,7 @@ evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key
    rsvg_handle_get_dimensions(rsvg, &dim);
    w = dim.width;
    h = dim.height;
-   if ((w < 1) || (h < 1) || (w > 8192) || (h > 8192))
+   if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE))
      {
 //	rsvg_handle_close(rsvg, NULL);
 	g_object_unref(rsvg);
