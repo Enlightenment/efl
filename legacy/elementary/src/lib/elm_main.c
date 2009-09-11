@@ -694,7 +694,7 @@ elm_quicklaunch_prepare(int argc, char **argv)
    char *exe = elm_quicklaunch_exe_path_get(argv[0]);
    if (!exe)
      {
-	printf("ERROR: %s does not exist\n", argv[0]);
+	ERR("requested quicklaunch binary '%s' does not exist\n", argv[0]);
 	return EINA_FALSE;
      }
    else
@@ -722,11 +722,19 @@ elm_quicklaunch_prepare(int argc, char **argv)
 	  free(exe2);
      }
    qr_handle = dlopen(exe, RTLD_NOW | RTLD_GLOBAL);
+   if (!qr_handle)
+     {
+	WRN("dlopen('%s') failed: %s", exe, dlerror());
+	free(exe);
+	return EINA_FALSE;
+     }
+   INF("dlopen('%s') = %p", exe, qr_handle);
    free(exe);
-   if (!qr_handle) return EINA_FALSE;
    qr_main = dlsym(qr_handle, "elm_main");
+   INF("dlsym(%p, 'elm_main') = %p", qr_handle, qr_main);
    if (!qr_main)
      {
+	WRN("not quicklauncher capable: no elm_main in '%s'", exe);
 	dlclose(qr_handle);
 	qr_handle = NULL;
 	return EINA_FALSE;
@@ -791,7 +799,9 @@ elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (postfork_func) (voi
 	for (i = 0; i < argc; i++) args[i] = argv[i];
 	args[argc] = NULL;
 	WRN("%s not quicklaunch capable, fallback...", argv[0]);
-	exit(execvp(argv[0], args));
+	execvp(argv[0], args);
+	ERR("failed to execute '%s': %s", argv[0], strerror(errno));
+	exit(-1);
      }
    child = fork();
    if (child > 0) return EINA_TRUE;
