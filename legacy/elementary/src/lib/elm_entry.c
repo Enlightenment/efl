@@ -88,7 +88,7 @@ _theme_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    const char *t;
    t = eina_stringshare_add(elm_entry_entry_get(obj));
-   _elm_theme_set(wd->ent, "entry", _getbase(obj), "default");
+   _elm_theme_set(wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
    elm_entry_entry_set(obj, t);
    eina_stringshare_del(t);
    edje_object_scale_set(wd->ent, elm_widget_scale_get(obj) * _elm_config->scale);
