@@ -270,7 +270,7 @@ main(int argc, char **argv)
 	fd = accept(sock, (struct sockaddr *)&client, &len);
 	if (fd >= 0)
 	  {
-	     int bytes;
+	     unsigned long bytes;
 	     char line[4096];
 	     int num;
 
