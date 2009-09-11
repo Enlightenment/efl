@@ -54,6 +54,7 @@ static const Eina_Test_Case etc[] = {
   { "Mempool", eina_test_mempool },
   { "Rectangle", eina_test_rectangle },
   { "Matrix Sparse", eina_test_matrixsparse },
+  { "Eina Tiler", eina_test_tiler },
   { NULL, NULL }
 };
 
