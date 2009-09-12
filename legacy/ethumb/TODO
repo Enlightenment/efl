@@ -5,12 +5,6 @@
  * memory handling:
    * zero pointer parameters before failing on SAFETY macros (file_get, etc)
 
- * callback:
-   * const void *data on function registration, cast when call.
-   * give generated_cb the Ethumb_Client parameter.
-   * fix types to include Ethumb and Ethumb_Client prefix, make names
-     like any other EFL callback, or just remove the typedef.
-
  * unit tests, be them in C or Python, covering:
    * thumbnail generation respect parameters (size, format...)
    * respect fdo standards (hash, location, etc, uri with spaces...)
