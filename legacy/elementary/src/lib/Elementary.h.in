@@ -15,6 +15,7 @@
 @ELM_WIN32_DEF@ ELM_WIN32
 @ELM_WINCE_DEF@ ELM_WINCE
 @ELM_EDBUS_DEF@ ELM_EDBUS
+@ELM_EFREET_DEF@ ELM_EFREET
 @ELM_ALLOCA_H_DEF@ ELM_ALLOCA_H
 @ELM_LIBINTL_H_DEF@ ELM_LIBINTL_H
 
@@ -73,6 +74,12 @@
 #ifdef ELM_EDBUS
 # include <E_DBus.h>
 # include <E_Hal.h>
+#endif
+
+#ifdef ELM_EFREET
+# include <Efreet.h>
+# include <Efreet_Mime.h>
+# include <Efreet_Trash.h>
 #endif
 
 #ifdef EAPI
@@ -161,6 +168,9 @@ extern "C" {
    EAPI void         elm_quicklaunch_cleanup(void);
    EAPI int          elm_quicklaunch_fallback(int argc, char **argv);
    EAPI char        *elm_quicklaunch_exe_path_get(const char *exe);
+   
+   EAPI void         elm_need_efreet(void);
+   EAPI void         elm_need_e_dbus(void);
 
    EAPI void         elm_object_scale_set(Evas_Object *obj, double scale);
    EAPI double       elm_object_scale_get(const Evas_Object *obj);

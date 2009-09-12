@@ -190,6 +190,24 @@ PKG_CHECK_MODULES([ELEMENTARY_EDBUS],
 )
 AC_SUBST(ELM_EDBUS_DEF)
 
+ELM_EFREET_DEF="#undef"
+have_elementary_efreet="no"
+PKG_CHECK_MODULES([ELEMENTARY_EFREET],
+   [
+    efreet
+    efreet-mime
+    efreet-trash
+   ],
+   [
+    AC_DEFINE(HAVE_ELEMENTARY_EFREET, 1, [Efreet support for Elementary])
+    have_elementary_efreet="yes"
+    ELM_EFREET_DEF="#define"
+    requirement_elm="efreet efreet-mime efreet-trash ${requirement_elm}"
+   ],
+   [have_elementary_efreet="no"]
+)
+AC_SUBST(ELM_EFREET_DEF)
+
 ELM_ALLOCA_H_DEF="#undef"
 AC_CHECK_HEADER(alloca.h, [ELM_ALLOCA_H_DEF="#define"])
 AC_SUBST(ELM_ALLOCA_H_DEF)
@@ -251,6 +269,7 @@ echo "  Windows CE....: ${have_elementary_wince}"
 echo
 echo "Features:"
 echo "  EDBus.........: ${have_elementary_edbus}"
+echo "  EFreet........: ${have_elementary_efreet}"
 echo
 echo "edje_cc.........: ${edje_cc}"
 echo

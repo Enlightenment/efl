@@ -13,7 +13,8 @@ AM_CPPFLAGS = \
 @ELEMENTARY_FB_CFLAGS@ \
 @ELEMENTARY_WIN32_CFLAGS@ \
 @ELEMENTARY_WINCE_CFLAGS@ \
-@ELEMENTARY_EDBUS_CFLAGS@
+@ELEMENTARY_EDBUS_CFLAGS@ \
+@ELEMENTARY_EFREET_CFLAGS@
 
 if ELEMENTARY_WINDOWS_BUILD
 AM_CPPFLAGS += -DELEMENTARY_BUILD
@@ -57,7 +58,10 @@ test_separator.c \
 test_scroller.c \
 test_spinner.c \
 test_index.c \
-test_photocam.c
+test_photocam.c \
+test_photo.c \
+test_icon_desktops.c
+
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la
 elementary_test_LDFLAGS =
 

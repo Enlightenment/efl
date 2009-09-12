@@ -348,6 +348,76 @@ elm_shutdown(void)
    elm_quicklaunch_shutdown();
 }
 
+#ifdef ELM_EDBUS
+static Eina_Bool _elm_need_e_dbus = 0;
+#endif
+EAPI void
+elm_need_e_dbus(void)
+{
+#ifdef ELM_EDBUS
+   if (_elm_need_e_dbus) return;
+   _elm_need_e_dbus = 1;
+   e_dbus_init();
+#endif   
+}
+
+static void
+_elm_unneed_e_dbus(void)
+{
+#ifdef ELM_EDBUS
+   if (_elm_need_e_dbus)
+     {
+        _elm_need_e_dbus = 0;
+        e_dbus_shutdown();
+     }
+#endif   
+}
+
+#ifdef ELM_EFREET
+static Eina_Bool _elm_need_efreet = 0;
+#endif
+EAPI void
+elm_need_efreet(void)
+{
+#ifdef ELM_EFREET
+   if (_elm_need_efreet) return;
+   _elm_need_efreet = 1;
+   efreet_init();
+   efreet_util_init();
+   efreet_mime_init();
+   efreet_trash_init();
+   /*
+     {
+        Eina_List **list;
+        
+        list = efreet_icon_extra_list_get();
+        if (list)
+          {
+             e_user_dir_concat_static(buf, "icons");
+             *list = eina_list_prepend(*list, (void *)eina_stringshare_add(buf));
+             e_prefix_data_concat_static(buf, "data/icons");
+             *list = eina_list_prepend(*list, (void *)eina_stringshare_add(buf));
+          }
+     }
+   */
+#endif
+}
+
+static void
+_elm_unneed_efreet(void)
+{
+#ifdef ELM_EDBUS
+   if (_elm_need_efreet)
+     {
+        _elm_need_efreet = 0;
+        efreet_trash_shutdown();
+        efreet_mime_shutdown();
+        efreet_util_shutdown();
+        efreet_shutdown();
+     }
+#endif   
+}
+
 EAPI void
 elm_quicklaunch_init(int argc, char **argv)
 {
@@ -370,7 +440,7 @@ elm_quicklaunch_init(int argc, char **argv)
    evas_init();
    edje_init();
    ecore_evas_init(); // FIXME: check errors
-
+   
    _elm_exit_handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, _elm_signal_exit, NULL);
 
    _elm_appname = strdup(ecore_file_file_get(argv[0]));
@@ -641,6 +711,8 @@ elm_quicklaunch_shutdown(void)
 
    free(_elm_config);
    free(_elm_appname);
+   _elm_unneed_efreet();
+   _elm_unneed_e_dbus();
    ecore_evas_shutdown();
    edje_shutdown();
    evas_shutdown();
