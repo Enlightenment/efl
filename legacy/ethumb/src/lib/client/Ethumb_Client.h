@@ -38,20 +38,17 @@ extern "C" {
 #endif
 
 typedef struct _Ethumb_Client Ethumb_Client;
-typedef void (*ec_connect_callback_t)(Ethumb_Client *client, Eina_Bool success, void *data);
-typedef void (*generated_callback_t)(long id, const char *file, const char *key,
-                                     const char *thumb_path, const char *thumb_key,
-                                     Eina_Bool success, void *data);
+typedef void (*Ethumb_Client_Connect_Cb)(void *data, Ethumb_Client *client, Eina_Bool success);
+typedef void (*Ethumb_Client_Die_Cb)(void *data, Ethumb_Client *client);
+typedef void (*Ethumb_Client_Generate_Cb)(void *data, Ethumb_Client *client, int id, const char *file, const char *key, const char *thumb_path, const char *thumb_key, Eina_Bool success);
+typedef void (*Ethumb_Client_Generate_Cancel_Cb)(void *data, Eina_Bool success);
 
 EAPI int ethumb_client_init(void);
 EAPI int ethumb_client_shutdown(void);
 
-EAPI Ethumb_Client * ethumb_client_connect(ec_connect_callback_t connect_cb, void *data, void (*free_data)(void *));
+EAPI Ethumb_Client * ethumb_client_connect(Ethumb_Client_Connect_Cb connect_cb, const void *data, Eina_Free_Cb free_data);
 EAPI void ethumb_client_disconnect(Ethumb_Client *client);
-EAPI void ethumb_client_on_server_die_callback_set(Ethumb_Client *client, void (*on_server_die_cb)(Ethumb_Client *client, void *data), void *data);
-
-EAPI void ethumb_client_queue_remove(Ethumb_Client *client, int id, void (*queue_remove_cb)(Eina_Bool success, void *data), void *data);
-EAPI void ethumb_client_queue_clear(Ethumb_Client *client);
+EAPI void ethumb_client_on_server_die_callback_set(Ethumb_Client *client, Ethumb_Client_Die_Cb server_die_cb, const void *data, Eina_Free_Cb free_data);
 
 EAPI void ethumb_client_fdo_set(Ethumb_Client *client, Ethumb_Thumb_FDO_Size s);
 EAPI void ethumb_client_size_set(Ethumb_Client *client, int tw, int th);
@@ -87,7 +84,9 @@ EAPI void ethumb_client_file_free(Ethumb_Client *client);
 EAPI void ethumb_client_thumb_path_set(Ethumb_Client *client, const char *path, const char *key);
 EAPI void ethumb_client_thumb_path_get(Ethumb_Client *client, const char **path, const char **key);
 EAPI Eina_Bool ethumb_client_thumb_exists(Ethumb_Client *client);
-EAPI long ethumb_client_generate(Ethumb_Client *client, generated_callback_t generated_cb, void *data, void (*free_data)(void *));
+EAPI int  ethumb_client_generate(Ethumb_Client *client, Ethumb_Client_Generate_Cb generated_cb, const void *data, Eina_Free_Cb free_data);
+EAPI void ethumb_client_generate_cancel(Ethumb_Client *client, int id, Ethumb_Client_Generate_Cancel_Cb cancel_cb, const void *data, Eina_Free_Cb free_data);
+EAPI void ethumb_client_generate_cancel_all(Ethumb_Client *client);
 
 #ifdef __cplusplus
 }

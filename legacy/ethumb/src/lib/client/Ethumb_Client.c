@@ -62,16 +62,21 @@ struct _Ethumb_Client
    DBusPendingCall *pending_start_service_by_name;
    const char *unique_name;
    DBusPendingCall *pending_new;
-   ec_connect_callback_t connect_cb;
-   void *connect_cb_data;
-   void (*connect_cb_free_data)(void *);
+   struct {
+      Ethumb_Client_Connect_Cb cb;
+      void *data;
+      Eina_Free_Cb free_data;
+   } connect;
    Eina_List *pending_add;
    Eina_List *pending_remove;
    Eina_List *pending_gen;
    DBusPendingCall *pending_clear;
    DBusPendingCall *pending_setup;
-   void (*on_server_die_cb)(Ethumb_Client *client, void *data);
-   void *on_server_die_cb_data;
+   struct {
+      Ethumb_Client_Die_Cb cb;
+      void *data;
+      Eina_Free_Cb free_data;
+   } die;
    const char *object_path;
 
    Eina_Bool ethumb_dirty : 1;
@@ -86,9 +91,9 @@ struct _ethumb_pending_add
    const char *key;
    const char *thumb;
    const char *thumb_key;
-   generated_callback_t generated_cb;
+   Ethumb_Client_Generate_Cb generated_cb;
    void *data;
-   void (*free_data)(void *);
+   Eina_Free_Cb free_data;
    DBusPendingCall *pending_call;
    Ethumb_Client *client;
 };
@@ -96,8 +101,9 @@ struct _ethumb_pending_add
 struct _ethumb_pending_remove
 {
    dbus_int32_t id;
-   void (*remove_cb)(Eina_Bool result, void *data);
+   Ethumb_Client_Generate_Cancel_Cb cancel_cb;
    void *data;
+   Eina_Free_Cb free_data;
    DBusPendingCall *pending_call;
    Ethumb_Client *client;
 };
@@ -109,9 +115,9 @@ struct _ethumb_pending_gen
    const char *key;
    const char *thumb;
    const char *thumb_key;
-   generated_callback_t generated_cb;
+   Ethumb_Client_Generate_Cb generated_cb;
    void *data;
-   void (*free_data)(void *);
+   Eina_Free_Cb free_data;
 };
 
 static const char _ethumb_dbus_bus_name[] = "org.enlightenment.Ethumb";
@@ -215,13 +221,40 @@ _ethumb_client_name_owner_changed(void *data, DBusMessage *msg)
 	else
 	  {
 	     ERR("server exit!!!\n");
-	     if (client->on_server_die_cb)
-	       client->on_server_die_cb(client,
-					client->on_server_die_cb_data);
+	     if (client->die.cb)
+	       {
+		  client->die.cb(client->die.data, client);
+		  client->die.cb = NULL;
+	       }
+	     if (client->die.free_data)
+	       {
+		  client->die.free_data(client->die.data);
+		  client->die.free_data = NULL;
+		  client->die.data = NULL;
+	       }
 	  }
      }
    else
      DBG("unknown change from %s to %s\n", from, to);
+}
+
+static void
+_ethumb_client_report_connect(Ethumb_Client *client, Eina_Bool success)
+{
+   if (!client->connect.cb)
+     {
+	ERR("already called?!");
+	return;
+     }
+
+   client->connect.cb(client->connect.data, client, success);
+   if (client->connect.free_data)
+     {
+	client->connect.free_data(client->connect.data);
+	client->connect.free_data = NULL;
+     }
+   client->connect.cb = NULL;
+   client->connect.data = NULL;
 }
 
 static void
@@ -251,15 +284,11 @@ _ethumb_client_new_cb(void *data, DBusMessage *msg, DBusError *error)
       _ethumb_dbus_objects_interface, "generated",
       _ethumb_client_generated_cb, client);
 
-   client->connect_cb(client, 1, client->connect_cb_data);
-   if (client->connect_cb_free_data)
-     client->connect_cb_free_data(client->connect_cb_data);
+   _ethumb_client_report_connect(client, 1);
    return;
 
 end_error:
-   client->connect_cb(client, 0, client->connect_cb_data);
-   if (client->connect_cb_free_data)
-     client->connect_cb_free_data(client->connect_cb_data);
+   _ethumb_client_report_connect(client, 0);
 }
 
 static void
@@ -323,9 +352,7 @@ _ethumb_client_start_server_cb(void *data, DBusMessage *msg, DBusError *err)
 
  error:
    ERR("failed to start Ethumbd DBus service by its name.\n");
-   client->connect_cb(client, 0, client->connect_cb_data);
-   if (client->connect_cb_free_data)
-     client->connect_cb_free_data(client->connect_cb_data);
+   _ethumb_client_report_connect(client, 0);
 }
 
 static void
@@ -344,9 +371,7 @@ _ethumb_client_start_server(Ethumb_Client *client)
    if (!client->pending_start_service_by_name)
      {
 	ERR("could not start service by name!\n");
-	client->connect_cb(client, 0, client->connect_cb_data);
-	if (client->connect_cb_free_data)
-	  client->connect_cb_free_data(client->connect_cb_data);
+	_ethumb_client_report_connect(client, 0);
      }
 }
 
@@ -389,9 +414,7 @@ _ethumb_client_get_name_owner(void *data, DBusMessage *msg, DBusError *err)
    return;
 
 error:
-   client->connect_cb(client, 0, client->connect_cb_data);
-   if (client->connect_cb_free_data)
-     client->connect_cb_free_data(client->connect_cb_data);
+   _ethumb_client_report_connect(client, 0);
 }
 
 EAPI int
@@ -434,8 +457,46 @@ ethumb_client_shutdown(void)
    return _initcount;
 }
 
+/**
+ * Connects to Ethumb server and return the client instance.
+ *
+ * This is the "constructor" of Ethumb_Client, where everything
+ * starts.
+ *
+ * If server was down, it is tried to start it using DBus activation,
+ * then the connection is retried.
+ *
+ * This call is asynchronous and will not block, instead it will be in
+ * "not connected" state until @a connect_cb is called with either
+ * success or failure. On failure, then no methods should be
+ * called. On success you're now able to setup and then ask generation
+ * of thumbnails.
+ *
+ * Usually you should listen for server death/disconenction with
+ * ethumb_client_on_server_die_callback_set().
+ *
+ * @param connect_cb function to call to report connection success or
+ *        failure. Do not call any other ethumb_client method until
+ *        this function returns. The first received parameter is the
+ *        given argument @a data. Must @b not be @c NULL. This
+ *        function will not be called if user explicitly calls
+ *        ethumb_client_disconnect().
+ * @param data context to give back to @a connect_cb. May be @c NULL.
+ * @param free_data function used to release @a data resources, if
+ *        any. May be @c NULL. If this function exists, it will be
+ *        called immediately after @a connect_cb is called or if user
+ *        explicitly calls ethumb_client_disconnect() before such
+ *        (that is, don't rely on @a data after @a connect_cb was
+ *        called!)
+ *
+ * @return client instance or NULL if failed. If @a connect_cb is
+ *         missing it returns @c NULL. If it fail for other
+ *         conditions, @c NULL is also returned and @a connect_cb is
+ *         called with @c success=EINA_FALSE. The client instance is
+ *         not ready to be used until @a connect_cb is called.
+ */
 EAPI Ethumb_Client *
-ethumb_client_connect(ec_connect_callback_t connect_cb, void *data, void (*free_data)(void *))
+ethumb_client_connect(Ethumb_Client_Connect_Cb connect_cb, const void *data, Eina_Free_Cb free_data)
 {
    Ethumb_Client *eclient;
 
@@ -448,9 +509,9 @@ ethumb_client_connect(ec_connect_callback_t connect_cb, void *data, void (*free_
 	goto err;
      }
 
-   eclient->connect_cb = connect_cb;
-   eclient->connect_cb_data = data;
-   eclient->connect_cb_free_data = free_data;
+   eclient->connect.cb = connect_cb;
+   eclient->connect.data = (void *)data;
+   eclient->connect.free_data = free_data;
 
    eclient->ethumb = ethumb_new();
    if (!eclient->ethumb)
@@ -486,10 +547,18 @@ connection_err:
 ethumb_new_err:
    free(eclient);
 err:
-   connect_cb(NULL, EINA_FALSE, data);
+   connect_cb((void *)data, NULL, EINA_FALSE);
+   if (free_data)
+     free_data((void *)data);
    return NULL;
 }
 
+/**
+ * Disconnect the client, releasing all client resources.
+ *
+ * This is the destructor of Ethumb_Client, after it's disconnected
+ * the client handle is now gone and should not be used.
+ */
 EAPI void
 ethumb_client_disconnect(Ethumb_Client *client)
 {
@@ -531,6 +600,8 @@ ethumb_client_disconnect(Ethumb_Client *client)
 	struct _ethumb_pending_remove *pending = data;
 	dbus_pending_call_cancel(pending->pending_call);
 	dbus_pending_call_unref(pending->pending_call);
+	if (pending->free_data)
+	  pending->free_data(pending->data);
 	free(pending);
      }
 
@@ -563,14 +634,46 @@ end_connection:
      e_dbus_signal_handler_del(client->conn, client->generated_signal);
    e_dbus_connection_close(client->conn);
 
+   if (client->connect.free_data)
+     client->connect.free_data(client->connect.data);
+   if (client->die.free_data)
+     client->die.free_data(client->die.data);
+
    free(client);
 }
 
+/**
+ * Sets the callback to report server died.
+ *
+ * When server dies there is nothing you can do, just release
+ * resources with ethumb_client_disconnect() and probably try to
+ * connect again.
+ *
+ * Usually you should set this callback and handle this case, it does
+ * happen!
+ *
+ * @param client the client instance to monitor. Must @b not be @c
+ *        NULL.
+ * @param server_die_cb function to call back when server dies. The
+ *        first parameter will be the argument @a data. May be @c
+ *        NULL.
+ * @param data context to give back to @a server_die_cb. May be @c
+ *        NULL.
+ * @param free_data used to release @a data resources after @a
+ *        server_die_cb is called or user calls
+ *        ethumb_client_disconnect().
+ */
 EAPI void
-ethumb_client_on_server_die_callback_set(Ethumb_Client *client, void (*on_server_die_cb)(Ethumb_Client *client, void *data), void *data)
+ethumb_client_on_server_die_callback_set(Ethumb_Client *client, Ethumb_Client_Die_Cb server_die_cb, const void *data, Eina_Free_Cb free_data)
 {
-   client->on_server_die_cb = on_server_die_cb;
-   client->on_server_die_cb_data = data;
+   EINA_SAFETY_ON_NULL_RETURN(client);
+
+   if (client->die.free_data)
+     client->die.free_data(client->die.data);
+
+   client->die.cb = server_die_cb;
+   client->die.data = (void *)data;
+   client->die.free_data = free_data;
 }
 
 static void
@@ -631,6 +734,15 @@ _ethumb_client_dbus_append_bytearray(DBusMessageIter *iter, const char *string)
    dbus_message_iter_close_container(iter, &viter);
 }
 
+/**
+ * Send setup to server.
+ *
+ * This method is called automatically by ethumb_client_generate() if
+ * any property was changed. No need to call it manually.
+ *
+ * @param client client instance. Must @b not be @c NULL and client
+ *        must be connected (after connected_cb is called).
+ */
 EAPI void
 ethumb_client_ethumb_setup(Ethumb_Client *client)
 {
@@ -647,6 +759,7 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
    dbus_int32_t video_ntimes, video_fps, document_page;
 
    EINA_SAFETY_ON_NULL_RETURN(client);
+   EINA_SAFETY_ON_FALSE_RETURN(client->connected);
    client->ethumb_dirty = 0;
 
    msg = dbus_message_new_method_call(_ethumb_dbus_bus_name,
@@ -822,9 +935,10 @@ _ethumb_client_generated_cb(void *data, DBusMessage *msg)
    if (found)
      {
 	client->pending_gen = eina_list_remove_list(client->pending_gen, l);
-	pending->generated_cb(id, pending->file, pending->key,
+	pending->generated_cb(pending->data, client, id,
+			      pending->file, pending->key,
                               pending->thumb, pending->thumb_key,
-                              success, pending->data);
+			      success);
         if (pending->free_data)
 	  pending->free_data(pending->data);
 	eina_stringshare_del(pending->file);
@@ -875,8 +989,8 @@ end:
    free(pending);
 }
 
-static long
-_ethumb_client_queue_add(Ethumb_Client *client, const char *file, const char *key, const char *thumb, const char *thumb_key, generated_callback_t generated_cb, void *data, void (*free_data)(void *))
+static int
+_ethumb_client_queue_add(Ethumb_Client *client, const char *file, const char *key, const char *thumb, const char *thumb_key, Ethumb_Client_Generate_Cb generated_cb, const void *data, Eina_Free_Cb free_data)
 {
    DBusMessage *msg;
    DBusMessageIter iter;
@@ -889,7 +1003,7 @@ _ethumb_client_queue_add(Ethumb_Client *client, const char *file, const char *ke
    pending->thumb = eina_stringshare_add(thumb);
    pending->thumb_key = eina_stringshare_add(thumb_key);
    pending->generated_cb = generated_cb;
-   pending->data = data;
+   pending->data = (void *)data;
    pending->free_data = free_data;
    pending->client = client;
 
@@ -937,13 +1051,30 @@ _ethumb_client_queue_remove_cb(void *data, DBusMessage *msg, DBusError *error)
    dbus_message_iter_get_basic(&iter, &success);
 
 end:
-   if (pending->remove_cb)
-     pending->remove_cb(success, pending->data);
+   if (pending->cancel_cb)
+     pending->cancel_cb(pending->data, success);
+   if (pending->free_data)
+     pending->free_data(pending->data);
    free(pending);
 }
 
+/**
+ * Ask server to cancel generation of thumbnail.
+ *
+ * @param client client instance. Must @b not be @c NULL and client
+ *        must be connected (after connected_cb is called).
+ * @param id valid id returned by ethumb_client_generate()
+ * @param cancel_cb function to report cancellation results.
+ * @param data context argument to give back to @a cancel_cb. May be
+ *        @c NULL.
+ * @param data context to give back to @a cancel_cb. May be @c
+ *        NULL.
+ * @param free_data used to release @a data resources after @a
+ *        cancel_cb is called or user calls
+ *        ethumb_client_disconnect().
+ */
 EAPI void
-ethumb_client_queue_remove(Ethumb_Client *client, int id, void (*queue_remove_cb)(Eina_Bool success, void *data), void *data)
+ethumb_client_generate_cancel(Ethumb_Client *client, int id, Ethumb_Client_Generate_Cancel_Cb cancel_cb, const void *data, Eina_Free_Cb free_data)
 {
    DBusMessage *msg;
    struct _ethumb_pending_remove *pending;
@@ -951,11 +1082,13 @@ ethumb_client_queue_remove(Ethumb_Client *client, int id, void (*queue_remove_cb
    int found;
    dbus_int32_t id32 = id;
    EINA_SAFETY_ON_NULL_RETURN(client);
+   EINA_SAFETY_ON_FALSE_RETURN(id >= 0);
 
    pending = calloc(1, sizeof(*pending));
    pending->id = id;
-   pending->remove_cb = queue_remove_cb;
-   pending->data = data;
+   pending->cancel_cb = cancel_cb;
+   pending->data = (void *)data;
+   pending->free_data = free_data;
    pending->client = client;
 
    msg = dbus_message_new_method_call(_ethumb_dbus_bus_name,
@@ -1029,8 +1162,16 @@ _ethumb_client_queue_clear_cb(void *data, DBusMessage *msg __UNUSED__, DBusError
    client->pending_clear = NULL;
 }
 
+/**
+ * Ask server to cancel generation of all thumbnails.
+ *
+ * @param client client instance. Must @b not be @c NULL and client
+ *        must be connected (after connected_cb is called).
+ *
+ * @see ethumb_client_generate_cancel()
+ */
 EAPI void
-ethumb_client_queue_clear(Ethumb_Client *client)
+ethumb_client_generate_cancel_all(Ethumb_Client *client)
 {
    DBusMessage *msg;
    void *data;
@@ -1287,6 +1428,23 @@ ethumb_client_document_page_set(Ethumb_Client *client, int page)
    ethumb_document_page_set(client->ethumb, page);
 }
 
+/**
+ * Set source file to be thumbnailed.
+ *
+ * Calling this function has the side effect of resetting values set
+ * with ethumb_client_thumb_path_set() or auto-generated with
+ * ethumb_client_thumb_exists().
+ *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
+ * @param path the filesystem path to use. May be @c NULL.
+ * @param key the extra argument/key inside @a path to read image
+ *        from. This is only used for formats that allow multiple
+ *        resources in one file, like EET or Edje (group name).
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ */
 EAPI Eina_Bool
 ethumb_client_file_set(Ethumb_Client *client, const char *path, const char *key)
 {
@@ -1295,6 +1453,9 @@ ethumb_client_file_set(Ethumb_Client *client, const char *path, const char *key)
    return ethumb_file_set(client->ethumb, path, key);
 }
 
+/**
+ * Get values set with ethumb_client_file_get()
+ */
 EAPI void
 ethumb_client_file_get(Ethumb_Client *client, const char **path, const char **key)
 {
@@ -1305,6 +1466,13 @@ ethumb_client_file_get(Ethumb_Client *client, const char **path, const char **ke
    ethumb_file_get(client->ethumb, path, key);
 }
 
+/**
+ * Reset previously set file to @c NULL.
+ *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
+ */
 EAPI void
 ethumb_client_file_free(Ethumb_Client *client)
 {
@@ -1313,6 +1481,16 @@ ethumb_client_file_free(Ethumb_Client *client)
    ethumb_file_free(client->ethumb);
 }
 
+/**
+ * Set a defined path and key to store the thumbnail.
+ *
+ * If not explicitly given, the thumbnail path will be auto-generated
+ * by ethumb_client_thumb_exists() or server using configured
+ * parameters like size, aspect and category.
+ *
+ * Set these to @c NULL to forget previously given values. After
+ * ethumb_client_file_set() these values will be reset to @c NULL.
+ */
 EAPI void
 ethumb_client_thumb_path_set(Ethumb_Client *client, const char *path, const char *key)
 {
@@ -1321,6 +1499,27 @@ ethumb_client_thumb_path_set(Ethumb_Client *client, const char *path, const char
    ethumb_thumb_path_set(client->ethumb, path, key);
 }
 
+/**
+ * Get the configured thumbnail path.
+ *
+ * This returns the value set with ethumb_client_thumb_path_set() or
+ * auto-generated by ethumb_client_thumb_exists() if it was not set.
+ *
+ * @param path where to return configured path. May be @c NULL.  If
+ *        there was no path configured with
+ *        ethumb_client_thumb_path_set() and
+ *        ethumb_client_thumb_exists() was not called, then it will
+ *        probably return @c NULL. If not @c NULL, then it will be a
+ *        pointer to a stringshared instance, but @b no references are
+ *        added (do it with eina_stringshare_ref())!
+ * @param key where to return configured key. May be @c NULL.  If
+ *        there was no key configured with
+ *        ethumb_client_thumb_key_set() and
+ *        ethumb_client_thumb_exists() was not called, then it will
+ *        probably return @c NULL. If not @c NULL, then it will be a
+ *        pointer to a stringshared instance, but @b no references are
+ *        added (do it with eina_stringshare_ref())!
+ */
 EAPI void
 ethumb_client_thumb_path_get(Ethumb_Client *client, const char **path, const char **key)
 {
@@ -1331,6 +1530,20 @@ ethumb_client_thumb_path_get(Ethumb_Client *client, const char **path, const cha
    ethumb_thumb_path_get(client->ethumb, path, key);
 }
 
+/**
+ * Checks whenever file already exists (locally!)
+ *
+ * This will check locally (not calling server) if thumbnail already
+ * exists or not, also calculating the thumbnail path. See
+ * ethumb_client_thumb_path_get(). Path must be configured with
+ * ethumb_client_file_set() before using it and the last set file will
+ * be used!
+ *
+ * @param client client instance. Must @b not be @c NULL and client
+ *        must be configured with ethumb_client_file_set().
+ *
+ * @return #EINA_TRUE if it exists, #EINA_FALSE otherwise.
+ */
 EAPI Eina_Bool
 ethumb_client_thumb_exists(Ethumb_Client *client)
 {
@@ -1339,12 +1552,47 @@ ethumb_client_thumb_exists(Ethumb_Client *client)
    return ethumb_exists(client->ethumb);
 }
 
-EAPI long
-ethumb_client_generate(Ethumb_Client *client, generated_callback_t generated_cb, void *data, void (*free_data)(void *))
+/**
+ * Ask server to generate thumbnail.
+ *
+ * This process is asynchronous and will report back from main loop
+ * using @a generated_cb. One can cancel this request by calling
+ * ethumb_client_generate_cancel() or
+ * ethumb_client_generate_cancel_all(), but not that request might be
+ * processed by server already and no generated files will be removed
+ * if that is the case.
+ *
+ * This will not check if file already exists, this should be done by
+ * explicitly calling ethumb_client_thumb_exists(). That is, this
+ * function will override any existing thumbnail.
+ *
+ * @param client client instance. Must @b not be @c NULL and client
+ *        must be connected (after connected_cb is called).
+ * @param generated_cb function to report generation results.
+ * @param data context argument to give back to @a generated_cb. May
+ *        be @c NULL.
+ * @param data context to give back to @a generate_cb. May be @c
+ *        NULL.
+ * @param free_data used to release @a data resources after @a
+ *        generated_cb is called or user calls
+ *        ethumb_client_disconnect().
+ *
+ * @return identifier or -1 on error. If -1 is returned (error) then
+ *         @a free_data is @b not called!
+ *
+ * @see ethumb_client_connect()
+ * @see ethumb_client_file_set()
+ * @see ethumb_client_thumb_exists()
+ * @see ethumb_client_generate_cancel()
+ * @see ethumb_client_generate_cancel_all()
+ */
+EAPI int
+ethumb_client_generate(Ethumb_Client *client, Ethumb_Client_Generate_Cb generated_cb, const void *data, Eina_Free_Cb free_data)
 {
    const char *file, *key, *thumb, *thumb_key;
-   long id;
+   int id;
    EINA_SAFETY_ON_NULL_RETURN_VAL(client, -1);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(client->connected, -1);
 
    ethumb_file_get(client->ethumb, &file, &key);
    if (!file)

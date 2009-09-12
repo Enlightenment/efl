@@ -33,10 +33,10 @@
 
 #include "ethumbd_private.h"
 
-#define DBG(...) EINA_ERROR_PDBG(__VA_ARGS__)
-#define INF(...) EINA_ERROR_PINFO(__VA_ARGS__)
-#define WRN(...) EINA_ERROR_PWARN(__VA_ARGS__)
-#define ERR(...) EINA_ERROR_PERR(__VA_ARGS__)
+#define DBG(...) EINA_LOG_DBG(__VA_ARGS__)
+#define INF(...) EINA_LOG_INFO(__VA_ARGS__)
+#define WRN(...) EINA_LOG_WARN(__VA_ARGS__)
+#define ERR(...) EINA_LOG_ERR(__VA_ARGS__)
 
 #define NETHUMBS 100
 
@@ -228,7 +228,7 @@ _ec_op_del(struct _Ethumbd_Child *ec)
 }
 
 static void
-_ec_op_generated_cb(Ethumb *e, Eina_Bool success, void *data)
+_ec_op_generated_cb(void *data, Ethumb *e, Eina_Bool success)
 {
    struct _Ethumbd_Child *ec = data;
    const char *thumb_path, *thumb_key;
@@ -267,8 +267,7 @@ _ec_op_generate(struct _Ethumbd_Child *ec)
 
    ethumb_file_set(ec->ethumbt[index], path, key);
    ethumb_thumb_path_set(ec->ethumbt[index], thumb_path, thumb_key);
-   ethumb_generate(ec->ethumbt[index], _ec_op_generated_cb,
-		   ec, NULL);
+   ethumb_generate(ec->ethumbt[index], _ec_op_generated_cb, ec, NULL);
 
    free(path);
    free(key);

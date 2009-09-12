@@ -33,21 +33,15 @@
 #include <Ecore.h>
 
 static void
-_on_server_die_cb(Ethumb_Client *client, void *data)
+_on_server_die_cb(void *data __UNUSED__, Ethumb_Client *client __UNUSED__)
 {
    ecore_main_loop_quit();
 }
 
 static void
-_queue_add_cb(long id, const char *file, const char *key, const char *thumb_path, const char *thumb_key, Eina_Bool success, void *data)
+_queue_add_cb(void *data __UNUSED__, Ethumb_Client *client __UNUSED__, int id, const char *file, const char *key __UNUSED__, const char *thumb_path, const char *thumb_key __UNUSED__, Eina_Bool success)
 {
-   fprintf(stderr, ">>> file ready: %s; thumb ready: %s; id = %ld\n", file, thumb_path, id);
-}
-
-static void
-_disconnect(Ethumb_Client *client)
-{
-   ethumb_client_disconnect(client);
+   fprintf(stderr, ">>> %hhu file ready: %s; thumb ready: %s; id = %d\n", success, file, thumb_path, id);
 }
 
 static void
@@ -84,7 +78,7 @@ _request_thumbnails(Ethumb_Client *client, void *data)
 }
 
 static void
-_connect_cb(Ethumb_Client *client, Eina_Bool success, void *data)
+_connect_cb(void *data, Ethumb_Client *client, Eina_Bool success)
 {
    fprintf(stderr, "connected: %d\n", success);
    if (!success)
@@ -116,12 +110,12 @@ main(int argc, char *argv[])
 	ethumb_client_shutdown();
 	return -1;
      }
-   ethumb_client_on_server_die_callback_set(client, _on_server_die_cb, NULL);
+   ethumb_client_on_server_die_callback_set(client, _on_server_die_cb, NULL, NULL);
 
    fprintf(stderr, "*** debug\n");
    ecore_main_loop_begin();
 
-   _disconnect(client);
+   ethumb_client_disconnect(client);
 
    ethumb_client_shutdown();
 

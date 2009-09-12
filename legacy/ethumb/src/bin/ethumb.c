@@ -133,7 +133,7 @@ _thumb_report(const char *mode, Ethumb *e)
 }
 
 static void
-_finished_thumb(Ethumb *e, Eina_Bool success, void *data __UNUSED__)
+_finished_thumb( void *data __UNUSED__, Ethumb *e, Eina_Bool success)
 {
    const char *mode = success ? "GENERATED" : "FAILED";
    _thumb_report(mode, e);

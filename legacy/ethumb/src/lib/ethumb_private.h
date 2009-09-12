@@ -40,9 +40,9 @@ struct _Ethumb
    Evas *e, *sub_e;
    Evas_Object *o, *img;
    Ecore_Idler *finished_idler;
-   ethumb_generate_callback_t finished_cb;
+   Ethumb_Generate_Cb finished_cb;
    void *cb_data;
-   void (*cb_data_free)(void *);
+   Eina_Free_Cb cb_data_free;
    int cb_result;
 };
 

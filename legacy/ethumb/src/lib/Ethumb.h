@@ -68,7 +68,7 @@ typedef enum _Ethumb_Thumb_Aspect Ethumb_Thumb_Aspect;
 
 typedef struct _Ethumb_Frame Ethumb_Frame;
 typedef struct _Ethumb Ethumb;
-typedef void (*ethumb_generate_callback_t)(Ethumb *e, Eina_Bool success, void *data);
+typedef void (*Ethumb_Generate_Cb)(void *data, Ethumb *e, Eina_Bool success);
 
 EAPI int ethumb_init(void);
 EAPI int ethumb_shutdown(void);
@@ -126,7 +126,7 @@ EAPI void ethumb_file_get(const Ethumb *e, const char **path, const char **key) 
 EAPI void ethumb_file_free(Ethumb *e) EINA_ARG_NONNULL(1);
 EAPI void ethumb_thumb_path_set(Ethumb *e, const char *path, const char *key) EINA_ARG_NONNULL(1);
 EAPI void ethumb_thumb_path_get(Ethumb *e, const char **path, const char **key) EINA_ARG_NONNULL(1);
-EAPI Eina_Bool ethumb_generate(Ethumb *e, ethumb_generate_callback_t finished_cb, void *data, void (*free_data)(void *)) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool ethumb_generate(Ethumb *e, Ethumb_Generate_Cb finished_cb, const void *data, Eina_Free_Cb free_data) EINA_ARG_NONNULL(1, 2);
 EAPI Eina_Bool ethumb_exists(Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 #ifdef __cplusplus

@@ -42,10 +42,10 @@
 
 #define MAX_ID 2000000
 
-#define DBG(...) EINA_ERROR_PDBG(__VA_ARGS__)
-#define INF(...) EINA_ERROR_PINFO(__VA_ARGS__)
-#define WRN(...) EINA_ERROR_PWARN(__VA_ARGS__)
-#define ERR(...) EINA_ERROR_PERR(__VA_ARGS__)
+#define DBG(...) EINA_LOG_DBG(__VA_ARGS__)
+#define INF(...) EINA_LOG_INFO(__VA_ARGS__)
+#define WRN(...) EINA_LOG_WARN(__VA_ARGS__)
+#define ERR(...) EINA_LOG_ERR(__VA_ARGS__)
 
 static const char _ethumb_dbus_bus_name[] = "org.enlightenment.Ethumb";
 static const char _ethumb_dbus_interface[] = "org.enlightenment.Ethumb";
