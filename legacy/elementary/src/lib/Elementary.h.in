@@ -857,7 +857,7 @@ extern "C" {
 // * table doesnt do homogenous properly
 //
 //// (incomplete - medium priority)
-// * need to add support for disabled in all widgets. Button, toolbar, hoversel, radio, check, spinner and entry are currently done.
+// * need to add support for disabled in all widgets. Button, toolbar, hoversel, radio, check, toggle, spinner and entry are currently done.
 // * on the fly theme changes - test (should work)
 // * hoversel only vertical right now - make horizontal
 // * when entries are in a scroller and change size, the scroller shows scrollbars. fix. same for selecting. for 1 line entries in a scroller should only have scroll arrow indicators.

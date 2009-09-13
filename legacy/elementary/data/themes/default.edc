@@ -1310,6 +1310,7 @@ collections {
 	 image: "bt_bases.png" COMP;
 	 image: "bt_hilightw.png" COMP;
 	 image: "tog_base.png" COMP;
+	 image: "tog_dis_base.png" COMP;
       }
       parts {
          part { name: "bg";
@@ -1407,6 +1408,10 @@ collections {
 	       rel2.to: "offrect";
 	       image.normal: "tog_base.png";
 	    }
+	    description { state: "disabled" 0.0;
+	       inherit: "default" 0.0;
+	       image.normal: "tog_dis_base.png";
+	    }
 	 }
          part { name: "elm.offtext";
 	    type: TEXT;
@@ -1425,6 +1430,10 @@ collections {
 		  align:    0.5 0.5;
 		  text:     "OFF";
 	       }
+	    }
+	    description { state: "disabled" 0.0;
+	       inherit: "default" 0.0;
+	       color: 128 128 128 128;
 	    }
 	 }
          part { name: "elm.ontext";
@@ -1448,6 +1457,11 @@ collections {
 		  align:    0.5 0.5;
 		  text:     "ON";
 	       }
+	    }
+	    description { state: "disabled" 0.0;
+	       inherit: "default" 0.0;
+	       color: 128 128 128 128;
+	       color3: 0 0 0 24;
 	    }
 	 }
 	 part { name: "conf_over";
@@ -1527,6 +1541,17 @@ collections {
 	       aspect_preference: VERTICAL;
 	       rel2.offset: 4 -5;
 	    }
+	    description { state: "disabled" 0.0;
+	       inherit: "default" 0.0;
+	       color: 128 128 128 128;
+	    }
+	    description { state: "disabled_visible" 0.0;
+	       inherit: "default" 0.0;
+	       color: 128 128 128 128;
+               fixed: 1 1;
+	       visible: 1;
+	       aspect: 1.0 1.0;
+	    }
 	 }
          part { name: "elm.text";
 	    type: TEXT;
@@ -1552,6 +1577,26 @@ collections {
 	       inherit: "default" 0.0;
 	       visible: 1;
 	       text.min: 1 1;
+	    }
+	    description { state: "disabled" 0.0;
+	       inherit: "default" 0.0;
+	       color: 128 128 128 128;
+	    }
+	    description { state: "disabled_visible" 0.0;
+	       inherit: "default" 0.0;
+	       color: 128 128 128 128;
+	       visible: 1;
+	    }
+	 }
+ 	 part { name: "disabler";
+	    type: RECT;
+	    description { state: "default" 0.0;
+	       color: 0 0 0 0;
+	       visible: 0;
+	    }
+	    description { state: "disabled" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
 	    }
 	 }
       }
@@ -1612,6 +1657,57 @@ collections {
 	    action:  STATE_SET "default" 0.0;
 	    target: "elm.swallow.content";
 	 }
+	 program { name: "disable";
+	    signal: "elm,state,disabled";
+	    source: "elm";
+	    action: STATE_SET "disabled" 0.0;
+	    target: "togbase";
+	    target: "elm.offtext";
+	    target: "elm.ontext";
+	    target: "disabler";
+            after: "disable_text";
+	 }
+         program { name: "disable_text";
+	    script {
+	       new st[31];
+	       new Float:vl;
+	       get_state(PART:"elm.text", st, 30, vl);
+	       if (!strcmp(st, "visible"))
+		 set_state(PART:"elm.text", "disabled_visible", 0.0);
+	       else
+		 set_state(PART:"elm.text", "disabled", 0.0);
+
+               get_state(PART:"elm.swallow.content", st, 30, vl);
+	       if (!strcmp(st, "visible"))
+		 set_state(PART:"elm.swallow.content", "disabled_visible", 0.0);
+	       else
+		 set_state(PART:"elm.swallow.content", "disabled", 0.0);
+	    }
+         }
+	 program { name: "enable";
+	    signal: "elm,state,enabled";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
+	    target: "disabler";
+            after: "enable_text";
+	 }
+         program { name: "enable_text";
+	    script {
+	       new st[31];
+	       new Float:vl;
+	       get_state(PART:"elm.text", st, 30, vl);
+	       if (!strcmp(st, "disabled_visible"))
+		 set_state(PART:"elm.text", "visible", 0.0);
+	       else
+		 set_state(PART:"elm.text", "default", 0.0);
+
+               get_state(PART:"elm.swallow.content", st, 30, vl);
+	       if (!strcmp(st, "visible"))
+		 set_state(PART:"elm.swallow.content", "visible", 0.0);
+	       else
+		 set_state(PART:"elm.swallow.content", "default", 0.0);
+	    }
+         }
       }
    }
 
@@ -11213,7 +11309,9 @@ collections {
 	    description { state: "disabled_visible" 0.0;
 	       inherit: "default" 0.0;
 	       color: 128 128 128 128;
+               fixed: 1 1;
 	       visible: 1;
+	       aspect: 1.0 1.0;
 	    }
 	 }
          part { name: "elm.text";

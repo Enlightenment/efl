@@ -46,6 +46,18 @@ test_toggle(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(tg);
    evas_object_show(ic);
 
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   tg = elm_toggle_add(win);
+   elm_toggle_label_set(tg, "Icon no scale");
+   elm_toggle_icon_set(tg, ic);
+   elm_object_disabled_set(tg, 1);
+   elm_box_pack_end(bx, tg);
+   evas_object_show(tg);
+   evas_object_show(ic);
+
    tg = elm_toggle_add(win);
    elm_toggle_label_set(tg, "Label Only");
    elm_toggle_states_labels_set(tg, "Big long fun times label", "Small long happy fun label");
