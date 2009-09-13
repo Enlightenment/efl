@@ -287,8 +287,8 @@ struct _Evas
    Eina_Array     delete_objects;
    Eina_Array     active_objects;
    Eina_Array     restack_objects;
-   Eina_Array	  render_objects;
-   Eina_Array	  pending_objects;
+   Eina_Array     render_objects;
+   Eina_Array     pending_objects;
    Eina_Array     obscuring_objects;
    Eina_Array     temporary_objects;
    Eina_Array     calculate_objects;
