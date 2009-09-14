@@ -49,6 +49,12 @@ EFL_CHECK_CPU_ALTIVEC([have_altivec="yes"], [have_altivec="no"])
 
 EFL_CHECK_PTHREAD([have_pthread="yes"], [have_pthread="no"])
 
+if test "x${have_pthread}" = "xyes"; then
+   AC_CHECK_LIB(pthread, pthread_spin_init,
+   		[
+		  AC_DEFINE(EINA_PTHREAD_SPIN, 1, [Build eina_log lock using pthread_spin])
+		])
+fi
 
 ### Additional options to configure
 

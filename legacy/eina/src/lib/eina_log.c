@@ -337,6 +337,20 @@ static Eina_Bool _abort_on_critical = EINA_FALSE;
 #include <pthread.h>
 static Eina_Bool _threads_enabled = EINA_FALSE;
 static pthread_t _main_thread;
+
+#define IS_MAIN(t)  pthread_equal(t, _main_thread)
+#define IS_OTHER(t) EINA_UNLIKELY(!IS_MAIN(t))
+#define CHECK_MAIN(...)							\
+  do {									\
+     if (!IS_MAIN(pthread_self())) {					\
+	fprintf(stderr,							\
+		"ERR: not main thread! current=%lu, main=%lu\n",	\
+		pthread_self(), _main_thread);				\
+	return __VA_ARGS__;						\
+     }									\
+  } while (0)
+
+#ifdef EINA_PTHREAD_SPIN
 static pthread_spinlock_t _log_lock;
 #define LOCK()								\
   do {									\
@@ -355,23 +369,23 @@ static pthread_spinlock_t _log_lock;
 	       "---LOG UNLOCKED! [%s, %lu]\n",				\
 	       __FUNCTION__, pthread_self());				\
   } while (0)
-#define IS_MAIN(t)  pthread_equal(t, _main_thread)
-#define IS_OTHER(t) EINA_UNLIKELY(!IS_MAIN(t))
-#define CHECK_MAIN(...)							\
-  do {									\
-     if (!IS_MAIN(pthread_self())) {					\
-	fprintf(stderr,							\
-		"ERR: not main thread! current=%lu, main=%lu\n",	\
-		pthread_self(), _main_thread);				\
-	return __VA_ARGS__;						\
-     }									\
-  } while (0)
+#define INIT() pthread_spin_init(&_log_lock, PTHREAD_PROCESS_PRIVATE);
+#define SHUTDOWN() pthread_spin_destroy(&_log_lock);
+#else
+static pthread_mutex_t _log_mutex = PTHREAD_MUTEX_INITIALIZER;
+#define LOCK() pthread_mutex_lock(&_log_mutex);
+#define UNLOCK() pthread_mutex_unlock(&_log_mutex);
+#define INIT() do {} while (0)
+#define SHUTDOWN() do {} while (0)
+#endif
 #else
 #define LOCK() do {} while (0)
 #define UNLOCK() do {} while (0)
 #define IS_MAIN(t)  (1)
 #define IS_OTHER(t) (0)
 #define CHECK_MAIN(...) do {} while (0)
+#define INIT() do {} while (0)
+#define SHUTDOWN() do {} while (0)
 #endif
 
 
@@ -892,7 +906,7 @@ eina_log_init(void)
 
 #ifdef EFL_HAVE_PTHREAD
    _main_thread = pthread_self();
-   pthread_spin_init(&_log_lock, PTHREAD_PROCESS_PRIVATE);
+   INIT();
 #endif
 
    // Check if color is disabled
@@ -972,7 +986,7 @@ eina_log_shutdown(void)
      }
 
 #ifdef EFL_HAVE_PTHREAD
-   pthread_spin_destroy(&_log_lock);
+   SHUTDOWN();
    _threads_enabled = 0;
 #endif
 
