@@ -1,5 +1,5 @@
 #include <Elementary.h>
-
+#ifndef ELM_LIB_QUICKLAUNCH
 static Elm_Genlist_Item_Class it_desk;
 
 static char *
@@ -110,3 +110,4 @@ test_icon_desktops(void *data, Evas_Object *obj, void *event_info)
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
+#endif

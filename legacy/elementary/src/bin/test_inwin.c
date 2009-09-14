@@ -1,5 +1,5 @@
 #include <Elementary.h>
-
+#ifndef ELM_LIB_QUICKLAUNCH
 void
 test_inwin(void *data, Evas_Object *obj, void *event_info)
 {
@@ -67,3 +67,4 @@ test_inwin2(void *data, Evas_Object *obj, void *event_info)
    evas_object_resize(win, 320, 240);
    evas_object_show(win);
 }
+#endif

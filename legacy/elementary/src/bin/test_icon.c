@@ -1,5 +1,5 @@
 #include <Elementary.h>
-
+#ifndef ELM_LIB_QUICKLAUNCH
 void
 test_icon(void *data, Evas_Object *obj, void *event_info)
 {
@@ -20,3 +20,4 @@ test_icon(void *data, Evas_Object *obj, void *event_info)
 
    evas_object_show(win);
 }
+#endif

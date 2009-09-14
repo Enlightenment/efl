@@ -1,6 +1,5 @@
 #include <Elementary.h>
-
-
+#ifndef ELM_LIB_QUICKLAUNCH
 typedef struct _Testitem
 {
    Elm_Genlist_Item *item;
@@ -1049,3 +1048,4 @@ test_genlist6(void *data, Evas_Object *obj, void *event_info)
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
 }
+#endif

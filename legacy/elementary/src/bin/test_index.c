@@ -1,5 +1,5 @@
 #include <Elementary.h>
-
+#ifndef ELM_LIB_QUICKLAUNCH
 static Elm_Genlist_Item_Class itci;
 char *gli_label_get(const void *data, Evas_Object *obj, const char *part)
 {
@@ -90,3 +90,4 @@ test_index(void *data, Evas_Object *obj, void *event_info)
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
+#endif

@@ -1,5 +1,5 @@
 #include <Elementary.h>
-
+#ifndef ELM_LIB_QUICKLAUNCH
 static void
 my_hover_bt(void *data, Evas_Object *obj, void *event_info)
 {
@@ -168,3 +168,4 @@ test_hover2(void *data, Evas_Object *obj, void *event_info)
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
 }
+#endif
