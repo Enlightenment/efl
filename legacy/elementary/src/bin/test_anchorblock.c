@@ -1,5 +1,5 @@
 #include <Elementary.h>
-
+#ifndef ELM_LIB_QUICKLAUNCH
 static void
 my_anchorblock_bt(void *data, Evas_Object *obj, void *event_info)
 {
@@ -224,3 +224,4 @@ test_anchorblock(void *data, Evas_Object *obj, void *event_info)
    elm_object_focus(win);
    evas_object_show(win);
 }
+#endif
