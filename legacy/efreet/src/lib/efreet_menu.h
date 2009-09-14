@@ -15,18 +15,13 @@
 /**
  * The type of entry
  */
-enum Efreet_Menu_Entry_Type
+typedef enum Efreet_Menu_Entry_Type
 {
     EFREET_MENU_ENTRY_MENU,
     EFREET_MENU_ENTRY_DESKTOP,
     EFREET_MENU_ENTRY_SEPARATOR,
     EFREET_MENU_ENTRY_HEADER
-};
-
-/**
- * Efreet_Menu_Entry_Type
- */
-typedef enum Efreet_Menu_Entry_Type Efreet_Menu_Entry_Type;
+} Efreet_Menu_Entry_Type;
 
 /**
  * Efreet_Menu

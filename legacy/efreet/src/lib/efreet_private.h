@@ -75,19 +75,13 @@
  * @internal
  * The different types of commands in an Exec entry
  */
-enum Efreet_Desktop_Command_Flag
+typedef enum Efreet_Desktop_Command_Flag
 {
     EFREET_DESKTOP_EXEC_FLAG_FULLPATH = 0x0001,
     EFREET_DESKTOP_EXEC_FLAG_URI      = 0x0002,
     EFREET_DESKTOP_EXEC_FLAG_DIR      = 0x0004,
     EFREET_DESKTOP_EXEC_FLAG_FILE     = 0x0008
-};
-
-/**
- * @internal
- * Efreet_Desktop_Command_Flag
- */
-typedef enum Efreet_Desktop_Command_Flag Efreet_Desktop_Command_Flag;
+} Efreet_Desktop_Command_Flag;
 
 /**
  * @internal

@@ -2,14 +2,12 @@
 #ifndef EFREET_UTILS_H
 #define EFREET_UTILS_H
 
-typedef enum _Efreet_Desktop_Change Efreet_Desktop_Change;
-
-enum _Efreet_Desktop_Change
+typedef enum _Efreet_Desktop_Change
 {
     EFREET_DESKTOP_CHANGE_ADD,
     EFREET_DESKTOP_CHANGE_REMOVE,
     EFREET_DESKTOP_CHANGE_UPDATE
-};
+} Efreet_Desktop_Change;
 
 typedef struct _Efreet_Event_Desktop_Change Efreet_Event_Desktop_Change;
 

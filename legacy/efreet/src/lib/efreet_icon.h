@@ -15,35 +15,25 @@
 /**
  * The possible contexts for an icon directory
  */
-enum Efreet_Icon_Theme_Context
+typedef enum Efreet_Icon_Theme_Context
 {
     EFREET_ICON_THEME_CONTEXT_NONE,
     EFREET_ICON_THEME_CONTEXT_ACTIONS,
     EFREET_ICON_THEME_CONTEXT_DEVICES,
     EFREET_ICON_THEME_CONTEXT_FILESYSTEMS,
     EFREET_ICON_THEME_CONTEXT_MIMETYPES
-};
-
-/**
- * Efreet_icon_Theme_Context
- */
-typedef enum Efreet_Icon_Theme_Context Efreet_Icon_Theme_Context;
+} Efreet_Icon_Theme_Context;
 
 /**
  * The possible size types for an icon directory
  */
-enum Efreet_Icon_Size_Type
+typedef enum Efreet_Icon_Size_Type
 {
     EFREET_ICON_SIZE_TYPE_NONE,
     EFREET_ICON_SIZE_TYPE_FIXED,
     EFREET_ICON_SIZE_TYPE_SCALABLE,
     EFREET_ICON_SIZE_TYPE_THRESHOLD
-};
-
-/**
- * Efreet_Icon_Size_Type
- */
-typedef enum Efreet_Icon_Size_Type Efreet_Icon_Size_Type;
+} Efreet_Icon_Size_Type;
 
 /**
  * Efreet_Icon_Theme
