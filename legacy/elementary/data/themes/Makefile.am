@@ -62,6 +62,7 @@ sb_runnerh.png \
 sb_runnerv.png \
 shelf_inset.png \
 tog_base.png \
+tog_dis_base.png \
 shad_circ.png \
 bt_dis_base.png \
 bt_dis_hilight.png \
