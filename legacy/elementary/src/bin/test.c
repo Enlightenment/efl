@@ -1,7 +1,6 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
-
 /* all tests prototypes */
 void test_bg_plain(void *data, Evas_Object *obj, void *event_info);
 void test_bg_image(void *data, Evas_Object *obj, void *event_info);

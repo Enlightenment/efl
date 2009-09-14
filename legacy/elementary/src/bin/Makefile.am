@@ -83,11 +83,11 @@ endif
 # quicklaunch apps.
 elementary_testqldir = $(libdir)
 elementary_testql_LTLIBRARIES = elementary_testql.la
-elementary_testql_la_SOURCES = test.c
+elementary_testql_la_SOURCES = $(elementary_test_SOURCES)
 elementary_testql_la_LIBADD = $(top_builddir)/src/lib/libelementary.la
 elementary_testql_la_CFLAGS = 
 elementary_testql_la_LDFLAGS = -module -avoid-version -no-undefined
-elementary_testql_SOURCES = test.c
+elementary_testql_SOURCES = $(elementary_test_SOURCES)
 elementary_testql_LDADD = $(top_builddir)/src/lib/libelementary.la
 elementary_testql_CFLAGS = -DELM_LIB_QUICKLAUNCH=1
 elementary_testql_LDFLAGS =
