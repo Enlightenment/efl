@@ -856,9 +856,10 @@ _item_block_recalc(Item_Block *itb, int in)
 	  }
 	else
           {
-             if (!it->realized)
-               evas_object_smart_callback_call(it->wd->obj, "realized", it);
+             Eina_Bool was_realized = it->realized;
              _item_realize(it, in, 0);
+             if (!was_realized)
+               evas_object_smart_callback_call(it->wd->obj, "realized", it);
           }
 	minh += it->minh;
 	if (minw < it->minw) minw = it->minw;
@@ -886,9 +887,10 @@ _item_block_realize(Item_Block *itb, int in, int full)
 	if (it->delete_me) continue;
 	if (full)
           {
-             if (!it->realized)
-               evas_object_smart_callback_call(it->wd->obj, "realized", it);
+             Eina_Bool was_realized = it->realized;
              _item_realize(it, in, 0);
+             if (!was_realized)
+               evas_object_smart_callback_call(it->wd->obj, "realized", it);
           }
 	in++;
      }
@@ -932,9 +934,10 @@ _item_block_position(Item_Block *itb, int in)
 	  {
 	     if (vis)
                {
-                  if (!it->realized)
-                    evas_object_smart_callback_call(it->wd->obj, "realized", it);
+                  Eina_Bool was_realized = it->realized;
                   _item_realize(it, in, 0);
+                  if (!was_realized)
+                    evas_object_smart_callback_call(it->wd->obj, "realized", it);
                }
 	  }
 	if (it->realized)
@@ -2334,10 +2337,11 @@ elm_genlist_item_update(Elm_Genlist_Item *it)
      }
    if (it->realized)
      {
+        Eina_Bool was_realized = it->realized;
 	_item_unrealize(it);
-        if (!it->realized)
+        _item_realize(it, num, 0);
+        if (!was_realized)
           evas_object_smart_callback_call(it->wd->obj, "realized", it);
-	_item_realize(it, num, 0);
 	_item_block_recalc(it->block, numb);
 	_item_block_position(it->block, num);
      }
