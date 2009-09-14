@@ -324,12 +324,6 @@ extern "C" {
 	  ELM_SCROLLER_POLICY_OFF
      }
    Elm_Scroller_Policy;
-   typedef enum _Elm_Scroller_Axis
-     {
-	ELM_SCROLLER_AXIS_HORIZONTAL,
-	  ELM_SCROLLER_AXIS_VERTICAL
-     }
-   Elm_Scroller_Axis;
 
    EAPI Evas_Object *elm_scroller_add(Evas_Object *parent);
    EAPI void         elm_scroller_content_set(Evas_Object *obj, Evas_Object *child);
@@ -339,9 +333,6 @@ extern "C" {
    EAPI void         elm_scroller_region_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
    EAPI void         elm_scroller_child_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
    EAPI void         elm_scroller_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
-   EAPI void         elm_scroller_index_set(Evas_Object *obj, Eina_Bool h_index, Eina_Bool v_index);
-   EAPI void         elm_scroller_index_clear(Evas_Object *obj, Eina_Bool h_index, Eina_Bool v_index);
-   EAPI void         elm_scroller_index_add(Evas_Object *obj, Elm_Scroller_Axis axis, const char *label, Evas_Object *icon, Evas_Coord position, Evas_Coord size, int level);
    EAPI void         elm_scroller_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel);
    EAPI void         elm_scroller_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize);
    EAPI void         elm_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
