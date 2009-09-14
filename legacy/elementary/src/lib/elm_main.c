@@ -796,6 +796,7 @@ elm_quicklaunch_prepare(int argc, char **argv)
    qr_handle = dlopen(exe, RTLD_NOW | RTLD_GLOBAL);
    if (!qr_handle)
      {
+        fprintf(stderr, "dlerr: %s\n", dlerror());
 	WRN("dlopen('%s') failed: %s", exe, dlerror());
 	free(exe);
 	return EINA_FALSE;
