@@ -1,5 +1,5 @@
 #include <Elementary.h>
-
+#ifndef ELM_LIB_QUICKLAUNCH
 typedef struct Progressbar
 {
    Evas_Object *pb1;
@@ -185,3 +185,4 @@ test_progressbar(void *data, Evas_Object *obj, void *event_info)
 
    evas_object_show(win);
 }
+#endif

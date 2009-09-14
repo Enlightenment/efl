@@ -1,5 +1,5 @@
 #include <Elementary.h>
-
+#ifndef ELM_LIB_QUICKLAUNCH
 static void
 my_notepad_bt_1(void *data, Evas_Object *obj, void *event_info)
 {
@@ -95,3 +95,4 @@ test_notepad(void *data, Evas_Object *obj, void *event_info)
    elm_object_focus(win);
    evas_object_show(win);
 }
+#endif

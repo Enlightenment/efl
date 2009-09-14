@@ -1,5 +1,5 @@
 #include <Elementary.h>
-
+#ifndef ELM_LIB_QUICKLAUNCH
 typedef struct _Pginfo Pginfo;
 
 struct _Pginfo
@@ -143,3 +143,4 @@ test_pager(void *data, Evas_Object *obj, void *event_info)
 
    evas_object_show(win);
 }
+#endif
