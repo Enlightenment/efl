@@ -251,6 +251,7 @@ struct _Widget_Data
    Pan *pan;
    Evas_Coord pan_x, pan_y, minw, minh;
    Ecore_Job *calc_job;
+   Ecore_Job *update_job;
    Ecore_Idler *queue_idler;
    Eina_List *queue;
    Eina_List *selected;
@@ -274,6 +275,7 @@ struct _Item_Block
    Evas_Coord x, y, w, h, minw, minh;
    Eina_Bool realized : 1;
    Eina_Bool changed : 1;
+   Eina_Bool updateme : 1;
 };
 
 struct _Elm_Genlist_Item
@@ -314,6 +316,7 @@ struct _Elm_Genlist_Item
    Eina_Bool delete_me : 1;
    Eina_Bool down : 1;
    Eina_Bool dragging : 1;
+   Eina_Bool updateme : 1;
 };
 
 struct _Pan
@@ -342,6 +345,7 @@ _del_hook(Evas_Object *obj)
    evas_object_del(wd->pan_smart);
    wd->pan_smart = NULL;
    if (wd->calc_job) ecore_job_del(wd->calc_job);
+   if (wd->update_job) ecore_job_del(wd->update_job);
    free(wd);
 }
 
@@ -1038,6 +1042,71 @@ _calc_job(void *data)
      }
    wd->calc_job = NULL;
    evas_object_smart_changed(wd->pan_smart);
+}
+
+static void
+_update_job(void *data)
+{
+   Widget_Data *wd = data;
+   Eina_List *l, *l2;
+   Item_Block *itb;
+   int num, num0, position = 0, recalc = 0;
+
+   wd->update_job = NULL;
+   num = 0;
+   EINA_INLIST_FOREACH(wd->blocks, itb)
+     {
+        Evas_Coord pw;
+        Evas_Coord itminw, itminh;
+        Elm_Genlist_Item *it;
+        
+        if (!itb->updateme)
+          {
+             num += itb->count;
+             if (position)
+               _item_block_position(it->block, num);
+             continue;
+          }
+        num0 = num;
+        recalc = 0;
+        EINA_LIST_FOREACH(itb->items, l2, it)
+          {
+             if (it->updateme)
+               {
+                  itminw = it->w;
+                  itminh = it->h;
+                  
+                  it->updateme = 0;
+                  if (it->realized)
+                    {
+                       _item_unrealize(it);
+                       _item_realize(it, num, 0);
+                       evas_object_smart_callback_call(it->wd->obj, "realized", it);
+                    }
+                  else
+                    {
+                       _item_realize(it, num, 1);
+                       _item_unrealize(it);
+                    }
+                  if ((it->minw != itminw) || (it->minh != itminh))
+                    recalc = 1;
+               }
+             num++;
+          }
+        itb->updateme = 0;
+        if (recalc)
+          {
+             position = 1;
+             itb->changed = EINA_TRUE;
+             _item_block_recalc(itb, num0);
+             _item_block_position(itb, num0);
+          }
+     }
+   if (position)
+     {
+	if (wd->calc_job) ecore_job_del(wd->calc_job);
+	wd->calc_job = ecore_job_add(_calc_job, wd);
+     }
 }
 
 static void
@@ -2314,48 +2383,13 @@ elm_genlist_item_object_get(const Elm_Genlist_Item *it)
 EAPI void
 elm_genlist_item_update(Elm_Genlist_Item *it)
 {
-   Evas_Coord minw, minh;
-   Eina_List *l;
-   Elm_Genlist_Item *it2;
-   Item_Block *itb;
-   int num, numb;
    if (!it->block) return;
    if (it->delete_me) return;
-   minw = it->wd->minw;
-   minh = it->minh;
    it->mincalcd = EINA_FALSE;
-   EINA_INLIST_FOREACH(it->wd->blocks, itb)
-     {
-	if (itb == it->block) break;
-	num += itb->count;
-     }
-   numb = num;
-   EINA_LIST_FOREACH(it->block->items, l, it2)
-     {
-	if (it2 == it) break;
-	num++;
-     }
-   if (it->realized)
-     {
-        Eina_Bool was_realized = it->realized;
-	_item_unrealize(it);
-        _item_realize(it, num, 0);
-        if (!was_realized)
-          evas_object_smart_callback_call(it->wd->obj, "realized", it);
-	_item_block_recalc(it->block, numb);
-	_item_block_position(it->block, num);
-     }
-   else
-     {
-	_item_realize(it, num, 1);
-	_item_unrealize(it);
-     }
-   if ((it->minw > minw) || (it->minh != minh))
-     {
-	it->block->changed = EINA_TRUE;
-	if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
-	it->wd->calc_job = ecore_job_add(_calc_job, it->wd);
-     }
+   it->updateme = EINA_TRUE;
+   it->block->updateme = EINA_TRUE;
+   if (it->wd->update_job) ecore_job_del(it->wd->update_job);
+   it->wd->update_job = ecore_job_add(_update_job, it->wd);
 }
 
 /**
