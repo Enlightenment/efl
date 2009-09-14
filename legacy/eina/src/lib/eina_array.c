@@ -522,6 +522,10 @@ EAPI Eina_Bool
 eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data, void *gdata), void *gdata)
 {
    void **tmp;
+   /* WARNING:
+      The algorithm does exit before using unitialized data. So compiler is
+      giving you a false positiv here too.
+    */
    void *data;
    unsigned int total = 0;
    unsigned int limit;

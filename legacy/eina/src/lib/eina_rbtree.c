@@ -257,6 +257,11 @@ eina_rbtree_inline_insert(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_
    Eina_Rbtree head;
    Eina_Rbtree *g, *t;  /* Grandparent & parent */
    Eina_Rbtree *p, *q;  /* Iterator & parent */
+   /* WARNING:
+      Compiler is not able to understand the underlying algorithm and don't know that
+      first top node is always black, so it will never use last before running the loop
+      one time.
+    */
    Eina_Rbtree_Direction dir, last;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(node, root);
