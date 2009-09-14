@@ -314,6 +314,8 @@ efreet_icon_remove_extension(const char *icon)
     Eina_List *l;
     char *tmp = NULL, *ext = NULL;
 
+    if (!icon) return NULL;
+
     tmp = strdup(icon);
     ext = strrchr(tmp, '.');
     if (ext)
