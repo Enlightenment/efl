@@ -1,5 +1,5 @@
 #include <Elementary.h>
-
+#ifndef ELM_LIB_QUICKLAUNCH
 static void
 tb_1(void *data, Evas_Object *obj, void *event_info)
 {
@@ -144,3 +144,4 @@ test_toolbar(void *data, Evas_Object *obj, void *event_info)
 
    evas_object_show(win);
 }
+#endif
