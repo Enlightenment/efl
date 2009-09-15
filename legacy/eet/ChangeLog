@@ -222,3 +222,7 @@
 2009-08-16  Vincent Torri
 
 	* Fix build with suncc (missing alloca() declaration in eet_cipher.c)
+
+2009-09-15  Mathieu Taillefumier
+
+	* Use new Eina_Log infrastructure to report error.
