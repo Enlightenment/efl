@@ -722,6 +722,8 @@ _eina_matrixsparse_iterator_complete_next(Eina_Matrixsparse_Iterator_Complete *i
    else
      {
 	it->dummy.col.data = NULL;
+	it->dummy.col.col = it->idx.col;
+	it->dummy.row.row = it->idx.row;
 	*data = &it->dummy.col;
      }
 

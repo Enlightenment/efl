@@ -1235,7 +1235,8 @@ eina_tile_grid_slicer_iterator_free(Eina_Tile_Grid_Slicer_Iterator *it)
 static Eina_Bool
 eina_tile_grid_slicer_iterator_next(Eina_Tile_Grid_Slicer_Iterator *it, void **data)
 {
-   return eina_tile_grid_slicer_next(&it->priv, data);
+   return eina_tile_grid_slicer_next
+     (&it->priv, (const Eina_Tile_Grid_Info **)data);
 }
 
 /**
