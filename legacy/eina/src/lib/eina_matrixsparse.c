@@ -924,10 +924,14 @@ eina_matrixsparse_new(unsigned long rows, unsigned long cols, void (*free_func)(
 EAPI void
 eina_matrixsparse_free(Eina_Matrixsparse *m)
 {
+   void (*free_func)(void *, void *);
+   void *user_data;
+
    Eina_Matrixsparse_Row *r;
    EINA_MAGIC_CHECK_MATRIXSPARSE(m);
-   void (*free_func)(void *, void *) = m->free.func;
-   void *user_data = m->free.user_data;
+
+   free_func = m->free.func;
+   user_data = m->free.user_data;
 
    r = m->rows;
    while (r)
