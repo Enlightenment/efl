@@ -188,7 +188,6 @@ struct _Eet_Free
 struct _Eet_Free_Context
 {
    Eet_Free freelist;
-   Eet_Free freeleak;
    Eet_Free freelist_list;
    Eet_Free freelist_hash;
    Eet_Free freelist_str;
@@ -1389,29 +1388,6 @@ _eet_freelist_free(Eet_Free_Context *context, Eet_Data_Descriptor *edd)
    _eet_free_reset(&context->freelist);
 }
 
-#define _eet_freeleak_add(Ctx, Data)	_eet_free_add(&Ctx->freeleak, Data);
-#define _eet_freeleak_reset(Ctx)	_eet_free_reset(&Ctx->freeleak);
-#define _eet_freeleak_ref(Ctx)		_eet_free_ref(&Ctx->freeleak);
-#define _eet_freeleak_unref(Ctx)	_eet_free_unref(&Ctx->freeleak);
-
-static void
-_eet_freeleak_free(Eet_Free_Context *context, Eet_Data_Descriptor *edd)
-{
-   int j;
-   int i;
-
-   if (context->freeleak.ref > 0) return;
-   for (j = 0; j < 256; ++j)
-     for (i = 0; i < context->freeleak.num[j]; ++i)
-       {
-	  if (edd)
-	    edd->func.mem_free(context->freeleak.list[j][i]);
-	  else
-	    free(context->freeleak.list[j][i]);
-       }
-   _eet_free_reset(&context->freeleak);
-}
-
 #define _eet_freelist_list_add(Ctx, Data)  _eet_free_add(&Ctx->freelist_list, Data);
 #define _eet_freelist_list_reset(Ctx)      _eet_free_reset(&Ctx->freelist_list);
 #define _eet_freelist_list_ref(Ctx)        _eet_free_ref(&Ctx->freelist_list);
@@ -1506,7 +1482,6 @@ static void
 _eet_freelist_all_ref(Eet_Free_Context *freelist_context)
 {
    _eet_freelist_ref(freelist_context);
-   _eet_freeleak_ref(freelist_context);
    _eet_freelist_str_ref(freelist_context);
    _eet_freelist_list_ref(freelist_context);
    _eet_freelist_hash_ref(freelist_context);
@@ -1517,7 +1492,6 @@ static void
 _eet_freelist_all_unref(Eet_Free_Context *freelist_context)
 {
    _eet_freelist_unref(freelist_context);
-   _eet_freeleak_unref(freelist_context);
    _eet_freelist_str_unref(freelist_context);
    _eet_freelist_list_unref(freelist_context);
    _eet_freelist_hash_unref(freelist_context);
@@ -2358,12 +2332,10 @@ _eet_data_descriptor_decode(Eet_Free_Context *context,
 	_eet_freelist_list_free(context, edd);
 	_eet_freelist_hash_free(context, edd);
 	_eet_freelist_free(context, edd);
-	_eet_freeleak_reset(context);
      }
    else
      {
 	_eet_freelist_reset(context);
-	_eet_freeleak_free(context, edd);
 	_eet_freelist_str_reset(context);
 	_eet_freelist_list_reset(context);
 	_eet_freelist_hash_reset(context);
@@ -2390,7 +2362,6 @@ error:
    _eet_freelist_list_free(context, edd);
    _eet_freelist_hash_free(context, edd);
    _eet_freelist_free(context, edd);
-   _eet_freeleak_reset(context);
    if (dumpfunc)
      {
 	if (dump)
