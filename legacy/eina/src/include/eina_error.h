@@ -95,11 +95,11 @@ EAPI Eina_Error eina_error_msg_static_register(const char *msg) EINA_ARG_NONNULL
 EAPI Eina_Error eina_error_get(void);
 EAPI void eina_error_set(Eina_Error err);
 EAPI const char * eina_error_msg_get(Eina_Error error) EINA_PURE;
-EAPI void eina_error_print(int level, const char *file,
-	        const char *function, int line, const char *fmt, ...) EINA_ARG_NONNULL(2, 3, 5) EINA_PRINTF(5, 6) EINA_DEPRECATED;
-EAPI void eina_error_vprint(int level, const char *file,
-	        const char *fnc, int line, const char *fmt, va_list args) EINA_ARG_NONNULL(2, 3, 5) EINA_DEPRECATED;
-EAPI void eina_error_log_level_set(int level) EINA_DEPRECATED;
+EINA_DEPRECATED EAPI void eina_error_print(int level, const char *file,
+	        const char *function, int line, const char *fmt, ...) EINA_ARG_NONNULL(2, 3, 5) EINA_PRINTF(5, 6);
+EINA_DEPRECATED EAPI void eina_error_vprint(int level, const char *file,
+	        const char *fnc, int line, const char *fmt, va_list args) EINA_ARG_NONNULL(2, 3, 5);
+EINA_DEPRECATED EAPI void eina_error_log_level_set(int level);
 
 /**
  * @}
