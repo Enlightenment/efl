@@ -257,6 +257,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\lib\eina_matrixsparse.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\lib\eina_mempool.c"
 				>
 			</File>
@@ -270,6 +274,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\lib\eina_rectangle.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\eina_safety_checks.c"
 				>
 			</File>
 			<File
@@ -323,7 +331,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\include\eina_f8p24.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\include\eina_f16p16.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\include\eina_f32p32.h"
 				>
 			</File>
 			<File
@@ -364,6 +380,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\include\eina_main.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\include\eina_matrixsparse.h"
 				>
 			</File>
 			<File
