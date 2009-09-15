@@ -142,6 +142,7 @@ struct _Eet_File_Node
    unsigned char         ciphered : 1;
 };
 
+
 #if 0
 /* Version 2 */
 /* NB: all int's are stored in network byte order on disk */
@@ -222,6 +223,9 @@ static int        eet_readers_num     = 0;
 static int        eet_readers_alloc   = 0;
 static Eet_File **eet_readers         = NULL;
 static int        eet_initcount       = 0;
+
+/* log domain variable */
+int _eet_log_dom_global=-1;
 
 /* Check to see its' an eet file pointer */
 static inline int
@@ -315,7 +319,7 @@ eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
 	new_cache = realloc(new_cache, new_cache_alloc * sizeof(Eet_File *));
 	if (!new_cache)
 	  {
-	     fprintf(stderr, "BAD ERROR! Eet realloc of cache list failed. Abort\n");
+	     CRITICAL("BAD ERROR! Eet realloc of cache list failed. Abort\n");
 	     abort();
 	  }
      }
@@ -360,7 +364,7 @@ eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
 	     new_cache = realloc(new_cache, new_cache_alloc * sizeof(Eet_File *));
 	     if (!new_cache)
 	       {
-		  fprintf(stderr, "BAD ERROR! Eet realloc of cache list failed. Abort\n");
+		  CRITICAL("BAD ERROR! Eet realloc of cache list failed. Abort\n");
 		  abort();
 	       }
 	  }
@@ -758,17 +762,27 @@ eet_init(void)
 
    if (!eina_init())
      {
+       fprintf(stderr,"Eet: Eina init failed");
+       goto erro_eet_eina_init;
+     }
+   _eet_log_dom_global = eina_log_domain_register("Eet",EET_DEFAULT_LOG_COLOR);
+   if(_eet_log_dom_global < 0)
+     {
+       fprintf(stderr,"Eet Can not create a general log domain");
+       goto error_eet_eina_log;
+     }
+   return eet_initcount;
+ error_eet_eina_log:
+   eina_shutdown();
+ erro_eet_eina_init:
 #ifdef HAVE_GNUTLS
-	gnutls_global_deinit();
+   gnutls_global_deinit();
 #endif
 #ifdef HAVE_OPENSSL
-	EVP_cleanup();
-	ERR_free_strings();
+   EVP_cleanup();
+   ERR_free_strings();
 #endif
-	return 0;
-     }
-
-   return eet_initcount;
+   return 0;
 }
 
 EAPI int
@@ -779,7 +793,7 @@ eet_shutdown(void)
    if (eet_initcount > 0) return eet_initcount;
 
    eet_clearcache();
-
+   eina_log_domain_unregister(_eet_log_dom_global);
    eina_shutdown();
 #ifdef HAVE_GNUTLS
    gnutls_global_deinit();
@@ -1060,7 +1074,7 @@ eet_internal_read2(Eet_File *ef)
 
 	if (eet_test_close(ef->x509_der == NULL, ef)) return NULL;
 #else
-	fprintf(stderr, "This file could be signed but you didn't compile the necessary code to check the signature.\n");
+	ERROR("This file could be signed but you didn't compile the necessary code to check the signature.\n");
 #endif
      }
 
@@ -1078,7 +1092,7 @@ eet_internal_read1(Eet_File *ef)
    int			 byte_entries;
    int			 i;
 
-   fprintf(stderr, "EET file format of '%s' is deprecated. You should just open it one time with mode == EET_FILE_MODE_READ_WRITE to solve this issue.\n", ef->path);
+   WARN("EET file format of '%s' is deprecated. You should just open it one time with mode == EET_FILE_MODE_READ_WRITE to solve this issue.\n", ef->path);
 
    /* build header table if read mode */
    /* geat header */
@@ -1205,7 +1219,7 @@ eet_internal_read1(Eet_File *ef)
 	     strncpy(efn->name, (char *)p + HEADER_SIZE, name_size);
 	     efn->name[name_size] = 0;
 
-	     printf("File: %s is not up to date for key \"%s\" - needs rebuilding sometime\n", ef->path, efn->name);
+	     WARN("File: %s is not up to date for key \"%s\" - needs rebuilding sometime\n", ef->path, efn->name);
 	  }
 	else
 	  /* The only really usefull peace of code for efn->name (no backward compatibility) */
