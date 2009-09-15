@@ -595,6 +595,9 @@ extern "C" {
    EAPI void              evas_object_image_load_size_get          (const Evas_Object *obj, int *w, int *h) EINA_ARG_NONNULL(1);
    EAPI void              evas_object_image_load_scale_down_set    (Evas_Object *obj, int scale_down) EINA_ARG_NONNULL(1);
    EAPI int               evas_object_image_load_scale_down_get    (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+   EAPI void              evas_object_image_load_region_set        (Evas_Object *obj, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
+   EAPI void              evas_object_image_load_region_get        (const Evas_Object *obj, int *x, int *y, int *w, int *h) EINA_ARG_NONNULL(1);
+                                       
    EAPI void              evas_object_image_colorspace_set         (Evas_Object *obj, Evas_Colorspace cspace) EINA_ARG_NONNULL(1);
    EAPI Evas_Colorspace   evas_object_image_colorspace_get         (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI void                 evas_object_image_native_surface_set  (Evas_Object *obj, Evas_Native_Surface *surf) EINA_ARG_NONNULL(1, 2);

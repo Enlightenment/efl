@@ -134,6 +134,9 @@ typedef struct
       int    scale_down_by;
       double dpi;
       int    w, h;
+      struct {
+         int x, y, w, h;
+      } region;
    } lopt;
 } Op_Load; // +"file""key"
 typedef struct

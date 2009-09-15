@@ -239,6 +239,10 @@ _evas_cache_image_entry_new(Evas_Cache_Image *cache,
    ie->load_opts.dpi = 0;
    ie->load_opts.w = 0;
    ie->load_opts.h = 0;
+   ie->load_opts.region.x = 0;
+   ie->load_opts.region.y = 0;
+   ie->load_opts.region.w = 0;
+   ie->load_opts.region.h = 0;
    ie->scale = 1;
 
 #ifdef BUILD_ASYNC_PRELOAD
@@ -603,7 +607,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
    const char           *format;
    char                 *hkey;
    Image_Entry          *im;
-   Evas_Image_Load_Opts  prevent = { 0, 0, 0, 0 };
+   Evas_Image_Load_Opts  prevent = { 0, 0, 0, 0, 0, 0, 0, 0 };
    int                   size;
    int                   stat_done = 0;
    int                   file_length;
@@ -1255,7 +1259,6 @@ _evas_cache_background_load(void *data)
 
 	pthread_mutex_unlock(&mutex);
 
-        printf("load loop!\n");
 	if (current)
 	  {
 	     Evas_Cache_Image *cache;
@@ -1290,7 +1293,6 @@ _evas_cache_background_load(void *data)
 	     _evas_cache_image_async_call(current);
 	     current = NULL;
 	  }
-        printf("---\n");
 
 	pthread_cond_signal(&cond_done);
      }

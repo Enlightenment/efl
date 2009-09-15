@@ -34,6 +34,9 @@ struct _Lopt
    int    scale_down_by; // if > 1 then use this
    double dpi; // if > 0.0 use this
    int    w, h; // if > 0 use this
+   struct {
+      int x, y, w, h;
+   } region;
 };
 
 struct _Img
@@ -957,7 +960,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              Op_Load *rep;
              Op_Load_Reply msg;
              Img *img;
-             RGBA_Image_Loadopts lopt = {0, 0.0, 0, 0};
+             RGBA_Image_Loadopts lopt = {0, 0.0, 0, 0, 0, 0, 0, 0};
              char *file = NULL, *key = NULL;
              
              D("OP_LOAD %i", c->pid);
@@ -969,11 +972,16 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              lopt.dpi = rep->lopt.dpi;
              lopt.w = rep->lopt.w;
              lopt.h = rep->lopt.h;
+             lopt.region.x = rep->lopt.region.x;
+             lopt.region.y = rep->lopt.region.y;
+             lopt.region.w = rep->lopt.region.w;
+             lopt.region.h = rep->lopt.region.h;
              D("... img_load '%s'", file);
              if (key) D("'%s'", key);
              else D("   '%s'", NULL);
-             D("   lopt { %i %1.1f %i %i}", 
-               lopt.scale_down_by, lopt.dpi, lopt.w, lopt.h);
+             D("   lopt { %i %1.1f %i %i { %i %i %i %i}}",
+               lopt.scale_down_by, lopt.dpi, lopt.w, lopt.h, 
+               lopt.region.x, lopt.region.y, lopt.region.w, lopt.region.h);
              img = img_load(file, key, &lopt);
              D("... img_load = %p", img);
              if (img)

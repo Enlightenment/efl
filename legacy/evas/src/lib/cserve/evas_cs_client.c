@@ -298,6 +298,10 @@ evas_cserve_image_load(Image_Entry *ie, const char *file, const char *key, RGBA_
    msg.lopt.dpi = lopt->dpi;
    msg.lopt.w = lopt->w;
    msg.lopt.h = lopt->h;
+   msg.lopt.region.x = lopt->region.x;
+   msg.lopt.region.y = lopt->region.y;
+   msg.lopt.region.w = lopt->region.w;
+   msg.lopt.region.h = lopt->region.h;
    if (file[0] != '/')
      {
         if (getcwd(wdb, sizeof(wdb)))

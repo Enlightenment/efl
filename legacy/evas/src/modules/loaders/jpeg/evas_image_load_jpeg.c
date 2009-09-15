@@ -104,6 +104,12 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie, FILE *f)
 /* head decoding */
    w = cinfo.output_width;
    h = cinfo.output_height;
+   if ((ie->load_opts.region.w > 0) && (ie->load_opts.region.h > 0))
+     {
+        RECTS_CLIP_TO_RECT(ie->load_opts.region.x, ie->load_opts.region.y,
+                           ie->load_opts.region.w, ie->load_opts.region.h,
+                           0, 0, w, h);
+     }
    if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE))
      {
         jpeg_destroy_decompress(&cinfo);
@@ -176,6 +182,7 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie, FILE *f)
 	jpeg_start_decompress(&cinfo);
      }
 
+   // FIXME: handle region if specified
    ie->w = cinfo.output_width;
    ie->h = cinfo.output_height;
 /* end head decoding */

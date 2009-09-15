@@ -23,7 +23,7 @@ struct _Evas_Object_Image
       int         spread;
       Evas_Coord_Rectangle fill;
       struct {
-	 short       w, h, stride;
+	 short         w, h, stride;
       } image;
       struct {
 	 short         l, r, t, b;
@@ -46,6 +46,9 @@ struct _Evas_Object_Image
       unsigned char  scale_down_by;
       double         dpi;
       short          w, h;
+      struct {
+         short       x, y, w, h;
+      } region;
    } load_opts;
 
    struct {
@@ -292,6 +295,10 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
    lo.dpi = o->load_opts.dpi;
    lo.w = o->load_opts.w;
    lo.h = o->load_opts.h;
+   lo.region.x = o->load_opts.region.x;
+   lo.region.y = o->load_opts.region.y;
+   lo.region.w = o->load_opts.region.w;
+   lo.region.h = o->load_opts.region.h;
    o->engine_data = obj->layer->evas->engine.func->image_load(obj->layer->evas->engine.data.output,
 							      o->cur.file,
 							      o->cur.key,
@@ -1725,6 +1732,57 @@ evas_object_image_load_scale_down_get(const Evas_Object *obj)
  *
  */
 EAPI void
+evas_object_image_load_region_set(Evas_Object *obj, int x, int y, int w, int h)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return;
+   MAGIC_CHECK_END();
+   if ((o->load_opts.region.x == x) && (o->load_opts.region.y == y) &&
+       (o->load_opts.region.w == w) && (o->load_opts.region.h == h)) return;
+   o->load_opts.region.x = x;
+   o->load_opts.region.y = y;
+   o->load_opts.region.w = w;
+   o->load_opts.region.h = h;
+   if (o->cur.file)
+     {
+	evas_object_image_unload(obj, 0);
+	evas_object_image_load(obj);
+	o->changed = 1;
+	evas_object_change(obj);
+     }
+}
+
+EAPI void
+evas_object_image_load_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return;
+   MAGIC_CHECK_END();
+   if (x) *x = o->load_opts.region.x;
+   if (y) *y = o->load_opts.region.y;
+   if (w) *w = o->load_opts.region.w;
+   if (h) *h = o->load_opts.region.h;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+EAPI void
 evas_object_image_colorspace_set(Evas_Object *obj, Evas_Colorspace cspace)
 {
    Evas_Object_Image *o;
@@ -1994,6 +2052,10 @@ evas_object_image_load(Evas_Object *obj)
    lo.dpi = o->load_opts.dpi;
    lo.w = o->load_opts.w;
    lo.h = o->load_opts.h;
+   lo.region.x = o->load_opts.region.x;
+   lo.region.y = o->load_opts.region.y;
+   lo.region.w = o->load_opts.region.w;
+   lo.region.h = o->load_opts.region.h;
    o->engine_data = obj->layer->evas->engine.func->image_load(obj->layer->evas->engine.data.output,
 							      o->cur.file,
 							      o->cur.key,
