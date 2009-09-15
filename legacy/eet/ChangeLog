@@ -226,3 +226,7 @@
 2009-09-15  Mathieu Taillefumier
 
 	* Use new Eina_Log infrastructure to report error.
+
+2009-09-15  Cedric BAIL
+
+	* Remove apparently useless eet_freeleak_* from eet_data.
