@@ -22,8 +22,6 @@ set VSCOMMONTOOLS=%VS90COMNTOOLS%vsvars32.bat
 
 goto STARTVS
 
-goto END
-
 :NOVS9
 
 rem Check for basic requirements for Visual Studio 2005
