@@ -563,6 +563,7 @@ extern "C" {
    EAPI void        *elm_hoversel_item_data_get(Elm_Hoversel_Item *it);
    EAPI const char  *elm_hoversel_item_label_get(Elm_Hoversel_Item *it);
    EAPI void         elm_hoversel_item_icon_set(Elm_Hoversel_Item *it, const char *icon_file, const char *icon_group, Elm_Icon_Type icon_type);
+   EAPI void         elm_hoversel_item_icon_get(Elm_Hoversel_Item *it, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type);
    /* smart callbacks called:
     * "clicked" - the user clicked the hoversel button and popped up the sel
     * "selected" - an item in the hoversel list is selected

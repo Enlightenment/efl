@@ -511,3 +511,24 @@ elm_hoversel_item_icon_set(Elm_Hoversel_Item *it, const char *icon_file, const c
    it->icon_type = icon_type;
 }
 
+/**
+ * Get the icon object of the hoversel item
+ *
+ * @param it The item to get the icon from
+ * @param icon_file The image file path on disk used for the icon or standard
+ * icon name. return
+ * @param icon_group The edje group used if @p icon_file is an edje file. NULL
+ * if the icon is not an edje file. return
+ * @param icon_type The icon type. return
+ *
+ * @ingroup Hoversel
+ */
+EAPI void
+elm_hoversel_item_icon_get(Elm_Hoversel_Item *it, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type)
+{
+   if (!it) return;
+
+   if (icon_file) *icon_file = it->icon_file;
+   if (icon_group) *icon_group = it->icon_group;
+   if (icon_type) *icon_type = it->icon_type;
+}
