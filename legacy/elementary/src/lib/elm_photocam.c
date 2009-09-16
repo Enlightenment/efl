@@ -225,12 +225,11 @@ grid_load(Evas_Object *obj)
                   evas_object_hide(wd->grid.grid[tn].img[loadnum]);
                   evas_object_image_file_set(wd->grid.grid[tn].img[loadnum], NULL, NULL);
                   evas_object_image_load_scale_down_set(wd->grid.grid[tn].img[loadnum], wd->grid.zoom);
-/*                  evas_object_image_load_region_set(wd->grid.grid[tn].img[loadnum],
+                  evas_object_image_load_region_set(wd->grid.grid[tn].img[loadnum],
                                                     wd->grid.grid[tn].src.x,
                                                     wd->grid.grid[tn].src.y,
                                                     wd->grid.grid[tn].src.w,
                                                     wd->grid.grid[tn].src.h);
- */
 //                  evas_object_image_pixels_dirty_set(wd->grid.grid[tn].img[loadnum], 1);
                   evas_object_image_file_set(wd->grid.grid[tn].img[loadnum], wd->file, NULL); 
                   evas_object_image_preload(wd->grid.grid[tn].img[loadnum], 0);
