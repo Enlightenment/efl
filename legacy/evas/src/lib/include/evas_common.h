@@ -170,7 +170,7 @@ void *alloca (size_t);
 
 #define IMG_TOO_BIG(w, h) \
    ((((unsigned long long)w) * ((unsigned long long)h)) > \
-       (1 << (29 * (sizeof(void *) / 4))))
+       (1ULL << (29 * (sizeof(void *) / 4))))
 
 #ifdef BUILD_SMALL_DITHER_MASK
 # define DM_TABLE     _evas_dither_44
