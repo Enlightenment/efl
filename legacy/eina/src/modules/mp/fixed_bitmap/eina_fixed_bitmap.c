@@ -23,7 +23,9 @@
 # include "config.h"
 #endif
 
-#include <stdint.h>
+#ifndef _MSC_VER
+# include <stdint.h>
+#endif
 #include <string.h>
 #include <assert.h>
 
@@ -204,12 +206,14 @@ eina_fixed_bitmap_shutdown(void *data)
 }
 
 static Eina_Mempool_Backend _eina_fixed_bitmap_mp_backend = {
-  .name ="fixed_bitmap",
-  .init = &eina_fixed_bitmap_init,
-  .shutdown = &eina_fixed_bitmap_shutdown,
-  .realloc = &eina_fixed_bitmap_realloc,
-  .alloc = &eina_fixed_bitmap_malloc,
-  .free = &eina_fixed_bitmap_free
+   "fixed_bitmap",
+   &eina_fixed_bitmap_init,
+   &eina_fixed_bitmap_free,
+   &eina_fixed_bitmap_malloc,
+   &eina_fixed_bitmap_realloc,
+   NULL,
+   NULL,
+   &eina_fixed_bitmap_shutdown
 };
 
 Eina_Bool fixed_bitmap_init(void)

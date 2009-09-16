@@ -61,14 +61,14 @@ eina_pass_through_shutdown(__UNUSED__ void *data)
 
 
 static Eina_Mempool_Backend _eina_pass_through_mp_backend = {
-  .name = "pass_through",
-  .init = &eina_pass_through_init,
-  .shutdown = &eina_pass_through_shutdown,
-  .realloc = &eina_pass_through_realloc,
-  .alloc = &eina_pass_through_malloc,
-  .free = &eina_pass_through_free,
-  .garbage_collect = NULL,
-  .statistics = NULL
+   "pass_through",
+   &eina_pass_through_init,
+   &eina_pass_through_free,
+   &eina_pass_through_malloc,
+   &eina_pass_through_realloc,
+   NULL,
+   NULL,
+   &eina_pass_through_shutdown
 };
 
 Eina_Bool pass_through_init(void)
