@@ -976,15 +976,15 @@ extern "C" {
     *
     * @since 1.0.0
     */
-   EAPI Eet_Data_Descriptor *eet_data_descriptor_new(const char *name, int size, void *(*func_list_next) (void *l), void *(*func_list_append) (void *l, void *d), void *(*func_list_data) (void *l), void *(*func_list_free) (void *l), void  (*func_hash_foreach) (void *h, int (*func) (void *h, const char *k, void *dt, void *fdt), void *fdt), void *(*func_hash_add) (void *h, const char *k, void *d), void  (*func_hash_free) (void *h)) EINA_DEPRECATED;
+   EINA_DEPRECATED EAPI Eet_Data_Descriptor *eet_data_descriptor_new(const char *name, int size, void *(*func_list_next) (void *l), void *(*func_list_append) (void *l, void *d), void *(*func_list_data) (void *l), void *(*func_list_free) (void *l), void  (*func_hash_foreach) (void *h, int (*func) (void *h, const char *k, void *dt, void *fdt), void *fdt), void *(*func_hash_add) (void *h, const char *k, void *d), void  (*func_hash_free) (void *h));
    /*
     * FIXME:
     *
     * moving to this api from the old above. this will break things when the
     * move happens - but be warned
     */
-   EAPI Eet_Data_Descriptor *eet_data_descriptor2_new(const Eet_Data_Descriptor_Class *eddc) EINA_DEPRECATED;
-   EAPI Eet_Data_Descriptor *eet_data_descriptor3_new(const Eet_Data_Descriptor_Class *eddc) EINA_DEPRECATED;
+   EINA_DEPRECATED EAPI Eet_Data_Descriptor *eet_data_descriptor2_new(const Eet_Data_Descriptor_Class *eddc);
+   EINA_DEPRECATED EAPI Eet_Data_Descriptor *eet_data_descriptor3_new(const Eet_Data_Descriptor_Class *eddc);
 
    /**
     * This function creates a new data descriptore and returns a handle to the
