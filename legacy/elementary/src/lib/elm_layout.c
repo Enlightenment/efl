@@ -65,7 +65,7 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	if (si->obj == obj)
 	  {
 	     edje_object_part_swallow(wd->lay, si->swallow, obj);
-	     _sizing_eval(obj);
+	     _sizing_eval(data);
 	     break;
 	  }
      }
