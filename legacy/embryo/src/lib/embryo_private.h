@@ -249,11 +249,20 @@ struct _Embryo_Program
    void          *data;
 };
 
+#ifdef _MSC_VER
+# pragma pack(1)
+# define EMBRYO_STRUCT_PACKED
+#elif defined (__GNUC__)
+# define EMBRYO_STRUCT_PACKED __attribute__((packed))
+#else
+# define EMBRYO_STRUCT_PACKED
+#endif
+
 struct _Embryo_Func_Stub
 {
    int  address;
    char name[sEXPMAX+1];
-} __attribute__((packed));
+} EMBRYO_STRUCT_PACKED;
 
 struct _Embryo_Header
 {
@@ -274,7 +283,11 @@ struct _Embryo_Header
    int pubvars; /* the "public variables" table */
    int tags; /* the "public tagnames" table */
    int nametable; /* name table, file version 7 only */
-} __attribute__((packed));
+} EMBRYO_STRUCT_PACKED;
+
+#ifdef _MSC_VER
+# pragma pack()
+#endif
 
 void _embryo_args_init(Embryo_Program *ep);
 void _embryo_fp_init(Embryo_Program *ep);
