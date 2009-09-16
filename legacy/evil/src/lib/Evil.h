@@ -154,6 +154,7 @@ typedef unsigned long  gid_t;
 #  define strdup(s) _strdup(s)
 #  define fileno(f) _fileno(f)
 #  define fdopen(fd,m) _fdopen((fd),(m))
+#  define tzset _tzset
 
 # endif
 #endif
