@@ -10,14 +10,6 @@ if not exist %EXT_DIR% (
 	goto END
 )
 
-rem Setup common Win32 environment variables
-
-rem Add installation directory pathes.
-set INCLUDE=%EXT_DIR%\include;%INCLUDE%
-set LIB=%EXT_DIR%\lib;%LIB%
-
-set INCLUDE=%cd%\common;%cd%\..\src\lib;%INCLUDE%
-
 rem Check for basic requirements for Visual Studio 2008
 if "%VS90COMNTOOLS%" == "" (
 	echo ERROR: Microsoft Visual Studio 2008 is not installed.
@@ -25,17 +17,10 @@ if "%VS90COMNTOOLS%" == "" (
 	goto NOVS9
 )
 
-set SolutionDirectory=%cd%\vs9
-set DebugOutputDirectory=%SolutionDirectory%\out
-set ReleaseOutputDirectory=%SolutionDirectory%\out
-set DebugLibraryDirectory=%SolutionDirectory%\out
-set ReleaseLibraryDirectory=%SolutionDirectory%\out
-set TemporaryDirectory=%SolutionDirectory%\temp
+set PROJECT_TYPE=vs9
+set VSCOMMONTOOLS=%VS90COMNTOOLS%vsvars32.bat
 
-rem Setting environment for using Microsoft Visual Studio 2008 x86 tools.
-call "%VS90COMNTOOLS%vsvars32.bat"
-
-vs9\evil.sln
+goto STARTVS
 
 goto END
 
@@ -48,16 +33,29 @@ if "%VS80COMNTOOLS%" == "" (
 	goto END
 )
 
-set SolutionDirectory=%cd%\vs8
+set PROJECT_TYPE=vs8
+set VSCOMMONTOOLS=%VS80COMNTOOLS%vsvars32.bat
+
+:STARTVS
+
+rem Setup common Win32 environment variables
+
+rem Add installation directory pathes.
+set INCLUDE=%EXT_DIR%\include;%INCLUDE%
+set LIB=%EXT_DIR%\lib;%LIB%
+
+set INCLUDE=%cd%\common;%cd%\..\src\lib;%INCLUDE%
+
+set SolutionDirectory=%cd%\%PROJECT_TYPE%
 set DebugOutputDirectory=%SolutionDirectory%\out
 set ReleaseOutputDirectory=%SolutionDirectory%\out
 set DebugLibraryDirectory=%SolutionDirectory%\out
 set ReleaseLibraryDirectory=%SolutionDirectory%\out
 set TemporaryDirectory=%SolutionDirectory%\temp
 
-rem Setting environment for using Microsoft Visual Studio 2005 x86 tools.
-call "%VS80COMNTOOLS%vsvars32.bat"
+rem Setting environment for using Microsoft Visual Studio x86 tools.
+call "%VSCOMMONTOOLS%"
 
-vs8\evil.sln
+%PROJECT_TYPE%\evil.sln
 
 :END
