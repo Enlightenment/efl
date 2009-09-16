@@ -166,7 +166,11 @@ void *alloca (size_t);
 /* use exact rects for updates not tiles */
 /* #define RECTUPDATE */
 #define TILESIZE 8
-#define IMG_MAX_SIZE 65536
+#define IMG_MAX_SIZE 65000
+
+#define IMG_TOO_BIG(w, h) \
+   ((((unsigned long long)w) * ((unsigned long long)h)) > \
+       (1 << (29 * (sizeof(void *) / 4))))
 
 #ifdef BUILD_SMALL_DITHER_MASK
 # define DM_TABLE     _evas_dither_44

@@ -46,9 +46,9 @@ _evas_image_foreach_loader(const Eina_Hash *hash, const char *key, Evas_Module *
    evas_module_use(em);
    if (evas_image_load_func && evas_image_load_func->file_head(ie, ie->file, ie->key))
      {
-	ie->info.module = (void*) em;
-	ie->info.loader = (void*) evas_image_load_func;
-	evas_module_ref((Evas_Module*) ie->info.module);
+	ie->info.module = (void *)em;
+	ie->info.loader = (void *)evas_image_load_func;
+	evas_module_ref((Evas_Module *)ie->info.module);
 	return EINA_FALSE;
      }
 
@@ -79,7 +79,7 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
      {
 	for (i = 0, ++dot; i < (sizeof (loaders) / sizeof (struct ext_loader_s)); ++i)
 	  {
-	     if (!strcasecmp (dot, loaders[i].extention))
+	     if (!strcasecmp(dot, loaders[i].extention))
 	       {
 		  loader = loaders[i].loader;
 		  break;
@@ -108,7 +108,7 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 
    /* This is our last chance, try all known image loader. */
    /* FIXME: We could use eina recursive module search ability. */
-   for (i = 0; i < sizeof (loaders_name) / sizeof (char *); ++i)
+   for (i = 0; i < sizeof (loaders_name) / sizeof (char *); i++)
      {
 	em = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loaders_name[i]);
 	if (em)
@@ -165,7 +165,9 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
    evas_image_load_func = ie->info.loader;
    evas_module_use((Evas_Module*) ie->info.module);
    if (!evas_image_load_func->file_data(ie, ie->file, ie->key))
-     return -1;
+     {
+        return -1;
+     }
 
 //   evas_module_unref((Evas_Module*) ie->info.module);
 //   ie->info.module = NULL;

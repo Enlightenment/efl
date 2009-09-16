@@ -174,7 +174,8 @@ evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *ke
    if (tiff_image.alpha != EXTRASAMPLE_UNSPECIFIED)
      ie->flags.alpha = 1;
    if ((tiff_image.width < 1) || (tiff_image.height < 1) ||
-       (tiff_image.width > IMG_MAX_SIZE) || (tiff_image.height > IMG_MAX_SIZE))
+       (tiff_image.width > IMG_MAX_SIZE) || (tiff_image.height > IMG_MAX_SIZE) ||
+       IMG_TOO_BIG(tiff_image.width, tiff_image.height))
      {
 	TIFFClose(tif);
 	return 0;

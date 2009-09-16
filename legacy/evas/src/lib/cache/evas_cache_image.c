@@ -46,7 +46,7 @@ static pthread_t tid = 0;
 
 static Eina_Bool running = EINA_FALSE;
 
-static void* _evas_cache_background_load(void *);
+static void *_evas_cache_background_load(void *);
 #endif
 
 #define FREESTRC(Var)              \
@@ -317,7 +317,7 @@ _evas_cache_image_async_call__locked(Image_Entry *im)
    while (im->targets)
      {
 	Evas_Cache_Target *tmp = im->targets;
-
+        
 	evas_async_events_put(tmp->target, EVAS_CALLBACK_IMAGE_PRELOADED, NULL,
 			      (void (*)(void*, Evas_Callback_Type, void*))evas_object_event_callback_call);
 	im->targets = (Evas_Cache_Target*) eina_inlist_remove(EINA_INLIST_GET(im->targets), EINA_INLIST_GET(im->targets));
@@ -411,34 +411,38 @@ _evas_cache_image_entry_preload_remove(Image_Entry *ie, const void *target)
 		       if (l->ie == ie)
 			 {
 			    Evas_Cache_Target *tg;
-
-			    if (target) {
-			       EINA_INLIST_FOREACH(ie->targets, tg)
-				 {
-				    if (tg->target == target) {
-				       ie->targets = (Evas_Cache_Target*) eina_inlist_remove(EINA_INLIST_GET(ie->targets), EINA_INLIST_GET(tg));
-				       free(tg);
-				       break;
-				    }
-				 }
-			    } else {
-			       _evas_cache_image_async_call__locked(ie);
-
-			       while (ie->targets)
-				 {
-				    tg = ie->targets;
-				    ie->targets = (Evas_Cache_Target*) eina_inlist_remove(EINA_INLIST_GET(ie->targets), EINA_INLIST_GET(tg));
-				    free(tg);
-				 }
-			    }
-
+                            
+			    if (target)
+                              {
+                                 EINA_INLIST_FOREACH(ie->targets, tg)
+                                   {
+                                      if (tg->target == target)
+                                        {
+                                           ie->targets = (Evas_Cache_Target*) eina_inlist_remove(EINA_INLIST_GET(ie->targets), EINA_INLIST_GET(tg));
+                                           free(tg);
+                                           break;
+                                        }
+                                   }
+                              }
+                            else
+                              {
+                                 _evas_cache_image_async_call__locked(ie);
+                                 
+                                 while (ie->targets)
+                                   {
+                                      tg = ie->targets;
+                                      ie->targets = (Evas_Cache_Target*) eina_inlist_remove(EINA_INLIST_GET(ie->targets), EINA_INLIST_GET(tg));
+                                      free(tg);
+                                   }
+                              }
+                            
 			    if (!ie->targets)
 			      {
 				 preload = eina_inlist_remove(preload,
 							      EINA_INLIST_GET(l));
 				 free(l);
 			      }
-
+                            
 			    break;
 			 }
 		    }
@@ -622,7 +626,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
    file_length = strlen(file);
    key_length = key ? strlen(key) : 6;
 
-   size = file_length + key_length + 64;
+   size = file_length + key_length + 128;
    hkey = alloca(sizeof (char) * size);
 
    memcpy(hkey, file, file_length);
@@ -639,13 +643,15 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
        (lo &&
         (lo->scale_down_by == 0) &&
         (lo->dpi == 0.0) &&
-        ((lo->w == 0) || (lo->h == 0))))
+        ((lo->w == 0) || (lo->h == 0)) &&
+        ((lo->region.w == 0) || (lo->region.w == 0))
+        ))
      {
         lo = &prevent;
-        if (key)
-          format = "%s//://%s";
-        else
-          format = "%s//://%p";
+//        if (key)
+//          format = "%s//://%s";
+//        else
+//          format = "%s//://%p";
      }
    else
      {
@@ -668,6 +674,26 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
 	size += 1;
 
 	size += eina_convert_xtoa(lo->h, hkey + size);
+        
+	hkey[size] = '/';
+	size += 1;
+
+	size += eina_convert_xtoa(lo->region.x, hkey + size);
+        
+	hkey[size] = '+';
+	size += 1;
+        
+	size += eina_convert_xtoa(lo->region.y, hkey + size);
+        
+	hkey[size] = '.';
+	size += 1;
+        
+	size += eina_convert_xtoa(lo->region.w, hkey + size);
+        
+	hkey[size] = 'x';
+	size += 1;
+        
+	size += eina_convert_xtoa(lo->region.h, hkey + size);
      }
 
    hkey[size] = '\0';
@@ -1242,15 +1268,15 @@ static void*
 _evas_cache_background_load(void *data)
 {
    (void) data;
-
- restart:
+   
+   restart:
    while (preload)
      {
 	pthread_mutex_lock(&mutex);
 	if (preload)
 	  {
 	     Evas_Cache_Preload *tmp = (Evas_Cache_Preload*) preload;
-
+             
 	     current = tmp->ie;
 	     preload = eina_inlist_remove(preload, preload);
 
@@ -1270,21 +1296,24 @@ _evas_cache_background_load(void *data)
              current->channel++;
 	     cache = current->cache;
 
-	     error = cache->func.load(current);
-	     if (cache->func.debug)
-	       cache->func.debug("load", current);
-
-	     if (error)
-	       {
-		  _evas_cache_image_entry_surface_alloc(cache, current,
-							current->w, current->h);
-		  current->flags.loaded = 0;
-	       }
-	     else
-	       {
-		  current->flags.loaded = 1;
-	       }
-
+             if (!current->flags.loaded)
+               {
+                  error = cache->func.load(current);
+                  if (cache->func.debug)
+                    cache->func.debug("load", current);
+                  
+                  if (error)
+                    {
+                       _evas_cache_image_entry_surface_alloc(cache, current,
+                                                             current->w, current->h);
+                       current->flags.loaded = 0;
+                    }
+                  else
+                    {
+                       current->flags.loaded = 1;
+                    }
+               }
+             
 	     current->flags.preload = 0;
 
              current->channel = pchannel;

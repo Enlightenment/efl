@@ -32,6 +32,7 @@ evas_image_load_file_head_eet(Image_Entry *ie, const char *file, const char *key
    if (!ef) return 0;
    ok = eet_data_image_header_read(ef, key,
 				   &w, &h, &alpha, &compression, &quality, &lossy);
+   if (IMG_TOO_BIG(w, h)) goto on_error;
    if (!ok) goto on_error;
    if (alpha) ie->flags.alpha = 1;
    ie->w = w;
@@ -59,6 +60,7 @@ evas_image_load_file_data_eet(Image_Entry *ie, const char *file, const char *key
    if (!ef) return 0;
    ok = eet_data_image_header_read(ef, key,
 				   &w, &h, &alpha, &compression, &quality, &lossy);
+   if (IMG_TOO_BIG(w, h)) goto on_error;
    if (!ok) goto on_error;
    evas_cache_image_surface_alloc(ie, w, h);
    ok = eet_data_image_read_to_surface(ef, key, 0, 0,

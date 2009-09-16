@@ -56,7 +56,8 @@ evas_image_load_file_head_edb(Image_Entry *ie, const char *file, const char *key
      }
    w = header[1];
    h = header[2];
-   if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE))
+   if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) || 
+       IMG_TOO_BIG(w, h))
      {
 	free(ret);
 	e_db_close(db);
@@ -120,7 +121,8 @@ evas_image_load_file_data_edb(Image_Entry *ie, const char *file, const char *key
      }
    w = header[1];
    h = header[2];
-   if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE))
+   if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
+       IMG_TOO_BIG(w, h))
      {
 	free(ret);
 	e_db_close(db);

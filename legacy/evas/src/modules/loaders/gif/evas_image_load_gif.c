@@ -65,7 +65,8 @@ evas_image_load_file_head_gif(Image_Entry *ie, const char *file, const char *key
                }
              w = gif->Image.Width;
              h = gif->Image.Height;
-	     if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE))
+	     if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
+                 IMG_TOO_BIG(w, h))
 	       {
 		  DGifCloseFile(gif);
 		  return 0;

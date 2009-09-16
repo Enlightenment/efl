@@ -620,7 +620,7 @@ evas_cache_engine_image_load_data(Engine_Image_Entry *eim)
    assert(eim->src);
    assert(eim->cache);
 
-   if (eim->flags.loaded) return ;
+   if (eim->flags.loaded) return;
 
    if (eim->src)
      evas_cache_image_load_data(eim->src);
