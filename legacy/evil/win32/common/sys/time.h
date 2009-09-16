@@ -53,8 +53,6 @@ struct timezone
 */ 
 EVIL_COMMON_API int __cdecl gettimeofday(struct timeval *tv, void *tzp);
 
-#define HAVE_GETTIMEOFDAY
-
 #ifdef	__cplusplus
 }
 #endif
