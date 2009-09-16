@@ -152,6 +152,8 @@ typedef unsigned long  gid_t;
 #  define mkdir(p,m) _mkdir(p)
 #  define lstat(f,s) _stat((f),(s))
 #  define strdup(s) _strdup(s)
+#  define fileno(f) _fileno(f)
+#  define fdopen(fd,m) _fdopen((fd),(m))
 
 # endif
 #endif
