@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(INCLUDE)"
-				PreprocessorDefinitions="HAVE_ERRNO_H;SECURITY_WIN32;WIN32;_DEBUG;_WINDOWS;_USRDLL;HAVE_EVIL;DLL_EXPORT;snprintf=_snprintf_c;__CRT_INLINE=__inline;inline=__inline;__UNUSED__=;EFL_EINA_BUILD;PACKAGE_LIB_DIR=;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="HAVE_ERRNO_H;SECURITY_WIN32;WIN32;_DEBUG;_WINDOWS;_USRDLL;HAVE_EVIL;DLL_EXPORT;snprintf=_snprintf_c;__CRT_INLINE=__inline;inline=__inline;__UNUSED__=;EFL_EINA_BUILD;PACKAGE_LIB_DIR=;_CRT_SECURE_NO_WARNINGS;EINA_STATIC_BUILD_CHAINED_POOL;EINA_STATIC_BUILD_PASS_THROUGH;EINA_STATIC_BUILD_FIXED_BITMAP"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -65,7 +65,7 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="false"
 				LinkLibraryDependencies="true"
-				AdditionalDependencies="libdl.lib"
+				AdditionalDependencies="libevil.lib libdl.lib"
 				OutputFile="$(OutDir)\libeina.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(LIB); $(DebugLibraryDirectory)"
@@ -123,7 +123,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="$(INCLUDE)"
-				PreprocessorDefinitions="HAVE_ERRNO_H;SECURITY_WIN32;WIN32;NDEBUG;_WINDOWS;_USRDLL;HAVE_EVIL;DLL_EXPORT;snprintf=_snprintf_c;__CRT_INLINE=__inline;inline=__inline;__UNUSED__=;EFL_EINA_BUILD;PACKAGE_LIB_DIR="
+				PreprocessorDefinitions="HAVE_ERRNO_H;SECURITY_WIN32;WIN32;NDEBUG;_WINDOWS;_USRDLL;HAVE_EVIL;DLL_EXPORT;snprintf=_snprintf_c;__CRT_INLINE=__inline;inline=__inline;__UNUSED__=;EFL_EINA_BUILD;PACKAGE_LIB_DIR=;_CRT_SECURE_NO_WARNINGS;EINA_STATIC_BUILD_CHAINED_POOL;EINA_STATIC_BUILD_PASS_THROUGH;EINA_STATIC_BUILD_FIXED_BITMAP"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -144,7 +144,7 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="false"
 				LinkLibraryDependencies="true"
-				AdditionalDependencies="libdl.lib"
+				AdditionalDependencies="libevil.lib libdl.lib"
 				OutputFile="$(OutDir)\libeina.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(LIB); $(ReleaseLibraryDirectory)"
@@ -289,6 +289,18 @@
 			</File>
 			<File
 				RelativePath="..\..\src\lib\eina_value.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\modules\mp\chained_pool\eina_chained_mempool.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\modules\mp\fixed_bitmap\eina_fixed_bitmap.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\modules\mp\pass_through\eina_pass_through.c"
 				>
 			</File>
 		</Filter>

@@ -10,9 +10,6 @@ if not exist %EXT_DIR% (
 	goto END
 )
 
-rem Setup common Win32 environment variables
-
-
 rem Check for basic requirements for Visual Studio 2008
 if "%VS90COMNTOOLS%" == "" (
 	echo ERROR: Microsoft Visual Studio 2008 is not installed.
@@ -39,12 +36,14 @@ set VSCOMMONTOOLS=%VS80COMNTOOLS%vsvars32.bat
 
 :STARTVS
 
+rem Setup common Win32 environment variables
+
 rem Add Evil lib path
 set EvilInclude=%cd%\..\..\evil\src\lib
 set EvilCommon=%cd%\..\..\evil\win32\common
 set EvilOut=%cd%\..\..\evil\win32\%PROJECT_TYPE%\out
 
-set INCLUDE=%EvilCommon%;%EvilInclude%;%EvilInclude%\dlfcn;%EvilInclude%\mman;%INCLUDE%
+set INCLUDE=%EvilCommon%;%EvilInclude%;%EvilInclude%\dlfcn;%INCLUDE%
 set LIB=%EvilOut%;%LIB%
 
 rem Add installation directory pathes.
