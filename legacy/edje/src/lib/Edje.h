@@ -70,6 +70,62 @@ enum _Edje_Object_Table_Homogeneous_Mode
 };
 typedef enum _Edje_Object_Table_Homogeneous_Mode Edje_Object_Table_Homogeneous_Mode;
 
+typedef enum _Edje_Part_Type
+{
+   EDJE_PART_TYPE_NONE      = 0,
+   EDJE_PART_TYPE_RECTANGLE = 1,
+   EDJE_PART_TYPE_TEXT      = 2,
+   EDJE_PART_TYPE_IMAGE     = 3,
+   EDJE_PART_TYPE_SWALLOW   = 4,
+   EDJE_PART_TYPE_TEXTBLOCK = 5,
+   EDJE_PART_TYPE_GRADIENT  = 6,
+   EDJE_PART_TYPE_GROUP     = 7,
+   EDJE_PART_TYPE_BOX       = 8,
+   EDJE_PART_TYPE_TABLE     = 9,
+   EDJE_PART_TYPE_LAST      = 10
+} Edje_Part_Type;
+
+typedef enum _Edje_Text_Effect
+{
+   EDJE_TEXT_EFFECT_NONE                = 0,
+   EDJE_TEXT_EFFECT_PLAIN               = 1,
+   EDJE_TEXT_EFFECT_OUTLINE             = 2,
+   EDJE_TEXT_EFFECT_SOFT_OUTLINE        = 3,
+   EDJE_TEXT_EFFECT_SHADOW              = 4,
+   EDJE_TEXT_EFFECT_SOFT_SHADOW         = 5,
+   EDJE_TEXT_EFFECT_OUTLINE_SHADOW      = 6,
+   EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW = 7,
+   EDJE_TEXT_EFFECT_FAR_SHADOW          = 8,
+   EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW     = 9,
+   EDJE_TEXT_EFFECT_GLOW                = 10,
+   EDJE_TEXT_EFFECT_LAST                = 11
+} Edje_Text_Effect;
+
+typedef enum _Edje_Action_Type
+{
+   EDJE_ACTION_TYPE_NONE          = 0,
+   EDJE_ACTION_TYPE_STATE_SET     = 1,
+   EDJE_ACTION_TYPE_ACTION_STOP   = 2,
+   EDJE_ACTION_TYPE_SIGNAL_EMIT   = 3,
+   EDJE_ACTION_TYPE_DRAG_VAL_SET  = 4,
+   EDJE_ACTION_TYPE_DRAG_VAL_STEP = 5,
+   EDJE_ACTION_TYPE_DRAG_VAL_PAGE = 6,
+   EDJE_ACTION_TYPE_SCRIPT        = 7,
+   EDJE_ACTION_TYPE_FOCUS_SET     = 8,
+   EDJE_ACTION_TYPE_LUA_SCRIPT    = 9,
+   EDJE_ACTION_TYPE_LAST          = 10
+} Edje_Action_Type;
+
+typedef enum _Edje_Tween_Mode
+{
+   EDJE_TWEEN_MODE_NONE       = 0,
+   EDJE_TWEEN_MODE_LINEAR     = 1,
+   EDJE_TWEEN_MODE_SINUSOIDAL = 2,
+   EDJE_TWEEN_MODE_ACCELERATE = 3,
+   EDJE_TWEEN_MODE_DECELERATE = 4,
+   EDJE_TWEEN_MODE_LAST       = 5
+} Edje_Tween_Mode;
+
 typedef struct _Edje_Message_String           Edje_Message_String;
 typedef struct _Edje_Message_Int              Edje_Message_Int;
 typedef struct _Edje_Message_Float            Edje_Message_Float;

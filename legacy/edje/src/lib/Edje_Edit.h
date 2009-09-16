@@ -1,7 +1,7 @@
 #ifndef _EDJE_EDIT_H
 #define _EDJE_EDIT_H
 
-#include <Evas.h>
+#include <Edje.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -30,12 +30,13 @@
 #endif
 
 
-enum {
+typedef enum _Edje_Edit_Image_Comp
+{
    EDJE_EDIT_IMAGE_COMP_RAW,
    EDJE_EDIT_IMAGE_COMP_USER,
    EDJE_EDIT_IMAGE_COMP_COMP,
    EDJE_EDIT_IMAGE_COMP_LOSSY
-};
+} Edje_Edit_Image_Comp;
 
 /**
  * @file
@@ -146,7 +147,7 @@ edje_edit_print_internal_status(
 /**Create a new empty group in the given edje.
  * If a group with the same name exist none is created.
  */
-EAPI unsigned char         ///@return 1 on success, 0 on failure
+EAPI Eina_Bool         ///@return 1 on success, 0 on failure
 edje_edit_group_add(
    Evas_Object *obj,       ///< The edje object
    const char  *name       ///< The name for the new empty group
@@ -157,14 +158,14 @@ edje_edit_group_add(
  * All the parts and the programs inside the group will be deleted as well,
  * but not image or font embedded in the edje.
  */
-EAPI unsigned char         ///@return 1 on success, 0 on failure
+EAPI Eina_Bool         ///@return 1 on success, 0 on failure
 edje_edit_group_del(
    Evas_Object *obj        ///< The edje object
 );
 
 /**Check if a group with the given name exist in the edje.
  */
-EAPI unsigned char         ///< 1 if the group exist, 0 otherwise.
+EAPI Eina_Bool         ///< 1 if the group exist, 0 otherwise.
 edje_edit_group_exist(
    Evas_Object *obj,       ///< The edje object
    const char *group       ///< The name of the group
@@ -174,7 +175,7 @@ edje_edit_group_exist(
  * You can only rename a group that is currently loaded
  * Note that the relative getter function don't exist as it don't make sense ;)
  */
-EAPI unsigned char         ///@return 1 on success, 0 on failure
+EAPI Eina_Bool         ///@return 1 on success, 0 on failure
 edje_edit_group_name_set(
    Evas_Object *obj,       ///< The edje object
    const char  *new_name   ///< The new name for the group
@@ -241,7 +242,7 @@ edje_edit_data_list_get(
 /**Create a new data object in the given edje
  * If another data with the same name exists nothing is created and FALSE is returned.
  */
-EAPI unsigned char         ///@return TRUE on success
+EAPI Eina_Bool         ///@return TRUE on success
 edje_edit_data_add(
    Evas_Object *obj,       ///< The edje object
    const char *itemname,   ///< The name for the new data
@@ -249,7 +250,7 @@ edje_edit_data_add(
 );
 
 /**Delete the given data object from edje */
-EAPI unsigned char         ///@return TRUE on success
+EAPI Eina_Bool         ///@return TRUE on success
 edje_edit_data_del(
    Evas_Object *obj,       ///< The edje object
    const char *itemname    ///< The name of the data to remove
@@ -263,7 +264,7 @@ edje_edit_data_value_get(
 );
 
 /** Set the data associated with the given itemname **/
-EAPI unsigned char        ///@return TRUE on success
+EAPI Eina_Bool        ///@return TRUE on success
 edje_edit_data_value_set(
    Evas_Object * obj,     ///< The edje object
    const char *itemname,  ///< The name of the data item
@@ -271,7 +272,7 @@ edje_edit_data_value_set(
 );
 
 /** Change the name of the given data object */
-EAPI unsigned char        ///@return TRUE on success
+EAPI Eina_Bool        ///@return TRUE on success
 edje_edit_data_name_set(
    Evas_Object *obj,     ///< The edje object
    const char *itemname, ///< The name of the data item
@@ -297,14 +298,14 @@ edje_edit_color_classes_list_get(
 /** Create a new color class object in the given edje
  *  If another class with the same name exists nothing is created and FALSE is returned.
  */
-EAPI unsigned char        ///@return TRUE on success
+EAPI Eina_Bool        ///@return TRUE on success
 edje_edit_color_class_add(
    Evas_Object *obj,      ///< The edje object
    const char *name       ///< The name of the new color class
 );
 
 /** Delete the given class object from edje */
-EAPI unsigned char        ///@return TRUE on success
+EAPI Eina_Bool        ///@return TRUE on success
 edje_edit_color_class_del(
    Evas_Object *obj,      ///< The edje object
    const char *name       ///< The name of the color class to delete
@@ -313,7 +314,7 @@ edje_edit_color_class_del(
 /** Get all the colors that compose the class.
  *  You can pass NULL to colors you are not intrested in
  */
-EAPI unsigned char         ///@return TRUE on success
+EAPI Eina_Bool         ///@return TRUE on success
 edje_edit_color_class_colors_get(
    Evas_Object *obj,       ///< The edje object
    const char *class_name, ///< The name of the color class
@@ -334,7 +335,7 @@ edje_edit_color_class_colors_get(
 /** Set the colors for the given color class.
  *  If you set a color to -1 it will not be touched
  */
-EAPI unsigned char         ///@return TRUE on success
+EAPI Eina_Bool         ///@return TRUE on success
 edje_edit_color_class_colors_set(
    Evas_Object *obj,       ///< The edje object
    const char *class_name, ///< The name of the color class
@@ -353,7 +354,7 @@ edje_edit_color_class_colors_set(
 );
 
 /** Change the name of a color class */
-EAPI unsigned char        ///@return TRUE on success
+EAPI Eina_Bool        ///@return TRUE on success
 edje_edit_color_class_name_set(
    Evas_Object *obj,      ///< The edje object
    const char *name,      ///< The name of the color class
@@ -379,7 +380,7 @@ edje_edit_styles_list_get(
 /** Create a new text style object in the given edje
  *  If another style with the same name exists nothing is created and FALSE is returned.
  */
-EAPI unsigned char        ///@return TRUE on success, FALSE if the tag can't be created
+EAPI Eina_Bool        ///@return TRUE on success, FALSE if the tag can't be created
 edje_edit_style_add(
    Evas_Object *obj,      ///< The edje object
    const char *style      ///< The new name for the style
@@ -432,7 +433,7 @@ edje_edit_style_tag_name_set(
 /** Add a new tag to the given text style.
  *  If another tag with the same name exists nothing is created and FALSE is returned.
  */
-EAPI unsigned char         ///@return TRUE on success, FALSE if the tag can't be created
+EAPI Eina_Bool         ///@return TRUE on success, FALSE if the tag can't be created
 edje_edit_style_tag_add(
    Evas_Object *obj,       ///< The edje object
    const char *style,      ///< The name of the style
@@ -467,11 +468,11 @@ edje_edit_parts_list_get(
  * If another part with the same name just exists nothing is created and FALSE is returned.
  * Note that this function also create a default description for the part.
  */
-EAPI unsigned char         ///@return TRUE on success, FALSE if the part can't be created
+EAPI Eina_Bool         ///@return TRUE on success, FALSE if the part can't be created
 edje_edit_part_add(
    Evas_Object *obj,       ///< The edje object
    const char *name,       ///< The name for the new part
-   unsigned char type      ///< The type of the part to create (One of: EDJE_PART_TYPE_NONE, EDJE_PART_TYPE_RECTANGLE, EDJE_PART_TYPE_TEXT,EDJE_PART_TYPE_IMAGE, EDJE_PART_TYPE_SWALLOW, EDJE_PART_TYPE_TEXTBLOCK,EDJE_PART_TYPE_GRADIENT or EDJE_PART_TYPE_GROUP)
+   Edje_Part_Type type      ///< The type of the part to create (One of: EDJE_PART_TYPE_NONE, EDJE_PART_TYPE_RECTANGLE, EDJE_PART_TYPE_TEXT,EDJE_PART_TYPE_IMAGE, EDJE_PART_TYPE_SWALLOW, EDJE_PART_TYPE_TEXTBLOCK,EDJE_PART_TYPE_GRADIENT or EDJE_PART_TYPE_GROUP)
 );
 
 /**Delete the given part from the edje
@@ -479,7 +480,7 @@ edje_edit_part_add(
  * A group must have at least one part, so it's not possible to
  * remove the last remaining part.
  */
-EAPI unsigned char         ///@return 1 on success, 0 if the part can't be removed
+EAPI Eina_Bool         ///@return 1 on success, 0 if the part can't be removed
 edje_edit_part_del(
    Evas_Object *obj,       ///< The edje object
    const char *part        ///< The name of the part to remove
@@ -487,21 +488,21 @@ edje_edit_part_del(
 
 /**Check if a part with the given name exist in the edje object.
  */
-EAPI unsigned char         ///< 1 if the part exist, 0 otherwise.
+EAPI Eina_Bool         ///< 1 if the part exist, 0 otherwise.
 edje_edit_part_exist(
    Evas_Object *obj,       ///< The edje object
    const char *part        ///< The name of the part
 );
 
 /**Move the given part below the previous one.*/
-EAPI unsigned char         ///@return 1 on success, 0 on failure
+EAPI Eina_Bool         ///@return 1 on success, 0 on failure
 edje_edit_part_restack_below(
    Evas_Object *obj,       ///< The edje object
    const char *part        ///< The name of the part to restack
 );
 
 /**Move the given part above the next one.*/
-EAPI unsigned char         ///@return 1 on success, 0 on failure
+EAPI Eina_Bool         ///@return 1 on success, 0 on failure
 edje_edit_part_restack_above(
    Evas_Object *obj,       ///< The edje object
    const char *part        ///< The name of the part to restack
@@ -510,7 +511,7 @@ edje_edit_part_restack_above(
 /**Set a new name for part.
  * Note that the relative getter function don't exist as it don't make sense ;)
  */
-EAPI unsigned char         ///@return 1 on success, 0 on failure
+EAPI Eina_Bool         ///@return 1 on success, 0 on failure
 edje_edit_part_name_set(
    Evas_Object *obj,       ///< The edje object
    const char  *part,      ///< The name of the part to rename
@@ -518,7 +519,7 @@ edje_edit_part_name_set(
 );
 
 /**Get the type of a part */
-EAPI unsigned char         ///@return One of: EDJE_PART_TYPE_NONE, EDJE_PART_TYPE_RECTANGLE, EDJE_PART_TYPE_TEXT,EDJE_PART_TYPE_IMAGE, EDJE_PART_TYPE_SWALLOW, EDJE_PART_TYPE_TEXTBLOCK,EDJE_PART_TYPE_GRADIENT or EDJE_PART_TYPE_GROUP
+EAPI Edje_Part_Type         ///@return One of: EDJE_PART_TYPE_NONE, EDJE_PART_TYPE_RECTANGLE, EDJE_PART_TYPE_TEXT,EDJE_PART_TYPE_IMAGE, EDJE_PART_TYPE_SWALLOW, EDJE_PART_TYPE_TEXTBLOCK,EDJE_PART_TYPE_GRADIENT or EDJE_PART_TYPE_GROUP
 edje_edit_part_type_get(
    Evas_Object *obj,       ///< The edje object
    const char *part        ///< The name of the part
@@ -536,7 +537,7 @@ edje_edit_part_clip_to_get(
 /**Set a part to clip part to.
  * If clip_to is NULL then the clipping value will be cancelled (unset clipping)
  */
-EAPI unsigned char         ///@return 1 on success, 0 otherwise.
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise.
 edje_edit_part_clip_to_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -558,7 +559,7 @@ edje_edit_part_source_get(
  * 'autoswallow' inside the given part.
  * NOTE: This is not applied now. You must reload the edje to see the change.
  */
-EAPI unsigned char         ///@return 1 on success, 0 otherwise.
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise.
 edje_edit_part_source_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -566,7 +567,7 @@ edje_edit_part_source_set(
 );
 
 /**Get the effect for a given part. */
-EAPI unsigned char         ///@return One of: EDJE_TEXT_EFFECT_NONE, _PLAIN, _OUTLINE, _SOFT_OUTLINE, _SHADOW, _SOFT_SHADOW, _OUTLINE_SHADOW, _OUTLINE_SOFT_SHADOW, _FAR_SHADOW, _FAR_SOFT_SHADOW, _GLOW.
+EAPI Edje_Text_Effect         ///@return One of: EDJE_TEXT_EFFECT_NONE, _PLAIN, _OUTLINE, _SOFT_OUTLINE, _SHADOW, _SOFT_SHADOW, _OUTLINE_SHADOW, _OUTLINE_SOFT_SHADOW, _FAR_SHADOW, _FAR_SOFT_SHADOW, _GLOW.
 edje_edit_part_effect_get(
    Evas_Object *obj,       ///< The edje object
    const char *part        ///< The name of the part
@@ -577,7 +578,7 @@ EAPI void
 edje_edit_part_effect_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   unsigned char effect    ///< The effect to set. See edje_edit_part_effect_get() for possible value
+   Edje_Text_Effect effect    ///< The effect to set. See edje_edit_part_effect_get() for possible value
 );
 
 /**Get the current selected state in part. */
@@ -588,7 +589,7 @@ edje_edit_part_selected_state_get(
 );
 
 /**Set the current state in part.*/
-EAPI unsigned char         ///@return 1 on success, 0 otherwise.
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise.
 edje_edit_part_selected_state_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -596,7 +597,7 @@ edje_edit_part_selected_state_set(
 );
 
 /**Get mouse_events for part.*/
-EAPI unsigned char         ///@return 1 if part accept mouse events, 0 if not
+EAPI Eina_Bool         ///@return 1 if part accept mouse events, 0 if not
 edje_edit_part_mouse_events_get(
    Evas_Object *obj,       ///< The edje object
    const char *part        ///< The name of the part
@@ -607,11 +608,11 @@ EAPI void
 edje_edit_part_mouse_events_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   unsigned char mouse_events ///< If set to 1 part will accept mouse events, 0 to ignore all mouse events from part.
+   Eina_Bool mouse_events ///< If set to 1 part will accept mouse events, 0 to ignore all mouse events from part.
 );
 
 /**Get repeat_events for part.*/
-EAPI unsigned char         ///@return 1 if part will pass all events to the other parts, 0 if not
+EAPI Eina_Bool         ///@return 1 if part will pass all events to the other parts, 0 if not
 edje_edit_part_repeat_events_get(
    Evas_Object *obj,       ///< The edje object
    const char *part        ///< The name of the part
@@ -622,7 +623,7 @@ EAPI void
 edje_edit_part_repeat_events_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
-   unsigned char repeat_events /**< If set to 1 part will repeat
+   Eina_Bool repeat_events /**< If set to 1 part will repeat
                                  * all the received mouse events to other parts.
                                  * If set to 0 the events received will not propagate to other parts.*/
 );
@@ -810,7 +811,7 @@ edje_edit_state_del(
 
 /**Check if a part state with the given name exist.
  */
-EAPI unsigned char         ///< 1 if the part state exist, 0 otherwise.
+EAPI Eina_Bool         ///< 1 if the part state exist, 0 otherwise.
 edje_edit_state_exist(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -1346,7 +1347,7 @@ edje_edit_state_fill_size_offset_y_set(
 );
 
 /**Get the visibility of a part state.*/
-EAPI unsigned char         ///@return TRUE if the state is visible
+EAPI Eina_Bool         ///@return TRUE if the state is visible
 edje_edit_state_visible_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -1359,7 +1360,7 @@ edje_edit_state_visible_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
    const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
-   unsigned char visible   ///< TRUE to set the state visible
+   Eina_Bool visible   ///< TRUE to set the state visible
 );
 
 /**Get the color class of the given part state. Remember to free the string with edje_edit_string_free()*/
@@ -1474,7 +1475,7 @@ edje_edit_state_text_elipsis_set(
 );
 
 /**Get if the text part fit it's container horizontally */
-EAPI unsigned char         ///@return 1 If the part fit it's container horizontally
+EAPI Eina_Bool         ///@return 1 If the part fit it's container horizontally
 edje_edit_state_text_fit_x_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -1487,11 +1488,11 @@ edje_edit_state_text_fit_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
    const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
-   unsigned char fit       ///< 1 to make the text fit it's container
+   Eina_Bool fit       ///< 1 to make the text fit it's container
 );
 
 /**Get if the text part fit it's container vertically */
-EAPI unsigned char         ///@return 1 If the part fit it's container vertically
+EAPI Eina_Bool         ///@return 1 If the part fit it's container vertically
 edje_edit_state_text_fit_y_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -1504,7 +1505,7 @@ edje_edit_state_text_fit_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
    const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
-   unsigned char fit       ///< 1 to make the text fit it's container
+   Eina_Bool fit       ///< 1 to make the text fit it's container
 );
 
 /**Get the list of all the fonts in the given edje.
@@ -1519,7 +1520,7 @@ edje_edit_fonts_list_get(
  * The newly created font will be available to all the groups in the edje, not only the current one.
  * If font can't be load FALSE is returned.
  */
-EAPI unsigned char         ///@return TRUE on success or FALSE on failure
+EAPI Eina_Bool         ///@return TRUE on success or FALSE on failure
 edje_edit_font_add(
    Evas_Object *obj,       ///< The edje object
    const char* path        ///< The file path to load the ttf font from
@@ -1569,7 +1570,7 @@ edje_edit_images_list_get(
  *
  * The format of the image files that can be loaded depend on the evas engine on your system
  */
-EAPI unsigned char         ///@return TRUE on success or FALSE on failure
+EAPI Eina_Bool         ///@return TRUE on success or FALSE on failure
 edje_edit_image_add(
    Evas_Object *obj,       ///< The edje object
    const char* path        ///< The name of the image file to include in the edje
@@ -1583,7 +1584,7 @@ edje_edit_image_add(
  * "name". Note that all the parts in the edje share the same image collection,
  * thus you can/must use the same image for different part.
  */
-EAPI unsigned char        /// @return TRUE on success or FALSE on failure
+EAPI Eina_Bool        /// @return TRUE on success or FALSE on failure
 edje_edit_image_data_add(
    Evas_Object *obj,      ///< The edje object
    const char *name,      ///< The image entry name
@@ -1615,7 +1616,7 @@ edje_edit_image_id_get(
 );
 
 /**Get compression type for the given image.*/
-EAPI int                  ///@return One of EDJE_EDIT_IMAGE_COMP_RAW, EDJE_EDIT_IMAGE_COMP_USER, EDJE_EDIT_IMAGE_COMP_COMP or EDJE_EDIT_IMAGE_COMP_LOSSY
+EAPI Edje_Edit_Image_Comp ///@return One of EDJE_EDIT_IMAGE_COMP_RAW, EDJE_EDIT_IMAGE_COMP_USER, EDJE_EDIT_IMAGE_COMP_COMP or EDJE_EDIT_IMAGE_COMP_LOSSY
 edje_edit_image_compression_type_get(
    Evas_Object *obj,      ///< The edje object
    const char *image      ///< The name of the image
@@ -1682,7 +1683,7 @@ edje_edit_state_tweens_list_get(
 /**Add a new tween frame to the given part state
  * The tween param must be the name of an existing image.
  */
-EAPI unsigned char         ///@return 1 on success, 0 otherwise
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_tween_add(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -1694,7 +1695,7 @@ edje_edit_state_tween_add(
  * If none is removed the function return 0.
  * The image is not removed from the edje.
  */
-EAPI unsigned char         ///@return 1 on success, 0 otherwise
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_tween_del(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -1719,21 +1720,21 @@ edje_edit_spectrum_list_get(
 );
 
 /**Add a new spectra in the given edje object.*/
-EAPI unsigned char         ///@return 1 on success, 0 otherwise
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_spectra_add(
    Evas_Object *obj,       ///< The edje object
    const char* name        ///< The name of the new spectra
 );
 
 /**Delete the given spectra from the edje object.*/
-EAPI unsigned char         ///@return 1 on success, 0 otherwise
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_spectra_del(
    Evas_Object *obj,       ///< The edje object
    const char* spectra     ///< The name of the spectra to delete
 );
 
 /**Change the name of the given spectra.*/
-EAPI unsigned char         ///@return 1 on success, 0 otherwise
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_spectra_name_set(
    Evas_Object *obj,       ///< The edje object
    const char* spectra,    ///< The current name of the spectra
@@ -1748,7 +1749,7 @@ edje_edit_spectra_stop_num_get(
 );
 
 /**Set the number of stops in the given spectra.*/
-EAPI unsigned char         ///@return 1 on success, 0 otherwise
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_spectra_stop_num_set(
    Evas_Object *obj,       ///< The edje object
    const char* spectra,    ///< The name of the spectra
@@ -1756,7 +1757,7 @@ edje_edit_spectra_stop_num_set(
 );
 
 /**Get the colors of the given stop.*/
-EAPI unsigned char         ///@return 1 on success, 0 otherwise
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_spectra_stop_color_get(
    Evas_Object *obj,       ///< The edje object
    const char* spectra,    ///< The name of the spectra
@@ -1769,7 +1770,7 @@ edje_edit_spectra_stop_color_get(
 );
 
 /**Set the colors of the given stop.*/
-EAPI unsigned char         ///@return 1 on success, 0 otherwise
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_spectra_stop_color_set(
    Evas_Object *obj,       ///< The edje object
    const char* spectra,    ///< The name of the spectra
@@ -1801,7 +1802,7 @@ edje_edit_state_gradient_type_get(
 /**Set the type of gradient.
  * Gradient type can be on of the following: linear, linear.diag, linear.codiag, radial, rectangular, angular, sinusoidal
  */
-EAPI unsigned char         ///@return 1 on success, 0 otherwise
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_gradient_type_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -1810,7 +1811,7 @@ edje_edit_state_gradient_type_set(
 );
 
 /**Get if the current gradient use the fill properties or the gradient_rel as params.*/
-EAPI unsigned char         ///@return 1 if use fill, 0 if use gradient_rel
+EAPI Eina_Bool         ///@return 1 if use fill, 0 if use gradient_rel
 edje_edit_state_gradient_use_fill_get(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -1826,7 +1827,7 @@ edje_edit_state_gradient_spectra_get(
 );
 
 /**Set the spectra used by part state.*/
-EAPI unsigned char         ///@return 1 on success, 0 otherwise
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_gradient_spectra_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -1884,7 +1885,7 @@ edje_edit_state_gradient_rel2_relative_y_get(
 );
 
 /**Set the gradien rel1 relative x value */
-EAPI unsigned char         ///@return 1 on success, 0 otherwise
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_gradient_rel1_relative_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -1893,7 +1894,7 @@ edje_edit_state_gradient_rel1_relative_x_set(
 );
 
 /**Set the gradien rel1 relative y value */
-EAPI unsigned char         ///@return 1 on success, 0 otherwise
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_gradient_rel1_relative_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -1902,7 +1903,7 @@ edje_edit_state_gradient_rel1_relative_y_set(
 );
 
 /**Set the gradien rel2 relative x value */
-EAPI unsigned char         ///@return 1 on success, 0 otherwise
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_gradient_rel2_relative_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -1911,7 +1912,7 @@ edje_edit_state_gradient_rel2_relative_x_set(
 );
 
 /**Set the gradien rel2 relative y value */
-EAPI unsigned char         ///@return 1 on success, 0 otherwise
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_gradient_rel2_relative_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -1952,7 +1953,7 @@ edje_edit_state_gradient_rel2_offset_y_get(
 );
 
 /**Set the gradien rel1 offset x value */
-EAPI unsigned char         ///@return 1 on success, 0 otherwise
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_gradient_rel1_offset_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -1961,7 +1962,7 @@ edje_edit_state_gradient_rel1_offset_x_set(
 );
 
 /**Set the gradien rel1 offset y value */
-EAPI unsigned char         ///@return 1 on success, 0 otherwise
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_gradient_rel1_offset_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -1970,7 +1971,7 @@ edje_edit_state_gradient_rel1_offset_y_set(
 );
 
 /**Set the gradien rel2 offset x value */
-EAPI unsigned char         ///@return 1 on success, 0 otherwise
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_gradient_rel2_offset_x_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -1979,7 +1980,7 @@ edje_edit_state_gradient_rel2_offset_x_set(
 );
 
 /**Set the gradien rel2 offset y value */
-EAPI unsigned char         ///@return 1 on success, 0 otherwise
+EAPI Eina_Bool         ///@return 1 on success, 0 otherwise
 edje_edit_state_gradient_rel2_offset_y_set(
    Evas_Object *obj,       ///< The edje object
    const char *part,       ///< The name of the part
@@ -2008,7 +2009,7 @@ edje_edit_programs_list_get(
 /**Add a new program to the edje file
  * If a program with the same name just exist the function will fail.
  */
-EAPI unsigned char         ///@return 1 on success or 0 on errors
+EAPI Eina_Bool         ///@return 1 on success or 0 on errors
 edje_edit_program_add(
    Evas_Object *obj,       ///< The edje object
    const char *name        ///< The name of the new program
@@ -2016,7 +2017,7 @@ edje_edit_program_add(
 
 /**Remove the given program from the edje file.
  */
-EAPI unsigned char         ///@return 1 on success or 0 on errors
+EAPI Eina_Bool         ///@return 1 on success or 0 on errors
 edje_edit_program_del(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The name of the program to remove
@@ -2024,21 +2025,21 @@ edje_edit_program_del(
 
 /**Check if a program with the given name exist in the edje object.
  */
-EAPI unsigned char         ///< 1 if the program exist, 0 otherwise.
+EAPI Eina_Bool         ///< 1 if the program exist, 0 otherwise.
 edje_edit_program_exist(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The name of the program
 );
 
 /**Run the given program. */
-EAPI unsigned char         ///< 1 on success, 0 otherwise.
+EAPI Eina_Bool         ///< 1 on success, 0 otherwise.
 edje_edit_program_run(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The name of the program to execute
 );
 
 /**Set a new name for the given program */
-EAPI unsigned char        ///@return 1 on success or 0 on errors
+EAPI Eina_Bool        ///@return 1 on success or 0 on errors
 edje_edit_program_name_set(
    Evas_Object *obj,       ///< The edje object
    const char *prog,       ///< The program name
@@ -2053,7 +2054,7 @@ edje_edit_program_source_get(
 );
 
 /**Set source of the given program. */
-EAPI unsigned char         ///@return 1 on success or 0 on errors
+EAPI Eina_Bool         ///@return 1 on success or 0 on errors
 edje_edit_program_source_set(
    Evas_Object *obj,       ///< The edje object
    const char *prog,       ///< The program name
@@ -2068,7 +2069,7 @@ edje_edit_program_signal_get(
 );
 
 /**Set signal of the given program. */
-EAPI unsigned char         ///@return 1 on success or 0 on errors
+EAPI Eina_Bool         ///@return 1 on success or 0 on errors
 edje_edit_program_signal_set(
    Evas_Object *obj,       ///< The edje object
    const char *prog,       ///< The program name
@@ -2083,7 +2084,7 @@ edje_edit_program_in_from_get(
 );
 
 /**Set in.from of a given program.*/
-EAPI unsigned char         ///@return 1 on success or 0 on errors
+EAPI Eina_Bool         ///@return 1 on success or 0 on errors
 edje_edit_program_in_from_set(
    Evas_Object *obj,       ///< The edje object
    const char *prog,       ///< The program name
@@ -2098,7 +2099,7 @@ edje_edit_program_in_range_get(
 );
 
 /**Set in.range of a given program.*/
-EAPI unsigned char         ///@return 1 on success or 0 on errors
+EAPI Eina_Bool         ///@return 1 on success or 0 on errors
 edje_edit_program_in_range_set(
    Evas_Object *obj,       ///< The edje object
    const char *prog,       ///< The program name
@@ -2108,7 +2109,7 @@ edje_edit_program_in_range_set(
 /**Get the action of a given program.
  * Action can be one of EDJE_ACTION_TYPE_NONE, _STATE_SET, ACTION_STOP, SIGNAL_EMIT, DRAG_VAL_SET, _DRAG_VAL_STEP, _DRAG_VAL_PAGE, _SCRIPT
  */
-EAPI int                   ///@return The action type, or -1 on errors
+EAPI Edje_Action_Type      ///@return The action type, or -1 on errors
 edje_edit_program_action_get(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The program name
@@ -2117,11 +2118,11 @@ edje_edit_program_action_get(
 /**Set the action of a given program.
  * Action can be one of EDJE_ACTION_TYPE_NONE, _STATE_SET, ACTION_STOP, SIGNAL_EMIT, DRAG_VAL_SET, _DRAG_VAL_STEP, _DRAG_VAL_PAGE, _SCRIPT
  */
-EAPI unsigned char         ///@return 1 on success or 0 on errors
+EAPI Eina_Bool         ///@return 1 on success or 0 on errors
 edje_edit_program_action_set(
    Evas_Object *obj,       ///< The edje object
    const char *prog,       ///< The program name
-   int action              ///< The new action type
+   Edje_Action_Type action ///< The new action type
 );
 
 /**Get the list of the targets for the given program
@@ -2138,7 +2139,7 @@ edje_edit_program_targets_get(
  * If program action is EDJE_ACTION_TYPE_ACTION_STOP then 'target' must be an existing program name.
  * If action is EDJE_ACTION_TYPE_STATE_SET then 'target' must be an existing part name.
  */
-EAPI unsigned char         ///@return 1 on success or 0 on errors
+EAPI Eina_Bool         ///@return 1 on success or 0 on errors
 edje_edit_program_target_add(
    Evas_Object *obj,       ///< The edje object
    const char *prog,       ///< The program name
@@ -2146,7 +2147,7 @@ edje_edit_program_target_add(
 );
 
 /**Clear the 'targets' list of the given program */
-EAPI unsigned char         ///@return 1 on success or 0 on errors
+EAPI Eina_Bool         ///@return 1 on success or 0 on errors
 edje_edit_program_targets_clear(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The program name
@@ -2165,7 +2166,7 @@ edje_edit_program_afters_get(
 /**Add a new program name to the list of 'afters' in the given program.
  * All the programs listed in 'afters' will be executed after program execution.
  */
-EAPI unsigned char         ///@return 1 on success or 0 on errors
+EAPI Eina_Bool         ///@return 1 on success or 0 on errors
 edje_edit_program_after_add(
    Evas_Object *obj,       ///< The edje object
    const char *prog,       ///< The program name
@@ -2173,7 +2174,7 @@ edje_edit_program_after_add(
 );
 
 /**Clear the 'afters' list of the given program */
-EAPI unsigned char         ///@return 1 on success or 0 on errors
+EAPI Eina_Bool         ///@return 1 on success or 0 on errors
 edje_edit_program_afters_clear(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The program name
@@ -2193,7 +2194,7 @@ edje_edit_program_state_get(
  * In a STATE_SET action this is the name of state to set.
  * In a SIGNAL_EMIT action is the name of the signal to emit.
  */
-EAPI unsigned char         ///@return 1 on success or 0 on errors
+EAPI Eina_Bool         ///@return 1 on success or 0 on errors
 edje_edit_program_state_set(
    Evas_Object *obj,       ///< The edje object
    const char *prog,       ///< The program name
@@ -2214,7 +2215,7 @@ edje_edit_program_value_get(
  * In a STATE_SET action this is the value of state to set.
  * Not used on SIGNAL_EMIT action.
  */
-EAPI unsigned char         ///@return 1 on success or 0 on errors
+EAPI Eina_Bool         ///@return 1 on success or 0 on errors
 edje_edit_program_value_set(
    Evas_Object *obj,       ///< The edje object
    const char *prog,       ///< The program name
@@ -2235,7 +2236,7 @@ edje_edit_program_state2_get(
  * In a STATE_SET action is not used
  * In a SIGNAL_EMIT action is the source of the emitted signal.
  */
-EAPI unsigned char         ///@return 1 on success or 0 on errors
+EAPI Eina_Bool         ///@return 1 on success or 0 on errors
 edje_edit_program_state2_set(
    Evas_Object *obj,       ///< The edje object
    const char *prog,       ///< The program name
@@ -2254,7 +2255,7 @@ edje_edit_program_value2_get(
 /**Set the value2 of state for the given program.
  * This is used in DRAG_ACTION
  */
-EAPI unsigned char         ///@return 1 on success or 0 on errors
+EAPI Eina_Bool         ///@return 1 on success or 0 on errors
 edje_edit_program_value2_set(
    Evas_Object *obj,       ///< The edje object
    const char *prog,       ///< The program name
@@ -2264,7 +2265,7 @@ edje_edit_program_value2_set(
 /**Get the type of transition to use when apply animations.
  * Can be one of: EDJE_TWEEN_MODE_NONE, EDJE_TWEEN_MODE_LINEAR, EDJE_TWEEN_MODE_SINUSOIDAL, EDJE_TWEEN_MODE_ACCELERATE or EDJE_TWEEN_MODE_DECELERATE.
  */
-EAPI int                   ///@return The type of transition used by program
+EAPI Edje_Tween_Mode       ///@return The type of transition used by program
 edje_edit_program_transition_get(
    Evas_Object *obj,       ///< The edje object
    const char *prog        ///< The program name
@@ -2273,11 +2274,11 @@ edje_edit_program_transition_get(
 /**Set the type of transition to use when apply animations.
  * Can be one of: EDJE_TWEEN_MODE_NONE, EDJE_TWEEN_MODE_LINEAR, EDJE_TWEEN_MODE_SINUSOIDAL, EDJE_TWEEN_MODE_ACCELERATE or EDJE_TWEEN_MODE_DECELERATE.
  */
-EAPI unsigned char         ///@return 1 on success or 0 on errors
+EAPI Eina_Bool         ///@return 1 on success or 0 on errors
 edje_edit_program_transition_set(
    Evas_Object *obj,       ///< The edje object
    const char *prog,       ///< The program name
-   int transition          ///< The transition type to set
+   Edje_Tween_Mode transition ///< The transition type to set
 );
 
 /**Get the duration of the transition in seconds.*/
@@ -2288,7 +2289,7 @@ edje_edit_program_transition_time_get(
 );
 
 /**Set the duration of the transition in seconds.*/
-EAPI unsigned char         ///@return 1 on success or 0 on errors
+EAPI Eina_Bool         ///@return 1 on success or 0 on errors
 edje_edit_program_transition_time_set(
    Evas_Object *obj,       ///< The edje object
    const char *prog,       ///< The program name

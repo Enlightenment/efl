@@ -201,7 +201,7 @@ _edje_real_part_free(Edje_Real_Part *rp)
    eina_mempool_free(_edje_real_part_mp, rp);
 }
 
-static unsigned char
+static Eina_Bool
 _edje_import_image_file(Edje *ed, const char *path, int id)
 {
    char buf[256];
@@ -625,7 +625,7 @@ edje_edit_compiler_get(Evas_Object *obj)
 /*  GROUPS API  */
 /****************/
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_group_add(Evas_Object *obj, const char *name)
 {
    Edje_Part_Collection_Directory_Entry *de;
@@ -661,7 +661,7 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    search = 0;
    while (!id)
      {
-	unsigned char found = 0;
+	Eina_Bool found = 0;
 
 	EINA_LIST_FOREACH(ed->file->collection_dir->entries, l, d)
 	  {
@@ -704,7 +704,7 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
 }
 
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_group_del(Evas_Object *obj)
 {
    char buf[32];
@@ -772,7 +772,7 @@ edje_edit_group_del(Evas_Object *obj)
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_group_exist(Evas_Object *obj, const char *group)
 {
    Eina_List *l;
@@ -786,7 +786,7 @@ edje_edit_group_exist(Evas_Object *obj, const char *group)
    return 0;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_group_name_set(Evas_Object *obj, const char *new_name)
 {
    Eina_List *l;
@@ -796,9 +796,12 @@ edje_edit_group_name_set(Evas_Object *obj, const char *new_name)
    GET_ED_OR_RETURN(0);
 
    if (!new_name) return 0;
-   if (edje_edit_group_exist(obj, new_name)) return 0;
 
    pc = ed->collection;
+
+   if (!strcmp(pc->part, new_name)) return 1;
+
+   if (edje_edit_group_exist(obj, new_name)) return 0;
 
    printf("Set name of current group: %s [id: %d][new name: %s]\n",
 	 pc->part, pc->id, new_name);
@@ -918,7 +921,7 @@ edje_edit_data_list_get(Evas_Object * obj)
    return datas;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_data_add(Evas_Object *obj, const char *itemname, const char *value)
 {
    Eina_List *l;
@@ -946,7 +949,7 @@ edje_edit_data_add(Evas_Object *obj, const char *itemname, const char *value)
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_data_del(Evas_Object *obj, const char *itemname)
 {
    Eina_List *l;
@@ -989,7 +992,7 @@ edje_edit_data_value_get(Evas_Object * obj, char *itemname)
    return NULL;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_data_value_set(Evas_Object *obj, const char *itemname, const char *value)
 {
    Eina_List *l;
@@ -1011,7 +1014,7 @@ edje_edit_data_value_set(Evas_Object *obj, const char *itemname, const char *val
    return 0;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_data_name_set(Evas_Object *obj, const char *itemname,  const char *newname)
 {
    Eina_List *l;
@@ -1055,7 +1058,7 @@ edje_edit_color_classes_list_get(Evas_Object * obj)
    return classes;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_color_class_colors_get(Evas_Object *obj, const char *class_name, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3)
 {
    Eina_List *l;
@@ -1089,7 +1092,7 @@ edje_edit_color_class_colors_get(Evas_Object *obj, const char *class_name, int *
    return 0;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_color_class_colors_set(Evas_Object *obj, const char *class_name, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
 {
    Eina_List *l;
@@ -1123,7 +1126,7 @@ edje_edit_color_class_colors_set(Evas_Object *obj, const char *class_name, int r
    return 0;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_color_class_add(Evas_Object *obj, const char *name)
 {
    Eina_List *l;
@@ -1152,7 +1155,7 @@ edje_edit_color_class_add(Evas_Object *obj, const char *name)
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_color_class_del(Evas_Object *obj, const char *name)
 {
    Eina_List *l;
@@ -1174,7 +1177,7 @@ edje_edit_color_class_del(Evas_Object *obj, const char *name)
    return 0;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_color_class_name_set(Evas_Object *obj, const char *name, const char *newname)
 {
    Eina_List *l;
@@ -1220,7 +1223,7 @@ edje_edit_styles_list_get(Evas_Object * obj)
    return styles;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_style_add(Evas_Object * obj, const char* style)
 {
    Edje_Style *s;
@@ -1348,7 +1351,7 @@ edje_edit_style_tag_value_set(Evas_Object * obj, const char* style, const char* 
    t->value = eina_stringshare_add(new_value);
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_style_tag_add(Evas_Object * obj, const char* style, const char* tag_name)
 {
    Edje_Style *s;
@@ -1420,12 +1423,13 @@ edje_edit_parts_list_get(Evas_Object *obj)
    return parts;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_part_name_set(Evas_Object *obj, const char* part, const char* new_name)
 {
    GET_RP_OR_RETURN(0);
 
    if (!new_name) return 0;
+   if (!strcmp(part, new_name)) return 1;
    if (_edje_real_part_get(ed, new_name)) return 0;
 
    printf("Set name of part: %s [new name: %s]\n", part, new_name);
@@ -1436,8 +1440,8 @@ edje_edit_part_name_set(Evas_Object *obj, const char* part, const char* new_name
    return 1;
 }
 
-EAPI unsigned char
-edje_edit_part_add(Evas_Object *obj, const char* name, unsigned char type)
+EAPI Eina_Bool
+edje_edit_part_add(Evas_Object *obj, const char* name, Edje_Part_Type type)
 {
    Edje_Part_Collection *pc;
    Edje_Part *ep;
@@ -1449,18 +1453,18 @@ edje_edit_part_add(Evas_Object *obj, const char* name, unsigned char type)
 
    /* Check if part already exists */
    if (_edje_real_part_get(ed, name))
-     return FALSE;
+     return EINA_FALSE;
 
    /* Alloc Edje_Part or return */
    ep = _alloc(sizeof(Edje_Part));
-   if (!ep) return FALSE;
+   if (!ep) return EINA_FALSE;
 
    /* Alloc Edje_Real_Part or return */
    rp = _alloc(sizeof(Edje_Real_Part));
    if (!rp)
      {
 	free(ep);
-	return FALSE;
+	return EINA_FALSE;
      }
 
    /* Init Edje_Part */
@@ -1556,10 +1560,10 @@ edje_edit_part_add(Evas_Object *obj, const char* name, unsigned char type)
 
    edje_object_calc_force(obj);
 
-   return TRUE;
+   return EINA_TRUE;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_part_del(Evas_Object *obj, const char* part)
 {
    Edje_Part *ep;
@@ -1573,7 +1577,7 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
    ep = rp->part;
    id = ep->id;
 
-   if (ed->table_parts_size <= 1) return FALSE; //don't remove the last part
+   if (ed->table_parts_size <= 1) return EINA_FALSE; //don't remove the last part
 
    /* Unlik Edje_Real_Parts that link to the removed one */
    int i;
@@ -1647,17 +1651,17 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
 
 
    edje_object_calc_force(obj);
-   return TRUE;
+   return EINA_TRUE;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_part_exist(Evas_Object *obj, const char *part)
 {
    GET_RP_OR_RETURN(0);
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_part_restack_below(Evas_Object *obj, const char* part)
 {
    Edje_Part_Collection *group;
@@ -1682,7 +1686,7 @@ edje_edit_part_restack_below(Evas_Object *obj, const char* part)
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_part_restack_above(Evas_Object *obj, const char* part)
 {
    Edje_Part_Collection *group;
@@ -1709,7 +1713,7 @@ edje_edit_part_restack_above(Evas_Object *obj, const char* part)
    return 1;
 }
 
-EAPI unsigned char
+EAPI Edje_Part_Type
 edje_edit_part_type_get(Evas_Object *obj, const char *part)
 {
    GET_RP_OR_RETURN(0);
@@ -1734,7 +1738,7 @@ edje_edit_part_selected_state_get(Evas_Object *obj, const char *part)
    return eina_stringshare_add(name);
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_part_selected_state_set(Evas_Object *obj, const char *part, const char *state)
 {
    Edje_Part_Description *pd;
@@ -1767,7 +1771,7 @@ edje_edit_part_clip_to_get(Evas_Object *obj, const char *part)
    return eina_stringshare_add(clip->part->name);
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_part_clip_to_set(Evas_Object *obj, const char *part, const char *clip_to)
 {
    Edje_Real_Part *clip;
@@ -1813,7 +1817,7 @@ edje_edit_part_clip_to_set(Evas_Object *obj, const char *part, const char *clip_
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_part_mouse_events_get(Evas_Object *obj, const char *part)
 {
    GET_RP_OR_RETURN(0);
@@ -1822,7 +1826,7 @@ edje_edit_part_mouse_events_get(Evas_Object *obj, const char *part)
 }
 
 EAPI void
-edje_edit_part_mouse_events_set(Evas_Object *obj, const char *part, unsigned char mouse_events)
+edje_edit_part_mouse_events_set(Evas_Object *obj, const char *part, Eina_Bool mouse_events)
 {
    GET_RP_OR_RETURN();
 
@@ -1844,7 +1848,7 @@ edje_edit_part_mouse_events_set(Evas_Object *obj, const char *part, unsigned cha
      }
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_part_repeat_events_get(Evas_Object *obj, const char *part)
 {
    GET_RP_OR_RETURN(0);
@@ -1854,7 +1858,7 @@ edje_edit_part_repeat_events_get(Evas_Object *obj, const char *part)
 }
 
 EAPI void
-edje_edit_part_repeat_events_set(Evas_Object *obj, const char *part, unsigned char repeat_events)
+edje_edit_part_repeat_events_set(Evas_Object *obj, const char *part, Eina_Bool repeat_events)
 {
    GET_RP_OR_RETURN();
 
@@ -1902,7 +1906,7 @@ edje_edit_part_source_get(Evas_Object *obj, const char *part)
    return eina_stringshare_add(rp->part->source);
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source)
 {
    GET_RP_OR_RETURN(0);
@@ -2295,7 +2299,7 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name)
    pd->gradient.use_rel = 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_state_exist(Evas_Object *obj, const char *part, const char *state)
 {
    GET_PD_OR_RETURN(0);
@@ -3007,7 +3011,7 @@ edje_edit_state_fill_size_offset_y_set(Evas_Object *obj, const char *part, const
    edje_object_calc_force(obj);
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_state_visible_get(Evas_Object *obj, const char *part, const char *state)
 {
    GET_PD_OR_RETURN(0);
@@ -3016,7 +3020,7 @@ edje_edit_state_visible_get(Evas_Object *obj, const char *part, const char *stat
 }
 
 EAPI void
-edje_edit_state_visible_set(Evas_Object *obj, const char *part, const char *state, unsigned char visible)
+edje_edit_state_visible_set(Evas_Object *obj, const char *part, const char *state, Eina_Bool visible)
 {
    GET_PD_OR_RETURN();
    printf("Set state visible flag of part: %s state: %s to: %d\n", part, state, visible);
@@ -3157,7 +3161,7 @@ edje_edit_state_text_elipsis_set(Evas_Object *obj, const char *part, const char 
    edje_object_calc_force(obj);
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_state_text_fit_x_get(Evas_Object *obj, const char *part, const char *state)
 {
    GET_PD_OR_RETURN(0);
@@ -3166,7 +3170,7 @@ edje_edit_state_text_fit_x_get(Evas_Object *obj, const char *part, const char *s
 }
 
 EAPI void
-edje_edit_state_text_fit_x_set(Evas_Object *obj, const char *part, const char *state, unsigned char fit)
+edje_edit_state_text_fit_x_set(Evas_Object *obj, const char *part, const char *state, Eina_Bool fit)
 {
    GET_PD_OR_RETURN();
 
@@ -3176,7 +3180,7 @@ edje_edit_state_text_fit_x_set(Evas_Object *obj, const char *part, const char *s
    edje_object_calc_force(obj);
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_state_text_fit_y_get(Evas_Object *obj, const char *part, const char *state)
 {
    GET_PD_OR_RETURN(0);
@@ -3185,7 +3189,7 @@ edje_edit_state_text_fit_y_get(Evas_Object *obj, const char *part, const char *s
 }
 
 EAPI void
-edje_edit_state_text_fit_y_set(Evas_Object *obj, const char *part, const char *state, unsigned char fit)
+edje_edit_state_text_fit_y_set(Evas_Object *obj, const char *part, const char *state, Eina_Bool fit)
 {
    GET_PD_OR_RETURN();
 
@@ -3218,7 +3222,7 @@ edje_edit_fonts_list_get(Evas_Object *obj)
    return fonts;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_font_add(Evas_Object *obj, const char* path)
 {
    char buf[PATH_MAX];
@@ -3340,7 +3344,7 @@ edje_edit_state_font_set(Evas_Object *obj, const char *part, const char *state, 
    edje_object_calc_force(obj);
 }
 
-EAPI unsigned char
+EAPI Edje_Text_Effect
 edje_edit_part_effect_get(Evas_Object *obj, const char *part)
 {
    GET_RP_OR_RETURN(0);
@@ -3350,7 +3354,7 @@ edje_edit_part_effect_get(Evas_Object *obj, const char *part)
 }
 
 EAPI void
-edje_edit_part_effect_set(Evas_Object *obj, const char *part, unsigned char effect)
+edje_edit_part_effect_set(Evas_Object *obj, const char *part, Edje_Text_Effect effect)
 {
    GET_RP_OR_RETURN();
 
@@ -3388,7 +3392,7 @@ edje_edit_images_list_get(Evas_Object *obj)
    return images;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_image_add(Evas_Object *obj, const char* path)
 {
    Eina_List *l;
@@ -3442,7 +3446,7 @@ edje_edit_image_add(Evas_Object *obj, const char* path)
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_image_data_add(Evas_Object *obj, const char *name, int id)
 {
    Eina_List *l;
@@ -3500,7 +3504,7 @@ edje_edit_image_id_get(Evas_Object *obj, const char *image_name)
    return _edje_image_id_find(obj, image_name);
 }
 
-EAPI int 
+EAPI Edje_Edit_Image_Comp
 edje_edit_image_compression_type_get(Evas_Object *obj, const char *image)
 {
    Edje_Image_Directory_Entry *i = NULL;
@@ -3612,7 +3616,7 @@ edje_edit_state_tweens_list_get(Evas_Object *obj, const char *part, const char *
    return tweens;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_state_tween_add(Evas_Object *obj, const char *part, const char *state, const char *tween)
 {
    Edje_Part_Image_Id *i;
@@ -3634,7 +3638,7 @@ edje_edit_state_tween_add(Evas_Object *obj, const char *part, const char *state,
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_state_tween_del(Evas_Object *obj, const char *part, const char *state, const char *tween)
 {
    Eina_List *l;
@@ -3735,7 +3739,7 @@ edje_edit_spectrum_list_get(Evas_Object *obj)
    return spectrum;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_spectra_add(Evas_Object *obj, const char* name)
 {
    GET_ED_OR_RETURN(0);
@@ -3765,7 +3769,7 @@ edje_edit_spectra_add(Evas_Object *obj, const char* name)
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_spectra_del(Evas_Object *obj, const char* spectra)
 {
    Edje_Spectrum_Directory_Entry *s;
@@ -3792,7 +3796,7 @@ edje_edit_spectra_del(Evas_Object *obj, const char* spectra)
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_spectra_name_set(Evas_Object *obj, const char* spectra, const char* name)
 {
    Edje_Spectrum_Directory_Entry *s;
@@ -3825,7 +3829,7 @@ edje_edit_spectra_stop_num_get(Evas_Object *obj, const char* spectra)
    return eina_list_count(s->color_list);
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_spectra_stop_num_set(Evas_Object *obj, const char* spectra, int num)
 {
    Edje_Spectrum_Directory_Entry *s;
@@ -3864,7 +3868,7 @@ edje_edit_spectra_stop_num_set(Evas_Object *obj, const char* spectra, int num)
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_spectra_stop_color_get(Evas_Object *obj, const char* spectra, int stop_number, int *r, int *g, int *b, int *a, int *d)
 {
    Edje_Spectrum_Directory_Entry *s;
@@ -3886,7 +3890,7 @@ edje_edit_spectra_stop_color_get(Evas_Object *obj, const char* spectra, int stop
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_spectra_stop_color_set(Evas_Object *obj, const char* spectra, int stop_number, int r, int g, int b, int a, int d)
 {
    Edje_Spectrum_Directory_Entry *s;
@@ -3928,7 +3932,7 @@ edje_edit_state_gradient_type_get(Evas_Object *obj, const char *part, const char
    return eina_stringshare_add(pd->gradient.type);
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_state_gradient_type_set(Evas_Object *obj, const char *part, const char *state, const char *type)
 {
    GET_PD_OR_RETURN(0);
@@ -3943,7 +3947,7 @@ edje_edit_state_gradient_type_set(Evas_Object *obj, const char *part, const char
 }
 
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_state_gradient_use_fill_get(Evas_Object *obj, const char *part, const char *state)
 {
    GET_PD_OR_RETURN(-1);
@@ -3970,7 +3974,7 @@ edje_edit_state_gradient_spectra_get(Evas_Object *obj, const char *part, const c
    return eina_stringshare_add(s->entry);
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_state_gradient_spectra_set(Evas_Object *obj, const char *part, const char *state, const char* spectra)
 {
    Edje_Spectrum_Directory_Entry *s;
@@ -4039,7 +4043,7 @@ edje_edit_state_gradient_rel2_relative_y_get(Evas_Object *obj, const char *part,
    return pd->gradient.rel2.relative_y;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_state_gradient_rel1_relative_x_set(Evas_Object *obj, const char *part, const char *state, double val)
 {
    GET_PD_OR_RETURN(0);
@@ -4050,7 +4054,7 @@ edje_edit_state_gradient_rel1_relative_x_set(Evas_Object *obj, const char *part,
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_state_gradient_rel1_relative_y_set(Evas_Object *obj, const char *part, const char *state, double val)
 {
    GET_PD_OR_RETURN(0);
@@ -4061,7 +4065,7 @@ edje_edit_state_gradient_rel1_relative_y_set(Evas_Object *obj, const char *part,
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_state_gradient_rel2_relative_x_set(Evas_Object *obj, const char *part, const char *state, double val)
 {
    GET_PD_OR_RETURN(0);
@@ -4072,7 +4076,7 @@ edje_edit_state_gradient_rel2_relative_x_set(Evas_Object *obj, const char *part,
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_state_gradient_rel2_relative_y_set(Evas_Object *obj, const char *part, const char *state, double val)
 {
    GET_PD_OR_RETURN(0);
@@ -4115,7 +4119,7 @@ edje_edit_state_gradient_rel2_offset_y_get(Evas_Object *obj, const char *part, c
    return pd->gradient.rel2.offset_y;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_state_gradient_rel1_offset_x_set(Evas_Object *obj, const char *part, const char *state, int val)
 {
    GET_PD_OR_RETURN(0);
@@ -4126,7 +4130,7 @@ edje_edit_state_gradient_rel1_offset_x_set(Evas_Object *obj, const char *part, c
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_state_gradient_rel1_offset_y_set(Evas_Object *obj, const char *part, const char *state, int val)
 {
    GET_PD_OR_RETURN(0);
@@ -4137,7 +4141,7 @@ edje_edit_state_gradient_rel1_offset_y_set(Evas_Object *obj, const char *part, c
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_state_gradient_rel2_offset_x_set(Evas_Object *obj, const char *part, const char *state, int val)
 {
    GET_PD_OR_RETURN(0);
@@ -4148,7 +4152,7 @@ edje_edit_state_gradient_rel2_offset_x_set(Evas_Object *obj, const char *part, c
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_state_gradient_rel2_offset_y_set(Evas_Object *obj, const char *part, const char *state, int val)
 {
    GET_PD_OR_RETURN(0);
@@ -4202,7 +4206,7 @@ edje_edit_programs_list_get(Evas_Object *obj)
    return progs;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_program_add(Evas_Object *obj, const char *name)
 {
    Edje_Program *epr;
@@ -4260,7 +4264,7 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_program_del(Evas_Object *obj, const char *prog)
 {
    Eina_List *l;
@@ -4380,7 +4384,7 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_program_exist(Evas_Object *obj, const char *prog)
 {
    GET_EPR_OR_RETURN(0);
@@ -4388,7 +4392,7 @@ edje_edit_program_exist(Evas_Object *obj, const char *prog)
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_program_run(Evas_Object *obj, const char *prog)
 {
    GET_ED_OR_RETURN(0);
@@ -4398,7 +4402,7 @@ edje_edit_program_run(Evas_Object *obj, const char *prog)
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_program_name_set(Evas_Object *obj, const char *prog, const char* new_name)
 {
    GET_ED_OR_RETURN(0);
@@ -4426,7 +4430,7 @@ edje_edit_program_source_get(Evas_Object *obj, const char *prog)
    return eina_stringshare_add(epr->source);
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_program_source_set(Evas_Object *obj, const char *prog, const char *source)
 {
    GET_ED_OR_RETURN(0);
@@ -4457,7 +4461,7 @@ edje_edit_program_signal_get(Evas_Object *obj, const char *prog)
    return eina_stringshare_add(epr->signal);
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_program_signal_set(Evas_Object *obj, const char *prog, const char *signal)
 {
    GET_ED_OR_RETURN(0);
@@ -4488,7 +4492,7 @@ edje_edit_program_state_get(Evas_Object *obj, const char *prog)
    return eina_stringshare_add(epr->state);
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_program_state_set(Evas_Object *obj, const char *prog, const char *state)
 {
    GET_ED_OR_RETURN(0);
@@ -4512,7 +4516,7 @@ edje_edit_program_state2_get(Evas_Object *obj, const char *prog)
    return eina_stringshare_add(epr->state2);
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_program_state2_set(Evas_Object *obj, const char *prog, const char *state2)
 {
    GET_ED_OR_RETURN(0);
@@ -4535,7 +4539,7 @@ edje_edit_program_value_get(Evas_Object *obj, const char *prog)
    return epr->value;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_program_value_set(Evas_Object *obj, const char *prog, double value)
 {
    GET_EPR_OR_RETURN(0);
@@ -4554,7 +4558,7 @@ edje_edit_program_value2_get(Evas_Object *obj, const char *prog)
    return epr->value2;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_program_value2_set(Evas_Object *obj, const char *prog, double value)
 {
    GET_EPR_OR_RETURN(0);
@@ -4573,7 +4577,7 @@ edje_edit_program_in_from_get(Evas_Object *obj, const char *prog)
    return epr->in.from;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_program_in_from_set(Evas_Object *obj, const char *prog, double seconds)
 {
    GET_EPR_OR_RETURN(0);
@@ -4592,7 +4596,7 @@ edje_edit_program_in_range_get(Evas_Object *obj, const char *prog)
    return epr->in.range;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_program_in_range_set(Evas_Object *obj, const char *prog, double seconds)
 {
    GET_EPR_OR_RETURN(0);
@@ -4602,7 +4606,7 @@ edje_edit_program_in_range_set(Evas_Object *obj, const char *prog, double second
    return 1;
 }
 
-EAPI int
+EAPI Edje_Tween_Mode
 edje_edit_program_transition_get(Evas_Object *obj, const char *prog)
 {
    GET_EPR_OR_RETURN(-1);
@@ -4611,8 +4615,8 @@ edje_edit_program_transition_get(Evas_Object *obj, const char *prog)
    return epr->tween.mode;
 }
 
-EAPI unsigned char
-edje_edit_program_transition_set(Evas_Object *obj, const char *prog, int transition)
+EAPI Eina_Bool
+edje_edit_program_transition_set(Evas_Object *obj, const char *prog, Edje_Tween_Mode transition)
 {
    GET_EPR_OR_RETURN(0);
 
@@ -4630,7 +4634,7 @@ edje_edit_program_transition_time_get(Evas_Object *obj, const char *prog)
    return epr->tween.time;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_program_transition_time_set(Evas_Object *obj, const char *prog, double seconds)
 {
    GET_EPR_OR_RETURN(0);
@@ -4640,7 +4644,7 @@ edje_edit_program_transition_time_set(Evas_Object *obj, const char *prog, double
    return 1;
 }
 
-EAPI int
+EAPI Edje_Action_Type
 edje_edit_program_action_get(Evas_Object *obj, const char *prog)
 {
    GET_EPR_OR_RETURN(-1);
@@ -4649,8 +4653,8 @@ edje_edit_program_action_get(Evas_Object *obj, const char *prog)
    return epr->action;
 }
 
-EAPI unsigned char
-edje_edit_program_action_set(Evas_Object *obj, const char *prog, int action)
+EAPI Eina_Bool
+edje_edit_program_action_set(Evas_Object *obj, const char *prog, Edje_Action_Type action)
 {
    GET_EPR_OR_RETURN(0);
 
@@ -4697,7 +4701,7 @@ edje_edit_program_targets_get(Evas_Object *obj, const char *prog)
    return targets;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_program_targets_clear(Evas_Object *obj, const char *prog)
 {
    GET_EPR_OR_RETURN(0);
@@ -4714,7 +4718,7 @@ edje_edit_program_targets_clear(Evas_Object *obj, const char *prog)
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_program_target_add(Evas_Object *obj, const char *prog, const char *target)
 {
    int id;
@@ -4777,7 +4781,7 @@ edje_edit_program_afters_get(Evas_Object *obj, const char *prog)
    return afters;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_program_afters_clear(Evas_Object *obj, const char *prog)
 {
    GET_EPR_OR_RETURN(0);
@@ -4794,7 +4798,7 @@ edje_edit_program_afters_clear(Evas_Object *obj, const char *prog)
    return 1;
 }
 
-EAPI unsigned char
+EAPI Eina_Bool
 edje_edit_program_after_add(Evas_Object *obj, const char *prog, const char *after)
 {
    Edje_Program *af;
