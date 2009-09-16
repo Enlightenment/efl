@@ -1,4 +1,4 @@
- This folder contains Microsoft Visual Studion projects and some sources for
+ This folder contains Microsoft Visual Studio projects and some sources for
  building Evil.
 
 Important:
