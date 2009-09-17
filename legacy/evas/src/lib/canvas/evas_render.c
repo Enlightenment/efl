@@ -5,9 +5,16 @@ static Eina_List *
 evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char do_draw);
 
 /**
- * To be documented.
+ * Add a damage rectangle.
  *
- * FIXME: To be fixed.
+ * @param e The given canvas pointer.
+ * @param x The rectangle's left position.
+ * @param y The rectangle's top position.
+ * @param w The rectangle's width.
+ * @param h The rectangle's height.
+ *
+ * This is the function by which one tells evas that a part of the
+ * canvas has to be repainted.
  *
  */
 EAPI void
@@ -25,9 +32,19 @@ evas_damage_rectangle_add(Evas *e, int x, int y, int w, int h)
 }
 
 /**
- * To be documented.
+ * Add an obscured region.
  *
- * FIXME: To be fixed.
+ * @param e The given canvas pointer.
+ * @param x The rectangle's left position.
+ * @param y The rectangle's top position
+ * @param w The rectangle's width.
+ * @param h The rectangle's height.
+ *
+ * This is the function by which one tells evas that a part of the
+ * canvas has not to be repainted. To make this region one that have
+ * to be repainted, call the function evas_obscured_clear().
+ *
+ * @see evas_obscured_clear().
  *
  */
 EAPI void
@@ -44,9 +61,14 @@ evas_obscured_rectangle_add(Evas *e, int x, int y, int w, int h)
 }
 
 /**
- * To be documented.
+ * Remove all obscured region rectangles from the canvas.
  *
- * FIXME: To be fixed.
+ * @param e The given canvas pointer.
+ *
+ * This function removes all the rectangles from the obscured list of
+ * the canvas. It takes obscured areas added with
+ * evas_obscured_rectangle_add() and makes it a region that have to be
+ * repainted.
  *
  */
 EAPI void
@@ -646,9 +668,12 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
 }
 
 /**
- * To be documented.
+ * Free the rectangles returned by evas_render_updates().
  *
- * FIXME: To be fixed.
+ * @param updates The list of updated rectangles of the canvas.
+ *
+ * This function removes the region from the render updates list. It
+ * makes the region doesn't be render updated anymore.
  *
  */
 EAPI void
@@ -661,9 +686,13 @@ evas_render_updates_free(Eina_List *updates)
 }
 
 /**
- * To be documented.
+ * Force immediate renderization of the given canvas.
  *
- * FIXME: To be fixed.
+ * @param e The given canvas pointer.
+ * @return A list of updated rectangles of the canvas.
+ *
+ * This function forces an immediate renderization update of the given
+ * given canvas.
  *
  */
 EAPI Eina_List *
@@ -678,9 +707,11 @@ evas_render_updates(Evas *e)
 }
 
 /**
- * To be documented.
+ * Force renderization of a region
  *
- * FIXME: To be fixed.
+ * @param e The given canvas pointer.
+ *
+ * This function forces renderization of the region given.
  *
  */
 EAPI void
@@ -695,9 +726,16 @@ evas_render(Evas *e)
 }
 
 /**
- * To be documented.
+ * Update the canvas internal objects but not triggering immediate
+ * renderization.
  *
- * FIXME: To be fixed.
+ * @param e The given canvas pointer.
+ *
+ * This function updates the canvas internal objects not triggering
+ * renderization. To force renderization function evas_render() should
+ * be used.
+ *
+ * @see evas_render.
  *
  */
 EAPI void
@@ -712,9 +750,11 @@ evas_norender(Evas *e)
 }
 
 /**
- * To be documented.
+ * Make the canvas discard internally cached data used for renderization
  *
- * FIXME: To be fixed.
+ * @param e The given canvas pointer.
+ *
+ * This function flushes the arrays of delete, active and render objects.
  *
  */
 EAPI void

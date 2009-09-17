@@ -140,6 +140,7 @@ evas_object_gradient2_fill_spread_get(const Evas_Object *obj)
    return og->cur.fill.spread;
 }
 
+/* FIXME: To be documented*/
 EAPI void
 evas_object_gradient2_fill_transform_set (Evas_Object *obj, Evas_Transform *t)
 {
@@ -193,6 +194,7 @@ evas_object_gradient2_fill_transform_set (Evas_Object *obj, Evas_Transform *t)
    evas_object_change(obj);
 }
 
+/* FIXME: To be documented*/
 EAPI void
 evas_object_gradient2_fill_transform_get (const Evas_Object *obj, Evas_Transform *t)
 {

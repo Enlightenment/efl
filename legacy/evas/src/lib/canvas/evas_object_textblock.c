@@ -2422,8 +2422,7 @@ evas_textblock_style_new(void)
 
 /**
  * Destroys a textblock style.
- * @param The textblock style to free.
- * @return Returns no value.
+ * @param ts The textblock style to free.
  */
 EAPI void
 evas_textblock_style_free(Evas_Textblock_Style *ts)
@@ -2640,9 +2639,10 @@ evas_object_textblock_style_get(const Evas_Object *obj)
 }
 
 /**
- * to be documented.
- * @param obj  to be documented.
- * @return to be documented.
+ * @brief Change the charset in use inside the given textblock object.
+ *
+ * @param obj The given textblock object.
+ * @param ch The charset name.
  */
 EAPI void
 evas_object_textblock_replace_char_set(Evas_Object *obj, const char *ch)
@@ -2756,7 +2756,7 @@ _escaped_char_get(const char *s, const char *s_end)
 
 /**
  * to be documented.
- * @param obj  to be documented.
+ * @param escape to be documented.
  * @return to be documented.
  */
 EAPI const char *
@@ -2768,7 +2768,8 @@ evas_textblock_escape_string_get(const char *escape)
 
 /**
  * to be documented.
- * @param obj  to be documented.
+ * @param escape_start to be documented.
+ * @param escape_end to be documented.
  * @return to be documented.
  */
 EAPI const char *
@@ -2779,7 +2780,8 @@ evas_textblock_escape_string_range_get(const char *escape_start, const char *esc
 
 /**
  * to be documented.
- * @param obj  to be documented.
+ * @param string to be documented.
+ * @param len_ret to be documented.
  * @return to be documented.
  */
 EAPI const char *
@@ -2813,7 +2815,7 @@ _prepend_escaped_char(Evas_Textblock_Cursor *cur, const char *s,
 
 /**
  * to be documented.
- * @param ts  to be documented.
+ * @param obj  to be documented.
  * @param text to be documented.
  * @return Return no value.
  */
@@ -2955,7 +2957,7 @@ evas_object_textblock_text_markup_set(Evas_Object *obj, const char *text)
 
 /**
  * to be documented.
- * @param ts  to be documented.
+ * @param cur  to be documented.
  * @param text to be documented.
  * @return Return no value.
  */
@@ -3527,8 +3529,7 @@ evas_textblock_cursor_pos_get(const Evas_Textblock_Cursor *cur)
 /**
  * to be documented.
  * @param cur to be documented.
- * @param int to be documented.
- * @return Returns no value.
+ * @param pos to be documented.
  */
 EAPI void
 evas_textblock_cursor_pos_set(Evas_Textblock_Cursor *cur, int pos)
@@ -3545,7 +3546,7 @@ evas_textblock_cursor_pos_set(Evas_Textblock_Cursor *cur, int pos)
 /**
  * to be documented.
  * @param cur to be documented.
- * @param int to be documented.
+ * @param line to be documented.
  * @return to be documented.
  */
 EAPI Eina_Bool

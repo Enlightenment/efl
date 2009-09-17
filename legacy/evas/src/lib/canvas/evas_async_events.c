@@ -61,6 +61,28 @@ evas_async_events_shutdown(void)
 
 #endif
 
+/**
+ * @brief Get evas' internal asynchronous events read file descriptor.
+ *
+ * @return The canvas' asynchronous events read file descriptor.
+ *
+ * Evas' asynchronous events are meant to be dealt with internally,
+ * i. e., when building stuff to be glued together into the EFL
+ * infrastructure -- a module, for example. The context which demands
+ * its use is when calculations need to be done out of the main
+ * thread, asynchronously, and some action must be performed after
+ * that.
+ *
+ * An example of actual use of this API is for image asynchronous
+ * preload inside evas. If the canvas was instantiated throught
+ * ecore-evas usage, ecore itself will take care of calling those
+ * events' processing.
+ *
+ * This function returns the read file descriptor where to get the
+ * asynchronous events of the canvas. Naturally, other mainloops,
+ * apart from ecore, may make use of it.
+ *
+ */
 EAPI int
 evas_async_events_fd_get(void)
 {
@@ -71,6 +93,18 @@ evas_async_events_fd_get(void)
 #endif
 }
 
+/**
+ * @brief Trigger the processing of all events waiting on the file
+ * descriptor returned by evas_async_events_fd_get().
+ *
+ * @return The number of events processed.
+ *
+ * All asynchronous events queued up by evas_async_events_put() are
+ * processed here. More precisely, the callback functions, informed
+ * together with other event parameters, when queued, get called (with
+ * those parameters), in that order.
+ *
+ */
 EAPI int
 evas_async_events_process(void)
 {
@@ -115,6 +149,20 @@ evas_async_events_process(void)
 #endif
 }
 
+/**
+ * Insert asynchronous events on the canvas.
+ *
+ * @param target The target to be affected by the events.
+ * @param type The type of callback function.
+ * @param event_info Information about the event.
+ * @param func The callback function pointer.
+ *
+ * This is the way, for a routine running outside evas' main thread,
+ * to report an asynchronous event. A callback function is informed,
+ * whose call is to happen after evas_async_events_process() is
+ * called.
+ *
+ */
 EAPI Eina_Bool
 evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_info, void (*func)(void *target, Evas_Callback_Type type, void *event_info))
 {

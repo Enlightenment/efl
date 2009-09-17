@@ -933,8 +933,9 @@ evas_object_text_outline_color_get(const Evas_Object *obj, int *r, int *g, int *
 }
 
 /**
- * Gets the text style pad.
+ * Gets the text style pad of a text object.
  *
+ * @param obj The given text object.
  * @param l The left pad (or NULL).
  * @param r The right pad (or NULL).
  * @param t The top pad (or NULL).

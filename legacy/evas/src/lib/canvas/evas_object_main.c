@@ -1244,9 +1244,10 @@ evas_object_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
 }
 
 /**
- * Sets whether or not the given evas object is to be drawn anti_aliased.
+ * Sets whether or not the given evas object is to be drawn anti-aliased.
+ *
  * @param   obj The given evas object.
- * @param   anti_alias. 1 if the object is to be anti_aliased, 0 otherwise.
+ * @param   anti_alias 1 if the object is to be anti_aliased, 0 otherwise.
  * @ingroup Evas_Object_Group
  */
 EAPI void
@@ -1281,8 +1282,9 @@ evas_object_anti_alias_get(const Evas_Object *obj)
 
 /**
  * Sets the scaling factor for an evas object. Does not affect all objects.
+ *
  * @param   obj The given evas object.
- * @param   scale. The scaling factor. 1.0 == none.
+ * @param   scale The scaling factor. 1.0 == none.
  * @ingroup Evas_Object_Group
  */
 EAPI void
@@ -1304,6 +1306,7 @@ evas_object_scale_set(Evas_Object *obj, double scale)
  * Retrieves the scaling factor for the given evas object.
  * @param   obj The given evas object.
  * @return  The scaling factor.
+ *
  * @ingroup Evas_Object_Group
  */
 EAPI double
@@ -1318,8 +1321,10 @@ evas_object_scale_get(const Evas_Object *obj)
 
 /**
  * Sets the color_space to be used for linear interpolation of colors.
+ *
  * @param   obj The given evas object.
- * @param   color_space, one of EVAS_COLOR_SPACE_ARGB or EVAS_COLOR_SPACE_AHSV.
+ * @param   color_space one of EVAS_COLOR_SPACE_ARGB or EVAS_COLOR_SPACE_AHSV.
+ *
  * @ingroup Evas_Object_Group
  */
 EAPI void
@@ -1410,9 +1415,14 @@ evas_object_evas_get(const Evas_Object *obj)
  */
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Retrieves the top object at the given position (x,y)
+ * @param   e The given evas object.
+ * @param   x The horizontal coordinate
+ * @param   y The vertical coordinate
+ * @param   include_pass_events_objects Boolean Flag to include or not
+ * pass events objects
+ * @param   include_hidden_objects Boolean Flag to include or not hidden objects
+ * @return  The evas object that is over all others objects at the given position.
  */
 EAPI Evas_Object *
 evas_object_top_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
@@ -1446,9 +1456,10 @@ evas_object_top_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Eina_Bool i
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Retrieves the top object at mouse pointer position
+ * @param   e The given evas object.
+ * @return The evas object that is over all others objects at the
+ * pointer position.
  */
 EAPI Evas_Object *
 evas_object_top_at_pointer_get(const Evas *e)
@@ -1458,9 +1469,16 @@ evas_object_top_at_pointer_get(const Evas *e)
 }
 
 /**
- * To be documented.
+ * Retrieves the top object in the given rectangle region
+ * @param   e The given evas object.
+ * @param   x The horizontal coordinate.
+ * @param   y The vertical coordinate.
+ * @param   w The width size.
+ * @param   h The height size.
+ * @param   include_pass_events_objects Boolean Flag to include or not pass events objects
+ * @param   include_hidden_objects Boolean Flag to include or not hidden objects
+ * @return  The evas object that is over all others objects at the pointer position.
  *
- * FIXME: To be fixed.
  */
 EAPI Evas_Object *
 evas_object_top_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
@@ -1500,9 +1518,15 @@ evas_object_top_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas
 }
 
 /**
- * To be documented.
+ * Retrieves the objects at the given position
+ * @param   e The given evas object.
+ * @param   x The horizontal coordinate.
+ * @param   y The vertical coordinate.
+ * @param include_pass_events_objects Boolean Flag to include or not
+ * pass events objects
+ * @param   include_hidden_objects Boolean Flag to include or not hidden objects
+ * @return  The list of evas objects at the pointer position.
  *
- * FIXME: To be fixed.
  */
 EAPI Eina_List *
 evas_objects_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
@@ -1540,6 +1564,18 @@ evas_objects_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Eina_Bool incl
  * To be documented.
  *
  * FIXME: To be fixed.
+ */
+/**
+ * Retrieves the objects in the given rectangle region
+ * @param   e The given evas object.
+ * @param   x The horizontal coordinate.
+ * @param   y The vertical coordinate.
+ * @param   w The width size.
+ * @param   h The height size.
+ * @param   include_pass_events_objects Boolean Flag to include or not pass events objects
+ * @param   include_hidden_objects Boolean Flag to include or not hidden objects
+ * @return  The list of evas object in the rectangle region.
+ *
  */
 EAPI Eina_List *
 evas_objects_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)

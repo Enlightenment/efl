@@ -1084,8 +1084,10 @@ evas_object_table_padding_get(const Evas_Object *o, Evas_Coord *horizontal, Evas
 }
 
 /**
- * Add a new child to table.
+ * Add a new child to a table object.
  *
+ * @param o The given table object.
+ * @param child The child object to add.
  * @param col relative-horizontal position to place child.
  * @param row relative-vertical position to place child.
  * @param colspan how many relative-horizontal position to use for this child.
@@ -1246,8 +1248,9 @@ evas_object_table_unpack(Evas_Object *o, Evas_Object *child)
 }
 
 /**
- * Faster way to remove all child objects.
+ * Faster way to remove all child objects from a table object.
  *
+ * @param o The given table object.
  * @param clear if true, it will delete just removed children.
  */
 void

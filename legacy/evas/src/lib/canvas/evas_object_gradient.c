@@ -711,8 +711,19 @@ evas_object_gradient_type_get(const Evas_Object *obj, char **name, char **params
 */
 
 /**
-   FIXME: ...
-**/
+ * Convert a given color from HSV to RGB format.
+ *
+ * @param h The Hue component of the color.
+ * @param s The Saturation component of the color.
+ * @param v The Value component of the color.
+ * @param r The Red component of the color.
+ * @param g The Green component of the color.
+ * @param b The Blue component of the color.
+ *
+ * This function converts a given color in HSV color format to RGB
+ * color format.
+ *
+ **/
 EAPI void
 evas_color_hsv_to_rgb(float h, float s, float v, int *r, int *g, int *b)
 {
@@ -720,8 +731,19 @@ evas_color_hsv_to_rgb(float h, float s, float v, int *r, int *g, int *b)
 }
 
 /**
-   FIXME: ...
-**/
+ * Convert a given color from RGB to HSV format.
+ *
+ * @param r The Red component of the color.
+ * @param g The Green component of the color.
+ * @param b The Blue component of the color.
+ * @param h The Hue component of the color.
+ * @param s The Saturation component of the color.
+ * @param v The Value component of the color.
+ *
+ * This function converts a given color in RGB color format to HSV
+ * color format.
+ *
+ **/
 EAPI void
 evas_color_rgb_to_hsv(int r, int g, int b, float *h, float *s, float *v)
 {
@@ -729,8 +751,17 @@ evas_color_rgb_to_hsv(int r, int g, int b, float *h, float *s, float *v)
 }
 
 /**
-   FIXME: ...
-**/
+ * Pre-multiplies a rgb triplet by an alpha factor.
+ *
+ * @param a The alpha factor.
+ * @param r The Red component of the color.
+ * @param g The Green component of the color.
+ * @param b The Blue component of the color.
+ *
+ * This function pre-multiplies a given rbg triplet by an alpha
+ * factor. Alpha factor is used to define transparency.
+ *
+ **/
 EAPI void
 evas_color_argb_premul(int a, int *r, int *g, int *b)
 {
@@ -738,8 +769,19 @@ evas_color_argb_premul(int a, int *r, int *g, int *b)
 }
 
 /**
-   FIXME: ...
-**/
+ * Undo pre-multiplication of a rgb triplet by an alpha factor.
+ *
+ * @param a The alpha factor.
+ * @param r The Red component of the color.
+ * @param g The Green component of the color.
+ * @param b The Blue component of the color.
+ *
+ * This function undoes pre-multiplication a given rbg triplet by an
+ * alpha factor. Alpha factor is used to define transparency.
+ *
+ * @see evas_color_argb_premul().
+ *
+ **/
 EAPI void
 evas_color_argb_unpremul(int a, int *r, int *g, int *b)
 {
@@ -747,8 +789,15 @@ evas_color_argb_unpremul(int a, int *r, int *g, int *b)
 }
 
 /**
-   FIXME: ...
-**/
+ * Pre-multiplies data by an alpha factor.
+ *
+ * @param data The data value.
+ * @param len  The lenght value.
+ *
+ * This function pre-multiplies a given data by an alpha
+ * factor. Alpha factor is used to define transparency.
+ *
+ **/
 EAPI void
 evas_data_argb_premul(unsigned int *data, unsigned int len)
 {
@@ -757,8 +806,15 @@ evas_data_argb_premul(unsigned int *data, unsigned int len)
 }
 
 /**
-   FIXME: ...
-**/
+ * Undo pre-multiplication data by an alpha factor.
+ *
+ * @param data The data value.
+ * @param len  The lenght value.
+ *
+ * This function undoes pre-multiplication of a given data by an alpha
+ * factor. Alpha factor is used to define transparency.
+ *
+ **/
 EAPI void
 evas_data_argb_unpremul(unsigned int *data, unsigned int len)
 {

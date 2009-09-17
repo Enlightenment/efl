@@ -13,12 +13,11 @@
  * @param obj The object to be focused or unfocused.
  * @param focus set or remove focus to the object.
  *
- * Changing focus only affects where key events go.
- * There can be only one object focused at any time.
- * <p>
- * If the parameter (@p focus) is set, the passed object will be set as the
- * currently focused object.  It will receive all keyboard events that are not
- * exclusive key grabs on other objects.
+ * Changing focus only affects where key events go.  There can be only
+ * one object focused at any time.  <p> If the parameter (@p focus) is
+ * set, the passed object will be set as the currently focused object.
+ * It will receive all keyboard events that are not exclusive key
+ * grabs on other objects.
  *
  * @see evas_object_focus_get
  * @see evas_focus_get

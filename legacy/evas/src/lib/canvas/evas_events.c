@@ -90,17 +90,18 @@ evas_event_list_copy(Eina_List *list)
 /**
  * @defgroup Evas_Event_Freezing_Group Evas Event Freezing Functions
  *
- * Functions that deal with the freezing of event processing of an evas.
+ * Functions that deal with the freezing of event processing of an
+ * evas.
  */
 
 /**
- * Freeze all event processing
- * @param e The canvas to freeze event processing on
+ * Freeze all event processing.
+ * @param e The canvas to freeze event processing on.
  *
- * This function will indicate to evas that the canvas @p e is to have all
- * event processing frozen until a matching evas_event_thaw() function is
- * called on the same canvas. Every freeze call must be matched by a thaw call
- * in order to completely thaw out a canvas.
+ * This function will indicate to evas that the canvas @p e is to have
+ * all event processing frozen until a matching evas_event_thaw()
+ * function is called on the same canvas. Every freeze call must be
+ * matched by a thaw call in order to completely thaw out a canvas.
  *
  * Example:
  * @code
@@ -124,13 +125,14 @@ evas_event_freeze(Evas *e)
 }
 
 /**
- * Thaw a canvas out after freezing
- * @param e The canvas to thaw out
+ * Thaw a canvas out after freezing.
  *
- * This will thaw out a canvas after a matching evas_event_freeze() call. If
- * this call completely thaws out a canvas, events will start being processed
- * again after this call, but this call will not invole any "missed" events
- * to be evaluated.
+ * @param e The canvas to thaw out.
+ *
+ * This will thaw out a canvas after a matching evas_event_freeze()
+ * call. If this call completely thaws out a canvas, events will start
+ * being processed again after this call, but this call will not
+ * invole any "missed" events to be evaluated.
  *
  * See evas_event_freeze() for an example.
  * @ingroup Evas_Event_Freezing_Group
@@ -162,14 +164,15 @@ evas_event_thaw(Evas *e)
 }
 
 /**
- * Return the freeze count of a given canvas
- * @param e The canvas to fetch the freeze count from
+ * Return the freeze count of a given canvas.
+ * @param e The canvas to fetch the freeze count from.
  *
- * This returns the number of times the canvas has been told to freeze events.
- * It is possible to call evas_event_freeze() multiple times, and these must
- * be matched by evas_event_thaw() calls. This call allows the program to
- * discover just how many times things have been frozen in case it may want
- * to break out of a deep freeze state where the count is high.
+ * This returns the number of times the canvas has been told to freeze
+ * events.  It is possible to call evas_event_freeze() multiple times,
+ * and these must be matched by evas_event_thaw() calls. This call
+ * allows the program to discover just how many times things have been
+ * frozen in case it may want to break out of a deep freeze state
+ * where the count is high.
  *
  * Example:
  * @code
@@ -188,10 +191,19 @@ evas_event_freeze_get(const Evas *e)
    return e->events_frozen;
 }
 
+
 /**
- * To be documented.
+ * Mouse down event feed.
  *
- * FIXME: To be fixed.
+ * @param e The given canvas pointer.
+ * @param b The button number.
+ * @param flags The evas button flags.
+ * @param timestamp The timestamp of the mouse down event.
+ * @param data The data for canvas.
+ *
+ * This function will set some evas properties that is necessary when
+ * the mouse button is pressed. It prepares information to be treated
+ * by the callback function.
  *
  */
 EAPI void
@@ -244,9 +256,17 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
 }
 
 /**
- * To be documented.
+ * Mouse up event feed.
  *
- * FIXME: To be fixed.
+ * @param e The given canvas pointer.
+ * @param b The button number.
+ * @param flags evas button flags.
+ * @param timestamp The timestamp of the mouse up event.
+ * @param data The data for canvas.
+ *
+ * This function will set some evas properties that is necessary when
+ * the mouse button is released. It prepares information to be treated
+ * by the callback function.
  *
  */
 EAPI void
@@ -390,10 +410,16 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
    _evas_unwalk(e);
 }
 
+
 /**
- * To be documented.
+ * Mouse cancel event feed.
  *
- * FIXME: To be fixed.
+ * @param e The given canvas pointer.
+ * @param timestamp The timestamp of the mouse up event.
+ * @param data The data for canvas.
+ *
+ * This function will call evas_event_feed_mouse_up() when a
+ * mouse cancel event happens.
  *
  */
 EAPI void
@@ -417,9 +443,17 @@ evas_event_feed_mouse_cancel(Evas *e, unsigned int timestamp, const void *data)
 }
 
 /**
- * To be documented.
+ * Mouse wheel event feed.
  *
- * FIXME: To be fixed.
+ * @param e The given canvas pointer.
+ * @param direction The wheel mouse direction.
+ * @param z How much mouse wheel was scrolled up or down.
+ * @param timestamp The timestamp of the mouse up event.
+ * @param data The data for canvas.
+ *
+ * This function will set some evas properties that is necessary when
+ * the mouse wheel is scrolled up or down. It prepares information to
+ * be treated by the callback function.
  *
  */
 EAPI void
@@ -463,9 +497,17 @@ evas_event_feed_mouse_wheel(Evas *e, int direction, int z, unsigned int timestam
 }
 
 /**
- * To be documented.
+ * Mouse move event feed.
  *
- * FIXME: To be fixed.
+ * @param e The given canvas pointer.
+ * @param x The horizontal position of the mouse pointer.
+ * @param y The vertical position of the mouse pointer.
+ * @param timestamp The timestamp of the mouse up event.
+ * @param data The data for canvas.
+ *
+ * This function will set some evas properties that is necessary when
+ * the mouse is moved from its last position. It prepares information
+ * to be treated by the callback function.
  *
  */
 EAPI void
@@ -674,9 +716,15 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 }
 
 /**
- * To be documented.
+ * Mouse in event feed.
  *
- * FIXME: To be fixed.
+ * @param e The given canvas pointer.
+ * @param timestamp The timestamp of the mouse up event.
+ * @param data The data for canvas.
+ *
+ * This function will set some evas properties that is necessary when
+ * the mouse in event happens. It prepares information to be treated
+ * by the callback function.
  *
  */
 EAPI void
@@ -731,9 +779,15 @@ evas_event_feed_mouse_in(Evas *e, unsigned int timestamp, const void *data)
 }
 
 /**
- * To be documented.
+ * Mouse out event feed.
  *
- * FIXME: To be fixed.
+ * @param e The given canvas pointer.
+ * @param timestamp Timestamp of the mouse up event.
+ * @param data The data for canvas.
+ *
+ * This function will set some evas properties that is necessary when
+ * the mouse out event happens. It prepares information to be treated
+ * by the callback function.
  *
  */
 EAPI void
@@ -785,9 +839,19 @@ evas_event_feed_mouse_out(Evas *e, unsigned int timestamp, const void *data)
 }
 
 /**
- * To be documented.
+ * Key down event feed
  *
- * FIXME: To be fixed.
+ * @param e The canvas to thaw out
+ * @param keyname  Name of the key
+ * @param key The key pressed.
+ * @param string A String
+ * @param compose The compose string
+ * @param timestamp Timestamp of the mouse up event
+ * @param data Data for canvas.
+ *
+ * This function will set some evas properties that is necessary when
+ * a key is pressed. It prepares information to be treated by the
+ * callback function.
  *
  */
 EAPI void
@@ -867,9 +931,19 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
 }
 
 /**
- * To be documented.
+ * Key up event feed
  *
- * FIXME: To be fixed.
+ * @param e The canvas to thaw out
+ * @param keyname  Name of the key
+ * @param key The key released.
+ * @param string string
+ * @param compose compose
+ * @param timestamp Timestamp of the mouse up event
+ * @param data Data for canvas.
+ *
+ * This function will set some evas properties that is necessary when
+ * a key is released. It prepares information to be treated by the
+ * callback function.
  *
  */
 EAPI void
@@ -949,9 +1023,14 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
 }
 
 /**
- * To be documented.
+ * Hold event feed
  *
- * FIXME: To be fixed.
+ * @param e The given canvas pointer.
+ * @param hold The hold.
+ * @param timestamp The timestamp of the mouse up event.
+ * @param data The data for canvas.
+ *
+ * This function makes the object to stop sending events.
  *
  */
 EAPI void
@@ -1094,7 +1173,8 @@ evas_object_repeat_events_get(const Evas_Object *obj)
 }
 
 /**
- * Set whether events on a smart member object should propagate to its parent.
+ * Set whether events on a smart member object should propagate to its
+ * parent.
  *
  * @param obj the smart member object
  * @param prop wheter to propagate events or not
@@ -1146,14 +1226,16 @@ evas_object_propagate_events_get(const Evas_Object *obj)
  * @param obj
  * @param setting desired behavior.
  *
- * This function has direct effect on event callbacks related to mouse.
+ * This function has direct effect on event callbacks related to
+ * mouse.
  *
- * If @p setting is EVAS_OBJECT_POINTER_MODE_AUTOGRAB, then when mouse is
- * down at this object, events will be restricted to it as source, mouse
- * moves, for example, will be emitted even if outside this object area.
+ * If @p setting is EVAS_OBJECT_POINTER_MODE_AUTOGRAB, then when mouse
+ * is down at this object, events will be restricted to it as source,
+ * mouse moves, for example, will be emitted even if outside this
+ * object area.
  *
- * If @p setting is EVAS_OBJECT_POINTER_MODE_NOGRAB, then events will be
- * emitted just when inside this object area.
+ * If @p setting is EVAS_OBJECT_POINTER_MODE_NOGRAB, then events will
+ * be emitted just when inside this object area.
  *
  * The default value is EVAS_OBJECT_POINTER_MODE_AUTOGRAB.
  */

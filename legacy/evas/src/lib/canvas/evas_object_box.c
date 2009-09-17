@@ -1966,7 +1966,7 @@ evas_object_box_prepend(Evas_Object *o, Evas_Object *child)
 }
 
 /**
- * Prepend a new object @child to the box @o relative to element @a
+ * Prepend a new object @a child to the box @c o relative to element @a
  * reference. If @a reference is not contained in the box or any other
  * error occurs, @c NULL is returned.
  */

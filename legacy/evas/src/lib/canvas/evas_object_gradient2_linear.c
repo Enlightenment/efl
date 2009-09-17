@@ -140,6 +140,7 @@ evas_object_gradient2_linear_fill_set(Evas_Object *obj, float x0, float y0, floa
    evas_object_change(obj);
 }
 
+/*FIXME: To be documented*/
 EAPI void
 evas_object_gradient2_linear_fill_get(const Evas_Object *obj, float *x0, float *y0, float *x1, float *y1)
 {

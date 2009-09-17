@@ -123,7 +123,7 @@ evas_smart_free(Evas_Smart *s)
 /**
  * Creates an Evas_Smart from an Evas_Smart_Class.
  *
- * @param Evas_Smart_Class the smart class definition
+ * @param sc the smart class definition
  * @return an Evas_Smart
  */
 EAPI Evas_Smart *
@@ -162,14 +162,13 @@ evas_smart_class_get(const Evas_Smart *s)
 }
 
 /**
- * Get the data pointer set on an Evas_Smart.
+ * @brief Get the data pointer set on an Evas_Smart.
+ *
+ * @param s Evas_Smart
  *
  * This data pointer is set either as the final parameter to
  * evas_smart_new or as the data field in the Evas_Smart_Class passed
  * in to evas_smart_class_new
- *
- * @param Evas_Smart
- *
  */
 EAPI void *
 evas_smart_data_get(const Evas_Smart *s)

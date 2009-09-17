@@ -240,9 +240,16 @@ evas_object_intercept_call_clip_unset(Evas_Object *obj)
 /* public calls */
 
 /**
- * To be documented.
+ * Set the callback function that intercepts a show event of a object.
  *
- * FIXME: To be fixed.
+ * @param obj The given canvas object pointer.
+ * @param func The given function to be the callback function.
+ * @param data The data passed to the callback fucntion.
+ *
+ * This function sets a callback function to intercepts a show event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_show_callback_del().
  *
  */
 EAPI void
@@ -261,9 +268,16 @@ evas_object_intercept_show_callback_add(Evas_Object *obj, void (*func) (void *da
 }
 
 /**
- * To be documented.
+ * Unset the callback function that intercepts a show event of a
+ * object.
  *
- * FIXME: To be fixed.
+ * @param obj The given canvas object pointer.
+ * @param func The given callback function.
+ *
+ * This function sets a callback function to intercepts a show event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_show_callback_add().
  *
  */
 EAPI void *
@@ -285,9 +299,16 @@ evas_object_intercept_show_callback_del(Evas_Object *obj, void (*func) (void *da
 }
 
 /**
- * To be documented.
+ * Set the callback function that intercepts a hide event of a object.
  *
- * FIXME: To be fixed.
+ * @param obj The given canvas object pointer.
+ * @param func The given function to be the callback function.
+ * @param data The data passed to the callback fucntion.
+ *
+ * This function sets a callback function to intercepts a hide event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_hide_callback_del().
  *
  */
 EAPI void
@@ -305,9 +326,16 @@ evas_object_intercept_hide_callback_add(Evas_Object *obj, void (*func) (void *da
 }
 
 /**
- * To be documented.
+ * Unset the callback function that intercepts a hide event of a
+ * object.
  *
- * FIXME: To be fixed.
+ * @param obj The given canvas object pointer.
+ * @param func The given callback function.
+ *
+ * This function sets a callback function to intercepts a hide event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_hide_callback_add().
  *
  */
 EAPI void *
@@ -329,9 +357,16 @@ evas_object_intercept_hide_callback_del(Evas_Object *obj, void (*func) (void *da
 }
 
 /**
- * To be documented.
+ * Set the callback function that intercepts a move event of a object.
  *
- * FIXME: To be fixed.
+ * @param obj The given canvas object pointer.
+ * @param func The given function to be the callback function.
+ * @param data The data passed to the callback fucntion.
+ *
+ * This function sets a callback function to intercepts a move event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_move_callback_del().
  *
  */
 EAPI void
@@ -349,9 +384,16 @@ evas_object_intercept_move_callback_add(Evas_Object *obj, void (*func) (void *da
 }
 
 /**
- * To be documented.
+ * Unset the callback function that intercepts a move event of a
+ * object.
  *
- * FIXME: To be fixed.
+ * @param obj The given canvas object pointer.
+ * @param func The given callback function.
+ *
+ * This function sets a callback function to intercepts a move event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_move_callback_add().
  *
  */
 EAPI void *

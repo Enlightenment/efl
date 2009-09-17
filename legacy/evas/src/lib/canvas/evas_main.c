@@ -4,6 +4,17 @@
 
 static int initcount = 0;
 
+/**
+ * Initialize Evas
+ *
+ * @return The init counter value.
+ *
+ * This function initialize evas, increments a counter of the number
+ * of calls to this function and returns this value.
+ *
+ * @see evas_shutdown().
+ *
+ */
 EAPI int
 evas_init(void)
 {
@@ -30,6 +41,18 @@ evas_init(void)
    return 0;
 #endif
 }
+
+/**
+ * Shutdown Evas
+ *
+ * @return The init counter value.
+ *
+ * This function finalize evas, decrements the counter of the number
+ * of calls to the function evas_init() and returns this value.
+ *
+ * @see evas_init().
+ *
+ */
 
 EAPI int
 evas_shutdown(void)
@@ -67,12 +90,13 @@ evas_shutdown(void)
  * @li Set its render method with @ref evas_output_method_set .
  * @li Set its viewport size with @ref evas_output_viewport_set .
  * @li Set its size of the canvas with @ref evas_output_size_set .
- * @li Ensure that the render engine is given the correct settings with
- *     @ref evas_engine_info_set .
+ * @li Ensure that the render engine is given the correct settings
+ *     with @ref evas_engine_info_set .
  *
  * This function should only fail if the memory allocation fails.
  *
- * @return  A new uninitialised Evas canvas on success.  Otherwise, @c NULL.
+ * @return A new uninitialised Evas canvas on success.  Otherwise, @c
+ * NULL.
  * @ingroup Evas_Canvas
  */
 EAPI Evas *
@@ -206,8 +230,8 @@ evas_free(Evas *e)
 /**
  * @defgroup Evas_Output_Method Evas Render Engine Functions
  *
- * Functions that are used to set the render engine for a given function, and
- * then get that engine working.
+ * Functions that are used to set the render engine for a given
+ * function, and then get that engine working.
  *
  * The following code snippet shows how they can be used to
  * initialise an evas that uses the X11 software engine:
@@ -293,8 +317,9 @@ evas_output_method_get(const Evas *e)
 /**
  * Retrieves the current render engine info struct from the given evas.
  *
- * The returned structure is publicly modifiable.  The contents are valid
- * until either @ref evas_engine_info_set or @ref evas_render are called.
+ * The returned structure is publicly modifiable.  The contents are
+ * valid until either @ref evas_engine_info_set or @ref evas_render
+ * are called.
  *
  * This structure does not need to be freed by the caller.
  *
@@ -354,9 +379,11 @@ evas_engine_info_set(Evas *e, Evas_Engine_Info *info)
 }
 
 /**
- * @defgroup Evas_Output_Size Evas Output and Viewport Resizing Functions
+ * @defgroup Evas_Output_Size Evas Output and Viewport Resizing
+ * Functions
  *
- * Functions that set and retrieve the output and viewport size of an evas.
+ * Functions that set and retrieve the output and viewport size of an
+ * evas.
  */
 
 /**
@@ -422,9 +449,9 @@ evas_output_size_get(const Evas *e, int *w, int *h)
 /**
  * Sets the output viewport of the given evas in evas units.
  *
- * The output viewport is the area of the evas that will be visible to the
- * viewer.  The viewport will be stretched to fit the output target of the
- * evas when rendering is performed.
+ * The output viewport is the area of the evas that will be visible to
+ * the viewer.  The viewport will be stretched to fit the output
+ * target of the evas when rendering is performed.
  *
  * @note The coordinate values do not have to map 1-to-1 with the output
  *       target.  However, it is generally advised that it is done for ease
@@ -472,11 +499,12 @@ evas_output_viewport_set(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas
  * @param h The pointer to a height variable to be filled in
  * @ingroup Evas_Output_Size
  *
- * Calling this function writes the current canvas output viewport size and
- * location values into the variables pointed to by @p x, @p y, @p w and @p h.
- * On success the variables have the output location and size values written to
- * them in canvas units. Any of @p x, @p y, @p w or @p h that are NULL will not
- * be written to. If @p e is invalid, the results are undefined.
+ * Calling this function writes the current canvas output viewport
+ * size and location values into the variables pointed to by @p x, @p
+ * y, @p w and @p h.  On success the variables have the output
+ * location and size values written to them in canvas units. Any of @p
+ * x, @p y, @p w or @p h that are NULL will not be written to. If @p e
+ * is invalid, the results are undefined.
  *
  * Example:
  * @code
@@ -504,7 +532,8 @@ evas_output_viewport_get(const Evas *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord
 }
 
 /**
- * @defgroup Evas_Coord_Mapping_Group Evas Coordinate Mapping Functions
+ * @defgroup Evas_Coord_Mapping_Group Evas Coordinate Mapping
+ * Functions
  *
  * Functions that are used to map coordinates from the canvas to the
  * screen or the screen to the canvas.
@@ -518,10 +547,10 @@ evas_output_viewport_get(const Evas *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord
  * @return The screen co-ordinate translated to canvas unit co-ordinates
  * @ingroup Evas_Coord_Mapping_Group
  *
- * This function takes in a horizontal co-ordinate as the @p x parameter and
- * converts it into canvas units, accounting for output size, viewport size
- * and location, returning it as the function return value. If @p e is
- * invalid, the results are undefined.
+ * This function takes in a horizontal co-ordinate as the @p x
+ * parameter and converts it into canvas units, accounting for output
+ * size, viewport size and location, returning it as the function
+ * return value. If @p e is invalid, the results are undefined.
  *
  * Example:
  * @code
@@ -550,10 +579,10 @@ evas_coord_screen_x_to_world(const Evas *e, int x)
  * @return The screen co-ordinate translated to canvas unit co-ordinates
  * @ingroup Evas_Coord_Mapping_Group
  *
- * This function takes in a vertical co-ordinate as the @p y parameter and
- * converts it into canvas units, accounting for output size, viewport size
- * and location, returning it as the function return value. If @p e is
- * invalid, the results are undefined.
+ * This function takes in a vertical co-ordinate as the @p y parameter
+ * and converts it into canvas units, accounting for output size,
+ * viewport size and location, returning it as the function return
+ * value. If @p e is invalid, the results are undefined.
  *
  * Example:
  * @code
@@ -582,10 +611,10 @@ evas_coord_screen_y_to_world(const Evas *e, int y)
  * @return The output/screen co-ordinate translated to output co-ordinates
  * @ingroup Evas_Coord_Mapping_Group
  *
- * This function takes in a horizontal co-ordinate as the @p x parameter and
- * converts it into output units, accounting for output size, viewport size
- * and location, returning it as the function return value. If @p e is
- * invalid, the results are undefined.
+ * This function takes in a horizontal co-ordinate as the @p x
+ * parameter and converts it into output units, accounting for output
+ * size, viewport size and location, returning it as the function
+ * return value. If @p e is invalid, the results are undefined.
  *
  * Example:
  * @code
@@ -614,10 +643,10 @@ evas_coord_world_x_to_screen(const Evas *e, Evas_Coord x)
  * @return The output/screen co-ordinate translated to output co-ordinates
  * @ingroup Evas_Coord_Mapping_Group
  *
- * This function takes in a vertical co-ordinate as the @p x parameter and
- * converts it into output units, accounting for output size, viewport size
- * and location, returning it as the function return value. If @p e is
- * invalid, the results are undefined.
+ * This function takes in a vertical co-ordinate as the @p x parameter
+ * and converts it into output units, accounting for output size,
+ * viewport size and location, returning it as the function return
+ * value. If @p e is invalid, the results are undefined.
  *
  * Example:
  * @code
@@ -645,15 +674,17 @@ evas_coord_world_y_to_screen(const Evas *e, Evas_Coord y)
  * @return A numeric (opaque) ID for the rendering engine
  * @ingroup Evas_Output_Method
  *
- * This function looks up a numeric return value for the named engine in the
- * string @p name. This is a normal C string, NUL byte terminated. The name
- * is case sensitive. If the rendering engine is available, a numeric ID for
- * that engine is returned that is not 0. If the engine is not available, 0
- * is returned, indicating an invalid engine.
+ * This function looks up a numeric return value for the named engine
+ * in the string @p name. This is a normal C string, NUL byte
+ * terminated. The name is case sensitive. If the rendering engine is
+ * available, a numeric ID for that engine is returned that is not
+ * 0. If the engine is not available, 0 is returned, indicating an
+ * invalid engine.
  *
- * The programmer should NEVER rely on the numeric ID of an engine unless it is
- * returned by this function. Programs should NOT be written accessing render
- * method ID's directly, without first obtaining it from this function.
+ * The programmer should NEVER rely on the numeric ID of an engine
+ * unless it is returned by this function. Programs should NOT be
+ * written accessing render method ID's directly, without first
+ * obtaining it from this function.
  *
  * Example:
  * @code
@@ -694,13 +725,13 @@ evas_render_method_lookup(const char *name)
  * @return A linked list whose data members are C strings of engine names
  * @ingroup Evas_Output_Method
  *
- * Calling this will return a handle (pointer) to an Evas linked list. Each node
- * in the linked list will have the data pointer be a (char *) pointer to the
- * string name of the rendering engine available. The strings should never be
- * modified, neither should the list be modified. This list should be cleaned up
- * as soon as the program no longer needs it using
- * evas_render_method_list_free(). If no engines are available from Evas, NULL
- * will be returned.
+ * Calling this will return a handle (pointer) to an Evas linked
+ * list. Each node in the linked list will have the data pointer be a
+ * (char *) pointer to the string name of the rendering engine
+ * available. The strings should never be modified, neither should the
+ * list be modified. This list should be cleaned up as soon as the
+ * program no longer needs it using evas_render_method_list_free(). If
+ * no engines are available from Evas, NULL will be returned.
  *
  * Example:
  * @code
@@ -789,9 +820,10 @@ evas_render_method_list(void)
  * @param list The Eina_List base pointer for the engine list to be freed
  * @ingroup Evas_Output_Method
  *
- * When this function is called it will free the engine list passed in as
- * @p list. The list should only be a list of engines generated by calling
- * evas_render_method_list(). If @p list is NULL, nothing will happen.
+ * When this function is called it will free the engine list passed in
+ * as @p list. The list should only be a list of engines generated by
+ * calling evas_render_method_list(). If @p list is NULL, nothing will
+ * happen.
  *
  * Example:
  * @code
@@ -830,10 +862,10 @@ evas_render_method_list_free(Eina_List *list)
  * @param y The pointer to an integer to be filled in
  * @ingroup Evas_Pointer_Group
  *
- * This function returns the current known screen/output co-ordinates of the
- * mouse pointer and sets the contents of the integers pointed to by @p x
- * and @p y to contain these co-ordinates. If @p e is not a valid canvas the
- * results of this function are undefined.
+ * This function returns the current known screen/output co-ordinates
+ * of the mouse pointer and sets the contents of the integers pointed
+ * to by @p x and @p y to contain these co-ordinates. If @p e is not a
+ * valid canvas the results of this function are undefined.
  *
  * Example:
  * @code
@@ -864,10 +896,10 @@ evas_pointer_output_xy_get(const Evas *e, int *x, int *y)
  * @param y The pointer to a Evas_Coord to be filled in
  * @ingroup Evas_Pointer_Group
  *
- * This function returns the current known canvas unit co-ordinates of the
- * mouse pointer and sets the contents of the Evas_Coords pointed to by @p x
- * and @p y to contain these co-ordinates. If @p e is not a valid canvas the
- * results of this function are undefined.
+ * This function returns the current known canvas unit co-ordinates of
+ * the mouse pointer and sets the contents of the Evas_Coords pointed
+ * to by @p x and @p y to contain these co-ordinates. If @p e is not a
+ * valid canvas the results of this function are undefined.
  *
  * Example:
  * @code
@@ -897,19 +929,20 @@ evas_pointer_canvas_xy_get(const Evas *e, Evas_Coord *x, Evas_Coord *y)
  * @return A bitmask of the currently depressed buttons on the cavas
  * @ingroup Evas_Pointer_Group
  *
- * Calling this function will return a 32-bit integer with the appropriate bits
- * set to 1 that correspond to a mouse button being depressed. This limits
- * Evas to a mouse devices with a maximum of 32 buttons, but that is generally
- * in excess of any host system's pointing device abilities.
+ * Calling this function will return a 32-bit integer with the
+ * appropriate bits set to 1 that correspond to a mouse button being
+ * depressed. This limits Evas to a mouse devices with a maximum of 32
+ * buttons, but that is generally in excess of any host system's
+ * pointing device abilities.
  *
- * A canvas by default begins with no mouse buttons being pressed and only
- * calls to evas_event_feed_mouse_down(), evas_event_feed_mouse_down_data(),
- * evas_event_feed_mouse_up() and evas_event_feed_mouse_up_data() will alter
- * that.
+ * A canvas by default begins with no mouse buttons being pressed and
+ * only calls to evas_event_feed_mouse_down(),
+ * evas_event_feed_mouse_down_data(), evas_event_feed_mouse_up() and
+ * evas_event_feed_mouse_up_data() will alter that.
  *
- * The least significant bit corresponds to the first mouse button (button 1)
- * and the most significant bit corresponds to the last mouse button
- * (button 32).
+ * The least significant bit corresponds to the first mouse button
+ * (button 1) and the most significant bit corresponds to the last
+ * mouse button (button 32).
  *
  * If @p e is not a valid canvas, the return value is undefined.
  *
@@ -942,13 +975,14 @@ evas_pointer_button_down_mask_get(const Evas *e)
  * @return An integer that is 1 if the mouse is inside the canvas, 0 otherwise
  * @ingroup Evas_Pointer_Group
  *
- * When this function is called it will return a value of either 0 or 1,
- * depending on if evas_event_feed_mouse_in(), evas_event_feed_mouse_in_data(),
- * or evas_event_feed_mouse_out(), evas_event_feed_mouse_out_data() have been
- * called to feed in a mouse enter event into the canvas.
+ * When this function is called it will return a value of either 0 or
+ * 1, depending on if evas_event_feed_mouse_in(),
+ * evas_event_feed_mouse_in_data(), or evas_event_feed_mouse_out(),
+ * evas_event_feed_mouse_out_data() have been called to feed in a
+ * mouse enter event into the canvas.
  *
- * A return value of 1 indicates the mouse is logically inside the canvas, and
- * 0 implies it is logically outside the canvas.
+ * A return value of 1 indicates the mouse is logically inside the
+ * canvas, and 0 implies it is logically outside the canvas.
  *
  * A canvas begins with the mouse being assumed outside (0).
  *
