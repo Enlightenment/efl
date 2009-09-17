@@ -21,7 +21,9 @@
  * @author Rafael Antognolli <antognolli@profusion.mobi>
  * @author Gustavo Sverzut Barbieri <barbieri@profusion.mobi>
  */
-#include <config.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

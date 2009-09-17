@@ -1,13 +1,13 @@
-AC_INIT(ethumb, 0.1, antognolli@profusion.mobi)
-AC_PREREQ(2.52)
-AC_CONFIG_SRCDIR(configure.ac)
+AC_INIT([ethumb], [0.1], [enlightenment-devel@lists.sourceforge.net])
+AC_PREREQ([2.52])
+AC_CONFIG_SRCDIR([configure.ac])
+AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 AC_ISC_POSIX
 
 AM_INIT_AUTOMAKE(1.6 dist-bzip2)
 AM_CONFIG_HEADER(config.h)
-AC_SUBST(ACLOCAL_AMFLAGS, "-I m4")
 _XTERM_COLORS
 
 AC_PROG_CC
@@ -41,6 +41,22 @@ AS_AC_EXPAND(PLUGINSDIR, $pluginsdir)
 AC_DEFINE_UNQUOTED(PLUGINSDIR, ["$PLUGINSDIR"], [Where plugins are installed.])
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
+
+with_max_log_level="<unset>"
+AC_ARG_WITH(internal-maximum-log-level,
+   [AC_HELP_STRING([--with-internal-maximum-log-level=NUMBER],
+                   [limit eina internal log level to the given number, any call to EINA_LOG() with values greater than this will be compiled out, ignoring runtime settings, but saving function calls.])],
+   [
+    if test "x${withval}" != "xno"; then
+       if echo "${withval}" | grep '^[[0-9]]\+$' >/dev/null 2>/dev/null; then
+          AC_MSG_NOTICE([ignoring any EINA_LOG() with level greater than ${withval}])
+          AC_DEFINE_UNQUOTED(EINA_LOG_LEVEL_MAXIMUM, ${withval}, [if set, logging is limited to this amount.])
+          with_max_log_level="${withval}"
+       else
+          AC_MSG_ERROR([--with-internal-maximum-log-level takes a decimal number, got "${withval}" instead.])
+       fi
+    fi
+    ], [:])
 
 PKG_CHECK_MODULES(EINA, [eina-0])
 PKG_CHECK_MODULES(EVAS, [evas])
@@ -114,3 +130,53 @@ data/frames/Makefile
 m4/Makefile
 doc/Makefile
 ])
+
+txt_strip() {
+        echo "[$]@" | sed -e 's/^[[ \t]]*\([[^ \t]]*\)[[ \t]]*$/\1/g'
+}
+
+MODS=""
+for mod in $OPTIONAL_MODULES; do
+        MODS="$MODS ${COLOR_HGREEN}+$mod${COLOR_END}"
+done
+MODS=$(txt_strip $MODS)
+
+UNUSED_MODS=""
+for mod in $UNUSED_OPTIONAL_MODULES; do
+        UNUSED_MODS="$UNUSED_MODS ${COLOR_HRED}-$mod${COLOR_END}"
+done
+UNUSED_MODS=$(txt_strip $UNUSED_MODS)
+
+cat <<SUMMARY_EOF
+
+Summary:
+ * project..........: $PACKAGE $VERSION
+ * prefix...........: $(txt_strip $prefix)
+ * DBus services dir: $(txt_strip $dbusservicedir)
+ * CFLAGS...........: $(txt_strip $CFLAGS)
+ * LDFLAGS..........: $(txt_strip $LDFLAGS)
+
+Configuration Options Summary:
+
+ * maximum log level: ${with_max_log_level}
+ * documentation....: ${build_doc}
+
+SUMMARY_EOF
+
+if test "x$MODS" != "x"; then
+   echo -e " * enabled modules..: $MODS"
+fi
+
+if test "x$UNUSED_MODS" != "x"; then
+   echo -e " * disabled modules.: $UNUSED_MODS"
+fi
+
+cat << HINT_EOF
+
+now type:
+
+Now type 'make' ('gmake' on some systems) to compile $PACKAGE, and
+then afterwards as root (or the user who will install this), type
+'make install'. Change users with 'su' or 'sudo' appropriately.
+
+HINT_EOF
