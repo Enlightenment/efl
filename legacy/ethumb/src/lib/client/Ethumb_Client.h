@@ -38,7 +38,15 @@ extern "C" {
 #endif
 
 /**
- * @defgroup Ethumb_Client Client
+ * @defgroup Ethumb_Client Ethumb Client
+ *
+ * @{
+ */
+
+/**
+ * @defgroup Ethumb_Client_Basics Ethumb Client Basics
+ *
+ * Functions that all users must know of to use Ethumb_Client.
  *
  * @{
  */
@@ -58,7 +66,8 @@ typedef struct _Ethumb_Client Ethumb_Client;
  *
  * @param data extra context given to ethumb_client_connect().
  * @param client handle of the current connection to server.
- * @param success #EINA_TRUE if connected or #EINA_FALSE if it was not possible.
+ * @param success @c EINA_TRUE if connected or @c EINA_FALSE if it was
+ *        not possible.
  */
 typedef void (*Ethumb_Client_Connect_Cb)(void *data, Ethumb_Client *client, Eina_Bool success);
 
@@ -80,12 +89,12 @@ typedef void (*Ethumb_Client_Die_Cb)(void *data, Ethumb_Client *client);
  * @param client handle of the current connection to server.
  * @param id identifier returned by ethumb_client_generate().
  * @param file path set with ethumb_client_file_set().
- * @param key value set with ethumb_client_file_set() or #NULL.
+ * @param key value set with ethumb_client_file_set() or @c NULL.
  * @param thumb_path where thumbnail was stored, either set with
  *        ethumb_client_thumb_path_set() or automatically calculated
  *        using parameters.
- * @param thumb_key key inside thumb_path where thumbnail was stored or #NULL.
- * @param success #EINA_TRUE if generated or #EINA_FALSE on errors.
+ * @param thumb_key key inside thumb_path where thumbnail was stored or @c NULL.
+ * @param success @c EINA_TRUE if generated or @c EINA_FALSE on errors.
  */
 typedef void (*Ethumb_Client_Generate_Cb)(void *data, Ethumb_Client *client, int id, const char *file, const char *key, const char *thumb_path, const char *thumb_key, Eina_Bool success);
 
@@ -103,6 +112,19 @@ EAPI int ethumb_client_shutdown(void);
 EAPI Ethumb_Client * ethumb_client_connect(Ethumb_Client_Connect_Cb connect_cb, const void *data, Eina_Free_Cb free_data);
 EAPI void ethumb_client_disconnect(Ethumb_Client *client);
 EAPI void ethumb_client_on_server_die_callback_set(Ethumb_Client *client, Ethumb_Client_Die_Cb server_die_cb, const void *data, Eina_Free_Cb free_data);
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Ethumb_Client_Setup Ethumb Client Fine Tune Setup
+ *
+ * How to fine tune thumbnail generation, setting size, aspect,
+ * frames, quality and so on.
+ *
+ * @{
+ */
 
 EAPI void ethumb_client_fdo_set(Ethumb_Client *client, Ethumb_Thumb_FDO_Size s);
 EAPI void ethumb_client_size_set(Ethumb_Client *client, int tw, int th);
@@ -125,22 +147,33 @@ EAPI const char * ethumb_client_category_get(const Ethumb_Client *client);
 EAPI void ethumb_client_video_time_set(Ethumb_Client *client, float time);
 EAPI void ethumb_client_video_start_set(Ethumb_Client *client, float start);
 EAPI void ethumb_client_video_interval_set(Ethumb_Client *client, float interval);
-EAPI void ethumb_client_video_ntimes_set(Ethumb_Client *client, int ntimes);
-EAPI void ethumb_client_video_fps_set(Ethumb_Client *client, int fps);
-EAPI void ethumb_client_document_page_set(Ethumb_Client *client, int page);
+EAPI void ethumb_client_video_ntimes_set(Ethumb_Client *client, unsigned int ntimes);
+EAPI void ethumb_client_video_fps_set(Ethumb_Client *client, unsigned int fps);
+EAPI void ethumb_client_document_page_set(Ethumb_Client *client, unsigned int page);
 
 EAPI void ethumb_client_ethumb_setup(Ethumb_Client *client);
 
+EAPI void ethumb_client_thumb_path_set(Ethumb_Client *client, const char *path, const char *key);
+EAPI void ethumb_client_thumb_path_get(Ethumb_Client *client, const char **path, const char **key);
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup Ethumb_Client_Basics Ethumb Client Basics
+ * @{
+ */
 EAPI Eina_Bool ethumb_client_file_set(Ethumb_Client *client, const char *path, const char *key);
 EAPI void ethumb_client_file_get(Ethumb_Client *client, const char **path, const char **key);
 EAPI void ethumb_client_file_free(Ethumb_Client *client);
 
-EAPI void ethumb_client_thumb_path_set(Ethumb_Client *client, const char *path, const char *key);
-EAPI void ethumb_client_thumb_path_get(Ethumb_Client *client, const char **path, const char **key);
 EAPI Eina_Bool ethumb_client_thumb_exists(Ethumb_Client *client);
 EAPI int  ethumb_client_generate(Ethumb_Client *client, Ethumb_Client_Generate_Cb generated_cb, const void *data, Eina_Free_Cb free_data);
 EAPI void ethumb_client_generate_cancel(Ethumb_Client *client, int id, Ethumb_Client_Generate_Cancel_Cb cancel_cb, const void *data, Eina_Free_Cb free_data);
 EAPI void ethumb_client_generate_cancel_all(Ethumb_Client *client);
+/**
+ * @}
+ */
 
 /**
  * @}

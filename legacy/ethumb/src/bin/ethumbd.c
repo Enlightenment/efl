@@ -93,9 +93,9 @@ struct _Ethumb_Setup
    float video_time;
    float video_start;
    float video_interval;
-   int video_ntimes;
-   int video_fps;
-   int document_page;
+   unsigned int video_ntimes;
+   unsigned int video_fps;
+   unsigned int document_page;
 };
 
 struct _Ethumb_Request
@@ -1396,10 +1396,10 @@ static int
 _ethumb_dbus_video_ntimes_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
-   int video_ntimes;
+   unsigned int video_ntimes;
 
    type = dbus_message_iter_get_arg_type(iter);
-   if (type != DBUS_TYPE_INT32)
+   if (type != DBUS_TYPE_UINT32)
      {
 	ERR("invalid param for video_ntimes_set.\n");
 	return 0;
@@ -1417,10 +1417,10 @@ static int
 _ethumb_dbus_video_fps_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
-   int video_fps;
+   unsigned int video_fps;
 
    type = dbus_message_iter_get_arg_type(iter);
-   if (type != DBUS_TYPE_INT32)
+   if (type != DBUS_TYPE_UINT32)
      {
 	ERR("invalid param for video_fps_set.\n");
 	return 0;
@@ -1438,10 +1438,10 @@ static int
 _ethumb_dbus_document_page_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
-   dbus_int32_t document_page;
+   unsigned int document_page;
 
    type = dbus_message_iter_get_arg_type(iter);
-   if (type != DBUS_TYPE_INT32)
+   if (type != DBUS_TYPE_UINT32)
      {
 	ERR("invalid param for document_page_set.\n");
 	return 0;

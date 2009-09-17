@@ -17,12 +17,12 @@
 
 struct _emotion_plugin
 {
-   int fps;
+   unsigned int fps;
    double ptotal, len, pi;
    double total_time, tmp_time;
-   int pcount;
-   int frnum;
-   int first;
+   unsigned int pcount;
+   unsigned int frnum;
+   Eina_Bool first;
    Eet_File *ef;
    Evas_Object *video;
    Ethumb *e;
@@ -64,7 +64,7 @@ _video_stopped_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUS
 
    _plugin->pi = 0;
    _plugin->ptotal = 0;
-   _plugin->first = 0;
+   _plugin->first = EINA_FALSE;
    _plugin->total_time = _plugin->tmp_time;
 }
 
@@ -79,10 +79,10 @@ _video_pos_set(struct _emotion_plugin *_plugin)
    _plugin->len = emotion_object_play_length_get(_plugin->video);
 
    if (_plugin->len > 0)
-     _plugin->first = 1;
+     _plugin->first = EINA_TRUE;
 
    if (pos <=0 || pos >= 1)
-     _plugin->pi = 0.2 * _plugin->len + _plugin->pcount *
+     _plugin->pi = 0.1 * _plugin->len + _plugin->pcount *
 	_plugin->len * interval;
    else
      _plugin->pi = pos * _plugin->len + _plugin->pcount *
@@ -97,7 +97,7 @@ _setup_thumbnail(struct _emotion_plugin *_plugin)
    char buf[4096];
    Evas *evas;
    Evas_Object *edje;
-   int i;
+   unsigned int i;
    const char *thumb_path;
 
    ethumb_thumb_path_get(_plugin->e, &thumb_path, NULL);
@@ -221,7 +221,7 @@ _frame_grab(void *data)
    if (_plugin->first)
      {
 	_plugin->pi = p;
-	_plugin->first = 0;
+	_plugin->first = EINA_FALSE;
      }
 
    if (p > _plugin->pi + _plugin->ptotal)

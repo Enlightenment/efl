@@ -3,6 +3,8 @@
 
 #include <Ethumb.h>
 
+typedef struct _Ethumb_Frame Ethumb_Frame;
+
 struct _Ethumb_Frame
 {
    const char *file;
@@ -29,11 +31,11 @@ struct _Ethumb
    struct
      {
 	double start, time, interval;
-	int ntimes, fps;
+	unsigned int ntimes, fps;
      } video;
    struct
      {
-	int page;
+	unsigned int page;
      } document;
    Ethumb_Frame *frame;
    Ecore_Evas *ee, *sub_ee;

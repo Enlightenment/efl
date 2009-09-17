@@ -202,6 +202,7 @@ ethumb_new(void)
    ethumb = calloc(1, sizeof(Ethumb));
    EINA_SAFETY_ON_NULL_RETURN_VAL(ethumb, NULL);
 
+   /* IF CHANGED, UPDATE DOCS in (Ethumb.c, Ethumb_Client.c, python...)!!! */
    ethumb->tw = THUMB_SIZE_NORMAL;
    ethumb->th = THUMB_SIZE_NORMAL;
    ethumb->crop_x = 0.5;
@@ -532,7 +533,7 @@ ethumb_frame_get(const Ethumb *e, const char **theme_file, const char **group, c
 }
 
 static const char *
-_ethumb_build_absolute_path(const char *path, char buf[])
+_ethumb_build_absolute_path(const char *path, char buf[PATH_MAX])
 {
    char *p;
    int len;
@@ -546,7 +547,10 @@ _ethumb_build_absolute_path(const char *path, char buf[])
      strcpy(p, path);
    else if (path[0] == '~')
      {
-	strcpy(p, getenv("HOME"));
+	const char *home = getenv("HOME");
+	if (!home)
+	  return NULL;
+	strcpy(p, home);
 	len = strlen(p);
 	p += len;
 	p[0] = '/';
@@ -555,7 +559,8 @@ _ethumb_build_absolute_path(const char *path, char buf[])
      }
    else
      {
-	getcwd(p, PATH_MAX);
+	if (!getcwd(p, PATH_MAX))
+	  return NULL;
 	len = strlen(p);
 	p += len;
 	p[0] = '/';
@@ -606,6 +611,8 @@ EAPI void
 ethumb_video_start_set(Ethumb *e, float start)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
+   EINA_SAFETY_ON_FALSE_RETURN(start >= 0.0);
+   EINA_SAFETY_ON_FALSE_RETURN(start <= 1.0);
 
    DBG("ethumb=%p, video_start=%f", e, start);
    e->video.start = start;
@@ -654,15 +661,16 @@ ethumb_video_interval_get(const Ethumb *e)
 }
 
 EAPI void
-ethumb_video_ntimes_set(Ethumb *e, int ntimes)
+ethumb_video_ntimes_set(Ethumb *e, unsigned int ntimes)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
+   EINA_SAFETY_ON_FALSE_RETURN(ntimes > 0);
 
    DBG("ethumb=%p, video_ntimes=%d", e, ntimes);
    e->video.ntimes = ntimes;
 }
 
-EAPI int
+EAPI unsigned int
 ethumb_video_ntimes_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
@@ -671,15 +679,16 @@ ethumb_video_ntimes_get(const Ethumb *e)
 }
 
 EAPI void
-ethumb_video_fps_set(Ethumb *e, int fps)
+ethumb_video_fps_set(Ethumb *e, unsigned int fps)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
+   EINA_SAFETY_ON_FALSE_RETURN(fps > 0);
 
    DBG("ethumb=%p, video_fps=%d", e, fps);
    e->video.fps = fps;
 }
 
-EAPI int
+EAPI unsigned int
 ethumb_video_fps_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
@@ -688,7 +697,7 @@ ethumb_video_fps_get(const Ethumb *e)
 }
 
 EAPI void
-ethumb_document_page_set(Ethumb *e, int page)
+ethumb_document_page_set(Ethumb *e, unsigned int page)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
 
@@ -696,7 +705,7 @@ ethumb_document_page_set(Ethumb *e, int page)
    e->document.page = page;
 }
 
-EAPI int
+EAPI unsigned int
 ethumb_document_page_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);

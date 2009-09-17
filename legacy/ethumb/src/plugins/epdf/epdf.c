@@ -20,8 +20,7 @@ _generate_thumb(Ethumb *e)
    const char *src_path;
    int w, h, ww, hh;
    int fx, fy, fw, fh;
-   int npages;
-   int pagenum;
+   unsigned int npages, pagenum;
 
    ethumb_file_get(e, &src_path, NULL);
    document = epdf_document_new(src_path);

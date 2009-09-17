@@ -463,6 +463,23 @@ error:
  * @endcond
  */
 
+/**
+ * @brief Initialize the Ethumb_Client library.
+ *
+ * @return 1 or greater on success, 0 on error.
+ *
+ * This function sets up all the Ethumb_Client module dependencies. It
+ * returns 0 on failure (that is, when one of the dependency fails to
+ * initialize), otherwise it returns the number of times it has
+ * already been called.
+ *
+ * When Ethumb_Client is not used anymore, call
+ * ethumb_client_shutdown() to shut down the Ethumb_Client library.
+ *
+ * @see ethumb_client_shutdown()
+ * @see ethumb_client_connect()
+ * @see @ref tutorial_ethumb_client
+ */
 EAPI int
 ethumb_client_init(void)
 {
@@ -488,6 +505,22 @@ ethumb_client_init(void)
    return ++_initcount;
 }
 
+/**
+ * @brief Shut down the Ethumb_Client library.
+ *
+ * @return 0 when everything is shut down, 1 or greater if there are
+ *         other users of the Ethumb_Client library pending shutdown.
+ *
+ * This function shuts down the Ethumb_Client library. It returns 0
+ * when it has been called the same number of times than
+ * ethumb_client_init(). In that case it shut down all the
+ * Ethumb_Client modules dependencies.
+ *
+ * Once this function succeeds (that is, @c 0 is returned), you must
+ * not call any of the Eina function anymore. You must call
+ * ethumb_client_init() again to use the Ethumb_Client functions
+ * again.
+ */
 EAPI int
 ethumb_client_shutdown(void)
 {
@@ -604,6 +637,9 @@ err:
  *
  * This is the destructor of Ethumb_Client, after it's disconnected
  * the client handle is now gone and should not be used.
+ *
+ * @param client client instance to be destroyed. Must @b not be @c
+ *        NULL.
  */
 EAPI void
 ethumb_client_disconnect(Ethumb_Client *client)
@@ -914,19 +950,19 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
    dbus_message_iter_append_basic(&viter, DBUS_TYPE_DOUBLE, &video_interval);
    _close_variant_iter(viter);
 
-   _open_variant_iter("video_ntimes", "i", viter);
+   _open_variant_iter("video_ntimes", "u", viter);
    video_ntimes = ethumb_video_ntimes_get(e);
-   dbus_message_iter_append_basic(&viter, DBUS_TYPE_INT32, &video_ntimes);
+   dbus_message_iter_append_basic(&viter, DBUS_TYPE_UINT32, &video_ntimes);
    _close_variant_iter(viter);
 
-   _open_variant_iter("video_fps", "i", viter);
+   _open_variant_iter("video_fps", "u", viter);
    video_fps = ethumb_video_fps_get(e);
-   dbus_message_iter_append_basic(&viter, DBUS_TYPE_INT32, &video_fps);
+   dbus_message_iter_append_basic(&viter, DBUS_TYPE_UINT32, &video_fps);
    _close_variant_iter(viter);
 
-   _open_variant_iter("document_page", "i", viter);
+   _open_variant_iter("document_page", "u", viter);
    document_page = ethumb_document_page_get(e);
-   dbus_message_iter_append_basic(&viter, DBUS_TYPE_INT32, &document_page);
+   dbus_message_iter_append_basic(&viter, DBUS_TYPE_UINT32, &document_page);
    _close_variant_iter(viter);
 
 #undef _open_variant_iter
@@ -1299,6 +1335,9 @@ ethumb_client_generate_cancel_all(Ethumb_Client *client)
  * ~/.thumbnails/SIZE, with size being either normal (128x128) or
  * large (256x256).
  *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
  * @param s size identifier, either #ETHUMB_THUMB_NORMAL (0) or
  *        #ETHUMB_THUMB_LARGE (1).
  *
@@ -1320,8 +1359,11 @@ ethumb_client_fdo_set(Ethumb_Client *client, Ethumb_Thumb_FDO_Size s)
 /**
  * Configure future request to use custom size.
  *
- * @param w width, default is 128.
- * @param h height, default is 128.
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
+ * @param tw width, default is 128.
+ * @param th height, default is 128.
  */
 EAPI void
 ethumb_client_size_set(Ethumb_Client *client, int tw, int th)
@@ -1335,8 +1377,11 @@ ethumb_client_size_set(Ethumb_Client *client, int tw, int th)
 /**
  * Retrieve future request to use custom size.
  *
- * @param w where to return width. May be #NULL.
- * @param h where to return height. May be #NULL.
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
+ * @param tw where to return width. May be @c NULL.
+ * @param th where to return height. May be @c NULL.
  */
 EAPI void
 ethumb_client_size_get(const Ethumb_Client *client, int *tw, int *th)
@@ -1351,6 +1396,9 @@ ethumb_client_size_get(const Ethumb_Client *client, int *tw, int *th)
 /**
  * Configure format to use for future requests.
  *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
  * @param f format identifier to use, either #ETHUMB_THUMB_FDO (0),
  *        #ETHUMB_THUMB_JPEG (1) or #ETHUMB_THUMB_EET (2). Default is FDO.
  */
@@ -1365,6 +1413,10 @@ ethumb_client_format_set(Ethumb_Client *client, Ethumb_Thumb_Format f)
 
 /**
  * Retrieve format to use for future requests.
+ *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
  *
  * @return format identifier to use, either #ETHUMB_THUMB_FDO (0),
  *         #ETHUMB_THUMB_JPEG (1) or #ETHUMB_THUMB_EET (2).
@@ -1400,6 +1452,9 @@ ethumb_client_format_get(const Ethumb_Client *client)
  * pixels from left and 250 pixels from right being lost, that is just
  * the 500x500 central pixels of image will be considered for scaling.
  *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
  * @param a aspect mode identifier, either #ETHUMB_THUMB_KEEP_ASPECT (0),
  *        #ETHUMB_THUMB_IGNORE_ASPECT (1) or #ETHUMB_THUMB_CROP (2).
  */
@@ -1415,6 +1470,10 @@ ethumb_client_aspect_set(Ethumb_Client *client, Ethumb_Thumb_Aspect a)
 /**
  * Get current aspect in use for requests.
  *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
+ *
  * @return aspect in use for future requests.
  */
 EAPI Ethumb_Thumb_Aspect
@@ -1428,6 +1487,9 @@ ethumb_client_aspect_get(const Ethumb_Client *client)
 /**
  * Configure crop alignment in use for future requests.
  *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
  * @param x horizontal alignment. 0.0 means left side will be visible
  *        or right side is being lost. 1.0 means right side will be
  *        visible or left side is being lost. 0.5 means just center is
@@ -1447,8 +1509,11 @@ ethumb_client_crop_align_set(Ethumb_Client *client, float x, float y)
 /**
  * Get current crop alignment in use for requests.
  *
- * @param x where to return horizontal alignment. May be #NULL.
- * @param y where to return vertical alignment. May be #NULL.
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
+ * @param x where to return horizontal alignment. May be @c NULL.
+ * @param y where to return vertical alignment. May be @c NULL.
  */
 EAPI void
 ethumb_client_crop_align_get(const Ethumb_Client *client, float *x, float *y)
@@ -1463,6 +1528,9 @@ ethumb_client_crop_align_get(const Ethumb_Client *client, float *x, float *y)
 /**
  * Configure quality to be used in thumbnails.
  *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
  * @param quality value from 0 to 100, default is 80. The effect
  *        depends on the format being used, PNG will not use it.
  */
@@ -1476,6 +1544,10 @@ ethumb_client_quality_set(Ethumb_Client *client, int quality)
 
 /**
  * Get quality to be used in thumbnails.
+ *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
  *
  * @return quality value from 0 to 100, default is 80. The effect
  *         depends on the format being used, PNG will not use it.
@@ -1491,6 +1563,9 @@ ethumb_client_quality_get(const Ethumb_Client *client)
 /**
  * Configure compression level used in requests.
  *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
  * @param compress value from 0 to 9, default is 9. The effect
  *        depends on the format being used, JPEG will not use it.
  */
@@ -1504,6 +1579,10 @@ ethumb_client_compress_set(Ethumb_Client *client, int compress)
 
 /**
  * Get compression level used in requests.
+ *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
  *
  * @return compress value from 0 to 9, default is 9. The effect
  *         depends on the format being used, JPEG will not use it.
@@ -1525,6 +1604,9 @@ ethumb_client_compress_get(const Ethumb_Client *client)
  * of thumbnails, but sometimes it's useful to have it composited and
  * avoid runtime overhead.
  *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
  * @param file file path to edje.
  * @param group group inside edje to use.
  * @param swallow name of swallow part.
@@ -1541,11 +1623,25 @@ ethumb_client_frame_set(Ethumb_Client *client, const char *file, const char *gro
 /**
  * Configure where to store thumbnails in future requests.
  *
- * Note that this is the base, a category is added to this path as a
- * sub directory.
+ * This value will be used to generate thumbnail paths, that is, it
+ * will be used when ethumb_client_thumb_path_set() was not called
+ * after last ethumb_client_file_set().
  *
+ * Note that this is the base, a category is added to this path as a
+ * sub directory. This is not the final directory where files are
+ * stored, the thumbnail system will account @b category as well, see
+ * ethumb_client_category_set().
+ *
+ * As other options, this value will only be applied to future
+ * requests.
+ *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
  * @param path base directory where to store thumbnails. Default is
  *        ~/.thumbnails
+ *
+ * @see ethumb_client_category_set()
  */
 EAPI void
 ethumb_client_dir_path_set(Ethumb_Client *client, const char *path)
@@ -1556,6 +1652,18 @@ ethumb_client_dir_path_set(Ethumb_Client *client, const char *path)
    ethumb_thumb_dir_path_set(client->ethumb, path);
 }
 
+/**
+ * Get base directory path where to store thumbnails.
+ *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
+ *
+ * @return pointer to internal string with current path. This string
+ *         should not be modified or freed.
+ *
+ * @see ethumb_client_dir_path_set()
+ */
 EAPI const char *
 ethumb_client_dir_path_get(const Ethumb_Client *client)
 {
@@ -1567,10 +1675,26 @@ ethumb_client_dir_path_get(const Ethumb_Client *client)
 /**
  * Category directory to store thumbnails.
  *
+ * This value will be used to generate thumbnail paths, that is, it
+ * will be used when ethumb_client_thumb_path_set() was not called
+ * after last ethumb_client_file_set().
+ *
+ * This is a sub-directory inside base directory
+ * (ethumb_client_dir_path_set()) that creates a namespace to avoid
+ * different options resulting in the same file.
+ *
+ * As other options, this value will only be applied to future
+ * requests.
+ *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
  * @param category category sub directory to store thumbnail. Default
  *        is either "normal" or "large" for FDO compliant thumbnails
  *        or WIDTHxHEIGHT-ASPECT[-FRAMED]-FORMAT. It can be a string
- *        or None to use auto generated names.
+ *        or @c NULL to use auto generated names.
+ *
+ * @see ethumb_client_dir_path_set()
  */
 EAPI void
 ethumb_client_category_set(Ethumb_Client *client, const char *category)
@@ -1581,6 +1705,18 @@ ethumb_client_category_set(Ethumb_Client *client, const char *category)
    ethumb_thumb_category_set(client->ethumb, category);
 }
 
+/**
+ * Get category sub-directory  where to store thumbnails.
+ *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
+ *
+ * @return pointer to internal string with current path. This string
+ *         should not be modified or freed.
+ *
+ * @see ethumb_client_category_set()
+ */
 EAPI const char *
 ethumb_client_category_get(const Ethumb_Client *client)
 {
@@ -1589,6 +1725,14 @@ ethumb_client_category_get(const Ethumb_Client *client)
    return ethumb_thumb_category_get(client->ethumb);
 }
 
+/**
+ * Set the video time (duration) in seconds.
+ *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
+ * @param time duration (in seconds). Defaults to 3 seconds.
+ */
 EAPI void
 ethumb_client_video_time_set(Ethumb_Client *client, float time)
 {
@@ -1598,15 +1742,48 @@ ethumb_client_video_time_set(Ethumb_Client *client, float time)
    ethumb_video_time_set(client->ethumb, time);
 }
 
+/**
+ * Set initial video position to start thumbnailing, in percentage.
+ *
+ * This is useful to avoid thumbnailing the company/producer logo or
+ * movie opening.
+ *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
+ * @param start initial video positon to thumbnail, in percentage (0.0
+ *        to 1.0, inclusive). Defaults to 10% (0.1).
+ */
 EAPI void
 ethumb_client_video_start_set(Ethumb_Client *client, float start)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
+   EINA_SAFETY_ON_FALSE_RETURN(start >= 0.0);
+   EINA_SAFETY_ON_FALSE_RETURN(start <= 1.0);
 
    client->ethumb_dirty = 1;
    ethumb_video_start_set(client->ethumb, start);
 }
 
+/**
+ * Set the video frame interval, in seconds.
+ *
+ * This is useful for animated thumbnail and will define skip time
+ * before going to the next frame. Note that video backends might not
+ * be able to precisely skip that amount as it will depend on various
+ * factors, including video encoding.
+ *
+ * Although this seems similar to ethumb_client_video_fps_set(), this
+ * one is the time that will be used to seek. The math is simple, for
+ * each new frame the video position will be set to:
+ * ((video_length * start_time) + (interval * current_frame_number)).
+ *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
+ * @param interval time between frames, in seconds. Defaults to 0.05
+ *        seconds.
+ */
 EAPI void
 ethumb_client_video_interval_set(Ethumb_Client *client, float interval)
 {
@@ -1616,26 +1793,64 @@ ethumb_client_video_interval_set(Ethumb_Client *client, float interval)
    ethumb_video_interval_set(client->ethumb, interval);
 }
 
+/**
+ * Set the number of frames to thumbnail.
+ *
+ * This is useful for animated thumbnail and will define how many
+ * frames the generated file will have.
+ *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
+ * @param ntimes number of times, must be greater than zero.
+ *        Defaults to 3.
+ */
 EAPI void
-ethumb_client_video_ntimes_set(Ethumb_Client *client, int ntimes)
+ethumb_client_video_ntimes_set(Ethumb_Client *client, unsigned int ntimes)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
+   EINA_SAFETY_ON_FALSE_RETURN(ntimes > 0);
 
    client->ethumb_dirty = 1;
    ethumb_video_ntimes_set(client->ethumb, ntimes);
 }
 
+/**
+ * Set the number of frames per second to thumbnail the video.
+ *
+ * This configures the number of times per seconds the thumbnail will
+ * use to create thumbnails.
+ *
+ * Although this is similar to ethumb_client_video_interval_set(), it
+ * is the delay used between calling functions thata generates frames,
+ * while the other is the time used to skip inside the video.
+ *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
+ * @param fps number of frames per second to thumbnail. Must be greater
+ *        than zero. Defaults to 10.
+ */
 EAPI void
-ethumb_client_video_fps_set(Ethumb_Client *client, int fps)
+ethumb_client_video_fps_set(Ethumb_Client *client, unsigned int fps)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
+   EINA_SAFETY_ON_FALSE_RETURN(fps > 0);
 
    client->ethumb_dirty = 1;
    ethumb_video_fps_set(client->ethumb, fps);
 }
 
+/**
+ * Set the page number to thumbnail in paged documents.
+ *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
+ * @param page page number, defaults to 0 (first).
+ */
 EAPI void
-ethumb_client_document_page_set(Ethumb_Client *client, int page)
+ethumb_client_document_page_set(Ethumb_Client *client, unsigned int page)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
 
@@ -1658,7 +1873,7 @@ ethumb_client_document_page_set(Ethumb_Client *client, int page)
  *        from. This is only used for formats that allow multiple
  *        resources in one file, like EET or Edje (group name).
  *
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
  */
 EAPI Eina_Bool
 ethumb_client_file_set(Ethumb_Client *client, const char *path, const char *key)
@@ -1670,6 +1885,18 @@ ethumb_client_file_set(Ethumb_Client *client, const char *path, const char *key)
 
 /**
  * Get values set with ethumb_client_file_get()
+ *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
+ * @param path where to return configured path. May be @c NULL.  If
+ *        not @c NULL, then it will be a pointer to a stringshared
+ *        instance, but @b no references are added (do it with
+ *        eina_stringshare_ref())!
+ * @param key where to return configured key. May be @c NULL.If not @c
+ *        NULL, then it will be a pointer to a stringshared instance,
+ *        but @b no references are added (do it with
+ *        eina_stringshare_ref())!
  */
 EAPI void
 ethumb_client_file_get(Ethumb_Client *client, const char **path, const char **key)
@@ -1705,6 +1932,14 @@ ethumb_client_file_free(Ethumb_Client *client)
  *
  * Set these to @c NULL to forget previously given values. After
  * ethumb_client_file_set() these values will be reset to @c NULL.
+ *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
+ * @param path force generated thumbnail to the exact given path. If
+ *        @c NULL, then reverts back to auto-generation.
+ * @param key force generated thumbnail to the exact given key. If
+ *        @c NULL, then reverts back to auto-generation.
  */
 EAPI void
 ethumb_client_thumb_path_set(Ethumb_Client *client, const char *path, const char *key)
@@ -1720,6 +1955,9 @@ ethumb_client_thumb_path_set(Ethumb_Client *client, const char *path, const char
  * This returns the value set with ethumb_client_thumb_path_set() or
  * auto-generated by ethumb_client_thumb_exists() if it was not set.
  *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
  * @param path where to return configured path. May be @c NULL.  If
  *        there was no path configured with
  *        ethumb_client_thumb_path_set() and
@@ -1757,7 +1995,7 @@ ethumb_client_thumb_path_get(Ethumb_Client *client, const char **path, const cha
  * @param client client instance. Must @b not be @c NULL and client
  *        must be configured with ethumb_client_file_set().
  *
- * @return #EINA_TRUE if it exists, #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if it exists, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ethumb_client_thumb_exists(Ethumb_Client *client)
