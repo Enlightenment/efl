@@ -1,6 +1,13 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Frame Frame
+ *
+ * This holds some content and has a title. Looks like a frame, but
+ * supports styles so multple frames are avaible
+ */
+
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -66,6 +73,14 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
      }
 }
 
+/**
+ * Add a new frame to the parent
+ *
+ * @param parent The parent object
+ * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Frame
+ */
 EAPI Evas_Object *
 elm_frame_add(Evas_Object *parent)
 {
@@ -92,6 +107,14 @@ elm_frame_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * Set the frame label
+ *
+ * @param obj The frame object
+ * @param label The label of this frame object
+ *
+ * @ingroup Frame
+ */
 EAPI void
 elm_frame_label_set(Evas_Object *obj, const char *label)
 {
@@ -100,6 +123,15 @@ elm_frame_label_set(Evas_Object *obj, const char *label)
    _sizing_eval(obj);
 }
 
+/**
+ * Get the frame label
+ *
+ * @param obj The frame object
+ *
+ * @return The label of this frame objet or NULL if unable to get frame
+ *
+ * @ingroup Frame
+ */
 EAPI const char*
 elm_frame_label_get(Evas_Object *obj)
 {
@@ -108,6 +140,14 @@ elm_frame_label_get(Evas_Object *obj)
    return edje_object_part_text_get(wd->frm, "elm.text");
 }
 
+/**
+ * Set the frame content
+ *
+ * @param obj The frame object
+ * @param content The content will be filled in this frame object
+ *
+ * @ingroup Frame
+ */
 EAPI void
 elm_frame_content_set(Evas_Object *obj, Evas_Object *content)
 {
@@ -125,6 +165,14 @@ elm_frame_content_set(Evas_Object *obj, Evas_Object *content)
      }
 }
 
+/**
+ * Set the frame style
+ *
+ * @param obj The frame object
+ * @param style The style will be applied in this frame
+ *
+ * @ingroup Frame
+ */
 EAPI void
 elm_frame_style_set(Evas_Object *obj, const char *style)
 {

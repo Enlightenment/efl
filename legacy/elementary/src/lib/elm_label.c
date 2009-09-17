@@ -1,6 +1,13 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Label Label
+ *
+ * Display text, with simple html-like markup. The theme of course
+ * can invent new markup tags and style them any way it likes
+ */
+
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -42,6 +49,14 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
 
+/**
+ * Add a new label to the parent
+ *
+ * @param parent The parent object
+ * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Label
+ */
 EAPI Evas_Object *
 elm_label_add(Evas_Object *parent)
 {
@@ -68,6 +83,14 @@ elm_label_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * Set the label on the label object
+ *
+ * @param obj The label object
+ * @param label The label will be used on the label object
+ *
+ * @ingroup Label
+ */
 EAPI void
 elm_label_label_set(Evas_Object *obj, const char *label)
 {
@@ -79,6 +102,13 @@ elm_label_label_set(Evas_Object *obj, const char *label)
    _sizing_eval(obj);
 }
 
+/**
+ * Get the label used on the label object
+ *
+ * @param obj The label object
+ *
+ * @ingroup Label
+ */
 EAPI const char*
 elm_label_label_get(Evas_Object *obj)
 {

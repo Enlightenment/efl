@@ -1,6 +1,15 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Bubble Bubble
+ *
+ * The Bubble is an widget used to show a text in a frame as speach is
+ * represented in comics.
+ *
+ */
+
+
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -79,6 +88,16 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
      }
 }
 
+/**
+ * Add a new bubble to the parent
+ *
+ * @param parent The parent object
+ * @return The new object or NULL if it cannot be created
+ *
+ * This function adds a text bubble to the given parent evas object.
+ *
+ * @ingroup Bubble
+ */
 EAPI Evas_Object *
 elm_bubble_add(Evas_Object *parent)
 {
@@ -105,6 +124,17 @@ elm_bubble_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * Set the label of the bubble
+ *
+ * @param obj The given evas pointer
+ * @param label The string to set in the label
+ *
+ * This function sets the title of the bubble that is showed on top of
+ * the bubble.
+ *
+ * @ingroup Bubble
+ */
 EAPI void
 elm_bubble_label_set(Evas_Object *obj, const char *label)
 {
@@ -125,6 +155,19 @@ elm_bubble_label_get(Evas_Object *obj)
    return wd->label;
 }
 
+/**
+ * Set the info of the bubble
+ *
+ * @param obj The given evas pointer
+ * @param info The given info about the bubble
+ *
+ * This function sets the text showed on the top right of bubble In
+ * the Anchorblock example of the Elementary tests application it
+ * shows time.
+ *
+ * @ingroup Bubble
+ *
+ */
 EAPI void
 elm_bubble_info_set(Evas_Object *obj, const char *info)
 {
@@ -135,7 +178,18 @@ elm_bubble_info_set(Evas_Object *obj, const char *info)
    edje_object_part_text_set(wd->bbl, "elm.info", info);
    _sizing_eval(obj);
 }
-
+/**
+ * Set the text to be showed in the bubble
+ *
+ * @param obj The given evas pointer
+ * @param content The given info about the bubble
+ *
+ * This function sets the text showed on the top right of bubble. In
+ * the Anchorblock example of the Elementary tests application it
+ * shows time.
+ *
+ * @ingroup Bubble
+ */
 EAPI void
 elm_bubble_content_set(Evas_Object *obj, Evas_Object *content)
 {
@@ -153,6 +207,16 @@ elm_bubble_content_set(Evas_Object *obj, Evas_Object *content)
    _sizing_eval(obj);
 }
 
+/**
+ * Set the icon of the bubble
+ *
+ * @param obj The given evas pointer
+ * @param icon The given icon for the bubble
+ *
+ * This function sets the icon showed on the top left of bubble. 
+ *
+ * @ingroup Bubble
+ */
 EAPI void
 elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
@@ -178,6 +242,16 @@ elm_bubble_icon_get(Evas_Object *obj)
    return wd->icon;
 }
 
+/**
+ * Set the corner of the bubble
+ *
+ * @param obj The given evas pointer.
+ * @param corner The given corner for the bubble.
+ *
+ * This function sets the corner of the bubble.
+ *
+ * @ingroup Bubble
+ */
 EAPI void
 elm_bubble_corner_set(Evas_Object *obj, const char *corner)
 {

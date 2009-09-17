@@ -1998,7 +1998,7 @@ elm_genlist_item_subitems_clear(Elm_Genlist_Item *it)
  * item @p it.
  *
  * @param it The item
- * @param selcted The slected state
+ * @param selected The slected state
  *
  * @ingroup Genlist
  */

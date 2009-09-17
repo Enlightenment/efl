@@ -1,6 +1,13 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Photo Photo
+ *
+ * For displaying the photo of a person (contact). Simple yet
+ * with a very specific purpose. 
+ */
+
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -55,6 +62,14 @@ _mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info)
    evas_object_smart_callback_call(data, "clicked", NULL);
 }
 
+/**
+ * Add a new photo to the parent
+ *
+ * @param parent The parent object
+ * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Photo
+ */
 EAPI Evas_Object *
 elm_photo_add(Evas_Object *parent)
 {
@@ -95,6 +110,16 @@ elm_photo_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * Set the file that will be used as photo
+ *
+ * @param obj The photo object
+ * @param file The path to file that will be used as photo
+ *
+ * @return (1 = sucess, 0 = error)
+ *
+ * @ingroup Photo
+ */
 EAPI Eina_Bool
 elm_photo_file_set(Evas_Object *obj, const char *file)
 {
@@ -105,6 +130,14 @@ elm_photo_file_set(Evas_Object *obj, const char *file)
    return 1;
 }
 
+/**
+ * Set the size that will be used on the photo
+ *
+ * @param obj The photo object
+ * @param size The size that the photo will be
+ *
+ * @ingroup Photo
+ */
 EAPI void
 elm_photo_size_set(Evas_Object *obj, int size)
 {

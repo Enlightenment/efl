@@ -1,6 +1,14 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Table Table
+ *
+ * Arranges widgets in a table where items can also span multiple
+ * columns or rows - even overlap (and then be raised or lowered
+ * accordingly to adjust stacking if they do overlap).
+ */
+
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -55,6 +63,14 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
    _sizing_eval(obj);
 }
 
+/**
+ * Add a new table to the parent
+ *
+ * @param parent The parent object
+ * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Table
+ */
 EAPI Evas_Object *
 elm_table_add(Evas_Object *parent)
 {
@@ -80,6 +96,16 @@ elm_table_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * Set the homogenous layout in the table
+ *
+ * @param obj The layout object
+ * @param homogenous A boolean to set (or no) layout homogenous
+ * in the table
+ * (1 = homogenous,  0 = no homogenous)
+ *
+ * @ingroup Table
+ */
 EAPI void
 elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
 {
@@ -87,6 +113,18 @@ elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
    _els_smart_table_homogenous_set(wd->tbl, homogenous);
 }
 
+/**
+ * Add a subobject on the table with the coordinates passed
+ *
+ * @param obj The table object
+ * @param subobj The subobject to be added to the table
+ * @param x Coordinate to X axis
+ * @param y Coordinate to Y axis
+ * @param w Horizontal length
+ * @param h Vertical length
+ *
+ * @ingroup Table
+ */
 EAPI void
 elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h)
 {

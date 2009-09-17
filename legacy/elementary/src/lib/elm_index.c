@@ -582,9 +582,10 @@ elm_index_active_set(Evas_Object *obj, Eina_Bool active)
 }
 
 /**
- * XXX
+ * @brief To be documented.
  *
- * @param obj The index object
+ * @param obj The index object.
+ * @param level To be documented.
  *
  * @ingroup Index
  */
@@ -598,7 +599,7 @@ elm_index_item_level_set(Evas_Object *obj, int level)
 }
 
 /**
- * XXX
+ * @brief To be documented.
  *
  * @param obj The index object
  *
@@ -613,9 +614,10 @@ elm_index_item_level_get(Evas_Object *obj)
 }
 
 /**
- * XXX
+ * @brief To be documented.
  *
- * @param obj The index object
+ * @param obj The index object.
+ * @param level to be documented.
  *
  * @ingroup Index
  */
@@ -634,9 +636,11 @@ elm_index_item_selected_get(Evas_Object *obj, int level)
 }
 
 /**
- * XXX
+ * @brief To be documented.
  *
- * @param obj The index object
+ * @param obj The index object.
+ * @param letter to be documented.
+ * @param item to be documented.
  *
  * @ingroup Index
  */
@@ -653,9 +657,11 @@ elm_index_item_append(Evas_Object *obj, const char *letter, const void *item)
 }
 
 /**
- * XXX
+ * @brief To be documented.
  *
- * @param obj The index object
+ * @param obj The index object.
+ * @param letter to be documented.
+ * @param item to be documented.
  *
  * @ingroup Index
  */
@@ -672,9 +678,12 @@ elm_index_item_prepend(Evas_Object *obj, const char *letter, const void *item)
 }
 
 /**
- * XXX
+ * @brief To be documented.
  *
  * @param obj The index object
+ * @param letter to be documented.
+ * @param item to be documented.
+ * @param relative to be documented.
  *
  * @ingroup Index
  */
@@ -702,9 +711,12 @@ elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void 
 }
 
 /**
- * XXX
+ * @brief To be documented.
  *
- * @param obj The index object
+ * @param obj The index object.
+ * @param letter to be documented.
+ * @param item to be documented.
+ * @param relative to be documented.
  *
  * @ingroup Index
  */
@@ -732,9 +744,10 @@ elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void
 }
 
 /**
- * XXX
+ * @brief To be documented.
  *
  * @param obj The index object
+ * @param item To be documented.
  *
  * @ingroup Index
  */
@@ -751,9 +764,9 @@ elm_index_item_del(Evas_Object *obj, const void *item)
 }
 
 /**
- * XXX
+ * @brief To be documented.
  *
- * @param obj The index object
+ * @param obj The index object.
  *
  * @ingroup Index
  */
@@ -777,9 +790,10 @@ elm_index_item_clear(Evas_Object *obj)
 }
 
 /**
- * XXX
+ * @brief To be documented.
  *
  * @param obj The index object
+ * @param level To be documented.
  *
  * @ingroup Index
  */

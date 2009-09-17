@@ -4,6 +4,15 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Image Image
+ *
+ * A standard image that may be provided by the theme (delete, edit,
+ * arrows etc.) or a custom file (PNG, JPG, EDJE etc.) used for an
+ * icon. The Icon may scale or not and of course... support alpha
+ * channels.
+ */
+
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -77,6 +86,14 @@ _mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info)
    evas_object_smart_callback_call(data, "clicked", NULL);
 }
 
+/**
+ * Add a new image to the parent
+ *
+ * @param parent The parent object
+ * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Image
+ */
 EAPI Evas_Object *
 elm_image_add(Evas_Object *parent)
 {
@@ -110,6 +127,17 @@ elm_image_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * Set the file that will be used as image
+ *
+ * @param obj The image object
+ * @param file The path to file that will be used as image
+ * @param group The group that the image belongs in edje file
+ *
+ * @return (1 = sucess, 0 = error)
+ *
+ * @ingroup Image
+ */
 EAPI Eina_Bool
 elm_image_file_set(Evas_Object *obj, const char *file, const char *group)
 {
@@ -127,6 +155,15 @@ elm_image_file_set(Evas_Object *obj, const char *file, const char *group)
    return ret;
 }
 
+/**
+ * Set the smooth effect for a image
+ *
+ * @param obj The image object
+ * @param smooth A bool to set (or no) smooth effect
+ * (1 = smooth, 0 = not smooth)
+ *
+ * @ingroup Image
+ */
 EAPI void
 elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 {
@@ -143,6 +180,15 @@ elm_image_object_size_get(const Evas_Object *obj, int *w, int *h)
    _els_smart_icon_size_get(wd->img, w, h);
 }
 
+/**
+ * Set if the object are scalable
+ *
+ * @param obj The image object.
+ * @param no_scale A bool to set scale (or no).
+ * (1 = no_scale, 0 = scale)
+ *
+ * @ingroup Image
+ */
 EAPI void
 elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale)
 {
@@ -150,8 +196,18 @@ elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale)
    if (!wd) return;
    wd->no_scale = no_scale;
    _sizing_eval(obj);
+
 }
 
+/**
+ * Set if the object is (up/down) scalable
+ *
+ * @param obj The image object
+ * @param scale_up A bool to set if the object is scalable up
+ * @param scale_down A bool to set if the object is scalable down
+ *
+ * @ingroup Image
+ */
 EAPI void
 elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down)
 {
@@ -162,6 +218,15 @@ elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down)
    _sizing_eval(obj);
 }
 
+/**
+ * Set if the object is filled outside
+ *
+ * @param obj The image object
+ * @param fill_outside A bool to set if the object is filled outside
+ * (1 = filled, 0 = no filled)
+ *
+ * @ingroup Image
+ */
 EAPI void
 elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
 {
@@ -171,6 +236,14 @@ elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
    _sizing_eval(obj);
 }
 
+/**
+ * Set the prescale size for the image
+ *
+ * @param obj The image object
+ * @param size The prescale size
+ *
+ * @ingroup Image
+ */
 EAPI void
 elm_image_prescale_set(Evas_Object *obj, int size)
 {
@@ -180,6 +253,18 @@ elm_image_prescale_set(Evas_Object *obj, int size)
    _els_smart_icon_scale_size_set(wd->img, size);
 }
 
+/**
+ * Set the image orient
+ *
+ * @param obj The image object
+ * @param orient The image orient
+ * (ELM_IMAGE_ORIENT_NONE, ELM_IMAGE_ROTATE_90_CW,
+ *  ELM_IMAGE_ROTATE_180_CW, ELM_IMAGE_ROTATE_90_CCW,
+ *  ELM_IMAGE_FLIP_HORIZONTAL,ELM_IMAGE_FLIP_VERTICAL,
+ *  ELM_IMAGE_FLIP_TRANSPOSE, ELM_IMAGE_FLIP_TRANSVERSE)
+ *
+ * @ingroup Image
+ */
 EAPI void
 elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
 {

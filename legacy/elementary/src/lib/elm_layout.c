@@ -1,6 +1,15 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Layout Layout
+ *
+ * This takes a standard Edje design file and wraps it very thinly
+ * in a widget and handles swallowing widgets into swallow regions
+ * in the Edje object, allowing Edje to be used as a design and
+ * layout tool
+ */
+
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Subinfo     Subinfo;
 
@@ -92,6 +101,14 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
      }
 }
 
+/**
+ * Add a new layout to the parent
+ *
+ * @param parent The parent object
+ * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Layout
+ */
 EAPI Evas_Object *
 elm_layout_add(Evas_Object *parent)
 {
@@ -117,6 +134,17 @@ elm_layout_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * Set the file that will be used as layout
+ *
+ * @param obj The layout object
+ * @param file The path to file (edj) that will be used as layout
+ * @param group The group that the layout belongs in edje file
+ *
+ * @return (1 = sucess, 0 = error)
+ *
+ * @ingroup Layout
+ */
 EAPI Eina_Bool
 elm_layout_file_set(Evas_Object *obj, const char *file, const char *group)
 {
@@ -127,6 +155,15 @@ elm_layout_file_set(Evas_Object *obj, const char *file, const char *group)
    return ret;
 }
 
+/**
+ * Set the layout content
+ *
+ * @param obj The layout object
+ * @param swallow The swallow group name in the edje file
+ * @param content The content will be filled in this layout object
+ *
+ * @ingroup Layout
+ */
 EAPI void
 elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content)
 {
@@ -157,6 +194,16 @@ elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conte
      }
 }
 
+/**
+ * Get the edje layout
+ *
+ * @param obj The layout object
+ *
+ * @return A Evas_Object with the edje layout settings loaded
+ * with function elm_layout_file_set
+ *
+ * @ingroup Layout
+ */
 EAPI Evas_Object *
 elm_layout_edje_get(const Evas_Object *obj)
 {

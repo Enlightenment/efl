@@ -1174,7 +1174,7 @@ elm_finger_size_get(void)
  *
  * This sets the globally configured finger size in pixels
  *
- * @paramsize The finger size
+ * @param size The finger size
  * @ingroup Fingers
  */
 EAPI void

@@ -1,6 +1,13 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Button Button
+ *
+ * This is a push-button. Press it and run some function. It can contain
+ * a simple label and icon object.
+ */
+
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -108,6 +115,13 @@ _signal_clicked(void *data, Evas_Object *obj, const char *emission, const char *
    evas_object_smart_callback_call(data, "clicked", NULL);
 }
 
+/**
+ * Add a new button to the parent
+ * @param parent The parent object
+ * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Button
+ */
 EAPI Evas_Object *
 elm_button_add(Evas_Object *parent)
 {
@@ -136,6 +150,14 @@ elm_button_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * Set the label used in the button
+ *
+ * @param obj The button object
+ * @param label The text will be written on the button 
+ *
+ * @ingroup Button
+ */
 EAPI void
 elm_button_label_set(Evas_Object *obj, const char *label)
 {
@@ -169,6 +191,14 @@ elm_button_label_get(Evas_Object *obj)
    return wd->label;
 }
 
+/**
+ * Set the icon used for the button
+ *
+ * @param obj The button object
+ * @param icon  The image for the button
+ *
+ * @ingroup Button
+ */
 EAPI void
 elm_button_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
@@ -199,6 +229,14 @@ elm_button_icon_get(Evas_Object *obj)
    return wd->icon;
 }
 
+/**
+ * Set the button style
+ *
+ * @param obj The button object
+ * @param style The style for the button
+ *
+ * @ingroup Button
+ */
 EAPI void
 elm_button_style_set(Evas_Object *obj, const char *style)
 {

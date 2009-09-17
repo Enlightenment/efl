@@ -378,13 +378,13 @@ elm_radio_state_value_set(Evas_Object *obj, int value)
 }
 
 /**
- * Set the value the radio
+ * Set the value of the radio.
  *
  * This sets the value of the radio group and will also set the value if
  * pointed to, to the value supplied, but will not call any callbacks.
  *
  * @param obj The radio object
- * @param state The value to use for the group
+ * @param value The value to use for the group
  *
  * @ingroup Radio
  */

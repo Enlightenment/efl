@@ -458,7 +458,7 @@ elm_slider_unit_format_set(Evas_Object *obj, const char *units)
  * information on how this works.
  *
  * @param obj The slider object
- * @param units The format string for the indicator display
+ * @param indicator The format string for the indicator display
  *
  * @ingroup Slider
  */

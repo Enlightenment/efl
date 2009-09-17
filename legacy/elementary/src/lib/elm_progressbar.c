@@ -255,7 +255,7 @@ elm_progressbar_pulse_set (Evas_Object *obj, Eina_Bool pulse)
  * (the cursor pulse right to left and left to right, and loop) if pulse is set to 1.
  *
  * @param obj The progressbar object
- * @param pulse The pulse flag. 1 == pulse, 0 == normal
+ * @param state The pulse flag. 1 == pulse, 0 == normal
  *
  * @ingroup Progressbar
  */

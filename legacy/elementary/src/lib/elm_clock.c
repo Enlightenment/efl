@@ -1,6 +1,14 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+/**
+ * @defgroup Clock Clock
+ *
+ * It's a widget to show clock with animation. The update of time is
+ * showed in an animation like a flip of a sheet.
+ *
+ */
+
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -358,6 +366,16 @@ _time_update(Evas_Object *obj)
      wd->cur.ampm = -1;
 }
 
+/**
+ * Add a new clock to the parent
+ *
+ * @param parent The parent object
+ *
+ * This function inserts a clock widget on a given canvas to show a
+ * animated clock.
+ *
+ * @ingroup Clock
+ */
 EAPI Evas_Object *
 elm_clock_add(Evas_Object *parent)
 {
@@ -388,6 +406,18 @@ elm_clock_add(Evas_Object *parent)
    return obj;
 }
 
+/**
+ * Set the clock time
+ *
+ * @param obj The clock object
+ * @param hrs The hours to set
+ * @param min The minutes to set
+ * @param sec The secondes to set
+ *
+ * This function updates the time that is showed by the clock widget
+ *
+ * @ingroup Clock
+ */
 EAPI void
 elm_clock_time_set(Evas_Object *obj, int hrs, int min, int sec)
 {
@@ -398,6 +428,22 @@ elm_clock_time_set(Evas_Object *obj, int hrs, int min, int sec)
    _time_update(obj);
 }
 
+/**
+ * Get clock time
+ *
+ * @param obj The clock object 
+ * @param hrs Pointer to the variable to get the hour of this clock
+ * object
+ * @param min Pointer to the variable to get the minute of this clock
+ * object
+ * @param sec Pointer to the variable to get the second of this clock
+ * object
+ *
+ * This function gets the time set of the clock widget and returns it
+ * on the variables passed as the arguments to function
+ *
+ * @ingroup Clock
+ */
 EAPI void
 elm_clock_time_get(const Evas_Object *obj, int *hrs, int *min, int *sec)
 {
@@ -407,6 +453,16 @@ elm_clock_time_get(const Evas_Object *obj, int *hrs, int *min, int *sec)
    if (sec) *sec = wd->sec;
 }
 
+/**
+ * Set if the clock settings can be edited
+ *
+ * @param obj The clock object
+ * @param edit Bool option for edited (1 = yes, 0 = no)
+ *
+ * This function sets if the clock settings can be edited or not.
+ *
+ * @ingroup Clock
+ */
 EAPI void
 elm_clock_edit_set(Evas_Object *obj, Eina_Bool edit)
 {
@@ -415,6 +471,20 @@ elm_clock_edit_set(Evas_Object *obj, Eina_Bool edit)
    _time_update(obj);
 }
 
+/**
+ * Set if the clock show hours in military or am/pm mode
+ *
+ * @param obj The clock object
+ * @param am_pm Bool option for the hours mode
+ * (1 = am/pm, 0 = military)
+ *
+ * This function sets the clock to show hours in military or am/pm
+ * mode. Some countries like Brazil the military mode (00-24h-format)
+ * is used in opposition to the USA where the am/pm mode is more
+ * common used.
+ *
+ * @ingroup Clock
+ */
 EAPI void
 elm_clock_show_am_pm_set(Evas_Object *obj, Eina_Bool am_pm)
 {
@@ -423,6 +493,18 @@ elm_clock_show_am_pm_set(Evas_Object *obj, Eina_Bool am_pm)
    _time_update(obj);
 }
 
+/**
+ * Set if the clock show hour with the seconds
+ *
+ * @param obj The clock object
+ * @param seconds Bool option for the show seconds
+ * (1 = show seconds, 0 = not show seconds)
+ *
+ * This function sets the clock to show or not to show the elapsed
+ * seconds.
+ *
+ * @ingroup Clock
+ */
 EAPI void
 elm_clock_show_seconds_set(Evas_Object *obj, Eina_Bool seconds)
 {
