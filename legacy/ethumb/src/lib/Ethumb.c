@@ -778,8 +778,8 @@ _ethumb_generate_hash(const char *file)
   EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
 
   uri = alloca(3 * strlen(file) + 9);
-  strncpy(uri, "file://", sizeof(uri));
-  t = uri + 7;
+  memcpy(uri, "file://", sizeof("file://") - 1);
+  t = uri + sizeof("file://") - 1;
 
   for (c = (const unsigned char *)file; *c != '\0'; c++)
     {
