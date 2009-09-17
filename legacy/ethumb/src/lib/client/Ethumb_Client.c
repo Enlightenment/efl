@@ -91,6 +91,7 @@ static int _log_dom = -1;
 #define INF(...) EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
 #define WRN(...) EINA_LOG_DOM_WARN(_log_dom, __VA_ARGS__)
 #define ERR(...) EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
+#define CRITICAL(...) EINA_LOG_DOM_CRIT(_log_dom, __VA_ARGS__)
 
 struct _Ethumb_Client
 {
@@ -180,12 +181,12 @@ __dbus_callback_check_and_init(const char *file, int line, const char *function,
 {
    if (!msg)
      {
-	ERR("%s:%d:%s() callback without message arguments!\n",
+	ERR("%s:%d:%s() callback without message arguments!",
 		file, line, function);
 
 	if (err)
 	  ERR("%s:%d:%s() an error was reported by server: "
-		  "name=\"%s\", message=\"%s\"\n",
+		  "name=\"%s\", message=\"%s\"",
 		  file, line, function, err->name, err->message);
 
 	return 0;
@@ -193,7 +194,7 @@ __dbus_callback_check_and_init(const char *file, int line, const char *function,
 
    if (!dbus_message_iter_init(msg, itr))
      {
-	ERR("%s:%d:%s() could not init iterator.\n",
+	ERR("%s:%d:%s() could not init iterator.",
 		file, line, function);
 	return 0;
      }
@@ -211,7 +212,7 @@ __dbus_iter_type_check(int type, int expected, const char *expected_name)
    if (type == expected)
      return 1;
 
-   ERR("expected type %s (%c) but got %c instead!\n",
+   ERR("expected type %s (%c) but got %c instead!",
 	   expected_name, expected, type);
 
    return 0;
@@ -223,7 +224,7 @@ __dbus_iter_type_check(int type, int expected, const char *expected_name)
     {									\
        if ((ptr) == NULL)						\
 	 {								\
-	    ERR("%s == NULL!\n", #ptr);		\
+	    CRITICAL("%s == NULL!", #ptr);				\
 	    return __VA_ARGS__;						\
 	 }								\
     }									\
@@ -243,7 +244,7 @@ _ethumb_client_name_owner_changed(void *data, DBusMessage *msg)
        DBUS_TYPE_STRING, &to,
        DBUS_TYPE_INVALID))
      {
-	ERR("could not get NameOwnerChanged arguments: %s: %s\n",
+	ERR("could not get NameOwnerChanged arguments: %s: %s",
 	    err.name, err.message);
 	dbus_error_free(&err);
 	return;
@@ -252,17 +253,17 @@ _ethumb_client_name_owner_changed(void *data, DBusMessage *msg)
    if (strcmp(name, _ethumb_dbus_bus_name) != 0)
      return;
 
-   DBG("NameOwnerChanged from=[%s] to=[%s]\n", from, to);
+   DBG("NameOwnerChanged from=[%s] to=[%s]", from, to);
 
    if (from[0] != '\0' && to[0] == '\0')
      {
-	DBG("exit ethumbd at %s\n", from);
+	DBG("exit ethumbd at %s", from);
 	if (strcmp(client->unique_name, from) != 0)
-	  WRN("%s was not the known name %s, ignored.\n",
+	  WRN("%s was not the known name %s, ignored.",
 	       from, client->unique_name);
 	else
 	  {
-	     ERR("server exit!!!\n");
+	     ERR("server exit!!!");
 	     if (client->die.cb)
 	       {
 		  client->die.cb(client->die.data, client);
@@ -277,7 +278,7 @@ _ethumb_client_name_owner_changed(void *data, DBusMessage *msg)
 	  }
      }
    else
-     DBG("unknown change from %s to %s\n", from, to);
+     DBG("unknown change from %s to %s", from, to);
 }
 
 static void
@@ -366,18 +367,18 @@ _ethumb_client_start_server_cb(void *data, DBusMessage *msg, DBusError *err)
    dbus_message_iter_get_basic(&iter, &ret);
    if ((ret != 1) && (ret != 2))
      {
-	ERR("Error starting Ethumbd DBus service by its name: retcode %u\n",
+	ERR("Error starting Ethumbd DBus service by its name: retcode %u",
 	    ret);
 	goto error;
      }
 
    client->server_started = 1;
-   DBG("Ethumbd DBus service started successfully (%d), now request its name\n",
+   DBG("Ethumbd DBus service started successfully (%d), now request its name",
        ret);
 
    if (client->pending_get_name_owner)
      {
-	DBG("already requesting name owner, cancel and try again\n");
+	DBG("already requesting name owner, cancel and try again");
 	dbus_pending_call_cancel(client->pending_get_name_owner);
      }
 
@@ -386,14 +387,14 @@ _ethumb_client_start_server_cb(void *data, DBusMessage *msg, DBusError *err)
       client);
    if (!client->pending_get_name_owner)
      {
-	ERR("could not create a get_name_owner request.\n");
+	ERR("could not create a get_name_owner request.");
 	goto error;
      }
 
    return;
 
  error:
-   ERR("failed to start Ethumbd DBus service by its name.\n");
+   ERR("failed to start Ethumbd DBus service by its name.");
    _ethumb_client_report_connect(client, 0);
 }
 
@@ -402,7 +403,7 @@ _ethumb_client_start_server(Ethumb_Client *client)
 {
    if (client->pending_start_service_by_name)
      {
-	DBG("already pending start service by name.\n");
+	DBG("already pending start service by name.");
 	return;
      }
 
@@ -412,7 +413,7 @@ _ethumb_client_start_server(Ethumb_Client *client)
       client);
    if (!client->pending_start_service_by_name)
      {
-	ERR("could not start service by name!\n");
+	ERR("could not start service by name!");
 	_ethumb_client_report_connect(client, 0);
      }
 }
@@ -429,7 +430,7 @@ _ethumb_client_get_name_owner(void *data, DBusMessage *msg, DBusError *err)
 
    if (dbus_error_is_set(err) && (!client->server_started))
      {
-	DBG("could not find server (%s), try to start it...\n", err->message);
+	DBG("could not find server (%s), try to start it...", err->message);
 	_ethumb_client_start_server(client);
 	return;
      }
@@ -444,11 +445,11 @@ _ethumb_client_get_name_owner(void *data, DBusMessage *msg, DBusError *err)
    dbus_message_iter_get_basic(&iter, &uid);
    if (!uid)
      {
-	ERR("no name owner!\n");
+	ERR("no name owner!");
 	goto error;
      }
 
-   DBG("unique name = %s\n", uid);
+   DBG("unique name = %s", uid);
    client->unique_name = eina_stringshare_add(uid);
 
    _ethumb_client_call_new(client);
@@ -584,7 +585,7 @@ ethumb_client_connect(Ethumb_Client_Connect_Cb connect_cb, const void *data, Ein
    eclient = calloc(1, sizeof(*eclient));
    if (!eclient)
      {
-	ERR("could not allocate Ethumb_Client structure.\n");
+	ERR("could not allocate Ethumb_Client structure.");
 	goto err;
      }
 
@@ -595,14 +596,14 @@ ethumb_client_connect(Ethumb_Client_Connect_Cb connect_cb, const void *data, Ein
    eclient->ethumb = ethumb_new();
    if (!eclient->ethumb)
      {
-	ERR("could not create ethumb handler.\n");
+	ERR("could not create ethumb handler.");
 	goto ethumb_new_err;
      }
 
    eclient->conn = e_dbus_bus_get(DBUS_BUS_SESSION);
    if (!eclient->conn)
      {
-	ERR("could not connect to session bus.\n");
+	ERR("could not connect to session bus.");
 	goto connection_err;
      }
 
@@ -615,7 +616,7 @@ ethumb_client_connect(Ethumb_Client_Connect_Cb connect_cb, const void *data, Ein
 	 eclient);
    if (!eclient->pending_get_name_owner)
      {
-	ERR("could not create a get_name_owner request.\n");
+	ERR("could not create a get_name_owner request.");
 	goto connection_err;
      }
 
@@ -793,7 +794,7 @@ _ethumb_client_dbus_get_bytearray(DBusMessageIter *iter)
    el_type = dbus_message_iter_get_element_type(iter);
    if (el_type != DBUS_TYPE_BYTE)
      {
-	ERR("not an byte array element.\n");
+	ERR("not an byte array element.");
 	return NULL;
      }
 
@@ -2050,7 +2051,7 @@ ethumb_client_generate(Ethumb_Client *client, Ethumb_Client_Generate_Cb generate
    ethumb_file_get(client->ethumb, &file, &key);
    if (!file)
      {
-	ERR("no file set.\n");
+	ERR("no file set.");
 	return -1;
      }
 

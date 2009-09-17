@@ -78,7 +78,7 @@ _ethumb_plugin_list_cb(Eina_Module *m, void *data __UNUSED__)
    file = eina_module_file_get(m);
    if (!eina_module_load(m))
      {
-	ERR("could not load module \"%s\": %s\n",
+	ERR("could not load module \"%s\": %s",
 	    file, eina_error_msg_get(eina_error_get()));
 	return EINA_FALSE;
      }
@@ -86,7 +86,7 @@ _ethumb_plugin_list_cb(Eina_Module *m, void *data __UNUSED__)
    plugin_get = eina_module_symbol_get(m, "ethumb_plugin_get");
    if (!plugin_get)
      {
-	ERR("could not find ethumb_plugin_get() in module \"%s\": %s\n",
+	ERR("could not find ethumb_plugin_get() in module \"%s\": %s",
 	    file, eina_error_msg_get(eina_error_get()));
 	eina_module_unload(m);
 	return EINA_FALSE;
@@ -95,15 +95,15 @@ _ethumb_plugin_list_cb(Eina_Module *m, void *data __UNUSED__)
    plugin = plugin_get();
    if (!plugin)
      {
-	ERR("plugin \"%s\" failed to init.\n", file);
+	ERR("plugin \"%s\" failed to init.", file);
 	eina_module_unload(m);
 	return EINA_FALSE;
      }
 
-   DBG("loaded plugin \"%s\" (%p) with extensions:\n", file, plugin);
+   DBG("loaded plugin \"%s\" (%p) with extensions:", file, plugin);
    for (ext = plugin->extensions; *ext; ext++)
      {
-	DBG("   extension \"%s\"\n", *ext);
+	DBG("   extension \"%s\"", *ext);
 	eina_hash_add(_plugins_ext, *ext, plugin);
      }
 
@@ -219,7 +219,7 @@ ethumb_new(void)
    e = ecore_evas_get(ee);
    if (!e)
      {
-	ERR("could not create ecore evas buffer\n");
+	ERR("could not create ecore evas buffer");
 	return NULL;
      }
 
@@ -229,7 +229,7 @@ ethumb_new(void)
    o = ecore_evas_object_image_new(ee);
    if (!o)
      {
-	ERR("could not create sub ecore evas buffer\n");
+	ERR("could not create sub ecore evas buffer");
 	ecore_evas_free(ee);
 	free(ethumb);
 	return NULL;
@@ -244,7 +244,7 @@ ethumb_new(void)
    img = evas_object_image_add(sub_e);
    if (!img)
      {
-	ERR("could not create source objects.\n");
+	ERR("could not create source objects.");
 	ecore_evas_free(ee);
 	free(ethumb);
 	return NULL;
@@ -257,7 +257,7 @@ ethumb_new(void)
    ethumb->o = o;
    ethumb->img = img;
 
-   DBG("ethumb=%p\n", ethumb);
+   DBG("ethumb=%p", ethumb);
 
    return ethumb;
 }
@@ -473,14 +473,14 @@ ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const cha
 	frame = calloc(1, sizeof(Ethumb_Frame));
 	if (!frame)
 	  {
-	     ERR("could not allocate Ethumb_Frame structure.\n");
+	     ERR("could not allocate Ethumb_Frame structure.");
 	     return EINA_FALSE;
 	  }
 
 	frame->edje = edje_object_add(e->sub_e);
 	if (!frame->edje)
 	  {
-	     ERR("could not create edje frame object.\n");
+	     ERR("could not create edje frame object.");
 	     _ethumb_frame_free(frame);
 	     e->frame = NULL;
 	     return EINA_FALSE;
@@ -489,7 +489,7 @@ ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const cha
 
    if (!edje_object_file_set(frame->edje, theme_file, group))
      {
-	ERR("could not load frame theme.\n");
+	ERR("could not load frame theme.");
 	_ethumb_frame_free(frame);
 	e->frame = NULL;
 	return EINA_FALSE;
@@ -498,7 +498,7 @@ ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const cha
    edje_object_part_swallow(frame->edje, swallow, e->img);
    if (!edje_object_part_swallow_get(frame->edje, swallow))
      {
-	ERR("could not swallow image to edje frame.\n");
+	ERR("could not swallow image to edje frame.");
 	_ethumb_frame_free(frame);
 	e->frame = NULL;
 	return EINA_FALSE;
@@ -722,7 +722,7 @@ ethumb_file_set(Ethumb *e, const char *path, const char *key)
    DBG("ethumb=%p, path=%s, key=%s", e, path ? path : "", key ? key : "");
    if (path && access(path, R_OK))
      {
-	ERR("couldn't access file \"%s\"\n", path);
+	ERR("couldn't access file \"%s\"", path);
 	return EINA_FALSE;
      }
 
@@ -807,7 +807,7 @@ _ethumb_generate_hash(const char *file)
     }
   md5out[2 * n] = '\0';
 
-  DBG("md5=%s, file=%s\n", md5out, file);
+  DBG("md5=%s, file=%s", md5out, file);
   return eina_stringshare_add(md5out);
 }
 
@@ -1046,14 +1046,14 @@ _ethumb_plugin_generate(Ethumb *e)
    ext = strrchr(e->src_path, '.');
    if (!ext)
      {
-	ERR("could not get extension for file \"%s\"\n", e->src_path);
+	ERR("could not get extension for file \"%s\"", e->src_path);
 	return EINA_FALSE;
      }
 
    plugin = eina_hash_find(_plugins_ext, ext + 1);
    if (!plugin)
      {
-	DBG("no plugin for extension: \"%s\"\n", ext + 1);
+	DBG("no plugin for extension: \"%s\"", ext + 1);
 	return EINA_FALSE;
      }
 
@@ -1112,7 +1112,7 @@ ethumb_image_save(Ethumb *e)
 
    if (!e->thumb_path)
      {
-	ERR("could not create file path...\n");
+	ERR("could not create file path...");
 	return EINA_FALSE;
      }
 
@@ -1121,7 +1121,7 @@ ethumb_image_save(Ethumb *e)
    free(dname);
    if (!r)
      {
-	ERR("could not create directory '%s'\n", dname);
+	ERR("could not create directory '%s'", dname);
 	return EINA_FALSE;
      }
 
@@ -1131,7 +1131,7 @@ ethumb_image_save(Ethumb *e)
 
    if (!r)
      {
-	ERR("could not save image.\n");
+	ERR("could not save image.");
 	return EINA_FALSE;
      }
 
@@ -1163,7 +1163,7 @@ _ethumb_image_load(Ethumb *e)
    error = evas_object_image_load_error_get(img);
    if (error != EVAS_LOAD_ERROR_NONE)
      {
-	ERR("could not load image '%s': %d\n", e->src_path, error);
+	ERR("could not load image '%s': %d", e->src_path, error);
 	return 0;
      }
 
@@ -1239,7 +1239,7 @@ ethumb_generate(Ethumb *e, Ethumb_Generate_Cb finished_cb, const void *data, Ein
 
    if (e->finished_idler)
      {
-	ERR("thumbnail generation already in progress.\n");
+	ERR("thumbnail generation already in progress.");
 	return EINA_FALSE;
      }
    e->finished_cb = finished_cb;
@@ -1248,7 +1248,7 @@ ethumb_generate(Ethumb *e, Ethumb_Generate_Cb finished_cb, const void *data, Ein
 
    if (!e->src_path)
      {
-	ERR("no file set.\n");
+	ERR("no file set.");
 	ethumb_finished_callback_call(e, 0);
 	return EINA_TRUE;
      }
@@ -1259,7 +1259,7 @@ ethumb_generate(Ethumb *e, Ethumb_Generate_Cb finished_cb, const void *data, Ein
 
    if (!_ethumb_image_load(e))
      {
-	ERR("could not load input image.\n");
+	ERR("could not load input image.");
 	ethumb_finished_callback_call(e, 0);
 	return EINA_TRUE;
      }
@@ -1293,7 +1293,7 @@ ethumb_exists(Ethumb *e)
    EINA_SAFETY_ON_TRUE_RETURN_VAL(r_src, 0);
 
    if (r_thumb && errno != ENOENT)
-     ERR("could not access file \"%s\": %s\n", e->thumb_path, strerror(errno));
+     ERR("could not access file \"%s\": %s", e->thumb_path, strerror(errno));
    else if (!r_thumb && thumb.st_mtime > src.st_mtime)
      r = EINA_TRUE;
 
