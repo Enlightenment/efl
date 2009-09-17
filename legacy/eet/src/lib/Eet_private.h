@@ -70,7 +70,7 @@ struct _Eet_Node
    } data;
 };
 
-/**  
+/**
  * variable and macros used for the eina_log module
  */
 extern int _eet_log_dom_global;
@@ -80,19 +80,19 @@ extern int _eet_log_dom_global;
 #endif
 
 /**
- * the default module log domain is the eet log domain 
+ * the default module log domain is the eet log domain
  */
 
 #define EET_DEFAULT_MODULE_LOG_DOMAIN _eet_log_dom_global
 
-/* Macros that are used everywhere 
+/* Macros that are used everywhere
  *
  * the first four macros are the general macros for the lib
  */
 #ifdef EET_DEFAULT_LOG_COLOR
 #undef EET_DEFAULT_LOG_COLOR
 #endif
-#define EET_DEFAULT_LOG_COLOR "\033[36m"
+#define EET_DEFAULT_LOG_COLOR EINA_COLOR_CYAN
 #ifdef ERROR
 #undef ERROR
 #endif
@@ -115,7 +115,7 @@ extern int _eet_log_dom_global;
 #define CRITICAL(...) EINA_LOG_DOM_CRIT(_eet_log_dom_global, __VA_ARGS__)
 /**
  * macros that are used all around the code for message processing
- * four macros are defined ERR, WRN, DGB, INF. 
+ * four macros are defined ERR, WRN, DGB, INF.
  * EFREET_MODULE_LOG_DOM should be defined individually for each module
  */
 

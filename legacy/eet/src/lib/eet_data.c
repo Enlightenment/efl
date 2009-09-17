@@ -1994,7 +1994,7 @@ _eet_data_dump_parse(Eet_Dictionary *ed,
 					   else if (!strcmp(tok3, "hash"))      n->type = EET_G_HASH;
 					   else
 					     {
-					       ERR("ERROR: group type '%s' invalid.\n", tok3);
+					       ERR("ERROR: group type '%s' invalid.", tok3);
 					     }
 					   node = n;
 					}
@@ -2106,7 +2106,7 @@ _eet_data_dump_parse(Eet_Dictionary *ed,
 					     }
 					   else
 					     {
-						ERR("ERROR: value type '%s' invalid.\n", tok4);
+						ERR("ERROR: value type '%s' invalid.", tok4);
 					     }
 					}
 				   }

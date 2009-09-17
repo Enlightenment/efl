@@ -142,7 +142,6 @@ struct _Eet_File_Node
    unsigned char         ciphered : 1;
 };
 
-
 #if 0
 /* Version 2 */
 /* NB: all int's are stored in network byte order on disk */
@@ -319,7 +318,7 @@ eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
 	new_cache = realloc(new_cache, new_cache_alloc * sizeof(Eet_File *));
 	if (!new_cache)
 	  {
-	     CRITICAL("BAD ERROR! Eet realloc of cache list failed. Abort\n");
+	     CRITICAL("BAD ERROR! Eet realloc of cache list failed. Abort");
 	     abort();
 	  }
      }
@@ -364,7 +363,7 @@ eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
 	     new_cache = realloc(new_cache, new_cache_alloc * sizeof(Eet_File *));
 	     if (!new_cache)
 	       {
-		  CRITICAL("BAD ERROR! Eet realloc of cache list failed. Abort\n");
+		  CRITICAL("BAD ERROR! Eet realloc of cache list failed. Abort");
 		  abort();
 	       }
 	  }
@@ -768,7 +767,7 @@ eet_init(void)
    _eet_log_dom_global = eina_log_domain_register("Eet",EET_DEFAULT_LOG_COLOR);
    if(_eet_log_dom_global < 0)
      {
-       fprintf(stderr,"Eet Can not create a general log domain");
+       EINA_LOG_ERR("Eet Can not create a general log domain.");
        goto error_eet_eina_log;
      }
    return eet_initcount;
@@ -794,6 +793,7 @@ eet_shutdown(void)
 
    eet_clearcache();
    eina_log_domain_unregister(_eet_log_dom_global);
+   _eet_log_dom_global = -1;
    eina_shutdown();
 #ifdef HAVE_GNUTLS
    gnutls_global_deinit();
@@ -1074,7 +1074,7 @@ eet_internal_read2(Eet_File *ef)
 
 	if (eet_test_close(ef->x509_der == NULL, ef)) return NULL;
 #else
-	ERROR("This file could be signed but you didn't compile the necessary code to check the signature.\n");
+	ERROR("This file could be signed but you didn't compile the necessary code to check the signature.");
 #endif
      }
 
@@ -1092,7 +1092,7 @@ eet_internal_read1(Eet_File *ef)
    int			 byte_entries;
    int			 i;
 
-   WARN("EET file format of '%s' is deprecated. You should just open it one time with mode == EET_FILE_MODE_READ_WRITE to solve this issue.\n", ef->path);
+   WARN("EET file format of '%s' is deprecated. You should just open it one time with mode == EET_FILE_MODE_READ_WRITE to solve this issue.", ef->path);
 
    /* build header table if read mode */
    /* geat header */
@@ -1219,7 +1219,7 @@ eet_internal_read1(Eet_File *ef)
 	     strncpy(efn->name, (char *)p + HEADER_SIZE, name_size);
 	     efn->name[name_size] = 0;
 
-	     WARN("File: %s is not up to date for key \"%s\" - needs rebuilding sometime\n", ef->path, efn->name);
+	     WARN("File: %s is not up to date for key \"%s\" - needs rebuilding sometime", ef->path, efn->name);
 	  }
 	else
 	  /* The only really usefull peace of code for efn->name (no backward compatibility) */

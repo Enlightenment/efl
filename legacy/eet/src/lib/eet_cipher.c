@@ -272,7 +272,7 @@ eet_identity_print(Eet_Key *key, FILE *out)
 	goto on_error;
       if (!(res = malloc(size))) goto on_error;
 
-      INF("Private Key:\n");
+      INF("Private Key:");
       buf[32] = '\0';
 
       for (i = 0; i < 6; i++)
@@ -284,11 +284,11 @@ eet_identity_print(Eet_Key *key, FILE *out)
 	    }
 	  if (err) goto on_error;
 
-	  INF("\t%s:\n", names[i]);
+	  INF("\t%s:", names[i]);
 	  for (j = 0; strlen(res) > j; j += 32)
 	    {
 	      snprintf(buf, 32, "%s", res + j);
-	      INF("\t\t%s\n", buf);
+	      INF("\t\t%s", buf);
 	    }
 	}
       free(res);
@@ -297,7 +297,7 @@ eet_identity_print(Eet_Key *key, FILE *out)
 
   if (key->certificate)
     {
-      INF("Public certificate:\n");
+      INF("Public certificate:");
       if (gnutls_x509_crt_print(key->certificate, GNUTLS_X509_CRT_FULL, &data)) goto on_error;
       INF("%s", data.data);
       gnutls_free(data.data);
@@ -318,29 +318,29 @@ eet_identity_print(Eet_Key *key, FILE *out)
   rsa = EVP_PKEY_get1_RSA(key->private_key);
   if (rsa)
     {
-      INF("Private key (RSA):\n");
+      INF("Private key (RSA):");
       RSA_print_fp(out, rsa, 0);
     }
 
   dsa = EVP_PKEY_get1_DSA(key->private_key);
   if (dsa)
     {
-      INF("Private key (DSA):\n");
+      INF("Private key (DSA):");
       DSA_print_fp(out, dsa, 0);
     }
 
   dh = EVP_PKEY_get1_DH(key->private_key);
   if (dh)
     {
-      INF("Private key (DH):\n");
+      INF("Private key (DH):");
       DHparams_print_fp(out, dh);
     }
 
-  INF("Public certificate:\n");
+  INF("Public certificate:");
   X509_print_fp(out, key->certificate);
 # endif
 #else
-  INF("You need to compile signature support in EET.\n");
+  ERROR("You need to compile signature support in EET.");
 #endif
 }
 
@@ -682,7 +682,7 @@ eet_identity_certificate_print(const unsigned char *certificate, int der_length,
 #ifdef HAVE_SIGNATURE
   if (!certificate || !out || der_length <= 0)
      {
-	INFO("No certificate provided.\n");
+	ERROR("No certificate provided.");
 	return ;
      }
 # ifdef HAVE_GNUTLS
@@ -699,7 +699,7 @@ eet_identity_certificate_print(const unsigned char *certificate, int der_length,
   datum.data = NULL;
   datum.size = 0;
   if (gnutls_x509_crt_print(cert, GNUTLS_X509_CRT_FULL, &datum)) goto on_error;
-  INF("Public certificate :\n");
+  INF("Public certificate :");
   INF("%s", datum.data);
 
  on_error:
@@ -715,17 +715,17 @@ eet_identity_certificate_print(const unsigned char *certificate, int der_length,
    x509 = d2i_X509(NULL, &tmp, der_length);
    if (x509 == NULL)
      {
-	INF("Not a valid certificate.\n");
+	INF("Not a valid certificate.");
 	return ;
      }
 
-   INF("Public certificate :\n");
+   INF("Public certificate :");
    X509_print_fp(out, x509);
 
    X509_free(x509);
 # endif
 #else
-   INF("You need to compile signature support in EET.\n");
+   ERROR("You need to compile signature support in EET.");
 #endif
 }
 
