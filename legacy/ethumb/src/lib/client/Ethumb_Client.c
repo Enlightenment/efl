@@ -1,6 +1,9 @@
 /**
  * @file
  *
+ * This is the client-server thumbnail library, see @ref
+ * tutorial_ethumb_client.
+ *
  * Copyright (C) 2009 by ProFUSION embedded systems
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -19,7 +22,46 @@
  * USA.
  *
  * @author Rafael Antognolli <antognolli@profusion.mobi>
+ * @author Gustavo Sverzut Barbieri <barbieri@profusion.mobi>
  */
+
+/**
+ * @page tutorial_ethumb_client Client-Server Thumbnailing Tutorial
+ *
+ * @section tutorial_ethumb_client_intro Introduction
+ *
+ * Ethumb provides both in process and client-server generation
+ * methods. The advantage of the client-server method is that current
+ * process will not do the heavy operations that may block, stopping
+ * animations and other user interactions. Instead the client library
+ * will configure a local #Ethumb instance and mirrors/controls a
+ * remote process using DBus. The simple operations like most setters
+ * and getters as well as checking for thumbnail existence
+ * (ethumb_client_thumb_exists()) is done locally, while expensive
+ * (ethumb_client_generate()) are done on server and then reported
+ * back to application when it is finished (both success or failure).
+ *
+ * @section tutorial_ethumb_client_connect Connecting to Server
+ *
+ * TODO
+ *
+ * @section tutorial_ethumb_client_generate Requesting Thumbnail Generation
+ *
+ * TODO
+ *
+ * @section tutorial_ethumb_client_setup Setup Extra Thumbnail Parameters
+ *
+ * TODO
+ *
+ * @section tutorial_ethumb_client_server_died Handle Server Disconnection
+ *
+ * TODO
+ */
+
+/**
+ * @cond LOCAL
+ */
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -417,6 +459,10 @@ error:
    _ethumb_client_report_connect(client, 0);
 }
 
+/**
+ * @endcond
+ */
+
 EAPI int
 ethumb_client_init(void)
 {
@@ -676,6 +722,10 @@ ethumb_client_on_server_die_callback_set(Ethumb_Client *client, Ethumb_Client_Di
    client->die.free_data = free_data;
 }
 
+/**
+ * @cond LOCAL
+ */
+
 static void
 _ethumb_client_ethumb_setup_cb(void *data, DBusMessage *msg, DBusError *error)
 {
@@ -735,6 +785,10 @@ _ethumb_client_dbus_append_bytearray(DBusMessageIter *iter, const char *string)
 }
 
 /**
+ * @endcond
+ */
+
+/**
  * Send setup to server.
  *
  * This method is called automatically by ethumb_client_generate() if
@@ -769,6 +823,9 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
    dbus_message_iter_init_append(msg, &iter);
    dbus_message_iter_open_container(&iter, DBUS_TYPE_ARRAY, "{sv}", &aiter);
 
+/**
+ * @cond LOCAL
+ */
 #define _open_variant_iter(str_entry, str_type, end_iter)		   \
    entry = str_entry;							   \
    dbus_message_iter_open_container(&aiter, DBUS_TYPE_DICT_ENTRY, NULL, &diter); \
@@ -779,6 +836,9 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
 #define _close_variant_iter(end_iter)					   \
    dbus_message_iter_close_container(&diter, &end_iter);		   \
    dbus_message_iter_close_container(&aiter, &diter);
+/**
+ * @endcond
+ */
 
    /* starting array elements */
 
@@ -879,6 +939,10 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
 					       -1, client);
    dbus_message_unref(msg);
 }
+
+/**
+ * @cond LOCAL
+ */
 
 static void
 _ethumb_client_generated_cb(void *data, DBusMessage *msg)
@@ -1057,6 +1121,9 @@ end:
      pending->free_data(pending->data);
    free(pending);
 }
+/**
+ * @endcond
+ */
 
 /**
  * Ask server to cancel generation of thumbnail.
@@ -1154,6 +1221,9 @@ end:
    dbus_message_unref(msg);
 }
 
+/**
+ * @cond LOCAL
+ */
 static void
 _ethumb_client_queue_clear_cb(void *data, DBusMessage *msg __UNUSED__, DBusError *error __UNUSED__)
 {
@@ -1161,6 +1231,9 @@ _ethumb_client_queue_clear_cb(void *data, DBusMessage *msg __UNUSED__, DBusError
 
    client->pending_clear = NULL;
 }
+/**
+ * @endcond
+ */
 
 /**
  * Ask server to cancel generation of all thumbnails.

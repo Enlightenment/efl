@@ -40,6 +40,8 @@ AC_SUBST(pluginsdir)
 AS_AC_EXPAND(PLUGINSDIR, $pluginsdir)
 AC_DEFINE_UNQUOTED(PLUGINSDIR, ["$PLUGINSDIR"], [Where plugins are installed.])
 
+EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
+
 PKG_CHECK_MODULES(EINA, [eina-0])
 PKG_CHECK_MODULES(EVAS, [evas])
 PKG_CHECK_MODULES(ECORE, [ecore])
@@ -110,4 +112,5 @@ src/tests/Makefile
 data/Makefile
 data/frames/Makefile
 m4/Makefile
+doc/Makefile
 ])

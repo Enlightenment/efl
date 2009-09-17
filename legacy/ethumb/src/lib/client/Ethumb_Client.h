@@ -37,10 +37,64 @@
 extern "C" {
 #endif
 
+/**
+ * @defgroup Ethumb_Client Client
+ *
+ * @{
+ */
+
+/**
+ * @brief client handle.
+ *
+ * The client handle is created by ethumb_client_connect() and
+ * destroyed by ethumb_client_disconnect(). The connection and
+ * requests are asynchronous and callbacks should be used to report
+ * both success and failure of calls.
+ */
 typedef struct _Ethumb_Client Ethumb_Client;
+
+/**
+ * @brief reports results of ethumb_client_connect()
+ *
+ * @param data extra context given to ethumb_client_connect().
+ * @param client handle of the current connection to server.
+ * @param success #EINA_TRUE if connected or #EINA_FALSE if it was not possible.
+ */
 typedef void (*Ethumb_Client_Connect_Cb)(void *data, Ethumb_Client *client, Eina_Bool success);
+
+/**
+ * @brief reports server connection ended.
+ *
+ * Functions of this type may be called if they are set with
+ * ethumb_client_on_server_die_callback_set().
+ *
+ * @param data extra context given to ethumb_client_on_server_die_callback_set().
+ * @param client handle of the current connection to server.
+ */
 typedef void (*Ethumb_Client_Die_Cb)(void *data, Ethumb_Client *client);
+
+/**
+ * @brief reports results of ethumb_client_generate().
+ *
+ * @param data extra context given to ethumb_client_generate().
+ * @param client handle of the current connection to server.
+ * @param id identifier returned by ethumb_client_generate().
+ * @param file path set with ethumb_client_file_set().
+ * @param key value set with ethumb_client_file_set() or #NULL.
+ * @param thumb_path where thumbnail was stored, either set with
+ *        ethumb_client_thumb_path_set() or automatically calculated
+ *        using parameters.
+ * @param thumb_key key inside thumb_path where thumbnail was stored or #NULL.
+ * @param success #EINA_TRUE if generated or #EINA_FALSE on errors.
+ */
 typedef void (*Ethumb_Client_Generate_Cb)(void *data, Ethumb_Client *client, int id, const char *file, const char *key, const char *thumb_path, const char *thumb_key, Eina_Bool success);
+
+/**
+ * @brief reports results of ethumb_client_generate_cancel()
+ *
+ * @param data extra context given to ethumb_client_generate_cancel()
+ * @param client handle of the current connection to server.
+ */
 typedef void (*Ethumb_Client_Generate_Cancel_Cb)(void *data, Eina_Bool success);
 
 EAPI int ethumb_client_init(void);
@@ -87,6 +141,11 @@ EAPI Eina_Bool ethumb_client_thumb_exists(Ethumb_Client *client);
 EAPI int  ethumb_client_generate(Ethumb_Client *client, Ethumb_Client_Generate_Cb generated_cb, const void *data, Eina_Free_Cb free_data);
 EAPI void ethumb_client_generate_cancel(Ethumb_Client *client, int id, Ethumb_Client_Generate_Cancel_Cb cancel_cb, const void *data, Eina_Free_Cb free_data);
 EAPI void ethumb_client_generate_cancel_all(Ethumb_Client *client);
+
+/**
+ * @}
+ */
+
 
 #ifdef __cplusplus
 }

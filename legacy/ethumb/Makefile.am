@@ -29,6 +29,12 @@ service_DATA = org.enlightenment.Ethumb.service
 
 endif
 
-SUBDIRS = m4 src data
+SUBDIRS = m4 src data doc
 
 ACLOCAL_AMFLAGS = -I m4
+
+.PHONY: doc
+
+doc:
+	@echo "entering doc/"
+	$(MAKE) -C doc doc
