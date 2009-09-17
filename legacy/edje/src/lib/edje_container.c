@@ -168,6 +168,46 @@ _edje_item_recalc(Edje_Item *ei)
 
 
 /*****************************/
+/**
+ * @endcond
+ */
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+/**
+ * @addtogroup Edje_container_Group Container
+ *
+ * @brief These functions provides an abstraction layer between the application
+ * code and the interface, while allowing extremely flexible dynamic layouts
+ * and animations.
+ *
+ * For more information, you can look at the @ref tutorial_list_page.
+ *
+ * @{
+ */
+
+/**
+ * @brief Create an edje item.
+ *
+ * @param cl The edje item of type Edje_Item_Class.
+ * @param data The edje item data.
+ *
+ * @return The new edje item created.
+ *
+ * This function creates an new edje item. The edje item data can be
+ * retrieved with edje_item_data_get().
+ *
+ * @see edje_item_del()
+ * @see edje_item_data_set()
+ * @see edje_item_data_get()
+ *
+ */
 
 Edje_Item *
 edje_item_add(Edje_Item_Class *cl, void *data)
@@ -181,6 +221,19 @@ edje_item_add(Edje_Item_Class *cl, void *data)
 
    return ei;
 }
+
+/**
+ * @brief Delete an edje item.
+ *
+ * @param ei The edje item to be deleted.
+ *
+ * This function deletes the edje item from memory.
+ *
+ * @see edje_item_add()
+ * @see edje_item_data_set()
+ * @see edje_item_data_get()
+ *
+ */
 
 void
 edje_item_del(Edje_Item *ei)
@@ -197,6 +250,16 @@ edje_item_del(Edje_Item *ei)
    _edje_container_recalc(sd);
 }
 
+/**
+ * @brief Return the smart object of the edje item.
+ *
+ * @param ei The edje item wich the smart object of type Evas_Object is get
+ * from.
+ *
+ * This function returns the smart object in the edje item.
+ *
+ */
+
 Evas_Object *
 edje_item_container_get(Edje_Item *ei)
 {
@@ -205,12 +268,39 @@ edje_item_container_get(Edje_Item *ei)
 }
 
 /* an arbitary data pointer to use to track other data */
+/**
+ * @brief Set the edje item data.
+ *
+ * @param ei The edje item of type Edje_Item_Class.
+ * @param data The edje item data.
+ *
+ * This function set the data of the edje item. The edje item data can be
+ * retrieved with edje_item_data_get().
+ *
+ * @see edje_item_add()
+ * @see edje_item_del()
+ * @see edje_item_data_get()
+ *
+ */
 
 void
 edje_item_data_set(Edje_Item *ei, void *data)
 {
    ei->data = data;
 }
+
+/**
+ * @brief Get the data of the edje item.
+ *
+ * @param ei The edje item of type Edje_Item_Class.
+ *
+ * This function get the data of the edje item set by edje_item_data_set().
+ *
+ * @see edje_item_data_set()
+ * @see edje_item_add()
+ * @see edje_item_del()
+ *
+ */
 
 void *
 edje_item_data_get(Edje_Item *ei)
@@ -219,6 +309,7 @@ edje_item_data_get(Edje_Item *ei)
 }
 
 /* this object covers the entire item */
+
 void
 edje_item_overlay_object_set(Edje_Item *ei, Evas_Object *obj)
 {
@@ -230,6 +321,8 @@ edje_item_overlay_object_set(Edje_Item *ei, Evas_Object *obj)
    if (ei->sd)
      evas_object_smart_member_add(((Smart_Data *)(ei->sd))->smart_obj, obj);
 }
+
+
 
 Evas_Object *
 edje_item_overlay_object_get(Edje_Item *ei)

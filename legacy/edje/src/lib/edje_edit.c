@@ -74,6 +74,7 @@ _alloc(size_t size)
 /* INTERNALS */
 /*************/
 
+
 static Edje_Part_Description *
 _edje_part_description_find_byname(Edje *ed, const char *part, const char *state) //state include the value in the string (ex. "default 0.00")
 {
@@ -625,6 +626,23 @@ edje_edit_compiler_get(Evas_Object *obj)
 /*  GROUPS API  */
 /****************/
 
+/**
+ * @brief Add an edje (empty) group to an edje object's group set.
+ *
+ * @param obj The pointer to edje object.
+ * @param name The name of the group.
+ *
+ * @return 1 If it could allocate memory to the part group added
+ * or zero if not.
+ *
+ * This function adds, at run time, one more group, which will reside
+ * in memory, to the group set found in the .edj file which @a obj was
+ * loaded with. This group can be manipulated by other API functions,
+ * like @c edje_edit_part_add(), for example. If desired, the new
+ * group can be actually commited the respective .edj by use of @c
+ * edje_edit_save().
+ *
+ */
 EAPI Eina_Bool
 edje_edit_group_add(Evas_Object *obj, const char *name)
 {
@@ -703,7 +721,18 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    return 1;
 }
 
-
+/**
+ * @brief Delete an edje object's current group.
+ *
+ * @param obj The pointer to the edje object.
+ *
+ * @return @c 1 on success, @c 0 on failure.
+ *
+ * This function deletes the group which @a obj is set to. This
+ * operation can be commited the the .edj file the object was loaded
+ * with by use of @c edje_edit_save().
+ *
+ */
 EAPI Eina_Bool
 edje_edit_group_del(Evas_Object *obj)
 {
