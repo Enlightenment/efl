@@ -618,7 +618,7 @@ _ecore_evas_new_auto_discover(int x, int y, int w, int h, const char *extra_opti
  *        consider ';' as the command terminator, so you need to escape
  *        it or use quotes.
  *
- * @param Ecore_Evas instance or NULL if creation failed.
+ * @return Ecore_Evas instance or NULL if creation failed.
  */
 EAPI Ecore_Evas *
 ecore_evas_new(const char *engine_name, int x, int y, int w, int h, const char *extra_options)
@@ -714,10 +714,10 @@ ecore_evas_data_get(const Ecore_Evas *ee, const char *key)
 /**
  * Store user data in an Ecore_Evas structure.
  *
- * @param eeThe Ecore_Evas to store the user data in.
- * @param keyA unique string to associate the user data against. Cannot
+ * @param ee The Ecore_Evas to store the user data in.
+ * @param key A unique string to associate the user data against. Cannot
  * be NULL.
- * @param dataA pointer to the user data to store.
+ * @param data A pointer to the user data to store.
  *
  * This function associates the @p data with a @p key which is stored by
  * the Ecore_Evas @p ee. Be aware that a call to ecore_evas_free() will
@@ -2307,8 +2307,8 @@ ecore_evas_sticky_get(const Ecore_Evas *ee)
 /**
  * Set if this evas should ignore events
  *
- * @param ee The Ecore_Evas whose window's to ignore events
- * @param sticky The Ecore_Evas new ignore state
+ * @param ee The Ecore_Evas whose window's to ignore events.
+ * @param ignore The Ecore_Evas new ignore state.
  *
  */
 EAPI void

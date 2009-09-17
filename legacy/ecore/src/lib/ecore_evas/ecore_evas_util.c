@@ -259,6 +259,7 @@ _ecore_evas_object_evas_check(const char *function, const Ecore_Evas *ee, const 
  *
  * @param ee The Ecore_Evas to associate to @a obj
  * @param obj The object to associate to @a ee
+ * @param flags The association flags.
  * @return 1 on success, 0 otherwise.
  */
 EAPI int
