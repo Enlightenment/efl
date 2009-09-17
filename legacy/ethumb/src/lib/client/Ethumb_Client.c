@@ -1218,6 +1218,23 @@ ethumb_client_generate_cancel_all(Ethumb_Client *client)
    dbus_message_unref(msg);
 }
 
+/**
+ * Configure future requests to use FreeDesktop.Org preset.
+ *
+ * This is a preset to provide freedesktop.org (fdo) standard
+ * compliant thumbnails. That is, files are stored as JPEG under
+ * ~/.thumbnails/SIZE, with size being either normal (128x128) or
+ * large (256x256).
+ *
+ * @param s size identifier, either #ETHUMB_THUMB_NORMAL (0) or
+ *        #ETHUMB_THUMB_LARGE (1).
+ *
+ * @see ethumb_client_size_set()
+ * @see ethumb_client_aspect_set()
+ * @see ethumb_client_crop_align_set()
+ * @see ethumb_client_category_set()
+ * @see ethumb_client_dir_path_set()
+ */
 EAPI void
 ethumb_client_fdo_set(Ethumb_Client *client, Ethumb_Thumb_FDO_Size s)
 {
@@ -1227,6 +1244,12 @@ ethumb_client_fdo_set(Ethumb_Client *client, Ethumb_Thumb_FDO_Size s)
    ethumb_thumb_fdo_set(client->ethumb, s);
 }
 
+/**
+ * Configure future request to use custom size.
+ *
+ * @param w width, default is 128.
+ * @param h height, default is 128.
+ */
 EAPI void
 ethumb_client_size_set(Ethumb_Client *client, int tw, int th)
 {
@@ -1236,6 +1259,12 @@ ethumb_client_size_set(Ethumb_Client *client, int tw, int th)
    ethumb_thumb_size_set(client->ethumb, tw, th);
 }
 
+/**
+ * Retrieve future request to use custom size.
+ *
+ * @param w where to return width. May be #NULL.
+ * @param h where to return height. May be #NULL.
+ */
 EAPI void
 ethumb_client_size_get(const Ethumb_Client *client, int *tw, int *th)
 {
@@ -1246,6 +1275,12 @@ ethumb_client_size_get(const Ethumb_Client *client, int *tw, int *th)
    ethumb_thumb_size_get(client->ethumb, tw, th);
 }
 
+/**
+ * Configure format to use for future requests.
+ *
+ * @param f format identifier to use, either #ETHUMB_THUMB_FDO (0),
+ *        #ETHUMB_THUMB_JPEG (1) or #ETHUMB_THUMB_EET (2). Default is FDO.
+ */
 EAPI void
 ethumb_client_format_set(Ethumb_Client *client, Ethumb_Thumb_Format f)
 {
@@ -1255,6 +1290,12 @@ ethumb_client_format_set(Ethumb_Client *client, Ethumb_Thumb_Format f)
    ethumb_thumb_format_set(client->ethumb, f);
 }
 
+/**
+ * Retrieve format to use for future requests.
+ *
+ * @return format identifier to use, either #ETHUMB_THUMB_FDO (0),
+ *         #ETHUMB_THUMB_JPEG (1) or #ETHUMB_THUMB_EET (2).
+ */
 EAPI Ethumb_Thumb_Format
 ethumb_client_format_get(const Ethumb_Client *client)
 {
@@ -1263,6 +1304,32 @@ ethumb_client_format_get(const Ethumb_Client *client)
    return ethumb_thumb_format_get(client->ethumb);
 }
 
+/**
+ * Configure aspect mode to use.
+ *
+ * If aspect is kept (#ETHUMB_THUMB_KEEP_ASPECT), then image will be
+ * rescaled so the largest dimension is not bigger than it's specified
+ * size (see ethumb_client_size_get()) and the other dimension is
+ * resized in the same proportion. Example: size is 256x256, image is
+ * 1000x500, resulting thumbnail is 256x128.
+ *
+ * If aspect is ignored (#ETHUMB_THUMB_IGNORE_ASPECT), then image will
+ * be distorted to match required thumbnail size. Example: size is
+ * 256x256, image is 1000x500, resulting thumbnail is 256x256.
+ *
+ * If crop is required (#ETHUMB_THUMB_CROP), then image will be
+ * cropped so the smallest dimension is not bigger than its specified
+ * size (see ethumb_client_size_get()) and the other dimension will
+ * overflow, not being visible in the final image. How it will
+ * overflow is speficied by ethumb_client_crop_align_set()
+ * alignment. Example: size is 256x256, image is 1000x500, crop
+ * alignment is 0.5, 0.5, resulting thumbnail is 256x256 with 250
+ * pixels from left and 250 pixels from right being lost, that is just
+ * the 500x500 central pixels of image will be considered for scaling.
+ *
+ * @param a aspect mode identifier, either #ETHUMB_THUMB_KEEP_ASPECT (0),
+ *        #ETHUMB_THUMB_IGNORE_ASPECT (1) or #ETHUMB_THUMB_CROP (2).
+ */
 EAPI void
 ethumb_client_aspect_set(Ethumb_Client *client, Ethumb_Thumb_Aspect a)
 {
@@ -1272,6 +1339,11 @@ ethumb_client_aspect_set(Ethumb_Client *client, Ethumb_Thumb_Aspect a)
    ethumb_thumb_aspect_set(client->ethumb, a);
 }
 
+/**
+ * Get current aspect in use for requests.
+ *
+ * @return aspect in use for future requests.
+ */
 EAPI Ethumb_Thumb_Aspect
 ethumb_client_aspect_get(const Ethumb_Client *client)
 {
@@ -1280,6 +1352,16 @@ ethumb_client_aspect_get(const Ethumb_Client *client)
    return ethumb_thumb_aspect_get(client->ethumb);
 }
 
+/**
+ * Configure crop alignment in use for future requests.
+ *
+ * @param x horizontal alignment. 0.0 means left side will be visible
+ *        or right side is being lost. 1.0 means right side will be
+ *        visible or left side is being lost. 0.5 means just center is
+ *        visible, both sides will be lost.  Default is 0.5.
+ * @param y vertical alignment. 0.0 is top visible, 1.0 is bottom
+ *        visible, 0.5 is center visible. Default is 0.5
+ */
 EAPI void
 ethumb_client_crop_align_set(Ethumb_Client *client, float x, float y)
 {
@@ -1289,6 +1371,12 @@ ethumb_client_crop_align_set(Ethumb_Client *client, float x, float y)
    ethumb_thumb_crop_align_set(client->ethumb, x, y);
 }
 
+/**
+ * Get current crop alignment in use for requests.
+ *
+ * @param x where to return horizontal alignment. May be #NULL.
+ * @param y where to return vertical alignment. May be #NULL.
+ */
 EAPI void
 ethumb_client_crop_align_get(const Ethumb_Client *client, float *x, float *y)
 {
@@ -1299,6 +1387,12 @@ ethumb_client_crop_align_get(const Ethumb_Client *client, float *x, float *y)
    ethumb_thumb_crop_align_get(client->ethumb, x, y);
 }
 
+/**
+ * Configure quality to be used in thumbnails.
+ *
+ * @param quality value from 0 to 100, default is 80. The effect
+ *        depends on the format being used, PNG will not use it.
+ */
 EAPI void
 ethumb_client_quality_set(Ethumb_Client *client, int quality)
 {
@@ -1307,6 +1401,12 @@ ethumb_client_quality_set(Ethumb_Client *client, int quality)
    ethumb_thumb_quality_set(client->ethumb, quality);
 }
 
+/**
+ * Get quality to be used in thumbnails.
+ *
+ * @return quality value from 0 to 100, default is 80. The effect
+ *         depends on the format being used, PNG will not use it.
+ */
 EAPI int
 ethumb_client_quality_get(const Ethumb_Client *client)
 {
@@ -1315,6 +1415,12 @@ ethumb_client_quality_get(const Ethumb_Client *client)
    return ethumb_thumb_quality_get(client->ethumb);
 }
 
+/**
+ * Configure compression level used in requests.
+ *
+ * @param compress value from 0 to 9, default is 9. The effect
+ *        depends on the format being used, JPEG will not use it.
+ */
 EAPI void
 ethumb_client_compress_set(Ethumb_Client *client, int compress)
 {
@@ -1323,6 +1429,12 @@ ethumb_client_compress_set(Ethumb_Client *client, int compress)
    ethumb_thumb_compress_set(client->ethumb, compress);
 }
 
+/**
+ * Get compression level used in requests.
+ *
+ * @return compress value from 0 to 9, default is 9. The effect
+ *         depends on the format being used, JPEG will not use it.
+ */
 EAPI int
 ethumb_client_compress_get(const Ethumb_Client *client)
 {
@@ -1331,6 +1443,19 @@ ethumb_client_compress_get(const Ethumb_Client *client)
    return ethumb_thumb_compress_get(client->ethumb);
 }
 
+/**
+ * Set frame to apply to future thumbnails.
+ *
+ * This will create an edje object that will have image swallowed
+ * in. This can be used to simulate Polaroid or wood frames in the
+ * generated image. Remeber it is bad to modify the original contents
+ * of thumbnails, but sometimes it's useful to have it composited and
+ * avoid runtime overhead.
+ *
+ * @param file file path to edje.
+ * @param group group inside edje to use.
+ * @param swallow name of swallow part.
+ */
 EAPI Eina_Bool
 ethumb_client_frame_set(Ethumb_Client *client, const char *file, const char *group, const char *swallow)
 {
@@ -1340,6 +1465,15 @@ ethumb_client_frame_set(Ethumb_Client *client, const char *file, const char *gro
    return ethumb_frame_set(client->ethumb, file, group, swallow);
 }
 
+/**
+ * Configure where to store thumbnails in future requests.
+ *
+ * Note that this is the base, a category is added to this path as a
+ * sub directory.
+ *
+ * @param path base directory where to store thumbnails. Default is
+ *        ~/.thumbnails
+ */
 EAPI void
 ethumb_client_dir_path_set(Ethumb_Client *client, const char *path)
 {
@@ -1357,6 +1491,14 @@ ethumb_client_dir_path_get(const Ethumb_Client *client)
    return ethumb_thumb_dir_path_get(client->ethumb);
 }
 
+/**
+ * Category directory to store thumbnails.
+ *
+ * @param category category sub directory to store thumbnail. Default
+ *        is either "normal" or "large" for FDO compliant thumbnails
+ *        or WIDTHxHEIGHT-ASPECT[-FRAMED]-FORMAT. It can be a string
+ *        or None to use auto generated names.
+ */
 EAPI void
 ethumb_client_category_set(Ethumb_Client *client, const char *category)
 {
