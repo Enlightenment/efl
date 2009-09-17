@@ -1,9 +1,33 @@
  * documentation (based on python bindings)
-   * Ethumb
-   * Ethumb_Client
+   * Ethumb (adapt most bits based on Ethumb_Client)
+   * Ethumb_Client (mostly done)
+   * finish ethumb_client tutorial
 
  * memory handling:
    * zero pointer parameters before failing on SAFETY macros (file_get, etc)
+
+ * ethumb_object:
+   smart object (ethumb_object_add())that given a file_set() will
+   automatically use Ethumb_Client to check if thumbnail exists or
+   generate a new one, do evas_object_image_preload() and then show
+   the object.
+
+   To save memory and avoid thousands of Ethumb_Client, this should be
+   shared among all Evas_Object that take a reference when object is
+   created, releasing the reference after thumbnail is generated. When
+   the last user releases it, start a timer to disconnect in X seconds
+   (5-10 seconds is good enough).
+
+   Similar to Ethumb_Client, it should expose all Ethumb properties,
+   they would be cached locally and on smart_calculate() they should
+   be dispatched to server for a new thumbnail if source file pat set.
+
+ * elm_thumbnail:
+   using ethumb_object, this can be based on E17 ethumb object that
+   uses edje and can have the theme set, so on load a nice animation
+   can happen, animate a throbber while it generates, etc. It may
+   return ethumb_object (Evas_Object) if user wants to set fancy
+   parameters.
 
  * unit tests, be them in C or Python, covering:
    * thumbnail generation respect parameters (size, format...)
