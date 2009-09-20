@@ -311,41 +311,119 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f)
 	     scans = cinfo.rec_outbuf_height;
 	     if ((h - l) < scans) scans = h - l;
 	     ptr = data;
-	     for (y = 0; y < scans; y++)
-	       {
-		  for (x = 0; x < w; x++)
-		    {
+             if (!region)
+               {
+                  for (y = 0; y < scans; y++)
+                    {
                        if (cinfo.saw_Adobe_marker)
-                         /* According to libjpeg doc, Photoshop inverse the values of C, M, Y and K, */
-                         /* that is C is replaces by 255 - C, etc...*/
-                         /* See the comment below for the computation of RGB values from CMYK ones. */
-                         *ptr2 =
-                           (0xff000000) |
-                           ((ptr[0] * ptr[3] / 255) << 16) |
-                           ((ptr[1] * ptr[3] / 255) << 8) |
-                           ((ptr[2] * ptr[3] / 255));
+                         {
+                            for (x = 0; x < w; x++)
+                              {
+                                 /* According to libjpeg doc, Photoshop inverse the values of C, M, Y and K, */
+                                 /* that is C is replaces by 255 - C, etc...*/
+                                 /* See the comment below for the computation of RGB values from CMYK ones. */
+                                 *ptr2 =
+                                   (0xff000000) |
+                                   ((ptr[0] * ptr[3] / 255) << 16) |
+                                   ((ptr[1] * ptr[3] / 255) << 8) |
+                                   ((ptr[2] * ptr[3] / 255));
+                                 ptr += 4;
+                                 ptr2++;
+                              }
+                         }
                        else
-                         /* Conversion from CMYK to RGB is done in 2 steps: */
-                         /* CMYK => CMY => RGB (see http://www.easyrgb.com/index.php?X=MATH) */
-                         /* after computation, if C, M, Y and K are between 0 and 1, we have: */
-                         /* R = (1 - C) * (1 - K) * 255 */
-                         /* G = (1 - M) * (1 - K) * 255 */
-                         /* B = (1 - Y) * (1 - K) * 255 */
-                         /* libjpeg stores CMYK values between 0 and 255, */
-                         /* so we replace C by C * 255 / 255, etc... and we obtain: */
-                         /* R = (255 - C) * (255 - K) / 255 */
-                         /* G = (255 - M) * (255 - K) / 255 */
-                         /* B = (255 - Y) * (255 - K) / 255 */
-                         /* with C, M, Y and K between 0 and 255. */
-                         *ptr2 =
-                           (0xff000000) |
-                           (((255 - ptr[0]) * (255 - ptr[3]) / 255) << 16) |
-                           (((255 - ptr[1]) * (255 - ptr[3]) / 255) << 8) |
-                           (((255 - ptr[2]) * (255 - ptr[3]) / 255));
-		       ptr += 4;
-		       ptr2++;
+                         {
+                            for (x = 0; x < w; x++)
+                              {
+                                 /* Conversion from CMYK to RGB is done in 2 steps: */
+                                 /* CMYK => CMY => RGB (see http://www.easyrgb.com/index.php?X=MATH) */
+                                 /* after computation, if C, M, Y and K are between 0 and 1, we have: */
+                                 /* R = (1 - C) * (1 - K) * 255 */
+                                 /* G = (1 - M) * (1 - K) * 255 */
+                                 /* B = (1 - Y) * (1 - K) * 255 */
+                                 /* libjpeg stores CMYK values between 0 and 255, */
+                                 /* so we replace C by C * 255 / 255, etc... and we obtain: */
+                                 /* R = (255 - C) * (255 - K) / 255 */
+                                 /* G = (255 - M) * (255 - K) / 255 */
+                                 /* B = (255 - Y) * (255 - K) / 255 */
+                                 /* with C, M, Y and K between 0 and 255. */
+                                 *ptr2 =
+                                   (0xff000000) |
+                                   (((255 - ptr[0]) * (255 - ptr[3]) / 255) << 16) |
+                                   (((255 - ptr[1]) * (255 - ptr[3]) / 255) << 8) |
+                                   (((255 - ptr[2]) * (255 - ptr[3]) / 255));
+                                 ptr += 4;
+                                 ptr2++;
+                              }
+                         }
 		    }
 	       }
+             else
+               {
+                  // if line # > region last line, break
+                  if (l >= (ie->load_opts.region.y + ie->load_opts.region.h))
+                    {
+                       jpeg_destroy_decompress(&cinfo);
+                       return 1;
+                    }
+                  // els if scan block intersects region start or later
+                  else if ((l + scans) > 
+                           (ie->load_opts.region.y))
+                    {
+                       for (y = 0; y < scans; y++)
+                         {
+                            if (((y + l) >= ie->load_opts.region.y) &&
+                                ((y + l) < (ie->load_opts.region.y + ie->load_opts.region.h)))
+                              {
+                                 ptr += ie->load_opts.region.x;
+                                 if (cinfo.saw_Adobe_marker)
+                                   {
+                                      for (x = 0; x < ie->load_opts.region.w; x++)
+                                        {
+                                           /* According to libjpeg doc, Photoshop inverse the values of C, M, Y and K, */
+                                           /* that is C is replaces by 255 - C, etc...*/
+                                           /* See the comment below for the computation of RGB values from CMYK ones. */
+                                           *ptr2 =
+                                             (0xff000000) |
+                                             ((ptr[0] * ptr[3] / 255) << 16) |
+                                             ((ptr[1] * ptr[3] / 255) << 8) |
+                                             ((ptr[2] * ptr[3] / 255));
+                                           ptr += 4;
+                                           ptr2++;
+                                        }
+                                   }
+                                 else
+                                   {
+                                      for (x = 0; x < ie->load_opts.region.w; x++)
+                                        {
+                                           /* Conversion from CMYK to RGB is done in 2 steps: */
+                                           /* CMYK => CMY => RGB (see http://www.easyrgb.com/index.php?X=MATH) */
+                                           /* after computation, if C, M, Y and K are between 0 and 1, we have: */
+                                           /* R = (1 - C) * (1 - K) * 255 */
+                                           /* G = (1 - M) * (1 - K) * 255 */
+                                           /* B = (1 - Y) * (1 - K) * 255 */
+                                           /* libjpeg stores CMYK values between 0 and 255, */
+                                           /* so we replace C by C * 255 / 255, etc... and we obtain: */
+                                           /* R = (255 - C) * (255 - K) / 255 */
+                                           /* G = (255 - M) * (255 - K) / 255 */
+                                           /* B = (255 - Y) * (255 - K) / 255 */
+                                           /* with C, M, Y and K between 0 and 255. */
+                                           *ptr2 =
+                                             (0xff000000) |
+                                             (((255 - ptr[0]) * (255 - ptr[3]) / 255) << 16) |
+                                             (((255 - ptr[1]) * (255 - ptr[3]) / 255) << 8) |
+                                             (((255 - ptr[2]) * (255 - ptr[3]) / 255));
+                                           ptr += 4;
+                                           ptr2++;
+                                        }
+                                   }
+                                 ptr += (4 * (w - (ie->load_opts.region.x + ie->load_opts.region.w)));
+                              }
+                            else
+                              ptr += (4 * w);
+                         }
+                    }
+               }
 	  }
      }
    /* We handle then RGB with 3 components */
@@ -353,8 +431,9 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f)
      {
         if (region)
           {
+             // debug for now
              printf("R| %p %5ix%5i %s: %5i %5i %5ix%5i\n",
-                    ie, 
+                    ie,
                     ie->w, ie->h,
                     ie->file,
                     ie->load_opts.region.x,
@@ -362,7 +441,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f)
                     ie->load_opts.region.w,
                     ie->load_opts.region.h);
           }
-	for (i = 0; i < cinfo.rec_outbuf_height; i++)
+        for (i = 0; i < cinfo.rec_outbuf_height; i++)
 	  line[i] = data + (i * w * 3);
 	for (l = 0; l < h; l += cinfo.rec_outbuf_height)
 	  {
@@ -428,16 +507,51 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f)
 	     scans = cinfo.rec_outbuf_height;
 	     if ((h - l) < scans) scans = h - l;
 	     ptr = data;
-	     for (y = 0; y < scans; y++)
-	       {
-		  for (x = 0; x < w; x++)
-		    {
-		       *ptr2 =
-			 (0xff000000) | ((ptr[0]) << 16) | ((ptr[0]) << 8) | (ptr[0]);
-		       ptr++;
-		       ptr2++;
-		    }
+             if (!region)
+               {
+                  for (y = 0; y < scans; y++)
+                    {
+                       for (x = 0; x < w; x++)
+                         {
+                            *ptr2 =
+                              (0xff000000) | ((ptr[0]) << 16) | ((ptr[0]) << 8) | (ptr[0]);
+                            ptr++;
+                            ptr2++;
+                         }
+                    }
 	       }
+             else
+               {
+                  // if line # > region last line, break
+                  if (l >= (ie->load_opts.region.y + ie->load_opts.region.h))
+                    {
+                       jpeg_destroy_decompress(&cinfo);
+                       return 1;
+                    }
+                  // els if scan block intersects region start or later
+                  else if ((l + scans) > 
+                           (ie->load_opts.region.y))
+                    {
+                       for (y = 0; y < scans; y++)
+                         {
+                            if (((y + l) >= ie->load_opts.region.y) &&
+                                ((y + l) < (ie->load_opts.region.y + ie->load_opts.region.h)))
+                              {
+                                 ptr += ie->load_opts.region.x;
+                                 for (x = 0; x < ie->load_opts.region.w; x++)
+                                   {
+                                      *ptr2 =
+                                        (0xff000000) | ((ptr[0]) << 16) | ((ptr[0]) << 8) | (ptr[0]);
+                                      ptr++;
+                                      ptr2++;
+                                   }
+                                 ptr += w - (ie->load_opts.region.x + ie->load_opts.region.w);
+                              }
+                            else
+                              ptr += w;
+                         }
+                    }
+               }
 	  }
      }
 /* end data decoding */
