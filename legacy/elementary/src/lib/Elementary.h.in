@@ -299,6 +299,7 @@ extern "C" {
    EAPI void         elm_box_pack_before(Evas_Object *obj, Evas_Object *subobj, Evas_Object *before);
    EAPI void         elm_box_pack_after(Evas_Object *obj, Evas_Object *subobj, Evas_Object *after);
    EAPI void         elm_box_clear(Evas_Object *obj);
+   EAPI void         elm_box_unpack(Evas_Object *obj);
    /* smart callbacks called:
     */
 
