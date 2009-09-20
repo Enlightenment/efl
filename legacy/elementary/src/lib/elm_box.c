@@ -251,6 +251,5 @@ elm_box_clear(Evas_Object *obj)
 EAPI void
 elm_box_unpack(Evas_Object *obj)
 {
-   evas_object_hide(obj);
    _els_smart_box_unpack(obj);
 }
