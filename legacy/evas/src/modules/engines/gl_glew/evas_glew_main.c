@@ -44,7 +44,7 @@ evas_glew_init(HWND window, HDC *dc, HGLRC *context)
 
    if (GLEW_VERSION_2_0)
      {
-       printf ("2.0\n");
+       INFO("2.0");
      }
 
    return 1;

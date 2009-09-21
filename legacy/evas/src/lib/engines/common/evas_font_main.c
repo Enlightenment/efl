@@ -3,7 +3,7 @@
  */
 
 #include "evas_common.h"
-
+#include "evas_private.h"
 FT_Library      evas_ft_lib = 0;
 static int      initialised = 0;
 

@@ -51,7 +51,7 @@ _evas_software_wince_gxinfo_init(HDC dc, int *width, int *height, void **buffer)
                       (char *) &gxInfo);
    if (result <= 0)
      {
-        fprintf (stderr, "[Evas] [Engine] [WinCE FB] ExtEscape() with GETGXINFO failed\n");
+        ERROR("[Engine] [WinCE FB] ExtEscape() with GETGXINFO failed");
         return 0;
      }
 
@@ -79,7 +79,7 @@ evas_software_wince_fb_init(HWND window,
    dc = GetDC (window);
    if (!dc)
      {
-        fprintf (stderr, "[Evas] [Engine] [WinCE FB] Can not get DC\n");
+        ERROR("[Engine] [WinCE FB] Can not get DC");
         free(priv);
         return NULL;
      }
@@ -102,9 +102,9 @@ evas_software_wince_fb_init(HWND window,
        if ((priv->width != width) ||
            (priv->height != height))
          {
-            fprintf (stderr, "[Evas] [Engine] [WinCE FB] Size mismatch\n");
-            fprintf (stderr, "[Evas] [Engine] [WinCE FB] asked: %dx%d\n", width, height);
-            fprintf (stderr, "[Evas] [Engine] [WinCE FB] got  : %dx%d\n", priv->width, priv->height);
+            ERROR("[Engine] [WinCE FB] Size mismatch");
+            ERROR("[Engine] [WinCE FB] asked: %dx%d", width, height);
+            ERROR("[Engine] [WinCE FB] got  : %dx%d", priv->width, priv->height);
             ReleaseDC(window, dc);
             free(priv);
             return NULL;
@@ -119,8 +119,8 @@ evas_software_wince_fb_init(HWND window,
        (rfbi.wBPP != 16) ||
        (rfbi.wFormat != 1))
      {
-        fprintf (stderr, "[Evas] [Engine] [WinCE FB] ExtEscape() with GETRAWFRAMEBUFFER failed\n");
-        fprintf (stderr, "[Evas] [Engine] [WinCE FB] trying ExtEscape() with GETGXINFO\n");
+        ERRPR("[Engine] [WinCE FB] ExtEscape() with GETRAWFRAMEBUFFER failed");
+        ERROR("[Engine] [WinCE FB] trying ExtEscape() with GETGXINFO");
         if (!_evas_software_wince_gxinfo_init(dc, &priv->width, &priv->height, &priv->buffer))
           {
              ReleaseDC(window, dc);
@@ -139,9 +139,9 @@ evas_software_wince_fb_init(HWND window,
   if ((priv->width != width) ||
       (priv->height != height))
     {
-       fprintf (stderr, "[Evas] [Engine] [WinCE FB] Size mismatch\n");
-       fprintf (stderr, "[Evas] [Engine] [WinCE FB] asked: %dx%d\n", width, height);
-       fprintf (stderr, "[Evas] [Engine] [WinCE FB] got  : %dx%d\n", priv->width, priv->height);
+       ERROR("[Engine] [WinCE FB] Size mismatch");
+       ERROR("[Engine] [WinCE FB] asked: %dx%d", width, height);
+       ERROR("[Engine] [WinCE FB] got  : %dx%d", priv->width, priv->height);
        ReleaseDC(window, dc);
        free(priv);
        return NULL;

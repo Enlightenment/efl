@@ -3,7 +3,6 @@
  */
 
 #include "evas_common.h"
-
 static RGBA_Gfx_Func     op_add_span_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
 static RGBA_Gfx_Pt_Func  op_add_pt_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
 

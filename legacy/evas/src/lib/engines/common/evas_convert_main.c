@@ -591,7 +591,7 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
 	       }
 #endif
 	  }
-	printf("depth = %i mode = %i\n", depth, pal_mode);
+	INFO("depth = %i mode = %i", depth, pal_mode);
 	if (depth == 8)
 	  {
 #ifdef BUILD_CONVERT_8_RGB_332

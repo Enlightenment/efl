@@ -5,6 +5,7 @@
 #include <time.h>
 #include <SDL/SDL.h>
 
+#include "evas_common.h"
 #include "evas_engine.h"
 
 /* function tables - filled in later (func and parent func) */
@@ -143,7 +144,7 @@ _sdl16_output_setup(int w, int h, int rotation, int fullscreen, int noframe, int
    re->cache = evas_cache_engine_image_init(&_sdl16_cache_engine_image_cb, evas_common_soft16_image_cache_get());
    if (!re->cache)
      {
-        fprintf(stderr, "Evas_Cache_Engine_Image allocation failed!\n");
+        ERROR("Evas_Cache_Engine_Image allocation failed!");
         free(re);
         return NULL;
      }
@@ -169,7 +170,7 @@ _sdl16_output_setup(int w, int h, int rotation, int fullscreen, int noframe, int
                               | (noframe ? SDL_NOFRAME : 0));
    if (!surface)
      {
-        fprintf(stderr, "SDL_SetVideoMode [ %i x %i x 16 ] failed\n", w, h);
+        ERROR("SDL_SetVideoMode [ %i x %i x 16 ] failed", w, h);
         evas_cache_engine_image_shutdown(re->cache);
         free(re);
         return NULL;
@@ -181,7 +182,7 @@ _sdl16_output_setup(int w, int h, int rotation, int fullscreen, int noframe, int
    re->soft16_engine_image = (SDL_Engine_Image_Entry *) evas_cache_engine_image_engine(re->cache, surface);
    if (!re->soft16_engine_image)
      {
-        fprintf(stderr, "Soft16_Image allocation from SDL failed\n");
+        ERROR("Soft16_Image allocation from SDL failed");
         evas_cache_engine_image_shutdown(re->cache);
         free(re);
         return NULL;
@@ -203,7 +204,7 @@ evas_engine_sdl16_setup(Evas *e, void *in)
 
    if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
      {
-        fprintf(stderr, "SDL_Init failed with %s\n", SDL_GetError());
+        ERROR("SDL_Init failed with %s", SDL_GetError());
         SDL_Quit();
         return 0;
      }
@@ -262,13 +263,13 @@ evas_engine_sdl16_output_resize(void *data, int w, int h)
                               | (re->flags.noframe ? SDL_NOFRAME : 0));
    if (!surface)
      {
-        fprintf(stderr, "Unable to change the resolution to : %ix%i\n", w, h);
+        ERROR("Unable to change the resolution to : %ix%i", w, h);
         exit(-1);
      }
    re->soft16_engine_image = (SDL_Engine_Image_Entry *) evas_cache_engine_image_engine(re->cache, surface);
    if (!re->soft16_engine_image)
      {
-	fprintf(stderr, "RGBA_Image allocation from SDL failed\n");
+	ERROR("RGBA_Image allocation from SDL failed");
 	exit(-1);
      }
 
@@ -611,12 +612,12 @@ evas_engine_sdl16_image_new_from_copied_data(void *data,
 
    if (cspace != EVAS_COLORSPACE_RGB565_A5P)
      {
-        fprintf(stderr, "Unsupported colorspace %d in %s() (%s:%d)\n",
+        WARN("Unsupported colorspace %d in %s() (%s:%d)",
                 cspace, __FUNCTION__, __FILE__, __LINE__);
         return NULL;
      }
 
-   fprintf(stderr, "s image_data: %p\n", image_data);
+   WARN("s image_data: %p", image_data);
 
    return evas_cache_engine_image_copied_data(re->cache,
                                               w, h,
@@ -631,7 +632,7 @@ evas_engine_sdl16_image_new_from_data(void *data, int w, int h, DATA32* image_da
 
    if (cspace != EVAS_COLORSPACE_RGB565_A5P)
      {
-        fprintf(stderr, "Unsupported colorspace %d in %s() (%s:%d)\n",
+        WARN("Unsupported colorspace %d in %s() (%s:%d)",
                 cspace, __FUNCTION__, __FILE__, __LINE__);
         return NULL;
      }

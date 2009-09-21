@@ -686,15 +686,15 @@ eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int 
    RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
    Evas_Quartz_Gradient *gr = (Evas_Quartz_Gradient *)gradient;
 
-   printf("#Gradient#\n");
-   printf("Fill: %i %i %i %i\n", gr->grad->fill.x, gr->grad->fill.y, gr->grad->fill.w, gr->grad->fill.h);
-   printf("Type: %s %s\n", gr->grad->type.name, gr->grad->type.params);
-   printf("XYWH: %i %i %i %i\n", x, y, w, h);
-   printf("Geom: %p %p\n", gr->grad->type.geometer, gr->grad->type.geometer->get_fill_func);
-   printf("Map: len: %d angle: %f direction: %d offset: %f\n", gr->grad->map.len, gr->grad->map.angle, gr->grad->map.direction, gr->grad->map.offset);
-   printf("Color: nstops: %d len: %d\n", gr->grad->color.nstops, gr->grad->color.len);
-   printf("Alpha: nstops: %d len: %d\n", gr->grad->alpha.nstops, gr->grad->alpha.len);
-   printf("\n");
+   INFO("#Gradient#");
+   INFO("Fill: %i %i %i %i", gr->grad->fill.x, gr->grad->fill.y, gr->grad->fill.w, gr->grad->fill.h);
+   INFO("Type: %s %s", gr->grad->type.name, gr->grad->type.params);
+   INFO("XYWH: %i %i %i %i", x, y, w, h);
+   INFO("Geom: %p %p", gr->grad->type.geometer, gr->grad->type.geometer->get_fill_func);
+   INFO("Map: len: %d angle: %f direction: %d offset: %f", gr->grad->map.len, gr->grad->map.angle, gr->grad->map.direction, gr->grad->map.offset);
+   INFO("Color: nstops: %d len: %d", gr->grad->color.nstops, gr->grad->color.len);
+   INFO("Alpha: nstops: %d len: %d", gr->grad->alpha.nstops, gr->grad->alpha.len);
+   INFO("");
 
    if ((gr->sw != w) || (gr->sh != h))
       gr->changed = 1;

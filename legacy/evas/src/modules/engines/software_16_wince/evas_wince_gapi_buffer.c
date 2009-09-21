@@ -110,7 +110,7 @@ evas_software_wince_gapi_init(HWND window,
         gapi_lib = LoadLibrary(L"gx.dll");
         if (!gapi_lib)
           {
-             fprintf (stderr, "[Evas] [Engine] [WinCE GAPI] Can not load gx.dll\n");
+             ERROR("[Engine] [WinCE GAPI] Can not load gx.dll");
              goto free_priv;
           }
      }
@@ -131,13 +131,13 @@ evas_software_wince_gapi_init(HWND window,
        !suspend ||
        !resume)
      {
-        fprintf (stderr, "[Evas] [Engine] [WinCE GAPI] Can not find valid symbols\n");
+       ERROR("[Engine] [WinCE GAPI] Can not find valid symbols");
         goto free_lib;
      }
 
    if (!display_open(window, GX_FULLSCREEN))
      {
-        fprintf (stderr, "[Evas] [Engine] [WinCE GAPI] Can not open display\n");
+        ERROR("[Engine] [WinCE GAPI] Can not open display");
         goto free_lib;
      }
 
@@ -146,7 +146,7 @@ evas_software_wince_gapi_init(HWND window,
    // verify pixel format
    if(!(prop.ffFormat & kfDirect565) || (prop.cBPP != 16))
      {
-        fprintf (stderr, "[Evas] [Engine] [WinCE GAPI] display format mismatch\n");
+        ERROR("[Engine] [WinCE GAPI] display format mismatch");
         goto close_display;
      }
 
@@ -154,7 +154,7 @@ evas_software_wince_gapi_init(HWND window,
    if ((GetSystemMetrics(SM_CXSCREEN) != (int)prop.cxWidth) ||
        (GetSystemMetrics(SM_CYSCREEN) != (int)prop.cyHeight))
      {
-        fprintf (stderr, "[Evas] [Engine] [WinCE GAPI] display size mismatch\n");
+        ERROR("[Engine] [WinCE GAPI] display size mismatch");
         goto close_display;
      }
 
@@ -221,7 +221,7 @@ v |         |
         dc = GetDC (window);
         if (!dc)
           {
-             fprintf (stderr, "[Evas] [Engine] [WinCE GAPI] Can not get device\n");
+             ERROR("[Engine] [WinCE GAPI] Can not get device");
              goto close_display;
           }
 
@@ -230,7 +230,7 @@ v |         |
                            (char *) &gxInfo);
         if (result <= 0)
           {
-             fprintf (stderr, "[Evas] [Engine] [WinCE GAPI] ExtEscape failed\n");
+             ERROR("[Engine] [WinCE GAPI] ExtEscape failed");
              ReleaseDC(window, dc);
              goto close_display;
           }
@@ -249,9 +249,9 @@ v |         |
    if ((priv->width != width) ||
        (priv->height != height))
      {
-        fprintf (stderr, "[Evas] [Engine] [WinCE GAPI] Size mismatch\n");
-        fprintf (stderr, "[Evas] [Engine] [WinCE GAPI] asked: %dx%d\n", width, height);
-        fprintf (stderr, "[Evas] [Engine] [WinCE GAPI] got  : %dx%d\n", priv->width, priv->height);
+        WARN("[Engine] [WinCE GAPI] Size mismatch");
+        WARN("[Engine] [WinCE GAPI] asked: %dx%d", width, height);
+        WARN("[Engine] [WinCE GAPI] got  : %dx%d", priv->width, priv->height);
         goto close_display;
      }
 

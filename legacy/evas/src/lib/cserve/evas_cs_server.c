@@ -225,8 +225,8 @@ server_parse(Server *s, Client *c)
    data = c->inbuf + (sizeof(int) * 3);
    if (ints[2] != (c->req_from + 1))
      {
-        printf("EEK! sequence number mismatch from client with pid: %i\n"
-               "---- num %i is not 1 more than %i\n"
+        ERROR("EEK! sequence number mismatch from client with pid: %i\n"
+               "---- num %i is not 1 more than %i"
                ,
                c->pid, ints[2], c->req_from);
         return 0;

@@ -202,8 +202,7 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
                        /* Header */
                        if (sscanf(line, "%i %i %i %i", &w, &h, &ncolors, &cpp) != 4)
 			 {
-                            fprintf(stderr,
-                                    "XPM ERROR: XPM file malformed header\n");
+			   ERROR("XPM ERROR: XPM file malformed header");
                             free(line);
                             fclose(f);
                             xpm_parse_done();
@@ -211,8 +210,7 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
 			 }
                        if ((ncolors > 32766) || (ncolors < 1))
                          {
-                            fprintf(stderr,
-                                    "XPM ERROR: XPM files with colors > 32766 or < 1 not supported\n");
+                            ERROR("XPM ERROR: XPM files with colors > 32766 or < 1 not supported");
                             free(line);
                             fclose(f);
                             xpm_parse_done();
@@ -220,8 +218,7 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
                          }
                        if ((cpp > 5) || (cpp < 1))
                          {
-                            fprintf(stderr,
-                                    "XPM ERROR: XPM files with characters per pixel > 5 or < 1not supported\n");
+			    ERROR("XPM ERROR: XPM files with characters per pixel > 5 or < 1not supported");
                             free(line);
                             fclose(f);
                             xpm_parse_done();
@@ -229,8 +226,7 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
                          }
                        if ((w > IMG_MAX_SIZE) || (w < 1))
                          {
-                            fprintf(stderr,
-                                    "XPM ERROR: Image width > IMG_MAX_SIZE or < 1 pixels for file\n");
+			    ERROR("XPM ERROR: Image width > IMG_MAX_SIZE or < 1 pixels for file");
                             free(line);
                             fclose(f);
                             xpm_parse_done();
@@ -238,8 +234,7 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
                          }
                        if ((h > IMG_MAX_SIZE) || (h < 1))
                          {
-                            fprintf(stderr,
-                                    "XPM ERROR: Image height > IMG_MAX_SIZE or < 1 pixels for file\n");
+			    ERROR("XPM ERROR: Image height > IMG_MAX_SIZE or < 1 pixels for file");
                             free(line);
                             fclose(f);
                             xpm_parse_done();
@@ -248,7 +243,7 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
                        if (IMG_TOO_BIG(w, h))
                          {
                             fprintf(stderr,
-                                    "XPM ERROR: Image just too big to ever allocate\n");
+                                    "XPM ERROR: Image just too big to ever allocate");
                             free(line);
                             fclose(f);
                             xpm_parse_done();

@@ -4,6 +4,8 @@
 
 #include "evas_cs.h"
 
+int _cserve_tool_log_dom = -1;
+
 int
 main(int argc, char **argv)
 {

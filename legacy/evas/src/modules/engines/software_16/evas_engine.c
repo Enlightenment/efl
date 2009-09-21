@@ -11,7 +11,7 @@
  */
 
 #define NOT_IMPLEMENTED()                                               \
-   fprintf(stderr, "NOT_IMPLEMENTED: %s() at %s:%d\n",                  \
+  WARN("NOT_IMPLEMENTED: %s() at %s:%d",					\
            __FUNCTION__, __FILE__, __LINE__)
 
 static void *
@@ -509,7 +509,7 @@ eng_image_new_from_data(void *data __UNUSED__, int w, int h, DATA32 *image_data,
 {
    if ((image_data) && (cspace != EVAS_COLORSPACE_RGB565_A5P))
      {
-	fprintf(stderr, "Unsupported colorspace %d in %s() (%s:%d)\n",
+	WARN("Unsupported colorspace %d in %s() (%s:%d)",
 		cspace, __FUNCTION__, __FILE__, __LINE__);
 	return NULL;
      }
@@ -521,7 +521,7 @@ eng_image_new_from_copied_data(void *data __UNUSED__, int w, int h, DATA32 *imag
 {
    if ((image_data) && (cspace != EVAS_COLORSPACE_RGB565_A5P))
      {
-	fprintf(stderr, "Unsupported colorspace %d in %s() (%s:%d)\n",
+	WARN("Unsupported colorspace %d in %s() (%s:%d)",
 		cspace, __FUNCTION__, __FILE__, __LINE__);
 	return NULL;
      }

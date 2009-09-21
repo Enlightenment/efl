@@ -3,7 +3,7 @@
 #include "evas_cs.h"
 
 static int initcount = 0;
-
+int _evas_log_dom_global = -1;
 /**
  * Initialize Evas
  *
@@ -22,6 +22,13 @@ evas_init(void)
      {
 	if (!eina_init())
 	  return 0;
+	_evas_log_dom_global = eina_log_domain_register("evas_main",EVAS_DEFAULT_LOG_COLOR);
+	if(_evas_log_dom_global < 0)
+	  {
+	    fprintf(stderr,"Error: Evas could not create a default log domain\n");
+	    eina_shutdown();
+	    return 0;
+	  }
 	evas_module_init();
 #ifdef BUILD_ASYNC_EVENTS
 	if (!evas_async_events_init())
@@ -36,6 +43,7 @@ evas_init(void)
 #ifdef BUILD_ASYNC_EVENTS
  shutdown_module:
    evas_module_shutdown();
+   eina_log_domain_unregister(_evas_log_dom_global);
    eina_shutdown();
 
    return 0;
@@ -69,6 +77,7 @@ evas_shutdown(void)
 	evas_font_dir_cache_free();
 	evas_common_shutdown();
 	evas_module_shutdown();
+	eina_log_domain_unregister(_evas_log_dom_global);
 	eina_shutdown();
      }
    return initcount;
@@ -477,7 +486,7 @@ evas_output_viewport_set(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas
    if (h <= 0) return;
    if ((x != 0) || (y != 0))
      {
-	printf("EVAS: compat error. viewport x,y != 0,0 not supported\n");
+	ERROR("EVAS: compat error. viewport x,y != 0,0 not supported");
 	x = 0;
 	y = 0;
      }

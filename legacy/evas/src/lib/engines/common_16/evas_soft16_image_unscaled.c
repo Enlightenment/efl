@@ -60,9 +60,8 @@ _soft16_image_draw_unscaled_no_mul(Soft16_Image *src, Soft16_Image *dst,
                                               src_offset, dst_offset,
                                               width, height);
    else
-      fprintf(stderr,
-              "Unsupported draw of unscaled images src->cache_entry.flags.alpha=%d, "
-              "dst->cache_entry.flags.alpha=%d, WITHOUT COLOR MUL\n",
+     ERROR("Unsupported draw of unscaled images src->cache_entry.flags.alpha=%d, "
+              "dst->cache_entry.flags.alpha=%d, WITHOUT COLOR MUL",
               src->cache_entry.flags.alpha, dst->cache_entry.flags.alpha);
 }
 
@@ -128,9 +127,8 @@ _soft16_image_draw_unscaled_mul_alpha(Soft16_Image *src, Soft16_Image *dst,
       _soft16_image_draw_unscaled_solid_solid_mul_alpha
          (src, dst, dc, src_offset, dst_offset, width, height, a);
    else
-      fprintf(stderr,
-              "Unsupported draw of unscaled images src->cache_entry.flags.alpha=%d, "
-              "dst->cache_entry.flags.alpha=%d, WITH ALPHA MUL %d\n",
+     ERROR("Unsupported draw of unscaled images src->cache_entry.flags.alpha=%d, "
+              "dst->cache_entry.flags.alpha=%d, WITH ALPHA MUL %d",
               src->cache_entry.flags.alpha, dst->cache_entry.flags.alpha, A_VAL(&dc->mul.col));
 }
 
@@ -219,9 +217,8 @@ _soft16_image_draw_unscaled_mul_color(Soft16_Image *src, Soft16_Image *dst,
      _soft16_image_draw_unscaled_solid_solid_mul_color
        (src, dst, dc, src_offset, dst_offset, width, height, r, g, b, a);
    else
-      fprintf(stderr,
-              "Unsupported draw of unscaled images src->cache_entry.flags.alpha=%d, "
-              "dst->cache_entry.flags.alpha=%d, WITH COLOR MUL 0x%08x\n",
+     ERROR("Unsupported draw of unscaled images src->cache_entry.flags.alpha=%d, "
+              "dst->cache_entry.flags.alpha=%d, WITH COLOR MUL 0x%08x",
               src->cache_entry.flags.alpha, dst->cache_entry.flags.alpha, dc->mul.col);
 }
 

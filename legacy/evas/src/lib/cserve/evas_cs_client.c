@@ -145,8 +145,8 @@ server_read(Server *s, int channel, int *opcode, int *size)
    if ((*size < 0) || (*size > (1024 * 1024))) return NULL;
    if (ints[2] != (s->ch[channel].req_from + 1))
      {
-        printf("EEK! sequence number mismatch from serer with pid: %i\n"
-               "---- num %i is not 1 more than %i\n"
+        ERROR("EEK! sequence number mismatch from serer with pid: %i\n"
+               "---- num %i is not 1 more than %i"
                ,
                s->pid, ints[2], s->ch[channel].req_from);
         return NULL;

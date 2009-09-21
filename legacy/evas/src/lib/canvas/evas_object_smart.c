@@ -174,20 +174,20 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
 
    if (obj->delete_me)
      {
-	printf("EVAS ERROR: Adding deleted object %p to smart obj %p\n", obj, smart_obj);
+        ERROR("Adding deleted object %p to smart obj %p", obj, smart_obj);
 	abort();
 	return;
      }
    if (smart_obj->delete_me)
      {
-	printf("EVAS ERROR: Adding object %p to deleted smart obj %p\n", obj, smart_obj);
+	ERROR("Adding object %p to deleted smart obj %p", obj, smart_obj);
 	abort();
 	return;
      }
    if (obj->layer && smart_obj->layer
        && obj->layer->evas != smart_obj->layer->evas)
      {
-	printf("EVAS ERROR: Adding object %p from Evas (%p) from another Evas (%p)\n", obj, obj->layer->evas, smart_obj->layer->evas);
+	ERROR("EVAS ERROR: Adding object %p from Evas (%p) from another Evas (%p)", obj, obj->layer->evas, smart_obj->layer->evas);
 	abort();
 	return;
      }

@@ -15,7 +15,7 @@ evas_software_gdi_init (HWND         window,
 
    if (!window)
      {
-        fprintf (stderr, "[Evas] [Engine] [GDI] Window is NULL\n");
+        ERROR("[Engine] [GDI] Window is NULL");
         return 0;
      }
 
@@ -24,14 +24,14 @@ evas_software_gdi_init (HWND         window,
    buf->priv.gdi.dc = GetDC(window);
    if (!buf->priv.gdi.dc)
      {
-        fprintf (stderr, "[Evas] [Engine] [GDI] Can not get DC\n");
+        ERROR("[Engine] [GDI] Can not get DC");
         return 0;
      }
 
    /* FIXME: check depth */
    if (depth != GetDeviceCaps(buf->priv.gdi.dc, BITSPIXEL))
      {
-        fprintf (stderr, "[Evas] [Engine] [GDI] no compatible depth\n");
+        ERROR("[Engine] [GDI] no compatible depth");
         ReleaseDC(window, buf->priv.gdi.dc);
         return 0;
      }
@@ -58,7 +58,7 @@ evas_software_gdi_init (HWND         window,
    buf->priv.gdi.bitmap_info = (BITMAPINFO_GDI *)malloc(sizeof(BITMAPINFO_GDI));
    if (!buf->priv.gdi.bitmap_info)
      {
-        fprintf (stderr, "[Evas] [Engine] [GDI] Can not allocate bitmap info\n");
+        ERROR("[Engine] [GDI] Can not allocate bitmap info");
         ReleaseDC(window, buf->priv.gdi.dc);
         return 0;
      }
@@ -88,7 +88,7 @@ evas_software_gdi_init (HWND         window,
          buf->priv.gdi.bitmap_info->masks[2] = 0x000000ff;
          break;
       default:
-        fprintf (stderr, "[Evas] [Engine] [GDI] wrong depth\n");
+        ERROR("[Engine] [GDI] wrong depth");
         free(buf->priv.gdi.bitmap_info);
         ReleaseDC(window, buf->priv.gdi.dc);
         return 0;

@@ -69,8 +69,8 @@ _dfb_surface_clear(IDirectFBSurface *surface, int x, int y, int w, int h)
    return;
 
  error:
-   fprintf(stderr, "ERROR: could not clear surface: %s\n",
-	   DirectFBErrorString(r));
+   ERROR("DirectFB: could not clear surface: %s",
+	 DirectFBErrorString(r));
 }
 
 static void
@@ -93,7 +93,7 @@ _image_autoset_alpha(DirectFB_Engine_Image_Entry *image)
    r = surface->GetPixelFormat(surface, &fmt);
    if (r != DFB_OK)
      {
-	fprintf(stderr, "ERROR: could not get pixel format: %s\n",
+       ERROR("DirectFB: could not get pixel format: %s",
 		DirectFBErrorString(r));
 	return;
      }
@@ -114,8 +114,8 @@ _dfb_surface_update(IDirectFBSurface *surface, int x, int y, int w, int h)
    cr.y2 = y + h - 1;
    r = surface->Flip(surface, &cr, DSFLIP_NONE);
    if (r != DFB_OK)
-     fprintf(stderr, "ERROR: could not update surface: %s\n",
-	     DirectFBErrorString(r));
+     WARN("DirectFB: could not update surface: %s",
+	   DirectFBErrorString(r));
 }
 
 static IDirectFBSurface *
@@ -138,7 +138,7 @@ _dfb_surface_from_data(IDirectFB *dfb, int w, int h, void *data)
    r = dfb->CreateSurface(dfb, &desc, &s);
    if (r != DFB_OK)
      {
-	fprintf(stderr, "ERROR: cannot create DirectFB surface: %s\n",
+	ERROR("DirectFB: cannot create DirectFB surface: %s",
 		DirectFBErrorString(r));
 	return NULL;
      }
@@ -165,14 +165,14 @@ _dfb_blit_accel_caps_print(IDirectFBSurface *dst, IDirectFBSurface *src)
    r = dst->GetAccelerationMask(dst, src, &mask);
    if (r != DFB_OK)
      {
-	fprintf(stderr, "ERROR: Could not retrieve acceleration mask: %s\n",
+	ERROR("DirectFB: Could not retrieve acceleration mask: %s",
 		DirectFBErrorString(r));
 	return;
      }
 
-   fputs("Acceleration: ", stderr);
+   DEBUG("Acceleration: ");
 
-#define O(m) if (mask & m) fputs(#m " ", stderr)
+#define O(m) if (mask & m) DEBUG(#m " ")
    O(DFXL_FILLRECTANGLE);
    O(DFXL_DRAWRECTANGLE);
    O(DFXL_DRAWLINE);
@@ -183,8 +183,7 @@ _dfb_blit_accel_caps_print(IDirectFBSurface *dst, IDirectFBSurface *src)
    O(DFXL_DRAWSTRING);
 #undef O
 
-   if (mask == DFXL_NONE) fputs("<NONE>", stderr);
-   fputc('\n', stderr);
+   if (mask == DFXL_NONE) DEBUG("<NONE>");
 #endif /* DFB_DEBUG_ACCELERATION */
 }
 
@@ -300,14 +299,14 @@ _dfb_surface_set_color_from_context(IDirectFBSurface *surface, RGBA_Draw_Context
      goto error;
 
 #ifdef DFB_DEBUG_FLAGS
-   printf("DRAW: color=%d %d %d %d, flags=%s\n",
+   DEBUG("DirectFB DRAW: color=%d %d %d %d, flags=%s",
 	  r, g, b, a, _dfb_draw_flags_str(flags));
 #endif /* DFB_DEBUG_FLAGS */
 
    return 1;
 
  error:
-   fprintf(stderr, "ERROR: could not set color from context: %s\n",
+   ERROR("DirectFB: could not set color from context: %s",
 	   DirectFBErrorString(res));
    return 0;
 }
@@ -354,7 +353,7 @@ _dfb_surface_set_blit_params(DirectFB_Engine_Image_Entry *d, DirectFB_Engine_Ima
      goto error;
 
 #ifdef DFB_DEBUG_FLAGS
-   printf("BLIT: sfunc=%s, dfunc=%s, color=%d %d %d %d\n\tblit=%s\n\tdraw=%s\n",
+   DEBUG("DirectFB BLIT: sfunc=%s, dfunc=%s, color=%d %d %d %d\n\tblit=%s\n\tdraw=%s",
 	  _dfb_blend_func_str(src_func), _dfb_blend_func_str(dst_func),
 	  r, g, b, a,
 	  _dfb_blit_flags_str(blit_flags), _dfb_draw_flags_str(draw_flags));
@@ -363,8 +362,8 @@ _dfb_surface_set_blit_params(DirectFB_Engine_Image_Entry *d, DirectFB_Engine_Ima
    return 1;
 
  error:
-   fprintf(stderr, "ERROR: Could not set blit params: %s\n",
-	   DirectFBErrorString(res));
+   ERROR("DirectFB: Could not set blit params: %s",
+	 DirectFBErrorString(res));
    return 0;
 }
 
@@ -386,9 +385,8 @@ _dfb_lock_and_sync_image(IDirectFBSurface *surface, RGBA_Image *image, DFBSurfac
    if (pitch != (sw * 4))
      {
 	/* XXX TODO: support other pixel formats. */
-	fprintf(stderr,
-		"ERROR: IDirectFBSurface pitch(%d) is not supported: "
-		"should be %d.\n",
+       ERROR("DirectFB: IDirectFBSurface pitch(%d) is not supported: "
+		"should be %d.",
 		pitch, sw * 4);
 	surface->Unlock(surface);
 	return 0;
@@ -613,7 +611,7 @@ evas_cache_image_dfb_mem_size_get(Engine_Image_Entry *eie)
    r = deie->surface->GetSize(deie->surface, &w, &h);
    if (r != DFB_OK)
      {
-	fprintf(stderr, "ERROR: Could not get surface size: %s\n",
+	ERROR("DirectFB: Could not get surface size: %s",
 		DirectFBErrorString(r));
 	return size;
      }
@@ -629,22 +627,20 @@ evas_cache_image_dfb_debug(const char *context, Engine_Image_Entry* eie)
 {
    DirectFB_Engine_Image_Entry *eim = (DirectFB_Engine_Image_Entry *)eie;
 
-   fprintf(stderr, "*** %s image (%p) ***\n", context, eim);
+   DEBUG("*** %s image (%p) ***", context, eim);
    if (eim)
      {
-        fprintf(stderr,
-		"* W: %d\n"
+       DEBUG("* W: %d\n"
 		"* H: %d\n"
 		"* R: %d\n"
 		"* Key: %s\n"
-		"* DFB Surface: %p\n",
+		"* DFB Surface: %p",
 		eie->w, eie->h, eie->references, eie->cache_key, eim->surface);
 
         if (eie->src)
-          fprintf(stderr,
-		  "* Pixels: %p\n", ((RGBA_Image*) eie->src)->image.data);
+          DEBUG("* Pixels: %p", ((RGBA_Image*) eie->src)->image.data);
      }
-   fputs("*** ***\n", stderr);
+   DEBUG("*** ***");
 }
 #endif
 
@@ -701,29 +697,28 @@ _is_dfb_data_ok(IDirectFB *idfb, IDirectFBSurface *surface, int w, int h)
 
    if (!idfb)
      {
-	fputs("ERROR: missing IDirectFB\n", stderr);
+	ERROR("missing IDirectFB");
 	return EINA_FALSE;
      }
    dfb = idfb;
 
    if (!surface)
      {
-	fputs("ERROR: missing IDirectFBSurface\n", stderr);
+       ERROR("missing IDirectFBSurface");
 	return EINA_FALSE;
      }
 
    r = surface->GetSize(surface, &sw, &sh);
    if (r != DFB_OK)
      {
-	fprintf(stderr, "ERROR: could not get surface %p size: %s\n",
-		surface, DirectFBErrorString(r));
+       ERROR("DirectFB: could not get surface %p size: %s",
+	     surface, DirectFBErrorString(r));
 	return EINA_FALSE;
      }
 
    if ((w > sw) || (h > sh))
      {
-	fprintf(stderr,
-		"ERROR: requested size is larger than surface: %dx%d > %dx%d\n",
+       ERROR("DirectFB: requested size is larger than surface: %dx%d > %dx%d",
 		w, h, sw, sh);
 	return EINA_FALSE;
      }
@@ -750,7 +745,7 @@ _evas_common_init(void)
    evas_common_line_init();
    evas_common_font_init();
    evas_common_draw_init();
-   evas_common_tilebuf_init();
+   evas_common_tilebuf_init();  
 }
 
 static int
@@ -765,7 +760,7 @@ evas_engine_dfb_output_reconfigure(Render_Engine *re, int w, int h)
    re->tb = evas_common_tilebuf_new(w, h);
    if (!re->tb)
      {
-	fputs("ERROR: could not allocate tile buffer.\n", stderr);
+	ERROR("DirectFB: could not allocate tile buffer.");
 	goto failed_tilebuf;
      }
    evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
@@ -778,7 +773,7 @@ evas_engine_dfb_output_reconfigure(Render_Engine *re, int w, int h)
      evas_cache_engine_image_engine(re->cache, re->spec->surface);
    if (!re->screen_image)
      {
-	fputs("ERROR: RGBA_Image allocation from DFB failed\n", stderr);
+	ERROR("DirectFB: RGBA_Image allocation from DFB failed");
 	goto failed_image;
      }
    re->screen_image->flags.engine_surface = 1;
@@ -793,7 +788,7 @@ evas_engine_dfb_output_reconfigure(Render_Engine *re, int w, int h)
    re->tb = NULL;
  failed_tilebuf:
    re->screen_image = NULL;
-   fputs("ERROR: Evas DirectFB reconfigure failed\n", stderr);
+   ERROR("DirectFB: Evas DirectFB reconfigure failed");
    return 0;
 }
 
@@ -819,13 +814,13 @@ _dfb_output_setup(int w, int h, const struct Evas_Engine_DirectFB_Spec *spec)
 					    evas_common_image_cache_get());
    if (!re->cache)
      {
-	fputs("ERROR: Evas_Cache_Engine_Image allocation failed!\n", stderr);
+	ERROR("DirectFB: Evas_Cache_Engine_Image allocation failed!");
 	goto fatal_after_engine;
      }
 
    if (!evas_engine_dfb_output_reconfigure(re, w, h))
      {
-	fputs("ERROR: Could not reconfigure evas engine.\n", stderr);
+	ERROR("DirectFB: Could not reconfigure evas engine.");
 	goto fatal_after_reconfigure;
      }
 
@@ -839,7 +834,7 @@ _dfb_output_setup(int w, int h, const struct Evas_Engine_DirectFB_Spec *spec)
  fatal_after_engine:
    free(re);
  fatal:
-   fputs("FATAL: unable to continue, abort()!\n", stderr);
+   CRITICAL("DirectFB: unable to continue, abort()!");
    abort();
    return NULL;
 }
@@ -887,7 +882,7 @@ static void
 evas_engine_dfb_output_resize(void *data, int w, int h)
 {
    if (!evas_engine_dfb_output_reconfigure(data, w, h))
-     fputs("ERROR: failed to resize DirectFB evas\n", stderr);
+     ERROR("DirectFB: failed to resize DirectFB evas");
 }
 
 static void
@@ -1031,7 +1026,7 @@ evas_engine_dfb_output_idle_flush(void *data)
    Render_Engine *re = data;
 
    if (re->update_regions_count != 0)
-     fputs("ERROR: update_regions_count not 0 as it should be!\n", stderr);
+     ERROR("DirectFB: update_regions_count not 0 as it should be!");
 
    free(re->update_regions);
    re->update_regions_count = 0;
@@ -1351,7 +1346,7 @@ evas_engine_dfb_image_data_get(void *data __UNUSED__, void *image, int to_write,
 	  break;
 
        error:
-	  fprintf(stderr, "ERROR: could not lock surface %p: %s\n",
+	  ERROR("DirectFB: could not lock surface %p: %s",
 		  s, DirectFBErrorString(r));
 	  *image_data = NULL;
 	  break;

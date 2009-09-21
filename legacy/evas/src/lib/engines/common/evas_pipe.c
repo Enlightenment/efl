@@ -73,7 +73,7 @@ evas_common_pipe_thread(void *data)
 {
    Thinfo *thinfo;
 
-//   printf("TH [...........\n");
+//   INFO("TH [...........");
    thinfo = data;
    for (;;)
      {
@@ -81,13 +81,13 @@ evas_common_pipe_thread(void *data)
 	RGBA_Pipe *p;
 
 	/* wait for start signal */
-//	printf(" TH %i START...\n", thinfo->thread_num);
+//	INFO(" TH %i START...", thinfo->thread_num);
 	pthread_barrier_wait(&(thinfo->barrier[0]));
 	info = thinfo->info;
 //	if (info)
 //	  {
 //	     thinfo->info = NULL;
-//	     printf(" TH %i GO\n", thinfo->thread_num);
+//	     INFO(" TH %i GO", thinfo->thread_num);
 	EINA_INLIST_FOREACH(EINA_INLIST_GET(info->im->pipe), p)
 	       {
 		  int i;
@@ -100,7 +100,7 @@ evas_common_pipe_thread(void *data)
 	       }
 	     free(info);
 //	  }
-//	printf(" TH %i DONE\n", thinfo->thread_num);
+//	INFO(" TH %i DONE", thinfo->thread_num);
 	/* send finished signal */
 	pthread_barrier_wait(&(thinfo->barrier[1]));
      }

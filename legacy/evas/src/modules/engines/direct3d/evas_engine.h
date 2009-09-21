@@ -22,7 +22,7 @@ extern "C" {
 
 //#define ENABLE_LOG_PRINTF
 #ifdef ENABLE_LOG_PRINTF
-#define Log(str, ...) printf("D3D "str"\n", __VA_ARGS__)
+#define Log(str, ...) INFO("D3D "str, __VA_ARGS__)
 #else
 #define Log(str, ...)
 #endif

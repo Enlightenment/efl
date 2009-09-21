@@ -71,9 +71,7 @@ _soft16_rectangle_draw_int(Soft16_Image *dst, RGBA_Draw_Context *dc,
 	     (dst, dst_offset, dr.w, dr.h, rgb565, alpha);
       }
    else
-      fprintf(stderr,
-              "Unsupported feature: drawing rectangle to non-opaque "
-              "destination.\n");
+     ERROR("Unsupported feature: drawing rectangle to non-opaque destination.");
 }
 
 void

@@ -198,7 +198,7 @@ eng_output_redraws_clear(void *data)
 
    re = (Render_Engine *)data;
    re->win->draw.redraw = 0;
-//   printf("GL: finish update cycle!\n");
+//   INFO("GL: finish update cycle!");
 }
 
 /* at least the nvidia drivers are so abysmal that copying from the backbuffer

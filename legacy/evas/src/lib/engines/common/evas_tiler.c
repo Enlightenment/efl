@@ -1,5 +1,4 @@
 #include "evas_common.h"
-
 #ifdef EVAS_RECT_SPLIT
 
 static const list_node_t list_node_zeroed = { NULL };
@@ -95,7 +94,7 @@ rect_init(rect_t *r, int x, int y, int w, int h)
 void
 rect_print(const rect_t r)
 {
-   printf("<rect(%d, %d, %d, %d)>", r.left, r.top, r.width, r.height);
+   INFO("<rect(%d, %d, %d, %d)>", r.left, r.top, r.width, r.height);
 }
 
 void
@@ -107,7 +106,7 @@ rect_list_print(const list_t rects)
    len = 0;
    for (node = rects.head; node != NULL; node = node->next) len++;
 
-   printf("[");
+   putchar('[');
    for (node = rects.head; node != NULL; node = node->next)
      {
 	rect_print(((rect_node_t *)node)->rect);
@@ -122,7 +121,7 @@ rect_list_print(const list_t rects)
 	       }
 	  }
      }
-   printf("]\n");
+   putchar(']');
 }
 
 inline void
@@ -717,7 +716,7 @@ rect_list_add_split_fuzzy(list_t *rects, list_node_t *node, int accepted_error)
 			*/
 		       /* prev_cur_node = cur_node; */
 		       /* cur_node = cur_node->next; */
-		       printf("Should not get here!\n");
+		       WARN("Should not get here!");
 		       abort();
 		    }
 
@@ -920,7 +919,7 @@ _add_redraw(list_t *rects, int max_w, int max_h, int x, int y, int w, int h)
    rn = (rect_node_t *)rect_list_node_pool_get();
    rn->_lst = list_node_zeroed;
    rect_init(&rn->rect, x, y, w, h);
-   //fprintf(stderr, "ACCOUNTING: add_redraw: %4d,%4d %3dx%3d\n", x, y, w, h);
+   //INFO(stderr, "ACCOUNTING: add_redraw: %4d,%4d %3dx%3d", x, y, w, h);
    //testing on my core2 duo desktop - fuzz of 32 or 48 is best.
 #define FUZZ 32
    rect_list_add_split_fuzzy_and_merge(rects, (list_node_t *)rn,
@@ -1008,7 +1007,7 @@ evas_common_tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
    if ((w <= 0) || (h <= 0)) return 0;
 
    rect_init(&r, x, y, w, h);
-   //fprintf(stderr, "ACCOUNTING: del_redraw: %4d,%4d %3dx%3d\n", x, y, w, h);
+   //ERROR("ACCOUNTING: del_redraw: %4d,%4d %3dx%3d", x, y, w, h);
 
    rect_list_del_split_strict(&tb->rects, r);
    tb->need_merge = 1;

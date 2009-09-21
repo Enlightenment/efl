@@ -12,7 +12,7 @@ void
 evas_fb_outbuf_fb_free(Outbuf *buf)
 {
    /* FIXME: impliment */
-   printf("destroying fb info.. not implemented!!!! WARNING. LEAK!\n");
+   WARN("destroying fb info.. not implemented!!!! WARNING. LEAK!");
    if (buf->priv.back_buf)
      evas_cache_image_drop(&buf->priv.back_buf->cache_entry);
    free(buf);

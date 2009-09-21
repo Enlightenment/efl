@@ -266,17 +266,17 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
 
    if (!rast)
      {
-        fprintf(stderr, "Evas Tiff loader: out of memory\n");
-
-        TIFFRGBAImageEnd((TIFFRGBAImage *) & rgba_image);
-        TIFFClose(tif);
-
+       ERROR("Evas Tiff loader: out of memory");
+       
+       TIFFRGBAImageEnd((TIFFRGBAImage *) & rgba_image);
+       TIFFClose(tif);
+       
         return 0;
      }
 
    if (rgba_image.rgba.put.any == NULL)
      {
-        fprintf(stderr, "Evas Tiff loader: no put function");
+       ERROR("Evas Tiff loader: no put function");
 
         _TIFFfree(rast);
         TIFFRGBAImageEnd((TIFFRGBAImage *) & rgba_image);
@@ -312,7 +312,7 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
      }
    else
      {
-        printf("channel bits == %i\n", (int)rgba_image.rgba.samplesperpixel);
+        INFO("channel bits == %i", (int)rgba_image.rgba.samplesperpixel);
      }
 
    _TIFFfree(rast);

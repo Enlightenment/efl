@@ -32,8 +32,8 @@ struct _Evas_Object_Box_Accessor
   EVAS_OBJECT_BOX_DATA_GET(o, ptr);					\
   if (!ptr)								\
     {									\
-       fprintf(stderr, "CRITICAL: no widget data for object %p (%s)\n",	\
-	       o, evas_object_type_get(o));				\
+       CRITICAL("no widget data for object %p (%s)",	\
+		o, evas_object_type_get(o));				\
        fflush(stderr);							\
        abort();								\
        return;								\
@@ -43,7 +43,7 @@ struct _Evas_Object_Box_Accessor
   EVAS_OBJECT_BOX_DATA_GET(o, ptr);					\
   if (!ptr)								\
     {									\
-       fprintf(stderr, "CRITICAL: no widget data for object %p (%s)\n",	\
+       CRITICAL("no widget data for object %p (%s)",	\
 	       o, evas_object_type_get(o));				\
        fflush(stderr);							\
        abort();								\
@@ -355,7 +355,7 @@ _evas_object_box_remove_at_default(Evas_Object *o, Evas_Object_Box_Data *priv, u
    node = eina_list_nth_list(priv->children, pos);
    if (!node)
      {
-	fprintf(stderr, "ERROR: no item to be removed at position %d\n", pos);
+	ERROR("ERROR: no item to be removed at position %d\n", pos);
 	return NULL;
      }
 
@@ -451,7 +451,7 @@ _evas_object_box_smart_calculate(Evas_Object *o)
    if (priv->layout.cb)
      priv->layout.cb(o, priv, priv->layout.data);
    else
-     fprintf(stderr, "ERROR: no layout function set for %p box.\n", o);
+     ERROR("No layout function set for %p box.", o);
 }
 
 static Evas_Smart *

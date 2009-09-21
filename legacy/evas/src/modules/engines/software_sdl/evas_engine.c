@@ -5,6 +5,7 @@
 #include <time.h>
 #include <SDL/SDL.h>
 
+#include "evas_common.h"
 #include "evas_engine.h"
 
 /* #define DEBUG_SDL */
@@ -99,7 +100,7 @@ evas_engine_sdl_setup		(Evas* e, void* in)
 
    if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
      {
-	fprintf(stderr, "SDL_Init failed with %s\n", SDL_GetError());
+	ERROR("SDL_Init failed with %s", SDL_GetError());
         SDL_Quit();
         return 0;
      }
@@ -170,13 +171,13 @@ evas_engine_sdl_output_resize	(void *data, int w, int h)
 
    if (!surface)
      {
-	fprintf(stderr, "Unable to change the resolution to : %ix%i\n", w, h);
+	ERROR("Unable to change the resolution to : %ix%i", w, h);
 	exit(-1);
      }
    re->rgba_engine_image = (SDL_Engine_Image_Entry *) evas_cache_engine_image_engine(re->cache, surface);
    if (!re->rgba_engine_image)
      {
-	fprintf(stderr, "RGBA_Image allocation from SDL failed\n");
+	ERROR("RGBA_Image allocation from SDL failed");
 	exit(-1);
      }
 
@@ -924,7 +925,7 @@ _sdl_output_setup		(int w, int h, int fullscreen, int noframe, int alpha, int hw
    re->cache = evas_cache_engine_image_init(&_sdl_cache_engine_image_cb, evas_common_image_cache_get());
    if (!re->cache)
      {
-        fprintf(stderr, "Evas_Cache_Engine_Image allocation failed!\n");
+        CRITICAL("Evas_Cache_Engine_Image allocation failed!");
         exit(-1);
      }
 
@@ -939,7 +940,7 @@ _sdl_output_setup		(int w, int h, int fullscreen, int noframe, int alpha, int hw
 
    if (!surface)
      {
-        fprintf(stderr, "SDL_SetVideoMode [ %i x %i x 32 ] failed.\n", w, h);
+        CRITICAL("SDL_SetVideoMode [ %i x %i x 32 ] failed.", w, h);
         exit(-1);
      }
 
@@ -951,7 +952,7 @@ _sdl_output_setup		(int w, int h, int fullscreen, int noframe, int alpha, int hw
    re->rgba_engine_image = (SDL_Engine_Image_Entry *) evas_cache_engine_image_engine(re->cache, surface);
    if (!re->rgba_engine_image)
      {
-	fprintf(stderr, "RGBA_Image allocation from SDL failed\n");
+	CRITICAL("RGBA_Image allocation from SDL failed");
         exit(-1);
      }
 
@@ -1136,17 +1137,17 @@ _sdl_image_debug(const char* context, Engine_Image_Entry* eie)
 {
    SDL_Engine_Image_Entry       *eim = (SDL_Engine_Image_Entry *) eie;
 
-   printf ("*** %s image (%p) ***\n", context, eim);
+   DEBUG("*** %s image (%p) ***", context, eim);
    if (eim)
      {
-        printf ("* W: %i\n* H: %i\n* R: %i\n", eim->cache_entry.w, eim->cache_entry.h, eim->cache_entry.references);
+        DEBUG ("* W: %i\n* H: %i\n* R: %i", eim->cache_entry.w, eim->cache_entry.h, eim->cache_entry.references);
         if (eim->cache_entry.src)
-          printf ("* Pixels: %p\n* SDL Surface: %p\n",((RGBA_Image*) eim->cache_entry.src)->image.data, eim->surface);
+          DEBUG ("* Pixels: %p\n* SDL Surface: %p",((RGBA_Image*) eim->cache_entry.src)->image.data, eim->surface);
         if (eim->surface)
-          printf ("* Surface->pixels: %p\n", eim->surface->pixels);
-	printf ("* Key: %s\n", eim->cache_entry.cache_key);
-        printf ("* Reference: %i\n", eim->cache_entry.references);
+          DEBUG ("* Surface->pixels: %p", eim->surface->pixels);
+	DEBUG ("* Key: %s", eim->cache_entry.cache_key);
+        DEBUG ("* Reference: %i", eim->cache_entry.references);
      }
-   printf ("*** ***\n");
+   DEBUG ("*** ***");
 }
 #endif

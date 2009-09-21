@@ -355,13 +355,13 @@ evas_software_xcb_outbuf_setup_x(int               w,
 	   evas_software_xcb_x_output_buffer_free(xcbob, 1);
 	   if (!conv_func)
 	     {
-		printf(".[ Evas Error ].\n"
-		       " {\n"
-		       "  At depth         %i:\n"
-		       "  RGB format mask: %08x, %08x, %08x\n"
-		       "  Palette mode:    %i\n"
-		       "  Not supported by and compiled in converters!\n"
-		       " }\n",
+		ERROR("XCB Engine"
+		       " {"
+		       "  At depth         %i:"
+		       "  RGB format mask: %08x, %08x, %08x"
+		       "  Palette mode:    %i"
+		       "  Not supported by and compiled in converters!"
+		       " }",
 		       buf->priv.x11.xcb.depth,
 		       buf->priv.mask.r,
 		       buf->priv.mask.g,

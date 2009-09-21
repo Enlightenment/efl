@@ -193,12 +193,12 @@ evas_software_gdi_outbuf_setup(int          width,
 
            if (!conv_func)
              {
-                fprintf(stderr, ".[ Evas Error ].\n"
-                        " {\n"
-                        "  At depth         %i:\n"
-                        "  RGB format mask: %08lx, %08lx, %08lx\n"
-                        "  Not supported by and compiled in converters!\n"
-                        " }\n",
+                ERROR(".[ soft_gdi engine Error ]."
+                      " {"
+                      "  At depth         %i:"
+                      "  RGB format mask: %08lx, %08lx, %08lx"
+                      "  Not supported by and compiled in converters!"
+                      " }",
                         buf->priv.gdi.depth,
                         buf->priv.gdi.bitmap_info->masks[0],
                         buf->priv.gdi.bitmap_info->masks[1],

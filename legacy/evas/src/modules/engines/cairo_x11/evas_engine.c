@@ -257,7 +257,7 @@ eng_info(Evas *e)
    info = calloc(1, sizeof(Evas_Engine_Info_Cairo_X11));
    if (!info) return NULL;
    info->magic.magic = rand();
-   printf("CAIRO: create info...\n");
+   INFO("CAIRO: create info...");
    return info;
    e = NULL;
 }
@@ -278,7 +278,7 @@ eng_setup(Evas *e, void *in)
    Evas_Engine_Info_Cairo_X11 *info;
 
    info = (Evas_Engine_Info_Cairo_X11 *)in;
-   printf("CAIRO: setup info...\n");
+   INFO("CAIRO: setup info...");
    if (!e->engine.data.output)
      e->engine.data.output =
      eng_output_setup(e->output.w,
@@ -314,7 +314,7 @@ eng_output_setup(int w, int h, Display *disp, Drawable draw, Visual *vis, Colorm
 	free(re);
 	return NULL;
      }
-   printf("CAIRO: cairo window setup done.\n");
+   INFO("CAIRO: cairo window setup done.");
    evas_common_cpu_init();
 
    evas_common_blend_init();

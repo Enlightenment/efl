@@ -8,6 +8,7 @@
 
 
 #include "evas_common.h"
+#include "evas_private.h"
 #include "evas_blend_private.h"
 
 #include "evas_intl_utils.h" /*defines INTERNATIONAL_SUPPORT if possible */
