@@ -268,9 +268,9 @@ elm_scroller_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->scr, "edge,bottom", _edge_bottom, obj);
    evas_object_smart_callback_add(wd->scr, "scroll", _scroll, obj);
    evas_object_smart_callback_add(wd->scr, "animate,start", _scroll_anim_start, obj);
-   evas_object_smart_callback_add(wd->scr, "animate,start", _scroll_anim_stop, obj);
+   evas_object_smart_callback_add(wd->scr, "animate,stop", _scroll_anim_stop, obj);
    evas_object_smart_callback_add(wd->scr, "drag,start", _scroll_drag_start, obj);
-   evas_object_smart_callback_add(wd->scr, "drag,start", _scroll_drag_stop, obj);
+   evas_object_smart_callback_add(wd->scr, "drag,stop", _scroll_drag_stop, obj);
 
    _sizing_eval(obj);
    return obj;
