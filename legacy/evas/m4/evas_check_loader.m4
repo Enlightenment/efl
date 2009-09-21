@@ -102,9 +102,25 @@ AC_CHECK_HEADER([jpeglib.h], [have_dep="yes"])
 if test "x${have_dep}"  = "xyes" ; then
    AC_CHECK_LIB([jpeg],
       [jpeg_CreateDecompress],
-      [evas_image_loader_[]$1[]_libs="-ljpeg"],
+      [
+        evas_image_loader_[]$1[]_libs="-ljpeg"
+        AC_COMPILE_IFELSE([[
+                          #include <stdio.h>
+                          #include <jpeglib.h>
+                          #include <setjmp.h>
+                          int main(int argc, char **argv) {
+                          struct jpeg_decompress_struct decomp;
+                          decomp.region_x = 0;
+                          }
+                        ]],
+                        [have_jpeg_region="yes"],
+                        [have_jpeg_region="no"])
+      ],
       [have_dep="no"]
    )
+   if test "x${have_jpeg_region}" = "xyes" ; then
+     AC_DEFINE(BUILD_LOADER_JPEG_REGION, [1], [JPEG Region Decode Support])
+   fi
 fi
 
 AC_SUBST([evas_image_loader_$1_cflags])
