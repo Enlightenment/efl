@@ -238,8 +238,9 @@ grid_load(Evas_Object *obj)
                {
                   wd->grid.grid[tn].want = 0;
                   wd->grid.grid[tn].have = 0;
-                  evas_object_image_file_set(wd->grid.grid[tn].img[loadnum], NULL, NULL);
+                  evas_object_hide(wd->grid.grid[tn].img[loadnum]);
                   evas_object_image_preload(wd->grid.grid[tn].img[loadnum], 1);
+                  evas_object_image_file_set(wd->grid.grid[tn].img[loadnum], NULL, NULL);
                }
           }
      }
@@ -569,7 +570,7 @@ elm_photocam_add(Evas_Object *parent)
 
    wd->zoom = 1;
    
-   wd->grid.tsize = 256;
+   wd->grid.tsize = 512;
    
    wd->grid.img = evas_object_image_add(e);
    evas_object_image_scale_hint_set(wd->grid.img, EVAS_IMAGE_SCALE_HINT_STATIC);

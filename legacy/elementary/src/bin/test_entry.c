@@ -141,6 +141,7 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    sc = elm_scroller_add(win);
    elm_scroller_content_min_limit(sc, 0, 1);
    elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scroller_bounce_set(sc, 0, 0);
    evas_object_size_hint_weight_set(sc, 1.0, 0.0);
    evas_object_size_hint_align_set(sc, -1.0, -1.0);
    elm_box_pack_end(bx, sc);
@@ -149,7 +150,7 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    elm_entry_single_line_set(en, 1);
    elm_entry_entry_set(en, "Disabled entry");
    evas_object_size_hint_weight_set(en, 1.0, 0.0);
-   evas_object_size_hint_align_set(en, -1.0, 0.0);
+   evas_object_size_hint_align_set(en, -1.0, 0.5);
    elm_object_disabled_set(en, 1);
    elm_scroller_content_set(sc, en);
    evas_object_show(en);
@@ -159,6 +160,7 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    sc = elm_scroller_add(win);
    elm_scroller_content_min_limit(sc, 0, 1);
    elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scroller_bounce_set(sc, 0, 0);
    evas_object_size_hint_weight_set(sc, 1.0, 0.0);
    evas_object_size_hint_align_set(sc, -1.0, -1.0);
    elm_box_pack_end(bx, sc);
@@ -167,7 +169,7 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    elm_entry_password_set(en, 1);
    elm_entry_entry_set(en, "Access denied, give up!");
    evas_object_size_hint_weight_set(en, 1.0, 0.0);
-   evas_object_size_hint_align_set(en, -1.0, 0.0);
+   evas_object_size_hint_align_set(en, -1.0, 0.5);
    elm_object_disabled_set(en, 1);
    elm_scroller_content_set(sc, en);
    evas_object_show(en);
@@ -178,6 +180,7 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(sc, 1.0, 1.0);
    evas_object_size_hint_align_set(sc, -1.0, -1.0);
    elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
+   elm_scroller_bounce_set(sc, 0, 1);
    elm_box_pack_end(bx, sc);
 
    en = elm_entry_add(win);
@@ -204,6 +207,7 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    sc = elm_scroller_add(win);
    elm_scroller_content_min_limit(sc, 0, 1);
    elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scroller_bounce_set(sc, 0, 0);
    evas_object_size_hint_weight_set(sc, 1.0, 0.0);
    evas_object_size_hint_align_set(sc, -1.0, -1.0);
    elm_box_pack_end(bx, sc);
@@ -212,7 +216,7 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    elm_entry_single_line_set(en, 1);
    elm_entry_entry_set(en, "This is a single line");
    evas_object_size_hint_weight_set(en, 1.0, 0.0);
-   evas_object_size_hint_align_set(en, -1.0, 0.0);
+   evas_object_size_hint_align_set(en, -1.0, 0.5);
    elm_entry_select_all(en);
    elm_scroller_content_set(sc, en);
    evas_object_show(en);
@@ -222,6 +226,7 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    sc = elm_scroller_add(win);
    elm_scroller_content_min_limit(sc, 0, 1);
    elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scroller_bounce_set(sc, 0, 0);
    evas_object_size_hint_weight_set(sc, 1.0, 0.0);
    evas_object_size_hint_align_set(sc, -1.0, -1.0);
    elm_box_pack_end(bx, sc);
@@ -240,6 +245,7 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(sc, 1.0, 1.0);
    evas_object_size_hint_align_set(sc, -1.0, -1.0);
    elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
+   elm_scroller_bounce_set(sc, 0, 1);
    elm_box_pack_end(bx, sc);
 
    en = elm_entry_add(win);

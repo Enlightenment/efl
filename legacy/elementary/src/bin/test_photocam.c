@@ -5,11 +5,12 @@ test_photocam(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *ph;
    char buf[PATH_MAX];
-   const char *img[3] =
+   const char *img[4] =
      {
-        "/home/raster/t1.jpg", 
-        "/home/raster/t2.jpg", 
-        "/home/raster/t3.jpg"
+        "/home/raster/t1.jpg",  //   5 mpixel
+        "/home/raster/t2.jpg",  //  18 mpixel
+        "/home/raster/t3.jpg",  //  39 mpixel
+        "/home/raster/t4.jpg"   // 192 mpixel
      };
 
    win = elm_win_add(NULL, "photocam", ELM_WIN_BASIC);
@@ -25,7 +26,7 @@ test_photocam(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(ph, 1.0, 1.0);
    elm_win_resize_object_add(win, ph);
    
-   elm_photocam_file_set(ph, img[0]);
+   elm_photocam_file_set(ph, img[3]);
    
    evas_object_show(ph);
    

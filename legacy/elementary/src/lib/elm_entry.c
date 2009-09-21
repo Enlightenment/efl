@@ -123,9 +123,12 @@ _elm_win_recalc_job(void *data)
    resh = 0;
    minminw = 0;
    edje_object_size_min_restricted_calc(wd->ent, &minw, &minh, 0, 0);
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    minminw = minw;
    edje_object_size_min_restricted_calc(wd->ent, &minw, &minh, resw, 0);
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(data, minminw, minh);
+   if (wd->single_line) maxh = minh;
    evas_object_size_hint_max_set(data, -1, maxh);
    if (wd->deferred_cur)
      elm_widget_show_region_set(data, wd->cx, wd->cy, wd->cw, wd->ch);
@@ -151,7 +154,9 @@ _sizing_eval(Evas_Object *obj)
      {
 	evas_object_geometry_get(wd->ent, NULL, NULL, &resw, &resh);
 	edje_object_size_min_calc(wd->ent, &minw, &minh);
+        elm_coords_finger_size_adjust(1, &minw, 1, &minh);
 	evas_object_size_hint_min_set(obj, minw, minh);
+        if (wd->single_line) maxh = minh;
 	evas_object_size_hint_max_set(obj, maxw, maxh);
      }
 }

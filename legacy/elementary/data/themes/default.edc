@@ -4215,13 +4215,13 @@ collections {
 	       text {
 		  style: "entry_single_textblock_style";
 		  min: 1 1;
+                  max: 0 1;
 	       }
 	    }
 	    description { state: "disabled" 0.0;
                inherit: "default" 0.0;
 	       text {
 		  style: "entry_single_textblock_disabled_style";
-		  min: 0 1;
 	       }
 	    }
 	 }
@@ -4263,13 +4263,13 @@ collections {
 	       text {
 		  style: "entry_single_textblock_style";
 		  min: 1 1;
+                  max: 0 1;
 	       }
 	    }
 	    description { state: "disabled" 0.0;
                inherit: "default" 0.0;
 	       text {
 		  style: "entry_single_textblock_disabled_style";
-		  min: 0 1;
 	       }
 	    }
 	 }
@@ -4317,7 +4317,6 @@ collections {
                inherit: "default" 0.0;
 	       text {
 		  style: "entry_textblock_disabled_style";
-		  min: 0 1;
 	       }
 	    }
 	 }
@@ -4365,7 +4364,6 @@ collections {
                inherit: "default" 0.0;
 	       text {
 		  style: "entry_textblock_disabled_style";
-		  min: 0 1;
 	       }
 	    }
 	 }
@@ -4409,13 +4407,13 @@ collections {
 		  style: "entry_single_textblock_style";
 		  repch: "*";
 		  min: 1 1;
+                  max: 0 1;
 	       }
 	    }
 	    description { state: "disabled" 0.0;
                inherit: "default" 0.0;
 	       text {
 		  style: "entry_single_textblock_disabled_style";
-		  min: 0 1;
 	       }
 	    }
 	 }
