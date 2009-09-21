@@ -240,16 +240,35 @@ elm_box_clear(Evas_Object *obj)
 }
 
 /**
- * This unpacks an item from the box
+ * This unpack a box item
  *
- * This unpacks a single Evas_Object from the box.
+ * This unpack the selected member from the box object, but does not delete
+ * the box itself or the packed items.
  *
- * @param obj The box item
+ * @param obj The box object
  *
  * @ingroup Box
  */
 EAPI void
-elm_box_unpack(Evas_Object *obj)
+elm_box_unpack(Evas_Object *obj, Evas_Object *subobj)
 {
-   _els_smart_box_unpack(obj);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   _els_smart_box_unpack(wd->box, subobj);
+}
+
+/**
+ * This unpack the box items
+ *
+ * This unpack all members from the box object, but does not delete
+ * the box itself or the packed items.
+ *
+ * @param obj The box object
+ *
+ * @ingroup Box
+ */
+EAPI void
+elm_box_unpack_all(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   _els_smart_box_unpack_all(wd->box);
 }

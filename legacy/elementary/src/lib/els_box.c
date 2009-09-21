@@ -153,20 +153,35 @@ _els_smart_box_pack_after(Evas_Object *obj, Evas_Object *child, Evas_Object *aft
 }
 
 void
-_els_smart_box_unpack(Evas_Object *obj)
+_els_smart_box_unpack(Evas_Object *obj, Evas_Object *child)
 {
    Smart_Data *sd;
    
    if (!obj) return;
-   sd = evas_object_smart_data_get(evas_object_smart_parent_get(obj));
+   sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   sd->items = eina_list_remove(sd->items, obj);
-   _smart_disown(obj);
+   sd->items = eina_list_remove(sd->items, child);
+   elm_widget_sub_object_del(obj, child);
+   _smart_disown(child);
    if (!sd->deleting)
      {
         if (!evas_object_clipees_get(sd->clip))
           evas_object_hide(sd->clip);
         _smart_reconfigure(sd);
+     }
+}
+
+void
+_els_smart_box_unpack_all(Evas_Object *obj)
+{
+   Smart_Data *sd;
+
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+   while (sd->items)
+     {
+	Evas_Object *child = sd->items->data;
+        _els_smart_box_unpack(obj, child);
      }
 }
 
@@ -222,7 +237,7 @@ _smart_disown(Evas_Object *obj)
 static void
 _smart_item_del_hook(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   _els_smart_box_unpack(obj);
+   _els_smart_box_unpack(evas_object_smart_parent_get(obj), obj);
 }
 
 static void
@@ -507,7 +522,7 @@ _smart_del(Evas_Object *obj)
 	Evas_Object *child;
 	
 	child = sd->items->data;
-	_els_smart_box_unpack(child);
+	_els_smart_box_unpack(obj, child);
      }
    evas_object_del(sd->clip);
    free(sd);
