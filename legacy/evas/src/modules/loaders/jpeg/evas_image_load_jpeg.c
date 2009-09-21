@@ -200,6 +200,15 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie, FILE *f)
    return 1;
 }
 
+static double
+get_time(void)
+{
+   struct timeval      timev;
+   
+   gettimeofday(&timev, NULL);
+   return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
+}
+
 static int
 evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f)
 {
@@ -261,7 +270,15 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f)
    h = cinfo.output_height;
 
    if ((ie->load_opts.region.w > 0) && (ie->load_opts.region.h > 0))
-     region = 1;
+     {
+        region = 1;
+#ifdef BUILD_LOADER_JPEG_REGION
+        cinfo.region_x = ie->load_opts.region.x;
+        cinfo.region_y = ie->load_opts.region.y;
+        cinfo.region_w = ie->load_opts.region.w;
+        cinfo.region_h = ie->load_opts.region.h;
+#endif
+     }
    if ((w != ie->w) || (h != ie->h))
      {
         // OK. region decode happening. a sub-set of the image
@@ -429,10 +446,12 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f)
    /* We handle then RGB with 3 components */
    else if (cinfo.output_components == 3)
      {
+/*        
+        double t;
         if (region)
           {
              // debug for now
-             printf("R| %p %5ix%5i %s: %5i %5i %5ix%5i\n",
+             printf("R| %p %5ix%5i %s: %5i %5i %5ix%5i - ",
                     ie,
                     ie->w, ie->h,
                     ie->file,
@@ -441,6 +460,8 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f)
                     ie->load_opts.region.w,
                     ie->load_opts.region.h);
           }
+        t = get_time();
+ */
         for (i = 0; i < cinfo.rec_outbuf_height; i++)
 	  line[i] = data + (i * w * 3);
 	for (l = 0; l < h; l += cinfo.rec_outbuf_height)
@@ -468,9 +489,13 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f)
                   if (l >= (ie->load_opts.region.y + ie->load_opts.region.h))
                     {
                        jpeg_destroy_decompress(&cinfo);
+/*                       
+                       t = get_time() - t;
+                       printf("%3.3f\n", t);
+ */ 
                        return 1;
                     }
-                  // els if scan block intersects region start or later
+                  // else if scan block intersects region start or later
                   else if ((l + scans) > 
                            (ie->load_opts.region.y))
                     {
@@ -495,6 +520,10 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f)
                     }
                }
 	  }
+/*        
+        t = get_time() - t;
+        printf("%3.3f\n", t);
+ */
      }
    /* We finally handle RGB with 1 component */
    else if (cinfo.output_components == 1)
