@@ -151,6 +151,14 @@ struct Efreet_Mime_Icon_Entry
     unsigned int size;
 };
 
+/* define macros and variable for using the eina logging system  */
+
+#ifdef EFREET_MODULE_LOG_DOM 
+#undef EFREET_MODULE_LOG_DOM
+#endif
+#define EFREET_MODULE_LOG_DOM _efreet_mime_log_dom
+static int _efreet_mime_log_dom = -1;
+
 
 static int efreet_mime_glob_remove(const char *glob);
 static void efreet_mime_mime_types_load(const char *file);
@@ -207,6 +215,14 @@ efreet_mime_init(void)
     if (!efreet_init())
         return 0;
 
+    _efreet_mime_log_dom = eina_log_domain_register("Efreet_mime",EFREET_DEFAULT_LOG_COLOR);
+
+    if(_efreet_mime_log_dom < 0) 
+      {
+	ERROR("Efreet: Could not create a log domain for Efreet_mime.");
+	return 0;
+      }
+
     efreet_mime_endianess = efreet_mime_endian_check();
 
     monitors = eina_hash_string_superfast_new(EINA_FREE_CB(ecore_file_monitor_del));
@@ -241,7 +257,7 @@ efreet_mime_shutdown(void)
     IF_FREE_HASH(monitors);
     IF_FREE_HASH(wild);
     IF_FREE_HASH(mime_icons);
-
+    eina_log_domain_unregister(_efreet_mime_log_dom);
     efreet_shutdown();
     ecore_file_shutdown();
     ecore_shutdown();
@@ -1559,11 +1575,11 @@ efreet_mime_icons_debug(void)
             now = 0;
         }
 
-        printf("mime-icon entry: '%s' last used: %s",
+        DBG("mime-icon entry: '%s' last used: %s",
                entry->mime, ctime(&entry->timestamp));
 
         EINA_INLIST_FOREACH(entry->list, n)
-            printf("\tsize: %3u theme: '%s' icon: '%s'\n",
+            DBG("\tsize: %3u theme: '%s' icon: '%s'",
                    n->theme, n->size, n->icon);
     }
 }

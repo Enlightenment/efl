@@ -32,9 +32,15 @@ void *alloca (size_t);
 #include "Efreet.h"
 #include "efreet_private.h"
 
+#ifdef EFREET_MODULE_LOG_DOM 
+#undef EFREET_MODULE_LOG_DOM
+#endif
+#define EFREET_MODULE_LOG_DOM _efreet_ini_log_dom
+static int _efreet_ini_log_dom = -1;
+
 static Eina_Hash *efreet_ini_parse(const char *file);
 static char *efreet_ini_unescape(const char *str);
-
+static int _efreet_ini_log_om = -1;
 static Eina_Bool
 efreet_ini_section_save(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 static Eina_Bool
@@ -55,6 +61,13 @@ efreet_ini_init(void)
 {
     if (init++) return init;
     if (!eina_init()) return --init;
+    _efreet_ini_log_dom = eina_log_domain_register("Efreet_init",EFREET_DEFAULT_LOG_COLOR);
+    if(_efreet_ini_log_dom < 0)
+      {
+	ERROR("Efreet: Could not create a log domain for efreet_init");
+	eina_shutdown();
+	return --init;
+      }
     return init;
 }
 
@@ -67,6 +80,7 @@ int
 efreet_ini_shutdown(void)
 {
     if (--init) return init;
+    eina_log_domain_unregister(_efreet_ini_log_dom);
     eina_shutdown();
     return init;
 }
@@ -184,8 +198,8 @@ efreet_ini_parse(const char *file)
                 section = eina_hash_string_small_new(free);
 
                 eina_hash_del(data, header, NULL);
-//                if (old) printf("[efreet] Warning: duplicate section '%s' "
-  //                              "in file '%s'\n", header, file);
+//                if (old) INF("[efreet] Warning: duplicate section '%s' "
+  //                              "in file '%s'", header, file);
 
                 eina_hash_add(data, header, section);
             }
@@ -200,7 +214,7 @@ efreet_ini_parse(const char *file)
 
         if (section == NULL)
         {
-//            printf("Invalid file (%s) (missing section)\n", file);
+//            INF("Invalid file (%s) (missing section)", file);
             goto next_line;
         }
 
@@ -242,7 +256,7 @@ efreet_ini_parse(const char *file)
             if (key_end == 0)
             {
                 /* invalid file... */
-//                printf("Invalid file (%s) (invalid key=value pair)\n", file);
+//                INF("Invalid file (%s) (invalid key=value pair)", file);
 
                 goto next_line;
             }
@@ -264,7 +278,7 @@ efreet_ini_parse(const char *file)
 //        else
 //        {
 //            /* invalid file... */
-//            printf("Invalid file (%s) (missing = from key=value pair)\n", file);
+//            INF("Invalid file (%s) (missing = from key=value pair)", file);
 //        }
 
 next_line:

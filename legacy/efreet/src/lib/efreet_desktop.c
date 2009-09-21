@@ -47,6 +47,13 @@ static int efreet_desktop_command_file_id = 0;
 static int init = 0;
 static int cache_flush = 0;
 
+#ifdef EFREET_MODULE_LOG_DOM 
+#undef EFREET_MODULE_LOG_DOM
+#endif
+
+#define EFREET_MODULE_LOG_DOM _efreet_desktop_log_dom
+static int _efreet_desktop_log_dom = -1;
+
 EAPI int EFREET_DESKTOP_TYPE_APPLICATION = 0;
 EAPI int EFREET_DESKTOP_TYPE_LINK = 0;
 EAPI int EFREET_DESKTOP_TYPE_DIRECTORY = 0;
@@ -137,6 +144,13 @@ efreet_desktop_init(void)
 {
     if (init++) return init;
     if (!eina_init()) return --init;
+    _efreet_desktop_log_dom = eina_log_domain_register("Efreet_desktop",EFREET_DEFAULT_LOG_COLOR);
+    if(_efreet_desktop_log_dom<0)
+      {
+	ERROR("Efreet: Could not create a log domain for Efreet_desktop");
+	eina_shutdown();
+	return --init;
+      }
     if (!ecore_file_init()) return --init;
 
     efreet_desktop_cache = eina_hash_string_superfast_new(NULL);
@@ -168,7 +182,7 @@ efreet_desktop_shutdown(void)
     if (--init) return init;
     ecore_file_shutdown();
     eina_shutdown();
-
+    eina_log_domain_unregister(_efreet_desktop_log_dom);
     IF_RELEASE(desktop_environment);
     IF_FREE_HASH(efreet_desktop_cache);
     while (efreet_desktop_types)
@@ -333,7 +347,7 @@ efreet_desktop_read(Efreet_Desktop *desktop)
     if (!ok) ok = efreet_ini_section_set(ini, "KDE Desktop Entry");
     if (!ok)
     {
-        printf("efreet_desktop_new error: no Desktop Entry section\n");
+        ERR("efreet_desktop_new error: no Desktop Entry section");
         error = 1;
     }
 
@@ -776,8 +790,8 @@ efreet_desktop_string_list_parse(const char *string)
     if (*s)
     {
 #ifdef STRICT_SPEC
-        printf("[Efreet]: Found a string list without ';' "
-                "at the end: %s\n", string);
+        WRN("[Efreet]: Found a string list without ';' "
+                "at the end: %s", string);
 #endif
         list = eina_list_append(list, (void *)eina_stringshare_add(s));
     }
@@ -959,7 +973,7 @@ efreet_desktop_generic_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini)
     if (val) desktop->name = strdup(val);
     else
     {
-        printf("efreet_desktop_generic_fields_parse error: no Name\n");
+        ERR("efreet_desktop_generic_fields_parse error: no Name");
         return 0;
     }
 
@@ -1396,7 +1410,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
                         break;
                     case 'v':
                     case 'm':
-                        printf("[Efreet]: Deprecated conversion char: '%c' in file '%s'\n",
+                        WRN("[Efreet]: Deprecated conversion char: '%c' in file '%s'",
                                                             *p, command->desktop->orig_path);
                         break;
                     case '%':
@@ -1404,7 +1418,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
                         break;
                     default:
 #ifdef STRICT_SPEC
-                        printf("[Efreet]: Unknown conversion character: '%c'\n", *p);
+                        WRN("[Efreet_desktop]: Unknown conversion character: '%c'", *p);
 #endif
                         break;
                 }
@@ -1421,7 +1435,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
 	*/
        if ((file) && (!file_added))
 	 {
-	    printf("[Efreet]: %s\n"
+	    WRN("Efreet_desktop: %s\n"
 		   "  command: %s\n"
 		   "  has no file path/uri spec info for executing this app WITH a\n"
 		   "  file/uri as a parameter. This is unlikely to be the intent.\n"
@@ -1543,8 +1557,8 @@ efreet_desktop_command_append_single(char *dest, int *size, int *len,
             str = file->file;
             break;
         default:
-            printf("Invalid type passed to efreet_desktop_command_append_single:"
-                                                                " '%c'\n", type);
+            ERR("Invalid type passed to efreet_desktop_command_append_single:"
+                                                                " '%c'", type);
             return dest;
     }
 
@@ -1621,7 +1635,7 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
     const char *uri, *base;
     int nonlocal = 0;
 /*
-    printf("FLAGS: %d, %d, %d, %d\n",
+    DBG("FLAGS: %d, %d, %d, %d\n",
         command->flags & EFREET_DESKTOP_EXEC_FLAG_FULLPATH ? 1 : 0,
         command->flags & EFREET_DESKTOP_EXEC_FLAG_URI ? 1 : 0,
         command->flags & EFREET_DESKTOP_EXEC_FLAG_DIR ? 1 : 0,
@@ -1694,10 +1708,10 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
         free(abs);
     }
 #if 0
-    printf("  fullpath: %s\n", f->fullpath);
-    printf("  uri: %s\n", f->uri);
-    printf("  dir: %s\n", f->dir);
-    printf("  file: %s\n", f->file);
+    INF("  fullpath: %s", f->fullpath);
+    INF("  uri: %s", f->uri);
+    INF("  dir: %s", f->dir);
+    INF("  file: %s", f->file);
 #endif
     return f;
 }

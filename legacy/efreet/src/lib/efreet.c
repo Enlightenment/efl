@@ -3,7 +3,7 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-
+#include <stdio.h>
 #include <string.h>
 
 #include <Ecore_Str.h>
@@ -17,7 +17,7 @@ static int efreet_parsed_locale = 0;
 static char *efreet_lang = NULL;
 static char *efreet_lang_country = NULL;
 static char *efreet_lang_modifier = NULL;
-
+int _efreet_log_domain_global = -1;
 static void efreet_parse_locale(void);
 static int efreet_parse_locale_setting(const char *env);
 
@@ -30,6 +30,12 @@ efreet_init(void)
 {
     if (init++) return init;
     if (!eina_init()) return --init;
+    _efreet_log_domain_global = eina_log_domain_register("Efreet",EFREET_DEFAULT_LOG_COLOR);
+    if(_efreet_log_domain_global < 0) 
+      {
+	printf("Efreet could create a general log domain.\n");
+	return --init;
+      }
     if (!efreet_base_init()) return --init;
     if (!efreet_xml_init()) return --init;
     if (!efreet_icon_init()) return --init;
@@ -55,6 +61,7 @@ efreet_shutdown(void)
     efreet_icon_shutdown();
     efreet_xml_shutdown();
     efreet_base_shutdown();
+    eina_log_domain_unregister(_efreet_log_domain_global);
     eina_shutdown();
 
     IF_FREE(efreet_lang);

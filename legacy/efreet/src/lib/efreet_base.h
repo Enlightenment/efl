@@ -1,7 +1,6 @@
 /* vim: set sw=4 ts=4 sts=4 et: */
 #ifndef EFREET_BASE_H
 #define EFREET_BASE_H
-
 /**
  * @file efreet_base.h
  * @brief Contains the methods used to support the FDO base directory

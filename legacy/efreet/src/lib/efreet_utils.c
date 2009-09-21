@@ -63,6 +63,14 @@ struct Efreet_Util_Desktop
     int priority;
 };
 
+/* define macros and variable for using the eina logging system  */
+
+#ifdef EFREET_MODULE_LOG_DOM 
+#undef EFREET_MODULE_LOG_DOM
+#endif
+#define EFREET_MODULE_LOG_DOM _efreet_utils_log_dom
+static int _efreet_utils_log_dom = -1;
+
 static char *efreet_util_path_in_default(const char *section, const char *path);
 
 static int  efreet_util_cache_fill(void *data);
@@ -116,7 +124,12 @@ efreet_util_init(void)
     Eina_List *dirs;
 
     if (init++) return init;
-
+    _efreet_utils_log_dom = eina_log_domain_register("Efreet_util",EFREET_DEFAULT_LOG_COLOR);
+    if(_efreet_utils_log_dom < 0)
+      {
+	ERROR("Efreet: Could not create a log domain for efreet_util");
+	return 0;
+      }
     if (!EFREET_EVENT_DESKTOP_LIST_CHANGE)
         EFREET_EVENT_DESKTOP_LIST_CHANGE = ecore_event_type_new();
     if (!EFREET_EVENT_DESKTOP_CHANGE)
@@ -157,7 +170,7 @@ efreet_util_shutdown(void)
     Efreet_Cache_Fill_Dir *dir;
 
     if (--init) return init;
-
+    
     if (idler)
     {
         ecore_idler_del(idler);
@@ -185,7 +198,7 @@ efreet_util_shutdown(void)
     }
 
     IF_FREE_HASH(desktops_by_category);
-
+    eina_log_domain_unregister(_efreet_utils_log_dom);
     return init;
 }
 
@@ -539,7 +552,7 @@ efreet_util_desktop_category_list(const char *category)
 static Eina_Bool
 dump(Eina_Hash *hash, const char *key, void *value, __UNUSED__ void *data)
 {
-    printf("%s -> %p\n", (char *)key, value);
+    INF("%s -> %p", (char *)key, value);
 }
 #endif
 
@@ -580,7 +593,7 @@ efreet_util_cache_fill(__UNUSED__ void *data)
 #if 0
             eina_hash_foreach(desktop_by_file_id, dump, NULL);
             eina_hash_foreach(file_id_by_desktop_path, dump, NULL);
-            printf("%d\n", eina_hash_population(desktop_by_file_id));
+            DBG("%d", eina_hash_population(desktop_by_file_id));
 #endif
             efreet_cache_clear();
             ecore_event_add(EFREET_EVENT_DESKTOP_LIST_CHANGE, NULL, NULL, NULL);

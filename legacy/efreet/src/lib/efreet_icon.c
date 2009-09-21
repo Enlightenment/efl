@@ -97,6 +97,13 @@ static void efreet_icon_cache_add(Efreet_Icon_Theme *theme, const char *icon, un
 
 static Efreet_Icon_Theme *fake_null = NULL;
 
+
+#ifdef EFREET_MODULE_LOG_DOM 
+#undef EFREET_MODULE_LOG_DOM
+#endif
+#define EFREET_MODULE_LOG_DOM _efreet_icon_log_dom
+static int _efreet_icon_log_dom = -1; 
+
 static void
 _efreet_icon_cache_list_destroy(Eina_List *list)
 {
@@ -326,7 +333,7 @@ efreet_icon_remove_extension(const char *icon)
             if (!strcmp(ext, ext2))
             {
 #ifdef STRICT_SPEC
-                printf("[Efreet]: Requesting an icon with an extension: %s\n",
+                WRN("[Efreet]: Requesting an icon with an extension: %s",
                                                                         icon);
 #endif
                 *ext = '\0';
@@ -908,7 +915,7 @@ efreet_icon_fallback_dir_scan(const char *dir, const char *icon_name)
             icon = strdup(path);
 #ifdef STRICT_SPEC
             if (icon)
-                printf("[Efreet]: Found an icon that already has an extension: %s\n", path);
+                WRN("[Efreet]: Found an icon that already has an extension: %s", path);
 #endif
         }
     }

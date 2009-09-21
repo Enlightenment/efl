@@ -72,6 +72,57 @@
 #endif
 
 /**
+ * @def _efree_log_domain_global
+ * global log domain for efreet (see eina_log module)
+ */
+
+extern int _efreet_log_dom_global;
+#ifdef EFREET_DEFAULT_LOG_COLOR
+#undef EFREET_DEFAULT_LOG_COLOR
+#endif
+#define EFREET_DEFAULT_LOG_COLOR "\033[36m"
+
+#define EFREET_MODULE_LOG_DOM _efreet_log_dom_global; /*default log domain for each module. It can redefined inside each module */
+#ifdef ERROR
+#undef ERROR
+#endif
+#define ERROR(...) EINA_LOG_DOM_ERR(EFREET_MODULE_LOG_DOM, __VA_ARGS__)
+#ifdef DEBUG
+#undef DEBUG
+#endif
+#define DEBUG(...) EINA_LOG_DOM_DBG(EFREET_MODULE_LOG_DOM, __VA_ARGS__)
+#ifdef INFO
+#undef INFO
+#endif
+#define INFO(...) EINA_LOG_DOM_INFO(EFREET_MODULE_LOG_DOM, __VA_ARGS__)
+#ifdef WARN
+#undef WARN
+#endif
+#define WARN(...) EINA_LOG_DOM_WARN(EFREET_MODULE_LOG_DOM, __VA_ARGS__)
+
+/**
+ * macros that are used all around the code for message processing
+ * four macros are defined ERR, WRN, DGB, INF. 
+ * EFREET_MODULE_LOG_DOM should be defined individually for each module
+ */
+#define EFREET_MODULE_LOG_DOM _efreet_log_dom_global; /*default log domain for each module. It can redefined inside each module */
+#ifdef ERR
+#undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(EFREET_MODULE_LOG_DOM, __VA_ARGS__)
+#ifdef DBG
+#undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(EFREET_MODULE_LOG_DOM, __VA_ARGS__)
+#ifdef INF
+#undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(EFREET_MODULE_LOG_DOM, __VA_ARGS__)
+#ifdef WRN
+#undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(EFREET_MODULE_LOG_DOM, __VA_ARGS__)
+/**
  * @internal
  * The different types of commands in an Exec entry
  */

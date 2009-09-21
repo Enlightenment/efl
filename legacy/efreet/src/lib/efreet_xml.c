@@ -38,6 +38,15 @@ static void efreet_xml_comment_skip(char **data, int *size);
 static int error = 0;
 static int init = 0;
 
+/* define macros and variable for using the eina logging system  */
+
+#ifdef EFREET_MODULE_LOG_DOM 
+#undef EFREET_MODULE_LOG_DOM
+#endif
+#define EFREET_MODULE_LOG_DOM _efreet_xml_log_dom
+
+static int _efreet_xml_log_dom = -1;
+
 /**
  * @internal
  * @return Returns > 0 on success or 0 on failure
@@ -48,6 +57,12 @@ efreet_xml_init(void)
 {
     if (init++) return init;
     if (!eina_init()) return --init;
+    _efreet_xml_log_dom = eina_log_domain_register("Efreet_xml",EFREET_DEFAULT_LOG_COLOR);
+    if(_efreet_xml_log_dom < 0)
+      {
+	ERROR("Efreet: Could not create a log domain for Efreet_xml.");
+	return 0;
+      }
     return init;
 }
 
@@ -60,6 +75,7 @@ int
 efreet_xml_shutdown(void)
 {
     if (--init) return init;
+    eina_log_domain_unregister(_efreet_xml_log_dom);
     eina_shutdown();
     return init;
 }
@@ -98,7 +114,7 @@ efreet_xml_new(const char *file)
     return xml;
 
 efreet_error:
-    fprintf(stderr, "[efreet]: could not parse xml file\n");
+    ERR("could not parse xml file");
     if (data != (void *)-1) munmap(data, size);
     if (fd != -1) close(fd);
     if (xml) efreet_xml_del(xml);
@@ -184,18 +200,17 @@ efreet_xml_dump(Efreet_Xml *xml, int level)
         Efreet_Xml *child;
         Eina_List *l;
 
-        printf(">\n");
+        printf(">");
 
         EINA_LIST_FOREACH(xml->children, l, child)
             efreet_xml_dump(child, level + 1);
 
         for (i = 0; i < level; i++)
             printf("\t");
-        printf("</%s>\n", xml->tag);
+        printf("</%s>", xml->tag);
     }
     else if (xml->text)
         printf(">%s</%s>\n", xml->text, xml->tag);
-
     else
         printf("/>\n");
 }
@@ -276,7 +291,7 @@ efreet_xml_tag_parse(char **data, int *size, const char **tag)
 
     if (!start)
     {
-        fprintf(stderr, "[efreet]: missing start tag\n");
+        ERR("missing start tag");
         error = 1;
         return 0;
     }
@@ -294,7 +309,7 @@ efreet_xml_tag_parse(char **data, int *size, const char **tag)
 
     if (!end)
     {
-        fprintf(stderr, "[efreet]: no end of tag\n");
+        ERR("no end of tag");
         error = 1;
         return 0;
     }
@@ -302,7 +317,7 @@ efreet_xml_tag_parse(char **data, int *size, const char **tag)
     buf_size = end - start + 1;
     if (buf_size <= 1)
     {
-        fprintf(stderr, "[efreet]: no tag name\n");
+        ERR("no tag name");
         error = 1;
         return 0;
     }
@@ -351,7 +366,7 @@ efreet_xml_attributes_parse(char **data, int *size,
             buf_size = end - start + 1;
             if (buf_size <= 1)
             {
-                fprintf(stderr, "[efreet]: zero length key\n");
+	        ERR("zero length key");
                 goto efreet_error;
             }
 
@@ -375,7 +390,7 @@ efreet_xml_attributes_parse(char **data, int *size,
 
             if (!start)
             {
-                fprintf(stderr, "[efreet]: missing value for attribute!\n");
+	        ERR("missing value for attribute!");
                 goto efreet_error;
             }
 
@@ -394,7 +409,7 @@ efreet_xml_attributes_parse(char **data, int *size,
 
             if (!start)
             {
-                fprintf(stderr, "[efreet]: erroneous value for attribute!\n");
+                ERR("erroneous value for attribute!");
                 goto efreet_error;
             }
 
@@ -418,14 +433,14 @@ efreet_xml_attributes_parse(char **data, int *size,
 
             if (!end)
             {
-                fprintf(stderr, "[efreet]: erroneous value for attribute!\n");
+                ERR("erroneous value for attribute!");
                 goto efreet_error;
             }
 
             buf_size = end - start + 1;
             if (buf_size <= 1)
             {
-                fprintf(stderr, "[efreet]: zero length value\n");
+	        ERR("zero length value");
                 goto efreet_error;
             }
 
@@ -531,7 +546,7 @@ efreet_xml_tag_empty(char **data, int *size)
         (*size)--;
         (*data)++;
     }
-    fprintf(stderr, "[efreet]: missing end of tag\n");
+    ERR("missing end of tag");
     error = 1;
 
     return 1;
@@ -550,7 +565,7 @@ efreet_xml_tag_close(char **data, int *size, const char *tag)
                 (*data) += 2;
                 if ((int)strlen(tag) > *size)
                 {
-                    fprintf(stderr, "[efreet]: wrong end tag\n");
+		    ERR("wrong end tag");
                     error = 1;
                     return 1;
                 }
@@ -566,7 +581,7 @@ efreet_xml_tag_close(char **data, int *size, const char *tag)
 
                     if (*tag)
                     {
-                        fprintf(stderr, "[efreet]: wrong end tag\n");
+                        ERR("wrong end tag");
                         error = 1;
                         return 1;
                     }
