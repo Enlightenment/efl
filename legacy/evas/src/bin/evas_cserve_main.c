@@ -25,6 +25,11 @@
 #undef DBG
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_evas_cserve_bin_log_dom, __VA_ARGS__)
+#ifdef WRN
+#undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_evas_cserve_bin_log_dom, __VA_ARGS__)
+  
 #ifdef CSERVE_BIN_DEFAULT_COLOR
 #undef CSERVE_BIN_DEFAULT_COLOR
 #endif
@@ -988,8 +993,8 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              lopt.region.w = rep->lopt.region.w;
              lopt.region.h = rep->lopt.region.h;
              DBG("... img_load '%s'", file);
-             if (key) DBG("'%s'", key);
-             else DBG("   '%s'", NULL);
+             if (key) DBG("'%s'", (char *)key);
+             else DBG("   '%s'", "");
              DBG("   lopt { %i %1.1f %i %i { %i %i %i %i}}",
                lopt.scale_down_by, lopt.dpi, lopt.w, lopt.h, 
                lopt.region.x, lopt.region.y, lopt.region.w, lopt.region.h);
@@ -1373,7 +1378,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                   msg->cached.mem_total = 
                     (msg->cached.mem_total + 1023) / 1024;
                   DBG("... reply");
-                  evas_cserve_client_send(c, OP_GETINFO, len, msg);
+                  evas_cserve_client_send(c, OP_GETINFO, len, (unsigned char *)msg);
                   free(msg);
                }
              else
@@ -1590,7 +1595,7 @@ main(int argc, char **argv)
           }
         if ((t_next <= 0) && (cache_item_timeout_check > 0))
           t_next = 1;
-        DBG("sleep for %isec...", t_next);
+        DBG("sleep for %isec...", (int)t_next);
         
         LKL(strshr_freeme_lock);
         if (strshr_freeme_count > 0)
