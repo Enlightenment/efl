@@ -1090,8 +1090,9 @@ evas_object_table_padding_get(const Evas_Object *o, Evas_Coord *horizontal, Evas
 Eina_Bool
 evas_object_table_pack(Evas_Object *o, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
 {
-   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(o, priv, 0);
    Evas_Object_Table_Option *opt;
+
+   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(o, priv, 0);
 
    if (rowspan < 1)
      {
@@ -1212,8 +1213,9 @@ _evas_object_table_remove_opt(Evas_Object_Table_Data *priv, Evas_Object_Table_Op
 Eina_Bool
 evas_object_table_unpack(Evas_Object *o, Evas_Object *child)
 {
-   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(o, priv, 0);
    Evas_Object_Table_Option *opt;
+
+   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(o, priv, 0);
 
    if (o != evas_object_smart_parent_get(child))
      {

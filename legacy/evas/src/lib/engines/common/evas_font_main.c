@@ -194,12 +194,13 @@ evas_common_font_utf8_get_prev(const unsigned char *buf, int *iindex)
     * Returns 0 to indicate there is no prev char
     */
 
+   int r;
    int index = *iindex;
    if (index <= 0)
      return 0;
 
    /* First obtain the codepoint at iindex */
-   int r = evas_common_font_utf8_get_next(buf, &index);
+   r = evas_common_font_utf8_get_next(buf, &index);
 
    /* Next advance iindex to previous codepoint */
    index = *iindex;

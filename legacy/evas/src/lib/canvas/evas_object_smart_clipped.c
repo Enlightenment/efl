@@ -83,9 +83,10 @@ evas_object_smart_clipped_smart_add(Evas_Object *obj)
 static void
 evas_object_smart_clipped_smart_del(Evas_Object *obj)
 {
-   CSO_DATA_GET_OR_RETURN(obj, cso);
    Eina_List *lst, *itr;
    Evas_Object *data;
+
+   CSO_DATA_GET_OR_RETURN(obj, cso);
 
    if (cso->clipper)
      {
