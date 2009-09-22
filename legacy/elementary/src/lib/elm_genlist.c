@@ -1064,7 +1064,7 @@ _update_job(void *data)
           {
              num += itb->count;
              if (position)
-               _item_block_position(it->block, num);
+               _item_block_position(itb, num);
              continue;
           }
         num0 = num;
