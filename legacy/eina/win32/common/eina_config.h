@@ -21,5 +21,11 @@
 
 #undef EINA_MAGIC_DEBUG
 #undef EINA_DEFAULT_MEMPOOL
+#undef EINA_SAFETY_CHECKS
+
+#ifndef NDEBUG
+# define EINA_MAGIC_DEBUG
+# define EINA_SAFETY_CHECKS
+#endif
 
 #endif /* EINA_CONFIG_H_ */
