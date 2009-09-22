@@ -31,7 +31,7 @@ pkg_LTLIBRARIES	= module.la
 module_la_SOURCES = $(SOFTWARE_16_DDRAW_SOURCES)
 module_la_CXXFLAGS = -fno-rtti -fno-exceptions
 module_la_LIBADD = $(top_builddir)/src/lib/libevas.la @EINA_LIBS@ $(SOFTWARE_16_DDRAW_LIBADD)
-module_la_LDFLAGS = -no-undefined -module -avoid-version
+module_la_LDFLAGS = @lt_enable_auto_import@ -no-undefined -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 
 else

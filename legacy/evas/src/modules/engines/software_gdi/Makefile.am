@@ -29,7 +29,7 @@ if !EVAS_STATIC_BUILD_SOFTWARE_GDI
 pkg_LTLIBRARIES = module.la
 module_la_SOURCES = $(SOFTWARE_GDI_SOURCES)
 module_la_LIBADD = $(top_builddir)/src/lib/libevas.la @EINA_LIBS@ $(SOFTWARE_GDI_LIBADD)
-module_la_LDFLAGS = -no-undefined -module -avoid-version
+module_la_LDFLAGS = @lt_enable_auto_import@ -no-undefined -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 
 else
