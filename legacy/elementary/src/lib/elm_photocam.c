@@ -226,10 +226,10 @@ grid_load(Evas_Object *obj)
                   evas_object_image_file_set(wd->grid.grid[tn].img[loadnum], NULL, NULL);
                   evas_object_image_load_scale_down_set(wd->grid.grid[tn].img[loadnum], wd->grid.zoom);
                   evas_object_image_load_region_set(wd->grid.grid[tn].img[loadnum],
-                                                    wd->grid.grid[tn].src.x,
-                                                    wd->grid.grid[tn].src.y,
-                                                    wd->grid.grid[tn].src.w,
-                                                    wd->grid.grid[tn].src.h);
+                                                    wd->grid.grid[tn].src.x / wd->grid.zoom,
+                                                    wd->grid.grid[tn].src.y / wd->grid.zoom,
+                                                    wd->grid.grid[tn].src.w / wd->grid.zoom,
+                                                    wd->grid.grid[tn].src.h / wd->grid.zoom);
 //                  evas_object_image_pixels_dirty_set(wd->grid.grid[tn].img[loadnum], 1);
                   evas_object_image_file_set(wd->grid.grid[tn].img[loadnum], wd->file, NULL); 
                   evas_object_image_preload(wd->grid.grid[tn].img[loadnum], 0);
@@ -362,8 +362,8 @@ _calc_job(void *data)
    Widget_Data *wd = data;
    Evas_Coord minw, minh;
 
-   minw = wd->grid.w;
-   minh = wd->grid.h;
+   minw = wd->grid.w / wd->grid.zoom;
+   minh = wd->grid.h / wd->grid.zoom;
    
    if ((minw != wd->minw) || (minh != wd->minh))
      {
