@@ -28,7 +28,7 @@ pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES  = $(GL_GLEW_SOURCES)
 module_la_LIBADD = $(GL_GLEW_LIBADD) $(top_builddir)/src/lib/libevas.la
-module_la_LDFLAGS = -no-undefined -module -avoid-version
+module_la_LDFLAGS = @lt_enable_auto_import@ -no-undefined -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 
 else
