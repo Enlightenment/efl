@@ -488,6 +488,7 @@ struct _Image_Entry_Flags
    Eina_Bool alpha_sparse : 1;
 #ifdef BUILD_ASYNC_PRELOAD
    Eina_Bool preload      : 1;
+   Eina_Bool pending      : 1;
 #endif
 };
 

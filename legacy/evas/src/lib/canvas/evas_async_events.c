@@ -143,6 +143,7 @@ evas_async_events_process(void)
 	   _fd_read = -1;
        }
 
+   evas_cache_pending_process();
    return count;
 #else
    return 0;
