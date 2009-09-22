@@ -1416,7 +1416,7 @@ ecore_x_window_children_get(Ecore_X_Window window __UNUSED__,
    reply = _ecore_xcb_reply_get();
    if (!reply) return NULL;
 
-   windows = malloc(reply->children_len);
+   windows = malloc(sizeof(Ecore_X_Window) * reply->children_len);
    if (!windows)
      return NULL;
 
