@@ -20,11 +20,10 @@ typedef struct _Grid_Item Grid_Item;
 
 struct _Grid_Item
 {
-   Evas_Object *img[2];
+   Evas_Object *img;
    struct {
       int x, y, w, h;
    } src, out;
-   int loadnum;
    Eina_Bool want : 1;
    Eina_Bool have : 1;
    Eina_Bool want_new : 1;
@@ -50,10 +49,13 @@ struct _Widget_Data
    Evas_Coord pan_x, pan_y, minw, minh;
 
    int zoom;
+   Elm_Photocam_Zoom_Mode mode;
    const char *file;
-   Ecore_Job *calc_job;
    
+   Ecore_Job *calc_job;
+   Ecore_Timer *scr_timer;
    Grid grid;
+   Eina_Bool smooth : 1;
 
 /*   
    Evas_Object *img[3];
@@ -107,15 +109,10 @@ grid_place(Evas_Object *obj, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_C
              yy = wd->grid.grid[tn].out.y;
              ww = wd->grid.grid[tn].out.w;
              hh = wd->grid.grid[tn].out.h;
-             evas_object_move(wd->grid.grid[tn].img[0],
+             evas_object_move(wd->grid.grid[tn].img,
                               ox + xx - px,
                               oy + yy - py);
-             evas_object_resize(wd->grid.grid[tn].img[0],
-                                ww, hh);
-             evas_object_move(wd->grid.grid[tn].img[1],
-                              ox + xx - px,
-                              oy + yy - py);
-             evas_object_resize(wd->grid.grid[tn].img[1],
+             evas_object_resize(wd->grid.grid[tn].img,
                                 ww, hh);
           }
      }
@@ -133,7 +130,7 @@ _tile_preloaded(void *data, Evas *e, Evas_Object *o, void *event_info)
 {
    Grid_Item *git = data;
 
-   evas_object_show(git->img[git->loadnum]);
+   evas_object_show(git->img);
    git->have = 1;
 }
 
@@ -158,7 +155,7 @@ grid_create(Evas_Object *obj)
      {
         for (x = 0; x < wd->grid.gw; x++)
           {
-             int tn, i, xx, yy, ww, hh;
+             int tn, xx, yy, ww, hh;
              
              tn = (y * wd->grid.gw) + x;
              wd->grid.grid[tn].src.x = x * wd->grid.tsize;
@@ -177,20 +174,17 @@ grid_create(Evas_Object *obj)
              wd->grid.grid[tn].out.w = wd->grid.grid[tn].src.w / wd->zoom;
              wd->grid.grid[tn].out.h = wd->grid.grid[tn].src.h / wd->zoom;
              
-             for (i = 0; i < 2; i++)
-               {
-                  wd->grid.grid[tn].img[i] = 
-                    evas_object_image_add(evas_object_evas_get(obj));
-                  evas_object_image_scale_hint_set(wd->grid.grid[tn].img[i], EVAS_IMAGE_SCALE_HINT_STATIC);
-                  evas_object_smart_member_add(wd->grid.grid[tn].img[i], 
-                                               wd->pan_smart);
-                  elm_widget_sub_object_add(obj, wd->grid.grid[tn].img[i]);
-                  evas_object_image_filled_set(wd->grid.grid[tn].img[i], 1);
-                  evas_object_event_callback_add(wd->grid.grid[tn].img[i], 
-                                                 EVAS_CALLBACK_IMAGE_PRELOADED,
-                                                 _tile_preloaded, 
-                                                 &(wd->grid.grid[tn]));
-               }
+             wd->grid.grid[tn].img = 
+               evas_object_image_add(evas_object_evas_get(obj));
+             evas_object_image_scale_hint_set(wd->grid.grid[tn].img, EVAS_IMAGE_SCALE_HINT_STATIC);
+             evas_object_smart_member_add(wd->grid.grid[tn].img, 
+                                          wd->pan_smart);
+             elm_widget_sub_object_add(obj, wd->grid.grid[tn].img);
+             evas_object_image_filled_set(wd->grid.grid[tn].img, 1);
+             evas_object_event_callback_add(wd->grid.grid[tn].img, 
+                                            EVAS_CALLBACK_IMAGE_PRELOADED,
+                                            _tile_preloaded, 
+                                            &(wd->grid.grid[tn]));
           }
      }
 }
@@ -207,11 +201,10 @@ grid_load(Evas_Object *obj)
      {
         for (x = 0; x < wd->grid.gw; x++)
           {
-             int tn, loadnum;
+             int tn;
              Eina_Bool visible = 0;
              
              tn = (y * wd->grid.gw) + x;
-             loadnum = wd->grid.grid[tn].loadnum;
              if (ELM_RECTS_INTERSECT(wd->pan_x, wd->pan_y, 
                                      ow, oh,
                                      wd->grid.grid[tn].out.x,
@@ -222,27 +215,72 @@ grid_load(Evas_Object *obj)
              if ((visible) && (!wd->grid.grid[tn].want))
                {
                   wd->grid.grid[tn].want = 1;
-                  evas_object_hide(wd->grid.grid[tn].img[loadnum]);
-                  evas_object_image_file_set(wd->grid.grid[tn].img[loadnum], NULL, NULL);
-                  evas_object_image_load_scale_down_set(wd->grid.grid[tn].img[loadnum], wd->grid.zoom);
-                  evas_object_image_load_region_set(wd->grid.grid[tn].img[loadnum],
+                  evas_object_hide(wd->grid.grid[tn].img);
+                  evas_object_image_file_set(wd->grid.grid[tn].img, NULL, NULL);
+                  evas_object_image_load_scale_down_set(wd->grid.grid[tn].img, wd->grid.zoom);
+                  evas_object_image_load_region_set(wd->grid.grid[tn].img,
                                                     wd->grid.grid[tn].src.x / wd->grid.zoom,
                                                     wd->grid.grid[tn].src.y / wd->grid.zoom,
                                                     wd->grid.grid[tn].src.w / wd->grid.zoom,
                                                     wd->grid.grid[tn].src.h / wd->grid.zoom);
-//                  evas_object_image_pixels_dirty_set(wd->grid.grid[tn].img[loadnum], 1);
-                  evas_object_image_file_set(wd->grid.grid[tn].img[loadnum], wd->file, NULL); 
-                  evas_object_image_preload(wd->grid.grid[tn].img[loadnum], 0);
+//                  evas_object_image_pixels_dirty_set(wd->grid.grid[tn].img, 1);
+                  evas_object_image_file_set(wd->grid.grid[tn].img, wd->file, NULL); 
+                  evas_object_image_preload(wd->grid.grid[tn].img, 0);
                }
              else if ((wd->grid.grid[tn].want) && (!visible))
                {
                   wd->grid.grid[tn].want = 0;
                   wd->grid.grid[tn].have = 0;
-                  evas_object_hide(wd->grid.grid[tn].img[loadnum]);
-                  evas_object_image_preload(wd->grid.grid[tn].img[loadnum], 1);
-                  evas_object_image_file_set(wd->grid.grid[tn].img[loadnum], NULL, NULL);
+                  evas_object_hide(wd->grid.grid[tn].img);
+                  evas_object_image_preload(wd->grid.grid[tn].img, 1);
+                  evas_object_image_file_set(wd->grid.grid[tn].img, NULL, NULL);
                }
           }
+     }
+}
+
+static void
+_smooth_update(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   int x, y;
+
+   for (y = 0; y < wd->grid.gh; y++)
+     {
+        for (x = 0; x < wd->grid.gw; x++)
+          {
+             int tn;
+             
+             tn = (y * wd->grid.gw) + x;
+             evas_object_image_smooth_scale_set(wd->grid.grid[tn].img, wd->smooth);
+          }
+     }
+   evas_object_image_smooth_scale_set(wd->grid.img, wd->smooth);
+}
+
+static int
+_scr_timeout(void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd->smooth)
+     {
+        wd->smooth = 1;
+        _smooth_update(data);
+     }
+   wd->scr_timer = NULL;
+   return 0;
+}
+
+static void
+_scr(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (wd->scr_timer) ecore_timer_del(wd->scr_timer);
+   wd->scr_timer = ecore_timer_add(0.25, _scr_timeout, data);
+   if (wd->smooth)
+     {
+        wd->smooth = 0;
+        _smooth_update(data);
      }
 }
 
@@ -320,6 +358,7 @@ _del_hook(Evas_Object *obj)
    wd->pan_smart = NULL;
    if (wd->file) eina_stringshare_del(wd->file);
    if (wd->calc_job) ecore_job_del(wd->calc_job);
+   if (wd->scr_timer) ecore_timer_del(wd->scr_timer);
    free(wd);
 }
 
@@ -532,6 +571,8 @@ elm_photocam_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
 
    wd->scr = elm_smart_scroller_add(e);
+   evas_object_smart_callback_add(wd->scr, "scroll", _scr, obj);
+   evas_object_smart_callback_add(wd->scr, "drag", _scr, obj);
    elm_widget_resize_object_set(obj, wd->scr);
 
    elm_smart_scroller_bounce_allow_set(wd->scr, 1, 1);
@@ -569,6 +610,8 @@ elm_photocam_add(Evas_Object *parent)
 				     _pan_max_get, _pan_child_size_get);
 
    wd->zoom = 1;
+   wd->mode = ELM_PHOTOCAM_ZOOM_MODE_MANUAL;
+   wd->smooth = 1;
    
    wd->grid.tsize = 512;
    
@@ -608,6 +651,7 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
    
    wd->file = eina_stringshare_add(file);
    evas_object_hide(wd->grid.img);
+   evas_object_image_smooth_scale_set(wd->grid.img, wd->smooth);
    evas_object_image_file_set(wd->grid.img, NULL, NULL);
    evas_object_image_load_scale_down_set(wd->grid.img, 0);
    evas_object_image_file_set(wd->grid.img, wd->file, NULL);
@@ -621,4 +665,68 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
    grid_create(obj);
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
+}
+
+/**
+ * XXX
+ *
+ * xxx
+ *
+ * @param obj The photocam object
+ *
+ * @ingroup Photocam
+ */
+EAPI void
+elm_photocam_zoom_set(Evas_Object *obj, int zoom)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (zoom == wd->zoom) return;
+}
+
+/**
+ * XXX
+ *
+ * xxx
+ *
+ * @param obj The photocam object
+ *
+ * @ingroup Photocam
+ */
+EAPI int
+elm_photocam_zoom_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->zoom;
+}
+
+/**
+ * XXX
+ *
+ * xxx
+ *
+ * @param obj The photocam object
+ *
+ * @ingroup Photocam
+ */
+EAPI void
+elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->mode == mode) return;
+}
+
+/**
+ * XXX
+ *
+ * xxx
+ *
+ * @param obj The photocam object
+ *
+ * @ingroup Photocam
+ */
+EAPI Elm_Photocam_Zoom_Mode
+elm_photocam_zoom_mode_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->mode;
 }

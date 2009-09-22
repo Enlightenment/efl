@@ -124,7 +124,7 @@ static void _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 static void _smart_show(Evas_Object *obj);
 static void _smart_hide(Evas_Object *obj);
 static void _smart_color_set(Evas_Object *obj, int r, int g, int b, int a);
-static void _smart_clip_set(Evas_Object *obj, Evas_Object * clip);
+static void _smart_clip_set(Evas_Object *obj, Evas_Object *clip);
 static void _smart_clip_unset(Evas_Object *obj);
 static void _smart_init(void);
 
@@ -282,7 +282,7 @@ _smart_scrollto_x_animator(void *data)
    t = ecore_loop_time_get();
    tt = (t - sd->scrollto.x.t_start) / (sd->scrollto.x.t_end - sd->scrollto.x.t_start);
    tt = 1.0 - tt;
-   tt = 1.0 - (tt * tt * tt);
+   tt = 1.0 - (tt * tt);
    sd->pan_func.get(sd->pan_obj, &px, &py);
    px = (sd->scrollto.x.start * (1.0 - tt)) +
      (sd->scrollto.x.end * tt);
@@ -347,7 +347,7 @@ _smart_scrollto_y_animator(void *data)
    t = ecore_loop_time_get();
    tt = (t - sd->scrollto.y.t_start) / (sd->scrollto.y.t_end - sd->scrollto.y.t_start);
    tt = 1.0 - tt;
-   tt = 1.0 - (tt * tt * tt);
+   tt = 1.0 - (tt * tt);
    sd->pan_func.get(sd->pan_obj, &px, &py);
    py = (sd->scrollto.y.start * (1.0 - tt)) +
      (sd->scrollto.y.end * tt);
@@ -496,7 +496,7 @@ _smart_bounce_x_animator(void *data)
      {
 	dt = dt / _elm_config->thumbscroll_bounce_friction;
 	if (dt > 1.0) dt = 1.0;
-	p = 1.0 - ((1.0 - dt) * (1.0 - dt) * (1.0 - dt));
+	p = 1.0 - ((1.0 - dt) * (1.0 - dt));
         elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
         dx = sd->down.b2x - sd->down.bx;
 	dx = (dx * p);
@@ -528,7 +528,7 @@ _smart_bounce_y_animator(void *data)
      {
 	dt = dt / _elm_config->thumbscroll_bounce_friction;
 	if (dt > 1.0) dt = 1.0;
-	p = 1.0 - ((1.0 - dt) * (1.0 - dt) * (1.0 - dt));
+	p = 1.0 - ((1.0 - dt) * (1.0 - dt));
         elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
         dy = sd->down.b2y - sd->down.by;
 	dy = (dy * p);
@@ -560,7 +560,7 @@ _smart_momentum_animator(void *data)
      {
 	dt = dt / _elm_config->thumbscroll_friction;
 	if (dt > 1.0) dt = 1.0;
-	p = 1.0 - ((1.0 - dt) * (1.0 - dt) * (1.0 - dt));
+	p = 1.0 - ((1.0 - dt) * (1.0 - dt));
 	dx = (sd->down.dx * _elm_config->thumbscroll_friction * p);
 	dy = (sd->down.dy * _elm_config->thumbscroll_friction * p);
         sd->down.ax = dx;
@@ -2107,7 +2107,7 @@ _smart_color_set(Evas_Object *obj, int r, int g, int b, int a)
 }
 
 static void
-_smart_clip_set(Evas_Object *obj, Evas_Object * clip)
+_smart_clip_set(Evas_Object *obj, Evas_Object *clip)
 {
    INTERNAL_ENTRY;
    evas_object_clip_set(sd->edje_obj, clip);
