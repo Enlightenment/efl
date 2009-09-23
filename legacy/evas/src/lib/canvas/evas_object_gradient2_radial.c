@@ -1,5 +1,6 @@
 #include "evas_common.h"
 #include "evas_private.h"
+#include "evas_object_gradient2.h"
 
 /* private magic number for radial gradient objects */
 static const char rg_type[] = "radial_gradient";

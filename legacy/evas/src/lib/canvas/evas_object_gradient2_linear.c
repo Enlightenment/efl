@@ -1,5 +1,6 @@
 #include "evas_common.h"
 #include "evas_private.h"
+#include "evas_object_gradient2.h"
 
 /* private magic number for linear gradient objects */
 static const char lg_type[] = "linear_gradient";
