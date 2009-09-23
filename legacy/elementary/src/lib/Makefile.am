@@ -61,6 +61,7 @@ elm_spinner.c \
 elm_index.c \
 elm_photocam.c \
 elm_notify.c \
+elm_slideshow.c \
 \
 elc_notepad.c \
 elc_anchorview.c \

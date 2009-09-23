@@ -20,6 +20,7 @@
 #include "els_icon.h"
 
 // FIXME: totally disorganised. clean this up!
+// Why EAPI in a private header ?
 
 typedef enum _Elm_Engine
 {
@@ -109,6 +110,10 @@ EAPI void         elm_widget_style_set(Evas_Object *obj, const char *style);
 EAPI const char  *elm_widget_style_get(const Evas_Object *obj);
 EAPI void         elm_widget_type_set(Evas_Object *obj, const char *type);
 EAPI const char  *elm_widget_type_get(const Evas_Object *obj);
+
+EAPI Eina_List   *_stringlist_get(const char *str);
+EAPI void         _stringlist_free(Eina_List *list);
+
 
 extern char *_elm_appname;
 extern Elm_Config *_elm_config;

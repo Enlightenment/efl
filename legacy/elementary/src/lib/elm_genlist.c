@@ -300,7 +300,7 @@ struct _Elm_Genlist_Item
    Eina_List *icon_objs;
    Ecore_Timer *long_timer;
    Evas_Coord dx, dy;
-   
+
    Elm_Genlist_Item *rel;
    int relcount;
    Eina_Bool before : 1;
@@ -395,39 +395,6 @@ _sizing_eval(Evas_Object *obj)
    if (wd->mode != ELM_LIST_LIMIT) minw = -1;
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
-}
-
-static Eina_List *
-_stringlist_get(const char *str)
-{
-   Eina_List *list = NULL;
-   const char *s, *b;
-   if (!str) return NULL;
-   for (b = s = str; 1; s++)
-     {
-	if ((*s == ' ') || (*s == 0))
-	  {
-	     char *t = malloc(s - b + 1);
-	     if (t)
-	       {
-		  strncpy(t, b, s - b);
-		  t[s - b] = 0;
-		  list = eina_list_append(list, eina_stringshare_add(t));
-		  free(t);
-	       }
-	     b = s + 1;
-	  }
-	if (*s == 0) break;
-     }
-   return list;
-}
-
-static void
-_stringlist_free(Eina_List *list)
-{
-   const char *s;
-   EINA_LIST_FREE(list, s)
-     eina_stringshare_del(s);
 }
 
 static void
@@ -567,7 +534,7 @@ _long_press(void *data)
    it->wd->longpressed = EINA_TRUE;
    evas_object_smart_callback_call(it->wd->obj, "longpressed", it);
    return 0;
-}            
+}
 
 static void
 _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
@@ -722,16 +689,16 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
    for (it2 = it, depth = 0; it2->parent; it2 = it2->parent) depth += 1;
    treesize = edje_object_data_get(it->base, "treesize");
    if (treesize) tsize = atoi(treesize);
-   evas_object_size_hint_min_set(it->spacer, 
+   evas_object_size_hint_min_set(it->spacer,
                                  (depth * tsize) * _elm_config->scale, 1);
    edje_object_part_swallow(it->base, "elm.swallow.pad", it->spacer);
    if (!calc)
      {
-	edje_object_signal_callback_add(it->base, "elm,action,expand,toggle", 
+	edje_object_signal_callback_add(it->base, "elm,action,expand,toggle",
                                         "elm", _signal_expand_toggle, it);
-	edje_object_signal_callback_add(it->base, "elm,action,expand", "elm", 
+	edje_object_signal_callback_add(it->base, "elm,action,expand", "elm",
                                         _signal_expand, it);
-	edje_object_signal_callback_add(it->base, "elm,action,contract", 
+	edje_object_signal_callback_add(it->base, "elm,action,contract",
                                         "elm", _signal_contract, it);
 	stacking = edje_object_data_get(it->base, "stacking");
 	if (stacking)
@@ -1059,7 +1026,7 @@ _update_job(void *data)
         Evas_Coord pw;
         Evas_Coord itminw, itminh;
         Elm_Genlist_Item *it;
-        
+
         if (!itb->updateme)
           {
              num += itb->count;
@@ -1075,7 +1042,7 @@ _update_job(void *data)
                {
                   itminw = it->w;
                   itminh = it->h;
-                  
+
                   it->updateme = 0;
                   if (it->realized)
                     {
@@ -1293,7 +1260,7 @@ elm_genlist_add(Evas_Object *parent)
    evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-on", _freeze_on, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-off", _freeze_off, obj);
-   
+
    if (!smart)
      {
 	static Evas_Smart_Class sc;
@@ -1319,7 +1286,7 @@ elm_genlist_add(Evas_Object *parent)
 				     _pan_set, _pan_get,
 				     _pan_max_get, _pan_child_size_get);
 
-   edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), 
+   edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr),
                              &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
 
@@ -1331,7 +1298,7 @@ static Elm_Genlist_Item *
 _item_new(Widget_Data *wd, const Elm_Genlist_Item_Class *itc,
 	  const void *data, Elm_Genlist_Item *parent,
 	  Elm_Genlist_Item_Flags flags,
-	  void (*func) (void *data, Evas_Object *obj, void *event_info), 
+	  void (*func) (void *data, Evas_Object *obj, void *event_info),
           const void *func_data)
 {
    Elm_Genlist_Item *it;
@@ -1534,7 +1501,7 @@ _item_block_add(Widget_Data *wd, Elm_Genlist_Item *it)
         int newc;
         Item_Block *itb2;
         Elm_Genlist_Item *it2;
-        
+
         newc = itb->count / 2;
         itb2 = calloc(1, sizeof(Item_Block));
         if (!itb2) return;
@@ -1544,12 +1511,12 @@ _item_block_add(Widget_Data *wd, Elm_Genlist_Item *it)
         while ((itb->count > newc) && (itb->items))
           {
              Eina_List *l;
-             
+
              l = eina_list_last(itb->items);
              it2 = l->data;
              itb->items = eina_list_remove_list(itb->items, l);
              itb->count--;
-             
+
              itb2->items = eina_list_prepend(itb2->items, it2);
              it2->block = itb2;
              itb2->count++;
@@ -1902,7 +1869,7 @@ elm_genlist_at_xy_item_get(const Evas_Object *obj, Evas_Coord x, Evas_Coord y, i
    Evas_Coord ox, oy, ow, oh;
    Item_Block *itb;
    Evas_Coord lasty;
-   
+
    evas_object_geometry_get(wd->pan_smart, &ox, &oy, &ow, &oh);
    lasty = oy;
    EINA_INLIST_FOREACH(wd->blocks, itb)
@@ -1910,14 +1877,14 @@ elm_genlist_at_xy_item_get(const Evas_Object *obj, Evas_Coord x, Evas_Coord y, i
 	Eina_List *l;
 	Elm_Genlist_Item *it;
 
-        if (!ELM_RECTS_INTERSECT(ox + itb->x - itb->wd->pan_x, 
+        if (!ELM_RECTS_INTERSECT(ox + itb->x - itb->wd->pan_x,
                                  oy + itb->y - itb->wd->pan_y,
                                  itb->w, itb->h, x, y, 1, 1))
           continue;
 	EINA_LIST_FOREACH(itb->items, l, it)
 	  {
              Evas_Coord itx, ity;
-             
+
              itx = ox + itb->x + it->x - itb->wd->pan_x;
              ity = oy + itb->y + it->y - itb->wd->pan_y;
              if (ELM_RECTS_INTERSECT(itx, ity, it->w, it->h, x, y, 1, 1))
@@ -2369,7 +2336,7 @@ elm_genlist_item_top_bring_in(Elm_Genlist_Item *it)
  *
  * This deletes the item from genlist and calls the genlist item del class
  * callback defined in the item class, if it is set.
- * 
+ *
  * @param it The item
  *
  * @ingroup Genlist

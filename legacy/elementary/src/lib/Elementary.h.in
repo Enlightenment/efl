@@ -791,6 +791,17 @@ extern "C" {
    /* smart callbacks called:
     */
 
+   EAPI Evas_Object *elm_slideshow_add(Evas_Object *parent);
+   EAPI void         elm_slideshow_image_add(Evas_Object *obj, const char *file, const char *group);
+   EAPI void	     elm_slideshow_goto(Evas_Object *obj, int pos);
+   EAPI void	     elm_slideshow_next(Evas_Object *obj);
+   EAPI void	     elm_slideshow_previous(Evas_Object *obj);
+   EAPI const Eina_List *elm_slideshow_transitions_get(Evas_Object *obj);
+   EAPI void	     elm_slideshow_transition_set(Evas_Object *obj, const char *);
+   /* smart callbacks called:
+    */
+
+
    EAPI Evas_Object *elm_fileselector_add(Evas_Object *parent);
    EAPI void         elm_fileselector_is_save_set(Evas_Object *obj, Eina_Bool is_save);
    EAPI Eina_Bool    elm_fileselector_is_save_get(Evas_Object *obj);

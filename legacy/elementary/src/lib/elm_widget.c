@@ -961,3 +961,39 @@ _smart_init(void)
 	_e_smart = evas_smart_class_new(&sc);
      }
 }
+
+
+Eina_List *
+_stringlist_get(const char *str)
+{
+   Eina_List *list = NULL;
+   const char *s, *b;
+   if (!str) return NULL;
+   for (b = s = str; 1; s++)
+     {
+	if ((*s == ' ') || (*s == 0))
+	  {
+	     char *t = malloc(s - b + 1);
+	     if (t)
+	       {
+		  strncpy(t, b, s - b);
+		  t[s - b] = 0;
+		  list = eina_list_append(list, eina_stringshare_add(t));
+		  free(t);
+	       }
+	     b = s + 1;
+	  }
+	if (*s == 0) break;
+     }
+   return list;
+}
+
+void
+_stringlist_free(Eina_List *list)
+{
+   const char *s;
+   EINA_LIST_FREE(list, s)
+     eina_stringshare_del(s);
+}
+
+
