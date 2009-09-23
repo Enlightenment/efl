@@ -168,7 +168,7 @@ extern "C" {
    EAPI void         elm_quicklaunch_cleanup(void);
    EAPI int          elm_quicklaunch_fallback(int argc, char **argv);
    EAPI char        *elm_quicklaunch_exe_path_get(const char *exe);
-   
+
    EAPI void         elm_need_efreet(void);
    EAPI void         elm_need_e_dbus(void);
 
@@ -185,7 +185,7 @@ extern "C" {
    EAPI void         elm_finger_size_set(Evas_Coord size);
 
    EAPI void         elm_object_focus(Evas_Object *obj);
-   
+
    EAPI void         elm_object_scroll_hold_push(Evas_Object *obj);
    EAPI void         elm_object_scroll_hold_pop(Evas_Object *obj);
    EAPI void         elm_object_scroll_freeze_push(Evas_Object *obj);
@@ -408,6 +408,25 @@ extern "C" {
    EAPI Evas_Object *elm_layout_edje_get(const Evas_Object *obj);
    /* smart callbacks called:
     */
+
+   typedef enum _Elm_Notify_Orient
+     {
+	 ELM_NOTIFY_ORIENT_TOP,
+	 ELM_NOTIFY_ORIENT_BOTTOM,
+	 ELM_NOTIFY_ORIENT_LEFT,
+	 ELM_NOTIFY_ORIENT_RIGHT,
+	 ELM_NOTIFY_ORIENT_TOP_LEFT,
+	 ELM_NOTIFY_ORIENT_TOP_RIGHT,
+	 ELM_NOTIFY_ORIENT_BOTTOM_LEFT,
+	 ELM_NOTIFY_ORIENT_BOTTOM_RIGHT
+     } Elm_Notify_Orient;
+   EAPI Evas_Object *elm_notify_add(Evas_Object *parent);
+   EAPI void         elm_notify_content_set(Evas_Object *obj, Evas_Object *content);
+   EAPI void	     elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient);
+   EAPI void         elm_notify_timeout_set(Evas_Object *obj, int timeout);
+   /* smart callbacks called:
+    */
+
 
    typedef enum _Elm_Hover_Axis
      {
@@ -815,7 +834,7 @@ extern "C" {
     * "changed" - when the spinner value changes
     * "delay,changed" - when the spinner value changed, but a small time after a change (use this if you only want to respond to a change once the spinner is held still for a short while).
     */
-   
+
    EAPI Evas_Object *elm_index_add(Evas_Object *parent);
    EAPI void         elm_index_active_set(Evas_Object *obj, Eina_Bool active);
    EAPI void         elm_index_item_level_set(Evas_Object *obj, int level);
@@ -846,7 +865,7 @@ extern "C" {
    EAPI int          elm_photocam_zoom_get(Evas_Object *obj);
    EAPI void         elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode);
    EAPI Elm_Photocam_Zoom_Mode elm_photocam_zoom_mode_get(Evas_Object *obj);
-       
+
 #ifdef __cplusplus
 }
 #endif

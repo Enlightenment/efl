@@ -49,6 +49,7 @@ void test_index(void *data, Evas_Object *obj, void *event_info);
 void test_photocam(void *data, Evas_Object *obj, void *event_info);
 void test_photo(void *data, Evas_Object *obj, void *event_info);
 void test_icon_desktops(void *data, Evas_Object *obj, void *event_info);
+void test_notify(void *data, Evas_Object *obj, void *event_info);
 
 static void
 my_win_del(void *data, Evas_Object *obj, void *event_info)
@@ -139,7 +140,7 @@ my_win_main(void)
    elm_list_item_append(li, "Box Vert", NULL, NULL, test_box_vert, NULL);
    elm_list_item_append(li, "Box Horiz", NULL, NULL, test_box_horiz, NULL);
    elm_list_item_append(li, "Buttons", NULL, NULL, test_button, NULL);
-   elm_list_item_append(li, "Toggles", NULL, NULL, test_toggle, NULL); 
+   elm_list_item_append(li, "Toggles", NULL, NULL, test_toggle, NULL);
    elm_list_item_append(li, "Table", NULL, NULL, test_table, NULL);
    elm_list_item_append(li, "Clock", NULL, NULL, test_clock, NULL);
    elm_list_item_append(li, "Layout", NULL, NULL, test_layout, NULL);
@@ -180,6 +181,7 @@ my_win_main(void)
    elm_list_item_append(li, "Photocam", NULL, NULL, test_photocam, NULL);
    elm_list_item_append(li, "Photo", NULL, NULL, test_photo, NULL);
    elm_list_item_append(li, "Icon Desktops", NULL, NULL, test_icon_desktops, NULL);
+   elm_list_item_append(li, "Notify", NULL, NULL, test_notify, NULL);
 
    elm_list_go(li);
 

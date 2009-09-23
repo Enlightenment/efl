@@ -60,7 +60,8 @@ test_spinner.c \
 test_index.c \
 test_photocam.c \
 test_photo.c \
-test_icon_desktops.c
+test_icon_desktops.c \
+test_notify.c
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la
 elementary_test_LDFLAGS =
@@ -68,11 +69,11 @@ elementary_test_LDFLAGS =
 if BUILD_QUICKLAUNCH
 elementary_quicklaunch_SOURCES = quicklaunch.c
 elementary_quicklaunch_LDADD = $(top_builddir)/src/lib/libelementary.la
-elementary_quicklaunch_LDFLAGS = 
+elementary_quicklaunch_LDFLAGS =
 
 if BUILD_RUN
 elementary_run_SOURCES = run.c
-elementary_run_LDADD = 
+elementary_run_LDADD =
 elementary_run_LDFLAGS =
 endif
 
@@ -85,7 +86,7 @@ elementary_testqldir = $(libdir)
 elementary_testql_LTLIBRARIES = elementary_testql.la
 elementary_testql_la_SOURCES = $(elementary_test_SOURCES)
 elementary_testql_la_LIBADD = $(top_builddir)/src/lib/libelementary.la
-elementary_testql_la_CFLAGS = 
+elementary_testql_la_CFLAGS =
 elementary_testql_la_LDFLAGS = -module -avoid-version -no-undefined
 elementary_testql_SOURCES = $(elementary_test_SOURCES)
 elementary_testql_LDADD = $(top_builddir)/src/lib/libelementary.la
