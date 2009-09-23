@@ -5632,10 +5632,16 @@ collections {
                repeat_events: 1;
                description { state: "default" 0.0;
                    color: 0 0 0 0;
+                   rel1.offset: 10 10;
+                   rel2.offset: -10 -10;
+                   rel1.relative: 0.0 -1.0;
+                   rel2.relative: 1.0 0.0;
                }
                description { state: "visible" 0.0;
                    inherit: "default" 1.0;
                    color: 0 0 0 64;
+                   rel1.relative: 0.0 0.0;
+                   rel2.relative: 1.0 1.0;
                }
            }
            part { name: "shad";
@@ -5678,12 +5684,9 @@ collections {
            part { name: "elm.swallow.content";
                type: SWALLOW;
                description { state: "default" 0.0;
-                   rel1.relative: 0.0 0.0;
-                   rel2.relative: 1.0 1.0;
+                   rel1.to: "base";
+                   rel2.to: "base";
                }
-               description { state: "hide" 0.0;
-                   rel1.relative: 0.0 -1.0;
-                   rel2.relative: 1.0 0.0;}
            }
        }
        programs {
@@ -5695,14 +5698,14 @@ collections {
            }
            program { name: "show_2";
                 signal: "show";
-                action: STATE_SET "hide" 0.0;
-                target: "elm.swallow.content";
+                action: STATE_SET "default" 0.0;
+                target: "base";
                 after: "show_3";
            }
            program { name: "show_3";
                 signal: "show";
-                action: STATE_SET "default" 0.0;
-                target: "elm.swallow.content";
+                action: STATE_SET "visible" 0.0;
+                target: "base";
                 transition: LINEAR 0.5;
            }
            program { name: "hide";
@@ -5727,10 +5730,16 @@ collections {
                repeat_events: 1;
                description { state: "default" 0.0;
                    color: 0 0 0 0;
+                   rel1.offset: 10 10;
+                   rel2.offset: -10 -10;
+                   rel1.relative: 0.0 1.0;
+                   rel2.relative: 1.0 2.0;
                }
                description { state: "visible" 0.0;
                    inherit: "default" 1.0;
                    color: 0 0 0 64;
+                   rel1.relative: 0.0 0.0;
+                   rel2.relative: 1.0 1.0;
                }
            }
            part { name: "shad";
@@ -5773,12 +5782,9 @@ collections {
            part { name: "elm.swallow.content";
                type: SWALLOW;
                description { state: "default" 0.0;
-                   rel1.relative: 0.0 0.0;
-                   rel2.relative: 1.0 1.0;
+                   rel1.to: "base";
+                   rel2.to: "base";
                }
-               description { state: "hide" 0.0;
-                   rel1.relative: 0.0 1.0;
-                   rel2.relative: 1.0 2.0;}
            }
        }
        programs {
@@ -5790,14 +5796,14 @@ collections {
            }
            program { name: "show_2";
                 signal: "show";
-                action: STATE_SET "hide" 0.0;
-                target: "elm.swallow.content";
+                action: STATE_SET "default" 0.0;
+                target: "base";
                 after: "show_3";
            }
            program { name: "show_3";
                 signal: "show";
-                action: STATE_SET "default" 0.0;
-                target: "elm.swallow.content";
+                action: STATE_SET "visible" 0.0;
+                target: "base";
                 transition: LINEAR 0.5;
            }
            program { name: "hide";
@@ -5822,10 +5828,16 @@ collections {
                repeat_events: 1;
                description { state: "default" 0.0;
                    color: 0 0 0 0;
+                   rel1.offset: 10 10;
+                   rel2.offset: -10 -10;
+                   rel1.relative: -1.0 0.0;
+                   rel2.relative: 0.0 1.0;
                }
                description { state: "visible" 0.0;
                    inherit: "default" 1.0;
                    color: 0 0 0 64;
+                   rel1.relative: 0.0 0.0;
+                   rel2.relative: 1.0 1.0;
                }
            }
            part { name: "shad";
@@ -5868,12 +5880,9 @@ collections {
            part { name: "elm.swallow.content";
                type: SWALLOW;
                description { state: "default" 0.0;
-                   rel1.relative: 0.0 0.0;
-                   rel2.relative: 1.0 1.0;
+                   rel1.to: "base";
+                   rel2.to: "base";
                }
-               description { state: "hide" 0.0;
-                   rel1.relative: -1.0 0.0;
-                   rel2.relative: 0.0 1.0;}
            }
        }
        programs {
@@ -5885,14 +5894,14 @@ collections {
            }
            program { name: "show_2";
                signal: "show";
-               action: STATE_SET "hide" 0.0;
-               target: "elm.swallow.content";
+               action: STATE_SET "default" 0.0;
+               target: "base";
                after: "show_3";
            }
            program { name: "show_3";
                signal: "show";
-               action: STATE_SET "default" 0.0;
-               target: "elm.swallow.content";
+               action: STATE_SET "visible" 0.0;
+               target: "base";
                transition: LINEAR 0.5;
            }
            program { name: "hide";
@@ -5915,12 +5924,18 @@ collections {
                type: RECT;
                mouse_events: 0;
                repeat_events: 1;
-               description { state: "default" 0.0;
+                description { state: "default" 0.0;
                    color: 0 0 0 0;
+                   rel1.offset: 10 10;
+                   rel2.offset: -10 -10;
+                   rel1.relative: 1.0 0.0;
+                   rel2.relative: 2.0 1.0;
                }
                description { state: "visible" 0.0;
                    inherit: "default" 1.0;
                    color: 0 0 0 64;
+                   rel1.relative: 0.0 0.0;
+                   rel2.relative: 1.0 1.0;
                }
            }
            part { name: "shad";
@@ -5963,12 +5978,9 @@ collections {
            part { name: "elm.swallow.content";
                type: SWALLOW;
                description { state: "default" 0.0;
-                   rel1.relative: 0.0 0.0;
-                   rel2.relative: 1.0 1.0;
+                   rel1.to: "base";
+                   rel2.to: "base";
                }
-               description { state: "hide" 0.0;
-                   rel1.relative: 1.0 0.0;
-                   rel2.relative: 2.0 1.0;}
            }
        }
        programs {
@@ -5980,14 +5992,14 @@ collections {
            }
            program { name: "show_2";
                signal: "show";
-               action: STATE_SET "hide" 0.0;
-               target: "elm.swallow.content";
+               action: STATE_SET "default" 0.0;
+               target: "base";
                after: "show_3";
            }
            program { name: "show_3";
                signal: "show";
-               action: STATE_SET "default" 0.0;
-               target: "elm.swallow.content";
+               action: STATE_SET "visible" 0.0;
+               target: "base";
                transition: LINEAR 0.5;
            }
            program { name: "hide";
@@ -6010,12 +6022,18 @@ collections {
                type: RECT;
                mouse_events: 0;
                repeat_events: 1;
-               description { state: "default" 0.0;
+                description { state: "default" 0.0;
                    color: 0 0 0 0;
+                   rel1.offset: 10 10;
+                   rel2.offset: -10 -10;
+                   rel1.relative: 0.0 -1.0;
+                   rel2.relative: 1.0 0.0;
                }
                description { state: "visible" 0.0;
                    inherit: "default" 1.0;
                    color: 0 0 0 64;
+                   rel1.relative: 0.0 0.0;
+                   rel2.relative: 1.0 1.0;
                }
            }
            part { name: "shad";
@@ -6058,12 +6076,9 @@ collections {
            part { name: "elm.swallow.content";
                type: SWALLOW;
                description { state: "default" 0.0;
-                   rel1.relative: 0.0 0.0;
-                   rel2.relative: 1.0 1.0;
+                   rel1.to: "base";
+                   rel2.to: "base";
                }
-               description { state: "hide" 0.0;
-                   rel1.relative: 0.0 -1.0;
-                   rel2.relative: 1.0 0.0;}
            }
        }
        programs {
@@ -6075,14 +6090,14 @@ collections {
            }
            program { name: "show_2";
                signal: "show";
-               action: STATE_SET "hide" 0.0;
-               target: "elm.swallow.content";
+               action: STATE_SET "default" 0.0;
+               target: "base";
                after: "show_3";
            }
            program { name: "show_3";
                signal: "show";
-               action: STATE_SET "default" 0.0;
-               target: "elm.swallow.content";
+               action: STATE_SET "visible" 0.0;
+               target: "base";
                transition: LINEAR 0.5;
            }
            program { name: "hide";
@@ -6107,10 +6122,16 @@ collections {
                repeat_events: 1;
                description { state: "default" 0.0;
                    color: 0 0 0 0;
+                   rel1.offset: 10 10;
+                   rel2.offset: -10 -10;
+                   rel1.relative: 0.0 -1.0;
+                   rel2.relative: 1.0 0.0;
                }
                description { state: "visible" 0.0;
                    inherit: "default" 1.0;
                    color: 0 0 0 64;
+                   rel1.relative: 0.0 0.0;
+                   rel2.relative: 1.0 1.0;
                }
            }
            part { name: "shad";
@@ -6153,12 +6174,9 @@ collections {
            part { name: "elm.swallow.content";
                type: SWALLOW;
                description { state: "default" 0.0;
-                   rel1.relative: 0.0 0.0;
-                   rel2.relative: 1.0 1.0;
+                   rel1.to: "base";
+                   rel2.to: "base";
                }
-               description { state: "hide" 0.0;
-                   rel1.relative: 0.0 -1.0;
-                   rel2.relative: 1.0 0.0;}
            }
        }
        programs {
@@ -6170,14 +6188,14 @@ collections {
            }
            program { name: "show_2";
                signal: "show";
-               action: STATE_SET "hide" 0.0;
-               target: "elm.swallow.content";
+               action: STATE_SET "default" 0.0;
+               target: "base";
                after: "show_3";
            }
            program { name: "show_3";
                signal: "show";
-               action: STATE_SET "default" 0.0;
-               target: "elm.swallow.content";
+               action: STATE_SET "visible" 0.0;
+               target: "base";
                transition: LINEAR 0.5;
            }
            program { name: "hide";
@@ -6202,10 +6220,16 @@ collections {
                repeat_events: 1;
                description { state: "default" 0.0;
                    color: 0 0 0 0;
+                   rel1.offset: 10 10;
+                   rel2.offset: -10 -10;
+                   rel1.relative: 0.0 1.0;
+                   rel2.relative: 1.0 2.0;
                }
                description { state: "visible" 0.0;
                    inherit: "default" 1.0;
                    color: 0 0 0 64;
+                   rel1.relative: 0.0 0.0;
+                   rel2.relative: 1.0 1.0;
                }
            }
            part { name: "shad";
@@ -6248,12 +6272,9 @@ collections {
            part { name: "elm.swallow.content";
                type: SWALLOW;
                description { state: "default" 0.0;
-                   rel1.relative: 0.0 0.0;
-                   rel2.relative: 1.0 1.0;
+                   rel1.to: "base";
+                   rel2.to: "base";
                }
-               description { state: "hide" 0.0;
-                   rel1.relative: 0.0 1.0;
-                   rel2.relative: 1.0 2.0;}
            }
        }
        programs {
@@ -6265,14 +6286,14 @@ collections {
            }
            program { name: "show_2";
                signal: "show";
-               action: STATE_SET "hide" 0.0;
-               target: "elm.swallow.content";
+               action: STATE_SET "default" 0.0;
+               target: "base";
                after: "show_3";
            }
            program { name: "show_3";
                signal: "show";
-               action: STATE_SET "default" 0.0;
-               target: "elm.swallow.content";
+               action: STATE_SET "visible" 0.0;
+               target: "base";
                transition: LINEAR 0.5;
            }
            program { name: "hide";
@@ -6295,12 +6316,18 @@ collections {
                type: RECT;
                mouse_events: 0;
                repeat_events: 1;
-               description { state: "default" 0.0;
+              description { state: "default" 0.0;
                    color: 0 0 0 0;
+                   rel1.offset: 10 10;
+                   rel2.offset: -10 -10;
+                   rel1.relative: 0.0 1.0;
+                   rel2.relative: 1.0 2.0;
                }
                description { state: "visible" 0.0;
                    inherit: "default" 1.0;
                    color: 0 0 0 64;
+                   rel1.relative: 0.0 0.0;
+                   rel2.relative: 1.0 1.0;
                }
            }
            part { name: "shad";
@@ -6343,12 +6370,9 @@ collections {
            part { name: "elm.swallow.content";
                type: SWALLOW;
                description { state: "default" 0.0;
-                   rel1.relative: 0.0 0.0;
-                   rel2.relative: 1.0 1.0;
+                   rel1.to: "base";
+                   rel2.to: "base";
                }
-               description { state: "hide" 0.0;
-                   rel1.relative: 0.0 1.0;
-                   rel2.relative: 1.0 2.0;}
            }
        }
        programs {
@@ -6360,14 +6384,14 @@ collections {
            }
            program { name: "show_2";
                signal: "show";
-               action: STATE_SET "hide" 0.0;
-               target: "elm.swallow.content";
+               action: STATE_SET "default" 0.0;
+               target: "base";
                after: "show_3";
            }
            program { name: "show_3";
                signal: "show";
-               action: STATE_SET "default" 0.0;
-               target: "elm.swallow.content";
+               action: STATE_SET "visible" 0.0;
+               target: "base";
                transition: LINEAR 0.5;
            }
            program { name: "hide";
