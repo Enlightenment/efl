@@ -55,10 +55,10 @@ _theme_hook(Evas_Object *obj)
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord minw = -1, minh = -1;
+   //Evas_Coord minw = -1, minh = -1;
 
-   edje_object_size_min_calc(wd->notify, &minw, &minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
+   //edje_object_size_min_calc(wd->notify, &minw, &minh);
+   //evas_object_size_hint_min_set(obj, minw, minh);
 }
 
    static void
@@ -183,6 +183,19 @@ _hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
      }
 }
 
+   static void
+_mouse_in(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "mouse,in", NULL);
+}
+
+
+   static void
+_mouse_out(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "mouse,out", NULL);
+}
+
 /**
  * Add a new notify to the parent
  *
@@ -209,6 +222,8 @@ elm_notify_add(Evas_Object *parent)
 
    wd->notify = edje_object_add(e);
    elm_notify_orient_set(obj, ELM_NOTIFY_ORIENT_TOP);
+   evas_object_event_callback_add(wd->notify, EVAS_CALLBACK_MOUSE_IN, _mouse_in, obj);
+   evas_object_event_callback_add(wd->notify, EVAS_CALLBACK_MOUSE_OUT, _mouse_out, obj);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, obj);
@@ -302,6 +317,7 @@ elm_notify_timeout_set(Evas_Object *obj, int timeout)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->timeout = timeout;
+   elm_notify_timer_init(obj);
 }
 
 /**
@@ -314,6 +330,7 @@ elm_notify_timer_init(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if(wd->timer)
      ecore_timer_del(wd->timer);
+   wd->timer = NULL;
    if(wd->timeout>0)
      wd->timer = ecore_timer_add(wd->timeout, _timer_cb, obj);
 }
