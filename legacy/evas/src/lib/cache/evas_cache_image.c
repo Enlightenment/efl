@@ -708,10 +708,10 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
    char                 *hkey;
    Image_Entry          *im;
    Evas_Image_Load_Opts  prevent = { 0, 0, 0, 0, 0, 0, 0, 0 };
-   int                   size;
+   size_t                size;
    int                   stat_done = 0;
-   int                   file_length;
-   int                   key_length;
+   size_t                file_length;
+   size_t                key_length;
    struct stat           st;
 
    assert(cache != NULL);
