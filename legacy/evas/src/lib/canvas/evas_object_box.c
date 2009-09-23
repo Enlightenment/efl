@@ -342,6 +342,8 @@ _evas_object_box_remove_at_default(Evas_Object *o, Evas_Object_Box_Data *priv, u
 {
    const Evas_Object_Box_Api *api;
    Eina_List *node;
+   Evas_Object_Box_Option *opt;
+   Evas_Object *obj;
 
    api = priv->api;
 
@@ -359,8 +361,8 @@ _evas_object_box_remove_at_default(Evas_Object *o, Evas_Object_Box_Data *priv, u
 	return NULL;
      }
 
-   Evas_Object_Box_Option *opt = node->data;
-   Evas_Object *obj = opt->obj;
+   opt = node->data;
+   obj = opt->obj;
 
    priv->children = eina_list_remove_list(priv->children, node);
    api->option_free(o, priv, opt);
@@ -745,13 +747,16 @@ evas_object_box_layout_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, vo
    int x, y, w, h;
    int n_children;
    Evas_Object_Box_Option *opt;
+   Evas_Object_Box_Option **objects;
    Eina_List *l;
 
    n_children = eina_list_count(priv->children);
    if (!n_children)
      return;
 
-   Evas_Object_Box_Option *objects[n_children];
+   objects = (Evas_Object_Box_Option **)alloca(sizeof(Evas_Object_Box_Option *) * n_children);
+   if (!objects)
+     return;
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
    global_pad = priv->pad.h;
@@ -908,13 +913,16 @@ evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void
    int x, y, w, h;
    int n_children;
    Evas_Object_Box_Option *opt;
+   Evas_Object_Box_Option **objects;
    Eina_List *l;
 
    n_children = eina_list_count(priv->children);
    if (!n_children)
      return;
 
-   Evas_Object_Box_Option *objects[n_children];
+   objects = (Evas_Object_Box_Option **)alloca(sizeof(Evas_Object_Box_Option *) * n_children);
+   if (!objects)
+     return;
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
    global_pad = priv->pad.v;
@@ -1490,6 +1498,9 @@ evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *pri
    int remain_y, i;
    int x, y, w, h;
    Eina_List *l;
+   int *row_max_h;
+   int *row_break;
+   int *row_width;
    int off_y;
 
    n_children = eina_list_count(priv->children);
@@ -1497,9 +1508,15 @@ evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *pri
      return;
 
    /* *per row* arrays */
-   int row_max_h[n_children];
-   int row_break[n_children];
-   int row_width[n_children];
+   row_max_h = (int *)alloca(sizeof(int) * n_children);
+   if (!row_max_h)
+     return;
+   row_break = (int *)alloca(sizeof(int) * n_children);
+   if (!row_break)
+     return;
+   row_width = (int *)alloca(sizeof(int) * n_children);
+   if (!row_width)
+     return;
 
    memset(row_width, 0, sizeof(row_width));
 
@@ -1674,6 +1691,9 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv,
    int remain_x, i;
    int x, y, w, h;
    Eina_List *l;
+   int *col_max_w;
+   int *col_break;
+   int *col_height;
    int off_x;
 
    n_children = eina_list_count(priv->children);
@@ -1681,9 +1701,15 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv,
      return;
 
    /* *per col* arrays */
-   int col_max_w[n_children];
-   int col_break[n_children];
-   int col_height[n_children];
+   col_max_w = (int *)alloca(sizeof(int) * n_children);
+   if (!col_max_w)
+     return;
+   col_break = (int *)alloca(sizeof(int) * n_children);
+   if (!col_break)
+     return;
+   col_height = (int *)alloca(sizeof(int) * n_children);
+   if (!col_height)
+     return;
 
    memset(col_height, 0, sizeof(col_height));
 
@@ -2205,8 +2231,9 @@ evas_object_box_children_get(const Evas_Object *o)
 const char *
 evas_object_box_option_property_name_get(Evas_Object *o, int property)
 {
-   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, NULL);
    const Evas_Object_Box_Api *api;
+
+   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, NULL);
 
    if (property < 0)
      return NULL;
@@ -2225,8 +2252,9 @@ evas_object_box_option_property_name_get(Evas_Object *o, int property)
 int
 evas_object_box_option_property_id_get(Evas_Object *o, const char *name)
 {
-   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, -1);
    const Evas_Object_Box_Api *api;
+
+   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, -1);
 
    if (!name)
      return -1;
@@ -2268,8 +2296,9 @@ evas_object_box_option_property_set(Evas_Object *o, Evas_Object_Box_Option *opt,
 Eina_Bool
 evas_object_box_option_property_vset(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args)
 {
-   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, 0);
    const Evas_Object_Box_Api *api;
+
+   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, 0);
 
    if (!opt) return EINA_FALSE;
 
@@ -2312,8 +2341,9 @@ evas_object_box_option_property_get(Evas_Object *o, Evas_Object_Box_Option *opt,
 Eina_Bool
 evas_object_box_option_property_vget(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args)
 {
-   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, 0);
    const Evas_Object_Box_Api *api;
+
+   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, 0);
 
    if (!opt) return EINA_FALSE;
 
