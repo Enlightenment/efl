@@ -32,6 +32,7 @@
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
 #include "eina_convert.h"
+#include "eina_f32p32.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -69,6 +70,28 @@ static inline void reverse(char s[], int length)
 	s[i] = s[j];
 	s[j] = c;
      }
+}
+
+static inline Eina_F32p32 eina_f32p32_mul2(Eina_F32p32 fp)
+{
+   int64_t low;
+   int64_t high;
+
+   low = (fp & 0x00000000ffffffffLL) << 1;
+   high = (fp >> 32) << 33;
+
+   return low + high;
+}
+
+static inline Eina_F32p32 eina_f32p32_mul16(Eina_F32p32 fp)
+{
+   int64_t low;
+   int64_t high;
+
+   low = (fp & 0x00000000ffffffffLL) << 4;
+   high = (fp >> 32) << 36;
+
+   return low + high;
 }
 
 /**
@@ -542,6 +565,94 @@ eina_convert_dtoa(double d, char *des)
         d -= floor(d);
         d *= 16;
         *(des++) = look_up_table[(size_t)d];
+     }
+
+   while (*(des - 1) == '0')
+     {
+	des--;
+	length--;
+     }
+
+   if (*(des - 1) == '.')
+     {
+	des--;
+	length--;
+     }
+
+   *(des++) = 'p';
+   if (p < 0)
+     {
+        *(des++) = '-';
+        p = -p;
+     }
+   else
+     *(des++) = '+';
+   length += 2;
+
+   return length + eina_convert_itoa(p, des);
+}
+
+EAPI int
+eina_convert_fptoa(Eina_F32p32 fp, char *des)
+{
+   int length = 0;
+   int p = 0;;
+   int i;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(des, EINA_FALSE);
+
+   if (fp == 0)
+     {
+       memcpy(des, "0x0p+0", 7);
+       return 7;
+     }
+
+   if (fp < 0)
+     {
+        *(des++) = '-';
+        fp = -fp;
+	length++;
+     }
+
+   /* fp >= 1 */
+   if (fp >= 0x0000000100000000LL)
+     {
+        while (fp >= 0x0000000100000000LL)
+          {
+            p++;
+            /* fp /= 2 */
+            fp >>= 1;
+          }
+     }
+   /* fp < 0.5 */
+   else if (fp < 0x80000000)
+     {
+        while (fp < 0x80000000)
+          {
+             p--;
+             /* fp *= 2 */
+             fp <<= 1;
+          }
+     }
+
+   if (p)
+     {
+        p--;
+	/* fp *= 2 */
+        fp <<= 1;
+     }
+
+   *(des++) = '0';
+   *(des++) = 'x';
+   *(des++) = look_up_table[fp >> 32];
+   *(des++) = '.';
+   length += 4;
+
+   for (i = 0; i < 16; i++, length++)
+     {
+        fp &= 0x00000000ffffffffLL;
+        fp <<= 4; /* fp *= 16 */
+        *(des++) = look_up_table[fp >> 32];
      }
 
    while (*(des - 1) == '0')
