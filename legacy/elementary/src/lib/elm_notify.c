@@ -183,19 +183,6 @@ _hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
      }
 }
 
-   static void
-_mouse_in(void *data, Evas *e, Evas_Object *obj, void *event_info)
-{
-   evas_object_smart_callback_call(data, "mouse,in", NULL);
-}
-
-
-   static void
-_mouse_out(void *data, Evas *e, Evas_Object *obj, void *event_info)
-{
-   evas_object_smart_callback_call(data, "mouse,out", NULL);
-}
-
 /**
  * Add a new notify to the parent
  *
@@ -222,8 +209,6 @@ elm_notify_add(Evas_Object *parent)
 
    wd->notify = edje_object_add(e);
    elm_notify_orient_set(obj, ELM_NOTIFY_ORIENT_TOP);
-   evas_object_event_callback_add(wd->notify, EVAS_CALLBACK_MOUSE_IN, _mouse_in, obj);
-   evas_object_event_callback_add(wd->notify, EVAS_CALLBACK_MOUSE_OUT, _mouse_out, obj);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, obj);
