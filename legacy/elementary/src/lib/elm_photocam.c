@@ -34,10 +34,10 @@ struct _Grid
 {
    int tsize; // size of tile (tsize x tsize pixels)
    int zoom; // zoom level tiles want for optimal display (1, 2, 4, 8)
-   int w, h; // size of image in pixels (represented by grid)
+   int iw, ih; // size of image in pixels
+   int w, h; // size of grid image in pixels (represented by grid)
    int gw, gh; // size of grid in tiles
    Grid_Item *grid; // the grid (gw * gh items)
-   Evas_Object *img; // low res version of image (scale down == 8)
 };
 
 struct _Widget_Data
@@ -54,6 +54,7 @@ struct _Widget_Data
    
    Ecore_Job *calc_job;
    Ecore_Timer *scr_timer;
+   Evas_Object *img; // low res version of image (scale down == 8)
    Grid grid;
    Eina_Bool smooth : 1;
 
@@ -92,12 +93,12 @@ grid_place(Evas_Object *obj, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_C
    Widget_Data *wd = elm_widget_data_get(obj);
    int x, y;
     
-   evas_object_move(wd->grid.img, 
+   evas_object_move(wd->img, 
                     ox + 0 - px,
                     oy + 0 - py);
-   evas_object_resize(wd->grid.img, 
-                      wd->grid.w / wd->zoom, 
-                      wd->grid.h / wd->zoom);
+   evas_object_resize(wd->img, 
+                      wd->grid.w,
+                      wd->grid.h);
    for (y = 0; y < wd->grid.gh; y++)
      {
         for (x = 0; x < wd->grid.gw; x++)
@@ -123,6 +124,22 @@ grid_clear(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    int x, y;
+   
+   if (!wd->grid.grid) return;
+   for (y = 0; y < wd->grid.gh; y++)
+     {
+        for (x = 0; x < wd->grid.gw; x++)
+          {
+             int tn;
+             
+             tn = (y * wd->grid.gw) + x;
+             evas_object_del(wd->grid.grid[tn].img);
+          }
+     }
+   free(wd->grid.grid);
+   wd->grid.grid = NULL;
+   wd->grid.gw = 0;
+   wd->grid.gh = 0;
 }
 
 static void
@@ -142,6 +159,9 @@ grid_create(Evas_Object *obj)
    
    grid_clear(obj);
    wd->grid.zoom = wd->zoom;
+   wd->grid.w = wd->grid.iw / wd->grid.zoom;
+   wd->grid.h = wd->grid.ih / wd->grid.zoom;
+   if (wd->grid.zoom >= 8) return;
    wd->grid.gw = (wd->grid.w + wd->grid.tsize - 1) / wd->grid.tsize;
    wd->grid.gh = (wd->grid.h + wd->grid.tsize - 1) / wd->grid.tsize;
    wd->grid.grid = calloc(1, sizeof(Grid_Item) * wd->grid.gw * wd->grid.gh);
@@ -169,10 +189,10 @@ grid_create(Evas_Object *obj)
              else
                wd->grid.grid[tn].src.h = wd->grid.tsize;
              
-             wd->grid.grid[tn].out.x = wd->grid.grid[tn].src.x / wd->zoom;
-             wd->grid.grid[tn].out.y = wd->grid.grid[tn].src.y / wd->zoom;
-             wd->grid.grid[tn].out.w = wd->grid.grid[tn].src.w / wd->zoom;
-             wd->grid.grid[tn].out.h = wd->grid.grid[tn].src.h / wd->zoom;
+             wd->grid.grid[tn].out.x = wd->grid.grid[tn].src.x;
+             wd->grid.grid[tn].out.y = wd->grid.grid[tn].src.y;
+             wd->grid.grid[tn].out.w = wd->grid.grid[tn].src.w;
+             wd->grid.grid[tn].out.h = wd->grid.grid[tn].src.h;
              
              wd->grid.grid[tn].img = 
                evas_object_image_add(evas_object_evas_get(obj));
@@ -219,10 +239,10 @@ grid_load(Evas_Object *obj)
                   evas_object_image_file_set(wd->grid.grid[tn].img, NULL, NULL);
                   evas_object_image_load_scale_down_set(wd->grid.grid[tn].img, wd->grid.zoom);
                   evas_object_image_load_region_set(wd->grid.grid[tn].img,
-                                                    wd->grid.grid[tn].src.x / wd->grid.zoom,
-                                                    wd->grid.grid[tn].src.y / wd->grid.zoom,
-                                                    wd->grid.grid[tn].src.w / wd->grid.zoom,
-                                                    wd->grid.grid[tn].src.h / wd->grid.zoom);
+                                                    wd->grid.grid[tn].src.x,
+                                                    wd->grid.grid[tn].src.y,
+                                                    wd->grid.grid[tn].src.w,
+                                                    wd->grid.grid[tn].src.h);
 //                  evas_object_image_pixels_dirty_set(wd->grid.grid[tn].img, 1);
                   evas_object_image_file_set(wd->grid.grid[tn].img, wd->file, NULL); 
                   evas_object_image_preload(wd->grid.grid[tn].img, 0);
@@ -255,7 +275,7 @@ _smooth_update(Evas_Object *obj)
              evas_object_image_smooth_scale_set(wd->grid.grid[tn].img, wd->smooth);
           }
      }
-   evas_object_image_smooth_scale_set(wd->grid.img, wd->smooth);
+   evas_object_image_smooth_scale_set(wd->img, wd->smooth);
 }
 
 static int
@@ -401,8 +421,8 @@ _calc_job(void *data)
    Widget_Data *wd = data;
    Evas_Coord minw, minh;
 
-   minw = wd->grid.w / wd->grid.zoom;
-   minh = wd->grid.h / wd->grid.zoom;
+   minw = wd->grid.w;
+   minh = wd->grid.h;
    
    if ((minw != wd->minw) || (minh != wd->minh))
      {
@@ -539,7 +559,7 @@ _main_preloaded(void *data, Evas *e, Evas_Object *o, void *event_info)
    Evas_Object *obj = data;
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   evas_object_show(wd->grid.img);
+   evas_object_show(wd->img);
    grid_load(obj);
 }
    
@@ -615,12 +635,12 @@ elm_photocam_add(Evas_Object *parent)
    
    wd->grid.tsize = 512;
    
-   wd->grid.img = evas_object_image_add(e);
-   evas_object_image_scale_hint_set(wd->grid.img, EVAS_IMAGE_SCALE_HINT_STATIC);
-   evas_object_smart_member_add(wd->grid.img, wd->pan_smart);
-   elm_widget_sub_object_add(obj, wd->grid.img);
-   evas_object_image_filled_set(wd->grid.img, 1);
-   evas_object_event_callback_add(wd->grid.img, EVAS_CALLBACK_IMAGE_PRELOADED,
+   wd->img = evas_object_image_add(e);
+   evas_object_image_scale_hint_set(wd->img, EVAS_IMAGE_SCALE_HINT_STATIC);
+   evas_object_smart_member_add(wd->img, wd->pan_smart);
+   elm_widget_sub_object_add(obj, wd->img);
+   evas_object_image_filled_set(wd->img, 1);
+   evas_object_event_callback_add(wd->img, EVAS_CALLBACK_IMAGE_PRELOADED,
                                   _main_preloaded, obj);
    
    edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), 
@@ -650,18 +670,18 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
    if (wd->file) eina_stringshare_del(wd->file);
    
    wd->file = eina_stringshare_add(file);
-   evas_object_hide(wd->grid.img);
-   evas_object_image_smooth_scale_set(wd->grid.img, wd->smooth);
-   evas_object_image_file_set(wd->grid.img, NULL, NULL);
-   evas_object_image_load_scale_down_set(wd->grid.img, 0);
-   evas_object_image_file_set(wd->grid.img, wd->file, NULL);
-   evas_object_image_size_get(wd->grid.img, &w, &h);
-   wd->grid.w = w;
-   wd->grid.h = h;
-   evas_object_image_file_set(wd->grid.img, NULL, NULL);
-   evas_object_image_load_scale_down_set(wd->grid.img, 8);
-   evas_object_image_file_set(wd->grid.img, wd->file, NULL);
-   evas_object_image_preload(wd->grid.img, 0);
+   evas_object_hide(wd->img);
+   evas_object_image_smooth_scale_set(wd->img, wd->smooth);
+   evas_object_image_file_set(wd->img, NULL, NULL);
+   evas_object_image_load_scale_down_set(wd->img, 0);
+   evas_object_image_file_set(wd->img, wd->file, NULL);
+   evas_object_image_size_get(wd->img, &w, &h);
+   wd->grid.iw = w;
+   wd->grid.ih = h;
+   evas_object_image_file_set(wd->img, NULL, NULL);
+   evas_object_image_load_scale_down_set(wd->img, 8);
+   evas_object_image_file_set(wd->img, wd->file, NULL);
+   evas_object_image_preload(wd->img, 0);
    grid_create(obj);
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
@@ -680,7 +700,12 @@ EAPI void
 elm_photocam_zoom_set(Evas_Object *obj, int zoom)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (zoom < 1) zoom = 1;
    if (zoom == wd->zoom) return;
+   wd->zoom = zoom;
+   grid_create(obj);
+   if (wd->calc_job) ecore_job_del(wd->calc_job);
+   wd->calc_job = ecore_job_add(_calc_job, wd);
 }
 
 /**
