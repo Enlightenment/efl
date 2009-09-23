@@ -694,6 +694,7 @@ extern "C" {
    EAPI void              elm_genlist_multi_select_set(Evas_Object *obj, Eina_Bool multi);
    EAPI Elm_Genlist_Item *elm_genlist_selected_item_get(const Evas_Object *obj);
    EAPI const Eina_List  *elm_genlist_selected_items_get(const Evas_Object *obj);
+   EAPI Elm_Genlist_Item *elm_genlist_at_xy_item_get(const Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *posret);
    EAPI Elm_Genlist_Item *elm_genlist_first_item_get(const Evas_Object *obj);
    EAPI Elm_Genlist_Item *elm_genlist_last_item_get(const Evas_Object *obj);
    EAPI Elm_Genlist_Item *elm_genlist_item_next_get(const Elm_Genlist_Item *item);

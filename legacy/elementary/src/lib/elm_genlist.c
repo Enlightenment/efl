@@ -1853,6 +1853,72 @@ elm_genlist_selected_items_get(const Evas_Object *obj)
 }
 
 /**
+ * Get the item that is at the x, y canvas coords
+ *
+ * This returns the item at the given coordinates (which are canvas relative
+ * not object-relative). If an item is at that coordinate, that item handle
+ * is returned, and if @p posret is not NULL, the integer pointed to is set
+ * to a value of -1, 0 or 1, depending if the coordinate is on the upper
+ * portion of that item (-1), on the middle section (0) or on the lower part
+ * (1). If NULL is returned as an item (no item found there), then posret
+ * may indicate -1 or 1 based if the coordinate is above or below all items
+ * respectively in the genlist.
+ *
+ * @param it The item
+ * @param x The input x coordinate
+ * @param y The input y coordinate
+ * @param posret The position relative to the item returned here
+ * @return The item at the coordinates or NULL if none
+ *
+ * @ingroup Genlist
+ */
+EAPI Elm_Genlist_Item *
+elm_genlist_at_xy_item_get(const Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *posret)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Coord ox, oy, ow, oh;
+   Item_Block *itb;
+   Evas_Coord lasty;
+   
+   evas_object_geometry_get(wd->pan_smart, &ox, &oy, &ow, &oh);
+   lasty = oy;
+   EINA_INLIST_FOREACH(wd->blocks, itb)
+     {
+	Eina_List *l;
+	Elm_Genlist_Item *it;
+
+        if (!ELM_RECTS_INTERSECT(ox + itb->x - itb->wd->pan_x, 
+                                 oy + itb->y - itb->wd->pan_y,
+                                 itb->w, itb->h, x, y, 1, 1))
+          continue;
+	EINA_LIST_FOREACH(itb->items, l, it)
+	  {
+             Evas_Coord itx, ity;
+             
+             itx = ox + itb->x + it->x - itb->wd->pan_x;
+             ity = oy + itb->y + it->y - itb->wd->pan_y;
+             if (ELM_RECTS_INTERSECT(itx, ity, it->w, it->h, x, y, 1, 1))
+               {
+                  if (posret)
+                    {
+                       if (y <= (ity + (it->h / 4))) *posret = -1;
+                       else if (y >= (ity + it->h - (it->h / 4))) *posret = 1;
+                       else *posret = 0;
+                    }
+                  return it;
+               }
+             lasty = ity + it->h;
+	  }
+     }
+   if (posret)
+     {
+        if (y > lasty) *posret = 1;
+        else *posret = -1;
+     }
+   return NULL;
+}
+
+/**
  * Get the first item in the genlist
  *
  * This returns the first item in the list.

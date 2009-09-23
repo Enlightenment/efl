@@ -39,10 +39,25 @@ gl_sel(void *data, Evas_Object *obj, void *event_info)
    printf("sel item data [%p] on genlist obj [%p], item pointer [%p]\n", data, obj, event_info);
 }
 
+static void
+_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *gl = data;
+   Evas_Event_Mouse_Move *ev = event_info;
+   int where = 0;
+   Elm_Genlist_Item *gli;
+   gli = elm_genlist_at_xy_item_get(gl, ev->cur.canvas.x, ev->cur.canvas.y, &where);
+   if (gli)
+     printf("over %p, where %i\n", elm_genlist_item_data_get(gli), where);
+   else
+     printf("over none, where %i\n", where);
+}
+
 void
 test_genlist(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *gl;
+   Evas_Object *over;
    Elm_Genlist_Item *gli;
    int i;
 
@@ -60,7 +75,15 @@ test_genlist(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, gl);
    evas_object_size_hint_weight_set(gl, 1.0, 1.0);
    evas_object_show(gl);
-
+   
+   over = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_color_set(over, 0, 0, 0, 0);
+   evas_object_event_callback_add(over, EVAS_CALLBACK_MOUSE_MOVE, _move, gl);
+   evas_object_repeat_events_set(over, 1);
+   evas_object_show(over);
+   evas_object_size_hint_weight_set(over, 1.0, 1.0);
+   elm_win_resize_object_add(win, over);
+   
    itc1.item_style     = "default";
    itc1.func.label_get = gl_label_get;
    itc1.func.icon_get  = gl_icon_get;
