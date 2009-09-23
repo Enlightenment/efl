@@ -111,6 +111,7 @@ _eina_convert_fp_check(double d, Eina_F32p32 fp, int length)
    l1 = eina_convert_dtoa(d, tmp1);
    l2 = eina_convert_fptoa(fp, tmp2);
    fail_if(l1 != l2);
+   fail_if(length != l1);
    fail_if(strcmp(tmp1, tmp2) != 0);
 
    d = -d;
@@ -119,6 +120,7 @@ _eina_convert_fp_check(double d, Eina_F32p32 fp, int length)
    l1 = eina_convert_dtoa(d, tmp1);
    l2 = eina_convert_fptoa(fp, tmp2);
    fail_if(l1 != l2);
+   fail_if(length + 1 != l1);
    fail_if(strcmp(tmp1, tmp2) != 0);
 }
 
@@ -128,7 +130,7 @@ START_TEST(eina_convert_fp)
    _eina_convert_fp_check(0.5, 0x0000000080000000, 8);
    _eina_convert_fp_check(0.625, 0x00000000a0000000, 8);
    _eina_convert_fp_check(256.0, 0x0000010000000000, 6);
-   _eina_convert_fp_check(0.5, 0x0000000080000000, 9);
+   _eina_convert_fp_check(0.5, 0x0000000080000000, 8);
    _eina_convert_fp_check(128.625, 0x00000080a0000000, 10);
 }
 END_TEST
