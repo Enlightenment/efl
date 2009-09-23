@@ -8,14 +8,16 @@
 #endif
 
 #include <limits.h>
-#include <unistd.h>
 #include <stdlib.h>
-#include <sys/param.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 /* get the casefold feature! */
 #include <fnmatch.h>
 #include <dirent.h>
+#ifndef _MSC_VER
+# include <unistd.h>
+# include <sys/param.h>
+#endif
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
@@ -50,7 +52,7 @@ char *
 evas_file_path_join(const char *path, const char *end)
 {
    char *res = NULL;
-   int len;
+   size_t len;
 
    if ((!path) && (!end)) return NULL;
    if (!path) return strdup(end);

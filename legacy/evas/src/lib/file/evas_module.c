@@ -6,6 +6,17 @@
 
 #include <evas_common.h>
 #include <evas_private.h>
+#include <evas_module.h>
+
+#ifdef _MSC_VER
+# ifdef open
+#  undef open
+# endif
+# ifdef close
+#  undef close
+# endif
+#endif
+
 
 static Eina_Hash *evas_modules[4] = {
   NULL,
@@ -41,7 +52,9 @@ void
 evas_module_paths_init(void)
 {
    char *path, *path2;
+#ifndef _MSC_VER
    const char *path3;
+#endif
 
    /* 1. ~/.evas/modules/ */
    path = eina_module_environment_path_get("HOME", "/.evas/modules");
@@ -59,6 +72,7 @@ evas_module_paths_init(void)
      evas_module_paths = _evas_module_append(evas_module_paths, path2);
 
    /* 4. PREFIX/evas/modules/ */
+#ifndef _MSC_VER
    path3 = PACKAGE_LIB_DIR "/evas/modules";
    if ((path && (strcmp(path, path3) != 0)) ||
        (path2 && (strcmp(path2, path3) != 0)) ||
@@ -68,6 +82,7 @@ evas_module_paths_init(void)
 	if (path)
 	  evas_module_paths = _evas_module_append(evas_module_paths, path);
      }
+#endif
 }
 
 #define EVAS_EINA_STATIC_MODULE_DEFINE(Tn, Name)	\
