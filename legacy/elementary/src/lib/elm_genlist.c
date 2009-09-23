@@ -1511,10 +1511,7 @@ _item_block_add(Widget_Data *wd, Elm_Genlist_Item *it)
    else
      {
 	itb = it->rel->block;
-	if ((!itb) || (itb->count >= 32))
-	  {
-	     goto newblock;
-	  }
+	if (!itb) goto newblock;
 	if (it->before)
 	  itb->items = eina_list_prepend_relative(itb->items, it, it->rel);
 	else
@@ -1531,6 +1528,32 @@ _item_block_add(Widget_Data *wd, Elm_Genlist_Item *it)
 	if ((it->rel->delete_me) && (it->rel->relcount == 0))
 	  _item_del(it->rel);
 	it->rel = NULL;
+     }
+   if (itb->count > 32)
+     {
+        int newc;
+        Item_Block *itb2;
+        Elm_Genlist_Item *it2;
+        
+        newc = itb->count / 2;
+        itb2 = calloc(1, sizeof(Item_Block));
+        if (!itb2) return;
+        itb2->wd = wd;
+        wd->blocks = eina_inlist_append_relative(wd->blocks, EINA_INLIST_GET(itb2), EINA_INLIST_GET(itb));
+        itb2->changed = EINA_TRUE;
+        while ((itb->count > newc) && (itb->items))
+          {
+             Eina_List *l;
+             
+             l = eina_list_last(itb->items);
+             it2 = l->data;
+             itb->items = eina_list_remove_list(itb->items, l);
+             itb->count--;
+             
+             itb2->items = eina_list_prepend(itb2->items, it2);
+             it2->block = itb2;
+             itb2->count++;
+          }
      }
 }
 
