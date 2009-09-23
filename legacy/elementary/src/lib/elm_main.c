@@ -358,6 +358,7 @@ elm_need_e_dbus(void)
    if (_elm_need_e_dbus) return;
    _elm_need_e_dbus = 1;
    e_dbus_init();
+   e_hal_init();
 #endif   
 }
 
@@ -368,6 +369,7 @@ _elm_unneed_e_dbus(void)
    if (_elm_need_e_dbus)
      {
         _elm_need_e_dbus = 0;
+	e_hal_shutdown();
         e_dbus_shutdown();
      }
 #endif   
