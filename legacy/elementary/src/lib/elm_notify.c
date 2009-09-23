@@ -313,7 +313,7 @@ elm_notify_timer_init(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if(wd->timer)
-     evas_object_del(wd->timer);
+     ecore_timer_del(wd->timer);
    if(wd->timeout>0)
      wd->timer = ecore_timer_add(wd->timeout, _timer_cb, obj);
 }
