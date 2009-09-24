@@ -182,6 +182,11 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 	if (!wd->on_hold)
 	  {
 	     wd->on_hold = EINA_TRUE;
+             if (it->long_timer)
+               {
+                  ecore_timer_del(it->long_timer);
+                  it->long_timer = NULL;
+               }
 	     _item_unselect(it);
 	  }
      }
