@@ -155,8 +155,8 @@ evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coo
      }
    obj->cur.geometry.x = min_x;
    obj->cur.geometry.y = min_y;
-   obj->cur.geometry.w = max_x - min_x + 2.0;
-   obj->cur.geometry.h = max_y - min_y + 2.0;
+   obj->cur.geometry.w = max_x - min_x + 2;
+   obj->cur.geometry.h = max_y - min_y + 2;
 ////   obj->cur.cache.geometry.validity = 0;
    o->cur.x1 = x1 - min_x;
    o->cur.y1 = y1 - min_y;
@@ -203,18 +203,18 @@ evas_object_line_xy_get(const Evas_Object *obj, Evas_Coord *x1, Evas_Coord *y1, 
    Evas_Object_Line *o;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   if (x1) *x1 = 0.0;
-   if (y1) *y1 = 0.0;
-   if (x2) *x2 = 0.0;
-   if (y2) *y2 = 0.0;
+   if (x1) *x1 = 0;
+   if (y1) *y1 = 0;
+   if (x2) *x2 = 0;
+   if (y2) *y2 = 0;
    return;
    MAGIC_CHECK_END();
    o = (Evas_Object_Line *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Line, MAGIC_OBJ_LINE);
-   if (x1) *x1 = 0.0;
-   if (y1) *y1 = 0.0;
-   if (x2) *x2 = 0.0;
-   if (y2) *y2 = 0.0;
+   if (x1) *x1 = 0;
+   if (y1) *y1 = 0;
+   if (x2) *x2 = 0;
+   if (y2) *y2 = 0;
    return;
    MAGIC_CHECK_END();
    if (x1) *x1 = obj->cur.geometry.x + o->cur.x1;
@@ -260,10 +260,10 @@ evas_object_line_new(void)
    /* alloc obj private data */
    o = calloc(1, sizeof(Evas_Object_Line));
    o->magic = MAGIC_OBJ_LINE;
-   o->cur.x1 = 0.0;
-   o->cur.y1 = 0.0;
-   o->cur.x2 = 31.0;
-   o->cur.y2 = 31.0;
+   o->cur.x1 = 0;
+   o->cur.y1 = 0;
+   o->cur.x2 = 31;
+   o->cur.y2 = 31;
    o->prev = o->cur;
    return o;
 }

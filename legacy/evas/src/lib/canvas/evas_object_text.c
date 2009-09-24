@@ -1335,10 +1335,10 @@ evas_object_text_init(Evas_Object *obj)
    obj->cur.color.g = 255;
    obj->cur.color.b = 255;
    obj->cur.color.a = 255;
-   obj->cur.geometry.x = 0.0;
-   obj->cur.geometry.y = 0.0;
-   obj->cur.geometry.w = 0.0;
-   obj->cur.geometry.h = 0.0;
+   obj->cur.geometry.x = 0;
+   obj->cur.geometry.y = 0;
+   obj->cur.geometry.w = 0;
+   obj->cur.geometry.h = 0;
    obj->cur.layer = 0;
    /* set up object-specific settings */
    obj->prev = obj->cur;

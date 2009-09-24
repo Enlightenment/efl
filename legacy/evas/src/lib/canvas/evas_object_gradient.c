@@ -411,11 +411,11 @@ evas_object_gradient_fill_angle_get(const Evas_Object *obj)
    Evas_Object_Gradient *o;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return 0.0;
+   return 0;
    MAGIC_CHECK_END();
    o = (Evas_Object_Gradient *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
-   return 0.0;
+   return 0;
    MAGIC_CHECK_END();
    return o->cur.fill.angle;
 }
@@ -503,11 +503,11 @@ evas_object_gradient_angle_get(const Evas_Object *obj)
    Evas_Object_Gradient *o;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return 0.0;
+   return 0;
    MAGIC_CHECK_END();
    o = (Evas_Object_Gradient *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
-   return 0.0;
+   return 0;
    MAGIC_CHECK_END();
    return o->cur.map.angle;
 }
@@ -859,14 +859,14 @@ evas_object_gradient_new(void)
    o = calloc(1, sizeof(Evas_Object_Gradient));
    if (!o) return NULL;
    o->magic = MAGIC_OBJ_GRADIENT;
-   o->cur.map.angle = 0.0;
+   o->cur.map.angle = 0;
    o->cur.map.offset = 0.0;
    o->cur.map.direction = 1;
    o->cur.fill.x = 0;
    o->cur.fill.y = 0;
    o->cur.fill.w = 1;
    o->cur.fill.h = 1;
-   o->cur.fill.angle = 0.0;
+   o->cur.fill.angle = 0;
    o->cur.fill.spread = EVAS_TEXTURE_REFLECT;
    o->cur.type.name = strdup("linear");
    o->cur.type.params = NULL;

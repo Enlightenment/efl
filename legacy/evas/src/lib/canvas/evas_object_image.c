@@ -603,8 +603,8 @@ evas_object_image_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Co
 
    if (w < 0) w = -w;
    if (h < 0) h = -h;
-   if (w == 0.0) return;
-   if (h == 0.0) return;
+   if (w == 0) return;
+   if (h == 0) return;
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -2325,10 +2325,10 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 									 o->cur.border.t, o->cur.border.b);
 	idx = evas_object_image_figure_x_fill(obj, o->cur.fill.x, o->cur.fill.w, &idw);
 	idy = evas_object_image_figure_y_fill(obj, o->cur.fill.y, o->cur.fill.h, &idh);
-	if (idw < 1.0) idw = 1.0;
-	if (idh < 1.0) idh = 1.0;
-	if (idx > 0.0) idx -= idw;
-	if (idy > 0.0) idy -= idh;
+	if (idw < 1) idw = 1;
+	if (idh < 1) idh = 1;
+	if (idx > 0) idx -= idw;
+	if (idy > 0) idy -= idh;
 	while ((int)idx < obj->cur.geometry.w)
 	  {
 	     Evas_Coord ydy;
@@ -2337,7 +2337,7 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 	     ydy = idy;
 	     ix = idx;
 	     if ((o->cur.fill.w == obj->cur.geometry.w) &&
-		 (o->cur.fill.x == 0.0))
+		 (o->cur.fill.x == 0))
 	       {
 		  dobreak_w = 1;
 		  iw = obj->cur.geometry.w;
@@ -2350,7 +2350,7 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 
 		  iy = idy;
 		  if ((o->cur.fill.h == obj->cur.geometry.h) &&
-		      (o->cur.fill.y == 0.0))
+		      (o->cur.fill.y == 0))
 		    {
 		       ih = obj->cur.geometry.h;
 		       dobreak_h = 1;

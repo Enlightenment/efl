@@ -137,23 +137,23 @@ evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
      {
 	obj->cur.geometry.x = p->x;
 	obj->cur.geometry.y = p->y;
-	obj->cur.geometry.w = 2.0;
-	obj->cur.geometry.h = 2.0;
+	obj->cur.geometry.w = 2;
+	obj->cur.geometry.h = 2;
      }
    else
      {
 	if (x < obj->cur.geometry.x) min_x = x;
 	else min_x = obj->cur.geometry.x;
-	if (x > (obj->cur.geometry.x + obj->cur.geometry.w - 2.0)) max_x = x;
-	else max_x = obj->cur.geometry.x + obj->cur.geometry.w - 2.0;
+	if (x > (obj->cur.geometry.x + obj->cur.geometry.w - 2)) max_x = x;
+	else max_x = obj->cur.geometry.x + obj->cur.geometry.w - 2;
 	if (y < obj->cur.geometry.y) min_y = y;
 	else min_y = obj->cur.geometry.y;
-	if (y > (obj->cur.geometry.y + obj->cur.geometry.h - 2.0)) max_y = y;
-	else max_y = obj->cur.geometry.y + obj->cur.geometry.h - 2.0;
+	if (y > (obj->cur.geometry.y + obj->cur.geometry.h - 2)) max_y = y;
+	else max_y = obj->cur.geometry.y + obj->cur.geometry.h - 2;
 	obj->cur.geometry.x = min_x;
 	obj->cur.geometry.y = min_y;
-	obj->cur.geometry.w = max_x - min_x + 2.0;
-	obj->cur.geometry.h = max_y - min_y + 2.0;
+	obj->cur.geometry.w = max_x - min_x + 2;
+	obj->cur.geometry.h = max_y - min_y + 2;
      }
    o->points = eina_list_append(o->points, p);
 
@@ -241,10 +241,10 @@ evas_object_polygon_init(Evas_Object *obj)
    obj->cur.color.g = 255;
    obj->cur.color.b = 255;
    obj->cur.color.a = 255;
-   obj->cur.geometry.x = 0.0;
-   obj->cur.geometry.y = 0.0;
-   obj->cur.geometry.w = 0.0;
-   obj->cur.geometry.h = 0.0;
+   obj->cur.geometry.x = 0;
+   obj->cur.geometry.y = 0;
+   obj->cur.geometry.w = 0;
+   obj->cur.geometry.h = 0;
    obj->cur.layer = 0;
    /* set up object-specific settings */
    obj->prev = obj->cur;

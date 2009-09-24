@@ -479,7 +479,7 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    return;
    MAGIC_CHECK_END();
    if (obj->delete_me) return;
-   if (w < 0.0) w = 0.0; if (h < 0.0) h = 0.0;
+   if (w < 0) w = 0; if (h < 0) h = 0;
    if (evas_object_intercept_call_resize(obj, w, h)) return;
 #ifdef FORWARD_NOOP_RESIZES_TO_SMART_OBJS
    if (obj->smart.smart)
