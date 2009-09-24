@@ -229,8 +229,8 @@ void *alloca (size_t);
 #define IMG_MAX_SIZE 65000
 
 #define IMG_TOO_BIG(w, h) \
-   ((((unsigned long long)w) * ((unsigned long long)h)) > \
-       (1ULL << (29 * (sizeof(void *) / 4))))
+   ((((unsigned long long)w) * ((unsigned long long)h)) >= \
+       ((1ULL << (29 * (sizeof(void *) / 4))) - 2048))
 
 #ifdef BUILD_SMALL_DITHER_MASK
 # define DM_TABLE     _evas_dither_44
