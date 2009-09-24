@@ -70,6 +70,7 @@ struct _Widget_Data
    int nosmooth;
    Eina_List *grids;
    Eina_Bool main_load_pending : 1;
+   Eina_Bool resized : 1;
 };
 
 struct _Pan
@@ -502,6 +503,15 @@ _calc_job(void *data)
    minw = wd->size.w;
    minh = wd->size.h;
    
+   if (wd->resized)
+     {
+        wd->resized = 0;
+        if (wd->mode != ELM_PHOTOCAM_ZOOM_MODE_MANUAL)
+          {
+             wd->zoom++;
+             elm_photocam_zoom_set(wd->obj, wd->zoom - 1);
+          }
+     }
    if ((minw != wd->minw) || (minh != wd->minh))
      {
         wd->minw = minw;
@@ -584,6 +594,7 @@ _pan_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    Evas_Coord ow, oh;
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    if ((ow == w) && (oh == h)) return;
+   sd->wd->resized = 1;
    if (sd->wd->calc_job) ecore_job_del(sd->wd->calc_job);
    sd->wd->calc_job = ecore_job_add(_calc_job, sd->wd);
 }
@@ -822,12 +833,11 @@ elm_photocam_zoom_set(Evas_Object *obj, int zoom)
           z = wd->size.imw / pw;
         else
           z = wd->size.imh / ph;
-        z++;
-        if (z <= 1) z == 1;
-        else if (z <= 2) z = 2;
-        else if (z <= 4) z = 4;
-        else if (z <= 8) z = 8;
-        else z = 8;
+//        z++;
+        if      (z >= 8) z = 8;
+        else if (z >= 4) z = 4;
+        else if (z >= 2) z = 2;
+        else             z = 1;
         wd->zoom = z;
         wd->size.nw = pw;
         wd->size.nh = ph;
@@ -848,12 +858,11 @@ elm_photocam_zoom_set(Evas_Object *obj, int zoom)
           z = wd->size.imw / pw;
         else
           z = wd->size.imh / ph;
-        z++;
-        if (z <= 1) z == 1;
-        else if (z <= 2) z = 2;
-        else if (z <= 4) z = 4;
-        else if (z <= 8) z = 8;
-        else z = 8;
+//        z++;
+        if      (z >= 8) z = 8;
+        else if (z >= 4) z = 4;
+        else if (z >= 2) z = 2;
+        else             z = 1;
         wd->zoom = z;
         wd->size.nw = pw;
         wd->size.nh = ph;
