@@ -1,6 +1,23 @@
 #include "evas_common.h"
 #include "evas_private.h"
-#include "evas_object_gradient2.h"
+
+typedef struct _Evas_Object_Gradient2      Evas_Object_Gradient2;
+
+struct _Evas_Object_Gradient2
+{
+   DATA32            magic;
+
+   struct {
+      struct {
+         Evas_Common_Transform  transform;
+         int         spread;
+      } fill;
+      unsigned char    gradient_opaque : 1;
+   } cur, prev;
+
+   unsigned char     gradient_changed : 1;
+};
+
 
 
 /**
