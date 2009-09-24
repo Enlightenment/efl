@@ -1034,11 +1034,11 @@ elm_smart_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y,
    x = nx;
    if (x < 0) x = 0;
    else if ((x + w) > cw) x = cw - w;
-   _smart_scrollto_x(sd, 1.0, x);
+   _smart_scrollto_x(sd, _elm_config->page_scroll_friction, x);
    y = ny;
    if (y < 0) y = 0;
    else if ((y + h) > ch) y = ch - h;
-   _smart_scrollto_y(sd, 1.0, y);
+   _smart_scrollto_y(sd, _elm_config->page_scroll_friction, y);
 }
 
 /* local subsystem functions */
@@ -1414,9 +1414,9 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info)
                        
                        elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
                        pgx = _smart_page_x_get(sd, ox);
-                       if (pgx != x) _smart_scrollto_x(sd, 1.0, pgx);
+                       if (pgx != x) _smart_scrollto_x(sd, _elm_config->page_scroll_friction, pgx);
                        pgy = _smart_page_y_get(sd, oy);
-                       if (pgy != y) _smart_scrollto_y(sd, 1.0, pgy);
+                       if (pgy != y) _smart_scrollto_y(sd, _elm_config->page_scroll_friction, pgy);
                     }
 	       }
              else
@@ -1427,9 +1427,9 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info)
                        
                        elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
                        pgx = _smart_page_x_get(sd, ox);
-                       if (pgx != x) _smart_scrollto_x(sd, 1.0, pgx);
+                       if (pgx != x) _smart_scrollto_x(sd, _elm_config->page_scroll_friction, pgx);
                        pgy = _smart_page_y_get(sd, oy);
-                       if (pgy != y) _smart_scrollto_y(sd, 1.0, pgy);
+                       if (pgy != y) _smart_scrollto_y(sd, _elm_config->page_scroll_friction, pgy);
                     }
                }
 	     sd->down.dragged = 0;

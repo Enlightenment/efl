@@ -832,7 +832,7 @@ elm_photocam_zoom_set(Evas_Object *obj, int zoom)
    elm_smart_scroller_child_viewport_size_get(wd->scr, &rw, &rh);
    wd->size.spos.x = (double)(rx + (rw / 2)) / (double)wd->size.w;
    wd->size.spos.y = (double)(ry + (rh / 2)) / (double)wd->size.h;
-   wd->t_end = wd->t_start + 0.5;
+   wd->t_end = wd->t_start + _elm_config->zoom_friction;
    an = wd->zoom_animator;
    if (!_zoom_anim(obj)) ecore_animator_del(an);
    if (wd->calc_job) ecore_job_del(wd->calc_job);

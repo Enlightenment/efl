@@ -43,6 +43,8 @@ struct _Elm_Config
    double thumbscroll_momentum_threshhold;
    double thumbscroll_friction;
    double thumbscroll_bounce_friction;
+   double page_scroll_friction;
+   double zoom_friction;
    int thumbscroll_bounce_enable;
    double scale;
    int bgpixmap;
