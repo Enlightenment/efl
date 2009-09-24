@@ -451,7 +451,13 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   grid_clearall(obj);
+   Grid *g;
+   
+   EINA_LIST_FREE(wd->grids, g)
+     {
+        if (g->grid) free(g->grid);
+        free(g);
+     }
    evas_object_del(wd->pan_smart);
    wd->pan_smart = NULL;
    if (wd->file) eina_stringshare_del(wd->file);
