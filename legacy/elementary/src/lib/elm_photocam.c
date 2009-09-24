@@ -400,7 +400,7 @@ _zoom_anim(void *data)
    Evas_Object *obj = data;
    Widget_Data *wd = elm_widget_data_get(obj);
    double t;
-   Evas_Coord ow, oh;
+   Evas_Coord xx, yy, ow, oh;
    
    t = ecore_loop_time_get();
    if (t >= wd->t_end)
@@ -412,13 +412,14 @@ _zoom_anim(void *data)
    t = 1.0 - (t * t);
    wd->size.w = (wd->size.ow * (1.0 - t)) + (wd->size.nw * t);
    wd->size.h = (wd->size.oh * (1.0 - t)) + (wd->size.nh * t);
-   printf("%3.3f %3.3f\n", wd->size.spos.x, wd->size.spos.y);
-//   elm_smart_scroller_child_viewport_size_get(wd->scr, &ow, &oh);
-//   elm_smart_scroller_child_region_show
-//     (wd->scr, 
-//      (wd->size.spos.x * wd->size.w) - (ow / 2),
-//      (wd->size.spos.y * wd->size.h) - (oh / 2),
-//      ow, oh);
+   elm_smart_scroller_child_viewport_size_get(wd->scr, &ow, &oh);
+   xx = (wd->size.spos.x * wd->size.w) - (ow / 2);
+   yy = (wd->size.spos.y * wd->size.h) - (oh / 2);
+   if (xx < 0) xx = 0;
+   else if (xx > (wd->size.w - ow)) xx = wd->size.w - ow;
+   if (yy < 0) yy = 0;
+   else if (yy > (wd->size.h - oh)) yy = wd->size.h - oh;
+   elm_smart_scroller_child_region_show(wd->scr, xx, yy, ow, oh);
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
    if (t >= 1.0)
@@ -785,6 +786,7 @@ elm_photocam_zoom_set(Evas_Object *obj, int zoom)
    Eina_List *l;
    Grid *g, *g_zoom = NULL;
    Evas_Coord pw, ph, rx, ry, rw, rh;
+   int z;
    Ecore_Animator *an;
    
    if (zoom < 1) zoom = 1;
@@ -792,11 +794,76 @@ elm_photocam_zoom_set(Evas_Object *obj, int zoom)
    wd->zoom = zoom;
    wd->size.ow = wd->size.w;
    wd->size.oh = wd->size.h;
-   wd->size.nw = wd->size.imw / wd->zoom;
-   wd->size.nh = wd->size.imh / wd->zoom;
-   wd->size.w = wd->size.nw;
-   wd->size.h = wd->size.nh;
-   if (wd->main_load_pending) goto done;
+   elm_smart_scroller_child_pos_get(wd->scr, &rx, &ry);
+   elm_smart_scroller_child_viewport_size_get(wd->scr, &rw, &rh);
+   if (wd->mode == ELM_PHOTOCAM_ZOOM_MODE_MANUAL)
+     {
+        wd->size.nw = wd->size.imw / wd->zoom;
+        wd->size.nh = wd->size.imh / wd->zoom;
+     }
+   else if (wd->mode == ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT)
+     {
+        ph = (wd->size.imh * rw) / wd->size.imw;
+        if (ph > rh)
+          {
+             pw = (wd->size.imw * rh) / wd->size.imh;
+             ph = rh;
+          }
+        else
+          {
+             pw = rw;
+          }
+        if ((pw > wd->size.imw) || (ph > wd->size.imh))
+          {
+             pw = wd->size.imw;
+             ph = wd->size.imh;
+          }
+        if (wd->size.imw > wd->size.imh)
+          z = wd->size.imw / pw;
+        else
+          z = wd->size.imh / ph;
+        z++;
+        if (z <= 1) z == 1;
+        else if (z <= 2) z = 2;
+        else if (z <= 4) z = 4;
+        else if (z <= 8) z = 8;
+        else z = 8;
+        wd->zoom = z;
+        wd->size.nw = pw;
+        wd->size.nh = ph;
+     }
+   else if (wd->mode == ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL)
+     {
+        ph = (wd->size.imh * rw) / wd->size.imw;
+        if (ph < rh)
+          {
+             pw = (wd->size.imw * rh) / wd->size.imh;
+             ph = rh;
+          }
+        else
+          {
+             pw = rw;
+          }
+        if (wd->size.imw > wd->size.imh)
+          z = wd->size.imw / pw;
+        else
+          z = wd->size.imh / ph;
+        z++;
+        if (z <= 1) z == 1;
+        else if (z <= 2) z = 2;
+        else if (z <= 4) z = 4;
+        else if (z <= 8) z = 8;
+        else z = 8;
+        wd->zoom = z;
+        wd->size.nw = pw;
+        wd->size.nh = ph;
+     }
+   if (wd->main_load_pending)
+     {
+        wd->size.w = wd->size.nw;
+        wd->size.h = wd->size.nh;
+        goto done;
+     }
    EINA_LIST_FOREACH(wd->grids, l, g)
      {
         if (g->zoom == wd->zoom)
@@ -828,11 +895,13 @@ elm_photocam_zoom_set(Evas_Object *obj, int zoom)
         if (wd->nosmooth == 1) _smooth_update(obj);
      }
    wd->t_start = ecore_loop_time_get();
-   elm_smart_scroller_child_pos_get(wd->scr, &rx, &ry);
-   elm_smart_scroller_child_viewport_size_get(wd->scr, &rw, &rh);
+   wd->t_end = wd->t_start + _elm_config->zoom_friction;
    wd->size.spos.x = (double)(rx + (rw / 2)) / (double)wd->size.w;
    wd->size.spos.y = (double)(ry + (rh / 2)) / (double)wd->size.h;
-   wd->t_end = wd->t_start + _elm_config->zoom_friction;
+   if (rw > wd->size.w) wd->size.spos.x = 0.5;
+   if (rh > wd->size.h) wd->size.spos.y = 0.5;
+   if (wd->size.spos.x > 1.0) wd->size.spos.x = 1.0;
+   if (wd->size.spos.y > 1.0) wd->size.spos.y = 1.0;
    an = wd->zoom_animator;
    if (!_zoom_anim(obj)) ecore_animator_del(an);
    if (wd->calc_job) ecore_job_del(wd->calc_job);
@@ -869,6 +938,9 @@ elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->mode == mode) return;
+   wd->mode = mode;
+   wd->zoom++;
+   elm_photocam_zoom_set(obj, wd->zoom - 1);
 }
 
 /**

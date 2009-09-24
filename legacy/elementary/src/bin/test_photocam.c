@@ -19,7 +19,25 @@ my_bt_zoom_out(void *data, Evas_Object *obj, void *event_info)
    zoom = elm_photocam_zoom_get(data);
    zoom *= 2;
    elm_photocam_zoom_mode_set(data, ELM_PHOTOCAM_ZOOM_MODE_MANUAL);
-   if (zoom <= 32) elm_photocam_zoom_set(data, zoom);
+   if (zoom <= 256) elm_photocam_zoom_set(data, zoom);
+}
+
+void
+my_bt_zoom_man(void *data, Evas_Object *obj, void *event_info)
+{
+   elm_photocam_zoom_mode_set(data, ELM_PHOTOCAM_ZOOM_MODE_MANUAL);
+}
+
+void
+my_bt_zoom_fit(void *data, Evas_Object *obj, void *event_info)
+{
+   elm_photocam_zoom_mode_set(data, ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT);
+}
+
+void
+my_bt_zoom_fill(void *data, Evas_Object *obj, void *event_info)
+{
+   elm_photocam_zoom_mode_set(data, ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL);
 }
 
 void
@@ -69,7 +87,31 @@ test_photocam(void *data, Evas_Object *obj, void *event_info)
    evas_object_smart_callback_add(bt, "clicked", my_bt_zoom_in, ph);
    evas_object_size_hint_weight_set(bt, 1.0, 1.0);
    evas_object_size_hint_align_set(bt, 0.9, 0.1);
-   elm_table_pack(tb2, bt, 0, 0, 1, 1);
+   elm_table_pack(tb2, bt, 2, 0, 1, 1);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Manual");
+   evas_object_smart_callback_add(bt, "clicked", my_bt_zoom_man, ph);
+   evas_object_size_hint_weight_set(bt, 1.0, 1.0);
+   evas_object_size_hint_align_set(bt, 0.1, 0.9);
+   elm_table_pack(tb2, bt, 0, 1, 1, 1);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Fit");
+   evas_object_smart_callback_add(bt, "clicked", my_bt_zoom_fit, ph);
+   evas_object_size_hint_weight_set(bt, 1.0, 1.0);
+   evas_object_size_hint_align_set(bt, 0.5, 0.9);
+   elm_table_pack(tb2, bt, 1, 1, 1, 1);
+   evas_object_show(bt);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Fill");
+   evas_object_smart_callback_add(bt, "clicked", my_bt_zoom_fill, ph);
+   evas_object_size_hint_weight_set(bt, 1.0, 1.0);
+   evas_object_size_hint_align_set(bt, 0.9, 0.9);
+   elm_table_pack(tb2, bt, 2, 1, 1, 1);
    evas_object_show(bt);
    
    evas_object_show(tb2);
