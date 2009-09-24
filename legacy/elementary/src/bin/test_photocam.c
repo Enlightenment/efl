@@ -45,6 +45,7 @@ test_photocam(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *ph, *tb2, *bt;
    char buf[PATH_MAX];
+   // FIXME: add a file selector and a "select a file" button.
    const char *img[4] =
      {
         "/home/raster/t1.jpg",  //   5 mpixel
@@ -66,7 +67,7 @@ test_photocam(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(ph, 1.0, 1.0);
    elm_win_resize_object_add(win, ph);
    
-   elm_photocam_file_set(ph, img[1]);
+   elm_photocam_file_set(ph, img[3]);
    
    evas_object_show(ph);
    

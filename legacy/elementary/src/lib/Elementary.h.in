@@ -878,11 +878,12 @@ extern "C" {
 	ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL
      } Elm_Photocam_Zoom_Mode;
    EAPI Evas_Object *elm_photocam_add(Evas_Object *parent);
-   EAPI void         elm_photocam_file_set(Evas_Object *obj, const char *file);
+   EAPI int          elm_photocam_file_set(Evas_Object *obj, const char *file);
    EAPI void         elm_photocam_zoom_set(Evas_Object *obj, int zoom);
    EAPI int          elm_photocam_zoom_get(Evas_Object *obj);
    EAPI void         elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode);
    EAPI Elm_Photocam_Zoom_Mode elm_photocam_zoom_mode_get(Evas_Object *obj);
+   EAPI void         elm_photocam_image_size_get(Evas_Object *obj, int *w, int *h);
 
 #ifdef __cplusplus
 }

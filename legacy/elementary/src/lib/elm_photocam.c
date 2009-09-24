@@ -4,7 +4,25 @@
 /**
  * @defgroup Photocam Photocam
  *
- * XXX
+ * This is a widget specifically for displaying high-resolution digital
+ * camera photos giving speedy feedback (fast load), low memory footprint
+ * and zooming and panning as well as fitting logic.
+ * 
+ * TODO:
+ * 
+ * 1. clicked signal - get mouse down/up etc. on photo
+ * 2. longpress signal "
+ * 3. wrap photo in theme edje so u can have styling around photo
+ * 4. handle styles properly
+ * 5. signals for stages of load (main preload, each tile, all done)
+ * 6. signals for change in zoom level
+ * 7. signals for change in pan
+ * 8. controls for setting panning
+ * 
+ * optional?
+ * 
+ * 9.  exif handling
+ * 10. rotation flags in exif handling (nasty! should have rot in evas)
  *
  * Signals that you can add callbacks for are:
  *
@@ -742,16 +760,22 @@ elm_photocam_add(Evas_Object *parent)
 }
 
 /**
- * XXX
+ * Set the photo file to be shown
  *
- * xxx
+ * This sets (and shows) the specified file (with a relative or absolute path)
+ * and will return a load error (same error that
+ * evas_object_image_load_error_get() will return). The image will change and
+ * adjust its size at this point and begin a background load process for this
+ * photo that at some time in the future will be displayed at the full quality
+ * needed.
  *
  * @param obj The photocam object
  * @param file The photo file
+ * @return The return error (see EVAS_LOAD_ERROR_NONE, EVAS_LOAD_ERROR_GENERIC etc.)
  *
  * @ingroup Photocam
  */
-EAPI void
+EAPI int
 elm_photocam_file_set(Evas_Object *obj, const char *file)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -785,12 +809,17 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
    grid_clearall(obj);
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
+   return evas_object_image_load_error_get(wd->img);
 }
 
 /**
- * XXX
+ * Set the zoom level of the photo
  *
- * xxx
+ * This sets the zoom level. 1 will be 1:1 pixel for pixel. 2 will be 2:1
+ * (that is 2x2 photo pixels will display as 1 on-screen pixel). 4:1 will be
+ * 4x4 photo pixels as 1 screen pixel, and so on. The @p zoom parameter must
+ * be a power of 2 (1, 2, 4, 8, 16, 32, 64 etc.) to work correctly, and be
+ * greater than 0. Other values will have undefined behavior.
  *
  * @param obj The photocam object
  *
@@ -839,7 +868,6 @@ elm_photocam_zoom_set(Evas_Object *obj, int zoom)
           z = wd->size.imw / pw;
         else
           z = wd->size.imh / ph;
-//        z++;
         if      (z >= 8) z = 8;
         else if (z >= 4) z = 4;
         else if (z >= 2) z = 2;
@@ -864,7 +892,6 @@ elm_photocam_zoom_set(Evas_Object *obj, int zoom)
           z = wd->size.imw / pw;
         else
           z = wd->size.imh / ph;
-//        z++;
         if      (z >= 8) z = 8;
         else if (z >= 4) z = 4;
         else if (z >= 2) z = 2;
@@ -924,11 +951,15 @@ elm_photocam_zoom_set(Evas_Object *obj, int zoom)
 }
 
 /**
- * XXX
+ * Get the zoom level of the photo
  *
- * xxx
+ * This returns the current zoom level of the photocam object. Note that if
+ * you set the fill mode to other than ELM_PHOTOCAM_ZOOM_MODE_MANUAL
+ * (which is the default), the zoom level may be changed at any time by the
+ * photocam object itself to account for photo size and photocam viewpoer size
  *
  * @param obj The photocam object
+ * @return The current zoom level
  *
  * @ingroup Photocam
  */
@@ -940,11 +971,20 @@ elm_photocam_zoom_get(Evas_Object *obj)
 }
 
 /**
- * XXX
+ * Set the zoom mode
  *
- * xxx
+ * This sets the zoom mode to manual or one of several automatic levels.
+ * Manual (ELM_PHOTOCAM_ZOOM_MODE_MANUAL) means that zoom is set manually by
+ * elm_photocam_zoom_set() and will stay at that level until changed by code
+ * or until zoom mode is changed. This is the default mode.
+ * The Automatic modes will allow the photocam object to automatically
+ * adjust zoom mode based on properties. ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT) will
+ * adjust zoom so the photo fits EXACTLY inside the scroll frame with no pixels
+ * outside this area. ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL will be similar but
+ * ensure no pixels within the frame are left unfilled.
  *
  * @param obj The photocam object
+ * @param mode The desired mode
  *
  * @ingroup Photocam
  */
@@ -959,11 +999,12 @@ elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode)
 }
 
 /**
- * XXX
+ * Get the zoom mode
  *
- * xxx
+ * This gets the current zoom mode of the photocam object
  *
  * @param obj The photocam object
+ * @return The current zoom mode
  *
  * @ingroup Photocam
  */
@@ -972,4 +1013,25 @@ elm_photocam_zoom_mode_get(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    return wd->mode;
+}
+
+/**
+ * Get the current image pixel width and height
+ *
+ * This gets the current photo pixel width and height (for the original).
+ * The size will be returned in the integers @p w and @p h that are pointed
+ * to.
+ *
+ * @param obj The photocam object
+ * @param w A pointer to the width return
+ * @param h A pointer to the height return
+ *
+ * @ingroup Photocam
+ */
+EAPI void
+elm_photocam_image_size_get(Evas_Object *obj, int *w, int *h)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (w) *w = wd->size.imw;
+   if (h) *h = wd->size.imh;
 }
