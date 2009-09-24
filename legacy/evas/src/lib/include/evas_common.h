@@ -13,34 +13,34 @@
 #include "Evas.h"
 
 /* macros needed to log message through eina_log */
-extern int _evas_log_dom_global;
+extern EAPI int _evas_log_dom_global;
 #ifdef  _EVAS_DEFAULT_MODULE_LOG_DOM
-#undef _EVAS_DEFAULT_MODULE_LOG_DOM
+# undef _EVAS_DEFAULT_MODULE_LOG_DOM
 #endif
 #define _EVAS_DEFAULT_MODULE_LOG_DOM _evas_log_dom_global
 
 #ifdef EVAS_DEFAULT_LOG_COLOR
-#undef EVAS_DEFAULT_LOG_COLOR
+# undef EVAS_DEFAULT_LOG_COLOR
 #endif
 #define EVAS_DEFAULT_LOG_COLOR "\033[36m"
 #ifdef ERROR
-#undef ERROR
+# undef ERROR
 #endif
 #define ERROR(...) EINA_LOG_DOM_ERR(_evas_log_dom_global, __VA_ARGS__)
 #ifdef DEBUG
-#undef DEBUG
+# undef DEBUG
 #endif
 #define DEBUG(...) EINA_LOG_DOM_DBG(_evas_log_dom_global, __VA_ARGS__)
 #ifdef INFO
-#undef INFO
+# undef INFO
 #endif
 #define INFO(...) EINA_LOG_DOM_INFO(_evas_log_dom_global, __VA_ARGS__)
 #ifdef WARN
-#undef WARN
+# undef WARN
 #endif
 #define WARN(...) EINA_LOG_DOM_WARN(_evas_log_dom_global, __VA_ARGS__)
 #ifdef CRITICAL
-#undef CRITICAL
+# undef CRITICAL
 #endif
 #define CRITICAL(...) EINA_LOG_DOM_CRIT(_evas_log_dom_global, __VA_ARGS__)
 /**
@@ -50,23 +50,23 @@ extern int _evas_log_dom_global;
  */
 
 #ifdef ERR
-#undef ERR
+# undef ERR
 #endif
 #define ERR(...) EINA_LOG_DOM_ERR(_EVAS_DEFAULT_MODULE_LOG_DOM, __VA_ARGS__)
 #ifdef DBG
-#undef DBG
+# undef DBG
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_EVAS_DEFAULT_MODULE_LOG_DOM, __VA_ARGS__)
 #ifdef INF
-#undef INF
+# undef INF
 #endif
 #define INF(...) EINA_LOG_DOM_INFO(_EVAS_DEFAULT__MODULE_LOG_DOM, __VA_ARGS__)
 #ifdef WRN
-#undef WRN
+# undef WRN
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(_EVAS_DEFAULT_MODULE_LOG_DOM, __VA_ARGS__)
 #ifdef CRIT
-#undef CRIT
+# undef CRIT
 #endif
 #define CRIT(...) EINA_LOG_DOM_CRIT(_EVAS_DEFAULT_MODULE_LOG_DOM, __VA_ARGS__)
 
@@ -133,11 +133,11 @@ extern int _evas_log_dom_global;
 #endif
 
 #ifndef _GNU_SOURCE
-#define _GNU_SOURCE
+# define _GNU_SOURCE
 #endif
 
 #ifndef BUILD_PTHREAD
-#undef BUILD_PIPE_RENDER
+# undef BUILD_PIPE_RENDER
 #endif
 
 #ifdef BUILD_PTHREAD
@@ -174,16 +174,6 @@ extern int _evas_log_dom_global;
 # define TH_MAX 0
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <time.h>
-#include <ctype.h>
-#include <stdint.h>
-
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
 #elif defined __GNUC__
@@ -199,6 +189,18 @@ extern int _evas_log_dom_global;
 extern "C"
 # endif
 void *alloca (size_t);
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <time.h>
+#include <ctype.h>
+#ifndef _MSC_VER
+# include <stdint.h>
+# include <unistd.h>
 #endif
 
 #include <ft2build.h>
