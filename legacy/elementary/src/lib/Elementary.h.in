@@ -798,7 +798,13 @@ extern "C" {
    EAPI void	     elm_slideshow_previous(Evas_Object *obj);
    EAPI const Eina_List *elm_slideshow_transitions_get(Evas_Object *obj);
    EAPI void	     elm_slideshow_transition_set(Evas_Object *obj, const char *);
+   EAPI void         elm_slideshow_timeout_set(Evas_Object *obj ,int timeout);
+   EAPI int          elm_slideshow_timeout_get(Evas_Object *obj);
+   EAPI void	     elm_slideshow_loop_set(Evas_Object *obj, int loop);
+   EAPI void         elm_slideshow_clear(Evas_Object *obj);
    /* smart callbacks called:
+    * "clicked" - the use click on the widget
+    * "move" - the mouse move on the widget)
     */
 
 

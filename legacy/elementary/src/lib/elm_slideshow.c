@@ -27,14 +27,17 @@ struct _Node
 struct _Widget_Data
 {
    Evas_Object *slideshow;
-   Evas_Object *img1, *img2;
 
    // list of char*
    Eina_List *images;
    int current;
+   int loop;
 
    Eina_List *transitions;
    const char *transition;
+
+   Ecore_Timer *timer;
+   int timeout;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -49,6 +52,8 @@ static void _signal_move(void *data, Evas *e, Evas_Object *obj, void *event_info
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   elm_slideshow_clear(obj);
+   _stringlist_free(wd->transitions);
    free(wd);
 }
 
@@ -83,18 +88,12 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
    static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
+   Node *node;
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
-   evas_object_event_callback_del
-      (wd->img1, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
-   evas_object_del(wd->img1);
-
-   evas_object_event_callback_del
-      (wd->img2, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
-   evas_object_del(wd->img2);
 }
 
-static void
+   static void
 _signal_clicked(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
@@ -102,7 +101,7 @@ _signal_clicked(void *data, Evas *e, Evas_Object *obj, void *event_info)
    evas_object_smart_callback_call(data, "clicked", NULL);
 }
 
-static void
+   static void
 _signal_move(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
@@ -110,7 +109,7 @@ _signal_move(void *data, Evas *e, Evas_Object *obj, void *event_info)
    evas_object_smart_callback_call(data, "move", NULL);
 }
 
-static void
+   static void
 _end(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Node *node;
@@ -123,6 +122,18 @@ _end(void *data, Evas_Object *obj, const char *emission, const char *source)
 
    o = edje_object_part_object_get(wd->slideshow, "elm.image.1");
    evas_object_image_file_set((Evas_Object *)o, node->file, node->group);
+}
+
+
+   static int
+_timer_cb(void *data)
+{
+   Evas_Object *obj = data;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   wd->timer = NULL;
+   elm_slideshow_next(obj);
+   return 0;
 }
 
 /**
@@ -211,9 +222,6 @@ elm_slideshow_goto(Evas_Object *obj, int pos)
    if(pos<0 || pos>=eina_list_count(wd->images))
      return ;
 
-   if(wd->img1)
-     evas_object_del(wd->img1);
-
    wd->current = pos;
    node = eina_list_nth(wd->images, wd->current);
 
@@ -232,13 +240,21 @@ elm_slideshow_next(Evas_Object *obj)
    char buf[1024];
    const Evas_Object *o;
    Node *node;
+   int next;
    Widget_Data *wd = elm_widget_data_get(obj);
    if(!wd) return;
 
-   if(wd->current >= eina_list_count(wd->images) - 1)
+   if(eina_list_count(wd->images) <= 0
+	 || (wd->current >= eina_list_count(wd->images) - 1
+	    && !wd->loop))
      return ;
 
-   node = eina_list_nth(wd->images, wd->current + 1);
+   if(wd->current >= eina_list_count(wd->images) - 1)
+     next = 0;
+   else
+     next = wd->current + 1;
+
+   node = eina_list_nth(wd->images, next);
 
    _end(obj, obj, NULL, NULL);
 
@@ -248,7 +264,13 @@ elm_slideshow_next(Evas_Object *obj)
    snprintf(buf, 1024, "%s,next", wd->transition);
    edje_object_signal_emit(wd->slideshow, buf, "slideshow");
 
-   wd->current++;
+   wd->current = next;
+
+   if(wd->timer)
+     ecore_timer_del(wd->timer);
+   wd->timer = NULL;
+   if(wd->timeout>0)
+     wd->timer = ecore_timer_add(wd->timeout, _timer_cb, obj);
 }
 
 /**
@@ -262,13 +284,21 @@ elm_slideshow_previous(Evas_Object *obj)
    char buf[1024];
    const Evas_Object *o;
    Node *node;
+   int previous;
    Widget_Data *wd = elm_widget_data_get(obj);
    if(!wd) return;
 
-   if(wd->current <= 0)
+   if(eina_list_count(wd->images) <= 0
+	 || (wd->current <= 0
+	    && !wd->loop))
      return ;
 
-   node = eina_list_nth(wd->images, wd->current - 1);
+   if(wd->current <= 0)
+     previous = eina_list_count(wd->images) - 1;
+   else
+     previous = wd->current - 1;
+
+   node = eina_list_nth(wd->images, previous);
 
    _end(obj, obj, NULL, NULL);
 
@@ -278,7 +308,13 @@ elm_slideshow_previous(Evas_Object *obj)
    snprintf(buf, 1024, "%s,previous", wd->transition);
    edje_object_signal_emit(wd->slideshow, buf, "slideshow");
 
-   wd->current--;
+   wd->current = previous;
+
+   if(wd->timer)
+     ecore_timer_del(wd->timer);
+   wd->timer = NULL;
+   if(wd->timeout>0)
+     wd->timer = ecore_timer_add(wd->timeout, _timer_cb, obj);
 }
 
 /**
@@ -310,5 +346,75 @@ elm_slideshow_transition_set(Evas_Object *obj, const char *transition)
 
    eina_stringshare_del(wd->transition);
    wd->transition = eina_stringshare_add(transition);
+}
+
+/**
+ * The object can go to the next image automatically after a few seconds.
+ * This method set the timeout to use. A timeout <=0 disable the timer.
+ *
+ * @param obj The slideshow object
+ * @param timeout The new timeout
+ */
+   EAPI void
+elm_slideshow_timeout_set(Evas_Object *obj ,int timeout)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if(!wd) return;
+
+   wd->timeout = timeout;
+   if(wd->timer)
+     ecore_timer_del(wd->timer);
+   wd->timer = NULL;
+   if(timeout>0)
+     wd->timer = ecore_timer_add(timeout, _timer_cb, obj);
+}
+
+/**
+ * Returns the timeout value
+ *
+ * @param obj The slideshow object
+ * @return Returns the timeout
+ */
+   EAPI int
+elm_slideshow_timeout_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if(!wd) return;
+
+   return wd->timeout;
+}
+
+/**
+ * Set if the first image should follow the last
+ *
+ * @param obj The slideshow object
+ * @param loop if 1, the first image will follow the last
+ */
+   EAPI void
+elm_slideshow_loop_set(Evas_Object *obj, int loop)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if(!wd) return;
+
+   wd->loop = loop;
+}
+
+/**
+ * Delete all the images
+ *
+ * @param obj The slideshow object
+ */
+   EAPI void
+elm_slideshow_clear(Evas_Object *obj)
+{
+   Node *node;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if(!wd) return;
+
+   EINA_LIST_FREE(wd->images, node)
+     {
+	 if(node->file) eina_stringshare_del(node->file);
+	 if(node->group) eina_stringshare_del(node->group);
+     }
 }
 
