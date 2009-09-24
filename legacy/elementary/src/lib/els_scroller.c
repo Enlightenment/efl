@@ -1034,11 +1034,11 @@ elm_smart_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y,
    x = nx;
    if (x < 0) x = 0;
    else if ((x + w) > cw) x = cw - w;
-   _smart_scrollto_x(sd, _elm_config->page_scroll_friction, x);
+   _smart_scrollto_x(sd, _elm_config->bring_in_scroll_friction, x);
    y = ny;
    if (y < 0) y = 0;
    else if ((y + h) > ch) y = ch - h;
-   _smart_scrollto_y(sd, _elm_config->page_scroll_friction, y);
+   _smart_scrollto_y(sd, _elm_config->bring_in_scroll_friction, y);
 }
 
 /* local subsystem functions */

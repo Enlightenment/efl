@@ -505,6 +505,7 @@ elm_quicklaunch_init(int argc, char **argv)
    _elm_config->thumbscroll_bounce_friction = 0.5;
    _elm_config->thumbscroll_bounce_enable = 1;
    _elm_config->page_scroll_friction = 0.5;
+   _elm_config->bring_in_scroll_friction = 0.5;
    _elm_config->zoom_friction = 0.5;
    _elm_config->scale = 1.0;
    _elm_config->font_hinting = 2;
@@ -564,6 +565,8 @@ elm_quicklaunch_init(int argc, char **argv)
    if (s) _elm_config->thumbscroll_friction = atof(s);
    s = getenv("ELM_PAGE_SCROLL_FRICTION");
    if (s) _elm_config->page_scroll_friction = atof(s);
+   s = getenv("ELM_BRING_IN_SCROLL_FRICTION");
+   if (s) _elm_config->bring_in_scroll_friction = atof(s);
    s = getenv("ELM_ZOOM_FRICTION");
    if (s) _elm_config->zoom_friction = atof(s);
 
