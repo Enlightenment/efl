@@ -6406,7 +6406,9 @@ collections {
 ///////////////////////////////////////////////////////////////////////////////
     group { name: "elm/slideshow/base/default";
         data {
-            item: transitions "fade black_fade horizontal vertical square";
+            item: transitions "fade black_fade horizontal vertical square 4_square";
+            item: image1 "elm.image.1";
+            item: image2 "elm.image.2 elm.image.2_2 elm.image.2_3 elm.image.2_4";
         }
         parts {
             part { name: "elm.image.1";
@@ -6553,6 +6555,96 @@ collections {
                     rel1.relative: 0.0 0.0;
                     rel2.relative: 1.0 1.0;
                     color: 255 255 255 255;
+                }
+                description{
+                    state: "4_square_prev_next_init" 0.0;
+                    visible: 1;
+                    rel1.relative: -0.5 -0.5;
+                    rel2.relative: 0.0 0.0;
+                    fill {
+                        origin.relative: 0.0 0.0;
+                        size.relative: 2.0 2.0;
+                    }
+                }
+                description{
+                    state: "4_square_prev_next" 0.0;
+                    inherit: "4_square_prev_next_init" 0.0;
+                    visible: 1;
+                    rel1.relative: 0.0 0.0;
+                    rel2.relative: 0.5 0.5;
+
+                }
+            }
+            part { name: "elm.image.2_2";
+                type: IMAGE;
+                description{
+                    state: "default" 0.0;
+                    visible: 0;
+                }
+                description{
+                    state: "4_square_prev_next_init" 0.0;
+                    visible: 1;
+                    rel1.relative: 1.0 -0.5;
+                    rel2.relative: 1.5 0.0;
+                    fill {
+                        origin.relative: -1.0 0.0;
+                        size.relative: 2.0 2.0;
+                    }
+                }
+                description{
+                    state: "4_square_prev_next" 0.0;
+                    inherit: "4_square_prev_next_init" 0.0;
+                    visible: 1;
+                    rel1.relative: 0.5 0.0;
+                    rel2.relative: 1.0 0.5;
+                }
+            }
+            part { name: "elm.image.2_3";
+                type: IMAGE;
+                description{
+                    state: "default" 0.0;
+                    visible: 0;
+                }
+                description{
+                    state: "4_square_prev_next_init" 0.0;
+                    visible: 1;
+                    rel1.relative: 1.0 1.0;
+                    rel2.relative: 1.5 1.5;
+                    fill {
+                        origin.relative: -1.0 -1.0;
+                        size.relative: 2.0 2.0;
+                    }
+                }
+                description{
+                    state: "4_square_prev_next" 0.0;
+                    inherit: "4_square_prev_next_init" 0.0;
+                    visible: 1;
+                    rel1.relative: 0.5 0.5;
+                    rel2.relative: 1.0 1.0;
+                }
+            }
+            part { name: "elm.image.2_4";
+                type: IMAGE;
+                description{
+                    state: "default" 0.0;
+                    visible: 0;
+                }
+                description{
+                    state: "4_square_prev_next_init" 0.0;
+                    visible: 1;
+                    rel1.relative: -0.5 1.0;
+                    rel2.relative: 0.0 1.5;
+                    fill {
+                        origin.relative: 0.0 -1.0;
+                        size.relative: 2.0 2.0;
+                    }
+                }
+                description{
+                    state: "4_square_prev_next" 0.0;
+                    inherit: "4_square_prev_next_init" 0.0;
+                    visible: 1;
+                    rel1.relative: 0.0 0.5;
+                    rel2.relative: 0.5 1.0;
                 }
             }
         }
@@ -6707,10 +6799,42 @@ collections {
                 target: "elm.image.2";
                 after: "square_next_2";
             }
+            program { name: "4_square_next";
+                signal: "4_square,next";
+                source: "slideshow";
+                action: STATE_SET "4_square_prev_next_init" 0.0;
+                target: "elm.image.2";
+                target: "elm.image.2_2";
+                target: "elm.image.2_3";
+                target: "elm.image.2_4";
+                after: "4_square_next_2";
+            }
+            program { name: "4_square_next_2";
+                action: STATE_SET "4_square_prev_next" 0.0;
+                target: "elm.image.2";
+                target: "elm.image.2_2";
+                target: "elm.image.2_3";
+                target: "elm.image.2_4";
+                transition: DECELERATE 1.0;
+                after: "end";
+            }
+            program { name: "4_square_previous";
+                signal: "4_square,previous";
+                source: "slideshow";
+                action: STATE_SET "4_square_prev_next_init" 0.0;
+                target: "elm.image.2";
+                target: "elm.image.2_2";
+                target: "elm.image.2_3";
+                target: "elm.image.2_4";
+                after: "4_square_next_2";
+            }
             program { name: "end";
                 action: STATE_SET "default" 0.0;
                 target: "elm.image.1";
                 target: "elm.image.2";
+                target: "elm.image.2_2";
+                target: "elm.image.2_3";
+                target: "elm.image.2_4";
                 after: "end_signal";
             }
             program { name: "end_signal";

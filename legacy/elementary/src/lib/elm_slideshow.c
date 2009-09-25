@@ -36,6 +36,9 @@ struct _Widget_Data
    Eina_List *transitions;
    const char *transition;
 
+   Eina_List *img1_parts;
+   Eina_List *img2_parts;
+
    Ecore_Timer *timer;
    int timeout;
 };
@@ -116,14 +119,19 @@ _end(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Node *node;
    const Evas_Object *o;
+   Eina_List *l;
+   const char *part;
 
    Widget_Data *wd = elm_widget_data_get(data);
 
    node = eina_list_nth(wd->images, wd->current);
    if(!node) return;
 
-   o = edje_object_part_object_get(wd->slideshow, "elm.image.1");
-   evas_object_image_file_set((Evas_Object *)o, node->file, node->group);
+   EINA_LIST_FOREACH(wd->img1_parts, l, part)
+     {
+	o = edje_object_part_object_get(wd->slideshow, part);
+	evas_object_image_file_set((Evas_Object *)o, node->file, node->group);
+     }
 }
 
 
@@ -170,6 +178,8 @@ elm_slideshow_add(Evas_Object *parent)
    wd->transitions = _stringlist_get(edje_object_data_get(wd->slideshow, "transitions"));
    if(eina_list_count(wd->transitions) > 0)
      wd->transition = eina_stringshare_add(eina_list_data_get(wd->transitions));
+   wd->img1_parts = _stringlist_get(edje_object_data_get(wd->slideshow, "image1"));
+   wd->img2_parts = _stringlist_get(edje_object_data_get(wd->slideshow, "image2"));
 
    edje_object_signal_callback_add(wd->slideshow, "end", "slideshow", _end, obj);
 
@@ -217,6 +227,8 @@ elm_slideshow_image_add(Evas_Object *obj, const char *file, const char *group)
 elm_slideshow_goto(Evas_Object *obj, int pos)
 {
    Node *node;
+   Eina_List *l;
+   const char *part;
    const Evas_Object *o;
    Widget_Data *wd = elm_widget_data_get(obj);
    if(!wd) return;
@@ -227,8 +239,11 @@ elm_slideshow_goto(Evas_Object *obj, int pos)
    wd->current = pos;
    node = eina_list_nth(wd->images, wd->current);
 
-   o = edje_object_part_object_get(wd->slideshow, "elm.image.1");
-   evas_object_image_file_set((Evas_Object *)o, node->file, node->group);
+   EINA_LIST_FOREACH(wd->img1_parts, l, part)
+     {
+	o = edje_object_part_object_get(wd->slideshow, part);
+	evas_object_image_file_set((Evas_Object *)o, node->file, node->group);
+     }
 }
 
 /**
@@ -241,6 +256,8 @@ elm_slideshow_next(Evas_Object *obj)
 {
    char buf[1024];
    const Evas_Object *o;
+   Eina_List *l;
+   const char *part;
    Node *node;
    int next;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -260,8 +277,12 @@ elm_slideshow_next(Evas_Object *obj)
 
    _end(obj, obj, NULL, NULL);
 
-   o = edje_object_part_object_get(wd->slideshow, "elm.image.2");
-   evas_object_image_file_set((Evas_Object *)o, node->file, node->group);
+
+   EINA_LIST_FOREACH(wd->img2_parts, l, part)
+     {
+	o = edje_object_part_object_get(wd->slideshow, part);
+	evas_object_image_file_set((Evas_Object *)o, node->file, node->group);
+     }
 
    snprintf(buf, 1024, "%s,next", wd->transition);
    edje_object_signal_emit(wd->slideshow, buf, "slideshow");
@@ -285,6 +306,8 @@ elm_slideshow_previous(Evas_Object *obj)
 {
    char buf[1024];
    const Evas_Object *o;
+   Eina_List *l;
+   const char *part;
    Node *node;
    int previous;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -304,8 +327,11 @@ elm_slideshow_previous(Evas_Object *obj)
 
    _end(obj, obj, NULL, NULL);
 
-   o = edje_object_part_object_get(wd->slideshow, "elm.image.2");
-   evas_object_image_file_set((Evas_Object *)o, node->file, node->group);
+   EINA_LIST_FOREACH(wd->img2_parts, l, part)
+     {
+	o = edje_object_part_object_get(wd->slideshow, part);
+	evas_object_image_file_set((Evas_Object *)o, node->file, node->group);
+     }
 
    snprintf(buf, 1024, "%s,previous", wd->transition);
    edje_object_signal_emit(wd->slideshow, buf, "slideshow");
