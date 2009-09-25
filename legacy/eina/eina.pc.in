@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: Eina
 Description: Eina
-Requires: 
+@pkgconfig_requires_private@: @requirement_eina@
 Version: @VERSION@
 Libs: -L${libdir} -leina
 Libs.private: -ldl

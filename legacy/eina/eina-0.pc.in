@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: Eina
 Description: A Library that implements fast data types and miscellaneous tools
-Requires:
+@pkgconfig_requires_private@: @requirement_eina@
 Version: @VERSION@
 Libs: -L${exec_prefix}/lib -leina
 Libs.private: -ldl

@@ -28,6 +28,8 @@ AC_SUBST(version_info)
 
 ### Needed information
 
+requirement_eina=""
+
 release="ver-pre-svn-04"
 case "$host_os" in
    mingw32ce* | cegcc*)
@@ -192,6 +194,14 @@ AC_PROG_CC
 # pkg-config
 PKG_PROG_PKG_CONFIG
 
+# Check whether pkg-config supports Requires.private
+if $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
+   pkgconfig_requires_private="Requires.private"
+else
+   pkgconfig_requires_private="Requires"
+fi
+AC_SUBST(pkgconfig_requires_private)
+
 # doxygen program for documentation building
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
@@ -201,12 +211,16 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 # Evil library for compilation on Windows CE
 
+EFL_EINA_BUILD=""
 case "$host_os" in
    mingw* | cegcc*)
-   PKG_CHECK_MODULES([EVIL], [evil])
-   AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
+      PKG_CHECK_MODULES([EVIL], [evil])
+      AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
+      requirement_eina="evil"
+      EFL_EINA_BUILD="-DEFL_EINA_BUILD"
    ;;
 esac
+AC_SUBST(EFL_EINA_BUILD)
 
 # Check ememoa memory pool library
 
@@ -313,7 +327,6 @@ EINA_LIBS=
 lt_enable_auto_import=""
 case "${host_os}" in
    mingw* | cegcc*)
-      AC_DEFINE(EFL_EINA_BUILD, 1, [Define to mention that eina is built])
       EINA_LIBS="-ldl ${EVIL_LIBS} -lm"
       lt_enable_auto_import="-Wl,--enable-auto-import"
    ;;

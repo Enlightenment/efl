@@ -4,7 +4,8 @@ AM_CPPFLAGS = \
 -I. \
 -I$(top_srcdir)/src/include \
 -I$(top_builddir)/src/include \
-@EINA_CPPFLAGS@
+@EINA_CPPFLAGS@ \
+@EFL_EINA_BUILD@
 
 if EINA_BUILD_CHAINED_POOL
 if !EINA_STATIC_BUILD_CHAINED_POOL

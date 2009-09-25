@@ -5,7 +5,8 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/include \
 -I$(top_builddir)/src/include \
 @EINA_CPPFLAGS@ \
-@EINA_CFLAGS@
+@EINA_CFLAGS@ \
+@EFL_EINA_BUILD@
 
 if EINA_BUILD_PASS_THROUGH
 if !EINA_STATIC_BUILD_PASS_THROUGH

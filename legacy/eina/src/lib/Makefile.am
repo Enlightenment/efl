@@ -7,7 +7,8 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@EINA_CPPFLAGS@
+@EINA_CPPFLAGS@ \
+@EFL_EINA_BUILD@
 
 base_sources = \
 eina_error.c \
