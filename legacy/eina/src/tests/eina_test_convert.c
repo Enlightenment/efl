@@ -105,14 +105,26 @@ _eina_convert_fp_check(double d, Eina_F32p32 fp, int length)
 {
    char tmp1[128];
    char tmp2[128];
+   Eina_F32p32 fpc;
+   double fpd;
    int l1;
    int l2;
 
    l1 = eina_convert_dtoa(d, tmp1);
    l2 = eina_convert_fptoa(fp, tmp2);
+/*    fprintf(stderr, "[%s](%i) vs [%s](%i)\n", tmp1, l1, tmp2, l2); */
    fail_if(l1 != l2);
    fail_if(length != l1);
    fail_if(strcmp(tmp1, tmp2) != 0);
+
+   fail_if(!eina_convert_atofp(tmp2, l2, &fpc));
+/*    fprintf(stderr, "%016x vs %016x\n", fpc, fp); */
+   fail_if(fpc != fp);
+
+   fail_if(!eina_convert_atofp(tmp1, l1, &fpc));
+   fpd = eina_f32p32_double_to(fpc);
+/*    fprintf(stderr, "%0.16f vs %0.16f\n", fpd, d); */
+   fail_if(fabs(fpd - d) > DBL_MIN);
 
    d = -d;
    fp = -fp;
@@ -122,6 +134,15 @@ _eina_convert_fp_check(double d, Eina_F32p32 fp, int length)
    fail_if(l1 != l2);
    fail_if(length + 1 != l1);
    fail_if(strcmp(tmp1, tmp2) != 0);
+
+   fail_if(!eina_convert_atofp(tmp2, l2, &fpc));
+/*    fprintf(stderr, "%016x vs %016x\n", fpc, fp); */
+   fail_if(fpc != fp);
+
+   fail_if(!eina_convert_atofp(tmp1, l1, &fpc));
+   fpd = eina_f32p32_double_to(fpc);
+/*    fprintf(stderr, "%0.16f vs %0.16f\n", fpd, d); */
+   fail_if(fabs(fpd - d) > DBL_MIN);
 }
 
 START_TEST(eina_convert_fp)

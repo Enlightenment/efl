@@ -72,28 +72,6 @@ static inline void reverse(char s[], int length)
      }
 }
 
-static inline Eina_F32p32 eina_f32p32_mul2(Eina_F32p32 fp)
-{
-   int64_t low;
-   int64_t high;
-
-   low = (fp & 0x00000000ffffffffLL) << 1;
-   high = (fp >> 32) << 33;
-
-   return low + high;
-}
-
-static inline Eina_F32p32 eina_f32p32_mul16(Eina_F32p32 fp)
-{
-   int64_t low;
-   int64_t high;
-
-   low = (fp & 0x00000000ffffffffLL) << 4;
-   high = (fp >> 32) << 36;
-
-   return low + high;
-}
-
 /**
  * @endcond
  */
@@ -705,6 +683,26 @@ eina_convert_fptoa(Eina_F32p32 fp, char *des)
    length += 2;
 
    return length + eina_convert_itoa(p, des);
+}
+
+EAPI Eina_Bool
+eina_convert_atofp(const char *src, int length, Eina_F32p32 *fp)
+{
+   long long m;
+   long e;
+
+   if (!eina_convert_atod(src, length, &m, &e))
+     return EINA_FALSE;
+
+   if (fp)
+     {
+	e += 32;
+
+	if (e > 0) *fp = m << e;
+	else *fp = m >> e;
+     }
+
+   return EINA_TRUE;
 }
 
 /**
