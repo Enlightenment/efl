@@ -353,7 +353,7 @@ eina_convert_xtoa(unsigned int n, char *s)
 }
 
 /**
- * @brief Convert a string to a double
+ * @brief Convert a string to a double.
  *
  * @param src The string to convert.
  * @param length The length of the string.
@@ -487,7 +487,7 @@ eina_convert_atod(const char *src, int length, long long *m, long *e)
 }
 
 /**
- * @brief Convert a double to a string
+ * @brief Convert a double to a string.
  *
  * @param d The double to convert.
  * @param des The destination buffer to store the converted double.
@@ -571,7 +571,7 @@ eina_convert_dtoa(double d, char *des)
 }
 
 /**
- * @brief Convert a 32.32 fixed point number to a string
+ * @brief Convert a 32.32 fixed point number to a string.
  *
  * @param fp The fixed point number to convert.
  * @param des The destination buffer to store the converted fixed point number.
@@ -685,22 +685,66 @@ eina_convert_fptoa(Eina_F32p32 fp, char *des)
    return length + eina_convert_itoa(p, des);
 }
 
+/**
+ * @brief Convert a string to a 32.32 fixed point number.
+ *
+ * @param src The string to convert.
+ * @param length The length of the string.
+ * @param fp The fixed point number.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * This function converts the string @p src of length @p length that
+ * represent a double in hexadecimal base to a 32.32 fixed point
+ * number stored in @p fp. If @fp is @c NULL, nothing is done and
+ * #EINA_TRUE is returned.
+ *
+ * The string must have the following format:
+ *
+ * @code
+ * [-]0xh.hhhhhp[+-]e
+ * @endcode
+ *
+ * where the h are the hexadecimal cyphers of the mantiss and e the
+ * exponent (a decimal number). If n is the number of cypers after the
+ * point, the returned mantiss and exponents are:
+ *
+ * @code
+ * mantiss  : [-]hhhhhh
+ * exponent : 2^([+-]e - 4 * n)
+ * @endcode
+ *
+ * The mantiss and exponent are stored in the buffers pointed
+ * respectively by @p m and @p e.
+ *
+ * If the string is invalid, the error is set to:
+ *
+ * @li #EINA_ERROR_CONVERT_0X_NOT_FOUND if no 0x is found,
+ * @li #EINA_ERROR_CONVERT_P_NOT_FOUND if no p is found,
+ * @li #EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH if @p length is not
+ * correct.
+ *
+ * In those cases, #EINA_FALSE is returned, otherwise #EINA_TRUE is
+ * returned.
+ *
+ * @note The code uses eina_convert_atod() and do the correct bit
+ * shift to compute the fixed point number.
+ */
 EAPI Eina_Bool
 eina_convert_atofp(const char *src, int length, Eina_F32p32 *fp)
 {
    long long m;
    long e;
 
+   if (!fp)
+     return EINA_TRUE;
+
    if (!eina_convert_atod(src, length, &m, &e))
      return EINA_FALSE;
 
-   if (fp)
-     {
-	e += 32;
+   e += 32;
 
-	if (e > 0) *fp = m << e;
-	else *fp = m >> e;
-     }
+   if (e > 0) *fp = m << e;
+   else *fp = m >> e;
 
    return EINA_TRUE;
 }
