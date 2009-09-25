@@ -735,8 +735,10 @@ eina_convert_atofp(const char *src, int length, Eina_F32p32 *fp)
    long long m;
    long e;
 
-   if (!eina_convert_atod(src, length, &m, &e) || !fp)
+   if (!eina_convert_atod(src, length, &m, &e))
      return EINA_FALSE;
+
+   if (!fp) return EINA_TRUE;
 
    e += 32;
 
