@@ -404,6 +404,8 @@ EINA_BENCH_MODULE([evas], [${enable_benchmark}], [evas], [enable_benchmark_evas=
 EINA_BENCH_MODULE([ecore], [${enable_benchmark}], [ecore], [enable_benchmark_ecore="yes"], [enable_benchmark_ecore="no"])
 EINA_BENCH_MODULE([glib], [${enable_benchmark}], [glib-2.0], [enable_benchmark_glib="yes"], [enable_benchmark_glib="no"])
 
+AC_SUBST(requirement_eina)
+
 ### Create the .pc.in file according to the major version
 #cat > ${srcdir}/eina-${VMAJ}.pc.in << EOF
 #prefix=@prefix@
