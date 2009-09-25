@@ -310,7 +310,7 @@ eina_convert_shutdown(void)
  * converted string is in decimal base. As no check is done, @p s must
  * be a buffer that is sufficiently large to store the integer.
  *
- * The returned value is the length os the string, including the nul
+ * The returned value is the length of the string, including the nul
  * terminated character.
  */
 EAPI int
@@ -352,7 +352,7 @@ eina_convert_itoa(int n, char *s)
  * cyphers are in lower case. As no check is done, @p s must be a
  * buffer that is sufficiently large to store the integer.
  *
- * The returned value is the length os the string, including the nul
+ * The returned value is the length of the string, including the nul
  * terminated character.
  */
 EAPI int
@@ -517,7 +517,7 @@ eina_convert_atod(const char *src, int length, long long *m, long *e)
  *
  * This function converts the double @p d to a string. The string is
  * stored in the buffer pointed by @p des and must be sufficiently
- * large to contain the converted double. The returned string is
+ * large to contain the converted double. The returned string is nul
  * terminated and has the following format:
  *
  * @code
@@ -592,6 +592,33 @@ eina_convert_dtoa(double d, char *des)
    return length + eina_convert_itoa(p, des);
 }
 
+/**
+ * @brief Convert a 32.32 fixed point number to a string
+ *
+ * @param fp The fixed point number to convert.
+ * @param des The destination buffer to store the converted fixed point number.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * This function converts the 32.32 fixed point number @fp to a
+ * string. The string is stored in the buffer pointed by @p des and
+ * must be sufficiently large to contain the converted fixed point
+ * number. The returned string is terminated and has the following
+ * format:
+ *
+ * @code
+ * [-]0xh.hhhhhp[+-]e
+ * @endcode
+ *
+ * where the h are the hexadecimal cyphers of the mantiss and e the
+ * exponent (a decimal number).
+ *
+ * The returned value is the length of the string, including the nul
+ * character.
+ *
+ * @note The code is the same than eina_convert_dtoa() except that it
+ * implements the frexp() function for fixed point numbers and does
+ * some optimisations.
+ */
 EAPI int
 eina_convert_fptoa(Eina_F32p32 fp, char *des)
 {
