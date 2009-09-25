@@ -695,8 +695,8 @@ eina_convert_fptoa(Eina_F32p32 fp, char *des)
  *
  * This function converts the string @p src of length @p length that
  * represent a double in hexadecimal base to a 32.32 fixed point
- * number stored in @p fp. If @fp is @c NULL, nothing is done and
- * #EINA_TRUE is returned.
+ * number stored in @p fp. The function always tries to convert the
+ * string with eina_convert_atod().
  *
  * The string must have the following format:
  *
@@ -723,8 +723,8 @@ eina_convert_fptoa(Eina_F32p32 fp, char *des)
  * @li #EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH if @p length is not
  * correct.
  *
- * In those cases, #EINA_FALSE is returned, otherwise #EINA_TRUE is
- * returned.
+ * In those cases, or if @p fp is @c NULL, #EINA_FALSE is returned,
+ * otherwise @p fp is computed and #EINA_TRUE is returned.
  *
  * @note The code uses eina_convert_atod() and do the correct bit
  * shift to compute the fixed point number.
@@ -735,10 +735,7 @@ eina_convert_atofp(const char *src, int length, Eina_F32p32 *fp)
    long long m;
    long e;
 
-   if (!fp)
-     return EINA_TRUE;
-
-   if (!eina_convert_atod(src, length, &m, &e))
+   if (!eina_convert_atod(src, length, &m, &e) || !fp)
      return EINA_FALSE;
 
    e += 32;
