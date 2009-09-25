@@ -128,7 +128,16 @@ separator_h.png \
 separator_v.png \
 toolbar_separator_v.png \
 sp_bt_l.png \
-sp_bt_r.png
+sp_bt_r.png \
+busy-1.png \
+busy-2.png \
+busy-3.png \
+busy-4.png \
+busy-5.png \
+busy-6.png \
+busy-7.png \
+busy-8.png \
+busy-9.png
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \

@@ -884,7 +884,21 @@ extern "C" {
    EAPI void         elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode);
    EAPI Elm_Photocam_Zoom_Mode elm_photocam_zoom_mode_get(Evas_Object *obj);
    EAPI void         elm_photocam_image_size_get(Evas_Object *obj, int *w, int *h);
-
+   EAPI void         elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h);
+   EAPI void         elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h);
+   /* smart callbacks called:
+    * "clicked" - when image clicked
+    * "press" - when mouse/finger held down initially on image
+    * "longpressed" - when mouse/finger held for long time on image
+    * "clicked,double" - when mouse/finger double-clicked
+    * "load" - when photo load begins
+    * "loaded" - when photo load done
+    * "load,details" - when detailed image load begins
+    * "loaded,details" - when detailed image load done
+    * "zoom,start" - when zooming started
+    * "zoom,stop" - when zooming stopped
+    * "zoom,change" - when auto zoom mode changed zoom level
+    */
 #ifdef __cplusplus
 }
 #endif
