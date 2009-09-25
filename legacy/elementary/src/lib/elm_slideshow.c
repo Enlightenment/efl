@@ -54,6 +54,8 @@ _del_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    elm_slideshow_clear(obj);
    _stringlist_free(wd->transitions);
+   if (wd->timer)
+     ecore_timer_del(wd->timer);
    free(wd);
 }
 
