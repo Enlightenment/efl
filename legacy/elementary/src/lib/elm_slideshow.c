@@ -49,7 +49,7 @@ static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _signal_clicked(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _signal_move(void *data, Evas *e, Evas_Object *obj, void *event_info);
-
+static int _timer_cb(void *data);
 
    static void
 _del_hook(Evas_Object *obj)
@@ -132,6 +132,9 @@ _end(void *data, Evas_Object *obj, const char *emission, const char *source)
 	o = edje_object_part_object_get(wd->slideshow, part);
 	evas_object_image_file_set((Evas_Object *)o, node->file, node->group);
      }
+
+   if(wd->timeout>0)
+     wd->timer = ecore_timer_add(wd->timeout, _timer_cb, data);
 }
 
 
@@ -292,8 +295,6 @@ elm_slideshow_next(Evas_Object *obj)
    if(wd->timer)
      ecore_timer_del(wd->timer);
    wd->timer = NULL;
-   if(wd->timeout>0)
-     wd->timer = ecore_timer_add(wd->timeout, _timer_cb, obj);
 }
 
 /**
@@ -341,8 +342,6 @@ elm_slideshow_previous(Evas_Object *obj)
    if(wd->timer)
      ecore_timer_del(wd->timer);
    wd->timer = NULL;
-   if(wd->timeout>0)
-     wd->timer = ecore_timer_add(wd->timeout, _timer_cb, obj);
 }
 
 /**
