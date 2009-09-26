@@ -14,10 +14,8 @@ struct _Widget_Data
 
 struct _Elm_Carousel_Item
 {
-   Evas_Object *obj;
-   Evas_Object *base;
+   Evas_Object *obj, *base, *icon;
    const char *label;
-   Evas_Object *icon;
    void (*func) (void *data, Evas_Object *obj, void *event_info);
    const void *data;
    Eina_Bool selected : 1;
@@ -45,6 +43,7 @@ _item_select(Elm_Carousel_Item *it)
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Object *obj2;
    const Eina_List *l;
+
    if (it->selected) return;
    EINA_LIST_FOREACH(wd->items, l, it2)
      {
@@ -76,9 +75,11 @@ _theme_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    const Eina_List *l;
    const Elm_Carousel_Item *it;
-   Evas_Coord mw, mh;
+
    EINA_LIST_FOREACH(wd->items, l, it)
      {
+        Evas_Coord mw, mh;
+
 	if (it->selected)
 	  edje_object_signal_emit(it->base, "elm,state,selected", "elm");
 	_elm_theme_set(it->base, "carousel", "item", elm_widget_style_get(obj));
@@ -194,6 +195,7 @@ elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, vo
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord mw, mh;
    Elm_Carousel_Item *it = calloc(1, sizeof(Elm_Carousel_Item));
+
    if (!it) return NULL;
    wd->items = eina_list_append(wd->items, it);
    it->obj = obj;
@@ -232,6 +234,7 @@ elm_carousel_item_del(Elm_Carousel_Item *it)
 {
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Object *obj2 = it->obj;
+
    wd->items = eina_list_remove(wd->items, it);
    eina_stringshare_del(it->label);
    if (it->icon) evas_object_del(it->icon);
