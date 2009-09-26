@@ -11,7 +11,7 @@
  */
 
 typedef struct _Widget_Data Widget_Data;
-typedef struct _Subinfo     Subinfo;
+typedef struct _Subinfo Subinfo;
 
 struct _Widget_Data
 {
@@ -36,6 +36,7 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Subinfo *si;
+
    EINA_LIST_FREE(wd->subs, si)
      {
 	eina_stringshare_del(si->swallow);
@@ -48,7 +49,9 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   edje_object_scale_set(wd->lay, elm_widget_scale_get(obj) * _elm_config->scale);
+
+   edje_object_scale_set(wd->lay, elm_widget_scale_get(obj) * 
+                         _elm_config->scale);
    _sizing_eval(obj);
 }
 
@@ -69,6 +72,7 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Widget_Data *wd = elm_widget_data_get(data);
    const Eina_List *l;
    const Subinfo *si;
+
    EINA_LIST_FOREACH(wd->subs, l, si)
      {
 	if (si->obj == obj)
@@ -87,12 +91,14 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *sub = event_info;
    Eina_List *l;
    Subinfo *si;
+
    EINA_LIST_FOREACH(wd->subs, l, si)
      {
 	if (si->obj == sub)
 	  {
-	     evas_object_event_callback_del
-	       (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
+	     evas_object_event_callback_del(sub, 
+                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
+                                            _changed_size_hints);
 	     wd->subs = eina_list_remove_list(wd->subs, l);
 	     eina_stringshare_del(si->swallow);
 	     free(si);
@@ -150,8 +156,8 @@ elm_layout_file_set(Evas_Object *obj, const char *file, const char *group)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_Bool ret = edje_object_file_set(wd->lay, file, group);
-   if (ret)
-     _sizing_eval(obj);
+
+   if (ret) _sizing_eval(obj);
    return ret;
 }
 
@@ -184,7 +190,8 @@ elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conte
      {
 	elm_widget_sub_object_add(obj, content);
 	edje_object_part_swallow(wd->lay, swallow, content);
-	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+	evas_object_event_callback_add(content, 
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
 	si = ELM_NEW(Subinfo);
 	si->swallow = eina_stringshare_add(swallow);
@@ -208,5 +215,6 @@ EAPI Evas_Object *
 elm_layout_edje_get(const Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    return wd->lay;
 }
