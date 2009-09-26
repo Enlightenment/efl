@@ -24,6 +24,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (wd->label) eina_stringshare_del(wd->label);
    free(wd);
 }
@@ -32,9 +33,11 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    _elm_theme_set(wd->lbl, "label", "base", elm_widget_style_get(obj));
    edje_object_part_text_set(wd->lbl, "elm.text", wd->label);
-   edje_object_scale_set(wd->lbl, elm_widget_scale_get(obj) * _elm_config->scale);
+   edje_object_scale_set(wd->lbl, elm_widget_scale_get(obj) * 
+                         _elm_config->scale);
    _sizing_eval(obj);
 }
 
@@ -95,6 +98,7 @@ EAPI void
 elm_label_label_set(Evas_Object *obj, const char *label)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!label) label = "";
    if (wd->label) eina_stringshare_del(wd->label);
    wd->label = eina_stringshare_add(label);
@@ -113,7 +117,7 @@ EAPI const char*
 elm_label_label_get(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
 
+   if (!wd) return NULL;
    return wd->label;
 }
