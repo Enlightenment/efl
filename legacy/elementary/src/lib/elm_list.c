@@ -6,8 +6,7 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *scr, *box;
-   Eina_List *items;
-   Eina_List *selected;
+   Eina_List *items, *selected;
    Elm_List_Mode mode;
    Evas_Coord minw[2], minh[2];
    Eina_Bool on_hold : 1;
@@ -20,8 +19,7 @@ struct _Widget_Data
 struct _Elm_List_Item
 {
    Eina_List *node;
-   Evas_Object *obj;
-   Evas_Object *base;
+   Evas_Object *obj, *base;
    const char *label;
    Evas_Object *icon, *end;
    void (*func) (void *data, Evas_Object *obj, void *event_info);
@@ -42,7 +40,6 @@ static void _sizing_eval(Evas_Object *obj);
 static void _on_focus_hook(void *data, Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
-
 static void _fix_items(Evas_Object *obj);
 
 static void
@@ -50,6 +47,7 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_List_Item *it;
+
    EINA_LIST_FREE(wd->items, it)
      {
 	if (it->del_cb) it->del_cb((void *)it->data, it->obj, it);
@@ -109,8 +107,9 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 	  {
 	     if (it->icon == sub) it->icon = NULL;
 	     if (it->end == sub) it->end = NULL;
-	     evas_object_event_callback_del
-	       (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
+	     evas_object_event_callback_del(sub, 
+                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
+                                            _changed_size_hints);
 	     _fix_items(obj);
 	     _sizing_eval(obj);
 	     break;
@@ -123,6 +122,7 @@ _item_hilight(Elm_List_Item *it)
 {
    Widget_Data *wd = elm_widget_data_get(it->obj);
    const char *selectraise;
+
    if (it->hilighted) return;
    edje_object_signal_emit(it->base, "elm,state,selected", "elm");
    selectraise = edje_object_data_get(it->base, "selectraise");
@@ -136,6 +136,7 @@ _item_select(Elm_List_Item *it)
 {
    Widget_Data *wd = elm_widget_data_get(it->obj);
    const char *selectraise;
+
    if (it->selected)
      {
 	if (wd->always_select) goto call;
@@ -153,6 +154,7 @@ _item_unselect(Elm_List_Item *it)
 {
    Widget_Data *wd = elm_widget_data_get(it->obj);
    const char *stacking, *selectraise;
+
    if (!it->hilighted) return;
    edje_object_signal_emit(it->base, "elm,state,unselected", "elm");
    stacking = edje_object_data_get(it->base, "stacking");
@@ -177,6 +179,7 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    Elm_List_Item *it = data;
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Event_Mouse_Move *ev = event_info;
+
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
 	if (!wd->on_hold)
@@ -197,6 +200,7 @@ _long_press(void *data)
 {
    Elm_List_Item *it = data;
    Widget_Data *wd = elm_widget_data_get(it->obj);
+
    it->long_timer = NULL;
    wd->longpressed = EINA_TRUE;
    evas_object_smart_callback_call(it->obj, "longpressed", it);
@@ -209,6 +213,7 @@ _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    Elm_List_Item *it = data;
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Event_Mouse_Down *ev = event_info;
+
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) wd->on_hold = EINA_TRUE;
    else wd->on_hold = EINA_FALSE;
@@ -227,6 +232,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    Elm_List_Item *it = data;
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Event_Mouse_Up *ev = event_info;
+
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) wd->on_hold = EINA_TRUE;
    else wd->on_hold = EINA_FALSE;
@@ -243,8 +249,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    if (wd->longpressed)
      {
         wd->longpressed = EINA_FALSE;
-        if (!wd->wasselected)
-          _item_unselect(it);
+        if (!wd->wasselected) _item_unselect(it);
         wd->wasselected = 0;
         return;
      }
@@ -270,6 +275,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 	  {
 	     const Eina_List *l, *l_next;
 	     Elm_List_Item *it2;
+
 	     EINA_LIST_FOREACH_SAFE(wd->selected, l, l_next, it2)
 	       if (it2 != it) _item_unselect(it2);
 	     _item_hilight(it);
@@ -444,6 +450,7 @@ static void
 _hold_on(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    elm_widget_scroll_hold_push(wd->scr);
 }
@@ -452,6 +459,7 @@ static void
 _hold_off(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    elm_widget_scroll_hold_pop(wd->scr);
 }
@@ -460,6 +468,7 @@ static void
 _freeze_on(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    elm_widget_scroll_hold_push(wd->scr);
 }
@@ -468,6 +477,7 @@ static void
 _freeze_off(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    elm_widget_scroll_hold_pop(wd->scr);
 }
@@ -518,6 +528,7 @@ elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Eva
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_List_Item *it = _item_new(obj, label, icon, end, func, data);
+
    wd->items = eina_list_append(wd->items, it);
    it->node = eina_list_last(wd->items);
    elm_box_pack_end(wd->box, it->base);
@@ -529,6 +540,7 @@ elm_list_item_prepend(Evas_Object *obj, const char *label, Evas_Object *icon, Ev
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_List_Item *it = _item_new(obj, label, icon, end, func, data);
+
    wd->items = eina_list_prepend(wd->items, it);
    it->node = wd->items;
    elm_box_pack_start(wd->box, it->base);
@@ -571,6 +583,7 @@ EAPI void
 elm_list_clear(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    while (wd->items)
      elm_list_item_del(wd->items->data);
 }
@@ -579,6 +592,7 @@ EAPI void
 elm_list_go(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    _fix_items(obj);
 }
 
@@ -586,6 +600,7 @@ EAPI void
 elm_list_multi_select_set(Evas_Object *obj, Eina_Bool multi)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    wd->multi = multi;
 }
 
@@ -593,6 +608,7 @@ EAPI void
 elm_list_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (wd->mode == mode) return;
    wd->mode = mode;
    if (wd->mode == ELM_LIST_LIMIT)
@@ -605,6 +621,7 @@ EAPI void
 elm_list_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    wd->always_select = always_select;
 }
 
@@ -612,6 +629,7 @@ EAPI const Eina_List *
 elm_list_items_get(const Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    return wd->items;
 }
 
@@ -619,6 +637,7 @@ EAPI Elm_List_Item *
 elm_list_selected_item_get(const Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (wd->selected) return wd->selected->data;
    return NULL;
 }
@@ -627,6 +646,7 @@ EAPI const Eina_List *
 elm_list_selected_items_get(const Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    return wd->selected;
 }
 
@@ -658,6 +678,7 @@ elm_list_item_show(Elm_List_Item *it)
    Widget_Data *wd = elm_widget_data_get(it->obj);
    Evas_Coord bx, by, bw, bh;
    Evas_Coord x, y, w, h;
+
    evas_object_geometry_get(wd->box, &bx, &by, &bw, &bh);
    evas_object_geometry_get(it->base, &x, &y, &w, &h);
    x -= bx;
@@ -669,6 +690,7 @@ EAPI void
 elm_list_item_del(Elm_List_Item *it)
 {
    Widget_Data *wd = elm_widget_data_get(it->obj);
+
    if (it->del_cb) it->del_cb((void *)it->data, it->obj, it);
    if (it->selected) _item_unselect(it);
    wd->items = eina_list_remove_list(wd->items, it->node);
@@ -701,12 +723,9 @@ elm_list_item_icon_get(const Elm_List_Item *it)
 EAPI void
 elm_list_item_icon_set(Elm_List_Item *it, Evas_Object *icon)
 {
-   if (it->icon == icon)
-     return;
-   if (it->dummy_icon && !icon)
-     return;
-   if (it->dummy_icon)
-     evas_object_del(it->icon);
+   if (it->icon == icon) return;
+   if (it->dummy_icon && !icon) return;
+   if (it->dummy_icon) evas_object_del(it->icon);
    if (!icon)
      {
 	icon = evas_object_rectangle_add(evas_object_evas_get(it->obj));
@@ -728,12 +747,9 @@ elm_list_item_end_get(const Elm_List_Item *it)
 EAPI void
 elm_list_item_end_set(Elm_List_Item *it, Evas_Object *end)
 {
-   if (it->end == end)
-     return;
-   if (it->dummy_end && !end)
-     return;
-   if (it->dummy_end)
-     evas_object_del(it->end);
+   if (it->end == end) return;
+   if (it->dummy_end && !end) return;
+   if (it->dummy_end) evas_object_del(it->end);
    if (!end)
      {
 	end = evas_object_rectangle_add(evas_object_evas_get(it->obj));
@@ -760,8 +776,7 @@ elm_list_item_label_get(const Elm_List_Item *it)
 EAPI void
 elm_list_item_label_set(Elm_List_Item *it, const char *text)
 {
-   if (!eina_stringshare_replace(&it->label, text))
-     return;
+   if (!eina_stringshare_replace(&it->label, text)) return;
    if (it->base)
      edje_object_part_text_set(it->base, "elm.text", it->label);
 }
