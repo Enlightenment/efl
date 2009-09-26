@@ -190,7 +190,7 @@ _time_update(Evas_Object *obj)
        (wd->cur.edit != wd->edit))
      {
 	int i;
-//	Evas_Coord mw, mh;
+	Evas_Coord mw, mh;
 
 	for (i = 0; i < 6; i++)
 	  {
