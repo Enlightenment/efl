@@ -138,6 +138,7 @@ int
 dladdr (const void *addr __UNUSED__, Dl_info *info)
 {
    TCHAR  tpath[PATH_MAX];
+   MEMORY_BASIC_INFORMATION mbi;
    char  *path;
    char  *tmp;
    size_t length;
@@ -146,7 +147,17 @@ dladdr (const void *addr __UNUSED__, Dl_info *info)
   if (!info)
     return 0;
 
-   ret = GetModuleFileName(GetModuleHandle(NULL), (LPTSTR)&tpath, PATH_MAX);
+  length = VirtualQuery(addr, &mbi, sizeof(mbi));
+  if (!length)
+    return 0;
+
+  if (mbi.State != MEM_COMMIT)
+    return 0;
+
+  if (!mbi.AllocationBase)
+    return 0;
+
+  ret = GetModuleFileName((HMODULE)mbi.AllocationBase, (LPTSTR)&tpath, PATH_MAX);
    if (!ret)
      return 0;
 
