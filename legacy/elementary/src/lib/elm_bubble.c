@@ -9,7 +9,6 @@
  *
  */
 
-
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -72,20 +71,12 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
-   if (sub == wd->content)
-     {
-	evas_object_event_callback_del
-	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
-	wd->content = NULL;
-	_sizing_eval(obj);
-     }
-   else if (sub == wd->icon)
-     {
-	evas_object_event_callback_del
-	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
-	wd->icon = NULL;
-	_sizing_eval(obj);
-     }
+
+   evas_object_event_callback_del(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
+                                  _changed_size_hints);
+   if (sub == wd->content) wd->content = NULL;
+   else if (sub == wd->icon) wd->icon = NULL;
+   _sizing_eval(obj);
 }
 
 /**
@@ -151,7 +142,6 @@ elm_bubble_label_get(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-
    return wd->label;
 }
 
@@ -201,7 +191,8 @@ elm_bubble_content_set(Evas_Object *obj, Evas_Object *content)
      {
 	elm_widget_sub_object_add(obj, content);
 	edje_object_part_swallow(wd->bbl, "elm.swallow.content", content);
-	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+	evas_object_event_callback_add(content, 
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
      }
    _sizing_eval(obj);
@@ -256,7 +247,6 @@ EAPI void
 elm_bubble_corner_set(Evas_Object *obj, const char *corner)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-
    _elm_theme_set(wd->bbl, "bubble", corner, elm_widget_style_get(obj));
    if (wd->icon)
      edje_object_part_swallow(wd->bbl, "elm.swallow.icon", wd->icon);
