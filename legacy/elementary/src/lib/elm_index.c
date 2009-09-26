@@ -54,17 +54,14 @@ _del_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it;
    Eina_List *l, *clear = NULL;
+
    if (!wd) return;
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
    _index_box_clear(obj, wd->bx[0], 0);
    EINA_LIST_FOREACH(wd->items, l, it)
-     {
-        clear = eina_list_append(clear, it);
-     }
+     clear = eina_list_append(clear, it);
    EINA_LIST_FREE(clear, it)
-     {
-        _item_free(it);
-     }
+     _item_free(it);
    if (wd->delay) ecore_timer_del(wd->delay);
    free(wd);
 }
@@ -73,6 +70,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    _index_box_clear(obj, wd->bx[0], 0);
    _index_box_clear(obj, wd->bx[1], 1);
    if (wd->horizontal)
@@ -103,7 +101,7 @@ _theme_hook(Evas_Object *obj)
         if (!wd->event[1])
           {
              Evas_Coord minw, minh;
-             
+
              wd->event[1] = evas_object_rectangle_add(evas_object_evas_get(wd->base));
              evas_object_color_set(wd->event[1], 0, 0, 0, 0);
              evas_object_size_hint_min_set(wd->event[1], minw, minh);
@@ -147,6 +145,7 @@ _item_new(Evas_Object *obj, const char *letter, const void *item)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it;
+
    it = calloc(1, sizeof(Item));
    if (!it) return NULL;
    it->obj = obj;
@@ -162,10 +161,9 @@ _item_find(Evas_Object *obj, const void *item)
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
    Item *it;
+
    EINA_LIST_FOREACH(wd->items, l, it)
-     {
-        if (it->data == item) return it;
-     }
+     if (it->data == item) return it;
    return NULL;
 }
 
@@ -173,6 +171,7 @@ static void
 _item_free(Item *it)
 {
    Widget_Data *wd = elm_widget_data_get(it->obj);
+
    wd->items = eina_list_remove(wd->items, it);
    if (it->base) evas_object_del(it->base);
    eina_stringshare_del(it->letter);
@@ -187,17 +186,16 @@ _index_box_auto_fill(Evas_Object *obj, Evas_Object *box, int level)
    Eina_List *l;
    Item *it, **itfit = NULL;
    Evas_Coord mw, mh, w, h;
-   int i;
+   int i = 0;
    char buf[1024];
-        
+
    if (wd->level_active[level]) return;
-   i = 0;
    evas_object_geometry_get(box, NULL, NULL, &w, &h);
    EINA_LIST_FOREACH(wd->items, l, it)
      {
         Evas_Object *o;
         const char *stacking;
-        
+
         if (it->level != level) continue;
         o = edje_object_add(evas_object_evas_get(obj));
         it->base = o;
@@ -262,8 +260,9 @@ static int
 _delay_change(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   wd->delay = NULL;
    void *d;
+
+   wd->delay = NULL;
    d = (void *)elm_index_item_selected_get(data, wd->level);
    if (d) evas_object_smart_callback_call(data, "delay,changed", d);
    return 0;
@@ -290,8 +289,7 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
         evas_object_geometry_get(wd->bx[i], &bx, &by, &bw, &bh);
         EINA_LIST_FOREACH(wd->items, l, it)
           {
-             if (!((it->level == i) && (it->base)))
-               continue;
+             if (!((it->level == i) && (it->base))) continue;
              if ((it->base) && (it->level != wd->level))
                {
                   if (it->selected)
@@ -323,13 +321,9 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
                }
           }
         if ((i == 0) && (wd->level == 0))
-          {
-             edje_object_part_drag_value_set(wd->base, "elm.dragable.index.1", cdv, cdv);
-          }
-        if (it_closest)
-          {
-             it_closest->selected = 1;
-          }
+          edje_object_part_drag_value_set(wd->base, "elm.dragable.index.1", 
+                                          cdv, cdv);
+        if (it_closest) it_closest->selected = 1;
         if (it_closest != it_last)
           {
              change = 1;
@@ -350,7 +344,7 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
              if (it_closest)
                {
                   const char *selectraise;
-                  
+
                   it = it_closest;
                   edje_object_signal_emit(it->base, "elm,state,active", "elm");
                   selectraise = edje_object_data_get(it->base, "selectraise");
@@ -401,15 +395,16 @@ _mouse_down(void *data, Evas *e, Evas_Object *o, void *event_info)
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Down *ev = event_info;
    Evas_Coord x, y;
+
    if (ev->button != 1) return;
    wd->down = 1;
-
    evas_object_geometry_get(wd->base, &x, &y, NULL, NULL);
    wd->dx = ev->canvas.x - x;
    wd->dy = ev->canvas.y - y;
    elm_index_active_set(data, 1);
    _sel_eval(data, ev->canvas.x, ev->canvas.y);
-   edje_object_part_drag_value_set(wd->base, "elm.dragable.pointer", wd->dx, wd->dy);
+   edje_object_part_drag_value_set(wd->base, "elm.dragable.pointer", 
+                                   wd->dx, wd->dy);
 }
 
 static void 
@@ -418,6 +413,7 @@ _mouse_up(void *data, Evas *e, Evas_Object *o, void *event_info)
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Up *ev = event_info;
    void *d;
+
    if (ev->button != 1) return;
    wd->down = 0;
    d = (void *)elm_index_item_selected_get(data, wd->level);
@@ -508,7 +504,7 @@ elm_index_add(Evas_Object *parent)
    wd->base = edje_object_add(e);
    _elm_theme_set(wd->base, "index", "base/vertical", "default");
    elm_widget_resize_object_set(obj, wd->base);
-   
+
    o = evas_object_rectangle_add(e);
    wd->event[0] = o;
    evas_object_color_set(o, 0, 0, 0, 0);
@@ -531,7 +527,7 @@ elm_index_add(Evas_Object *parent)
         edje_object_part_swallow(wd->base, "elm.swallow.event.1", o);
         elm_widget_sub_object_add(obj, o);
      }
-     
+
    wd->bx[0] = _els_smart_box_add(e);
    _els_smart_box_orientation_set(wd->bx[0], 0);
    _els_smart_box_homogenous_set(wd->bx[0], 1);
@@ -565,6 +561,7 @@ EAPI void
 elm_index_active_set(Evas_Object *obj, Eina_Bool active)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    if (wd->active == active) return;
    wd->active = active;
@@ -576,9 +573,7 @@ elm_index_active_set(Evas_Object *obj, Eina_Bool active)
         edje_object_signal_emit(wd->base, "elm,state,active", "elm");
      }
    else
-     {
-        edje_object_signal_emit(wd->base, "elm,state,inactive", "elm");
-     }
+     edje_object_signal_emit(wd->base, "elm,state,inactive", "elm");
 }
 
 /**
@@ -593,6 +588,7 @@ EAPI void
 elm_index_item_level_set(Evas_Object *obj, int level)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    if (wd->level == level) return;
    wd->level = level;
@@ -609,6 +605,7 @@ EAPI int
 elm_index_item_level_get(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return 0;
    return wd->level;
 }
@@ -627,11 +624,10 @@ elm_index_item_selected_get(Evas_Object *obj, int level)
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
    Item *it;
+
    if (!wd) return NULL;
    EINA_LIST_FOREACH(wd->items, l, it)
-     {
-        if ((it->selected) && (it->level == level)) return it->data;
-     }
+     if ((it->selected) && (it->level == level)) return it->data;
    return NULL;
 }
 
@@ -649,6 +645,7 @@ elm_index_item_append(Evas_Object *obj, const char *letter, const void *item)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it;
+
    if (!wd) return;
    it = _item_new(obj, letter, item);
    if (!it) return;
@@ -670,6 +667,7 @@ elm_index_item_prepend(Evas_Object *obj, const char *letter, const void *item)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it;
+
    if (!wd) return;
    it = _item_new(obj, letter, item);
    if (!it) return;
@@ -692,6 +690,7 @@ elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void 
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it, *it_rel;
+
    if (!wd) return;
    if (!relative)
      {
@@ -725,6 +724,7 @@ elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it, *it_rel;
+
    if (!wd) return;
    if (!relative)
      {
@@ -756,6 +756,7 @@ elm_index_item_del(Evas_Object *obj, const void *item)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it;
+
    if (!wd) return;
    it = _item_find(obj, item);
    if (!it) return;
@@ -776,6 +777,7 @@ elm_index_item_clear(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it;
    Eina_List *l, *clear = NULL;
+
    if (!wd) return;
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
    EINA_LIST_FOREACH(wd->items, l, it)
@@ -784,9 +786,7 @@ elm_index_item_clear(Evas_Object *obj)
         clear = eina_list_append(clear, it);
      }
    EINA_LIST_FREE(clear, it)
-     {
-        _item_free(it);
-     }
+     _item_free(it);
 }
 
 /**
@@ -802,6 +802,7 @@ elm_index_item_go(Evas_Object *obj, int level)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Item *it;
+
    if (!wd) return;
    // XXX
    _index_box_auto_fill(obj, wd->bx[0], 0);
