@@ -128,7 +128,8 @@ elm_bg_file_set(Evas_Object *obj, const char *file, const char *group)
    else
      {
 	wd->custom_img = evas_object_image_add(evas_object_evas_get(wd->img));
-	evas_object_event_callback_add(wd->custom_img, EVAS_CALLBACK_RESIZE, _custom_resize, wd);
+	evas_object_event_callback_add(wd->custom_img, EVAS_CALLBACK_RESIZE, 
+                                       _custom_resize, wd);
 	evas_object_image_file_set(wd->custom_img, file, group);
      }
    elm_widget_sub_object_add(obj, wd->custom_img);
