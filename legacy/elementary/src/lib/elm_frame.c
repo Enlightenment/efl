@@ -26,6 +26,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    free(wd);
 }
 
@@ -33,6 +34,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    _elm_theme_set(wd->frm, "frame", "base", elm_widget_style_get(obj));
    if (wd->content)
      edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->content);
@@ -55,6 +57,7 @@ static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+
    edje_object_part_swallow(wd->frm, "elm.swallow.content", obj);
    _sizing_eval(data);
 }
@@ -64,10 +67,11 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
+
    if (sub == wd->content)
      {
-	evas_object_event_callback_del
-	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
+	evas_object_event_callback_del(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
+                                       _changed_size_hints);
 	wd->content = NULL;
 	_sizing_eval(obj);
      }
@@ -119,6 +123,7 @@ EAPI void
 elm_frame_label_set(Evas_Object *obj, const char *label)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    edje_object_part_text_set(wd->frm, "elm.text", label);
    _sizing_eval(obj);
 }
@@ -136,7 +141,8 @@ EAPI const char*
 elm_frame_label_get(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd || !wd->frm) return NULL;
+
+   if ((!wd) || (!wd->frm)) return NULL;
    return edje_object_part_text_get(wd->frm, "elm.text");
 }
 
@@ -152,6 +158,7 @@ EAPI void
 elm_frame_content_set(Evas_Object *obj, Evas_Object *content)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if ((wd->content != content) && (wd->content))
      elm_widget_sub_object_del(obj, wd->content);
    wd->content = content;
@@ -159,7 +166,8 @@ elm_frame_content_set(Evas_Object *obj, Evas_Object *content)
      {
 	elm_widget_sub_object_add(obj, content);
 	edje_object_part_swallow(wd->frm, "elm.swallow.content", content);
-	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+	evas_object_event_callback_add(content, 
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
 	_sizing_eval(obj);
      }
