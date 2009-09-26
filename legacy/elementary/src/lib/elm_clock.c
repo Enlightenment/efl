@@ -21,13 +21,14 @@ struct _Widget_Data
    Evas_Object *digit[6];
    Evas_Object *ampm;
    Ecore_Timer *ticker;
-   struct {
-      int hrs, min, sec;
-      char ampm;
-      Eina_Bool seconds : 1;
-      Eina_Bool am_pm : 1;
-      Eina_Bool edit : 1;
-   } cur;
+   struct 
+     {
+        int hrs, min, sec;
+        char ampm;
+        Eina_Bool seconds : 1;
+        Eina_Bool am_pm : 1;
+        Eina_Bool edit : 1;
+     } cur;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -55,7 +56,6 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   int i;
    wd->cur.am_pm = !wd->cur.am_pm; /* hack - force update */
    _time_update(obj);
 }
@@ -64,10 +64,10 @@ static int
 _ticker(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   double          t;
-   struct timeval  timev;
-   struct tm      *tm;
-   time_t          tt;
+   double t;
+   struct timeval timev;
+   struct tm *tm;
+   time_t tt;
 
    gettimeofday(&timev, NULL);
    t = ((double)(1000000 - timev.tv_usec)) / 1000000.0;
@@ -190,7 +190,7 @@ _time_update(Evas_Object *obj)
        (wd->cur.edit != wd->edit))
      {
 	int i;
-	Evas_Coord mw, mh;
+//	Evas_Coord mw, mh;
 
 	for (i = 0; i < 6; i++)
 	  {
@@ -214,7 +214,8 @@ _time_update(Evas_Object *obj)
 	  _elm_theme_set(wd->clk, "clock", "base-am_pm", style);
 	else
 	  _elm_theme_set(wd->clk, "clock", "base", style);
-	edje_object_scale_set(wd->clk, elm_widget_scale_get(obj) * _elm_config->scale);
+	edje_object_scale_set(wd->clk, elm_widget_scale_get(obj) * 
+                              _elm_config->scale);
 
 	for (i = 0; i < 6; i++)
 	  {
@@ -223,7 +224,8 @@ _time_update(Evas_Object *obj)
 	     if ((!wd->seconds) && (i >= 4)) break;
 	     wd->digit[i] = edje_object_add(evas_object_evas_get(wd->clk));
 	     _elm_theme_set(wd->digit[i], "clock", "flipdigit", style);
-	     edje_object_scale_set(wd->digit[i], elm_widget_scale_get(obj) * _elm_config->scale);
+	     edje_object_scale_set(wd->digit[i], elm_widget_scale_get(obj) * 
+                                   _elm_config->scale);
 	     if (wd->edit)
 	       edje_object_signal_emit(wd->digit[i], "elm,state,edit,on", "elm");
 	     edje_object_signal_callback_add(wd->digit[i], "elm,action,up", "",
@@ -243,7 +245,8 @@ _time_update(Evas_Object *obj)
 	  {
 	     wd->ampm = edje_object_add(evas_object_evas_get(wd->clk));
 	     _elm_theme_set(wd->ampm, "clock", "flipampm", style);
-	     edje_object_scale_set(wd->ampm, elm_widget_scale_get(obj) * _elm_config->scale);
+	     edje_object_scale_set(wd->ampm, elm_widget_scale_get(obj) * 
+                                   _elm_config->scale);
 	     if (wd->edit)
 	       edje_object_signal_emit(wd->ampm, "elm,state,edit,on", "elm");
 	     edje_object_signal_callback_add(wd->ampm, "elm,action,up", "",
