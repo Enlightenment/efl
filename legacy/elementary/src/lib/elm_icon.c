@@ -15,12 +15,12 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *img;
-   const char  *stdicon;
-   Eina_Bool    scale_up : 1;
-   Eina_Bool    scale_down : 1;
-   Eina_Bool    smooth : 1;
-   Eina_Bool    fill_outside : 1;
-   Eina_Bool    no_scale : 1;
+   const char *stdicon;
+   Eina_Bool scale_up : 1;
+   Eina_Bool scale_down : 1;
+   Eina_Bool smooth : 1;
+   Eina_Bool fill_outside : 1;
+   Eina_Bool no_scale : 1;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -32,6 +32,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    if (wd->stdicon) eina_stringshare_del(wd->stdicon);
    free(wd);
@@ -41,6 +42,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    if (wd->stdicon)
      _elm_theme_icon_set(wd->img, wd->stdicon, "default");
@@ -142,10 +144,9 @@ elm_icon_file_set(Evas_Object *obj, const char *file, const char *group)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_Bool ret;
-   if (!wd) return 0;
    const char *p;
 
-   if (!file) return 0;
+   if ((!wd) || (!file)) return 0;
    if (wd->stdicon) eina_stringshare_del(wd->stdicon);
    wd->stdicon = NULL;
    if (((p = strrchr(file, '.'))) && (!strcasecmp(p, ".edj")))
@@ -168,9 +169,8 @@ EAPI void
 elm_icon_standard_set(Evas_Object *obj, const char *name)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
 
-   if (!name) return;
+   if ((!wd) || (!name)) return;
    if (wd->stdicon) eina_stringshare_del(wd->stdicon);
    wd->stdicon = eina_stringshare_add(name);
    _elm_theme_icon_set(wd->img, name, "default");
@@ -190,6 +190,7 @@ EAPI void
 elm_icon_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    wd->smooth = smooth;
    _sizing_eval(obj);
@@ -208,6 +209,7 @@ EAPI void
 elm_icon_no_scale_set(Evas_Object *obj, Eina_Bool no_scale)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    wd->no_scale = no_scale;
    _sizing_eval(obj);
@@ -226,6 +228,7 @@ EAPI void
 elm_icon_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    wd->scale_up = scale_up;
    wd->scale_down = scale_down;
@@ -245,6 +248,7 @@ EAPI void
 elm_icon_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    wd->fill_outside = fill_outside;
    _sizing_eval(obj);
@@ -263,6 +267,7 @@ EAPI void
 elm_icon_prescale_set(Evas_Object *obj, int size)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    _els_smart_icon_scale_size_set(wd->img, size);
 }
