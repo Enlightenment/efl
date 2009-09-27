@@ -109,6 +109,8 @@ case "$host_os" in
       ;;
 esac
 
+requirement_evas=""
+
 
 ### Additional options to configure
 
@@ -140,6 +142,14 @@ AC_PROG_CC
 # pkg-config
 PKG_PROG_PKG_CONFIG
 
+# Check whether pkg-config supports Requires.private
+if $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
+   pkgconfig_requires_private="Requires.private"
+else
+   pkgconfig_requires_private="Requires"
+fi
+AC_SUBST(pkgconfig_requires_private)
+
 # doxygen program for documentation building
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
@@ -150,8 +160,9 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 case "$host_os" in
    mingw* | cegcc*)
-   PKG_CHECK_MODULES([EVIL], [evil])
-   AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
+      PKG_CHECK_MODULES([EVIL], [evil])
+      AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed])
+      requirement_evas="evil ${requirement_evas}"
    ;;
 esac
 
@@ -162,6 +173,8 @@ PKG_CHECK_MODULES([EINA], [eina-0])
 
 # Freetype
 PKG_CHECK_MODULES([FREETYPE], [freetype2 >= 9.3.0])
+
+requirement_evas="freetype2 eina-0 ${requirement_evas}"
 
 ## optional dependencies
 
@@ -185,6 +198,7 @@ if test "x${want_fontconfig}" = "xyes" -o "x${want_fontconfig}" = "xauto" ; then
       [
        have_fontconfig="yes"
        AC_DEFINE(HAVE_FONTCONFIG, 1, [have fontconfig searching capabilities])
+       requirement_evas="fontconfig ${requirement_evas}"
       ],
       [
        if test "x${want_fontconfig}" = "xyes" -a "x${use_strict}" = "xyes" ; then
@@ -212,6 +226,7 @@ if test "x${want_fribidi}" = "xyes" -o "x${want_fribidi}" = "xauto" ; then
       [
        have_fribidi="yes"
        AC_DEFINE(HAVE_FRIBIDI, 1, [have fribidi support])
+       requirement_evas="fribidi ${requirement_evas}"
       ],
       [
        if test "x$want_fribidi" = "xyes" -a "x$use_strict" = "xyes" ; then
@@ -1109,6 +1124,7 @@ if test x$want_valgrind = "xyes"; then
     [
       AC_DEFINE(HAVE_VALGRIND, 1, [Valgrind support])
       have_valgrind=yes
+      requirement_evas="valgrind ${requirement_evas}"
     ],
     [
       if test "x$want_valgrind" = "xyes" -a "x$use_strict" = "xyes" ; then
@@ -1124,6 +1140,7 @@ fi
 AC_SUBST(altivec_cflags)
 AC_SUBST(pthread_cflags)
 AC_SUBST(pthread_libs)
+AC_SUBST(requirement_evas)
 
 
 #####################################################################

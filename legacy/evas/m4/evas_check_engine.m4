@@ -1,5 +1,5 @@
 
-dnl use: EVAS_CHECK_ENGINE_DEP_BUFFER(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EVAS_CHECK_ENGINE_DEP_BUFFER(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_BUFFER],
 [
@@ -12,14 +12,14 @@ AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
 if test "x${have_dep}" = "xyes" ; then
-  m4_default([$3], [:])
-else
   m4_default([$4], [:])
+else
+  m4_default([$5], [:])
 fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_XLIB(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_XLIB(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_XLIB],
 [
@@ -57,14 +57,14 @@ AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
 if test "x${have_dep}" = "xyes" ; then
-  m4_default([$3], [:])
-else
   m4_default([$4], [:])
+else
+  m4_default([$5], [:])
 fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_XRENDER_X11(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EVAS_CHECK_ENGINE_DEP_XRENDER_X11(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_XRENDER_X11],
 [
@@ -107,14 +107,14 @@ AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
 if test "x${have_dep}" = "xyes" ; then
-  m4_default([$3], [:])
-else
   m4_default([$4], [:])
+else
+  m4_default([$5], [:])
 fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_GL_X11(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EVAS_CHECK_ENGINE_DEP_GL_X11(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_GL_X11],
 [
@@ -157,18 +157,19 @@ AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
 if test "x${have_dep}" = "xyes" ; then
-  m4_default([$3], [:])
-else
   m4_default([$4], [:])
+else
+  m4_default([$5], [:])
 fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_CAIRO_X11(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EVAS_CHECK_ENGINE_DEP_CAIRO_X11(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_CAIRO_X11],
 [
 
+requirement=""
 have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
@@ -179,7 +180,7 @@ AC_PATH_XTRA
 AC_CHECK_HEADER([X11/X.h],
    [PKG_CHECK_MODULES([CAIRO],
        [cairo >= 1.0.0],
-       [have_dep="yes"]
+       [have_dep="yes" requirement="cairo"]
     )]
 )
 
@@ -198,19 +199,24 @@ fi
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
+if test "x$3" = "xstatic" ; then
+   requirement_evas="${requirement} ${requirement_evas}"
+fi
+
 if test "x${have_dep}" = "xyes" ; then
-  m4_default([$3], [:])
-else
   m4_default([$4], [:])
+else
+  m4_default([$5], [:])
 fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_XCB(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_XCB(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_XCB],
 [
 
+requirement=""
 have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
@@ -219,6 +225,7 @@ PKG_CHECK_MODULES([XCB],
    [xcb xcb-shm xcb-image >= 0.2.1 pixman-1],
    [
     have_dep="yes"
+    requirement="xcb xcb-shm xcb-image pixman-1"
     evas_engine_[]$1[]_cflags="${XCB_CFLAGS}"
     evas_engine_[]$1[]_libs="${XCB_LIBS}"
    ]
@@ -227,19 +234,24 @@ PKG_CHECK_MODULES([XCB],
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
+if test "x$3" = "xstatic" ; then
+   requirement_evas="${requirement} ${requirement_evas}"
+fi
+
 if test "x${have_dep}" = "xyes" ; then
-  m4_default([$3], [:])
-else
   m4_default([$4], [:])
+else
+  m4_default([$5], [:])
 fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_XRENDER_XCB(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EVAS_CHECK_ENGINE_DEP_XRENDER_XCB(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_XRENDER_XCB],
 [
 
+requirement=""
 have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
@@ -248,6 +260,7 @@ PKG_CHECK_MODULES([XCBRENDER],
    [xcb xcb-shm xcb-render xcb-image >= 0.2.1 pixman-1],
    [
     have_dep="yes"
+    requirement="xcb xcb-shm xcb-render xcb-image pixman-1"
     evas_engine_[]$1[]_cflags="${XCBRENDER_CFLAGS}"
     evas_engine_[]$1[]_libs="${XCBRENDER_LIBS}"
    ]
@@ -256,15 +269,19 @@ PKG_CHECK_MODULES([XCBRENDER],
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
+if test "x$3" = "xstatic" ; then
+   requirement_evas="${requirement} ${requirement_evas}"
+fi
+
 if test "x${have_dep}" = "xyes" ; then
-  m4_default([$3], [:])
-else
   m4_default([$4], [:])
+else
+  m4_default([$5], [:])
 fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_GDI(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_GDI(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_GDI],
 [
@@ -284,14 +301,14 @@ AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
 if test "x${have_dep}" = "xyes" ; then
-  m4_default([$3], [:])
-else
   m4_default([$4], [:])
+else
+  m4_default([$5], [:])
 fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_DDRAW(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_DDRAW(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_DDRAW],
 [
@@ -311,14 +328,14 @@ AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
 if test "x${have_dep}" = "xyes" ; then
-  m4_default([$3], [:])
-else
   m4_default([$4], [:])
+else
+  m4_default([$5], [:])
 fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_DIRECT3D(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EVAS_CHECK_ENGINE_DEP_DIRECT3D(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_DIRECT3D],
 [
@@ -338,14 +355,14 @@ AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
 if test "x${have_dep}" = "xyes" ; then
-  m4_default([$3], [:])
-else
   m4_default([$4], [:])
+else
+  m4_default([$5], [:])
 fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_QUARTZ(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EVAS_CHECK_ENGINE_DEP_QUARTZ(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_QUARTZ],
 [
@@ -362,14 +379,14 @@ AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
 if test "x${have_dep}" = "xyes" ; then
-  m4_default([$3], [:])
-else
   m4_default([$4], [:])
+else
+  m4_default([$5], [:])
 fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_GL_GLEW(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EVAS_CHECK_ENGINE_DEP_GL_GLEW(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_GL_GLEW],
 [
@@ -389,18 +406,19 @@ AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
 if test "x${have_dep}" = "xyes" ; then
-  m4_default([$3], [:])
-else
   m4_default([$4], [:])
+else
+  m4_default([$5], [:])
 fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_SDL(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_SDL(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_SDL],
 [
 
+requirement=""
 have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
@@ -409,6 +427,7 @@ PKG_CHECK_MODULES([SDL],
    [sdl >= 1.2.0],
    [
     have_dep="yes"
+    requirement="sdl"
     evas_engine_[]$1[]_cflags="${SDL_CFLAGS}"
     evas_engine_[]$1[]_libs="${SDL_LIBS}"
    ]
@@ -417,15 +436,19 @@ PKG_CHECK_MODULES([SDL],
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
+if test "x$3" = "xstatic" ; then
+   requirement_evas="${requirement} ${requirement_evas}"
+fi
+
 if test "x${have_dep}" = "xyes" ; then
-  m4_default([$3], [:])
-else
   m4_default([$4], [:])
+else
+  m4_default([$5], [:])
 fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_FB(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EVAS_CHECK_ENGINE_DEP_FB(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_FB],
 [
@@ -440,18 +463,19 @@ AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
 if test "x${have_dep}" = "xyes" ; then
-  m4_default([$3], [:])
-else
   m4_default([$4], [:])
+else
+  m4_default([$5], [:])
 fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_DIRECTFB(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EVAS_CHECK_ENGINE_DEP_DIRECTFB(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_DIRECTFB],
 [
 
+requirement=""
 have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
@@ -460,6 +484,7 @@ PKG_CHECK_MODULES([DIRECTFB],
    [directfb >= 0.9.16],
    [
     have_dep="yes"
+    requirement="directfb"
     evas_engine_[]$1[]_cflags="${DIRECTFB_CFLAGS}"
     evas_engine_[]$1[]_libs="${DIRECTFB_LIBS}"
    ]
@@ -468,15 +493,19 @@ PKG_CHECK_MODULES([DIRECTFB],
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
+if test "x$3" = "xstatic" ; then
+   requirement_evas="${requirement} ${requirement_evas}"
+fi
+
 if test "x${have_dep}" = "xyes" ; then
-  m4_default([$3], [:])
-else
   m4_default([$4], [:])
+else
+  m4_default([$5], [:])
 fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_QTOPIA(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_QTOPIA(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_QTOPIA],
 [
@@ -521,15 +550,14 @@ AC_SUBST([evas_engine_$1_libs])
 AC_SUBST([evas_engine_$1_moc])
 
 if test "x${have_dep}" = "xyes" ; then
-  m4_default([$3], [:])
-else
   m4_default([$4], [:])
+else
+  m4_default([$5], [:])
 fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_16_X11(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
-
+dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_16_X11(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_16_X11],
 [
 
@@ -566,14 +594,14 @@ AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
 if test "x${have_dep}" = "xyes" ; then
-  m4_default([$3], [:])
-else
   m4_default([$4], [:])
+else
+  m4_default([$5], [:])
 fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_16_DDRAW(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_16_DDRAW(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_16_DDRAW],
 [
@@ -593,14 +621,14 @@ AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
 if test "x${have_dep}" = "xyes" ; then
-  m4_default([$3], [:])
-else
   m4_default([$4], [:])
+else
+  m4_default([$5], [:])
 fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_16_WINCE(engine, simple[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_16_WINCE(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_16_WINCE],
 [
@@ -613,9 +641,9 @@ AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
 if test "x${have_dep}" = "xyes" ; then
-  m4_default([$3], [:])
-else
   m4_default([$4], [:])
+else
+  m4_default([$5], [:])
 fi
 
 ])
@@ -652,7 +680,7 @@ AC_MSG_CHECKING([whether to enable $4 rendering backend])
 AC_MSG_RESULT([${want_engine}])
 
 if test "x${want_engine}" = "xyes" -o "x${want_engine}" = "xstatic" -o "x${want_engine}" = "xauto" ; then
-   m4_default([EVAS_CHECK_ENGINE_DEP_]m4_defn([UP]))(DOWN, $3, [have_engine="yes"], [have_engine="no"])
+   m4_default([EVAS_CHECK_ENGINE_DEP_]m4_defn([UP]))(DOWN, $3, ${want_engine}, [have_engine="yes"], [have_engine="no"])
 fi
 
 if test "x${have_engine}" = "xno" -a "x${want_engine}" = "xyes" -a "x${use_strict}" = "xyes" ; then
