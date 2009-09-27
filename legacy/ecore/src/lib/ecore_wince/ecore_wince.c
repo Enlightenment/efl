@@ -77,7 +77,7 @@ ecore_wince_init()
        return 0;
      }
 
-   ECORE_WINCE_MSG_INFO("initializing ecore_wince (current count: %d)\n", _ecore_wince_init_count);
+   ECORE_WINCE_MSG_INFO("initializing ecore_wince (current count: %d)", _ecore_wince_init_count);
 
    if (_ecore_wince_init_count > 0)
      {
@@ -88,7 +88,7 @@ ecore_wince_init()
    _ecore_wince_instance = GetModuleHandle(NULL);
    if (!_ecore_wince_instance)
      {
-        ECORE_WINCE_MSG_ERR("GetModuleHandle() failed\n");
+        ECORE_WINCE_MSG_ERR("GetModuleHandle() failed");
         return 0;
      }
 
@@ -106,7 +106,7 @@ ecore_wince_init()
 
    if(!RegisterClass(&wc))
      {
-        ECORE_WINCE_MSG_ERR("RegisterClass() failed\n");
+        ECORE_WINCE_MSG_ERR("RegisterClass() failed");
         FreeLibrary(_ecore_wince_instance);
         return 0;
      }
@@ -137,7 +137,7 @@ ecore_wince_shutdown()
 {
    HWND task_bar;
 
-   ECORE_WINCE_MSG_INFO("shutting down ecore_wince (current count: %d)\n", _ecore_wince_init_count);
+   ECORE_WINCE_MSG_INFO("shutting down ecore_wince (current count: %d)", _ecore_wince_init_count);
 
    _ecore_wince_init_count--;
    if (_ecore_wince_init_count > 0) return _ecore_wince_init_count;
@@ -155,11 +155,11 @@ ecore_wince_shutdown()
 
    if (!UnregisterClass(ECORE_WINCE_WINDOW_CLASS, _ecore_wince_instance))
      {
-        ECORE_WINCE_MSG_ERR("UnregisterClass() failed\n");
+        ECORE_WINCE_MSG_ERR("UnregisterClass() failed");
      }
    if (!FreeLibrary(_ecore_wince_instance))
      {
-        ECORE_WINCE_MSG_ERR("FreeLibrary() failed\n");
+        ECORE_WINCE_MSG_ERR("FreeLibrary() failed");
      }
    _ecore_wince_instance = NULL;
 
@@ -275,7 +275,7 @@ _ecore_wince_window_procedure(HWND   window,
             {
                POINT pt;
 
-               ECORE_WINCE_MSG_INFO("mouse in window\n");
+               ECORE_WINCE_MSG_INFO("mouse in window");
 
                pt.x = LOWORD(data_param);
                pt.y = HIWORD(data_param);
@@ -298,7 +298,7 @@ _ecore_wince_window_procedure(HWND   window,
             }
           else
             {
-               ECORE_WINCE_MSG_ERR("GetClientRect() failed\n");
+               ECORE_WINCE_MSG_ERR("GetClientRect() failed");
             }
           _ecore_wince_event_handle_motion_notify(data);
 

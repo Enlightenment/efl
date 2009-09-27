@@ -174,7 +174,7 @@ _ecore_evas_win32_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, voi
    Ecore_Evas                 *ee;
    Ecore_Win32_Event_Mouse_In *e;
 
-   ECORE_EVAS_MSG_INFO("mouse in\n");
+   ECORE_EVAS_MSG_INFO("mouse in");
 
    e = event;
    ee = ecore_event_window_match((Ecore_Window)e->window);
@@ -196,7 +196,7 @@ _ecore_evas_win32_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, vo
    Ecore_Evas                  *ee;
    Ecore_Win32_Event_Mouse_Out *e;
 
-   ECORE_EVAS_MSG_INFO("mouse out\n");
+   ECORE_EVAS_MSG_INFO("mouse out");
 
    e = event;
    ee = ecore_event_window_match((Ecore_Window)e->window);
@@ -220,7 +220,7 @@ _ecore_evas_win32_event_window_damage(void *data __UNUSED__, int type __UNUSED__
    Ecore_Evas                      *ee;
    Ecore_Win32_Event_Window_Damage *e;
 
-   ECORE_EVAS_MSG_INFO("window damage\n");
+   ECORE_EVAS_MSG_INFO("window damage");
 
    e = event;
    ee = ecore_event_window_match((Ecore_Window)e->window);
@@ -272,7 +272,7 @@ _ecore_evas_win32_event_window_destroy(void *data __UNUSED__, int type __UNUSED_
    Ecore_Evas                       *ee;
    Ecore_Win32_Event_Window_Destroy *e;
 
-   ECORE_EVAS_MSG_INFO("window destroy\n");
+   ECORE_EVAS_MSG_INFO("window destroy");
 
    e = event;
    ee = ecore_event_window_match((Ecore_Window)e->window);
@@ -290,7 +290,7 @@ _ecore_evas_win32_event_window_show(void *data __UNUSED__, int type __UNUSED__, 
    Ecore_Evas                    *ee;
    Ecore_Win32_Event_Window_Show *e;
 
-   ECORE_EVAS_MSG_INFO("window show\n");
+   ECORE_EVAS_MSG_INFO("window show");
 
    e = event;
    ee = ecore_event_window_match((Ecore_Window)e->window);
@@ -309,7 +309,7 @@ _ecore_evas_win32_event_window_hide(void *data __UNUSED__, int type __UNUSED__, 
    Ecore_Evas                    *ee;
    Ecore_Win32_Event_Window_Hide *e;
 
-   ECORE_EVAS_MSG_INFO("window hide\n");
+   ECORE_EVAS_MSG_INFO("window hide");
 
    e = event;
    ee = ecore_event_window_match((Ecore_Window)e->window);
@@ -328,7 +328,7 @@ _ecore_evas_win32_event_window_configure(void *data __UNUSED__, int type __UNUSE
    Ecore_Evas                         *ee;
    Ecore_Win32_Event_Window_Configure *e;
 
-   ECORE_EVAS_MSG_INFO("window configure\n");
+   ECORE_EVAS_MSG_INFO("window configure");
 
    e = event;
    ee = ecore_event_window_match((Ecore_Window)e->window);
@@ -386,7 +386,7 @@ _ecore_evas_win32_event_window_delete_request(void *data __UNUSED__, int type __
    Ecore_Evas                              *ee;
    Ecore_Win32_Event_Window_Delete_Request *e;
 
-   ECORE_EVAS_MSG_INFO("window delete request\n");
+   ECORE_EVAS_MSG_INFO("window delete request");
 
    e = event;
    ee = ecore_event_window_match((Ecore_Window)e->window);
@@ -404,7 +404,7 @@ _ecore_evas_win32_event_window_delete_request(void *data __UNUSED__, int type __
 static void
 _ecore_evas_win32_free(Ecore_Evas *ee)
 {
-   ECORE_EVAS_MSG_INFO("ecore evas free\n");
+   ECORE_EVAS_MSG_INFO("ecore evas free");
 
    ecore_win32_window_free((struct _Ecore_Win32_Window *)ee->prop.window);
    ecore_event_window_unregister(ee->prop.window);
@@ -423,7 +423,7 @@ _ecore_evas_win32_callback_delete_request_set(Ecore_Evas *ee,
 static void
 _ecore_evas_win32_move(Ecore_Evas *ee, int x, int y)
 {
-  ECORE_EVAS_MSG_INFO("ecore evas move (%dx%d)\n", x, y);
+  ECORE_EVAS_MSG_INFO("ecore evas move (%dx%d)", x, y);
 
    if ((x != ee->x) || (y != ee->y))
      {
@@ -438,7 +438,7 @@ _ecore_evas_win32_move(Ecore_Evas *ee, int x, int y)
 static void
 _ecore_evas_win32_resize(Ecore_Evas *ee, int width, int height)
 {
-   ECORE_EVAS_MSG_INFO("ecore evas resize (%dx%d)\n", width, height);
+   ECORE_EVAS_MSG_INFO("ecore evas resize (%dx%d)", width, height);
 
    if ((ee->w != width) || (ee->h != height))
      {
@@ -465,7 +465,7 @@ _ecore_evas_win32_resize(Ecore_Evas *ee, int width, int height)
 static void
 _ecore_evas_win32_move_resize(Ecore_Evas *ee, int x, int y, int width, int height)
 {
-   ECORE_EVAS_MSG_INFO("ecore evas resize (%dx%d %dx%d)\n", x, y, width, height);
+   ECORE_EVAS_MSG_INFO("ecore evas resize (%dx%d %dx%d)", x, y, width, height);
 
    if ((ee->w != width) || (ee->h != height) || (x != ee->x) || (y != ee->y))
      {
@@ -571,7 +571,7 @@ _ecore_evas_win32_rotation_set_internal(Ecore_Evas *ee, int rotation)
 static void
 _ecore_evas_win32_rotation_set(Ecore_Evas *ee, int rotation)
 {
-   ECORE_EVAS_MSG_INFO("ecore evas rotation: %s\n", rotation ? "yes" : "no");
+   ECORE_EVAS_MSG_INFO("ecore evas rotation: %s", rotation ? "yes" : "no");
 
    if (ee->rotation == rotation) return;
 
@@ -605,7 +605,7 @@ _ecore_evas_win32_rotation_set(Ecore_Evas *ee, int rotation)
 static void
 _ecore_evas_win32_show(Ecore_Evas *ee)
 {
-   ECORE_EVAS_MSG_INFO("ecore evas show\n");
+   ECORE_EVAS_MSG_INFO("ecore evas show");
 
    ee->should_be_visible = 1;
    if (ee->prop.avoid_damage)
@@ -618,7 +618,7 @@ _ecore_evas_win32_show(Ecore_Evas *ee)
 static void
 _ecore_evas_win32_hide(Ecore_Evas *ee)
 {
-   ECORE_EVAS_MSG_INFO("ecore evas hide\n");
+   ECORE_EVAS_MSG_INFO("ecore evas hide");
 
    ecore_win32_window_hide((struct _Ecore_Win32_Window *)ee->prop.window);
    ee->should_be_visible = 0;
@@ -627,7 +627,7 @@ _ecore_evas_win32_hide(Ecore_Evas *ee)
 static void
 _ecore_evas_win32_raise(Ecore_Evas *ee)
 {
-   ECORE_EVAS_MSG_INFO("ecore evas raise\n");
+   ECORE_EVAS_MSG_INFO("ecore evas raise");
 
    if (!ee->prop.fullscreen)
      ecore_win32_window_raise((struct _Ecore_Win32_Window *)ee->prop.window);
@@ -638,7 +638,7 @@ _ecore_evas_win32_raise(Ecore_Evas *ee)
 static void
 _ecore_evas_win32_lower(Ecore_Evas *ee)
 {
-   ECORE_EVAS_MSG_INFO("ecore evas lower\n");
+   ECORE_EVAS_MSG_INFO("ecore evas lower");
 
    if (!ee->prop.fullscreen)
      ecore_win32_window_lower((struct _Ecore_Win32_Window *)ee->prop.window);
@@ -649,7 +649,7 @@ _ecore_evas_win32_lower(Ecore_Evas *ee)
 static void
 _ecore_evas_win32_activate(Ecore_Evas *ee)
 {
-   ECORE_EVAS_MSG_INFO("ecore evas activate\n");
+   ECORE_EVAS_MSG_INFO("ecore evas activate");
 
    ecore_win32_window_focus_set((struct _Ecore_Win32_Window *)ee->prop.window);
 }
@@ -657,7 +657,7 @@ _ecore_evas_win32_activate(Ecore_Evas *ee)
 static void
 _ecore_evas_win32_title_set(Ecore_Evas *ee, const char *title)
 {
-   ECORE_EVAS_MSG_INFO("ecore evas title set\n");
+   ECORE_EVAS_MSG_INFO("ecore evas title set");
 
    if (ee->prop.title) free(ee->prop.title);
    ee->prop.title = NULL;
@@ -781,7 +781,7 @@ _ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, int on)
 {
    struct _Ecore_Win32_Window *window;
 
-   ECORE_EVAS_MSG_INFO("ecore evas fullscreen set\n");
+   ECORE_EVAS_MSG_INFO("ecore evas fullscreen set");
 
    if ((ee->engine.win32.state.fullscreen && on) ||
       (!ee->engine.win32.state.fullscreen && !on))

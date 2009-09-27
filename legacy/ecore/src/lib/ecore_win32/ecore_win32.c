@@ -94,7 +94,7 @@ ecore_win32_init()
         return 0;
      }
 
-   ECORE_WIN32_MSG_INFO("initializing ecore_win32 (current count: %d)\n", _ecore_win32_init_count);
+   ECORE_WIN32_MSG_INFO("initializing ecore_win32 (current count: %d)", _ecore_win32_init_count);
 
    if (_ecore_win32_init_count > 0)
      {
@@ -105,7 +105,7 @@ ecore_win32_init()
    _ecore_win32_instance = GetModuleHandle(NULL);
    if (!_ecore_win32_instance)
      {
-        ECORE_WIN32_MSG_ERR("GetModuleHandle() failed\n");
+        ECORE_WIN32_MSG_ERR("GetModuleHandle() failed");
         return 0;
      }
 
@@ -123,14 +123,14 @@ ecore_win32_init()
 
    if(!RegisterClass(&wc))
      {
-        ECORE_WIN32_MSG_ERR("RegisterClass() failed\n");
+        ECORE_WIN32_MSG_ERR("RegisterClass() failed");
         FreeLibrary(_ecore_win32_instance);
         return 0;
      }
 
    if (!ecore_win32_dnd_init())
      {
-        ECORE_WIN32_MSG_ERR("ecore_win32_dnd_init() failed\n");
+        ECORE_WIN32_MSG_ERR("ecore_win32_dnd_init() failed");
         FreeLibrary(_ecore_win32_instance);
         return 0;
      }
@@ -161,7 +161,7 @@ ecore_win32_init()
 int
 ecore_win32_shutdown()
 {
-   ECORE_WIN32_MSG_INFO("shutting down ecore_win32 (current count: %d)\n", _ecore_win32_init_count);
+   ECORE_WIN32_MSG_INFO("shutting down ecore_win32 (current count: %d)", _ecore_win32_init_count);
 
    _ecore_win32_init_count--;
    if (_ecore_win32_init_count > 0) return _ecore_win32_init_count;
@@ -171,11 +171,11 @@ ecore_win32_shutdown()
    ecore_win32_dnd_shutdown();
    if (!UnregisterClass(ECORE_WIN32_WINDOW_CLASS, _ecore_win32_instance))
      {
-        ECORE_WIN32_MSG_INFO("UnregisterClass() failed\n");
+        ECORE_WIN32_MSG_INFO("UnregisterClass() failed");
      }
    if (!FreeLibrary(_ecore_win32_instance))
      {
-        ECORE_WIN32_MSG_INFO("FreeLibrary() failed\n");
+        ECORE_WIN32_MSG_INFO("FreeLibrary() failed");
      }
    _ecore_win32_instance = NULL;
 
@@ -192,19 +192,19 @@ ecore_win32_screen_depth_get()
    HDC dc;
    int depth;
 
-   ECORE_WIN32_MSG_INFO("getting screen depth\n");
+   ECORE_WIN32_MSG_INFO("getting screen depth");
 
    dc = GetDC(NULL);
    if (!dc)
      {
-        ECORE_WIN32_MSG_ERR("GetDC() failed\n");
+        ECORE_WIN32_MSG_ERR("GetDC() failed");
         return 0;
      }
 
    depth = GetDeviceCaps(dc, BITSPIXEL);
    if (!ReleaseDC(NULL, dc))
      {
-        ECORE_WIN32_MSG_ERR("ReleaseDC() failed (device context not released)\n");
+        ECORE_WIN32_MSG_ERR("ReleaseDC() failed (device context not released)");
      }
 
    return depth;
@@ -323,7 +323,7 @@ _ecore_win32_window_procedure(HWND   window,
             {
                POINT pt;
 
-               ECORE_WIN32_MSG_INFO("mouse in window\n");
+               ECORE_WIN32_MSG_INFO("mouse in window");
 
                pt.x = GET_X_LPARAM(data_param);
                pt.y = GET_Y_LPARAM(data_param);
@@ -346,7 +346,7 @@ _ecore_win32_window_procedure(HWND   window,
             }
           else
             {
-               ECORE_WIN32_MSG_ERR("GetClientRect() failed\n");
+               ECORE_WIN32_MSG_ERR("GetClientRect() failed");
             }
           _ecore_win32_event_handle_motion_notify(data);
 
