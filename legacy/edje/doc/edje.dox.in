@@ -8,7 +8,7 @@ These routines are used for Edje.
 /**
 
 @mainpage Edje Library Documentation
-@image html  edje.png
+@image html  e.png
 @version @PACKAGE_VERSION@
 @author Carsten Haitzler <raster\@rasterman.com>
 @date 2003-2008
