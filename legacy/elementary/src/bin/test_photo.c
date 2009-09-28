@@ -24,12 +24,12 @@ test_photo(void *data, Evas_Object *obj, void *event_info)
    elm_win_autodel_set(win, 1);
 
    bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
    tb = elm_table_add(win);
-   evas_object_size_hint_weight_set(tb, 1.0, 1.0);
+   evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    
    n = 0;
    for (j = 0; j < 12; j++)
@@ -42,8 +42,10 @@ test_photo(void *data, Evas_Object *obj, void *event_info)
              n++;
              if (n >= 9) n = 0;
              elm_photo_file_set(ph, buf);
-             evas_object_size_hint_weight_set(ph, 1.0, 1.0);
-             evas_object_size_hint_align_set(ph, -1.0, -1.0);
+             evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND, 
+                                              EVAS_HINT_EXPAND);
+             evas_object_size_hint_align_set(ph, EVAS_HINT_FILL, 
+                                             EVAS_HINT_FILL);
              elm_photo_size_set(ph, 80);
              elm_table_pack(tb, ph, i, j, 1, 1);
              evas_object_show(ph);
@@ -51,7 +53,7 @@ test_photo(void *data, Evas_Object *obj, void *event_info)
      }
    
    sc = elm_scroller_add(win);
-   evas_object_size_hint_weight_set(sc, 1.0, 1.0);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, sc);
    
    elm_scroller_content_set(sc, tb);

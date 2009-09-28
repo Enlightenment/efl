@@ -60,12 +60,12 @@ test_fileselector(void *data, Evas_Object *obj, void *event_info)
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
    vbox = elm_box_add(win);
    elm_win_resize_object_add(win, vbox);
-   evas_object_size_hint_weight_set(vbox, 1.0, 1.0);
+   evas_object_size_hint_weight_set(vbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(vbox);
 
    fs = elm_fileselector_add(win);
@@ -76,8 +76,8 @@ test_fileselector(void *data, Evas_Object *obj, void *event_info)
    /* start the fileselector in the home dir */
    elm_fileselector_path_set(fs, getenv("HOME"));
    /* allow fs to expand in x & y */
-   evas_object_size_hint_weight_set(fs, 1.0, 1.0);
-   evas_object_size_hint_align_set(fs, -1.0, -1.0);
+   evas_object_size_hint_weight_set(fs, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(fs, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(vbox, fs);
    evas_object_show(fs); // TODO fix this is the widget
    

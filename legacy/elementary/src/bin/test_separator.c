@@ -12,17 +12,17 @@ test_separator(void *data, Evas_Object *obj, void *event_info)
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
    bx0 = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx0, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bx0, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_horizontal_set(bx0, 1);
    elm_win_resize_object_add(win, bx0);
    evas_object_show(bx0);
 
    bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx0, bx);
    evas_object_show(bx);
 
@@ -47,7 +47,7 @@ test_separator(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(sp);
 
    bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx0, bx);
    evas_object_show(bx);
 

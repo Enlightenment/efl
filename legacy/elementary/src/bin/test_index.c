@@ -47,16 +47,16 @@ test_index(void *data, Evas_Object *obj, void *event_info)
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
    gl = elm_genlist_add(win);
-   evas_object_size_hint_weight_set(gl, 1.0, 1.0);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, gl);
    evas_object_show(gl);
    
    id = elm_index_add(win);
-   evas_object_size_hint_weight_set(id, 1.0, 1.0);
+   evas_object_size_hint_weight_set(id, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, id);
    
    evas_object_show(id);

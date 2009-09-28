@@ -11,11 +11,11 @@ test_spinner(void *data, Evas_Object *obj, void *event_info)
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
    bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
@@ -24,8 +24,8 @@ test_spinner(void *data, Evas_Object *obj, void *event_info)
    elm_spinner_step_set(sp, 1.3);
    elm_spinner_wrap_set(sp, 1);
    elm_spinner_min_max_set(sp, -50.0, 250.0);
-   evas_object_size_hint_align_set(sp, -1.0, 0.5);
-   evas_object_size_hint_weight_set(sp, 1.0, 1.0);
+   evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, sp);
    evas_object_show(sp);
 
@@ -33,8 +33,8 @@ test_spinner(void *data, Evas_Object *obj, void *event_info)
    elm_spinner_label_format_set(sp, "Disabled %.0f");
    elm_object_disabled_set(sp, 1);
    elm_spinner_min_max_set(sp, -50.0, 250.0);
-   evas_object_size_hint_align_set(sp, -1.0, 0.5);
-   evas_object_size_hint_weight_set(sp, 1.0, 1.0);
+   evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, sp);
    evas_object_show(sp);
 

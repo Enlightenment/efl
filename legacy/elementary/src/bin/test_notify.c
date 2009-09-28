@@ -4,7 +4,6 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
-
 static void
 _bt(void *data, Evas_Object *obj, void *event_info)
 {
@@ -31,18 +30,17 @@ test_notify(void *data, Evas_Object *obj, void *event_info)
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
    bx2 = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx2, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bx2);
    evas_object_show(bx2);
 
-
    notify = elm_notify_add(win);
    elm_win_resize_object_add(win, notify);
-   evas_object_size_hint_weight_set(notify, 1.0, 1.0);
+   evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
    bx = elm_box_add(win);
    elm_notify_content_set(notify, bx);
@@ -66,11 +64,9 @@ test_notify(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
 
-
-
    notify = elm_notify_add(win);
    elm_win_resize_object_add(win, notify);
-   evas_object_size_hint_weight_set(notify, 1.0, 1.0);
+   evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM);
    elm_notify_timeout_set(notify, 5);
 
@@ -96,10 +92,9 @@ test_notify(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
 
-
    notify = elm_notify_add(win);
    elm_win_resize_object_add(win, notify);
-   evas_object_size_hint_weight_set(notify, 1.0, 1.0);
+   evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_LEFT);
    elm_notify_timeout_set(notify, 10);
 
@@ -127,7 +122,7 @@ test_notify(void *data, Evas_Object *obj, void *event_info)
 
    notify = elm_notify_add(win);
    elm_win_resize_object_add(win, notify);
-   evas_object_size_hint_weight_set(notify, 1.0, 1.0);
+   evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_RIGHT);
 
    bx = elm_box_add(win);
@@ -152,10 +147,9 @@ test_notify(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
 
-
    notify = elm_notify_add(win);
    elm_win_resize_object_add(win, notify);
-   evas_object_size_hint_weight_set(notify, 1.0, 1.0);
+   evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_TOP_LEFT);
 
    bx = elm_box_add(win);
@@ -182,7 +176,7 @@ test_notify(void *data, Evas_Object *obj, void *event_info)
 
    notify = elm_notify_add(win);
    elm_win_resize_object_add(win, notify);
-   evas_object_size_hint_weight_set(notify, 1.0, 1.0);
+   evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_TOP_RIGHT);
 
    bx = elm_box_add(win);
@@ -207,11 +201,9 @@ test_notify(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
 
-
-
    notify = elm_notify_add(win);
    elm_win_resize_object_add(win, notify);
-   evas_object_size_hint_weight_set(notify, 1.0, 1.0);
+   evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM_LEFT);
 
    bx = elm_box_add(win);
@@ -236,10 +228,9 @@ test_notify(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
 
-
    notify = elm_notify_add(win);
    elm_win_resize_object_add(win, notify);
-   evas_object_size_hint_weight_set(notify, 1.0, 1.0);
+   evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM_RIGHT);
 
    bx = elm_box_add(win);

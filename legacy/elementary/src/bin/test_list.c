@@ -12,12 +12,12 @@ test_list(void *data, Evas_Object *obj, void *event_info)
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
    li = elm_list_add(win);
    elm_win_resize_object_add(win, li);
-   evas_object_size_hint_weight_set(li, 1.0, 1.0);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
@@ -65,7 +65,7 @@ test_list(void *data, Evas_Object *obj, void *event_info)
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
-   evas_object_size_hint_align_set(ic, 0.0, 1.0);
+   evas_object_size_hint_align_set(ic, 0.0, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
    elm_list_item_append(li, "are", bx, NULL,  NULL, NULL);
@@ -123,17 +123,17 @@ test_list2(void *data, Evas_Object *obj, void *event_info)
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", PACKAGE_DATA_DIR);
    elm_bg_file_set(bg, buf, NULL);
    elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
    bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
    li = elm_list_add(win);
-   evas_object_size_hint_align_set(li, -1.0, -1.0);
-   evas_object_size_hint_weight_set(li, 1.0, 1.0);
+   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_list_horizontal_mode_set(li, ELM_LIST_LIMIT);
 //   elm_list_multi_select_set(li, 1);
 
@@ -201,14 +201,14 @@ test_list2(void *data, Evas_Object *obj, void *event_info)
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
    elm_box_homogenous_set(bx2, 1);
-   evas_object_size_hint_weight_set(bx2, 1.0, 0.0);
-   evas_object_size_hint_align_set(bx2, -1.0, -1.0);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Clear");
    evas_object_smart_callback_add(bt, "clicked", my_li2_clear, li);
-   evas_object_size_hint_align_set(bt, -1.0, -1.0);
-   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
 
@@ -233,12 +233,12 @@ test_list3(void *data, Evas_Object *obj, void *event_info)
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
    li = elm_list_add(win);
    elm_win_resize_object_add(win, li);
-   evas_object_size_hint_weight_set(li, 1.0, 1.0);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_list_horizontal_mode_set(li, ELM_LIST_COMPRESS);
 
    ic = elm_icon_add(win);
@@ -286,11 +286,11 @@ test_list3(void *data, Evas_Object *obj, void *event_info)
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
-   evas_object_size_hint_align_set(ic, 0.0, 1.0);
+   evas_object_size_hint_align_set(ic, 0.0, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
-   elm_list_item_append(li, "are", bx, NULL,  NULL, NULL);
 
+   elm_list_item_append(li, "are", bx, NULL,  NULL, NULL);
    elm_list_item_append(li, "you", NULL, NULL,  NULL, NULL);
    elm_list_item_append(li, "doing", NULL, NULL,  NULL, NULL);
    elm_list_item_append(li, "out", NULL, NULL,  NULL, NULL);

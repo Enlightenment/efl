@@ -12,11 +12,11 @@ test_check(void *data, Evas_Object *obj, void *event_info)
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
    bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
@@ -25,8 +25,8 @@ test_check(void *data, Evas_Object *obj, void *event_info)
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    ck = elm_check_add(win);
-   evas_object_size_hint_weight_set(ck, 1.0, 1.0);
-   evas_object_size_hint_align_set(ck, -1.0, 0.5);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
    elm_check_label_set(ck, "Icon sized to check");
    elm_check_icon_set(ck, ic);
    elm_check_state_set(ck, 1);
@@ -55,8 +55,8 @@ test_check(void *data, Evas_Object *obj, void *event_info)
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    ck = elm_check_add(win);
-   evas_object_size_hint_weight_set(ck, 1.0, 1.0);
-   evas_object_size_hint_align_set(ck, -1.0, 0.5);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
    elm_check_label_set(ck, "Disabled check");
    elm_check_icon_set(ck, ic);
    elm_check_state_set(ck, 1);

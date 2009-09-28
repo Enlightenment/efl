@@ -3,8 +3,7 @@
 typedef struct _Testitem
 {
    Elm_Genlist_Item *item;
-   int mode;
-   int onoff;
+   int mode, onoff;
 } Testitem;
 
 static void

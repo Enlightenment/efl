@@ -48,7 +48,7 @@ test_pager(void *data, Evas_Object *obj, void *event_info)
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
    pg = elm_pager_add(win);
@@ -58,7 +58,7 @@ test_pager(void *data, Evas_Object *obj, void *event_info)
    info.pager = pg;
 
    bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bx);
 
    lb = elm_label_add(win);
@@ -74,15 +74,16 @@ test_pager(void *data, Evas_Object *obj, void *event_info)
 		       "the stack).<br>"
 		       "<br>"
 		       "The theme may define the animation how<br>"
-		       "show and hide of pages."
-		       );
+		       "show and hide of pages.");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Flip to 2");
    evas_object_smart_callback_add(bt, "clicked", my_pager_1, &info);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Popme");
    evas_object_smart_callback_add(bt, "clicked", my_pager_pop, &info);
@@ -92,8 +93,9 @@ test_pager(void *data, Evas_Object *obj, void *event_info)
    info.pg1 = bx;
 
    bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bx);
+
    lb = elm_label_add(win);
    elm_label_label_set(lb,
 		       "This is page 2 in a pager stack.<br>"
@@ -103,11 +105,13 @@ test_pager(void *data, Evas_Object *obj, void *event_info)
 		       );
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Flip to 3");
    evas_object_smart_callback_add(bt, "clicked", my_pager_2, &info);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Popme");
    evas_object_smart_callback_add(bt, "clicked", my_pager_pop, &info);
@@ -117,22 +121,24 @@ test_pager(void *data, Evas_Object *obj, void *event_info)
    info.pg2 = bx;
 
    bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bx);
+
    lb = elm_label_add(win);
    elm_label_label_set(lb,
 		       "This is page 3 in a pager stack.<br>"
 		       "<br>"
 		       "This is just like the previous page in<br>"
-		       "the pager stack."
-		       );
+		       "the pager stack.");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Flip to 1");
    evas_object_smart_callback_add(bt, "clicked", my_pager_3, &info);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Popme");
    evas_object_smart_callback_add(bt, "clicked", my_pager_pop, &info);

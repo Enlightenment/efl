@@ -71,21 +71,22 @@ test_progressbar(void *data, Evas_Object *obj, void *event_info)
 
    win = elm_win_add(NULL, "progressbar", ELM_WIN_BASIC);
    elm_win_title_set(win, "Progressbar");
-   evas_object_smart_callback_add(win, "delete-request", my_progressbar_destroy, test);
+   evas_object_smart_callback_add(win, "delete-request", 
+                                  my_progressbar_destroy, test);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);
-   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bx);
 
    pb = elm_progressbar_add(win);
-   evas_object_size_hint_weight_set(pb, 1.0, 1.0);
-   evas_object_size_hint_align_set(pb, -1.0, 0.5);
+   evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, pb);
 //   elm_progressbar_horizontal_set(pb, EINA_TRUE);
 //   elm_progressbar_label_set(pb, "Progression %");
@@ -94,8 +95,8 @@ test_progressbar(void *data, Evas_Object *obj, void *event_info)
    _test_progressbar.pb1 = pb;
 
    pb = elm_progressbar_add(win);
-   evas_object_size_hint_align_set(pb, -1.0, 0.5);
-   evas_object_size_hint_weight_set(pb, 1.0, 1.0);
+   evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_progressbar_label_set(pb, "Infinite bounce");
    elm_progressbar_pulse_set(pb, EINA_TRUE);
    elm_box_pack_end(bx, pb);
@@ -106,14 +107,15 @@ test_progressbar(void *data, Evas_Object *obj, void *event_info)
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic1, buf, NULL);
    evas_object_size_hint_aspect_set(ic1, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+
    pb = elm_progressbar_add(win);
    elm_progressbar_label_set(pb, "Label");
    elm_progressbar_icon_set(pb, ic1);
    elm_progressbar_inverted_set(pb, 1);
    elm_progressbar_unit_format_set(pb, "%1.1f units");
    elm_progressbar_span_size_set(pb, 200);
-   evas_object_size_hint_align_set(pb, -1.0, 0.5);
-   evas_object_size_hint_weight_set(pb, 1.0, 1.0);
+   evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, pb);
    evas_object_show(ic1);
    evas_object_show(pb);
@@ -121,15 +123,15 @@ test_progressbar(void *data, Evas_Object *obj, void *event_info)
 
    hbx = elm_box_add(win);
    elm_box_horizontal_set(hbx, EINA_TRUE);
-   evas_object_size_hint_weight_set(hbx, 1.0, 1.0);
-   evas_object_size_hint_align_set(hbx, -1.0, -1.0);
+   evas_object_size_hint_weight_set(hbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(hbx, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, hbx);
    evas_object_show(hbx);
 
    pb = elm_progressbar_add(win);
    elm_progressbar_horizontal_set(pb, EINA_FALSE);
-   evas_object_size_hint_align_set(pb, -1.0, -1.0);
-   evas_object_size_hint_weight_set(pb, 1.0, 1.0);
+   evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(hbx, pb);
    elm_progressbar_span_size_set(pb, 60);
    elm_progressbar_label_set(pb, "percent");
@@ -138,8 +140,8 @@ test_progressbar(void *data, Evas_Object *obj, void *event_info)
 
    pb = elm_progressbar_add(win);
    elm_progressbar_horizontal_set(pb, EINA_FALSE);
-   evas_object_size_hint_align_set(pb, -1.0, 0.5);
-   evas_object_size_hint_weight_set(pb, 1.0, 1.0);
+   evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_progressbar_span_size_set(pb, 80);
    elm_progressbar_pulse_set(pb, EINA_TRUE);
    elm_progressbar_unit_format_set(pb, NULL);
@@ -151,6 +153,7 @@ test_progressbar(void *data, Evas_Object *obj, void *event_info)
    ic2 = elm_icon_add(win);
    elm_icon_file_set(ic2, buf, NULL);
    evas_object_size_hint_aspect_set(ic2, EVAS_ASPECT_CONTROL_HORIZONTAL, 1, 1);
+
    pb = elm_progressbar_add(win);
    elm_progressbar_horizontal_set(pb, EINA_FALSE);
    elm_progressbar_label_set(pb, "Label");
@@ -158,8 +161,8 @@ test_progressbar(void *data, Evas_Object *obj, void *event_info)
    elm_progressbar_inverted_set(pb, 1);
    elm_progressbar_unit_format_set(pb, "%1.2f%%");
    elm_progressbar_span_size_set(pb, 200);
-   evas_object_size_hint_align_set(pb, -1.0, 0.5);
-   evas_object_size_hint_weight_set(pb, 1.0, 1.0);
+   evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(hbx, pb);
    evas_object_show(ic2);
    evas_object_show(pb);
@@ -167,7 +170,7 @@ test_progressbar(void *data, Evas_Object *obj, void *event_info)
 
    bt_bx = elm_box_add(win);
    elm_box_horizontal_set(bt_bx, 1);
-   evas_object_size_hint_weight_set(bt_bx, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bt_bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, bt_bx);
    evas_object_show(bt_bx);
 

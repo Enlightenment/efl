@@ -83,13 +83,13 @@ test_slideshow(void *data, Evas_Object *obj, void *event_info)
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
    slideshow = elm_slideshow_add(win);
    elm_slideshow_loop_set(slideshow, 1);
    elm_win_resize_object_add(win, slideshow);
-   evas_object_size_hint_weight_set(slideshow, 1.0, 1.0);
+   evas_object_size_hint_weight_set(slideshow, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(slideshow);
 
    elm_slideshow_image_add(slideshow, PACKAGE_DATA_DIR"/images/logo.png", NULL);

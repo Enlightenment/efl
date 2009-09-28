@@ -98,7 +98,7 @@ my_win_main(void)
     * a lot more resources, so only use it if you need it. */
    bg = elm_bg_add(win);
    /* set weight to 1.0 x 1.0 == expand in both x and y direction */
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    /* tell the window that this object is to be resized along with the window.
     * also as a result this object will be one of several objects that
     * controls the minimum/maximum size of the window */
@@ -109,7 +109,7 @@ my_win_main(void)
    /* add a box layout widget to the window */
    bx0 = elm_box_add(win);
    /* allow base box (bx0) to expand in x and y */
-   evas_object_size_hint_weight_set(bx0, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bx0, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    /* tell the window that the box affects window size and also will be
     * resized when the window is */
    elm_win_resize_object_add(win, bx0);

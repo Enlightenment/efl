@@ -11,7 +11,7 @@ test_bg_plain(void *data, Evas_Object *obj, void *event_info)
 
    bg = elm_bg_add(win);
    /* allow bg to expand in x & y */
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
@@ -43,7 +43,7 @@ test_bg_image(void *data, Evas_Object *obj, void *event_info)
    bg = elm_bg_add(win);
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", PACKAGE_DATA_DIR);
    elm_bg_file_set(bg, buf, NULL);
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 

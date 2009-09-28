@@ -48,12 +48,12 @@ test_scroller(void *data, Evas_Object *obj, void *event_info)
    elm_win_autodel_set(win, 1);
 
    bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
    tb = elm_table_add(win);
-   evas_object_size_hint_weight_set(tb, 1.0, 1.0);
+   evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
    n = 0;
    for (j = 0; j < 12; j++)
@@ -66,8 +66,8 @@ test_scroller(void *data, Evas_Object *obj, void *event_info)
              n++;
              if (n >= 9) n = 0;
              elm_bg_file_set(bg2, buf, NULL);
-             evas_object_size_hint_weight_set(bg2, 1.0, 1.0);
-             evas_object_size_hint_align_set(bg2, -1.0, -1.0);
+             evas_object_size_hint_weight_set(bg2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+             evas_object_size_hint_align_set(bg2, EVAS_HINT_FILL, EVAS_HINT_FILL);
              evas_object_size_hint_min_set(bg2, 318, 318);
              elm_table_pack(tb, bg2, i, j, 1, 1);
              evas_object_show(bg2);
@@ -75,7 +75,7 @@ test_scroller(void *data, Evas_Object *obj, void *event_info)
      }
    
    sc = elm_scroller_add(win);
-   evas_object_size_hint_weight_set(sc, 1.0, 1.0);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, sc);
 
    elm_scroller_content_set(sc, tb);
@@ -86,13 +86,13 @@ test_scroller(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(sc);
 
    tb2 = elm_table_add(win);
-   evas_object_size_hint_weight_set(tb2, 1.0, 1.0);
+   evas_object_size_hint_weight_set(tb2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, tb2);
 
    bt = elm_button_add(win);
    elm_button_label_set(bt, "to 300 300");
    evas_object_smart_callback_add(bt, "clicked", my_bt_go_300_300, sc);
-   evas_object_size_hint_weight_set(bt, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.1, 0.1);
    elm_table_pack(tb2, bt, 0, 0, 1, 1);
    evas_object_show(bt);
@@ -100,7 +100,7 @@ test_scroller(void *data, Evas_Object *obj, void *event_info)
    bt = elm_button_add(win);
    elm_button_label_set(bt, "to 900 300");
    evas_object_smart_callback_add(bt, "clicked", my_bt_go_900_300, sc);
-   evas_object_size_hint_weight_set(bt, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.9, 0.1);
    elm_table_pack(tb2, bt, 1, 0, 1, 1);
    evas_object_show(bt);
@@ -108,7 +108,7 @@ test_scroller(void *data, Evas_Object *obj, void *event_info)
    bt = elm_button_add(win);
    elm_button_label_set(bt, "to 300 900");
    evas_object_smart_callback_add(bt, "clicked", my_bt_go_300_900, sc);
-   evas_object_size_hint_weight_set(bt, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.1, 0.9);
    elm_table_pack(tb2, bt, 0, 1, 1, 1);
    evas_object_show(bt);
@@ -116,7 +116,7 @@ test_scroller(void *data, Evas_Object *obj, void *event_info)
    bt = elm_button_add(win);
    elm_button_label_set(bt, "to 900 900");
    evas_object_smart_callback_add(bt, "clicked", my_bt_go_900_900, sc);
-   evas_object_size_hint_weight_set(bt, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.9, 0.9);
    elm_table_pack(tb2, bt, 1, 1, 1, 1);
    evas_object_show(bt);
