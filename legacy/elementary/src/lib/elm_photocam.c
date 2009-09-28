@@ -1011,6 +1011,8 @@ elm_photocam_zoom_set(Evas_Object *obj, int zoom)
    wd->size.oh = wd->size.h;
    elm_smart_scroller_child_pos_get(wd->scr, &rx, &ry);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &rw, &rh);
+   if(rw <= 0 || rh <= 0) return;
+
    if (wd->mode == ELM_PHOTOCAM_ZOOM_MODE_MANUAL)
      {
         wd->size.nw = wd->size.imw / wd->zoom;
