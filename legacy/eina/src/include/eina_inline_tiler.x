@@ -129,8 +129,11 @@ eina_tile_grid_slicer_setup(Eina_Tile_Grid_Slicer *slc, int x, int y, int w, int
 
    if (x < 0 || y < 0 || w <= 0 || h <= 0 || tile_w <= 0 || tile_h <= 0)
      {
+	slc->first = 0;
 	slc->col1 = slc->row1 = 0;
 	slc->col2 = slc->row2 = 0;
+	slc->info.col = slc->col1;
+	slc->info.row = slc->row1;
 	return EINA_TRUE;
      }
 
