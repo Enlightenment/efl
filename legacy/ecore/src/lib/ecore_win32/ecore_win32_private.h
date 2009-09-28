@@ -94,7 +94,7 @@ struct _Ecore_Win32_Window
 
 extern HINSTANCE           _ecore_win32_instance;
 extern double              _ecore_win32_double_click_time;
-extern double              _ecore_win32_event_last_time;
+extern long                _ecore_win32_event_last_time;
 extern Ecore_Win32_Window *_ecore_win32_event_last_window;
 
 

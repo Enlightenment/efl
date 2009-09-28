@@ -37,7 +37,7 @@ DEFINE_OLEGUID(IID_IUnknown,       0x00000000L, 0, 0);
 
 HINSTANCE           _ecore_win32_instance = NULL;
 double              _ecore_win32_double_click_time = 0.25;
-double              _ecore_win32_event_last_time = 0.0;
+long                _ecore_win32_event_last_time = 0;
 Ecore_Win32_Window *_ecore_win32_event_last_window = NULL;
 int                 _ecore_win32_log_dom = -1;
 
@@ -242,7 +242,7 @@ ecore_win32_double_click_time_get(void)
 /**
  * Return the last event time
  */
-double
+long
 ecore_win32_current_time_get(void)
 {
    return _ecore_win32_event_last_time;

@@ -27,8 +27,8 @@
 
 static Ecore_Win32_Window *_ecore_win32_mouse_down_last_window = NULL;
 static Ecore_Win32_Window *_ecore_win32_mouse_down_last_last_window = NULL;
-static double              _ecore_win32_mouse_down_last_time = 0;
-static double              _ecore_win32_mouse_down_last_last_time = 0;
+static long                _ecore_win32_mouse_down_last_time = 0  ;
+static long                _ecore_win32_mouse_down_last_last_time = 0  ;
 static int                 _ecore_win32_mouse_down_did_triple = 0;
 static int                 _ecore_win32_mouse_up_count = 0;
 
@@ -95,7 +95,7 @@ _ecore_win32_event_handle_key_press(Ecore_Win32_Callback_Data *msg,
         free(e);
         return;
      }
-   e->timestamp = (double)msg->time / 1000.0;
+   e->timestamp = msg->time;
 
    _ecore_win32_event_last_time = e->timestamp;
 
@@ -145,7 +145,7 @@ _ecore_win32_event_handle_key_release(Ecore_Win32_Callback_Data *msg,
         free(e);
         return;
      }
-   e->timestamp = (double)msg->time / 1000.0;
+   e->timestamp = msg->time;
 
    _ecore_win32_event_last_time = e->timestamp;
 
@@ -175,7 +175,7 @@ _ecore_win32_event_handle_button_press(Ecore_Win32_Callback_Data *msg,
         e->z = GET_WHEEL_DELTA_WPARAM(msg->window_param) > 0 ? -1 : 1;
         e->x = GET_X_LPARAM(msg->data_param);
         e->y = GET_Y_LPARAM(msg->data_param);
-        e->timestamp = (double)msg->time / 1000.0;
+        e->timestamp = msg->time;
 
         _ecore_win32_event_last_time = e->timestamp;
         _ecore_win32_event_last_window = (Ecore_Win32_Window *)e->window;
@@ -193,7 +193,7 @@ _ecore_win32_event_handle_button_press(Ecore_Win32_Callback_Data *msg,
           e->window = (Ecore_Window)window;
           e->x = GET_X_LPARAM(msg->data_param);
           e->y = GET_Y_LPARAM(msg->data_param);
-          e->timestamp = (double)msg->time / 1000.0;
+          e->timestamp = msg->time;
 
           _ecore_win32_event_last_time = e->timestamp;
           _ecore_win32_event_last_window = (Ecore_Win32_Window *)e->window;
@@ -208,8 +208,8 @@ _ecore_win32_event_handle_button_press(Ecore_Win32_Callback_Data *msg,
             {
                _ecore_win32_mouse_down_last_window = NULL;
                _ecore_win32_mouse_down_last_last_window = NULL;
-               _ecore_win32_mouse_down_last_time = 0.0;
-               _ecore_win32_mouse_down_last_last_time = 0.0;
+               _ecore_win32_mouse_down_last_time = 0;
+               _ecore_win32_mouse_down_last_last_time = 0;
             }
 
           e = (Ecore_Event_Mouse_Button *)calloc(1, sizeof(Ecore_Event_Mouse_Button));
@@ -219,13 +219,13 @@ _ecore_win32_event_handle_button_press(Ecore_Win32_Callback_Data *msg,
           e->buttons = button;
           e->x = GET_X_LPARAM(msg->data_param);
           e->y = GET_Y_LPARAM(msg->data_param);
-          e->timestamp = (double)msg->time / 1000.0;
+          e->timestamp = msg->time;
 
-          if (((e->timestamp - _ecore_win32_mouse_down_last_time) <= _ecore_win32_double_click_time) &&
+          if (((e->timestamp - _ecore_win32_mouse_down_last_time) <= (long)(1000 * _ecore_win32_double_click_time)) &&
               (e->window == (Ecore_Window)_ecore_win32_mouse_down_last_window))
             e->double_click = 1;
 
-          if (((e->timestamp - _ecore_win32_mouse_down_last_last_time) <= (2.0 * _ecore_win32_double_click_time)) &&
+          if (((e->timestamp - _ecore_win32_mouse_down_last_last_time) <= (long)(2 * 1000 * _ecore_win32_double_click_time)) &&
               (e->window == (Ecore_Window)_ecore_win32_mouse_down_last_window) &&
               (e->window == (Ecore_Window)_ecore_win32_mouse_down_last_last_window))
             {
@@ -273,7 +273,7 @@ _ecore_win32_event_handle_button_release(Ecore_Win32_Callback_Data *msg,
       e->window = (Ecore_Window)window;
       e->x = GET_X_LPARAM(msg->data_param);
       e->y = GET_Y_LPARAM(msg->data_param);
-      e->timestamp = (double)msg->time / 1000.0;
+      e->timestamp = msg->time;
 
       _ecore_win32_event_last_time = e->timestamp;
       _ecore_win32_event_last_window = (Ecore_Win32_Window *)e->window;
@@ -291,17 +291,17 @@ _ecore_win32_event_handle_button_release(Ecore_Win32_Callback_Data *msg,
       e->buttons = button;
       e->x = GET_X_LPARAM(msg->data_param);
       e->y = GET_Y_LPARAM(msg->data_param);
-      e->timestamp = (double)msg->time / 1000.0;
+      e->timestamp = msg->time;
 
       _ecore_win32_mouse_up_count++;
 
       if ((_ecore_win32_mouse_up_count >= 2) &&
-          ((e->timestamp - _ecore_win32_mouse_down_last_time) <= _ecore_win32_double_click_time) &&
+          ((e->timestamp - _ecore_win32_mouse_down_last_time) <= (long)(1000 * _ecore_win32_double_click_time)) &&
           (e->window == (Ecore_Window)_ecore_win32_mouse_down_last_window))
         e->double_click = 1;
 
       if ((_ecore_win32_mouse_up_count >= 3) &&
-          ((e->timestamp - _ecore_win32_mouse_down_last_last_time) <= (2.0 * _ecore_win32_double_click_time)) &&
+          ((e->timestamp - _ecore_win32_mouse_down_last_last_time) <= (long)(2 * 1000 * _ecore_win32_double_click_time)) &&
           (e->window == (Ecore_Window)_ecore_win32_mouse_down_last_window) &&
           (e->window == (Ecore_Window)_ecore_win32_mouse_down_last_last_window))
         e->triple_click = 1;
@@ -326,7 +326,7 @@ _ecore_win32_event_handle_motion_notify(Ecore_Win32_Callback_Data *msg)
    e->window = (Ecore_Window)GetWindowLong(msg->window, GWL_USERDATA);
    e->x = GET_X_LPARAM(msg->data_param);
    e->y = GET_Y_LPARAM(msg->data_param);
-   e->timestamp = (double)msg->time / 1000.0;
+   e->timestamp = msg->time;
 
    ecore_event_add(ECORE_EVENT_MOUSE_MOVE, e, NULL, NULL);
 }
@@ -345,7 +345,7 @@ _ecore_win32_event_handle_enter_notify(Ecore_Win32_Callback_Data *msg)
      e->window = (Ecore_Window)GetWindowLong(msg->window, GWL_USERDATA);
      e->x = msg->x;
      e->y = msg->y;
-     e->timestamp = (double)msg->time / 1000.0;
+     e->timestamp = msg->time;
 
      _ecore_win32_event_last_time = e->timestamp;
      _ecore_win32_event_last_window = (Ecore_Win32_Window *)e->window;
@@ -362,7 +362,7 @@ _ecore_win32_event_handle_enter_notify(Ecore_Win32_Callback_Data *msg)
      e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
      e->x = msg->x;
      e->y = msg->y;
-     e->time = (double)msg->time / 1000.0;
+     e->time = msg->time ;
 
      _ecore_win32_event_last_time = e->time;
 
@@ -384,7 +384,7 @@ _ecore_win32_event_handle_leave_notify(Ecore_Win32_Callback_Data *msg)
      e->window = (Ecore_Window)GetWindowLong(msg->window, GWL_USERDATA);
      e->x = msg->x;
      e->y = msg->y;
-     e->timestamp = (double)msg->time / 1000.0;
+     e->timestamp = msg->time;
 
      _ecore_win32_event_last_time = e->timestamp;
      _ecore_win32_event_last_window = (Ecore_Win32_Window *)e->window;
@@ -401,7 +401,7 @@ _ecore_win32_event_handle_leave_notify(Ecore_Win32_Callback_Data *msg)
      e->window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
      e->x = msg->x;
      e->y = msg->y;
-     e->time = (double)msg->time / 1000.0;
+     e->time = msg->time;
 
      _ecore_win32_event_last_time = e->time;
 

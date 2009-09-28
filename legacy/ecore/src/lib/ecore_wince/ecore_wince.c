@@ -24,7 +24,7 @@
 /***** Global declarations *****/
 
 double              _ecore_wince_double_click_time = 0.25;
-double              _ecore_wince_event_last_time = 0.0;
+long                _ecore_wince_event_last_time = 0;
 Ecore_WinCE_Window *_ecore_wince_event_last_window = NULL;
 HINSTANCE           _ecore_wince_instance = NULL;
 int                 _ecore_wince_log_dom = -1;
@@ -202,7 +202,7 @@ ecore_wince_double_click_time_get(void)
 /**
  * Return the last event time
  */
-EAPI double
+EAPI long
 ecore_wince_current_time_get(void)
 {
    return _ecore_wince_event_last_time;

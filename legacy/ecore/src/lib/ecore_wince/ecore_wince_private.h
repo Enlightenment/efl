@@ -51,7 +51,7 @@ struct _Ecore_WinCE_Window
 
 extern HINSTANCE           _ecore_wince_instance;
 extern double              _ecore_wince_double_click_time;
-extern double              _ecore_wince_event_last_time;
+extern long                _ecore_wince_event_last_time;
 extern Ecore_WinCE_Window *_ecore_wince_event_last_window;
 
 

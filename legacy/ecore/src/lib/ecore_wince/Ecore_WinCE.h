@@ -60,7 +60,7 @@ struct _Ecore_WinCE_Event_Mouse_In
    Ecore_WinCE_Window *window;
    int                 x;
    int                 y;
-   double              time;
+   long                time;
 };
 
 struct _Ecore_WinCE_Event_Mouse_Out
@@ -68,19 +68,19 @@ struct _Ecore_WinCE_Event_Mouse_Out
    Ecore_WinCE_Window *window;
    int                 x;
    int                 y;
-   double              time;
+   long                time;
 };
 
 struct _Ecore_WinCE_Event_Window_Focus_In
 {
    Ecore_WinCE_Window *window;
-   double              time;
+   long                time;
 };
 
 struct _Ecore_WinCE_Event_Window_Focus_Out
 {
    Ecore_WinCE_Window *window;
-   double              time;
+   long                time;
 };
 
 struct _Ecore_WinCE_Event_Window_Damage
@@ -90,37 +90,37 @@ struct _Ecore_WinCE_Event_Window_Damage
    int                 y;
    int                 width;
    int                 height;
-   double              time;
+   long                time;
 };
 
 struct _Ecore_WinCE_Event_Window_Create
 {
    Ecore_WinCE_Window *window;
-   double              time;
+   long                time;
 };
 
 struct _Ecore_WinCE_Event_Window_Destroy
 {
    Ecore_WinCE_Window *window;
-   double              time;
+   long                time;
 };
 
 struct _Ecore_WinCE_Event_Window_Hide
 {
    Ecore_WinCE_Window *window;
-   double              time;
+   long                time;
 };
 
 struct _Ecore_WinCE_Event_Window_Show
 {
    Ecore_WinCE_Window *window;
-   double              time;
+   long                time;
 };
 
 struct _Ecore_WinCE_Event_Window_Delete_Request
 {
    Ecore_WinCE_Window *window;
-   double              time;
+   long                time;
 };
 
 
@@ -140,7 +140,7 @@ EAPI extern int ECORE_WINCE_EVENT_WINDOW_DELETE_REQUEST;
 
 EAPI int    ecore_wince_init();
 EAPI int    ecore_wince_shutdown();
-EAPI double ecore_wince_current_time_get(void);
+EAPI long   ecore_wince_current_time_get(void);
 EAPI void   ecore_wince_message_loop_begin (void);
 
 /* Window */

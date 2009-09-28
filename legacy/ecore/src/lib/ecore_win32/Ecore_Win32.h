@@ -139,7 +139,7 @@ struct _Ecore_Win32_Event_Mouse_In
    Ecore_Win32_Window *window;
    int                 x;
    int                 y;
-   double              time;
+   long                time;
 };
 
 struct _Ecore_Win32_Event_Mouse_Out
@@ -147,19 +147,19 @@ struct _Ecore_Win32_Event_Mouse_Out
    Ecore_Win32_Window *window;
    int                 x;
    int                 y;
-   double              time;
+   long                time;
 };
 
 struct _Ecore_Win32_Event_Window_Focus_In
 {
    Ecore_Win32_Window *window;
-   double              time;
+   long  long          time;
 };
 
 struct _Ecore_Win32_Event_Window_Focus_Out
 {
    Ecore_Win32_Window *window;
-   double              time;
+   long                time;
 };
 
 struct _Ecore_Win32_Event_Window_Damage
@@ -169,31 +169,31 @@ struct _Ecore_Win32_Event_Window_Damage
    int                 y;
    int                 width;
    int                 height;
-   double              time;
+   long                time;
 };
 
 struct _Ecore_Win32_Event_Window_Create
 {
    Ecore_Win32_Window *window;
-   double              time;
+   long                time;
 };
 
 struct _Ecore_Win32_Event_Window_Destroy
 {
    Ecore_Win32_Window *window;
-   double              time;
+   long                time;
 };
 
 struct _Ecore_Win32_Event_Window_Hide
 {
    Ecore_Win32_Window *window;
-   double              time;
+   long                time;
 };
 
 struct _Ecore_Win32_Event_Window_Show
 {
    Ecore_Win32_Window *window;
-   double              time;
+   long                time;
 };
 
 struct _Ecore_Win32_Event_Window_Configure
@@ -204,7 +204,7 @@ struct _Ecore_Win32_Event_Window_Configure
    int                 y;
    int                 width;
    int                 height;
-   double              time;
+   long                time;
 };
 
 struct _Ecore_Win32_Event_Window_Resize
@@ -212,13 +212,13 @@ struct _Ecore_Win32_Event_Window_Resize
    Ecore_Win32_Window *window;
    int                 width;
    int                 height;
-   double              time;
+   long                time;
 };
 
 struct _Ecore_Win32_Event_Window_Delete_Request
 {
    Ecore_Win32_Window *window;
-   double              time;
+   long                time;
 };
 
 #define ECORE_WIN32_DND_EVENT_DRAG_ENTER     1
@@ -248,7 +248,7 @@ EAPI extern int ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST;
 EAPI int    ecore_win32_init();
 EAPI int    ecore_win32_shutdown();
 EAPI int    ecore_win32_screen_depth_get();
-EAPI double ecore_win32_current_time_get(void);
+EAPI long   ecore_win32_current_time_get(void);
 EAPI void   ecore_win32_message_loop_begin (void);
 
 /* Window */
