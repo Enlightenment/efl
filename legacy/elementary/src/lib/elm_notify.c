@@ -13,7 +13,6 @@
  */
 
 typedef struct _Widget_Data Widget_Data;
-typedef struct _Subinfo Subinfo;
 
 struct _Widget_Data
 {
@@ -229,7 +228,6 @@ EAPI void
 elm_notify_content_set(Evas_Object *obj, Evas_Object *content)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Subinfo *si;
 
    if (wd->content)
      elm_widget_sub_object_del(obj, wd->content);
