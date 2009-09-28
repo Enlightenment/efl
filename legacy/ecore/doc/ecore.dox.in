@@ -8,8 +8,7 @@ These routines are used for Ecore Library interaction
 
 @mainpage Ecore
 
-@image latex ecore_big.eps width=5cm
-@image html  ecore.png
+@image html  e.png
 
 @version @PACKAGE_VERSION@
 @author Carsten Haitzler <raster\@rasterman.com>
