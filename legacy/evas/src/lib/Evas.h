@@ -264,6 +264,11 @@ struct _Evas_Native_Surface
 #define EVAS_TEXTURE_RESTRICT_REPEAT    4 /**< tiling clamps and any range offset repeats */
 #define EVAS_TEXTURE_PAD                5 /**< tiling extends with end values */
 
+#define EVAS_HINT_EXPAND  1.0 /**< Use with evas_object_size_hint_weight_set(), evas_object_size_hint_eight_get() */
+#define EVAS_HINT_FILL   -1.0 /**< Use with evas_object_size_hint_align_set(), evas_object_size_hint_align_get(), evas_object_size_hint_fill_set(), evas_object_size_hint_fill_get() */
+#define evas_object_size_hint_fill_set evas_object_size_hint_align_set /**< Convenience macro to make it easier to understand that align is also used for fill properties (as fill is mutually exclusive to align) */
+#define evas_object_size_hint_fill_get evas_object_size_hint_align_get /**< Convenience macro to make it easier to understand that align is also used for fill properties (as fill is mutually exclusive to align) */
+
 typedef enum _Evas_Render_Op
 {
    EVAS_RENDER_BLEND = 0, /**< default op: d = d*(1-sa) + s */
