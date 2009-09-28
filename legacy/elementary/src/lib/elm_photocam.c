@@ -50,7 +50,6 @@
  */
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Pan Pan;
-
 typedef struct _Grid Grid;
 typedef struct _Grid_Item Grid_Item;
 
@@ -58,9 +57,10 @@ struct _Grid_Item
 {
    Widget_Data *wd;
    Evas_Object *img;
-   struct {
-      int x, y, w, h;
-   } src, out;
+   struct 
+     {
+        int x, y, w, h;
+     } src, out;
    Eina_Bool want : 1;
    Eina_Bool have : 1;
 };
@@ -93,14 +93,16 @@ struct _Widget_Data
    Ecore_Timer *long_timer;
    Ecore_Animator *zoom_animator;
    double t_start, t_end;
-   struct {
-      int imw, imh;
-      int w, h;
-      int ow, oh, nw, nh;
-      struct {
-         double x, y;
-      } spos;
-   } size;
+   struct 
+     {
+        int imw, imh;
+        int w, h;
+        int ow, oh, nw, nh;
+        struct 
+          {
+             double x, y;
+          } spos;
+     } size;
    int tsize;
    Evas_Object *img; // low res version of image (scale down == 8)
    int nosmooth;
@@ -122,9 +124,7 @@ static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _show_region_hook(void *data, Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
-
 static void _calc_job(void *data);
-
 static void grid_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh);
 static void grid_clear(Evas_Object *obj, Grid *g);
 static Grid *grid_create(Evas_Object *obj);
@@ -188,8 +188,7 @@ grid_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord o
              evas_object_move(g->grid[tn].img,
                               ox + xx - px + ax,
                               oy + yy - py + ay);
-             evas_object_resize(g->grid[tn].img,
-                                ww, hh);
+             evas_object_resize(g->grid[tn].img, ww, hh);
           }
      }
 }
@@ -660,10 +659,10 @@ _sizing_eval(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
-   evas_object_size_hint_min_get(wd->scr, &minw, &minh);
+//   evas_object_size_hint_min_get(wd->scr, &minw, &minh);
    evas_object_size_hint_max_get(wd->scr, &maxw, &maxh);
-   minw = -1;
-   minh = -1;
+//   minw = -1;
+//   minh = -1;
 //   if (wd->mode != ELM_LIST_LIMIT) minw = -1;
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
@@ -1011,7 +1010,7 @@ elm_photocam_zoom_set(Evas_Object *obj, int zoom)
    wd->size.oh = wd->size.h;
    elm_smart_scroller_child_pos_get(wd->scr, &rx, &ry);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &rw, &rh);
-   if(rw <= 0 || rh <= 0) return;
+   if ((rw <= 0) || (rh <= 0)) return;
 
    if (wd->mode == ELM_PHOTOCAM_ZOOM_MODE_MANUAL)
      {
