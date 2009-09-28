@@ -386,8 +386,13 @@ edje_object_thaw(Evas_Object *obj)
  * the third is the text shadow. (Note that the second two only apply
  * to text parts).
  *
+ * Setting color emits a signal "color_class,set" with source being
+ * the given color class in all objects.
+ *
  * @see edje_color_class_set().
  *
+ * @note unlike Evas, Edje colors are @b not pre-multiplied. That is,
+ *       half-transparent white is 255 255 255 128.
  */
 EAPI void
 edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
@@ -452,7 +457,76 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
 	ed->all_part_change = 1;
 #endif
 	_edje_recalc(ed);
+	_edje_emit(ed, "color_class,set", color_class);
 	members = eina_list_next(members);
+     }
+}
+
+/**
+ * @brief Get Edje color class.
+ *
+ * @param color_class
+ * @param r Object Red value
+ * @param g Object Green value
+ * @param b Object Blue value
+ * @param a Object Alpha value
+ * @param r2 Outline Red value
+ * @param g2 Outline Green value
+ * @param b2 Outline Blue value
+ * @param a2 Outline Alpha value
+ * @param r3 Shadow Red value
+ * @param g3 Shadow Green value
+ * @param b3 Shadow Blue value
+ * @param a3 Shadow Alpha value
+ *
+ * @return EINA_TRUE if found or EINA_FALSE if not found and all
+ *         values are zeroed.
+ *
+ * This function gets the color values for a process level color
+ * class. This value is the globally set and not per-object, that is,
+ * the value that would be used by objects if they did not override with
+ * edje_object_color_class_set().
+ *
+ * The first color is the object, the second is the text outline, and
+ * the third is the text shadow. (Note that the second two only apply
+ * to text parts).
+ *
+ * @see edje_color_class_set().
+ *
+ * @note unlike Evas, Edje colors are @b not pre-multiplied. That is,
+ *       half-transparent white is 255 255 255 128.
+ */
+EAPI Eina_Bool
+edje_color_class_get(const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3)
+{
+   Edje_Color_Class *cc;
+
+   if (!color_class)
+     cc = NULL;
+   else
+     cc = eina_hash_find(_edje_color_class_hash, color_class);
+
+   if (cc)
+     {
+#define X(C) if (C) *C = cc->C
+#define S(_r, _g, _b, _a) X(_r); X(_g); X(_b); X(_a)
+	S(r, g, b, a);
+	S(r2, g2, b2, a2);
+	S(r3, g3, b3, a3);
+#undef S
+#undef X
+	return EINA_TRUE;
+     }
+   else
+     {
+#define X(C) if (C) *C = 0
+#define S(_r, _g, _b, _a) X(_r); X(_g); X(_b); X(_a)
+	S(r, g, b, a);
+	S(r2, g2, b2, a2);
+	S(r3, g3, b3, a3);
+#undef S
+#undef X
+	return EINA_FALSE;
      }
 }
 
@@ -464,6 +538,8 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
  * This function deletes any values at the process level for the
  * specified color class.
  *
+ * Deleting color emits a signal "color_class,del" with source being
+ * the given color class in all objects.
  */
 void
 edje_color_class_del(const char *color_class)
@@ -491,6 +567,7 @@ edje_color_class_del(const char *color_class)
 	ed->all_part_change = 1;
 #endif
 	_edje_recalc(ed);
+	_edje_emit(ed, "color_class,del", color_class);
 	members = eina_list_next(members);
      }
 }
@@ -554,6 +631,11 @@ _edje_color_class_list_foreach(const Eina_Hash *hash __UNUSED__, const void *key
  * the third is the text shadow. (Note that the second two only apply
  * to text parts).
  *
+ * Setting color emits a signal "color_class,set" with source being
+ * the given color.
+ *
+ * @note unlike Evas, Edje colors are @b not pre-multiplied. That is,
+ *       half-transparent white is 255 255 255 128.
  */
 EAPI void
 edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
@@ -642,6 +724,69 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
      }
 
    _edje_recalc(ed);
+   _edje_emit(ed, "color_class,set", color_class);
+}
+
+/**
+ * @brief Gets the object color class.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param color_class
+ * @param r Object Red value
+ * @param g Object Green value
+ * @param b Object Blue value
+ * @param a Object Alpha value
+ * @param r2 Outline Red value
+ * @param g2 Outline Green value
+ * @param b2 Outline Blue value
+ * @param a2 Outline Alpha value
+ * @param r3 Shadow Red value
+ * @param g3 Shadow Green value
+ * @param b3 Shadow Blue value
+ * @param a3 Shadow Alpha value
+ *
+ * @return EINA_TRUE if found or EINA_FALSE if not found and all
+ *         values are zeroed.
+ *
+ * This function gets the color values for an object level color
+ * class. If no explicit object color is set, then global values will
+ * be used.
+ *
+ * The first color is the object, the second is the text outline, and
+ * the third is the text shadow. (Note that the second two only apply
+ * to text parts).
+ *
+ * @note unlike Evas, Edje colors are @b not pre-multiplied. That is,
+ *       half-transparent white is 255 255 255 128.
+ */
+EAPI Eina_Bool
+edje_object_color_class_get(const Evas_Object *obj, const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3)
+{
+   Edje *ed = _edje_fetch(obj);
+   Edje_Color_Class *cc = _edje_color_class_find(ed, color_class);
+
+   if (cc)
+     {
+#define X(C) if (C) *C = cc->C
+#define S(_r, _g, _b, _a) X(_r); X(_g); X(_b); X(_a)
+	S(r, g, b, a);
+	S(r2, g2, b2, a2);
+	S(r3, g3, b3, a3);
+#undef S
+#undef X
+	return EINA_TRUE;
+     }
+   else
+     {
+#define X(C) if (C) *C = 0
+#define S(_r, _g, _b, _a) X(_r); X(_g); X(_b); X(_a)
+	S(r, g, b, a);
+	S(r2, g2, b2, a2);
+	S(r3, g3, b3, a3);
+#undef S
+#undef X
+	return EINA_FALSE;
+     }
 }
 
 /**
@@ -652,6 +797,8 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
  * This function deletes any values at the object level for the
  * specified object and color class.
  *
+ * Deleting color emits a signal "color_class,del" with source being
+ * the given color.
  */
 void
 edje_object_color_class_del(Evas_Object *obj, const char *color_class)
@@ -689,6 +836,7 @@ edje_object_color_class_del(Evas_Object *obj, const char *color_class)
    ed->all_part_change = 1;
 #endif
    _edje_recalc(ed);
+   _edje_emit(ed, "color_class,del", color_class);
 }
 
 /**
