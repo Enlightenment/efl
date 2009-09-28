@@ -52,17 +52,17 @@ test_toolbar(void *data, Evas_Object *obj, void *event_info)
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);
-   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bx);
 
    tb = elm_toolbar_add(win);
    evas_object_size_hint_weight_set(tb, 0.0, 0.0);
-   evas_object_size_hint_align_set(tb, -1.0, 0.0);
+   evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, 0.0);
 
    ph1 = elm_photo_add(win);
    ph2 = elm_photo_add(win);
@@ -100,21 +100,21 @@ test_toolbar(void *data, Evas_Object *obj, void *event_info)
 
    tb = elm_table_add(win);
 //   elm_table_homogenous_set(tb, 1);
-   evas_object_size_hint_weight_set(tb, 0.0, 1.0);
-   evas_object_size_hint_align_set(tb, -1.0, -1.0);
+   evas_object_size_hint_weight_set(tb, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    ph = ph1;
    elm_photo_size_set(ph, 40);
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", PACKAGE_DATA_DIR);
    elm_photo_file_set(ph, buf);
-   evas_object_size_hint_weight_set(ph, 1.0, 1.0);
+   evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ph, 0.5, 0.5);
    elm_table_pack(tb, ph, 0, 0, 1, 1);
    evas_object_show(ph);
 
    ph = ph2;
    elm_photo_size_set(ph, 80);
-   evas_object_size_hint_weight_set(ph, 1.0, 1.0);
+   evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ph, 0.5, 0.5);
    elm_table_pack(tb, ph, 1, 0, 1, 1);
    evas_object_show(ph);
@@ -123,7 +123,7 @@ test_toolbar(void *data, Evas_Object *obj, void *event_info)
    elm_photo_size_set(ph, 20);
    snprintf(buf, sizeof(buf), "%s/images/sky_01.jpg", PACKAGE_DATA_DIR);
    elm_photo_file_set(ph, buf);
-   evas_object_size_hint_weight_set(ph, 1.0, 1.0);
+   evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ph, 0.5, 0.5);
    elm_table_pack(tb, ph, 0, 1, 1, 1);
    evas_object_show(ph);
@@ -132,7 +132,7 @@ test_toolbar(void *data, Evas_Object *obj, void *event_info)
    elm_photo_size_set(ph, 60);
    snprintf(buf, sizeof(buf), "%s/images/sky_02.jpg", PACKAGE_DATA_DIR);
    elm_photo_file_set(ph, buf);
-   evas_object_size_hint_weight_set(ph, 1.0, 1.0);
+   evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ph, 0.5, 0.5);
    elm_table_pack(tb, ph, 1, 1, 1, 1);
    evas_object_show(ph);

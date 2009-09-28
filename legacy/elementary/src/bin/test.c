@@ -130,8 +130,8 @@ my_win_main(void)
 
    li = elm_list_add(win);
    elm_list_always_select_mode_set(li, 1);
-   evas_object_size_hint_weight_set(li, 1.0, 1.0);
-   evas_object_size_hint_align_set(li, -1.0, -1.0);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx0, li);
    evas_object_show(li);
 
