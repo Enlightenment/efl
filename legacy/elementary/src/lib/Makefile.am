@@ -75,8 +75,6 @@ els_scroller.c \
 els_scroller.h \
 els_box.c \
 els_box.h \
-els_table.c \
-els_table.h \
 els_icon.c \
 els_icon.h
 

@@ -16,7 +16,6 @@
 #include "els_pan.h"
 #include "els_scroller.h"
 #include "els_box.h"
-#include "els_table.h"
 #include "els_icon.h"
 
 // FIXME: totally disorganised. clean this up!

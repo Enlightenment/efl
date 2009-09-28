@@ -86,7 +86,7 @@ elm_table_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
 
-   wd->tbl = _els_smart_table_add(e);
+   wd->tbl = evas_object_table_add(e);
    evas_object_event_callback_add(wd->tbl, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				  _changed_size_hints, obj);
    elm_widget_resize_object_set(obj, wd->tbl);
@@ -110,7 +110,7 @@ EAPI void
 elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   _els_smart_table_homogenous_set(wd->tbl, homogenous);
+   evas_object_table_homogeneous_set(wd->tbl, homogenous);
 }
 
 /**
@@ -130,5 +130,5 @@ elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    elm_widget_sub_object_add(obj, subobj);
-   _els_smart_table_pack(wd->tbl, subobj, x, y, w, h);
+   evas_object_table_pack(wd->tbl, subobj, x, y, w, h);
 }
