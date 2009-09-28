@@ -22,6 +22,8 @@ struct _Evas_Object_Table_Option
    } pad;
    Eina_Bool expand_h : 1; /* XXX required? */
    Eina_Bool expand_v : 1; /* XXX required? */
+   Eina_Bool fill_h : 1;
+   Eina_Bool fill_v : 1;
 };
 
 struct _Evas_Object_Table_Cache
@@ -276,16 +278,20 @@ _evas_object_table_calculate_cell(const Evas_Object_Table_Option *opt, Evas_Coor
      cw = opt->min.w;
    else if ((opt->max.w > -1) && (*w > opt->max.w))
      cw = opt->max.w;
-   else
+   else if (opt->fill_h)
      cw = *w;
+   else
+     cw = opt->min.w;
 
    *h -= opt->pad.t + opt->pad.b;
    if (*h < opt->min.h)
      ch = opt->min.h;
    else if ((opt->max.h > -1) && (*h > opt->max.h))
      ch = opt->max.h;
-   else
+   else if (opt->fill_v)
      ch = *h;
+   else
+     ch = opt->min.h;
 
    *x += opt->pad.l;
    if (cw != *w)
@@ -394,10 +400,18 @@ _evas_object_table_calculate_hints_homogeneous(Evas_Object *o, Evas_Object_Table
 /*	     expand_v = 1; */
 /*	  } */
 
+	opt->fill_h = 0;
 	if (opt->align.h < 0.0)
-	  opt->align.h = 0.5;
+	  {
+	     opt->align.h = 0.5;
+	     opt->fill_h = 1;
+	  }
+	opt->fill_v = 0;
 	if (opt->align.v < 0.0)
-	  opt->align.v = 0.5;
+	  {
+	     opt->align.v = 0.5;
+	     opt->fill_v = 1;
+	  }
 
 	/* greatest mininum values, with paddings */
 	if (minw < cell_minw)
@@ -623,10 +637,18 @@ _evas_object_table_calculate_hints_regular(Evas_Object *o, Evas_Object_Table_Dat
 	     ((opt->max.h > -1) && (opt->min.h < opt->max.h))))
 	  opt->expand_v = 1;
 
+	opt->fill_h = 0;
 	if (opt->align.h < 0.0)
-	  opt->align.h = 0.5;
+	  {
+	     opt->align.h = 0.5;
+	     opt->fill_h = 1;
+	  }
+	opt->fill_v = 0;
 	if (opt->align.v < 0.0)
-	  opt->align.v = 0.5;
+	  {
+	     opt->align.v = 0.5;
+	     opt->fill_v = 1;
+	  }
 
 	if (opt->expand_h)
 	  memset(c->expands.h + opt->col, 1, opt->colspan);
