@@ -329,9 +329,6 @@ _evas_cache_image_async_call__locked(Image_Entry *im)
      {
 	Evas_Cache_Target *tmp = im->targets;
 
-        // FIXME: bug bug bug bug. hrrrm.
-        // FIXME: this is a little bad if obj gets deleted before preload
-        // async event comes in... boom!
 	evas_async_events_put(tmp->target, EVAS_CALLBACK_IMAGE_PRELOADED, NULL,
 			      (void (*)(void*, Evas_Callback_Type, void*))evas_object_event_callback_call);
 	im->targets = (Evas_Cache_Target*) eina_inlist_remove(EINA_INLIST_GET(im->targets), EINA_INLIST_GET(im->targets));
@@ -414,6 +411,7 @@ _evas_cache_image_entry_preload_remove(Image_Entry *ie, const void *target)
    if (running)
      {
 	pthread_mutex_lock(&mutex);
+        if (target) evas_async_target_del(target);
 	if (ie->flags.preload)
 	  {
 	     if (current == ie)
@@ -425,6 +423,7 @@ _evas_cache_image_entry_preload_remove(Image_Entry *ie, const void *target)
 	     else
 	       {
 		  Evas_Cache_Preload *l;
+                  
 		  EINA_INLIST_FOREACH(preload, l)
 		    {
 		       if (l->ie == ie)
@@ -450,6 +449,7 @@ _evas_cache_image_entry_preload_remove(Image_Entry *ie, const void *target)
                                  while (ie->targets)
                                    {
                                       tg = ie->targets;
+                                      evas_async_target_del(tg->target);
                                       ie->targets = (Evas_Cache_Target*) eina_inlist_remove(EINA_INLIST_GET(ie->targets), EINA_INLIST_GET(tg));
                                       free(tg);
                                    }

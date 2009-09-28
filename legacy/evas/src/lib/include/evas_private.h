@@ -789,7 +789,8 @@ struct _Evas_Imaging_Font
 
 int evas_async_events_init(void);
 int evas_async_events_shutdown(void);
-
+int evas_async_target_del(const void *target);
+       
 void _evas_walk(Evas *e);
 void _evas_unwalk(Evas *e);
 

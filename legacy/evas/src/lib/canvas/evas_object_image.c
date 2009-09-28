@@ -297,8 +297,13 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
    o->prev.file = NULL;
    o->prev.key = NULL;
    if (o->engine_data)
-     obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output,
-					       o->engine_data);
+     {
+        obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
+                                                                 o->engine_data,
+                                                                 obj);
+        obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output,
+                                                  o->engine_data);
+     }
    o->load_error = EVAS_LOAD_ERROR_NONE;
    lo.scale_down_by = o->load_opts.scale_down_by;
    lo.dpi = o->load_opts.dpi;
@@ -710,7 +715,7 @@ evas_object_image_fill_spread_get(const Evas_Object *obj)
 }
 
 EAPI void
-evas_object_image_fill_transform_set (Evas_Object *obj, Evas_Transform *t)
+evas_object_image_fill_transform_set(Evas_Object *obj, Evas_Transform *t)
 {
    Evas_Object_Image *o;
 
@@ -764,7 +769,7 @@ evas_object_image_fill_transform_set (Evas_Object *obj, Evas_Transform *t)
 
 /*FIXME: To be documented*/
 EAPI void
-evas_object_image_fill_transform_get (const Evas_Object *obj, Evas_Transform *t)
+evas_object_image_fill_transform_get(const Evas_Object *obj, Evas_Transform *t)
 {
    Evas_Object_Image *o;
 
@@ -2261,8 +2266,13 @@ evas_object_image_free(Evas_Object *obj)
    if (o->cur.file) eina_stringshare_del(o->cur.file);
    if (o->cur.key) eina_stringshare_del(o->cur.key);
    if (o->engine_data)
-     obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output,
-					       o->engine_data);
+     {
+        obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
+                                                                 o->engine_data,
+                                                                 obj);
+        obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output,
+                                                  o->engine_data);
+     }
    o->engine_data = NULL;
    o->magic = 0;
    EINA_LIST_FREE(o->pixel_updates, r)
