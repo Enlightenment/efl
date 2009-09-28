@@ -69,7 +69,7 @@ _spin(void *data, Evas *e, Evas_Object *obj, void *event_info)
      elm_slideshow_timeout_set(slideshow, (int)elm_spinner_value_get(data));
 }
 
-   void
+void
 test_slideshow(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *notify, *bx, *bt, *hv, *spin;
