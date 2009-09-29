@@ -28,6 +28,15 @@
     \@endproperty
 */
 
+#include <string.h>
+#include <errno.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <unistd.h>
+
+#include "edje_cc.h"
+
 /**
  * @page edcref Edje Data Collection reference
  * An Edje Data Collection, it's a plain text file (normally identified with the
@@ -40,15 +49,6 @@
  *
  * <table class="edcref" border="0">
  */
-
-#include <string.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <sys/mman.h>
-#include <unistd.h>
-
-#include "edje_cc.h"
 
 static void st_images_image(void);
 

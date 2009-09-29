@@ -135,7 +135,9 @@ edje_thaw(void)
 /**
  * @brief Set the edje append fontset.
  *
- * This function set the edje append fontset.
+ * @param fonts The fontset to append.
+ *
+ * This function sets the edje append fontset.
  *
  */
 EAPI void
@@ -166,7 +168,7 @@ edje_fontset_append_get(void)
 /**
  * @brief Set edje's global scaling factor.
  *
- * @param The edje (global) scale factor. The defaul is 1.0.
+ * @param scale The edje (global) scale factor. The defaul is 1.0.
  *
  * Edje allows one to build scalable interfaces. Scale factors, which
  * are set to neutral values by default (no scaling, actual sizes),
@@ -215,8 +217,8 @@ edje_scale_get(void)
 /**
  * @brief Set the edje object's scaling factor.
  *
- * @param The edje object's reference.
- * @param The edje object scale factor. The defaul is 1.0.
+ * @param obj The edje object's reference.
+ * @param scale The edje object scale factor. The defaul is 1.0.
  *
  * This function sets the individual scale factor of the @a obj edje
  * object. This property (or edje's global scale factor, when
@@ -243,7 +245,7 @@ edje_object_scale_set(Evas_Object *obj, double scale)
 /**
  * @brief Get the edje object's scaling factor.
  *
- * @param The edje object's reference.
+ * @param obj The edje object's reference.
  *
  * This function returns the individual scale factor of the @a obj
  * edje object, which can be set by edje_object_scale_set().
@@ -792,6 +794,7 @@ edje_object_color_class_get(const Evas_Object *obj, const char *color_class, int
 /**
  * @brief Delete the object color class.
  *
+ * @param obj The edje object's reference.
  * @param color_class The color class to be deleted.
  *
  * This function deletes any values at the object level for the
@@ -1443,7 +1446,7 @@ _edje_text_unescape(const char *text)
  *
  * @param obj A valid Evas Object handle
  * @param part The part name
- * @param text The text string
+ * @param text_to_escape The text string
  *
  * This funciton will do escape for you if it is a TEXTBLOCK part,
  * that is, if text contain tags, these tags will not be
@@ -1715,11 +1718,12 @@ edje_object_part_text_cursor_geometry_get(const Evas_Object *obj, const char *pa
 }
 
 /**
- * @brief Enables selection if the entyr is an EXPLICIT selection mode
+ * @brief Enables selection if the entry is an EXPLICIT selection mode
  * type.
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
+ * @param allow EINA_TRUE to enable, EINA_FALSE otherwise
  */
 EAPI void
 edje_object_part_text_select_allow_set(const Evas_Object *obj, const char *part, Eina_Bool allow)
@@ -2938,7 +2942,7 @@ edje_object_part_box_append(Evas_Object *obj, const char *part, Evas_Object *chi
 }
 
 /**
- * @briefPrepends an object to the box.
+ * @brief Prepends an object to the box.
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
@@ -3294,7 +3298,7 @@ _edje_table_child_remove(Edje_Real_Part *rp, Evas_Object *child)
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
- * @param child The object to pack in
+ * @param child_obj The object to pack in
  * @param col The column to place it in
  * @param row The row to place it in
  * @param colspan Columns the child will take
@@ -3326,7 +3330,7 @@ edje_object_part_table_pack(Evas_Object *obj, const char *part, Evas_Object *chi
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
- * @param child The object to pack in
+ * @param child_obj The object to pack in
  *
  * @return 1: Successfully removed.\n
  * 0: An error occured.

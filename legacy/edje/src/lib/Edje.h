@@ -29,6 +29,14 @@
 # endif
 #endif
 
+/** 
+ * @file Edje.h
+ * @brief Edje Graphical Design Library
+ *
+ * These routines are used for Edje.
+ */
+
+
 /* FIXDOC: Define these? */
 enum _Edje_Message_Type
 {

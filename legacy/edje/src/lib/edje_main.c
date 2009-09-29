@@ -22,8 +22,6 @@ Eina_Mempool *_edje_real_part_state_mp = NULL;
  * application code and the interface, while allowing extremely
  * flexible dynamic layouts and animations.
  *
- * For more information, you can look at the @ref tutorial_list_page.
- *
  * @{
  */
 
@@ -253,3 +251,8 @@ _edje_unref(Edje *ed)
    ed->references--;
    if (ed->references == 0) _edje_del(ed);
 }
+
+/**
+ *
+ * @}
+ */

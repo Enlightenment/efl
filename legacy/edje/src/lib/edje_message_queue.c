@@ -23,8 +23,6 @@ static Eina_List *tmp_msgq = NULL;
  * application code and the interface, while allowing extremely
  * flexible dynamic layouts and animations.
  *
- * For more information, you can look at the @ref tutorial_list_page.
- *
  * @{
  */
 
@@ -776,3 +774,8 @@ _edje_message_del(Edje *ed)
 	if (ed->message.num <= 0) return;
      }
 }
+
+/**
+ *
+ * @}
+ */

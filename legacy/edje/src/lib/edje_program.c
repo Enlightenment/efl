@@ -25,8 +25,6 @@ Eina_List      *_edje_animators = NULL;
  * application code and the interface, while allowing extremely
  * flexible dynamic layouts and animations.
  *
- * For more information, you can look at the @ref tutorial_list_page.
- *
  * @{
  */
 
@@ -1232,3 +1230,8 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src)
    _edje_thaw(ed);
    _edje_unref(ed);
 }
+
+/**
+ *
+ * @}
+ */

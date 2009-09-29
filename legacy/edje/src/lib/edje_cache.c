@@ -25,9 +25,6 @@
 # include <config.h>
 #endif
 
-#include <string.h>
-#include <sys/stat.h>
-
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
 #elif defined __GNUC__
@@ -45,7 +42,15 @@ extern "C"
 void *alloca (size_t);
 #endif
 
+#include <string.h>
+#include <sys/stat.h>
+
 #include "edje_private.h"
+
+
+/**
+ * @cond
+ */
 
 static Eina_Hash   *_edje_file_hash = NULL;
 static int          _edje_file_cache_size = 16;
@@ -476,8 +481,6 @@ _edje_file_cache_shutdown(void)
  * application code and the interface, while allowing extremely
  * flexible dynamic layouts and animations.
  *
- * For more information, you can look at the @ref tutorial_list_page.
- *
  * @{
  */
 
@@ -620,3 +623,8 @@ edje_collection_cache_flush(void)
    /* FIXME: freach in file hash too! */
    _edje_collection_cache_size = ps;
 }
+
+/**
+ *
+ * @}
+ */

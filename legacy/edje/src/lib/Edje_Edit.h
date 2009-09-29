@@ -1612,7 +1612,7 @@ edje_edit_state_image_set(
 EAPI int                   ///< The ID of the givan image name
 edje_edit_image_id_get(
    Evas_Object *obj,       ///< The edje object
-   const char *image_name
+   const char *image_name  ///< The image name
 );
 
 /**Get compression type for the given image.*/
