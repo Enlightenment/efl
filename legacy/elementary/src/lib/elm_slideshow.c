@@ -41,6 +41,8 @@ struct _Widget_Data
 
    Ecore_Timer *timer;
    int timeout;
+
+   int keep_ratio;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -50,6 +52,8 @@ static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *eve
 static void _signal_clicked(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _signal_move(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static int _timer_cb(void *data);
+static void _update_image_1(Evas_Object *obj);
+static void _update_image_2(Evas_Object *obj);
 
 static void
 _del_hook(Evas_Object *obj)
@@ -137,6 +141,9 @@ _end(void *data, Evas_Object *obj, const char *emission, const char *source)
 	evas_object_image_file_set((Evas_Object *)o, node->file, node->group);
      }
 
+   if(wd->keep_ratio)
+      _update_image_1(data);
+
    if(wd->timeout>0)
      wd->timer = ecore_timer_add(wd->timeout, _timer_cb, data);
 }
@@ -151,6 +158,112 @@ _timer_cb(void *data)
    wd->timer = NULL;
    elm_slideshow_next(obj);
    return 0;
+}
+
+static void _update_image_1(Evas_Object *obj)
+{
+   int x,y,w,h, w_img = 0, h_img = 0, w_img2, h_img2;
+   const Evas_Object *o;
+   
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if(!eina_list_count(wd->img1_parts))
+     return;
+   
+   evas_object_geometry_get(wd->slideshow, &x, &y, &w, &h);
+
+   o = edje_object_part_object_get(wd->slideshow, eina_list_data_get(wd->img1_parts));
+   evas_object_image_size_get((Evas_Object*) o, &w_img, &h_img);
+
+   w_img2 = w - w_img;
+   h_img2 = h - h_img;
+   if(w_img2 >= 0 && w_img2 < h_img2)
+     {
+	 h_img2 = h_img * (w/(double)w_img);
+	 w_img2 = w_img * (w/(double)w_img);
+     }
+   else if(h_img2 >= 0 && h_img2 < w_img2)
+     {
+	 w_img2 = w_img * (h/(double)h_img);
+	 h_img2 = h_img * (h/(double)h_img);
+     }
+   else if(w_img2 < 0 && w_img2 < h_img2)
+     {
+	 h_img2 = h_img * (w/(double)w_img);
+	 w_img2 = w_img * (w/(double)w_img);
+     }
+   else
+     {
+	w_img2 = w_img * (h/(double)h_img);
+	h_img2 = h_img * (h/(double)h_img);
+     }
+
+   Edje_Message_Int_Set *msg = alloca(sizeof(Edje_Message_Int_Set) + (3 * sizeof(int)));
+   msg->count=4;
+   msg->val[0] = (int)(w - w_img2) / 2;
+   msg->val[1] = (int)(h - h_img2) / 2;
+   msg->val[2] = (int)- (w - msg->val[0] - w_img2);
+   msg->val[3] = (int)- (h - msg->val[1] - h_img2);
+
+   edje_object_message_send(wd->slideshow,EDJE_MESSAGE_INT_SET , 1, msg);
+}
+
+static void _update_image_2(Evas_Object *obj)
+{
+   int x,y,w,h, w_img = 0, h_img = 0, w_img2, h_img2;
+   const Evas_Object *o;
+   
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if(!eina_list_count(wd->img2_parts))
+     return;
+   
+   evas_object_geometry_get(wd->slideshow, &x, &y, &w, &h);
+
+   o = edje_object_part_object_get(wd->slideshow, eina_list_data_get(wd->img2_parts));
+   evas_object_image_size_get((Evas_Object*) o, &w_img, &h_img);
+
+   w_img2 = w - w_img;
+   h_img2 = h - h_img;
+   if(w_img2 >= 0 && w_img2 < h_img2)
+     {
+	 h_img2 = h_img * (w/(double)w_img);
+	 w_img2 = w_img * (w/(double)w_img);
+     }
+   else if(h_img2 >= 0 && h_img2 < w_img2)
+     {
+	 w_img2 = w_img * (h/(double)h_img);
+	 h_img2 = h_img * (h/(double)h_img);
+     }
+   else if(w_img2 < 0 && w_img2 < h_img2)
+     {
+	 h_img2 = h_img * (w/(double)w_img);
+	 w_img2 = w_img * (w/(double)w_img);
+     }
+   else
+     {
+	w_img2 = w_img * (h/(double)h_img);
+	h_img2 = h_img * (h/(double)h_img);
+     }
+
+   Edje_Message_Int_Set *msg = alloca(sizeof(Edje_Message_Int_Set) + (3 * sizeof(int)));
+   msg->count=4;
+   msg->val[0] = (int)(w - w_img2) / 2;
+   msg->val[1] = (int)(h - h_img2) / 2;
+   msg->val[2] = (int)- (w - msg->val[0] - w_img2);
+   msg->val[3] = (int)- (h - msg->val[1] - h_img2);
+
+   edje_object_message_send(wd->slideshow,EDJE_MESSAGE_INT_SET , 2, msg);
+}
+
+void _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
+   if(!wd->keep_ratio) return ;
+
+   _update_image_1(data);
+   _update_image_2(data);
 }
 
 /**
@@ -196,6 +309,7 @@ elm_slideshow_add(Evas_Object *parent)
                                   _signal_move, obj);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
+   evas_object_event_callback_add(wd->slideshow, EVAS_CALLBACK_RESIZE, _resize, obj);
 
    _sizing_eval(obj);
    return obj;
@@ -254,6 +368,9 @@ elm_slideshow_goto(Evas_Object *obj, int pos)
 	o = edje_object_part_object_get(wd->slideshow, part);
 	evas_object_image_file_set((Evas_Object *)o, node->file, node->group);
      }
+
+   if(wd->keep_ratio)
+      _update_image_1(obj);
 }
 
 /**
@@ -294,6 +411,8 @@ elm_slideshow_next(Evas_Object *obj)
 	evas_object_image_file_set((Evas_Object *)o, node->file, node->group);
      }
 
+   if(wd->keep_ratio)
+      _update_image_2(obj);
    snprintf(buf, 1024, "%s,next", wd->transition);
    edje_object_signal_emit(wd->slideshow, buf, "slideshow");
 
@@ -340,6 +459,8 @@ elm_slideshow_previous(Evas_Object *obj)
 	evas_object_image_file_set((Evas_Object *)o, node->file, node->group);
      }
 
+   if(wd->keep_ratio)
+     _update_image_2(obj);
    snprintf(buf, 1024, "%s,previous", wd->transition);
    edje_object_signal_emit(wd->slideshow, buf, "slideshow");
 
@@ -429,6 +550,40 @@ elm_slideshow_loop_set(Evas_Object *obj, int loop)
    if(!wd) return;
    wd->loop = loop;
 }
+
+/**
+ * Set if the ratio of the images should be keep
+ *
+ * @param obj The slideshow object
+ * @param ratio 1 : the ratio will be keep
+ */
+EAPI void
+elm_slideshow_ratio_set(Evas_Object *obj, int ratio)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if(!wd) return;
+   wd->keep_ratio = ratio;
+
+   if(!ratio)
+     {
+	Edje_Message_Int_Set *msg = alloca(sizeof(Edje_Message_Int_Set) + (3 * sizeof(int)));
+	msg->count=4;
+	msg->val[0] = 0;
+	msg->val[1] = 0;
+	msg->val[2] = 0;
+	msg->val[3] = 0;
+
+	edje_object_message_send(wd->slideshow,EDJE_MESSAGE_INT_SET , 1, msg);
+	edje_object_message_send(wd->slideshow,EDJE_MESSAGE_INT_SET , 2, msg);
+     }
+   else
+     {
+	 _update_image_1(obj);
+	 _update_image_2(obj);
+     }
+}
+
 
 /**
  * Delete all the images

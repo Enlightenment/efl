@@ -46,7 +46,7 @@ _hv_select(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_start(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_start(void *data, Evas_Object *obj, void *event_info)
 {
    elm_slideshow_timeout_set(slideshow, (int)elm_spinner_value_get(data));
 
@@ -55,7 +55,7 @@ _start(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_stop(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_stop(void *data, Evas_Object *obj, void *event_info)
 {
    elm_slideshow_timeout_set(slideshow, 0);
    elm_widget_disabled_set(bt_start, 0);
@@ -63,7 +63,7 @@ _stop(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_spin(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_spin(void *data, Evas_Object *obj, void *event_info)
 {
    if(elm_slideshow_timeout_get(slideshow) > 0)
      elm_slideshow_timeout_set(slideshow, (int)elm_spinner_value_get(data));
@@ -88,6 +88,7 @@ test_slideshow(void *data, Evas_Object *obj, void *event_info)
 
    slideshow = elm_slideshow_add(win);
    elm_slideshow_loop_set(slideshow, 1);
+   elm_slideshow_ratio_set(slideshow, 1);
    elm_win_resize_object_add(win, slideshow);
    evas_object_size_hint_weight_set(slideshow, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(slideshow);

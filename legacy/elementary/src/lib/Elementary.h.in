@@ -801,6 +801,7 @@ extern "C" {
    EAPI void         elm_slideshow_timeout_set(Evas_Object *obj ,int timeout);
    EAPI int          elm_slideshow_timeout_get(Evas_Object *obj);
    EAPI void	     elm_slideshow_loop_set(Evas_Object *obj, int loop);
+   EAPI void	     elm_slideshow_ratio_set(Evas_Object *obj, int ratio);
    EAPI void         elm_slideshow_clear(Evas_Object *obj);
    /* smart callbacks called:
     * "clicked" - the use click on the widget

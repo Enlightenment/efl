@@ -5197,7 +5197,7 @@ collections {
 	       fill.smooth: 0;
 	    }
 	 }
-      }
+     }
    }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -6410,9 +6410,53 @@ collections {
             item: image1 "elm.image.1";
             item: image2 "elm.image.2 elm.image.2_2 elm.image.2_3 elm.image.2_4";
         }
+        script {
+            public message(Msg_Type:type, id, ...) {
+                if( (type==MSG_INT_SET) && (id==1) )
+                {
+                    new off1_x;
+                    new off1_y;
+                    new off2_x;
+                    new off2_y;
+
+                    custom_state(PART:"image_1_area", "default", 0.0);
+
+                    off1_x = getarg(2);
+                    off1_y = getarg(3);
+                    off2_x = getarg(4);
+                    off2_y = getarg(5);
+                    set_state_val(PART:"image_1_area", STATE_REL1_OFFSET, off1_x, off1_y);
+                    set_state_val(PART:"image_1_area", STATE_REL2_OFFSET, off2_x, off2_y);
+                    set_state(PART:"image_1_area", "custom", 0.0);
+                }
+                else if( (type==MSG_INT_SET) && (id==2) )
+                {
+                    new off1_x;
+                    new off1_y;
+                    new off2_x;
+                    new off2_y;
+
+                    custom_state(PART:"image_2_area", "default", 0.0);
+
+                    off1_x = getarg(2);
+                    off1_y = getarg(3);
+                    off2_x = getarg(4);
+                    off2_y = getarg(5);
+                    set_state_val(PART:"image_2_area", STATE_REL1_OFFSET, off1_x, off1_y);
+                    set_state_val(PART:"image_2_area", STATE_REL2_OFFSET, off2_x, off2_y);
+                    set_state(PART:"image_2_area", "custom", 0.0);
+                }
+            }
+        }
         parts {
-            part { name: "elm.image.1";
-                type: IMAGE;
+            part { name: "whole";
+                description {
+                    state: "default" 0.0;
+                    visible: 1;
+                    color: 0 0 0 0;
+                }
+            }
+            part { name: "image_1_whole";
                 description {
                     state: "default" 0.0;
                     color: 255 255 255 255;
@@ -6472,11 +6516,12 @@ collections {
                     rel1.relative: 0.0 1.0;
                     rel2.relative: 1.0 2.0;
                 }
+
             }
-            part { name: "elm.image.2";
-                type: IMAGE;
+            part { name: "image_2_whole";
                 description {
                     state: "default" 0.0;
+                    visible: 1;
                     color: 255 255 255 0;
                 }
                 description {
@@ -6558,6 +6603,50 @@ collections {
                 }
                 description{
                     state: "4_square_prev_next_init" 0.0;
+                    inherit: "default" 0.0;
+                    visible: 1;
+                    color: 255 255 255 255;
+                }
+            }
+            part { name: "image_1_area";
+                description {
+                    state: "default" 0.0;
+                    visible: 0;
+                    rel1.to: "image_1_whole";
+                    rel2.to: "image_1_whole";
+                }
+            }
+            part { name: "image_2_area";
+                description {
+                    state: "default" 0.0;
+                    visible: 0;
+                    rel1.to: "image_2_whole";
+                    rel2.to: "image_2_whole";
+                }
+            }
+            part { name: "elm.image.1";
+                type: IMAGE;
+                clip_to: "image_1_whole";
+                description {
+                    state: "default" 0.0;
+                    rel1.to: "image_1_area";
+                    rel2.to: "image_1_area";
+                    color: 255 255 255 255;
+                }
+            }
+            part { name: "elm.image.2";
+                type: IMAGE;
+                clip_to: "image_2_whole";
+                description {
+                    state: "default" 0.0;
+                    color: 255 255 255 255;
+                    rel1.to: "image_2_area";
+                    rel2.to: "image_2_area";
+                }
+                description{
+                    state: "4_square_prev_next_init" 0.0;
+                    inherit: "default" 0.0;
+                    color: 255 255 255 255;
                     visible: 1;
                     rel1.relative: -0.5 -0.5;
                     rel2.relative: 0.0 0.0;
@@ -6568,21 +6657,24 @@ collections {
                 }
                 description{
                     state: "4_square_prev_next" 0.0;
+                    inherit: "default" 0.0;
                     inherit: "4_square_prev_next_init" 0.0;
-                    visible: 1;
                     rel1.relative: 0.0 0.0;
                     rel2.relative: 0.5 0.5;
-
                 }
             }
             part { name: "elm.image.2_2";
                 type: IMAGE;
+                clip_to: "image_2_whole";
                 description{
                     state: "default" 0.0;
+                    rel1.to: "image_2_area";
+                    rel2.to: "image_2_area";
                     visible: 0;
                 }
                 description{
                     state: "4_square_prev_next_init" 0.0;
+                    inherit: "default" 0.0;
                     visible: 1;
                     rel1.relative: 1.0 -0.5;
                     rel2.relative: 1.5 0.0;
@@ -6593,20 +6685,24 @@ collections {
                 }
                 description{
                     state: "4_square_prev_next" 0.0;
+                    inherit: "default" 0.0;
                     inherit: "4_square_prev_next_init" 0.0;
-                    visible: 1;
                     rel1.relative: 0.5 0.0;
                     rel2.relative: 1.0 0.5;
                 }
             }
             part { name: "elm.image.2_3";
                 type: IMAGE;
+                clip_to: "image_2_whole";
                 description{
                     state: "default" 0.0;
+                    rel1.to: "image_2_area";
+                    rel2.to: "image_2_area";
                     visible: 0;
                 }
                 description{
                     state: "4_square_prev_next_init" 0.0;
+                    inherit: "default" 0.0;
                     visible: 1;
                     rel1.relative: 1.0 1.0;
                     rel2.relative: 1.5 1.5;
@@ -6617,6 +6713,7 @@ collections {
                 }
                 description{
                     state: "4_square_prev_next" 0.0;
+                    inherit: "default" 0.0;
                     inherit: "4_square_prev_next_init" 0.0;
                     visible: 1;
                     rel1.relative: 0.5 0.5;
@@ -6625,12 +6722,16 @@ collections {
             }
             part { name: "elm.image.2_4";
                 type: IMAGE;
+                clip_to: "image_2_whole";
                 description{
                     state: "default" 0.0;
                     visible: 0;
+                    rel1.to: "image_2_area";
+                    rel2.to: "image_2_area";
                 }
                 description{
                     state: "4_square_prev_next_init" 0.0;
+                    inherit: "default" 0.0;
                     visible: 1;
                     rel1.relative: -0.5 1.0;
                     rel2.relative: 0.0 1.5;
@@ -6641,6 +6742,7 @@ collections {
                 }
                 description{
                     state: "4_square_prev_next" 0.0;
+                    inherit: "default" 0.0;
                     inherit: "4_square_prev_next_init" 0.0;
                     visible: 1;
                     rel1.relative: 0.0 0.5;
@@ -6653,14 +6755,14 @@ collections {
                 signal: "fade,next";
                 source: "slideshow";
                 action: STATE_SET "default" 0.0;
-                target: "elm.image.1";
-                target: "elm.image.2";
+                target: "image_1_whole";
+                target: "image_2_whole";
                 after: "fade_next_2";
             }
             program { name: "fade_next_2";
                 action: STATE_SET "fade_prev_next" 0.0;
-                target: "elm.image.1";
-                target: "elm.image.2";
+                target: "image_1_whole";
+                target: "image_2_whole";
                 transition: SINUSOIDAL 1.5;
                 after: "end";
             }
@@ -6668,14 +6770,14 @@ collections {
                 signal: "fade,previous";
                 source: "slideshow";
                 action: STATE_SET "default" 0.0;
-                target: "elm.image.1";
-                target: "elm.image.2";
+                target: "image_1_whole";
+                target: "image_2_whole";
                 after: "fade_previous_2";
             }
             program { name: "fade_previous_2";
                 action: STATE_SET "fade_prev_next" 0.0;
-                target: "elm.image.1";
-                target: "elm.image.2";
+                target: "image_1_whole";
+                target: "image_2_whole";
                 transition: SINUSOIDAL 1.5;
                 after: "end";
             }
@@ -6683,19 +6785,19 @@ collections {
                 signal: "black_fade,next";
                 source: "slideshow";
                 action: STATE_SET "black_fade_prev_next_init" 0.0;
-                target: "elm.image.1";
-                target: "elm.image.2";
+                target: "image_1_whole";
+                target: "image_2_whole";
                 after: "black_fade_next_2";
             }
             program { name: "black_fade_next_2";
                 action: STATE_SET "black_fade_prev_next" 0.0;
-                target: "elm.image.1";
+                target: "image_1_whole";
                 transition: SINUSOIDAL 0.75;
                 after: "black_fade_next_3";
             }
             program { name: "black_fade_next_3";
                 action: STATE_SET "black_fade_prev_next" 0.0;
-                target: "elm.image.2";
+                target: "image_2_whole";
                 transition: SINUSOIDAL 0.75;
                 after: "end";
             }
@@ -6703,19 +6805,19 @@ collections {
                 signal: "black_fade,previous";
                 source: "slideshow";
                 action: STATE_SET "black_fade_prev_next_init" 0.0;
-                target: "elm.image.1";
-                target: "elm.image.2";
+                target: "image_1_whole";
+                target: "image_2_whole";
                 after: "black_fade_previous_2";
             }
             program { name: "black_fade_previous_2";
                 action: STATE_SET "black_fade_prev_next" 0.0;
-                target: "elm.image.1";
+                target: "image_1_whole";
                 transition: SINUSOIDAL 0.75;
                 after: "black_fade_previous_3";
             }
             program { name: "black_fade_previous_3";
                 action: STATE_SET "black_fade_prev_next" 0.0;
-                target: "elm.image.2";
+                target: "image_2_whole";
                 transition: SINUSOIDAL 0.75;
                 after: "end";
             }
@@ -6723,14 +6825,14 @@ collections {
                 signal: "horizontal,next";
                 source: "slideshow";
                 action: STATE_SET "horizontal_next_init" 0.0;
-                target: "elm.image.1";
-                target: "elm.image.2";
+                target: "image_1_whole";
+                target: "image_2_whole";
                 after: "horizontal_next_2";
             }
             program { name: "horizontal_next_2";
                 action: STATE_SET "horizontal_next" 0.0;
-                target: "elm.image.1";
-                target: "elm.image.2";
+                target: "image_1_whole";
+                target: "image_2_whole";
                 transition: SINUSOIDAL 1.5;
                 after: "end";
             }
@@ -6738,14 +6840,14 @@ collections {
                 signal: "horizontal,previous";
                 source: "slideshow";
                 action: STATE_SET "horizontal_prev_init" 0.0;
-                target: "elm.image.1";
-                target: "elm.image.2";
+                target: "image_1_whole";
+                target: "image_2_whole";
                 after: "horizontal_previous_2";
             }
             program { name: "horizontal_previous_2";
                 action: STATE_SET "horizontal_prev" 0.0;
-                target: "elm.image.1";
-                target: "elm.image.2";
+                target: "image_1_whole";
+                target: "image_2_whole";
                 transition: SINUSOIDAL 1.5;
                 after: "end";
             }
@@ -6753,14 +6855,14 @@ collections {
                 signal: "vertical,next";
                 source: "slideshow";
                 action: STATE_SET "vertical_next_init" 0.0;
-                target: "elm.image.1";
-                target: "elm.image.2";
+                target: "image_1_whole";
+                target: "image_2_whole";
                 after: "vertical_next_2";
             }
             program { name: "vertical_next_2";
                 action: STATE_SET "vertical_next" 0.0;
-                target: "elm.image.1";
-                target: "elm.image.2";
+                target: "image_1_whole";
+                target: "image_2_whole";
                 transition: SINUSOIDAL 1.5;
                 after: "end";
             }
@@ -6768,14 +6870,14 @@ collections {
                 signal: "vertical,previous";
                 source: "slideshow";
                 action: STATE_SET "vertical_prev_init" 0.0;
-                target: "elm.image.1";
-                target: "elm.image.2";
+                target: "image_1_whole";
+                target: "image_2_whole";
                 after: "vertical_previous_2";
             }
             program { name: "vertical_previous_2";
                 action: STATE_SET "vertical_prev" 0.0;
-                target: "elm.image.1";
-                target: "elm.image.2";
+                target: "image_1_whole";
+                target: "image_2_whole";
                 transition: SINUSOIDAL 1.5;
                 after: "end";
             }
@@ -6783,12 +6885,12 @@ collections {
                 signal: "square,next";
                 source: "slideshow";
                 action: STATE_SET "square_prev_next_init" 0.0;
-                target: "elm.image.2";
+                target: "image_2_whole";
                 after: "square_next_2";
             }
             program { name: "square_next_2";
                 action: STATE_SET "square_prev_next" 0.0;
-                target: "elm.image.2";
+                target: "image_2_whole";
                 transition: SINUSOIDAL 1.5;
                 after: "end";
             }
@@ -6796,13 +6898,14 @@ collections {
                 signal: "square,previous";
                 source: "slideshow";
                 action: STATE_SET "square_prev_next_init" 0.0;
-                target: "elm.image.2";
+                target: "image_2_whole";
                 after: "square_next_2";
             }
             program { name: "4_square_next";
                 signal: "4_square,next";
                 source: "slideshow";
                 action: STATE_SET "4_square_prev_next_init" 0.0;
+                target: "image_2_whole";
                 target: "elm.image.2";
                 target: "elm.image.2_2";
                 target: "elm.image.2_3";
@@ -6822,6 +6925,7 @@ collections {
                 signal: "4_square,previous";
                 source: "slideshow";
                 action: STATE_SET "4_square_prev_next_init" 0.0;
+                target: "image_2_whole";
                 target: "elm.image.2";
                 target: "elm.image.2_2";
                 target: "elm.image.2_3";
@@ -6830,6 +6934,8 @@ collections {
             }
             program { name: "end";
                 action: STATE_SET "default" 0.0;
+                target: "image_1_whole";
+                target: "image_2_whole";
                 target: "elm.image.1";
                 target: "elm.image.2";
                 target: "elm.image.2_2";
@@ -14805,528 +14911,4 @@ collections {
 	 }
       }
    }
-
-///////////////////////////////////////////////////////////////////////////////
-   group { name: "elm/photocam/base/default";
-      script {
-	 public sbvis_v, sbvis_h, sbalways_v, sbalways_h, sbvis_timer;
-	 public timer0(val) {
-	    new v;
-	    v = get_int(sbvis_v);
-	    if (v) {
-               v = get_int(sbalways_v);
-               if (!v) {
-                  emit("do-hide-vbar", "");
-                  set_int(sbvis_v, 0);
-               }
-	    }
-	    v = get_int(sbvis_h);
-	    if (v) {
-               v = get_int(sbalways_h);
-               if (!v) {
-                  emit("do-hide-hbar", "");
-                  set_int(sbvis_h, 0);
-               }
-	    }
-	    set_int(sbvis_timer, 0);
-	    return 0;
-	 }
-      }
-      images {
-	 image: "shelf_inset.png" COMP;
-	 image: "bt_sm_base2.png" COMP;
-	 image: "bt_sm_shine.png" COMP;
-	 image: "bt_sm_hilight.png" COMP;
-	 image: "sb_runnerh.png" COMP;
-	 image: "sb_runnerv.png" COMP;
-         image: "busy-1.png" COMP;
-         image: "busy-2.png" COMP;
-         image: "busy-3.png" COMP;
-         image: "busy-4.png" COMP;
-         image: "busy-5.png" COMP;
-         image: "busy-6.png" COMP;
-         image: "busy-7.png" COMP;
-         image: "busy-8.png" COMP;
-         image: "busy-9.png" COMP;
-      }
-      parts {
-         part { name: "bg";
-	    type: RECT;
-	    description { state: "default" 0.0;
-	       rel1.offset: 1 1;
-	       rel2.offset: -2 -2;
-	       color: 255 255 255 0;
-	    }
-	 }
-	 part { name: "clipper";
-	    type: RECT;
-	    mouse_events: 0;
-	    description { state: "default" 0.0;
-	       rel1.to: "bg";
-	       rel2.to: "bg";
-	    }
-	 }
-	 part { name: "elm.swallow.content";
-	    clip_to: "clipper";
-	    type: SWALLOW;
-	    description { state: "default" 0.0;
-	       rel1.offset: 1 1;
-	       rel2.offset: -2 -2;
-	    }
-	 }
-         part { name: "busy_clip";
-            type: RECT;
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               visible: 0;
-               color: 255 255 255 0;
-            }
-            description { state: "active" 0.0;
-               visible: 1;
-               color: 255 255 255 255;
-            }
-         }
-         part { name: "busy";
-            clip_to: "busy_clip";
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               fixed: 1 1;
-               min: 32 32;
-               aspect: 1.0 1.0;
-               align: 1.0 1.0;
-               aspect_preference: BOTH;
-               rel1 {
-                  relative: 0.9 0.9;
-                  offset:   -9 -9;
-               }
-               rel2 {
-                  relative: 0.9 0.9;
-                  offset:   -9 -9;
-               }
-               image {
-                  normal: "busy-9.png";
-                  tween:  "busy-1.png";
-                  tween:  "busy-2.png";
-                  tween:  "busy-3.png";
-                  tween:  "busy-4.png";
-                  tween:  "busy-5.png";
-                  tween:  "busy-6.png";
-                  tween:  "busy-7.png";
-                  tween:  "busy-8.png";
-               }
-            }
-         }
-         part { name: "conf_over";
-	    mouse_events:  0;
-	    description { state: "default" 0.0;
-	       rel1.offset: 0 0;
-	       rel2.offset: -1 -1;
-	       image {
-		  normal: "shelf_inset.png";
-		  border: 7 7 7 7;
-		  middle: 0;
-	       }
-	       fill.smooth : 0;
-	    }
-	 }
-	 part { name: "sb_vbar_clip_master";
-	    type: RECT;
-	    mouse_events: 0;
-	    description { state: "default" 0.0;
-	    }
-	    description { state: "hidden" 0.0;
-	       visible: 0;
-	       color: 255 255 255 0;
-	    }
-	 }
-	 part { name: "sb_vbar_clip";
-            clip_to: "sb_vbar_clip_master";
-	    type: RECT;
-	    mouse_events: 0;
-	    description { state: "default" 0.0;
-	    }
-	    description { state: "hidden" 0.0;
-	       visible: 0;
-	       color: 255 255 255 0;
-	    }
-	 }
-	 part { name: "sb_vbar";
-	    type: RECT;
-	    mouse_events: 0;
-	    description { state: "default" 0.0;
-	       fixed: 1 1;
-	       visible: 0;
-	       min: 17 17;
-	       align: 1.0 0.0;
-	       rel1 {
-		  relative: 1.0 0.0;
-		  offset:   -2 0;
-	       }
-	       rel2 {
-		  relative: 1.0 0.0;
-		  offset:   -2 -1;
-		  to_y:     "sb_hbar";
-	       }
-	    }
-	 }
-	 part { name: "sb_vbar_runner";
-	    clip_to: "sb_vbar_clip";
-	    mouse_events: 0;
-	    description { state: "default" 0.0;
-	       min: 3 3;
-	       max: 3 99999;
-	       rel1.to:       "sb_vbar";
-	       rel2.to:       "sb_vbar";
-	       image {
-		  normal: "sb_runnerv.png";
-		  border: 0 0 4 4;
-	       }
-	       fill.smooth: 0;
-	    }
-	 }
-	 part { name: "elm.dragable.vbar";
-	    clip_to: "sb_vbar_clip";
-	    mouse_events: 0;
-	    dragable {
-	       x: 0 0 0;
-	       y: 1 1 0;
-	       confine: "sb_vbar";
-	    }
-	    description { state: "default" 0.0;
-	       fixed: 1 1;
-	       min: 17 17;
-	       rel1 {
-		  relative: 0.5  0.5;
-		  offset:   0    0;
-		  to: "sb_vbar";
-	       }
-	       rel2 {
-		  relative: 0.5  0.5;
-		  offset:   0    0;
-		  to: "sb_vbar";
-	       }
-	       image {
-		  normal: "bt_sm_base2.png";
-		  border: 6 6 6 6;
-	       }
-               image.middle: SOLID;
-	    }
-	 }
-	 part { name: "sb_vbar_over1";
-	    clip_to: "sb_vbar_clip";
-	    mouse_events: 0;
-	    description { state: "default" 0.0;
-	       rel1.to: "elm.dragable.vbar";
-	       rel2.relative: 1.0 0.5;
-	       rel2.to: "elm.dragable.vbar";
-	       image {
-		  normal: "bt_sm_hilight.png";
-		  border: 6 6 6 0;
-	       }
-	    }
-	 }
-	 part { name: "sb_vbar_over2";
-	    clip_to: "sb_vbar_clip";
-	    mouse_events: 0;
-	    description { state: "default" 0.0;
-	       rel1.to: "elm.dragable.vbar";
-	       rel2.to: "elm.dragable.vbar";
-	       image {
-		  normal: "bt_sm_shine.png";
-		  border: 6 6 6 0;
-	       }
-	    }
-	 }
-
-	 part { name: "sb_hbar_clip_master";
-	    type: RECT;
-	    mouse_events: 0;
-	    description { state: "default" 0.0;
-	    }
-	    description { state: "hidden" 0.0;
-	       visible: 0;
-	       color: 255 255 255 0;
-	    }
-	 }
-	 part { name: "sb_hbar_clip";
-            clip_to: "sb_hbar_clip_master";
-	    type: RECT;
-	    mouse_events: 0;
-	    description { state: "default" 0.0;
-	    }
-	    description { state: "hidden" 0.0;
-	       visible: 0;
-	       color: 255 255 255 0;
-	    }
-	 }
-	 part { name: "sb_hbar";
-	    type: RECT;
-	    mouse_events: 0;
-	    description { state: "default" 0.0;
-	       fixed: 1 1;
-	       visible: 0;
-	       min: 17 17;
-	       align: 0.0 1.0;
-	       rel1 {
-		  relative: 0.0 1.0;
-		  offset:   0 -2;
-	       }
-	       rel2 {
-		  relative: 0.0 1.0;
-		  offset:   -1 -2;
-		  to_x:     "sb_vbar";
-	       }
-	    }
-	 }
-	 part { name: "sb_hbar_runner";
-	    clip_to: "sb_hbar_clip";
-	    mouse_events: 0;
-	    description { state: "default" 0.0;
-	       min: 3 3;
-	       max: 99999 3;
-	       rel1.to:       "sb_hbar";
-	       rel2.to:       "sb_hbar";
-	       image {
-		  normal: "sb_runnerh.png";
-		  border: 4 4 0 0;
-	       }
-	       fill.smooth: 0;
-	    }
-	 }
-	 part { name: "elm.dragable.hbar";
-	    clip_to: "sb_hbar_clip";
-	    mouse_events: 0;
-	    dragable {
-	       x: 1 1 0;
-	       y: 0 0 0;
-	       confine: "sb_hbar";
-	    }
-	    description { state: "default" 0.0;
-	       fixed: 1 1;
-	       min: 17 17;
-	       rel1 {
-		  relative: 0.5  0.5;
-		  offset:   0    0;
-		  to: "sb_hbar";
-	       }
-	       rel2 {
-		  relative: 0.5  0.5;
-		  offset:   0    0;
-		  to: "sb_hbar";
-	       }
-	       image {
-		  normal: "bt_sm_base2.png";
-		  border: 6 6 6 6;
-	       }
-               image.middle: SOLID;
-	    }
-	 }
-	 part { name: "sb_hbar_over1";
-	    clip_to: "sb_hbar_clip";
-	    mouse_events: 0;
-	    description { state: "default" 0.0;
-	       rel1.to: "elm.dragable.hbar";
-	       rel2.relative: 1.0 0.5;
-	       rel2.to: "elm.dragable.hbar";
-	       image {
-		  normal: "bt_sm_hilight.png";
-		  border: 6 6 6 0;
-	       }
-	    }
-	 }
-	 part { name: "sb_hbar_over2";
-	    clip_to: "sb_hbar_clip";
-	    mouse_events: 0;
-	    description { state: "default" 0.0;
-	       rel1.to: "elm.dragable.hbar";
-	       rel2.to: "elm.dragable.hbar";
-	       image {
-		  normal: "bt_sm_shine.png";
-		  border: 6 6 6 0;
-	       }
-	    }
-	 }
-      }
-      programs {
-	 program { name: "load";
-	    signal: "load";
-	    source: "";
-	    script {
-	       set_state(PART:"sb_hbar_clip", "hidden", 0.0);
-	       set_state(PART:"sb_vbar_clip", "hidden", 0.0);
-	       set_int(sbvis_h, 0);
-	       set_int(sbvis_v, 0);
-	       set_int(sbalways_v, 0);
-	       set_int(sbalways_h, 0);
-	       set_int(sbvis_timer, 0);
-	    }
-	 }
-
-	 program { name: "vbar_show";
-	    signal: "elm,action,show,vbar";
-	    source: "elm";
-            action:  STATE_SET "default" 0.0;
-            target: "sb_vbar_clip_master";
-	 }
-	 program { name: "vbar_hide";
-	    signal: "elm,action,hide,vbar";
-	    source: "elm";
-            action:  STATE_SET "hidden" 0.0;
-            target: "sb_vbar_clip_master";
-	 }
-	 program { name: "vbar_show_always";
-	    signal: "elm,action,show_always,vbar";
-	    source: "elm";
-            script {
-               new v;
-               v = get_int(sbvis_v);
-               v |= get_int(sbalways_v);
-               if (!v) {
-                  set_int(sbalways_v, 1);
-                  emit("do-show-vbar", "");
-                  set_int(sbvis_v, 1);
-               }
-            }
-	 }
-	 program { name: "vbar_show_notalways";
-	    signal: "elm,action,show_notalways,vbar";
-	    source: "elm";
-            script {
-               new v;
-               v = get_int(sbalways_v);
-               if (v) {
-                  set_int(sbalways_v, 0);
-                  v = get_int(sbvis_v);
-                  if (!v) {
-                     emit("do-hide-vbar", "");
-                     set_int(sbvis_v, 0);
-                  }
-               }
-            }
-	 }
-	 program { name: "sb_vbar_show";
-	    signal: "do-show-vbar";
-	    source: "";
-	    action:  STATE_SET "default" 0.0;
-	    transition: LINEAR 1.0;
-	    target: "sb_vbar_clip";
-	 }
-	 program { name: "sb_vbar_hide";
-	    signal: "do-hide-vbar";
-	    source: "";
-	    action:  STATE_SET "hidden" 0.0;
-	    transition: LINEAR 1.0;
-	    target: "sb_vbar_clip";
-	 }
-
-	 program { name: "hbar_show";
-	    signal: "elm,action,show,hbar";
-	    source: "elm";
-            action:  STATE_SET "default" 0.0;
-            target: "sb_hbar_clip_master";
-	 }
-	 program { name: "hbar_hide";
-	    signal: "elm,action,hide,hbar";
-	    source: "elm";
-            action:  STATE_SET "hidden" 0.0;
-            target: "sb_hbar_clip_master";
-	 }
-	 program { name: "hbar_show_always";
-	    signal: "elm,action,show_always,hbar";
-	    source: "elm";
-            script {
-               new v;
-               v = get_int(sbvis_h);
-               v |= get_int(sbalways_h);
-               if (!v) {
-                  set_int(sbalways_h, 1);
-                  emit("do-show-hbar", "");
-                  set_int(sbvis_h, 1);
-               }
-            }
-	 }
-	 program { name: "hbar_show_notalways";
-	    signal: "elm,action,show_notalways,hbar";
-	    source: "elm";
-            script {
-               new v;
-               v = get_int(sbalways_h);
-               if (v) {
-                  set_int(sbalways_h, 0);
-                  v = get_int(sbvis_h);
-                  if (!v) {
-                     emit("do-hide-hbar", "");
-                     set_int(sbvis_h, 0);
-                  }
-               }
-            }
-	 }
-	 program { name: "sb_hbar_show";
-	    signal: "do-show-hbar";
-	    source: "";
-	    action:  STATE_SET "default" 0.0;
-	    transition: LINEAR 1.0;
-	    target: "sb_hbar_clip";
-	 }
-	 program { name: "sb_hbar_hide";
-	    signal: "do-hide-hbar";
-	    source: "";
-	    action:  STATE_SET "hidden" 0.0;
-	    transition: LINEAR 1.0;
-	    target: "sb_hbar_clip";
-	 }
-
-	 program { name: "scroll";
-	    signal: "elm,action,scroll";
-	    source: "elm";
-	    script {
-	       new v;
-	       v = get_int(sbvis_v);
-               v |= get_int(sbalways_v);
-	       if (!v) {
-                  emit("do-show-vbar", "");
-                  set_int(sbvis_v, 1);
-	       }
-	       v = get_int(sbvis_h);
-               v |= get_int(sbalways_h);
-	       if (!v) {
-                  emit("do-show-hbar", "");
-                  set_int(sbvis_h, 1);
-	       }
-	       v = get_int(sbvis_timer);
-	       if (v > 0) cancel_timer(v);
-	       v = timer(2.0, "timer0", 0);
-	       set_int(sbvis_timer, v);
-	    }
-	 }
-         program { name: "go1";
-            signal: "elm,state,busy,start";
-            source: "elm";
-            action: STATE_SET "active" 0.0;
-            transition: SINUSOIDAL 1.0;
-            target:  "busy_clip";
-         }
-         program { name: "go2";
-            signal: "elm,state,busy,start";
-            source: "elm";
-            action: STATE_SET "default" 0.0;
-            transition: LINEAR 0.5;
-            target: "busy";
-            after:  "go2";
-         }
-         program { name: "stop1";
-            signal: "elm,state,busy,stop";
-            source: "elm";
-            action: STATE_SET "default" 0.0;
-            transition: SINUSOIDAL 1.0;
-            target: "busy_clip";
-            after: "stop2";
-         }
-         program { name: "stop2";
-            action: ACTION_STOP;
-            target: "go2";
-         }
-      }
-   }
 }
-
