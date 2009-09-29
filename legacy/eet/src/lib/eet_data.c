@@ -208,6 +208,12 @@ static int   eet_data_get_float(const Eet_Dictionary *ed, const void *src, const
 static void *eet_data_put_float(Eet_Dictionary *ed, const void *src, int *size_ret);
 static int   eet_data_get_double(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dest);
 static void *eet_data_put_double(Eet_Dictionary *ed, const void *src, int *size_ret);
+static int   eet_data_get_f32p32(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dest);
+static void *eet_data_put_f32p32(Eet_Dictionary *ed, const void *src, int *size_ret);
+static int   eet_data_get_f16p16(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dest);
+static void *eet_data_put_f16p16(Eet_Dictionary *ed, const void *src, int *size_ret);
+static int   eet_data_get_f8p24(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dest);
+static void *eet_data_put_f8p24(Eet_Dictionary *ed, const void *src, int *size_ret);
 static inline int   eet_data_get_string(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dest);
 static void *eet_data_put_string(Eet_Dictionary *ed, const void *src, int *size_ret);
 static int   eet_data_get_istring(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dest);
@@ -271,7 +277,10 @@ static const Eet_Data_Basic_Type_Codec eet_basic_codec[] =
      {sizeof(long long), "ulong_long", eet_data_get_long_long, eet_data_put_long_long},
      {sizeof(char *),    "string",     eet_data_get_string,    eet_data_put_string   },
      {sizeof(char *),    "inlined",    eet_data_get_istring,   eet_data_put_istring  },
-     {sizeof(void *),    "NULL",       eet_data_get_null,      eet_data_put_null     }
+     {sizeof(void *),    "NULL",       eet_data_get_null,      eet_data_put_null     },
+     {sizeof(Eina_F32p32),"f32p32",    eet_data_get_f32p32,    eet_data_put_f32p32   },
+     {sizeof(Eina_F16p16),"f16p16",    eet_data_get_f16p16,    eet_data_put_f16p16   },
+     {sizeof(Eina_F8p24),"f8p24",      eet_data_get_f8p24,     eet_data_put_f8p24    }
 };
 
 static const Eet_Data_Group_Type_Codec eet_group_codec[] =
@@ -700,6 +709,85 @@ eet_data_put_double(Eet_Dictionary *ed, const void *src, int *size_ret)
    return eet_data_put_int(ed, &index, size_ret);
 }
 
+static int
+eet_data_get_f32p32(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dst)
+{
+   Eina_F32p32 *fp;
+   int index;
+
+   fp = (Eina_F32p32*) dst;
+
+   if (!ed) return -1;
+
+   if (eet_data_get_int(ed, src, src_end, &index) < 0) return -1;
+
+   if (!eet_dictionary_string_get_fp(ed, index, fp))
+     return -1;
+   return 1;
+}
+
+static void *
+eet_data_put_f32p32(Eet_Dictionary *ed, const void *src, int *size_ret)
+{
+   char  buf[128];
+   int   index;
+
+   if (!ed) return NULL;
+
+   eina_convert_fptoa((Eina_F32p32)(*(Eina_F32p32 *)src), buf);
+
+   index = eet_dictionary_string_add(ed, buf);
+   if (index == -1) return NULL;
+
+   return eet_data_put_int(ed, &index, size_ret);
+}
+
+static int
+eet_data_get_f16p16(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dst)
+{
+   Eina_F32p32 tmp;
+   Eina_F16p16 *fp;
+
+   fp = (Eina_F16p16*) dst;
+
+   if (eet_data_get_f32p32(ed, src, src_end, &tmp) < 0) return -1;
+
+   *fp = eina_f32p32_to_f16p16(tmp);
+   return 1;
+}
+
+static void *
+eet_data_put_f16p16(Eet_Dictionary *ed, const void *src, int *size_ret)
+{
+   Eina_F32p32 tmp;
+
+   tmp = eina_f16p16_to_f32p32((Eina_F16p16)(*(Eina_F16p16 *)src));
+   return eet_data_put_f32p32(ed, &tmp, size_ret);
+}
+
+static int
+eet_data_get_f8p24(const Eet_Dictionary *ed, const void *src, const void *src_end, void *dst)
+{
+   Eina_F32p32 tmp;
+   Eina_F8p24 *fp;
+
+   fp = (Eina_F8p24*) dst;
+
+   if (eet_data_get_f32p32(ed, src, src_end, &tmp) < 0) return -1;
+
+   *fp = eina_f32p32_to_f8p24(tmp);
+   return 1;
+}
+
+static void *
+eet_data_put_f8p24(Eet_Dictionary *ed, const void *src, int *size_ret)
+{
+   Eina_F32p32 tmp;
+
+   tmp = eina_f8p24_to_f32p32((Eina_F8p24)(*(Eina_F8p24 *)src));
+   return eet_data_put_f32p32(ed, &tmp, size_ret);
+}
+
 static inline int
 eet_data_get_type(const Eet_Dictionary *ed, int type, const void *src, const void *src_end, void *dest)
 {
@@ -716,6 +804,39 @@ eet_data_put_type(Eet_Dictionary *ed, int type, const void *src, int *size_ret)
 
    ret = eet_basic_codec[type - 1].put(ed, src, size_ret);
    return ret;
+}
+
+static inline Eina_Bool
+eet_data_type_match(int type1, int type2)
+{
+   if (type1 == type2) return EINA_TRUE;
+
+   /* Note: All floating point type are equivalent and could be read
+      without problem by any other floating point getter. */
+   switch (type1)
+     {
+      case EET_T_FLOAT:
+      case EET_T_DOUBLE:
+      case EET_T_F32P32:
+      case EET_T_F16P16:
+      case EET_T_F8P24:
+	 switch (type2)
+	   {
+	    case EET_T_FLOAT:
+	    case EET_T_DOUBLE:
+	    case EET_T_F32P32:
+	    case EET_T_F16P16:
+	    case EET_T_F8P24:
+	       return EINA_TRUE;
+	    default:
+	       break;
+	   }
+	 break;
+      default:
+	 break;
+     }
+
+   return EINA_FALSE;
 }
 
 /* chunk format...
@@ -802,6 +923,13 @@ eet_data_chunk_new(void *data, int size, const char *name, int type, int group_t
    if (!name) return NULL;
    chnk = calloc(1, sizeof(Eet_Data_Chunk));
    if (!chnk) return NULL;
+
+   /* Note: Another security, so older eet library could read file
+    saved with fixed point value. */
+   if (type == EET_T_F32P32
+       || type == EET_T_F16P16
+       || type == EET_T_F8P24)
+     type = EET_T_DOUBLE;
 
    chnk->name = strdup(name);
    chnk->len = strlen(name) + 1;
@@ -2280,7 +2408,7 @@ _eet_data_descriptor_decode(Eet_Free_Context *context,
 		  else
 		    {
 		       if (IS_SIMPLE_TYPE(echnk.type) &&
-			   (echnk.type == ede->type))
+			   eet_data_type_match(echnk.type, ede->type))
 			 type = echnk.type;
 		       else if ((echnk.group_type > EET_G_UNKNOWN) &&
 				(echnk.group_type < EET_G_LAST) &&

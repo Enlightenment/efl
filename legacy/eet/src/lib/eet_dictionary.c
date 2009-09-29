@@ -127,8 +127,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed, const char *string)
 
    current = ed->all + ed->count;
 
-   current->flags.converted = 0;
-   current->flags.is_float = 0;
+   current->type = EET_D_NOT_CONVERTED;
 
    current->hash = hash;
 
@@ -201,7 +200,7 @@ eet_dictionary_string_get_char(const Eet_Dictionary *ed, int index)
    return NULL;
 }
 
-static inline int
+static inline Eina_Bool
 _eet_dictionary_string_get_me_cache(const char *s, int len, int *mantisse, int *exponent)
 {
    if ((len == 6) && (s[0] == '0') && (s[1] == 'x') && (s[3] == 'p'))
@@ -209,12 +208,12 @@ _eet_dictionary_string_get_me_cache(const char *s, int len, int *mantisse, int *
         *mantisse = (s[2] >= 'a') ? (s[2] - 'a' + 10) : (s[2] - '0');
         *exponent = (s[5] - '0');
 
-        return -1;
+        return EINA_TRUE;
      }
-   return 0;
+   return EINA_FALSE;
 }
 
-static inline int
+static inline Eina_Bool
 _eet_dictionary_string_get_float_cache(const char *s, int len, float *result)
 {
    int  mantisse;
@@ -225,12 +224,12 @@ _eet_dictionary_string_get_float_cache(const char *s, int len, float *result)
         if (s[4] == '+')        *result = (float) (mantisse << exponent);
         else                    *result = (float) mantisse / (float) (1 << exponent);
 
-        return -1;
+        return EINA_TRUE;
      }
-   return 0;
+   return EINA_FALSE;
 }
 
-static inline int
+static inline Eina_Bool
 _eet_dictionary_string_get_double_cache(const char *s, int len, double *result)
 {
    int  mantisse;
@@ -241,79 +240,100 @@ _eet_dictionary_string_get_double_cache(const char *s, int len, double *result)
         if (s[4] == '+')        *result = (double) (mantisse << exponent);
         else                    *result = (double) mantisse / (float) (1 << exponent);
 
-        return -1;
+        return EINA_TRUE;
      }
-   return 0;
+   return EINA_FALSE;
 }
 
-int
+static inline Eina_Bool
+_eet_dictionary_test(const Eet_Dictionary *ed, int index, void *result)
+{
+   if (!result) return EINA_FALSE;
+   if (!ed) return EINA_FALSE;
+   if (index < 0) return EINA_FALSE;
+   if (!(index < ed->count)) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+Eina_Bool
 eet_dictionary_string_get_float(const Eet_Dictionary *ed, int index, float *result)
 {
-   if (!result) return 0;
-   if (!ed) return 0;
-   if (index < 0) return 0;
-   if (index < ed->count)
+   if (!_eet_dictionary_test(ed, index, result)) return EINA_FALSE;
+
+   if (ed->all[index].type != EET_D_FLOAT)
      {
-        if (!(ed->all[index].flags.converted
-              && ed->all[index].flags.is_float))
-          {
-             const char      *str;
+	const char      *str;
 
-             str = ed->all[index].str ? ed->all[index].str : ed->all[index].mmap;
+	str = ed->all[index].str ? ed->all[index].str : ed->all[index].mmap;
 
-             if (!_eet_dictionary_string_get_float_cache(str, ed->all[index].len, &ed->all[index].convert.f))
-               {
-                  long long    mantisse = 0;
-                  long         exponent = 0;
+	if (!_eet_dictionary_string_get_float_cache(str, ed->all[index].len, &ed->all[index].convert.f))
+	  {
+	     long long    mantisse = 0;
+	     long         exponent = 0;
 
-                  if (eina_convert_atod(str, ed->all[index].len, &mantisse, &exponent) == EINA_FALSE)
-                    return 0;
+	     if (eina_convert_atod(str, ed->all[index].len, &mantisse, &exponent) == EINA_FALSE)
+	       return EINA_FALSE;
 
-                  ed->all[index].convert.f = ldexpf((float) mantisse, exponent);
-               }
+	     ed->all[index].convert.f = ldexpf((float) mantisse, exponent);
+	  }
 
-             ed->all[index].flags.is_float = 1;
-          }
-
-        *result = ed->all[index].convert.f;
-        return -1;
+	ed->all[index].type = EET_D_FLOAT;
      }
-   return 0;
+
+   *result = ed->all[index].convert.f;
+   return EINA_TRUE;
 }
 
-int
+Eina_Bool
 eet_dictionary_string_get_double(const Eet_Dictionary *ed, int index, double *result)
 {
-   if (!result) return 0;
-   if (!ed) return 0;
-   if (index < 0) return 0;
-   if (index < ed->count)
+   if (!_eet_dictionary_test(ed, index, result)) return EINA_FALSE;
+
+   if (ed->all[index].type != EET_D_DOUBLE)
      {
-        if (!(ed->all[index].flags.converted
-              && !ed->all[index].flags.is_float))
-          {
-             const char      *str;
+	const char      *str;
 
-             str = ed->all[index].str ? ed->all[index].str : ed->all[index].mmap;
+	str = ed->all[index].str ? ed->all[index].str : ed->all[index].mmap;
 
-             if (!_eet_dictionary_string_get_double_cache(str, ed->all[index].len, &ed->all[index].convert.d))
-               {
-                  long long    mantisse = 0;
-                  long         exponent = 0;
+	if (!_eet_dictionary_string_get_double_cache(str, ed->all[index].len, &ed->all[index].convert.d))
+	  {
+	     long long    mantisse = 0;
+	     long         exponent = 0;
 
-                  if (eina_convert_atod(str, ed->all[index].len, &mantisse, &exponent) == EINA_FALSE)
-                    return 0;
+	     if (eina_convert_atod(str, ed->all[index].len, &mantisse, &exponent) == EINA_FALSE)
+	       return EINA_FALSE;
 
-                  ed->all[index].convert.d = ldexp((double) mantisse, exponent);
-               }
+	     ed->all[index].convert.d = ldexp((double) mantisse, exponent);
+	  }
 
-             ed->all[index].flags.is_float = 0;
-          }
-
-        *result = ed->all[index].convert.d;
-        return -1;
+	ed->all[index].type = EET_D_DOUBLE;
      }
-   return 0;
+
+   *result = ed->all[index].convert.d;
+   return EINA_TRUE;
+}
+
+Eina_Bool
+eet_dictionary_string_get_fp(const Eet_Dictionary *ed, int index, Eina_F32p32 *result)
+{
+   if (!_eet_dictionary_test(ed, index, result)) return EINA_FALSE;
+
+   if (ed->all[index].type != EET_D_FIXED_POINT)
+     {
+	const char *str;
+	Eina_F32p32 fp;
+
+	str = ed->all[index].str ? ed->all[index].str : ed->all[index].mmap;
+
+	if (!eina_convert_atofp(str,  ed->all[index].len, &fp))
+	  return EINA_FALSE;
+
+	ed->all[index].convert.fp = fp;
+	ed->all[index].type = EET_D_FIXED_POINT;
+     }
+
+   *result = ed->all[index].convert.fp;
+   return EINA_TRUE;
 }
 
 EAPI int

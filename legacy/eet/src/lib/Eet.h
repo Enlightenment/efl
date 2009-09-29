@@ -59,7 +59,10 @@ extern "C" {
 #define EET_T_STRING            11 /**< Data type: char * */
 #define EET_T_INLINED_STRING    12 /**< Data type: char * (but compressed inside the resulting eet) */
 #define EET_T_NULL              13 /**< Data type: (void *) (only use it if you know why) */
-#define EET_T_LAST              14 /**< Last data type */
+#define EET_T_F32P32		14 /**< Data type:  */
+#define EET_T_F16P16		15 /**< Data type:  */
+#define EET_T_F8P24		16 /**< Data type:  */
+#define EET_T_LAST              17 /**< Last data type */
 
 #define EET_G_UNKNOWN    100 /**< Unknown group data encoding type */
 #define EET_G_ARRAY      101 /**< Fixed size array group type */

@@ -230,3 +230,11 @@
 2009-09-15  Cedric BAIL
 
 	* Remove apparently useless eet_freeleak_* from eet_data.
+
+2009-09-29  Cedric BAIL
+
+	* Add Fixed Point support and make it possible to switch from float
+	and double to any fixed point variant supported by eina.
+
+	Note: File saved with fixed point could be read by older version of
+	eet library with EET_T_DOUBLE type.
