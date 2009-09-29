@@ -264,6 +264,7 @@ static void _elm_rescale(void);
 char *_elm_appname = NULL;
 Elm_Config *_elm_config = NULL;
 const char *_elm_data_dir = NULL;
+const char *_elm_lib_dir = NULL;
 int _elm_log_dom = -1;
 
 static Ecore_Event_Handler *_elm_exit_handler = NULL;
@@ -442,6 +443,7 @@ elm_quicklaunch_init(int argc, char **argv)
    evas_init();
    edje_init();
    ecore_evas_init(); // FIXME: check errors
+   _elm_module_init();
    
    _elm_exit_handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, _elm_signal_exit, NULL);
 
@@ -461,8 +463,22 @@ elm_quicklaunch_init(int argc, char **argv)
 	     _elm_data_dir = eina_stringshare_add(buf);
 	  }
      }
+   if (!_elm_lib_dir)
+     {
+	s = getenv("ELM_LIB_DIR");
+	_elm_lib_dir = eina_stringshare_add(s);
+     }
+   if (!_elm_lib_dir)
+     {
+	s = getenv("ELM_PREFIX");
+	if (s)
+	  {
+	     snprintf(buf, sizeof(buf), "%s/lib", s);
+	     _elm_lib_dir = eina_stringshare_add(buf);
+	  }
+     }
 #ifdef HAVE_DLADDR
-   if (!_elm_data_dir)
+   if ((!_elm_data_dir) || (!_elm_lib_dir))
      {
 	Dl_info elementary_dl;
 	// libelementary.so/../../share/elementary/
@@ -473,27 +489,35 @@ elm_quicklaunch_init(int argc, char **argv)
 	     dir = ecore_file_dir_get(elementary_dl.dli_fname);
 	     if (dir)
 	       {
-		  dir2 = ecore_file_dir_get(dir);
-		  if (dir2)
-		    {
-		       snprintf(buf, sizeof(buf), "%s/share/elementary", dir2);
-		       if (ecore_file_is_dir(buf))
-			 _elm_data_dir = eina_stringshare_add(buf);
-		       free(dir2);
-		    }
+                  if (!_elm_lib_dir)
+                    {
+                       if (ecore_file_is_dir(dir))
+                         _elm_lib_dir = eina_stringshare_add(dir);
+                    }
+                  if (!_elm_data_dir)
+                    {
+                       dir2 = ecore_file_dir_get(dir);
+                       if (dir2)
+                         {
+                            snprintf(buf, sizeof(buf), "%s/share/elementary", dir2);
+                            if (ecore_file_is_dir(buf))
+                              _elm_data_dir = eina_stringshare_add(buf);
+                            free(dir2);
+                         }
+                    }
 		  free(dir);
 	       }
 	  }
      }
 #endif
    if (!_elm_data_dir)
-     {
-	_elm_data_dir = eina_stringshare_add(PACKAGE_DATA_DIR);
-     }
+     _elm_data_dir = eina_stringshare_add(PACKAGE_DATA_DIR);
    if (!_elm_data_dir)
-     {
-	_elm_data_dir = eina_stringshare_add("/");
-     }
+     _elm_data_dir = eina_stringshare_add("/");
+   if (!_elm_lib_dir)
+     _elm_lib_dir = eina_stringshare_add(PACKAGE_LIB_DIR);
+   if (!_elm_lib_dir)
+     _elm_lib_dir = eina_stringshare_add("/");
 
    // FIXME: actually load config
    _elm_config = ELM_NEW(Elm_Config);
@@ -724,6 +748,7 @@ elm_quicklaunch_shutdown(void)
    free(_elm_appname);
    _elm_unneed_efreet();
    _elm_unneed_e_dbus();
+   _elm_module_shutdown();
    ecore_evas_shutdown();
    edje_shutdown();
    evas_shutdown();

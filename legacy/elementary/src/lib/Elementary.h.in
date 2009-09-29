@@ -908,7 +908,6 @@ extern "C" {
 ////////////////////////////////////////////////////////////////////////////
 //
 //// (bugs - high priority)
-// * scale change for hover doesnt seem to do new size alloc nicely
 // * left/right arrow broken with password mode for entry + utf8 chars...
 // * bubble doesnt handle child size changes right
 // * table doesnt do homogenous properly
@@ -920,11 +919,9 @@ extern "C" {
 // * when entries are in a scroller and change size, the scroller shows scrollbars. fix. same for selecting. for 1 line entries in a scroller should only have scroll arrow indicators.
 //
 //// (more widgets/features - medium priority)
-// * multiple genlist item styles (multi-label, 1 icon + 2 line label, header etc.)
 // * carousel selector widget
 // * auto-size label/text that adapts text size to its allocated region
 // * [ scrollable dropdown combo box ]
-// * [ notepad widget ]
 // * [ toggle with 2x labelled button for 2 states ]
 // * [ poker spinner with numbers + labels ]
 // * [ wrapping text button bar ]
@@ -934,8 +931,6 @@ extern "C" {
 // * "dialogbutton" widget (bigger button for bottom of wins)
 // * dialog window widget
 // * phone-number widget (hilight country dial prefixes, add flags, photos of contacts that match etc.)
-// * imageview widget (for large not iconic images)
-// * tiled image + zoom widget (tiled map viewer)
 // * dialpad widget - need one with a phone dialpad
 // * file selector widget - needs look and functionality improvement :)
 // * generic "tacho" widget (set min/max labels - and up to 3 intermediate labels etc.)

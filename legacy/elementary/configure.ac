@@ -233,6 +233,10 @@ AC_SUBST(requirement_elm)
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
+MODULE_ARCH="$host_os-$host_cpu-$release"
+AC_SUBST(MODULE_ARCH)
+AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
+
 AC_OUTPUT([
 Makefile
 elementary.pc

@@ -126,8 +126,6 @@ td.nav_active {
 #header h1 {
 	width: 63px;
 	height: 63px;
-	background-image: url(e.png);
-	background-repeat: no-repeat;
 	position: absolute;
 	margin: 0px;
 }

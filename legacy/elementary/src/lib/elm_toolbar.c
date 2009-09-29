@@ -228,7 +228,7 @@ elm_toolbar_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, 0);
 
    wd->scr = elm_smart_scroller_add(e);
-   elm_scroller_bounce_set(wd->scr, 1, 0);
+   elm_smart_scroller_bounce_allow_set(wd->scr, 1, 0);
    elm_smart_scroller_theme_set(wd->scr, "toolbar", "base", "default");
    elm_widget_resize_object_set(obj, wd->scr);
    elm_smart_scroller_policy_set(wd->scr,
