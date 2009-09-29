@@ -129,8 +129,6 @@ test_anchorblock(void *data, Evas_Object *obj, void *event_info)
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_scroller_content_set(sc, bx);
-   evas_object_show(bx);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
@@ -219,6 +217,9 @@ test_anchorblock(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, bb);
    evas_object_show(bb);
 
+   elm_scroller_content_set(sc, bx);
+   evas_object_show(bx);
+   
    evas_object_show(sc);
 
    evas_object_resize(win, 320, 300);
