@@ -877,7 +877,7 @@ ECORE_CHECK_MODULE([SDL], [${want_ecore_sdl}], [${ecore_sdl_deps}],
 ECORE_CHECK_MODULE([FB], [${want_ecore_fb}], [$have_fb])
 
 if test "x${have_ecore_fb}" = "xyes" ; then
-   ECORE_CHECK_TSLIB([${want_tslib}], [have_tslib="no"], [have_tslib="no"])
+   ECORE_CHECK_TSLIB([${want_tslib}], [have_tslib="yes"], [have_tslib="no"])
 fi
 
 # ecore_directfb
