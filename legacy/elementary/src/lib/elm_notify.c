@@ -75,7 +75,6 @@ static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Object *sub = event_info;
 
    evas_object_event_callback_del(wd->content, 
                                   EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
