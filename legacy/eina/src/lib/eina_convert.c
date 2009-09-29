@@ -32,7 +32,7 @@
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
 #include "eina_convert.h"
-#include "eina_f32p32.h"
+#include "eina_fp.h"
 
 /*============================================================================*
  *                                  Local                                     *

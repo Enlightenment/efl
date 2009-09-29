@@ -22,7 +22,7 @@
 #include "eina_types.h"
 #include "eina_error.h"
 
-#include "eina_f32p32.h"
+#include "eina_fp.h"
 
 /**
  * @addtogroup Eina_Tools_Group Tools
