@@ -156,23 +156,30 @@ _sizing_eval(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    Evas_Coord vw = 0, vh = 0;
+   Evas_Coord w, h;
 
    if (!wd) return;
    edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), 
                              &minw, &minh);
-   evas_object_resize(wd->scr, 500, 500);
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   if(w<minw) w = minw;
+   if(h<minh) h = minh;
+
+   evas_object_resize(wd->scr, w, h);
+
    evas_object_size_hint_min_get(wd->bx, &minw, &minh);
+   if(w>minw) minw = w;
    evas_object_resize(wd->bx, minw, minh);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
    if (wd->scrollable)
      {
-	minw = 500 - vw;
-	minh = minh + (500 - vh);
+	minw = w - vw;
+	minh = minh + (h - vh);
      }
    else
      {
-	minw = minw + (500 - vw);
-	minh = minh + (500 - vh);
+	minw = minw + (w - vw);
+	minh = minh + (h - vh);
      }
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
