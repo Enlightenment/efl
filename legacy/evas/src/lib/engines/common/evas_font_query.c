@@ -246,9 +246,8 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *in_text, int pos, 
 #ifdef INTERNATIONAL_SUPPORT
    int len = 0;
    EvasIntlParType direction = FRIBIDI_TYPE_ON;
-   EvasIntlLevel *level_list;
-   EvasIntlStrIndex *logical_to_visual;
-
+   EvasIntlLevel *level_list = NULL;
+   EvasIntlStrIndex *logical_to_visual = NULL;
    char *visual_text = evas_intl_utf8_to_visual(in_text, &len, &direction, &logical_to_visual, NULL, &level_list);
    text = (visual_text) ? visual_text : in_text;
 #endif
@@ -385,9 +384,8 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *in_text, int x, in
 #ifdef INTERNATIONAL_SUPPORT
    int len = 0;
    EvasIntlParType direction = FRIBIDI_TYPE_ON;
-   EvasIntlLevel *level_list;
-   EvasIntlStrIndex *visual_to_logical;
-
+   EvasIntlLevel *level_list = NULL;
+   EvasIntlStrIndex *visual_to_logical = NULL;
    char *visual_text = evas_intl_utf8_to_visual(in_text, &len, &direction, NULL, &visual_to_logical, &level_list);
    text = (visual_text) ? visual_text : in_text;
 #endif
@@ -472,14 +470,14 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *in_text, int x, in
 		int i;
 		int logical_chr;
 		int position = evas_intl_position_visual_to_logical(visual_to_logical, char_index);
-
 		 
 		/* ensure even if the list won't run */
 		pchr = 0;					
-		for (logical_chr = 0, i = 0; i <= position; i++) {
-             	   pchr = logical_chr;
-             	   evas_common_font_utf8_get_next((unsigned char *)in_text, &logical_chr);
-                }
+		for (logical_chr = 0, i = 0; i <= position; i++)
+                  {
+                     pchr = logical_chr;
+                     evas_common_font_utf8_get_next((unsigned char *)in_text, &logical_chr);
+                  }
              }
 #endif
 	     ret_val = pchr;
@@ -578,6 +576,7 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const char *text, int x, in
      }
    return -1;
 }
+
 #if 0
 /* last char pos of text at xy pos */
 EAPI int
@@ -598,9 +597,8 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const char *in_text, int x,
 #ifdef INTERNATIONAL_SUPPORT
    int len = 0;
    EvasIntlParType direction = FRIBIDI_TYPE_ON;
-   EvasIntlLevel *level_list;
-   EvasIntlStrIndex *visual_to_logical;
-
+   EvasIntlLevel *level_list = NULL;
+   EvasIntlStrIndex *visual_to_logical = NULL;
    char *visual_text = evas_intl_utf8_to_visual(in_text, &len, &direction, NULL, &visual_to_logical, &level_list);
    text = (visual_text) ? visual_text : in_text;
 #endif
@@ -683,7 +681,7 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const char *in_text, int x,
 		 */
 		int i;
 		int logical_chr;
-		 
+                
 		/* ensure even if the list won't run */
 		pchr = 0;					
 		for (logical_chr = 0, i = 0; i <= char_index; i++) {
