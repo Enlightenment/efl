@@ -989,6 +989,7 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
  * greater than 0. Other values will have undefined behavior.
  *
  * @param obj The photocam object
+ * @param zoom The zoom level to set
  *
  * @ingroup Photocam
  */
