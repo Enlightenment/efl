@@ -2874,7 +2874,7 @@ eet_data_get_unknown(Eet_Free_Context *context, const Eet_Dictionary *ed, Eet_Da
 	  {
 	     eet_data_dump_simple_type(type, echnk->name, data, level, dumpfunc, dumpdata);
 	  }
-	else if (type == EET_T_STRING)
+	else if (edd && type == EET_T_STRING)
 	  {
 	     char **str;
 
@@ -2893,7 +2893,7 @@ eet_data_get_unknown(Eet_Free_Context *context, const Eet_Dictionary *ed, Eet_Da
 		    }
 	       }
 	  }
-	else if (type == EET_T_INLINED_STRING)
+	else if (edd && type == EET_T_INLINED_STRING)
 	  {
 	     char **str;
 

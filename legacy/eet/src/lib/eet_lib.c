@@ -1348,6 +1348,9 @@ eet_open(const char *file, Eet_File_Mode mode)
     /* try open the file based on mode */
    if ((mode == EET_FILE_MODE_READ) || (mode == EET_FILE_MODE_READ_WRITE))
      {
+	/* Prevent garbage in futur comparison. */
+	file_stat.st_mtime = 0;
+
 	fp = fopen(file, "rb");
 	if (!fp) goto on_error;
 	if (fstat(fileno(fp), &file_stat))
