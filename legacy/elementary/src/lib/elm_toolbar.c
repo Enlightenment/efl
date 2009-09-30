@@ -403,3 +403,13 @@ elm_toolbar_scrollable_set(Evas_Object *obj, Eina_Bool scrollable)
    wd->scrollable = scrollable;
    _sizing_eval(obj);
 }
+
+EAPI void
+elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return;
+   _els_smart_box_homogenous_set(wd->bx, homogenous);
+}
+
