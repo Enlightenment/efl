@@ -1,7 +1,3 @@
-/* Authors:
- *	Tom Hacohen (tom@stsob.com)
- */
-
 #include "../evas_intl_utils.h"
 
 #ifdef ARABIC_SUPPORT
@@ -118,7 +114,7 @@ evas_intl_arabic_to_context(FriBidiChar *text)
 
    /* check for empty string */
    if (!*text)
-     return;
+     return 0;
 
    len = _evas_intl_arabic_text_to_isolated(text);
    /*FIXME: make it skip vowels */

@@ -122,6 +122,8 @@ static int eng_font_cache_get(void *data);
 static void eng_font_hinting_set(void *data, void *font, int hinting);
 static int eng_font_hinting_can_hint(void *data, int hinting);
 
+static int eng_font_last_up_to_pos(void *data __UNUSED__, void *font, const char *text, int x, int y);
+
 typedef struct _Render_Engine Render_Engine;
 
 struct _Render_Engine
@@ -246,7 +248,9 @@ static Evas_Func eng_func =
      eng_font_hinting_can_hint,
      
      eng_image_scale_hint_set,
-     eng_image_scale_hint_get
+     eng_image_scale_hint_get,
+     /* more font draw functions */
+     eng_font_last_up_to_pos
 };
 
 static void *
@@ -1478,6 +1482,12 @@ eng_font_hinting_can_hint(void *data, int hinting)
    
    /* FIXME, use cairo font subsystem */
    re = (Render_Engine *)data;
+}
+
+static int
+eng_font_last_up_to_pos(void *data __UNUSED__, void *font, const char *text, int x, int y)
+{
+   return evas_common_font_query_last_up_to_pos(font, text, x, y);
 }
 
 static Eina_Bool
