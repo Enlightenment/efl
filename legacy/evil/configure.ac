@@ -95,7 +95,7 @@ case "$host_os" in
   *)
     have_wince="no"
     win32_cxxflags="-fno-rtti -fno-exceptions"
-    win32_cppflags="${win32_cppflags} -D_WIN32_WINNT=0x0500 -DSECURITY_WIN32"
+    win32_cppflags="${win32_cppflags} -D_WIN32_WINNT=0x0501 -DSECURITY_WIN32"
     ;;
 esac
 AC_SUBST(win32_cppflags)
