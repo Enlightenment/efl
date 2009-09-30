@@ -342,19 +342,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\eina_f8p24.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\include\eina_f16p16.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\include\eina_f32p32.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\include\eina_file.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\include\eina_fp.h"
 				>
 			</File>
 			<File

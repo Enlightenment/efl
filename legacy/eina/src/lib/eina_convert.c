@@ -25,6 +25,10 @@
 #include <string.h>
 #include <stdio.h>
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_log.h"
@@ -601,7 +605,7 @@ EAPI int
 eina_convert_fptoa(Eina_F32p32 fp, char *des)
 {
    int length = 0;
-   int p = 0;;
+   int p = 0;
    int i;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(des, EINA_FALSE);
