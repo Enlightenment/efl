@@ -90,6 +90,7 @@ ecore_init(void)
 	_ecore_signal_init();
 	_ecore_exe_init();
 	_ecore_thread_init();
+	_ecore_glib_init();
 	_ecore_loop_time = ecore_time_get();
      }
 
@@ -115,6 +116,7 @@ ecore_shutdown(void)
    if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
    _ecore_poller_shutdown();
    _ecore_animator_shutdown();
+   _ecore_glib_shutdown();
    _ecore_thread_shutdown();
    _ecore_exe_shutdown();
    _ecore_idle_enterer_shutdown();

@@ -85,6 +85,7 @@ want_signature="no"
 want_poll="yes"
 want_inotify="no"
 want_tslib="no"
+want_glib="no"
 
 # core modules
 want_ecore_job="yes"
@@ -134,6 +135,7 @@ case "$host_os" in
       ;;
    mingw*)
       want_curl="yes"
+      want_glib="auto"
       want_ecore_imf="yes"
       want_ecore_win32="yes"
       want_ecore_evas_software_gdi="yes"
@@ -145,6 +147,7 @@ case "$host_os" in
       ;;
    darwin*)
       want_curl="yes"
+      want_glib="auto"
       want_gnutls="auto"
       want_openssl="auto"
       want_ecore_con="yes"
@@ -157,6 +160,7 @@ case "$host_os" in
       ;;
    *)
       want_curl="yes"
+      want_glib="auto"
       want_abstract_sockets="yes"
       want_gnutls="auto"
       want_openssl="auto"
@@ -345,6 +349,23 @@ requirements_ecore_sdl="ecore eina-0 ${requirements_ecore_sdl}"
 requirements_ecore_x="ecore eina-0 ${requirements_ecore_x}"
 requirements_ecore_win32="ecore eina-0 ${requirements_ecore_win32}"
 requirements_ecore_wince="ecore eina-0 ${requirements_ecore_wince}"
+
+
+# glib support (main loop integration)
+AC_ARG_ENABLE([glib],
+   [AC_HELP_STRING([--disable-glib], [enable glib support. @<:@default=detect@:>@])],
+   [want_glib=$enableval], [])
+
+if test "x$want_glib" != "xno"; then
+   PKG_CHECK_MODULES([GLIB], [glib-2.0], [have_glib="yes"], [have_glib="no"])
+else
+   have_glib="no"
+fi
+if test "x$want_glib" = "xyes" -a "x$have_glib" = "xno"; then
+   AC_MSG_ERROR([GLib support requested, but no GLib found by pkg-config.])
+elif test "x$have_glib" = "xyes"; then
+   AC_DEFINE(HAVE_GLIB, [1], [Have GLib])
+fi
 
 
 # iconv library (ecore_txt)
@@ -1120,6 +1141,7 @@ echo
 echo " Core:"
 echo
 echo "  Ecore........................: always"
+echo "    GLib support...............: $have_glib"
 echo "  Ecore_Job....................: $have_ecore_job"
 echo "  Ecore_Txt....................: $have_ecore_txt"
 echo "  Ecore_Con....................: $have_ecore_con"
