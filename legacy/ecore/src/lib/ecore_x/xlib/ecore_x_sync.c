@@ -52,3 +52,17 @@ ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm)
 {
    return XSyncDestroyAlarm(_ecore_x_disp, alarm);
 }
+
+EAPI int
+ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter, unsigned int *val)
+{
+  XSyncValue value;
+
+  if (XSyncQueryCounter(_ecore_x_disp, counter, &value))
+    {
+      *val = (unsigned int) XSyncValueLow32(value);
+      return 1;
+    }
+
+  return 0;
+}

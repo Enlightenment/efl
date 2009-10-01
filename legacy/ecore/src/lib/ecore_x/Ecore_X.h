@@ -1636,6 +1636,7 @@ EAPI int              ecore_x_xregion_rect_contain(Ecore_X_XRegion *region, Ecor
 /* ecore_x_sync.c */
 EAPI Ecore_X_Sync_Alarm ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter);
 EAPI int                ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm);
+EAPI int                ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter, unsigned int *val);
 
 /* ecore_x_randr.c */
 typedef struct _Ecore_X_Screen_Size Ecore_X_Screen_Size;
