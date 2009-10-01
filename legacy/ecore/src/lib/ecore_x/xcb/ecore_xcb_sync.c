@@ -135,3 +135,25 @@ ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm)
    return 0;
 #endif /* ECORE_XCB_SYNC */
 }
+
+/* FIXME: round trip */
+
+EAPI int
+ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter, unsigned int *val)
+{
+#ifdef ECORE_XCB_SYNC
+  xcb_sync_query_counter_cookie_t cookie;
+  xcb_sync_query_counter_reply_t *reply;
+
+  cookie = xcb_sync_query_counter_unchecked(_ecore_xcb_conn, counter);
+  reply = xcb_sync_query_counter_reply(_ecore_xcb_conn, cookie, NULL);
+  if (reply)
+    {
+       *val = (unsigned int)reply->counter_value.lo;
+       free(reply);
+       return 1;
+    }
+#endif /* ECORE_XCB_SYNC */
+
+  return 0;
+}
