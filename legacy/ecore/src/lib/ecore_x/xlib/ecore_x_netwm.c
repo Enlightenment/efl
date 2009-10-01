@@ -1062,7 +1062,7 @@ ecore_x_netwm_ping_send(Ecore_X_Window win)
    xev.xclient.message_type = ECORE_X_ATOM_WM_PROTOCOLS;
    xev.xclient.format = 32;
    xev.xclient.data.l[0] = ECORE_X_ATOM_NET_WM_PING;
-   xev.xclient.data.l[1] = CurrentTime;
+   xev.xclient.data.l[1] = _ecore_x_event_last_time;
    xev.xclient.data.l[2] = win;
    xev.xclient.data.l[3] = 0;
    xev.xclient.data.l[4] = 0;
@@ -1087,7 +1087,7 @@ ecore_x_netwm_sync_request_send(Ecore_X_Window win, unsigned int serial)
    xev.xclient.message_type = ECORE_X_ATOM_WM_PROTOCOLS;
    xev.xclient.format = 32;
    xev.xclient.data.l[0] = ECORE_X_ATOM_NET_WM_SYNC_REQUEST;
-   xev.xclient.data.l[1] = CurrentTime;
+   xev.xclient.data.l[1] = _ecore_x_event_last_time;
    xev.xclient.data.l[2] = XSyncValueLow32(value);
    xev.xclient.data.l[3] = XSyncValueHigh32(value);
    xev.xclient.data.l[4] = 0;
