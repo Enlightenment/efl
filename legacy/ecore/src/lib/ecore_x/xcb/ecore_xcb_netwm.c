@@ -2646,7 +2646,7 @@ ecore_x_netwm_ping_send(Ecore_X_Window window)
    ev.window = window;
    ev.type = ECORE_X_ATOM_WM_PROTOCOLS;
    ev.data.data32[0] = ECORE_X_ATOM_NET_WM_PING;
-   ev.data.data32[1] = XCB_CURRENT_TIME;
+   ev.data.data32[1] = _ecore_xcb_event_last_time;
    ev.data.data32[2] = window;
    ev.data.data32[3] = 0;
    ev.data.data32[4] = 0;
@@ -2677,7 +2677,7 @@ ecore_x_netwm_sync_request_send(Ecore_X_Window window,
    ev.window = window;
    ev.type = ECORE_X_ATOM_WM_PROTOCOLS;
    ev.data.data32[0] = ECORE_X_ATOM_NET_WM_SYNC_REQUEST;
-   ev.data.data32[1] = XCB_CURRENT_TIME;
+   ev.data.data32[1] = _ecore_xcb_event_last_time;
    ev.data.data32[2] = serial;
    /* FIXME: imho, the following test is useless as serial is non negative */
    /* should we remove it ? */
@@ -2862,7 +2862,6 @@ _ecore_x_window_prop_string_utf8_set(Ecore_X_Window window,
                        8, strlen(str), str);
 }
 
-#if 0
 static void
 _ecore_x_window_prop_string_utf8_get_prefetch(Ecore_X_Window window,
                                               Ecore_X_Atom atom)
@@ -2875,20 +2874,9 @@ _ecore_x_window_prop_string_utf8_get_prefetch(Ecore_X_Window window,
    _ecore_xcb_cookie_cache(cookie.sequence);
 }
 
-static void
-_ecore_x_window_prop_string_utf8_get_fetch(void)
-{
-   xcb_get_property_cookie_t cookie;
-   xcb_get_property_reply_t *reply;
-
-   cookie.sequence = _ecore_xcb_cookie_get();
-   reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
-   _ecore_xcb_reply_cache(reply);
-}
-#endif
-
 /*
  * Get UTF-8 string property
+ * call _ecore_x_window_prop_string_utf8_get_prefetch() before.
  */
 static char *
 _ecore_x_window_prop_string_utf8_get(Ecore_X_Window window __UNUSED__,
@@ -2898,22 +2886,27 @@ _ecore_x_window_prop_string_utf8_get(Ecore_X_Window window __UNUSED__,
    char                     *str;
    int                       length;
 
-   reply = _ecore_xcb_reply_get();
+   reply = _ecore_xcb_reply_get((Ecore_Xcb_Reply_Cb)xcb_get_property_reply);
    if (!reply) return NULL;
 
    if ((reply->format != 8) ||
        (reply->value_len <= 0))
-      return NULL;
+     {
+       free(reply);
+       return NULL;
+     }
 
    length = reply->value_len;
    str = (char *)malloc (sizeof (char) * (length + 1));
    if (!str)
      {
+        free(reply);
         return NULL;
      }
    memcpy(str, xcb_get_property_value(reply), length);
    str[length] = '\0';
 
+   free(reply);
    return str;
 }
 
