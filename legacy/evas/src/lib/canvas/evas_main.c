@@ -207,9 +207,9 @@ evas_free(Evas *e)
 
    if (e->engine.func)
      {
-	e->engine.func->info_free(e, e->engine.info);
 	e->engine.func->context_free(e->engine.data.output, e->engine.data.context);
 	e->engine.func->output_free(e->engine.data.output);
+	e->engine.func->info_free(e, e->engine.info);
      }
 
    for (i = 0; i < e->modifiers.mod.count; i++)
