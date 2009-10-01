@@ -59,10 +59,7 @@ evas_common_font_query_kerning(RGBA_Font_Int* fi,
    return error;
 }
 
-/* string extents
- * Note: no need for special rtl handling
- * we can assume there's not between languages kerning
- * and that spaces get the same wide anywhere. */
+/* string extents */
 EAPI void
 evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
 {
@@ -131,7 +128,6 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
    if (h) *h = evas_common_font_max_ascent_get(fn) + evas_common_font_max_descent_get(fn);
 }
 
-
 /* text x inset */
 EAPI int
 evas_common_font_query_inset(RGBA_Font *fn, const char *text)
@@ -169,10 +165,7 @@ evas_common_font_query_inset(RGBA_Font *fn, const char *text)
    return fg->glyph_out->left;
 }
 
-/* h & v advance
- * Note: no need for special rtl handling
- * we can assume there's not between languages kerning
- * and that spaces get the same wide anywhere. */
+/* h & v advance */
 EAPI void
 evas_common_font_query_advance(RGBA_Font *fn, const char *text, int *h_adv, int *v_adv)
 {
@@ -225,7 +218,6 @@ evas_common_font_query_advance(RGBA_Font *fn, const char *text, int *h_adv, int 
    if (h_adv) *h_adv = pen_x - start_x;
 }
 
-
 /* x y w h for char at char pos */
 EAPI int
 evas_common_font_query_char_coords(RGBA_Font *fn, const char *in_text, int pos, int *cx, int *cy, int *cw, int *ch)
@@ -247,8 +239,8 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *in_text, int pos, 
    int len = 0;
    EvasIntlParType direction = FRIBIDI_TYPE_ON;
    EvasIntlLevel *level_list = NULL;
-   EvasIntlStrIndex *logical_to_visual = NULL;
-   char *visual_text = evas_intl_utf8_to_visual(in_text, &len, &direction, &logical_to_visual, NULL, &level_list);
+   EvasIntlStrIndex *visual_to_logical = NULL;
+   char *visual_text = evas_intl_utf8_to_visual(in_text, &len, &direction, &visual_to_logical, NULL, &level_list);
    text = (visual_text) ? visual_text : in_text;
 #endif
 
@@ -264,21 +256,20 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *in_text, int pos, 
    desc = evas_common_font_max_descent_get(fn);
 
    /* find the actual index, not the byte position */
-   position = 0;
-   chr = 0;
-   while (in_text[chr] && chr < pos) {
+   for (position = 0 , chr = 0 ; in_text[chr] && chr < pos ; position++) {
       evas_common_font_utf8_get_next((unsigned char *)in_text, &chr);
-      position++;
    }
-   /* if it's a bad position, break */
-   if (chr != pos) goto end;
-   /* if it's the end, the correct position is one after */
-   if (!in_text[chr]) position++;
-   
+   /* if we couldn't reach the correct position for some reason,
+    * return with an error */
+   if (chr != pos) {
+      ret_val = 0;
+      goto end;
+   }
+     
 #ifdef INTERNATIONAL_SUPPORT 
    /* if it's an in string position (not end), get logical position */
    if (position < len)
-      position = evas_intl_position_logical_to_visual(logical_to_visual, position);
+      position = evas_intl_position_visual_to_logical(visual_to_logical, position);
 #endif
 
 
@@ -292,9 +283,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *in_text, int pos, 
 
 	pchr = chr;
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
-	
 	if (gl == 0) break;
-
 	index = evas_common_font_glyph_search(fn, &fi, gl);
 	kern = 0;
         /* hmmm kerning means i can't sanely do my own cached metric tables! */
@@ -315,8 +304,8 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *in_text, int pos, 
 #endif
               {
 
-	         if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
-	            pen_x += kern;
+	           if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
+	              pen_x += kern;
 	      }
            }
 
@@ -358,7 +347,7 @@ end:
 
 #ifdef INTERNATIONAL_SUPPORT
    if (level_list) free(level_list);
-   if (logical_to_visual) free(logical_to_visual);
+   if (visual_to_logical) free(visual_to_logical);
    if (visual_text) free(visual_text);
 #endif
 
@@ -380,7 +369,7 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *in_text, int x, in
    FT_UInt prev_index;
    RGBA_Font_Int *fi;
    FT_Face pface = NULL;
-   
+
 #ifdef INTERNATIONAL_SUPPORT
    int len = 0;
    EvasIntlParType direction = FRIBIDI_TYPE_ON;
@@ -400,7 +389,7 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *in_text, int x, in
    prev_chr_end = 0;
    asc = evas_common_font_max_ascent_get(fn);
    desc = evas_common_font_max_descent_get(fn);
-
+   
    for (char_index = 0, chr = 0; text[chr]; char_index++)
      {
 	int pchr;
@@ -409,8 +398,7 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *in_text, int x, in
 	int chr_x, chr_y, chr_w;
         int gl, kern;
 
-	
-
+	pchr = chr;
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
 	index = evas_common_font_glyph_search(fn, &fi, gl);
@@ -431,11 +419,11 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *in_text, int x, in
 		}
 	      else
 #endif
-              {
+                {
 
-	         if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
-	            pen_x += kern;
-	      }
+	           if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
+	              pen_x += kern;
+	        }
            }
 
 	pface = fi->src->ft.face;
@@ -467,17 +455,15 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *in_text, int x, in
 	     if (ch) *ch = asc + desc;
 #ifdef INTERNATIONAL_SUPPORT
              {
+                /* we found the char position of the wanted char in the
+                 * visual string, we now need to translate it to the
+                 * position in the logical string */
 		int i;
-		int logical_chr;
 		int position = evas_intl_position_visual_to_logical(visual_to_logical, char_index);
 		 
 		/* ensure even if the list won't run */
-		pchr = 0;					
-		for (logical_chr = 0, i = 0; i <= position; i++)
-                  {
-                     pchr = logical_chr;
-                     evas_common_font_utf8_get_next((unsigned char *)in_text, &logical_chr);
-                  }
+                for (pchr = 0, i = 0; i < position; i++)
+                  evas_common_font_utf8_get_next((unsigned char *)in_text, &pchr);
              }
 #endif
 	     ret_val = pchr;
@@ -487,7 +473,7 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *in_text, int x, in
 	pen_x += fg->glyph->advance.x >> 16;
 	prev_index = index;
      }
-
+     
 end:
    
 #ifdef INTERNATIONAL_SUPPORT
@@ -576,137 +562,3 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const char *text, int x, in
      }
    return -1;
 }
-
-#if 0
-/* last char pos of text at xy pos */
-EAPI int
-evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const char *in_text, int x, int y)
-{
-   int use_kerning;
-   int pen_x, pen_y;
-   int prev_chr_end;
-   int chr;
-   int asc, desc;
-   int char_index = 0; /* the index of the current char */
-   const char *text = in_text;
-   int ret_val = -1;
-   FT_UInt prev_index;
-   RGBA_Font_Int *fi;
-   FT_Face pface = NULL;
-   
-#ifdef INTERNATIONAL_SUPPORT
-   int len = 0;
-   EvasIntlParType direction = FRIBIDI_TYPE_ON;
-   EvasIntlLevel *level_list = NULL;
-   EvasIntlStrIndex *visual_to_logical = NULL;
-   char *visual_text = evas_intl_utf8_to_visual(in_text, &len, &direction, NULL, &visual_to_logical, &level_list);
-   text = (visual_text) ? visual_text : in_text;
-#endif
-
-   fi = fn->fonts->data;
-
-   pen_x = 0;
-   pen_y = 0;
-   evas_common_font_size_use(fn);
-   use_kerning = FT_HAS_KERNING(fi->src->ft.face);
-   prev_index = 0;
-   prev_chr_end = 0;
-   asc = evas_common_font_max_ascent_get(fn);
-   desc = evas_common_font_max_descent_get(fn);
-
-   for (char_index = 0, chr = 0; text[chr]; char_index++)
-     {
-	int pchr;
-	FT_UInt index;
-	RGBA_Font_Glyph *fg;
-	int chr_x, chr_y, chr_w;
-        int gl, kern;
-
-	
-
-	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
-	if (gl == 0) break;
-	index = evas_common_font_glyph_search(fn, &fi, gl);
-	kern = 0;
-        /* hmmm kerning means i can't sanely do my own cached metric tables! */
-	/* grrr - this means font face sharing is kinda... not an option if */
-	/* you want performance */
-	if ((use_kerning) && (prev_index) && (index) &&
-	     (pface == fi->src->ft.face))
-	   {
-#ifdef INTERNATIONAL_SUPPORT
-	      /* if it's rtl, the kerning matching should be reversed, i.e prev
-	       * index is now the index and the other way around. */
-	      if (evas_intl_is_rtl_char(level_list, char_index))
-		{
-		   if (evas_common_font_query_kerning(fi, index, prev_index, &kern))
-		      pen_x += kern;
-		}
-	      else
-#endif
-              {
-
-	         if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
-	            pen_x += kern;
-	      }
-           }
-
-	pface = fi->src->ft.face;
-	fg = evas_common_font_int_cache_glyph_get(fi, index);
-	if (!fg) continue;
-
-	if (kern < 0) kern = 0;
-        chr_x = ((pen_x - kern) + (fg->glyph_out->left));
-	chr_y = (pen_y + (fg->glyph_out->top));
-	chr_w = fg->glyph_out->bitmap.width + kern;
-/*	if (text[chr]) */
-	  {
-	     int advw;
-
-	     advw = ((fg->glyph->advance.x + (kern << 16)) >> 16);
-	     if (chr_w < advw) chr_w = advw;
-	  }
-	if (chr_x > prev_chr_end)
-	  {
-	     chr_w += (chr_x - prev_chr_end);
-	     chr_x = prev_chr_end;
-	  }
-	if ((x >= chr_x) && (x <= (chr_x + chr_w)) &&
-	    (y >= -asc) && (y <= desc))
-	  {
-#ifdef INTERNATIONAL_SUPPORT
-             {
-		/* returs the char at the same position as the char found,
-		 * though in the logical string which ensures it's the last
-		 */
-		int i;
-		int logical_chr;
-                
-		/* ensure even if the list won't run */
-		pchr = 0;					
-		for (logical_chr = 0, i = 0; i <= char_index; i++) {
-             	   pchr = logical_chr;
-             	   evas_common_font_utf8_get_next((unsigned char *)in_text, &logical_chr);
-                }
-             }
-#endif
-	     ret_val = pchr;
-	     goto end;
-	  }
-	prev_chr_end = chr_x + chr_w;
-	pen_x += fg->glyph->advance.x >> 16;
-	prev_index = index;
-     }
-
-end:
-   
-#ifdef INTERNATIONAL_SUPPORT
-   if (level_list) free(level_list);
-   if (visual_to_logical) free(visual_to_logical);
-   if (visual_text) free(visual_text);
-#endif
-
-   return ret_val;
-}
-
-#endif
