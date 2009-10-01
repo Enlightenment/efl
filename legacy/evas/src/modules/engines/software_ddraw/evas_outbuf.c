@@ -160,16 +160,16 @@ evas_software_ddraw_outbuf_setup(int          width,
 
            if (!conv_func)
              {
-                ERROR("DDraw engine Error"
-		        " {"
-                        "  At depth         %i:"
-                        "  RGB format mask: %08x, %08x, %08x"
-                        "  Not supported by and compiled in converters!"
-                        " }",
-                        buf->priv.dd.depth,
-                        buf->priv.mask.r,
-                        buf->priv.mask.g,
-                        buf->priv.mask.b);
+                ERR("DDraw engine Error"
+                    " {"
+                    "  At depth         %i:"
+                    "  RGB format mask: %08x, %08x, %08x"
+                    "  Not supported by and compiled in converters!"
+                    " }",
+                    buf->priv.dd.depth,
+                    buf->priv.mask.r,
+                    buf->priv.mask.g,
+                    buf->priv.mask.b);
              }
         }
    }

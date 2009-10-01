@@ -85,6 +85,32 @@ struct _DD_Output_Buffer
    int   psize;
 };
 
+extern int _evas_log_dom_module;
+
+#ifdef EVAS_DEFAULT_LOG_COLOR
+# undef EVAS_DEFAULT_LOG_COLOR
+#endif
+#define EVAS_DEFAULT_LOG_COLOR "\033[36m"
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_evas_log_dom_module, __VA_ARGS__)
+#ifdef DBG
+# undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_evas_log_dom_module, __VA_ARGS__)
+#ifdef INF
+# undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(_evas_log_dom_module, __VA_ARGS__)
+#ifdef WRN
+# undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_evas_log_dom_module, __VA_ARGS__)
+#ifdef CRT
+# undef CRT
+#endif
+#define CRT(...) EINA_LOG_DOM_CRIT(_evas_log_dom_module, __VA_ARGS__)
 
 /* evas_outbuf.c */
 

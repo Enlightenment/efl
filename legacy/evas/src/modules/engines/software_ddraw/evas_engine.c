@@ -19,6 +19,10 @@ struct _Render_Engine
 };
 
 
+/* log domain variable */
+int _evas_log_dom_module = -1;
+
+
 static void *
 _output_setup(int  width,
               int  height,
@@ -92,6 +96,15 @@ eng_info(Evas *e)
    info = calloc(1, sizeof(Evas_Engine_Info_Software_DDraw));
    if (!info) return NULL;
    info->magic.magic = rand();
+
+   _evas_log_dom_module = eina_log_domain_register("Software_DDraw", EVAS_DEFAULT_LOG_COLOR);
+   if(_evas_log_dom_module < 0)
+     {
+	EINA_LOG_ERR("Can not create a module log domain.");
+	free(info);
+	return NULL;
+     }
+
    return info;
    e = NULL;
 }
@@ -100,6 +113,9 @@ static void
 eng_info_free(Evas *e, void *info)
 {
    Evas_Engine_Info_Software_DDraw *in;
+
+   eina_log_domain_unregister(_evas_log_dom_module);
+   _evas_log_dom_module = -1;
 
    in = (Evas_Engine_Info_Software_DDraw *)info;
    free(in);
