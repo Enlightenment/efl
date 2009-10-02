@@ -979,6 +979,20 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
    return evas_object_image_load_error_get(wd->img);
 }
 
+/*
+ * Returns the path of the current image file
+ *
+ * @param obj The photocam object
+ * @return Returns the path 
+ *
+ * @ingroup Photocam
+ */
+EAPI const char * elm_photocam_file_get(Evas_Object *obj)
+{
+    Widget_Data *wd = elm_widget_data_get(obj);
+    return wd->file;
+}
+
 /**
  * Set the zoom level of the photo
  *

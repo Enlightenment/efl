@@ -109,7 +109,7 @@ test_slideshow(void *data, Evas_Object *obj, void *event_info)
    bx = elm_box_add(win);
    elm_box_horizontal_set(bx, 1);
    elm_notify_content_set(notify, bx);
-   evas_object_show(bt);
+   evas_object_show(bx);
 
    evas_object_event_callback_add(bx, EVAS_CALLBACK_MOUSE_IN, _mouse_in, notify);
    evas_object_event_callback_add(bx, EVAS_CALLBACK_MOUSE_OUT, _mouse_out, notify);
