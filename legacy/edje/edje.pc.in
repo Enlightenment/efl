@@ -7,8 +7,8 @@ datadir=@datadir@/edje
 
 Name: edje
 Description: Enlightened graphical design and layout engine.
-Requires: @requirement_edje@
+@pkgconfig_requires_private@: @requirement_edje@
 Version: @VERSION@
 Libs: -L${libdir} -ledje
-Libs.private: @EDJE_LIBS@ @EVIL_LIBS@ @ECORE_IMF_LIBS@
+Libs.private:
 Cflags: -I${includedir}

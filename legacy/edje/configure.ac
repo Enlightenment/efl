@@ -165,6 +165,15 @@ AM_CONDITIONAL([HAVE_PYTHON], [test "$PYTHON" != : ])
 
 PKG_PROG_PKG_CONFIG
 
+# Check whether pkg-config supports Requires.private
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
+   pkgconfig_requires_private="Requires.private"
+else
+   pkgconfig_requires_private="Requires"
+fi
+AC_SUBST(pkgconfig_requires_private)
+
 
 ### Checks for libraries
 
@@ -220,7 +229,7 @@ PKG_CHECK_MODULES([ECORE_IMF],
    [
     AC_DEFINE(HAVE_ECORE_IMF, 1, [Input Method Support for Edje Entry])
     have_ecore_imf="yes"
-    requirement_edje="ecore-imf ecore-imf-evas ${requirement_edje}"
+    requirement_edje="ecore-imf-evas ecore-imf ${requirement_edje}"
    ],
    [have_ecore_imf="no"])
 
