@@ -447,7 +447,7 @@ ecore_evas_quartz_new(const char* name, int w, int h)
 
    return NULL;
 #else
-   fprintf(stderr, "OUTCH name='%s' size=%dx%d!\n", name ? name : "", w, h);
+   ERR("OUTCH name='%s' size=%dx%d!\n", name ? name : "", w, h);
    return NULL;
 #endif
 }

@@ -446,7 +446,7 @@ ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen, int hwsurface
 EAPI Ecore_Evas*
 ecore_evas_sdl_new(const char* name __UNUSED__, int w __UNUSED__, int h __UNUSED__, int fullscreen __UNUSED__, int hwsurface __UNUSED__, int noframe __UNUSED__, int alpha __UNUSED__)
 {
-   fprintf(stderr, "OUTCH !\n");
+   ERR("OUTCH !\n");
    return NULL;
 }
 #endif
@@ -469,7 +469,7 @@ ecore_evas_sdl16_new(const char* name, int w, int h, int fullscreen, int hwsurfa
 EAPI Ecore_Evas*
 ecore_evas_sdl16_new(const char* name __UNUSED__, int w __UNUSED__, int h __UNUSED__, int fullscreen __UNUSED__, int hwsurface __UNUSED__, int noframe __UNUSED__, int alpha __UNUSED__)
 {
-   fprintf(stderr, "OUTCH !\n");
+   ERR("OUTCH !\n");
    return NULL;
 }
 #endif

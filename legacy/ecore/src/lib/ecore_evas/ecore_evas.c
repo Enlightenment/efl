@@ -15,6 +15,7 @@
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 
+int _ecore_evas_log_dom = -1;
 static int _ecore_evas_init_count = 0;
 static Ecore_Fd_Handler *_ecore_evas_async_events_fd = NULL;
 static int _ecore_evas_async_events_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
@@ -149,9 +150,17 @@ ecore_evas_init(void)
      {
 	int fd;
 
-	evas_init ();
+	evas_init();
 	ecore_init();
 
+	_ecore_evas_log_dom = eina_log_domain_register("Ecore_Evas", ECORE_EVAS_DEFAULT_LOG_COLOR);
+	if(_ecore_evas_log_dom < 0) 
+	  {
+	    EINA_LOG_ERR("Impossible to create a log domain for Ecore_Evas.\n");
+	    ecore_shutdown();
+	    evas_shutdown();
+	    return 0;
+	  }
 	fd = evas_async_events_fd_get();
 	if (fd > 0)
 	  _ecore_evas_async_events_fd = ecore_main_fd_handler_add(fd,
@@ -194,7 +203,7 @@ ecore_evas_shutdown(void)
 #endif
 	if (_ecore_evas_async_events_fd)
 	  ecore_main_fd_handler_del(_ecore_evas_async_events_fd);
-
+	eina_log_domain_unregister(_ecore_evas_log_dom);
 	ecore_shutdown();
 	evas_shutdown();
      }
@@ -2432,7 +2441,7 @@ _ecore_evas_fps_debug_rendertime_add(double t)
      }
    else if ((tim - rlapse) >= 0.5)
      {
-        printf("FRAME: %i, FPS: %3.1f, RTIME %3.0f%%\n",
+        DBG("FRAME: %i, FPS: %3.1f, RTIME %3.0f%%\n",
                frames,
                (frames - flapse) / (tim - rlapse),
                (100.0 * rtime) / (tim - rlapse)

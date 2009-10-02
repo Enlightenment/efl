@@ -85,13 +85,13 @@ _ecore_evas_obj_intercept_lower(void *data, Evas_Object *obj __UNUSED__)
 static void
 _ecore_evas_obj_intercept_stack_above(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Evas_Object *above __UNUSED__)
 {
-   fprintf(stderr, "TODO: %s\n", __FUNCTION__);
+   INF("TODO: %s", __FUNCTION__);
 }
 
 static void
 _ecore_evas_obj_intercept_stack_below(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Evas_Object *below __UNUSED__)
 {
-   fprintf(stderr, "TODO: %s\n", __FUNCTION__);
+   INF("TODO: %s", __FUNCTION__);
 }
 
 static void
@@ -210,11 +210,10 @@ _ecore_evas_object_evas_check(const char *function, const Ecore_Evas *ee, const 
    name = evas_object_name_get(obj);
    type = evas_object_type_get(obj);
 
-   fprintf(stderr,
-	   "ERROR: %s(): object %p (name=\"%s\", type=\"%s\") evas "
-	   "is not the same as this Ecore_Evas evas: %p != %p\n",
-	   function, obj,
-	   name ? name : "", type ? type : "", e, ee->evas);
+   ERR("ERROR: %s(): object %p (name=\"%s\", type=\"%s\") evas "
+       "is not the same as this Ecore_Evas evas: %p != %p",
+       function, obj,
+       name ? name : "", type ? type : "", e, ee->evas);
    fflush(stderr);
    if (getenv("ECORE_ERROR_ABORT")) abort();
 
@@ -312,15 +311,15 @@ ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj)
    CHECK_PARAM_POINTER_RETURN("obj", obj, 0);
    old_ee = _evas_object_associate_get(obj);
    if (ee != old_ee) {
-      fprintf(stderr, "ERROR: trying to dissociate object that is not using "
-	      "this Ecore_Evas: %p != %p\n", ee, old_ee);
+      ERR("ERROR: trying to dissociate object that is not using "
+	  "this Ecore_Evas: %p != %p", ee, old_ee);
       return 0;
    }
 
    old_obj = _ecore_evas_associate_get(ee);
    if (old_obj != obj) {
-      fprintf(stderr, "ERROR: trying to dissociate object that is not being "
-	      "used by this Ecore_Evas: %p != %p\n", old_obj, obj);
+      ERR("ERROR: trying to dissociate object that is not being "
+	  "used by this Ecore_Evas: %p != %p", old_obj, obj);
       return 0;
    }
 

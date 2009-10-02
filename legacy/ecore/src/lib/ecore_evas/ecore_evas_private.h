@@ -95,6 +95,37 @@
 # include <Evas_Engine_Software_16_WinCE.h>
 #endif
 
+/**
+   Log domain macros and variable
+ **/
+
+extern int _ecore_evas_log_dom;
+
+#ifdef ECORE_EVAS_DEFAULT_LOG_COLOR
+# undef ECORE_EVAS_DEFAULT_LOG_COLOR
+#endif
+#define ECORE_EVAS_DEFAULT_LOG_COLOR EINA_COLOR_CYAN
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_ecore_evas_log_dom, __VA_ARGS__)
+#ifdef DBG
+# undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_ecore_evas_log_dom, __VA_ARGS__)
+#ifdef INF
+# undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(_ecore_evas_log_dom, __VA_ARGS__)
+#ifdef WRN
+# undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_ecore_evas_log_dom, __VA_ARGS__)
+#ifdef CRIT
+# undef CRIT
+#endif
+#define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_evas_log_dom, __VA_ARGS__)
+
 
 #define IDLE_FLUSH_TIME 0.5
 #ifndef _ECORE_EVAS_H
