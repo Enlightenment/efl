@@ -175,9 +175,9 @@ elm_carousel_add(Evas_Object *parent)
 
    wd->icon_size = 32;
 
-   wd->bx = _els_smart_box_add(e);
-   _els_smart_box_orientation_set(wd->bx, 1);
-   _els_smart_box_homogenous_set(wd->bx, 1);
+   wd->bx = evas_object_box_add(e);
+   evas_object_box_layout_set(wd->bx,
+		   evas_object_box_layout_homogeneous_horizontal, NULL, NULL);
    elm_widget_sub_object_add(obj, wd->bx);
    elm_smart_scroller_child_set(wd->scr, wd->bx);
    evas_object_show(wd->bx);
@@ -223,7 +223,7 @@ elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, vo
    evas_object_size_hint_align_set(it->base, -1.0, -1.0);
    evas_object_size_hint_min_set(it->base, mw, mh);
    evas_object_size_hint_max_set(it->base, 9999, mh);
-   _els_smart_box_pack_end(wd->bx, it->base);
+   evas_object_box_append(wd->bx, it->base);
    evas_object_show(it->base);
    _sizing_eval(obj);
    return it;

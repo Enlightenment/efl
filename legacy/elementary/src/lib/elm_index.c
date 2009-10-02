@@ -67,6 +67,14 @@ _del_hook(Evas_Object *obj)
 }
 
 static void
+_layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
+{
+   Widget_Data *wd = data;
+
+   _els_box_layout(o, priv, wd->horizontal, 1);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -83,9 +91,8 @@ _theme_hook(Evas_Object *obj)
      {
         if (!wd->bx[1])
           {
-             wd->bx[1] = _els_smart_box_add(evas_object_evas_get(wd->base));
-             _els_smart_box_orientation_set(wd->bx[1], wd->horizontal);
-             _els_smart_box_homogenous_set(wd->bx[1], 1);
+	     wd->bx[1] = evas_object_box_add(wd->base);
+	     evas_object_box_layout_set(wd->bx[1], _layout, wd, NULL);
              elm_widget_sub_object_add(obj, wd->bx[1]);
           }
         edje_object_part_swallow(wd->base, "elm.swallow.index.1", wd->bx[1]);
@@ -209,7 +216,7 @@ _index_box_auto_fill(Evas_Object *obj, Evas_Object *box, int level)
         evas_object_size_hint_weight_set(o, 1.0, 1.0);
         evas_object_size_hint_align_set(o, -1.0, -1.0);
         elm_widget_sub_object_add(obj, o);
-        _els_smart_box_pack_end(box, o);
+        evas_object_box_append(box, o);
         stacking = edje_object_data_get(o, "stacking");
         if (stacking)
           {
@@ -528,18 +535,16 @@ elm_index_add(Evas_Object *parent)
         elm_widget_sub_object_add(obj, o);
      }
 
-   wd->bx[0] = _els_smart_box_add(e);
-   _els_smart_box_orientation_set(wd->bx[0], 0);
-   _els_smart_box_homogenous_set(wd->bx[0], 1);
+   wd->bx[0] = evas_object_box_add(e);
+   evas_object_box_layout_set(wd->bx[0], _layout, wd, NULL);
    elm_widget_sub_object_add(obj, wd->bx[0]);
    edje_object_part_swallow(wd->base, "elm.swallow.index.0", wd->bx[0]);
    evas_object_show(wd->bx[0]);
 
    if (edje_object_part_exists(wd->base, "elm.swallow.index.1"))
      {
-        wd->bx[1] = _els_smart_box_add(e);
-        _els_smart_box_orientation_set(wd->bx[1], 0);
-        _els_smart_box_homogenous_set(wd->bx[1], 1);
+        wd->bx[1] = evas_object_box_add(e);
+	evas_object_box_layout_set(wd->bx[1], _layout, wd, NULL);
         elm_widget_sub_object_add(obj, wd->bx[1]);
         edje_object_part_swallow(wd->base, "elm.swallow.index.1", wd->bx[1]);
         evas_object_show(wd->bx[1]);

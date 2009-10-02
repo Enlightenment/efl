@@ -9,6 +9,7 @@ struct _Widget_Data
    Eina_List *items;
    int icon_size;
    Eina_Bool scrollable : 1;
+   Eina_Bool homogeneous : 1;
 };
 
 struct _Elm_Toolbar_Item
@@ -159,6 +160,7 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord w, h;
 
    if (!wd) return;
+   evas_object_smart_calculate(wd->bx);
    edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), 
                              &minw, &minh);
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
@@ -217,6 +219,14 @@ _select(void *data, Evas_Object *obj, const char *emission, const char *source)
    _item_select(data);
 }
 
+static void
+_layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
+{
+   Widget_Data *wd = data;
+
+   _els_box_layout(o, priv, 1, wd->homogeneous);
+}
+
 EAPI Evas_Object *
 elm_toolbar_add(Evas_Object *parent)
 {
@@ -244,10 +254,10 @@ elm_toolbar_add(Evas_Object *parent)
 
    wd->icon_size = 32;
    wd->scrollable = EINA_TRUE;
+   wd->homogeneous = EINA_TRUE;
 
-   wd->bx = _els_smart_box_add(e);
-   _els_smart_box_orientation_set(wd->bx, 1);
-   _els_smart_box_homogenous_set(wd->bx, 1);
+   wd->bx = evas_object_box_add(e);
+   evas_object_box_layout_set(wd->bx, _layout, wd, NULL);
    elm_widget_sub_object_add(obj, wd->bx);
    elm_smart_scroller_child_set(wd->scr, wd->bx);
    evas_object_show(wd->bx);
@@ -320,7 +330,7 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, voi
    evas_object_size_hint_align_set(it->base, -1.0, -1.0);
    evas_object_size_hint_min_set(it->base, mw, mh);
    evas_object_size_hint_max_set(it->base, 9999, mh);
-   _els_smart_box_pack_end(wd->bx, it->base);
+   evas_object_box_append(wd->bx, it->base);
    evas_object_show(it->base);
    _sizing_eval(obj);
    return it;
@@ -417,6 +427,7 @@ elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
-   _els_smart_box_homogenous_set(wd->bx, homogenous);
+   wd->homogeneous = !!homogenous;
+   evas_object_smart_calculate(wd->bx);
 }
 
