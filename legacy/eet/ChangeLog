@@ -242,3 +242,8 @@
 2009-10-01  Mathieu Taillefumier
 
 	* remove useless Eina_Log macros.
+
+2009-10-01  Vincent Torri
+
+	* Check the returned value of eet_init() in the binary.
+	* Use binary mode of fopen() in eet_main() for Windows compatibility

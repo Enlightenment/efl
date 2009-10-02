@@ -90,7 +90,7 @@ do_eet_extract(const char *file, const char *key, const char *out, const char *c
 	ERR("cannot read key %s\n", key);
 	exit(-1);
      }
-   f = fopen(out, "w");
+   f = fopen(out, "wb");
    if (!f)
      {
 	ERR("cannot open %s\n", out);
@@ -124,7 +124,7 @@ do_eet_decode(const char *file, const char *key, const char *out, const char *cr
 	ERR("cannot open for reading: %s\n", file);
 	exit(-1);
      }
-   f = fopen(out, "w");
+   f = fopen(out, "wb");
    if (!f)
      {
 	ERR("cannot open %s\n", out);
@@ -155,7 +155,7 @@ do_eet_insert(const char *file, const char *key, const char *out, int compress, 
 	ERR("cannot open for read+write: %s\n", file);
 	exit(-1);
      }
-   f = fopen(out, "r");
+   f = fopen(out, "rb");
    if (!f)
      {
 	ERR("cannot open %s\n", out);
@@ -198,7 +198,7 @@ do_eet_encode(const char *file, const char *key, const char *out, int compress, 
 	ERR("cannot open for read+write: %s\n", file);
 	exit(-1);
      }
-   f = fopen(out, "r");
+   f = fopen(out, "rb");
    if (!f)
      {
 	ERR("cannot open %s\n", out);
@@ -300,7 +300,9 @@ do_eet_sign(const char *file, const char *private_key, const char *public_key)
 int
 main(int argc, char **argv)
 {
-   eet_init();
+   if (!eet_init())
+     return -1;
+
    _eet_main_log_dom = eina_log_domain_register("Eet_Main",EINA_COLOR_CYAN);
    if(_eet_main_log_dom < -1)
      {
