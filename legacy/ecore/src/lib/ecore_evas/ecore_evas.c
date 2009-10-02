@@ -2441,7 +2441,7 @@ _ecore_evas_fps_debug_rendertime_add(double t)
      }
    else if ((tim - rlapse) >= 0.5)
      {
-        DBG("FRAME: %i, FPS: %3.1f, RTIME %3.0f%%\n",
+        DBG("FRAME: %i, FPS: %3.1f, RTIME %3.0f%%",
                frames,
                (frames - flapse) / (tim - rlapse),
                (100.0 * rtime) / (tim - rlapse)
