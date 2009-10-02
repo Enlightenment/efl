@@ -90,7 +90,7 @@ extern int _evas_log_dom_module;
 #ifdef EVAS_DEFAULT_LOG_COLOR
 # undef EVAS_DEFAULT_LOG_COLOR
 #endif
-#define EVAS_DEFAULT_LOG_COLOR "\033[36m"
+#define EVAS_DEFAULT_LOG_COLOR EINA_COLOR_CYAN
 #ifdef ERR
 # undef ERR
 #endif
