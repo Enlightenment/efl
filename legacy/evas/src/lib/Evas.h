@@ -1107,12 +1107,15 @@ extern "C" {
    typedef struct _Evas_Object_Box_Option     Evas_Object_Box_Option;
    typedef void (*Evas_Object_Box_Layout)(Evas_Object *o, Evas_Object_Box_Data *priv, void *user_data);
 
+#define EVAS_OBJECT_BOX_API_VERSION 1
    struct _Evas_Object_Box_Api
    {
       Evas_Smart_Class base;
+      int version;
       Evas_Object_Box_Option *(*append)(Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object *child);
       Evas_Object_Box_Option *(*prepend)(Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object *child);
       Evas_Object_Box_Option *(*insert_before)(Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object *child, const Evas_Object *reference);
+      Evas_Object_Box_Option *(*insert_after)(Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object *child, const Evas_Object *reference);
       Evas_Object_Box_Option *(*insert_at)(Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object *child, unsigned int pos);
       Evas_Object            *(*remove)(Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object *child);
       Evas_Object            *(*remove_at)(Evas_Object *o, Evas_Object_Box_Data *priv, unsigned int pos);
@@ -1137,7 +1140,7 @@ extern "C" {
  * @see EVAS_OBJECT_BOX_API_INIT_VERSION
  * @see EVAS_OBJECT_BOX_API_INIT_NAME_VERSION
  */
-#define EVAS_OBJECT_BOX_API_INIT(smart_class_init) {smart_class_init, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}
+#define EVAS_OBJECT_BOX_API_INIT(smart_class_init) {smart_class_init, EVAS_OBJECT_BOX_API_VERSION, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}
 
 /**
  * Initializer to zero a whole Evas_Object_Box_Api structure.
@@ -1225,6 +1228,7 @@ extern "C" {
    EAPI Evas_Object_Box_Option *evas_object_box_append(Evas_Object *o, Evas_Object *child) EINA_ARG_NONNULL(1, 2);
    EAPI Evas_Object_Box_Option *evas_object_box_prepend(Evas_Object *o, Evas_Object *child) EINA_ARG_NONNULL(1, 2);
    EAPI Evas_Object_Box_Option *evas_object_box_insert_before(Evas_Object *o, Evas_Object *child, const Evas_Object *reference) EINA_ARG_NONNULL(1, 2, 3);
+   EAPI Evas_Object_Box_Option *evas_object_box_insert_after(Evas_Object *o, Evas_Object *child, const Evas_Object *referente) EINA_ARG_NONNULL(1, 2, 3);
    EAPI Evas_Object_Box_Option *evas_object_box_insert_at(Evas_Object *o, Evas_Object *child, unsigned int pos) EINA_ARG_NONNULL(1, 2);
    EAPI Eina_Bool               evas_object_box_remove(Evas_Object *o, Evas_Object *child) EINA_ARG_NONNULL(1, 2);
    EAPI Eina_Bool               evas_object_box_remove_at(Evas_Object *o, unsigned int pos) EINA_ARG_NONNULL(1);

@@ -267,6 +267,31 @@ _evas_object_box_insert_before_default(Evas_Object *o, Evas_Object_Box_Data *pri
 }
 
 static Evas_Object_Box_Option *
+_evas_object_box_insert_after_default(Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object *child, const Evas_Object *reference)
+{
+   Eina_List *l;
+   Evas_Object_Box_Option *opt;
+
+   EINA_LIST_FOREACH(priv->children, l, opt)
+     {
+	if (opt->obj == reference)
+	  {
+	     Evas_Object_Box_Option *new_opt;
+
+	     new_opt = _evas_object_box_option_new(o, priv, child);
+	     if (!new_opt)
+	       return NULL;
+
+	     priv->children = eina_list_append_relative
+		(priv->children, new_opt, opt);
+	     return new_opt;
+	  }
+     }
+
+   return NULL;
+}
+
+static Evas_Object_Box_Option *
 _evas_object_box_insert_at_default(Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object *child, unsigned int pos)
 {
    Eina_List *l;
@@ -534,6 +559,7 @@ evas_object_box_smart_set(Evas_Object_Box_Api *api)
    api->append = _evas_object_box_append_default;
    api->prepend = _evas_object_box_prepend_default;
    api->insert_before = _evas_object_box_insert_before_default;
+   api->insert_after = _evas_object_box_insert_after_default;
    api->insert_at = _evas_object_box_insert_at_default;
    api->remove = _evas_object_box_remove_default;
    api->remove_at = _evas_object_box_remove_at_default;
@@ -2017,6 +2043,37 @@ evas_object_box_insert_before(Evas_Object *o, Evas_Object *child, const Evas_Obj
         evas_object_smart_member_add(child, o);
         evas_object_smart_changed(o);
         return _evas_object_box_option_callbacks_register(o, priv, opt);
+     }
+
+   return NULL;
+}
+
+/**
+ * Append a new object @a child to the box @c o relative to element @a
+ * reference. If @a reference is not contained in the box or any other
+ * error occurs, @c NULL is returend.
+ */
+Evas_Object_Box_Option *
+evas_object_box_insert_after(Evas_Object *o, Evas_Object *child, const Evas_Object *reference)
+{
+   Evas_Object_Box_Option *opt;
+   const Evas_Object_Box_Api *api;
+
+   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, NULL);
+   if (!child)
+     return NULL;
+
+   api = priv->api;
+   if ((!api) || (!api->insert_after))
+     return NULL;
+
+   opt = api->insert_after(o, priv, child, reference);
+
+   if (opt)
+     {
+	evas_object_smart_member_add(child, o);
+	evas_object_smart_changed(o);
+	return _evas_object_box_option_callbacks_register(o, priv, opt);
      }
 
    return NULL;
