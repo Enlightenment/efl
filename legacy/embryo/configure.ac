@@ -55,6 +55,14 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 PKG_PROG_PKG_CONFIG
 
+# Check whether pkg-config supports Requires.private
+if $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
+   pkgconfig_requires_private="Requires.private"
+else
+   pkgconfig_requires_private="Requires"
+fi
+AC_SUBST(pkgconfig_requires_private)
+
 
 ### Checks for libraries
 

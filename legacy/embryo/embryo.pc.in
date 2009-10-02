@@ -8,8 +8,8 @@ embryoincludedir=@embryoincludedir@
 
 Name: embryo
 Description: A small virtual machine engine and bytecode compiler
-Requires: @requirement_embryo@
+@pkgconfig_requires_private@: @requirement_embryo@
 Version: @VERSION@
 Libs: -L${libdir} -lembryo
-Libs.private: @EVIL_LIBS@ @fnmatch_libs@ -lm
+Libs.private: @fnmatch_libs@ -lm
 Cflags: -I${includedir}
