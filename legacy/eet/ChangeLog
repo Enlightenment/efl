@@ -238,3 +238,7 @@
 
 	Note: File saved with fixed point could be read by older version of
 	eet library with EET_T_DOUBLE type.
+
+2009-10-01  Mathieu Taillefumier
+
+	* remove useless Eina_Log macros.

@@ -340,7 +340,7 @@ eet_identity_print(Eet_Key *key, FILE *out)
   X509_print_fp(out, key->certificate);
 # endif
 #else
-  ERROR("You need to compile signature support in EET.");
+  ERR("You need to compile signature support in EET.");
 #endif
 }
 
@@ -682,7 +682,7 @@ eet_identity_certificate_print(const unsigned char *certificate, int der_length,
 #ifdef HAVE_SIGNATURE
   if (!certificate || !out || der_length <= 0)
      {
-	ERROR("No certificate provided.");
+	ERR("No certificate provided.");
 	return ;
      }
 # ifdef HAVE_GNUTLS
@@ -725,7 +725,7 @@ eet_identity_certificate_print(const unsigned char *certificate, int der_length,
    X509_free(x509);
 # endif
 #else
-   ERROR("You need to compile signature support in EET.");
+   ERR("You need to compile signature support in EET.");
 #endif
 }
 

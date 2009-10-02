@@ -224,7 +224,7 @@ static Eet_File **eet_readers         = NULL;
 static int        eet_initcount       = 0;
 
 /* log domain variable */
-int _eet_log_dom_global=-1;
+int _eet_log_dom_global = -1;
 
 /* Check to see its' an eet file pointer */
 static inline int
@@ -318,7 +318,7 @@ eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
 	new_cache = realloc(new_cache, new_cache_alloc * sizeof(Eet_File *));
 	if (!new_cache)
 	  {
-	     CRITICAL("BAD ERROR! Eet realloc of cache list failed. Abort");
+	     CRIT("BAD ERROR! Eet realloc of cache list failed. Abort");
 	     abort();
 	  }
      }
@@ -363,7 +363,7 @@ eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
 	     new_cache = realloc(new_cache, new_cache_alloc * sizeof(Eet_File *));
 	     if (!new_cache)
 	       {
-		  CRITICAL("BAD ERROR! Eet realloc of cache list failed. Abort");
+		  CRIT("BAD ERROR! Eet realloc of cache list failed. Abort");
 		  abort();
 	       }
 	  }
@@ -749,7 +749,7 @@ eet_init(void)
 	   allocated is currently 16384 bytes; you may thus use a value of 1 to
 	   request that default size. */
 	if (gcry_control(GCRYCTL_INIT_SECMEM, 16384, 0))
-	  fprintf(stderr, "BIG FAT WARNING: I AM UNABLE TO REQUEST SECMEM, Cryptographic operation are at risk !");
+	  WRN("BIG FAT WARNING: I AM UNABLE TO REQUEST SECMEM, Cryptographic operation are at risk !");
      }
    if (gnutls_global_init())
      return --eet_initcount;
@@ -764,13 +764,14 @@ eet_init(void)
        fprintf(stderr,"Eet: Eina init failed");
        goto erro_eet_eina_init;
      }
-   _eet_log_dom_global = eina_log_domain_register("Eet",EET_DEFAULT_LOG_COLOR);
+   _eet_log_dom_global = eina_log_domain_register("Eet", EET_DEFAULT_LOG_COLOR);
    if(_eet_log_dom_global < 0)
      {
        EINA_LOG_ERR("Eet Can not create a general log domain.");
        goto error_eet_eina_log;
      }
    return eet_initcount;
+
  error_eet_eina_log:
    eina_shutdown();
  erro_eet_eina_init:
@@ -1074,7 +1075,7 @@ eet_internal_read2(Eet_File *ef)
 
 	if (eet_test_close(ef->x509_der == NULL, ef)) return NULL;
 #else
-	ERROR("This file could be signed but you didn't compile the necessary code to check the signature.");
+	ERR("This file could be signed but you didn't compile the necessary code to check the signature.");
 #endif
      }
 
@@ -1092,7 +1093,7 @@ eet_internal_read1(Eet_File *ef)
    int			 byte_entries;
    int			 i;
 
-   WARN("EET file format of '%s' is deprecated. You should just open it one time with mode == EET_FILE_MODE_READ_WRITE to solve this issue.", ef->path);
+   WRN("EET file format of '%s' is deprecated. You should just open it one time with mode == EET_FILE_MODE_READ_WRITE to solve this issue.", ef->path);
 
    /* build header table if read mode */
    /* geat header */
@@ -1219,7 +1220,7 @@ eet_internal_read1(Eet_File *ef)
 	     strncpy(efn->name, (char *)p + HEADER_SIZE, name_size);
 	     efn->name[name_size] = 0;
 
-	     WARN("File: %s is not up to date for key \"%s\" - needs rebuilding sometime", ef->path, efn->name);
+	     WRN("File: %s is not up to date for key \"%s\" - needs rebuilding sometime", ef->path, efn->name);
 	  }
 	else
 	  /* The only really usefull peace of code for efn->name (no backward compatibility) */

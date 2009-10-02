@@ -19,6 +19,34 @@
 
 #include <Eet.h>
 
+
+static int _eet_main_log_dom = -1;
+
+#ifdef EET_DEFAULT_LOG_COLOR
+#undef EET_DEFAULT_LOG_COLOR
+#endif
+#define EET_DEFAULT_LOG_COLOR EINA_COLOR_CYAN
+#ifdef ERR
+#undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_eet_main_log_dom, __VA_ARGS__)
+#ifdef DBG
+#undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_eet_main_log_dom, __VA_ARGS__)
+#ifdef INF
+#undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(_eet_main_log_dom, __VA_ARGS__)
+#ifdef WRN
+#undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_eet_main_log_dom, __VA_ARGS__)
+#ifdef CRIT
+#undef CRIT
+#endif
+#define CRIT(...) EINA_LOG_DOM_CRIT(_eet_main_log_dom, __VA_ARGS__)
+
 static void
 do_eet_list(const char *file)
 {
@@ -29,7 +57,7 @@ do_eet_list(const char *file)
    ef = eet_open(file, EET_FILE_MODE_READ);
    if (!ef)
      {
-	printf("cannot open for reading: %s\n", file);
+        ERR("cannot open for reading: %s\n", file);
 	exit(-1);
      }
    list = eet_list(ef, "*", &num);
@@ -53,24 +81,24 @@ do_eet_extract(const char *file, const char *key, const char *out, const char *c
    ef = eet_open(file, EET_FILE_MODE_READ);
    if (!ef)
      {
-	printf("cannot open for reading: %s\n", file);
+	ERR("cannot open for reading: %s\n", file);
 	exit(-1);
      }
    data = eet_read_cipher(ef, key, &size, crypto_key);
    if (!data)
      {
-	printf("cannot read key %s\n", key);
+	ERR("cannot read key %s\n", key);
 	exit(-1);
      }
    f = fopen(out, "w");
    if (!f)
      {
-	printf("cannot open %s\n", out);
+	ERR("cannot open %s\n", out);
 	exit(-1);
      }
    if (fwrite(data, size, 1, f) != 1)
      {
-	printf("cannot write to %s\n", out);
+	ERR("cannot write to %s\n", out);
 	exit(-1);
      }
    fclose(f);
@@ -93,18 +121,18 @@ do_eet_decode(const char *file, const char *key, const char *out, const char *cr
    ef = eet_open(file, EET_FILE_MODE_READ);
    if (!ef)
      {
-	printf("cannot open for reading: %s\n", file);
+	ERR("cannot open for reading: %s\n", file);
 	exit(-1);
      }
    f = fopen(out, "w");
    if (!f)
      {
-	printf("cannot open %s\n", out);
+	ERR("cannot open %s\n", out);
 	exit(-1);
      }
    if (!eet_data_dump_cipher(ef, key, crypto_key, do_eet_decode_dump, f))
      {
-	printf("cannot write to %s\n", out);
+	ERR("cannot write to %s\n", out);
 	exit(-1);
      }
    fclose(f);
@@ -124,13 +152,13 @@ do_eet_insert(const char *file, const char *key, const char *out, int compress, 
      ef = eet_open(file, EET_FILE_MODE_WRITE);
    if (!ef)
      {
-	printf("cannot open for read+write: %s\n", file);
+	ERR("cannot open for read+write: %s\n", file);
 	exit(-1);
      }
    f = fopen(out, "r");
    if (!f)
      {
-	printf("cannot open %s\n", out);
+	ERR("cannot open %s\n", out);
 	exit(-1);
      }
    fseek(f, 0, SEEK_END);
@@ -139,12 +167,12 @@ do_eet_insert(const char *file, const char *key, const char *out, int compress, 
    data = malloc(size);
    if (!data)
      {
-	printf("cannot allocate %i bytes\n", size);
+	ERR("cannot allocate %i bytes\n", size);
 	exit(-1);
      }
    if (fread(data, size, 1, f) != 1)
      {
-	printf("cannot read file %s\n", out);
+	ERR("cannot read file %s\n", out);
 	exit(-1);
      }
    fclose(f);
@@ -167,13 +195,13 @@ do_eet_encode(const char *file, const char *key, const char *out, int compress, 
      ef = eet_open(file, EET_FILE_MODE_WRITE);
    if (!ef)
      {
-	printf("cannot open for read+write: %s\n", file);
+	ERR("cannot open for read+write: %s\n", file);
 	exit(-1);
      }
    f = fopen(out, "r");
    if (!f)
      {
-	printf("cannot open %s\n", out);
+	ERR("cannot open %s\n", out);
 	exit(-1);
      }
    fseek(f, 0, SEEK_END);
@@ -182,18 +210,18 @@ do_eet_encode(const char *file, const char *key, const char *out, int compress, 
    text = malloc(textlen);
    if (!text)
      {
-	printf("cannot allocate %i bytes\n", size);
+	ERR("cannot allocate %i bytes\n", size);
 	exit(-1);
      }
    if (fread(text, textlen, 1, f) != 1)
      {
-	printf("cannot read file %s\n", out);
+	ERR("cannot read file %s\n", out);
 	exit(-1);
      }
    fclose(f);
    if (!eet_data_undump_cipher(ef, key, crypto_key, text, textlen, compress))
      {
-        printf("cannot parse %s\n", out);
+        ERR("cannot parse %s\n", out);
 	exit(-1);
      }
    free(text);
@@ -208,7 +236,7 @@ do_eet_remove(const char *file, const char *key)
    ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
    if (!ef)
      {
-	printf("cannot open for read+write: %s\n", file);
+	ERR("cannot open for read+write: %s\n", file);
 	exit(-1);
      }
    eet_delete(ef, key);
@@ -226,17 +254,17 @@ do_eet_check(const char *file)
    ef = eet_open(file, EET_FILE_MODE_READ);
    if (!ef)
      {
-	fprintf(stdout, "checking signature of `%s` failed\n", file);
+	ERR("checking signature of `%s` failed\n", file);
 	exit(-1);
      }
 
    der = eet_identity_x509(ef, &der_length);
 
-   fprintf(stderr, "Certificate length %i.\n", der_length);
+   ERR("Certificate length %i.\n", der_length);
    eet_identity_certificate_print(der, der_length, stdout);
 
    eet_identity_signature(ef, &sign_length);
-   fprintf(stderr, "Signature length %i.\n", sign_length);
+   ERR("Signature length %i.\n", sign_length);
 
    eet_close(ef);
 }
@@ -250,18 +278,18 @@ do_eet_sign(const char *file, const char *private_key, const char *public_key)
    ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
    if (!ef)
      {
-	fprintf(stdout, "cannot open for read+write: %s.\n", file);
+       ERR("cannot open for read+write: %s.\n", file);
 	exit(-1);
      }
 
    key = eet_identity_open(public_key, private_key, NULL);
    if (!key)
      {
-	fprintf(stdout, "cannot open key '%s:%s'.\n", public_key, private_key);
+	ERR("cannot open key '%s:%s'.\n", public_key, private_key);
 	exit(-1);
      }
 
-   fprintf(stdout, "Using the following key to sign `%s`.\n", file);
+   ERR("Using the following key to sign `%s`.\n", file);
    eet_identity_print(key, stdout);
 
    eet_identity_set(ef, key);
@@ -273,6 +301,13 @@ int
 main(int argc, char **argv)
 {
    eet_init();
+   _eet_main_log_dom = eina_log_domain_register("Eet_Main",EINA_COLOR_CYAN);
+   if(_eet_main_log_dom < -1)
+     {
+       EINA_LOG_ERR("Impossible to create a log domain for eet_main.\n");
+       eet_shutdown();
+       return(-1);
+     }
    if (argc < 2)
      {
 	help:
@@ -341,6 +376,7 @@ main(int argc, char **argv)
      {
 	goto help;
      }
+   eina_log_domain_unregister(_eet_main_log_dom);
    eet_shutdown();
    return 0;
 }
