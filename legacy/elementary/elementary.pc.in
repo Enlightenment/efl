@@ -5,9 +5,8 @@ includedir=@includedir@
 
 Name: elementary
 Description: Mobile device touchscreen widget library
-Requires: @requirement_elm@
+@pkgconfig_requires_private@: @requirement_elm@
 Version: @VERSION@
 Libs: -L${libdir} -lelementary
-Libs.private: @dlopen_libs@ @my_libs@ @ELEMENTARY_LIBS@ @ELEMENTARY_X_LIBS@
-@ELEMENTARY_FB_LIBS@ @ELEMENTARY_WINCE_LIBS@ @ELEMENTARY_EDBUS_LIBS@ @ELEMENTARY_EFREET_LIBS@
-Cflags: -I${includedir} -I${includedir}/elementary @ELEMENTARY_CFLAGS@ @ELEMENTARY_X_CFLAGS@ @ELEMENTARY_FB_CFLAGS@ @ELEMENTARY_WINCE_CFLAGS@ @ELEMENTARY_EDBUS_CFLAGS@ @ELEMENTARY_EFREET_CFLAGS@
+Libs.private: @dlopen_libs@ @my_libs@
+Cflags: -I${includedir} -I${includedir}/elementary
