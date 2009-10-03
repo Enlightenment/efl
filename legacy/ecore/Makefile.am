@@ -82,83 +82,80 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN \
 	     ecore-wince.pc.in \
 	     ecore.spec.in ecore.spec
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = ecore.pc
+
 if BUILD_ECORE_CON
-pcon = ecore-con.pc
+pkgconfig_DATA += ecore-con.pc
 endif
 
 if BUILD_ECORE_CONFIG
-pconfig = ecore-config.pc
+pkgconfig_DATA += ecore-config.pc
 endif
 
 if BUILD_ECORE_DIRECTFB
-pdfb = ecore-directfb.pc
+pkgconfig_DATA += ecore-directfb.pc
 endif
 
 if BUILD_ECORE_EVAS
-pevas = ecore-evas.pc
+pkgconfig_DATA += ecore-evas.pc
 endif
 
 if BUILD_ECORE_FB
-pfb = ecore-fb.pc
+pkgconfig_DATA += ecore-fb.pc
 endif
 
 if BUILD_ECORE_FILE
-pfile = ecore-file.pc
+pkgconfig_DATA += ecore-file.pc
 endif
 
 if BUILD_ECORE_IMF
-pimf = ecore-imf.pc
+pkgconfig_DATA += ecore-imf.pc
 endif
 
 if BUILD_ECORE_IMF_EVAS
-pimfevas = ecore-imf-evas.pc
+pkgconfig_DATA += ecore-imf-evas.pc
 endif
 
 if BUILD_ECORE_INPUT
-pinput = ecore-input.pc
+pkgconfig_DATA += ecore-input.pc
 endif
 
 if BUILD_ECORE_IPC
-pipc = ecore-ipc.pc
+pkgconfig_DATA += ecore-ipc.pc
 endif
 
 if BUILD_ECORE_JOB
-pjob = ecore-job.pc
+pkgconfig_DATA += ecore-job.pc
 endif
 
 if BUILD_ECORE_TXT
-ptxt = ecore-txt.pc
+pkgconfig_DATA += ecore-txt.pc
 endif
 
 if BUILD_ECORE_X
-px = ecore-x.pc
+pkgconfig_DATA += ecore-x.pc
 endif
 
 if BUILD_ECORE_WIN32
-pwin32 = ecore-win32.pc
+pkgconfig_DATA += ecore-win32.pc
 endif
 
 if BUILD_ECORE_WINCE
-pwince = ecore-wince.pc
+pkgconfig_DATA += ecore-wince.pc
 endif
 
 if BUILD_ECORE_SDL
-psdl = ecore-sdl.pc
+pkgconfig_DATA += ecore-sdl.pc
 endif
 
 if BUILD_ECORE_QUARTZ
-pquartz = ecore-quartz.pc
+pkgconfig_DATA += ecore-quartz.pc
 endif
 
 if BUILD_ECORE_X_XCB
-px = ecore-x.pc
+pkgconfig_DATA += ecore-x.pc
 endif
-
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = \
-	ecore.pc $(pcon) $(pconfig) $(pdfb) $(pevas) \
-	$(pfb) $(pfile) $(pimf) $(pimfevas) $(pinput) $(pipc) $(pjob) \
-	$(ptxt) $(px) $(pwin32) $(pwince) $(psdl) $(pquartz)
 
 .PHONY: doc
 
