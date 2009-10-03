@@ -13,7 +13,6 @@
 #include "ecore_private.h"
 #include "Ecore_Input.h"
 #include "Ecore.h"
-#include "Ecore_Data.h"
 #include "Ecore_Sdl_Keys.h"
 
 #include <eina_rbtree.h>
