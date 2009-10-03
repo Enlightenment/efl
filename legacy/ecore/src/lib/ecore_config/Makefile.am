@@ -10,7 +10,9 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@EVAS_CFLAGS@ @EET_CFLAGS@ @EINA_CFLAGS@
+@EVAS_CFLAGS@ \
+@EET_CFLAGS@ \
+@EINA_CFLAGS@
 
 CLEANFILES = $(DB)
 
@@ -24,60 +26,40 @@ if BUILD_ECORE_CONFIG
 #	edb_ed $(top_builddir)/src/lib/ecore_config/$(DB) add /apps/web/email str `which thunderbird 2>/dev/null || which mozilla 2>/dev/null || which kmail 2>/dev/null || which sylpheed 2>/dev/null || which evolution 2>/dev/null`
 
 lib_LTLIBRARIES = libecore_config.la
-include_HEADERS = \
-Ecore_Config.h
+
+include_HEADERS = Ecore_Config.h
 
 libecore_config_la_LDFLAGS = -no-undefined -version-info @version_info@ @ecore_config_release_info@
 
 #config_DATA = $(DB)
 #configdir = $(pkgdatadir)
 
+libecore_config_la_SOURCES = \
+ecore_config.c \
+ecore_config_util.c \
+ecore_config_storage.c \
+ecore_config_extra.c \
+ecore_config_db.c
+
+libecore_config_la_LIBADD = \
+$(top_builddir)/src/lib/ecore/libecore.la \
+@EET_LIBS@ \
+@EINA_LIBS@ \
+@EVAS_LIBS@
+
 if BUILD_ECORE_IPC
 
-libecore_config_la_SOURCES = \
-ecore_config.c \
+libecore_config_la_SOURCES += \
 ecore_config_ipc_main.c \
-ecore_config_ipc_ecore.c \
-ecore_config_util.c \
-ecore_config_storage.c \
-ecore_config_extra.c \
-ecore_config_db.c \
-ecore_config_private.h
+ecore_config_ipc_ecore.c
 
-libecore_config_la_LIBADD = \
-$(top_builddir)/src/lib/ecore/libecore.la \
-$(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
-@EINA_LIBS@ \
-@EET_LIBS@ \
-@EVAS_LIBS@
-
-else
-
-libecore_config_la_SOURCES = \
-ecore_config.c \
-ecore_config_util.c \
-ecore_config_storage.c \
-ecore_config_extra.c \
-ecore_config_db.c \
-ecore_config_private.h
-
-libecore_config_la_LIBADD = \
-$(top_builddir)/src/lib/ecore/libecore.la \
-@EET_LIBS@ \
-@EINA_LIBS@ \
-@EVAS_LIBS@
+libecore_config_la_LIBADD += $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la
 
 endif
 
 endif
 
 EXTRA_DIST = \
-Ecore_Config.h \
-ecore_config.c \
-ecore_config_ipc_ecore.c \
-ecore_config_ipc_main.c \
 ecore_config_ipc.h \
-ecore_config_util.c \
-ecore_config_util.h \
-ecore_config_storage.c
-
+ecore_config_private.h \
+ecore_config_util.h
