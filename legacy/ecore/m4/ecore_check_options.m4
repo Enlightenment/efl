@@ -189,21 +189,24 @@ fi
 dnl use: ECORE_CHECK_TSLIB(default-enabled[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 AC_DEFUN([ECORE_CHECK_TSLIB],
 [
+_tslib_requirement=""
 _ecore_want_tslib=$1
 _ecore_have_tslib="no"
 TSLIB_LIBS=""
 TSLIB_CFLAGS=""
 
 if test "x${_ecore_want_tslib}" = "xyes" -o "x${_ecore_want_tslib}" = "xauto" ; then
-   PKG_CHECK_MODULES(TSLIB, tslib-1.0,
+   PKG_CHECK_MODULES([TSLIB], [tslib-1.0],
      [
       AC_DEFINE(HAVE_TSLIB, 1, [Build Ecore_FB Touchscreen Code])
       _ecore_have_tslib="yes"
+      _tslib_requirement="tslib-1.0"
      ],[
-      PKG_CHECK_MODULES(TSLIB, tslib,
+      PKG_CHECK_MODULES([TSLIB], [tslib],
         [
          AC_DEFINE(HAVE_TSLIB, 1, [Build Ecore_FB Touchscreen Code])
          _ecore_have_tslib="yes"
+         _tslib_requirement="tslib"
         ],[
          AC_CHECK_HEADER([tslib.h],
            [

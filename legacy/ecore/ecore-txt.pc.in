@@ -5,7 +5,8 @@ includedir=@includedir@
 
 Name: ecore-txt
 Description: E core library, Text module
-Requires: ecore @requirements_ecore_txt@
+@pkgconfig_requires_private@: @requirements_ecore_txt@
 Version: @VERSION@
-Libs: -L${libdir} @ecore_txt_libs@
+Libs: -L${libdir} -lecore_txt
+Libs.private: @iconv_libs@
 Cflags: -I${includedir}

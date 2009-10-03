@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: ecore-input
 Description: E core library, Input module
-Requires: @requirements_ecore_input@
+@pkgconfig_requires_private@: @requirements_ecore_input@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_input
 Cflags: -I${includedir}
