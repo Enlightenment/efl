@@ -169,7 +169,6 @@ static void _update_image_1(Evas_Object *obj)
    if (!wd) return;
    if(!eina_list_count(wd->img1_parts))
      return;
-   
    evas_object_geometry_get(wd->slideshow, &x, &y, &w, &h);
 
    o = edje_object_part_object_get(wd->slideshow, eina_list_data_get(wd->img1_parts));

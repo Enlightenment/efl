@@ -401,6 +401,25 @@ elm_hoversel_clear(Evas_Object *obj)
 }
 
 /**
+ * Get the list of items.
+ *
+ * @param obj The hoversel object
+ * @return Returns a list of Elm_Hoversel_Item*
+ *
+ * @ingroup Hoversel
+ */
+EAPI const Eina_List *
+elm_hoversel_items_get(Evas_Object *obj)
+{
+   Elm_Hoversel_Item *it;
+   Eina_List *l, *ll;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return NULL;
+   return wd->items;
+}
+
+/**
  * Add an item to the hoversel button
  *
  * This adds an item to the hoversel to show when it is clicked. Note: if you
@@ -544,3 +563,4 @@ elm_hoversel_item_icon_get(Elm_Hoversel_Item *it, const char **icon_file, const 
    if (icon_group) *icon_group = it->icon_group;
    if (icon_type) *icon_type = it->icon_type;
 }
+

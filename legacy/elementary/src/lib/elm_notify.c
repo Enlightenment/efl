@@ -93,6 +93,12 @@ _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
    _calc(obj);
 }
 
+static void
+_content_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   _calc(data);
+}
+
 static void 
 _calc(Evas_Object *obj)
 {
@@ -110,28 +116,28 @@ _calc(Evas_Object *obj)
 	switch (wd->orient)
 	  {
 	   case ELM_NOTIFY_ORIENT_TOP:
-             evas_object_move(wd->notify, x + offx, 0);
+             evas_object_move(wd->notify, x + offx, y);
              break;
 	   case ELM_NOTIFY_ORIENT_BOTTOM:
-             evas_object_move(wd->notify, x + offx, h - minh);
+             evas_object_move(wd->notify, x + offx, y + h - minh);
              break;
 	   case ELM_NOTIFY_ORIENT_LEFT:
-             evas_object_move(wd->notify, 0, y + offy);
+             evas_object_move(wd->notify, x, y + offy);
              break;
 	   case ELM_NOTIFY_ORIENT_RIGHT:
-             evas_object_move(wd->notify, w - minw, y + offy);
+             evas_object_move(wd->notify, x + w - minw, y + offy);
              break;
 	   case ELM_NOTIFY_ORIENT_TOP_LEFT:
-             evas_object_move(wd->notify, 0, 0);
+             evas_object_move(wd->notify, x, y);
              break;
 	   case ELM_NOTIFY_ORIENT_TOP_RIGHT:
-             evas_object_move(wd->notify, w - minw, 0);
+             evas_object_move(wd->notify, x + w - minw, y);
              break;
 	   case ELM_NOTIFY_ORIENT_BOTTOM_LEFT:
-             evas_object_move(wd->notify, 0, h - minh);
+             evas_object_move(wd->notify, x, y + h - minh);
              break;
 	   case ELM_NOTIFY_ORIENT_BOTTOM_RIGHT:
-             evas_object_move(wd->notify, w - minw, h - minh);
+             evas_object_move(wd->notify, x + w - minw, y + h - minh);
              break;
 	  }
         evas_object_resize(wd->notify, minw, minh);
@@ -208,6 +214,7 @@ elm_notify_add(Evas_Object *parent)
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, obj);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _resize, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _show, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _hide, obj);
 
@@ -238,6 +245,9 @@ elm_notify_content_set(Evas_Object *obj, Evas_Object *content)
 	evas_object_event_callback_add(content, 
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _changed_size_hints, obj);
+	evas_object_event_callback_add(content, 
+                                       EVAS_CALLBACK_RESIZE,
+                                       _content_resize, obj);
 	wd->content = content;
 	_sizing_eval(obj);
      }
@@ -317,3 +327,4 @@ elm_notify_timer_init(Evas_Object *obj)
    if (wd->timeout>0)
      wd->timer = ecore_timer_add(wd->timeout, _timer_cb, obj);
 }
+
