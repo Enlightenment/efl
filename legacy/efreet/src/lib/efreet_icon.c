@@ -868,6 +868,17 @@ efreet_icon_fallback_icon(const char *icon_name)
             }
         }
 
+        EINA_LIST_FOREACH(xdg_dirs, l, dir)
+        {
+            snprintf(path, PATH_MAX, "%s/pixmaps", dir);
+            icon = efreet_icon_fallback_dir_scan(path, icon_name);
+            if (icon)
+            {
+                efreet_icon_cache_add(efreet_icon_find_theme_check(NULL), icon_name, 0, icon);
+                return icon;
+            }
+        }
+
         icon = efreet_icon_fallback_dir_scan("/usr/share/pixmaps", icon_name);
     }
 
@@ -1255,6 +1266,12 @@ efreet_icon_theme_dir_scan_all(const char *theme_name)
     EINA_LIST_FOREACH(xdg_dirs, l, dir)
     {
         snprintf(path, sizeof(path), "%s/icons", dir);
+        efreet_icon_theme_dir_scan(path, theme_name);
+    }
+
+    EINA_LIST_FOREACH(xdg_dirs, l, dir)
+    {
+        snprintf(path, sizeof(path), "%s/pixmaps", dir);
         efreet_icon_theme_dir_scan(path, theme_name);
     }
 

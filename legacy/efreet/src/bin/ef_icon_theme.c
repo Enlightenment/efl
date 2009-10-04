@@ -93,6 +93,11 @@ ef_cb_efreet_icon_theme_list(void)
         snprintf(buf, sizeof(buf), "%s/icons", dir);
         ef_icon_theme_themes_find(buf, dirs);
     }
+    EINA_LIST_FOREACH(icon_dirs, l, dir)
+    {
+        snprintf(buf, sizeof(buf), "%s/pixmaps", dir);
+        ef_icon_theme_themes_find(buf, dirs);
+    }
     ef_icon_theme_themes_find("/usr/share/pixmaps", dirs);
 
     themes = efreet_icon_theme_list_get();
