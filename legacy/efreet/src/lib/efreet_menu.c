@@ -673,7 +673,6 @@ efreet_menu_parse(const char *path)
     Efreet_Xml *xml;
     Efreet_Menu_Internal *internal = NULL;
     Efreet_Menu *entry = NULL;
-    Eina_List *search_dirs;
 
     xml = efreet_xml_new(path);
     if (!xml) return NULL;
@@ -1021,8 +1020,6 @@ efreet_menu_internal_new(void)
 void
 efreet_menu_internal_free(Efreet_Menu_Internal *internal)
 {
-    void *d;
-
     if (!internal) return;
 
     IF_FREE(internal->file.path);

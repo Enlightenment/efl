@@ -242,8 +242,6 @@ efreet_mime_init(void)
 EAPI void
 efreet_mime_shutdown(void)
 {
-    void *d;
-
     if (_init_count == 0)
         return;
     _init_count--;

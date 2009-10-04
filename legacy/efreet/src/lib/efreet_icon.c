@@ -156,8 +156,6 @@ efreet_icon_init(void)
 void
 efreet_icon_shutdown(void)
 {
-    void *d;
-
     if (--efreet_icon_init_count)
         return;
 
@@ -1153,7 +1151,6 @@ efreet_icon_theme_new(void)
 static void
 efreet_icon_theme_free(Efreet_Icon_Theme *theme)
 {
-    void *d;
     if (!theme) return;
 
     IF_RELEASE(theme->name.internal);
