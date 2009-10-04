@@ -38,6 +38,14 @@ AC_SUBST(efreet_trash_release_info)
 
 PKG_PROG_PKG_CONFIG
 
+# Check whether pkg-config supports Requires.private
+if $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
+   pkgconfig_requires_private="Requires.private"
+else
+   pkgconfig_requires_private="Requires"
+fi
+AC_SUBST(pkgconfig_requires_private)
+
 EFL_EFREET_BUILD=""
 EFL_EFREET_MIME_BUILD=""
 EFL_EFREET_TRASH_BUILD=""

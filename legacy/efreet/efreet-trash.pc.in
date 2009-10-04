@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: efreet-trash
 Description: Freedesktop Shared Trash implementation for the EFL
-Requires: @requirements@
+@pkgconfig_requires_private@: @requirements@
 Version: @VERSION@
 Libs: -L${libdir} -lefreet_trash
 Cflags: -I${includedir}/efreet
