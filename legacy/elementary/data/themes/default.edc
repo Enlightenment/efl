@@ -14436,6 +14436,95 @@ collections {
       }
    }
 
+   group { name: "elm/progressbar/horizontal/wheel";
+      images {
+          image: "busy-1.png" COMP;
+          image: "busy-2.png" COMP;
+          image: "busy-3.png" COMP;
+          image: "busy-4.png" COMP;
+          image: "busy-5.png" COMP;
+          image: "busy-6.png" COMP;
+          image: "busy-7.png" COMP;
+          image: "busy-8.png" COMP;
+          image: "busy-9.png" COMP;
+      }
+      parts {
+         part { name: "elm.background.progressbar";
+            mouse_events: 0;
+            type: RECT;
+            description {
+               state: "default" 0.0;
+            }
+         }
+         part { name: "elm.swallow.bar";
+            mouse_events: 0;
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               min: 0 0;
+               max: 0 0;
+               visible: 0;
+            }
+         }
+         part { name: "elm.swallow.content";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               min: 0 0;
+               max: 0 0;
+               visible: 0;
+            }
+         }
+         part { name: "background";
+            mouse_events: 0;
+            clip_to: "elm.background.progressbar";
+            description {
+               state: "default" 0.0;
+               min: 32 32;
+               max: 32 32;
+               visible: 1;
+               aspect: 1.0 1.0;
+               aspect_preference: BOTH;
+               image {
+                   normal: "busy-9.png";
+                   border: 7 7 7 7;
+               }
+            }
+             description {
+               state: "pulse" 0.0;
+               inherit: "default" 0.0;
+               image {
+                   normal: "busy-9.png";
+                   tween:  "busy-1.png";
+                   tween:  "busy-2.png";
+                   tween:  "busy-3.png";
+                   tween:  "busy-4.png";
+                   tween:  "busy-5.png";
+                   tween:  "busy-6.png";
+                   tween:  "busy-7.png";
+                   tween:  "busy-8.png";
+                   border: 7 7 7 7;
+               }
+            }
+         }
+      }
+      programs {
+         program { name: "start_pulse";
+            signal: "elm,state,pulse,start";
+            source: "elm";
+            action: STATE_SET "pulse" 0.0;
+            target: "background";
+            transition: LINEAR 0.5;
+            after: "start_pulse";
+         }
+         program { name: "stop_pulse";
+            signal: "elm,state,pulse,stop";
+            source: "elm";
+            action: STATE_SET "default" 0.0;
+            target: "background";
+         }
+      }
+   }
+
+
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/spinner/base/default";
       images {

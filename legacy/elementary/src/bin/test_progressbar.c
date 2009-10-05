@@ -8,6 +8,7 @@ typedef struct Progressbar
    Evas_Object *pb4;
    Evas_Object *pb5;
    Evas_Object *pb6;
+   Evas_Object *pb7;
    Eina_Bool run;
    Ecore_Timer *timer;
 } Progressbar;
@@ -36,6 +37,7 @@ my_progressbar_test_start(void *data, Evas_Object *obj, void *event_info)
 {
    elm_progressbar_pulse(_test_progressbar.pb2, EINA_TRUE);
    elm_progressbar_pulse(_test_progressbar.pb5, EINA_TRUE);
+   elm_progressbar_pulse(_test_progressbar.pb7, EINA_TRUE);
    if (!_test_progressbar.run)
      {
         _test_progressbar.timer = ecore_timer_add(0.1, _my_progressbar_value_set, NULL);
@@ -48,6 +50,7 @@ my_progressbar_test_stop(void *data, Evas_Object *obj, void *event_info)
 {
    elm_progressbar_pulse(_test_progressbar.pb2, EINA_FALSE);
    elm_progressbar_pulse(_test_progressbar.pb5, EINA_FALSE);
+   elm_progressbar_pulse(_test_progressbar.pb7, EINA_FALSE);
    if (_test_progressbar.run)
      {
         ecore_timer_del(_test_progressbar.timer);
@@ -167,6 +170,15 @@ test_progressbar(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(ic2);
    evas_object_show(pb);
    _test_progressbar.pb6 = pb;
+
+   pb = elm_progressbar_add(win);
+   elm_object_style_set(pb, "wheel");
+   elm_progressbar_label_set(pb, "Style: wheel");
+   evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(bx, pb);
+   evas_object_show(pb);
+   _test_progressbar.pb7 = pb;
 
    bt_bx = elm_box_add(win);
    elm_box_horizontal_set(bt_bx, 1);
