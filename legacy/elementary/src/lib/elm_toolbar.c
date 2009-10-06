@@ -155,6 +155,7 @@ _menu_hide(void *data, Evas_Object *obj, void *event_info)
     it->menu_position = NULL;
     evas_object_del(it->menu_hover);
     it->menu_hover = NULL;
+    elm_toolbar_item_unselect_all(it->obj);
 }
 
 static void
@@ -570,6 +571,23 @@ elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent)
     wd->menu_parent = parent;
 }
 
+EAPI void 
+elm_toolbar_item_unselect_all(Evas_Object *obj)
+{
+    Eina_List *l;
+    Elm_Toolbar_Item *it;
+    Widget_Data *wd = elm_widget_data_get(obj);
+    if (!wd) return;
+    EINA_LIST_FOREACH(wd->items, l, it)
+    {
+        if (it->selected)
+        {
+            it->selected = EINA_FALSE;
+            edje_object_signal_emit(it->base, "elm,state,unselected", "elm");
+            break;
+        }
+    }
+}
 
 EAPI void 
 elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu) 
