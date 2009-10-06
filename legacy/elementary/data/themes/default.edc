@@ -4569,6 +4569,7 @@ collections {
 	 }
 	 part { name: "pop";
 	    mouse_events: 1;
+            repeat_events:1;
 	    description { state: "default" 0.0;
 	       rel1.to: "elm.swallow.slot.middle";
                rel1.offset: -5 -5;
@@ -4578,6 +4579,7 @@ collections {
 	 }
 	 part { name: "elm.swallow.slot.middle";
             type: SWALLOW;
+            repeat_events:1;
 	    description { state: "default" 0.0;
 	       rel1.to: "elm.swallow.size";
 	       rel2.to: "elm.swallow.size";
