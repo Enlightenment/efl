@@ -272,7 +272,7 @@ eet_identity_print(Eet_Key *key, FILE *out)
 	goto on_error;
       if (!(res = malloc(size))) goto on_error;
 
-      INF("Private Key:");
+      fprintf(out, "Private Key:\n");
       buf[32] = '\0';
 
       for (i = 0; i < 6; i++)
@@ -284,11 +284,11 @@ eet_identity_print(Eet_Key *key, FILE *out)
 	    }
 	  if (err) goto on_error;
 
-	  INF("\t%s:", names[i]);
+	  fprintf(out, "\t%s:\n", names[i]);
 	  for (j = 0; strlen(res) > j; j += 32)
 	    {
 	      snprintf(buf, 32, "%s", res + j);
-	      INF("\t\t%s", buf);
+	      fprintf(out, "\t\t%s\n", buf);
 	    }
 	}
       free(res);
@@ -297,9 +297,9 @@ eet_identity_print(Eet_Key *key, FILE *out)
 
   if (key->certificate)
     {
-      INF("Public certificate:");
+      fprintf(out, "Public certificate:\n");
       if (gnutls_x509_crt_print(key->certificate, GNUTLS_X509_CRT_FULL, &data)) goto on_error;
-      INF("%s", data.data);
+      fprintf(out, "%s\n", data.data);
       gnutls_free(data.data);
       data.data = NULL;
     }
@@ -318,25 +318,25 @@ eet_identity_print(Eet_Key *key, FILE *out)
   rsa = EVP_PKEY_get1_RSA(key->private_key);
   if (rsa)
     {
-      INF("Private key (RSA):");
+      fprintf(out, "Private key (RSA):\n");
       RSA_print_fp(out, rsa, 0);
     }
 
   dsa = EVP_PKEY_get1_DSA(key->private_key);
   if (dsa)
     {
-      INF("Private key (DSA):");
+      fprintf(out, "Private key (DSA):\n");
       DSA_print_fp(out, dsa, 0);
     }
 
   dh = EVP_PKEY_get1_DH(key->private_key);
   if (dh)
     {
-      INF("Private key (DH):");
+      fprintf(out, "Private key (DH):\n");
       DHparams_print_fp(out, dh);
     }
 
-  INF("Public certificate:");
+  fprintf(out, "Public certificate:\n");
   X509_print_fp(out, key->certificate);
 # endif
 #else

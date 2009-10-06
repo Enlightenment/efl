@@ -260,11 +260,11 @@ do_eet_check(const char *file)
 
    der = eet_identity_x509(ef, &der_length);
 
-   ERR("Certificate length %i.\n", der_length);
+   fprintf(stdout, "Certificate length %i.\n", der_length);
    eet_identity_certificate_print(der, der_length, stdout);
 
    eet_identity_signature(ef, &sign_length);
-   ERR("Signature length %i.\n", sign_length);
+   fprintf(stdout, "Signature length %i.\n", sign_length);
 
    eet_close(ef);
 }
@@ -289,7 +289,7 @@ do_eet_sign(const char *file, const char *private_key, const char *public_key)
 	exit(-1);
      }
 
-   ERR("Using the following key to sign `%s`.\n", file);
+   fprintf(stdout, "Using the following key to sign `%s`.\n", file);
    eet_identity_print(key, stdout);
 
    eet_identity_set(ef, key);
