@@ -128,8 +128,8 @@ _item_select(Elm_Toolbar_Item *it)
        }
        elm_hover_content_set(hv, elm_hover_best_content_location_get(hv, ELM_HOVER_AXIS_VERTICAL), bx);
        evas_object_event_callback_add(bx, EVAS_CALLBACK_RESIZE, _menu_move_resize, it);
-       evas_object_event_callback_add(hv, EVAS_CALLBACK_RESIZE, _menu_move_resize, it);
-       evas_object_event_callback_add(hv, EVAS_CALLBACK_MOVE, _menu_move_resize, it);
+       evas_object_event_callback_add(it->base, EVAS_CALLBACK_RESIZE, _menu_move_resize, it);
+       evas_object_event_callback_add(it->base, EVAS_CALLBACK_MOVE, _menu_move_resize, it);
        evas_object_smart_callback_add(hv, "clicked", _menu_hide, it);
        evas_object_show(hv);
         evas_object_smart_calculate(it->menu_hover);
