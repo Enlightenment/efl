@@ -44,6 +44,7 @@ struct _Elm_Toolbar_Item
    Eina_List *menu_items;
    Evas_Object *menu_position;
    Evas_Object *menu_hover;
+   Evas_Object *menu_bx;
 };
 
 static void _item_show(Elm_Toolbar_Item *it);
@@ -106,6 +107,7 @@ _item_select(Elm_Toolbar_Item *it)
        elm_hover_style_set(hv, "menu");
 
        bx = elm_box_add(it->base);
+       it->menu_bx = bx;
        evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
        evas_object_show(bx);
 
@@ -125,14 +127,13 @@ _item_select(Elm_Toolbar_Item *it)
            evas_object_show(bt);
        }
        elm_hover_content_set(hv, elm_hover_best_content_location_get(hv, ELM_HOVER_AXIS_VERTICAL), bx);
+       evas_object_event_callback_add(bx, EVAS_CALLBACK_RESIZE, _menu_move_resize, it);
        evas_object_event_callback_add(hv, EVAS_CALLBACK_RESIZE, _menu_move_resize, it);
        evas_object_event_callback_add(hv, EVAS_CALLBACK_MOVE, _menu_move_resize, it);
        evas_object_smart_callback_add(hv, "clicked", _menu_hide, it);
        evas_object_show(hv);
-
-       evas_object_geometry_get(it->base, &x, &y, &w, &h);
-       evas_object_move(it->menu_position, x, y);
-       evas_object_resize(it->menu_position, w , h);
+        evas_object_smart_calculate(it->menu_hover);
+       _menu_move_resize(it, NULL, NULL, NULL);
    }
    if (it->func) it->func((void *)(it->data), it->obj, it);
    evas_object_smart_callback_call(obj2, "clicked", it);
@@ -163,24 +164,31 @@ static void
 _menu_move_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
     Elm_Toolbar_Item *it = data;
-    Evas_Coord x_p,y_p,x,y,w,h,x2,y2,w2,h2;
+    Evas_Coord x_p,y_p,x,y,w,h,x2,y2,w2,h2,bx,by,bw,bh;
     Widget_Data *wd = elm_widget_data_get(it->obj);
     if (!wd || !wd->menu_parent) return;
-    evas_object_geometry_get(it->menu_position, &x_p, &y_p, NULL, NULL);
-    evas_object_geometry_get(it->menu_hover, &x, &y, &w, &h);
+    evas_object_geometry_get(it->base, &x, &y, &w, &h);
     evas_object_geometry_get(wd->menu_parent, &x2, &y2, &w2, &h2);
+    evas_object_geometry_get(it->menu_bx, &bx, &by, &bw, &bh);
 
-    if(x+w > x2+w2)
-        x_p -= x+w - x2+w2;
-    if(x < x2)
-        x_p += x2 - x;
+    x_p = x + (w-bw)/2;
+    y_p = y;
+    
+    if(x_p+bw > x2+w2)
+        x_p -= x_p+bw - (x2+w2);
+    if(x_p < x2)
+        x_p += x2 - x_p;
 
-    if(y+h > y2+h2)
-        y_p -= y+h - y2+h2;
-    if(y < y2)
-        y_p += y2 - y;
+    if(y_p+h+bh > y2+h2)
+        y_p -= y_p+h+bh - (y2+h2);
+    if(y_p < y2)
+        y_p += y2 - y_p;
 
     evas_object_move(it->menu_position, x_p, y_p);
+    evas_object_resize(it->menu_position, bw, h);
+    evas_object_size_hint_min_set(it->menu_position, bw, h);
+    evas_object_size_hint_max_set(it->menu_position, bw, h);
+    elm_hover_target_set(it->menu_hover, it->menu_position);
 }
 
 static void
