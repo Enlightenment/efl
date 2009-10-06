@@ -63,7 +63,7 @@ test_toolbar(void *data, Evas_Object *obj, void *event_info)
    tb = elm_toolbar_add(win);
    evas_object_size_hint_weight_set(tb, 0.0, 0.0);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, 0.0);
-
+   
    ph1 = elm_photo_add(win);
    ph2 = elm_photo_add(win);
    ph3 = elm_photo_add(win);
