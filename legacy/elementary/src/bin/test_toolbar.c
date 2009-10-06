@@ -95,11 +95,27 @@ test_toolbar(void *data, Evas_Object *obj, void *event_info)
    elm_icon_file_set(ic, buf, NULL);
    elm_toolbar_item_add(tb, ic, "Elementary", tb_5, ph4);
 
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   item = elm_toolbar_item_add(tb, ic, "Menu", NULL, NULL);
+   elm_toolbar_item_menu_set(item, 1);
+   elm_toolbar_menu_parent_set(tb, win);
+  
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_toolbar_item_menu_item_add(item, buf, NULL, "Here", tb_3, ph4);
+
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_toolbar_item_menu_item_add(item, buf, NULL, "Comes", tb_4, ph4);
+
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_toolbar_item_menu_item_add(item, buf, NULL, "Elementary", tb_5, ph4);
+
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
 
    tb = elm_table_add(win);
-//   elm_table_homogenous_set(tb, 1);
+   //elm_table_homogenous_set(tb, 1);
    evas_object_size_hint_weight_set(tb, 0.0, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 

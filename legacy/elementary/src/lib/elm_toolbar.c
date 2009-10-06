@@ -1,3 +1,6 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 #include <Elementary.h>
 #include "elm_priv.h"
 
@@ -9,7 +12,19 @@ struct _Widget_Data
    Eina_List *items;
    int icon_size;
    Eina_Bool scrollable : 1;
+   Evas_Object *menu_parent;
    Eina_Bool homogeneous : 1;
+};
+
+struct _Elm_Toolbar_Menu_Item
+{
+    Elm_Toolbar_Item *parent;
+
+    const char *icon_group;
+    const char *icon_path;
+    const char *label;
+    void (*func) (void *data, Evas_Object *obj, void *event_info);
+    const void *data;
 };
 
 struct _Elm_Toolbar_Item
@@ -23,6 +38,11 @@ struct _Elm_Toolbar_Item
    Eina_Bool selected : 1;
    Eina_Bool disabled : 1;
    Eina_Bool separator : 1;
+
+   Eina_Bool menu;
+   Eina_List *menu_items;
+   Evas_Object *menu_position;
+   Evas_Object *menu_hover;
 };
 
 static void _item_show(Elm_Toolbar_Item *it);
@@ -31,6 +51,10 @@ static void _item_disable(Elm_Toolbar_Item *it, Eina_Bool disabled);
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
+
+static void _menu_move_resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _menu_hide(void *data, Evas_Object *obj, void *event_info);
+static void _menu_item_select(void *data, Evas_Object *obj, void *event_info);
 
 static void
 _item_show(Elm_Toolbar_Item *it)
@@ -48,9 +72,11 @@ static void
 _item_select(Elm_Toolbar_Item *it)
 {
    Elm_Toolbar_Item *it2;
+   Elm_Toolbar_Menu_Item *it_menu;
    Widget_Data *wd = elm_widget_data_get(it->obj);
-   Evas_Object *obj2;
+   Evas_Object *obj2, *bt, *hv, *bx, *ic;
    const Eina_List *l;
+   Evas_Coord x,y,w,h;
 
    if (!wd) return;
    if ((it->selected) || (it->disabled) || (it->separator)) return;
@@ -67,8 +93,92 @@ _item_select(Elm_Toolbar_Item *it)
    edje_object_signal_emit(it->base, "elm,state,selected", "elm");
    _item_show(it);
    obj2 = it->obj;
+   if(it->menu)
+   {
+       it->menu_position = elm_icon_add(it->base);
+       
+       hv = elm_hover_add(it->base);
+       it->menu_hover = hv;
+       if(wd->menu_parent)
+           elm_hover_parent_set(hv, wd->menu_parent);
+       elm_hover_target_set(hv, it->menu_position);
+       elm_hover_style_set(hv, "menu");
+
+       bx = elm_box_add(it->base);
+       evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+       evas_object_show(bx);
+
+       EINA_LIST_FOREACH(it->menu_items, l, it_menu)
+       {
+           ic = elm_icon_add(it->base);
+           elm_icon_file_set(ic, it_menu->icon_path, it_menu->icon_group);
+
+           bt = elm_button_add(it->base);
+           evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+           evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+           elm_object_style_set(bt, "menu");
+           elm_button_label_set(bt, it_menu->label);
+           elm_button_icon_set(bt, ic);
+           evas_object_smart_callback_add(bt, "clicked", _menu_item_select, it_menu);
+           elm_box_pack_end(bx, bt);
+           evas_object_show(bt);
+       }
+       elm_hover_content_set(hv, elm_hover_best_content_location_get(hv, ELM_HOVER_AXIS_VERTICAL), bx);
+       evas_object_event_callback_add(hv, EVAS_CALLBACK_RESIZE, _menu_move_resize, it);
+       evas_object_event_callback_add(hv, EVAS_CALLBACK_MOVE, _menu_move_resize, it);
+       evas_object_smart_callback_add(hv, "clicked", _menu_hide, it);
+       evas_object_show(hv);
+
+       evas_object_geometry_get(it->base, &x, &y, &w, &h);
+       evas_object_move(it->menu_position, x, y);
+       evas_object_resize(it->menu_position, w , h);
+   }
    if (it->func) it->func((void *)(it->data), it->obj, it);
    evas_object_smart_callback_call(obj2, "clicked", it);
+}
+
+static void
+_menu_item_select(void *data, Evas_Object *obj, void *event_info)
+{
+    Elm_Toolbar_Menu_Item *it = data;
+    if (it->func) it->func((void *)(it->data), it->parent->obj, it);
+
+    _menu_hide(it->parent, NULL, NULL); 
+}
+
+static void
+_menu_hide(void *data, Evas_Object *obj, void *event_info)
+{
+    Elm_Toolbar_Item *it = data;
+
+    evas_object_del(it->menu_position);
+    it->menu_position = NULL;
+    evas_object_del(it->menu_hover);
+    it->menu_hover = NULL;
+}
+
+static void
+_menu_move_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{   
+    Elm_Toolbar_Item *it = data;
+    Evas_Coord x_p,y_p,x,y,w,h,x2,y2,w2,h2;
+    Widget_Data *wd = elm_widget_data_get(it->obj);
+    if (!wd || !wd->menu_parent) return;
+    evas_object_geometry_get(it->menu_position, &x_p, &y_p, NULL, NULL);
+    evas_object_geometry_get(it->menu_hover, &x, &y, &w, &h);
+    evas_object_geometry_get(wd->menu_parent, &x2, &y2, &w2, &h2);
+
+    if(x+w > x2+w2)
+        x_p -= x+w - x2+w2;
+    if(x < x2)
+        x_p += x2 - x;
+
+    if(y+h > y2+h2)
+        y_p -= y+h - y2+h2;
+    if(y < y2)
+        y_p += y2 - y;
+
+    evas_object_move(it->menu_position, x_p, y_p); 
 }
 
 static void 
@@ -90,6 +200,7 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Toolbar_Item *it;
+   Elm_Toolbar_Menu_Item *it_menu;
 
    if (!wd) return;
    EINA_LIST_FREE(wd->items, it)
@@ -97,6 +208,20 @@ _del_hook(Evas_Object *obj)
 	eina_stringshare_del(it->label);
 	if (it->icon) evas_object_del(it->icon);
 	evas_object_del(it->base);
+       if(it->menu_position)
+           evas_object_del(it->menu_position);
+       if(it->menu_hover)
+           evas_object_del(it->menu_hover);
+       EINA_LIST_FREE(it->menu_items, it_menu)
+       {
+           if(it_menu->icon_path)
+               eina_stringshare_del(it_menu->icon_path);
+           if(it_menu->icon_group)
+               eina_stringshare_del(it_menu->icon_group);
+           if(it_menu->label)
+               eina_stringshare_del(it_menu->label);
+           free(it_menu);
+       }
 	free(it);
      }
    free(wd);
@@ -191,7 +316,7 @@ static void
 _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   Evas_Coord mw, mh, vw, vh, w, h;
+   Evas_Coord mw, mh, vw, vh, x, y, w, h;
    const Eina_List *l;
    Elm_Toolbar_Item *it;
 
@@ -208,6 +333,12 @@ _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	if (it->selected)
 	  {
 	     _item_show(it);
+        if(it->menu_position)
+        {
+            evas_object_geometry_get(it->base, &x, &y, &w, &h);
+            evas_object_move(it->menu_position, x, y);
+            evas_object_resize(it->menu_position, w , h);
+        }
 	     break;
 	  }
      }
@@ -429,5 +560,62 @@ elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
    if (!wd) return;
    wd->homogeneous = !!homogenous;
    evas_object_smart_calculate(wd->bx);
+}
+
+EAPI void 
+elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent)
+{
+    Widget_Data *wd = elm_widget_data_get(obj);
+    if (!wd) return;
+    wd->menu_parent = parent;
+}
+
+
+EAPI void 
+elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu) 
+{
+   if (!item) return;
+   if (item->menu == menu) return;
+   item->menu = menu;
+}
+
+EAPI Elm_Toolbar_Menu_Item *
+elm_toolbar_item_menu_item_add(Elm_Toolbar_Item *item, const char *icon_path, const char *icon_group, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
+{
+    Elm_Toolbar_Menu_Item *menu_item;
+    if (!item) return NULL;
+
+    menu_item = calloc(1, sizeof(Elm_Toolbar_Menu_Item));
+    if(!menu_item) return NULL;
+    if(label)
+        menu_item->label = eina_stringshare_add(label);
+    if(icon_path)
+        menu_item->icon_path = eina_stringshare_add(icon_path); 
+    if(icon_group)
+        menu_item->icon_group = eina_stringshare_add(icon_group);
+    menu_item->func = func;
+    menu_item->data = data;
+    menu_item->parent = item;
+  
+    item->menu_items = eina_list_append(item->menu_items, menu_item);
+    return menu_item;
+}
+
+EAPI void         
+elm_toolbar_menu_item_del(Elm_Toolbar_Menu_Item *menu_item)
+{
+    Elm_Toolbar_Item *item;
+    if(!menu_item) return;
+
+    item = menu_item->parent;
+    item->menu_items = eina_list_remove(item->menu_items, menu_item);
+
+    if(menu_item->icon_path)
+        eina_stringshare_del(menu_item->icon_path);
+    if(menu_item->icon_group)
+        eina_stringshare_del(menu_item->icon_group);
+    if(menu_item->label)
+        eina_stringshare_del(menu_item->label);
+    free(menu_item);
 }
 

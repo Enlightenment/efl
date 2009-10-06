@@ -1612,6 +1612,316 @@ collections {
          }
       }
    }
+
+   group { name: "elm/button/base/menu";
+      images {
+	 image: "bt_base1.png" COMP;
+	 image: "bt_base2.png" COMP;
+	 image: "bt_hilight.png" COMP;
+	 image: "bt_shine.png" COMP;
+	 image: "bt_glow.png" COMP;
+	 image: "bt_dis_base.png" COMP;
+	 image: "bt_dis_hilight.png" COMP;
+      }
+      parts {
+	 part { name: "button_image";
+	    mouse_events: 1;
+	    description { state: "default" 0.0;
+           color: 255 255 255 0;
+	       image {
+		  normal: "bt_base2.png";
+		  border: 7 7 7 7;
+	       }
+               image.middle: SOLID;
+	    }
+       description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+          color: 255 255 255 255;
+	    }
+	    description { state: "clicked" 0.0;
+	       inherit: "default" 0.0;
+          inherit: "visible" 0.0;
+	       image.normal: "bt_base1.png";
+               image.middle: SOLID;
+	    }
+	    description { state: "disabled" 0.0;
+	       inherit:  "default" 0.0;
+          inherit: "visible" 0.0;
+	       image {
+		  normal: "bt_dis_base.png";
+		  border: 4 4 4 4;
+	       }
+	    }
+	 }
+	 part { name: "elm.swallow.content";
+	    type: SWALLOW;
+	    description { state: "default" 0.0;
+               fixed: 1 0;
+	       visible: 0;
+	       align: 0.0 0.5;
+	       rel1.offset: 4 4;
+	       rel2.offset: 3 -5;
+	       rel2.relative: 0.0 1.0;
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+               fixed: 1 0;
+	       visible: 1;
+	       aspect: 1.0 1.0;
+	       aspect_preference: VERTICAL;
+	       rel2.offset: 4 -5;
+	    }
+	    description { state: "icononly" 0.0;
+	       inherit: "default" 0.0;
+               fixed: 0 0;
+	       visible: 1;
+	       align: 0.5 0.5;
+	       aspect: 1.0 1.0;
+	       rel2.offset: -5 -5;
+	       rel2.relative: 1.0 1.0;
+	       aspect_preference: VERTICAL;
+	    }
+	 }
+         part {
+	    name:          "elm.text";
+	    type:          TEXT;
+	    effect:        SOFT_SHADOW;
+	    mouse_events:  0;
+	    scale: 1;
+	    description { state: "default" 0.0;
+	       visible: 0;
+	       rel1.to_x: "elm.swallow.content";
+	       rel1.relative: 1.0 0.0;
+               rel1.offset: 0 4;
+	       rel2.offset: -5 -5;
+	       color: 224 224 224 255;
+	       color3: 0 0 0 64;
+	       text {
+		  font:     "Sans,Edje-Vera";
+		  size:     10;
+		  min:      0 0;
+		  align:    0.0 0.5;
+	       }
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
+	       text.min: 1 1;
+	    }
+	    description { state: "disabled" 0.0;
+	       inherit: "default" 0.0;
+	       color: 0 0 0 128;
+	       color3: 0 0 0 0;
+	    }
+	    description { state: "disabled_visible" 0.0;
+	       inherit: "default" 0.0;
+	       color: 0 0 0 128;
+	       color3: 0 0 0 0;
+	       visible: 1;
+	       text.min: 1 1;
+	    }
+	 }
+	 part {	  name: "over1";
+	    mouse_events: 0;
+	    description { state: "default" 0.0;
+           color: 255 255 255 0;
+	       rel2.relative: 1.0 0.5;
+	       image {
+		  normal: "bt_hilight.png";
+		  border: 7 7 7 0;
+	       }
+	    }
+       description { state: "visible" 0.0;
+	       inherit:  "default" 0.0;
+          color: 255 255 255 255;
+	    }
+	    description { state: "disabled" 0.0;
+	       inherit:  "default" 0.0;
+          inherit:  "visible" 0.0;
+	       image {
+		  normal: "bt_dis_hilight.png";
+		  border: 4 4 4 0;
+	       }
+	    }
+	 }
+	 part { name: "over2";
+	    mouse_events: 1;
+	    repeat_events: 1;
+            ignore_flags: ON_HOLD;
+	    description { state: "default" 0.0;
+	       image {
+		  normal: "bt_shine.png";
+		  border: 7 7 7 7;
+	       }
+	    }
+	    description { state: "disabled" 0.0;
+	       inherit:  "default" 0.0;
+	       visible: 0;
+	    }
+	 }
+         part { name: "over3";
+            mouse_events: 1;
+            repeat_events: 1;
+            description { state: "default" 0.0;
+               color: 255 255 255 0;
+               image {
+                  normal: "bt_glow.png";
+                  border: 12 12 12 12;
+               }
+	       fill.smooth : 0;
+            }
+            description { state: "clicked" 0.0;
+               inherit:  "default" 0.0;
+               visible: 1;
+               color: 255 255 255 255;
+            }
+         }
+ 	 part { name: "disabler";
+	    type: RECT;
+	    description { state: "default" 0.0;
+	       color: 0 0 0 0;
+	       visible: 0;
+	    }
+	    description { state: "disabled" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
+	    }
+	 }
+      }
+      programs {
+    program {
+	    name:   "button_mouse_in";
+	    signal: "mouse,in";
+	    source: "over2";
+	    action: STATE_SET "visible" 0.0;
+	    target: "button_image";
+       target: "over1";
+       transition: DECELERATE 0.5;
+	 }
+	 program {
+	    name:   "button_mouse_out";
+	    signal: "mouse,out";
+	    source: "over2";
+	    action: STATE_SET "default" 0.0;
+	    target: "button_image";
+       target: "over1";
+       transition: DECELERATE 0.5;
+	 }
+	 program {
+	    name:   "button_unclick";
+	    signal: "mouse,up,1";
+	    source: "over2";
+	    action: STATE_SET "visible" 0.0;
+	    target: "button_image";
+	 }
+	 program {
+	    name:   "button_click2";
+	    signal: "mouse,down,1";
+	    source: "over3";
+	    action: STATE_SET "clicked" 0.0;
+	    target: "over3";
+	 }
+	 program {
+	    name:   "button_unclick2";
+	    signal: "mouse,up,1";
+	    source: "over3";
+	    action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.5;
+	    target: "over3";
+	 }
+	 program {
+	    name:   "button_unclick3";
+	    signal: "mouse,up,1";
+	    source: "over2";
+	    action: SIGNAL_EMIT "elm,action,click" "";
+	 }
+	 program { name: "text_show";
+	    signal: "elm,state,text,visible";
+	    source: "elm";
+	    script {
+	       new st[31];
+	       new Float:vl;
+	       get_state(PART:"elm.swallow.content", st, 30, vl);
+	       if (!strcmp(st, "icononly"))
+		 set_state(PART:"elm.swallow.content", "visible", 0.0);
+	       set_state(PART:"elm.text", "visible", 0.0);
+	    }
+	 }
+	 program { name: "text_hide";
+	    signal: "elm,state,text,hidden";
+	    source: "elm";
+	    script {
+	       new st[31];
+	       new Float:vl;
+	       get_state(PART:"elm.swallow.content", st, 30, vl);
+	       if (!strcmp(st, "visible"))
+		 set_state(PART:"elm.swallow.content", "icononly", 0.0);
+	       set_state(PART:"elm.text", "default", 0.0);
+	    }
+	 }
+	 program { name: "icon_show";
+	    signal: "elm,state,icon,visible";
+	    source: "elm";
+	    script {
+	       new st[31];
+	       new Float:vl;
+	       get_state(PART:"elm.text", st, 30, vl);
+	       if (!strcmp(st, "visible"))
+		 set_state(PART:"elm.swallow.content", "visible", 0.0);
+	       else
+		 set_state(PART:"elm.swallow.content", "icononly", 0.0);
+	    }
+	 }
+	 program { name: "icon_hide";
+	    signal: "elm,state,icon,hidden";
+	    source: "elm";
+	    action:  STATE_SET "default" 0.0;
+	    target: "elm.swallow.content";
+	 }
+	 program { name: "disable";
+	    signal: "elm,state,disabled";
+	    source: "elm";
+	    action: STATE_SET "disabled" 0.0;
+	    target: "button_image";
+	    target: "over1";
+	    target: "over2";
+	    target: "disabler";
+            after: "disable_text";
+	 }
+         program { name: "disable_text";
+	    script {
+	       new st[31];
+	       new Float:vl;
+	       get_state(PART:"elm.text", st, 30, vl);
+	       if (!strcmp(st, "visible"))
+		 set_state(PART:"elm.text", "disabled_visible", 0.0);
+	       else
+		 set_state(PART:"elm.text", "disabled", 0.0);
+	    }
+         }
+	 program { name: "enable";
+	    signal: "elm,state,enabled";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
+	    target: "button_image";
+	    target: "over1";
+	    target: "over2";
+	    target: "disabler";
+            after: "enable_text";
+	 }
+         program { name: "enable_text";
+	    script {
+	       new st[31];
+	       new Float:vl;
+	       get_state(PART:"elm.text", st, 30, vl);
+	       if (!strcmp(st, "disabled_visible"))
+		 set_state(PART:"elm.text", "visible", 0.0);
+	       else
+		 set_state(PART:"elm.text", "default", 0.0);
+	    }
+         }
+      }
+   }
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/toggle/base/default";
       images {
@@ -3945,6 +4255,332 @@ collections {
 		  normal: "bt_dis_hilight.png";
 		  border: 4 4 4 0;
 	       }
+	    }
+	 }
+      }
+      programs {
+	 program { name: "end";
+	    signal: "mouse,up,1";
+	    source: "base";
+	    action: SIGNAL_EMIT "elm,action,dismiss" "";
+	 }
+
+	 program { name: "show";
+            signal: "elm,action,show";
+	    source: "elm";
+	    action: STATE_SET "visible" 0.0;
+//	    transition: DECELERATE 0.5;
+	    target: "base";
+	 }
+	 program { name: "hide";
+            signal: "elm,action,hide";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
+//	    transition: DECELERATE 0.5;
+	    target: "base";
+	 }
+
+	 program { name: "leftshow";
+            signal: "elm,action,slot,left,show";
+	    source: "elm";
+	    action: STATE_SET "visible" 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "left";
+	    target: "elm.swallow.slot.left";
+	 }
+	 program { name: "lefthide";
+            signal: "elm,action,slot,left,hide";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "left";
+	    target: "elm.swallow.slot.left";
+	 }
+	 program { name: "rightshow";
+            signal: "elm,action,slot,right,show";
+	    source: "elm";
+	    action: STATE_SET "visible" 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "right";
+	    target: "elm.swallow.slot.right";
+	 }
+	 program { name: "righthide";
+            signal: "elm,action,slot,right,hide";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "right";
+	    target: "elm.swallow.slot.right";
+	 }
+	 program { name: "topshow";
+            signal: "elm,action,slot,top,show";
+	    source: "elm";
+	    action: STATE_SET "visible" 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "top";
+	    target: "elm.swallow.slot.top";
+	 }
+	 program { name: "tophide";
+            signal: "elm,action,slot,top,hide";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "top";
+	    target: "elm.swallow.slot.top";
+	 }
+	 program { name: "bottomshow";
+            signal: "elm,action,slot,bottom,show";
+	    source: "elm";
+	    action: STATE_SET "visible" 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "bottom";
+	    target: "elm.swallow.slot.bottom";
+	 }
+	 program { name: "bottomhide";
+            signal: "elm,action,slot,bottom,hide";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
+	    transition: DECELERATE 0.5;
+	    target: "bottom";
+	    target: "elm.swallow.slot.bottom";
+	 }
+      }
+   }
+
+   group { name: "elm/hover/base/menu";
+      images {
+	 image: "shad_circ.png" COMP;
+	 image: "bt_dis_base.png" COMP;
+      }
+      parts {
+	 part { name: "elm.swallow.offset";
+            type: SWALLOW;
+	    description { state: "default" 0.0;
+	       align: 0.0 0.0;
+	       rel1.relative: 0.0 0.0;
+	       rel2.relative: 0.0 0.0;
+	    }
+	 }
+	 part { name: "elm.swallow.size";
+            type: SWALLOW;
+	    description { state: "default" 0.0;
+	       align: 0.0 0.0;
+	       rel1.to: "elm.swallow.offset";
+	       rel1.relative: 1.0 1.0;
+	       rel2.to: "elm.swallow.offset";
+	       rel2.relative: 1.0 1.0;
+	    }
+	 }
+	 part { name: "base";
+	    type: RECT;
+	    mouse_events: 1;
+	    description { state: "default" 0.0;
+	       color: 0 0 0 0;
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 1.0;
+	       color: 0 0 0 64;
+	    }
+	 }
+	 part { name: "leftclip";
+	    type: RECT;
+	    description { state: "default" 0.0;
+	       rel2.to_x: "pop";
+	       rel2.relative: 0.0 1.0;
+               rel2.offset: 1 -1;
+	    }
+	 }
+	 part { name: "left";
+	    clip_to: "leftclip";
+	    description { state: "default" 0.0;
+	       visible: 0;
+	       rel1.to: "elm.swallow.slot.left";
+               rel1.offset: -5 -5;
+	       rel2.to: "elm.swallow.slot.left";
+               rel2.offset: 4 4;
+               image {
+		  normal: "bt_dis_base.png";
+		  border: 4 4 4 4;
+	       }
+               image.middle: SOLID;
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
+	    }
+	 }
+	 part { name: "elm.swallow.slot.left";
+            type: SWALLOW;
+	    clip_to: "leftclip";
+	    description { state: "default" 0.0;
+	       align: 0.0 0.5;
+	       rel1.to: "elm.swallow.slot.middle";
+	       rel1.relative: 0.0 0.0;
+	       rel1.offset: -1 0;
+	       rel2.to: "elm.swallow.slot.middle";
+	       rel2.relative: 0.0 1.0;
+	       rel2.offset: -1 -1;
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       rel1.offset: -7 0;
+	       rel2.offset: -7 -1;
+	       align: 1.0 0.5;
+	    }
+	 }
+	 part { name: "rightclip";
+	    type: RECT;
+	    description { state: "default" 0.0;
+	       rel1.to_x: "pop";
+	       rel1.relative: 1.0 0.0;
+               rel1.offset: -2 0;
+	    }
+	 }
+	 part { name: "right";
+	    clip_to: "rightclip";
+	    description { state: "default" 0.0;
+	       visible: 0;
+	       rel1.to: "elm.swallow.slot.right";
+               rel1.offset: -5 -5;
+	       rel2.to: "elm.swallow.slot.right";
+               rel2.offset: 4 4;
+               image {
+		  normal: "bt_dis_base.png";
+		  border: 4 4 4 4;
+	       }
+               image.middle: SOLID;
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
+	    }
+	 }
+	 part { name: "elm.swallow.slot.right";
+            type: SWALLOW;
+	    clip_to: "rightclip";
+	    description { state: "default" 0.0;
+	       align: 1.0 0.5;
+	       rel1.to: "elm.swallow.slot.middle";
+	       rel1.relative: 1.0 0.0;
+	       rel1.offset: 0 0;
+	       rel2.to: "elm.swallow.slot.middle";
+	       rel2.relative: 1.0 1.0;
+	       rel2.offset: 0 -1;
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       rel1.offset: 6 0;
+	       rel2.offset: 6 -1;
+	       align: 0.0 0.5;
+	    }
+	 }
+	 part { name: "topclip";
+	    type: RECT;
+	    description { state: "default" 0.0;
+	       rel2.to_y: "pop";
+	       rel2.relative: 1.0 0.0;
+               rel2.offset: -1 1;
+	    }
+	 }
+	 part { name: "top";
+	    clip_to: "topclip";
+	    description { state: "default" 0.0;
+	       visible: 0;
+	       rel1.to: "elm.swallow.slot.top";
+               rel1.offset: -5 -5;
+	       rel2.to: "elm.swallow.slot.top";
+               rel2.offset: 4 4;
+               image {
+		  normal: "bt_dis_base.png";
+		  border: 4 4 4 4;
+	       }
+               image.middle: SOLID;
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
+	    }
+	 }
+	 part { name: "elm.swallow.slot.top";
+            type: SWALLOW;
+	    clip_to: "topclip";
+	    description { state: "default" 0.0;
+	       visible: 1;
+	       align: 0.5 0.0;
+	       rel1.to: "elm.swallow.slot.middle";
+	       rel1.relative: 0.0 0.0;
+	       rel1.offset: 0 -1;
+	       rel2.to: "elm.swallow.slot.middle";
+	       rel2.relative: 1.0 0.0;
+	       rel2.offset: -1 -1;
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       rel1.offset: 0 -7;
+	       rel2.offset: -1 -7;
+	       align: 0.5 1.0;
+	    }
+	 }
+	 part { name: "bottomclip";
+	    type: RECT;
+	    description { state: "default" 0.0;
+	       rel1.to_y: "pop";
+	       rel1.relative: 0.0 1.0;
+               rel1.offset: -1 -2;
+	    }
+	 }
+	 part { name: "bottom";
+	    clip_to: "bottomclip";
+	    description { state: "default" 0.0;
+	       visible: 0;
+	       rel1.to: "elm.swallow.slot.bottom";
+               rel1.offset: -5 -5;
+	       rel2.to: "elm.swallow.slot.bottom";
+               rel2.offset: 4 4;
+               image {
+		  normal: "bt_dis_base.png";
+		  border: 4 4 4 4;
+	       }
+               image.middle: SOLID;
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
+	    }
+	 }
+	 part { name: "elm.swallow.slot.bottom";
+            type: SWALLOW;
+	    clip_to: "bottomclip";
+	    description { state: "default" 0.0;
+	       align: 0.5 1.0;
+	       rel1.to: "elm.swallow.slot.middle";
+	       rel1.relative: 0.0 1.0;
+	       rel1.offset: 0 0;
+	       rel2.to: "elm.swallow.slot.middle";
+	       rel2.relative: 1.0 1.0;
+	       rel2.offset: -1 0;
+	    }
+	    description { state: "visible" 0.0;
+	       inherit: "default" 0.0;
+	       rel1.offset: 0 6;
+	       rel2.offset: -1 6;
+	       align: 0.5 0.0;
+	    }
+	 }
+	 part { name: "pop";
+	    mouse_events: 1;
+	    description { state: "default" 0.0;
+	       rel1.to: "elm.swallow.slot.middle";
+               rel1.offset: -5 -5;
+	       rel2.to: "elm.swallow.slot.middle";
+               rel2.offset: 4 4;
+       }
+	 }
+	 part { name: "elm.swallow.slot.middle";
+            type: SWALLOW;
+	    description { state: "default" 0.0;
+	       rel1.to: "elm.swallow.size";
+	       rel2.to: "elm.swallow.size";
 	    }
 	 }
       }
