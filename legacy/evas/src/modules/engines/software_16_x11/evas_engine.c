@@ -459,7 +459,7 @@ static void
 eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x, int y, int w, int h)
 {
    Render_Engine *re;
-   XRectangle r;
+   XRectangle r = { 0, 0, 0, 0 };
 
    re = (Render_Engine *)data;
 

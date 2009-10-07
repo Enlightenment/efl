@@ -184,6 +184,12 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
 	abort();
 	return;
      }
+   if (!smart_obj->layer)
+     {
+	ERROR("No evas surface associated with smart object (%p)", smart_obj);
+	abort();
+	return;
+     }
    if (obj->layer && smart_obj->layer
        && obj->layer->evas != smart_obj->layer->evas)
      {

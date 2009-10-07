@@ -345,8 +345,8 @@ eng_info_free(Evas *e __UNUSED__, void *info)
 static int
 eng_setup(Evas *e, void *in)
 {
-   Render_Engine                 *re;
    Evas_Engine_Info_Software_X11 *info;
+   Render_Engine *re = NULL;
 
    info = (Evas_Engine_Info_Software_X11 *)in;
    if (!e->engine.data.output)

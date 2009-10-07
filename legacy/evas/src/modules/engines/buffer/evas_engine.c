@@ -75,7 +75,7 @@ _output_setup(int w,
 
      {
 	Outbuf_Depth dep;
-	DATA32 color_key;
+	DATA32 color_key = 0;
 
 	dep = OUTBUF_DEPTH_BGR_24BPP_888_888;
 	if      (depth_type == EVAS_ENGINE_BUFFER_DEPTH_ARGB32)

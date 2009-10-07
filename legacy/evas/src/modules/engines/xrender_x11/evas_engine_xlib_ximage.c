@@ -205,6 +205,10 @@ _xr_xlib_image_new(Ximage_Info *xinf, int w, int h, int depth)
 	     return NULL;
 	  }
      }
+   else
+     {
+	return NULL;
+     }
 
    xim_ok:
    _xr_xlib_image_info_pool_flush(xinf, 32, (1600 * 1200 * 32 * 2));
