@@ -67,7 +67,7 @@ source_fetch_file(const char *fil, const char *filname)
    sf->name = mem_strdup(filname);
    sf->file = mem_alloc(sz + 1);
    tmp = fread(sf->file, sz, 1, f);
-   if (tmp != sz)
+   if (tmp != 1)
      {
 	fprintf(stderr, "%s: Warning filename length doesn't match !\n",
 		progname);
