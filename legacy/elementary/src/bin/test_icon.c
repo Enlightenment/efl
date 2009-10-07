@@ -1,5 +1,11 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
+static void
+icon_clicked(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("clicked!\n");
+}
+
 void
 test_icon(void *data, Evas_Object *obj, void *event_info)
 {
@@ -18,6 +24,8 @@ test_icon(void *data, Evas_Object *obj, void *event_info)
    elm_win_resize_object_add(win, ic);
    evas_object_show(ic);
 
+   evas_object_smart_callback_add(ic, "clicked", icon_clicked, NULL);
+   
    evas_object_show(win);
 }
 #endif
