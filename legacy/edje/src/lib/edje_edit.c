@@ -5378,7 +5378,7 @@ _edje_generate_source(Evas_Object *obj)
    strcpy(tmpn, "/tmp/edje_edit.edc-tmp-XXXXXX");
    if (!(fd = mkstemp(tmpn))) return NULL;
    printf("*** tmp file: %s\n", tmpn);
-   if (!(f = fdopen(fd, "w"))) return NULL;
+   if (!(f = fdopen(fd, "wb"))) return NULL;
 
    /* Write edc into file */
    //TODO Probably we need to save the file before generation
