@@ -2369,33 +2369,34 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
 	     w = ep->w - ep->req.w;
 	     h = ep->h - ep->req.h;
 	     didw = 0;
-	     if (!((ep->chosen_description) &&
-		   (ep->chosen_description->fixed.w)))
+	     if (ep->chosen_description)
 	       {
-		  if (w > maxw)
+		  if (!ep->chosen_description->fixed.w)
 		    {
-		       maxw = w;
-		       ok = 1;
-		       pep = ep;
-		       didw = 1;
-		    }
-		  if ((ep->part->type == EDJE_PART_TYPE_TEXTBLOCK))
-		    {
-		       /* FIXME: do something */
-		    }
-	       }
-	     if (!((ep->chosen_description) &&
-		   (ep->chosen_description->fixed.h)))
-	       {
-		  if (!((ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) &&
-			(!ep->chosen_description->text.min_x) &&
-			(didw)))
-		    {
-		       if (h > maxh)
+		       if (w > maxw)
 			 {
-			    maxh = h;
+			    maxw = w;
 			    ok = 1;
 			    pep = ep;
+			    didw = 1;
+			 }
+		       if ((ep->part->type == EDJE_PART_TYPE_TEXTBLOCK))
+			 {
+			    /* FIXME: do something */
+			 }
+		    }
+		  if (!ep->chosen_description->fixed.h)
+		    {
+		       if (!((ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) &&
+			     (!ep->chosen_description->text.min_x) &&
+			     (didw)))
+			 {
+			    if (h > maxh)
+			      {
+				 maxh = h;
+				 ok = 1;
+				 pep = ep;
+			      }
 			 }
 		    }
 	       }
@@ -2472,7 +2473,7 @@ edje_object_part_state_get(const Evas_Object *obj, const char *part, double *val
 	printf("part not found\n");
 	return "";
      }
-   if (!rp->chosen_description)
+   if (rp->chosen_description)
      {
 	if (val_ret) *val_ret = rp->chosen_description->state.value;
 	if (rp->chosen_description->state.name)
