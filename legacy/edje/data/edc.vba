@@ -28,7 +28,7 @@ if exists('&ofu')
 endif
 
 syntax/edc.vim	[[[1
-225
+234
 " Vim syntax file
 " Language:	EDC
 " Maintainer:	Viktor Kojouharov
@@ -49,29 +49,30 @@ syn keyword	edcBlock	text font fill origin size image contained
 syn keyword	edcBlock	programs program styles style contained
 syn keyword 	edcBlock 	gradient spectra spectrum contained
 syn keyword 	edcBlock 	color_classes color_class rel1 rel2 contained
-syn keyword 	edcBlock 	items item contained
+syn keyword 	edcBlock 	items item script script_only contained
+syn keyword 	edcBlock 	lua_script lua_script_only contained
 
 syn keyword	edcLabel	item name alias min max type effect contained
 syn keyword	edcLabel	mouse_events repeat_events clip_to contained
-syn keyword	edcLabel	x y confine events scale contained
+syn keyword	edcLabel	x y confine events scale scale_hint contained
 syn keyword	edcLabel	ignore_flags precise_is_inside contained
 syn keyword	edcLabel	use_alternate_font_metrics entry_mode contained
-syn keyword	edcLabel	source source2 source3 source4 contained
+syn keyword	edcLabel	source source2 source3 source4 source5 source6 contained
 syn keyword	edcLabel	source5 source6 multiline pointer_mode contained
 syn keyword	edcLabel	state visible step aspect fixed middle contained
 syn keyword	edcLabel	aspect_preference elipsis image contained
-syn keyword	edcLabel	relative offset to to_x to_y contained
+syn keyword	edcLabel	relative offset to to_x to_y select_mode contained
 syn keyword	edcLabel	border color color2 color3 font size contained
 syn keyword	edcLabel	signal action transition in contained
 syn keyword	edcLabel	target after fit align contained
 syn keyword	edcLabel	text smooth inherit tag base style contained
-syn keyword	edcLabel	text_source color_class text_class contained
+syn keyword	edcLabel	text_source color_class text_class repch contained
 syn keyword	edcLabel	spectrum angle spread normal tween contained
 syn keyword	edcLabel	padding prefer weight aspect_mode contained
 syn keyword	edcLabel	options layout position span contained
 syn keyword	edcLabel	homogeneous contained
 
-syn keyword	edcConstant 	COMP RAW LOSSY NONE ON_HOLD AUTOGRAB NOGRAB
+syn keyword	edcConstant 	COMP RAW LOSSY USER NONE ON_HOLD AUTOGRAB NOGRAB
 syn keyword	edcConstant 	TEXT IMAGE RECT TEXTBLOCK SWALLOW GRADIENT GROUP
 syn keyword	edcConstant 	NONE PLAIN OUTLINE SOFT_OUTLINE SHADOW
 syn keyword	edcConstant 	SOFT_SHADOW OUTLINE_SHADOW OUTLINE_SOFT_SHADOW
@@ -79,8 +80,10 @@ syn keyword	edcConstant	GLOW FAR_SHADOW FAR_SOFT_SHADOW
 syn keyword	edcConstant 	STATE_SET ACTION_STOP SIGNAL_EMIT FOCUS_SET
 syn keyword	edcConstant	DRAG_VAL_SET DRAG_VAL_STEP DRAG_VAL_PAGE
 syn keyword	edcConstant	LINEAR SINUSOIDAL ACCELERATE DECELERATE
-syn keyword	edcConstant	VERTICAL HORIZONTAL BOTH BOX TABLE
-syn keyword	edcConstant	EDITABLE PASSWORD "default"
+syn keyword	edcConstant	NEITHER VERTICAL HORIZONTAL BOTH BOX TABLE
+syn keyword	edcConstant	DEFAULT EXPLICIT SOLID DYNAMIC STATIC
+syn keyword	edcConstant	EDITABLE PASSWORD SCALE TILE TABLE ITEM
+syn keyword	edcConstant	SCRIPT LUA_SCRIPT "default"
 
 syn keyword	edcTodo		contained TODO FIXME XXX
 
@@ -188,6 +191,11 @@ unlet b:current_syntax
 syn region 	edcScript	matchgroup=edcScriptTag start="\<script\_s*{" end="}" contains=@edcEmbryo,edcScriptTag
 syn keyword     edcScriptTag    contained script
 
+syn include 	@edcLua 	syntax/lua.vim
+unlet b:current_syntax
+syn region 	edcLuaScript	matchgroup=edcLuaScriptTag start="\<lua_script\_s*{" end="}" contains=@edcLua,edcLuaScriptTag
+syn keyword     edcLuaScriptTag    contained script
+
 if exists("edc_minlines")
   let b:edc_minlines = edc_minlines
 else
@@ -238,6 +246,7 @@ if version >= 508 || !exists("did_edc_syn_inits")
   HiLink edcError		Error
   HiLink edcBlock		Function
   HiLink edcScriptTag		Function
+  HiLink edcLuaScriptTag	Function
   HiLink edcPreCondit		PreCondit
   HiLink edcConstant		Constant
   HiLink edcCommentString	edcString
@@ -345,7 +354,7 @@ au BufRead,BufNewFile *.edc	set filetype=edc
 au BufRead,BufNewFile *.sma	set filetype=embryo
 au BufRead,BufNewFile *.embryo	set filetype=embryo
 autoload/edccomplete.vim	[[[1
-774
+827
 " Vim completion script
 " Language:	EDC
 " Maintainer:	Viktor Kojouharov
@@ -429,6 +438,8 @@ function! edccomplete#Complete(findstart, base)
 	call edccomplete#AddKeyword(res, a:base, s:partPointerMode)
       elseif line =~ 'editable_mode:\s*'
 	call edccomplete#AddKeyword(res, a:base, s:partEditableMode)
+      elseif line =~ 'select_mode:\s*'
+	call edccomplete#AddKeyword(res, a:base, s:partSelectMode)
       endif
       if line =~ 'image:\s*".\{-}"'
 	call edccomplete#AddKeyword(res, a:base, s:imageStorageMethod)
@@ -457,11 +468,18 @@ function! edccomplete#Complete(findstart, base)
       call edccomplete#AddStatement(res, line, a:base, s:imageStatement)
       if line =~ 'image:\s*".\{-}"'
 	call edccomplete#AddKeyword(res, a:base, s:imageStorageMethod)
+      elseif line =~ 'middle:\s*'
+	call edccomplete#AddKeyword(res, a:base, s:middleTypes)
+      elseif line =~ 'scale_hint:\s*'
+	call edccomplete#AddKeyword(res, a:base, s:scaleHintTypes)
       endif
 
     elseif b:scontext == 'fill'
       call edccomplete#AddLabel(res, line, a:base, s:fillLabel)
       call edccomplete#AddStatement(res, line, a:base, s:fillStatement)
+      if line =~ 'type:\s*'
+	call edccomplete#AddKeyword(res, a:base, s:fillTypes)
+      endif
 
     elseif b:scontext == 'origin' || b:scontext == 'size'
       call edccomplete#AddLabel(res, line, a:base, s:fillInnerStatement)
@@ -721,9 +739,16 @@ let s:partLabel = {
       \ 'use_alternate_font_metrics':	'"bool"',
       \ 'clip_to':		        '"string"',
       \ 'source':		        '"string"',
+      \ 'source2':		        '"string" (only for TEXTAREA)',
+      \ 'source3':		        '"string" (only for TEXTAREA)',
+      \ 'source4':		        '"string" (only for TEXTAREA)',
+      \ 'source5':		        '"string" (only for TEXTAREA)',
+      \ 'source6':		        '"string" (only for TEXTAREA)',
       \ 'image':		        '"string" "keyword"',
       \ 'font':			        '"string" "string"',
       \ 'entry_mode':		        '"keyword"',
+      \ 'select_mode':		        '"keyword"',
+      \ 'multiline':		        '"bool"',
       \ }
 let s:partStatement = [
       \ 'dragable',
@@ -798,6 +823,7 @@ let s:imageLabel = {
       \ 'tween':	'"string"',
       \ 'border':	'"int" "int" "int" "int"',
       \ 'middle':	'"bool"',
+      \ 'scale_hint':	'"keyword"',
       \ }
 
 " fill
@@ -805,6 +831,7 @@ let s:fillLabel = {
       \ 'smooth':	'"bool"',
       \ 'angle':	'"0-360"',
       \ 'spread':	'"bool"',
+      \ 'type':	        '"keyword"',
       \ }
 let s:fillStatement = [
       \ 'origin',
@@ -830,6 +857,7 @@ let s:textLabel = {
       \ 'elipsis':	'"float"',
       \ 'source':	'"string"',
       \ 'text_source':	'"string"',
+      \ 'repch':	'"char"',
       \ }
 let s:textStatement = [
       \ 'fonts',
@@ -848,6 +876,7 @@ let s:programLabel = {
       \ }
 let s:programStatement = [
       \ 'script',
+      \ 'lua_script',
       \ ]
 
 
@@ -900,16 +929,19 @@ let s:tableDescLabel = {
 
 " group
 let s:groupLabel = {
-      \ 'name':		'"string"',
-      \ 'alias':	'"string"',
-      \ 'min':		'"int" "int"',
-      \ 'max':		'"int" "int"',
-      \ 'image':	'"string" "keyword"',
-      \ 'font':		'"string" "string"',
+      \ 'name':		        '"string"',
+      \ 'alias':	        '"string"',
+      \ 'min':		        '"int" "int"',
+      \ 'max':		        '"int" "int"',
+      \ 'image':	        '"string" "keyword"',
+      \ 'font':		        '"string" "string"',
+      \ 'script_only':	        '"bool"',
+      \ 'lua_script_only':	'"bool"',
       \ }
 let s:groupStatement = [
       \ 'data',
       \ 'script',
+      \ 'lua_script',
       \ 'parts',
       \ 'images',
       \ 'fonts',
@@ -1020,6 +1052,7 @@ let s:imageStorageMethod = {
       \ 'COMP':		'',
       \ 'RAW':		'',
       \ 'LOSSY':	'0-100',
+      \ 'USER':	        '',
       \ }
 
 " part types
@@ -1065,12 +1098,41 @@ let s:partEditableMode = {
       \ 'EDITABLE':	'',
       \ 'PASSWORD':	'',
       \ }
+" part effects
+let s:partSelectMode = {
+      \ 'DEFAULT':		'',
+      \ 'EXPLICIT':		'',
+      \ }
 
 " aspect_preference types
 let s:aspectPrefTypes = {
+      \ 'NONE':	        '',
       \ 'VERTICAL':	'',
       \ 'HORIZONTAL':	'',
       \ 'BOTH':		'',
+      \	}
+
+" image middle types
+let s:middleTypes = {
+      \ 'NONE':	        '',
+      \ 'DEFAULT':	'',
+      \ 'SOLID':	'',
+      \ '0':		'',
+      \ '1':		'',
+      \	}
+
+" image scale_hint types
+let s:scaleHintTypes = {
+      \ 'NONE':	        '',
+      \ 'DYNAMIC':	'',
+      \ 'STATIC':	'',
+      \ '0':		'',
+      \	}
+
+" fill types
+let s:fillTypes = {
+      \ 'SCALE':        '',
+      \ 'TILE':	        '',
       \	}
 
 " program transition types
