@@ -1125,11 +1125,10 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
                 case '~':
                     ptr++;
                     entry->word_size = atoi(ptr);
-                    if (((entry->word_size != 0)
-                            && (entry->word_size != 1)
-                            && (entry->word_size != 2)
-                            && (entry->word_size != 4))
-                            || (entry->value_len % entry->word_size))
+                    if ((entry->word_size != 0) && ((entry->word_size != 1)
+						     && (entry->word_size != 2)
+						     && (entry->word_size != 4)
+						     || (entry->value_len % entry->word_size)))
                     {
                         /* Invalid, Destroy */
                         FREE(entry->value);
