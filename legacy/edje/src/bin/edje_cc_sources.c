@@ -48,6 +48,7 @@ source_fetch_file(const char *fil, const char *filname)
    FILE *f;
    char buf[16 * 1024], *dir = NULL;
    long sz;
+   size_t tmp;
    ssize_t dir_len = 0;
    SrcFile *sf;
 
@@ -65,7 +66,14 @@ source_fetch_file(const char *fil, const char *filname)
    sf = mem_alloc(SZ(SrcFile));
    sf->name = mem_strdup(filname);
    sf->file = mem_alloc(sz + 1);
-   fread(sf->file, sz, 1, f);
+   tmp = fread(sf->file, sz, 1, f);
+   if (tmp != sz)
+     {
+	fprintf(stderr, "%s: Warning filename length doesn't match !\n",
+		progname);
+	exit(-1);
+     }
+
    sf->file[sz] = '\0';
    fseek(f, 0, SEEK_SET);
    srcfiles.list = eina_list_append(srcfiles.list, sf);

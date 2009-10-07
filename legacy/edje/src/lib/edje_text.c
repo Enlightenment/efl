@@ -243,7 +243,7 @@ _edje_text_font_get(const char *base, const char *new, char **free_later)
 
    if (base && (!new))
      return base;
-   else if ((!base) && new)
+   else if (!base)
      return new;
 
    base_style = strstr(base, ":style=");

@@ -525,7 +525,7 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 			    const char *file = NULL;
 
 			    evas_object_image_file_get(im, &file, NULL);
-			    if ((file) && (stat(file, &st) != 0))
+			    if (!file || (stat(file, &st) != 0))
 			      st.st_size = 0;
 			    *input_bytes += st.st_size;
 			    *input_raw_bytes += im_w * im_h * 4;
