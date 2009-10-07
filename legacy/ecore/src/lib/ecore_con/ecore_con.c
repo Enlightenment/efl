@@ -787,7 +787,8 @@ ecore_con_client_del(Ecore_Con_Client *cl)
      }
    else
      {
-        cl->server->clients = eina_list_remove(cl->server->clients, cl);
+        if (cl->server)
+	  cl->server->clients = eina_list_remove(cl->server->clients, cl);
 	_ecore_con_client_free(cl);
      }
    return data;
