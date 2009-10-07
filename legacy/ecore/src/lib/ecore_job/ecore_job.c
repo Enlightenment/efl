@@ -113,8 +113,5 @@ _ecore_job_event_handler(void *data __UNUSED__, int type __UNUSED__, void *ev)
 static void
 _ecore_job_event_free(void *data __UNUSED__, void *ev)
 {
-   Ecore_Job *job;
-   
-   job = ev;
    free(ev);
 }
