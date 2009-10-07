@@ -62,7 +62,8 @@ test_photocam.c \
 test_photo.c \
 test_icon_desktops.c \
 test_notify.c \
-test_slideshow.c
+test_slideshow.c \
+test_menu.c
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la
 elementary_test_LDFLAGS =

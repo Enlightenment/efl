@@ -429,8 +429,6 @@ extern "C" {
    EAPI void	     elm_notify_timer_init(Evas_Object *obj);
    /* smart callbacks called:
     */
-
-
    typedef enum _Elm_Hover_Axis
      {
 	ELM_HOVER_AXIS_NONE,
@@ -615,13 +613,24 @@ extern "C" {
    EAPI Eina_Bool    elm_toolbar_item_separator_get(Elm_Toolbar_Item *item);
    EAPI void	     elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu);
    EAPI void	     elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent);
-   EAPI Elm_Toolbar_Menu_Item *elm_toolbar_item_menu_item_add(Elm_Toolbar_Item *item, const char *icon_path, const char *icon_group, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
-   EAPI void         elm_toolbar_menu_item_del(Elm_Toolbar_Menu_Item *item);
+   EAPI Elm_Toolbar_Menu_Item *elm_toolbar_item_menu_item_add(Elm_Toolbar_Item *item, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
    EAPI void         elm_toolbar_scrollable_set(Evas_Object *obj, Eina_Bool scrollable);
    EAPI void	     elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous);
    /* smart callbacks called:
     * "clicked" - when the user clicks on a toolbar item and becomes selected
     */
+
+   typedef struct _Menu_Item Elm_Menu_Item;
+   EAPI Evas_Object *	elm_menu_add(Evas_Object *parent);
+   EAPI void		elm_menu_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+   EAPI void		elm_menu_parent_set(Evas_Object *obj, Evas_Object *parent);
+   EAPI Elm_Menu_Item * elm_menu_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
+   /* smart callbacks called:
+    * "clicked" - the user clicked the empty space in the menu to dismiss
+    */
+
+
+
 
    typedef enum _Elm_List_Mode
      {

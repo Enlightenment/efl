@@ -52,6 +52,7 @@ my_bt_show_reg(void *data, Evas_Object *obj, void *event_info)
 
 static void
 my_bt_bring_reg(void *data, Evas_Object *obj, void *event_info)
+
 {
    elm_photocam_image_region_bring_in(data, 800, 300, 500, 300);
 }

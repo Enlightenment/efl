@@ -101,15 +101,21 @@ test_toolbar(void *data, Evas_Object *obj, void *event_info)
    item = elm_toolbar_item_add(tb, ic, "Menu", NULL, NULL);
    elm_toolbar_item_menu_set(item, 1);
    elm_toolbar_menu_parent_set(tb, win);
-  
+ 
+   ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   elm_toolbar_item_menu_item_add(item, buf, NULL, "Here", tb_3, ph4);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_toolbar_item_menu_item_add(item, ic, "Here", tb_3, ph4);
 
+   ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   elm_toolbar_item_menu_item_add(item, buf, NULL, "Comes", tb_4, ph4);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_toolbar_item_menu_item_add(item, ic, "Comes", tb_4, ph4);
 
+   ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   elm_toolbar_item_menu_item_add(item, buf, NULL, "Elementary", tb_5, ph4);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_toolbar_item_menu_item_add(item, ic, "Elementary", tb_5, ph4);
 
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);

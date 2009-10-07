@@ -8144,6 +8144,62 @@ collections {
    }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+   group { name: "elm/menu/base/default";
+       images {
+           image: "bt_dis_base.png" COMP;
+       }
+       parts {
+           part { name: "base";
+               type: RECT;
+               mouse_events: 1;
+               description { state: "default" 0.0;
+                   color: 0 0 0 0;
+               }
+               description { state: "visible" 0.0;
+                   inherit: "default" 1.0;
+                   color: 255 255 255 255;
+               }
+           }
+           part { name: "bottom";
+               clip_to: "base";
+               description { state: "default" 0.0;
+                   image {
+                       normal: "bt_dis_base.png";
+                       border: 4 4 4 4;
+                   }
+                   image.middle: SOLID;
+               }
+           }
+           part { name: "elm.swallow";
+               type: SWALLOW;
+               clip_to: "base";
+               description { state: "default" 0.0;
+                   align: 0.5 1.0;
+                   rel1.to: "bottom";
+                   rel2.to: "bottom";
+               }
+           }
+       }
+       programs {
+           program { name: "show";
+               signal: "show";
+               source: "";
+               action: STATE_SET "visible" 0.0;
+               transition: ACCELERATE 0.5; 
+               target: "base";
+           }
+           program { name: "hide";
+               signal: "elm,action,hide";
+               source: "elm";
+               action: STATE_SET "default" 0.0;
+               target: "base";
+           }
+       }
+   }
+
+
+   ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/list/item/default";
       data.item: "stacking" "above";
       images {
