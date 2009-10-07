@@ -881,11 +881,20 @@ _item_block_unrealize(Item_Block *itb)
 {
    const Eina_List *l;
    Elm_Genlist_Item *it;
+   int dragging = 0;
 
    if (!itb->realized) return;
    EINA_LIST_FOREACH(itb->items, l, it)
-     _item_unrealize(it);
-   itb->realized = EINA_FALSE;
+     {
+        if (it->dragging)
+          {
+             dragging = 1;
+          }
+        else
+          _item_unrealize(it);
+     }
+   if (!dragging)
+     itb->realized = EINA_FALSE;
 }
 
 static void
@@ -929,7 +938,10 @@ _item_block_position(Item_Block *itb, int in)
 		  evas_object_show(it->base);
 	       }
 	     else
-	       _item_unrealize(it);
+               {
+                  if (!it->dragging)
+                    _item_unrealize(it);
+               }
 	  }
 	y += it->h;
 	in++;
