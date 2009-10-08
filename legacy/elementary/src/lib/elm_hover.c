@@ -87,6 +87,8 @@ _sizing_eval(Evas_Object *obj)
    evas_object_resize(wd->cov, w, h);
    evas_object_size_hint_min_set(wd->offset, x2 - x, y2 - y);
    evas_object_size_hint_min_set(wd->size, w2, h2);
+   edje_object_part_swallow(wd->cov, "elm.swallow.offset", wd->offset);
+   edje_object_part_swallow(wd->cov, "elm.swallow.size", wd->size);
 }
 
 static void

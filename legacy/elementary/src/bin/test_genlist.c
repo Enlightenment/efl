@@ -589,7 +589,6 @@ Evas_Object *gl3_icon_get(const void *data, Evas_Object *obj, const char *part)
      {
 	Evas_Object *bx = elm_box_add(obj);
 	Evas_Object *ic;
-	elm_box_horizontal_set(bx, 1);
 	ic = elm_icon_add(obj);
 	snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
 	elm_icon_file_set(ic, buf, NULL);
@@ -601,6 +600,7 @@ Evas_Object *gl3_icon_get(const void *data, Evas_Object *obj, const char *part)
 	elm_icon_scale_set(ic, 0, 0);
 	evas_object_show(ic);
 	elm_box_pack_end(bx, ic);
+        elm_box_horizontal_set(bx, 1);
 	evas_object_show(bx);
 	return bx;
      }
@@ -755,6 +755,7 @@ Evas_Object *gl5_icon_get(const void *data, Evas_Object *obj, const char *part)
 	elm_icon_scale_set(ic, 0, 0);
 	evas_object_show(ic);
 	elm_box_pack_end(bx, ic);
+        elm_box_horizontal_set(bx, 1);
 	evas_object_show(bx);
 	return bx;
      }
