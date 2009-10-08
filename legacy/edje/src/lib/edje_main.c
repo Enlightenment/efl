@@ -50,15 +50,22 @@ edje_init(void)
    if (++_edje_init_count != 1)
      return _edje_init_count;
 
-   eina_init();
-   ecore_job_init();
    srand(time(NULL));
+
+   if (!eina_init())
+     return --_edje_init_count;
+   if (!ecore_job_init())
+     goto shutdown_eina;
+   if (!embryo_init())
+     goto shutdown_ecore_job;
+   if (!eet_init())
+     goto shutdown_embryo;
+
    _edje_edd_setup();
    _edje_text_init();
    _edje_box_init();
    _edje_lua_init();
-   embryo_init();
-   eet_init();
+   _edje_message_init();
 
    _edje_real_part_mp = eina_mempool_add("chained_mempool",
 					 "Edje_Real_Part", NULL,
@@ -66,7 +73,7 @@ edje_init(void)
    if (!_edje_real_part_mp)
      {
 	EINA_ERROR_PERR("ERROR: Mempool for Edje_Real_Part cannot be allocated.\n");
-	goto on_error;
+	goto shutdown_eet;
      }
 
    _edje_real_part_state_mp = eina_mempool_add("chained_mempool",
@@ -75,19 +82,30 @@ edje_init(void)
    if (!_edje_real_part_state_mp)
      {
 	EINA_ERROR_PERR("ERROR: Mempool for Edje_Real_Part_State cannot be allocated.\n");
-	goto on_error;
+	goto shutdown_eet;
      }
-
-   _edje_message_init();
 
    return _edje_init_count;
 
- on_error:
+ shutdown_eet:
    eina_mempool_del(_edje_real_part_state_mp);
    eina_mempool_del(_edje_real_part_mp);
    _edje_real_part_state_mp = NULL;
    _edje_real_part_mp = NULL;
-   return 0;
+   _edje_message_shutdown();
+   _edje_lua_shutdown();
+   _edje_box_shutdown();
+   _edje_text_class_members_free();
+   _edje_text_class_hash_free();
+   _edje_edd_free();
+   eet_shutdown();
+ shutdown_embryo:
+   embryo_shutdown();
+ shutdown_ecore_job:
+   ecore_job_shutdown();
+ shutdown_eina:
+   eina_shutdown();
+   return --_edje_init_count;
 }
 
 /**
@@ -120,22 +138,23 @@ edje_shutdown(void)
    _edje_timer = NULL;
 
    _edje_file_cache_shutdown();
-   _edje_message_shutdown();
-   _edje_edd_free();
    _edje_color_class_members_free();
    _edje_color_class_hash_free();
-   _edje_text_class_members_free();
-   _edje_text_class_hash_free();
-   _edje_box_shutdown();
 
    eina_mempool_del(_edje_real_part_state_mp);
    eina_mempool_del(_edje_real_part_mp);
    _edje_real_part_state_mp = NULL;
    _edje_real_part_mp = NULL;
 
+   _edje_message_shutdown();
+   _edje_lua_shutdown();
+   _edje_box_shutdown();
+   _edje_text_class_members_free();
+   _edje_text_class_hash_free();
+   _edje_edd_free();
+
    eet_shutdown();
    embryo_shutdown();
-   _edje_lua_shutdown();
    ecore_job_shutdown();
    eina_shutdown();
 
