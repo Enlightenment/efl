@@ -221,7 +221,7 @@ static Eet_File **eet_writers         = NULL;
 static int        eet_readers_num     = 0;
 static int        eet_readers_alloc   = 0;
 static Eet_File **eet_readers         = NULL;
-static int        eet_initcount       = 0;
+static int        eet_init_count       = 0;
 
 /* log domain variable */
 int _eet_log_dom_global = -1;
@@ -729,9 +729,8 @@ eet_flush(Eet_File *ef)
 EAPI int
 eet_init(void)
 {
-   eet_initcount++;
-
-   if (eet_initcount > 1) return eet_initcount;
+   if (++eet_init_count != 1)
+     return eet_init_count;
 
 #ifdef HAVE_GNUTLS
    /* Before the library can be used, it must initialize itself if needed. */
@@ -741,7 +740,7 @@ eet_init(void)
 	/* Disable warning messages about problems with the secure memory subsystem.
 	   This command should be run right after gcry_check_version. */
 	if (gcry_control(GCRYCTL_DISABLE_SECMEM_WARN))
-	  return --eet_initcount;
+	  return 0;
 	/* This command is used to allocate a pool of secure memory and thus
 	   enabling the use of secure memory. It also drops all extra privileges the
 	   process has (i.e. if it is run as setuid (root)). If the argument nbytes
@@ -752,7 +751,7 @@ eet_init(void)
 	  WRN("BIG FAT WARNING: I AM UNABLE TO REQUEST SECMEM, Cryptographic operation are at risk !");
      }
    if (gnutls_global_init())
-     return --eet_initcount;
+     return 0;
 #endif
 #ifdef HAVE_OPENSSL
    ERR_load_crypto_strings();
@@ -761,20 +760,21 @@ eet_init(void)
 
    if (!eina_init())
      {
-       fprintf(stderr,"Eet: Eina init failed");
-       goto erro_eet_eina_init;
+	fprintf(stderr,"Eet: Eina init failed");
+	goto error_eet_eina_init;
      }
    _eet_log_dom_global = eina_log_domain_register("Eet", EET_DEFAULT_LOG_COLOR);
-   if(_eet_log_dom_global < 0)
+   if (_eet_log_dom_global < 0)
      {
-       EINA_LOG_ERR("Eet Can not create a general log domain.");
-       goto error_eet_eina_log;
+	EINA_LOG_ERR("Eet Can not create a general log domain.");
+	goto error_eet_eina_log;
      }
-   return eet_initcount;
+
+   return eet_init_count;
 
  error_eet_eina_log:
    eina_shutdown();
- erro_eet_eina_init:
+ error_eet_eina_init:
 #ifdef HAVE_GNUTLS
    gnutls_global_deinit();
 #endif
@@ -788,9 +788,8 @@ eet_init(void)
 EAPI int
 eet_shutdown(void)
 {
-   eet_initcount--;
-
-   if (eet_initcount > 0) return eet_initcount;
+   if (--eet_init_count != 0)
+     return eet_init_count;
 
    eet_clearcache();
    eina_log_domain_unregister(_eet_log_dom_global);
@@ -804,7 +803,7 @@ eet_shutdown(void)
    ERR_free_strings();
 #endif
 
-   return eet_initcount;
+   return eet_init_count;
 }
 
 EAPI void
