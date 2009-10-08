@@ -740,7 +740,7 @@ eet_init(void)
 	/* Disable warning messages about problems with the secure memory subsystem.
 	   This command should be run right after gcry_check_version. */
 	if (gcry_control(GCRYCTL_DISABLE_SECMEM_WARN))
-	  return 0;
+	  return --eet_init_count;
 	/* This command is used to allocate a pool of secure memory and thus
 	   enabling the use of secure memory. It also drops all extra privileges the
 	   process has (i.e. if it is run as setuid (root)). If the argument nbytes
@@ -751,7 +751,7 @@ eet_init(void)
 	  WRN("BIG FAT WARNING: I AM UNABLE TO REQUEST SECMEM, Cryptographic operation are at risk !");
      }
    if (gnutls_global_init())
-     return 0;
+     return --eet_init_count;
 #endif
 #ifdef HAVE_OPENSSL
    ERR_load_crypto_strings();
@@ -782,7 +782,7 @@ eet_init(void)
    EVP_cleanup();
    ERR_free_strings();
 #endif
-   return 0;
+   return --eet_init_count;
 }
 
 EAPI int
