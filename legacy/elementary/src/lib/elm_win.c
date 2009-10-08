@@ -114,7 +114,7 @@ _elm_win_obj_callback_show(void *data, Evas *e, Evas_Object *obj, void *event_in
    // this is called to make sure all smart containers have calculated their
    // sizes BEFORE we show the window to make sure it initially appears at
    // our desired size (ie min size is known first)
-   evas_call_smarts_calculate(e);
+   evas_smart_objects_calculate(e);
 }
 
 static void
