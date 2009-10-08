@@ -544,7 +544,6 @@ evas_object_smart_need_recalculate_get(const Evas_Object *obj)
  * Call user provided calculate() and unset need_calculate.
  *
  * @param obj the smart object
- * @return if flag is set or not.
  *
  * @ingroup Evas_Smart_Object_Group
  */
@@ -565,6 +564,23 @@ evas_object_smart_calculate(Evas_Object *obj)
 
    o->need_recalculate = 0;
    obj->smart.smart->smart_class->calculate(obj);
+}
+
+/**
+ * Call user provided calculate() and unset need_calculate on all objects.
+ *
+ * @param e The canvas to calculate all objects in
+ *
+ * @ingroup Evas_Smart_Object_Group
+ */
+EAPI void
+evas_smart_objects_calculate(Evas *e)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return RENDER_METHOD_INVALID;
+   MAGIC_CHECK_END();
+   
+   evas_call_smarts_calculate(e);
 }
 
 /**
