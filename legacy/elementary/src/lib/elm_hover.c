@@ -23,7 +23,6 @@ static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _reval_content(Evas_Object *obj);
-static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void _hov_show_do(Evas_Object *obj);
 static void _hov_move(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -87,9 +86,7 @@ _sizing_eval(Evas_Object *obj)
    evas_object_move(wd->cov, x, y);
    evas_object_resize(wd->cov, w, h);
    evas_object_size_hint_min_set(wd->offset, x2 - x, y2 - y);
-   edje_object_part_swallow(wd->cov, "elm.swallow.offset", wd->offset);
    evas_object_size_hint_min_set(wd->size, w2, h2);
-   edje_object_part_swallow(wd->cov, "elm.swallow.size", wd->size);
 }
 
 static void
@@ -104,23 +101,6 @@ _reval_content(Evas_Object *obj)
 }
 
 static void
-_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
-{
-   Widget_Data *wd = elm_widget_data_get(data);
-   const Eina_List *l;
-   const Subinfo *si;
-
-   EINA_LIST_FOREACH(wd->subs, l, si)
-     {
-	if (si->obj == obj)
-	  {
-	     edje_object_part_swallow(wd->cov, si->swallow, si->obj);
-	     break;
-	  }
-     }
-}
-
-static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -132,9 +112,6 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
      {
 	if (si->obj == sub)
 	  {
-	     evas_object_event_callback_del(sub, 
-                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
-                                            _changed_size_hints);
 	     wd->subs = eina_list_remove_list(wd->subs, l);
 	     eina_stringshare_del(si->swallow);
 	     free(si);
@@ -390,9 +367,6 @@ elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conten
      {
 	elm_widget_sub_object_add(obj, content);
 	edje_object_part_swallow(wd->cov, buf, content);
-	evas_object_event_callback_add(content, 
-                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				       _changed_size_hints, obj);
 	si = ELM_NEW(Subinfo);
 	si->swallow = eina_stringshare_add(buf);
 	si->obj = content;

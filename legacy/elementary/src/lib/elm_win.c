@@ -22,6 +22,7 @@ struct _Elm_Win
 };
 
 static void _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _elm_win_obj_callback_show(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _elm_win_resize(Ecore_Evas *ee);
 static void _elm_win_delete_request(Ecore_Evas *ee);
 static void _elm_win_resize_job(void *data);
@@ -105,6 +106,15 @@ _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_inf
    ecore_job_add(_deferred_ecore_evas_free, win->ee);
 //   ecore_evas_free(win->ee);
    free(win);
+}
+
+static void
+_elm_win_obj_callback_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   // this is called to make sure all smart containers have calculated their
+   // sizes BEFORE we show the window to make sure it initially appears at
+   // our desired size (ie min size is known first)
+   evas_call_smarts_calculate(e);
 }
 
 static void
@@ -356,6 +366,8 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    evas_object_layer_set(win->win_obj, 50);
    evas_object_pass_events_set(win->win_obj, 1);
 
+   evas_object_event_callback_add(win->win_obj, EVAS_CALLBACK_SHOW,
+				  _elm_win_obj_callback_show, win);
    ecore_evas_object_associate(win->ee, win->win_obj,
 			       ECORE_EVAS_OBJECT_ASSOCIATE_BASE |
 			       ECORE_EVAS_OBJECT_ASSOCIATE_STACK |
@@ -700,7 +712,6 @@ static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   edje_object_part_swallow(wd->frm, "elm.swallow.content", obj);
    _sizing_eval(data);
 }
 

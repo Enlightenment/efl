@@ -124,7 +124,6 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (obj != wd->icon) return;
-   edje_object_part_swallow(wd->slider, "elm.swallow.content", obj);
    _sizing_eval(data);
 }
 

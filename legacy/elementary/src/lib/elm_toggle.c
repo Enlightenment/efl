@@ -84,11 +84,7 @@ static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   Evas_Coord mw, mh;
-
    if (obj != wd->icon) return;
-   edje_object_part_swallow(wd->tgl, "elm.swallow.content", obj);
-   evas_object_size_hint_min_get(obj, &mw, &mh);
    _sizing_eval(data);
 }
 

@@ -194,7 +194,6 @@ _index_box_auto_fill(Evas_Object *obj, Evas_Object *box, int level)
    Item *it, **itfit = NULL;
    Evas_Coord mw, mh, w, h;
    int i = 0;
-   char buf[1024];
 
    if (wd->level_active[level]) return;
    evas_object_geometry_get(box, NULL, NULL, &w, &h);
@@ -235,10 +234,7 @@ _index_box_auto_fill(Evas_Object *obj, Evas_Object *box, int level)
                }
           }
      }
-   snprintf(buf, sizeof(buf), "elm.swallow.index.%i", level);
-//   evas_object_size_hint_min_get(box, &mw, &mh);
-//   evas_object_size_hint_min_set(box, mw, 0);
-   edje_object_part_swallow(wd->base, buf, box);
+   evas_object_smart_calculate(box);
    wd->level_active[level] = 1;
 }
 
@@ -248,7 +244,6 @@ _index_box_clear(Evas_Object *obj, Evas_Object *box, int level)
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
    Item *it;
-   char buf[1024];
 
    if (!wd->level_active[level]) return;
    EINA_LIST_FOREACH(wd->items, l, it)
@@ -258,8 +253,6 @@ _index_box_clear(Evas_Object *obj, Evas_Object *box, int level)
         evas_object_del(it->base);
         it->base = 0;
      }
-   snprintf(buf, sizeof(buf), "elm.swallow.index.%i", level);
-   edje_object_part_swallow(wd->base, buf, box);
    wd->level_active[level] = 0;
 }
 

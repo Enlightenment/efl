@@ -67,6 +67,8 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   _elm_theme_set(wd->spinner, "spinner", "base", elm_widget_style_get(obj));
+   edje_object_part_swallow(wd->spinner, "elm.swallow.entry", wd->ent);
    _write_label(obj);
    edje_object_message_signal_process(wd->spinner);
    edje_object_scale_set(wd->spinner, elm_widget_scale_get(obj) * _elm_config->scale);
