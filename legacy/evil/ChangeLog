@@ -1,3 +1,9 @@
+2009-10-08  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_main.c:
+	Shutdown socket system in evil_shutdown().
+	Update init/shutdown scheme.
+
 2009-09-08  Vincent Torri  <doursse at users dot sf dot net>
 
 	* INSTALL:

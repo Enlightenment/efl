@@ -11,7 +11,7 @@
 #include "evil_private.h"
 
 
-static int           _evil_init_count = 0;
+static int      _evil_init_count = 0;
 
 extern LONGLONG _evil_time_freq;
 extern LONGLONG _evil_time_count;
@@ -25,16 +25,12 @@ evil_init()
    LARGE_INTEGER count;
    WORD          second = 59;
 
-   if (_evil_init_count > 0)
-     {
-	_evil_init_count++;
-	return _evil_init_count;
-     }
+   if (++_evil_init_count != 1)
+     return _evil_init_count;
 
    if (!QueryPerformanceFrequency(&freq))
-     {
        return 0;
-     }
+
    _evil_time_freq = freq.QuadPart;
 
    /* be sure that second + 1 != 0 */
@@ -56,12 +52,11 @@ evil_init()
    _evil_time_second = _evil_systemtime_to_time(st);
    if (_evil_time_second < 0)
      return 0;
+
    _evil_time_count = count.QuadPart;
 
-   if(!evil_sockets_init())
+   if (!evil_sockets_init())
      return 0;
-
-   _evil_init_count++;
 
    return _evil_init_count;
 }
@@ -69,10 +64,10 @@ evil_init()
 int
 evil_shutdown()
 {
-   _evil_init_count--;
-   if (_evil_init_count > 0) return _evil_init_count;
+   if (--_evil_init_count != 0)
+     return _evil_init_count;
 
-   if (_evil_init_count < 0) _evil_init_count = 0;
+   evil_sockets_shutdown();
 
    return _evil_init_count;
 }
