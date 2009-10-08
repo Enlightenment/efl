@@ -3772,7 +3772,7 @@ _edje_block_violate(Edje *ed)
 {
    if (ed->block > 0) ed->block_break = 1;
 }
-
+ 
 void
 _edje_object_part_swallow_free_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
@@ -3785,37 +3785,13 @@ _edje_object_part_swallow_free_cb(void *data, Evas *e, Evas_Object *obj, void *e
    event_info = NULL;
 }
 
-void
-_edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
+static void
+_edje_real_part_swallow_hints_update(Edje_Real_Part *rp)
 {
    char *type;
 
-   if (rp->swallowed_object)
-     {
-	evas_object_smart_member_del(rp->swallowed_object);
-	evas_object_event_callback_del(rp->swallowed_object,
-				       EVAS_CALLBACK_FREE,
-				       _edje_object_part_swallow_free_cb);
-	evas_object_clip_unset(rp->swallowed_object);
-	evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
-        if (rp->part->mouse_events)
-          _edje_callbacks_del(rp->swallowed_object);
-	rp->swallowed_object = NULL;
-     }
-#ifdef EDJE_CALC_CACHE
-   rp->invalidate = 1;
-#endif
-   if (!obj_swallow) return;
-   rp->swallowed_object = obj_swallow;
-   evas_object_smart_member_add(rp->swallowed_object, rp->edje->obj);
-   if (rp->clip_to)
-     evas_object_clip_set(rp->swallowed_object, rp->clip_to->object);
-   else evas_object_clip_set(rp->swallowed_object, rp->edje->clipper);
-   evas_object_stack_above(rp->swallowed_object, rp->object);
-   evas_object_event_callback_add(rp->swallowed_object, EVAS_CALLBACK_FREE,
-				  _edje_object_part_swallow_free_cb,
-				  rp->edje->obj);
-   type = (char *)evas_object_type_get(obj_swallow);
+   type = (char *)evas_object_type_get(rp->swallowed_object);
+   
    rp->swallow_params.min.w = 0;
    rp->swallow_params.min.h = 0;
    rp->swallow_params.max.w = -1;
@@ -3824,10 +3800,10 @@ _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
      {
 	Evas_Coord w, h;
 
-	edje_object_size_min_get(obj_swallow, &w, &h);
+	edje_object_size_min_get(rp->swallowed_object, &w, &h);
 	rp->swallow_params.min.w = w;
 	rp->swallow_params.min.h = h;
-	edje_object_size_max_get(obj_swallow, &w, &h);
+	edje_object_size_max_get(rp->swallowed_object, &w, &h);
 	rp->swallow_params.max.w = w;
 	rp->swallow_params.max.h = h;
      }
@@ -3836,7 +3812,7 @@ _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
      {
 	Evas_Coord w, h;
 
-	evas_object_geometry_get(obj_swallow, NULL, NULL, &w, &h);
+	evas_object_geometry_get(rp->swallowed_object, NULL, NULL, &w, &h);
 	rp->swallow_params.min.w = w;
 	rp->swallow_params.min.h = h;
 	rp->swallow_params.max.w = w;
@@ -3846,9 +3822,9 @@ _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
 	Evas_Coord w1, h1, w2, h2, aw, ah;
 	Evas_Aspect_Control am;
 
-	evas_object_size_hint_min_get(obj_swallow, &w1, &h1);
-	evas_object_size_hint_max_get(obj_swallow, &w2, &h2);
-	evas_object_size_hint_aspect_get(obj_swallow, &am, &aw, &ah);
+	evas_object_size_hint_min_get(rp->swallowed_object, &w1, &h1);
+	evas_object_size_hint_max_get(rp->swallowed_object, &w2, &h2);
+	evas_object_size_hint_aspect_get(rp->swallowed_object, &am, &aw, &ah);
 	rp->swallow_params.min.w = w1;
 	rp->swallow_params.min.h = h1;
 	if (w2 > 0) rp->swallow_params.max.w = w2;
@@ -3877,7 +3853,61 @@ _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
 	rp->swallow_params.aspect.h = ah;
 	evas_object_data_set(rp->swallowed_object, "\377 edje.swallowing_part", rp);
      }
+}
 
+void
+_edje_object_part_swallow_changed_hints_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Edje_Real_Part *rp;
+   
+   rp = data;
+   _edje_real_part_swallow_hints_update(rp);
+   rp->edje->dirty = 1;
+   _edje_recalc(rp->edje);
+   return;
+   e = NULL;
+   event_info = NULL;
+}
+
+void
+_edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
+{
+   if (rp->swallowed_object)
+     {
+	evas_object_smart_member_del(rp->swallowed_object);
+	evas_object_event_callback_del(rp->swallowed_object,
+				       EVAS_CALLBACK_FREE,
+				       _edje_object_part_swallow_free_cb);
+	evas_object_event_callback_del(rp->swallowed_object,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+				       _edje_object_part_swallow_changed_hints_cb);
+	evas_object_clip_unset(rp->swallowed_object);
+	evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
+        if (rp->part->mouse_events)
+          _edje_callbacks_del(rp->swallowed_object);
+	rp->swallowed_object = NULL;
+     }
+#ifdef EDJE_CALC_CACHE
+   rp->invalidate = 1;
+#endif
+   if (!obj_swallow) return;
+   rp->swallowed_object = obj_swallow;
+   evas_object_smart_member_add(rp->swallowed_object, rp->edje->obj);
+   if (rp->clip_to)
+     evas_object_clip_set(rp->swallowed_object, rp->clip_to->object);
+   else evas_object_clip_set(rp->swallowed_object, rp->edje->clipper);
+   evas_object_stack_above(rp->swallowed_object, rp->object);
+   evas_object_event_callback_add(rp->swallowed_object, 
+                                  EVAS_CALLBACK_FREE,
+				  _edje_object_part_swallow_free_cb,
+				  rp->edje->obj);
+   evas_object_event_callback_add(rp->swallowed_object, 
+                                  EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+				  _edje_object_part_swallow_changed_hints_cb,
+				  rp);
+   
+   _edje_real_part_swallow_hints_update(rp);
+   
    if (rp->part->mouse_events)
      {
         _edje_callbacks_add(obj_swallow, rp->edje, rp);
