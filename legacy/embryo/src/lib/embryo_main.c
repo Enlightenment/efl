@@ -31,8 +31,8 @@ static int _embryo_init_count = 0;
 EAPI int
 embryo_init(void)
 {
-   _embryo_init_count++;
-   if (_embryo_init_count > 1) return _embryo_init_count;
+   if (++_embryo_init_count != 1)
+     return _embryo_init_count;
 
    srand(time(NULL));
 
@@ -48,8 +48,8 @@ embryo_init(void)
 EAPI int
 embryo_shutdown(void)
 {
-   _embryo_init_count--;
-   if (_embryo_init_count > 0) return _embryo_init_count;
+   if (--_embryo_init_count != 0)
+     return _embryo_init_count;
 
    return _embryo_init_count;
 }
