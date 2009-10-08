@@ -409,7 +409,7 @@ elm_need_efreet(void)
 static void
 _elm_unneed_efreet(void)
 {
-#ifdef ELM_EDBUS
+#ifdef ELM_EFREET
    if (_elm_need_efreet)
      {
         _elm_need_efreet = 0;
