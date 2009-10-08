@@ -22,7 +22,7 @@ evas_init(void)
      return _evas_init_count;
 
    if (!eina_init())
-     return 0;
+     return --_evas_init_count;
 
    _evas_log_dom_global = eina_log_domain_register("evas_main",EVAS_DEFAULT_LOG_COLOR);
    if (_evas_log_dom_global < 0)
@@ -50,7 +50,7 @@ evas_init(void)
  shutdown_eina:
    eina_shutdown();
 
-   return 0;
+   return --_evas_init_count;
 }
 
 /**
