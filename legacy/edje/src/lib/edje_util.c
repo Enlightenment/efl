@@ -2140,6 +2140,9 @@ edje_object_part_unswallow(Evas_Object *obj __UNUSED__, Evas_Object *obj_swallow
 	evas_object_event_callback_del(rp->swallowed_object,
                                        EVAS_CALLBACK_FREE,
                                        _edje_object_part_swallow_free_cb);
+	evas_object_event_callback_del(rp->swallowed_object,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+				       _edje_object_part_swallow_changed_hints_cb);
 	evas_object_clip_unset(rp->swallowed_object);
 	evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
 
