@@ -51,12 +51,12 @@ evil_init()
 
    _evil_time_second = _evil_systemtime_to_time(st);
    if (_evil_time_second < 0)
-     return 0;
+     return --_evil_init_count;
 
    _evil_time_count = count.QuadPart;
 
    if (!evil_sockets_init())
-     return 0;
+     return --_evil_init_count;
 
    return _evil_init_count;
 }
