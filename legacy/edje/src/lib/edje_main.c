@@ -6,7 +6,7 @@
 
 #include "edje_private.h"
 
-static int initted = 0;
+static int _edje_init_count = 0;
 Eina_Mempool *_edje_real_part_mp = NULL;
 Eina_Mempool *_edje_real_part_state_mp = NULL;
 
@@ -47,39 +47,40 @@ Eina_Mempool *_edje_real_part_state_mp = NULL;
 EAPI int
 edje_init(void)
 {
-   initted++;
-   if (initted == 1)
+   if (++_edje_init_count != 1)
+     return _edje_init_count;
+
+   eina_init();
+   ecore_job_init();
+   srand(time(NULL));
+   _edje_edd_setup();
+   _edje_text_init();
+   _edje_box_init();
+   _edje_lua_init();
+   embryo_init();
+   eet_init();
+
+   _edje_real_part_mp = eina_mempool_add("chained_mempool",
+					 "Edje_Real_Part", NULL,
+					 sizeof (Edje_Real_Part), 128);
+   if (!_edje_real_part_mp)
      {
-	eina_init();
-        ecore_job_init();
-	srand(time(NULL));
-	_edje_edd_setup();
-	_edje_text_init();
-	_edje_box_init();
-	_edje_lua_init();
-	embryo_init();
-	eet_init();
-
-	_edje_real_part_mp = eina_mempool_add("chained_mempool",
-					      "Edje_Real_Part", NULL,
-					      sizeof (Edje_Real_Part), 128);
-	if (!_edje_real_part_mp)
-	  {
-	     EINA_ERROR_PERR("ERROR: Mempool for Edje_Real_Part cannot be allocated.\n");
-	     goto on_error;
-	  }
-
-	_edje_real_part_state_mp = eina_mempool_add("chained_mempool",
-					      "Edje_Real_Part_State", NULL,
-					      sizeof (Edje_Real_Part_State), 256);
-	if (!_edje_real_part_state_mp)
-	  {
-	     EINA_ERROR_PERR("ERROR: Mempool for Edje_Real_Part_State cannot be allocated.\n");
-	     goto on_error;
-	  }
+	EINA_ERROR_PERR("ERROR: Mempool for Edje_Real_Part cannot be allocated.\n");
+	goto on_error;
      }
+
+   _edje_real_part_state_mp = eina_mempool_add("chained_mempool",
+					       "Edje_Real_Part_State", NULL,
+					       sizeof (Edje_Real_Part_State), 256);
+   if (!_edje_real_part_state_mp)
+     {
+	EINA_ERROR_PERR("ERROR: Mempool for Edje_Real_Part_State cannot be allocated.\n");
+	goto on_error;
+     }
+
    _edje_message_init();
-   return initted;
+
+   return _edje_init_count;
 
  on_error:
    eina_mempool_del(_edje_real_part_state_mp);
@@ -92,7 +93,8 @@ edje_init(void)
 /**
  * @brief Shutdown the edje library.
  *
- * @return Zero, always.
+ * @return The number of times the library has been initialised without being
+ *         shutdown.
  *
  * This function shuts down the edje library. It calls the functions
  * eina_shutdown(), ecore_job_shutdown(), embryo_shutdown() and
@@ -110,8 +112,8 @@ edje_init(void)
 EAPI int
 edje_shutdown(void)
 {
-   initted--;
-   if (initted > 0) return initted;
+   if (--_edje_init_count != 0)
+     return _edje_init_count;
 
    if (_edje_timer)
      ecore_animator_del(_edje_timer);
@@ -131,13 +133,13 @@ edje_shutdown(void)
    _edje_real_part_state_mp = NULL;
    _edje_real_part_mp = NULL;
 
+   eet_shutdown();
    embryo_shutdown();
    _edje_lua_shutdown();
    ecore_job_shutdown();
-   eet_shutdown();
    eina_shutdown();
 
-   return 0;
+   return _edje_init_count;
 }
 
 /* Private Routines */
