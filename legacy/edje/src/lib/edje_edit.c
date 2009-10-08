@@ -25,6 +25,10 @@
 # include <locale.h>
 #endif
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "edje_private.h"
 
 
@@ -5374,8 +5378,11 @@ _edje_generate_source(Evas_Object *obj)
    GET_ED_OR_RETURN(NULL);
    
    /* Open a temp file */
-   //TODO this will not work on windows
+#ifdef HAVE_EVIL
+   snprintf(tmpn, PATH_MAX, "%s/edje_edit.edc-tmp-XXXXXX", evil_tmpdir_get());
+#else
    strcpy(tmpn, "/tmp/edje_edit.edc-tmp-XXXXXX");
+#endif
    if (!(fd = mkstemp(tmpn))) return NULL;
    printf("*** tmp file: %s\n", tmpn);
    if (!(f = fdopen(fd, "wb"))) return NULL;
