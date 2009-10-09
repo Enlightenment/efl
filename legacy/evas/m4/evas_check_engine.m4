@@ -125,7 +125,7 @@ evas_engine_[]$1[]_libs=""
 AC_PATH_X
 AC_PATH_XTRA
 
-AC_CHECK_HEADERS([GL/gl.h GL/glu.h GL/glx.h X11/X.h],
+AC_CHECK_HEADERS([GL/gl.h GL/glx.h X11/X.h],
    [have_dep="yes"],
    [have_dep="no"])
 
@@ -137,9 +137,8 @@ if test "x${have_dep}" = "xyes" ; then
    AC_CHECK_LIB([GL], [glXCreateContext], [have_dep="yes"], [have_dep="no"])
 fi
 
-if test "x${have_dep}" = "xyes" ; then
-   AC_CHECK_LIB([GLU], [gluNewTess], [have_dep="yes"], [have_dep="no"])
-fi
+## HACK: force gles build on systems that have glx
+#have_dep=no
 
 if test "x${have_dep}" = "xyes" ; then
    if test "x$2" = "xyes" ; then
@@ -150,11 +149,42 @@ if test "x${have_dep}" = "xyes" ; then
       x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11"
    fi
    evas_engine_[]$1[]_cflags="-I/usr/include ${x_cflags}"
-   evas_engine_[]$1[]_libs="${x_libs} -lGL -lGLU -lpthread"
+   evas_engine_[]$1[]_libs="${x_libs} -lGL -lpthread"
+   evas_engine_gl_common_libs="-lGL -lpthread"
+else
+   if test "x$2" = "xyes" ; then
+      x_libs="${x_libs} -lX11 -lXext"
+   else
+      x_dir=${x_dir:-/usr/X11R6}
+      x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
+      x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11"
+   fi
+   AC_CHECK_HEADERS([EGL/egl.h X11/X.h X11/Xlib.h], [have_egl="yes"])
+   if test "x${have_egl}" = "xyes" ; then
+      have_gles20="no"
+      AC_CHECK_LIB(gles20, glTexImage2D, [have_gles20="yes"], , -lEGL)
+      if test "x${have_gles20}" = "xyes" ; then
+         evas_engine_[]$1[]_cflags="${x_cflags}"
+         evas_engine_[]$1[]_libs="${x_libs} -lgles20 -lEGL"
+         AC_DEFINE(GLES_VARIETY_S3C6410, 1, [Samsung S3c6410 GLES2 support])
+         evas_engine_gl_common_libs="-lgles20"
+         have_dep="yes"
+      fi
+      have_glesv2="no"
+      AC_CHECK_LIB(GLESv2, glTexImage2D, [have_glesv2="yes"], , -lEGL ${x_libs} -lpthread -lm)
+      if test "x${have_glesv2}" = "xyes" ; then
+         evas_engine_[]$1[]_cflags="${x_cflags}"
+         evas_engine_[]$1[]_libs="${x_libs} -lGLESv2 -lpthread -lm -lEGL"
+         AC_DEFINE(GLES_VARIETY_SGX, 1, [Imagination SGX GLES2 support])
+         evas_engine_gl_common_libs="-lGLESv2 -lpthread -lm"
+         have_dep="yes"
+      fi
+   fi
 fi
 
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
+
 
 if test "x${have_dep}" = "xyes" ; then
   m4_default([$4], [:])
@@ -394,10 +424,10 @@ AC_DEFUN([EVAS_CHECK_ENGINE_DEP_GL_GLEW],
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
-AC_CHECK_HEADERS([GL/gl.h GL/glu.h GL/glew.h],
+AC_CHECK_HEADERS([GL/gl.h GL/glew.h],
    [
     have_dep="yes"
-    evas_engine_[]$1[]_libs="-lglu32 -lglew32 -lopengl32 -lgdi32"
+    evas_engine_[]$1[]_libs="-lglew32 -lopengl32 -lgdi32"
    ],
    [have_dep="no"]
 )

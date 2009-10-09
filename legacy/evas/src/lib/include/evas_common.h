@@ -876,6 +876,7 @@ struct _RGBA_Font_Int
 
    int               size;
    int               real_size;
+   int               max_h;
 
    struct {
       FT_Size       size;
@@ -923,6 +924,7 @@ struct _RGBA_Font_Glyph
    /* this is a problem - only 1 engine at a time can extend such a font... grrr */
    void           *ext_dat;
    void           (*ext_dat_free) (void *ext_dat);
+   RGBA_Font_Int   *fi;
 };
 
 struct _RGBA_Gfx_Compositor

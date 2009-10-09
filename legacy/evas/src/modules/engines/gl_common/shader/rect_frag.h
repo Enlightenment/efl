@@ -1,0 +1,6 @@
+"uniform sampler2D tex;\n"
+"varying vec4 col;\n"
+"void main()\n"
+"{\n"
+"   gl_FragColor = col;\n"
+"}\n"

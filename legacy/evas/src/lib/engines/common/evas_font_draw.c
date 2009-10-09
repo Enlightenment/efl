@@ -51,6 +51,8 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
    fg->glyph_out = (FT_BitmapGlyph)fg->glyph;
    fg->index = hindex;
 
+   fg->fi = fi;
+   
    eina_hash_direct_add(fi->glyphs, &fg->index, fg);
    return fg;
 }

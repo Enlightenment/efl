@@ -435,15 +435,11 @@ have_evas_engine_gl_common="no"
 if test "x$have_evas_engine_gl_x11" = "xyes" -o "x$have_evas_engine_gl_glew" = "xyes"; then
    AC_DEFINE(BUILD_ENGINE_GL_COMMON, 1, [Generic OpenGL Rendering Support])
    have_evas_engine_gl_common="yes"
-   evas_engine_gl_common_libs="-lglu32"
-fi
-
-if test "x$have_evas_engine_gl_x11" = "xyes" ; then
-   evas_engine_gl_common_libs="-lGL -lGLU -lpthread"
+   evas_engine_gl_common_libs=""
 fi
 
 if test "x$have_evas_engine_gl_glew" = "xyes" ; then
-   evas_engine_gl_common_libs="-lglu32"
+   evas_engine_gl_common_libs=""
 fi
 AC_SUBST([evas_engine_gl_common_libs])
 

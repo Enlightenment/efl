@@ -1,15 +1,6 @@
 #ifndef EVAS_GL_COMMON_H
 #define EVAS_GL_COMMON_H
 
-#define EVAS_GL_COMMON_NOCUTOUTS 1
-
-/* FIXME: need to handle memory errors */
-/* FIXME: need to handle list errors */
-/* FIXME: need to handle gl errors */
-/* FIXME: need to free textures is texture ream runs out */
-/* FIXME: need to break image textures into meshes if too big */
-/* FIXME: need to page mesh textures if texture alloc fails */
-
 #include "evas_common.h"
 #include "evas_private.h"
 #include "config.h"
@@ -26,100 +17,120 @@
 # include <GL/glew.h>
 #else
 # define GL_GLEXT_PROTOTYPES
-#endif /* BUILD_ENGINE_GL_GLEW */
+#endif
 
 #ifdef BUILD_ENGINE_GL_QUARTZ
 # include <OpenGL/gl.h>
-# include <OpenGL/glu.h>
 #else
-# include <GL/gl.h>
-# include <GL/glu.h>
-#endif /* BUILD_ENGINE_GL_QUARTZ */
+# if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#  if defined(GLES_VARIETY_S3C6410)
+#   include <GLES/gl.h>
+#  elif defined(GLES_VARIETY_SGX)
+#   include <GLES2/gl2.h>
+#  endif
+# else
+#  include <GL/gl.h>
+# endif
+#endif
 
+#ifndef GL_TEXTURE_RECTANGLE_NV
+#define GL_TEXTURE_RECTANGLE_NV 0x84F5
+#endif
+
+
+#define SHAD_VERTEX 0
+#define SHAD_COLOR  1
+#define SHAD_TEXUV  2
+
+typedef struct _Evas_GL_Program                      Evas_GL_Program;
+typedef struct _Evas_GL_Program_Source               Evas_GL_Program_Source;
 typedef struct _Evas_GL_Context                      Evas_GL_Context;
+typedef struct _Evas_GL_Texture_Pool                 Evas_GL_Texture_Pool;
 typedef struct _Evas_GL_Texture                      Evas_GL_Texture;
 typedef struct _Evas_GL_Image                        Evas_GL_Image;
+typedef struct _Evas_GL_Font_Texture                 Evas_GL_Font_Texture;
+
+
+
 typedef struct _Evas_GL_Polygon                      Evas_GL_Polygon;
 typedef struct _Evas_GL_Polygon_Point                Evas_GL_Polygon_Point;
 typedef struct _Evas_GL_Gradient                     Evas_GL_Gradient;
-typedef struct _Evas_GL_Font_Texture                 Evas_GL_Font_Texture;
 typedef struct _Evas_GL_Font_Texture_Pool            Evas_GL_Font_Texture_Pool;
 typedef struct _Evas_GL_Font_Texture_Pool_Allocation Evas_GL_Font_Texture_Pool_Allocation;
 
+struct _Evas_GL_Program
+{
+   GLuint vert, frag, prog;
+};
+
+struct _Evas_GL_Program_Source
+{
+   const char *src;
+   const unsigned int *bin;
+   int bin_size;
+};
+
 struct _Evas_GL_Context
 {
-   int             w, h;
-
-   unsigned char   dither : 1;
-   unsigned char   blend : 1;
-   unsigned char   blend_alpha : 1;
-   unsigned char   r, g, b, a;
-
-   struct {
-      unsigned char size : 1;
-      unsigned char dither : 1;
-      unsigned char blend : 1;
-      unsigned char color : 1;
-      unsigned char texture : 1;
-      unsigned char clip : 1;
-      unsigned char buf : 1;
-      unsigned char other : 1;
-   } change;
-
-   struct {
-      unsigned char active : 1;
-      int           x, y, w, h;
-   } clip;
-
-   struct {
-      int checked : 1;
-      int sgis_generate_mipmap : 1;
-      int nv_texture_rectangle : 1;
-      int arb_texture_non_power_of_two : 1;
-      int arb_program : 1;
-   } ext;
-
-   GLenum          read_buf;
-   GLenum          write_buf;
-
-   Evas_GL_Texture      *texture;
-   GLuint                font_texture;
-   unsigned char         font_texture_rectangle : 1;
-   unsigned char         texture_program : 1;
-
-   int             max_texture_depth;
-   int             max_texture_size;
-
-   int             references;
-
-   Eina_List      *images;
-   Eina_List      *tex_pool;
-
+   int                references;
+   int                w, h;
    RGBA_Draw_Context  *dc;
    
+   Eina_List          *images;
+
    struct {
-      GLhandleARB  prog, fshad;
-   } yuv422p;
+      Eina_List       *whole;
+      Eina_List       *atlas[33][3];
+   } tex;
+   
+   struct {
+      GLint max_texture_units;
+      GLint max_texture_size;
+      Eina_Bool tex_npo2 : 1;
+      Eina_Bool tex_rect : 1;
+   } info;
+   struct {
+      int             x, y, w, h;
+      Eina_Bool       active : 1;
+   } clip;
+   struct {
+      Evas_GL_Program rect, img, font, yuv;
+      GLuint          cur_prog;
+      GLuint          cur_tex;
+      Eina_Bool       smooth : 1;
+      Eina_Bool       blend : 1;
+   } shader;
+   struct {
+      int num;
+      int alloc;
+      GLint   *vertex;
+      GLfloat *color;
+      GLfloat *texuv;
+   } array;
+   struct {
+      Eina_Bool size : 1;
+   } change;
+   Eina_Bool checked : 1;
+};
+
+struct _Evas_GL_Texture_Pool
+{
+   Evas_GL_Context *gc;
+   GLuint           texture;
+   GLuint           format;
+   int              w, h;
+   int              references;
+   int              slot, fslot;
+   Eina_List       *allocations;
+   Eina_Bool        whole : 1;
 };
 
 struct _Evas_GL_Texture
 {
    Evas_GL_Context *gc;
-   int              w, h;
-   int              tw, th;
-   int              uw, uh;
-
-   GLuint           texture, texture2, texture3;
-
-   unsigned char    smooth : 1;
-   unsigned char    changed : 1;
-   unsigned char    have_mipmaps : 1;
-   unsigned char    rectangle : 1;
-   unsigned char    not_power_of_two : 1;
-   unsigned char    opt : 1;
-
+   Evas_GL_Texture_Pool *pt;
+   int              x, y, w, h;
    int              references;
-   GLhandleARB      prog;
 };
 
 struct _Evas_GL_Image
@@ -128,7 +139,6 @@ struct _Evas_GL_Image
    RGBA_Image      *im;
    Evas_GL_Texture *tex;
    RGBA_Image_Loadopts load_opts;
-   int              putcount;
    int              references;
    struct {
       int           space;
@@ -138,6 +148,16 @@ struct _Evas_GL_Image
    unsigned char    dirty : 1;
    unsigned char    cached : 1;
 };
+
+struct _Evas_GL_Font_Texture
+{
+   Evas_GL_Texture *tex;
+};
+
+
+
+
+
 
 struct _Evas_GL_Polygon
 {
@@ -159,17 +179,6 @@ struct _Evas_GL_Gradient
    unsigned char    changed : 1;
 };
 
-struct _Evas_GL_Font_Texture
-{
-   Evas_GL_Context                      *gc;
-   int                                   x, y, w, h;
-   double                                tx1, ty1, tx2, ty2;
-   int                                   aw, ah;
-   GLuint                                texture;
-   Evas_GL_Font_Texture_Pool            *pool;
-   Eina_Rectangle                       *alloc;
-};
-
 struct _Evas_GL_Font_Texture_Pool
 {
    Evas_GL_Context *gc;
@@ -178,25 +187,47 @@ struct _Evas_GL_Font_Texture_Pool
    unsigned char    rectangle : 1;
 };
 
+extern Evas_GL_Program_Source shader_rect_frag_src;
+extern Evas_GL_Program_Source shader_rect_vert_src;
+extern Evas_GL_Program_Source shader_img_frag_src;
+extern Evas_GL_Program_Source shader_img_vert_src;
+extern Evas_GL_Program_Source shader_font_frag_src;
+extern Evas_GL_Program_Source shader_font_vert_src;
+
+void glerr(const char *file, const char *func, int line, const char *op);
+ 
 Evas_GL_Context  *evas_gl_common_context_new(void);
 void              evas_gl_common_context_free(Evas_GL_Context *gc);
 void              evas_gl_common_context_use(Evas_GL_Context *gc);
 void              evas_gl_common_context_resize(Evas_GL_Context *gc, int w, int h);
-void              evas_gl_common_context_color_set(Evas_GL_Context *gc, int r, int g, int b, int a);
-void              evas_gl_common_context_blend_set(Evas_GL_Context *gc, int blend);
-void              evas_gl_common_context_dither_set(Evas_GL_Context *gc, int dither);
-void              evas_gl_common_context_texture_set(Evas_GL_Context *gc, Evas_GL_Texture *tex, int smooth, int w, int h);
-void              evas_gl_common_context_font_texture_set(Evas_GL_Context *gc, Evas_GL_Font_Texture *ft);
-void              evas_gl_common_context_clip_set(Evas_GL_Context *gc, int on, int x, int y, int w, int h);
-void              evas_gl_common_context_read_buf_set(Evas_GL_Context *gc, GLenum buf);
-void              evas_gl_common_context_write_buf_set(Evas_GL_Context *gc, GLenum buf);
 
-Evas_GL_Texture  *evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth);
-void              evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth);
+void              evas_gl_common_context_rectangle_push(Evas_GL_Context *gc,
+                                                        int x, int y, int w, int h,
+                                                        int r, int g, int b, int a);
+void              evas_gl_common_context_image_push(Evas_GL_Context *gc,
+                                                    Evas_GL_Texture *tex,
+                                                    double sx, double sy, double sw, double sh,
+                                                    int x, int y, int w, int h,
+                                                    int r, int g, int b, int a,
+                                                    Eina_Bool smooth);
+void              evas_gl_common_context_font_push(Evas_GL_Context *gc,
+                                                   Evas_GL_Texture *tex,
+                                                   double sx, double sy, double sw, double sh,
+                                                   int x, int y, int w, int h,
+                                                   int r, int g, int b, int a);
+void              evas_gl_common_context_flush(Evas_GL_Context *gc);
+
+void              evas_gl_common_shader_program_init(Evas_GL_Program *p,
+                                                     Evas_GL_Program_Source *vert,
+                                                     Evas_GL_Program_Source *frag);
+    
+void              evas_gl_common_rect_draw(Evas_GL_Context *gc, int x, int y, int w, int h);
+
+Evas_GL_Texture  *evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im);
+void              evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im);
 void              evas_gl_common_texture_free(Evas_GL_Texture *tex);
-void              evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int smooth);
-Evas_GL_Texture  *evas_gl_common_ycbcr601pl_texture_new(Evas_GL_Context *gc, unsigned char **rows, int w, int h, int smooth);
-void              evas_gl_common_ycbcr601pl_texture_update(Evas_GL_Texture *tex, unsigned char **rows, int w, int h, int smooth);
+Evas_GL_Texture  *evas_gl_common_texture_alpha_new(Evas_GL_Context *gc, DATA8 *pixels, int w, int h, int fh);
+void              evas_gl_common_texture_alpha_update(Evas_GL_Texture *tex, DATA8 *pixels, int w, int h, int fh);
     
 Evas_GL_Image    *evas_gl_common_image_load(Evas_GL_Context *gc, const char *file, const char *key, Evas_Image_Load_Opts *lo);
 Evas_GL_Image    *evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, DATA32 *data, int alpha, int cspace);
@@ -204,6 +235,31 @@ Evas_GL_Image    *evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc,
 Evas_GL_Image    *evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h, int alpha, int cspace);
 void              evas_gl_common_image_free(Evas_GL_Image *im);
 void              evas_gl_common_image_dirty(Evas_GL_Image *im);
+void              evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth);
+
+Evas_GL_Texture  *evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg);
+void              evas_gl_font_texture_free(Evas_GL_Texture *ft);
+void              evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Evas_GL_Polygon  *evas_gl_common_poly_point_add(Evas_GL_Polygon *poly, int x, int y);
 Evas_GL_Polygon  *evas_gl_common_poly_points_clear(Evas_GL_Polygon *poly);
@@ -231,14 +287,9 @@ void              evas_gl_common_gradient_draw(Evas_GL_Context *gc, Evas_GL_Grad
 
 void              evas_gl_common_swap_rect(Evas_GL_Context *gc, int x, int y, int w, int h);
 
-void              evas_gl_common_rect_draw(Evas_GL_Context *gc, int x, int y, int w, int h);
-void              evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth);
 void              evas_gl_common_line_draw(Evas_GL_Context *gc, int x1, int y1, int x2, int y2);
 void              evas_gl_common_poly_draw(Evas_GL_Context *gc, Evas_GL_Polygon *poly);
 
-Evas_GL_Font_Texture *evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg);
-void                  evas_gl_font_texture_free(Evas_GL_Font_Texture *ft);
-void                  evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y);
 
 /* FIXME:
  *

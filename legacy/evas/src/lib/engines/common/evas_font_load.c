@@ -356,6 +356,8 @@ evas_common_font_int_load_init(RGBA_Font_Int *fi)
 EAPI RGBA_Font_Int *
 evas_common_font_int_load_complete(RGBA_Font_Int *fi)
 {
+   int val, dv;
+   int ret;
    int error;
 
    error = FT_New_Size(fi->src->ft.face, &(fi->ft.size));
@@ -402,6 +404,28 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
      }
    fi->src->current_size = fi->size;
 
+   fi->max_h = 0;
+   
+   val = (int)fi->src->ft.face->bbox.yMax;
+   if (fi->src->ft.face->units_per_EM != 0)
+     {
+        dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
+        ret = (val * fi->src->ft.face->size->metrics.y_scale) / (dv * dv);
+     }
+   else
+     ret = val;
+   fi->max_h += ret;
+   
+   val = -(int)fi->src->ft.face->bbox.yMin;
+   if (fi->src->ft.face->units_per_EM != 0)
+     {
+        dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
+        ret = (val * fi->src->ft.face->size->metrics.y_scale) / (dv * dv);
+     }
+   else
+     ret = val;
+   fi->max_h += ret;
+   
    return fi;
 }
 

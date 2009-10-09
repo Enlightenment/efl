@@ -870,7 +870,8 @@ extern "C" {
    EAPI void              evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_Bool value) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool         evas_object_smart_need_recalculate_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI void              evas_object_smart_calculate       (Evas_Object *obj) EINA_ARG_NONNULL(1);
-
+   
+   EAPI void              evas_smart_objects_calculate      (Evas *e);
 
 /* events */
    EAPI void              evas_event_freeze                 (Evas *e) EINA_ARG_NONNULL(1);
