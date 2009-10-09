@@ -577,9 +577,8 @@ EAPI void
 evas_smart_objects_calculate(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return RENDER_METHOD_INVALID;
+   return;
    MAGIC_CHECK_END();
-   
    evas_call_smarts_calculate(e);
 }
 
