@@ -7,8 +7,18 @@
 #include "edje_private.h"
 
 static int _edje_init_count = 0;
+static int _edje_log_dom_global = -1;
 Eina_Mempool *_edje_real_part_mp = NULL;
 Eina_Mempool *_edje_real_part_state_mp = NULL;
+
+#ifdef EDJE_DEFAULT_LOG_COLOR
+# undef EDJE_DEFAULT_LOG_COLOR
+#endif
+#define EDJE_DEFAULT_LOG_COLOR EINA_COLOR_CYAN
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_edje_log_dom_global, __VA_ARGS__)
 
 
 /*============================================================================*
@@ -53,13 +63,35 @@ edje_init(void)
    srand(time(NULL));
 
    if (!eina_init())
-     return --_edje_init_count;
+     {
+	fprintf(stderr, "Edje: Eina init failed");
+	return --_edje_init_count;
+     }
+
+   _edje_log_dom_global = eina_log_domain_register("Edje", EDJE_DEFAULT_LOG_COLOR);
+   if (_edje_log_dom_global < 0)
+     {
+	EINA_LOG_ERR("Edje Can not create a general log domain.");
+	goto shutdown_eina;
+     }
+
    if (!ecore_job_init())
-     goto shutdown_eina;
+     {
+	ERR("Edje: Ecore_Job init failed");
+	goto unregister_log_domain;
+     }
+
    if (!embryo_init())
-     goto shutdown_ecore_job;
+     {
+	ERR("Edje: Embryo init failed");
+	goto shutdown_ecore_job;
+     }
+
    if (!eet_init())
-     goto shutdown_embryo;
+     {
+	ERR("Edje: Eet init failed");
+	goto shutdown_embryo;
+     }
 
    _edje_edd_init();
    _edje_text_init();
@@ -72,7 +104,7 @@ edje_init(void)
 					 sizeof (Edje_Real_Part), 128);
    if (!_edje_real_part_mp)
      {
-	EINA_ERROR_PERR("ERROR: Mempool for Edje_Real_Part cannot be allocated.\n");
+	ERR("ERROR: Mempool for Edje_Real_Part cannot be allocated.\n");
 	goto shutdown_eet;
      }
 
@@ -81,7 +113,7 @@ edje_init(void)
 					       sizeof (Edje_Real_Part_State), 256);
    if (!_edje_real_part_state_mp)
      {
-	EINA_ERROR_PERR("ERROR: Mempool for Edje_Real_Part_State cannot be allocated.\n");
+	ERR("ERROR: Mempool for Edje_Real_Part_State cannot be allocated.\n");
 	goto shutdown_eet;
      }
 
@@ -103,6 +135,9 @@ edje_init(void)
    embryo_shutdown();
  shutdown_ecore_job:
    ecore_job_shutdown();
+ unregister_log_domain:
+   eina_log_domain_unregister(_edje_log_dom_global);
+   _edje_log_dom_global = -1;
  shutdown_eina:
    eina_shutdown();
    return --_edje_init_count;
@@ -156,6 +191,8 @@ edje_shutdown(void)
    eet_shutdown();
    embryo_shutdown();
    ecore_job_shutdown();
+   eina_log_domain_unregister(_edje_log_dom_global);
+   _edje_log_dom_global = -1;
    eina_shutdown();
 
    return _edje_init_count;
