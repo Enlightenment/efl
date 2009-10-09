@@ -72,8 +72,8 @@ evas_object_smart_clipped_smart_add(Evas_Object *obj)
    evas_object_smart_member_add(clipper, obj);
    cso->clipper = clipper;
    evas_object_color_set(cso->clipper, 255, 255, 255, 255);
-   evas_object_move(cso->clipper, -10000, -10000);
-   evas_object_resize(cso->clipper, 20000, 20000);
+   evas_object_move(cso->clipper, -100000, -100000);
+   evas_object_resize(cso->clipper, 200000, 200000);
    evas_object_pass_events_set(cso->clipper, 1);
    evas_object_hide(cso->clipper); /* show when have something clipped to it */
 
