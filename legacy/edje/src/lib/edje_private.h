@@ -1086,8 +1086,8 @@ int   _edje_pending_timer_cb(void *data);
 void  _edje_callbacks_add(Evas_Object *obj, Edje *ed, Edje_Real_Part *rp);
 void  _edje_callbacks_del(Evas_Object *obj);
 
-void  _edje_edd_setup(void);
-void  _edje_edd_free(void);
+void  _edje_edd_init(void);
+void  _edje_edd_shutdown(void);
 
 void  _edje_file_add(Edje *ed);
 void  _edje_file_del(Edje *ed);

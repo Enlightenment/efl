@@ -35,7 +35,7 @@ EAPI Eet_Data_Descriptor *_edje_edd_edje_part_image_id = NULL;
    }
 
 void
-_edje_edd_free(void)
+_edje_edd_shutdown(void)
 {
    FREED(_edje_edd_edje_file);
    FREED(_edje_edd_edje_style);
@@ -62,7 +62,7 @@ _edje_edd_free(void)
 }
 
 void
-_edje_edd_setup(void)
+_edje_edd_init(void)
 {
    Eet_Data_Descriptor_Class eddc;
 

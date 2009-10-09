@@ -61,7 +61,7 @@ edje_init(void)
    if (!eet_init())
      goto shutdown_embryo;
 
-   _edje_edd_setup();
+   _edje_edd_init();
    _edje_text_init();
    _edje_box_init();
    _edje_lua_init();
@@ -97,7 +97,7 @@ edje_init(void)
    _edje_box_shutdown();
    _edje_text_class_members_free();
    _edje_text_class_hash_free();
-   _edje_edd_free();
+   _edje_edd_shutdown();
    eet_shutdown();
  shutdown_embryo:
    embryo_shutdown();
@@ -151,7 +151,7 @@ edje_shutdown(void)
    _edje_box_shutdown();
    _edje_text_class_members_free();
    _edje_text_class_hash_free();
-   _edje_edd_free();
+   _edje_edd_shutdown();
 
    eet_shutdown();
    embryo_shutdown();
