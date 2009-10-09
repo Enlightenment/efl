@@ -732,6 +732,18 @@ eet_init(void)
    if (++eet_init_count != 1)
      return eet_init_count;
 
+   if (!eina_init())
+     {
+	fprintf(stderr,"Eet: Eina init failed");
+	return --eet_init_count;
+     }
+   _eet_log_dom_global = eina_log_domain_register("Eet", EET_DEFAULT_LOG_COLOR);
+   if (_eet_log_dom_global < 0)
+     {
+	EINA_LOG_ERR("Eet Can not create a general log domain.");
+	goto shutdown_eina;
+     }
+
 #ifdef HAVE_GNUTLS
    /* Before the library can be used, it must initialize itself if needed. */
    if (gcry_control (GCRYCTL_ANY_INITIALIZATION_P) == 0)
@@ -740,7 +752,7 @@ eet_init(void)
 	/* Disable warning messages about problems with the secure memory subsystem.
 	   This command should be run right after gcry_check_version. */
 	if (gcry_control(GCRYCTL_DISABLE_SECMEM_WARN))
-	  return --eet_init_count;
+	  goto unregister_log_domain;
 	/* This command is used to allocate a pool of secure memory and thus
 	   enabling the use of secure memory. It also drops all extra privileges the
 	   process has (i.e. if it is run as setuid (root)). If the argument nbytes
@@ -751,37 +763,20 @@ eet_init(void)
 	  WRN("BIG FAT WARNING: I AM UNABLE TO REQUEST SECMEM, Cryptographic operation are at risk !");
      }
    if (gnutls_global_init())
-     return --eet_init_count;
+     goto unregister_log_domain;
 #endif
 #ifdef HAVE_OPENSSL
    ERR_load_crypto_strings();
    OpenSSL_add_all_algorithms();
 #endif
 
-   if (!eina_init())
-     {
-	fprintf(stderr,"Eet: Eina init failed");
-	goto error_eet_eina_init;
-     }
-   _eet_log_dom_global = eina_log_domain_register("Eet", EET_DEFAULT_LOG_COLOR);
-   if (_eet_log_dom_global < 0)
-     {
-	EINA_LOG_ERR("Eet Can not create a general log domain.");
-	goto error_eet_eina_log;
-     }
-
    return eet_init_count;
 
- error_eet_eina_log:
+ unregister_log_domain:
+   eina_log_domain_unregister(_eet_log_dom_global);
+   _eet_log_dom_global = -1;
+ shutdown_eina:
    eina_shutdown();
- error_eet_eina_init:
-#ifdef HAVE_GNUTLS
-   gnutls_global_deinit();
-#endif
-#ifdef HAVE_OPENSSL
-   EVP_cleanup();
-   ERR_free_strings();
-#endif
    return --eet_init_count;
 }
 
@@ -792,9 +787,6 @@ eet_shutdown(void)
      return eet_init_count;
 
    eet_clearcache();
-   eina_log_domain_unregister(_eet_log_dom_global);
-   _eet_log_dom_global = -1;
-   eina_shutdown();
 #ifdef HAVE_GNUTLS
    gnutls_global_deinit();
 #endif
@@ -802,6 +794,9 @@ eet_shutdown(void)
    EVP_cleanup();
    ERR_free_strings();
 #endif
+   eina_log_domain_unregister(_eet_log_dom_global);
+   _eet_log_dom_global = -1;
+   eina_shutdown();
 
    return eet_init_count;
 }
