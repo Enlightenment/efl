@@ -66,12 +66,15 @@ source_fetch_file(const char *fil, const char *filname)
    sf = mem_alloc(SZ(SrcFile));
    sf->name = mem_strdup(filname);
    sf->file = mem_alloc(sz + 1);
-   tmp = fread(sf->file, sz, 1, f);
-   if (tmp != 1)
+   if (sz > 0)
      {
-	fprintf(stderr, "%s: Warning filename length doesn't match !\n",
-		progname);
-	exit(-1);
+	tmp = fread(sf->file, sz, 1, f);
+	if (tmp != 1)
+	  {
+	     fprintf(stderr, "%s: Warning file length for (%s) doesn't match !\n",
+		     progname, filname);
+	     exit(-1);
+	  }
      }
 
    sf->file[sz] = '\0';
