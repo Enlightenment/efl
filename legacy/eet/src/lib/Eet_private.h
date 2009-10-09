@@ -90,27 +90,27 @@ extern int _eet_log_dom_global;
  * the first four macros are the general macros for the lib
  */
 #ifdef EET_DEFAULT_LOG_COLOR
-#undef EET_DEFAULT_LOG_COLOR
+# undef EET_DEFAULT_LOG_COLOR
 #endif
 #define EET_DEFAULT_LOG_COLOR EINA_COLOR_CYAN
 #ifdef ERR
-#undef ERR
+# undef ERR
 #endif
 #define ERR(...) EINA_LOG_DOM_ERR(_eet_log_dom_global, __VA_ARGS__)
 #ifdef DBG
-#undef DBG
+# undef DBG
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eet_log_dom_global, __VA_ARGS__)
 #ifdef INF
-#undef INF
+# undef INF
 #endif
 #define INF(...) EINA_LOG_DOM_INFO(_eet_log_dom_global, __VA_ARGS__)
 #ifdef WRN
-#undef WRN
+# undef WRN
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(_eet_log_dom_global, __VA_ARGS__)
 #ifdef CRIT
-#undef CRIT
+# undef CRIT
 #endif
 #define CRIT(...) EINA_LOG_DOM_CRIT(_eet_log_dom_global, __VA_ARGS__)
 

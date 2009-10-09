@@ -734,7 +734,7 @@ eet_init(void)
 
    if (!eina_init())
      {
-	fprintf(stderr,"Eet: Eina init failed");
+	fprintf(stderr, "Eet: Eina init failed");
 	return --eet_init_count;
      }
    _eet_log_dom_global = eina_log_domain_register("Eet", EET_DEFAULT_LOG_COLOR);
