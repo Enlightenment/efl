@@ -444,8 +444,8 @@ void          _ecore_fps_debug_init(void);
 void          _ecore_fps_debug_shutdown(void);
 void          _ecore_fps_debug_runtime_add(double t);
 
-int _ecore_thread_init(void);
-int _ecore_thread_shutdown(void);
+void _ecore_thread_init(void);
+void _ecore_thread_shutdown(void);
 
 void _ecore_glib_init(void);
 void _ecore_glib_shutdown(void);
