@@ -273,6 +273,24 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
      }
 }
 
+static void
+pt_unref(Evas_GL_Texture_Pool *pt)
+{
+   pt->references--;
+   if (pt->references > 0) return;
+   if (pt->whole)
+     {
+        pt->gc->tex.whole = eina_list_remove(pt->gc->tex.whole, pt);
+     }
+   else
+     {
+        pt->gc->tex.atlas [pt->slot][pt->fslot] =
+          eina_list_remove(pt->gc->tex.atlas[pt->slot][pt->fslot], pt);
+     }
+   glDeleteTextures(1, &(pt->texture));
+   free(pt);
+}
+
 void
 evas_gl_common_texture_free(Evas_GL_Texture *tex)
 {
@@ -280,26 +298,9 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex)
    tex->references--;
    if (tex->references > 0) return;
    tex->pt->allocations = eina_list_remove(tex->pt->allocations, tex);
-   tex->pt->references--;
-   if (tex->pt->references <= 0)
-     {
-        if (tex->pt->whole)
-          {
-             tex->gc->tex.whole = 
-               eina_list_remove(tex->gc->tex.whole, tex->pt);
-          }
-        else
-          {
-             tex->gc->tex.atlas
-               [tex->pt->slot][tex->pt->fslot] = 
-               eina_list_remove
-               (tex->gc->tex.atlas
-                [tex->pt->slot][tex->pt->fslot],
-                tex->pt);
-          }
-        glDeleteTextures(1, &(tex->pt->texture));
-        free(tex->pt);
-     }
+   pt_unref(tex->pt);
+   if (tex->ptu) pt_unref(tex->ptu);
+   if (tex->ptv) pt_unref(tex->ptv);
    free(tex);
 }
 
