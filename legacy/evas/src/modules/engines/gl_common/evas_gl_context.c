@@ -128,10 +128,35 @@ evas_gl_common_context_new(void)
 void
 evas_gl_common_context_free(Evas_GL_Context *gc)
 {
+   int i, j;
+   
    gc->references--;
    if (gc->references > 0) return;
-
-   // free all textures...
+/*
+   while (gc->tex.whole)
+     {
+        evas_gl_common_texture_free(gc->tex.whole->data);
+     }
+   for (i = 0; i < 33; i++)
+     {
+        for (j = 0; j < 3; j++)
+          {
+             while (gc->tex.atlas[i][j])
+               evas_gl_common_texture_free(gc->tex.atlas[i][j]);
+          }
+     }
+   while (gc->images)
+     {
+        evas_gl_common_image_free(gc->images->data);
+     }
+ */
+   // FIXME: free shader.rect.prog etc. etc.
+   
+   free(gc->array.vertex);
+   free(gc->array.color);
+   free(gc->array.texuv);
+   if (gc->array.texuv2) free(gc->array.texuv2);
+   if (gc->array.texuv3) free(gc->array.texuv3);
    
    if (gc == _evas_gl_common_context) _evas_gl_common_context = NULL;
    free(gc);
@@ -397,10 +422,10 @@ evas_gl_common_context_yuv_push(Evas_GL_Context *gc,
    tx2 = (sx + sw) / (double)tex->pt->w;
    ty2 = (sy + sh) / (double)tex->pt->h;
    
-   t2x1 = (sx) / (double)tex->ptu->w;
-   t2y1 = (sy) / (double)tex->ptu->h;
-   t2x2 = (sx + sw) / (double)tex->ptu->w;
-   t2y2 = (sy + sh) / (double)tex->ptu->h;
+   t2x1 = ((sx) / 2) / (double)tex->ptu->w;
+   t2y1 = ((sy) / 2) / (double)tex->ptu->h;
+   t2x2 = ((sx + sw) / 2) / (double)tex->ptu->w;
+   t2y2 = ((sy + sh) / 2) / (double)tex->ptu->h;
    
    PUSH_VERTEX(x    , y    , 0);
    PUSH_VERTEX(x + w, y    , 0);
@@ -459,6 +484,7 @@ shader_array_flush(Evas_GL_Context *gc)
 
    if (gc->shader.cur_tex != gc->shader.current.cur_tex)
      {
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
      }
    if (gc->shader.blend != gc->shader.current.blend)
@@ -497,8 +523,6 @@ shader_array_flush(Evas_GL_Context *gc)
         glEnableVertexAttribArray(SHAD_TEXUV3);
         glVertexAttribPointer(SHAD_TEXUV2, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv2);
         glVertexAttribPointer(SHAD_TEXUV3, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv3);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, gc->shader.cur_texu);
         glActiveTexture(GL_TEXTURE2);
@@ -520,8 +544,8 @@ shader_array_flush(Evas_GL_Context *gc)
    free(gc->array.vertex);
    free(gc->array.color);
    free(gc->array.texuv);
-   free(gc->array.texuv2);
-   free(gc->array.texuv3);
+   if (gc->array.texuv2) free(gc->array.texuv2);
+   if (gc->array.texuv3) free(gc->array.texuv3);
    
    gc->array.vertex = NULL;
    gc->array.color = NULL;
