@@ -14,7 +14,7 @@
 #include "efreet_private.h"
 #include "efreet_xml.h"
 
-static int init = 0;
+static int _efreet_init_count = 0;
 static int efreet_parsed_locale = 0;
 static char *efreet_lang = NULL;
 static char *efreet_lang_country = NULL;
@@ -30,21 +30,55 @@ static int efreet_parse_locale_setting(const char *env);
 EAPI int
 efreet_init(void)
 {
-    if (init++) return init;
-    if (!eina_init()) return --init;
-    _efreet_log_domain_global = eina_log_domain_register("Efreet",EFREET_DEFAULT_LOG_COLOR);
-    if(_efreet_log_domain_global < 0) 
-      {
-	printf("Efreet could create a general log domain.\n");
-	return --init;
-      }
-    if (!efreet_base_init()) return --init;
-    if (!efreet_xml_init()) return --init;
-    if (!efreet_icon_init()) return --init;
-    if (!efreet_ini_init()) return --init;
-    if (!efreet_desktop_init()) return --init;
-    if (!efreet_menu_init()) return --init;
-    return init;
+    if (++_efreet_init_count != 1)
+        return _efreet_init_count;
+
+    if (!eina_init())
+        return --_efreet_init_count;
+    _efreet_log_domain_global = eina_log_domain_register("Efreet", EFREET_DEFAULT_LOG_COLOR);
+    if (_efreet_log_domain_global < 0) 
+    {
+        printf("Efreet could create a general log domain.\n");
+
+	goto shutdown_eina;
+    }
+
+    if (!efreet_base_init())
+      goto unregister_log_domain;
+
+    if (!efreet_xml_init())
+      goto shutdown_efreet_base;
+
+    if (!efreet_icon_init())
+      goto shutdown_efreet_xml;
+
+    if (!efreet_ini_init())
+      goto shutdown_efreet_icon;
+
+    if (!efreet_desktop_init())
+      goto shutdown_efreet_ini;
+
+    if (!efreet_menu_init())
+      goto shutdown_efreet_desktop;
+
+    return _efreet_init_count;
+
+ shutdown_efreet_desktop:
+    efreet_desktop_shutdown();
+ shutdown_efreet_ini:
+    efreet_ini_shutdown();
+ shutdown_efreet_icon:
+    efreet_icon_shutdown();
+ shutdown_efreet_xml:
+    efreet_xml_shutdown();
+ shutdown_efreet_base:
+    efreet_base_shutdown();
+ unregister_log_domain:
+    eina_log_domain_unregister(_efreet_log_domain_global);
+ shutdown_eina:
+    eina_shutdown();
+
+    return --_efreet_init_count;
 }
 
 /**
@@ -56,7 +90,9 @@ efreet_init(void)
 EAPI int
 efreet_shutdown(void)
 {
-    if (--init) return init;
+    if (--_efreet_init_count != 0)
+      return _efreet_init_count;
+
     efreet_menu_shutdown();
     efreet_desktop_shutdown();
     efreet_ini_shutdown();
@@ -71,7 +107,7 @@ efreet_shutdown(void)
     IF_FREE(efreet_lang_modifier);
     efreet_parsed_locale = 0;  /* reset this in case they init efreet again */
 
-    return init;
+    return _efreet_init_count;
 }
 
 /**

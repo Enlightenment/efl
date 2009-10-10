@@ -192,10 +192,10 @@ Eina_List *efreet_default_dirs_get(const char *user_dir,
                                     const char *suffix);
 
 int efreet_ini_init(void);
-int efreet_ini_shutdown(void);
+void efreet_ini_shutdown(void);
 
 int efreet_desktop_init(void);
-int efreet_desktop_shutdown(void);
+void efreet_desktop_shutdown(void);
 
 const char *efreet_home_dir_get(void);
 

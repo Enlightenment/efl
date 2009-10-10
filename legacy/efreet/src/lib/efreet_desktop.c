@@ -44,7 +44,6 @@ static Eina_List *efreet_desktop_types = NULL;
  */
 static int efreet_desktop_command_file_id = 0;
 
-static int init = 0;
 static int cache_flush = 0;
 
 #ifdef EFREET_MODULE_LOG_DOM 
@@ -142,16 +141,17 @@ static void *efreet_desktop_command_execs_process(Efreet_Desktop_Command *comman
 int
 efreet_desktop_init(void)
 {
-    if (init++) return init;
-    if (!eina_init()) return --init;
-    _efreet_desktop_log_dom = eina_log_domain_register("Efreet_desktop",EFREET_DEFAULT_LOG_COLOR);
-    if(_efreet_desktop_log_dom<0)
-      {
+    _efreet_desktop_log_dom = eina_log_domain_register("Efreet_desktop", EFREET_DEFAULT_LOG_COLOR);
+    if (_efreet_desktop_log_dom < 0)
+    {
 	ERROR("Efreet: Could not create a log domain for Efreet_desktop");
-	eina_shutdown();
-	return --init;
-      }
-    if (!ecore_file_init()) return --init;
+	return 0;
+    }
+    if (!ecore_file_init())
+    {
+        eina_log_domain_unregister(_efreet_desktop_log_dom);
+        return 0;
+    }
 
     efreet_desktop_cache = eina_hash_string_superfast_new(NULL);
     efreet_desktop_types = NULL;
@@ -166,7 +166,7 @@ efreet_desktop_init(void)
     EFREET_DESKTOP_TYPE_DIRECTORY = efreet_desktop_type_add("Directory", NULL,
                                                                 NULL, NULL);
 
-    return init;
+    return 1;
 }
 
 /**
@@ -174,15 +174,11 @@ efreet_desktop_init(void)
  * @returns the number of initializations left for this system
  * @brief Attempts to shut down the subsystem if nothing else is using it
  */
-int
+void
 efreet_desktop_shutdown(void)
 {
     Efreet_Desktop_Type_Info *info;
 
-    if (--init) return init;
-    ecore_file_shutdown();
-    eina_shutdown();
-    eina_log_domain_unregister(_efreet_desktop_log_dom);
     IF_RELEASE(desktop_environment);
     IF_FREE_HASH(efreet_desktop_cache);
     while (efreet_desktop_types)
@@ -192,8 +188,8 @@ efreet_desktop_shutdown(void)
         efreet_desktop_types = eina_list_remove_list(efreet_desktop_types,
                                                      efreet_desktop_types);
     }
-
-    return init;
+    ecore_file_shutdown();
+    eina_log_domain_unregister(_efreet_desktop_log_dom);
 }
 
 /**

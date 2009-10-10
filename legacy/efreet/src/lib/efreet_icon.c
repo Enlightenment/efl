@@ -26,8 +26,6 @@ static Eina_List *efreet_icon_extensions = NULL;
 static Eina_List *efreet_extra_icon_dirs = NULL;
 static Eina_Hash *efreet_icon_cache = NULL;
 
-static int efreet_icon_init_count = 0;
-
 typedef struct Efreet_Icon_Cache Efreet_Icon_Cache;
 struct Efreet_Icon_Cache
 {
@@ -121,9 +119,6 @@ _efreet_icon_cache_list_destroy(Eina_List *list)
 int
 efreet_icon_init(void)
 {
-    if (efreet_icon_init_count++ > 0)
-        return efreet_icon_init_count;
-
     if (!efreet_icon_themes)
     {
         const char *default_exts[] = {".png", ".xpm", NULL};
@@ -131,7 +126,6 @@ efreet_icon_init(void)
 
         if (!ecore_init())
         {
-            efreet_icon_init_count--;
             return 0;
         }
 
@@ -156,9 +150,6 @@ efreet_icon_init(void)
 void
 efreet_icon_shutdown(void)
 {
-    if (--efreet_icon_init_count)
-        return;
-
     IF_FREE(efreet_icon_user_dir);
     IF_FREE(efreet_icon_deprecated_user_dir);
 
@@ -175,7 +166,6 @@ efreet_icon_shutdown(void)
    }
 
     ecore_shutdown();
-    efreet_icon_init_count = 0;
 }
 
 /**

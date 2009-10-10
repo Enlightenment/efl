@@ -460,15 +460,18 @@ efreet_menu_init(void)
         {NULL, NULL}
     };
 
-    if (!eina_init()) return 0;
-    _efreet_menu_log_dom = eina_log_domain_register("Efreet_menu",EFREET_DEFAULT_LOG_COLOR);
-    if(_efreet_menu_log_dom < 0)
-      {
-	ERROR("Efreet: Could not create a log domain for Efreet_mnenu");
-	eina_shutdown();
+    _efreet_menu_log_dom = eina_log_domain_register("Efreet_menu", EFREET_DEFAULT_LOG_COLOR);
+    if (_efreet_menu_log_dom < 0)
+    {
+	ERROR("Efreet: Could not create a log domain for Efreet_menu");
 	return 0;
-      }
-    if (!efreet_xml_init()) return 0;
+    }
+    if (!efreet_xml_init())
+    {
+	ERROR("Efreet: Could not init xml module");
+        eina_log_domain_unregister(_efreet_menu_log_dom);
+	return 0;
+    }
 
     efreet_menu_handle_cbs = eina_hash_string_superfast_new(NULL);
     efreet_menu_filter_cbs = eina_hash_string_superfast_new(NULL);
@@ -476,7 +479,11 @@ efreet_menu_init(void)
     efreet_menu_layout_cbs = eina_hash_string_superfast_new(NULL);
     if (!efreet_menu_handle_cbs || !efreet_menu_filter_cbs
             || !efreet_menu_move_cbs || !efreet_menu_layout_cbs)
-        return 0;
+    {
+        efreet_xml_shutdown();
+        eina_log_domain_unregister(_efreet_menu_log_dom);
+	return 0;
+    }
 
     /* set Menu into it's own so we can check the XML is valid before trying
      * to handle it */
@@ -589,7 +596,6 @@ efreet_menu_shutdown(void)
 
     efreet_xml_shutdown();
     eina_log_domain_unregister(_efreet_menu_log_dom);
-    eina_shutdown();
 }
 
 /**

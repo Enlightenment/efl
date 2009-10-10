@@ -47,11 +47,6 @@ static Eina_Bool
 efreet_ini_value_save(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 
 /**
- * The number of times the Ini subsytem has been initialized
- */
-static int init = 0;
-
-/**
  * @internal
  * @return Returns > 0 on success or 0 on failure
  * @brief Initialize the Ini parser subsystem
@@ -59,16 +54,13 @@ static int init = 0;
 int
 efreet_ini_init(void)
 {
-    if (init++) return init;
-    if (!eina_init()) return --init;
-    _efreet_ini_log_dom = eina_log_domain_register("Efreet_init",EFREET_DEFAULT_LOG_COLOR);
-    if(_efreet_ini_log_dom < 0)
-      {
+    _efreet_ini_log_dom = eina_log_domain_register("Efreet_init", EFREET_DEFAULT_LOG_COLOR);
+    if (_efreet_ini_log_dom < 0)
+    {
 	ERROR("Efreet: Could not create a log domain for efreet_init");
-	eina_shutdown();
-	return --init;
-      }
-    return init;
+	return 0;
+    }
+    return 1;
 }
 
 /**
@@ -76,13 +68,10 @@ efreet_ini_init(void)
  * @returns the number of initializations left for this system
  * @brief Attempts to shut down the subsystem if nothing else is using it
  */
-int
+void
 efreet_ini_shutdown(void)
 {
-    if (--init) return init;
     eina_log_domain_unregister(_efreet_ini_log_dom);
-    eina_shutdown();
-    return init;
 }
 
 /**

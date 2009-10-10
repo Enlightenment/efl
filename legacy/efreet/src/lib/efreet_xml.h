@@ -46,7 +46,7 @@ struct Efreet_Xml
 };
 
 int efreet_xml_init(void);
-int efreet_xml_shutdown(void);
+void efreet_xml_shutdown(void);
 
 Efreet_Xml *efreet_xml_new(const char *file);
 void efreet_xml_del(Efreet_Xml *xml);

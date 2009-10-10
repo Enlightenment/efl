@@ -42,7 +42,7 @@ extern "C" {
  */
 
 EAPI int         efreet_trash_init(void);
-EAPI void        efreet_trash_shutdown(void);
+EAPI int         efreet_trash_shutdown(void);
 
 EAPI const char *efreet_trash_dir_get(void);
 EAPI int         efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete);

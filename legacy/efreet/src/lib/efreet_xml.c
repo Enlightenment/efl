@@ -36,7 +36,6 @@ static void efreet_xml_cb_attribute_free(void *data);
 static void efreet_xml_comment_skip(char **data, int *size);
 
 static int error = 0;
-static int init = 0;
 
 /* define macros and variable for using the eina logging system  */
 
@@ -55,15 +54,13 @@ static int _efreet_xml_log_dom = -1;
 int
 efreet_xml_init(void)
 {
-    if (init++) return init;
-    if (!eina_init()) return --init;
-    _efreet_xml_log_dom = eina_log_domain_register("Efreet_xml",EFREET_DEFAULT_LOG_COLOR);
-    if(_efreet_xml_log_dom < 0)
-      {
+    _efreet_xml_log_dom = eina_log_domain_register("Efreet_xml", EFREET_DEFAULT_LOG_COLOR);
+    if (_efreet_xml_log_dom < 0)
+    {
 	ERROR("Efreet: Could not create a log domain for Efreet_xml.");
 	return 0;
-      }
-    return init;
+    }
+    return 1;
 }
 
 /**
@@ -71,13 +68,10 @@ efreet_xml_init(void)
  * @returns the number of initializations left for this system
  * @brief Attempts to shut down the subsystem if nothing else is using it
  */
-int
+void
 efreet_xml_shutdown(void)
 {
-    if (--init) return init;
     eina_log_domain_unregister(_efreet_xml_log_dom);
-    eina_shutdown();
-    return init;
 }
 
 /**

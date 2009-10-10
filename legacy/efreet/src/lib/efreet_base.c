@@ -44,14 +44,12 @@ static Eina_List  *efreet_dirs_get(const char *key,
 int
 efreet_base_init(void)
 {
-    if (!eina_init()) return 0;
-    _efreet_base_log_dom = eina_log_domain_register("Efreet_base",EFREET_DEFAULT_LOG_COLOR);
-    if(_efreet_base_log_dom < 0)
-      {
+    _efreet_base_log_dom = eina_log_domain_register("Efreet_base", EFREET_DEFAULT_LOG_COLOR);
+    if (_efreet_base_log_dom < 0)
+    {
 	ERROR("Efreet: Could not create a log domain for efreet_base.\n");
-	eina_shutdown();
 	return 0;
-      }
+    }
     return 1;
 }
 
@@ -71,7 +69,7 @@ efreet_base_shutdown(void)
     IF_FREE_LIST(xdg_data_dirs, eina_stringshare_del);
     IF_FREE_LIST(xdg_config_dirs, eina_stringshare_del);
 
-    eina_shutdown();
+    eina_log_domain_unregister(_efreet_base_log_dom);
 }
 
 /**

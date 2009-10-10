@@ -54,7 +54,7 @@ static Eina_Hash *wild = NULL;      /* contains *.ext and mime.types globs*/
 static Eina_Hash *monitors = NULL;  /* contains file monitors */
 static Eina_Hash *mime_icons = NULL; /* contains cache with mime->icons */
 static Eina_Inlist *mime_icons_lru = NULL;
-static unsigned int _init_count = 0;
+static unsigned int _efreet_mime_init_count = 0;
 
 /**
  * @internal
@@ -202,26 +202,25 @@ static void efreet_mime_icons_debug(void);
 EAPI int
 efreet_mime_init(void)
 {
-    _init_count++;
-    if (_init_count > 1)
-        return 1;
+    if (++_efreet_mime_init_count != 1)
+        return _efreet_mime_init_count;
 
     if (!ecore_init())
-        return 0;
+        return --_efreet_mime_init_count;
 
     if (!ecore_file_init())
-        return 0;
+        goto shutdown_ecore;
 
     if (!efreet_init())
-        return 0;
+        goto shutdown_ecore_file;
 
-    _efreet_mime_log_dom = eina_log_domain_register("Efreet_mime",EFREET_DEFAULT_LOG_COLOR);
+    _efreet_mime_log_dom = eina_log_domain_register("Efreet_mime", EFREET_DEFAULT_LOG_COLOR);
 
-    if(_efreet_mime_log_dom < 0) 
-      {
+    if (_efreet_mime_log_dom < 0) 
+    {
 	ERROR("Efreet: Could not create a log domain for Efreet_mime.");
-	return 0;
-      }
+	goto shutdown_efreet;
+    }
 
     efreet_mime_endianess = efreet_mime_endian_check();
 
@@ -230,23 +229,31 @@ efreet_mime_init(void)
     efreet_mime_type_cache_clear();
 
     if (!efreet_mime_init_files())
-        return 0;
+        goto unregister_log_domain;
 
-    return 1;
+    return _efreet_mime_init_count;
+
+ unregister_log_domain:
+    eina_log_domain_unregister(_efreet_mime_log_dom);
+ shutdown_efreet:
+    efreet_shutdown();
+ shutdown_ecore_file:
+    ecore_file_shutdown();
+ shutdown_ecore:
+    ecore_shutdown();
+
+    return --_efreet_mime_init_count;
 }
 
 /**
  * @return Returns no value
  * @brief Cleans up the efreet mime settings system
  */
-EAPI void
+EAPI int
 efreet_mime_shutdown(void)
 {
-    if (_init_count == 0)
-        return;
-    _init_count--;
-    if (_init_count > 0)
-        return;
+    if (--_efreet_mime_init_count != 0)
+        return _efreet_mime_init_count;
 
     efreet_mime_icons_debug();
 
@@ -259,6 +266,8 @@ efreet_mime_shutdown(void)
     efreet_shutdown();
     ecore_file_shutdown();
     ecore_shutdown();
+
+    return _efreet_mime_init_count;
 }
 
 /**

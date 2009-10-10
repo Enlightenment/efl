@@ -14,6 +14,7 @@
 #include "Efreet_Trash.h"
 #include "efreet_private.h"
 
+static unsigned int _efreet_trash_init_count = 0;
 static const char *efreet_trash_dir = NULL;
 
 /* define macros and variable for using the eina logging system  */
@@ -31,24 +32,37 @@ static int _efreet_trash_log_dom = -1;
 EAPI int
 efreet_trash_init(void)
 {
-    _efreet_trash_log_dom = eina_log_domain_register("Efreet_trash",EFREET_DEFAULT_LOG_COLOR);
-    if(_efreet_trash_log_dom < 0)
-      {
+    if (++_efreet_trash_init_count != 1)
+        return _efreet_trash_init_count;
+
+    if (!eina_init())
+        return --_efreet_trash_init_count;
+
+    _efreet_trash_log_dom = eina_log_domain_register("Efreet_trash", EFREET_DEFAULT_LOG_COLOR);
+    if (_efreet_trash_log_dom < 0)
+    {
 	ERROR("Efreet: Could not create a log domain for Efreet_trash");
-	return 0;
+        eina_shutdown();
+        return --_efreet_trash_init_count;
       }
-    return 1;
+    return _efreet_trash_init_count;
 }
 
 /**
  * @return Returns no value
  * @brief Cleans up the efreet trash system
  */
-EAPI void
+EAPI int
 efreet_trash_shutdown(void)
 {
+    if (--_efreet_trash_init_count != 0)
+        return _efreet_trash_init_count;
+
     IF_RELEASE(efreet_trash_dir);
     eina_log_domain_unregister(_efreet_trash_log_dom);
+    eina_shutdown();
+
+    return _efreet_trash_init_count;
 }
 
 /**

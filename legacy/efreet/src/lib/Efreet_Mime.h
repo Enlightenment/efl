@@ -45,7 +45,7 @@ extern "C" {
 
 
 EAPI int         efreet_mime_init(void);
-EAPI void        efreet_mime_shutdown(void);
+EAPI int         efreet_mime_shutdown(void);
 
 EAPI const char *efreet_mime_type_get(const char *file);
 EAPI const char *efreet_mime_magic_type_get(const char *file);
