@@ -137,8 +137,9 @@ if test "x${have_dep}" = "xyes" ; then
    AC_CHECK_LIB([GL], [glXCreateContext], [have_dep="yes"], [have_dep="no"])
 fi
 
-## HACK: force gles build on systems that have glx
-#have_dep=no
+if test "x$gl_flavor_gles" = "xyes" ; then
+  have_dep=no
+fi
 
 if test "x${have_dep}" = "xyes" ; then
    if test "x$2" = "xyes" ; then

@@ -379,6 +379,25 @@ AM_CONDITIONAL([EVAS_CSERVE], [test "x${want_evas_cserve}" = "xyes"])
 
 
 
+#######################################
+## GL force flavor gles
+gl_flavor_gles="no"
+AC_MSG_CHECKING(whether to build GLES flavor of GL)
+AC_ARG_ENABLE(gl-flavor-gles,
+  AC_HELP_STRING([--enable-gl-flavor-gles], [enable gles falvor of gl instead of standard]),
+  [
+      if test "x$enableval" = "xyes" ; then
+        AC_MSG_RESULT(yes)
+        gl_flavor_gles="yes"
+      else
+        AC_MSG_RESULT(no)
+        gl_flavor_gles="no"
+      fi
+  ], [
+      gl_flavor_gles="no"
+  ]
+)
+
 #####################################################################
 ## Engines
 
