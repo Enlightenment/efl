@@ -27,7 +27,7 @@ double              _ecore_wince_double_click_time = 0.25;
 long                _ecore_wince_event_last_time = 0;
 Ecore_WinCE_Window *_ecore_wince_event_last_window = NULL;
 HINSTANCE           _ecore_wince_instance = NULL;
-int                 _ecore_wince_log_dom = -1;
+int                 _ecore_wince_log_dom_global = -1;
 
 int ECORE_WINCE_EVENT_MOUSE_IN              = 0;
 int ECORE_WINCE_EVENT_MOUSE_OUT             = 0;
@@ -67,29 +67,31 @@ ecore_wince_init()
 {
    WNDCLASS wc;
 
+   if (++_ecore_win32_init_count != 1)
+     return _ecore_win32_init_count;
+
+   if (!eina_init())
+     return --_ecore_win32_init_count;
+
    eina_log_print_cb_set(_ecore_wince_error_print_cb, NULL);
-
-   if(_ecore_wince_log_dom < 0)
-     _ecore_wince_log_dom = eina_log_domain_register("ecore_wince", EINA_COLOR_LIGHTBLUE);
-   if(_ecore_wince_log_dom < 0)
+   _ecore_wince_log_dom_global = eina_log_domain_register("ecore_wince", EINA_COLOR_LIGHTBLUE);
+   if (_ecore_wince_log_dom_global < 0)
      {
-       EINA_LOG_ERR("Could not register log domain: ecore_wince");
-       return 0;
-     }
+        EINA_LOG_ERR("Ecore_WinCE: Could not register log domain");
+        goto shutdown_eina;
+      }
 
-   ECORE_WINCE_MSG_INFO("initializing ecore_wince (current count: %d)", _ecore_wince_init_count);
-
-   if (_ecore_wince_init_count > 0)
+   if (!ecore_event_init())
      {
-        _ecore_wince_init_count++;
-        return _ecore_wince_init_count;
+        ERR("Ecore_WinCE: Could not init ecore_event");
+        goto unregister_log_domain;
      }
 
    _ecore_wince_instance = GetModuleHandle(NULL);
    if (!_ecore_wince_instance)
      {
-        ECORE_WINCE_MSG_ERR("GetModuleHandle() failed");
-        return 0;
+        ERR("GetModuleHandle() failed");
+        goto shutdown_ecore_event;
      }
 
    memset (&wc, 0, sizeof (wc));
@@ -106,9 +108,8 @@ ecore_wince_init()
 
    if(!RegisterClass(&wc))
      {
-        ECORE_WINCE_MSG_ERR("RegisterClass() failed");
-        FreeLibrary(_ecore_wince_instance);
-        return 0;
+        ERR("RegisterClass() failed");
+        goto free_library;
      }
 
    if (!ECORE_WINCE_EVENT_MOUSE_IN)
@@ -125,11 +126,18 @@ ecore_wince_init()
         ECORE_WINCE_EVENT_WINDOW_DELETE_REQUEST = ecore_event_type_new();
      }
 
-   ecore_event_init();
-
-   _ecore_wince_init_count++;
-
    return _ecore_wince_init_count;
+
+ free_library:
+   FreeLibrary(_ecore_win32_instance);
+ shutdown_ecore_event:
+   ecore_event_shutdown();
+ unregister_log_domain:
+   eina_log_domain_unregister(_ecore_win32_log_dom_global);
+ shutdown_eina:
+   eina_shutdown();
+
+   return --_ecore_win32_init_count;
 }
 
 int
@@ -137,12 +145,8 @@ ecore_wince_shutdown()
 {
    HWND task_bar;
 
-   ECORE_WINCE_MSG_INFO("shutting down ecore_wince (current count: %d)", _ecore_wince_init_count);
-
-   _ecore_wince_init_count--;
-   if (_ecore_wince_init_count > 0) return _ecore_wince_init_count;
-
-   ecore_event_shutdown();
+   if (--_ecore_wince_init_count != 0)
+     return _ecore_wince_init_count;
 
    /* force task bar to be shown (in case the application exits */
    /* while being fullscreen) */
@@ -154,18 +158,16 @@ ecore_wince_shutdown()
      }
 
    if (!UnregisterClass(ECORE_WINCE_WINDOW_CLASS, _ecore_wince_instance))
-     {
-        ECORE_WINCE_MSG_ERR("UnregisterClass() failed");
-     }
+     ERR("UnregisterClass() failed");
+
    if (!FreeLibrary(_ecore_wince_instance))
-     {
-        ECORE_WINCE_MSG_ERR("FreeLibrary() failed");
-     }
+     ERR("FreeLibrary() failed");
+
    _ecore_wince_instance = NULL;
 
-   eina_log_domain_unregister(_ecore_wince_log_dom);
-
-   if (_ecore_wince_init_count < 0) _ecore_wince_init_count = 0;
+   ecore_event_shutdown();
+   eina_log_domain_unregister(_ecore_wince_log_dom_global);
+   eina_shutdown();
 
    return _ecore_wince_init_count;
 }
@@ -275,7 +277,7 @@ _ecore_wince_window_procedure(HWND   window,
             {
                POINT pt;
 
-               ECORE_WINCE_MSG_INFO("mouse in window");
+               INF("mouse in window");
 
                pt.x = LOWORD(data_param);
                pt.y = HIWORD(data_param);
@@ -298,7 +300,7 @@ _ecore_wince_window_procedure(HWND   window,
             }
           else
             {
-               ECORE_WINCE_MSG_ERR("GetClientRect() failed");
+               ERR("GetClientRect() failed");
             }
           _ecore_wince_event_handle_motion_notify(data);
 

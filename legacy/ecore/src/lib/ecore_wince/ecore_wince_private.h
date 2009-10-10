@@ -7,11 +7,11 @@
 
 
 /* logging messages macros */
-extern int _ecore_wince_log_dom;
+extern int _ecore_wince_log_dom_global;
 
-#define ECORE_WINCE_MSG_ERR(...) EINA_LOG_DOM_ERR(_ecore_wince_log_dom , __VA_ARGS__)
-#define ECORE_WINCE_MSG_DBG(...) EINA_LOG_DOM_DBG(_ecore_wince_log_dom , __VA_ARGS__)
-#define ECORE_WINCE_MSG_INFO(...) EINA_LOG_DOM_INFO(_ecore_wince_log_dom , __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_ecore_wince_log_dom_global , __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_ecore_wince_log_dom_global , __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_ecore_wince_log_dom_global , __VA_ARGS__)
 
 #define ECORE_WINCE_WINDOW_CLASS L"Ecore_WinCE_Window_Class"
 
