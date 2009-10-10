@@ -9,6 +9,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore_input \
 @EFL_ECORE_SDL_BUILD@ \
 @SDL_CFLAGS@ \
+@EVAS_CFLAGS@ \
 @EINA_CFLAGS@
 
 if BUILD_ECORE_SDL

@@ -240,7 +240,7 @@ EAPI int ECORE_IPC_EVENT_SERVER_DEL = 0;
 EAPI int ECORE_IPC_EVENT_CLIENT_DATA = 0;
 EAPI int ECORE_IPC_EVENT_SERVER_DATA = 0;
 
-static int                  init_count = 0;
+static int                  _ecore_ipc_init_count = 0;
 static Eina_List           *servers = NULL;
 static Ecore_Event_Handler *handler[6];
 
@@ -261,9 +261,11 @@ ecore_ipc_init(void)
 {
    int i = 0;
 
-   if (++init_count != 1) return init_count;
+   if (++_ecore_ipc_init_count != 1)
+     return _ecore_ipc_init_count;
 
-   ecore_con_init();
+   if (!ecore_con_init())
+     return --_ecore_ipc_init_count;
 
    ECORE_IPC_EVENT_CLIENT_ADD = ecore_event_type_new();
    ECORE_IPC_EVENT_CLIENT_DEL = ecore_event_type_new();
@@ -284,7 +286,7 @@ ecore_ipc_init(void)
 					  _ecore_ipc_event_client_data, NULL);
    handler[i++] = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DATA,
 					  _ecore_ipc_event_server_data, NULL);
-   return init_count;
+   return _ecore_ipc_init_count;
 }
 
 /**
@@ -298,7 +300,8 @@ ecore_ipc_shutdown(void)
 {
    int i;
 
-   if (--init_count != 0) return init_count;
+   if (--_ecore_ipc_init_count != 0)
+     return _ecore_ipc_init_count;
 
    while (servers) ecore_ipc_server_del(eina_list_data_get(servers));
 
@@ -307,7 +310,7 @@ ecore_ipc_shutdown(void)
 
    ecore_con_shutdown();
 
-   return init_count;
+   return _ecore_ipc_init_count;
 }
 
 /**

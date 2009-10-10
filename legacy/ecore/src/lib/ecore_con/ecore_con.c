@@ -62,7 +62,7 @@ EAPI int ECORE_CON_EVENT_CLIENT_DATA = 0;
 EAPI int ECORE_CON_EVENT_SERVER_DATA = 0;
 
 static Eina_List *servers = NULL;
-static int init_count = 0;
+static int _ecore_con_init_count = 0;
 
 #define LENGTH_OF_SOCKADDR_UN(s) (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
 #define LENGTH_OF_ABSTRACT_SOCKADDR_UN(s, path) (strlen(path) + 1 + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
@@ -83,9 +83,12 @@ static int init_count = 0;
 EAPI int
 ecore_con_init(void)
 {
-   if (++init_count != 1) return init_count;
+   if (++_ecore_con_init_count != 1)
+     return _ecore_con_init_count;
 
-   ecore_init();
+   if (!ecore_init())
+     return --_ecore_con_init_count;
+
    ECORE_CON_EVENT_CLIENT_ADD = ecore_event_type_new();
    ECORE_CON_EVENT_CLIENT_DEL = ecore_event_type_new();
    ECORE_CON_EVENT_SERVER_ADD = ecore_event_type_new();
@@ -98,7 +101,7 @@ ecore_con_init(void)
    ecore_con_dns_init();
    ecore_con_info_init();
 
-   return init_count;
+   return _ecore_con_init_count;
 }
 
 /**
@@ -110,7 +113,8 @@ ecore_con_init(void)
 EAPI int
 ecore_con_shutdown(void)
 {
-   if (--init_count != 0) return init_count;
+   if (--_ecore_con_init_count != 0)
+     return _ecore_con_init_count;
 
    while (servers)
      _ecore_con_server_free(eina_list_data_get(servers));
@@ -121,7 +125,7 @@ ecore_con_shutdown(void)
 
    ecore_shutdown();
 
-   return init_count;
+   return _ecore_con_init_count;
 }
 
 /**

@@ -42,24 +42,21 @@ static int _ecore_file_download_url_progress_cb(void *data, int type, void *even
 #endif
 static void _ecore_file_download_abort(Ecore_File_Download_Job *job);
 
-static int			 init = 0;
 static Ecore_Event_Handler	*_url_complete_handler = NULL;
 static Ecore_Event_Handler	*_url_progress_download = NULL;
 static Eina_List		*_job_list;
 
-EAPI int
+int
 ecore_file_download_init(void)
 {
 #ifndef _WIN32
-   ecore_con_url_init();
+  if (!ecore_con_url_init())
+    return 0;
 
-   if (init++ == 0)
-     {
 #ifdef HAVE_CURL
-	_url_complete_handler = ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _ecore_file_download_url_complete_cb, NULL);
-	_url_progress_download = ecore_event_handler_add(ECORE_CON_EVENT_URL_PROGRESS, _ecore_file_download_url_progress_cb, NULL);
+  _url_complete_handler = ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _ecore_file_download_url_complete_cb, NULL);
+  _url_progress_download = ecore_event_handler_add(ECORE_CON_EVENT_URL_PROGRESS, _ecore_file_download_url_progress_cb, NULL);
 #endif
-     }
 
    return 1;
 #else
@@ -67,31 +64,26 @@ ecore_file_download_init(void)
 #endif
 }
 
-EAPI int
+void
 ecore_file_download_shutdown(void)
 {
 #ifndef _WIN32
-   if (--init == 0)
-     {
-	if (_url_complete_handler)
-	  ecore_event_handler_del(_url_complete_handler);
-	if (_url_progress_download)
-	  ecore_event_handler_del(_url_progress_download);
-	_url_complete_handler = NULL;
-	_url_progress_download = NULL;
-	ecore_file_download_abort_all();
-     }
+  if (_url_complete_handler)
+    ecore_event_handler_del(_url_complete_handler);
+  if (_url_progress_download)
+    ecore_event_handler_del(_url_progress_download);
+  _url_complete_handler = NULL;
+  _url_progress_download = NULL;
+  ecore_file_download_abort_all();
 
-   return ecore_con_url_shutdown();
-#else
-   return 0;
+  ecore_con_url_shutdown();
 #endif
 }
 
 EAPI void
 ecore_file_download_abort_all(void)
 {
-	Ecore_File_Download_Job *job;
+   Ecore_File_Download_Job *job;
 
    EINA_LIST_FREE(_job_list, job)
 	     _ecore_file_download_abort(job);

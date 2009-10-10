@@ -41,18 +41,21 @@ static double _ecore_fb_double_click_time = 0.25;
 EAPI int
 ecore_fb_init(const char *name __UNUSED__)
 {
-	if(!_ecore_fb_init_count)
-	{
-		if(!ecore_fb_vt_init()) return 0;
-		ECORE_FB_EVENT_KEY_DOWN          = ecore_event_type_new();
-		ECORE_FB_EVENT_KEY_UP            = ecore_event_type_new();
-		ECORE_FB_EVENT_MOUSE_BUTTON_DOWN = ecore_event_type_new();
-		ECORE_FB_EVENT_MOUSE_BUTTON_UP   = ecore_event_type_new();
-		ECORE_FB_EVENT_MOUSE_MOVE        = ecore_event_type_new();
-		ECORE_FB_EVENT_MOUSE_WHEEL       = ecore_event_type_new();
-		_ecore_fb_size_get(&_ecore_fb_console_w, &_ecore_fb_console_h);
-	}
-	return ++_ecore_fb_init_count;
+   if (++_ecore_fb_init_count != 1)
+     return _ecore_fb_init_count;
+
+   if (!ecore_fb_vt_init())
+     return --_ecore_fb_init_count;
+
+   ECORE_FB_EVENT_KEY_DOWN          = ecore_event_type_new();
+   ECORE_FB_EVENT_KEY_UP            = ecore_event_type_new();
+   ECORE_FB_EVENT_MOUSE_BUTTON_DOWN = ecore_event_type_new();
+   ECORE_FB_EVENT_MOUSE_BUTTON_UP   = ecore_event_type_new();
+   ECORE_FB_EVENT_MOUSE_MOVE        = ecore_event_type_new();
+   ECORE_FB_EVENT_MOUSE_WHEEL       = ecore_event_type_new();
+   _ecore_fb_size_get(&_ecore_fb_console_w, &_ecore_fb_console_h);
+
+   return _ecore_fb_init_count;
 }
 
 /**
@@ -64,13 +67,12 @@ ecore_fb_init(const char *name __UNUSED__)
 EAPI int
 ecore_fb_shutdown(void)
 {    
-	_ecore_fb_init_count--;
-	if(!_ecore_fb_init_count)
-	{
-		ecore_fb_vt_shutdown();
-		return 0;
-	}
-	return _ecore_fb_init_count;
+   if (--_ecore_fb_init_count != 0)
+     return _ecore_fb_init_count;
+
+   ecore_fb_vt_shutdown();
+
+   return _ecore_fb_init_count;
 }
 
 

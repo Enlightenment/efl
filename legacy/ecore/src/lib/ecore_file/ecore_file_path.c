@@ -11,28 +11,23 @@
 
 #include "ecore_file_private.h"
 
-static int init = 0;
 static Eina_List *__ecore_file_path_bin = NULL;
 
 static Eina_List *_ecore_file_path_from_env(const char *env);
 
-int
+void
 ecore_file_path_init(void)
 {
-   if (++init != 1) return init;
    __ecore_file_path_bin = _ecore_file_path_from_env("PATH");
-   return init;
 }
 
-int
+void
 ecore_file_path_shutdown(void)
 {
    char *dir;
 
-   if (--init != 0) return init;
    EINA_LIST_FREE(__ecore_file_path_bin, dir)
      free(dir);
-   return init;
 }
 
 Eina_List *

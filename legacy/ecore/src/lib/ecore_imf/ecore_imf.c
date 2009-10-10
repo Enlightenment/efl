@@ -18,7 +18,7 @@ EAPI int ECORE_IMF_EVENT_PREEDIT_CHANGED = 0;
 EAPI int ECORE_IMF_EVENT_COMMIT = 0;
 EAPI int ECORE_IMF_EVENT_DELETE_SURROUNDING = 0;
 
-static int init_count = 0;
+static int _ecore_imf_init_count = 0;
 
 /**
  * @defgroup Ecore_IMF_Lib_Group Ecore Input Method Library Functions
@@ -36,9 +36,12 @@ static int init_count = 0;
 EAPI int
 ecore_imf_init(void)
 {
-   if (++init_count != 1) return init_count;
+   if (++_ecore_imf_init_count != 1)
+     return _ecore_imf_init_count;
 
-   ecore_init();
+   if (!ecore_init())
+     return --_ecore_imf_init_count;
+
    ecore_imf_module_init();
 
    ECORE_IMF_EVENT_PREEDIT_START = ecore_event_type_new();
@@ -47,7 +50,7 @@ ecore_imf_init(void)
    ECORE_IMF_EVENT_COMMIT = ecore_event_type_new();
    ECORE_IMF_EVENT_DELETE_SURROUNDING = ecore_event_type_new();
 
-   return init_count;
+   return _ecore_imf_init_count;
 }
 
 /**
@@ -59,10 +62,11 @@ ecore_imf_init(void)
 EAPI int
 ecore_imf_shutdown(void)
 {
-   if (--init_count != 0) return init_count;
+   if (--_ecore_imf_init_count != 0)
+     return _ecore_imf_init_count;
 
    ecore_shutdown();
    ecore_imf_module_shutdown();
 
-   return init_count;
+   return _ecore_imf_init_count;
 }

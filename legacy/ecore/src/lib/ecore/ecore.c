@@ -70,31 +70,39 @@ int _ecore_fps_debug = 0;
 EAPI int
 ecore_init(void)
 {
-   if (++_ecore_init_count == 1)
-     {
+   if (++_ecore_init_count != 1)
+     return _ecore_init_count;
+
 #ifdef HAVE_LOCALE_H
-	setlocale(LC_CTYPE, "");
+   setlocale(LC_CTYPE, "");
 #endif
-	/*
-	if (strcmp(nl_langinfo(CODESET), "UTF-8"))
-	  {
-	     printf("WARNING: not a utf8 locale!\n");
-	  }
-	 */
-#ifdef HAVE_EVIL
-        evil_init();
-#endif
-	eina_init();
-	if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
-	if (_ecore_fps_debug) _ecore_fps_debug_init();
-	_ecore_signal_init();
-	_ecore_exe_init();
-	_ecore_thread_init();
-	_ecore_glib_init();
-	_ecore_loop_time = ecore_time_get();
+   /*
+     if (strcmp(nl_langinfo(CODESET), "UTF-8"))
+     {
+	printf("WARNING: not a utf8 locale!\n");
      }
+   */
+#ifdef HAVE_EVIL
+   if (!evil_init())
+     return --_ecore_init_count;
+#endif
+   if (!eina_init())
+     goto shutdown_evil;
+   if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
+   if (_ecore_fps_debug) _ecore_fps_debug_init();
+   _ecore_signal_init();
+   _ecore_exe_init();
+   _ecore_thread_init();
+   _ecore_glib_init();
+   _ecore_loop_time = ecore_time_get();
 
    return _ecore_init_count;
+
+ shutdown_evil:
+#ifdef HAVE_EVIL
+   evil_shutdown();
+#endif
+   return --_ecore_init_count;
 }
 
 /**
@@ -110,8 +118,8 @@ ecore_init(void)
 EAPI int
 ecore_shutdown(void)
 {
-   if (--_ecore_init_count)
-      return _ecore_init_count;
+   if (--_ecore_init_count != 0)
+     return _ecore_init_count;
 
    if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
    _ecore_poller_shutdown();

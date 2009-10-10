@@ -141,73 +141,82 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
  * Init the Evas system.
  * @return greater than 0 on success, 0 on failure
  *
- * Set up the Evas wrapper system.
+ * Set up the Evas wrapper system. Init Evas and Ecore libraries.
  */
 EAPI int
 ecore_evas_init(void)
 {
-   if (_ecore_evas_init_count == 0)
+   int fd;
+
+   if (++_ecore_evas_init_count != 1)
+     return _ecore_evas_init_count;
+
+   if (!evas_init())
+     return --_ecore_evas_init_count;
+
+   if (!ecore_init())
+     goto shutdown_evas;
+
+   _ecore_evas_log_dom = eina_log_domain_register("Ecore_Evas", ECORE_EVAS_DEFAULT_LOG_COLOR);
+   if(_ecore_evas_log_dom < 0) 
      {
-	int fd;
-
-	evas_init();
-	ecore_init();
-
-	_ecore_evas_log_dom = eina_log_domain_register("Ecore_Evas", ECORE_EVAS_DEFAULT_LOG_COLOR);
-	if(_ecore_evas_log_dom < 0) 
-	  {
-	    EINA_LOG_ERR("Impossible to create a log domain for Ecore_Evas.\n");
-	    ecore_shutdown();
-	    evas_shutdown();
-	    return 0;
-	  }
-	fd = evas_async_events_fd_get();
-	if (fd > 0)
-	  _ecore_evas_async_events_fd = ecore_main_fd_handler_add(fd,
-								  ECORE_FD_READ,
-								  _ecore_evas_async_events_fd_handler, NULL,
-								  NULL, NULL);
+	EINA_LOG_ERR("Impossible to create a log domain for Ecore_Evas.\n");
+	goto shutdown_ecore;
      }
-   return ++_ecore_evas_init_count;
+
+   fd = evas_async_events_fd_get();
+   if (fd > 0)
+     _ecore_evas_async_events_fd = ecore_main_fd_handler_add(fd,
+							     ECORE_FD_READ,
+							     _ecore_evas_async_events_fd_handler, NULL,
+							     NULL, NULL);
+   return _ecore_evas_init_count;
+
+ shutdown_ecore:
+   ecore_shutdown();
+ shutdown_evas:
+   evas_shutdown();
+
+   return --_ecore_evas_init_count;
 }
 
 /**
  * Shut down the Evas system.
  * @return 0 if ecore evas is fully shut down, or > 0 if it still needs to be shut down
  *
- * This closes the Evas system down.
+ * This closes the Evas wrapper system down. Shut down Evas and Ecore libraries.
  */
 EAPI int
 ecore_evas_shutdown(void)
 {
-   _ecore_evas_init_count--;
-   if (_ecore_evas_init_count == 0)
-     {
+   if (--_ecore_evas_init_count != 0)
+     return _ecore_evas_init_count;
+
 #ifdef BUILD_ECORE_EVAS_X11
-	while (_ecore_evas_x_shutdown());
+   while (_ecore_evas_x_shutdown());
 #endif
 #ifdef BUILD_ECORE_EVAS_WIN32
-	while (_ecore_evas_win32_shutdown());
+   while (_ecore_evas_win32_shutdown());
 #endif
 #ifdef BUILD_ECORE_EVAS_FB
-	while (_ecore_evas_fb_shutdown());
+   while (_ecore_evas_fb_shutdown());
 #endif
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
-	while (_ecore_evas_buffer_shutdown());
+   while (_ecore_evas_buffer_shutdown());
 #endif
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
-	while (_ecore_evas_directfb_shutdown());
+   while (_ecore_evas_directfb_shutdown());
 #endif
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
-	while (_ecore_evas_wince_shutdown());
+   while (_ecore_evas_wince_shutdown());
 #endif
-	if (_ecore_evas_async_events_fd)
-	  ecore_main_fd_handler_del(_ecore_evas_async_events_fd);
-	eina_log_domain_unregister(_ecore_evas_log_dom);
-	ecore_shutdown();
-	evas_shutdown();
-     }
-   if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
+   if (_ecore_evas_async_events_fd)
+     ecore_main_fd_handler_del(_ecore_evas_async_events_fd);
+
+   eina_log_domain_unregister(_ecore_evas_log_dom);
+   ecore_shutdown();
+   evas_shutdown();
+
    return _ecore_evas_init_count;
 }
 

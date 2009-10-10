@@ -8,8 +8,6 @@
 
 #include "ecore_file_private.h"
 
-static int init = 0;
-
 typedef enum {
      ECORE_FILE_MONITOR_TYPE_NONE,
 #ifdef HAVE_INOTIFY
@@ -25,27 +23,23 @@ static Ecore_File_Monitor_Type monitor_type = ECORE_FILE_MONITOR_TYPE_NONE;
 int
 ecore_file_monitor_init(void)
 {
-   if (++init != 1) return init;
-
 #ifdef HAVE_INOTIFY
    monitor_type = ECORE_FILE_MONITOR_TYPE_INOTIFY;
    if (ecore_file_monitor_inotify_init())
-     return init;
+     return 1;
 #endif
 #ifdef HAVE_POLL
    monitor_type = ECORE_FILE_MONITOR_TYPE_POLL;
    if (ecore_file_monitor_poll_init())
-     return init;
+     return 1;
 #endif
    monitor_type = ECORE_FILE_MONITOR_TYPE_NONE;
-   return --init;
+   return 0;
 }
 
-int
+void
 ecore_file_monitor_shutdown(void)
 {
-   if (--init != 0) return init;
-
    switch (monitor_type)
      {
       case ECORE_FILE_MONITOR_TYPE_NONE:
@@ -61,7 +55,6 @@ ecore_file_monitor_shutdown(void)
 	 break;
 #endif
      }
-   return init;
 }
 
 /**

@@ -193,13 +193,12 @@ ecore_x_init(const char *name)
 
    xcb_intern_atom_cookie_t           atom_cookies[ECORE_X_ATOMS_COUNT];
 
-   if (_ecore_xcb_init_count > 0)
-     {
-	_ecore_xcb_init_count++;
-	return _ecore_xcb_init_count;
-     }
+   if (--_ecore_xcb_init_count != 1)
+     return _ecore_xcb_init_count;
+
    _ecore_xcb_conn = xcb_connect(name, &screen);
-   if (!_ecore_xcb_conn) return 0;
+   if (!_ecore_xcb_conn)
+     return --_ecore_xcb_init_count;
 
    /* FIXME: no error code right now */
    /* _ecore_xcb_error_handler_init(); */
@@ -268,7 +267,9 @@ ecore_x_init(const char *name)
 #endif /* ECORE_XCB_XPRINT */
 
    /* We init some components (not related to XCB) */
-   ecore_event_init();
+   if (!ecore_event_init())
+     goto close_connection;
+
    _ecore_x_reply_init();
    _ecore_x_dnd_init();
    ecore_x_netwm_init();
@@ -411,42 +412,7 @@ ecore_x_init(const char *name)
 
    _ecore_xcb_event_handlers = calloc(_ecore_xcb_event_handlers_num, sizeof(void *));
    if (!_ecore_xcb_event_handlers)
-     {
-        /* We get the replies of the QueryVersion request because we leave */
-#ifdef ECORE_XCB_DAMAGE
-        _ecore_x_damage_init_finalize();
-#endif /* ECORE_XCB_DAMAGE */
-#ifdef ECORE_XCB_COMPOSITE
-        _ecore_x_composite_init_finalize();
-#endif /* ECORE_XCB_COMPOSITE */
-#ifdef ECORE_XCB_DPMS
-        _ecore_x_dpms_init_finalize();
-#endif /* ECORE_XCB_DPMS */
-#ifdef ECORE_XCB_RANDR
-        _ecore_x_randr_init_finalize();
-#endif /* ECORE_XCB_RANDR */
-#ifdef ECORE_XCB_SCREENSAVER
-        _ecore_x_screensaver_init_finalize();
-#endif /* ECORE_XCB_SCREENSAVER */
-#ifdef ECORE_XCB_SHAPE
-        _ecore_x_shape_init_finalize();
-#endif /* ECORE_XCB_SHAPE */
-#ifdef ECORE_XCB_SYNC
-        _ecore_x_sync_init_finalize();
-#endif /* ECORE_XCB_SYNC */
-#ifdef ECORE_XCB_FIXES
-        _ecore_x_xfixes_init_finalize();
-#endif /* ECORE_XCB_FIXES */
-#ifdef ECORE_XCB_XINERAMA
-        _ecore_x_xinerama_init_finalize();
-#endif /* ECORE_XCB_XINERAMA */
-
-        ecore_event_shutdown();
-        xcb_disconnect(_ecore_xcb_conn);
-	_ecore_xcb_fd_handler_handle = NULL;
-	_ecore_xcb_conn = NULL;
-	return 0;
-     }
+     goto finalize_extensions;
 
 #ifdef ECORE_XCB_CURSOR
    _ecore_xcb_xcursor = XcursorSupportsARGB(_ecore_xcb_conn);
@@ -607,44 +573,8 @@ ecore_x_init(const char *name)
 			       _ecore_xcb_fd_handler, _ecore_xcb_conn,
 			       _ecore_xcb_fd_handler_buf, _ecore_xcb_conn);
    if (!_ecore_xcb_fd_handler_handle)
-     {
-        /* We get the replies of the QueryVersion request because we leave */
-#ifdef ECORE_XCB_DAMAGE
-        _ecore_x_damage_init_finalize();
-#endif /* ECORE_XCB_DAMAGE */
-#ifdef ECORE_XCB_COMPOSITE
-        _ecore_x_composite_init_finalize();
-#endif /* ECORE_XCB_COMPOSITE */
-#ifdef ECORE_XCB_DPMS
-        _ecore_x_dpms_init_finalize();
-#endif /* ECORE_XCB_DPMS */
-#ifdef ECORE_XCB_RANDR
-        _ecore_x_randr_init_finalize();
-#endif /* ECORE_XCB_RANDR */
-#ifdef ECORE_XCB_SCREENSAVER
-        _ecore_x_screensaver_init_finalize();
-#endif /* ECORE_XCB_SCREENSAVER */
-#ifdef ECORE_XCB_SHAPE
-        _ecore_x_shape_init_finalize();
-#endif /* ECORE_XCB_SHAPE */
-#ifdef ECORE_XCB_SYNC
-        _ecore_x_sync_init_finalize();
-#endif /* ECORE_XCB_SYNC */
-#ifdef ECORE_XCB_FIXES
-        _ecore_x_xfixes_init_finalize();
-#endif /* ECORE_XCB_FIXES */
-#ifdef ECORE_XCB_XINERAMA
-        _ecore_x_xinerama_init_finalize();
-#endif /* ECORE_XCB_XINERAMA */
+     goto free_event_handlers;
 
-        ecore_event_shutdown();
-	xcb_disconnect(_ecore_xcb_conn);
-	free(_ecore_xcb_event_handlers);
-	_ecore_xcb_fd_handler_handle = NULL;
-	_ecore_xcb_conn = NULL;
-	_ecore_xcb_event_handlers = NULL;
-	return 0;
-     }
    _ecore_xcb_filter_handler = ecore_event_filter_add(_ecore_xcb_event_filter_start, _ecore_xcb_event_filter_filter, _ecore_xcb_event_filter_end, NULL);
 
    /* This is just to be anal about naming conventions */
@@ -688,14 +618,57 @@ ecore_x_init(const char *name)
 #endif /* ECORE_XCB_XINERAMA */
 
    return _ecore_xcb_init_count;
+
+ free_event_handlers:
+   free(_ecore_xcb_event_handlers);
+   _ecore_xcb_event_handlers = NULL;
+ finalize_extensions:
+   /* We get the replies of the QueryVersion request because we leave */
+#ifdef ECORE_XCB_DAMAGE
+   _ecore_x_damage_init_finalize();
+#endif /* ECORE_XCB_DAMAGE */
+#ifdef ECORE_XCB_COMPOSITE
+   _ecore_x_composite_init_finalize();
+#endif /* ECORE_XCB_COMPOSITE */
+#ifdef ECORE_XCB_DPMS
+   _ecore_x_dpms_init_finalize();
+#endif /* ECORE_XCB_DPMS */
+#ifdef ECORE_XCB_RANDR
+   _ecore_x_randr_init_finalize();
+#endif /* ECORE_XCB_RANDR */
+#ifdef ECORE_XCB_SCREENSAVER
+   _ecore_x_screensaver_init_finalize();
+#endif /* ECORE_XCB_SCREENSAVER */
+#ifdef ECORE_XCB_SHAPE
+   _ecore_x_shape_init_finalize();
+#endif /* ECORE_XCB_SHAPE */
+#ifdef ECORE_XCB_SYNC
+   _ecore_x_sync_init_finalize();
+#endif /* ECORE_XCB_SYNC */
+#ifdef ECORE_XCB_FIXES
+   _ecore_x_xfixes_init_finalize();
+#endif /* ECORE_XCB_FIXES */
+#ifdef ECORE_XCB_XINERAMA
+   _ecore_x_xinerama_init_finalize();
+#endif /* ECORE_XCB_XINERAMA */
+   ecore_event_shutdown();
+ close_connection:
+   _ecore_x_atom_init_finalize(atom_cookies);
+   xcb_disconnect(_ecore_xcb_conn);
+   _ecore_xcb_fd_handler_handle = NULL;
+   _ecore_xcb_conn = NULL;
+
+   return --_ecore_xcb_init_count;
 }
 
 static int
 _ecore_x_shutdown(int close_display)
 {
-   _ecore_xcb_init_count--;
-   if (_ecore_xcb_init_count > 0) return _ecore_xcb_init_count;
+   if (--_ecore_xcb_init_count != 0)
+     return _ecore_xcb_init_count;
+
    if (!_ecore_xcb_conn) return _ecore_xcb_init_count;
+
    if (close_display)
       xcb_disconnect(_ecore_xcb_conn);
    else
@@ -712,7 +685,7 @@ _ecore_x_shutdown(int close_display)
    _ecore_x_dnd_shutdown();
    ecore_x_netwm_shutdown();
    _ecore_x_reply_shutdown();
-   if (_ecore_xcb_init_count < 0) _ecore_xcb_init_count = 0;
+
    return _ecore_xcb_init_count;
 }
 

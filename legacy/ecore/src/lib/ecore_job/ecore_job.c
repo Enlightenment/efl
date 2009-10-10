@@ -17,33 +17,35 @@ static int _ecore_job_event_handler(void *data, int type, void *ev);
 static void _ecore_job_event_free(void *data, void *ev);
     
 static int ecore_event_job_type = 0;
-static int _ecore_init_job_count = 0;
+static int _ecore_job_init_count = 0;
 static Ecore_Event_Handler* _ecore_job_handler = NULL;
 
 EAPI int
 ecore_job_init(void)
 {
-   if (++_ecore_init_job_count == 1)
-     {
-        ecore_init();
-	ecore_event_job_type = ecore_event_type_new();
-	_ecore_job_handler = ecore_event_handler_add(ecore_event_job_type, _ecore_job_event_handler, NULL);
-     }
+   if (++_ecore_job_init_count != 1)
+     return _ecore_job_init_count;
 
-   return _ecore_init_job_count;
+   if (!ecore_init())
+     return --_ecore_job_init_count;
+
+   ecore_event_job_type = ecore_event_type_new();
+   _ecore_job_handler = ecore_event_handler_add(ecore_event_job_type, _ecore_job_event_handler, NULL);
+
+   return _ecore_job_init_count;
 }
 
 EAPI int
 ecore_job_shutdown(void)
 {
-   if (--_ecore_init_job_count)
-     return _ecore_init_job_count;
+   if (--_ecore_job_init_count != 0)
+     return _ecore_job_init_count;
 
    ecore_event_handler_del(_ecore_job_handler);
    _ecore_job_handler = NULL;
    ecore_shutdown();
 
-   return _ecore_init_job_count;
+   return _ecore_job_init_count;
 }
 
 /**

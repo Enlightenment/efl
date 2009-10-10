@@ -27,7 +27,7 @@
 #include "ecore_file_private.h"
 
 
-static int init = 0;
+static int _ecore_file_init_count = 0;
 
 /* externally accessible functions */
 /**
@@ -39,29 +39,33 @@ static int init = 0;
 EAPI int
 ecore_file_init()
 {
-   if (++init != 1) return init;
+   if (++_ecore_file_init_count != 1)
+     return _ecore_file_init_count;
 
-//   if (!
-       ecore_file_monitor_init();
-//       )
-//     goto error;
-//   if (!
-       ecore_file_path_init();
-//       )
-//     goto error;
-//   if (!
-       ecore_file_download_init();
-//       )
-//     goto error;
-   return init;
+   ecore_file_path_init();
+   ecore_file_monitor_init();
+   ecore_file_download_init();
 
-//error:
+   /* FIXME: were the tests disabled for a good reason ? */
 
+   /*
+   if (!ecore_file_monitor_init())
+     goto shutdown_ecore_file_path;
+
+   if (!ecore_file_download_init())
+     goto shutdown_ecore_file_monitor;
+   */
+
+   return _ecore_file_init_count;
+
+   /*
+ shutdown_ecore_file_monitor:
    ecore_file_monitor_shutdown();
+ shutdown_ecore_file_path:
    ecore_file_path_shutdown();
-   ecore_file_download_shutdown();
 
-   return --init;
+   return --_ecore_file_init_count;
+   */
 }
 
 /**
@@ -71,13 +75,14 @@ ecore_file_init()
 EAPI int
 ecore_file_shutdown()
 {
-   if (--init != 0) return init;
+   if (--_ecore_file_init_count != 0)
+     return _ecore_file_init_count;
 
+   ecore_file_download_shutdown();
    ecore_file_monitor_shutdown();
    ecore_file_path_shutdown();
-   ecore_file_download_shutdown();
 
-   return init;
+   return _ecore_file_init_count;
 }
 
 /**

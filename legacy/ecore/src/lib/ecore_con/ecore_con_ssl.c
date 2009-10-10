@@ -15,7 +15,7 @@
 #include "ecore_con_private.h"
 #include "Ecore.h"
 
-static int _init_count = 0;
+static int _init_con_ssl_init_count = 0;
 
 #if USE_GNUTLS
 static int _client_connected = 0;
@@ -69,19 +69,19 @@ SSL_SUFFIX(_ecore_con_ssl_client_write)(Ecore_Con_Client *cl, unsigned char *buf
 Ecore_Con_Ssl_Error
 ecore_con_ssl_init(void)
 {
-  if (!_init_count++)
+  if (!_init_con_ssl_init_count++)
     SSL_SUFFIX(_ecore_con_ssl_init)();
 
-  return _init_count;
+  return _init_con_ssl_init_count;
 }
 
 Ecore_Con_Ssl_Error
 ecore_con_ssl_shutdown(void)
 {
-  if (!--_init_count)
+  if (!--_init_con_ssl_init_count)
     SSL_SUFFIX(_ecore_con_ssl_shutdown)();
 
-  return _init_count;
+  return _init_con_ssl_init_count;
 }
 
 /**

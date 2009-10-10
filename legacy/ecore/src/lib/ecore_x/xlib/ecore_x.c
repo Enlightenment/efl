@@ -166,15 +166,16 @@ ecore_x_init(const char *name)
    int damage_err_base = 0;
 #endif
    
-   if (_ecore_x_init_count > 0) 
-     {
-	_ecore_x_init_count++;
-	return _ecore_x_init_count;
-     }
-   ecore_event_init();
+   if (++_ecore_x_init_count != 1) 
+     return _ecore_x_init_count;
+
+   if (!ecore_event_init())
+     return --_ecore_x_init_count;
 
    _ecore_x_disp = XOpenDisplay((char *)name);
-   if (!_ecore_x_disp) return 0;
+   if (!_ecore_x_disp)
+     goto shutdown_ecore_event;
+
    _ecore_x_error_handler_init();
    _ecore_x_event_handlers_num = LASTEvent;
 
@@ -224,12 +225,8 @@ ecore_x_init(const char *name)
 
    _ecore_x_event_handlers = calloc(_ecore_x_event_handlers_num, sizeof(void *));
    if (!_ecore_x_event_handlers)
-     {
-        XCloseDisplay(_ecore_x_disp);
-	_ecore_x_fd_handler_handle = NULL;
-	_ecore_x_disp = NULL;
-	return 0;	
-     }
+     goto close_display;
+
 #ifdef ECORE_XCURSOR   
    _ecore_x_xcursor = XcursorSupportsARGB(_ecore_x_disp);
 #endif
@@ -400,15 +397,7 @@ ecore_x_init(const char *name)
 			       _ecore_x_fd_handler, _ecore_x_disp,
 			       _ecore_x_fd_handler_buf, _ecore_x_disp);
    if (!_ecore_x_fd_handler_handle)
-     {
-	XCloseDisplay(_ecore_x_disp);
-	free(_ecore_x_event_handlers);
-	_ecore_x_fd_handler_handle = NULL;
-	_ecore_x_disp = NULL;
-	_ecore_x_event_handlers = NULL;
-	return 0;
-     }
-   
+     goto free_event_handlers;
 
    _ecore_x_atoms_init();
 
@@ -435,8 +424,6 @@ ecore_x_init(const char *name)
    _ecore_x_composite_init();
    _ecore_x_dpms_init();
    _ecore_x_randr_init();
-
-   _ecore_x_init_count++;
    
    _ecore_x_private_win = ecore_x_window_override_new(0, -77, -777, 123, 456);
 
@@ -476,13 +463,26 @@ _im_create_error:
 _im_create_end:
 #endif
    return _ecore_x_init_count;
+
+ free_event_handlers:
+   free(_ecore_x_event_handlers);
+   _ecore_x_event_handlers = NULL;
+ close_display:
+   XCloseDisplay(_ecore_x_disp);
+   _ecore_x_fd_handler_handle = NULL;
+   _ecore_x_disp = NULL;
+ shutdown_ecore_event:
+   ecore_event_shutdown();
+
+   return --_ecore_x_init_count;
 }
 
 static int
 _ecore_x_shutdown(int close_display)
 {
-   _ecore_x_init_count--;
-   if (_ecore_x_init_count > 0) return _ecore_x_init_count;
+   if (--_ecore_x_init_count != 0)
+     return _ecore_x_init_count;
+
    if (!_ecore_x_disp) return _ecore_x_init_count;
 
 #ifdef ENABLE_XIM
@@ -508,7 +508,7 @@ _ecore_x_shutdown(int close_display)
    _ecore_x_dnd_shutdown();
    ecore_x_netwm_shutdown();
    ecore_event_shutdown();
-   if (_ecore_x_init_count < 0) _ecore_x_init_count = 0;
+
    return _ecore_x_init_count;
 }
 

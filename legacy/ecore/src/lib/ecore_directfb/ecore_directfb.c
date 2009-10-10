@@ -658,8 +658,7 @@ ecore_directfb_init(const char *name __UNUSED__)
 {
 	int i = 0;
 	
-	_ecore_directfb_init_count++;
-	if (_ecore_directfb_init_count > 1) return _ecore_directfb_init_count;
+	if (++_ecore_directfb_init_count != 1) return _ecore_directfb_init_count;
 	
 	DFBCHECK(DirectFBInit(NULL,NULL));
 	DFBCHECK(DirectFBCreate(&_dfb));
@@ -706,13 +705,8 @@ ecore_directfb_init(const char *name __UNUSED__)
 EAPI int
 ecore_directfb_shutdown(void)
 {
-	_ecore_directfb_init_count--;
-	if (_ecore_directfb_init_count > 0) return _ecore_directfb_init_count;
-	if (_ecore_directfb_init_count < 0)
-	{
-		_ecore_directfb_init_count = 0;
-		return 0;
-	}
+	if (--_ecore_directfb_init_count != 0) return _ecore_directfb_init_count;
+
 	ecore_main_fd_handler_del(_window_event_fd_handler_handle);
 	eina_hash_free(_ecore_directfb_key_symbols_hash);
 
@@ -725,5 +719,5 @@ ecore_directfb_shutdown(void)
 	DFBCHECK(_layer->Release(_layer));
 	DFBCHECK(_dfb->Release(_dfb));
 	
-	return 1;
+	return _ecore_directfb_init_count;
 }

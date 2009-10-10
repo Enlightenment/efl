@@ -25,17 +25,18 @@ static int old_flags;
 EAPI int
 ecore_quartz_init(const char *name __UNUSED__)
 {
-   if (!_ecore_quartz_init_count)
-     {
-        ECORE_QUARTZ_EVENT_GOT_FOCUS         = ecore_event_type_new();
-        ECORE_QUARTZ_EVENT_LOST_FOCUS        = ecore_event_type_new();
-        ECORE_QUARTZ_EVENT_RESIZE            = ecore_event_type_new();
-        ECORE_QUARTZ_EVENT_EXPOSE            = ecore_event_type_new();
-     }
+   if (++_ecore_quartz_init_count != 1)
+     return _ecore_quartz_init_count;
 
-   ecore_event_init();
+   if (!ecore_event_init())
+     return --_ecore_quartz_init_count;
 
-   return ++_ecore_quartz_init_count;
+   ECORE_QUARTZ_EVENT_GOT_FOCUS         = ecore_event_type_new();
+   ECORE_QUARTZ_EVENT_LOST_FOCUS        = ecore_event_type_new();
+   ECORE_QUARTZ_EVENT_RESIZE            = ecore_event_type_new();
+   ECORE_QUARTZ_EVENT_EXPOSE            = ecore_event_type_new();
+
+   return _ecore_quartz_init_count;
 }
 
 /**
@@ -47,7 +48,8 @@ ecore_quartz_init(const char *name __UNUSED__)
 EAPI int
 ecore_quartz_shutdown(void)
 {
-   _ecore_quartz_init_count--;
+   if (--_ecore_quartz_init_count != 0)
+     return _ecore_quartz_init_count;
 
    ecore_event_shutdown();
 

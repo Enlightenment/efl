@@ -34,11 +34,46 @@ EAPI int ECORE_EVENT_MOUSE_IN = 0;
 EAPI int ECORE_EVENT_MOUSE_OUT = 0;
 
 static int _ecore_event_init_count = 0;
+static int _ecore_event_evas_init_count = 0;
 
 static Ecore_Event_Handler *ecore_event_evas_handlers[8];
 static Eina_Hash *_window_hash = NULL;
 
-static int _ecore_event_evas_init_count = 0;
+EAPI int
+ecore_event_init(void)
+{
+   if (++_ecore_event_init_count != 1)
+     return _ecore_event_init_count;
+
+   ECORE_EVENT_KEY_DOWN = ecore_event_type_new();
+   ECORE_EVENT_KEY_UP = ecore_event_type_new();
+   ECORE_EVENT_MOUSE_BUTTON_DOWN = ecore_event_type_new();
+   ECORE_EVENT_MOUSE_BUTTON_UP = ecore_event_type_new();
+   ECORE_EVENT_MOUSE_MOVE = ecore_event_type_new();
+   ECORE_EVENT_MOUSE_WHEEL = ecore_event_type_new();
+   ECORE_EVENT_MOUSE_IN = ecore_event_type_new();
+   ECORE_EVENT_MOUSE_OUT = ecore_event_type_new();
+
+   return _ecore_event_init_count;
+}
+
+EAPI int
+ecore_event_shutdown(void)
+{
+   if (--_ecore_event_init_count != 0)
+     return _ecore_event_init_count;
+
+   ECORE_EVENT_KEY_DOWN = 0;
+   ECORE_EVENT_KEY_UP = 0;
+   ECORE_EVENT_MOUSE_BUTTON_DOWN = 0;
+   ECORE_EVENT_MOUSE_BUTTON_UP = 0;
+   ECORE_EVENT_MOUSE_MOVE = 0;
+   ECORE_EVENT_MOUSE_WHEEL = 0;
+   ECORE_EVENT_MOUSE_IN = 0;
+   ECORE_EVENT_MOUSE_OUT = 0;
+
+   return ++_ecore_event_init_count;
+}
 
 EAPI void
 ecore_event_evas_modifier_lock_update(Evas *e, unsigned int modifiers)
@@ -267,60 +302,75 @@ ecore_event_evas_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *eve
 EAPI int
 ecore_event_evas_init(void)
 {
-   if (!_ecore_event_evas_init_count)
+   if (++_ecore_event_evas_init_count != 1)
+     return _ecore_event_evas_init_count;
+
+   if (!ecore_init())
      {
-	ecore_init();
-	ecore_event_init();
-
-	ecore_event_evas_handlers[0] = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
-							       ecore_event_evas_key_down,
-							       NULL);
-	ecore_event_evas_handlers[1] = ecore_event_handler_add(ECORE_EVENT_KEY_UP,
-							       ecore_event_evas_key_up,
-							       NULL);
-	ecore_event_evas_handlers[2] = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN,
-							       ecore_event_evas_mouse_button_down,
-							       NULL);
-	ecore_event_evas_handlers[3] = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP,
-							       ecore_event_evas_mouse_button_up,
-							       NULL);
-	ecore_event_evas_handlers[4] = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE,
-							       ecore_event_evas_mouse_move,
-							       NULL);
-	ecore_event_evas_handlers[5] = ecore_event_handler_add(ECORE_EVENT_MOUSE_WHEEL,
-							       ecore_event_evas_mouse_wheel,
-							       NULL);
-	ecore_event_evas_handlers[6] = ecore_event_handler_add(ECORE_EVENT_MOUSE_IN,
-							       ecore_event_evas_mouse_in,
-							       NULL);
-	ecore_event_evas_handlers[7] = ecore_event_handler_add(ECORE_EVENT_MOUSE_OUT,
-							       ecore_event_evas_mouse_out,
-							       NULL);
-
-	_window_hash = eina_hash_pointer_new(free);
+	return --_ecore_event_evas_init_count;
      }
-   return ++_ecore_event_evas_init_count;
+
+   if (!ecore_event_init())
+     {
+	goto shutdown_ecore;
+     }
+
+   ecore_event_evas_handlers[0] = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
+							  ecore_event_evas_key_down,
+							  NULL);
+   ecore_event_evas_handlers[1] = ecore_event_handler_add(ECORE_EVENT_KEY_UP,
+							  ecore_event_evas_key_up,
+							  NULL);
+   ecore_event_evas_handlers[2] = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN,
+							  ecore_event_evas_mouse_button_down,
+							  NULL);
+   ecore_event_evas_handlers[3] = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP,
+							  ecore_event_evas_mouse_button_up,
+							  NULL);
+   ecore_event_evas_handlers[4] = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE,
+							  ecore_event_evas_mouse_move,
+							  NULL);
+   ecore_event_evas_handlers[5] = ecore_event_handler_add(ECORE_EVENT_MOUSE_WHEEL,
+							  ecore_event_evas_mouse_wheel,
+							  NULL);
+   ecore_event_evas_handlers[6] = ecore_event_handler_add(ECORE_EVENT_MOUSE_IN,
+							  ecore_event_evas_mouse_in,
+							  NULL);
+   ecore_event_evas_handlers[7] = ecore_event_handler_add(ECORE_EVENT_MOUSE_OUT,
+							  ecore_event_evas_mouse_out,
+							  NULL);
+
+   _window_hash = eina_hash_pointer_new(free);
+
+   return _ecore_event_evas_init_count;
+
+ shutdown_ecore:
+   ecore_shutdown();
+
+   return --_ecore_event_evas_init_count;
 }
 
 EAPI int
 ecore_event_evas_shutdown(void)
 {
-   if (_ecore_event_evas_init_count == 1)
+   int i;
+
+   if (--_ecore_event_evas_init_count != 0)
+     return _ecore_event_evas_init_count;
+
+
+   eina_hash_free(_window_hash);
+   _window_hash = NULL;
+   for (i = 0; i < sizeof(ecore_event_evas_handlers)/sizeof(Ecore_Event_Handler*); ++i)
      {
-	int i;
-
-        eina_hash_free(_window_hash);
-        _window_hash = NULL;
-	for (i = 0; i < sizeof(ecore_event_evas_handlers)/sizeof(Ecore_Event_Handler*); ++i)
-	  {
-	     ecore_event_handler_del(ecore_event_evas_handlers[i]);
-	     ecore_event_evas_handlers[i] = NULL;
-	  }
-
-	ecore_event_shutdown();
-	ecore_shutdown();
+	ecore_event_handler_del(ecore_event_evas_handlers[i]);
+	ecore_event_evas_handlers[i] = NULL;
      }
-   return --_ecore_event_evas_init_count;
+
+   ecore_event_shutdown();
+   ecore_shutdown();
+
+   return _ecore_event_evas_init_count;
 }
 
 typedef struct _Ecore_Event_Modifier_Match Ecore_Event_Modifier_Match;
@@ -370,38 +420,4 @@ ecore_event_update_modifier(const char *key, Ecore_Event_Modifiers *modifiers, i
        }
 
    return ECORE_NONE;
-}
-
-EAPI int
-ecore_event_init(void)
-{
-   if (!_ecore_event_init_count)
-     {
-	ECORE_EVENT_KEY_DOWN = ecore_event_type_new();
-	ECORE_EVENT_KEY_UP = ecore_event_type_new();
-	ECORE_EVENT_MOUSE_BUTTON_DOWN = ecore_event_type_new();
-	ECORE_EVENT_MOUSE_BUTTON_UP = ecore_event_type_new();
-	ECORE_EVENT_MOUSE_MOVE = ecore_event_type_new();
-	ECORE_EVENT_MOUSE_WHEEL = ecore_event_type_new();
-	ECORE_EVENT_MOUSE_IN = ecore_event_type_new();
-	ECORE_EVENT_MOUSE_OUT = ecore_event_type_new();
-     }
-   return ++_ecore_event_init_count;
-}
-
-EAPI int
-ecore_event_shutdown(void)
-{
-   if (_ecore_event_init_count == 1)
-     {
-	ECORE_EVENT_KEY_DOWN = 0;
-	ECORE_EVENT_KEY_UP = 0;
-	ECORE_EVENT_MOUSE_BUTTON_DOWN = 0;
-	ECORE_EVENT_MOUSE_BUTTON_UP = 0;
-	ECORE_EVENT_MOUSE_MOVE = 0;
-	ECORE_EVENT_MOUSE_WHEEL = 0;
-	ECORE_EVENT_MOUSE_IN = 0;
-	ECORE_EVENT_MOUSE_OUT = 0;
-     }
-   return ++_ecore_event_init_count;
 }
