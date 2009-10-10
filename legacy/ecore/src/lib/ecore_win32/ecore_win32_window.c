@@ -50,7 +50,7 @@ ecore_win32_window_new(Ecore_Win32_Window *parent,
                        int                 width,
                        int                 height)
 {
-   ECORE_WIN32_MSG_INFO("creating window with border");
+   INF("creating window with border");
 
    return ecore_win32_window_internal_new(parent,
                                           x, y,
@@ -66,7 +66,7 @@ ecore_win32_window_override_new(Ecore_Win32_Window *parent,
                                 int                 width,
                                 int                 height)
 {
-   ECORE_WIN32_MSG_INFO("creating window without border");
+   INF("creating window without border");
 
    return ecore_win32_window_internal_new(parent,
                                           x, y,
@@ -81,7 +81,7 @@ ecore_win32_window_free(Ecore_Win32_Window *window)
 
    if (!window) return;
 
-   ECORE_WIN32_MSG_INFO("destroying window");
+   INF("destroying window");
 
    if (wnd->shape.mask != NULL)
       free(wnd->shape.mask);
@@ -140,12 +140,12 @@ ecore_win32_window_move(Ecore_Win32_Window *window,
 
    if (!window) return;
 
-   ECORE_WIN32_MSG_INFO("moving window (%dx%d)", x, y);
+   INF("moving window (%dx%d)", x, y);
 
    w = ((struct _Ecore_Win32_Window *)window)->window;
    if (!GetWindowRect(w, &rect))
      {
-        ECORE_WIN32_MSG_ERR("GetWindowRect() failed");
+        ERR("GetWindowRect() failed");
         return;
      }
 
@@ -154,7 +154,7 @@ ecore_win32_window_move(Ecore_Win32_Window *window,
                    rect.bottom - rect.top,
                    TRUE))
      {
-        ECORE_WIN32_MSG_ERR("MoveWindow() failed");
+        ERR("MoveWindow() failed");
      }
 }
 
@@ -171,12 +171,12 @@ ecore_win32_window_resize(Ecore_Win32_Window *window,
 
    if (!window) return;
 
-   ECORE_WIN32_MSG_INFO("resizing window (%dx%d)", width, height);
+   INF("resizing window (%dx%d)", width, height);
 
    w = (struct _Ecore_Win32_Window *)window;
    if (!GetWindowRect(w->window, &rect))
      {
-        ECORE_WIN32_MSG_ERR("GetWindowRect() failed");
+        ERR("GetWindowRect() failed");
         return;
      }
 
@@ -195,12 +195,12 @@ ecore_win32_window_resize(Ecore_Win32_Window *window,
    rect.bottom = height;
    if (!(style = GetWindowLong(w->window, GWL_STYLE)))
      {
-        ECORE_WIN32_MSG_ERR("GetWindowLong() failed");
+        ERR("GetWindowLong() failed");
         return;
      }
    if (!AdjustWindowRect(&rect, style, FALSE))
      {
-        ECORE_WIN32_MSG_ERR("AdjustWindowRect() failed");
+        ERR("AdjustWindowRect() failed");
         return;
      }
 
@@ -209,7 +209,7 @@ ecore_win32_window_resize(Ecore_Win32_Window *window,
                    rect.bottom - rect.top,
                    TRUE))
      {
-        ECORE_WIN32_MSG_ERR("MoveWindow() failed");
+        ERR("MoveWindow() failed");
      }
 }
 
@@ -226,7 +226,7 @@ ecore_win32_window_move_resize(Ecore_Win32_Window *window,
 
    if (!window) return;
 
-   ECORE_WIN32_MSG_INFO("moving and resizing window (%dx%d %dx%d)", x, y, width, height);
+   INF("moving and resizing window (%dx%d %dx%d)", x, y, width, height);
 
    w = ((struct _Ecore_Win32_Window *)window);
    rect.left = 0;
@@ -239,12 +239,12 @@ ecore_win32_window_move_resize(Ecore_Win32_Window *window,
    rect.bottom = height;
    if (!(style = GetWindowLong(w->window, GWL_STYLE)))
      {
-        ECORE_WIN32_MSG_ERR("GetWindowLong() failed");
+        ERR("GetWindowLong() failed");
         return;
      }
    if (!AdjustWindowRect(&rect, style, FALSE))
      {
-        ECORE_WIN32_MSG_ERR("AdjustWindowRect() failed");
+        ERR("AdjustWindowRect() failed");
         return;
      }
 
@@ -253,7 +253,7 @@ ecore_win32_window_move_resize(Ecore_Win32_Window *window,
                    rect.bottom - rect.top,
                    TRUE))
      {
-        ECORE_WIN32_MSG_ERR("MoveWindow() failed");
+        ERR("MoveWindow() failed");
      }
 }
 
@@ -268,7 +268,7 @@ ecore_win32_window_geometry_get(Ecore_Win32_Window *window,
    int  w;
    int  h;
 
-   ECORE_WIN32_MSG_INFO("getting window geometry");
+   INF("getting window geometry");
 
    if (!window)
      {
@@ -283,7 +283,7 @@ ecore_win32_window_geometry_get(Ecore_Win32_Window *window,
    if (!GetClientRect(((struct _Ecore_Win32_Window *)window)->window,
                       &rect))
      {
-        ECORE_WIN32_MSG_ERR("GetClientRect() failed");
+        ERR("GetClientRect() failed");
 
         if (x) *x = 0;
         if (y) *y = 0;
@@ -299,7 +299,7 @@ ecore_win32_window_geometry_get(Ecore_Win32_Window *window,
    if (!GetWindowRect(((struct _Ecore_Win32_Window *)window)->window,
                       &rect))
      {
-        ECORE_WIN32_MSG_ERR("GetWindowRect() failed");
+        ERR("GetWindowRect() failed");
 
         if (x) *x = 0;
         if (y) *y = 0;
@@ -322,7 +322,7 @@ ecore_win32_window_size_get(Ecore_Win32_Window *window,
 {
    RECT rect;
 
-   ECORE_WIN32_MSG_INFO("getting window size");
+   INF("getting window size");
 
    if (!window)
      {
@@ -335,7 +335,7 @@ ecore_win32_window_size_get(Ecore_Win32_Window *window,
    if (!GetClientRect(((struct _Ecore_Win32_Window *)window)->window,
                       &rect))
      {
-        ECORE_WIN32_MSG_ERR("GetClientRect() failed");
+        ERR("GetClientRect() failed");
 
         if (width) *width = 0;
         if (height) *height = 0;
@@ -475,7 +475,7 @@ ecore_win32_window_shape_set(Ecore_Win32_Window *window,
    HRGN                        rgn;
    int                         x;
    int                         y;
-   OSVERSIONINFO               version_info;
+   OSVERSIONINF               version_info;
 
    if (window == NULL)
       return;
@@ -494,13 +494,13 @@ ecore_win32_window_shape_set(Ecore_Win32_Window *window,
                                    GetWindowLong(wnd->window, GWL_EXSTYLE) & (~WS_EX_LAYERED)) &&
                  (GetLastError() != 0))
                {
-                  ECORE_WIN32_MSG_ERR("SetWindowLongPtr() failed");
+                  ERR("SetWindowLongPtr() failed");
                   return;
                }
              if (!RedrawWindow(wnd->window, NULL, NULL,
                                RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN))
                {
-                  ECORE_WIN32_MSG_ERR("RedrawWindow() failed");
+                  ERR("RedrawWindow() failed");
                   return;
                }
 #endif
@@ -508,7 +508,7 @@ ecore_win32_window_shape_set(Ecore_Win32_Window *window,
         else
           if (!SetWindowRgn(wnd->window, NULL, TRUE))
             {
-               ECORE_WIN32_MSG_ERR("SetWindowRgn() failed");
+               ERR("SetWindowRgn() failed");
             }
         return;
      }
@@ -542,7 +542,7 @@ ecore_win32_window_shape_set(Ecore_Win32_Window *window,
                              GetWindowLong(wnd->window, GWL_EXSTYLE) | WS_EX_LAYERED) &&
            (GetLastError() != 0))
             {
-               ECORE_WIN32_MSG_ERR("SetWindowLongPtr() failed");
+               ERR("SetWindowLongPtr() failed");
                return;
             }
        wnd->shape.layered = 1;
@@ -552,7 +552,7 @@ ecore_win32_window_shape_set(Ecore_Win32_Window *window,
 
    if (!(rgn = CreateRectRgn(0, 0, 0, 0)))
      {
-        ECORE_WIN32_MSG_ERR("CreateRectRgn() failed");
+        ERR("CreateRectRgn() failed");
         return;
      }
    for (y = 0; y < height; y++)
@@ -561,7 +561,7 @@ ecore_win32_window_shape_set(Ecore_Win32_Window *window,
 
         if (!(rgnLine = CreateRectRgn(0, 0, 0, 0)))
           {
-             ECORE_WIN32_MSG_ERR("CreateRectRgn() failed");
+             ERR("CreateRectRgn() failed");
              return;
           }
         for (x = 0; x < width; x++)
@@ -572,33 +572,33 @@ ecore_win32_window_shape_set(Ecore_Win32_Window *window,
 
                   if (!(rgnDot = CreateRectRgn(x, y, x + 1, y + 1)))
                     {
-                       ECORE_WIN32_MSG_ERR("CreateRectRgn() failed");
+                       ERR("CreateRectRgn() failed");
                        return;
                     }
                   if (CombineRgn(rgnLine, rgnLine, rgnDot, RGN_OR) == ERROR)
                     {
-                       ECORE_WIN32_MSG_ERR("CombineRgn() has not created a new region");
+                       ERR("CombineRgn() has not created a new region");
                     }
                   if (!DeleteObject(rgnDot))
                     {
-                       ECORE_WIN32_MSG_ERR("DeleteObject() failed");
+                       ERR("DeleteObject() failed");
                        return;
                     }
                }
           }
         if (CombineRgn(rgn, rgn, rgnLine, RGN_OR) == ERROR)
           {
-             ECORE_WIN32_MSG_ERR("CombineRgn() has not created a new region");
+             ERR("CombineRgn() has not created a new region");
           }
         if (!DeleteObject(rgnLine))
           {
-             ECORE_WIN32_MSG_ERR("DeleteObject() failed");
+             ERR("DeleteObject() failed");
              return;
           }
      }
    if (!SetWindowRgn(wnd->window, rgn, TRUE))
      {
-        ECORE_WIN32_MSG_ERR("SetWindowRgn() failed");
+        ERR("SetWindowRgn() failed");
      }
 }
 
@@ -607,12 +607,12 @@ ecore_win32_window_show(Ecore_Win32_Window *window)
 {
    if (!window) return;
 
-   ECORE_WIN32_MSG_INFO("showing window");
+   INF("showing window");
 
    ShowWindow(((struct _Ecore_Win32_Window *)window)->window, SW_SHOWNORMAL);
    if (!UpdateWindow(((struct _Ecore_Win32_Window *)window)->window))
      {
-        ECORE_WIN32_MSG_ERR("UpdateWindow() failed");
+        ERR("UpdateWindow() failed");
      }
 }
 
@@ -622,7 +622,7 @@ ecore_win32_window_hide(Ecore_Win32_Window *window)
 {
    if (!window) return;
 
-   ECORE_WIN32_MSG_INFO("hiding window");
+   INF("hiding window");
 
    ShowWindow(((struct _Ecore_Win32_Window *)window)->window, SW_HIDE);
 }
@@ -632,13 +632,13 @@ ecore_win32_window_raise(Ecore_Win32_Window *window)
 {
    if (!window) return;
 
-   ECORE_WIN32_MSG_INFO("raising window");
+   INF("raising window");
 
    if (!SetWindowPos(((struct _Ecore_Win32_Window *)window)->window,
                      HWND_TOP, 0, 0, 0, 0,
                      SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE))
      {
-        ECORE_WIN32_MSG_ERR("SetWindowPos() failed");
+        ERR("SetWindowPos() failed");
      }
 }
 
@@ -647,13 +647,13 @@ ecore_win32_window_lower(Ecore_Win32_Window *window)
 {
    if (!window) return;
 
-   ECORE_WIN32_MSG_INFO("lowering window");
+   INF("lowering window");
 
    if (!SetWindowPos(((struct _Ecore_Win32_Window *)window)->window,
                      HWND_BOTTOM, 0, 0, 0, 0,
                      SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE))
      {
-        ECORE_WIN32_MSG_ERR("SetWindowPos() failed");
+        ERR("SetWindowPos() failed");
      }
 }
 
@@ -665,11 +665,11 @@ ecore_win32_window_title_set(Ecore_Win32_Window *window,
 
    if (!title || !title[0]) return;
 
-   ECORE_WIN32_MSG_INFO("setting window title");
+   INF("setting window title");
 
    if (!SetWindowText(((struct _Ecore_Win32_Window *)window)->window, title))
      {
-        ECORE_WIN32_MSG_ERR("SetWindowText() failed");
+        ERR("SetWindowText() failed");
      }
 }
 
@@ -678,11 +678,11 @@ ecore_win32_window_focus_set(Ecore_Win32_Window *window)
 {
    if (!window) return;
 
-   ECORE_WIN32_MSG_INFO("focusing window");
+   INF("focusing window");
 
    if (!SetFocus(((struct _Ecore_Win32_Window *)window)->window))
      {
-        ECORE_WIN32_MSG_ERR("SetFocus() failed");
+        ERR("SetFocus() failed");
      }
 }
 
@@ -699,7 +699,7 @@ ecore_win32_window_iconified_set(Ecore_Win32_Window *window,
        ((!ew->iconified) && (!on)))
      return;
 
-   ECORE_WIN32_MSG_INFO("iconifying window: %s", on ? "yes" : "no");
+   INF("iconifying window: %s", on ? "yes" : "no");
 
    ShowWindow(ew->window, on ? SW_MINIMIZE : SW_RESTORE);
    ew->iconified = on;
@@ -721,7 +721,7 @@ ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
        ((!ew->borderless) && (!on)))
      return;
 
-   ECORE_WIN32_MSG_INFO("setting window without border: %s", on ? "yes" : "no");
+   INF("setting window without border: %s", on ? "yes" : "no");
 
    w = ew->window;
 
@@ -730,13 +730,13 @@ ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
      {
         if (!GetClientRect(w, &rect))
           {
-             ECORE_WIN32_MSG_ERR("GetClientRect() failed");
+             ERR("GetClientRect() failed");
              return;
           }
         SetLastError(0);
         if (!SetWindowLongPtr(w, GWL_STYLE, style & ~(WS_CAPTION | WS_THICKFRAME)) && (GetLastError() != 0))
           {
-             ECORE_WIN32_MSG_ERR("SetWindowLongPtr() failed");
+             ERR("SetWindowLongPtr() failed");
              return;
           }
      }
@@ -744,19 +744,19 @@ ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
      {
         if (!GetWindowRect(w, &rect))
           {
-             ECORE_WIN32_MSG_ERR("GetWindowRect() failed");
+             ERR("GetWindowRect() failed");
              return;
           }
         style |= WS_CAPTION | WS_THICKFRAME;
         if (!AdjustWindowRect (&rect, style, FALSE))
           {
-             ECORE_WIN32_MSG_ERR("AdjustWindowRect() failed");
+             ERR("AdjustWindowRect() failed");
              return;
           }
         SetLastError(0);
         if (!SetWindowLongPtr(w, GWL_STYLE, style) && (GetLastError() != 0))
           {
-             ECORE_WIN32_MSG_ERR("SetWindowLongPtr() failed");
+             ERR("SetWindowLongPtr() failed");
              return;
           }
      }
@@ -765,7 +765,7 @@ ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
                      rect.right - rect.left, rect.bottom - rect.top,
                      SWP_NOMOVE | SWP_FRAMECHANGED))
      {
-        ECORE_WIN32_MSG_ERR("SetWindowPos() failed");
+        ERR("SetWindowPos() failed");
         return;
      }
    ew->borderless = on;
@@ -785,7 +785,7 @@ ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
        ((!ew->fullscreen) && (!on)))
      return;
 
-   ECORE_WIN32_MSG_INFO("setting fullscreen: %s", on ? "yes" : "no");
+   INF("setting fullscreen: %s", on ? "yes" : "no");
 
    ew->fullscreen = !!on;
    w = ew->window;
@@ -796,12 +796,12 @@ ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
 
         if (!GetWindowRect(w, &ew->rect))
           {
-             ECORE_WIN32_MSG_ERR("GetWindowRect() failed");
+             ERR("GetWindowRect() failed");
              return;
           }
         if (!(ew->style = GetWindowLong(w, GWL_STYLE)))
           {
-             ECORE_WIN32_MSG_ERR("GetWindowLong() failed");
+             ERR("GetWindowLong() failed");
              return;
           }
         style = ew->style & ~WS_OVERLAPPEDWINDOW & ~WS_SIZEBOX;
@@ -809,20 +809,20 @@ ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
         SetLastError(0);
         if (!SetWindowLongPtr(w, GWL_STYLE, style) && (GetLastError() != 0))
           {
-             ECORE_WIN32_MSG_ERR("SetWindowLongPtr() failed");
+             ERR("SetWindowLongPtr() failed");
              return;
           }
         SetLastError(0);
         if (!SetWindowLongPtr(w, GWL_EXSTYLE, WS_EX_TOPMOST) && (GetLastError() != 0))
           {
-             ECORE_WIN32_MSG_ERR("SetWindowLongPtr() failed");
+             ERR("SetWindowLongPtr() failed");
              return;
           }
         if (!SetWindowPos(w, HWND_TOPMOST, 0, 0,
                           GetSystemMetrics (SM_CXSCREEN), GetSystemMetrics (SM_CYSCREEN),
                           SWP_NOCOPYBITS | SWP_SHOWWINDOW))
           {
-             ECORE_WIN32_MSG_ERR("SetWindowPos() failed");
+             ERR("SetWindowPos() failed");
              return;
           }
      }
@@ -831,13 +831,13 @@ ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
         SetLastError(0);
         if (!SetWindowLongPtr(w, GWL_STYLE, ew->style) && (GetLastError() != 0))
           {
-             ECORE_WIN32_MSG_ERR("SetWindowLongPtr() failed");
+             ERR("SetWindowLongPtr() failed");
              return;
           }
         SetLastError(0);
         if (!SetWindowLongPtr(w, GWL_EXSTYLE, 0) && (GetLastError() != 0))
           {
-             ECORE_WIN32_MSG_ERR("SetWindowLongPtr() failed");
+             ERR("SetWindowLongPtr() failed");
              return;
           }
         if (!SetWindowPos(w, HWND_NOTOPMOST,
@@ -847,7 +847,7 @@ ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
                           ew->rect.bottom - ew->rect.top,
                           SWP_NOCOPYBITS | SWP_SHOWWINDOW))
           {
-             ECORE_WIN32_MSG_ERR("SetWindowPos() failed");
+             ERR("SetWindowPos() failed");
              return;
           }
      }
@@ -857,12 +857,12 @@ void
 ecore_win32_window_cursor_set(Ecore_Win32_Window *window,
                               Ecore_Win32_Cursor *cursor)
 {
-   ECORE_WIN32_MSG_INFO("setting cursor");
+   INF("setting cursor");
 
    if (!SetClassLong(((struct _Ecore_Win32_Window *)window)->window,
                      GCL_HCURSOR, (LONG)cursor))
      {
-        ECORE_WIN32_MSG_ERR("SetClassLong() failed");
+        ERR("SetClassLong() failed");
      }
 }
 
@@ -876,7 +876,7 @@ ecore_win32_window_state_set(Ecore_Win32_Window       *window,
    if (!window || !state || !num)
      return;
 
-   ECORE_WIN32_MSG_INFO("setting cursor state");
+   INF("setting cursor state");
 
    for (i = 0; i < num; i++)
      {
@@ -939,7 +939,7 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
    ew = (struct _Ecore_Win32_Window *)window;
    w = ew->window;
 
-   ECORE_WIN32_MSG_INFO("sending cursor state");
+   INF("sending cursor state");
 
    switch (state)
      {
@@ -963,7 +963,7 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
               if (!SystemParametersInfo(SPI_GETWORKAREA, 0,
                                         &rect, 0))
                 {
-                   ECORE_WIN32_MSG_ERR("SystemParametersInfo() failed");
+                   ERR("SystemParametersInfo() failed");
                    break;
                 }
               y = rect.top;
@@ -971,7 +971,7 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
 
               if (!GetClientRect(w, &rect))
                 {
-                   ECORE_WIN32_MSG_ERR("GetClientRect() failed");
+                   ERR("GetClientRect() failed");
                    break;
                 }
 
@@ -980,7 +980,7 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
                               height,
                               TRUE))
                 {
-                   ECORE_WIN32_MSG_ERR("MoveWindow() failed");
+                   ERR("MoveWindow() failed");
                 }
            }
          break;
@@ -991,7 +991,7 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
 
               if (!GetClientRect(w, &rect))
                 {
-                   ECORE_WIN32_MSG_ERR("GetClientRect() failed");
+                   ERR("GetClientRect() failed");
                    break;
                 }
 
@@ -1000,7 +1000,7 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
                               rect.bottom - rect.top,
                               TRUE))
                 {
-                   ECORE_WIN32_MSG_ERR("MoveWindow() failed");
+                   ERR("MoveWindow() failed");
                 }
            }
          break;
@@ -1012,7 +1012,7 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
               if (!SystemParametersInfo(SPI_GETWORKAREA, 0,
                                         &rect, 0))
                 {
-                   ECORE_WIN32_MSG_ERR("SystemParametersInfo() failed");
+                   ERR("SystemParametersInfo() failed");
                    break;
                 }
 
@@ -1021,7 +1021,7 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
                               rect.bottom - rect.top,
                               TRUE))
                 {
-                   ECORE_WIN32_MSG_ERR("MoveWindow() failed");
+                   ERR("MoveWindow() failed");
                 }
            }
          break;
@@ -1042,7 +1042,7 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
                              0, 0,
                              SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW))
              {
-                ECORE_WIN32_MSG_ERR("SetWindowPos() failed");
+                ERR("SetWindowPos() failed");
              }
          break;
       case ECORE_WIN32_WINDOW_STATE_BELOW:
@@ -1052,7 +1052,7 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
                              0, 0,
                              SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW))
              {
-                ECORE_WIN32_MSG_ERR("SetWindowPos() failed");
+                ERR("SetWindowPos() failed");
              }
          break;
       case ECORE_WIN32_WINDOW_STATE_DEMANDS_ATTENTION:
@@ -1071,7 +1071,7 @@ ecore_win32_window_type_set(Ecore_Win32_Window      *window,
    if (!window)
      return;
 
-   ECORE_WIN32_MSG_INFO("setting window type");
+   INF("setting window type");
 
    switch (type)
      {
@@ -1124,7 +1124,7 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
    w = (struct _Ecore_Win32_Window *)calloc(1, sizeof(struct _Ecore_Win32_Window));
    if (!w)
      {
-        ECORE_WIN32_MSG_ERR("malloc() failed");
+        ERR("malloc() failed");
         return NULL;
      }
 
@@ -1134,7 +1134,7 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
    rect.bottom = height;
    if (!AdjustWindowRect(&rect, style, FALSE))
      {
-        ECORE_WIN32_MSG_ERR("AdjustWindowRect() failed");
+        ERR("AdjustWindowRect() failed");
         free(w);
         return NULL;
      }
@@ -1164,7 +1164,7 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
                               NULL, _ecore_win32_instance, NULL);
    if (!w->window)
      {
-        ECORE_WIN32_MSG_ERR("CreateWindowEx() failed");
+        ERR("CreateWindowEx() failed");
         free(w);
         return NULL;
      }
@@ -1172,7 +1172,7 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
    SetLastError(0);
    if (!SetWindowLongPtr(w->window, GWL_USERDATA, (LONG)w) && (GetLastError() != 0))
      {
-        ECORE_WIN32_MSG_ERR("SetWindowLongPtr() failed");
+        ERR("SetWindowLongPtr() failed");
         DestroyWindow(w->window);
         free(w);
         return NULL;

@@ -82,31 +82,31 @@ ecore_win32_init()
 {
    WNDCLASS wc;
 
+   if (++_ecore_win32_init_count != 1)
+     return _ecore_win32_init_count;
+
+   if (!eina_init())
+     return --_ecore_win32_init_count;
+
    eina_log_print_cb_set(_ecore_win32_error_print_cb, NULL);
-
-   /* in case of double initialization of the module */
-   if(_ecore_win32_log_dom < 0)
-     _ecore_win32_log_dom = eina_log_domain_register("ecore_win32", EINA_COLOR_LIGHTBLUE);
-
-   if (_ecore_win32_log_dom < 0)
+   _ecore_win32_log_dom_global = eina_log_domain_register("ecore_win32", EINA_COLOR_LIGHTBLUE);
+   if (_ecore_win32_log_dom_global < 0)
      {
-        EINA_LOG_ERR("Could not register log domain: ecore_win32");
-        return 0;
+        EINA_LOG_ERR("Ecore_Win32: Could not register log domain");
+        goto shutdown_eina;
      }
 
-   ECORE_WIN32_MSG_INFO("initializing ecore_win32 (current count: %d)", _ecore_win32_init_count);
-
-   if (_ecore_win32_init_count > 0)
+   if (!ecore_event_init())
      {
-        _ecore_win32_init_count++;
-        return _ecore_win32_init_count;
+        ERR("Ecore_Win32: Could not init ecore_event");
+        goto unregister_log_domain;
      }
 
    _ecore_win32_instance = GetModuleHandle(NULL);
    if (!_ecore_win32_instance)
      {
-        ECORE_WIN32_MSG_ERR("GetModuleHandle() failed");
-        return 0;
+        ERR("GetModuleHandle() failed");
+        goto shutdown_ecore_event;
      }
 
    memset (&wc, 0, sizeof (WNDCLASS));
@@ -123,16 +123,14 @@ ecore_win32_init()
 
    if(!RegisterClass(&wc))
      {
-        ECORE_WIN32_MSG_ERR("RegisterClass() failed");
-        FreeLibrary(_ecore_win32_instance);
-        return 0;
+        ERR("RegisterClass() failed");
+        goto free_library;
      }
 
    if (!ecore_win32_dnd_init())
      {
-        ECORE_WIN32_MSG_ERR("ecore_win32_dnd_init() failed");
-        FreeLibrary(_ecore_win32_instance);
-        return 0;
+        ERR("ecore_win32_dnd_init() failed");
+        goto unregister_class;
      }
 
    if (!ECORE_WIN32_EVENT_MOUSE_IN)
@@ -151,37 +149,41 @@ ecore_win32_init()
         ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = ecore_event_type_new();
      }
 
-   ecore_event_init();
-
-   _ecore_win32_init_count++;
-
    return _ecore_win32_init_count;
+
+ unregister_class:
+   UnregisterClass(ECORE_WIN32_WINDOW_CLASS, _ecore_win32_instance);
+ free_library:
+   FreeLibrary(_ecore_win32_instance);
+ shutdown_ecore_event:
+   ecore_event_shutdown();
+ unregister_log_domain:
+   eina_log_domain_unregister(_ecore_win32_log_dom_global);
+ shutdown_eina:
+   eina_shutdown();
+
+   return --_ecore_win32_init_count;
 }
 
 int
 ecore_win32_shutdown()
 {
-   ECORE_WIN32_MSG_INFO("shutting down ecore_win32 (current count: %d)", _ecore_win32_init_count);
-
-   _ecore_win32_init_count--;
-   if (_ecore_win32_init_count > 0) return _ecore_win32_init_count;
-
-   ecore_event_shutdown();
+   if (--_ecore_win32_init_count != 0)
+     return _ecore_win32_init_count;
 
    ecore_win32_dnd_shutdown();
+
    if (!UnregisterClass(ECORE_WIN32_WINDOW_CLASS, _ecore_win32_instance))
-     {
-        ECORE_WIN32_MSG_INFO("UnregisterClass() failed");
-     }
+     INF("UnregisterClass() failed");
+
    if (!FreeLibrary(_ecore_win32_instance))
-     {
-        ECORE_WIN32_MSG_INFO("FreeLibrary() failed");
-     }
+     INF("FreeLibrary() failed");
+
    _ecore_win32_instance = NULL;
 
-   eina_log_domain_unregister(_ecore_win32_log_dom);
-
-   if (_ecore_win32_init_count < 0) _ecore_win32_init_count = 0;
+   ecore_event_shutdown();
+   eina_log_domain_unregister(_ecore_win32_log_dom_global);
+   eina_shutdown();
 
    return _ecore_win32_init_count;
 }
@@ -192,19 +194,19 @@ ecore_win32_screen_depth_get()
    HDC dc;
    int depth;
 
-   ECORE_WIN32_MSG_INFO("getting screen depth");
+   INF("getting screen depth");
 
    dc = GetDC(NULL);
    if (!dc)
      {
-        ECORE_WIN32_MSG_ERR("GetDC() failed");
+        ERR("GetDC() failed");
         return 0;
      }
 
    depth = GetDeviceCaps(dc, BITSPIXEL);
    if (!ReleaseDC(NULL, dc))
      {
-        ECORE_WIN32_MSG_ERR("ReleaseDC() failed (device context not released)");
+        ERR("ReleaseDC() failed (device context not released)");
      }
 
    return depth;
@@ -323,7 +325,7 @@ _ecore_win32_window_procedure(HWND   window,
             {
                POINT pt;
 
-               ECORE_WIN32_MSG_INFO("mouse in window");
+               INF("mouse in window");
 
                pt.x = GET_X_LPARAM(data_param);
                pt.y = GET_Y_LPARAM(data_param);
@@ -346,7 +348,7 @@ _ecore_win32_window_procedure(HWND   window,
             }
           else
             {
-               ECORE_WIN32_MSG_ERR("GetClientRect() failed");
+               ERR("GetClientRect() failed");
             }
           _ecore_win32_event_handle_motion_notify(data);
 

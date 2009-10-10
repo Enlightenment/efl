@@ -58,7 +58,7 @@ _ecore_win32_event_handle_key_press(Ecore_Win32_Callback_Data *msg,
 {
    Ecore_Event_Key *e;
 
-   ECORE_WIN32_MSG_INFO("key pressed");
+   INF("key pressed");
 
    e = (Ecore_Event_Key *)malloc(sizeof(Ecore_Event_Key));
    if (!e) return;
@@ -108,7 +108,7 @@ _ecore_win32_event_handle_key_release(Ecore_Win32_Callback_Data *msg,
 {
    Ecore_Event_Key *e;
 
-   ECORE_WIN32_MSG_INFO("key released");
+   INF("key released");
 
    e = (Ecore_Event_Key *)calloc(1, sizeof(Ecore_Event_Key));
    if (!e) return;
@@ -158,7 +158,7 @@ _ecore_win32_event_handle_button_press(Ecore_Win32_Callback_Data *msg,
 {
    Ecore_Win32_Window *window;
 
-   ECORE_WIN32_MSG_INFO("mouse button pressed");
+   INF("mouse button pressed");
 
    window = (Ecore_Win32_Window *)GetWindowLong(msg->window, GWL_USERDATA);
 
@@ -260,7 +260,7 @@ _ecore_win32_event_handle_button_release(Ecore_Win32_Callback_Data *msg,
 {
    Ecore_Win32_Window *window;
 
-   ECORE_WIN32_MSG_INFO("mouse button released");
+   INF("mouse button released");
 
    window = (void *)GetWindowLong(msg->window, GWL_USERDATA);
 
@@ -318,7 +318,7 @@ _ecore_win32_event_handle_motion_notify(Ecore_Win32_Callback_Data *msg)
 {
    Ecore_Event_Mouse_Move *e;
 
-   ECORE_WIN32_MSG_INFO("mouse moved");
+   INF("mouse moved");
 
    e = (Ecore_Event_Mouse_Move *)calloc(1, sizeof(Ecore_Event_Mouse_Move));
    if (!e) return;
@@ -337,7 +337,7 @@ _ecore_win32_event_handle_enter_notify(Ecore_Win32_Callback_Data *msg)
   {
      Ecore_Event_Mouse_Move *e;
 
-     ECORE_WIN32_MSG_INFO("mouse in");
+     INF("mouse in");
 
      e = (Ecore_Event_Mouse_Move *)calloc(1, sizeof(Ecore_Event_Mouse_Move));
      if (!e) return;
@@ -376,7 +376,7 @@ _ecore_win32_event_handle_leave_notify(Ecore_Win32_Callback_Data *msg)
   {
      Ecore_Event_Mouse_Move *e;
 
-     ECORE_WIN32_MSG_INFO("mouse out");
+     INF("mouse out");
 
      e = (Ecore_Event_Mouse_Move *)calloc(1, sizeof(Ecore_Event_Mouse_Move));
      if (!e) return;
@@ -414,7 +414,7 @@ _ecore_win32_event_handle_focus_in(Ecore_Win32_Callback_Data *msg)
 {
    Ecore_Win32_Event_Window_Focus_In *e;
 
-   ECORE_WIN32_MSG_INFO("focus in");
+   INF("focus in");
 
    e = (Ecore_Win32_Event_Window_Focus_In *)calloc(1, sizeof(Ecore_Win32_Event_Window_Focus_In));
    if (!e) return;
@@ -432,7 +432,7 @@ _ecore_win32_event_handle_focus_out(Ecore_Win32_Callback_Data *msg)
 {
    Ecore_Win32_Event_Window_Focus_Out *e;
 
-   ECORE_WIN32_MSG_INFO("focus out");
+   INF("focus out");
 
    e = (Ecore_Win32_Event_Window_Focus_Out *)calloc(1, sizeof(Ecore_Win32_Event_Window_Focus_Out));
    if (!e) return;
@@ -450,7 +450,7 @@ _ecore_win32_event_handle_expose(Ecore_Win32_Callback_Data *msg)
 {
    Ecore_Win32_Event_Window_Damage *e;
 
-   ECORE_WIN32_MSG_INFO("window expose");
+   INF("window expose");
 
    e = (Ecore_Win32_Event_Window_Damage *)calloc(1, sizeof(Ecore_Win32_Event_Window_Damage));
    if (!e) return;
@@ -472,7 +472,7 @@ _ecore_win32_event_handle_create_notify(Ecore_Win32_Callback_Data *msg)
 {
    Ecore_Win32_Event_Window_Create *e;
 
-   ECORE_WIN32_MSG_INFO("window create notify");
+   INF("window create notify");
 
    e = calloc(1, sizeof(Ecore_Win32_Event_Window_Create));
    if (!e) return;
@@ -489,7 +489,7 @@ _ecore_win32_event_handle_destroy_notify(Ecore_Win32_Callback_Data *msg)
 {
    Ecore_Win32_Event_Window_Destroy *e;
 
-   ECORE_WIN32_MSG_INFO("window destroy notify");
+   INF("window destroy notify");
 
    e = calloc(1, sizeof(Ecore_Win32_Event_Window_Destroy));
    if (!e) return;
@@ -507,7 +507,7 @@ _ecore_win32_event_handle_map_notify(Ecore_Win32_Callback_Data *msg)
 {
    Ecore_Win32_Event_Window_Show *e;
 
-   ECORE_WIN32_MSG_INFO("window map notify");
+   INF("window map notify");
 
    e = calloc(1, sizeof(Ecore_Win32_Event_Window_Show));
    if (!e) return;
@@ -524,7 +524,7 @@ _ecore_win32_event_handle_unmap_notify(Ecore_Win32_Callback_Data *msg)
 {
    Ecore_Win32_Event_Window_Hide *e;
 
-   ECORE_WIN32_MSG_INFO("window unmap notify");
+   INF("window unmap notify");
 
    e = calloc(1, sizeof(Ecore_Win32_Event_Window_Hide));
    if (!e) return;
@@ -539,17 +539,17 @@ _ecore_win32_event_handle_unmap_notify(Ecore_Win32_Callback_Data *msg)
 void
 _ecore_win32_event_handle_configure_notify(Ecore_Win32_Callback_Data *msg)
 {
-   WINDOWINFO                          wi;
+   WINDOWINF                          wi;
    Ecore_Win32_Event_Window_Configure *e;
    WINDOWPOS                          *window_pos;
 
-   ECORE_WIN32_MSG_INFO("window configure notify");
+   INF("window configure notify");
 
    e = calloc(1, sizeof(Ecore_Win32_Event_Window_Configure));
    if (!e) return;
 
    window_pos = (WINDOWPOS *)msg->data_param;
-   wi.cbSize = sizeof(WINDOWINFO);
+   wi.cbSize = sizeof(WINDOWINF);
    if (!GetWindowInfo(window_pos->hwnd, &wi))
      {
         free(e);
@@ -573,7 +573,7 @@ _ecore_win32_event_handle_resize(Ecore_Win32_Callback_Data *msg)
    RECT                             rect;
    Ecore_Win32_Event_Window_Resize *e;
 
-   ECORE_WIN32_MSG_INFO("window resize");
+   INF("window resize");
 
    if (!GetClientRect(msg->window, &rect))
      return;
@@ -594,7 +594,7 @@ _ecore_win32_event_handle_delete_request(Ecore_Win32_Callback_Data *msg)
 {
    Ecore_Win32_Event_Window_Delete_Request *e;
 
-   ECORE_WIN32_MSG_INFO("window delete request");
+   INF("window delete request");
 
    e = calloc(1, sizeof(Ecore_Win32_Event_Window_Delete_Request));
    if (!e) return;
