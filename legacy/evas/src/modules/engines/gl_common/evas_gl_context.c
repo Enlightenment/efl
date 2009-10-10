@@ -98,6 +98,10 @@ evas_gl_common_context_new(void)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
 #endif
         
+        glEnableVertexAttribArray(SHAD_VERTEX);
+        glEnableVertexAttribArray(SHAD_COLOR);
+        glEnableVertexAttribArray(SHAD_TEXUV);
+        
         evas_gl_common_shader_program_init(&(gc->shader.rect), 
                                            &(shader_rect_vert_src), 
                                            &(shader_rect_frag_src));
@@ -107,6 +111,13 @@ evas_gl_common_context_new(void)
         evas_gl_common_shader_program_init(&(gc->shader.font),
                                            &(shader_font_vert_src), 
                                            &(shader_font_frag_src));
+        evas_gl_common_shader_program_init(&(gc->shader.yuv),
+                                           &(shader_yuv_vert_src), 
+                                           &(shader_yuv_frag_src));
+        glUseProgram(gc->shader.yuv.prog);
+        glUniform1i(glGetUniformLocation(gc->shader.yuv.prog, "tex"), 0);
+        glUniform1i(glGetUniformLocation(gc->shader.yuv.prog, "texu"), 1);
+        glUniform1i(glGetUniformLocation(gc->shader.yuv.prog, "texv"), 2);
         _evas_gl_common_viewport_set(gc);
         gc->checked = 1;
      }
@@ -155,23 +166,33 @@ evas_gl_common_context_resize(Evas_GL_Context *gc, int w, int h)
 #define PUSH_TEXUV(u, v) \
    gc->array.texuv[nu++] = u; \
    gc->array.texuv[nu++] = v
+#define PUSH_TEXUV2(u, v) \
+   gc->array.texuv2[nu2++] = u; \
+   gc->array.texuv2[nu2++] = v
+#define PUSH_TEXUV3(u, v) \
+   gc->array.texuv3[nu3++] = u; \
+   gc->array.texuv3[nu3++] = v
 #define COLOR_FLOAT(r, g, b, a, fr, fg, fb, fa) \
    fr = ((GLfloat)(r)) / 255.0; \
    fg = ((GLfloat)(g)) / 255.0; \
    fb = ((GLfloat)(b)) / 255.0; \
    fa = ((GLfloat)(a)) / 255.0
 
-static void
+static inline void
 _evas_gl_common_context_array_alloc(Evas_GL_Context *gc)
 {
    if (gc->array.num <= gc->array.alloc) return;
-   gc->array.alloc += 1024;
+   gc->array.alloc += 6 * 1024;
    gc->array.vertex = realloc(gc->array.vertex,
                               gc->array.alloc * sizeof(GLint) * 3);
    gc->array.color  = realloc(gc->array.color,
                               gc->array.alloc * sizeof(GLfloat) * 4);
    gc->array.texuv  = realloc(gc->array.texuv,
                               gc->array.alloc * sizeof(GLfloat) * 2);
+   gc->array.texuv2  = realloc(gc->array.texuv2,
+                               gc->array.alloc * sizeof(GLfloat) * 2);
+   gc->array.texuv3  = realloc(gc->array.texuv3,
+                               gc->array.alloc * sizeof(GLfloat) * 2);
 }
 
 void
@@ -337,6 +358,90 @@ evas_gl_common_context_font_push(Evas_GL_Context *gc,
 }
 
 void
+evas_gl_common_context_yuv_push(Evas_GL_Context *gc,
+                                Evas_GL_Texture *tex, 
+                                double sx, double sy, double sw, double sh,
+                                int x, int y, int w, int h,
+                                int r, int g, int b, int a,
+                                Eina_Bool smooth)
+{
+   int pnum, nv, nc, nu, nu2, nu3, nt, i;
+   GLfloat rr, gg, bb, aa, tx1, tx2, ty1, ty2, t2x1, t2x2, t2y1, t2y2;
+   Eina_Bool blend = 0;
+
+   if (a < 255) blend = 1;
+   
+   if ((gc->shader.cur_tex != tex->pt->texture)
+       || (gc->shader.cur_prog != gc->shader.yuv.prog)
+       || (gc->shader.smooth != smooth)
+       || (gc->shader.blend != blend)
+       )
+     {
+        shader_array_flush(gc);
+        gc->shader.cur_tex = tex->pt->texture;
+        gc->shader.cur_texu = tex->ptu->texture;
+        gc->shader.cur_texv = tex->ptv->texture;
+        gc->shader.cur_prog = gc->shader.yuv.prog;
+        gc->shader.smooth = smooth;
+        gc->shader.blend = blend;
+     }
+   
+   pnum = gc->array.num;
+   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; 
+   nu2 = pnum * 2; nu3 = pnum * 2; nt = pnum * 4;
+   gc->array.num += 6;
+   _evas_gl_common_context_array_alloc(gc);
+
+   tx1 = (sx) / (double)tex->pt->w;
+   ty1 = (sy) / (double)tex->pt->h;
+   tx2 = (sx + sw) / (double)tex->pt->w;
+   ty2 = (sy + sh) / (double)tex->pt->h;
+   
+   t2x1 = (sx) / (double)tex->ptu->w;
+   t2y1 = (sy) / (double)tex->ptu->h;
+   t2x2 = (sx + sw) / (double)tex->ptu->w;
+   t2y2 = (sy + sh) / (double)tex->ptu->h;
+   
+   PUSH_VERTEX(x    , y    , 0);
+   PUSH_VERTEX(x + w, y    , 0);
+   PUSH_VERTEX(x    , y + h, 0);
+   
+   PUSH_TEXUV(tx1, ty1);
+   PUSH_TEXUV(tx2, ty1);
+   PUSH_TEXUV(tx1, ty2);
+   
+   PUSH_TEXUV2(t2x1, t2y1);
+   PUSH_TEXUV2(t2x2, t2y1);
+   PUSH_TEXUV2(t2x1, t2y2);
+   
+   PUSH_TEXUV3(t2x1, t2y1);
+   PUSH_TEXUV3(t2x2, t2y1);
+   PUSH_TEXUV3(t2x1, t2y2);
+   
+   PUSH_VERTEX(x + w, y    , 0);
+   PUSH_VERTEX(x + w, y + h, 0);
+   PUSH_VERTEX(x    , y + h, 0);
+   
+   PUSH_TEXUV(tx2, ty1);
+   PUSH_TEXUV(tx2, ty2);
+   PUSH_TEXUV(tx1, ty2);
+
+   PUSH_TEXUV2(t2x2, t2y1);
+   PUSH_TEXUV2(t2x2, t2y2);
+   PUSH_TEXUV2(t2x1, t2y2);
+
+   PUSH_TEXUV3(t2x2, t2y1);
+   PUSH_TEXUV3(t2x2, t2y2);
+   PUSH_TEXUV3(t2x1, t2y2);
+
+   COLOR_FLOAT(r, g, b, a, rr, gg, bb, aa);
+   for (i = 0; i < 6; i++)
+     {
+        PUSH_COLOR(rr, gg, bb, aa);
+     }
+}
+
+void
 evas_gl_common_context_flush(Evas_GL_Context *gc)
 {
    shader_array_flush(gc);
@@ -349,58 +454,80 @@ shader_array_flush(Evas_GL_Context *gc)
    if (gc->array.num <= 0) return;
 
 //   fprintf(stderr, "  flush array %i\n", gc->array.num);
-   glUseProgram(gc->shader.cur_prog);
-  
-   if (gc->shader.cur_tex)
+   if (gc->shader.cur_prog != gc->shader.current.cur_prog)
+     glUseProgram(gc->shader.cur_prog);
+
+   if (gc->shader.cur_tex != gc->shader.current.cur_tex)
      {
         glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
      }
-   else
+   if (gc->shader.blend != gc->shader.current.blend)
      {
-        glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
+        if (gc->shader.blend)
+          glEnable(GL_BLEND);
+        else 
+          glDisable(GL_BLEND);
      }
-   if (gc->shader.blend)
-     glEnable(GL_BLEND);
-   else 
-     glDisable(GL_BLEND);
-   if (gc->shader.smooth)
+   if (gc->shader.smooth != gc->shader.current.smooth)
      {
+        if (gc->shader.smooth)
+          {
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
+             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
 #endif
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-     }
-   else
-     {
+             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+          }
+        else
+          {
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1);
+             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1);
 #endif
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+          }
      }
-   
-   glEnableVertexAttribArray(SHAD_VERTEX);
+
    glVertexAttribPointer(SHAD_VERTEX, 3, GL_INT, GL_FALSE, 0, gc->array.vertex);
-   
-   glEnableVertexAttribArray(SHAD_COLOR);
    glVertexAttribPointer(SHAD_COLOR, 4, GL_FLOAT, GL_FALSE, 0, gc->array.color);
-   
-   glEnableVertexAttribArray(SHAD_TEXUV);
    glVertexAttribPointer(SHAD_TEXUV, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv);
+   if ((gc->array.texuv2) && (gc->array.texuv3))
+     {
+        glEnableVertexAttribArray(SHAD_TEXUV2);
+        glEnableVertexAttribArray(SHAD_TEXUV3);
+        glVertexAttribPointer(SHAD_TEXUV2, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv2);
+        glVertexAttribPointer(SHAD_TEXUV3, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv3);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, gc->shader.cur_texu);
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, gc->shader.cur_texv);
+     }
+   else
+     {
+        glDisableVertexAttribArray(SHAD_TEXUV2);
+        glDisableVertexAttribArray(SHAD_TEXUV3);
+     }
    
    glDrawArrays(GL_TRIANGLES, 0, gc->array.num);
-   
-   gc->shader.cur_prog = 0;
-   gc->shader.cur_tex = 0;
+
+   gc->shader.current.cur_prog = gc->shader.cur_prog;
+   gc->shader.current.cur_tex = gc->shader.cur_tex;
+   gc->shader.current.blend = gc->shader.blend;
+   gc->shader.current.smooth = gc->shader.smooth;
    
    free(gc->array.vertex);
    free(gc->array.color);
    free(gc->array.texuv);
+   free(gc->array.texuv2);
+   free(gc->array.texuv3);
    
    gc->array.vertex = NULL;
    gc->array.color = NULL;
    gc->array.texuv = NULL;
+   gc->array.texuv2 = NULL;
+   gc->array.texuv3 = NULL;
    
    gc->array.num = 0;
    gc->array.alloc = 0;
@@ -454,5 +581,8 @@ _evas_gl_common_viewport_set(Evas_GL_Context *gc)
                       GL_FALSE, proj);
    glUseProgram(gc->shader.font.prog);
    glUniformMatrix4fv(glGetUniformLocation(gc->shader.font.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   glUseProgram(gc->shader.yuv.prog);
+   glUniformMatrix4fv(glGetUniformLocation(gc->shader.yuv.prog, "mvp"), 1,
                       GL_FALSE, proj);
 }

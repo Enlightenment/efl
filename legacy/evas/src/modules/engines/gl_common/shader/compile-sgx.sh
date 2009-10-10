@@ -10,3 +10,4 @@ function compile()
 compile rect
 compile img
 compile font
+compile yuv

@@ -1,0 +1,16 @@
+attribute vec4 vertex;
+attribute vec4 color;
+attribute vec2 tex_coord;
+attribute vec2 tex_coord2;
+attribute vec2 tex_coord3;
+uniform mat4 mvp;
+varying vec4 col;
+varying vec4 tex_c;
+void main()
+{
+   gl_Position = mvp * vertex;
+   col = color;
+   tex_c = tex_coord;
+   tex_c2 = tex_coord2;
+   tex_c3 = tex_coord3;
+}

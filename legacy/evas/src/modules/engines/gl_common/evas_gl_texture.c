@@ -44,6 +44,8 @@ _tex_format_index(GLuint format)
         return 1;
      case GL_ALPHA:
         return 2;
+     case GL_LUMINANCE:
+        return 3;
      default:
         break;
      }
@@ -68,7 +70,7 @@ _pool_tex_new(Evas_GL_Context *gc, int w, int h, GLuint format)
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
    glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0,
-                format, GL_UNSIGNED_BYTE, NULL);
+                format, GL_UNSIGNED_BYTE/* fixme - pass this in */, NULL);
    glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
    return pt;
 }
@@ -204,7 +206,7 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im)
 void
 evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
 {
-#ifdef defined(GL_UNSIGNED_INT_8_8_8_8_REV) && defined(GL_BGRA)
+#if defined(GL_UNSIGNED_INT_8_8_8_8_REV) && defined(GL_BGRA)
 #define COLOR_FORMAT GL_RGBA   
 #define PIXEL_FORMAT GL_UNSIGNED_BYTE
 // FIXME: need to change shader for this to work
@@ -215,6 +217,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
 #define PIXEL_FORMAT GL_UNSIGNED_BYTE
 #endif   
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
+   glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
    //  +-+
    //  +-+
@@ -338,11 +341,81 @@ void
 evas_gl_common_texture_alpha_update(Evas_GL_Texture *tex, DATA8 *pixels, int w, int h, int fh)
 {
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
+   glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
    glTexSubImage2D(GL_TEXTURE_2D, 0,
 		   tex->x, tex->y, w, h,
 		   GL_ALPHA, GL_UNSIGNED_BYTE,
 		   pixels);
+   if (tex->pt->texture != tex->gc->shader.cur_tex)
+     {
+        glBindTexture(GL_TEXTURE_2D, tex->gc->shader.cur_tex);
+     }
+}
+
+Evas_GL_Texture *
+evas_gl_common_texture_yuv_new(Evas_GL_Context *gc, DATA8 **rows, int w, int h)
+{
+   Evas_GL_Texture *tex;
+   Eina_List *l_after = NULL;
+   int u = 0, v = 0;
+
+   tex = calloc(1, sizeof(Evas_GL_Texture));
+   if (!tex) return NULL;
+   
+   tex->gc = gc;
+   tex->references = 1;
+   tex->pt = _pool_tex_new(gc, w + 1, h  + 1, GL_LUMINANCE);
+   gc->tex.whole = eina_list_prepend(gc->tex.whole, tex->pt);
+   tex->pt->slot = -1;
+   tex->pt->fslot = -1;
+   tex->pt->whole = 1;
+   tex->ptu = _pool_tex_new(gc, (w / 2) + 1, (h / 2)  + 1, GL_LUMINANCE);
+   gc->tex.whole = eina_list_prepend(gc->tex.whole, tex->ptu);
+   tex->ptu->slot = -1;
+   tex->ptu->fslot = -1;
+   tex->ptu->whole = 1;
+   tex->ptv = _pool_tex_new(gc, (w / 2) + 1, (h / 2)  + 1, GL_LUMINANCE);
+   gc->tex.whole = eina_list_prepend(gc->tex.whole, tex->ptv);
+   tex->ptv->slot = -1;
+   tex->ptv->fslot = -1;
+   tex->ptv->whole = 1;
+   tex->x = 0;
+   tex->y = 0;
+   tex->w = w;
+   tex->h = h;
+   tex->pt->allocations = eina_list_prepend(tex->pt->allocations, tex);
+   tex->ptu->allocations = eina_list_prepend(tex->ptu->allocations, tex);
+   tex->ptv->allocations = eina_list_prepend(tex->ptv->allocations, tex);
+   tex->pt->references++;
+   tex->ptu->references++;
+   tex->ptv->references++;
+   evas_gl_common_texture_yuv_update(tex, rows, w, h);
+   return tex;
+}
+
+void
+evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, int w, int h)
+{
+   glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[1] - rows[0]);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+   glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
+   glTexSubImage2D(GL_TEXTURE_2D, 0,
+		   0, 0, w, h,
+                   GL_LUMINANCE, GL_UNSIGNED_BYTE,
+		   rows[0]);
+   glBindTexture(GL_TEXTURE_2D, tex->ptu->texture);
+   glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[h + 1] - rows[h]);
+   glTexSubImage2D(GL_TEXTURE_2D, 0,
+		   0, 0, w / 2, h / 2,
+                   GL_LUMINANCE, GL_UNSIGNED_BYTE,
+		   rows[h]);
+   glBindTexture(GL_TEXTURE_2D, tex->ptv->texture);
+   glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[h + (h / 2) + 1] - rows[h + (h / 2)]);
+   glTexSubImage2D(GL_TEXTURE_2D, 0,
+		   0, 0, w / 2, h / 2,
+                   GL_LUMINANCE, GL_UNSIGNED_BYTE,
+		   rows[h + (h / 2)]);
    if (tex->pt->texture != tex->gc->shader.cur_tex)
      {
         glBindTexture(GL_TEXTURE_2D, tex->gc->shader.cur_tex);

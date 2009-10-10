@@ -120,6 +120,46 @@ Evas_GL_Program_Source shader_font_vert_src =
 #endif     
 };
 
+/////////////////////////////////////////////
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int yuv_frag_bin[] =
+{
+# include "shader/yuv_frag_bin.h"
+};
+#endif
+
+const char yuv_frag_glsl[] =
+#include "shader/yuv_frag.h"
+  ;
+Evas_GL_Program_Source shader_yuv_frag_src =
+{
+   yuv_frag_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     yuv_frag_bin, sizeof(yuv_frag_bin_end)
+#else     
+     NULL, 0
+#endif     
+};
+
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int yuv_frag_bin[] =
+{
+# include "shader/yuv_vert_bin.h"
+};
+#endif
+const char yuv_vert_glsl[] =
+#include "shader/yuv_vert.h"
+  ;
+Evas_GL_Program_Source shader_yuv_vert_src =
+{
+   yuv_vert_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     yuv_vert_bin, sizeof(yuv_vert_bin)
+#else     
+     NULL, 0
+#endif     
+};
+
 
 
 
@@ -174,6 +214,8 @@ evas_gl_common_shader_program_init(Evas_GL_Program *p,
    glBindAttribLocation(p->prog, SHAD_VERTEX, "vertex");
    glBindAttribLocation(p->prog, SHAD_COLOR, "color");
    glBindAttribLocation(p->prog, SHAD_TEXUV, "tex_coord");
+   glBindAttribLocation(p->prog, SHAD_TEXUV2, "tex_coord2");
+   glBindAttribLocation(p->prog, SHAD_TEXUV3, "tex_coord3");
    
    glLinkProgram(p->prog);
    glGetProgramiv(p->prog, GL_LINK_STATUS, &ok);

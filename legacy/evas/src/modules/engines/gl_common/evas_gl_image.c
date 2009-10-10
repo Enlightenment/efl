@@ -195,6 +195,7 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
    Cutout_Rect  *rct;
    int c, cx, cy, cw, ch;
    int i;
+   int yuv = 0;
    
    if (sw < 1) sw = 1;
    if (sh < 1) sh = 1;
@@ -210,7 +211,7 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
      {
 	r = g = b = a = 255;
      }
-   
+/*   
    if ((im->cs.space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
        (im->cs.space == EVAS_COLORSPACE_YCBCR422P709_PL))
      {
@@ -230,6 +231,7 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
         space = EVAS_COLORSPACE_ARGB8888;
      }
    else
+ */
      space = im->cs.space;
    
    switch (space)
@@ -243,10 +245,27 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
 	  }
 	if (!im->tex)
 	  im->tex = evas_gl_common_texture_new(gc, im->im);
+        if (!im->tex) return;
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
-	break;
+        if ((im->tex) && (im->dirty))
+          {
+             evas_gl_common_texture_yuv_update(im->tex, im->cs.data,
+                                               im->im->cache_entry.w, 
+                                               im->im->cache_entry.h);
+             im->dirty = 0;
+          }
+        if ((!im->tex) && (im->cs.data) && (*((unsigned char **)im->cs.data)))
+          {
+             im->tex = evas_gl_common_texture_yuv_new(gc, im->cs.data,
+                                                      im->im->cache_entry.w, 
+                                                      im->im->cache_entry.h);
+             im->dirty = 0;
+          }
+        yuv = 1;
+        if (!im->tex) return;
+        break;
       default:
         printf("unhandled img format\n");
 	break;
@@ -267,12 +286,20 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
              if ((nw < 1) || (nh < 1)) return;
              if ((nx == dx) && (ny == dy) && (nw == dw) && (nh == dh))
                {
-                  evas_gl_common_context_image_push(gc,
+                  if (yuv)
+                    evas_gl_common_context_yuv_push(gc,
                                                     im->tex,
                                                     sx, sy, sw, sh,
                                                     dx, dy, dw, dh,
                                                     r, g, b, a,
                                                     smooth);
+                  else
+                    evas_gl_common_context_image_push(gc,
+                                                      im->tex,
+                                                      sx, sy, sw, sh,
+                                                      dx, dy, dw, dh,
+                                                      r, g, b, a,
+                                                      smooth);
                   return;
                }
              
@@ -280,21 +307,37 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
              ssy = (double)sy + ((double)(sh * (ny - dy)) / (double)(dh));
              ssw = ((double)sw * (double)(nw)) / (double)(dw);
              ssh = ((double)sh * (double)(nh)) / (double)(dh);
-             evas_gl_common_context_image_push(gc,
+             if (yuv)
+               evas_gl_common_context_yuv_push(gc,
                                                im->tex,
                                                ssx, ssy, ssw, ssh,
                                                nx, ny, nw, nh,
                                                r, g, b, a,
                                                smooth);
+             else
+               evas_gl_common_context_image_push(gc,
+                                                 im->tex,
+                                                 ssx, ssy, ssw, ssh,
+                                                 nx, ny, nw, nh,
+                                                 r, g, b, a,
+                                                 smooth);
           }
         else
           {
-             evas_gl_common_context_image_push(gc,
+             if (yuv)
+               evas_gl_common_context_yuv_push(gc,
                                                im->tex,
                                                sx, sy, sw, sh,
                                                dx, dy, dw, dh,
                                                r, g, b, a,
                                                smooth);
+             else
+               evas_gl_common_context_image_push(gc,
+                                                 im->tex,
+                                                 sx, sy, sw, sh,
+                                                 dx, dy, dw, dh,
+                                                 r, g, b, a,
+                                                 smooth);
           }
         return;
      }
@@ -320,24 +363,40 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
         if ((nw < 1) || (nh < 1)) continue;
         if ((nx == dx) && (ny == dy) && (nw == dw) && (nh == dh))
           {
-             evas_gl_common_context_image_push(gc,
-                                               im->tex,
-                                               sx, sy, sw, sh,
-                                               dx, dy, dw, dh,
+             if (yuv)
+               evas_gl_common_context_yuv_push(gc,
+                                                 im->tex,
+                                                 sx, sy, sw, sh,
+                                                 dx, dy, dw, dh,
                                                r, g, b, a,
-                                               smooth);
+                                                 smooth);
+             else
+               evas_gl_common_context_image_push(gc,
+                                                 im->tex,
+                                                 sx, sy, sw, sh,
+                                                 dx, dy, dw, dh,
+                                                 r, g, b, a,
+                                                 smooth);
              continue;
           }
         ssx = (double)sx + ((double)(sw * (nx - dx)) / (double)(dw));
         ssy = (double)sy + ((double)(sh * (ny - dy)) / (double)(dh));
         ssw = ((double)sw * (double)(nw)) / (double)(dw);
         ssh = ((double)sh * (double)(nh)) / (double)(dh);
-        evas_gl_common_context_image_push(gc,
+        if (yuv)
+          evas_gl_common_context_yuv_push(gc,
                                           im->tex,
                                           ssx, ssy, ssw, ssh,
                                           nx, ny, nw, nh,
                                           r, g, b, a,
                                           smooth);
+        else
+          evas_gl_common_context_image_push(gc,
+                                            im->tex,
+                                            ssx, ssy, ssw, ssh,
+                                            nx, ny, nw, nh,
+                                            r, g, b, a,
+                                            smooth);
      }
    evas_common_draw_context_apply_clear_cutouts(rects);
    /* restore clip info */
