@@ -333,7 +333,7 @@ elm_fileselector_add(Evas_Object *parent)
    // TODO Do we need a bg object? a frame?
    // vbox
    wd->vbox = elm_box_add(parent);
-   evas_object_size_hint_weight_set(wd->vbox, 1.0, 1.0);
+   evas_object_size_hint_weight_set(wd->vbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_widget_resize_object_set(obj, wd->vbox);
    evas_object_show(wd->vbox);
 
@@ -379,8 +379,8 @@ elm_fileselector_add(Evas_Object *parent)
    itc.func.del       = _itc_del;
 
    wd->list = elm_genlist_add(parent);
-   evas_object_size_hint_align_set(wd->list, -1.0, -1.0);
-   evas_object_size_hint_weight_set(wd->list, 1.0, 1.0);
+   evas_object_size_hint_align_set(wd->list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(wd->list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_min_set(wd->list, 100, 100);
    elm_widget_sub_object_add(obj, wd->list);
    elm_box_pack_end(wd->vbox, wd->list);
@@ -397,8 +397,8 @@ elm_fileselector_add(Evas_Object *parent)
    elm_widget_sub_object_add(obj, wd->entry);
    elm_entry_editable_set(wd->entry, 0);
    elm_entry_single_line_set(wd->entry, EINA_TRUE);
-   evas_object_size_hint_weight_set(wd->entry, 1.0, 0.0);
-   evas_object_size_hint_align_set(wd->entry, -1.0, 0.0);
+   evas_object_size_hint_weight_set(wd->entry, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(wd->entry, EVAS_HINT_FILL, 0.0);
    elm_box_pack_end(wd->vbox, wd->entry);
    evas_object_show(wd->entry);
    evas_object_smart_callback_add(wd->entry, "anchor,clicked", _anchor_clicked, obj);
@@ -407,8 +407,8 @@ elm_fileselector_add(Evas_Object *parent)
    wd->scr2 = elm_scroller_add(parent);
    elm_scroller_content_min_limit(wd->scr2, 0, 1);
    elm_scroller_policy_set(wd->scr2, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   evas_object_size_hint_weight_set(wd->scr2, 1.0, 0.0);
-   evas_object_size_hint_align_set(wd->scr2, -1.0, -1.0);
+   evas_object_size_hint_weight_set(wd->scr2, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(wd->scr2, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(wd->vbox, wd->scr2);
    evas_object_show(wd->scr2);
      
