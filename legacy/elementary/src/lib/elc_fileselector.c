@@ -421,7 +421,7 @@ elm_fileselector_add(Evas_Object *parent)
    
    // cancel btn
    bt = elm_button_add(parent);
-   elm_button_label_set(bt, "Cancel");
+   elm_button_label_set(bt, _("Cancel"));
    elm_widget_sub_object_add(obj, bt);
    elm_box_pack_end(box, bt);
    evas_object_smart_callback_add(bt, "clicked", _canc, obj);
@@ -429,7 +429,7 @@ elm_fileselector_add(Evas_Object *parent)
 
    // ok btn
    bt = elm_button_add(parent);
-   elm_button_label_set(bt, "Ok");
+   elm_button_label_set(bt, _("Ok"));
    elm_widget_sub_object_add(obj, bt);
    elm_box_pack_end(box, bt);
    evas_object_smart_callback_add(bt, "clicked", _ok, obj);
@@ -450,8 +450,6 @@ elm_fileselector_is_save_set(Evas_Object *obj, Eina_Bool is_save)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   printf("IS_SAVE %d \n", is_save);
-
    if (is_save)
      {
 	if (wd->entry2) return;
@@ -459,8 +457,8 @@ elm_fileselector_is_save_set(Evas_Object *obj, Eina_Bool is_save)
 	elm_widget_sub_object_add(obj, wd->entry2);
 	elm_entry_editable_set(wd->entry2, 1);
 	elm_entry_single_line_set(wd->entry2, EINA_TRUE);
-	evas_object_size_hint_weight_set(wd->entry2, 1.0, 0.0);
-	evas_object_size_hint_align_set(wd->entry2, -1.0, 0.0);
+	evas_object_size_hint_weight_set(wd->entry2, EVAS_HINT_EXPAND, 0.0);
+	evas_object_size_hint_align_set(wd->entry2, EVAS_HINT_FILL, 0.0);
 	elm_scroller_content_set(wd->scr2, wd->entry2);
 	evas_object_show(wd->entry2);
      }
