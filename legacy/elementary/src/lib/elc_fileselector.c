@@ -421,7 +421,7 @@ elm_fileselector_add(Evas_Object *parent)
    
    // cancel btn
    bt = elm_button_add(parent);
-   elm_button_label_set(bt, _("Cancel"));
+   elm_button_label_set(bt, "Cancel");
    elm_widget_sub_object_add(obj, bt);
    elm_box_pack_end(box, bt);
    evas_object_smart_callback_add(bt, "clicked", _canc, obj);
@@ -429,7 +429,7 @@ elm_fileselector_add(Evas_Object *parent)
 
    // ok btn
    bt = elm_button_add(parent);
-   elm_button_label_set(bt, _("Ok"));
+   elm_button_label_set(bt, "OK");
    elm_widget_sub_object_add(obj, bt);
    elm_box_pack_end(box, bt);
    evas_object_smart_callback_add(bt, "clicked", _ok, obj);
