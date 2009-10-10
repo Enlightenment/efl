@@ -16,10 +16,22 @@ evas_gl_private.h \
 evas_gl_common.h \
 evas_gl_context.c \
 evas_gl_shader.c \
+shader/font_frag.h \
+shader/font_frag_bin_s3c6410.h \
+shader/font_vert.h \
+shader/font_vert_bin_s3c6410.h \
 shader/img_frag.h \
+shader/img_frag_bin_s3c6410.h \
 shader/img_vert.h \
+shader/img_vert_bin_s3c6410.h \
 shader/rect_frag.h \
+shader/rect_frag_bin_s3c6410.h \
 shader/rect_vert.h \
+shader/rect_vert_bin_s3c6410.h \
+shader/yuv_frag.h \
+shader/yuv_frag_bin_s3c6410.h \
+shader/yuv_vert.h \
+shader/yuv_vert_bin_s3c6410.h \
 evas_gl_rectangle.c \
 evas_gl_texture.c \
 evas_gl_image.c \
@@ -48,4 +60,6 @@ shader/rect_frag_s3c6410.asm \
 shader/rect_vert.shd \
 shader/font_frag.shd \
 shader/font_frag_s3c6410.asm \
-shader/font_vert.shd
+shader/font_vert.shd \
+shader/yuv_frag.shd \
+shader/yuv_vert.shd

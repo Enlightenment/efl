@@ -4,7 +4,7 @@
 #if defined (GLES_VARIETY_S3C6410)
 const unsigned int rect_frag_bin[] =
 {
-# include "shader/rect_frag_bin.h"
+# include "shader/rect_frag_bin_s3c6410.h"
 };
 #endif
 
@@ -24,7 +24,7 @@ Evas_GL_Program_Source shader_rect_frag_src =
 #if defined (GLES_VARIETY_S3C6410)
 const unsigned int rect_frag_bin[] =
 {
-# include "shader/rect_vert_bin.h"
+# include "shader/rect_vert_bin_s3c6410.h"
 };
 #endif
 const char rect_vert_glsl[] =
@@ -44,7 +44,7 @@ Evas_GL_Program_Source shader_rect_vert_src =
 #if defined (GLES_VARIETY_S3C6410)
 const unsigned int img_frag_bin[] =
 {
-# include "shader/img_frag_bin.h"
+# include "shader/img_frag_bin_s3c6410.h"
 };
 #endif
 
@@ -64,7 +64,7 @@ Evas_GL_Program_Source shader_img_frag_src =
 #if defined (GLES_VARIETY_S3C6410)
 const unsigned int img_frag_bin[] =
 {
-# include "shader/img_vert_bin.h"
+# include "shader/img_vert_bin_s3c6410.h"
 };
 #endif
 const char img_vert_glsl[] =
@@ -84,7 +84,7 @@ Evas_GL_Program_Source shader_img_vert_src =
 #if defined (GLES_VARIETY_S3C6410)
 const unsigned int font_frag_bin[] =
 {
-# include "shader/font_frag_bin.h"
+# include "shader/font_frag_bin_s3c6410.h"
 };
 #endif
 
@@ -104,7 +104,7 @@ Evas_GL_Program_Source shader_font_frag_src =
 #if defined (GLES_VARIETY_S3C6410)
 const unsigned int font_frag_bin[] =
 {
-# include "shader/font_vert_bin.h"
+# include "shader/font_vert_bin_s3c6410.h"
 };
 #endif
 const char font_vert_glsl[] =
@@ -124,7 +124,7 @@ Evas_GL_Program_Source shader_font_vert_src =
 #if defined (GLES_VARIETY_S3C6410)
 const unsigned int yuv_frag_bin[] =
 {
-# include "shader/yuv_frag_bin.h"
+# include "shader/yuv_frag_bin_s3c6410.h"
 };
 #endif
 
@@ -144,7 +144,7 @@ Evas_GL_Program_Source shader_yuv_frag_src =
 #if defined (GLES_VARIETY_S3C6410)
 const unsigned int yuv_frag_bin[] =
 {
-# include "shader/yuv_vert_bin.h"
+# include "shader/yuv_vert_bin_s3c6410.h"
 };
 #endif
 const char yuv_vert_glsl[] =
