@@ -53,10 +53,22 @@ _move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
      printf("over none, where %i\n", where);
 }
 
+static void
+_bt50_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    elm_genlist_item_bring_in(data);
+}
+
+static void
+_bt1500_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    elm_genlist_item_bring_in(data);
+}
+
 void
 test_genlist(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *gl;
+   Evas_Object *win, *bg, *gl, *bt_50, *bt_1500, *bx;
    Evas_Object *over;
    Elm_Genlist_Item *gli;
    int i;
@@ -70,12 +82,18 @@ test_genlist(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
    gl = elm_genlist_add(win);
    elm_genlist_horizontal_mode_set(gl, ELM_LIST_LIMIT);
-   elm_win_resize_object_add(win, gl);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, gl);
    evas_object_show(gl);
-   
+
    over = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(over, 0, 0, 0, 0);
    evas_object_event_callback_add(over, EVAS_CALLBACK_MOUSE_MOVE, _move, gl);
@@ -83,21 +101,36 @@ test_genlist(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(over);
    evas_object_size_hint_weight_set(over, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, over);
-   
+
    itc1.item_style     = "default";
    itc1.func.label_get = gl_label_get;
    itc1.func.icon_get  = gl_icon_get;
    itc1.func.state_get = gl_state_get;
    itc1.func.del       = gl_del;
 
+   bt_50 = elm_button_add(win);
+   elm_button_label_set(bt_50, "Go to 50");
+   evas_object_show(bt_50);
+   elm_box_pack_end(bx, bt_50);
+
+   bt_1500 = elm_button_add(win);
+   elm_button_label_set(bt_1500, "Go to 1500");
+   evas_object_show(bt_1500);
+   elm_box_pack_end(bx, bt_1500);
+
    for (i = 0; i < 2000; i++)
      {
-	gli = elm_genlist_item_append(gl, &itc1,
-				      (void *)i/* item data */,
-				      NULL/* parent */,
-				      ELM_GENLIST_ITEM_NONE,
-				      gl_sel/* func */,
-				      (void *)(i * 10)/* func data */);
+         gli = elm_genlist_item_append(gl, &itc1,
+                 (void *)i/* item data */,
+                 NULL/* parent */,
+                 ELM_GENLIST_ITEM_NONE,
+                 gl_sel/* func */,
+                 (void *)(i * 10)/* func data */);
+
+         if(i==50)
+             evas_object_smart_callback_add(bt_50, "clicked", _bt50_cb, gli);
+         else if(i==1500)
+             evas_object_smart_callback_add(bt_1500, "clicked", _bt1500_cb, gli);
      }
    evas_object_resize(win, 480, 800);
    evas_object_show(win);
@@ -863,7 +896,7 @@ test_genlist5(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, gl);
    elm_object_scroll_freeze_push(gl);
    evas_object_show(bx2);
-   
+
    evas_object_smart_callback_add(gl, "drag,start,up", item_drag_up, NULL);
    evas_object_smart_callback_add(gl, "drag,start,down", item_drag_down, NULL);
    evas_object_smart_callback_add(gl, "drag,start,left", item_drag_left, NULL);
