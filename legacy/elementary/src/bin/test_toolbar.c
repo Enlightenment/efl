@@ -41,9 +41,10 @@ tb_5(void *data, Evas_Object *obj, void *event_info)
 void
 test_toolbar(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *bx, *tb, *ic, *ph;
+   Evas_Object *win, *bg, *bx, *tb, *ic, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Toolbar_Item *item;
+   Elm_Menu_Item *menu_item;
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "toolbar", ELM_WIN_BASIC);
@@ -61,6 +62,7 @@ test_toolbar(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bx);
 
    tb = elm_toolbar_add(win);
+   elm_toolbar_homogenous_set(tb, 0);
    evas_object_size_hint_weight_set(tb, 0.0, 0.0);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, 0.0);
    
@@ -83,7 +85,7 @@ test_toolbar(void *data, Evas_Object *obj, void *event_info)
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   elm_toolbar_item_add(tb, ic, "Here", tb_3, ph4);
+   elm_toolbar_item_add(tb, ic, "H", tb_3, ph4);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
@@ -101,21 +103,27 @@ test_toolbar(void *data, Evas_Object *obj, void *event_info)
    item = elm_toolbar_item_add(tb, ic, "Menu", NULL, NULL);
    elm_toolbar_item_menu_set(item, 1);
    elm_toolbar_menu_parent_set(tb, win);
+   menu = elm_toolbar_item_menu_get(item);
  
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   elm_toolbar_item_menu_item_add(item, ic, "Here", tb_3, ph4);
+   elm_menu_item_add(menu, NULL, ic, "Here", tb_3, ph4);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   elm_toolbar_item_menu_item_add(item, ic, "Comes", tb_4, ph4);
+   menu_item = elm_menu_item_add(menu, NULL, ic, "Comes", tb_4, ph4);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   elm_toolbar_item_menu_item_add(item, ic, "Elementary", tb_5, ph4);
+   elm_menu_item_add(menu, menu_item, ic, "hey ho", tb_4, ph4);
+
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   menu_item = elm_menu_item_add(menu, NULL, ic, "Elementary", tb_5, ph4);
 
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
