@@ -14,6 +14,7 @@ struct _Widget_Data
 {
    Evas_Object *lbl;
    const char *label;
+   Eina_Bool linewrap : 1;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -34,7 +35,10 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   _elm_theme_set(wd->lbl, "label", "base", elm_widget_style_get(obj));
+   if (wd->linewrap)
+     _elm_theme_set(wd->lbl, "label", "base_wrap", elm_widget_style_get(obj));
+   else
+     _elm_theme_set(wd->lbl, "label", "base", elm_widget_style_get(obj));
    edje_object_part_text_set(wd->lbl, "elm.text", wd->label);
    edje_object_scale_set(wd->lbl, elm_widget_scale_get(obj) * 
                          _elm_config->scale);
@@ -76,6 +80,8 @@ elm_label_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, 0);
+
+   wd->linewrap = EINA_FALSE;
 
    wd->lbl = edje_object_add(e);
    _elm_theme_set(wd->lbl, "label", "base", "default");
@@ -120,4 +126,21 @@ elm_label_label_get(Evas_Object *obj)
 
    if (!wd) return NULL;
    return wd->label;
+}
+
+EAPI void
+elm_label_line_wrap_set(Evas_Object *obj, Eina_Bool wrap)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   const char *t;
+   if (wd->linewrap == wrap) return;
+   wd->linewrap = wrap;
+   t = eina_stringshare_add(elm_label_label_get(obj));
+   if (wd->linewrap)
+     _elm_theme_set(wd->lbl, "label", "base_wrap", elm_widget_style_get(obj));
+   else
+     _elm_theme_set(wd->lbl, "label", "base", elm_widget_style_get(obj));
+   elm_label_label_set(obj, t);
+   eina_stringshare_del(t);
+   _sizing_eval(obj);
 }

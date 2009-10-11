@@ -539,6 +539,22 @@ collections {
       }
    }
 
+   group { name: "elm/label/base_wrap/default";
+      parts {
+	 part { name: "elm.text";
+	    type: TEXTBLOCK;
+	    mouse_events: 0;
+	    scale: 1;
+	    description { state: "default" 0.0;
+	       text {
+		  style: "textblock_style";
+		  min: 0 0;
+	       }
+	    }
+	 }
+      }
+   }
+
 ///////////////////////////////////////////////////////////////////////////////
 
    group { name: "elm/button/base/default";
