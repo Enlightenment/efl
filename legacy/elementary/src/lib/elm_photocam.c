@@ -690,7 +690,6 @@ _calc_job(void *data)
      {
         wd->minw = minw;
         wd->minh = minh;
-        evas_object_size_hint_min_set(wd->pan_smart, wd->minw, wd->minh);
         evas_object_smart_callback_call(wd->pan_smart, "changed", NULL);
         _sizing_eval(wd->obj);
      }
@@ -722,6 +721,7 @@ _pan_max_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
    Pan *sd = evas_object_smart_data_get(obj);
    Evas_Coord ow, oh;
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
+   printf("%ix%i\n", ow, oh);
    ow = sd->wd->minw - ow;
    if (ow < 0) ow = 0;
    oh = sd->wd->minh - oh;

@@ -1022,7 +1022,7 @@ _calc_job(void *data)
      {
 	wd->minw = minw;
 	wd->minh = minh;
-	evas_object_size_hint_min_set(wd->pan_smart, wd->minw, wd->minh);
+//	evas_object_size_hint_min_set(wd->pan_smart, wd->minw, wd->minh);
 	evas_object_smart_callback_call(wd->pan_smart, "changed", NULL);
 	_sizing_eval(wd->obj);
      }
