@@ -721,7 +721,6 @@ _pan_max_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
    Pan *sd = evas_object_smart_data_get(obj);
    Evas_Coord ow, oh;
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
-   printf("%ix%i\n", ow, oh);
    ow = sd->wd->minw - ow;
    if (ow < 0) ow = 0;
    oh = sd->wd->minh - oh;
