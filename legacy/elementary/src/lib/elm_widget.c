@@ -771,7 +771,7 @@ elm_widget_scale_get(const Evas_Object *obj)
 	if (sd->parent_obj)
 	  return elm_widget_scale_get(sd->parent_obj);
 	else
-	  return elm_scale_get();
+	  return 1.0;
      }
    return sd->scale;
 }
