@@ -27,6 +27,7 @@ struct _Widget_Data
    Eina_Bool selmode : 1;
    Eina_Bool deferred_cur : 1;
    Eina_Bool disabled : 1;
+   Eina_Bool context_menu : 1;
 };
 
 struct _Elm_Entry_Context_Menu_Item
@@ -352,14 +353,16 @@ _long_press(void *data)
      {
 	elm_hoversel_item_add(wd->hoversel, "Select", NULL, ELM_ICON_NONE, 
                               _select, data);
-	elm_hoversel_item_add(wd->hoversel, "Paste", NULL, ELM_ICON_NONE, 
-                              _paste, data);
+        if (wd->editable)
+          elm_hoversel_item_add(wd->hoversel, "Paste", NULL, ELM_ICON_NONE, 
+                                _paste, data);
      }
    else
      {
 	elm_hoversel_item_add(wd->hoversel, "Copy", NULL, ELM_ICON_NONE, 
                               _copy, data);
-	elm_hoversel_item_add(wd->hoversel, "Cut", NULL, ELM_ICON_NONE, 
+        if (wd->editable)
+          elm_hoversel_item_add(wd->hoversel, "Cut", NULL, ELM_ICON_NONE, 
                               _cut, data);
 	elm_hoversel_item_add(wd->hoversel, "Cancel", NULL, ELM_ICON_NONE, 
                               _cancel, data);
@@ -1022,9 +1025,10 @@ elm_entry_add(Evas_Object *parent)
    elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_can_focus_set(obj, 1);
 
-   wd->linewrap = EINA_TRUE;
-   wd->editable = EINA_TRUE;
-   wd->disabled = EINA_FALSE;
+   wd->linewrap     = EINA_TRUE;
+   wd->editable     = EINA_TRUE;
+   wd->disabled     = EINA_FALSE;
+   wd->context_menu = EINA_TRUE;
 
    wd->ent = edje_object_add(e);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOVE, _move, obj);
@@ -1262,6 +1266,34 @@ elm_entry_context_menu_item_add(Evas_Object *obj, const char *label, const char 
    it->icon_type = icon_type;
    it->func = func;
    it->data = (void *)data;
+}
+
+EAPI void
+elm_entry_context_menu_disabled_set(Evas_Object *obj, Eina_Bool disabled)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->context_menu == !disabled) return;
+   wd->context_menu = !disabled;
+   
+   if (wd->context_menu)
+     {
+        evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, obj);
+        evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_UP, _mouse_up, obj);
+     }
+   else
+     {
+        evas_object_event_callback_del(wd->ent, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down);
+        evas_object_event_callback_del(wd->ent, EVAS_CALLBACK_MOUSE_UP, _mouse_up);
+     }
+}
+
+EAPI Eina_Bool
+elm_entry_context_menu_disabled_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return !wd->context_menu;
 }
 
 EAPI char *
