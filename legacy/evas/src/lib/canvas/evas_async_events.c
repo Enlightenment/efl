@@ -149,6 +149,9 @@ evas_async_events_process(void)
    int i;
    int check;
    int count = 0;
+   int               myqueue_num = 0;
+   int               myqueue_alloc = 0;
+   Evas_Event_Async *myqueue = NULL;
    
    if (_fd_read == -1) return 0;
    
@@ -161,18 +164,24 @@ evas_async_events_process(void)
    
    if (queue)
      {
-        for (i = 0; i < queue_num; i++)
+        myqueue_num = queue_num;
+        myqueue_alloc = queue_alloc;
+        myqueue = queue;
+        queue_num = 0;
+        queue_alloc = 0;
+        queue = NULL;
+        pthread_mutex_unlock(&_mutex);
+        
+        for (i = 0; i < myqueue_num; i++)
           {
-             ev = &(queue[i]);
+             ev = &(myqueue[i]);
              if (ev->func) ev->func((void *)ev->target, ev->type, ev->event_info);
              count++;
           }
-        free(queue);
-        queue = NULL;
-        queue_num = 0;
-        queue_alloc = 0;
+        free(myqueue);
      }
-   pthread_mutex_unlock(&_mutex);
+   else
+     pthread_mutex_unlock(&_mutex);
    
    if (check < 0)
      switch (errno)
@@ -229,6 +238,7 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
           {
              queue_alloc -= 32;
              queue_num--;
+             pthread_mutex_unlock(&_mutex);
              return 0;
           }
         queue = q2;
