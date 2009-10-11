@@ -7,42 +7,30 @@
 /**
  * @defgroup Slideshow slideshow
  *
- * This object display a list of images and some actions like
- * next/previous are used to naviguate. The animations are defined in the theme,
+ * This object display a list of object (generally a list of images) and some actions like
+ * next/previous are used to navigate. The animations are defined in the theme,
  * consequently new animations can be added without having to update the
  * applications.
  *
  */
 
 typedef struct _Widget_Data Widget_Data;
-typedef struct _Subinfo Subinfo;
-typedef struct _Node Node;
-
-struct _Node
-{
-   const char *file;
-   const char *group;
-};
 
 struct _Widget_Data
 {
    Evas_Object *slideshow;
 
-   // list of char*
-   Eina_List *images;
+   // list of Evas_Object*
+   Eina_List *items;
    int current;
+   Evas_Object *previous;
    int loop;
 
    Eina_List *transitions;
    const char *transition;
 
-   Eina_List *img1_parts;
-   Eina_List *img2_parts;
-
    Ecore_Timer *timer;
    int timeout;
-
-   int keep_ratio;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -52,8 +40,6 @@ static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *eve
 static void _signal_clicked(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _signal_move(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static int _timer_cb(void *data);
-static void _update_image_1(Evas_Object *obj);
-static void _update_image_2(Evas_Object *obj);
 
 static void
 _del_hook(Evas_Object *obj)
@@ -125,25 +111,23 @@ _signal_move(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _end(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
-   Node *node;
+   Evas_Object *o;
    Eina_List *l;
    const char *part;
    Widget_Data *wd = elm_widget_data_get(data);
 
-   node = eina_list_nth(wd->images, wd->current);
-   if(!node) return;
-
-   EINA_LIST_FOREACH(wd->img1_parts, l, part)
+   if(wd->previous)
      {
-        const Evas_Object *o;
-
-	o = edje_object_part_object_get(wd->slideshow, part);
-	evas_object_image_file_set((Evas_Object *)o, node->file, node->group);
+	edje_object_part_unswallow(NULL, wd->previous);
+	evas_object_hide(wd->previous);
+	wd->previous = NULL;
      }
 
-   if(wd->keep_ratio)
-      _update_image_1(data);
+   o = eina_list_nth(wd->items, wd->current);
+   if(!o) return;
 
+   edje_object_part_unswallow(NULL, o);
+   edje_object_part_swallow(wd->slideshow, "elm.swallow.1", o);
    if(wd->timeout>0)
      wd->timer = ecore_timer_add(wd->timeout, _timer_cb, data);
 }
@@ -158,111 +142,6 @@ _timer_cb(void *data)
    wd->timer = NULL;
    elm_slideshow_next(obj);
    return 0;
-}
-
-static void _update_image_1(Evas_Object *obj)
-{
-   int x,y,w,h, w_img = 0, h_img = 0, w_img2, h_img2;
-   const Evas_Object *o;
-   
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if(!eina_list_count(wd->img1_parts))
-     return;
-   evas_object_geometry_get(wd->slideshow, &x, &y, &w, &h);
-
-   o = edje_object_part_object_get(wd->slideshow, eina_list_data_get(wd->img1_parts));
-   evas_object_image_size_get((Evas_Object*) o, &w_img, &h_img);
-
-   w_img2 = w - w_img;
-   h_img2 = h - h_img;
-   if(w_img2 >= 0 && w_img2 < h_img2)
-     {
-	 h_img2 = h_img * (w/(double)w_img);
-	 w_img2 = w_img * (w/(double)w_img);
-     }
-   else if(h_img2 >= 0 && h_img2 < w_img2)
-     {
-	 w_img2 = w_img * (h/(double)h_img);
-	 h_img2 = h_img * (h/(double)h_img);
-     }
-   else if(w_img2 < 0 && w_img2 < h_img2)
-     {
-	 h_img2 = h_img * (w/(double)w_img);
-	 w_img2 = w_img * (w/(double)w_img);
-     }
-   else
-     {
-	w_img2 = w_img * (h/(double)h_img);
-	h_img2 = h_img * (h/(double)h_img);
-     }
-
-   Edje_Message_Int_Set *msg = alloca(sizeof(Edje_Message_Int_Set) + (3 * sizeof(int)));
-   msg->count=4;
-   msg->val[0] = (int)(w - w_img2) / 2;
-   msg->val[1] = (int)(h - h_img2) / 2;
-   msg->val[2] = (int)- (w - msg->val[0] - w_img2);
-   msg->val[3] = (int)- (h - msg->val[1] - h_img2);
-
-   edje_object_message_send(wd->slideshow,EDJE_MESSAGE_INT_SET , 1, msg);
-}
-
-static void _update_image_2(Evas_Object *obj)
-{
-   int x,y,w,h, w_img = 0, h_img = 0, w_img2, h_img2;
-   const Evas_Object *o;
-   
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if(!eina_list_count(wd->img2_parts))
-     return;
-   
-   evas_object_geometry_get(wd->slideshow, &x, &y, &w, &h);
-
-   o = edje_object_part_object_get(wd->slideshow, eina_list_data_get(wd->img2_parts));
-   evas_object_image_size_get((Evas_Object*) o, &w_img, &h_img);
-
-   w_img2 = w - w_img;
-   h_img2 = h - h_img;
-   if(w_img2 >= 0 && w_img2 < h_img2)
-     {
-	 h_img2 = h_img * (w/(double)w_img);
-	 w_img2 = w_img * (w/(double)w_img);
-     }
-   else if(h_img2 >= 0 && h_img2 < w_img2)
-     {
-	 w_img2 = w_img * (h/(double)h_img);
-	 h_img2 = h_img * (h/(double)h_img);
-     }
-   else if(w_img2 < 0 && w_img2 < h_img2)
-     {
-	 h_img2 = h_img * (w/(double)w_img);
-	 w_img2 = w_img * (w/(double)w_img);
-     }
-   else
-     {
-	w_img2 = w_img * (h/(double)h_img);
-	h_img2 = h_img * (h/(double)h_img);
-     }
-
-   Edje_Message_Int_Set *msg = alloca(sizeof(Edje_Message_Int_Set) + (3 * sizeof(int)));
-   msg->count=4;
-   msg->val[0] = (int)(w - w_img2) / 2;
-   msg->val[1] = (int)(h - h_img2) / 2;
-   msg->val[2] = (int)- (w - msg->val[0] - w_img2);
-   msg->val[3] = (int)- (h - msg->val[1] - h_img2);
-
-   edje_object_message_send(wd->slideshow,EDJE_MESSAGE_INT_SET , 2, msg);
-}
-
-void _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
-{
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
-   if(!wd->keep_ratio) return ;
-
-   _update_image_1(data);
-   _update_image_2(data);
 }
 
 /**
@@ -289,6 +168,9 @@ elm_slideshow_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
 
+   wd->current = -1;
+   wd->previous = NULL;
+
    wd->slideshow = edje_object_add(e);
    _elm_theme_set(wd->slideshow, "slideshow", "base", "default");
    elm_widget_resize_object_set(obj, wd->slideshow);
@@ -297,8 +179,6 @@ elm_slideshow_add(Evas_Object *parent)
    wd->transitions = _stringlist_get(edje_object_data_get(wd->slideshow, "transitions"));
    if(eina_list_count(wd->transitions) > 0)
      wd->transition = eina_stringshare_add(eina_list_data_get(wd->transitions));
-   wd->img1_parts = _stringlist_get(edje_object_data_get(wd->slideshow, "image1"));
-   wd->img2_parts = _stringlist_get(edje_object_data_get(wd->slideshow, "image2"));
 
    edje_object_signal_callback_add(wd->slideshow, "end", "slideshow", _end, obj);
 
@@ -308,72 +188,59 @@ elm_slideshow_add(Evas_Object *parent)
                                   _signal_move, obj);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
-   evas_object_event_callback_add(wd->slideshow, EVAS_CALLBACK_RESIZE, _resize, obj);
 
    _sizing_eval(obj);
    return obj;
 }
 
 /**
- * Add an image in the list
- *
+ * Add a object in the list. The object can be a evas object image or a elm photo for example.
+ * 
+ * The object will become a member of the slideshow and will be deleted at the same time than the slideshow.
  * @param obj The slideshow object
- * @param file The image file
- * @param group The edje group if the image is in an eet file
+ * @param file The object
  */
 EAPI void
-elm_slideshow_image_add(Evas_Object *obj, const char *file, const char *group)
+elm_slideshow_item_add(Evas_Object *obj, Evas_Object *item)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if(!wd) return;
 
-   Node *node = ELM_NEW(Node);
+   wd->items = eina_list_append(wd->items, item);
 
-   node->file = eina_stringshare_add(file);
-   if(group)
-     node->group = eina_stringshare_add(group);
-
-   wd->images = eina_list_append(wd->images, node);
-
-   if(eina_list_count(wd->images) == 1)
+   if(eina_list_count(wd->items) == 1)
      elm_slideshow_goto(obj, 0);
 }
 
 /**
- * Go to the image number @pos
+ * Go to the item number @pos
  *
  * @param obj The slideshow object
- * @param pos The position of the image
+ * @param pos The position of the item
  */
 EAPI void
 elm_slideshow_goto(Evas_Object *obj, int pos)
 {
-   Node *node;
+   Evas_Object *o;
    Eina_List *l;
    const char *part;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
-   if ((pos < 0) || (pos>=eina_list_count(wd->images))) return;
+   if ((pos < 0) || (pos>=eina_list_count(wd->items))) return;
 
+   _end(obj, obj, NULL, NULL);
+
+   wd->previous = eina_list_nth(wd->items, wd->current);
    wd->current = pos;
-   node = eina_list_nth(wd->images, wd->current);
+   o = eina_list_nth(wd->items, wd->current);
 
-   EINA_LIST_FOREACH(wd->img1_parts, l, part)
-     {
-        const Evas_Object *o;
-
-	o = edje_object_part_object_get(wd->slideshow, part);
-	evas_object_image_file_set((Evas_Object *)o, node->file, node->group);
-     }
-
-   if(wd->keep_ratio)
-      _update_image_1(obj);
+   _end(obj, obj, NULL, NULL);
 }
 
 /**
- * Go to the next image
+ * Go to the next item
  *
  * @param obj The slideshow object
  */
@@ -383,38 +250,31 @@ elm_slideshow_next(Evas_Object *obj)
    char buf[1024];
    Eina_List *l;
    const char *part;
-   Node *node;
+   Evas_Object *o;
    int next;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
-   if ((eina_list_count(wd->images) <= 0) || 
-       ((wd->current >= eina_list_count(wd->images) - 1))
+   if ((eina_list_count(wd->items) <= 0) || 
+       ((wd->current >= eina_list_count(wd->items) - 1))
        && (!wd->loop))
      return;
 
-   if (wd->current >= eina_list_count(wd->images) - 1)
+   if (wd->current >= eina_list_count(wd->items) - 1)
      next = 0;
    else
      next = wd->current + 1;
 
-   node = eina_list_nth(wd->images, next);
+   o = eina_list_nth(wd->items, next);
 
    _end(obj, obj, NULL, NULL);
 
-   EINA_LIST_FOREACH(wd->img2_parts, l, part)
-     {
-        const Evas_Object *o;
+   edje_object_part_swallow(wd->slideshow, "elm.swallow.2", o);
 
-	o = edje_object_part_object_get(wd->slideshow, part);
-	evas_object_image_file_set((Evas_Object *)o, node->file, node->group);
-     }
-
-   if(wd->keep_ratio)
-      _update_image_2(obj);
    snprintf(buf, 1024, "%s,next", wd->transition);
    edje_object_signal_emit(wd->slideshow, buf, "slideshow");
 
+   wd->previous = eina_list_nth(wd->items, wd->current);
    wd->current = next;
 
    if (wd->timer) ecore_timer_del(wd->timer);
@@ -422,7 +282,7 @@ elm_slideshow_next(Evas_Object *obj)
 }
 
 /**
- * Go to the previous image
+ * Go to the previous item
  *
  * @param obj The slideshow object
  */
@@ -432,37 +292,30 @@ elm_slideshow_previous(Evas_Object *obj)
    char buf[1024];
    Eina_List *l;
    const char *part;
-   Node *node;
+   Evas_Object *o;
    int previous;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
-   if ((eina_list_count(wd->images) <= 0)
+   if ((eina_list_count(wd->items) <= 0)
        || (wd->current <= 0 && !wd->loop))
      return;
 
    if (wd->current <= 0)
-     previous = eina_list_count(wd->images) - 1;
+     previous = eina_list_count(wd->items) - 1;
    else
      previous = wd->current - 1;
 
-   node = eina_list_nth(wd->images, previous);
+   o = eina_list_nth(wd->items, previous);
 
    _end(obj, obj, NULL, NULL);
 
-   EINA_LIST_FOREACH(wd->img2_parts, l, part)
-     {
-        const Evas_Object *o;
+   edje_object_part_swallow(wd->slideshow, "elm.swallow.2", o);
 
-	o = edje_object_part_object_get(wd->slideshow, part);
-	evas_object_image_file_set((Evas_Object *)o, node->file, node->group);
-     }
-
-   if(wd->keep_ratio)
-     _update_image_2(obj);
    snprintf(buf, 1024, "%s,previous", wd->transition);
    edje_object_signal_emit(wd->slideshow, buf, "slideshow");
 
+   wd->previous = eina_list_nth(wd->items, wd->current);
    wd->current = previous;
 
    if (wd->timer) ecore_timer_del(wd->timer);
@@ -501,7 +354,7 @@ elm_slideshow_transition_set(Evas_Object *obj, const char *transition)
 }
 
 /**
- * The object can go to the next image automatically after a few seconds.
+ * The slideshow can go to the next item automatically after a few seconds.
  * This method set the timeout to use. A timeout <=0 disable the timer.
  *
  * @param obj The slideshow object
@@ -536,10 +389,10 @@ elm_slideshow_timeout_get(Evas_Object *obj)
 }
 
 /**
- * Set if the first image should follow the last
+ * Set if the first item should follow the last and vice versa
  *
  * @param obj The slideshow object
- * @param loop if 1, the first image will follow the last
+ * @param loop if 1, the first item will follow the last and vice versa
  */
 EAPI void
 elm_slideshow_loop_set(Evas_Object *obj, int loop)
@@ -551,54 +404,22 @@ elm_slideshow_loop_set(Evas_Object *obj, int loop)
 }
 
 /**
- * Set if the ratio of the images should be keep
- *
- * @param obj The slideshow object
- * @param ratio 1 : the ratio will be keep
- */
-EAPI void
-elm_slideshow_ratio_set(Evas_Object *obj, int ratio)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-
-   if(!wd) return;
-   wd->keep_ratio = ratio;
-
-   if(!ratio)
-     {
-	Edje_Message_Int_Set *msg = alloca(sizeof(Edje_Message_Int_Set) + (3 * sizeof(int)));
-	msg->count=4;
-	msg->val[0] = 0;
-	msg->val[1] = 0;
-	msg->val[2] = 0;
-	msg->val[3] = 0;
-
-	edje_object_message_send(wd->slideshow,EDJE_MESSAGE_INT_SET , 1, msg);
-	edje_object_message_send(wd->slideshow,EDJE_MESSAGE_INT_SET , 2, msg);
-     }
-   else
-     {
-	 _update_image_1(obj);
-	 _update_image_2(obj);
-     }
-}
-
-
-/**
- * Delete all the images
+ * Delete all the itemns
  *
  * @param obj The slideshow object
  */
 EAPI void
 elm_slideshow_clear(Evas_Object *obj)
 {
-   Node *node;
+   Evas_Object *o;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if(!wd) return;
-   EINA_LIST_FREE(wd->images, node)
+
+   wd->previous = NULL;
+   wd->current = -1;
+   EINA_LIST_FREE(wd->items, o)
      {
-        if (node->file) eina_stringshare_del(node->file);
-        if (node->group) eina_stringshare_del(node->group);
+	evas_object_del(o);
      }
 }

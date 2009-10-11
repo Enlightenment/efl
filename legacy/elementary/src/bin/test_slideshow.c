@@ -72,7 +72,7 @@ _spin(void *data, Evas_Object *obj, void *event_info)
 void
 test_slideshow(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *notify, *bx, *bt, *hv, *spin;
+   Evas_Object *win, *bg, *notify, *bx, *bt, *hv, *spin, *photo;
    char buf[PATH_MAX];
    const Eina_List *l;
    const char *transition;
@@ -88,18 +88,38 @@ test_slideshow(void *data, Evas_Object *obj, void *event_info)
 
    slideshow = elm_slideshow_add(win);
    elm_slideshow_loop_set(slideshow, 1);
-   elm_slideshow_ratio_set(slideshow, 1);
    elm_win_resize_object_add(win, slideshow);
    evas_object_size_hint_weight_set(slideshow, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(slideshow);
 
-   elm_slideshow_image_add(slideshow, PACKAGE_DATA_DIR"/images/logo.png", NULL);
-   elm_slideshow_image_add(slideshow, PACKAGE_DATA_DIR"/images/plant_01.jpg", NULL);
-   elm_slideshow_image_add(slideshow, PACKAGE_DATA_DIR"/images/rock_01.jpg", NULL);
-   elm_slideshow_image_add(slideshow, PACKAGE_DATA_DIR"/images/rock_02.jpg", NULL);
-   elm_slideshow_image_add(slideshow, PACKAGE_DATA_DIR"/images/sky_01.jpg", NULL);
-   elm_slideshow_image_add(slideshow, PACKAGE_DATA_DIR"/images/sky_04.jpg", NULL);
-   elm_slideshow_image_add(slideshow, PACKAGE_DATA_DIR"/images/wood_01.jpg", NULL);
+   photo = evas_object_image_add(evas_object_evas_get(win));
+   evas_object_image_file_set(photo, PACKAGE_DATA_DIR"/images/logo.png", NULL);
+   evas_object_image_filled_set(photo, 1);
+   elm_slideshow_item_add(slideshow, photo);
+   photo = evas_object_image_add(evas_object_evas_get(win));
+   evas_object_image_file_set(photo, PACKAGE_DATA_DIR"/images/plant_01.jpg", NULL);
+   evas_object_image_filled_set(photo, 1);
+   elm_slideshow_item_add(slideshow, photo);
+   photo = evas_object_image_add(evas_object_evas_get(win));
+   evas_object_image_file_set(photo, PACKAGE_DATA_DIR"/images/rock_01.jpg", NULL);
+   evas_object_image_filled_set(photo, 1);
+   elm_slideshow_item_add(slideshow, photo);
+   photo = evas_object_image_add(evas_object_evas_get(win));
+   evas_object_image_file_set(photo, PACKAGE_DATA_DIR"/images/rock_02.jpg", NULL);
+   evas_object_image_filled_set(photo, 1);
+   elm_slideshow_item_add(slideshow, photo);
+   photo = evas_object_image_add(evas_object_evas_get(win));
+   evas_object_image_file_set(photo, PACKAGE_DATA_DIR"/images/sky_01.jpg", NULL);
+   evas_object_image_filled_set(photo, 1);
+   elm_slideshow_item_add(slideshow, photo);
+   photo = evas_object_image_add(evas_object_evas_get(win));
+   evas_object_image_file_set(photo, PACKAGE_DATA_DIR"/images/sky_04.jpg", NULL);
+   evas_object_image_filled_set(photo, 1);
+   elm_slideshow_item_add(slideshow, photo);
+   photo = evas_object_image_add(evas_object_evas_get(win));
+   evas_object_image_file_set(photo, PACKAGE_DATA_DIR"/images/wood_01.jpg", NULL);
+   evas_object_image_filled_set(photo, 1);
+   elm_slideshow_item_add(slideshow, photo);
 
    notify = elm_notify_add(win);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM);
