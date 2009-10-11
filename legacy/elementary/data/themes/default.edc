@@ -14519,7 +14519,6 @@ collections {
                rel1 {
                   to_y: "elm.swallow.bar";
                   to_x: "elm.cur.progressbar";
-                  relative: 1.0 0.0;
                }
                rel2 {
                   to: "elm.swallow.bar";
@@ -14615,6 +14614,8 @@ collections {
                y: 0 0 0;
             }
             description { state: "default" 0.0;
+               min: 14 28;
+               fixed: 1 1;
                visible: 0;
                rel1 {
                   to: "background";
@@ -14875,7 +14876,6 @@ collections {
                rel1 {
                   to_x: "elm.swallow.bar";
                   to_y: "elm.cur.progressbar";
-                  relative: 0.0 1.0;
                }
                rel2 {
                   to: "elm.swallow.bar";
@@ -14942,6 +14942,8 @@ collections {
                y: 1 1 1;
             }
             description { state: "default" 0.0;
+               min: 28 14;
+               fixed: 1 1;
                visible: 0;
                rel1 {
                   to: "background";
