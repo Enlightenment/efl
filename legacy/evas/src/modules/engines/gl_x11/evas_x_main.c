@@ -198,17 +198,64 @@ eng_best_visual_get(Display *disp, int screen)
         XMatchVisualInfo(disp, screen, depth, TrueColor, _evas_gl_x11_vi);
 // GLX
 #else
-        int _evas_gl_x11_configuration[9] =
+
+#if 0 // use this if we want alpha
+        int config_attrs[20];
+        GLXFBConfig *configs = NULL, config = 0;
+        int i, num;
+        
+        config_attrs[0] = GLX_DRAWABLE_TYPE;
+        config_attrs[1] = GLX_WINDOW_BIT;
+        config_attrs[2] = GLX_DOUBLEBUFFER;
+        config_attrs[3] = 1;
+        config_attrs[4] = GLX_RED_SIZE;
+        config_attrs[5] = 1;
+        config_attrs[6] = GLX_GREEN_SIZE;
+        config_attrs[7] = 1;
+        config_attrs[8] = GLX_BLUE_SIZE;
+        config_attrs[9] = 1;
+        config_attrs[10] = None;
+        
+        // if rgba
+        config_attrs[10] = GLX_ALPHA_SIZE;
+        config_attrs[11] = 1;
+        config_attrs[12] = GLX_RENDER_TYPE;
+        config_attrs[13] = GLX_RGBA_BIT;
+        config_attrs[14] = None;
+        
+        configs = glXChooseFBConfig(disp, 0, config_attrs, &num);
+        for (i = 0; i < num; i++)
+          {
+             XVisualInfo *visinfo;
+             XRenderPictFormat *format;
+             
+             visinfo = glXGetVisualFromFBConfig(disp, configs[i]);
+             if (!visinfo) continue;
+             format = XRenderFindVisualFormat(disp, visinfo->visual);
+             if (!format) continue;
+             
+             if (format->direct.alphaMask > 0)
+               {
+                  config = configs[i];
+                  _evas_gl_x11_vi = visinfo;
+                  break;
+               }
+             XFree(visinfo);
+          }
+#else   
+        int _evas_gl_x11_configuration[] =
           {
              GLX_DOUBLEBUFFER,
                GLX_RGBA,
-               GLX_RED_SIZE,   1,
-               GLX_GREEN_SIZE, 1,
-               GLX_BLUE_SIZE,  1,
+               GLX_RED_SIZE, 1,
+               GLX_GREEN_SIZE,1,
+               GLX_BLUE_SIZE, 1,
                None
           };
         _evas_gl_x11_vi = glXChooseVisual(disp, screen,
                                           _evas_gl_x11_configuration);
+#endif
+        
 #endif
      }
    if (!_evas_gl_x11_vi) return NULL;

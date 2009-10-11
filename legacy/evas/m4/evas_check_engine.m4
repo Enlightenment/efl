@@ -154,13 +154,13 @@ if test "x${have_dep}" = "xyes" ; then
    evas_engine_gl_common_libs="-lGL -lpthread"
 else
    if test "x$2" = "xyes" ; then
-      x_libs="${x_libs} -lX11 -lXext"
+      x_libs="${x_libs} -lX11 -lXext -lXrender"
    else
       x_dir=${x_dir:-/usr/X11R6}
       x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
-      x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11"
+      x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext -lXrender"
    fi
-   AC_CHECK_HEADERS([EGL/egl.h X11/X.h X11/Xlib.h], [have_egl="yes"])
+   AC_CHECK_HEADERS([EGL/egl.h X11/X.h X11/Xlib.h X11/extensions/Xrender.h], [have_egl="yes"])
    if test "x${have_egl}" = "xyes" ; then
       have_gles20="no"
       AC_CHECK_LIB(gles20, glTexImage2D, [have_gles20="yes"], , -lEGL)

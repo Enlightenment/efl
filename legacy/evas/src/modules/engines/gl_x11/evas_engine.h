@@ -12,6 +12,7 @@
 #   include <X11/Xlib.h>
 #   include <X11/Xatom.h>
 #   include <X11/Xutil.h>
+#   include <X11/extensions/Xrender.h>
 #  elif defined(GLES_VARIETY_SGX)
 #   define SUPPORT_X11 1
 #   include <EGL/egl.h>
@@ -19,12 +20,14 @@
 #   include <X11/Xlib.h>
 #   include <X11/Xatom.h>
 #   include <X11/Xutil.h>
+#   include <X11/extensions/Xrender.h>
 #  endif
 # else
 #  include <GL/glx.h>
 #  include <X11/Xlib.h>
 #  include <X11/Xatom.h>
 #  include <X11/Xutil.h>
+#  include <X11/extensions/Xrender.h>
 #  include <GL/gl.h>
 #  include <GL/glx.h>
 # endif

@@ -86,7 +86,6 @@ evas_gl_common_context_new(void)
         glEnable(GL_DITHER);
         glDisable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-// for dest alpha        
 //        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glDepthMask(GL_FALSE);
         
