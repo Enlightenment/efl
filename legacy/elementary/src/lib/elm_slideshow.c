@@ -481,3 +481,31 @@ elm_slideshow_item_del(Elm_Slideshow_Item *item)
    free(item);
 }
 
+/**
+ * Returns the current item displayed
+ *
+ * @param obj The slideshow object
+ * @return Returns the current item displayed
+ */
+EAPI Elm_Slideshow_Item*
+elm_slideshow_item_current_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return NULL;
+   return wd->current;
+}
+
+/**
+ * Returns the evas object associated to an item
+ *
+ * @param item The slideshow item
+ * @return Returns the evas object associated to this item
+ */
+EAPI Evas_Object*
+elm_slideshow_item_object_get(Elm_Slideshow_Item * item)
+{
+   if (!item) return NULL;
+   return item->o;
+}
+
