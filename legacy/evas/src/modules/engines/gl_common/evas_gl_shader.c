@@ -15,7 +15,7 @@ Evas_GL_Program_Source shader_rect_frag_src =
 {
    rect_frag_glsl,
 #if defined (GLES_VARIETY_S3C6410)
-     rect_frag_bin, sizeof(rect_frag_bin_end)
+     rect_frag_bin, sizeof(rect_frag_bin)
 #else     
      NULL, 0
 #endif     
@@ -55,7 +55,7 @@ Evas_GL_Program_Source shader_img_frag_src =
 {
    img_frag_glsl,
 #if defined (GLES_VARIETY_S3C6410)
-     img_frag_bin, sizeof(img_frag_bin_end)
+     img_frag_bin, sizeof(img_frag_bin)
 #else     
      NULL, 0
 #endif     
@@ -95,7 +95,7 @@ Evas_GL_Program_Source shader_font_frag_src =
 {
    font_frag_glsl,
 #if defined (GLES_VARIETY_S3C6410)
-     font_frag_bin, sizeof(font_frag_bin_end)
+     font_frag_bin, sizeof(font_frag_bin)
 #else     
      NULL, 0
 #endif     
@@ -135,7 +135,7 @@ Evas_GL_Program_Source shader_yuv_frag_src =
 {
    yuv_frag_glsl,
 #if defined (GLES_VARIETY_S3C6410)
-     yuv_frag_bin, sizeof(yuv_frag_bin_end)
+     yuv_frag_bin, sizeof(yuv_frag_bin)
 #else     
      NULL, 0
 #endif     
