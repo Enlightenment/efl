@@ -828,9 +828,23 @@ extern "C" {
    /* smart callbacks called:
     */
 
+   typedef struct _Elm_Slideshow_Item_Class Elm_Slideshow_Item_Class;
+   typedef struct _Elm_Slideshow_Item_Class_Func Elm_Slideshow_Item_Class_Func;
+   typedef struct _Elm_Slideshow_Item       Elm_Slideshow_Item;
+   typedef Evas_Object *(*SlideshowItemGetFunc) (void *data, Evas_Object *obj);
+   typedef void         (*SlideshowItemDelFunc) (void *data, Evas_Object *obj);
+
+   struct _Elm_Slideshow_Item_Class
+     {
+	struct _Elm_Slideshow_Item_Class_Func {
+	     SlideshowItemGetFunc get;
+	     SlideshowItemDelFunc del;
+	} func;
+     };
+
    EAPI Evas_Object *elm_slideshow_add(Evas_Object *parent);
-   EAPI void         elm_slideshow_item_add(Evas_Object *obj, Evas_Object *item);
-   EAPI void	     elm_slideshow_goto(Evas_Object *obj, int pos);
+   EAPI Elm_Slideshow_Item* elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data);
+   EAPI void	     elm_slideshow_show(Elm_Slideshow_Item *item);
    EAPI void	     elm_slideshow_next(Evas_Object *obj);
    EAPI void	     elm_slideshow_previous(Evas_Object *obj);
    EAPI const Eina_List *elm_slideshow_transitions_get(Evas_Object *obj);
@@ -839,9 +853,8 @@ extern "C" {
    EAPI int          elm_slideshow_timeout_get(Evas_Object *obj);
    EAPI void	     elm_slideshow_loop_set(Evas_Object *obj, int loop);
    EAPI void         elm_slideshow_clear(Evas_Object *obj);
+   EAPI void	     elm_slideshow_item_del(Elm_Slideshow_Item *item);
    /* smart callbacks called:
-    * "clicked" - the use click on the widget
-    * "move" - the mouse move on the widget
     */
 
 
