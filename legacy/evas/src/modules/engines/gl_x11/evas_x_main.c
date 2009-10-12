@@ -47,7 +47,7 @@ eng_window_new(Display *disp,
    context_attrs[1] = 2;
    context_attrs[2] = EGL_NONE;
 # if defined(GLES_VARIETY_S3C6410)
-   if (_evas_gles_x11_vi->depth == 16) // 16bpp
+   if (_evas_gl_x11_vi->depth == 16) // 16bpp
      {
         config_attrs[0] = EGL_SURFACE_TYPE;
         config_attrs[1] = EGL_WINDOW_BIT;
