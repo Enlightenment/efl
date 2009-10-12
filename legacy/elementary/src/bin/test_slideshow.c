@@ -5,9 +5,17 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static Evas_Object *slideshow, *bt_start, *bt_stop;
+static Elm_Slideshow_Item_Class itc;
+static char *img1 = PACKAGE_DATA_DIR"/images/logo.png";
+static char *img2 = PACKAGE_DATA_DIR"/images/plant_01.jpg";
+static char *img3 = PACKAGE_DATA_DIR"/images/rock_01.jpg";
+static char *img4 = PACKAGE_DATA_DIR"/images/rock_02.jpg";
+static char *img5 = PACKAGE_DATA_DIR"/images/sky_01.jpg";
+static char *img6 = PACKAGE_DATA_DIR"/images/sky_04.jpg";
+static char *img7 = PACKAGE_DATA_DIR"/images/wood_01.jpg";
 
 static void
-_notify_show(void *data, Evas_Object *obj, void *event_info)
+_notify_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    evas_object_show(data);
    elm_notify_timer_init(data);
@@ -69,6 +77,18 @@ _spin(void *data, Evas_Object *obj, void *event_info)
      elm_slideshow_timeout_set(slideshow, (int)elm_spinner_value_get(data));
 }
 
+static Evas_Object *
+_get(void *data, Evas_Object *obj)
+{
+   Evas_Object *photo = evas_object_image_add(evas_object_evas_get(obj));
+   evas_object_image_file_set(photo, data, NULL);
+   evas_object_image_filled_set(photo, 1);
+
+   return photo;
+}
+
+
+
 void
 test_slideshow(void *data, Evas_Object *obj, void *event_info)
 {
@@ -76,6 +96,7 @@ test_slideshow(void *data, Evas_Object *obj, void *event_info)
    char buf[PATH_MAX];
    const Eina_List *l;
    const char *transition;
+   char *s;
 
    win = elm_win_add(NULL, "Slideshow", ELM_WIN_BASIC);
    elm_win_title_set(win, "Slideshow");
@@ -92,34 +113,16 @@ test_slideshow(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(slideshow, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(slideshow);
 
-   photo = evas_object_image_add(evas_object_evas_get(win));
-   evas_object_image_file_set(photo, PACKAGE_DATA_DIR"/images/logo.png", NULL);
-   evas_object_image_filled_set(photo, 1);
-   elm_slideshow_item_add(slideshow, photo);
-   photo = evas_object_image_add(evas_object_evas_get(win));
-   evas_object_image_file_set(photo, PACKAGE_DATA_DIR"/images/plant_01.jpg", NULL);
-   evas_object_image_filled_set(photo, 1);
-   elm_slideshow_item_add(slideshow, photo);
-   photo = evas_object_image_add(evas_object_evas_get(win));
-   evas_object_image_file_set(photo, PACKAGE_DATA_DIR"/images/rock_01.jpg", NULL);
-   evas_object_image_filled_set(photo, 1);
-   elm_slideshow_item_add(slideshow, photo);
-   photo = evas_object_image_add(evas_object_evas_get(win));
-   evas_object_image_file_set(photo, PACKAGE_DATA_DIR"/images/rock_02.jpg", NULL);
-   evas_object_image_filled_set(photo, 1);
-   elm_slideshow_item_add(slideshow, photo);
-   photo = evas_object_image_add(evas_object_evas_get(win));
-   evas_object_image_file_set(photo, PACKAGE_DATA_DIR"/images/sky_01.jpg", NULL);
-   evas_object_image_filled_set(photo, 1);
-   elm_slideshow_item_add(slideshow, photo);
-   photo = evas_object_image_add(evas_object_evas_get(win));
-   evas_object_image_file_set(photo, PACKAGE_DATA_DIR"/images/sky_04.jpg", NULL);
-   evas_object_image_filled_set(photo, 1);
-   elm_slideshow_item_add(slideshow, photo);
-   photo = evas_object_image_add(evas_object_evas_get(win));
-   evas_object_image_file_set(photo, PACKAGE_DATA_DIR"/images/wood_01.jpg", NULL);
-   evas_object_image_filled_set(photo, 1);
-   elm_slideshow_item_add(slideshow, photo);
+   itc.func.get = _get;
+   itc.func.del = NULL;
+
+   elm_slideshow_item_add(slideshow, &itc, img1);
+   elm_slideshow_item_add(slideshow, &itc, img2);
+   elm_slideshow_item_add(slideshow, &itc, img3);
+   elm_slideshow_item_add(slideshow, &itc, img4);
+   elm_slideshow_item_add(slideshow, &itc, img5);
+   elm_slideshow_item_add(slideshow, &itc, img6);
+   elm_slideshow_item_add(slideshow, &itc, img7);
 
    notify = elm_notify_add(win);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM);
@@ -179,8 +182,8 @@ test_slideshow(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bt);
 
 
-   evas_object_smart_callback_add(slideshow, "clicked", _notify_show, notify);
-   evas_object_smart_callback_add(slideshow, "move", _notify_show, notify);
+   evas_object_event_callback_add(slideshow, EVAS_CALLBACK_MOUSE_UP, _notify_show, notify);
+   evas_object_event_callback_add(slideshow, EVAS_CALLBACK_MOUSE_MOVE, _notify_show, notify);
 
    evas_object_resize(win, 350, 200);
    evas_object_show(win);
