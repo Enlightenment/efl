@@ -8,11 +8,18 @@
 # if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 #  if defined(GLES_VARIETY_S3C6410)
 #   include <EGL/egl.h>
-#   include <GLES/gl.h>
+#   include <GLES2/gl2.h>
 #   include <X11/Xlib.h>
 #   include <X11/Xatom.h>
 #   include <X11/Xutil.h>
 #   include <X11/extensions/Xrender.h>
+//// this changed. this was the old style. above the new style
+//#   include <EGL/egl.h>
+//#   include <GLES/gl.h>
+//#   include <X11/Xlib.h>
+//#   include <X11/Xatom.h>
+//#   include <X11/Xutil.h>
+//#   include <X11/extensions/Xrender.h>
 #  elif defined(GLES_VARIETY_SGX)
 #   define SUPPORT_X11 1
 #   include <EGL/egl.h>

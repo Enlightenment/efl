@@ -162,24 +162,32 @@ else
    fi
    AC_CHECK_HEADERS([EGL/egl.h X11/X.h X11/Xlib.h X11/extensions/Xrender.h], [have_egl="yes"])
    if test "x${have_egl}" = "xyes" ; then
-      have_gles20="no"
-      AC_CHECK_LIB(gles20, glTexImage2D, [have_gles20="yes"], , -lEGL)
-      if test "x${have_gles20}" = "xyes" ; then
-         evas_engine_[]$1[]_cflags="${x_cflags}"
-         evas_engine_[]$1[]_libs="${x_libs} -lgles20 -lEGL"
-         AC_DEFINE(GLES_VARIETY_S3C6410, 1, [Samsung S3c6410 GLES2 support])
-         evas_engine_gl_common_libs="-lgles20"
-         have_dep="yes"
-      fi
-      have_glesv2="no"
       AC_CHECK_LIB(GLESv2, glTexImage2D, [have_glesv2="yes"], , -lEGL ${x_libs} -lpthread -lm)
       if test "x${have_glesv2}" = "xyes" ; then
          evas_engine_[]$1[]_cflags="${x_cflags}"
          evas_engine_[]$1[]_libs="${x_libs} -lGLESv2 -lpthread -lm -lEGL"
-         AC_DEFINE(GLES_VARIETY_SGX, 1, [Imagination SGX GLES2 support])
          evas_engine_gl_common_libs="-lGLESv2 -lpthread -lm"
          have_dep="yes"
       fi
+dnl samsung s3c6410 libs changed to be like the sgx ones. need a variety option
+dnl      have_gles20="no"
+dnl      AC_CHECK_LIB(gles20, glTexImage2D, [have_gles20="yes"], , -lEGL)
+dnl      if test "x${have_gles20}" = "xyes" ; then
+dnl         evas_engine_[]$1[]_cflags="${x_cflags}"
+dnl         evas_engine_[]$1[]_libs="${x_libs} -lgles20 -lEGL"
+dnl         AC_DEFINE(GLES_VARIETY_S3C6410, 1, [Samsung S3c6410 GLES2 support])
+dnl         evas_engine_gl_common_libs="-lgles20"
+dnl         have_dep="yes"
+dnl      fi
+dnl      have_glesv2="no"
+dnl      AC_CHECK_LIB(GLESv2, glTexImage2D, [have_glesv2="yes"], , -lEGL ${x_libs} -lpthread -lm)
+dnl      if test "x${have_glesv2}" = "xyes" ; then
+dnl         evas_engine_[]$1[]_cflags="${x_cflags}"
+dnl         evas_engine_[]$1[]_libs="${x_libs} -lGLESv2 -lpthread -lm -lEGL"
+dnl         AC_DEFINE(GLES_VARIETY_SGX, 1, [Imagination SGX GLES2 support])
+dnl         evas_engine_gl_common_libs="-lGLESv2 -lpthread -lm"
+dnl         have_dep="yes"
+dnl      fi
    fi
 fi
 

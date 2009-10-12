@@ -394,7 +394,50 @@ AC_ARG_ENABLE(gl-flavor-gles,
         gl_flavor_gles="no"
       fi
   ], [
+      AC_MSG_RESULT(no)
       gl_flavor_gles="no"
+  ]
+)
+
+#######################################
+## GLES variety sgx
+gles_variety_sgx="no"
+AC_MSG_CHECKING(whether to build GLES variety for SGX)
+AC_ARG_ENABLE(gles-variety-sgx,
+  AC_HELP_STRING([--enable-gles-variety-sgx], [GLES variety SGX 3D unit]),
+  [
+      if test "x$enableval" = "xyes" ; then
+        AC_MSG_RESULT(yes)
+        AC_DEFINE(GLES_VARIETY_SGX, 1, [Imagination SGX GLES2 support])
+        gles_variety_sgx="yes"
+      else
+        AC_MSG_RESULT(no)
+        gles_variety_sgx="no"
+      fi
+  ], [
+      AC_MSG_RESULT(no)
+      gles_variety_sgx="no"
+  ]
+)
+
+#######################################
+## GLES variety s3c6410
+gles_variety_s3c6410="no"
+AC_MSG_CHECKING(whether to build GLES variety for s3c6410)
+AC_ARG_ENABLE(gles-variety-s3c6410,
+  AC_HELP_STRING([--enable-gles-variety-s3c6410], [GLES variety s3c6410 3D unit]),
+  [
+      if test "x$enableval" = "xyes" ; then
+        AC_MSG_RESULT(yes)
+        AC_DEFINE(GLES_VARIETY_S3C6410, 1, [Samsung S3c6410 GLES2 support])
+        gles_variety_s3c6410="yes"
+      else
+        AC_MSG_RESULT(no)
+        gles_variety_s3c6410="no"
+      fi
+  ], [
+      AC_MSG_RESULT(no)
+      gles_variety_s3c6410="no"
   ]
 )
 
@@ -1266,7 +1309,7 @@ echo "Engines:"
 echo "  Software Memory Buffer.....: $have_evas_engine_buffer"
 echo "  Software X11...............: $have_evas_engine_software_x11 (Xlib: $have_evas_engine_software_xlib) (XCB: $have_evas_engine_software_xcb)"
 echo "  XRender X11................: $have_evas_engine_xrender_x11 (XCB: $have_evas_engine_xrender_xcb)"
-echo "  OpenGL X11.................: $have_evas_engine_gl_x11"
+echo "  OpenGL X11.................: $have_evas_engine_gl_x11 (GLES: $gl_flavor_gles) (SGX: $gles_variety_sgx) (s3c6410: $gles_variety_s3c6410)"
 #echo "  Cairo X11..................: $have_evas_engine_cairo_x11"
 echo "  Software GDI...............: $have_evas_engine_software_gdi"
 echo "  Software DirectDraw........: $have_evas_engine_software_ddraw"

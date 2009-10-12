@@ -24,7 +24,9 @@
 #else
 # if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 #  if defined(GLES_VARIETY_S3C6410)
-#   include <GLES/gl.h>
+#   include <GLES2/gl2.h>
+//// this changed. this was the old style. above the new style
+//#   include <GLES/gl.h>
 #  elif defined(GLES_VARIETY_SGX)
 #   include <GLES2/gl2.h>
 #  endif

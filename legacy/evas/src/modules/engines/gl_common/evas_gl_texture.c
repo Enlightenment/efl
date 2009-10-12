@@ -217,7 +217,9 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
 #define PIXEL_FORMAT GL_UNSIGNED_BYTE
 #endif   
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
+#ifdef GL_UNPACK_ROW_LENGTH   
    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+#endif   
    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
    //  +-+
    //  +-+
@@ -342,7 +344,9 @@ void
 evas_gl_common_texture_alpha_update(Evas_GL_Texture *tex, DATA8 *pixels, int w, int h, int fh)
 {
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
+#ifdef GL_UNPACK_ROW_LENGTH   
    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+#endif   
    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
    glTexSubImage2D(GL_TEXTURE_2D, 0,
 		   tex->x, tex->y, w, h,
@@ -398,6 +402,8 @@ evas_gl_common_texture_yuv_new(Evas_GL_Context *gc, DATA8 **rows, int w, int h)
 void
 evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, int w, int h)
 {
+   // FIXME: works on lowest size 4 pixel high buffers. must also be multiple of 2
+#ifdef GL_UNPACK_ROW_LENGTH
    glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[1] - rows[0]);
    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
@@ -417,6 +423,59 @@ evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, int w, int
 		   0, 0, w / 2, h / 2,
                    GL_LUMINANCE, GL_UNSIGNED_BYTE,
 		   rows[h + (h / 2)]);
+#else
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+   glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
+   if ((rows[1] - rows[0]) == w)
+     glTexSubImage2D(GL_TEXTURE_2D, 0,
+                     0, 0, w, h,
+                     GL_LUMINANCE, GL_UNSIGNED_BYTE,
+                     rows[0]);
+   else
+     {
+        int y;
+        
+        for (y = 0; y < h; y++)
+          glTexSubImage2D(GL_TEXTURE_2D, 0,
+                          0, y, w, 1,
+                          GL_LUMINANCE, GL_UNSIGNED_BYTE,
+                          rows[y]);
+     }
+
+   glBindTexture(GL_TEXTURE_2D, tex->ptu->texture);
+   if ((rows[h + 1] - rows[h]) == (w / 2))
+     glTexSubImage2D(GL_TEXTURE_2D, 0,
+                     0, 0, w / 2, h / 2,
+                     GL_LUMINANCE, GL_UNSIGNED_BYTE,
+                     rows[h]);
+   else
+     {
+        int y;
+        
+        for (y = 0; y < (h / 2); y++)
+          glTexSubImage2D(GL_TEXTURE_2D, 0,
+                          0, y, w / 2, 1,
+                          GL_LUMINANCE, GL_UNSIGNED_BYTE,
+                          rows[h + y]);
+     }
+   
+   glBindTexture(GL_TEXTURE_2D, tex->ptv->texture);
+   if ((rows[h + (h / 2) + 1] - rows[h + (h / 2)]) == (w / 2))
+     glTexSubImage2D(GL_TEXTURE_2D, 0,
+                     0, 0, w / 2, h / 2,
+                     GL_LUMINANCE, GL_UNSIGNED_BYTE,
+                     rows[h + (h / 2)]);
+   else
+     {
+        int y;
+        
+        for (y = 0; y < (h / 2); y++)
+          glTexSubImage2D(GL_TEXTURE_2D, 0,
+                          0, y, w / 2, 1,
+                          GL_LUMINANCE, GL_UNSIGNED_BYTE,
+                          rows[h + (h / 2) + y]);
+     }
+#endif   
    if (tex->pt->texture != tex->gc->shader.cur_tex)
      {
         glBindTexture(GL_TEXTURE_2D, tex->gc->shader.cur_tex);
