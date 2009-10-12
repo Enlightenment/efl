@@ -205,14 +205,23 @@ extern "C" {
    EAPI void         elm_win_lower(Evas_Object *obj);
    EAPI void         elm_win_raise(Evas_Object *obj);
    EAPI void         elm_win_borderless_set(Evas_Object *obj, Eina_Bool borderless);
+   EAPI Eina_Bool    elm_win_borderless_get(Evas_Object *obj);
    EAPI void         elm_win_shaped_set(Evas_Object *obj, Eina_Bool shaped);
+   EAPI Eina_Bool    elm_win_shaped_get(Evas_Object *obj);
    EAPI void         elm_win_alpha_set(Evas_Object *obj, Eina_Bool alpha);
+   EAPI Eina_Bool    elm_win_alpha_get(Evas_Object *obj);
    EAPI void         elm_win_override_set(Evas_Object *obj, Eina_Bool override);
+   EAPI Eina_Bool    elm_win_override_get(Evas_Object *obj);
    EAPI void         elm_win_fullscreen_set(Evas_Object *obj, Eina_Bool fullscreen);
+   EAPI Eina_Bool    elm_win_fullscreen_get(Evas_Object *obj);
    EAPI void         elm_win_maximized_set(Evas_Object *obj, Eina_Bool maximized);
+   EAPI Eina_Bool    elm_win_maximized_get(Evas_Object *obj);
    EAPI void         elm_win_iconified_set(Evas_Object *obj, Eina_Bool iconified);
+   EAPI Eina_Bool    elm_win_iconified_get(Evas_Object *obj);
    EAPI void         elm_win_layer_set(Evas_Object *obj, int layer);
+   EAPI int          elm_win_layer_get(Evas_Object *obj);
    EAPI void         elm_win_rotation_set(Evas_Object *obj, int rotation);
+   EAPI int          elm_win_rotation_get(Evas_Object *obj);
    EAPI void         elm_win_sticky_set(Evas_Object *obj, Eina_Bool sticky);
 
    /*...

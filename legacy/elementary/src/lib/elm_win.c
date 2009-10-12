@@ -507,6 +507,16 @@ elm_win_borderless_set(Evas_Object *obj, Eina_Bool borderless)
    _elm_win_xwin_update(win);
 }
 
+EAPI Eina_Bool
+elm_win_borderless_get(Evas_Object *obj)
+{
+   Elm_Win *win;
+   if(strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
+   win = elm_widget_data_get(obj);
+   if (!win) return EINA_FALSE;
+   return ecore_evas_borderless_get(win->ee);
+}
+
 EAPI void
 elm_win_shaped_set(Evas_Object *obj, Eina_Bool shaped)
 {
@@ -516,6 +526,16 @@ elm_win_shaped_set(Evas_Object *obj, Eina_Bool shaped)
    if (!win) return;
    ecore_evas_shaped_set(win->ee, shaped);
    _elm_win_xwin_update(win);
+}
+
+EAPI Eina_Bool
+elm_win_shaped_get(Evas_Object *obj)
+{
+   Elm_Win *win;
+   if(strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
+   win = elm_widget_data_get(obj);
+   if (!win) return EINA_FALSE;
+   return ecore_evas_shaped_get(win->ee);
 }
 
 EAPI void
@@ -542,6 +562,16 @@ elm_win_alpha_set(Evas_Object *obj, Eina_Bool alpha)
      ecore_evas_alpha_set(win->ee, alpha);
 }
 
+EAPI Eina_Bool
+elm_win_alpha_get(Evas_Object *obj)
+{
+   Elm_Win *win;
+   if(strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
+   win = elm_widget_data_get(obj);
+   if (!win) return EINA_FALSE;
+   return ecore_evas_alpha_get(win->ee);
+}
+
 EAPI void
 elm_win_override_set(Evas_Object *obj, Eina_Bool override)
 {
@@ -551,6 +581,16 @@ elm_win_override_set(Evas_Object *obj, Eina_Bool override)
    if (!win) return;
    ecore_evas_override_set(win->ee, override);
    _elm_win_xwin_update(win);
+}
+
+EAPI Eina_Bool
+elm_win_override_get(Evas_Object *obj)
+{
+   Elm_Win *win;
+   if(strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
+   win = elm_widget_data_get(obj);
+   if (!win) return EINA_FALSE;
+   return ecore_evas_override_get(win->ee);
 }
 
 EAPI void
@@ -573,6 +613,27 @@ elm_win_fullscreen_set(Evas_Object *obj, Eina_Bool fullscreen)
      }
 }
 
+EAPI Eina_Bool
+elm_win_fullscreen_get(Evas_Object *obj)
+{
+   Elm_Win *win;
+   if(strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
+   win = elm_widget_data_get(obj);
+   if (!win) return EINA_FALSE;
+   switch (_elm_config->engine)
+     {
+     case ELM_SOFTWARE_16_WINCE:
+     case ELM_SOFTWARE_FB:
+	// these engines... can ONLY be fullscreen
+	return EINA_TRUE;
+	break;
+     default:
+	return ecore_evas_fullscreen_get(win->ee);
+	break;
+     }
+   return EINA_FALSE;
+}
+
 EAPI void
 elm_win_maximized_set(Evas_Object *obj, Eina_Bool maximized)
 {
@@ -582,6 +643,16 @@ elm_win_maximized_set(Evas_Object *obj, Eina_Bool maximized)
    if (!win) return;
    ecore_evas_maximized_set(win->ee, maximized);
    _elm_win_xwin_update(win);
+}
+
+EAPI Eina_Bool
+elm_win_maximized_get(Evas_Object *obj)
+{
+   Elm_Win *win;
+   if(strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
+   win = elm_widget_data_get(obj);
+   if (!win) return EINA_FALSE;
+   return ecore_evas_maximized_get(win->ee);
 }
 
 EAPI void
@@ -595,6 +666,16 @@ elm_win_iconified_set(Evas_Object *obj, Eina_Bool iconified)
    _elm_win_xwin_update(win);
 }
 
+EAPI Eina_Bool
+elm_win_iconified_get(Evas_Object *obj)
+{
+   Elm_Win *win;
+   if(strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
+   win = elm_widget_data_get(obj);
+   if (!win) return EINA_FALSE;
+   return ecore_evas_iconified_get(win->ee);
+}
+
 EAPI void
 elm_win_layer_set(Evas_Object *obj, int layer)
 {
@@ -604,6 +685,16 @@ elm_win_layer_set(Evas_Object *obj, int layer)
    if (!win) return;
    ecore_evas_layer_set(win->ee, layer);
    _elm_win_xwin_update(win);
+}
+
+EAPI int
+elm_win_layer_get(Evas_Object *obj)
+{
+   Elm_Win *win;
+   if(strcmp(elm_widget_type_get(obj), "win")) return -1;
+   win = elm_widget_data_get(obj);
+   if (!win) return -1;
+   return ecore_evas_layer_get(win->ee);
 }
 
 EAPI void
@@ -622,6 +713,16 @@ elm_win_rotation_set(Evas_Object *obj, int rotation)
    _elm_win_xwin_update(win);
 }
 
+EAPI int
+elm_win_rotation_get(Evas_Object *obj)
+{
+   Elm_Win *win;
+   if(strcmp(elm_widget_type_get(obj), "win")) return -1;
+   win = elm_widget_data_get(obj);
+   if (!win) return -1;
+   return win->rot;
+}
+
 EAPI void
 elm_win_sticky_set(Evas_Object *obj, Eina_Bool sticky)
 {
@@ -631,6 +732,16 @@ elm_win_sticky_set(Evas_Object *obj, Eina_Bool sticky)
    if (!win) return;
    ecore_evas_sticky_set(win->ee, sticky);
    _elm_win_xwin_update(win);
+}
+
+EAPI Eina_Bool
+elm_win_sticky_get(Evas_Object *obj)
+{
+   Elm_Win *win;
+   if(strcmp(elm_widget_type_get(obj), "win")) return EINA_FALSE;
+   win = elm_widget_data_get(obj);
+   if (!win) return EINA_FALSE;
+   return ecore_evas_sticky_get(win->ee);
 }
 
 EAPI void
