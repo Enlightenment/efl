@@ -1,6 +1,6 @@
 #!/bin/sh
 ORIONEXE=/home/raster/Data/orion/orion.exe
-OPTS="-O --nolodcalc -hp"
+OPTS="-O --nolodcalc -lp"
 
 function compile()
 {

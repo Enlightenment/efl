@@ -186,10 +186,11 @@ gl_compile_link_error(GLuint target, const char *action)
 void
 evas_gl_common_shader_program_init(Evas_GL_Program *p, 
                                    Evas_GL_Program_Source *vert,
-                                   Evas_GL_Program_Source *frag)
+                                   Evas_GL_Program_Source *frag,
+                                   const char *name)
 {
    GLint ok;
-   
+
    p->vert = glCreateShader(GL_VERTEX_SHADER);
    p->frag = glCreateShader(GL_FRAGMENT_SHADER);
 #if defined (GLES_VARIETY_S3C6410)
@@ -200,12 +201,22 @@ evas_gl_common_shader_program_init(Evas_GL_Program *p,
                   (const char **)&(vert->src), NULL);
    glCompileShader(p->vert);
    glGetShaderiv(p->vert, GL_COMPILE_STATUS, &ok);
-   if (!ok) gl_compile_link_error(p->vert, "compile vertex shader");
+   if (!ok)
+     {
+        gl_compile_link_error(p->vert, "compile vertex shader");
+        printf("Abort compile of shader vert (%s):\n%s\n", name, vert->src);
+        return;
+     }
    glShaderSource(p->frag, 1,
                   (const char **)&(frag->src), NULL);
    glCompileShader(p->frag);
    glGetShaderiv(p->frag, GL_COMPILE_STATUS, &ok);
-   if (!ok) gl_compile_link_error(p->frag, "compile fragment shader");
+   if (!ok)
+     {
+        gl_compile_link_error(p->frag, "compile fragment shader");
+        printf("Abort compile of shader frag (%s):\n%s\n", name, frag->src);
+        return;
+     }
 #endif
    p->prog = glCreateProgram();
    glAttachShader(p->prog, p->vert);
@@ -219,5 +230,11 @@ evas_gl_common_shader_program_init(Evas_GL_Program *p,
    
    glLinkProgram(p->prog);
    glGetProgramiv(p->prog, GL_LINK_STATUS, &ok);
-   if (!ok) gl_compile_link_error(p->prog, "link fragment and vertex shaders");
+   if (!ok)
+     {
+        gl_compile_link_error(p->prog, "link fragment and vertex shaders");
+        printf("Abort compile of shader frag (%s):\n%s\n", name, frag->src);
+        printf("Abort compile of shader vert (%s):\n%s\n", name, vert->src);
+        return;
+     }
 }

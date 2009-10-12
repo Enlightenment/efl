@@ -175,14 +175,14 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im)
    
    tex->gc = gc;
    tex->references = 1;
-   if (im->cache_entry.flags.alpha)
-     tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3, 
-                              im->cache_entry.h + 1, GL_RGBA, 
-                              &u, &v, &l_after, 1024);
-   else
-     tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3, 
-                              im->cache_entry.h + 1, GL_RGB, 
-                              &u, &v, &l_after, 1024);
+//   if (im->cache_entry.flags.alpha)
+   tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3, 
+                            im->cache_entry.h + 1, GL_RGBA, 
+                            &u, &v, &l_after, 1024);
+//   else
+//     tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3, 
+//                              im->cache_entry.h + 1, GL_RGB, 
+//                              &u, &v, &l_after, 1024);
    if (!tex->pt)
      {
         free(tex);

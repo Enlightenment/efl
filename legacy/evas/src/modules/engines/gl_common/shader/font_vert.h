@@ -1,3 +1,6 @@
+"#ifdef GL_ES\n"
+"precision mediump float;\n"
+"#endif\n"
 "attribute vec4 vertex;\n"
 "attribute vec4 color;\n"
 "attribute vec2 tex_coord;\n"

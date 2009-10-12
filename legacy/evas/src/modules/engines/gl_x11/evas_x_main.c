@@ -59,7 +59,9 @@ eng_window_new(Display *disp,
         config_attrs[7] = 6;
         config_attrs[8] = EGL_BLUE_SIZE;
         config_attrs[9] = 5;
-        config_attrs[10] = EGL_NONE;
+        config_attrs[10] = EGL_DEPTH_SIZE;
+        config_attrs[11] = 16;
+        config_attrs[12] = EGL_NONE;
      }
    else // 24/32bit. no one does 8bpp anymore. and 15bpp... dead
      {

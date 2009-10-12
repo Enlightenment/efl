@@ -234,7 +234,8 @@ void              evas_gl_common_context_flush(Evas_GL_Context *gc);
 
 void              evas_gl_common_shader_program_init(Evas_GL_Program *p,
                                                      Evas_GL_Program_Source *vert,
-                                                     Evas_GL_Program_Source *frag);
+                                                     Evas_GL_Program_Source *frag,
+                                                     const char *name);
     
 void              evas_gl_common_rect_draw(Evas_GL_Context *gc, int x, int y, int w, int h);
 

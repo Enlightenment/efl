@@ -103,17 +103,29 @@ evas_gl_common_context_new(void)
         
         evas_gl_common_shader_program_init(&(gc->shader.rect), 
                                            &(shader_rect_vert_src), 
-                                           &(shader_rect_frag_src));
+                                           &(shader_rect_frag_src),
+                                           "rect");
         evas_gl_common_shader_program_init(&(gc->shader.img),
-                                           &(shader_img_vert_src), 
-                                           &(shader_img_frag_src));
+                                           &(shader_img_vert_src),
+                                           &(shader_img_frag_src),
+                                           "img");
         evas_gl_common_shader_program_init(&(gc->shader.font),
                                            &(shader_font_vert_src), 
-                                           &(shader_font_frag_src));
+                                           &(shader_font_frag_src),
+                                           "font");
         evas_gl_common_shader_program_init(&(gc->shader.yuv),
                                            &(shader_yuv_vert_src), 
-                                           &(shader_yuv_frag_src));
+                                           &(shader_yuv_frag_src),
+                                           "yuv");
         glUseProgram(gc->shader.yuv.prog);
+        // in shader:
+        // uniform sampler2D tex[8];
+        // 
+        // in code:
+        // GLuint texes[8];
+        // GLint loc = glGetUniformLocation(prog, "tex");
+        // glUniform1iv(loc, 8, texes);
+        
         glUniform1i(glGetUniformLocation(gc->shader.yuv.prog, "tex"), 0);
         glUniform1i(glGetUniformLocation(gc->shader.yuv.prog, "texu"), 1);
         glUniform1i(glGetUniformLocation(gc->shader.yuv.prog, "texv"), 2);
