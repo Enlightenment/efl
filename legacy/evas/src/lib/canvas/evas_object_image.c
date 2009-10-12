@@ -2769,10 +2769,22 @@ static int
 evas_object_image_is_opaque(Evas_Object *obj)
 {
    Evas_Object_Image *o;
+   int v;
 
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fully opaque over the entire rectangle it occupies */
    o = (Evas_Object_Image *)(obj->object_data);
+   if (o->cur.has_alpha) return 0;
+   v = (!!!o->cur.fill.w) + (!!!o->cur.fill.h);
+   if (v) return 0;
+   if (!o->engine_data) return 0;
+   v = o->cur.border.l + o->cur.border.r + o->cur.border.t + o->cur.border.b;
+   v += !o->cur.border.fill;
+   if (v > 0) return 0;
+   if (obj->cur.render_op == EVAS_RENDER_COPY) return 1;
+   if (obj->cur.render_op != EVAS_RENDER_BLEND) return 0;
+   return 1;
+/*   
    if ((o->cur.fill.w < 1) || (o->cur.fill.h < 1))
      return 0;
    if (((o->cur.border.l != 0) ||
@@ -2781,12 +2793,10 @@ evas_object_image_is_opaque(Evas_Object *obj)
 	(o->cur.border.b != 0)) &&
        (!o->cur.border.fill)) return 0;
    if (!o->engine_data) return 0;
-   if (obj->cur.render_op == EVAS_RENDER_COPY)
-	return 1;
+   if (obj->cur.render_op == EVAS_RENDER_COPY) return 1;
    if (o->cur.has_alpha) return 0;
-   if (obj->cur.render_op != EVAS_RENDER_BLEND)
-	return 0;
    return 1;
+ */
 }
 
 static int

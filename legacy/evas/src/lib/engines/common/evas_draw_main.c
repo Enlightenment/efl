@@ -30,18 +30,17 @@ evas_common_draw_context_cutouts_add(Cutout_Rects* rects,
 {
    Cutout_Rect* rect;
 
-   if (rects->max < (rects->active + 1))
+   rects->active++;
+   if (rects->max < rects->active)
      {
-	rects->max += 32;
+	rects->max += 1024;
 	rects->rects = realloc(rects->rects, sizeof(Cutout_Rect) * rects->max);
      }
-
-   rect = rects->rects + rects->active;
+   rect = rects->rects + rects->active - 1;
    rect->x = x;
    rect->y = y;
    rect->w = w;
    rect->h = h;
-   rects->active++;
 
    return rect;
 }
@@ -187,8 +186,34 @@ evas_common_draw_context_add_cutout(RGBA_Draw_Context *dc, int x, int y, int w, 
 {
    if (dc->clip.use)
      {
+#if 1 // this is a bit faster
+        int xa1, xa2, xb1, xb2;
+        
+        xa1 = x;
+        xa2 = xa1 + w - 1;
+        xb1 = dc->clip.x;
+        if (xa2 < xb1) return;
+        xb2 = xb1 + dc->clip.w - 1;
+        if (xa1 >= xb2) return;
+        if (xa2 > xb2) xa2 = xb2; 
+        if (xb1 > xa1) xa1 = xb1;
+        x = xa1;
+        w = xa2 - xa1 + 1;
+        
+        xa1 = y;
+        xa2 = xa1 + h - 1;
+        xb1 = dc->clip.y;
+        if (xa2 < xb1) return;
+        xb2 = xb1 + dc->clip.h - 1; 
+        if (xa1 >= xb2) return;
+        if (xa2 > xb2) xa2 = xb2; 
+        if (xb1 > xa1) xa1 = xb1;
+        y = xa1;
+        h = xa2 - xa1 + 1;
+#else        
         RECTS_CLIP_TO_RECT(x, y, w, h,
 			   dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
+#endif        
 	if ((w < 1) || (h < 1)) return;
      }
    evas_common_draw_context_cutouts_add(&dc->cutout, x, y, w, h);

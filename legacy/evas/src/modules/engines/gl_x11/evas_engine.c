@@ -139,9 +139,9 @@ eng_output_resize(void *data, int w, int h)
 static void
 eng_output_tile_size_set(void *data, int w __UNUSED__, int h __UNUSED__)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
+//   Render_Engine *re;
+//
+//   re = (Render_Engine *)data;
 }
 
 static void
@@ -179,9 +179,9 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
 static void
 eng_output_redraws_rect_del(void *data, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
+//   Render_Engine *re;
+//
+//   re = (Render_Engine *)data;
 }
 
 static void
@@ -304,28 +304,28 @@ eng_output_flush(void *data)
 static void
 eng_output_idle_flush(void *data)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
+//   Render_Engine *re;
+//
+//   re = (Render_Engine *)data;
 }
 
 static void
 eng_context_cutout_add(void *data, void *context, int x, int y, int w, int h)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   re->win->gl_context->dc = context;
+//   Render_Engine *re;
+//
+//   re = (Render_Engine *)data;
+//   re->win->gl_context->dc = context;
    evas_common_draw_context_add_cutout(context, x, y, w, h);
 }
 
 static void
 eng_context_cutout_clear(void *data, void *context)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   re->win->gl_context->dc = context;
+//   Render_Engine *re;
+//
+//   re = (Render_Engine *)data;
+//   re->win->gl_context->dc = context;
    evas_common_draw_context_clear_cutouts(context);
 }
 
@@ -623,10 +623,10 @@ eng_gradient_draw(void *data, void *context, void *surface __UNUSED__, void *gra
 static int
 eng_image_alpha_get(void *data, void *image)
 {
-   Render_Engine *re;
+//   Render_Engine *re;
    Evas_GL_Image *im;
 
-   re = (Render_Engine *)data;
+//   re = (Render_Engine *)data;
    if (!image) return 1;
    im = image;
    /* FIXME: can move to gl_common */
@@ -643,10 +643,10 @@ eng_image_alpha_get(void *data, void *image)
 static int
 eng_image_colorspace_get(void *data, void *image)
 {
-   Render_Engine *re;
+//   Render_Engine *re;
    Evas_GL_Image *im;
 
-   re = (Render_Engine *)data;
+//   re = (Render_Engine *)data;
    if (!image) return EVAS_COLORSPACE_ARGB8888;
    im = image;
    return im->cs.space;
@@ -686,27 +686,27 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
 static void *
 eng_image_border_set(void *data, void *image, int l __UNUSED__, int r __UNUSED__, int t __UNUSED__, int b __UNUSED__)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
+//   Render_Engine *re;
+//
+//   re = (Render_Engine *)data;
    return image;
 }
 
 static void
 eng_image_border_get(void *data, void *image __UNUSED__, int *l __UNUSED__, int *r __UNUSED__, int *t __UNUSED__, int *b __UNUSED__)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
+//   Render_Engine *re;
+//
+//   re = (Render_Engine *)data;
 }
 
 static char *
 eng_image_comment_get(void *data, void *image, char *key __UNUSED__)
 {
-   Render_Engine *re;
+//   Render_Engine *re;
    Evas_GL_Image *im;
 
-   re = (Render_Engine *)data;
+//   re = (Render_Engine *)data;
    if (!image) return NULL;
    im = image;
    return im->im->info.comment;
@@ -715,10 +715,10 @@ eng_image_comment_get(void *data, void *image, char *key __UNUSED__)
 static char *
 eng_image_format_get(void *data, void *image)
 {
-   Render_Engine *re;
+//   Render_Engine *re;
    Evas_GL_Image *im;
 
-   re = (Render_Engine *)data;
+//   re = (Render_Engine *)data;
    im = image;
    return NULL;
 }
@@ -823,9 +823,9 @@ eng_image_free(void *data, void *image)
 static void
 eng_image_size_get(void *data, void *image, int *w, int *h)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
+//   Render_Engine *re;
+//
+//   re = (Render_Engine *)data;
    if (!image)
      {
 	*w = 0;
