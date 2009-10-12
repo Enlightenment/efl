@@ -26,6 +26,7 @@ struct _Widget_Data
 Elm_Genlist_Item_Class itc;
 
 static void _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent);
+static void _do_anchors(Evas_Object *obj, const char *path);
 
 /***  ELEMENTARY WIDGET  ***/
 static void
@@ -213,6 +214,7 @@ _anchor_clicked(void *data, Evas_Object *obj, void *event_info)
    eina_stringshare_del(p);
 }
 
+static void 
 _do_anchors(Evas_Object *obj, const char *path)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -257,7 +259,7 @@ _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent)
    char *real;
    Eina_List *files = NULL, *dirs = NULL, *l;
 
-   if (!wd || !ecore_file_is_dir(path)) return;
+   if ((!wd) || (!ecore_file_is_dir(path))) return;
 
    dir = opendir(path);
    if (!dir) return;
@@ -372,11 +374,11 @@ elm_fileselector_add(Evas_Object *parent)
    evas_object_show(bt);
 
    // genlist
-   itc.item_style     = "default";
+   itc.item_style = "default";
    itc.func.label_get = _itc_label_get;
-   itc.func.icon_get  = _itc_icon_get;
+   itc.func.icon_get = _itc_icon_get;
    itc.func.state_get = _itc_state_get;
-   itc.func.del       = _itc_del;
+   itc.func.del = _itc_del;
 
    wd->list = elm_genlist_add(parent);
    evas_object_size_hint_align_set(wd->list, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -439,7 +441,6 @@ elm_fileselector_add(Evas_Object *parent)
    //~ evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _show, obj);
    //~ evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       //~ _changed_size_hints, obj);
-				       
 
    _sizing_eval(obj);
    return obj;
@@ -506,6 +507,7 @@ elm_fileselector_selected_get(Evas_Object *obj)
      {
 	const char *name;
 	char buf[PATH_MAX];
+
 	name = elm_entry_entry_get(wd->entry2);
 	//TODO remove <br>
 	snprintf(buf, sizeof(buf), "%s/%s", wd->path, name);
