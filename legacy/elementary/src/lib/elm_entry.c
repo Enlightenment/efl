@@ -661,10 +661,9 @@ _text_to_mkup(const char *text)
    if (!text) return NULL;
    for (;;)
      {
-	// FIXME: use evas_string_char_next_get()
 	pos = pos2;
-	ch = evas_common_font_utf8_get_next((unsigned char *)(text), &pos2);
-	if (ch <= 0) break;
+        pos2 = evas_string_char_next_get((unsigned char *)(text), pos2, &ch);
+        if ((ch <= 0) || (pos2 <= 0)) break;
 	if (ch == '\n') 
           str = _str_append(str, "<br>", &str_len, &str_alloc);
 	else if (ch == '\t') 
