@@ -1156,7 +1156,7 @@ _pan_add(Evas_Object *obj)
 
    _pan_sc.add(obj);
    cd = evas_object_smart_data_get(obj);
-   sd = calloc(1, sizeof(Pan));
+   sd = ELM_NEW(Pan);
    if (!sd) return;
    sd->__clipped_data = *cd;
    free(cd);
