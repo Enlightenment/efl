@@ -299,8 +299,8 @@ _menu_item_select(void *data, Evas_Object *obj, const char *emission, const char
      {
 	if (!it->open)
 	  _submenu_open(it, NULL, NULL, NULL);
-        else
-	   _submenu_hide(it);
+	else
+	  _submenu_hide(it);
      }
    else
      _menu_hide(it->menu, NULL, NULL);

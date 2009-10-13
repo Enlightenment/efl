@@ -58,16 +58,16 @@ _start(void *data, Evas_Object *obj, void *event_info)
 {
    elm_slideshow_timeout_set(slideshow, (int)elm_spinner_value_get(data));
 
-   elm_widget_disabled_set(bt_start, 1);
-   elm_widget_disabled_set(bt_stop, 0);
+   elm_object_disabled_set(bt_start, 1);
+   elm_object_disabled_set(bt_stop, 0);
 }
 
 static void
 _stop(void *data, Evas_Object *obj, void *event_info)
 {
    elm_slideshow_timeout_set(slideshow, 0);
-   elm_widget_disabled_set(bt_start, 0);
-   elm_widget_disabled_set(bt_stop, 1);
+   elm_object_disabled_set(bt_start, 0);
+   elm_object_disabled_set(bt_stop, 1);
 }
 
 static void
@@ -178,7 +178,7 @@ test_slideshow(void *data, Evas_Object *obj, void *event_info)
    elm_button_label_set(bt, "Stop");
    evas_object_smart_callback_add(bt, "clicked", _stop, spin);
    elm_box_pack_end(bx, bt);
-   elm_widget_disabled_set(bt, 1);
+   elm_object_disabled_set(bt, 1);
    evas_object_show(bt);
 
 
