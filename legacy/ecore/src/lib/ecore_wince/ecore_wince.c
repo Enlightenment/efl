@@ -67,11 +67,11 @@ ecore_wince_init()
 {
    WNDCLASS wc;
 
-   if (++_ecore_win32_init_count != 1)
-     return _ecore_win32_init_count;
+   if (++_ecore_wince_init_count != 1)
+     return _ecore_wince_init_count;
 
    if (!eina_init())
-     return --_ecore_win32_init_count;
+     return --_ecore_wince_init_count;
 
    eina_log_print_cb_set(_ecore_wince_error_print_cb, NULL);
    _ecore_wince_log_dom_global = eina_log_domain_register("ecore_wince", EINA_COLOR_LIGHTBLUE);
@@ -129,15 +129,15 @@ ecore_wince_init()
    return _ecore_wince_init_count;
 
  free_library:
-   FreeLibrary(_ecore_win32_instance);
+   FreeLibrary(_ecore_wince_instance);
  shutdown_ecore_event:
    ecore_event_shutdown();
  unregister_log_domain:
-   eina_log_domain_unregister(_ecore_win32_log_dom_global);
+   eina_log_domain_unregister(_ecore_wince_log_dom_global);
  shutdown_eina:
    eina_shutdown();
 
-   return --_ecore_win32_init_count;
+   return --_ecore_wince_init_count;
 }
 
 int
