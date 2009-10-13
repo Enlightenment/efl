@@ -10,13 +10,13 @@ evas_gl_common_image_load(Evas_GL_Context *gc, const char *file, const char *key
    im_im = evas_common_load_image_from_file(file, key, lo);
    if (!im_im) return NULL;
 
-   EINA_LIST_FOREACH(gc->images, l, im)
+   EINA_LIST_FOREACH(gc->shared->images, l, im)
      {
 	if (im->im == im_im)
 	  {
              evas_cache_image_drop(&im_im->cache_entry);
-	     gc->images = eina_list_remove_list(gc->images, l);
-	     gc->images = eina_list_prepend(gc->images, im);
+	     gc->shared->images = eina_list_remove_list(gc->shared->images, l);
+	     gc->shared->images = eina_list_prepend(gc->shared->images, im);
 	     im->references++;
 	     return im;
 	  }
@@ -31,7 +31,7 @@ evas_gl_common_image_load(Evas_GL_Context *gc, const char *file, const char *key
    im->cached = 1;
    im->cs.space = EVAS_COLORSPACE_ARGB8888;
    if (lo) im->load_opts = *lo;
-   gc->images = eina_list_prepend(gc->images, im);
+   gc->shared->images = eina_list_prepend(gc->shared->images, im);
    return im;
 }
 
@@ -41,14 +41,14 @@ evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, DATA32 *da
    Evas_GL_Image *im;
    Eina_List *l;
 
-   EINA_LIST_FOREACH(gc->images, l, im)
+   EINA_LIST_FOREACH(gc->shared->images, l, im)
      {
 	if (((void *)(im->im->image.data) == (void *)data) &&
 	    (im->im->cache_entry.w == w) &&
 	    (im->im->cache_entry.h == h))
 	  {
-	     gc->images = eina_list_remove_list(gc->images, l);
-	     gc->images = eina_list_prepend(gc->images, im);
+	     gc->shared->images = eina_list_remove_list(gc->shared->images, l);
+	     gc->shared->images = eina_list_prepend(gc->shared->images, im);
 	     im->references++;
 	     return im;
 	  }
@@ -82,7 +82,7 @@ evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, DATA32 *da
      }
    /*
     im->cached = 1;
-    gc->images = eina_list_prepend(gc->images, im);
+    gc->shared->images = eina_list_prepend(gc->shared->images, im);
     */
    return im;
 }
@@ -171,7 +171,7 @@ evas_gl_common_image_free(Evas_GL_Image *im)
      {
 	if (!im->cs.no_free) free(im->cs.data);
      }
-   if (im->cached) im->gc->images = eina_list_remove(im->gc->images, im);
+   if (im->cached) im->gc->shared->images = eina_list_remove(im->gc->shared->images, im);
    if (im->im) evas_cache_image_drop(&im->im->cache_entry);
    if (im->tex) evas_gl_common_texture_free(im->tex);
    free(im);

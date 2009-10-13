@@ -103,12 +103,14 @@ eng_setup(Evas *e, void *in)
 				 info->info.depth,
 				 e->output.w,
 				 e->output.h);
+        
      }
    if (!e->engine.data.output) return 0;
    if (!e->engine.data.context)
      e->engine.data.context =
      e->engine.func->context_new(e->engine.data.output);
-
+   eng_window_use(re->win);
+   
    return 1;
 }
 
@@ -133,6 +135,7 @@ eng_output_resize(void *data, int w, int h)
    re = (Render_Engine *)data;
    re->win->w = w;
    re->win->h = h;
+   eng_window_use(re->win);
    evas_gl_common_context_resize(re->win->gl_context, w, h);
 }
 
@@ -275,6 +278,7 @@ eng_output_flush(void *data)
    re->win->draw.drew = 0;
    eng_window_use(re->win);
 
+//   glFlush();
 # if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
 #else

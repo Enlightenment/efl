@@ -6,7 +6,7 @@ static Evas_GL_X11_Window *_evas_gl_x11_window = NULL;
 static EGLContext context = EGL_NO_CONTEXT;
 #else
 // FIXME: this will only work for 1 display connection (glx land can have > 1)
-static GLXContext context = NULL;
+static GLXContext context = 0;
 #endif
 
 XVisualInfo *_evas_gl_x11_vi = NULL;
@@ -133,11 +133,19 @@ eng_window_new(Display *disp,
      }
 // GLX   
 #else
+
+#if 1
    if (!context)
      context = glXCreateContext(disp, gw->visualinfo, NULL, GL_TRUE);
    gw->context = context;
+#else   
+   gw->context = glXCreateContext(disp, gw->visualinfo, context, GL_TRUE);
+   if (!context) context = gw->context;
+#endif   
+   
    glXMakeCurrent(gw->disp, gw->win, gw->context);
 #endif
+   _evas_gl_x11_window = gw;
    
    gw->gl_context = evas_gl_common_context_new();
    if (!gw->gl_context)
@@ -145,6 +153,7 @@ eng_window_new(Display *disp,
 	free(gw);
 	return NULL;
      }
+   evas_gl_common_context_use(gw->gl_context);
    evas_gl_common_context_resize(gw->gl_context, w, h);
    return gw;
 }
@@ -157,7 +166,7 @@ eng_window_free(Evas_GL_X11_Window *gw)
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    if (gw->egl_surface[0] != EGL_NO_SURFACE)
      eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
-#else   
+#else
    // FIXME: refcount context   
    //   glXDestroyContext(gw->disp, gw->context);
 #endif

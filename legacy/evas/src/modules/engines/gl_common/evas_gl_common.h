@@ -48,6 +48,7 @@
 
 typedef struct _Evas_GL_Program                      Evas_GL_Program;
 typedef struct _Evas_GL_Program_Source               Evas_GL_Program_Source;
+typedef struct _Evas_GL_Shared                       Evas_GL_Shared;
 typedef struct _Evas_GL_Context                      Evas_GL_Context;
 typedef struct _Evas_GL_Texture_Pool                 Evas_GL_Texture_Pool;
 typedef struct _Evas_GL_Texture                      Evas_GL_Texture;
@@ -73,18 +74,9 @@ struct _Evas_GL_Program_Source
    int bin_size;
 };
 
-struct _Evas_GL_Context
+struct _Evas_GL_Shared
 {
-   int                references;
-   int                w, h;
-   RGBA_Draw_Context  *dc;
-   
    Eina_List          *images;
-
-   struct {
-      Eina_List       *whole;
-      Eina_List       *atlas[33][3];
-   } tex;
    
    struct {
       GLint max_texture_units;
@@ -92,12 +84,46 @@ struct _Evas_GL_Context
       Eina_Bool tex_npo2 : 1;
       Eina_Bool tex_rect : 1;
    } info;
+   
+   struct {
+      Eina_List       *whole;
+      Eina_List       *atlas[33][3];
+   } tex;
+   
+   struct {
+      Evas_GL_Program  rect, img, font, yuv;
+   } shader;
+   int references;
+   int w, h;
+};
+
+struct _Evas_GL_Context
+{
+   int                references;
+   int                w, h;
+   RGBA_Draw_Context  *dc;
+   
+   Evas_GL_Shared     *shared;
+/*   
+   Eina_List          *images;
+
+   struct {
+      Eina_List       *whole;
+      Eina_List       *atlas[33][3];
+   } tex;
+   struct {
+      GLint max_texture_units;
+      GLint max_texture_size;
+      Eina_Bool tex_npo2 : 1;
+      Eina_Bool tex_rect : 1;
+   } info;
+ */
    struct {
       int             x, y, w, h;
       Eina_Bool       active : 1;
    } clip;
    struct {
-      Evas_GL_Program rect, img, font, yuv;
+/*      Evas_GL_Program rect, img, font, yuv;*/
       GLuint          cur_prog;
       GLuint          cur_tex, cur_texu, cur_texv;
       Eina_Bool       smooth : 1;
@@ -121,7 +147,6 @@ struct _Evas_GL_Context
    struct {
       Eina_Bool size : 1;
    } change;
-   Eina_Bool checked : 1;
 };
 
 struct _Evas_GL_Texture_Pool
@@ -141,6 +166,7 @@ struct _Evas_GL_Texture
    Evas_GL_Context *gc;
    Evas_GL_Texture_Pool *pt, *ptu, *ptv;
    int              x, y, w, h;
+   double           sx1, sy1, sx2, sy2;
    int              references;
 };
 

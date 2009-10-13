@@ -19,8 +19,7 @@ evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
    j = fg->glyph_out->bitmap.pitch;
    if (j < w) j = w;
 
-   /* bug bug! glTexSubImage2D need a multiple of 4 pixels horizontally! :( */
-   nw = ((w + 3) / 4 ) * 4;
+   nw = w;
    ndata = alloca(nw *h);
    if (!ndata) return NULL;
    if (fg->glyph_out->bitmap.num_grays == 256)
@@ -82,6 +81,10 @@ evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
 //   fh = h;
    fh = fg->fi->max_h;
    tex = evas_gl_common_texture_alpha_new(gc, ndata, w, h, fh);
+   tex->sx1 = ((double)(tex->x)) / (double)tex->pt->w;
+   tex->sy1 = ((double)(tex->y)) / (double)tex->pt->h;
+   tex->sx2 = ((double)(tex->x + tex->w)) / (double)tex->pt->w;
+   tex->sy2 = ((double)(tex->y + tex->h)) / (double)tex->pt->h;
    return tex;
 }
 
@@ -129,7 +132,8 @@ evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface __UNUSED__, RGBA_Dr
              if ((nx == x) && (ny == y) && (nw == tex->w) && (nh == tex->h))
                {
                   evas_gl_common_context_font_push(gc, tex,
-                                                   sx, sy, sw, sh,
+                                                   0.0, 0.0, 0.0, 0.0,
+//                                                   sx, sy, sw, sh,
                                                    x, y, tex->w, tex->h,
                                                    r, g, b, a);
                   return;
@@ -146,7 +150,8 @@ evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface __UNUSED__, RGBA_Dr
         else
           {
              evas_gl_common_context_font_push(gc, tex, 
-                                              sx, sy, sw, sh,
+                                              0.0, 0.0, 0.0, 0.0,
+//                                              sx, sy, sw, sh,
                                               x, y, tex->w, tex->h,
                                               r, g, b, a);
           }
@@ -174,7 +179,8 @@ evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface __UNUSED__, RGBA_Dr
         if ((nx == x) && (ny == y) && (nw == tex->w) && (nh == tex->h))
           {
              evas_gl_common_context_font_push(gc, tex,
-                                              sx, sy, sw, sh,
+                                              0.0, 0.0, 0.0, 0.0,
+//                                              sx, sy, sw, sh,
                                               x, y, tex->w, tex->h,
                                               r, g, b, a);
              continue;

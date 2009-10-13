@@ -1,9 +1,9 @@
 #include "evas_gl_private.h"
-
-static void _evas_gl_common_viewport_set(Evas_GL_Context *gc);
+  
 static void shader_array_flush(Evas_GL_Context *gc);
 
 static Evas_GL_Context *_evas_gl_common_context = NULL;
+static Evas_GL_Shared *shared = NULL;
 
 void
 glerr(const char *file, const char *func, int line, const char *op)
@@ -32,16 +32,76 @@ glerr(const char *file, const char *func, int line, const char *op)
      }
 }
 
+static void
+matrix_ident(GLfloat *m)
+{
+   memset(m, 0, 16 * sizeof(GLfloat));
+   m[0] = m[5] = m[10] = m[15] = 1.0;
+}
+
+static void
+matrix_ortho(GLfloat *m, GLfloat l, GLfloat r, GLfloat t, GLfloat b, GLfloat near, GLfloat far)
+{
+   m[0] = 2.0 / (r - l);
+   m[1] = m[2] = m[3] = 0.0;
+   
+   m[4] = 0.0;
+   m[5] = 2.0 / (t - b);
+   m[6] = m[7] = 0.0;
+   
+   m[8] = m[9] = 0.0;
+   m[10] = -(2.0 / (far - near));
+   m[11] = 0.0;
+   
+   m[12] = -((r + l)/(r - l));
+   m[13] = -((t + b)/(t - b));
+   m[14] = -((near + far)/(far - near));
+   m[15] = 1.0;
+}
+
+static void
+_evas_gl_common_viewport_set(Evas_GL_Context *gc)
+{
+   GLfloat proj[16];
+
+   if ((!gc->change.size) || 
+       ((gc->shared->w == gc->w) && (gc->shared->h == gc->h)))
+     return;
+   gc->shared->w = gc->w;
+   gc->shared->h = gc->h;
+   gc->change.size = 0;
+   
+   glViewport(0, 0, gc->w, gc->h);
+   
+   matrix_ident(proj);
+   matrix_ortho(proj, 0, gc->w, 0, gc->h, -1.0, 1.0);
+   
+   glUseProgram(gc->shared->shader.rect.prog);
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.rect.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   glUseProgram(gc->shared->shader.img.prog);
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.img.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   glUseProgram(gc->shared->shader.font.prog);
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.font.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   glUseProgram(gc->shared->shader.yuv.prog);
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.yuv.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+}
+
 Evas_GL_Context *
 evas_gl_common_context_new(void)
 {
    Evas_GL_Context *gc;
 
+#if 1
    if (_evas_gl_common_context)
      {
 	_evas_gl_common_context->references++;
 	return _evas_gl_common_context;
      }
+#endif   
    gc = calloc(1, sizeof(Evas_GL_Context));
    if (!gc) return NULL;
 
@@ -49,37 +109,38 @@ evas_gl_common_context_new(void)
    
    _evas_gl_common_context = gc;
 
-   if (!gc->checked)
+   if (!shared)
      {
         GLint linked;
         unsigned int pixel = 0xffffffff;
         const GLubyte *ext;
-        
+
+        shared = calloc(1, sizeof(Evas_GL_Shared));
         ext = glGetString(GL_EXTENSIONS);
         if (ext)
           {
              fprintf(stderr, "EXT:\n%s\n", ext);
              if ((strstr(ext, "GL_ARB_texture_non_power_of_two")) ||
                  (strstr(ext, "OES_texture_npot")))
-               gc->info.tex_npo2 = 1;
+               shared->info.tex_npo2 = 1;
              if ((strstr(ext, "GL_NV_texture_rectangle")) ||
                  (strstr(ext, "GL_EXT_texture_rectangle")))
-               gc->info.tex_rect = 1;
+               shared->info.tex_rect = 1;
           }
         glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS,
-                      &(gc->info.max_texture_units));
+                      &(shared->info.max_texture_units));
         glGetIntegerv(GL_MAX_TEXTURE_SIZE,
-                      &(gc->info.max_texture_size));
+                      &(shared->info.max_texture_size));
         
         fprintf(stderr, "max tex size %ix%i\n"
                 "max units %i\n"
                 "non-power-2 tex %i\n"
                 "rect tex %i\n"
                 , 
-                gc->info.max_texture_size, gc->info.max_texture_size,
-                gc->info.max_texture_units,
-                (int)gc->info.tex_npo2,
-                (int)gc->info.tex_rect
+                shared->info.max_texture_size, shared->info.max_texture_size,
+                shared->info.max_texture_units,
+                (int)shared->info.tex_npo2,
+                (int)shared->info.tex_rect
                 );
         
         glDisable(GL_DEPTH_TEST);
@@ -101,29 +162,32 @@ evas_gl_common_context_new(void)
         glEnableVertexAttribArray(SHAD_COLOR);
         glEnableVertexAttribArray(SHAD_TEXUV);
         
-        evas_gl_common_shader_program_init(&(gc->shader.rect), 
+        evas_gl_common_shader_program_init(&(shared->shader.rect), 
                                            &(shader_rect_vert_src), 
                                            &(shader_rect_frag_src),
                                            "rect");
-        evas_gl_common_shader_program_init(&(gc->shader.img),
+        evas_gl_common_shader_program_init(&(shared->shader.img),
                                            &(shader_img_vert_src),
                                            &(shader_img_frag_src),
                                            "img");
-        evas_gl_common_shader_program_init(&(gc->shader.font),
+        evas_gl_common_shader_program_init(&(shared->shader.font),
                                            &(shader_font_vert_src), 
                                            &(shader_font_frag_src),
                                            "font");
 #if defined (GLES_VARIETY_S3C6410)
-        evas_gl_common_shader_program_init(&(gc->shader.yuv),
+        evas_gl_common_shader_program_init(&(shared->shader.yuv),
                                            &(shader_img_vert_src),
                                            &(shader_img_frag_src),
                                            "yuv");
 #else        
-        evas_gl_common_shader_program_init(&(gc->shader.yuv),
+        evas_gl_common_shader_program_init(&(shared->shader.yuv),
                                            &(shader_yuv_vert_src), 
                                            &(shader_yuv_frag_src),
                                            "yuv");
-        glUseProgram(gc->shader.yuv.prog);
+        glUseProgram(shared->shader.yuv.prog);
+        glUniform1i(glGetUniformLocation(shared->shader.yuv.prog, "tex"), 0);
+        glUniform1i(glGetUniformLocation(shared->shader.yuv.prog, "texu"), 1);
+        glUniform1i(glGetUniformLocation(shared->shader.yuv.prog, "texv"), 2);
 #endif        
         // in shader:
         // uniform sampler2D tex[8];
@@ -132,13 +196,10 @@ evas_gl_common_context_new(void)
         // GLuint texes[8];
         // GLint loc = glGetUniformLocation(prog, "tex");
         // glUniform1iv(loc, 8, texes);
-        
-        glUniform1i(glGetUniformLocation(gc->shader.yuv.prog, "tex"), 0);
-        glUniform1i(glGetUniformLocation(gc->shader.yuv.prog, "texu"), 1);
-        glUniform1i(glGetUniformLocation(gc->shader.yuv.prog, "texv"), 2);
-        _evas_gl_common_viewport_set(gc);
-        gc->checked = 1;
      }
+   gc->shared = shared;
+   gc->shared->references++;
+   _evas_gl_common_viewport_set(gc);
    
    return gc;
 }
@@ -150,23 +211,29 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
    
    gc->references--;
    if (gc->references > 0) return;
-   while (gc->images)
+   gc->shared->references--;
+   if (gc->shared->references == 0)
      {
-        evas_gl_common_image_free(gc->images->data);
-     }
-   while (gc->tex.whole)
-     {
-        evas_gl_common_texture_free(gc->tex.whole->data);
-     }
-   for (i = 0; i < 33; i++)
-     {
-        for (j = 0; j < 3; j++)
+        while (gc->shared->images)
           {
-             while (gc->tex.atlas[i][j])
-               evas_gl_common_texture_free(gc->tex.atlas[i][j]);
+             evas_gl_common_image_free(gc->shared->images->data);
           }
+        while (gc->shared->tex.whole)
+          {
+             evas_gl_common_texture_free(gc->shared->tex.whole->data);
+          }
+        for (i = 0; i < 33; i++)
+          {
+             for (j = 0; j < 3; j++)
+               {
+                  while (gc->shared->tex.atlas[i][j])
+                    evas_gl_common_texture_free(gc->shared->tex.atlas[i][j]);
+               }
+          }
+        free(gc->shared);
+        shared = NULL;
+        // FIXME: free shader.rect.prog etc. etc.
      }
-   // FIXME: free shader.rect.prog etc. etc.
    
    free(gc->array.vertex);
    free(gc->array.color);
@@ -181,8 +248,9 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
 void
 evas_gl_common_context_use(Evas_GL_Context *gc)
 {
-   if (_evas_gl_common_context == gc) return;
-//   _evas_gl_common_context = gc;
+//   if (_evas_gl_common_context == gc) return;
+   _evas_gl_common_context = gc;
+   _evas_gl_common_viewport_set(gc);
 }
 
 void
@@ -247,13 +315,13 @@ evas_gl_common_context_rectangle_push(Evas_GL_Context *gc,
    
    if (a < 255) blend = 1;
    if ((gc->shader.cur_tex != 0)
-       || (gc->shader.cur_prog != gc->shader.rect.prog)
+       || (gc->shader.cur_prog != gc->shared->shader.rect.prog)
        || (gc->shader.blend != blend)
        )
      {
         shader_array_flush(gc);
         gc->shader.cur_tex = 0;
-        gc->shader.cur_prog = gc->shader.rect.prog;
+        gc->shader.cur_prog = gc->shared->shader.rect.prog;
         gc->shader.blend = blend;
      }
    
@@ -297,14 +365,14 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
    if (a < 255) blend = 1;
    
    if ((gc->shader.cur_tex != tex->pt->texture)
-       || (gc->shader.cur_prog != gc->shader.img.prog)
+       || (gc->shader.cur_prog != gc->shared->shader.img.prog)
        || (gc->shader.smooth != smooth)
        || (gc->shader.blend != blend)
        )
      {
         shader_array_flush(gc);
         gc->shader.cur_tex = tex->pt->texture;
-        gc->shader.cur_prog = gc->shader.img.prog;
+        gc->shader.cur_prog = gc->shared->shader.img.prog;
         gc->shader.smooth = smooth;
         gc->shader.blend = blend;
      }
@@ -353,14 +421,14 @@ evas_gl_common_context_font_push(Evas_GL_Context *gc,
    GLfloat rr, gg, bb, aa, tx1, tx2, ty1, ty2;
 
    if ((gc->shader.cur_tex != tex->pt->texture)
-       || (gc->shader.cur_prog != gc->shader.font.prog)
+       || (gc->shader.cur_prog != gc->shared->shader.font.prog)
        || (gc->shader.smooth != 0)
        || (gc->shader.blend != 1)
        )
      {
         shader_array_flush(gc);
         gc->shader.cur_tex = tex->pt->texture;
-        gc->shader.cur_prog = gc->shader.font.prog;
+        gc->shader.cur_prog = gc->shared->shader.font.prog;
         gc->shader.smooth = 0;
         gc->shader.blend = 1;
      }
@@ -370,10 +438,20 @@ evas_gl_common_context_font_push(Evas_GL_Context *gc,
    gc->array.num += 6;
    _evas_gl_common_context_array_alloc(gc);
 
-   tx1 = ((double)(tex->x) + sx) / (double)tex->pt->w;
-   ty1 = ((double)(tex->y) + sy) / (double)tex->pt->h;
-   tx2 = ((double)(tex->x) + sx + sw) / (double)tex->pt->w;
-   ty2 = ((double)(tex->y) + sy + sh) / (double)tex->pt->h;
+   if (sw == 0.0)
+     {
+        tx1 = tex->sx1;
+        ty1 = tex->sy1;
+        tx2 = tex->sx2;
+        ty2 = tex->sy2;
+     }
+   else
+     {
+        tx1 = ((double)(tex->x) + sx) / (double)tex->pt->w;
+        ty1 = ((double)(tex->y) + sy) / (double)tex->pt->h;
+        tx2 = ((double)(tex->x) + sx + sw) / (double)tex->pt->w;
+        ty2 = ((double)(tex->y) + sy + sh) / (double)tex->pt->h;
+     }
    
    PUSH_VERTEX(x    , y    , 0);
    PUSH_VERTEX(x + w, y    , 0);
@@ -413,7 +491,7 @@ evas_gl_common_context_yuv_push(Evas_GL_Context *gc,
    if (a < 255) blend = 1;
    
    if ((gc->shader.cur_tex != tex->pt->texture)
-       || (gc->shader.cur_prog != gc->shader.yuv.prog)
+       || (gc->shader.cur_prog != gc->shared->shader.yuv.prog)
        || (gc->shader.smooth != smooth)
        || (gc->shader.blend != blend)
        )
@@ -422,7 +500,7 @@ evas_gl_common_context_yuv_push(Evas_GL_Context *gc,
         gc->shader.cur_tex = tex->pt->texture;
         gc->shader.cur_texu = tex->ptu->texture;
         gc->shader.cur_texv = tex->ptv->texture;
-        gc->shader.cur_prog = gc->shader.yuv.prog;
+        gc->shader.cur_prog = gc->shared->shader.yuv.prog;
         gc->shader.smooth = smooth;
         gc->shader.blend = blend;
      }
@@ -577,58 +655,4 @@ shader_array_flush(Evas_GL_Context *gc)
    
    gc->array.num = 0;
    gc->array.alloc = 0;
-}
-
-static void
-matrix_ident(GLfloat *m)
-{
-   memset(m, 0, 16 * sizeof(GLfloat));
-   m[0] = m[5] = m[10] = m[15] = 1.0;
-}
-
-static void
-matrix_ortho(GLfloat *m, GLfloat l, GLfloat r, GLfloat t, GLfloat b, GLfloat near, GLfloat far)
-{
-   m[0] = 2.0 / (r - l);
-   m[1] = m[2] = m[3] = 0.0;
-   
-   m[4] = 0.0;
-   m[5] = 2.0 / (t - b);
-   m[6] = m[7] = 0.0;
-   
-   m[8] = m[9] = 0.0;
-   m[10] = -(2.0 / (far - near));
-   m[11] = 0.0;
-   
-   m[12] = -((r + l)/(r - l));
-   m[13] = -((t + b)/(t - b));
-   m[14] = -((near + far)/(far - near));
-   m[15] = 1.0;
-}
-
-static void
-_evas_gl_common_viewport_set(Evas_GL_Context *gc)
-{
-   GLfloat proj[16];
-   
-   if (!gc->change.size) return;
-   gc->change.size = 0;
-   
-   glViewport(0, 0, gc->w, gc->h);
-   
-   matrix_ident(proj);
-   matrix_ortho(proj, 0, gc->w, 0, gc->h, -1.0, 1.0);
-   
-   glUseProgram(gc->shader.rect.prog);
-   glUniformMatrix4fv(glGetUniformLocation(gc->shader.rect.prog, "mvp"), 1,
-                      GL_FALSE, proj);
-   glUseProgram(gc->shader.img.prog);
-   glUniformMatrix4fv(glGetUniformLocation(gc->shader.img.prog, "mvp"), 1,
-                      GL_FALSE, proj);
-   glUseProgram(gc->shader.font.prog);
-   glUniformMatrix4fv(glGetUniformLocation(gc->shader.font.prog, "mvp"), 1,
-                      GL_FALSE, proj);
-   glUseProgram(gc->shader.yuv.prog);
-   glUniformMatrix4fv(glGetUniformLocation(gc->shader.yuv.prog, "mvp"), 1,
-                      GL_FALSE, proj);
 }

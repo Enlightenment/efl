@@ -18,8 +18,8 @@ _tex_adjust(Evas_GL_Context *gc, int *w, int *h)
    unsigned int n;
    
 // disable - has a bug somewhere   
-//   if (gc->info.tex_npo2) return;
-   /*if (gc->info.tex_rect) return;*/
+//   if (gc->shared->info.tex_npo2) return;
+   /*if (gc->shared->info.tex_rect) return;*/
    *w = _nearest_pow2(*w);
    *h = _nearest_pow2(*h);
 }
@@ -28,7 +28,7 @@ static int
 _tex_round_slot(Evas_GL_Context *gc, int h)
 {
 // disable. has a bug somewhere   
-//   if (!gc->info.tex_npo2)
+//   if (!gc->shared->info.tex_npo2)
      h = _nearest_pow2(h);
    return (h + 15) >> 4;
 }
@@ -132,7 +132,7 @@ _pool_tex_find(Evas_GL_Context *gc, int w, int h, GLuint format, int *u, int *v,
    if ((w > 512) || (h > 512))
      {
         pt = _pool_tex_new(gc, w + 2, h + 1, format);
-        gc->tex.whole = eina_list_prepend(gc->tex.whole, pt);
+        gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, pt);
         pt->slot = -1;
         pt->fslot = -1;
         pt->whole = 1;
@@ -144,19 +144,19 @@ _pool_tex_find(Evas_GL_Context *gc, int w, int h, GLuint format, int *u, int *v,
    
    th = _tex_round_slot(gc, h);
    th2 = _tex_format_index(format);
-   EINA_LIST_FOREACH(gc->tex.atlas[th][th2], l, pt)
+   EINA_LIST_FOREACH(gc->shared->tex.atlas[th][th2], l, pt)
      {
         if (_pool_tex_alloc(pt, format, w, h, u, v, l_after))
           {
-             gc->tex.atlas[th][th2] = 
-               eina_list_remove_list(gc->tex.atlas[th][th2], l);
-             gc->tex.atlas[th][th2] = 
-               eina_list_prepend(gc->tex.atlas[th][th2], pt);
+             gc->shared->tex.atlas[th][th2] = 
+               eina_list_remove_list(gc->shared->tex.atlas[th][th2], l);
+             gc->shared->tex.atlas[th][th2] = 
+               eina_list_prepend(gc->shared->tex.atlas[th][th2], pt);
              return pt;
           }
      }
    pt = _pool_tex_new(gc, atlas_w, h, format);
-   gc->tex.atlas[th][th2] = eina_list_prepend(gc->tex.atlas[th][th2], pt);
+   gc->shared->tex.atlas[th][th2] = eina_list_prepend(gc->shared->tex.atlas[th][th2], pt);
    pt->slot = th;
    pt->fslot = th2;
    *u = 0;
@@ -284,12 +284,12 @@ pt_unref(Evas_GL_Texture_Pool *pt)
    if (pt->references > 0) return;
    if (pt->whole)
      {
-        pt->gc->tex.whole = eina_list_remove(pt->gc->tex.whole, pt);
+        pt->gc->shared->tex.whole = eina_list_remove(pt->gc->shared->tex.whole, pt);
      }
    else
      {
-        pt->gc->tex.atlas [pt->slot][pt->fslot] =
-          eina_list_remove(pt->gc->tex.atlas[pt->slot][pt->fslot], pt);
+        pt->gc->shared->tex.atlas [pt->slot][pt->fslot] =
+          eina_list_remove(pt->gc->shared->tex.atlas[pt->slot][pt->fslot], pt);
      }
    glDeleteTextures(1, &(pt->texture));
    free(pt);
@@ -321,7 +321,8 @@ evas_gl_common_texture_alpha_new(Evas_GL_Context *gc, DATA8 *pixels, int w, int 
    
    tex->gc = gc;
    tex->references = 1;
-   if (tw > gc->info.max_texture_size) tw = gc->info.max_texture_size;
+   if (tw > gc->shared->info.max_texture_size)
+     tw = gc->shared->info.max_texture_size;
    tex->pt = _pool_tex_find(gc, w + 3, fh, GL_ALPHA,
                             &u, &v, &l_after, tw);
    if (!tex->pt)
@@ -349,7 +350,7 @@ evas_gl_common_texture_alpha_update(Evas_GL_Texture *tex, DATA8 *pixels, int w, 
 #ifdef GL_UNPACK_ROW_LENGTH   
    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 #endif   
-   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
    glTexSubImage2D(GL_TEXTURE_2D, 0,
 		   tex->x, tex->y, w, h,
 		   GL_ALPHA, GL_UNSIGNED_BYTE,
@@ -373,17 +374,17 @@ evas_gl_common_texture_yuv_new(Evas_GL_Context *gc, DATA8 **rows, int w, int h)
    tex->gc = gc;
    tex->references = 1;
    tex->pt = _pool_tex_new(gc, w + 1, h  + 1, GL_LUMINANCE);
-   gc->tex.whole = eina_list_prepend(gc->tex.whole, tex->pt);
+   gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, tex->pt);
    tex->pt->slot = -1;
    tex->pt->fslot = -1;
    tex->pt->whole = 1;
    tex->ptu = _pool_tex_new(gc, (w / 2) + 1, (h / 2)  + 1, GL_LUMINANCE);
-   gc->tex.whole = eina_list_prepend(gc->tex.whole, tex->ptu);
+   gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, tex->ptu);
    tex->ptu->slot = -1;
    tex->ptu->fslot = -1;
    tex->ptu->whole = 1;
    tex->ptv = _pool_tex_new(gc, (w / 2) + 1, (h / 2)  + 1, GL_LUMINANCE);
-   gc->tex.whole = eina_list_prepend(gc->tex.whole, tex->ptv);
+   gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, tex->ptv);
    tex->ptv->slot = -1;
    tex->ptv->fslot = -1;
    tex->ptv->whole = 1;
