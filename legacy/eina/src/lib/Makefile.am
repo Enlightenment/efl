@@ -101,6 +101,8 @@ $(builddir)/ eina_amalgamation.c: $(sources_used) Makefile
 	@echo "#include <dlfcn.h>" >> $(builddir)/eina_amalgamation.c
 	@echo "#include <sys/types.h>" >> $(builddir)/eina_amalgamation.c
 	@echo "#include <dirent.h>" >> $(builddir)/eina_amalgamation.c
+	@echo "#include <assert.h>" >> $(builddir)/eina_amalgamation.c
+	@echo "#include <errno.h>" >> $(builddir)/eina_amalgamation.c
 
 	@echo "#ifdef HAVE_EVIL" >> $(builddir)/eina_amalgamation.c
 	@echo "# include <Evil.h>" >> $(builddir)/eina_amalgamation.c
@@ -118,7 +120,7 @@ $(builddir)/ eina_amalgamation.c: $(sources_used) Makefile
 		  file="$$f" ; \
 	   fi ; \
 	   echo "/* file: $$file */" >> $(builddir)/eina_amalgamation.c; \
-	   grep -v -e '^# *include \+.\(config\|eina_[a-z_]\+\|Evil\|stdio\|stdlib\|string\|dlfcn\)[.]h.*' $$file >> $(builddir)/eina_amalgamation.c; \
+	   grep -v -e '^# *include \+.\(config\|eina_[a-z_]\+\|Evil\|stdio\|stdlib\|string\|dlfcn\|dirent\|assert\|errno\)[.]h.*' $$file >> $(builddir)/eina_amalgamation.c; \
 	done
 	@echo "eina_amalgamation.c generated"
 
