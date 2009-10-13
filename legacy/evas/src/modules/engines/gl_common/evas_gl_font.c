@@ -19,7 +19,7 @@ evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
    j = fg->glyph_out->bitmap.pitch;
    if (j < w) j = w;
 
-   nw = w;
+   nw = ((w + 3) / 4) * 4;
    ndata = alloca(nw *h);
    if (!ndata) return NULL;
    if (fg->glyph_out->bitmap.num_grays == 256)

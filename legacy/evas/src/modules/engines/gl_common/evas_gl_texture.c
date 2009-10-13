@@ -350,15 +350,13 @@ evas_gl_common_texture_alpha_update(Evas_GL_Texture *tex, DATA8 *pixels, int w, 
 #ifdef GL_UNPACK_ROW_LENGTH   
    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 #endif   
-   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
    glTexSubImage2D(GL_TEXTURE_2D, 0,
 		   tex->x, tex->y, w, h,
 		   GL_ALPHA, GL_UNSIGNED_BYTE,
 		   pixels);
    if (tex->pt->texture != tex->gc->shader.cur_tex)
-     {
-        glBindTexture(GL_TEXTURE_2D, tex->gc->shader.cur_tex);
-     }
+     glBindTexture(GL_TEXTURE_2D, tex->gc->shader.cur_tex);
 }
 
 Evas_GL_Texture *
