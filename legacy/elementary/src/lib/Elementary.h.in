@@ -959,8 +959,6 @@ extern "C" {
     * "zoom,change" - when auto zoom mode changed zoom level
     */
 
-    EAPI Evas_Object *elm_grid_add(Evas_Object *parent);
-
 #ifdef __cplusplus
 }
 #endif
