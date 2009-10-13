@@ -143,7 +143,10 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
    
    gc->references--;
    if (gc->references > 0) return;
-/*
+   while (gc->images)
+     {
+        evas_gl_common_image_free(gc->images->data);
+     }
    while (gc->tex.whole)
      {
         evas_gl_common_texture_free(gc->tex.whole->data);
@@ -156,11 +159,6 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
                evas_gl_common_texture_free(gc->tex.atlas[i][j]);
           }
      }
-   while (gc->images)
-     {
-        evas_gl_common_image_free(gc->images->data);
-     }
- */
    // FIXME: free shader.rect.prog etc. etc.
    
    free(gc->array.vertex);
