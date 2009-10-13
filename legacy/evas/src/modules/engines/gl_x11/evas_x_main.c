@@ -247,8 +247,9 @@ eng_best_visual_get(Display *disp, int screen)
 #else   
         int _evas_gl_x11_configuration[] =
           {
-             GLX_DOUBLEBUFFER,
-               GLX_RGBA,
+             GLX_RGBA, GLX_DOUBLEBUFFER,
+               GLX_LEVEL, 0,
+               GLX_DEPTH_SIZE, 0,
                GLX_RED_SIZE, 1,
                GLX_GREEN_SIZE,1,
                GLX_BLUE_SIZE, 1,
