@@ -64,7 +64,7 @@ EAPI Eina_Hash * eina_hash_new(Eina_Key_Length key_length_cb,
 			       Eina_Key_Cmp key_cmp_cb,
 			       Eina_Key_Hash key_hash_cb,
 			       Eina_Free_Cb data_free_cb,
-			       int buckets_power_size) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2, 3);
+			       int buckets_power_size) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(2, 3);
 EAPI Eina_Hash * eina_hash_string_djb2_new(Eina_Free_Cb data_free_cb);
 EAPI Eina_Hash * eina_hash_string_superfast_new(Eina_Free_Cb data_free_cb);
 EAPI Eina_Hash * eina_hash_string_small_new(Eina_Free_Cb data_free_cb);
