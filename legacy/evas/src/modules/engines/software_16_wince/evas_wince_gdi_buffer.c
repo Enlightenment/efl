@@ -37,7 +37,7 @@ evas_software_wince_gdi_init(HWND window,
    priv->dc = GetDC(window);
    if (!priv->dc)
      {
-        WARN("[Engine] [WinCE GDI] Can not get DC");
+        fprintf(stderr, "[Engine] [WinCE GDI] Can not get DC\n");
         free(priv);
         return NULL;
      }
@@ -56,7 +56,7 @@ evas_software_wince_gdi_init(HWND window,
    priv->bitmap_info = (BITMAPINFO_16bpp *)malloc(sizeof(BITMAPINFO_16bpp));
    if (!priv->bitmap_info)
      {
-        WARN("[Engine] [WinCE GDI] Can not allocate bitmap info");
+        fprintf(stderr, "[Engine] [WinCE GDI] Can not allocate bitmap info\n");
         ReleaseDC(window, priv->dc);
         free(priv);
         return NULL;
@@ -144,7 +144,7 @@ evas_software_wince_gdi_output_buffer_paste(FB_Output_Buffer *fbob)
    if ((fbob->im->cache_entry.w == priv->width) &&
        (fbob->im->cache_entry.h == priv->height))
      {
-        HDC     dc;
+        HDC dc;
 
         dc = CreateCompatibleDC(priv->dc);
         SelectObject(dc, priv->bitmap);
