@@ -74,7 +74,7 @@ test_progressbar(void *data, Evas_Object *obj, void *event_info)
 
    win = elm_win_add(NULL, "progressbar", ELM_WIN_BASIC);
    elm_win_title_set(win, "Progressbar");
-   evas_object_smart_callback_add(win, "delete-request", 
+   evas_object_smart_callback_add(win, "delete,request", 
                                   my_progressbar_destroy, test);
 
    bg = elm_bg_add(win);

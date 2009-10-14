@@ -82,12 +82,12 @@ my_win_main(void)
    /* set the title of the window - this is in the titlebar */
    elm_win_title_set(win, "Elementary Tests");
 
-   /* set a callback on the window when "delete-request" is emitted as
+   /* set a callback on the window when "delete,request" is emitted as
     * a callback. when this happens my_win_del() is called and the
     * data pointer (first param) is passed the final param here (in this
     * case it is NULL). This is how you can pass specific things to a
     * callback like objects or data layered on top */
-   evas_object_smart_callback_add(win, "delete-request", my_win_del, NULL);
+   evas_object_smart_callback_add(win, "delete,request", my_win_del, NULL);
 
    /* add a background to our window. this just uses the standard theme set
     * background. without a backgorund, you could make a window seem
