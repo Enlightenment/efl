@@ -276,6 +276,9 @@ elm_slideshow_next(Evas_Object *obj)
 
    _end(obj, obj, NULL, NULL);
 
+   if (wd->timer) ecore_timer_del(wd->timer);
+   wd->timer = NULL;
+
    if(!next->o && next->itc->func.get)
      {
 	 next->o = next->itc->func.get((void*)next->data, obj);
@@ -290,9 +293,6 @@ elm_slideshow_next(Evas_Object *obj)
 
    wd->previous = wd->current;
    wd->current = next;
-
-   if (wd->timer) ecore_timer_del(wd->timer);
-   wd->timer = NULL;
 }
 
 /**
@@ -321,6 +321,9 @@ elm_slideshow_previous(Evas_Object *obj)
 
    _end(obj, obj, NULL, NULL);
 
+   if (wd->timer) ecore_timer_del(wd->timer);
+   wd->timer = NULL;
+
    if(!prev->o && prev->itc->func.get)
      {
 	 prev->o = prev->itc->func.get((void*)prev->data, obj);
@@ -334,9 +337,6 @@ elm_slideshow_previous(Evas_Object *obj)
 
    wd->previous = wd->current;
    wd->current = prev;
-
-   if (wd->timer) ecore_timer_del(wd->timer);
-   wd->timer = NULL;
 }
 
 /**

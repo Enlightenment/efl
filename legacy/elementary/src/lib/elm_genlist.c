@@ -2399,6 +2399,80 @@ elm_genlist_item_top_bring_in(Elm_Genlist_Item *it)
 }
 
 /**
+ * Show the given item at the middle
+ *
+ * This causes genlist to jump to the given item @p it and show it (by scrolling),
+ * if it is not fully visible.
+ *
+ * @param it The item
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_item_middle_show(Elm_Genlist_Item *it)
+{
+   Evas_Coord ow, oh;
+
+   if (!it) return;
+   if (it->delete_me) return;
+   if ((it->queued) || (!it->mincalcd))
+     {
+	it->wd->show_item = it;
+        it->wd->bring_in = 1;
+	it->showme = EINA_TRUE;
+	return;
+     }
+   if (it->wd->show_item)
+     {
+	it->wd->show_item->showme = EINA_FALSE;
+	it->wd->show_item = NULL;
+     }
+   evas_object_geometry_get(it->wd->pan_smart, NULL, NULL, &ow, &oh);
+   elm_smart_scroller_child_region_show(it->wd->scr,
+					it->x + it->block->x,
+		         it->y + it->block->y - oh/2 + it->h/2,
+					it->block->w, oh);
+}
+
+
+/**
+ * Bring in the given item at the middle
+ *
+ * This causes genlist to jump to the given item @p it and show it (by scrolling),
+ * if it is not fully visible. This may use animation to do so and take a
+ * period of time
+ *
+ * @param it The item
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_item_middle_bring_in(Elm_Genlist_Item *it)
+{
+   Evas_Coord ow, oh;
+
+   if (!it) return;
+   if (it->delete_me) return;
+   if ((it->queued) || (!it->mincalcd))
+     {
+	it->wd->show_item = it;
+        it->wd->bring_in = 1;
+	it->showme = EINA_TRUE;
+	return;
+     }
+   if (it->wd->show_item)
+     {
+	it->wd->show_item->showme = EINA_FALSE;
+	it->wd->show_item = NULL;
+     }
+   evas_object_geometry_get(it->wd->pan_smart, NULL, NULL, &ow, &oh);
+   elm_smart_scroller_region_bring_in(it->wd->scr,
+                                      it->x + it->block->x,
+                                      it->y + it->block->y - oh/2 + it->h/2,
+                                      it->block->w, oh);
+}
+
+/**
  * Delete a given item
  *
  * This deletes the item from genlist and calls the genlist item del class

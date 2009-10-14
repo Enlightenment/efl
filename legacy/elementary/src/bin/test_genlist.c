@@ -62,7 +62,7 @@ _bt50_cb(void *data, Evas_Object *obj, void *event_info)
 static void
 _bt1500_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    elm_genlist_item_bring_in(data);
+    elm_genlist_item_middle_bring_in(data);
 }
 
 void
