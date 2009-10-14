@@ -12,6 +12,8 @@
 #include "Ecore_Con.h"
 #include "ecore_file_private.h"
 
+#ifdef BUILD_ECORE_CON
+
 #define ECORE_MAGIC_FILE_DOWNLOAD_JOB	0xf7427cb8
 
 typedef struct _Ecore_File_Download_Job		Ecore_File_Download_Job;
@@ -46,28 +48,29 @@ static Ecore_Event_Handler	*_url_complete_handler = NULL;
 static Ecore_Event_Handler	*_url_progress_download = NULL;
 static Eina_List		*_job_list;
 
+#endif /* BUILD_ECORE_CON */
+
 int
 ecore_file_download_init(void)
 {
-#ifndef _WIN32
+#ifdef BUILD_ECORE_CON
   if (!ecore_con_url_init())
     return 0;
 
-#ifdef HAVE_CURL
+# ifdef HAVE_CURL
   _url_complete_handler = ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _ecore_file_download_url_complete_cb, NULL);
   _url_progress_download = ecore_event_handler_add(ECORE_CON_EVENT_URL_PROGRESS, _ecore_file_download_url_progress_cb, NULL);
-#endif
+# endif
+
+#endif /* BUILD_ECORE_CON */
 
    return 1;
-#else
-   return 0;
-#endif
 }
 
 void
 ecore_file_download_shutdown(void)
 {
-#ifndef _WIN32
+#ifdef BUILD_ECORE_CON
   if (_url_complete_handler)
     ecore_event_handler_del(_url_complete_handler);
   if (_url_progress_download)
@@ -77,16 +80,18 @@ ecore_file_download_shutdown(void)
   ecore_file_download_abort_all();
 
   ecore_con_url_shutdown();
-#endif
+#endif /* BUILD_ECORE_CON */
 }
 
 EAPI void
 ecore_file_download_abort_all(void)
 {
+#ifdef BUILD_ECORE_CON
    Ecore_File_Download_Job *job;
 
    EINA_LIST_FREE(_job_list, job)
 	     _ecore_file_download_abort(job);
+#endif /* BUILD_ECORE_CON */
 }
 
 /**
@@ -107,6 +112,7 @@ ecore_file_download(const char *url, const char *dst,
 		    int (*progress_cb)(void *data, const char *file, long int dltotal, long int dlnow, long int ultotal, long int ulnow),
 		    void *data)
 {
+#ifdef BUILD_ECORE_CON
    char *dir = ecore_file_dir_get(dst);
 
    if (!ecore_file_is_dir(dir))
@@ -129,7 +135,7 @@ ecore_file_download(const char *url, const char *dst,
 	url = strchr(url, '/');
 	return ecore_file_cp(url, dst);
      }
-#ifdef HAVE_CURL
+# ifdef HAVE_CURL
    else if ((!strncmp(url, "http://", 7)) ||
 	    (!strncmp(url, "ftp://", 6)))
      {
@@ -142,16 +148,16 @@ ecore_file_download(const char *url, const char *dst,
 	else
 	  return 0;
      }
-#endif
+# endif
    else
      {
 	return 0;
      }
-#ifndef HAVE_CURL
+#else
    completion_cb = NULL;
    progress_cb = NULL;
    data = NULL;
-#endif
+#endif /* BUILD_ECORE_CON */
 }
 
 /**
@@ -165,16 +171,20 @@ ecore_file_download(const char *url, const char *dst,
 EAPI int
 ecore_file_download_protocol_available(const char *protocol)
 {
+#ifdef BUILD_ECORE_CON
    if (!strncmp(protocol, "file://", 7)) return 1;
-#ifdef HAVE_CURL
+# ifdef HAVE_CURL
    else if (!strncmp(protocol, "http://", 7)) return 1;
    else if (!strncmp(protocol, "ftp://", 6)) return 1;
-#endif
+# endif
+#endif /* BUILD_ECORE_CON */
 
    return 0;
 }
 
-#ifdef HAVE_CURL
+#ifdef BUILD_ECORE_CON
+
+# ifdef HAVE_CURL
 static int
 _ecore_file_download_url_compare_job(const void *data1, const void *data2)
 {
@@ -270,15 +280,16 @@ _ecore_file_download_curl(const char *url, const char *dst,
 
    return job;
 }
-#endif
+# endif
 
 static void
 _ecore_file_download_abort(Ecore_File_Download_Job *job)
 {
-#ifdef HAVE_CURL
+# ifdef HAVE_CURL
    ecore_con_url_destroy(job->url_con);
-#endif  
+# endif  
    fclose(job->file);
    free(job->dst);
    free(job);
 }
+#endif /* BUILD_ECORE_CON */
