@@ -8,7 +8,9 @@ These routines are used for Eet Library interaction
 /**
 
 @mainpage Eet Library Documentation
-@image html  eet.png
+
+@image html  e_big.png
+
 @version @PACKAGE_VERSION@
 @author Carsten Haitzler <raster\@rasterman.com>
 @date 2000-2008
