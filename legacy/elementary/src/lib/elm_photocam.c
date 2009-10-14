@@ -122,6 +122,7 @@ struct _Widget_Data
    Eina_Bool resized : 1;
    Eina_Bool longpressed : 1;
    Eina_Bool on_hold : 1;
+   Eina_Bool paused : 1;
 };
 
 struct _Pan
@@ -538,24 +539,11 @@ _main_preloaded(void *data, Evas *e, Evas_Object *o, void *event_info)
 }
 
 static int
-_zoom_anim(void *data)
+zoom_do(Evas_Object *obj, double t)
 {
-   Evas_Object *obj = data;
    Widget_Data *wd = elm_widget_data_get(obj);
-   double t;
    Evas_Coord xx, yy, ow, oh;
    
-   t = ecore_loop_time_get();
-   if (t >= wd->t_end)
-     {
-        t = 1.0;
-     }
-   else if (wd->t_end > wd->t_start)
-     t = (t - wd->t_start) / (wd->t_end - wd->t_start);
-   else
-     t = 1.0;
-   t = 1.0 - t;
-   t = 1.0 - (t * t);
    wd->size.w = (wd->size.ow * (1.0 - t)) + (wd->size.nw * t);
    wd->size.h = (wd->size.oh * (1.0 - t)) + (wd->size.nh * t);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &ow, &oh);
@@ -578,17 +566,42 @@ _zoom_anim(void *data)
              if (g->dead)
                {
                   wd->grids = eina_list_remove_list(wd->grids, l);
-                  grid_clear(data, g);
+                  grid_clear(obj, g);
                   free(g);
                }
           }
-        wd->nosmooth--;
-        if (wd->nosmooth == 0) _smooth_update(data);
-        wd->zoom_animator = NULL;
-        evas_object_smart_callback_call(data, "zoom,stop", NULL);
         return 0;
      }
    return 1;
+}
+
+
+static int
+_zoom_anim(void *data)
+{
+   Evas_Object *obj = data;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   double t;
+   int go;
+   
+   t = ecore_loop_time_get();
+   if (t >= wd->t_end)
+     t = 1.0;
+   else if (wd->t_end > wd->t_start)
+     t = (t - wd->t_start) / (wd->t_end - wd->t_start);
+   else
+     t = 1.0;
+   t = 1.0 - t;
+   t = 1.0 - (t * t);
+   go = zoom_do(obj, t);
+   if (!go)
+     {
+        wd->nosmooth--;
+        if (wd->nosmooth == 0) _smooth_update(data);
+        wd->zoom_animator = NULL;
+        evas_object_smart_callback_call(obj, "zoom,stop", NULL);
+     }
+   return go;
 }
 
 static void
@@ -1210,13 +1223,6 @@ elm_photocam_zoom_set(Evas_Object *obj, double zoom)
           }
      }
    done:
-   if (!wd->zoom_animator)
-     {
-        wd->zoom_animator = ecore_animator_add(_zoom_anim, obj);
-        wd->nosmooth++;
-        if (wd->nosmooth == 1) _smooth_update(obj);
-        started = 1;
-     }
    wd->t_start = ecore_loop_time_get();
    wd->t_end = wd->t_start + _elm_config->zoom_friction;
    if ((wd->size.w > 0) && (wd->size.h > 0))
@@ -1233,18 +1239,38 @@ elm_photocam_zoom_set(Evas_Object *obj, double zoom)
    if (rh > wd->size.h) wd->size.spos.y = 0.5;
    if (wd->size.spos.x > 1.0) wd->size.spos.x = 1.0;
    if (wd->size.spos.y > 1.0) wd->size.spos.y = 1.0;
-   an = wd->zoom_animator;
-   if (!_zoom_anim(obj))
+   if (wd->paused)
      {
-        ecore_animator_del(an);
-        an = NULL;
+        zoom_do(obj, 1.0);
+     }
+   else
+     {
+        if (!wd->zoom_animator)
+          {
+             wd->zoom_animator = ecore_animator_add(_zoom_anim, obj);
+             wd->nosmooth++;
+             if (wd->nosmooth == 1) _smooth_update(obj);
+             started = 1;
+          }
+     }
+   an = wd->zoom_animator;
+   if (an)
+     {
+        if (!_zoom_anim(obj))
+          {
+             ecore_animator_del(an);
+             an = NULL;
+          }
      }
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
-   if (started)
-     evas_object_smart_callback_call(obj, "zoom,start", NULL);
-   if (!an)
-     evas_object_smart_callback_call(obj, "zoom,stop", NULL);
+   if (!wd->paused)
+     {
+        if (started)
+          evas_object_smart_callback_call(obj, "zoom,start", NULL);
+        if (!an)
+          evas_object_smart_callback_call(obj, "zoom,stop", NULL);
+     }
    if (zoom_changed)
      evas_object_smart_callback_call(obj, "zoom,change", NULL);
 }
@@ -1417,9 +1443,10 @@ elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h)
    if (wd->zoom_animator)
      {
         wd->nosmooth--;
-        if (wd->nosmooth == 0) _smooth_update(obj);
         ecore_animator_del(wd->zoom_animator);
         wd->zoom_animator = NULL;
+        zoom_do(obj, 1.0);
+        evas_object_smart_callback_call(obj, "zoom,stop", NULL);
      }
    elm_smart_scroller_child_region_show(wd->scr, rx, ry, rw, rh);
 }
@@ -1458,6 +1485,51 @@ elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h)
         if (wd->nosmooth == 0) _smooth_update(obj);
         ecore_animator_del(wd->zoom_animator);
         wd->zoom_animator = NULL;
-     }
+        zoom_do(obj, 1.0);
+        evas_object_smart_callback_call(obj, "zoom,stop", NULL);
+    }
    elm_smart_scroller_region_bring_in(wd->scr, rx, ry, rw, rh);
+}
+
+/**
+ * Set the paused state for photocam
+ * 
+ * This sets the paused state to on (1) or off (0) for photocam. The default
+ * is on. This will stop zooming using animation ch change zoom levels and
+ * change instantly. This will stop any existing animations that are running.
+ * 
+ * @param obj The photocam object
+ * @param paused The pause state to set
+ */
+EAPI void
+elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->paused == !!paused) return;
+   wd->paused = paused;
+   if (wd->paused)
+     {
+        if (wd->zoom_animator)
+          {
+             ecore_animator_del(wd->zoom_animator);
+             wd->zoom_animator = NULL;
+             zoom_do(obj, 1.0);
+             evas_object_smart_callback_call(obj, "zoom,stop", NULL);
+          }
+     }
+}
+
+/**
+ * Get the paused state for photocam
+ * 
+ * This gets the current paused state for the photocam object.
+ * 
+ * @param obj The photocam object
+ * @return The current paused state
+ */
+EAPI Eina_Bool
+elm_photocam_paused_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->paused;
 }

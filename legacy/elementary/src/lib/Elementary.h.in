@@ -946,6 +946,8 @@ extern "C" {
    EAPI void         elm_photocam_region_get(Evas_Object *obj, int *x, int *y, int *w, int *h);
    EAPI void         elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h);
    EAPI void         elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h);
+   EAPI void         elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused);
+   EAPI Eina_Bool    elm_photocam_paused_get(Evas_Object *obj);
    /* smart callbacks called:
     * "clicked" - when image clicked
     * "press" - when mouse/finger held down initially on image
@@ -969,78 +971,4 @@ extern "C" {
 }
 #endif
 
-  ////////////////////////////////////////////////////////////////////////////
- /// FIXME: TODO LIST ///////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-//
-//// (bugs - high priority)
-// * left/right arrow broken with password mode for entry + utf8 chars...
-// * bubble doesnt handle child size changes right
-// * table doesnt do homogenous properly
-//
-//// (incomplete - medium priority)
-// * need to add support for disabled in all widgets. Button, toolbar, hoversel, radio, check, toggle, spinner and entry are currently done.
-// * on the fly theme changes - test (should work)
-// * hoversel only vertical right now - make horizontal
-// * when entries are in a scroller and change size, the scroller shows scrollbars. fix. same for selecting. for 1 line entries in a scroller should only have scroll arrow indicators.
-//
-//// (more widgets/features - medium priority)
-// * carousel selector widget
-// * auto-size label/text that adapts text size to its allocated region
-// * [ scrollable dropdown combo box ]
-// * [ toggle with 2x labelled button for 2 states ]
-// * [ poker spinner with numbers + labels ]
-// * [ wrapping text button bar ]
-// * slide-open "panel" that can hold stuff and optionally scroll
-// * calendar widget (select date)
-// * range selector (select range of values from X to Y over an interval)
-// * "dialogbutton" widget (bigger button for bottom of wins)
-// * dialog window widget
-// * phone-number widget (hilight country dial prefixes, add flags, photos of contacts that match etc.)
-// * dialpad widget - need one with a phone dialpad
-// * file selector widget - needs look and functionality improvement :)
-// * generic "tacho" widget (set min/max labels - and up to 3 intermediate labels etc.)
-// * status widget (busy, stalled, running, etc.)
-// * full window in window widget (so move/resize of window object does as you'd expect a child window to do within the canvas)
-// * window frame widget for borderless windows that want the app to do its own frame (move, resize as well etc.)
-//
-//// (improvements - low priority)
-// * test for all bubble styles
-// * test for all frame styles
-// * test for all genlist item styles
-// * test for all button styles
-// * test for all hoversel styles
-// * test for all inwin styles
-// * test for all anchorblock styles
-// * test for all anchorview styles
-// * test more layout in layout
-// * test normal evas (and edje) objects used as children in elm widgets
-// * need a way to attach a "dnd detector" to any object
-// * need a dnd handler (able to hook to dnd detector)
-// * need another sample theme
-// * need a way to set a preferred size of a widget (but not min or max).
-// * merge with gurana
-// * use evas's new box instead of a box smart
-// * use evas's table instead of a table smart
-// * use stack for win widget
-// * determine prefix of app dynamically and export calls to get prefix info
-// * load config from file - currently being done
-// * load config from x property
-// * handle finger size property and on-the-fly changes like scaling does
-// * somehow a pdf(ps) viewer widget that doesnt make it gpl (lgpl)
-// * emotion widget
-// * ewebkit widget
-// * flash (gnash) widget
-// * menu bar + menu widget
-// * need url and path entry modes for vkbd
-// * return list of toplevel window objects
-// * focus should have an object that is layered above all others (definable layer) that moves + resizes (slides about - animated) from one focused widget to the next for focus. also emit focus/unfocus signals too
-// * scroller could do with page up/down/left/right buttons and and idea of a page size
-// * current sizing tree inefficient
-// * need a way to filter entry data for entry (eg for phone numbers)
-// * win should emit signals based on vkbd type - if it gets a message and is a vkbd win
-// * win needs a way of setting aspect too
-// * use the wrong call on the wrong widget and *BOOM* ... crashland
-//
-//////////////////////////////////////////////////////////////////////////////
 #endif

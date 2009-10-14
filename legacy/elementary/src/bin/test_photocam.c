@@ -184,9 +184,9 @@ my_bt_zoom_out(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_bt_zoom_man(void *data, Evas_Object *obj, void *event_info)
+my_bt_pause(void *data, Evas_Object *obj, void *event_info)
 {
-   elm_photocam_zoom_mode_set(data, ELM_PHOTOCAM_ZOOM_MODE_MANUAL);
+   elm_photocam_paused_set(data, !elm_photocam_paused_get(data));
 }
 
 static void
@@ -298,8 +298,8 @@ test_photocam(void *data, Evas_Object *obj, void *event_info)
    
    
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Manual");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_zoom_man, ph);
+   elm_button_label_set(bt, "Pause On/Off");
+   evas_object_smart_callback_add(bt, "clicked", my_bt_pause, ph);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.1, 0.9);
    elm_table_pack(tb2, bt, 0, 2, 1, 1);
