@@ -1,17 +1,6 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
-my_bt_zoom_in(void *data, Evas_Object *obj, void *event_info)
-{
-   int zoom;
-   
-   zoom = elm_photocam_zoom_get(data);
-   zoom /= 2;
-   elm_photocam_zoom_mode_set(data, ELM_PHOTOCAM_ZOOM_MODE_MANUAL);
-   if (zoom >= 1) elm_photocam_zoom_set(data, zoom);
-}
-
-static void
 sel_done(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *ph, *iw;
@@ -58,14 +47,25 @@ my_bt_bring_reg(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_bt_zoom_out(void *data, Evas_Object *obj, void *event_info)
+my_bt_zoom_in(void *data, Evas_Object *obj, void *event_info)
 {
-   int zoom;
+   double zoom;
    
    zoom = elm_photocam_zoom_get(data);
-   zoom *= 2;
+   zoom -= 0.5;
    elm_photocam_zoom_mode_set(data, ELM_PHOTOCAM_ZOOM_MODE_MANUAL);
-   if (zoom <= 256) elm_photocam_zoom_set(data, zoom);
+   if (zoom >= (1.0 / 32.0)) elm_photocam_zoom_set(data, zoom);
+}
+
+static void
+my_bt_zoom_out(void *data, Evas_Object *obj, void *event_info)
+{
+   double zoom;
+   
+   zoom = elm_photocam_zoom_get(data);
+   zoom += 0.5;
+   elm_photocam_zoom_mode_set(data, ELM_PHOTOCAM_ZOOM_MODE_MANUAL);
+   if (zoom <= 256.0) elm_photocam_zoom_set(data, zoom);
 }
 
 static void

@@ -84,7 +84,7 @@ struct _Widget_Data
    Pan *pan;
    Evas_Coord pan_x, pan_y, minw, minh;
 
-   int zoom;
+   double zoom;
    Elm_Photocam_Zoom_Mode mode;
    const char *file;
    
@@ -129,6 +129,18 @@ static void grid_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, 
 static void grid_clear(Evas_Object *obj, Grid *g);
 static Grid *grid_create(Evas_Object *obj);
 static void grid_load(Evas_Object *obj, Grid *g);
+
+static int
+nearest_pow2(int num)
+{
+   unsigned int n = num - 1;
+   n |= n >> 1;
+   n |= n >> 2;
+   n |= n >> 4;
+   n |= n >> 8;
+   n |= n >> 16;
+   return n + 1;
+}
 
 static void
 img_place(Evas_Object *obj, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh)
@@ -246,6 +258,14 @@ _tile_preloaded(void *data, Evas *e, Evas_Object *o, void *event_info)
      }
 }
 
+static int
+grid_zoom_calc(double zoom)
+{
+   int z = zoom;
+   if (z < 1) z = 1;
+   return nearest_pow2(z);
+}
+
 static Grid *
 grid_create(Evas_Object *obj)
 {
@@ -255,7 +275,7 @@ grid_create(Evas_Object *obj)
    
    g = calloc(1, sizeof(Grid));
    
-   g->zoom = wd->zoom;
+   g->zoom = grid_zoom_calc(wd->zoom);
    g->tsize = wd->tsize;
    g->iw = wd->size.imw;
    g->ih = wd->size.imh;
@@ -298,8 +318,9 @@ grid_create(Evas_Object *obj)
              g->grid[tn].wd = wd;
              g->grid[tn].img = 
                evas_object_image_add(evas_object_evas_get(obj));
+             evas_object_image_scale_hint_set
+               (g->grid[tn].img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
              evas_object_pass_events_set(g->grid[tn].img, 1);
-             evas_object_image_scale_hint_set(g->grid[tn].img, EVAS_IMAGE_SCALE_HINT_STATIC);
              evas_object_smart_member_add(g->grid[tn].img, 
                                           wd->pan_smart);
              elm_widget_sub_object_add(obj, g->grid[tn].img);
@@ -476,7 +497,7 @@ _scr(void *data, Evas_Object *obj, void *event_info)
         if (wd->nosmooth == 1) _smooth_update(data);
      }
    if (wd->scr_timer) ecore_timer_del(wd->scr_timer);
-   wd->scr_timer = ecore_timer_add(0.25, _scr_timeout, data);
+   wd->scr_timer = ecore_timer_add(0.5, _scr_timeout, data);
 }
 
 static void
@@ -682,8 +703,9 @@ _calc_job(void *data)
         wd->resized = 0;
         if (wd->mode != ELM_PHOTOCAM_ZOOM_MODE_MANUAL)
           {
-             wd->zoom++;
-             elm_photocam_zoom_set(wd->obj, wd->zoom - 1);
+             double tz = wd->zoom;
+             wd->zoom = 0.0;
+             elm_photocam_zoom_set(wd->obj, tz);
           }
      }
    if ((minw != wd->minw) || (minh != wd->minh))
@@ -894,6 +916,7 @@ elm_photocam_add(Evas_Object *parent)
    wd->tsize = 512;
    
    wd->img = evas_object_image_add(e);
+   evas_object_image_scale_hint_set(wd->img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
    evas_object_event_callback_add(wd->img, EVAS_CALLBACK_MOUSE_DOWN,
                                   _mouse_down, obj);
    evas_object_event_callback_add(wd->img, EVAS_CALLBACK_MOUSE_UP,
@@ -973,8 +996,11 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
                                 "elm,state,busy,start", "elm");
         evas_object_smart_callback_call(obj, "load,detail", NULL);
      }
-   wd->zoom++;
-   elm_photocam_zoom_set(obj, wd->zoom - 1);
+     {
+        double tz = wd->zoom;
+        wd->zoom = 0.0;
+        elm_photocam_zoom_set(wd->obj, tz);
+     }
    return evas_object_image_load_error_get(wd->img);
 }
 
@@ -998,8 +1024,8 @@ EAPI const char * elm_photocam_file_get(Evas_Object *obj)
  * This sets the zoom level. 1 will be 1:1 pixel for pixel. 2 will be 2:1
  * (that is 2x2 photo pixels will display as 1 on-screen pixel). 4:1 will be
  * 4x4 photo pixels as 1 screen pixel, and so on. The @p zoom parameter must
- * be a power of 2 (1, 2, 4, 8, 16, 32, 64 etc.) to work correctly, and be
- * greater than 0. Other values will have undefined behavior.
+ * be greater than 0. It is usggested to stick to powers of 2. (1, 2, 4, 8,
+ * 16, 32, etc.). 
  *
  * @param obj The photocam object
  * @param zoom The zoom level to set
@@ -1007,7 +1033,7 @@ EAPI const char * elm_photocam_file_get(Evas_Object *obj)
  * @ingroup Photocam
  */
 EAPI void
-elm_photocam_zoom_set(Evas_Object *obj, int zoom)
+elm_photocam_zoom_set(Evas_Object *obj, double zoom)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
@@ -1017,7 +1043,7 @@ elm_photocam_zoom_set(Evas_Object *obj, int zoom)
    int zoom_changed = 0, started = 0;
    Ecore_Animator *an;
    
-   if (zoom < 1) zoom = 1;
+   if (zoom <= (1.0 / 256.0)) zoom = (1.0 / 256.0);
    if (zoom == wd->zoom) return;
    wd->zoom = zoom;
    wd->size.ow = wd->size.w;
@@ -1028,8 +1054,8 @@ elm_photocam_zoom_set(Evas_Object *obj, int zoom)
 
    if (wd->mode == ELM_PHOTOCAM_ZOOM_MODE_MANUAL)
      {
-        wd->size.nw = wd->size.imw / wd->zoom;
-        wd->size.nh = wd->size.imh / wd->zoom;
+        wd->size.nw = (double)wd->size.imw / wd->zoom;
+        wd->size.nh = (double)wd->size.imh / wd->zoom;
      }
    else if (wd->mode == ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT)
      {
@@ -1110,26 +1136,37 @@ elm_photocam_zoom_set(Evas_Object *obj, int zoom)
      }
    EINA_LIST_FOREACH(wd->grids, l, g)
      {
-        if (g->zoom == wd->zoom)
+        if (g->zoom == grid_zoom_calc(wd->zoom))
           {
-             g_zoom = g;
-             g->dead = 0;
+             wd->grids = eina_list_remove(wd->grids, g);
+             wd->grids = eina_list_prepend(wd->grids, g);
+             _grid_raise(g);
+             goto done;
           }
-        else
-          g->dead = 1;
-     }
-   if (g_zoom)
-     {
-        g = g_zoom;
-        wd->grids = eina_list_remove(wd->grids, g);
-        wd->grids = eina_list_prepend(wd->grids, g);
-        _grid_raise(g);
-        goto done;
      }
    g = grid_create(obj);
    if (g)
      {
+        if (eina_list_count(wd->grids) > 1)
+          {
+             g_zoom = eina_list_last(wd->grids)->data;
+             wd->grids = eina_list_remove(wd->grids, g_zoom);
+             grid_clear(obj, g_zoom);
+             free(g_zoom);
+             EINA_LIST_FOREACH(wd->grids, l, g_zoom)
+               {
+                  g_zoom->dead = 1;
+               }
+          }
         wd->grids = eina_list_prepend(wd->grids, g);
+     }
+   else
+     {
+        EINA_LIST_FREE(wd->grids, g)
+          {
+             grid_clear(obj, g);
+             free(g);
+          }
      }
    done:
    if (!wd->zoom_animator)
@@ -1184,7 +1221,7 @@ elm_photocam_zoom_set(Evas_Object *obj, int zoom)
  *
  * @ingroup Photocam
  */
-EAPI int
+EAPI double
 elm_photocam_zoom_get(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1215,8 +1252,11 @@ elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->mode == mode) return;
    wd->mode = mode;
-   wd->zoom++;
-   elm_photocam_zoom_set(obj, wd->zoom - 1);
+     {
+        double tz = wd->zoom;
+        wd->zoom = 0.0;
+        elm_photocam_zoom_set(wd->obj, tz);
+     }
 }
 
 /**
