@@ -73,17 +73,19 @@ _stop(void *data, Evas_Object *obj, void *event_info)
 static void
 _spin(void *data, Evas_Object *obj, void *event_info)
 {
-   if(elm_slideshow_timeout_get(slideshow) > 0)
+   if (elm_slideshow_timeout_get(slideshow) > 0)
      elm_slideshow_timeout_set(slideshow, (int)elm_spinner_value_get(data));
 }
 
 static Evas_Object *
 _get(void *data, Evas_Object *obj)
 {
+   int w, h;
    Evas_Object *photo = evas_object_image_add(evas_object_evas_get(obj));
    evas_object_image_file_set(photo, data, NULL);
    evas_object_image_filled_set(photo, 1);
-
+   evas_object_image_size_get(photo, &w, &h);
+   evas_object_size_hint_aspect_set(photo, EVAS_ASPECT_CONTROL_BOTH, w, h);
    return photo;
 }
 
