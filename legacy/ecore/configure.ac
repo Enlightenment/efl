@@ -855,17 +855,12 @@ fi
 
 # ecore_config
 ecore_config_deps="no"
-if test "x${have_eet}" = "xyes" -a "x${have_evas}" ; then
+if test "x${have_eet}" = "xyes" -a "x${have_evas}"  -a "x${have_ecore_ipc}" ; then
    ecore_config_deps="yes"
 fi
 
 ECORE_CHECK_MODULE([Config], [${want_ecore_config}], [${ecore_config_deps}],
-   [requirements_ecore_config="evas eet ${requirements_ecore_config}"])
-
-if test "x${have_ecore_config}" = "xyes" -a "x${have_ecore_ipc}" = "xyes" ; then
-   requirements_ecore_config="ecore-ipc ${requirements_ecore_config}"
-
-fi
+   [requirements_ecore_config="ecore-ipc evas eet ${requirements_ecore_config}"])
 
 # ecore_imf
 
