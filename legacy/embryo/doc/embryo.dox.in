@@ -8,7 +8,9 @@ These routines are used for Embryo.
 /**
 
 @mainpage Embryo Library Documentation
-@image html  embryo.png
+
+@image html  e_big.png
+
 @version @PACKAGE_VERSION@
 @author Carsten Haitzler <raster\@rasterman.com>
 @date 2004
