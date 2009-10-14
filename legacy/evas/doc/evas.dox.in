@@ -1,8 +1,9 @@
 /**
 
 @mainpage Evas
-@image latex evas_big.eps width=5cm
-@image html  evas.png
+
+@image html  e_big.png
+
 @version @PACKAGE_VERSION@
 @author Carsten Haitzler <raster\@rasterman.com>
 @author Till Adam <till\@adam-lilienthal.de>
