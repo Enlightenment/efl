@@ -2,20 +2,72 @@
 #define __EVIL_STDLIB_H__
 
 
+/**
+ * @file evil_stdlib.h
+ * @brief The file that provides functions ported from Unix in stdlib.h.
+ * @defgroup Evil_Stdlib_Group Stdlib.h functions.
+ *
+ * This header provides functions ported from Unix in stdlib.h.
+ *
+ * @{
+ */
+
+
 /*
  * Environment variable related functions
  *
  */
 
-#if defined(__CEGCC__) || defined(__MINGW32CE__)
+#ifdef _WIN32_WCE
 
+/**
+ * @brief Retrieve the value of environment variables.
+ *
+ * @param name The name of the environment variable.
+ * @return The value of the environment variable.
+ *
+ * This function searches the environment variable @p name if it
+ * exists and return a pointer to the value of the environment
+ * variable. If the specified environment variable cannot be found,
+ * @c NULL is returned.
+ *
+ * The returned value may be overwritten by a subsequent call to
+ * getenv(), setenv(), or unsetenv().
+ *
+ * Conformity: Non applicable.
+ *
+ * Supported OS: Windows CE.
+ *
+ * @note On Windows CE, there is no environment variable. This is
+ * faked by storing a value in a key in the base registry.
+ */
 EAPI char *getenv(const char *name);
 
-#endif /* __CEGCC__ || __MINGW32CE__ */
+#endif /* _WIN32_WCE */
 
 
 #ifdef __MINGW32CE__
 
+/**
+ * @brief Set the value of environment variables.
+ *
+ * @param string A formatted string.
+ * @return 0 in success, non-zero otherwise.
+ *
+ * This function uses @p string to set environment variable values.
+ * @p string should point to a string of the form "name=value". This
+ * function makes the value of the environment variable name equal to
+ * value by altering an existing variable or creating a new one. In
+ * either case, the string pointed to by @p string becomes part of the
+ * environment, so altering @p string shall change the environment.
+ *
+ * Conformity: Non applicable.
+ *
+ * Supported OS: Windows CE.
+ *
+ * @note On Windows CE, there is no environment variable. This is
+ * faked by storing a value in a key in the base registry.
+ */
 EAPI int putenv(const char *string);
 
 #endif /* __MINGW32CE__ */
@@ -25,20 +77,24 @@ EAPI int putenv(const char *string);
  *
  * @param name The name of the environment variable.
  * @param value The value of the environment variable to set.
+ * @param overwrite 0 to let the environment variable unchanged, 1 otherwise.
  * @return 0 on success, -1 otherwise.
  *
  * Add the new environment variable @p name or modify its value if it
  * exists, and set it to @p value. Environment variables define the
  * environment in which a process executes. If @p value is @c NULL, the
- * variable is removed (unset) and that call is equivalent to unsetenv().
+ * variable is removed (unset) and that call is equivalent to
+ * unsetenv().If the environment variable named by @p name already
+ * exists and the value of @p overwrite is 0, the function shall
+ * return success and the environment shall remain unchanged.
  * If the function succeeds, it returns 0, otherwise it returns -1.
  *
  * Conformity: Non applicable.
  *
- * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
- * Windows XP.
+ * Supported OS: Windows XP, Windows CE.
  *
- * @ingroup Evil
+ * @note On Windows CE, there is no environment variable. This is
+ * faked by storing a value in a key in the base registry.
  */
 EAPI int setenv(const char *name,
                 const char *value,
@@ -60,10 +116,10 @@ EAPI int setenv(const char *name,
  *
  * Conformity: Non applicable.
  *
- * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
- * Windows XP.
+ * Supported OS: Windows XP, Windows CE (not cegcc).
  *
- * @ingroup Evil
+ * @note On Windows CE, there is no environment variable. This is
+ * faked by storing a value in a key in the base registry.
  */
 EAPI int unsetenv(const char *name);
 
@@ -78,7 +134,7 @@ EAPI int unsetenv(const char *name);
 /**
  * @brief Make temporay unique file name.
  *
- * @param template Template of the file to create.
+ * @param __template Template of the file to create.
  * @return A file descriptor on success, -1 otherwise.
  *
  * Take the given file name @p template and overwrite a portion of it
@@ -103,10 +159,7 @@ EAPI int unsetenv(const char *name);
  *
  * Conformity: Should follow BSD conformity.
  *
- * Supported OS: Windows 98, Windows Me, Windows NT, Windows 2000,
- * Windows XP.
- *
- * @ingroup Evil
+ * Supported OS: Windows XP, Windows CE.
  */
 EAPI int mkstemp(char *__template);
 
@@ -129,12 +182,14 @@ EAPI int mkstemp(char *__template);
  *
  * Conformity: None.
  *
- * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
- * Windows XP.
- *
- * @ingroup Evil
+ * Supported OS: Windows XP, Windows CE.
  */
 EAPI char *realpath(const char *file_name, char *resolved_name);
+
+
+/**
+ * @}
+ */
 
 
 #endif /* __EVIL_STDLIB_H__ */

@@ -2,16 +2,65 @@
 #define __EVIL_UNISTD_H__
 
 
+/**
+ * @file evil_unistd.h
+ * @brief The file that provides functions ported from Unix in unistd.h.
+ * @defgroup Evil_Unistd_Group Unistd.h functions
+ *
+ * This header provides functions ported from Unix in unistd.h.
+ *
+ * @{
+ */
+
+
 /*
  * Time related functions
  *
  */
 
+/**
+ * @brief Return the time spent since the Evil library has been initialized.
+ *
+ * @return The time spent since the Evil library has been initialized.
+ *
+ * This function returns the time spent since the Evil library has
+ * been initialized. It uses a high-resolution timer and then can have
+ * a precision up to the nano-second. The precision is processor
+ * dependant. This function can be used to benchmark parts of code in
+ * with high precision.
+ *
+ * Conformity: Not appliclable.
+ *
+ * Supported OS: Windows XP, Windows CE.
+ */
 EAPI double evil_time_get();
 
+/**
+ * @brief Retrieve the time since the Evil library has been
+ * initialized.
+ *
+ * @param tp Structure to fill.
+ * @param tzp Unused.
+ * @return Always 1.
+ *
+ * The function fills @p tp with the time spent since the Evil library
+ * has been initialized. It uses a high-resolution timer and then can
+ * have a precision up to the nano-second. The precision is processor
+ * dependant. This function can be used to benchmark parts of code in
+ * with high precision. This function always returns 1.
+ *
+ * Conformity: Not appliclable.
+ *
+ * Supported OS: Windows XP, Windows CE.
+ */
 EAPI int evil_gettimeofday(struct timeval * tp, void * tzp);
 
-#define gettimeofday(tp, tzp) evil_gettimeofday(tp, tzp)
+/**
+ * @def gettimeofday(tp,tzp)
+ *
+ * Wrapper around evil_gettimeofday().
+ */
+#define gettimeofday(tp,tzp) evil_gettimeofday((tp),(tzp))
 
 
 /*
@@ -31,10 +80,7 @@ EAPI int evil_gettimeofday(struct timeval * tp, void * tzp);
  *
  * Conformity: Not appliclable.
  *
- * Supported OS: Windows 98, Windows Me, Windows NT, Windows 2000,
- * Windows XP.
- *
- * @ingroup Evil
+ * Supported OS: Windows XP, Windows CE.
  */
 EAPI pid_t getpid(void);
 
@@ -65,10 +111,7 @@ EAPI pid_t getpid(void);
  *
  * Conformity: None.
  *
- * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
- * Windows XP.
- *
- * @ingroup Evil
+ * Supported OS: Windows XP, Windows CE.
  */
 EAPI int symlink(const char *oldpath, const char *newpath);
 
@@ -93,10 +136,7 @@ EAPI int symlink(const char *oldpath, const char *newpath);
  *
  * Conformity: None.
  *
- * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
- * Windows XP.
- *
- * @ingroup Evil
+ * Supported OS: Windows XP, Windows CE.
  */
 EAPI ssize_t readlink(const char *path, char *buf, size_t bufsiz);
 
@@ -109,9 +149,29 @@ EAPI ssize_t readlink(const char *path, char *buf, size_t bufsiz);
 
 #if defined (_WIN32_WCE) && ! defined (__CEGCC__)
 
+/**
+ * @brief Return information about a file.
+ *
+ * @param file_name The file to retrieve information from.
+ * @param st Buffer to fill
+ * @return 0 on success, -1 otherwise.
+ *
+ * This function retrieves information about the file named
+ * @p file_name and fill the structure @p st. If the function
+ * succeeds, 0 is returned, otherwise -1 is returned.
+ *
+ * Conformity: None.
+ *
+ * Supported OS: Windows CE (not cegcc).
+ */
 EAPI int evil_stat(const char *file_name, struct stat *st);
 
-# define stat(f, st) evil_stat(f, st)
+/**
+ * @def stat(f,st)
+ *
+ * Wrapper around evil_stat().
+ */
+# define stat(f,st) evil_stat((f),(st))
 
 #endif /* _WIN32_WCE && ! __CEGCC__ */
 
@@ -139,13 +199,15 @@ EAPI int evil_stat(const char *file_name, struct stat *st);
  *
  * Conformity: Almost POSIX.1 (no errno set)
  *
- * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
- * Windows XP, WinCE.
- *
- * @ingroup Evil
+ * Supported OS: Windows XP, Windows CE.
  */
 EAPI char *evil_getcwd(char *buffer, size_t size);
 
+/**
+ * @def getcwd(b,s)
+ *
+ * Wrapper around evil_getcwd().
+ */
 #define getcwd(b,s) evil_getcwd((b),(s))
 
 /*
@@ -163,10 +225,7 @@ EAPI char *evil_getcwd(char *buffer, size_t size);
  *
  * Conformity: Non applicable.
  *
- * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
- * Windows XP.
- *
- * @ingroup Evil
+ * Supported OS: Windows XP, Windows CE.
  */
 EAPI int evil_sockets_init(void);
 
@@ -177,10 +236,7 @@ EAPI int evil_sockets_init(void);
  *
  * Conformity: Non applicable.
  *
- * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
- * Windows XP.
- *
- * @ingroup Evil
+ * Supported OS: Windows XP, Windows CE.
  */
 EAPI void evil_sockets_shutdown(void);
 
@@ -196,13 +252,15 @@ EAPI void evil_sockets_shutdown(void);
  *
  * Conformity: Not applicable.
  *
- * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
- * Windows XP.
- *
- * @ingroup Evil
+ * Supported OS: Windows XP, Windows CE.
  */
 EAPI int evil_pipe(int *fds);
 
+/**
+ * @def pipe(fds)
+ *
+ * Wrapper around evil_pipe().
+ */
 #define pipe(fds) evil_pipe(fds)
 
 
@@ -224,11 +282,18 @@ EAPI int evil_pipe(int *fds);
  * This function does nothing and returns always 1. It is defined for
  * ecore_app only for native Windows CE code.
  *
- * @ingroup Evil
+ * Conformity: Not appliclable.
+ *
+ * Supported OS: Windows CE (not cegcc).
  */
 EAPI int execvp( const char *file, char *const argv[]);
 
 #endif /* _WIN32_WCE && ! __CEGCC__ */
+
+
+/**
+ * @}
+ */
 
 
 #endif /* __EVIL_UNISTD_H__ */

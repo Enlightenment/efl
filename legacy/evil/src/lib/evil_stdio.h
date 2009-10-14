@@ -2,6 +2,17 @@
 #define __EVIL_STDIO_H__
 
 
+/**
+ * @file evil_stdio.h
+ * @brief The file that provides functions ported from Unix in stdio.h.
+ * @defgroup Evil_Stdio_Group Stdio.h functions
+ *
+ * This header provides functions ported from Unix in stdio.h.
+ *
+ * @{
+ */
+
+
 #if defined (_WIN32_WCE) && ! defined (__CEGCC__)
 
 /*
@@ -36,6 +47,11 @@ EAPI size_t evil_fread_native(void* buffer, size_t size, size_t count, FILE* str
 EAPI int evil_fclose_native(FILE *stream);
 
 #endif /* _WIN32_WCE */
+
+
+/**
+ * @}
+ */
 
 
 #endif /* __EVIL_STDIO_H__ */

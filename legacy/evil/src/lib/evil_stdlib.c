@@ -28,7 +28,7 @@
  *
  */
 
-#if defined(__CEGCC__) || defined(__MINGW32CE__)
+#ifdef _WIN32_WCE
 
 static char _evil_stdlib_getenv_buffer[PATH_MAX];
 
@@ -91,7 +91,7 @@ getenv(const char *name)
      }
 }
 
-#endif /* __CEGCC__ || __MINGW32CE__ */
+#endif /* _WIN32_WCE */
 
 #ifdef __MINGW32CE__
 

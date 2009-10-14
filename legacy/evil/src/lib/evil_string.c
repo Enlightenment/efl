@@ -6,7 +6,7 @@
 #include "Evil.h"
 
 
-#ifdef __MINGW32CE__
+#if defined (_WIN32_WCE) && ! defined (__CEGCC__)
 
 /*
  * Error related functions
@@ -18,7 +18,7 @@ char *strerror (int errnum __UNUSED__)
    return "[Windows CE] error\n";
 }
 
-#endif /* __MINGW32CE__ */
+#endif /* _WIN32_WCE && ! __CEGCC__ */
 
 
 #ifndef __CEGCC__
