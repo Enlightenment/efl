@@ -1122,11 +1122,6 @@ elm_photocam_zoom_set(Evas_Object *obj, double zoom)
                {
                   pw = rw;
                }
-             if ((pw > wd->size.imw) || (ph > wd->size.imh))
-               {
-                  pw = wd->size.imw;
-                  ph = wd->size.imh;
-               }
              if (wd->size.imw > wd->size.imh)
                z = wd->size.imw / pw;
              else

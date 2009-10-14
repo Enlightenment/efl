@@ -254,9 +254,9 @@ extern "C" {
    /* X specific calls - won't work on non-x engines (return 0) */
    EAPI Ecore_X_Window elm_win_xwindow_get(const Evas_Object *obj);
    /* smart callbacks called:
-    * "delete-request" - the user requested to delete the window
-    * "focus-in" - window got focus
-    * "focus-out" - window lost focus
+    * "delete,request" - the user requested to delete the window
+    * "focus,on" - window got focus
+    * "focus,out" - window lost focus
     */
 
    EAPI Evas_Object *elm_bg_add(Evas_Object *parent);
@@ -350,15 +350,15 @@ extern "C" {
    EAPI void         elm_scroller_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize);
    EAPI void         elm_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
    /* smart callbacks called:
-    * "edge_left"
-    * "edge_right"
-    * "edge_top"
-    * "edge_bottom"
+    * "edge,left"
+    * "edge,right"
+    * "edge,top"
+    * "edge,bottom"
     * "scroll"
-    * "scroll_anim_start"
-    * "scroll_anim_stop"
-    * "scroll_drag_start"
-    * "scroll_drag_stop"
+    * "scroll,anim,start"
+    * "scroll,anim,stop"
+    * "scroll,drag,start"
+    * "scroll,drag,stop"
     */
 
    EAPI Evas_Object *elm_label_add(Evas_Object *parent);
@@ -958,6 +958,11 @@ extern "C" {
     * "zoom,start" - when zooming started
     * "zoom,stop" - when zooming stopped
     * "zoom,change" - when auto zoom mode changed zoom level
+    * "scroll - the content has been scrolled (moved)
+    * "scroll,anim,start" - scrolling animation has started
+    * "scroll,anim,stop" - scrolling animation has stopped
+    * "scroll,drag,start" - dragging the contents around has started
+    * "scroll,drag,stop" - dragging the contents around has stopped
     */
 
 #ifdef __cplusplus
