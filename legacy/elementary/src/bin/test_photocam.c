@@ -1,5 +1,120 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
+
+static void
+my_ph_clicked(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   printf("clicked\n");
+}
+
+static void
+my_ph_press(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   printf("press\n");
+}
+
+static void
+my_ph_longpressed(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   printf("longpressed\n");
+}
+
+static void
+my_ph_clicked_double(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   printf("clicked,double\n");
+}
+
+static void
+my_ph_load(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   printf("load\n");
+}
+
+static void
+my_ph_loaded(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   printf("loaded\n");
+}
+
+static void
+my_ph_load_details(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   printf("load,details\n");
+}
+
+static void
+my_ph_loaded_details(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   printf("loaded,details\n");
+}
+
+static void
+my_ph_zoom_start(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   printf("zoom,start\n");
+}
+
+static void
+my_ph_zoom_stop(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   printf("zoom,stop\n");
+}
+
+static void
+my_ph_zoom_change(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   printf("zoom,change\n");
+}
+
+static void
+my_ph_anim_start(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   printf("anim,start\n");
+}
+
+static void
+my_ph_anim_stop(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   printf("anim,stop\n");
+}
+
+static void
+my_ph_drag_start(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   printf("drag,start\n");
+}
+
+static void
+my_ph_drag_stop(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   printf("drag_stop\n");
+}
+
+static void
+my_ph_scroll(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win = data;
+   int x, y, w, h;
+   elm_photocam_region_get(obj, &x, &y, &w, &h);
+   printf("scroll %i %i %ix%i\n", x, y, w, h);
+}
+
 static void
 sel_done(void *data, Evas_Object *obj, void *event_info)
 {
@@ -114,6 +229,23 @@ test_photocam(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, ph);
    evas_object_data_set(ph, "window", win);
+   
+   evas_object_smart_callback_add(ph, "clicked", my_ph_clicked, win);
+   evas_object_smart_callback_add(ph, "press", my_ph_press, win);
+   evas_object_smart_callback_add(ph, "longpressed", my_ph_longpressed, win);
+   evas_object_smart_callback_add(ph, "clicked,double", my_ph_clicked_double, win);
+   evas_object_smart_callback_add(ph, "load", my_ph_load, win);
+   evas_object_smart_callback_add(ph, "loaded", my_ph_loaded, win);
+   evas_object_smart_callback_add(ph, "load,details", my_ph_load_details, win);
+   evas_object_smart_callback_add(ph, "loaded,details", my_ph_loaded_details, win);
+   evas_object_smart_callback_add(ph, "zoom,start", my_ph_zoom_start, win);
+   evas_object_smart_callback_add(ph, "zoom,stop", my_ph_zoom_stop, win);
+   evas_object_smart_callback_add(ph, "zoom,change", my_ph_zoom_change, win);
+   evas_object_smart_callback_add(ph, "scroll,anim,start", my_ph_anim_start, win);
+   evas_object_smart_callback_add(ph, "scroll,anim,stop", my_ph_anim_stop, win);
+   evas_object_smart_callback_add(ph, "scroll,drag,start", my_ph_drag_start, win);
+   evas_object_smart_callback_add(ph, "scroll,drag,stop", my_ph_drag_stop, win);
+   evas_object_smart_callback_add(ph, "scroll", my_ph_scroll, win);
    
    elm_photocam_file_set(ph, img[1]);
    

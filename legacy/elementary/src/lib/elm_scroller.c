@@ -12,23 +12,23 @@
  * 
  * Signals that you can add callbacks for are:
  * 
- * edge_left - the left edge of the content has been reached
+ * edge,left - the left edge of the content has been reached
  * 
- * edge_right - the right edge of the content has been reached
+ * edge,right - the right edge of the content has been reached
  * 
- * edge_top - the top edge of the content has been reached
+ * edge,top - the top edge of the content has been reached
  * 
- * edge_bottom - the bottom edge of the content has been reached
+ * edge,bottom - the bottom edge of the content has been reached
  * 
  * scroll - the content has been scrolled (moved)
  * 
- * scroll_anim_start - scrolling animation has started
+ * scroll,anim,start - scrolling animation has started
  * 
- * scroll_anim_stop - scrolling animation has stopped
+ * scroll,anim,stop - scrolling animation has stopped
  * 
- * scroll_drag_start - dragging the contents around has started
+ * scroll,drag,start - dragging the contents around has started
  * 
- * scroll_drag_stop - dragging the contents around has stopped
+ * scroll,drag,stop - dragging the contents around has stopped
  */
 typedef struct _Widget_Data Widget_Data;
 
@@ -171,25 +171,25 @@ _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _edge_left(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   evas_object_smart_callback_call(data, "edge_left", NULL);
+   evas_object_smart_callback_call(data, "edge,left", NULL);
 }
 
 static void
 _edge_right(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   evas_object_smart_callback_call(data, "edge_right", NULL);
+   evas_object_smart_callback_call(data, "edge,right", NULL);
 }
 
 static void
 _edge_top(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   evas_object_smart_callback_call(data, "edge_top", NULL);
+   evas_object_smart_callback_call(data, "edge,top", NULL);
 }
 
 static void
 _edge_bottom(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   evas_object_smart_callback_call(data, "edge_bottom", NULL);
+   evas_object_smart_callback_call(data, "edge,bottom", NULL);
 }
 
 static void
@@ -201,25 +201,25 @@ _scroll(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _scroll_anim_start(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   evas_object_smart_callback_call(data, "scroll_anim_start", NULL);
+   evas_object_smart_callback_call(data, "scroll,anim,start", NULL);
 }
 
 static void
 _scroll_anim_stop(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   evas_object_smart_callback_call(data, "scroll_anim_stop", NULL);
+   evas_object_smart_callback_call(data, "scroll,anim,stop", NULL);
 }
 
 static void
 _scroll_drag_start(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   evas_object_smart_callback_call(data, "scroll_drag_start", NULL);
+   evas_object_smart_callback_call(data, "scroll,drag,start", NULL);
 }
 
 static void
 _scroll_drag_stop(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   evas_object_smart_callback_call(data, "scroll_drag_stop", NULL);
+   evas_object_smart_callback_call(data, "scroll,drag,stop", NULL);
 }
 
 /**

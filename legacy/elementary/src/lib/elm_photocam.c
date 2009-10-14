@@ -38,6 +38,16 @@
  * 
  * zoom,change - Zoom changed when using an auto zoom mode.
  * 
+ * scroll - the content has been scrolled (moved)
+ *
+ * scroll,anim,start - scrolling animation has started
+ *
+ * scroll,anim,stop - scrolling animation has stopped
+ *
+ * scroll,drag,start - dragging the contents around has started
+ *
+ * scroll,drag,stop - dragging the contents around has stopped
+ * 
  * ---
  * 
  * TODO (maybe - optional future stuff):
@@ -843,6 +853,36 @@ _freeze_off(void *data, Evas_Object *obj, void *event_info)
    elm_smart_scroller_freeze_set(wd->scr, 0);
 }
 
+static void
+_scr_anim_start(void *data, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "scroll,anim,start", NULL);
+}
+
+static void
+_scr_anim_stop(void *data, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "scroll,anim,stop", NULL);
+}
+
+static void
+_scr_drag_start(void *data, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "scroll,drag,start", NULL);
+}
+
+static void
+_scr_drag_stop(void *data, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "scroll,drag,stop", NULL);
+}
+
+static void
+_scr_scroll(void *data, Evas_Object *obj, void *event_info)
+{
+   evas_object_smart_callback_call(data, "scroll", NULL);
+}
+
 /**
  * Add a new Photocam object
  *
@@ -876,6 +916,12 @@ elm_photocam_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->scr, "drag", _scr, obj);
    elm_widget_resize_object_set(obj, wd->scr);
 
+   evas_object_smart_callback_add(wd->scr, "animate,start", _scr_anim_start, obj);
+   evas_object_smart_callback_add(wd->scr, "animate,stop", _scr_anim_stop, obj);
+   evas_object_smart_callback_add(wd->scr, "drag,start", _scr_drag_start, obj);
+   evas_object_smart_callback_add(wd->scr, "drag,stop", _scr_drag_stop, obj);
+   evas_object_smart_callback_add(wd->scr, "scroll", _scr_scroll, obj);
+   
    elm_smart_scroller_bounce_allow_set(wd->scr, 1, 1);
 
    wd->obj = obj;
@@ -1295,6 +1341,54 @@ elm_photocam_image_size_get(Evas_Object *obj, int *w, int *h)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (w) *w = wd->size.imw;
    if (h) *h = wd->size.imh;
+}
+
+/**
+ * Get the current area of the image that is currently shown
+ * 
+ * This gets the region 
+ * 
+ */
+EAPI void
+elm_photocam_region_get(Evas_Object *obj, int *x, int *y, int *w, int *h)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Coord sx, sy, sw, sh;
+   int iw, ih;
+
+   elm_smart_scroller_child_pos_get(wd->scr, &sx, &sy);
+   elm_smart_scroller_child_viewport_size_get(wd->scr, &sw, &sh);
+   if (wd->size.w > 0)
+     {
+        if (x)
+          {
+             *x = (wd->size.imw * sx) / wd->size.w;
+             if (*x > wd->size.imw) *x = wd->size.imw;
+             else if (*x < 0) *x = 0;
+          }
+        if (w)
+          {
+             *w = (wd->size.imw * sw) / wd->size.w;
+             if (*w > wd->size.imw) *w = wd->size.imw;
+             else if (*w < 0) *w = 0;
+          }
+     }
+   if (wd->size.h > 0)
+     {
+        if (y)
+          {
+             *y = (wd->size.imh * sy) / wd->size.h;
+             if (*y > wd->size.imh) *y = wd->size.imh;
+             else if (*y < 0) *y = 0;
+          }
+        if (h)
+          {
+             *h = (wd->size.imh * sh) / wd->size.h;
+             if (*h > wd->size.imh) *h = wd->size.imh;
+             else if (*h < 0) *h = 0;
+          }
+     }
+   wd->size.w;
 }
 
 /**

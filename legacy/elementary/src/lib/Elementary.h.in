@@ -943,6 +943,7 @@ extern "C" {
    EAPI void         elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode);
    EAPI Elm_Photocam_Zoom_Mode elm_photocam_zoom_mode_get(Evas_Object *obj);
    EAPI void         elm_photocam_image_size_get(Evas_Object *obj, int *w, int *h);
+   EAPI void         elm_photocam_region_get(Evas_Object *obj, int *x, int *y, int *w, int *h);
    EAPI void         elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h);
    EAPI void         elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h);
    /* smart callbacks called:

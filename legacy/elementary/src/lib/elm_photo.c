@@ -6,6 +6,11 @@
  *
  * For displaying the photo of a person (contact). Simple yet
  * with a very specific purpose. 
+ * 
+ * Signals that you can add callbacks for are:
+ *
+ * clicked - This is called when a user has clicked the photo
+ *
  */
 
 typedef struct _Widget_Data Widget_Data;

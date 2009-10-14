@@ -55,7 +55,8 @@ _elm_win_focus_in(Ecore_Evas *ee)
    if(strcmp(elm_widget_type_get(obj), "win")) return;
    win = elm_widget_data_get(obj);
    if (!win) return;
-   evas_object_smart_callback_call(win->win_obj, "focus-in", NULL);
+   evas_object_smart_callback_call(win->win_obj, "focus-in", NULL); // FIXME: remove me
+   evas_object_smart_callback_call(win->win_obj, "focus,in", NULL);
 }
 
 static void
@@ -66,7 +67,8 @@ _elm_win_focus_out(Ecore_Evas *ee)
    if(strcmp(elm_widget_type_get(obj), "win")) return;
    win = elm_widget_data_get(obj);
    if (!win) return;
-   evas_object_smart_callback_call(win->win_obj, "focus-out", NULL);
+   evas_object_smart_callback_call(win->win_obj, "focus-out", NULL); // FIXME: remove me
+   evas_object_smart_callback_call(win->win_obj, "focus,out", NULL);
 }
 
 static void
@@ -127,7 +129,8 @@ _elm_win_delete_request(Ecore_Evas *ee)
    if (!win) return;
    int autodel = win->autodel;
    win->autodel_clear = &autodel;
-   evas_object_smart_callback_call(win->win_obj, "delete-request", NULL);
+   evas_object_smart_callback_call(win->win_obj, "delete-request", NULL); // FIXME: remove me
+   evas_object_smart_callback_call(win->win_obj, "delete,request", NULL);
    // FIXME: if above callback deletes - then the below will be invalid
    if (autodel) evas_object_del(win->win_obj);
    else win->autodel_clear = NULL;

@@ -8,6 +8,10 @@
  * arrows etc.) or a custom file (PNG, JPG, EDJE etc.) used for an
  * icon. The Icon may scale or not and of course... support alpha
  * channels.
+ * 
+ * Signals that you can add callbacks for are:
+ * 
+ * clicked - This is called when a user has clicked the icon
  */
 
 typedef struct _Widget_Data Widget_Data;

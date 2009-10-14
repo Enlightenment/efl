@@ -6,7 +6,6 @@
  *
  * The Bubble is an widget used to show a text in a frame as speach is
  * represented in comics.
- *
  */
 
 typedef struct _Widget_Data Widget_Data;
