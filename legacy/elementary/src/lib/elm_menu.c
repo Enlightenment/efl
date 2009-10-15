@@ -53,6 +53,16 @@ static void _item_sizing_eval(Elm_Menu_Item *item);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _submenu_hide(Elm_Menu_Item *item);
 static void _submenu_open(void *data, Evas_Object *obj, const char *emission, const char *source);
+static void _parent_resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
+
+static void
+_del_pre_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_RESIZE, _parent_resize);
+}
+
 
 static void
 _del_hook(Evas_Object *obj)
@@ -71,7 +81,7 @@ _del_hook(Evas_Object *obj)
 	     ll = eina_list_append(ll, item->items);
 	     if (item->label)
 	       eina_stringshare_del(item->label);
-	     if (item->bx)
+	     if (item->hv)
 	       {
 		  evas_object_del(item->hv);
 		  evas_object_del(item->location);
@@ -79,10 +89,15 @@ _del_hook(Evas_Object *obj)
 	     free(item);
 	  }
      }
+   if (wd->hv)
+     {
+	evas_object_del(wd->hv);
+	evas_object_del(wd->location);
+     }
    free(wd);
 }
 
-static void
+   static void
 _theme_hook(Evas_Object *obj)
 {
    Eina_List *l, *_l, *ll = NULL;
@@ -429,6 +444,7 @@ elm_menu_add(Evas_Object *parent)
    elm_widget_type_set(obj, "menu");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
+   elm_widget_del_hook_set(obj, _del_pre_hook);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
 

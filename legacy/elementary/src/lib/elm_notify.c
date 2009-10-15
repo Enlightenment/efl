@@ -31,6 +31,21 @@ static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *eve
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void _calc(Evas_Object *obj);
 static void _content_resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _show(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _hide(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
+
+   static void
+_del_pre_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_RESIZE, _resize);
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_MOVE, _resize);
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_SHOW, _show);
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_HIDE, _hide);
+}
+
 
 static void
 _del_hook(Evas_Object *obj)
@@ -205,6 +220,7 @@ elm_notify_add(Evas_Object *parent)
    elm_widget_type_set(obj, "notify");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
+   elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
 

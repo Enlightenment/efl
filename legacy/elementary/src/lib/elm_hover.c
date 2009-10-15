@@ -238,7 +238,7 @@ _parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
 
-   wd->parent = NULL;
+   elm_hover_parent_set(data, NULL);
    _sizing_eval(data);
 }
 
