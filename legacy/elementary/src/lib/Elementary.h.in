@@ -243,7 +243,7 @@ extern "C" {
 
    EAPI Evas_Object *elm_win_inwin_add(Evas_Object *obj);
    EAPI void         elm_win_inwin_activate(Evas_Object *obj);
-   EAPI void         elm_win_inwin_style_set(Evas_Object *obj, const char *style); /** DEPRECATED. use elm_object_style_set() instead */
+   EINA_DEPRECATED EAPI void elm_win_inwin_style_set(Evas_Object *obj, const char *style);
    EAPI void         elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content);
    /* available styles:
     * default
@@ -319,7 +319,7 @@ extern "C" {
    EAPI const char  *elm_button_label_get(Evas_Object *obj);
    EAPI void         elm_button_icon_set(Evas_Object *obj, Evas_Object *icon);
    EAPI Evas_Object *elm_button_icon_get(Evas_Object *obj);
-   EAPI void         elm_button_style_set(Evas_Object *obj, const char *style);/** DEPRECATED. use elm_object_style_set() instead */
+   EINA_DEPRECATED EAPI void elm_button_style_set(Evas_Object *obj, const char *style);
    /* available styles:
     * default
     * anchor
@@ -385,7 +385,7 @@ extern "C" {
    EAPI void         elm_frame_label_set(Evas_Object *obj, const char *label);
    EAPI const char  *elm_frame_label_get(Evas_Object *obj);
    EAPI void         elm_frame_content_set(Evas_Object *obj, Evas_Object *content);
-   EAPI void         elm_frame_style_set(Evas_Object *obj, const char *style);/** DEPRECATED. use elm_object_style_set() instead */
+   EINA_DEPRECATED EAPI void elm_frame_style_set(Evas_Object *obj, const char *style);
    /* available styles:
     * default
     * pad_small
@@ -450,7 +450,7 @@ extern "C" {
    EAPI void         elm_hover_target_set(Evas_Object *obj, Evas_Object *target);
    EAPI void         elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void         elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
-   EAPI void         elm_hover_style_set(Evas_Object *obj, const char *style); /** DEPRECATED. use elm_object_style_set() instead */
+   EINA_DEPRECATED EAPI void elm_hover_style_set(Evas_Object *obj, const char *style);
    EAPI const char  *elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_axis);
    /* available styles:
     * default
