@@ -19,6 +19,7 @@ struct _Widget_Data
 };
 
 static void _del_hook(Evas_Object *obj);
+static void _theme_hook(Evas_Object *obj);
 static void _custom_resize(void *data, Evas *a, Evas_Object *obj, void *event_info);
 
 static void
