@@ -55,7 +55,7 @@ _theme_hook(Evas_Object *obj)
 static void
 _sizing_eval(Evas_Object *obj)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
+   //Widget_Data *wd = elm_widget_data_get(obj);
    //Evas_Coord minw = -1, minh = -1;
 
    //edje_object_size_min_calc(wd->notify, &minw, &minh);
