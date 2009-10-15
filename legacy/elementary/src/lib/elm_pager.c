@@ -366,3 +366,17 @@ elm_pager_content_top_get(Evas_Object *obj)
    it = eina_list_last(wd->stack)->data;
    return it->content;
 }
+
+/**
+ * Set the pager style
+ *
+ * @param obj The pager object
+ * @param style The style will be applied in this pager
+ *
+ * @ingroup Pager
+ */
+EAPI void
+elm_pager_style_set(Evas_Object *obj, const char *style)
+{
+   elm_widget_style_set(obj, style);
+}
