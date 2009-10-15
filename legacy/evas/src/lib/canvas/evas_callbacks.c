@@ -352,7 +352,7 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (
 	return;
      }
    obj->callbacks->callbacks =
-     eina_inlist_append(obj->callbacks->callbacks, EINA_INLIST_GET(fn));
+     eina_inlist_prepend(obj->callbacks->callbacks, EINA_INLIST_GET(fn));
 }
 
 /**
