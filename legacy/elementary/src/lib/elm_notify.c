@@ -65,7 +65,8 @@ _sizing_eval(Evas_Object *obj)
 static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
+//   Widget_Data *wd = elm_widget_data_get(data);
+
    _sizing_eval(data);
 }
 
@@ -165,7 +166,7 @@ _show(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	ecore_timer_del(wd->timer);
 	wd->timer = NULL;
      }
-   if (wd->timeout>0)
+   if (wd->timeout > 0)
      wd->timer = ecore_timer_add(wd->timeout, _timer_cb, obj);
 }
 
@@ -322,7 +323,7 @@ elm_notify_timer_init(Evas_Object *obj)
 
    if (wd->timer) ecore_timer_del(wd->timer);
    wd->timer = NULL;
-   if (wd->timeout>0)
+   if (wd->timeout > 0)
      wd->timer = ecore_timer_add(wd->timeout, _timer_cb, obj);
 }
 

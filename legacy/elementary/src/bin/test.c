@@ -52,6 +52,7 @@ void test_icon_desktops(void *data, Evas_Object *obj, void *event_info);
 void test_notify(void *data, Evas_Object *obj, void *event_info);
 void test_slideshow(void *data, Evas_Object *obj, void *event_info);
 void test_menu(void *data, Evas_Object *obj, void *event_info);
+void test_panel(void *data, Evas_Object *obj, void *event_info);
 
 
 static void
@@ -187,8 +188,7 @@ my_win_main(void)
    elm_list_item_append(li, "Notify", NULL, NULL, test_notify, NULL);
    elm_list_item_append(li, "Slideshow", NULL, NULL, test_slideshow, NULL);
    elm_list_item_append(li, "Menu", NULL, NULL, test_menu, NULL);
-
-
+   elm_list_item_append(li, "Panel", NULL, NULL, test_panel, NULL);
 
    elm_list_go(li);
 
