@@ -178,6 +178,8 @@ eng_window_use(Evas_GL_X11_Window *gw)
 {
    if (_evas_gl_x11_window != gw)
      {
+        if (_evas_gl_x11_window)
+          evas_gl_common_context_flush(_evas_gl_x11_window->gl_context);
 	_evas_gl_x11_window = gw;
 // EGL / GLES
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
