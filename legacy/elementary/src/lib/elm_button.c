@@ -97,7 +97,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
    if (sub == wd->icon)
      {
 	edje_object_signal_emit(wd->btn, "elm,state,icon,hidden", "elm");
-	evas_object_event_callback_del(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
+	evas_object_event_callback_del(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _changed_size_hints);
 	wd->icon = NULL;
 	edje_object_message_signal_process(wd->btn);
@@ -139,7 +139,7 @@ elm_button_add(Evas_Object *parent)
 
    wd->btn = edje_object_add(e);
    _elm_theme_set(wd->btn, "button", "base", "default");
-   edje_object_signal_callback_add(wd->btn, "elm,action,click", "", 
+   edje_object_signal_callback_add(wd->btn, "elm,action,click", "",
                                    _signal_clicked, obj);
    elm_widget_resize_object_set(obj, wd->btn);
 
@@ -153,7 +153,7 @@ elm_button_add(Evas_Object *parent)
  * Set the label used in the button
  *
  * @param obj The button object
- * @param label The text will be written on the button 
+ * @param label The text will be written on the button
  *
  * @ingroup Button
  */
@@ -231,6 +231,8 @@ elm_button_icon_get(Evas_Object *obj)
  *
  * @param obj The button object
  * @param style The style for the button
+ *
+ * DEPRECATED. use elm_object_style_set() instead
  *
  * @ingroup Button
  */

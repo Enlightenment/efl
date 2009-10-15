@@ -68,7 +68,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 
    if (sub == wd->content)
      {
-	evas_object_event_callback_del(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
+	evas_object_event_callback_del(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _changed_size_hints);
 	wd->content = NULL;
 	_sizing_eval(obj);
@@ -164,7 +164,7 @@ elm_frame_content_set(Evas_Object *obj, Evas_Object *content)
      {
 	elm_widget_sub_object_add(obj, content);
 	edje_object_part_swallow(wd->frm, "elm.swallow.content", content);
-	evas_object_event_callback_add(content, 
+	evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
 	_sizing_eval(obj);
@@ -176,6 +176,8 @@ elm_frame_content_set(Evas_Object *obj, Evas_Object *content)
  *
  * @param obj The frame object
  * @param style The style will be applied in this frame
+ *
+ * DEPRECATED. use elm_object_style_set() instead
  *
  * @ingroup Frame
  */

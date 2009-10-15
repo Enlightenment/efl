@@ -67,7 +67,7 @@ _theme_hook(Evas_Object *obj)
 
    // FIXME: hover contents doesnt seem to propagate resizes properly
    _elm_theme_set(wd->cov, "hover", "base", elm_widget_style_get(obj));
-   edje_object_scale_set(wd->cov, elm_widget_scale_get(obj) * 
+   edje_object_scale_set(wd->cov, elm_widget_scale_get(obj) *
                          _elm_config->scale);
    _reval_content(obj);
    _sizing_eval(obj);
@@ -271,7 +271,7 @@ elm_hover_add(Evas_Object *parent)
    wd->cov = edje_object_add(e);
    _elm_theme_set(wd->cov, "hover", "base", "default");
    elm_widget_sub_object_add(obj, wd->cov);
-   edje_object_signal_callback_add(wd->cov, "elm,action,dismiss", "", 
+   edje_object_signal_callback_add(wd->cov, "elm,action,dismiss", "",
                                    _signal_dismiss, obj);
 
    wd->offset = evas_object_rectangle_add(e);
@@ -299,12 +299,12 @@ elm_hover_target_set(Evas_Object *obj, Evas_Object *target)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (wd->target)
-     evas_object_event_callback_del(wd->target, EVAS_CALLBACK_DEL, 
+     evas_object_event_callback_del(wd->target, EVAS_CALLBACK_DEL,
                                     _target_del);
    wd->target = target;
    if (wd->target)
      {
-	evas_object_event_callback_add(wd->target, EVAS_CALLBACK_DEL, 
+	evas_object_event_callback_add(wd->target, EVAS_CALLBACK_DEL,
                                        _target_del, obj);
 	elm_widget_hover_object_set(target, obj);
 	_sizing_eval(obj);
@@ -318,29 +318,29 @@ elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 
    if (wd->parent)
      {
-	evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_MOVE, 
+	evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_MOVE,
                                        _parent_move);
-	evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_RESIZE, 
+	evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_RESIZE,
                                        _parent_resize);
-	evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_SHOW, 
+	evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_SHOW,
                                        _parent_show);
-	evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_HIDE, 
+	evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_HIDE,
                                        _parent_hide);
-	evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_DEL, 
+	evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_DEL,
                                        _parent_del);
      }
    wd->parent = parent;
    if (wd->parent)
      {
-	evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_MOVE, 
+	evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_MOVE,
                                        _parent_move, obj);
-	evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_RESIZE, 
+	evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_RESIZE,
                                        _parent_resize, obj);
-	evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_SHOW, 
+	evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_SHOW,
                                        _parent_show, obj);
-	evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_HIDE, 
+	evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_HIDE,
                                        _parent_hide, obj);
-	evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_DEL, 
+	evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_DEL,
                                        _parent_del, obj);
 //	elm_widget_sub_object_add(parent, obj);
      }
@@ -377,11 +377,11 @@ elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conten
      }
 }
 
+/** DEPRECATED. use elm_object_style_set() instead */
 EAPI void
 elm_hover_style_set(Evas_Object *obj, const char *style)
 {
    elm_widget_style_set(obj, style);
-//   Widget_Data *wd = elm_widget_data_get(obj);
 }
 
 EAPI const char *
