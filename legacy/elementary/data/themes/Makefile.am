@@ -137,7 +137,8 @@ busy-5.png \
 busy-6.png \
 busy-7.png \
 busy-8.png \
-busy-9.png
+busy-9.png \
+arrow_right.png
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
