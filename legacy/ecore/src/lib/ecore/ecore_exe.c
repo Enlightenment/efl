@@ -7,8 +7,8 @@
 #endif
 
 #if defined (__FreeBSD__) || defined (__OpenBSD__) || defined (__NetBSD__)
-#include <sys/time.h>
-#include <sys/resource.h>
+# include <sys/time.h>
+# include <sys/resource.h>
 #endif
 
 #include <stdlib.h>
