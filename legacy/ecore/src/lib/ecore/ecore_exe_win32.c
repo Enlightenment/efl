@@ -6,14 +6,14 @@
 # include <config.h>
 #endif
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#undef WIN32_LEAN_AND_MEAN
-
 #include "ecore_private.h"
 #include "Ecore.h"
 
 #ifdef _WIN32
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
 
 #define ECORE_EXE_WIN32_TIMEOUT 3000
 
