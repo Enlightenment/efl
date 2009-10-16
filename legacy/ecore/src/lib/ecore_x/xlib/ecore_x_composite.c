@@ -34,9 +34,9 @@ ecore_x_composite_query(void)
 EAPI void
 ecore_x_composite_redirect_window(Ecore_X_Window win, Ecore_X_Composite_Update_Type type)
 {
+#ifdef ECORE_XCOMPOSITE
    int update;
 
-#ifdef ECORE_XCOMPOSITE
    switch(type)
      {
       case ECORE_X_COMPOSITE_UPDATE_AUTOMATIC:
@@ -53,9 +53,9 @@ ecore_x_composite_redirect_window(Ecore_X_Window win, Ecore_X_Composite_Update_T
 EAPI void
 ecore_x_composite_redirect_subwindows(Ecore_X_Window win, Ecore_X_Composite_Update_Type type)
 {
+#ifdef ECORE_XCOMPOSITE
    int update;
 
-#ifdef ECORE_XCOMPOSITE
    switch(type)
      {
       case ECORE_X_COMPOSITE_UPDATE_AUTOMATIC:
@@ -72,9 +72,9 @@ ecore_x_composite_redirect_subwindows(Ecore_X_Window win, Ecore_X_Composite_Upda
 EAPI void
 ecore_x_composite_unredirect_window(Ecore_X_Window win, Ecore_X_Composite_Update_Type type)
 {
+#ifdef ECORE_XCOMPOSITE
    int update;
 
-#ifdef ECORE_XCOMPOSITE
    switch(type)
      {
       case ECORE_X_COMPOSITE_UPDATE_AUTOMATIC:
@@ -91,9 +91,9 @@ ecore_x_composite_unredirect_window(Ecore_X_Window win, Ecore_X_Composite_Update
 EAPI void
 ecore_x_composite_unredirect_subwindows(Ecore_X_Window win, Ecore_X_Composite_Update_Type type)
 {
+#ifdef ECORE_XCOMPOSITE
    int update;
 
-#ifdef ECORE_XCOMPOSITE
    switch(type)
      {
       case ECORE_X_COMPOSITE_UPDATE_AUTOMATIC:
@@ -110,12 +110,10 @@ ecore_x_composite_unredirect_subwindows(Ecore_X_Window win, Ecore_X_Composite_Up
 EAPI Ecore_X_Pixmap
 ecore_x_composite_name_window_pixmap_get(Ecore_X_Window win)
 {
-   Ecore_X_Pixmap pixmap;
+   Ecore_X_Pixmap pixmap = None;
   
 #ifdef ECORE_XCOMPOSITE
    pixmap = XCompositeNameWindowPixmap(_ecore_x_disp, win);
-#else
-   return None;
 #endif
 
    return pixmap;
