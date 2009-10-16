@@ -120,9 +120,7 @@ extern "C" {
      };
    typedef enum _Ecore_Poller_Type Ecore_Poller_Type;
 
-#ifndef _WIN32
    typedef void Ecore_Exe; /**< A handle for spawned processes */
-#endif
    typedef void Ecore_Timer; /**< A handle for timers */
    typedef void Ecore_Idler; /**< A handle for idlers */
    typedef void Ecore_Idle_Enterer; /**< A handle for idle enterers */
@@ -246,7 +244,6 @@ extern "C" {
    EAPI void                *ecore_event_current_event_get(void);
 
 
-#ifndef _WIN32
    EAPI void        ecore_exe_run_priority_set(int pri);
    EAPI int         ecore_exe_run_priority_get(void);
    EAPI Ecore_Exe  *ecore_exe_run(const char *exe_cmd, const void *data);
@@ -270,7 +267,6 @@ extern "C" {
    EAPI void        ecore_exe_kill(Ecore_Exe *exe);
    EAPI void        ecore_exe_signal(Ecore_Exe *exe, int num);
    EAPI void        ecore_exe_hup(Ecore_Exe *exe);
-#endif
 
    EAPI Ecore_Idler *ecore_idler_add(int (*func) (void *data), const void *data);
    EAPI void        *ecore_idler_del(Ecore_Idler *idler);

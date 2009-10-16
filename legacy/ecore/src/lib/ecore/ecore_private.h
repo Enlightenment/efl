@@ -207,9 +207,7 @@ enum _Ecore_Poller_Type
 };
 typedef enum _Ecore_Poller_Type Ecore_Poller_Type;
 
-#ifndef _WIN32
 typedef struct _Ecore_Exe           Ecore_Exe;
-#endif
 typedef struct _Ecore_Timer         Ecore_Timer;
 typedef struct _Ecore_Idler         Ecore_Idler;
 typedef struct _Ecore_Idle_Enterer  Ecore_Idle_Enterer;
@@ -418,12 +416,9 @@ int           _ecore_signal_count_get(void);
 void          _ecore_signal_call(void);
 #endif
 
-#ifdef _WIN32
-static inline void _ecore_exe_init(void) { }
-static inline void _ecore_exe_shutdown(void) { }
-#else
 void          _ecore_exe_init(void);
 void          _ecore_exe_shutdown(void);
+#ifndef _WIN32
 Ecore_Exe    *_ecore_exe_find(pid_t pid);
 void         *_ecore_exe_event_del_new(void);
 void          _ecore_exe_event_del_free(void *data, void *ev);

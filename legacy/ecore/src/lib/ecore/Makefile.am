@@ -16,6 +16,7 @@ ecore_anim.c \
 ecore_app.c \
 ecore_events.c \
 ecore_exe.c \
+ecore_exe_win32.c \
 ecore_getopt.c \
 ecore_hash.c \
 ecore_idle_enterer.c \
