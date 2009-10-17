@@ -49,10 +49,10 @@ extern "C" {
    * Evas Array Hash functions
    */
 
-   EAPI Evas_Array_Hash *evas_array_hash_new        (void);
-   EAPI void             evas_array_hash_free       (Evas_Array_Hash *hash);
-   EAPI void             evas_array_hash_add        (Evas_Array_Hash *hash, int key, int data);
-   EAPI int              evas_array_hash_search     (Evas_Array_Hash *hash, int key);
+   EINA_DEPRECATED EAPI Evas_Array_Hash *evas_array_hash_new        (void);
+   EINA_DEPRECATED EAPI void             evas_array_hash_free       (Evas_Array_Hash *hash);
+   EINA_DEPRECATED EAPI void             evas_array_hash_add        (Evas_Array_Hash *hash, int key, int data);
+   EINA_DEPRECATED EAPI int              evas_array_hash_search     (Evas_Array_Hash *hash, int key);
 
 
   /*
@@ -65,7 +65,7 @@ extern "C" {
     *
     * do we really need this? hmmm - let me think... there may be a better way
     */
-  static inline Eina_Hash *evas_hash_add(Eina_Hash *hash, const char *key, const void *data)
+  EINA_DEPRECATED static inline Eina_Hash *evas_hash_add(Eina_Hash *hash, const char *key, const void *data)
   {
      if (!hash) hash = eina_hash_string_superfast_new(NULL);
      if (!hash) return NULL;
@@ -74,7 +74,7 @@ extern "C" {
      return hash;
   }
 
-  static inline Eina_Hash *evas_hash_direct_add(Eina_Hash *hash, const char *key, const void *data)
+  EINA_DEPRECATED static inline Eina_Hash *evas_hash_direct_add(Eina_Hash *hash, const char *key, const void *data)
   {
      if (!hash) hash = eina_hash_string_superfast_new(NULL);
      if (!hash) return NULL;
@@ -83,7 +83,7 @@ extern "C" {
      return hash;
   }
 
-  static inline Eina_Hash *evas_hash_del(Eina_Hash *hash, const char *key, const void *data)
+  EINA_DEPRECATED static inline Eina_Hash *evas_hash_del(Eina_Hash *hash, const char *key, const void *data)
   {
      if (!hash) return NULL;
      eina_hash_del(hash, key, data);
@@ -96,31 +96,31 @@ extern "C" {
 
      return hash;
   }
-  static inline int evas_hash_size(const Eina_Hash *hash)
+  EINA_DEPRECATED static inline int evas_hash_size(const Eina_Hash *hash)
   {
      if (!hash) return 0;
      return 255;
   }
 
-  static inline void *evas_hash_find(const Eina_Hash *hash, const void *key)
+  EINA_DEPRECATED static inline void *evas_hash_find(const Eina_Hash *hash, const void *key)
   {
      if (!hash) return NULL;
      return eina_hash_find(hash, key);
   }
 
-  static inline void *evas_hash_modify(Eina_Hash *hash, const void *key, const void *data)
+  EINA_DEPRECATED static inline void *evas_hash_modify(Eina_Hash *hash, const void *key, const void *data)
   {
      if (!hash) return NULL;
      return eina_hash_modify(hash, key, data);
   }
 
-  static inline void evas_hash_free(Eina_Hash *hash)
+  EINA_DEPRECATED static inline void evas_hash_free(Eina_Hash *hash)
   {
      if (!hash) return;
      eina_hash_free(hash);
   }
 
-  static inline void evas_hash_foreach(const Eina_Hash *hash, Eina_Bool (*cb)(const Eina_Hash *hash, const char *key, void *data, void *fdata), const void *fdata)
+  EINA_DEPRECATED static inline void evas_hash_foreach(const Eina_Hash *hash, Eina_Bool (*cb)(const Eina_Hash *hash, const char *key, void *data, void *fdata), const void *fdata)
   {
      if (!hash) return;
      eina_hash_foreach(hash, (Eina_Hash_Foreach)cb, fdata);
