@@ -69,7 +69,9 @@ evas_regionbuf.c \
 evas_pipe.c \
 evas_intl_utils.c \
 evas_intl/evas_intl_arabic.c \
-evas_intl/evas_intl_arabic.h
+evas_intl/evas_intl_arabic.h \
+evas_map_image.c \
+evas_map_image.h
 
 EXTRA_DIST = \
 evas_blend.h \

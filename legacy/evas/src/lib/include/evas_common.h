@@ -1199,6 +1199,8 @@ Tilebuf_Rect *evas_common_regionbuf_rects_get (Regionbuf *rb);
 /****/
 #include "../engines/common/evas_draw.h"
 
+#include "../engines/common/evas_map_image.h"
+
 /****/
 #ifdef BUILD_PIPE_RENDER
 # include "../engines/common/evas_pipe.h"
