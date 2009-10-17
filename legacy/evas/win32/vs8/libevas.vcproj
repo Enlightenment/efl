@@ -392,30 +392,6 @@
 			</Filter>
 		</Filter>
 		<Filter
-			Name="data"
-			>
-			<Filter
-				Name="Header Files"
-				>
-				<File
-					RelativePath="..\..\src\lib\data\evas_mempool.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Source Files"
-				>
-				<File
-					RelativePath="..\..\src\lib\data\evas_array_hash.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\lib\data\evas_mempool.c"
-					>
-				</File>
-			</Filter>
-		</Filter>
-		<Filter
 			Name="file"
 			>
 			<Filter
