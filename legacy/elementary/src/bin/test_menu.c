@@ -15,7 +15,8 @@ _show(void *data, Evas *e, Evas_Object *obj, void *event_info)
    evas_object_show(data);
 }
 
-static void _populate_4(Elm_Menu_Item *item)
+static void 
+_populate_4(Elm_Menu_Item *item)
 {
    Evas_Object *ic;
    Elm_Menu_Item *item2, *item3;
@@ -28,10 +29,10 @@ static void _populate_4(Elm_Menu_Item *item)
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   item2 = elm_menu_item_add(menu, item, ic, "menu 3", NULL, NULL);
 
+   item2 = elm_menu_item_add(menu, item, ic, "menu 3", NULL, NULL);
    
-   elm_menu_item_separator_add(menu,item);
+   elm_menu_item_separator_add(menu, item);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
@@ -52,7 +53,8 @@ static void _populate_4(Elm_Menu_Item *item)
    elm_menu_item_disabled_set(item3, 1);
 }
 
-static void _populate_3(Elm_Menu_Item *item)
+static void 
+_populate_3(Elm_Menu_Item *item)
 {
    Evas_Object *ic;
    Elm_Menu_Item *item2, *item3;
@@ -65,8 +67,8 @@ static void _populate_3(Elm_Menu_Item *item)
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   item2 = elm_menu_item_add(menu, item, ic, "menu 3", NULL, NULL);
 
+   item2 = elm_menu_item_add(menu, item, ic, "menu 3", NULL, NULL);
    
    elm_menu_item_separator_add(menu,item);
 
@@ -77,7 +79,8 @@ static void _populate_3(Elm_Menu_Item *item)
    elm_menu_item_disabled_set(item3, 1);
 }
 
-static void _populate_2(Elm_Menu_Item *item)
+static void 
+_populate_2(Elm_Menu_Item *item)
 {
    Evas_Object *ic;
    Elm_Menu_Item *item2, *item3;
@@ -90,8 +93,8 @@ static void _populate_2(Elm_Menu_Item *item)
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   item2 = elm_menu_item_add(menu, item, ic, "menu 3", NULL, NULL);
 
+   item2 = elm_menu_item_add(menu, item, ic, "menu 3", NULL, NULL);
    
    _populate_3(item2);
 
@@ -106,6 +109,7 @@ static void _populate_2(Elm_Menu_Item *item)
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
+
    item2 = elm_menu_item_add(menu, item, ic, "menu 2", NULL, NULL);
 
    elm_menu_item_separator_add(menu,item);
@@ -119,7 +123,8 @@ static void _populate_2(Elm_Menu_Item *item)
    _populate_4(item2);
 }
 
-static void _populate_1(Elm_Menu_Item *item)
+static void 
+_populate_1(Elm_Menu_Item *item)
 {
    Elm_Menu_Item *item2;
 
@@ -147,12 +152,10 @@ test_menu(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
-
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    elm_win_resize_object_add(win, rect);
    evas_object_color_set(rect, 0, 0, 0, 0);
    evas_object_show(rect);
-   
 
    menu = elm_menu_add(win);
    item = elm_menu_item_add(menu, NULL, NULL, "first item", NULL, NULL);
@@ -160,15 +163,14 @@ test_menu(void *data, Evas_Object *obj, void *event_info)
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   item = elm_menu_item_add(menu, NULL, ic, "second item", NULL, NULL);
 
+   item = elm_menu_item_add(menu, NULL, ic, "second item", NULL, NULL);
    _populate_1(item);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    elm_menu_item_add(menu, item, ic, "sub menu", NULL, NULL);
-
 
    evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN, _show, menu);
 

@@ -17,7 +17,6 @@ test_panel(void *data, Evas_Object *obj, void *event_info)
 
    panel = elm_panel_add(win);
    elm_panel_orient_set(panel, ELM_PANEL_ORIENT_LEFT);
-   elm_panel_timeout_set(panel, 2);
    evas_object_size_hint_weight_set(panel, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(panel, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(panel);

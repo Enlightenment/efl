@@ -36,7 +36,8 @@ _theme_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    _elm_theme_set(wd->panel, "panel", "base", "default");
-   edje_object_scale_set(wd->panel, elm_widget_scale_get(obj) * _elm_config->scale);
+   edje_object_scale_set(wd->panel, elm_widget_scale_get(obj) * 
+                         _elm_config->scale);
    _sizing_eval(obj);
 }
 
@@ -45,10 +46,8 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord x, y, w, h;
-   Evas_Coord px, py, pw, ph;
 
    evas_object_geometry_get(wd->parent, &x, &y, &w, &h);
-   evas_object_geometry_get(wd->panel, &px, &py, &pw, &ph);
    switch (wd->orient) 
      {
       case ELM_PANEL_ORIENT_TOP:
@@ -79,8 +78,7 @@ _parent_resize(void *data, Evas *evas, Evas_Object *obj, void *event)
 static void 
 _btn_click(void *data, Evas_Object *obj, void *event) 
 {
-   Evas_Object *o = data;
-   Widget_Data *wd = elm_widget_data_get(o);
+   Widget_Data *wd = elm_widget_data_get(data);
 
    elm_icon_standard_set(wd->icn, "arrow_right");
 }

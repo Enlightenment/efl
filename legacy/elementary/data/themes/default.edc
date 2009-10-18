@@ -3374,7 +3374,7 @@ collections {
                    inherit:  "default" 0.0;
                }
            }
-           part {	  name: "over_disabled";
+           part { name: "over_disabled";
                mouse_events: 0;
                description { state: "default" 0.0;
                    color: 255 255 255 0;

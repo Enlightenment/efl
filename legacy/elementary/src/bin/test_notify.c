@@ -18,7 +18,7 @@ _bt_close(void *data, Evas_Object *obj, void *event_info)
    evas_object_hide(notify);
 }
 
-   void
+void
 test_notify(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *bx2, *notify, *bt, *lb;
