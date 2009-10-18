@@ -35,7 +35,7 @@ static void _show(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _hide(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
-   static void
+static void
 _del_pre_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
