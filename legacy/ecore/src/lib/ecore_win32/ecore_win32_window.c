@@ -475,7 +475,7 @@ ecore_win32_window_shape_set(Ecore_Win32_Window *window,
    HRGN                        rgn;
    int                         x;
    int                         y;
-   OSVERSIONINF               version_info;
+   OSVERSIONINFO               version_info;
 
    if (window == NULL)
       return;

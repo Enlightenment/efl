@@ -539,7 +539,7 @@ _ecore_win32_event_handle_unmap_notify(Ecore_Win32_Callback_Data *msg)
 void
 _ecore_win32_event_handle_configure_notify(Ecore_Win32_Callback_Data *msg)
 {
-   WINDOWINF                          wi;
+   WINDOWINFO                          wi;
    Ecore_Win32_Event_Window_Configure *e;
    WINDOWPOS                          *window_pos;
 
@@ -549,7 +549,7 @@ _ecore_win32_event_handle_configure_notify(Ecore_Win32_Callback_Data *msg)
    if (!e) return;
 
    window_pos = (WINDOWPOS *)msg->data_param;
-   wi.cbSize = sizeof(WINDOWINF);
+   wi.cbSize = sizeof(WINDOWINFO);
    if (!GetWindowInfo(window_pos->hwnd, &wi))
      {
         free(e);
