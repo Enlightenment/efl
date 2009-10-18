@@ -29,13 +29,11 @@ struct _Menu_Item
 
    void (*func) (void *data, Evas_Object *obj, void *event_info);
    const void *data;
-   //
 
    //if submenu
    Eina_Bool open;
    Evas_Object *hv, *bx, *location;
    Eina_List *items;
-   //
 };
 
 struct _Widget_Data
@@ -97,7 +95,7 @@ _del_hook(Evas_Object *obj)
    free(wd);
 }
 
-   static void
+static void
 _theme_hook(Evas_Object *obj)
 {
    Eina_List *l, *_l, *ll = NULL;
@@ -404,7 +402,7 @@ _item_submenu_obj_create(Elm_Menu_Item *item)
    item->hv = elm_hover_add(wd->bx);
    elm_hover_target_set(item->hv, item->location);
    elm_hover_parent_set(item->hv, wd->parent);
-   elm_hover_style_set(item->hv, "submenu");
+   elm_object_style_set(item->hv, "submenu");
 
    item->bx = elm_box_add(wd->bx);
    evas_object_event_callback_add(item->bx, EVAS_CALLBACK_RESIZE, _menu_resize, item->menu);
@@ -454,7 +452,7 @@ elm_menu_add(Evas_Object *parent)
    wd->hv = elm_hover_add(obj);
    elm_hover_parent_set(wd->hv, parent);
    elm_hover_target_set(wd->hv, wd->location);
-   elm_hover_style_set(wd->hv, "menu");
+   elm_object_style_set(wd->hv, "menu");
    evas_object_smart_callback_add(wd->hv, "clicked", _menu_hide, obj);
 
    wd->bx = elm_box_add(obj);
@@ -596,7 +594,6 @@ elm_menu_item_label_get(Elm_Menu_Item *item)
    if (!item) return ;
    return item->label;
 }
-
 
 EAPI void
 elm_menu_item_icon_set(Elm_Menu_Item *item, Evas_Object *icon)
