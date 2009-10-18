@@ -143,7 +143,7 @@ _activate(Evas_Object *obj)
 
    wd->hover = elm_hover_add(obj);
    snprintf(buf, sizeof(buf), "hoversel_vertical/%s", elm_widget_style_get(obj));
-   elm_hover_style_set(wd->hover, buf);
+   elm_object_style_set(wd->hover, buf);
    evas_object_smart_callback_add(wd->hover, "clicked", _hover_clicked, obj);
    elm_hover_parent_set(wd->hover, wd->hover_parent);
    elm_hover_target_set(wd->hover, wd->btn);
