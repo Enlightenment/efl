@@ -81,13 +81,15 @@ _item_select(Elm_Toolbar_Item *it)
    _item_show(it);
    obj2 = it->obj;
    if(it->menu)
-   {
-       evas_object_show(it->o_menu);
-       evas_object_event_callback_add(it->base, EVAS_CALLBACK_RESIZE, _menu_move_resize, it);
-       evas_object_event_callback_add(it->base, EVAS_CALLBACK_MOVE, _menu_move_resize, it);
+     {
+        evas_object_show(it->o_menu);
+        evas_object_event_callback_add(it->base, EVAS_CALLBACK_RESIZE, 
+                                       _menu_move_resize, it);
+        evas_object_event_callback_add(it->base, EVAS_CALLBACK_MOVE, 
+                                       _menu_move_resize, it);
 
-       _menu_move_resize(it, NULL, NULL, NULL);
-   }
+        _menu_move_resize(it, NULL, NULL, NULL);
+     }
    if (it->func) it->func((void *)(it->data), it->obj, it);
    evas_object_smart_callback_call(obj2, "clicked", it);
 }
@@ -95,20 +97,20 @@ _item_select(Elm_Toolbar_Item *it)
 static void
 _menu_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-    Elm_Toolbar_Item *it = data;
-    elm_toolbar_item_unselect_all(it->obj);
+   Elm_Toolbar_Item *it = data;
+   elm_toolbar_item_unselect_all(it->obj);
 }
 
 static void
 _menu_move_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-    Elm_Toolbar_Item *it = data;
-    Evas_Coord x_p,y_p,x,y,w,h,x2,y2,w2,h2,bx,by,bw,bh;
-    Widget_Data *wd = elm_widget_data_get(it->obj);
-    if (!wd || !wd->menu_parent) return;
-    
-    evas_object_geometry_get(it->base, &x, &y, &w, &h);
-    elm_menu_move(it->o_menu, x, y+h);
+   Elm_Toolbar_Item *it = data;
+   Evas_Coord x, y, w, h;
+   Widget_Data *wd = elm_widget_data_get(it->obj);
+
+   if ((!wd) || (!wd->menu_parent)) return;
+   evas_object_geometry_get(it->base, &x, &y, &w, &h);
+   elm_menu_move(it->o_menu, x, y + h);
 }
 
 static void
@@ -125,7 +127,7 @@ _item_disable(Elm_Toolbar_Item *it, Eina_Bool disabled)
      edje_object_signal_emit(it->base, "elm,state,enabled", "elm");
 }
 
-   static void
+static void
 _del_pre_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -133,9 +135,7 @@ _del_pre_hook(Evas_Object *obj)
 
    if (!wd) return;
    EINA_LIST_FREE(wd->items, it)
-     {
-	elm_toolbar_item_menu_set(it, 0);
-     }
+     elm_toolbar_item_menu_set(it, 0);
 }
 
 static void
@@ -193,14 +193,13 @@ _theme_hook(Evas_Object *obj)
              edje_object_part_text_set(it->base, "elm.text", it->label);
           }
         else
-          {
-             _elm_theme_set(it->base, "toolbar", "separator", style);
-          }
+          _elm_theme_set(it->base, "toolbar", "separator", style);
+
 	mw = mh = -1;
-	if(!it->separator)
+	if (!it->separator)
 	  elm_coords_finger_size_adjust(1, &mw, 1, &mh);
 	edje_object_size_min_restricted_calc(it->base, &mw, &mh, mw, mh);
-	if(!it->separator)
+	if (!it->separator)
 	  elm_coords_finger_size_adjust(1, &mw, 1, &mh);
         evas_object_size_hint_min_set(it->base, mw, mh);
      }
@@ -220,13 +219,13 @@ _sizing_eval(Evas_Object *obj)
    edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr),
                              &minw, &minh);
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   if(w<minw) w = minw;
-   if(h<minh) h = minh;
+   if (w < minw) w = minw;
+   if (h < minh) h = minh;
 
    evas_object_resize(wd->scr, w, h);
 
    evas_object_size_hint_min_get(wd->bx, &minw, &minh);
-   if(w>minw) minw = w;
+   if (w > minw) minw = w;
    evas_object_resize(wd->bx, minw, minh);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
    if (wd->scrollable)
@@ -356,7 +355,7 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, voi
    Elm_Toolbar_Item *it;
 
    if (!wd) return NULL;
-   it = calloc(1, sizeof(Elm_Toolbar_Item));
+   it = ELM_NEW(Elm_Toolbar_Item);
    if (!it) return NULL;
    wd->items = eina_list_append(wd->items, it);
    it->obj = obj;
@@ -495,37 +494,36 @@ elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
 EAPI void
 elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
-    Eina_List *l;
-    Elm_Toolbar_Item *it;
+   Eina_List *l;
+   Elm_Toolbar_Item *it;
+   Widget_Data *wd = elm_widget_data_get(obj);
 
-    Widget_Data *wd = elm_widget_data_get(obj);
-    if (!wd) return;
-    if(!parent) return;
-
-    wd->menu_parent = parent;
-    EINA_LIST_FOREACH(wd->items, l, it)
-    {
+   if ((!wd) || (!parent)) return;
+   wd->menu_parent = parent;
+   EINA_LIST_FOREACH(wd->items, l, it)
+     {
         if (it->o_menu)
-            elm_menu_parent_set(it->o_menu, wd->menu_parent);
-    }
+          elm_menu_parent_set(it->o_menu, wd->menu_parent);
+     }
 }
 
 EAPI void
 elm_toolbar_item_unselect_all(Evas_Object *obj)
 {
-    Eina_List *l;
-    Elm_Toolbar_Item *it;
-    Widget_Data *wd = elm_widget_data_get(obj);
-    if (!wd) return;
-    EINA_LIST_FOREACH(wd->items, l, it)
-    {
+   Eina_List *l;
+   Elm_Toolbar_Item *it;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return;
+   EINA_LIST_FOREACH(wd->items, l, it)
+     {
         if (it->selected)
-        {
-            it->selected = EINA_FALSE;
-            edje_object_signal_emit(it->base, "elm,state,unselected", "elm");
-            break;
-        }
-    }
+          {
+             it->selected = EINA_FALSE;
+             edje_object_signal_emit(it->base, "elm,state,unselected", "elm");
+             break;
+          }
+     }
 }
 
 /**
@@ -537,42 +535,42 @@ elm_toolbar_item_unselect_all(Evas_Object *obj)
 EAPI void
 elm_toolbar_align_set(Evas_Object *obj, double align)
 {
-    Eina_List *l;
-    Elm_Toolbar_Item *it;
-    Widget_Data *wd = elm_widget_data_get(obj);
-    if (!wd) return;
+   Eina_List *l;
+   Elm_Toolbar_Item *it;
+   Widget_Data *wd = elm_widget_data_get(obj);
 
-    if(wd->align != align)
-        evas_object_size_hint_align_set(wd->bx, align, 0.5);
-
+   if (!wd) return;
+   if(wd->align != align)
+     evas_object_size_hint_align_set(wd->bx, align, 0.5);
     wd->align = align;
 }
 
 EAPI void
 elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu)
 {
-   if (!item) return;
+   Widget_Data *wd = elm_widget_data_get(item->obj);
+
+   if ((!wd) || (!item)) return;
    if (item->menu == menu) return;
    item->menu = menu;
-
-   Widget_Data *wd = elm_widget_data_get(item->obj);
-   if (!wd) return;
 
    if(menu)
      {
 	item->o_menu = elm_menu_add(item->base);
-	if(wd->menu_parent)
+	if (wd->menu_parent)
 	  elm_menu_parent_set(item->o_menu, wd->menu_parent);
-	evas_object_event_callback_add(item->o_menu, EVAS_CALLBACK_HIDE, _menu_hide, item);
+	evas_object_event_callback_add(item->o_menu, EVAS_CALLBACK_HIDE, 
+                                       _menu_hide, item);
      }
-   else if(item->o_menu)
+   else if (item->o_menu)
      {
-	evas_object_event_callback_del(item->o_menu, EVAS_CALLBACK_HIDE, _menu_hide);
+	evas_object_event_callback_del(item->o_menu, EVAS_CALLBACK_HIDE, 
+                                       _menu_hide);
 	evas_object_del(item->o_menu);
      }
 }
 
-   EAPI Evas_Object *
+EAPI Evas_Object *
 elm_toolbar_item_menu_get(Elm_Toolbar_Item *item)
 {
    if (!item) return;
@@ -581,4 +579,3 @@ elm_toolbar_item_menu_get(Elm_Toolbar_Item *item)
    elm_toolbar_item_menu_set(item, 1);
    return item->o_menu;
 }
-
