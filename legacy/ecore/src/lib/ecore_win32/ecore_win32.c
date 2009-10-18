@@ -39,7 +39,7 @@ HINSTANCE           _ecore_win32_instance = NULL;
 double              _ecore_win32_double_click_time = 0.25;
 long                _ecore_win32_event_last_time = 0;
 Ecore_Win32_Window *_ecore_win32_event_last_window = NULL;
-int                 _ecore_win32_log_dom = -1;
+int                 _ecore_win32_log_dom_global = -1;
 
 int ECORE_WIN32_EVENT_MOUSE_IN              = 0;
 int ECORE_WIN32_EVENT_MOUSE_OUT             = 0;
