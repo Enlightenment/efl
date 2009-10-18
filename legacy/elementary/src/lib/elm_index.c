@@ -91,7 +91,7 @@ _theme_hook(Evas_Object *obj)
      {
         if (!wd->bx[1])
           {
-	     wd->bx[1] = evas_object_box_add(wd->base);
+	     wd->bx[1] = evas_object_box_add(evas_object_evas_get(wd->base));
 	     evas_object_box_layout_set(wd->bx[1], _layout, wd, NULL);
              elm_widget_sub_object_add(obj, wd->bx[1]);
           }
@@ -350,7 +350,7 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
                   selectraise = edje_object_data_get(it->base, "selectraise");
                   if ((selectraise) && (!strcmp(selectraise, "on")))
                     evas_object_raise(it->base);
-                  evas_object_smart_callback_call((void *)obj, "changed", it->data);
+                  evas_object_smart_callback_call((void *)obj, "changed", (void *)it->data);
                   if (wd->delay) ecore_timer_del(wd->delay);
                   wd->delay = ecore_timer_add(0.2, _delay_change, obj);
                }
