@@ -79,7 +79,7 @@ _theme_hook(Evas_Object *obj)
 
    if (!wd) return;
    snprintf(buf, sizeof(buf), "hoversel_vertical/%s", elm_widget_style_get(obj));
-   elm_button_style_set(wd->btn, buf);
+   elm_object_style_set(wd->btn, buf);
 }
 
 static void
@@ -156,7 +156,7 @@ _activate(Evas_Object *obj)
    EINA_LIST_FOREACH(wd->items, l, it)
      {
 	bt = elm_button_add(wd->hover);
-	elm_button_style_set(bt, buf);
+	elm_object_style_set(bt, buf);
 	elm_button_label_set(bt, it->label);
 	if (it->icon_file)
 	  {
@@ -227,7 +227,7 @@ elm_hoversel_add(Evas_Object *parent)
    elm_widget_disable_hook_set(obj, _disable_hook);
 
    wd->btn = elm_button_add(parent);
-   elm_button_style_set(wd->btn, "hoversel_vertical");
+   elm_object_style_set(wd->btn, "hoversel_vertical");
    elm_widget_resize_object_set(obj, wd->btn);
    evas_object_event_callback_add(wd->btn, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				  _changed_size_hints, obj);

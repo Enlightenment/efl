@@ -79,7 +79,8 @@ _anchor_clicked(void *data, Evas_Object *obj, void *event_info)
    evas_object_resize(wd->pop, info->w, info->h);
 
    wd->hover = elm_hover_add(obj);
-   if (wd->hover_style) elm_hover_style_set(wd->hover, wd->hover_style);
+   if (wd->hover_style) 
+     elm_object_style_set(wd->hover, wd->hover_style);
    hover_parent = wd->hover_parent;
    if (!hover_parent) hover_parent = obj;
    elm_hover_parent_set(wd->hover, hover_parent);
