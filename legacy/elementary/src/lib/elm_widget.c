@@ -66,15 +66,13 @@ static void
 _sub_obj_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Smart_Data *sd = data;
+
    if (obj == sd->resize_obj)
-     {
-	sd->resize_obj = NULL;
-     }
-   else if (obj == sd->hover_obj) sd->hover_obj = NULL;
+     sd->resize_obj = NULL;
+   else if (obj == sd->hover_obj) 
+     sd->hover_obj = NULL;
    else
-     {
-	sd->subobjs = eina_list_remove(sd->subobjs, obj);
-     }
+     sd->subobjs = eina_list_remove(sd->subobjs, obj);
    evas_object_smart_callback_call(sd->obj, "sub-object-del", obj);
 }
 
@@ -82,7 +80,6 @@ static void
 _sub_obj_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Smart_Data *sd = data;
-   Evas_Object *op, *op2;
 
    elm_widget_focus_steal(sd->obj);
 }
@@ -194,6 +191,7 @@ elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
 {
    API_ENTRY return;
    double scale, pscale = elm_widget_scale_get(sobj);
+
    sd->subobjs = eina_list_append(sd->subobjs, sobj);
    if (!sd->child_can_focus)
      {
@@ -204,7 +202,8 @@ elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
 	Smart_Data *sd2 = evas_object_smart_data_get(sobj);
 	if (sd2)
 	  {
-	     if (sd2->parent_obj) elm_widget_sub_object_del(sd2->parent_obj, sobj);
+	     if (sd2->parent_obj) 
+               elm_widget_sub_object_del(sd2->parent_obj, sobj);
 	     sd2->parent_obj = obj;
 	  }
      }
@@ -243,8 +242,10 @@ elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
 	     Smart_Data *sd2 = evas_object_smart_data_get(sd->resize_obj);
 	     if (sd2) sd2->parent_obj = NULL;
 	  }
-	evas_object_event_callback_del(sd->resize_obj, EVAS_CALLBACK_DEL, _sub_obj_del);
-	evas_object_event_callback_del(sd->resize_obj, EVAS_CALLBACK_MOUSE_DOWN, _sub_obj_mouse_down);
+	evas_object_event_callback_del(sd->resize_obj, EVAS_CALLBACK_DEL, 
+                                       _sub_obj_del);
+	evas_object_event_callback_del(sd->resize_obj, EVAS_CALLBACK_MOUSE_DOWN, 
+                                       _sub_obj_mouse_down);
 	evas_object_smart_member_del(sd->resize_obj);
      }
    sd->resize_obj = sobj;
@@ -258,7 +259,8 @@ elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
 	evas_object_clip_set(sobj, evas_object_clip_get(obj));
 	evas_object_smart_member_add(sobj, obj);
 	evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
-	evas_object_event_callback_add(sobj, EVAS_CALLBACK_MOUSE_DOWN, _sub_obj_mouse_down, sd);
+	evas_object_event_callback_add(sobj, EVAS_CALLBACK_MOUSE_DOWN, 
+                                       _sub_obj_mouse_down, sd);
 	_smart_reconfigure(sd);
 	evas_object_smart_callback_call(obj, "sub-object-add", sobj);
      }
@@ -269,9 +271,8 @@ elm_widget_hover_object_set(Evas_Object *obj, Evas_Object *sobj)
 {
    API_ENTRY return;
    if (sd->hover_obj)
-     {
-	evas_object_event_callback_del(sd->hover_obj, EVAS_CALLBACK_DEL, _sub_obj_del);
-     }
+     evas_object_event_callback_del(sd->hover_obj, EVAS_CALLBACK_DEL, 
+                                    _sub_obj_del);
    sd->hover_obj = sobj;
    if (sd->hover_obj)
      {
@@ -309,6 +310,7 @@ elm_widget_focused_object_get(const Evas_Object *obj)
    const Evas_Object *subobj;
    const Eina_List *l;
    API_ENTRY return NULL;
+
    if (!sd->focused) return NULL;
    EINA_LIST_FOREACH(sd->subobjs, l, subobj)
      {
@@ -366,7 +368,8 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
 			 {
 			    /* the previous focused item was unfocused - so focus
 			     * the next one (that can be focused) */
-			    if (elm_widget_focus_jump(sd->resize_obj, forward)) return 1;
+			    if (elm_widget_focus_jump(sd->resize_obj, forward)) 
+                              return 1;
 			    else noloop = 1;
 			 }
 		       else
@@ -374,7 +377,8 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
 			    if (elm_widget_focus_get(sd->resize_obj))
 			      {
 				 /* jump to the next focused item or focus this item */
-				 if (elm_widget_focus_jump(sd->resize_obj, forward)) return 1;
+				 if (elm_widget_focus_jump(sd->resize_obj, forward)) 
+                                   return 1;
 				 /* it returned 0 - it got to the last item and is past it */
 				 focus_next = 1;
 			      }
@@ -393,7 +397,8 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
 				   {
 				      /* the previous focused item was unfocused - so focus
 				       * the next one (that can be focused) */
-				      if (elm_widget_focus_jump(child, forward)) return 1;
+				      if (elm_widget_focus_jump(child, forward)) 
+                                        return 1;
 				      else break;
 				   }
 				 else
@@ -401,7 +406,8 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
 				      if (elm_widget_focus_get(child))
 					{
 					   /* jump to the next focused item or focus this item */
-					   if (elm_widget_focus_jump(child, forward)) return 1;
+					   if (elm_widget_focus_jump(child, forward)) 
+                                             return 1;
 					   /* it returned 0 - it got to the last item and is past it */
 					   focus_next = 1;
 					}
@@ -424,7 +430,8 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
 			      {
 				 /* the previous focused item was unfocused - so focus
 				  * the next one (that can be focused) */
-				 if (elm_widget_focus_jump(child, forward)) return 1;
+				 if (elm_widget_focus_jump(child, forward)) 
+                                   return 1;
 				 else break;
 			      }
 			    else
@@ -432,7 +439,8 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
 				 if (elm_widget_focus_get(child))
 				   {
 				      /* jump to the next focused item or focus this item */
-				      if (elm_widget_focus_jump(child, forward)) return 1;
+				      if (elm_widget_focus_jump(child, forward)) 
+                                        return 1;
 				      /* it returned 0 - it got to the last item and is past it */
 				      focus_next = 1;
 				   }
@@ -448,14 +456,16 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
 			      {
 				 /* the previous focused item was unfocused - so focus
 				  * the next one (that can be focused) */
-				 if (elm_widget_focus_jump(sd->resize_obj, forward)) return 1;
+				 if (elm_widget_focus_jump(sd->resize_obj, forward)) 
+                                   return 1;
 			      }
 			    else
 			      {
 				 if (elm_widget_focus_get(sd->resize_obj))
 				   {
 				      /* jump to the next focused item or focus this item */
-				      if (elm_widget_focus_jump(sd->resize_obj, forward)) return 1;
+				      if (elm_widget_focus_jump(sd->resize_obj, forward)) 
+                                        return 1;
 				      /* it returned 0 - it got to the last item and is past it */
 				      focus_next = 1;
 				   }
@@ -550,9 +560,7 @@ elm_widget_focused_object_clear(Evas_Object *obj)
    API_ENTRY return;
    if (!sd->focused) return;
    if (elm_widget_focus_get(sd->resize_obj))
-     {
-	elm_widget_focused_object_clear(sd->resize_obj);
-     }
+     elm_widget_focused_object_clear(sd->resize_obj);
    else
      {
 	const Eina_List *l;
@@ -576,6 +584,7 @@ _elm_widget_parent_focus(Evas_Object *obj)
 {
    API_ENTRY return;
    Evas_Object *o = elm_widget_parent_get(obj);
+
    if (sd->focused) return;
    if (o) _elm_widget_parent_focus(o);
    sd->focused = 1;
@@ -588,6 +597,7 @@ elm_widget_focus_steal(Evas_Object *obj)
 {
    Evas_Object *parent, *o;
    API_ENTRY return;
+
    if (sd->focused) return;
    if (sd->disabled) return;
    parent = obj;
@@ -645,6 +655,7 @@ EAPI void
 elm_widget_disabled_set(Evas_Object *obj, int disabled)
 {
    API_ENTRY return;
+
    if (sd->disabled == disabled) return;
    sd->disabled = disabled;
    if (sd->focused)
@@ -679,7 +690,8 @@ elm_widget_show_region_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Co
    sd->ry = y;
    sd->rw = w;
    sd->rh = h;
-   if (sd->on_show_region_func) sd->on_show_region_func(sd->on_show_region_data, obj);
+   if (sd->on_show_region_func) 
+     sd->on_show_region_func(sd->on_show_region_data, obj);
 }
 
 EAPI void
@@ -781,6 +793,7 @@ elm_widget_style_set(Evas_Object *obj, const char *style)
 {
    const char *old;
    API_ENTRY return;
+
    old = sd->style;
    sd->style = eina_stringshare_add(style);
    if (old) eina_stringshare_del(old);
@@ -995,5 +1008,3 @@ _stringlist_free(Eina_List *list)
    EINA_LIST_FREE(list, s)
      eina_stringshare_del(s);
 }
-
-
