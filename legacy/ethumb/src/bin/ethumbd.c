@@ -905,10 +905,10 @@ _ethumb_dbus_get_bytearray(DBusMessageIter *iter)
    dbus_message_iter_recurse(iter, &riter);
    dbus_message_iter_get_fixed_array(&riter, &result, &length);
 
-   if (result[0] == '\0')
+   if ((length == 0) || (result[0] == '\0'))
      return NULL;
    else
-     return eina_stringshare_add(result);
+     return eina_stringshare_add_length(result, length);
 }
 
 static void
