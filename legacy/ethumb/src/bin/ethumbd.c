@@ -1601,7 +1601,7 @@ static struct _Ethumb_DBus_Method_Table _ethumb_dbus_objects_methods[] = {
 };
 
 static struct _Ethumb_DBus_Signal_Table _ethumb_dbus_objects_signals[] = {
-  {"generated", "xayayb"},
+  {"generated", "iayayb"},
   {NULL, NULL}
 };
 
