@@ -5,6 +5,7 @@ void
 test_panel(void *data, Evas_Object *obj, void *event_info) 
 {
    Evas_Object *win, *bg, *panel;
+   Evas_Object *list;
 
    win = elm_win_add(NULL, "panel", ELM_WIN_BASIC);
    elm_win_title_set(win, "Panel");
@@ -20,6 +21,13 @@ test_panel(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(panel, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(panel, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(panel);
+
+   list = elm_genlist_add(win);
+   evas_object_resize(list, 100, 100);
+   evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(list);
+   elm_panel_content_set(panel, list);
 
    evas_object_resize(win, 300, 300);
    evas_object_show(win);
