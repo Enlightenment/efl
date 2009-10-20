@@ -19,6 +19,18 @@ struct _Line
    Span span[2];
 };
 
+static FPc
+_interp(int x1, int x2, int p, FPc u1, FPc u2)
+{
+   FPc u;
+   
+   x2 -= x1;
+   x1 = 0;
+   u = u2 - u1;
+   u = (u * p) / (x2 + 1);
+   return u + u1;
+}
+
 EAPI void
 evas_common_map4_rgba(RGBA_Image *src, RGBA_Image *dst,
                       RGBA_Draw_Context *dc,
@@ -26,10 +38,16 @@ evas_common_map4_rgba(RGBA_Image *src, RGBA_Image *dst,
                       int smooth, int level)
 {
    int i;
-   int ytop, ybottom, ystart, yend, y;
+   int ytop, ybottom, ystart, yend, y, yp;
    int py[4];
    Line *spans = NULL;
-
+   DATA32 *buf;
+   RGBA_Gfx_Func func;
+   
+   if (src->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
+     evas_cache_image_load_data(&src->cache_entry);
+   evas_common_image_colorspace_normalize(src);
+   
    ytop = p[0].y;
    for (i = 1; i < 4; i++)
      {
@@ -46,8 +64,8 @@ evas_common_map4_rgba(RGBA_Image *src, RGBA_Image *dst,
    
    if ((ytop >= dst->cache_entry.h) || (ybottom < 0)) return;
    
-   if (ystart < 0) ystart = 0;
-   else ystart =  ytop;
+   if (ytop < 0) ystart = 0;
+   else ystart = ytop;
    if (ybottom >= dst->cache_entry.h) yend = dst->cache_entry.h - 1;
    else yend = ybottom;
 
@@ -82,62 +100,12 @@ evas_common_map4_rgba(RGBA_Image *src, RGBA_Image *dst,
      }
    else
      {
-        // convex case
-        
-        // |------------|
-        // |------------|
-        // |------------|
-        // |------------|
-        // |------------|
-        
-        // |------------|
-        //  |----------|
-        //   |--------|
-        //    |------|
-        //     |----|
-
-        // |--------|
-        // |--------|
-        // |--------|
-        // |-----|
-        // |--|
-        
-        // |--|
-        // |-----|
-        // |--------|
-        // |--------|
-        // |--------|
-
-        // |--|
-        // |-----|
-        // |--------|
-        // |-----|
-        // |--|
-        
-        //     |--|
-        //   |------|
-        // |----------|
-        //   |------|
-        //     |--|
-        
-        // concave case
-        
-        //       |--|
-        //     |------|
-        //   |----||----|
-        // |--|        |--|
-
-        // |--|        |--|
-        //   |----||----|
-        //     |------|
-        //       |--|
-       
         for (y = ystart; y <= yend; y++)
           {
-             int edge[4][3], edge_num, x, t, h, swapped, order[4];
-             FPc uv[4][2], u, v;
+             int edge[4][3], edge_num, swapped, order[4];
+             FPc uv[4][2], u, v, x, h, t;
         
-             
+             yp = y - ystart;
              edge_num = 0;
              //--------------------
              if ((PY(0) <= y) && (PY(1) > y)) // 0 above, 1, below
@@ -196,17 +164,25 @@ evas_common_map4_rgba(RGBA_Image *src, RGBA_Image *dst,
                {
                   int e1 = edge[i][0], e2 = edge[i][1];
 
-                  h = p[e2].y - p[e1].y; // height of span
-                  t = (((y + 1) << FP) + (FP1 - 1)) - p[e1].y;
+                  h = (p[e2].y - p[e1].y) >> FP; // height of edge
+                  t = (((y << FP) + (FP1 - 1)) - p[e1].y) >> FP;
                   x = p[e2].x - p[e1].x;
+//                  printf("   x = %i, p1 = %i, p2 = %i\n", x, p[e1].x, p[e2].x);
+//                  printf("   + %i\n", ((x * t) / h));
                   x = p[e1].x + ((x * t) / h);
+                  
                   u = p[e2].u - p[e1].u;
                   u = p[e1].u + ((u * t) / h);
+                  
                   v = p[e2].v - p[e1].v;
                   v = p[e1].v + ((v * t) / h);
                   uv[i][1] = v;
                   uv[i][0] = u;
                   edge[i][2] = x >> FP;
+//                  printf("%i | %3i: %3i - %i / %i [%i->%i]\n", 
+//                         y, i, x >> FP, 
+//                         t, h >> FP, 
+//                         p[e1].x >> FP, p[e2].x >> FP);
                   // also fill in order
                   order[i] = i;
                }
@@ -214,13 +190,13 @@ evas_common_map4_rgba(RGBA_Image *src, RGBA_Image *dst,
              do
                {
                   swapped = 0;
-                  for (i = 0; i < edge_num; i++)
+                  for (i = 0; i < (edge_num - 1); i++)
                     {
                        if (edge[order[i]][2] > edge[order[i + 1]][2])
                          {
                             t = order[i];
                             order[i] = order[i + 1];
-                            order[i] = t;
+                            order[i + 1] = t;
                             swapped = 1;
                          }
                     }
@@ -228,38 +204,200 @@ evas_common_map4_rgba(RGBA_Image *src, RGBA_Image *dst,
              while (swapped);
              if (edge_num == 2)
                {
-                  spans[y].span[0].x1 = edge[order[0]][2];
-                  spans[y].span[0].u[0] = uv[order[0]][0];
-                  spans[y].span[0].v[0] = uv[order[0]][1];
-                  spans[y].span[0].x2 = edge[order[1]][2];
-                  spans[y].span[0].u[0] = uv[order[1]][0];
-                  spans[y].span[0].v[0] = uv[order[1]][1];
-                  spans[y].span[1].x1 = -1;
+                  i = 0;
+                  spans[yp].span[i].x1 = edge[order[0]][2];
+                  spans[yp].span[i].u[0] = uv[order[0]][0];
+                  spans[yp].span[i].v[0] = uv[order[0]][1];
+                  spans[yp].span[i].x2 = edge[order[1]][2];
+                  spans[yp].span[i].u[1] = uv[order[1]][0];
+                  spans[yp].span[i].v[1] = uv[order[1]][1];
+                  if ((spans[yp].span[i].x1 >= dst->cache_entry.w) ||
+                      (spans[yp].span[i].x2 < 0))
+                    {
+                       spans[yp].span[i].x1 = -1;
+                    }
+                  else
+                    {
+                       if (spans[yp].span[i].x1 < 0)
+                         {
+                            spans[yp].span[i].u[0] = 
+                              _interp(spans[yp].span[i].x1,
+                                      spans[yp].span[i].x2, 0, 
+                                      spans[yp].span[i].u[0],
+                                      spans[yp].span[i].u[1]);
+                            spans[yp].span[i].v[0] = 
+                              _interp(spans[yp].span[i].x1,
+                                      spans[yp].span[i].x2, 0, 
+                                      spans[yp].span[i].v[0],
+                                      spans[yp].span[i].v[1]);
+                            spans[yp].span[i].x1 = 0;
+                         }
+                       if (spans[yp].span[i].x2 >= dst->cache_entry.w)
+                         {
+                            spans[yp].span[i].u[1] = 
+                              _interp(spans[yp].span[i].x1,
+                                      spans[yp].span[i].x2, dst->cache_entry.w,
+                                      spans[yp].span[i].u[0],
+                                      spans[yp].span[i].u[1]);
+                            spans[yp].span[i].v[1] = 
+                              _interp(spans[yp].span[i].x1,
+                                      spans[yp].span[i].x2, dst->cache_entry.w,
+                                      spans[yp].span[i].v[0],
+                                      spans[yp].span[i].v[1]);
+                            spans[yp].span[i].x2 = dst->cache_entry.w - 1;
+                         }
+                       i++;
+                       spans[yp].span[i].x1 = -1;
+                    }
                }
              else if (edge_num == 4)
                {
-                  spans[y].span[0].x1 = edge[order[0]][2];
-                  spans[y].span[0].u[0] = uv[order[0]][0];
-                  spans[y].span[0].v[0] = uv[order[0]][1];
-                  spans[y].span[0].x2 = edge[order[1]][2];
-                  spans[y].span[0].u[0] = uv[order[1]][0];
-                  spans[y].span[0].v[0] = uv[order[1]][1];
-                  spans[y].span[1].x1 = edge[order[2]][2];
-                  spans[y].span[1].u[0] = uv[order[2]][0];
-                  spans[y].span[1].v[0] = uv[order[2]][1];
-                  spans[y].span[1].x2 = edge[order[3]][2];
-                  spans[y].span[1].u[0] = uv[order[3]][0];
-                  spans[y].span[1].v[0] = uv[order[3]][1];
+                  i = 0;
+                  spans[yp].span[i].x1 = edge[order[0]][2];
+                  spans[yp].span[i].u[0] = uv[order[0]][0];
+                  spans[yp].span[i].v[0] = uv[order[0]][1];
+                  spans[yp].span[i].x2 = edge[order[1]][2];
+                  spans[yp].span[i].u[1] = uv[order[1]][0];
+                  spans[yp].span[i].v[1] = uv[order[1]][1];
+                  if ((spans[yp].span[i].x1 >= dst->cache_entry.w) ||
+                      (spans[yp].span[i].x2 < 0))
+                    {
+                       spans[yp].span[i].x1 = -1;
+                    }
+                  else
+                    {
+                       if (spans[yp].span[i].x1 < 0)
+                         {
+                            spans[yp].span[i].u[0] = 
+                              _interp(spans[yp].span[i].x1,
+                                      spans[yp].span[i].x2, 0, 
+                                      spans[yp].span[i].u[0],
+                                      spans[yp].span[i].u[1]);
+                            spans[yp].span[i].v[0] = 
+                              _interp(spans[yp].span[i].x1,
+                                      spans[yp].span[i].x2, 0, 
+                                      spans[yp].span[i].v[0],
+                                      spans[yp].span[i].v[1]);
+                            spans[yp].span[i].x1 = 0;
+                         }
+                       if (spans[yp].span[i].x2 >= dst->cache_entry.w)
+                         {
+                            spans[yp].span[i].u[1] = 
+                              _interp(spans[yp].span[i].x1,
+                                      spans[yp].span[i].x2, dst->cache_entry.w,
+                                      spans[yp].span[i].u[0],
+                                      spans[yp].span[i].u[1]);
+                            spans[yp].span[i].v[1] = 
+                              _interp(spans[yp].span[i].x1,
+                                      spans[yp].span[i].x2, dst->cache_entry.w,
+                                      spans[yp].span[i].v[0],
+                                      spans[yp].span[i].v[1]);
+                            spans[yp].span[i].x2 = dst->cache_entry.w - 1;
+                         }
+                       i++;
+                    }
+                  spans[yp].span[i].x1 = edge[order[2]][2];
+                  spans[yp].span[i].u[0] = uv[order[2]][0];
+                  spans[yp].span[i].v[0] = uv[order[2]][1];
+                  spans[yp].span[i].x2 = edge[order[3]][2];
+                  spans[yp].span[i].u[1] = uv[order[3]][0];
+                  spans[yp].span[i].v[1] = uv[order[3]][1];
+                  if ((spans[yp].span[i].x1 >= dst->cache_entry.w) ||
+                      (spans[yp].span[i].x2 < 0))
+                    {
+                       spans[yp].span[i].x1 = -1;
+                    }
+                  else
+                    {
+                       if (spans[yp].span[i].x1 < 0)
+                         {
+                            spans[yp].span[i].u[0] = 
+                              _interp(spans[yp].span[i].x1,
+                                      spans[yp].span[i].x2, 0, 
+                                      spans[yp].span[i].u[0],
+                                      spans[yp].span[i].u[1]);
+                            spans[yp].span[i].v[0] = 
+                              _interp(spans[yp].span[i].x1,
+                                      spans[yp].span[i].x2, 0, 
+                                      spans[yp].span[i].v[0],
+                                      spans[yp].span[i].v[1]);
+                            spans[yp].span[i].x1 = 0;
+                         }
+                       if (spans[yp].span[i].x2 >= dst->cache_entry.w)
+                         {
+                            spans[yp].span[i].u[1] = 
+                              _interp(spans[yp].span[i].x1,
+                                      spans[yp].span[i].x2, dst->cache_entry.w,
+                                      spans[yp].span[i].u[0],
+                                      spans[yp].span[i].u[1]);
+                            spans[yp].span[i].v[1] = 
+                              _interp(spans[yp].span[i].x1,
+                                      spans[yp].span[i].x2, dst->cache_entry.w,
+                                      spans[yp].span[i].v[0],
+                                      spans[yp].span[i].v[1]);
+                            spans[yp].span[i].x2 = dst->cache_entry.w - 1;
+                         }
+                    }
                }
              else
                {
-                  printf("duck for y %i, edge_num is %i\n", y, edge_num);
+                  spans[yp].span[0].x1 = -1;
+//                  printf("duck for y %i, edge_num is %i\n", y, edge_num);
                }
           }
      }
+   if (dc->mul.use)
+     func = evas_common_gfx_func_composite_pixel_color_span_get(src, dc->mul.col, dst, dst->cache_entry.w, dc->render_op);
+   else
+     func = evas_common_gfx_func_composite_pixel_span_get(src, dst, dst->cache_entry.w, dc->render_op);
+   
+   buf = alloca(dst->cache_entry.w * sizeof(DATA32));
    // walk spans and fill
+//   printf("---------- %i -> %i / %i [%i]\n", 
+//          ystart, yend, dst->cache_entry.h, dst->cache_entry.w);
    for (y = ystart; y <= yend; y++)
      {
+        yp = y - ystart;
+//        printf("y: %3i[%3i] :", y, yp);
         
+        for (i = 0; i < 2; i++)
+          {
+             if (spans[yp].span[i].x1 >= 0)
+               {
+                  int x, w, ww, sw, shp, swp;
+                  FPc u, v, ud, vd;
+                  DATA32 *d, *dptr, *sp, *s;
+                  x = spans[yp].span[i].x1;
+                  w = (spans[yp].span[i].x2 - x) + 1;
+
+                  ww = w;
+                  d = buf;
+                  u = spans[yp].span[i].u[0];
+                  v = spans[yp].span[i].v[0];
+                  ud = (spans[yp].span[i].u[1] - u) / w;
+                  vd = (spans[yp].span[i].v[1] - v) / w;
+                  sp = src->image.data;
+                  sw = src->cache_entry.w;
+                  swp = sw << FP;
+                  shp = src->cache_entry.h << FP ;
+//                  printf(" %3i[%3i,%3i] - %3i[%3i,%3i] |", 
+//                         x, u >> FP, v >> FP, 
+//                         x + w - 1, spans[yp].span[i].u[1] >> FP, spans[yp].span[i].v[1] >> FP);
+                  while (ww > 0)
+                    {
+                       s = sp + ((v >> FP) * sw) + (u >> FP);
+                       *d++ = *s;
+                       u += ud;
+                       if (u >= swp) u = swp - 1;
+                       v += vd;
+                       if (v >= shp) v = shp - 1;
+                       ww--;
+                    }
+                  dptr = ((DATA32 *)dst->image.data) + 
+                    (y * dst->cache_entry.w) + x;
+                  func(buf, NULL, dc->mul.col, dptr, w);
+               }
+          }
+//        printf("\n");
      }
 }

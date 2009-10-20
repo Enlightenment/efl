@@ -13,9 +13,9 @@ typedef int FPc;
 // fp # of bits of float accuracy
 #define FP 12
 // fp half (half of an fp unit)
-#define FPH (1 << (FP - 1 - 1))
+#define FPH (1 << (FP - 1))
 // one fp unit
-#define FP1 (1 << (FP - 1))
+#define FP1 (1 << (FP))
 
 struct _RGBA_Map_Point
 {

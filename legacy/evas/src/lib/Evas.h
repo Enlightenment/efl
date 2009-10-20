@@ -104,6 +104,7 @@ typedef enum _Evas_Object_Table_Homogeneous_Mode
 typedef struct _Evas_Transform Evas_Transform; /**< An Evas projective or affine transform */
 typedef struct _Evas_Coord_Rectangle  Evas_Coord_Rectangle; /**< A generic rectangle handle */
 typedef struct _Evas_Smart_Class      Evas_Smart_Class; /**< A smart object base class */
+typedef struct _Evas_Map_Point        Evas_Map_Point; /**< A point with attributes for x, y, z texture u & v etc. */
 
 typedef struct _Evas Evas; /**< An Evas canvas handle */
 typedef struct _Evas_Object Evas_Object; /**< An Evas Object handle */
@@ -846,7 +847,18 @@ extern "C" {
 
    EAPI Eina_List        *evas_objects_at_xy_get            (const Evas *e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI Eina_List        *evas_objects_in_rectangle_get     (const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-
+   
+   EAPI void              evas_object_map_enable_set        (Evas_Object *obj, Eina_Bool enabled);
+   EAPI Eina_Bool         evas_object_map_enable_get        (const Evas_Object *obj);
+   EAPI void              evas_object_map_set               (Evas_Object *obj, const Evas_Map_Point *points);
+   EAPI void              evas_object_map_get               (const Evas_Object *obj, Evas_Map_Point *points);
+   EAPI Evas_Map_Point   *evas_map_new                      (int num);
+   EAPI void              evas_map_free                     (Evas_Map_Point *mp);
+   EAPI void              evas_map_point_coord_set          (Evas_Map_Point *mp, int n, Evas_Coord x, Evas_Coord y, Evas_Coord z);
+   EAPI void              evas_map_point_coord_get          (const Evas_Map_Point *mp, int n, Evas_Coord *x, Evas_Coord *y, Evas_Coord *z);
+   EAPI void              evas_map_point_image_uv_set       (Evas_Map_Point *mp, int n, double u, double v);
+   EAPI void              evas_map_point_image_uv_get       (const Evas_Map_Point *mp, int n, double *u, double *v);
+   
 /* smart objects */
    EINA_DEPRECATED EAPI Evas_Smart *evas_smart_new          (const char *name, void (*func_add) (Evas_Object *obj), void (*func_del) (Evas_Object *obj), void (*func_layer_set) (Evas_Object *obj, int l), void (*func_raise) (Evas_Object *obj), void (*func_lower) (Evas_Object *obj), void (*func_stack_above) (Evas_Object *obj, Evas_Object *above), void (*func_stack_below) (Evas_Object *obj, Evas_Object *below), void (*func_move) (Evas_Object *obj, Evas_Coord x, Evas_Coord y), void (*func_resize) (Evas_Object *obj, Evas_Coord w, Evas_Coord h), void (*func_show) (Evas_Object *obj), void (*func_hide) (Evas_Object *obj), void (*func_color_set) (Evas_Object *obj, int r, int g, int b, int a), void (*func_clip_set) (Evas_Object *obj, Evas_Object *clip), void (*func_clip_unset) (Evas_Object *obj), const void *data) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
    EAPI void              evas_smart_free                   (Evas_Smart *s) EINA_ARG_NONNULL(1);

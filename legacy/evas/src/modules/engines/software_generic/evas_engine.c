@@ -778,6 +778,17 @@ eng_image_draw(void *data __UNUSED__, void *context, void *surface, void *image,
 }
 
 static void
+eng_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *image, RGBA_Map_Point *p, int smooth, int level)
+{
+   RGBA_Image *im;
+
+   if (!image) return;
+   im = image;
+   evas_common_map4_rgba(im, surface, context, p, smooth, level);
+   evas_common_cpu_end_opt();
+}
+
+static void
 eng_image_scale_hint_set(void *data __UNUSED__, void *image, int hint)
 {
    Image_Entry *im;
@@ -1123,9 +1134,10 @@ static Evas_Func func =
      eng_image_scale_hint_set,
      eng_image_scale_hint_get,
      /* more font draw functions */
-     eng_font_last_up_to_pos
+     eng_font_last_up_to_pos,
+     /* FUTURE software generic calls go here (done) */
+     eng_image_map4_draw
      /* FUTURE software generic calls go here */
-
 };
 
 /*

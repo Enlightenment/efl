@@ -2327,165 +2327,190 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 	       }
 	     o->dirty_pixels = 0;
 	  }
-        obj->layer->evas->engine.func->image_scale_hint_set(output,
+        if ((obj->cur.mappoints) && (obj->cur.usemap))
+          {
+             RGBA_Map_Point pts[4];
+             int i;
+             
+             // draw geom +x +y
+             for (i = 0; i < 4; i++)
+               {
+                  pts[i].x = (obj->cur.mappoints[i].x + x) << FP;
+                  pts[i].y = (obj->cur.mappoints[i].y + y) << FP;
+                  pts[i].z = (obj->cur.mappoints[i].z)     << FP;
+                  pts[i].u = obj->cur.mappoints[i].u * FP1;
+                  pts[i].v = obj->cur.mappoints[i].v * FP1;
+               }
+             obj->layer->evas->engine.func->image_map4_draw(output,
+                                                            context,
+                                                            surface,
                                                             o->engine_data,
-                                                            o->scale_hint);
-	o->engine_data = obj->layer->evas->engine.func->image_border_set(output, o->engine_data,
-									 o->cur.border.l, o->cur.border.r,
-									 o->cur.border.t, o->cur.border.b);
-	idx = evas_object_image_figure_x_fill(obj, o->cur.fill.x, o->cur.fill.w, &idw);
-	idy = evas_object_image_figure_y_fill(obj, o->cur.fill.y, o->cur.fill.h, &idh);
-	if (idw < 1) idw = 1;
-	if (idh < 1) idh = 1;
-	if (idx > 0) idx -= idw;
-	if (idy > 0) idy -= idh;
-	while ((int)idx < obj->cur.geometry.w)
-	  {
-	     Evas_Coord ydy;
-	     int dobreak_w = 0;
-
-	     ydy = idy;
-	     ix = idx;
-	     if ((o->cur.fill.w == obj->cur.geometry.w) &&
-		 (o->cur.fill.x == 0))
-	       {
-		  dobreak_w = 1;
-		  iw = obj->cur.geometry.w;
-	       }
-	     else
-	       iw = ((int)(idx + idw)) - ix;
-	     while ((int)idy < obj->cur.geometry.h)
-	       {
-		  int dobreak_h = 0;
-
-		  iy = idy;
-		  if ((o->cur.fill.h == obj->cur.geometry.h) &&
-		      (o->cur.fill.y == 0))
-		    {
-		       ih = obj->cur.geometry.h;
-		       dobreak_h = 1;
-		    }
-		  else
-		    ih = ((int)(idy + idh)) - iy;
-		  if ((o->cur.border.l == 0) &&
-		      (o->cur.border.r == 0) &&
-		      (o->cur.border.t == 0) &&
-		      (o->cur.border.b == 0) &&
-		      (o->cur.border.fill != 0))
-		    obj->layer->evas->engine.func->image_draw(output,
-							      context,
-							      surface,
-							      o->engine_data,
-							      0, 0,
-							      o->cur.image.w,
-							      o->cur.image.h,
-							      obj->cur.geometry.x + ix + x,
-							      obj->cur.geometry.y + iy + y,
-							      iw, ih,
-							      o->cur.smooth_scale);
-		  else
-		    {
-		       int inx, iny, inw, inh, outx, outy, outw, outh;
-		       int bl, br, bt, bb;
-		       int imw, imh, ox, oy;
-
-		       ox = obj->cur.geometry.x + ix + x;
-		       oy = obj->cur.geometry.y + iy + y;
-		       imw = o->cur.image.w;
-		       imh = o->cur.image.h;
-		       bl = o->cur.border.l;
-		       br = o->cur.border.r;
-		       bt = o->cur.border.t;
-		       bb = o->cur.border.b;
-		       if ((bl + br) > iw)
-			 {
-			    bl = iw / 2;
-			    br = iw - bl;
-			 }
-		       if ((bl + br) > imw)
-			 {
-			    bl = imw / 2;
-			    br = imw - bl;
-			 }
-		       if ((bt + bb) > ih)
-			 {
-			    bt = ih / 2;
-			    bb = ih - bt;
-			 }
-		       if ((bt + bb) > imh)
-			 {
-			    bt = imh / 2;
-			    bb = imh - bt;
-			 }
-
-		       inx = 0; iny = 0;
-		       inw = bl; inh = bt;
-		       outx = ox; outy = oy;
-		       outw = bl; outh = bt;
-		       obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
-		       inx = bl; iny = 0;
-		       inw = imw - bl - br; inh = bt;
-		       outx = ox + bl; outy = oy;
-		       outw = iw - bl - br; outh = bt;
-		       obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
-		       inx = imw - br; iny = 0;
-		       inw = br; inh = bt;
-		       outx = ox + iw - br; outy = oy;
-		       outw = br; outh = bt;
-		       obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
-
-		       inx = 0; iny = bt;
-		       inw = bl; inh = imh - bt - bb;
-		       outx = ox; outy = oy + bt;
-		       outw = bl; outh = ih - bt - bb;
-		       obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
-		       if (o->cur.border.fill > EVAS_BORDER_FILL_NONE)
-			 {
-			    inx = bl; iny = bt;
-			    inw = imw - bl - br; inh = imh - bt - bb;
-			    outx = ox + bl; outy = oy + bt;
-			    outw = iw - bl - br; outh = ih - bt - bb;
-                            if ((o->cur.border.fill == EVAS_BORDER_FILL_SOLID) &&
-                                (obj->cur.cache.clip.a == 255) &&
-                                (obj->cur.render_op == EVAS_RENDER_BLEND))
+                                                            pts,
+                                                            o->cur.smooth_scale,
+                                                            0);
+          }
+        else
+          {
+             obj->layer->evas->engine.func->image_scale_hint_set(output,
+                                                                 o->engine_data,
+                                                                 o->scale_hint);
+             o->engine_data = obj->layer->evas->engine.func->image_border_set(output, o->engine_data,
+                                                                              o->cur.border.l, o->cur.border.r,
+                                                                              o->cur.border.t, o->cur.border.b);
+             idx = evas_object_image_figure_x_fill(obj, o->cur.fill.x, o->cur.fill.w, &idw);
+             idy = evas_object_image_figure_y_fill(obj, o->cur.fill.y, o->cur.fill.h, &idh);
+             if (idw < 1) idw = 1;
+             if (idh < 1) idh = 1;
+             if (idx > 0) idx -= idw;
+             if (idy > 0) idy -= idh;
+             while ((int)idx < obj->cur.geometry.w)
+               {
+                  Evas_Coord ydy;
+                  int dobreak_w = 0;
+                  
+                  ydy = idy;
+                  ix = idx;
+                  if ((o->cur.fill.w == obj->cur.geometry.w) &&
+                      (o->cur.fill.x == 0))
+                    {
+                       dobreak_w = 1;
+                       iw = obj->cur.geometry.w;
+                    }
+                  else
+                    iw = ((int)(idx + idw)) - ix;
+                  while ((int)idy < obj->cur.geometry.h)
+                    {
+                       int dobreak_h = 0;
+                       
+                       iy = idy;
+                       if ((o->cur.fill.h == obj->cur.geometry.h) &&
+                           (o->cur.fill.y == 0))
+                         {
+                            ih = obj->cur.geometry.h;
+                            dobreak_h = 1;
+                         }
+                       else
+                         ih = ((int)(idy + idh)) - iy;
+                       if ((o->cur.border.l == 0) &&
+                           (o->cur.border.r == 0) &&
+                           (o->cur.border.t == 0) &&
+                           (o->cur.border.b == 0) &&
+                           (o->cur.border.fill != 0))
+                         obj->layer->evas->engine.func->image_draw(output,
+                                                                   context,
+                                                                   surface,
+                                                                   o->engine_data,
+                                                                   0, 0,
+                                                                   o->cur.image.w,
+                                                                   o->cur.image.h,
+                                                                   obj->cur.geometry.x + ix + x,
+                                                                   obj->cur.geometry.y + iy + y,
+                                                                   iw, ih,
+                                                                   o->cur.smooth_scale);
+                       else
+                         {
+                            int inx, iny, inw, inh, outx, outy, outw, outh;
+                            int bl, br, bt, bb;
+                            int imw, imh, ox, oy;
+                            
+                            ox = obj->cur.geometry.x + ix + x;
+                            oy = obj->cur.geometry.y + iy + y;
+                            imw = o->cur.image.w;
+                            imh = o->cur.image.h;
+                            bl = o->cur.border.l;
+                            br = o->cur.border.r;
+                            bt = o->cur.border.t;
+                            bb = o->cur.border.b;
+                            if ((bl + br) > iw)
                               {
-                                 obj->layer->evas->engine.func->context_render_op_set(output, context,
-                                                                                      EVAS_RENDER_COPY);
-                                 obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
-                                 obj->layer->evas->engine.func->context_render_op_set(output, context,
-                                                                                      obj->cur.render_op);
+                                 bl = iw / 2;
+                                 br = iw - bl;
                               }
-                            else
-                              obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
-			 }
-		       inx = imw - br; iny = bt;
-		       inw = br; inh = imh - bt - bb;
-		       outx = ox + iw - br; outy = oy + bt;
-		       outw = br; outh = ih - bt - bb;
-		       obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
-
-		       inx = 0; iny = imh - bb;
-		       inw = bl; inh = bb;
-		       outx = ox; outy = oy + ih - bb;
-		       outw = bl; outh = bb;
-		       obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
-		       inx = bl; iny = imh - bb;
-		       inw = imw - bl - br; inh = bb;
-		       outx = ox + bl; outy = oy + ih - bb;
-		       outw = iw - bl - br; outh = bb;
-		       obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
-		       inx = imw - br; iny = imh - bb;
-		       inw = br; inh = bb;
-		       outx = ox + iw - br; outy = oy + ih - bb;
-		       outw = br; outh = bb;
-		       obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
-		    }
-		  idy += idh;
-		  if (dobreak_h) break;
-	       }
-	     idx += idw;
-	     idy = ydy;
-	     if (dobreak_w) break;
+                            if ((bl + br) > imw)
+                              {
+                                 bl = imw / 2;
+                                 br = imw - bl;
+                              }
+                            if ((bt + bb) > ih)
+                              {
+                                 bt = ih / 2;
+                                 bb = ih - bt;
+                              }
+                            if ((bt + bb) > imh)
+                              {
+                                 bt = imh / 2;
+                                 bb = imh - bt;
+                              }
+                            
+                            inx = 0; iny = 0;
+                            inw = bl; inh = bt;
+                            outx = ox; outy = oy;
+                            outw = bl; outh = bt;
+                            obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
+                            inx = bl; iny = 0;
+                            inw = imw - bl - br; inh = bt;
+                            outx = ox + bl; outy = oy;
+                            outw = iw - bl - br; outh = bt;
+                            obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
+                            inx = imw - br; iny = 0;
+                            inw = br; inh = bt;
+                            outx = ox + iw - br; outy = oy;
+                            outw = br; outh = bt;
+                            obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
+                            
+                            inx = 0; iny = bt;
+                            inw = bl; inh = imh - bt - bb;
+                            outx = ox; outy = oy + bt;
+                            outw = bl; outh = ih - bt - bb;
+                            obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
+                            if (o->cur.border.fill > EVAS_BORDER_FILL_NONE)
+                              {
+                                 inx = bl; iny = bt;
+                                 inw = imw - bl - br; inh = imh - bt - bb;
+                                 outx = ox + bl; outy = oy + bt;
+                                 outw = iw - bl - br; outh = ih - bt - bb;
+                                 if ((o->cur.border.fill == EVAS_BORDER_FILL_SOLID) &&
+                                     (obj->cur.cache.clip.a == 255) &&
+                                     (obj->cur.render_op == EVAS_RENDER_BLEND))
+                                   {
+                                      obj->layer->evas->engine.func->context_render_op_set(output, context,
+                                                                                           EVAS_RENDER_COPY);
+                                      obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
+                                      obj->layer->evas->engine.func->context_render_op_set(output, context,
+                                                                                           obj->cur.render_op);
+                                   }
+                                 else
+                                   obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
+                              }
+                            inx = imw - br; iny = bt;
+                            inw = br; inh = imh - bt - bb;
+                            outx = ox + iw - br; outy = oy + bt;
+                            outw = br; outh = ih - bt - bb;
+                            obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
+                            
+                            inx = 0; iny = imh - bb;
+                            inw = bl; inh = bb;
+                            outx = ox; outy = oy + ih - bb;
+                            outw = bl; outh = bb;
+                            obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
+                            inx = bl; iny = imh - bb;
+                            inw = imw - bl - br; inh = bb;
+                            outx = ox + bl; outy = oy + ih - bb;
+                            outw = iw - bl - br; outh = bb;
+                            obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
+                            inx = imw - br; iny = imh - bb;
+                            inw = br; inh = bb;
+                            outx = ox + iw - br; outy = oy + ih - bb;
+                            outw = br; outh = bb;
+                            obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
+                         }
+                       idy += idh;
+                       if (dobreak_h) break;
+                    }
+                  idx += idw;
+                  idy = ydy;
+                  if (dobreak_w) break;
+               }
 	  }
      }
 }
@@ -2774,17 +2799,6 @@ evas_object_image_is_opaque(Evas_Object *obj)
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fully opaque over the entire rectangle it occupies */
    o = (Evas_Object_Image *)(obj->object_data);
-   if (o->cur.has_alpha) return 0;
-   v = (!!!o->cur.fill.w) + (!!!o->cur.fill.h);
-   if (v) return 0;
-   if (!o->engine_data) return 0;
-   v = o->cur.border.l + o->cur.border.r + o->cur.border.t + o->cur.border.b;
-   v += !o->cur.border.fill;
-   if (v > 0) return 0;
-   if (obj->cur.render_op == EVAS_RENDER_COPY) return 1;
-   if (obj->cur.render_op != EVAS_RENDER_BLEND) return 0;
-   return 1;
-/*   
    if ((o->cur.fill.w < 1) || (o->cur.fill.h < 1))
      return 0;
    if (((o->cur.border.l != 0) ||
@@ -2793,10 +2807,10 @@ evas_object_image_is_opaque(Evas_Object *obj)
 	(o->cur.border.b != 0)) &&
        (!o->cur.border.fill)) return 0;
    if (!o->engine_data) return 0;
+   if ((obj->cur.mappoints) && (obj->cur.usemap)) return 0;
    if (obj->cur.render_op == EVAS_RENDER_COPY) return 1;
    if (o->cur.has_alpha) return 0;
    return 1;
- */
 }
 
 static int
@@ -2815,11 +2829,10 @@ evas_object_image_was_opaque(Evas_Object *obj)
 	(o->prev.border.b != 0)) &&
        (!o->prev.border.fill)) return 0;
    if (!o->engine_data) return 0;
-   if (obj->prev.render_op == EVAS_RENDER_COPY)
-	return 1;
+   if ((obj->prev.mappoints) && (obj->prev.usemap)) return 0;
+   if (obj->prev.render_op == EVAS_RENDER_COPY) return 1;
    if (o->prev.has_alpha) return 0;
-   if (obj->prev.render_op != EVAS_RENDER_BLEND)
-	return 0;
+   if (obj->prev.render_op != EVAS_RENDER_BLEND) return 0;
    return 1;
 }
 
@@ -2960,6 +2973,7 @@ evas_object_image_has_opaque_rect(Evas_Object *obj)
    Evas_Object_Image *o;
 
    o = (Evas_Object_Image *)(obj->object_data);
+   if ((obj->cur.mappoints) && (obj->cur.usemap)) return 0;
    if (((o->cur.border.l | o->cur.border.r | o->cur.border.t | o->cur.border.b) != 0) &&
        (o->cur.border.fill == EVAS_BORDER_FILL_SOLID) &&
        (obj->cur.render_op == EVAS_RENDER_BLEND) &&

@@ -357,6 +357,13 @@ struct _Evas_Size_Hints
    Evas_Border padding;
 };
 
+struct _Evas_Map_Point
+{
+   Evas_Coord x, y, z;
+   double u, v;
+   // FIXME: add color?
+};
+
 struct _Evas_Object
 {
    EINA_INLIST;
@@ -382,12 +389,14 @@ struct _Evas_Object
 	 } clip;
       } cache;
       double scale;
+      Evas_Map_Point *mappoints;
       Evas_Coord_Rectangle geometry;
       struct {
 	 unsigned char  r, g, b, a;
       } color;
       Evas_Object      *clipper;
       short             layer;
+      Eina_Bool         usemap : 1;
       Eina_Bool         visible : 1;
       Eina_Bool         have_clipees : 1;
       Eina_Bool         anti_alias : 1;
@@ -672,6 +681,8 @@ struct _Evas_Func
    void (*image_scale_hint_set)            (void *data, void *image, int hint);
    int  (*image_scale_hint_get)            (void *data, void *image);
    int  (*font_last_up_to_pos)             (void *data, void *font, const char *text, int x, int y);
+
+   void (*image_map4_draw)                 (void *data, void *context, void *surface, void *image, RGBA_Map_Point *p, int smooth, int level);
 };
 
 struct _Evas_Image_Load_Func
