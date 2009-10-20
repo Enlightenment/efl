@@ -706,14 +706,14 @@ static int
 _ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
 			 fd_set *exceptfds, struct timeval *tv)
 {
-   HANDLE* events[MAXIMUM_WAIT_OBJECTS];
-   int     sockets[MAXIMUM_WAIT_OBJECTS];
-   int     events_nbr = 0;
-   DWORD   result;
-   DWORD   timeout;
-   MSG     msg;
-   int     i;
-   int     res;
+   HANDLE events[MAXIMUM_WAIT_OBJECTS];
+   int    sockets[MAXIMUM_WAIT_OBJECTS];
+   int    events_nbr = 0;
+   DWORD  result;
+   DWORD  timeout;
+   MSG    msg;
+   int    i;
+   int    res;
 
    /* Create an event object per socket */
    for(i = 0; i < nfds; i++)
