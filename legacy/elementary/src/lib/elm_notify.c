@@ -117,7 +117,7 @@ static void
 _calc(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
+   Evas_Coord minw = -1, minh = -1;
    Evas_Coord x, y, w, h;
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
