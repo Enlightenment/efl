@@ -91,15 +91,10 @@ _write_label(Evas_Object *obj)
    char buf[1024];
 
    if (wd->label)
-     {
-        snprintf(buf, sizeof(buf), wd->label, wd->val);
-        edje_object_part_text_set(wd->spinner, "elm.text", buf);
-     }
+     snprintf(buf, sizeof(buf), wd->label, wd->val);
    else
-     {
-        snprintf(buf, sizeof(buf), "%.0f", wd->val);
-        edje_object_part_text_set(wd->spinner, "elm.text", buf);
-     }
+     snprintf(buf, sizeof(buf), "%.0f", wd->val);
+   edje_object_part_text_set(wd->spinner, "elm.text", buf);
 
    if (wd->entry_visible)
      {
@@ -146,14 +141,14 @@ static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-   if (!wd) return;
+   Evas_Coord minw = -1, minh = -1;
 
+   if (!wd) return;
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc(wd->spinner, &minw, &minh, minw, minh);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, maxw, maxh);
+   evas_object_size_hint_max_set(obj, -1, -1);
 }
 
 static void
@@ -166,14 +161,14 @@ static void
 _val_set(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   double pos;
+   double pos = 0.0;
+
    if (wd->val_max > wd->val_min)
      pos = ((wd->val - wd->val_min) / (wd->val_max - wd->val_min));
-   else
-     pos = 0.0;
    if (pos < 0.0) pos = 0.0;
    else if (pos > 1.0) pos = 1.0;
-   edje_object_part_drag_value_set(wd->spinner, "elm.dragable.slider", pos, pos);
+   edje_object_part_drag_value_set(wd->spinner, "elm.dragable.slider", 
+                                   pos, pos);
 }
 
 static void
@@ -199,6 +194,7 @@ _drag_start(void *data, Evas_Object *obj, const char *emission, const char *sour
 {
    Widget_Data *wd = elm_widget_data_get(data);
    double pos;
+
    edje_object_part_drag_value_get(wd->spinner, "elm.dragable.slider",
 				   &pos, NULL);
    wd->drag_start_pos = pos;
@@ -208,6 +204,7 @@ static void
 _drag_stop(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+
    wd->drag_start_pos = 0;
    edje_object_part_drag_value_set(wd->spinner, "elm.dragable.slider", 0.0, 0.0);
 }
@@ -216,8 +213,8 @@ static void
 _hide_entry(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
 
+   if (!wd) return;
    edje_object_signal_emit(wd->spinner, "elm,state,inactive", "elm");
    wd->entry_visible = 0;
 }
@@ -226,8 +223,8 @@ static void
 _reset_value(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
 
+   if (!wd) return;
    _hide_entry(obj);
    elm_spinner_value_set(obj, wd->orig_val);
 }
@@ -237,8 +234,8 @@ _apply_entry_value(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    double val;
-   if (!wd) return;
 
+   if (!wd) return;
    _hide_entry(obj);
    val = atof(elm_entry_entry_get(wd->ent));
    elm_spinner_value_set(obj, val);
@@ -248,14 +245,14 @@ static void
 _toggle_entry(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+
    if (!wd) return;
    if (wd->dragging)
      {
         wd->dragging = 0;
         return;
      }
-   if (elm_widget_disabled_get(data))
-     return;
+   if (elm_widget_disabled_get(data)) return;
    if (wd->entry_visible)
      _apply_entry_value(data);
    else
@@ -275,8 +272,8 @@ static int
 _spin_value(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return ECORE_CALLBACK_CANCEL;
 
+   if (!wd) return ECORE_CALLBACK_CANCEL;
    if (_value_set(data, wd->spin_speed))
      _write_label(data);
 
@@ -289,6 +286,7 @@ static void
 _val_inc_start(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    wd->interval = 0.85;
    wd->spin_speed = wd->step;
@@ -301,6 +299,7 @@ static void
 _val_inc_stop(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    wd->interval = 0.85;
    wd->spin_speed = 0;
@@ -312,6 +311,7 @@ static void
 _val_dec_start(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    wd->interval = 0.85;
    wd->spin_speed = -wd->step;
@@ -324,6 +324,7 @@ static void
 _val_dec_stop(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    wd->interval = 0.85;
    wd->spin_speed = 0;
@@ -335,6 +336,7 @@ static void
 _button_inc_start(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+
    if (!wd) return;
    if (wd->entry_visible)
      {
@@ -348,6 +350,7 @@ static void
 _button_inc_stop(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+
    if (!wd) return;
    _val_inc_stop(data);
 }
@@ -356,6 +359,7 @@ static void
 _button_dec_start(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+
    if (!wd) return;
    if (wd->entry_visible)
      {
@@ -369,6 +373,7 @@ static void
 _button_dec_stop(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+
    if (!wd) return;
    _val_dec_stop(data);
 }
@@ -384,6 +389,7 @@ _entry_event_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
    Widget_Data *wd = elm_widget_data_get(data);
+
    if (!wd) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (!strcmp(ev->keyname, "Up"))
@@ -397,6 +403,7 @@ _entry_event_key_up(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
    Widget_Data *wd = elm_widget_data_get(data);
+
    if (!wd) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (!strcmp(ev->keyname, "Up"))
@@ -443,25 +450,37 @@ elm_spinner_add(Evas_Object *parent)
    _elm_theme_set(wd->spinner, "spinner", "base", "default");
    elm_widget_resize_object_set(obj, wd->spinner);
    edje_object_signal_callback_add(wd->spinner, "drag", "*", _drag, obj);
-   edje_object_signal_callback_add(wd->spinner, "drag,start", "*", _drag_start, obj);
-   edje_object_signal_callback_add(wd->spinner, "drag,stop", "*", _drag_stop, obj);
-   edje_object_signal_callback_add(wd->spinner, "drag,step", "*", _drag_stop, obj);
-   edje_object_signal_callback_add(wd->spinner, "drag,page", "*", _drag_stop, obj);
+   edje_object_signal_callback_add(wd->spinner, "drag,start", "*", 
+                                   _drag_start, obj);
+   edje_object_signal_callback_add(wd->spinner, "drag,stop", "*", 
+                                   _drag_stop, obj);
+   edje_object_signal_callback_add(wd->spinner, "drag,step", "*", 
+                                   _drag_stop, obj);
+   edje_object_signal_callback_add(wd->spinner, "drag,page", "*", 
+                                   _drag_stop, obj);
 
-   edje_object_signal_callback_add(wd->spinner, "elm,action,increment,start", "*", _button_inc_start, obj);
-   edje_object_signal_callback_add(wd->spinner, "elm,action,increment,stop", "*", _button_inc_stop, obj);
-   edje_object_signal_callback_add(wd->spinner, "elm,action,decrement,start", "*", _button_dec_start, obj);
-   edje_object_signal_callback_add(wd->spinner, "elm,action,decrement,stop", "*", _button_dec_stop, obj);
-   edje_object_part_drag_value_set(wd->spinner, "elm.dragable.slider", 0.0, 0.0);
+   edje_object_signal_callback_add(wd->spinner, "elm,action,increment,start", 
+                                   "*", _button_inc_start, obj);
+   edje_object_signal_callback_add(wd->spinner, "elm,action,increment,stop", 
+                                   "*", _button_inc_stop, obj);
+   edje_object_signal_callback_add(wd->spinner, "elm,action,decrement,start", 
+                                   "*", _button_dec_start, obj);
+   edje_object_signal_callback_add(wd->spinner, "elm,action,decrement,stop", 
+                                   "*", _button_dec_stop, obj);
+   edje_object_part_drag_value_set(wd->spinner, "elm.dragable.slider", 
+                                   0.0, 0.0);
 
-   evas_object_event_callback_add(wd->spinner, EVAS_CALLBACK_KEY_DOWN, _entry_event_key_down, obj);
-   evas_object_event_callback_add(wd->spinner, EVAS_CALLBACK_KEY_UP, _entry_event_key_up, obj);
+   evas_object_event_callback_add(wd->spinner, EVAS_CALLBACK_KEY_DOWN, 
+                                  _entry_event_key_down, obj);
+   evas_object_event_callback_add(wd->spinner, EVAS_CALLBACK_KEY_UP, 
+                                  _entry_event_key_up, obj);
 
    wd->ent = elm_entry_add(obj);
    elm_entry_single_line_set(wd->ent, 1);
    evas_object_smart_callback_add(wd->ent, "activated", _entry_activated, obj);
    edje_object_part_swallow(wd->spinner, "elm.swallow.entry", wd->ent);
-   edje_object_signal_callback_add(wd->spinner, "elm,action,entry,toggle", "*", _toggle_entry, obj);
+   edje_object_signal_callback_add(wd->spinner, "elm,action,entry,toggle", 
+                                   "*", _toggle_entry, obj);
 
    _write_label(obj);
    _sizing_eval(obj);
@@ -485,6 +504,7 @@ EAPI void
 elm_spinner_label_format_set(Evas_Object *obj, const char *fmt)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (wd->label) eina_stringshare_del(wd->label);
    wd->label = eina_stringshare_add(fmt);
    _write_label(obj);
@@ -503,8 +523,8 @@ EAPI const char *
 elm_spinner_label_format_get(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
 
+   if (!wd) return NULL;
    return wd->label;
 }
 
@@ -523,6 +543,7 @@ EAPI void
 elm_spinner_min_max_set(Evas_Object *obj, double min, double max)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if ((wd->val_min == min) && (wd->val_max == max)) return;
    wd->val_min = min;
    wd->val_max = max;
@@ -559,6 +580,7 @@ EAPI void
 elm_spinner_value_set(Evas_Object *obj, double val)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (wd->val == val) return;
    wd->val = val;
    if (wd->val < wd->val_min) wd->val = wd->val_min;
