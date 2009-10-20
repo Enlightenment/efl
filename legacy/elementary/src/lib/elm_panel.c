@@ -1,6 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+#define PNL_BTN_WIDTH 32
+
 /**
  * @defgroup Panel Panel
  * 
@@ -10,17 +12,28 @@
 typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data 
 {
-   Evas_Object *parent, *panel, *btn, *icn;
+   Evas_Object *parent, *panel, *content;
    Elm_Panel_Orient orient;
+   Eina_Bool hidden : 1;
    int timeout;
    Ecore_Timer *timer;
 };
 
+static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _parent_resize(void *data, Evas *evas, Evas_Object *obj, void *event);
-static void _btn_click(void *data, Evas_Object *obj, void *event);
+static void _toggle_panel(void *data, Evas_Object *obj, const char *emission, const char *source);
+
+static void 
+_del_pre_hook(Evas_Object *obj) 
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_RESIZE, 
+                                  _parent_resize, obj);
+}
 
 static void 
 _del_hook(Evas_Object *obj) 
@@ -46,25 +59,28 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord x, y, w, h;
+   Evas_Coord pw, ph;
 
    evas_object_geometry_get(wd->parent, &x, &y, &w, &h);
+   edje_object_size_min_calc(wd->panel, &pw, &ph);
+   if (pw < 64) pw = 64;
    switch (wd->orient) 
      {
       case ELM_PANEL_ORIENT_TOP:
         evas_object_move(wd->panel, x, y);
-        evas_object_resize(wd->panel, w, 48);
+        evas_object_resize(wd->panel, w, pw + PNL_BTN_WIDTH);
         break;
       case ELM_PANEL_ORIENT_BOTTOM:
-        evas_object_move(wd->panel, x, h - 48);
-        evas_object_resize(wd->panel, w, 48);
+        evas_object_move(wd->panel, x, h - (pw + PNL_BTN_WIDTH));
+        evas_object_resize(wd->panel, w, pw + PNL_BTN_WIDTH);
         break;
       case ELM_PANEL_ORIENT_LEFT:
         evas_object_move(wd->panel, x, y);
-        evas_object_resize(wd->panel, 48, h);
+        evas_object_resize(wd->panel, pw + PNL_BTN_WIDTH, h);
         break;
       case ELM_PANEL_ORIENT_RIGHT:
-        evas_object_move(wd->panel, (x + w - 48), y);
-        evas_object_resize(wd->panel, 48, h);
+        evas_object_move(wd->panel, (x + w - (pw + PNL_BTN_WIDTH)), y);
+        evas_object_resize(wd->panel, pw + PNL_BTN_WIDTH, h);
         break;
      }
 }
@@ -76,11 +92,21 @@ _parent_resize(void *data, Evas *evas, Evas_Object *obj, void *event)
 }
 
 static void 
-_btn_click(void *data, Evas_Object *obj, void *event) 
+_toggle_panel(void *data, Evas_Object *obj, const char *emission, const char *source) 
 {
    Widget_Data *wd = elm_widget_data_get(data);
 
-   elm_icon_standard_set(wd->icn, "arrow_right");
+   if (wd->timer) ecore_timer_del(wd->timer);
+   if (wd->hidden) 
+     {
+        edje_object_signal_emit(wd->panel, "elm,state,visible", "elm");
+        wd->hidden = EINA_FALSE;
+     }
+   else 
+     {
+        edje_object_signal_emit(wd->panel, "elm,state,hidden", "elm");
+        wd->hidden = EINA_TRUE;
+     }
 }
 
 EAPI Evas_Object *
@@ -92,12 +118,15 @@ elm_panel_add(Evas_Object *parent)
 
    wd = ELM_NEW(Widget_Data);
    wd->parent = parent;
+   wd->hidden = EINA_FALSE;
+   wd->timeout = 2;
    evas = evas_object_evas_get(parent);
 
    obj = elm_widget_add(evas);
    elm_widget_type_set(obj, "panel");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
+   elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
 
@@ -105,19 +134,8 @@ elm_panel_add(Evas_Object *parent)
    elm_panel_orient_set(obj, ELM_PANEL_ORIENT_LEFT);
    elm_widget_resize_object_set(obj, wd->panel);
 
-   wd->icn = elm_icon_add(obj);
-   elm_icon_standard_set(wd->icn, "arrow_left");
-   evas_object_size_hint_aspect_set(wd->icn, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-   elm_widget_sub_object_add(obj, wd->icn);
-
-   wd->btn = elm_button_add(obj);
-   elm_button_icon_set(wd->btn, wd->icn);
-   elm_object_style_set(wd->btn, "anchor");
-   evas_object_size_hint_align_set(wd->btn, 0.0, 0.0);
-   elm_widget_sub_object_add(obj, wd->btn);
-   evas_object_smart_callback_add(wd->btn, "clicked", _btn_click, obj);
-   edje_object_part_swallow(wd->panel, "elm.swallow.arrow", wd->btn);
-
+   edje_object_signal_callback_add(wd->panel, "elm,action,panel,toggle", 
+                                   "*", _toggle_panel, obj);
    evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_RESIZE, 
                                   _parent_resize, obj);
 
@@ -155,4 +173,20 @@ elm_panel_timeout_set(Evas_Object *obj, int timeout)
 
    wd->timeout = timeout;
 //   _timer_init(obj);
+}
+
+EAPI void 
+elm_panel_content_set(Evas_Object *obj, Evas_Object *content) 
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (wd->content)
+     elm_widget_sub_object_del(obj, wd->content);
+   if (content) 
+     {
+        elm_widget_sub_object_add(obj, content);
+        edje_object_part_swallow(wd->panel, "elm.swallow.content", content);
+        wd->content = content;
+        _sizing_eval(obj);
+     }
 }
