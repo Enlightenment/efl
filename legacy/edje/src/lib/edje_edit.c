@@ -2339,6 +2339,142 @@ edje_edit_state_exist(Evas_Object *obj, const char *part, const char *state)
    return 1;
 }
 
+EAPI Eina_Bool
+edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, const char *to)
+{
+   Edje_Part_Description *pdfrom, *pdto;
+   Edje_Part_Image_Id *i;
+   Eina_List *l;
+   GET_RP_OR_RETURN(0);
+
+   pdfrom = _edje_part_description_find_byname(ed, part, from);
+   if (!pdfrom)
+     return 0;
+
+   pdto = _edje_part_description_find_byname(ed, part, to);
+   if (!pdto)
+     {
+	pdto = _alloc(sizeof(Edje_Part_Description));
+	if (!pdto)
+	  return 0;
+	/* No need to check for default desc, at this point it must exist */
+	rp->part->other_desc = eina_list_append(rp->part->other_desc, pdto);
+	pdto->state.name = eina_stringshare_add(to);
+	pdto->state.value = 0.0;
+     }
+
+#define PD_COPY(_x) pdto->_x = pdfrom->_x
+   PD_COPY(align.x);
+   PD_COPY(align.y);
+   PD_COPY(fixed.w);
+   PD_COPY(fixed.h);
+   PD_COPY(min.w);
+   PD_COPY(min.h);
+   PD_COPY(max.w);
+   PD_COPY(max.h);
+   PD_COPY(aspect.min);
+   PD_COPY(aspect.max);
+   PD_COPY(aspect.prefer);
+   PD_COPY(rel1.relative_x);
+   PD_COPY(rel1.relative_y);
+   PD_COPY(rel1.offset_x);
+   PD_COPY(rel1.offset_y);
+   PD_COPY(rel1.id_x);
+   PD_COPY(rel1.id_y);
+   PD_COPY(rel2.relative_x);
+   PD_COPY(rel2.relative_y);
+   PD_COPY(rel2.offset_x);
+   PD_COPY(rel2.offset_y);
+   PD_COPY(rel2.id_x);
+   PD_COPY(rel2.id_y);
+   EINA_LIST_FREE(pdto->image.tween_list, i)
+      free(i);
+   EINA_LIST_FOREACH(pdfrom->image.tween_list, l, i)
+     {
+	Edje_Part_Image_Id *new_i;
+	new_i = _alloc(sizeof(Edje_Part_Image_Id));
+	/* error checking? What to do if failed? Rollback, abort? */
+	new_i->id = i->id;
+	pdto->image.tween_list = eina_list_append(pdto->image.tween_list, new_i);
+     }
+   eina_stringshare_replace(&pdto->gradient.type, pdfrom->gradient.type);
+   eina_stringshare_replace(&pdto->gradient.params, pdfrom->gradient.params);
+   PD_COPY(gradient.id);
+   PD_COPY(gradient.use_rel);
+   PD_COPY(gradient.rel1.relative_x);
+   PD_COPY(gradient.rel1.relative_y);
+   PD_COPY(gradient.rel1.offset_x);
+   PD_COPY(gradient.rel1.offset_y);
+   PD_COPY(gradient.rel2.relative_x);
+   PD_COPY(gradient.rel2.relative_y);
+   PD_COPY(gradient.rel2.offset_x);
+   PD_COPY(gradient.rel2.offset_y);
+   PD_COPY(border.l);
+   PD_COPY(border.r);
+   PD_COPY(border.t);
+   PD_COPY(border.b);
+   PD_COPY(border.no_fill);
+   PD_COPY(fill.pos_rel_x);
+   PD_COPY(fill.rel_x);
+   PD_COPY(fill.pos_rel_y);
+   PD_COPY(fill.rel_y);
+   PD_COPY(fill.pos_abs_x);
+   PD_COPY(fill.abs_x);
+   PD_COPY(fill.pos_abs_y);
+   PD_COPY(fill.abs_y);
+   PD_COPY(fill.angle);
+   PD_COPY(fill.spread);
+   PD_COPY(fill.smooth);
+   PD_COPY(fill.type);
+   eina_stringshare_replace(&pdto->color_class, pdfrom->color_class);
+   eina_stringshare_replace(&pdto->text.text, pdfrom->text.text);
+   eina_stringshare_replace(&pdto->text.text_class, pdfrom->text.text_class);
+   eina_stringshare_replace(&pdto->text.style, pdfrom->text.style);
+   eina_stringshare_replace(&pdto->text.font, pdfrom->text.font);
+   eina_stringshare_replace(&pdto->text.repch, &pdfrom->text.repch);
+   PD_COPY(text.align.x);
+   PD_COPY(text.align.y);
+   PD_COPY(text.elipsis);
+   PD_COPY(text.size);
+   PD_COPY(text.id_source);
+   PD_COPY(text.id_text_source);
+   PD_COPY(text.fit_x);
+   PD_COPY(text.fit_y);
+   PD_COPY(text.min_x);
+   PD_COPY(text.min_y);
+   PD_COPY(text.max_x);
+   PD_COPY(text.max_y);
+   eina_stringshare_replace(&pdto->box.layout, pdfrom->box.layout);
+   eina_stringshare_replace(&pdto->box.alt_layout, pdfrom->box.alt_layout);
+   PD_COPY(box.align.x);
+   PD_COPY(box.align.y);
+   PD_COPY(box.padding.x);
+   PD_COPY(box.padding.y);
+   PD_COPY(box.min.h);
+   PD_COPY(box.min.v);
+   PD_COPY(table.homogeneous);
+   PD_COPY(table.align.x);
+   PD_COPY(table.align.y);
+   PD_COPY(table.padding.x);
+   PD_COPY(table.padding.y);
+   PD_COPY(color.r);
+   PD_COPY(color.g);
+   PD_COPY(color.b);
+   PD_COPY(color.a);
+   PD_COPY(color2.r);
+   PD_COPY(color2.g);
+   PD_COPY(color2.b);
+   PD_COPY(color2.a);
+   PD_COPY(color3.r);
+   PD_COPY(color3.g);
+   PD_COPY(color3.b);
+   PD_COPY(color3.a);
+   PD_COPY(visible);
+#undef PD_COPY
+
+   return 1;
+}
+
 //relative
 EAPI double
 edje_edit_state_rel1_relative_x_get(Evas_Object *obj, const char *part, const char *state)

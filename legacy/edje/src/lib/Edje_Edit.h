@@ -818,6 +818,16 @@ edje_edit_state_exist(
    const char *state       ///< The name of the state to check (including the state value)
 );
 
+/**Copies the state @p from into @p to. If @p to doesn't exist it will be created.
+ */
+EAPI Eina_Bool        ///< 1 if it could be copied, 0 if something went wrong.
+edje_edit_state_copy(
+   Evas_Object *obj,      ///< The edje object
+   const char *part,      ///< The name of the part
+   const char *from,      ///< State to copy from (including state value)
+   const char *to         ///< State to copy into (not including state value if new)
+);
+
 /**Get the rel1 relative x value of state*/
 EAPI double                ///@return The 'rel1 relative X' value of the part state
 edje_edit_state_rel1_relative_x_get(
