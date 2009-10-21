@@ -429,8 +429,7 @@ evas_common_map4_rgba_internal(RGBA_Image *src, RGBA_Image *dst,
    swp = sw << FP;
    shp = src->cache_entry.h << FP;
 
-//   if (smooth)
-   if (0)
+   if (smooth)
      {
          for (y = ystart; y <= yend; y++)
           {
