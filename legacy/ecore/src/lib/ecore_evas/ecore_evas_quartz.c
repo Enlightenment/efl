@@ -56,7 +56,7 @@ static NSWindow * main_window;
 {
    if(ctx != NULL)
    {
-      Ecore_evas  *ee;
+      Ecore_Evas  *ee;
 
       EINA_INLIST_FOREACH(ecore_evases, ee)
       {
