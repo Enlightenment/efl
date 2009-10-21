@@ -103,7 +103,4 @@ static void eng_font_draw(void *data, void *context, void *surface, void *font, 
 static void eng_font_hinting_set(void *data, void *font, int hinting);
 static int eng_font_hinting_can_hint(void *data, int hinting);
 
-EAPI int module_open(Evas_Module *em);
-EAPI void module_close(void);
-
 #endif /* _EVAS_QUARTZ_PRIVATE_H_ */
