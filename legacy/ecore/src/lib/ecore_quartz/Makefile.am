@@ -12,7 +12,8 @@ if BUILD_ECORE_QUARTZ
 
 lib_LTLIBRARIES = libecore_quartz.la
 include_HEADERS = \
-Ecore_Quartz.h
+Ecore_Quartz.h \
+Ecore_Quartz_Keys.h
 
 libecore_quartz_la_SOURCES = \
 ecore_quartz.m
