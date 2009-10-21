@@ -273,7 +273,7 @@ EAPI Eina_Accessor *eina_list_accessor_new(const Eina_List *list) EINA_MALLOC EI
  *   }
  * @endcode
  */
-#define EINA_LIST_REVERSE_FOREACH_SAFE(list, l, l_prev, data) for (l = list, l_prev = eina_list_prev(l), data = eina_list_data_get(l); l; l = l_prev, l_prev = eina_list_prev(l), data = eina_list_data_get(l))
+#define EINA_LIST_REVERSE_FOREACH_SAFE(list, l, l_prev, data) for (l = eina_list_last(list), l_prev = eina_list_prev(l), data = eina_list_data_get(l); l; l = l_prev, l_prev = eina_list_prev(l), data = eina_list_data_get(l))
 
 /**
  * @def EINA_LIST_FREE
