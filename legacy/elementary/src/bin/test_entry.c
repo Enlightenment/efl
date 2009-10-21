@@ -33,6 +33,14 @@ my_entry_bt_4(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+my_entry_bt_5(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *en = data;
+   const char *s = elm_entry_entry_get(en);
+   printf("PASSWORD: '%s'\n", s ? s : "");
+}
+
+static void
 anchor_test(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *en = data;
@@ -121,7 +129,7 @@ test_entry(void *data, Evas_Object *obj, void *event_info)
 void
 test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *bx, *bx2, *bt, *en, *sc, *sp;
+   Evas_Object *win, *bg, *bx, *bx2, *bt, *en, *en_p, *sc, *sp;
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "entry-scrolled", ELM_WIN_BASIC);
@@ -231,13 +239,13 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, sc);
 
-   en = elm_entry_add(win);
-   elm_entry_password_set(en, 1);
-   elm_entry_entry_set(en, "Password here");
-   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.0);
-   elm_scroller_content_set(sc, en);
-   evas_object_show(en);
+   en_p = elm_entry_add(win);
+   elm_entry_password_set(en_p, 1);
+   elm_entry_entry_set(en_p, "Password here");
+   evas_object_size_hint_weight_set(en_p, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(en_p, EVAS_HINT_FILL, 0.0);
+   elm_scroller_content_set(sc, en_p);
+   evas_object_show(en_p);
 
    evas_object_show(sc);
 
@@ -281,6 +289,14 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Print");
    evas_object_smart_callback_add(bt, "clicked", my_entry_bt_2, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Print pwd");
+   evas_object_smart_callback_add(bt, "clicked", my_entry_bt_5, en_p);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
