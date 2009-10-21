@@ -852,6 +852,7 @@ extern "C" {
    EAPI Eina_Bool         evas_object_map_enable_get        (const Evas_Object *obj);
    EAPI void              evas_object_map_set               (Evas_Object *obj, const Evas_Map_Point *points);
    EAPI void              evas_object_map_get               (const Evas_Object *obj, Evas_Map_Point *points);
+   
    EAPI Evas_Map_Point   *evas_map_new                      (int num);
    EAPI void              evas_map_free                     (Evas_Map_Point *mp);
    EAPI void              evas_map_point_coord_set          (Evas_Map_Point *mp, int n, Evas_Coord x, Evas_Coord y, Evas_Coord z);

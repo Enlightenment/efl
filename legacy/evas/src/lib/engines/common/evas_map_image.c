@@ -51,6 +51,7 @@ evas_common_map4_rgba(RGBA_Image *src, RGBA_Image *dst,
    if (src->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
      evas_cache_image_load_data(&src->cache_entry);
    evas_common_image_colorspace_normalize(src);
+   if (!src->image.data) return;
    if (!dc->cutout.rects)
      {
         evas_common_map4_rgba_internal(src, dst, dc, p, smooth, level);
@@ -146,6 +147,16 @@ evas_common_map4_rgba_internal(RGBA_Image *src, RGBA_Image *dst,
    // all on one line. eg:
    // 
    // |----------|
+   for (i = 0; i < 4; i++)
+     {
+        if (p[i].u < 0) p[i].u = 0;
+        else if (p[i].u > (src->cache_entry.w << FP))
+          p[i].u = src->cache_entry.w << FP;
+        
+        if (p[i].v < 0) p[i].v = 0;
+        else if (p[i].v > (src->cache_entry.h << FP))
+          p[i].v = src->cache_entry.h << FP;
+     }
    if ((PY(0) == PY(1)) && (PY(0) == PY(2)) && (PY(0) == PY(3)))
      {
         // FIXME:
@@ -229,6 +240,7 @@ evas_common_map4_rgba_internal(RGBA_Image *src, RGBA_Image *dst,
                   
                   v = p[e2].v - p[e1].v;
                   v = p[e1].v + ((v * t) / h);
+                  
                   uv[i][1] = v;
                   uv[i][0] = u;
                   edge[i][2] = x >> FP;
@@ -416,49 +428,95 @@ evas_common_map4_rgba_internal(RGBA_Image *src, RGBA_Image *dst,
    sw = src->cache_entry.w;
    swp = sw << FP;
    shp = src->cache_entry.h << FP;
-   
-   for (y = ystart; y <= yend; y++)
+
+//   if (smooth)
+   if (0)
      {
-        int x, w, ww;
-        FPc u, v, ud, vd;
-        DATA32 *d, *dptr, *s;
-        yp = y - ystart;
-        
-//        printf("y: %3i[%3i] :", y, yp);
-        for (i = 0; i < 2; i++)
+         for (y = ystart; y <= yend; y++)
           {
-             if (spans[yp].span[i].x1 >= 0)
+             int x, w, ww;
+             FPc u, v, ud, vd;
+             DATA32 *d, *dptr, *s;
+             yp = y - ystart;
+        
+             for (i = 0; i < 2; i++)
                {
-                  x = spans[yp].span[i].x1;
-                  w = (spans[yp].span[i].x2 - x);
-                  
-                  if (w <= 0) continue;
-                  ww = w;
-                  d = buf;
-                  u = spans[yp].span[i].u[0];
-                  v = spans[yp].span[i].v[0];
-                  ud = (spans[yp].span[i].u[1] - u) / w;
-                  vd = (spans[yp].span[i].v[1] - v) / w;
-//                  printf(" %3i[%3i,%3i] - %3i[%3i,%3i] |", 
-//                         x, u >> FP, v >> FP, 
-//                         x + w, 
-//                         spans[yp].span[i].u[1] >> FP, spans[yp].span[i].v[1] >> FP);
-                  while (ww > 0)
+                  if (spans[yp].span[i].x1 >= 0)
                     {
-                       s = sp + ((v >> FP) * sw) + (u >> FP);
-                       *d++ = *s;
-                       u += ud;
-                       v += vd;
-                       if (u >= swp) u = swp - 1;
-                       if (v >= shp) v = shp - 1;
-                       ww--;
+                       x = spans[yp].span[i].x1;
+                       w = (spans[yp].span[i].x2 - x);
+                       
+                       if (w <= 0) continue;
+                       ww = w;
+                       d = buf;
+                       u = spans[yp].span[i].u[0];
+                       v = spans[yp].span[i].v[0];
+                       ud = (spans[yp].span[i].u[1] - u) / w;
+                       vd = (spans[yp].span[i].v[1] - v) / w;
+                       if (ud < 0) u -= 1;
+                       if (vd < 0) v -= 1;
+                       while (ww > 0)
+                         {
+                            s = sp + ((v >> FP) * sw) + (u >> FP);
+                            *d++ = *s;
+                            u += ud;
+                            v += vd;
+                            ww--;
+                         }
+                       dptr = dst->image.data;
+                       dptr += (y * dst->cache_entry.w) + x;
+                       func(buf, NULL, dc->mul.col, dptr, w);
                     }
-                  dptr = dst->image.data;
-                  dptr += (y * dst->cache_entry.w) + x;
-                  func(buf, NULL, dc->mul.col, dptr, w);
+                  else break;
                }
-             else break;
           }
-//        printf("\n");
+     }
+   else
+     {
+         for (y = ystart; y <= yend; y++)
+          {
+             int x, w, ww;
+             FPc u, v, ud, vd;
+             DATA32 *d, *dptr, *s;
+             yp = y - ystart;
+        
+//             printf("y: %3i[%3i] :", y, yp);
+             for (i = 0; i < 2; i++)
+               {
+                  if (spans[yp].span[i].x1 >= 0)
+                    {
+                       x = spans[yp].span[i].x1;
+                       w = (spans[yp].span[i].x2 - x);
+                       
+                       if (w <= 0) continue;
+                       ww = w;
+                       d = buf;
+                       u = spans[yp].span[i].u[0];
+                       v = spans[yp].span[i].v[0];
+                       ud = (spans[yp].span[i].u[1] - u) / w;
+                       vd = (spans[yp].span[i].v[1] - v) / w;
+//                       printf(" %3i[%3i,%3i] - %3i[%3i,%3i] |", 
+//                              x, u >> FP, v >> FP, 
+//                              x + w, 
+//                              spans[yp].span[i].u[1] >> FP, 
+//                              spans[yp].span[i].v[1] >> FP);
+                       if (ud < 0) u -= 1;
+                       if (vd < 0) v -= 1;
+                       while (ww > 0)
+                         {
+                            s = sp + ((v >> FP) * sw) + (u >> FP);
+                            *d++ = *s;
+                            u += ud;
+                            v += vd;
+                            ww--;
+                         }
+                       dptr = dst->image.data;
+                       dptr += (y * dst->cache_entry.w) + x;
+                       func(buf, NULL, dc->mul.col, dptr, w);
+                    }
+                  else break;
+               }
+//             printf("\n");
+          }
      }
 }
