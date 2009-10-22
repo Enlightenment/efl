@@ -64,7 +64,7 @@ bool D3DVertexBufferCache::InitBuffer(D3DDevice *d3d, BYTE *data, int size, Cach
       CacheEntry new_entry;
       if (!CreateEntry(d3d, new_entry, size))
       {
-         Log("Failed to create new vbcache entry");
+	WRN("Failed to create new vbcache entry");
          return false;
       }
       _cache.Add(new_entry);
@@ -80,7 +80,7 @@ bool D3DVertexBufferCache::InitBuffer(D3DDevice *d3d, BYTE *data, int size, Cach
    assert(ce != NULL);
    if (!InsertData(*ce, data, size))
    {
-      Log("Failed to insert vbcache data");
+      WRN("Failed to insert vbcache data");
       return false;
    }
    return true;

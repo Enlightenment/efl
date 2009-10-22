@@ -193,7 +193,7 @@ evas_software_gdi_outbuf_setup(int          width,
 
            if (!conv_func)
              {
-                ERROR(".[ soft_gdi engine Error ]."
+                ERR(".[ soft_gdi engine Error ]."
                       " {"
                       "  At depth         %i:"
                       "  RGB format mask: %08lx, %08lx, %08lx"

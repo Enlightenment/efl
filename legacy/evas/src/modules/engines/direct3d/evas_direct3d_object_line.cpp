@@ -28,7 +28,7 @@ void D3DObjectLine::EndCache(D3DDevice *d3d)
    d3d->GetDevice()->DrawPrimitiveUP(D3DPT_LINELIST, _cache.Length() / 2, 
       _cache.Data(), sizeof(Vertex));
 
-   Log("Line cache drawn: %d items", _cache.Length() / 2);
+   DBG("Line cache drawn: %d items", _cache.Length() / 2);
    _cache_enabled = false;
 }
 

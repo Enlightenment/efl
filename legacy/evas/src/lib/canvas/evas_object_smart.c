@@ -174,26 +174,26 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
 
    if (obj->delete_me)
      {
-        ERROR("Adding deleted object %p to smart obj %p", obj, smart_obj);
+        CRIT("Adding deleted object %p to smart obj %p", obj, smart_obj);
 	abort();
 	return;
      }
    if (smart_obj->delete_me)
      {
-	ERROR("Adding object %p to deleted smart obj %p", obj, smart_obj);
+	CRIT("Adding object %p to deleted smart obj %p", obj, smart_obj);
 	abort();
 	return;
      }
    if (!smart_obj->layer)
      {
-	ERROR("No evas surface associated with smart object (%p)", smart_obj);
+	CRIT("No evas surface associated with smart object (%p)", smart_obj);
 	abort();
 	return;
      }
    if (obj->layer && smart_obj->layer
        && obj->layer->evas != smart_obj->layer->evas)
      {
-	ERROR("EVAS ERROR: Adding object %p from Evas (%p) from another Evas (%p)", obj, obj->layer->evas, smart_obj->layer->evas);
+	CRIT("Adding object %p from Evas (%p) from another Evas (%p)", obj, obj->layer->evas, smart_obj->layer->evas);
 	abort();
 	return;
      }

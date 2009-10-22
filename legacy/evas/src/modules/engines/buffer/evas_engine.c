@@ -3,8 +3,18 @@
 #include "evas_engine.h"
 #include "Evas_Engine_Buffer.h"
 
+/* domain for eina_log */
+/* the log macros are defined in evas_common.h */
+/* theirs names are EVAS_ERR, EVAS_DBG, EVAS_CRIT, EVAS_WRN and EVAS_INF */
+/* although we can use the EVAS_ERROR, etc... macros it will not work
+   when the -fvisibility=hidden option is passed to gcc */
+
+int _evas_engine_buffer_log_dom = -1;
+
 /* function tables - filled in later (func and parent func) */
+
 static Evas_Func func, pfunc;
+
 
 /* engine struct data */
 typedef struct _Render_Engine Render_Engine;
@@ -72,7 +82,7 @@ _output_setup(int w,
    evas_common_tilebuf_init();
 
    evas_buffer_outbuf_buf_init();
-
+   
      {
 	Outbuf_Depth dep;
 	DATA32 color_key = 0;
@@ -113,7 +123,6 @@ static void *
 eng_info(Evas *e)
 {
    Evas_Engine_Info_Buffer *info;
-
    info = calloc(1, sizeof(Evas_Engine_Info_Buffer));
    if (!info) return NULL;
    info->magic.magic = rand();
@@ -125,7 +134,6 @@ static void
 eng_info_free(Evas *e __UNUSED__, void *info)
 {
    Evas_Engine_Info_Buffer *in;
-
    in = (Evas_Engine_Info_Buffer *)info;
    free(in);
 }
@@ -340,6 +348,14 @@ module_open(Evas_Module *em)
    if (!em) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
+   
+   _evas_engine_buffer_log_dom = eina_log_domain_register("EvasBufferEngine", EINA_COLOR_BLUE);
+   if(_evas_engine_buffer_log_dom < 0)
+     {
+       EINA_LOG_ERR("Impossible to create a log domain for Eina.buffer.\n");
+       return 0;
+     }
+   
    /* store it for later use */
    func = pfunc;
    /* now to override methods */
@@ -366,6 +382,7 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em)
 {
+  eina_log_domain_unregister(_evas_engine_buffer_log_dom);
 }
 
 static Evas_Module_Api evas_modapi =

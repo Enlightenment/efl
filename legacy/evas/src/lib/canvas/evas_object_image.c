@@ -2533,7 +2533,7 @@ evas_object_image_render_pre(Evas_Object *obj)
 
    if ((o->cur.fill.w < 1) || (o->cur.fill.h < 1))
      {
-       ERROR("evas image: %p has invalid fill size: %dx%d. Ignored",
+       ERR("%p has invalid fill size: %dx%d. Ignored",
 	     obj, o->cur.fill.w, o->cur.fill.h);
 	return;
      }

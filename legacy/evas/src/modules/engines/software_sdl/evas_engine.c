@@ -8,6 +8,7 @@
 #include "evas_common.h"
 #include "evas_engine.h"
 
+int _evas_engine_soft_sdl_log_dom = -1;
 /* #define DEBUG_SDL */
 
 static Evas_Func	func = {};
@@ -67,21 +68,18 @@ static const Evas_Cache_Engine_Image_Func       _sdl_cache_engine_image_cb = {
 static void*
 evas_engine_sdl_info		(Evas* e __UNUSED__)
 {
-   Evas_Engine_Info_SDL*	info = calloc(1, sizeof (Evas_Engine_Info_SDL));
-
-   if (!info)
-      return NULL;
-
+   Evas_Engine_Info_SDL*	info;
+   info = calloc(1, sizeof (Evas_Engine_Info_SDL));
+   if (!info) return NULL;
    info->magic.magic = rand();
-
    return info;
 }
 
 static void
 evas_engine_sdl_info_free	(Evas* e __UNUSED__, void* info)
 {
-   Evas_Engine_Info_SDL*	in = (Evas_Engine_Info_SDL*) info;
-
+   Evas_Engine_Info_SDL*	in;
+   in = (Evas_Engine_Info_SDL*) info;
    free(in);
    in = NULL;
 }
@@ -100,7 +98,7 @@ evas_engine_sdl_setup		(Evas* e, void* in)
 
    if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
      {
-	ERROR("SDL_Init failed with %s", SDL_GetError());
+	ERR("SDL_Init failed with %s", SDL_GetError());
         SDL_Quit();
         return 0;
      }
@@ -171,13 +169,13 @@ evas_engine_sdl_output_resize	(void *data, int w, int h)
 
    if (!surface)
      {
-	ERROR("Unable to change the resolution to : %ix%i", w, h);
+	ERR("Unable to change the resolution to : %ix%i", w, h);
 	exit(-1);
      }
    re->rgba_engine_image = (SDL_Engine_Image_Entry *) evas_cache_engine_image_engine(re->cache, surface);
    if (!re->rgba_engine_image)
      {
-	ERROR("RGBA_Image allocation from SDL failed");
+	ERR("RGBA_Image allocation from SDL failed");
 	exit(-1);
      }
 
@@ -821,6 +819,12 @@ static int module_open(Evas_Module *em)
    if (!em) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
+   _evas_engine_soft_sdl_log_dom = eina_log_domain_register("EvasSoftSdl",EVAS_DEFAULT_LOG_COLOR);
+   if(_evas_engine_soft_sdl_log_dom < 0) 
+     {
+       EINA_LOG_ERR("Impossible to create a log domain for the SoftSdl engine.\n");
+       return 0;
+     }
    /* store it for later use */
    func = pfunc;
    /* now to override methods */
@@ -877,7 +881,7 @@ static int module_open(Evas_Module *em)
 
 static void module_close(Evas_Module *em)
 {
-
+  eina_log_domain_unregister(_evas_engine_soft_sdl_log_dom);
 }
 
 static Evas_Module_Api evas_modapi =
@@ -925,7 +929,7 @@ _sdl_output_setup		(int w, int h, int fullscreen, int noframe, int alpha, int hw
    re->cache = evas_cache_engine_image_init(&_sdl_cache_engine_image_cb, evas_common_image_cache_get());
    if (!re->cache)
      {
-        CRITICAL("Evas_Cache_Engine_Image allocation failed!");
+        CRIT("Evas_Cache_Engine_Image allocation failed!");
         exit(-1);
      }
 
@@ -940,7 +944,7 @@ _sdl_output_setup		(int w, int h, int fullscreen, int noframe, int alpha, int hw
 
    if (!surface)
      {
-        CRITICAL("SDL_SetVideoMode [ %i x %i x 32 ] failed.", w, h);
+        CRIT("SDL_SetVideoMode [ %i x %i x 32 ] failed.", w, h);
         exit(-1);
      }
 
@@ -952,7 +956,7 @@ _sdl_output_setup		(int w, int h, int fullscreen, int noframe, int alpha, int hw
    re->rgba_engine_image = (SDL_Engine_Image_Entry *) evas_cache_engine_image_engine(re->cache, surface);
    if (!re->rgba_engine_image)
      {
-	CRITICAL("RGBA_Image allocation from SDL failed");
+	CRIT("RGBA_Image allocation from SDL failed");
         exit(-1);
      }
 
@@ -1137,17 +1141,17 @@ _sdl_image_debug(const char* context, Engine_Image_Entry* eie)
 {
    SDL_Engine_Image_Entry       *eim = (SDL_Engine_Image_Entry *) eie;
 
-   DEBUG("*** %s image (%p) ***", context, eim);
+   DBG("*** %s image (%p) ***", context, eim);
    if (eim)
      {
-        DEBUG ("* W: %i\n* H: %i\n* R: %i", eim->cache_entry.w, eim->cache_entry.h, eim->cache_entry.references);
+        DBG ("* W: %i\n* H: %i\n* R: %i", eim->cache_entry.w, eim->cache_entry.h, eim->cache_entry.references);
         if (eim->cache_entry.src)
-          DEBUG ("* Pixels: %p\n* SDL Surface: %p",((RGBA_Image*) eim->cache_entry.src)->image.data, eim->surface);
+          DBG ("* Pixels: %p\n* SDL Surface: %p",((RGBA_Image*) eim->cache_entry.src)->image.data, eim->surface);
         if (eim->surface)
-          DEBUG ("* Surface->pixels: %p", eim->surface->pixels);
-	DEBUG ("* Key: %s", eim->cache_entry.cache_key);
-        DEBUG ("* Reference: %i", eim->cache_entry.references);
+          DBG ("* Surface->pixels: %p", eim->surface->pixels);
+	DBG ("* Key: %s", eim->cache_entry.cache_key);
+        DBG ("* Reference: %i", eim->cache_entry.references);
      }
-   DEBUG ("*** ***");
+   DBG ("*** ***");
 }
 #endif

@@ -34,11 +34,11 @@ bool D3DShaderPack::Initialize(D3DDevice *d3d)
 {
    bool res = true;
    if (!(res = InitVertexDeclarations(d3d) && res))
-      Log("Failed to create vdecl set");
+      WRN("Failed to create vdecl set");
    if (!(res = InitVertexShaders(d3d) && res))
-      Log("Failed to create vs set");
+      WRN("Failed to create vs set");
    if (!(res = InitPixelShaders(d3d) && res))
-      Log("Failed to create ps set");
+      WRN("Failed to create ps set");
    return res;
 }
 
@@ -280,11 +280,11 @@ void *D3DShaderPack::CompileShader(D3DDevice *d3d, bool make_vs,
 
    if (FAILED(res))
    {
-      Log("Shader %s compilation failed, code = %X", name, res);
+      ERR("Shader %s compilation failed, code = %X", name, res);
       if (error_msgs == NULL)
          return NULL;
       const char *mess = (const char *)error_msgs->GetBufferPointer();
-      Log("Error output:\n%s", mess);
+      ERR("Error output:\n%s", mess);
       error_msgs->Release();
       return NULL;
    }
@@ -310,7 +310,7 @@ void *D3DShaderPack::CompileShader(D3DDevice *d3d, bool make_vs,
 
    if (FAILED(res))
    {
-      Log("Shader %s creation failed, code = %X", name, res);
+      WRN("Shader %s creation failed, code = %X", name, res);
       return NULL;
    }
    return res_ptr;

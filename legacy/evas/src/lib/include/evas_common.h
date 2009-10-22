@@ -14,61 +14,40 @@
 
 /* macros needed to log message through eina_log */
 extern EAPI int _evas_log_dom_global;
-#ifdef  _EVAS_DEFAULT_MODULE_LOG_DOM
-# undef _EVAS_DEFAULT_MODULE_LOG_DOM
+#ifdef  _EVAS_DEFAULT_LOG_DOM
+# undef _EVAS_DEFAULT_LOG_DOM
 #endif
-#define _EVAS_DEFAULT_MODULE_LOG_DOM _evas_log_dom_global
+#define _EVAS_DEFAULT_LOG_DOM _evas_log_dom_global
 
 #ifdef EVAS_DEFAULT_LOG_COLOR
 # undef EVAS_DEFAULT_LOG_COLOR
 #endif
-#define EVAS_DEFAULT_LOG_COLOR "\033[36m"
-#ifdef ERROR
-# undef ERROR
-#endif
-#define ERROR(...) EINA_LOG_DOM_ERR(_evas_log_dom_global, __VA_ARGS__)
-#ifdef DEBUG
-# undef DEBUG
-#endif
-#define DEBUG(...) EINA_LOG_DOM_DBG(_evas_log_dom_global, __VA_ARGS__)
-#ifdef INFO
-# undef INFO
-#endif
-#define INFO(...) EINA_LOG_DOM_INFO(_evas_log_dom_global, __VA_ARGS__)
-#ifdef WARN
-# undef WARN
-#endif
-#define WARN(...) EINA_LOG_DOM_WARN(_evas_log_dom_global, __VA_ARGS__)
-#ifdef CRITICAL
-# undef CRITICAL
-#endif
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_evas_log_dom_global, __VA_ARGS__)
-/**
- * macros that are used all around the code for message processing
- * four macros are defined ERR, WRN, DGB, INF. 
- * EFREET_MODULE_LOG_DOM should be defined individually for each module
- */
+#define EVAS_DEFAULT_LOG_COLOR EINA_COLOR_BLUE
 
 #ifdef ERR
 # undef ERR
 #endif
-#define ERR(...) EINA_LOG_DOM_ERR(_EVAS_DEFAULT_MODULE_LOG_DOM, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_EVAS_DEFAULT_LOG_DOM, __VA_ARGS__)
+
 #ifdef DBG
 # undef DBG
 #endif
-#define DBG(...) EINA_LOG_DOM_DBG(_EVAS_DEFAULT_MODULE_LOG_DOM, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_EVAS_DEFAULT_LOG_DOM, __VA_ARGS__)
+
 #ifdef INF
 # undef INF
 #endif
-#define INF(...) EINA_LOG_DOM_INFO(_EVAS_DEFAULT__MODULE_LOG_DOM, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_EVAS_DEFAULT_LOG_DOM, __VA_ARGS__)
+
 #ifdef WRN
 # undef WRN
 #endif
-#define WRN(...) EINA_LOG_DOM_WARN(_EVAS_DEFAULT_MODULE_LOG_DOM, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_EVAS_DEFAULT_LOG_DOM, __VA_ARGS__)
+
 #ifdef CRIT
 # undef CRIT
 #endif
-#define CRIT(...) EINA_LOG_DOM_CRIT(_EVAS_DEFAULT_MODULE_LOG_DOM, __VA_ARGS__)
+#define CRIT(...) EINA_LOG_DOM_CRIT(_EVAS_DEFAULT_LOG_DOM, __VA_ARGS__)
 
 /*****************************************************************************/
 

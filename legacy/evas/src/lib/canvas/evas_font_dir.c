@@ -394,7 +394,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 	set = FcFontSort(NULL, p_nm, FcTrue, NULL, &res);
 	if (!set)
 	  {
-	     ERROR("No fontconfig font matches '%s'. It was the last resource, no font found!", name);
+	     ERR("No fontconfig font matches '%s'. It was the last resource, no font found!", name);
 	     goto fc_end;
 	  }
 

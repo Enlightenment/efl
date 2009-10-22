@@ -53,7 +53,7 @@ static int               _evas_common_rgba_image_dirty(Image_Entry* dst, const I
 static void
 _evas_common_rgba_image_debug(const char* context, Image_Entry *eim)
 {
-  DEBUG("%p = [%s] {%s,%s} %i [%i|%i]", eim, context, eim->file, eim->key, eim->references, eim->w, eim->h);
+  DBG("%p = [%s] {%s,%s} %i [%i|%i]", eim, context, eim->file, eim->key, eim->references, eim->w, eim->h);
 }
 
 static const Evas_Cache_Image_Func      _evas_common_image_func =
@@ -83,7 +83,7 @@ evas_common_image_init(void)
    if (!eci)
      eci = evas_cache_image_init(&_evas_common_image_func);
    reference++;
-////   ERROR("REF++=%i", reference);
+////   ERR("REF++=%i", reference);
 
 #ifdef BUILD_LOADER_EET
    eet_init();

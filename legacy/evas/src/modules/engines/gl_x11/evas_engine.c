@@ -9,7 +9,7 @@
 #else
 #endif
 
-
+int _evas_engine_GL_X11_log_dom = -1;
 /* function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
 
@@ -25,9 +25,7 @@ static void *
 eng_info(Evas *e)
 {
    Evas_Engine_Info_GL_X11 *info;
-
    info = calloc(1, sizeof(Evas_Engine_Info_GL_X11));
-   if (!info) return NULL;
    info->magic.magic = rand();
    info->func.best_visual_get = eng_best_visual_get;
    info->func.best_colormap_get = eng_best_colormap_get;
@@ -40,7 +38,7 @@ static void
 eng_info_free(Evas *e __UNUSED__, void *info)
 {
    Evas_Engine_Info_GL_X11 *in;
-
+   eina_log_domain_unregister(_evas_engine_GL_X11_log_dom);
    in = (Evas_Engine_Info_GL_X11 *)info;
    free(in);
 }
@@ -194,7 +192,7 @@ eng_output_redraws_clear(void *data)
 
    re = (Render_Engine *)data;
    re->win->draw.redraw = 0;
-//   INFO("GL: finish update cycle!");
+//   INF("GL: finish update cycle!");
 }
 
 /* at least the nvidia drivers are so abysmal that copying from the backbuffer
@@ -1078,6 +1076,12 @@ module_open(Evas_Module *em)
    if (!em) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
+   _evas_engine_GL_X11_log_dom = eina_log_domain_register("EvasEngineGLX11", EVAS_DEFAULT_LOG_COLOR);
+   if(_evas_engine_GL_X11_log_dom<0)
+     {
+       EINA_LOG_ERR("Impossible to create a log domain for GL X11 engine.\n");
+       return 0;
+     }
    /* store it for later use */
    func = pfunc;
    /* now to override methods */
@@ -1179,6 +1183,7 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em)
 {
+    eina_log_domain_unregister(_evas_engine_GL_X11_log_dom);
 }
 
 static Evas_Module_Api evas_modapi =

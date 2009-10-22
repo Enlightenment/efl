@@ -8,6 +8,9 @@
 #include "Evas_Engine_Cairo_X11.h"
 #include "evas_cairo_common.h"
 
+/* domain for eina_log */
+int _evas_engine_cairo_X11_log_dom = -1;
+
 static void *eng_info(Evas *e);
 static void eng_info_free(Evas *e, void *info);
 static int eng_setup(Evas *e, void *info);
@@ -257,11 +260,10 @@ static void *
 eng_info(Evas *e)
 {
    Evas_Engine_Info_Cairo_X11 *info;
-
+   INF("CAIRO: create info...");
    info = calloc(1, sizeof(Evas_Engine_Info_Cairo_X11));
    if (!info) return NULL;
-   info->magic.magic = rand();
-   INFO("CAIRO: create info...");
+   info->magic.magic = rand();   
    return info;
    e = NULL;
 }
@@ -270,7 +272,6 @@ static void
 eng_info_free(Evas *e, void *info)
 {
    Evas_Engine_Info_Cairo_X11 *in;
-
    in = (Evas_Engine_Info_Cairo_X11 *)info;
    free(in);
 }
@@ -282,7 +283,7 @@ eng_setup(Evas *e, void *in)
    Evas_Engine_Info_Cairo_X11 *info;
 
    info = (Evas_Engine_Info_Cairo_X11 *)in;
-   INFO("CAIRO: setup info...");
+   INF("CAIRO: setup info...");
    if (!e->engine.data.output)
      e->engine.data.output =
      eng_output_setup(e->output.w,
@@ -318,7 +319,7 @@ eng_output_setup(int w, int h, Display *disp, Drawable draw, Visual *vis, Colorm
 	free(re);
 	return NULL;
      }
-   INFO("CAIRO: cairo window setup done.");
+   INF("CAIRO: cairo window setup done.");
    evas_common_cpu_init();
 
    evas_common_blend_init();
@@ -1500,6 +1501,12 @@ static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
+   _evas_engine_cairo_X11_log_dom = eina_log_domain_register("EvasCairoX11Engine", EINA_COLOR_BLUE);
+   if(_evas_engine_cairo_X11_log_dom < 0)
+     {
+       EINA_LOG_ERR("Impossible to create a log doamin for the cairo (X11) engine.\n");
+       return 0;
+     }
    em->functions = (void *)(&eng_func);
    return 1;
 }
@@ -1507,6 +1514,7 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em)
 {
+  eina_log_domain_unregister(_evas_engine_cairo_X11_log_dom);
 }
 
 static Evas_Module_Api evas_modapi =

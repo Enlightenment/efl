@@ -715,7 +715,7 @@ evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_180 (DATA32 *src, DATA8 *dst,
 
    dst_ptr = (DATA16 *)dst;
 
-   ERROR("evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_180");
+   ERR("evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_180");
 
    CONVERT_LOOP_START_ROT_180();
 

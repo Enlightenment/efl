@@ -3,6 +3,7 @@
 #include "evas_engine.h"
 #include "Evas_Engine_Software_DDraw.h"
 
+int _evas_engine_soft_ddraw_log_dom = -1;
 /* function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
 
@@ -96,15 +97,6 @@ eng_info(Evas *e)
    info = calloc(1, sizeof(Evas_Engine_Info_Software_DDraw));
    if (!info) return NULL;
    info->magic.magic = rand();
-
-   _evas_log_dom_module = eina_log_domain_register("Software_DDraw", EVAS_DEFAULT_LOG_COLOR);
-   if(_evas_log_dom_module < 0)
-     {
-	EINA_LOG_ERR("Can not create a module log domain.");
-	free(info);
-	return NULL;
-     }
-
    return info;
    e = NULL;
 }
@@ -113,10 +105,6 @@ static void
 eng_info_free(Evas *e, void *info)
 {
    Evas_Engine_Info_Software_DDraw *in;
-
-   eina_log_domain_unregister(_evas_log_dom_module);
-   _evas_log_dom_module = -1;
-
    in = (Evas_Engine_Info_Software_DDraw *)info;
    free(in);
 }
@@ -338,6 +326,13 @@ module_open(Evas_Module *em)
    if (!em) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
+   _evas_log_dom_module = eina_log_domain_register("Software_DDraw", EVAS_DEFAULT_LOG_COLOR);
+   if(_evas_log_dom_module < 0)
+     {
+       EINA_LOG_ERR("Can not create a module log domain.");
+       free(info);
+       return NULL;
+     }
    /* store it for later use */
    func = pfunc;
    /* now to override methods */
@@ -364,6 +359,7 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em)
 {
+  eina_log_domain_unregister(_evas_log_dom_module);
 }
 
 static Evas_Module_Api evas_modapi =

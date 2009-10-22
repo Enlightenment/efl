@@ -3,6 +3,8 @@
 #include "evas_engine.h"
 #include "Evas_Engine_FB.h"
 
+int _evas_engine_fb_log_dom = -1;
+
 /* function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
 
@@ -76,7 +78,6 @@ static void *
 eng_info(Evas *e)
 {
    Evas_Engine_Info_FB *info;
-
    info = calloc(1, sizeof(Evas_Engine_Info_FB));
    if (!info) return NULL;
    info->magic.magic = rand();
@@ -88,7 +89,6 @@ static void
 eng_info_free(Evas *e __UNUSED__, void *info)
 {
    Evas_Engine_Info_FB *in;
-
    in = (Evas_Engine_Info_FB *)info;
    free(in);
 }
@@ -263,6 +263,12 @@ module_open(Evas_Module *em)
    if (!em) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
+   _evas_engine_fb_log_dom = eina_log_domain_register("Evas_fb_engine", EVAS_DEFAULT_LOG_COLOR);
+   if (_evas_engine_fb_log_dom < 0) {
+     EINA_LOG_ERR("Impossible to create a log domain for FB engine.\n");
+     return 0;
+   }
+
    /* store it for later use */
    func = pfunc;
    /* now to override methods */
@@ -289,6 +295,7 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em)
 {
+  eina_log_dom_unregister(_evas_engine_fb_log_dom);
 }
 
 static Evas_Module_Api evas_modapi =

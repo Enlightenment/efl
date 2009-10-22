@@ -4,7 +4,7 @@
 #include "Evas_Engine_XRender_X11.h"
 
 #include "evas_engine.h"
-
+int _evas_xrender_xcb_log_dom = -1;
 /* function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
 
@@ -350,7 +350,6 @@ static void *
 eng_info(Evas *e __UNUSED__)
 {
    Evas_Engine_Info_XRender_X11 *info;
-
    info = calloc(1, sizeof(Evas_Engine_Info_XRender_X11));
    if (!info) return NULL;
    info->magic.magic = rand();
@@ -361,7 +360,6 @@ static void
 eng_info_free(Evas *e __UNUSED__, void *info)
 {
    Evas_Engine_Info_XRender_X11 *in;
-
    in = (Evas_Engine_Info_XRender_X11 *)info;
    free(in);
 }
@@ -1405,7 +1403,12 @@ module_open(Evas_Module *em)
    if (!em) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
-   
+   _evas_xrender_xcb_log_dom = eina_log_domain_register("EvasSoftXrender", EVAS_DEFAULT_LOG_COLOR);
+   if(_evas_xrender_xcb_log_dom < 0)
+     {
+       EINA_LOG_ERR("Impossible to create a log domain for the Software Xrender engine.\n");
+       return 0;
+     }
    /* store it for later use */
    func = pfunc;
    /* now to override methods */
@@ -1506,6 +1509,7 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em)
 {
+  eina_log_domain_unregister(_evas_xrender_xcb_log_dom);
 }
 
 static Evas_Module_Api evas_modapi =

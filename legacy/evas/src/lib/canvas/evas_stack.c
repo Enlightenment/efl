@@ -187,7 +187,7 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
      {
 	if (obj->smart.parent != above->smart.parent)
 	  {
-//	     ERROR("BITCH! evas_object_stack_above(), %p not inside same smart as %p!", obj, above);
+//	     ERR("BITCH! evas_object_stack_above(), %p not inside same smart as %p!", obj, above);
 	     return;
 	  }
 	evas_object_smart_member_stack_above(obj, above);
@@ -275,7 +275,7 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
      {
 	if (obj->smart.parent != below->smart.parent)
 	  {
-//	     ERROR("BITCH! evas_object_stack_below(), %p not inside same smart as %p!", obj, below);
+//	     ERR("BITCH! evas_object_stack_below(), %p not inside same smart as %p!", obj, below);
 	     return;
 	  }
 	evas_object_smart_member_stack_below(obj, below);

@@ -32,7 +32,7 @@ struct _Evas_Object_Box_Accessor
   EVAS_OBJECT_BOX_DATA_GET(o, ptr);					\
   if (!ptr)								\
     {									\
-       CRITICAL("no widget data for object %p (%s)",	\
+       CRIT("no widget data for object %p (%s)",	\
 		o, evas_object_type_get(o));				\
        fflush(stderr);							\
        abort();								\
@@ -43,7 +43,7 @@ struct _Evas_Object_Box_Accessor
   EVAS_OBJECT_BOX_DATA_GET(o, ptr);					\
   if (!ptr)								\
     {									\
-       CRITICAL("no widget data for object %p (%s)",	\
+       CRIT("no widget data for object %p (%s)",	\
 	       o, evas_object_type_get(o));				\
        fflush(stderr);							\
        abort();								\
@@ -374,15 +374,15 @@ _evas_object_box_remove_at_default(Evas_Object *o, Evas_Object_Box_Data *priv, u
 
    if ((!api) || (!api->option_free))
      {
-	fputs("WARNING: api->option_free not set (may cause memory leaks,"
-	      " segfaults)\n", stderr);
+	WRN("api->option_free not set (may cause memory leaks,"
+	      " segfaults)\n");
         return NULL;
      }
 
    node = eina_list_nth_list(priv->children, pos);
    if (!node)
      {
-	ERROR("ERROR: no item to be removed at position %d\n", pos);
+	ERR("No item to be removed at position %d\n", pos);
 	return NULL;
      }
 
@@ -408,7 +408,7 @@ _evas_object_box_smart_add(Evas_Object *o)
 	priv = (Evas_Object_Box_Data *)calloc(1, sizeof(*priv));
 	if (!priv)
 	  {
-	     fputs("ERROR: could not allocate object private data.\n", stderr);
+	     ERR("Could not allocate object private data.\n");
 	     return;
 	  }
 
@@ -441,8 +441,8 @@ _evas_object_box_smart_del(Evas_Object *o)
    api = priv->api;
    if ((!api) || (!api->option_free))
      {
-	fputs("WARNING: api->option_free not set (may cause memory leaks,"
-	      " segfaults)\n", stderr);
+	WRN("api->option_free not set (may cause memory leaks,"
+	      " segfaults)\n");
         return;
      }
 
@@ -478,7 +478,7 @@ _evas_object_box_smart_calculate(Evas_Object *o)
    if (priv->layout.cb)
      priv->layout.cb(o, priv, priv->layout.data);
    else
-     ERROR("No layout function set for %p box.", o);
+     ERR("No layout function set for %p box.", o);
 }
 
 static Evas_Smart *

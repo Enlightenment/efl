@@ -29,21 +29,21 @@ bool D3DDevice::Init(HWND window, int depth, bool fullscreen)
 
    if (FAILED(hr = _object->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &dm)))
      {
-     Log("GetAdapterDisplayMode failed: %x", hr);
-     Destroy();
-     return false;
+       ERR("GetAdapterDisplayMode failed: %x", hr);
+       Destroy();
+       return false;
      }
 
    if (FAILED(hr = _object->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps)))
      {
-     Log("GetDeviceCaps failed: %x", hr);
+     ERR("GetDeviceCaps failed: %x", hr);
      Destroy();
      return false;
      }
 
    if (!GetClientRect(window, &rect))
      {
-     Log("GetClientRect failed: %x", GetLastError());
+     ERR("GetClientRect failed: %x", GetLastError());
      Destroy();
      return false;
      }
@@ -84,7 +84,7 @@ bool D3DDevice::Init(HWND window, int depth, bool fullscreen)
    if (FAILED(hr = _object->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
      window, flag, &pp, &_device)))
      {
-     Log("CreateDevice failed: %x", hr);
+     WRN("CreateDevice failed: %x", hr);
      Destroy();
      return false;
      }
@@ -103,7 +103,7 @@ bool D3DDevice::Init(HWND window, int depth, bool fullscreen)
      _depth = 16;
      break;
    default:
-     Log("No supported format found");
+     WRN("No supported format found");
      Destroy();
      return false;
    }
@@ -119,7 +119,7 @@ bool D3DDevice::Init(HWND window, int depth, bool fullscreen)
 
    if (FAILED(CreateRenderTarget()))
    {
-      Log("Failed to create render target");
+      ERR("Failed to create render target");
       Destroy();
       return false;
    }
@@ -136,7 +136,7 @@ bool D3DDevice::Reset(int width, int height, int fullscreen)
    _d3dpp.Windowed = (fullscreen == 1) ? FALSE : ((fullscreen == 0) ? TRUE : _d3dpp.Windowed);
    if (FAILED(ResetDevice()))
    {
-      Log("Couldnt restore device");
+      WRN("Couldnt restore device");
       _d3dpp = pp;
       return SUCCEEDED(ResetDevice());
    }
@@ -166,7 +166,7 @@ void D3DDevice::Destroy()
       _object->Release();
    ResetParams();
 
-   Log("uninitialized");
+   INF("uninitialized");
 }
 
 void D3DDevice::ResetParams()
@@ -201,7 +201,7 @@ HRESULT D3DDevice::RestoreDevice()
    if (SUCCEEDED(hr = _device->TestCooperativeLevel()))
    {
       _device_lost = FALSE;
-      Log("render test ok");
+      DBG("render test ok");
       return S_OK;
    }
 
@@ -220,7 +220,7 @@ HRESULT D3DDevice::RestoreDevice()
 
 HRESULT D3DDevice::ResetDevice()
 {
-   Log("reset");
+   DBG("reset");
    HRESULT hr = S_OK;
 
    _scene_rendering = FALSE;
@@ -243,7 +243,7 @@ HRESULT D3DDevice::ResetDevice()
    // Reset the device
    if (FAILED(hr = _device->Reset(&_d3dpp)))
    {
-      Log("D3DDevice: Reset of the device failed! Error (%X)", (DWORD)hr);
+      ERR("D3DDevice: Reset of the device failed! Error (%X)", (DWORD)hr);
       return hr;
    }
 
@@ -261,13 +261,13 @@ HRESULT D3DDevice::ResetDevice()
 
    if (FAILED(hr))
    {
-      Log("Restoration of device objects failed");
+      WRN("Restoration of device objects failed");
       // Invalidate objects
 
       return E_FAIL;
    }
 
-   Log("Device objects were successfuly restored");
+   DBG("Device objects were successfuly restored");
    _textures.Set(NULL);
 
    //_device_objects_restored = true;
@@ -290,7 +290,7 @@ bool D3DDevice::Begin()
    HRESULT hr;
    if (FAILED(hr = _device->BeginScene()))
    {
-      Log("Cannot begin scene: %X", (DWORD)hr);
+      WRN("Cannot begin scene: %X", (DWORD)hr);
       return false;
    }
 
@@ -332,7 +332,7 @@ TArray<DWORD> &D3DDevice::GetRenderData()
       return _render_data;
    if (FAILED(hr = _device->GetRenderTargetData(surf, _render_target_data)))
    {
-      Log("Failed to get render target data (%X)", (DWORD)hr);
+      WRN("Failed to get render target data (%X)", (DWORD)hr);
       surf->Release();
       return _render_data;
    }

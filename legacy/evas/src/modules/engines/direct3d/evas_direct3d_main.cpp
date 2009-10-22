@@ -83,7 +83,7 @@ bool CreateDIBObjects(DevicePtr *dev_ptr)
    assert(dev_ptr != NULL);
    if ((dev_ptr->dib.hdc = CreateCompatibleDC(NULL)) == NULL)
    {
-      Log("Failed to create compatible DC");
+      WRN("Failed to create compatible DC");
       return false;
    }
    ZeroMemory(&dev_ptr->dib.info, sizeof(dev_ptr->dib.info));
@@ -96,7 +96,7 @@ bool CreateDIBObjects(DevicePtr *dev_ptr)
    if ((dev_ptr->dib.image = CreateDIBSection(dev_ptr->dib.hdc, &dev_ptr->dib.info,
       DIB_RGB_COLORS, (void **)&dev_ptr->dib.data, NULL, 0)) == NULL)
    {
-      Log("Failed to create dib section");
+      WRN("Failed to create dib section");
       DeleteDIBObjects(dev_ptr);
       return false;
    }
@@ -122,7 +122,7 @@ Direct3DDeviceHandler evas_direct3d_init(HWND window, int depth, int fullscreen)
 
    if (!D3DShaderPack::Current()->Initialize(device))
    {
-      Log("Failed to build shader pack");
+      ERR("Failed to build shader pack");
       device->Destroy();
       return NULL;
    }
@@ -141,7 +141,7 @@ Direct3DDeviceHandler evas_direct3d_init(HWND window, int depth, int fullscreen)
    if (!D3DImageCache::Current()->CreateImage(device, device->GetWidth(), device->GetHeight(),
       true, info))
    {
-      Log("Failed to create fonts image buffer");
+      WRN("Failed to create fonts image buffer");
       return NULL;
    }
    dev_ptr->fonts_buffer_image_id = info.id;
@@ -171,7 +171,7 @@ evas_direct3d_free(Direct3DDeviceHandler d3d)
    dev_ptr->device = NULL;
    delete dev_ptr;
 
-   Log("uninitialized");
+   DBG("uninitialized");
 }
 
 void
@@ -181,19 +181,19 @@ evas_direct3d_resize(Direct3DDeviceHandler d3d, int width, int height)
    D3DDevice *device = dev_ptr->device;
    if (!device->Reset(width, height, -1))
    {
-      Log("Failed to resize");
+      ERR("Failed to resize");
       return;
    }
    if (!D3DImageCache::Current()->ResizeImage(device, width, height,
       dev_ptr->fonts_buffer_image_id))
    {
-      Log("Failed to resize fonts image buffer");
+      WRN("Failed to resize fonts image buffer");
    }
    if (dev_ptr->layered)
    {
       DeleteDIBObjects(dev_ptr);
       if (!CreateDIBObjects(dev_ptr))
-         Log("Failed to create dib objects");
+         WRN("Failed to create dib objects");
    }
 }
 
@@ -210,13 +210,13 @@ evas_direct3d_set_fullscreen(Direct3DDeviceHandler d3d, int width, int height, i
 
    if (!device->Reset(width, height, fullscreen))
    {
-      Log("Failed to resize");
+      WRN("Failed to resize");
       return;
    }
    if (!D3DImageCache::Current()->ResizeImage(device, width, height,
       dev_ptr->fonts_buffer_image_id))
    {
-      Log("Failed to resize fonts image buffer");
+      WRN("Failed to resize fonts image buffer");
    }
 
    if (fullscreen == 0)
@@ -258,7 +258,7 @@ evas_direct3d_context_set_multiplier(Direct3DDeviceHandler d3d, int r, int g, in
 void
 evas_direct3d_render_all(Direct3DDeviceHandler d3d)
 {
-   Log("render");
+   DBG("render");
    assert(d3d != NULL);
    DevicePtr *dev_ptr = SelectDevice(d3d);
    D3DDevice *device = dev_ptr->device;
@@ -349,12 +349,12 @@ void evas_direct3d_line_draw(Direct3DDeviceHandler d3d, int x1, int y1, int x2, 
    {
       line = new D3DObjectLine();
       scene->AddObject(line);
-      Log("New line object (total objects: %d)", scene->GetObjectCount());
+      DBG("New line object (total objects: %d)", scene->GetObjectCount());
    }
    else
    {
       line->SetFree(false);
-      Log("Line reused (object: %p)", line.Addr());
+      DBG("Line reused (object: %p)", line.Addr());
    }
 
    line->Setup(
@@ -377,12 +377,12 @@ void evas_direct3d_rectangle_draw(Direct3DDeviceHandler d3d, int x, int y, int w
    {
       rect = new D3DObjectRect();
       scene->AddObject(rect);
-      Log("New rect object (total objects: %d)", scene->GetObjectCount());
+      DBG("New rect object (total objects: %d)", scene->GetObjectCount());
    }
    else
    {
       rect->SetFree(false);
-      Log("Rect reused (object: %p)", rect.Addr());
+      DBG("Rect reused (object: %p)", rect.Addr());
    }
 
    rect->Setup(
@@ -403,7 +403,7 @@ Direct3DImageHandler evas_direct3d_image_load(Direct3DDeviceHandler d3d,
    RGBA_Image *evas_image = evas_common_load_image_from_file(file, key, lo);
    if (evas_image == NULL)
    {
-      Log("Failed to load image from %s", file);
+      WRN("Failed to load image from %s", file);
       return NULL;
    }
    int image_width = evas_image->cache_entry.w;
@@ -420,7 +420,7 @@ Direct3DImageHandler evas_direct3d_image_load(Direct3DDeviceHandler d3d,
    image->SetFree(true);
    scene->AddObject(image);
 
-   Log("New image object (total objects: %d)", scene->GetObjectCount());
+   DBG("New image object (total objects: %d)", scene->GetObjectCount());
 
    ImagePtr *ptr = new ImagePtr;
    ptr->ref = image;
@@ -447,7 +447,7 @@ Direct3DImageHandler evas_direct3d_image_new_from_data(Direct3DDeviceHandler d3d
    if (!D3DImageCache::Current()->InsertImage(device, image_data,
       image_width, image_height, info))
    {
-      Log("Couldnt add image to the cache");
+      WRN("Couldnt add image to the cache");
       return NULL;
    }
    char buf[64];
@@ -458,7 +458,7 @@ Direct3DImageHandler evas_direct3d_image_new_from_data(Direct3DDeviceHandler d3d
    image->SetFree(true);
    scene->AddObject(image);
 
-   Log("New image object (total objects: %d)", scene->GetObjectCount());
+   DBG("New image object (total objects: %d)", scene->GetObjectCount());
 
    ImagePtr *ptr = new ImagePtr;
    ptr->ref = image;
@@ -498,7 +498,7 @@ void evas_direct3d_image_data_put(Direct3DDeviceHandler d3d, Direct3DImageHandle
       return;
 
    if (!image_ref->UpdateImageData(image_data))
-      Log("Failed to update image data");
+      ERR("Failed to update image data");
 }
 
 void evas_direct3d_image_data_get(Direct3DDeviceHandler d3d, Direct3DImageHandler image,
@@ -540,7 +540,7 @@ void evas_direct3d_image_draw(Direct3DDeviceHandler d3d, Direct3DImageHandler im
          {
             images[i]->CopyTo(image_ref);
             found = true;
-            Log("Image object info reused, source: \"%s\"", image_ref->GetSource());
+            WRN("Image object info reused, source: \"%s\"", image_ref->GetSource());
             break;
          }
       }
@@ -556,7 +556,7 @@ void evas_direct3d_image_draw(Direct3DDeviceHandler d3d, Direct3DImageHandler im
       if (!D3DImageCache::Current()->InsertImage(device, (DWORD *)evas_image->image.data,
          evas_image->cache_entry.w, evas_image->cache_entry.h, info))
       {
-         Log("Couldnt add image to the cache");
+         WRN("Couldnt add image to the cache");
          return;
       }
       image_ref->Init(info.u, info.v, info.du, info.dv, info.id,

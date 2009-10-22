@@ -1,5 +1,4 @@
 #include "evas_common.h"
-#include "evas_private.h"
 #include "evas_common_soft16.h"
 
 /*
@@ -9,9 +8,34 @@
  **
  *****
  */
+int _evas_soft16_log_dom = -1;
+#ifdef ERR
+#undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR( _evas_soft16_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+#undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_evas_soft16_log_dom, __VA_ARGS__)
+
+#ifdef INF
+#undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(_evas_soft16_log_dom, __VA_ARGS__)
+
+#ifdef WRN
+#undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_evas_soft16_log_dom, __VA_ARGS__)
+
+#ifdef CRIT
+#undef CRIT
+#endif
+#define CRIT(...) EINA_LOG_DOM_CRIT(_evas_soft16_log_dom, __VA_ARGS__)
 
 #define NOT_IMPLEMENTED()                                               \
-  WARN("NOT_IMPLEMENTED: %s() at %s:%d",					\
+  WRN("NOT_IMPLEMENTED: %s() at %s:%d",				\
            __FUNCTION__, __FILE__, __LINE__)
 
 static void *
@@ -509,7 +533,7 @@ eng_image_new_from_data(void *data __UNUSED__, int w, int h, DATA32 *image_data,
 {
    if ((image_data) && (cspace != EVAS_COLORSPACE_RGB565_A5P))
      {
-	WARN("Unsupported colorspace %d in %s() (%s:%d)",
+	WRN("Unsupported colorspace %d in %s() (%s:%d)",
 		cspace, __FUNCTION__, __FILE__, __LINE__);
 	return NULL;
      }
@@ -521,7 +545,7 @@ eng_image_new_from_copied_data(void *data __UNUSED__, int w, int h, DATA32 *imag
 {
    if ((image_data) && (cspace != EVAS_COLORSPACE_RGB565_A5P))
      {
-	WARN("Unsupported colorspace %d in %s() (%s:%d)",
+	WRN("Unsupported colorspace %d in %s() (%s:%d)",
 		cspace, __FUNCTION__, __FILE__, __LINE__);
 	return NULL;
      }
@@ -1002,13 +1026,21 @@ static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
+   _evas_soft16_log_dom = eina_log_domain_register("Soft16Engine", EVAS_DEFAULT_LOG_COLOR);
+   if(_evas_soft16_log_dom < 0) 
+     {
+       EINA_LOG_ERR("Impossible to create a log domain for the soft16 Engine.\n");
+       return 0;
+     }
    em->functions = (void *)(&func);
+   
    return 1;
 }
 
 static void
 module_close(Evas_Module *em)
 {
+   eina_log_domain_unregister(_evas_soft16_log_dom);
 }
 
 static Evas_Module_Api evas_modapi =

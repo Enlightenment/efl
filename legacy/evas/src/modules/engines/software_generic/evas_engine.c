@@ -8,9 +8,8 @@
  **
  *****
  */
-
 static int cpunum = 0;
-
+static int _evas_soft_gen_log_dom = -1;
 static void *
 eng_context_new(void *data __UNUSED__)
 {
@@ -1152,6 +1151,12 @@ static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
+   _evas_soft_gen_log_dom = eina_log_domain_register("EvasSoftGeneric", EVAS_DEFAULT_LOG_COLOR);
+   if(_evas_soft_gen_log_dom<0)
+     {
+       EINA_LOG_ERR("Evas SoftGen : Impossible to create a log domain for the software generic engine.\n");
+       return 0;
+     }
    em->functions = (void *)(&func);
    cpunum = eina_cpu_count();
    return 1;
@@ -1160,6 +1165,7 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em)
 {
+  eina_log_domain_unregister(_evas_soft_gen_log_dom);
 }
 
 static Evas_Module_Api evas_modapi =

@@ -16,7 +16,7 @@
 #include "Evas.h"
 #include "evas_cs.h"
 
-#define D(...) EINA_LOG_DBG(__VA_ARGS__)
+#define D(...) EINA_LOG_DOM_DBG(_evas_cserve_bin_log_dom, __VA_ARGS__)
 #ifdef ERR
 #undef ERR
 #endif
@@ -33,7 +33,7 @@
 #ifdef CSERVE_BIN_DEFAULT_COLOR
 #undef CSERVE_BIN_DEFAULT_COLOR
 #endif
-#define CSERVE_BIN_DEFAULT_COLOR "\033[36m"
+#define CSERVE_BIN_DEFAULT_COLOR EINA_COLOR_BLUE
 // fixme:'s
 // 
 // preload - make it work (both)

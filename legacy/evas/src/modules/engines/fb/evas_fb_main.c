@@ -377,10 +377,10 @@ fb_getmode(void)
       bpp = mode->fb_var.bits_per_pixel / 8;
       break;
      default:
-       ERROR("EvasFB: Cannot handle framebuffer of depth %i",
+      ERR("Cannot handle framebuffer of depth %i",
 	     mode->fb_var.bits_per_pixel);
       fb_cleanup();
-       free(mode);
+      free(mode);
       return NULL;
   }
   mode->depth = depth;
@@ -418,7 +418,7 @@ fb_setvt(int vtno)
   chown(vtname, getuid(), getgid());
   if (access(vtname,R_OK | W_OK) == -1)
     {
-      CRITICAL("EvasFB: access %s: %s",vtname,strerror(errno));
+      CRIT("Access %s: %s",vtname,strerror(errno));
       exit(1);
     }
   open(vtname,O_RDWR);
@@ -463,7 +463,7 @@ fb_init(int vt, int device)
      }
    if (fb == -1)
      {
-	CRITICAL("open %s: %s", dev, strerror(errno));
+	CRIT("open %s: %s", dev, strerror(errno));
 	fb_cleanup();
 	exit(1);
      }
@@ -527,7 +527,7 @@ fb_postinit(FB_Mode *mode)
 
   if (fb_fix.type != FB_TYPE_PACKED_PIXELS)
     {
-      CRITICAL("can handle only packed pixel frame buffers");
+      CRIT("can handle only packed pixel frame buffers");
       fb_cleanup();
       exit(1);
     }

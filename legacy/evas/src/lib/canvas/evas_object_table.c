@@ -93,8 +93,8 @@ struct _Evas_Object_Table_Accessor
   EVAS_OBJECT_TABLE_DATA_GET(o, ptr);					\
   if (!ptr)								\
     {									\
-      CRITICAL("CRITICAL: no widget data for object %p (%s)",		\
-	       o, evas_object_type_get(o));				\
+      CRIT("no widget data for object %p (%s)",		\
+	   o, evas_object_type_get(o));					\
        abort();								\
        return;								\
 }
@@ -103,7 +103,7 @@ struct _Evas_Object_Table_Accessor
   EVAS_OBJECT_TABLE_DATA_GET(o, ptr);					\
   if (!ptr)								\
     {									\
-       CRITICAL("No widget data for object %p (%s)",	                \
+       CRIT("No widget data for object %p (%s)",	                \
 	       o, evas_object_type_get(o));				\
        abort();								\
        return val;							\
@@ -170,7 +170,7 @@ _evas_object_table_cache_alloc(int cols, int rows)
    cache = malloc(size);
    if (!cache)
      {
-	ERROR("Could not allocate table cache %dx%d (%d bytes): %s",
+	ERR("Could not allocate table cache %dx%d (%d bytes): %s",
 	      cols, rows, size, strerror(errno));
 	return NULL;
      }
@@ -322,7 +322,7 @@ _evas_object_table_calculate_cell(const Evas_Object_Table_Option *opt, Evas_Coor
 /*      } */
 /*    else if (min < 1) */
 /*      { */
-/*	WARN("Child %p [%s, %s] has no minimum width " */
+/*	WRN("Child %p [%s, %s] has no minimum width " */
 /*		"and no %s expand (weight is not > 0.0). " */
 /*		"Assuming weight > 0.0\n", */
 /*		child, evas_object_type_get(child), evas_object_name_get(child), */
@@ -429,13 +429,13 @@ _evas_object_table_calculate_hints_homogeneous(Evas_Object *o, Evas_Object_Table
      {
 	if (o_minw < 1)
 	  {
-	     ERROR("homogeneous table based on item size but no "
+	     ERR("homogeneous table based on item size but no "
 		   "horizontal mininum size specified! Using expand.");
 	     expand_h = 1;
 	  }
 	if (o_minh < 1)
 	  {
-	     ERROR("homogeneous table based on item size but no "
+	     ERR("homogeneous table based on item size but no "
 		   "vertical mininum size specified! Using expand.");
 	     expand_v = 1;
 	  }
@@ -746,7 +746,7 @@ _evas_object_table_calculate_layout_regular(Evas_Object *o, Evas_Object_Table_Da
 	cols = malloc(size);
 	if (!cols)
 	  {
-	     ERROR("Could not allocate temp columns (%d bytes): %s",
+	     ERR("Could not allocate temp columns (%d bytes): %s",
 		   size, strerror(errno));
 	     return;
 	  }
@@ -769,7 +769,7 @@ _evas_object_table_calculate_layout_regular(Evas_Object *o, Evas_Object_Table_Da
 	rows = malloc(size);
 	if (!rows)
 	  {
-	     ERROR("could not allocate temp rows (%d bytes): %s",
+	     ERR("could not allocate temp rows (%d bytes): %s",
 		     size, strerror(errno));
 	     goto end;
 	  }
@@ -826,7 +826,7 @@ _evas_object_table_smart_add(Evas_Object *o)
 	priv = calloc(1, sizeof(*priv));
 	if (!priv)
 	  {
-	     ERROR("could not allocate object private data.");
+	     ERR("could not allocate object private data.");
 	     return;
 	  }
 	evas_object_smart_data_set(o, priv);
@@ -884,7 +884,7 @@ _evas_object_table_smart_calculate(Evas_Object *o)
 
    if ((priv->size.cols < 1) || (priv->size.rows < 1))
      {
-	DEBUG("Nothing to do: cols=%d, rows=%d",
+	DBG("Nothing to do: cols=%d, rows=%d",
 	      priv->size.cols, priv->size.rows);
 	return;
      }
@@ -1118,26 +1118,26 @@ evas_object_table_pack(Evas_Object *o, Evas_Object *child, unsigned short col, u
 
    if (rowspan < 1)
      {
-	ERROR("rowspan < 1");
+	ERR("rowspan < 1");
 	return EINA_FALSE;
      }
    if (colspan < 1)
      {
-	ERROR("colspan < 1");
+	ERR("colspan < 1");
 	return EINA_FALSE;
      }
 
    opt = _evas_object_table_option_get(child);
    if (opt)
      {
-	ERROR("cannot add object that is already part of a table!");
+	ERR("cannot add object that is already part of a table!");
 	return EINA_FALSE;
      }
 
    opt = malloc(sizeof(*opt));
    if (!opt)
      {
-	ERROR("could not allocate table option data.");
+	ERR("could not allocate table option data.");
 	return EINA_FALSE;
      }
 
@@ -1241,14 +1241,14 @@ evas_object_table_unpack(Evas_Object *o, Evas_Object *child)
 
    if (o != evas_object_smart_parent_get(child))
      {
-	ERROR("cannot unpack child from incorrect table!");
+	ERR("cannot unpack child from incorrect table!");
 	return EINA_FALSE;
      }
 
    opt = _evas_object_table_option_del(child);
    if (!opt)
      {
-	ERROR("cannot unpack child with no packing option!");
+	ERR("cannot unpack child with no packing option!");
 	return EINA_FALSE;
      }
 

@@ -139,7 +139,7 @@ void D3DObjectImage::EndCache(D3DDevice *d3d)
       cur += groups[i].num * 6;
    }
 
-   Log("Image cache drawn: %d items, %d groups", _cache.Length(), groups.Length());
+   DBG("Image cache drawn: %d items, %d groups", _cache.Length(), groups.Length());
    _cache_enabled = false;
 }
 
@@ -147,7 +147,7 @@ void D3DObjectImage::Draw(D3DDevice *d3d)
 {
    _dirty = false;
 
-   Log("Image draw: (%.3f, %.3f, %.3f, %.3f)", _x, _y, _w, _h);
+   DBG("Image draw: (%.3f, %.3f, %.3f, %.3f)", _x, _y, _w, _h);
 
    if (_cache_enabled)
    {

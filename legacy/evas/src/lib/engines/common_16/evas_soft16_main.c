@@ -28,7 +28,7 @@ static int               _evas_common_load_soft16_image_data_from_file(Image_Ent
 /* static void */
 /* _evas_common_soft16_image_debug(const char* context, Image_Entry *eim) */
 /* { */
-/*    DEBUG("[16] %p = [%s] {%s,%s} %i [%i|%i]", eim, context, eim->file, eim->key, eim->references, eim->w, eim->h); */
+/*    DBG("[16] %p = [%s] {%s,%s} %i [%i|%i]", eim, context, eim->file, eim->key, eim->references, eim->w, eim->h); */
 /* } */
 
 static const Evas_Cache_Image_Func      _evas_common_soft16_image_func =

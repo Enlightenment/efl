@@ -65,7 +65,7 @@ evas_smart_new(const char *name,
    Evas_Smart *s;
    Evas_Smart_Class *sc;
 
-   WARN("----- WARNING. evas_smart_new() will be deprecated and removed soon"
+   WRN("----- WARNING. evas_smart_new() will be deprecated and removed soon"
 	  "----- Please use evas_smart_class_new() instead");
 
    if (!name) return NULL;

@@ -113,7 +113,7 @@ D3DObjectFont::Glyph *D3DObjectFont::GetGlyph(void *source)
 {
    if (_image_id < 0)
    {
-      Log("Font is not initialized");
+      WRN("Font is not initialized");
       return NULL;
    }
    for (int i = 0; i < _glyphs.Length(); i++)
@@ -129,7 +129,7 @@ D3DObjectFont::Glyph *D3DObjectFont::AddGlyph(D3DDevice *d3d, void *source,
 {
    if (_image_id < 0)
    {
-      Log("Font is not initialized");
+      WRN("Font is not initialized");
       return NULL;
    }
    for (int i = 0; i < _glyphs.Length(); i++)

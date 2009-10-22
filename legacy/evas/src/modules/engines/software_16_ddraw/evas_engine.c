@@ -4,6 +4,7 @@
 #include "Evas_Engine_Software_16_DDraw.h"
 #include "evas_common_soft16.h"
 
+int _evas_engine_soft16_ddraw_log_dom = -1;
 /* function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
 
@@ -50,7 +51,6 @@ static void *
 eng_info(Evas *e)
 {
    Evas_Engine_Info_Software_16_DDraw *info;
-
    info = calloc(1, sizeof(Evas_Engine_Info_Software_16_DDraw));
    if (!info) return NULL;
    info->magic.magic = rand();
@@ -62,7 +62,6 @@ static void
 eng_info_free(Evas *e, void *info)
 {
    Evas_Engine_Info_Software_16_DDraw *in;
-
    in = (Evas_Engine_Info_Software_16_DDraw *)info;
    free(in);
 }
@@ -575,6 +574,12 @@ module_open(Evas_Module *em)
    if (!em) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_16")) return 0;
+   _evas_engine_soft16_ddraw_log_dom = eina_log_domain_register("EvasSoft16DDraw",EINA_COLOR_BLUE);
+   if(_evas_engine_soft16_ddraw_log_dom < 0)
+     {
+       EINA_LOG_ERR("Impossible to create a log domain for Soft16_DDraw engine.\n");
+       return 0;
+     }
    /* store it for later use */
    func = pfunc;
    /* now to override methods */
@@ -601,6 +606,7 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em)
 {
+  eina_log_domain_unregister(_evas_engine_soft16_ddraw_log_dom);
 }
 
 static Evas_Module_Api evas_modapi =

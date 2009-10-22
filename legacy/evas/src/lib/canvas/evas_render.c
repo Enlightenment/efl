@@ -404,7 +404,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
      }
    if ((e->output.w != e->viewport.w) || (e->output.h != e->viewport.h))
      {
-	ERROR("viewport size != output size!");
+	ERR("viewport size != output size!");
      }
    /* phase 5. add obscures */
    EINA_LIST_FOREACH(e->obscures, ll, r)

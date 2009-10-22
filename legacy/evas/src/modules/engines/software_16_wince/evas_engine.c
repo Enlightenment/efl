@@ -4,6 +4,7 @@
 #include "Evas_Engine_Software_16_WinCE.h"
 #include "evas_common_soft16.h"
 
+int _evas_enigne_soft16_wince_log_dom = -1;
 
 typedef enum
 {
@@ -89,7 +90,6 @@ static void *
 eng_info(Evas *e)
 {
    Evas_Engine_Info_Software_16_WinCE *info;
-
    info = calloc(1, sizeof(Evas_Engine_Info_Software_16_WinCE));
    if (!info) return NULL;
    info->magic.magic = rand();
@@ -103,7 +103,6 @@ static void
 eng_info_free(Evas *e, void *info)
 {
    Evas_Engine_Info_Software_16_WinCE *in;
-
    in = (Evas_Engine_Info_Software_16_WinCE *)info;
    free(in);
 }
@@ -716,6 +715,14 @@ module_open(Evas_Module *em)
    if (!em) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_16")) return 0;
+   _evas_engine_soft16_wince_log_dom = eina_log_domain_register("EvasSoft16Wince", EVAS_DEFAULT_LOG_COLOR);
+   
+   if(_evas_engine_soft16_wince_log_dom < 0)
+     {
+       EINA_LOG_ERR("Impossible to create a log domain for the Soft16 Wince engine.\n");
+       return NULL;
+     }
+
    /* store it for later use */
    func = pfunc;
    /* now to override methods */
@@ -742,6 +749,8 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em)
 {
+  eina_log_domain_unregister(_evas_soft16_wince_log_dom);
+  return NULL;
 }
 
 static Evas_Module_Api evas_modapi =

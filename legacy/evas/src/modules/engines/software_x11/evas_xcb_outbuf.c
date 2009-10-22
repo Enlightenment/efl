@@ -355,7 +355,7 @@ evas_software_xcb_outbuf_setup_x(int               w,
 	   evas_software_xcb_x_output_buffer_free(xcbob, 1);
 	   if (!conv_func)
 	     {
-		ERROR("XCB Engine"
+		ERR("XCB Engine"
 		       " {"
 		       "  At depth         %i:"
 		       "  RGB format mask: %08x, %08x, %08x"

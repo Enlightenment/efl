@@ -27,7 +27,7 @@ void D3DObjectRect::EndCache(D3DDevice *d3d)
    d3d->GetDevice()->DrawPrimitiveUP(D3DPT_TRIANGLELIST, _cache.Length() / 3,
       _cache.Data(), sizeof(Vertex));
 
-   Log("Rect cache drawn: %d items", _cache.Length() / 6);
+   DBG("Rect cache drawn: %d items", _cache.Length() / 6);
    _cache_enabled = false;
 }
 

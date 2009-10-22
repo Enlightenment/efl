@@ -27,7 +27,7 @@ evas_init(void)
    _evas_log_dom_global = eina_log_domain_register("evas_main",EVAS_DEFAULT_LOG_COLOR);
    if (_evas_log_dom_global < 0)
      {
-	fprintf(stderr,"Error: Evas could not create a default log domain\n");
+       EINA_LOG_ERR("Evas could not create a default log domain\n");
 	goto shutdown_eina;
      }
 
@@ -489,7 +489,7 @@ evas_output_viewport_set(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas
    if (h <= 0) return;
    if ((x != 0) || (y != 0))
      {
-	ERROR("EVAS: compat error. viewport x,y != 0,0 not supported");
+	ERR("Compat error. viewport x,y != 0,0 not supported");
 	x = 0;
 	y = 0;
      }

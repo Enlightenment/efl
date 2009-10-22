@@ -208,7 +208,7 @@ bool D3DImageCache::ResizeImage(D3DDevice *d3d, int nw, int nh, int id)
    if (FAILED(hr = d3d->GetDevice()->CreateTexture(nw, nh, 0, 0, D3DFMT_A8R8G8B8,
       D3DPOOL_MANAGED, &tex, NULL)))
    {
-      Log("Failed to create texture: %X", hr);
+      WRN("Failed to create texture: %X", hr);
       return false;
    }
    assert(tex != NULL);
@@ -249,7 +249,7 @@ bool D3DImageCache::CreateEntry(D3DDevice *d3d, CacheEntry &entry, int w, int h,
    if (FAILED(hr = d3d->GetDevice()->CreateTexture(width, height, 0, 0, D3DFMT_A8R8G8B8,
       D3DPOOL_MANAGED, &entry.texture, NULL)))
    {
-      Log("Failed to create texture: %X", hr);
+      WRN("Failed to create texture: %X", hr);
       return false;
    }
 
@@ -271,7 +271,7 @@ bool D3DImageCache::InsertData(CacheEntry &entry, DWORD *data, int w, int h)
    D3DLOCKED_RECT lr;
    if (FAILED(entry.texture->LockRect(0, &lr, &rc, 0)))
    {
-      Log("Failed to lock texture");
+      WRN("Failed to lock texture");
       return false;
    }
 
@@ -288,7 +288,7 @@ bool D3DImageCache::InsertData(CacheEntry &entry, DWORD *data, int w, int h)
 
    if (FAILED(entry.texture->UnlockRect(0)))
    {
-      Log("Failed to unlock texture");
+      WRN("Failed to unlock texture");
       return false;
    }
    return true;
@@ -304,7 +304,7 @@ bool D3DImageCache::RetrieveData(CacheEntry &entry, DWORD *data, int w, int h)
    D3DLOCKED_RECT lr;
    if (FAILED(entry.texture->LockRect(0, &lr, &rc, D3DLOCK_READONLY)))
    {
-      Log("Failed to lock texture");
+      WRN("Failed to lock texture");
       return false;
    }
 
@@ -313,7 +313,7 @@ bool D3DImageCache::RetrieveData(CacheEntry &entry, DWORD *data, int w, int h)
 
    if (FAILED(entry.texture->UnlockRect(0)))
    {
-      Log("Failed to unlock texture");
+      WRN("Failed to unlock texture");
       return false;
    }
    return true;
@@ -349,7 +349,7 @@ bool D3DImageCache::UpdateImageDataWithDirtyInfo(CacheEntryInfo &info, DWORD *da
    D3DLOCKED_RECT lr;
    if (FAILED(entry.texture->LockRect(0, &lr, &rc, 0)))
    {
-      Log("Failed to lock texture");
+      WRN("Failed to lock texture");
       return false;
    }
 
@@ -386,7 +386,7 @@ bool D3DImageCache::UpdateImageDataWithDirtyInfo(CacheEntryInfo &info, DWORD *da
 
    if (FAILED(entry.texture->UnlockRect(0)))
    {
-      Log("Failed to unlock texture");
+      WRN("Failed to unlock texture");
       return false;
    }
    return true;
@@ -405,7 +405,7 @@ bool D3DImageCache::UpdateImageDataDiscard(CacheEntryInfo &info, DWORD *data)
    D3DLOCKED_RECT lr;
    if (FAILED(entry.texture->LockRect(0, &lr, &rc, 0)))
    {
-      Log("Failed to lock texture");
+      WRN("Failed to lock texture");
       return false;
    }
 
@@ -417,7 +417,7 @@ bool D3DImageCache::UpdateImageDataDiscard(CacheEntryInfo &info, DWORD *data)
 
    if (FAILED(entry.texture->UnlockRect(0)))
    {
-      Log("Failed to unlock texture");
+      WRN("Failed to unlock texture");
       return false;
    }
    return true;

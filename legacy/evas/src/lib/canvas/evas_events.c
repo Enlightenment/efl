@@ -398,13 +398,13 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 
    if (e->pointer.mouse_grabbed < 0)
      {
-        ERROR("BUG? e->pointer.mouse_grabbed (=%d) < 0!",
+        ERR("BUG? e->pointer.mouse_grabbed (=%d) < 0!",
 	      e->pointer.mouse_grabbed);
      }
 
    if ((e->pointer.button == 0) && (e->pointer.mouse_grabbed != 0))
      {
-        INFO("restore to 0 grabs (from %i)", e->pointer.mouse_grabbed);
+        INF("restore to 0 grabs (from %i)", e->pointer.mouse_grabbed);
 	e->pointer.mouse_grabbed = 0;
      }
    _evas_unwalk(e);

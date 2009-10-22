@@ -8,7 +8,7 @@
 #include "evas_engine.h"
 #include "Evas_Engine_Quartz.h"
 #include "evas_quartz_private.h"
-
+int _evas_engine_quartz_log_dom = -1;
 static Evas_Func func;
 
 typedef struct _Render_Engine Render_Engine;
@@ -40,12 +40,10 @@ static void *
 eng_info(Evas *e)
 {
    Evas_Engine_Info_Quartz *info;
-
+   
    info = calloc(1, sizeof(Evas_Engine_Info_Quartz));
    if (!info) return NULL;
-
    info->magic.magic = rand();
-
    return info;
 }
 
@@ -686,15 +684,15 @@ eng_gradient_draw(void *data, void *context, void *surface, void *gradient, int 
    RGBA_Draw_Context *dc = (RGBA_Draw_Context *)context;
    Evas_Quartz_Gradient *gr = (Evas_Quartz_Gradient *)gradient;
 
-   INFO("#Gradient#");
-   INFO("Fill: %i %i %i %i", gr->grad->fill.x, gr->grad->fill.y, gr->grad->fill.w, gr->grad->fill.h);
-   INFO("Type: %s %s", gr->grad->type.name, gr->grad->type.params);
-   INFO("XYWH: %i %i %i %i", x, y, w, h);
-   INFO("Geom: %p %p", gr->grad->type.geometer, gr->grad->type.geometer->get_fill_func);
-   INFO("Map: len: %d angle: %f direction: %d offset: %f", gr->grad->map.len, gr->grad->map.angle, gr->grad->map.direction, gr->grad->map.offset);
-   INFO("Color: nstops: %d len: %d", gr->grad->color.nstops, gr->grad->color.len);
-   INFO("Alpha: nstops: %d len: %d", gr->grad->alpha.nstops, gr->grad->alpha.len);
-   INFO("");
+   INF("#Gradient#");
+   INF("Fill: %i %i %i %i", gr->grad->fill.x, gr->grad->fill.y, gr->grad->fill.w, gr->grad->fill.h);
+   INF("Type: %s %s", gr->grad->type.name, gr->grad->type.params);
+   INF("XYWH: %i %i %i %i", x, y, w, h);
+   INF("Geom: %p %p", gr->grad->type.geometer, gr->grad->type.geometer->get_fill_func);
+   INF("Map: len: %d angle: %f direction: %d offset: %f", gr->grad->map.len, gr->grad->map.angle, gr->grad->map.direction, gr->grad->map.offset);
+   INF("Color: nstops: %d len: %d", gr->grad->color.nstops, gr->grad->color.len);
+   INF("Alpha: nstops: %d len: %d", gr->grad->alpha.nstops, gr->grad->alpha.len);
+   INF("");
 
    if ((gr->sw != w) || (gr->sh != h))
       gr->changed = 1;
@@ -1416,7 +1414,16 @@ static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
+
    if (!_evas_module_engine_inherit(&func, "software_generic")) return 0;
+
+   _evas_engine_quartz_log_dom = eina_log_domain_register("EvasQuartz", EVAS_DEFAULT_LOG_COLOR);
+   if(_evas_engine_quartz_log_dom < 0)
+     {
+       EINA_LOG_ERR("Impossible to create a log domain for the Quartz engine.\n");
+       return 0;
+     }
+
    #define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
    ORD(context_anti_alias_get);
    ORD(context_anti_alias_set);
@@ -1514,7 +1521,7 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em)
 {
-
+   eina_log_domain_unregister(_evas_engine_quartz_log_dom);
 }
 
 static Evas_Module_Api evas_modapi =

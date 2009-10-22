@@ -15,6 +15,7 @@ struct _Render_Engine
    int in_redraw : 1;
 };
 
+int _evas_engine_direct3d_log_dom = -1;
 
 /* function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
@@ -55,7 +56,7 @@ _output_setup(int width, int height, int rotation, HWND window, int depth, int f
    evas_common_font_init();
    evas_common_draw_init();
    evas_common_tilebuf_init();
-
+   
    if ((re->d3d = evas_direct3d_init(window, depth, fullscreen)) == 0)
      {
      free(re);
@@ -93,8 +94,7 @@ eng_setup(Evas *e, void *info)
 {
    Render_Engine *re;
    Evas_Engine_Info_Direct3D *in;
-   re = (Render_Engine *)e->engine.data.output;
-
+   re = (Render_Engine *)e->engine.data.output;   
    in = (Evas_Engine_Info_Direct3D *)info;
    if (e->engine.data.output == NULL)
      {
@@ -533,6 +533,13 @@ module_open(Evas_Module *em)
    if (!em) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
+    /* Initialize the log domain */
+   _evas_engine_direct3d_log_dom = eina_log_domain_register("EvasDirect3D", EVAS_DEFAULT_LOG_COLOR);
+   if(_evas_engine_direct3d_log_dom < 0)
+     {
+       EINA_LOG_ERR("Impossible to create a log domain for the Direct3D engine.\n");
+       return 0;
+     }
    /* store it for later use */
    func = pfunc;
    /* now to override methods */
@@ -603,6 +610,7 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em)
 {
+  eina_log_domain_unregister(_evas_engine_direct3d_log_dom);
 }
 
 static Evas_Module_Api evas_modapi =
