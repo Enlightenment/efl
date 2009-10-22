@@ -820,6 +820,11 @@ evas_engine_sdl16_image_draw(void *data __UNUSED__, void *context, void *surface
 }
 
 static void
+evas_engine_sdl16_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *image, RGBA_Map_Point *p, int smooth, int level)
+{
+}
+
+static void
 evas_engine_sdl16_image_scale_hint_set(void *data __UNUSED__, void *image, int hint)
 {
 }
@@ -1072,6 +1077,7 @@ module_open(Evas_Module *em)
    ORD(image_border_set);
    ORD(image_border_get);
    ORD(image_draw);
+   ORD(image_map4_draw);
    ORD(image_cache_flush);
    ORD(image_cache_set);
    ORD(image_cache_get);

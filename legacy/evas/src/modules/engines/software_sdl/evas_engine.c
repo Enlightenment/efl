@@ -619,6 +619,40 @@ evas_engine_sdl_image_draw(void *data, void *context, void *surface, void *image
 }
 
 static void
+evas_engine_sdl_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *image, RGBA_Map_Point *p, int smooth, int level)
+{
+   SDL_Engine_Image_Entry *eim = image;
+   SDL_Engine_Image_Entry *dst = surface;
+   int mustlock_im = 0;
+   int mustlock_dst = 0;
+
+   if (!eim || !dst) return;
+
+   if (SDL_MUSTLOCK(dst->surface))
+     {
+        mustlock_dst = 1;
+	SDL_LockSurface(dst->surface);
+	_SDL_UPDATE_PIXELS(dst);
+     }
+
+   if (eim->surface && SDL_MUSTLOCK(eim->surface))
+     {
+        mustlock_im = 1;
+	SDL_LockSurface(eim->surface);
+	_SDL_UPDATE_PIXELS(eim);
+     }
+
+   evas_common_map4_rgba(eim->cache_entry.src, dst->cache_entry.src, context, p, smooth, level);
+   evas_common_cpu_end_opt();
+
+   if (mustlock_im)
+     SDL_UnlockSurface(eim->surface);
+
+   if (mustlock_dst)
+     SDL_UnlockSurface(dst->surface);
+}
+
+static void
 evas_engine_sdl_image_scale_hint_set(void *data __UNUSED__, void *image, int hint)
 {
 }
@@ -860,6 +894,7 @@ static int module_open(Evas_Module *em)
    ORD(image_border_set);
    ORD(image_border_get);
    ORD(image_draw);
+   ORD(image_map4_draw);
    ORD(image_comment_get);
    ORD(image_format_get);
    ORD(image_cache_flush);
