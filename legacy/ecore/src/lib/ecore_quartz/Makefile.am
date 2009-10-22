@@ -16,7 +16,8 @@ Ecore_Quartz.h \
 Ecore_Quartz_Keys.h
 
 libecore_quartz_la_SOURCES = \
-ecore_quartz.m
+ecore_quartz.m \
+ecore_cocoa_window.m
 
 libecore_quartz_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
@@ -27,3 +28,5 @@ $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 libecore_quartz_la_LDFLAGS = @quartz_ldflags@ -version-info @version_info@ @ecore_quartz_release_info@
 
 endif
+
+EXTRA_DIST = ecore_cocoa_private.h
