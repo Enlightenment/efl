@@ -176,12 +176,12 @@ evas_gl_common_context_new(void)
                                            &(shader_font_vert_src), 
                                            &(shader_font_frag_src),
                                            "font");
-#if defined (GLES_VARIETY_S3C6410)
-        evas_gl_common_shader_program_init(&(shared->shader.yuv),
-                                           &(shader_img_vert_src),
-                                           &(shader_img_frag_src),
-                                           "yuv");
-#else        
+//#if defined (GLES_VARIETY_S3C6410)
+//        evas_gl_common_shader_program_init(&(shared->shader.yuv),
+//                                           &(shader_img_vert_src),
+//                                           &(shader_img_frag_src),
+//                                           "yuv");
+//#else        
         evas_gl_common_shader_program_init(&(shared->shader.yuv),
                                            &(shader_yuv_vert_src), 
                                            &(shader_yuv_frag_src),
@@ -190,7 +190,7 @@ evas_gl_common_context_new(void)
         glUniform1i(glGetUniformLocation(shared->shader.yuv.prog, "tex"), 0);
         glUniform1i(glGetUniformLocation(shared->shader.yuv.prog, "texu"), 1);
         glUniform1i(glGetUniformLocation(shared->shader.yuv.prog, "texv"), 2);
-#endif        
+//#endif        
         // in shader:
         // uniform sampler2D tex[8];
         // 
