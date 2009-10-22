@@ -419,43 +419,87 @@ evas_common_map4_rgba_internal(RGBA_Image *src, RGBA_Image *dst,
    
    buf = alloca(dst->cache_entry.w * sizeof(DATA32));
    // walk spans and fill
-   for (y = ystart; y <= yend; y++)
+   if ((!src->cache_entry.flags.alpha) &&
+       (!dst->cache_entry.flags.alpha) &&
+       (!dc->mul.use))
      {
-        int x, w, ww, dx, dy, sx, sy;
-        FPc u, v, ud, vd, up, vp;
-        DATA32 *d, *dptr, *s, *so[4], val1, val2;
-        yp = y - ystart;
-        
-        for (i = 0; i < 2; i++)
+        for (y = ystart; y <= yend; y++)
           {
-             if (spans[yp].span[i].x1 >= 0)
+             int x, w, ww, dx, dy, sx, sy;
+             FPc u, v, ud, vd, up, vp;
+             DATA32 *d, *dptr, *s, *so[4], val1, val2;
+             yp = y - ystart;
+             
+             for (i = 0; i < 2; i++)
                {
-                  x = spans[yp].span[i].x1;
-                  w = (spans[yp].span[i].x2 - x);
-                  
-                  if (w <= 0) continue;
-                  ww = w;
-                  d = buf;
-                  u = spans[yp].span[i].u[0] << FPI;
-                  v = spans[yp].span[i].v[0] << FPI;
-                  ud = ((spans[yp].span[i].u[1] << FPI) - u) / w;
-                  vd = ((spans[yp].span[i].v[1] << FPI) - v) / w;
-                  if (ud < 0) u -= 1;
-                  if (vd < 0) v -= 1;
-                  while (ww > 0)
+                  if (spans[yp].span[i].x1 >= 0)
                     {
-                       s = sp + ((v >> (FP + FPI)) * sw) + 
-                         (u >> (FP + FPI));
-                       *d++ = *s;
-                       u += ud;
-                       v += vd;
-                       ww--;
+                       x = spans[yp].span[i].x1;
+                       w = (spans[yp].span[i].x2 - x);
+                       
+                       if (w <= 0) continue;
+                       ww = w;
+                       d = dst->image.data + (y * dst->cache_entry.w) + x;
+                       u = spans[yp].span[i].u[0] << FPI;
+                       v = spans[yp].span[i].v[0] << FPI;
+                       ud = ((spans[yp].span[i].u[1] << FPI) - u) / w;
+                       vd = ((spans[yp].span[i].v[1] << FPI) - v) / w;
+                       if (ud < 0) u -= 1;
+                       if (vd < 0) v -= 1;
+                       while (ww > 0)
+                         {
+                            s = sp + ((v >> (FP + FPI)) * sw) + 
+                              (u >> (FP + FPI));
+                            *d++ = *s;
+                            u += ud;
+                            v += vd;
+                            ww--;
+                         }
                     }
-                  dptr = dst->image.data;
-                  dptr += (y * dst->cache_entry.w) + x;
-                  func(buf, NULL, dc->mul.col, dptr, w);
+                  else break;
                }
-             else break;
+          }
+     }
+   else
+     {
+        for (y = ystart; y <= yend; y++)
+          {
+             int x, w, ww, dx, dy, sx, sy;
+             FPc u, v, ud, vd, up, vp;
+             DATA32 *d, *dptr, *s, *so[4], val1, val2;
+             yp = y - ystart;
+             
+             for (i = 0; i < 2; i++)
+               {
+                  if (spans[yp].span[i].x1 >= 0)
+                    {
+                       x = spans[yp].span[i].x1;
+                       w = (spans[yp].span[i].x2 - x);
+                       
+                       if (w <= 0) continue;
+                       ww = w;
+                       d = buf;
+                       u = spans[yp].span[i].u[0] << FPI;
+                       v = spans[yp].span[i].v[0] << FPI;
+                       ud = ((spans[yp].span[i].u[1] << FPI) - u) / w;
+                       vd = ((spans[yp].span[i].v[1] << FPI) - v) / w;
+                       if (ud < 0) u -= 1;
+                       if (vd < 0) v -= 1;
+                       while (ww > 0)
+                         {
+                            s = sp + ((v >> (FP + FPI)) * sw) + 
+                              (u >> (FP + FPI));
+                            *d++ = *s;
+                            u += ud;
+                            v += vd;
+                            ww--;
+                         }
+                       dptr = dst->image.data;
+                       dptr += (y * dst->cache_entry.w) + x;
+                       func(buf, NULL, dc->mul.col, dptr, w);
+                    }
+                  else break;
+               }
           }
      }
 }
