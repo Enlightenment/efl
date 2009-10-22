@@ -1262,6 +1262,7 @@ elm_coords_finger_size_adjust(int times_w, Evas_Coord *w, int times_h, Evas_Coor
 EAPI void
 elm_object_focus(Evas_Object *obj)
 {
+   if (!elm_widget_can_focus_get(obj)) return;
    elm_widget_focus_set(obj, 1);
 }
 
