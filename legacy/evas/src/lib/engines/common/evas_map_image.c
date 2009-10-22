@@ -409,20 +409,16 @@ evas_common_map4_rgba_internal(RGBA_Image *src, RGBA_Image *dst,
              else
                {
                   spans[yp].span[0].x1 = -1;
-//                  printf("duck for y %i, edge_num is %i\n", y, edge_num);
                }
           }
      }
    if (dc->mul.use)
      func = evas_common_gfx_func_composite_pixel_color_span_get(src, dc->mul.col, dst, cw, dc->render_op);
    else
-     func = evas_common_gfx_func_composite_pixel_span_get(src, dst, dst->cache_entry.w, dc->render_op);
+     func = evas_common_gfx_func_composite_pixel_span_get(src, dst, cw, dc->render_op);
    
    buf = alloca(dst->cache_entry.w * sizeof(DATA32));
    // walk spans and fill
-//   printf("---------- %i -> %i / %i %i [ %i %i]\n", 
-//          ystart, yend, cy, ch, cx, cw);
-
    for (y = ystart; y <= yend; y++)
      {
         int x, w, ww, dx, dy, sx, sy;
