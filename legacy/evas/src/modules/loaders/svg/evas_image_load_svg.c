@@ -14,26 +14,6 @@ Evas_Image_Load_Func evas_image_load_svg_func =
 };
 
 static int  rsvg_initialized = 0;
-static void svg_loader_unpremul_data(DATA32 *data, unsigned int len);
-
-static void
-svg_loader_unpremul_data(DATA32 *data, unsigned int len)
-{
-   DATA32  *de = data + len;
-
-   while (data < de)
-     {
-	DATA32   a = A_VAL(data);
-	
-	if (a && (a < 255))
-	  {
-	     R_VAL(data) = (R_VAL(data) * 255) / a;
-	     G_VAL(data) = (G_VAL(data) * 255) / a;
-	     B_VAL(data) = (B_VAL(data) * 255) / a;
-	  }
-	data++;
-     }
-}
 
 static int
 evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key __UNUSED__)
@@ -82,6 +62,7 @@ evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key
 	return 0;
      }
 
+   rsvg_handle_set_dpi(rsvg, 75.0);
    rsvg_handle_get_dimensions(rsvg, &dim);
    w = dim.width;
    h = dim.height;
@@ -101,8 +82,8 @@ evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key
      }
    else if (ie->load_opts.dpi > 0.0)
      {
-	w = (w * ie->load_opts.dpi) / 90.0;
-	h = (h * ie->load_opts.dpi) / 90.0;
+	w = (w * ie->load_opts.dpi) / 75.0;
+	h = (h * ie->load_opts.dpi) / 75.0;
      }
    else if ((ie->load_opts.w > 0) &&
 	    (ie->load_opts.h > 0))
@@ -181,6 +162,7 @@ evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key
 	return 0;
      }
 
+   rsvg_handle_set_dpi(rsvg, 75.0);
    rsvg_handle_get_dimensions(rsvg, &dim);
    w = dim.width;
    h = dim.height;
@@ -199,8 +181,8 @@ evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key
      }
    else if (ie->load_opts.dpi > 0.0)
      {
-	w = (w * ie->load_opts.dpi) / 90.0;
-	h = (h * ie->load_opts.dpi) / 90.0;
+	w = (w * ie->load_opts.dpi) / 75.0;
+	h = (h * ie->load_opts.dpi) / 75.0;
      }
    else if ((ie->load_opts.w > 0) &&
 	    (ie->load_opts.h > 0))
