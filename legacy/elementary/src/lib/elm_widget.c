@@ -80,8 +80,19 @@ static void
 _sub_obj_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Smart_Data *sd = data;
-
-   elm_widget_focus_steal(sd->obj);
+   Evas_Object *o;
+   const char *s;
+   
+   o = obj;
+   do {
+      s = evas_object_type_get(o);
+      if (!s) return;
+      if (!strcmp(s, "elm_widget")) break;
+      o = evas_object_smart_parent_get(o);
+   } while (o);
+   if (!o) return;
+   if (!elm_widget_can_focus_get(o)) return;
+   elm_widget_focus_steal(o);
 }
 
 /* externally accessible functions */
@@ -616,7 +627,9 @@ elm_widget_focus_steal(Evas_Object *obj)
 	parent = elm_widget_parent_get(parent);
 	sd = evas_object_smart_data_get(parent);
 	if (elm_widget_focus_get(sd->resize_obj))
-	  elm_widget_focused_object_clear(sd->resize_obj);
+          {
+             elm_widget_focused_object_clear(sd->resize_obj);
+          }
 	else
 	  {
 	     const Eina_List *l;
