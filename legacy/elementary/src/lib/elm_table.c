@@ -58,8 +58,8 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
-   evas_object_event_callback_del
-     (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
+   evas_object_event_callback_del_full
+     (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
    _sizing_eval(obj);
 }
 
@@ -111,6 +111,22 @@ elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    evas_object_table_homogeneous_set(wd->tbl, homogenous);
+}
+
+/**
+ * Set padding between cells.
+ *
+ * @param obj The layout object.
+ * @param horizontal set the horizontal padding. 
+ * @param vertical set the vertical padding.
+ *
+ * @ingroup Table
+ */
+EAPI void
+elm_table_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   evas_object_table_padding_set(wd->tbl, horizontal, vertical);
 }
 
 /**
