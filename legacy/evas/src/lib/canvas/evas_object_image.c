@@ -2327,19 +2327,23 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 	       }
 	     o->dirty_pixels = 0;
 	  }
-        if ((obj->cur.mappoints) && (obj->cur.usemap))
+        if ((obj->cur.map) && (obj->cur.map->count == 4) && (obj->cur.usemap))
           {
-             RGBA_Map_Point pts[4];
-             int i;
-             
+	     const Evas_Map_Point *p, *p_end;
+             RGBA_Map_Point pts[4], *pt;
+
+	     p = obj->cur.map->points;
+	     p_end = p + 4;
+	     pt = pts;
+
              // draw geom +x +y
-             for (i = 0; i < 4; i++)
+             for (; p < p_end; p++, pt++)
                {
-                  pts[i].x = (obj->cur.mappoints[i].x + x) << FP;
-                  pts[i].y = (obj->cur.mappoints[i].y + y) << FP;
-                  pts[i].z = (obj->cur.mappoints[i].z)     << FP;
-                  pts[i].u = obj->cur.mappoints[i].u * FP1;
-                  pts[i].v = obj->cur.mappoints[i].v * FP1;
+                  pt->x = (p->x + x) << FP;
+                  pt->y = (p->y + y) << FP;
+                  pt->z = (p->z)     << FP;
+                  pt->u = p->u * FP1;
+                  pt->v = p->v * FP1;
                }
              obj->layer->evas->engine.func->image_map4_draw(output,
                                                             context,
@@ -2794,7 +2798,6 @@ static int
 evas_object_image_is_opaque(Evas_Object *obj)
 {
    Evas_Object_Image *o;
-   int v;
 
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fully opaque over the entire rectangle it occupies */
@@ -2807,7 +2810,7 @@ evas_object_image_is_opaque(Evas_Object *obj)
 	(o->cur.border.b != 0)) &&
        (!o->cur.border.fill)) return 0;
    if (!o->engine_data) return 0;
-   if ((obj->cur.mappoints) && (obj->cur.usemap)) return 0;
+   if ((obj->cur.map) && (obj->cur.usemap)) return 0;
    if (obj->cur.render_op == EVAS_RENDER_COPY) return 1;
    if (o->cur.has_alpha) return 0;
    return 1;
@@ -2829,7 +2832,7 @@ evas_object_image_was_opaque(Evas_Object *obj)
 	(o->prev.border.b != 0)) &&
        (!o->prev.border.fill)) return 0;
    if (!o->engine_data) return 0;
-   if ((obj->prev.mappoints) && (obj->prev.usemap)) return 0;
+   if ((obj->prev.map) && (obj->prev.usemap)) return 0;
    if (obj->prev.render_op == EVAS_RENDER_COPY) return 1;
    if (o->prev.has_alpha) return 0;
    if (obj->prev.render_op != EVAS_RENDER_BLEND) return 0;
@@ -2973,7 +2976,7 @@ evas_object_image_has_opaque_rect(Evas_Object *obj)
    Evas_Object_Image *o;
 
    o = (Evas_Object_Image *)(obj->object_data);
-   if ((obj->cur.mappoints) && (obj->cur.usemap)) return 0;
+   if ((obj->cur.map) && (obj->cur.usemap)) return 0;
    if (((o->cur.border.l | o->cur.border.r | o->cur.border.t | o->cur.border.b) != 0) &&
        (o->cur.border.fill == EVAS_BORDER_FILL_SOLID) &&
        (obj->cur.render_op == EVAS_RENDER_BLEND) &&

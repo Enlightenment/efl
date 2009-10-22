@@ -364,6 +364,12 @@ struct _Evas_Map_Point
    // FIXME: add color?
 };
 
+struct _Evas_Map
+{
+   unsigned long count;
+   Evas_Map_Point points[];
+};
+
 struct _Evas_Object
 {
    EINA_INLIST;
@@ -389,7 +395,7 @@ struct _Evas_Object
 	 } clip;
       } cache;
       double scale;
-      Evas_Map_Point *mappoints;
+      Evas_Map *map;
       Evas_Coord_Rectangle geometry;
       struct {
 	 unsigned char  r, g, b, a;
