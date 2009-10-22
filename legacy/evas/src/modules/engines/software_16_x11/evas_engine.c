@@ -588,7 +588,7 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em)
 {
-  eina_log_dom_unregister(_evas_engine_soft16_x11_log_dom);
+  eina_log_domain_unregister(_evas_engine_soft16_x11_log_dom);
 }
 
 static Evas_Module_Api evas_modapi =
