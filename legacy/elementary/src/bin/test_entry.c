@@ -112,7 +112,6 @@ test_entry(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
    elm_object_focus_allow_set(bt, 0);
-   printf("selection: %p\n", bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
