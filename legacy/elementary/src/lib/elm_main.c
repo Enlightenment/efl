@@ -1266,6 +1266,38 @@ elm_object_focus(Evas_Object *obj)
 }
 
 /**
+ * Set the ability for the object to focus
+ *
+ * This sets the ability for the object to be able to get keyboard focus or
+ * not. By default all objects are able to be focused.
+ *
+ * @param obj The object
+ * @param enable 1 if the object can be focused, 0 if not
+ * @ingroup Focus
+ */
+EAPI void
+elm_object_focus_allow_set(Evas_Object *obj, Eina_Bool enable)
+{
+   elm_widget_can_focus_set(obj, enable);
+}
+
+/**
+ * Get the ability for the object to focus
+ *
+ * This gets the ability for the object to be able to get keyboard focus or
+ * not. By default all objects are able to be focused.
+ *
+ * @param obj The object
+ * @return 1 if the object is allowed to be focused, 0 if not.
+ * @ingroup Focus
+ */
+EAPI Eina_Bool
+elm_object_focus_allow_get(Evas_Object *obj)
+{
+   return elm_widget_can_focus_get(obj);
+}
+
+/**
  * @defgroup Scrollhints Scrollhints
  *
  * Objects when inside a scroller can scroll, but this may not always be
