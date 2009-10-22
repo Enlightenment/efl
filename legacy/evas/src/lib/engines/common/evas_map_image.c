@@ -5,6 +5,12 @@
 #include "evas_common.h"
 #include "evas_blend_private.h"
 
+#define FPI 8
+#define FPI1 (1 << (FPI))
+#define FPIH (1 << (FPI - 1))
+
+#define FPFPI1 (1 << (FP + FPI))
+
 typedef struct _Line Line;
 typedef struct _Span Span;
 
@@ -122,18 +128,11 @@ evas_common_map4_rgba_internal(RGBA_Image *src, RGBA_Image *dst,
    if (ybottom >= (cy + ch)) yend = (cy + ch) - 1;
    else yend = ybottom;
 
-   // generate a lise of spans. eg:
-   // 
-   //       H
-   //     |--|
-   //   |-----|
-   // |--------|
-   //   |-------|
-   //      |---|
-   //        ||
-   // 
-   // up to 2 spans per line (because its a quad).
-
+   sp = src->image.data;
+   sw = src->cache_entry.w;
+   swp = sw << FP;
+   shp = src->cache_entry.h << FP;
+   
 #if 1
    // maybe faster on x86?
    for (i = 0; i < 4; i++) py[i] = p[i].y >> FP;
@@ -144,9 +143,6 @@ evas_common_map4_rgba_internal(RGBA_Image *src, RGBA_Image *dst,
    spans = alloca((yend - ystart + 1) * sizeof(Line));
    memset(spans, 0, (yend - ystart + 1) * sizeof(Line));
    
-   // all on one line. eg:
-   // 
-   // |----------|
    for (i = 0; i < 4; i++)
      {
         if (p[i].u < 0) p[i].u = 0;
@@ -159,6 +155,9 @@ evas_common_map4_rgba_internal(RGBA_Image *src, RGBA_Image *dst,
      }
    if ((PY(0) == PY(1)) && (PY(0) == PY(2)) && (PY(0) == PY(3)))
      {
+        // all on one line. eg:
+        // 
+        // |----------|
         // FIXME:
         // find min x point and max x point and span those
      }
@@ -423,99 +422,44 @@ evas_common_map4_rgba_internal(RGBA_Image *src, RGBA_Image *dst,
    // walk spans and fill
 //   printf("---------- %i -> %i / %i %i [ %i %i]\n", 
 //          ystart, yend, cy, ch, cx, cw);
-   
-   sp = src->image.data;
-   sw = src->cache_entry.w;
-   swp = sw << FP;
-   shp = src->cache_entry.h << FP;
 
-   if (smooth)
+   for (y = ystart; y <= yend; y++)
      {
-         for (y = ystart; y <= yend; y++)
-          {
-             int x, w, ww;
-             FPc u, v, ud, vd;
-             DATA32 *d, *dptr, *s;
-             yp = y - ystart;
+        int x, w, ww, dx, dy, sx, sy;
+        FPc u, v, ud, vd, up, vp;
+        DATA32 *d, *dptr, *s, *so[4], val1, val2;
+        yp = y - ystart;
         
-             for (i = 0; i < 2; i++)
-               {
-                  if (spans[yp].span[i].x1 >= 0)
-                    {
-                       x = spans[yp].span[i].x1;
-                       w = (spans[yp].span[i].x2 - x);
-                       
-                       if (w <= 0) continue;
-                       ww = w;
-                       d = buf;
-                       u = spans[yp].span[i].u[0];
-                       v = spans[yp].span[i].v[0];
-                       ud = (spans[yp].span[i].u[1] - u) / w;
-                       vd = (spans[yp].span[i].v[1] - v) / w;
-                       if (ud < 0) u -= 1;
-                       if (vd < 0) v -= 1;
-                       while (ww > 0)
-                         {
-                            s = sp + ((v >> FP) * sw) + (u >> FP);
-                            *d++ = *s;
-                            u += ud;
-                            v += vd;
-                            ww--;
-                         }
-                       dptr = dst->image.data;
-                       dptr += (y * dst->cache_entry.w) + x;
-                       func(buf, NULL, dc->mul.col, dptr, w);
-                    }
-                  else break;
-               }
-          }
-     }
-   else
-     {
-         for (y = ystart; y <= yend; y++)
+        for (i = 0; i < 2; i++)
           {
-             int x, w, ww;
-             FPc u, v, ud, vd;
-             DATA32 *d, *dptr, *s;
-             yp = y - ystart;
-        
-//             printf("y: %3i[%3i] :", y, yp);
-             for (i = 0; i < 2; i++)
+             if (spans[yp].span[i].x1 >= 0)
                {
-                  if (spans[yp].span[i].x1 >= 0)
+                  x = spans[yp].span[i].x1;
+                  w = (spans[yp].span[i].x2 - x);
+                  
+                  if (w <= 0) continue;
+                  ww = w;
+                  d = buf;
+                  u = spans[yp].span[i].u[0] << FPI;
+                  v = spans[yp].span[i].v[0] << FPI;
+                  ud = ((spans[yp].span[i].u[1] << FPI) - u) / w;
+                  vd = ((spans[yp].span[i].v[1] << FPI) - v) / w;
+                  if (ud < 0) u -= 1;
+                  if (vd < 0) v -= 1;
+                  while (ww > 0)
                     {
-                       x = spans[yp].span[i].x1;
-                       w = (spans[yp].span[i].x2 - x);
-                       
-                       if (w <= 0) continue;
-                       ww = w;
-                       d = buf;
-                       u = spans[yp].span[i].u[0];
-                       v = spans[yp].span[i].v[0];
-                       ud = (spans[yp].span[i].u[1] - u) / w;
-                       vd = (spans[yp].span[i].v[1] - v) / w;
-//                       printf(" %3i[%3i,%3i] - %3i[%3i,%3i] |", 
-//                              x, u >> FP, v >> FP, 
-//                              x + w, 
-//                              spans[yp].span[i].u[1] >> FP, 
-//                              spans[yp].span[i].v[1] >> FP);
-                       if (ud < 0) u -= 1;
-                       if (vd < 0) v -= 1;
-                       while (ww > 0)
-                         {
-                            s = sp + ((v >> FP) * sw) + (u >> FP);
-                            *d++ = *s;
-                            u += ud;
-                            v += vd;
-                            ww--;
-                         }
-                       dptr = dst->image.data;
-                       dptr += (y * dst->cache_entry.w) + x;
-                       func(buf, NULL, dc->mul.col, dptr, w);
+                       s = sp + ((v >> (FP + FPI)) * sw) + 
+                         (u >> (FP + FPI));
+                       *d++ = *s;
+                       u += ud;
+                       v += vd;
+                       ww--;
                     }
-                  else break;
+                  dptr = dst->image.data;
+                  dptr += (y * dst->cache_entry.w) + x;
+                  func(buf, NULL, dc->mul.col, dptr, w);
                }
-//             printf("\n");
+             else break;
           }
      }
 }
