@@ -9,25 +9,25 @@
  * region around, allowing to move through a much larger object that is
  * contained in the scroller. The scroiller will always have a small minimum
  * size by default as it won't be limited by the contents of the scroller.
- * 
+ *
  * Signals that you can add callbacks for are:
- * 
+ *
  * edge,left - the left edge of the content has been reached
- * 
+ *
  * edge,right - the right edge of the content has been reached
- * 
+ *
  * edge,top - the top edge of the content has been reached
- * 
+ *
  * edge,bottom - the bottom edge of the content has been reached
- * 
+ *
  * scroll - the content has been scrolled (moved)
- * 
+ *
  * scroll,anim,start - scrolling animation has started
- * 
+ *
  * scroll,anim,stop - scrolling animation has stopped
- * 
+ *
  * scroll,drag,start - dragging the contents around has started
- * 
+ *
  * scroll,drag,stop - dragging the contents around has stopped
  */
 typedef struct _Widget_Data Widget_Data;
@@ -125,8 +125,8 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
    if (sub == wd->content)
      {
 	elm_widget_on_show_region_hook_set(wd->content, NULL, NULL);
-	evas_object_event_callback_del(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
-                                       _changed_size_hints);
+	evas_object_event_callback_del_full (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+           _changed_size_hints, obj);
 	wd->content = NULL;
 	_sizing_eval(obj);
      }
@@ -361,7 +361,7 @@ elm_scroller_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coor
 /**
  * Set the scroller scrollbar policy
  *
- * This sets the scrollbar visibility policy for the given scroller. 
+ * This sets the scrollbar visibility policy for the given scroller.
  * ELM_SMART_SCROLLER_POLICY_AUTO means the scrollber is made visible if it
  * is needed, and otherwise kept hidden. ELM_SMART_SCROLLER_POLICY_ON turns
  * it on all the time, and ELM_SMART_SCROLLER_POLICY_OFF always keeps it off.
@@ -447,7 +447,7 @@ elm_scroller_child_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
  y Y coordinate of the region
  w Width of the region
  h Height of the region
- 
+
  EAPI void elm_scroller_region_show ( Evas_Object *  obj, * @param v_bounce Will the scroller bounce vertically or not
  *
  * @ingroup Scroller
@@ -473,7 +473,7 @@ elm_scroller_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce
  * is "half a viewport". Sane usable valus are normally between 0.0 and 1.0
  * including 1.0. If you only want 1 axis to be page "limited", use 0.0 for
  * the other axis.
- * 
+ *
  * @param obj The scroller object
  * @param h_pagerel The horizontal page relative size
  * @param v_pagerel The vertical page relative size
@@ -497,7 +497,7 @@ elm_scroller_page_relative_set(Evas_Object *obj, double h_pagerel, double v_page
  * See also elm_scroller_page_relative_set(). This, instead of a page size
  * being relaive to the viewport, sets it to an absolute fixed value, with
  * 0 turning it off for that axis.
- * 
+ *
  * @param obj The scroller object
  * @param h_pagesize The horizontal page size
  * @param v_pagesize The vertical page size

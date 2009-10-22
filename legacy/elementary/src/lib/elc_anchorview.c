@@ -205,7 +205,7 @@ elm_anchorview_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->hover_parent)
-     evas_object_event_callback_del(wd->hover_parent, EVAS_CALLBACK_DEL, _parent_del);
+     evas_object_event_callback_del_full(wd->hover_parent, EVAS_CALLBACK_DEL, _parent_del, obj);
    wd->hover_parent = parent;
    if (wd->hover_parent)
      evas_object_event_callback_add(wd->hover_parent, EVAS_CALLBACK_DEL, _parent_del, obj);

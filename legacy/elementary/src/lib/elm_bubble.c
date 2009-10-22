@@ -67,8 +67,8 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
 
-   evas_object_event_callback_del(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
-                                  _changed_size_hints);
+   evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                  _changed_size_hints, obj);
    if (sub == wd->content) wd->content = NULL;
    else if (sub == wd->icon) wd->icon = NULL;
    _sizing_eval(obj);
@@ -186,7 +186,7 @@ elm_bubble_content_set(Evas_Object *obj, Evas_Object *content)
      {
 	elm_widget_sub_object_add(obj, content);
 	edje_object_part_swallow(wd->bbl, "elm.swallow.content", content);
-	evas_object_event_callback_add(content, 
+	evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
      }
@@ -199,7 +199,7 @@ elm_bubble_content_set(Evas_Object *obj, Evas_Object *content)
  * @param obj The given evas pointer
  * @param icon The given icon for the bubble
  *
- * This function sets the icon showed on the top left of bubble. 
+ * This function sets the icon showed on the top left of bubble.
  *
  * @ingroup Bubble
  */

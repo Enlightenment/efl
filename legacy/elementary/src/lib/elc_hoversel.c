@@ -7,7 +7,7 @@
  * A hoversel is a button that pops up a list of items (automatically
  * choosing the direction to display) that have a lable and/or an icon to
  * select from. It is a convenience widget to avoid the need to do all the
- * piecing together yourself. It is intended for a small numbr of items in
+ * piecing together yourself. It is intended for a small number of items in
  * the hoversel menu (no more than 8), though is capable of many more.
  *
  * Signals that you can add callbacks for are:
@@ -151,7 +151,7 @@ _activate(Evas_Object *obj)
    bx = elm_box_add(wd->hover);
    elm_box_homogenous_set(bx, 1);
 
-   snprintf(buf, sizeof(buf), "hoversel_vertical_entry/%s", 
+   snprintf(buf, sizeof(buf), "hoversel_vertical_entry/%s",
             elm_widget_style_get(obj));
    EINA_LIST_FOREACH(wd->items, l, it)
      {
@@ -177,7 +177,7 @@ _activate(Evas_Object *obj)
      }
 
    elm_hover_content_set(wd->hover,
-                         elm_hover_best_content_location_get(wd->hover, 
+                         elm_hover_best_content_location_get(wd->hover,
                                                              ELM_HOVER_AXIS_VERTICAL),
                          bx);
    evas_object_show(bx);
@@ -253,11 +253,11 @@ elm_hoversel_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 
    if (!wd) return;
    if (wd->hover_parent)
-     evas_object_event_callback_del(wd->hover_parent, EVAS_CALLBACK_DEL, 
-                                    _parent_del);
+     evas_object_event_callback_del_full(wd->hover_parent, EVAS_CALLBACK_DEL,
+                                    _parent_del, obj);
    wd->hover_parent = parent;
    if (wd->hover_parent)
-     evas_object_event_callback_add(wd->hover_parent, EVAS_CALLBACK_DEL, 
+     evas_object_event_callback_add(wd->hover_parent, EVAS_CALLBACK_DEL,
                                     _parent_del, obj);
 }
 
@@ -383,7 +383,7 @@ elm_hoversel_hover_end(Evas_Object *obj)
  *
  * This will remove all the children items from the hoversel. (should not be
  * called while the hoversel is active).
- * 
+ *
  * @param obj The hoversel object
  *
  * @ingroup Hoversel

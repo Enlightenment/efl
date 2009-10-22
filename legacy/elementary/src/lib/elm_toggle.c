@@ -97,8 +97,8 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
    if (sub == wd->icon)
      {
 	edje_object_signal_emit(wd->tgl, "elm,state,icon,hidden", "elm");
-	evas_object_event_callback_del
-	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
+	evas_object_event_callback_del_full
+	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
 	wd->icon = NULL;
 	_sizing_eval(obj);
      }
@@ -145,9 +145,9 @@ elm_toggle_add(Evas_Object *parent)
    _elm_theme_set(wd->tgl, "toggle", "base", "default");
    wd->ontext = eina_stringshare_add("ON");
    wd->offtext = eina_stringshare_add("OFF");
-   edje_object_signal_callback_add(wd->tgl, "elm,action,toggle,on", "", 
+   edje_object_signal_callback_add(wd->tgl, "elm,action,toggle,on", "",
                                    _signal_toggle_on, obj);
-   edje_object_signal_callback_add(wd->tgl, "elm,action,toggle,off", "", 
+   edje_object_signal_callback_add(wd->tgl, "elm,action,toggle,off", "",
                                    _signal_toggle_off, obj);
    elm_widget_resize_object_set(obj, wd->tgl);
    edje_object_part_text_set(wd->tgl, "elm.ontext", wd->ontext);

@@ -28,7 +28,7 @@ struct _Elm_Toolbar_Item
    Eina_Bool selected : 1;
    Eina_Bool disabled : 1;
    Eina_Bool separator : 1;
-    
+
    Eina_Bool menu;
    Evas_Object *o_menu;
 };
@@ -83,9 +83,9 @@ _item_select(Elm_Toolbar_Item *it)
    if(it->menu)
      {
         evas_object_show(it->o_menu);
-        evas_object_event_callback_add(it->base, EVAS_CALLBACK_RESIZE, 
+        evas_object_event_callback_add(it->base, EVAS_CALLBACK_RESIZE,
                                        _menu_move_resize, it);
-        evas_object_event_callback_add(it->base, EVAS_CALLBACK_MOVE, 
+        evas_object_event_callback_add(it->base, EVAS_CALLBACK_MOVE,
                                        _menu_move_resize, it);
 
         _menu_move_resize(it, NULL, NULL, NULL);
@@ -104,13 +104,14 @@ _menu_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _menu_move_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   Elm_Toolbar_Item *it = data;
-   Evas_Coord x, y, w, h;
-   Widget_Data *wd = elm_widget_data_get(it->obj);
+    Elm_Toolbar_Item *it = data;
+    Evas_Coord x,y,w,h;
+    Widget_Data *wd = elm_widget_data_get(it->obj);
 
-   if ((!wd) || (!wd->menu_parent)) return;
-   evas_object_geometry_get(it->base, &x, &y, &w, &h);
-   elm_menu_move(it->o_menu, x, y + h);
+    if (!wd || !wd->menu_parent) return;
+
+    evas_object_geometry_get(it->base, &x, &y, &w, &h);
+    elm_menu_move(it->o_menu, x, y+h);
 }
 
 static void
@@ -312,7 +313,7 @@ elm_toolbar_add(Evas_Object *parent)
    wd->scrollable = EINA_TRUE;
    wd->homogeneous = EINA_TRUE;
    wd->align = 0.5;
-   
+
    wd->bx = evas_object_box_add(e);
    evas_object_size_hint_align_set(wd->bx, wd->align, 0.5);
    evas_object_box_layout_set(wd->bx, _layout, wd, NULL);
@@ -530,7 +531,7 @@ elm_toolbar_item_unselect_all(Evas_Object *obj)
  * Set if the alignment of the items.
  *
  * @param obj The toolbar object
- * @param align The new alignment. (left) 0.0 ... 1.0 (right) 
+ * @param align The new alignment. (left) 0.0 ... 1.0 (right)
  */
 EAPI void
 elm_toolbar_align_set(Evas_Object *obj, double align)
@@ -559,13 +560,13 @@ elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu)
 	item->o_menu = elm_menu_add(item->base);
 	if (wd->menu_parent)
 	  elm_menu_parent_set(item->o_menu, wd->menu_parent);
-	evas_object_event_callback_add(item->o_menu, EVAS_CALLBACK_HIDE, 
+	evas_object_event_callback_add(item->o_menu, EVAS_CALLBACK_HIDE,
                                        _menu_hide, item);
      }
    else if (item->o_menu)
      {
-	evas_object_event_callback_del(item->o_menu, EVAS_CALLBACK_HIDE, 
-                                       _menu_hide);
+	evas_object_event_callback_del_full(item->o_menu, EVAS_CALLBACK_HIDE,
+	      _menu_hide, item);
 	evas_object_del(item->o_menu);
      }
 }

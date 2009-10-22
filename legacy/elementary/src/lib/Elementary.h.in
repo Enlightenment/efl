@@ -403,6 +403,7 @@ extern "C" {
    EAPI Evas_Object *elm_table_add(Evas_Object *parent);
    EAPI void         elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous);
    EAPI void         elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h);
+   EAPI void	     elm_table_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical);
    /* smart callbacks called:
     */
 
@@ -439,6 +440,8 @@ extern "C" {
    EAPI void	     elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient);
    EAPI void         elm_notify_timeout_set(Evas_Object *obj, int timeout);
    EAPI void	     elm_notify_timer_init(Evas_Object *obj);
+   EAPI void	     elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat);
+   EAPI void	     elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent);
    /* smart callbacks called:
     */
    typedef enum _Elm_Hover_Axis
@@ -486,6 +489,7 @@ extern "C" {
    EAPI const char  *elm_entry_selection_get(const Evas_Object *obj);
    EAPI void         elm_entry_entry_insert(Evas_Object *obj, const char *entry);
    EAPI void         elm_entry_line_wrap_set(Evas_Object *obj, Eina_Bool wrap);
+   EAPI void         elm_entry_line_char_wrap_set(Evas_Object *obj, Eina_Bool wrap);
    EAPI void         elm_entry_editable_set(Evas_Object *obj, Eina_Bool editable);
    EAPI void         elm_entry_select_none(Evas_Object *obj);
    EAPI void         elm_entry_select_all(Evas_Object *obj);
@@ -648,8 +652,8 @@ extern "C" {
    EAPI void		 elm_menu_item_del(Elm_Menu_Item *item);
    EAPI const Eina_List *elm_menu_item_subitems_get(Elm_Menu_Item *item);
    /* smart callbacks called:
+    * "clicked" - the user clicked the empty space in the menu to dismiss. event_info is NULL.
     */
-
 
    typedef enum _Elm_List_Mode
      {
@@ -873,12 +877,17 @@ extern "C" {
    EAPI Evas_Object *elm_fileselector_add(Evas_Object *parent);
    EAPI void         elm_fileselector_is_save_set(Evas_Object *obj, Eina_Bool is_save);
    EAPI Eina_Bool    elm_fileselector_is_save_get(Evas_Object *obj);
+   EAPI void         elm_fileselector_folder_only_set(Evas_Object *obj, Eina_Bool only);
+   EAPI Eina_Bool    elm_fileselector_folder_only_get(Evas_Object *obj);
+   EAPI void         elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj, Eina_Bool buttons);
+   EAPI Eina_Bool    elm_fileselector_buttons_ok_cancel_get(Evas_Object *obj);
    EAPI void         elm_fileselector_expandable_set(Evas_Object *obj, Eina_Bool expand);
    EAPI void         elm_fileselector_path_set(Evas_Object *obj, const char *path);
    EAPI const char  *elm_fileselector_path_get(Evas_Object *obj);
    EAPI const char  *elm_fileselector_selected_get(Evas_Object *obj);
    /* smart callbacks called:
     * "selected" - the user click on a file
+    * "directory,open" - the list is populate with a new content. event_info is a directory. 
     * "done" - the user click on the ok or cancel buttons
     */
 

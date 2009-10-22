@@ -144,8 +144,8 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 	if (it->content == sub)
 	  {
 	     wd->stack = eina_list_remove_list(wd->stack, l);
-	     evas_object_event_callback_del
-	       (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
+	     evas_object_event_callback_del_full
+	       (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, it);
 	     evas_object_del(it->base);
 	     _eval_top(it->obj);
 	     free(it);

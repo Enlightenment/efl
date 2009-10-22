@@ -50,7 +50,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   edje_object_scale_set(wd->lay, elm_widget_scale_get(obj) * 
+   edje_object_scale_set(wd->lay, elm_widget_scale_get(obj) *
                          _elm_config->scale);
    _sizing_eval(obj);
 }
@@ -85,9 +85,10 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
      {
 	if (si->obj == sub)
 	  {
-	     evas_object_event_callback_del(sub, 
-                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
-                                            _changed_size_hints);
+	     evas_object_event_callback_del_full(sub,
+                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                            _changed_size_hints,
+                                            obj);
 	     wd->subs = eina_list_remove_list(wd->subs, l);
 	     eina_stringshare_del(si->swallow);
 	     free(si);
@@ -179,7 +180,7 @@ elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conte
      {
 	elm_widget_sub_object_add(obj, content);
 	edje_object_part_swallow(wd->lay, swallow, content);
-	evas_object_event_callback_add(content, 
+	evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
 	si = ELM_NEW(Subinfo);

@@ -135,8 +135,8 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
    if (sub == wd->icon)
      {
 	edje_object_signal_emit(wd->slider, "elm,state,icon,hidden", "elm");
-	evas_object_event_callback_del
-	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
+	evas_object_event_callback_del_full
+	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
 	wd->icon = NULL;
 	_sizing_eval(obj);
      }

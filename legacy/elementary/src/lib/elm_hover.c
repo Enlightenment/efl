@@ -40,10 +40,10 @@ _del_pre_hook(Evas_Object *obj)
      evas_object_smart_callback_call(obj, "clicked", NULL);
    elm_hover_target_set(obj, NULL);
    elm_hover_parent_set(obj, NULL);
-   evas_object_event_callback_del(wd->hov, EVAS_CALLBACK_MOVE, _hov_move);
-   evas_object_event_callback_del(wd->hov, EVAS_CALLBACK_RESIZE, _hov_resize);
-   evas_object_event_callback_del(wd->hov, EVAS_CALLBACK_SHOW, _hov_show);
-   evas_object_event_callback_del(wd->hov, EVAS_CALLBACK_HIDE, _hov_hide);
+   evas_object_event_callback_del_full(wd->hov, EVAS_CALLBACK_MOVE, _hov_move, obj);
+   evas_object_event_callback_del_full(wd->hov, EVAS_CALLBACK_RESIZE, _hov_resize, obj);
+   evas_object_event_callback_del_full(wd->hov, EVAS_CALLBACK_SHOW, _hov_show, obj);
+   evas_object_event_callback_del_full(wd->hov, EVAS_CALLBACK_HIDE, _hov_hide, obj);
 
    EINA_LIST_FREE(wd->subs, si)
      {
@@ -299,8 +299,8 @@ elm_hover_target_set(Evas_Object *obj, Evas_Object *target)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (wd->target)
-     evas_object_event_callback_del(wd->target, EVAS_CALLBACK_DEL,
-                                    _target_del);
+     evas_object_event_callback_del_full(wd->target, EVAS_CALLBACK_DEL,
+                                    _target_del, obj);
    wd->target = target;
    if (wd->target)
      {
@@ -318,16 +318,16 @@ elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 
    if (wd->parent)
      {
-	evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_MOVE,
-                                       _parent_move);
-	evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_RESIZE,
-                                       _parent_resize);
-	evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_SHOW,
-                                       _parent_show);
-	evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_HIDE,
-                                       _parent_hide);
-	evas_object_event_callback_del(wd->parent, EVAS_CALLBACK_DEL,
-                                       _parent_del);
+	evas_object_event_callback_del_full(wd->parent, EVAS_CALLBACK_MOVE,
+                                       _parent_move, obj);
+	evas_object_event_callback_del_full(wd->parent, EVAS_CALLBACK_RESIZE,
+                                       _parent_resize, obj);
+	evas_object_event_callback_del_full(wd->parent, EVAS_CALLBACK_SHOW,
+                                       _parent_show, obj);
+	evas_object_event_callback_del_full(wd->parent, EVAS_CALLBACK_HIDE,
+                                       _parent_hide, obj);
+	evas_object_event_callback_del_full(wd->parent, EVAS_CALLBACK_DEL,
+                                       _parent_del, obj);
      }
    wd->parent = parent;
    if (wd->parent)

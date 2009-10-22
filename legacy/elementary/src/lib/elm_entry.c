@@ -19,6 +19,7 @@ struct _Widget_Data
    Eina_List *items;
    Eina_Bool changed : 1;
    Eina_Bool linewrap : 1;
+   Eina_Bool char_linewrap : 1;
    Eina_Bool single_line : 1;
    Eina_Bool password : 1;
    Eina_Bool editable : 1;
@@ -145,7 +146,7 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    Evas_Coord resw, resh, minminw;
 
-   if (wd->linewrap)
+   if (wd->linewrap || wd->char_linewrap)
      {
 	evas_object_geometry_get(wd->ent, NULL, NULL, &resw, &resh);
 	if ((resw == wd->lastw) && (!wd->changed)) return;
@@ -223,7 +224,7 @@ _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
 
-   if (wd->linewrap) _sizing_eval(data);
+   if (wd->linewrap || wd->char_linewrap) _sizing_eval(data);
    if (wd->hoversel) _hoversel_position(data);
 //   Evas_Coord ww, hh;
 //   evas_object_geometry_get(wd->ent, NULL, NULL, &ww, &hh);
@@ -351,25 +352,25 @@ _long_press(void *data)
    evas_object_smart_callback_add(wd->hoversel, "dismissed", _dismissed, data);
    if (!wd->selmode)
      {
-	elm_hoversel_item_add(wd->hoversel, "Select", NULL, ELM_ICON_NONE, 
+	elm_hoversel_item_add(wd->hoversel, "Select", NULL, ELM_ICON_NONE,
                               _select, data);
         if (wd->editable)
-          elm_hoversel_item_add(wd->hoversel, "Paste", NULL, ELM_ICON_NONE, 
+          elm_hoversel_item_add(wd->hoversel, "Paste", NULL, ELM_ICON_NONE,
                                 _paste, data);
      }
    else
      {
-	elm_hoversel_item_add(wd->hoversel, "Copy", NULL, ELM_ICON_NONE, 
+	elm_hoversel_item_add(wd->hoversel, "Copy", NULL, ELM_ICON_NONE,
                               _copy, data);
         if (wd->editable)
-          elm_hoversel_item_add(wd->hoversel, "Cut", NULL, ELM_ICON_NONE, 
+          elm_hoversel_item_add(wd->hoversel, "Cut", NULL, ELM_ICON_NONE,
                               _cut, data);
-	elm_hoversel_item_add(wd->hoversel, "Cancel", NULL, ELM_ICON_NONE, 
+	elm_hoversel_item_add(wd->hoversel, "Cancel", NULL, ELM_ICON_NONE,
                               _cancel, data);
      }
    EINA_LIST_FOREACH(wd->items, l, it)
      {
-        elm_hoversel_item_add(wd->hoversel, it->label, it->icon_file, 
+        elm_hoversel_item_add(wd->hoversel, it->label, it->icon_file,
                               it->icon_type, _item_clicked, it);
      }
    if (wd->hoversel)
@@ -483,6 +484,7 @@ _getbase(Evas_Object *obj)
 	     else
 	       {
 		  if (wd->linewrap) return "base";
+        else if (wd->char_linewrap) return "base-charwrap";
 		  else  return "base-nowrap";
 	       }
 	  }
@@ -496,6 +498,7 @@ _getbase(Evas_Object *obj)
 	     else
 	       {
 		  if (wd->linewrap) return "base-noedit";
+        else if (wd->char_linewrap) return "base-noedit-charwrap";
 		  else  return "base-nowrap-noedit";
 	       }
 	  }
@@ -664,15 +667,15 @@ _text_to_mkup(const char *text)
 	pos = pos2;
         pos2 = evas_string_char_next_get((unsigned char *)(text), pos2, &ch);
         if ((ch <= 0) || (pos2 <= 0)) break;
-	if (ch == '\n') 
+	if (ch == '\n')
           str = _str_append(str, "<br>", &str_len, &str_alloc);
-	else if (ch == '\t') 
+	else if (ch == '\t')
           str = _str_append(str, "<\t>", &str_len, &str_alloc);
-	else if (ch == '<') 
+	else if (ch == '<')
           str = _str_append(str, "&lt;", &str_len, &str_alloc);
-	else if (ch == '>') 
+	else if (ch == '>')
           str = _str_append(str, "&gt;", &str_len, &str_alloc);
-	else if (ch == '&') 
+	else if (ch == '&')
           str = _str_append(str, "&amp;", &str_len, &str_alloc);
 	else
 	  {
@@ -720,7 +723,7 @@ _signal_selection_start(void *data, Evas_Object *obj, const char *emission, cons
 
 	     top = elm_widget_top_get(data);
 	     if ((top) && (elm_win_xwindow_get(top)))
-	       ecore_x_selection_primary_set(elm_win_xwindow_get(top), txt, 
+	       ecore_x_selection_primary_set(elm_win_xwindow_get(top), txt,
                                              strlen(txt));
 #endif
 	     free(txt);
@@ -746,7 +749,7 @@ _signal_selection_changed(void *data, Evas_Object *obj, const char *emission, co
 
 	     top = elm_widget_top_get(data);
 	     if ((top) && (elm_win_xwindow_get(top)))
-	       ecore_x_selection_primary_set(elm_win_xwindow_get(top), txt, 
+	       ecore_x_selection_primary_set(elm_win_xwindow_get(top), txt,
                                              strlen(txt));
 #endif
 	     free(txt);
@@ -777,7 +780,7 @@ _signal_selection_cleared(void *data, Evas_Object *obj, const char *emission, co
 		  t = _mkup_to_text(wd->cut_sel);
 		  if (t)
 		    {
-		       ecore_x_selection_primary_set(elm_win_xwindow_get(top), 
+		       ecore_x_selection_primary_set(elm_win_xwindow_get(top),
                                                      t, strlen(t));
 		       free(t);
 		    }
@@ -856,7 +859,7 @@ _signal_cursor_changed(void *data, Evas_Object *obj, const char *emission, const
    Evas_Coord cx, cy, cw, ch;
 
    evas_object_smart_callback_call(data, "cursor,changed", NULL);
-   edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text", 
+   edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text",
                                              &cx, &cy, &cw, &ch);
    if (!wd->deferred_recalc_job)
      elm_widget_show_region_set(data, cx, cy, cw, ch);
@@ -903,7 +906,7 @@ _signal_anchor_up(void *data, Evas_Object *obj, const char *emission, const char
 	ei.name = n;
 	ei.button = atoi(buf2);
 	ei.x = ei.y = ei.w = ei.h = 0;
-	geoms = 
+	geoms =
           edje_object_part_text_anchor_geometry_get(wd->ent, "elm.text", ei.name);
 	if (geoms)
 	  {
@@ -1025,6 +1028,7 @@ elm_entry_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, 1);
 
    wd->linewrap     = EINA_TRUE;
+   wd->char_linewrap= EINA_FALSE;
    wd->editable     = EINA_TRUE;
    wd->disabled     = EINA_FALSE;
    wd->context_menu = EINA_TRUE;
@@ -1032,41 +1036,41 @@ elm_entry_add(Evas_Object *parent)
    wd->ent = edje_object_add(e);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOVE, _move, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_RESIZE, _resize, obj);
-   evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_DOWN, 
+   evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_DOWN,
                                   _mouse_down, obj);
-   evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_UP, 
+   evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_UP,
                                   _mouse_up, obj);
-   evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_MOVE, 
+   evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_MOVE,
                                   _mouse_move, obj);
 
    _elm_theme_set(wd->ent, "entry", "base", "default");
-   edje_object_signal_callback_add(wd->ent, "entry,changed", "elm.text", 
+   edje_object_signal_callback_add(wd->ent, "entry,changed", "elm.text",
                                    _signal_entry_changed, obj);
-   edje_object_signal_callback_add(wd->ent, "selection,start", "elm.text", 
+   edje_object_signal_callback_add(wd->ent, "selection,start", "elm.text",
                                    _signal_selection_start, obj);
-   edje_object_signal_callback_add(wd->ent, "selection,changed", "elm.text", 
+   edje_object_signal_callback_add(wd->ent, "selection,changed", "elm.text",
                                    _signal_selection_changed, obj);
-   edje_object_signal_callback_add(wd->ent, "selection,cleared", "elm.text", 
+   edje_object_signal_callback_add(wd->ent, "selection,cleared", "elm.text",
                                    _signal_selection_cleared, obj);
-   edje_object_signal_callback_add(wd->ent, "entry,paste,request", "elm.text", 
+   edje_object_signal_callback_add(wd->ent, "entry,paste,request", "elm.text",
                                    _signal_entry_paste_request, obj);
-   edje_object_signal_callback_add(wd->ent, "entry,copy,notify", "elm.text", 
+   edje_object_signal_callback_add(wd->ent, "entry,copy,notify", "elm.text",
                                    _signal_entry_copy_notify, obj);
-   edje_object_signal_callback_add(wd->ent, "entry,cut,notify", "elm.text", 
+   edje_object_signal_callback_add(wd->ent, "entry,cut,notify", "elm.text",
                                    _signal_entry_cut_notify, obj);
-   edje_object_signal_callback_add(wd->ent, "cursor,changed", "elm.text", 
+   edje_object_signal_callback_add(wd->ent, "cursor,changed", "elm.text",
                                    _signal_cursor_changed, obj);
-   edje_object_signal_callback_add(wd->ent, "anchor,mouse,down,*", "elm.text", 
+   edje_object_signal_callback_add(wd->ent, "anchor,mouse,down,*", "elm.text",
                                    _signal_anchor_down, obj);
-   edje_object_signal_callback_add(wd->ent, "anchor,mouse,up,*", "elm.text", 
+   edje_object_signal_callback_add(wd->ent, "anchor,mouse,up,*", "elm.text",
                                    _signal_anchor_up, obj);
-   edje_object_signal_callback_add(wd->ent, "anchor,mouse,move,*", "elm.text", 
+   edje_object_signal_callback_add(wd->ent, "anchor,mouse,move,*", "elm.text",
                                    _signal_anchor_move, obj);
-   edje_object_signal_callback_add(wd->ent, "anchor,mouse,in,*", "elm.text", 
+   edje_object_signal_callback_add(wd->ent, "anchor,mouse,in,*", "elm.text",
                                    _signal_anchor_in, obj);
-   edje_object_signal_callback_add(wd->ent, "anchor,mouse,out,*", "elm.text", 
+   edje_object_signal_callback_add(wd->ent, "anchor,mouse,out,*", "elm.text",
                                    _signal_anchor_out, obj);
-   edje_object_signal_callback_add(wd->ent, "entry,key,enter", "elm.text", 
+   edje_object_signal_callback_add(wd->ent, "entry,key,enter", "elm.text",
                                    _signal_key_enter, obj);
    edje_object_part_text_set(wd->ent, "elm.text", "<br>");
    elm_widget_resize_object_set(obj, wd->ent);
@@ -1098,6 +1102,7 @@ elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line)
    if (wd->single_line == single_line) return;
    wd->single_line = single_line;
    wd->linewrap = EINA_FALSE;
+   wd->char_linewrap = EINA_FALSE;
    t = eina_stringshare_add(elm_entry_entry_get(obj));
    _elm_theme_set(wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
    elm_entry_entry_set(obj, t);
@@ -1115,6 +1120,7 @@ elm_entry_password_set(Evas_Object *obj, Eina_Bool password)
    wd->password = password;
    wd->single_line = EINA_TRUE;
    wd->linewrap = EINA_FALSE;
+   wd->char_linewrap = EINA_FALSE;
    t = eina_stringshare_add(elm_entry_entry_get(obj));
    _elm_theme_set(wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
    elm_entry_entry_set(obj, t);
@@ -1180,6 +1186,25 @@ elm_entry_line_wrap_set(Evas_Object *obj, Eina_Bool wrap)
 
    if (wd->linewrap == wrap) return;
    wd->linewrap = wrap;
+   if(wd->linewrap)
+       wd->char_linewrap = EINA_FALSE;
+   t = eina_stringshare_add(elm_entry_entry_get(obj));
+   _elm_theme_set(wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
+   elm_entry_entry_set(obj, t);
+   eina_stringshare_del(t);
+   _sizing_eval(obj);
+}
+
+EAPI void
+elm_entry_line_char_wrap_set(Evas_Object *obj, Eina_Bool wrap)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   const char *t;
+
+   if (wd->char_linewrap == wrap) return;
+   wd->char_linewrap = wrap;
+   if(wd->char_linewrap)
+       wd->linewrap = EINA_FALSE;
    t = eina_stringshare_add(elm_entry_entry_get(obj));
    _elm_theme_set(wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
    elm_entry_entry_set(obj, t);
@@ -1274,7 +1299,7 @@ elm_entry_context_menu_disabled_set(Evas_Object *obj, Eina_Bool disabled)
    if (!wd) return;
    if (wd->context_menu == !disabled) return;
    wd->context_menu = !disabled;
-   
+
    if (wd->context_menu)
      {
         evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, obj);
@@ -1282,8 +1307,8 @@ elm_entry_context_menu_disabled_set(Evas_Object *obj, Eina_Bool disabled)
      }
    else
      {
-        evas_object_event_callback_del(wd->ent, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down);
-        evas_object_event_callback_del(wd->ent, EVAS_CALLBACK_MOUSE_UP, _mouse_up);
+        evas_object_event_callback_del_full(wd->ent, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, obj);
+        evas_object_event_callback_del_full(wd->ent, EVAS_CALLBACK_MOUSE_UP, _mouse_up, obj);
      }
 }
 

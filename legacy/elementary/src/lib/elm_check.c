@@ -111,8 +111,8 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
    if (sub == wd->icon)
      {
 	edje_object_signal_emit(wd->chk, "elm,state,icon,hidden", "elm");
-	evas_object_event_callback_del(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
-                                       _changed_size_hints);
+	evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
 	wd->icon = NULL;
 	_sizing_eval(obj);
      }
@@ -178,11 +178,11 @@ elm_check_add(Evas_Object *parent)
 
    wd->chk = edje_object_add(e);
    _elm_theme_set(wd->chk, "check", "base", "default");
-   edje_object_signal_callback_add(wd->chk, "elm,action,check,on", "", 
+   edje_object_signal_callback_add(wd->chk, "elm,action,check,on", "",
                                    _signal_check_on, obj);
-   edje_object_signal_callback_add(wd->chk, "elm,action,check,off", "", 
+   edje_object_signal_callback_add(wd->chk, "elm,action,check,off", "",
                                    _signal_check_off, obj);
-   edje_object_signal_callback_add(wd->chk, "elm,action,check,toggle", "", 
+   edje_object_signal_callback_add(wd->chk, "elm,action,check,toggle", "",
                                    _signal_check_toggle, obj);
    elm_widget_resize_object_set(obj, wd->chk);
 

@@ -442,8 +442,8 @@ elm_win_resize_object_del(Evas_Object *obj, Evas_Object *subobj)
    if(strcmp(elm_widget_type_get(obj), "win")) return;
    win = elm_widget_data_get(obj);
    if (!win) return;
-   evas_object_event_callback_del(subobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _elm_win_subobj_callback_changed_size_hints);
-   evas_object_event_callback_del(subobj, EVAS_CALLBACK_DEL, _elm_win_subobj_callback_del);
+   evas_object_event_callback_del_full(subobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _elm_win_subobj_callback_changed_size_hints, obj);
+   evas_object_event_callback_del_full(subobj, EVAS_CALLBACK_DEL, _elm_win_subobj_callback_del, obj);
    win->subobjs = eina_list_remove(win->subobjs, subobj);
    elm_widget_sub_object_del(obj, subobj);
    _elm_win_eval_subobjs(obj);
@@ -836,8 +836,8 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *sub = event_info;
    if (sub == wd->content)
      {
-	evas_object_event_callback_del
-	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
+	evas_object_event_callback_del_full
+	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
 	wd->content = NULL;
 	_sizing_eval(obj);
      }

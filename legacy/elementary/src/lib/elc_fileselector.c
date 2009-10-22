@@ -1,4 +1,4 @@
-/* 
+/*
  * TODO
  *  userdefined icon/label cb
  *  show/hide/add buttons ???
@@ -20,7 +20,15 @@ struct _Widget_Data
    Evas_Object *vbox, *entry, *entry2, *list, *scr2;
    const char *path;
    const char *selection;
+   Eina_Bool only_folder;
    Eina_Bool expand;
+
+   struct 
+   {
+    Evas_Object *bx;
+    Evas_Object *ok;
+    Evas_Object *cancel;
+   } buttons;
 };
 
 Elm_Genlist_Item_Class itc;
@@ -80,7 +88,7 @@ _itc_icon_get(const void *data, Evas_Object *obj, const char *source)
    return NULL;
 }
 
-static Eina_Bool 
+static Eina_Bool
 _itc_state_get(const void *data, Evas_Object *obj, const char *source)
 {
    return EINA_FALSE;
@@ -214,7 +222,7 @@ _anchor_clicked(void *data, Evas_Object *obj, void *event_info)
    eina_stringshare_del(p);
 }
 
-static void 
+static void
 _do_anchors(Evas_Object *obj, const char *path)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -243,7 +251,7 @@ _do_anchors(Evas_Object *obj, const char *path)
      }
    free(tok[0]);
    free(tok);
-   
+
    //~ printf("ANCHOR: %s\n", buf);
    elm_entry_entry_set(wd->entry, buf);
 }
@@ -264,6 +272,8 @@ _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent)
    dir = opendir(path);
    if (!dir) return;
 
+   evas_object_smart_callback_call(obj, "directory,open", (void*)path);
+
    if (!parent)
      {
 	elm_genlist_clear(wd->list);
@@ -271,7 +281,7 @@ _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent)
 	wd->path = eina_stringshare_add(path);
 	_do_anchors(obj, path);
      }
-   
+
    if (wd->entry2)
      elm_entry_entry_set(wd->entry2, "");
 
@@ -283,7 +293,7 @@ _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent)
 	real = ecore_file_realpath(buf); //TODO this will resolv symlinks...I dont like it
 	if (ecore_file_is_dir(real))
 	  dirs = eina_list_append(dirs, real);
-	else
+	else if(!wd->only_folder)
 	  files = eina_list_append(files, real);
      }
    closedir(dir);
@@ -303,7 +313,7 @@ _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent)
 	free(real);
      }
    eina_list_free(dirs);
-   
+
    EINA_LIST_FOREACH(files, l, real)
      {
 	//~ printf("FILE: %s [%p]\n", real, wd->list);
@@ -346,7 +356,7 @@ elm_fileselector_add(Evas_Object *parent)
    elm_box_pack_end(wd->vbox, box);
    evas_object_size_hint_align_set(box, 0.0, 0.0);
    evas_object_show(box);
-   
+
    // up btn
    ic = elm_icon_add(parent);
    elm_icon_standard_set(ic, "arrow_up");
@@ -359,7 +369,7 @@ elm_fileselector_add(Evas_Object *parent)
    elm_box_pack_end(box, bt);
    evas_object_smart_callback_add(bt, "clicked", _up, obj);
    evas_object_show(bt);
-   
+
    // home btn
    ic = elm_icon_add(parent);
    elm_icon_standard_set(ic, "home");
@@ -398,7 +408,8 @@ elm_fileselector_add(Evas_Object *parent)
    wd->entry = elm_entry_add(parent);
    elm_widget_sub_object_add(obj, wd->entry);
    elm_entry_editable_set(wd->entry, 0);
-   elm_entry_single_line_set(wd->entry, EINA_TRUE);
+   elm_entry_single_line_set(wd->entry, EINA_FALSE);
+   elm_entry_line_char_wrap_set(wd->entry, EINA_TRUE);
    evas_object_size_hint_weight_set(wd->entry, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(wd->entry, EVAS_HINT_FILL, 0.0);
    elm_box_pack_end(wd->vbox, wd->entry);
@@ -413,30 +424,9 @@ elm_fileselector_add(Evas_Object *parent)
    evas_object_size_hint_align_set(wd->scr2, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(wd->vbox, wd->scr2);
    evas_object_show(wd->scr2);
-     
-   // buttons box
-   box = elm_box_add(parent);
-   elm_box_horizontal_set(box, 1);
-   elm_widget_sub_object_add(obj, box);
-   elm_box_pack_end(wd->vbox, box);
-   evas_object_show(box);
+
+   elm_fileselector_buttons_ok_cancel_set(obj, 1);
    
-   // cancel btn
-   bt = elm_button_add(parent);
-   elm_button_label_set(bt, "Cancel");
-   elm_widget_sub_object_add(obj, bt);
-   elm_box_pack_end(box, bt);
-   evas_object_smart_callback_add(bt, "clicked", _canc, obj);
-   evas_object_show(bt);
-
-   // ok btn
-   bt = elm_button_add(parent);
-   elm_button_label_set(bt, "OK");
-   elm_widget_sub_object_add(obj, bt);
-   elm_box_pack_end(box, bt);
-   evas_object_smart_callback_add(bt, "clicked", _ok, obj);
-   evas_object_show(bt);
-
    // Is this the right way to show sub-objs ?? or use the show/hide cbs ??
    //~ evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _show, obj);
    //~ evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
@@ -478,6 +468,74 @@ elm_fileselector_is_save_get(Evas_Object *obj)
 }
 
 EAPI void
+elm_fileselector_folder_only_set(Evas_Object *obj, Eina_Bool only)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if(wd->only_folder == only) return ;
+
+   wd->only_folder = only;
+}
+
+EAPI Eina_Bool
+elm_fileselector_only_folder_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->only_folder;
+}
+
+EAPI void
+elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj, Eina_Bool only)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *box, *bt;
+
+   if (only)
+     {
+	if (wd->buttons.bx) return;
+   // buttons box
+   box = elm_box_add(obj);
+   wd->buttons.bx = box;
+   elm_box_horizontal_set(box, 1);
+   elm_widget_sub_object_add(obj, box);
+   elm_box_pack_end(wd->vbox, box);
+   evas_object_show(box);
+
+   // cancel btn
+   bt = elm_button_add(obj);
+   wd->buttons.cancel = bt;
+   elm_button_label_set(bt, "Cancel");
+   elm_widget_sub_object_add(obj, bt);
+   elm_box_pack_end(box, bt);
+   evas_object_smart_callback_add(bt, "clicked", _canc, obj);
+   evas_object_show(bt);
+
+   // ok btn
+   bt = elm_button_add(obj);
+   wd->buttons.ok = bt;
+   elm_button_label_set(bt, "OK");
+   elm_widget_sub_object_add(obj, bt);
+   elm_box_pack_end(box, bt);
+   evas_object_smart_callback_add(bt, "clicked", _ok, obj);
+   evas_object_show(bt);
+     }
+   else
+     {
+   evas_object_del(wd->buttons.bx);
+   evas_object_del(wd->buttons.ok);
+   evas_object_del(wd->buttons.cancel);
+	wd->buttons.bx = NULL;
+     }
+}
+
+EAPI Eina_Bool
+elm_fileselector_ok_cancel_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->buttons.bx ? EINA_TRUE : EINA_FALSE;
+}
+
+EAPI void
 elm_fileselector_expandable_set(Evas_Object *obj, Eina_Bool expand)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -502,7 +560,7 @@ elm_fileselector_selected_get(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Genlist_Item *it;
-   
+
    if (wd->entry2)
      {
 	const char *name;
@@ -515,7 +573,7 @@ elm_fileselector_selected_get(Evas_Object *obj)
 	wd->selection = eina_stringshare_add(buf);
 	return wd->selection;
      }
-   
+
    it = elm_genlist_selected_item_get(wd->list);
    if (it) return elm_genlist_item_data_get(it);
 

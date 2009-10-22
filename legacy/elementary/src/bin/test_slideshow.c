@@ -81,11 +81,9 @@ static Evas_Object *
 _get(void *data, Evas_Object *obj)
 {
    int w, h;
-   Evas_Object *photo = evas_object_image_add(evas_object_evas_get(obj));
-   evas_object_image_file_set(photo, data, NULL);
-   evas_object_image_filled_set(photo, 1);
-   evas_object_image_size_get(photo, &w, &h);
-   evas_object_size_hint_aspect_set(photo, EVAS_ASPECT_CONTROL_BOTH, w, h);
+   Evas_Object *photo = elm_photocam_add(obj);
+   elm_photocam_file_set(photo, data);
+   elm_photocam_zoom_mode_set(photo, ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT);
    return photo;
 }
 

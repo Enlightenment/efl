@@ -7,12 +7,12 @@
 typedef struct _Smart_Data Smart_Data;
 
 struct _Smart_Data
-{ 
+{
    Evas_Object *smart_obj;
    Evas_Object *child_obj;
    Evas_Coord   x, y, w, h;
    Evas_Coord   child_w, child_h, px, py;
-}; 
+};
 
 /* local subsystem functions */
 static void _smart_child_del_hook(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -50,15 +50,15 @@ _elm_smart_pan_child_set(Evas_Object *obj, Evas_Object *child)
      {
 	evas_object_clip_unset(sd->child_obj);
 	evas_object_smart_member_del(sd->child_obj);
-        evas_object_event_callback_del(sd->child_obj, EVAS_CALLBACK_FREE, _smart_child_del_hook);
-	evas_object_event_callback_del(sd->child_obj, EVAS_CALLBACK_RESIZE, _smart_child_resize_hook);
+        evas_object_event_callback_del_full(sd->child_obj, EVAS_CALLBACK_FREE, _smart_child_del_hook, sd);
+	evas_object_event_callback_del_full(sd->child_obj, EVAS_CALLBACK_RESIZE, _smart_child_resize_hook, sd);
 	sd->child_obj = NULL;
      }
    if (child)
      {
 	Evas_Coord w, h;
 	int r, g, b, a;
-	
+
 	sd->child_obj = child;
 	evas_object_smart_member_add(sd->child_obj, sd->smart_obj);
 	evas_object_geometry_get(sd->child_obj, NULL, NULL, &w, &h);
@@ -135,7 +135,7 @@ static void
 _smart_child_del_hook(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Smart_Data *sd;
-   
+
    sd = data;
    sd->child_obj = NULL;
    evas_object_smart_callback_call(sd->smart_obj, "changed", NULL);
@@ -146,7 +146,7 @@ _smart_child_resize_hook(void *data, Evas *e, Evas_Object *obj, void *event_info
 {
    Smart_Data *sd;
    Evas_Coord w, h;
-   
+
    sd = data;
    evas_object_geometry_get(sd->child_obj, NULL, NULL, &w, &h);
    if ((w != sd->child_w) || (h != sd->child_h))
@@ -168,7 +168,7 @@ static void
 _smart_add(Evas_Object *obj)
 {
    Smart_Data *sd;
-   
+
    sd = calloc(1, sizeof(Smart_Data));
    if (!sd) return;
    sd->smart_obj = obj;
@@ -239,7 +239,7 @@ _smart_clip_unset(Evas_Object *obj)
 {
    INTERNAL_ENTRY;
    evas_object_clip_unset(sd->child_obj);
-}  
+}
 
 /* never need to touch this */
 
@@ -253,7 +253,7 @@ _smart_init(void)
 	     SMART_NAME,
 	       EVAS_SMART_CLASS_VERSION,
 	       _smart_add,
-	       _smart_del, 
+	       _smart_del,
 	       _smart_move,
 	       _smart_resize,
 	       _smart_show,

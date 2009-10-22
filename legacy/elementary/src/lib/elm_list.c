@@ -107,9 +107,9 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 	  {
 	     if (it->icon == sub) it->icon = NULL;
 	     if (it->end == sub) it->end = NULL;
-	     evas_object_event_callback_del(sub, 
-                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
-                                            _changed_size_hints);
+	     evas_object_event_callback_del_full(sub,
+                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                            _changed_size_hints, obj);
 	     _fix_items(obj);
 	     _sizing_eval(obj);
 	     break;
@@ -518,7 +518,7 @@ elm_list_add(Evas_Object *parent)
    evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-on", _freeze_on, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-off", _freeze_off, obj);
-   
+
    _sizing_eval(obj);
    return obj;
 }

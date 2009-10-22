@@ -76,10 +76,10 @@ struct _Smart_Data
          Ecore_Animator *animator;
       } x, y;
    } scrollto;
-   
+
    double pagerel_h, pagerel_v;
    Evas_Coord pagesize_h, pagesize_v;
-   
+
    unsigned char hbar_visible : 1;
    unsigned char vbar_visible : 1;
    unsigned char extern_pan : 1;
@@ -149,7 +149,7 @@ elm_smart_scroller_child_set(Evas_Object *obj, Evas_Object *child)
    if (sd->child_obj)
      {
 	_elm_smart_pan_child_set(sd->pan_obj, NULL);
-	evas_object_event_callback_del(sd->child_obj, EVAS_CALLBACK_DEL, _smart_child_del_hook);
+	evas_object_event_callback_del_full(sd->child_obj, EVAS_CALLBACK_DEL, _smart_child_del_hook, sd);
      }
 
    sd->child_obj = child;
@@ -278,7 +278,7 @@ _smart_scrollto_x_animator(void *data)
    Smart_Data *sd = data;
    Evas_Coord px, py;
    double t, tt;
-   
+
    t = ecore_loop_time_get();
    tt = (t - sd->scrollto.x.t_start) / (sd->scrollto.x.t_end - sd->scrollto.x.t_start);
    tt = 1.0 - tt;
@@ -343,7 +343,7 @@ _smart_scrollto_y_animator(void *data)
    Smart_Data *sd = data;
    Evas_Coord px, py;
    double t, tt;
-   
+
    t = ecore_loop_time_get();
    tt = (t - sd->scrollto.y.t_start) / (sd->scrollto.y.t_end - sd->scrollto.y.t_start);
    tt = 1.0 - tt;
@@ -415,13 +415,13 @@ static Evas_Coord
 _smart_page_x_get(Smart_Data *sd, int offset)
 {
    Evas_Coord x, y, w, h, cw, ch;
-   
+
    elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
    elm_smart_scroller_child_viewport_size_get(sd->smart_obj, &w, &h);
    sd->pan_func.child_size_get(sd->pan_obj, &cw, &ch);
-   
+
    x += offset;
-   
+
    if (sd->pagerel_h > 0.0)
      {
         x = x + (w * sd->pagerel_h * 0.5);
@@ -443,13 +443,13 @@ static Evas_Coord
 _smart_page_y_get(Smart_Data *sd, int offset)
 {
    Evas_Coord x, y, w, h, cw, ch;
-   
+
    elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
    elm_smart_scroller_child_viewport_size_get(sd->smart_obj, &w, &h);
    sd->pan_func.child_size_get(sd->pan_obj, &cw, &ch);
-   
+
    y += offset;
-   
+
    if (sd->pagerel_v > 0.0)
      {
         y = y + (h * sd->pagerel_v * 0.5);
@@ -471,14 +471,14 @@ static void
 _smart_page_adjust(Smart_Data *sd)
 {
    Evas_Coord x, y, w, h;
-   
+
    if (!_smart_do_page(sd)) return;
-   
+
    elm_smart_scroller_child_viewport_size_get(sd->smart_obj, &w, &h);
-   
+
    x = _smart_page_x_get(sd, 0);
    y = _smart_page_y_get(sd, 0);
-   
+
    elm_smart_scroller_child_region_show(sd->smart_obj, x, y, w, h);
 }
 
@@ -1290,11 +1290,11 @@ _smart_event_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	     sd->down.sy = y;
 	     sd->down.locked = 0;
 	     memset(&(sd->down.history[0]), 0, sizeof(sd->down.history[0]) * 20);
-#ifdef EVTIME             
+#ifdef EVTIME
 	     sd->down.history[0].timestamp = ev->timestamp / 1000.0;
-#else             
+#else
 	     sd->down.history[0].timestamp = ecore_loop_time_get();
-#endif             
+#endif
 	     sd->down.history[0].x = ev->canvas.x;
 	     sd->down.history[0].y = ev->canvas.y;
 	  }
@@ -1345,25 +1345,25 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info)
 
 #ifdef EVTIME
                        t = ev->timestamp / 1000.0;
-#else             
+#else
                        t = ecore_loop_time_get();
-#endif             
+#endif
                        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
                        ax = ev->canvas.x;
                        ay = ev->canvas.y;
                        at = 0.0;
-#ifdef SCROLLDBG                       
+#ifdef SCROLLDBG
                        printf("------\n");
-#endif                       
+#endif
                        for (i = 0; i < 20; i++)
                          {
                             dt = t - sd->down.history[i].timestamp;
                             if (dt > 0.2) break;
-#ifdef SCROLLDBG                       
-                            printf("H: %i %i @ %1.3f\n", 
-                                   sd->down.history[i].x, 
+#ifdef SCROLLDBG
+                            printf("H: %i %i @ %1.3f\n",
+                                   sd->down.history[i].x,
                                    sd->down.history[i].y, dt);
-#endif                            
+#endif
                             at += dt;
                             ax += sd->down.history[i].x;
                             ay += sd->down.history[i].y;
@@ -1411,7 +1411,7 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info)
                   if (_smart_do_page(sd))
                     {
                        Evas_Coord pgx, pgy;
-                       
+
                        elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
                        pgx = _smart_page_x_get(sd, ox);
                        if (pgx != x) _smart_scrollto_x(sd, _elm_config->page_scroll_friction, pgx);
@@ -1424,7 +1424,7 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info)
                   if (_smart_do_page(sd))
                     {
                        Evas_Coord pgx, pgy;
-                       
+
                        elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
                        pgx = _smart_page_x_get(sd, ox);
                        if (pgx != x) _smart_scrollto_x(sd, _elm_config->page_scroll_friction, pgx);
@@ -1489,11 +1489,11 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj, void *event_info)
 
 	     memmove(&(sd->down.history[1]), &(sd->down.history[0]),
 		     sizeof(sd->down.history[0]) * 19);
-#ifdef EVTIME             
+#ifdef EVTIME
 	     sd->down.history[0].timestamp = ev->timestamp / 1000.0;
-#else             
+#else
 	     sd->down.history[0].timestamp = ecore_loop_time_get();
-#endif             
+#endif
 	     sd->down.history[0].x = ev->cur.canvas.x;
 	     sd->down.history[0].y = ev->cur.canvas.y;
 

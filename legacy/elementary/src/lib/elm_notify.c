@@ -16,9 +16,11 @@ typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
 {
-   Evas_Object *notify, *content;
+   Evas_Object *notify, *content, *parent;
 
    Elm_Notify_Orient orient;
+   Eina_Bool repeat_events;
+   Evas_Object *block_events;
 
    int timeout;
    Ecore_Timer *timer;
@@ -40,10 +42,10 @@ _del_pre_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   evas_object_event_callback_del(obj, EVAS_CALLBACK_RESIZE, _resize);
-   evas_object_event_callback_del(obj, EVAS_CALLBACK_MOVE, _resize);
-   evas_object_event_callback_del(obj, EVAS_CALLBACK_SHOW, _show);
-   evas_object_event_callback_del(obj, EVAS_CALLBACK_HIDE, _hide);
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE, _resize, obj);
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOVE, _resize, obj);
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_SHOW, _show, obj);
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_HIDE, _hide, obj);
 }
 
 
@@ -52,6 +54,14 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
+   elm_notify_content_set(obj, NULL);
+   elm_notify_parent_set(obj, NULL);
+   elm_notify_repeat_events_set(obj, EINA_TRUE);
+   if (wd->timer)
+     {
+	ecore_timer_del(wd->timer);
+	wd->timer = NULL;
+     }
    free(wd);
 }
 
@@ -62,7 +72,9 @@ _theme_hook(Evas_Object *obj)
 
    if (!wd) return;
    _elm_theme_set(wd->notify, "notify", "base", "default");
-   edje_object_scale_set(wd->notify, elm_widget_scale_get(obj) * 
+   if(wd->block_events)
+     _elm_theme_set(wd->block_events, "notify", "block_events", "default");
+   edje_object_scale_set(wd->notify, elm_widget_scale_get(obj) *
                          _elm_config->scale);
    _sizing_eval(obj);
 }
@@ -70,11 +82,13 @@ _theme_hook(Evas_Object *obj)
 static void
 _sizing_eval(Evas_Object *obj)
 {
-   //Widget_Data *wd = elm_widget_data_get(obj);
-   //Evas_Coord minw = -1, minh = -1;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Coord x,y,w,h;
+   if(!wd->parent) return ;
 
-   //edje_object_size_min_calc(wd->notify, &minw, &minh);
-   //evas_object_size_hint_min_set(obj, minw, minh);
+   evas_object_geometry_get(wd->parent, &x, &y, &w, &h);
+   evas_object_resize(obj, w, h);
+   evas_object_move(obj, x, y);
 }
 
 static void
@@ -90,15 +104,8 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   evas_object_event_callback_del(wd->content, 
-                                  EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
-                                  _changed_size_hints);
-   evas_object_del(wd->content);
-   if (wd->timer)
-     {
-	ecore_timer_del(wd->timer);
-	wd->timer = NULL;
-     }
+   if(event_info == wd->content)
+     wd->content = NULL;
 }
 
 static void
@@ -113,7 +120,7 @@ _content_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
    _calc(data);
 }
 
-static void 
+static void
 _calc(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -122,6 +129,7 @@ _calc(Evas_Object *obj)
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    edje_object_size_min_calc(wd->notify, &minw, &minh);
+
    if (wd->content)
      {
 	int offx = (w - minw) / 2;
@@ -176,6 +184,9 @@ _show(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    evas_object_show(wd->notify);
+   
+   if(!wd->repeat_events)
+     evas_object_show(wd->block_events);
    if (wd->timer)
      {
 	ecore_timer_del(wd->timer);
@@ -191,12 +202,31 @@ _hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    evas_object_hide(wd->notify);
-
+   if(!wd->repeat_events)
+     evas_object_hide(wd->block_events);
    if (wd->timer)
      {
 	ecore_timer_del(wd->timer);
 	wd->timer = NULL;
      }
+}
+
+static void
+_parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   wd->parent = NULL;
+   evas_object_hide(obj);
+}
+
+static void
+_parent_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   wd->parent = NULL;
+   evas_object_hide(obj);
 }
 
 /**
@@ -224,6 +254,8 @@ elm_notify_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
 
+   wd->repeat_events = EINA_TRUE;
+
    wd->notify = edje_object_add(e);
    elm_notify_orient_set(obj, ELM_NOTIFY_ORIENT_TOP);
 
@@ -232,6 +264,8 @@ elm_notify_add(Evas_Object *parent)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _resize, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _show, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _hide, obj);
+
+   elm_notify_parent_set(obj, parent);
 
    _sizing_eval(obj);
    return obj;
@@ -250,20 +284,86 @@ elm_notify_content_set(Evas_Object *obj, Evas_Object *content)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if (wd->content)
-     elm_widget_sub_object_del(obj, wd->content);
+   if(wd->content)
+     {
+	evas_object_event_callback_del_full(wd->content,
+	      EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+	      _changed_size_hints, obj);
+        evas_object_event_callback_del_full(wd->content,
+	      EVAS_CALLBACK_RESIZE,
+	      _content_resize, obj);
+	evas_object_del(wd->content);
+	wd->content = NULL;
+     }
 
    if (content)
      {
-	elm_widget_sub_object_add(obj, content);
 	edje_object_part_swallow(wd->notify, "elm.swallow.content", content);
-	evas_object_event_callback_add(content, 
+	evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _changed_size_hints, obj);
-	evas_object_event_callback_add(content, 
+	evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_RESIZE,
                                        _content_resize, obj);
 	wd->content = content;
+	elm_widget_sub_object_add(obj, content);
+	_sizing_eval(obj);
+     }
+   _calc(obj);
+}
+
+/**
+ * Set the notify parent 
+ *
+ * @param obj The notify object
+ * @param content The new parent
+ *
+ * @ingroup Notify
+ */
+EAPI void
+elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if(wd->parent)
+     {
+	evas_object_event_callback_del_full(wd->parent,
+	      EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+	      _changed_size_hints, obj);
+	evas_object_event_callback_del_full(wd->parent,
+	      EVAS_CALLBACK_RESIZE,
+	      _changed_size_hints, obj);
+	evas_object_event_callback_del_full(wd->parent,
+	      EVAS_CALLBACK_MOVE,
+	      _changed_size_hints, obj);
+	evas_object_event_callback_del_full(wd->parent,
+	      EVAS_CALLBACK_DEL,
+	      _parent_del, obj);
+	evas_object_event_callback_del_full(wd->parent,
+	      EVAS_CALLBACK_HIDE,
+	      _parent_hide, obj);
+	wd->parent = NULL;
+     }
+
+   if (parent)
+     {
+	edje_object_part_swallow(wd->notify, "elm.swallow.parent", parent);
+	evas_object_event_callback_add(parent,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+	evas_object_event_callback_add(parent,
+                                       EVAS_CALLBACK_RESIZE,
+                                       _changed_size_hints, obj);
+	evas_object_event_callback_add(parent,
+                                       EVAS_CALLBACK_MOVE,
+                                       _changed_size_hints, obj);
+	evas_object_event_callback_add(parent,
+                                       EVAS_CALLBACK_DEL,
+				       _parent_del, obj);
+	evas_object_event_callback_add(parent,
+                                       EVAS_CALLBACK_HIDE,
+                                       _parent_hide, obj);
+	wd->parent = parent;
 	_sizing_eval(obj);
      }
    _calc(obj);
@@ -341,5 +441,35 @@ elm_notify_timer_init(Evas_Object *obj)
    wd->timer = NULL;
    if (wd->timeout > 0)
      wd->timer = ecore_timer_add(wd->timeout, _timer_cb, obj);
+}
+
+/**
+ * When true if the user clicks outside the window the events will be 
+ * catch by the others widgets, else the events are block and the signal
+ * dismiss will be sent when the user click outside the window.
+ *
+ * @note The default value is EINA_TRUE.
+ *
+ * @param obj The notify object
+ * @param repeats EINA_TRUE Events are repeats, else no 
+ */
+EAPI void
+elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if(repeat == wd->repeat_events) return;
+
+   wd->repeat_events = repeat;
+   if(!repeat)
+     {
+	wd->block_events = edje_object_add(evas_object_evas_get(obj));
+	_elm_theme_set(wd->block_events, "notify", "block_events", "default");
+        elm_widget_resize_object_set(obj,wd->block_events);	
+     }
+   else
+     {
+	evas_object_del(wd->block_events);
+     }
 }
 

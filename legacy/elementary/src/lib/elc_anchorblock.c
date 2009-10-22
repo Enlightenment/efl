@@ -35,9 +35,8 @@ static void
 _del_pre_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-
-   evas_object_event_callback_del(wd->entry, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				  _changed_size_hints);
+   evas_object_event_callback_del_full(wd->entry, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+				  _changed_size_hints, obj);
    elm_anchorblock_hover_end(obj);
    elm_anchorblock_hover_parent_set(obj, NULL);
 }
@@ -96,7 +95,7 @@ _anchor_clicked(void *data, Evas_Object *obj, void *event_info)
    evas_object_resize(wd->pop, info->w, info->h);
 
    wd->hover = elm_hover_add(obj);
-   if (wd->hover_style) 
+   if (wd->hover_style)
      elm_object_style_set(wd->hover, wd->hover_style);
    hover_parent = wd->hover_parent;
    if (!hover_parent) hover_parent = obj;
@@ -219,7 +218,7 @@ elm_anchorblock_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (wd->hover_parent)
-     evas_object_event_callback_del(wd->hover_parent, EVAS_CALLBACK_DEL, _parent_del);
+     evas_object_event_callback_del_full(wd->hover_parent, EVAS_CALLBACK_DEL, _parent_del, obj);
    wd->hover_parent = parent;
    if (wd->hover_parent)
      evas_object_event_callback_add(wd->hover_parent, EVAS_CALLBACK_DEL, _parent_del, obj);

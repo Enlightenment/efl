@@ -64,6 +64,9 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
+   edje_object_part_unswallow(NULL, wd->spacer); 
+
    if (wd->horizontal)
      _elm_theme_set(wd->progressbar, "progressbar", "horizontal", elm_widget_style_get(obj));
    else
@@ -94,8 +97,8 @@ _theme_hook(Evas_Object *obj)
    else
      evas_object_size_hint_min_set(wd->spacer, 1, (double)wd->size * elm_widget_scale_get(obj) * _elm_config->scale);
 
-
    edje_object_part_swallow(wd->progressbar, "elm.swallow.bar", wd->spacer);
+
    _units_set(obj);
    edje_object_message_signal_process(wd->progressbar);
    edje_object_scale_set(wd->progressbar, elm_widget_scale_get(obj) * _elm_config->scale);
@@ -130,8 +133,8 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
    if (sub == wd->icon)
      {
 	edje_object_signal_emit(wd->progressbar, "elm,state,icon,hidden", "elm");
-	evas_object_event_callback_del
-	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints);
+	evas_object_event_callback_del_full
+	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
 	wd->icon = NULL;
 	_sizing_eval(obj);
      }
@@ -172,7 +175,7 @@ _units_set(Evas_Object *obj)
    if (wd->units)
      {
         char buf[1024];
-        
+
         snprintf(buf, sizeof(buf), wd->units, 100 * wd->val);
         edje_object_part_text_set(wd->progressbar, "elm.text.status", buf);
      }

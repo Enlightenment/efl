@@ -3950,6 +3950,7 @@ collections {
 	 part { name: "elm.swallow.content";
 	    type: SWALLOW;
 	    description { state: "default" 0.0;
+           align: 0.0 0.0;
 	       rel1 {
 		  to_y: "elm.text";
 		  relative: 0.0 1.0;
@@ -5385,6 +5386,80 @@ collections {
       }
    }
 
+    group { name: "elm/entry/base-charwrap/default";
+      styles
+	{
+	   style { name: "entry_textblock_style_charwrap";
+ 	      base: "font=Sans font_size=10 align=left color=#000 wrap=char";
+	      tag:  "br" "\n";
+	      tag:  "tab" "\t";
+	      tag:  "em" "+ font=Sans:style=Oblique";
+	      tag:  "b" "+ font=Sans:style=Bold";
+	      tag:  "link" "+ color=#800 underline=on underline_color=#8008";
+	      tag:  "hilight" "+ font=Sans:style=Bold";
+	   }
+	   style { name: "entry_textblock_disabled_style_charwrap";
+ 	      base: "font=Sans font_size=10 align=left color=#00000080 wrap=char";
+	      tag:  "br" "\n";
+	      tag:  "tab" "\t";
+	      tag:  "em" "+ font=Sans:style=Oblique";
+	      tag:  "b" "+ font=Sans:style=Bold";
+	      tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
+	      tag:  "hilight" "+ font=Sans:style=Bold";
+	   }
+	}
+      parts {
+	 part { name: "elm.text";
+	    type: TEXTBLOCK;
+	    mouse_events: 1;
+	    scale: 1;
+	    entry_mode: EDITABLE;
+	    select_mode: EXPLICIT;
+	    multiline: 1;
+	    source: "elm/entry/selection/default"; // selection under
+//	    source2: "X"; // selection over
+//	    source3: "X"; // cursor under
+	    source4: "elm/entry/cursor/default"; // cursorover
+	    source5: "elm/entry/anchor/default"; // anchor under
+//	    source6: "X"; // anchor over
+	    description { state: "default" 0.0;
+	       text {
+		  style: "entry_textblock_style_charwrap";
+		  min: 0 1;
+	       }
+	    }
+	    description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+	       text {
+		  style: "entry_textblock_disabled_style_charwrap";
+		  min: 0 1;
+	       }
+	    }
+	 }
+      }
+      programs {
+	 program { name: "focus";
+            signal: "load";
+	    source: "";
+	    action: FOCUS_SET;
+	    target: "elm.text";
+	 }
+	 program { name: "disable";
+	    signal: "elm,state,disabled";
+	    source: "elm";
+	    action: STATE_SET "disabled" 0.0;
+	    target: "elm.text";
+	 }
+	 program { name: "enable";
+	    signal: "elm,state,enabled";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
+	    target: "elm.text";
+	 }
+      }
+   }
+
+
    group { name: "elm/entry/base-nowrap/default";
       parts {
 	 part { name: "elm.text";
@@ -5629,6 +5704,53 @@ collections {
       }
    }
 
+   group { name: "elm/entry/base-noedit-charwrap/default";
+      parts {
+	 part { name: "elm.text";
+	    type: TEXTBLOCK;
+	    mouse_events: 1;
+	    scale: 1;
+	    entry_mode: PLAIN;
+	    select_mode: EXPLICIT;
+	    multiline: 1;
+	    source: "elm/entry/selection/default"; // selection under
+	    source5: "elm/entry/anchor/default"; // anchor under
+	    description { state: "default" 0.0;
+	       text {
+		  style: "entry_textblock_style_charwrap";
+		  min: 0 1;
+	       }
+	    }
+	    description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+	       text {
+		  style: "entry_textblock_disabled_style_charwrap";
+	       }
+	    }
+	 }
+      }
+      programs {
+	 program { name: "focus";
+            signal: "load";
+	    source: "";
+	    action: FOCUS_SET;
+	    target: "elm.text";
+	 }
+	 program { name: "disable";
+	    signal: "elm,state,disabled";
+	    source: "elm";
+	    action: STATE_SET "disabled" 0.0;
+	    target: "elm.text";
+	 }
+	 program { name: "enable";
+	    signal: "elm,state,enabled";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
+	    target: "elm.text";
+	 }
+      }
+   }
+   
    group { name: "elm/entry/base-nowrap-noedit/default";
       parts {
 	 part { name: "elm.text";
@@ -6903,7 +7025,18 @@ collections {
       }
    }
 
-///////////////////////////////////////////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////////////
+   group { name: "elm/notify/block_events/default";
+       parts {
+           part { name: "block_events";
+               type: RECT;
+               description { state: "default" 0.0;
+                   color: 0 0 0 64;
+                   visible: 1;
+               }
+           }
+       }
+   }
    group { name: "elm/notify/base/default";
        //this group is a design similar to the inwin group
        images {
@@ -7865,6 +7998,15 @@ collections {
                     color: 255 255 255 255;
                     rel1.to: "image_2_whole";
                     rel2.to: "image_2_whole";
+                }
+            }
+            part { name: "events_catcher";
+                type: RECT;
+                repeat_events: 1;
+                description {
+                    state: "default" 0.0;
+                    visible: 1;
+                    color: 0 0 0 0;
                 }
             }
         }
