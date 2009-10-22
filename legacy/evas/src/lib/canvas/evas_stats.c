@@ -68,8 +68,7 @@ evas_cserve_image_cache_contents_get(Evas_Cserve_Image_Cache *cache)
      {
         Evas_Cserve_Image *im;
         Op_Getinfo_Item it;
-        char *file, *key, buf[512];
-        struct tm *ltm;
+        char *file, *key;
 
         itt = (Op_Getinfo_Item *)p;
         memcpy(&it, itt, sizeof(Op_Getinfo_Item));

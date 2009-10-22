@@ -37,7 +37,7 @@ static const char *loaders_name[] = {
 };
 
 static Eina_Bool
-_evas_image_foreach_loader(const Eina_Hash *hash, const char *key, Evas_Module *em, Image_Entry *ie)
+_evas_image_foreach_loader(const Eina_Hash *hash __UNUSED__, const char *key __UNUSED__, Evas_Module *em, Image_Entry *ie)
 {
    Evas_Image_Load_Func *evas_image_load_func = NULL;
 

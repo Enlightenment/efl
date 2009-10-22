@@ -190,7 +190,7 @@ _sci_fix_newest(RGBA_Image *im)
 
 static Scaleitem *
 _sci_find(RGBA_Image *im,
-          RGBA_Draw_Context *dc, int smooth,
+          RGBA_Draw_Context *dc __UNUSED__, int smooth,
           int src_region_x, int src_region_y,
           int src_region_w, int src_region_h,
           int dst_region_w, int dst_region_h)
@@ -343,11 +343,11 @@ evas_common_rgba_image_scalecache_flush(void)
 }
 
 EAPI void
-evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst,
+evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst __UNUSED__,
                                           RGBA_Draw_Context *dc, int smooth,
                                           int src_region_x, int src_region_y,
                                           int src_region_w, int src_region_h,
-                                          int dst_region_x, int dst_region_y,
+                                          int dst_region_x __UNUSED__, int dst_region_y __UNUSED__,
                                           int dst_region_w, int dst_region_h)
 {
 #ifdef SCALECACHE

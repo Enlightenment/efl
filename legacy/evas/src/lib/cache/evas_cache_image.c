@@ -707,10 +707,9 @@ EAPI Image_Entry *
 evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *key, RGBA_Image_Loadopts *lo, int *error)
 {
    const char           *ckey = "(null)";
-   const char           *format;
    char                 *hkey;
    Image_Entry          *im;
-   Evas_Image_Load_Opts  prevent = { 0, 0, 0, 0, 0, 0, 0, 0 };
+   Evas_Image_Load_Opts  prevent = { 0, 0, 0, 0, { 0, 0, 0, 0 } };
    size_t                size;
    int                   stat_done = 0;
    size_t                file_length;

@@ -14,7 +14,7 @@ static int connect_num = 0;
 static int cserve_discon = 0;
 
 static void
-pipe_handler(int x, siginfo_t *info, void *data)
+pipe_handler(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
 {
 }
 

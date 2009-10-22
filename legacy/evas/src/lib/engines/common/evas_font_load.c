@@ -20,8 +20,8 @@ static Eina_Bool font_modify_cache_cb(const Eina_Hash *hash, const void *key, vo
 static Eina_Bool font_flush_free_glyph_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 
 static int
-_evas_font_cache_int_cmp(const RGBA_Font_Int *k1, int k1_length,
-			 const RGBA_Font_Int *k2, int k2_length)
+_evas_font_cache_int_cmp(const RGBA_Font_Int *k1, int k1_length __UNUSED__,
+			 const RGBA_Font_Int *k2, int k2_length __UNUSED__)
 {
    /* RGBA_Font_Source->name is a stringshare */
    if (k1->src->name == k2->src->name)
@@ -30,7 +30,7 @@ _evas_font_cache_int_cmp(const RGBA_Font_Int *k1, int k1_length,
 }
 
 static int
-_evas_font_cache_int_hash(const RGBA_Font_Int *key, int key_length)
+_evas_font_cache_int_hash(const RGBA_Font_Int *key, int key_length __UNUSED__)
 {
    int hash;
 

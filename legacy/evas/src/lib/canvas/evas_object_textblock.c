@@ -3300,7 +3300,6 @@ EAPI Eina_Bool
 evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur)
 {
    int index, ch;
-   int at_start_of_line = 0;
 
    if (!cur) return EINA_FALSE;
    if (!cur->node) return EINA_FALSE;
