@@ -61,6 +61,15 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
+_content_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Evas_Coord minw, minh;
+   edje_object_size_min_calc(wd->content, &minw, &minh);
+   evas_object_size_hint_min_set(wd->content, minw, minh);
+}
+
+static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -68,8 +77,8 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 
    if (sub == wd->content)
      {
-	evas_object_event_callback_del(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints);
+	evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
 	wd->content = NULL;
 	_sizing_eval(obj);
      }
@@ -167,6 +176,9 @@ elm_frame_content_set(Evas_Object *obj, Evas_Object *content)
 	evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
+   evas_object_event_callback_add(content,
+                                       EVAS_CALLBACK_RESIZE,
+				       _content_resize, obj);
 	_sizing_eval(obj);
      }
 }
