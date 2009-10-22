@@ -365,11 +365,11 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
           {
              if (yuv)
                evas_gl_common_context_yuv_push(gc,
-                                                 im->tex,
-                                                 sx, sy, sw, sh,
-                                                 dx, dy, dw, dh,
+                                               im->tex,
+                                               sx, sy, sw, sh,
+                                               dx, dy, dw, dh,
                                                r, g, b, a,
-                                                 smooth);
+                                               smooth);
              else
                evas_gl_common_context_image_push(gc,
                                                  im->tex,

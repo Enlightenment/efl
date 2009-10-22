@@ -17,8 +17,7 @@ _tex_adjust(Evas_GL_Context *gc, int *w, int *h)
 {
    unsigned int n;
    
-// disable - has a bug somewhere   
-//   if (gc->shared->info.tex_npo2) return;
+   if (gc->shared->info.tex_npo2) return;
    /*if (gc->shared->info.tex_rect) return;*/
    *w = _nearest_pow2(*w);
    *h = _nearest_pow2(*h);
@@ -27,8 +26,7 @@ _tex_adjust(Evas_GL_Context *gc, int *w, int *h)
 static int
 _tex_round_slot(Evas_GL_Context *gc, int h)
 {
-// disable. has a bug somewhere   
-//   if (!gc->shared->info.tex_npo2)
+   if (!gc->shared->info.tex_npo2)
      h = _nearest_pow2(h);
    return (h + 15) >> 4;
 }
@@ -59,6 +57,7 @@ _pool_tex_new(Evas_GL_Context *gc, int w, int h, GLuint format)
    
    pt = calloc(1, sizeof(Evas_GL_Texture_Pool));
    if (!pt) return NULL;
+   h = _tex_round_slot(gc, h) << 4;
    _tex_adjust(gc, &w, &h);
    pt->gc = gc;
    pt->w = w;
@@ -131,7 +130,7 @@ _pool_tex_find(Evas_GL_Context *gc, int w, int h, GLuint format, int *u, int *v,
    
    if ((w > 512) || (h > 512))
      {
-        pt = _pool_tex_new(gc, w + 2, h + 1, format);
+        pt = _pool_tex_new(gc, w, h, format);
         gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, pt);
         pt->slot = -1;
         pt->fslot = -1;
@@ -156,7 +155,8 @@ _pool_tex_find(Evas_GL_Context *gc, int w, int h, GLuint format, int *u, int *v,
           }
      }
    pt = _pool_tex_new(gc, atlas_w, h, format);
-   gc->shared->tex.atlas[th][th2] = eina_list_prepend(gc->shared->tex.atlas[th][th2], pt);
+   gc->shared->tex.atlas[th][th2] = 
+     eina_list_prepend(gc->shared->tex.atlas[th][th2], pt);
    pt->slot = th;
    pt->fslot = th2;
    *u = 0;
@@ -178,7 +178,7 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im)
    tex->gc = gc;
    tex->references = 1;
 //   if (im->cache_entry.flags.alpha)
-   tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3, 
+   tex->pt = _pool_tex_find(gc, im->cache_entry.w + 2,
                             im->cache_entry.h + 1, GL_RGBA, 
                             &u, &v, &l_after, 1024);
 //   else

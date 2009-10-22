@@ -124,7 +124,9 @@ evas_gl_common_context_new(void)
                  (strstr(ext, "OES_texture_npot")))
                shared->info.tex_npo2 = 1;
              if ((strstr(ext, "GL_NV_texture_rectangle")) ||
-                 (strstr(ext, "GL_EXT_texture_rectangle")))
+                 (strstr(ext, "GL_EXT_texture_rectangle")) ||
+                 (strstr(ext, "GL_ARB_texture_rectangle"))
+                 )
                shared->info.tex_rect = 1;
           }
         glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS,
