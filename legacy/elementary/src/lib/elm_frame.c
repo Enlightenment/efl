@@ -79,6 +79,8 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
      {
 	evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _changed_size_hints, obj);
+   evas_object_event_callback_del_full(sub, EVAS_CALLBACK_RESIZE,
+                                       _content_resize, obj);
 	wd->content = NULL;
 	_sizing_eval(obj);
      }
