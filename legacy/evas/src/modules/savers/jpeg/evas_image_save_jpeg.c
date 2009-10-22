@@ -30,25 +30,22 @@ _JPEGFatalErrorHandler(j_common_ptr cinfo)
    return;
 }
 
-static void _JPEGErrorHandler(j_common_ptr cinfo);
 static void
-_JPEGErrorHandler(j_common_ptr cinfo)
+_JPEGErrorHandler(j_common_ptr cinfo __UNUSED__)
 {
-   emptr errmgr;
+/*    emptr errmgr; */
    
-   errmgr = (emptr) cinfo->err;
+/*    errmgr = (emptr) cinfo->err; */
    return;
 }
 
-static void _JPEGErrorHandler2(j_common_ptr cinfo, int msg_level);
 static void
-_JPEGErrorHandler2(j_common_ptr cinfo, int msg_level)
+_JPEGErrorHandler2(j_common_ptr cinfo __UNUSED__, int msg_level __UNUSED__)
 {
-   emptr errmgr;
+/*    emptr errmgr; */
    
-   errmgr = (emptr) cinfo->err;
+/*    errmgr = (emptr) cinfo->err; */
    return;
-   msg_level = 0;
 }
 
 static int

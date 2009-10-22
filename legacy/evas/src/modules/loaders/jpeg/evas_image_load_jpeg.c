@@ -53,26 +53,25 @@ _JPEGFatalErrorHandler(j_common_ptr cinfo)
 }
 
 static void
-_JPEGErrorHandler(j_common_ptr cinfo)
+_JPEGErrorHandler(j_common_ptr cinfo __UNUSED__)
 {
-   emptr errmgr;
+/*    emptr errmgr; */
 
-   errmgr = (emptr) cinfo->err;
+/*    errmgr = (emptr) cinfo->err; */
    /*   cinfo->err->output_message(cinfo);*/
    /*   longjmp(errmgr->setjmp_buffer, 1);*/
    return;
 }
 
 static void
-_JPEGErrorHandler2(j_common_ptr cinfo, int msg_level)
+_JPEGErrorHandler2(j_common_ptr cinfo __UNUSED__, int msg_level __UNUSED__)
 {
-   emptr errmgr;
+/*    emptr errmgr; */
 
-   errmgr = (emptr) cinfo->err;
+/*    errmgr = (emptr) cinfo->err; */
    /*   cinfo->err->output_message(cinfo);*/
    /*   longjmp(errmgr->setjmp_buffer, 1);*/
    return;
-   msg_level = 0;
 }
 
 static int
@@ -200,6 +199,7 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie, FILE *f)
    return 1;
 }
 
+/*
 static double
 get_time(void)
 {
@@ -208,6 +208,7 @@ get_time(void)
    gettimeofday(&timev, NULL);
    return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
 }
+*/
 
 static int
 evas_image_load_file_data_jpeg_internal(Image_Entry *ie, FILE *f)

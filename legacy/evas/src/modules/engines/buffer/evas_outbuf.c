@@ -76,7 +76,6 @@ RGBA_Image *
 evas_buffer_outbuf_buf_new_region_for_update(Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch)
 {
    RGBA_Image *im;
-   DATA32 *ptr;
 
    if (buf->priv.back_buf)
      {

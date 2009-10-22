@@ -543,7 +543,7 @@ eng_output_idle_flush(void *data)
 }
 
 static Eina_Bool
-eng_canvas_alpha_get(void *data, void *context)
+eng_canvas_alpha_get(void *data __UNUSED__, void *context __UNUSED__)
 {
    return EINA_FALSE;
 }

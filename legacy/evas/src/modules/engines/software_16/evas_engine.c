@@ -672,12 +672,12 @@ eng_image_draw(void *data __UNUSED__, void *context, void *surface, void *image,
 }
 
 static void
-eng_image_scale_hint_set(void *data __UNUSED__, void *image, int hint)
+eng_image_scale_hint_set(void *data __UNUSED__, void *image __UNUSED__, int hint __UNUSED__)
 {
 }
 
 static int
-eng_image_scale_hint_get(void *data __UNUSED__, void *image)
+eng_image_scale_hint_get(void *data __UNUSED__, void *image __UNUSED__)
 {
    return EVAS_IMAGE_SCALE_HINT_NONE;
 }
