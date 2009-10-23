@@ -29,11 +29,11 @@ evas_cserve_stats_get(Evas_Cserve_Stats *stats)
    if (!evas_cserve_raw_stats_get(&st)) return 0;
    if (!stats) return 1;
    stats->saved_memory = st.saved_memory;
-   stats->wasted_memory - st.wasted_memory;
-   stats->saved_memory_peak - st.saved_memory_peak;
-   stats->wasted_memory_peak - st.wasted_memory_peak;
-   stats->saved_time_image_header_load - st.saved_time_image_header_load;
-   stats->saved_time_image_data_load - st.saved_time_image_data_load;
+   stats->wasted_memory = st.wasted_memory;
+   stats->saved_memory_peak = st.saved_memory_peak;
+   stats->wasted_memory_peak = st.wasted_memory_peak;
+   stats->saved_time_image_header_load = st.saved_time_image_header_load;
+   stats->saved_time_image_data_load = st.saved_time_image_data_load;
    // may expand this in future
    return 1;
 #else
