@@ -83,6 +83,21 @@ elm_theme_overlay_add(const char *item)
 {
    const char *f = eina_stringshare_add(item);
    if (f) overlay = eina_list_prepend(overlay, f);
+   elm_theme_flush();
+}
+
+EAPI void
+elm_theme_overlay_del(const char *item)
+{
+   const Eina_List *l;
+   const char *f;
+   EINA_LIST_FOREACH(overlay, l, f)
+     {
+        eina_stringshare_del(f);
+        overlay = eina_list_remove_list(overlay, l);
+        return;
+     }
+   elm_theme_flush();
 }
 
 EAPI void
@@ -90,6 +105,29 @@ elm_theme_extension_add(const char *item)
 {
    const char *f = eina_stringshare_add(item);
    if (f) extension = eina_list_append(extension, f);
+   elm_theme_flush();
+}
+
+EAPI void
+elm_theme_extension_del(const char *item)
+{
+   const Eina_List *l;
+   const char *f;
+   EINA_LIST_FOREACH(extension, l, f)
+     {
+        eina_stringshare_del(f);
+        extension = eina_list_remove_list(extension, l);
+        return;
+     }
+   elm_theme_flush();
+}
+
+EAPI void
+elm_theme_flush(void)
+{
+   if (cache) eina_hash_free(cache);
+   cache = NULL;
+   _elm_win_rescale();
 }
 
 int
