@@ -195,7 +195,7 @@ evas_gl_common_shader_program_init(Evas_GL_Program *p,
    p->frag = glCreateShader(GL_FRAGMENT_SHADER);
 #if defined (GLES_VARIETY_S3C6410)
    glShaderBinary(1, &(p->vert), 0, vert->bin, vert->bin_size);
-   glShaderBinary(1, &(p->frag), 0, frag->bin, vert->bin_size);
+   glShaderBinary(1, &(p->frag), 0, frag->bin, frag->bin_size);
 #else 
    glShaderSource(p->vert, 1,
                   (const char **)&(vert->src), NULL);
