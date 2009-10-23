@@ -792,6 +792,7 @@ extern "C" {
    EAPI void              elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
    /* available item styles:
     * default
+    * default_style - The text part is a textblock
     * double_label
     * icon_top_text_bottom
     */
