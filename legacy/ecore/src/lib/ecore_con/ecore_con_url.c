@@ -327,6 +327,10 @@ ecore_con_url_destroy(Ecore_Con_Url *url_con)
      }
    if (url_con->curl_easy)
      {
+	// FIXME: For an unknown reason, progress continue to arrive after destruction
+	// this prevent any further call to the callback.
+	curl_easy_setopt(url_con->curl_easy, CURLOPT_PROGRESSFUNCTION, NULL);
+
 	if (url_con->active)
 	  {
 	     url_con->active = 0;
