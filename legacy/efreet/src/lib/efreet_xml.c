@@ -44,6 +44,7 @@ static int error = 0;
 #endif
 #define EFREET_MODULE_LOG_DOM _efreet_xml_log_dom
 
+static int _efreet_xml_init_count = 0;
 static int _efreet_xml_log_dom = -1;
 
 /**
@@ -54,13 +55,16 @@ static int _efreet_xml_log_dom = -1;
 int
 efreet_xml_init(void)
 {
-    _efreet_xml_log_dom = eina_log_domain_register("Efreet_xml", EFREET_DEFAULT_LOG_COLOR);
-    if (_efreet_xml_log_dom < 0)
-    {
+   _efreet_xml_init_count++;
+   if (_efreet_xml_init_count > 1) return _efreet_xml_init_count;
+   _efreet_xml_log_dom = eina_log_domain_register("Efreet_xml", EFREET_DEFAULT_LOG_COLOR);
+   if (_efreet_xml_log_dom < 0)
+     {
+        _efreet_xml_init_count--;
 	ERROR("Efreet: Could not create a log domain for Efreet_xml.");
-	return 0;
-    }
-    return 1;
+	return _efreet_xml_init_count;
+     }
+   return _efreet_xml_init_count;
 }
 
 /**
@@ -71,7 +75,9 @@ efreet_xml_init(void)
 void
 efreet_xml_shutdown(void)
 {
-    eina_log_domain_unregister(_efreet_xml_log_dom);
+   _efreet_xml_init_count--;
+   if (_efreet_xml_init_count > 0) return;
+   eina_log_domain_unregister(_efreet_xml_log_dom);
 }
 
 /**
