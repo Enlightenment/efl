@@ -11616,7 +11616,7 @@ collections {
                description {
                    state: "default" 0.0;
                    align: 0.0 0.5;
-                   fixed: 1 1;
+                   fixed: 0 1;
                    rel1 {
                        to_x: "elm.swallow.icon";
                        to_y: "base";
@@ -11862,7 +11862,7 @@ collections {
                description {
                    state: "default" 0.0;
                    align: 0.0 0.5;
-                   fixed: 1 1;
+                   fixed: 0 1;
                    rel1 {
                        to_x: "elm.swallow.icon";
                        to_y: "base";
@@ -12162,7 +12162,7 @@ collections {
                description {
                    state: "default" 0.0;
                    align: 0.0 0.5;
-                   fixed: 1 1;
+                   fixed: 0 1;
                    rel1 {
                        to_x:     "elm.swallow.icon";
                        to_y: "base";
@@ -12456,7 +12456,7 @@ collections {
                description {
                    state: "default" 0.0;
                    align: 0.0 0.5;
-                   fixed: 1 1;
+                   fixed: 0 1;
                    rel1 {
                        to_x:     "elm.swallow.icon";
                        to_y: "base";
