@@ -130,6 +130,12 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 #else
 	return 0;
 #endif
+      case ECORE_EVAS_ENGINE_QUARTZ:
+#ifdef BUILD_ECORE_EVAS_QUARTZ
+	 return 1;
+#else
+	 return 0;
+#endif
       default:
 	return 0;
 	break;
@@ -313,6 +319,22 @@ _ecore_evas_constructor_software_x11(int x, int y, int w, int h, const char *ext
    ee = ecore_evas_software_x11_new(disp_name, parent, x, y, w, h);
    free(disp_name);
 
+   return ee;
+}
+#endif
+
+#ifdef BUILD_ECORE_EVAS_QUARTZ
+static Ecore_Evas *
+_ecore_evas_constructor_quartz(int x, int y, int w, int h, const char *extra_options)
+{
+   char *name = NULL;
+   Ecore_Evas *ee;
+
+   _ecore_evas_parse_extra_options_str(extra_options, "name=", &name);
+   ee = ecore_evas_quartz_new(name, w, h);
+   free(name);
+
+   if (ee) ecore_evas_move(ee, x, y);
    return ee;
 }
 #endif
@@ -570,6 +592,9 @@ static const struct ecore_evas_engine _engines[] = {
   /* independent */
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
   {"buffer", _ecore_evas_constructor_buffer},
+#endif
+#ifdef BUILD_ECORE_EVAS_QUARTZ
+  {"quartz", _ecore_evas_constructor_quartz},
 #endif
   {NULL, NULL}
 };
