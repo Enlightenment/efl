@@ -93,14 +93,12 @@ elm_theme_overlay_del(const char *item)
    const char *f, *s;
    s = eina_stringshare_add(item);
    EINA_LIST_FOREACH(overlay, l, f)
-     {
-	if (f == s)
-	  {
-	     eina_stringshare_del(f);
-	     overlay = eina_list_remove_list(overlay, l);
-	  }
-        break;
-     }
+     if (f == s)
+       {
+	  eina_stringshare_del(f);
+	  overlay = eina_list_remove_list(overlay, l);
+	  break;
+       }
    eina_stringshare_del(s);
    elm_theme_flush();
 }
@@ -120,14 +118,12 @@ elm_theme_extension_del(const char *item)
    const char *f, *s;
    s = eina_stringshare_add(item);
    EINA_LIST_FOREACH(extension, l, f)
-     {
-	if (f == s)
-	  {
-	     eina_stringshare_del(f);
-	     extension = eina_list_remove_list(extension, l);
-	  }
-        break;
-     }
+     if (f == s)
+       {
+	  eina_stringshare_del(f);
+	  extension = eina_list_remove_list(extension, l);
+	  break;
+       }
    eina_stringshare_del(s);
    elm_theme_flush();
 }
