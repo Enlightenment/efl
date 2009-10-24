@@ -20,6 +20,7 @@
 
 /**
  * @mainpage Evil
+ * @image html  e_big.png
  * @author Vincent Torri
  * @date 2008
  *
@@ -67,6 +68,7 @@ extern "C" {
 #include <limits.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <math.h>
 
 
 #ifdef PATH_MAX
@@ -150,11 +152,15 @@ typedef unsigned long  gid_t;
 #  define write(fd,buffer,count) _write((fd),(buffer),(count))
 #  define unlink(filename) _unlink((filename))
 #  define mkdir(p,m) _mkdir(p)
+#  define access(p,m) _access((p),(m))
 #  define lstat(f,s) _stat((f),(s))
 #  define strdup(s) _strdup(s)
-#  define fileno(f) _fileno(f)
+#  ifndef fileno
+#   define fileno(f) _fileno(f)
+#  endif
 #  define fdopen(fd,m) _fdopen((fd),(m))
 #  define tzset _tzset
+#  define hypot(x,y) _hypot((x),(y))
 
 # endif
 #endif
