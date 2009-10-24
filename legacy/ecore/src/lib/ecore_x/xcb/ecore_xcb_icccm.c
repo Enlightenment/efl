@@ -718,6 +718,8 @@ EAPI void
 ecore_x_icccm_title_set(Ecore_X_Window window,
                         const char    *title)
 {
+   if (!title) return;
+
    /* FIXME: to do:  utf8 */
 
 /*    xprop.value = NULL; */
