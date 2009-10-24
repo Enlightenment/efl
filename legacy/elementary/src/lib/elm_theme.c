@@ -124,7 +124,7 @@ elm_theme_extension_del(const char *item)
 	if (f == s)
 	  {
 	     eina_stringshare_del(f);
-	     overlay = eina_list_remove_list(overlay, l);
+	     extension = eina_list_remove_list(extension, l);
 	  }
         break;
      }
