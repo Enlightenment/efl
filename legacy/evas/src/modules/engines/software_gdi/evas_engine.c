@@ -146,11 +146,13 @@ eng_setup(Evas *e, void *in)
                                                 0, 0);
 	re->ob->onebuf = ponebuf;
      }
-   if (!e->engine.data.output) return;
+   if (!e->engine.data.output) return 0;
    if (!e->engine.data.context)
      e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
 
    re = e->engine.data.output;
+
+   return 1;
 }
 
 static void
