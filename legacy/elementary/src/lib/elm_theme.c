@@ -90,13 +90,18 @@ EAPI void
 elm_theme_overlay_del(const char *item)
 {
    const Eina_List *l;
-   const char *f;
+   const char *f, *s;
+   s = eina_stringshare_add(item);
    EINA_LIST_FOREACH(overlay, l, f)
      {
-        eina_stringshare_del(f);
-        overlay = eina_list_remove_list(overlay, l);
-        return;
+	if (f == s)
+	  {
+	     eina_stringshare_del(f);
+	     overlay = eina_list_remove_list(overlay, l);
+	  }
+        break;
      }
+   eina_stringshare_del(s);
    elm_theme_flush();
 }
 
@@ -112,13 +117,18 @@ EAPI void
 elm_theme_extension_del(const char *item)
 {
    const Eina_List *l;
-   const char *f;
+   const char *f, *s;
+   s = eina_stringshare_add(item);
    EINA_LIST_FOREACH(extension, l, f)
      {
-        eina_stringshare_del(f);
-        extension = eina_list_remove_list(extension, l);
-        return;
+	if (f == s)
+	  {
+	     eina_stringshare_del(f);
+	     overlay = eina_list_remove_list(overlay, l);
+	  }
+        break;
      }
+   eina_stringshare_del(s);
    elm_theme_flush();
 }
 
@@ -126,7 +136,7 @@ EAPI void
 elm_theme_flush(void)
 {
    if (cache) eina_hash_free(cache);
-   cache = NULL;
+   cache = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
    _elm_win_rescale();
 }
 
@@ -175,13 +185,6 @@ _elm_theme_icon_set(Evas_Object *o, const char *group, const char *style)
    return (w > 0);
 }
 
-static Eina_Bool
-_cache_free_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata)
-{
-   eina_stringshare_del(data);
-   return EINA_TRUE;
-}
-
 int
 _elm_theme_parse(const char *theme)
 {
@@ -223,12 +226,8 @@ _elm_theme_parse(const char *theme)
 	  names = eina_list_append(names, p);
      }
    if (cache)
-     {
-	eina_hash_foreach(cache, _cache_free_cb, NULL);
-	eina_hash_free(cache);
-	cache = NULL;
-     }
-   cache = eina_hash_string_superfast_new(NULL);
+     eina_hash_free(cache);
+   cache = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
 
    EINA_LIST_FREE(themes, p)
      {
