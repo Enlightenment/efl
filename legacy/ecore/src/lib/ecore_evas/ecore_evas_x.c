@@ -1739,8 +1739,8 @@ _ecore_evas_x_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
    if (ee->prop.clas) free(ee->prop.clas);
    ee->prop.name = NULL;
    ee->prop.clas = NULL;
-   ee->prop.name = strdup(n);
-   ee->prop.clas = strdup(c);
+   if (n) ee->prop.name = strdup(n);
+   if (c) ee->prop.clas = strdup(c);
    ecore_x_icccm_name_class_set(ee->prop.window, ee->prop.name, ee->prop.clas);
 }
 
