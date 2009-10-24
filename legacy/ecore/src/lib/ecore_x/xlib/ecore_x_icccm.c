@@ -413,6 +413,8 @@ ecore_x_icccm_title_set(Ecore_X_Window win, const char *t)
    XTextProperty       xprop;
    int                 ret;
 
+   if (!t) return;
+
    xprop.value = NULL;
 #ifdef X_HAVE_UTF8_STRING
    list[0] = strdup(t);
