@@ -604,6 +604,20 @@ efreet_ini_localestring_set(Efreet_Ini *ini, const char *key, const char *value)
 }
 
 /**
+ * @param ini: The ini struct to work with
+ * @param key: The key to remove
+ * @return Returns no value
+ * @brief Remove the given key from the ini struct
+ */
+EAPI void
+efreet_ini_key_unset(Efreet_Ini *ini, const char *key)
+{
+    if (!ini || !key || !ini->section) return;
+
+    eina_hash_del(ini->section, key, NULL);
+}
+
+/**
  * @param str The string to unescape
  * @return An allocated unescaped string
  * @brief Unescapes backslash escapes in a string

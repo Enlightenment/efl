@@ -52,6 +52,8 @@ EAPI double       efreet_ini_double_get(Efreet_Ini *ini, const char *key);
 EAPI void         efreet_ini_double_set(Efreet_Ini *ini, const char *key,
                                                     double value);
 
+EAPI void         efreet_ini_key_unset(Efreet_Ini *ini, const char *key);
+
 /**
  * @}
  */
