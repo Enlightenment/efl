@@ -32,7 +32,7 @@ void *alloca (size_t);
 #include "Efreet.h"
 #include "efreet_private.h"
 
-#ifdef EFREET_MODULE_LOG_DOM 
+#ifdef EFREET_MODULE_LOG_DOM
 #undef EFREET_MODULE_LOG_DOM
 #endif
 #define EFREET_MODULE_LOG_DOM _efreet_ini_log_dom
@@ -145,8 +145,8 @@ efreet_ini_parse(const char *file)
         int sep;
 
         /* find the end of line */
-        for (line_length = 0; 
-                (line_length < left) && 
+        for (line_length = 0;
+                (line_length < left) &&
                 (line_start[line_length] != '\n'); line_length++)
             ;
 
@@ -158,9 +158,9 @@ efreet_ini_parse(const char *file)
         }
 
         /* skip empty lines and comments */
-        if ((line_length == 0) || (line_start[0] == '\r') || 
+        if ((line_length == 0) || (line_start[0] == '\r') ||
                 (line_start[0] == '\n') || (line_start[0] == '#') ||
-                (line_start[0] == '\0')) 
+                (line_start[0] == '\0'))
             goto next_line;
 
         /* new section */
@@ -169,8 +169,8 @@ efreet_ini_parse(const char *file)
             int header_length;
 
             /* find the ']' */
-            for (header_length = 1; 
-                    (header_length < line_length) && 
+            for (header_length = 1;
+                    (header_length < line_length) &&
                     (line_start[header_length] != ']'); ++header_length)
                 ;
 
@@ -217,7 +217,7 @@ efreet_ini_parse(const char *file)
             int key_end, value_start, value_end;
 
             /* trim whitespace from end of key */
-            for (key_end = sep - 1; 
+            for (key_end = sep - 1;
                     (key_end > 0) && isspace(line_start[key_end]); --key_end)
                 ;
 
@@ -230,7 +230,7 @@ efreet_ini_parse(const char *file)
                 ;
 
             /* trim \n off of end of value */
-            for (value_end = line_length; 
+            for (value_end = line_length;
                  (value_end > value_start) &&
                  ((line_start[value_end] == '\n') ||
                   (line_start[value_end] == '\r')); --value_end)
@@ -257,7 +257,7 @@ efreet_ini_parse(const char *file)
             memcpy((char*)key, line_start, key_end);
             ((char*)key)[key_end] = '\0';
 
-            memcpy((char*)value, line_start + value_start, 
+            memcpy((char*)value, line_start + value_start,
                     value_end - value_start);
             ((char*)value)[value_end - value_start] = '\0';
 
