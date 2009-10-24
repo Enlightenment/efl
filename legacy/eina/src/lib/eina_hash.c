@@ -773,7 +773,8 @@ eina_hash_population(const Eina_Hash *hash)
  * @param hash The hash table to be freed
  *
  * This function frees up all the memory allocated to storing the specified
- * hash tale pointed to by @p hash. Any entries in the table that the program
+ * hash tale pointed to by @p hash. If no data_free_cb has been passed to the
+ * hash at creation time, any entries in the table that the program
  * has no more pointers for elsewhere may now be lost, so this should only be
  * called if the program has lready freed any allocated data in the hash table
  * or has the pointers for data in teh table stored elswehere as well.
