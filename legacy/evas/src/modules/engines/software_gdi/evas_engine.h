@@ -6,7 +6,7 @@
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
 
-extern _evas_engine_soft_gdi_log_dom = -1;
+extern int _evas_engine_soft_gdi_log_dom;
 
 #ifdef ERR
 # undef ERR

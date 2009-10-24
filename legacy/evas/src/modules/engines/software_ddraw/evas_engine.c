@@ -330,8 +330,7 @@ module_open(Evas_Module *em)
    if(_evas_log_dom_module < 0)
      {
        EINA_LOG_ERR("Can not create a module log domain.");
-       free(info);
-       return NULL;
+       return 0;
      }
    /* store it for later use */
    func = pfunc;

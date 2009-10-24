@@ -338,7 +338,7 @@ module_open(Evas_Module *em)
    if(_evas_engine_soft_gdi_log_dom < 0)
      {
        EINA_LOG_ERR("Impossible to create a log domain for the Soft_GDI engine.\n");
-       return NULL;
+       return 0;
      }
    /* store it for later use */
    func = pfunc;
