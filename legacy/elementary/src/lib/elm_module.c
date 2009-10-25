@@ -48,7 +48,7 @@ _elm_module_add(const char *name)
         
         if (home)
           {
-             snprintf(buf, sizeof(buf), "%s/.elementary/modules/%s/%s/module.so", home, name, MODULE_ARCH);
+             snprintf(buf, sizeof(buf), "%s/.elementary/modules/%s/%s/module" EFL_SHARED_EXTENSION, home, name, MODULE_ARCH);
              m->handle = dlopen(buf, RTLD_NOW | RTLD_GLOBAL);
              if (m->handle)
                {
@@ -73,7 +73,7 @@ _elm_module_add(const char *name)
           }
         if (!m->handle)
           {
-             snprintf(buf, sizeof(buf), "%s/elementary/modules/%s/%s/module.so", _elm_lib_dir, name, MODULE_ARCH);
+             snprintf(buf, sizeof(buf), "%s/elementary/modules/%s/%s/module" EFL_SHARED_EXTENSION, _elm_lib_dir, name, MODULE_ARCH);
              m->handle = dlopen(buf, RTLD_NOW | RTLD_GLOBAL);
              if (m->handle)
                {

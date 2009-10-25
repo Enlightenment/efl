@@ -45,6 +45,11 @@ case "$host_os" in
     ;;
 esac
 AC_SUBST(release_info)
+AC_SUBST(MODULE_ARCH)
+AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
+
+EFL_SHARED_EXTENSION="${shrext_cmds}"
+AC_DEFINE_UNQUOTED(EFL_SHARED_EXTENSION, "${EFL_SHARED_EXTENSION}", "Shared extension")
 
 requirement_elm=""
 
@@ -241,10 +246,6 @@ AC_SUBST(my_libs)
 AC_SUBST(requirement_elm)
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
-
-MODULE_ARCH="$host_os-$host_cpu-$release"
-AC_SUBST(MODULE_ARCH)
-AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 
 AC_OUTPUT([
 Makefile
