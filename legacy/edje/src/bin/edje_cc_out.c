@@ -815,10 +815,11 @@ struct _Edje_Lua_Script_Writer_Struct {
 };
 
 static int
-_edje_lua_script_writer (lua_State *L, const void* chunk_buf, size_t chunk_size, void* _data)
+_edje_lua_script_writer (lua_State *L __UNUSED__, const void* chunk_buf, size_t chunk_size, void* _data)
 {
    Edje_Lua_Script_Writer_Struct *data = _data;
    void *old = data->buf;
+
    data->buf = malloc (data->size + chunk_size);
    memcpy (data->buf, old, data->size);
    memcpy (&((data->buf)[data->size]), chunk_buf, chunk_size);
@@ -832,6 +833,7 @@ void
 _edje_lua_error_and_abort(lua_State * L, int err_code, Eet_File *ef)
 {
    char *err_type;
+
    switch (err_code)
      {
      case LUA_ERRRUN:
@@ -1425,6 +1427,7 @@ static void
 _data_queue_program_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int len)
 {
    Code_Lookup *cl;
+
    cl = mem_alloc(SZ(Code_Lookup));
    cl->ptr = ptr;
    cl->len = len;
@@ -1434,14 +1437,15 @@ _data_queue_program_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int 
    code_lookups = eina_list_append(code_lookups, cl);
 }
 static void
-_data_queue_group_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int len)
+_data_queue_group_lookup(Edje_Part_Collection *pc __UNUSED__, char *name, char *ptr __UNUSED__, int len __UNUSED__)
 {
    data_queue_group_lookup(name);	
 }
 static void
-_data_queue_image_pc_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int len)
+_data_queue_image_pc_lookup(Edje_Part_Collection *pc __UNUSED__, char *name, char *ptr, int len)
 {
    Code_Lookup *cl;
+
    cl = mem_alloc(SZ(Code_Lookup));
    cl->ptr = ptr;
    cl->len = len;
