@@ -6,11 +6,6 @@
 # include "config.h"
 #endif
 
-#include <string.h>
-#include <limits.h>
-#include <unistd.h>
-#include <sys/stat.h>
-
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
 #elif defined __GNUC__
@@ -27,6 +22,11 @@ extern "C"
 # endif
 void *alloca (size_t);
 #endif
+
+#include <string.h>
+#include <limits.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
 #include <Ecore_Evas.h>
 

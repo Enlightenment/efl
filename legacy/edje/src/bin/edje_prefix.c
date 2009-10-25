@@ -21,6 +21,10 @@
 #include <time.h>
 #include <dirent.h>
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "edje_prefix.h"
 
 #ifdef _WIN32

@@ -6,15 +6,6 @@
 # include <config.h>
 #endif
 
-#include <string.h>
-#include <ctype.h>
-#include <limits.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <fcntl.h>
-
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
 #elif defined __GNUC__
@@ -31,6 +22,15 @@ extern "C"
 # endif
 void *alloca (size_t);
 #endif
+
+#include <string.h>
+#include <ctype.h>
+#include <limits.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #include "edje_cc.h"
 
