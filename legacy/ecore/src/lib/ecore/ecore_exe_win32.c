@@ -2,6 +2,14 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+/*
+ * TODO:
+ * - manage priority
+ * - manage I/O pipes
+ * - add events for start/close, maybe others
+ * - manage SetConsoleCtrlHandler ?
+ */
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -111,6 +119,10 @@ EAPI Ecore_Exe *ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, c
 
    if (!CreateProcess(NULL, exe->cmd, NULL, NULL, TRUE,
                       0, NULL, NULL, &si, &pi))
+     goto free_exe_cmd;
+
+   /* be sure that the child process is running */
+   if (WaitForInputIdle(pi.hProcess, INFINITE) != 0)
      goto free_exe_cmd;
 
    exe->thread = pi.hThread;
