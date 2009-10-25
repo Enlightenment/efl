@@ -228,6 +228,8 @@ typedef struct _Ecore_Pipe          Ecore_Pipe;
 typedef struct _Ecore_Poller        Ecore_Poller;
 #ifdef _WIN32
 typedef struct _Ecore_Win32_Handler Ecore_Win32_Handler;
+#else
+typedef void                        Ecore_Win32_Handler;
 #endif
 
 #ifndef _WIN32

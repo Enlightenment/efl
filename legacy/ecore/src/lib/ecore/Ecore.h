@@ -294,6 +294,7 @@ extern "C" {
    EAPI int               ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler);
    EAPI int               ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
    EAPI void              ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
+
    EAPI Ecore_Win32_Handler *ecore_main_win32_handler_add(void *h, int (*func) (void *data, Ecore_Win32_Handler *wh), const void *data);
 
    EAPI Ecore_Pipe  *ecore_pipe_add(void (*handler) (void *data, void *buffer, unsigned int nbyte), const void *data);
