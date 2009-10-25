@@ -281,7 +281,7 @@ EAPI Eina_Module *eina_module_new(const char *file)
 
    m = malloc(sizeof(Eina_Module) + len + 1);
    if (!m) {
-      ERR("could not malloc(%lu)", sizeof(Eina_Module) + len + 1);
+      ERR("could not malloc(%lu)", (unsigned long)(sizeof(Eina_Module) + len + 1));
       return NULL;
    }
    memcpy((char *)m->file, file, len + 1);
