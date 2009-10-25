@@ -514,6 +514,7 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 		  p->fd_handler = NULL;
 		  return ECORE_CALLBACK_CANCEL;
 	       }
+#ifndef _WIN32
 	     else if ((ret == PIPE_FD_ERROR) && ((errno == EINTR) || (errno == EAGAIN)))
 	       return ECORE_CALLBACK_RENEW;
 	     else
@@ -521,10 +522,26 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 		  fprintf(stderr, "An unhandled error (ret: %d errno: %d)"
                           "occured while reading from the pipe the length\n",
                           ret, errno);
-		  return ECORE_CALLBACK_RENEW;
+                  return ECORE_CALLBACK_RENEW;
 	       }
+#else
+	     else /* ret == PIPE_FD_ERROR is the only other case on Windows */
+	       {
+                  if (WSAGetLastError() != WSAEWOULDBLOCK)
+                    {
+                       p->handler((void *)p->data, NULL, 0);
+                       pipe_close(p->fd_read);
+                       p->fd_read = PIPE_FD_INVALID;
+                       p->fd_handler = NULL;
+                       return ECORE_CALLBACK_CANCEL;
+                    }
+                  else
+                    goto _win32_done;
+	       }
+#endif
 	  }
 
+     _win32_done:
 	if (!p->passed_data)
 	  p->passed_data = malloc(p->len);
 
@@ -556,6 +573,7 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 	     p->fd_handler = NULL;
 	     return ECORE_CALLBACK_CANCEL;
 	  }
+#ifndef _WIN32
 	else if (ret == PIPE_FD_ERROR && (errno == EINTR || errno == EAGAIN))
 	  return ECORE_CALLBACK_RENEW;
 	else
@@ -565,6 +583,21 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                      ret, errno);
 	     return ECORE_CALLBACK_RENEW;
 	  }
+#else
+        else /* ret == PIPE_FD_ERROR is the only other case on Windows */
+          {
+             if (WSAGetLastError() != WSAEWOULDBLOCK)
+               {
+                  p->handler((void *)p->data, NULL, 0);
+                  pipe_close(p->fd_read);
+                  p->fd_read = PIPE_FD_INVALID;
+                  p->fd_handler = NULL;
+                  return ECORE_CALLBACK_CANCEL;
+               }
+             else
+               break;
+          }
+#endif
      }
    while (ecore_time_get() - start_time < ecore_animator_frametime_get());
    
