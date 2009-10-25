@@ -1219,8 +1219,8 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *signal, const char *
    Evas_Object	*parent;
    Edje		*ed;
    char		 new_src[4096]; /* XXX is this max reasonable? */
-   int		 length_parent = 0;
-   int		 length_source;
+   size_t	 length_parent = 0;
+   size_t	 length_source;
 
    parent = data;
    ed = _edje_fetch(obj);
