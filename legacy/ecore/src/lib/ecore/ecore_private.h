@@ -11,6 +11,12 @@
 # include <signal.h>
 #endif
 
+#ifdef _WIN32
+# define WIN32_LEAN_AND_MEAN
+# include <windows.h>
+# undef WIN32_LEAN_AND_MEAN
+#endif
+
 #include <Eina.h>
 
 #ifdef EAPI
@@ -81,6 +87,7 @@
 #define ECORE_MAGIC_ANIMATOR        0xf7643ea5
 #define ECORE_MAGIC_POLLER          0xf7568127
 #define ECORE_MAGIC_PIPE            0xf7458226
+#define ECORE_MAGIC_WIN32_HANDLER   0xf7e8f1a3
 
 
 #define ECORE_MAGIC                 Ecore_Magic  __magic
@@ -219,6 +226,9 @@ typedef struct _Ecore_Event         Ecore_Event;
 typedef struct _Ecore_Animator      Ecore_Animator;
 typedef struct _Ecore_Pipe          Ecore_Pipe;
 typedef struct _Ecore_Poller        Ecore_Poller;
+#ifdef _WIN32
+typedef struct _Ecore_Win32_Handler Ecore_Win32_Handler;
+#endif
 
 #ifndef _WIN32
 struct _Ecore_Exe
@@ -315,6 +325,17 @@ struct _Ecore_Fd_Handler
    void                   (*prep_func) (void *data, Ecore_Fd_Handler *fd_handler);
    void                    *prep_data;
 };
+
+#ifdef _WIN32
+struct _Ecore_Win32_Handler
+{
+   EINA_INLIST;
+   ECORE_MAGIC;
+   HANDLE         h;
+   int          (*func) (void *data, Ecore_Win32_Handler *win32_handler);
+   void          *data;
+};
+#endif
 
 struct _Ecore_Event_Handler
 {

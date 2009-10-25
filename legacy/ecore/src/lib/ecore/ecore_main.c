@@ -52,6 +52,9 @@ static int               in_main_loop = 0;
 static int               do_quit = 0;
 static Ecore_Fd_Handler *fd_handlers = NULL;
 static int               fd_handlers_delete_me = 0;
+#ifdef _WIN32
+static Ecore_Win32_Handler *win32_handlers = NULL;
+#endif
 
 #ifdef _WIN32
 static int (*main_loop_select)(int , fd_set *, fd_set *, fd_set *, struct timeval *) = _ecore_main_win32_select;
@@ -215,6 +218,37 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, int (*func) (voi
 							 EINA_INLIST_GET(fdh));
    return fdh;
 }
+
+#ifdef _WIN32
+EAPI Ecore_Win32_Handler *
+ecore_main_win32_handler_add(void *h,
+                             int (*func) (void *data, Ecore_Win32_Handler *wh),
+                             const void *data)
+{
+   Ecore_Win32_Handler *wh;
+
+   if (!h || !func)
+     return NULL;
+
+   wh = calloc(1, sizeof(Ecore_Win32_Handler));
+   if (!wh) return NULL;
+   ECORE_MAGIC_SET(wh, ECORE_MAGIC_WIN32_HANDLER);
+   wh->h = (HANDLE)h;
+   wh->func = func;
+   wh->data = (void *)data;
+   win32_handlers = (Ecore_Win32_Handler *)eina_inlist_append(EINA_INLIST_GET(win32_handlers),
+                                                              EINA_INLIST_GET(wh));
+   return wh;
+}
+#else
+EAPI Ecore_Win32_Handler *
+ecore_main_win32_handler_add(void *h __UNUSED__,
+                             int (*func) (void *data, Ecore_Win32_Handler *wh) __UNUSED__,
+                             const void *data __UNUSED__)
+{
+   return NULL;
+}
+#endif
 
 /**
  * Deletes the given FD handler.
@@ -706,8 +740,11 @@ static int
 _ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
 			 fd_set *exceptfds, struct timeval *tv)
 {
-   HANDLE events[MAXIMUM_WAIT_OBJECTS];
+   HANDLE objects[MAXIMUM_WAIT_OBJECTS];
    int    sockets[MAXIMUM_WAIT_OBJECTS];
+   Ecore_Win32_Handler *wh;
+   int    objects_nbr = 0;
+   int    handles_nbr = 0;
    int    events_nbr = 0;
    DWORD  result;
    DWORD  timeout;
@@ -733,10 +770,19 @@ _ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
 	  {
              event = WSACreateEvent();
 	     WSAEventSelect(i, event, network_event);
-	     events[events_nbr] = event;
+	     objects[objects_nbr] = event;
 	     sockets[events_nbr] = i;
 	     events_nbr++;
+             objects_nbr++;
           }
+     }
+
+   /* store the HANDLEs in the objects to wait for */
+   EINA_INLIST_FOREACH(win32_handlers, wh)
+     {
+        objects[objects_nbr] = wh->h;
+        handles_nbr++;
+        objects_nbr++;
      }
 
    /* Empty the queue before waiting */
@@ -753,7 +799,7 @@ _ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
    else
      timeout = (DWORD)(tv->tv_sec * 1000.0 + tv->tv_usec / 1000.0);
 
-   result = MsgWaitForMultipleObjects(events_nbr, (const HANDLE *)events, FALSE,
+   result = MsgWaitForMultipleObjects(objects_nbr, (const HANDLE *)objects, FALSE,
 				      timeout, QS_ALLINPUT);
 
    FD_ZERO(readfds);
@@ -765,7 +811,7 @@ _ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
      {
         res = 0;
      }
-   else if (result == (WAIT_OBJECT_0 + events_nbr))
+   else if (result == (WAIT_OBJECT_0 + objects_nbr))
      {
         while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 	  {
@@ -779,7 +825,7 @@ _ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
      {
         WSANETWORKEVENTS network_event;
 
-        WSAEnumNetworkEvents(sockets[result], events[result], &network_event);
+        WSAEnumNetworkEvents(sockets[result], objects[result], &network_event);
 
         if(network_event.lNetworkEvents & FD_READ)
 	  FD_SET(sockets[result], readfds);
@@ -790,6 +836,15 @@ _ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
 
         res = 1;
      }
+   else if ((result >= WAIT_OBJECT_0 + events_nbr) && (result < WAIT_OBJECT_0 + objects_nbr))
+     {
+        EINA_INLIST_FOREACH(win32_handlers, wh)
+          {
+             if (objects[result - WAIT_OBJECT_0] == wh->h)
+               wh->func(wh->data, wh);
+          }
+        res = 1;
+     }
    else
      {
         fprintf(stderr, "unknown result...\n");
@@ -797,7 +852,16 @@ _ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
 
    /* Remove event objects again */
    for(i = 0; i < events_nbr; i++)
-     WSACloseEvent(events[i]);
+     WSACloseEvent(objects[i]);
+
+   /* remove HANDLEs */
+   while (win32_handlers)
+     {
+        wh = win32_handlers;
+        win32_handlers = (Ecore_Win32_Handler *)eina_inlist_remove(EINA_INLIST_GET(win32_handlers),
+                                                                   EINA_INLIST_GET(wh));
+        free(wh);
+     }
 
    return res;
 }

@@ -56,10 +56,10 @@
 #elif defined (__FreeBSD__) && (__FreeBSD_version >= 420001)
 # include <sys/select.h>
 #else
-# include <sys/types.h>
 # include <sys/time.h>
 # include <signal.h>
 #endif
+#include <sys/types.h>
 
 #ifndef TRUE
 # define TRUE 1
@@ -125,7 +125,8 @@ extern "C" {
    typedef void Ecore_Idler; /**< A handle for idlers */
    typedef void Ecore_Idle_Enterer; /**< A handle for idle enterers */
    typedef void Ecore_Idle_Exiter; /**< A handle for idle exiters */
-   typedef void Ecore_Fd_Handler; /**< A handle for Fd hanlders */
+   typedef void Ecore_Fd_Handler; /**< A handle for Fd handlers */
+   typedef void Ecore_Win32_Handler; /**< A handle for HANDLE handlers on Windows */
    typedef void Ecore_Event_Handler; /**< A handle for an event handler */
    typedef void Ecore_Event_Filter; /**< A handle for an event filter */
    typedef void Ecore_Event; /**< A handle for an event */
@@ -293,6 +294,7 @@ extern "C" {
    EAPI int               ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler);
    EAPI int               ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
    EAPI void              ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
+   EAPI Ecore_Win32_Handler *ecore_main_win32_handler_add(void *h, int (*func) (void *data, Ecore_Win32_Handler *wh), const void *data);
 
    EAPI Ecore_Pipe  *ecore_pipe_add(void (*handler) (void *data, void *buffer, unsigned int nbyte), const void *data);
    EAPI void        *ecore_pipe_del(Ecore_Pipe *p);
