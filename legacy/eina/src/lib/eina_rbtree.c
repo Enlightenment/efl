@@ -278,7 +278,7 @@ eina_rbtree_inline_insert(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_
      }
 
    memset(&head, 0, sizeof (Eina_Rbtree));
-   dir = EINA_RBTREE_LEFT;
+   last = dir = EINA_RBTREE_LEFT;
 
    /* Set up helpers */
    t = &head;
