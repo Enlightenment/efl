@@ -644,7 +644,7 @@ compile(void)
 
    if (!tmp_dir)
 #ifdef HAVE_EVIL
-     tmp_dir = evil_tmpdir_get();
+     tmp_dir = (char *)evil_tmpdir_get();
 #else
      tmp_dir = "/tmp";
 #endif

@@ -764,13 +764,15 @@ data_write_scripts(Eet_File *ef)
 
    if (!tmp_dir)
 #ifdef HAVE_EVIL
-     tmp_dir = evil_tmpdir_get();
+     tmp_dir = (char *)evil_tmpdir_get();
 #else
      tmp_dir = "/tmp";
 #endif
 
    for (i = 0, l = codes; l; l = eina_list_next(l), i++)
      {
+	char tmpn[4096];
+	char tmpo[4096];
 	int fd;
 	Code *cd = eina_list_data_get(l);
 	
@@ -779,7 +781,6 @@ data_write_scripts(Eet_File *ef)
 	if ((!cd->shared) && (!cd->programs))
 	  continue;
 
-	char tmpn[4096];
 	snprintf(tmpn, PATH_MAX, "%s/edje_cc.sma-tmp-XXXXXX", tmp_dir);
 	fd = mkstemp(tmpn);
 	if (fd < 0)
@@ -789,7 +790,6 @@ data_write_scripts(Eet_File *ef)
 	create_script_file(ef, tmpn, cd);
 	close(fd);
 
-	char tmpo[4096];
 	snprintf(tmpo, PATH_MAX, "%s/edje_cc.amx-tmp-XXXXXX", tmp_dir);
 	fd = mkstemp(tmpo);
 	if (fd < 0)
@@ -814,20 +814,25 @@ struct _Edje_Lua_Script_Writer_Struct {
    int size;
 };
 
+#ifdef LUA_BINARY
 static int
 _edje_lua_script_writer (lua_State *L __UNUSED__, const void* chunk_buf, size_t chunk_size, void* _data)
 {
-   Edje_Lua_Script_Writer_Struct *data = _data;
-   void *old = data->buf;
+   Edje_Lua_Script_Writer_Struct *data;
+   void *old;
 
+   data = (Edje_Lua_Script_Writer_Struct *)_data;
+   old = data->buf;
    data->buf = malloc (data->size + chunk_size);
    memcpy (data->buf, old, data->size);
    memcpy (&((data->buf)[data->size]), chunk_buf, chunk_size);
    if (old)
      free (old);
    data->size += chunk_size;
+
    return 0;
 }
+#endif
 
 void
 _edje_lua_error_and_abort(lua_State * L, int err_code, Eet_File *ef)
@@ -866,21 +871,28 @@ data_write_lua_scripts(Eet_File *ef)
 
    for (i = 0, l = codes; l; l = eina_list_next(l), i++)
      {
-	Code *cd = eina_list_data_get(l);
+	char buf[4096];
+	Code *cd;
+	lua_State *L;
+	int ln = 1;
+	luaL_Buffer b;
+	Edje_Lua_Script_Writer_Struct data;
+#ifdef LUA_BINARY
+	int err_code;
+#endif
+
+	cd = (Code *)eina_list_data_get(l);
 	if (!cd->is_lua)
 	  continue;
 	if ((!cd->shared) && (!cd->programs))
 	  continue;
 	
-	lua_State *L = luaL_newstate();
+	L = luaL_newstate();
 	if (!L)
 	  error_and_abort(ef, "Lua error: Lua state could not be initialized\n");
 
-	int ln = 1;
-	luaL_Buffer b;
 	luaL_buffinit(L, &b);
 
-	Edje_Lua_Script_Writer_Struct data;
 	data.buf = NULL;
 	data.size = 0;
 	if (cd->shared)
@@ -914,7 +926,6 @@ data_write_lua_scripts(Eet_File *ef)
 	  }
 	luaL_pushresult(&b);
 #ifdef LUA_BINARY
-	int err_code;
 	if (err_code = luaL_loadstring(L, lua_tostring (L, -1)))
 	  _edje_lua_error_and_abort(L, err_code, ef);
 	lua_dump(L, _edje_lua_script_writer, &data);
@@ -935,7 +946,6 @@ data_write_lua_scripts(Eet_File *ef)
 	   printf("lua call error: %s\n", lua_tostring (L, -1));
 	 */
 	
-	char buf[4096];
 	snprintf(buf, sizeof(buf), "lua_scripts/%i", i);
 	eet_write(ef, buf, data.buf, data.size, 1);
 #ifdef LUA_BINARY
