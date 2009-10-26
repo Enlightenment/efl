@@ -32,9 +32,6 @@ evas_common_map4_rgba_internal(RGBA_Image *src, RGBA_Image *dst,
                                RGBA_Map_Point *p, 
                                int smooth, int level);
 
-//extern const DATA8 _evas_dither_44[4][4];
-//extern const DATA8 _evas_dither_128128[128][128];
-  
 static FPc
 _interp(int x1, int x2, int p, FPc u1, FPc u2)
 {
@@ -45,6 +42,25 @@ _interp(int x1, int x2, int p, FPc u1, FPc u2)
    u = u2 - u1;
    u = (u * p) / (x2 + 1);
    return u1 + u;
+}
+
+static void
+_limit(Span *s, int c1, int c2)
+{
+   if (s->x1 < c1)
+     {
+        s->u[0] = _interp(s->x1, s->x2, c1, s->u[0], s->u[1]);
+        s->v[0] = _interp(s->x1, s->x2, c1, s->v[0], s->v[1]);
+        s->x1 = c1;
+        s->o1 = c1 << FP;
+     }
+   if (s->x2 > c2)
+     {
+        s->u[1] = _interp(s->x1, s->x2, c2, s->u[0], s->u[1]);
+        s->v[1] = _interp(s->x1, s->x2, c2, s->v[0], s->v[1]);
+        s->x2 = c2;
+        s->o2 = c2 << FP;
+     }
 }
 
 EAPI void
@@ -106,264 +122,160 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
    
    if ((PY(0) == PY(1)) && (PY(0) == PY(2)) && (PY(0) == PY(3)))
      {
-        // all on one line. eg:
-        // 
-        // |----------|
-        // FIXME:
-        // find min x point and max x point and span those
-     }
-   else
-     {
+        int leftp, rightp;
+        
+        leftp = rightp = 0;
+        for (i = 1; i < 4; i++)
+          {
+             if (p[i].x < p[leftp].x) leftp = i;
+             if (p[i].x > p[rightp].x) rightp = i;
+          }
         for (y = ystart; y <= yend; y++)
           {
-        
              yp = y - ystart;
-             edge_num = 0;
-             //--------------------
-             if ((PY(0) <= y) && (PY(1) > y)) // 0 above, 1, below
-               {
-                  edge[edge_num][0] = 0;
-                  edge[edge_num][1] = 1;
-                  edge_num++;
-               }
-             else if ((PY(1) <= y) && (PY(0) > y)) // 1 above, 0, below
-               {
-                  edge[edge_num][0] = 1;
-                  edge[edge_num][1] = 0;
-                  edge_num++;
-               }
-             //--------------------
-             if ((PY(1) <= y) && (PY(2) > y)) // 1 above, 2, below
-               {
-                  edge[edge_num][0] = 1;
-                  edge[edge_num][1] = 2;
-                  edge_num++;
-               }
-             else if ((PY(2) <= y) && (PY(1) > y)) // 2 above, 1, below
-               {
-                  edge[edge_num][0] = 2;
-                  edge[edge_num][1] = 1;
-                  edge_num++;
-               }
-             //--------------------
-             if ((PY(2) <= y) && (PY(3) > y)) // 2 above, 3, below
-               {
-                  edge[edge_num][0] = 2;
-                  edge[edge_num][1] = 3;
-                  edge_num++;
-               }
-             else if ((PY(3) <= y) && (PY(2) > y)) // 3 above, 2, below
-               {
-                  edge[edge_num][0] = 3;
-                  edge[edge_num][1] = 2;
-                  edge_num++;
-               }
-             //--------------------
-             if ((PY(3) <= y) && (PY(0) > y)) // 3 above, 0, below
-               {
-                  edge[edge_num][0] = 3;
-                  edge[edge_num][1] = 0;
-                  edge_num++;
-               }
-             else if ((PY(0) <= y) && (PY(3) > y)) // 0 above, 3, below
-               {
-                  edge[edge_num][0] = 0;
-                  edge[edge_num][1] = 3;
-                  edge_num++;
-               }
-             // calculate line x points for each edge
-             for (i = 0; i < edge_num; i++)
-               {
-                  int e1 = edge[i][0];
-                  int e2 = edge[i][1];
-
-                  h = (p[e2].y - p[e1].y) >> FP; // height of edge
-                  t = (((y << FP) + (FP1 - 1)) - p[e1].y) >> FP;
-                  x = p[e2].x - p[e1].x;
-                  x = p[e1].x + ((x * t) / h);
-                  
-                  u = p[e2].u - p[e1].u;
-                  u = p[e1].u + ((u * t) / h);
-                  
-                  v = p[e2].v - p[e1].v;
-                  v = p[e1].v + ((v * t) / h);
-                  
-                  uv[i][1] = v;
-                  uv[i][0] = u;
-                  edge[i][2] = x >> FP;
-                  edge[i][3] = x;
-                  // also fill in order
-                  order[i] = i;
-               }
-             // sort edges from left to right - bubble. its a small list!
-             do
-               {
-                  swapped = 0;
-                  for (i = 0; i < (edge_num - 1); i++)
-                    {
-                       if (edge[order[i]][2] > edge[order[i + 1]][2])
-                         {
-                            t = order[i];
-                            order[i] = order[i + 1];
-                            order[i + 1] = t;
-                            swapped = 1;
-                         }
-                    }
-               }
-             while (swapped);
-             if (edge_num == 2)
+             if (y == PY(0))
                {
                   i = 0;
-                  spans[yp].span[i].x1 = edge[order[0]][2];
-                  spans[yp].span[i].o1 = edge[order[0]][3];
-                  spans[yp].span[i].u[0] = uv[order[0]][0];
-                  spans[yp].span[i].v[0] = uv[order[0]][1];
-                  spans[yp].span[i].x2 = edge[order[1]][2];
-                  spans[yp].span[i].o2 = edge[order[1]][3];
-                  spans[yp].span[i].u[1] = uv[order[1]][0];
-                  spans[yp].span[i].v[1] = uv[order[1]][1];
+                  spans[yp].span[i].x1 = p[leftp].x >> FP;
+                  spans[yp].span[i].o1 = p[leftp].x;
+                  spans[yp].span[i].u[0] = p[leftp].u;
+                  spans[yp].span[i].v[0] = p[leftp].v;
+                  spans[yp].span[i].x2 = p[rightp].x >> FP;
+                  spans[yp].span[i].o2 = p[rightp].x;
+                  spans[yp].span[i].u[1] = p[rightp].u;
+                  spans[yp].span[i].v[1] = p[rightp].v;
                   if ((spans[yp].span[i].x1 >= (cx + cw)) ||
                       (spans[yp].span[i].x2 < cx))
-                    {
-                       spans[yp].span[i].x1 = -1;
-                    }
+                    spans[yp].span[i].x1 = -1;
                   else
                     {
-                       if (spans[yp].span[i].x1 < cx)
-                         {
-                            spans[yp].span[i].u[0] = 
-                              _interp(spans[yp].span[i].x1,
-                                      spans[yp].span[i].x2, 0, 
-                                      spans[yp].span[i].u[0],
-                                      spans[yp].span[i].u[1]);
-                            spans[yp].span[i].v[0] = 
-                              _interp(spans[yp].span[i].x1,
-                                      spans[yp].span[i].x2, 0, 
-                                      spans[yp].span[i].v[0],
-                                      spans[yp].span[i].v[1]);
-                            spans[yp].span[i].x1 = cx;
-                            spans[yp].span[i].o1 = cx << FP;
-                         }
-                       if (spans[yp].span[i].x2 >= (cx + cw))
-                         {
-                            spans[yp].span[i].u[1] = 
-                              _interp(spans[yp].span[i].x1,
-                                      spans[yp].span[i].x2, (cx + cw),
-                                      spans[yp].span[i].u[0],
-                                      spans[yp].span[i].u[1]);
-                            spans[yp].span[i].v[1] = 
-                              _interp(spans[yp].span[i].x1,
-                                      spans[yp].span[i].x2, (cx + cw),
-                                      spans[yp].span[i].v[0],
-                                      spans[yp].span[i].v[1]);
-                            spans[yp].span[i].x2 = (cx + cw);
-                            spans[yp].span[i].o2 = (cx + cw) << FP;
-                         }
+                       _limit(&(spans[yp].span[i]), cx, cx + cw);
                        i++;
                        spans[yp].span[i].x1 = -1;
-                    }
-               }
-             else if (edge_num == 4)
-               {
-                  i = 0;
-                  spans[yp].span[i].x1 = edge[order[0]][2];
-                  spans[yp].span[i].u[0] = uv[order[0]][0];
-                  spans[yp].span[i].v[0] = uv[order[0]][1];
-                  spans[yp].span[i].x2 = edge[order[1]][2];
-                  spans[yp].span[i].u[1] = uv[order[1]][0];
-                  spans[yp].span[i].v[1] = uv[order[1]][1];
-                  if ((spans[yp].span[i].x1 >= (cx + cw)) ||
-                      (spans[yp].span[i].x2 < cx))
-                    {
-                       spans[yp].span[i].x1 = -1;
-                    }
-                  else
-                    {
-                       if (spans[yp].span[i].x1 < cx)
-                         {
-                            spans[yp].span[i].u[0] = 
-                              _interp(spans[yp].span[i].x1,
-                                      spans[yp].span[i].x2, 0, 
-                                      spans[yp].span[i].u[0],
-                                      spans[yp].span[i].u[1]);
-                            spans[yp].span[i].v[0] = 
-                              _interp(spans[yp].span[i].x1,
-                                      spans[yp].span[i].x2, 0, 
-                                      spans[yp].span[i].v[0],
-                                      spans[yp].span[i].v[1]);
-                            spans[yp].span[i].x1 = cx;
-                            spans[yp].span[i].o1 = cx << FP;
-                         }
-                       if (spans[yp].span[i].x2 >= (cx + cw))
-                         {
-                            spans[yp].span[i].u[1] = 
-                              _interp(spans[yp].span[i].x1,
-                                      spans[yp].span[i].x2, (cx + cw),
-                                      spans[yp].span[i].u[0],
-                                      spans[yp].span[i].u[1]);
-                            spans[yp].span[i].v[1] = 
-                              _interp(spans[yp].span[i].x1,
-                                      spans[yp].span[i].x2, (cx + cw),
-                                      spans[yp].span[i].v[0],
-                                      spans[yp].span[i].v[1]);
-                            spans[yp].span[i].x2 = (cx + cw);
-                            spans[yp].span[i].o2 = (cx + cw) << FP;
-                         }
-                       i++;
-                    }
-                  spans[yp].span[i].x1 = edge[order[2]][2];
-                  spans[yp].span[i].u[0] = uv[order[2]][0];
-                  spans[yp].span[i].v[0] = uv[order[2]][1];
-                  spans[yp].span[i].x2 = edge[order[3]][2];
-                  spans[yp].span[i].u[1] = uv[order[3]][0];
-                  spans[yp].span[i].v[1] = uv[order[3]][1];
-                  if ((spans[yp].span[i].x1 >= (cx + cw)) ||
-                      (spans[yp].span[i].x2 < cx))
-                    {
-                       spans[yp].span[i].x1 = -1;
-                    }
-                  else
-                    {
-                       int l = cx;
-                       
-                       if (i > 0) l = spans[yp].span[i - 1].x2;
-                       if (spans[yp].span[i].x1 < l)
-                         {
-                            spans[yp].span[i].u[0] = 
-                              _interp(spans[yp].span[i].x1,
-                                      spans[yp].span[i].x2, l, 
-                                      spans[yp].span[i].u[0],
-                                      spans[yp].span[i].u[1]);
-                            spans[yp].span[i].v[0] = 
-                              _interp(spans[yp].span[i].x1,
-                                      spans[yp].span[i].x2, l, 
-                                      spans[yp].span[i].v[0],
-                                      spans[yp].span[i].v[1]);
-                            spans[yp].span[i].x1 = l;
-                            spans[yp].span[i].o1 = l << FP;
-                         }
-                       if (spans[yp].span[i].x2 >= (cx + cw))
-                         {
-                            spans[yp].span[i].u[1] = 
-                              _interp(spans[yp].span[i].x1,
-                                      spans[yp].span[i].x2, (cx + cw),
-                                      spans[yp].span[i].u[0],
-                                      spans[yp].span[i].u[1]);
-                            spans[yp].span[i].v[1] = 
-                              _interp(spans[yp].span[i].x1,
-                                      spans[yp].span[i].x2, (cx + cw),
-                                      spans[yp].span[i].v[0],
-                                      spans[yp].span[i].v[1]);
-                            spans[yp].span[i].x2 = (cx + cw);
-                            spans[yp].span[i].o2 = (cx + cw) << FP;
-                         }
                     }
                }
              else
+               spans[yp].span[0].x1 = -1;
+          }
+        return;
+     }
+   
+   for (y = ystart; y <= yend; y++)
+     {
+        yp = y - ystart;
+        edge_num = 0;
+        for (i = 0; i < 4; i++)
+          {
+             if ((PY(i) <= y) && (PY((i + 1) % 4) > y))
                {
-                  spans[yp].span[0].x1 = -1;
+                  edge[edge_num][0] = i;
+                  edge[edge_num][1] = (i + 1) % 4;
+                  edge_num++;
+               }
+             else if ((PY((i + 1) % 4) <= y) && (PY(i) > y))
+               {
+                  edge[edge_num][0] = (i + 1) % 4;
+                  edge[edge_num][1] = i;
+                  edge_num++;
                }
           }
+        // calculate line x points for each edge
+        for (i = 0; i < edge_num; i++)
+          {
+             int e1 = edge[i][0];
+             int e2 = edge[i][1];
+             
+             h = (p[e2].y - p[e1].y) >> FP; // height of edge
+             t = (((y << FP) + (FP1 - 1)) - p[e1].y) >> FP;
+             x = p[e2].x - p[e1].x;
+             x = p[e1].x + ((x * t) / h);
+             
+             u = p[e2].u - p[e1].u;
+             u = p[e1].u + ((u * t) / h);
+             
+             v = p[e2].v - p[e1].v;
+             v = p[e1].v + ((v * t) / h);
+             
+             uv[i][1] = v;
+             uv[i][0] = u;
+             edge[i][2] = x >> FP;
+             edge[i][3] = x;
+             // also fill in order
+             order[i] = i;
+          }
+        // sort edges from left to right - bubble. its a small list!
+        do
+          {
+             swapped = 0;
+             for (i = 0; i < (edge_num - 1); i++)
+               {
+                  if (edge[order[i]][2] > edge[order[i + 1]][2])
+                    {
+                       t = order[i];
+                       order[i] = order[i + 1];
+                       order[i + 1] = t;
+                       swapped = 1;
+                    }
+               }
+          }
+        while (swapped);
+        if (edge_num == 2)
+          {
+             i = 0;
+             spans[yp].span[i].x1 = edge[order[0]][2];
+             spans[yp].span[i].o1 = edge[order[0]][3];
+             spans[yp].span[i].u[0] = uv[order[0]][0];
+             spans[yp].span[i].v[0] = uv[order[0]][1];
+             spans[yp].span[i].x2 = edge[order[1]][2];
+             spans[yp].span[i].o2 = edge[order[1]][3];
+             spans[yp].span[i].u[1] = uv[order[1]][0];
+             spans[yp].span[i].v[1] = uv[order[1]][1];
+             if ((spans[yp].span[i].x1 >= (cx + cw)) ||
+                 (spans[yp].span[i].x2 < cx))
+               spans[yp].span[i].x1 = -1;
+             else
+               {
+                  _limit(&(spans[yp].span[i]), cx, cx + cw);
+                  i++;
+                  spans[yp].span[i].x1 = -1;
+               }
+          }
+        else if (edge_num == 4)
+          {
+             i = 0;
+             spans[yp].span[i].x1 = edge[order[0]][2];
+             spans[yp].span[i].u[0] = uv[order[0]][0];
+             spans[yp].span[i].v[0] = uv[order[0]][1];
+             spans[yp].span[i].x2 = edge[order[1]][2];
+             spans[yp].span[i].u[1] = uv[order[1]][0];
+             spans[yp].span[i].v[1] = uv[order[1]][1];
+             if ((spans[yp].span[i].x1 >= (cx + cw)) ||
+                 (spans[yp].span[i].x2 < cx))
+               spans[yp].span[i].x1 = -1;
+             else
+               {
+                  _limit(&(spans[yp].span[i]), cx, cx + cw);
+                  i++;
+               }
+             spans[yp].span[i].x1 = edge[order[2]][2];
+             spans[yp].span[i].u[0] = uv[order[2]][0];
+             spans[yp].span[i].v[0] = uv[order[2]][1];
+             spans[yp].span[i].x2 = edge[order[3]][2];
+             spans[yp].span[i].u[1] = uv[order[3]][0];
+             spans[yp].span[i].v[1] = uv[order[3]][1];
+             if ((spans[yp].span[i].x1 >= (cx + cw)) ||
+                 (spans[yp].span[i].x2 < cx))
+               spans[yp].span[i].x1 = -1;
+             else
+               {
+                  int l = cx;
+                  
+                  if (i > 0) l = spans[yp].span[i - 1].x2;
+                  _limit(&(spans[yp].span[i]), l, cx + cw);
+               }
+          }
+        else
+          spans[yp].span[0].x1 = -1;
      }
 }
 
