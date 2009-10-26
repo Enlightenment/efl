@@ -3879,20 +3879,33 @@ _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
 {
    if (rp->swallowed_object)
      {
-	evas_object_smart_member_del(rp->swallowed_object);
-	evas_object_event_callback_del_full(rp->swallowed_object,
-                                            EVAS_CALLBACK_FREE,
-                                            _edje_object_part_swallow_free_cb,
-                                            rp->edje->obj);
-	evas_object_event_callback_del_full(rp->swallowed_object,
-                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                            _edje_object_part_swallow_changed_hints_cb,
-                                            rp->edje->obj);
-	evas_object_clip_unset(rp->swallowed_object);
-	evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
-        if (rp->part->mouse_events)
-          _edje_callbacks_del(rp->swallowed_object);
-	rp->swallowed_object = NULL;
+        if (rp->swallowed_object != obj_swallow)
+          {
+             evas_object_smart_member_del(rp->swallowed_object);
+             evas_object_event_callback_del_full(rp->swallowed_object,
+                                                 EVAS_CALLBACK_FREE,
+                                                 _edje_object_part_swallow_free_cb,
+                                                 rp->edje->obj);
+             evas_object_event_callback_del_full(rp->swallowed_object,
+                                                 EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                                 _edje_object_part_swallow_changed_hints_cb,
+                                                 rp->edje->obj);
+             evas_object_clip_unset(rp->swallowed_object);
+             evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
+             if (rp->part->mouse_events)
+               _edje_callbacks_del(rp->swallowed_object);
+             rp->swallowed_object = NULL;
+          }
+        else
+          {
+#ifdef EDJE_CALC_CACHE
+             rp->invalidate = 1;
+#endif
+             _edje_real_part_swallow_hints_update(rp);
+             rp->edje->dirty = 1;
+             _edje_recalc(rp->edje);
+             return;
+          }
      }
 #ifdef EDJE_CALC_CACHE
    rp->invalidate = 1;
