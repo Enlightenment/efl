@@ -22,9 +22,19 @@ static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *eve
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 
 static void
+_del_pre_hook(Evas_Object *obj)
+{
+    Widget_Data *wd = elm_widget_data_get(obj);
+
+    evas_object_event_callback_del_full
+        (wd->tbl, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
+}
+
+static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   evas_object_del(wd->tbl);
    free(wd);
 }
 
@@ -56,10 +66,13 @@ _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
+   /* We do not add this callback, consequently we do not need to delete it
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Object *sub = event_info;
+   evas_Object *sub = event_info;
+
    evas_object_event_callback_del_full
      (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
+     */
    _sizing_eval(obj);
 }
 
@@ -85,6 +98,7 @@ elm_table_add(Evas_Object *parent)
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_del_pre_hook_set(obj, _del_pre_hook);
 
    wd->tbl = evas_object_table_add(e);
    evas_object_event_callback_add(wd->tbl, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
