@@ -286,16 +286,16 @@ _smart_scrollto_x_animator(void *data)
    sd->pan_func.get(sd->pan_obj, &px, &py);
    px = (sd->scrollto.x.start * (1.0 - tt)) +
      (sd->scrollto.x.end * tt);
-   elm_smart_scroller_child_pos_set(sd->smart_obj, px, py);
    if (t >= sd->scrollto.x.t_end)
      {
         px = sd->scrollto.x.end;
-        sd->pan_func.set(sd->pan_obj, px, py);
+        elm_smart_scroller_child_pos_set(sd->smart_obj, px, py);
         sd->scrollto.x.animator = NULL;
         if (!sd->scrollto.y.animator)
           _smart_anim_stop(sd->smart_obj);
         return 0;
      }
+   elm_smart_scroller_child_pos_set(sd->smart_obj, px, py);
    return 1;
 }
 
@@ -351,16 +351,17 @@ _smart_scrollto_y_animator(void *data)
    sd->pan_func.get(sd->pan_obj, &px, &py);
    py = (sd->scrollto.y.start * (1.0 - tt)) +
      (sd->scrollto.y.end * tt);
-   elm_smart_scroller_child_pos_set(sd->smart_obj, px, py);
    if (t >= sd->scrollto.y.t_end)
      {
         py = sd->scrollto.y.end;
-        sd->pan_func.set(sd->pan_obj, px, py);
+        elm_smart_scroller_child_pos_set(sd->smart_obj, px, py);
         sd->scrollto.y.animator = NULL;
         if (!sd->scrollto.x.animator)
           _smart_anim_stop(sd->smart_obj);
         return 0;
      }
+   elm_smart_scroller_child_pos_set(sd->smart_obj, px, py);
+
    return 1;
 }
 
