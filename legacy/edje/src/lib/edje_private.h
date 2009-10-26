@@ -567,6 +567,7 @@ struct _Edje_Part_Description
    } table;
 
    Edje_Color color, color2, color3;  /* color for rect or text, shadow etc. */
+   Eina_List *external_params; /* parameters for external objects */
 
    unsigned char     visible; /* is it shown */
 };
@@ -1337,5 +1338,12 @@ const Eina_List *_edje_entry_anchors_list(Edje_Real_Part *rp);
 void _edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
 void _edje_entry_select_allow_set(Edje_Real_Part *rp, Eina_Bool allow);
 void _edje_entry_select_abort(Edje_Real_Part *rp);
+
+void _edje_external_init();
+void _edje_external_shutdown();
+Evas_Object *_edje_external_type_add(const char *type_name, Evas *evas, Evas_Object *parent, const Eina_List *params);
+void _edje_external_signal_emit(Evas_Object *obj, const char *emission, const char *source);
+void _edje_external_params_free(Eina_List *params, unsigned int free_strings);
+void _edje_external_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *params, Edje_Part_Description *chosen_desc);
 
 #endif
