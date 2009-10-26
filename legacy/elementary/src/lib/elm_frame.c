@@ -47,7 +47,6 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-
    edje_object_size_min_calc(wd->frm, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
@@ -57,6 +56,9 @@ static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   // FIXME: why is this needed? how does edje get this unswallowed or
+   // lose its callbacks to edje
+   edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->content);
    _sizing_eval(data);
 }
 
