@@ -1628,7 +1628,7 @@ module_open(Evas_Module *em)
    if (!em) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&parent_func, "software_generic")) return 0;
-   _evas_engine_directfb_log_dom = eina_log_domain_register("EvasEngineDirectFB",EVAS_DEFAULT_COLOR);
+   _evas_engine_directfb_log_dom = eina_log_domain_register("EvasEngineDirectFB",EVAS_DEFAULT_LOG_COLOR);
    if(_evas_engine_directfb_log_dom < 0)
      {
        EINA_LOG_ERR("Impossible to create a log domain for the DirectFb engine.\n");
