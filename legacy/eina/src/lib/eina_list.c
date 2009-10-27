@@ -1422,7 +1422,7 @@ eina_list_clone(const Eina_List *list)
  *
  * This function sorts @p list. @p size if the number of the first
  * element to sort. If @p size is 0 or greater than the number of
- * elements in @p list, all the elemnts are sorted. @p func is used to
+ * elements in @p list, all the elements are sorted. @p func is used to
  * compare two elements of @p list. If @p list or @p func are @c NULL,
  * this function returns @c NULL.
  *
@@ -1579,6 +1579,62 @@ eina_list_merge(Eina_List *left, Eina_List *right)
      }
 
    return left;
+}
+
+
+/**
+ * @brief Split a list into 2 lists.
+ *
+ * @param list List to split.
+ * @param relative The list will be split after @p relative.
+ * @param right The head of the new right list.
+ * @return The new left list
+ *
+ * This function split @p list into two lists ( left and right ) after the node @p relative. @p Relative 
+ * will become the last node of the left list. If @p list or @p right are NULL list is returns. 
+ * If @p relative is NULL right is set to @p list and NULL is returns.
+ * If @p relative is the last node of @p list list is returns and @p right is set to NULL.
+ *
+ * list does not exist anymore after the split.
+ *
+ */
+EAPI Eina_List *
+eina_list_split_list(Eina_List *list, Eina_List *relative, Eina_List **right)
+{
+   Eina_List *next;
+   Eina_List *itr;
+
+   if(!right) return list;
+   *right = NULL;
+
+   if (!list) return NULL;
+   if (!relative)
+     {
+         *right = list;
+         return NULL;
+     }
+   if (relative == eina_list_last(list)) return list;
+
+   next = eina_list_next(relative); 
+   next->prev = NULL;
+   next->accounting = _eina_list_mempool_accounting_new(next);
+   next->accounting->last = list->accounting->last;
+   *right = next;
+
+   itr = next;
+   do
+     {
+        itr->accounting = next->accounting;
+        next->accounting->count++;
+        itr = itr->next;
+     }
+	while (itr);
+
+   relative->next = NULL;
+   list->accounting->last = relative; 
+   list->accounting->count = list->accounting->count - next->accounting->count;
+
+   return list;
 }
 
 /**
