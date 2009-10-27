@@ -232,7 +232,7 @@ _ecore_getopt_copyright(FILE *fp, const Ecore_Getopt *parser)
 {
    const char *txt = gettext(parser->copyright);
    fputs(_("Copyright:"), fp);
-   fputs(_("\n   "), fp);
+   fputs("\n   ", fp);
    _ecore_getopt_help_line
      (fp, 3, cols, 3, txt, strlen(txt));
    fputc('\n', fp);
@@ -410,7 +410,7 @@ _ecore_getopt_help_desc_store(FILE *fp, const int base, const int total, int use
 	 len = str ? strlen(str) : 0;
 	 break;
       case ECORE_GETOPT_TYPE_BOOL:
-	 str = store->def.boolv ? _("true") : _("false");
+	 str = store->def.boolv ? "true" : "false";
 	 len = strlen(str);
 	 break;
       case ECORE_GETOPT_TYPE_SHORT:
@@ -791,13 +791,6 @@ _ecore_getopt_parse_bool(const char *str, unsigned char *v)
        (strcasecmp(str, "false") == 0) ||
        (strcasecmp(str, "no") == 0) ||
        (strcasecmp(str, "off") == 0)
-#ifdef HAVE_GETTEXT
-       ||
-       (strcasecmp(str, _("f")) == 0) ||
-       (strcasecmp(str, _("false")) == 0) ||
-       (strcasecmp(str, _("no")) == 0) ||
-       (strcasecmp(str, _("off")) == 0)
-#endif
        )
      {
 	*v = 0;
@@ -808,13 +801,6 @@ _ecore_getopt_parse_bool(const char *str, unsigned char *v)
 	    (strcasecmp(str, "true") == 0) ||
 	    (strcasecmp(str, "yes") == 0) ||
 	    (strcasecmp(str, "on") == 0)
-#ifdef HAVE_GETTEXT
-	    ||
-	    (strcasecmp(str, _("t")) == 0) ||
-	    (strcasecmp(str, _("true")) == 0) ||
-	    (strcasecmp(str, _("yes")) == 0) ||
-	    (strcasecmp(str, _("on")) == 0)
-#endif
 	    )
      {
 	*v = 1;
