@@ -29,8 +29,7 @@ _elm_theme_theme_element_try(const char *home, const char *f, const char *group)
    char buf[PATH_MAX];
    const char *file = NULL;
 
-   if ((f[0] == '/') ||
-       ((f[0] == '.') && (f[1] == '/')) ||
+   if ((f[0] == '/') || ((f[0] == '.') && (f[1] == '/')) ||
        ((f[0] == '.') && (f[1] == '.') && (f[2] == '/')))
      return _elm_theme_find_try(f, group);
    else if (((f[0] == '~') && (f[1] == '/')))
@@ -54,6 +53,7 @@ _elm_theme_group_file_find(const char *group)
    char *p;
    static const char *home = NULL;
    const char *file = eina_hash_find(cache, group);
+
    if (file) return file;
    if (!home)
      {
@@ -82,6 +82,7 @@ EAPI void
 elm_theme_overlay_add(const char *item)
 {
    const char *f = eina_stringshare_add(item);
+
    if (f) overlay = eina_list_prepend(overlay, f);
    elm_theme_flush();
 }
@@ -91,12 +92,13 @@ elm_theme_overlay_del(const char *item)
 {
    const Eina_List *l;
    const char *f, *s;
+
    s = eina_stringshare_add(item);
    EINA_LIST_FOREACH(overlay, l, f)
      if (f == s)
        {
 	  eina_stringshare_del(f);
-	  overlay = eina_list_remove_list(overlay, l);
+	  overlay = eina_list_remove_list(overlay, (Eina_List *)l);
 	  break;
        }
    eina_stringshare_del(s);
@@ -107,6 +109,7 @@ EAPI void
 elm_theme_extension_add(const char *item)
 {
    const char *f = eina_stringshare_add(item);
+
    if (f) extension = eina_list_append(extension, f);
    elm_theme_flush();
 }
@@ -116,12 +119,13 @@ elm_theme_extension_del(const char *item)
 {
    const Eina_List *l;
    const char *f, *s;
+
    s = eina_stringshare_add(item);
    EINA_LIST_FOREACH(extension, l, f)
      if (f == s)
        {
 	  eina_stringshare_del(f);
-	  extension = eina_list_remove_list(extension, l);
+	  extension = eina_list_remove_list(extension, (Eina_List *)l);
 	  break;
        }
    eina_stringshare_del(s);
@@ -162,8 +166,7 @@ _elm_theme_icon_set(Evas_Object *o, const char *group, const char *style)
 {
    const char *file;
    char buf2[1024];
-   int w, h;
-   int ok;
+   int w, h, ok;
 
    snprintf(buf2, sizeof(buf2), "elm/icon/%s/%s", group, style);
    file = _elm_theme_group_file_find(buf2);
@@ -199,6 +202,7 @@ _elm_theme_parse(const char *theme)
 		  if (n)
 		    {
 		       const char *nn;
+
 		       strncpy(n, p, pe - p);
 		       n[pe - p] = 0;
 		       nn = eina_stringshare_add(n);
@@ -226,9 +230,7 @@ _elm_theme_parse(const char *theme)
    cache = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
 
    EINA_LIST_FREE(themes, p)
-     {
-	eina_stringshare_del(p);
-     }
+     eina_stringshare_del(p);
 
    themes = names;
    return 1;

@@ -998,7 +998,6 @@ extern "C" {
      } Elm_Panel_Orient;
      EAPI Evas_Object *elm_panel_add(Evas_Object *parent);
      EAPI void         elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient);
-     EAPI void         elm_panel_timeout_set(Evas_Object *obj, int timeout);
      EAPI void         elm_panel_content_set(Evas_Object *obj, Evas_Object *content);
 
 #ifdef __cplusplus

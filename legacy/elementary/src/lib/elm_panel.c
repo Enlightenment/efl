@@ -15,8 +15,6 @@ struct _Widget_Data
    Evas_Object *parent, *panel, *content;
    Elm_Panel_Orient orient;
    Eina_Bool hidden : 1;
-   int timeout;
-   Ecore_Timer *timer;
 };
 
 static void _del_pre_hook(Evas_Object *obj);
@@ -67,19 +65,15 @@ _sizing_eval(Evas_Object *obj)
    switch (wd->orient) 
      {
       case ELM_PANEL_ORIENT_TOP:
-        evas_object_move(wd->panel, x, y);
         evas_object_resize(wd->panel, w, pw + PNL_BTN_WIDTH);
         break;
       case ELM_PANEL_ORIENT_BOTTOM:
-        evas_object_move(wd->panel, x, h - (pw + PNL_BTN_WIDTH));
         evas_object_resize(wd->panel, w, pw + PNL_BTN_WIDTH);
         break;
       case ELM_PANEL_ORIENT_LEFT:
-        evas_object_move(wd->panel, x, y);
         evas_object_resize(wd->panel, pw + PNL_BTN_WIDTH, h);
         break;
       case ELM_PANEL_ORIENT_RIGHT:
-        evas_object_move(wd->panel, (x + w - (pw + PNL_BTN_WIDTH)), y);
         evas_object_resize(wd->panel, pw + PNL_BTN_WIDTH, h);
         break;
      }
@@ -96,15 +90,14 @@ _toggle_panel(void *data, Evas_Object *obj, const char *emission, const char *so
 {
    Widget_Data *wd = elm_widget_data_get(data);
 
-   if (wd->timer) ecore_timer_del(wd->timer);
    if (wd->hidden) 
      {
-        edje_object_signal_emit(wd->panel, "elm,state,visible", "elm");
+        edje_object_signal_emit(wd->panel, "elm,action,show", "elm");
         wd->hidden = EINA_FALSE;
      }
    else 
      {
-        edje_object_signal_emit(wd->panel, "elm,state,hidden", "elm");
+        edje_object_signal_emit(wd->panel, "elm,action,hide", "elm");
         wd->hidden = EINA_TRUE;
      }
 }
@@ -119,7 +112,6 @@ elm_panel_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    wd->parent = parent;
    wd->hidden = EINA_FALSE;
-   wd->timeout = 2;
    evas = evas_object_evas_get(parent);
 
    obj = elm_widget_add(evas);
@@ -138,6 +130,8 @@ elm_panel_add(Evas_Object *parent)
                                    "*", _toggle_panel, obj);
    evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_RESIZE, 
                                   _parent_resize, obj);
+
+   edje_object_signal_emit(wd->panel, "elm,action,show", "elm");
 
    return obj;
 }
@@ -164,15 +158,6 @@ elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient)
         break;
      }
    _sizing_eval(obj);
-}
-
-EAPI void 
-elm_panel_timeout_set(Evas_Object *obj, int timeout) 
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-
-   wd->timeout = timeout;
-//   _timer_init(obj);
 }
 
 EAPI void 

@@ -18072,6 +18072,15 @@ group
                {
                   state: "default" 0.0;
                   color: 255 255 255 0;
+                  rel1.relative: -0.5 0.0;
+                  rel2.relative: 0.3 1.0;
+               }
+             description 
+               {
+                  state: "visible" 0.0;
+                  inherit: "default" 0.0;
+                  rel1.relative: 0.0 0.0;
+                  rel2.relative: 1.0 1.0;
                }
           }
         part 
@@ -18121,7 +18130,6 @@ group
              description 
                {
                   state: "default" 0.0;
-                  min: 32 48;
                   max: 32 48;
                   fixed: 1 1;
                   align: 0.0 0.5;
@@ -18131,6 +18139,7 @@ group
                        offset: -3 0;
                        to_x: "base";
                     }
+                  rel2.to_x: "bg";
                   image 
                     {
                        normal: "bt_base1.png";
@@ -18224,19 +18233,18 @@ group
                   align: 0.5 0.5;
                   min: 16 16;
                   max: 16 16;
-                  image.normal: "icon_arrow_left.png";
+                  image.normal: "icon_arrow_right.png";
                }
              description 
                {
-                  state: "hidden" 0.0;
+                  state: "visible" 0.0;
                   inherit: "default" 0.0;
-                  image.normal: "icon_arrow_right.png";
+                  image.normal: "icon_arrow_left.png";
                }
           }
      }
    programs 
      {
-        /*
         program 
           {
              name: "show";
@@ -18244,6 +18252,8 @@ group
              source: "elm";
              action: STATE_SET "visible" 0.0;
              target: "bg";
+             target: "btn_icon";
+             transition: LINEAR 0.5;
           }
         program 
           {
@@ -18258,6 +18268,7 @@ group
              name: "show3";
              action: STATE_SET "visible" 0.0;
              target: "bg";
+             target: "btn_icon";
              transition: LINEAR 0.5;
           }
         program 
@@ -18267,8 +18278,9 @@ group
              source: "elm";
              action: STATE_SET "default" 0.0;
              target: "bg";
+             target: "btn_icon";
+             transition: LINEAR 0.5;
           }
-         */
         program 
           {
              name: "btn_click";
@@ -18308,22 +18320,6 @@ group
              signal: "mouse,up,1";
              source: "btn_over2";
              action: SIGNAL_EMIT "elm,action,panel,toggle" "";
-          }
-        program 
-          {
-             name: "visible";
-             signal: "elm,state,visible";
-             source: "elm";
-             action: STATE_SET "default" 0.0;
-             target: "btn_icon";
-          }
-        program 
-          {
-             name: "hidden";
-             signal: "elm,state,hidden";
-             source: "elm";
-             action: STATE_SET "hidden" 0.0;
-             target: "btn_icon";
           }
      }
 }
