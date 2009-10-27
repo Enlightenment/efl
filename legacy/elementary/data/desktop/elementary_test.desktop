@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Elementary Test
 Comment=Elementary Test Application
+Comment[cs]=Testovací aplikace Elementary
 Exec=elementary_test
 Icon=elementary
 Terminal=false
