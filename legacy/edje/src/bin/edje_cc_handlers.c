@@ -200,15 +200,10 @@ static void st_collections_group_parts_part_description_table_homogeneous(void);
 static void st_collections_group_parts_part_description_table_align(void);
 static void st_collections_group_parts_part_description_table_padding(void);
 
-/* external part parameters */
-static void st_collections_group_parts_part_description_params_int(void);
 static void ob_collections_group_programs_program(void);
-static void st_collections_group_parts_part_description_params_double(void);
-
 static void st_collections_group_programs_program_name(void);
-static void st_collections_group_parts_part_description_params_string(void);
 static void st_collections_group_programs_program_signal(void);
- static void st_collections_group_programs_program_source(void);
+static void st_collections_group_programs_program_source(void);
 static void st_collections_group_programs_program_in(void);
 static void st_collections_group_programs_program_action(void);
 static void st_collections_group_programs_program_transition(void);
@@ -404,9 +399,6 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.table.homogeneous", st_collections_group_parts_part_description_table_homogeneous},
      {"collections.group.parts.part.description.table.align", st_collections_group_parts_part_description_table_align},
      {"collections.group.parts.part.description.table.padding", st_collections_group_parts_part_description_table_padding},
-     {"collections.group.parts.part.description.params.int", st_collections_group_parts_part_description_params_int},
-     {"collections.group.parts.part.description.params.double", st_collections_group_parts_part_description_params_double},
-     {"collections.group.parts.part.description.params.string", st_collections_group_parts_part_description_params_string},
      {"collections.group.parts.part.description.images.image", st_images_image}, /* dup */
      {"collections.group.parts.part.description.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.fonts.font", st_fonts_font}, /* dup */
@@ -567,7 +559,6 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.gradient.rel2", NULL},
      {"collections.group.parts.part.description.box", NULL},
      {"collections.group.parts.part.description.table", NULL},
-     {"collections.group.parts.part.description.params", NULL},
      {"collections.group.parts.part.description.color_classes", NULL}, /* dup */
      {"collections.group.parts.part.description.color_classes.color_class", ob_color_class}, /* dup */
      {"collections.group.parts.part.description.program", ob_collections_group_programs_program}, /* dup */
@@ -1702,7 +1693,6 @@ st_collections_group_parts_part_name(void)
             @li GROUP
             @li BOX
             @li TABLE
-            @li EXTERNAL
     @endproperty
 */
 static void
@@ -1726,7 +1716,6 @@ st_collections_group_parts_part_type(void)
 			 "GROUP", EDJE_PART_TYPE_GROUP,
 			 "BOX", EDJE_PART_TYPE_BOX,
 			 "TABLE", EDJE_PART_TYPE_TABLE,
-			 "EXTERNAL", EDJE_PART_TYPE_EXTERNAL,
 			 NULL);
 }
 
@@ -2986,7 +2975,6 @@ ob_collections_group_parts_part_description(void)
    ed->table.align.y = 0.5;
    ed->table.padding.x = 0;
    ed->table.padding.y = 0;
-   ed->external_params = NULL;
 }
 
 /**
@@ -3121,20 +3109,6 @@ st_collections_group_parts_part_description_inherit(void)
 
    data_queue_part_slave_lookup(&(parent->text.id_source), &(ed->text.id_source));
    data_queue_part_slave_lookup(&(parent->text.id_text_source), &(ed->text.id_text_source));
-
-   if (parent->external_params)
-     {
-	Eina_List *l;
-	Edje_External_Param *param, *new_param;
-
-	ed->external_params = NULL;
-	EINA_LIST_FOREACH(parent->external_params, l, param)
-	  {
-	     new_param = mem_alloc(SZ(Edje_External_Param));
-	     *new_param = *param;
-	     ed->external_params = eina_list_append(ed->external_params, new_param);
-	  }
-     }
 }
 
 /**
@@ -5504,121 +5478,6 @@ static void st_collections_group_parts_part_description_table_padding(void)
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
    ed->table.padding.x = parse_int_range(0, 0, 0x7fffffff);
    ed->table.padding.y = parse_int_range(1, 0, 0x7fffffff);
-}
-
-static void
-_st_collections_group_parts_part_description_params(Edje_External_Param_Type type)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-   Edje_External_Param *param;
-   Eina_List *l;
-   const char *name;
-   int found = 0;
-
-   check_arg_count(2);
-
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   ep = eina_list_data_get(eina_list_last(pc->parts));
-
-   if (ep->type != EDJE_PART_TYPE_EXTERNAL)
-     {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"params in non-EXTERNAL part.\n",
-		progname, file_in, line - 1);
-	exit(-1);
-     }
-
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-
-   name = parse_str(0);
-
-   /* if a param with this name already exists, overwrite it */
-   EINA_LIST_FOREACH(ed->external_params, l, param)
-     {
-	if (!strcmp(param->name, name))
-	  {
-	     found = 1;
-	     break;
-	  }
-     }
-
-   if (!found)
-     {
-	param = mem_alloc(SZ(Edje_External_Param));
-	param->name = name;
-     }
-
-   param->type = type;
-   param->i = 0;
-   param->d = 0;
-   param->s = NULL;
-
-   switch (type)
-     {
-      case EDJE_EXTERNAL_PARAM_TYPE_INT:
-	 param->i = parse_int(1);
-	 break;
-      case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
-	 param->d = parse_float(1);
-	 break;
-      case EDJE_EXTERNAL_PARAM_TYPE_STRING:
-	 param->s = parse_str(1);
-	 break;
-     }
-
-   if (!found)
-     ed->external_params = eina_list_append(ed->external_params, param);
-}
-
-/**
-    @page edcref
-    @property
-        inherit
-    @parameters
-        [param_name] [int_value]
-    @effect
-	Adds an integer parameter for an external object
-    @endproperty
-*/
-static void
-st_collections_group_parts_part_description_params_int(void)
-{
-   _st_collections_group_parts_part_description_params(EDJE_EXTERNAL_PARAM_TYPE_INT);
-}
-
-/**
-    @page edcref
-    @property
-        inherit
-    @parameters
-        [param_name] [double_value]
-    @effect
-	Adds a double parameter for an external object
-    @endproperty
-*/
-static void
-st_collections_group_parts_part_description_params_double(void)
-{
-   _st_collections_group_parts_part_description_params(EDJE_EXTERNAL_PARAM_TYPE_DOUBLE);
-}
-
-/**
-    @page edcref
-    @property
-        inherit
-    @parameters
-        [param_name] [string_value]
-    @effect
-	Adds a string parameter for an external object
-    @endproperty
-*/
-static void
-st_collections_group_parts_part_description_params_string(void)
-{
-   _st_collections_group_parts_part_description_params(EDJE_EXTERNAL_PARAM_TYPE_STRING);
 }
 
 /**

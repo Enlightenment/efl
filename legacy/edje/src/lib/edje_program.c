@@ -944,8 +944,8 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
      {
         size_t length;
         char *part;
-       /* the signal contains a colon, split the signal into "part:signal",
-	* and deliver it to "part" (if there is a GROUP or EXTERNAL part named "part")
+       /* the signal contains a colon, split the signal into "group:signal",
+	* and deliver it to "group"
 	*/
        length = strlen(sig) + 1;
        part = alloca(length);
@@ -962,25 +962,17 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
             for (i = 0; i < ed->table_parts_size; i++)
               {
                  Edje_Real_Part *rp = ed->table_parts[i];
-                 if ((rp->part->type == EDJE_PART_TYPE_GROUP || rp->part->type == EDJE_PART_TYPE_EXTERNAL) &&
+                 if ((rp->part->type == EDJE_PART_TYPE_GROUP) &&
                      (rp->swallowed_object) &&
                      (rp->part) && (rp->part->name) &&
                      (strcmp(rp->part->name, part) == 0))
                    {
-		      if (rp->part->type == EDJE_PART_TYPE_GROUP)
-			{
-			   Edje *ed2 = _edje_fetch(rp->swallowed_object);
-			   if (ed2) _edje_emit(ed2, newsig, src);
-			   return; /* stop processing.
-				    * XXX maybe let signal be processed anyway?
-				    * XXX in this case, just comment this line
-				    */
-			}
-		      else if (rp->part->type == EDJE_PART_TYPE_EXTERNAL)
-			{
-			   _edje_external_signal_emit(rp->swallowed_object, newsig, src);
-			   return;
-			}
+                      Edje *ed2 = _edje_fetch(rp->swallowed_object);
+                      if (ed2) _edje_emit(ed2, newsig, src);
+                      return; /* stop processing.
+			       * XXX maybe let signal be processed anyway?
+			       * XXX in this case, just comment this line
+			       */
                    }
               }
          }

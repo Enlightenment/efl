@@ -42,8 +42,7 @@ edje_textblock_styles.c \
 edje_edit.c \
 edje_script_only.c \
 edje_lua_script_only.c \
-edje_entry.c \
-edje_external.c
+edje_entry.c
 
 libedje_la_LIBADD = @EDJE_LIBS@ @ECORE_IMF_LIBS@ -lm
 libedje_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@

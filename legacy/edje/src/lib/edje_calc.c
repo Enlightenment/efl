@@ -1874,7 +1874,6 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	      /* move and resize are needed for all previous object => no break here. */
 	   case EDJE_PART_TYPE_SWALLOW:
 	   case EDJE_PART_TYPE_GROUP:
-	   case EDJE_PART_TYPE_EXTERNAL:
 	      /* visibility and color have no meaning on SWALLOW and GROUP part. */
 	      evas_object_move(ep->object, ed->x + pf->x, ed->y + pf->y);
 	      evas_object_resize(ep->object, pf->w, pf->h);
@@ -1903,9 +1902,6 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	      break;
 	   case EDJE_PART_TYPE_TABLE:
 	      _edje_table_recalc_apply(ed, ep, pf, chosen_desc);
-	      break;
-	   case EDJE_PART_TYPE_EXTERNAL:
-	      _edje_external_recalc_apply(ed, ep, pf, chosen_desc);
 	      break;
 	   case EDJE_PART_TYPE_RECTANGLE:
 	   case EDJE_PART_TYPE_SWALLOW:

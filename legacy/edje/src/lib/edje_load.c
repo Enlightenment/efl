@@ -399,7 +399,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			break;
 		     case EDJE_PART_TYPE_SWALLOW:
 		     case EDJE_PART_TYPE_GROUP:
-		     case EDJE_PART_TYPE_EXTERNAL:
 			rp->object = evas_object_rectangle_add(ed->evas);
 			evas_object_color_set(rp->object, 0, 0, 0, 0);
 			evas_object_pass_events_set(rp->object, 1);
@@ -596,13 +595,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			     source = pack_it->source;
 			  }
 			break;
-		     case EDJE_PART_TYPE_EXTERNAL:
-			  {
-			     Evas_Object *child_obj;
-			     child_obj = _edje_external_type_add(rp->part->source, evas_object_evas_get(ed->obj), ed->obj, rp->part->default_desc->external_params);
-			     if (child_obj) _edje_real_part_swallow(rp, child_obj);
-			  }
-			continue;
 		     default:
 			continue;
 		    }
@@ -847,7 +839,7 @@ _edje_file_del(Edje *ed)
 
                   /* Objects swallowed by the app do not get deleted,
                    but those internally swallowed (GROUP type) do. */
-		  if (rp->part->type == EDJE_PART_TYPE_GROUP || rp->part->type == EDJE_PART_TYPE_EXTERNAL)
+		  if (rp->part->type == EDJE_PART_TYPE_GROUP)
 		    evas_object_del(rp->swallowed_object);
 
 		  rp->swallowed_object = NULL;
@@ -1146,8 +1138,6 @@ _edje_collection_free_part_description_free(Edje_Part_Description *desc, unsigne
 
    EINA_LIST_FREE(desc->image.tween_list, pi)
      free(pi);
-   if (desc->external_params)
-     _edje_external_params_free(desc->external_params, free_strings);
    if (free_strings)
      {
 	if (desc->color_class)     eina_stringshare_del(desc->color_class);

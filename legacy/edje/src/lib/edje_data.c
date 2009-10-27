@@ -26,7 +26,6 @@ EAPI Eet_Data_Descriptor *_edje_edd_edje_part_collection = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_part = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_part_image_id = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_external_param = NULL;
 
 #define FREED(eed) \
    if (eed) \
@@ -60,7 +59,6 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_part);
    FREED(_edje_edd_edje_part_description);
    FREED(_edje_edd_edje_part_image_id);
-   FREED(_edje_edd_edje_external_param);
 }
 
 void
@@ -215,15 +213,6 @@ _edje_edd_init(void)
      eet_data_descriptor_file_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_image_id, Edje_Part_Image_Id, "id", id, EET_T_INT);
 
-   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_External_Param);
-   _edje_edd_edje_external_param =
-     eet_data_descriptor_file_new(&eddc);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_external_param, Edje_External_Param, "name", name, EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_external_param, Edje_External_Param, "type", type, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_external_param, Edje_External_Param, "i", i, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_external_param, Edje_External_Param, "d", d, EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_external_param, Edje_External_Param, "s", s, EET_T_STRING);
-
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description);
    _edje_edd_edje_part_description =
      eet_data_descriptor_file_new(&eddc);
@@ -329,7 +318,6 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "table.align.y", table.align.y, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "table.padding.x", table.padding.x, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "table.padding.y", table.padding.y, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_part_description, Edje_Part_Description, "external_params", external_params, _edje_edd_edje_external_param);
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Pack_Element);
    _edje_edd_edje_pack_element =

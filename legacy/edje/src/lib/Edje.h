@@ -90,8 +90,7 @@ typedef enum _Edje_Part_Type
    EDJE_PART_TYPE_GROUP     = 7,
    EDJE_PART_TYPE_BOX       = 8,
    EDJE_PART_TYPE_TABLE     = 9,
-   EDJE_PART_TYPE_EXTERNAL  = 10,
-   EDJE_PART_TYPE_LAST      = 11
+   EDJE_PART_TYPE_LAST      = 10
 } Edje_Part_Type;
 
 typedef enum _Edje_Text_Effect
@@ -226,37 +225,6 @@ enum
      EDJE_LOAD_ERROR_UNKNOWN_COLLECTION = 8,
      EDJE_LOAD_ERROR_RECURSIVE_REFERENCE = 9
 };
-
-enum _Edje_External_Param_Type
-{
-  EDJE_EXTERNAL_PARAM_TYPE_INT,
-  EDJE_EXTERNAL_PARAM_TYPE_DOUBLE,
-  EDJE_EXTERNAL_PARAM_TYPE_STRING,
-  EDJE_EXTERNAL_PARAM_TYPE_MAX
-};
-typedef enum _Edje_External_Param_Type Edje_External_Param_Type;
-
-struct _Edje_External_Param
-{
-  const char *name;
-  Edje_External_Param_Type type;
-  // XXX these could be in a union, but eet doesn't support them (or does it?)
-  int i;
-  double d;
-  const char *s;
-};
-typedef struct _Edje_External_Param Edje_External_Param;
-
-struct _Edje_External_Type
-{
-  Evas_Object *(*add) (void *data, Evas *evas, Evas_Object *parent, const Eina_List *params);
-  void (*state_set) (void *data, Evas_Object *obj, const Eina_List *from_params, const Eina_List *to_params, float pos);
-  void (*signal_emit) (void *data, Evas_Object *obj, const char *emission, const char *source);
-
-  void *data;
-};
-typedef struct _Edje_External_Type Edje_External_Type;
-
 
 typedef void (*Edje_Signal_Cb) (void *data, Evas_Object *obj, const char *emission, const char *source);
 typedef void (*Edje_Text_Change_Cb) (void *data, Evas_Object *obj, const char *part);
@@ -396,11 +364,6 @@ extern "C" {
    EAPI void         edje_object_message_signal_process (Evas_Object *obj);
 
    EAPI void         edje_message_signal_process        (void);
-
-   /* edje_external.c */
-  EAPI Eina_Bool edje_external_type_register(const char *type_name, Edje_External_Type *type_info);
-  EAPI Eina_Bool edje_external_type_unregister(const char *type_name);
-  EAPI Edje_External_Param *edje_external_param_find(const Eina_List *params, const char *key);
 
 #ifdef __cplusplus
 }
