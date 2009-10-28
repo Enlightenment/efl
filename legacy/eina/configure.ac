@@ -257,6 +257,9 @@ AC_HEADER_ASSERT
 AC_HEADER_DIRENT
 AC_HEADER_TIME
 
+AC_CHECK_HEADER([fnmatch.h],
+   [dummy="yes"],
+   [AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file. MinGW users: see the INSTALL file])])
 
 ### Checks for types
 
