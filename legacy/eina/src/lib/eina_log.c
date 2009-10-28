@@ -141,6 +141,26 @@
  * The global level (EINA_LOG_LEVEL) can also be set through code, using
  * eina_log_level_set() function.
  *
+ *
+ * While developing your libraries or applications, you may notice that 
+ * EINA_LOG_DOM_(ERR, DBG, INFO, CRIT, WARN) macros also print out 
+ * messages from eina itself. Here we introduce another environment variable
+ * that is a bit more special: EINA_LOG_LEVELS_GLOB.
+ *
+ * This variable allows you to disable the logging of any/all code in eina itself.
+ * This is useful when developing your libraries or applications so that you can 
+ * see your own domain's messages easier without having to sift through a lot of 
+ * internal eina debug messages. Here's an example:
+ *
+ * @code
+ *
+ * EINA_LOG_LEVEL=3 EINA_LOG_LEVELS_GLOB=eina_*:0 ./myapp
+ *
+ * @endcode
+ *
+ * This will disable eina_log output from all internal eina code thus allowing 
+ * you to see your own domain messages easier.
+ * 
  * @section tutorial_log_advanced_display Advanced usage of print callbacks
  *
  * The log module allows the user to change the way
@@ -273,6 +293,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <fnmatch.h>
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
@@ -305,6 +326,7 @@
 #define EINA_LOG_ENV_ABORT "EINA_LOG_ABORT"
 #define EINA_LOG_ENV_LEVEL "EINA_LOG_LEVEL"
 #define EINA_LOG_ENV_LEVELS "EINA_LOG_LEVELS"
+#define EINA_LOG_ENV_LEVELS_GLOB "EINA_LOG_LEVELS_GLOB"
 #define EINA_LOG_ENV_COLOR_DISABLE "EINA_LOG_COLOR_DISABLE"
 #define EINA_LOG_ENV_FILE_DISABLE "EINA_LOG_FILE_DISABLE"
 #define EINA_LOG_ENV_FUNCTION_DISABLE "EINA_LOG_FUNCTION_DISABLE"
@@ -325,6 +347,7 @@ struct _Eina_Log_Domain_Level_Pending
  * updates the domain levels on the first log and clears itself.
  */
 static Eina_Inlist *_pending_list = NULL;
+static Eina_Inlist *_glob_list = NULL;
 
 // Disable color flag (can be changed through the env var
 // EINA_LOG_ENV_COLOR_DISABLE).
@@ -793,6 +816,44 @@ eina_log_domain_parse_pendings(void)
      }
 }
 
+static void
+eina_log_domain_parse_pending_globs(void)
+{
+   const char *start;
+
+   if (!(start = getenv(EINA_LOG_ENV_LEVELS_GLOB))) return;
+
+   // name1:level1,name2:level2,name3:level3,...
+   while (1)
+     {
+	Eina_Log_Domain_Level_Pending *p;
+	char *end = NULL;
+	char *tmp = NULL;
+	long int level;
+
+	end = strchr(start, ':');
+	if (!end) break;
+
+	// Parse level, keep going if failed
+	level = strtol((char *)(end + 1), &tmp, 10);
+	if (tmp == (end + 1)) goto parse_end;
+
+	// Parse name
+	p = malloc(sizeof(Eina_Log_Domain_Level_Pending) + end - start + 1);
+	if (!p) break;
+	memcpy((char *)p->name, start, end - start);
+	((char *)p->name)[end - start] = '\0';
+	p->level = level;
+
+	_glob_list = eina_inlist_append(_glob_list, EINA_INLIST_GET(p));
+
+	parse_end:
+	start = strchr(tmp, ',');
+	if (start) start++;
+	else break;
+     }
+}
+
 /**
  * @endcond
  */
@@ -937,6 +998,9 @@ eina_log_init(void)
 	return EINA_FALSE;
      }
 
+   // Parse pending domains passed through EINA_LOG_LEVELS_GLOB
+   eina_log_domain_parse_pending_globs();
+
    // Parse pending domains passed through EINA_LOG_LEVELS
    eina_log_domain_parse_pendings();
 
@@ -977,6 +1041,13 @@ eina_log_shutdown(void)
    _log_domains = NULL;
    _log_domains_count = 0;
    _log_domains_allocated = 0;
+
+   while (_glob_list) 
+     {
+        tmp = _glob_list;
+        _glob_list = _glob_list->next;
+        free(tmp);
+     }
 
    while (_pending_list)
      {
@@ -1099,6 +1170,15 @@ eina_log_domain_register_unlocked(const char *name, const char *color)
    _log_domains_count++;
 
 finish_register:
+   EINA_INLIST_FOREACH(_glob_list, pending) 
+     {
+        if (!fnmatch(pending->name, name, 0)) 
+          {
+             _log_domains[i].level = pending->level;
+             break;
+          }
+     }
+
    EINA_INLIST_FOREACH(_pending_list, pending)
      {
 	if (!strcmp(pending->name, name))
