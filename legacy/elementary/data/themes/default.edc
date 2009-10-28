@@ -5353,6 +5353,7 @@ collections {
 	    source5: "elm/entry/anchor/default"; // anchor under
 //	    source6: "X"; // anchor over
 	    description { state: "default" 0.0;
+               fixed: 1 0;
 	       text {
 		  style: "entry_textblock_style";
 		  min: 0 1;
@@ -5426,6 +5427,7 @@ collections {
 	    source5: "elm/entry/anchor/default"; // anchor under
 //	    source6: "X"; // anchor over
 	    description { state: "default" 0.0;
+               fixed: 1 0;
 	       text {
 		  style: "entry_textblock_style_charwrap";
 		  min: 0 1;
@@ -5672,6 +5674,7 @@ collections {
 	    source: "elm/entry/selection/default"; // selection under
 	    source5: "elm/entry/anchor/default"; // anchor under
 	    description { state: "default" 0.0;
+               fixed: 1 0;
 	       text {
 		  style: "entry_textblock_style";
 		  min: 0 1;
@@ -5719,6 +5722,7 @@ collections {
 	    source: "elm/entry/selection/default"; // selection under
 	    source5: "elm/entry/anchor/default"; // anchor under
 	    description { state: "default" 0.0;
+               fixed: 1 0;
 	       text {
 		  style: "entry_textblock_style_charwrap";
 		  min: 0 1;
