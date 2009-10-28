@@ -2,7 +2,7 @@
 #include "evas_private.h"
 
 static Eina_List *
-evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char do_draw);
+evas_render_updates_internal(Evas *e, Evas_Object *smart, unsigned char make_updates, unsigned char do_draw);
 
 /**
  * Add a damage rectangle.
@@ -144,6 +144,39 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Eina_Array *active
 	obj->changed = 1;
 	clean_them = EINA_TRUE;
      }
+   
+   if (!((obj->func->can_map) && (obj->func->can_map(obj))) &&
+       ((obj->cur.map) && (obj->cur.map->count == 4) && (obj->cur.usemap)))
+     {
+        if (obj->changed)
+          {
+             if ((is_active) && (obj->restack) && (!obj->clip.clipees) &&
+                 ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
+                  (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
+               eina_array_push(restack_objects, obj);
+             else if ((is_active) && (!obj->clip.clipees) &&
+                      ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
+                       (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
+               {
+                  eina_array_push(render_objects, obj);
+                  obj->render_pre = 1;
+               }
+          }
+        /* for now all mapped objects are no logner opaque        
+        else
+          {
+             if (evas_object_is_opaque(obj) &&
+                 evas_object_is_visible(obj))
+               {
+                  eina_array_push(render_objects, obj);
+                  obj->rect_del = 1;
+               }
+          }
+         */
+     }
+   
+   /* handle normal rendering. this object knows how to handle maps */
+   
    if (obj->changed)
      {
 	if (obj->smart.smart)
@@ -246,14 +279,14 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *e)
 	Evas_Object *obj;
 	int ok = 0;
 	int is_active;
-
+        
 	obj = eina_array_data_get(pending_objects, i);
-
+        
 	if (!obj->layer) goto clean_stuff;
-
+        
 	evas_object_clip_recalc(obj);
 	is_active = evas_object_is_active(obj);
-
+        
 	if (!is_active &&
 	    !obj->is_active &&
 	    !obj->render_pre &&
@@ -262,7 +295,7 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *e)
 	     ok = 1;
 	     goto clean_stuff;
 	  }
-
+        
 	if (obj->is_active == is_active)
 	  {
 	     if (obj->changed)
@@ -279,18 +312,18 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *e)
 			 (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
 		      {
 			 if (!(obj->render_pre
-			       || obj->rect_del))
+                               || obj->rect_del))
 			   ok = 1;
 		      }
-		    else
-		      if (is_active && (!obj->clip.clipees) &&
-			  ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
-			   (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
-			{
-			   if (obj->render_pre
-			       || obj->rect_del)
-			     ok = 1;
-			}
+                  else
+                    if (is_active && (!obj->clip.clipees) &&
+                        ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
+                         (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
+                      {
+                         if (obj->render_pre
+                             || obj->rect_del)
+                           ok = 1;
+                      }
 	       }
 	     else
 	       {
@@ -303,18 +336,18 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *e)
 		      }
 	       }
 	  }
-
-     clean_stuff:
+        
+        clean_stuff:
 	if (!ok)
 	  {
 	     eina_array_clean(&e->active_objects);
 	     eina_array_clean(&e->render_objects);
-
+             
 	     eina_array_clean(&e->restack_objects);
 	     eina_array_clean(&e->delete_objects);
-
+             
 	     e->invalidate = 1;
-
+             
 	     return ;
 	  }
      }
@@ -332,7 +365,10 @@ pending_change(void *data, void *gdata __UNUSED__)
 }
 
 static Eina_List *
-evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char do_draw)
+evas_render_updates_internal(Evas *e,
+                             Evas_Object *smart,
+                             unsigned char make_updates,
+                             unsigned char do_draw)
 {
    Eina_List *updates = NULL;
    Eina_List *ll;
@@ -348,6 +384,11 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
    return NULL;
    MAGIC_CHECK_END();
    if (!e->changed) return NULL;
+
+   if (smart)
+     {
+        // FIXME: if smart, only consider child objects
+     }
 
    evas_call_smarts_calculate(e);
 
@@ -588,11 +629,79 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char 
                                    }
 			      }
 #endif
-			    obj->func->render(obj,
-					      e->engine.data.output,
-					      e->engine.data.context,
-					      surface,
-					      off_x, off_y);
+                            if (!((obj->func->can_map) && (obj->func->can_map(obj))) &&
+                                ((obj->cur.map) && (obj->cur.map->count == 4) && (obj->cur.usemap)))
+                              {
+                                 const Evas_Map_Point *p, *p_end;
+                                 RGBA_Map_Point pts[4], *pt;
+                                 void *ctx;
+                                 
+                                 ctx = e->engine.func->context_new(e->engine.data.output);
+                                 if (!obj->cur.map->surface)
+                                   {
+                                      obj->cur.map->surface =
+                                        obj->layer->evas->engine.func->image_map_surface_new
+                                        (e->engine.data.output,
+                                         obj->cur.map->normal_geometry.w,
+                                         obj->cur.map->normal_geometry.h,
+                                         1);
+                                   }
+                                 
+                                 if (obj->smart.smart)
+                                   {
+                                      // FIXME: doesnt work yet
+                                      // smart object. draw all children to
+                                      // surface (and if they are mapped...
+                                      // recurse)
+                                      evas_render_updates_internal(e, obj, 0, 1);
+                                   }
+                                 else
+                                   {
+                                      obj->func->render(obj,
+                                                        e->engine.data.output,
+                                                        ctx,
+                                                        obj->cur.map->surface,
+                                                        -obj->cur.cache.clip.x,
+                                                        -obj->cur.cache.clip.y
+                                                        );
+                                   }
+                                 e->engine.func->context_free(e->engine.data.output, ctx);
+                                 
+                                 p = obj->cur.map->points;
+                                 p_end = p + 4;
+                                 pt = pts;
+                                 
+                                 for (; p < p_end; p++, pt++)
+                                   {
+                                      pt->x = (p->x + off_x) << FP;
+                                      pt->y = (p->y + off_y) << FP;
+                                      pt->z = (p->z)         << FP;
+                                      pt->u = p->u * FP1;
+                                      pt->v = p->v * FP1;
+                                   }
+                                 obj->layer->evas->engine.func->image_map4_draw
+                                   (e->engine.data.output,
+                                    e->engine.data.context,
+                                    surface,
+                                    obj->cur.map->surface,
+                                    pts,
+                                    1, // smooth? (on for now)
+                                    0);
+                                 // FIXME: needs to cache these maps and
+                                 // keep them only rendering updates
+                                 obj->layer->evas->engine.func->image_map_surface_free
+                                   (e->engine.data.output,
+                                    obj->cur.map->surface);
+                                 obj->cur.map->surface = NULL;
+                              }
+                            else
+                              {
+                                 obj->func->render(obj,
+                                                   e->engine.data.output,
+                                                   e->engine.data.context,
+                                                   surface,
+                                                   off_x, off_y);
+                              }
 			    e->engine.func->context_cutout_clear(e->engine.data.output,
 								 e->engine.data.context);
 			 }
@@ -703,7 +812,7 @@ evas_render_updates(Evas *e)
    MAGIC_CHECK_END();
 
    if (!e->changed) return NULL;
-   return evas_render_updates_internal(e, 1, 1);
+   return evas_render_updates_internal(e, NULL, 1, 1);
 }
 
 /**
@@ -722,7 +831,7 @@ evas_render(Evas *e)
    MAGIC_CHECK_END();
 
    if (!e->changed) return;
-   evas_render_updates_internal(e, 0, 1);
+   evas_render_updates_internal(e, NULL, 0, 1);
 }
 
 /**
@@ -746,7 +855,7 @@ evas_norender(Evas *e)
    MAGIC_CHECK_END();
 
 //   if (!e->changed) return;
-   evas_render_updates_internal(e, 0, 0);
+   evas_render_updates_internal(e, NULL, 0, 0);
 }
 
 /**

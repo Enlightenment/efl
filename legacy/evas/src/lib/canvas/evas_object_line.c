@@ -65,6 +65,7 @@ static const Evas_Object_Func object_func =
      evas_object_line_coords_recalc,
      NULL,
      NULL,
+     NULL,
      NULL
 };
 

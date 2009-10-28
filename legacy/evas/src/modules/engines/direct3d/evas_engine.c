@@ -580,6 +580,10 @@ module_open(Evas_Module *em)
    ORD(image_scale_hint_set);
    ORD(image_scale_hint_get);
 
+//   ORD(image_map4_draw);
+//   ORD(image_map_surface_new);
+//   ORD(image_map_surface_free);
+
 /*
    ORD(gradient2_color_np_stop_insert);
    ORD(gradient2_clear);

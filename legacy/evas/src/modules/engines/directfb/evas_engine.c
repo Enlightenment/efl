@@ -1679,6 +1679,11 @@ module_open(Evas_Module *em)
    ORD(gradient_draw);
    ORD(image_scale_hint_set);
    ORD(image_scale_hint_get);
+
+//   ORD(image_map4_draw);
+//   ORD(image_map_surface_new);
+//   ORD(image_map_surface_free);
+
    /* now advertise out own api */
    em->functions = (void *)(&func);
    return 1;

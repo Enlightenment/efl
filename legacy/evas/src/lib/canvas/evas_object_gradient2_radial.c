@@ -63,6 +63,7 @@ static const Evas_Object_Func rg_object_func =
      NULL,
      NULL,
      NULL,
+     NULL,
      NULL
 };
 

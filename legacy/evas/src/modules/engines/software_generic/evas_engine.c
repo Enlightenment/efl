@@ -787,6 +787,26 @@ eng_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *i
    evas_common_cpu_end_opt();
 }
 
+static void *
+eng_image_map_surface_new(void *data __UNUSED__, int w, int h, int alpha)
+{
+   void *surface;
+   DATA32 *pixels;
+   surface = evas_cache_image_copied_data(evas_common_image_cache_get(), 
+                                          w, h, NULL, alpha, 
+                                          EVAS_COLORSPACE_ARGB8888);
+   pixels = evas_cache_image_pixels(surface);
+   // FIXME: need a clear call
+   memset(pixels, 0, (w *h * sizeof(DATA32)));
+   return surface;
+}
+
+static void
+eng_image_map_surface_free(void *data __UNUSED__, void *surface)
+{
+   evas_cache_image_drop(surface);
+}
+
 static void
 eng_image_scale_hint_set(void *data __UNUSED__, void *image, int hint)
 {
@@ -1135,7 +1155,9 @@ static Evas_Func func =
      /* more font draw functions */
      eng_font_last_up_to_pos,
      /* FUTURE software generic calls go here (done) */
-     eng_image_map4_draw
+     eng_image_map4_draw,
+     eng_image_map_surface_new,
+     eng_image_map_surface_free
      /* FUTURE software generic calls go here */
 };
 

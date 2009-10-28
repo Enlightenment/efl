@@ -1012,6 +1012,10 @@ static Evas_Func func =
      /* more font draw functions */
      eng_font_last_up_to_pos
      /* FUTURE software generic calls go here */
+//   ORD(image_map4_draw);
+//   ORD(image_map_surface_new);
+//   ORD(image_map_surface_free);
+     /* FUTURE software generic calls go here */
 };
 
 /*

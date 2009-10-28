@@ -1175,6 +1175,10 @@ module_open(Evas_Module *em)
    ORD(image_scale_hint_set);
    ORD(image_scale_hint_get);
    
+   //ODR(image_map4_draw);
+   //ODR(image_map_surface_new);
+   //ODR(image_map_surface_free);
+   
    /* now advertise out own api */
    em->functions = (void *)(&func);
    return 1;

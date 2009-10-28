@@ -253,7 +253,10 @@ static Evas_Func eng_func =
      eng_image_scale_hint_set,
      eng_image_scale_hint_get,
      /* more font draw functions */
-     eng_font_last_up_to_pos
+     eng_font_last_up_to_pos,
+     NULL, // image_map4_draw
+     NULL, // image_map_surface_new
+     NULL // image_map_surface_free
 };
 
 static void *

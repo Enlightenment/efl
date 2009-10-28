@@ -87,6 +87,7 @@ static int evas_object_image_was_opaque(Evas_Object *obj);
 static int evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 static int evas_object_image_has_opaque_rect(Evas_Object *obj);
 static int evas_object_image_get_opaque_rect(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+static int evas_object_image_can_map(Evas_Object *obj);
 
 static void *evas_object_image_data_convert_internal(Evas_Object_Image *o, void *data, Evas_Colorspace to_cspace);
 static void evas_object_image_filled_resize_listener(void *data, Evas *e, Evas_Object *obj, void *einfo);
@@ -113,7 +114,8 @@ static const Evas_Object_Func object_func =
      NULL,
      NULL,
      evas_object_image_has_opaque_rect,
-     evas_object_image_get_opaque_rect
+     evas_object_image_get_opaque_rect,
+     evas_object_image_can_map
 };
 
 /**
@@ -3001,6 +3003,12 @@ evas_object_image_get_opaque_rect(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y
    if (*w < 0) *w = 0;
    *h = obj->cur.geometry.h - (o->cur.border.t + o->cur.border.b);
    if (*h < 0) *h = 0;
+   return 1;
+}
+
+static int
+evas_object_image_can_map(Evas_Object *obj)
+{
    return 1;
 }
 

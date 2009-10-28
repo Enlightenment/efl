@@ -366,7 +366,9 @@ struct _Evas_Map_Point
 
 struct _Evas_Map
 {
-   unsigned long count;
+   int count;
+   Evas_Coord_Rectangle normal_geometry;
+   void *surface;
    Evas_Map_Point points[];
 };
 
@@ -537,6 +539,8 @@ struct _Evas_Object_Func
 
    int (*has_opaque_rect) (Evas_Object *obj);
    int (*get_opaque_rect) (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+
+   int (*can_map) (Evas_Object *obj);
 };
 
 struct _Evas_Func
@@ -689,6 +693,8 @@ struct _Evas_Func
    int  (*font_last_up_to_pos)             (void *data, void *font, const char *text, int x, int y);
 
    void (*image_map4_draw)                 (void *data, void *context, void *surface, void *image, RGBA_Map_Point *p, int smooth, int level);
+   void *(*image_map_surface_new)          (void *data, int w, int h, int alpha);
+   void *(*image_map_surface_free)         (void *data, void *surface);
 };
 
 struct _Evas_Image_Load_Func
