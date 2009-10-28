@@ -381,6 +381,20 @@ case "$host_os" in
 esac
 AC_SUBST(dlopen_libs)
 
+fnmatch_libs=""
+AC_CHECK_FUNCS([fnmatch], [res="yes"], [res="no"])
+if test "x$res" = "xno"; then
+   AC_SEARCH_LIBS([fnmatch],
+      [fnmatch evil iberty],
+      [res="yes"],
+      [res="no"])
+   if test "x$res" = "xno"; then
+      AC_MSG_ERROR([Cannot find fnmatch() in neither libc nor libfnmatch, nor libiberty, nor libevil])
+   fi
+   fnmatch_libs="${ac_cv_search_fnmatch}"
+fi
+AC_SUBST(fnmatch_libs)
+
 ### Modules
 
 EINA_CHECK_MODULE([chained-pool], [yes], [chained pool])
