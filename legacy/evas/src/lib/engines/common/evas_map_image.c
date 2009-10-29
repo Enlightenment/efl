@@ -273,8 +273,9 @@ evas_common_map4_rgba(RGBA_Image *src, RGBA_Image *dst,
      evas_cache_image_load_data(&src->cache_entry);
    evas_common_image_colorspace_normalize(src);
    if (!src->image.data) return;
+#ifdef BUILD_MMX
    evas_common_cpu_can_do(&mmx, &sse, &sse2);
-   
+#endif   
    if (!dc->cutout.rects)
      {
 #ifdef BUILD_MMX
