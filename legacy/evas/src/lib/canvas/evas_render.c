@@ -632,67 +632,71 @@ evas_render_updates_internal(Evas *e,
                             if (!((obj->func->can_map) && (obj->func->can_map(obj))) &&
                                 ((obj->cur.map) && (obj->cur.map->count == 4) && (obj->cur.usemap)))
                               {
-                                 const Evas_Map_Point *p, *p_end;
-                                 RGBA_Map_Point pts[4], *pt;
-                                 void *ctx;
-                                 
-                                 ctx = e->engine.func->context_new(e->engine.data.output);
-                                 if (!obj->cur.map->surface)
+                                 if ((obj->cur.map->normal_geometry.w > 0) && 
+                                     (obj->cur.map->normal_geometry.h > 0))
                                    {
-                                      obj->cur.map->surface =
-                                        obj->layer->evas->engine.func->image_map_surface_new
+                                      const Evas_Map_Point *p, *p_end;
+                                      RGBA_Map_Point pts[4], *pt;
+                                      void *ctx;
+                                      
+                                      ctx = e->engine.func->context_new(e->engine.data.output);
+                                      if (!obj->cur.map->surface)
+                                        {
+                                           obj->cur.map->surface =
+                                             obj->layer->evas->engine.func->image_map_surface_new
+                                             (e->engine.data.output,
+                                              obj->cur.map->normal_geometry.w,
+                                              obj->cur.map->normal_geometry.h,
+                                              1);
+                                        }
+                                      
+                                      if (obj->smart.smart)
+                                        {
+                                           // FIXME: doesnt work yet
+                                           // smart object. draw all children to
+                                           // surface (and if they are mapped...
+                                           // recurse)
+                                           evas_render_updates_internal(e, obj, 0, 1);
+                                        }
+                                      else
+                                        {
+                                           obj->func->render(obj,
+                                                             e->engine.data.output,
+                                                             ctx,
+                                                             obj->cur.map->surface,
+                                                             -obj->cur.cache.clip.x,
+                                                             -obj->cur.cache.clip.y
+                                                             );
+                                        }
+                                      e->engine.func->context_free(e->engine.data.output, ctx);
+                                      
+                                      p = obj->cur.map->points;
+                                      p_end = p + 4;
+                                      pt = pts;
+                                      
+                                      for (; p < p_end; p++, pt++)
+                                        {
+                                           pt->x = (p->x + off_x) << FP;
+                                           pt->y = (p->y + off_y) << FP;
+                                           pt->z = (p->z)         << FP;
+                                           pt->u = p->u * FP1;
+                                           pt->v = p->v * FP1;
+                                        }
+                                      obj->layer->evas->engine.func->image_map4_draw
                                         (e->engine.data.output,
-                                         obj->cur.map->normal_geometry.w,
-                                         obj->cur.map->normal_geometry.h,
-                                         1);
+                                         e->engine.data.context,
+                                         surface,
+                                         obj->cur.map->surface,
+                                         pts,
+                                         1, // smooth? (on for now)
+                                         0);
+                                      // FIXME: needs to cache these maps and
+                                      // keep them only rendering updates
+                                      obj->layer->evas->engine.func->image_map_surface_free
+                                        (e->engine.data.output,
+                                         obj->cur.map->surface);
+                                      obj->cur.map->surface = NULL;
                                    }
-                                 
-                                 if (obj->smart.smart)
-                                   {
-                                      // FIXME: doesnt work yet
-                                      // smart object. draw all children to
-                                      // surface (and if they are mapped...
-                                      // recurse)
-                                      evas_render_updates_internal(e, obj, 0, 1);
-                                   }
-                                 else
-                                   {
-                                      obj->func->render(obj,
-                                                        e->engine.data.output,
-                                                        ctx,
-                                                        obj->cur.map->surface,
-                                                        -obj->cur.cache.clip.x,
-                                                        -obj->cur.cache.clip.y
-                                                        );
-                                   }
-                                 e->engine.func->context_free(e->engine.data.output, ctx);
-                                 
-                                 p = obj->cur.map->points;
-                                 p_end = p + 4;
-                                 pt = pts;
-                                 
-                                 for (; p < p_end; p++, pt++)
-                                   {
-                                      pt->x = (p->x + off_x) << FP;
-                                      pt->y = (p->y + off_y) << FP;
-                                      pt->z = (p->z)         << FP;
-                                      pt->u = p->u * FP1;
-                                      pt->v = p->v * FP1;
-                                   }
-                                 obj->layer->evas->engine.func->image_map4_draw
-                                   (e->engine.data.output,
-                                    e->engine.data.context,
-                                    surface,
-                                    obj->cur.map->surface,
-                                    pts,
-                                    1, // smooth? (on for now)
-                                    0);
-                                 // FIXME: needs to cache these maps and
-                                 // keep them only rendering updates
-                                 obj->layer->evas->engine.func->image_map_surface_free
-                                   (e->engine.data.output,
-                                    obj->cur.map->surface);
-                                 obj->cur.map->surface = NULL;
                               }
                             else
                               {
