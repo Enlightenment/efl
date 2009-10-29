@@ -35,6 +35,7 @@ struct _Widget_Data
 
    // list of Elm_Slideshow_Item*
    Eina_List *items;
+   Eina_List *items_built;
    Elm_Slideshow_Item *current;
    Elm_Slideshow_Item *previous;
    int loop;
@@ -72,7 +73,7 @@ _theme_hook(Evas_Object *obj)
 
    if(!wd) return;
    _elm_theme_set(wd->slideshow, "slideshow", "base", "default");
-   edje_object_scale_set(wd->slideshow, elm_widget_scale_get(obj) * 
+   edje_object_scale_set(wd->slideshow, elm_widget_scale_get(obj) *
                          _elm_config->scale);
    _sizing_eval(obj);
 }
@@ -115,13 +116,8 @@ _end(void *data, Evas_Object *obj, const char *emission, const char *source)
    item = wd->previous;
    if(item && item->o)
      {
-	edje_object_part_unswallow(NULL, wd->previous->o);
-	if(item->o && item->itc->func.del)
-	     item->itc->func.del((void*)item->data, wd->previous->o);
-	else if(item->o)
-	  evas_object_del(item->o);
-	item->o = NULL;
-	wd->previous = NULL;
+	edje_object_part_unswallow(NULL, item->o);
+	evas_object_hide(item->o);
      }
 
    item = wd->current;
@@ -129,6 +125,7 @@ _end(void *data, Evas_Object *obj, const char *emission, const char *source)
 
    edje_object_part_unswallow(NULL, item->o);
    edje_object_part_swallow(wd->slideshow, "elm.swallow.1", item->o);
+   evas_object_show(item->o);
 }
 
 
@@ -141,6 +138,53 @@ _timer_cb(void *data)
    wd->timer = NULL;
    elm_slideshow_next(obj);
    return 0;
+}
+
+static void
+_item_build(Elm_Slideshow_Item *item)
+{
+   Elm_Slideshow_Item *_item;
+   Evas_Object *obj = item->obj;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if(!item->o && item->itc->func.get)
+     {
+	 item->o = item->itc->func.get((void*)item->data, obj);
+	 evas_object_smart_member_add(item->o, obj);
+	 wd->items_built = eina_list_append(wd->items_built, item);
+     }
+
+   //we pre built the next and the previous item
+   _item = eina_list_data_get(eina_list_prev(item->l));
+   if(!_item && wd->loop)
+     _item = eina_list_data_get(eina_list_last(item->l));
+   if(_item && !_item->o && _item->itc->func.get)
+     {
+	_item->o = _item->itc->func.get((void*)_item->data, obj);
+	evas_object_hide(_item->o);
+	evas_object_smart_member_add(_item->o, obj);
+	wd->items_built = eina_list_append(wd->items_built, _item);
+     }
+
+   _item = eina_list_data_get(eina_list_next(item->l));
+   if(!_item && wd->loop)
+     _item = eina_list_data_get(wd->items);
+   if(_item && !_item->o && _item->itc->func.get)
+     {
+	 _item->o = _item->itc->func.get((void*)_item->data, obj);
+	 evas_object_hide(_item->o);
+	 evas_object_smart_member_add(_item->o, obj);
+	 wd->items_built = eina_list_append(wd->items_built, _item);
+     }
+
+   //only the three last items are keep
+   while(eina_list_count(wd->items_built) > 3)
+     {
+	_item = eina_list_data_get(wd->items_built);
+	wd->items_built = eina_list_remove_list(wd->items_built, wd->items_built);
+	evas_object_del(_item->o);
+	_item->o = NULL;
+     }
 }
 
 /**
@@ -189,13 +233,13 @@ elm_slideshow_add(Evas_Object *parent)
 
 /**
  * Add a object in the list. The object can be a evas object image or a elm photo for example.
- * 
+ *
  * @param obj The slideshow object
  * @aram itc Callbacks used to create/delete the object. If itc->del.del is NULL, the object will be destroyed with evas_object_del()
  * @param data Data used by the user to identified the item
  * @return Returns The slideshow item
  */
-EAPI Elm_Slideshow_Item* 
+EAPI Elm_Slideshow_Item*
 elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data)
 {
    Elm_Slideshow_Item *item;
@@ -218,10 +262,10 @@ elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, co
 }
 
 /**
- * Go to the item number @pos
+ * Go to the item
  *
  * @param obj The slideshow object
- * @param pos The position of the item
+ * @param item The item
  */
 EAPI void
 elm_slideshow_show(Elm_Slideshow_Item *item)
@@ -238,11 +282,7 @@ elm_slideshow_show(Elm_Slideshow_Item *item)
 
    wd->previous = wd->current;
    wd->current = item;
-   if(!item->o && item->itc->func.get)
-     {
-	 item->o = item->itc->func.get((void*)item->data, item->obj);
-	 evas_object_smart_member_add(item->o, item->obj);
-     }
+   _item_build(item);
 
    _end(item->obj, item->obj, NULL, NULL);
 }
@@ -277,15 +317,11 @@ elm_slideshow_next(Evas_Object *obj)
    if (wd->timer) ecore_timer_del(wd->timer);
    if(wd->timeout>0)
      wd->timer = ecore_timer_add(wd->timeout, _timer_cb, obj);
-	 
-   if(!next->o && next->itc->func.get)
-     {
-	 next->o = next->itc->func.get((void*)next->data, obj);
-	 evas_object_smart_member_add(next->o, obj);
-     }
 
+   _item_build(next);
 
    edje_object_part_swallow(wd->slideshow, "elm.swallow.2", next->o);
+   evas_object_show(next->o);
 
    snprintf(buf, 1024, "%s,next", wd->transition);
    edje_object_signal_emit(wd->slideshow, buf, "slideshow");
@@ -310,7 +346,7 @@ elm_slideshow_previous(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
-  
+
    if(wd->current)
      prev = eina_list_data_get(eina_list_prev(wd->current->l));
    if(wd->current && !prev && wd->loop)
@@ -324,13 +360,10 @@ elm_slideshow_previous(Evas_Object *obj)
    if(wd->timeout>0)
      wd->timer = ecore_timer_add(wd->timeout, _timer_cb, obj);
 
-   if(!prev->o && prev->itc->func.get)
-     {
-	 prev->o = prev->itc->func.get((void*)prev->data, obj);
-	 evas_object_smart_member_add(prev->o, obj);
-     }
+   _item_build(prev);
 
    edje_object_part_swallow(wd->slideshow, "elm.swallow.2", prev->o);
+   evas_object_show(prev->o);
 
    snprintf(buf, 1024, "%s,previous", wd->transition);
    edje_object_signal_emit(wd->slideshow, buf, "slideshow");
@@ -450,9 +483,9 @@ elm_slideshow_clear(Evas_Object *obj)
 /**
  * Delete the item
  *
- * @param item The slideshow item 
+ * @param item The slideshow item
  */
-   EAPI void	
+   EAPI void
 elm_slideshow_item_del(Elm_Slideshow_Item *item)
 {
    if(!item) return;
@@ -480,6 +513,21 @@ elm_slideshow_item_del(Elm_Slideshow_Item *item)
 
    free(item);
 }
+
+/**
+ * Returns the list of items
+ * @param obj The slideshow object
+ * @return Returns the list of items (list of Elm_Slideshow_Item).
+ */
+EAPI const Eina_List*
+elm_slideshow_items_get(const Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return NULL;
+   return wd->items;
+}
+
 
 /**
  * Returns the current item displayed
