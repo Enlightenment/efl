@@ -21,7 +21,7 @@ struct _Elm_Slideshow_Item
 {
    Evas_Object *obj;
 
-   Eina_List *l;
+   Eina_List *l, *l_built;
 
    const void *data;
    const Elm_Slideshow_Item_Class *itc;
@@ -63,6 +63,7 @@ _del_hook(Evas_Object *obj)
    elm_slideshow_clear(obj);
    _stringlist_free(wd->transitions);
    if (wd->timer) ecore_timer_del(wd->timer);
+
    free(wd);
 }
 
@@ -119,7 +120,8 @@ _end(void *data, Evas_Object *obj, const char *emission, const char *source)
 	edje_object_part_unswallow(NULL, item->o);
 	evas_object_hide(item->o);
      }
-
+   wd->previous = NULL;
+   
    item = wd->current;
    if(!item || !item->o) return;
 
@@ -151,8 +153,11 @@ _item_build(Elm_Slideshow_Item *item)
      {
 	 item->o = item->itc->func.get((void*)item->data, obj);
 	 evas_object_smart_member_add(item->o, obj);
-	 wd->items_built = eina_list_append(wd->items_built, item);
+	 item->l_built = eina_list_append(NULL, item);
+	 wd->items_built = eina_list_merge(wd->items_built, item->l_built);
      }
+   else if(item->l_built)
+     wd->items_built = eina_list_demote_list(wd->items_built, item->l_built);
 
    //we pre built the next and the previous item
    _item = eina_list_data_get(eina_list_prev(item->l));
@@ -163,8 +168,12 @@ _item_build(Elm_Slideshow_Item *item)
 	_item->o = _item->itc->func.get((void*)_item->data, obj);
 	evas_object_hide(_item->o);
 	evas_object_smart_member_add(_item->o, obj);
-	wd->items_built = eina_list_append(wd->items_built, _item);
+	_item->l_built = eina_list_append(NULL, _item);
+        wd->items_built = eina_list_merge(wd->items_built, _item->l_built);
      }
+   else if(_item  && _item->l_built)
+     wd->items_built = eina_list_demote_list(wd->items_built, _item->l_built);
+
 
    _item = eina_list_data_get(eina_list_next(item->l));
    if(!_item && wd->loop)
@@ -174,15 +183,21 @@ _item_build(Elm_Slideshow_Item *item)
 	 _item->o = _item->itc->func.get((void*)_item->data, obj);
 	 evas_object_hide(_item->o);
 	 evas_object_smart_member_add(_item->o, obj);
-	 wd->items_built = eina_list_append(wd->items_built, _item);
+	 _item->l_built = eina_list_append(NULL, _item);
+        wd->items_built = eina_list_merge(wd->items_built, _item->l_built);
      }
+   else if(_item && _item->l_built)
+     wd->items_built = eina_list_demote_list(wd->items_built, _item->l_built);
 
    //only the three last items are keep
    while(eina_list_count(wd->items_built) > 3)
      {
 	_item = eina_list_data_get(wd->items_built);
 	wd->items_built = eina_list_remove_list(wd->items_built, wd->items_built);
-	evas_object_del(_item->o);
+	if(item->itc->func.del)
+	  item->itc->func.del((void*)item->data, wd->previous->o);
+	else
+	  evas_object_del(item->o);
 	_item->o = NULL;
      }
 }
@@ -468,13 +483,17 @@ elm_slideshow_clear(Evas_Object *obj)
 
    wd->previous = NULL;
    wd->current = NULL;
+
+   EINA_LIST_FREE(wd->items_built, item)
+     {
+	if(item->itc->func.del)
+	  item->itc->func.del((void*)item->data, wd->previous->o);
+	else
+	  evas_object_del(item->o);
+     }
+
    EINA_LIST_FREE(wd->items, item)
      {
-	if(item->o && item->itc->func.del)
-	     item->itc->func.del((void*)item->data, wd->previous->o);
-	else if(item->o)
-	  evas_object_del(item->o);
-
 	free(item);
      }
 }
