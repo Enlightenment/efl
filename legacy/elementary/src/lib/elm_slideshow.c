@@ -121,7 +121,7 @@ _end(void *data, Evas_Object *obj, const char *emission, const char *source)
 	evas_object_hide(item->o);
      }
    wd->previous = NULL;
-   
+
    item = wd->current;
    if(!item || !item->o) return;
 
@@ -143,7 +143,7 @@ _timer_cb(void *data)
 }
 
 static void
-_item_build(Elm_Slideshow_Item *item)
+_item_realize(Elm_Slideshow_Item *item)
 {
    Elm_Slideshow_Item *_item;
    Evas_Object *obj = item->obj;
@@ -297,7 +297,7 @@ elm_slideshow_show(Elm_Slideshow_Item *item)
 
    wd->previous = wd->current;
    wd->current = item;
-   _item_build(item);
+   _item_realize(item);
 
    _end(item->obj, item->obj, NULL, NULL);
 }
@@ -333,7 +333,7 @@ elm_slideshow_next(Evas_Object *obj)
    if(wd->timeout>0)
      wd->timer = ecore_timer_add(wd->timeout, _timer_cb, obj);
 
-   _item_build(next);
+   _item_realize(next);
 
    edje_object_part_swallow(wd->slideshow, "elm.swallow.2", next->o);
    evas_object_show(next->o);
@@ -375,7 +375,7 @@ elm_slideshow_previous(Evas_Object *obj)
    if(wd->timeout>0)
      wd->timer = ecore_timer_add(wd->timeout, _timer_cb, obj);
 
-   _item_build(prev);
+   _item_realize(prev);
 
    edje_object_part_swallow(wd->slideshow, "elm.swallow.2", prev->o);
    evas_object_show(prev->o);
@@ -529,7 +529,7 @@ elm_slideshow_item_del(Elm_Slideshow_Item *item)
      item->itc->func.del((void*)item->data, wd->previous->o);
    else if(item->o)
      evas_object_del(item->o);
-   
+
    free(item);
 }
 
