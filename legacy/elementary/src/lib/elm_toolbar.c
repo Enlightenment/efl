@@ -412,10 +412,19 @@ elm_toolbar_item_label_get(Elm_Toolbar_Item *item)
 EAPI void
 elm_toolbar_item_label_set(Elm_Toolbar_Item *item, const char *label)
 {
+   Evas_Coord mw, mh;
    if (!item) return;
    eina_stringshare_del(item->label);
    item->label = eina_stringshare_add(label);
    edje_object_part_text_set(item->base, "elm.text", item->label);
+
+   mw = mh = -1;
+   elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+   edje_object_size_min_restricted_calc(item->base, &mw, &mh, mw, mh);
+   elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+   evas_object_size_hint_weight_set(item->base, -1.0, 1.0);
+   evas_object_size_hint_align_set(item->base, 0.5, -1.0);
+   evas_object_size_hint_min_set(item->base, mw, mh);
 }
 
 EAPI void
