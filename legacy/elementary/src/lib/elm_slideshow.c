@@ -195,9 +195,9 @@ _item_build(Elm_Slideshow_Item *item)
 	_item = eina_list_data_get(wd->items_built);
 	wd->items_built = eina_list_remove_list(wd->items_built, wd->items_built);
 	if(item->itc->func.del)
-	  item->itc->func.del((void*)item->data, wd->previous->o);
+	  item->itc->func.del((void*)item->data, _item->o);
 	else
-	  evas_object_del(item->o);
+	  evas_object_del(_item->o);
 	_item->o = NULL;
      }
 }
@@ -487,7 +487,7 @@ elm_slideshow_clear(Evas_Object *obj)
    EINA_LIST_FREE(wd->items_built, item)
      {
 	if(item->itc->func.del)
-	  item->itc->func.del((void*)item->data, wd->previous->o);
+	  item->itc->func.del((void*)item->data, item->o);
 	else
 	  evas_object_del(item->o);
      }
@@ -529,7 +529,7 @@ elm_slideshow_item_del(Elm_Slideshow_Item *item)
      item->itc->func.del((void*)item->data, wd->previous->o);
    else if(item->o)
      evas_object_del(item->o);
-
+   
    free(item);
 }
 
