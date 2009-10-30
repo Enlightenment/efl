@@ -79,12 +79,14 @@ static int _ecore_con_url_progress_cb(void *clientp, double dltotal, double dlno
 static size_t _ecore_con_url_read_cb(void *ptr, size_t size, size_t nitems, void *stream);
 static void _ecore_con_event_url_free(void *data __UNUSED__, void *ev);
 static int _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match);
+static int _ecore_con_url_idler_handler(void *data __UNUSED__);
 
 static Ecore_Idler *_fd_idler_handler = NULL;
 static Eina_List *_url_con_list = NULL;
 static CURLM *curlm = NULL;
 static fd_set _current_fd_set;
 static int init_count = 0;
+static Ecore_Timer *_curl_timeout = NULL;
 
 typedef struct _Ecore_Con_Url_Event Ecore_Con_Url_Event;
 struct _Ecore_Con_Url_Event
@@ -129,6 +131,10 @@ EAPI int
 ecore_con_url_init(void)
 {
 #ifdef HAVE_CURL
+   init_count++;
+
+   if (init_count > 1) return init_count;
+
    if (!ECORE_CON_EVENT_URL_DATA)
      {
 	ECORE_CON_EVENT_URL_DATA = ecore_event_type_new();
@@ -138,6 +144,8 @@ ecore_con_url_init(void)
 
    if (!curlm)
      {
+	long ms;
+
 	FD_ZERO(&_current_fd_set);
 	if (curl_global_init(CURL_GLOBAL_NOTHING))
 	  {
@@ -151,10 +159,17 @@ ecore_con_url_init(void)
 	  {
 	     while (_url_con_list)
 	       ecore_con_url_destroy(eina_list_data_get(_url_con_list));
+
+	     init_count--;
 	     return 0;
 	  }
+
+	curl_multi_timeout(curlm, &ms);
+	if (ms <= 0) ms = 1000;
+
+	_curl_timeout = ecore_timer_add((double) ms / 1000, _ecore_con_url_idler_handler, (void *) 0xACE);
+	ecore_timer_freeze(_curl_timeout);
      }
-   init_count++;
    return 1;
 #else
    return 0;
@@ -173,6 +188,17 @@ ecore_con_url_shutdown(void)
    if (!init_count) return 0;
 
    init_count--;
+
+   if (init_count != 0) return init_count;
+
+   if (_fd_idler_handler)
+     ecore_idler_del(_fd_idler_handler);
+   _fd_idler_handler = NULL;
+
+   if (_curl_timeout)
+     ecore_timer_del(_curl_timeout);
+   _curl_timeout = NULL;
+
    while (_url_con_list)
      ecore_con_url_destroy(eina_list_data_get(_url_con_list));
 
@@ -748,14 +774,18 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename, const cha
    if (!url_con->url) return 0;
    if (filename)
      {
+	char *tmp;
+
+	tmp = strdupa(filename);
+
 	if (stat(filename, &file_info)) return 0;
 	fd = fopen(filename, "rb");
 	if (upload_dir)
 	   snprintf(url, sizeof(url), "ftp://%s/%s/%s", url_con->url, 
-                    upload_dir, basename(filename));
+                    upload_dir, basename(tmp));
 	else
 	   snprintf(url, sizeof(url), "ftp://%s/%s", url_con->url, 
-                    basename(filename));
+                    basename(tmp));
 	snprintf(userpwd, sizeof(userpwd), "%s:%s", user, pass);
 	curl_easy_setopt(url_con->curl_easy, CURLOPT_INFILESIZE_LARGE, 
                          (curl_off_t)file_info.st_size);
@@ -1040,6 +1070,11 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
 		  if (FD_ISSET(fd, &exc_set)) flags |= ECORE_FD_ERROR;
 		  if (flags)
 		    {
+		       long ms = 0;
+
+		       curl_multi_timeout(curlm, &ms);
+		       if (ms == 0) ms = 1000;
+
 		       FD_SET(fd, &_current_fd_set);
 		       url_con->fd = fd;
 		       url_con->flags = flags;
@@ -1054,18 +1089,20 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
 	if (!url_con->fd_handler)
 	  {
 	     /* Failed to set up an fd_handler */
+	     ecore_timer_freeze(_curl_timeout);
 	     curl_multi_remove_handle(curlm, url_con->curl_easy);
 	     url_con->active = 0;
 	     url_con->fd = -1;
 	     return 0;
 	  }
+	ecore_timer_thaw(_curl_timeout);
      }
 
    return 1;
 }
 
 static int
-_ecore_con_url_idler_handler(void *data __UNUSED__)
+_ecore_con_url_idler_handler(void *data)
 {
    double start;
    int done = 1, still_running;
@@ -1085,7 +1122,10 @@ _ecore_con_url_idler_handler(void *data __UNUSED__)
      {
 	_ecore_con_url_restart_fd_handler();
 	_fd_idler_handler = NULL;
-	return 0;
+
+	if (!_url_con_list)
+	  ecore_timer_freeze(_curl_timeout);
+	return data == (void*) 0xACE ? 1 : 0;
      }
 
    return 1;
