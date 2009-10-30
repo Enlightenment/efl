@@ -375,8 +375,6 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, voi
         int ms = 0;
 
         ms = ((double)wd->icon_size * _elm_config->scale);
-	//TODO uncomment the next line to get a big icon
-	//ms = 100;
 	evas_object_size_hint_min_set(it->icon, ms, ms);
 	evas_object_size_hint_max_set(it->icon, ms, ms);
 	edje_object_part_swallow(it->base, "elm.swallow.icon", it->icon);
