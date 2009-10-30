@@ -843,6 +843,7 @@ extern "C" {
    /* available item styles:
     * default
     * fade
+    * fade_translucide
     */
    /* smart callbacks called:
     */
