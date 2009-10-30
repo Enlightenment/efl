@@ -82,7 +82,6 @@ _del_hook(Evas_Object *obj)
 	     if (item->icon) evas_object_del(item->icon);
 	     if (item->hv) evas_object_del(item->hv);
 	     if (item->location) evas_object_del(item->location);
-	     if (item->o) evas_object_del(item->o);
 	     free(item);
 	  }
      }
