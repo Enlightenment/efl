@@ -27,6 +27,7 @@ struct _Widget_Data
 {
    Eina_List *stack;
    Item *top, *oldtop;
+   Evas_Object *rect;
 };
 
 struct _Item
@@ -180,6 +181,7 @@ _signal_hide_finished(void *data, Evas_Object *obj, const char *emission, const 
    Evas_Object *obj2 = it->obj;
    evas_object_hide(it->base);
    edje_object_signal_emit(it->base, "elm,action,reset", "elm");
+   evas_object_smart_callback_call(obj2, "hide,finished", it->content);
    edje_object_message_signal_process(it->base);
    if (it->popme)
      {
@@ -212,6 +214,10 @@ elm_pager_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
 
+   wd->rect = evas_object_rectangle_add(e);
+   elm_widget_resize_object_set(obj, wd->rect);
+   elm_widget_sub_object_add(obj, wd->rect);
+   
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _move, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, obj);
 
@@ -246,6 +252,7 @@ elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    evas_object_move(it->base, x, y);
    evas_object_resize(it->base, w, h);
+   evas_object_clip_set(it->base, wd->rect);
    elm_widget_sub_object_add(obj, it->base);
    elm_widget_sub_object_add(obj, it->content);
    _elm_theme_set(it->base,  "pager", "base", elm_widget_style_get(obj));
