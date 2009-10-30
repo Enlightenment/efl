@@ -1000,13 +1000,14 @@ ethumb_calculate_fill_from_ratio(Ethumb *e, float ia, int *fx, int *fy, int *fw,
 {
    float a;
 
-   if (ia == 0)
-     return;
-
    *fw = e->tw;
    *fh = e->th;
    *fx = 0;
    *fy = 0;
+
+   if (ia == 0)
+     return;
+
    a = e->tw / (float)e->th;
 
    if (e->aspect == ETHUMB_THUMB_CROP)
