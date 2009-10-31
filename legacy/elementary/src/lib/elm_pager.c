@@ -27,7 +27,7 @@ struct _Widget_Data
 {
    Eina_List *stack;
    Item *top, *oldtop;
-   Evas_Object *rect;
+   Evas_Object *rect, *clip;
 };
 
 struct _Item
@@ -214,10 +214,15 @@ elm_pager_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
 
+   wd->clip = evas_object_rectangle_add(e);
+   elm_widget_resize_object_set(obj, wd->clip);
+   elm_widget_sub_object_add(obj, wd->clip);
+
    wd->rect = evas_object_rectangle_add(e);
-   elm_widget_resize_object_set(obj, wd->rect);
    elm_widget_sub_object_add(obj, wd->rect);
-   
+   evas_object_color_set(wd->rect, 255, 255, 255, 0); 
+   evas_object_clip_set(wd->rect, wd->clip);
+
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _move, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, obj);
 
@@ -252,7 +257,7 @@ elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    evas_object_move(it->base, x, y);
    evas_object_resize(it->base, w, h);
-   evas_object_clip_set(it->base, wd->rect);
+   evas_object_clip_set(it->base, wd->clip);
    elm_widget_sub_object_add(obj, it->base);
    elm_widget_sub_object_add(obj, it->content);
    _elm_theme_set(it->base,  "pager", "base", elm_widget_style_get(obj));
