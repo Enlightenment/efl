@@ -407,7 +407,6 @@ _item_submenu_obj_create(Elm_Menu_Item *item)
    elm_object_style_set(item->hv, "submenu");
 
    item->bx = elm_box_add(wd->bx);
-   evas_object_event_callback_add(item->bx, EVAS_CALLBACK_RESIZE, _menu_resize, item->menu);
    evas_object_size_hint_weight_set(item->bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(item->bx);
    elm_hover_content_set(item->hv, elm_hover_best_content_location_get(item->hv, ELM_HOVER_AXIS_VERTICAL), item->bx);
@@ -420,6 +419,8 @@ _item_submenu_obj_create(Elm_Menu_Item *item)
                                    _submenu_open, item);
    evas_object_event_callback_add(item->o, EVAS_CALLBACK_MOVE, _item_move_resize, item);
    evas_object_event_callback_add(item->o, EVAS_CALLBACK_RESIZE, _item_move_resize, item);
+
+   evas_object_event_callback_add(item->bx, EVAS_CALLBACK_RESIZE, _menu_resize, item->menu);
 }
 
 
@@ -458,7 +459,6 @@ elm_menu_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->hv, "clicked", _hover_clicked_cb, obj);
 
    wd->bx = elm_box_add(obj);
-   evas_object_event_callback_add(wd->bx, EVAS_CALLBACK_RESIZE, _menu_resize, obj);
    evas_object_size_hint_weight_set(wd->bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(wd->bx);
    elm_hover_content_set(wd->hv, elm_hover_best_content_location_get(wd->hv, ELM_HOVER_AXIS_VERTICAL), wd->bx);
@@ -466,6 +466,8 @@ elm_menu_add(Evas_Object *parent)
    evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_RESIZE, _parent_resize, obj);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _show, obj);
+
+   evas_object_event_callback_add(wd->bx, EVAS_CALLBACK_RESIZE, _menu_resize, obj);
 
    _sizing_eval(obj);
    return obj;

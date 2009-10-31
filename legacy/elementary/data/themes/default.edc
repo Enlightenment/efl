@@ -15738,7 +15738,7 @@ collections {
            }
        }
    }
-    group { name: "elm/pager/base/fade_translucide";
+   group { name: "elm/pager/base/fade_translucide";
        data.item: "onshow" "raise";
        // other options
        //      data.item: "onhide" "lower";
