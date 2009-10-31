@@ -600,7 +600,11 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			  {
 			     Evas_Object *child_obj;
 			     child_obj = _edje_external_type_add(rp->part->source, evas_object_evas_get(ed->obj), ed->obj, rp->part->default_desc->external_params);
-			     if (child_obj) _edje_real_part_swallow(rp, child_obj);
+			     if (child_obj)
+			       {
+				  _edje_real_part_swallow(rp, child_obj);
+				  rp->param1.external_params = _edje_external_params_parse(child_obj, rp->param1.description->external_params);
+			       }
 			  }
 			continue;
 		     default:
@@ -847,8 +851,17 @@ _edje_file_del(Edje *ed)
 
                   /* Objects swallowed by the app do not get deleted,
                    but those internally swallowed (GROUP type) do. */
-		  if (rp->part->type == EDJE_PART_TYPE_GROUP || rp->part->type == EDJE_PART_TYPE_EXTERNAL)
-		    evas_object_del(rp->swallowed_object);
+		  switch (rp->part->type)
+		    {
+		     case EDJE_PART_TYPE_EXTERNAL:
+			_edje_external_parsed_params_free(rp->swallowed_object, rp->param1.external_params);
+			if (rp->param2)
+			  _edje_external_parsed_params_free(rp->swallowed_object, rp->param2->external_params);
+		     case EDJE_PART_TYPE_GROUP:
+			evas_object_del(rp->swallowed_object);
+		     default:
+			break;
+		    }
 
 		  rp->swallowed_object = NULL;
 	       }

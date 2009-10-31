@@ -740,8 +740,9 @@ struct _Edje_Real_Part_State
    int                    state; // 4
    Edje_Calc_Params       p; // 96
 #endif
-}; // 20
-// WITH EDJE_CALC_CACHE 120
+   void                  *external_params; // 4
+}; // 24
+// WITH EDJE_CALC_CACHE 124
 
 struct _Edje_Real_Part_Drag
 {
@@ -1345,5 +1346,7 @@ Evas_Object *_edje_external_type_add(const char *type_name, Evas *evas, Evas_Obj
 void _edje_external_signal_emit(Evas_Object *obj, const char *emission, const char *source);
 void _edje_external_params_free(Eina_List *params, unsigned int free_strings);
 void _edje_external_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *params, Edje_Part_Description *chosen_desc);
+void *_edje_external_params_parse(Evas_Object *obj, const Eina_List *params);
+void _edje_external_parsed_params_free(Evas_Object *obj, void *params);
 
 #endif

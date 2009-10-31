@@ -110,10 +110,15 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
      {
 	if (!ep->param2)
 	  ep->param2 = eina_mempool_malloc(_edje_real_part_state_mp, sizeof (Edje_Real_Part_State));
+	else if (ep->part->type == EDJE_PART_TYPE_EXTERNAL)
+	  _edje_external_parsed_params_free(ep->swallowed_object, ep->param2->external_params);
+	ep->param2->external_params = NULL;
      }
    else
      if (ep->param2)
        {
+	  if (ep->part->type == EDJE_PART_TYPE_EXTERNAL)
+	    _edje_external_parsed_params_free(ep->swallowed_object, ep->param2->external_params);
 	  eina_mempool_free(_edje_real_part_state_mp, ep->param2);
 	  ep->param2 = NULL;
        }
@@ -133,6 +138,13 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
    if (ep->param1.description->rel2.id_y >= 0)
      ep->param1.rel2_to_y = ed->table_parts[ep->param1.description->rel2.id_y % ed->table_parts_size];
 
+   if (ep->part->type == EDJE_PART_TYPE_EXTERNAL)
+     {
+	if (ep->param1.external_params)
+	  _edje_external_parsed_params_free(ep->swallowed_object, ep->param1.external_params);
+	ep->param1.external_params = _edje_external_params_parse(ep->swallowed_object, ep->param1.description->external_params);
+     }
+
    if (ep->param2)
      {
 	ep->param2->description = epd2;
@@ -150,6 +162,9 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
 	       ep->param2->rel2_to_x = ed->table_parts[ep->param2->description->rel2.id_x % ed->table_parts_size];
 	     if (ep->param2->description->rel2.id_y >= 0)
 	       ep->param2->rel2_to_y = ed->table_parts[ep->param2->description->rel2.id_y % ed->table_parts_size];
+
+	     if (ep->part->type == EDJE_PART_TYPE_EXTERNAL)
+	       ep->param2->external_params = _edje_external_params_parse(ep->swallowed_object, ep->param2->description->external_params);
 	  }
 
 	if (ep->description_pos != 0.0)

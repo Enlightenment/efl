@@ -24,6 +24,12 @@ edje_external_type_unregister(const char *type_name)
    return eina_hash_del_by_key(type_registry, type_name);
 }
 
+EAPI Eina_Iterator *
+edje_external_iterator_get(void)
+{
+   return eina_hash_iterator_tuple_new(type_registry);
+}
+
 EAPI Edje_External_Param *
 edje_external_param_find(const Eina_List *params, const char *key)
 {
@@ -172,6 +178,7 @@ _edje_external_recalc_apply(Edje *ed, Edje_Real_Part *ep,
       Edje_Part_Description *chosen_desc)
 {
    Edje_External_Type *type;
+   void *params1, *params2 = NULL;
    if (!ep->swallowed_object) return;
 
    type = evas_object_data_get(ep->swallowed_object, "Edje_External_Type");
@@ -180,8 +187,38 @@ _edje_external_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 
    if (!type->state_set) return;
 
+   params1 = ep->param1.external_params ? ep->param1.external_params : ep->param1.description->external_params;
+   if (ep->param2 && ep->param2->description)
+     params2 = ep->param2->external_params ? ep->param2->external_params : ep->param2->description->external_params;
+
    type->state_set(type->data, ep->swallowed_object,
-	 ep->param1.description->external_params,
-	 (ep->param2 && ep->param2->description ? ep->param2->description->external_params : NULL),
-	 ep->description_pos);
+	 params1, params2, ep->description_pos);
+}
+
+void *
+_edje_external_params_parse(Evas_Object *obj, const Eina_List *params)
+{
+   Edje_External_Type *type;
+
+   type = evas_object_data_get(obj, "Edje_External_Type");
+   if (!type) return NULL;
+
+   if (!type->params_parse) return NULL;
+
+   return type->params_parse(type->data, params);
+}
+
+void
+_edje_external_parsed_params_free(Evas_Object *obj, void *params)
+{
+   Edje_External_Type *type;
+
+   if (!params) return;
+
+   type = evas_object_data_get(obj, "Edje_External_Type");
+   if (!type) return;
+
+   if (!type->params_free) return;
+
+   type->params_free(params);
 }
