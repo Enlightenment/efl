@@ -309,9 +309,11 @@ extern "C" {
   {shortname, longname, help, NULL, ECORE_GETOPT_ACTION_STORE_CONST,	\
        {.store_const = value}}
 #define ECORE_GETOPT_STORE_TRUE(shortname, longname, help)              \
-  {shortname, longname, help, NULL, ECORE_GETOPT_ACTION_STORE_TRUE}
+  {shortname, longname, help, NULL, ECORE_GETOPT_ACTION_STORE_TRUE,	\
+       {.dummy = NULL}}
 #define ECORE_GETOPT_STORE_FALSE(shortname, longname, help)             \
-  {shortname, longname, help, NULL, ECORE_GETOPT_ACTION_STORE_FALSE}
+  {shortname, longname, help, NULL, ECORE_GETOPT_ACTION_STORE_FALSE,	\
+       {.dummy = NULL}}
 
 #define ECORE_GETOPT_CHOICE(shortname, longname, help, choices_array)   \
   {shortname, longname, help, NULL, ECORE_GETOPT_ACTION_CHOICE,		\
