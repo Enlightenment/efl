@@ -566,7 +566,7 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
 //             pops++;
              if (!ct)
                {
-                  // FIXME: static ct - nver can free on shutdown? not a leak
+                  // FIXME: static ct - never can free on shutdown? not a leak
                   // or real harm - just annoying valgrind bitch
                   ct = evas_common_draw_context_new();
                   evas_common_draw_context_set_render_op(ct, _EVAS_RENDER_COPY);
