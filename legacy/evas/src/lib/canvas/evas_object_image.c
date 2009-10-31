@@ -2347,13 +2347,9 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
                   pt->u = p->u * FP1;
                   pt->v = p->v * FP1;
                }
-             obj->layer->evas->engine.func->image_map4_draw(output,
-                                                            context,
-                                                            surface,
-                                                            o->engine_data,
-                                                            pts,
-                                                            o->cur.smooth_scale,
-                                                            0);
+             obj->layer->evas->engine.func->image_map4_draw
+               (output, context, surface, o->engine_data, pts,
+                o->cur.smooth_scale | obj->cur.map->smooth, 0);
           }
         else
           {

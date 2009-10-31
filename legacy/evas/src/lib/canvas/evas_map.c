@@ -66,6 +66,8 @@ _evas_map_new(int count)
    Evas_Map *m = calloc(1, sizeof(Evas_Map) + count * sizeof(Evas_Map_Point));
    if (!m) return NULL;
    m->count = count;
+   m->alpha = 1;
+   m->smooth = 1;
    return m;
 }
 
@@ -83,11 +85,12 @@ _evas_map_copy(Evas_Map *dst, const Evas_Map *src)
 {
    if (dst->count != src->count)
      {
-	ERR("cannot copy map of different sizes: dst=%lu, src=%lu",
-	    dst->count, src->count);
+	ERR("cannot copy map of different sizes: dst=%i, src=%i", dst->count, src->count);
 	return EINA_FALSE;
      }
    memcpy(dst->points, src->points, src->count * sizeof(Evas_Map_Point));
+   dst->smooth = src->smooth;
+   dst->alpha = src->alpha;
    return EINA_TRUE;
 }
 
@@ -204,6 +207,13 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
      {
         if (obj->cur.map)
           {
+             if (obj->cur.map->surface)
+               {
+                  obj->layer->evas->engine.func->image_map_surface_free
+                    (obj->layer->evas->engine.data.output,
+                     obj->cur.map->surface);
+                  obj->cur.map->surface = NULL;
+               }
              obj->cur.geometry = obj->cur.map->normal_geometry;
              if (!obj->prev.map)
                {
@@ -284,10 +294,73 @@ evas_map_new(int count)
 {
    if (count != 4)
      {
-	ERR("num (%lu) != 4 is unsupported!", count);
+	ERR("num (%i) != 4 is unsupported!", count);
 	return NULL;
      }
    return _evas_map_new(count);
+}
+
+/**
+ * Set the smoothing for map rendering
+ * 
+ * This sets smoothing for map rendering. If the object is a type that has
+ * its own smoothing settings, then both the smooth settings for this object
+ * and the map must be turned off. By default smooth maps are enabled.
+ * 
+ * @param m map to modify. Must not be NULL.
+ * @param enabled enable or disable smooth map rendering
+ */
+EAPI void
+evas_map_smooth_set(Evas_Map *m, Eina_Bool enabled)
+{
+   if (!m) return;
+   m->smooth = enabled;
+}
+
+/**
+ * get the smoothing for map rendering
+ * 
+ * This gets smoothing for map rendering.
+ * 
+ * @param m map to get the smooth from. Must not be NULL.
+ */
+EAPI Eina_Bool
+evas_map_smooth_get(const Evas_Map *m)
+{
+   if (!m) return 0;
+   return m->smooth;
+}
+
+/**
+ * Set the alpha flag for map rendering
+ * 
+ * This sets alpha flag for map rendering. If the object is a type that has
+ * its own alpha settings, then this will take precedence. Only image objects
+ * have this currently. Fits stops alpha blending of the map area, and is
+ * useful if you know the object and/or all sub-objects is 100% solid.
+ * 
+ * @param m map to modify. Must not be NULL.
+ * @param enabled enable or disable alpha map rendering
+ */
+EAPI void
+evas_map_alpha_set(Evas_Map *m, Eina_Bool enabled)
+{
+   if (!m) return;
+   m->alpha = enabled;
+}
+
+/**
+ * get the alpha flag for map rendering
+ * 
+ * This gets the alph flag for map rendering.
+ * 
+ * @param m map to get the alpha from. Must not be NULL.
+ */
+EAPI Eina_Bool
+evas_map_alpha_get(const Evas_Map *m)
+{
+   if (!m) return 0;
+   return m->alpha;
 }
 
 /**

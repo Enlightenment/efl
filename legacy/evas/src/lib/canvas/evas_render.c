@@ -128,7 +128,7 @@ _evas_child_changed_propagate(Evas_Object *obj)
                  (obj2->changed))
                {
                   obj->changed = 1;
-                  return 1;
+                  return;
                }
              else if (obj2->smart.smart)
                {
@@ -182,42 +182,21 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Eina_Array *active
    if (!((obj->func->can_map) && (obj->func->can_map(obj))) &&
        ((obj->cur.map) && (obj->cur.map->count == 4) && (obj->cur.usemap)))
      {
-        if (obj->smart.smart)
-          {
-             _evas_child_changed_propagate(obj);
-//             printf("%p changed\n", obj);
-          }
+        if (obj->smart.smart) _evas_child_changed_propagate(obj);
         if (obj->changed)
           {
              if ((is_active) && (obj->restack) && (!obj->clip.clipees) &&
                  ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
                   (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
-               {
-//                  printf("a\n");
-                  eina_array_push(restack_objects, obj);
-               }
+               eina_array_push(restack_objects, obj);
              else if ((is_active) && (!obj->clip.clipees) &&
                       ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
                        (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
                {
-//                  printf("b\n");
                   eina_array_push(restack_objects, obj);
-//                  eina_array_push(render_objects, obj);
                   obj->render_pre = 1;
                }
           }
-//        printf("---\n");
-        /* for now all mapped objects are no logner opaque        
-        else
-          {
-             if (evas_object_is_opaque(obj) &&
-                 evas_object_is_visible(obj))
-               {
-                  eina_array_push(render_objects, obj);
-                  obj->rect_del = 1;
-               }
-          }
-         */
         return;
      }
    
@@ -229,7 +208,6 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Eina_Array *active
 	  {
 	     Evas_Object *obj2;
 
-//             printf("_evas_render_phase1_object_process smart1 %p\n", obj);
 	     eina_array_push(render_objects, obj);
 	     obj->render_pre = 1;
 	     EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2)
@@ -267,7 +245,6 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Eina_Array *active
 	       {
 		  Evas_Object *obj2;
 
-//             printf("_evas_render_phase1_object_process smart2 %p\n", obj);
 		  eina_array_push(render_objects, obj);
 		  obj->render_pre = 1;
 		  EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2)
@@ -406,16 +383,14 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface, int 
      {
         const Evas_Map_Point *p, *p_end;
         RGBA_Map_Point pts[4], *pt;
-        void *ctx;
+        void *ctx, *ctx2;
+        int sw, sh;
+        int changed = 0;
         
-        if ((obj->cur.map->normal_geometry.w <= 0) || 
-            (obj->cur.map->normal_geometry.h <= 0))
-          return;
+        sw = obj->cur.map->normal_geometry.w;
+        sh = obj->cur.map->normal_geometry.h;
+        if ((sw <= 0) || (sh <= 0)) return;
              
-        static int level = 0;
-        
-        level++;
-//        printf("+-- mapped draw lv %i\n", level);
         p = obj->cur.map->points;
         p_end = p + 4;
         pt = pts;
@@ -428,60 +403,104 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface, int 
              pt->v = p->v * FP1;
           }
         
-        
-        ctx = e->engine.func->context_new(e->engine.data.output);
+        if (obj->cur.map->surface)
+          {
+             if ((obj->cur.map->surface_w != sw) ||
+                 (obj->cur.map->surface_h != sh))
+               {
+                  obj->layer->evas->engine.func->image_map_surface_free
+                    (e->engine.data.output, obj->cur.map->surface);
+                  obj->cur.map->surface = NULL;
+               }
+          }
         if (!obj->cur.map->surface)
-          obj->cur.map->surface =
-          obj->layer->evas->engine.func->image_map_surface_new
-          (e->engine.data.output, obj->cur.map->normal_geometry.w,
-           obj->cur.map->normal_geometry.h, 1);
-        
-        // FIXME: only re-render if obj changed or smart children or size changed etc.
+          {
+             obj->cur.map->surface_w = sw;
+             obj->cur.map->surface_h = sh;
+             
+             obj->cur.map->surface =
+               obj->layer->evas->engine.func->image_map_surface_new
+               (e->engine.data.output, obj->cur.map->surface_w,
+                obj->cur.map->surface_h, 
+                obj->cur.map->alpha);
+             changed = 1;
+          }
         if (obj->smart.smart)
           {
              Evas_Object *obj2;
              
-             off_x = -obj->cur.map->normal_geometry.x;
-             off_y = -obj->cur.map->normal_geometry.y;
-/*             
-             printf("draw mapped smart obj %p, %ix%i, off %i %i [%i %i]\n",
-                    obj,
-                    obj->cur.map->normal_geometry.w, 
-                    obj->cur.map->normal_geometry.h,
-                    off_x, off_y,
-                    obj->cur.map->normal_geometry.x,
-                    obj->cur.map->normal_geometry.y);
- */
-             EINA_INLIST_FOREACH
-               (evas_object_smart_members_get_direct(obj), obj2)
+             EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2)
                {
-                  if (evas_object_is_active(obj2) && 
-                      (!obj2->clip.clipees) &&
-                      ((evas_object_is_visible(obj2) && 
-                        (!obj2->cur.have_clipees))))
-                    evas_render_mapped(e, obj2, ctx, obj->cur.map->surface, 
-                                       off_x, off_y);
+                  if (!obj2->smart.smart)
+                    {
+                       if (obj2->changed)
+                         {
+                            obj2->changed = 0;
+                            changed = 1;
+                         }
+                    }
                }
+             obj->changed = 0;
           }
         else
-          {
-             off_x = -obj->cur.cache.clip.x;
-             off_y = -obj->cur.cache.clip.y;
-             obj->func->render(obj, e->engine.data.output, ctx,
-                               obj->cur.map->surface, off_x, off_y);
-          }
-        e->engine.func->context_free(e->engine.data.output, ctx);
+          changed = obj->changed;
         
+        // clear surface before re-render
+        if ((changed) && (obj->cur.map->surface))
+          {
+             ctx2 = e->engine.func->context_new(e->engine.data.output);
+             e->engine.func->context_color_set
+               (e->engine.data.output, ctx2, 0, 0, 0, 0);
+             e->engine.func->context_render_op_set
+               (e->engine.data.output, ctx2, EVAS_RENDER_COPY);
+             e->engine.func->rectangle_draw(e->engine.data.output,
+                                            ctx2,
+                                            obj->cur.map->surface,
+                                            0, 0, 
+                                            obj->cur.map->surface_w,
+                                            obj->cur.map->surface_h);
+             e->engine.func->context_free(e->engine.data.output, ctx2);
+             
+             ctx = e->engine.func->context_new(e->engine.data.output);
+        
+             // FIXME: only re-render if obj changed or smart children or size changed etc.
+             if (obj->smart.smart)
+               {
+                  Evas_Object *obj2;
+                  
+                  off_x = -obj->cur.map->normal_geometry.x;
+                  off_y = -obj->cur.map->normal_geometry.y;
+                  EINA_INLIST_FOREACH
+                    (evas_object_smart_members_get_direct(obj), obj2)
+                    {
+                       if (evas_object_is_active(obj2) && 
+                           (!obj2->clip.clipees) &&
+                           ((evas_object_is_visible(obj2) && 
+                             (!obj2->cur.have_clipees))))
+                         evas_render_mapped(e, obj2, ctx, 
+                                            obj->cur.map->surface, 
+                                            off_x, off_y);
+                    }
+               }
+             else
+               {
+                  off_x = -obj->cur.cache.clip.x;
+                  off_y = -obj->cur.cache.clip.y;
+                  obj->func->render(obj, e->engine.data.output, ctx,
+                                    obj->cur.map->surface, off_x, off_y);
+               }
+             e->engine.func->context_free(e->engine.data.output, ctx);
+          }
+
         obj->layer->evas->engine.func->image_map4_draw
           (e->engine.data.output, e->engine.data.context, surface, 
-           obj->cur.map->surface, pts, 1, /*smooth? (on for now)*/ 0);
+           obj->cur.map->surface, pts, obj->cur.map->smooth, 0);
+        
         // FIXME: needs to cache these maps and
         // keep them only rendering updates
-        obj->layer->evas->engine.func->image_map_surface_free
-          (e->engine.data.output, obj->cur.map->surface);
-        obj->cur.map->surface = NULL;
-        level--;
-//        printf("+-- done\n");
+//        obj->layer->evas->engine.func->image_map_surface_free
+//          (e->engine.data.output, obj->cur.map->surface);
+//        obj->cur.map->surface = NULL;
      }
    else
      obj->func->render(obj, e->engine.data.output, context, surface, 

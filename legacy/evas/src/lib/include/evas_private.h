@@ -369,6 +369,9 @@ struct _Evas_Map
    int count;
    Evas_Coord_Rectangle normal_geometry;
    void *surface;
+   int surface_w, surface_h;
+   Eina_Bool alpha : 1;
+   Eina_Bool smooth : 1;
    Evas_Map_Point points[];
 };
 

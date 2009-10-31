@@ -858,6 +858,10 @@ extern "C" {
    EAPI void              evas_map_util_zoom                (Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_Coord cy);
 
    EAPI Evas_Map         *evas_map_new                      (int count);
+   EAPI void              evas_map_smooth_set               (Evas_Map *m, Eina_Bool enabled);
+   EAPI Eina_Bool         evas_map_smooth_get               (const Evas_Map *m);
+   EAPI void              evas_map_alpha_set                (Evas_Map *m, Eina_Bool enabled);
+   EAPI Eina_Bool         evas_map_alpha_get                (const Evas_Map *m);
    EAPI Evas_Map         *evas_map_dup                      (const Evas_Map *m);
    EAPI void              evas_map_free                     (Evas_Map *m);
    EAPI void              evas_map_point_coord_set          (Evas_Map *m, int idx, Evas_Coord x, Evas_Coord y, Evas_Coord z);

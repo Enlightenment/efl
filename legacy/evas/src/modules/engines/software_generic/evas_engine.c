@@ -796,8 +796,6 @@ eng_image_map_surface_new(void *data __UNUSED__, int w, int h, int alpha)
                                           w, h, NULL, alpha, 
                                           EVAS_COLORSPACE_ARGB8888);
    pixels = evas_cache_image_pixels(surface);
-   // FIXME: need a clear call
-   memset(pixels, 0, (w *h * sizeof(DATA32)));
    return surface;
 }
 
