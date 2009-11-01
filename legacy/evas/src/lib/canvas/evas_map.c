@@ -63,21 +63,21 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
 static inline Evas_Map *
 _evas_map_new(int count)
 {
+   int i;
+   
    Evas_Map *m = calloc(1, sizeof(Evas_Map) + count * sizeof(Evas_Map_Point));
    if (!m) return NULL;
    m->count = count;
    m->alpha = 1;
    m->smooth = 1;
+   for (i = 0; i < count; i++)
+     {
+        m->points[i].r = 255;
+        m->points[i].g = 255;
+        m->points[i].b = 255;
+        m->points[i].a = 255;
+     }
    return m;
-}
-
-static inline Evas_Map *
-_evas_map_dup(const Evas_Map *orig)
-{
-   Evas_Map *copy = _evas_map_new(orig->count);
-   if (!copy) return NULL;
-   memcpy(copy->points, orig->points, orig->count * sizeof(Evas_Map_Point));
-   return copy;
 }
 
 static inline Eina_Bool
@@ -92,6 +92,17 @@ _evas_map_copy(Evas_Map *dst, const Evas_Map *src)
    dst->smooth = src->smooth;
    dst->alpha = src->alpha;
    return EINA_TRUE;
+}
+
+static inline Evas_Map *
+_evas_map_dup(const Evas_Map *orig)
+{
+   Evas_Map *copy = _evas_map_new(orig->count);
+   if (!copy) return NULL;
+   memcpy(copy->points, orig->points, orig->count * sizeof(Evas_Map_Point));
+   copy->smooth = orig->smooth;
+   copy->alpha = orig->alpha;
+   return copy;
 }
 
 static inline void
@@ -514,6 +525,67 @@ evas_map_point_image_uv_get(const Evas_Map *m, int idx, double *u, double *v)
  error:
    if (u) *u = 0.0;
    if (v) *v = 0.0;
+}
+
+/**
+ * Set the color of a vertex in the map
+ *
+ * This sets the color of the vertex in the map. Colors will be linearly
+ * interpolated between vertex points through the map. Color will multiply
+ * the "texture" pixels (like GL_MODULATE in OpenGL). The default color of
+ * a vertex in a map is white solid (255, 255, 255, 255) which means it will
+ * have no affect on modifying the texture pixels.
+ * 
+ * @param m map to change the color of.
+ * @param idx index of point to change. Must be smaller than map size.
+ * @param r red (0 - 255)
+ * @param g green (0 - 255)
+ * @param b blue (0 - 255)
+ * @param a alpha (0 - 255)
+ * 
+ * @see evas_map_point_coord_set()
+ * @see evas_object_map_set()
+ */
+EAPI void
+evas_map_point_color_set(Evas_Map *m, int idx, int r, int g, int b, int a)
+{
+   Evas_Map_Point *p;
+   if (!m) return;
+   if (idx >= m->count) return;
+   p = m->points + idx;
+   p->r = r;
+   p->g = g;
+   p->b = b;
+   p->a = a;
+}
+
+/**
+ * Get the color set on a vertex in the map
+ *
+ * This gets the color set by evas_map_point_color_set() on the given vertex
+ * of the map.
+ * 
+ * @param m map to get the color of the vertex from.
+ * @param idx index of point get. Must be smaller than map size.
+ * @param r pointer to red return
+ * @param g pointer to green return
+ * @param b pointer to blue return
+ * @param a pointer to alpha return (0 - 255)
+ * 
+ * @see evas_map_point_coord_set()
+ * @see evas_object_map_set()
+ */
+EAPI void
+evas_map_point_color_get(const Evas_Map *m, int idx, int *r, int *g, int *b, int *a)
+{
+   Evas_Map_Point *p;
+   if (!m) return;
+   if (idx >= m->count) return;
+   p = m->points + idx;
+   if (r) *r = p->r;
+   if (g) *g = p->g;
+   if (b) *b = p->b;
+   if (a) *a = p->a;
 }
 
 /****************************************************************************/

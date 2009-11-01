@@ -109,7 +109,9 @@ evas_scale_smooth_scaler_up.c \
 evas_scale_span.h \
 evas_pipe.h \
 evas_intl_utils.h \
-evas_map_image_internal.c
+evas_map_image_internal.c \
+evas_map_image_core.c \
+evas_map_image_loop.c
 
 libevas_engine_common_la_DEPENDENCIES = \
 $(top_builddir)/config.h

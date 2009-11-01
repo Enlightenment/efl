@@ -2346,7 +2346,10 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
                   pt->z = (p->z)     << FP;
                   pt->u = p->u * FP1;
                   pt->v = p->v * FP1;
-               }
+                  pt->col = 
+                   (((DATA32)p->a) << 24) | (((DATA32)p->r) << 16) | 
+                    (((DATA32)p->g) << 8) | (((DATA32)p->b));
+              }
              obj->layer->evas->engine.func->image_map4_draw
                (output, context, surface, o->engine_data, pts,
                 o->cur.smooth_scale | obj->cur.map->smooth, 0);

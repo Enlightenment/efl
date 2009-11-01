@@ -383,7 +383,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface, int 
      {
         const Evas_Map_Point *p, *p_end;
         RGBA_Map_Point pts[4], *pt;
-        void *ctx, *ctx2;
+        void *ctx;
         int sw, sh;
         int changed = 0;
         
@@ -401,6 +401,9 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface, int 
              pt->z = (p->z)         << FP;
              pt->u = p->u * FP1;
              pt->v = p->v * FP1;
+             pt->col = 
+               (((DATA32)p->a) << 24) | (((DATA32)p->r) << 16) | 
+               (((DATA32)p->g) << 8) | (((DATA32)p->b));
           }
         
         if (obj->cur.map->surface)
@@ -448,21 +451,22 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface, int 
         // clear surface before re-render
         if ((changed) && (obj->cur.map->surface))
           {
-             ctx2 = e->engine.func->context_new(e->engine.data.output);
-             e->engine.func->context_color_set
-               (e->engine.data.output, ctx2, 0, 0, 0, 0);
-             e->engine.func->context_render_op_set
-               (e->engine.data.output, ctx2, EVAS_RENDER_COPY);
-             e->engine.func->rectangle_draw(e->engine.data.output,
-                                            ctx2,
-                                            obj->cur.map->surface,
-                                            0, 0, 
-                                            obj->cur.map->surface_w,
-                                            obj->cur.map->surface_h);
-             e->engine.func->context_free(e->engine.data.output, ctx2);
-             
+             if (obj->cur.map->alpha)
+               {
+                  ctx = e->engine.func->context_new(e->engine.data.output);
+                  e->engine.func->context_color_set
+                    (e->engine.data.output, ctx, 0, 0, 0, 0);
+                  e->engine.func->context_render_op_set
+                    (e->engine.data.output, ctx, EVAS_RENDER_COPY);
+                  e->engine.func->rectangle_draw(e->engine.data.output,
+                                                 ctx,
+                                                 obj->cur.map->surface,
+                                                 0, 0, 
+                                                 obj->cur.map->surface_w,
+                                                 obj->cur.map->surface_h);
+                  e->engine.func->context_free(e->engine.data.output, ctx);
+               }
              ctx = e->engine.func->context_new(e->engine.data.output);
-        
              // FIXME: only re-render if obj changed or smart children or size changed etc.
              if (obj->smart.smart)
                {

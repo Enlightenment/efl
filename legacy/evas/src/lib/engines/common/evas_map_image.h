@@ -22,6 +22,7 @@ struct _RGBA_Map_Point
    FPc x, y; // x, y screenspace
    FPc z; // z in world space. optional
    FPc u, v; // u, v in tex coords
+   DATA32 col; // color at this point
 };
 
 EAPI void

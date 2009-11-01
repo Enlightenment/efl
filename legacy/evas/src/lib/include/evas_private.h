@@ -48,6 +48,7 @@ typedef struct _Evas_Intercept_Func_Color   Evas_Intercept_Func_Color;
 typedef struct _Evas_Key_Grab               Evas_Key_Grab;
 typedef struct _Evas_Callbacks              Evas_Callbacks;
 typedef struct _Evas_Format                 Evas_Format;
+typedef struct _Evas_Map_Point              Evas_Map_Point;
 
 #define MAGIC_EVAS          0x70777770
 #define MAGIC_OBJ           0x71777770
@@ -361,7 +362,7 @@ struct _Evas_Map_Point
 {
    Evas_Coord x, y, z;
    double u, v;
-   // FIXME: add color?
+   unsigned char r, g, b, a;
 };
 
 struct _Evas_Map

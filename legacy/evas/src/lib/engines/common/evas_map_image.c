@@ -26,6 +26,7 @@ struct _Span
    int x1, x2;
    FPc o1, o2;
    FPc  u[2], v[2];
+   DATA32 col[2];
 };
 
 struct _Line
@@ -45,13 +46,26 @@ _interp(int x1, int x2, int p, FPc u1, FPc u2)
    return u1 + u;
 }
 
+static DATA32
+_interp_col(int x1, int x2, int p, DATA32 col1, DATA32 col2)
+{
+   DATA32 col;
+   
+   x2 -= x1;
+   p -= x1;
+   p = (p << 8) / (x2 + 1);
+   return INTERP_256(p, col2, col1);
+}
+
 static void
-_limit(Span *s, int c1, int c2)
+_limit(Span *s, int c1, int c2, int nocol)
 {
    if (s->x1 < c1)
      {
         s->u[0] = _interp(s->x1, s->x2, c1, s->u[0], s->u[1]);
         s->v[0] = _interp(s->x1, s->x2, c1, s->v[0], s->v[1]);
+        if (!nocol)
+          s->col[0] = _interp_col(s->x1, s->x2, c1, s->col[0], s->col[1]);
         s->x1 = c1;
         s->o1 = c1 << FP;
      }
@@ -59,6 +73,8 @@ _limit(Span *s, int c1, int c2)
      {
         s->u[1] = _interp(s->x1, s->x2, c2, s->u[0], s->u[1]);
         s->v[1] = _interp(s->x1, s->x2, c2, s->v[0], s->v[1]);
+        if (!nocol)
+          s->col[1] = _interp_col(s->x1, s->x2, c2, s->col[0], s->col[1]);
         s->x2 = c2;
         s->o2 = c2 << FP;
      }
@@ -72,6 +88,7 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
    int py[4];
    int edge[4][4], edge_num, swapped, order[4];
    FPc uv[4][2], u, v, x, h, t;
+   DATA32 col[4];
    
 #if 1 // maybe faster on x86?
    for (i = 0; i < 4; i++) py[i] = p[i].y >> FP;
@@ -83,12 +100,14 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
    if ((PY(0) == PY(1)) && (PY(0) == PY(2)) && (PY(0) == PY(3)))
      {
         int leftp, rightp;
+        int nocol = 1;
         
         leftp = rightp = 0;
         for (i = 1; i < 4; i++)
           {
              if (p[i].x < p[leftp].x) leftp = i;
              if (p[i].x > p[rightp].x) rightp = i;
+             if (p[i].col != 0xffffffff) nocol = 0;
           }
         for (y = ystart; y <= yend; y++)
           {
@@ -100,16 +119,18 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
                   spans[yp].span[i].o1 = p[leftp].x;
                   spans[yp].span[i].u[0] = p[leftp].u;
                   spans[yp].span[i].v[0] = p[leftp].v;
+                  spans[yp].span[i].col[0] = p[leftp].col;
                   spans[yp].span[i].x2 = p[rightp].x >> FP;
                   spans[yp].span[i].o2 = p[rightp].x;
                   spans[yp].span[i].u[1] = p[rightp].u;
                   spans[yp].span[i].v[1] = p[rightp].v;
+                  spans[yp].span[i].col[1] = p[rightp].col;
                   if ((spans[yp].span[i].x1 >= (cx + cw)) ||
                       (spans[yp].span[i].x2 < cx))
                     spans[yp].span[i].x1 = -1;
                   else
                     {
-                       _limit(&(spans[yp].span[i]), cx, cx + cw);
+                       _limit(&(spans[yp].span[i]), cx, cx + cw, nocol);
                        i++;
                        spans[yp].span[i].x1 = -1;
                     }
@@ -122,6 +143,8 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
    
    for (y = ystart; y <= yend; y++)
      {
+        int nocol = 1;
+        
         yp = y - ystart;
         edge_num = 0;
         for (i = 0; i < 4; i++)
@@ -138,12 +161,14 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
                   edge[edge_num][1] = i;
                   edge_num++;
                }
+             if (p[i].col != 0xffffffff) nocol = 0;
           }
         // calculate line x points for each edge
         for (i = 0; i < edge_num; i++)
           {
              int e1 = edge[i][0];
              int e2 = edge[i][1];
+             FPc t256;
              
              h = (p[e2].y - p[e1].y) >> FP; // height of edge
              t = (((y << FP) + (FP1 - 1)) - p[e1].y) >> FP;
@@ -155,6 +180,9 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              
              v = p[e2].v - p[e1].v;
              v = p[e1].v + ((v * t) / h);
+             
+             t256 = (t << 8) / h; // maybe * 255?
+             col[i] = INTERP_256(t256, p[e2].col, p[e1].col);
              
              uv[i][1] = v;
              uv[i][0] = u;
@@ -186,16 +214,19 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              spans[yp].span[i].o1 = edge[order[0]][3];
              spans[yp].span[i].u[0] = uv[order[0]][0];
              spans[yp].span[i].v[0] = uv[order[0]][1];
+             spans[yp].span[i].col[0] = col[order[0]];
+             
              spans[yp].span[i].x2 = edge[order[1]][2];
              spans[yp].span[i].o2 = edge[order[1]][3];
              spans[yp].span[i].u[1] = uv[order[1]][0];
              spans[yp].span[i].v[1] = uv[order[1]][1];
+             spans[yp].span[i].col[1] = col[order[1]];
              if ((spans[yp].span[i].x1 >= (cx + cw)) ||
                  (spans[yp].span[i].x2 < cx))
                spans[yp].span[i].x1 = -1;
              else
                {
-                  _limit(&(spans[yp].span[i]), cx, cx + cw);
+                  _limit(&(spans[yp].span[i]), cx, cx + cw, nocol);
                   i++;
                   spans[yp].span[i].x1 = -1;
                }
@@ -206,23 +237,29 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              spans[yp].span[i].x1 = edge[order[0]][2];
              spans[yp].span[i].u[0] = uv[order[0]][0];
              spans[yp].span[i].v[0] = uv[order[0]][1];
+             spans[yp].span[i].col[0] = col[order[0]];
+             
              spans[yp].span[i].x2 = edge[order[1]][2];
              spans[yp].span[i].u[1] = uv[order[1]][0];
              spans[yp].span[i].v[1] = uv[order[1]][1];
+             spans[yp].span[i].col[1] = col[order[1]];
              if ((spans[yp].span[i].x1 >= (cx + cw)) ||
                  (spans[yp].span[i].x2 < cx))
                spans[yp].span[i].x1 = -1;
              else
                {
-                  _limit(&(spans[yp].span[i]), cx, cx + cw);
+                  _limit(&(spans[yp].span[i]), cx, cx + cw, nocol);
                   i++;
                }
              spans[yp].span[i].x1 = edge[order[2]][2];
              spans[yp].span[i].u[0] = uv[order[2]][0];
              spans[yp].span[i].v[0] = uv[order[2]][1];
+             spans[yp].span[i].col[0] = col[order[2]];
+             
              spans[yp].span[i].x2 = edge[order[3]][2];
              spans[yp].span[i].u[1] = uv[order[3]][0];
              spans[yp].span[i].v[1] = uv[order[3]][1];
+             spans[yp].span[i].col[1] = col[order[3]];
              if ((spans[yp].span[i].x1 >= (cx + cw)) ||
                  (spans[yp].span[i].x2 < cx))
                spans[yp].span[i].x1 = -1;
@@ -231,7 +268,7 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
                   int l = cx;
                   
                   if (i > 0) l = spans[yp].span[i - 1].x2;
-                  _limit(&(spans[yp].span[i]), l, cx + cw);
+                  _limit(&(spans[yp].span[i]), l, cx + cw, nocol);
                }
           }
         else
