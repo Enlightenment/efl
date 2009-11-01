@@ -67,51 +67,51 @@ if EINA_AMALGAMATION
 eina_sources_used = eina_amalgamation.c
 BUILT_SOURCES = eina_amalgamation.c
 
-$(builddir)/ eina_amalgamation.c: $(sources_used) Makefile
-	-rm -f $(builddir)/eina_amalgamation.c
+eina_amalgamation.c: $(sources_used) Makefile
+	-rm -f eina_amalgamation.c
 
-	@echo "#ifdef HAVE_CONFIG_H" >> $(builddir)/eina_amalgamation.c
-	@echo "#include \"config.h\"" >> $(builddir)/eina_amalgamation.c
-	@echo "#endif" >> $(builddir)/eina_amalgamation.c
+	@echo "#ifdef HAVE_CONFIG_H" >> eina_amalgamation.c
+	@echo "#include \"config.h\"" >> eina_amalgamation.c
+	@echo "#endif" >> eina_amalgamation.c
 
-	@echo "#ifndef _WIN32" >> $(builddir)/eina_amalgamation.c
-	@echo "#define _GNU_SOURCE" >> $(builddir)/eina_amalgamation.c
-	@echo "#endif" >> $(builddir)/eina_amalgamation.c
+	@echo "#ifndef _WIN32" >> eina_amalgamation.c
+	@echo "#define _GNU_SOURCE" >> eina_amalgamation.c
+	@echo "#endif" >> eina_amalgamation.c
 
-	@echo "#ifdef HAVE_ALLOCA_H" >> $(builddir)/eina_amalgamation.c
-	@echo "# include <alloca.h>" >> $(builddir)/eina_amalgamation.c
-	@echo "#elif defined __GNUC__" >> $(builddir)/eina_amalgamation.c
-	@echo "# define alloca __builtin_alloca" >> $(builddir)/eina_amalgamation.c
-	@echo "#elif defined _AIX" >> $(builddir)/eina_amalgamation.c
-	@echo "# define alloca __alloca" >> $(builddir)/eina_amalgamation.c
-	@echo "#elif defined _MSC_VER" >> $(builddir)/eina_amalgamation.c
-	@echo "# include <malloc.h>" >> $(builddir)/eina_amalgamation.c
-	@echo "# define alloca _alloca" >> $(builddir)/eina_amalgamation.c
-	@echo "#else" >> $(builddir)/eina_amalgamation.c
-	@echo "# include <stddef.h>" >> $(builddir)/eina_amalgamation.c
-	@echo "# ifdef __cplusplus" >> $(builddir)/eina_amalgamation.c
-	@echo "#extern \"C\"" >> $(builddir)/eina_amalgamation.c
-	@echo "# endif" >> $(builddir)/eina_amalgamation.c
-	@echo "#void *alloca (size_t);" >> $(builddir)/eina_amalgamation.c
-	@echo "#endif" >> $(builddir)/eina_amalgamation.c
+	@echo "#ifdef HAVE_ALLOCA_H" >> eina_amalgamation.c
+	@echo "# include <alloca.h>" >> eina_amalgamation.c
+	@echo "#elif defined __GNUC__" >> eina_amalgamation.c
+	@echo "# define alloca __builtin_alloca" >> eina_amalgamation.c
+	@echo "#elif defined _AIX" >> eina_amalgamation.c
+	@echo "# define alloca __alloca" >> eina_amalgamation.c
+	@echo "#elif defined _MSC_VER" >> eina_amalgamation.c
+	@echo "# include <malloc.h>" >> eina_amalgamation.c
+	@echo "# define alloca _alloca" >> eina_amalgamation.c
+	@echo "#else" >> eina_amalgamation.c
+	@echo "# include <stddef.h>" >> eina_amalgamation.c
+	@echo "# ifdef __cplusplus" >> eina_amalgamation.c
+	@echo "#extern \"C\"" >> eina_amalgamation.c
+	@echo "# endif" >> eina_amalgamation.c
+	@echo "#void *alloca (size_t);" >> eina_amalgamation.c
+	@echo "#endif" >> eina_amalgamation.c
 
-	@echo "#include <stdio.h>" >> $(builddir)/eina_amalgamation.c
-	@echo "#include <stdlib.h>" >> $(builddir)/eina_amalgamation.c
-	@echo "#include <string.h>" >> $(builddir)/eina_amalgamation.c
-	@echo "#include <dlfcn.h>" >> $(builddir)/eina_amalgamation.c
-	@echo "#include <sys/types.h>" >> $(builddir)/eina_amalgamation.c
-	@echo "#include <dirent.h>" >> $(builddir)/eina_amalgamation.c
-	@echo "#include <assert.h>" >> $(builddir)/eina_amalgamation.c
-	@echo "#include <errno.h>" >> $(builddir)/eina_amalgamation.c
+	@echo "#include <stdio.h>" >> eina_amalgamation.c
+	@echo "#include <stdlib.h>" >> eina_amalgamation.c
+	@echo "#include <string.h>" >> eina_amalgamation.c
+	@echo "#include <dlfcn.h>" >> eina_amalgamation.c
+	@echo "#include <sys/types.h>" >> eina_amalgamation.c
+	@echo "#include <dirent.h>" >> eina_amalgamation.c
+	@echo "#include <assert.h>" >> eina_amalgamation.c
+	@echo "#include <errno.h>" >> eina_amalgamation.c
 
-	@echo "#ifdef HAVE_EVIL" >> $(builddir)/eina_amalgamation.c
-	@echo "# include <Evil.h>" >> $(builddir)/eina_amalgamation.c
-	@echo "#endif" >> $(builddir)/eina_amalgamation.c
+	@echo "#ifdef HAVE_EVIL" >> eina_amalgamation.c
+	@echo "# include <Evil.h>" >> eina_amalgamation.c
+	@echo "#endif" >> eina_amalgamation.c
 
-	@echo "#include \"eina_config.h\"" >> $(builddir)/eina_amalgamation.c
-	@echo "#include \"eina_private.h\"" >> $(builddir)/eina_amalgamation.c
-	@echo "#include \"eina_safety_checks.h\"" >> $(builddir)/eina_amalgamation.c
-	@echo "#include \"Eina.h\"" >> $(builddir)/eina_amalgamation.c
+	@echo "#include \"eina_config.h\"" >> eina_amalgamation.c
+	@echo "#include \"eina_private.h\"" >> eina_amalgamation.c
+	@echo "#include \"eina_safety_checks.h\"" >> eina_amalgamation.c
+	@echo "#include \"Eina.h\"" >> eina_amalgamation.c
 
 	@for f in $(sources_used); do \
 	   if [ `expr substr $$f 1 1` != '/' ]; then \
@@ -119,8 +119,8 @@ $(builddir)/ eina_amalgamation.c: $(sources_used) Makefile
 	   else \
 		  file="$$f" ; \
 	   fi ; \
-	   echo "/* file: $$file */" >> $(builddir)/eina_amalgamation.c; \
-	   grep -v -e '^# *include \+.\(config\|eina_[a-z_]\+\|Evil\|stdio\|stdlib\|string\|dlfcn\|dirent\|assert\|errno\)[.]h.*' $$file >> $(builddir)/eina_amalgamation.c; \
+	   echo "/* file: $$file */" >> eina_amalgamation.c; \
+	   grep -v -e '^# *include \+.\(config\|eina_[a-z_]\+\|Evil\|stdio\|stdlib\|string\|dlfcn\|dirent\|assert\|errno\)[.]h.*' $$file >> eina_amalgamation.c; \
 	done
 	@echo "eina_amalgamation.c generated"
 
