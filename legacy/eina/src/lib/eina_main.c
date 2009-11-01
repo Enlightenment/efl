@@ -314,7 +314,6 @@ eina_threads_shutdown(void)
 #endif
 }
 
-
 /**
  * @}
  */

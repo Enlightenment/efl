@@ -375,37 +375,37 @@ static pthread_t _main_thread;
 
 #ifdef EINA_PTHREAD_SPIN
 static pthread_spinlock_t _log_lock;
-#define LOCK()								\
+#define LOG_LOCK()								\
   if(_threads_enabled) \
   do {									\
      if (0)								\
-       fprintf(stderr, "+++LOG LOCKED!   [%s, %lu]\n",			\
+       fprintf(stderr, "+++LOG LOG_LOCKED!   [%s, %lu]\n",			\
 	       __FUNCTION__, pthread_self());				\
      if (EINA_UNLIKELY(_threads_enabled))				\
        pthread_spin_lock(&_log_lock);					\
   } while (0)
-#define UNLOCK()							\
+#define LOG_UNLOCK()							\
   if(_threads_enabled) \
   do {									\
      if (EINA_UNLIKELY(_threads_enabled))				\
        pthread_spin_unlock(&_log_lock);					\
      if (0)								\
        fprintf(stderr,							\
-	       "---LOG UNLOCKED! [%s, %lu]\n",				\
+	       "---LOG LOG_UNLOCKED! [%s, %lu]\n",				\
 	       __FUNCTION__, pthread_self());				\
   } while (0)
 #define INIT() pthread_spin_init(&_log_lock, PTHREAD_PROCESS_PRIVATE);
 #define SHUTDOWN() pthread_spin_destroy(&_log_lock);
 #else
 static pthread_mutex_t _log_mutex = PTHREAD_MUTEX_INITIALIZER;
-#define LOCK() if(_threads_enabled) pthread_mutex_lock(&_log_mutex);
-#define UNLOCK() if(_threads_enabled) pthread_mutex_unlock(&_log_mutex);
+#define LOG_LOCK() if(_threads_enabled) pthread_mutex_lock(&_log_mutex);
+#define LOG_UNLOCK() if(_threads_enabled) pthread_mutex_unlock(&_log_mutex);
 #define INIT() do {} while (0)
 #define SHUTDOWN() do {} while (0)
 #endif
 #else
-#define LOCK() do {} while (0)
-#define UNLOCK() do {} while (0)
+#define LOG_LOCK() do {} while (0)
+#define LOG_UNLOCK() do {} while (0)
 #define IS_MAIN(t)  (1)
 #define IS_OTHER(t) (0)
 #define CHECK_MAIN(...) do {} while (0)
@@ -1134,11 +1134,11 @@ eina_log_threads_enable(void)
 EAPI void
 eina_log_print_cb_set(Eina_Log_Print_Cb cb, void *data)
 {
-   LOCK();
+   LOG_LOCK();
    _print_cb = cb;
    _print_cb_data = data;
    eina_log_print_prefix_update();
-   UNLOCK();
+   LOG_UNLOCK();
 }
 
 /**
@@ -1243,9 +1243,9 @@ eina_log_domain_register(const char *name, const char *color)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, -1);
 
-   LOCK();
+   LOG_LOCK();
    r = eina_log_domain_register_unlocked(name, color);
-   UNLOCK();
+   LOG_UNLOCK();
    return r;
 }
 
@@ -1274,9 +1274,9 @@ EAPI void
 eina_log_domain_unregister(int domain)
 {
    EINA_SAFETY_ON_FALSE_RETURN(domain >= 0);
-   LOCK();
+   LOG_LOCK();
    eina_log_domain_unregister_unlocked(domain);
-   UNLOCK();
+   LOG_UNLOCK();
 }
 
 /**
@@ -1446,9 +1446,9 @@ eina_log_print(int domain, Eina_Log_Level level, const char *file,
      }
 #endif
    va_start(args, fmt);
-   LOCK();
+   LOG_LOCK();
    eina_log_print_unlocked(domain, level, file, fnc, line, fmt, args);
-   UNLOCK();
+   LOG_UNLOCK();
    va_end(args);
 }
 
@@ -1497,8 +1497,8 @@ eina_log_vprint(int domain, Eina_Log_Level level, const char *file,
 	return;
      }
 #endif
-   LOCK();
+   LOG_LOCK();
    eina_log_print_unlocked(domain, level, file, fnc, line, fmt, args);
-   UNLOCK();
+   LOG_UNLOCK();
 }
 
