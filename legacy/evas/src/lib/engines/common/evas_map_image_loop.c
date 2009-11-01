@@ -60,11 +60,12 @@
         INTERP_256_R2R(mm4, mm2, mm1, mm5);
 #   ifdef COLMUL
         cc = cv >> 16; // col
+        cv += cd; // col
         MOV_A2R(cc, mm2); // col
-        MOV_A2R(c1, mm3); // col
-        MOV_A2R(c2, mm4); // col
+        MOV_P2R(c1, mm3, mm0); // col
+        MOV_P2R(c2, mm4, mm0); // col
         INTERP_256_R2R(mm2, mm4, mm3, mm5); // col
-        MUL4_256_R2R(mm3, mm1);
+        MUL4_SYM_R2R(mm3, mm1, mm5); // col
 #   endif                            
         MOV_R2P(mm1, *d, mm0);
 #  else
