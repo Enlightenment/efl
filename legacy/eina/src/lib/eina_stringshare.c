@@ -178,15 +178,15 @@ static int _eina_stringshare_log_dom = -1;
 
 #ifdef EFL_HAVE_PTHREAD
 #include <pthread.h>
-static Eina_Bool _threads_activated = EINA_FALSE;
+static Eina_Bool _stringshare_threads_activated = EINA_FALSE;
 //string < 4
 static pthread_mutex_t _mutex_small = PTHREAD_MUTEX_INITIALIZER;
 //string >= 4
 static pthread_mutex_t _mutex_big = PTHREAD_MUTEX_INITIALIZER;
-#define STRINGSHARE_LOCK_SMALL() if(_threads_activated) pthread_mutex_lock(&_mutex_small);
-#define STRINGSHARE_UNLOCK_SMALL() if(_threads_activated) pthread_mutex_unlock(&_mutex_small);
-#define STRINGSHARE_LOCK_BIG() if(_threads_activated) pthread_mutex_lock(&_mutex_big);
-#define STRINGSHARE_UNLOCK_BIG() if(_threads_activated) pthread_mutex_unlock(&_mutex_big);
+#define STRINGSHARE_LOCK_SMALL() if(_stringshare_threads_activated) pthread_mutex_lock(&_mutex_small);
+#define STRINGSHARE_UNLOCK_SMALL() if(_stringshare_threads_activated) pthread_mutex_unlock(&_mutex_small);
+#define STRINGSHARE_LOCK_BIG() if(_stringshare_threads_activated) pthread_mutex_lock(&_mutex_big);
+#define STRINGSHARE_UNLOCK_BIG() if(_stringshare_threads_activated) pthread_mutex_unlock(&_mutex_big);
 #else
 #define STRINGSHARE_LOCK_SMALL() do {} while (0)
 #define STRINGSHARE_UNLOCK_SMALL() do {} while (0)
@@ -955,7 +955,7 @@ eina_stringshare_shutdown(void)
 void
 eina_stringshare_threads_init(void)
 {
-   _threads_activated = EINA_TRUE;
+   _stringshare_threads_activated = EINA_TRUE;
 }
 
 /**
@@ -970,7 +970,7 @@ eina_stringshare_threads_init(void)
 void
 eina_stringshare_threads_shutdown(void)
 {
-   _threads_activated = EINA_FALSE;
+   _stringshare_threads_activated = EINA_FALSE;
 }
 
 #endif
