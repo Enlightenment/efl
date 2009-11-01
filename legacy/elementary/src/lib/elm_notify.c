@@ -259,13 +259,13 @@ elm_notify_add(Evas_Object *parent)
    wd->notify = edje_object_add(e);
    elm_notify_orient_set(obj, ELM_NOTIFY_ORIENT_TOP);
 
+   elm_notify_parent_set(obj, parent);
+
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _resize, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _show, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _hide, obj);
-
-   elm_notify_parent_set(obj, parent);
 
    _sizing_eval(obj);
    return obj;
@@ -298,15 +298,16 @@ elm_notify_content_set(Evas_Object *obj, Evas_Object *content)
 
    if (content)
      {
-	edje_object_part_swallow(wd->notify, "elm.swallow.content", content);
-	evas_object_event_callback_add(content,
-                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints, obj);
-	evas_object_event_callback_add(content,
-                                       EVAS_CALLBACK_RESIZE,
-                                       _content_resize, obj);
 	wd->content = content;
 	elm_widget_sub_object_add(obj, content);
+
+	edje_object_part_swallow(wd->notify, "elm.swallow.content", content);
+	evas_object_event_callback_add(content,
+	      EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+	      _changed_size_hints, obj);
+	evas_object_event_callback_add(content,
+	      EVAS_CALLBACK_RESIZE,
+	      _content_resize, obj);
 	_sizing_eval(obj);
      }
    _calc(obj);
@@ -347,6 +348,7 @@ elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent)
 
    if (parent)
      {
+	wd->parent = parent;
 	edje_object_part_swallow(wd->notify, "elm.swallow.parent", parent);
 	evas_object_event_callback_add(parent,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
@@ -363,7 +365,6 @@ elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent)
 	evas_object_event_callback_add(parent,
                                        EVAS_CALLBACK_HIDE,
                                        _parent_hide, obj);
-	wd->parent = parent;
 	_sizing_eval(obj);
      }
    _calc(obj);
