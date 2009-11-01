@@ -1,3 +1,5 @@
+// vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+
 /* EINA - EFL data type library
  * Copyright (C) 2002-2008 Carsten Haitzler, Gustavo Sverzut Barbieri, Tilman Sauerbeck,
  *                         Vincent Torri, Cedric Bail, Jorge Luis Zapata Muga,
@@ -1590,15 +1592,15 @@ eina_list_merge(Eina_List *left, Eina_List *right)
  * @param right The head of the new right list.
  * @return The new left list
  *
- * This function split @p list into two lists ( left and right ) after the node @p relative. @p Relative 
- * will become the last node of the left list. If @p list or @p right are NULL list is returns. 
+ * This function split @p list into two lists ( left and right ) after the node @p relative. @p Relative
+ * will become the last node of the left list. If @p list or @p right are NULL list is returns.
  * If @p relative is NULL right is set to @p list and NULL is returns.
  * If @p relative is the last node of @p list list is returns and @p right is set to NULL.
  *
  * list does not exist anymore after the split.
  *
  */
-EAPI Eina_List *
+   EAPI Eina_List *
 eina_list_split_list(Eina_List *list, Eina_List *relative, Eina_List **right)
 {
    Eina_List *next;
@@ -1610,12 +1612,12 @@ eina_list_split_list(Eina_List *list, Eina_List *relative, Eina_List **right)
    if (!list) return NULL;
    if (!relative)
      {
-         *right = list;
-         return NULL;
+	*right = list;
+	return NULL;
      }
    if (relative == eina_list_last(list)) return list;
 
-   next = eina_list_next(relative); 
+   next = eina_list_next(relative);
    next->prev = NULL;
    next->accounting = _eina_list_mempool_accounting_new(next);
    next->accounting->last = list->accounting->last;
@@ -1624,14 +1626,14 @@ eina_list_split_list(Eina_List *list, Eina_List *relative, Eina_List **right)
    itr = next;
    do
      {
-        itr->accounting = next->accounting;
-        next->accounting->count++;
-        itr = itr->next;
+	itr->accounting = next->accounting;
+	next->accounting->count++;
+	itr = itr->next;
      }
-	while (itr);
+   while (itr);
 
    relative->next = NULL;
-   list->accounting->last = relative; 
+   list->accounting->last = relative;
    list->accounting->count = list->accounting->count - next->accounting->count;
 
    return list;

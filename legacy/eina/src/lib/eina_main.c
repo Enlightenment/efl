@@ -48,6 +48,7 @@
  */
 
 static int _eina_main_count = 0;
+static int _eina_main_thread_count = 0;
 static int _eina_log_dom = -1;
 
 #ifdef ERR
@@ -60,6 +61,18 @@ static int _eina_log_dom = -1;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_log_dom, __VA_ARGS__)
 
+#ifdef EFL_HAVE_PTHREAD
+#include <pthread.h>
+static Eina_Bool _threads_activated = EINA_FALSE;
+static pthread_mutex_t _mutex = PTHREAD_MUTEX_INITIALIZER;
+#define LOCK() if(_threads_activated) pthread_mutex_lock(&_mutex);
+#define UNLOCK() if(_threads_activated) pthread_mutex_unlock(&_mutex);
+#define UNLOCK_FORCE() pthread_mutex_unlock(&_mutex);
+#else
+#define LOCK() do {} while (0)
+#define UNLOCK() do {} while (0)
+#define UNLOCK_FORCE() do {} while (0)
+#endif
 
 /* place module init/shutdown functions here to avoid other modules
  * calling them by mistake.
@@ -219,6 +232,88 @@ eina_shutdown(void)
      _eina_shutdown_from_desc(_eina_desc_setup + _eina_desc_setup_len);
    return _eina_main_count;
 }
+
+
+/**
+ * @brief Initialize the mutexs of the Eina library.
+ *
+ * @return 1 or greater on success, 0 on error.
+ *
+ * This function sets up all the mutexs in all eina modules. It returns 0 on
+ * failure (that is, when one of the module fails to initialize),
+ * otherwise it returns the number of times it has already been
+ * called.
+ *
+ * When the mutexs are not used anymore, call eina_thread_shutdown() to shut down
+ * the mutexs.
+ */
+EAPI int
+eina_threads_init(void)
+{
+#ifdef EFL_HAVE_PTHREAD
+    int ret;
+    
+    LOCK();
+    ++_eina_main_thread_count;
+    ret = _eina_main_thread_count;
+
+    if(_eina_main_thread_count > 1) 
+    {
+        UNLOCK();
+        return ret;
+    }
+
+    eina_stringshare_threads_init();
+    eina_log_threads_init();
+    _threads_activated = EINA_TRUE;
+
+    return ret;
+#else
+    return 0;
+#endif
+}
+
+/**
+ * @brief Shut down mutexs in the Eina library.
+ *
+ * @return 0 when all mutexs are completely shut down, 1 or
+ * greater otherwise.
+ *
+ * This function shuts down the mutexs in the Eina library. It returns 0 when it has
+ * been called the same number of times than eina_thread_init(). In that case
+ * it shut down all the mutexs.
+ *
+ * Once this function succeeds (that is, @c 0 is returned), you must
+ * not call any of the Eina function in a thread anymore. You must call
+ * eina_thread_init() again to use the Eina functions in a thread again.
+ */
+EAPI int
+eina_threads_shutdown(void)
+{
+#ifdef EFL_HAVE_PTHREAD
+    int ret;
+
+    LOCK();
+    ret = --_eina_main_thread_count;
+    if(_eina_main_thread_count > 0) 
+    {
+        UNLOCK();
+        return ret; 
+    }
+
+    eina_stringshare_threads_shutdown();
+    eina_log_threads_shutdown();
+
+    _threads_activated = EINA_FALSE;
+
+    UNLOCK_FORCE();
+
+    return ret;
+#else
+    return 0;
+#endif
+}
+
 
 /**
  * @}

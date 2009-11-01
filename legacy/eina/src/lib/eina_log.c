@@ -376,6 +376,7 @@ static pthread_t _main_thread;
 #ifdef EINA_PTHREAD_SPIN
 static pthread_spinlock_t _log_lock;
 #define LOCK()								\
+  if(_threads_enabled) \
   do {									\
      if (0)								\
        fprintf(stderr, "+++LOG LOCKED!   [%s, %lu]\n",			\
@@ -384,6 +385,7 @@ static pthread_spinlock_t _log_lock;
        pthread_spin_lock(&_log_lock);					\
   } while (0)
 #define UNLOCK()							\
+  if(_threads_enabled) \
   do {									\
      if (EINA_UNLIKELY(_threads_enabled))				\
        pthread_spin_unlock(&_log_lock);					\
@@ -396,8 +398,8 @@ static pthread_spinlock_t _log_lock;
 #define SHUTDOWN() pthread_spin_destroy(&_log_lock);
 #else
 static pthread_mutex_t _log_mutex = PTHREAD_MUTEX_INITIALIZER;
-#define LOCK() pthread_mutex_lock(&_log_mutex);
-#define UNLOCK() pthread_mutex_unlock(&_log_mutex);
+#define LOCK() if(_threads_enabled) pthread_mutex_lock(&_log_mutex);
+#define UNLOCK() if(_threads_enabled) pthread_mutex_unlock(&_log_mutex);
 #define INIT() do {} while (0)
 #define SHUTDOWN() do {} while (0)
 #endif
@@ -700,7 +702,6 @@ eina_log_print_prefix_update(void)
 #undef S
 }
 
-
 /*
  * Creates a colored domain name string.
  */
@@ -965,11 +966,6 @@ eina_log_init(void)
    assert((sizeof(_names)/sizeof(_names[0])) == EINA_LOG_LEVELS);
    assert((sizeof(_colors)/sizeof(_colors[0])) == EINA_LOG_LEVELS + 1);
 
-#ifdef EFL_HAVE_PTHREAD
-   _main_thread = pthread_self();
-   INIT();
-#endif
-
    // Check if color is disabled
    if ((tmp = getenv(EINA_LOG_ENV_COLOR_DISABLE)) && (atoi(tmp) == 1))
      _disable_color = EINA_TRUE;
@@ -1056,13 +1052,47 @@ eina_log_shutdown(void)
 	free(tmp);
      }
 
-#ifdef EFL_HAVE_PTHREAD
-   SHUTDOWN();
-   _threads_enabled = 0;
-#endif
-
    return EINA_TRUE;
 }
+
+
+#ifdef EFL_HAVE_PTHREAD
+
+/**
+ * @internal
+ * @brief Activate the log mutex.
+ *
+ * This function activate the mutex in the eina log module. It is called by
+ * eina_thread_init().
+ *
+ * @see eina_thread_init()
+ */
+void 
+eina_log_threads_init(void)
+{
+   _main_thread = pthread_self();
+   _threads_enabled = EINA_TRUE;
+   INIT();
+}
+
+/**
+ * @internal
+ * @brief Shut down the log mutex.
+ *
+ * This function shuts down the mutex in the log module. 
+ * It is called by eina_thread_shutdown().
+ *
+ * @see eina_thread_shutdown()
+ */
+void
+eina_log_threads_shutdown(void)
+{
+    SHUTDOWN();
+    _threads_enabled = EINA_FALSE;
+}
+
+#endif
+
 
 /**
  * Enable logging module to handle threads.
@@ -1471,3 +1501,4 @@ eina_log_vprint(int domain, Eina_Log_Level level, const char *file,
    eina_log_print_unlocked(domain, level, file, fnc, line, fmt, args);
    UNLOCK();
 }
+

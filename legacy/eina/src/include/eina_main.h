@@ -35,6 +35,10 @@ EAPI int eina_init(void);
 
 EAPI int eina_shutdown(void);
 
+EAPI int eina_threads_init(void);
+
+EAPI int eina_threads_shutdown(void);
+
 /**
  * @}
  */

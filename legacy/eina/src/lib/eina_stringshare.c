@@ -100,19 +100,23 @@ static const char EINA_MAGIC_STRINGSHARE_HEAD_STR[] = "Eina Stringshare Head";
 static const char EINA_MAGIC_STRINGSHARE_NODE_STR[] = "Eina Stringshare Node";
 
 
-#define EINA_MAGIC_CHECK_STRINGSHARE_HEAD(d, ...)		\
+#define EINA_MAGIC_CHECK_STRINGSHARE_HEAD(d, unlock, ...)	\
   do {								\
     if (!EINA_MAGIC_CHECK((d), EINA_MAGIC_STRINGSHARE_HEAD))	\
     {								\
         EINA_MAGIC_FAIL((d), EINA_MAGIC_STRINGSHARE_HEAD);	\
+        unlock;							\
         return __VA_ARGS__;					\
     }								\
   } while (0);
 
-#define EINA_MAGIC_CHECK_STRINGSHARE_NODE(d)			\
+#define EINA_MAGIC_CHECK_STRINGSHARE_NODE(d, unlock)		\
   do {								\
     if (!EINA_MAGIC_CHECK((d), EINA_MAGIC_STRINGSHARE_NODE))	\
+    {								\
+      unlock;							\
       EINA_MAGIC_FAIL((d), EINA_MAGIC_STRINGSHARE_NODE);	\
+    }								\
   } while (0);
 
 typedef struct _Eina_Stringshare             Eina_Stringshare;
@@ -169,6 +173,27 @@ static int _eina_stringshare_log_dom = -1;
 #undef DBG
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_stringshare_log_dom, __VA_ARGS__)
+
+
+
+#ifdef EFL_HAVE_PTHREAD
+#include <pthread.h>
+static Eina_Bool _threads_activated = EINA_FALSE;
+//string < 4
+static pthread_mutex_t _mutex_small = PTHREAD_MUTEX_INITIALIZER;
+//string >= 4
+static pthread_mutex_t _mutex_big = PTHREAD_MUTEX_INITIALIZER;
+#define LOCK_SMALL() if(_threads_activated) pthread_mutex_lock(&_mutex_small);
+#define UNLOCK_SMALL() if(_threads_activated) pthread_mutex_unlock(&_mutex_small);
+#define LOCK_BIG() if(_threads_activated) pthread_mutex_lock(&_mutex_big); 
+#define UNLOCK_BIG() if(_threads_activated) pthread_mutex_unlock(&_mutex_big);
+#else
+#define LOCK_SMALL() do {} while (0)
+#define UNLOCK_SMALL() do {} while (0)
+#define LOCK_BIG() do {} while (0)
+#define UNLOCK_BIG() do {} while (0)
+#endif
+
 
 static const unsigned char _eina_stringshare_single[512] = {
   0,0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8,0,9,0,10,0,11,0,12,0,13,0,14,0,15,0,
@@ -276,6 +301,9 @@ _eina_stringshare_population_stats(void)
 static void
 _eina_stringshare_population_add(int slen)
 {
+   LOCK_SMALL();
+   LOCK_BIG();
+
    population.count++;
    if (population.count > population.max)
      population.max = population.count;
@@ -286,14 +314,23 @@ _eina_stringshare_population_add(int slen)
 	if (population_group[slen].count > population_group[slen].max)
 	  population_group[slen].max = population_group[slen].count;
      }
+
+   UNLOCK_BIG();
+   UNLOCK_SMALL();
 }
 
 static void
 _eina_stringshare_population_del(int slen)
 {
+   LOCK_SMALL();
+   LOCK_BIG();
+
    population.count--;
    if (slen < 4)
      population_group[slen].count--;
+
+   UNLOCK_BIG();
+   UNLOCK_SMALL();
 }
 
 static void
@@ -331,7 +368,7 @@ static void _eina_stringshare_population_head_del(__UNUSED__ Eina_Stringshare_He
 static int
 _eina_stringshare_cmp(const Eina_Stringshare_Head *ed, const int *hash, __UNUSED__ int length, __UNUSED__ void *data)
 {
-   EINA_MAGIC_CHECK_STRINGSHARE_HEAD(ed, 0);
+   EINA_MAGIC_CHECK_STRINGSHARE_HEAD(ed, , 0);
 
    return ed->hash - *hash;
 }
@@ -339,8 +376,8 @@ _eina_stringshare_cmp(const Eina_Stringshare_Head *ed, const int *hash, __UNUSED
 static Eina_Rbtree_Direction
 _eina_stringshare_node(const Eina_Stringshare_Head *left, const Eina_Stringshare_Head *right, __UNUSED__ void *data)
 {
-   EINA_MAGIC_CHECK_STRINGSHARE_HEAD(left, 0);
-   EINA_MAGIC_CHECK_STRINGSHARE_HEAD(right, 0);
+   EINA_MAGIC_CHECK_STRINGSHARE_HEAD(left, , 0);
+   EINA_MAGIC_CHECK_STRINGSHARE_HEAD(right, , 0);
 
    if (left->hash - right->hash < 0)
      return EINA_RBTREE_LEFT;
@@ -350,7 +387,7 @@ _eina_stringshare_node(const Eina_Stringshare_Head *left, const Eina_Stringshare
 static void
 _eina_stringshare_head_free(Eina_Stringshare_Head *ed, __UNUSED__ void *data)
 {
-   EINA_MAGIC_CHECK_STRINGSHARE_HEAD(ed);
+   EINA_MAGIC_CHECK_STRINGSHARE_HEAD(ed, );
 
    while (ed->head)
      {
@@ -879,6 +916,9 @@ eina_stringshare_shutdown(void)
 {
    unsigned int i;
 
+   LOCK_SMALL();
+   LOCK_BIG();
+
    _eina_stringshare_population_stats();
 
    /* remove any string still in the table */
@@ -893,8 +933,47 @@ eina_stringshare_shutdown(void)
    _eina_stringshare_small_shutdown();
    eina_log_domain_unregister(_eina_stringshare_log_dom);
    _eina_stringshare_log_dom = -1;
+
+   UNLOCK_BIG();
+   UNLOCK_SMALL();
+
+
    return EINA_TRUE;
 }
+
+#ifdef EFL_HAVE_PTHREAD
+
+/**
+ * @internal
+ * @brief Activate the stringshare mutexs.
+ *
+ * This function activate the mutexs in the eina stringshare module. It is called by
+ * eina_thread_init().
+ *
+ * @see eina_thread_init()
+ */
+void 
+eina_stringshare_threads_init(void)
+{
+   _threads_activated = EINA_TRUE; 
+}
+
+/**
+ * @internal
+ * @brief Shut down the stringshare mutexs.
+ *
+ * This function shuts down the mutexs in the stringshare module. 
+ * It is called by eina_thread_shutdown().
+ *
+ * @see eina_thread_shutdown()
+ */
+void
+eina_stringshare_threads_shutdown(void)
+{
+   _threads_activated = EINA_FALSE; 
+}
+
+#endif
 
 /**
  * @brief Retrieve an instance of a string for use in a program.
@@ -936,35 +1015,52 @@ eina_stringshare_add_length(const char *str, unsigned int slen)
    else if (slen == 1)
      return (const char *)_eina_stringshare_single + ((*str) << 1);
    else if (slen < 4)
-     return _eina_stringshare_small_add(str, slen);
+     {
+	LOCK_SMALL();
+	const char *s = _eina_stringshare_small_add(str, slen);
+	UNLOCK_SMALL();
+	return s;
+     }
 
    hash = eina_hash_superfast(str, slen);
    hash_num = hash & 0xFF;
    hash = (hash >> 8) & EINA_STRINGSHARE_MASK;
 
+   LOCK_BIG();
    p_bucket = share->buckets + hash_num;
+
    ed = _eina_stringshare_find_hash(*p_bucket, hash);
    if (!ed)
-     return _eina_stringshare_add_head(p_bucket, hash, str, slen);
+     {
+	const char *s =  _eina_stringshare_add_head(p_bucket, hash, str, slen);
+	UNLOCK_BIG();
+	return s;
+     }
 
-   EINA_MAGIC_CHECK_STRINGSHARE_HEAD(ed, NULL);
+   EINA_MAGIC_CHECK_STRINGSHARE_HEAD(ed, UNLOCK_BIG(), NULL);
 
    el = _eina_stringshare_head_find(ed, str, slen);
    if (el)
      {
-	EINA_MAGIC_CHECK_STRINGSHARE_NODE(el);
+	EINA_MAGIC_CHECK_STRINGSHARE_NODE(el, UNLOCK_BIG());
 	el->references++;
+	UNLOCK_BIG();
 	return el->str;
      }
 
    el = _eina_stringshare_node_alloc(slen);
    if (!el)
-     return NULL;
+     {
+	UNLOCK_BIG();
+	return NULL;
+     }
 
    _eina_stringshare_node_init(el, str, slen);
    el->next = ed->head;
    ed->head = el;
    _eina_stringshare_population_head_add(ed);
+
+   UNLOCK_BIG();
 
    return el->str;
 }
@@ -1014,7 +1110,7 @@ _eina_stringshare_node_from_str(const char *str)
    const size_t offset = (char *)&(t.str) - (char *)&t;
 
    node = (Eina_Stringshare_Node *)(str - offset);
-   EINA_MAGIC_CHECK_STRINGSHARE_NODE(node);
+   EINA_MAGIC_CHECK_STRINGSHARE_NODE(node, );
    return node;
 }
 
@@ -1047,17 +1143,26 @@ eina_stringshare_ref(const char *str)
    if (slen < 2)
      {
 	_eina_stringshare_population_add(slen);
+
 	return str;
      }
    else if (slen < 4)
      {
 	_eina_stringshare_population_add(slen);
-	return _eina_stringshare_small_add(str, slen);
+
+	LOCK_SMALL();
+	const char *s =  _eina_stringshare_small_add(str, slen);
+	UNLOCK_SMALL();
+
+	return s;
      }
 
+   LOCK_BIG();
    node = _eina_stringshare_node_from_str(str);
    node->references++;
    DBG("str=%p (%s) refs=%u", str, str, node->references);
+
+   UNLOCK_BIG();
 
    _eina_stringshare_population_add(node->length);
 
@@ -1102,15 +1207,20 @@ eina_stringshare_del(const char *str)
      return;
    else if (slen < 4)
      {
+	LOCK_SMALL();
 	_eina_stringshare_small_del(str, slen);
+	UNLOCK_SMALL();
 	return;
      }
+
+   LOCK_BIG();
 
    node = _eina_stringshare_node_from_str(str);
    if (node->references > 1)
      {
 	node->references--;
 	DBG("str=%p (%s) refs=%u", str, str, node->references);
+	UNLOCK_BIG();
 	return;
      }
 
@@ -1127,7 +1237,7 @@ eina_stringshare_del(const char *str)
    if (!ed)
      goto on_error;
 
-   EINA_MAGIC_CHECK_STRINGSHARE_HEAD(ed);
+   EINA_MAGIC_CHECK_STRINGSHARE_HEAD(ed, UNLOCK_BIG());
 
    if (!_eina_stringshare_head_remove_node(ed, node))
      goto on_error;
@@ -1140,9 +1250,12 @@ eina_stringshare_del(const char *str)
    else
      _eina_stringshare_population_head_del(ed);
 
+   UNLOCK_BIG();
+
    return;
 
  on_error:
+   UNLOCK_BIG();
    /* possible segfault happened before here, but... */
    CRITICAL("EEEK trying to del non-shared stringshare \"%s\"", str);
 }
@@ -1231,7 +1344,10 @@ static Eina_Bool
 eina_iterator_array_check(const Eina_Rbtree *rbtree __UNUSED__, Eina_Stringshare_Head *head, struct dumpinfo *fdata)
 {
    Eina_Stringshare_Node *node;
-   
+
+   LOCK_SMALL();
+   LOCK_BIG();
+
    fdata->used += sizeof(Eina_Stringshare_Head);
    for (node = head->head; node; node = node->next)
      {
@@ -1243,6 +1359,10 @@ eina_iterator_array_check(const Eina_Rbtree *rbtree __UNUSED__, Eina_Stringshare
 	fdata->dups += node->references - 1;
 	fdata->unique++;
      }
+
+   UNLOCK_BIG();
+   UNLOCK_SMALL();
+
    return EINA_TRUE;
 }
 
@@ -1266,7 +1386,12 @@ eina_stringshare_dump(void)
    di.unique = 0;
    printf("DDD:   len   ref string\n");
    printf("DDD:-------------------\n");
+
+   LOCK_SMALL();
    _eina_stringshare_small_dump(&di);
+   UNLOCK_SMALL();
+
+   LOCK_BIG();
    for (i = 0; i < EINA_STRINGSHARE_BUCKETS; i++)
      {
 	if (!share->buckets[i]) continue;
@@ -1294,8 +1419,11 @@ eina_stringshare_dump(void)
    for (i = 0; i < sizeof (population_group) / sizeof (population_group[0]); ++i)
      fprintf(stderr, "DDD: %i strings of length %i, max strings: %i\n", population_group[i].count, i, population_group[i].max);
 #endif
+
+   UNLOCK_BIG();
 }
 
 /**
  * @}
  */
+
