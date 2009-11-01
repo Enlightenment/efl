@@ -401,9 +401,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface, int 
              pt->z = (p->z)         << FP;
              pt->u = p->u * FP1;
              pt->v = p->v * FP1;
-             pt->col = 
-               (((DATA32)p->a) << 24) | (((DATA32)p->r) << 16) | 
-               (((DATA32)p->g) << 8) | (((DATA32)p->b));
+             pt->col = ARGB_JOIN(p->a, p->r, p->g, p->b);
           }
         
         if (obj->cur.map->surface)
