@@ -18,6 +18,7 @@ AC_C___ATTRIBUTE__
 dnl AC_C_CONST is bogus, its tests fails on -Wall -O1 ( uninitialized values)
 dnl AC_C_CONST
 
+AC_LIBTOOL_WIN32_DLL
 define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
 AC_PROG_LIBTOOL
 
@@ -57,6 +58,17 @@ AC_ARG_WITH(internal-maximum-log-level,
        fi
     fi
     ], [:])
+
+EFL_ETHUMB_BUILD=""
+lt_enable_auto_import=""
+case "$host_os" in
+   mingw* | cegcc*)
+      EFL_ETHUMB_BUILD="-DEFL_ETHUMB_BUILD"
+      lt_enable_auto_import="-Wl,--enable-auto-import"
+   ;;
+esac
+AC_SUBST(EFL_ETHUMB_BUILD)
+AC_SUBST(lt_enable_auto_import)
 
 PKG_CHECK_MODULES(EINA, [eina-0])
 PKG_CHECK_MODULES(EVAS, [evas])

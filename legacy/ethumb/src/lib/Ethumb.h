@@ -1,9 +1,18 @@
 #ifndef __ETHUMB_H__
 #define __ETHUMB_H__ 1
 
+#include <Eina.h>
+#include <Evas.h>
+#include <Ecore.h>
+#include <Ecore_Evas.h>
+
+#ifdef EAPI
+# undef EAPI
+#endif
+
 #ifndef EAPI
 #ifdef _WIN32
-# ifdef EFL_EVAS_BUILD
+# ifdef EFL_ETHUMB_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #   define GNUC_NULL_TERMINATED
@@ -30,11 +39,6 @@
 # endif
 #endif /* ! _WIN32 */
 #endif /* EAPI */
-
-#include <Ecore.h>
-#include <Ecore_Evas.h>
-#include <Evas.h>
-#include <Eina.h>
 
 #ifdef __cplusplus
 extern "C" {
