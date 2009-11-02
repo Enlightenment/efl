@@ -1023,8 +1023,6 @@ eina_log_shutdown(void)
 {
    Eina_Inlist *tmp;
 
-   CHECK_MAIN(0);
-
    while (_log_domains_count--)
      {
 	if (_log_domains[_log_domains_count].deleted)
@@ -1087,6 +1085,7 @@ eina_log_threads_init(void)
 void
 eina_log_threads_shutdown(void)
 {
+    CHECK_MAIN(0);
     SHUTDOWN();
     _threads_enabled = EINA_FALSE;
 }
