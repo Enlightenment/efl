@@ -127,17 +127,9 @@ _theme_hook(Evas_Object *obj)
    edje_object_scale_set(wd->base, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
    _index_box_auto_fill(obj, wd->bx[0], 0);
-   // FIXME: for some reason size hint changes are not picked up by edje!
-   edje_object_part_swallow(wd->base, "elm.swallow.index.0", wd->bx[0]);
    if (wd->active)
-     {
-        if (wd->level == 1)
-          {
-             _index_box_auto_fill(obj, wd->bx[1], 1);
-             // FIXME: for some reason size hint changes are not picked up by edje!
-             edje_object_part_swallow(wd->base, "elm.swallow.index.1", wd->bx[1]);
-          }
-     }
+     if (wd->level == 1)
+       _index_box_auto_fill(obj, wd->bx[1], 1);
 }
 
 static void
@@ -575,8 +567,6 @@ elm_index_active_set(Evas_Object *obj, Eina_Bool active)
      {
         _index_box_clear(obj, wd->bx[1], 1);
         _index_box_auto_fill(obj, wd->bx[0], 0);
-        // FIXME: for some reason size hint changes are not picked up by edje!
-        edje_object_part_swallow(wd->base, "elm.swallow.index.0", wd->bx[0]);
         edje_object_signal_emit(wd->base, "elm,state,active", "elm");
      }
    else
@@ -812,12 +802,6 @@ elm_index_item_go(Evas_Object *obj, int level)
 
    if (!wd) return;
    _index_box_auto_fill(obj, wd->bx[0], 0);
-   // FIXME: for some reason size hint changes are not picked up by edje!
-   edje_object_part_swallow(wd->base, "elm.swallow.index.0", wd->bx[0]);
    if (wd->level == 1)
-     {
-        _index_box_auto_fill(obj, wd->bx[1], 1);
-        // FIXME: for some reason size hint changes are not picked up by edje!
-        edje_object_part_swallow(wd->base, "elm.swallow.index.1", wd->bx[1]);
-     }
+     _index_box_auto_fill(obj, wd->bx[1], 1);
 }

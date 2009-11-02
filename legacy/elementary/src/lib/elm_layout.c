@@ -69,21 +69,7 @@ _sizing_eval(Evas_Object *obj)
 static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
-   const Eina_List *l;
-   const Subinfo *si;
-
-   // FIXME: for some reason size hint changes are not picked up by edje!
-   EINA_LIST_FOREACH(wd->subs, l, si)
-     {
-	if (si->obj == obj)
-	  {
-	     edje_object_part_swallow(wd->lay, si->swallow, obj);
-	     _sizing_eval(data);
-	     break;
-	  }
-     }
-   //_sizing_eval(data);
+   _sizing_eval(data);
 }
 
 static void
