@@ -132,7 +132,7 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
    return;
    MAGIC_CHECK_END();
    if (obj->cur.usemap == !!enabled) return;
-   obj->cur.usemap = enabled;
+   obj->cur.usemap = !!enabled;
    if (enabled)
      {
         if (!obj->cur.map)
@@ -147,7 +147,7 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
              _evas_map_calc_geom_change(obj);
           }
      }
-   if (obj->cur.usemap) _evas_map_calc_map_geometry(obj);
+   _evas_map_calc_map_geometry(obj);
 }
 
 /**
@@ -248,7 +248,7 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
 	_evas_map_copy(obj->cur.map, map);
         obj->prev.map = NULL;
      }
-   if (obj->cur.usemap) _evas_map_calc_map_geometry(obj);
+   _evas_map_calc_map_geometry(obj);
 }
 
 /**
