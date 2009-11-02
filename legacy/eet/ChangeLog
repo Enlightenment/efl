@@ -251,3 +251,8 @@
 2009-10-09  Vincent Torri
 
 	* initialize eina first in eet_init().
+
+2009-11-02  Vincent Torri
+
+	* allow generation of one single file with all source code in it.
+	See configure help to enable it (--enable-amalgamation).
