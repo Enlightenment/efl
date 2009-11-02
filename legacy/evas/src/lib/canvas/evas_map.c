@@ -684,18 +684,19 @@ evas_map_util_zoom(Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_
  * xxx
  *
  * @param m map to change.
- * @param dx amount of degrees from 0.0 to 360.0 to rotate.
+ * @param dx amount of degrees from 0.0 to 360.0 to rotate arount X axis.
+ * @param dy amount of degrees from 0.0 to 360.0 to rotate arount Y axis.
+ * @param dz amount of degrees from 0.0 to 360.0 to rotate arount Z axis.
  * @param cx rotation's center horizontal positon.
  * @param cy rotation's center vertical positon.
+ * @param cz rotation's center vertical positon.
  *
  * @see evas_map_point_coord_set()
  * @see evas_map_util_zoom()
  */
 EAPI void
-evas_map_util_rotate_3d(Evas_Map *m, double dx, double dy, double dz, 
-                        Evas_Coord cx, Evas_Coord cy, Evas_Coord cz,
-                        Evas_Coord px, Evas_Coord py,
-                        Evas_Coord z0, Evas_Coord foc)
+evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz, 
+                        Evas_Coord cx, Evas_Coord cy, Evas_Coord cz)
 {
    double rz = (dz * M_PI) / 180.0;
    double rx = (dx * M_PI) / 180.0;
@@ -738,30 +739,92 @@ evas_map_util_rotate_3d(Evas_Map *m, double dx, double dy, double dz,
              y = yy + (y * sin(rx + M_PI_2));
           }
         
-        x = x + cx;
-        y = y + cy;
-        z = z + cz;
+        p->x = x + cx;
+        p->y = y + cy;
+        p->z = z + cz;
+     }
+}
 
-        if (foc > 0)
+/**
+ * XXX
+ * 
+ * xxx
+ *
+ * @param m map to change.
+ * @param lx X coordinate in space of light point
+ * @param ly Y coordinate in space of light point
+ * @param lz Z coordinate in space of light point
+ */
+EAPI void
+evas_map_util_3d_lighting(Evas_Map *m, 
+                          Evas_Coord lx, Evas_Coord ly, Evas_Coord lz,
+                          int lr, int lg, int lb, int ar, int ab, int ag)
+{
+   int i;
+   
+   if (!m) return;
+   
+   for (i = 0; i < m->count; i++)
+     {
+        double x, y, z;
+        double nx, ny, nz, x1, y1, z1, x2, y2, z2, ln, br;
+        int h, j, mr, mg, mb;
+        
+        x = m->points[i].x;
+        y = m->points[i].y;
+        z = m->points[i].z;
+        
+        // calc normal
+        h = (i + m->count - 1) % m->count; // prev point
+        j = (i + 1) % m->count; // next point
+
+        x1 = m->points[h].x - x;
+        y1 = m->points[h].y - y;
+        z1 = m->points[h].z - z;
+        
+        x2 = m->points[j].x - x;
+        y2 = m->points[j].y - y;
+        z2 = m->points[j].z - z;
+        
+        nx = (y1 * z2) - (z1 * y2);
+        ny = (z1 * x2) - (x1 * z2);
+        nz = (x1 * y2) - (y1 * x2);
+        
+        ln = (nx * nx) + (ny * ny) + (nz * nz);
+        ln = sqrt(ln);
+        
+        if (ln != 0.0)
           {
-             x = x - px;
-             y = y - py;
-             
-             zz = ((z - z0) + foc);
-             
-             if (zz > 0)
-               {
-                  x = (x * foc) / zz;
-                  y = (y * foc) / zz;
-               }
-             
-             x = px + x;
-             y = py + y;
+             nx /= ln;
+             ny /= ln;
+             nz /= ln;
           }
         
-        p->x = x;
-        p->y = y;
-        p->z = z;
+        // calc point -> light vector
+        x = lx - x;
+        y = ly - y;
+        z = lz - z;
+        
+        ln = (x * x) + (y * y) + (z * z);
+        ln = sqrt(ln);
+        
+        if (ln != 0.0)
+          {
+             x /= ln;
+             y /= ln;
+             z /= ln;
+          }
+        
+        // brightness - tan (0.0 -> 1.0 brightness really)
+        br = (nx * x) + (ny * y) + (nz * z);
+        if (br < 0.0) br = 0.0;
+        
+        mr = ar + ((lr - ar) * br);
+        mg = ag + ((lg - ag) * br);
+        mb = ab + ((lb - ab) * br);
+        m->points[i].r = (m->points[i].r * mr) / 255;
+        m->points[i].g = (m->points[i].g * mg) / 255;
+        m->points[i].b = (m->points[i].b * mb) / 255;
      }
 }
 
@@ -773,9 +836,9 @@ evas_map_util_rotate_3d(Evas_Map *m, double dx, double dy, double dz,
  * @param m map to change.
  */
 EAPI void
-evas_map_util_perspective(Evas_Map *m,
-                          Evas_Coord px, Evas_Coord py,
-                          Evas_Coord z0, Evas_Coord foc)
+evas_map_util_3d_perspective(Evas_Map *m,
+                             Evas_Coord px, Evas_Coord py,
+                             Evas_Coord z0, Evas_Coord foc)
 {
    Evas_Map_Point *p, *p_end;
 

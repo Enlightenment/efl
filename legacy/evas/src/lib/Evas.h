@@ -855,15 +855,10 @@ extern "C" {
 
    EAPI void              evas_map_util_rotate              (Evas_Map *m, double degrees, Evas_Coord cx, Evas_Coord cy);
    EAPI void              evas_map_util_zoom                (Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_Coord cy);
-   EAPI void              evas_map_util_rotate_3d           (Evas_Map *m, double dx, double dy, double dz,
-                                                             Evas_Coord cx, Evas_Coord cy, Evas_Coord cz,
-                                                             Evas_Coord px, Evas_Coord py,
-                                                             Evas_Coord z0, Evas_Coord foc);
-   EAPI void              evas_map_util_perspective         (Evas_Map *m,
-                                                             Evas_Coord px, Evas_Coord py,
-                                                             Evas_Coord z0, Evas_Coord foc);
+   EAPI void              evas_map_util_3d_rotate           (Evas_Map *m, double dx, double dy, double dz, Evas_Coord cx, Evas_Coord cy, Evas_Coord cz);
+   EAPI void              evas_map_util_3d_lighting         (Evas_Map *m, Evas_Coord lx, Evas_Coord ly, Evas_Coord lz, int lr, int lg, int lb, int ar, int ab, int ag);
+   EAPI void              evas_map_util_3d_perspective      (Evas_Map *m, Evas_Coord px, Evas_Coord py, Evas_Coord z0, Evas_Coord foc);
    EAPI Eina_Bool         evas_map_util_clockwise_get       (Evas_Map *m);
-       
 
    EAPI Evas_Map         *evas_map_new                      (int count);
    EAPI void              evas_map_smooth_set               (Evas_Map *m, Eina_Bool enabled);
