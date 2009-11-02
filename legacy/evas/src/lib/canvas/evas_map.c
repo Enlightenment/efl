@@ -679,9 +679,14 @@ evas_map_util_zoom(Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_
 }
 
 /**
- * XXX
+ * Rotate the map around 3 axes in 3D
  * 
- * xxx
+ * This will rotate not just around the "Z" axis as in evas_map_util_rotate()
+ * (which is a convenience call for those only wanting 2D). This will rotate
+ * around the X, Y and Z axes. The Z axis points "into" the screen with low
+ * values at the screen and higher values further away. The X axis runs from
+ * left to right on the screen and the Y axis from top to bottom. Like with
+ * evas_map_util_rotate(0 you provide a center point to rotate around (in 3D).
  *
  * @param m map to change.
  * @param dx amount of degrees from 0.0 to 360.0 to rotate arount X axis.
@@ -690,9 +695,6 @@ evas_map_util_zoom(Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_
  * @param cx rotation's center horizontal positon.
  * @param cy rotation's center vertical positon.
  * @param cz rotation's center vertical positon.
- *
- * @see evas_map_point_coord_set()
- * @see evas_map_util_zoom()
  */
 EAPI void
 evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz, 
@@ -746,14 +748,26 @@ evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
 }
 
 /**
- * XXX
+ * Perform lighting calculations on the given Map
  * 
- * xxx
+ * This is used to apply lighting calculations (from a single light source)
+ * to a given map. The R, G and B values of each vertex will be modified to
+ * reflect the lighting based on the lixth point coordinates, the light
+ * color and the ambient color, and at what angle the map is facing the
+ * light source. A surface should have its points be declared in a
+ * clockwise fashion if the face is "facing" towards you (as opposed to
+ * away from you) as faces have a "logical" side for lighting.
  *
  * @param m map to change.
  * @param lx X coordinate in space of light point
  * @param ly Y coordinate in space of light point
  * @param lz Z coordinate in space of light point
+ * @param lr light red value (0 - 255)
+ * @param lg light green value (0 - 255)
+ * @param lb light blue value (0 - 255)
+ * @param lr ambient color red value (0 - 255)
+ * @param lg ambient color green value (0 - 255)
+ * @param lb ambient color blue value (0 - 255)
  */
 EAPI void
 evas_map_util_3d_lighting(Evas_Map *m, 
@@ -829,11 +843,26 @@ evas_map_util_3d_lighting(Evas_Map *m,
 }
 
 /**
- * XXX
+ * Apply a perspective transform to the map
  * 
- * xxx
+ * This applies a given perspective (3D) to the map coordinates. X, Y and Z
+ * values are used. The px and py points specify the "infinite distance" point
+ * in the 3D conversion (where all lines converge to like when artists draw
+ * 3D by hand). The @p z0 value specifis the z value at which there is a 1:1
+ * mapping between spatial coorinates and screen coordinates. Any points
+ * on this z value will not have their X and Y values modified in the transform.
+ * Those further away (Z value higher) will shrink into the distance, and
+ * those less than this value will expand and become bigger. The @p foc value
+ * determines the "focal length" of the camera. This is in reality the distance
+ * between the camera lens plane itself (at or closer than this rendering
+ * results are undefined) and the "z0" z value. This allows for some "depth"
+ * control and @p foc must be greater than 0.
  *
  * @param m map to change.
+ * @param px The pespective distance X coordinate
+ * @param py The pespective distance Y coordinate
+ * @param z0 The "0" z plane value
+ * @param foc The focal distance
  */
 EAPI void
 evas_map_util_3d_perspective(Evas_Map *m,
@@ -870,9 +899,12 @@ evas_map_util_3d_perspective(Evas_Map *m,
 }
 
 /**
- * XXX
+ * Get the clockwise state of a map
  * 
- * xxx
+ * This determines if the output points (X and Y. Z is not used) are
+ * clockwise or anti-clockwise. This can be used for "back-face culling". This
+ * is where you hide objects that "face away" from you. In this case objects
+ * that are not clockwise.
  *
  * @param m map to query.
  * @return 1 if clockwise, 0 otherwise
