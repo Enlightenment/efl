@@ -141,7 +141,7 @@ eet_amalgamation.c: $(base_sources) Makefile
 		  file="$$f" ; \
 	   fi ; \
 	   echo "/* file: $$file */" >> eet_amalgamation.c; \
-	   grep -v -e '^# *include \+.\(config\|\|Evil\|Eina\|stdio\|string\|math\|ctype\|limits\|types\|stat\|mman\|setjmp\|errno\|time\|fnmatch\|fcntl\|winsowk2\|unistd\|in\|gnutls\|gcrypt\|x509\|rsa\|objects\|err\|ssl\|dh\|dsa\|evp\|pem\|sha\|hmac\|rand\|zlib\|jpeglib\|Eet_private\|Eet\)[.]h.*' $$file >> eet_amalgamation.c; \
+	   grep -v -e '^# *include \+.\(config\|\|Evil\|Eina\|stdio\|string\|math\|ctype\|limits\|sys/types\|sys/stat\|sys/mman\|setjmp\|errno\|time\|fnmatch\|fcntl\|winsock2\|unistd\|netinet/in\|gnutls/gnutls\|gcrypt\|gnutls/x509\|openssl/rsa\|openssl/objects\|openssl/err\|openssl/ssl\|openssl/dh\|openssl/dsa\|openssl/evp\|openssl/pem\|openssl/sha\|openssl/hmac\|openssl/x509\|openssl/rand\|zlib\|jpeglib\|Eet_private\|Eet\)[.]h.*' $$file >> eet_amalgamation.c; \
 	done
 	@echo "eet_amalgamation.c generated"
 
