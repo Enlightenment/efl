@@ -51,6 +51,18 @@ requirement_eet=""
 
 ### Additional options to configure
 
+AC_ARG_ENABLE([amalgamation],
+   [AC_HELP_STRING([--enable-amalgamation], [enable generation of one single file with all source code in it, helps compiler optimizations.])],
+   [if test "x${enableval}" = "xyes"; then
+       do_amalgamation="yes"
+    else
+       do_amalgamation="no"
+    fi
+   ],
+   [do_amalgamation="no"]
+)
+AM_CONDITIONAL(EET_AMALGAMATION, test "x${do_amalgamation}" = "xyes")
+
 # Old eet file format support
 
 old_eet_file_format="yes"
@@ -401,6 +413,7 @@ echo "  Openssl..............: ${have_openssl}"
 echo "    Cipher support.....: ${have_cipher}"
 echo "    Signature..........: ${have_signature}"
 echo
+echo "  Amalgamation.........: ${do_amalgamation}"
 echo "  Documentation........: ${build_doc}"
 echo "  Tests................: ${enable_tests}"
 echo "  Coverage.............: ${enable_coverage}"

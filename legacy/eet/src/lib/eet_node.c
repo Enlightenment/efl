@@ -316,6 +316,10 @@ eet_node_dump_simple_type(Eet_Node *n, int level,
    eet_node_dump_string_escape(dumpdata, dumpfunc, n->name);
    dumpfunc(dumpdata, "\" ");
 
+#ifdef EET_T_TYPE
+# undef EET_T_TYPE
+#endif
+
 #define EET_T_TYPE(Eet_Type, Type)					\
    case Eet_Type:							\
      {									\

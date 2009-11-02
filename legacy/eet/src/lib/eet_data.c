@@ -7,9 +7,9 @@
 #endif
 
 #if HAVE___ATTRIBUTE__
-#define __UNUSED__ __attribute__((unused))
+# define __UNUSED__ __attribute__((unused))
 #else
-#define __UNUSED__
+# define __UNUSED__
 #endif
 
 #include <stdio.h>
@@ -292,7 +292,7 @@ static const Eet_Data_Group_Type_Codec eet_group_codec[] =
      { eet_data_get_hash,     eet_data_put_hash }
 };
 
-static int words_bigendian = -1;
+static int _eet_data_words_bigendian = -1;
 
 /*---*/
 
@@ -314,10 +314,23 @@ static int words_bigendian = -1;
    ((((short)(x) & 0x00ff ) << 8) |\
        (((short)(x) & 0xff00 ) >> 8))
 
+#ifdef CONV8
+# undef CONV8
+#endif
+#ifdef CONV16
+# undef CONV16
+#endif
+#ifdef CONV32
+# undef CONV32
+#endif
+#ifdef CONV64
+# undef CONV64
+#endif
+
 #define CONV8(x)
-#define CONV16(x) {if (words_bigendian) SWAP16(x);}
-#define CONV32(x) {if (words_bigendian) SWAP32(x);}
-#define CONV64(x) {if (words_bigendian) SWAP64(x);}
+#define CONV16(x) {if (_eet_data_words_bigendian) SWAP16(x);}
+#define CONV32(x) {if (_eet_data_words_bigendian) SWAP32(x);}
+#define CONV64(x) {if (_eet_data_words_bigendian) SWAP64(x);}
 
 #define IS_SIMPLE_TYPE(Type)    (Type > EET_T_UNKNOW && Type < EET_T_LAST)
 
@@ -1814,13 +1827,13 @@ _eet_data_dump_encode(Eet_Dictionary *ed,
    int csize, size;
    Eet_Node *n;
 
-   if (words_bigendian == -1)
+   if (_eet_data_words_bigendian == -1)
      {
 	unsigned long int v;
 
 	v = htonl(0x12345678);
-	if (v == 0x12345678) words_bigendian = 1;
-	else words_bigendian = 0;
+	if (v == 0x12345678) _eet_data_words_bigendian = 1;
+	else _eet_data_words_bigendian = 0;
      }
 
    if (node == NULL) return NULL;
@@ -2335,13 +2348,13 @@ _eet_data_descriptor_decode(Eet_Free_Context *context,
    int size, i, dump;
    Eet_Data_Chunk chnk;
 
-   if (words_bigendian == -1)
+   if (_eet_data_words_bigendian == -1)
      {
 	unsigned long int v;
 
 	v = htonl(0x12345678);
-	if (v == 0x12345678) words_bigendian = 1;
-	else words_bigendian = 0;
+	if (v == 0x12345678) _eet_data_words_bigendian = 1;
+	else _eet_data_words_bigendian = 0;
      }
 
    if (edd)
@@ -2808,6 +2821,10 @@ eet_data_dump_simple_type(int type, const char *name, void *dd,
    _eet_data_dump_string_escape(dumpdata, dumpfunc, name);
    dumpfunc(dumpdata, "\" ");
 
+#ifdef EET_T_TYPE
+# undef EET_T_TYPE
+#endif
+
 #define EET_T_TYPE(Eet_Type, Type)					\
    case Eet_Type:							\
      {									\
@@ -3257,13 +3274,13 @@ _eet_data_descriptor_encode(Eet_Dictionary *ed,
    int                   csize;
    int                   i;
 
-   if (words_bigendian == -1)
+   if (_eet_data_words_bigendian == -1)
      {
 	unsigned long int v;
 
 	v = htonl(0x12345678);
-	if (v == 0x12345678) words_bigendian = 1;
-	else words_bigendian = 0;
+	if (v == 0x12345678) _eet_data_words_bigendian = 1;
+	else _eet_data_words_bigendian = 0;
      }
 
    ds = eet_data_stream_new();
