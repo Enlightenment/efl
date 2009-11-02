@@ -140,13 +140,13 @@ void eet_identity_unref(Eet_Key *key);
 void eet_identity_ref(Eet_Key *key);
 
 #ifndef PATH_MAX
-#define PATH_MAX 4096
+# define PATH_MAX 4096
 #endif
 
 #ifdef DNDEBUG
-#define EET_ASSERT(Test, Do) if (Test == 0) Do;
+# define EET_ASSERT(Test, Do) if (Test == 0) Do;
 #else
-#define EET_ASSERT(Test, Do) if (Test == 0) abort();
+# define EET_ASSERT(Test, Do) if (Test == 0) abort();
 #endif
 
 #endif
