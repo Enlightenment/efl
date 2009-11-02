@@ -578,7 +578,7 @@ evas_map_point_color_set(Evas_Map *m, int idx, int r, int g, int b, int a)
 EAPI void
 evas_map_point_color_get(const Evas_Map *m, int idx, int *r, int *g, int *b, int *a)
 {
-   Evas_Map_Point *p;
+   const Evas_Map_Point *p;
    if (!m) return;
    if (idx >= m->count) return;
    p = m->points + idx;
@@ -616,10 +616,8 @@ evas_map_util_rotate(Evas_Map *m, double degrees, Evas_Coord cx, Evas_Coord cy)
    Evas_Map_Point *p, *p_end;
 
    if (!m) return;
-   if (m->count != 4) return;
-
    p = m->points;
-   p_end = p + 4;
+   p_end = p + m->count;
 
    for (; p < p_end; p++)
      {
@@ -662,10 +660,8 @@ evas_map_util_zoom(Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_
    Evas_Map_Point *p, *p_end;
 
    if (!m) return;
-   if (m->count != 4) return;
-
    p = m->points;
-   p_end = p + 4;
+   p_end = p + m->count;
 
    for (; p < p_end; p++)
      {
@@ -680,4 +676,167 @@ evas_map_util_zoom(Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_
         p->x = x + cx;
         p->y = y + cy;
      }
+}
+
+/**
+ * XXX
+ * 
+ * xxx
+ *
+ * @param m map to change.
+ * @param dx amount of degrees from 0.0 to 360.0 to rotate.
+ * @param cx rotation's center horizontal positon.
+ * @param cy rotation's center vertical positon.
+ *
+ * @see evas_map_point_coord_set()
+ * @see evas_map_util_zoom()
+ */
+EAPI void
+evas_map_util_rotate_3d(Evas_Map *m, double dx, double dy, double dz, 
+                        Evas_Coord cx, Evas_Coord cy, Evas_Coord cz,
+                        Evas_Coord px, Evas_Coord py,
+                        Evas_Coord z0, Evas_Coord foc)
+{
+   double rz = (dz * M_PI) / 180.0;
+   double rx = (dx * M_PI) / 180.0;
+   double ry = (dy * M_PI) / 180.0;
+   Evas_Map_Point *p, *p_end;
+
+   if (!m) return;
+   p = m->points;
+   p_end = p + m->count;
+
+   for (; p < p_end; p++)
+     {
+        double x, y, z, xx, yy, zz;
+
+        x = p->x - cx;
+        y = p->y - cy;
+        z = p->z - cz;
+        
+        if (rz != 0.0)
+          {
+             xx = x * cos(rz);
+             yy = x * sin(rz);
+             x = xx + (y * cos(rz + M_PI_2));
+             y = yy + (y * sin(rz + M_PI_2));
+          }
+
+        if (ry != 0.0)
+          {
+             xx = x * cos(ry);
+             zz = x * sin(ry);
+             x = xx + (z * cos(ry + M_PI_2));
+             z = zz + (z * sin(ry + M_PI_2));
+          }
+        
+        if (rx != 0.0)
+          {
+             zz = z * cos(rx);
+             yy = z * sin(rx);
+             z = zz + (y * cos(rx + M_PI_2));
+             y = yy + (y * sin(rx + M_PI_2));
+          }
+        
+        x = x + cx;
+        y = y + cy;
+        z = z + cz;
+
+        if (foc > 0)
+          {
+             x = x - px;
+             y = y - py;
+             
+             zz = ((z - z0) + foc);
+             
+             if (zz > 0)
+               {
+                  x = (x * foc) / zz;
+                  y = (y * foc) / zz;
+               }
+             
+             x = px + x;
+             y = py + y;
+          }
+        
+        p->x = x;
+        p->y = y;
+        p->z = z;
+     }
+}
+
+/**
+ * XXX
+ * 
+ * xxx
+ *
+ * @param m map to change.
+ */
+EAPI void
+evas_map_util_perspective(Evas_Map *m,
+                          Evas_Coord px, Evas_Coord py,
+                          Evas_Coord z0, Evas_Coord foc)
+{
+   Evas_Map_Point *p, *p_end;
+
+   if (!m) return;
+   p = m->points;
+   p_end = p + m->count;
+
+   for (; p < p_end; p++)
+     {
+        Evas_Coord x, y, zz;
+
+        if (foc > 0)
+          {
+             x = p->x - px;
+             y = p->y - py;
+             
+             zz = ((p->z - z0) + foc);
+             
+             if (zz > 0)
+               {
+                  x = (x * foc) / zz;
+                  y = (y * foc) / zz;
+               }
+             
+             p->x = px + x;
+             p->y = py + y;
+          }
+     }
+}
+
+/**
+ * XXX
+ * 
+ * xxx
+ *
+ * @param m map to query.
+ * @return 1 if clockwise, 0 otherwise
+ */
+EAPI Eina_Bool
+evas_map_util_clockwise_get(Evas_Map *m)
+{
+   int i, j, k, count;
+   long long c;
+   
+   if (!m) return 0;
+   if (m->count < 3) return 0;
+   
+   count = 0;
+   for (i = 0; i < m->count; i++)
+     {
+        j = (i + 1) % m->count; 
+        k = (i + 2) % m->count;
+        c = 
+          ((m->points[j].x - m->points[i].x) *
+           (m->points[k].y - m->points[j].y))
+          -
+          ((m->points[j].y - m->points[i].y) *
+           (m->points[k].x - m->points[j].x));
+        if (c < 0) count--;
+        else if (c > 0) count++;
+     }
+   if (count > 0) return 1;
+   return 0;
 }
