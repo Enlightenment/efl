@@ -42,10 +42,6 @@ void *alloca (size_t);
 # include <unistd.h>
 #endif
 
-#ifdef HAVE_OPENSSL
-#include <openssl/err.h>
-#endif
-
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
 #endif
