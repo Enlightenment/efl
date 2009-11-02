@@ -3858,6 +3858,10 @@ _edje_real_part_swallow_hints_update(Edje_Real_Part *rp)
 	rp->swallow_params.aspect.h = ah;
 	evas_object_data_set(rp->swallowed_object, "\377 edje.swallowing_part", rp);
      }
+
+#ifdef EDJE_CALC_CACHE
+     rp->invalidate = 1;
+#endif
 }
 
 void
@@ -3898,9 +3902,6 @@ _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow)
           }
         else
           {
-#ifdef EDJE_CALC_CACHE
-             rp->invalidate = 1;
-#endif
              _edje_real_part_swallow_hints_update(rp);
              rp->edje->dirty = 1;
              _edje_recalc(rp->edje);
