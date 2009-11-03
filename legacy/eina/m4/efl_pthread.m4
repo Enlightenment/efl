@@ -41,13 +41,17 @@ AC_MSG_RESULT([${_efl_enable_pthread}])
 
 if test "x${_efl_have_pthread}" = "xyes" ; then
    case "$host_os" in
+      mingw*)
+         EFL_PTHREAD_CFLAGS="-mthreads"
+         EFL_PTHREAD_LIBS="-mthreads -lpthreadGC2"
+         ;;
       solaris*)
          EFL_PTHREAD_CFLAGS="-mt"
          EFL_PTHREAD_LIBS="-mt"
          ;;
       *)
          EFL_PTHREAD_CFLAGS="-pthread"
-         EFL_PTHREAD_LIBS="-pthead"
+         EFL_PTHREAD_LIBS="-pthread"
          ;;
    esac
 fi
