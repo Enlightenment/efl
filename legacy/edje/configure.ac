@@ -56,6 +56,18 @@ requirement_edje=""
 
 ### Additional options to configure
 
+AC_ARG_ENABLE([amalgamation],
+   [AC_HELP_STRING([--enable-amalgamation], [enable generation of one single file with all source code in it, helps compiler optimizations.])],
+   [if test "x${enableval}" = "xyes"; then
+       do_amalgamation="yes"
+    else
+       do_amalgamation="no"
+    fi
+   ],
+   [do_amalgamation="no"]
+)
+AM_CONDITIONAL(EDJE_AMALGAMATION, test "x${do_amalgamation}" = "xyes")
+
 AC_ARG_ENABLE([edje-cc],
    [AC_HELP_STRING([--disable-edje-cc], [disable building of edje_cc])],
    [
@@ -322,10 +334,9 @@ echo "------------------------------------------------------------------------"
 echo
 echo "Configuration Options Summary:"
 echo
+echo "  Amalgamation.........: ${do_amalgamation}"
 echo "  Ecore IMF............: $have_ecore_imf"
-echo
 echo "  EDJE_PROGRAM_CACHE...: $want_edje_program_cache"
-echo
 echo "  EDJE_CALC_CACHE......: $want_edje_calc_cache"
 echo
 echo "  Build binaries.......: $have_edje_cc"

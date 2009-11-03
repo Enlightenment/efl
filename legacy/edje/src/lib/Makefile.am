@@ -18,7 +18,7 @@ lib_LTLIBRARIES = libedje.la
 
 include_HEADERS = Edje.h Edje_Edit.h
 
-libedje_la_SOURCES  = \
+base_sources = \
 edje_calc.c \
 edje_callbacks.c \
 edje_data.c \
@@ -33,9 +33,7 @@ edje_text.c \
 edje_util.c \
 edje_var.c \
 edje_container.c \
-edje_container.h \
 edje_message_queue.c \
-edje_private.h \
 edje_cache.c \
 edje_match.c \
 edje_textblock_styles.c \
@@ -45,5 +43,94 @@ edje_lua_script_only.c \
 edje_entry.c \
 edje_external.c
 
+if EDJE_AMALGAMATION
+edje_sources_used = edje_amalgamation.c
+BUILT_SOURCES = edje_amalgamation.c
+
+edje_amalgamation.c: $(base_sources) Makefile
+	-rm -f edje_amalgamation.c
+
+	@echo "#ifdef HAVE_CONFIG_H" >> edje_amalgamation.c
+	@echo "# include \"config.h\"" >> edje_amalgamation.c
+	@echo "#endif" >> edje_amalgamation.c
+
+	@echo "#ifndef _WIN32" >> eina_amalgamation.c
+	@echo "#define _GNU_SOURCE" >> eina_amalgamation.c
+	@echo "#endif" >> eina_amalgamation.c
+
+	@echo "#ifdef HAVE_ALLOCA_H" >> edje_amalgamation.c
+	@echo "# include <alloca.h>" >> edje_amalgamation.c
+	@echo "#elif defined __GNUC__" >> edje_amalgamation.c
+	@echo "# define alloca __builtin_alloca" >> edje_amalgamation.c
+	@echo "#elif defined _AIX" >> edje_amalgamation.c
+	@echo "# define alloca __alloca" >> edje_amalgamation.c
+	@echo "#elif defined _MSC_VER" >> edje_amalgamation.c
+	@echo "# include <malloc.h>" >> edje_amalgamation.c
+	@echo "# define alloca _alloca" >> edje_amalgamation.c
+	@echo "#else" >> edje_amalgamation.c
+	@echo "# include <stddef.h>" >> edje_amalgamation.c
+	@echo "# ifdef __cplusplus" >> edje_amalgamation.c
+	@echo "#extern \"C\"" >> edje_amalgamation.c
+	@echo "# endif" >> edje_amalgamation.c
+	@echo "#void *alloca (size_t);" >> edje_amalgamation.c
+	@echo "#endif" >> edje_amalgamation.c
+
+	@echo "#include <string.h>" >> edje_amalgamation.c
+	@echo "#include <math.h>" >> edje_amalgamation.c
+	@echo "#include <time.h>" >> edje_amalgamation.c
+	@echo "#include <limits.h>" >> edje_amalgamation.c
+	@echo "#include <errno.h>" >> edje_amalgamation.c
+	@echo "#include <sys/stat.h>" >> edje_amalgamation.c
+
+	@echo "#ifndef _MSC_VER" >> edje_amalgamation.c
+	@echo "# include <unistd.h>" >> edje_amalgamation.c
+	@echo "#endif" >> edje_amalgamation.c
+
+	@echo "#ifdef HAVE_LOCALE_H" >> edje_amalgamation.c
+	@echo "# include <locale.h>" >> edje_amalgamation.c
+	@echo "#endif" >> edje_amalgamation.c
+
+	@echo "#include <lua.h>" >> edje_amalgamation.c
+	@echo "#include <lauxlib.h>" >> edje_amalgamation.c
+
+	@echo "#ifdef HAVE_EVIL" >> edje_amalgamation.c
+	@echo "# include <Evil.h>" >> edje_amalgamation.c
+	@echo "#endif" >> edje_amalgamation.c
+
+	@echo "#include <Eina.h>" >> edje_amalgamation.c
+	@echo "#include <Edje.h>" >> edje_amalgamation.c
+	@echo "#include <Evas.h>" >> edje_amalgamation.c
+	@echo "#include <Ecore.h>" >> edje_amalgamation.c
+	@echo "#include <Ecore_Str.h>" >> edje_amalgamation.c
+	@echo "#include <Ecore_Job.h>" >> edje_amalgamation.c
+	@echo "#include <Embryo.h>" >> edje_amalgamation.c
+
+	@echo "#ifdef HAVE_ECORE_IMF" >> edje_amalgamation.c
+	@echo "# include <Ecore_IMF.h>" >> edje_amalgamation.c
+	@echo "#endif" >> edje_amalgamation.c
+
+	@echo "#include <edje_private.h>" >> edje_amalgamation.c
+
+	@for f in $(base_sources); do \
+	   if [ `expr substr $$f 1 1` != '/' ]; then \
+		  file="$(srcdir)/$$f" ; \
+	   else \
+		  file="$$f" ; \
+	   fi ; \
+	   echo "/* file: $$file */" >> edje_amalgamation.c; \
+	   grep -v -e '^# *include \+.\(config\|\|Evil\|Eina\|Eet\|Evas\|Ecore\|Ecore_Str\|Ecore_Job\|Embryo\|Ecore_IMF\|string\|math\|limits\|sys/stat\|errno\|time\|unistd\|locale\|lua\|lauxlib\|edje_private\)[.]h.*' $$file >> edje_amalgamation.c; \
+	done
+	@echo "edje_amalgamation.c generated"
+
+else
+edje_sources_used = $(base_sources)
+endif
+
+libedje_la_SOURCES = $(edje_sources_used)
 libedje_la_LIBADD = @EDJE_LIBS@ @ECORE_IMF_LIBS@ -lm
 libedje_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
+
+EXTRA_DIST = edje_private.h edje_container.h
+
+clean-local:
+	@rm -rf  edje_amalgamation.c
