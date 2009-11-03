@@ -120,14 +120,14 @@ AC_ARG_WITH(internal-maximum-log-level,
     ], [:])
 
 AC_ARG_ENABLE([amalgamation],
-   [AC_HELP_STRING([--disable-amalgamation], [disable generation of one single file with all source code in it, helps compiler optimizations.])],
-   [if test "x${enableval}" = "xno"; then
-       do_amalgamation="no"
-    else
+   [AC_HELP_STRING([--enable-amalgamation], [enable generation of one single file with all source code in it, helps compiler optimizations.])],
+   [if test "x${enableval}" = "xyes"; then
        do_amalgamation="yes"
+    else
+       do_amalgamation="no"
     fi
    ],
-   [do_amalgamation="yes"]
+   [do_amalgamation="no"]
 )
 AM_CONDITIONAL(EINA_AMALGAMATION, test "x${do_amalgamation}" = "xyes")
 

@@ -1,5 +1,4 @@
 MAINTAINERCLEANFILES = Makefile.in
-CLEANFILES = eina_amalgamation.c
 
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/include \
@@ -38,7 +37,6 @@ eina_tiler.c \
 eina_hamster.c \
 eina_safety_checks.c
 
-DIST_SOURCES = $(base_sources)
 sources_used = $(base_sources)
 
 if EINA_STATIC_BUILD_CHAINED_POOL
@@ -124,7 +122,6 @@ eina_amalgamation.c: $(sources_used) Makefile
 	done
 	@echo "eina_amalgamation.c generated"
 
-
 else
 eina_sources_used = $(sources_used)
 endif
@@ -135,4 +132,4 @@ libeina_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @versio
 libeina_la_CFLAGS = @EINA_CFLAGS@ @EFL_PTHREAD_CFLAGS@
 
 clean-local:
-	rm -rf *.gcno
+	rm -rf *.gcno eina_amalgamation.c
