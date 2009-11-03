@@ -40,7 +40,7 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
 
    if (!obj->cur.map) return;
    p = obj->cur.map->points;
-   p_end = p + 4;
+   p_end = p + obj->cur.map->count;
    x1 = p->x;
    x2 = p->x;
    y1 = p->y;
@@ -53,10 +53,10 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
         if (p->y < y1) y1 = p->y;
         if (p->y > y2) y2 = p->y;
      }
-   obj->cur.geometry.x = x1;
-   obj->cur.geometry.y = y1;
-   obj->cur.geometry.w = (x2 - x1) + 1;
-   obj->cur.geometry.h = (y2 - y1) + 1;
+   obj->cur.map->normal_geometry.x = x1;
+   obj->cur.map->normal_geometry.y = y1;
+   obj->cur.map->normal_geometry.w = (x2 - x1);
+   obj->cur.map->normal_geometry.h = (y2 - y1);
    _evas_map_calc_geom_change(obj);
 }
 
@@ -137,13 +137,13 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
      {
         if (!obj->cur.map)
           obj->cur.map = _evas_map_new(4);
-        obj->cur.map->normal_geometry = obj->cur.geometry;
+//        obj->cur.map->normal_geometry = obj->cur.geometry;
      }
    else
      {
         if (obj->cur.map)
           {
-             obj->cur.geometry = obj->cur.map->normal_geometry;
+             obj->prev.geometry = obj->cur.map->normal_geometry;
              _evas_map_calc_geom_change(obj);
           }
      }
@@ -225,7 +225,7 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
                      obj->cur.map->surface);
                   obj->cur.map->surface = NULL;
                }
-             obj->cur.geometry = obj->cur.map->normal_geometry;
+             obj->prev.geometry = obj->cur.map->normal_geometry;
              if (!obj->prev.map)
                {
 		  _evas_map_free(obj->cur.map);

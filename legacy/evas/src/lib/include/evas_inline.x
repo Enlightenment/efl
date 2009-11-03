@@ -157,8 +157,20 @@ evas_object_clip_recalc(Evas_Object *obj)
    if (!(obj->cur.clipper == NULL || obj->cur.clipper->cur.cache.clip.dirty)
        && !obj->cur.cache.clip.dirty) return;
    evas_object_coords_recalc(obj);
-   cx = obj->cur.geometry.x; cy = obj->cur.geometry.y;
-   cw = obj->cur.geometry.w; ch = obj->cur.geometry.h;
+   if (obj->cur.map)
+     {
+        cx = obj->cur.map->normal_geometry.x;
+        cy = obj->cur.map->normal_geometry.y;
+        cw = obj->cur.map->normal_geometry.w;
+        ch = obj->cur.map->normal_geometry.h;
+     }
+   else
+     {
+        cx = obj->cur.geometry.x;
+        cy = obj->cur.geometry.y;
+        cw = obj->cur.geometry.w;
+        ch = obj->cur.geometry.h;
+     }
 ////   cx = obj->cur.cache.geometry.x; cy = obj->cur.cache.geometry.y;
 ////   cw = obj->cur.cache.geometry.w; ch = obj->cur.cache.geometry.h;
    if (obj->cur.color.a == 0) cvis = 0;

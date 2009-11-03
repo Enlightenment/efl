@@ -172,23 +172,35 @@ void
 evas_object_render_pre_prev_cur_add(Eina_Array *rects, Evas_Object *obj)
 {
    evas_add_rect(rects,
-		 obj->cur.geometry.x,
-		 obj->cur.geometry.y,
-		 obj->cur.geometry.w,
-		 obj->cur.geometry.h);
+                 obj->cur.cache.clip.x,
+                 obj->cur.cache.clip.y,
+                 obj->cur.cache.clip.w,
+                 obj->cur.cache.clip.h);
+   evas_add_rect(rects,
+                 obj->prev.cache.clip.x,
+                 obj->prev.cache.clip.y,
+                 obj->prev.cache.clip.w,
+                 obj->prev.cache.clip.h);
+/*        
+        evas_add_rect(rects,
+                      obj->cur.geometry.x,
+                      obj->cur.geometry.y,
+                      obj->cur.geometry.w,
+                      obj->cur.geometry.h);
 ////	    obj->cur.cache.geometry.x,
 ////	    obj->cur.cache.geometry.y,
 ////	    obj->cur.cache.geometry.w,
 ////	    obj->cur.cache.geometry.h);
-   evas_add_rect(rects,
-		 obj->prev.geometry.x,
-		 obj->prev.geometry.y,
-		 obj->prev.geometry.w,
-		 obj->prev.geometry.h);
+        evas_add_rect(rects,
+                      obj->prev.geometry.x,
+                      obj->prev.geometry.y,
+                      obj->prev.geometry.w,
+                      obj->prev.geometry.h);
 ////	    obj->prev.cache.geometry.x,
 ////	    obj->prev.cache.geometry.y,
 ////	    obj->prev.cache.geometry.w,
 ////	    obj->prev.cache.geometry.h);
+*/
 }
 
 void

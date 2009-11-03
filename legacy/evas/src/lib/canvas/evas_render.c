@@ -387,8 +387,8 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface, int 
         int sw, sh;
         int changed = 0;
         
-        sw = obj->cur.map->normal_geometry.w;
-        sh = obj->cur.map->normal_geometry.h;
+        sw = obj->cur.geometry.w;
+        sh = obj->cur.geometry.h;
         if ((sw <= 0) || (sh <= 0)) return;
              
         p = obj->cur.map->points;
@@ -470,8 +470,8 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface, int 
                {
                   Evas_Object *obj2;
                   
-                  off_x = -obj->cur.map->normal_geometry.x;
-                  off_y = -obj->cur.map->normal_geometry.y;
+                  off_x = -obj->cur.geometry.x;
+                  off_y = -obj->cur.geometry.y;
                   EINA_INLIST_FOREACH
                     (evas_object_smart_members_get_direct(obj), obj2)
                     {
