@@ -3,6 +3,7 @@
  */
 
 #include <string.h>
+
 #include "edje_private.h"
 
 typedef struct _Edje_Box_Layout Edje_Box_Layout;
@@ -1294,8 +1295,9 @@ edje_object_part_text_get(const Evas_Object *obj, const char *part)
      }
    return NULL;
 }
+
 static Eina_Bool
-_edje_strbuf_append(char **p_str, size_t *allocated, size_t *used, const char *news, size_t news_len)
+_edje_strbuf_append1(char **p_str, size_t *allocated, size_t *used, const char *news, size_t news_len)
 {
    if (*used + news_len >= *allocated)
      {
@@ -1349,12 +1351,12 @@ _edje_text_escape(const char *text)
 	else
 	  escaped_len = strlen(escaped);
 
-	if (!_edje_strbuf_append(&ret, &ret_len, &used, escaped, escaped_len))
+	if (!_edje_strbuf_append1(&ret, &ret_len, &used, escaped, escaped_len))
 	  return NULL;
 	text += advance;
      }
 
-   if (!_edje_strbuf_append(&ret, &ret_len, &used, "", 1))
+   if (!_edje_strbuf_append1(&ret, &ret_len, &used, "", 1))
      return NULL;
    return ret;
 }
@@ -1397,7 +1399,7 @@ _edje_text_unescape(const char *text)
 
 	     if (len > 0)
 	       {
-		  if (!_edje_strbuf_append(&ret, &ret_len, &used, str, len))
+		  if (!_edje_strbuf_append1(&ret, &ret_len, &used, str, len))
 		    return NULL;
 	       }
 
@@ -1418,7 +1420,7 @@ _edje_text_unescape(const char *text)
 		  len = text + 1 - escape_start;
 	       }
 
-	     if (!_edje_strbuf_append(&ret, &ret_len, &used, str, len))
+	     if (!_edje_strbuf_append1(&ret, &ret_len, &used, str, len))
 	       return NULL;
 
 	     escape_start = NULL;
@@ -1432,11 +1434,11 @@ _edje_text_unescape(const char *text)
    if (last && (text > last))
      {
 	size_t len = text - last;
-	if (!_edje_strbuf_append(&ret, &ret_len, &used, last, len))
+	if (!_edje_strbuf_append1(&ret, &ret_len, &used, last, len))
 	  return NULL;
      }
 
-   if (!_edje_strbuf_append(&ret, &ret_len, &used, "", 1))
+   if (!_edje_strbuf_append1(&ret, &ret_len, &used, "", 1))
      return NULL;
    return ret;
 }

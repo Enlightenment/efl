@@ -6,7 +6,9 @@
 # include <config.h>
 #endif
 
-#define _GNU_SOURCE
+#ifndef _WIN32
+# define _GNU_SOURCE
+#endif
 
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>

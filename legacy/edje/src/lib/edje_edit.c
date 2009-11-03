@@ -17,9 +17,12 @@
 
 #include <string.h>
 #include <limits.h>
-#include <unistd.h>
 #include <sys/stat.h>
 #include <errno.h>
+
+#ifndef _MSC_VER
+# include <unistd.h>
+#endif
 
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
