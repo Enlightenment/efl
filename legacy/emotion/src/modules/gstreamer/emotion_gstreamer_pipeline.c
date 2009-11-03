@@ -501,6 +501,8 @@ emotion_streams_sinks_get(Emotion_Gstreamer_Video *ev, GstElement *decoder)
 	     vlist = eina_list_next(vlist);
 
 	     emotion_video_sink_fill(vsink, pad, caps);
+	     ev->ratio = (double)vsink->width / (double)vsink->height;
+
 	  }
 	/* audio stream */
 	else if (g_str_has_prefix(str, "audio/"))
