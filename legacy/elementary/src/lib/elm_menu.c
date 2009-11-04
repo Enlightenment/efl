@@ -526,6 +526,19 @@ elm_menu_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 }
 
 /*
+ * Move the menu to a new position
+ * 
+ * @param obj The menu object.
+ * @param x The new position.
+ * @param y The new position.
+ */
+EAPI Evas_Object *
+elm_menu_object_get(const Elm_Menu_Item *it)
+{
+   return it->o;
+}
+
+/*
  * Add an item at the end
  *
  * @param obj The menu object.
