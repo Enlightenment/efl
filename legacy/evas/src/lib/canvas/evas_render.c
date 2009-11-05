@@ -486,8 +486,8 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface, int 
                }
              else
                {
-                  off_x = -obj->cur.cache.clip.x;
-                  off_y = -obj->cur.cache.clip.y;
+                  off_x = -obj->cur.geometry.x;
+                  off_y = -obj->cur.geometry.y;
                   obj->func->render(obj, e->engine.data.output, ctx,
                                     obj->cur.map->surface, off_x, off_y);
                }

@@ -64,7 +64,6 @@ static inline Evas_Map *
 _evas_map_new(int count)
 {
    int i;
-   
    Evas_Map *m = calloc(1, sizeof(Evas_Map) + count * sizeof(Evas_Map_Point));
    if (!m) return NULL;
    m->count = count;
@@ -110,6 +109,151 @@ _evas_map_free(Evas_Map *m)
 {
    free(m);
 }
+
+Eina_Bool
+evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
+                    Evas_Coord *mx, Evas_Coord *my, int grab)
+{
+   int order[4], i, j, edges, edge[4][2], douv;
+   Evas_Coord xe[2];
+   double u[2], v[2];
+
+   if (m->count != 4) return 0;
+   // FIXME need to handle grab mode and extrapolte coords outside
+   // map
+   if (grab)
+     {
+        Evas_Coord ymin, ymax;
+        
+        ymin = m->points[0].y;
+        ymax = m->points[0].y;
+        for (i = 1; i < m->count; i++)
+          {
+             if (m->points[i].y < ymin) ymin = m->points[i].y; 
+             else if (m->points[i].y > ymax) ymax = m->points[i].y; 
+          }
+        if (y <= ymin) y = ymin + 1;
+        if (y >= ymax) y = ymax - 1;
+     }
+   edges = 0;
+   for (i = 0; i < m->count; i++)
+     {
+        j = (i + 1) % m->count;
+        if ((m->points[i].y <= y) && (m->points[j].y > y))
+          {
+             edge[edges][0] = i;
+             edge[edges][1] = j;
+             edges++;
+          }
+        else if ((m->points[j].y <= y) && (m->points[i].y > y))
+          {
+             edge[edges][0] = j;
+             edge[edges][1] = i;
+             edges++;
+          }
+     }
+   douv = 0;
+   if ((mx) || (my)) douv = 1;
+   for (i = 0; i < (edges - 1); i+= 2)
+     {
+        Evas_Coord yp, yd, x0, x1;
+        
+        j = i + 1;
+        yd = m->points[edge[i][1]].y - m->points[edge[i][0]].y;
+        if (yd > 0)
+          {
+             yp = y - m->points[edge[i][0]].y;
+             xe[0] = m->points[edge[i][1]].x - m->points[edge[i][0]].x;
+             xe[0] = m->points[edge[i][0]].x + ((xe[0] * yp) / yd);
+             if (douv)
+               {
+                  u[0] = m->points[edge[i][1]].u - m->points[edge[i][0]].u;
+                  u[0] = m->points[edge[i][0]].u + ((u[0] * yp) / yd);
+                  v[0] = m->points[edge[i][1]].v - m->points[edge[i][0]].v;
+                  v[0] = m->points[edge[i][0]].v + ((v[0] * yp) / yd);
+               }
+          }
+        else
+          {
+             xe[0] = m->points[edge[i][0]].x;
+             if (douv)
+               {
+                  u[0] = m->points[edge[i][0]].u;
+                  v[0] = m->points[edge[i][0]].v;
+               }
+          }
+        yd = m->points[edge[j][1]].y - m->points[edge[j][0]].y;
+        if (yd > 0)
+          {
+             yp = y - m->points[edge[j][0]].y;
+             xe[1] = m->points[edge[j][1]].x - m->points[edge[j][0]].x;
+             xe[1] = m->points[edge[j][0]].x + ((xe[1] * yp) / yd);
+             if (douv)
+               {
+                  u[1] = m->points[edge[j][1]].u - m->points[edge[j][0]].u;
+                  u[1] = m->points[edge[j][0]].u + ((u[1] * yp) / yd);
+                  v[1] = m->points[edge[j][1]].v - m->points[edge[j][0]].v;
+                  v[1] = m->points[edge[j][0]].v + ((v[1] * yp) / yd);
+               }
+          }
+        else
+          {
+             xe[1] = m->points[edge[j][0]].x;
+             if (douv)
+               {
+                  u[1] = m->points[edge[j][0]].u;
+                  v[1] = m->points[edge[j][0]].v;
+               }
+          }
+        if (xe[0] > xe[1])
+          {
+             int ti;
+             
+             ti = xe[0]; xe[0] = xe[1]; xe[1] = ti;
+             if (douv)
+               {
+                  double td;
+                  
+                  td = u[0]; u[0] = u[1]; u[1] = td;
+                  td = v[0]; v[0] = v[1]; v[1] = td;
+               }
+          }
+        if ((x >= xe[0]) && (x < xe[1]))
+          {
+             if (douv)
+               {
+                  if (mx) 
+                    *mx = u[0] + (((x - xe[0]) * (u[1] - u[0])) / 
+                                  (xe[1] - xe[0]));
+                 if (my)
+                    *my = v[0] + (((x - xe[0]) * (v[1] - v[0])) / 
+                                  (xe[1] - xe[0]));
+               }
+             return 1;
+          }
+        if (grab)
+          {
+             if (douv)
+               {
+                  if (mx) 
+                    *mx = u[0] + (((x - xe[0]) * (u[1] - u[0])) / 
+                                  (xe[1] - xe[0]));
+                  if (my)
+                    *my = v[0] + (((x - xe[0]) * (v[1] - v[0])) / 
+                                  (xe[1] - xe[0]));
+               }
+             return 1;
+          }
+     }
+   return 0;
+}
+
+Eina_Bool
+evas_map_inside_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y)
+{
+   return evas_map_coords_get(m, x, y, NULL, NULL, 0);
+}
+
 
 /**
  * Enable or disable the map that is set

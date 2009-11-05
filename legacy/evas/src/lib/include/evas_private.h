@@ -50,22 +50,22 @@ typedef struct _Evas_Callbacks              Evas_Callbacks;
 typedef struct _Evas_Format                 Evas_Format;
 typedef struct _Evas_Map_Point              Evas_Map_Point;
 
-#define MAGIC_EVAS          0x70777770
-#define MAGIC_OBJ           0x71777770
-#define MAGIC_OBJ_RECTANGLE 0x71777771
-#define MAGIC_OBJ_LINE      0x71777772
-#define MAGIC_OBJ_GRADIENT  0x71777773
-#define MAGIC_OBJ_POLYGON   0x71777774
-#define MAGIC_OBJ_IMAGE     0x71777775
-#define MAGIC_OBJ_TEXT      0x71777776
-#define MAGIC_OBJ_SMART     0x71777777
-#define MAGIC_OBJ_TEXTBLOCK 0x71777778
-#define MAGIC_SMART         0x72777770
+#define MAGIC_EVAS                 0x70777770
+#define MAGIC_OBJ                  0x71777770
+#define MAGIC_OBJ_RECTANGLE        0x71777771
+#define MAGIC_OBJ_LINE             0x71777772
+#define MAGIC_OBJ_GRADIENT         0x71777773
+#define MAGIC_OBJ_POLYGON          0x71777774
+#define MAGIC_OBJ_IMAGE            0x71777775
+#define MAGIC_OBJ_TEXT             0x71777776
+#define MAGIC_OBJ_SMART            0x71777777
+#define MAGIC_OBJ_TEXTBLOCK        0x71777778
+#define MAGIC_SMART                0x72777770
 #define MAGIC_OBJ_GRADIENT_LINEAR  0x72777771
 #define MAGIC_OBJ_GRADIENT_RADIAL  0x72777772
-#define MAGIC_OBJ_SHAPE  0x72777773
-#define MAGIC_OBJ_CONTAINER  0x72777774
-#define MAGIC_OBJ_CUSTOM  0x72777775
+#define MAGIC_OBJ_SHAPE            0x72777773
+#define MAGIC_OBJ_CONTAINER        0x72777774
+#define MAGIC_OBJ_CUSTOM           0x72777775
 
 #ifdef MAGIC_DEBUG
 # define MAGIC_CHECK_FAILED(o, t, m) \
@@ -367,13 +367,14 @@ struct _Evas_Map_Point
 
 struct _Evas_Map
 {
-   int count;
-   Evas_Coord_Rectangle normal_geometry;
-   void *surface;
-   int surface_w, surface_h;
+   int count; // num of points
+   Evas_Coord_Rectangle normal_geometry; // bounding box of map geom actually
+   void *surface; // surface holding map if needed
+   int surface_w, surface_h; // current surface w & h alloc
+   Evas_Coord mx, my; // mouse x, y after conversion to map space
    Eina_Bool alpha : 1;
    Eina_Bool smooth : 1;
-   Evas_Map_Point points[];
+   Evas_Map_Point points[]; // actual points
 };
 
 struct _Evas_Object
@@ -458,6 +459,7 @@ struct _Evas_Object
    Eina_Bool                   restack : 1;
    Eina_Bool                   changed : 1;
    Eina_Bool                   is_active : 1;
+   
    Eina_Bool                   render_pre : 1;
    Eina_Bool                   rect_del : 1;
    Eina_Bool                   mouse_in : 1;
@@ -466,7 +468,9 @@ struct _Evas_Object
    Eina_Bool                   focused : 1;
    Eina_Bool                   in_layer : 1;
    Eina_Bool                   no_propagate : 1;
+   
    Eina_Bool                   precise_is_inside : 1;
+   Eina_Bool                   havemap_parent : 1;
 
    unsigned char               delete_me;
 };
@@ -827,6 +831,9 @@ EAPI int _evas_module_engine_inherit(Evas_Func *funcs, char *name);
 void evas_render_invalidate(Evas *e);
 void evas_render_object_recalc(Evas_Object *obj);
 
+Eina_Bool evas_map_inside_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y);
+Eina_Bool evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y, Evas_Coord *mx, Evas_Coord *my, int grab);
+       
 #define EVAS_API_OVERRIDE(func, api, prefix) \
      (api)->func = prefix##func
 
