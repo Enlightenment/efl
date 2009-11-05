@@ -470,6 +470,7 @@ struct _Image_Entry_Flags
 #ifdef BUILD_ASYNC_PRELOAD
    Eina_Bool preload      : 1;
    Eina_Bool pending      : 1;
+   Eina_Bool in_pipe	  : 1;
 #endif
 };
 
