@@ -926,6 +926,8 @@ evas_cache_image_drop(Image_Entry *im)
    if (im->references == 0)
      {
 #ifdef BUILD_ASYNC_PRELOAD
+        _evas_cache_image_entry_preload_remove(im, NULL);
+        /*
 	pthread_mutex_lock(&mutex);
         if (im->flags.preload)
           {
@@ -941,6 +943,7 @@ evas_cache_image_drop(Image_Entry *im)
              return;
           }
 	pthread_mutex_unlock(&mutex);
+         */
 #endif
 
 	if (im->flags.dirty)
