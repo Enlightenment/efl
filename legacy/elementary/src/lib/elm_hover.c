@@ -230,10 +230,7 @@ _parent_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
 
-   if (wd)
-   {
-      evas_object_hide(wd->cov);
-   }
+   if (wd) evas_object_hide(wd->cov);
 }
 
 static void
