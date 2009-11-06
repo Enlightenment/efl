@@ -10,7 +10,6 @@
 # undef EAPI
 #endif
 
-#ifndef EAPI
 #ifdef _WIN32
 # ifdef EFL_ETHUMB_BUILD
 #  ifdef DLL_EXPORT
@@ -38,7 +37,6 @@
 #  define GNUC_NULL_TERMINATED
 # endif
 #endif /* ! _WIN32 */
-#endif /* EAPI */
 
 #ifdef __cplusplus
 extern "C" {

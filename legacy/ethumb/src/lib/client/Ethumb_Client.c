@@ -63,12 +63,9 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+# include "config.h"
 #endif
-#include <Eina.h>
-#include <eina_safety_checks.h>
-#include <Ethumb.h>
-#include "Ethumb_Client.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
@@ -78,11 +75,16 @@
 #include <sys/types.h>
 #include <stdbool.h>
 
+#include <Eina.h>
+#include <eina_safety_checks.h>
+#include <E_DBus.h>
+#include <Ethumb.h>
+
+#include "Ethumb_Client.h"
+
 #ifndef PATH_MAX
 #define PATH_MAX 4096
 #endif
-
-#include <E_DBus.h>
 
 #define MAX_ID 2000000
 

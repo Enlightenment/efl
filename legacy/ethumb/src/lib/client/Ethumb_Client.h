@@ -1,9 +1,14 @@
 #ifndef __ETHUMB_CLIENT_H__
 #define __ETHUMB_CLIENT_H__ 1
 
-#ifndef EAPI
+#include <Ethumb.h>
+
+#ifdef EAPI
+# undef EAPI
+#endif
+
 #ifdef _WIN32
-# ifdef EFL_EVAS_BUILD
+# ifdef EFL_ETHUMB_CLIENT_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #   define GNUC_NULL_TERMINATED
@@ -14,7 +19,7 @@
 # else
 #  define EAPI __declspec(dllimport)
 #  define GNUC_NULL_TERMINATED
-# endif /* ! EFL_EVAS_BUILD */
+# endif /* ! EFL_ETHUMB_BUILD */
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -29,9 +34,6 @@
 #  define GNUC_NULL_TERMINATED
 # endif
 #endif /* ! _WIN32 */
-#endif /* EAPI */
-
-#include <Ethumb.h>
 
 #ifdef __cplusplus
 extern "C" {
