@@ -30,8 +30,7 @@ eet_node.c \
 eet_utils.c
 
 if EET_AMALGAMATION
-eet_sources_used = eet_amalgamation.c
-BUILT_SOURCES = eet_amalgamation.c
+nodist_libeet_la_SOURCES = eet_amalgamation.c
 
 eet_amalgamation.c: $(base_sources) Makefile
 	-rm -f eet_amalgamation.c
@@ -146,10 +145,9 @@ eet_amalgamation.c: $(base_sources) Makefile
 	@echo "eet_amalgamation.c generated"
 
 else
-eet_sources_used = $(base_sources)
+libeet_la_SOURCES = $(base_sources)
 endif
 
-libeet_la_SOURCES = $(eet_sources_used)
 libeet_la_CFLAGS = @EET_CFLAGS@ @DEBUG_CFLAGS@
 libeet_la_LIBADD = @GNUTLS_LIBS@ @OPENSSL_LIBS@ @EFL_COVERAGE_LIBS@ @EET_LIBS@ @EINA_LIBS@ @EVIL_LIBS@ -lz -ljpeg -lm
 libeet_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
