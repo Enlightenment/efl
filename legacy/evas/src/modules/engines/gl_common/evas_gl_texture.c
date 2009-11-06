@@ -95,8 +95,7 @@ _tex_sub_2d(int x, int y, int w, int h, int fmt, int type, const void *pix)
 }
 
 static Evas_GL_Texture_Pool *
-_pool_tex_new(Evas_GL_Context *gc, int w, int h, 
-              GLenum intformat, GLenum format)
+_pool_tex_new(Evas_GL_Context *gc, int w, int h, int intformat, int format)
 {
    Evas_GL_Texture_Pool *pt;
    
