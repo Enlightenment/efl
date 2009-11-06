@@ -13,7 +13,7 @@ _evas_event_havemap_adjust(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
      {
         if ((pmap->cur.map) && (pmap->cur.map->count == 4) && (pmap->cur.usemap))
           break;
-        pmap = obj->smart.parent;
+        pmap = pmap->smart.parent;
      }
    if (!pmap) return;
    evas_map_coords_get(pmap->cur.map, *x, *y, x, y, obj->mouse_grabbed);
