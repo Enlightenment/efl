@@ -44,8 +44,7 @@ edje_entry.c \
 edje_external.c
 
 if EDJE_AMALGAMATION
-edje_sources_used = edje_amalgamation.c
-BUILT_SOURCES = edje_amalgamation.c
+nodist_libedje_la_SOURCES = edje_amalgamation.c
 
 edje_amalgamation.c: $(base_sources) Makefile
 	-rm -f edje_amalgamation.c
@@ -123,10 +122,9 @@ edje_amalgamation.c: $(base_sources) Makefile
 	@echo "edje_amalgamation.c generated"
 
 else
-edje_sources_used = $(base_sources)
+libedje_la_SOURCES = $(base_sources)
 endif
 
-libedje_la_SOURCES = $(edje_sources_used)
 libedje_la_LIBADD = @EDJE_LIBS@ @ECORE_IMF_LIBS@ -lm
 libedje_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
