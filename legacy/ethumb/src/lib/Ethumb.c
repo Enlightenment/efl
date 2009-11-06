@@ -51,6 +51,7 @@ void *alloca (size_t);
 #include <sys/stat.h>
 #include <dirent.h>
 #include <dlfcn.h>
+#include <ctype.h>
 
 #ifndef PATH_MAX
 # define PATH_MAX 4096
@@ -1060,20 +1061,26 @@ ethumb_calculate_fill(Ethumb *e, int iw, int ih, int *fx, int *fy, int *fw, int 
 static Eina_Bool
 _ethumb_plugin_generate(Ethumb *e)
 {
-   const char *ext;
+   const char *extp;
+   char ext[PATH_MAX];
    Ethumb_Plugin *plugin;
+   int i;
 
-   ext = strrchr(e->src_path, '.');
-   if (!ext)
+   extp = strrchr(e->src_path, '.');
+   if (!extp)
      {
 	ERR("could not get extension for file \"%s\"", e->src_path);
 	return EINA_FALSE;
      }
 
-   plugin = eina_hash_find(_plugins_ext, ext + 1);
+   for (i = 0; extp[i] != '\0'; i++)
+	ext[i] = tolower(extp[i + 1]);
+
+   plugin = eina_hash_find(_plugins_ext, ext);
    if (!plugin)
      {
-	DBG("no plugin for extension: \"%s\"", ext + 1);
+	DBG("no plugin for extension: \"%s\"", ext);
+	free(ext);
 	return EINA_FALSE;
      }
 
@@ -1151,7 +1158,8 @@ ethumb_image_save(Ethumb *e)
 
    if (!r)
      {
-	ERR("could not save image.");
+	ERR("could not save image: path=%s, key=%s", e->thumb_path,
+	    e->thumb_key);
 	return EINA_FALSE;
      }
 
