@@ -128,7 +128,7 @@ _evas_child_changed_propagate(Evas_Object *obj)
                  (obj2->changed))
                {
                   obj->changed = 1;
-                  return;
+                  return 1;
                }
              else if (obj2->smart.smart)
                {
@@ -199,7 +199,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Eina_Array *active
                   obj->render_pre = 1;
                }
           }
-        return;
+        return clean_them;
      }
    
    /* handle normal rendering. this object knows how to handle maps */
