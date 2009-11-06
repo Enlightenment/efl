@@ -143,6 +143,7 @@ extern "C" {
    typedef struct _Ecore_Exe_Event_Del         Ecore_Exe_Event_Del; /**< Spawned Exe exit event */
    typedef struct _Ecore_Exe_Event_Data_Line   Ecore_Exe_Event_Data_Line; /**< Lines from a child process */
    typedef struct _Ecore_Exe_Event_Data        Ecore_Exe_Event_Data; /**< Data from a child process */
+   typedef struct _Ecore_Thread                Ecore_Thread;
 
    struct _Ecore_Event_Signal_User /** User signal event */
      {
@@ -303,7 +304,8 @@ extern "C" {
    EAPI void         ecore_pipe_write_close(Ecore_Pipe *p);
    EAPI void         ecore_pipe_read_close(Ecore_Pipe *p);
 
-   EAPI Eina_Bool ecore_thread_run(void (*func_heavy)(void *data), void (*func_end)(void *data), const void *data);
+   EAPI Ecore_Thread *ecore_thread_run(void (*func_heavy)(void *data), void (*func_end)(void *data), void (*func_cancel)(void *data), const void *data);
+   EAPI Eina_Bool ecore_thread_cancel(Ecore_Thread *thread);
 
    EAPI double ecore_time_get(void);
    EAPI double ecore_loop_time_get(void);
