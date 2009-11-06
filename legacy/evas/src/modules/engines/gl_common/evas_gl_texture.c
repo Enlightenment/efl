@@ -168,7 +168,7 @@ _pool_tex_alloc(Evas_GL_Texture_Pool *pt, int w, int h, int *u, int *v, Eina_Lis
 
 static Evas_GL_Texture_Pool *
 _pool_tex_find(Evas_GL_Context *gc, int w, int h, 
-               GLuint intformat, GLuint format, int *u, int *v, 
+               int intformat, int format, int *u, int *v, 
                Eina_List **l_after, int atlas_w)
 {
    Evas_GL_Texture_Pool *pt = NULL;
