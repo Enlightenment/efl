@@ -177,12 +177,6 @@ evas_gl_common_context_new(void)
                                            &(shader_font_vert_src), 
                                            &(shader_font_frag_src),
                                            "font");
-//#if defined (GLES_VARIETY_S3C6410)
-//        evas_gl_common_shader_program_init(&(shared->shader.yuv),
-//                                           &(shader_img_vert_src),
-//                                           &(shader_img_frag_src),
-//                                           "yuv");
-//#else        
         evas_gl_common_shader_program_init(&(shared->shader.yuv),
                                            &(shader_yuv_vert_src), 
                                            &(shader_yuv_frag_src),
@@ -191,7 +185,6 @@ evas_gl_common_context_new(void)
         glUniform1i(glGetUniformLocation(shared->shader.yuv.prog, "tex"), 0);
         glUniform1i(glGetUniformLocation(shared->shader.yuv.prog, "texu"), 1);
         glUniform1i(glGetUniformLocation(shared->shader.yuv.prog, "texv"), 2);
-//#endif        
         // in shader:
         // uniform sampler2D tex[8];
         // 
@@ -235,7 +228,6 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
           }
         free(gc->shared);
         shared = NULL;
-        // FIXME: free shader.rect.prog etc. etc.
      }
    
    free(gc->array.vertex);
@@ -284,11 +276,6 @@ evas_gl_common_context_resize(Evas_GL_Context *gc, int w, int h)
 #define PUSH_TEXUV3(u, v) \
    gc->array.texuv3[nu3++] = u; \
    gc->array.texuv3[nu3++] = v
-#define COLOR_FLOAT(r, g, b, a, fr, fg, fb, fa) \
-   fr = ((GLfloat)(r)) / 255.0; \
-   fg = ((GLfloat)(g)) / 255.0; \
-   fb = ((GLfloat)(b)) / 255.0; \
-   fa = ((GLfloat)(a)) / 255.0
 
 static inline void
 _evas_gl_common_context_array_alloc(Evas_GL_Context *gc)
@@ -296,9 +283,9 @@ _evas_gl_common_context_array_alloc(Evas_GL_Context *gc)
    if (gc->array.num <= gc->array.alloc) return;
    gc->array.alloc += 6 * 1024;
    gc->array.vertex = realloc(gc->array.vertex,
-                              gc->array.alloc * sizeof(GLint) * 3);
+                              gc->array.alloc * sizeof(GLshort) * 3);
    gc->array.color  = realloc(gc->array.color,
-                              gc->array.alloc * sizeof(GLfloat) * 4);
+                              gc->array.alloc * sizeof(GLubyte) * 4);
    gc->array.texuv  = realloc(gc->array.texuv,
                               gc->array.alloc * sizeof(GLfloat) * 2);
    gc->array.texuv2  = realloc(gc->array.texuv2,
@@ -313,7 +300,6 @@ evas_gl_common_context_rectangle_push(Evas_GL_Context *gc,
                                       int r, int g, int b, int a)
 {
    int pnum, nv, nc, nu, nt, i;
-   GLfloat rr, gg, bb, aa;
    Eina_Bool blend = 0;
    
    if (a < 255) blend = 1;
@@ -345,10 +331,9 @@ evas_gl_common_context_rectangle_push(Evas_GL_Context *gc,
      {
         PUSH_TEXUV(0.0, 0.0);
      }
-   COLOR_FLOAT(r, g, b, a, rr, gg, bb, aa);
    for (i = 0; i < 6; i++)
      {
-        PUSH_COLOR(rr, gg, bb, aa);
+        PUSH_COLOR(r, g, b, a);
      }
 }
 
@@ -361,7 +346,7 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
                                   Eina_Bool smooth)
 {
    int pnum, nv, nc, nu, nt, i;
-   GLfloat rr, gg, bb, aa, tx1, tx2, ty1, ty2;
+   GLfloat tx1, tx2, ty1, ty2;
    Eina_Bool blend = 1;
 
    if (tex->pt->format == GL_RGB) blend = 0;
@@ -406,10 +391,9 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
    PUSH_TEXUV(tx2, ty2);
    PUSH_TEXUV(tx1, ty2);
 
-   COLOR_FLOAT(r, g, b, a, rr, gg, bb, aa);
    for (i = 0; i < 6; i++)
      {
-        PUSH_COLOR(rr, gg, bb, aa);
+        PUSH_COLOR(r, g, b, a);
      }
 }
 
@@ -421,7 +405,7 @@ evas_gl_common_context_font_push(Evas_GL_Context *gc,
                                  int r, int g, int b, int a)
 {
    int pnum, nv, nc, nu, nt, i;
-   GLfloat rr, gg, bb, aa, tx1, tx2, ty1, ty2;
+   GLfloat tx1, tx2, ty1, ty2;
 
    if ((gc->shader.cur_tex != tex->pt->texture)
        || (gc->shader.cur_prog != gc->shared->shader.font.prog)
@@ -472,10 +456,9 @@ evas_gl_common_context_font_push(Evas_GL_Context *gc,
    PUSH_TEXUV(tx2, ty2);
    PUSH_TEXUV(tx1, ty2);
 
-   COLOR_FLOAT(r, g, b, a, rr, gg, bb, aa);
    for (i = 0; i < 6; i++)
      {
-        PUSH_COLOR(rr, gg, bb, aa);
+        PUSH_COLOR(r, g, b, a);
      }
 }
 
@@ -488,7 +471,7 @@ evas_gl_common_context_yuv_push(Evas_GL_Context *gc,
                                 Eina_Bool smooth)
 {
    int pnum, nv, nc, nu, nu2, nu3, nt, i;
-   GLfloat rr, gg, bb, aa, tx1, tx2, ty1, ty2, t2x1, t2x2, t2y1, t2y2;
+   GLfloat tx1, tx2, ty1, ty2, t2x1, t2x2, t2y1, t2y2;
    Eina_Bool blend = 0;
 
    if (a < 255) blend = 1;
@@ -556,10 +539,9 @@ evas_gl_common_context_yuv_push(Evas_GL_Context *gc,
    PUSH_TEXUV3(t2x2, t2y2);
    PUSH_TEXUV3(t2x1, t2y2);
 
-   COLOR_FLOAT(r, g, b, a, rr, gg, bb, aa);
    for (i = 0; i < 6; i++)
      {
-        PUSH_COLOR(rr, gg, bb, aa);
+        PUSH_COLOR(r, g, b, a);
      }
 }
 
@@ -612,13 +594,11 @@ shader_array_flush(Evas_GL_Context *gc)
              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-//             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-//             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
           }
      }
 
-   glVertexAttribPointer(SHAD_VERTEX, 3, GL_INT, GL_FALSE, 0, gc->array.vertex);
-   glVertexAttribPointer(SHAD_COLOR, 4, GL_FLOAT, GL_FALSE, 0, gc->array.color);
+   glVertexAttribPointer(SHAD_VERTEX, 3, GL_SHORT, GL_FALSE, 0, gc->array.vertex);
+   glVertexAttribPointer(SHAD_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, gc->array.color);
    glVertexAttribPointer(SHAD_TEXUV, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv);
    if ((gc->array.texuv2) && (gc->array.texuv3))
      {

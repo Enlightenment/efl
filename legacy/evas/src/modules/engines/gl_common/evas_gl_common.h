@@ -104,26 +104,11 @@ struct _Evas_GL_Context
    RGBA_Draw_Context  *dc;
    
    Evas_GL_Shared     *shared;
-/*   
-   Eina_List          *images;
-
-   struct {
-      Eina_List       *whole;
-      Eina_List       *atlas[33][3];
-   } tex;
-   struct {
-      GLint max_texture_units;
-      GLint max_texture_size;
-      Eina_Bool tex_npo2 : 1;
-      Eina_Bool tex_rect : 1;
-   } info;
- */
    struct {
       int             x, y, w, h;
       Eina_Bool       active : 1;
    } clip;
    struct {
-/*      Evas_GL_Program rect, img, font, yuv;*/
       GLuint          cur_prog;
       GLuint          cur_tex, cur_texu, cur_texv;
       Eina_Bool       smooth : 1;
@@ -138,8 +123,8 @@ struct _Evas_GL_Context
    struct {
       int num;
       int alloc;
-      GLint   *vertex;
-      GLfloat *color;
+      GLshort *vertex;
+      GLubyte *color;
       GLfloat *texuv;
       GLfloat *texuv2;
       GLfloat *texuv3;
@@ -153,7 +138,7 @@ struct _Evas_GL_Texture_Pool
 {
    Evas_GL_Context *gc;
    GLuint           texture;
-   GLuint           format;
+   GLuint           intformat, format, dataformat;
    int              w, h;
    int              references;
    int              slot, fslot;

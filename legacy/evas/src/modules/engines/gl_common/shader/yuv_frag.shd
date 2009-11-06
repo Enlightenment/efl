@@ -8,15 +8,12 @@ varying vec2 tex_c2;
 varying vec2 tex_c3;
 void main()
 {
-   float r, g, b, y, u, v;
-   y = texture2D(tex, tex_c.xy).r;
-   u = texture2D(texu, tex_c2.xy).r;
-   v = texture2D(texv, tex_c3.xy).r;
-   y = (y - 0.0625) * 1.164;
-   u = u - 0.5;
-   v = v - 0.5;
-   r = y + (1.402   * v);
-   g = y - (0.34414 * u) - (0.71414 * v);
-   b = y + (1.772   * u);
-   gl_FragColor = vec4(r, g, b, 1.0) * col;
+   mat4 yuv2rgb = mat4( 1.16400,  1.16400,  1.16400, 0.00000,
+                        0.00000, -0.34410,  1.77200, 0.00000,
+                        1.40200, -0.71410,  0.00000, 0.00000,
+                       -0.77380,  0.45630, -0.95880, 1.00000);
+   vec4 yuv = vec4(texture2D(tex, tex_c.xy).r,
+                   texture2D(texu, tex_c2.xy).r,
+                   texture2D(texv, tex_c3.xy).r, 1.0);
+   gl_FragColor = (yuv2rgb * yuv) * col;
 }

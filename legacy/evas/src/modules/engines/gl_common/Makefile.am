@@ -62,4 +62,5 @@ shader/font_frag.shd \
 shader/font_frag_s3c6410.asm \
 shader/font_vert.shd \
 shader/yuv_frag.shd \
+shader/yuv_frag_s3c6410.asm \
 shader/yuv_vert.shd

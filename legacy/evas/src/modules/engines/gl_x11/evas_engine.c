@@ -1028,6 +1028,25 @@ eng_image_scale_hint_set(void *data __UNUSED__, void *image, int hint)
 {
 }
 
+static void
+eng_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *image, RGBA_Map_Point *p, int smooth, int level)
+{
+   // XXX
+}
+
+static void *
+eng_image_map_surface_new(void *data __UNUSED__, int w, int h, int alpha)
+{
+   // XXX
+   return NULL;
+}
+
+static void
+eng_image_map_surface_free(void *data __UNUSED__, void *surface)
+{
+   // XXX
+}
+
 static int
 eng_image_scale_hint_get(void *data __UNUSED__, void *image)
 {
@@ -1175,9 +1194,9 @@ module_open(Evas_Module *em)
    ORD(image_scale_hint_set);
    ORD(image_scale_hint_get);
    
-   //ODR(image_map4_draw);
-   //ODR(image_map_surface_new);
-   //ODR(image_map_surface_free);
+   ORD(image_map4_draw);
+   ORD(image_map_surface_new);
+   ORD(image_map_surface_free);
    
    /* now advertise out own api */
    em->functions = (void *)(&func);

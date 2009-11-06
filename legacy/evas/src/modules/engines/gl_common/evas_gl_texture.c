@@ -1,5 +1,25 @@
 #include "evas_gl_private.h"
 
+#if 1
+static const GLenum rgba_fmt   = GL_RGBA;
+static const GLenum rgba_ifmt  = GL_RGBA;
+//static const GLenum rgb_fmt    = GL_RGBA;
+//static const GLenum rgb_ifmt   = GL_RGBA;
+static const GLenum alpha_fmt  = GL_ALPHA;
+static const GLenum alpha_ifmt = GL_ALPHA;
+static const GLenum lum_fmt    = GL_LUMINANCE;
+static const GLenum lum_ifmt   = GL_LUMINANCE;
+#else
+static const GLenum rgba_fmt   = GL_RGBA;
+static const GLenum rgba_ifmt  = GL_COMPRESSED_RGBA;
+//static const GLenum rgb_fmt    = GL_RGBA;
+//static const GLenum rgb_ifmt   = GL_COMPRESSED_RGBA;
+static const GLenum alpha_fmt  = GL_ALPHA;
+static const GLenum alpha_ifmt = GL_COMPRESSED_ALPHA;
+static const GLenum lum_fmt    = GL_LUMINANCE;
+static const GLenum lum_ifmt   = GL_COMPRESSED_LUMINANCE;
+#endif
+
 static int
 _nearest_pow2(int num)
 {
@@ -37,12 +57,24 @@ _tex_format_index(GLuint format)
    switch (format)
      {
      case GL_RGBA:
+#ifdef GL_COMPRESSED_RGBA
+     case GL_COMPRESSED_RGBA:
+#endif        
         return 0;
      case GL_RGB:
+#ifdef GL_COMPRESSED_RGB        
+     case GL_COMPRESSED_RGB:
+#endif        
         return 1;
      case GL_ALPHA:
+#ifdef GL_COMPRESSED_ALPHA        
+     case GL_COMPRESSED_ALPHA:
+#endif        
         return 2;
      case GL_LUMINANCE:
+#ifdef GL_COMPRESSED_LUMINANCE        
+     case GL_COMPRESSED_LUMINANCE:
+#endif        
         return 3;
      default:
         break;
@@ -50,8 +82,33 @@ _tex_format_index(GLuint format)
    return 0;
 }
 
+static void
+_tex_2d(GLint internalformat,
+        GLsizei width,
+        GLsizei height,
+        GLenum format,
+        GLenum type)
+{
+   glTexImage2D(GL_TEXTURE_2D, 0, internalformat, 
+                width, height, 0, format, type, NULL);
+}
+
+static void
+_tex_sub_2d(GLint xoffset,
+            GLint yoffset,
+            GLsizei width,
+            GLsizei height,
+            GLenum format,
+            GLenum type,
+            const GLvoid *pixels)
+{
+   glTexSubImage2D(GL_TEXTURE_2D, 0, 
+                   xoffset, yoffset, width, height, format, type, pixels);
+}
+
 static Evas_GL_Texture_Pool *
-_pool_tex_new(Evas_GL_Context *gc, int w, int h, GLuint format)
+_pool_tex_new(Evas_GL_Context *gc, int w, int h, 
+              GLenum intformat, GLenum format)
 {
    Evas_GL_Texture_Pool *pt;
    
@@ -62,7 +119,9 @@ _pool_tex_new(Evas_GL_Context *gc, int w, int h, GLuint format)
    pt->gc = gc;
    pt->w = w;
    pt->h = h;
+   pt->intformat = intformat;
    pt->format = format;
+   pt->dataformat = GL_UNSIGNED_BYTE;
    pt->references = 0;
    glGenTextures(1, &(pt->texture));
    glBindTexture(GL_TEXTURE_2D, pt->texture);
@@ -70,14 +129,13 @@ _pool_tex_new(Evas_GL_Context *gc, int w, int h, GLuint format)
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-   glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0,
-                format, GL_UNSIGNED_BYTE/* fixme - pass this in */, NULL);
+   _tex_2d(pt->intformat, w, h, pt->format, pt->dataformat);
    glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
    return pt;
 }
 
 static int
-_pool_tex_alloc(Evas_GL_Texture_Pool *pt, GLuint format, int w, int h, int *u, int *v, Eina_List **l_after)
+_pool_tex_alloc(Evas_GL_Texture_Pool *pt, int w, int h, int *u, int *v, Eina_List **l_after)
 {
    Eina_List *l;
    Evas_GL_Texture *tex, *tex2;
@@ -122,7 +180,9 @@ _pool_tex_alloc(Evas_GL_Texture_Pool *pt, GLuint format, int w, int h, int *u, i
 }
 
 static Evas_GL_Texture_Pool *
-_pool_tex_find(Evas_GL_Context *gc, int w, int h, GLuint format, int *u, int *v, Eina_List **l_after, int atlas_w)
+_pool_tex_find(Evas_GL_Context *gc, int w, int h, 
+               GLuint intformat, GLuint format, int *u, int *v, 
+               Eina_List **l_after, int atlas_w)
 {
    Evas_GL_Texture_Pool *pt = NULL;
    Eina_List *l;
@@ -130,7 +190,7 @@ _pool_tex_find(Evas_GL_Context *gc, int w, int h, GLuint format, int *u, int *v,
    
    if ((w > 512) || (h > 512))
      {
-        pt = _pool_tex_new(gc, w, h, format);
+        pt = _pool_tex_new(gc, w, h, intformat, format);
         gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, pt);
         pt->slot = -1;
         pt->fslot = -1;
@@ -145,7 +205,7 @@ _pool_tex_find(Evas_GL_Context *gc, int w, int h, GLuint format, int *u, int *v,
    th2 = _tex_format_index(format);
    EINA_LIST_FOREACH(gc->shared->tex.atlas[th][th2], l, pt)
      {
-        if (_pool_tex_alloc(pt, format, w, h, u, v, l_after))
+        if (_pool_tex_alloc(pt, w, h, u, v, l_after))
           {
              gc->shared->tex.atlas[th][th2] = 
                eina_list_remove_list(gc->shared->tex.atlas[th][th2], l);
@@ -154,7 +214,7 @@ _pool_tex_find(Evas_GL_Context *gc, int w, int h, GLuint format, int *u, int *v,
              return pt;
           }
      }
-   pt = _pool_tex_new(gc, atlas_w, h, format);
+   pt = _pool_tex_new(gc, atlas_w, h, intformat, format);
    gc->shared->tex.atlas[th][th2] = 
      eina_list_prepend(gc->shared->tex.atlas[th][th2], pt);
    pt->slot = th;
@@ -179,11 +239,11 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im)
    tex->references = 1;
 //   if (im->cache_entry.flags.alpha)
    tex->pt = _pool_tex_find(gc, im->cache_entry.w + 2,
-                            im->cache_entry.h + 1, GL_RGBA, 
+                            im->cache_entry.h + 1, rgba_ifmt, rgba_fmt, 
                             &u, &v, &l_after, 1024);
 //   else
 //     tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3, 
-//                              im->cache_entry.h + 1, GL_RGB, 
+//                              im->cache_entry.h + 1, rgb_ifmt, rgb_fmt,
 //                              &u, &v, &l_after, 1024);
    if (!tex->pt)
      {
@@ -208,16 +268,6 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im)
 void
 evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
 {
-#if defined(GL_UNSIGNED_INT_8_8_8_8_REV) && defined(GL_BGRA)
-#define COLOR_FORMAT GL_RGBA   
-#define PIXEL_FORMAT GL_UNSIGNED_BYTE
-// FIXME: need to change shader for this to work
-//#define COLOR_FORMAT GL_BGRA
-//#define PIXEL_FORMAT GL_UNSIGNED_INT_8_8_8_8_REV
-#else
-#define COLOR_FORMAT GL_RGBA   
-#define PIXEL_FORMAT GL_UNSIGNED_BYTE
-#endif   
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
 #ifdef GL_UNPACK_ROW_LENGTH   
    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
@@ -226,55 +276,47 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
    //  +-+
    //  +-+
    // 
-   glTexSubImage2D(GL_TEXTURE_2D, 0,
-		   tex->x, tex->y, 
-                   im->cache_entry.w, im->cache_entry.h,
-		   COLOR_FORMAT, PIXEL_FORMAT,
-		   im->image.data);
+   _tex_sub_2d(tex->x, tex->y, 
+               im->cache_entry.w, im->cache_entry.h,
+               tex->pt->format, tex->pt->dataformat,
+               im->image.data);
    // |xxx
    // |xxx
    // 
-   glTexSubImage2D(GL_TEXTURE_2D, 0,
-		   tex->x - 1, tex->y, 
-                  1, im->cache_entry.h,
-		   COLOR_FORMAT, PIXEL_FORMAT,
-		   im->image.data);
+   _tex_sub_2d(tex->x - 1, tex->y, 
+               1, im->cache_entry.h,
+               tex->pt->format, tex->pt->dataformat,
+               im->image.data);
    //  xxx|
    //  xxx|
    // 
-   glTexSubImage2D(GL_TEXTURE_2D, 0,
-		   tex->x + im->cache_entry.w, tex->y, 
-                  1, im->cache_entry.h,
-		   COLOR_FORMAT, PIXEL_FORMAT,
-		   im->image.data + (im->cache_entry.w - 1));
+   _tex_sub_2d(tex->x + im->cache_entry.w, tex->y, 
+               1, im->cache_entry.h,
+               tex->pt->format, tex->pt->dataformat,
+               im->image.data + (im->cache_entry.w - 1));
    //  xxx
    //  xxx
    //  ---
-   glTexSubImage2D(GL_TEXTURE_2D, 0,
-		   tex->x, tex->y + im->cache_entry.h,
-                  im->cache_entry.w, 1,
-		   COLOR_FORMAT, PIXEL_FORMAT,
-		   im->image.data + ((im->cache_entry.h - 1) * im->cache_entry.w));
+   _tex_sub_2d(tex->x, tex->y + im->cache_entry.h,
+               im->cache_entry.w, 1,
+               tex->pt->format, tex->pt->dataformat,
+               im->image.data + ((im->cache_entry.h - 1) * im->cache_entry.w));
    //  xxx
    //  xxx
    // o
-   glTexSubImage2D(GL_TEXTURE_2D, 0,
-		   tex->x - 1, tex->y + im->cache_entry.h,
-                  1, 1,
-		   COLOR_FORMAT, PIXEL_FORMAT,
-		   im->image.data + ((im->cache_entry.h - 1) * im->cache_entry.w));
+   _tex_sub_2d(tex->x - 1, tex->y + im->cache_entry.h,
+               1, 1,
+               tex->pt->format, tex->pt->dataformat,
+               im->image.data + ((im->cache_entry.h - 1) * im->cache_entry.w));
    //  xxx
    //  xxx
    //     o
-   glTexSubImage2D(GL_TEXTURE_2D, 0,
-		   tex->x + im->cache_entry.w, tex->y + im->cache_entry.h,
-                  1, 1,
-		   COLOR_FORMAT, PIXEL_FORMAT,
-		   im->image.data + ((im->cache_entry.h - 1) * im->cache_entry.w) + (im->cache_entry.w - 1));
+   _tex_sub_2d(tex->x + im->cache_entry.w, tex->y + im->cache_entry.h,
+               1, 1,
+               tex->pt->format, tex->pt->dataformat,
+               im->image.data + ((im->cache_entry.h - 1) * im->cache_entry.w) + (im->cache_entry.w - 1));
    if (tex->pt->texture != tex->gc->shader.cur_tex)
-     {
-        glBindTexture(GL_TEXTURE_2D, tex->gc->shader.cur_tex);
-     }
+     glBindTexture(GL_TEXTURE_2D, tex->gc->shader.cur_tex);
 }
 
 static void
@@ -323,8 +365,7 @@ evas_gl_common_texture_alpha_new(Evas_GL_Context *gc, DATA8 *pixels, int w, int 
    tex->references = 1;
    if (tw > gc->shared->info.max_texture_size)
      tw = gc->shared->info.max_texture_size;
-   tex->pt = _pool_tex_find(gc, w + 3, fh, GL_ALPHA,
-                            &u, &v, &l_after, tw);
+   tex->pt = _pool_tex_find(gc, w + 3, fh, alpha_ifmt, alpha_fmt, &u, &v, &l_after, tw);
    if (!tex->pt)
      {
         free(tex);
@@ -351,10 +392,7 @@ evas_gl_common_texture_alpha_update(Evas_GL_Texture *tex, DATA8 *pixels, int w, 
    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 #endif   
    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-   glTexSubImage2D(GL_TEXTURE_2D, 0,
-		   tex->x, tex->y, w, h,
-		   GL_ALPHA, GL_UNSIGNED_BYTE,
-		   pixels);
+   _tex_sub_2d(tex->x, tex->y, w, h, tex->pt->format, tex->pt->dataformat, pixels);
    if (tex->pt->texture != tex->gc->shader.cur_tex)
      glBindTexture(GL_TEXTURE_2D, tex->gc->shader.cur_tex);
 }
@@ -371,17 +409,17 @@ evas_gl_common_texture_yuv_new(Evas_GL_Context *gc, DATA8 **rows, int w, int h)
    
    tex->gc = gc;
    tex->references = 1;
-   tex->pt = _pool_tex_new(gc, w + 1, h  + 1, GL_LUMINANCE);
+   tex->pt = _pool_tex_new(gc, w + 1, h  + 1, lum_ifmt, lum_fmt);
    gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, tex->pt);
    tex->pt->slot = -1;
    tex->pt->fslot = -1;
    tex->pt->whole = 1;
-   tex->ptu = _pool_tex_new(gc, (w / 2) + 1, (h / 2)  + 1, GL_LUMINANCE);
+   tex->ptu = _pool_tex_new(gc, (w / 2) + 1, (h / 2)  + 1, lum_ifmt, lum_fmt);
    gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, tex->ptu);
    tex->ptu->slot = -1;
    tex->ptu->fslot = -1;
    tex->ptu->whole = 1;
-   tex->ptv = _pool_tex_new(gc, (w / 2) + 1, (h / 2)  + 1, GL_LUMINANCE);
+   tex->ptv = _pool_tex_new(gc, (w / 2) + 1, (h / 2)  + 1, lum_ifmt, lum_fmt);
    gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, tex->ptv);
    tex->ptv->slot = -1;
    tex->ptv->fslot = -1;
@@ -403,82 +441,49 @@ evas_gl_common_texture_yuv_new(Evas_GL_Context *gc, DATA8 **rows, int w, int h)
 void
 evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, int w, int h)
 {
+   int y;
+   
    // FIXME: works on lowest size 4 pixel high buffers. must also be multiple of 2
 #ifdef GL_UNPACK_ROW_LENGTH
    glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[1] - rows[0]);
    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
-   glTexSubImage2D(GL_TEXTURE_2D, 0,
-		   0, 0, w, h,
-                   GL_LUMINANCE, GL_UNSIGNED_BYTE,
-		   rows[0]);
+   _tex_sub_2d(0, 0, w, h, tex->pt->format, tex->pt->dataformat, rows[0]);
    glBindTexture(GL_TEXTURE_2D, tex->ptu->texture);
    glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[h + 1] - rows[h]);
-   glTexSubImage2D(GL_TEXTURE_2D, 0,
-		   0, 0, w / 2, h / 2,
-                   GL_LUMINANCE, GL_UNSIGNED_BYTE,
-		   rows[h]);
+   _tex_sub_2d(0, 0, w / 2, h / 2, tex->ptu->format, tex->ptu->dataformat, rows[h]);
    glBindTexture(GL_TEXTURE_2D, tex->ptv->texture);
    glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[h + (h / 2) + 1] - rows[h + (h / 2)]);
-   glTexSubImage2D(GL_TEXTURE_2D, 0,
-		   0, 0, w / 2, h / 2,
-                   GL_LUMINANCE, GL_UNSIGNED_BYTE,
-		   rows[h + (h / 2)]);
+   _tex_sub_2d(0, 0, w / 2, h / 2, tex->ptv->format, tex->ptv->dataformat, rows[h + (h / 2)]);
 #else
    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
    if ((rows[1] - rows[0]) == w)
-     glTexSubImage2D(GL_TEXTURE_2D, 0,
-                     0, 0, w, h,
-                     GL_LUMINANCE, GL_UNSIGNED_BYTE,
-                     rows[0]);
+     _tex_sub_2d(0, 0, w, h, tex->pt->format, tex->pt->dataformat, rows[0]);
    else
      {
-        int y;
-        
         for (y = 0; y < h; y++)
-          glTexSubImage2D(GL_TEXTURE_2D, 0,
-                          0, y, w, 1,
-                          GL_LUMINANCE, GL_UNSIGNED_BYTE,
-                          rows[y]);
+          _tex_sub_2d(0, y, w, 1, tex->pt->format, tex->pt->dataformat, rows[y]);
      }
 
    glBindTexture(GL_TEXTURE_2D, tex->ptu->texture);
    if ((rows[h + 1] - rows[h]) == (w / 2))
-     glTexSubImage2D(GL_TEXTURE_2D, 0,
-                     0, 0, w / 2, h / 2,
-                     GL_LUMINANCE, GL_UNSIGNED_BYTE,
-                     rows[h]);
+     _tex_sub_2d(0, 0, w / 2, h / 2, tex->ptu->format, tex->ptu->dataformat, rows[h]);
    else
      {
-        int y;
-        
         for (y = 0; y < (h / 2); y++)
-          glTexSubImage2D(GL_TEXTURE_2D, 0,
-                          0, y, w / 2, 1,
-                          GL_LUMINANCE, GL_UNSIGNED_BYTE,
-                          rows[h + y]);
+          _tex_sub_2d(0, y, w / 2, 1, tex->ptu->format, tex->ptu->dataformat, rows[h + y]);
      }
    
    glBindTexture(GL_TEXTURE_2D, tex->ptv->texture);
    if ((rows[h + (h / 2) + 1] - rows[h + (h / 2)]) == (w / 2))
-     glTexSubImage2D(GL_TEXTURE_2D, 0,
-                     0, 0, w / 2, h / 2,
-                     GL_LUMINANCE, GL_UNSIGNED_BYTE,
-                     rows[h + (h / 2)]);
+     _tex_sub_2d(0, 0, w / 2, h / 2, tex->ptv->format, tex->ptv->dataformat, rows[h + (h / 2)]);
    else
      {
-        int y;
-        
         for (y = 0; y < (h / 2); y++)
-          glTexSubImage2D(GL_TEXTURE_2D, 0,
-                          0, y, w / 2, 1,
-                          GL_LUMINANCE, GL_UNSIGNED_BYTE,
-                          rows[h + (h / 2) + y]);
+          _tex_sub_2d(0, y, w / 2, 1, tex->ptv->format, tex->ptv->dataformat, rows[h + (h / 2) + y]);
      }
 #endif   
    if (tex->pt->texture != tex->gc->shader.cur_tex)
-     {
-        glBindTexture(GL_TEXTURE_2D, tex->gc->shader.cur_tex);
-     }
+     glBindTexture(GL_TEXTURE_2D, tex->gc->shader.cur_tex);
 }
