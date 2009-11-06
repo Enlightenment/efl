@@ -19,7 +19,7 @@
 # else
 #  define EAPI __declspec(dllimport)
 #  define GNUC_NULL_TERMINATED
-# endif /* ! EFL_ETHUMB_BUILD */
+# endif /* ! EFL_ETHUMB_CLIENT_BUILD */
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
