@@ -83,27 +83,15 @@ _tex_format_index(GLuint format)
 }
 
 static void
-_tex_2d(GLint internalformat,
-        GLsizei width,
-        GLsizei height,
-        GLenum format,
-        GLenum type)
+_tex_2d(int intfmt, int w, int h, int fmt, int type)
 {
-   glTexImage2D(GL_TEXTURE_2D, 0, internalformat, 
-                width, height, 0, format, type, NULL);
+   glTexImage2D(GL_TEXTURE_2D, 0, intfmt, w, h, 0, fmt, type, NULL);
 }
 
 static void
-_tex_sub_2d(GLint xoffset,
-            GLint yoffset,
-            GLsizei width,
-            GLsizei height,
-            GLenum format,
-            GLenum type,
-            const GLvoid *pixels)
+_tex_sub_2d(int x, int y, int w, int h, int fmt, int type, const void *pix)
 {
-   glTexSubImage2D(GL_TEXTURE_2D, 0, 
-                   xoffset, yoffset, width, height, format, type, pixels);
+   glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, fmt, type, pix);
 }
 
 static Evas_GL_Texture_Pool *
