@@ -8,6 +8,7 @@
 #include "evas_convert_rgb_24.h"
 #include "evas_convert_rgb_32.h"
 #include "evas_convert_grypal_6.h"
+#include "evas_convert_gry_8.h"
 #include "evas_convert_yuv.h"
 
 const DATA8 _evas_dither_44[4][4] =
@@ -162,6 +163,14 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
      {
 	if (depth == 8)
 	  {
+#ifdef BUILD_CONVERT_8_GRY_1
+	     if (pal_mode == PAL_MODE_NONE)
+	       return evas_common_convert_rgba_to_8bpp_gry_256_dith;
+#endif
+#ifdef BUILD_CONVERT_8_GRY_16
+	     if (pal_mode == PAL_MODE_NONE)
+	       return evas_common_convert_rgba_to_8bpp_gry_16_dith;
+#endif
 #ifdef BUILD_CONVERT_8_RGB_332
 	     if (pal_mode == PAL_MODE_RGB332)
 	       return evas_common_convert_rgba_to_8bpp_rgb_332_dith;

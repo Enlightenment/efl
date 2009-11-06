@@ -1147,6 +1147,12 @@ EVAS_CONVERT_ROT(32, RGB, 270)
 EVAS_CONVERT_ROT(32, RGB, 90)
 
 #######################################
+## Convert to 8bpp grayscale with 256 value, no palette
+EVAS_CONVERT_COLOR(8, GRY, 1)
+## Convert to 8bpp grayscale with 16 value, no palette
+EVAS_CONVERT_COLOR(8, GRY, 16)
+
+#######################################
 ## Convert to 8bpp grayscale, 64-palette
 conv_8_grayscale_64="yes"
 AC_MSG_CHECKING(whether to build 8bpp grayscale 64-palette converter code)
@@ -1383,6 +1389,8 @@ echo "  8bpp RGB 222............: $conv_8_rgb_222"
 echo "  8bpp RGB 221............: $conv_8_rgb_221"
 echo "  8bpp RGB 121............: $conv_8_rgb_121"
 echo "  8bpp RGB 111............: $conv_8_rgb_111"
+echo "  8bpp Grayscale (256)....: $conv_8_gry_1"
+echo "  8bpp Grayscale (16).....: $conv_8_gry_16"
 echo "  8bpp Grayscale 64-pal...: $conv_8_grayscale_64"
 # FIXME: add grayscale and B&W support
 echo "  16bpp RGB 565...........: $conv_16_rgb_565"
