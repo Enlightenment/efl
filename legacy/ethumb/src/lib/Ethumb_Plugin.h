@@ -2,9 +2,6 @@
 #define _ETHUMB_PLUGIN_H_
 
 #include <Ethumb.h>
-#include <Eina.h>
-#include <Evas.h>
-#include <Ecore_Evas.h>
 
 typedef struct _Ethumb_Plugin Ethumb_Plugin;
 
