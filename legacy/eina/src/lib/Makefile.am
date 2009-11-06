@@ -37,35 +37,32 @@ eina_tiler.c \
 eina_hamster.c \
 eina_safety_checks.c
 
-sources_used = $(base_sources)
-
 if EINA_STATIC_BUILD_CHAINED_POOL
-sources_used += $(top_srcdir)/src/modules/mp/chained_pool/eina_chained_mempool.c
+base_sources += $(top_srcdir)/src/modules/mp/chained_pool/eina_chained_mempool.c
 endif
 
 if EINA_STATIC_BUILD_EMEMOA_FIXED
-sources_used += $(top_srcdir)/src/modules/mp/ememoa_fixed/eina_ememoa_fixed.c
+base_sources += $(top_srcdir)/src/modules/mp/ememoa_fixed/eina_ememoa_fixed.c
 endif
 
 if EINA_STATIC_BUILD_EMEMOA_UNKNOWN
-sources_used += $(top_srcdir)/src/modules/mp/ememoa_unknown/eina_ememoa_unknown.c
+base_sources += $(top_srcdir)/src/modules/mp/ememoa_unknown/eina_ememoa_unknown.c
 endif
 
 if EINA_STATIC_BUILD_FIXED_BITMAP
-sources_used += $(top_srcdir)/src/modules/mp/fixed_bitmap/eina_fixed_bitmap.c
+base_sources += $(top_srcdir)/src/modules/mp/fixed_bitmap/eina_fixed_bitmap.c
 endif
 
 if EINA_STATIC_BUILD_PASS_THROUGH
-sources_used += $(top_srcdir)/src/modules/mp/pass_through/eina_pass_through.c
+base_sources += $(top_srcdir)/src/modules/mp/pass_through/eina_pass_through.c
 endif
 
 lib_LTLIBRARIES = libeina.la
 
 if EINA_AMALGAMATION
-eina_sources_used = eina_amalgamation.c
-BUILT_SOURCES = eina_amalgamation.c
+nodist_libeina_la_SOURCES = eina_amalgamation.c
 
-eina_amalgamation.c: $(sources_used) Makefile
+eina_amalgamation.c: $(base_sources) Makefile
 	-rm -f eina_amalgamation.c
 
 	@echo "#ifdef HAVE_CONFIG_H" >> eina_amalgamation.c
@@ -111,7 +108,7 @@ eina_amalgamation.c: $(sources_used) Makefile
 	@echo "#include \"eina_safety_checks.h\"" >> eina_amalgamation.c
 	@echo "#include \"Eina.h\"" >> eina_amalgamation.c
 
-	@for f in $(sources_used); do \
+	@for f in $(base_sources); do \
 	   if [ `expr substr $$f 1 1` != '/' ]; then \
 		  file="$(srcdir)/$$f" ; \
 	   else \
@@ -123,10 +120,9 @@ eina_amalgamation.c: $(sources_used) Makefile
 	@echo "eina_amalgamation.c generated"
 
 else
-eina_sources_used = $(sources_used)
+libeina_la_SOURCES = $(base_sources)
 endif
 
-libeina_la_SOURCES = $(eina_sources_used)
 libeina_la_LIBADD = @EINA_LIBS@ @dlopen_libs@
 libeina_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@ @EFL_PTHREAD_LIBS@
 libeina_la_CFLAGS = @EINA_CFLAGS@ @EFL_PTHREAD_CFLAGS@
