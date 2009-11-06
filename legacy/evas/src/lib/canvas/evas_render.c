@@ -2,7 +2,7 @@
 #include "evas_private.h"
 
 static Eina_List *
-evas_render_updates_internal(Evas *e, Evas_Object *smart, unsigned char make_updates, unsigned char do_draw);
+evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char do_draw);
 
 /**
  * Add a damage rectangle.
@@ -169,7 +169,9 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Eina_Array *active
 
    obj->is_active = is_active;
    if ((is_active) || (obj->delete_me != 0))
-     eina_array_push(active_objects, obj);
+     {
+        eina_array_push(active_objects, obj);
+     }
    if (restack)
      {
 	if (!obj->changed)
@@ -511,7 +513,6 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface, int 
 
 static Eina_List *
 evas_render_updates_internal(Evas *e,
-                             Evas_Object *smart, // is this a good idea?
                              unsigned char make_updates,
                              unsigned char do_draw)
 {
@@ -529,11 +530,6 @@ evas_render_updates_internal(Evas *e,
    return NULL;
    MAGIC_CHECK_END();
    if (!e->changed) return NULL;
-
-   if (smart)
-     {
-        // FIXME: if smart, only consider child objects
-     }
 
    evas_call_smarts_calculate(e);
 
@@ -806,6 +802,12 @@ evas_render_updates_internal(Evas *e,
 	     obj->restack = 0;
 	     obj->changed = 0;
 	  }
+        else if (obj->cur.map != obj->prev.map)
+          {
+	     obj->func->render_post(obj);
+	     obj->restack = 0;
+	     obj->changed = 0;
+          }
 /* moved to other pre-process phase 1
 	if (obj->delete_me == 2)
 	  {
@@ -886,7 +888,7 @@ evas_render_updates(Evas *e)
    MAGIC_CHECK_END();
 
    if (!e->changed) return NULL;
-   return evas_render_updates_internal(e, NULL, 1, 1);
+   return evas_render_updates_internal(e, 1, 1);
 }
 
 /**
@@ -905,7 +907,7 @@ evas_render(Evas *e)
    MAGIC_CHECK_END();
 
    if (!e->changed) return;
-   evas_render_updates_internal(e, NULL, 0, 1);
+   evas_render_updates_internal(e, 0, 1);
 }
 
 /**
@@ -929,7 +931,7 @@ evas_norender(Evas *e)
    MAGIC_CHECK_END();
 
 //   if (!e->changed) return;
-   evas_render_updates_internal(e, NULL, 0, 0);
+   evas_render_updates_internal(e, 0, 0);
 }
 
 /**

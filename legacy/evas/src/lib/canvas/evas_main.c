@@ -126,15 +126,15 @@ evas_new(void)
    e->hinting = EVAS_FONT_HINTING_BYTECODE;
    e->name_hash = eina_hash_string_superfast_new(NULL);
 
-   eina_array_step_set(&e->delete_objects, 16);
-   eina_array_step_set(&e->active_objects, 16);
-   eina_array_step_set(&e->restack_objects, 16);
-   eina_array_step_set(&e->render_objects, 16);
-   eina_array_step_set(&e->pending_objects, 16);
-   eina_array_step_set(&e->obscuring_objects, 16);
-   eina_array_step_set(&e->temporary_objects, 16);
-   eina_array_step_set(&e->calculate_objects, 16);
-   eina_array_step_set(&e->clip_changes, 16);
+   eina_array_step_set(&e->delete_objects, 256);
+   eina_array_step_set(&e->active_objects, 256);
+   eina_array_step_set(&e->restack_objects, 256);
+   eina_array_step_set(&e->render_objects, 256);
+   eina_array_step_set(&e->pending_objects, 256);
+   eina_array_step_set(&e->obscuring_objects, 256);
+   eina_array_step_set(&e->temporary_objects, 256);
+   eina_array_step_set(&e->calculate_objects, 256);
+   eina_array_step_set(&e->clip_changes, 256);
 
    return e;
 }

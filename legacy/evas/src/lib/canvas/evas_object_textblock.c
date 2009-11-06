@@ -5630,6 +5630,11 @@ evas_object_textblock_render_pre(Evas_Object *obj)
 	evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes, obj, is_v, was_v);
 	goto done;
      }
+   if (obj->cur.map != obj->prev.map)
+     {
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+        goto done;
+     }
    /* it's not visible - we accounted for it appearing or not so just abort */
    if (!is_v) goto done;
    /* clipper changed this is in addition to anything else for obj */
