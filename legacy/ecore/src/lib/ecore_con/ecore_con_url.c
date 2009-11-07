@@ -776,7 +776,8 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename, const cha
      {
 	char *tmp;
 
-	tmp = strdupa(filename);
+	tmp = strdup(filename);
+	if (!tmp) return 0;
 
 	if (stat(filename, &file_info)) return 0;
 	fd = fopen(filename, "rb");
@@ -795,6 +796,8 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename, const cha
                          _ecore_con_url_read_cb);
 	curl_easy_setopt(url_con->curl_easy, CURLOPT_READDATA, fd);
 	ecore_con_url_url_set(url_con, url);
+
+	free(tmp);
 
 	return _ecore_con_url_perform(url_con);
      }
