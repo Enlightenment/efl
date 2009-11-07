@@ -937,24 +937,27 @@ evas_cache_image_drop(Image_Entry *im)
    im->references--;
    cache = im->cache;
 
-   if (im->references == 0 && !im->flags.pending)
+   if (im->references == 0)
      {
 #ifdef BUILD_ASYNC_PRELOAD
-	pthread_mutex_lock(&mutex);
-        if (im->flags.preload || im->flags.in_pipe)
-          {
-             pthread_mutex_unlock(&mutex);
-             _evas_cache_image_entry_preload_remove(im, NULL);
-             pthread_mutex_lock(&mutex_pending);
-             if (!im->flags.pending)
-               {
-                  im->flags.pending = 1;
-                  pending = eina_list_append(pending, im);
-               }
-             pthread_mutex_unlock(&mutex_pending);
-             return;
-          }
-	pthread_mutex_unlock(&mutex);
+	if (!im->flags.pending)
+	  {
+	     pthread_mutex_lock(&mutex);
+	     if (im->flags.preload || im->flags.in_pipe)
+	       {
+		  pthread_mutex_unlock(&mutex);
+		  _evas_cache_image_entry_preload_remove(im, NULL);
+		  pthread_mutex_lock(&mutex_pending);
+		  if (!im->flags.pending)
+		    {
+		       im->flags.pending = 1;
+		       pending = eina_list_append(pending, im);
+		    }
+		  pthread_mutex_unlock(&mutex_pending);
+		  return;
+	       }
+	     pthread_mutex_unlock(&mutex);
+	  }
 #endif
 
 	if (im->flags.dirty)
