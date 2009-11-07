@@ -28,6 +28,7 @@
 #  include <unistd.h>
 # elif defined (__FreeBSD__) || defined (__OpenBSD__) || defined (__NetBSD__) || defined (__DragonFly__) || defined (__MacOSX__)
 #  include <unistd.h>
+#  include <sys/param.h>
 #  include <sys/sysctl.h>
 # elif defined (__linux__)
 #  define _GNU_SOURCE
