@@ -60,14 +60,17 @@ AC_ARG_WITH(internal-maximum-log-level,
     ], [:])
 
 EFL_ETHUMB_BUILD=""
+EFL_ETHUMB_CLIENT_BUILD=""
 lt_enable_auto_import=""
 case "$host_os" in
    mingw* | cegcc*)
       EFL_ETHUMB_BUILD="-DEFL_ETHUMB_BUILD"
+      EFL_ETHUMB_CLIENT_BUILD="-DEFL_ETHUMB_CLIENT_BUILD"
       lt_enable_auto_import="-Wl,--enable-auto-import"
    ;;
 esac
 AC_SUBST(EFL_ETHUMB_BUILD)
+AC_SUBST(EFL_ETHUMB_CLIENT_BUILD)
 AC_SUBST(lt_enable_auto_import)
 
 PKG_CHECK_MODULES(EINA, [eina-0])
