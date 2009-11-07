@@ -82,14 +82,14 @@ void
 evas_object_change(Evas_Object *obj)
 {
    Eina_List *l;
-   Evas_Object *data;
+   Evas_Object *obj2;
 
    obj->layer->evas->changed = 1;
    if (obj->changed) return;
+//   obj->changed = 1;
    evas_render_object_recalc(obj);
    /* set changed flag on all objects this one clips too */
-   EINA_LIST_FOREACH(obj->clip.clipees, l, data)
-     evas_object_change(data);
+   EINA_LIST_FOREACH(obj->clip.clipees, l, obj2) evas_object_change(obj2);
    if (obj->smart.parent) evas_object_change(obj->smart.parent);
 }
 
@@ -208,10 +208,8 @@ evas_object_clip_changes_clean(Evas_Object *obj)
 {
    Eina_Rectangle *r;
 
-   EINA_LIST_FREE(obj->clip.changes, r)
-     eina_rectangle_free(r);
+   EINA_LIST_FREE(obj->clip.changes, r) eina_rectangle_free(r);
 }
-
 
 void
 evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *obj, int is_v, int was_v)

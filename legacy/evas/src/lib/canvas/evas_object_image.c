@@ -2741,11 +2741,18 @@ evas_object_image_render_pre(Evas_Object *obj)
    /* aren't fully opaque and we are visible */
    if (evas_object_is_visible(obj) &&
        evas_object_is_opaque(obj))
-     obj->layer->evas->engine.func->output_redraws_rect_del(obj->layer->evas->engine.data.output,
-							    obj->cur.cache.clip.x,
-							    obj->cur.cache.clip.y,
-							    obj->cur.cache.clip.w,
-							    obj->cur.cache.clip.h);
+     {
+        printf("            %p img rect del %i %i %ix%i\n", obj,
+               obj->cur.cache.clip.x,
+               obj->cur.cache.clip.y,
+               obj->cur.cache.clip.w,
+               obj->cur.cache.clip.h);
+         obj->layer->evas->engine.func->output_redraws_rect_del(obj->layer->evas->engine.data.output,
+                                                               obj->cur.cache.clip.x,
+                                                               obj->cur.cache.clip.y,
+                                                               obj->cur.cache.clip.w,
+                                                               obj->cur.cache.clip.h);
+     }
    done:
    evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, obj, is_v, was_v);
 }
@@ -2836,7 +2843,7 @@ evas_object_image_was_opaque(Evas_Object *obj)
 	(o->prev.border.b != 0)) &&
        (!o->prev.border.fill)) return 0;
    if (!o->engine_data) return 0;
-   if ((obj->prev.map) && (obj->prev.usemap)) return 0;
+   if (obj->prev.usemap) return 0;
    if (obj->prev.render_op == EVAS_RENDER_COPY) return 1;
    if (o->prev.has_alpha) return 0;
    if (obj->prev.render_op != EVAS_RENDER_BLEND) return 0;

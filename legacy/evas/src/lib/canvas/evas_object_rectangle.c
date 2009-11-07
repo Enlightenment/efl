@@ -299,6 +299,7 @@ evas_object_rectangle_is_opaque(Evas_Object *obj)
 {
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fully opaque over the entire rectangle it occupies */
+   if ((obj->cur.map) && (obj->cur.usemap)) return 0;
    if (obj->cur.render_op == EVAS_RENDER_COPY)
 	return 1;
    if (obj->cur.render_op != EVAS_RENDER_BLEND)

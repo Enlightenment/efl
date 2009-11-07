@@ -451,6 +451,7 @@ evas_object_gradient2_linear_is_opaque(Evas_Object *obj)
 
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fully opaque over the entire region it occupies */
+   if ((obj->cur.map) && (obj->cur.usemap)) return 0;
    o = (Evas_Object_Gradient2_Linear *)(obj->object_data);
    if (!o->engine_data) return 0;
    og = (Evas_Object_Gradient2 *)(o);

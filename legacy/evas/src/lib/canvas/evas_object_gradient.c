@@ -1150,8 +1150,9 @@ evas_object_gradient_is_opaque(Evas_Object *obj)
    /* currently fully opaque over the entire region it occupies */
    o = (Evas_Object_Gradient *)(obj->object_data);
    if (!o->engine_data) return 0;
+   if ((obj->cur.map) && (obj->cur.usemap)) return 0;
    return o->cur.gradient_opaque;
- }
+}
 
 static int
 evas_object_gradient_was_opaque(Evas_Object *obj)

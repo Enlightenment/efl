@@ -30,6 +30,7 @@ _evas_map_calc_geom_change(Evas_Object *obj)
      }
    evas_object_inform_call_move(obj);
    evas_object_inform_call_resize(obj);
+   obj->changed = 1;
 }
 
 static void
