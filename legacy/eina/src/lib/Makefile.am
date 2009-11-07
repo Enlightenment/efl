@@ -98,6 +98,7 @@ eina_amalgamation.c: $(base_sources) Makefile
 	@echo "#include <dirent.h>" >> eina_amalgamation.c
 	@echo "#include <assert.h>" >> eina_amalgamation.c
 	@echo "#include <errno.h>" >> eina_amalgamation.c
+	@echo "#include <fnmatch.h>" >> eina_amalgamation.c
 
 	@echo "#ifdef HAVE_EVIL" >> eina_amalgamation.c
 	@echo "# include <Evil.h>" >> eina_amalgamation.c
@@ -115,7 +116,7 @@ eina_amalgamation.c: $(base_sources) Makefile
 		  file="$$f" ; \
 	   fi ; \
 	   echo "/* file: $$file */" >> eina_amalgamation.c; \
-	   grep -v -e '^# *include \+.\(config\|eina_[a-z_]\+\|Evil\|stdio\|stdlib\|string\|dlfcn\|dirent\|assert\|errno\)[.]h.*' $$file >> eina_amalgamation.c; \
+	   grep -v -e '^# *include \+.\(config\|eina_[a-z_]\+\|Evil\|stdio\|stdlib\|string\|dlfcn\|dirent\|assert\|errno\|fnmatch\)[.]h.*' $$file >> eina_amalgamation.c; \
 	done
 	@echo "eina_amalgamation.c generated"
 
