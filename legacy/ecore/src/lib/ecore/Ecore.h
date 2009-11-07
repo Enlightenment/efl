@@ -55,6 +55,7 @@
 # include <winsock2.h>
 #elif (defined (__FreeBSD__) && (__FreeBSD_version >= 420001)) || defined (__OpenBSD__)
 # include <sys/select.h>
+# include <signal.h>
 #else
 # include <sys/time.h>
 # include <signal.h>
