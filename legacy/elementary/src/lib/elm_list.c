@@ -701,6 +701,14 @@ elm_list_item_del(Elm_List_Item *it)
    free(it);
 }
 
+/**
+ * Set the function called when a list item is freed.
+ *
+ * @param it The item to set the callback on
+ * @param func The function called
+ *
+ * @ingroup Hoversel
+ */
 EAPI void
 elm_list_item_del_cb_set(Elm_List_Item *it, void (*func)(void *data, Evas_Object *obj, void *event_info))
 {

@@ -36,6 +36,7 @@ struct _Elm_Hoversel_Item
    const char *icon_group;
    Elm_Icon_Type icon_type;
    void (*func) (void *data, Evas_Object *obj, void *event_info);
+   void (*del_cb) (void *data, Evas_Object *obj, void *event_info);
    void *data;
 };
 
@@ -63,6 +64,7 @@ _del_hook(Evas_Object *obj)
    elm_hoversel_hover_end(obj);
    EINA_LIST_FREE(wd->items, it)
      {
+	if (it->del_cb) it->del_cb((void *)it->data, it->obj, it);
 	eina_stringshare_del(it->label);
 	eina_stringshare_del(it->icon_file);
 	eina_stringshare_del(it->icon_group);
@@ -469,6 +471,7 @@ elm_hoversel_item_del(Elm_Hoversel_Item *it)
 {
    Widget_Data *wd = elm_widget_data_get(it->obj);
 
+   if (it->del_cb) it->del_cb((void *)it->data, it->obj, it);
    if (!wd) return;
    elm_hoversel_hover_end(it->obj);
    wd->items = eina_list_remove(wd->items, it);
@@ -476,6 +479,20 @@ elm_hoversel_item_del(Elm_Hoversel_Item *it)
    eina_stringshare_del(it->icon_file);
    eina_stringshare_del(it->icon_group);
    free(it);
+}
+
+/**
+ * Set the function called when an hoversel item is freed.
+ *
+ * @param it The item to set the callback on
+ * @param func The function called
+ *
+ * @ingroup Hoversel
+ */
+EAPI void
+elm_hoversel_item_del_cb_set(Elm_Hoversel_Item *it, void (*func)(void *data, Evas_Object *obj, void *event_info))
+{
+   it->del_cb = func;
 }
 
 /**
