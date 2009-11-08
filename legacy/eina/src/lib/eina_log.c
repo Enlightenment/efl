@@ -1085,7 +1085,7 @@ eina_log_threads_init(void)
 void
 eina_log_threads_shutdown(void)
 {
-    CHECK_MAIN(0);
+    CHECK_MAIN();
     SHUTDOWN();
     _threads_enabled = EINA_FALSE;
 }
