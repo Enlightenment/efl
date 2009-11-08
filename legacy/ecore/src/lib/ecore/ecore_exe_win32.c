@@ -14,6 +14,8 @@
 # include <config.h>
 #endif
 
+#include <Evil.h>
+
 #include "ecore_private.h"
 #include "Ecore.h"
 
@@ -38,6 +40,7 @@ struct _Ecore_Exe
    EINA_INLIST;
    ECORE_MAGIC;
 
+   HANDLE process2;
    HANDLE process; /* CloseHandle */
    HANDLE thread;
    DWORD  process_id;
@@ -50,8 +53,18 @@ struct _Ecore_Exe
 };
 
 static Ecore_Exe *exes = NULL;
+Ecore_Win32_Handler *h = NULL;
+Ecore_Win32_Handler *h2 = NULL;
 
 static BOOL CALLBACK _ecore_exe_enum_windows_procedure(HWND window, LPARAM data);
+static void          _ecore_exe_event_add_free(void *data, void *ev);
+static void          _ecore_exe_event_del_free(void *data __UNUSED__, void *ev);
+static int           _ecore_exe_close_cb(void *data, Ecore_Win32_Handler *wh);
+
+EAPI int            ECORE_EXE_EVENT_ADD = 0;
+EAPI int            ECORE_EXE_EVENT_DEL = 0;
+EAPI int            ECORE_EXE_EVENT_DATA = 0;
+EAPI int            ECORE_EXE_EVENT_ERROR = 0;
 
 void
 _ecore_exe_init(void)
@@ -84,10 +97,11 @@ EAPI Ecore_Exe *ecore_exe_run(const char *exe_cmd, const void *data)
 
 EAPI Ecore_Exe *ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 {
-   STARTUPINFO         si;
-   PROCESS_INFORMATION pi;
-   Ecore_Exe          *exe;
-   char               *ret = NULL;
+   STARTUPINFO          si;
+   PROCESS_INFORMATION  pi;
+   Ecore_Exe_Event_Add *e;
+   Ecore_Exe           *exe;
+   char                *ret = NULL;
 
    exe = calloc(1, sizeof(Ecore_Exe));
    if (!exe)
@@ -122,24 +136,39 @@ EAPI Ecore_Exe *ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, c
      goto free_exe_cmd;
 
    /* be sure that the child process is running */
+   /* FIXME: This does not work if the child is an EFL-based app */
    if (WaitForInputIdle(pi.hProcess, INFINITE) != 0)
      goto free_exe_cmd;
 
+   ECORE_MAGIC_SET(exe, ECORE_MAGIC_EXE);
+   exe->process = pi.hProcess;
    exe->thread = pi.hThread;
    exe->process_id = pi.dwProcessId;
    exe->thread_id = pi.dwThreadId;
    exe->data = (void *)data;
-   CloseHandle(pi.hProcess);
 
-   if (!(exe->process = OpenProcess(PROCESS_SUSPEND_RESUME | PROCESS_TERMINATE | SYNCHRONIZE,
-                                    FALSE, pi.dwProcessId)))
+   if (!(exe->process2 = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_SUSPEND_RESUME | PROCESS_TERMINATE | SYNCHRONIZE,
+                                     FALSE, pi.dwProcessId)))
      goto close_thread;
 
+   h = ecore_main_win32_handler_add(exe->process2, _ecore_exe_close_cb, exe);
+
    exes = (Ecore_Exe *)eina_inlist_append(EINA_INLIST_GET(exes), EINA_INLIST_GET(exe));
+
+   e = (Ecore_Exe_Event_Add *)calloc(1, sizeof(Ecore_Exe_Event_Add));
+   if (!e) goto close_process2;
+
+   e->exe = exe;
+   ecore_event_add(ECORE_EXE_EVENT_ADD, e,
+                   _ecore_exe_event_add_free, NULL);
+
    return exe;
 
+ close_process2:
+   CloseHandle(exe->process2);
  close_thread:
    CloseHandle(pi.hThread);
+   CloseHandle(pi.hProcess);
  free_exe_cmd:
    free(exe->cmd);
  free_exe:
@@ -179,8 +208,9 @@ EAPI void *ecore_exe_free(Ecore_Exe *exe)
 
    data = exe->data;
 
-   CloseHandle(exe->process);
    CloseHandle(exe->thread);
+   CloseHandle(exe->process);
+   CloseHandle(exe->process2);
    free(exe->cmd);
    exes = (Ecore_Exe *) eina_inlist_remove(EINA_INLIST_GET(exes), EINA_INLIST_GET(exe));
    ECORE_MAGIC_SET(exe, ECORE_MAGIC_NONE);
@@ -280,6 +310,7 @@ EAPI void ecore_exe_interrupt(Ecore_Exe *exe)
 	return;
      }
 
+   CloseHandle(exe->thread);
    CloseHandle(exe->process);
    exe->sig = ECORE_EXE_WIN32_SIGINT;
    while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)exe));
@@ -293,6 +324,7 @@ EAPI void ecore_exe_quit(Ecore_Exe *exe)
 	return;
      }
 
+   CloseHandle(exe->thread);
    CloseHandle(exe->process);
    exe->sig = ECORE_EXE_WIN32_SIGQUIT;
    while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)exe));
@@ -306,6 +338,7 @@ EAPI void ecore_exe_terminate(Ecore_Exe *exe)
 	return;
      }
 
+/*    CloseHandle(exe->thread); */
    CloseHandle(exe->process);
    exe->sig = ECORE_EXE_WIN32_SIGTERM;
    while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)exe));
@@ -319,6 +352,7 @@ EAPI void ecore_exe_kill(Ecore_Exe *exe)
 	return;
      }
 
+   CloseHandle(exe->thread);
    CloseHandle(exe->process);
    exe->sig = ECORE_EXE_WIN32_SIGKILL;
    while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)exe));
@@ -369,29 +403,48 @@ _ecore_exe_enum_windows_procedure(HWND window, LPARAM data)
         if (CreateRemoteThread(exe->process, NULL, 0,
                                (LPTHREAD_START_ROUTINE)_ecore_exe_thread_procedure, NULL,
                                0, NULL))
-          return FALSE;
+          {
+            printf ("remote thread\n");
+            return FALSE;
+          }
 
         if ((exe->sig == ECORE_EXE_WIN32_SIGINT) ||
             (exe->sig == ECORE_EXE_WIN32_SIGQUIT))
-          return FALSE;
+          {
+            printf ("int or quit\n");
+            return FALSE;
+          }
 
         /* WM_CLOSE message */
         PostMessage(window, WM_CLOSE, 0, 0);
         if (WaitForSingleObject(exe->process, ECORE_EXE_WIN32_TIMEOUT) == WAIT_OBJECT_0)
-          return FALSE;
+          {
+            printf ("CLOSE\n");
+            return FALSE;
+          }
 
         /* WM_QUIT message */
         PostMessage(window, WM_QUIT, 0, 0);
         if (WaitForSingleObject(exe->process, ECORE_EXE_WIN32_TIMEOUT) == WAIT_OBJECT_0)
-          return FALSE;
+          {
+            printf ("QUIT\n");
+            return FALSE;
+          }
 
         /* Exit process */
         if (CreateRemoteThread(exe->process, NULL, 0,
                                (LPTHREAD_START_ROUTINE)ExitProcess, NULL,
                                0, NULL))
-          return FALSE;
+          {
+            printf ("remote thread 2\n");
+            return FALSE;
+          }
+
         if (exe->sig == ECORE_EXE_WIN32_SIGTERM)
-          return FALSE;
+          {
+            printf ("term\n");
+            return FALSE;
+          }
 
         TerminateProcess(exe->process, 0);
 
@@ -399,6 +452,63 @@ _ecore_exe_enum_windows_procedure(HWND window, LPARAM data)
      }
 
    return TRUE;
+}
+
+static void
+_ecore_exe_event_add_free(void *data __UNUSED__, void *ev)
+{
+   Ecore_Exe_Event_Add *e;
+
+   e = ev;
+   free(e);
+}
+
+static void
+_ecore_exe_event_del_free(void *data __UNUSED__, void *ev)
+{
+   Ecore_Exe_Event_Del *e;
+
+   e = (Ecore_Exe_Event_Del *)ev;
+   if (e->exe)
+     ecore_exe_free(e->exe);
+   free(e);
+}
+
+static int
+_ecore_exe_close_cb(void *data, Ecore_Win32_Handler *wh)
+{
+   Ecore_Exe_Event_Del *e;
+   Ecore_Exe           *exe;
+   DWORD                exit_code = 0;
+
+   printf ("closing...\n");
+
+   e = calloc(1, sizeof(Ecore_Exe_Event_Del));
+   if (!e) return 0;
+
+   exe = (Ecore_Exe *)data;
+
+   if (GetExitCodeProcess(exe->process2, &exit_code))
+     {
+       printf ("exit code : %d\n", (int)exit_code);
+        e->exit_code = exit_code;
+        e->exited = 1;
+     }
+   else
+     {
+        char *msg;
+
+        msg = evil_last_error_get();
+        printf("%s\n", msg);
+        free(msg);
+     }
+     e->pid = exe->process_id;
+     e->exe = exe;
+
+     _ecore_event_add(ECORE_EXE_EVENT_DEL, e,
+                      _ecore_exe_event_del_free, NULL);
+
+   return 1;
 }
 
 #endif

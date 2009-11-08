@@ -195,7 +195,6 @@ extern "C" {
 #endif
      };
 
-#ifndef _WIN32
    struct _Ecore_Exe_Event_Add /** Process add event */
      {
 	Ecore_Exe *exe; /**< The handle to the added process */
@@ -211,7 +210,9 @@ extern "C" {
 	unsigned int  exited    : 1; /** < set to 1 if the process exited of its own accord */
 	unsigned int  signalled : 1; /** < set to 1 id the process exited due to uncaught signal */
 	void         *ext_data; /**< Extension data - not used */
+#ifndef _WIN32
 	siginfo_t     data; /**< Signal info */
+#endif
      };
 
    struct _Ecore_Exe_Event_Data_Line /**< Lines from a child process */
@@ -227,7 +228,6 @@ extern "C" {
 	int   size; /**< the size of this data in bytes */
 	Ecore_Exe_Event_Data_Line *lines; /**< an array of line data if line buffered, the last one has it's line member set to NULL */
      };
-#endif
 
    EAPI int  ecore_init(void);
    EAPI int  ecore_shutdown(void);
