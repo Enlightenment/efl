@@ -14,7 +14,9 @@
 # include <config.h>
 #endif
 
-#include <Evil.h>
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
 
 #include "ecore_private.h"
 #include "Ecore.h"
