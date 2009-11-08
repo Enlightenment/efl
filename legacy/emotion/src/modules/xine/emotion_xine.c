@@ -1359,11 +1359,11 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 			    _emotion_progress_set(ev->obj, (char *)e->description, (double)e->percent / 100.0);
 			 }
 		       break;
-		     case XINE_EVENT_MRL_REFERENCE:
+		     case XINE_EVENT_MRL_REFERENCE_EXT:
 			 {
-			    xine_mrl_reference_data_t *e;
+			    xine_mrl_reference_data_ext_t *e;
 			    
-			    e = (xine_mrl_reference_data_t *)eev->xine_event;
+			    e = (xine_mrl_reference_data_ext_t *)eev->xine_event;
 			    _emotion_file_ref_set(ev->obj, e->mrl, e->alternative);
 			 }
 		       break;

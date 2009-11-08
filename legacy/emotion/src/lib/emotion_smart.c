@@ -976,7 +976,7 @@ _emotion_progress_set(Evas_Object *obj, char *info, double stat)
 }
 
 EAPI void
-_emotion_file_ref_set(Evas_Object *obj, char *file, int num)
+_emotion_file_ref_set(Evas_Object *obj, const char *file, int num)
 {
    Smart_Data *sd;
 

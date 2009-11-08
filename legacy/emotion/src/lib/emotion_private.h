@@ -115,7 +115,7 @@ EAPI void  _emotion_audio_level_change(Evas_Object *obj);
 EAPI void  _emotion_channels_change(Evas_Object *obj);
 EAPI void  _emotion_title_set(Evas_Object *obj, char *title);
 EAPI void  _emotion_progress_set(Evas_Object *obj, char *info, double stat);
-EAPI void  _emotion_file_ref_set(Evas_Object *obj, char *file, int num);
+EAPI void  _emotion_file_ref_set(Evas_Object *obj, const char *file, int num);
 EAPI void  _emotion_spu_button_num_set(Evas_Object *obj, int num);
 EAPI void  _emotion_spu_button_set(Evas_Object *obj, int button);
 
