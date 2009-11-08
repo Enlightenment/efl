@@ -13,6 +13,7 @@
 #include "ecore_private.h"
 #include "Ecore.h"
 
+#ifdef BUILD_PTHREAD
 typedef struct _Ecore_Pthread_Worker Ecore_Pthread_Worker;
 typedef struct _Ecore_Pthread_Data Ecore_Pthread_Data;
 typedef struct _Ecore_Pthread Ecore_Pthread;
@@ -33,16 +34,17 @@ struct _Ecore_Pthread_Data
    Ecore_Pipe *p;
    pthread_t thread;
 };
+#endif
 
 static int _ecore_thread_count_max = 0;
-static int _ecore_thread_count = 0;
-
-static Eina_List *_ecore_thread_data = NULL;
-static Eina_List *_ecore_thread = NULL;
 static int ECORE_THREAD_PIPE_DEL = 0;
-static Ecore_Event_Handler *del_handler = NULL;
 
 #ifdef BUILD_PTHREAD
+static int _ecore_thread_count = 0;
+static Eina_List *_ecore_thread_data = NULL;
+static Eina_List *_ecore_thread = NULL;
+static Ecore_Event_Handler *del_handler = NULL;
+
 static pthread_mutex_t _mutex = PTHREAD_MUTEX_INITIALIZER;
 
 static void
@@ -286,6 +288,7 @@ ecore_thread_run(void (*func_heavy)(void *data),
 EAPI Eina_Bool
 ecore_thread_cancel(Ecore_Thread *thread)
 {
+#ifdef BUILD_PTHREAD
    Ecore_Pthread_Worker *work;
    Eina_List *l;
 
@@ -308,4 +311,7 @@ ecore_thread_cancel(Ecore_Thread *thread)
    /* Delay the destruction */
    work->cancel = EINA_TRUE;
    return EINA_FALSE;
+#else
+   return EINA_FALSE;
+#endif
 }
