@@ -157,9 +157,7 @@ _edje_external_signal_emit(Evas_Object *obj, const char *emission, const char *s
 void
 _edje_external_params_free(Eina_List *external_params, unsigned int free_strings)
 {
-   Eina_List *l;
    Edje_External_Param *param;
-   Edje_Part_Description *desc;
 
    EINA_LIST_FREE(external_params, param)
      {
