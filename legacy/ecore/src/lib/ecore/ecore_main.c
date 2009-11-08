@@ -438,7 +438,7 @@ _ecore_main_select(double timeout)
    if (ret < 0)
      {
 #ifdef _WIN32
-       fprintf(stderr, "main_loop_select error %d\n", WSAGetLastError());
+	fprintf(stderr, "main_loop_select error %d\n", WSAGetLastError());
 	if (WSAEINTR == WSAGetLastError()) return -1;
 #else
 	if (errno == EINTR) return -1;
@@ -799,6 +799,8 @@ _ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
    else
      timeout = (DWORD)(tv->tv_sec * 1000.0 + tv->tv_usec / 1000.0);
 
+   if (timeout == 0) return;
+
    result = MsgWaitForMultipleObjects(objects_nbr, (const HANDLE *)objects, FALSE,
 				      timeout, QS_ALLINPUT);
 
@@ -807,8 +809,18 @@ _ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
    FD_ZERO(exceptfds);
 
    /* The result tells us the type of event we have. */
-   if (result == WAIT_TIMEOUT)
+   if (result == WAIT_FAILED)
      {
+        char *msg;
+
+        msg = evil_last_error_get();
+        printf (" * %s\n", msg);
+        free(msg);
+        res = 0;
+     }
+   else if (result == WAIT_TIMEOUT)
+     {
+        printf ("time out\n");
         res = 0;
      }
    else if (result == (WAIT_OBJECT_0 + objects_nbr))
