@@ -119,7 +119,6 @@ static int cache_item_timeout = -1;
 static int cache_item_timeout_check = -1;
 static Mem *stat_mem = NULL;
 static int _evas_cserve_bin_log_dom = -1;
-static int stat_mem_num = 0;
 static Eina_List *stat_mems = NULL;
 
 static void cache_clean(void);
@@ -976,7 +975,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              Op_Load *rep;
              Op_Load_Reply msg;
              Img *img;
-             RGBA_Image_Loadopts lopt = {0, 0.0, 0, 0, 0, 0, 0, 0};
+             RGBA_Image_Loadopts lopt = {0, 0.0, 0, 0, {0, 0, 0, 0}};
              char *file = NULL, *key = NULL;
              
              DBG("OP_LOAD %i", c->pid);
@@ -1368,7 +1367,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                        DBG("...   memcpy %p %p %i ", 
                          itt, &it, sizeof(Op_Getinfo_Item));
                        memcpy(itt, &it, sizeof(Op_Getinfo_Item));
-                       DBG("...   memcpy done n", img);
+                       DBG("...   memcpy done %p", img);
                        p += sizeof(Op_Getinfo_Item) + it.file_key_size;
                        LKU(img->lock); 
                     }
@@ -1439,7 +1438,7 @@ parse_args(int argc, char **argv)
      }
 }
 
-static exit_flag = 0;
+static int exit_flag = 0;
 
 static void
 exit_handler(int x, siginfo_t *info, void *data)
