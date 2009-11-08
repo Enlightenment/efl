@@ -240,7 +240,6 @@ em_init(Evas_Object  *obj,
 {
    Emotion_Gstreamer_Video *ev;
    GError                  *error;
-   int                      fds[2];
 
    if (!emotion_video)
      return 0;
