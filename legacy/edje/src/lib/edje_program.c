@@ -730,8 +730,8 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
 //		       goto done;
 		    }
 	       }
-	     done:
-	        continue;
+//	     done:
+//	        continue;
 	  }
 //	_edje_emit(ed, "program,stop", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
