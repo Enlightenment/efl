@@ -797,6 +797,24 @@ eng_image_free(void *data, void *image)
    free(im);
 }
 
+static void
+eng_image_data_preload_request(void *data __UNUSED__, void *image, const void *target)
+{
+   Evas_Quartz_Image *im = (Evas_Quartz_Image *)image;
+
+   if (!im && !im->im) return ;
+   evas_cache_image_preload_data(&im->im->cache_entry, target);
+}
+
+static void
+eng_image_data_preload_cancel(void *data __UNUSED__, void *image, const void *target)
+{
+   Evas_Quartz_Image *im = (Evas_Quartz_Image *)image;
+
+   if (!im && !im->im) return ;
+   evas_cache_image_preload_cancel(&im->im->cache_entry, target);
+}
+
 static void *
 eng_image_size_set(void *data, void *image, int w, int h)
 {
@@ -1482,6 +1500,8 @@ module_open(Evas_Module *em)
    ORD(image_comment_get);
    ORD(image_data_get);
    ORD(image_data_put);
+   ORD(image_data_preload_request);
+   ORD(image_data_preload_cancel);
    ORD(image_dirty_region);
    ORD(image_draw);
    ORD(image_format_get);
