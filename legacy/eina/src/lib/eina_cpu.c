@@ -149,8 +149,8 @@ EAPI int eina_cpu_count(void)
 # elif defined (__FreeBSD__) || defined (__OpenBSD__) || defined (__NetBSD__) || defined (__DragonFly__) || defined (__MacOSX__) || ( defined (__MACH__) && defined (__APPLE__))
 
    int    mib[4];
-   size_t len;
    int    cpus;
+   size_t len = sizeof(cpus);
 
    mib[0] = CTL_HW;
 #ifdef HW_AVAILCPU
