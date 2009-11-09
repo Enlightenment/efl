@@ -30,7 +30,6 @@ _evas_map_calc_geom_change(Evas_Object *obj)
      }
    evas_object_inform_call_move(obj);
    evas_object_inform_call_resize(obj);
-   obj->changed = 1;
 }
 
 static void
@@ -288,7 +287,6 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
      {
         if (obj->cur.map)
           {
-             obj->prev.geometry = obj->cur.map->normal_geometry;
              _evas_map_calc_geom_change(obj);
           }
      }
