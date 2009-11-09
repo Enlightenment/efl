@@ -12,7 +12,7 @@
  *
  * Signals that you can add callbacks for are:
  *
- * anchor,clicked - achor called was clicked. event_info is anchor info -
+ * anchor,clicked - anchor called was clicked. event_info is anchor info -
  * Elm_Entry_Anchorview_Info
  */
 typedef struct _Widget_Data Widget_Data;
