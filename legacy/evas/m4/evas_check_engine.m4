@@ -406,8 +406,6 @@ dnl use: EVAS_CHECK_ENGINE_DEP_QUARTZ(engine, simple, want_static[, ACTION-IF-FO
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_QUARTZ],
 [
 
-AC_LANG_PUSH([Objective C])
-
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
@@ -424,8 +422,6 @@ if test "x${have_dep}" = "xyes" ; then
 else
   m4_default([$5], [:])
 fi
-
-AC_LANG_POP([Objective C])
 
 ])
 
