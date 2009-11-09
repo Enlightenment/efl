@@ -1080,7 +1080,6 @@ _ethumb_plugin_generate(Ethumb *e)
    if (!plugin)
      {
 	DBG("no plugin for extension: \"%s\"", ext);
-	free(ext);
 	return EINA_FALSE;
      }
 
