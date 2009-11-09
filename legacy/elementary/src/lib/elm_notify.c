@@ -84,8 +84,8 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord x,y,w,h;
-   if(!wd->parent) return ;
 
+   if (!wd->parent) return;
    evas_object_geometry_get(wd->parent, &x, &y, &w, &h);
    evas_object_resize(obj, w, h);
    evas_object_move(obj, x, y);
@@ -165,7 +165,6 @@ _calc(Evas_Object *obj)
         evas_object_resize(wd->notify, minw, minh);
      }
 }
-
 
 static int
 _timer_cb(void *data)
@@ -287,11 +286,10 @@ elm_notify_content_set(Evas_Object *obj, Evas_Object *content)
    if(wd->content)
      {
 	evas_object_event_callback_del_full(wd->content,
-	      EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-	      _changed_size_hints, obj);
-        evas_object_event_callback_del_full(wd->content,
-	      EVAS_CALLBACK_RESIZE,
-	      _content_resize, obj);
+                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                            _changed_size_hints, obj);
+        evas_object_event_callback_del_full(wd->content, EVAS_CALLBACK_RESIZE,
+                                            _content_resize, obj);
 	evas_object_del(wd->content);
 	wd->content = NULL;
      }
@@ -303,11 +301,10 @@ elm_notify_content_set(Evas_Object *obj, Evas_Object *content)
 
 	edje_object_part_swallow(wd->notify, "elm.swallow.content", content);
 	evas_object_event_callback_add(content,
-	      EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-	      _changed_size_hints, obj);
-	evas_object_event_callback_add(content,
-	      EVAS_CALLBACK_RESIZE,
-	      _content_resize, obj);
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+	evas_object_event_callback_add(content, EVAS_CALLBACK_RESIZE,
+                                       _content_resize, obj);
 	_sizing_eval(obj);
      }
    _calc(obj);
@@ -329,20 +326,16 @@ elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent)
    if(wd->parent)
      {
 	evas_object_event_callback_del_full(wd->parent,
-	      EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-	      _changed_size_hints, obj);
-	evas_object_event_callback_del_full(wd->parent,
-	      EVAS_CALLBACK_RESIZE,
-	      _changed_size_hints, obj);
-	evas_object_event_callback_del_full(wd->parent,
-	      EVAS_CALLBACK_MOVE,
-	      _changed_size_hints, obj);
-	evas_object_event_callback_del_full(wd->parent,
-	      EVAS_CALLBACK_DEL,
-	      _parent_del, obj);
-	evas_object_event_callback_del_full(wd->parent,
-	      EVAS_CALLBACK_HIDE,
-	      _parent_hide, obj);
+                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                            _changed_size_hints, obj);
+	evas_object_event_callback_del_full(wd->parent, EVAS_CALLBACK_RESIZE,
+                                            _changed_size_hints, obj);
+	evas_object_event_callback_del_full(wd->parent, EVAS_CALLBACK_MOVE,
+                                            _changed_size_hints, obj);
+	evas_object_event_callback_del_full(wd->parent, EVAS_CALLBACK_DEL,
+                                            _parent_del, obj);
+	evas_object_event_callback_del_full(wd->parent, EVAS_CALLBACK_HIDE,
+                                            _parent_hide, obj);
 	wd->parent = NULL;
      }
 
@@ -353,17 +346,13 @@ elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent)
 	evas_object_event_callback_add(parent,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _changed_size_hints, obj);
-	evas_object_event_callback_add(parent,
-                                       EVAS_CALLBACK_RESIZE,
+	evas_object_event_callback_add(parent, EVAS_CALLBACK_RESIZE,
                                        _changed_size_hints, obj);
-	evas_object_event_callback_add(parent,
-                                       EVAS_CALLBACK_MOVE,
+	evas_object_event_callback_add(parent, EVAS_CALLBACK_MOVE,
                                        _changed_size_hints, obj);
-	evas_object_event_callback_add(parent,
-                                       EVAS_CALLBACK_DEL,
+	evas_object_event_callback_add(parent, EVAS_CALLBACK_DEL,
 				       _parent_del, obj);
-	evas_object_event_callback_add(parent,
-                                       EVAS_CALLBACK_HIDE,
+	evas_object_event_callback_add(parent, EVAS_CALLBACK_HIDE, 
                                        _parent_hide, obj);
 	_sizing_eval(obj);
      }
@@ -469,8 +458,6 @@ elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
         elm_widget_resize_object_set(obj,wd->block_events);	
      }
    else
-     {
-	evas_object_del(wd->block_events);
-     }
+     evas_object_del(wd->block_events);
 }
 
