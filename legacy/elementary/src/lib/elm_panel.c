@@ -23,14 +23,16 @@ static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _parent_resize(void *data, Evas *evas, Evas_Object *obj, void *event);
 static void _toggle_panel(void *data, Evas_Object *obj, const char *emission, const char *source);
+static void _changed_size_hints(void *data, Evas *evas, Evas_Object *obj, void *event);
+static void _sub_del(void *data, Evas_Object *obj, void *event);
 
 static void 
 _del_pre_hook(Evas_Object *obj) 
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_RESIZE, 
-                                  _parent_resize, obj);
+   evas_object_event_callback_del_full(wd->parent, EVAS_CALLBACK_RESIZE, 
+                                       _parent_resize, obj);
 }
 
 static void 
@@ -47,8 +49,13 @@ _theme_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    _elm_theme_set(wd->panel, "panel", "base", "default");
+   if (wd->content)
+     edje_object_part_swallow(wd->panel, "elm.swallow.content", wd->content);
    edje_object_scale_set(wd->panel, elm_widget_scale_get(obj) * 
                          _elm_config->scale);
+
+   edje_object_signal_emit(wd->panel, "elm,action,show", "elm");
+   edje_object_message_signal_process(wd->panel);
    _sizing_eval(obj);
 }
 
@@ -61,7 +68,8 @@ _sizing_eval(Evas_Object *obj)
 
    evas_object_geometry_get(wd->parent, &x, &y, &w, &h);
    edje_object_size_min_calc(wd->panel, &pw, &ph);
-   if (pw < 64) pw = 64;
+   printf("Panel Min Size: %d %d\n", pw, ph);
+//   if (pw < 64) pw = 64;
    switch (wd->orient) 
      {
       case ELM_PANEL_ORIENT_TOP:
@@ -102,6 +110,39 @@ _toggle_panel(void *data, Evas_Object *obj, const char *emission, const char *so
      }
 }
 
+static void 
+_changed_size_hints(void *data, Evas *evas, Evas_Object *obj, void *event) 
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+
+   if (wd->content)
+     edje_object_part_swallow(wd->panel, "elm.swallow.content", wd->content);
+   _sizing_eval(data);
+}
+
+static void 
+_sub_del(void *data, Evas_Object *obj, void *event) 
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *sub = event;
+
+   if (sub == wd->content) 
+     {
+        evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
+                                            _changed_size_hints, obj);
+        wd->content = NULL;
+        _sizing_eval(obj);
+     }
+}
+
+/**
+ * Add a new panel to the parent
+ * 
+ * @param parent The parent object
+ * @return The new object or NULL if it cannot be created
+ * 
+ * @ingroup Panel
+ */
 EAPI Evas_Object *
 elm_panel_add(Evas_Object *parent) 
 {
@@ -131,11 +172,20 @@ elm_panel_add(Evas_Object *parent)
    evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_RESIZE, 
                                   _parent_resize, obj);
 
-   edje_object_signal_emit(wd->panel, "elm,action,show", "elm");
+   evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
 
+   _sizing_eval(obj);
    return obj;
 }
 
+/**
+ * Set the panel orientation
+ * 
+ * @param obj The panel object
+ * @param orient The orientation to set for this panel object
+ * 
+ * @ingroup Panel
+ */
 EAPI void 
 elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient) 
 {
@@ -160,18 +210,29 @@ elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient)
    _sizing_eval(obj);
 }
 
+/**
+ * Set the panel content
+ * 
+ * @param obj The panel object
+ * @param content The content will be filled in this panel object
+ * 
+ * @ingroup Panel
+ */
 EAPI void 
 elm_panel_content_set(Evas_Object *obj, Evas_Object *content) 
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if (wd->content)
+   if ((wd->content != content) && (wd->content))
      elm_widget_sub_object_del(obj, wd->content);
+   wd->content = content;
    if (content) 
      {
         elm_widget_sub_object_add(obj, content);
         edje_object_part_swallow(wd->panel, "elm.swallow.content", content);
-        wd->content = content;
+        evas_object_event_callback_add(content, 
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
+                                       _changed_size_hints, obj);
         _sizing_eval(obj);
      }
 }
