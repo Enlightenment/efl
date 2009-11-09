@@ -13,6 +13,7 @@ struct _Widget_Data
    Ecore_Event_Handler *sel_clear_handler;
    Ecore_Timer *longpress_timer;
    const char *cut_sel;
+   const char *stripped;
    Evas_Coord lastw;
    Evas_Coord downx, downy;
    Evas_Coord cx, cy, cw, ch;
@@ -73,6 +74,7 @@ _del_hook(Evas_Object *obj)
    ecore_event_handler_del(wd->sel_clear_handler);
 #endif
    if (wd->cut_sel) eina_stringshare_del(wd->cut_sel);
+   if (wd->stripped) eina_stringshare_del(wd->stripped);
    if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
    if (wd->longpress_timer) ecore_timer_del(wd->longpress_timer);
    EINA_LIST_FREE(wd->items, it)
@@ -1154,9 +1156,15 @@ EAPI const char *
 elm_entry_entry_get(const Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   const char *text;
 
    if (!wd) return NULL;
-   return edje_object_part_text_get(wd->ent, "elm.text");
+   // Strip ending <br> that is added by the textblock
+   // need to check if <br> is present? seems it is always there
+   if (wd->stripped) eina_stringshare_del(wd->stripped);
+   text = edje_object_part_text_get(wd->ent, "elm.text");
+   wd->stripped = eina_stringshare_add_length(text, strlen(text) - 4);
+   return wd->stripped;
 }
 
 EAPI const char *
