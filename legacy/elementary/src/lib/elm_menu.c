@@ -62,7 +62,6 @@ _del_pre_hook(Evas_Object *obj)
    evas_object_event_callback_del_full(wd->parent, EVAS_CALLBACK_RESIZE, _parent_resize, obj);
 }
 
-
 static void
 _del_hook(Evas_Object *obj)
 {
@@ -176,7 +175,6 @@ _sizing_eval(Evas_Object *obj)
      }
 }
 
-
 static void
 _submenu_sizing_eval(Elm_Menu_Item *parent)
 {
@@ -264,7 +262,6 @@ _item_move_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
      _submenu_sizing_eval(item);
 }
 
-
 static void
 _hover_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 {
@@ -303,7 +300,6 @@ _submenu_hide(Elm_Menu_Item *item)
 	  _submenu_hide(item2);
      }
 }
-
 
 static void
 _menu_item_select(void *data, Evas_Object *obj, const char *emission, const char *source)
@@ -353,9 +349,9 @@ static void
 _submenu_open(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    Elm_Menu_Item *it = data;
+
    it->open = EINA_TRUE;
    evas_object_show(it->hv);
-
    _sizing_eval(it->menu);
 }
 
@@ -422,7 +418,6 @@ _item_submenu_obj_create(Elm_Menu_Item *item)
 
    evas_object_event_callback_add(item->bx, EVAS_CALLBACK_RESIZE, _menu_resize, item->menu);
 }
-
 
 /**
  * Add a new menu to the parent
