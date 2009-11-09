@@ -840,15 +840,7 @@ _edje_file_del(Edje *ed)
 	       }
 	     if (rp->swallowed_object)
 	       {
-		  evas_object_smart_member_del(rp->swallowed_object);
-		  evas_object_event_callback_del(rp->swallowed_object,
-						 EVAS_CALLBACK_FREE,
-						 _edje_object_part_swallow_free_cb);
-		  evas_object_clip_unset(rp->swallowed_object);
-		  evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
-		  if (rp->part->mouse_events)
-		     _edje_callbacks_del(rp->swallowed_object);
-
+                  _edje_real_part_swallow_clear(rp);
                   /* Objects swallowed by the app do not get deleted,
                    but those internally swallowed (GROUP type) do. */
 		  switch (rp->part->type)
@@ -862,7 +854,6 @@ _edje_file_del(Edje *ed)
 		     default:
 			break;
 		    }
-
 		  rp->swallowed_object = NULL;
 	       }
 	     if (rp->items)
