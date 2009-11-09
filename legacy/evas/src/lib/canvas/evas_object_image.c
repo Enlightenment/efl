@@ -2743,11 +2743,6 @@ evas_object_image_render_pre(Evas_Object *obj)
    if (evas_object_is_visible(obj) &&
        evas_object_is_opaque(obj))
      {
-        printf("            %p img rect del %i %i %ix%i\n", obj,
-               obj->cur.cache.clip.x,
-               obj->cur.cache.clip.y,
-               obj->cur.cache.clip.w,
-               obj->cur.cache.clip.h);
          obj->layer->evas->engine.func->output_redraws_rect_del(obj->layer->evas->engine.data.output,
                                                                obj->cur.cache.clip.x,
                                                                obj->cur.cache.clip.y,
