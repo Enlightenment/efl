@@ -26,7 +26,7 @@
 #  include <windows.h>
 # elif defined (__SUNPRO_C)
 #  include <unistd.h>
-# elif defined (__FreeBSD__) || defined (__OpenBSD__) || defined (__NetBSD__) || defined (__DragonFly__) || defined (__MacOSX__)
+# elif defined (__FreeBSD__) || defined (__OpenBSD__) || defined (__NetBSD__) || defined (__DragonFly__) || defined (__MacOSX__) || ( defined (__MACH__) && defined (__APPLE__))
 #  include <unistd.h>
 #  include <sys/param.h>
 #  include <sys/sysctl.h>
@@ -146,7 +146,8 @@ EAPI int eina_cpu_count(void)
     */
    return sysconf(_SC_NPROCESSORS_ONLN);
 
-# elif defined (__FreeBSD__) || defined (__OpenBSD__) || defined (__NetBSD__) || defined (__DragonFly__) || defined (__MacOSX__)
+# elif defined (__FreeBSD__) || defined (__OpenBSD__) || defined (__NetBSD__) || defined (__DragonFly__) || defined (__MacOSX__) || ( defined (__MACH__) && defined (__APPLE__))
+
    int    mib[4];
    size_t len;
    int    cpus;
