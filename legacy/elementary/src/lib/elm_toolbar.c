@@ -386,8 +386,8 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, voi
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
    edje_object_size_min_restricted_calc(it->base, &mw, &mh, mw, mh);
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-   evas_object_size_hint_weight_set(it->base, -1.0, 1.0);
-   evas_object_size_hint_align_set(it->base, 0.5, -1.0);
+   evas_object_size_hint_weight_set(it->base, -1.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(it->base, 0.5, EVAS_HINT_FILL);
    evas_object_size_hint_min_set(it->base, mw, mh);
    evas_object_box_append(wd->bx, it->base);
    evas_object_show(it->base);
