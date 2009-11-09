@@ -27,19 +27,14 @@ VMIN=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $2);}'`
 version_info=`expr $VMAJ + $VMIN`
 AC_SUBST(version_info)
 
-themesdir="${datadir}/ethumb/data/frames"
-AC_SUBST(themesdir)
-AS_AC_EXPAND(THEMESDIR, $themesdir)
-AC_DEFINE_UNQUOTED(THEMESDIR, ["$THEMESDIR"], [Where frame theme files are installed.]
-)
+#themesdir="${datadir}/ethumb/data/frames"
+#AC_SUBST(themesdir)
+#AS_AC_EXPAND(THEMESDIR, $themesdir)
+#AC_DEFINE_UNQUOTED(THEMESDIR, ["$THEMESDIR"], [Where frame theme files are installed.]
+#)
 
-AS_AC_EXPAND(SYSCONFDIR, $sysconfdir)
-AC_DEFINE_UNQUOTED(SYSCONFDIR, ["$SYSCONFDIR"], [Where system configuration is stored])
-
-pluginsdir="${libdir}/ethumb/plugins"
-AC_SUBST(pluginsdir)
-AS_AC_EXPAND(PLUGINSDIR, $pluginsdir)
-AC_DEFINE_UNQUOTED(PLUGINSDIR, ["$PLUGINSDIR"], [Where plugins are installed.])
+#AS_AC_EXPAND(SYSCONFDIR, $sysconfdir)
+#AC_DEFINE_UNQUOTED(SYSCONFDIR, ["$SYSCONFDIR"], [Where system configuration is stored])
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
