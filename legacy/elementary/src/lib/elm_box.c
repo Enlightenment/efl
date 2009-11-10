@@ -30,7 +30,6 @@ static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 
-
 static void
 _del_pre_hook(Evas_Object *obj)
 {
@@ -39,8 +38,6 @@ _del_pre_hook(Evas_Object *obj)
     evas_object_event_callback_del_full
         (wd->box, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
 }
-
-
 
 static void
 _del_hook(Evas_Object *obj)
