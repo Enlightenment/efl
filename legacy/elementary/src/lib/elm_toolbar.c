@@ -28,7 +28,6 @@ struct _Elm_Toolbar_Item
    Eina_Bool selected : 1;
    Eina_Bool disabled : 1;
    Eina_Bool separator : 1;
-
    Eina_Bool menu;
    Evas_Object *o_menu;
 };
@@ -108,8 +107,7 @@ _menu_move_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
     Evas_Coord x,y,w,h;
     Widget_Data *wd = elm_widget_data_get(it->obj);
 
-    if (!wd || !wd->menu_parent) return;
-
+    if ((!wd) || (!wd->menu_parent)) return;
     evas_object_geometry_get(it->base, &x, &y, &w, &h);
     elm_menu_move(it->o_menu, x, y+h);
 }
@@ -211,7 +209,7 @@ static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
+   Evas_Coord minw = -1, minh = -1;
    Evas_Coord vw = 0, vh = 0;
    Evas_Coord w, h;
 
@@ -230,17 +228,12 @@ _sizing_eval(Evas_Object *obj)
    evas_object_resize(wd->bx, minw, minh);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
    if (wd->scrollable)
-     {
-	minw = w - vw;
-	minh = minh + (h - vh);
-     }
+     minw = w - vw;
    else
-     {
-	minw = minw + (w - vw);
-	minh = minh + (h - vh);
-     }
+     minw = minw + (w - vw);
+   minh = minh + (h - vh);
    evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, maxw, maxh);
+   evas_object_size_hint_max_set(obj, -1, -1);
 }
 
 static void
@@ -412,18 +405,18 @@ elm_toolbar_item_label_get(Elm_Toolbar_Item *item)
 EAPI void
 elm_toolbar_item_label_set(Elm_Toolbar_Item *item, const char *label)
 {
-   Evas_Coord mw, mh;
+   Evas_Coord mw = -1, mh = -1;
+
    if (!item) return;
    eina_stringshare_del(item->label);
    item->label = eina_stringshare_add(label);
    edje_object_part_text_set(item->base, "elm.text", item->label);
 
-   mw = mh = -1;
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
    edje_object_size_min_restricted_calc(item->base, &mw, &mh, mw, mh);
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-   evas_object_size_hint_weight_set(item->base, -1.0, 1.0);
-   evas_object_size_hint_align_set(item->base, 0.5, -1.0);
+   evas_object_size_hint_weight_set(item->base, -1.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(item->base, 0.5, EVAS_HINT_FILL);
    evas_object_size_hint_min_set(item->base, mw, mh);
 }
 
