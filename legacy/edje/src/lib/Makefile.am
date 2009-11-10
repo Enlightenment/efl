@@ -125,7 +125,7 @@ else
 libedje_la_SOURCES = $(base_sources)
 endif
 
-libedje_la_LIBADD = @EDJE_LIBS@ @ECORE_IMF_LIBS@ -lm
+libedje_la_LIBADD = @EDJE_LIBS@ @ECORE_IMF_LIBS@ @EVIL_LIBS@ -lm
 libedje_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
 EXTRA_DIST = edje_private.h edje_container.h
