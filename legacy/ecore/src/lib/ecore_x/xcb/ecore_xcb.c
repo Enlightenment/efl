@@ -982,7 +982,7 @@ _ecore_xcb_key_mask_get(xcb_keysym_t sym)
          {
             int mask;
 
-            mask = masks[i];
+            mask = masks[j];
             free(reply);
             xcb_key_symbols_free(symbols);
             return mask;
