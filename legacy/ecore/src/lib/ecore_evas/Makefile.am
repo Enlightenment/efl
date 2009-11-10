@@ -110,6 +110,7 @@ $(ECORE_WINCE_LIB) \
 $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 $(top_builddir)/src/lib/ecore/libecore.la \
 @EVAS_LIBS@ \
+@EINA_LIBS@ \
 @EVIL_LIBS@
 
 libecore_evas_la_LDFLAGS = @quartz_ldflags@ -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @ecore_evas_release_info@
