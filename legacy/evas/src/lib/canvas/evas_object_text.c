@@ -1541,9 +1541,6 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
      }
    else if (o->cur.style == EVAS_TEXT_STYLE_SOFT_SHADOW)
      {
-        printf("text [%p] %3i %3i '%s'\n", obj,
-               obj->cur.geometry.x,
-               obj->cur.geometry.y, o->cur.text);
 	for (j = 0; j < 5; j++)
 	  {
 	     for (i = 0; i < 5; i++)

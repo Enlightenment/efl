@@ -197,16 +197,12 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
    if (obj->delete_me != 0) clean_them = EINA_TRUE;
 
    /* build active object list */
+   evas_object_clip_recalc(obj);
    is_active = evas_object_is_active(obj);
-
    obj->is_active = is_active;
    if ((is_active) || (obj->delete_me != 0))
-     {
-        printf("act1 [%p]\n", obj);
-        eina_array_push(active_objects, obj);
-     }
-   else
-     printf("nact [%p]\n", obj);
+     eina_array_push(active_objects, obj);
+   
    if (_evas_render_has_map(obj)) map = 1;
    
    if ((restack) && (!map))
@@ -247,7 +243,6 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
      }
    else if (_evas_render_had_map(obj))
      {
-        evas_object_clip_recalc(obj);
         eina_array_push(restack_objects, obj);
         _evas_render_prev_cur_clip_cache_add(e, obj);
      }
@@ -256,7 +251,6 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
    
    if (obj->changed)
      {
-        evas_object_clip_recalc(obj);
 	if (obj->smart.smart)
 	  {
 	     eina_array_push(render_objects, obj);
@@ -316,6 +310,11 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
 		       eina_array_push(render_objects, obj);
 		       obj->rect_del = 1;
 		    }
+                  else if (evas_object_is_visible(obj))
+                    {
+                       eina_array_push(render_objects, obj);
+                       obj->render_pre = 1;
+                    }
 	       }
 	  }
      }
@@ -450,7 +449,6 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                 ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)))))
               )) 
      return;
-   printf("rndr [%p]\n", obj);
    
    if (_evas_render_has_map(obj))
      {
@@ -617,7 +615,6 @@ evas_render_updates_internal(Evas *e,
    if (!e->changed) return NULL;
 
    evas_call_smarts_calculate(e);
-   printf("--- --- --- --- --- --- --- --- --- --- --- --- --- --- ---\n");
    
    /* Check if the modified object mean recalculating every thing */
    if (!e->invalidate)
@@ -706,7 +703,6 @@ evas_render_updates_internal(Evas *e,
 	  {
 	     int off_x, off_y;
 
-             printf("============ [ %3i %3i | %3ix%3i ]\n", ux, uy, uw, uh);
 	     if (make_updates)
 	       {
 		  Eina_Rectangle *rect;
