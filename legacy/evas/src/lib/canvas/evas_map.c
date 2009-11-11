@@ -748,25 +748,25 @@ _evas_map_util_points_populate(Evas_Map *m, const Evas_Coord x, const Evas_Coord
 
    p[0].x = x;
    p[0].y = y;
-   p[0].x = z;
+   p[0].z = z;
    p[0].u = 0.0;
    p[0].v = 0.0;
 
    p[1].x = x + w;
    p[1].y = y;
-   p[1].x = z;
+   p[1].z = z;
    p[1].u = w;
    p[1].v = 0.0;
 
    p[2].x = x + w;
    p[2].y = y + h;
-   p[2].x = z;
+   p[2].z = z;
    p[2].u = w;
    p[2].v = h;
 
    p[3].x = x;
    p[3].y = y + h;
-   p[3].x = z;
+   p[3].z = z;
    p[3].u = 0.0;
    p[3].v = h;
 }
