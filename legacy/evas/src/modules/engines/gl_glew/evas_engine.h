@@ -1,9 +1,15 @@
 #ifndef __EVAS_ENGINE_H__
 #define __EVAS_ENGINE_H__
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <windows.h>
 
 #include "evas_gl_common.h"
+#include "Evas_Engine_GL_Glew.h"
+
 extern int _evas_engine_GL_glew_log_dom ;
 #ifdef ERR
 # undef ERR
@@ -34,9 +40,11 @@ typedef struct _Evas_GL_Glew_Window Evas_GL_Glew_Window;
 
 struct _Evas_GL_Glew_Window
 {
+#ifdef _WIN32
    HWND             window;
    HDC              dc;
    HGLRC            context;
+#endif
    int              width;
    int              height;
    int              depth;
@@ -51,21 +59,17 @@ struct _Evas_GL_Glew_Window
    } draw;
 };
 
-int evas_glew_init(HWND window, HDC *dc, HGLRC *context);
-
-void evas_glew_shutdown(HWND  window,
-                        HDC   dc,
-                        HGLRC context);
-
+#ifdef _WIN32
 Evas_GL_Glew_Window *eng_window_new(HWND window,
-                                    HDC   dc,
-                                    HGLRC context,
                                     int  depth,
                                     int  width,
                                     int  height);
+#endif
 
 void eng_window_free(Evas_GL_Glew_Window *gw);
 void eng_window_use(Evas_GL_Glew_Window *gw);
+void eng_window_swap_buffers(Evas_GL_Glew_Window *gw);
+void eng_window_vsync_set(int on);
 
 
 #endif /* __EVAS_ENGINE_H__ */

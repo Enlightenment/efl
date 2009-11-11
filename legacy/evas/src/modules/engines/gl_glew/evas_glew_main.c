@@ -1,19 +1,30 @@
-#include "evas_common.h"
 #include "evas_engine.h"
-#include "Evas_Engine_GL_Glew.h"
 
+#ifdef HAVE_GL_GLEW_H
+# include <GL/wglew.h>
+#endif
 
 static Evas_GL_Glew_Window *_evas_gl_glew_window = NULL;
 
-int
-evas_glew_init(HWND window, HDC *dc, HGLRC *context)
+Evas_GL_Glew_Window *
+eng_window_new(HWND  window,
+               int   depth,
+               int   width,
+               int   height)
 {
    PIXELFORMATDESCRIPTOR pfd;
+   Evas_GL_Glew_Window  *gw;
    int                   format;
 
-   *dc = GetDC(window);
-   if (!*dc)
-    goto no_dc;
+   gw = calloc(1, sizeof(Evas_GL_Glew_Window));
+   if (!gw) return NULL;
+
+   gw->window = window;
+   gw->depth = depth;
+
+   gw->dc = GetDC(window);
+   if (!gw->dc)
+    goto free_window;
 
    ZeroMemory(&pfd, sizeof (pfd));
    pfd.nSize = sizeof (pfd);
@@ -24,85 +35,60 @@ evas_glew_init(HWND window, HDC *dc, HGLRC *context)
    pfd.cDepthBits = 32;
    pfd.iLayerType = PFD_MAIN_PLANE;
 
-   format = ChoosePixelFormat(*dc, &pfd);
+   format = ChoosePixelFormat(gw->dc, &pfd);
    if (!format)
-     goto no_format;
+     goto release_dc;
 
-   SetPixelFormat(*dc, format, &pfd);
+   SetPixelFormat(gw->dc, format, &pfd);
 
    if (pfd.iPixelType != PFD_TYPE_RGBA)
-     goto no_format;
+     goto release_dc;
 
-   *context = wglCreateContext(*dc);
-   if (!*context)
-     goto no_format;
+   gw->context = wglCreateContext(gw->dc);
+   if (!gw->context)
+     goto release_dc;
 
-   wglMakeCurrent(*dc, *context);
+   wglMakeCurrent(gw->dc, gw->context);
 
    if (glewInit() != GLEW_OK)
-     goto glew_init_failed;
+     goto delete_context;
 
-   if (GLEW_VERSION_2_0)
+   if (!GLEW_VERSION_2_0)
      {
-       INF("2.0");
+        fprintf(stderr, "\nERROR: OpenGL 2.0 not supported. Exiting...\n\n");
+        goto delete_context;
      }
 
-   return 1;
-
- glew_init_failed:
-   wglMakeCurrent(NULL, NULL);
-   wglDeleteContext(*context);
- no_format:
-   ReleaseDC(window, *dc);
- no_dc:
-
-  return 0;
-}
-
-void
-evas_glew_shutdown(HWND  window,
-                   HDC   dc,
-                   HGLRC context)
-{
-   wglMakeCurrent(NULL, NULL);
-   wglDeleteContext(context);
-   ReleaseDC(window, dc);
-}
-
-Evas_GL_Glew_Window *
-eng_window_new(HWND  window,
-               HDC   dc,
-               HGLRC context,
-               int   depth,
-               int   width,
-               int   height)
-{
-   Evas_GL_Glew_Window *gw;
-
-   gw = calloc(1, sizeof(Evas_GL_Glew_Window));
-   if (!gw) return NULL;
-
-   gw->window = window;
-   gw->dc = dc;
-   gw->context = context;
-   gw->depth = depth;
+   _evas_gl_glew_window = gw;
 
    gw->gl_context = evas_gl_common_context_new();
    if (!gw->gl_context)
-     {
-	free(gw);
-	return NULL;
-     }
+     goto delete_context;
    evas_gl_common_context_resize(gw->gl_context, width, height);
 
    return gw;
+
+ delete_context:
+   wglMakeCurrent(NULL, NULL);
+   wglDeleteContext(gw->context);
+ release_dc:
+   ReleaseDC(window, gw->dc);
+ free_window:
+   free(gw);
+
+   return NULL;
 }
 
 void
 eng_window_free(Evas_GL_Glew_Window *gw)
 {
+   if (!gw)
+     return;
    if (gw == _evas_gl_glew_window) _evas_gl_glew_window = NULL;
    evas_gl_common_context_free(gw->gl_context);
+   wglMakeCurrent(NULL, NULL);
+   wglDeleteContext(gw->context);
+   ReleaseDC(gw->window, gw->dc);
    free(gw);
 }
 
@@ -111,8 +97,37 @@ eng_window_use(Evas_GL_Glew_Window *gw)
 {
    if (_evas_gl_glew_window != gw)
      {
-	_evas_gl_glew_window = gw;
-	wglMakeCurrent(gw->dc, gw->context);
+        if (_evas_gl_glew_window)
+          evas_gl_common_context_flush(_evas_gl_glew_window->gl_context);
+        _evas_gl_glew_window = gw;
+        wglMakeCurrent(gw->dc, gw->context);
      }
    evas_gl_common_context_use(gw->gl_context);
+}
+
+void
+eng_window_swap_buffers(Evas_GL_Glew_Window *gw)
+{
+   SwapBuffers(gw->dc);
+}
+
+void
+eng_window_vsync_set(int on)
+{
+#if 1 /* Using Glew */
+   wglSwapIntervalEXT(on);
+#else /* Using plain OpenGL */
+   const char *extensions = glGetString(GL_EXTENSIONS);
+
+   /* check if WGL_EXT_swap_control extension is supported */
+   if (strstr(extensions, "WGL_EXT_swap_control") == 0)
+     return;
+   else
+     {
+        wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress("wglSwapIntervalEXT");
+
+        if (wglSwapIntervalEXT)
+          wglSwapIntervalEXT(on);
+     }
+#endif
 }
