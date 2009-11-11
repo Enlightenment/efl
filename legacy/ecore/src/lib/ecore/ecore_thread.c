@@ -6,14 +6,14 @@
 # include <Evil.h>
 #endif
 
-#ifdef BUILD_PTHREAD
+#ifdef EFL_HAVE_PTHREAD
 # include <pthread.h>
 #endif
 
 #include "ecore_private.h"
 #include "Ecore.h"
 
-#ifdef BUILD_PTHREAD
+#ifdef EFL_HAVE_PTHREAD
 typedef struct _Ecore_Pthread_Worker Ecore_Pthread_Worker;
 typedef struct _Ecore_Pthread_Data Ecore_Pthread_Data;
 typedef struct _Ecore_Pthread Ecore_Pthread;
@@ -39,7 +39,7 @@ struct _Ecore_Pthread_Data
 static int _ecore_thread_count_max = 0;
 static int ECORE_THREAD_PIPE_DEL = 0;
 
-#ifdef BUILD_PTHREAD
+#ifdef EFL_HAVE_PTHREAD
 static int _ecore_thread_count = 0;
 static Eina_List *_ecore_thread_data = NULL;
 static Eina_List *_ecore_thread = NULL;
@@ -164,7 +164,7 @@ _ecore_thread_init(void)
      _ecore_thread_count_max = 1;
 
    ECORE_THREAD_PIPE_DEL = ecore_event_type_new();
-#ifdef BUILD_PTHREAD
+#ifdef EFL_HAVE_PTHREAD
    del_handler = ecore_event_handler_add(ECORE_THREAD_PIPE_DEL, _ecore_thread_pipe_del, NULL);
 #endif
 }
@@ -173,7 +173,7 @@ void
 _ecore_thread_shutdown(void)
 {
    /* FIXME: If function are still running in the background, should we kill them ? */
-#ifdef BUILD_PTHREAD
+#ifdef EFL_HAVE_PTHREAD
    Ecore_Pthread_Worker *work;
    Ecore_Pthread_Data *pth;
 
@@ -221,7 +221,7 @@ ecore_thread_run(void (*func_heavy)(void *data),
 		 void (*func_cancel)(void *data),
 		 const void *data)
 {
-#ifdef BUILD_PTHREAD
+#ifdef EFL_HAVE_PTHREAD
    Ecore_Pthread_Worker *work;
    Ecore_Pthread_Data *pth;
 
@@ -288,7 +288,7 @@ ecore_thread_run(void (*func_heavy)(void *data),
 EAPI Eina_Bool
 ecore_thread_cancel(Ecore_Thread *thread)
 {
-#ifdef BUILD_PTHREAD
+#ifdef EFL_HAVE_PTHREAD
    Ecore_Pthread_Worker *work;
    Eina_List *l;
 

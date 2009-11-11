@@ -709,11 +709,8 @@ fi
 AC_SUBST(quartz_ldflags)
 
 # basic pthread support
-AC_CHECK_HEADER(pthread.h,
-  [
-     AC_DEFINE(BUILD_PTHREAD, 1, [Build thread worker])
-  ]
-)
+
+EFL_CHECK_PTHREAD([have_pthread="yes"], [have_pthread="no"])
 
 ### Checks for types
 AC_CHECK_SIZEOF(int, 4)
@@ -1181,6 +1178,7 @@ echo
 echo " Core:"
 echo
 echo "  Ecore........................: always"
+echo "    Thread support.............: $have_pthread"
 echo "    GLib support...............: $have_glib"
 echo "  Ecore_Job....................: $have_ecore_job"
 echo "  Ecore_Txt....................: $have_ecore_txt"
