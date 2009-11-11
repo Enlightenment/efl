@@ -440,6 +440,8 @@ evas_object_map_get(const Evas_Object *obj)
  * @see evas_map_dup()
  * @see evas_map_point_coord_set()
  * @see evas_map_point_image_uv_set()
+ * @see evas_map_util_points_populate_from_object_full()
+ * @see evas_map_util_points_populate_from_object()
  *
  * @see evas_object_map_set()
  */
@@ -573,6 +575,8 @@ evas_map_free(Evas_Map *m)
  *
  * @see evas_map_util_rotate()
  * @see evas_map_util_zoom()
+ * @see evas_map_util_points_populate_from_object_full()
+ * @see evas_map_util_points_populate_from_object()
  */
 EAPI void
 evas_map_point_coord_set(Evas_Map *m, int idx, Evas_Coord x, Evas_Coord y, Evas_Coord z)
@@ -632,6 +636,8 @@ evas_map_point_coord_get(const Evas_Map *m, int idx, Evas_Coord *x, Evas_Coord *
  * 
  * @see evas_map_point_coord_set()
  * @see evas_object_map_set()
+ * @see evas_map_util_points_populate_from_object_full()
+ * @see evas_map_util_points_populate_from_object()
  */
 EAPI void
 evas_map_point_image_uv_set(Evas_Map *m, int idx, double u, double v)
@@ -685,7 +691,8 @@ evas_map_point_image_uv_get(const Evas_Map *m, int idx, double *u, double *v)
  * @param g green (0 - 255)
  * @param b blue (0 - 255)
  * @param a alpha (0 - 255)
- * 
+ *
+ * @see evas_map_util_points_color_set()
  * @see evas_map_point_coord_set()
  * @see evas_object_map_set()
  */
@@ -734,6 +741,183 @@ evas_map_point_color_get(const Evas_Map *m, int idx, int *r, int *g, int *b, int
 /****************************************************************************/
 /* util functions for manipulating maps, so you don't need to know the math */
 /****************************************************************************/
+static inline void
+_evas_map_util_points_populate(Evas_Map *m, const Evas_Coord x, const Evas_Coord y, const Evas_Coord w, const Evas_Coord h, const Evas_Coord z)
+{
+   Evas_Map_Point *p = m->points;
+
+   p[0].x = x;
+   p[0].y = y;
+   p[0].x = z;
+   p[0].u = 0.0;
+   p[0].v = 0.0;
+
+   p[1].x = x + w;
+   p[1].y = y;
+   p[1].x = z;
+   p[1].u = w;
+   p[1].v = 0.0;
+
+   p[2].x = x + w;
+   p[2].y = y + h;
+   p[2].x = z;
+   p[2].u = w;
+   p[2].v = h;
+
+   p[3].x = x;
+   p[3].y = y + h;
+   p[3].x = z;
+   p[3].u = 0.0;
+   p[3].v = h;
+}
+
+/**
+ * Populate source and destination map points to match exactly object.
+ *
+ * Usually one initialize map of an object to match it's original
+ * position and size, then transform these with evas_map_util_*
+ * functions, such as evas_map_util_rotate() or
+ * evas_map_util_3d_rotate(). The original set is done by this
+ * function, avoiding code duplication all around.
+ *
+ * @param m map to change all 4 points (must be of size 4).
+ * @param obj object to use unmapped geometry to populate map coordinates.
+ * @param z Point Z Coordinate hint (pre-perspective transform). This value
+ *        will be used for all four points.
+ *
+ * @see evas_map_util_points_populate_from_object()
+ * @see evas_map_point_coord_set()
+ * @see evas_map_point_image_uv_set()
+ */
+EAPI void
+evas_map_util_points_populate_from_object_full(Evas_Map *m, const Evas_Object *obj, Evas_Coord z)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (!m)
+     {
+	ERR("map == NULL");
+	return;
+     }
+   if (m->count != 4)
+     {
+	ERR("map has count=%d where 4 was expected.", m->count);
+	return;
+     }
+   _evas_map_util_points_populate(m, obj->cur.geometry.x, obj->cur.geometry.y,
+				  obj->cur.geometry.w, obj->cur.geometry.h, z);
+}
+
+/**
+ * Populate source and destination map points to match exactly object.
+ *
+ * Usually one initialize map of an object to match it's original
+ * position and size, then transform these with evas_map_util_*
+ * functions, such as evas_map_util_rotate() or
+ * evas_map_util_3d_rotate(). The original set is done by this
+ * function, avoiding code duplication all around.
+ *
+ * Z Point coordinate is assumed as 0 (zero).
+ *
+ * @param m map to change all 4 points (must be of size 4).
+ * @param obj object to use unmapped geometry to populate map coordinates.
+ *
+ * @see evas_map_util_points_populate_from_object_full()
+ * @see evas_map_util_points_populate_from_geometry()
+ * @see evas_map_point_coord_set()
+ * @see evas_map_point_image_uv_set()
+ */
+EAPI void
+evas_map_util_points_populate_from_object(Evas_Map *m, const Evas_Object *obj)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (!m)
+     {
+	ERR("map == NULL");
+	return;
+     }
+   if (m->count != 4)
+     {
+	ERR("map has count=%d where 4 was expected.", m->count);
+	return;
+     }
+   _evas_map_util_points_populate(m, obj->cur.geometry.x, obj->cur.geometry.y,
+				  obj->cur.geometry.w, obj->cur.geometry.h, 0);
+}
+
+/**
+ * Populate source and destination map points to match given geometry.
+ *
+ * Similar to evas_map_util_points_populate_from_object_full(), this
+ * call takes raw values instead of querying object's unmapped
+ * geometry. The given width will be used to calculate destination
+ * points (evas_map_point_coord_set()) and set the image uv
+ * (evas_map_point_image_uv_set()).
+ *
+ * @param m map to change all 4 points (must be of size 4).
+ * @param x Point X Coordinate
+ * @param y Point Y Coordinate
+ * @param w width to use to calculate second and third points.
+ * @param h height to use to calculate third and fourth points.
+ * @param z Point Z Coordinate hint (pre-perspective transform). This value
+ *        will be used for all four points.
+ *
+ * @see evas_map_util_points_populate_from_object()
+ * @see evas_map_point_coord_set()
+ * @see evas_map_point_image_uv_set()
+ */
+EAPI void
+evas_map_util_points_populate_from_geometry(Evas_Map *m, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Coord z)
+{
+   if (!m)
+     {
+	ERR("map == NULL");
+	return;
+     }
+   if (m->count != 4)
+     {
+	ERR("map has count=%d where 4 was expected.", m->count);
+	return;
+     }
+   _evas_map_util_points_populate(m, x, y, w, h, z);
+}
+
+/**
+ * Set color of all points to given color.
+ *
+ * This call is useful to reuse maps after they had 3d lightning or
+ * any other colorization applied before.
+ *
+ * @param m map to change the color of.
+ * @param r red (0 - 255)
+ * @param g green (0 - 255)
+ * @param b blue (0 - 255)
+ * @param a alpha (0 - 255)
+ *
+ * @see evas_map_point_color_set()
+ */
+EAPI void
+evas_map_util_points_color_set(Evas_Map *m, int r, int g, int b, int a)
+{
+   Evas_Map_Point *p, *p_end;
+   if (!m)
+     {
+	ERR("map == NULL");
+	return;
+     }
+   p = m->points;
+   p_end = p + m->count;
+   for (; p < p_end; p++)
+     {
+	p->r = r;
+	p->g = g;
+	p->b = b;
+	p->a = a;
+     }
+}
 
 /**
  * Change the map to apply the given rotation.

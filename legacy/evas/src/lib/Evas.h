@@ -853,6 +853,12 @@ extern "C" {
    EAPI void              evas_object_map_set               (Evas_Object *obj, const Evas_Map *map);
    EAPI const Evas_Map   *evas_object_map_get               (const Evas_Object *obj);
 
+   EAPI void              evas_map_util_points_populate_from_object_full   (Evas_Map *m, const Evas_Object *obj, Evas_Coord z);
+   EAPI void              evas_map_util_points_populate_from_object        (Evas_Map *m, const Evas_Object *obj);
+   EAPI void              evas_map_util_points_populate_from_geometry      (Evas_Map *m, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Coord z);
+
+   EAPI void              evas_map_util_points_color_set                   (Evas_Map *m, int r, int g, int b, int a);
+
    EAPI void              evas_map_util_rotate              (Evas_Map *m, double degrees, Evas_Coord cx, Evas_Coord cy);
    EAPI void              evas_map_util_zoom                (Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_Coord cy);
    EAPI void              evas_map_util_3d_rotate           (Evas_Map *m, double dx, double dy, double dz, Evas_Coord cx, Evas_Coord cy, Evas_Coord cz);
