@@ -241,6 +241,12 @@ void             evas_gl_common_context_yuv_push(Evas_GL_Context *gc,
                                                  int x, int y, int w, int h,
                                                  int r, int g, int b, int a,
                                                  Eina_Bool smooth);
+void             evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
+                                                        Evas_GL_Texture *tex,
+                                                        RGBA_Map_Point *p,
+                                                        int clip, int cx, int cy, int cw, int ch,
+                                                        int r, int g, int b, int a,
+                                                        Eina_Bool smooth);
 void              evas_gl_common_context_flush(Evas_GL_Context *gc);
 
 void              evas_gl_common_shader_program_init(Evas_GL_Program *p,
@@ -264,6 +270,7 @@ Evas_GL_Image    *evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc,
 Evas_GL_Image    *evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h, int alpha, int cspace);
 void              evas_gl_common_image_free(Evas_GL_Image *im);
 void              evas_gl_common_image_dirty(Evas_GL_Image *im);
+void              evas_gl_common_image_map4_draw(Evas_GL_Context *gc, Evas_GL_Image *im, RGBA_Map_Point *p, int smooth, int level);
 void              evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth);
 
 Evas_GL_Texture  *evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg);

@@ -546,6 +546,68 @@ evas_gl_common_context_yuv_push(Evas_GL_Context *gc,
 }
 
 void
+evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
+                                       Evas_GL_Texture *tex,
+                                       RGBA_Map_Point *p,
+                                       int clip, int cx, int cy, int cw, int ch,
+                                       int r, int g, int b, int a,
+                                       Eina_Bool smooth)
+{
+   int pnum, nv, nc, nu, nt, i;
+   const int points[6] = { 0, 1, 2, 0, 2, 3 };
+   GLfloat tx[4], ty[4];
+   Eina_Bool blend = 1;
+   RGBA_Map_Point *pt;
+   DATA32 cmul;
+
+   blend = 1;
+   
+//   if (tex->pt->format == GL_RGB) blend = 0;
+//   if (a < 255) blend = 1;
+   
+   if ((gc->shader.cur_tex != tex->pt->texture)
+       || (gc->shader.cur_prog != gc->shared->shader.img.prog)
+       || (gc->shader.smooth != smooth)
+       || (gc->shader.blend != blend)
+       )
+     {
+        shader_array_flush(gc);
+        gc->shader.cur_tex = tex->pt->texture;
+        gc->shader.cur_prog = gc->shared->shader.img.prog;
+        gc->shader.smooth = smooth;
+        gc->shader.blend = blend;
+     }
+   
+   pnum = gc->array.num;
+   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nt = pnum * 4;
+   gc->array.num += 6;
+   _evas_gl_common_context_array_alloc(gc);
+
+   for (i = 0; i < 4; i++)
+     {
+        tx[i] = ((double)(tex->x) + (((double)p[i].u) / FP1)) /
+          (double)tex->pt->w;
+        ty[i] = ((double)(tex->y) + (((double)p[i].v) / FP1)) / 
+          (double)tex->pt->h;
+     }
+   cmul = ARGB_JOIN(a, r, g, b);
+   for (i = 0; i < 6; i++)
+     {
+        DATA32 cl = MUL4_SYM(cmul, p[points[i]].col);
+        PUSH_VERTEX((p[points[i]].x >> FP), 
+                    (p[points[i]].y >> FP),
+                    0);
+//                    (p[points[i]].z >> FP));
+        PUSH_TEXUV(tx[points[i]],
+                   ty[points[i]]);
+        PUSH_COLOR(R_VAL(&cl),
+                   G_VAL(&cl),
+                   B_VAL(&cl),
+                   A_VAL(&cl));
+     }
+}
+
+void
 evas_gl_common_context_flush(Evas_GL_Context *gc)
 {
    shader_array_flush(gc);

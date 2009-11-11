@@ -111,7 +111,7 @@ evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, int w, int h, DAT
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
         if (im->tex) evas_gl_common_texture_free(im->tex);
-	im->tex = NULL;
+        im->tex = NULL;
 	im->cs.no_free = 0;
         im->cs.data = calloc(1, im->im->cache_entry.h * sizeof(unsigned char *) * 2);
         if ((data) && (im->cs.data))
@@ -184,33 +184,9 @@ evas_gl_common_image_dirty(Evas_GL_Image *im)
    im->dirty = 1;
 }
 
-void
-evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth)
+static void
+image_update(Evas_GL_Context *gc, Evas_GL_Image *im)
 {
-   RGBA_Draw_Context *dc;
-   int r, g, b, a;
-   double ssx, ssy, ssw, ssh;
-   int space;
-   Cutout_Rects *rects;
-   Cutout_Rect  *rct;
-   int c, cx, cy, cw, ch;
-   int i;
-   int yuv = 0;
-   
-   if (sw < 1) sw = 1;
-   if (sh < 1) sh = 1;
-   dc = gc->dc;
-   if (dc->mul.use)
-     {
-	a = (dc->mul.col >> 24) & 0xff;
-	r = (dc->mul.col >> 16) & 0xff;
-	g = (dc->mul.col >> 8 ) & 0xff;
-	b = (dc->mul.col      ) & 0xff;
-     }
-   else
-     {
-	r = g = b = a = 255;
-     }
 /*   
    if ((im->cs.space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
        (im->cs.space == EVAS_COLORSPACE_YCBCR422P709_PL))
@@ -232,9 +208,7 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
      }
    else
  */
-     space = im->cs.space;
-   
-   switch (space)
+   switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
         evas_cache_image_load_data(&im->im->cache_entry);
@@ -263,14 +237,78 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy
                                                       im->im->cache_entry.h);
              im->dirty = 0;
           }
-        yuv = 1;
         if (!im->tex) return;
         break;
       default:
         printf("unhandled img format\n");
 	break;
     }
+}
 
+void
+evas_gl_common_image_map4_draw(Evas_GL_Context *gc, Evas_GL_Image *im, 
+                               RGBA_Map_Point *p, int smooth, int level)
+{
+   RGBA_Draw_Context *dc;
+   int r, g, b, a;
+   int c, cx, cy, cw, ch;
+   
+   dc = gc->dc;
+   if (dc->mul.use)
+     {
+        a = (dc->mul.col >> 24) & 0xff;
+        r = (dc->mul.col >> 16) & 0xff;
+        g = (dc->mul.col >> 8 ) & 0xff;
+        b = (dc->mul.col      ) & 0xff;
+     }
+   else
+     {
+        r = g = b = a = 255;
+     }
+   
+   image_update(gc, im);
+   
+   c = gc->dc->clip.use; 
+   cx = gc->dc->clip.x; cy = gc->dc->clip.y; 
+   cw = gc->dc->clip.w; ch = gc->dc->clip.h;
+   evas_gl_common_context_image_map4_push(gc, im->tex, p, 
+                                          c, cx, cy, cw, ch, 
+                                          r, g, b, a, smooth);
+}
+
+void
+evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth)
+{
+   RGBA_Draw_Context *dc;
+   int r, g, b, a;
+   double ssx, ssy, ssw, ssh;
+   Cutout_Rects *rects;
+   Cutout_Rect  *rct;
+   int c, cx, cy, cw, ch;
+   int i;
+   int yuv = 0;
+   
+   if (sw < 1) sw = 1;
+   if (sh < 1) sh = 1;
+   dc = gc->dc;
+   if (dc->mul.use)
+     {
+	a = (dc->mul.col >> 24) & 0xff;
+	r = (dc->mul.col >> 16) & 0xff;
+	g = (dc->mul.col >> 8 ) & 0xff;
+	b = (dc->mul.col      ) & 0xff;
+     }
+   else
+     {
+	r = g = b = a = 255;
+     }
+   
+   image_update(gc, im);
+   
+   if ((im->cs.space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
+       (im->cs.space == EVAS_COLORSPACE_YCBCR422P709_PL))
+     yuv = 1;
+   
    if ((!gc->dc->cutout.rects)
 //       || (gc->dc->cutout.active > 32)
        )

@@ -787,7 +787,6 @@ eng_image_load(void *data, const char *file, const char *key, int *error, Evas_I
    *error = 0;
    eng_window_use(re->win);
    return evas_gl_common_image_load(re->win->gl_context, file, key, lo);
-   return NULL;
 }
 
 static void *
@@ -798,7 +797,6 @@ eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha,
    re = (Render_Engine *)data;
    eng_window_use(re->win);
    return evas_gl_common_image_new_from_data(re->win->gl_context, w, h, image_data, alpha, cspace);
-   return NULL;
 }
 
 static void *
@@ -809,7 +807,6 @@ eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data, int
    re = (Render_Engine *)data;
    eng_window_use(re->win);
    return evas_gl_common_image_new_from_copied_data(re->win->gl_context, w, h, image_data, alpha, cspace);
-   return NULL;
 }
 
 static void
@@ -1031,7 +1028,10 @@ eng_image_scale_hint_set(void *data __UNUSED__, void *image, int hint)
 static void
 eng_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *image, RGBA_Map_Point *p, int smooth, int level)
 {
-   // XXX
+   Render_Engine *re;
+   
+   re = (Render_Engine *)data;
+   evas_gl_common_image_map4_draw(re->win->gl_context, image, p, smooth, level);
 }
 
 static void *
