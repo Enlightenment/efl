@@ -86,6 +86,7 @@ want_cipher="no"
 want_signature="no"
 want_poll="yes"
 want_inotify="no"
+want_notify_win32="no"
 want_tslib="no"
 want_glib="no"
 
@@ -136,6 +137,7 @@ case "$host_os" in
       want_ecore_evas_software_16_wince="yes"
       ;;
    mingw*)
+      want_notify_win32="yes"
       want_curl="yes"
       want_glib="auto"
       want_ecore_imf="yes"
@@ -837,9 +839,11 @@ ECORE_CHECK_MODULE([File], [${want_ecore_file}])
 
 have_poll="no"
 have_inotify="no"
+have_notify_win32="no"
 if test "x${have_ecore_file}" = "xyes" ; then
    ECORE_CHECK_POLL([${want_poll}], [have_poll="yes"], [have_poll="no"])
    ECORE_CHECK_INOTIFY([${want_inotify}], [have_inotify="yes"], [have_inotify="no"])
+   ECORE_CHECK_NOTIFY_WIN32([${want_notify_win32}], [have_notify_win32="yes"], [have_notify_win32="no"])
 
    if test "x${have_ecore_con}" = "xyes" ; then
       requirements_ecore_file="ecore-con ${requirements_ecore_file}"
@@ -1205,6 +1209,7 @@ fi
 echo "  Ecore_File...................: $have_ecore_file"
 if test "x$have_ecore_file" = "xyes" ; then
   echo "    Inotify....................: $have_inotify"
+  echo "    Windows notification.......: $have_notify_win32"
   echo "    Poll.......................: $have_poll"
   echo "    CURL.......................: $have_curl"
 fi
