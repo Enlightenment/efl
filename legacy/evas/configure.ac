@@ -501,6 +501,7 @@ if test "x$have_evas_engine_gl_x11" = "xyes" -o "x$have_evas_engine_gl_glew" = "
 fi
 
 if test "x$have_evas_engine_gl_glew" = "xyes" ; then
+   have_evas_engine_gl_common="yes"
    evas_engine_gl_common_libs=""
 fi
 AC_SUBST([evas_engine_gl_common_libs])
