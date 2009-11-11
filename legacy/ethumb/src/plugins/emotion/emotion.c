@@ -15,6 +15,12 @@
 #include <Edje_Edit.h>
 #include <Emotion.h>
 
+static int _log_dom = -1;
+#define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_log_dom, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
+
 struct _emotion_plugin
 {
    unsigned int fps;
@@ -40,6 +46,7 @@ _resize_movie(struct _emotion_plugin *_plugin)
    ratio = emotion_object_ratio_get(_plugin->video);
    ethumb_calculate_aspect_from_ratio(e, ratio, &w, &h);
    ethumb_calculate_fill_from_ratio(e, ratio, &fx, &fy, &fw, &fh);
+   DBG("size: w=%d, h=%d fill: x=%d, y=%d, w=%d, h=%d", w, h, fx, fy, fw, fh);
 
    _plugin->w = w;
    _plugin->h = h;
@@ -186,6 +193,8 @@ _frame_grab_single(void *data)
    p = emotion_object_position_get(_plugin->video);
    if (p < _plugin->pi)
      return EINA_TRUE;
+
+   DBG("saving static thumbnail at position=%f (intended=%f)", p, _plugin->pi);
 
    ethumb_image_save(e);
 
@@ -349,6 +358,8 @@ ethumb_plugin_get(void)
 	extensions,
 	_generate_thumb,
      };
+
+   _log_dom = eina_log_domain_register("ethumb_emotion", EINA_COLOR_GREEN);
 
    return &plugin;
 }
