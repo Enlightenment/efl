@@ -220,9 +220,14 @@ if test "x${want_gnutls}" = "xyes" -o "x${want_gnutls}" = "xauto" ; then
        AC_DEFINE(HAVE_GNUTLS, 1, [Have Gnutls support])
        requirement_eet="gnutls ${requirement_eet}"
       ],
-      [
-       have_gnutls="no"
-      ])
+      [have_gnutls="no"])
+   if test "x${have_gnutls}" = "xyes" ; then
+      AC_PATH_GENERIC([libgcrypt], [], [have_gnutls="yes"], [have_gnutls="no"])
+      if test "x${have_gnutls}" = "xyes" ; then
+         GNUTLS_CFLAGS="${GNUTLS_CFLAGS} ${LIBGCRYPT_CFLAGS}"
+         GNUTLS_LIBS="${GNUTLS_LIBS} ${LIBGCRYPT_LIBS}"
+      fi
+   fi
 fi
 
 # Openssl library

@@ -256,3 +256,8 @@
 
 	* allow generation of one single file with all source code in it.
 	See configure help to enable it (--enable-amalgamation).
+
+2009-11-11  Vincent Torri
+
+	* Add check on libgcrypt library in configure. Needed when GNUtls
+	support is enabled.
