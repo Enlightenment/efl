@@ -4,7 +4,7 @@
 #include "Evas_Engine_Software_16_WinCE.h"
 #include "evas_common_soft16.h"
 
-int _evas_enigne_soft16_wince_log_dom = -1;
+int _evas_engine_soft16_wince_log_dom = -1;
 
 typedef enum
 {
@@ -749,7 +749,7 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em)
 {
-  eina_log_domain_unregister(_evas_soft16_wince_log_dom);
+  eina_log_domain_unregister(_evas_engine_soft16_wince_log_dom);
   return NULL;
 }
 
