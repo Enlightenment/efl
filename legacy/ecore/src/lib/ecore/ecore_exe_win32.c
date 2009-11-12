@@ -22,6 +22,7 @@
 #include "Ecore.h"
 
 #ifdef _WIN32
+# ifndef _WIN32_WCE
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -513,4 +514,17 @@ _ecore_exe_close_cb(void *data, Ecore_Win32_Handler *wh)
    return 1;
 }
 
+# else
+
+void
+_ecore_exe_init(void)
+{
+}
+
+void
+_ecore_exe_shutdown(void)
+{
+}
+
+# endif
 #endif
