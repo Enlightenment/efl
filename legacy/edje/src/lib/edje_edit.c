@@ -1765,7 +1765,7 @@ edje_edit_part_selected_state_get(Evas_Object *obj, const char *part)
    GET_RP_OR_RETURN(NULL);
 
    if (!rp->chosen_description)
-     return "default 0.00";
+     return eina_stringshare_add("default 0.00");
 
    snprintf(name, PATH_MAX, "%s %.2f",
             rp->chosen_description->state.name,
