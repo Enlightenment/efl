@@ -410,7 +410,15 @@ static Eina_Stringshare_Small _eina_small_share;
 static inline int
 _eina_stringshare_small_cmp(const Eina_Stringshare_Small_Bucket *bucket, int i, const char *pstr, unsigned char plength)
 {
-   const unsigned char cur_plength = bucket->lengths[i];
+   /* pstr and plength are from second char and on, since the first is
+    * always the same.
+    *
+    * First string being always the same, size being between 2 and 3
+    * characters (there is a check for special case length==1 and then
+    * small stringshare is applied to strings < 4), we just need to
+    * compare 2 characters of both strings.
+    */
+   const unsigned char cur_plength = bucket->lengths[i] - 1;
    const char *cur_pstr;
 
    if (cur_plength > plength)
@@ -440,7 +448,7 @@ static const char *
 _eina_stringshare_small_bucket_find(const Eina_Stringshare_Small_Bucket *bucket, const char *str, unsigned char length, int *index)
 {
    const char *pstr = str + 1; /* skip first letter, it's always the same */
-   unsigned char plength = length;
+   unsigned char plength = length - 1;
    int i, low, high;
 
    if (bucket->count == 0)
