@@ -158,16 +158,16 @@ ecore_timer_del(Ecore_Timer *timer)
 	return NULL;
      }
 
-   if (timer->frozen)
+   if (timer->frozen && !timer->running)
      {
 	void *data = timer->data;
 
 	suspended = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
-	free(timer);
 
 	if (timer->delete_me)
 	  timers_delete_me--;
 
+	free(timer);
 	return data;
      }
 
@@ -291,7 +291,8 @@ ecore_timer_freeze(Ecore_Timer *timer)
    if (timer->frozen)
      return ;
 
-   timers = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
+   if (!timer->running)
+     timers = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
    suspended = (Ecore_Timer *) eina_inlist_prepend(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
 
    now = ecore_time_get();
@@ -458,6 +459,8 @@ _ecore_timer_call(double when)
 	    (timer->just_added == 0) &&
 	    (timer->delete_me == 0))
 	  {
+	     timer->running = EINA_TRUE;
+
 	     timers = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
 	     _ecore_timer_call(when);
 	     if ((!timer->delete_me) && (timer->func(timer->data)))
@@ -473,10 +476,15 @@ _ecore_timer_call(double when)
 		   */
 		  if (!timer->delete_me)
 		    {
-		       if ((timer->at + timer->in) < (when - 15.0))
-			 _ecore_timer_set(timer, when + timer->in, timer->in, timer->func, timer->data);
-		       else
-			 _ecore_timer_set(timer, timer->at + timer->in, timer->in, timer->func, timer->data);
+		       timer->running = EINA_FALSE;
+
+		       if (!timer->frozen)
+			 {
+			    if ((timer->at + timer->in) < (when - 15.0))
+			      _ecore_timer_set(timer, when + timer->in, timer->in, timer->func, timer->data);
+			    else
+			      _ecore_timer_set(timer, timer->at + timer->in, timer->in, timer->func, timer->data);
+			 }
 		    }
 		  else
 		    free(timer);

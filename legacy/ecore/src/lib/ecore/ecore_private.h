@@ -276,11 +276,13 @@ struct _Ecore_Timer
    double          in;
    double          at;
    double          pending;
+   int           (*func) (void *data);
+   void           *data;
+
    unsigned char   delete_me : 1;
    unsigned char   just_added : 1;
    unsigned char   frozen : 1;
-   int           (*func) (void *data);
-   void           *data;
+   unsigned char   running : 1;
 };
 
 struct _Ecore_Idler
