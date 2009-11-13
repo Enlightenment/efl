@@ -40,7 +40,10 @@ matrix_ident(GLfloat *m)
 }
 
 static void
-matrix_ortho(GLfloat *m, GLfloat l, GLfloat r, GLfloat t, GLfloat b, GLfloat near, GLfloat far)
+matrix_ortho(GLfloat *m, 
+             GLfloat l, GLfloat r, 
+             GLfloat t, GLfloat b, 
+             GLfloat near, GLfloat far)
 {
    m[0] = 2.0 / (r - l);
    m[1] = m[2] = m[3] = 0.0;
@@ -63,18 +66,35 @@ static void
 _evas_gl_common_viewport_set(Evas_GL_Context *gc)
 {
    GLfloat proj[16];
+   int w = 1, h = 1, m = 1;
 
+   if ((gc->shader.surface == gc->def_surface) ||
+       (!gc->shader.surface))
+     {
+        w = gc->w;
+        h = gc->h;
+     }
+   else
+     {
+        w = gc->shader.surface->w;
+        h = gc->shader.surface->h;
+        m = -1;
+     }
+   
    if ((!gc->change.size) || 
-       ((gc->shared->w == gc->w) && (gc->shared->h == gc->h)))
+       ((gc->shared->w == w) && (gc->shared->h == gc->h)))
      return;
-   gc->shared->w = gc->w;
-   gc->shared->h = gc->h;
+   gc->shared->w = w;
+   gc->shared->h = h;
    gc->change.size = 0;
    
-   glViewport(0, 0, gc->w, gc->h);
+   glViewport(0, 0, w, h);
    
    matrix_ident(proj);
-   matrix_ortho(proj, 0, gc->w, 0, gc->h, -1.0, 1.0);
+   if (m == 1)
+     matrix_ortho(proj, 0, w, 0, h, -1.0, 1.0);
+   else
+     matrix_ortho(proj, 0, w, h, 0, -1.0, 1.0);
    
    glUseProgram(gc->shared->shader.rect.prog);
    glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.rect.prog, "mvp"), 1,
@@ -87,6 +107,9 @@ _evas_gl_common_viewport_set(Evas_GL_Context *gc)
                       GL_FALSE, proj);
    glUseProgram(gc->shared->shader.yuv.prog);
    glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.yuv.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   glUseProgram(gc->shared->shader.tex.prog);
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.tex.prog, "mvp"), 1,
                       GL_FALSE, proj);
 }
 
@@ -150,7 +173,9 @@ evas_gl_common_context_new(void)
         glEnable(GL_DITHER);
         glDisable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        // no dest alpha
+//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // dest alpha
+//        glBlendFunc(GL_SRC_ALPHA, GL_ONE); // ???
         glDepthMask(GL_FALSE);
         
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -181,6 +206,10 @@ evas_gl_common_context_new(void)
                                            &(shader_yuv_vert_src), 
                                            &(shader_yuv_frag_src),
                                            "yuv");
+        evas_gl_common_shader_program_init(&(shared->shader.tex),
+                                           &(shader_tex_vert_src), 
+                                           &(shader_tex_frag_src),
+                                           "tex");
         glUseProgram(shared->shader.yuv.prog);
         glUniform1i(glGetUniformLocation(shared->shader.yuv.prog, "tex"), 0);
         glUniform1i(glGetUniformLocation(shared->shader.yuv.prog, "texu"), 1);
@@ -196,6 +225,8 @@ evas_gl_common_context_new(void)
    gc->shared = shared;
    gc->shared->references++;
    _evas_gl_common_viewport_set(gc);
+   
+   gc->def_surface = evas_gl_common_image_surface_new(gc, 1, 1, 1);
    
    return gc;
 }
@@ -223,12 +254,15 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
              for (j = 0; j < 3; j++)
                {
                   while (gc->shared->tex.atlas[i][j])
-                    evas_gl_common_texture_free(gc->shared->tex.atlas[i][j]);
+                    evas_gl_common_texture_free
+                    ((Evas_GL_Texture *)gc->shared->tex.atlas[i][j]);
                }
           }
         free(gc->shared);
         shared = NULL;
      }
+   
+   evas_gl_common_image_free(gc->def_surface);
    
    free(gc->array.vertex);
    free(gc->array.color);
@@ -256,6 +290,32 @@ evas_gl_common_context_resize(Evas_GL_Context *gc, int w, int h)
    gc->w = w;
    gc->h = h;
    if (_evas_gl_common_context == gc) _evas_gl_common_viewport_set(gc);
+}
+
+void
+evas_gl_common_context_target_surface_set(Evas_GL_Context *gc,
+                                          Evas_GL_Image *surface)
+{
+   if (surface == gc->shader.surface) return;
+   
+   evas_gl_common_context_flush(gc);
+
+   gc->shader.surface = surface;
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   // FIXME: XXX render-to-texture for gles2
+#else   
+   // FIXME: viewport goopies
+   gc->change.size = 1;
+   if (gc->shader.surface == gc->def_surface)
+     {
+        glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+     }
+   else
+     {
+        glBindFramebuffer(GL_FRAMEBUFFER_EXT, surface->tex->pt->fb);
+     }
+   _evas_gl_common_viewport_set(gc);
+#endif   
 }
 
 #define PUSH_VERTEX(x, y, z) \
@@ -303,15 +363,18 @@ evas_gl_common_context_rectangle_push(Evas_GL_Context *gc,
    Eina_Bool blend = 0;
    
    if (a < 255) blend = 1;
+   if (gc->dc->render_op == EVAS_RENDER_COPY) blend = 0;
    if ((gc->shader.cur_tex != 0)
        || (gc->shader.cur_prog != gc->shared->shader.rect.prog)
        || (gc->shader.blend != blend)
+       || (gc->shader.render_op != gc->dc->render_op)
        )
      {
         shader_array_flush(gc);
         gc->shader.cur_tex = 0;
         gc->shader.cur_prog = gc->shared->shader.rect.prog;
         gc->shader.blend = blend;
+        gc->shader.render_op = gc->dc->render_op;
      }
    
    pnum = gc->array.num;
@@ -356,6 +419,7 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
        || (gc->shader.cur_prog != gc->shared->shader.img.prog)
        || (gc->shader.smooth != smooth)
        || (gc->shader.blend != blend)
+       || (gc->shader.render_op != gc->dc->render_op)
        )
      {
         shader_array_flush(gc);
@@ -363,6 +427,7 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
         gc->shader.cur_prog = gc->shared->shader.img.prog;
         gc->shader.smooth = smooth;
         gc->shader.blend = blend;
+        gc->shader.render_op = gc->dc->render_op;
      }
    
    pnum = gc->array.num;
@@ -411,6 +476,7 @@ evas_gl_common_context_font_push(Evas_GL_Context *gc,
        || (gc->shader.cur_prog != gc->shared->shader.font.prog)
        || (gc->shader.smooth != 0)
        || (gc->shader.blend != 1)
+       || (gc->shader.render_op != gc->dc->render_op)
        )
      {
         shader_array_flush(gc);
@@ -418,6 +484,7 @@ evas_gl_common_context_font_push(Evas_GL_Context *gc,
         gc->shader.cur_prog = gc->shared->shader.font.prog;
         gc->shader.smooth = 0;
         gc->shader.blend = 1;
+        gc->shader.render_op = gc->dc->render_op;
      }
    
    pnum = gc->array.num;
@@ -480,6 +547,7 @@ evas_gl_common_context_yuv_push(Evas_GL_Context *gc,
        || (gc->shader.cur_prog != gc->shared->shader.yuv.prog)
        || (gc->shader.smooth != smooth)
        || (gc->shader.blend != blend)
+       || (gc->shader.render_op != gc->dc->render_op)
        )
      {
         shader_array_flush(gc);
@@ -489,6 +557,7 @@ evas_gl_common_context_yuv_push(Evas_GL_Context *gc,
         gc->shader.cur_prog = gc->shared->shader.yuv.prog;
         gc->shader.smooth = smooth;
         gc->shader.blend = blend;
+        gc->shader.render_op = gc->dc->render_op;
      }
    
    pnum = gc->array.num;
@@ -551,7 +620,7 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
                                        RGBA_Map_Point *p,
                                        int clip, int cx, int cy, int cw, int ch,
                                        int r, int g, int b, int a,
-                                       Eina_Bool smooth)
+                                       Eina_Bool smooth, Eina_Bool tex_only)
 {
    int pnum, nv, nc, nu, nt, i;
    const int points[6] = { 0, 1, 2, 0, 2, 3 };
@@ -566,16 +635,22 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
 //   if (a < 255) blend = 1;
    
    if ((gc->shader.cur_tex != tex->pt->texture)
-       || (gc->shader.cur_prog != gc->shared->shader.img.prog)
+       || ((tex_only) && (gc->shader.cur_prog != gc->shared->shader.tex.prog))
+       || ((!tex_only) && (gc->shader.cur_prog != gc->shared->shader.img.prog))
        || (gc->shader.smooth != smooth)
        || (gc->shader.blend != blend)
+       || (gc->shader.render_op != gc->dc->render_op)
        )
      {
         shader_array_flush(gc);
         gc->shader.cur_tex = tex->pt->texture;
-        gc->shader.cur_prog = gc->shared->shader.img.prog;
+        if (tex_only)
+          gc->shader.cur_prog = gc->shared->shader.tex.prog;
+        else
+          gc->shader.cur_prog =gc->shared->shader.img.prog; 
         gc->shader.smooth = smooth;
         gc->shader.blend = blend;
+        gc->shader.render_op = gc->dc->render_op;
      }
    
    pnum = gc->array.num;
@@ -635,6 +710,33 @@ shader_array_flush(Evas_GL_Context *gc)
         else 
           glDisable(GL_BLEND);
      }
+   if (gc->shader.render_op != gc->shader.current.render_op)
+     {
+        switch (gc->shader.render_op)
+          {
+          case EVAS_RENDER_BLEND: /**< default op: d = d*(1-sa) + s */
+             glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+             break;
+          case EVAS_RENDER_COPY: /**< d = s */
+             glDisable(GL_BLEND);
+             glBlendFunc(GL_ONE, GL_ONE);
+             break;
+             // FIXME: fix blend funcs below!
+          case EVAS_RENDER_BLEND_REL: /**< d = d*(1 - sa) + s*da */
+          case EVAS_RENDER_COPY_REL: /**< d = s*da */
+          case EVAS_RENDER_ADD: /**< d = d + s */
+          case EVAS_RENDER_ADD_REL: /**< d = d + s*da */
+          case EVAS_RENDER_SUB: /**< d = d - s */
+          case EVAS_RENDER_SUB_REL: /**< d = d - s*da */
+          case EVAS_RENDER_TINT: /**< d = d*s + d*(1 - sa) + s*(1 - da) */
+          case EVAS_RENDER_TINT_REL: /**< d = d*(1 - sa + s) */
+          case EVAS_RENDER_MASK: /**< d = d*sa */
+          case EVAS_RENDER_MUL: /**< d = d*s */
+          default:
+             glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+             break;
+          }
+     }
    if (gc->shader.smooth != gc->shader.current.smooth)
      {
         if (gc->shader.smooth)
@@ -685,6 +787,7 @@ shader_array_flush(Evas_GL_Context *gc)
    gc->shader.current.cur_tex = gc->shader.cur_tex;
    gc->shader.current.blend = gc->shader.blend;
    gc->shader.current.smooth = gc->shader.smooth;
+   gc->shader.current.render_op = gc->shader.render_op;
    
    free(gc->array.vertex);
    free(gc->array.color);

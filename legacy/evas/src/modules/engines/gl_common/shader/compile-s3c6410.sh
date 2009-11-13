@@ -33,3 +33,4 @@ compile rect
 compile img
 compile font
 compile yuv
+compile tex

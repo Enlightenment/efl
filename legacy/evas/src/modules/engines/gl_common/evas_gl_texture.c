@@ -252,6 +252,67 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im)
    return tex;
 }
 
+static Evas_GL_Texture_Pool *
+_pool_tex_render_new(Evas_GL_Context *gc, int w, int h, int intformat, int format)
+{
+   Evas_GL_Texture_Pool *pt;
+   
+   pt = calloc(1, sizeof(Evas_GL_Texture_Pool));
+   if (!pt) return NULL;
+   h = _tex_round_slot(gc, h) << 4;
+   _tex_adjust(gc, &w, &h);
+   pt->gc = gc;
+   pt->w = w;
+   pt->h = h;
+   pt->intformat = intformat;
+   pt->format = format;
+   pt->dataformat = GL_UNSIGNED_BYTE;
+   pt->references = 0;
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   // FIXME: XXX render-to-texture for gles2
+#else
+   glGenTextures(1, &(pt->texture));
+   glBindTexture(GL_TEXTURE_2D, pt->texture);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   _tex_2d(pt->intformat, w, h, pt->format, pt->dataformat);
+   glGenFramebuffers(1, &(pt->fb));
+   glBindFramebuffer(GL_FRAMEBUFFER_EXT, pt->fb);
+   glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, pt->texture, 0);
+   glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+   glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
+#endif   
+   return pt;
+}
+
+Evas_GL_Texture *
+evas_gl_common_texture_render_new(Evas_GL_Context *gc, int w, int h, int alpha)
+{
+   Evas_GL_Texture *tex;
+   Eina_List *l_after = NULL;
+   int u = 0, v = 0;
+
+   tex = calloc(1, sizeof(Evas_GL_Texture));
+   if (!tex) return NULL;
+   
+   tex->gc = gc;
+   tex->references = 1;
+   tex->pt = _pool_tex_render_new(gc, w, h, rgba_ifmt, rgba_fmt);
+   if (!tex->pt)
+     {
+        free(tex);
+        return NULL;
+     }
+   tex->x = 0;
+   tex->y = 0;
+   tex->w = w;
+   tex->h = h;
+   tex->pt->references++;
+   return tex;
+}
+
 void
 evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
 {

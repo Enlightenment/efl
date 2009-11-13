@@ -91,7 +91,7 @@ struct _Evas_GL_Shared
    } tex;
    
    struct {
-      Evas_GL_Program  rect, img, font, yuv;
+      Evas_GL_Program  rect, img, font, yuv, tex;
    } shader;
    int references;
    int w, h;
@@ -109,13 +109,16 @@ struct _Evas_GL_Context
       Eina_Bool       active : 1;
    } clip;
    struct {
+      Evas_GL_Image  *surface;
       GLuint          cur_prog;
       GLuint          cur_tex, cur_texu, cur_texv;
+      int             render_op;
       Eina_Bool       smooth : 1;
       Eina_Bool       blend : 1;
       struct {
          GLuint          cur_prog;
          GLuint          cur_tex, cur_texum, cur_texv;
+         int             render_op;
          Eina_Bool       smooth : 1;
          Eina_Bool       blend : 1;
       } current;
@@ -132,12 +135,14 @@ struct _Evas_GL_Context
    struct {
       Eina_Bool size : 1;
    } change;
+   
+   Evas_GL_Image *def_surface;
 };
 
 struct _Evas_GL_Texture_Pool
 {
    Evas_GL_Context *gc;
-   GLuint           texture;
+   GLuint           texture, fb;
    GLuint           intformat, format, dataformat;
    int              w, h;
    int              references;
@@ -162,6 +167,8 @@ struct _Evas_GL_Image
    Evas_GL_Texture *tex;
    RGBA_Image_Loadopts load_opts;
    int              references;
+   // if im->im == NULL, it's a render-surface so these here are used
+   int              w, h;
    struct {
       int           space;
       void         *data;
@@ -169,6 +176,8 @@ struct _Evas_GL_Image
    } cs;
    unsigned char    dirty : 1;
    unsigned char    cached : 1;
+   unsigned char    alpha : 1;
+   unsigned char    tex_only : 1;
 };
 
 struct _Evas_GL_Font_Texture
@@ -213,6 +222,8 @@ extern Evas_GL_Program_Source shader_font_frag_src;
 extern Evas_GL_Program_Source shader_font_vert_src;
 extern Evas_GL_Program_Source shader_yuv_frag_src;
 extern Evas_GL_Program_Source shader_yuv_vert_src;
+extern Evas_GL_Program_Source shader_tex_frag_src;
+extern Evas_GL_Program_Source shader_tex_vert_src;
 
 void glerr(const char *file, const char *func, int line, const char *op);
  
@@ -220,7 +231,8 @@ Evas_GL_Context  *evas_gl_common_context_new(void);
 void              evas_gl_common_context_free(Evas_GL_Context *gc);
 void              evas_gl_common_context_use(Evas_GL_Context *gc);
 void              evas_gl_common_context_resize(Evas_GL_Context *gc, int w, int h);
-
+void              evas_gl_common_context_target_surface_set(Evas_GL_Context *gc, Evas_GL_Image *surface);
+    
 void              evas_gl_common_context_rectangle_push(Evas_GL_Context *gc,
                                                         int x, int y, int w, int h,
                                                         int r, int g, int b, int a);
@@ -246,7 +258,8 @@ void             evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
                                                         RGBA_Map_Point *p,
                                                         int clip, int cx, int cy, int cw, int ch,
                                                         int r, int g, int b, int a,
-                                                        Eina_Bool smooth);
+                                                        Eina_Bool smooth, 
+                                                        Eina_Bool tex_only);
 void              evas_gl_common_context_flush(Evas_GL_Context *gc);
 
 void              evas_gl_common_shader_program_init(Evas_GL_Program *p,
@@ -257,6 +270,7 @@ void              evas_gl_common_shader_program_init(Evas_GL_Program *p,
 void              evas_gl_common_rect_draw(Evas_GL_Context *gc, int x, int y, int w, int h);
 
 Evas_GL_Texture  *evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im);
+Evas_GL_Texture  *evas_gl_common_texture_render_new(Evas_GL_Context *gc, int w, int h, int alpha);
 void              evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im);
 void              evas_gl_common_texture_free(Evas_GL_Texture *tex);
 Evas_GL_Texture  *evas_gl_common_texture_alpha_new(Evas_GL_Context *gc, DATA8 *pixels, int w, int h, int fh);
@@ -269,6 +283,7 @@ Evas_GL_Image    *evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w,
 Evas_GL_Image    *evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, int w, int h, DATA32 *data, int alpha, int cspace);
 Evas_GL_Image    *evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h, int alpha, int cspace);
 void              evas_gl_common_image_free(Evas_GL_Image *im);
+Evas_GL_Image    *evas_gl_common_image_surface_new(Evas_GL_Context *gc, int w, int h, int alpha);
 void              evas_gl_common_image_dirty(Evas_GL_Image *im);
 void              evas_gl_common_image_map4_draw(Evas_GL_Context *gc, Evas_GL_Image *im, RGBA_Map_Point *p, int smooth, int level);
 void              evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth);

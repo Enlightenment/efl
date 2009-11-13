@@ -1,0 +1,10 @@
+#ifdef GL_ES
+precision mediump float;
+#endif
+uniform sampler2D tex;
+varying vec4 col;
+varying vec2 tex_c;
+void main()
+{
+   gl_FragColor = texture2D(tex, tex_c.xy) * col;
+}

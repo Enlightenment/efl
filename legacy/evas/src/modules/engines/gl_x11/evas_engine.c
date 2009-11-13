@@ -250,7 +250,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 //   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 //   glClear(GL_COLOR_BUFFER_BIT);
 //x//   printf("frame -> new\n");
-   return re;
+   return re->win->gl_context->def_surface;
 }
 
 static void
@@ -333,23 +333,25 @@ eng_context_cutout_clear(void *data, void *context)
 }
 
 static void
-eng_rectangle_draw(void *data, void *context, void *surface __UNUSED__, int x, int y, int w, int h)
+eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
    eng_window_use(re->win);
+   evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
    re->win->gl_context->dc = context;
    evas_gl_common_rect_draw(re->win->gl_context, x, y, w, h);
 }
 
 static void
-eng_line_draw(void *data, void *context, void *surface __UNUSED__, int x1, int y1, int x2, int y2)
+eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
    eng_window_use(re->win);
+   evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
    re->win->gl_context->dc = context;
 //-//   evas_gl_common_line_draw(re->win->gl_context, x1, y1, x2, y2);
 }
@@ -375,12 +377,13 @@ eng_polygon_points_clear(void *data, void *context __UNUSED__, void *polygon)
 }
 
 static void
-eng_polygon_draw(void *data, void *context, void *surface __UNUSED__, void *polygon)
+eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
    eng_window_use(re->win);
+   evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
    re->win->gl_context->dc = context;
 //--//      evas_gl_common_poly_draw(re->win->gl_context, polygon);
 }
@@ -1006,13 +1009,14 @@ eng_image_data_preload_cancel(void *data __UNUSED__, void *image, const void *ta
 }
 
 static void
-eng_image_draw(void *data, void *context, void *surface __UNUSED__, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
+eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
    if (!image) return;
    eng_window_use(re->win);
+   evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
    re->win->gl_context->dc = context;
    evas_gl_common_image_draw(re->win->gl_context, image,
                              src_x, src_y, src_w, src_h,
@@ -1031,20 +1035,25 @@ eng_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *i
    Render_Engine *re;
    
    re = (Render_Engine *)data;
+   eng_window_use(re->win);
+   evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
+   re->win->gl_context->dc = context;
    evas_gl_common_image_map4_draw(re->win->gl_context, image, p, smooth, level);
 }
 
 static void *
 eng_image_map_surface_new(void *data __UNUSED__, int w, int h, int alpha)
 {
-   // XXX
-   return NULL;
+   Render_Engine *re;
+   
+   re = (Render_Engine *)data;
+   return evas_gl_common_image_surface_new(re->win->gl_context, w, h, alpha);
 }
 
 static void
 eng_image_map_surface_free(void *data __UNUSED__, void *surface)
 {
-   // XXX
+   evas_gl_common_image_free(surface);
 }
 
 static int
@@ -1054,12 +1063,14 @@ eng_image_scale_hint_get(void *data __UNUSED__, void *image)
 }
 
 static void
-eng_font_draw(void *data, void *context, void *surface __UNUSED__, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const char *text)
+eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const char *text)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
    eng_window_use(re->win);
+   evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
+   re->win->gl_context->dc = context;
      {
         // FIXME: put im into context so we can free it
 	static RGBA_Image *im = NULL;

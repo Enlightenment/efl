@@ -32,6 +32,10 @@ shader/yuv_frag.h \
 shader/yuv_frag_bin_s3c6410.h \
 shader/yuv_vert.h \
 shader/yuv_vert_bin_s3c6410.h \
+shader/tex_frag.h \
+shader/tex_frag_bin_s3c6410.h \
+shader/tex_vert.h \
+shader/tex_vert_bin_s3c6410.h \
 evas_gl_rectangle.c \
 evas_gl_texture.c \
 evas_gl_image.c \
@@ -63,4 +67,7 @@ shader/font_frag_s3c6410.asm \
 shader/font_vert.shd \
 shader/yuv_frag.shd \
 shader/yuv_frag_s3c6410.asm \
-shader/yuv_vert.shd
+shader/yuv_vert.shd \
+shader/tex_frag.shd \
+shader/tex_frag_s3c6410.asm \
+shader/tex_vert.shd

@@ -13,7 +13,7 @@ evas_gl_common_rect_draw(Evas_GL_Context *gc, int x, int y, int w, int h)
    c = gc->dc->clip.use; cx = gc->dc->clip.x; cy = gc->dc->clip.y; cw = gc->dc->clip.w; ch = gc->dc->clip.h;
    
    ca = (gc->dc->col.col >> 24) & 0xff;
-   if (ca <= 0) return;
+//   if (ca <= 0) return;
    cr = (gc->dc->col.col >> 16) & 0xff;
    cg = (gc->dc->col.col >> 8 ) & 0xff;
    cb = (gc->dc->col.col      ) & 0xff;

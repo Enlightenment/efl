@@ -160,6 +160,46 @@ Evas_GL_Program_Source shader_yuv_vert_src =
 #endif     
 };
 
+/////////////////////////////////////////////
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int tex_frag_bin[] =
+{
+# include "shader/tex_frag_bin_s3c6410.h"
+};
+#endif
+
+const char tex_frag_glsl[] =
+#include "shader/tex_frag.h"
+  ;
+Evas_GL_Program_Source shader_tex_frag_src =
+{
+   tex_frag_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     tex_frag_bin, sizeof(tex_frag_bin)
+#else     
+     NULL, 0
+#endif     
+};
+
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int tex_vert_bin[] =
+{
+# include "shader/tex_vert_bin_s3c6410.h"
+};
+#endif
+const char tex_vert_glsl[] =
+#include "shader/tex_vert.h"
+  ;
+Evas_GL_Program_Source shader_tex_vert_src =
+{
+   tex_vert_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     tex_vert_bin, sizeof(tex_vert_bin)
+#else     
+     NULL, 0
+#endif     
+};
+
 
 
 
