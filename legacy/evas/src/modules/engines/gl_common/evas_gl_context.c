@@ -238,6 +238,9 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
    gc->references--;
    if (gc->references > 0) return;
    gc->shared->references--;
+   
+   evas_gl_common_image_free(gc->def_surface);
+   
    if (gc->shared->references == 0)
      {
         while (gc->shared->images)
@@ -261,8 +264,7 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
         shared = NULL;
      }
    
-   evas_gl_common_image_free(gc->def_surface);
-   
+
    free(gc->array.vertex);
    free(gc->array.color);
    free(gc->array.texuv);

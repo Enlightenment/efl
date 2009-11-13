@@ -38,7 +38,8 @@ static void
 eng_info_free(Evas *e __UNUSED__, void *info)
 {
    Evas_Engine_Info_GL_X11 *in;
-   eina_log_domain_unregister(_evas_engine_GL_X11_log_dom);
+// dont free! why bother? its not worth it   
+//   eina_log_domain_unregister(_evas_engine_GL_X11_log_dom);
    in = (Evas_Engine_Info_GL_X11 *)info;
    free(in);
 }
@@ -1106,11 +1107,12 @@ module_open(Evas_Module *em)
    if (!em) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
-   _evas_engine_GL_X11_log_dom = eina_log_domain_register("EvasEngineGLX11", EVAS_DEFAULT_LOG_COLOR);
-   if(_evas_engine_GL_X11_log_dom<0)
+   if (_evas_engine_GL_X11_log_dom < 0)
+     _evas_engine_GL_X11_log_dom = eina_log_domain_register("EvasEngineGLX11", EVAS_DEFAULT_LOG_COLOR);
+   if (_evas_engine_GL_X11_log_dom < 0)
      {
-       EINA_LOG_ERR("Impossible to create a log domain for GL X11 engine.\n");
-       return 0;
+        EINA_LOG_ERR("Impossible to create a log domain for GL X11 engine.\n");
+        return 0;
      }
    /* store it for later use */
    func = pfunc;
