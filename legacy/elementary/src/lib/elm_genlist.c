@@ -335,12 +335,18 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   elm_genlist_clear(obj);
-   evas_object_del(wd->pan_smart);
-   wd->pan_smart = NULL;
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    if (wd->update_job) ecore_job_del(wd->update_job);
    free(wd);
+}
+
+static void
+_del_pre_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   evas_object_del(wd->pan_smart);
+   wd->pan_smart = NULL;
+   elm_genlist_clear(obj);
 }
 
 static void
@@ -1274,6 +1280,7 @@ elm_genlist_add(Evas_Object *parent)
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
 
    wd->scr = elm_smart_scroller_add(e);

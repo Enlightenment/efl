@@ -101,6 +101,14 @@ _menu_hide(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
+_menu_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   // avoid hide being emitted during object deletion
+   evas_object_event_callback_del_full
+     (obj, EVAS_CALLBACK_HIDE, _menu_hide, data);
+}
+
+static void
 _menu_move_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
     Elm_Toolbar_Item *it = data;
@@ -134,24 +142,21 @@ _del_pre_hook(Evas_Object *obj)
 
    if (!wd) return;
    EINA_LIST_FREE(wd->items, it)
-     elm_toolbar_item_menu_set(it, 0);
+     {
+	eina_stringshare_del(it->label);
+	if (it->icon) evas_object_del(it->icon);
+	if ((!wd->menu_parent) && (it->o_menu)) evas_object_del(it->o_menu);
+	evas_object_del(it->base);
+	free(it);
+     }
 }
 
 static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Elm_Toolbar_Item *it;
 
    if (!wd) return;
-   EINA_LIST_FREE(wd->items, it)
-     {
-	eina_stringshare_del(it->label);
-	if (it->icon) evas_object_del(it->icon);
-	evas_object_del(it->base);
-	free(it);
-	elm_toolbar_item_menu_set(it, 0);
-     }
    free(wd);
 }
 
@@ -562,11 +567,11 @@ elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu)
 	  elm_menu_parent_set(item->o_menu, wd->menu_parent);
 	evas_object_event_callback_add(item->o_menu, EVAS_CALLBACK_HIDE,
                                        _menu_hide, item);
+	evas_object_event_callback_add(item->o_menu, EVAS_CALLBACK_DEL,
+				       _menu_del, item);
      }
    else if (item->o_menu)
      {
-	evas_object_event_callback_del_full(item->o_menu, EVAS_CALLBACK_HIDE,
-	      _menu_hide, item);
 	evas_object_del(item->o_menu);
      }
 }

@@ -37,14 +37,13 @@ _del_pre_hook(Evas_Object *obj)
 
     evas_object_event_callback_del_full
         (wd->box, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
+    evas_object_box_remove_all(wd->box, 0);
 }
 
 static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   evas_object_box_remove_all(wd->box, 0);
-   evas_object_del(wd->box);
    free(wd);
 }
 

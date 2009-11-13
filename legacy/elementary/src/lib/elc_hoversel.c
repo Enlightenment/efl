@@ -50,18 +50,11 @@ static void _parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _del_pre_hook(Evas_Object *obj)
 {
-   elm_hoversel_hover_end(obj);
-   elm_hoversel_hover_parent_set(obj, NULL);
-}
-
-static void
-_del_hook(Evas_Object *obj)
-{
    Elm_Hoversel_Item *it;
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if (!wd) return;
    elm_hoversel_hover_end(obj);
+   elm_hoversel_hover_parent_set(obj, NULL);
    EINA_LIST_FREE(wd->items, it)
      {
 	if (it->del_cb) it->del_cb((void *)it->data, it->obj, it);
@@ -70,6 +63,12 @@ _del_hook(Evas_Object *obj)
 	eina_stringshare_del(it->icon_group);
 	free(it);
      }
+}
+
+static void
+_del_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
    free(wd);
 }
 

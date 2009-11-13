@@ -656,7 +656,7 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    wd->on_hold = EINA_FALSE;
 }
    
-static Evas_Smart_Class _pan_sc = {NULL};
+static Evas_Smart_Class _pan_sc = EVAS_SMART_CLASS_INIT_NULL;
 
 static void
 _del_hook(Evas_Object *obj)
@@ -1394,6 +1394,12 @@ elm_photocam_region_get(Evas_Object *obj, int *x, int *y, int *w, int *h)
              else if (*w < 0) *w = 0;
           }
      }
+   else
+     {
+	if (x) *x = 0;
+	if (w) *w = 0;
+     }
+
    if (wd->size.h > 0)
      {
         if (y)
@@ -1409,7 +1415,11 @@ elm_photocam_region_get(Evas_Object *obj, int *x, int *y, int *w, int *h)
              else if (*h < 0) *h = 0;
           }
      }
-   wd->size.w;
+   else
+     {
+	if (y) *y = 0;
+	if (h) *h = 0;
+     }
 }
 
 /**
