@@ -64,7 +64,8 @@ test_icon_desktops.c \
 test_notify.c \
 test_slideshow.c \
 test_menu.c \
-test_panel.c
+test_panel.c \
+test_map.c
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la
 elementary_test_LDFLAGS =

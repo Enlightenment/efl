@@ -117,6 +117,7 @@ extern "C" {
 
 /* handy macros */
 #define ELM_RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh) (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && (((x) + (w)) > (xx)) && (((y) + (h)) > (yy)))
+#define ELM_PI 3.14159265358979323846
 
 /**************************************************************************/
    /* Objects */
@@ -188,7 +189,7 @@ extern "C" {
    EAPI void         elm_object_focus(Evas_Object *obj);
    EAPI void         elm_object_focus_allow_set(Evas_Object *obj, Eina_Bool enable);
    EAPI Eina_Bool    elm_object_focus_allow_get(Evas_Object *obj);
-       
+
    EAPI void         elm_object_scroll_hold_push(Evas_Object *obj);
    EAPI void         elm_object_scroll_hold_pop(Evas_Object *obj);
    EAPI void         elm_object_scroll_freeze_push(Evas_Object *obj);
@@ -201,7 +202,7 @@ extern "C" {
    EAPI void         elm_theme_extension_add(const char *item);
    EAPI void         elm_theme_extension_del(const char *item);
    EAPI void         elm_theme_flush(void);
-       
+
    EAPI Evas_Object *elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type);
    EAPI void         elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj);
    EAPI void         elm_win_resize_object_del(Evas_Object *obj, Evas_Object *subobj);
@@ -895,7 +896,7 @@ extern "C" {
    EAPI const char  *elm_fileselector_selected_get(Evas_Object *obj);
    /* smart callbacks called:
     * "selected" - the user click on a file
-    * "directory,open" - the list is populate with a new content. event_info is a directory. 
+    * "directory,open" - the list is populate with a new content. event_info is a directory.
     * "done" - the user click on the ok or cancel buttons
     */
 
@@ -980,6 +981,40 @@ extern "C" {
     * "clicked,double" - when mouse/finger double-clicked
     * "load" - when photo load begins
     * "loaded" - when photo load done
+    * "load,details" - when detailed image load begins
+    * "loaded,details" - when detailed image load done
+    * "zoom,start" - when zooming started
+    * "zoom,stop" - when zooming stopped
+    * "zoom,change" - when auto zoom mode changed zoom level
+    * "scroll - the content has been scrolled (moved)
+    * "scroll,anim,start" - scrolling animation has started
+    * "scroll,anim,stop" - scrolling animation has stopped
+    * "scroll,drag,start" - dragging the contents around has started
+    * "scroll,drag,stop" - dragging the contents around has stopped
+    */
+
+   typedef enum _Elm_Map_Zoom_Mode
+     {
+	ELM_MAP_ZOOM_MODE_MANUAL,
+	ELM_MAP_ZOOM_MODE_AUTO_FIT,
+	ELM_MAP_ZOOM_MODE_AUTO_FILL
+     } Elm_Map_Zoom_Mode;
+   EAPI Evas_Object *elm_map_add(Evas_Object *parent);
+   EAPI void         elm_map_zoom_set(Evas_Object *obj, int zoom);
+   EAPI double       elm_map_zoom_get(Evas_Object *obj);
+   EAPI void         elm_map_zoom_mode_set(Evas_Object *obj, Elm_Map_Zoom_Mode mode);
+   EAPI Elm_Map_Zoom_Mode elm_map_zoom_mode_get(Evas_Object *obj);
+   EAPI void         elm_map_image_size_get(Evas_Object *obj, int *w, int *h);
+   EAPI void	     elm_map_geo_region_get(Evas_Object *obj, double *lat, double *lon);
+   EAPI void         elm_map_geo_region_bring_in(Evas_Object *obj, double lat, double lon);
+   EAPI void         elm_map_geo_region_show(Evas_Object *obj, double lat, double lon);
+   EAPI void         elm_map_paused_set(Evas_Object *obj, Eina_Bool paused);
+   EAPI Eina_Bool    elm_map_paused_get(Evas_Object *obj);
+   /* smart callbacks called:
+    * "clicked" - when image clicked
+    * "press" - when mouse/finger held down initially on image
+    * "longpressed" - when mouse/finger held for long time on image
+    * "clicked,double" - when mouse/finger double-clicked
     * "load,details" - when detailed image load begins
     * "loaded,details" - when detailed image load done
     * "zoom,start" - when zooming started
