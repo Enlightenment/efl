@@ -382,6 +382,7 @@ pt_unref(Evas_GL_Texture_Pool *pt)
           eina_list_remove(pt->gc->shared->tex.atlas[pt->slot][pt->fslot], pt);
      }
    glDeleteTextures(1, &(pt->texture));
+   if (pt->fb) glDeleteFramebuffersEXT(1, &(pt->fb));
    free(pt);
 }
 
