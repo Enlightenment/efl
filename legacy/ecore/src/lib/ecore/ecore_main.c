@@ -488,7 +488,6 @@ _ecore_main_fd_handlers_bads_rem(void)
 		     fprintf(stderr, "Fd function err returned 0, remove it\n");
 		     fdh->delete_me = 1;
 		     fd_handlers_delete_me = 1;
-		     _ecore_main_fd_handlers_cleanup();
 		   }
 	       }
 	     else
@@ -496,11 +495,11 @@ _ecore_main_fd_handlers_bads_rem(void)
 		  fprintf(stderr, "Problematic fd found at %d! setting it for delete\n", fdh->fd);
 		  fdh->delete_me = 1;
 		  fd_handlers_delete_me = 1;
-		  _ecore_main_fd_handlers_cleanup();
 	       }
 	  }
-
     }
+
+   _ecore_main_fd_handlers_cleanup();
 }
 
 static void
