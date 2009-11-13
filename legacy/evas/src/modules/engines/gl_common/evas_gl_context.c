@@ -80,10 +80,11 @@ _evas_gl_common_viewport_set(Evas_GL_Context *gc)
         h = gc->shader.surface->h;
         m = -1;
      }
-   
+
    if ((!gc->change.size) || 
-       ((gc->shared->w == w) && (gc->shared->h == gc->h)))
+       ((gc->shared->w == w) && (gc->shared->h == h)))
      return;
+   
    gc->shared->w = w;
    gc->shared->h = h;
    gc->change.size = 0;
@@ -91,10 +92,8 @@ _evas_gl_common_viewport_set(Evas_GL_Context *gc)
    glViewport(0, 0, w, h);
    
    matrix_ident(proj);
-   if (m == 1)
-     matrix_ortho(proj, 0, w, 0, h, -1.0, 1.0);
-   else
-     matrix_ortho(proj, 0, w, h, 0, -1.0, 1.0);
+   if (m == 1) matrix_ortho(proj, 0, w, 0, h, -1.0, 1.0);
+   else matrix_ortho(proj, 0, w, h, 0, -1.0, 1.0);
    
    glUseProgram(gc->shared->shader.rect.prog);
    glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.rect.prog, "mvp"), 1,
@@ -307,13 +306,9 @@ evas_gl_common_context_target_surface_set(Evas_GL_Context *gc,
    // FIXME: viewport goopies
    gc->change.size = 1;
    if (gc->shader.surface == gc->def_surface)
-     {
-        glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
-     }
+     glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
    else
-     {
-        glBindFramebuffer(GL_FRAMEBUFFER_EXT, surface->tex->pt->fb);
-     }
+     glBindFramebuffer(GL_FRAMEBUFFER_EXT, surface->tex->pt->fb);
    _evas_gl_common_viewport_set(gc);
 #endif   
 }
