@@ -703,13 +703,6 @@ shader_array_flush(Evas_GL_Context *gc)
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
      }
-   if (gc->shader.blend != gc->shader.current.blend)
-     {
-        if (gc->shader.blend)
-          glEnable(GL_BLEND);
-        else 
-          glDisable(GL_BLEND);
-     }
    if (gc->shader.render_op != gc->shader.current.render_op)
      {
         switch (gc->shader.render_op)
@@ -718,7 +711,7 @@ shader_array_flush(Evas_GL_Context *gc)
              glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
              break;
           case EVAS_RENDER_COPY: /**< d = s */
-             glDisable(GL_BLEND);
+             gc->shader.blend = 0;
              glBlendFunc(GL_ONE, GL_ONE);
              break;
              // FIXME: fix blend funcs below!
@@ -736,6 +729,13 @@ shader_array_flush(Evas_GL_Context *gc)
              glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
              break;
           }
+     }
+   if (gc->shader.blend != gc->shader.current.blend)
+     {
+        if (gc->shader.blend)
+          glEnable(GL_BLEND);
+        else 
+          glDisable(GL_BLEND);
      }
    if (gc->shader.smooth != gc->shader.current.smooth)
      {
