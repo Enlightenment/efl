@@ -890,7 +890,7 @@ _smart_del(Evas_Object *obj)
      }
    if (sd->hover_obj)
      {
-	sobj = sd->resize_obj;
+	sobj = sd->hover_obj;
 	sd->hover_obj = NULL;
 	evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
 	evas_object_smart_callback_call(sd->obj, "sub-object-del", sobj);
