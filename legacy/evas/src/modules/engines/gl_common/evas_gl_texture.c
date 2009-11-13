@@ -269,7 +269,18 @@ _pool_tex_render_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
    pt->dataformat = GL_UNSIGNED_BYTE;
    pt->references = 0;
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   // FIXME: XXX render-to-texture for gles2
+   glGenTextures(1, &(pt->texture));
+   glBindTexture(GL_TEXTURE_2D, pt->texture);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   _tex_2d(pt->intformat, w, h, pt->format, pt->dataformat);
+   glGenFramebuffers(1, &(pt->fb));
+   glBindFramebuffer(GL_FRAMEBUFFER_OES, pt->fb);
+   glFramebufferTexture2DEXT(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_TEXTURE_2D, pt->texture, 0);
+   glBindFramebufferEXT(GL_FRAMEBUFFER_OES, 0);
+   glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
 #else
    glGenTextures(1, &(pt->texture));
    glBindTexture(GL_TEXTURE_2D, pt->texture);

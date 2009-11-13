@@ -309,10 +309,17 @@ evas_gl_common_context_target_surface_set(Evas_GL_Context *gc,
 #else   
    // FIXME: viewport goopies
    gc->change.size = 1;
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   if (gc->shader.surface == gc->def_surface)
+     glBindFramebuffer(GL_FRAMEBUFFER_OES, 0);
+   else
+     glBindFramebuffer(GL_FRAMEBUFFER_OES, surface->tex->pt->fb);
+#else
    if (gc->shader.surface == gc->def_surface)
      glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
    else
      glBindFramebuffer(GL_FRAMEBUFFER_EXT, surface->tex->pt->fb);
+#endif   
    _evas_gl_common_viewport_set(gc);
 #endif   
 }
