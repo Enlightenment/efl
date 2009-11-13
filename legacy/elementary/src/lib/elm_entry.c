@@ -1156,15 +1156,17 @@ EAPI const char *
 elm_entry_entry_get(const Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   const char *text;
+   const char *text, *s;
 
    if (!wd) return NULL;
    // Strip ending <br> that is added by the textblock
    // need to check if <br> is present? seems it is always there
-   if (wd->stripped) eina_stringshare_del(wd->stripped);
    text = edje_object_part_text_get(wd->ent, "elm.text");
-   wd->stripped = eina_stringshare_add_length(text, strlen(text) - 4);
-   return wd->stripped;
+   s = eina_stringshare_add_length(text, strlen(text) - 4);
+
+   if (wd->stripped) eina_stringshare_del(wd->stripped);
+   wd->stripped = s;
+   return s;
 }
 
 EAPI const char *
