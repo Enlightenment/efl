@@ -49,6 +49,7 @@ extern "C" {
 
    typedef struct _Ecore_File_Monitor       Ecore_File_Monitor;
    typedef struct _Ecore_File_Monitor_Event Ecore_File_Monitor_Event;
+   typedef struct _Ecore_File_Download_Job  Ecore_File_Download_Job;
 
    typedef enum
      {
@@ -105,7 +106,7 @@ extern "C" {
    EAPI int         ecore_file_app_installed(const char *exe);
    EAPI Eina_List  *ecore_file_app_list(void);
 
-   EAPI int         ecore_file_download(const char *url, const char *dst,
+   EAPI int ecore_file_download(const char *url, const char *dst, 
 					void (*completion_cb)(void *data,
 							      const char *file,
 							      int status),
@@ -115,8 +116,10 @@ extern "C" {
 							   long int dlnow,
 							   long int ultotal,
 							   long int ulnow),
-					void *data);
-   EAPI void        ecore_file_download_abort_all(void);
+					void *data, 
+					Ecore_File_Download_Job **job_ret);
+   EAPI void        ecore_file_download_abort_all(void);  
+   EAPI void        ecore_file_download_abort(Ecore_File_Download_Job *job);
    EAPI int         ecore_file_download_protocol_available(const char *protocol);
 
 #ifdef __cplusplus

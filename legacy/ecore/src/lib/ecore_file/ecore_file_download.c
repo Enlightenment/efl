@@ -16,7 +16,6 @@
 
 #define ECORE_MAGIC_FILE_DOWNLOAD_JOB	0xf7427cb8
 
-typedef struct _Ecore_File_Download_Job		Ecore_File_Download_Job;
 struct _Ecore_File_Download_Job
 {
    ECORE_MAGIC;
@@ -42,7 +41,6 @@ Ecore_File_Download_Job *_ecore_file_download_curl(const char *url, const char *
 static int _ecore_file_download_url_complete_cb(void *data, int type, void *event);
 static int _ecore_file_download_url_progress_cb(void *data, int type, void *event);
 #endif
-static void _ecore_file_download_abort(Ecore_File_Download_Job *job);
 
 static Ecore_Event_Handler	*_url_complete_handler = NULL;
 static Ecore_Event_Handler	*_url_progress_download = NULL;
@@ -90,7 +88,7 @@ ecore_file_download_abort_all(void)
    Ecore_File_Download_Job *job;
 
    EINA_LIST_FREE(_job_list, job)
-	     _ecore_file_download_abort(job);
+	     ecore_file_download_abort(job);
 #endif /* BUILD_ECORE_CON */
 }
 
@@ -98,6 +96,8 @@ ecore_file_download_abort_all(void)
  * Download @p url to the given @p dst
  * @param  url The complete url to download
  * @param  dst The local file to save the downloaded to
+ * @param  job_ret Here the protocol use is http or ftp, this parameter will be fill 
+ *	with the job. The you con use ecore_file_download_abort() to cancel it.
  * @param  completion_cb A callback called on download complete
  * @param  progress_cb A callback called during the download operation
  * @return 1 if the download start or 0 on failure
@@ -110,7 +110,7 @@ EAPI int
 ecore_file_download(const char *url, const char *dst,
 		    void (*completion_cb)(void *data, const char *file, int status),
 		    int (*progress_cb)(void *data, const char *file, long int dltotal, long int dlnow, long int ultotal, long int ulnow),
-		    void *data)
+		    void *data, Ecore_File_Download_Job **job_ret)
 {
 #ifdef BUILD_ECORE_CON
    char *dir = ecore_file_dir_get(dst);
@@ -133,7 +133,7 @@ ecore_file_download(const char *url, const char *dst,
 	url += 7;
 	/* skip hostname */
 	url = strchr(url, '/');
-	return ecore_file_cp(url, dst);
+	return ecore_file_cp(url, dst); 
      }
 # ifdef HAVE_CURL
    else if ((!strncmp(url, "http://", 7)) ||
@@ -143,10 +143,8 @@ ecore_file_download(const char *url, const char *dst,
 	Ecore_File_Download_Job *job;
 
 	job = _ecore_file_download_curl(url, dst, completion_cb, progress_cb, data);
-	if (job)
-	  return 1;
-	else
-	  return 0;
+	if(job_ret) *job_ret = job;
+	return job != NULL;
      }
 # endif
    else
@@ -157,6 +155,7 @@ ecore_file_download(const char *url, const char *dst,
    completion_cb = NULL;
    progress_cb = NULL;
    data = NULL;
+   return 0;
 #endif /* BUILD_ECORE_CON */
 }
 
@@ -204,12 +203,11 @@ _ecore_file_download_url_complete_cb(void *data, int type, void *event)
    job = eina_list_search_unsorted(_job_list, _ecore_file_download_url_compare_job, ev->url_con);
    if (!ECORE_MAGIC_CHECK(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB)) return 1;
 
-   _job_list = eina_list_remove(_job_list, job);
 
    if (job->completion_cb)
      job->completion_cb(ecore_con_url_data_get(job->url_con), job->dst, !ev->status);
 
-   _ecore_file_download_abort(job);
+   ecore_file_download_abort(job);
 
    return 0;
 }
@@ -230,8 +228,7 @@ _ecore_file_download_url_progress_cb(void *data, int type, void *event)
 			  (long int) ev->down.total, (long int) ev->down.now,
 			  (long int) ev->up.total, (long int) ev->up.now) != 0)
        {
-	  _job_list = eina_list_remove(_job_list, job);
-	  _ecore_file_download_abort(job);
+	  ecore_file_download_abort(job);
        }
 
    return 0;
@@ -282,12 +279,13 @@ _ecore_file_download_curl(const char *url, const char *dst,
 }
 # endif
 
-static void
-_ecore_file_download_abort(Ecore_File_Download_Job *job)
+EAPI void
+ecore_file_download_abort(Ecore_File_Download_Job *job)
 {
 # ifdef HAVE_CURL
    ecore_con_url_destroy(job->url_con);
 # endif  
+   _job_list = eina_list_remove(_job_list, job);
    fclose(job->file);
    free(job->dst);
    free(job);
