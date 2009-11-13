@@ -1049,10 +1049,13 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
    /* This one can't be stopped, or the download never start. */
    while (curl_multi_perform(curlm, &still_running) == CURLM_CALL_MULTI_PERFORM);
 
-   completed_immediately =  _ecore_con_url_process_completed_jobs(url_con);
+   completed_immediately = _ecore_con_url_process_completed_jobs(url_con);
 
    if (!completed_immediately)
      {
+	if (url_con->fd_handler)
+	  ecore_main_fd_handler_del(url_con->fd_handler);
+
 	/* url_con still active -- set up an fd_handler */
 	FD_ZERO(&read_set);
 	FD_ZERO(&write_set);
