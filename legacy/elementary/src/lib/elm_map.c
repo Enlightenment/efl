@@ -234,8 +234,9 @@ grid_clear(Evas_Object *obj, Grid *g)
 
 	if(gi->job)
 	  {
-	     DBG("DOWNLOAD abort %p", gi);
+	     DBG("DOWNLOAD abort %d", wd->preload_num);
 	     ecore_file_download_abort(gi->job);
+	     gi->job = NULL;
 	  }
 	free(gi);
      }
@@ -262,7 +263,7 @@ _tile_downloaded(void *data, const char *file, int status)
    gi->download = EINA_FALSE;
    gi->job = NULL;
 
-   DBG("DOWNLOAD done %p %s", gi, file);
+   DBG("DOWNLOAD done %d %s", gi->wd->preload_num, file);
    if (gi->want)
      {
 	gi->want = EINA_FALSE;
@@ -368,10 +369,16 @@ grid_load(Evas_Object *obj, Grid *g)
 		       evas_object_smart_callback_call(obj, "loaded,detail", NULL);
 		    }
 		  evas_object_hide(gi->img);
-		  evas_object_image_preload(gi->img, 1);
 		  evas_object_image_file_set(gi->img, NULL, NULL);
 		  gi->want = EINA_FALSE;
 		  gi->have = EINA_FALSE;
+
+		  if(gi->job)
+		    {
+		       DBG("DOWNLOAD abort %d", wd->preload_num);
+		       ecore_file_download_abort(gi->job);
+		       gi->job = NULL;
+		    }
 	       }
 	     else if (gi->have)
 	       {
@@ -437,7 +444,6 @@ grid_load(Evas_Object *obj, Grid *g)
 	       {
 		  char buf[PATH_MAX], buf2[PATH_MAX];
 
-		  gi->download = EINA_TRUE;
 		  gi->want = EINA_TRUE;
 
 		  snprintf(buf, PATH_MAX, DEST_DIR_PATH, g->zoom, x);
@@ -447,12 +453,13 @@ grid_load(Evas_Object *obj, Grid *g)
 		  snprintf(buf2, PATH_MAX, DEST_FILE_PATH, buf, y);
 
 		  snprintf(buf, PATH_MAX, SOURCE_PATH,
-			wd->zoom, x, y);
+			g->zoom, x, y);
 
 
 		  if(ecore_file_exists(buf2) || g == eina_list_data_get(wd->grids))
 		    {
-		       DBG("DOWNLOAD %p %s \n\t in %s", gi, buf, buf2);
+		       gi->download = EINA_TRUE;
+		       DBG("DOWNLOAD %d %s \n\t in %s", wd->preload_num, buf, buf2);
 		       wd->preload_num++;
 		       if (wd->preload_num == 1)
 			 {
@@ -465,9 +472,9 @@ grid_load(Evas_Object *obj, Grid *g)
 			 _tile_downloaded(gi, buf2, EINA_TRUE);
 		       else
 			 {
-			 ecore_file_download(buf, buf2, _tile_downloaded, _tile_dl_progress, gi, &gi->job);
-			 if(!gi->job)
-			   DBG("ERROR NO JOB !!!!!\n");
+			    ecore_file_download(buf, buf2, _tile_downloaded, _tile_dl_progress, gi, &(gi->job));
+			    if(!gi->job)
+			      DBG("Can't start to download %s", buf);
 			 }
 		    }
 	       }
@@ -911,6 +918,13 @@ elm_map_add(Evas_Object *parent)
    static Evas_Smart *smart = NULL;
    int i;
    Grid *g;
+
+   
+   if(!ecore_file_download_protocol_available("http://"))
+   {
+       ERR("Ecore must be built with the support of HTTP for the widget map !");
+       return NULL;
+   }
 
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
