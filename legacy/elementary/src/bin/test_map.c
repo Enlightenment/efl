@@ -112,7 +112,7 @@ my_map_scroll(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *win = data;
    double lon, lat;
    elm_map_geo_region_get(obj, &lat, &lon);
-   printf("scroll latitude : %f longitude : %f\n", lat, lon);
+   //printf("scroll latitude : %f longitude : %f\n", lat, lon);
 }
 
 static void

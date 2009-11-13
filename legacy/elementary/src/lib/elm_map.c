@@ -69,7 +69,7 @@ struct _Grid_Item
    Eina_Bool want : 1;
    Eina_Bool download : 1;
    Eina_Bool have : 1;
-   Eina_Bool dead : 1; // old grid item, will die as sonn as the file is downloaded
+   Ecore_File_Download_Job *job;
 };
 
 struct _Grid
@@ -232,18 +232,26 @@ grid_clear(Evas_Object *obj, Grid *g)
 	       }
 	  }
 
-	if(gi->download)
+	if(gi->job)
 	  {
-	     gi->dead = EINA_TRUE;
-	     gi->want = EINA_FALSE;
+	     DBG("DOWNLOAD abort %p", gi);
+	     ecore_file_download_abort(gi->job);
 	  }
-	else
-	  free(gi);
+	free(gi);
      }
    eina_matrixsparse_free(g->grid);
    g->grid = NULL;
    g->gw = 0;
    g->gh = 0;
+}
+
+static int
+_tile_dl_progress(void *data, const char *file,
+					     long int dltotal, long int dlnow,
+					     long int ultotal, long int ulnow)
+{
+	//printf("PROGREES %s\n", file);
+	return 0;
 }
 
    static void
@@ -252,7 +260,10 @@ _tile_downloaded(void *data, const char *file, int status)
    Grid_Item *gi = data;
 
    gi->download = EINA_FALSE;
-   if (gi->want && !gi->dead)
+   gi->job = NULL;
+
+   DBG("DOWNLOAD done %p %s", gi, file);
+   if (gi->want)
      {
 	gi->want = EINA_FALSE;
 	evas_object_image_file_set(gi->img, file, NULL);
@@ -267,8 +278,6 @@ _tile_downloaded(void *data, const char *file, int status)
 	     evas_object_smart_callback_call(gi->wd->obj, "loaded,detail", NULL);
 	  }
      }
-   else if (gi->dead)
-     free(gi);
 }
 
    static Grid *
@@ -440,10 +449,10 @@ grid_load(Evas_Object *obj, Grid *g)
 		  snprintf(buf, PATH_MAX, SOURCE_PATH,
 			wd->zoom, x, y);
 
-		  DBG("DOWNLOAD %s \n\t in %s", buf, buf2);
 
 		  if(ecore_file_exists(buf2) || g == eina_list_data_get(wd->grids))
 		    {
+		       DBG("DOWNLOAD %p %s \n\t in %s", gi, buf, buf2);
 		       wd->preload_num++;
 		       if (wd->preload_num == 1)
 			 {
@@ -455,7 +464,11 @@ grid_load(Evas_Object *obj, Grid *g)
 		       if(ecore_file_exists(buf2))
 			 _tile_downloaded(gi, buf2, EINA_TRUE);
 		       else
-			 ecore_file_download(buf, buf2, _tile_downloaded, NULL, gi);
+			 {
+			 ecore_file_download(buf, buf2, _tile_downloaded, _tile_dl_progress, gi, &gi->job);
+			 if(!gi->job)
+			   DBG("ERROR NO JOB !!!!!\n");
+			 }
 		    }
 	       }
 	     else if(gi->have)

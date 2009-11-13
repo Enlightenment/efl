@@ -1,6 +1,8 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
+static Evas_Object *rect;
+
 static void
 my_ph_clicked(void *data, Evas_Object *obj, void *event_info)
 {
@@ -201,6 +203,47 @@ my_bt_zoom_fill(void *data, Evas_Object *obj, void *event_info)
    elm_photocam_zoom_mode_set(data, ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL);
 }
 
+static void
+_photocam_mouse_wheel_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *photocam = data;
+   Evas_Object *ph = data;
+   Evas_Event_Mouse_Wheel *ev = (Evas_Event_Mouse_Wheel*) event_info;
+   int zoom;
+   double val;
+   //unset the mouse wheel
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+
+   zoom = elm_photocam_zoom_get(photocam);
+   if (ev->z>0 && zoom == 1) return;
+
+   if (ev->z > 0)
+     zoom /= 2;
+   else
+     zoom *= 2;
+
+   val = 1;
+   int _zoom = zoom;
+   while(_zoom>1)
+     {
+	_zoom /= 2;
+	val++;
+     }
+
+   elm_photocam_zoom_mode_set(photocam, ELM_PHOTOCAM_ZOOM_MODE_MANUAL);
+   if (zoom >= 1) elm_photocam_zoom_set(photocam, zoom);
+}
+
+   static void
+_photocam_move_resize_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   int x,y,w,h;
+
+   evas_object_geometry_get(data,&x,&y,&w,&h);
+   evas_object_resize(rect,w,h);
+   evas_object_move(rect,x,y);
+}
+
 void
 test_photocam(void *data, Evas_Object *obj, void *event_info)
 {
@@ -229,7 +272,17 @@ test_photocam(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, ph);
    evas_object_data_set(ph, "window", win);
-  
+ 
+   rect = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_color_set(rect, 0, 0, 0, 0);
+   evas_object_repeat_events_set(rect,1);
+   evas_object_show(rect);
+   evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_WHEEL, _photocam_mouse_wheel_cb, ph);
+   evas_object_raise(rect);
+
+   evas_object_event_callback_add(ph, EVAS_CALLBACK_RESIZE, _photocam_move_resize_cb, ph);
+   evas_object_event_callback_add(ph, EVAS_CALLBACK_MOVE, _photocam_move_resize_cb, ph);
+
    evas_object_smart_callback_add(ph, "clicked", my_ph_clicked, win);
    evas_object_smart_callback_add(ph, "press", my_ph_press, win);
    evas_object_smart_callback_add(ph, "longpressed", my_ph_longpressed, win);
