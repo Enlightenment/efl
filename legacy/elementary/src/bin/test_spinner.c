@@ -30,6 +30,17 @@ test_spinner(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(sp);
 
    sp = elm_spinner_add(win);
+   elm_spinner_label_format_set(sp, "%1.1f units");
+   elm_spinner_step_set(sp, 1.3);
+   elm_spinner_wrap_set(sp, 1);
+   elm_object_style_set (sp, "vertical");
+   elm_spinner_min_max_set(sp, -50.0, 250.0);
+   evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(bx, sp);
+   evas_object_show(sp);
+
+   sp = elm_spinner_add(win);
    elm_spinner_label_format_set(sp, "Disabled %.0f");
    elm_object_disabled_set(sp, 1);
    elm_spinner_min_max_set(sp, -50.0, 250.0);
