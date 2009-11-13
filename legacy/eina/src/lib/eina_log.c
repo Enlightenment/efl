@@ -324,6 +324,7 @@
  */
 
 #define EINA_LOG_ENV_ABORT "EINA_LOG_ABORT"
+#define EINA_LOG_ENV_ABORT_LEVEL "EINA_LOG_ABORT_LEVEL"
 #define EINA_LOG_ENV_LEVEL "EINA_LOG_LEVEL"
 #define EINA_LOG_ENV_LEVELS "EINA_LOG_LEVELS"
 #define EINA_LOG_ENV_LEVELS_GLOB "EINA_LOG_LEVELS_GLOB"
@@ -355,6 +356,7 @@ static Eina_Bool _disable_color = EINA_FALSE;
 static Eina_Bool _disable_file = EINA_FALSE;
 static Eina_Bool _disable_function = EINA_FALSE;
 static Eina_Bool _abort_on_critical = EINA_FALSE;
+static int _abort_level_on_critical = EINA_LOG_LEVEL_CRITICAL;
 
 #ifdef EFL_HAVE_PTHREAD
 #include <pthread.h>
@@ -979,6 +981,9 @@ eina_log_init(void)
    if ((tmp = getenv(EINA_LOG_ENV_ABORT)) && (atoi(tmp) == 1))
      _abort_on_critical = EINA_TRUE;
 
+   if ((tmp = getenv(EINA_LOG_ENV_ABORT_LEVEL)))
+     _abort_level_on_critical = atoi(tmp);
+
    eina_log_print_prefix_update();
 
    // Global log level
@@ -1395,7 +1400,7 @@ eina_log_print_unlocked(int domain, Eina_Log_Level level, const char *file, cons
    _print_cb(d, level, file, fnc, line, fmt, _print_cb_data, args);
 
    if (EINA_UNLIKELY(_abort_on_critical) &&
-       EINA_UNLIKELY(level <= EINA_LOG_LEVEL_CRITICAL))
+       EINA_UNLIKELY(level <= _abort_level_on_critical))
      abort();
 }
 
