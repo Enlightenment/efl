@@ -1672,7 +1672,7 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
             f->pending = 1;
 
             ecore_file_download(uri, f->fullpath, efreet_desktop_cb_download_complete,
-                                            efreet_desktop_cb_download_progress, f);
+                                            efreet_desktop_cb_download_progress, f, NULL);
         }
 
         if (command->flags & EFREET_DESKTOP_EXEC_FLAG_URI)
