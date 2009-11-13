@@ -252,7 +252,7 @@ struct _Edje_External_Type
   Evas_Object *(*add) (void *data, Evas *evas, Evas_Object *parent, const Eina_List *params);
   void (*state_set) (void *data, Evas_Object *obj, const void *from_params, const void *to_params, float pos);
   void (*signal_emit) (void *data, Evas_Object *obj, const char *emission, const char *source);
-  void *(*params_parse) (void *data, const Eina_List *params);
+  void *(*params_parse) (void *data, Evas_Object *obj, const Eina_List *params);
   void (*params_free) (void *params);
 
   Evas_Object *(*icon_get) (void *data, Evas *e);
@@ -403,7 +403,7 @@ extern "C" {
    EAPI void         edje_message_signal_process        (void);
 
    /* edje_external.c */
-  EAPI Eina_Bool edje_external_type_register(const char *type_name, Edje_External_Type *type_info);
+  EAPI Eina_Bool edje_external_type_register(const char *type_name, const Edje_External_Type *type_info);
   EAPI Eina_Bool edje_external_type_unregister(const char *type_name);
   EAPI Eina_Iterator *edje_external_iterator_get(void);
   EAPI Edje_External_Param *edje_external_param_find(const Eina_List *params, const char *key);

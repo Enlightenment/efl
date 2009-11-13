@@ -8,7 +8,7 @@ static Eina_Hash *type_registry = NULL;
 static int init_count = 0;
 
 EAPI Eina_Bool
-edje_external_type_register(const char *type_name, Edje_External_Type *type_info)
+edje_external_type_register(const char *type_name, const Edje_External_Type *type_info)
 {
    if (eina_hash_find(type_registry, type_name))
      {
@@ -203,7 +203,7 @@ _edje_external_params_parse(Evas_Object *obj, const Eina_List *params)
 
    if (!type->params_parse) return NULL;
 
-   return type->params_parse(type->data, params);
+   return type->params_parse(type->data, obj, params);
 }
 
 void
