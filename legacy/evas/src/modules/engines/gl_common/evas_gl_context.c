@@ -304,24 +304,21 @@ evas_gl_common_context_target_surface_set(Evas_GL_Context *gc,
    evas_gl_common_context_flush(gc);
 
    gc->shader.surface = surface;
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   // FIXME: XXX render-to-texture for gles2
-#else   
-   // FIXME: viewport goopies
    gc->change.size = 1;
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   if (gc->shader.surface == gc->def_surface)
-     glBindFramebuffer(GL_FRAMEBUFFER_OES, 0);
-   else
-     glBindFramebuffer(GL_FRAMEBUFFER_OES, surface->tex->pt->fb);
+# ifndef GL_FRAMEBUFFER
+#  define GL_FRAMEBUFFER GL_FRAMEBUFFER_OES
+# endif   
 #else
+# ifndef GL_FRAMEBUFFER
+#  define GL_FRAMEBUFFER GL_FRAMEBUFFER_EXT
+# endif   
+#endif   
    if (gc->shader.surface == gc->def_surface)
-     glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+     glBindFramebuffer(GL_FRAMEBUFFER, 0);
    else
-     glBindFramebuffer(GL_FRAMEBUFFER_EXT, surface->tex->pt->fb);
-#endif   
+     glBindFramebuffer(GL_FRAMEBUFFER, surface->tex->pt->fb);
    _evas_gl_common_viewport_set(gc);
-#endif   
 }
 
 #define PUSH_VERTEX(x, y, z) \

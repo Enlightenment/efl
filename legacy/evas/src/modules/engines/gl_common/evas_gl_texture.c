@@ -269,19 +269,20 @@ _pool_tex_render_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
    pt->dataformat = GL_UNSIGNED_BYTE;
    pt->references = 0;
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   glGenTextures(1, &(pt->texture));
-   glBindTexture(GL_TEXTURE_2D, pt->texture);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-   _tex_2d(pt->intformat, w, h, pt->format, pt->dataformat);
-   glGenFramebuffers(1, &(pt->fb));
-   glBindFramebuffer(GL_FRAMEBUFFER_OES, pt->fb);
-   glFramebufferTexture2DEXT(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_TEXTURE_2D, pt->texture, 0);
-   glBindFramebufferEXT(GL_FRAMEBUFFER_OES, 0);
-   glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
+# ifndef GL_FRAMEBUFFER
+#  define GL_FRAMEBUFFER GL_FRAMEBUFFER_OES
+# endif
+# ifndef GL_COLOR_ATTACHMENT0
+#  define GL_COLOR_ATTACHMENT0 GL_COLOR_ATTACHMENT0_OES
+# endif
 #else
+# ifndef GL_FRAMEBUFFER
+#  define GL_FRAMEBUFFER GL_FRAMEBUFFER_EXT
+# endif
+# ifndef GL_COLOR_ATTACHMENT0
+#  define GL_COLOR_ATTACHMENT0 GL_COLOR_ATTACHMENT0_EXT
+# endif
+#endif  
    glGenTextures(1, &(pt->texture));
    glBindTexture(GL_TEXTURE_2D, pt->texture);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -290,11 +291,10 @@ _pool_tex_render_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
    _tex_2d(pt->intformat, w, h, pt->format, pt->dataformat);
    glGenFramebuffers(1, &(pt->fb));
-   glBindFramebuffer(GL_FRAMEBUFFER_EXT, pt->fb);
-   glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, pt->texture, 0);
-   glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+   glBindFramebuffer(GL_FRAMEBUFFER, pt->fb);
+   glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pt->texture, 0);
+   glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
    glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
-#endif   
    return pt;
 }
 
