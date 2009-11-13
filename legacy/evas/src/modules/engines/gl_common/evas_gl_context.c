@@ -110,6 +110,7 @@ _evas_gl_common_viewport_set(Evas_GL_Context *gc)
    glUseProgram(gc->shared->shader.tex.prog);
    glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.tex.prog, "mvp"), 1,
                       GL_FALSE, proj);
+   glUseProgram(gc->shader.cur_prog);
 }
 
 Evas_GL_Context *
@@ -213,6 +214,7 @@ evas_gl_common_context_new(void)
         glUniform1i(glGetUniformLocation(shared->shader.yuv.prog, "tex"), 0);
         glUniform1i(glGetUniformLocation(shared->shader.yuv.prog, "texu"), 1);
         glUniform1i(glGetUniformLocation(shared->shader.yuv.prog, "texv"), 2);
+        glUseProgram(gc->shader.cur_prog);
         // in shader:
         // uniform sampler2D tex[8];
         // 
@@ -669,6 +671,7 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
         PUSH_VERTEX((p[points[i]].x >> FP), 
                     (p[points[i]].y >> FP),
                     0);
+//                    (p[points[i]].y >> FP) + 4096);
 //                    (p[points[i]].z >> FP));
         PUSH_TEXUV(tx[points[i]],
                    ty[points[i]]);
