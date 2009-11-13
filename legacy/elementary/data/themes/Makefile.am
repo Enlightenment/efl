@@ -138,7 +138,10 @@ busy-6.png \
 busy-7.png \
 busy-8.png \
 busy-9.png \
-arrow_right.png
+arrow_right.png \
+bt_spinner_up.png \
+bt_spinner_down.png \
+bt_spinner_hilight.png
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
