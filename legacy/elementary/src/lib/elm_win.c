@@ -81,6 +81,7 @@ static void
 _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Elm_Win *win = data;
+   Evas_Object *child;
 
    if (win->autodel_clear) *(win->autodel_clear) = -1;
    _elm_win_list = eina_list_remove(_elm_win_list, win->win_obj);
@@ -89,15 +90,15 @@ _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_inf
    ecore_evas_callback_resize_set(win->ee, NULL);
    if (win->deferred_resize_job) ecore_job_del(win->deferred_resize_job);
    if (win->deferred_child_eval_job) ecore_job_del(win->deferred_child_eval_job);
-   while (evas_object_bottom_get(win->evas) &&
-	  (evas_object_bottom_get(win->evas) != obj))
+   while (((child = evas_object_bottom_get(win->evas)) != NULL) &&
+	  (child != obj))
      {
-	evas_object_del(evas_object_bottom_get(win->evas));
+	evas_object_del(child);
      }
-   while (evas_object_top_get(win->evas) &&
-	  (evas_object_top_get(win->evas) != obj))
+   while (((child = evas_object_top_get(win->evas)) != NULL) &&
+	  (child != obj))
      {
-	evas_object_del(evas_object_top_get(win->evas));
+	evas_object_del(child);
      }
    evas_image_cache_flush(win->evas);
    evas_font_cache_flush(win->evas);
