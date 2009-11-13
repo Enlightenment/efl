@@ -157,6 +157,20 @@ ecore_timer_del(Ecore_Timer *timer)
 			 "ecore_timer_del");
 	return NULL;
      }
+
+   if (timer->frozen)
+     {
+	void *data = timer->data;
+
+	suspended = (Ecore_Timer *) eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
+	free(timer);
+
+	if (timer->delete_me)
+	  timers_delete_me--;
+
+	return data;
+     }
+
    if (timer->delete_me) return timer->data;
    timers_delete_me++;
    timer->delete_me = 1;
