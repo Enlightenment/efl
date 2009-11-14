@@ -1069,7 +1069,6 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
 
 	/* Stupid curl, why can't I get the fd to the current added job? */
 	curl_multi_fdset(curlm, &read_set, &write_set, &exc_set, &fd_max);
-	int found = 0;
 	for (fd = 0; fd <= fd_max; fd++)
 	  {
 	     if (!FD_ISSET(fd, &_current_fd_set))
