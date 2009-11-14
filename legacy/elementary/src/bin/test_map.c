@@ -112,7 +112,7 @@ my_map_scroll(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *win = data;
    double lon, lat;
    elm_map_geo_region_get(obj, &lat, &lon);
-   //printf("scroll latitude : %f longitude : %f\n", lat, lon);
+   printf("scroll latitude : %f longitude : %f\n", lat, lon);
 }
 
 static void
@@ -130,7 +130,7 @@ my_bt_show_reg(void *data, Evas_Object *obj, void *event_info)
 {
    elm_map_paused_set(data, EINA_TRUE);
    elm_map_zoom_set(data, 18);
-   elm_map_geo_region_show(data, 48.857, 2.352);
+   //elm_map_geo_region_show(data, 48.857, 2.352);
 }
 
 static void

@@ -62,6 +62,7 @@ struct _Grid_Item
 {
    Widget_Data *wd;
    Evas_Object *img;
+   const char *file;
    struct
      {
 	int x, y, w, h;
@@ -70,6 +71,7 @@ struct _Grid_Item
    Eina_Bool download : 1;
    Eina_Bool have : 1;
    Ecore_File_Download_Job *job;
+   int try_num;
 };
 
 struct _Grid
@@ -234,25 +236,20 @@ grid_clear(Evas_Object *obj, Grid *g)
 
 	if(gi->job)
 	  {
-	     DBG("DOWNLOAD abort %d", wd->preload_num);
+	     DBG("DOWNLOAD abort %s", gi->file);
 	     ecore_file_download_abort(gi->job);
+	     remove(gi->file);
 	     gi->job = NULL;
 	  }
+	if(gi->file)
+	  eina_stringshare_del(gi->file);
+
 	free(gi);
      }
    eina_matrixsparse_free(g->grid);
    g->grid = NULL;
    g->gw = 0;
    g->gh = 0;
-}
-
-static int
-_tile_dl_progress(void *data, const char *file,
-					     long int dltotal, long int dlnow,
-					     long int ultotal, long int ulnow)
-{
-	//printf("PROGREES %s\n", file);
-	return 0;
 }
 
    static void
@@ -263,8 +260,8 @@ _tile_downloaded(void *data, const char *file, int status)
    gi->download = EINA_FALSE;
    gi->job = NULL;
 
-   DBG("DOWNLOAD done %d %s", gi->wd->preload_num, file);
-   if (gi->want)
+   DBG("DOWNLOAD done %s", gi->file);
+   if (gi->want && !status)
      {
 	gi->want = EINA_FALSE;
 	evas_object_image_file_set(gi->img, file, NULL);
@@ -278,6 +275,11 @@ _tile_downloaded(void *data, const char *file, int status)
 		   "elm,state,busy,stop", "elm");
 	     evas_object_smart_callback_call(gi->wd->obj, "loaded,detail", NULL);
 	  }
+     }
+
+   if(status)
+     {
+	DBG("Download failed (%d) %s", status, gi->file);
      }
 }
 
@@ -329,7 +331,7 @@ grid_load(Evas_Object *obj, Grid *g)
    size = g->tsize;
    if ((gw != g->w) && (g->w > 0))
      size = ((long long)gw * size) / g->w;
-   if(size < 128) return; // else we will load to much tiles
+   if(size < g->tsize / 2) return; // else we will load to much tiles
 
 
    it = eina_matrixsparse_iterator_new(g->grid);
@@ -375,10 +377,12 @@ grid_load(Evas_Object *obj, Grid *g)
 
 		  if(gi->job)
 		    {
-		       DBG("DOWNLOAD abort %d", wd->preload_num);
+		       DBG("DOWNLOAD abort %s", gi->file);
 		       ecore_file_download_abort(gi->job);
+		       remove(gi->file);
 		       gi->job = NULL;
 		    }
+		  gi->download = EINA_FALSE;
 	       }
 	     else if (gi->have)
 	       {
@@ -455,11 +459,13 @@ grid_load(Evas_Object *obj, Grid *g)
 		  snprintf(buf, PATH_MAX, SOURCE_PATH,
 			g->zoom, x, y);
 
+		  if(gi->file)
+		    eina_stringshare_del(gi->file);
+		  gi->file = eina_stringshare_add(buf2);
 
 		  if(ecore_file_exists(buf2) || g == eina_list_data_get(wd->grids))
 		    {
 		       gi->download = EINA_TRUE;
-		       DBG("DOWNLOAD %d %s \n\t in %s", wd->preload_num, buf, buf2);
 		       wd->preload_num++;
 		       if (wd->preload_num == 1)
 			 {
@@ -469,10 +475,11 @@ grid_load(Evas_Object *obj, Grid *g)
 			 }
 
 		       if(ecore_file_exists(buf2))
-			 _tile_downloaded(gi, buf2, EINA_TRUE);
+			 _tile_downloaded(gi, buf2, 0);
 		       else
 			 {
-			    ecore_file_download(buf, buf2, _tile_downloaded, _tile_dl_progress, gi, &(gi->job));
+		            DBG("DOWNLOAD %d %s \t in %s", wd->preload_num, buf, buf2);
+			    ecore_file_download(buf, buf2, _tile_downloaded, NULL, gi, &(gi->job));
 			    if(!gi->job)
 			      DBG("Can't start to download %s", buf);
 			 }
@@ -631,7 +638,6 @@ _long_press(void *data)
    static void
 _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 {
-   printf("WOUSE DOWN\n");
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Down *ev = event_info;
    if (ev->button != 1) return;
