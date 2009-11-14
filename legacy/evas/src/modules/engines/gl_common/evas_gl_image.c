@@ -301,7 +301,9 @@ evas_gl_common_image_map4_draw(Evas_GL_Context *gc, Evas_GL_Image *im,
      }
    
    _evas_gl_common_image_update(gc, im);
-   
+
+   // FIXME: need to handle clipping with a scissor. only sane way to do it.
+
    glFlush();
    
    c = gc->dc->clip.use; 

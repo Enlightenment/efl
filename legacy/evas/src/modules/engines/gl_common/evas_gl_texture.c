@@ -384,14 +384,10 @@ pt_unref(Evas_GL_Texture_Pool *pt)
    pt->references--;
    if (pt->references > 0) return;
    if (pt->whole)
-     {
-        pt->gc->shared->tex.whole = eina_list_remove(pt->gc->shared->tex.whole, pt);
-     }
+     pt->gc->shared->tex.whole = eina_list_remove(pt->gc->shared->tex.whole, pt);
    else
-     {
-        pt->gc->shared->tex.atlas [pt->slot][pt->fslot] =
-          eina_list_remove(pt->gc->shared->tex.atlas[pt->slot][pt->fslot], pt);
-     }
+     pt->gc->shared->tex.atlas [pt->slot][pt->fslot] =
+     eina_list_remove(pt->gc->shared->tex.atlas[pt->slot][pt->fslot], pt);
    glDeleteTextures(1, &(pt->texture));
    if (pt->fb) glDeleteFramebuffers(1, &(pt->fb));
    free(pt);
@@ -411,7 +407,8 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex)
 }
 
 Evas_GL_Texture *
-evas_gl_common_texture_alpha_new(Evas_GL_Context *gc, DATA8 *pixels, int w, int h, int fh)
+evas_gl_common_texture_alpha_new(Evas_GL_Context *gc, DATA8 *pixels, 
+                                 int w, int h, int fh)
 {
    Evas_GL_Texture *tex;
    Eina_List *l_after = NULL;
@@ -425,7 +422,8 @@ evas_gl_common_texture_alpha_new(Evas_GL_Context *gc, DATA8 *pixels, int w, int 
    tex->references = 1;
    if (tw > gc->shared->info.max_texture_size)
      tw = gc->shared->info.max_texture_size;
-   tex->pt = _pool_tex_find(gc, w + 3, fh, alpha_ifmt, alpha_fmt, &u, &v, &l_after, tw);
+   tex->pt = _pool_tex_find(gc, w + 3, fh, alpha_ifmt, alpha_fmt, &u, &v, 
+                            &l_after, tw);
    if (!tex->pt)
      {
         free(tex);
@@ -436,7 +434,8 @@ evas_gl_common_texture_alpha_new(Evas_GL_Context *gc, DATA8 *pixels, int w, int 
    tex->w = w;
    tex->h = h;
    if (l_after)
-     tex->pt->allocations = eina_list_append_relative(tex->pt->allocations, tex, l_after);
+     tex->pt->allocations = 
+     eina_list_append_relative_list(tex->pt->allocations, tex, l_after);
    else
      tex->pt->allocations = eina_list_prepend(tex->pt->allocations, tex);
    tex->pt->references++;
@@ -445,14 +444,16 @@ evas_gl_common_texture_alpha_new(Evas_GL_Context *gc, DATA8 *pixels, int w, int 
 }
 
 void
-evas_gl_common_texture_alpha_update(Evas_GL_Texture *tex, DATA8 *pixels, int w, int h, int fh)
+evas_gl_common_texture_alpha_update(Evas_GL_Texture *tex, DATA8 *pixels, 
+                                    int w, int h, int fh)
 {
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
 #ifdef GL_UNPACK_ROW_LENGTH   
    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 #endif   
    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-   _tex_sub_2d(tex->x, tex->y, w, h, tex->pt->format, tex->pt->dataformat, pixels);
+   _tex_sub_2d(tex->x, tex->y, w, h, tex->pt->format, tex->pt->dataformat, 
+               pixels);
    if (tex->pt->texture != tex->gc->shader.cur_tex)
      glBindTexture(GL_TEXTURE_2D, tex->gc->shader.cur_tex);
 }
