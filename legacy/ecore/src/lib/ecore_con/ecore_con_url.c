@@ -346,10 +346,13 @@ ecore_con_url_destroy(Ecore_Con_Url *url_con)
      }
 
    ECORE_MAGIC_SET(url_con, ECORE_MAGIC_NONE);
-   if (url_con->fd_handler)
+   if(url_con->fd != -1)
      {
-	ecore_main_fd_handler_del(url_con->fd_handler);
+	FD_CLR(url_con->fd, &_current_fd_set);
+	if (url_con->fd_handler)
+	  ecore_main_fd_handler_del(url_con->fd_handler);
 	url_con->fd = -1;
+	url_con->fd_handler = NULL;
      }
    if (url_con->curl_easy)
      {
@@ -740,7 +743,9 @@ ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length, cons
 
    url_con->received = 0;
 
-   return _ecore_con_url_perform(url_con);
+   int res = _ecore_con_url_perform(url_con);
+
+   return res;
 #else
    return 0;
    url_con = NULL;
@@ -1055,6 +1060,7 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
      {
 	if (url_con->fd_handler)
 	  ecore_main_fd_handler_del(url_con->fd_handler);
+	url_con->fd_handler = NULL;
 
 	/* url_con still active -- set up an fd_handler */
 	FD_ZERO(&read_set);
@@ -1063,6 +1069,7 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
 
 	/* Stupid curl, why can't I get the fd to the current added job? */
 	curl_multi_fdset(curlm, &read_set, &write_set, &exc_set, &fd_max);
+	int found = 0;
 	for (fd = 0; fd <= fd_max; fd++)
 	  {
 	     if (!FD_ISSET(fd, &_current_fd_set))

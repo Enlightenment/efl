@@ -96,8 +96,8 @@ ecore_file_download_abort_all(void)
  * Download @p url to the given @p dst
  * @param  url The complete url to download
  * @param  dst The local file to save the downloaded to
- * @param  job_ret Here the protocol use is http or ftp, this parameter will be fill 
- *	with the job. The you con use ecore_file_download_abort() to cancel it.
+ * @param  job_ret If the protocol use is http or ftp, this parameter will be fill
+ *	with the job. Then you can use ecore_file_download_abort() to cancel it.
  * @param  completion_cb A callback called on download complete
  * @param  progress_cb A callback called during the download operation
  * @return 1 if the download start or 0 on failure
@@ -133,7 +133,7 @@ ecore_file_download(const char *url, const char *dst,
 	url += 7;
 	/* skip hostname */
 	url = strchr(url, '/');
-	return ecore_file_cp(url, dst); 
+	return ecore_file_cp(url, dst);
      }
 # ifdef HAVE_CURL
    else if ((!strncmp(url, "http://", 7)) ||
@@ -207,7 +207,10 @@ _ecore_file_download_url_complete_cb(void *data, int type, void *event)
    if (job->completion_cb)
      job->completion_cb(ecore_con_url_data_get(job->url_con), job->dst, !ev->status);
 
-   ecore_file_download_abort(job);
+   _job_list = eina_list_remove(_job_list, job);
+   fclose(job->file);
+   free(job->dst);
+   free(job);
 
    return 0;
 }
@@ -228,7 +231,12 @@ _ecore_file_download_url_progress_cb(void *data, int type, void *event)
 			  (long int) ev->down.total, (long int) ev->down.now,
 			  (long int) ev->up.total, (long int) ev->up.now) != 0)
        {
-	  ecore_file_download_abort(job);
+	  _job_list = eina_list_remove(_job_list, job);
+	  fclose(job->file);
+	  free(job->dst);
+	  free(job);
+
+	  return 1;
        }
 
    return 0;
@@ -284,7 +292,7 @@ ecore_file_download_abort(Ecore_File_Download_Job *job)
 {
 # ifdef HAVE_CURL
    ecore_con_url_destroy(job->url_con);
-# endif  
+# endif
    _job_list = eina_list_remove(_job_list, job);
    fclose(job->file);
    free(job->dst);
