@@ -494,10 +494,10 @@ echo "    E17 real data......: ${enable_benchmark_e17}"
 fi
 echo
 echo "  CPU Specific Extensions:"
-echo "    MMX..................: ${have_mmx}"
-echo "    SSE..................: ${have_sse}"
-echo "    SSE2.................: ${have_sse2}"
-echo "    ALTIVEC..............: ${have_altivec}"
+echo "    MMX................: ${have_mmx}"
+echo "    SSE................: ${have_sse}"
+echo "    SSE2...............: ${have_sse2}"
+echo "    ALTIVEC............: ${have_altivec}"
 echo
 echo "  Memory pools:"
 echo "    Chained pool.......: ${enable_chained_pool}"
@@ -506,13 +506,13 @@ echo "    Ememoa unknown.....: ${enable_ememoa_unknown}"
 echo "    Fixed bitmap.......: ${enable_fixed_bitmap}"
 echo "    Pass through.......: ${enable_pass_through}"
 echo
-echo "Compilation..........: make (or gmake)"
-echo "  CPPFLAGS...........: $CPPFLAGS"
-echo "  CFLAGS.............: $CFLAGS"
-echo "  LDFLAGS............: $LDFLAGS"
+echo "Compilation............: make (or gmake)"
+echo "  CPPFLAGS.............: $CPPFLAGS"
+echo "  CFLAGS...............: $CFLAGS"
+echo "  LDFLAGS..............: $LDFLAGS"
 echo
-echo "Installation.........: make install (as root if needed, with 'su' or 'sudo')"
-echo "  prefix.............: $prefix"
+echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
+echo "  prefix...............: $prefix"
 echo
 if test "x${have_static_module}" = "xyes" ; then
 echo -e "\0033\01331;31mWarning\0033\01331;0m: You are trying to link statically one or more modules to Eina."
