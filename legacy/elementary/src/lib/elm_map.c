@@ -61,7 +61,7 @@ typedef struct _Grid_Item Grid_Item;
 struct _Grid_Item
 {
    Widget_Data *wd;
-   Evas_Object *img;
+   Evas_Object *img, *txt;
    const char *file;
    struct
      {
@@ -200,6 +200,12 @@ grid_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord o
 	      yy - py + ay + oy);
 
 	evas_object_resize(gi->img, ww, hh);
+
+	evas_object_move(gi->txt,
+	      xx - px + ax + ox,
+	      yy - py + ay + oy);
+
+	evas_object_resize(gi->txt, ww, hh);
      }
 }
 
@@ -221,6 +227,7 @@ grid_clear(Evas_Object *obj, Grid *g)
      {
 	Grid_Item *gi = eina_matrixsparse_cell_data_get(cell);
 	evas_object_del(gi->img);
+	evas_object_del(gi->txt);
 
 	if (gi->want)
 	  {
@@ -253,6 +260,28 @@ grid_clear(Evas_Object *obj, Grid *g)
 }
 
    static void
+_tile_update(Grid_Item *gi)
+{
+   gi->want = EINA_FALSE;
+    gi->download = EINA_FALSE;
+   evas_object_image_file_set(gi->img, gi->file, NULL);
+   evas_object_show(gi->img);
+
+   evas_object_text_text_set(gi->txt, gi->file);
+   evas_object_show(gi->txt);
+
+   gi->have = EINA_TRUE;
+   gi->wd->preload_num--;
+   if (gi->wd->preload_num == 0)
+     {
+	edje_object_signal_emit(elm_smart_scroller_edje_object_get(gi->wd->scr),
+	      "elm,state,busy,stop", "elm");
+	evas_object_smart_callback_call(gi->wd->obj, "loaded,detail", NULL);
+     }
+}
+
+
+   static void
 _tile_downloaded(void *data, const char *file, int status)
 {
    Grid_Item *gi = data;
@@ -262,25 +291,10 @@ _tile_downloaded(void *data, const char *file, int status)
 
    DBG("DOWNLOAD done %s", gi->file);
    if (gi->want && !status)
-     {
-	gi->want = EINA_FALSE;
-	evas_object_image_file_set(gi->img, file, NULL);
-	evas_object_show(gi->img);
-
-	gi->have = EINA_TRUE;
-	gi->wd->preload_num--;
-	if (gi->wd->preload_num == 0)
-	  {
-	     edje_object_signal_emit(elm_smart_scroller_edje_object_get(gi->wd->scr),
-		   "elm,state,busy,stop", "elm");
-	     evas_object_smart_callback_call(gi->wd->obj, "loaded,detail", NULL);
-	  }
-     }
+	_tile_update(gi);
 
    if(status)
-     {
 	DBG("Download failed (%d) %s", status, gi->file);
-     }
 }
 
    static Grid *
@@ -371,6 +385,7 @@ grid_load(Evas_Object *obj, Grid *g)
 		       evas_object_smart_callback_call(obj, "loaded,detail", NULL);
 		    }
 		  evas_object_hide(gi->img);
+		  //evas_object_hide(gi->txt);
 		  evas_object_image_file_set(gi->img, NULL, NULL);
 		  gi->want = EINA_FALSE;
 		  gi->have = EINA_FALSE;
@@ -387,6 +402,7 @@ grid_load(Evas_Object *obj, Grid *g)
 	     else if (gi->have)
 	       {
 		  evas_object_hide(gi->img);
+		  //evas_object_hide(gi->txt);
 		  evas_object_image_preload(gi->img, 1);
 		  evas_object_image_file_set(gi->img, NULL, NULL);
 		  gi->have = EINA_FALSE;
@@ -430,16 +446,24 @@ grid_load(Evas_Object *obj, Grid *g)
 		  gi->out.h = gi->src.h;
 
 		  gi->wd = wd;
+
 		  gi->img = evas_object_image_add(evas_object_evas_get(obj));
 		  evas_object_image_scale_hint_set
 		     (gi->img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
-		  evas_object_pass_events_set(gi->img, 1);
 		  evas_object_image_filled_set(gi->img, 1);
 
 		  evas_object_smart_member_add(gi->img,
 			wd->pan_smart);
 		  elm_widget_sub_object_add(obj, gi->img);
 		  evas_object_pass_events_set(gi->img, 1);
+
+		  gi->txt = evas_object_text_add(evas_object_evas_get(obj));
+		  evas_object_text_font_set(gi->txt, "Vera", 12);
+		  evas_object_color_set(gi->txt, 100, 100, 100, 255);
+		  evas_object_smart_member_add(gi->txt,
+			wd->pan_smart);
+		  elm_widget_sub_object_add(obj, gi->txt);
+		  evas_object_pass_events_set(gi->txt, 1);
 
 		  eina_matrixsparse_data_idx_set(g->grid, y, x, gi);
 	       }
@@ -475,10 +499,10 @@ grid_load(Evas_Object *obj, Grid *g)
 			 }
 
 		       if(ecore_file_exists(buf2))
-			 _tile_downloaded(gi, buf2, 0);
+			 _tile_update(gi);
 		       else
 			 {
-		            DBG("DOWNLOAD %d %s \t in %s", wd->preload_num, buf, buf2);
+		            DBG("DOWNLOAD %s \t in %s", buf, buf2);
 			    ecore_file_download(buf, buf2, _tile_downloaded, NULL, gi, &(gi->job));
 			    if(!gi->job)
 			      DBG("Can't start to download %s", buf);
@@ -537,6 +561,7 @@ _grid_raise(Grid *g)
      {
 	Grid_Item *gi = eina_matrixsparse_cell_data_get(cell);
 	evas_object_raise(gi->img);
+	evas_object_raise(gi->txt);
      }
 }
 
@@ -1045,7 +1070,6 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
    int z;
    int zoom_changed = 0, started = 0;
 
-   Ecore_Animator *an;
    if (zoom < 0 ) zoom = 0;
    if (zoom > 18) zoom = 18;
    if (zoom == wd->zoom) return;
@@ -1190,13 +1214,12 @@ done:
 	     started = 1;
 	  }
      }
-   an = wd->zoom_animator;
-   if (an)
+   if (wd->zoom_animator)
      {
 	if (!_zoom_anim(obj))
 	  {
-	     ecore_animator_del(an);
-	     an = NULL;
+	     ecore_animator_del(wd->zoom_animator);
+	     wd->zoom_animator = NULL;
 	  }
      }
    if (wd->calc_job) ecore_job_del(wd->calc_job);
@@ -1205,7 +1228,7 @@ done:
      {
 	if (started)
 	  evas_object_smart_callback_call(obj, "zoom,start", NULL);
-	if (!an)
+	if (!wd->zoom_animator)
 	  evas_object_smart_callback_call(obj, "zoom,stop", NULL);
      }
 
