@@ -19332,7 +19332,7 @@ collections {
 /////////////////////////////////////////////////////////////////////////////
 group 
 {
-   name: "elm/panel/base/default";
+   name: "elm/panel/base/left";
    images 
      {
         image: "bt_base1.png" COMP;
@@ -19354,14 +19354,13 @@ group
                {
                   state: "default" 0.0;
                   color: 255 255 255 0;
-                  rel1.relative: 0.0 0.0;
-                  rel2.relative: 1.0 1.0;
+                  rel1.offset: 30 0;
+                  rel2.relative: 0.0 1.0;
                }
              description 
                {
                   state: "visible" 0.0;
                   inherit: "default" 0.0;
-                  rel1.relative: 0.0 0.0;
                   rel2.relative: 1.0 1.0;
                }
           }
