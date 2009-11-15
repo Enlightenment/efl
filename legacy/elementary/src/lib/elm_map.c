@@ -78,7 +78,7 @@ struct _Marker_Group
    Evas_Coord w, h;
    Evas_Object *obj, *bubble, *sc, *bx, *rect;
    Eina_Bool open : 1;
-   Eina_Bool raise : 1;
+   Eina_Bool bringin : 1;
 };
 
 struct _Grid_Item
@@ -168,6 +168,7 @@ static void grid_load(Evas_Object *obj, Grid *g);
 
 
 static void _group_open_cb(void *data, Evas_Object *obj, const char *emission, const char *soure);
+static void _group_bringin_cb(void *data, Evas_Object *obj, const char *emission, const char *soure);
 static void _group_bubble_create(Marker_Group *group);
 static void _group_bubble_free(Marker_Group *group);
 static void _group_bubble_place(Marker_Group *group);
@@ -268,7 +269,7 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
 		  elm_widget_sub_object_add(obj, group->obj);
 
 		  edje_object_signal_callback_add(group->obj, "open", "elm", _group_open_cb, group);
-
+		  edje_object_signal_callback_add(group->obj, "bringin", "elm", _group_bringin_cb, group);
 		  if(group->open)
 		    _group_bubble_create(group);
 	       }
@@ -407,6 +408,9 @@ _tile_update(Grid_Item *gi)
    gi->want = EINA_FALSE;
    gi->download = EINA_FALSE;
    evas_object_image_file_set(gi->img, gi->file, NULL);
+   if( evas_object_image_load_error_get(gi->img) != EVAS_LOAD_ERROR_NONE )
+     remove(gi->file);
+
    evas_object_show(gi->img);
 
    //evas_object_text_text_set(gi->txt, gi->file);
@@ -436,7 +440,10 @@ _tile_downloaded(void *data, const char *file, int status)
      _tile_update(gi);
 
    if(status)
-     DBG("Download failed (%d) %s", status, gi->file);
+     {
+	DBG("Download failed %s (%d,%s) ", status, gi->file, curl_easy_strerror(status));
+	remove(gi->file);
+     }
 }
 
    static Grid *
@@ -1104,18 +1111,12 @@ _scr_scroll(void *data, Evas_Object *obj, void *event_info)
 }
 
    static void
-_group_bubble_mouse_in_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_group_bubble_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Marker_Group *group = data;
-   if(group->raise)
-     {
-	group->raise = EINA_FALSE;
-	return ;
-     }
-
+   
    if(!evas_object_above_get(group->rect))
      return ;
-   group->raise = EINA_TRUE;
    evas_object_raise(group->bubble);
    evas_object_raise(group->sc);
    evas_object_raise(group->rect);
@@ -1142,8 +1143,7 @@ _group_bubble_create(Marker_Group *group)
 	 group->wd->obj);
    elm_widget_sub_object_add(group->wd->obj, group->rect);
 
-   evas_object_event_callback_add(group->rect, EVAS_CALLBACK_MOUSE_UP, _group_bubble_mouse_in_cb, group);
-
+   evas_object_event_callback_add(group->rect, EVAS_CALLBACK_MOUSE_UP, _group_bubble_mouse_up_cb, group);
 
    _group_bubble_place(group);
 }
@@ -1245,11 +1245,28 @@ _group_bubble_place(Marker_Group *group)
    evas_object_show(group->rect);
 }
 
+static void
+_group_bringin_cb(void *data, Evas_Object *obj, const char *emission, const char *soure)
+{	
+   Marker_Group *group = data;
+   double lon, lat;
+
+   group->bringin = EINA_TRUE;
+
+   elm_map_utils_convert_coord_into_geo(group->x, group->y, group->wd->size.w, &lon, &lat);
+   elm_map_geo_region_bring_in(group->wd->obj, lon, lat);
+}
 
 static void
 _group_open_cb(void *data, Evas_Object *obj, const char *emission, const char *soure)
 {
    Marker_Group *group = data;
+
+   if(group->bringin)
+     {
+	group->bringin = EINA_FALSE;
+	return ;
+     }
 
    if(group->bubble)
      {
