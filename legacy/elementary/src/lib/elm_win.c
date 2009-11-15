@@ -5,20 +5,18 @@ typedef struct _Elm_Win Elm_Win;
 
 struct _Elm_Win
 {
-   Ecore_Evas     *ee;
-   Evas           *evas;
-   Evas_Object    *parent;
-   Evas_Object    *win_obj;
-   Eina_List      *subobjs;
-   Ecore_X_Window  xwin;
-   Ecore_Job      *deferred_resize_job;
-   Ecore_Job      *deferred_child_eval_job;
+   Ecore_Evas *ee;
+   Evas *evas;
+   Evas_Object *parent, *win_obj;
+   Eina_List *subobjs;
+   Ecore_X_Window xwin;
+   Ecore_Job *deferred_resize_job;
+   Ecore_Job *deferred_child_eval_job;
 
-   Elm_Win_Type          type;
+   Elm_Win_Type type;
    Elm_Win_Keyboard_Mode kbdmode;
-   Eina_Bool             autodel : 1;
-   int                   *autodel_clear;
-   int                    rot;
+   Eina_Bool autodel : 1;
+   int *autodel_clear, rot;
 };
 
 static void _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -39,8 +37,8 @@ static void
 _elm_win_resize(Ecore_Evas *ee)
 {
    Evas_Object *obj = ecore_evas_object_associate_get(ee);
-   Elm_Win *win;
    if (strcmp(elm_widget_type_get(obj), "win")) return;
+   Elm_Win *win;
    win = elm_widget_data_get(obj);
    if (!win) return;
    if (win->deferred_resize_job) ecore_job_del(win->deferred_resize_job);
@@ -51,10 +49,11 @@ static void
 _elm_win_focus_in(Ecore_Evas *ee)
 {
    Evas_Object *obj = ecore_evas_object_associate_get(ee);
-   Elm_Win *win;
    if (strcmp(elm_widget_type_get(obj), "win")) return;
+   Elm_Win *win;
    win = elm_widget_data_get(obj);
    if (!win) return;
+   /*NB: Why two different "focus signals" here ??? */
    evas_object_smart_callback_call(win->win_obj, "focus-in", NULL); // FIXME: remove me
    evas_object_smart_callback_call(win->win_obj, "focus,in", NULL);
 }
@@ -63,8 +62,8 @@ static void
 _elm_win_focus_out(Ecore_Evas *ee)
 {
    Evas_Object *obj = ecore_evas_object_associate_get(ee);
-   Elm_Win *win;
    if (strcmp(elm_widget_type_get(obj), "win")) return;
+   Elm_Win *win;
    win = elm_widget_data_get(obj);
    if (!win) return;
    evas_object_smart_callback_call(win->win_obj, "focus-out", NULL); // FIXME: remove me
@@ -102,6 +101,7 @@ _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_inf
      }
    evas_image_cache_flush(win->evas);
    evas_font_cache_flush(win->evas);
+// FIXME: Why are we flushing edje on every window destroy ??
    edje_file_cache_flush();
    edje_collection_cache_flush();
 // FIXME: we are in the del handler for the object and delete the canvas
@@ -125,8 +125,8 @@ static void
 _elm_win_delete_request(Ecore_Evas *ee)
 {
    Evas_Object *obj = ecore_evas_object_associate_get(ee);
-   Elm_Win *win;
    if (strcmp(elm_widget_type_get(obj), "win")) return;
+   Elm_Win *win;
    win = elm_widget_data_get(obj);
    if (!win) return;
    int autodel = win->autodel;
@@ -299,7 +299,8 @@ _elm_win_subobj_callback_changed_size_hints(void *data, Evas *e, Evas_Object *ob
 void
 _elm_win_shutdown(void)
 {
-   while (_elm_win_list) evas_object_del(_elm_win_list->data);
+   while (_elm_win_list) 
+     evas_object_del(_elm_win_list->data);
 }
 
 void
@@ -307,6 +308,7 @@ _elm_win_rescale(void)
 {
    const Eina_List *l;
    Evas_Object *obj;
+
    EINA_LIST_FOREACH(_elm_win_list, l, obj)
      elm_widget_theme(obj);
 }
@@ -352,7 +354,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 	return NULL;
      }
    _elm_win_xwindow_get(win);
-   if (_elm_config->bgpixmap && !_elm_config->compositing)
+   if ((_elm_config->bgpixmap) && (!_elm_config->compositing))
      ecore_evas_avoid_damage_set(win->ee, ECORE_EVAS_AVOID_DAMAGE_EXPOSE);
 // bg pixmap done by x - has other issues like can be redrawn by x before it
 // is filled/ready by app
@@ -385,8 +387,8 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    ecore_evas_callback_resize_set(win->ee, _elm_win_resize);
    ecore_evas_callback_focus_in_set(win->ee, _elm_win_focus_in);
    ecore_evas_callback_focus_out_set(win->ee, _elm_win_focus_out);
-   evas_image_cache_set(win->evas, _elm_config->image_cache * 1024);
-   evas_font_cache_set(win->evas, _elm_config->font_cache * 1024);
+   evas_image_cache_set(win->evas, (_elm_config->image_cache * 1024));
+   evas_font_cache_set(win->evas, (_elm_config->font_cache * 1024));
    EINA_LIST_FOREACH(_elm_config->font_dirs, l, fontpath)
      evas_font_path_append(win->evas, fontpath);
    if (_elm_config->font_hinting == 0)
@@ -395,8 +397,6 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
      evas_font_hinting_set(win->evas, EVAS_FONT_HINTING_AUTO);
    else if (_elm_config->font_hinting == 2)
      evas_font_hinting_set(win->evas, EVAS_FONT_HINTING_BYTECODE);
-   edje_frametime_set(1.0 / 60.0);
-   edje_scale_set(_elm_config->scale);
 
    _elm_win_xwin_update(win);
 
@@ -429,8 +429,11 @@ elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj)
    if (!win) return;
    win->subobjs = eina_list_append(win->subobjs, subobj);
    elm_widget_sub_object_add(obj, subobj);
-   evas_object_event_callback_add(subobj, EVAS_CALLBACK_DEL, _elm_win_subobj_callback_del, obj);
-   evas_object_event_callback_add(subobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _elm_win_subobj_callback_changed_size_hints, obj);
+   evas_object_event_callback_add(subobj, EVAS_CALLBACK_DEL, 
+                                  _elm_win_subobj_callback_del, obj);
+   evas_object_event_callback_add(subobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
+                                  _elm_win_subobj_callback_changed_size_hints, 
+                                  obj);
    ecore_evas_geometry_get(win->ee, NULL, NULL, &w, &h);
    evas_object_move(subobj, 0, 0);
    evas_object_resize(subobj, w, h);
@@ -444,8 +447,12 @@ elm_win_resize_object_del(Evas_Object *obj, Evas_Object *subobj)
    if (strcmp(elm_widget_type_get(obj), "win")) return;
    win = elm_widget_data_get(obj);
    if (!win) return;
-   evas_object_event_callback_del_full(subobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _elm_win_subobj_callback_changed_size_hints, obj);
-   evas_object_event_callback_del_full(subobj, EVAS_CALLBACK_DEL, _elm_win_subobj_callback_del, obj);
+   evas_object_event_callback_del_full(subobj, 
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
+                                       _elm_win_subobj_callback_changed_size_hints, 
+                                       obj);
+   evas_object_event_callback_del_full(subobj, EVAS_CALLBACK_DEL, 
+                                       _elm_win_subobj_callback_del, obj);
    win->subobjs = eina_list_remove(win->subobjs, subobj);
    elm_widget_sub_object_del(obj, subobj);
    _elm_win_eval_subobjs(obj);
@@ -816,18 +823,17 @@ static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
+   Evas_Coord minw = -1, minh = -1;
 
    evas_object_size_hint_min_get(wd->content, &minw, &minh);
    edje_object_size_min_calc(wd->frm, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, maxw, maxh);
+   evas_object_size_hint_max_set(obj, -1, -1);
 }
 
 static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
    _sizing_eval(data);
 }
 
@@ -839,7 +845,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
    if (sub == wd->content)
      {
 	evas_object_event_callback_del_full
-	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
+          (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
 	wd->content = NULL;
 	_sizing_eval(obj);
      }
@@ -848,18 +854,20 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 EAPI Evas_Object *
 elm_win_inwin_add(Evas_Object *obj)
 {
-   Elm_Win *win;
+   if (strcmp(elm_widget_type_get(obj), "win")) return;
+
    Evas_Object *obj2;
    Widget_Data *wd;
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
+   Elm_Win *win;
+
    win = elm_widget_data_get(obj);
    if (!win) return NULL;
    wd = ELM_NEW(Widget_Data);
    obj2 = elm_widget_add(win->evas);
    elm_widget_type_set(obj2, "inwin");
    elm_widget_sub_object_add(obj, obj2);
-   evas_object_size_hint_weight_set(obj2, 1.0, 1.0);
-   evas_object_size_hint_align_set(obj2, -1.0, -1.0);
+   evas_object_size_hint_weight_set(obj2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(obj2, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_win_resize_object_add(obj, obj2);
 
    elm_widget_data_set(obj2, wd);
@@ -897,7 +905,7 @@ EAPI void
 elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if ((wd->content != content) && (wd->content))
+   if ((wd->content) && (wd->content != content))
      elm_widget_sub_object_del(obj, wd->content);
    wd->content = content;
    if (content)
@@ -919,6 +927,5 @@ elm_win_xwindow_get(const Evas_Object *obj)
 
    ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
    if (ee) xwin = (Ecore_X_Window)ecore_evas_window_get(ee);
-
    return xwin;
 }
