@@ -425,8 +425,7 @@ EAPI void
 elm_quicklaunch_init(int argc, char **argv)
 {
    int i;
-   char buf[PATH_MAX];
-   char *s;
+   char buf[PATH_MAX], *s;
 
    eina_init();
    _elm_log_dom = eina_log_domain_register("elementary", EINA_COLOR_LIGHTBLUE);
@@ -444,7 +443,7 @@ elm_quicklaunch_init(int argc, char **argv)
    edje_init();
    ecore_evas_init(); // FIXME: check errors
    _elm_module_init();
-   
+
    _elm_exit_handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, _elm_signal_exit, NULL);
 
    _elm_appname = strdup(ecore_file_file_get(argv[0]));
@@ -628,7 +627,9 @@ elm_quicklaunch_init(int argc, char **argv)
 		  len = p - pp;
 		  strncpy(buf, pp, len);
 		  buf[len] = 0;
-		  _elm_config->font_dirs = eina_list_append(_elm_config->font_dirs, eina_stringshare_add(buf));
+		  _elm_config->font_dirs = 
+                    eina_list_append(_elm_config->font_dirs, 
+                                     eina_stringshare_add(buf));
 		  if (*p == 0) break;
 		  p++;
 		  pp = p;
@@ -657,11 +658,11 @@ elm_quicklaunch_init(int argc, char **argv)
 
    s = getenv("ELM_FPS");
    if (s) _elm_config->fps = atof(s);
-
-   if (_elm_config->fps < 1.0)
-     _elm_config->fps = 1.0;
+   if (_elm_config->fps < 1.0) _elm_config->fps = 1.0;
 
    ecore_animator_frametime_set(1.0 / _elm_config->fps);
+   edje_frametime_set(1.0 / 60.0);
+   edje_scale_set(_elm_config->scale);
 }
 
 EAPI void
@@ -705,7 +706,6 @@ elm_quicklaunch_sub_init(int argc, char **argv)
 	  }
 #endif
       }
-
 }
 
 EAPI void
