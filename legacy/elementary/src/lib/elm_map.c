@@ -447,7 +447,7 @@ _tile_downloaded(void *data, const char *file, int status)
 
    if(status)
      {
-	DBG("Download failed %s (%d,%s) ", status, gi->file, curl_easy_strerror(status));
+	DBG("Download failed %s (%d) ", status, gi->file);
 	remove(gi->file);
      }
 }
@@ -752,6 +752,8 @@ zoom_do(Evas_Object *obj, double t)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord xx, yy, ow, oh;
 
+   if(t>1.0) t = 1.0;
+
    wd->size.w = (wd->size.ow * (1.0 - t)) + (wd->size.nw * t);
    wd->size.h = (wd->size.oh * (1.0 - t)) + (wd->size.nh * t);
 
@@ -779,6 +781,7 @@ zoom_do(Evas_Object *obj, double t)
    wd->calc_job = ecore_job_add(_calc_job, wd);
    if (t >= 1.0)
      {
+	printf("ZOOM DONE\n");
 	return 0;
      }
    return 1;
@@ -934,11 +937,7 @@ _sizing_eval(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
-   //   evas_object_size_hint_min_get(wd->scr, &minw, &minh);
    evas_object_size_hint_max_get(wd->scr, &maxw, &maxh);
-   //   minw = -1;
-   //   minh = -1;
-   //   if (wd->mode != ELM_LIST_LIMIT) minw = -1;
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
@@ -955,11 +954,11 @@ _calc_job(void *data)
    if (wd->resized)
      {
 	wd->resized = 0;
-	if (wd->mode != ELM_PHOTOCAM_ZOOM_MODE_MANUAL)
+	if (wd->mode != ELM_MAP_ZOOM_MODE_MANUAL)
 	  {
 	     double tz = wd->zoom;
 	     wd->zoom = 0.0;
-	     elm_photocam_zoom_set(wd->obj, tz);
+	     elm_map_zoom_set(wd->obj, tz);
 	  }
      }
    if ((minw != wd->minw) || (minh != wd->minh))
@@ -1410,7 +1409,7 @@ elm_map_add(Evas_Object *parent)
 
 
    wd->zoom = -1;
-   wd->mode = ELM_PHOTOCAM_ZOOM_MODE_MANUAL;
+   wd->mode = ELM_MAP_ZOOM_MODE_MANUAL;
 
    wd->tsize = 256;
 
@@ -1529,21 +1528,6 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
 	wd->size.nh = pow(2.0, wd->zoom) * wd->tsize;
      }
 
-   if ((wd->size.w > 0) && (wd->size.h > 0))
-     {
-	wd->size.spos.x = (double)(rx + (rw / 2)) / (double)wd->size.w;
-	wd->size.spos.y = (double)(ry + (rh / 2)) / (double)wd->size.h;
-     }
-   else
-     {
-	wd->size.spos.x = 0.5;
-	wd->size.spos.y = 0.5;
-     }
-   if (rw > wd->size.w) wd->size.spos.x = 0.5;
-   if (rh > wd->size.h) wd->size.spos.y = 0.5;
-   if (wd->size.spos.x > 1.0) wd->size.spos.x = 1.0;
-   if (wd->size.spos.y > 1.0) wd->size.spos.y = 1.0;
-
    EINA_LIST_FOREACH(wd->grids, l, g)
      {
 	if (g->zoom == wd->zoom)
@@ -1578,7 +1562,20 @@ done:
 
    wd->t_start = ecore_loop_time_get();
    wd->t_end = wd->t_start + _elm_config->zoom_friction;
-
+   if ((wd->size.w > 0) && (wd->size.h > 0))
+     {
+	wd->size.spos.x = (double)(rx + (rw / 2)) / (double)wd->size.w;
+	wd->size.spos.y = (double)(ry + (rh / 2)) / (double)wd->size.h;
+     }
+   else
+     {
+	wd->size.spos.x = 0.5;
+	wd->size.spos.y = 0.5;
+     }
+   if (rw > wd->size.w) wd->size.spos.x = 0.5;
+   if (rh > wd->size.h) wd->size.spos.y = 0.5;
+   if (wd->size.spos.x > 1.0) wd->size.spos.x = 1.0;
+   if (wd->size.spos.y > 1.0) wd->size.spos.y = 1.0;
    if (wd->paused)
      {
 	zoom_do(obj, 1.0);

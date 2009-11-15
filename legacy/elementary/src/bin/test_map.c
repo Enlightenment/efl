@@ -150,8 +150,8 @@ my_bt_show_reg(void *data, Evas_Object *obj, void *event_info)
 {
    elm_map_paused_set(data, EINA_TRUE);
    elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_MANUAL);
-   //elm_map_zoom_set(data, 18);
    elm_map_geo_region_show(data, 2.352, 48.857);
+   //elm_map_zoom_set(data, 18);
 }
 
 static void
