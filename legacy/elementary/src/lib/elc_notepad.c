@@ -279,8 +279,8 @@ elm_notepad_add(Evas_Object *parent)
    wd->scr = elm_scroller_add(parent);
    elm_widget_resize_object_set(obj, wd->scr);
    wd->entry = elm_entry_add(parent);
-   evas_object_size_hint_weight_set(wd->entry, 1.0, 1.0);
-   evas_object_size_hint_align_set(wd->entry, -1.0, -1.0);
+   evas_object_size_hint_weight_set(wd->entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(wd->entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_scroller_content_set(wd->scr, wd->entry);
    evas_object_show(wd->entry);
 
