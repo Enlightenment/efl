@@ -48,7 +48,6 @@ _del_pre_hook(Evas_Object *obj)
    evas_object_event_callback_del_full(obj, EVAS_CALLBACK_HIDE, _hide, obj);
 }
 
-
 static void
 _del_hook(Evas_Object *obj)
 {
@@ -72,7 +71,7 @@ _theme_hook(Evas_Object *obj)
 
    if (!wd) return;
    _elm_theme_set(wd->notify, "notify", "base", "default");
-   if(wd->block_events)
+   if (wd->block_events)
      _elm_theme_set(wd->block_events, "notify", "block_events", "default");
    edje_object_scale_set(wd->notify, elm_widget_scale_get(obj) *
                          _elm_config->scale);
@@ -87,15 +86,13 @@ _sizing_eval(Evas_Object *obj)
 
    if (!wd->parent) return;
    evas_object_geometry_get(wd->parent, &x, &y, &w, &h);
-   evas_object_resize(obj, w, h);
    evas_object_move(obj, x, y);
+   evas_object_resize(obj, w, h);
 }
 
 static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-//   Widget_Data *wd = elm_widget_data_get(data);
-
    _sizing_eval(data);
 }
 
@@ -104,7 +101,7 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if(event_info == wd->content)
+   if (event_info == wd->content)
      wd->content = NULL;
 }
 
@@ -183,7 +180,6 @@ _show(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    evas_object_show(wd->notify);
-   
    if(!wd->repeat_events)
      evas_object_show(wd->block_events);
    if (wd->timer)
@@ -283,7 +279,7 @@ elm_notify_content_set(Evas_Object *obj, Evas_Object *content)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if(wd->content)
+   if (wd->content)
      {
 	evas_object_event_callback_del_full(wd->content,
                                             EVAS_CALLBACK_CHANGED_SIZE_HINTS,
@@ -448,14 +444,14 @@ elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if(repeat == wd->repeat_events) return;
+   if (repeat == wd->repeat_events) return;
 
    wd->repeat_events = repeat;
    if(!repeat)
      {
 	wd->block_events = edje_object_add(evas_object_evas_get(obj));
 	_elm_theme_set(wd->block_events, "notify", "block_events", "default");
-        elm_widget_resize_object_set(obj,wd->block_events);	
+        elm_widget_resize_object_set(obj, wd->block_events);	
      }
    else
      evas_object_del(wd->block_events);
