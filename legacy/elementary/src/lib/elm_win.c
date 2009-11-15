@@ -37,8 +37,8 @@ static void
 _elm_win_resize(Ecore_Evas *ee)
 {
    Evas_Object *obj = ecore_evas_object_associate_get(ee);
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    Elm_Win *win;
+   if (strcmp(elm_widget_type_get(obj), "win")) return;
    win = elm_widget_data_get(obj);
    if (!win) return;
    if (win->deferred_resize_job) ecore_job_del(win->deferred_resize_job);
@@ -49,8 +49,8 @@ static void
 _elm_win_focus_in(Ecore_Evas *ee)
 {
    Evas_Object *obj = ecore_evas_object_associate_get(ee);
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    Elm_Win *win;
+   if (strcmp(elm_widget_type_get(obj), "win")) return;
    win = elm_widget_data_get(obj);
    if (!win) return;
    /*NB: Why two different "focus signals" here ??? */
@@ -62,8 +62,8 @@ static void
 _elm_win_focus_out(Ecore_Evas *ee)
 {
    Evas_Object *obj = ecore_evas_object_associate_get(ee);
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    Elm_Win *win;
+   if (strcmp(elm_widget_type_get(obj), "win")) return;
    win = elm_widget_data_get(obj);
    if (!win) return;
    evas_object_smart_callback_call(win->win_obj, "focus-out", NULL); // FIXME: remove me
@@ -125,8 +125,8 @@ static void
 _elm_win_delete_request(Ecore_Evas *ee)
 {
    Evas_Object *obj = ecore_evas_object_associate_get(ee);
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
    Elm_Win *win;
+   if (strcmp(elm_widget_type_get(obj), "win")) return;
    win = elm_widget_data_get(obj);
    if (!win) return;
    int autodel = win->autodel;
@@ -854,12 +854,11 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
 EAPI Evas_Object *
 elm_win_inwin_add(Evas_Object *obj)
 {
-   if (strcmp(elm_widget_type_get(obj), "win")) return;
-
    Evas_Object *obj2;
    Widget_Data *wd;
    Elm_Win *win;
 
+   if (strcmp(elm_widget_type_get(obj), "win")) return;
    win = elm_widget_data_get(obj);
    if (!win) return NULL;
    wd = ELM_NEW(Widget_Data);
