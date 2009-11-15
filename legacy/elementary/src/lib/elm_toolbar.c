@@ -35,13 +35,15 @@ struct _Elm_Toolbar_Item
 static void _item_show(Elm_Toolbar_Item *it);
 static void _item_select(Elm_Toolbar_Item *it);
 static void _item_disable(Elm_Toolbar_Item *it, Eina_Bool disabled);
+static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
-
+static void _resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _menu_move_resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _menu_hide(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _menu_item_select(void *data, Evas_Object *obj, void *event_info);
+static void _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data);
 
 static void
 _item_show(Elm_Toolbar_Item *it)
