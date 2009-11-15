@@ -144,6 +144,12 @@ struct _Widget_Data
    Eina_Bool on_hold : 1;
    Eina_Bool paused : 1;
 
+   struct
+     {
+	Eina_Bool enabled;
+	double lon, lat;
+     } center_on;
+
    Eina_List *markers[19];
    Evas_Coord marker_w, marker_h;
    Evas_Coord marker_max_w, marker_max_h;
@@ -751,8 +757,18 @@ zoom_do(Evas_Object *obj, double t)
 
    elm_smart_scroller_child_viewport_size_get(wd->scr, &ow, &oh);
 
-   xx = (wd->size.spos.x * wd->size.w) - (ow / 2);
-   yy = (wd->size.spos.y * wd->size.h) - (oh / 2);
+   if(wd->center_on.enabled)
+     {
+	elm_map_utils_convert_geo_into_coord(wd->center_on.lon, wd->center_on.lat, wd->size.w, &xx, &yy);
+	xx -= ow / 2;
+        yy -= oh / 2;
+     }
+   else
+     {
+	xx = (wd->size.spos.x * wd->size.w) - (ow / 2);
+	yy = (wd->size.spos.y * wd->size.h) - (oh / 2);
+     }
+
    if (xx < 0) xx = 0;
    else if (xx > (wd->size.w - ow)) xx = wd->size.w - ow;
    if (yy < 0) yy = 0;
@@ -762,7 +778,9 @@ zoom_do(Evas_Object *obj, double t)
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
    if (t >= 1.0)
-     return 0;
+     {
+	return 0;
+     }
    return 1;
 }
 
@@ -1095,6 +1113,8 @@ _scr_anim_stop(void *data, Evas_Object *obj, void *event_info)
    static void
 _scr_drag_start(void *data, Evas_Object *obj, void *event_info)
 {
+   Widget_Data *wd = elm_widget_data_get(data);
+   wd->center_on.enabled = EINA_FALSE;
    evas_object_smart_callback_call(data, "scroll,drag,start", NULL);
 }
 
@@ -1114,7 +1134,7 @@ _scr_scroll(void *data, Evas_Object *obj, void *event_info)
 _group_bubble_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Marker_Group *group = data;
-   
+
    if(!evas_object_above_get(group->rect))
      return ;
    evas_object_raise(group->bubble);
@@ -1247,7 +1267,7 @@ _group_bubble_place(Marker_Group *group)
 
 static void
 _group_bringin_cb(void *data, Evas_Object *obj, const char *emission, const char *soure)
-{	
+{
    Marker_Group *group = data;
    double lon, lat;
 
@@ -1685,6 +1705,10 @@ elm_map_geo_region_bring_in(Evas_Object *obj, double lon, double lat)
 	evas_object_smart_callback_call(obj, "zoom,stop", NULL);
      }
    elm_smart_scroller_region_bring_in(wd->scr, rx, ry, rw, rh);
+
+   wd->center_on.enabled = EINA_TRUE;
+   wd->center_on.lon = lon;
+   wd->center_on.lat = lat;
 }
 
 /**
@@ -1719,6 +1743,10 @@ elm_map_geo_region_show(Evas_Object *obj, double lon, double lat)
 	evas_object_smart_callback_call(obj, "zoom,stop", NULL);
      }
    elm_smart_scroller_child_region_show(wd->scr, rx, ry, rw, rh);
+
+   wd->center_on.enabled = EINA_TRUE;
+   wd->center_on.lon = lon;
+   wd->center_on.lat = lat;
 }
 
 /**
