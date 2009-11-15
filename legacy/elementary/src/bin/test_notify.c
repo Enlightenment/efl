@@ -38,8 +38,6 @@ test_notify(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(tb);
 
-
-
    notify = elm_notify_add(win);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 

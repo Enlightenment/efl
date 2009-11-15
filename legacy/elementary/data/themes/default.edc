@@ -19355,9 +19355,9 @@ group
              description 
                {
                   state: "default" 0.0;
-                  color: 255 0 0 100;
+                  color: 255 255 255 0;
                   rel1.relative: 0.0 0.0;
-                  rel2.relative: 2.0 1.0;
+                  rel2.relative: 1.0 1.0;
                }
              description 
                {
