@@ -55,7 +55,7 @@ _sizing_eval(Evas_Object *obj)
    mw = mw + (w - vw);
    mh = mh + (h - vh);
    evas_object_size_hint_min_set(obj, mw, mh);
-   evas_object_size_hint_max_set(obj, -1, ,-1);
+   evas_object_size_hint_max_set(obj, -1, -1);
 }
 
 static void 
