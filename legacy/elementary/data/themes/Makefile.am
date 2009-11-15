@@ -76,6 +76,7 @@ cur_hi.png \
 cur_shad.png \
 cur_shine.png \
 cur_glow.png \
+bubble.png \
 bubble_3.png \
 bubble_shine3.png \
 bubble_4.png \

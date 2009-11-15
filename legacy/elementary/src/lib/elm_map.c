@@ -76,8 +76,9 @@ struct _Marker_Group
    Eina_List *markers;
    Evas_Coord x, y;
    Evas_Coord w, h;
-   Evas_Object *obj, *bubble, *sc, *bx;
+   Evas_Object *obj, *bubble, *sc, *bx, *rect;
    Eina_Bool open : 1;
+   Eina_Bool raise : 1;
 };
 
 struct _Grid_Item
@@ -864,7 +865,7 @@ _del_pre_hook(Evas_Object *obj)
 
    Widget_Data *wd = elm_widget_data_get(obj);
    grid_clearall(obj);
-   
+
    for(i=0; i<19; i++)
      {
 	EINA_LIST_FREE(wd->markers[i], group)
@@ -1103,6 +1104,24 @@ _scr_scroll(void *data, Evas_Object *obj, void *event_info)
 }
 
    static void
+_group_bubble_mouse_in_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Marker_Group *group = data;
+   if(group->raise)
+     {
+	group->raise = EINA_FALSE;
+	return ;
+     }
+
+   if(!evas_object_above_get(group->rect))
+     return ;
+   group->raise = EINA_TRUE;
+   evas_object_raise(group->bubble);
+   evas_object_raise(group->sc);
+   evas_object_raise(group->rect);
+}
+
+   static void
 _group_bubble_create(Marker_Group *group)
 {
    if(group->bubble) return ;
@@ -1116,15 +1135,17 @@ _group_bubble_create(Marker_Group *group)
 
    _group_bubble_content_update(group);
 
-   _group_bubble_place(group);
-}
+   group->rect = evas_object_rectangle_add(evas_object_evas_get(group->obj));
+   evas_object_color_set(group->rect, 0, 0, 0, 0);
+   evas_object_repeat_events_set(group->rect, EINA_TRUE);
+   evas_object_smart_member_add(group->rect,
+	 group->wd->obj);
+   elm_widget_sub_object_add(group->wd->obj, group->rect);
 
-   static void
-_group_bubble_mouse_in_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
-{
-   Marker_Group *group = data;
-   evas_object_raise(group->bubble);
-   evas_object_raise(group->sc);
+   evas_object_event_callback_add(group->rect, EVAS_CALLBACK_MOUSE_UP, _group_bubble_mouse_in_cb, group);
+
+
+   _group_bubble_place(group);
 }
 
    static void
@@ -1154,9 +1175,6 @@ _group_bubble_content_update(Marker_Group *group)
 	evas_object_size_hint_weight_set(group->bx, 0.5, 0.5);
 	elm_box_horizontal_set(group->bx, EINA_TRUE);
 	evas_object_show(group->bx);
-
-	evas_object_event_callback_add(group->bx, EVAS_CALLBACK_MOUSE_IN, _group_bubble_mouse_in_cb, group);
-	evas_object_event_callback_add(group->bx, EVAS_CALLBACK_MOUSE_DOWN, _group_bubble_mouse_in_cb, group);
 
 	elm_scroller_content_set(group->sc, group->bx);
      }
@@ -1196,6 +1214,7 @@ _group_bubble_free(Marker_Group *group)
 {
    if(!group->bubble) return ;
    evas_object_del(group->bubble);
+   evas_object_del(group->rect);
    group->bubble = NULL;
    _group_bubble_content_free(group);
 }
@@ -1220,6 +1239,10 @@ _group_bubble_place(Marker_Group *group)
    evas_object_move(group->bubble, xx, yy);
    evas_object_resize(group->bubble, ww, hh);
    evas_object_show(group->bubble);
+
+   evas_object_move(group->rect, xx, yy);
+   evas_object_resize(group->rect, ww, hh);
+   evas_object_show(group->rect);
 }
 
 
