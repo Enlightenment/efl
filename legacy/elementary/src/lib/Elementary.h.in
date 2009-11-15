@@ -1003,17 +1003,32 @@ extern "C" {
 	ELM_MAP_ZOOM_MODE_AUTO_FIT,
 	ELM_MAP_ZOOM_MODE_AUTO_FILL
      } Elm_Map_Zoom_Mode;
+   typedef struct _Elm_Map_Marker Elm_Map_Marker;
+   typedef struct _Elm_Map_Marker_Class Elm_Map_Marker_Class;
+   typedef Evas_Object *(*ElmMapMarkerGetFunc)      (Evas_Object *obj, Elm_Map_Marker *marker, void *data);
+   typedef void         (*ElmMapMarkerDelFunc)      (Evas_Object *obj, Elm_Map_Marker *marker, void *data, Evas_Object *o);
+   struct _Elm_Map_Marker_Class
+     {
+	struct _Elm_Map_Marker_Class_Func
+	  {
+	     ElmMapMarkerGetFunc get;
+	     ElmMapMarkerDelFunc del; //if NULL the object will be destroyed with evas_object_del()
+	  } func;
+     };
    EAPI Evas_Object *elm_map_add(Evas_Object *parent);
    EAPI void         elm_map_zoom_set(Evas_Object *obj, int zoom);
    EAPI double       elm_map_zoom_get(Evas_Object *obj);
    EAPI void         elm_map_zoom_mode_set(Evas_Object *obj, Elm_Map_Zoom_Mode mode);
    EAPI Elm_Map_Zoom_Mode elm_map_zoom_mode_get(Evas_Object *obj);
    EAPI void         elm_map_image_size_get(Evas_Object *obj, int *w, int *h);
-   EAPI void	     elm_map_geo_region_get(Evas_Object *obj, double *lat, double *lon);
-   EAPI void         elm_map_geo_region_bring_in(Evas_Object *obj, double lat, double lon);
-   EAPI void         elm_map_geo_region_show(Evas_Object *obj, double lat, double lon);
+   EAPI void	     elm_map_geo_region_get(Evas_Object *obj, double *lon, double *lat);
+   EAPI void         elm_map_geo_region_bring_in(Evas_Object *obj, double lon, double lat);
+   EAPI void         elm_map_geo_region_show(Evas_Object *obj, double lon, double lat);
    EAPI void         elm_map_paused_set(Evas_Object *obj, Eina_Bool paused);
    EAPI Eina_Bool    elm_map_paused_get(Evas_Object *obj);
+   EAPI void	     elm_map_utils_convert_coord_into_geo(int x, int y, int size, double *lon, double *lat);
+   EAPI void         elm_map_utils_convert_geo_into_coord(double lon, double lat, int size, int *x, int *y);
+   EAPI Elm_Map_Marker *elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *class, void *data);
    /* smart callbacks called:
     * "clicked" - when image clicked
     * "press" - when mouse/finger held down initially on image

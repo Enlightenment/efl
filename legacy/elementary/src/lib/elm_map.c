@@ -42,8 +42,6 @@
  *
  * scroll,drag,stop - dragging the contents around has stopped
  *
- * ---
- *
  */
 
 
@@ -51,17 +49,42 @@ typedef struct _Widget_Data Widget_Data;
 typedef struct _Pan Pan;
 typedef struct _Grid Grid;
 typedef struct _Grid_Item Grid_Item;
+typedef struct _Marker_Group Marker_Group;
+
 
 #define SOURCE_PATH "http://tile.openstreetmap.org/%d/%d/%d.png"
 #define DEST_DIR_ZOOM_PATH "/tmp/elm_map/%d/"
 #define DEST_DIR_PATH DEST_DIR_ZOOM_PATH"%d/"
 #define DEST_FILE_PATH "%s%d.png"
 
+struct _Elm_Map_Marker
+{
+   Widget_Data *wd;
+   Elm_Map_Marker_Class *class;
+   double longitude, latitude;
+
+   Evas_Coord map_size;
+   Evas_Coord x[19], y[19];
+   void *data;
+
+   Evas_Object *content;
+};
+
+struct _Marker_Group
+{
+   Widget_Data *wd;
+   Eina_List *markers;
+   Evas_Coord x, y;
+   Evas_Coord w, h;
+   Evas_Object *obj, *bubble, *sc, *bx;
+   Eina_Bool open : 1;
+};
 
 struct _Grid_Item
 {
    Widget_Data *wd;
-   Evas_Object *img, *txt;
+   Evas_Object *img;
+   //Evas_Object *txt;
    const char *file;
    struct
      {
@@ -83,7 +106,6 @@ struct _Grid
    int w, h; // size of grid image in pixels (represented by grid)
    int gw, gh; // size of grid in tiles
    Eina_Matrixsparse *grid;
-   Eina_Bool dead : 1; // old grid. will die as soon as anim is over
 };
 
 struct _Widget_Data
@@ -120,6 +142,11 @@ struct _Widget_Data
    Eina_Bool longpressed : 1;
    Eina_Bool on_hold : 1;
    Eina_Bool paused : 1;
+
+   Eina_List *markers[19];
+   Evas_Coord marker_w, marker_h;
+   Evas_Coord marker_max_w, marker_max_h;
+   int marker_zoom;
 };
 
 struct _Pan
@@ -137,6 +164,16 @@ static void grid_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, 
 static void grid_clear(Evas_Object *obj, Grid *g);
 static Grid *grid_create(Evas_Object *obj);
 static void grid_load(Evas_Object *obj, Grid *g);
+
+
+static void _group_open_cb(void *data, Evas_Object *obj, const char *emission, const char *soure);
+static void _group_bubble_create(Marker_Group *group);
+static void _group_bubble_free(Marker_Group *group);
+static void _group_bubble_place(Marker_Group *group);
+
+static void _group_bubble_content_update(Marker_Group *group);
+static void _group_bubble_content_free(Marker_Group *group);
+static void marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh);
 
    static void
 rect_place(Evas_Object *obj, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh)
@@ -158,11 +195,113 @@ rect_place(Evas_Object *obj, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_C
 }
 
    static void
+marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Coord ax, ay, gw, gh, tx, ty;
+   Eina_List *l, *l2;
+   Marker_Group *group;
+   int x, y;
+   int xx, yy, ww, hh;
+   char buf[PATH_MAX];
+
+   if(g != eina_list_data_get(wd->grids)) return ;
+
+   ax = 0;
+   ay = 0;
+   gw = wd->size.w;
+   gh = wd->size.h;
+   if (ow > gw) ax = (ow - gw) / 2;
+   if (oh > gh) ay = (oh - gh) / 2;
+
+   if(wd->zoom != wd->marker_zoom)
+     {
+	EINA_LIST_FOREACH(wd->markers[wd->marker_zoom], l, group)
+	  {
+	     if(group->obj)
+	       {
+		  evas_object_del(group->obj);
+		  group->obj = NULL;
+		  group->open = EINA_FALSE;
+		  _group_bubble_free(group);
+	       }
+	  }
+     }
+   wd->marker_zoom = wd->zoom;
+
+   EINA_LIST_FOREACH(wd->markers[wd->zoom], l, group)
+     {
+	if(!group->markers) continue ;
+
+	xx = group->x;
+	yy = group->y;
+	ww = group->w;
+	hh = group->h;
+
+	if(ww<=0) ww = 1;
+	if(hh<=0) hh = 1;
+
+	if ((gw != g->w) && (g->w > 0))
+	  {
+	     tx = xx;
+	     xx = ((long long )gw * xx) / g->w;
+	     ww = (((long long)gw * (tx + ww)) / g->w) - xx;
+	  }
+	if ((gh != g->h) && (g->h > 0))
+	  {
+	     ty = yy;
+	     yy = ((long long)gh * yy) / g->h;
+	     hh = (((long long)gh * (ty + hh)) / g->h) - yy;
+	  }
+
+	if(xx-px+ax >= ox && xx-px+ax<= ox+ow
+	      && yy-py+ay >= oy && yy-py+ay<= oy+oh)
+	  {
+	     if(!group->obj)
+	       {
+		  group->obj = edje_object_add(evas_object_evas_get(obj));
+		  _elm_theme_set(group->obj, "map", "marker", elm_widget_style_get(obj));
+
+		  evas_object_smart_member_add(group->obj,
+			wd->pan_smart);
+		  elm_widget_sub_object_add(obj, group->obj);
+
+		  edje_object_signal_callback_add(group->obj, "open", "elm", _group_open_cb, group);
+
+		  if(group->open)
+		    _group_bubble_create(group);
+	       }
+
+	     if(eina_list_count(group->markers) > 1)
+	       {
+		  snprintf(buf, PATH_MAX, "%d", eina_list_count(group->markers));
+		  edje_object_part_text_set(group->obj, "elm.text", buf);
+	       }
+	     evas_object_move(group->obj,
+		   xx - px + ax + ox - ww/2,
+		   yy - py + ay + oy - hh/2);
+	     evas_object_resize(group->obj, ww, hh);
+	     evas_object_raise(group->obj);
+	     evas_object_show(group->obj);
+
+	     if(group->bubble)
+	       _group_bubble_place(group);
+	  }
+	else if(group->obj)
+	  {
+	     evas_object_del(group->obj);
+	     group->obj = NULL;
+	     _group_bubble_free(group);
+	  }
+     }
+}
+
+   static void
 grid_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord ax, ay, gw, gh, tx, ty;
-   int x, y;
+   int xx, yy, ww, hh;
 
    ax = 0;
    ay = 0;
@@ -176,7 +315,6 @@ grid_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord o
 
    EINA_ITERATOR_FOREACH(it, cell)
      {
-	int xx, yy, ww, hh;
 	Grid_Item *gi = eina_matrixsparse_cell_data_get(cell);
 
 	xx = gi->out.x;
@@ -201,12 +339,14 @@ grid_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord o
 
 	evas_object_resize(gi->img, ww, hh);
 
-	evas_object_move(gi->txt,
-	      xx - px + ax + ox,
-	      yy - py + ay + oy);
+	/*evas_object_move(gi->txt,
+	  xx - px + ax + ox,
+	  yy - py + ay + oy);
 
-	evas_object_resize(gi->txt, ww, hh);
+	  evas_object_resize(gi->txt, ww, hh);
+	  */
      }
+   eina_iterator_free(it);
 }
 
    static void
@@ -227,7 +367,7 @@ grid_clear(Evas_Object *obj, Grid *g)
      {
 	Grid_Item *gi = eina_matrixsparse_cell_data_get(cell);
 	evas_object_del(gi->img);
-	evas_object_del(gi->txt);
+	//evas_object_del(gi->txt);
 
 	if (gi->want)
 	  {
@@ -254,6 +394,7 @@ grid_clear(Evas_Object *obj, Grid *g)
 	free(gi);
      }
    eina_matrixsparse_free(g->grid);
+   eina_iterator_free(it);
    g->grid = NULL;
    g->gw = 0;
    g->gh = 0;
@@ -263,12 +404,12 @@ grid_clear(Evas_Object *obj, Grid *g)
 _tile_update(Grid_Item *gi)
 {
    gi->want = EINA_FALSE;
-    gi->download = EINA_FALSE;
+   gi->download = EINA_FALSE;
    evas_object_image_file_set(gi->img, gi->file, NULL);
    evas_object_show(gi->img);
 
-   evas_object_text_text_set(gi->txt, gi->file);
-   evas_object_show(gi->txt);
+   //evas_object_text_text_set(gi->txt, gi->file);
+   //evas_object_show(gi->txt);
 
    gi->have = EINA_TRUE;
    gi->wd->preload_num--;
@@ -291,10 +432,10 @@ _tile_downloaded(void *data, const char *file, int status)
 
    DBG("DOWNLOAD done %s", gi->file);
    if (gi->want && !status)
-	_tile_update(gi);
+     _tile_update(gi);
 
    if(status)
-	DBG("Download failed (%d) %s", status, gi->file);
+     DBG("Download failed (%d) %s", status, gi->file);
 }
 
    static Grid *
@@ -410,11 +551,12 @@ grid_load(Evas_Object *obj, Grid *g)
 	       }
 	  }
      }
+   eina_iterator_free(it);
 
-   xx = wd->pan_x / size;
+   xx = wd->pan_x / size - 1;
    if(xx < 0) xx = 0;
 
-   yy = wd->pan_y / size;
+   yy = wd->pan_y / size - 1;
    if(yy < 0) yy = 0;
 
    ww =  ow / size + 2;
@@ -457,14 +599,14 @@ grid_load(Evas_Object *obj, Grid *g)
 		  elm_widget_sub_object_add(obj, gi->img);
 		  evas_object_pass_events_set(gi->img, 1);
 
-		  gi->txt = evas_object_text_add(evas_object_evas_get(obj));
-		  evas_object_text_font_set(gi->txt, "Vera", 12);
-		  evas_object_color_set(gi->txt, 100, 100, 100, 255);
-		  evas_object_smart_member_add(gi->txt,
-			wd->pan_smart);
-		  elm_widget_sub_object_add(obj, gi->txt);
-		  evas_object_pass_events_set(gi->txt, 1);
-
+		  /*gi->txt = evas_object_text_add(evas_object_evas_get(obj));
+		    evas_object_text_font_set(gi->txt, "Vera", 12);
+		    evas_object_color_set(gi->txt, 100, 100, 100, 255);
+		    evas_object_smart_member_add(gi->txt,
+		    wd->pan_smart);
+		    elm_widget_sub_object_add(obj, gi->txt);
+		    evas_object_pass_events_set(gi->txt, 1);
+		    */
 		  eina_matrixsparse_data_idx_set(g->grid, y, x, gi);
 	       }
 
@@ -502,7 +644,7 @@ grid_load(Evas_Object *obj, Grid *g)
 			 _tile_update(gi);
 		       else
 			 {
-		            DBG("DOWNLOAD %s \t in %s", buf, buf2);
+			    DBG("DOWNLOAD %s \t in %s", buf, buf2);
 			    ecore_file_download(buf, buf2, _tile_downloaded, NULL, gi, &(gi->job));
 			    if(!gi->job)
 			      DBG("Can't start to download %s", buf);
@@ -545,6 +687,7 @@ _smooth_update(Evas_Object *obj)
 	     Grid_Item *gi = eina_matrixsparse_cell_data_get(cell);
 	     evas_object_image_smooth_scale_set(gi->img, (wd->nosmooth == 0));
 	  }
+	eina_iterator_free(it);
      }
 }
 
@@ -561,8 +704,9 @@ _grid_raise(Grid *g)
      {
 	Grid_Item *gi = eina_matrixsparse_cell_data_get(cell);
 	evas_object_raise(gi->img);
-	evas_object_raise(gi->txt);
+	//evas_object_raise(gi->txt);
      }
+   eina_iterator_free(it);
 }
 
    static int
@@ -697,22 +841,45 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 
 static Evas_Smart_Class _pan_sc = EVAS_SMART_CLASS_INIT_NULL;
 
-static void
+   static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    if (wd->scr_timer) ecore_timer_del(wd->scr_timer);
    if (wd->zoom_animator) ecore_animator_del(wd->zoom_animator);
    if (wd->long_timer) ecore_timer_del(wd->long_timer);
+
    free(wd);
 }
 
-static void
+   static void
 _del_pre_hook(Evas_Object *obj)
 {
+   Marker_Group *group;
+   Elm_Map_Marker *marker;
+   int i;
+   Eina_Bool free_marker = EINA_TRUE;
+
    Widget_Data *wd = elm_widget_data_get(obj);
    grid_clearall(obj);
+   
+   for(i=0; i<19; i++)
+     {
+	EINA_LIST_FREE(wd->markers[i], group)
+	  {
+	     EINA_LIST_FREE(group->markers, marker)
+	       {
+		  if(free_marker)
+		    free(marker);
+	       }
+	     free(group);
+	  }
+	free_marker = EINA_FALSE;
+     }
+
+
    evas_object_del(wd->pan_smart);
    wd->pan_smart = NULL;
 }
@@ -721,7 +888,7 @@ _del_pre_hook(Evas_Object *obj)
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   elm_smart_scroller_theme_set(wd->scr, "photocam", "base", elm_widget_style_get(obj));
+   elm_smart_scroller_theme_set(wd->scr, "map", "base", elm_widget_style_get(obj));
    edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
 }
@@ -869,6 +1036,7 @@ _pan_calculate(Evas_Object *obj)
      {
 	grid_load(sd->wd->obj, g);
 	grid_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
+	marker_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
      }
 }
 
@@ -934,6 +1102,143 @@ _scr_scroll(void *data, Evas_Object *obj, void *event_info)
    evas_object_smart_callback_call(data, "scroll", NULL);
 }
 
+   static void
+_group_bubble_create(Marker_Group *group)
+{
+   if(group->bubble) return ;
+
+   group->bubble = edje_object_add(evas_object_evas_get(group->obj));
+   _elm_theme_set(group->bubble, "map", "marker_bubble",
+	 elm_widget_style_get(group->wd->obj));
+   evas_object_smart_member_add(group->bubble,
+	 group->wd->obj);
+   elm_widget_sub_object_add(group->wd->obj, group->bubble);
+
+   _group_bubble_content_update(group);
+
+   _group_bubble_place(group);
+}
+
+   static void
+_group_bubble_mouse_in_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Marker_Group *group = data;
+   evas_object_raise(group->bubble);
+   evas_object_raise(group->sc);
+}
+
+   static void
+_group_bubble_content_update(Marker_Group *group)
+{
+   Eina_List *l;
+   Elm_Map_Marker *marker;
+
+   if(!group->bubble) return ;
+
+   _group_bubble_content_free(group);
+
+   if(!group->sc)
+     {
+	group->sc = elm_scroller_add(group->bubble);
+	elm_scroller_content_min_limit(group->sc, EINA_FALSE, EINA_TRUE);
+	elm_scroller_policy_set(group->sc, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF);
+	elm_scroller_bounce_set(group->sc, EINA_TRUE, EINA_FALSE);
+	edje_object_part_swallow(group->bubble, "elm.swallow.content", group->sc);
+	evas_object_show(group->sc);
+	evas_object_smart_member_add(group->sc,
+	      group->wd->obj);
+	elm_widget_sub_object_add(group->wd->obj, group->sc);
+
+	group->bx = elm_box_add(group->bubble);
+	evas_object_size_hint_align_set(group->bx, -1, -1);
+	evas_object_size_hint_weight_set(group->bx, 0.5, 0.5);
+	elm_box_horizontal_set(group->bx, EINA_TRUE);
+	evas_object_show(group->bx);
+
+	evas_object_event_callback_add(group->bx, EVAS_CALLBACK_MOUSE_IN, _group_bubble_mouse_in_cb, group);
+	evas_object_event_callback_add(group->bx, EVAS_CALLBACK_MOUSE_DOWN, _group_bubble_mouse_in_cb, group);
+
+	elm_scroller_content_set(group->sc, group->bx);
+     }
+
+   EINA_LIST_FOREACH(group->markers, l, marker)
+     {
+	if(marker->class->func.get)
+	  marker->content = marker->class->func.get(group->wd->obj, marker, marker->data);
+
+	if(marker->content)
+	   elm_box_pack_end(group->bx, marker->content);
+     }
+}
+
+   static void
+_group_bubble_content_free(Marker_Group *group)
+{
+   Eina_List *l;
+   Elm_Map_Marker *marker;
+
+   if(!group->sc) return ;
+
+   EINA_LIST_FOREACH(group->markers, l, marker)
+     {
+	if(marker->content && marker->class->func.del)
+	  marker->class->func.del(group->wd->obj, marker, marker->data, marker->content);
+	else if(marker->content)
+	  evas_object_del(marker->content);
+     }
+
+   evas_object_del(group->sc);
+   group->sc = NULL;
+}
+
+   static void
+_group_bubble_free(Marker_Group *group)
+{
+   if(!group->bubble) return ;
+   evas_object_del(group->bubble);
+   group->bubble = NULL;
+   _group_bubble_content_free(group);
+}
+
+   static void
+_group_bubble_place(Marker_Group *group)
+{
+   Evas_Coord x, y, w, h;
+   Evas_Coord xx, yy, ww, hh;
+   const char *s;
+
+   if(!group->bubble) return ;
+
+   evas_object_geometry_get(group->obj, &x, &y, &w, &h);
+   s = edje_object_data_get(group->bubble, "size_w");
+   ww = atoi(s);
+   s = edje_object_data_get(group->bubble, "size_h");
+   hh = atoi(s);
+   xx = x+w/2-ww/2;
+   yy = y-hh;
+
+   evas_object_move(group->bubble, xx, yy);
+   evas_object_resize(group->bubble, ww, hh);
+   evas_object_show(group->bubble);
+}
+
+
+static void
+_group_open_cb(void *data, Evas_Object *obj, const char *emission, const char *soure)
+{
+   Marker_Group *group = data;
+
+   if(group->bubble)
+     {
+	group->open = EINA_FALSE;
+	_group_bubble_free(group);
+	return ;
+     }
+   group->open = EINA_TRUE;
+   _group_bubble_create(group);
+}
+
+
 /**
  * Add a new Map object
  *
@@ -945,20 +1250,21 @@ _scr_scroll(void *data, Evas_Object *obj, void *event_info)
    EAPI Evas_Object *
 elm_map_add(Evas_Object *parent)
 {
-   Evas_Object *obj;
+   Evas_Object *obj, *o;
    Evas *e;
    Widget_Data *wd;
    Evas_Coord minw, minh;
    static Evas_Smart *smart = NULL;
    int i;
+   const char *s;
    Grid *g;
 
-   
+
    if(!ecore_file_download_protocol_available("http://"))
-   {
-       ERR("Ecore must be built with the support of HTTP for the widget map !");
-       return NULL;
-   }
+     {
+	ERR("Ecore must be built with the support of HTTP for the widget map !");
+	return NULL;
+     }
 
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
@@ -971,7 +1277,7 @@ elm_map_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
 
    wd->scr = elm_smart_scroller_add(e);
-   elm_smart_scroller_theme_set(wd->scr, "photocam", "base", "default");
+   elm_smart_scroller_theme_set(wd->scr, "map", "base", "default");
    evas_object_smart_callback_add(wd->scr, "scroll", _scr, obj);
    evas_object_smart_callback_add(wd->scr, "drag", _scr, obj);
    elm_widget_resize_object_set(obj, wd->scr);
@@ -985,6 +1291,19 @@ elm_map_add(Evas_Object *parent)
    elm_smart_scroller_bounce_allow_set(wd->scr, 1, 1);
 
    wd->obj = obj;
+
+   //load the minimum size of the marker group
+   o = edje_object_add(e);
+   _elm_theme_set(o, "map", "marker", elm_widget_style_get(obj));
+   s = edje_object_data_get(o, "size_w");
+   wd->marker_w = atoi(s);
+   s = edje_object_data_get(o, "size_h");
+   wd->marker_h = atoi(s);
+   s = edje_object_data_get(o, "size_max_w");
+   wd->marker_max_w = atoi(s);
+   s = edje_object_data_get(o, "size_max_h");
+   wd->marker_max_h = atoi(s);
+   evas_object_del(o);
 
    evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
    evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
@@ -1053,7 +1372,7 @@ elm_map_add(Evas_Object *parent)
 /**
  * Set the zoom level of the map
  *
- * This sets the zoom level. 0 is the world map and 18 is the maximum zoom. 
+ * This sets the zoom level. 0 is the world map and 18 is the maximum zoom.
  *
  * @param obj The map object
  * @param zoom The zoom level to set
@@ -1305,14 +1624,12 @@ elm_map_zoom_mode_get(Evas_Object *obj)
 }
 
    EAPI void
-elm_map_geo_region_bring_in(Evas_Object *obj, double lat, double lon)
+elm_map_geo_region_bring_in(Evas_Object *obj, double lon, double lat)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    int rx, ry, rw, rh;
 
-   rx = floor((lon + 180.0) / 360.0 * wd->size.w);
-   ry = floor((1.0 - log( tan(lat * ELM_PI/180.0) + 1.0 / cos(lat * ELM_PI/180.0)) / ELM_PI) / 2.0 * wd->size.h);
-
+   elm_map_utils_convert_geo_into_coord(lon, lat, wd->size.w, &rx, &ry);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &rw, &rh);
 
    rx = rx - rw/2;
@@ -1331,7 +1648,7 @@ elm_map_geo_region_bring_in(Evas_Object *obj, double lat, double lon)
 }
 
 /**
- * Move the map to the current coordinates. 
+ * Move the map to the current coordinates.
  *
  * This move the map to the current coordinates. The map will be centred on these coordinates.
  *
@@ -1342,14 +1659,12 @@ elm_map_geo_region_bring_in(Evas_Object *obj, double lat, double lon)
  * @ingroup Map
  */
    EAPI void
-elm_map_geo_region_show(Evas_Object *obj, double lat, double lon)
+elm_map_geo_region_show(Evas_Object *obj, double lon, double lat)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    int rx, ry, rw, rh;
 
-   rx = floor((lon + 180.0) / 360.0 * wd->size.w);
-   ry = floor((1.0 - log( tan(lat * ELM_PI/180.0) + 1.0 / cos(lat * ELM_PI/180.0)) / ELM_PI) / 2.0 * wd->size.h);
-
+   elm_map_utils_convert_geo_into_coord(lon, lat, wd->size.w, &rx, &ry);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &rw, &rh);
 
    rx = rx - rw/2;
@@ -1367,7 +1682,7 @@ elm_map_geo_region_show(Evas_Object *obj, double lat, double lon)
 }
 
 /**
- * Move the map to the current coordinates. 
+ * Move the map to the current coordinates.
  *
  * This move the map to the current coordinates. The map will be centred on these coordinates.
  *
@@ -1378,7 +1693,7 @@ elm_map_geo_region_show(Evas_Object *obj, double lat, double lon)
  * @ingroup Map
  */
    EAPI void
-elm_map_geo_region_get(Evas_Object *obj, double *lat, double *lon)
+elm_map_geo_region_get(Evas_Object *obj, double *lon, double *lat)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord sx, sy, sw, sh;
@@ -1389,21 +1704,7 @@ elm_map_geo_region_get(Evas_Object *obj, double *lat, double *lon)
    sx += sw/2;
    sy += sh/2;
 
-   if (wd->size.w > 0)
-     {
-	if (lon)
-	  {
-	     *lon = sx / (double)wd->size.w * 360.0 - 180;
-	  }
-     }
-   if (wd->size.h > 0)
-     {
-	if (lat)
-	  {
-	     double n = ELM_PI - 2.0 * ELM_PI * sy / wd->size.h;
-	     *lat = 180.0 / ELM_PI * atan(0.5 * (exp(n) - exp(-n)));
-	  }
-     }
+   elm_map_utils_convert_coord_into_geo(sx, sy, wd->size.w, lon, lat);
 }
 
 /**
@@ -1448,3 +1749,140 @@ elm_map_paused_get(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    return wd->paused;
 }
+
+
+/**
+ * Convert a pixel coordinate into a geographic coordinate.
+ *
+ * Convert a pixel coordinate (x,y) into a geographic coordinate (longitude, latitude).
+ *
+ * @param obj The map object
+ * @param x the coordinate
+ * @param y the coordinate
+ * @param size the size in pixels of the map. The map is a square and generally his size is : pow(2.0, zoom)*256.
+ * @param lon the longitude correspond to x
+ * @param lat the latitude correspond to y
+ */
+   EAPI void
+elm_map_utils_convert_coord_into_geo(int x, int y, int size, double *lon, double *lat)
+{
+   if (lon)
+     {
+	*lon = x / (double)size * 360.0 - 180;
+     }
+   if (lat)
+     {
+	double n = ELM_PI - 2.0 * ELM_PI * y / size;
+	*lat = 180.0 / ELM_PI * atan(0.5 * (exp(n) - exp(-n)));
+     }
+}
+
+/**
+ * Convert a geographic coordinate into a pixel coordinate.
+ *
+ * Convert a geographic coordinate (longitude, latitude) into a pixel coordinate (x, y).
+ *
+ * @param obj The map object
+ * @param lon the longitude
+ * @param lat the latitude
+ * @param size the size in pixels of the map. The map is a square and generally his size is : pow(2.0, zoom)*256.
+ * @param x the coordinate correspond to the longitude
+ * @param y the coordinate correspond to the latitude
+ */
+   EAPI void
+elm_map_utils_convert_geo_into_coord(double lon, double lat, int size, int *x, int *y)
+{
+   if(x)
+     *x = floor((lon + 180.0) / 360.0 * size);
+   if(y)
+     *y = floor((1.0 - log( tan(lat * ELM_PI/180.0) + 1.0 / cos(lat * ELM_PI/180.0)) / ELM_PI) / 2.0 * size);
+}
+
+
+
+/**
+ * Add a marker on the map
+ *
+ * Add a marker on the map
+ *
+ * @param obj The map object
+ * @param lon the longitude
+ * @param lat the latitude
+ * @param class the class to use
+ * @param data the data passed to the callbacks
+ */
+   EAPI Elm_Map_Marker *
+elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *class, void *data)
+{
+   int i;
+   Eina_List *l, *l2;
+   Marker_Group *group;
+   Elm_Map_Marker *_marker;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   Elm_Map_Marker *marker = calloc(1, sizeof(Elm_Map_Marker));
+
+   marker->wd = wd;
+   marker->class = class;
+   marker->longitude = lon;
+   marker->latitude = lat;
+   marker->data = data;
+
+   for(i=0; i<=18; i++)
+     {
+	int sizew = wd->marker_w;;
+	int sizeh = wd->marker_h;;
+	if(sizew<=0) sizew = 2;
+	if(sizeh<=0) sizeh = 2;
+	if(sizew > wd->marker_max_w) sizew = wd->marker_max_w;
+	if(sizeh > wd->marker_max_h) sizeh = wd->marker_max_h;
+
+	elm_map_utils_convert_geo_into_coord(lon, lat, pow(2.0, i)*wd->tsize,
+	      &(marker->x[i]), &(marker->y[i]));
+
+	EINA_LIST_FOREACH(wd->markers[i], l, group)
+	  {
+	     if(ELM_RECTS_INTERSECT( marker->x[i]-sizew/4, marker->y[i]-sizeh/4, sizew, sizeh,
+		      group->x-group->w/4, group->y-group->h/4, group->w, group->h))
+	       {
+		  group->x = marker->x[i];
+		  group->y = marker->y[i];
+		  EINA_LIST_FOREACH(group->markers, l2, _marker)
+		    {
+		       group->x+=_marker->x[i];
+		       group->y+=_marker->y[i];
+		    }
+		  group->markers = eina_list_append(group->markers, marker);
+		  group->x = group->x / eina_list_count(group->markers);
+		  group->y = group->y / eina_list_count(group->markers);
+		  group->w = sizew + sizew/8. * eina_list_count(group->markers);
+		  group->h = sizeh + sizew/8. * eina_list_count(group->markers);
+		  if(group->w > wd->marker_max_w) group->w = wd->marker_max_w;
+		  if(group->h > wd->marker_max_h) group->h = wd->marker_max_h;
+
+		  break;
+	       }
+	  }
+	if(!group)
+	  {
+	     group = calloc(1, sizeof(Marker_Group));
+	     group->wd = wd;
+	     group->x = marker->x[i];
+	     group->y = marker->y[i];
+	     group->w = sizew;
+	     group->h = sizeh;
+	     group->markers = eina_list_append(group->markers, marker);
+	     wd->markers[i] = eina_list_append(wd->markers[i], group);
+	  }
+     }
+
+   if(wd->grids)
+     {
+	Evas_Coord ox, oy, ow, oh;
+	evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
+	marker_place(obj, eina_list_data_get(wd->grids), wd->pan_x, wd->pan_y, ox, oy, ow, oh);
+     }
+
+   return marker;
+}
+
