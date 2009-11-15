@@ -18690,7 +18690,7 @@ collections {
 
 /////////////////////////////////////////////////////////////////////////////
 // PANEL
-////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 group 
 {
    name: "elm/panel/base/default";
@@ -18714,9 +18714,9 @@ group
              description 
                {
                   state: "default" 0.0;
-                  color: 255 255 255 0;
-                  rel1.relative: -0.5 0.0;
-                  rel2.relative: 0.3 1.0;
+                  color: 255 0 0 100;
+                  rel1.relative: 0.0 0.0;
+                  rel2.relative: 2.0 1.0;
                }
              description 
                {
@@ -18748,8 +18748,9 @@ group
           }
         part 
           {
-             name: "elm.swallow.content";
-             type: SWALLOW;
+             name: "clipper";
+             type: RECT;
+             mouse_events: 0;
              description 
                {
                   state: "default" 0.0;
@@ -18763,6 +18764,18 @@ group
                        offset: -5 -5;
                        to: "base";
                     }
+               }
+          }
+        part 
+          {
+             name: "elm.swallow.content";
+             type: SWALLOW;
+             clip_to: "clipper";
+             description 
+               {
+                  state: "default" 0.0;
+                  rel1.to: "clipper";
+                  rel2.to: "clipper";
                }
           }
         part 
@@ -18904,6 +18917,7 @@ group
              signal: "show";
              action: STATE_SET "default" 0.0;
              target: "bg";
+             target: "btn_icon";
              after: "show3";
           }
         program 
