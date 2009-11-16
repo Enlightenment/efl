@@ -204,13 +204,36 @@ static Evas_Object *_marker_get(Evas_Object *obj, Elm_Map_Marker *marker, void *
 {
     Marker_Data *d = data;
 
-    Evas_Object *o = evas_object_image_add(evas_object_evas_get(obj));
-    evas_object_image_file_set(o, d->file, NULL);
-    evas_object_image_filled_set(o, EINA_TRUE);
-    evas_object_size_hint_min_set(o, 64, 64);
-    evas_object_show(o);
+    Evas_Object *bx = elm_box_add(obj);
+    evas_object_show(bx);
 
-    return o;
+    if(d == &data3)
+    {
+        Evas_Object *icon = elm_icon_add(obj);
+        elm_icon_file_set(icon, d->file, NULL);
+        evas_object_show(icon);
+
+        Evas_Object *o = elm_button_add(obj);
+        elm_button_icon_set(o, icon);
+        evas_object_show(o);
+        elm_box_pack_end(bx, o);
+    }
+    else
+    {
+        Evas_Object *o = evas_object_image_add(evas_object_evas_get(obj));
+        evas_object_image_file_set(o, d->file, NULL);
+        evas_object_image_filled_set(o, EINA_TRUE);
+        evas_object_size_hint_min_set(o, 64, 64);
+        evas_object_show(o);
+        elm_box_pack_end(bx, o);
+
+        Evas_Object *lbl = elm_label_add(obj);
+        elm_label_label_set(lbl, "Wolves Go !");
+        evas_object_show(lbl);
+        elm_box_pack_end(bx, lbl);
+    }
+
+    return bx;
 }
 
 void

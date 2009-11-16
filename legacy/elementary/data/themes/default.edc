@@ -19294,12 +19294,11 @@ collections {
         type: SWALLOW;
         clip_to: "clipper";
         description { state: "default" 0.0;
+            align: 0.5 0.5;
           rel1 {
-            to: "base0";
             offset: 9 8;
           }
           rel2 {
-            to: "base0";
             offset: -10 -17;
           }
         }

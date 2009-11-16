@@ -150,6 +150,7 @@ struct _Widget_Data
 	double lon, lat;
      } center_on;
 
+   Ecore_Job *markers_place_job;
    Eina_List *markers[19];
    Evas_Coord marker_w, marker_h;
    Evas_Coord marker_max_w, marker_max_h;
@@ -182,6 +183,7 @@ static void _group_bubble_place(Marker_Group *group);
 static void _group_bubble_content_update(Marker_Group *group);
 static void _group_bubble_content_free(Marker_Group *group);
 static void marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh);
+static void _bubble_sc_hits_changed_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
    static void
 rect_place(Evas_Object *obj, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh)
@@ -900,6 +902,8 @@ _del_pre_hook(Evas_Object *obj)
 	  {
 	     EINA_LIST_FREE(group->markers, marker)
 	       {
+		  evas_object_event_callback_del_full(group->sc, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
+			_bubble_sc_hits_changed_cb, group);
 		  if(free_marker)
 		    free(marker);
 	       }
@@ -1167,11 +1171,17 @@ _group_bubble_create(Marker_Group *group)
    _group_bubble_place(group);
 }
 
+static void _bubble_sc_hits_changed_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   _group_bubble_place(data);
+}
+
    static void
 _group_bubble_content_update(Marker_Group *group)
 {
    Eina_List *l;
    Elm_Map_Marker *marker;
+   Evas_Coord h;
 
    if(!group->bubble) return ;
 
@@ -1196,6 +1206,9 @@ _group_bubble_content_update(Marker_Group *group)
 	evas_object_show(group->bx);
 
 	elm_scroller_content_set(group->sc, group->bx);
+	
+	evas_object_event_callback_add(group->sc, EVAS_CALLBACK_RESIZE, 
+	      _bubble_sc_hits_changed_cb, group);
      }
 
    EINA_LIST_FOREACH(group->markers, l, marker)
@@ -1232,6 +1245,9 @@ _group_bubble_content_free(Marker_Group *group)
 _group_bubble_free(Marker_Group *group)
 {
    if(!group->bubble) return ;
+
+   evas_object_event_callback_del_full(group->sc, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
+	 _bubble_sc_hits_changed_cb, group);
    evas_object_del(group->bubble);
    evas_object_del(group->rect);
    group->bubble = NULL;
@@ -1245,13 +1261,13 @@ _group_bubble_place(Marker_Group *group)
    Evas_Coord xx, yy, ww, hh;
    const char *s;
 
-   if(!group->bubble) return ;
+   if(!group->bubble || !group->obj) return ;
 
-   evas_object_geometry_get(group->obj, &x, &y, &w, &h);
+   evas_object_geometry_get(group->obj, &x, &y, &w, NULL);
+   edje_object_size_min_calc(group->bubble, NULL, &hh);
+
    s = edje_object_data_get(group->bubble, "size_w");
    ww = atoi(s);
-   s = edje_object_data_get(group->bubble, "size_h");
-   hh = atoi(s);
    xx = x+w/2-ww/2;
    yy = y-hh;
 
