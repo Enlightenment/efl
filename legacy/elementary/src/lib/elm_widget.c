@@ -28,6 +28,7 @@ struct _Smart_Data
    void         (*activate_func) (Evas_Object *obj);
    void         (*disable_func) (Evas_Object *obj);
    void         (*theme_func) (Evas_Object *obj);
+   void         (*changed_func) (Evas_Object *obj);
    void         (*on_focus_func) (void *data, Evas_Object *obj);
    void          *on_focus_data;
    void         (*on_change_func) (void *data, Evas_Object *obj);
@@ -57,6 +58,7 @@ static void _smart_hide(Evas_Object *obj);
 static void _smart_color_set(Evas_Object *obj, int r, int g, int b, int a);
 static void _smart_clip_set(Evas_Object *obj, Evas_Object * clip);
 static void _smart_clip_unset(Evas_Object *obj);
+static void _smart_calculate(Evas_Object *obj);
 static void _smart_init(void);
 
 /* local subsystem globals */
@@ -143,6 +145,13 @@ elm_widget_theme_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
 {
    API_ENTRY return;
    sd->theme_func = func;
+}
+
+EAPI void
+elm_widget_changed_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
+{
+   API_ENTRY return;
+   sd->changed_func = func;
 }
 
 EAPI void
@@ -961,6 +970,13 @@ _smart_clip_unset(Evas_Object *obj)
    evas_object_clip_unset(sd->resize_obj);
 }
 
+static void
+_smart_calculate(Evas_Object *obj)
+{
+   INTERNAL_ENTRY;
+   if (sd->changed_func) sd->changed_func(obj);
+}
+
 /* never need to touch this */
 
 static void
@@ -981,7 +997,7 @@ _smart_init(void)
 	       _smart_color_set,
 	       _smart_clip_set,
 	       _smart_clip_unset,
-	       NULL,
+	       _smart_calculate,
 	       NULL,
 	       NULL,
 	       NULL

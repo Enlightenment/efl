@@ -98,6 +98,7 @@ EAPI void         elm_widget_focus_hook_set(Evas_Object *obj, void (*func) (Evas
 EAPI void         elm_widget_activate_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
 EAPI void         elm_widget_disable_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
 EAPI void         elm_widget_theme_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
+EAPI void         elm_widget_changed_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
 EAPI void         elm_widget_theme(Evas_Object *obj);
 EAPI void         elm_widget_on_focus_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
 EAPI void         elm_widget_on_change_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
