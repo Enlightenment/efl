@@ -74,6 +74,7 @@ struct _Marker_Group
 {
    Widget_Data *wd;
    Eina_List *markers;
+   long long sum_x, sum_y;
    Evas_Coord x, y;
    Evas_Coord w, h;
    Evas_Object *obj, *bubble, *sc, *bx, *rect;
@@ -135,6 +136,11 @@ struct _Widget_Data
 	     double x, y;
 	  } spos;
      } size;
+   struct
+     {
+	Eina_Bool show : 1;
+	Evas_Coord x, y ,w ,h;
+     } show;
    int tsize;
    int nosmooth;
    int preload_num;
@@ -163,6 +169,9 @@ struct _Pan
    Widget_Data *wd;
 };
 
+
+static void _pan_calculate(Evas_Object *obj);
+
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _show_region_hook(void *data, Evas_Object *obj);
@@ -189,19 +198,31 @@ static void _bubble_sc_hits_changed_cb(void *data, Evas *e, Evas_Object *obj, vo
 rect_place(Evas_Object *obj, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord ax, ay, gw, gh;
+   Evas_Coord ax, ay, gw, gh, hh, ww;
    int x, y;
+
+   evas_object_geometry_get(wd->rect, NULL, NULL, &ww, &hh);
 
    ax = 0;
    ay = 0;
    gw = wd->size.w;
    gh = wd->size.h;
+
+   if(ww == gw && hh == gh) return ;
+
    if (ow > gw) ax = (ow - gw) / 2;
    if (oh > gh) ay = (oh - gh) / 2;
    evas_object_move(wd->rect,
 	 ox + 0 - px + ax,
 	 oy + 0 - py + ay);
    evas_object_resize(wd->rect, gw, gh);
+
+   if(wd->show.show)
+     {
+	wd->show.show = EINA_FALSE;
+	elm_smart_scroller_child_region_show(wd->scr, wd->show.x, wd->show.y, wd->show.w, wd->show.h);
+     }
+   printf("RECT PLACE %d %d\n", gw, gh);
 }
 
    static void
@@ -576,14 +597,14 @@ grid_load(Evas_Object *obj, Grid *g)
    if(yy < 0) yy = 0;
 
    ww =  ow / size + 2;
-   if(xx + ww > g->gw) ww = g->gw - xx;
+   if(xx + ww > g->gw) ww = g->gw - xx - 1;
 
    hh =  oh / size + 2;
-   if(yy + hh > g->gh) hh = g->gh - yy;
+   if(yy + hh > g->gh) hh = g->gh - yy - 1;
 
-   for (y = yy; y < yy + hh; y++)
+   for (y = yy; y <= yy + hh; y++)
      {
-	for (x = xx; x < xx + ww; x++)
+	for (x = xx; x <= xx + ww; x++)
 	  {
 	     gi = eina_matrixsparse_data_idx_get(g->grid, y, x);
 
@@ -778,12 +799,19 @@ zoom_do(Evas_Object *obj, double t)
    if (yy < 0) yy = 0;
    else if (yy > (wd->size.h - oh)) yy = wd->size.h - oh;
 
-   elm_smart_scroller_child_region_show(wd->scr, xx, yy, ow, oh);
+   printf("ZOOM %d %f %d\n", wd->size.w, wd->size.spos.x, xx);
+   //elm_smart_scroller_child_region_show(wd->scr, xx, yy, ow, oh);
+   wd->show.show = EINA_TRUE;
+   wd->show.x = xx;
+   wd->show.y = yy;
+   wd->show.w = ow;
+   wd->show.h = oh;
+
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
    if (t >= 1.0)
      {
-	printf("ZOOM DONE\n");
+	printf("ZOOM DONE %d %d\n\n", xx, yy);
 	return 0;
      }
    return 1;
@@ -1285,11 +1313,11 @@ _group_bringin_cb(void *data, Evas_Object *obj, const char *emission, const char
 {
    Marker_Group *group = data;
    double lon, lat;
+   Elm_Map_Marker *marker = eina_list_data_get(group->markers);
+   if(!marker) return ;
 
    group->bringin = EINA_TRUE;
-
-   elm_map_utils_convert_coord_into_geo(group->x, group->y, group->wd->size.w, &lon, &lat);
-   elm_map_geo_region_bring_in(group->wd->obj, lon, lat);
+   elm_map_geo_region_bring_in(group->wd->obj, marker->longitude, marker->latitude);
 }
 
 static void
@@ -1312,7 +1340,6 @@ _group_open_cb(void *data, Evas_Object *obj, const char *emission, const char *s
    group->open = EINA_TRUE;
    _group_bubble_create(group);
 }
-
 
 /**
  * Add a new Map object
@@ -1363,7 +1390,7 @@ elm_map_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->scr, "drag,stop", _scr_drag_stop, obj);
    evas_object_smart_callback_add(wd->scr, "scroll", _scr_scroll, obj);
 
-   elm_smart_scroller_bounce_allow_set(wd->scr, 1, 1);
+   elm_smart_scroller_bounce_allow_set(wd->scr, 0, 0);
 
    wd->obj = obj;
 
@@ -1421,7 +1448,6 @@ elm_map_add(Evas_Object *parent)
    elm_widget_sub_object_add(obj, wd->rect);
    evas_object_show(wd->rect);
    evas_object_color_set(wd->rect, 0, 0, 0, 0);
-
 
 
    wd->zoom = -1;
@@ -1580,16 +1606,16 @@ done:
    wd->t_end = wd->t_start + _elm_config->zoom_friction;
    if ((wd->size.w > 0) && (wd->size.h > 0))
      {
-	wd->size.spos.x = (double)(rx + (rw / 2)) / (double)wd->size.w;
-	wd->size.spos.y = (double)(ry + (rh / 2)) / (double)wd->size.h;
+	wd->size.spos.x = (double)(rx + (rw / 2)) / (double)wd->size.ow;
+	wd->size.spos.y = (double)(ry + (rh / 2)) / (double)wd->size.oh;
      }
    else
      {
 	wd->size.spos.x = 0.5;
 	wd->size.spos.y = 0.5;
      }
-   if (rw > wd->size.w) wd->size.spos.x = 0.5;
-   if (rh > wd->size.h) wd->size.spos.y = 0.5;
+   if (rw > wd->size.ow) wd->size.spos.x = 0.5;
+   if (rh > wd->size.oh) wd->size.spos.y = 0.5;
    if (wd->size.spos.x > 1.0) wd->size.spos.x = 1.0;
    if (wd->size.spos.y > 1.0) wd->size.spos.y = 1.0;
    if (wd->paused)
@@ -1896,9 +1922,8 @@ elm_map_utils_convert_geo_into_coord(double lon, double lat, int size, int *x, i
 elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *class, void *data)
 {
    int i;
-   Eina_List *l, *l2;
+   Eina_List *l;
    Marker_Group *group;
-   Elm_Map_Marker *_marker;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    Elm_Map_Marker *marker = calloc(1, sizeof(Elm_Map_Marker));
@@ -1926,16 +1951,13 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 	     if(ELM_RECTS_INTERSECT( marker->x[i]-sizew/4, marker->y[i]-sizeh/4, sizew, sizeh,
 		      group->x-group->w/4, group->y-group->h/4, group->w, group->h))
 	       {
-		  group->x = marker->x[i];
-		  group->y = marker->y[i];
-		  EINA_LIST_FOREACH(group->markers, l2, _marker)
-		    {
-		       group->x+=_marker->x[i];
-		       group->y+=_marker->y[i];
-		    }
 		  group->markers = eina_list_append(group->markers, marker);
-		  group->x = group->x / eina_list_count(group->markers);
-		  group->y = group->y / eina_list_count(group->markers);
+		  
+		  group->sum_x += marker->x[i];
+		  group->sum_y += marker->y[i];
+		  group->x = group->sum_x / eina_list_count(group->markers);
+		  group->y = group->sum_y / eina_list_count(group->markers);
+		  
 		  group->w = sizew + sizew/8. * eina_list_count(group->markers);
 		  group->h = sizeh + sizew/8. * eina_list_count(group->markers);
 		  if(group->w > wd->marker_max_w) group->w = wd->marker_max_w;
@@ -1948,6 +1970,8 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 	  {
 	     group = calloc(1, sizeof(Marker_Group));
 	     group->wd = wd;
+	     group->sum_x = marker->x[i];
+	     group->sum_y = marker->y[i];
 	     group->x = marker->x[i];
 	     group->y = marker->y[i];
 	     group->w = sizew;
