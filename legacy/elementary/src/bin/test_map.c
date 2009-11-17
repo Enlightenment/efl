@@ -9,6 +9,8 @@ typedef struct Marker_Data
 
 Elm_Map_Marker_Class itc;
 
+static Evas_Object *rect;
+
 Marker_Data data1 = {PACKAGE_DATA_DIR"/images/logo.png"};
 Marker_Data data2 = {PACKAGE_DATA_DIR"/images/logo_small.png"};
 Marker_Data data3 = {PACKAGE_DATA_DIR"/images/panel_01.jpg"};
@@ -238,6 +240,38 @@ static Evas_Object *_marker_get(Evas_Object *obj, Elm_Map_Marker *marker, void *
     return bx;
 }
 
+static void
+_map_mouse_wheel_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *map = data;
+   Evas_Object *ph = data;
+   Evas_Event_Mouse_Wheel *ev = (Evas_Event_Mouse_Wheel*) event_info;
+   int zoom;
+   double val;
+   //unset the mouse wheel
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+
+   zoom = elm_map_zoom_get(map);
+
+   if (ev->z > 0)
+     zoom++;
+   else
+     zoom--;
+
+   elm_map_zoom_mode_set(map, ELM_MAP_ZOOM_MODE_MANUAL);
+   if (zoom >= 0 && zoom <= 18) elm_map_zoom_set(map, zoom);
+}
+
+   static void
+_map_move_resize_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   int x,y,w,h;
+
+   evas_object_geometry_get(data,&x,&y,&w,&h);
+   evas_object_resize(rect,w,h);
+   evas_object_move(rect,x,y);
+}
+
 void
 test_map(void *data, Evas_Object *obj, void *event_info)
 {
@@ -260,6 +294,18 @@ test_map(void *data, Evas_Object *obj, void *event_info)
 
    itc.func.get = _marker_get;
    itc.func.del = NULL;
+
+   
+   rect = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_color_set(rect, 0, 0, 0, 0);
+   evas_object_repeat_events_set(rect,1);
+   evas_object_show(rect);
+   evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_WHEEL, _map_mouse_wheel_cb, map);
+   evas_object_raise(rect);
+
+   evas_object_event_callback_add(map, EVAS_CALLBACK_RESIZE, _map_move_resize_cb, map);
+   evas_object_event_callback_add(map, EVAS_CALLBACK_MOVE, _map_move_resize_cb, map);
+
 
    Elm_Map_Marker *marker = elm_map_marker_add(map, 2.352, 48.857, &itc, &data1);
    marker = elm_map_marker_add(map, 2.355, 48.857, &itc, &data3);
