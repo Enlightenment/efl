@@ -113,6 +113,11 @@ struct _Widget_Data
              double x, y;
           } spos;
      } size;
+   struct
+     {
+	Eina_Bool show : 1;
+	Evas_Coord x, y ,w ,h;
+     } show;
    int tsize;
    Evas_Object *img; // low res version of image (scale down == 8)
    int nosmooth;
@@ -170,6 +175,12 @@ img_place(Evas_Object *obj, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Co
                     ox + 0 - px + ax,
                     oy + 0 - py + ay);
    evas_object_resize(wd->img, gw, gh);
+
+   if(wd->show.show)
+     {
+	wd->show.show = EINA_FALSE;
+	elm_smart_scroller_child_region_show(wd->scr, wd->show.x, wd->show.y, wd->show.w, wd->show.h);
+     }
 }
 
 static void
@@ -553,7 +564,13 @@ zoom_do(Evas_Object *obj, double t)
    else if (xx > (wd->size.w - ow)) xx = wd->size.w - ow;
    if (yy < 0) yy = 0;
    else if (yy > (wd->size.h - oh)) yy = wd->size.h - oh;
-   elm_smart_scroller_child_region_show(wd->scr, xx, yy, ow, oh);
+
+   wd->show.show = EINA_TRUE;
+   wd->show.x = xx;
+   wd->show.y = yy;
+   wd->show.w = ow;
+   wd->show.h = oh;
+
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
    if (t >= 1.0)

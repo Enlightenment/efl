@@ -222,7 +222,6 @@ rect_place(Evas_Object *obj, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_C
 	wd->show.show = EINA_FALSE;
 	elm_smart_scroller_child_region_show(wd->scr, wd->show.x, wd->show.y, wd->show.w, wd->show.h);
      }
-   printf("RECT PLACE %d %d\n", gw, gh);
 }
 
    static void
@@ -786,7 +785,7 @@ zoom_do(Evas_Object *obj, double t)
      {
 	elm_map_utils_convert_geo_into_coord(wd->center_on.lon, wd->center_on.lat, wd->size.w, &xx, &yy);
 	xx -= ow / 2;
-        yy -= oh / 2;
+	yy -= oh / 2;
      }
    else
      {
@@ -799,8 +798,6 @@ zoom_do(Evas_Object *obj, double t)
    if (yy < 0) yy = 0;
    else if (yy > (wd->size.h - oh)) yy = wd->size.h - oh;
 
-   printf("ZOOM %d %f %d\n", wd->size.w, wd->size.spos.x, xx);
-   //elm_smart_scroller_child_region_show(wd->scr, xx, yy, ow, oh);
    wd->show.show = EINA_TRUE;
    wd->show.x = xx;
    wd->show.y = yy;
@@ -811,7 +808,6 @@ zoom_do(Evas_Object *obj, double t)
    wd->calc_job = ecore_job_add(_calc_job, wd);
    if (t >= 1.0)
      {
-	printf("ZOOM DONE %d %d\n\n", xx, yy);
 	return 0;
      }
    return 1;
@@ -1234,7 +1230,7 @@ _group_bubble_content_update(Marker_Group *group)
 	evas_object_show(group->bx);
 
 	elm_scroller_content_set(group->sc, group->bx);
-	
+
 	evas_object_event_callback_add(group->sc, EVAS_CALLBACK_RESIZE, 
 	      _bubble_sc_hits_changed_cb, group);
      }
@@ -1245,7 +1241,7 @@ _group_bubble_content_update(Marker_Group *group)
 	  marker->content = marker->class->func.get(group->wd->obj, marker, marker->data);
 
 	if(marker->content)
-	   elm_box_pack_end(group->bx, marker->content);
+	  elm_box_pack_end(group->bx, marker->content);
      }
 }
 
@@ -1308,7 +1304,7 @@ _group_bubble_place(Marker_Group *group)
    evas_object_show(group->rect);
 }
 
-static void
+   static void
 _group_bringin_cb(void *data, Evas_Object *obj, const char *emission, const char *soure)
 {
    Marker_Group *group = data;
@@ -1320,7 +1316,7 @@ _group_bringin_cb(void *data, Evas_Object *obj, const char *emission, const char
    elm_map_geo_region_bring_in(group->wd->obj, marker->longitude, marker->latitude);
 }
 
-static void
+   static void
 _group_open_cb(void *data, Evas_Object *obj, const char *emission, const char *soure)
 {
    Marker_Group *group = data;
@@ -1390,7 +1386,7 @@ elm_map_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->scr, "drag,stop", _scr_drag_stop, obj);
    evas_object_smart_callback_add(wd->scr, "scroll", _scr_scroll, obj);
 
-   elm_smart_scroller_bounce_allow_set(wd->scr, 0, 0);
+   elm_smart_scroller_bounce_allow_set(wd->scr, 1, 1);
 
    wd->obj = obj;
 
@@ -1952,12 +1948,12 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 		      group->x-group->w/4, group->y-group->h/4, group->w, group->h))
 	       {
 		  group->markers = eina_list_append(group->markers, marker);
-		  
+
 		  group->sum_x += marker->x[i];
 		  group->sum_y += marker->y[i];
 		  group->x = group->sum_x / eina_list_count(group->markers);
 		  group->y = group->sum_y / eina_list_count(group->markers);
-		  
+
 		  group->w = sizew + sizew/8. * eina_list_count(group->markers);
 		  group->h = sizeh + sizew/8. * eina_list_count(group->markers);
 		  if(group->w > wd->marker_max_w) group->w = wd->marker_max_w;
