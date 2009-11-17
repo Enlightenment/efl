@@ -1231,6 +1231,7 @@ extern "C" {
 	 void *data;
 	 void (*free_data)(void *data);
       } layout;
+      Eina_Bool layouting : 1;
    };
 
    struct _Evas_Object_Box_Option

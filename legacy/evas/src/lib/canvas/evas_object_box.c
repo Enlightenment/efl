@@ -104,7 +104,8 @@ static void
 _on_child_resize(void *data, Evas *evas __UNUSED__, Evas_Object *o __UNUSED__, void *einfo __UNUSED__)
 {
    Evas_Object *box = data;
-   evas_object_smart_changed(box);
+   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(box, priv);
+   if (!priv->layouting) evas_object_smart_changed(box);
 }
 
 static void
@@ -131,7 +132,8 @@ static void
 _on_child_hints_changed(void *data, Evas *evas __UNUSED__, Evas_Object *o __UNUSED__, void *einfo __UNUSED__)
 {
    Evas_Object *box = data;
-   evas_object_smart_changed(box);
+   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(box, priv);
+   if (!priv->layouting) evas_object_smart_changed(box);
 }
 
 static Evas_Object_Box_Option *
@@ -476,7 +478,11 @@ _evas_object_box_smart_calculate(Evas_Object *o)
 {
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(o, priv);
    if (priv->layout.cb)
-     priv->layout.cb(o, priv, priv->layout.data);
+       {
+           priv->layouting = 1;
+           priv->layout.cb(o, priv, priv->layout.data);
+           priv->layouting = 0;
+       }
    else
      ERR("No layout function set for %p box.", o);
 }
@@ -625,6 +631,7 @@ _layout_set_offset_and_expand_dimension_space_max_bounded(int dim, int *new_dim,
 {
    if (align >= 0.0)
      {
+	*new_dim = dim;
 	*offset = (space_sz - (dim + pad_before + pad_after)) * align
 	  + pad_before;
      }
@@ -648,14 +655,35 @@ static void
 _layout_set_offset_and_change_dimension_min_max_cell_bounded(int dim, int *new_dim, int min_dim, int max_dim, int cell_sz, int *offset, double align, int pad_before, int pad_after)
 {
    if (align >= 0.0)
-     *offset = (cell_sz - (dim + pad_before + pad_after)) * align
-       + pad_before;
+     {
+	*new_dim = dim;
+	*offset =
+	  (cell_sz - (dim + pad_before + pad_after)) * align + pad_before;
+     }
    else
      {
         *offset = pad_before;
-        _layout_dimension_change_min_max_cell_bound(
-						    dim, new_dim, min_dim, max_dim, cell_sz - pad_before - pad_after);
+        _layout_dimension_change_min_max_cell_bound
+	  (dim, new_dim, min_dim, max_dim, cell_sz - pad_before - pad_after);
      }
+}
+
+static void
+_sizing_eval(Evas_Object *obj)
+{
+   Evas_Coord minw, minh, maxw, maxh;
+   Evas_Coord w, h;
+
+   evas_object_size_hint_min_get(obj, &minw, &minh);
+   evas_object_size_hint_max_get(obj, &maxw, &maxh);
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+
+   if (w < minw) w = minw;
+   if (h < minh) h = minh;
+   if ((maxw >= 0) && (w > maxw)) w = maxw;
+   if ((maxh >= 0) && (h > maxh)) h = maxh;
+
+   evas_object_resize(obj, w, h);
 }
 
 static int
@@ -672,7 +700,7 @@ _evas_object_box_layout_horizontal_weight_apply(Evas_Object_Box_Data *priv, Evas
 
         evas_object_geometry_get(o, NULL, NULL, NULL, &h);
 
-        if (remaining < 0)
+        if (remaining <= 0)
 	  {
 	     int min_w;
 
@@ -760,8 +788,6 @@ _evas_object_box_layout_horizontal_weight_apply(Evas_Object_Box_Data *priv, Evas
  * resized bounded to a minimum or maximum size, their size hint
  * properties must be set (by the
  * evas_object_size_hint_{min,max}_set() functions.
- *
- * @todo consider aspect hint and respect it.
  */
 void
 evas_object_box_layout_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
@@ -793,6 +819,7 @@ evas_object_box_layout_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, vo
         int padding_l, padding_r;
         double weight_x;
 
+	_sizing_eval(opt->obj);
         evas_object_size_hint_weight_get(opt->obj, &weight_x, NULL);
         evas_object_size_hint_padding_get
 	  (opt->obj, &padding_l, &padding_r, NULL, NULL);
@@ -862,6 +889,7 @@ evas_object_box_layout_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, vo
 	     sub_pixel -= 1 << 16;
 	  }
      }
+
    evas_object_size_hint_min_set(o, req_w, top_h);
 }
 
@@ -879,7 +907,7 @@ _evas_object_box_layout_vertical_weight_apply(Evas_Object_Box_Data *priv, Evas_O
 
         evas_object_geometry_get(o, NULL, NULL, &w, NULL);
 
-        if (remaining < 0)
+        if (remaining <= 0)
 	  {
 	     int min_h;
 
@@ -926,8 +954,6 @@ _evas_object_box_layout_vertical_weight_apply(Evas_Object_Box_Data *priv, Evas_O
  * This function behaves analogously to
  * evas_object_box_layout_horizontal().  The description of its
  * behaviour can be derived from that function's documentation.
- *
- * @todo consider aspect hint and respect it.
  */
 void
 evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
@@ -959,6 +985,7 @@ evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void
         int padding_t, padding_b;
         double weight_y;
 
+	_sizing_eval(opt->obj);
         evas_object_size_hint_weight_get(opt->obj, NULL, &weight_y);
         evas_object_size_hint_padding_get
 	  (opt->obj, NULL, NULL, &padding_t, &padding_b);
@@ -1028,6 +1055,7 @@ evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void
 	     sub_pixel -= 1 << 16;
 	  }
      }
+
    evas_object_size_hint_min_set(o, top_w, req_h);
 }
 
@@ -1063,8 +1091,6 @@ evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void
  * value of -1.0 to @c align_y makes the box try to resize this child
  * element to the exact height of its parent (respecting the max hint
  * on the child's height).
- *
- * @todo consider aspect hint and respect it.
  */
 void
 evas_object_box_layout_homogeneous_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
@@ -1098,6 +1124,7 @@ evas_object_box_layout_homogeneous_horizontal(Evas_Object *o, Evas_Object_Box_Da
         evas_object_size_hint_max_get(opt->obj, &max_w, &max_h);
         evas_object_size_hint_min_get(opt->obj, &min_w, NULL);
 
+	_sizing_eval(opt->obj);
         evas_object_geometry_get(opt->obj, NULL, NULL, &child_w, &child_h);
 
         new_w = child_w;
@@ -1122,6 +1149,7 @@ evas_object_box_layout_homogeneous_horizontal(Evas_Object *o, Evas_Object_Box_Da
 	     sub_pixel -= 1 << 16;
 	  }
      }
+
    evas_object_size_hint_min_set(o, w, h);
 }
 
@@ -1132,8 +1160,6 @@ evas_object_box_layout_homogeneous_horizontal(Evas_Object *o, Evas_Object_Box_Da
  * This function behaves analogously to
  * evas_object_box_layout_homogeneous_horizontal().  The description
  * of its behaviour can be derived from that function's documentation.
- *
- * @todo consider aspect hint and respect it.
  */
 void
 evas_object_box_layout_homogeneous_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
@@ -1167,6 +1193,7 @@ evas_object_box_layout_homogeneous_vertical(Evas_Object *o, Evas_Object_Box_Data
         evas_object_size_hint_max_get(opt->obj, &max_w, &max_h);
         evas_object_size_hint_min_get(opt->obj, NULL, &min_h);
 
+	_sizing_eval(opt->obj);
         evas_object_geometry_get(opt->obj, NULL, NULL, &child_w, &child_h);
         new_w = child_w;
         new_h = child_h;
@@ -1190,6 +1217,7 @@ evas_object_box_layout_homogeneous_vertical(Evas_Object *o, Evas_Object_Box_Data
 	     sub_pixel -= 1 << 16;
 	  }
      }
+
    evas_object_size_hint_min_set(o, w, h);
 }
 
@@ -1233,8 +1261,6 @@ evas_object_box_layout_homogeneous_vertical(Evas_Object *o, Evas_Object_Box_Data
  * value of -1.0 to @c align_y makes the box try to resize this child
  * element to the exact height of its parent (respecting the max hint
  * on the child's height).
- *
- * @todo consider aspect hint and respect it.
  */
 void
 evas_object_box_layout_homogeneous_max_size_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
@@ -1257,6 +1283,7 @@ evas_object_box_layout_homogeneous_max_size_horizontal(Evas_Object *o, Evas_Obje
      {
         int child_w, padding_l, padding_r;
 
+	_sizing_eval(opt->obj);
         evas_object_size_hint_padding_get
 	  (opt->obj, &padding_l, &padding_r, NULL, NULL);
         evas_object_geometry_get(opt->obj, NULL, NULL, &child_w, NULL);
@@ -1315,6 +1342,7 @@ evas_object_box_layout_homogeneous_max_size_horizontal(Evas_Object *o, Evas_Obje
 	     sub_pixel -= 1 << 16;
 	  }
      }
+
    evas_object_size_hint_min_set(o, x, top_h);
 }
 
@@ -1326,8 +1354,6 @@ evas_object_box_layout_homogeneous_max_size_horizontal(Evas_Object *o, Evas_Obje
  * evas_object_box_layout_homogeneous_max_size_horizontal().  The
  * description of its behaviour can be derived from that function's
  * documentation.
- *
- * @todo consider aspect hint and respect it.
  */
 void
 evas_object_box_layout_homogeneous_max_size_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
@@ -1350,6 +1376,7 @@ evas_object_box_layout_homogeneous_max_size_vertical(Evas_Object *o, Evas_Object
      {
         int child_h, padding_t, padding_b;
 
+	_sizing_eval(opt->obj);
         evas_object_size_hint_padding_get
 	  (opt->obj, NULL, NULL, &padding_t, &padding_b);
         evas_object_geometry_get(opt->obj, NULL, NULL, NULL, &child_h);
@@ -1408,6 +1435,7 @@ evas_object_box_layout_homogeneous_max_size_vertical(Evas_Object *o, Evas_Object
 	     sub_pixel -= 1 << 16;
 	  }
      }
+
    evas_object_size_hint_min_set(o, top_w, y);
 }
 
@@ -1427,7 +1455,8 @@ _evas_object_box_layout_flow_horizontal_row_info_collect(Evas_Object_Box_Data *p
         evas_object_size_hint_padding_get
 	  (opt->obj, &padding_l, &padding_r, &padding_t, &padding_b);
 
-        evas_object_geometry_get(opt->obj, NULL, NULL, &child_w, &child_h);
+	_sizing_eval(opt->obj);
+	evas_object_geometry_get(opt->obj, NULL, NULL, &child_w, &child_h);
 
         child_w += padding_l + padding_r + priv->pad.h;
         child_h += padding_t + padding_b;
@@ -1472,9 +1501,6 @@ _evas_object_box_layout_flow_horizontal_row_info_collect(Evas_Object_Box_Data *p
    *row_count = n_rows;
    *off_y_ret = off_y;
    *max_h_ret = max_h;
-
-   //TODO set size hints
-   //evas_object_size_hint_min_set(o, w,h);
 }
 
 /**
@@ -1511,8 +1537,6 @@ _evas_object_box_layout_flow_horizontal_row_info_collect(Evas_Object_Box_Data *p
  * row justifying) of setting space between rows.  Note, however, that
  * @c align_y dictates positioning relative to the *largest height*
  * required by a child object in the actual row.
- *
- * @todo consider aspect hint and respect it.
  */
 void
 evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
@@ -1646,6 +1670,7 @@ _evas_object_box_layout_flow_vertical_col_info_collect(Evas_Object_Box_Data *pri
         evas_object_size_hint_padding_get
 	  (opt->obj, &padding_l, &padding_r, &padding_t, &padding_b);
 
+	_sizing_eval(opt->obj);
         evas_object_geometry_get(opt->obj, NULL, NULL, &child_w, &child_h);
 
         child_w += padding_l + padding_r;
@@ -1692,9 +1717,6 @@ _evas_object_box_layout_flow_vertical_col_info_collect(Evas_Object_Box_Data *pri
    *col_count = n_cols;
    *off_x_ret = off_x;
    *max_w_ret = max_w;
-
-   //TODO set size hints
-   //evas_object_size_hint_min_set(o, w,h);
 }
 
 /**
@@ -1704,8 +1726,6 @@ _evas_object_box_layout_flow_vertical_col_info_collect(Evas_Object_Box_Data *pri
  * This function behaves analogously to
  * evas_object_box_layout_flow_horizontal().  The description of its
  * behaviour can be derived from that function's documentation.
- *
- * @todo consider aspect hint and respect it.
  */
 void
 evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
@@ -1842,8 +1862,6 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv,
  * (respecting the min and max hints on the child's width *and*
  * accounting its horizontal padding properties).  Same applies to
  * vertical axis.
- *
- * @todo consider aspect hint and respect it.
  */
 void
 evas_object_box_layout_stack(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
@@ -1869,7 +1887,8 @@ evas_object_box_layout_stack(Evas_Object *o, Evas_Object_Box_Data *priv, void *d
         evas_object_size_hint_max_get(child, &max_w, &max_h);
         evas_object_size_hint_min_get(child, &min_w, &min_h);
 
-        evas_object_geometry_get(child, NULL, NULL, &child_w, &child_h);
+	_sizing_eval(opt->obj);
+	evas_object_geometry_get(child, NULL, NULL, &child_w, &child_h);
         new_w = child_w;
         new_h = child_h;
         if (new_w > top_w) top_w = new_w;
@@ -1888,6 +1907,7 @@ evas_object_box_layout_stack(Evas_Object *o, Evas_Object_Box_Data *priv, void *d
 	  evas_object_stack_above(child, old_child);
         old_child = child;
      }
+
    evas_object_size_hint_min_set(o, top_w, top_h);
 }
 
