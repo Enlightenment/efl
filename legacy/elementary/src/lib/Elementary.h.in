@@ -1021,7 +1021,6 @@ extern "C" {
    EAPI double       elm_map_zoom_get(Evas_Object *obj);
    EAPI void         elm_map_zoom_mode_set(Evas_Object *obj, Elm_Map_Zoom_Mode mode);
    EAPI Elm_Map_Zoom_Mode elm_map_zoom_mode_get(Evas_Object *obj);
-   EAPI void         elm_map_image_size_get(Evas_Object *obj, int *w, int *h);
    EAPI void	     elm_map_geo_region_get(Evas_Object *obj, double *lon, double *lat);
    EAPI void         elm_map_geo_region_bring_in(Evas_Object *obj, double lon, double lat);
    EAPI void         elm_map_geo_region_show(Evas_Object *obj, double lon, double lat);
@@ -1030,6 +1029,13 @@ extern "C" {
    EAPI void	     elm_map_utils_convert_coord_into_geo(int x, int y, int size, double *lon, double *lat);
    EAPI void         elm_map_utils_convert_geo_into_coord(double lon, double lat, int size, int *x, int *y);
    EAPI Elm_Map_Marker *elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *clas, void *data);
+   EAPI void	     elm_map_max_marker_per_group_set(Evas_Object *obj, int max);
+   EAPI void	     elm_map_marker_remove(Elm_Map_Marker *marker);
+   EAPI void	     elm_map_marker_bring_in(Elm_Map_Marker *marker);
+   EAPI void	     elm_map_marker_show(Elm_Map_Marker *marker);
+   EAPI void	     elm_map_markers_list_show(Eina_List *markers);
+   EAPI Evas_Object *elm_map_marker_object_get(Elm_Map_Marker *marker);
+   EAPI void	     elm_map_marker_update(Elm_Map_Marker *marker);
    /* smart callbacks called:
     * "clicked" - when image clicked
     * "press" - when mouse/finger held down initially on image

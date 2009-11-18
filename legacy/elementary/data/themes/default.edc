@@ -21682,7 +21682,7 @@ collections {
       image: "bubble_shine.png" COMP;
     }
     data {
-            item: size_w 200;
+            item: size_w 400;
             item: size_h 100;
         }
     parts {

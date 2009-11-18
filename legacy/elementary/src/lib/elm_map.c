@@ -67,6 +67,8 @@ struct _Elm_Map_Marker
    Evas_Coord x[19], y[19];
    void *data;
 
+   Marker_Group *groups[19];
+
    Evas_Object *content;
 };
 
@@ -158,6 +160,7 @@ struct _Widget_Data
 
    Ecore_Job *markers_place_job;
    Eina_List *markers[19];
+   Evas_Coord markers_max_num;
    Evas_Coord marker_w, marker_h;
    Evas_Coord marker_max_w, marker_max_h;
    int marker_zoom;
@@ -284,8 +287,8 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
 	     hh = (((long long)gh * (ty + hh)) / g->h) - yy;
 	  }
 
-	if(xx-px+ax >= ox && xx-px+ax<= ox+ow
-	      && yy-py+ay >= oy && yy-py+ay<= oy+oh)
+	if(xx-px+ax+ox >= ox && xx-px+ax+ox<= ox+ow
+	      && yy-py+ay+oy >= oy && yy-py+ay+oy<= oy+oh)
 	  {
 	     if(!group->obj)
 	       {
@@ -589,17 +592,17 @@ grid_load(Evas_Object *obj, Grid *g)
      }
    eina_iterator_free(it);
 
-   xx = wd->pan_x / size - 1;
+   xx = wd->pan_x / size;
    if(xx < 0) xx = 0;
 
-   yy = wd->pan_y / size - 1;
+   yy = wd->pan_y / size;
    if(yy < 0) yy = 0;
 
-   ww =  ow / size + 2;
-   if(xx + ww > g->gw) ww = g->gw - xx - 1;
+   ww =  ow / size + 1;
+   if(xx + ww >= g->gw) ww = g->gw - xx - 1;
 
-   hh =  oh / size + 2;
-   if(yy + hh > g->gh) hh = g->gh - yy - 1;
+   hh =  oh / size + 1;
+   if(yy + hh >= g->gh) hh = g->gh - yy - 1;
 
    for (y = yy; y <= yy + hh; y++)
      {
@@ -926,7 +929,7 @@ _del_pre_hook(Evas_Object *obj)
 	  {
 	     EINA_LIST_FREE(group->markers, marker)
 	       {
-		  evas_object_event_callback_del_full(group->sc, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
+		  evas_object_event_callback_del_full(group->sc, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 			_bubble_sc_hits_changed_cb, group);
 		  if(free_marker)
 		    free(marker);
@@ -1181,6 +1184,8 @@ _group_bubble_create(Marker_Group *group)
 	 group->wd->obj);
    elm_widget_sub_object_add(group->wd->obj, group->bubble);
 
+
+   _group_bubble_content_free(group);
    _group_bubble_content_update(group);
 
    group->rect = evas_object_rectangle_add(evas_object_evas_get(group->obj));
@@ -1206,10 +1211,9 @@ _group_bubble_content_update(Marker_Group *group)
    Eina_List *l;
    Elm_Map_Marker *marker;
    Evas_Coord h;
+   int i = 0;
 
    if(!group->bubble) return ;
-
-   _group_bubble_content_free(group);
 
    if(!group->sc)
      {
@@ -1231,17 +1235,23 @@ _group_bubble_content_update(Marker_Group *group)
 
 	elm_scroller_content_set(group->sc, group->bx);
 
-	evas_object_event_callback_add(group->sc, EVAS_CALLBACK_RESIZE, 
+	evas_object_event_callback_add(group->sc, EVAS_CALLBACK_RESIZE,
 	      _bubble_sc_hits_changed_cb, group);
      }
 
    EINA_LIST_FOREACH(group->markers, l, marker)
      {
-	if(marker->clas->func.get)
+	if(i>=group->wd->markers_max_num)
+	  break;
+
+	if(!marker->content && marker->clas->func.get)
 	  marker->content = marker->clas->func.get(group->wd->obj, marker, marker->data);
+	else if(marker->content)
+	  elm_box_unpack(group->bx, marker->content);
 
 	if(marker->content)
 	  elm_box_pack_end(group->bx, marker->content);
+	i++;
      }
 }
 
@@ -1259,6 +1269,7 @@ _group_bubble_content_free(Marker_Group *group)
 	  marker->clas->func.del(group->wd->obj, marker, marker->data, marker->content);
 	else if(marker->content)
 	  evas_object_del(marker->content);
+	marker->content = NULL;
      }
 
    evas_object_del(group->sc);
@@ -1270,7 +1281,7 @@ _group_bubble_free(Marker_Group *group)
 {
    if(!group->bubble) return ;
 
-   evas_object_event_callback_del_full(group->sc, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
+   evas_object_event_callback_del_full(group->sc, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 	 _bubble_sc_hits_changed_cb, group);
    evas_object_del(group->bubble);
    evas_object_del(group->rect);
@@ -1402,6 +1413,8 @@ elm_map_add(Evas_Object *parent)
    s = edje_object_data_get(o, "size_max_h");
    wd->marker_max_h = atoi(s);
    evas_object_del(o);
+
+   wd->markers_max_num = 30;
 
    evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
    evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
@@ -1975,6 +1988,7 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 	     group->markers = eina_list_append(group->markers, marker);
 	     wd->markers[i] = eina_list_append(wd->markers[i], group);
 	  }
+	marker->groups[i] = group;
      }
 
    if(wd->grids)
@@ -1986,4 +2000,173 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 
    return marker;
 }
+
+
+/**
+ * Remove a marker from the map
+ *
+ * Remove a marker from the map
+ *
+ * @param marker The marker to remove
+ */
+   EAPI void
+elm_map_marker_remove(Elm_Map_Marker *marker)
+{
+   int i;
+   Widget_Data *wd = marker->wd;
+
+   for(i=0; i<=18; i++)
+	marker->groups[i]->markers = eina_list_remove(marker->groups[i]->markers, marker);
+
+   if(marker->content && marker->clas->func.del)
+     marker->clas->func.del(marker->wd->obj, marker, marker->data, marker->content);
+   else if(marker->content)
+     evas_object_del(marker->content);
+
+   free(marker);
+
+   if(wd->grids)
+     {
+	Evas_Coord ox, oy, ow, oh;
+	evas_object_geometry_get(wd->obj, &ox, &oy, &ow, &oh);
+	marker_place(wd->obj, eina_list_data_get(wd->grids), wd->pan_x, wd->pan_y, ox, oy, ow, oh);
+     }
+}
+
+/**
+ * Bring in the marker to the center
+ *
+ * Move the map to the coordinate of the marker.
+ *
+ * @param marker The marker where the map will be center.
+ */
+   EAPI void
+elm_map_marker_bring_in(Elm_Map_Marker *marker)
+{
+   elm_map_geo_region_bring_in(marker->wd->obj, marker->longitude, marker->latitude);
+}
+
+
+/**
+ * Show the marker to the center
+ *
+ * Move the map to the coordinate of the marker.
+ *
+ * @param marker The marker where the map will be center.
+ */
+   EAPI void
+elm_map_marker_show(Elm_Map_Marker *marker)
+{
+   elm_map_geo_region_show(marker->wd->obj, marker->longitude, marker->latitude);
+}
+
+/*
+ * Move and zoom the map to display a list of marker.
+ *
+ * The map will be center on the center point of the markers in the list. Then the map will be zoom in order to fit the markers, the maximum zoom which allows to display all the markers is used.
+ *
+ * @param markers The list of markers (list of Elm_Map_Marker *)
+ */
+   EAPI void
+elm_map_markers_list_show(Eina_List *markers)
+{
+   int zoom;
+   double minlon = 360, maxlon = -360;
+   double minlat = 360, maxlat = -360;
+   double lon, lat;
+   Eina_List *l;
+   Elm_Map_Marker *marker, *m_max_lon = NULL, *m_max_lat = NULL, *m_min_lon = NULL, *m_min_lat = NULL;
+   Evas_Coord rw, rh, xc, yc;
+   Widget_Data *wd;
+
+   if(!markers)
+     return;
+
+   EINA_LIST_FOREACH(markers, l, marker)
+     {
+	wd = marker->wd;
+
+	if(!m_min_lon || marker->longitude < m_min_lon->longitude)
+	  m_min_lon = marker;
+
+	if(!m_max_lon || marker->longitude > m_max_lon->longitude)
+	  m_max_lon = marker;
+
+	if(!m_min_lat || marker->latitude > m_min_lat->latitude)
+	  m_min_lat = marker;
+
+	if(!m_max_lat || marker->latitude < m_max_lat->latitude)
+	  m_max_lat = marker;
+     }
+
+   lon = (m_max_lon->longitude - m_min_lon->longitude) / 2. + m_min_lon->longitude;
+   lat = (m_max_lat->latitude - m_min_lat->latitude) / 2. + m_min_lat->latitude;
+
+   elm_smart_scroller_child_viewport_size_get(wd->scr, &rw, &rh);
+   for(zoom = 18; zoom>=0; zoom--)
+     {
+	Evas_Coord size = pow(2.0, zoom)*wd->tsize;
+	elm_map_utils_convert_geo_into_coord(lon, lat, size, &xc, &yc);
+
+	if(m_min_lon->x[zoom] - wd->marker_max_w > xc-rw/2
+	      && m_min_lat->y[zoom] - wd->marker_max_h > yc-rh/2
+	      && m_max_lon->x[zoom] + wd->marker_max_w < xc+rw/2
+	      && m_max_lat->y[zoom] + wd->marker_max_h < yc+rh/2)
+	  break;
+     }
+
+   if(zoom<0)
+     zoom = 0;
+
+   elm_map_geo_region_show(wd->obj, lon, lat);
+   elm_map_zoom_set(wd->obj, zoom);
+}
+
+/*
+ * Set the maximum numbers of markers display in a group.
+ *
+ * A group can have a long list of markers, consequently the creation of the content of the bubble can be very slow. In order to avoid this, a maximum number of items is displayed in a bubble. By default this number is 30.
+ *
+ * @param obj The map object.
+ * @param max The maximum numbers of items displayed in a bubble.
+ */
+   EAPI void
+elm_map_max_marker_per_group_set(Evas_Object *obj, int max)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   wd->markers_max_num = max;
+}
+
+/*
+ * Return the evas object getting from the ElmMapMarkerGetFunc callback
+ *
+ * @param marker The marker.
+ * @return Return the evas object if it exists, else NULL.
+ */
+   EAPI Evas_Object *
+elm_map_marker_object_get(Elm_Map_Marker *marker)
+{
+   return marker->content;
+}
+
+
+/*
+ * Update the marker
+ *
+ * @param marker The marker.
+ */
+   EAPI void 
+elm_map_marker_update(Elm_Map_Marker *marker)
+{
+   if(marker->content)
+     {
+	if(marker->clas->func.del)
+	  marker->clas->func.del(marker->wd->obj, marker, marker->data, marker->content);
+	else
+	  evas_object_del(marker->content);
+	marker->content = NULL;
+	_group_bubble_content_update(marker->groups[marker->wd->zoom]);
+     }
+}
+
 

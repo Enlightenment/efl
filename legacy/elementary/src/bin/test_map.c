@@ -247,7 +247,6 @@ _map_mouse_wheel_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Evas_Object *ph = data;
    Evas_Event_Mouse_Wheel *ev = (Evas_Event_Mouse_Wheel*) event_info;
    int zoom;
-   double val;
    //unset the mouse wheel
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
