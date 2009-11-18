@@ -1029,7 +1029,7 @@ extern "C" {
    EAPI Eina_Bool    elm_map_paused_get(Evas_Object *obj);
    EAPI void	     elm_map_utils_convert_coord_into_geo(int x, int y, int size, double *lon, double *lat);
    EAPI void         elm_map_utils_convert_geo_into_coord(double lon, double lat, int size, int *x, int *y);
-   EAPI Elm_Map_Marker *elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *class, void *data);
+   EAPI Elm_Map_Marker *elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *clas, void *data);
    /* smart callbacks called:
     * "clicked" - when image clicked
     * "press" - when mouse/finger held down initially on image

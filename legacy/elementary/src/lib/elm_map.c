@@ -60,7 +60,7 @@ typedef struct _Marker_Group Marker_Group;
 struct _Elm_Map_Marker
 {
    Widget_Data *wd;
-   Elm_Map_Marker_Class *class;
+   Elm_Map_Marker_Class *clas;
    double longitude, latitude;
 
    Evas_Coord map_size;
@@ -1237,8 +1237,8 @@ _group_bubble_content_update(Marker_Group *group)
 
    EINA_LIST_FOREACH(group->markers, l, marker)
      {
-	if(marker->class->func.get)
-	  marker->content = marker->class->func.get(group->wd->obj, marker, marker->data);
+	if(marker->clas->func.get)
+	  marker->content = marker->clas->func.get(group->wd->obj, marker, marker->data);
 
 	if(marker->content)
 	  elm_box_pack_end(group->bx, marker->content);
@@ -1255,8 +1255,8 @@ _group_bubble_content_free(Marker_Group *group)
 
    EINA_LIST_FOREACH(group->markers, l, marker)
      {
-	if(marker->content && marker->class->func.del)
-	  marker->class->func.del(group->wd->obj, marker, marker->data, marker->content);
+	if(marker->content && marker->clas->func.del)
+	  marker->clas->func.del(group->wd->obj, marker, marker->data, marker->content);
 	else if(marker->content)
 	  evas_object_del(marker->content);
      }
@@ -1911,11 +1911,11 @@ elm_map_utils_convert_geo_into_coord(double lon, double lat, int size, int *x, i
  * @param obj The map object
  * @param lon the longitude
  * @param lat the latitude
- * @param class the class to use
+ * @param clas the class to use
  * @param data the data passed to the callbacks
  */
    EAPI Elm_Map_Marker *
-elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *class, void *data)
+elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *clas, void *data)
 {
    int i;
    Eina_List *l;
@@ -1925,7 +1925,7 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
    Elm_Map_Marker *marker = calloc(1, sizeof(Elm_Map_Marker));
 
    marker->wd = wd;
-   marker->class = class;
+   marker->clas = clas;
    marker->longitude = lon;
    marker->latitude = lat;
    marker->data = data;
