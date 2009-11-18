@@ -2347,6 +2347,7 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, const
 {
    Edje_Part_Description *pdfrom, *pdto;
    Edje_Part_Image_Id *i;
+   Edje_External_Param *p;
    Eina_List *l;
    GET_RP_OR_RETURN(0);
 
@@ -2367,6 +2368,8 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, const
      }
 
 #define PD_COPY(_x) pdto->_x = pdfrom->_x
+#define PD_STRING_COPY(_x) _edje_if_string_free(ed, pdto->_x); \
+			   pdto->_x = eina_stringshare_add(pdfrom->_x)
    PD_COPY(align.x);
    PD_COPY(align.y);
    PD_COPY(fixed.w);
@@ -2400,8 +2403,8 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, const
 	new_i->id = i->id;
 	pdto->image.tween_list = eina_list_append(pdto->image.tween_list, new_i);
      }
-   eina_stringshare_replace(&pdto->gradient.type, pdfrom->gradient.type);
-   eina_stringshare_replace(&pdto->gradient.params, pdfrom->gradient.params);
+   PD_STRING_COPY(gradient.type);
+   PD_STRING_COPY(gradient.params);
    PD_COPY(gradient.id);
    PD_COPY(gradient.use_rel);
    PD_COPY(gradient.rel1.relative_x);
@@ -2429,12 +2432,12 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, const
    PD_COPY(fill.spread);
    PD_COPY(fill.smooth);
    PD_COPY(fill.type);
-   eina_stringshare_replace(&pdto->color_class, pdfrom->color_class);
-   eina_stringshare_replace(&pdto->text.text, pdfrom->text.text);
-   eina_stringshare_replace(&pdto->text.text_class, pdfrom->text.text_class);
-   eina_stringshare_replace(&pdto->text.style, pdfrom->text.style);
-   eina_stringshare_replace(&pdto->text.font, pdfrom->text.font);
-   eina_stringshare_replace(&pdto->text.repch, &pdfrom->text.repch);
+   PD_STRING_COPY(color_class);
+   PD_STRING_COPY(text.text);
+   PD_STRING_COPY(text.text_class);
+   PD_STRING_COPY(text.style);
+   PD_STRING_COPY(text.font);
+   PD_STRING_COPY(text.repch);
    PD_COPY(text.align.x);
    PD_COPY(text.align.y);
    PD_COPY(text.elipsis);
@@ -2447,8 +2450,8 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, const
    PD_COPY(text.min_y);
    PD_COPY(text.max_x);
    PD_COPY(text.max_y);
-   eina_stringshare_replace(&pdto->box.layout, pdfrom->box.layout);
-   eina_stringshare_replace(&pdto->box.alt_layout, pdfrom->box.alt_layout);
+   PD_STRING_COPY(box.layout);
+   PD_STRING_COPY(box.alt_layout);
    PD_COPY(box.align.x);
    PD_COPY(box.align.y);
    PD_COPY(box.padding.x);
@@ -2472,7 +2475,37 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, const
    PD_COPY(color3.g);
    PD_COPY(color3.b);
    PD_COPY(color3.a);
+   /* XXX: optimize this, most likely we don't need to remove and add */
+   EINA_LIST_FREE(pdto->external_params, p)
+     {
+	_edje_if_string_free(ed, p->name);
+	if (p->s)
+	  _edje_if_string_free(ed, p->s);
+	free(p);
+     }
+   EINA_LIST_FOREACH(pdfrom->external_params, l, p)
+     {
+	Edje_External_Param *new_p;
+	new_p = _alloc(sizeof(Edje_External_Param));
+	new_p->name = eina_stringshare_add(p->name);
+	new_p->type = p->type;
+	switch (p->type)
+	  {
+	   case EDJE_EXTERNAL_PARAM_TYPE_INT:
+	      new_p->i = p->i;
+	      break;
+	   case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
+	      new_p->d = p->d;
+	      break;
+	   case EDJE_EXTERNAL_PARAM_TYPE_STRING:
+	      new_p->s = eina_stringshare_add(p->s);
+	      break;
+	   default:
+	      break;
+	  }
+     }
    PD_COPY(visible);
+#undef PD_STRING_COPY
 #undef PD_COPY
 
    return 1;
@@ -3216,6 +3249,178 @@ edje_edit_state_color_class_set(Evas_Object *obj, const char *part, const char *
    //printf("Set ColorClass of part: %s state: %s [to: %s]\n", part, state, color_class);
    _edje_if_string_free(ed, pd->color_class);
    pd->color_class = (char*)eina_stringshare_add(color_class);
+}
+
+EAPI const Eina_List *
+edje_edit_state_external_params_list_get(Evas_Object *obj, const char *part, const char *state)
+{
+   GET_PD_OR_RETURN(NULL);
+   return pd->external_params;
+}
+
+EAPI Eina_Bool
+edje_edit_state_external_param_get(Evas_Object *obj, const char *part, const char *state, const char *param, Edje_External_Param_Type *type, void **value)
+{
+   Eina_List *l;
+   Edje_External_Param *p;
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   EINA_LIST_FOREACH(pd->external_params, l, p)
+      if (!strcmp(p->name, param))
+	{
+	   if (type) *type = p->type;
+	   if (value)
+	      switch (p->type)
+		{
+		 case EDJE_EXTERNAL_PARAM_TYPE_INT:
+		    *value = &p->i;
+		    break;
+		 case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
+		    *value = &p->d;
+		    break;
+		 case EDJE_EXTERNAL_PARAM_TYPE_STRING:
+		    *value = p->s;
+		    break;
+		}
+	   return EINA_TRUE;
+	}
+
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_external_param_int_get(Evas_Object *obj, const char *part, const char *state, const char *param, int *value)
+{
+   Eina_List *l;
+   Edje_External_Param *p;
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   EINA_LIST_FOREACH(pd->external_params, l, p)
+      if (!strcmp(p->name, param))
+	{
+	   if (p->type != EDJE_EXTERNAL_PARAM_TYPE_INT)
+	     return EINA_FALSE;
+	   if (value)
+	     *value = p->i;
+	   return EINA_TRUE;
+	}
+
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_external_param_double_get(Evas_Object *obj, const char *part, const char *state, const char *param, double *value)
+{
+   Eina_List *l;
+   Edje_External_Param *p;
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   EINA_LIST_FOREACH(pd->external_params, l, p)
+      if (!strcmp(p->name, param))
+	{
+	   if (p->type != EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+	     return EINA_FALSE;
+	   if (value)
+	     *value = p->d;
+	   return EINA_TRUE;
+	}
+
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_external_param_string_get(Evas_Object *obj, const char *part, const char *state, const char *param, const char **value)
+{
+   Eina_List *l;
+   Edje_External_Param *p;
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   EINA_LIST_FOREACH(pd->external_params, l, p)
+      if (!strcmp(p->name, param))
+	{
+	   if (p->type != EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	     return EINA_FALSE;
+	   if (value)
+	     *value = p->s;
+	   return EINA_TRUE;
+	}
+
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const char *state, const char *param, Edje_External_Param_Type type, ...)
+{
+   va_list ap;
+   Eina_List *l;
+   Edje_External_Param *p;
+   int found = 0;
+
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   va_start(ap, type);
+
+   EINA_LIST_FOREACH(pd->external_params, l, p)
+      if (!strcmp(p->name, param))
+	{
+	   found = 1;
+	   break;
+	}
+
+   if (!found)
+     {
+	p = _alloc(sizeof(Edje_External_Param));
+	if (!p)
+	  {
+	     va_end(ap);
+	     return EINA_FALSE;
+	  }
+	p->name = eina_stringshare_add(param);
+     }
+
+   p->type = type;
+   p->i = 0;
+   p->d = 0;
+   _edje_if_string_free(ed, p->s);
+   p->s = NULL;
+
+   switch (type)
+     {
+      case EDJE_EXTERNAL_PARAM_TYPE_INT:
+	 p->i = (int)va_arg(ap, int);
+	 break;
+      case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
+	 p->d = (double)va_arg(ap, double);
+	 break;
+      case EDJE_EXTERNAL_PARAM_TYPE_STRING:
+	 p->s = eina_stringshare_add((const char *)va_arg(ap, char *));
+	 break;
+     }
+
+   va_end(ap);
+
+   if (!found)
+     pd->external_params = eina_list_append(pd->external_params, p);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_external_param_int_set(Evas_Object *obj, const char *part, const char *state, const char *param, int value)
+{
+   return edje_edit_state_external_param_set(obj, part, state, param, EDJE_EXTERNAL_PARAM_TYPE_INT, value);
+}
+
+EAPI Eina_Bool
+edje_edit_state_external_param_double_set(Evas_Object *obj, const char *part, const char *state, const char *param, double value)
+{
+   return edje_edit_state_external_param_set(obj, part, state, param, EDJE_EXTERNAL_PARAM_TYPE_DOUBLE, value);
+}
+
+EAPI Eina_Bool
+edje_edit_state_external_param_string_set(Evas_Object *obj, const char *part, const char *state, const char *param, const char *value)
+{
+   return edje_edit_state_external_param_set(obj, part, state, param, EDJE_EXTERNAL_PARAM_TYPE_STRING, value);
 }
 
 /**************/

@@ -1390,6 +1390,96 @@ edje_edit_state_color_class_set(
    const char *color_class ///< The new color_class to assign
 );
 
+/**Get the list of parameters for an external part. DO NOT FREE THE LIST*/
+EAPI const Eina_List *
+edje_edit_state_external_params_list_get( ///@return The list of Edje_External_Param
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state       ///< The name of the 'part state' (ex. "default 0.00")
+);
+
+/**Get the type and value of the paramater given*/
+EAPI Eina_Bool
+edje_edit_state_external_param_get( ///@return True if the parameter was found, False otherwise
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *param,      ///< The name of the parameter to look for
+   Edje_External_Param_Type *type, ///< Type will be stored here
+   void **value            ///< Pointer to value will be stored here. DO NOT FREE IT
+);
+
+/**Get external parameter of type INT*/
+EAPI Eina_Bool
+edje_edit_state_external_param_int_get( ///@return True if succesful, False if not found or is of different type
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *param,      ///< The name of the parameter
+   int *value
+);
+
+/**Get external parameter of type DOUBLE*/
+EAPI Eina_Bool
+edje_edit_state_external_param_double_get( ///@return True if succesful, False if not found or is of different type
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *param,      ///< The name of the parameter
+   double *value
+);
+
+/**Get external parameter of type STRING*/
+EAPI Eina_Bool
+edje_edit_state_external_param_string_get( ///@return True if succesful, False if not found or is of different type
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *param,      ///< The name of the parameter
+   const char **value
+);
+
+/**Set the external parameter type and value, adding it if it didn't exist before*/
+EAPI Eina_Bool
+edje_edit_state_external_param_set( ///@return True if it was set
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *param,      ///< The name of the parameter to set
+   Edje_External_Param_Type type, ///< The type of the parameter
+   ...                     ///< Value(s) according to type
+);
+
+/**Set external parameter of type INT*/
+EAPI Eina_Bool
+edje_edit_state_external_param_int_set( ///@return True if it was set
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *param,      ///< The name of the parameter
+   int value
+);
+
+/**Set external parameter of type DOUBLE*/
+EAPI Eina_Bool
+edje_edit_state_external_param_double_set( ///@return True if it was set
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *param,      ///< The name of the parameter
+   double value
+);
+
+/**Set external parameter of type STRING*/
+EAPI Eina_Bool
+edje_edit_state_external_param_string_set( ///@return True if it was set
+   Evas_Object *obj,       ///< The edje object
+   const char *part,       ///< The name of the part
+   const char *state,      ///< The name of the 'part state' (ex. "default 0.00")
+   const char *param,      ///< The name of the parameter
+   const char *value
+);
+
 
 //@}
 /******************************************************************************/
