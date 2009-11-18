@@ -793,6 +793,7 @@ extern "C" {
    EAPI void              elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode);
    EAPI void              elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
    EAPI void              elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
+   EAPI void              elm_genlist_compress_mode_set(Evas_Object *obj, Eina_Bool compress);
    /* available item styles:
     * default
     * default_style - The text part is a textblock

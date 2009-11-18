@@ -259,6 +259,7 @@ struct _Widget_Data
    Eina_Bool wasselected : 1;
    Eina_Bool no_select : 1;
    Eina_Bool bring_in : 1;
+   Eina_Bool compress : 1;
 };
 
 struct _Item_Block
@@ -675,20 +676,15 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
                          _elm_config->scale);
    evas_object_smart_member_add(it->base, it->wd->pan_smart);
    elm_widget_sub_object_add(it->wd->obj, it->base);
-   if (it->flags & ELM_GENLIST_ITEM_SUBITEMS)
-     {
-	if (in & 0x1)
-	  snprintf(buf, sizeof(buf), "tree_odd/%s", it->itc->item_style);
-	else
-	  snprintf(buf, sizeof(buf), "tree/%s", it->itc->item_style);
-     }
-   else
-     {
-	if (in & 0x1)
-	  snprintf(buf, sizeof(buf), "item_odd/%s", it->itc->item_style);
-	else
-	  snprintf(buf, sizeof(buf), "item/%s", it->itc->item_style);
-     }
+
+   if (it->flags & ELM_GENLIST_ITEM_SUBITEMS) strncpy(buf, "tree", sizeof(buf));
+   else strncpy(buf, "item", sizeof(buf)); 
+   if (it->wd->compress) strncat(buf, "_compress", sizeof(buf));
+
+   if (in & 0x1) strncat(buf, "_odd", sizeof(buf));
+   strncat(buf, "/", sizeof(buf));
+   strncat(buf, it->itc->item_style, sizeof(buf));
+   
    _elm_theme_set(it->base, "genlist", buf, elm_widget_style_get(it->wd->obj));
    it->spacer = evas_object_rectangle_add(evas_object_evas_get(it->wd->obj));
    evas_object_color_set(it->spacer, 0, 0, 0, 0);
@@ -2662,4 +2658,22 @@ elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    wd->no_select = no_select;
+}
+
+/**
+ * Set compress mode mode
+ *
+ * This will enable the compress mode where items are "compressed" horizontally
+ * to fit the genlist scrollable viewport width.
+ *
+ * @param obj The genlist object
+ * @param no_select The compress mode (1 on, 2 off)
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_compress_mode_set(Evas_Object *obj, Eina_Bool compress)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   wd->compress = compress;
 }
