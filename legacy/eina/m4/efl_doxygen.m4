@@ -11,8 +11,6 @@ dnl
 AC_DEFUN([EFL_CHECK_DOXYGEN],
 [
 
-efl_have_doxygen="no"
-
 dnl
 dnl Disable the build of the documentation
 dnl
@@ -75,6 +73,8 @@ dnl Check the given doxygen program.
           AC_MSG_WARN([no doxygen detected. Documentation will not be built])
        fi
       ])
+else
+   efl_have_doxygen="no"
 fi
 
 dnl
