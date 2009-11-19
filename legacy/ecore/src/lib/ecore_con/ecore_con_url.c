@@ -1186,12 +1186,17 @@ _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
 		  e = calloc(1, sizeof(Ecore_Con_Event_Url_Complete));
 		  if (e)
 		    {
-		       long status;	/* curl API uses long, not int */
-
 		       e->url_con = url_con;
 		       e->status = 0;
-		       curl_easy_getinfo(curlmsg->easy_handle, CURLINFO_RESPONSE_CODE, &status);
-		       e->status = status;
+		       if (curlmsg->data.result == CURLE_OK)
+			 {
+			    long status;	/* curl API uses long, not int */
+
+			    status = 0;
+			    curl_easy_getinfo(curlmsg->easy_handle, CURLINFO_RESPONSE_CODE, &status);
+			    e->status = status;
+			 }
+
 		       _url_complete_push_event(ECORE_CON_EVENT_URL_COMPLETE, e);
 		    }
 		  curl_multi_remove_handle(curlm, url_con->curl_easy);
