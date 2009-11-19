@@ -2718,6 +2718,8 @@ _escaped_char_match(const char *s, int *adv)
 
 	escape = map_itr;
 	_advance_after_end_of_string(&map_itr);
+	if (map_itr >= map_end) break;
+
 	mc = map_itr;
 	sc = s;
 	match = 1;
