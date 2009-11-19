@@ -11,6 +11,8 @@ dnl
 AC_DEFUN([EFL_CHECK_DOXYGEN],
 [
 
+efl_have_doxygen="no"
+
 dnl
 dnl Disable the build of the documentation
 dnl
@@ -84,9 +86,9 @@ if ! test "x${efl_have_doxygen}" = "xyes" ; then
    efl_enable_doc="no"
 fi
 
-AM_CONDITIONAL(EFL_BUILD_DOC, test "x${efl_enable_doc}" = "xyes")
+AM_CONDITIONAL(EFL_BUILD_DOC, test "x${efl_have_doxygen}" = "xyes")
 
-if test "x${efl_enable_doc}" = "xyes" ; then
+if test "x${efl_have_doxygen}" = "xyes" ; then
   m4_default([$1], [:])
 else
   m4_default([$2], [:])
