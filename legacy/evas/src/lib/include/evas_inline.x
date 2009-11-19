@@ -81,7 +81,7 @@ static inline int
 evas_object_is_visible(Evas_Object *obj)
 {
    if ((obj->cur.visible) &&
-       (obj->cur.cache.clip.visible) &&
+       ((obj->cur.cache.clip.visible) || (obj->smart.smart)) &&
        (obj->cur.cache.clip.a > 0))
      {
 	if (obj->func->is_visible)
@@ -119,12 +119,28 @@ evas_object_is_in_output_rect(Evas_Object *obj, int x, int y, int w, int h)
 static inline int
 evas_object_is_active(Evas_Object *obj)
 {
-   if ((evas_object_is_visible(obj) || evas_object_was_visible(obj)) &&
-       (evas_object_is_in_output_rect(obj, 0, 0, obj->layer->evas->output.w,
-				      obj->layer->evas->output.h) ||
-	evas_object_was_in_output_rect(obj, 0, 0, obj->layer->evas->output.w,
-				       obj->layer->evas->output.h)))
-     return 1;
+   if (evas_object_is_visible(obj) || evas_object_was_visible(obj))
+     {
+        if (obj->smart.smart)
+          {
+             int mapsmt = 0;
+             if (obj->smart.smart && (obj->cur.map && obj->cur.usemap)) mapsmt = 1;
+             if (!mapsmt) return 1;
+             if (evas_object_is_in_output_rect(obj, 0, 0, obj->layer->evas->output.w,
+                                               obj->layer->evas->output.h) ||
+                 evas_object_was_in_output_rect(obj, 0, 0, obj->layer->evas->output.w,
+                                                obj->layer->evas->output.h))
+               return 1;
+          }
+        else
+          {
+             if (evas_object_is_in_output_rect(obj, 0, 0, obj->layer->evas->output.w,
+                                               obj->layer->evas->output.h) ||
+                 evas_object_was_in_output_rect(obj, 0, 0, obj->layer->evas->output.w,
+                                                obj->layer->evas->output.h))
+               return 1;
+          }
+     }
    return 0;
 }
 

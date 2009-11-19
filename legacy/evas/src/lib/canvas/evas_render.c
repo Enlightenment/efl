@@ -126,8 +126,7 @@ static Eina_Bool
 _evas_render_has_map(Evas_Object *obj)
 {
    return ((!((obj->func->can_map) && (obj->func->can_map(obj)))) &&
-           ((obj->cur.map) && (obj->cur.map->count == 4) && 
-            (obj->cur.usemap)));
+           ((obj->cur.map) && (obj->cur.usemap)));
 }
 
 static Eina_Bool
@@ -258,6 +257,14 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
    RD("    [--- PROCESS [%p] '%s' active = %i, del = %i | %i %i %ix%i\n", obj, obj->type, is_active, obj->delete_me, obj->cur.geometry.x, obj->cur.geometry.y, obj->cur.geometry.w, obj->cur.geometry.h);
    if ((is_active) || (obj->delete_me != 0))
      eina_array_push(active_objects, obj);
+
+#ifdef REND_DGB
+   if (!is_active)
+     {
+        RDI(level);
+        RD("     [%p] vis: %i, cache.clip.vis: %i cache.clip.a: %i [%p]\n", obj, obj->cur.visible, obj->cur.cache.clip.visible, obj->cur.cache.clip.a, obj->func->is_visible);
+     }
+#endif   
    
    if (_evas_render_has_map(obj)) map = 1;
    
