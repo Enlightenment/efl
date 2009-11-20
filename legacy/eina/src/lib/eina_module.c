@@ -547,6 +547,37 @@ EAPI Eina_Array * eina_module_list_get(Eina_Array *array, const char *path, unsi
 }
 
 /**
+ * @brief Find an module in array.
+ *
+ * @param array The array to find the module.
+ * @param module The name of module to be searched;
+ *
+ * This function finds an @p module in an @p array;
+ * If the element is found return the module else NULL.
+ */
+EAPI Eina_Module *
+eina_module_find(Eina_Array *array, char *module)
+{
+   unsigned int i;
+   Eina_Array_Iterator iterator;
+   Eina_Module *m;
+
+   EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
+   {
+      const char *file_m;
+      ssize_t len;
+
+      file_m = basename(eina_module_file_get(m));
+      len = strlen(file_m);
+      len -= sizeof(MODULE_EXTENSION) - 1;
+      if (len <= 0) continue;
+      if (!strncmp(module, file_m, len)) return m;
+   }
+
+   return NULL;
+}
+
+/**
  * Load every module on the list of modules
  * @param array The array of modules to load
  */
