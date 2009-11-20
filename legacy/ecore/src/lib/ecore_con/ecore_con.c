@@ -6,8 +6,10 @@
 # include <config.h>
 #endif
 
+#include <sys/types.h>
 #include <sys/stat.h>
 #include <arpa/inet.h>
+#include <netinet/tcp.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <errno.h>
@@ -278,7 +280,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 	if (!svr->fd_handler) goto error;
      }
 
-   if (type == ECORE_CON_REMOTE_TCP)
+   if (type == ECORE_CON_REMOTE_TCP || type == ECORE_CON_REMOTE_NODELAY)
      {
         /* TCP */
         if (!ecore_con_info_tcp_listen(svr, _ecore_con_cb_tcp_listen, svr)) goto error;
@@ -365,7 +367,8 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
 
    type = compl_type & ECORE_CON_TYPE;
 
-   if ((type == ECORE_CON_REMOTE_TCP || type == ECORE_CON_REMOTE_UDP || ECORE_CON_REMOTE_BROADCAST) && (port < 0)) return NULL;
+   if ((type == ECORE_CON_REMOTE_TCP || type == ECORE_CON_REMOTE_NODELAY
+	|| type == ECORE_CON_REMOTE_UDP || ECORE_CON_REMOTE_BROADCAST) && (port < 0)) return NULL;
 
    if ((type == ECORE_CON_LOCAL_USER) || (type == ECORE_CON_LOCAL_SYSTEM) ||
        (type == ECORE_CON_LOCAL_ABSTRACT))
@@ -456,7 +459,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
 	  }
      }
 
-   if (type == ECORE_CON_REMOTE_TCP)
+   if (type == ECORE_CON_REMOTE_TCP || type == ECORE_CON_REMOTE_NODELAY)
      {
         /* TCP */
         if (!ecore_con_info_tcp_connect(svr, _ecore_con_cb_tcp_connect, svr)) goto error;
@@ -972,6 +975,13 @@ _ecore_con_cb_tcp_listen(void *data, Ecore_Con_Info *net_info)
    lin.l_onoff = 1;
    lin.l_linger = 0;
    if (setsockopt(svr->fd, SOL_SOCKET, SO_LINGER, &lin, sizeof(struct linger)) < 0) goto error;
+   if (svr->type == ECORE_CON_REMOTE_NODELAY)
+     {
+	int flag = 1;
+
+	if (setsockopt(svr->fd, IPPROTO_TCP, TCP_NODELAY, (char *) &flag, sizeof(int)) < 0)
+	  goto error;
+     }
    if (bind(svr->fd, net_info->info.ai_addr, net_info->info.ai_addrlen) < 0) goto error;
    if (listen(svr->fd, 4096) < 0) goto error;
    svr->fd_handler =
@@ -1052,6 +1062,13 @@ _ecore_con_cb_tcp_connect(void *data, Ecore_Con_Info *net_info)
    if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
    if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0)
      goto error;
+   if (svr->type == ECORE_CON_REMOTE_NODELAY)
+     {
+	int flag = 1;
+
+	if (setsockopt(svr->fd, IPPROTO_TCP, TCP_NODELAY, (char *) &flag, sizeof(int)) < 0)
+	  goto error;
+     }
    if (connect(svr->fd, net_info->info.ai_addr, net_info->info.ai_addrlen) < 0)
      {
        if (errno != EINPROGRESS)
