@@ -142,7 +142,9 @@ busy-9.png \
 arrow_right.png \
 bt_spinner_up.png \
 bt_spinner_down.png \
-bt_spinner_hilight.png
+bt_spinner_hilight.png \
+up.png \
+down.png
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
