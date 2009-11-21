@@ -1694,7 +1694,7 @@ EAPI void           ecore_x_region_translate(Ecore_X_Region region, int dx, int 
 EAPI void           ecore_x_region_extents(Ecore_X_Region dest, Ecore_X_Region source);
 EAPI void           ecore_x_region_fetch_prefetch(Ecore_X_Region region);
 EAPI void           ecore_x_region_fetch_fetch(void);
-EAPI Ecore_X_Rectangle * ecore_x_region_fetch(Ecore_X_Region region, int *num, Ecore_X_Rectangle *bounds);
+EAPI Ecore_X_Rectangle *ecore_x_region_fetch(Ecore_X_Region region, int *num, Ecore_X_Rectangle *bounds);
 EAPI void           ecore_x_region_expand(Ecore_X_Region dest, Ecore_X_Region source, unsigned int left, unsigned int right, unsigned int top, unsigned int bottom);
 EAPI void           ecore_x_region_gc_clip_set(Ecore_X_Region region, Ecore_X_GC gc, int x_origin, int y_origin);
 EAPI void           ecore_x_region_window_shape_set(Ecore_X_Region region, Ecore_X_Window win, Ecore_X_Shape_Type type, int x_offset, int y_offset);
