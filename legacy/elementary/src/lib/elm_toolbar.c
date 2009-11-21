@@ -24,6 +24,7 @@ struct _Elm_Toolbar_Item
    const char *label;
    Evas_Object *icon;
    void (*func) (void *data, Evas_Object *obj, void *event_info);
+   void (*del_cb) (void *data, Evas_Object *obj, void *event_info);
    const void *data;
    Eina_Bool selected : 1;
    Eina_Bool disabled : 1;
@@ -145,6 +146,7 @@ _del_pre_hook(Evas_Object *obj)
    if (!wd) return;
    EINA_LIST_FREE(wd->items, it)
      {
+	if (it->del_cb) it->del_cb((void *)it->data, it->obj, it);
 	eina_stringshare_del(it->label);
 	if (it->icon) evas_object_del(it->icon);
 	if ((!wd->menu_parent) && (it->o_menu)) evas_object_del(it->o_menu);
@@ -434,12 +436,27 @@ elm_toolbar_item_del(Elm_Toolbar_Item *it)
    Evas_Object *obj2 = it->obj;
 
    if ((!wd) || (!it)) return;
+   if (it->del_cb) it->del_cb((void *)it->data, it->obj, it);
    wd->items = eina_list_remove(wd->items, it);
    eina_stringshare_del(it->label);
    if (it->icon) evas_object_del(it->icon);
    evas_object_del(it->base);
    free(it);
    _theme_hook(obj2);
+}
+
+/**
+ * Set the function called when a toolbar item is freed.
+ *
+ * @param it The item to set the callback on
+ * @param func The function called
+ *
+ * @ingroup Hoversel
+ */
+EAPI void
+elm_toolbar_item_del_cb_set(Elm_Toolbar_Item *it, void (*func)(void *data, Evas_Object *obj, void *event_info))
+{
+   it->del_cb = func;
 }
 
 EAPI void
