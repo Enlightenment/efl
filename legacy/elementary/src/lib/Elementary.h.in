@@ -1036,6 +1036,7 @@ extern "C" {
    EAPI void	     elm_map_markers_list_show(Eina_List *markers);
    EAPI Evas_Object *elm_map_marker_object_get(Elm_Map_Marker *marker);
    EAPI void	     elm_map_marker_update(Elm_Map_Marker *marker);
+   EAPI void	     elm_map_bubbles_close(Evas_Object *obj);
    /* smart callbacks called:
     * "clicked" - when image clicked
     * "press" - when mouse/finger held down initially on image

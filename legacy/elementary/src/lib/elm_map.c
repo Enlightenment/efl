@@ -164,6 +164,7 @@ struct _Widget_Data
    Evas_Coord marker_w, marker_h;
    Evas_Coord marker_max_w, marker_max_h;
    int marker_zoom;
+   Eina_List *opened_bubbles; //opened bubbles, list of Map_Group *
 };
 
 struct _Pan
@@ -186,6 +187,8 @@ static Grid *grid_create(Evas_Object *obj);
 static void grid_load(Evas_Object *obj, Grid *g);
 
 
+static void _group_object_create(Marker_Group *group);
+static void _group_object_free(Marker_Group *group);
 static void _group_open_cb(void *data, Evas_Object *obj, const char *emission, const char *soure);
 static void _group_bringin_cb(void *data, Evas_Object *obj, const char *emission, const char *soure);
 static void _group_bubble_create(Marker_Group *group);
@@ -253,10 +256,7 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
 	  {
 	     if(group->obj)
 	       {
-		  evas_object_del(group->obj);
-		  group->obj = NULL;
-		  group->open = EINA_FALSE;
-		  _group_bubble_free(group);
+		  _group_object_free(group);
 	       }
 	  }
      }
@@ -291,19 +291,7 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
 	      && yy-py+ay+oy >= oy && yy-py+ay+oy<= oy+oh)
 	  {
 	     if(!group->obj)
-	       {
-		  group->obj = edje_object_add(evas_object_evas_get(obj));
-		  _elm_theme_set(group->obj, "map", "marker", elm_widget_style_get(obj));
-
-		  evas_object_smart_member_add(group->obj,
-			wd->pan_smart);
-		  elm_widget_sub_object_add(obj, group->obj);
-
-		  edje_object_signal_callback_add(group->obj, "open", "elm", _group_open_cb, group);
-		  edje_object_signal_callback_add(group->obj, "bringin", "elm", _group_bringin_cb, group);
-		  if(group->open)
-		    _group_bubble_create(group);
-	       }
+	       _group_object_create(group);
 
 	     if(eina_list_count(group->markers) > 1)
 	       {
@@ -322,9 +310,7 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
 	  }
 	else if(group->obj)
 	  {
-	     evas_object_del(group->obj);
-	     group->obj = NULL;
-	     _group_bubble_free(group);
+	     _group_object_free(group);
 	  }
      }
 }
@@ -1160,6 +1146,35 @@ _scr_scroll(void *data, Evas_Object *obj, void *event_info)
    evas_object_smart_callback_call(data, "scroll", NULL);
 }
 
+
+   static void
+_group_object_create(Marker_Group *group)
+{
+   if(group->obj) return ;
+
+   group->wd->opened_bubbles = eina_list_append(group->wd->opened_bubbles, group);
+   group->obj = edje_object_add(evas_object_evas_get(group->wd->obj));
+   _elm_theme_set(group->obj, "map", "marker", elm_widget_style_get(group->wd->obj));
+
+   evas_object_smart_member_add(group->obj,
+	 group->wd->pan_smart);
+   elm_widget_sub_object_add(group->wd->obj, group->obj);
+
+   edje_object_signal_callback_add(group->obj, "open", "elm", _group_open_cb, group);
+   edje_object_signal_callback_add(group->obj, "bringin", "elm", _group_bringin_cb, group);
+   if(group->open)
+     _group_bubble_create(group);
+}
+
+   static void
+_group_object_free(Marker_Group *group)
+{
+   group->wd->opened_bubbles = eina_list_remove(group->wd->opened_bubbles, group);
+   evas_object_del(group->obj);
+   group->obj = NULL;
+   _group_bubble_free(group);
+}
+
    static void
 _group_bubble_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
@@ -1183,7 +1198,6 @@ _group_bubble_create(Marker_Group *group)
    evas_object_smart_member_add(group->bubble,
 	 group->wd->obj);
    elm_widget_sub_object_add(group->wd->obj, group->bubble);
-
 
    _group_bubble_content_free(group);
    _group_bubble_content_update(group);
@@ -2016,7 +2030,7 @@ elm_map_marker_remove(Elm_Map_Marker *marker)
    Widget_Data *wd = marker->wd;
 
    for(i=0; i<=18; i++)
-	marker->groups[i]->markers = eina_list_remove(marker->groups[i]->markers, marker);
+     marker->groups[i]->markers = eina_list_remove(marker->groups[i]->markers, marker);
 
    if(marker->content && marker->clas->func.del)
      marker->clas->func.del(marker->wd->obj, marker, marker->data, marker->content);
@@ -2169,4 +2183,22 @@ elm_map_marker_update(Elm_Map_Marker *marker)
      }
 }
 
+/*
+ *
+ * Close all opened bubbles
+ *
+ * @param The map object
+ */
+   EAPI void
+elm_map_bubbles_close(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Marker_Group *group;
+   Eina_List *l, *l_next;
+
+   EINA_LIST_FOREACH_SAFE(wd->opened_bubbles, l, l_next, group)
+     {
+	_group_object_free(group);
+     }
+}
 
