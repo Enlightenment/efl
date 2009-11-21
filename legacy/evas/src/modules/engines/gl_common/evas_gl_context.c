@@ -1,5 +1,44 @@
 #include "evas_gl_private.h"
-  
+
+static int sym_done = 0;
+
+void (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b) = NULL;
+void (*glsym_glBindFramebuffer)      (GLenum a, GLuint b) = NULL;
+void (*glsym_glFramebufferTexture2D) (GLenum a, GLenum b, GLenum c, GLuint d, GLint e) = NULL;
+void (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b) = NULL;
+
+static void
+sym_missing(void)
+{
+   printf("EVAS ERROR - GL symbols missing!\n");
+}
+
+static void
+gl_symbols(void)
+{
+   if (sym_done) return;
+   sym_done = 1;
+
+#define FINDSYM(dst, sym) if (!dst) dst = dlsym(RTLD_DEFAULT, sym)
+#define FALLBAK(dst) if (!dst) dst = (void *)sym_missing;
+   
+   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers");
+   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersEXT");
+   FALLBAK(glsym_glGenFramebuffers);
+   
+   FINDSYM(glsym_glBindFramebuffer, "glBindFramebuffer");
+   FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferEXT");
+   FALLBAK(glsym_glBindFramebuffer);
+   
+   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2D");
+   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DEXT");
+   FALLBAK(glsym_glFramebufferTexture2D);
+
+   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffers");
+   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersEXT");
+   FALLBAK(glsym_glDeleteFramebuffers);
+}
+
 static void shader_array_flush(Evas_GL_Context *gc);
 
 static Evas_GL_Context *_evas_gl_common_context = NULL;
@@ -118,6 +157,7 @@ evas_gl_common_context_new(void)
 {
    Evas_GL_Context *gc;
 
+   gl_symbols();
 #if 1
    if (_evas_gl_common_context)
      {
@@ -315,9 +355,9 @@ evas_gl_common_context_target_surface_set(Evas_GL_Context *gc,
 # endif   
 #endif   
    if (gc->shader.surface == gc->def_surface)
-     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+     glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
    else
-     glBindFramebuffer(GL_FRAMEBUFFER, surface->tex->pt->fb);
+     glsym_glBindFramebuffer(GL_FRAMEBUFFER, surface->tex->pt->fb);
    _evas_gl_common_viewport_set(gc);
 }
 

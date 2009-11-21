@@ -290,10 +290,12 @@ _pool_tex_render_new(Evas_GL_Context *gc, int w, int h, int intformat, int forma
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
    _tex_2d(pt->intformat, w, h, pt->format, pt->dataformat);
-   glGenFramebuffers(1, &(pt->fb));
-   glBindFramebuffer(GL_FRAMEBUFFER, pt->fb);
-   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pt->texture, 0);
-   glBindFramebuffer(GL_FRAMEBUFFER, 0);
+   
+   glsym_glGenFramebuffers(1, &(pt->fb));
+   glsym_glBindFramebuffer(GL_FRAMEBUFFER, pt->fb);
+   glsym_glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pt->texture, 0);
+   glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
+   
    glBindTexture(GL_TEXTURE_2D, gc->shader.cur_tex);
    return pt;
 }
@@ -389,7 +391,7 @@ pt_unref(Evas_GL_Texture_Pool *pt)
      pt->gc->shared->tex.atlas [pt->slot][pt->fslot] =
      eina_list_remove(pt->gc->shared->tex.atlas[pt->slot][pt->fslot], pt);
    glDeleteTextures(1, &(pt->texture));
-   if (pt->fb) glDeleteFramebuffers(1, &(pt->fb));
+   if (pt->fb) glsym_glDeleteFramebuffers(1, &(pt->fb));
    free(pt);
 }
 

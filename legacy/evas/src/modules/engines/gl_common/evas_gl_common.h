@@ -21,17 +21,18 @@
 
 #ifdef BUILD_ENGINE_GL_QUARTZ
 # include <OpenGL/gl.h>
+# include <OpenGL/glext.h>
 #else
 # if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 #  if defined(GLES_VARIETY_S3C6410)
 #   include <GLES2/gl2.h>
-//// this changed. this was the old style. above the new style
-//#   include <GLES/gl.h>
 #  elif defined(GLES_VARIETY_SGX)
 #   include <GLES2/gl2.h>
+#   include <GLES2/gl2ext.h>
 #  endif
 # else
 #  include <GL/gl.h>
+#  include <GL/glext.h>
 # endif
 #endif
 
@@ -292,6 +293,11 @@ Evas_GL_Texture  *evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph 
 void              evas_gl_font_texture_free(Evas_GL_Texture *ft);
 void              evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y);
 
+
+void (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b);
+void (*glsym_glBindFramebuffer)      (GLenum a, GLuint b);
+void (*glsym_glFramebufferTexture2D) (GLenum a, GLenum b, GLenum c, GLuint d, GLint e);
+void (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b);
 
 
 
