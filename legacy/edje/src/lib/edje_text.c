@@ -135,13 +135,13 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
    if (tw > sw)
      {
 	if (params->type.text.elipsis != 0.0)
-	  c1 = evas_object_text_char_coords_get(ep->object,
-		-p + l, th / 2,
-		NULL, NULL, NULL, NULL);
+          /* should be the last in text! not the rightmost */
+          c1 = evas_object_text_last_up_to_pos(ep->object,
+                -p + l, th / 2);
 	if (params->type.text.elipsis != 1.0)
-	  c2 = evas_object_text_char_coords_get(ep->object,
-		-p + sw - r, th / 2,
-		NULL, NULL, NULL, NULL);
+          /* should be the last in text! not the rightmost */
+          c2 = evas_object_text_last_up_to_pos(ep->object,
+                -p + sw - r, th / 2);
 	if ((c1 < 0) && (c2 < 0))
 	  {
 	     c1 = 0;
