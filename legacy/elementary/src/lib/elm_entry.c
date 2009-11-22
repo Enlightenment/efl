@@ -345,6 +345,7 @@ _long_press(void *data)
    const Elm_Entry_Context_Menu_Item *it;
 
    if (wd->hoversel) evas_object_del(wd->hoversel);
+   else elm_widget_scroll_freeze_push(data);
    wd->hoversel = elm_hoversel_add(data);
    elm_object_style_set(wd->hoversel, "entry");
    elm_widget_sub_object_add(data, wd->hoversel);
@@ -397,7 +398,6 @@ _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    if (ev->button != 1) return;
    //   if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
    if (wd->longpress_timer) ecore_timer_del(wd->longpress_timer);
-   elm_widget_scroll_freeze_push(data);
    wd->longpress_timer = ecore_timer_add(1.0, _long_press, data);
    wd->downx = ev->canvas.x;
    wd->downy = ev->canvas.y;
@@ -412,7 +412,6 @@ _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    if (ev->button != 1) return;
    if (wd->longpress_timer)
      {
-	elm_widget_scroll_freeze_pop(data);
 	ecore_timer_del(wd->longpress_timer);
 	wd->longpress_timer = NULL;
      }
@@ -430,7 +429,6 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 	  {
 	     if (wd->longpress_timer)
 	       {
-		  elm_widget_scroll_freeze_pop(data);
 		  ecore_timer_del(wd->longpress_timer);
 		  wd->longpress_timer = NULL;
 	       }
@@ -447,7 +445,6 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 		 ((_elm_config->finger_size / 2) *
 		  (_elm_config->finger_size / 2)))
 	       {
-		  elm_widget_scroll_freeze_pop(data);
 		  ecore_timer_del(wd->longpress_timer);
 		  wd->longpress_timer = NULL;
 	       }
@@ -465,7 +462,6 @@ _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 	    ((_elm_config->finger_size / 2) *
 	     (_elm_config->finger_size / 2)))
 	  {
-	     elm_widget_scroll_freeze_pop(data);
 	     ecore_timer_del(wd->longpress_timer);
 	     wd->longpress_timer = NULL;
 	  }

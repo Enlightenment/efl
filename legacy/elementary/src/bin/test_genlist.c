@@ -894,7 +894,6 @@ test_genlist5(void *data, Evas_Object *obj, void *event_info)
 					 NULL/* func data */);
 
    elm_box_pack_end(bx, gl);
-   elm_object_scroll_freeze_push(gl);
    evas_object_show(bx2);
 
    evas_object_smart_callback_add(gl, "drag,start,up", item_drag_up, NULL);
