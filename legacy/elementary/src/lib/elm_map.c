@@ -1152,7 +1152,6 @@ _group_object_create(Marker_Group *group)
 {
    if(group->obj) return ;
 
-   group->wd->opened_bubbles = eina_list_append(group->wd->opened_bubbles, group);
    group->obj = edje_object_add(evas_object_evas_get(group->wd->obj));
    _elm_theme_set(group->obj, "map", "marker", elm_widget_style_get(group->wd->obj));
 
@@ -1169,7 +1168,6 @@ _group_object_create(Marker_Group *group)
    static void
 _group_object_free(Marker_Group *group)
 {
-   group->wd->opened_bubbles = eina_list_remove(group->wd->opened_bubbles, group);
    evas_object_del(group->obj);
    group->obj = NULL;
    _group_bubble_free(group);
@@ -1191,6 +1189,8 @@ _group_bubble_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_inf
 _group_bubble_create(Marker_Group *group)
 {
    if(group->bubble) return ;
+
+   group->wd->opened_bubbles = eina_list_append(group->wd->opened_bubbles, group);
 
    group->bubble = edje_object_add(evas_object_evas_get(group->obj));
    _elm_theme_set(group->bubble, "map", "marker_bubble",
@@ -1295,6 +1295,7 @@ _group_bubble_free(Marker_Group *group)
 {
    if(!group->bubble) return ;
 
+   group->wd->opened_bubbles = eina_list_remove(group->wd->opened_bubbles, group);
    evas_object_event_callback_del_full(group->sc, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 	 _bubble_sc_hits_changed_cb, group);
    evas_object_del(group->bubble);
@@ -2198,7 +2199,7 @@ elm_map_bubbles_close(Evas_Object *obj)
 
    EINA_LIST_FOREACH_SAFE(wd->opened_bubbles, l, l_next, group)
      {
-	_group_object_free(group);
+	_group_bubble_free(group);
      }
 }
 
