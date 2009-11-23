@@ -221,7 +221,7 @@ _ecore_file_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh)
                           &md->buf_length,
                           &md->overlapped,
                           NULL);
-   return 0;
+   return 1;
 }
 
 int
