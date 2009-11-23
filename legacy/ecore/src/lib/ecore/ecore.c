@@ -193,6 +193,9 @@ _ecore_magic_string_get(Ecore_Magic m)
       case ECORE_MAGIC_FD_HANDLER:
 	return "Ecore_Fd_Handler (Fd Handler)";
 	break;
+      case ECORE_MAGIC_WIN32_HANDLER:
+	return "Ecore_Win32_Handler (Win32 Handler)";
+	break;
       case ECORE_MAGIC_EVENT_HANDLER:
 	return "Ecore_Event_Handler (Event Handler)";
 	break;

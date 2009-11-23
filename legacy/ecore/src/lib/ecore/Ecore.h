@@ -298,6 +298,7 @@ extern "C" {
    EAPI void              ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
 
    EAPI Ecore_Win32_Handler *ecore_main_win32_handler_add(void *h, int (*func) (void *data, Ecore_Win32_Handler *wh), const void *data);
+   EAPI void                *ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler);
 
    EAPI Ecore_Pipe  *ecore_pipe_add(void (*handler) (void *data, void *buffer, unsigned int nbyte), const void *data);
    EAPI void        *ecore_pipe_del(Ecore_Pipe *p);

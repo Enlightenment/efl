@@ -338,6 +338,7 @@ struct _Ecore_Win32_Handler
    HANDLE         h;
    int          (*func) (void *data, Ecore_Win32_Handler *win32_handler);
    void          *data;
+   int            delete_me : 1;
 };
 #endif
 
