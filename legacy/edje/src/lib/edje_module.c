@@ -59,6 +59,10 @@ edje_module_load(const char *module)
    Eina_Module *m;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(module, EINA_FALSE);
+
+   if (eina_hash_find(_registered_modules, module))
+     return EINA_TRUE;
+
    m = eina_module_find(_available_modules, module);
 
    if (!m)
