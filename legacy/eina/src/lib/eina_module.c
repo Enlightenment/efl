@@ -426,7 +426,7 @@ EAPI Eina_Bool eina_module_unload(Eina_Module *m)
  * is @c NULL, or if it has not been correctly loaded before, the
  * function returns immediatly @c NULL.
  */
-EAPI void * eina_module_symbol_get(Eina_Module *m, const char *symbol)
+EAPI void * eina_module_symbol_get(const Eina_Module *m, const char *symbol)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(m->handle, NULL);
@@ -443,7 +443,7 @@ EAPI void * eina_module_symbol_get(Eina_Module *m, const char *symbol)
  * @c NULL, the function returns immediatly @c NULL. The returned
  * value must no be freed.
  */
-EAPI const char * eina_module_file_get(Eina_Module *m)
+EAPI const char * eina_module_file_get(const Eina_Module *m)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
    return m->file;
