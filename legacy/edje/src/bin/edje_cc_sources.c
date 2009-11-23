@@ -15,6 +15,9 @@
 static Eet_Data_Descriptor *_srcfile_edd = NULL;
 static Eet_Data_Descriptor *_srcfile_list_edd = NULL;
 
+static Eet_Data_Descriptor *_external_edd = NULL;
+static Eet_Data_Descriptor *_external_list_edd = NULL;
+
 static Eet_Data_Descriptor *_font_edd = NULL;
 static Eet_Data_Descriptor *_font_list_edd = NULL;
 
@@ -33,6 +36,14 @@ source_edd(void)
    eet_eina_stream_data_descriptor_class_set(&eddc, "srcfile_list", sizeof (SrcFile_List));
    _srcfile_list_edd = eet_data_descriptor_stream_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_LIST(_srcfile_list_edd, SrcFile_List, "list", list, _srcfile_edd);
+
+   eet_eina_stream_data_descriptor_class_set(&eddc, "external", sizeof (External));
+   _external_edd = eet_data_descriptor_stream_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_external_edd, External, "name", name, EET_T_INLINED_STRING);
+
+   eet_eina_stream_data_descriptor_class_set(&eddc, "external_list", sizeof (External_List));
+   _external_list_edd = eet_data_descriptor_stream_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_LIST(_external_list_edd, External_List, "list", list, _external_edd);
 
    eet_eina_stream_data_descriptor_class_set(&eddc, "font", sizeof (Font));
    _font_edd = eet_data_descriptor_stream_new(&eddc);

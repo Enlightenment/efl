@@ -411,6 +411,11 @@ extern "C" {
   EAPI Eina_Bool edje_external_param_double_get(const Eina_List *params, const char *key, double *ret);
   EAPI Eina_Bool edje_external_param_string_get(const Eina_List *params, const char *key, const char **ret);
 
+  /* edje_module.c */
+  EAPI Eina_Bool edje_module_load(const char *module);
+  EAPI const Eina_List *edje_available_modules_get(void);
+
+
 #ifdef __cplusplus
 }
 #endif

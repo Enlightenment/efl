@@ -97,6 +97,7 @@ edje_init(void)
    _edje_text_init();
    _edje_box_init();
    _edje_external_init();
+   _edje_module_init();
    _edje_lua_init();
    _edje_message_init();
 
@@ -127,6 +128,7 @@ edje_init(void)
    _edje_real_part_mp = NULL;
    _edje_message_shutdown();
    _edje_lua_shutdown();
+   _edje_module_shutdown();
    _edje_external_shutdown();
    _edje_box_shutdown();
    _edje_text_class_members_free();
@@ -185,6 +187,7 @@ edje_shutdown(void)
 
    _edje_message_shutdown();
    _edje_lua_shutdown();
+   _edje_module_shutdown();
    _edje_external_shutdown();
    _edje_box_shutdown();
    _edje_text_class_members_free();

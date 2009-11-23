@@ -118,6 +118,8 @@ typedef struct _Edje_File                            Edje_File;
 typedef struct _Edje_Style                           Edje_Style;
 typedef struct _Edje_Style_Tag                       Edje_Style_Tag;
 typedef struct _Edje_Data                            Edje_Data;
+typedef struct _Edje_External_Directory              Edje_External_Directory;
+typedef struct _Edje_External_Directory_Entry        Edje_External_Directory_Entry;
 typedef struct _Edje_Font_Directory                  Edje_Font_Directory;
 typedef struct _Edje_Font_Directory_Entry            Edje_Font_Directory_Entry;
 typedef struct _Edje_Image_Directory                 Edje_Image_Directory;
@@ -207,6 +209,7 @@ struct _Edje_File
 {
    const char                     *path;
 
+   Edje_External_Directory        *external_dir;
    Edje_Font_Directory            *font_dir;
    Edje_Image_Directory           *image_dir;
    Edje_Spectrum_Directory        *spectrum_dir;
@@ -266,6 +269,22 @@ struct _Edje_Font_Directory_Entry
    const char *entry; /* the name of the font */
    const char *path;
 };
+
+/*----------*/
+
+struct _Edje_External_Directory
+{
+   Eina_List *entries; /* a list of Edje_External_Directory_Entry */
+};
+
+struct _Edje_External_Directory_Entry
+{
+   const char *entry; /* the name of the external */
+};
+
+
+/*----------*/
+
 
 
 /*----------*/
@@ -1349,5 +1368,8 @@ void _edje_external_params_free(Eina_List *params, unsigned int free_strings);
 void _edje_external_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *params, Edje_Part_Description *chosen_desc);
 void *_edje_external_params_parse(Evas_Object *obj, const Eina_List *params);
 void _edje_external_parsed_params_free(Evas_Object *obj, void *params);
+
+void _edje_module_init();
+void _edje_module_shutdown();
 
 #endif

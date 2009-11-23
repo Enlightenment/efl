@@ -9,6 +9,8 @@ EAPI Eet_Data_Descriptor *_edje_edd_edje_style = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_style_tag = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_color_class = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_data = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_external_directory = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_external_directory_entry = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_font_directory = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_font_directory_entry = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_image_directory = NULL;
@@ -43,6 +45,8 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_style_tag);
    FREED(_edje_edd_edje_color_class);
    FREED(_edje_edd_edje_data);
+   FREED(_edje_edd_edje_external_directory);
+   FREED(_edje_edd_edje_external_directory_entry);
    FREED(_edje_edd_edje_font_directory);
    FREED(_edje_edd_edje_font_directory_entry);
    FREED(_edje_edd_edje_image_directory);
@@ -67,6 +71,17 @@ void
 _edje_edd_init(void)
 {
    Eet_Data_Descriptor_Class eddc;
+
+   /* external directory */
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_External_Directory_Entry);
+   _edje_edd_edje_external_directory_entry =
+     eet_data_descriptor_file_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_external_directory_entry, Edje_External_Directory_Entry, "entry", entry, EET_T_STRING);
+
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_External_Directory);
+   _edje_edd_edje_external_directory =
+     eet_data_descriptor_file_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_external_directory, Edje_External_Directory, "entries", entries, _edje_edd_edje_external_directory_entry);
 
    /* font directory */
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Font_Directory_Entry);
@@ -171,6 +186,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_file, Edje_File, "compiler", compiler, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_file, Edje_File, "version", version, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_file, Edje_File, "feature_ver", feature_ver, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "external_dir", external_dir, _edje_edd_edje_external_directory);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "font_dir", font_dir, _edje_edd_edje_font_directory);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "image_dir", image_dir, _edje_edd_edje_image_directory);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "spectrum_dir", spectrum_dir, _edje_edd_edje_spectrum_directory);

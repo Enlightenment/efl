@@ -54,6 +54,8 @@
  * <table class="edcref" border="0">
  */
 
+static void st_externals_external(void);
+
 static void st_images_image(void);
 
 static void st_fonts_font(void);
@@ -222,6 +224,7 @@ static void ob_collections_group_programs_program_lua_script(void);
 
 New_Statement_Handler statement_handlers[] =
 {
+     {"externals.external", st_externals_external},
      {"images.image", st_images_image},
      {"fonts.font", st_fonts_font},
      {"data.item", st_data_item},
@@ -236,6 +239,7 @@ New_Statement_Handler statement_handlers[] =
      /*{"spectra.spectrum", st_spectrum},*/
      {"spectra.spectrum.name", st_spectrum_name},
      {"spectra.spectrum.color", st_spectrum_color},
+     {"collections.externals.external", st_externals_external}, /* dup */
      {"collections.image", st_images_image}, /* dup */
      {"collections.images.image", st_images_image}, /* dup */
      {"collections.font", st_fonts_font}, /* dup */
@@ -254,6 +258,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.min", st_collections_group_min},
      {"collections.group.max", st_collections_group_max},
      {"collections.group.data.item", st_collections_group_data_item},
+     {"collections.group.externals.external", st_externals_external}, /* dup */
      {"collections.group.image", st_images_image}, /* dup */
      {"collections.group.images.image", st_images_image}, /* dup */
      {"collections.group.font", st_fonts_font}, /* dup */
@@ -501,6 +506,7 @@ New_Statement_Handler statement_handlers[] =
 
 New_Object_Handler object_handlers[] =
 {
+     {"externals", NULL},
      {"images", NULL},
      {"fonts", NULL},
      {"data", NULL},
@@ -631,6 +637,63 @@ statement_handler_num(void)
 }
 
 /*****/
+
+/**
+    @page edcref
+
+    @block
+        externals
+    @context
+        externals {
+           external: "name";
+        }
+    @description
+        The "externals" block is used to list each external module file that will be used in others
+	programs.
+    @endblock
+
+    @property
+        external
+    @parameters
+        [external filename]
+    @endproperty
+ */
+static void
+st_externals_external(void)
+{
+   External *ex;
+   Edje_External_Directory_Entry *ext;
+
+   check_arg_count(1);
+
+   if (!edje_file->external_dir)
+     edje_file->external_dir = mem_alloc(SZ(Edje_External_Directory));
+
+   ex = mem_alloc(SZ(External));
+   ex->name = parse_str(0);
+     {
+	Eina_List *l;
+	External *lex;
+
+	EINA_LIST_FOREACH(externals, l, lex)
+	  {
+	     if (!strcmp(lex->name, ex->name))
+	       {
+		  free(ex->name);
+		  free(ex);
+		  return;
+	       }
+	  }
+     }
+   externals = eina_list_append(externals, ex);
+
+   if (edje_file->external_dir)
+     {
+	ext = mem_alloc(SZ(Edje_External_Directory_Entry));
+	ext->entry = mem_strdup(ex->name);
+	edje_file->external_dir->entries = eina_list_append(edje_file->external_dir->entries, ext);
+     }
+}
 
 /**
     @page edcref

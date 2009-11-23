@@ -36,6 +36,7 @@ void *alloca (size_t);
 #include <lua.h>
 #include <lauxlib.h>
 
+typedef struct _External_Lookup External_Lookup;
 typedef struct _Part_Lookup Part_Lookup;
 typedef struct _Program_Lookup Program_Lookup;
 typedef struct _Group_Lookup Group_Lookup;
@@ -43,6 +44,12 @@ typedef struct _String_Lookup Image_Lookup;
 typedef struct _String_Lookup Spectrum_Lookup;
 typedef struct _Slave_Lookup Slave_Lookup;
 typedef struct _Code_Lookup Code_Lookup;
+
+
+struct _External_Lookup
+{
+   char *name;
+};
 
 struct _Part_Lookup
 {
@@ -86,6 +93,7 @@ static void data_process_string(Edje_Part_Collection *pc, const char *prefix, ch
 
 Edje_File *edje_file = NULL;
 Eina_List *edje_collections = NULL;
+Eina_List *externals = NULL;
 Eina_List *fonts = NULL;
 Eina_List *codes = NULL;
 Eina_List *code_lookups = NULL;
