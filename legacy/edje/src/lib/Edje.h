@@ -276,12 +276,20 @@ struct _Edje_External_Param_Info
 };
 typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
 
-#define EDJE_EXTERNAL_PARAM_INFO_INT(name, min, max, step) \
+#define EDJE_EXTERNAL_PARAM_INFO_INT_FULL(name, min, max, step) \
   {name, EDJE_EXTERNAL_PARAM_TYPE_INT, {.i = {min, max, step}}}
-#define EDJE_EXTERNAL_PARAM_INFO_DOUBLE(name, min, max, step) \
+#define EDJE_EXTERNAL_PARAM_INFO_DOUBLE_FULL(name, min, max, step) \
   {name, EDJE_EXTERNAL_PARAM_TYPE_DOUBLE, {.d = {min, max, step}}}
-#define EDJE_EXTERNAL_PARAM_INFO_STRING(name, accept, deny) \
+#define EDJE_EXTERNAL_PARAM_INFO_STRING_FULL(name, accept, deny) \
   {name, EDJE_EXTERNAL_PARAM_TYPE_STRING, {.s = {accept, deny}}}
+
+#define EDJE_EXTERNAL_PARAM_INFO_INT(name) \
+   EDJE_EXTERNAL_PARAM_INFO_INT_FULL(name, EDJE_EXTERNAL_INT_UNSET, EDJE_EXTERNAL_INT_UNSET, EDJE_EXTERNAL_INT_UNSET)
+#define EDJE_EXTERNAL_PARAM_INFO_DOUBLE(name) \
+   EDJE_EXTERNAL_PARAM_INFO_DOUBLE_FULL(name, EDJE_EXTERNAL_DOUBLE_UNSET, EDJE_EXTERNAL_DOUBLE_UNSET, EDJE_EXTERNAL_DOUBLE_UNSET)
+#define EDJE_EXTERNAL_PARAM_INFO_STRING(name) \
+   EDJE_EXTERNAL_PARAM_INFO_STRING_FULL(name, NULL, NULL)
+
 #define EDJE_EXTERNAL_PARAM_INFO_SENTINEL {NULL, 0, {.s = {NULL, NULL}}}
 
 struct _Edje_External_Type
