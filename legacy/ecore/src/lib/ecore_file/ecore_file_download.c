@@ -286,10 +286,12 @@ _ecore_file_download_curl(const char *url, const char *dst,
    return job;
 }
 # endif
+#endif
 
 EAPI void
 ecore_file_download_abort(Ecore_File_Download_Job *job)
 {
+#ifdef BUILD_ECORE_CON
 # ifdef HAVE_CURL
    ecore_con_url_destroy(job->url_con);
 # endif
@@ -297,5 +299,5 @@ ecore_file_download_abort(Ecore_File_Download_Job *job)
    fclose(job->file);
    free(job->dst);
    free(job);
-}
 #endif /* BUILD_ECORE_CON */
+}
