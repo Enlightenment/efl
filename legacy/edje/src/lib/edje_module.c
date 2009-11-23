@@ -83,6 +83,10 @@ edje_module_load(const char *module)
 void
 _edje_module_init(void)
 {
+   unsigned int i;
+   Eina_Array_Iterator it;
+   Eina_Module *m;
+
    _edje_modules_log_dom = eina_log_domain_register("edje_module", LOG_COLOR);
 
    if (_edje_modules_log_dom < 0)
@@ -93,17 +97,13 @@ _edje_module_init(void)
 
    _registered_modules = eina_hash_string_small_new(NULL);
    _available_modules = eina_module_list_get(_available_modules,
-           PACKAGE_LIB_DIR "/lib/edje", 0, NULL, NULL);
+           PACKAGE_LIB_DIR "/edje", 0, NULL, NULL);
 
    if (!_available_modules)
      {
        eina_hash_free(_registered_modules);
        return;
      }
-
-   unsigned int i;
-   Eina_Array_Iterator it;
-   Eina_Module *m;
 
    EINA_ARRAY_ITER_NEXT(_available_modules, i, m, it)
      {
