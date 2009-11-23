@@ -70,7 +70,7 @@ EAPI Eina_Array * eina_module_list_get(Eina_Array *array, const char *path, unsi
 EAPI void eina_module_list_load(Eina_Array *list) EINA_ARG_NONNULL(1);
 EAPI void eina_module_list_unload(Eina_Array *list) EINA_ARG_NONNULL(1);
 EAPI void eina_module_list_flush(Eina_Array *list) EINA_ARG_NONNULL(1);
-EAPI Eina_Module * eina_module_find(Eina_Array *array, char *module) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Module * eina_module_find(const Eina_Array *array, const char *module) EINA_ARG_NONNULL(1, 2) EINA_PURE;
 
 /**
  * @}

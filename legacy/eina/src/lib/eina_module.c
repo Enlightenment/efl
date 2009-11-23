@@ -556,7 +556,7 @@ EAPI Eina_Array * eina_module_list_get(Eina_Array *array, const char *path, unsi
  * If the element is found return the module else NULL.
  */
 EAPI Eina_Module *
-eina_module_find(Eina_Array *array, char *module)
+eina_module_find(const Eina_Array *array, const char *module)
 {
    unsigned int i;
    Eina_Array_Iterator iterator;
