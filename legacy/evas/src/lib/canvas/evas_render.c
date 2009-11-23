@@ -551,9 +551,13 @@ pending_change(void *data, void *gdata __UNUSED__)
 
    obj = data;
    if (obj->delete_me) return EINA_FALSE;
+   if (obj->pre_render_done)
+     {
+   RD("  OBJ [%p] pending change %i -> 0, pre %i\n", obj, obj->changed, obj->pre_render_done);
    obj->pre_render_done = 0;
-//   if (!obj->layer)
-     obj->changed = 0;
+//// FIXME: this wipes out changes
+   obj->changed = 0;
+     }
    return obj->changed ? EINA_TRUE : EINA_FALSE;
 }
 
@@ -589,6 +593,9 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
         RD("      }\n");
         return;
      }
+   
+   // set render_pre - for child objs that may not have gotten it.
+   obj->pre_render_done = 1;
    
    if (_evas_render_has_map(obj))
      {
@@ -1051,8 +1058,10 @@ evas_render_updates_internal(Evas *e,
 
 	obj = eina_array_data_get(&e->active_objects, i);
 	obj->pre_render_done = 0;
+        RD("    OBJ [%p] post... %i %i\n", obj, obj->changed, do_draw);
 	if ((obj->changed) && (do_draw))
 	  {
+             RD("    OBJ [%p] post... func1\n", obj);
 	     obj->func->render_post(obj);
 	     obj->restack = 0;
 	     obj->changed = 0;
@@ -1060,6 +1069,7 @@ evas_render_updates_internal(Evas *e,
         else if ((obj->cur.map != obj->prev.map) ||
                  (obj->cur.usemap != obj->prev.usemap))
           {
+             RD("    OBJ [%p] post... func2\n", obj);
 	     obj->func->render_post(obj);
 	     obj->restack = 0;
 	     obj->changed = 0;

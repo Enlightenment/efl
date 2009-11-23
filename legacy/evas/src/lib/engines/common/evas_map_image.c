@@ -24,7 +24,7 @@ typedef struct _Span Span;
 struct _Span
 {
    int x1, x2;
-   FPc o1, o2;
+   FPc o1, o2, z1, z2;
    FPc  u[2], v[2];
    DATA32 col[2];
 };
@@ -43,6 +43,7 @@ _interp(int x1, int x2, int p, FPc u1, FPc u2)
    p -= x1;
    u = u2 - u1;
    u = (u * p) / (x2 + 1);
+   // FIXME: do z persp
    return u1 + u;
 }
 
@@ -54,6 +55,7 @@ _interp_col(int x1, int x2, int p, DATA32 col1, DATA32 col2)
    x2 -= x1;
    p -= x1;
    p = (p << 8) / (x2 + 1);
+   // FIXME: do z persp
    return INTERP_256(p, col2, col1);
 }
 
@@ -68,6 +70,7 @@ _limit(Span *s, int c1, int c2, int nocol)
           s->col[0] = _interp_col(s->x1, s->x2, c1, s->col[0], s->col[1]);
         s->x1 = c1;
         s->o1 = c1 << FP;
+        // FIXME: do s->z1
      }
    if (s->x2 > c2)
      {
@@ -77,6 +80,7 @@ _limit(Span *s, int c1, int c2, int nocol)
           s->col[1] = _interp_col(s->x1, s->x2, c2, s->col[0], s->col[1]);
         s->x2 = c2;
         s->o2 = c2 << FP;
+        // FIXME: do s->z2
      }
 }
 
@@ -140,7 +144,6 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
           }
         return;
      }
-   
    for (y = ystart; y <= yend; y++)
      {
         int nocol = 1;
@@ -174,16 +177,64 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              t = (((y << FP) + (FP1 - 1)) - p[e1].y) >> FP;
              x = p[e2].x - p[e1].x;
              x = p[e1].x + ((x * t) / h);
+
+/*             
+             // FIXME: 3d accuracy here
+             // XXX t needs adjusting. above its a linear interp point
+             // only.
+             // 
+             // // FIXME: do in fixed pt. reduce divides
+             evas_common_cpu_end_opt();
+             // 
+             int foc = 512, z0 = 0, px = 320, py = 240; // FIXME: need from map points
+             //
+             float focf, hf;
+             float z1, z2, y1, y2, dz, dy, zt, dydz, yt;
              
+             focf = foc;
+             hf = h;
+             
+             // adjust for fixed point and focal length and z0 for map
+             z1 = (p[e1].z >> FP) - z0 + foc;
+             z2 = (p[e2].z >> FP) - z0 + foc;
+             // deltas
+             dz = z1 - z2;
+             
+             if (dz != 0)
+               {
+                  int pt;
+                  
+                  // adjust for perspective point (being 0 0)
+                  y1 = (p[e1].y >> FP) - py;
+                  y2 = (p[e2].y >> FP) - py;
+                  
+                  // correct for x &y not being in world coords - screen coords
+                  y1 = (y1 * z1) / focf;
+                  y2 = (y2 * z2) / focf;
+                  
+                  // deltas
+                  dy = y1 - y2;
+                  
+                  yt = y - py;
+                  dydz = dy / dz;
+
+                  zt = (y2 - (dydz * z2)) / ((yt / focf) - dydz);
+
+                  pt = t;
+                  t = ((z1 - zt) * hf) / dz;
+               }
+ */
              u = p[e2].u - p[e1].u;
              u = p[e1].u + ((u * t) / h);
              
              v = p[e2].v - p[e1].v;
              v = p[e1].v + ((v * t) / h);
-             
+
+             // FIXME: 3d accuracy for color too
              t256 = (t << 8) / h; // maybe * 255?
              col[i] = INTERP_256(t256, p[e2].col, p[e1].col);
              
+             // FIXME: store z persp
              uv[i][1] = v;
              uv[i][0] = u;
              edge[i][2] = x >> FP;

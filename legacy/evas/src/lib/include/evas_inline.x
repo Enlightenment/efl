@@ -5,7 +5,7 @@ static inline int
 evas_object_was_visible(Evas_Object *obj)
 {
    if ((obj->prev.visible) &&
-       (obj->prev.cache.clip.visible) &&
+       ((obj->prev.cache.clip.visible) || (obj->smart.smart)) &&
        (obj->prev.cache.clip.a > 0))
      {
 	if (obj->func->was_visible)
