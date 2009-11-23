@@ -172,6 +172,8 @@ _ecore_evas_quartz_init(int w, int h)
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
 
+   ecore_event_evas_init();
+
    ecore_evas_idle_enterer = ecore_idle_enterer_add(_ecore_evas_idle_enter, NULL);
    ecore_evas_event = ecore_poller_add(ECORE_POLLER_CORE, 1, ecore_evas_event, NULL);
    ecore_poller_poll_interval_set(ECORE_POLLER_CORE, 0.006);
@@ -201,6 +203,8 @@ _ecore_evas_quartz_shutdown(void)
       ecore_evas_idle_enterer = NULL;
       ecore_poller_del(ecore_evas_event);
       ecore_evas_event = NULL;
+
+      ecore_event_evas_shutdown();
    }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
    return _ecore_evas_init_count;
@@ -431,6 +435,7 @@ ecore_evas_quartz_new(const char* name, int w, int h)
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
 
    ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
+
    return ee;
 
  free_window:

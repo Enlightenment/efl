@@ -583,6 +583,11 @@ static const struct ecore_evas_engine _engines[] = {
   {"software_16_wince_gdi", _ecore_evas_constructor_software_16_wince_gdi},
 #endif
 
+  /* Apple */
+#ifdef BUILD_ECORE_EVAS_QUARTZ
+  {"quartz", _ecore_evas_constructor_quartz},
+#endif
+
   /* Last chance to have a window */
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
   {"sdl", _ecore_evas_constructor_sdl},
@@ -592,9 +597,6 @@ static const struct ecore_evas_engine _engines[] = {
   /* independent */
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
   {"buffer", _ecore_evas_constructor_buffer},
-#endif
-#ifdef BUILD_ECORE_EVAS_QUARTZ
-  {"quartz", _ecore_evas_constructor_quartz},
 #endif
   {NULL, NULL}
 };
