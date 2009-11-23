@@ -363,6 +363,10 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
      }
    else
      {
+        RD("      not changed... [%i] -> (%i %i %p %i) [%i]\n", 
+           evas_object_is_visible(obj), 
+           obj->cur.visible, obj->cur.cache.clip.visible, obj->smart.smart, obj->cur.cache.clip.a,
+           evas_object_was_visible(obj));
 	if ((!obj->clip.clipees) && (obj->delete_me == 0) &&
 	    ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
 	     (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
