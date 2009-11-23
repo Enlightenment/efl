@@ -1,6 +1,9 @@
 #ifndef _EDJE_H
 #define _EDJE_H
 
+#include <stdint.h>
+#include <math.h>
+
 #include <Evas.h>
 
 #ifdef EAPI
@@ -247,6 +250,40 @@ struct _Edje_External_Param
 };
 typedef struct _Edje_External_Param Edje_External_Param;
 
+#define EDJE_EXTERNAL_INT_UNSET INT32_MAX
+#define EDJE_EXTERNAL_DOUBLE_UNSET NAN
+
+struct _Edje_External_Param_Info
+{
+   const char *name;
+   Edje_External_Param_Type type;
+   union
+   {
+      struct
+      {
+	 int min, max, step;
+      } i;
+      struct
+      {
+	 double min, max, step;
+      } d;
+      struct
+      {
+	 const char *accept_fmt;
+	 const char *deny_fmt;
+      } s;
+   } info;
+};
+typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
+
+#define EDJE_EXTERNAL_PARAM_INFO_INT(name, min, max, step) \
+  {name, EDJE_EXTERNAL_PARAM_TYPE_INT, {.i = {min, max, step}}}
+#define EDJE_EXTERNAL_PARAM_INFO_DOUBLE(name, min, max, step) \
+  {name, EDJE_EXTERNAL_PARAM_TYPE_DOUBLE, {.d = {min, max, step}}}
+#define EDJE_EXTERNAL_PARAM_INFO_STRING(name, accept, deny) \
+  {name, EDJE_EXTERNAL_PARAM_TYPE_STRING, {.s = {accept, deny}}}
+#define EDJE_EXTERNAL_PARAM_INFO_SENTINEL {NULL, 0, {.s = {NULL, NULL}}}
+
 struct _Edje_External_Type
 {
   Evas_Object *(*add) (void *data, Evas *evas, Evas_Object *parent, const Eina_List *params);
@@ -257,6 +294,8 @@ struct _Edje_External_Type
 
   Evas_Object *(*icon_get) (void *data, Evas *e);
   const char *(*label_get) (void *data);
+
+  Edje_External_Param_Info *parameters_info;
 
   void *data;
 };
@@ -410,6 +449,7 @@ extern "C" {
   EAPI Eina_Bool edje_external_param_int_get(const Eina_List *params, const char *key, int *ret);
   EAPI Eina_Bool edje_external_param_double_get(const Eina_List *params, const char *key, double *ret);
   EAPI Eina_Bool edje_external_param_string_get(const Eina_List *params, const char *key, const char **ret);
+  EAPI const Edje_External_Param_Info *edje_external_param_info_get(const char *type_name);
 
   /* edje_module.c */
   EAPI Eina_Bool edje_module_load(const char *module);

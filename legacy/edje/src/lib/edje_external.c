@@ -93,6 +93,16 @@ edje_external_param_string_get(const Eina_List *params, const char *key, const c
    return EINA_FALSE;
 }
 
+EAPI const Edje_External_Param_Info *
+edje_external_param_info_get(const char *type_name)
+{
+   Edje_External_Type *type;
+
+   type = eina_hash_find(type_registry, type_name);
+   if (!type)
+     return NULL;
+   return type->parameters_info;
+}
 
 void
 _edje_external_init()
