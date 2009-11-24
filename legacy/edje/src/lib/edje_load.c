@@ -307,7 +307,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
    ed->load_error = EDJE_LOAD_ERROR_NONE;
    _edje_file_add(ed);
 
-   if (ed->file->external_dir)
+   if (ed->file && ed->file->external_dir)
      {
        const Edje_External_Directory_Entry *ext;
        const Eina_List *n;
