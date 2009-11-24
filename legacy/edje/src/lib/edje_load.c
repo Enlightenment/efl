@@ -305,7 +305,18 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
    ed->group = eina_stringshare_add(group);
 
    ed->load_error = EDJE_LOAD_ERROR_NONE;
-  _edje_file_add(ed);
+   _edje_file_add(ed);
+
+   if (ed->file->external_dir)
+     {
+       const Edje_External_Directory_Entry *ext;
+       const Eina_List *n;
+
+       EINA_LIST_FOREACH(ed->file->external_dir->entries, n, ext)
+         {
+            edje_module_load(ext->entry);
+         }
+     }
 
    _edje_textblock_styles_add(ed);
    _edje_textblock_style_all_update(ed);

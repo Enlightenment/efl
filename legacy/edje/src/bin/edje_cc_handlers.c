@@ -517,6 +517,7 @@ New_Object_Handler object_handlers[] =
      {"spectra", NULL},
      {"spectra.spectrum", ob_spectrum},
      {"collections", ob_collections},
+     {"collections.externals", NULL}, /* dup */
      {"collections.images", NULL}, /* dup */
      {"collections.fonts", NULL}, /* dup */
      {"collections.styles", NULL}, /* dup */
@@ -527,6 +528,7 @@ New_Object_Handler object_handlers[] =
      {"collections.group.data", NULL},
      {"collections.group.script", ob_collections_group_script},
      {"collections.group.lua_script", ob_collections_group_lua_script},
+     {"collections.group.externals", NULL}, /* dup */
      {"collections.group.images", NULL}, /* dup */
      {"collections.group.fonts", NULL}, /* dup */
      {"collections.group.styles", NULL}, /* dup */
