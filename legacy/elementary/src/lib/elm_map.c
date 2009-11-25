@@ -2031,7 +2031,15 @@ elm_map_marker_remove(Elm_Map_Marker *marker)
    Widget_Data *wd = marker->wd;
 
    for(i=0; i<=18; i++)
-     marker->groups[i]->markers = eina_list_remove(marker->groups[i]->markers, marker);
+     {
+	marker->groups[i]->markers = eina_list_remove(marker->groups[i]->markers, marker);
+	if(eina_list_count(marker->groups[i]->markers) == 0)
+	  {
+		wd->markers[i] = eina_list_remove(wd->markers[i], marker->groups[i]);
+		_group_object_free(marker->groups[i]);
+		free(marker->groups[i]);
+	  }
+     }
 
    if(marker->content && marker->clas->func.del)
      marker->clas->func.del(marker->wd->obj, marker, marker->data, marker->content);
