@@ -88,7 +88,9 @@ test_genlist(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(bx);
 
    gl = elm_genlist_add(win);
-   elm_genlist_horizontal_mode_set(gl, ELM_LIST_LIMIT);
+   // FIXME: This causes genlist to resize the horiz axis very slowly :(
+   // Reenable this and resize the window horizontally, then try to resize it back
+   //elm_genlist_horizontal_mode_set(gl, ELM_LIST_LIMIT);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, gl);
