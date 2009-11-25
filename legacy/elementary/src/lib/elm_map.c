@@ -178,7 +178,6 @@ static void _pan_calculate(Evas_Object *obj);
 
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
-static void _show_region_hook(void *data, Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _calc_job(void *data);
 static void grid_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh);
@@ -205,7 +204,6 @@ rect_place(Evas_Object *obj, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_C
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord ax, ay, gw, gh, hh, ww;
-   int x, y;
 
    evas_object_geometry_get(wd->rect, NULL, NULL, &ww, &hh);
 
@@ -235,9 +233,8 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord ax, ay, gw, gh, tx, ty;
-   Eina_List *l, *l2;
+   Eina_List *l;
    Marker_Group *group;
-   int x, y;
    int xx, yy, ww, hh;
    char buf[PATH_MAX];
 
@@ -458,7 +455,7 @@ _tile_downloaded(void *data, const char *file, int status)
 
    if(status)
      {
-	DBG("Download failed %s (%d) ", status, gi->file);
+	DBG("Download failed %s (%d) ", gi->file, status);
 	remove(gi->file);
      }
 }
@@ -467,7 +464,6 @@ _tile_downloaded(void *data, const char *file, int status)
 grid_create(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   int x, y;
    Grid *g;
 
    g = calloc(1, sizeof(Grid));
@@ -831,13 +827,6 @@ _zoom_anim(void *data)
    return go;
 }
 
-   static void
-_mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info)
-{
-   Widget_Data *wd = elm_widget_data_get(data);
-   Evas_Event_Mouse_Move *ev = event_info;
-}
-
    static int
 _long_press(void *data)
 {
@@ -937,15 +926,6 @@ _theme_hook(Evas_Object *obj)
    elm_smart_scroller_theme_set(wd->scr, "map", "base", elm_widget_style_get(obj));
    edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
-}
-
-   static void
-_show_region_hook(void *data, Evas_Object *obj)
-{
-   Widget_Data *wd = elm_widget_data_get(data);
-   Evas_Coord x, y, w, h;
-   elm_widget_show_region_get(obj, &x, &y, &w, &h);
-   elm_smart_scroller_child_region_show(wd->scr, x, y, w, h);
 }
 
    static void
@@ -1224,7 +1204,6 @@ _group_bubble_content_update(Marker_Group *group)
 {
    Eina_List *l;
    Elm_Map_Marker *marker;
-   Evas_Coord h;
    int i = 0;
 
    if(!group->bubble) return ;
@@ -1307,7 +1286,7 @@ _group_bubble_free(Marker_Group *group)
    static void
 _group_bubble_place(Marker_Group *group)
 {
-   Evas_Coord x, y, w, h;
+   Evas_Coord x, y, w;
    Evas_Coord xx, yy, ww, hh;
    const char *s;
 
@@ -1334,7 +1313,6 @@ _group_bubble_place(Marker_Group *group)
 _group_bringin_cb(void *data, Evas_Object *obj, const char *emission, const char *soure)
 {
    Marker_Group *group = data;
-   double lon, lat;
    Elm_Map_Marker *marker = eina_list_data_get(group->markers);
    if(!marker) return ;
 
@@ -1379,10 +1357,7 @@ elm_map_add(Evas_Object *parent)
    Widget_Data *wd;
    Evas_Coord minw, minh;
    static Evas_Smart *smart = NULL;
-   int i;
    const char *s;
-   Grid *g;
-
 
    if(!ecore_file_download_protocol_available("http://"))
      {
@@ -1466,8 +1441,6 @@ elm_map_add(Evas_Object *parent)
 	 _mouse_down, obj);
    evas_object_event_callback_add(wd->rect, EVAS_CALLBACK_MOUSE_UP,
 	 _mouse_up, obj);
-   evas_object_event_callback_add(wd->rect, EVAS_CALLBACK_MOUSE_MOVE,
-	 _mouse_move, obj);
    evas_object_smart_member_add(wd->rect, wd->pan_smart);
    elm_widget_sub_object_add(obj, wd->rect);
    evas_object_show(wd->rect);
@@ -1510,7 +1483,7 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
    Grid *g, *g_zoom = NULL;
-   Evas_Coord pw, ph, rx, ry, rw, rh;
+   Evas_Coord rx, ry, rw, rh;
    int z;
    int zoom_changed = 0, started = 0;
 
@@ -1828,7 +1801,6 @@ elm_map_geo_region_get(Evas_Object *obj, double *lon, double *lat)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord sx, sy, sw, sh;
-   int iw, ih;
 
    elm_smart_scroller_child_pos_get(wd->scr, &sx, &sy);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &sw, &sh);
@@ -2095,8 +2067,6 @@ elm_map_marker_show(Elm_Map_Marker *marker)
 elm_map_markers_list_show(Eina_List *markers)
 {
    int zoom;
-   double minlon = 360, maxlon = -360;
-   double minlat = 360, maxlat = -360;
    double lon, lat;
    Eina_List *l;
    Elm_Map_Marker *marker, *m_max_lon = NULL, *m_max_lat = NULL, *m_min_lon = NULL, *m_min_lat = NULL;
