@@ -252,6 +252,8 @@ _ethumb_client_name_owner_changed(void *data, DBusMessage *msg)
 	return;
      }
 
+   if(!from || !name)
+       return ;
    if (strcmp(name, _ethumb_dbus_bus_name) != 0)
      return;
 
@@ -260,10 +262,10 @@ _ethumb_client_name_owner_changed(void *data, DBusMessage *msg)
    if (from[0] != '\0' && to[0] == '\0')
      {
 	DBG("exit ethumbd at %s", from);
-	if (strcmp(client->unique_name, from) != 0)
+	if (client->unique_name && strcmp(client->unique_name, from) != 0)
 	  WRN("%s was not the known name %s, ignored.",
 	       from, client->unique_name);
-	else
+	else if(client->unique_name)
 	  {
 	     ERR("server exit!!!");
 	     if (client->die.cb)
