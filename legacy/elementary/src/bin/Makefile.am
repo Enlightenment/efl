@@ -14,7 +14,8 @@ AM_CPPFLAGS = \
 @ELEMENTARY_WIN32_CFLAGS@ \
 @ELEMENTARY_WINCE_CFLAGS@ \
 @ELEMENTARY_EDBUS_CFLAGS@ \
-@ELEMENTARY_EFREET_CFLAGS@
+@ELEMENTARY_EFREET_CFLAGS@ \
+@ELEMENTARY_EWEATHER_CFLAGS@
 
 if ELEMENTARY_WINDOWS_BUILD
 AM_CPPFLAGS += -DELEMENTARY_BUILD
@@ -65,14 +66,15 @@ test_notify.c \
 test_slideshow.c \
 test_menu.c \
 test_panel.c \
-test_map.c
+test_map.c \
+test_weather.c
 
-elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la
+elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@
 elementary_test_LDFLAGS =
 
 if BUILD_QUICKLAUNCH
 elementary_quicklaunch_SOURCES = quicklaunch.c
-elementary_quicklaunch_LDADD = $(top_builddir)/src/lib/libelementary.la
+elementary_quicklaunch_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@
 elementary_quicklaunch_LDFLAGS =
 
 if BUILD_RUN

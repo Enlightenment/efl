@@ -54,6 +54,8 @@ void test_slideshow(void *data, Evas_Object *obj, void *event_info);
 void test_menu(void *data, Evas_Object *obj, void *event_info);
 void test_panel(void *data, Evas_Object *obj, void *event_info);
 void test_map(void *data, Evas_Object *obj, void *event_info);
+void test_weather(void *data, Evas_Object *obj, void *event_info);
+
 
 static void
 my_win_del(void *data, Evas_Object *obj, void *event_info)
@@ -190,6 +192,7 @@ my_win_main(void)
    elm_list_item_append(li, "Menu", NULL, NULL, test_menu, NULL);
    elm_list_item_append(li, "Panel", NULL, NULL, test_panel, NULL);
    elm_list_item_append(li, "Map", NULL, NULL, test_map, NULL);
+   elm_list_item_append(li, "Weather", NULL, NULL, test_weather, NULL);
 
    elm_list_go(li);
 

@@ -2037,6 +2037,7 @@ elm_map_marker_remove(Elm_Map_Marker *marker)
 	  {
 		wd->markers[i] = eina_list_remove(wd->markers[i], marker->groups[i]);
 		_group_object_free(marker->groups[i]);
+		_group_bubble_free(marker->groups[i]);
 		free(marker->groups[i]);
 	  }
      }

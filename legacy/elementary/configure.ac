@@ -222,6 +222,22 @@ PKG_CHECK_MODULES([ELEMENTARY_EFREET],
 )
 AC_SUBST(ELM_EFREET_DEF)
 
+ELM_EWEATHER_DEF="#undef"
+have_elementary_eweather="no"
+PKG_CHECK_MODULES([ELEMENTARY_EWEATHER],
+   [
+    eweather
+   ],
+   [
+    AC_DEFINE(HAVE_ELEMENTARY_EWEATHER, 1, [EWeather support for Elementary])
+    have_elementary_eweather="yes"
+    ELM_EWEATHER_DEF="#define"
+    requirement_elm="eweather ${requirement_elm}"
+   ],
+   [have_elementary_eweather="no"]
+)
+AC_SUBST(ELM_EWEATHER_DEF)
+
 ELM_ALLOCA_H_DEF="#undef"
 AC_CHECK_HEADER(alloca.h, [ELM_ALLOCA_H_DEF="#define"])
 AC_SUBST(ELM_ALLOCA_H_DEF)
@@ -284,6 +300,7 @@ echo
 echo "Features:"
 echo "  EDBus.........: ${have_elementary_edbus}"
 echo "  EFreet........: ${have_elementary_efreet}"
+echo "  EWeather......: ${have_elementary_eweather}"
 echo
 echo "edje_cc.........: ${edje_cc}"
 echo
