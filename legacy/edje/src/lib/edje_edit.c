@@ -1476,8 +1476,8 @@ edje_edit_part_name_set(Evas_Object *obj, const char* part, const char* new_name
    return 1;
 }
 
-EAPI Eina_Bool
-edje_edit_part_add(Evas_Object *obj, const char* name, Edje_Part_Type type)
+Eina_Bool
+_edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type, const char *source)
 {
    Edje_Part_Collection *pc;
    Edje_Part *ep;
@@ -1519,6 +1519,8 @@ edje_edit_part_add(Evas_Object *obj, const char* name, Edje_Part_Type type)
    ep->clip_to_id = -1;
    ep->dragable.confine_id = -1;
    ep->dragable.events_id = -1;
+   if (source)
+     ep->source = eina_stringshare_add(source);
 
    ep->default_desc = NULL;
    ep->other_desc = NULL;
@@ -1539,12 +1541,20 @@ edje_edit_part_add(Evas_Object *obj, const char* name, Edje_Part_Type type)
 	evas_object_text_font_source_set(rp->object, ed->path);
      }
    else if (ep->type == EDJE_PART_TYPE_SWALLOW ||
-	    ep->type == EDJE_PART_TYPE_GROUP)
+	    ep->type == EDJE_PART_TYPE_GROUP ||
+	    ep->type == EDJE_PART_TYPE_EXTERNAL)
      {
 	rp->object = evas_object_rectangle_add(ed->evas);
 	evas_object_color_set(rp->object, 0, 0, 0, 0);
 	evas_object_pass_events_set(rp->object, 1);
 	evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
+	if (ep->type == EDJE_PART_TYPE_EXTERNAL)
+	  {
+	     Evas_Object *child;
+	     child = _edje_external_type_add(source, evas_object_evas_get(obj), obj, NULL);
+	     if (child)
+	       _edje_real_part_swallow(rp, child);
+	  }
      }
    else if (ep->type == EDJE_PART_TYPE_TEXTBLOCK)
      rp->object = evas_object_textblock_add(ed->evas);
@@ -1597,6 +1607,22 @@ edje_edit_part_add(Evas_Object *obj, const char* name, Edje_Part_Type type)
    edje_object_calc_force(obj);
 
    return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type)
+{
+   if (type == EDJE_PART_TYPE_EXTERNAL)
+     return EINA_FALSE;
+   return _edje_edit_real_part_add(obj, name, type, NULL);
+}
+
+EAPI Eina_Bool
+edje_edit_part_external_add(Evas_Object *obj, const char *name, const char *source)
+{
+   if (!source)
+     return EINA_FALSE;
+   return _edje_edit_real_part_add(obj, name, EDJE_PART_TYPE_EXTERNAL, source);
 }
 
 EAPI Eina_Bool
@@ -1948,6 +1974,9 @@ edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source
    GET_RP_OR_RETURN(0);
 
    //printf("Set source for part: %s [source: %s]\n", part, source);
+
+   if (rp->part->type == EDJE_PART_TYPE_EXTERNAL)
+     return 0;
 
    _edje_if_string_free(ed, rp->part->source);
 
@@ -2333,6 +2362,37 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name)
    pd->gradient.rel2.offset_x = -1;
    pd->gradient.rel2.offset_y = -1;
    pd->gradient.use_rel = 1;
+
+   if (rp->part->type == EDJE_PART_TYPE_EXTERNAL && rp->part->source)
+     {
+	Edje_External_Param_Info *pi;
+	pi = edje_external_param_info_get(rp->part->source);
+	while (pi && pi->name)
+	  {
+	     Edje_External_Param *p;
+	     p = _alloc(sizeof(Edje_External_Param));
+	     /* error checking.. meh */
+	     p->name = eina_stringshare_add(pi->name);
+	     p->type = pi->type;
+	     switch(p->type)
+	       {
+		case EDJE_EXTERNAL_PARAM_TYPE_INT:
+		   p->i = pi->info.i.def;
+		   break;
+		case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
+		   p->d = pi->info.d.def;
+		   break;
+		case EDJE_EXTERNAL_PARAM_TYPE_STRING:
+		   if (pi->info.s.def)
+		     p->s = eina_stringshare_add(pi->info.s.def);
+		   break;
+	       }
+	     pd->external_params = eina_list_append(pd->external_params, p);
+	     pi++;
+	  }
+	if (pd->external_params)
+	  rp->param1.external_params = _edje_external_params_parse(rp->swallowed_object, pd->external_params);
+     }
 }
 
 EAPI Eina_Bool

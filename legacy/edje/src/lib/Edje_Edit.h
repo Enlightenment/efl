@@ -475,6 +475,17 @@ edje_edit_part_add(
    Edje_Part_Type type      ///< The type of the part to create (One of: EDJE_PART_TYPE_NONE, EDJE_PART_TYPE_RECTANGLE, EDJE_PART_TYPE_TEXT,EDJE_PART_TYPE_IMAGE, EDJE_PART_TYPE_SWALLOW, EDJE_PART_TYPE_TEXTBLOCK,EDJE_PART_TYPE_GRADIENT or EDJE_PART_TYPE_GROUP)
 );
 
+/**Create a new part of type EXTERNAL in the given edje
+ * If another part with the same name just exists nothing is created and FALSE is returned.
+ * Note that this function also create a default description for the part.
+ */
+EAPI Eina_Bool         ///@return TRUE on success, FALSE if the part can't be created
+edje_edit_part_external_add(
+   Evas_Object *obj,       ///< The edje object
+   const char *name,       ///< The name for the new part
+   const char *source      ///< External type of the part
+);
+
 /**Delete the given part from the edje
  * All the reference to this part will be zeroed.
  * A group must have at least one part, so it's not possible to
