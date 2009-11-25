@@ -80,7 +80,6 @@ _spin(void *data, Evas_Object *obj, void *event_info)
 static Evas_Object *
 _get(void *data, Evas_Object *obj)
 {
-   int w, h;
    Evas_Object *photo = elm_photocam_add(obj);
    elm_photocam_file_set(photo, data);
    elm_photocam_zoom_mode_set(photo, ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT);
@@ -92,11 +91,9 @@ _get(void *data, Evas_Object *obj)
 void
 test_slideshow(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *notify, *bx, *bt, *hv, *spin, *photo;
-   char buf[PATH_MAX];
+   Evas_Object *win, *bg, *notify, *bx, *bt, *hv, *spin;
    const Eina_List *l;
    const char *transition;
-   char *s;
 
    win = elm_win_add(NULL, "Slideshow", ELM_WIN_BASIC);
    elm_win_title_set(win, "Slideshow");

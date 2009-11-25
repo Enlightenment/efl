@@ -4,6 +4,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+
 /**
  * @defgroup Notify notify
  *
@@ -40,8 +41,6 @@ static void _resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void
 _del_pre_hook(Evas_Object *obj)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-
    evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE, _resize, obj);
    evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOVE, _resize, obj);
    evas_object_event_callback_del_full(obj, EVAS_CALLBACK_SHOW, _show, obj);
@@ -307,7 +306,7 @@ elm_notify_content_set(Evas_Object *obj, Evas_Object *content)
 }
 
 /**
- * Set the notify parent 
+ * Set the notify parent
  *
  * @param obj The notify object
  * @param content The new parent
@@ -348,7 +347,7 @@ elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent)
                                        _changed_size_hints, obj);
 	evas_object_event_callback_add(parent, EVAS_CALLBACK_DEL,
 				       _parent_del, obj);
-	evas_object_event_callback_add(parent, EVAS_CALLBACK_HIDE, 
+	evas_object_event_callback_add(parent, EVAS_CALLBACK_HIDE,
                                        _parent_hide, obj);
 	_sizing_eval(obj);
      }
@@ -430,14 +429,14 @@ elm_notify_timer_init(Evas_Object *obj)
 }
 
 /**
- * When true if the user clicks outside the window the events will be 
+ * When true if the user clicks outside the window the events will be
  * catch by the others widgets, else the events are block and the signal
  * dismiss will be sent when the user click outside the window.
  *
  * @note The default value is EINA_TRUE.
  *
  * @param obj The notify object
- * @param repeats EINA_TRUE Events are repeats, else no 
+ * @param repeats EINA_TRUE Events are repeats, else no
  */
 EAPI void
 elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
@@ -451,7 +450,7 @@ elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
      {
 	wd->block_events = edje_object_add(evas_object_evas_get(obj));
 	_elm_theme_set(wd->block_events, "notify", "block_events", "default");
-        elm_widget_resize_object_set(obj, wd->block_events);	
+        elm_widget_resize_object_set(obj, wd->block_events);
      }
    else
      evas_object_del(wd->block_events);

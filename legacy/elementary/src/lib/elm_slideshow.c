@@ -51,8 +51,6 @@ static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void _signal_clicked(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void _signal_move(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static int _timer_cb(void *data);
 
 static void
@@ -93,25 +91,19 @@ _sizing_eval(Evas_Object *obj)
 static void
 _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
-
    _sizing_eval(data);
 }
 
 static void
 _sub_del(void *data, Evas_Object *obj, void *event_info)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Object *sub = event_info;
+   ;
 }
 
 static void
 _end(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
-   Evas_Object *o;
-   Eina_List *l;
    Elm_Slideshow_Item *item;
-   const char *part;
    Widget_Data *wd = elm_widget_data_get(data);
 
    item = wd->previous;
@@ -241,6 +233,7 @@ elm_slideshow_add(Evas_Object *parent)
    edje_object_signal_callback_add(wd->slideshow, "end", "slideshow", _end, obj);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
 
    _sizing_eval(obj);
    return obj;
@@ -260,7 +253,7 @@ elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, co
    Elm_Slideshow_Item *item;
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if(!wd) return;
+   if(!wd) return NULL;
 
    item = calloc(1, sizeof(Elm_Slideshow_Item));
    item->data = data;
@@ -285,9 +278,6 @@ elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, co
 EAPI void
 elm_slideshow_show(Elm_Slideshow_Item *item)
 {
-   Evas_Object *o;
-   Eina_List *l;
-   const char *part;
    Widget_Data *wd = elm_widget_data_get(item->obj);
 
    if (!wd) return;
@@ -311,10 +301,6 @@ EAPI void
 elm_slideshow_next(Evas_Object *obj)
 {
    char buf[1024];
-   Eina_List *l;
-   const char *part;
-   Elm_Slideshow_Item *item;
-   Evas_Object *o;
    Elm_Slideshow_Item *next = NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -354,9 +340,6 @@ elm_slideshow_next(Evas_Object *obj)
 elm_slideshow_previous(Evas_Object *obj)
 {
    char buf[1024];
-   Eina_List *l;
-   const char *part;
-   Evas_Object *o;
    Elm_Slideshow_Item *prev;
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -398,7 +381,7 @@ elm_slideshow_transitions_get(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if(!wd) return;
+   if(!wd) return NULL;
    return wd->transitions;
 }
 
@@ -449,7 +432,7 @@ elm_slideshow_timeout_get(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if(!wd) return;
+   if(!wd) return -1;
    return wd->timeout;
 }
 

@@ -4,7 +4,7 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
-static Evas_Object *win, *bg, *notify, *menu, *rect, *ic;;
+static Evas_Object *win, *bg, *menu, *rect, *ic;;
 static char buf[PATH_MAX];
 
 static void
@@ -139,8 +139,6 @@ _populate_1(Elm_Menu_Item *item)
 void
 test_menu(void *data, Evas_Object *obj, void *event_info)
 {
-   const Eina_List *l;
-   const char *transition;
    Elm_Menu_Item *item;
 
    win = elm_win_add(NULL, "Menu", ELM_WIN_BASIC);

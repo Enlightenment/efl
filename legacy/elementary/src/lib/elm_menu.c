@@ -550,7 +550,7 @@ elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, Evas_Object *icon, co
    Elm_Menu_Item *subitem;
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if (!wd) return;
+   if (!wd) return NULL;
    subitem = ELM_NEW(Elm_Menu_Item);
    if (!subitem) return NULL;
    subitem->func = func;
@@ -582,8 +582,6 @@ elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, Evas_Object *icon, co
 EAPI void
 elm_menu_item_label_set(Elm_Menu_Item *item, const char *label)
 {
-   Evas_Coord mw, mh;
-
    if (item->label) eina_stringshare_del(item->label);
    if (label)
      {
@@ -603,7 +601,7 @@ elm_menu_item_label_set(Elm_Menu_Item *item, const char *label)
 EAPI const char *
 elm_menu_item_label_get(Elm_Menu_Item *item)
 {
-   if (!item) return ;
+   if (!item) return NULL;
    return item->label;
 }
 
@@ -649,7 +647,7 @@ elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent)
    Elm_Menu_Item *subitem;
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if (!wd) return;
+   if (!wd) return NULL;
    subitem = ELM_NEW(Elm_Menu_Item);
    if (!subitem) return NULL;
    subitem->menu = obj;
@@ -677,7 +675,6 @@ elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent)
 EAPI void
 elm_menu_item_del(Elm_Menu_Item *item)
 {
-   Eina_List *l;
    Elm_Menu_Item *_item;
 
    if (!item) return;
