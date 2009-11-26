@@ -1626,13 +1626,6 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
 	evas_object_color_set(rp->object, 0, 0, 0, 0);
 	evas_object_pass_events_set(rp->object, 1);
 	evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
-	if (ep->type == EDJE_PART_TYPE_EXTERNAL)
-	  {
-	     Evas_Object *child;
-	     child = _edje_external_type_add(source, evas_object_evas_get(obj), obj, NULL);
-	     if (child)
-	       _edje_real_part_swallow(rp, child);
-	  }
      }
    else if (ep->type == EDJE_PART_TYPE_TEXTBLOCK)
      rp->object = evas_object_textblock_add(ed->evas);
@@ -1663,6 +1656,13 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
 	       }
 	     if (ep->precise_is_inside)
 	       evas_object_precise_is_inside_set(rp->object, 1);
+	  }
+	if (ep->type == EDJE_PART_TYPE_EXTERNAL)
+	  {
+	     Evas_Object *child;
+	     child = _edje_external_type_add(source, evas_object_evas_get(obj), obj, NULL);
+	     if (child)
+	       _edje_real_part_swallow(rp, child);
 	  }
 	evas_object_clip_set(rp->object, ed->clipper);
      }
