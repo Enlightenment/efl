@@ -187,7 +187,8 @@ _edje_real_part_free(Edje_Real_Part *rp)
 	if (rp->part->mouse_events)
 	  _edje_callbacks_del(rp->swallowed_object);
 
-	if (rp->part->type == EDJE_PART_TYPE_GROUP)
+	if (rp->part->type == EDJE_PART_TYPE_GROUP ||
+	    rp->part->type == EDJE_PART_TYPE_EXTERNAL)
 	  evas_object_del(rp->swallowed_object);
 
 	rp->swallowed_object = NULL;
