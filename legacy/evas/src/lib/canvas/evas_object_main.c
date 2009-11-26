@@ -1612,7 +1612,7 @@ evas_objects_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Co
      {
 	Evas_Object *obj;
 
-	EINA_INLIST_REVERSE_FOREACH(get_layer_objects_last(lay), obj)
+	EINA_INLIST_FOREACH(get_layer_objects_last(lay), obj)
 	  {
 	     if (obj->delete_me) continue;
 	     if ((!include_pass_events_objects) && (evas_event_passes_through(obj))) continue;
