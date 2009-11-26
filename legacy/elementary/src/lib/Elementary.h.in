@@ -498,6 +498,17 @@ extern "C" {
    EAPI void         elm_entry_editable_set(Evas_Object *obj, Eina_Bool editable);
    EAPI void         elm_entry_select_none(Evas_Object *obj);
    EAPI void         elm_entry_select_all(Evas_Object *obj);
+#if 0
+   //next char (char # -= 1)
+   //prev char (char # += 1)
+   //get cur char pos (char #)
+   //set cur char pos (char #)
+   //get char len (# of chars)
+   //get cur char (utf8)
+   //get text from char pos 1 to char pos 2 (inclusive)
+   //sel text from char pos 1 to char pos 2 (inclusive)
+   //clean sel (already have with select_abort)
+#endif
    EAPI void         elm_entry_context_menu_clear(Evas_Object *obj);
    EAPI void         elm_entry_context_menu_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
    EAPI void         elm_entry_context_menu_disabled_set(Evas_Object *obj, Eina_Bool disabled);
@@ -703,7 +714,7 @@ extern "C" {
     * "longpressed" - an item in the hoversel list is long-pressed
     */
 
-   // FIXME: incomplete - carousel
+   // FIXME: incomplete - carousel. don't use this until this comment is removed
    typedef struct _Elm_Carousel_Item Elm_Carousel_Item;
    EAPI Evas_Object       *elm_carousel_add(Evas_Object *parent);
    EAPI Elm_Carousel_Item *elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
