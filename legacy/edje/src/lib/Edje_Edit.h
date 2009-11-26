@@ -450,6 +450,38 @@ edje_edit_style_tag_del(
 
 //@}
 /******************************************************************************/
+/************************   EXTERNALS API   ***********************************/
+/******************************************************************************/
+/** @name Externals API
+ *  Functions to deal with list of external modules (see @ref edcref).
+ */ //@{
+
+/** Get the list of all the externals requested in the given edje object.
+ *  Use edje_edit_string_list_free() when you don't need it anymore.
+ */
+EAPI Eina_List *           ///@return An Eina_List* of string (char *)containing all the externals names.
+edje_edit_externals_list_get(
+   Evas_Object *obj        ///< The edje object
+);
+
+/** Add an external module to be requested on edje load
+ *  If one with the same name exists nothing is created and FALSE is returned.
+ */
+EAPI Eina_Bool        ///@return TRUE on success, FALSE otherwise
+edje_edit_external_add(
+   Evas_Object *obj,      ///< The edje object
+   const char *external   ///< The new name for the extermal
+);
+
+/** Delete the given external from the list. */
+EAPI void
+edje_edit_external_del(
+   Evas_Object *obj,      ///< The edje object
+   const char *external   ///< The name for the external to delete
+);
+
+//@}
+/******************************************************************************/
 /**************************   PARTS API   *************************************/
 /******************************************************************************/
 /** @name Parts API

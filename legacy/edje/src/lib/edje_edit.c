@@ -600,6 +600,22 @@ _edje_edit_style_tag_get(Edje *ed, const char *style, const char *name)
    return NULL;
 }
 
+static Edje_External_Directory_Entry *
+_edje_edit_external_get(Edje *ed, const char *name)
+{
+   Eina_List *l;
+   Edje_External_Directory_Entry *e;
+
+   if (!ed || !ed->file || !ed->file->external_dir || !name)
+     return NULL;
+
+   EINA_LIST_FOREACH(ed->file->external_dir->entries, l, e)
+      if (e->entry && !strcmp(e->entry, name))
+	return e;
+
+   return NULL;
+}
+
 /*****************/
 /*  GENERAL API  */
 /*****************/
@@ -1431,6 +1447,68 @@ edje_edit_style_tag_del(Evas_Object * obj, const char* style, const char* tag)
    _edje_if_string_free(ed, t->text_class);
    free(t);
    t = NULL;
+}
+
+/*******************/
+/*  EXTERNALS API  */
+/*******************/
+
+EAPI Eina_List *
+edje_edit_externals_list_get(Evas_Object *obj)
+{
+   Eina_List *externals = NULL;
+   Eina_List *l;
+   Edje_External_Directory_Entry *e;
+
+   GET_ED_OR_RETURN(NULL);
+
+   if (!ed->file || !ed->file->external_dir)
+      return NULL;
+   //printf("GET STYLES LIST %d\n", eina_list_count(ed->file->styles));
+   EINA_LIST_FOREACH(ed->file->external_dir->entries, l, e)
+     externals = eina_list_append(externals, eina_stringshare_add(e->entry));
+
+   return externals;
+}
+
+EAPI Eina_Bool
+edje_edit_external_add(Evas_Object *obj, const char *external)
+{
+   Edje_External_Directory_Entry *e;
+   GET_ED_OR_RETURN(0);
+
+   e = _edje_edit_external_get(ed, external);
+   if (e) return 0;
+
+   e = _alloc(sizeof(Edje_External_Directory_Entry));
+   if (!e) return 0;
+   e->entry = (char*)eina_stringshare_add(external);
+
+   if (!ed->file->external_dir)
+     ed->file->external_dir = _alloc(sizeof(Edje_External_Directory));
+   ed->file->external_dir->entries = eina_list_append(ed->file->external_dir->entries, e);
+   return 1;
+}
+
+EAPI void
+edje_edit_external_del(Evas_Object *obj, const char *external)
+{
+   Edje_External_Directory_Entry *e;
+
+   GET_ED_OR_RETURN();
+
+   e = _edje_edit_external_get(ed, external);
+   if (!e) return;
+
+   ed->file->external_dir->entries = eina_list_remove(ed->file->external_dir->entries, e);
+   if (!ed->file->external_dir->entries)
+     {
+	free(ed->file->external_dir);
+	ed->file->external_dir = NULL;
+     }
+
+   _edje_if_string_free(ed, e->entry);
+   free(e);
 }
 
 /***************/
@@ -5289,7 +5367,7 @@ edje_edit_script_get(Evas_Object *obj)
 #define I6 "                  "
 #define I7 "                     "
 
-static char *types[] = {"NONE", "RECT", "TEXT", "IMAGE", "SWALLOW", "TEXTBLOCK", "GRADIENT", "GROUP"};
+static char *types[] = {"NONE", "RECT", "TEXT", "IMAGE", "SWALLOW", "TEXTBLOCK", "GRADIENT", "GROUP", "BOX", "TABLE", "EXTERNAL"};
 static char *effects[] = {"NONE", "PLAIN", "OUTLINE", "SOFT_OUTLINE", "SHADOW", "SOFT_SHADOW", "OUTLINE_SHADOW", "OUTLINE_SOFT_SHADOW ", "FAR_SHADOW ", "FAR_SOFT_SHADOW", "GLOW"};
 static char *prefers[] = {"NONE", "VERTICAL", "HORIZONTAL", "BOTH"};
 static void
@@ -5350,6 +5428,12 @@ _edje_generate_source_of_style(Edje * ed, const char *name, FILE * f)
 	 fprintf(f, I1 "}\n");
 	 return;
        }
+}
+
+static void
+_edje_generate_source_of_external(Edje *ed, const char *name, FILE *f)
+{
+   fprintf(f, I1 "external: \"%s\";\n", name);
 }
 
 static void
@@ -5651,6 +5735,36 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
         //TODO rel1 and 2 seems unused
 	fprintf(f, I5"}\n");
      }
+
+   //External
+   if (rp->part->type == EDJE_PART_TYPE_EXTERNAL)
+     {
+	if ((ll = edje_edit_state_external_params_list_get(obj, part, state)))
+	  {
+	     Edje_External_Param *p;
+
+	     fprintf(f, I5"params {\n");
+	     EINA_LIST_FOREACH(ll, l, p)
+	       {
+		  switch (p->type)
+		    {
+		     case EDJE_EXTERNAL_PARAM_TYPE_INT:
+			fprintf(f, I6"int: \"%s\" \"%d\";\n", p->name, p->i);
+			break;
+		     case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
+			fprintf(f, I6"double: \"%s\" \"%g\";\n", p->name, p->d);
+			break;
+		     case EDJE_EXTERNAL_PARAM_TYPE_STRING:
+			if (p->s)
+			  fprintf(f, I6"string: \"%s\" \"%s\";\n", p->name, p->s);
+			break;
+		     default:
+			break;
+		    }
+	       }
+	     fprintf(f, I5"}\n");
+	  }
+     }
    
    fprintf(f, I4"}\n");//description
 }
@@ -5876,6 +5990,17 @@ _edje_generate_source(Evas_Object *obj)
 	fprintf(f, I0 "styles {\n");
 	EINA_LIST_FOREACH(ll, l, entry)
 	  _edje_generate_source_of_style(ed, entry, f);
+	fprintf(f, I0 "}\n\n");
+	edje_edit_string_list_free(ll);
+     }
+
+   /* Externals */
+   if ((ll = edje_edit_externals_list_get(obj)))
+     {
+	fprintf(f, I0 "externals {\n");
+	EINA_LIST_FOREACH(ll, l, entry)
+	   _edje_generate_source_of_external(ed, entry, f);
+
 	fprintf(f, I0 "}\n\n");
 	edje_edit_string_list_free(ll);
      }
