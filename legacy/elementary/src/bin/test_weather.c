@@ -7,21 +7,25 @@
 #endif
 
 static Evas_Object *en, *hv;
+#ifdef HAVE_ELEMENTARY_EWEATHER
 static EWeather *eweather;
+#endif
 static Eina_Module *module;
 
 
 static void _apply_cb(void *data, Evas_Object *o, void *event_info)
 {
-    if(module)
-        eweather_plugin_set(eweather, module);
-
-    eweather_code_set(eweather, elm_entry_entry_get(en));
+#ifdef HAVE_ELEMENTARY_EWEATHER
+   if (module)
+     eweather_plugin_set(eweather, module);
+   eweather_code_set(eweather, elm_entry_entry_get(en));
+#endif
 }
 
-static void _hover_select_cb(void *data, Evas_Object *obj, void *event_info)
+static void
+_hover_select_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    module = data;
+   module = data;
 }
 
 void
@@ -70,12 +74,12 @@ test_weather(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(hv);
 
    array = eweather_plugins_list_get(eweather);
-
+   
    EINA_ARRAY_ITER_NEXT(array, i, m, it)
-   {
-       elm_hoversel_item_add(hv, eweather_plugin_name_get(eweather, i), NULL, ELM_ICON_NONE, _hover_select_cb, m);
-   }
-
+     {
+        elm_hoversel_item_add(hv, eweather_plugin_name_get(eweather, i), NULL, ELM_ICON_NONE, _hover_select_cb, m);
+     }
+   
    en = elm_entry_add(win);
    elm_entry_line_wrap_set(en, 0);
    elm_entry_single_line_set(en, EINA_TRUE);
@@ -104,5 +108,4 @@ test_weather(void *data, Evas_Object *obj, void *event_info)
     evas_object_resize(win, 244, 388);
     evas_object_show(win);
 }
-
 #endif
