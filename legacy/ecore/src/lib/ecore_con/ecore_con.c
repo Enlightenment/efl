@@ -719,7 +719,7 @@ ecore_con_client_send(Ecore_Con_Client *cl, const void *data, int size)
 
    if(cl->server && cl->server->type == ECORE_CON_REMOTE_UDP)
      {
-       sendto(cl->server->fd, data, size, 0, (struct sockaddr *) cl->data, sizeof(struct sockaddr_in));
+       sendto(cl->server->fd, data, size, 0, (struct sockaddr *) cl->client_addr, sizeof(struct sockaddr_in));
      }
    else if (cl->buf)
      {
@@ -776,11 +776,11 @@ ecore_con_client_del(Ecore_Con_Client *cl)
 	return NULL;
      }
 
-   if(cl->data && cl->server && (cl->server->type == ECORE_CON_REMOTE_UDP ||
+   if(cl->client_addr && cl->server && (cl->server->type == ECORE_CON_REMOTE_UDP ||
 				 cl->server->type == ECORE_CON_REMOTE_MCAST))
-     free(cl->data);
-   else
-     data = cl->data;
+     free(cl->client_addr);
+
+   data = cl->data;
 
    cl->data = NULL;
    cl->delete_me = 1;
@@ -1449,13 +1449,13 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	       cl->fd = 0;
 	       cl->fd_handler = NULL;
 	       cl->server = svr;
-	       cl->data = calloc(1, sizeof(client_addr));
-	       if(cl->data == NULL)
+	       cl->client_addr = calloc(1, sizeof(client_addr));
+	       if(cl->client_addr == NULL)
 		 {
 		   free(cl);
 		   return 1;
 		 }
-	       memcpy(cl->data,  &client_addr, sizeof(client_addr));
+	       memcpy(cl->client_addr,  &client_addr, sizeof(client_addr));
 	       ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
 	       svr->clients = eina_list_append(svr->clients, cl);
 
@@ -1471,7 +1471,7 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	       inbuf = malloc(num);
 	       if(inbuf == NULL)
 		 {
-		   free(cl->data);
+		   free(cl->client_addr);
 		   free(cl);
 		   return 1;
 		 }
