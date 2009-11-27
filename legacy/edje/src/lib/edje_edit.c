@@ -3493,9 +3493,12 @@ edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const cha
    va_list ap;
    Eina_List *l;
    Edje_External_Param *p;
+   Edje_Real_Part *rp;
    int found = 0;
 
    GET_PD_OR_RETURN(EINA_FALSE);
+
+   rp = _edje_real_part_get(ed, part);
 
    va_start(ap, type);
 
@@ -3540,6 +3543,11 @@ edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const cha
 
    if (!found)
      pd->external_params = eina_list_append(pd->external_params, p);
+
+   _edje_external_parsed_params_free(rp->swallowed_object, rp->param1.external_params);
+   rp->param1.external_params = _edje_external_params_parse(rp->swallowed_object, pd->external_params);
+
+   edje_object_calc_force(obj);
 
    return EINA_TRUE;
 }
