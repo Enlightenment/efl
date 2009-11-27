@@ -1823,6 +1823,8 @@ edje_edit_part_restack_below(Evas_Object *obj, const char* part)
    _edje_parts_id_switch(ed, rp, prev);
 
    evas_object_stack_below(rp->object, prev->object);
+   if (rp->swallowed_object)
+     evas_object_stack_above(rp->swallowed_object, rp->object);
 
    return 1;
 }
@@ -1850,6 +1852,8 @@ edje_edit_part_restack_above(Evas_Object *obj, const char* part)
    _edje_parts_id_switch(ed, rp, next);
 
    evas_object_stack_above(rp->object, next->object);
+   if (rp->swallowed_object)
+     evas_object_stack_above(rp->swallowed_object, rp->object);
 
    return 1;
 }
