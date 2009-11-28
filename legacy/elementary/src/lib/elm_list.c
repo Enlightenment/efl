@@ -695,6 +695,7 @@ elm_list_item_del(Elm_List_Item *it)
    if (it->selected) _item_unselect(it);
    wd->items = eina_list_remove_list(wd->items, it->node);
    eina_stringshare_del(it->label);
+   if (it->long_timer) ecore_timer_del(it->long_timer);
    if (it->icon) evas_object_del(it->icon);
    if (it->end) evas_object_del(it->end);
    if (it->base) evas_object_del(it->base);
