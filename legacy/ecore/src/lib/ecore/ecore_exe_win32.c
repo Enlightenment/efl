@@ -6,7 +6,7 @@
  * TODO:
  * - manage priority
  * - manage I/O pipes
- * - add events for start/close, maybe others
+ * - add events for data and error
  * - manage SetConsoleCtrlHandler ?
  */
 
@@ -55,25 +55,25 @@ struct _Ecore_Exe
    int    is_suspended : 1;
 };
 
-static Ecore_Exe *exes = NULL;
-Ecore_Win32_Handler *h = NULL;
-Ecore_Win32_Handler *h2 = NULL;
+static Ecore_Exe           *exes = NULL;
+static Ecore_Win32_Handler *h = NULL;
 
 static BOOL CALLBACK _ecore_exe_enum_windows_procedure(HWND window, LPARAM data);
 static void          _ecore_exe_event_add_free(void *data, void *ev);
 static void          _ecore_exe_event_del_free(void *data __UNUSED__, void *ev);
 static int           _ecore_exe_close_cb(void *data, Ecore_Win32_Handler *wh);
 
-EAPI int            ECORE_EXE_EVENT_ADD = 0;
-EAPI int            ECORE_EXE_EVENT_DEL = 0;
-EAPI int            ECORE_EXE_EVENT_DATA = 0;
-EAPI int            ECORE_EXE_EVENT_ERROR = 0;
+
+EAPI int ECORE_EXE_EVENT_ADD = 0;
+EAPI int ECORE_EXE_EVENT_DEL = 0;
+EAPI int ECORE_EXE_EVENT_DATA = 0;
+EAPI int ECORE_EXE_EVENT_ERROR = 0;
 
 void
 _ecore_exe_init(void)
 {
-/*    ECORE_EXE_EVENT_ADD = ecore_event_type_new(); */
-/*    ECORE_EXE_EVENT_DEL = ecore_event_type_new(); */
+   ECORE_EXE_EVENT_ADD = ecore_event_type_new();
+   ECORE_EXE_EVENT_DEL = ecore_event_type_new();
 /*    ECORE_EXE_EVENT_DATA = ecore_event_type_new(); */
 /*    ECORE_EXE_EVENT_ERROR = ecore_event_type_new(); */
 }
