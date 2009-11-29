@@ -1067,7 +1067,7 @@ elm_exit(void)
 EAPI void
 elm_object_scale_set(Evas_Object *obj, double scale)
 {
-   return elm_widget_scale_set(obj, scale);
+   elm_widget_scale_set(obj, scale);
 }
 
 /**
