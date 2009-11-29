@@ -205,7 +205,6 @@ _ecore_magic_string_get(Ecore_Magic m)
       default:
 	return "<UNKNOWN>";
      };
-   return "<UNKNOWN>";
 }
 
 /* fps debug calls - for debugging how much time your app actually spends */
