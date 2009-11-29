@@ -41,9 +41,9 @@
 
 #ifdef ELM_UNIX
 # include <locale.h>
-#ifdef ELM_LIBINTL_H
-# include <libintl.h>
-#endif
+# ifdef ELM_LIBINTL_H
+#  include <libintl.h>
+# endif
 # include <signal.h>
 # include <grp.h>
 # include <glob.h>
