@@ -90,6 +90,7 @@ dnl managed by evil
       have_socket="no"
       ;;
    *solaris*)
+      ELM_UNIX_DEF="#define"
       have_socket="yes"
       AC_CHECK_LIB([socket], [connect], [], [have_socket="no"])
       ;;
