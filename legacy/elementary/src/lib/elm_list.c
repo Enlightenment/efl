@@ -219,11 +219,12 @@ _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    else wd->on_hold = EINA_FALSE;
    wd->wasselected = it->selected;
    _item_hilight(it);
-   if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     evas_object_smart_callback_call(it->obj, "clicked", it);
    wd->longpressed = EINA_FALSE;
    if (it->long_timer) ecore_timer_del(it->long_timer);
    it->long_timer = ecore_timer_add(1.0, _long_press, it);
+   /* Always call the callbacks last - the user may delete our context! */
+   if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
+     evas_object_smart_callback_call(it->obj, "clicked", it);
 }
 
 static void
