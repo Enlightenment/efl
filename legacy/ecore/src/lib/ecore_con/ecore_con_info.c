@@ -214,10 +214,9 @@ ecore_con_info_get(Ecore_Con_Server *svr,
 	      canonname_len = strlen(result->ai_canonname) + 1;
 	    tosend_len = sizeof(Ecore_Con_Info) + result->ai_addrlen + canonname_len;
 
-	    if (!(tosend = malloc(tosend_len)))
+	    if (!(tosend = alloca(tosend_len)))
 	      goto on_error;
 
-	    memset(tosend, 0, tosend_len);
 	    container = (Ecore_Con_Info *)tosend;
 
 	    container->size = tosend_len;
@@ -234,8 +233,6 @@ ecore_con_info_get(Ecore_Con_Server *svr,
 		memcpy(container->service, sbuf, sizeof(container->service));
 	      }
 	    err = write(fd[1], tosend, tosend_len);
-
-	    free(tosend);
 	  }
 
 on_error:
