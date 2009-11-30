@@ -2646,6 +2646,7 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, const
 	   default:
 	      break;
 	  }
+	pdto->external_params = eina_list_append(pdto->external_params, new_p);
      }
    PD_COPY(visible);
 #undef PD_STRING_COPY
