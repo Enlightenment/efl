@@ -640,8 +640,9 @@ ftoi(cell * val, char *curptr)
      }
    else if (rational_digits == 0)
      {
+	float f = (float) fnum;
 	/* floating point */
-      *val = EMBRYO_FLOAT_TO_CELL((float) fnum);
+      *val = EMBRYO_FLOAT_TO_CELL(f);
 #if !defined NDEBUG
 	/* I assume that the C/C++ compiler stores "float" values in IEEE 754
 	 * format (as mandated in the ANSI standard). Test this assumption anyway.
