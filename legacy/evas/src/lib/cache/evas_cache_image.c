@@ -206,6 +206,8 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
    FREESTRC(ie->file);
    FREESTRC(ie->key);
 
+   ie->cache = NULL;
+
    cache->func.surface_delete(ie);
 
 #ifdef BUILD_ASYNC_PRELOAD
