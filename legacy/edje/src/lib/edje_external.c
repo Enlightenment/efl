@@ -7,6 +7,18 @@
 static Eina_Hash *type_registry = NULL;
 static int init_count = 0;
 
+/**
+ * Register given type name to return the given information.
+ *
+ * @param type_name name to register and be known by edje's "source:"
+ *        parameter of "type: EXTERNAL" parts.
+ * @param type_info meta-information describing how to interact with it.
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure (like
+ *         type already registered).
+ *
+ * @see edje_external_type_array_register()
+ */
 EAPI Eina_Bool
 edje_external_type_register(const char *type_name, const Edje_External_Type *type_info)
 {
@@ -18,10 +30,75 @@ edje_external_type_register(const char *type_name, const Edje_External_Type *typ
    return eina_hash_add(type_registry, type_name, type_info);
 }
 
+/**
+ * Unregister given type name previously registered.
+ *
+ * @param type_name name to unregister. It should be registered with
+ *        edje_external_type_register() before.
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure (like
+ *         type_name did not exist).
+ *
+ * @see edje_external_type_array_unregister()
+ */
 EAPI Eina_Bool
 edje_external_type_unregister(const char *type_name)
 {
    return eina_hash_del_by_key(type_registry, type_name);
+}
+
+/**
+ * Register a batch of types and their information.
+ *
+ * This is the recommended function to add information as it's faster
+ * than the single version edje_external_type_register().
+ *
+ * @note the given array is not modified, but the type name strings
+ *       are @b not duplicated! That is, all type names must be @b
+ *       live until they are unregistered! This was choosen to save
+ *       some memory and most people will just define the array as a
+ *       global static const type anyway.
+ *
+ * @param arrray @c NULL terminated array with type name and
+ *        information. Note that type name or information are not
+ *        modified by are @b referenced, so they must keep alive after
+ *        this function returns!
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure (like
+ *         type already registered).
+ *
+ * @see edje_external_type_register()
+ */
+EAPI void
+edje_external_type_array_register(const Edje_External_Type_Info *array)
+{
+   const Edje_External_Type_Info *itr;
+
+   if (!array)
+     return;
+
+   for (itr = array; itr->name; itr++)
+     eina_hash_direct_add(type_registry, itr->name, itr->info);
+}
+
+/**
+ * Unregister a batch of given external type previously registered.
+ *
+ * @param array @c NULL terminated array, should be the same as the
+ *        one used to register with edje_external_type_array_register()
+ *
+ * @see edje_external_type_unregister()
+ */
+EAPI void
+edje_external_type_array_unregister(const Edje_External_Type_Info *array)
+{
+   const Edje_External_Type_Info *itr;
+
+   if (!array)
+     return;
+
+   for (itr = array; itr->name; itr++)
+     eina_hash_del(type_registry, itr->name, itr->info);
 }
 
 EAPI Eina_Iterator *

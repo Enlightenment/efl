@@ -328,6 +328,15 @@ struct _Edje_External_Type
 typedef struct _Edje_External_Type Edje_External_Type;
 
 
+struct _Edje_External_Type_Info
+{
+   const char *name;
+   const Edje_External_Type *info;
+};
+typedef struct _Edje_External_Type_Info Edje_External_Type_Info;
+
+
+
 typedef void (*Edje_Signal_Cb) (void *data, Evas_Object *obj, const char *emission, const char *source);
 typedef void (*Edje_Text_Change_Cb) (void *data, Evas_Object *obj, const char *part);
 typedef void (*Edje_Message_Handler_Cb) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg);
@@ -482,6 +491,10 @@ extern "C" {
    /* edje_external.c */
   EAPI Eina_Bool edje_external_type_register(const char *type_name, const Edje_External_Type *type_info);
   EAPI Eina_Bool edje_external_type_unregister(const char *type_name);
+
+  EAPI void      edje_external_type_array_register(const Edje_External_Type_Info *array);
+  EAPI void      edje_external_type_array_unregister(const Edje_External_Type_Info *array);
+
   EAPI Eina_Iterator *edje_external_iterator_get(void);
   EAPI Edje_External_Param *edje_external_param_find(const Eina_List *params, const char *key);
   EAPI Eina_Bool edje_external_param_int_get(const Eina_List *params, const char *key, int *ret);
