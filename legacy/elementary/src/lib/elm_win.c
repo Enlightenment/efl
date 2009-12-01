@@ -128,6 +128,12 @@ _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_inf
    ecore_job_add(_deferred_ecore_evas_free, win->ee);
 //   ecore_evas_free(win->ee);
    free(win);
+
+   if ((!_elm_win_list) &&
+       (elm_policy_get(ELM_POLICY_QUIT) == ELM_POLICY_QUIT_LAST_WINDOW_CLOSED))
+     {
+	elm_exit();
+     }
 }
 
 static void

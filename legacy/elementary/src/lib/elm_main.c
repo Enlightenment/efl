@@ -267,6 +267,9 @@ const char *_elm_data_dir = NULL;
 const char *_elm_lib_dir = NULL;
 int _elm_log_dom = -1;
 
+EAPI int ELM_EVENT_POLICY_CHANGED = 0;
+
+static int _elm_policies[ELM_POLICY_LAST];
 static Ecore_Event_Handler *_elm_exit_handler = NULL;
 static Ecore_Event_Handler *_elm_event_property_change = NULL;
 #ifdef HAVE_ELEMENTARY_X
@@ -468,6 +471,11 @@ elm_quicklaunch_init(int argc, char **argv)
    eet_init();
    ecore_init();
    ecore_app_args_set(argc, (const char **)argv);
+
+   memset(_elm_policies, 0, sizeof(_elm_policies));
+   if (ELM_EVENT_POLICY_CHANGED == 0)
+     ELM_EVENT_POLICY_CHANGED = ecore_event_type_new();
+
    ecore_file_init();
    evas_init();
    edje_init();
@@ -1104,6 +1112,65 @@ elm_exit(void)
 {
    ecore_main_loop_quit();
 }
+
+
+/**
+ * Set new policy value.
+ *
+ * This will emit the ecore event ELM_EVENT_POLICY_CHANGED in the main
+ * loop giving the event information Elm_Event_Policy_Changed with
+ * policy identifier, new and old values.
+ *
+ * @param policy policy identifier as in Elm_Policy.
+ * @param value policy value, depends on identifiers, usually there is
+ *        an enumeration with the same prefix as the policy name, for
+ *        example: ELM_POLICY_QUIT and Elm_Policy_Quit
+ *        (ELM_POLICY_QUIT_NONE, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED).
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on error (right
+ *         now just invalid policy identifier, but in future policy
+ *         value might be enforced).
+ */
+EAPI Eina_Bool
+elm_policy_set(unsigned int policy, int value)
+{
+   Elm_Event_Policy_Changed *ev;
+
+   if (policy >= ELM_POLICY_LAST)
+     return EINA_FALSE;
+
+   if (value == _elm_policies[policy])
+     return EINA_TRUE;
+
+   /* TODO: validade policy? */
+
+   ev = malloc(sizeof(*ev));
+   ev->policy = policy;
+   ev->new_value = value;
+   ev->old_value = _elm_policies[policy];
+
+   _elm_policies[policy] = value;
+
+   ecore_event_add(ELM_EVENT_POLICY_CHANGED, ev, NULL, NULL);
+
+   return EINA_TRUE;
+}
+
+/**
+ * Gets the policy value set for given identifier.
+ *
+ * @param policy policy identifier as in Elm_Policy.
+ *
+ * @return policy value. Will be 0 if policy identifier is invalid.
+ */
+EAPI int
+elm_policy_get(unsigned int policy)
+{
+   if (policy >= ELM_POLICY_LAST)
+     return 0;
+   return _elm_policies[policy];
+}
+
 
 /**
  * @defgroup Scaling Selective Widget Scaling
