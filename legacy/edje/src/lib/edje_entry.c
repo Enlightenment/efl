@@ -179,6 +179,7 @@ static void
 _curs_update_from_curs(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__, Entry *en)
 {
    Evas_Coord cx, cy, cw, ch;
+   if (c != en->cursor) return;
    evas_textblock_cursor_char_geometry_get(c, &cx, &cy, &cw, &ch);
    en->cx = cx + (cw / 2);
    en->cy = cy + (ch / 2);
@@ -1632,8 +1633,7 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
 #endif
      }
    done:
-   en->cursor = evas_object_textblock_cursor_get(rp->object);
-
+   en->cursor = (Evas_Textblock_Cursor *)evas_object_textblock_cursor_get(rp->object);
 }
 
 void
@@ -1880,6 +1880,208 @@ _edje_entry_select_abort(Edje_Real_Part *rp)
         en->selecting = EINA_FALSE;
         _edje_entry_real_part_configure(rp);
      }
+}
+
+static Evas_Textblock_Cursor *
+_cursor_get(Edje_Real_Part *rp, Edje_Cursor cur)
+{
+   Entry *en = rp->entry_data;
+   if (!en) return NULL;
+   switch (cur)
+     {
+     case EDJE_CURSOR_MAIN:
+        return en->cursor;
+        break;
+     case EDJE_CURSOR_SELECTION_BEGIN:
+        return en->sel_start;
+        break;
+     case EDJE_CURSOR_SELECTION_END:
+        return en->sel_end;
+        break;
+     default:
+        break;
+     }
+   return NULL;
+}
+
+Eina_Bool
+_edje_entry_cursor_next(Edje_Real_Part *rp, Edje_Cursor cur)
+{
+   Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
+   if (!c) return 0;
+   if (!evas_textblock_cursor_char_next(c))
+     {
+        evas_textblock_cursor_eol_set(c, 0);
+	if (evas_textblock_cursor_node_next(c)) goto ok;
+        else return 0;
+     }
+   ok:
+   _curs_update_from_curs(c, rp->object, rp->entry_data);
+   _sel_update(c, rp->object, rp->entry_data);
+   _edje_entry_real_part_configure(rp);
+   return 1;
+}
+
+Eina_Bool
+_edje_entry_cursor_prev(Edje_Real_Part *rp, Edje_Cursor cur)
+{
+   Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
+   if (!c) return 0;
+   if (!evas_textblock_cursor_char_prev(c))
+     {
+	if (evas_textblock_cursor_node_prev(c)) goto ok;
+        else return 0;
+     }
+   ok:
+   _curs_update_from_curs(c, rp->object, rp->entry_data);
+   _sel_update(c, rp->object, rp->entry_data);
+   _edje_entry_real_part_configure(rp);
+   return 1;
+}
+
+Eina_Bool
+_edje_entry_cursor_up(Edje_Real_Part *rp, Edje_Cursor cur)
+{
+   Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
+   Evas_Coord lx, ly, lw, lh, cx, cy, cw, ch;
+   int ln;
+   if (!c) return 0;
+   ln = evas_textblock_cursor_line_geometry_get(c, NULL, NULL, NULL, NULL);
+   ln--;
+   if (ln < 0) return 0;
+   if (!evas_object_textblock_line_number_geometry_get(rp->object, ln, 
+                                                       &lx, &ly, &lw, &lh))
+     return 0;
+   evas_textblock_cursor_char_geometry_get(c, &cx, &cy, &cw, &ch);
+   if (!evas_textblock_cursor_char_coord_set(c, cx, ly + (lh / 2)))
+     {
+        if (cx < (lx +(lw / 2)))
+          evas_textblock_cursor_line_first(c);
+        else
+          evas_textblock_cursor_line_last(c);
+     }
+   _curs_update_from_curs(c, rp->object, rp->entry_data);
+   _sel_update(c, rp->object, rp->entry_data);
+   _edje_entry_real_part_configure(rp);
+   return 1;
+}
+
+Eina_Bool
+_edje_entry_cursor_down(Edje_Real_Part *rp, Edje_Cursor cur)
+{
+   Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
+   Evas_Coord lx, ly, lw, lh, cx, cy, cw, ch;
+   int ln, ll;
+   if (!c) return 0;
+   ln = evas_textblock_cursor_line_geometry_get(c, NULL, NULL, NULL, NULL);
+   ln++;
+   if (!evas_object_textblock_line_number_geometry_get(rp->object, ln, 
+                                                       &lx, &ly, &lw, &lh))
+     return 0;
+   evas_textblock_cursor_char_geometry_get(c, &cx, &cy, &cw, &ch);
+   if (!evas_textblock_cursor_char_coord_set(c, cx, ly + (lh / 2)))
+     {
+        if (cx < (lx +(lw / 2)))
+          evas_textblock_cursor_line_first(c);
+        else
+          evas_textblock_cursor_line_last(c);
+     }
+   _curs_update_from_curs(c, rp->object, rp->entry_data);
+   _sel_update(c, rp->object, rp->entry_data);
+   _edje_entry_real_part_configure(rp);
+   return 1;
+}
+
+void
+_edje_entry_cursor_begin(Edje_Real_Part *rp, Edje_Cursor cur)
+{
+   Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
+   if (!c) return;
+   evas_textblock_cursor_node_first(c);
+   _curs_update_from_curs(c, rp->object, rp->entry_data);
+   _sel_update(c, rp->object, rp->entry_data);
+   _edje_entry_real_part_configure(rp);
+}
+
+void
+_edje_entry_cursor_end(Edje_Real_Part *rp, Edje_Cursor cur)
+{
+   Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
+   if (!c) return;
+   evas_textblock_cursor_node_last(c);
+   _curs_update_from_curs(c, rp->object, rp->entry_data);
+   _sel_update(c, rp->object, rp->entry_data);
+   _edje_entry_real_part_configure(rp);
+}
+
+void
+_edje_entry_cursor_copy(Edje_Real_Part *rp, Edje_Cursor cur, Edje_Cursor dst)
+{
+   Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
+   if (!c) return;
+   Evas_Textblock_Cursor *d = _cursor_get(rp, dst);
+   if (!d) return;
+   evas_textblock_cursor_copy(c, d);
+   _curs_update_from_curs(c, rp->object, rp->entry_data);
+   _sel_update(c, rp->object, rp->entry_data);
+   _edje_entry_real_part_configure(rp);
+}
+
+void
+_edje_entry_cursor_line_begin(Edje_Real_Part *rp, Edje_Cursor cur)
+{
+   Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
+   if (!c) return;
+   evas_textblock_cursor_line_first(c);
+   _curs_update_from_curs(c, rp->object, rp->entry_data);
+   _sel_update(c, rp->object, rp->entry_data);
+   _edje_entry_real_part_configure(rp);
+}
+
+void
+_edje_entry_cursor_line_end(Edje_Real_Part *rp, Edje_Cursor cur)
+{
+   Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
+   if (!c) return;
+   evas_textblock_cursor_line_last(c);
+   _curs_update_from_curs(c, rp->object, rp->entry_data);
+   _sel_update(c, rp->object, rp->entry_data);
+   _edje_entry_real_part_configure(rp);
+}
+
+Eina_Bool
+_edje_entry_cursor_is_format_get(Edje_Real_Part *rp, Edje_Cursor cur)
+{
+   Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
+   if (!c) return 0;
+   return evas_textblock_cursor_node_format_get(c);
+}
+
+Eina_Bool
+_edje_entry_cursor_is_visible_format_get(Edje_Real_Part *rp, Edje_Cursor cur)
+{
+   Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
+   if (!c) return 0;
+   return evas_textblock_cursor_node_format_is_visible_get(c);
+}
+
+const char *
+_edje_entry_cursor_content_get(Edje_Real_Part *rp, Edje_Cursor cur)
+{
+   Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
+   const char *s;
+   static buf[16];
+   int pos, pos2, ch;
+   if (!c) return NULL;
+   s = evas_textblock_cursor_node_format_get(c);
+   if (s) return s;
+   s = evas_textblock_cursor_node_text_get(c);
+   if (!s) return NULL;
+   pos = evas_textblock_cursor_pos_get(c);
+   pos2 = evas_string_char_next_get(s, pos, &ch);
+   strncpy(buf, s + pos, pos2 - pos);
+   buf[pos2 - pos] = 0;
+   return buf;
 }
 
 #ifdef HAVE_ECORE_IMF

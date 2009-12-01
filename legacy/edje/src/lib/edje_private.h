@@ -584,7 +584,19 @@ struct _Edje_Part_Description
          int x, y;
       } padding;
    } table;
-
+   
+#if 0
+   // // // // //
+   struct {
+      struct {
+         double ax, ay, az;
+      } rot;
+      // FIXME: center point is another part id
+      // FIXME: perspective should other part or global value/obj
+   } map;
+   // // // // //
+#endif
+   
    Edje_Color color, color2, color3;  /* color for rect or text, shadow etc. */
    Eina_List *external_params; /* parameters for external objects */
 
@@ -1360,6 +1372,18 @@ void _edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Co
 void _edje_entry_select_allow_set(Edje_Real_Part *rp, Eina_Bool allow);
 void _edje_entry_select_abort(Edje_Real_Part *rp);
 
+Eina_Bool _edje_entry_cursor_next(Edje_Real_Part *rp, Edje_Cursor cur);
+Eina_Bool _edje_entry_cursor_prev(Edje_Real_Part *rp, Edje_Cursor cur);
+Eina_Bool _edje_entry_cursor_up(Edje_Real_Part *rp, Edje_Cursor cur);
+Eina_Bool _edje_entry_cursor_down(Edje_Real_Part *rp, Edje_Cursor cur);
+void _edje_entry_cursor_begin(Edje_Real_Part *rp, Edje_Cursor cur);
+void _edje_entry_cursor_end(Edje_Real_Part *rp, Edje_Cursor cur);
+void _edje_entry_cursor_line_begin(Edje_Real_Part *rp, Edje_Cursor cur);
+void _edje_entry_cursor_line_end(Edje_Real_Part *rp, Edje_Cursor cur);
+Eina_Bool _edje_entry_cursor_is_format_get(Edje_Real_Part *rp, Edje_Cursor cur);
+Eina_Bool _edje_entry_cursor_is_visible_format_get(Edje_Real_Part *rp, Edje_Cursor cur);
+const char *_edje_entry_cursor_content_get(Edje_Real_Part *rp, Edje_Cursor cur);
+    
 void _edje_external_init();
 void _edje_external_shutdown();
 Evas_Object *_edje_external_type_add(const char *type_name, Evas *evas, Evas_Object *parent, const Eina_List *params);

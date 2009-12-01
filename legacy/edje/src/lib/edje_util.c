@@ -1762,6 +1762,277 @@ edje_object_part_text_select_abort(const Evas_Object *obj, const char *part)
 }
 
 /**
+ * @brief XX
+ * 
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ */
+EAPI Eina_Bool
+edje_object_part_text_cursor_next(const Evas_Object *obj, const char *part, Edje_Cursor cur)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return 0;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return 0;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        return _edje_entry_cursor_next(rp, cur);
+     }
+   return 0;
+}
+
+/**
+ * @brief XX
+ * 
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ */
+EAPI Eina_Bool
+edje_object_part_text_cursor_prev(const Evas_Object *obj, const char *part, Edje_Cursor cur)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return 0;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return 0;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        return _edje_entry_cursor_prev(rp, cur);
+     }
+   return 0;
+}
+
+/**
+ * @brief XX
+ * 
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ */
+EAPI Eina_Bool
+edje_object_part_text_cursor_up(const Evas_Object *obj, const char *part, Edje_Cursor cur)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return 0;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return 0;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        return _edje_entry_cursor_up(rp, cur);
+     }
+   return 0;
+}
+
+/**
+ * @brief XX
+ * 
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ */
+EAPI Eina_Bool
+edje_object_part_text_cursor_down(const Evas_Object *obj, const char *part, Edje_Cursor cur)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return 0;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return 0;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        return _edje_entry_cursor_down(rp, cur);
+     }
+   return 0;
+}
+
+/**
+ * @brief XX
+ * 
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ */
+EAPI void
+edje_object_part_text_cursor_begin_set(const Evas_Object *obj, const char *part, Edje_Cursor cur)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        _edje_entry_cursor_begin(rp, cur);
+     }
+}
+
+/**
+ * @brief XX
+ * 
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ */
+EAPI void
+edje_object_part_text_cursor_end_set(const Evas_Object *obj, const char *part, Edje_Cursor cur)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        _edje_entry_cursor_end(rp, cur);
+     }
+}
+
+/**
+ * @brief XX
+ * 
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ */
+EAPI void
+edje_object_part_text_cursor_copy(const Evas_Object *obj, const char *part, Edje_Cursor src, Edje_Cursor dst)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        _edje_entry_cursor_copy(rp, src, dst);
+     }
+}
+
+/**
+ * @brief XX
+ * 
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ */
+EAPI void
+edje_object_part_text_cursor_line_begin_set(const Evas_Object *obj, const char *part, Edje_Cursor cur)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        _edje_entry_cursor_line_begin(rp, cur);
+     }
+}
+
+/**
+ * @brief XX
+ * 
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ */
+EAPI void
+edje_object_part_text_cursor_line_end_set(const Evas_Object *obj, const char *part, Edje_Cursor cur)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        _edje_entry_cursor_line_end(rp, cur);
+     }
+}
+
+/**
+ * @brief XX
+ * 
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ */
+EAPI Eina_Bool
+edje_object_part_text_cursor_is_format_get(const Evas_Object *obj, const char *part, Edje_Cursor cur)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return 0;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return 0;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        return _edje_entry_cursor_is_format_get(rp, cur);
+     }
+   return 0;
+}
+
+/**
+ * @brief XX
+ * 
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ */
+EAPI Eina_Bool
+edje_object_part_text_cursor_is_visible_format_get(const Evas_Object *obj, const char *part, Edje_Cursor cur)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return 0;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return 0;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        return _edje_entry_cursor_is_visible_format_get(rp, cur);
+     }
+   return 0;
+}
+
+/**
+ * @brief XX
+ * 
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ */
+EAPI const char *
+edje_object_part_text_cursor_content_get(const Evas_Object *obj, const char *part, Edje_Cursor cur)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return NULL;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return NULL;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        return _edje_entry_cursor_content_get(rp, cur);
+     }
+   return NULL;
+}
+
+/**
  * @brief Swallows an object into the edje.
  *
  * @param obj A valid Evas_Object handle
