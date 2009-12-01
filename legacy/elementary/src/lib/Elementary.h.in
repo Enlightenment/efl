@@ -247,7 +247,9 @@ extern "C" {
     */
    EAPI void         elm_win_keyboard_mode_set(Evas_Object *obj, Elm_Win_Keyboard_Mode mode);
    EAPI void         elm_win_keyboard_win_set(Evas_Object *obj, Eina_Bool is_keyboard);
-
+   
+   EAPI void         elm_win_screen_position_get(Evas_Object *obj, int *x, int *y);
+       
    EAPI Evas_Object *elm_win_inwin_add(Evas_Object *obj);
    EAPI void         elm_win_inwin_activate(Evas_Object *obj);
    EINA_DEPRECATED EAPI void elm_win_inwin_style_set(Evas_Object *obj, const char *style);
@@ -264,6 +266,7 @@ extern "C" {
     * "delete,request" - the user requested to delete the window
     * "focus,on" - window got focus
     * "focus,out" - window lost focus
+    * "moved" - window that holds the canvas was moved
     */
 
    EAPI Evas_Object *elm_bg_add(Evas_Object *parent);
@@ -498,17 +501,22 @@ extern "C" {
    EAPI void         elm_entry_editable_set(Evas_Object *obj, Eina_Bool editable);
    EAPI void         elm_entry_select_none(Evas_Object *obj);
    EAPI void         elm_entry_select_all(Evas_Object *obj);
-#if 0
-   //next char (char # -= 1)
-   //prev char (char # += 1)
-   //get cur char pos (char #)
-   //set cur char pos (char #)
-   //get char len (# of chars)
-   //get cur char (utf8)
-   //get text from char pos 1 to char pos 2 (inclusive)
-   //sel text from char pos 1 to char pos 2 (inclusive)
-   //clean sel (already have with select_abort)
-#endif
+   EAPI Eina_Bool    elm_entry_cursor_next(Evas_Object *obj);
+   EAPI Eina_Bool    elm_entry_cursor_prev(Evas_Object *obj);
+   EAPI Eina_Bool    elm_entry_cursor_up(Evas_Object *obj);
+   EAPI Eina_Bool    elm_entry_cursor_down(Evas_Object *obj);
+   EAPI void         elm_entry_cursor_begin_set(Evas_Object *obj);
+   EAPI void         elm_entry_cursor_end_set(Evas_Object *obj);
+   EAPI void         elm_entry_cursor_line_begin_set(Evas_Object *obj);
+   EAPI void         elm_entry_cursor_line_end_set(Evas_Object *obj);
+   EAPI void         elm_entry_cursor_selection_begin(Evas_Object *obj);
+   EAPI void         elm_entry_cursor_selection_end(Evas_Object *obj);
+   EAPI Eina_Bool    elm_entry_cursor_is_format_get(Evas_Object *obj);
+   EAPI Eina_Bool    elm_entry_cursor_is_visible_format_get(Evas_Object *obj);
+   EAPI const char  *elm_entry_cursor_content_get(Evas_Object *obj);
+   EAPI void         elm_entry_selection_cut(Evas_Object *obj);
+   EAPI void         elm_entry_selection_copy(Evas_Object *obj);
+   EAPI void         elm_entry_selection_paste(Evas_Object *obj);
    EAPI void         elm_entry_context_menu_clear(Evas_Object *obj);
    EAPI void         elm_entry_context_menu_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
    EAPI void         elm_entry_context_menu_disabled_set(Evas_Object *obj, Eina_Bool disabled);
@@ -527,6 +535,10 @@ extern "C" {
     * "cursor,changed" - the cursor changed position
     * "anchor,clicked" - achor called was clicked | event_info = Elm_Entry_Anchor_Info
     * "activated" - when the enter key is pressed (useful for single line)
+    * "press" - when finger/mouse is pressed down
+    * "clicked" - when finger/mouse is pressed and released (without a drag etc.)
+    * "clicked,double" - when finger/mouse is double-pressed
+    * "longpressed" - the entry has been longpressed
     */
 
    /* composite widgets - these basically put together basic widgets above

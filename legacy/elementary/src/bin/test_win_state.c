@@ -56,6 +56,22 @@ my_bt_38_rot_270(void *data, Evas_Object *obj, void *event_info)
    elm_win_rotation_set(win, 270);
 }
 
+static void
+my_win_move(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Coord x, y;
+   elm_win_screen_position_get(obj, &x, &y);
+   printf("MOVE - win geom: %4i %4i\n", x, y);
+}
+
+static void
+_win_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Evas_Coord w, h;
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   printf("RESIZE - win geom: %4ix%4i\n", w, h);
+}
+
 void
 test_win_state(void *data, Evas_Object *obj, void *event_info)
 {
@@ -65,6 +81,8 @@ test_win_state(void *data, Evas_Object *obj, void *event_info)
 
    win = elm_win_add(NULL, "window-state", ELM_WIN_BASIC);
    elm_win_title_set(win, "Window States");
+   evas_object_smart_callback_add(win, "moved", my_win_move, NULL);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_RESIZE, _win_resize, NULL);
    elm_win_autodel_set(win, 1);
 
    bg = elm_bg_add(win);

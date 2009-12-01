@@ -17,10 +17,14 @@ struct _Elm_Win
    Elm_Win_Keyboard_Mode kbdmode;
    Eina_Bool autodel : 1;
    int *autodel_clear, rot;
+   struct {
+      int x, y;
+   } screen;
 };
 
 static void _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _elm_win_obj_intercept_show(void *data, Evas_Object *obj);
+static void _elm_win_move(Ecore_Evas *ee);
 static void _elm_win_resize(Ecore_Evas *ee);
 static void _elm_win_delete_request(Ecore_Evas *ee);
 static void _elm_win_resize_job(void *data);
@@ -32,6 +36,21 @@ static void _elm_win_subobj_callback_del(void *data, Evas *e, Evas_Object *obj, 
 static void _elm_win_subobj_callback_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 static Eina_List *_elm_win_list = NULL;
+
+static void
+_elm_win_move(Ecore_Evas *ee)
+{
+   Evas_Object *obj = ecore_evas_object_associate_get(ee);
+   Elm_Win *win;
+   int x, y;
+   if (strcmp(elm_widget_type_get(obj), "win")) return;
+   win = elm_widget_data_get(obj);
+   if (!win) return;
+   ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
+   win->screen.x = x;
+   win->screen.y = y;
+   evas_object_smart_callback_call(win->win_obj, "moved", NULL);
+}
 
 static void
 _elm_win_resize(Ecore_Evas *ee)
@@ -387,6 +406,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    ecore_evas_callback_resize_set(win->ee, _elm_win_resize);
    ecore_evas_callback_focus_in_set(win->ee, _elm_win_focus_in);
    ecore_evas_callback_focus_out_set(win->ee, _elm_win_focus_out);
+   ecore_evas_callback_move_set(win->ee, _elm_win_move);
    evas_image_cache_set(win->evas, (_elm_config->image_cache * 1024));
    evas_font_cache_set(win->evas, (_elm_config->font_cache * 1024));
    EINA_LIST_FOREACH(_elm_config->font_dirs, l, fontpath)
@@ -786,6 +806,17 @@ elm_win_keyboard_win_set(Evas_Object *obj, Eina_Bool is_keyboard)
      ecore_x_e_virtual_keyboard_set
      (win->xwin, is_keyboard);
 #endif
+}
+
+EAPI void
+elm_win_screen_position_get(Evas_Object *obj, int *x, int *y)
+{
+   Elm_Win *win;
+   if (strcmp(elm_widget_type_get(obj), "win")) return;
+   win = elm_widget_data_get(obj);
+   if (!win) return;
+   if (x) *x = win->screen.x;
+   if (y) *y = win->screen.y;
 }
 
 typedef struct _Widget_Data Widget_Data;

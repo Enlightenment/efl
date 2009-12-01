@@ -271,6 +271,8 @@ static Ecore_Event_Handler *_elm_exit_handler = NULL;
 static Ecore_Event_Handler *_elm_event_property_change = NULL;
 #ifdef HAVE_ELEMENTARY_X
 static Ecore_X_Atom _elm_atom_enlightenment_scale = 0;
+static Ecore_X_Atom _elm_atom_enlightenment_finger_size = 0;
+static Ecore_X_Atom _elm_atom_enlightenment_theme = 0;
 #endif
 
 static int
@@ -302,6 +304,34 @@ _elm_window_property_change(void *data, int ev_type, void *ev)
 		  if (val > 0) _elm_config->scale = (double)val / 1000.0;
 		  if (pscale != _elm_config->scale) _elm_rescale();
 	       }
+	  }
+	else if (event->atom == _elm_atom_enlightenment_finger_size)
+	  {
+	     int val = 1000;
+
+	     if (ecore_x_window_prop_card32_get(event->win,
+						event->atom,
+						&val, 1) > 0)
+	       {
+		  int pfinger_size;
+
+		  pfinger_size = _elm_config->finger_size;
+		  _elm_config->finger_size = val;
+		  if (pfinger_size != _elm_config->finger_size) _elm_rescale();
+	       }
+	  }
+	else if (event->atom == _elm_atom_enlightenment_theme)
+	  {
+             char *val = NULL;
+             
+             val = ecore_x_window_prop_string_get(event->win,
+                                                  event->atom);
+             if (val)
+               {
+                  _elm_theme_parse(val);
+                  free(val);
+                  _elm_rescale();
+               }
 	  }
      }
    return 1;
@@ -518,7 +548,8 @@ elm_quicklaunch_init(int argc, char **argv)
    if (!_elm_lib_dir)
      _elm_lib_dir = eina_stringshare_add("/");
 
-   // FIXME: actually load config
+   // FIXME: actually load config from file - use eet. also for X properties,
+   // reduce to single x property with eet data encoded in it.
    _elm_config = ELM_NEW(Elm_Config);
    _elm_config->engine = ELM_SOFTWARE_X11;
    _elm_config->thumbscroll_enable = 1;
@@ -598,15 +629,12 @@ elm_quicklaunch_init(int argc, char **argv)
    else _elm_theme_parse("default");
 
    _elm_config->font_hinting = 2;
-   s= getenv("ELM_FONT_HINTING");
+   s = getenv("ELM_FONT_HINTING");
    if (s)
      {
-	if (!strcasecmp(s, "none"))
-	  _elm_config->font_hinting = 0;
-	else if (!strcasecmp(s, "auto"))
-	  _elm_config->font_hinting = 1;
-	else if (!strcasecmp(s, "bytecode"))
-	  _elm_config->font_hinting = 2;
+	if (!strcasecmp(s, "none"))          _elm_config->font_hinting = 0;
+	else if (!strcasecmp(s, "auto"))     _elm_config->font_hinting = 1;
+	else if (!strcasecmp(s, "bytecode")) _elm_config->font_hinting = 2;
      }
 
    s = getenv("ELM_FONT_PATH");
@@ -663,6 +691,9 @@ elm_quicklaunch_init(int argc, char **argv)
    ecore_animator_frametime_set(1.0 / _elm_config->fps);
    edje_frametime_set(1.0 / 60.0);
    edje_scale_set(_elm_config->scale);
+
+   s = getenv("ELM_MODULES");
+   if (s) _elm_module_parse(s);
 }
 
 EAPI void
@@ -684,7 +715,11 @@ elm_quicklaunch_sub_init(int argc, char **argv)
 	  }
 	if (!ecore_x_screen_is_composited(0))
 	  _elm_config->compositing = 0;
-	_elm_atom_enlightenment_scale = ecore_x_atom_get("ENLIGHTENMENT_SCALE");
+        
+	_elm_atom_enlightenment_scale       = ecore_x_atom_get("ENLIGHTENMENT_SCALE");
+	_elm_atom_enlightenment_finger_size = ecore_x_atom_get("ENLIGHTENMENT_FINGER_SIZE");
+	_elm_atom_enlightenment_theme       = ecore_x_atom_get("ENLIGHTENMENT_THEME");
+        
 	ecore_x_event_mask_set(ecore_x_window_root_first_get(),
 			       ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
 	_elm_event_property_change = ecore_event_handler_add
@@ -702,6 +737,30 @@ elm_quicklaunch_sub_init(int argc, char **argv)
 		       if (getenv("ELM_FINGER_SIZE"))
 			 _elm_config->finger_size = 40.0 * _elm_config->scale;
 		    }
+	       }
+	  }
+	if (!getenv("ELM_FINGER_SIZE"))
+	  {
+	     if (ecore_x_window_prop_card32_get(ecore_x_window_root_first_get(),
+						_elm_atom_enlightenment_finger_size,
+						&val, 1) > 0)
+	       {
+		  if (val > 0)
+		    {
+		       _elm_config->finger_size = val;
+		    }
+	       }
+	  }
+	if (!getenv("ELM_THEME"))
+	  {
+             char *s;
+             
+             s = ecore_x_window_prop_string_get(ecore_x_window_root_first_get(),
+                                                _elm_atom_enlightenment_theme);
+             if (s)
+	       {
+                  _elm_theme_parse(s);
+                  free(s);
 	       }
 	  }
 #endif

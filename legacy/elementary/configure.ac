@@ -273,6 +273,8 @@ src/Makefile
 src/lib/Makefile
 src/lib/Elementary.h
 src/bin/Makefile
+src/modules/Makefile
+src/modules/test_entry/Makefile
 data/Makefile
 data/themes/Makefile
 data/images/Makefile

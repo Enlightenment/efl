@@ -195,7 +195,7 @@ _elm_theme_parse(const char *theme)
    for (;;)
      {
 	if ((*pe == ':') || (*pe == 0))
-	  { // p -> pe == 'name/'
+	  { // p -> pe == 'name:'
 	     if (pe > p)
 	       {
 		  char *n = malloc(pe - p + 1);
