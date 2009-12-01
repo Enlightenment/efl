@@ -627,7 +627,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
  * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI int
-ecore_exe_send(Ecore_Exe * exe, void *data, int size)
+ecore_exe_send(Ecore_Exe * exe, const void *data, int size)
 {
    void               *buf;
 
