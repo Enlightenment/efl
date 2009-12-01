@@ -130,6 +130,16 @@ struct _Ethumb_Queue
    int *list;
 };
 
+struct _Ethumb_Slave
+{
+   Ecore_Exe *exe;
+   Ecore_Event_Handler *data_cb;
+   Ecore_Event_Handler *del_cb;
+   char *bufcmd; // buffer to read commands from slave
+   int scmd; // size of command to read
+   int pcmd; // position in the command buffer
+};
+
 struct _Ethumbd
 {
    E_DBus_Connection *conn;
@@ -139,11 +149,9 @@ struct _Ethumbd
    Ecore_Idler *idler;
    struct _Ethumb_Request *processing;
    struct _Ethumb_Queue queue;
-   int pipeout;
-   int pipein;
-   Ecore_Fd_Handler *fd_handler;
    double timeout;
    Ecore_Timer *timeout_timer;
+   struct _Ethumb_Slave slave;
 };
 
 struct _Ethumb_Object_Data
@@ -189,6 +197,7 @@ const Ecore_Getopt optdesc = {
 };
 
 static void _ethumb_dbus_generated_signal(struct _Ethumbd *ed, int *id, const char *thumb_path, const char *thumb_key, Eina_Bool success);
+static int _ethumbd_slave_spawn(struct _Ethumbd *ed);
 
 static int
 _ethumbd_timeout_cb(void *data)
@@ -270,75 +279,16 @@ _ethumb_dbus_inc_min_id(struct _Ethumb_Object *eobject)
 }
 
 int
-_ethumbd_read_safe(int fd, void *buf, ssize_t size)
+_ethumbd_write_safe(struct _Ethumbd *ed, const void *buf, ssize_t size)
 {
-   ssize_t todo;
-   char *p;
 
-   todo = size;
-   p = buf;
-
-   while (todo > 0)
+   if (!ed->slave.exe)
      {
-	ssize_t r;
-
-	r = read(fd, p, todo);
-	if (r > 0)
-	  {
-	     todo -= r;
-	     p += r;
-	  }
-	else if (r == 0)
-	  return 0;
-	else
-	  {
-	     if (errno == EINTR || errno == EAGAIN)
-	       continue;
-	     else
-	       {
-		  ERR("could not read from fd %d: %s",
-		      fd, strerror(errno));
-		  return 0;
-	       }
-	  }
+	ERR("slave process isn't running.\n");
+	return 0;
      }
 
-   return 1;
-}
-
-int
-_ethumbd_write_safe(int fd, const void *buf, ssize_t size)
-{
-   ssize_t todo;
-   const char *p;
-
-   todo = size;
-   p = buf;
-
-   while (todo > 0)
-     {
-	ssize_t r;
-
-	r = write(fd, p, todo);
-	if (r > 0)
-	  {
-	     todo -= r;
-	     p += r;
-	  }
-	else if (r == 0)
-	  return 0;
-	else
-	  {
-	     if (errno == EINTR || errno == EAGAIN)
-	       continue;
-	     else
-	       {
-		  ERR("could not write to fd %d: %s", fd, strerror(errno));
-		  return 0;
-	       }
-	  }
-     }
-
+   ecore_exe_send(ed->slave.exe, buf, size);
    return 1;
 }
 
@@ -346,20 +296,20 @@ static void
 _ethumbd_child_write_op_new(struct _Ethumbd *ed, int index)
 {
    int id = ETHUMBD_OP_NEW;
-   _ethumbd_write_safe(ed->pipeout, &id, sizeof(id));
-   _ethumbd_write_safe(ed->pipeout, &index, sizeof(index));
+   _ethumbd_write_safe(ed, &id, sizeof(id));
+   _ethumbd_write_safe(ed, &index, sizeof(index));
 }
 
 static void
 _ethumbd_child_write_op_del(struct _Ethumbd *ed, int index)
 {
    int id = ETHUMBD_OP_DEL;
-   _ethumbd_write_safe(ed->pipeout, &id, sizeof(id));
-   _ethumbd_write_safe(ed->pipeout, &index, sizeof(index));
+   _ethumbd_write_safe(ed, &id, sizeof(id));
+   _ethumbd_write_safe(ed, &index, sizeof(index));
 }
 
 static void
-_ethumbd_pipe_str_write(int fd, const char *str)
+_ethumbd_pipe_str_write(struct _Ethumbd *ed, const char *str)
 {
    int len;
 
@@ -368,39 +318,8 @@ _ethumbd_pipe_str_write(int fd, const char *str)
    else
      len = 0;
 
-   _ethumbd_write_safe(fd, &len, sizeof(len));
-   _ethumbd_write_safe(fd, str, len);
-}
-
-static int
-_ethumbd_pipe_str_read(int fd, char **str)
-{
-   int size;
-   int r;
-   char buf[PATH_MAX];
-
-   r = _ethumbd_read_safe(fd, &size, sizeof(size));
-   if (!r)
-     {
-	*str = NULL;
-	return 0;
-     }
-
-   if (!size)
-     {
-	*str = NULL;
-	return 1;
-     }
-
-   r = _ethumbd_read_safe(fd, buf, size);
-   if (!r)
-     {
-	*str = NULL;
-	return 0;
-     }
-
-   *str = strdup(buf);
-   return 1;
+   _ethumbd_write_safe(ed, &len, sizeof(len));
+   _ethumbd_write_safe(ed, str, len);
 }
 
 static void
@@ -408,13 +327,13 @@ _ethumbd_child_write_op_generate(struct _Ethumbd *ed, int index, const char *pat
 {
    int id = ETHUMBD_OP_GENERATE;
 
-   _ethumbd_write_safe(ed->pipeout, &id, sizeof(id));
-   _ethumbd_write_safe(ed->pipeout, &index, sizeof(index));
+   _ethumbd_write_safe(ed, &id, sizeof(id));
+   _ethumbd_write_safe(ed, &index, sizeof(index));
 
-   _ethumbd_pipe_str_write(ed->pipeout, path);
-   _ethumbd_pipe_str_write(ed->pipeout, key);
-   _ethumbd_pipe_str_write(ed->pipeout, thumb_path);
-   _ethumbd_pipe_str_write(ed->pipeout, thumb_key);
+   _ethumbd_pipe_str_write(ed, path);
+   _ethumbd_pipe_str_write(ed, key);
+   _ethumbd_pipe_str_write(ed, thumb_path);
+   _ethumbd_pipe_str_write(ed, thumb_key);
 }
 
 static void
@@ -435,47 +354,153 @@ _generated_cb(struct _Ethumbd *ed, Eina_Bool success, const char *thumb_path, co
    ed->processing = NULL;
 }
 
+static void
+_ethumbd_slave_cmd_ready(struct _Ethumbd *ed)
+{
+   char *bufcmd = ed->slave.bufcmd;
+   Eina_Bool *success;
+   char *thumb_path, *thumb_key;
+   int *size_path, *size_key;
+
+
+   success = (Eina_Bool *)bufcmd;
+   bufcmd += sizeof(*success);
+
+   size_path = (int *)bufcmd;
+   bufcmd += sizeof(*size_path);
+
+   write(STDERR_FILENO, bufcmd, ed->slave.scmd);
+
+   thumb_path = bufcmd;
+   bufcmd += *size_path;
+
+   size_key = (int *)bufcmd;
+   bufcmd += sizeof(*size_key);
+
+   thumb_key = bufcmd;
+
+   _generated_cb(ed, *success, thumb_path, thumb_key);
+
+   free(ed->slave.bufcmd);
+   ed->slave.bufcmd = NULL;
+   ed->slave.scmd = 0;
+}
+
 static int
-_ethumbd_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
+_ethumbd_slave_alloc_cmd(struct _Ethumbd *ed, int ssize, char *sdata)
+{
+   int *scmd;
+
+   if (ed->slave.bufcmd)
+     return 0;
+
+   scmd = (int *)sdata;
+   if (ssize < sizeof(*scmd)) {
+	ERR("could not read size of command.\n");
+	return 0;
+   }
+   ed->slave.bufcmd = malloc(*scmd);
+   ed->slave.scmd = *scmd;
+   ed->slave.pcmd = 0;
+
+   return sizeof(*scmd);
+}
+
+static int
+_ethumbd_slave_data_read_cb(void *data, int type, void *event)
 {
    struct _Ethumbd *ed = data;
-   Eina_Bool success;
-   int r;
-   char *thumb_path, *thumb_key;
+   Ecore_Exe_Event_Data *ev = event;
+   int ssize;
+   char *sdata;
 
-   if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_ERROR))
+   if (ev->exe != ed->slave.exe)
      {
-	ERR("error on pipein! child exiting...\n");
-	ed->fd_handler = NULL;
-	ecore_main_loop_quit();
+	ERR("PARENT ERROR: slave != ev->exe\n");
 	return 0;
      }
 
-   r = _ethumbd_read_safe(ed->pipein, &success, sizeof(success));
-   if (!r)
+   ssize = ev->size;
+   sdata = ev->data;
+
+   write(STDERR_FILENO, sdata, ssize);
+
+   while (ssize > 0)
      {
-	ERR("ethumbd child exited!\n");
-	ed->fd_handler = NULL;
-	return 0;
+	if (!ed->slave.bufcmd)
+	  {
+	     int n;
+	     n = _ethumbd_slave_alloc_cmd(ed, ssize, sdata);
+	     ssize -= n;
+	     sdata += n;
+	  }
+	else
+	  {
+	     char *bdata;
+	     int nbytes;
+	     bdata = ed->slave.bufcmd + ed->slave.pcmd;
+	     nbytes = ed->slave.scmd - ed->slave.pcmd;
+	     nbytes = ssize < nbytes ? ssize : nbytes;
+	     memcpy(bdata, sdata, nbytes);
+	     sdata += nbytes;
+	     ssize -= nbytes;
+	     ed->slave.pcmd += nbytes;
+
+	     if (ed->slave.pcmd == ed->slave.scmd)
+	       _ethumbd_slave_cmd_ready(ed);
+	  }
      }
-
-   r = _ethumbd_pipe_str_read(ed->pipein, &thumb_path);
-   r = _ethumbd_pipe_str_read(ed->pipein, &thumb_key);
-   _generated_cb(ed, success, thumb_path, thumb_key);
-
-   free(thumb_path);
-   free(thumb_key);
 
    return 1;
 }
 
+static int
+_ethumbd_slave_del_cb(void *data, int type, void *event)
+{
+   struct _Ethumbd *ed = data;
+   Ecore_Exe_Event_Del *ev = event;
+   int i;
+
+   if (ev->exe != ed->slave.exe)
+     return 1;
+
+   if (ev->exited)
+     ERR("slave exited with code: %d\n", ev->exit_code);
+   else if (ev->signalled)
+     ERR("slave exited by signal: %d\n", ev->exit_signal);
+
+   if (!ed->processing)
+     goto end;
+
+   i = ed->queue.current;
+   ERR("failed to generate thumbnail for: \"%s:%s\"\n",
+       ed->processing->file, ed->processing->key);
+
+   if (ed->queue.table[i].used)
+     _ethumb_dbus_generated_signal
+       (ed, &ed->processing->id, NULL, NULL, EINA_FALSE);
+   eina_stringshare_del(ed->processing->file);
+   eina_stringshare_del(ed->processing->key);
+   eina_stringshare_del(ed->processing->thumb);
+   eina_stringshare_del(ed->processing->thumb_key);
+   free(ed->processing);
+   ed->processing = NULL;
+
+end:
+   ed->slave.exe = NULL;
+   if (ed->slave.bufcmd)
+     free(ed->slave.bufcmd);
+
+   return _ethumbd_slave_spawn(ed);
+}
+
 static void
-_ethumbd_pipe_write_setup(int fd, int type, const void *data)
+_ethumbd_pipe_write_setup(struct _Ethumbd *ed, int type, const void *data)
 {
    const int *i_value;
    const float *f_value;
 
-   _ethumbd_write_safe(fd, &type, sizeof(type));
+   _ethumbd_write_safe(ed, &type, sizeof(type));
 
    switch (type)
      {
@@ -490,7 +515,7 @@ _ethumbd_pipe_write_setup(int fd, int type, const void *data)
       case ETHUMBD_VIDEO_NTIMES:
       case ETHUMBD_VIDEO_FPS:
 	 i_value = data;
-	 _ethumbd_write_safe(fd, i_value, sizeof(*i_value));
+	 _ethumbd_write_safe(ed, i_value, sizeof(*i_value));
 	 break;
       case ETHUMBD_CROP_X:
       case ETHUMBD_CROP_Y:
@@ -498,14 +523,14 @@ _ethumbd_pipe_write_setup(int fd, int type, const void *data)
       case ETHUMBD_VIDEO_START:
       case ETHUMBD_VIDEO_INTERVAL:
 	 f_value = data;
-	 _ethumbd_write_safe(fd, f_value, sizeof(*f_value));
+	 _ethumbd_write_safe(ed, f_value, sizeof(*f_value));
 	 break;
       case ETHUMBD_DIRECTORY:
       case ETHUMBD_CATEGORY:
       case ETHUMBD_FRAME_FILE:
       case ETHUMBD_FRAME_GROUP:
       case ETHUMBD_FRAME_SWALLOW:
-	 _ethumbd_pipe_str_write(fd, data);
+	 _ethumbd_pipe_str_write(ed, data);
 	 break;
       case ETHUMBD_SETUP_FINISHED:
 	 break;
@@ -519,58 +544,57 @@ _process_setup(struct _Ethumbd *ed)
 {
    int op_id = ETHUMBD_OP_SETUP;
    int index = ed->queue.current;
-   int fd = ed->pipeout;
 
    struct _Ethumb_Setup *setup = &ed->processing->setup;
 
-   _ethumbd_write_safe(ed->pipeout, &op_id, sizeof(op_id));
-   _ethumbd_write_safe(ed->pipeout, &index, sizeof(index));
+   _ethumbd_write_safe(ed, &op_id, sizeof(op_id));
+   _ethumbd_write_safe(ed, &index, sizeof(index));
 
    if (setup->flags.fdo)
-     _ethumbd_pipe_write_setup(fd, ETHUMBD_FDO, &setup->fdo);
+     _ethumbd_pipe_write_setup(ed, ETHUMBD_FDO, &setup->fdo);
    if (setup->flags.size)
      {
-	_ethumbd_pipe_write_setup(fd, ETHUMBD_SIZE_W, &setup->tw);
-	_ethumbd_pipe_write_setup(fd, ETHUMBD_SIZE_H, &setup->th);
+	_ethumbd_pipe_write_setup(ed, ETHUMBD_SIZE_W, &setup->tw);
+	_ethumbd_pipe_write_setup(ed, ETHUMBD_SIZE_H, &setup->th);
      }
    if (setup->flags.format)
-     _ethumbd_pipe_write_setup(fd, ETHUMBD_FORMAT, &setup->format);
+     _ethumbd_pipe_write_setup(ed, ETHUMBD_FORMAT, &setup->format);
    if (setup->flags.aspect)
-     _ethumbd_pipe_write_setup(fd, ETHUMBD_ASPECT, &setup->aspect);
+     _ethumbd_pipe_write_setup(ed, ETHUMBD_ASPECT, &setup->aspect);
    if (setup->flags.crop)
      {
-	_ethumbd_pipe_write_setup(fd, ETHUMBD_CROP_X, &setup->cx);
-	_ethumbd_pipe_write_setup(fd, ETHUMBD_CROP_Y, &setup->cy);
+	_ethumbd_pipe_write_setup(ed, ETHUMBD_CROP_X, &setup->cx);
+	_ethumbd_pipe_write_setup(ed, ETHUMBD_CROP_Y, &setup->cy);
      }
    if (setup->flags.quality)
-     _ethumbd_pipe_write_setup(fd, ETHUMBD_QUALITY, &setup->quality);
+     _ethumbd_pipe_write_setup(ed, ETHUMBD_QUALITY, &setup->quality);
    if (setup->flags.compress)
-     _ethumbd_pipe_write_setup(fd, ETHUMBD_COMPRESS, &setup->compress);
+     _ethumbd_pipe_write_setup(ed, ETHUMBD_COMPRESS, &setup->compress);
    if (setup->flags.directory)
-     _ethumbd_pipe_write_setup(fd, ETHUMBD_DIRECTORY, setup->directory);
+     _ethumbd_pipe_write_setup(ed, ETHUMBD_DIRECTORY, setup->directory);
    if (setup->flags.category)
-     _ethumbd_pipe_write_setup(fd, ETHUMBD_CATEGORY, setup->category);
+     _ethumbd_pipe_write_setup(ed, ETHUMBD_CATEGORY, setup->category);
    if (setup->flags.frame)
      {
-	_ethumbd_pipe_write_setup(fd, ETHUMBD_FRAME_FILE, setup->theme_file);
-	_ethumbd_pipe_write_setup(fd, ETHUMBD_FRAME_GROUP, setup->group);
-	_ethumbd_pipe_write_setup(fd, ETHUMBD_FRAME_SWALLOW, setup->swallow);
+	_ethumbd_pipe_write_setup(ed, ETHUMBD_FRAME_FILE, setup->theme_file);
+	_ethumbd_pipe_write_setup(ed, ETHUMBD_FRAME_GROUP, setup->group);
+	_ethumbd_pipe_write_setup(ed, ETHUMBD_FRAME_SWALLOW, setup->swallow);
      }
    if (setup->flags.video_time)
-     _ethumbd_pipe_write_setup(fd, ETHUMBD_VIDEO_TIME, &setup->video_time);
+     _ethumbd_pipe_write_setup(ed, ETHUMBD_VIDEO_TIME, &setup->video_time);
    if (setup->flags.video_start)
-     _ethumbd_pipe_write_setup(fd, ETHUMBD_VIDEO_START, &setup->video_start);
+     _ethumbd_pipe_write_setup(ed, ETHUMBD_VIDEO_START, &setup->video_start);
    if (setup->flags.video_interval)
-     _ethumbd_pipe_write_setup(fd, ETHUMBD_VIDEO_INTERVAL,
+     _ethumbd_pipe_write_setup(ed, ETHUMBD_VIDEO_INTERVAL,
 			       &setup->video_interval);
    if (setup->flags.video_ntimes)
-     _ethumbd_pipe_write_setup(fd, ETHUMBD_VIDEO_NTIMES, &setup->video_ntimes);
+     _ethumbd_pipe_write_setup(ed, ETHUMBD_VIDEO_NTIMES, &setup->video_ntimes);
    if (setup->flags.video_fps)
-     _ethumbd_pipe_write_setup(fd, ETHUMBD_VIDEO_FPS, &setup->video_fps);
+     _ethumbd_pipe_write_setup(ed, ETHUMBD_VIDEO_FPS, &setup->video_fps);
    if (setup->flags.document_page)
-     _ethumbd_pipe_write_setup(fd, ETHUMBD_DOCUMENT_PAGE,
+     _ethumbd_pipe_write_setup(ed, ETHUMBD_DOCUMENT_PAGE,
 			       &setup->document_page);
-   _ethumbd_pipe_write_setup(fd, ETHUMBD_SETUP_FINISHED, NULL);
+   _ethumbd_pipe_write_setup(ed, ETHUMBD_SETUP_FINISHED, NULL);
 
 
    if (setup->directory) eina_stringshare_del(setup->directory);
@@ -1706,49 +1730,26 @@ _ethumb_dbus_finish(struct _Ethumbd *ed)
 }
 
 static int
-_ethumbd_spawn(struct _Ethumbd *ed)
+_ethumbd_slave_spawn(struct _Ethumbd *ed)
 {
-   int pparent[2]; // parent writes here
-   int pchild[2]; // child writes here
-   int pid;
+   ed->slave.data_cb = ecore_event_handler_add(
+      ECORE_EXE_EVENT_DATA, _ethumbd_slave_data_read_cb, ed);
+   ed->slave.del_cb = ecore_event_handler_add(
+      ECORE_EXE_EVENT_DEL, _ethumbd_slave_del_cb, ed);
 
-   if (pipe(pparent) == -1)
+   ed->slave.bufcmd = NULL;
+   ed->slave.scmd = 0;
+
+   ed->slave.exe = ecore_exe_pipe_run(
+      ETHUMB_LIBEXEC_DIR"/ethumbd_slave",
+      ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_WRITE, ed);
+   if (!ed->slave.exe)
      {
-	ERR("could not create parent pipe.\n");
+	ERR("could not create slave.\n");
 	return 0;
      }
 
-   if (pipe(pchild) == -1)
-     {
-	ERR("could not create child pipe.\n");
-	return 0;
-     }
-
-   pid = fork();
-   if (pid == -1)
-     {
-	ERR("fork error.\n");
-	return 0;
-     }
-
-   if (pid == 0)
-     {
-	close(pparent[1]);
-	close(pchild[0]);
-	ethumbd_child_start(pparent[0], pchild[1]);
-	return 2;
-     }
-   else
-     {
-	close(pparent[0]);
-	close(pchild[1]);
-	ed->pipeout = pparent[1];
-	ed->pipein = pchild[0];
-	ed->fd_handler = ecore_main_fd_handler_add
-	  (ed->pipein, ECORE_FD_READ | ECORE_FD_ERROR,
-	   _ethumbd_fd_handler, ed, NULL, NULL);
-	return 1;
-     }
+   return 1;
 }
 
 int
@@ -1767,7 +1768,7 @@ main(int argc, char *argv[])
 
    ethumb_init();
 
-   child = _ethumbd_spawn(&ed);
+   child = _ethumbd_slave_spawn(&ed);
    if (!child)
      {
 	exit_value = -6;
@@ -1831,6 +1832,8 @@ main(int argc, char *argv[])
  finish_edbus:
    e_dbus_shutdown();
  finish:
+   if (ed.slave.exe)
+     ecore_exe_quit(ed.slave.exe);
    ethumb_shutdown();
    eina_init();
    ecore_shutdown();

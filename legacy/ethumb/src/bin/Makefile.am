@@ -19,15 +19,23 @@ ethumb_DEPENDENCIES = $(top_builddir)/config.h
 
 if USE_MODULE_ETHUMBD
 
-AM_CPPFLAGS += @EDBUS_CFLAGS@
+AM_CPPFLAGS += @EDBUS_CFLAGS@ \
+	-DETHUMB_LIBEXEC_DIR=\"$(libexecdir)\"
 bin_PROGRAMS += ethumbd ethumbd_client
 noinst_HEADERS += ethumbd_private.h
 
-ethumbd_SOURCES = ethumbd.c ethumbd_child.c
+libexec_PROGRAMS = ethumbd_slave
+
+ethumbd_SOURCES = ethumbd.c
 ethumbd_LDADD = \
 	@EINA_LIBS@ @ECORE_LIBS@ @EDBUS_LIBS@ \
 	$(top_builddir)/src/lib/libethumb.la
 ethumbd_DEPENDENCIES = $(top_builddir)/config.h
+
+ethumbd_slave_SOURCES = ethumbd_child.c
+ethumbd_slave_LDADD = \
+	@EINA_LIBS@ @ECORE_LIBS@ @EDBUS_LIBS@ \
+	$(top_builddir)/src/lib/libethumb.la
 
 ethumbd_client_SOURCES = ethumbd_client.c
 ethumbd_client_LDADD = \
