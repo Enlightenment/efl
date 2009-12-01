@@ -147,6 +147,36 @@ extern "C" {
 	  ELM_WIN_KEYBOARD_PASSWORD
      } Elm_Win_Keyboard_Mode;
 
+  /**
+   * Emitted when policy value changed.
+   */
+  EAPI extern int ELM_EVENT_POLICY_CHANGED;
+  typedef struct _Elm_Event_Policy_Changed
+    {
+       unsigned int policy;
+       int new_value;
+       int old_value;
+    } Elm_Event_Policy_Changed;
+
+  /**
+   * Policy identifiers.
+   *
+   * @see elm_policy_set()
+   */
+  typedef enum _Elm_Policy
+    {
+      ELM_POLICY_QUIT, /**< when should quit application automatically.
+			* @see Elm_Policy_Quit.
+			*/
+      ELM_POLICY_LAST
+    } Elm_Policy;
+
+  typedef enum _Elm_Policy_Quit
+    {
+      ELM_POLICY_QUIT_NONE = 0, /**< never quit application automatically */
+      ELM_POLICY_QUIT_LAST_WINDOW_CLOSED /**< quit when last window is closed */
+    } Elm_Policy_Quit;
+
 #ifndef ELM_LIB_QUICKLAUNCH
 #define ELM_MAIN() int main(int argc, char **argv) {elm_init(argc, argv); return elm_main(argc, argv);}
 #else
@@ -173,6 +203,9 @@ extern "C" {
 
    EAPI void         elm_need_efreet(void);
    EAPI void         elm_need_e_dbus(void);
+
+   EAPI Eina_Bool    elm_policy_set(unsigned int policy, int value);
+   EAPI int          elm_policy_get(unsigned int policy);
 
    EAPI void         elm_object_scale_set(Evas_Object *obj, double scale);
    EAPI double       elm_object_scale_get(const Evas_Object *obj);
