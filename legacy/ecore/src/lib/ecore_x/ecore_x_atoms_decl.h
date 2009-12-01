@@ -219,3 +219,6 @@ EAPI Ecore_X_Atom  ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_PHONE_NUMBER= 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_HEX         = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_TERMINAL    = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_PASSWORD    = 0;
+
+/* atom to determine if an app is illume compliant */
+EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_CONFORMANT            = 0;
