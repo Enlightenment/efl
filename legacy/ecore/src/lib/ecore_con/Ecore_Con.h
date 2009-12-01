@@ -224,9 +224,9 @@ extern "C" {
    EAPI void              ecore_con_url_time(Ecore_Con_Url *url_con, Ecore_Con_Url_Time condition, time_t tm);
 
 #ifdef HAVE_NETDB_H
-   EAPI int               ecore_con_dns_lookup(const char *name,
-					       void (*done_cb)(void *data, struct hostent *hostent),
-					       void *data);
+   EINA_DEPRECATED EAPI int ecore_con_dns_lookup(const char *name,
+						 void (*done_cb)(void *data, struct hostent *hostent),
+						 void *data);
    EAPI int		  ecore_con_info_get(Ecore_Con_Server *svr, Ecore_Con_Info_Cb done_cb, void *data, struct addrinfo *hints);
 #endif
 
