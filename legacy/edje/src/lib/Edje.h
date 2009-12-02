@@ -326,8 +326,8 @@ struct _Edje_External_Type
 
   const char *(*label_get) (void *data);
   const char *(*description_get) (void *data);
-  Evas_Object *(*icon_get) (void *data, Evas *e);
-  Evas_Object *(*preview_get) (void *data, Evas *e);
+  Evas_Object *(*icon_add) (void *data, Evas *e);
+  Evas_Object *(*preview_add) (void *data, Evas *e);
 
   Edje_External_Param_Info *parameters_info;
 
