@@ -311,6 +311,12 @@ typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
 
 struct _Edje_External_Type
 {
+#define EDJE_EXTERNAL_TYPE_ABI_VERSION (1)
+  unsigned int abi_version; /**< always use:
+			     *  - #EDJE_EXTERNAL_TYPE_ABI_VERSION to declare.
+			     *  - edje_external_type_abi_version_get() to check.
+			     */
+
   const char *module;
   Evas_Object *(*add) (void *data, Evas *evas, Evas_Object *parent, const Eina_List *params);
   void (*state_set) (void *data, Evas_Object *obj, const void *from_params, const void *to_params, float pos);
@@ -318,8 +324,10 @@ struct _Edje_External_Type
   void *(*params_parse) (void *data, Evas_Object *obj, const Eina_List *params);
   void (*params_free) (void *params);
 
-  Evas_Object *(*icon_get) (void *data, Evas *e);
   const char *(*label_get) (void *data);
+  const char *(*description_get) (void *data);
+  Evas_Object *(*icon_get) (void *data, Evas *e);
+  Evas_Object *(*preview_get) (void *data, Evas *e);
 
   Edje_External_Param_Info *parameters_info;
 
@@ -494,6 +502,9 @@ extern "C" {
 
   EAPI void      edje_external_type_array_register(const Edje_External_Type_Info *array);
   EAPI void      edje_external_type_array_unregister(const Edje_External_Type_Info *array);
+
+  EAPI unsigned int edje_external_type_abi_version_get(void) EINA_CONST;
+
 
   EAPI Eina_Iterator *edje_external_iterator_get(void);
   EAPI Edje_External_Param *edje_external_param_find(const Eina_List *params, const char *key);

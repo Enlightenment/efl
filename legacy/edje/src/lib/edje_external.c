@@ -22,6 +22,20 @@ static int init_count = 0;
 EAPI Eina_Bool
 edje_external_type_register(const char *type_name, const Edje_External_Type *type_info)
 {
+   if (!type_name)
+     return EINA_FALSE;
+   if (!type_info)
+     return EINA_FALSE;
+
+   if (type_info->abi_version != EDJE_EXTERNAL_TYPE_ABI_VERSION)
+     {
+	printf("EDJE ERROR: external type '%s' (%p) has incorrect abi version. "
+	       "got %#x where %#x was expected.\n",
+	       type_name, type_info,
+	       type_info->abi_version, EDJE_EXTERNAL_TYPE_ABI_VERSION);
+	return EINA_FALSE;
+     }
+
    if (eina_hash_find(type_registry, type_name))
      {
 	printf("EDJE ERROR: external type '%s' already registered\n", type_name);
@@ -44,6 +58,8 @@ edje_external_type_register(const char *type_name, const Edje_External_Type *typ
 EAPI Eina_Bool
 edje_external_type_unregister(const char *type_name)
 {
+   if (!type_name)
+     return EINA_FALSE;
    return eina_hash_del_by_key(type_registry, type_name);
 }
 
@@ -78,7 +94,18 @@ edje_external_type_array_register(const Edje_External_Type_Info *array)
      return;
 
    for (itr = array; itr->name; itr++)
-     eina_hash_direct_add(type_registry, itr->name, itr->info);
+     {
+	if (itr->info->abi_version != EDJE_EXTERNAL_TYPE_ABI_VERSION)
+	  {
+	     printf("EDJE ERROR: external type '%s' (%p) has incorrect abi "
+		    "version. got %#x where %#x was expected.\n",
+		    itr->name, itr->info,
+		    itr->info->abi_version, EDJE_EXTERNAL_TYPE_ABI_VERSION);
+	     continue;
+	  }
+
+	eina_hash_direct_add(type_registry, itr->name, itr->info);
+     }
 }
 
 /**
@@ -99,6 +126,30 @@ edje_external_type_array_unregister(const Edje_External_Type_Info *array)
 
    for (itr = array; itr->name; itr++)
      eina_hash_del(type_registry, itr->name, itr->info);
+}
+
+/**
+ * Return the current ABI version for Edje_External_Type structure.
+ *
+ * Always check this number before accessing Edje_External_Type in
+ * your own software. If the number is not the same, your software may
+ * access invalid memory and crash, or just get garbage values.
+ *
+ * @warning @b NEVER, EVER define your own Edje_External_Type using the
+ *          return of this function as it will change as Edje library
+ *          (libedje.so) changes, but your type definition will
+ *          not. Instead, use #EDJE_EXTERNAL_TYPE_ABI_VERSION.
+ *
+ * Summary:
+ *   - use edje_external_type_abi_version_get() to check.
+ *   - use #EDJE_EXTERNAL_TYPE_ABI_VERSION to define/declare.
+ *
+ * @return version this edje library was compiled.
+ */
+EAPI unsigned int
+edje_external_type_abi_version_get(void)
+{
+   return EDJE_EXTERNAL_TYPE_ABI_VERSION;
 }
 
 EAPI Eina_Iterator *
