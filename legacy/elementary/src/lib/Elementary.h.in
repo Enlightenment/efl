@@ -1112,15 +1112,51 @@ extern "C" {
 
    typedef enum _Elm_Panel_Orient
      {
-	 ELM_PANEL_ORIENT_TOP,
-	 ELM_PANEL_ORIENT_BOTTOM,
-	 ELM_PANEL_ORIENT_LEFT,
-	 ELM_PANEL_ORIENT_RIGHT,
+        ELM_PANEL_ORIENT_TOP,
+          ELM_PANEL_ORIENT_BOTTOM,
+          ELM_PANEL_ORIENT_LEFT,
+          ELM_PANEL_ORIENT_RIGHT,
      } Elm_Panel_Orient;
-     EAPI Evas_Object *elm_panel_add(Evas_Object *parent);
-     EAPI void         elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient);
-     EAPI void         elm_panel_content_set(Evas_Object *obj, Evas_Object *content);
+   EAPI Evas_Object *elm_panel_add(Evas_Object *parent);
+   EAPI void         elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient);
+   EAPI void         elm_panel_content_set(Evas_Object *obj, Evas_Object *content);
 
+#if 0 // working on it
+   // flip types:
+   //  rotate around y axis 180 degrees
+   //  rotate around x axis 180 degrees
+   // 
+   // properties
+   //  perspective focal dist, x, y
+   // 
+   // FIXME:
+   // custom value
+   //  map 1/0
+   // 
+   //  center x, y, z
+   //  angle x, y, z
+   // 
+   //  light 1/0
+   //  light rgb
+   //  light ambient rgb
+   //  light x, y, z
+   typedef enum _Elm_Flip_Mode
+     {
+        ELM_FLIP_ROTATE_Y CENTER_AXIS,
+          ELM_FLIP_ROTATE_X_CENTER_AXIS
+     } Elm_Flip_Mode;
+   
+   EAPI Evas_Object *elm_flip_add(Evas_Object *parent);
+   EAPI void         elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content);
+   EAPI void         elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content);
+   EAPI Eina_Bool    elm_flip_front_get(Evas_Object *obj);
+   EAPI void         elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc, Evas_Coord x, Evas_Coord y);
+   EAPI void         elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode);
+   /* smart callbacks called:
+    * "animate,done" - when a flip animation is finished
+    */
+#endif
+   
 #ifdef __cplusplus
 }
 #endif

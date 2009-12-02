@@ -1,7 +1,8 @@
 # get rid of that stupid cache mechanism
 rm -f config.cache
 
-AC_INIT([elementary], [0.5.1.0], [enlightenment-devel@lists.sourceforge.net])
+AC_INIT([elementary], [0.6.0.063], [enlightenment-devel@lists.sourceforge.net])
+release="ver-svn-04"
 AC_PREREQ(2.52)
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
@@ -34,7 +35,6 @@ SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
-release="ver-pre-svn-04"
 case "$host_os" in
   mingw32ce* | cegcc*)
     MODULE_ARCH="$host_os-$host_cpu"

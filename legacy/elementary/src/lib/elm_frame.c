@@ -26,7 +26,6 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   elm_frame_content_set(obj, NULL);
    free(wd);
 }
 
