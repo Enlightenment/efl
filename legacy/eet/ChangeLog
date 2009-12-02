@@ -261,3 +261,8 @@
 
 	* Add check on libgcrypt library in configure. Needed when GNUtls
 	support is enabled.
+
+2009-12-02  Carsten Haitzler (The Rasterman)
+
+        * Release eet 1.2.3
+

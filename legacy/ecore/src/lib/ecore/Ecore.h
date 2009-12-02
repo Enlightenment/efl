@@ -307,7 +307,7 @@ extern "C" {
    EAPI void         ecore_pipe_read_close(Ecore_Pipe *p);
 
    EAPI Ecore_Thread *ecore_thread_run(void (*func_heavy)(void *data), void (*func_end)(void *data), void (*func_cancel)(void *data), const void *data);
-   EAPI Eina_Bool ecore_thread_cancel(Ecore_Thread *thread);
+   EAPI Eina_Bool     ecore_thread_cancel(Ecore_Thread *thread);
 
    EAPI double ecore_time_get(void);
    EAPI double ecore_loop_time_get(void);

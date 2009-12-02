@@ -1,7 +1,8 @@
 # get rid of that stupid cache mechanism
 rm -f config.cache
 
-AC_INIT([evas], [0.9.9.062], [enlightenment-devel@lists.sourceforge.net])
+AC_INIT([evas], [0.9.9.063], [enlightenment-devel@lists.sourceforge.net])
+release="ver-svn-04"
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
@@ -27,7 +28,6 @@ AC_SUBST(version_info)
 
 ### Needed information
 
-release="ver-pre-svn-04"
 case "$host_os" in
    mingw32ce* | cegcc*)
       MODULE_ARCH="$host_os-$host_cpu"

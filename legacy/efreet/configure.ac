@@ -1,7 +1,9 @@
+# get rid of that stupid cache mechanism
 rm -f config.cache
 
-AC_INIT([efreet], [0.5.0.062], [enlightenment-devel@lists.sourceforge.net])
-AC_PREREQ([2.52])
+AC_INIT([efreet], [0.5.0.063], [enlightenment-devel@lists.sourceforge.net])
+release="ver-svn-04"
+# get rid of that stupid cache mechanismAC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_BUILD
@@ -28,7 +30,6 @@ VMIN=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $2);}'`
 VMIC=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $3);}'`
 SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
-release="ver-pre-svn-04"
 efreet_release_info="-release $release"
 efreet_mime_release_info="-release $release"
 efreet_trash_release_info="-release $release"
