@@ -31,6 +31,7 @@ Font_List *fontlist = NULL;
 
 int line = 0;
 int build_sh = 1;
+int new_dir = 1;
 
 int        decomp(void);
 void       output(void);
@@ -42,7 +43,7 @@ main_help(void)
 {
    printf
      ("Usage:\n"
-      "\t%s input_file.edj [-main-out file.edc] [-no-build-sh]\n"
+      "\t%s input_file.edj [-main-out file.edc] [-no-build-sh] [-current-dir]\n"
       "\n"
       ,progname);
 }
@@ -69,6 +70,8 @@ main(int argc, char **argv)
 	  }
 	else if (!strcmp(argv[i], "-no-build-sh"))
 	  build_sh = 0;
+	else if (!strcmp(argv[i], "-current-dir"))
+	  new_dir = 0;
      }
    if (!file_in)
      {
@@ -141,15 +144,20 @@ output(void)
    SrcFile *sf;
    char *outdir, *p;
 
-   p = strrchr(file_in, '/');
-   if (p)
-     outdir = strdup(p + 1);
+   if (!new_dir)
+     outdir = strdup(".");
    else
-     outdir = strdup(file_in);
-   p = strrchr(outdir, '.');
-   if (p) *p = 0;
+     {
+	p = strrchr(file_in, '/');
+	if (p)
+	  outdir = strdup(p + 1);
+	else
+	  outdir = strdup(file_in);
+	p = strrchr(outdir, '.');
+	if (p) *p = 0;
+	ecore_file_mkpath(outdir);
+     }
 
-   ecore_file_mkpath(outdir);
 
    ef = eet_open(file_in, EET_FILE_MODE_READ);
 
