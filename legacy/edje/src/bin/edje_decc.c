@@ -30,6 +30,7 @@ SrcFile_List *srcfiles = NULL;
 Font_List *fontlist = NULL;
 
 int line = 0;
+int build_sh = 1;
 
 int        decomp(void);
 void       output(void);
@@ -41,7 +42,7 @@ main_help(void)
 {
    printf
      ("Usage:\n"
-      "\t%s input_file.edj [-main-out file.edc]\n"
+      "\t%s input_file.edj [-main-out file.edc] [-no-build-sh]\n"
       "\n"
       ,progname);
 }
@@ -66,6 +67,8 @@ main(int argc, char **argv)
 	     i++;
 	     file_out = argv[i];
 	  }
+	else if (!strcmp(argv[i], "-no-build-sh"))
+	  build_sh = 0;
      }
    if (!file_in)
      {
@@ -292,17 +295,25 @@ output(void)
 	FILE *f;
 	SrcFile *sf = eina_list_data_get(srcfiles->list);
 
-	snprintf(out, sizeof(out), "%s/build.sh", outdir);
-	printf("Output Build Script: %s\n", out);
-	if (strstr(out, "../"))
+
+	if (build_sh)
 	  {
-	     printf("ERROR: potential security violation. attempt to write in parent dir.\n");
-	     exit (-1);
+	     snprintf(out, sizeof(out), "%s/build.sh", outdir);
+	     printf("Output Build Script: %s\n", out);
+	     if (strstr(out, "../"))
+	       {
+		  printf("ERROR: potential security violation. attempt to write in parent dir.\n");
+		  exit (-1);
+	       }
+	     f = fopen(out, "wb");
+	     fprintf(f, "#!/bin/sh\n");
+	     fprintf(f, "%s $@ -id . -fd . %s -o %s.edj\n", edje_file->compiler, sf->name, outdir);
+	     fclose(f);
+
+	     printf("\n*** CAUTION ***\n"
+		    "Please check the build script for anything malicious "
+		    "before running it!\n\n");
 	  }
-	f = fopen(out, "wb");
-	fprintf(f, "#!/bin/sh\n");
-	fprintf(f, "%s $@ -id . -fd . %s -o %s.edj\n", edje_file->compiler, sf->name, outdir);
-	fclose(f);
 
 	if (file_out)
 	  {
@@ -312,9 +323,6 @@ output(void)
 
 	chmod(out, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP);
 
-	printf("\n*** CAUTION ***\n"
-	      "Please check the build script for anything malicious "
-	      "before running it!\n\n");
      }
    eet_close(ef);
 }
