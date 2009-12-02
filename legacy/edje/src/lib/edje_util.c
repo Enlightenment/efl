@@ -2067,7 +2067,12 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
 
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return;
-   if (rp->part->type != EDJE_PART_TYPE_SWALLOW) return;
+   if (rp->part->type != EDJE_PART_TYPE_SWALLOW)
+     {
+	fprintf(stderr, "ERROR: cannot unswallow part %s: not swallow type!\n",
+		rp->part->name);
+	return;
+     }
    _edje_real_part_swallow(rp, obj_swallow);
 }
 
@@ -2407,7 +2412,15 @@ edje_object_part_unswallow(Evas_Object *obj __UNUSED__, Evas_Object *obj_swallow
    if (!obj_swallow) return;
 
    rp = (Edje_Real_Part *)evas_object_data_get(obj_swallow, "\377 edje.swallowing_part");
-   if (rp && rp->swallowed_object == obj_swallow)
+   if (!rp)
+     return;
+   if (rp->part->type != EDJE_PART_TYPE_SWALLOW)
+     {
+	fprintf(stderr, "ERROR: cannot unswallow part %s: not swallow type!\n",
+		rp->part->name);
+	return;
+     }
+   if (rp->swallowed_object == obj_swallow)
      {
 	evas_object_smart_member_del(rp->swallowed_object);
 	evas_object_event_callback_del_full(rp->swallowed_object,
