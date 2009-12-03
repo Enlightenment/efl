@@ -84,6 +84,7 @@ END_TEST
 START_TEST(eina_log_domains_slot_reuse)
 {
    fail_if(!eina_init());
+   fail_if(!eina_threads_init());
 
    // Create 9 domains
    int idx[9];
@@ -112,6 +113,7 @@ START_TEST(eina_log_domains_slot_reuse)
    // Check for slot reuse
    fail_if(new != removed);
 
+   eina_threads_shutdown();
    eina_shutdown();
 }
 END_TEST
@@ -119,6 +121,8 @@ END_TEST
 START_TEST(eina_log_level_indexes)
 {
    fail_if(!eina_init());
+   fail_if(!eina_threads_init());
+   fail_if(!eina_threads_init());
 
    int d = eina_log_domain_register("Levels", EINA_COLOR_GREEN);
    fail_if(d < 0);
@@ -129,6 +133,8 @@ START_TEST(eina_log_level_indexes)
    // Displayed only if user sets level 6 or higher
    EINA_LOG(d, 6, "Higher level debug\n");
 
+   eina_threads_shutdown();
+   eina_threads_shutdown();
    eina_shutdown();
 }
 END_TEST

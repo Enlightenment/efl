@@ -151,9 +151,49 @@ START_TEST(eina_hash_double_item)
 }
 END_TEST
 
+START_TEST(eina_hash_all_int)
+{
+   Eina_Hash *hash;
+   int64_t j[] = { 4321312301243122, 6, 7 };
+   int i[] = { 42, 6, 7 };
+   int64_t *test2;
+   int *test;
+   int it;
+
+   fail_if(eina_init() != 2);
+
+   hash = eina_hash_int32_new(NULL);
+   fail_if(hash == NULL);
+
+   for (it = 0; it < 3; ++it)
+     fail_if(eina_hash_add(hash, &i[it], &i[it]) != EINA_TRUE);
+
+   fail_if(eina_hash_del(hash, &i[1], &i[1]) != EINA_TRUE);
+   test = eina_hash_find(hash, &i[2]);
+   fail_if(test != &i[2]);
+
+   eina_hash_free(hash);
+
+   hash = eina_hash_int64_new(NULL);
+   fail_if(hash == NULL);
+
+   for (it = 0; it < 3; ++it)
+     fail_if(eina_hash_add(hash, &j[it], &j[it]) != EINA_TRUE);
+
+   fail_if(eina_hash_del(hash, &j[1], &j[1]) != EINA_TRUE);
+   test2 = eina_hash_find(hash, &j[0]);
+   fail_if(test2 != &j[0]);
+
+   eina_hash_free(hash);
+
+   fail_if(eina_shutdown() != 1);
+}
+END_TEST
+
 void eina_test_hash(TCase *tc)
 {
    tcase_add_test(tc, eina_hash_simple);
    tcase_add_test(tc, eina_hash_extended);
    tcase_add_test(tc, eina_hash_double_item);
+   tcase_add_test(tc, eina_hash_all_int);
 }

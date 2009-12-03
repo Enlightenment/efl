@@ -32,7 +32,31 @@ START_TEST(eina_simple)
 }
 END_TEST
 
+START_TEST(eina_cpu)
+{
+   fail_if(eina_init() != 2); /* one init by test suite */
+
+   fail_if(eina_cpu_count() <= 0);
+
+   eina_cpu_features_get();
+
+   fail_if(eina_shutdown() != 1);
+}
+END_TEST
+
+START_TEST(eina_hamster)
+{
+   fail_if(eina_init() != 2); /* one init by test suite */
+
+   fail_if(eina_hamster_count() <= 0);
+
+   fail_if(eina_shutdown() != 1);
+}
+END_TEST
+
 void eina_test_main(TCase *tc)
 {
    tcase_add_test(tc, eina_simple);
+   tcase_add_test(tc, eina_cpu);
+   tcase_add_test(tc, eina_hamster);
 }
