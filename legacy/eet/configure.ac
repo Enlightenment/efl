@@ -175,10 +175,11 @@ AC_SUBST(pkgconfig_requires_private)
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
-
 ### Checks for libraries
 
 # Evil library for compilation on Windows
+
+EFL_CHECK_PTHREAD([have_pthread="yes"], [have_pthread="no"])
 
 EFL_EET_BUILD=""
 case "$host_os" in
@@ -417,6 +418,7 @@ echo "  Gnutls...............: ${have_gnutls}"
 echo "  Openssl..............: ${have_openssl}"
 echo "    Cipher support.....: ${have_cipher}"
 echo "    Signature..........: ${have_signature}"
+echo "  Thread Support.......: ${have_pthread}"
 echo
 echo "  Amalgamation.........: ${do_amalgamation}"
 echo "  Documentation........: ${build_doc}"

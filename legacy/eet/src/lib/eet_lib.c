@@ -60,6 +60,23 @@ void *alloca (size_t);
 # include <openssl/evp.h>
 #endif
 
+#ifdef EFL_HAVE_PTHREAD
+# ifdef _WIN32
+#  define WIN32_LEAN_AND_MEAN
+#  include <windows.h>
+# elif defined (__SUNPRO_C)
+#  include <unistd.h>
+# elif defined (__FreeBSD__) || defined (__OpenBSD__) || defined (__NetBSD__) || defined (__DragonFly__) || defined (__MacOSX__) || ( defined (__MACH__) && defined (__APPLE__))
+#  include <unistd.h>
+#  include <sys/param.h>
+#  include <sys/sysctl.h>
+# elif defined (__linux__)
+#  define _GNU_SOURCE
+#  include <sched.h>
+# endif
+# include <pthread.h>
+#endif
+
 #include <Eina.h>
 
 #include "Eet.h"
@@ -102,6 +119,10 @@ struct _Eet_File
    int                   sha1_length;
 
    time_t                mtime;
+
+#ifdef EFL_HAVE_PTHREAD
+   pthread_mutex_t	 file_lock;
+#endif
 
    unsigned char         writes_pending : 1;
    unsigned char         delete_me_now : 1;
@@ -209,6 +230,29 @@ static Eet_Error	eet_flush(Eet_File *ef);
 static Eet_Error	eet_flush2(Eet_File *ef);
 static Eet_File_Node	*find_node_by_name(Eet_File *ef, const char *name);
 static int		read_data_from_disk(Eet_File *ef, Eet_File_Node *efn, void *buf, int len);
+
+#ifdef EFL_HAVE_PTHREAD
+static pthread_mutex_t eet_cache_lock = PTHREAD_MUTEX_INITIALIZER;
+
+#define LOCK_CACHE pthread_mutex_lock(&eet_cache_lock);
+#define UNLOCK_CACHE pthread_mutex_unlock(&eet_cache_lock);
+
+#define INIT_FILE(File) pthread_mutex_init(&File->file_lock, NULL);
+#define LOCK_FILE(File) pthread_mutex_lock(&File->file_lock);
+#define UNLOCK_FILE(File) pthread_mutex_unlock(&File->file_lock);
+#define DESTROY_FILE(File) pthread_mutex_destroy(&File->file_lock);
+
+#else
+
+#define LOCK_CACHE ;
+#define UNLOCK_CACHE ;
+
+#define INIT_FILE(File) ;
+#define LOCK_FILE(File) ;
+#define UNLOCK_FILE(File) ;
+#define DESTROY_FILE(File) ;
+
+#endif
 
 /* cache. i don't expect this to ever be large, so arrays will do */
 static int        eet_writers_num     = 0;
@@ -1279,6 +1323,7 @@ eet_memopen_read(const void *data, size_t size)
    if (!ef)
      return NULL;
 
+   INIT_FILE(ef);
    ef->ed = NULL;
    ef->path = NULL;
    ef->key = NULL;
@@ -1311,6 +1356,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 
    /* find the current file handle in cache*/
    ef = NULL;
+   LOCK_CACHE;
    if (mode == EET_FILE_MODE_READ)
      {
 	ef = eet_cache_find((char *)file, eet_writers, eet_writers_num);
@@ -1335,6 +1381,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	  }
 	ef = eet_cache_find((char *)file, eet_writers, eet_writers_num);
      }
+   UNLOCK_CACHE;
 
     /* try open the file based on mode */
    if ((mode == EET_FILE_MODE_READ) || (mode == EET_FILE_MODE_READ_WRITE))
@@ -1399,6 +1446,7 @@ eet_open(const char *file, Eet_File_Mode mode)
      return NULL;
 
    /* fill some of the members */
+   INIT_FILE(ef);
    ef->fp = fp;
    ef->key = NULL;
    ef->readfp = NULL;
@@ -1451,11 +1499,13 @@ eet_open(const char *file, Eet_File_Mode mode)
    /* add to cache */
    if (ef->references == 1)
      {
+	LOCK_CACHE;
 	if (ef->mode == EET_FILE_MODE_READ)
 	  eet_cache_add(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
 	else
 	  if ((ef->mode == EET_FILE_MODE_WRITE) || (ef->mode == EET_FILE_MODE_READ_WRITE))
 	    eet_cache_add(ef, &eet_writers, &eet_writers_num, &eet_writers_alloc);
+	UNLOCK_CACHE;
      }
 
    return ef;
@@ -1539,10 +1589,14 @@ eet_close(Eet_File *ef)
      return EET_ERROR_NONE;
 
    /* remove from cache */
+   LOCK_CACHE;
    if (ef->mode == EET_FILE_MODE_READ)
      eet_cache_del(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
    else if ((ef->mode == EET_FILE_MODE_WRITE) || (ef->mode == EET_FILE_MODE_READ_WRITE))
      eet_cache_del(ef, &eet_writers, &eet_writers_num, &eet_writers_alloc);
+   UNLOCK_CACHE;
+
+   DESTROY_FILE(ef);
 
    /* free up data */
    if (ef->header)
@@ -1616,18 +1670,18 @@ eet_read_cipher(Eet_File *ef, const char *name, int *size_ret, const char *ciphe
    if (eet_check_header(ef))
      return NULL;
 
+   LOCK_FILE(ef);
+
    /* hunt hash bucket */
    efn = find_node_by_name(ef, name);
-   if (!efn)
-     return NULL;
+   if (!efn) goto on_error;
 
    /* get size (uncompressed, if compressed at all) */
    size = efn->data_size;
 
    /* allocate data */
    data = malloc(size);
-   if (!data)
-     return NULL;
+   if (!data) goto on_error;
 
    /* uncompressed data */
    if (efn->compression == 0)
@@ -1639,17 +1693,13 @@ eet_read_cipher(Eet_File *ef, const char *name, int *size_ret, const char *ciphe
 	  memcpy(data, efn->data, efn->size);
 	else
 	  if (!read_data_from_disk(ef, efn, data, size))
-	    {
-	       free(data);
-	       return NULL;
-	    }
+	    goto on_error;
         if (efn->ciphered && cipher_key)
 	  {
 	    if (eet_decipher(data, size, cipher_key, strlen(cipher_key), &data_deciphered, &data_deciphered_sz))
 	      {
-		free(data);
 		if (data_deciphered) free(data_deciphered);
-		return NULL;
+		goto on_error;
 	      }
 	    free(data);
 	    data = data_deciphered;
@@ -1673,18 +1723,14 @@ eet_read_cipher(Eet_File *ef, const char *name, int *size_ret, const char *ciphe
 	  {
 	     tmp_data = malloc(compr_size);
 	     if (!tmp_data)
-	       {
-		  free(data);
-		  return NULL;
-	       }
+	       goto on_error;
 
 	     free_tmp = 1;
 
 	     if (!read_data_from_disk(ef, efn, tmp_data, compr_size))
 	       {
 		  free(tmp_data);
-		  free(data);
-		  return NULL;
+		  goto on_error;
 	       }
 	  }
 
@@ -1692,10 +1738,9 @@ eet_read_cipher(Eet_File *ef, const char *name, int *size_ret, const char *ciphe
 	  {
 	    if (eet_decipher(tmp_data, compr_size, cipher_key, strlen(cipher_key), &data_deciphered, &data_deciphered_sz))
 	      {
-		free(data);
 		if (free_tmp) free(tmp_data);
 		if (data_deciphered) free(data_deciphered);
-		return NULL;
+		goto on_error;
 	      }
 	    free(tmp_data);
 	    tmp_data = data_deciphered;
@@ -1706,10 +1751,7 @@ eet_read_cipher(Eet_File *ef, const char *name, int *size_ret, const char *ciphe
 	dlen = size;
 	if (uncompress((Bytef *)data, &dlen,
 		 tmp_data, (uLongf)compr_size))
-	  {
-	     free(data);
-	     return NULL;
-	  }
+	  goto on_error;
 
 	if (free_tmp)
 	  free(tmp_data);
@@ -1719,7 +1761,14 @@ eet_read_cipher(Eet_File *ef, const char *name, int *size_ret, const char *ciphe
    if (size_ret)
      *size_ret = size;
 
+   UNLOCK_FILE(ef);
+
    return data;
+
+ on_error:
+   UNLOCK_FILE(ef);
+   free(data);
+   return NULL;
 }
 
 EAPI void *
@@ -1751,13 +1800,14 @@ eet_read_direct(Eet_File *ef, const char *name, int *size_ret)
    if (eet_check_header(ef))
      return NULL;
 
+   LOCK_FILE(ef);
+
    /* hunt hash bucket */
    efn = find_node_by_name(ef, name);
-   if (!efn)
-     return NULL;
+   if (!efn) goto on_error;
 
    if (efn->offset < 0 && efn->data == NULL)
-     return NULL;
+     goto on_error;
 
    /* get size (uncompressed, if compressed at all) */
    size = efn->data_size;
@@ -1774,7 +1824,13 @@ eet_read_direct(Eet_File *ef, const char *name, int *size_ret)
    if (size_ret)
      *size_ret = size;
 
+   UNLOCK_FILE(ef);
+
    return data;
+
+ on_error:
+   UNLOCK_FILE(ef);
+   return NULL;
 }
 
 EAPI int
@@ -1795,25 +1851,35 @@ eet_write_cipher(Eet_File *ef, const char *name, const void *data, int size, int
        (ef->mode != EET_FILE_MODE_READ_WRITE))
      return 0;
 
+   LOCK_FILE(ef);
+
    if (!ef->header)
      {
 	/* allocate header */
 	ef->header = calloc(1, sizeof(Eet_File_Header));
 	if (!ef->header)
-	  return 0;
+	  goto on_error;
 
 	ef->header->magic = EET_MAGIC_FILE_HEADER;
 	/* allocate directory block in ram */
 	ef->header->directory = calloc(1, sizeof(Eet_File_Directory));
 	if (!ef->header->directory)
-	  return 0;
+	  {
+	     free(ef->header);
+	     ef->header = NULL;
+	     goto on_error;
+	  }
 
 	/* 8 bit hash table (256 buckets) */
 	ef->header->directory->size = 8;
 	/* allocate base hash table */
 	ef->header->directory->nodes = calloc(1, sizeof(Eet_File_Node *) * (1 << ef->header->directory->size));
 	if (!ef->header->directory->nodes)
-	  return 0;
+	  {
+	     free(ef->header->directory);
+	     ef->header = NULL;
+	     goto on_error;
+	  }
      }
 
    /* figure hash bucket */
@@ -1824,8 +1890,7 @@ eet_write_cipher(Eet_File *ef, const char *name, const void *data, int size, int
    if (compress || !cipher_key)
      {
        data2 = malloc(data_size);
-       if (!data2)
-	 return 0;
+       if (!data2) goto on_error;
      }
 
    /* if we want to compress */
@@ -1905,7 +1970,7 @@ eet_write_cipher(Eet_File *ef, const char *name, const void *data, int size, int
 	if (!efn)
 	  {
 	     free(data2);
-	     return 0;
+	     goto on_error;
 	  }
 	efn->name = strdup(name);
         efn->name_size = strlen(efn->name) + 1;
@@ -1923,7 +1988,12 @@ eet_write_cipher(Eet_File *ef, const char *name, const void *data, int size, int
 
    /* flags that writes are pending */
    ef->writes_pending = 1;
+   UNLOCK_FILE(ef);
    return data_size;
+
+ on_error:
+   UNLOCK_FILE(ef);
+   return 0;
 }
 
 EAPI int
@@ -1953,6 +2023,8 @@ eet_delete(Eet_File *ef, const char *name)
    if (eet_check_header(ef))
      return 0;
 
+   LOCK_FILE(ef);
+
    /* figure hash bucket */
    hash = _eet_hash_gen(name, ef->header->directory->size);
 
@@ -1981,6 +2053,8 @@ eet_delete(Eet_File *ef, const char *name)
    /* flags that writes are pending */
    if (exists_already)
      ef->writes_pending = 1;
+
+   UNLOCK_FILE(ef);
 
    /* update access time */
    return exists_already;
@@ -2016,6 +2090,8 @@ eet_list(Eet_File *ef, const char *glob, int *count_ret)
 	return NULL;
      }
 
+   LOCK_FILE(ef);
+
    /* loop through all entries */
    num = (1 << ef->header->directory->size);
    for (i = 0; i < num; i++)
@@ -2042,10 +2118,7 @@ eet_list(Eet_File *ef, const char *glob, int *count_ret)
 			 {
 			    free(list_ret);
 
-			    if (count_ret)
-			      *count_ret = 0;
-
-			    return NULL;
+			    goto on_error;
 			 }
 		       list_ret = new_list;
 		    }
@@ -2056,11 +2129,21 @@ eet_list(Eet_File *ef, const char *glob, int *count_ret)
 	  }
      }
 
+   UNLOCK_FILE(ef);
+
    /* return count and list */
    if (count_ret)
      *count_ret = list_count;
 
    return list_ret;
+
+ on_error:
+   UNLOCK_FILE(ef);
+
+   if (count_ret)
+     *count_ret = 0;
+
+   return NULL;
 }
 
 EAPI int
@@ -2075,6 +2158,8 @@ eet_num_entries(Eet_File *ef)
         (ef->mode != EET_FILE_MODE_READ_WRITE)))
      return -1;
 
+   LOCK_FILE(ef);
+
    /* loop through all entries */
    num = (1 << ef->header->directory->size);
    for (i = 0; i < num; i++)
@@ -2082,6 +2167,8 @@ eet_num_entries(Eet_File *ef)
 	for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
 	  ret++;
      }
+
+   UNLOCK_FILE(ef);
 
    return ret;
 }
