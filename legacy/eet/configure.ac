@@ -177,9 +177,9 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 ### Checks for libraries
 
-# Evil library for compilation on Windows
-
 EFL_CHECK_PTHREAD([have_pthread="yes"], [have_pthread="no"])
+
+# Evil library for compilation on Windows
 
 EFL_EET_BUILD=""
 case "$host_os" in
