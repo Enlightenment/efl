@@ -657,7 +657,6 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
      {
 	einfo->info.virtual_terminal = 0;
 	einfo->info.device_number = strtol(disp_name, NULL, 10);
-	einfo->info.device_number = 0;
 	einfo->info.refresh = 0;
 	einfo->info.rotation = ee->rotation;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
