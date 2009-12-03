@@ -312,8 +312,8 @@ dnl use: EVAS_CHECK_IMAGE_LOADER(loader, want_loader, macro)
 AC_DEFUN([EVAS_CHECK_IMAGE_LOADER],
 [
 
-m4_pushdef([UP], m4_toupper([[$1]]))
-m4_pushdef([DOWN], m4_tolower([[$1]]))
+m4_pushdef([UP], m4_toupper([$1]))
+m4_pushdef([DOWN], m4_tolower([$1]))
 
 want_loader="$2"
 want_static_loader="no"
