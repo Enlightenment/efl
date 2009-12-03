@@ -379,7 +379,7 @@ _long_press(void *data)
      {
         wd->api->obj_longpress(data);
      }
-   else
+   else if (wd->context_menu)
      {
         if (wd->hoversel) evas_object_del(wd->hoversel);
         else elm_widget_scroll_freeze_push(data);
@@ -419,10 +419,10 @@ _long_press(void *data)
              evas_object_show(wd->hoversel);
              elm_hoversel_hover_begin(wd->hoversel);
           }
+        edje_object_part_text_select_allow_set(wd->ent, "elm.text", 0);
+        edje_object_part_text_select_abort(wd->ent, "elm.text");
      }
    wd->longpress_timer = NULL;
-   edje_object_part_text_select_allow_set(wd->ent, "elm.text", 0);
-   edje_object_part_text_select_abort(wd->ent, "elm.text");
    evas_object_smart_callback_call(data, "longpressed", NULL);
    return 0;
 }
@@ -1479,17 +1479,6 @@ elm_entry_context_menu_disabled_set(Evas_Object *obj, Eina_Bool disabled)
    if (!wd) return;
    if (wd->context_menu == !disabled) return;
    wd->context_menu = !disabled;
-
-   if (wd->context_menu)
-     {
-        evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, obj);
-        evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_UP, _mouse_up, obj);
-     }
-   else
-     {
-        evas_object_event_callback_del_full(wd->ent, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, obj);
-        evas_object_event_callback_del_full(wd->ent, EVAS_CALLBACK_MOUSE_UP, _mouse_up, obj);
-     }
 }
 
 EAPI Eina_Bool
