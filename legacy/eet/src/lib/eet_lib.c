@@ -61,19 +61,6 @@ void *alloca (size_t);
 #endif
 
 #ifdef EFL_HAVE_PTHREAD
-# ifdef _WIN32
-#  define WIN32_LEAN_AND_MEAN
-#  include <windows.h>
-# elif defined (__SUNPRO_C)
-#  include <unistd.h>
-# elif defined (__FreeBSD__) || defined (__OpenBSD__) || defined (__NetBSD__) || defined (__DragonFly__) || defined (__MacOSX__) || ( defined (__MACH__) && defined (__APPLE__))
-#  include <unistd.h>
-#  include <sys/param.h>
-#  include <sys/sysctl.h>
-# elif defined (__linux__)
-#  define _GNU_SOURCE
-#  include <sched.h>
-# endif
 # include <pthread.h>
 #endif
 
