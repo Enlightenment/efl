@@ -266,3 +266,7 @@
 
         * Release eet 1.2.3
 
+2009-12-03  Cedric BAIL
+
+	* Make all operation on Eet_File thread safe.
+
