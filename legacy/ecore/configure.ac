@@ -82,6 +82,7 @@ want_curl="no"
 want_abstract_sockets="no"
 want_gnutls="no"
 want_openssl="no"
+want_cares="no"
 want_cipher="no"
 want_signature="no"
 want_poll="yes"
@@ -797,6 +798,7 @@ ECORE_CHECK_MODULE([Con], [${want_ecore_con}])
 have_curl="no"
 have_gnutls="no"
 have_openssl="no"
+have_cares="no"
 if test "x${have_ecore_con}" = "xyes" ; then
 
    ECORE_CHECK_CURL([${want_curl}],
@@ -825,6 +827,15 @@ if test "x${have_ecore_con}" = "xyes" ; then
          # depends on ecore_con anyway.
       fi
    fi
+
+   ECORE_CHECK_CARES([${want_cares}],
+      [
+	have_cares="yes"
+	requirements_ecore_con="libcares ${requirements_ecore_con}"
+      ], [
+      	have_cares="no"
+      ])
+
 fi
 
 # ecore_ipc
@@ -1193,6 +1204,7 @@ fi
   echo "    GnuTLS.....................: $have_gnutls"
   echo "    CURL.......................: $have_curl"
   echo "    Abstract Sockets...........: $want_abstract_sockets"
+  echo "    c-ares.....................: $have_cares"
 fi
 echo "  Ecore_Ipc....................: $have_ecore_ipc"
 if test "x$have_ecore_ipc" = "xyes" ; then

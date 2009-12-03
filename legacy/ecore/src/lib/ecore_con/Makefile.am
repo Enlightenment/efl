@@ -5,7 +5,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore_con \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_con \
-@SSL_CFLAGS@ @CURL_CFLAGS@ @EINA_CFLAGS@ @TLS_CFLAGS@
+@SSL_CFLAGS@ @CURL_CFLAGS@ @EINA_CFLAGS@ @TLS_CFLAGS@ @CARES_CFLAGS@
 
 if BUILD_ECORE_CON
 
@@ -16,13 +16,18 @@ Ecore_Con.h
 libecore_con_la_SOURCES = \
 ecore_con.c \
 ecore_con_dns.c \
-ecore_con_info.c \
 ecore_con_ssl.c \
 ecore_con_url.c
 
+if HAVE_CARES
+libecore_con_la_SOURCES += ecore_con_ares.c
+else
+libecore_con_la_SOURCES += ecore_con_info.c
+endif
+
 libecore_con_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
-@SSL_LIBS@ @CURL_LIBS@ @EINA_LIBS@ @TLS_LIBS@
+@SSL_LIBS@ @CURL_LIBS@ @EINA_LIBS@ @TLS_LIBS@ @CARES_LIBS@
 
 libecore_con_la_LDFLAGS = -no-undefined -version-info @version_info@ @ecore_con_release_info@
 
