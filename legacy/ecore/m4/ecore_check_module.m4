@@ -1,8 +1,8 @@
 dnl use: ECORE_CHECK_MODULE(Foo, default-enabled[, dependancy[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]]])
 AC_DEFUN([ECORE_CHECK_MODULE],
 [
-m4_pushdef([UP], m4_toupper([[$1]]))dnl
-m4_pushdef([DOWN], m4_tolower([[$1]]))dnl
+m4_pushdef([UP], m4_toupper([$1]))dnl
+m4_pushdef([DOWN], m4_tolower([$1]))dnl
 
 have_ecore_[]m4_defn([DOWN])=no
 ecore_[]m4_defn([DOWN])[]_cflags=
