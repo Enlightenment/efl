@@ -959,7 +959,8 @@ edje_edit_group_max_h_set(Evas_Object *obj, int h)
 EAPI Eina_List *
 edje_edit_data_list_get(Evas_Object * obj)
 {
-   Eina_List *datas, *l;
+   Eina_List *datas = NULL;
+   Eina_List *l;
    Edje_Data *d;
 
    GET_ED_OR_RETURN(NULL);
@@ -1519,7 +1520,7 @@ edje_edit_external_del(Evas_Object *obj, const char *external)
 EAPI Eina_List *
 edje_edit_parts_list_get(Evas_Object *obj)
 {
-   Eina_List *parts;
+   Eina_List *parts = NULL;
    int i;
 
    GET_ED_OR_RETURN(NULL);
@@ -2263,7 +2264,7 @@ EAPI Eina_List *
 edje_edit_part_states_list_get(Evas_Object *obj, const char *part)
 {
    char state_name[PATH_MAX];
-   Eina_List *states;
+   Eina_List *states = NULL;
    Eina_List *l;
    Edje_Part_Description *state;
 
