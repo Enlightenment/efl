@@ -51,6 +51,8 @@ requirement_eet=""
 
 ### Additional options to configure
 
+# Amalgamation
+
 AC_ARG_ENABLE([amalgamation],
    [AC_HELP_STRING([--enable-amalgamation], [enable generation of one single file with all source code in it, helps compiler optimizations.])],
    [if test "x${enableval}" = "xyes"; then
@@ -177,8 +179,6 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 ### Checks for libraries
 
-EFL_CHECK_PTHREAD([have_pthread="yes"], [have_pthread="no"])
-
 # Evil library for compilation on Windows
 
 EFL_EET_BUILD=""
@@ -266,6 +266,10 @@ fi
 
 AC_MSG_CHECKING(whether to activate signature support in eet)
 AC_MSG_RESULT(${have_signature})
+
+# pthread library
+
+EFL_CHECK_PTHREAD([have_pthread="yes"], [have_pthread="no"])
 
 
 ### Checks for header files
