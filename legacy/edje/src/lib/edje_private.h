@@ -705,6 +705,8 @@ struct _Edje
 
    int                   state;
 
+   int			 preload_count;
+
    unsigned short        dirty : 1;
    unsigned short        recalc : 1;
    unsigned short        walking_callbacks : 1;

@@ -39,6 +39,8 @@ struct _Edje_List_Foreach_Data
 
 static Eina_Bool _edje_color_class_list_foreach(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 static Eina_Bool _edje_text_class_list_foreach(const Eina_Hash *hash, const void *key, void *data, void *fdata);
+static void _edje_object_image_preload_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _edje_object_signal_preload_cb(void *data, Evas_Object *obj, const char *emission, const char *source);
 
 Edje_Real_Part *_edje_real_part_recursive_get_helper(Edje *ed, char **path);
 
@@ -3705,6 +3707,72 @@ edje_object_part_table_clear(Evas_Object *obj, const char *part, Eina_Bool clear
    return EINA_TRUE;
 }
 
+#define EDJE_PRELOAD_EMISSION "preload,done"
+#define EDJE_PRELOAD_SOURCE NULL
+
+EAPI Eina_Bool
+edje_object_preload(Evas_Object *obj, Eina_Bool cancel)
+{
+   Edje *ed;
+   int count;
+   int i;
+
+   ed = _edje_fetch(obj);
+   if (!ed) return EINA_FALSE;
+
+   for (i = 0, count = 0; i < ed->table_parts_size; i++)
+     {
+	Edje_Real_Part *rp;
+	Edje_Part *ep;
+
+	rp = ed->table_parts[i];
+	ep = rp->part;
+
+	if (ep->type == EDJE_PART_TYPE_IMAGE ||
+	    (ep->type == EDJE_PART_TYPE_GROUP && rp->swallowed_object))
+	  count++;
+     }
+
+   ed->preload_count = count;
+
+   if (count > 0)
+     {
+	for (i = 0; i < ed->table_parts_size; i++)
+	  {
+	     Edje_Real_Part *rp;
+	     Edje_Part *ep;
+
+	     rp = ed->table_parts[i];
+	     ep = rp->part;
+
+	     if (ep->type == EDJE_PART_TYPE_IMAGE)
+	       {
+		  evas_object_event_callback_del_full(rp->object, EVAS_CALLBACK_IMAGE_PRELOADED, _edje_object_image_preload_cb, ed);
+		  evas_object_event_callback_add(rp->object, EVAS_CALLBACK_IMAGE_PRELOADED, _edje_object_image_preload_cb, ed);
+		  evas_object_image_preload(rp->object, cancel);
+
+		  count--;
+	       }
+	     else if (ep->type == EDJE_PART_TYPE_GROUP)
+	       {
+		  if (rp->swallowed_object) {
+		     edje_object_signal_callback_del(rp->swallowed_object, EDJE_PRELOAD_EMISSION, EDJE_PRELOAD_SOURCE, _edje_object_signal_preload_cb);
+		     edje_object_signal_callback_add(rp->swallowed_object, EDJE_PRELOAD_EMISSION, EDJE_PRELOAD_SOURCE, _edje_object_signal_preload_cb, ed);
+		     edje_object_preload(rp->swallowed_object, cancel);
+
+		     count--;
+		  }
+	       }
+	  }
+     }
+   else
+     {
+	_edje_emit(ed, EDJE_PRELOAD_EMISSION, EDJE_PRELOAD_SOURCE);
+     }
+
+   return EINA_TRUE;
+}
+
 Eina_Bool
 _edje_real_part_table_pack(Edje_Real_Part *rp, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
 {
@@ -4238,4 +4306,30 @@ _edje_real_part_swallow_clear(Edje_Real_Part *rp)
    evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
    if (rp->part->mouse_events)
      _edje_callbacks_del(rp->swallowed_object);
+}
+
+static void
+_edje_object_preload(Edje *ed)
+{
+   ed->preload_count--;
+   if (!ed->preload_count)
+     _edje_emit(ed, EDJE_PRELOAD_EMISSION, EDJE_PRELOAD_SOURCE);
+}
+
+static void
+_edje_object_image_preload_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Edje *ed = data;
+
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_IMAGE_PRELOADED, _edje_object_image_preload_cb, ed);
+   _edje_object_preload(ed);
+}
+
+static void
+_edje_object_signal_preload_cb(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   Edje *ed = data;
+
+   edje_object_signal_callback_del(obj, EDJE_PRELOAD_EMISSION, EDJE_PRELOAD_SOURCE, _edje_object_signal_preload_cb);
+   _edje_object_preload(ed);
 }

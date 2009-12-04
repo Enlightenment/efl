@@ -409,6 +409,9 @@ extern "C" {
    EAPI int          edje_object_load_error_get      (const Evas_Object *obj);
    EAPI const char  *edje_load_error_str             (int error);
 
+   /* edje_util.c */
+   EAPI Eina_Bool    edje_object_preload             (Evas_Object *obj, Eina_Bool cancel);
+
    /* edje_program.c */
    EAPI void         edje_object_signal_callback_add (Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
    EAPI void        *edje_object_signal_callback_del (Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func);
