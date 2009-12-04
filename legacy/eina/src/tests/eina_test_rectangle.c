@@ -72,9 +72,44 @@ START_TEST(eina_rectangle_pool)
 }
 END_TEST
 
+START_TEST(eina_rectangle_intersect)
+{
+   Eina_Rectangle r1, r2, r3, r4, rd;
+
+   fail_if(!eina_init());
+
+   EINA_RECTANGLE_SET(&r1, 10, 10, 50, 50);
+   EINA_RECTANGLE_SET(&r2, 20, 20, 20, 20);
+   EINA_RECTANGLE_SET(&r3, 0, 0, 10, 10);
+   EINA_RECTANGLE_SET(&r4, 30, 30, 50, 50);
+
+   rd = r1;
+
+   fail_if(eina_rectangle_intersection(&rd, &r3));
+   fail_if(!eina_rectangle_intersection(&rd, &r2));
+
+   fail_if(rd.x != r2.x
+	   || rd.y != r2.y
+	   || rd.w != r2.w
+	   || rd.h != r2.h);
+
+   rd = r1;
+
+   fail_if(!eina_rectangle_intersection(&rd, &r4));
+
+   fail_if(rd.x != 30
+	   || rd.y != 30
+	   || rd.w != 30
+	   || rd.h != 30);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_rectangle(TCase *tc)
 {
    tcase_add_test(tc, eina_rectangle_pool);
+   tcase_add_test(tc, eina_rectangle_intersect);
 }
 
