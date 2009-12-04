@@ -47,6 +47,8 @@ check_iterator(Eina_Iterator *it, struct test_rect *cur_test)
 	      cur_test[i].full != tile->full);
       i++;
    }
+
+   fail_if(i == 0);
 }
 
 START_TEST(eina_test_tile_grid_slicer_iterator)
@@ -83,6 +85,7 @@ START_TEST(eina_test_tile_grid_slicer_iterator)
       {1, 2,   0,   0, 128,   1,  0},
       {2, 2,   0,   0,   1,   1,  0}};
 
+   eina_init();
 
    cur_test = test1;
    it = eina_tile_grid_slicer_iterator_new(200, 210, 10, 15, 128, 128);
@@ -118,6 +121,57 @@ START_TEST(eina_test_tile_grid_slicer_iterator)
    it = eina_tile_grid_slicer_iterator_new(128, 128, 129, 129, 128, 128);
    check_iterator(it, cur_test);
    eina_iterator_free(it);
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_test_tiler_all)
+{
+   Eina_Tiler *tl;
+   Eina_Iterator *it;
+   Eina_Rectangle *rc;
+   Eina_Rectangle r;
+   int i = 0;
+
+   eina_init();
+
+   tl = eina_tiler_new(640, 480);
+
+   eina_tiler_tile_size_set(tl, 32, 32);
+
+   EINA_RECTANGLE_SET(&r, 50, 50, 20, 20);
+   fail_if(!eina_tiler_rect_add(tl, &r));
+
+   EINA_RECTANGLE_SET(&r, -10, -10, 5, 5);
+   fail_if(eina_tiler_rect_add(tl, &r));
+
+   EINA_RECTANGLE_SET(&r, 40, 40, 20, 20);
+   eina_tiler_rect_del(tl, &r);
+   
+   it = eina_tiler_iterator_new(tl);
+   fail_if(!it);
+
+   EINA_ITERATOR_FOREACH(it, r)
+     {
+       fail_if(r.w <= 0);
+       fail_if(r.h <= 0);
+       fail_if(r.x < 0 || r.x + r.w > 640);
+       fail_if(r.y < 0 || r.y + r.h > 480);
+       ++i;
+     }
+
+   fail_if(eina_iterator_container_get(it) != tl);
+
+   eina_iterator_free(it);
+
+   fail_if(i == 0);
+
+   eina_tiler_clear(tl);
+
+   eina_tiler_free(tl);
+
+   eina_shutdown();
 }
 END_TEST
 
@@ -125,4 +179,5 @@ void
 eina_test_tiler(TCase *tc)
 {
    tcase_add_test(tc, eina_test_tile_grid_slicer_iterator);
+   tcase_add_test(tc, eina_test_tiler_all);
 }
