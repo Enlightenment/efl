@@ -1352,7 +1352,9 @@ eet_open(const char *file, Eet_File_Mode mode)
 	     eet_flush2(ef);
 	     ef->references++;
 	     ef->delete_me_now = 1;
+             UNLOCK_CACHE;
 	     eet_close(ef);
+             LOCK_CACHE;
 	  }
 	ef = eet_cache_find((char *)file, eet_readers, eet_readers_num);
      }
@@ -1364,12 +1366,14 @@ eet_open(const char *file, Eet_File_Mode mode)
 	  {
 	     ef->delete_me_now = 1;
 	     ef->references++;
+             UNLOCK_CACHE;
 	     eet_close(ef);
+             LOCK_CACHE;
 	  }
 	ef = eet_cache_find((char *)file, eet_writers, eet_writers_num);
      }
    UNLOCK_CACHE;
-
+   
     /* try open the file based on mode */
    if ((mode == EET_FILE_MODE_READ) || (mode == EET_FILE_MODE_READ_WRITE))
      {
