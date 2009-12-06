@@ -43,7 +43,7 @@ EAPI int
 ecore_x_e_virtual_keyboard_get(Ecore_X_Window win)
 {
    unsigned int val;
-   
+
    if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD, &val, 1))
      return 0;
    return val;
@@ -111,4 +111,21 @@ ecore_x_e_virtual_keyboard_state_send(Ecore_X_Window win, Ecore_X_Virtual_Keyboa
 				 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
 				 _ecore_x_e_vkbd_atom_get(state),
 				 0, 0, 0, 0);
+}
+
+EAPI void 
+ecore_x_e_illume_conformant_set(Ecore_X_Window win, unsigned int is_conformant) 
+{
+   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_CONFORMANT,
+				  &is_conformant, 1);
+}
+
+EAPI int 
+ecore_x_e_illume_conformant_get(Ecore_X_Window win) 
+{
+   unsigned int val;
+
+   if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_CONFORMANT, &val, 1))
+     return 0;
+   return val;
 }

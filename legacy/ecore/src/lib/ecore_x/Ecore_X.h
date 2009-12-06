@@ -1518,8 +1518,6 @@ EAPI void                ecore_x_netwm_state_request_send(Ecore_X_Window win, Ec
 EAPI void                ecore_x_netwm_desktop_request_send(Ecore_X_Window win, Ecore_X_Window root, unsigned int desktop);
 
 
-
-
 EAPI void                ecore_x_e_init(void);
 EAPI void                ecore_x_e_frame_size_set(Ecore_X_Window win, int fl, int fr, int ft, int fb);
 EAPI void                ecore_x_e_virtual_keyboard_set(Ecore_X_Window win, unsigned int is_keyboard);
@@ -1527,7 +1525,11 @@ EAPI int                 ecore_x_e_virtual_keyboard_get(Ecore_X_Window win);
 EAPI void                ecore_x_e_virtual_keyboard_state_set(Ecore_X_Window win, Ecore_X_Virtual_Keyboard_State state);
 EAPI Ecore_X_Virtual_Keyboard_State ecore_x_e_virtual_keyboard_state_get(Ecore_X_Window win);
 EAPI void                ecore_x_e_virtual_keyboard_state_send(Ecore_X_Window win, Ecore_X_Virtual_Keyboard_State state);
-       
+
+
+EAPI void                ecore_x_e_illume_conformant_set(Ecore_X_Window win, unsigned int is_conformant);
+EAPI int                 ecore_x_e_illume_conformant_get(Ecore_X_Window win);
+
 
 EAPI void                ecore_x_xinerama_query_screens_prefetch(void);
 EAPI void                ecore_x_xinerama_query_screens_fetch(void);
