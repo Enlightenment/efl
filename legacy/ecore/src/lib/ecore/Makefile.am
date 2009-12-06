@@ -15,8 +15,6 @@ ecore.c \
 ecore_anim.c \
 ecore_app.c \
 ecore_events.c \
-ecore_exe.c \
-ecore_exe_win32.c \
 ecore_getopt.c \
 ecore_hash.c \
 ecore_idle_enterer.c \
@@ -38,6 +36,16 @@ ecore_tree.c \
 ecore_value.c \
 ecore_thread.c \
 ecore_glib.c
+
+if ECORE_HAVE_WIN32
+
+libecore_la_SOURCES += ecore_exe_win32.c
+
+else
+
+libecore_la_SOURCES += ecore_exe.c
+
+endif
 
 libecore_la_LIBADD = @dlopen_libs@ @EINA_LIBS@ @EVIL_LIBS@ @GLIB_LIBS@ @WIN32_LIBS@ @LTLIBINTL@ @EFL_PTHREAD_LIBS@ -lm
 libecore_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @ecore_release_info@

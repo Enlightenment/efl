@@ -26,8 +26,6 @@
 #include "ecore_private.h"
 #include "Ecore.h"
 
-#ifndef _WIN32
-
 /* TODO: Something to let people build a command line and does auto escaping -
  *
  * ecore_exe_snprintf()
@@ -1688,5 +1686,3 @@ _ecore_exe_dead_attach(Ecore_Exe *exe)
 	exe->doomsday_clock_dead = dead;
      }
 }
-
-#endif

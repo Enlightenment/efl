@@ -21,8 +21,7 @@
 #include "ecore_private.h"
 #include "Ecore.h"
 
-#ifdef _WIN32
-# ifndef _WIN32_WCE
+#ifndef _WIN32_WCE
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -52,16 +51,35 @@ struct _Ecore_Exe
    char  *tag;
    char  *cmd;
    Ecore_Exe_Win32_Signal sig;
+   Ecore_Win32_Handler *h_close;
+   Ecore_Win32_Handler *h_read;
+   Ecore_Win32_Handler *h_write;
+   Ecore_Win32_Handler *h_error;
+   HANDLE child_pipe_read;
+   HANDLE child_pipe_write;
+   HANDLE child_pipe_error;
+   HANDLE child_pipe_read_x;
+   HANDLE child_pipe_write_x;
+   HANDLE child_pipe_error_x;
+   void  *read_data_buf;
+   void  *error_data_buf;
+   int   read_data_size;
+   int   error_data_size;
+   int    close_stdin;
    int    is_suspended : 1;
 };
 
-static Ecore_Exe           *exes = NULL;
-static Ecore_Win32_Handler *h = NULL;
+static Ecore_Exe *exes = NULL;
 
 static BOOL CALLBACK _ecore_exe_enum_windows_procedure(HWND window, LPARAM data);
 static void          _ecore_exe_event_add_free(void *data, void *ev);
-static void          _ecore_exe_event_del_free(void *data __UNUSED__, void *ev);
+static void          _ecore_exe_event_del_free(void *data, void *ev);
+static void          _ecore_exe_event_exe_data_free(void *data,
+                                                    void *ev);
 static int           _ecore_exe_close_cb(void *data, Ecore_Win32_Handler *wh);
+static int           _ecore_exe_pipe_read_cb(void *data, Ecore_Win32_Handler *wh);
+static int           _ecore_exe_pipe_write_cb(void *data, Ecore_Win32_Handler *wh);
+static int           _ecore_exe_pipe_error_cb(void *data, Ecore_Win32_Handler *wh);
 
 
 EAPI int ECORE_EXE_EVENT_ADD = 0;
@@ -74,8 +92,8 @@ _ecore_exe_init(void)
 {
    ECORE_EXE_EVENT_ADD = ecore_event_type_new();
    ECORE_EXE_EVENT_DEL = ecore_event_type_new();
-/*    ECORE_EXE_EVENT_DATA = ecore_event_type_new(); */
-/*    ECORE_EXE_EVENT_ERROR = ecore_event_type_new(); */
+   ECORE_EXE_EVENT_DATA = ecore_event_type_new();
+   ECORE_EXE_EVENT_ERROR = ecore_event_type_new();
 }
 
 void
@@ -102,6 +120,7 @@ EAPI Ecore_Exe *ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, c
 {
    STARTUPINFO          si;
    PROCESS_INFORMATION  pi;
+   SECURITY_ATTRIBUTES  sa;
    Ecore_Exe_Event_Add *e;
    Ecore_Exe           *exe;
    char                *ret = NULL;
@@ -110,8 +129,48 @@ EAPI Ecore_Exe *ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, c
    if (!exe)
      return NULL;
 
+   if ((flags & ECORE_EXE_PIPE_AUTO) && (!(flags & ECORE_EXE_PIPE_ERROR))
+       && (!(flags & ECORE_EXE_PIPE_READ)))
+     /* We need something to auto pipe. */
+     flags |= ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR;
+
+   exe->child_pipe_read = NULL;
+   exe->child_pipe_write = NULL;
+   exe->child_pipe_error = NULL;
+   exe->child_pipe_read_x = NULL;
+   exe->child_pipe_write_x = NULL;
+   exe->child_pipe_error_x = NULL;
+
+   sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+   sa.bInheritHandle = TRUE;
+   sa.lpSecurityDescriptor = NULL;
+
+   if (flags & ECORE_EXE_PIPE_READ)
+     {
+        if (!CreatePipe(&exe->child_pipe_read, &exe->child_pipe_read_x, &sa, 0))
+          goto free_exe;
+        if (!SetHandleInformation(exe->child_pipe_read, HANDLE_FLAG_INHERIT, 0))
+          goto free_exe;
+     }
+
+   if (flags & ECORE_EXE_PIPE_WRITE)
+     {
+        if (!CreatePipe(&exe->child_pipe_write, &exe->child_pipe_write_x, &sa, 0))
+          goto close_pipe_read;
+        if (!SetHandleInformation(exe->child_pipe_write_x, HANDLE_FLAG_INHERIT, 0))
+          goto close_pipe_read;
+     }
+
+   if (flags & ECORE_EXE_PIPE_ERROR)
+     {
+        if (!CreatePipe(&exe->child_pipe_error, &exe->child_pipe_error_x, &sa, 0))
+          goto close_pipe_write;
+        if (!SetHandleInformation(exe->child_pipe_error, HANDLE_FLAG_INHERIT, 0))
+          goto close_pipe_write;
+     }
+
    if ((flags & ECORE_EXE_USE_SH) ||
-       ((ret = strrchr(exe_cmd, ".bat")) && (ret[4] == '\0')))
+       ((ret = strrstr(exe_cmd, ".bat")) && (ret[4] == '\0')))
      {
         char buf[PATH_MAX];
         snprintf(buf, PATH_MAX, "cmd.exe /c %s", exe_cmd);
@@ -121,16 +180,16 @@ EAPI Ecore_Exe *ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, c
      exe->cmd = strdup(exe_cmd);
 
    if (!exe->cmd)
-     goto free_exe;
+     goto close_pipe_error;
 
    ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));
 
    ZeroMemory(&si, sizeof(STARTUPINFO));
-   si.cb = sizeof(STARTUPINFO); 
-/*    si.hStdError = g_hChildStd_OUT_Wr; */
-/*    si.hStdOutput = g_hChildStd_OUT_Wr; */
-/*    si.hStdInput = g_hChildStd_IN_Rd; */
-/*    si.dwFlags |= STARTF_USESTDHANDLES; */
+   si.cb = sizeof(STARTUPINFO);
+   si.hStdOutput = exe->child_pipe_read_x;
+   si.hStdInput = exe->child_pipe_write;
+   si.hStdError = exe->child_pipe_error_x;
+   si.dwFlags |= STARTF_USESTDHANDLES;
 
    /* FIXME: gerer la priorite */
 
@@ -140,8 +199,8 @@ EAPI Ecore_Exe *ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, c
 
    /* be sure that the child process is running */
    /* FIXME: This does not work if the child is an EFL-based app */
-   if (WaitForInputIdle(pi.hProcess, INFINITE) != 0)
-     goto free_exe_cmd;
+/*    if (WaitForInputIdle(pi.hProcess, INFINITE) != 0) */
+/*      goto free_exe_cmd; */
 
    ECORE_MAGIC_SET(exe, ECORE_MAGIC_EXE);
    exe->process = pi.hProcess;
@@ -154,12 +213,31 @@ EAPI Ecore_Exe *ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, c
                                      FALSE, pi.dwProcessId)))
      goto close_thread;
 
-   h = ecore_main_win32_handler_add(exe->process2, _ecore_exe_close_cb, exe);
+   exe->h_close = ecore_main_win32_handler_add(exe->process2, _ecore_exe_close_cb, exe);
+   if (!exe->h_close) goto close_process2;
+
+   if (flags & ECORE_EXE_PIPE_READ)
+     {
+        exe->h_read = ecore_main_win32_handler_add(exe->child_pipe_read, _ecore_exe_pipe_read_cb, exe);
+        if (!exe->h_read) goto delete_h_close;
+     }
+
+   if (flags & ECORE_EXE_PIPE_WRITE)
+     {
+        exe->h_write = ecore_main_win32_handler_add(exe->child_pipe_write_x, _ecore_exe_pipe_write_cb, exe);
+        if (!exe->h_write) goto delete_h_read;
+     }
+
+   if (flags & ECORE_EXE_PIPE_ERROR)
+     {
+        exe->h_error = ecore_main_win32_handler_add(exe->child_pipe_error, _ecore_exe_pipe_error_cb, exe);
+        if (!exe->h_error) goto delete_h_write;
+     }
 
    exes = (Ecore_Exe *)eina_inlist_append(EINA_INLIST_GET(exes), EINA_INLIST_GET(exe));
 
    e = (Ecore_Exe_Event_Add *)calloc(1, sizeof(Ecore_Exe_Event_Add));
-   if (!e) goto close_process2;
+   if (!e) goto delete_h_error;
 
    e->exe = exe;
    ecore_event_add(ECORE_EXE_EVENT_ADD, e,
@@ -167,24 +245,50 @@ EAPI Ecore_Exe *ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, c
 
    return exe;
 
+ delete_h_error:
+   if (exe->h_error)
+     ecore_main_win32_handler_del(exe->h_error);
+ delete_h_write:
+   if (exe->h_write)
+     ecore_main_win32_handler_del(exe->h_write);
+ delete_h_read:
+   if (exe->h_read)
+     ecore_main_win32_handler_del(exe->h_read);
+ delete_h_close:
+   ecore_main_win32_handler_del(exe->h_close);
  close_process2:
    CloseHandle(exe->process2);
  close_thread:
-   CloseHandle(pi.hThread);
-   CloseHandle(pi.hProcess);
+   CloseHandle(exe->thread);
+   CloseHandle(exe->process);
  free_exe_cmd:
    free(exe->cmd);
+ close_pipe_error:
+   CloseHandle(exe->child_pipe_error);
+   CloseHandle(exe->child_pipe_error_x);
+ close_pipe_write:
+   CloseHandle(exe->child_pipe_write);
+   CloseHandle(exe->child_pipe_write_x);
+ close_pipe_read:
+   CloseHandle(exe->child_pipe_read);
+   CloseHandle(exe->child_pipe_read_x);
  free_exe:
    free(exe);
    return NULL;
 }
 
-EAPI int ecore_exe_send(Ecore_Exe *exe, void *data, int size)
+EAPI int ecore_exe_send(Ecore_Exe *exe, const void *data, int size)
 {
 }
 
 EAPI void ecore_exe_close_stdin(Ecore_Exe *exe)
 {
+   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
+     {
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_close_stdin");
+	return;
+     }
+   exe->close_stdin = 1;
 }
 
 EAPI void ecore_exe_auto_limits_set(Ecore_Exe *exe, int start_bytes, int end_bytes, int start_lines, int end_lines)
@@ -193,10 +297,54 @@ EAPI void ecore_exe_auto_limits_set(Ecore_Exe *exe, int start_bytes, int end_byt
 
 EAPI Ecore_Exe_Event_Data *ecore_exe_event_data_get(Ecore_Exe *exe, Ecore_Exe_Flags flags)
 {
+   Ecore_Exe_Event_Data *e = NULL;
+   unsigned char      *inbuf;
+   int                 inbuf_num;
+
+   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
+     {
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_event_data_get");
+	return NULL;
+     }
+
+   /* Sort out what sort of event we are, */
+   /* And get the data. */
+   if (flags & ECORE_EXE_PIPE_READ)
+     {
+	flags = ECORE_EXE_PIPE_READ;
+
+	inbuf = exe->read_data_buf;
+	inbuf_num = exe->read_data_size;
+	exe->read_data_buf = NULL;
+	exe->read_data_size = 0;
+     }
+   else
+     {
+	flags = ECORE_EXE_PIPE_ERROR;
+
+	inbuf = exe->error_data_buf;
+	inbuf_num = exe->error_data_size;
+	exe->error_data_buf = NULL;
+	exe->error_data_size = 0;
+     }
+
+   e = calloc(1, sizeof(Ecore_Exe_Event_Data));
+   if (e)
+     {
+	e->exe = exe;
+	e->data = inbuf;
+	e->size = inbuf_num;
+     }
+
+   return e;
 }
 
-EAPI void ecore_exe_event_data_free(Ecore_Exe_Event_Data *data)
+EAPI void ecore_exe_event_data_free(Ecore_Exe_Event_Data *e)
 {
+   if (!e) return;
+   IF_FREE(e->lines);
+   IF_FREE(e->data);
+   free(e);
 }
 
 EAPI void *ecore_exe_free(Ecore_Exe *exe)
@@ -211,11 +359,24 @@ EAPI void *ecore_exe_free(Ecore_Exe *exe)
 
    data = exe->data;
 
+   if (exe->h_error)
+     ecore_main_win32_handler_del(exe->h_error);
+   if (exe->h_write)
+     ecore_main_win32_handler_del(exe->h_write);
+   if (exe->h_read)
+     ecore_main_win32_handler_del(exe->h_read);
+   ecore_main_win32_handler_del(exe->h_close);
+   CloseHandle(exe->process2);
    CloseHandle(exe->thread);
    CloseHandle(exe->process);
-   CloseHandle(exe->process2);
    free(exe->cmd);
-   exes = (Ecore_Exe *) eina_inlist_remove(EINA_INLIST_GET(exes), EINA_INLIST_GET(exe));
+   CloseHandle(exe->child_pipe_error);
+   CloseHandle(exe->child_pipe_error_x);
+   CloseHandle(exe->child_pipe_write);
+   CloseHandle(exe->child_pipe_write_x);
+   CloseHandle(exe->child_pipe_read);
+   CloseHandle(exe->child_pipe_read_x);
+   exes = (Ecore_Exe *)eina_inlist_remove(EINA_INLIST_GET(exes), EINA_INLIST_GET(exe));
    ECORE_MAGIC_SET(exe, ECORE_MAGIC_NONE);
    if (exe->tag) free(exe->tag);
    free(exe);
@@ -361,7 +522,7 @@ EAPI void ecore_exe_kill(Ecore_Exe *exe)
    while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)exe));
 }
 
-EAPI void ecore_exe_signal(Ecore_Exe *exe, int num)
+EAPI void ecore_exe_signal(Ecore_Exe *exe, int num __UNUSED__)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -384,7 +545,7 @@ EAPI void ecore_exe_hup(Ecore_Exe *exe)
 }
 
 static DWORD WINAPI
-_ecore_exe_thread_procedure(LPVOID data)
+_ecore_exe_thread_procedure(LPVOID data __UNUSED__)
 {
    GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
    GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, 0);
@@ -462,7 +623,7 @@ _ecore_exe_event_add_free(void *data __UNUSED__, void *ev)
 {
    Ecore_Exe_Event_Add *e;
 
-   e = ev;
+   e = (Ecore_Exe_Event_Add *)ev;
    free(e);
 }
 
@@ -477,14 +638,21 @@ _ecore_exe_event_del_free(void *data __UNUSED__, void *ev)
    free(e);
 }
 
+static void
+_ecore_exe_event_exe_data_free(void *data __UNUSED__, void *ev)
+{
+   Ecore_Exe_Event_Data *e;
+
+   e = (Ecore_Exe_Event_Data *)ev;
+   ecore_exe_event_data_free(e);
+}
+
 static int
-_ecore_exe_close_cb(void *data, Ecore_Win32_Handler *wh)
+_ecore_exe_close_cb(void *data, Ecore_Win32_Handler *wh __UNUSED__)
 {
    Ecore_Exe_Event_Del *e;
    Ecore_Exe           *exe;
    DWORD                exit_code = 0;
-
-   printf ("closing...\n");
 
    e = calloc(1, sizeof(Ecore_Exe_Event_Del));
    if (!e) return 0;
@@ -493,7 +661,6 @@ _ecore_exe_close_cb(void *data, Ecore_Win32_Handler *wh)
 
    if (GetExitCodeProcess(exe->process2, &exit_code))
      {
-       printf ("exit code : %d\n", (int)exit_code);
         e->exit_code = exit_code;
         e->exited = 1;
      }
@@ -514,7 +681,118 @@ _ecore_exe_close_cb(void *data, Ecore_Win32_Handler *wh)
    return 1;
 }
 
-# else
+static int
+_ecore_exe_generic_cb(void *data, Ecore_Win32_Handler *wh, Ecore_Exe_Flags flags)
+{
+   char       buf[READBUFSIZ];
+   Ecore_Exe *exe;
+   HANDLE     child_pipe;
+   int        event_type;
+   DWORD      num_exe;
+
+   if (!wh)
+     return 1;
+
+   exe = (Ecore_Exe *)data;
+
+   /* Sort out what sort of handler we are. */
+   /* And get any left over data from last time. */
+   if (flags & ECORE_EXE_PIPE_READ)
+     {
+	flags = ECORE_EXE_PIPE_READ;
+	event_type = ECORE_EXE_EVENT_DATA;
+	child_pipe = exe->child_pipe_read;
+     }
+   else
+     {
+	flags = ECORE_EXE_PIPE_ERROR;
+	event_type = ECORE_EXE_EVENT_ERROR;
+	child_pipe = exe->child_pipe_error;
+     }
+
+   for (;;)
+     {
+        Ecore_Exe_Event_Data *e;
+        BOOL                  res;
+
+        res = ReadFile(child_pipe, buf, READBUFSIZ, &num_exe, NULL);
+        if (!res || num_exe == 0) continue;
+
+        if (flags & ECORE_EXE_PIPE_READ)
+          {
+             if (exe->read_data_buf) free(exe->read_data_buf);
+             exe->read_data_size = 0;
+             exe->read_data_buf = malloc(num_exe);
+             if (exe->read_data_buf)
+               {
+                  memcpy(exe->read_data_buf, buf, num_exe);
+                  exe->read_data_size = num_exe;
+               }
+          }
+        else
+          {
+             if (exe->error_data_buf) free(exe->error_data_buf);
+             exe->error_data_size = 0;
+             exe->error_data_buf = malloc(num_exe);
+             if (exe->error_data_buf)
+               {
+                  memcpy(exe->error_data_buf, buf, num_exe);
+                  exe->error_data_size = num_exe;
+               }
+          }
+
+        e = ecore_exe_event_data_get(exe, flags);
+        if (e)
+          ecore_event_add(event_type, e,
+                          _ecore_exe_event_exe_data_free,
+                          NULL);
+        break;
+     }
+
+   return 1;
+}
+
+static int
+_ecore_exe_pipe_read_cb(void *data, Ecore_Win32_Handler *wh)
+{
+   return _ecore_exe_generic_cb(data, wh, ECORE_EXE_PIPE_READ);
+}
+
+static int
+_ecore_exe_pipe_write_cb(void *data, Ecore_Win32_Handler *wh __UNUSED__)
+{
+   char       buf[READBUFSIZ];
+   Ecore_Exe *exe;
+   DWORD      num_exe;
+   BOOL       res;
+
+   exe = (Ecore_Exe *)data;
+
+   res = WriteFile(exe->child_pipe_write_x, buf, READBUFSIZ, &num_exe, NULL);
+   if (!res || num_exe == 0)
+     {
+       /* FIXME: what to do here ?? */
+     }
+
+   if (exe->close_stdin == 1)
+     {
+        if (exe->h_write)
+          ecore_main_win32_handler_del(exe->h_write);
+        exe->h_write = NULL;
+        CloseHandle(exe->child_pipe_write);
+        exe->child_pipe_write = NULL;
+     }
+
+   return 1;
+}
+
+static int
+_ecore_exe_pipe_error_cb(void *data, Ecore_Win32_Handler *wh)
+{
+   return _ecore_exe_generic_cb(data, wh, ECORE_EXE_PIPE_ERROR);
+}
+
+#else
 
 void
 _ecore_exe_init(void)
@@ -526,5 +804,4 @@ _ecore_exe_shutdown(void)
 {
 }
 
-# endif
 #endif

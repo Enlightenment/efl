@@ -292,7 +292,7 @@ ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler)
 }
 #else
 EAPI void *
-ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler)
+ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler __UNUSED__)
 {
    return NULL;
 }
