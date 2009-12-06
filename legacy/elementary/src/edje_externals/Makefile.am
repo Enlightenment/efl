@@ -1,0 +1,37 @@
+
+MAINTAINERCLEANFILES = Makefile.in
+
+AM_CPPFLAGS = \
+-I. \
+-I$(top_builddir) \
+-I$(top_srcdir) \
+-I$(top_srcdir)/src/lib \
+-I$(top_builddir)/src/lib \
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+@ELEMENTARY_CFLAGS@ \
+@ELEMENTARY_X_CFLAGS@ \
+@ELEMENTARY_FB_CFLAGS@ \
+@ELEMENTARY_WIN32_CFLAGS@ \
+@ELEMENTARY_WINCE_CFLAGS@ \
+@ELEMENTARY_EDBUS_CFLAGS@ \
+@ELEMENTARY_EFREET_CFLAGS@
+
+if ELEMENTARY_WINDOWS_BUILD
+AM_CPPFLAGS += -DELEMENTARY_BUILD
+endif
+
+pkgdir = $(libdir)/edje
+pkg_LTLIBRARIES = elm.la
+
+elm_la_SOURCES = private.h \
+				modules.inc \
+				elm.c \
+				elm_button.c \
+				elm_check.c \
+				elm_radio.c \
+				elm_slider.c \
+				elm_toggle.c
+
+elm_la_LIBADD = $(top_builddir)/src/lib/libelementary.la
+elm_la_LDFLAGS = $(all_libraries) -no-undefined @lt_enable_auto_import@ -module -avoid-version -shared -fPIC
