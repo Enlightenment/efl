@@ -1,4 +1,3 @@
-
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
@@ -74,4 +73,17 @@ strcoll (const char *s1, const char *s2)
 #endif /* ! UNICODE */
 }
 
+
 #endif /* _WIN32_WCE */
+
+char *
+strrstr (const char *str, const char *substr)
+{
+  char *it;
+  char *ret = NULL;
+
+  while ((it = strstr(str, substr)))
+    ret = it;
+
+  return ret;
+}

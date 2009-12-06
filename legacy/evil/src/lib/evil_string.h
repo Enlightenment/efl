@@ -90,6 +90,23 @@ EAPI int strcoll (const char *s1, const char *s2);
 
 #endif /* _WIN32_WCE */
 
+/**
+ * @brief get the last substring occurence.
+ *
+ * @param str The string to search from.
+ * @param substr The substring to search.
+ * @return The last occurrence of the substring if found, @c NULL otherwise.
+ *
+ * This function retrieves the last occurrence of @p substring in the
+ * string @p str. If @p str or @p substr are @c NULL, of if @p substr
+ * is not found in @p str, @c NULL is returned.
+ *
+ * Conformity: Non applicable.
+ *
+ * Supported OS: Windows XP, Windows CE.
+ */
+EAPI char *strrstr (const char *str, const char *substr);
+
 
 /**
  * @}

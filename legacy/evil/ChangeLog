@@ -1,3 +1,13 @@
+2009-12-06  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_string.c:
+	add strrstr() function.
+
+	* src/bin/evil_suite.c:
+	* src/lib/evil_fnmatch.c:
+	* src/lib/evil_fnmatch_list_of_states.c:
+	include config.h
+
 2009-10-08  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_main.c:
