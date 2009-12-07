@@ -2422,7 +2422,7 @@ _eet_data_descriptor_decode(Eet_Free_Context *context,
 		    {
 		       if (IS_SIMPLE_TYPE(echnk.type) &&
 			   eet_data_type_match(echnk.type, ede->type))
-			 type = echnk.type;
+			 type = ede->type;
 		       else if ((echnk.group_type > EET_G_UNKNOWN) &&
 				(echnk.group_type < EET_G_LAST) &&
 				(echnk.group_type == ede->group_type))

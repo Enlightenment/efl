@@ -270,3 +270,6 @@
 
 	* Make all operation on Eet_File thread safe.
 
+2009-12-07  Cedric BAIL
+
+	* Fix error when retrieving a different float type than the stored one.
