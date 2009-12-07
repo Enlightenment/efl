@@ -307,7 +307,7 @@ ef_cb_desktop_command_get(void)
 
     info->expected = expected;
     efreet_desktop_command_get(desktop, NULL, _cb_command, info);
-    expected = eina_list_free(expected);
+    eina_list_free(expected);
 
     /* clean up */
     efreet_desktop_free(desktop);
