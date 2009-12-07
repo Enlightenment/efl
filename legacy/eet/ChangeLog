@@ -273,3 +273,4 @@
 2009-12-07  Cedric BAIL
 
 	* Fix error when retrieving a different float type than the stored one.
+	* Reduce convertion with a little memory overhead.

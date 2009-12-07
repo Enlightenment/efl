@@ -260,13 +260,13 @@ eet_dictionary_string_get_float(const Eet_Dictionary *ed, int index, float *resu
 {
    if (!_eet_dictionary_test(ed, index, result)) return EINA_FALSE;
 
-   if (ed->all[index].type != EET_D_FLOAT)
+   if (!(ed->all[index].type & EET_D_FLOAT))
      {
 	const char      *str;
 
 	str = ed->all[index].str ? ed->all[index].str : ed->all[index].mmap;
 
-	if (!_eet_dictionary_string_get_float_cache(str, ed->all[index].len, &ed->all[index].convert.f))
+	if (!_eet_dictionary_string_get_float_cache(str, ed->all[index].len, &ed->all[index].f))
 	  {
 	     long long    mantisse = 0;
 	     long         exponent = 0;
@@ -274,13 +274,13 @@ eet_dictionary_string_get_float(const Eet_Dictionary *ed, int index, float *resu
 	     if (eina_convert_atod(str, ed->all[index].len, &mantisse, &exponent) == EINA_FALSE)
 	       return EINA_FALSE;
 
-	     ed->all[index].convert.f = ldexpf((float) mantisse, exponent);
+	     ed->all[index].f = ldexpf((float) mantisse, exponent);
 	  }
 
-	ed->all[index].type = EET_D_FLOAT;
+	ed->all[index].type |= EET_D_FLOAT;
      }
 
-   *result = ed->all[index].convert.f;
+   *result = ed->all[index].f;
    return EINA_TRUE;
 }
 
@@ -289,13 +289,13 @@ eet_dictionary_string_get_double(const Eet_Dictionary *ed, int index, double *re
 {
    if (!_eet_dictionary_test(ed, index, result)) return EINA_FALSE;
 
-   if (ed->all[index].type != EET_D_DOUBLE)
+   if (!(ed->all[index].type & EET_D_DOUBLE))
      {
 	const char      *str;
 
 	str = ed->all[index].str ? ed->all[index].str : ed->all[index].mmap;
 
-	if (!_eet_dictionary_string_get_double_cache(str, ed->all[index].len, &ed->all[index].convert.d))
+	if (!_eet_dictionary_string_get_double_cache(str, ed->all[index].len, &ed->all[index].d))
 	  {
 	     long long    mantisse = 0;
 	     long         exponent = 0;
@@ -303,13 +303,13 @@ eet_dictionary_string_get_double(const Eet_Dictionary *ed, int index, double *re
 	     if (eina_convert_atod(str, ed->all[index].len, &mantisse, &exponent) == EINA_FALSE)
 	       return EINA_FALSE;
 
-	     ed->all[index].convert.d = ldexp((double) mantisse, exponent);
+	     ed->all[index].d = ldexp((double) mantisse, exponent);
 	  }
 
-	ed->all[index].type = EET_D_DOUBLE;
+	ed->all[index].type |= EET_D_DOUBLE;
      }
 
-   *result = ed->all[index].convert.d;
+   *result = ed->all[index].d;
    return EINA_TRUE;
 }
 
@@ -318,7 +318,7 @@ eet_dictionary_string_get_fp(const Eet_Dictionary *ed, int index, Eina_F32p32 *r
 {
    if (!_eet_dictionary_test(ed, index, result)) return EINA_FALSE;
 
-   if (ed->all[index].type != EET_D_FIXED_POINT)
+   if (!(ed->all[index].type & EET_D_FIXED_POINT))
      {
 	const char *str;
 	Eina_F32p32 fp;
@@ -328,11 +328,11 @@ eet_dictionary_string_get_fp(const Eet_Dictionary *ed, int index, Eina_F32p32 *r
 	if (!eina_convert_atofp(str,  ed->all[index].len, &fp))
 	  return EINA_FALSE;
 
-	ed->all[index].convert.fp = fp;
-	ed->all[index].type = EET_D_FIXED_POINT;
+	ed->all[index].fp = fp;
+	ed->all[index].type |= EET_D_FIXED_POINT;
      }
 
-   *result = ed->all[index].convert.fp;
+   *result = ed->all[index].fp;
    return EINA_TRUE;
 }
 

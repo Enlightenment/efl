@@ -11,10 +11,10 @@ typedef enum _Eet_Convert_Type Eet_Convert_Type;
 
 enum _Eet_Convert_Type
 {
-  EET_D_NOT_CONVERTED,
-  EET_D_FLOAT,
-  EET_D_DOUBLE,
-  EET_D_FIXED_POINT
+  EET_D_NOT_CONVERTED = 0,
+  EET_D_FLOAT = 1 << 1,
+  EET_D_DOUBLE = 1 << 2,
+  EET_D_FIXED_POINT = 1 << 4
 };
 
 typedef struct _Eet_String              Eet_String;
@@ -30,12 +30,9 @@ struct _Eet_String
   int                    next;
   int                    prev;
 
-  union
-  {
-    float                f;
-    double               d;
-    Eina_F32p32		 fp;
-  } convert;
+  float                f;
+  double               d;
+  Eina_F32p32		 fp;
 
   Eet_Convert_Type	 type;
 };
