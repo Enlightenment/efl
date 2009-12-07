@@ -58,8 +58,19 @@ eina_f32p32_scale(Eina_F32p32 a, int b)
 static inline Eina_F32p32
 eina_f32p32_div(Eina_F32p32 a, Eina_F32p32 b)
 {
-   /* If a > 2³², you will have a wrong result due to overflow. */
-   return (a << 32) / b;
+   /* Prevent overflow and do '(a << 32) / b' */
+   /* f32p64 / f32p32 = f32p32 */
+   /* f32p32 / f32p32 = f32p0 */
+   Eina_F32p32 up;
+   Eina_F32p32 down;
+   Eina_F32p32 result;
+
+   up = (a / b) << 32;
+   down = (a << 32) / b;
+
+   result = up + down;
+
+   return result;
 }
 
 static inline Eina_F32p32
