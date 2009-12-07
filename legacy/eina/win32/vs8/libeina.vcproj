@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(INCLUDE)"
-				PreprocessorDefinitions="HAVE_ERRNO_H;SECURITY_WIN32;WIN32;_DEBUG;_WINDOWS;_USRDLL;HAVE_EVIL;DLL_EXPORT;snprintf=_snprintf_c;__CRT_INLINE=__inline;inline=__inline;__UNUSED__=;EFL_EINA_BUILD;PACKAGE_LIB_DIR="
+				PreprocessorDefinitions="HAVE_ERRNO_H;_WIN32_WINNT=0x0501;SECURITY_WIN32;WIN32;_DEBUG;_WINDOWS;_USRDLL;HAVE_EVIL;DLL_EXPORT;snprintf=_snprintf_c;__CRT_INLINE=__inline;inline=__inline;__UNUSED__=;EFL_EINA_BUILD;PACKAGE_LIB_DIR=;_POSIX_"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -123,7 +123,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="$(INCLUDE)"
-				PreprocessorDefinitions="HAVE_ERRNO_H;SECURITY_WIN32;WIN32;NDEBUG;_WINDOWS;_USRDLL;HAVE_EVIL;DLL_EXPORT;snprintf=_snprintf_c;__CRT_INLINE=__inline;inline=__inline;__UNUSED__=;EFL_EINA_BUILD;PACKAGE_LIB_DIR="
+				PreprocessorDefinitions="HAVE_ERRNO_H;_WIN32_WINNT=0x0501;SECURITY_WIN32;WIN32;NDEBUG;_WINDOWS;_USRDLL;HAVE_EVIL;DLL_EXPORT;snprintf=_snprintf_c;__CRT_INLINE=__inline;inline=__inline;__UNUSED__=;EFL_EINA_BUILD;PACKAGE_LIB_DIR=;_POSIX_"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"

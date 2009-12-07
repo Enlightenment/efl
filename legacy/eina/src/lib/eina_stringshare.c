@@ -1024,8 +1024,10 @@ eina_stringshare_add_length(const char *str, unsigned int slen)
      return (const char *)_eina_stringshare_single + ((*str) << 1);
    else if (slen < 4)
      {
+	const char *s;
+
 	STRINGSHARE_LOCK_SMALL();
-	const char *s = _eina_stringshare_small_add(str, slen);
+	s = _eina_stringshare_small_add(str, slen);
 	STRINGSHARE_UNLOCK_SMALL();
 	return s;
      }
@@ -1156,10 +1158,11 @@ eina_stringshare_ref(const char *str)
      }
    else if (slen < 4)
      {
+	const char *s;
 	_eina_stringshare_population_add(slen);
 
 	STRINGSHARE_LOCK_SMALL();
-	const char *s =  _eina_stringshare_small_add(str, slen);
+	s =  _eina_stringshare_small_add(str, slen);
 	STRINGSHARE_UNLOCK_SMALL();
 
 	return s;
