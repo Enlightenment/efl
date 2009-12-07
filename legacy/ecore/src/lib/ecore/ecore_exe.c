@@ -1411,7 +1411,6 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler,
 {
    Ecore_Exe *exe;
    int child_fd;
-   int is_buffered = 0;
    int event_type;
 
    exe = data;
