@@ -62,7 +62,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="true"
-				AdditionalDependencies="libeet.lib"
+				AdditionalDependencies="libeet.lib libeina.lib"
 				OutputFile="$(OutDir)\eet.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(LIB); $(DebugLibraryDirectory)"
@@ -142,9 +142,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="true"
-				AdditionalDependencies="libeet.lib"
+				AdditionalDependencies="libeet.lib libeina.lib"
 				OutputFile="$(OutDir)\eet.exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(LIB); $(ReleaseLibraryDirectory)"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"

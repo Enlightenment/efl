@@ -6,6 +6,10 @@
 # include <config.h>
 #endif
 
+#ifdef _WIN32
+# include <winsock2.h>
+#endif
+
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
 #elif defined __GNUC__

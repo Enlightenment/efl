@@ -274,3 +274,8 @@
 
 	* Fix error when retrieving a different float type than the stored one.
 	* Reduce convertion with a little memory overhead.
+
+2009-12-07  Vincent Torri
+
+	* Include winsock2.h in eet_image.c for htonl definition on Windows.
+	* Fix Visual Studio project files

@@ -338,6 +338,9 @@ case "$host_os" in
       EET_CPPFLAGS="-D_WIN32_WCE=0x0420"
       EET_CFLAGS="-mwin32"
       ;;
+   mingw*)
+      EET_CPPFLAGS="-D_WIN32_WINNT=0x0500"
+      ;;
 esac
 AC_SUBST(EET_CPPFLAGS)
 AC_SUBST(EET_CFLAGS)
