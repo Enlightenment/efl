@@ -68,13 +68,13 @@ static Ecore_Exe_Event_Add *_ecore_exe_event_add_new(void);
 static void         _ecore_exe_event_add_free(void *data, void *ev);
 static void         _ecore_exe_dead_attach(Ecore_Exe *exe);
 
-EAPI int            ECORE_EXE_EVENT_ADD = 0;
-EAPI int            ECORE_EXE_EVENT_DEL = 0;
-EAPI int            ECORE_EXE_EVENT_DATA = 0;
-EAPI int            ECORE_EXE_EVENT_ERROR = 0;
+EAPI int ECORE_EXE_EVENT_ADD = 0;
+EAPI int ECORE_EXE_EVENT_DEL = 0;
+EAPI int ECORE_EXE_EVENT_DATA = 0;
+EAPI int ECORE_EXE_EVENT_ERROR = 0;
 
-static Ecore_Exe   *exes = NULL;
-static const char  *shell = NULL;
+static Ecore_Exe *exes = NULL;
+static const char *shell = NULL;
 
 /* FIXME: This errno checking stuff should be put elsewhere for everybody to use.
  * For now it lives here though, just to make testing easier.
@@ -94,7 +94,7 @@ static int          _ecore_exe_check_errno(int result, const char *file, int lin
 static int
 _ecore_exe_check_errno(int result, const char *file, int line)
 {
-   int                 saved_errno = errno;
+   int saved_errno = errno;
 
    if (result == -1)
      {
@@ -270,13 +270,13 @@ ecore_exe_run_priority_get(void)
  * @return  A process handle to the spawned process.
  * @ingroup Ecore_Exe_Basic_Group
  */
-EAPI Ecore_Exe     *
+EAPI Ecore_Exe *
 ecore_exe_run(const char *exe_cmd, const void *data)
 {
 /* I'm just being paranoid again, leaving in the original code in case there is a problem. */
 #if 0
-   Ecore_Exe          *exe;
-   pid_t               pid;
+   Ecore_Exe *exe;
+   pid_t pid;
 
    if (!exe_cmd)
       return NULL;
@@ -330,17 +330,17 @@ ecore_exe_run(const char *exe_cmd, const void *data)
  * @return  A process handle to the spawned process.
  * @ingroup Ecore_Exe_Basic_Group
  */
-EAPI Ecore_Exe     *
+EAPI Ecore_Exe *
 ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 {
-   Ecore_Exe          *exe = NULL;
-   int                 statusPipe[2] = { -1, -1 };
-   int                 errorPipe[2] = { -1, -1 };
-   int                 readPipe[2] = { -1, -1 };
-   int                 writePipe[2] = { -1, -1 };
-   int                 n = 0;
-   int                 ok = 1;
-   int                 result;
+   Ecore_Exe *exe = NULL;
+   int statusPipe[2] = { -1, -1 };
+   int errorPipe[2] = { -1, -1 };
+   int readPipe[2] = { -1, -1 };
+   int writePipe[2] = { -1, -1 };
+   int n = 0;
+   int ok = 1;
+   int result;
 
    if (!exe_cmd) return NULL;
    exe = calloc(1, sizeof(Ecore_Exe));
@@ -391,8 +391,8 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
      }
    if (ok)
      {
-	pid_t               pid = 0;
-	volatile int        vfork_exec_errno = 0;
+	pid_t pid = 0;
+	volatile int vfork_exec_errno = 0;
 
 	/* FIXME: I should double check this.  After a quick look around, this is already done, but via a more modern method. */
 	/* signal(SIGPIPE, SIG_IGN);    We only want EPIPE on errors */
@@ -481,7 +481,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 	      * wrong */
 	     for (;;)
 	       {
-		  char                buf;
+		  char buf;
 
 		  E_NO_ERRNO(result, read(statusPipe[0], &buf, 1), ok);
 		  if (result == 0)
@@ -627,7 +627,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 EAPI int
 ecore_exe_send(Ecore_Exe * exe, const void *data, int size)
 {
-   void               *buf;
+   void *buf;
 
    buf = realloc(exe->write_data_buf, exe->write_data_size + size);
    if (buf == NULL) return 0;
@@ -649,7 +649,7 @@ ecore_exe_send(Ecore_Exe * exe, const void *data, int size)
  * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI void
-ecore_exe_close_stdin(Ecore_Exe * exe)
+ecore_exe_close_stdin(Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -670,7 +670,7 @@ ecore_exe_close_stdin(Ecore_Exe * exe)
  * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI void
-ecore_exe_auto_limits_set(Ecore_Exe * exe, int start_bytes, int end_bytes,
+ecore_exe_auto_limits_set(Ecore_Exe *exe, int start_bytes, int end_bytes,
 			  int start_lines, int end_lines)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
@@ -732,12 +732,12 @@ ecore_exe_auto_limits_set(Ecore_Exe * exe, int start_bytes, int end_bytes,
  * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI Ecore_Exe_Event_Data *
-ecore_exe_event_data_get(Ecore_Exe * exe, Ecore_Exe_Flags flags)
+ecore_exe_event_data_get(Ecore_Exe *exe, Ecore_Exe_Flags flags)
 {
    Ecore_Exe_Event_Data *e = NULL;
-   int                 is_buffered = 0;
-   unsigned char      *inbuf;
-   int                 inbuf_num;
+   int is_buffered = 0;
+   unsigned char *inbuf;
+   int inbuf_num;
 
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -784,11 +784,11 @@ ecore_exe_event_data_get(Ecore_Exe * exe, Ecore_Exe_Flags flags)
 
 	if (is_buffered)
 	  {			/* Deal with line buffering. */
-	     int                 max = 0;
-	     int                 count = 0;
-	     int                 i;
-	     int                 last = 0;
-	     char               *c;
+	     int max = 0;
+	     int count = 0;
+	     int i;
+	     int last = 0;
+	     char *c;
 
 	     c = (char *)inbuf;
 	     for (i = 0; i < inbuf_num; i++)	/* Find the lines. */
@@ -864,7 +864,7 @@ ecore_exe_event_data_get(Ecore_Exe * exe, Ecore_Exe_Flags flags)
  * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI void
-ecore_exe_tag_set(Ecore_Exe * exe, const char *tag)
+ecore_exe_tag_set(Ecore_Exe *exe, const char *tag)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -886,8 +886,8 @@ ecore_exe_tag_set(Ecore_Exe * exe, const char *tag)
  * @return  The string attached to @p exe.
  * @ingroup Ecore_Exe_Basic_Group
  */
-EAPI char          *
-ecore_exe_tag_get(Ecore_Exe * exe)
+EAPI char *
+ecore_exe_tag_get(Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -908,12 +908,12 @@ ecore_exe_tag_get(Ecore_Exe * exe)
  *          called.
  * @ingroup Ecore_Exe_Basic_Group
  */
-EAPI void          *
-ecore_exe_free(Ecore_Exe * exe)
+EAPI void *
+ecore_exe_free(Ecore_Exe *exe)
 {
-   void               *data;
-   int                 ok = 0;
-   int                 result;
+   void *data;
+   int ok = 0;
+   int result;
 
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -971,7 +971,7 @@ ecore_exe_free(Ecore_Exe * exe)
  * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI void
-ecore_exe_event_data_free(Ecore_Exe_Event_Data * e)
+ecore_exe_event_data_free(Ecore_Exe_Event_Data *e)
 {
    IF_FREE(e->lines);
    IF_FREE(e->data);
@@ -984,8 +984,8 @@ ecore_exe_event_data_free(Ecore_Exe_Event_Data * e)
  * @return  The process ID on success.  @c -1 otherwise.
  * @ingroup Ecore_Exe_Basic_Group
  */
-EAPI                pid_t
-ecore_exe_pid_get(Ecore_Exe * exe)
+EAPI pid_t
+ecore_exe_pid_get(Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -1001,8 +1001,8 @@ ecore_exe_pid_get(Ecore_Exe * exe)
  * @return  The command on success.  NULL otherwise.
  * @ingroup Ecore_Exe_Basic_Group
  */
-EAPI char          *
-ecore_exe_cmd_get(Ecore_Exe * exe)
+EAPI char *
+ecore_exe_cmd_get(Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -1018,8 +1018,8 @@ ecore_exe_cmd_get(Ecore_Exe * exe)
  * @return  The data pointer attached to @p exe.
  * @ingroup Ecore_Exe_Basic_Group
  */
-EAPI void          *
-ecore_exe_data_get(Ecore_Exe * exe)
+EAPI void *
+ecore_exe_data_get(Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -1041,7 +1041,7 @@ ecore_exe_data_get(Ecore_Exe * exe)
  * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
-ecore_exe_pause(Ecore_Exe * exe)
+ecore_exe_pause(Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -1057,7 +1057,7 @@ ecore_exe_pause(Ecore_Exe * exe)
  * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
-ecore_exe_continue(Ecore_Exe * exe)
+ecore_exe_continue(Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -1073,7 +1073,7 @@ ecore_exe_continue(Ecore_Exe * exe)
  * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
-ecore_exe_interrupt(Ecore_Exe * exe)
+ecore_exe_interrupt(Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -1090,7 +1090,7 @@ ecore_exe_interrupt(Ecore_Exe * exe)
  * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
-ecore_exe_quit(Ecore_Exe * exe)
+ecore_exe_quit(Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -1107,7 +1107,7 @@ ecore_exe_quit(Ecore_Exe * exe)
  * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
-ecore_exe_terminate(Ecore_Exe * exe)
+ecore_exe_terminate(Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -1125,7 +1125,7 @@ ecore_exe_terminate(Ecore_Exe * exe)
  * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
-ecore_exe_kill(Ecore_Exe * exe)
+ecore_exe_kill(Ecore_Exe *exe)
 {
    struct _ecore_exe_dead_exe *dead;
 
@@ -1157,7 +1157,7 @@ ecore_exe_kill(Ecore_Exe * exe)
  * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
-ecore_exe_signal(Ecore_Exe * exe, int num)
+ecore_exe_signal(Ecore_Exe *exe, int num)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -1176,7 +1176,7 @@ ecore_exe_signal(Ecore_Exe * exe, int num)
  * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
-ecore_exe_hup(Ecore_Exe * exe)
+ecore_exe_hup(Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -1186,10 +1186,10 @@ ecore_exe_hup(Ecore_Exe * exe)
    kill(exe->pid, SIGHUP);
 }
 
-static Ecore_Exe   *
+static Ecore_Exe *
 _ecore_exe_is_it_alive(pid_t pid)
 {
-   Ecore_Exe          *exe = NULL;
+   Ecore_Exe *exe = NULL;
 
    /* FIXME: There is no nice, safe, OS independant way to tell if a
     * particular PID is still alive.  I have written code to do so
@@ -1231,7 +1231,7 @@ _ecore_exe_make_sure_its_dead(void *data)
    dead = data;
    if (dead)
      {
-	Ecore_Exe          *exe = NULL;
+	Ecore_Exe *exe = NULL;
 
 	if ((exe = _ecore_exe_is_it_alive(dead->pid)) != NULL)
 	  {
@@ -1263,7 +1263,7 @@ _ecore_exe_make_sure_its_really_dead(void *data)
    dead = data;
    if (dead)
      {
-	Ecore_Exe          *exe = NULL;
+	Ecore_Exe *exe = NULL;
 
 	if ((exe = _ecore_exe_is_it_alive(dead->pid)) != NULL)
 	  {
@@ -1297,10 +1297,11 @@ _ecore_exe_shutdown(void)
       ecore_exe_free(exes);
 }
 
-Ecore_Exe          *
+Ecore_Exe *
 _ecore_exe_find(pid_t pid)
 {
    Ecore_Exe *exe;
+
    EINA_INLIST_FOREACH(exes, exe)
      {
 	if (exe->pid == pid)
@@ -1312,10 +1313,10 @@ _ecore_exe_find(pid_t pid)
 static inline void
 _ecore_exe_exec_it(const char *exe_cmd, Ecore_Exe_Flags flags)
 {
-   char                use_sh = 1;
-   char               *buf = NULL;
-   char              **args = NULL;
-   int                 save_errno = 0;
+   char use_sh = 1;
+   char *buf = NULL;
+   char **args = NULL;
+   int  save_errno = 0;
 
    /* So what is this doing?
     *
@@ -1325,9 +1326,9 @@ _ecore_exe_exec_it(const char *exe_cmd, Ecore_Exe_Flags flags)
     */
    if (!strpbrk(exe_cmd, "|&;<>()$`\\\"'*?#"))
      {
-	char               *token;
-	char                pre_command = 1;
-	int                 num_tokens = 0;
+	char *token;
+	char pre_command = 1;
+	int num_tokens = 0;
 
 	if (!(buf = strdup(exe_cmd)))
 	   return;
@@ -1352,7 +1353,7 @@ _ecore_exe_exec_it(const char *exe_cmd, Ecore_Exe_Flags flags)
 	IF_FREE(buf);
 	if ((!token) && (num_tokens))
 	  {
-	     int                 i = 0;
+	     int i = 0;
 
 	     if (!(buf = strdup(exe_cmd)))
 	       return;
@@ -1405,13 +1406,13 @@ _ecore_exe_exec_it(const char *exe_cmd, Ecore_Exe_Flags flags)
 }
 
 static int
-_ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler * fd_handler,
+_ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler,
 				Ecore_Exe_Flags flags)
 {
-   Ecore_Exe          *exe;
-   int                 child_fd;
-   int                 is_buffered = 0;
-   int                 event_type;
+   Ecore_Exe *exe;
+   int child_fd;
+   int is_buffered = 0;
+   int event_type;
 
    exe = data;
 
@@ -1436,8 +1437,8 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler * fd_handler,
    if ((fd_handler)
        && (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ)))
      {
-	unsigned char      *inbuf;
-	int                 inbuf_num;
+	unsigned char *inbuf;
+	int inbuf_num;
 
 	/* Get any left over data from last time. */
 	if (flags & ECORE_EXE_PIPE_READ)
@@ -1457,8 +1458,8 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler * fd_handler,
 
 	for (;;)
 	  {
-	     int                 num, lost_exe;
-	     char                buf[READBUFSIZ];
+	     int num, lost_exe;
+	     char buf[READBUFSIZ];
 
 	     lost_exe = 0;
 	     errno = 0;
@@ -1541,23 +1542,23 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler * fd_handler,
 }
 
 static int
-_ecore_exe_data_error_handler(void *data, Ecore_Fd_Handler * fd_handler)
+_ecore_exe_data_error_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {
    return _ecore_exe_data_generic_handler(data, fd_handler,
 					  ECORE_EXE_PIPE_ERROR);
 }
 
 static int
-_ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler * fd_handler)
+_ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {
    return _ecore_exe_data_generic_handler(data, fd_handler,
 					  ECORE_EXE_PIPE_READ);
 }
 
 static int
-_ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler * fd_handler __UNUSED__)
+_ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
-   Ecore_Exe          *exe;
+   Ecore_Exe *exe;
 
    exe = data;
    if ((exe->write_fd_handler)
@@ -1570,8 +1571,8 @@ _ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler * fd_handler __UNUSED
    if ((exe->close_stdin == 1)
        && (exe->write_data_size == exe->write_data_offset))
      {
-	int                 ok = 0;
-	int                 result;
+	int ok = 0;
+	int result;
 
 	printf("Closing stdin for %s\n", exe->cmd);
 	/* if (exe->child_fd_write != -1)  E_NO_ERRNO(result, fsync(exe->child_fd_write), ok);   This a) doesn't work, and b) isn't needed. */
@@ -1586,9 +1587,9 @@ _ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler * fd_handler __UNUSED
 }
 
 static void
-_ecore_exe_flush(Ecore_Exe * exe)
+_ecore_exe_flush(Ecore_Exe *exe)
 {
-   int                 count;
+   int count;
 
    /* check whether we need to write anything at all. */
    if ((exe->child_fd_write == -1) || (!exe->write_data_buf))
