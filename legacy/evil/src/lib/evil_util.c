@@ -1,3 +1,9 @@
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
+
+#include "Evil.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -6,12 +12,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
-
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif /* HAVE_CONFIG_H */
-
-#include "Evil.h"
 
 
 wchar_t *

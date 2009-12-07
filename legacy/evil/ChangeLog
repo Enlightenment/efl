@@ -1,3 +1,21 @@
+2009-12-07  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_libgen.c:
+	* src/lib/evil_libgen.h:
+	* src/lib/Makefile.am:
+	* win32/vs8/libevil.vcproj:
+	* win32/vs9/libevil.vcproj:
+	add basename() function.
+
+	* src/lib/Evil.h:
+	add basename() function and comment useless wrappers (for now).
+
+	* src/lib/dlfcn/dlfcn.h:
+	remove useless include.
+
+	* src/lib/evil_util.c:
+	formatting.
+
 2009-12-06  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_string.c:

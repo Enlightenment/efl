@@ -9,6 +9,7 @@ include_HEADERS = \
 Evil.h \
 evil_fcntl.h \
 evil_langinfo.h \
+evil_libgen.h \
 evil_main.h \
 evil_stdlib.h \
 evil_stdio.h \
@@ -36,6 +37,7 @@ evil_fcntl.c \
 evil_fnmatch.c \
 evil_fnmatch_list_of_states.c \
 evil_langinfo.c \
+evil_libgen.c \
 evil_main.c \
 evil_mman.c \
 evil_pwd.c \

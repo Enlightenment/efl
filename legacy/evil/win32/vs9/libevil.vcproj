@@ -216,6 +216,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\lib\evil_libgen.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\lib\evil_main.c"
 				>
 			</File>
@@ -283,6 +287,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\lib\evil_langinfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lib\evil_libgen.h"
 				>
 			</File>
 			<File
