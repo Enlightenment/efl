@@ -123,7 +123,7 @@ ecore_x_e_illume_conformant_set(Ecore_X_Window win, unsigned int is_conformant)
 EAPI int 
 ecore_x_e_illume_conformant_get(Ecore_X_Window win) 
 {
-   unsigned int val;
+   unsigned int val = 0;
 
    if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_CONFORMANT, &val, 1))
      return 0;
