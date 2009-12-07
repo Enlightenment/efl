@@ -39,6 +39,12 @@ eina_f16p16_mul(Eina_F16p16 a, Eina_F16p16 b)
 }
 
 static inline Eina_F16p16
+eina_f16p16_scale(Eina_F16p16 a, int b)
+{
+   return a * b;
+}
+
+static inline Eina_F16p16
 eina_f16p16_div(Eina_F16p16 a, Eina_F16p16 b)
 {
    return (Eina_F16p16) ((((int64_t) a) << 16) / (int64_t) b);

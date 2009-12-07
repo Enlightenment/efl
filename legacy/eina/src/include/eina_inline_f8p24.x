@@ -39,6 +39,12 @@ eina_f8p24_mul(Eina_F8p24 a, Eina_F8p24 b)
 }
 
 static inline Eina_F8p24
+eina_f8p24_scale(Eina_F8p24 a, int b)
+{
+   return a * b;
+}
+
+static inline Eina_F8p24
 eina_f8p24_div(Eina_F8p24 a, Eina_F8p24 b)
 {
    return (Eina_F8p24) ((((int64_t) a) << 24) / (int64_t) b);

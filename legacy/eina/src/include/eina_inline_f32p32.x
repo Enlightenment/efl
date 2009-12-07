@@ -34,7 +34,25 @@ eina_f32p32_sub(Eina_F32p32 a, Eina_F32p32 b)
 static inline Eina_F32p32
 eina_f32p32_mul(Eina_F32p32 a, Eina_F32p32 b)
 {
-   return (a * b) >> 32;
+   /* Prevent overflow and do '(a * b) >> 32' */
+   /* f32p32 * f32p32 = f64p64 */
+   /* f16p16 * f16p16 = f32p32 */
+   Eina_F32p32 up;
+   Eina_F32p32 down;
+   Eina_F32p32 result;
+
+   up = (a >> 16) * (b >> 16);
+   down = (a & 0xFFFF) * (b & 0xFFFF);
+
+   result = up + (down >> 32);
+
+   return result;
+}
+
+static inline Eina_F32p32
+eina_f32p32_scale(Eina_F32p32 a, int b)
+{
+   return a * b;
 }
 
 static inline Eina_F32p32
