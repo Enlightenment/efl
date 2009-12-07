@@ -614,10 +614,10 @@ elm_menu_item_icon_set(Elm_Menu_Item *item, Evas_Object *icon)
      {
 	item->icon = icon;
 	elm_widget_sub_object_add(item->menu, icon);
-	edje_object_part_swallow(item->o, "elm.swallow.content", icon);
-	edje_object_signal_emit(item->o, "elm,state,icon,visible", "elm");
 	evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _changed_size_hints, item->menu);
+	edje_object_part_swallow(item->o, "elm.swallow.content", icon);
+	edje_object_signal_emit(item->o, "elm,state,icon,visible", "elm");
 	edje_object_message_signal_process(item->o);
 	_sizing_eval(item->menu);
      }

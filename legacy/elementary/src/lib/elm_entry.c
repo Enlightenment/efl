@@ -257,7 +257,10 @@ _resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
 
-   if (wd->linewrap || wd->char_linewrap) _sizing_eval(data);
+   if (wd->linewrap || wd->char_linewrap)
+     {
+        _sizing_eval(data);
+     }
    if (wd->hoversel) _hoversel_position(data);
 //   Evas_Coord ww, hh;
 //   evas_object_geometry_get(wd->ent, NULL, NULL, &ww, &hh);

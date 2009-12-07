@@ -294,12 +294,12 @@ elm_notify_content_set(Evas_Object *obj, Evas_Object *content)
 	wd->content = content;
 	elm_widget_sub_object_add(obj, content);
 
-	edje_object_part_swallow(wd->notify, "elm.swallow.content", content);
 	evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _changed_size_hints, obj);
 	evas_object_event_callback_add(content, EVAS_CALLBACK_RESIZE,
                                        _content_resize, obj);
+	edje_object_part_swallow(wd->notify, "elm.swallow.content", content);
 	_sizing_eval(obj);
      }
    _calc(obj);
@@ -337,7 +337,6 @@ elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent)
    if (parent)
      {
 	wd->parent = parent;
-	edje_object_part_swallow(wd->notify, "elm.swallow.parent", parent);
 	evas_object_event_callback_add(parent,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _changed_size_hints, obj);
@@ -349,6 +348,7 @@ elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent)
 				       _parent_del, obj);
 	evas_object_event_callback_add(parent, EVAS_CALLBACK_HIDE,
                                        _parent_hide, obj);
+	edje_object_part_swallow(wd->notify, "elm.swallow.parent", parent);
 	_sizing_eval(obj);
      }
    _calc(obj);

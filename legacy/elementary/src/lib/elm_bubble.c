@@ -185,10 +185,10 @@ elm_bubble_content_set(Evas_Object *obj, Evas_Object *content)
    if (content)
      {
 	elm_widget_sub_object_add(obj, content);
-	edje_object_part_swallow(wd->bbl, "elm.swallow.content", content);
 	evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
+	edje_object_part_swallow(wd->bbl, "elm.swallow.content", content);
      }
    _sizing_eval(obj);
 }

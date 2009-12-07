@@ -261,10 +261,10 @@ elm_check_icon_set(Evas_Object *obj, Evas_Object *icon)
    if (icon)
      {
 	elm_widget_sub_object_add(obj, icon);
-	edje_object_part_swallow(wd->chk, "elm.swallow.content", icon);
-	edje_object_signal_emit(wd->chk, "elm,state,icon,visible", "elm");
 	evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
+	edje_object_part_swallow(wd->chk, "elm.swallow.content", icon);
+	edje_object_signal_emit(wd->chk, "elm,state,icon,visible", "elm");
 	_sizing_eval(obj);
      }
 }

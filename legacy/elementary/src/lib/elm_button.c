@@ -207,10 +207,10 @@ elm_button_icon_set(Evas_Object *obj, Evas_Object *icon)
      {
 	wd->icon = icon;
 	elm_widget_sub_object_add(obj, icon);
-	edje_object_part_swallow(wd->btn, "elm.swallow.content", icon);
-	edje_object_signal_emit(wd->btn, "elm,state,icon,visible", "elm");
 	evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
+	edje_object_part_swallow(wd->btn, "elm.swallow.content", icon);
+	edje_object_signal_emit(wd->btn, "elm,state,icon,visible", "elm");
 	edje_object_message_signal_process(wd->btn);
 	_sizing_eval(obj);
      }
