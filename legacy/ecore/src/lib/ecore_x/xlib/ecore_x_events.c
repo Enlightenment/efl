@@ -1410,7 +1410,6 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
      {
 	Ecore_X_Event_Xdnd_Enter *e;
 	Ecore_X_DND_Target *target;
-	unsigned long three;
 
 	e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Enter));
 	if (!e) return;
@@ -1427,7 +1426,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	     return;
 	  }
 
-	if ((three = xevent->xclient.data.l[1] & 0x1UL))
+	if (xevent->xclient.data.l[1] & 0x1UL)
 	  {
 	     /* source supports more than 3 types, fetch property */
 	     unsigned char *data;

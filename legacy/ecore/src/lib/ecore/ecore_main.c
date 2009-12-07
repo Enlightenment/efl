@@ -662,7 +662,6 @@ _ecore_main_loop_iterate_internal(int once_only)
    if (_ecore_event_exist())
      {
 	have_event = 1;
-	have_signal = 1;
 	_ecore_main_select(0.0);
 	goto process_events;
      }
@@ -688,7 +687,6 @@ _ecore_main_loop_iterate_internal(int once_only)
    if (_ecore_event_exist())
      {
 	have_event = 1;
-	have_signal = 1;
 	_ecore_main_select(0.0);
 	goto process_events;
      }
@@ -725,7 +723,6 @@ _ecore_main_loop_iterate_internal(int once_only)
 	     if (!_ecore_idler_exist())
 	       {
 		  if (_ecore_main_select(-1.0) > 0) have_event = 1;
-		  if (_ecore_signal_count_get() > 0) have_signal = 1;
 	       }
 	     /* idlers */
 	     else
@@ -751,7 +748,6 @@ _ecore_main_loop_iterate_internal(int once_only)
 	     if (!_ecore_idler_exist())
 	       {
 		  if (_ecore_main_select(next_time) > 0) have_event = 1;
-		  if (_ecore_signal_count_get() > 0) have_signal = 1;
 	       }
 	     /* idlers */
 	     else

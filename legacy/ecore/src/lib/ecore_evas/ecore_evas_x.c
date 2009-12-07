@@ -3038,9 +3038,6 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
 
    if (einfo)
      {
-	int screen;
-
-	screen = DefaultScreen(ecore_x_display_get());
 	if (ScreenCount(ecore_x_display_get()) > 1)
 	  {
 	     Ecore_X_Window *roots;
@@ -3058,10 +3055,7 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
 		       for (i = 0; i < num; i++)
 			 {
 			    if (at.root == roots[i])
-			      {
-				 screen = i;
-				 break;
-			      }
+			      break;
 			 }
 		    }
 		  free(roots);

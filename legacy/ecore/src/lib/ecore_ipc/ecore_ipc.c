@@ -284,7 +284,7 @@ ecore_ipc_init(void)
 					  _ecore_ipc_event_server_del, NULL);
    handler[i++] = ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DATA,
 					  _ecore_ipc_event_client_data, NULL);
-   handler[i++] = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DATA,
+   handler[i] = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DATA,
 					  _ecore_ipc_event_server_data, NULL);
    return _ecore_ipc_init_count;
 }

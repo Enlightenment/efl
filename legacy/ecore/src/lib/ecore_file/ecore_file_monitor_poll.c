@@ -209,10 +209,8 @@ static void
 _ecore_file_monitor_poll_check(Ecore_File_Monitor *em)
 {
    int mtime;
-   int is_dir;
 
    mtime = ecore_file_mod_time(em->path);
-   is_dir = ecore_file_is_dir(em->path);
    if (mtime < ECORE_FILE_MONITOR_POLL(em)->mtime)
      {
 	Ecore_File *l;

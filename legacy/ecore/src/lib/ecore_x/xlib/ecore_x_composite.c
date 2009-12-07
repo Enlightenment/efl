@@ -35,7 +35,7 @@ EAPI void
 ecore_x_composite_redirect_window(Ecore_X_Window win, Ecore_X_Composite_Update_Type type)
 {
 #ifdef ECORE_XCOMPOSITE
-   int update;
+   int update = CompositeRedirectAutomatic;
 
    switch(type)
      {
@@ -54,7 +54,7 @@ EAPI void
 ecore_x_composite_redirect_subwindows(Ecore_X_Window win, Ecore_X_Composite_Update_Type type)
 {
 #ifdef ECORE_XCOMPOSITE
-   int update;
+   int update = CompositeRedirectAutomatic;
 
    switch(type)
      {
@@ -73,7 +73,7 @@ EAPI void
 ecore_x_composite_unredirect_window(Ecore_X_Window win, Ecore_X_Composite_Update_Type type)
 {
 #ifdef ECORE_XCOMPOSITE
-   int update;
+   int update = CompositeRedirectAutomatic;
 
    switch(type)
      {
@@ -92,7 +92,7 @@ EAPI void
 ecore_x_composite_unredirect_subwindows(Ecore_X_Window win, Ecore_X_Composite_Update_Type type)
 {
 #ifdef ECORE_XCOMPOSITE
-   int update;
+   int update = CompositeRedirectAutomatic;
 
    switch(type)
      {

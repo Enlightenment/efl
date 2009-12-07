@@ -1422,16 +1422,12 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler,
 	flags = ECORE_EXE_PIPE_READ;
 	event_type = ECORE_EXE_EVENT_DATA;
 	child_fd = exe->child_fd_read;
-	if (exe->flags & ECORE_EXE_PIPE_READ_LINE_BUFFERED)
-	   is_buffered = 1;
      }
    else
      {
 	flags = ECORE_EXE_PIPE_ERROR;
 	event_type = ECORE_EXE_EVENT_ERROR;
 	child_fd = exe->child_fd_error;
-	if (exe->flags & ECORE_EXE_PIPE_ERROR_LINE_BUFFERED)
-	   is_buffered = 1;
      }
 
    if ((fd_handler)

@@ -1145,7 +1145,7 @@ ecore_x_netwm_desktop_request_send(Ecore_X_Window win, Ecore_X_Window root, unsi
 }
 
 int
-_ecore_x_netwm_startup_info_begin(Ecore_X_Window win, char *data)
+_ecore_x_netwm_startup_info_begin(Ecore_X_Window win __UNUSED__, char *data __UNUSED__)
 {
 #if 0
    Ecore_X_Startup_Info *info;
@@ -1182,15 +1182,12 @@ _ecore_x_netwm_startup_info_begin(Ecore_X_Window win, char *data)
 	/* We have a '\0' in there, the message is done */
 	_ecore_x_netwm_startup_info_process(info);
      }
-#else
-   win = 0;
-   data = NULL;
 #endif
    return 1;
 }
 
 int
-_ecore_x_netwm_startup_info(Ecore_X_Window win, char *data)
+_ecore_x_netwm_startup_info(Ecore_X_Window win __UNUSED__, char *data __UNUSED__)
 {
 #if 0
    Ecore_X_Startup_Info *info;
@@ -1219,9 +1216,6 @@ _ecore_x_netwm_startup_info(Ecore_X_Window win, char *data)
 	/* We have a '\0' in there, the message is done */
 	_ecore_x_netwm_startup_info_process(info);
      }
-#else
-   win = 0;
-   data = NULL;
 #endif
    return 1;
 }

@@ -122,7 +122,6 @@ _ecore_config_db_read(Ecore_Config_DB_File *db, const char *key)
 {
    char *data, *value;
    int size;
-   Ecore_Config_Prop *prop;
    Ecore_Config_Type type;
    
    data = eet_read(db->ef, (char*)key, &size);
@@ -151,8 +150,7 @@ _ecore_config_db_read(Ecore_Config_DB_File *db, const char *key)
    
 	type = data[0];
 	value = data + l + 1;
-	prop = ecore_config_get(key);
-	
+
 	switch (type) 
 	  {
 	     case ECORE_CONFIG_INT:

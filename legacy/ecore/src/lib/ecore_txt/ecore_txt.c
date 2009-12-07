@@ -37,7 +37,6 @@ ecore_txt_convert(const char *enc_from, const char *enc_to, const char *text)
    outp     = new_txt;
    outalloc = 64;
    outlen   = 0;
-   tob      = 0;
 
    for (;;)
      {

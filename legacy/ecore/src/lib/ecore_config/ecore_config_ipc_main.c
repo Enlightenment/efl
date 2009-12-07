@@ -93,12 +93,9 @@ _ecore_config_ipc_prop_desc(Ecore_Config_Server * srv, const long serial,
 			    const char *key)
 {
 #ifdef HAVE_EVAS2
-   Ecore_Config_Bundle *theme;
    Ecore_Config_Prop  *e;
 
-   theme = ecore_config_bundle_by_serial_get(srv, serial);
    e = ecore_config_get(key);
-
    if (e)
      {
 	estring            *s = estring_new(512);
@@ -118,11 +115,8 @@ _ecore_config_ipc_prop_get(Ecore_Config_Server * srv, const long serial,
 {
 #ifdef HAVE_EVAS2
    char               *ret;
-   Ecore_Config_Bundle *theme;
 
-   ret = NULL;
-   theme = ecore_config_bundle_by_serial_get(srv, serial);
-   if ((ret = ecore_config_as_string_get( /*theme, */ key)))
+   if ((ret = ecore_config_as_string_get(key)))
       return ret;
 #endif
    return strdup("<undefined>");

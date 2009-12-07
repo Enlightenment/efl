@@ -85,9 +85,9 @@ EAPI Ecore_X_Randr_Rotation
 ecore_x_randr_screen_rotation_get(Ecore_X_Window root)
 {
 #ifdef ECORE_XRANDR
-   Rotation rot, crot = 0;
+   Rotation crot = 0;
    
-   rot = XRRRotations(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp, root), &crot);
+   XRRRotations(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp, root), &crot);
    return crot;
 #else
    return 0;

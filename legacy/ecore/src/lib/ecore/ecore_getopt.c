@@ -557,10 +557,10 @@ _ecore_getopt_help_desc(FILE *fp, const Ecore_Getopt_Desc *desc)
    switch (desc->action)
      {
       case ECORE_GETOPT_ACTION_STORE:
-	 used = _ecore_getopt_help_desc_store(fp, helpcol, cols, used, desc);
+	 _ecore_getopt_help_desc_store(fp, helpcol, cols, used, desc);
 	 break;
       case ECORE_GETOPT_ACTION_CHOICE:
-	 used = _ecore_getopt_help_desc_choices(fp, helpcol, cols, used, desc);
+	 _ecore_getopt_help_desc_choices(fp, helpcol, cols, used, desc);
 	 break;
       default:
 	 break;
@@ -746,7 +746,6 @@ _ecore_getopt_parse_find_nonargs_base(const Ecore_Getopt *parser, int argc, char
 	base = dst;
 	if (src != dst)
 	  argv[dst] = argv[src];
-	src++;
 	dst++;
      }
 

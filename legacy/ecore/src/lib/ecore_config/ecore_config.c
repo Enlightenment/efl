@@ -449,7 +449,6 @@ ecore_config_type_guess(const char *key, const char *val)
 {
    Ecore_Config_Prop  *p;
    char               *l;
-   long                v;
 
    l = NULL;
 
@@ -460,7 +459,7 @@ ecore_config_type_guess(const char *key, const char *val)
       return ECORE_CONFIG_NIL;
    if (val[0] == '#')
       return ECORE_CONFIG_RGB;
-   v = strtol(val, &l, 10);
+   strtol(val, &l, 10);
    if (*l)
      {
 	float               f;
@@ -1639,7 +1638,6 @@ ecore_config_init_global(const char *name)
    char               *p;
    int global;
    char               *buf;
-   global = 0;
 
    if ((p = getenv("HOME")))
      {				/* debug-only ### FIXME */

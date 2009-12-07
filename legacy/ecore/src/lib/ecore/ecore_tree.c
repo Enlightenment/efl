@@ -650,9 +650,7 @@ tree_node_find_parent(Ecore_Tree *tree, const void *key)
 
    while (!parent)
      {
-	int compare;
-
-	if ((compare = tree->compare_func(key, travel->key)) < 0)
+	if (tree->compare_func(key, travel->key) < 0)
 	  {
 	     if (!travel->right_child)
 	       parent = travel;

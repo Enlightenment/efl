@@ -158,7 +158,6 @@ _ecore_config_ipc_ecore_handle_request(Ecore_Ipc_Server * server,
 
    srv = _ecore_config_server_convert(server);
    serial = e->minor;
-   ret = ECORE_CONFIG_ERR_FAIL;
    r = NULL;
    m = (char *)e->data;
    E(1, "IPC/eCore: client sent: [%d,%d] #%d (%d) @ %p\n", e->major, e->minor,
