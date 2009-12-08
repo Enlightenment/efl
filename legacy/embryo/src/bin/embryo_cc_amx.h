@@ -67,11 +67,20 @@
 #define sEXPMAX         19	/* maximum name length for file version <= 6 */
 #define sNAMEMAX        31	/* maximum name length of symbol name */
 
+#if defined (_MSC_VER) || (defined (__SUNPRO_C) && __SUNPRO_C < 0x5100)
+# pragma pack(1)
+# define EMBRYO_STRUCT_PACKED
+#elif defined (__GNUC__) || (defined (__SUNPRO_C) && __SUNPRO_C >= 0x5100)
+# define EMBRYO_STRUCT_PACKED __attribute__((packed))
+#else
+# define EMBRYO_STRUCT_PACKED
+#endif
+
    typedef struct tagAMX_FUNCSTUB
    {
       unsigned int        address;
       char                name[sEXPMAX + 1];
-   } __attribute__((packed)) AMX_FUNCSTUB;
+   } EMBRYO_STRUCT_PACKED AMX_FUNCSTUB;
 
 /* The AMX structure is the internal structure for many functions. Not all
  * fields are valid at all times; many fields are cached in local variables.
@@ -108,7 +117,7 @@
       cell reset_stk     ;
       cell reset_hea     ;
       cell          *syscall_d;	/* relocated value/address for the SYSCALL.D opcode */
-   } __attribute__((packed)) AMX;
+   } EMBRYO_STRUCT_PACKED AMX;
 
 /* The AMX_HEADER structure is both the memory format as the file format. The
  * structure is used internaly.
@@ -132,7 +141,12 @@
       int pubvars    ;	/* the "public variables" table */
       int tags       ;	/* the "public tagnames" table */
       int nametable  ;	/* name table, file version 7 only */
-   } __attribute__((packed)) AMX_HEADER;
+   } EMBRYO_STRUCT_PACKED AMX_HEADER;
+
+#if defined _MSC_VER || (defined (__SUNPRO_C) && __SUNPRO_C < 0x5100)
+# pragma pack()
+#endif
+
 #define AMX_MAGIC       0xf1e0
 
    enum

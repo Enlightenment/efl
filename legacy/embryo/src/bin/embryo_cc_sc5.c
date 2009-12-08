@@ -33,11 +33,15 @@
 # include <config.h>
 #endif
 
-#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+
+#ifndef _MSC_VER
+# include <unistd.h>
+#endif
+
 #include "embryo_cc_sc.h"
 #include "embryo_cc_sc5.scp"
 

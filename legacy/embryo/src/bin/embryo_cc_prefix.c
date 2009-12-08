@@ -8,20 +8,23 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <sys/param.h>
 #include <math.h>
 #include <fnmatch.h>
 #include <limits.h>
 #include <ctype.h>
 #include <time.h>
 #include <dirent.h>
-#include <dlfcn.h>      /* dlopen,dlclose,etc */
+
+#ifndef _MSC_VER
+# include <unistd.h>
+# include <sys/param.h>
+#endif
+
 #ifdef HAVE_EVIL
 # include <Evil.h>      /* for realpath */
 #else
