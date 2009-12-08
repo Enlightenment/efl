@@ -28,6 +28,7 @@ eina_counter.c \
 eina_iterator.c \
 eina_accessor.c \
 eina_convert.c \
+eina_fp.c \
 eina_rbtree.c \
 eina_benchmark.c \
 eina_rectangle.c \

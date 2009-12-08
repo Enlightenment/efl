@@ -26,6 +26,8 @@
 # include <stdint.h>
 #endif
 
+#define EINA_F32P32_PI 0x00000003243f6a89
+
 typedef int64_t Eina_F32p32;
 typedef int32_t Eina_F16p16;
 typedef int32_t Eina_F8p24;
@@ -42,6 +44,9 @@ static inline Eina_F32p32 eina_f32p32_scale(Eina_F32p32 a, int b);
 static inline Eina_F32p32 eina_f32p32_div(Eina_F32p32 a, Eina_F32p32 b);
 static inline Eina_F32p32 eina_f32p32_sqrt(Eina_F32p32 a);
 static inline unsigned int eina_f32p32_fracc_get(Eina_F32p32 v);
+
+EAPI Eina_F32p32 eina_f32p32_cos(Eina_F32p32 a);
+EAPI Eina_F32p32 eina_f32p32_sin(Eina_F32p32 a);
 
 static inline Eina_F16p16 eina_f16p16_int_from(int32_t v);
 static inline int32_t eina_f16p16_int_to(Eina_F16p16 v);
