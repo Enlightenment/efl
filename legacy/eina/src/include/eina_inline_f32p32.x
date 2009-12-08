@@ -19,6 +19,8 @@
 #ifndef EINA_INLINE_F32P32_X_
 # define EINA_INLINE_F32P32_X_
 
+#include <stdlib.h>
+
 static inline Eina_F32p32
 eina_f32p32_add(Eina_F32p32 a, Eina_F32p32 b)
 {
@@ -35,18 +37,23 @@ static inline Eina_F32p32
 eina_f32p32_mul(Eina_F32p32 a, Eina_F32p32 b)
 {
    /* Prevent overflow and do '(a * b) >> 32' */
-   /* f32p32 * f32p32 = f64p64 */
-   /* f16p16 * f16p16 = f32p32 */
+   /* Basically do: Eina_F16p16 * Eina_F16p16 = Eina_F32p32 */
    Eina_F32p32 up;
    Eina_F32p32 down;
    Eina_F32p32 result;
+   uint64_t as, bs;
+   Eina_F32p32 sign;
 
-   up = (a >> 16) * (b >> 16);
-   down = (a & 0xFFFF) * (b & 0xFFFF);
+   sign = a ^ b;
+   as = llabs(a);
+   bs = llabs(b);
+
+   up = (as >> 16) * (bs >> 16);
+   down = (as & 0xFFFF) * (bs & 0xFFFF);
 
    result = up + (down >> 32);
 
-   return result;
+   return sign < 0 ? - result : result;
 }
 
 static inline Eina_F32p32
@@ -58,19 +65,17 @@ eina_f32p32_scale(Eina_F32p32 a, int b)
 static inline Eina_F32p32
 eina_f32p32_div(Eina_F32p32 a, Eina_F32p32 b)
 {
-   /* Prevent overflow and do '(a << 32) / b' */
-   /* f32p64 / f32p32 = f32p32 */
-   /* f32p32 / f32p32 = f32p0 */
-   Eina_F32p32 up;
-   Eina_F32p32 down;
+   Eina_F32p32 sign;
    Eina_F32p32 result;
 
-   up = (a / b) << 32;
-   down = (a << 32) / b;
+   sign = a ^ b;
 
-   result = up + down;
+   if (b == 0)
+     return sign < 0 ? (Eina_F32p32) 0x8000000000000000 : (Eina_F32p32) 0x7FFFFFFFFFFFFFFF;
 
-   return result;
+   result = (eina_f32p32_mul(llabs(a),  (((uint64_t) 1 << 62) / ((uint64_t)(llabs(b)) >> 2))));
+
+   return sign < 0 ? - result : result;
 }
 
 static inline Eina_F32p32
