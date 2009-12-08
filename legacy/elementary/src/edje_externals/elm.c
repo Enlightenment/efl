@@ -25,8 +25,6 @@ external_common_params_parse_internal(size_t params_size, void *data, Evas_Objec
      {
     if (!strcmp(param->name, "label"))
       p->label = param->s;
-    if(!strcmp(param->name, "state"))
-      p->state = param->i;
      }
    return p;
 }

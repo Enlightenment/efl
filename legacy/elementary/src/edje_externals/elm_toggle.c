@@ -6,6 +6,7 @@ typedef struct _Elm_Params_Toggle
    Elm_Params base;
    Evas_Object *icon;
    const char *st_label_from, *st_label_to;
+   int state;
 } Elm_Params_Toggle;
 
 static void
@@ -21,14 +22,14 @@ external_toggle_state_set(void *data, Evas_Object *obj, const void *from_params,
     elm_toggle_label_set(obj, p1->base.label);
     elm_toggle_icon_set(obj, p1->icon);
     elm_toggle_states_labels_set(obj, p1->st_label_from, p1->st_label_to);
-    elm_toggle_state_set(obj, p1->base.state);
+    elm_toggle_state_set(obj, p1->state);
     return;
      }
 
    elm_toggle_label_set(obj, p2->base.label);
    elm_toggle_icon_set(obj, p2->icon);
    elm_toggle_states_labels_set(obj, p2->st_label_from, p2->st_label_to);
-   elm_toggle_state_set(obj, p2->base.state);
+   elm_toggle_state_set(obj, p2->state);
 }
 
 static void *
@@ -42,6 +43,10 @@ external_toggle_params_parse(void *data, Evas_Object *obj, const Eina_List *para
      return NULL;
 
    external_common_icon_param_parse(&mem->icon, obj, params);
+
+   param = edje_external_param_find(params, "state");
+   if (param)
+     mem->state = param->i;
 
    param = edje_external_param_find(params, "state label from");
    if (param)

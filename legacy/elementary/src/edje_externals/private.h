@@ -30,7 +30,6 @@
 
 typedef struct {
     const char *label;
-    int state;
 } Elm_Params;
 
 void  external_signal(void *data, Evas_Object *obj, const char *signal, const char *source);
@@ -72,5 +71,4 @@ DEFINE_EXTERNAL_TYPE(type_name, name)
 
 
 #define DEFINE_EXTERNAL_COMMON_PARAMS           \
-    EDJE_EXTERNAL_PARAM_INFO_STRING("label"),   \
-    EDJE_EXTERNAL_PARAM_INFO_INT("state")
+    EDJE_EXTERNAL_PARAM_INFO_STRING("label")

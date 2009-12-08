@@ -4,6 +4,7 @@ typedef struct _Elm_Params_Check
 {
    Elm_Params base;
    Evas_Object *icon;
+   int state;
 } Elm_Params_Check;
 
 static void
@@ -18,13 +19,13 @@ external_check_state_set(void *data, Evas_Object *obj, const void *from_params, 
      {
     elm_check_label_set(obj, p1->base.label);
     elm_check_icon_set(obj, p1->icon);
-    elm_check_state_set(obj, p1->base.state);
+    elm_check_state_set(obj, p1->state);
     return;
      }
 
    elm_check_label_set(obj, p2->base.label);
    elm_check_icon_set(obj, p2->icon);
-   elm_check_state_set(obj, p2->base.state);
+   elm_check_state_set(obj, p2->state);
 }
 
 static void *
@@ -38,6 +39,10 @@ external_check_params_parse(void *data, Evas_Object *obj, const Eina_List *param
      return NULL;
 
    external_common_icon_param_parse(&mem->icon, obj, params);
+
+   param = edje_external_param_find(params, "state");
+   if (param)
+     mem->state = param->i;
 
    return mem;
 }
