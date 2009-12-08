@@ -48,11 +48,11 @@ external_toggle_params_parse(void *data, Evas_Object *obj, const Eina_List *para
    if (param)
      mem->state = param->i;
 
-   param = edje_external_param_find(params, "state label from");
+   param = edje_external_param_find(params, "label on");
    if (param)
      mem->st_label_from = eina_stringshare_add(param->s);
 
-   param = edje_external_param_find(params, "state label to");
+   param = edje_external_param_find(params, "label off");
    if (param)
      mem->st_label_to = eina_stringshare_add(param->s);
 
@@ -76,6 +76,9 @@ external_toggle_params_free(void *params)
 static Edje_External_Param_Info external_toggle_params[] = {
    DEFINE_EXTERNAL_COMMON_PARAMS,
    EDJE_EXTERNAL_PARAM_INFO_STRING("icon"),
+   EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT("label on", "ON"),
+   EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT("label off", "OFF"),
+   EDJE_EXTERNAL_PARAM_INFO_INT("state"),
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 

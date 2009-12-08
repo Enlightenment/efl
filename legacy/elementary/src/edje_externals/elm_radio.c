@@ -25,7 +25,8 @@ external_radio_state_set(void *data, Evas_Object *obj, const void *from_params, 
       {
      Evas_Object *ed = evas_object_smart_parent_get(obj);
      Evas_Object *group = edje_object_part_swallow_get(ed, p1->group_name);
-     elm_radio_group_add(obj, group);
+     if (group)
+       elm_radio_group_add(obj, group);
       }
     return;
      }
@@ -53,7 +54,7 @@ external_radio_params_parse(void *data, Evas_Object *obj, const Eina_List *param
 
    external_common_icon_param_parse(&mem->icon, obj, params);
 
-   param = edje_external_param_find(params, "param group");
+   param = edje_external_param_find(params, "group");
    if (param)
      mem->group_name = eina_stringshare_add(param->s);
 
@@ -79,6 +80,8 @@ external_radio_params_free(void *params)
 static Edje_External_Param_Info external_radio_params[] = {
    DEFINE_EXTERNAL_COMMON_PARAMS,
    EDJE_EXTERNAL_PARAM_INFO_STRING("icon"),
+   EDJE_EXTERNAL_PARAM_INFO_STRING("group"),
+   EDJE_EXTERNAL_PARAM_INFO_INT("state"),
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 

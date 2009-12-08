@@ -71,4 +71,4 @@ DEFINE_EXTERNAL_TYPE(type_name, name)
 
 
 #define DEFINE_EXTERNAL_COMMON_PARAMS           \
-    EDJE_EXTERNAL_PARAM_INFO_STRING("label")
+    EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT("label", "label goes here")

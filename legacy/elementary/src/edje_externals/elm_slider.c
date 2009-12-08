@@ -77,11 +77,11 @@ external_slider_params_parse(void *data, Evas_Object *obj, const Eina_List *para
    if (param)
      mem->horizontal = param->i;
 
-   param = edje_external_param_find(params, "unit");
+   param = edje_external_param_find(params, "unit format");
    if (param)
      mem->unit = eina_stringshare_add(param->s);
 
-   param = edje_external_param_find(params, "indicator");
+   param = edje_external_param_find(params, "indicator format");
    if (param)
      mem->indicator = eina_stringshare_add(param->s);
 
@@ -105,6 +105,14 @@ external_slider_params_free(void *params)
 static Edje_External_Param_Info external_slider_params[] = {
    DEFINE_EXTERNAL_COMMON_PARAMS,
    EDJE_EXTERNAL_PARAM_INFO_STRING("icon"),
+   EDJE_EXTERNAL_PARAM_INFO_DOUBLE("min"),
+   EDJE_EXTERNAL_PARAM_INFO_DOUBLE_DEFAULT("max", 10.0),
+   EDJE_EXTERNAL_PARAM_INFO_DOUBLE("value"),
+   EDJE_EXTERNAL_PARAM_INFO_INT("horizontal"),
+   EDJE_EXTERNAL_PARAM_INFO_INT("inverted"),
+   EDJE_EXTERNAL_PARAM_INFO_INT("span"),
+   EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT("unit format", "%1.2f"),
+   EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT("indicator format", "%1.2f"),
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 
