@@ -21,7 +21,7 @@
 			OutputDirectory="$(DebugOutputDirectory)"
 			IntermediateDirectory="$(TemporaryDirectory)\$(TargetName)\$(ConfigurationName)"
 			ConfigurationType="1"
-			CharacterSet="1"
+			CharacterSet="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -97,7 +97,7 @@
 			OutputDirectory="$(ReleaseOutputDirectory)"
 			IntermediateDirectory="$(TemporaryDirectory)\$(TargetName)\$(ConfigurationName)"
 			ConfigurationType="1"
-			CharacterSet="1"
+			CharacterSet="0"
 			WholeProgramOptimization="1"
 			>
 			<Tool
