@@ -105,9 +105,9 @@ external_slider_params_free(void *params)
 static Edje_External_Param_Info external_slider_params[] = {
    DEFINE_EXTERNAL_COMMON_PARAMS,
    EDJE_EXTERNAL_PARAM_INFO_STRING("icon"),
-   EDJE_EXTERNAL_PARAM_INFO_DOUBLE("min"),
-   EDJE_EXTERNAL_PARAM_INFO_DOUBLE_DEFAULT("max", 10.0),
-   EDJE_EXTERNAL_PARAM_INFO_DOUBLE("value"),
+//   EDJE_EXTERNAL_PARAM_INFO_DOUBLE("min"),
+//   EDJE_EXTERNAL_PARAM_INFO_DOUBLE_DEFAULT("max", 10.0),
+//   EDJE_EXTERNAL_PARAM_INFO_DOUBLE("value"),
    EDJE_EXTERNAL_PARAM_INFO_INT("horizontal"),
    EDJE_EXTERNAL_PARAM_INFO_INT("inverted"),
    EDJE_EXTERNAL_PARAM_INFO_INT("span"),
