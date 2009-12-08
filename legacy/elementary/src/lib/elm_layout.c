@@ -117,6 +117,12 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
      }
 }
 
+static void
+_signal_size_eval(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   _request_sizing_eval(data);
+}
+
 /**
  * Add a new layout to the parent
  *
@@ -144,7 +150,9 @@ elm_layout_add(Evas_Object *parent)
 
    wd->lay = edje_object_add(e);
    elm_widget_resize_object_set(obj, wd->lay);
-
+   edje_object_signal_callback_add(wd->lay, "size,eval", "elm",
+                                   _signal_size_eval, obj);
+   
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
 
    _request_sizing_eval(obj);
@@ -216,6 +224,12 @@ elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conte
  * Get the edje layout
  *
  * @param obj The layout object
+ * 
+ * This returns the edje object. It is not expected to be used to then swallow
+ * objects via edje_object_part_swallow() for example. Use 
+ * elm_layout_content_set() instead so child object handling and sizing is
+ * done properly. This is more intended for setting text, emitting signals,
+ * hooking to singal callbacks etc.
  *
  * @return A Evas_Object with the edje layout settings loaded
  * with function elm_layout_file_set
@@ -228,4 +242,23 @@ elm_layout_edje_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    return wd->lay;
+}
+
+/**
+ * Get the edje layout
+ * 
+ * Manually fors a sizing re-evaluation when contents changed state so that
+ * minimum size might have changed and needs re-evaluation. Also note that
+ * a standard signal of "size,eval" "elm" emitted by the edje object will
+ * cause this to happen too
+ *
+ * @param obj The layout object
+ *
+ * @ingroup Layout
+ */
+EAPI void
+elm_layout_sizing_eval(const Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   _request_sizing_eval(obj);
 }
