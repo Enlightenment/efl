@@ -251,50 +251,45 @@ typedef enum _Edje_External_Param_Type Edje_External_Param_Type;
 
 struct _Edje_External_Param
 {
-  const char *name;
-  Edje_External_Param_Type type;
-  // XXX these could be in a union, but eet doesn't support them (or does it?)
-  int i;
-  double d;
-  const char *s;
+   const char *name;
+   Edje_External_Param_Type type;
+   // XXX these could be in a union, but eet doesn't support them (or does it?)
+   int i;
+   double d;
+   const char *s;
 };
 typedef struct _Edje_External_Param Edje_External_Param;
 
-#ifndef NAN
-extern const float *_edje_const_nan;
-#define NAN (*_edje_const_nan)
-#endif
-
-#define EDJE_EXTERNAL_INT_UNSET INT32_MAX
-#define EDJE_EXTERNAL_DOUBLE_UNSET NAN
+#define EDJE_EXTERNAL_INT_UNSET 0xffffffff
+#define EDJE_EXTERNAL_DOUBLE_UNSET 0x1.0p255f
 
 struct _Edje_External_Param_Info
 {
    const char *name;
    Edje_External_Param_Type type;
    union
-   {
-      struct
-      {
-	 int def, min, max, step;
-      } i;
-      struct
-      {
-	 double def, min, max, step;
-      } d;
-      struct
-      {
-	 const char *def;
-	 const char *accept_fmt;
-	 const char *deny_fmt;
-      } s;
-      struct
-      {
-	 int def;
-	 const char *false_str;
-	 const char *true_str;
-      } b;
-   } info;
+     {
+        struct
+          {
+             int def, min, max, step;
+          } i;
+        struct
+          {
+             double def, min, max, step;
+          } d;
+        struct
+          {
+             const char *def;
+             const char *accept_fmt;
+             const char *deny_fmt;
+          } s;
+        struct
+          {
+             int def;
+             const char *false_str;
+             const char *true_str;
+          } b;
+     } info;
 };
 typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
 
