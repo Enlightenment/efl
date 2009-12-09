@@ -5,7 +5,8 @@ typedef struct _Elm_Params_Slider
    Elm_Params base;
    Evas_Object *icon;
    const char *indicator, *unit;
-   int inverted, max, min, span, value, horizontal;
+   double min, max, value;
+   int inverted, span, horizontal;
 } Elm_Params_Slider;
 
 static void
@@ -18,16 +19,16 @@ external_slider_state_set(void *data, Evas_Object *obj, const void *from_params,
 
    if (!p2)
      {
-    elm_slider_label_set(obj, p1->base.label);
-    elm_slider_icon_set(obj, p1->icon);
-    elm_slider_span_size_set(obj, p1->span);
-    elm_slider_min_max_set(obj, p1->min, p1->max);
-    elm_slider_value_set(obj, p1->value);
-    elm_slider_inverted_set(obj, p1->inverted);;
-    elm_slider_horizontal_set(obj, p1->horizontal);
-    elm_slider_indicator_format_set(obj, p1->indicator);
-    elm_slider_unit_format_set(obj, p1->unit);
-    return;
+	elm_slider_label_set(obj, p1->base.label);
+	elm_slider_icon_set(obj, p1->icon);
+	elm_slider_span_size_set(obj, p1->span);
+	elm_slider_min_max_set(obj, p1->min, p1->max);
+	elm_slider_value_set(obj, p1->value);
+	elm_slider_inverted_set(obj, p1->inverted);;
+	elm_slider_horizontal_set(obj, p1->horizontal);
+	elm_slider_indicator_format_set(obj, p1->indicator);
+	elm_slider_unit_format_set(obj, p1->unit);
+	return;
      }
 
    elm_slider_label_set(obj, p2->base.label);
@@ -59,15 +60,15 @@ external_slider_params_parse(void *data, Evas_Object *obj, const Eina_List *para
 
    param = edje_external_param_find(params, "min");
    if (param)
-     mem->min = param->i;
+     mem->min = param->d;
 
    param = edje_external_param_find(params, "max");
    if (param)
-     mem->max = param->i;
+     mem->max = param->d;
 
    param = edje_external_param_find(params, "value");
    if (param)
-     mem->value = param->i;
+     mem->value = param->d;
 
    param = edje_external_param_find(params, "inverted");
    if (param)
