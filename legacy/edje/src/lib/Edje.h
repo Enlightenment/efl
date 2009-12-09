@@ -32,7 +32,7 @@
 # endif
 #endif
 
-/** 
+/**
  * @file Edje.h
  * @brief Edje Graphical Design Library
  *
@@ -244,6 +244,7 @@ enum _Edje_External_Param_Type
   EDJE_EXTERNAL_PARAM_TYPE_INT,
   EDJE_EXTERNAL_PARAM_TYPE_DOUBLE,
   EDJE_EXTERNAL_PARAM_TYPE_STRING,
+  EDJE_EXTERNAL_PARAM_TYPE_BOOL,
   EDJE_EXTERNAL_PARAM_TYPE_MAX
 };
 typedef enum _Edje_External_Param_Type Edje_External_Param_Type;
@@ -287,6 +288,12 @@ struct _Edje_External_Param_Info
 	 const char *accept_fmt;
 	 const char *deny_fmt;
       } s;
+      struct
+      {
+	 int def;
+	 const char *false_str;
+	 const char *true_str;
+      } b;
    } info;
 };
 typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
@@ -297,6 +304,8 @@ typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
   {name, EDJE_EXTERNAL_PARAM_TYPE_DOUBLE, {.d = {def, min, max, step}}}
 #define EDJE_EXTERNAL_PARAM_INFO_STRING_FULL(name, def, accept, deny) \
   {name, EDJE_EXTERNAL_PARAM_TYPE_STRING, {.s = {def, accept, deny}}}
+#define EDJE_EXTERNAL_PARAM_INFO_BOOL_FULL(name, def, false_str, true_str) \
+  {name, EDJE_EXTERNAL_PARAM_TYPE_BOOL, {.b = {def, false_str, true_str}}}
 
 #define EDJE_EXTERNAL_PARAM_INFO_INT_DEFAULT(name, def) \
    EDJE_EXTERNAL_PARAM_INFO_INT_FULL(name, def, EDJE_EXTERNAL_INT_UNSET, EDJE_EXTERNAL_INT_UNSET, EDJE_EXTERNAL_INT_UNSET)
@@ -304,6 +313,8 @@ typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
    EDJE_EXTERNAL_PARAM_INFO_DOUBLE_FULL(name, def, EDJE_EXTERNAL_DOUBLE_UNSET, EDJE_EXTERNAL_DOUBLE_UNSET, EDJE_EXTERNAL_DOUBLE_UNSET)
 #define EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT(name, def) \
    EDJE_EXTERNAL_PARAM_INFO_STRING_FULL(name, def, NULL, NULL)
+#define EDJE_EXTERNAL_PARAM_INFO_BOOL_DEFAULT(name, def) \
+   EDJE_EXTERNAL_PARAM_INFO_BOOL_FULL(name, def, "false", "true")
 
 #define EDJE_EXTERNAL_PARAM_INFO_INT(name) \
    EDJE_EXTERNAL_PARAM_INFO_INT_DEFAULT(name, 0)
@@ -311,6 +322,8 @@ typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
    EDJE_EXTERNAL_PARAM_INFO_DOUBLE_DEFAULT(name, 0.0)
 #define EDJE_EXTERNAL_PARAM_INFO_STRING(name) \
    EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT(name, NULL)
+#define EDJE_EXTERNAL_PARAM_INFO_BOOL(name) \
+   EDJE_EXTERNAL_PARAM_INFO_BOOL_DEFAULT(name, 0)
 
 #define EDJE_EXTERNAL_PARAM_INFO_SENTINEL {NULL, 0, {.s = {NULL, NULL, NULL}}}
 
@@ -375,7 +388,7 @@ extern "C" {
    EAPI double       edje_scale_get                  (void);
    EAPI void         edje_object_scale_set           (Evas_Object *obj, double scale);
    EAPI double       edje_object_scale_get           (const Evas_Object *obj);
-       
+
    /* edje_load.c */
    EAPI Eina_List   *edje_file_collection_list       (const char *file);
    EAPI void         edje_file_collection_list_free  (Eina_List *lst);
@@ -456,7 +469,7 @@ extern "C" {
    EAPI void             edje_object_part_text_cursor_geometry_get     (const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
    EAPI void             edje_object_part_text_select_allow_set        (const Evas_Object *obj, const char *part, Eina_Bool allow);
    EAPI void             edje_object_part_text_select_abort            (const Evas_Object *obj, const char *part);
-   
+
    EAPI Eina_Bool        edje_object_part_text_cursor_next(const Evas_Object *obj, const char *part, Edje_Cursor cur);
    EAPI Eina_Bool        edje_object_part_text_cursor_prev(const Evas_Object *obj, const char *part, Edje_Cursor cur);
    EAPI Eina_Bool        edje_object_part_text_cursor_up(const Evas_Object *obj, const char *part, Edje_Cursor cur);
@@ -469,7 +482,7 @@ extern "C" {
    EAPI Eina_Bool        edje_object_part_text_cursor_is_format_get(const Evas_Object *obj, const char *part, Edje_Cursor cur);
    EAPI Eina_Bool        edje_object_part_text_cursor_is_visible_format_get(const Evas_Object *obj, const char *part, Edje_Cursor cur);
    EAPI const char      *edje_object_part_text_cursor_content_get(const Evas_Object *obj, const char *part, Edje_Cursor cur);
-       
+
    EAPI void         edje_object_part_swallow        (Evas_Object *obj, const char *part, Evas_Object *obj_swallow);
    EAPI void         edje_object_part_unswallow      (Evas_Object *obj, Evas_Object *obj_swallow);
    EAPI Evas_Object *edje_object_part_swallow_get    (const Evas_Object *obj, const char *part);
@@ -519,6 +532,7 @@ extern "C" {
   EAPI Eina_Bool edje_external_param_int_get(const Eina_List *params, const char *key, int *ret);
   EAPI Eina_Bool edje_external_param_double_get(const Eina_List *params, const char *key, double *ret);
   EAPI Eina_Bool edje_external_param_string_get(const Eina_List *params, const char *key, const char **ret);
+  EAPI Eina_Bool edje_external_param_bool_get(const Eina_List *params, const char *key, const char **ret);
   EAPI const Edje_External_Param_Info *edje_external_param_info_get(const char *type_name);
 
   /* edje_module.c */

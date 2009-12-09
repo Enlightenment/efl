@@ -221,6 +221,23 @@ edje_external_param_string_get(const Eina_List *params, const char *key, const c
    return EINA_FALSE;
 }
 
+EAPI Eina_Bool
+edje_external_param_bool_get(const Eina_List *params, const char *key, const char **ret)
+{
+   Edje_External_Param *param;
+
+   if (!params) return EINA_FALSE;
+   param = edje_external_param_find(params, key);
+
+   if (param && param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL && ret)
+     {
+	*ret = param->i;
+	return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
 EAPI const Edje_External_Param_Info *
 edje_external_param_info_get(const char *type_name)
 {
