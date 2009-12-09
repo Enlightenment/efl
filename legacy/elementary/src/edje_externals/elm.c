@@ -23,8 +23,8 @@ external_common_params_parse_internal(size_t params_size, void *data, Evas_Objec
 
    EINA_LIST_FOREACH(params, l, param)
      {
-    if (!strcmp(param->name, "label"))
-      p->label = param->s;
+	if (!strcmp(param->name, "label"))
+	  p->label = param->s;
      }
    return p;
 }
@@ -37,13 +37,13 @@ external_common_icon_param_parse(Evas_Object **icon, Evas_Object *obj, const Ein
    p = edje_external_param_find(params, "icon");
    if (p)
      {
-    Evas_Object *parent = evas_object_smart_parent_get(obj);
-    const char *file;
-    edje_object_file_get(parent, &file, NULL);
-    *icon = elm_icon_add(parent);
+	Evas_Object *parent = evas_object_smart_parent_get(obj);
+	const char *file;
+	edje_object_file_get(parent, &file, NULL);
+	*icon = elm_icon_add(parent);
 
-    if (!elm_icon_file_set(*icon, file, p->s))
-      elm_icon_standard_set(*icon, p->s);
+	if (!elm_icon_file_set(*icon, file, p->s))
+	  elm_icon_standard_set(*icon, p->s);
      }
 }
 

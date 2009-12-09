@@ -47,6 +47,7 @@ external_slider_params_parse(void *data, Evas_Object *obj, const Eina_List *para
 {
    Elm_Params_Slider *mem;
    Edje_External_Param *param;
+   const Eina_List *l;
 
    mem = external_common_params_parse(Elm_Params_Slider, data, obj, params);
    if (!mem)
@@ -54,37 +55,25 @@ external_slider_params_parse(void *data, Evas_Object *obj, const Eina_List *para
 
    external_common_icon_param_parse(&mem->icon, obj, params);
 
-   param = edje_external_param_find(params, "span");
-   if (param)
-     mem->span = param->i;
-
-   param = edje_external_param_find(params, "min");
-   if (param)
-     mem->min = param->d;
-
-   param = edje_external_param_find(params, "max");
-   if (param)
-     mem->max = param->d;
-
-   param = edje_external_param_find(params, "value");
-   if (param)
-     mem->value = param->d;
-
-   param = edje_external_param_find(params, "inverted");
-   if (param)
-     mem->inverted = param->i;
-
-   param = edje_external_param_find(params, "horizontal");
-   if (param)
-     mem->horizontal = param->i;
-
-   param = edje_external_param_find(params, "unit format");
-   if (param)
-     mem->unit = eina_stringshare_add(param->s);
-
-   param = edje_external_param_find(params, "indicator format");
-   if (param)
-     mem->indicator = eina_stringshare_add(param->s);
+   EINA_LIST_FOREACH(params, l, param)
+     {
+	if (!strcmp(param->name, "span"))
+	  mem->span = param->i;
+	else if (!strcmp(param->name, "min"))
+	  mem->min = param->d;
+	else if (!strcmp(param->name, "max"))
+	  mem->max = param->d;
+	else if (!strcmp(param->name, "value"))
+	  mem->value = param->d;
+	else if (!strcmp(param->name, "inverted"))
+	  mem->inverted = param->i;
+	else if (!strcmp(param->name, "horizontal"))
+	  mem->horizontal = param->i;
+	else if (!strcmp(param->name, "unit format"))
+	  mem->unit = eina_stringshare_add(param->s);
+	else if (!strcmp(param->name, "indicator format"))
+	  mem->indicator = eina_stringshare_add(param->s);
+     }
 
    return mem;
 }

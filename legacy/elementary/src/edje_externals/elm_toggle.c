@@ -1,5 +1,6 @@
-#include "private.h"
 #include <string.h>
+
+#include "private.h"
 
 typedef struct _Elm_Params_Toggle
 {
@@ -19,11 +20,11 @@ external_toggle_state_set(void *data, Evas_Object *obj, const void *from_params,
 
    if (!p2)
      {
-    elm_toggle_label_set(obj, p1->base.label);
-    elm_toggle_icon_set(obj, p1->icon);
-    elm_toggle_states_labels_set(obj, p1->st_label_from, p1->st_label_to);
-    elm_toggle_state_set(obj, p1->state);
-    return;
+	elm_toggle_label_set(obj, p1->base.label);
+	elm_toggle_icon_set(obj, p1->icon);
+	elm_toggle_states_labels_set(obj, p1->st_label_from, p1->st_label_to);
+	elm_toggle_state_set(obj, p1->state);
+	return;
      }
 
    elm_toggle_label_set(obj, p2->base.label);
@@ -37,6 +38,7 @@ external_toggle_params_parse(void *data, Evas_Object *obj, const Eina_List *para
 {
    Elm_Params_Toggle *mem;
    Edje_External_Param *param;
+   const Eina_List *l;
 
    mem = external_common_params_parse(Elm_Params_Toggle, data, obj, params);
    if (!mem)
@@ -44,17 +46,15 @@ external_toggle_params_parse(void *data, Evas_Object *obj, const Eina_List *para
 
    external_common_icon_param_parse(&mem->icon, obj, params);
 
-   param = edje_external_param_find(params, "state");
-   if (param)
-     mem->state = param->i;
-
-   param = edje_external_param_find(params, "label on");
-   if (param)
-     mem->st_label_from = eina_stringshare_add(param->s);
-
-   param = edje_external_param_find(params, "label off");
-   if (param)
-     mem->st_label_to = eina_stringshare_add(param->s);
+   EINA_LIST_FOREACH(params, l, param)
+     {
+	if (!strcmp(param->name, "state"))
+	  mem->state = param->i;
+	else if (!strcmp(param->name, "label on"))
+	  mem->st_label_from = eina_stringshare_add(param->s);
+	else if (!strcmp(param->name, "label off"))
+	  mem->st_label_to = eina_stringshare_add(param->s);
+     }
 
    return mem;
 }
