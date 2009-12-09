@@ -6,6 +6,9 @@
 
 #include "edje_private.h"
 
+static const unsigned int _edje_conte_nan_int = 0x7fc00000;
+float *_edje_const_nan = (float *)(&(_edje_conte_nan_int));
+
 static int _edje_init_count = 0;
 static int _edje_log_dom_global = -1;
 Eina_Mempool *_edje_real_part_mp = NULL;
