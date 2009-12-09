@@ -48,7 +48,9 @@
  */
 
 static int _eina_main_count = 0;
+#ifdef EFL_HAVE_PTHREAD
 static int _eina_main_thread_count = 0;
+#endif
 static int _eina_log_dom = -1;
 
 #ifdef ERR
