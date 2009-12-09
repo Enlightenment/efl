@@ -21,7 +21,9 @@
 # define EINA_FP_H_
 
 #ifdef _MSC_VER
-# include <Evil.h>
+typedef unsigned __int64 uint64_t;
+typedef signed __int64 int64_t;
+typedef signed int int32_t;
 #else
 # include <stdint.h>
 #endif
