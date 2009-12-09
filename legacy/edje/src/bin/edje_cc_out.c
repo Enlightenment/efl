@@ -938,7 +938,7 @@ data_write_lua_scripts(Eet_File *ef)
 	  _edje_lua_error_and_abort(L, err_code, ef);
 	lua_dump(L, _edje_lua_script_writer, &data);
 #else // LUA_PLAIN_TEXT
-	data.buf = lua_tostring(L, -1);
+	data.buf = (char *)lua_tostring(L, -1);
 	data.size = strlen(data.buf);
 #endif
 	//printf("lua chunk size: %d\n", data.size);

@@ -2054,7 +2054,8 @@ _edje_entry_cursor_is_format_get(Edje_Real_Part *rp, Edje_Cursor cur)
 {
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
    if (!c) return 0;
-   return evas_textblock_cursor_node_format_get(c);
+   if (evas_textblock_cursor_node_format_get(c)) return 1;
+   return 0;
 }
 
 Eina_Bool
@@ -2070,7 +2071,7 @@ _edje_entry_cursor_content_get(Edje_Real_Part *rp, Edje_Cursor cur)
 {
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
    const char *s;
-   static buf[16];
+   static char buf[16];
    int pos, pos2, ch;
    if (!c) return NULL;
    s = evas_textblock_cursor_node_format_get(c);

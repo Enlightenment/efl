@@ -2447,10 +2447,11 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name)
    pd->gradient.rel2.offset_y = -1;
    pd->gradient.use_rel = 1;
 
-   if (rp->part->type == EDJE_PART_TYPE_EXTERNAL && rp->part->source)
+   if ((rp->part->type == EDJE_PART_TYPE_EXTERNAL) && (rp->part->source))
      {
 	Edje_External_Param_Info *pi;
-	pi = edje_external_param_info_get(rp->part->source);
+        
+	pi = (Edje_External_Param_Info *)edje_external_param_info_get(rp->part->source);
 	while (pi && pi->name)
 	  {
 	     Edje_External_Param *p;
@@ -2513,7 +2514,7 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, const
 
 #define PD_COPY(_x) pdto->_x = pdfrom->_x
 #define PD_STRING_COPY(_x) _edje_if_string_free(ed, pdto->_x); \
-			   pdto->_x = eina_stringshare_add(pdfrom->_x)
+			   pdto->_x = (char *)eina_stringshare_add(pdfrom->_x)
    PD_COPY(align.x);
    PD_COPY(align.y);
    PD_COPY(fixed.w);
@@ -3424,7 +3425,7 @@ edje_edit_state_external_param_get(Evas_Object *obj, const char *part, const cha
 		    *value = &p->d;
 		    break;
 		 case EDJE_EXTERNAL_PARAM_TYPE_STRING:
-		    *value = p->s;
+		    *value = (void *)p->s;
 		    break;
 		}
 	   return EINA_TRUE;
@@ -5754,7 +5755,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
    //External
    if (rp->part->type == EDJE_PART_TYPE_EXTERNAL)
      {
-	if ((ll = edje_edit_state_external_params_list_get(obj, part, state)))
+	if ((ll = (Eina_List *)edje_edit_state_external_params_list_get(obj, part, state)))
 	  {
 	     Edje_External_Param *p;
 
@@ -6169,7 +6170,10 @@ edje_edit_save(Evas_Object *obj)
    fseek(f, 0, SEEK_SET);
 
    sf->file = _alloc(sz + 1); //TODO check result and return nicely
-   fread(sf->file, sz, 1, f);
+   if (fread(sf->file, sz, 1, f) != 1)
+     {
+        // do nothing
+     }
    sf->file[sz] = '\0';
    fseek(f, 0, SEEK_SET);
    fclose(f);

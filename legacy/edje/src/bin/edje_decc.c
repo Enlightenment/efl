@@ -326,7 +326,10 @@ output(void)
 	if (file_out)
 	  {
 	     snprintf(out, sizeof(out), "%s/%s", outdir, file_out);
-	     symlink(sf->name, out);
+	     if (symlink(sf->name, out) != 0)
+               {
+                  printf("ERROR: symlink %s -> %s failed\n", sf->name, out);
+               }
 	  }
 
 	chmod(out, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP);
