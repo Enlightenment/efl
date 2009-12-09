@@ -20,6 +20,8 @@
 #ifndef EINA_FP_H_
 # define EINA_FP_H_
 
+#include "eina_types.h"
+
 #ifdef _MSC_VER
 typedef unsigned __int64 uint64_t;
 typedef signed __int64 int64_t;
@@ -46,6 +48,9 @@ static inline Eina_F32p32 eina_f32p32_scale(Eina_F32p32 a, int b);
 static inline Eina_F32p32 eina_f32p32_div(Eina_F32p32 a, Eina_F32p32 b);
 static inline Eina_F32p32 eina_f32p32_sqrt(Eina_F32p32 a);
 static inline unsigned int eina_f32p32_fracc_get(Eina_F32p32 v);
+
+// dont use llabs - issues if not on 64bit
+#define eina_fp32p32_llabs(a) ((a < 0) ? -(a) : (a))
 
 EAPI Eina_F32p32 eina_f32p32_cos(Eina_F32p32 a);
 EAPI Eina_F32p32 eina_f32p32_sin(Eina_F32p32 a);

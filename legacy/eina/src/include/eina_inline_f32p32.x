@@ -21,9 +21,6 @@
 
 #include <stdlib.h>
 
-// dont use llabs - issues if not on 64bit
-#define _eina_fp32p32_llabs(a) ((a < 0) ? -(a) : (a))
-
 static inline Eina_F32p32
 eina_f32p32_add(Eina_F32p32 a, Eina_F32p32 b)
 {
@@ -48,8 +45,8 @@ eina_f32p32_mul(Eina_F32p32 a, Eina_F32p32 b)
    Eina_F32p32 sign;
 
    sign = a ^ b;
-   as = _eina_fp32p32_llabs(a);
-   bs = _eina_fp32p32_llabs(b);
+   as = eina_fp32p32_llabs(a);
+   bs = eina_fp32p32_llabs(b);
 
    up = (as >> 16) * (bs >> 16);
    down = (as & 0xFFFF) * (bs & 0xFFFF);
@@ -76,7 +73,7 @@ eina_f32p32_div(Eina_F32p32 a, Eina_F32p32 b)
    if (b == 0)
      return sign < 0 ? (Eina_F32p32) 0x8000000000000000ll : (Eina_F32p32) 0x7FFFFFFFFFFFFFFFll;
 
-   result = (eina_f32p32_mul(_eina_fp32p32_llabs(a),  (((uint64_t) 1 << 62) / ((uint64_t)(_eina_fp32p32_llabs(b)) >> 2))));
+   result = (eina_f32p32_mul(eina_fp32p32_llabs(a),  (((uint64_t) 1 << 62) / ((uint64_t)(eina_fp32p32_llabs(b)) >> 2))));
 
    return sign < 0 ? - result : result;
 }
