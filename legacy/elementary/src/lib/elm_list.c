@@ -48,12 +48,18 @@ static void _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_in
 static void _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info);
 static void _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info);
 
-#define ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, ...)		\
-  if ((it) && ((it)->deleted))					\
-    {								\
-       fprintf(stderr, "ERROR: %s:%d:%s() "#it" is NULL.\n",	\
-	       __FILE__, __LINE__, __FUNCTION__);		\
-       return __VA_ARGS__;					\
+#define ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, ...)			\
+  if (!it)								\
+    {									\
+       fprintf(stderr, "ERROR: %s:%d:%s() "#it" is NULL.\n",		\
+	       __FILE__, __LINE__, __FUNCTION__);			\
+       return __VA_ARGS__;						\
+    }								 	\
+  else if (it->deleted)						\
+    {									\
+       fprintf(stderr, "ERROR: %s:%d:%s() "#it" has been DELETED.\n",	\
+	       __FILE__, __LINE__, __FUNCTION__);			\
+       return __VA_ARGS__;						\
     }
 
 
