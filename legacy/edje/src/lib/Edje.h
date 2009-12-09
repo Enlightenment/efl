@@ -259,6 +259,17 @@ struct _Edje_External_Param
 };
 typedef struct _Edje_External_Param Edje_External_Param;
 
+#ifndef NAN
+# include <endian.h>
+# if __BYTE_ORDER == __BIG_ENDIAN
+#  define __nan_bytes { 0x7f, 0xc0, 0, 0 }
+# elif __BYTE_ORDER == __LITLE_ENDIAN
+#  define __nan_bytes { 0, 0, 0xc0, 0x7f }
+# endif
+static union { unsigned char __c[4]; float __d; } __nan_union = { __nan_bytes };
+# define NAN (__nan_union.d)
+#endif
+
 #define EDJE_EXTERNAL_INT_UNSET INT32_MAX
 #define EDJE_EXTERNAL_DOUBLE_UNSET NAN
 
