@@ -172,7 +172,7 @@ EAPI extern Eina_Error EINA_ERROR_SAFETY_FAILED;
   do { if (0 && (exp)) (void)val; } while (0)
 
 #define EINA_SAFETY_ON_FALSE_RETURN(exp)				\
-  do { (void)((!exp)); } while (0)
+  do { (void)(!(exp)); } while (0)
 
 #define EINA_SAFETY_ON_FALSE_RETURN_VAL(exp, val)			\
   do { if (0 && !(exp)) (void)val; } while (0)
