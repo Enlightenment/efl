@@ -126,6 +126,22 @@ if test "x${want_edje_calc_cache}" = "xyes" ; then
    AC_DEFINE(EDJE_CALC_CACHE, 1, [Cache result of edje_part_recalc - this uses up extra ram with the gain of reducing CPU usage when edje object are not resized])
 fi
 
+# Enable Fixed Point use
+want_fixed_point="no"
+
+AC_ARG_ENABLE([fixed-point],
+   [AC_HELP_STRING(
+       [--enable-fixed-point],
+       [reduce use of FPU by using Fixed Point provided by Eina and Eet, [[default=disabled]]]
+    )],
+    [want_fixed_point=$enableval]
+)
+AM_CONDITIONAL(BUILD_EDJE_FP, test "x${want_fixed_point}" = "xyes")
+
+if test "x${want_fixed_point}" = "xyes" ; then
+   AC_DEFINE(BUILD_EDJE_FP, 1, [Use Fixed Point instead of FPU])
+fi
+
 install_vim="yes"
 AC_ARG_WITH([vim],
     [AC_HELP_STRING([--with-vim=DIR], [Location of Vim data files [[autodetect]]])],
@@ -337,6 +353,7 @@ echo "  Amalgamation.........: ${do_amalgamation}"
 echo "  Ecore IMF............: $have_ecore_imf"
 echo "  EDJE_PROGRAM_CACHE...: $want_edje_program_cache"
 echo "  EDJE_CALC_CACHE......: $want_edje_calc_cache"
+echo "  Fixed point..........: $want_fixed_point"
 echo
 echo "  Build binaries.......: $have_edje_cc"
 echo

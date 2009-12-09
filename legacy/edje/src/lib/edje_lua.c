@@ -2562,9 +2562,9 @@ _edje_lua_description_get_aspect(lua_State *L)
       _edje_lua_checkudata(L, 1, &mDescription);
    if (!obj->rp->custom) return 0;
    lua_createtable(L, 2, 0);
-   lua_pushnumber(L, obj->rp->custom->description->aspect.min);
+   lua_pushnumber(L, TO_DOUBLE(obj->rp->custom->description->aspect.min));
    lua_rawseti(L, -2, 1);
-   lua_pushnumber(L, obj->rp->custom->description->aspect.max);
+   lua_pushnumber(L, TO_DOUBLE(obj->rp->custom->description->aspect.max));
    lua_rawseti(L, -2, 1);
    return 1;
 }
@@ -3046,8 +3046,8 @@ _edje_lua_description_set_aspect(lua_State *L)
    if (!obj->rp->custom) return 0;
    lua_rawgeti(L, 2, 1);
    lua_rawgeti(L, 2, 2);
-   obj->rp->custom->description->aspect.min = luaL_checknumber(L, -2);
-   obj->rp->custom->description->aspect.max = luaL_checknumber(L, -1);
+   obj->rp->custom->description->aspect.min = FROM_DOUBLE(luaL_checknumber(L, -2));
+   obj->rp->custom->description->aspect.max = FROM_DOUBLE(luaL_checknumber(L, -1));
    return 0;
 
 }

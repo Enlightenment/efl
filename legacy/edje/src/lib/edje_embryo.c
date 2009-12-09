@@ -1659,12 +1659,19 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
 
 	 break;
       case EDJE_STATE_PARAM_ASPECT:
-	 CHKPARAM(4);
+	 {
+	   double tmp;
 
-	 GETFLOAT(rp->custom->description->aspect.min, params[3]);
-	 GETFLOAT(rp->custom->description->aspect.max, params[4]);
+	   CHKPARAM(4);
 
-	 break;
+	   GETFLOAT(tmp, params[3]);
+	   rp->custom->description->aspect.min = FROM_DOUBLE(tmp);
+
+	   GETFLOAT(tmp, params[4]);
+	   rp->custom->description->aspect.max = FROM_DOUBLE(tmp);
+
+	   break;
+	 }
       case EDJE_STATE_PARAM_ASPECT_PREF:
 	 CHKPARAM(3);
 
@@ -1952,8 +1959,8 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
       case EDJE_STATE_PARAM_ASPECT:
 	 CHKPARAM(4);
 
-	 SETFLOAT(rp->custom->description->aspect.min, params[3]);
-	 SETFLOAT(rp->custom->description->aspect.max, params[4]);
+	 SETFLOAT(TO_DOUBLE(rp->custom->description->aspect.min), params[3]);
+	 SETFLOAT(TO_DOUBLE(rp->custom->description->aspect.max), params[4]);
 
 	 break;
       case EDJE_STATE_PARAM_ASPECT_PREF:

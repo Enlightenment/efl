@@ -45,6 +45,49 @@
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #endif
 
+
+#ifdef BUILD_EDJE_FP
+
+#define FLOAT_T Eina_F32p32
+#define EDJE_T_FLOAT EET_T_F32P32
+#define MUL(a, b) eina_f32p32_mul(a, b)
+#define SCALE(a, b) eina_f32p32_scale(a, b)
+#define DIV(a, b) eina_f32p32_div(a, b)
+#define DIV2(a) ((a) >> 1)
+#define ADD(a, b) eina_f32p32_add(a, b)
+#define SUB(a, b) eina_f32p32_sub(a, b)
+#define SQRT(a) eina_f32p32_sqrt(a)
+#define TO_DOUBLE(a) eina_f32p32_double_to(a)
+#define FROM_DOUBLE(a) eina_f32p32_double_from(a)
+#define FROM_INT(a) eina_f32p32_int_from(a)
+#define TO_INT(a) eina_f32p32_int_to(a)
+#define ZERO 0
+#define COS(a) eina_f32p32_cos(a)
+#define SIN(a) eina_f32p32_sin(a)
+#define PI EINA_F32P32_PI
+
+#else
+
+#define FLOAT_T double
+#define EDJE_T_FLOAT EET_T_DOUBLE
+#define MUL(a, b) ((a) * (b))
+#define SCALE(a, b) ((a) * (double)(b))
+#define DIV(a, b) ((a) / (b))
+#define DIV2(a) ((a) / 2.0)
+#define ADD(a, b) ((a) + (b))
+#define SUB(a, b) ((a) - (b))
+#define SQRT(a) sqrt(a)
+#define TO_DOUBLE(a) (double)(a)
+#define FROM_DOUBLE(a) (a)
+#define FROM_INT(a) (double)(a)
+#define TO_INT(a) (int)(a)
+#define ZERO 0.0
+#define COS(a) cos(a)
+#define SIN(a) sin(a)
+#define PI 3.14159265358979323846
+
+#endif
+
 /* increment this when the EET data descriptors have changed and old
  * EETs cannot be loaded/used correctly anymore.
  */
@@ -65,7 +108,7 @@
 
 struct _Edje_Position_Scale
 {
-   double x, y;
+   FLOAT_T x, y;
 };
 
 struct _Edje_Position
@@ -90,7 +133,7 @@ struct _Edje_Color
 
 struct _Edje_Aspect_Prefer
 {
-   double min, max;
+   FLOAT_T min, max;
    enum {
      EDJE_ASPECT_PREFER_NONE,
      EDJE_ASPECT_PREFER_VERTICAL,
@@ -138,8 +181,6 @@ typedef struct _Edje_Part_Image_Id                   Edje_Part_Image_Id;
 typedef struct _Edje_Part_Description                Edje_Part_Description;
 typedef struct _Edje_Spectrum_Color                  Edje_Spectrum_Color;
 typedef struct _Edje_Patterns                        Edje_Patterns;
-
-#define PI 3.14159265358979323846
 
 #define EDJE_INF_MAX_W 100000
 #define EDJE_INF_MAX_H 100000
@@ -495,8 +536,8 @@ struct _Edje_Part_Description
    Edje_Aspect_Prefer aspect;
 
    struct {
-      double         relative_x;
-      double         relative_y;
+      FLOAT_T        relative_x;
+      FLOAT_T	     relative_y;
       int            offset_x;
       int            offset_y;
       int            id_x; /* -1 = whole part collection, or part ID */
@@ -515,8 +556,8 @@ struct _Edje_Part_Description
       int            id; /* the spectrum id to use */
       int            use_rel; /* 1 - use rel1,rel2; 0 - use fill */
       struct {
-         double      relative_x;
-         double      relative_y;
+         FLOAT_T     relative_x;
+         FLOAT_T     relative_y;
          int         offset_x;
          int         offset_y;
       } rel1, rel2; /* linear gradient fill options */
@@ -528,10 +569,10 @@ struct _Edje_Part_Description
    } border;
 
    struct {
-      double         pos_rel_x; /* fill offset x relative to area */
-      double         rel_x; /* relative size compared to area */
-      double         pos_rel_y; /* fill offset y relative to area */
-      double         rel_y; /* relative size compared to area */
+      FLOAT_T        pos_rel_x; /* fill offset x relative to area */
+      FLOAT_T        rel_x; /* relative size compared to area */
+      FLOAT_T        pos_rel_y; /* fill offset y relative to area */
+      FLOAT_T        rel_y; /* relative size compared to area */
       int            pos_abs_x; /* fill offset x added to fill offset */
       int            abs_x; /* size of fill added to relative fill */
       int            pos_abs_y; /* fill offset y added to fill offset */
@@ -689,7 +730,7 @@ struct _Edje
    int                   block;
    int                   load_error;
    int                   freeze;
-   double                scale;
+   FLOAT_T		 scale;
 
    struct {
       void (*func) (void *data, Evas_Object *obj, const char *part);
@@ -779,7 +820,7 @@ struct _Edje_Real_Part_State
 
 struct _Edje_Real_Part_Drag
 {
-   double		 x, y; // 16
+   FLOAT_T		 x, y; // 16
    Edje_Position_Scale	 val, size, step, page; // 64
    struct {
       unsigned int	 count; // 4
@@ -828,7 +869,7 @@ struct _Edje_Real_Part
 	 const char	    *in_str; // 4 text only
 	 const char         *out_str; // 4 text only
 	 int                 out_size; // 4 text only
-	 double              align_x, align_y; // 16 text only
+	 FLOAT_T             align_x, align_y; // 16 text only
 	 double              elipsis; // 8 text only
 	 int                 fit_x, fit_y; // 8 text only
       } cache; // 64
@@ -836,7 +877,7 @@ struct _Edje_Real_Part
                  // if part type is TEXT move common members textblock +
                  // text to front and have smaller struct for textblock
 
-   double                    description_pos; // 8
+   FLOAT_T                   description_pos; // 8
    Edje_Part_Description    *chosen_description; // 4
    Edje_Real_Part_State      param1; // 20
    // WITH EDJE_CALC_CACHE: 140
@@ -1095,7 +1136,7 @@ extern Eina_List       *_edje_animators;
 extern Eina_List       *_edje_edjes;
 
 extern char            *_edje_fontset_append;
-extern double           _edje_scale;
+extern FLOAT_T          _edje_scale;
 extern int              _edje_freeze_val;
 extern int              _edje_freeze_calc_count;
 
@@ -1107,8 +1148,8 @@ Edje_Part_Description *_edje_part_description_find(Edje *ed, Edje_Real_Part *rp,
 void  _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char  *d1, double v1, const char *d2, double v2);
 void  _edje_recalc(Edje *ed);
 void  _edje_recalc_do(Edje *ed);
-int   _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, double *x, double *y);
-void  _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, double x, double y);
+int   _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, FLOAT_T *x, FLOAT_T *y);
+void  _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T x, FLOAT_T y);
 
 void  _edje_mouse_in_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
 void  _edje_mouse_out_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);

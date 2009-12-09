@@ -1334,7 +1334,7 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
             (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_EXPLICIT))
           {
              Eina_List *first, *last;
-             double sc;
+             FLOAT_T sc;
              
              first = en->sel;
              last = eina_list_last(en->sel);
@@ -1354,8 +1354,8 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
                   d = (r2->y + (r2->h / 2)) - en->cy;
                   d2 += d * d;
                   sc = rp->edje->scale;
-                  if (sc == 0.0) sc = _edje_scale;
-                  d = (Evas_Coord)(20.0 * sc); // FIXME: maxing number!
+                  if (sc == ZERO) sc = _edje_scale;
+                  d = (Evas_Coord)MUL(FROM_INT(20), sc); // FIXME: maxing number!
                   d = d * d;
                   if (d1 < d2)
                     {

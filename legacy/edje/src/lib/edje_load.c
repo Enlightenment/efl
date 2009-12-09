@@ -382,8 +382,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			    return 0;
 			 }
 
-		       rp->drag->step.x = ep->dragable.step_x;
-		       rp->drag->step.y = ep->dragable.step_y;
+		       rp->drag->step.x = FROM_INT(ep->dragable.step_x);
+		       rp->drag->step.y = FROM_INT(ep->dragable.step_y);
 		    }
 
 		  rp->edje = ed;
@@ -565,8 +565,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		  if (_edje_block_break(ed)) break;
 		  if (rp->drag)
 		    {
-		       if (rp->part->dragable.x < 0) rp->drag->val.x = 1.0;
-		       if (rp->part->dragable.y < 0) rp->drag->val.x = 1.0;
+		       if (rp->part->dragable.x < 0) rp->drag->val.x = FROM_DOUBLE(1.0);
+		       if (rp->part->dragable.y < 0) rp->drag->val.x = FROM_DOUBLE(1.0);
 		       _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
 		    }
 	       }

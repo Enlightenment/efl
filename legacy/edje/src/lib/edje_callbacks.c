@@ -129,7 +129,7 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	*/
 	rp = events;
 	{
-	   double dx = 0.0, dy = 0.0;
+	   FLOAT_T dx = ZERO, dy = ZERO;
 	   int dir;
 
 	   dir = _edje_part_dragable_calc(ed, rp, &dx, &dy);
@@ -300,7 +300,7 @@ _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 
 	if (rp->drag->down.count > 0)
 	  {
-	     double dx, dy;
+	     FLOAT_T dx, dy;
 	     int dir;
 
 	     dir = _edje_part_dragable_calc(ed, rp, &dx, &dy);

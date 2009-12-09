@@ -93,6 +93,8 @@ edje_init(void)
 	goto shutdown_embryo;
      }
 
+   _edje_scale = FROM_DOUBLE(1.0);
+
    _edje_edd_init();
    _edje_text_init();
    _edje_box_init();

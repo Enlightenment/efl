@@ -2663,7 +2663,7 @@ edje_edit_state_rel1_relative_x_get(Evas_Object *obj, const char *part, const ch
 {
    GET_PD_OR_RETURN(0);
    //printf("Get rel1 rel of part: %s state: %s [%f]\n", part, state, pd->rel1.relative_x);
-   return pd->rel1.relative_x;
+   return TO_DOUBLE(pd->rel1.relative_x);
 }
 
 EAPI double
@@ -2671,7 +2671,7 @@ edje_edit_state_rel1_relative_y_get(Evas_Object *obj, const char *part, const ch
 {
    GET_PD_OR_RETURN(0);
    //printf("Get rel1 rel of part: %s state: %s\n", part, state);
-   return pd->rel1.relative_y;
+   return TO_DOUBLE(pd->rel1.relative_y);
 }
 
 EAPI double
@@ -2679,7 +2679,7 @@ edje_edit_state_rel2_relative_x_get(Evas_Object *obj, const char *part, const ch
 {
    GET_PD_OR_RETURN(0);
    //printf("Get rel2 rel of part: %s state: %s\n", part, state);
-   return pd->rel2.relative_x;
+   return TO_DOUBLE(pd->rel2.relative_x);
 }
 
 EAPI double
@@ -2687,7 +2687,7 @@ edje_edit_state_rel2_relative_y_get(Evas_Object *obj, const char *part, const ch
 {
    GET_PD_OR_RETURN(0);
    //printf("Get rel2 rel of part: %s state: %s\n", part, state);
-   return pd->rel2.relative_y;
+   return TO_DOUBLE(pd->rel2.relative_y);
 }
 
 EAPI void
@@ -2696,7 +2696,7 @@ edje_edit_state_rel1_relative_x_set(Evas_Object *obj, const char *part, const ch
    GET_PD_OR_RETURN();
    //printf("Set rel1x of part: %s state: %s to: %f\n", part, state, x);
    //TODO check boudaries
-   pd->rel1.relative_x = x;
+   pd->rel1.relative_x = FROM_DOUBLE(x);
    edje_object_calc_force(obj);
 }
 
@@ -2706,7 +2706,7 @@ edje_edit_state_rel1_relative_y_set(Evas_Object *obj, const char *part, const ch
    GET_PD_OR_RETURN();
    //printf("Set rel1y of part: %s state: %s to: %f\n", part, state, y);
    //TODO check boudaries
-   pd->rel1.relative_y = y;
+   pd->rel1.relative_y = FROM_DOUBLE(y);
    edje_object_calc_force(obj);
 }
 
@@ -2716,7 +2716,7 @@ edje_edit_state_rel2_relative_x_set(Evas_Object *obj, const char *part, const ch
    GET_PD_OR_RETURN();
    //printf("Set rel2x of part: %s state: %s to: %f\n", part, state, x);
    //TODO check boudaries
-   pd->rel2.relative_x = x;
+   pd->rel2.relative_x = FROM_DOUBLE(x);
    edje_object_calc_force(obj);
 }
 
@@ -2727,7 +2727,7 @@ edje_edit_state_rel2_relative_y_set(Evas_Object *obj, const char *part, const ch
    //printf("Set rel2y of part: %s state: %s to: %f\n", part, state, y);
    pd = _edje_part_description_find_byname(ed, part, state);
    //TODO check boudaries
-   pd->rel2.relative_y = y;
+   pd->rel2.relative_y = FROM_DOUBLE(y);
    edje_object_calc_force(obj);
 }
 
@@ -2770,7 +2770,7 @@ edje_edit_state_rel1_offset_x_set(Evas_Object *obj, const char *part, const char
    GET_PD_OR_RETURN();
    //printf("Set rel1x offset of part: %s state: %s to: %f\n", part, state, x);
    //TODO check boudaries
-   pd->rel1.offset_x = x;
+   pd->rel1.offset_x = TO_INT(FROM_DOUBLE(x));
    edje_object_calc_force(obj);
 }
 
@@ -2780,7 +2780,7 @@ edje_edit_state_rel1_offset_y_set(Evas_Object *obj, const char *part, const char
    GET_PD_OR_RETURN();
    //printf("Set rel1y offset of part: %s state: %s to: %f\n", part, state, y);
    //TODO check boudaries
-   pd->rel1.offset_y = y;
+   pd->rel1.offset_y = TO_INT(FROM_DOUBLE(y));
    edje_object_calc_force(obj);
 }
 
@@ -2790,7 +2790,7 @@ edje_edit_state_rel2_offset_x_set(Evas_Object *obj, const char *part, const char
    GET_PD_OR_RETURN();
    //printf("Set rel2x offset of part: %s state: %s to: %f\n", part, state, x);
    //TODO check boudaries
-   pd->rel2.offset_x = x;
+   pd->rel2.offset_x = TO_INT(FROM_DOUBLE(x));
    edje_object_calc_force(obj);
 }
 
@@ -2800,7 +2800,7 @@ edje_edit_state_rel2_offset_y_set(Evas_Object *obj, const char *part, const char
    GET_PD_OR_RETURN();
    //printf("Set rel2y offset of part: %s state: %s to: %f\n", part, state, y);
    //TODO check boudaries
-   pd->rel2.offset_y = y;
+   pd->rel2.offset_y = TO_INT(FROM_DOUBLE(y));
    edje_object_calc_force(obj);
 }
 
@@ -3066,7 +3066,7 @@ edje_edit_state_align_x_get(Evas_Object *obj, const char *part, const char *stat
 
    //printf("GET ALIGN_X of state '%s' [%f]\n", state, pd->align.x);
 
-   return pd->align.x;
+   return TO_DOUBLE(pd->align.x);
 }
 
 EAPI double
@@ -3076,7 +3076,7 @@ edje_edit_state_align_y_get(Evas_Object *obj, const char *part, const char *stat
 
    //printf("GET ALIGN_Y of state '%s' [%f]\n", state, pd->align.y);
 
-   return pd->align.y;
+   return TO_DOUBLE(pd->align.y);
 }
 
 EAPI void
@@ -3084,7 +3084,7 @@ edje_edit_state_align_x_set(Evas_Object *obj, const char *part, const char *stat
 {
    GET_PD_OR_RETURN();
    //printf("SET ALIGN_X of state '%s' [to: %f]\n", state, align);
-   pd->align.x = align;
+   pd->align.x = FROM_DOUBLE(align);
 }
 
 EAPI void
@@ -3093,7 +3093,7 @@ edje_edit_state_align_y_set(Evas_Object *obj, const char *part, const char *stat
    GET_PD_OR_RETURN();
 
    //printf("SET ALIGN_Y of state '%s' [to: %f]\n", state, align);
-   pd->align.y = align;
+   pd->align.y = FROM_DOUBLE(align);
 }
 
 //min & max
@@ -3176,7 +3176,7 @@ edje_edit_state_aspect_min_get(Evas_Object *obj, const char *part, const char *s
    GET_PD_OR_RETURN(0);
 
    //printf("GET ASPECT_MIN of state '%s' [%f]\n", state, pd->aspect.min);
-   return pd->aspect.min;
+   return TO_DOUBLE(pd->aspect.min);
 }
 
 EAPI double
@@ -3185,7 +3185,7 @@ edje_edit_state_aspect_max_get(Evas_Object *obj, const char *part, const char *s
    GET_PD_OR_RETURN(0);
 
    //printf("GET ASPECT_MAX of state '%s' [%f]\n", state, pd->aspect.max);
-   return pd->aspect.max;
+   return TO_DOUBLE(pd->aspect.max);
 }
 
 EAPI void
@@ -3194,7 +3194,7 @@ edje_edit_state_aspect_min_set(Evas_Object *obj, const char *part, const char *s
    GET_PD_OR_RETURN();
 
    //printf("SET ASPECT_MIN of state '%s' [to: %f]\n", state, aspect);
-   pd->aspect.min = aspect;
+   pd->aspect.min = FROM_DOUBLE(aspect);
 }
 
 EAPI void
@@ -3203,7 +3203,7 @@ edje_edit_state_aspect_max_set(Evas_Object *obj, const char *part, const char *s
    GET_PD_OR_RETURN();
 
    //printf("SET ASPECT_MAX of state '%s' [to: %f]\n", state, aspect);
-   pd->aspect.max = aspect;
+   pd->aspect.max = FROM_DOUBLE(aspect);
 }
 
 EAPI unsigned char
@@ -3230,7 +3230,7 @@ edje_edit_state_fill_origin_relative_x_get(Evas_Object *obj, const char *part, c
 {
    GET_PD_OR_RETURN(0);
    //printf("Get state fill origin of part: %s state: %s\n", part, state);
-   return pd->fill.pos_rel_x;
+   return TO_DOUBLE(pd->fill.pos_rel_x);
 }
 
 EAPI double
@@ -3238,7 +3238,7 @@ edje_edit_state_fill_origin_relative_y_get(Evas_Object *obj, const char *part, c
 {
    GET_PD_OR_RETURN(0);
    //printf("Get state fill origin of part: %s state: %s\n", part, state);
-   return pd->fill.pos_rel_y;
+   return TO_DOUBLE(pd->fill.pos_rel_y);
 }
 
 EAPI int
@@ -3263,7 +3263,7 @@ edje_edit_state_fill_origin_relative_x_set(Evas_Object *obj, const char *part, c
 {
    GET_PD_OR_RETURN();
    //printf("Set state fill origin of part: %s state: %s to: %f\n", part, state, x);
-   pd->fill.pos_rel_x = x;
+   pd->fill.pos_rel_x = FROM_DOUBLE(x);
    edje_object_calc_force(obj);
 }
 
@@ -3272,7 +3272,7 @@ edje_edit_state_fill_origin_relative_y_set(Evas_Object *obj, const char *part, c
 {
    GET_PD_OR_RETURN();
    //printf("Set state fill origin of part: %s state: %s to: %f\n", part, state, y);
-   pd->fill.pos_rel_y = y;
+   pd->fill.pos_rel_y = FROM_DOUBLE(y);
    edje_object_calc_force(obj);
 }
 
@@ -3281,7 +3281,7 @@ edje_edit_state_fill_origin_offset_x_set(Evas_Object *obj, const char *part, con
 {
    GET_PD_OR_RETURN();
    //printf("Set state fill origin offset x of part: %s state: %s to: %f\n", part, state, x);
-   pd->fill.pos_abs_x = x;
+   pd->fill.pos_abs_x = FROM_DOUBLE(x);
    edje_object_calc_force(obj);
 }
 
@@ -3290,7 +3290,7 @@ edje_edit_state_fill_origin_offset_y_set(Evas_Object *obj, const char *part, con
 {
    GET_PD_OR_RETURN();
    //printf("Set state fill origin offset y of part: %s state: %s to: %f\n", part, state, y);
-   pd->fill.pos_abs_y = y;
+   pd->fill.pos_abs_y = FROM_DOUBLE(y);
    edje_object_calc_force(obj);
 }
 
@@ -3299,7 +3299,7 @@ edje_edit_state_fill_size_relative_x_get(Evas_Object *obj, const char *part, con
 {
    GET_PD_OR_RETURN(0.0);
    //printf("Get state fill size of part: %s state: %s\n", part, state);
-   return pd->fill.rel_x;
+   return TO_DOUBLE(pd->fill.rel_x);
 }
 
 EAPI double
@@ -3307,7 +3307,7 @@ edje_edit_state_fill_size_relative_y_get(Evas_Object *obj, const char *part, con
 {
    GET_PD_OR_RETURN(0.0);
    //printf("Get state fill size of part: %s state: %s\n", part, state);
-   return pd->fill.rel_y;
+   return TO_DOUBLE(pd->fill.rel_y);
 }
 
 EAPI int
@@ -3331,7 +3331,7 @@ edje_edit_state_fill_size_relative_x_set(Evas_Object *obj, const char *part, con
 {
    GET_PD_OR_RETURN();
    //printf("Set state fill size of part: %s state: %s to: %f\n", part, state, x);
-   pd->fill.rel_x = x;
+   pd->fill.rel_x = FROM_DOUBLE(x);
    edje_object_calc_force(obj);
 }
 
@@ -3340,7 +3340,7 @@ edje_edit_state_fill_size_relative_y_set(Evas_Object *obj, const char *part, con
 {
    GET_PD_OR_RETURN();
    //printf("Set state fill size of part: %s state: %s to: %f\n", part, state, y);
-   pd->fill.rel_y = y;
+   pd->fill.rel_y = FROM_DOUBLE(y);
    edje_object_calc_force(obj);
 }
 
@@ -3349,7 +3349,7 @@ edje_edit_state_fill_size_offset_x_set(Evas_Object *obj, const char *part, const
 {
    GET_PD_OR_RETURN();
    //printf("Set state fill size offset x of part: %s state: %s to: %f\n", part, state, x);
-   pd->fill.abs_x = x;
+   pd->fill.abs_x = FROM_DOUBLE(x);
    edje_object_calc_force(obj);
 }
 
@@ -3358,7 +3358,7 @@ edje_edit_state_fill_size_offset_y_set(Evas_Object *obj, const char *part, const
 {
    GET_PD_OR_RETURN();
    //printf("Set state fill size offset y of part: %s state: %s to: %f\n", part, state, y);
-   pd->fill.abs_y = y;
+   pd->fill.abs_y = FROM_DOUBLE(y);
    edje_object_calc_force(obj);
 }
 
@@ -3638,7 +3638,7 @@ edje_edit_state_text_align_x_get(Evas_Object *obj, const char *part, const char 
    GET_PD_OR_RETURN(0);
 
    //printf("GET TEXT_ALIGN_X of state: %s [%f]\n", state, pd->text.align.x);
-   return pd->text.align.x;
+   return TO_DOUBLE(pd->text.align.x);
 }
 
 EAPI void
@@ -3648,7 +3648,7 @@ edje_edit_state_text_align_x_set(Evas_Object *obj, const char *part, const char 
 
    //printf("SET TEXT_ALIGN_X of state: %s [%f]\n", state, align);
 
-   pd->text.align.x = align;
+   pd->text.align.x = FROM_DOUBLE(align);
    edje_object_calc_force(obj);
 }
 
@@ -3658,7 +3658,7 @@ edje_edit_state_text_align_y_get(Evas_Object *obj, const char *part, const char 
    GET_PD_OR_RETURN(0.0);
 
    //printf("GET TEXT_ALIGN_Y of state: %s [%f]\n", state, pd->text.align.x);
-   return pd->text.align.y;
+   return TO_DOUBLE(pd->text.align.y);
 }
 
 EAPI void
@@ -3668,7 +3668,7 @@ edje_edit_state_text_align_y_set(Evas_Object *obj, const char *part, const char 
 
    //printf("SET TEXT_ALIGN_Y of state: %s [%f]\n", state, align);
 
-   pd->text.align.y = align;
+   pd->text.align.y = FROM_DOUBLE(align);
    edje_object_calc_force(obj);
 }
 
@@ -4544,7 +4544,7 @@ edje_edit_state_gradient_rel1_relative_x_get(Evas_Object *obj, const char *part,
    GET_PD_OR_RETURN(0);
    //printf("GET GRADIENT REL1 RELX for part: %s state: %s [%f]\n", part, state, pd->gradient.rel1.relative_x);
 
-   return pd->gradient.rel1.relative_x;
+   return TO_DOUBLE(pd->gradient.rel1.relative_x);
 }
 
 EAPI double
@@ -4553,7 +4553,7 @@ edje_edit_state_gradient_rel1_relative_y_get(Evas_Object *obj, const char *part,
    GET_PD_OR_RETURN(0);
    //printf("GET GRADIENT REL1 RELY for part: %s state: %s [%f]\n", part, state, pd->gradient.rel1.relative_y);
 
-   return pd->gradient.rel1.relative_y;
+   return TO_DOUBLE(pd->gradient.rel1.relative_y);
 }
 
 EAPI double
@@ -4562,7 +4562,7 @@ edje_edit_state_gradient_rel2_relative_x_get(Evas_Object *obj, const char *part,
    GET_PD_OR_RETURN(0);
    //printf("GET GRADIENT REL2 RELX for part: %s state: %s [%f]\n", part, state, pd->gradient.rel2.relative_x);
 
-   return pd->gradient.rel2.relative_x;
+   return TO_DOUBLE(pd->gradient.rel2.relative_x);
 }
 
 EAPI double
@@ -4571,7 +4571,7 @@ edje_edit_state_gradient_rel2_relative_y_get(Evas_Object *obj, const char *part,
    GET_PD_OR_RETURN(0);
    //printf("GET GRADIENT REL2 RELY for part: %s state: %s [%f]\n", part, state, pd->gradient.rel2.relative_y);
 
-   return pd->gradient.rel2.relative_y;
+   return TO_DOUBLE(pd->gradient.rel2.relative_y);
 }
 
 EAPI Eina_Bool
@@ -4580,7 +4580,7 @@ edje_edit_state_gradient_rel1_relative_x_set(Evas_Object *obj, const char *part,
    GET_PD_OR_RETURN(0);
    //printf("SET GRADIENT REL1 RELX for part: %s state: %s [TO %f]\n", part, state, val);
 
-   pd->gradient.rel1.relative_x = val;
+   pd->gradient.rel1.relative_x = FROM_DOUBLE(val);
    edje_object_calc_force(obj);
    return 1;
 }
@@ -4591,7 +4591,7 @@ edje_edit_state_gradient_rel1_relative_y_set(Evas_Object *obj, const char *part,
    GET_PD_OR_RETURN(0);
    //printf("SET GRADIENT REL1 RELY for part: %s state: %s [TO %f]\n", part, state, val);
 
-   pd->gradient.rel1.relative_y = val;
+   pd->gradient.rel1.relative_y = FROM_DOUBLE(val);
    edje_object_calc_force(obj);
    return 1;
 }
@@ -4602,7 +4602,7 @@ edje_edit_state_gradient_rel2_relative_x_set(Evas_Object *obj, const char *part,
    GET_PD_OR_RETURN(0);
    //printf("SET GRADIENT REL2 RELX for part: %s state: %s [TO %f]\n", part, state, val);
 
-   pd->gradient.rel2.relative_x = val;
+   pd->gradient.rel2.relative_x = FROM_DOUBLE(val);
    edje_object_calc_force(obj);
    return 1;
 }
@@ -4613,7 +4613,7 @@ edje_edit_state_gradient_rel2_relative_y_set(Evas_Object *obj, const char *part,
    GET_PD_OR_RETURN(0);
    //printf("SET GRADIENT REL2 RELY for part: %s state: %s [TO %f]\n", part, state, val);
 
-   pd->gradient.rel2.relative_y = val;
+   pd->gradient.rel2.relative_y = FROM_DOUBLE(val);
    edje_object_calc_force(obj);
    return 1;
 }
@@ -5578,7 +5578,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
      fprintf(f, I5"visible: 0;\n");
    
    if (pd->align.x != 0.5 || pd->align.y != 0.5)
-     fprintf(f, I5"align: %g %g;\n", pd->align.x, pd->align.y);
+     fprintf(f, I5"align: %g %g;\n", TO_DOUBLE(pd->align.x), TO_DOUBLE(pd->align.y));
    
    //TODO Support fixed
    
@@ -5590,7 +5590,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
    //TODO Support step
    
    if (pd->aspect.min || pd->aspect.max)
-      fprintf(f, I5"aspect: %g %g;\n", pd->aspect.min, pd->aspect.max);
+      fprintf(f, I5"aspect: %g %g;\n", TO_DOUBLE(pd->aspect.min), TO_DOUBLE(pd->aspect.max));
    if (pd->aspect.prefer)
       fprintf(f, I5"aspect_preference: %s;\n", prefers[pd->aspect.prefer]);
    
@@ -5616,7 +5616,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
      {
 	fprintf(f, I5"rel1 {\n");
 	if (pd->rel1.relative_x || pd->rel1.relative_y)
-	  fprintf(f, I6"relative: %g %g;\n", pd->rel1.relative_x, pd->rel1.relative_y);
+	   fprintf(f, I6"relative: %g %g;\n", TO_DOUBLE(pd->rel1.relative_x), TO_DOUBLE(pd->rel1.relative_y));
 	if (pd->rel1.offset_x || pd->rel1.offset_y)
 	  fprintf(f, I6"offset: %d %d;\n", pd->rel1.offset_x, pd->rel1.offset_y);
 	if (pd->rel1.id_x != -1 && pd->rel1.id_x == pd->rel1.id_y)
@@ -5637,8 +5637,8 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
        pd->rel2.id_x != -1 || pd->rel2.id_y != -1)
      {
 	fprintf(f, I5"rel2 {\n");
-	if (pd->rel2.relative_x != 1.0 || pd->rel2.relative_y != 1.0)
-	  fprintf(f, I6"relative: %g %g;\n", pd->rel2.relative_x, pd->rel2.relative_y);
+	if (TO_DOUBLE(pd->rel2.relative_x) != 1.0 || TO_DOUBLE(pd->rel2.relative_y) != 1.0)
+	  fprintf(f, I6"relative: %g %g;\n", TO_DOUBLE(pd->rel2.relative_x), TO_DOUBLE(pd->rel2.relative_y));
 	if (pd->rel2.offset_x != -1 || pd->rel2.offset_y != -1)
 	  fprintf(f, I6"offset: %d %d;\n", pd->rel2.offset_x, pd->rel2.offset_y);
 	if (pd->rel2.id_x != -1 && pd->rel2.id_x == pd->rel2.id_y)
@@ -5695,18 +5695,18 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 	  {
 		fprintf(f, I6"origin {\n");
 		if (pd->fill.pos_rel_x || pd->fill.pos_rel_y)
-		  fprintf(f, I7"relative: %g %g;\n", pd->fill.pos_rel_x, pd->fill.pos_rel_y);
+		  fprintf(f, I7"relative: %g %g;\n", TO_DOUBLE(pd->fill.pos_rel_x), TO_DOUBLE(pd->fill.pos_rel_y));
 		if (pd->fill.pos_abs_x || pd->fill.pos_abs_y)
 		  fprintf(f, I7"offset: %d %d;\n", pd->fill.pos_abs_x, pd->fill.pos_abs_y);
 		fprintf(f, I6"}\n");
           }
 
-	if (pd->fill.rel_x != 1.0 || pd->fill.rel_y != 1.0 ||
+	if (TO_DOUBLE(pd->fill.rel_x) != 1.0 || TO_DOUBLE(pd->fill.rel_y) != 1.0 ||
             pd->fill.abs_x || pd->fill.abs_y)
 	  {
 		fprintf(f, I6"size {\n");
 		if (pd->fill.rel_x != 1.0 || pd->fill.rel_y != 1.0)
-		  fprintf(f, I7"relative: %g %g;\n", pd->fill.rel_x, pd->fill.rel_y);
+		  fprintf(f, I7"relative: %g %g;\n", TO_DOUBLE(pd->fill.rel_x), TO_DOUBLE(pd->fill.rel_y));
 		if (pd->fill.abs_x || pd->fill.abs_y)
 		  fprintf(f, I7"offset: %d %d;\n", pd->fill.abs_x, pd->fill.abs_y);
 		fprintf(f, I6"}\n");
@@ -5728,8 +5728,8 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 	if (pd->text.fit_x || pd->text.fit_y)
 	  fprintf(f, I6"fit: %d %d;\n", pd->text.fit_x, pd->text.fit_y);
         //TODO Support min & max
-	if (pd->text.align.x != 0.5 || pd->text.align.y != 0.5)
-	  fprintf(f, I6"align: %g %g;\n", pd->text.align.x, pd->text.align.y);
+	if (TO_DOUBLE(pd->text.align.x) != 0.5 || TO_DOUBLE(pd->text.align.y) != 0.5)
+	  fprintf(f, I6"align: %g %g;\n", TO_DOUBLE(pd->text.align.x), TO_DOUBLE(pd->text.align.y));
         //TODO Support source
         //TODO Support text_source
 	if (pd->text.elipsis)
