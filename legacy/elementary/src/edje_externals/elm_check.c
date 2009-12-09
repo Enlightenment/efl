@@ -60,7 +60,7 @@ external_check_params_free(void *params)
 static Edje_External_Param_Info external_check_params[] = {
    DEFINE_EXTERNAL_COMMON_PARAMS,
    EDJE_EXTERNAL_PARAM_INFO_STRING("icon"),
-   EDJE_EXTERNAL_PARAM_INFO_INT("state"),
+   EDJE_EXTERNAL_PARAM_INFO_BOOL_FULL("state", 0, "unchecked", "checked"),
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 

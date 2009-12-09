@@ -78,7 +78,7 @@ static Edje_External_Param_Info external_toggle_params[] = {
    EDJE_EXTERNAL_PARAM_INFO_STRING("icon"),
    EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT("label on", "ON"),
    EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT("label off", "OFF"),
-   EDJE_EXTERNAL_PARAM_INFO_INT("state"),
+   EDJE_EXTERNAL_PARAM_INFO_BOOL("state"),
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 
