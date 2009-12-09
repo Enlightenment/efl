@@ -1,7 +1,12 @@
-#include <math.h>
-#include <stdio.h>
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 
-#include "Eina.h"
+#include <stdio.h>
+#include <math.h>
+
+#include "eina_types.h"
+#include "eina_fp.h"
 
 #define MAX_PREC 1025
 static const Eina_F32p32 eina_trigo[MAX_PREC] =
@@ -111,7 +116,7 @@ static const Eina_F32p32 eina_trigo[MAX_PREC] =
     0x000000000192d39e, 0x00000000012e4c3e, 0x0000000000c9c4af, 0x0000000000653d02, 0x0000000000000000
   };
 
-Eina_F32p32
+EAPI Eina_F32p32
 eina_f32p32_cos(Eina_F32p32 a)
 {
    Eina_F32p32 F32P32_2PI;
@@ -151,7 +156,7 @@ eina_f32p32_cos(Eina_F32p32 a)
      return result;
 }
 
-Eina_F32p32
+EAPI Eina_F32p32
 eina_f32p32_sin(Eina_F32p32 a)
 {
    Eina_F32p32 F32P32_2PI;
