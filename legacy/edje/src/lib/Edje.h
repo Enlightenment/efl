@@ -260,7 +260,7 @@ struct _Edje_External_Param
 typedef struct _Edje_External_Param Edje_External_Param;
 
 #ifndef NAN
-extern float *_edje_const_nan;
+extern const float *_edje_const_nan;
 #define NAN (*_edje_const_nan)
 #endif
 
