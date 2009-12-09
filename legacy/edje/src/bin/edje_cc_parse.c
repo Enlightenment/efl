@@ -31,6 +31,7 @@ void *alloca (size_t);
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <math.h>
 
 #include "edje_cc.h"
 
@@ -1037,30 +1038,26 @@ check_min_arg_count(int min_required_args)
 /* int set of function */
 
 static int
-my_atoi(const char * s)
+my_atoi(const char *s)
 {
    int res = 0;
    char buf[4096];
-
-   if (!s)
-     return 0;
-
-   if (!strstrip(s, buf, sizeof (buf)))
+   
+   if (!s) return 0;
+   if (!strstrip(s, buf, sizeof(buf)))
      {
 	fprintf(stderr, "%s: Error. %s:%i expression is too long\n",
 		progname, file_in, line - 1);
 	return 0;
      }
-
    _alphai(buf, &res);
    return res;
 }
 
 static char *
-_deltai(char *s, int * val)
+_deltai(char *s, int *val)
 {
    if (!val) return NULL;
-
    if ('(' != s[0])
      {
 	fprintf(stderr, "%s: Error. %s:%i unexpected character at %s\n",
@@ -1074,15 +1071,36 @@ _deltai(char *s, int * val)
 	s++;
 	return s;
      }
-
    return s;
 }
 
 static char *
-_gammai(char *s, int * val)
+_funci(char *s, int *val)
+{
+   if (!strncmp(s, "floor(", 6))
+     {
+        s += 5;
+        s = _deltai(s, val);
+        *val = *val;
+     }
+   else if (!strncmp(s, "ceil(", 5))
+     {
+        s += 4;
+        s = _deltai(s, val);
+        *val = *val;
+     }
+   else
+     {
+        fprintf(stderr, "%s: Error. %s:%i unexpected character at %s\n",
+                progname, file_in, line - 1, s);
+     }
+   return s;
+}
+
+static char *
+_gammai(char *s, int *val)
 {
    if (!val) return NULL;
-
    if (_is_numi(s[0]))
      {
 	s = _get_numi(s, val);
@@ -1094,22 +1112,22 @@ _gammai(char *s, int * val)
 	return s;
      }
    else
-     fprintf(stderr, "%s: Error. %s:%i unexpected character at %s\n",
-	     progname, file_in, line - 1, s);
+     {
+        s = _funci(s, val);
+//        fprintf(stderr, "%s: Error. %s:%i unexpected character at %s\n",
+//                progname, file_in, line - 1, s);
+     }
    return s;
 }
 
 static char *
-_betai(char *s, int * val)
+_betai(char *s, int *val)
 {
    int a1, a2;
    char op;
 
-   if (!val)
-     return NULL;
-
+   if (!val) return NULL;
    s = _gammai(s, &a1);
-
    while (_is_op1i(s[0]))
      {
 	op = s[0];
@@ -1117,23 +1135,18 @@ _betai(char *s, int * val)
 	s = _gammai(s, &a2);
 	a1 = _calci(op, a1, a2);
      }
-
    (*val) = a1;
-
    return s;
 }
 
 static char *
-_alphai(char *s, int * val)
+_alphai(char *s, int *val)
 {
    int a1, a2;
    char op;
-
-   if (!val)
-     return NULL;
-
+   
+   if (!val) return NULL;
    s = _betai(s, &a1);
-
    while (_is_op2i(s[0]))
      {
 	op = s[0];
@@ -1141,32 +1154,26 @@ _alphai(char *s, int * val)
 	s = _betai(s, &a2);
 	a1 = _calci(op, a1, a2);
      }
-
    (*val) = a1;
    return s;
 }
 
 char *
-_get_numi(char *s, int * val)
+_get_numi(char *s, int *val)
 {
    char buf[4096];
    int pos = 0;
-
-   if (!val)
-     return s;
-
-   while (
-	  (('0' <= s[pos]) && ('9' >= s[pos])) ||
-	  ((0 == pos) && ('-' == s[pos]))
-	  )
+   
+   if (!val) return s;
+   while ((('0' <= s[pos]) && ('9' >= s[pos])) ||
+	  ((0 == pos) && ('-' == s[pos])))
      {
 	buf[pos] = s[pos];
 	pos++;
      }
-
    buf[pos] = '\0';
    (*val) = atoi(buf);
-   return (s+pos);
+   return (s + pos);
 }
 
 int
@@ -1183,9 +1190,10 @@ _is_op1i(char c)
 {
    switch(c)
      {
-      case '*':;
-      case '/': return 1;
-      default: return 0;
+     case '*':;
+     case '%':;
+     case '/': return 1;
+     default: return 0;
      }
    return 0;
 }
@@ -1195,9 +1203,9 @@ _is_op2i(char c)
 {
    switch(c)
      {
-      case '+':;
-      case '-': return 1;
-      default: return 0;
+     case '+':;
+     case '-': return 1;
+     default: return 0;
      }
    return 0;
 }
@@ -1207,23 +1215,28 @@ _calci(char op, int a, int b)
 {
    switch(op)
      {
-      case '+':
+     case '+':
 	a += b;
 	return a;
-      case '-':
+     case '-':
 	a -= b;
 	return a;
-      case '/':
-	if(0 != b)
-	  a /= b;
+     case '/':
+	if (0 != b) a /= b;
 	else
 	  fprintf(stderr, "%s: Error. %s:%i divide by zero\n",
 		  progname, file_in, line - 1);
 	return a;
-      case '*':
+     case '*':
 	a *= b;
 	return a;
-      default:
+     case '%':
+	if (0 != b) a = a % b;
+	else
+	  fprintf(stderr, "%s: Error. %s:%i modula by zero\n",
+		  progname, file_in, line - 1);
+	return a;
+     default:
 	fprintf(stderr, "%s: Error. %s:%i unexpected character '%c'\n",
 		progname, file_in, line - 1, op);
 	return a;
@@ -1233,13 +1246,12 @@ _calci(char op, int a, int b)
 /* float set of functoins */
 
 double
-my_atof(const char * s)
+my_atof(const char *s)
 {
    double res = 0;
    char buf[4096];
-
-   if (!s)
-     return 0;
+   
+   if (!s) return 0;
 
    if (!strstrip(s, buf, sizeof (buf)))
      {
@@ -1247,16 +1259,14 @@ my_atof(const char * s)
 		progname, file_in, line - 1);
 	return 0;
      }
-
    _alphaf(buf, &res);
    return res;
 }
 
 static char *
-_deltaf(char *s, double * val)
+_deltaf(char *s, double *val)
 {
    if (!val) return NULL;
-
    if ('(' != s[0])
      {
 	fprintf(stderr, "%s: Error. %s:%i unexpected character at %s\n",
@@ -1270,15 +1280,37 @@ _deltaf(char *s, double * val)
 	s++;
 	return s;
      }
-
    return s;
 }
 
 static char *
-_gammaf(char *s, double * val)
+_funcf(char *s, double *val)
+{
+   if (!strncmp(s, "floor(", 6))
+     {
+        s += 5;
+        s = _deltaf(s, val);
+        *val = floor(*val);
+     }
+   else if (!strncmp(s, "ceil(", 5))
+     {
+        s += 4;
+        s = _deltaf(s, val);
+        *val = ceil(*val);
+     }
+   else
+     {
+        fprintf(stderr, "%s: Error. %s:%i unexpected character at %s\n",
+                progname, file_in, line - 1, s);
+     }
+   return s;
+}
+
+static char *
+_gammaf(char *s, double *val)
 {
    if (!val) return NULL;
-
+   
    if (_is_numf(s[0]))
      {
 	s = _get_numf(s, val);
@@ -1290,22 +1322,22 @@ _gammaf(char *s, double * val)
 	return s;
      }
    else
-     fprintf(stderr, "%s: Error. %s:%i unexpected character at %s\n",
-	     progname, file_in, line - 1, s);
+     {
+        s = _funcf(s, val);
+//        fprintf(stderr, "%s: Error. %s:%i unexpected character at %s\n",
+//                progname, file_in, line - 1, s);
+     }
    return s;
 }
 
 static char *
-_betaf(char *s, double * val)
+_betaf(char *s, double *val)
 {
    double a1=0, a2=0;
    char op;
-
-   if (!val)
-     return NULL;
-
+   
+   if (!val) return NULL;
    s = _gammaf(s, &a1);
-
    while (_is_op1f(s[0]))
      {
 	op = s[0];
@@ -1313,23 +1345,18 @@ _betaf(char *s, double * val)
 	s = _gammaf(s, &a2);
 	a1 = _calcf(op, a1, a2);
      }
-
    (*val) = a1;
-
    return s;
 }
 
 static char *
-_alphaf(char *s, double * val)
+_alphaf(char *s, double *val)
 {
    double a1=0, a2=0;
    char op;
 
-   if (!val)
-     return NULL;
-
+   if (!val) return NULL;
    s = _betaf(s, &a1);
-
    while (_is_op2f(s[0]))
      {
 	op = s[0];
@@ -1337,31 +1364,25 @@ _alphaf(char *s, double * val)
 	s = _betaf(s, &a2);
 	a1 = _calcf(op, a1, a2);
      }
-
    (*val) = a1;
-
    return s;
 }
 
 static char *
-_get_numf(char *s, double * val)
+_get_numf(char *s, double *val)
 {
    char buf[4096];
    int pos = 0;
 
-   if (!val)
-     return s;
+   if (!val) return s;
 
-   while (
-	  (('0' <= s[pos]) && ('9' >= s[pos])) ||
+   while ((('0' <= s[pos]) && ('9' >= s[pos])) ||
 	  ('.' == s[pos]) ||
-	  ((0 == pos) && ('-' == s[pos]))
-	  )
+	  ((0 == pos) && ('-' == s[pos])))
      {
 	buf[pos] = s[pos];
 	pos++;
      }
-
    buf[pos] = '\0';
    (*val) = atof(buf);
    return (s+pos);
@@ -1384,9 +1405,10 @@ _is_op1f(char c)
 {
    switch(c)
      {
-      case '*':;
-      case '/': return 1;
-      default: return 0;
+     case '*':;
+     case '%':;
+     case '/': return 1;
+     default: return 0;
      }
    return 0;
 }
@@ -1396,9 +1418,9 @@ _is_op2f(char c)
 {
    switch(c)
      {
-      case '+':;
-      case '-': return 1;
-      default: return 0;
+     case '+':;
+     case '-': return 1;
+     default: return 0;
      }
    return 0;
 }
@@ -1408,22 +1430,28 @@ _calcf(char op, double a, double b)
 {
    switch(op)
      {
-      case '+':
+     case '+':
 	a += b;
 	return a;
-      case '-':
+     case '-':
 	a -= b;
 	return a;
-      case '/':
+     case '/':
 	if (b != 0) a /= b;
 	else
 	  fprintf(stderr, "%s: Error. %s:%i divide by zero\n",
 		  progname, file_in, line - 1);
 	return a;
-      case '*':
+     case '*':
 	a *= b;
 	return a;
-      default:
+     case '%':
+	if (0 != b) a = (double)((int)a % (int)b);
+	else
+	  fprintf(stderr, "%s: Error. %s:%i modula by zero\n",
+		  progname, file_in, line - 1);
+	return a;
+     default:
 	fprintf(stderr, "%s: Error. %s:%i unexpected character '%c'\n",
 		progname, file_in, line - 1, op);
 	return a;
@@ -1439,7 +1467,6 @@ strstrip(const char *in, char *out, size_t size)
 		progname, file_in, line - 1);
 	return 0;
      }
-
    /* remove spaces and tabs */
    while (*in)
      {
@@ -1450,8 +1477,6 @@ strstrip(const char *in, char *out, size_t size)
 	  }
 	in++;
      }
-
    *out = '\0';
-
    return 1;
 }
