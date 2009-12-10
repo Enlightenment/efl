@@ -303,7 +303,13 @@ evas_object_smart_members_get_direct(const Evas_Object *obj)
 {
    Evas_Object_Smart *o;
 
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return NULL;
+   MAGIC_CHECK_END();
    o = (Evas_Object_Smart *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
+   return NULL;
+   MAGIC_CHECK_END();
    return o->contained;
 }
 
