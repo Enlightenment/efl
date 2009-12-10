@@ -1664,9 +1664,11 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
 
 	   CHKPARAM(4);
 
+	   tmp = TO_DOUBLE(rp->custom->description->aspect.min);
 	   GETFLOAT(tmp, params[3]);
 	   rp->custom->description->aspect.min = FROM_DOUBLE(tmp);
 
+	   tmp = TO_DOUBLE(rp->custom->description->aspect.max);
 	   GETFLOAT(tmp, params[4]);
 	   rp->custom->description->aspect.max = FROM_DOUBLE(tmp);
 

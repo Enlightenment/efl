@@ -2525,10 +2525,10 @@ static void ob_collections_group_parts_part_box_items_item(void)
    item->padding.r = 0;
    item->padding.t = 0;
    item->padding.b = 0;
-   item->align.x = 0.5;
-   item->align.y = 0.5;
-   item->weight.x = 0.0;
-   item->weight.y = 0.0;
+   item->align.x = FROM_DOUBLE(0.5);
+   item->align.y = FROM_DOUBLE(0.5);
+   item->weight.x = FROM_DOUBLE(0.0);
+   item->weight.y = FROM_DOUBLE(0.0);
    item->aspect.w = 0;
    item->aspect.h = 0;
    item->aspect.mode = EDJE_ASPECT_PREFER_NONE;
@@ -2755,8 +2755,8 @@ static void st_collections_group_parts_part_box_items_item_align(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
 
    item = eina_list_data_get(eina_list_last(ep->items));
-   item->align.x = parse_float_range(0, -1.0, 1.0);
-   item->align.y = parse_float_range(1, -1.0, 1.0);
+   item->align.x = FROM_DOUBLE(parse_float_range(0, -1.0, 1.0));
+   item->align.y = FROM_DOUBLE(parse_float_range(1, -1.0, 1.0));
 }
 
 /**
@@ -2781,8 +2781,8 @@ static void st_collections_group_parts_part_box_items_item_weight(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
 
    item = eina_list_data_get(eina_list_last(ep->items));
-   item->weight.x = parse_float_range(0, 0.0, 99999.99);
-   item->weight.y = parse_float_range(1, 0.0, 99999.99);
+   item->weight.x = FROM_DOUBLE(parse_float_range(0, 0.0, 99999.99));
+   item->weight.y = FROM_DOUBLE(parse_float_range(1, 0.0, 99999.99));
 }
 
 /**
@@ -2982,35 +2982,35 @@ ob_collections_group_parts_part_description(void)
    else
      ep->other_desc = eina_list_append(ep->other_desc, ed);
    ed->visible = 1;
-   ed->align.x = 0.5;
-   ed->align.y = 0.5;
+   ed->align.x = FROM_DOUBLE(0.5);
+   ed->align.y = FROM_DOUBLE(0.5);
    ed->min.w = 0;
    ed->min.h = 0;
    ed->fixed.w = 0;
    ed->fixed.h = 0;
    ed->max.w = -1;
    ed->max.h = -1;
-   ed->rel1.relative_x = 0.0;
-   ed->rel1.relative_y = 0.0;
+   ed->rel1.relative_x = FROM_DOUBLE(0.0);
+   ed->rel1.relative_y = FROM_DOUBLE(0.0);
    ed->rel1.offset_x = 0;
    ed->rel1.offset_y = 0;
    ed->rel1.id_x = -1;
    ed->rel1.id_y = -1;
-   ed->rel2.relative_x = 1.0;
-   ed->rel2.relative_y = 1.0;
+   ed->rel2.relative_x = FROM_DOUBLE(1.0);
+   ed->rel2.relative_y = FROM_DOUBLE(1.0);
    ed->rel2.offset_x = -1;
    ed->rel2.offset_y = -1;
    ed->rel2.id_x = -1;
    ed->rel2.id_y = -1;
    ed->image.id = -1;
    ed->fill.smooth = 1;
-   ed->fill.pos_rel_x = 0.0;
+   ed->fill.pos_rel_x = FROM_DOUBLE(0.0);
    ed->fill.pos_abs_x = 0;
-   ed->fill.rel_x = 1.0;
+   ed->fill.rel_x = FROM_DOUBLE(1.0);
    ed->fill.abs_x = 0;
-   ed->fill.pos_rel_y = 0.0;
+   ed->fill.pos_rel_y = FROM_DOUBLE(0.0);
    ed->fill.pos_abs_y = 0;
-   ed->fill.rel_y = 1.0;
+   ed->fill.rel_y = FROM_DOUBLE(1.0);
    ed->fill.abs_y = 0;
    ed->fill.angle = 0;
    ed->fill.spread = 0;
@@ -3028,27 +3028,27 @@ ob_collections_group_parts_part_description(void)
    ed->color3.g = 0;
    ed->color3.b = 0;
    ed->color3.a = 128;
-   ed->text.align.x = 0.5;
-   ed->text.align.y = 0.5;
+   ed->text.align.x = FROM_DOUBLE(0.5);
+   ed->text.align.y = FROM_DOUBLE(0.5);
    ed->text.id_source = -1;
    ed->text.id_text_source = -1;
-   ed->gradient.rel1.relative_x = 0;
-   ed->gradient.rel1.relative_y = 0;
+   ed->gradient.rel1.relative_x = FROM_INT(0);
+   ed->gradient.rel1.relative_y = FROM_INT(0);
    ed->gradient.rel1.offset_x = 0;
    ed->gradient.rel1.offset_y = 0;
-   ed->gradient.rel2.relative_x = 1;
-   ed->gradient.rel2.relative_y = 1;
+   ed->gradient.rel2.relative_x = FROM_INT(1);
+   ed->gradient.rel2.relative_y = FROM_INT(1);
    ed->gradient.rel2.offset_x = -1;
    ed->gradient.rel2.offset_y = -1;
    ed->box.layout = NULL;
    ed->box.alt_layout = NULL;
-   ed->box.align.x = 0.5;
-   ed->box.align.y = 0.5;
+   ed->box.align.x = FROM_DOUBLE(0.5);
+   ed->box.align.y = FROM_DOUBLE(0.5);
    ed->box.padding.x = 0;
    ed->box.padding.y = 0;
    ed->table.homogeneous = EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE;
-   ed->table.align.x = 0.5;
-   ed->table.align.y = 0.5;
+   ed->table.align.x = FROM_DOUBLE(0.5);
+   ed->table.align.y = FROM_DOUBLE(0.5);
    ed->table.padding.x = 0;
    ed->table.padding.y = 0;
    ed->external_params = NULL;
@@ -3296,8 +3296,8 @@ st_collections_group_parts_part_description_align(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->align.x = parse_float_range(0, 0.0, 1.0);
-   ed->align.y = parse_float_range(1, 0.0, 1.0);
+   ed->align.x = FROM_DOUBLE(parse_float_range(0, 0.0, 1.0));
+   ed->align.y = FROM_DOUBLE(parse_float_range(1, 0.0, 1.0));
 }
 
 /**
@@ -3438,8 +3438,8 @@ st_collections_group_parts_part_description_aspect(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->aspect.min = parse_float_range(0, 0.0, 999999999.0);
-   ed->aspect.max = parse_float_range(1, 0.0, 999999999.0);
+   ed->aspect.min = FROM_DOUBLE(parse_float_range(0, 0.0, 999999999.0));
+   ed->aspect.max = FROM_DOUBLE(parse_float_range(1, 0.0, 999999999.0));
 }
 
 /**
@@ -3636,8 +3636,8 @@ st_collections_group_parts_part_description_rel1_relative(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->rel1.relative_x = parse_float(0);
-   ed->rel1.relative_y = parse_float(1);
+   ed->rel1.relative_x = FROM_DOUBLE(parse_float(0));
+   ed->rel1.relative_y = FROM_DOUBLE(parse_float(1));
 }
 
 /**
@@ -3781,8 +3781,8 @@ st_collections_group_parts_part_description_rel2_relative(void)
    ep = eina_list_data_get(eina_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->rel2.relative_x = parse_float(0);
-   ed->rel2.relative_y = parse_float(1);
+   ed->rel2.relative_x = FROM_DOUBLE(parse_float(0));
+   ed->rel2.relative_y = FROM_DOUBLE(parse_float(1));
 }
 
 static void
@@ -4326,8 +4326,8 @@ st_collections_group_parts_part_description_fill_origin_relative(void)
 
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->fill.pos_rel_x = parse_float_range(0, -999999999.0, 999999999.0);
-   ed->fill.pos_rel_y = parse_float_range(1, -999999999.0, 999999999.0);
+   ed->fill.pos_rel_x = FROM_DOUBLE(parse_float_range(0, -999999999.0, 999999999.0));
+   ed->fill.pos_rel_y = FROM_DOUBLE(parse_float_range(1, -999999999.0, 999999999.0));
 }
 
 /**
@@ -4421,8 +4421,8 @@ st_collections_group_parts_part_description_fill_size_relative(void)
 	exit(-1);
      }
 
-   ed->fill.rel_x = parse_float_range(0, 0.0, 999999999.0);
-   ed->fill.rel_y = parse_float_range(1, 0.0, 999999999.0);
+   ed->fill.rel_x = FROM_DOUBLE(parse_float_range(0, 0.0, 999999999.0));
+   ed->fill.rel_y = FROM_DOUBLE(parse_float_range(1, 0.0, 999999999.0));
 }
 
 /**
@@ -4878,8 +4878,8 @@ st_collections_group_parts_part_description_text_align(void)
 
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->text.align.x = parse_float_range(0, 0.0, 1.0);
-   ed->text.align.y = parse_float_range(1, 0.0, 1.0);
+   ed->text.align.x = FROM_DOUBLE(parse_float_range(0, 0.0, 1.0));
+   ed->text.align.y = FROM_DOUBLE(parse_float_range(1, 0.0, 1.0));
 }
 
 /**
@@ -5387,8 +5387,8 @@ static void st_collections_group_parts_part_description_box_align(void)
 
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->box.align.x = parse_float_range(0, -1.0, 1.0);
-   ed->box.align.y = parse_float_range(1, -1.0, 1.0);
+   ed->box.align.x = FROM_DOUBLE(parse_float_range(0, -1.0, 1.0));
+   ed->box.align.y = FROM_DOUBLE(parse_float_range(1, -1.0, 1.0));
 }
 
 static void st_collections_group_parts_part_description_box_padding(void)
@@ -5542,8 +5542,8 @@ static void st_collections_group_parts_part_description_table_align(void)
 
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
-   ed->table.align.x = parse_float_range(0, -1.0, 1.0);
-   ed->table.align.y = parse_float_range(1, -1.0, 1.0);
+   ed->table.align.x = FROM_DOUBLE(parse_float_range(0, -1.0, 1.0));
+   ed->table.align.y = FROM_DOUBLE(parse_float_range(1, -1.0, 1.0));
 }
 
 static void st_collections_group_parts_part_description_table_padding(void)
