@@ -33,8 +33,6 @@ test_flip(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(fl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, fl);
 
-   
-   
    o = elm_button_add(win);
    elm_button_label_set(o, "Front");
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -46,9 +44,7 @@ test_flip(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_flip_content_front_set(fl, o);
    evas_object_show(o);
-   
-   
-   
+
    evas_object_show(fl);
 
    bx2 = elm_box_add(win);
@@ -90,7 +86,8 @@ test_flip(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 #endif
-   
+
+   evas_object_resize(win, 300, 300);
    evas_object_show(win);
 }
 #endif
