@@ -295,22 +295,24 @@ echo "------------------------------------------------------------------------"
 echo
 echo "Configuration Options Summary:"
 echo
-echo "Engines:"
-echo "  X11...........: ${have_elementary_x}"
-echo "  Framebuffer...: ${have_elementary_fb}"
-echo "  Windows XP....: ${have_elementary_win32}"
-echo "  Windows CE....: ${have_elementary_wince}"
+echo "  Engines:"
+echo "    X11................: ${have_elementary_x}"
+echo "    Framebuffer........: ${have_elementary_fb}"
+echo "    Windows XP.........: ${have_elementary_win32}"
+echo "    Windows CE.........: ${have_elementary_wince}"
 echo
-echo "Features:"
-echo "  EDBus.........: ${have_elementary_edbus}"
-echo "  EFreet........: ${have_elementary_efreet}"
-echo "  EWeather......: ${have_elementary_eweather}"
+echo "  Features:"
+echo "    EDBus..............: ${have_elementary_edbus}"
+echo "    EFreet.............: ${have_elementary_efreet}"
+echo "    EWeather...........: ${have_elementary_eweather}"
 echo
-echo "edje_cc.........: ${edje_cc}"
+echo "  edje_cc..............: ${edje_cc}"
 echo
-echo "------------------------------------------------------------------------"
+echo "Compilation............: make (or gmake)"
+echo "  CPPFLAGS.............: $CPPFLAGS"
+echo "  CFLAGS...............: $CFLAGS"
+echo "  LDFLAGS..............: $LDFLAGS"
 echo
-echo "Now type 'make' ('gmake' on some systems) to compile $PACKAGE,"
-echo "and then afterwards as root (or the user who will install this), type"
-echo "'make install'. Change users with 'su' or 'sudo' appropriately."
+echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
+echo "  prefix...............: $prefix"
 echo
