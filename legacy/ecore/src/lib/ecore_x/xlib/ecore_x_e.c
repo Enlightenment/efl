@@ -113,6 +113,31 @@ ecore_x_e_virtual_keyboard_state_send(Ecore_X_Window win, Ecore_X_Virtual_Keyboa
 				 0, 0, 0, 0);
 }
 
+static Ecore_X_Atom 
+_ecore_x_e_illume_atom_get(Ecore_X_Illume_Mode mode) 
+{
+   switch (mode) 
+     {
+      case ECORE_X_ILLUME_MODE_SINGLE:
+        return ECORE_X_ATOM_E_ILLUME_MODE_SINGLE;
+      case ECORE_X_ILLUME_MODE_DUAL:
+        return ECORE_X_ATOM_E_ILLUME_MODE_DUAL;
+      default:
+        return 0;
+     }
+   return 0;
+}
+
+static Ecore_X_Illume_Mode 
+_ecore_x_e_illume_mode_get(Ecore_X_Atom atom) 
+{
+   if (atom == ECORE_X_ATOM_E_ILLUME_MODE_SINGLE)
+     return ECORE_X_ILLUME_MODE_SINGLE;
+   if (atom == ECORE_X_ATOM_E_ILLUME_MODE_DUAL)
+     return ECORE_X_ILLUME_MODE_DUAL;
+   return ECORE_X_ILLUME_MODE_UNKNOWN;
+}
+
 EAPI void 
 ecore_x_e_illume_conformant_set(Ecore_X_Window win, unsigned int is_conformant) 
 {
@@ -128,4 +153,33 @@ ecore_x_e_illume_conformant_get(Ecore_X_Window win)
    if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_CONFORMANT, &val, 1))
      return 0;
    return val;
+}
+
+EAPI void 
+ecore_x_e_illume_mode_set(Ecore_X_Window win, Ecore_X_Illume_Mode mode) 
+{
+   Ecore_X_Atom atom = 0;
+
+   atom = _ecore_x_e_illume_atom_get(mode);
+   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_MODE,
+				  &atom, 1);
+}
+
+EAPI Ecore_X_Illume_Mode 
+ecore_x_e_illume_mode_get(Ecore_X_Window win) 
+{
+   Ecore_X_Atom atom = 0;
+
+   if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_MODE, &atom, 1))
+     return ECORE_X_ILLUME_MODE_UNKNOWN;
+   return _ecore_x_e_illume_mode_get(atom);
+}
+
+EAPI void 
+ecore_x_e_illume_mode_send(Ecore_X_Window win, Ecore_X_Illume_Mode mode) 
+{
+   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_MODE,
+				 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
+				 _ecore_x_e_illume_atom_get(mode),
+				 0, 0, 0, 0);
 }

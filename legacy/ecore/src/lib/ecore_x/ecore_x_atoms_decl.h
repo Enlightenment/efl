@@ -222,3 +222,6 @@ EAPI Ecore_X_Atom  ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_PASSWORD    = 0;
 
 /* atom to determine if an app is illume compliant */
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_CONFORMANT            = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_MODE                  = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_MODE_SINGLE           = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_MODE_DUAL             = 0;

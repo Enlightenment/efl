@@ -896,50 +896,48 @@ EAPI extern int ECORE_X_LOCK_NUM;
 EAPI extern int ECORE_X_LOCK_CAPS;
 
 typedef enum _Ecore_X_WM_Protocol {
-	/**
-	 * If enabled the window manager will be asked to send a
-	 * delete message instead of just closing (destroying) the window.
-	 */
-	ECORE_X_WM_PROTOCOL_DELETE_REQUEST,
+   /**
+    * If enabled the window manager will be asked to send a
+    * delete message instead of just closing (destroying) the window.
+    */
+   ECORE_X_WM_PROTOCOL_DELETE_REQUEST,
 
-	/**
-	 * If enabled the window manager will be told that the window
-	 * explicitly sets input focus.
-	 */
-	ECORE_X_WM_PROTOCOL_TAKE_FOCUS,
+     /**
+      * If enabled the window manager will be told that the window
+      * explicitly sets input focus.
+      */
+     ECORE_X_WM_PROTOCOL_TAKE_FOCUS,
 
-	/**
-	 * If enabled the window manager can ping the window to check
-	 * if it is alive.
-	 */
-	ECORE_X_NET_WM_PROTOCOL_PING,
+     /**
+      * If enabled the window manager can ping the window to check
+      * if it is alive.
+      */
+     ECORE_X_NET_WM_PROTOCOL_PING,
 
-	/**
-	 * If enabled the window manager can sync updating with the
-	 * window (?)
-	 */
-	ECORE_X_NET_WM_PROTOCOL_SYNC_REQUEST,
+     /**
+      * If enabled the window manager can sync updating with the
+      * window (?)
+      */
+     ECORE_X_NET_WM_PROTOCOL_SYNC_REQUEST,
 
-	/* Number of defined items */
-	ECORE_X_WM_PROTOCOL_NUM
+     /* Number of defined items */
+     ECORE_X_WM_PROTOCOL_NUM
 } Ecore_X_WM_Protocol;
 
 typedef enum _Ecore_X_Window_Input_Mode {
-	/** The window can never be focused */
-	ECORE_X_WINDOW_INPUT_MODE_NONE,
+   /** The window can never be focused */
+   ECORE_X_WINDOW_INPUT_MODE_NONE,
 
-	/** The window can be focused by the WM but doesn't focus itself */
-	ECORE_X_WINDOW_INPUT_MODE_PASSIVE,
+     /** The window can be focused by the WM but doesn't focus itself */
+     ECORE_X_WINDOW_INPUT_MODE_PASSIVE,
 
-	/** The window sets the focus itself if one of its sub-windows
-	 * already is focused
-	 */
-	ECORE_X_WINDOW_INPUT_MODE_ACTIVE_LOCAL,
+     /** The window sets the focus itself if one of its sub-windows
+      * already is focused */
+     ECORE_X_WINDOW_INPUT_MODE_ACTIVE_LOCAL,
 
-	/** The window sets the focus itself even if another window
-	 * is currently focused
-	 */
-	ECORE_X_WINDOW_INPUT_MODE_ACTIVE_GLOBAL
+     /** The window sets the focus itself even if another window
+      * is currently focused */
+     ECORE_X_WINDOW_INPUT_MODE_ACTIVE_GLOBAL
 } Ecore_X_Window_Input_Mode;
 
 typedef enum _Ecore_X_Window_State_Hint {
@@ -1006,6 +1004,12 @@ typedef enum _Ecore_X_Virtual_Keyboard_State {
     ECORE_X_VIRTUAL_KEYBOARD_STATE_PASSWORD
 } Ecore_X_Virtual_Keyboard_State;
 
+typedef enum _Ecore_X_Illume_Mode 
+{
+   ECORE_X_ILLUME_MODE_UNKNOWN = 0, 
+     ECORE_X_ILLUME_MODE_SINGLE, 
+     ECORE_X_ILLUME_MODE_DUAL
+} Ecore_X_Illume_Mode;
 
 /* Window layer constants */
 #define ECORE_X_WINDOW_LAYER_BELOW 2
@@ -1529,7 +1533,9 @@ EAPI void                ecore_x_e_virtual_keyboard_state_send(Ecore_X_Window wi
 
 EAPI void                ecore_x_e_illume_conformant_set(Ecore_X_Window win, unsigned int is_conformant);
 EAPI int                 ecore_x_e_illume_conformant_get(Ecore_X_Window win);
-
+EAPI void                ecore_x_e_illume_mode_set(Ecore_X_Window win, Ecore_X_Illume_Mode mode);
+EAPI Ecore_X_Illume_Mode ecore_x_e_illume_mode_get(Ecore_X_Window win);
+EAPI void                ecore_x_e_illume_mode_send(Ecore_X_Window win, Ecore_X_Illume_Mode mode);
 
 EAPI void                ecore_x_xinerama_query_screens_prefetch(void);
 EAPI void                ecore_x_xinerama_query_screens_fetch(void);

@@ -199,5 +199,8 @@ EAPI extern Ecore_X_Atom  ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_PASSWORD;
 
 /* atom to determine if an app is illume compliant */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_CONFORMANT;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_MODE;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_MODE_SINGLE;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_MODE_DUAL;
 
 #endif /* _ECORE_X_ATOMS_H */
