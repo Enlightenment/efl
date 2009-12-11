@@ -136,7 +136,17 @@ AC_ARG_ENABLE([simple-x11],
 
 
 ### Checks for programs
-
+m4_ifdef([AC_PROG_OBJC],
+   [
+    AC_PROG_OBJC
+    _AM_DEPENDENCIES(OBJC)
+   ],
+   [
+    AC_CHECK_TOOL([OBJC], [gcc])
+    AC_SUBST([OBJC])
+    AC_SUBST([OBJCFLAGS])
+   ]
+)
 AC_PROG_CXX
 AC_PROG_CC
 
@@ -1423,11 +1433,14 @@ echo "  32bpp Rotation 270......: $conv_32_rgb_rot_270"
 echo
 echo "Documentation.............: ${build_doc}"
 echo
-echo "------------------------------------------------------------------------"
+echo "Compilation............: make (or gmake)"
+echo "  CPPFLAGS.............: $CPPFLAGS"
+echo "  CFLAGS...............: $CFLAGS"
+echo "  CXXFLAGS.............: $CXXFLAGS"
+echo "  LDFLAGS..............: $LDFLAGS"
 echo
-echo "Now type 'make' ('gmake' on some systems) to compile $PACKAGE,"
-echo "and then afterwards as root (or the user who will install this), type"
-echo "'make install'. Change users with 'su' or 'sudo' appropriately."
+echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
+echo "  prefix...............: $prefix"
 echo
 if test "x${have_static_module}" = "xyes" ; then
 echo -e "\0033\01331;31mWarning\0033\01331;0m: You are trying to link statically one or more modules to Evas."
