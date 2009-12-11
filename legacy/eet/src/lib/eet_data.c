@@ -1317,6 +1317,7 @@ eet_data_descriptor_file_new(const Eet_Data_Descriptor_Class *eddc)
 EAPI void
 eet_data_descriptor_free(Eet_Data_Descriptor *edd)
 {
+   if (!edd) return ;
    _eet_descriptor_hash_free(edd);
    if (edd->elements.set) free(edd->elements.set);
    free(edd);

@@ -279,3 +279,7 @@
 
 	* Include winsock2.h in eet_image.c for htonl definition on Windows.
 	* Fix Visual Studio project files
+
+2009-12-11  Cedric BAIL
+
+	* Make eet_data_descriptor_free safe to call on NULL pointer.
