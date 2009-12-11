@@ -1158,6 +1158,40 @@ extern "C" {
     */
 #endif
    
+   EAPI Evas_Object *elm_scrolled_entry_add(Evas_Object *parent);
+   EAPI void         elm_scrolled_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line);
+   EAPI void         elm_scrolled_entry_password_set(Evas_Object *obj, Eina_Bool password);
+   EAPI void         elm_scrolled_entry_entry_set(Evas_Object *obj, const char *entry);
+   EAPI const char  *elm_scrolled_entry_entry_get(const Evas_Object *obj);
+   EAPI const char  *elm_scrolled_entry_selection_get(const Evas_Object *obj);
+   EAPI void         elm_scrolled_entry_entry_insert(Evas_Object *obj, const char *entry);
+   EAPI void         elm_scrolled_entry_line_wrap_set(Evas_Object *obj, Eina_Bool wrap);
+   EAPI void         elm_scrolled_entry_line_char_wrap_set(Evas_Object *obj, Eina_Bool wrap);
+   EAPI void         elm_scrolled_entry_editable_set(Evas_Object *obj, Eina_Bool editable);
+   EAPI void         elm_scrolled_entry_select_none(Evas_Object *obj);
+   EAPI void         elm_scrolled_entry_select_all(Evas_Object *obj);
+   EAPI Eina_Bool    elm_scrolled_entry_cursor_next(Evas_Object *obj);
+   EAPI Eina_Bool    elm_scrolled_entry_cursor_prev(Evas_Object *obj);
+   EAPI Eina_Bool    elm_scrolled_entry_cursor_up(Evas_Object *obj);
+   EAPI Eina_Bool    elm_scrolled_entry_cursor_down(Evas_Object *obj);
+   EAPI void         elm_scrolled_entry_cursor_begin_set(Evas_Object *obj);
+   EAPI void         elm_scrolled_entry_cursor_end_set(Evas_Object *obj);
+   EAPI void         elm_scrolled_entry_cursor_line_begin_set(Evas_Object *obj);
+   EAPI void         elm_scrolled_entry_cursor_line_end_set(Evas_Object *obj);
+   EAPI void         elm_scrolled_entry_cursor_selection_begin(Evas_Object *obj);
+   EAPI void         elm_scrolled_entry_cursor_selection_end(Evas_Object *obj);
+   EAPI Eina_Bool    elm_scrolled_entry_cursor_is_format_get(Evas_Object *obj);
+   EAPI Eina_Bool    elm_scrolled_entry_cursor_is_visible_format_get(Evas_Object *obj);
+   EAPI const char  *elm_scrolled_entry_cursor_content_get(Evas_Object *obj);
+   EAPI void         elm_scrolled_entry_selection_cut(Evas_Object *obj);
+   EAPI void         elm_scrolled_entry_selection_copy(Evas_Object *obj);
+   EAPI void         elm_scrolled_entry_selection_paste(Evas_Object *obj);
+   EAPI void         elm_scrolled_entry_context_menu_clear(Evas_Object *obj);
+   EAPI void         elm_scrolled_entry_context_menu_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data);
+   EAPI void         elm_scrolled_entry_context_menu_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+   EAPI Eina_Bool    elm_scrolled_entry_context_menu_disabled_get(Evas_Object *obj);
+   EAPI void         elm_scrolled_entry_scrollbar_policy_set(Evas_Object *obj, Elm_Scroller_Policy h, Elm_Scroller_Policy v);
+
 #ifdef __cplusplus
 }
 #endif

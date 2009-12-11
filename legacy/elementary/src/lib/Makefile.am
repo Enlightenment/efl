@@ -74,6 +74,7 @@ elc_anchorview.c \
 elc_anchorblock.c \
 elc_hoversel.c \
 elc_fileselector.c \
+elc_scrolled_entry.c \
 \
 els_pan.c \
 els_pan.h \

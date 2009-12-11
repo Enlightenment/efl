@@ -30,6 +30,7 @@ elm_la_SOURCES = private.h \
 				elm_button.c \
 				elm_check.c \
 				elm_radio.c \
+				elm_scrolled_entry.c \
 				elm_slider.c \
 				elm_toggle.c
 
