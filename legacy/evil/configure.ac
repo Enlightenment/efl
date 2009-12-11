@@ -144,9 +144,12 @@ echo
 echo "  Documentation........: ${build_doc}"
 echo "  Mpatrol..............: ${have_mpatrol}"
 echo
-echo "  Compilation..........: make"
+echo "Compilation............: make (or gmake)"
+echo "  CPPFLAGS.............: $CPPFLAGS"
+echo "  CFLAGS...............: $CFLAGS"
+echo "  CXXFLAGS.............: $CXXFLAGS"
+echo "  LDFLAGS..............: $LDFLAGS"
 echo
-echo "  Installation.........: make install"
-echo
-echo "    prefix.............: $prefix"
+echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
+echo "  prefix...............: $prefix"
 echo
