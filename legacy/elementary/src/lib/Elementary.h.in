@@ -462,7 +462,7 @@ extern "C" {
    EAPI Eina_Bool    elm_layout_file_set(Evas_Object *obj, const char *file, const char *group);
    EAPI void         elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
    EAPI Evas_Object *elm_layout_edje_get(const Evas_Object *obj);
-   EAPI void          elm_layout_sizing_eval(const Evas_Object *obj);
+   EAPI void          elm_layout_sizing_eval(Evas_Object *obj);
        /* smart callbacks called:
     */
 
@@ -851,6 +851,7 @@ extern "C" {
    EAPI void              elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
    EAPI void              elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
    EAPI void              elm_genlist_compress_mode_set(Evas_Object *obj, Eina_Bool compress);
+   EAPI void              elm_genlist_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
    /* available item styles:
     * default
     * default_style - The text part is a textblock
@@ -1122,7 +1123,7 @@ extern "C" {
    EAPI void         elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient);
    EAPI void         elm_panel_content_set(Evas_Object *obj, Evas_Object *content);
 
-#if 0 // working on it
+#if 1 // working on it
    // flip types:
    //  rotate around y axis 180 degrees
    //  rotate around x axis 180 degrees
@@ -1143,8 +1144,10 @@ extern "C" {
    //  light x, y, z
    typedef enum _Elm_Flip_Mode
      {
-        ELM_FLIP_ROTATE_Y CENTER_AXIS,
-          ELM_FLIP_ROTATE_X_CENTER_AXIS
+        ELM_FLIP_ROTATE_Y_CENTER_AXIS,
+          ELM_FLIP_ROTATE_X_CENTER_AXIS,
+          ELM_FLIP_ROTATE_XZ_CENTER_AXIS,
+          ELM_FLIP_ROTATE_YZ_CENTER_AXIS
      } Elm_Flip_Mode;
    
    EAPI Evas_Object *elm_flip_add(Evas_Object *parent);

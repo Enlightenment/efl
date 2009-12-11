@@ -257,7 +257,7 @@ elm_layout_edje_get(const Evas_Object *obj)
  * @ingroup Layout
  */
 EAPI void
-elm_layout_sizing_eval(const Evas_Object *obj)
+elm_layout_sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    _request_sizing_eval(obj);

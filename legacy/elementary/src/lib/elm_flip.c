@@ -1,9 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-#if 0 // working on it
+#if 1 // working on it
 
-// fixme: on configure of widget smart obj - reconfigure front + back and maps
 /**
  * @defgroup Flip Flip
  *
@@ -15,9 +14,13 @@ typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
 {
+   Ecore_Animator *animator;
+   double start, len;
+   Elm_Flip_Mode mode;
    struct {
       Evas_Object *content;
    } front, back;
+   Eina_Bool state : 1;
 };
 
 static void _del_hook(Evas_Object *obj);
@@ -30,6 +33,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->animator) ecore_animator_del(wd->animator);
    free(wd);
 }
 
@@ -94,6 +98,161 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
      }
 }
 
+static int
+_flip(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   double t = ecore_loop_time_get() - wd->start;
+   Evas_Coord x, y, w, h;
+   double p, deg;
+   Evas_Map *mf, *mb;
+   Evas_Coord cx, cy, cz, px, py, foc;
+   int lx, ly, lz, lr, lg, lb, lar, lag, lab;
+   if (!wd->animator) return 0;
+   t = t / wd->len;
+   if (t > 1.0) t = 1.0;
+
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   
+
+   mf = evas_map_new(4);
+   evas_map_smooth_set(mf, 0);
+   mb = evas_map_new(4);
+   evas_map_smooth_set(mb, 0);
+
+   if (wd->front.content)
+     evas_map_util_points_populate_from_object_full(mf, wd->front.content, 0);
+   if (wd->back.content)
+     evas_map_util_points_populate_from_object_full(mb, wd->back.content, 0);
+   
+   cx = x + (w / 2);
+   cy = y + (h / 2);
+
+   px = x + (w / 2);
+   py = y + (h / 2);
+   foc = 2048;
+   
+   lx = cx;
+   ly = cy;
+   lz = -10000;
+   lr = 255;
+   lg = 255;
+   lb = 255;
+   lar = 0;
+   lag = 0;
+   lab = 0;
+   
+   switch (wd->mode)
+     {
+     case ELM_FLIP_ROTATE_Y_CENTER_AXIS:
+        p = 1.0 - t;
+        p = 1.0 - (p * p);
+        if (wd->state) deg = 180.0 * p;
+        else deg = 180 + (180.0 * p);
+        evas_map_util_3d_rotate(mf, 0.0, deg, 0.0, cx, cy, 0);
+        evas_map_util_3d_rotate(mb, 0.0, deg + 180.0, 0.0, cx, cy, 0);
+        break;
+     case ELM_FLIP_ROTATE_X_CENTER_AXIS:
+        p = 1.0 - t;
+        p = 1.0 - (p * p);
+        if (wd->state) deg = 180.0 * p;
+        else deg = 180 + (180.0 * p);
+        evas_map_util_3d_rotate(mf, deg, 0.0, 0.0, cx, cy, 0);
+        evas_map_util_3d_rotate(mb, deg + 180.0, 0.0, 0.0, cx, cy, 0);
+        break;
+     case ELM_FLIP_ROTATE_XZ_CENTER_AXIS:
+        p = 1.0 - t;
+        p = 1.0 - (p * p);
+        if (wd->state) deg = 180.0 * p;
+        else deg = 180 + (180.0 * p);
+        evas_map_util_3d_rotate(mf, deg, 0.0, deg, cx, cy, 0);
+        evas_map_util_3d_rotate(mb, deg + 180.0, 0.0, deg + 180.0, cx, cy, 0);
+        break;
+     case ELM_FLIP_ROTATE_YZ_CENTER_AXIS:
+        p = 1.0 - t;
+        p = 1.0 - (p * p);
+        if (wd->state) deg = 180.0 * p;
+        else deg = 180 + (180.0 * p);
+        evas_map_util_3d_rotate(mf, 0.0, deg, deg, cx, cy, 0);
+        evas_map_util_3d_rotate(mb, 0.0, deg + 180.0, deg + 180.0, cx, cy, 0);
+        break;
+     default:
+        break;
+     }
+
+   
+   if (wd->front.content)
+     {
+        evas_map_util_3d_lighting(mf, lx, ly, lz, lr, lg, lb, lar, lag, lab);
+        evas_map_util_3d_perspective(mf, px, py, 0, foc);
+        evas_object_map_set(wd->front.content, mf);
+        evas_object_map_enable_set(wd->front.content, 1);
+        if (evas_map_util_clockwise_get(mf)) evas_object_show(wd->front.content);
+        else evas_object_hide(wd->front.content);
+     }
+      
+   if (wd->back.content)
+     {
+        evas_map_util_3d_lighting(mb, lx, ly, lz, lr, lg, lb, lar, lag, lab);
+        evas_map_util_3d_perspective(mb, px, py, 0, foc);
+        evas_object_map_set(wd->back.content, mb);
+        evas_object_map_enable_set(wd->back.content, 1);
+        if (evas_map_util_clockwise_get(mb)) evas_object_show(wd->back.content);
+        else evas_object_hide(wd->back.content);
+     }
+   
+   evas_map_free(mf);
+   evas_map_free(mb);
+   
+   if (t >= 1.0)
+     {
+        evas_object_map_enable_set(wd->front.content, 0);
+        evas_object_map_enable_set(wd->back.content, 0);
+        wd->animator = NULL;
+        wd->state = !wd->state;
+        evas_object_smart_callback_call(obj, "animate,done", NULL);
+        return 0;
+     }
+   return 1;
+}
+
+static void
+_configure(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Coord x, y, w, h;
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   if (wd->front.content)
+     {
+        evas_object_move(wd->front.content, x, y);
+        evas_object_resize(wd->front.content, w, h);
+     }
+   if (wd->back.content)
+     {
+        evas_object_move(wd->back.content, x, y);
+        evas_object_resize(wd->back.content, w, h);
+     }
+   _flip(obj);
+}
+
+static void
+_move(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   _configure(obj);
+}
+
+static void
+_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{    
+   _configure(obj);
+}
+
+static int
+_animate(void *data)
+{
+   return _flip(data);
+}
+
 /**
  * Add a new flip to the parent
  *
@@ -119,7 +278,11 @@ elm_flip_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
-
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _move, NULL);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, NULL);
+   
+   wd->state = 1;
+     
    _sizing_eval(obj);
    return obj;
 }
@@ -154,6 +317,7 @@ elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content)
      }
    //XXX use clips
    if (!elm_flip_front_get(obj)) evas_object_hide(wd->front.content);
+   _configure(obj);
 }
 
 /**
@@ -186,6 +350,7 @@ elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content)
      }
    //XXX use clips
    if (elm_flip_front_get(obj)) evas_object_hide(wd->back.content);
+   _configure(obj);
 }
 
 /**
@@ -200,8 +365,7 @@ EAPI Eina_Bool
 elm_flip_front_get(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   //XXX retunr if front is showing or not
-   return 1;
+   return wd->state;
 }
 
 EAPI void
@@ -214,5 +378,9 @@ EAPI void
 elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd->animator) wd->animator = ecore_animator_add(_animate, obj);
+   wd->mode = mode;
+   wd->start = ecore_loop_time_get();
+   wd->len = 0.5;
 }
 #endif

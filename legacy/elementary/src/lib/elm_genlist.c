@@ -2637,7 +2637,6 @@ EAPI void
 elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-
    wd->always_select = always_select;
 }
 
@@ -2656,12 +2655,11 @@ EAPI void
 elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-
    wd->no_select = no_select;
 }
 
 /**
- * Set compress mode mode
+ * Set compress mode
  *
  * This will enable the compress mode where items are "compressed" horizontally
  * to fit the genlist scrollable viewport width.
@@ -2676,4 +2674,23 @@ elm_genlist_compress_mode_set(Evas_Object *obj, Eina_Bool compress)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    wd->compress = compress;
+}
+
+/**
+ * Set bounce mode
+ *
+ * This will enable or disable the scroller bounce mode for the gnelist. See 
+ * elm_scroller_bounce_set() for details
+ *
+ * @param obj The genlist object
+ * @param h_bounce Allow bounce horizontally
+ * @param v_bounce Allow bounce vertically
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
 }
