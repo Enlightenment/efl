@@ -183,3 +183,19 @@ ecore_x_e_illume_mode_send(Ecore_X_Window win, Ecore_X_Illume_Mode mode)
 				 _ecore_x_e_illume_atom_get(mode),
 				 0, 0, 0, 0);
 }
+
+EAPI void 
+ecore_x_e_illume_back_send(Ecore_X_Window win) 
+{
+   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_BACK,
+				 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
+				 1, 0, 0, 0, 0);
+}
+
+EAPI void 
+ecore_x_e_illume_close_send(Ecore_X_Window win) 
+{
+   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_CLOSE,
+				 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE, 
+				 1, 0, 0, 0, 0);
+}

@@ -215,7 +215,9 @@ _ecore_x_atoms_init(void)
         { "_E_ILLUME_CONFORMANT", &ECORE_X_ATOM_E_ILLUME_CONFORMANT }, 
         { "_E_ILLUME_MODE", &ECORE_X_ATOM_E_ILLUME_MODE }, 
         { "_E_ILLUME_MODE_SINGLE", &ECORE_X_ATOM_E_ILLUME_MODE_SINGLE }, 
-        { "_E_ILLUME_MODE_DUAL", &ECORE_X_ATOM_E_ILLUME_MODE_DUAL }
+        { "_E_ILLUME_MODE_DUAL", &ECORE_X_ATOM_E_ILLUME_MODE_DUAL }, 
+        { "_E_ILLUME_BACK", &ECORE_X_ATOM_E_ILLUME_BACK }, 
+        { "_E_ILLUME_CLOSE", &ECORE_X_ATOM_E_ILLUME_CLOSE }
      };
    Atom *atoms;
    char **names;

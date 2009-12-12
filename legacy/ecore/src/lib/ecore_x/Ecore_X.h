@@ -1536,6 +1536,9 @@ EAPI int                 ecore_x_e_illume_conformant_get(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_mode_set(Ecore_X_Window win, Ecore_X_Illume_Mode mode);
 EAPI Ecore_X_Illume_Mode ecore_x_e_illume_mode_get(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_mode_send(Ecore_X_Window win, Ecore_X_Illume_Mode mode);
+EAPI void                ecore_x_e_illume_back_send(Ecore_X_Window win);
+EAPI void                ecore_x_e_illume_close_send(Ecore_X_Window win);
+
 
 EAPI void                ecore_x_xinerama_query_screens_prefetch(void);
 EAPI void                ecore_x_xinerama_query_screens_fetch(void);
