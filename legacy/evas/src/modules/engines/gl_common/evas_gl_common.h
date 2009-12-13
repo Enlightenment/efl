@@ -114,14 +114,18 @@ struct _Evas_GL_Context
       GLuint          cur_prog;
       GLuint          cur_tex, cur_texu, cur_texv;
       int             render_op;
+      int             cx, cy, cw, ch;
       Eina_Bool       smooth : 1;
       Eina_Bool       blend : 1;
+      Eina_Bool       clip : 1;
       struct {
          GLuint          cur_prog;
          GLuint          cur_tex, cur_texum, cur_texv;
          int             render_op;
+         int             cx, cy, cw, ch;
          Eina_Bool       smooth : 1;
          Eina_Bool       blend : 1;
+         Eina_Bool       clip : 1;
       } current;
    } shader;
    struct {

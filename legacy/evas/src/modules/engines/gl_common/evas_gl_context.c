@@ -411,6 +411,7 @@ evas_gl_common_context_rectangle_push(Evas_GL_Context *gc,
        || (gc->shader.cur_prog != gc->shared->shader.rect.prog)
        || (gc->shader.blend != blend)
        || (gc->shader.render_op != gc->dc->render_op)
+       || (gc->shader.clip != 0)
        )
      {
         shader_array_flush(gc);
@@ -418,6 +419,7 @@ evas_gl_common_context_rectangle_push(Evas_GL_Context *gc,
         gc->shader.cur_prog = gc->shared->shader.rect.prog;
         gc->shader.blend = blend;
         gc->shader.render_op = gc->dc->render_op;
+        gc->shader.clip = 0;
      }
    
    pnum = gc->array.num;
@@ -463,6 +465,7 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
        || (gc->shader.smooth != smooth)
        || (gc->shader.blend != blend)
        || (gc->shader.render_op != gc->dc->render_op)
+       || (gc->shader.clip != 0)
        )
      {
         shader_array_flush(gc);
@@ -471,6 +474,7 @@ evas_gl_common_context_image_push(Evas_GL_Context *gc,
         gc->shader.smooth = smooth;
         gc->shader.blend = blend;
         gc->shader.render_op = gc->dc->render_op;
+        gc->shader.clip = 0;
      }
    
    pnum = gc->array.num;
@@ -520,6 +524,7 @@ evas_gl_common_context_font_push(Evas_GL_Context *gc,
        || (gc->shader.smooth != 0)
        || (gc->shader.blend != 1)
        || (gc->shader.render_op != gc->dc->render_op)
+       || (gc->shader.clip != 0)
        )
      {
         shader_array_flush(gc);
@@ -528,6 +533,7 @@ evas_gl_common_context_font_push(Evas_GL_Context *gc,
         gc->shader.smooth = 0;
         gc->shader.blend = 1;
         gc->shader.render_op = gc->dc->render_op;
+        gc->shader.clip = 0;
      }
    
    pnum = gc->array.num;
@@ -591,6 +597,7 @@ evas_gl_common_context_yuv_push(Evas_GL_Context *gc,
        || (gc->shader.smooth != smooth)
        || (gc->shader.blend != blend)
        || (gc->shader.render_op != gc->dc->render_op)
+       || (gc->shader.clip != 0)
        )
      {
         shader_array_flush(gc);
@@ -601,6 +608,7 @@ evas_gl_common_context_yuv_push(Evas_GL_Context *gc,
         gc->shader.smooth = smooth;
         gc->shader.blend = blend;
         gc->shader.render_op = gc->dc->render_op;
+        gc->shader.clip = 0;
      }
    
    pnum = gc->array.num;
@@ -683,6 +691,11 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
        || (gc->shader.smooth != smooth)
        || (gc->shader.blend != blend)
        || (gc->shader.render_op != gc->dc->render_op)
+       || (gc->shader.clip != clip)
+       || (gc->shader.cx != cx)
+       || (gc->shader.cy != cy)
+       || (gc->shader.cw != cw)
+       || (gc->shader.ch != ch)
        )
      {
         shader_array_flush(gc);
@@ -694,6 +707,11 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
         gc->shader.smooth = smooth;
         gc->shader.blend = blend;
         gc->shader.render_op = gc->dc->render_op;
+        gc->shader.clip = clip;
+        gc->shader.cx = cx;
+        gc->shader.cy = cy;
+        gc->shader.cw = cw;
+        gc->shader.ch = ch;
      }
    
    pnum = gc->array.num;
@@ -804,6 +822,29 @@ shader_array_flush(Evas_GL_Context *gc)
              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
           }
      }
+   if (gc->shader.clip != gc->shader.current.clip)
+     {
+        if (gc->shader.clip)
+          glEnable(GL_SCISSOR_TEST);
+        else
+          glDisable(GL_SCISSOR_TEST);
+     }
+   if (gc->shader.clip)
+     {
+        if ((gc->shader.cx != gc->shader.current.cx) ||
+            (gc->shader.cx != gc->shader.current.cx) ||
+            (gc->shader.cx != gc->shader.current.cx) ||
+            (gc->shader.cx != gc->shader.current.cx))
+          glScissor(gc->shader.cx, 
+                    gc->h - gc->shader.cy - gc->shader.ch,
+                    gc->shader.cw,
+                    gc->shader.ch);
+//                    gc->clip.x,
+//                    gc->h - gc->clip.y - gc->clip.h,
+//                    gc->clip.w,
+//                    gc->clip.h);
+        
+     }
 
    glVertexAttribPointer(SHAD_VERTEX, 3, GL_SHORT, GL_FALSE, 0, gc->array.vertex);
    glVertexAttribPointer(SHAD_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, gc->array.color);
@@ -832,6 +873,11 @@ shader_array_flush(Evas_GL_Context *gc)
    gc->shader.current.blend = gc->shader.blend;
    gc->shader.current.smooth = gc->shader.smooth;
    gc->shader.current.render_op = gc->shader.render_op;
+   gc->shader.current.clip = gc->shader.clip;
+   gc->shader.current.cx = gc->shader.cx;
+   gc->shader.current.cy = gc->shader.cy;
+   gc->shader.current.cw = gc->shader.cw;
+   gc->shader.current.ch = gc->shader.ch;
    
    free(gc->array.vertex);
    free(gc->array.color);
