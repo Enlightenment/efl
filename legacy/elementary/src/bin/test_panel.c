@@ -1,7 +1,7 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
-Elm_Genlist_Item_Class itc;
+static Elm_Genlist_Item_Class itc;
 
 static char *_label_get(const void *data, Evas_Object *obj, const char *source);
 static Evas_Object *_icon_get(const void *data, Evas_Object *obj, const char *source);

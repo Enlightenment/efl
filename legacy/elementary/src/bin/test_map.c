@@ -7,7 +7,7 @@ typedef struct Marker_Data
 } Marker_Data;
 
 
-Elm_Map_Marker_Class itc;
+static Elm_Map_Marker_Class itc;
 
 static Evas_Object *rect;
 
