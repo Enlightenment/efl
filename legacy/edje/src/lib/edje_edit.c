@@ -1668,6 +1668,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
 	       _edje_real_part_swallow(rp, child);
 	  }
 	evas_object_clip_set(rp->object, ed->clipper);
+	evas_object_show(ed->clipper);
      }
    rp->gradient_id = -1;
 
@@ -1720,7 +1721,7 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
    ep = rp->part;
    id = ep->id;
 
-   if (ed->table_parts_size <= 1) return EINA_FALSE; //don't remove the last part
+   //if (ed->table_parts_size <= 1) return EINA_FALSE; //don't remove the last part
 
    /* Unlik Edje_Real_Parts that link to the removed one */
    int i;
@@ -1792,6 +1793,9 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
    /* Free Edje_Real_Part */
    _edje_real_part_free(rp);
 
+   /* if all parts are gone, hide the clipper */
+   if (ed->table_parts_size == 0)
+     evas_object_hide(ed->clipper);
 
    edje_object_calc_force(obj);
    return EINA_TRUE;
