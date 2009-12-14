@@ -16,9 +16,9 @@ external_button_state_set(void *data, Evas_Object *obj, const void *from_params,
 
    if (!p2)
      {
-   elm_button_label_set(obj, p1->base.label);
-   elm_button_icon_set(obj, p1->icon);
-   return;
+	elm_button_label_set(obj, p1->base.label);
+	elm_button_icon_set(obj, p1->icon);
+	return;
      }
 
    elm_button_label_set(obj, p2->base.label);

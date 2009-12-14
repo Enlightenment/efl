@@ -17,10 +17,10 @@ external_check_state_set(void *data, Evas_Object *obj, const void *from_params, 
 
    if (!p2)
      {
-    elm_check_label_set(obj, p1->base.label);
-    elm_check_icon_set(obj, p1->icon);
-    elm_check_state_set(obj, p1->state);
-    return;
+	elm_check_label_set(obj, p1->base.label);
+	elm_check_icon_set(obj, p1->icon);
+	elm_check_state_set(obj, p1->state);
+	return;
      }
 
    elm_check_label_set(obj, p2->base.label);
