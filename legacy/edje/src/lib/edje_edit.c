@@ -1637,6 +1637,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
      printf("EDJE ERROR: wrong part type %i!\n", ep->type);
    if (rp->object)
      {
+	evas_object_show(rp->object);
 	evas_object_smart_member_add(rp->object, ed->obj);
 	evas_object_layer_set(rp->object, evas_object_layer_get(ed->obj));
 	if (ep->type != EDJE_PART_TYPE_SWALLOW && ep->type != EDJE_PART_TYPE_GROUP)
@@ -1662,7 +1663,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
 	if (ep->type == EDJE_PART_TYPE_EXTERNAL)
 	  {
 	     Evas_Object *child;
-	     child = _edje_external_type_add(source, evas_object_evas_get(obj), obj, NULL);
+	     child = _edje_external_type_add(source, evas_object_evas_get(ed->obj), ed->obj, NULL);
 	     if (child)
 	       _edje_real_part_swallow(rp, child);
 	  }
