@@ -1550,6 +1550,14 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	     ecore_x_icccm_title_set(ee->prop.window, ee->prop.title);
 	     ecore_x_netwm_name_set(ee->prop.window, ee->prop.title);
 	  }
+	ecore_x_icccm_hints_set(ee->prop.window,
+				1 /* accepts_focus */,
+				ECORE_X_WINDOW_STATE_HINT_NORMAL /* initial_state */,
+				0 /* icon_pixmap */,
+				0 /* icon_mask */,
+				0 /* icon_window */,
+				0 /* window_group */,
+				0 /* is_urgent */);
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 */
      }
    else if (!strcmp(ee->driver, "xrender_x11"))
@@ -1615,6 +1623,14 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	     ecore_x_icccm_title_set(ee->prop.window, ee->prop.title);
 	     ecore_x_netwm_name_set(ee->prop.window, ee->prop.title);
 	  }
+	ecore_x_icccm_hints_set(ee->prop.window,
+				1 /* accepts_focus */,
+				ECORE_X_WINDOW_STATE_HINT_NORMAL /* initial_state */,
+				0 /* icon_pixmap */,
+				0 /* icon_mask */,
+				0 /* icon_window */,
+				0 /* window_group */,
+				0 /* is_urgent */);
 #endif /* BUILD_ECORE_EVAS_XRENDER_X11 || BUILD_ECORE_EVAS_XRENDER_XCB */
      }
    else if (!strcmp(ee->driver, "software_16_x11"))
@@ -1673,6 +1689,14 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 	     ecore_x_icccm_title_set(ee->prop.window, ee->prop.title);
 	     ecore_x_netwm_name_set(ee->prop.window, ee->prop.title);
 	  }
+	ecore_x_icccm_hints_set(ee->prop.window,
+				1 /* accepts_focus */,
+				ECORE_X_WINDOW_STATE_HINT_NORMAL /* initial_state */,
+				0 /* icon_pixmap */,
+				0 /* icon_mask */,
+				0 /* icon_window */,
+				0 /* window_group */,
+				0 /* is_urgent */);
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
      }
 }
@@ -2452,6 +2476,14 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 	einfo->info.debug    = redraw_debug;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
+   ecore_x_icccm_hints_set(ee->prop.window,
+                           1 /* accepts_focus */,
+                           ECORE_X_WINDOW_STATE_HINT_NORMAL /* initial_state */,
+                           0 /* icon_pixmap */,
+                           0 /* icon_mask */,
+                           0 /* icon_window */,
+                           0 /* window_group */,
+                           0 /* is_urgent */);
 
    ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
@@ -2633,6 +2665,15 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 //	putenv((char*)"DESKTOP_STARTUP_ID=");
      }
 
+   ecore_x_icccm_hints_set(ee->prop.window,
+                           1 /* accepts_focus */,
+                           ECORE_X_WINDOW_STATE_HINT_NORMAL /* initial_state */,
+                           0 /* icon_pixmap */,
+                           0 /* icon_mask */,
+                           0 /* icon_window */,
+                           0 /* window_group */,
+                           0 /* is_urgent */);
+   
    ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
 # endif /* HAVE_ECORE_X_XCB */
@@ -2872,6 +2913,15 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
 
+   ecore_x_icccm_hints_set(ee->prop.window,
+                           1 /* accepts_focus */,
+                           ECORE_X_WINDOW_STATE_HINT_NORMAL /* initial_state */,
+                           0 /* icon_pixmap */,
+                           0 /* icon_mask */,
+                           0 /* icon_window */,
+                           0 /* window_group */,
+                           0 /* is_urgent */);
+   
    ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
    return ee;
@@ -3075,6 +3125,15 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
 
+   ecore_x_icccm_hints_set(ee->prop.window,
+                           1 /* accepts_focus */,
+                           ECORE_X_WINDOW_STATE_HINT_NORMAL /* initial_state */,
+                           0 /* icon_pixmap */,
+                           0 /* icon_mask */,
+                           0 /* icon_window */,
+                           0 /* window_group */,
+                           0 /* is_urgent */);
+   
    ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
    ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb) _ecore_evas_mouse_move_process);
    return ee;
