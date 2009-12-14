@@ -14,7 +14,7 @@ if BUILD_ENGINE_GL_GLEW
 
 GL_GLEW_SOURCES = \
 evas_engine.c \
-evas_glew_main.c
+evas_glew_win32_main.c
 
 GL_GLEW_LIBADD = @evas_engine_gl_glew_libs@ $(top_builddir)/src/modules/engines/gl_common/libevas_engine_gl_common.la
 
