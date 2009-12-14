@@ -130,8 +130,10 @@ evas_fonts_zero_free(Evas *evas)
 	if (fd->name) eina_stringshare_del(fd->name);
 	if (fd->source) eina_stringshare_del(fd->source);
 	evas->engine.func->font_free(evas->engine.data.output, fd->font);
+#ifdef HAVE_FONTCONFIG
 	if (fd->set) FcFontSetDestroy(fd->set);
 	if (fd->p_nm) FcPatternDestroy(fd->p_nm);
+#endif
 	free(fd);
      }
 }
@@ -152,8 +154,10 @@ evas_fonts_zero_presure(Evas *evas)
 	if (fd->name) eina_stringshare_del(fd->name);
 	if (fd->source) eina_stringshare_del(fd->source);
 	evas->engine.func->font_free(evas->engine.data.output, fd->font);
+#ifdef HAVE_FONTCONFIG
 	if (fd->set) FcFontSetDestroy(fd->set);
 	if (fd->p_nm) FcPatternDestroy(fd->p_nm);
+#endif
 	free(fd);
 
 	if (eina_list_count(fonts_zero) < 5) break;
@@ -190,8 +194,10 @@ evas_font_free(Evas *evas, void *font)
 	if (fd->name) eina_stringshare_del(fd->name);
 	if (fd->source) eina_stringshare_del(fd->source);
 	evas->engine.func->font_free(evas->engine.data.output, fd->font);
+#ifdef HAVE_FONTCONFIG
 	if (fd->set) FcFontSetDestroy(fd->set);
 	if (fd->p_nm) FcPatternDestroy(fd->p_nm);
+#endif
 	free(fd);
 
 	if (eina_list_count(fonts_zero) < 43) break;
@@ -214,6 +220,7 @@ evas_font_init(void)
 #endif
 }
 
+#ifdef HAVE_FONTCONFIG
 static void *
 evas_load_fontconfig(Evas *evas, FcFontSet *set, int size)
 {
@@ -235,6 +242,7 @@ evas_load_fontconfig(Evas *evas, FcFontSet *set, int size)
 
    return font;
 }
+#endif
 
 void *
 evas_font_load(Evas *evas, const char *name, const char *source, int size)
@@ -267,11 +275,13 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 		       fd->ref++;
 		       return fd->font;
 		    }
+#ifdef HAVE_FONTCONFIG
 		  else if (fd->set && fd->p_nm)
 		    {
 		       font = evas_load_fontconfig(evas, fd->set, size);
 		       goto on_find;
 		    }
+#endif
 	       }
 	  }
      }
@@ -290,11 +300,13 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 		       fd->ref++;
 		       return fd->font;
 		    }
+#ifdef HAVE_FONTCONFIG
 		  else if (fd->set && fd->p_nm)
 		    {
 		       font = evas_load_fontconfig(evas, fd->set, size);
 		       goto on_find;
 		    }
+#endif
 	       }
 	  }
      }
