@@ -3722,6 +3722,8 @@ edje_object_preload(Evas_Object *obj, Eina_Bool cancel)
    ed = _edje_fetch(obj);
    if (!ed) return EINA_FALSE;
 
+   _edje_recalc_do(ed);
+
    for (i = 0, count = 0; i < ed->table_parts_size; i++)
      {
 	Edje_Real_Part *rp;
@@ -3749,10 +3751,21 @@ edje_object_preload(Evas_Object *obj, Eina_Bool cancel)
 
 	     if (ep->type == EDJE_PART_TYPE_IMAGE)
 	       {
-		  evas_object_event_callback_del_full(rp->object, EVAS_CALLBACK_IMAGE_PRELOADED, _edje_object_image_preload_cb, ed);
-		  evas_object_event_callback_add(rp->object, EVAS_CALLBACK_IMAGE_PRELOADED, _edje_object_image_preload_cb, ed);
-		  evas_object_image_preload(rp->object, cancel);
+		  const char *file = NULL;
+		  const char *key = NULL;
 
+		  evas_object_event_callback_del_full(rp->object, EVAS_CALLBACK_IMAGE_PRELOADED, _edje_object_image_preload_cb, ed);
+
+		  evas_object_image_file_get(rp->object, &file, &key);
+		  if (!file && !key)
+		    {
+		       ed->preload_count--;
+		    }
+		  else
+		    {
+		       evas_object_event_callback_add(rp->object, EVAS_CALLBACK_IMAGE_PRELOADED, _edje_object_image_preload_cb, ed);
+		       evas_object_image_preload(rp->object, cancel);
+		    }
 		  count--;
 	       }
 	     else if (ep->type == EDJE_PART_TYPE_GROUP)
