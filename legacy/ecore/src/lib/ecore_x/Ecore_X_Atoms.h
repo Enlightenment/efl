@@ -203,7 +203,7 @@ EAPI extern Ecore_X_Atom  ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_URL;
 EAPI extern Ecore_X_Atom  ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_KEYPAD;
 EAPI extern Ecore_X_Atom  ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_J2ME;
 
-/* atom to determine if an app is illume compliant */
+/* Illume specific atoms */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_CONFORMANT;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_MODE;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_MODE_SINGLE;
@@ -211,6 +211,7 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_MODE_DUAL;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_BACK;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_CLOSE;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_DRAG;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_DRAG_LOCKED;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_DRAG_START;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_DRAG_END;
 

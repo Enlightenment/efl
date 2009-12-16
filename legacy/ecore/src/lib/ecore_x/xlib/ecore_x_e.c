@@ -203,7 +203,7 @@ ecore_x_e_illume_close_send(Ecore_X_Window win)
 EAPI void 
 ecore_x_e_illume_drag_set(Ecore_X_Window win, unsigned int drag) 
 {
-   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_DRAG,&drag, 1);
+   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_DRAG, &drag, 1);
 }
 
 EAPI int 
@@ -212,6 +212,24 @@ ecore_x_e_illume_drag_get(Ecore_X_Window win)
    unsigned int val = 0;
 
    if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_DRAG, &val, 1))
+     return 0;
+   return val;
+}
+
+EAPI void 
+ecore_x_e_illume_drag_locked_set(Ecore_X_Window win, unsigned int is_locked) 
+{
+   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_DRAG_LOCKED, 
+                                  &is_locked, 1);
+}
+
+EAPI int 
+ecore_x_e_illume_drag_locked_get(Ecore_X_Window win) 
+{
+   unsigned int val = 0;
+
+   if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_DRAG_LOCKED, 
+                                       &val, 1))
      return 0;
    return val;
 }

@@ -1546,6 +1546,8 @@ EAPI void                ecore_x_e_illume_back_send(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_close_send(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_drag_set(Ecore_X_Window win, unsigned int drag);
 EAPI int                 ecore_x_e_illume_drag_get(Ecore_X_Window win);
+EAPI void                ecore_x_e_illume_drag_locked_set(Ecore_X_Window win, unsigned int is_locked);
+EAPI int                 ecore_x_e_illume_drag_locked_get(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_drag_start_send(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_drag_end_send(Ecore_X_Window win);
 
