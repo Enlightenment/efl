@@ -34,6 +34,8 @@ void *alloca (size_t);
 #include <math.h>
 
 #include "edje_cc.h"
+#include <Ecore.h>
+#include <Ecore_File.h>
 
 static void  new_object(void);
 static void  new_statement(void);
@@ -696,24 +698,28 @@ compile(void)
 	 * Also, that preprocessor is not managing C++ comments, so pass the
 	 * sun cc preprocessor just after.
 	 */
-	snprintf(buf, sizeof(buf), "/usr/ccs/lib/cpp -I%s %s %s %s",
-		 inc, def, file_in, tmpn);
-	ret = system(buf);
-	if (ret == 0)
-	  {
-	     static char tmpn2[4096];
-
-	     snprintf (tmpn2, PATH_MAX, "%s/edje_cc.edc-tmp-XXXXXX", tmp_dir);
-	     fd = mkstemp(tmpn2);
-	     if (fd >= 0)
-	       {
-		  close(fd); 
-		  snprintf (buf, 4096, "cc -E -I%s %s -o %s %s",
-			    inc, def, tmpn2, tmpn);
-		  ret = system(buf);
-		  snprintf(tmpn, 4096, "%s", tmpn2);
-	       }
-	  }
+        ret = -1;
+        if (ecore_file_exists("/usr/ccs/lib/cpp"))
+          {
+             snprintf(buf, sizeof(buf), "/usr/ccs/lib/cpp -I%s %s %s %s",
+                      inc, def, file_in, tmpn);
+             ret = system(buf);
+             if (ret == 0)
+               {
+                  static char tmpn2[4096];
+                  
+                  snprintf (tmpn2, PATH_MAX, "%s/edje_cc.edc-tmp-XXXXXX", tmp_dir);
+                  fd = mkstemp(tmpn2);
+                  if (fd >= 0)
+                    {
+                       close(fd); 
+                       snprintf (buf, 4096, "cc -E -I%s %s -o %s %s",
+                                 inc, def, tmpn2, tmpn);
+                       ret = system(buf);
+                       snprintf(tmpn, 4096, "%s", tmpn2);
+                    }
+               }
+          }
 	/*
 	 * On some BSD based systems (MacOS, OpenBSD), the default cpp
 	 * in the path is a wrapper script that chokes on the -o option.
@@ -728,13 +734,13 @@ compile(void)
 	 * OpenSolaris: using gcc -E to remove them after using cpp.
 	 *
 	 */
-	if (ret < 0)
+	if (ret != 0)
 	  {
 	     snprintf(buf, sizeof(buf), "cat %s | cpp -I%s %s > %s",
 		      file_in, inc, def, tmpn);
 	     ret = system(buf);
 	  }
-	if (ret < 0)
+	if (ret != 0)
 	  {
 	     snprintf(buf, sizeof(buf), "gcc -I%s %s -E -o %s %s",
 		      inc, def, tmpn, file_in);
