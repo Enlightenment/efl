@@ -249,3 +249,22 @@ elm_anchorview_hover_end(Evas_Object *obj)
    wd->hover = NULL;
    wd->pop = NULL;
 }
+
+/**
+ * Set bounce mode
+ *
+ * This will enable or disable the scroller bounce mode for the anchorview. See
+ * elm_scroller_bounce_set() for details
+ *
+ * @param obj The anchorview anchorview
+ * @param h_bounce Allow bounce horizontally
+ * @param v_bounce Allow bounce vertically
+ *
+ * @ingroup Anchorview
+ */
+EAPI void
+elm_anchorview_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   elm_scroller_bounce_set(wd->scroller, h_bounce, v_bounce);
+}

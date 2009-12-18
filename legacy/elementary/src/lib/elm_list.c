@@ -933,7 +933,7 @@ elm_list_item_del(Elm_List_Item *it)
  * @param it The item to set the callback on
  * @param func The function called
  *
- * @ingroup Hoversel
+ * @ingroup List
  */
 EAPI void
 elm_list_item_del_cb_set(Elm_List_Item *it, void (*func)(void *data, Evas_Object *obj, void *event_info))
@@ -1053,4 +1053,23 @@ elm_list_item_next(const Elm_List_Item *it)
      return it->node->next->data;
    else
      return NULL;
+}
+
+/**
+ * Set bounce mode
+ *
+ * This will enable or disable the scroller bounce mode for the list. See
+ * elm_scroller_bounce_set() for details
+ *
+ * @param obj The list object
+ * @param h_bounce Allow bounce horizontally
+ * @param v_bounce Allow bounce vertically
+ *
+ * @ingroup List
+ */
+EAPI void
+elm_list_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
 }

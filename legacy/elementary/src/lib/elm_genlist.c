@@ -2679,7 +2679,7 @@ elm_genlist_compress_mode_set(Evas_Object *obj, Eina_Bool compress)
 /**
  * Set bounce mode
  *
- * This will enable or disable the scroller bounce mode for the gnelist. See 
+ * This will enable or disable the scroller bounce mode for the genlist. See 
  * elm_scroller_bounce_set() for details
  *
  * @param obj The genlist object

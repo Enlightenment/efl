@@ -326,3 +326,22 @@ elm_notepad_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
    wd->format = format;
    _load(obj);
 }
+
+/**
+ * Set bounce mode
+ *
+ * This will enable or disable the scroller bounce mode for the notepad. See
+ * elm_scroller_bounce_set() for details
+ *
+ * @param obj The notepad object
+ * @param h_bounce Allow bounce horizontally
+ * @param v_bounce Allow bounce vertically
+ *
+ * @ingroup Notepad
+ */
+EAPI void
+elm_notepad_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   elm_scroller_bounce_set(wd->scr, h_bounce, v_bounce);
+}
