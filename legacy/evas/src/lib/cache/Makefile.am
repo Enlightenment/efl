@@ -15,7 +15,8 @@ AM_CPPFLAGS	     = -I. \
 noinst_LTLIBRARIES      = libevas_cache.la
 libevas_cache_la_SOURCES  = \
 evas_cache_image.c \
-evas_cache_engine_image.c
+evas_cache_engine_image.c \
+evas_preload.c
 
 libevas_cache_la_LIBAD = @EVIL_LIBS@
 

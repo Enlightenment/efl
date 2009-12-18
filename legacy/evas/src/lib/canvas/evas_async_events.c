@@ -12,7 +12,6 @@ static int _fd_write = -1;
 static int _fd_read = -1;
 
 static int _init_evas_event = 0;
-static pthread_mutex_t _mutex = PTHREAD_MUTEX_INITIALIZER;
 
 typedef struct _Evas_Event_Async	Evas_Event_Async;
 
@@ -24,29 +23,25 @@ struct _Evas_Event_Async
    Evas_Callback_Type	  type;
 };
 
-static int               queue_num = 0;
-static int               queue_alloc = 0;
-static Evas_Event_Async *queue = NULL;
-
 int
 evas_async_events_init(void)
 {
    int filedes[2];
-   
+
    _init_evas_event++;
    if (_init_evas_event > 1) return _init_evas_event;
-   
+
    if (pipe(filedes) == -1)
      {
 	_init_evas_event = 0;
 	return 0;
      }
-   
+
    _fd_read = filedes[0];
    _fd_write = filedes[1];
-   
+
    fcntl(_fd_read, F_SETFL, O_NONBLOCK);
-   
+
    return _init_evas_event;
 }
 
@@ -55,43 +50,13 @@ evas_async_events_shutdown(void)
 {
    _init_evas_event--;
    if (_init_evas_event > 0) return _init_evas_event;
-   
+
    close(_fd_read);
    close(_fd_write);
    _fd_read = -1;
    _fd_write = -1;
 
    return _init_evas_event;
-}
-
-int
-evas_async_target_del(const void *target)
-{
-   int i, j, d = 0;
-   
-   pthread_mutex_lock(&_mutex);
-   if (queue)
-     {
-        for (i = 0; i < queue_num; i++)
-          {
-             if (queue[i].target == target)
-               {
-                  for (j = i + 1; j < queue_num; j++)
-                    memcpy(&(queue[j - 1]), &(queue[j]), sizeof(Evas_Event_Async));
-                  i--;
-                  queue_num--;
-                  d++;
-               }
-          }
-        if (queue_num == 0)
-          {
-             free(queue);
-             queue = NULL;
-             queue_alloc = 0;
-          }
-     }
-   pthread_mutex_unlock(&_mutex);
-   return d;
 }
 
 #endif
@@ -145,44 +110,24 @@ evas_async_events_process(void)
 {
 #ifdef BUILD_ASYNC_EVENTS
    Evas_Event_Async *ev;
-   unsigned char buf[1];
-   int i;
    int check;
    int count = 0;
-   int               myqueue_num = 0;
-   int               myqueue_alloc = 0;
-   Evas_Event_Async *myqueue = NULL;
-   
+
    if (_fd_read == -1) return 0;
-   
-   pthread_mutex_lock(&_mutex);
-   do
-     {
-	check = read(_fd_read, buf, 1);
-     }
-   while (check > 0);
-   
-   if (queue)
-     {
-        myqueue_num = queue_num;
-        myqueue_alloc = queue_alloc;
-        myqueue = queue;
-        queue_num = 0;
-        queue_alloc = 0;
-        queue = NULL;
-        pthread_mutex_unlock(&_mutex);
-        
-        for (i = 0; i < myqueue_num; i++)
-          {
-             ev = &(myqueue[i]);
+
+   do {
+	check = read(_fd_read, &ev, sizeof (Evas_Event_Async *));
+
+	if (check == sizeof (Evas_Event_Async *))
+	  {
              if (ev->func) ev->func((void *)ev->target, ev->type, ev->event_info);
-             count++;
-          }
-        free(myqueue);
-     }
-   else
-     pthread_mutex_unlock(&_mutex);
-   
+	     free(ev);
+	     count++;
+	  }
+   } while (check > 0);
+
+   evas_cache_image_wakeup();
+
    if (check < 0)
      switch (errno)
        {
@@ -192,8 +137,7 @@ evas_async_events_process(void)
        case EISDIR:
           _fd_read = -1;
        }
-   
-   evas_cache_pending_process();
+
    return count;
 #else
    return 0;
@@ -225,38 +169,21 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
    if (!func) return 0;
    if (_fd_write == -1) return 0;
 
-   pthread_mutex_lock(&_mutex);
-   
-   queue_num++;
-   if (queue_num > queue_alloc)
-     {
-        Evas_Event_Async *q2;
-        
-        queue_alloc += 32; // 32 slots at a time for async events
-        q2 = realloc(queue, queue_alloc * sizeof(Evas_Event_Async));
-        if (!q2)
-          {
-             queue_alloc -= 32;
-             queue_num--;
-             pthread_mutex_unlock(&_mutex);
-             return 0;
-          }
-        queue = q2;
-     }
-   ev = &(queue[queue_num - 1]);
-   memset(ev, 0, sizeof(Evas_Event_Async));
+   ev = calloc(1, sizeof (Evas_Event_Async));
+   if (!ev) return 0;
+
    ev->func = func;
    ev->target = target;
    ev->type = type;
    ev->event_info = event_info;
 
-   do
-     {
-        unsigned char buf[1] = { 0xf0 };
-        check = write(_fd_write, buf, 1);
-     } while ((check != 1) && ((errno == EINTR) || (errno == EAGAIN)));
+   do {
+      check = write(_fd_write, &ev, sizeof (Evas_Event_Async*));
+   } while ((check != sizeof (Evas_Event_Async)) && ((errno == EINTR) || (errno == EAGAIN)));
 
-   if (check == 1)
+   evas_cache_image_wakeup();
+
+   if (check == sizeof (Evas_Event_Async*))
      result = EINA_TRUE;
    else
      switch (errno)
@@ -267,8 +194,7 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
        case EPIPE:
           _fd_write = -1;
        }
-   
-   pthread_mutex_unlock(&_mutex);
+
    return result;
 #else
    func(target, type, event_info);

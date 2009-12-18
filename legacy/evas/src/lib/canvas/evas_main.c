@@ -39,6 +39,9 @@ evas_init(void)
 #ifdef EVAS_CSERVE
    if (getenv("EVAS_CSERVE")) evas_cserve_init();
 #endif
+#ifdef BUILD_ASYNC_PRELOAD
+   _evas_preload_thread_init();
+#endif
 
    return _evas_init_count;
 
@@ -71,6 +74,9 @@ evas_shutdown(void)
    if (--_evas_init_count != 0)
      return _evas_init_count;
 
+#ifdef BUILD_ASYNC_EVENTS
+   _evas_preload_thread_shutdown();
+#endif
 #ifdef EVAS_CSERVE
    if (getenv("EVAS_CSERVE")) evas_cserve_shutdown();
 #endif

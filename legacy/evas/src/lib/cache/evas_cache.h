@@ -46,6 +46,9 @@ struct _Evas_Cache_Image
 {
    Evas_Cache_Image_Func         func;
 
+   Eina_List			*preload;
+   Eina_List			*pending;
+
    Eina_Inlist                  *dirty;
 
    Eina_Inlist                  *lru;
@@ -111,7 +114,6 @@ extern "C" {
 EAPI Evas_Cache_Image*        evas_cache_image_init(const Evas_Cache_Image_Func *cb);
 EAPI void                     evas_cache_image_shutdown(Evas_Cache_Image *cache);
 EAPI Image_Entry*             evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *key, RGBA_Image_Loadopts *lo, int *error);
-EAPI void                     evas_cache_pending_process(void);
 EAPI void                     evas_cache_image_drop(Image_Entry *im);
 EAPI void                     evas_cache_image_data_not_needed(Image_Entry *im);
 EAPI int                      evas_cache_image_flush(Evas_Cache_Image *cache);
@@ -156,6 +158,8 @@ EAPI void                     evas_cache_engine_image_load_data(Engine_Image_Ent
 
 EAPI void                     evas_cache_image_preload_data(Image_Entry *im, const void *target);
 EAPI void                     evas_cache_image_preload_cancel(Image_Entry *im, const void *target);
+
+EAPI void                     evas_cache_image_wakeup(void);
 
 #ifdef __cplusplus
 }

@@ -822,7 +822,15 @@ struct _Evas_Imaging_Font
 int evas_async_events_init(void);
 int evas_async_events_shutdown(void);
 int evas_async_target_del(const void *target);
-       
+
+void _evas_preload_thread_init(void);
+void _evas_preload_thread_shutdown(void);
+Evas_Preload_Pthread *evas_preload_thread_run(void (*func_heavy)(void *data),
+					     void (*func_end)(void *data),
+					     void (*func_cancel)(void *data),
+					     const void *data);
+Eina_Bool evas_preload_thread_cancel(Evas_Preload_Pthread *thread);
+
 void _evas_walk(Evas *e);
 void _evas_unwalk(Evas *e);
 

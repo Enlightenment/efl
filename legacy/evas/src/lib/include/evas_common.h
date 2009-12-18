@@ -335,6 +335,7 @@ typedef struct _Image_Entry             Image_Entry;
 typedef struct _Image_Entry_Flags	Image_Entry_Flags;
 typedef struct _Engine_Image_Entry      Engine_Image_Entry;
 typedef struct _Evas_Cache_Target       Evas_Cache_Target;
+typedef struct _Evas_Preload_Pthread    Evas_Preload_Pthread;
 
 typedef struct _RGBA_Image_Loadopts   RGBA_Image_Loadopts;
 #ifdef BUILD_PIPE_RENDER
@@ -468,9 +469,9 @@ struct _Image_Entry_Flags
    Eina_Bool alpha        : 1;
    Eina_Bool alpha_sparse : 1;
 #ifdef BUILD_ASYNC_PRELOAD
-   Eina_Bool preload      : 1;
+   Eina_Bool preload_done : 1;
+   Eina_Bool delete_me    : 1;
    Eina_Bool pending      : 1;
-   Eina_Bool in_pipe	  : 1;
 #endif
 };
 
@@ -478,6 +479,7 @@ struct _Evas_Cache_Target
 {
   EINA_INLIST;
   const void *target;
+  void *data;
 };
 
 struct _Image_Entry
@@ -492,6 +494,7 @@ struct _Image_Entry
    const char            *key;
 
    Evas_Cache_Target     *targets;
+   Evas_Preload_Pthread   *preload;
 
    time_t                 timestamp;
    time_t                 laststat;
