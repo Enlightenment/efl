@@ -776,6 +776,7 @@ expression(int *constant, cell * val, int *tag, int chkfuncresult)
    else
      {
 	*constant = FALSE;
+	*val = 0;
      }				/* if */
    if (tag != NULL)
       *tag = lval.tag;
