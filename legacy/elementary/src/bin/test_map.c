@@ -10,6 +10,7 @@ typedef struct Marker_Data
 static Elm_Map_Marker_Class itc;
 
 static Evas_Object *rect;
+static int nb_elts;
 
 Marker_Data data1 = {PACKAGE_DATA_DIR"/images/logo.png"};
 Marker_Data data2 = {PACKAGE_DATA_DIR"/images/logo_small.png"};
@@ -194,6 +195,27 @@ my_bt_zoom_fill(void *data, Evas_Object *obj, void *event_info)
    elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_AUTO_FILL);
 }
 
+static void
+my_bt_add(void *data, Evas_Object *obj, void *event_info)
+{
+    int i;
+
+    for(i =0; i<100; i++)
+    {
+        int r1 = rand() % (180*2*100);
+        if(r1<=180) r1 = -r1;
+        else r1 = r1 - 180*100;
+
+        int r2 = rand() % (85*2*100);
+        if(r2<=85) r2 = -r2;
+        else r2 = r2 - 85*100;
+
+       elm_map_marker_add(data, r1/100., r2/100., &itc, &data7); 
+    }
+    nb_elts+=1000;
+    printf("nb elements: %d\n", nb_elts);
+}
+
 static Evas_Object *
 _marker_get(Evas_Object *obj, Elm_Map_Marker *marker, void *data)
 {
@@ -243,9 +265,9 @@ _map_mouse_wheel_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    zoom = elm_map_zoom_get(map);
 
    if (ev->z > 0)
-     zoom++;
-   else
      zoom--;
+   else
+     zoom++;
 
    elm_map_zoom_mode_set(map, ELM_MAP_ZOOM_MODE_MANUAL);
    if (zoom >= 0 && zoom <= 18) elm_map_zoom_set(map, zoom);
@@ -278,6 +300,8 @@ test_map(void *data, Evas_Object *obj, void *event_info)
    map = elm_map_add(win);
    if (map) 
      {
+        srand( time(NULL) );
+
         evas_object_size_hint_weight_set(map, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         elm_win_resize_object_add(win, map);
         evas_object_data_set(map, "window", win);
@@ -314,6 +338,8 @@ test_map(void *data, Evas_Object *obj, void *event_info)
         marker = elm_map_marker_add(map, 7.3165409990833, 48.856078, &itc, &data11);
         marker = elm_map_marker_add(map, 7.319812, 48.856561, &itc, &data10);
 
+        nb_elts = 13;
+
         evas_object_smart_callback_add(map, "clicked", my_map_clicked, win);
         evas_object_smart_callback_add(map, "press", my_map_press, win);
         evas_object_smart_callback_add(map, "longpressed", my_map_longpressed, win);
@@ -343,6 +369,14 @@ test_map(void *data, Evas_Object *obj, void *event_info)
         evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(bt, 0.1, 0.1);
         elm_table_pack(tb2, bt, 0, 0, 1, 1);
+        evas_object_show(bt);
+
+        bt = elm_button_add(win);
+        elm_button_label_set(bt, "Add 1000 markers");
+        evas_object_smart_callback_add(bt, "clicked", my_bt_add, map);
+        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(bt, 0.5, 0.1);
+        elm_table_pack(tb2, bt, 1, 0, 1, 1);
         evas_object_show(bt);
 
         bt = elm_button_add(win);

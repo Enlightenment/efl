@@ -75,6 +75,8 @@ struct _Elm_Map_Marker
 struct _Marker_Group
 {
    Widget_Data *wd;
+   Eina_Matrixsparse_Cell *cell;
+
    Eina_List *markers;
    long long sum_x, sum_y;
    Evas_Coord x, y;
@@ -159,7 +161,8 @@ struct _Widget_Data
      } center_on;
 
    Ecore_Job *markers_place_job;
-   Eina_List *markers[19];
+   Eina_Matrixsparse *markers[19];
+   Eina_List *groups_displayed;
    Evas_Coord markers_max_num;
    Evas_Coord marker_w, marker_h;
    Evas_Coord marker_max_w, marker_max_h;
@@ -233,10 +236,13 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord ax, ay, gw, gh, tx, ty;
-   Eina_List *l;
+   Eina_List *l, *l_next, *markers;
    Marker_Group *group;
    int xx, yy, ww, hh;
    char buf[PATH_MAX];
+   int y, x;
+   int g_xx, g_yy, g_hh, g_ww;
+   int mi_start, mj_start, mi_end, mj_end;
 
    if(g != eina_list_data_get(wd->grids)) return ;
 
@@ -249,7 +255,7 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
 
    if(wd->zoom != wd->marker_zoom)
      {
-	EINA_LIST_FOREACH(wd->markers[wd->marker_zoom], l, group)
+	EINA_LIST_FOREACH_SAFE(wd->groups_displayed, l, l_next, group)
 	  {
 	     if(group->obj)
 	       {
@@ -259,10 +265,9 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
      }
    wd->marker_zoom = wd->zoom;
 
-   EINA_LIST_FOREACH(wd->markers[wd->zoom], l, group)
+   //hide groups no more displayed
+   EINA_LIST_FOREACH_SAFE(wd->groups_displayed, l, l_next, group)
      {
-	if(!group->markers) continue ;
-
 	xx = group->x;
 	yy = group->y;
 	ww = group->w;
@@ -284,30 +289,85 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
 	     hh = (((long long)gh * (ty + hh)) / g->h) - yy;
 	  }
 
-	if(xx-px+ax+ox >= ox && xx-px+ax+ox<= ox+ow
-	      && yy-py+ay+oy >= oy && yy-py+ay+oy<= oy+oh)
-	  {
-	     if(!group->obj)
-	       _group_object_create(group);
-
-	     if(eina_list_count(group->markers) > 1)
-	       {
-		  snprintf(buf, PATH_MAX, "%d", eina_list_count(group->markers));
-		  edje_object_part_text_set(group->obj, "elm.text", buf);
-	       }
-	     evas_object_move(group->obj,
-		   xx - px + ax + ox - ww/2,
-		   yy - py + ay + oy - hh/2);
-	     evas_object_resize(group->obj, ww, hh);
-	     evas_object_raise(group->obj);
-	     evas_object_show(group->obj);
-
-	     if(group->bubble)
-	       _group_bubble_place(group);
-	  }
-	else if(group->obj)
-	  {
+	if(group->obj &&
+	      !(xx-px+ax+ox >= ox && xx-px+ax+ox<= ox+ow
+	      && yy-py+ay+oy >= oy && yy-py+ay+oy<= oy+oh))
 	     _group_object_free(group);
+     }
+
+   g_xx = wd->pan_x / wd->tsize;
+   if(g_xx < 0) g_xx = 0;
+
+   g_yy = wd->pan_y / wd->tsize;
+   if(g_yy < 0) g_yy = 0;
+
+   g_ww =  ow / wd->tsize + 1;
+   if(g_xx + g_ww >= g->gw) g_ww = g->gw - g_xx - 1;
+
+   g_hh =  oh / wd->tsize + 1;
+   if(g_yy + g_hh >= g->gh) g_hh = g->gh - g_yy - 1;
+
+   for (y = g_yy; y <= g_yy + g_hh; y++)
+     {
+	for (x = g_xx; x <= g_xx + g_ww; x++)
+	  {
+	     if(!wd->markers[wd->zoom])
+	       continue ;
+
+	     markers = eina_matrixsparse_data_idx_get(wd->markers[wd->zoom], y, x);
+
+	     int i = 0;
+	     EINA_LIST_FOREACH(markers, l, group)
+	       {
+		  if(!group->markers) continue ;
+
+		  xx = group->x;
+		  yy = group->y;
+		  ww = group->w;
+		  hh = group->h;
+
+		  if(ww<=0) ww = 1;
+		  if(hh<=0) hh = 1;
+
+		  if ((gw != g->w) && (g->w > 0))
+		    {
+		       tx = xx;
+		       xx = ((long long )gw * xx) / g->w;
+		       ww = (((long long)gw * (tx + ww)) / g->w) - xx;
+		    }
+		  if ((gh != g->h) && (g->h > 0))
+		    {
+		       ty = yy;
+		       yy = ((long long)gh * yy) / g->h;
+		       hh = (((long long)gh * (ty + hh)) / g->h) - yy;
+		    }
+
+		  if(xx-px+ax+ox >= ox && xx-px+ax+ox<= ox+ow
+			&& yy-py+ay+oy >= oy && yy-py+ay+oy<= oy+oh)
+		    {
+		       if(!group->obj)
+			 _group_object_create(group);
+
+		       if(eina_list_count(group->markers) > 1)
+			 {
+			    snprintf(buf, PATH_MAX, "%d", eina_list_count(group->markers));
+			    edje_object_part_text_set(group->obj, "elm.text", buf);
+			 }
+		       evas_object_move(group->obj,
+			     xx - px + ax + ox - ww/2,
+			     yy - py + ay + oy - hh/2);
+		       evas_object_resize(group->obj, ww, hh);
+		       evas_object_raise(group->obj);
+		       evas_object_show(group->obj);
+
+		       if(group->bubble)
+			 _group_bubble_place(group);
+		    }
+		  else if(group->obj)
+		    {
+		       _group_object_free(group);
+		    }
+	       }
 	  }
      }
 }
@@ -891,28 +951,41 @@ _del_pre_hook(Evas_Object *obj)
 {
    Marker_Group *group;
    Elm_Map_Marker *marker;
+   Eina_Matrixsparse *matrix;
    int i;
    Eina_Bool free_marker = EINA_TRUE;
+   Eina_List *l;
 
    Widget_Data *wd = elm_widget_data_get(obj);
    grid_clearall(obj);
 
    for (i=0; i<19; i++)
      {
-	EINA_LIST_FREE(wd->markers[i], group)
-	  {
-	     EINA_LIST_FREE(group->markers, marker)
-	       {
-		  evas_object_event_callback_del_full(group->sc, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-			_bubble_sc_hits_changed_cb, group);
-		  if(free_marker)
-		    free(marker);
-	       }
-	     free(group);
-	  }
-	free_marker = EINA_FALSE;
-     }
+	if(!wd->markers[i])
+	  continue;
 
+	Eina_Iterator *it = eina_matrixsparse_iterator_new(wd->markers[i]);
+	Eina_Matrixsparse_Cell *cell;
+
+	EINA_ITERATOR_FOREACH(it, cell)
+	  {
+	     l =  eina_matrixsparse_cell_data_get(cell);
+	     EINA_LIST_FREE(l, group)
+	       {
+		  EINA_LIST_FREE(group->markers, marker)
+		    {
+		       evas_object_event_callback_del_full(group->sc, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+			     _bubble_sc_hits_changed_cb, group);
+		       if(free_marker)
+			 free(marker);
+		    }
+		  free(group);
+	       }
+	     free_marker = EINA_FALSE;
+	  }
+	eina_iterator_free(it);
+	eina_matrixsparse_free(wd->markers[i]);
+     }
 
    evas_object_del(wd->pan_smart);
    wd->pan_smart = NULL;
@@ -1142,6 +1215,8 @@ _group_object_create(Marker_Group *group)
    edje_object_signal_callback_add(group->obj, "bringin", "elm", _group_bringin_cb, group);
    if(group->open)
      _group_bubble_create(group);
+   
+   group->wd->groups_displayed = eina_list_append(group->wd->groups_displayed, group);
 }
 
 static void 
@@ -1150,6 +1225,8 @@ _group_object_free(Marker_Group *group)
    evas_object_del(group->obj);
    group->obj = NULL;
    _group_bubble_free(group);
+
+   group->wd->groups_displayed = eina_list_remove(group->wd->groups_displayed, group);
 }
 
 static void 
@@ -1916,10 +1993,13 @@ elm_map_utils_convert_geo_into_coord(double lon, double lat, int size, int *x, i
 EAPI Elm_Map_Marker *
 elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *clas, void *data)
 {
-   int i;
+   int i, j;
    Eina_List *l;
    Marker_Group *group;
    Widget_Data *wd = elm_widget_data_get(obj);
+   int mpi, mpj;
+   int tabi[9];
+   int tabj[9];
 
    Elm_Map_Marker *marker = ELM_NEW(Elm_Map_Marker);
 
@@ -1928,6 +2008,14 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
    marker->longitude = lon;
    marker->latitude = lat;
    marker->data = data;
+
+   tabi[0] = tabi[3] = tabi[6] = -1;
+   tabi[1] = tabi[4] = tabi[7] = 0;
+   tabi[2] = tabi[5] = tabi[8] = 1;
+   
+   tabj[0] = tabj[1] = tabj[2] = -1;
+   tabj[3] = tabj[4] = tabj[5] = 0;
+   tabj[6] = tabj[7] = tabj[8] = 1;
 
    for (i=0; i<=18; i++)
      {
@@ -1941,24 +2029,38 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 	elm_map_utils_convert_geo_into_coord(lon, lat, pow(2.0, i)*wd->tsize,
 	      &(marker->x[i]), &(marker->y[i]));
 
-	EINA_LIST_FOREACH(wd->markers[i], l, group)
+	//search in the matrixsparse the region where the marker will be
+	mpi = marker->x[i] / wd->tsize;
+	mpj = marker->y[i] / wd->tsize;
+
+	if(!wd->markers[i])
 	  {
-	     if(ELM_RECTS_INTERSECT( marker->x[i]-sizew/4, marker->y[i]-sizeh/4, sizew, sizeh,
-		      group->x-group->w/4, group->y-group->h/4, group->w, group->h))
+	     int size =  pow(2.0, i);
+	     wd->markers[i] = eina_matrixsparse_new(size, size, NULL, NULL);
+	  }
+
+	for(j=0, group=NULL; j<9 && !group; j++)
+	  {
+	     EINA_LIST_FOREACH(eina_matrixsparse_data_idx_get(wd->markers[i], mpj + tabj[j], mpi + tabi[j]), 
+		   l, group)
 	       {
-		  group->markers = eina_list_append(group->markers, marker);
+		  if(ELM_RECTS_INTERSECT( marker->x[i]-sizew/4, marker->y[i]-sizeh/4, sizew, sizeh,
+			   group->x-group->w/4, group->y-group->h/4, group->w, group->h))
+		    {
+		       group->markers = eina_list_append(group->markers, marker);
 
-		  group->sum_x += marker->x[i];
-		  group->sum_y += marker->y[i];
-		  group->x = group->sum_x / eina_list_count(group->markers);
-		  group->y = group->sum_y / eina_list_count(group->markers);
+		       group->sum_x += marker->x[i];
+		       group->sum_y += marker->y[i];
+		       group->x = group->sum_x / eina_list_count(group->markers);
+		       group->y = group->sum_y / eina_list_count(group->markers);
 
-		  group->w = sizew + sizew/8. * eina_list_count(group->markers);
-		  group->h = sizeh + sizew/8. * eina_list_count(group->markers);
-		  if(group->w > wd->marker_max_w) group->w = wd->marker_max_w;
-		  if(group->h > wd->marker_max_h) group->h = wd->marker_max_h;
+		       group->w = sizew + sizew/8. * eina_list_count(group->markers);
+		       group->h = sizeh + sizew/8. * eina_list_count(group->markers);
+		       if(group->w > wd->marker_max_w) group->w = wd->marker_max_w;
+		       if(group->h > wd->marker_max_h) group->h = wd->marker_max_h;
 
-		  break;
+		       break;
+		    }
 	       }
 	  }
 	if(!group)
@@ -1971,8 +2073,14 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 	     group->y = marker->y[i];
 	     group->w = sizew;
 	     group->h = sizeh;
+
 	     group->markers = eina_list_append(group->markers, marker);
-	     wd->markers[i] = eina_list_append(wd->markers[i], group);
+
+	     Eina_List *l = eina_matrixsparse_data_idx_get(wd->markers[i], mpj, mpi);
+	     l = eina_list_append(l, group);
+	     eina_matrixsparse_data_idx_set(wd->markers[i], mpj, mpi, l);
+
+	     eina_matrixsparse_cell_idx_get(wd->markers[i], mpj, mpi, &(group->cell));
 	  }
 	marker->groups[i] = group;
      }
@@ -1998,6 +2106,7 @@ EAPI void
 elm_map_marker_remove(Elm_Map_Marker *marker)
 {
    int i;
+   Eina_List *groups;
    Widget_Data *wd = marker->wd;
 
    for (i=0; i<=18; i++)
@@ -2005,7 +2114,10 @@ elm_map_marker_remove(Elm_Map_Marker *marker)
 	marker->groups[i]->markers = eina_list_remove(marker->groups[i]->markers, marker);
 	if(eina_list_count(marker->groups[i]->markers) == 0)
 	  {
-		wd->markers[i] = eina_list_remove(wd->markers[i], marker->groups[i]);
+		groups = eina_matrixsparse_cell_data_get(marker->groups[i]->cell);
+		groups = eina_list_remove(groups, marker->groups[i]);
+		eina_matrixsparse_cell_data_set(marker->groups[i]->cell, groups);
+
 		_group_object_free(marker->groups[i]);
 		_group_bubble_free(marker->groups[i]);
 		free(marker->groups[i]);
