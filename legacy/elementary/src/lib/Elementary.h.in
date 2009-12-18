@@ -303,7 +303,7 @@ extern "C" {
    EAPI Ecore_X_Window elm_win_xwindow_get(const Evas_Object *obj);
    /* smart callbacks called:
     * "delete,request" - the user requested to delete the window
-    * "focus,on" - window got focus
+    * "focus,in" - window got focus
     * "focus,out" - window lost focus
     * "moved" - window that holds the canvas was moved
     */
