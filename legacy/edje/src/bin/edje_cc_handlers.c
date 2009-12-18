@@ -728,6 +728,7 @@ st_externals_external(void)
         @li RAW: Uncompressed.
         @li COMP: Lossless compression.
         @li LOSSY [0-100]: Lossy comression with quality from 0 to 100.
+        @li USER: Do not embed the file, refer to the external file instead.
     @endproperty
  */
 static void
