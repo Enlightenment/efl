@@ -2033,8 +2033,8 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 
    for (i=0; i<=18; i++)
      {
-	int sizew = wd->marker_w;;
-	int sizeh = wd->marker_h;;
+	int sizew = wd->marker_w;
+	int sizeh = wd->marker_h;
 	if(sizew<=0) sizew = 2;
 	if(sizeh<=0) sizeh = 2;
 	if(sizew > wd->marker_max_w) sizew = wd->marker_max_w;
@@ -2072,6 +2072,9 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 		       group->h = sizeh + sizew/8. * eina_list_count(group->markers);
 		       if(group->w > wd->marker_max_w) group->w = wd->marker_max_w;
 		       if(group->h > wd->marker_max_h) group->h = wd->marker_max_h;
+
+		       if(group->bubble)
+			 _group_bubble_content_update(group);
 
 		       break;
 		    }
@@ -2135,6 +2138,26 @@ elm_map_marker_remove(Elm_Map_Marker *marker)
 		_group_object_free(marker->groups[i]);
 		_group_bubble_free(marker->groups[i]);
 		free(marker->groups[i]);
+	  }
+	else
+	  {
+	     int sizew = wd->marker_w;
+	     int sizeh = wd->marker_h;
+	     if(sizew<=0) sizew = 2;
+	     if(sizeh<=0) sizeh = 2;
+	     if(sizew > wd->marker_max_w) sizew = wd->marker_max_w;
+	     if(sizeh > wd->marker_max_h) sizeh = wd->marker_max_h;
+
+	     marker->groups[i]->sum_x -= marker->x[i];
+	     marker->groups[i]->sum_y -= marker->y[i];
+
+	     marker->groups[i]->x = marker->groups[i]->sum_x / eina_list_count(marker->groups[i]->markers);
+	     marker->groups[i]->y = marker->groups[i]->sum_y / eina_list_count(marker->groups[i]->markers);
+
+	     marker->groups[i]->w = sizew + sizew/8. * eina_list_count(marker->groups[i]->markers);
+	     marker->groups[i]->h = sizeh + sizew/8. * eina_list_count(marker->groups[i]->markers);
+	     if(marker->groups[i]->w > wd->marker_max_w) marker->groups[i]->w = wd->marker_max_w;
+	     if(marker->groups[i]->h > wd->marker_max_h) marker->groups[i]->h = wd->marker_max_h;
 	  }
      }
 
