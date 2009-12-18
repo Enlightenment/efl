@@ -184,6 +184,12 @@ my_bt_pause(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+my_bt_markers_pause(void *data, Evas_Object *obj, void *event_info)
+{
+   elm_map_paused_markers_set(data, !elm_map_paused_markers_get(data));
+}
+
+static void
 my_bt_zoom_fit(void *data, Evas_Object *obj, void *event_info)
 {
    elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_AUTO_FIT);
@@ -286,7 +292,7 @@ _map_move_resize_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 void
 test_map(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *map, *tb2, *bt;
+   Evas_Object *win, *bg, *map, *tb2, *bt, *bx;
 
    win = elm_win_add(NULL, "map", ELM_WIN_BASIC);
    elm_win_title_set(win, "Map");
@@ -403,13 +409,29 @@ test_map(void *data, Evas_Object *obj, void *event_info)
         elm_table_pack(tb2, bt, 2, 1, 1, 1);
         evas_object_show(bt);
 
+        //
+        bx = elm_box_add(win);
+        evas_object_show(bx);
+        evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(bx, 0.1, 0.9);
+        elm_table_pack(tb2, bx, 0, 2, 1, 1);
+
         bt = elm_button_add(win);
         elm_button_label_set(bt, "Pause On/Off");
         evas_object_smart_callback_add(bt, "clicked", my_bt_pause, map);
         evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(bt, 0.1, 0.9);
-        elm_table_pack(tb2, bt, 0, 2, 1, 1);
         evas_object_show(bt);
+        elm_box_pack_end(bx, bt);
+
+        bt = elm_button_add(win);
+        elm_button_label_set(bt, "Markers pause On/Off");
+        evas_object_smart_callback_add(bt, "clicked", my_bt_markers_pause, map);
+        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(bt, 0.1, 0.9);
+        evas_object_show(bt);
+        elm_box_pack_end(bx, bt);
+        //
 
         bt = elm_button_add(win);
         elm_button_label_set(bt, "Fit");

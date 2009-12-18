@@ -154,6 +154,7 @@ struct _Widget_Data
    Eina_Bool longpressed : 1;
    Eina_Bool on_hold : 1;
    Eina_Bool paused : 1;
+   Eina_Bool paused_markers : 1;
 
    struct
      {
@@ -270,6 +271,9 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
      }
    wd->marker_zoom = wd->zoom;
 
+   if(wd->paused_markers 
+	 && (wd->size.nw != wd->size.w || wd->size.nh != wd->size.h) )
+     return ;
    
    g_xx = wd->pan_x / wd->tsize;
    if(g_xx < 0) g_xx = 0;
@@ -1936,6 +1940,24 @@ elm_map_paused_set(Evas_Object *obj, Eina_Bool paused)
 }
 
 /**
+ * Set the paused state for the markers
+ *
+ * This sets the paused state to on (1) or off (0) for the markers. The default
+ * is off. This will stop displaying the markers during change zoom levels. Set
+ * to on if you have a large number of markers.
+ *
+ * @param obj The map object
+ * @param paused The pause state to set
+ */
+EAPI void
+elm_map_paused_markers_set(Evas_Object *obj, Eina_Bool paused)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->paused_markers == !!paused) return;
+   wd->paused_markers = paused;
+}
+
+/**
  * Get the paused state for map
  *
  * This gets the current paused state for the map object.
@@ -1950,6 +1972,20 @@ elm_map_paused_get(Evas_Object *obj)
    return wd->paused;
 }
 
+/**
+ * Get the paused state for the markers
+ *
+ * This gets the current paused state for the markers object.
+ *
+ * @param obj The map object
+ * @return The current paused state
+ */
+EAPI Eina_Bool
+elm_map_paused_markers_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->paused_markers;
+}
 
 /**
  * Convert a pixel coordinate into a geographic coordinate.
@@ -2102,11 +2138,20 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 	     group->markers = eina_list_append(group->markers, marker);
 	     group->update_nbelems = EINA_TRUE;
 
-	     Eina_List *l = eina_matrixsparse_data_idx_get(wd->markers[i], mpj, mpi);
-	     l = eina_list_append(l, group);
-	     eina_matrixsparse_data_idx_set(wd->markers[i], mpj, mpi, l);
-
 	     eina_matrixsparse_cell_idx_get(wd->markers[i], mpj, mpi, &(group->cell));
+
+	     if(!group->cell)
+	       {
+		  Eina_List *l = eina_list_append(NULL, group);
+		  eina_matrixsparse_data_idx_set(wd->markers[i], mpj, mpi, l);
+		  eina_matrixsparse_cell_idx_get(wd->markers[i], mpj, mpi, &(group->cell));
+	       }
+	     else
+	       {
+		  Eina_List *l = eina_matrixsparse_cell_data_get(group->cell);
+		  l = eina_list_append(l, group);
+		  eina_matrixsparse_cell_data_set(group->cell, l);
+	       }
 	  }
 	marker->groups[i] = group;
      }
