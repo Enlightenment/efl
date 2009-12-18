@@ -21658,7 +21658,6 @@ collections {
                         size:     10;
                         min:      0 0;
                         align:    0.5 0.5;
-                        fit: 1 1;
                     }
                 }
             }

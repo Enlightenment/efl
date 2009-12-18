@@ -84,6 +84,7 @@ struct _Marker_Group
    Evas_Object *obj, *bubble, *sc, *bx, *rect;
    Eina_Bool open : 1;
    Eina_Bool bringin : 1;
+   Eina_Bool update_nbelems : 1;
 };
 
 struct _Grid_Item
@@ -238,7 +239,7 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord ax, ay, gw, gh, tx, ty;
-   Eina_List *l, *l_next, *markers;
+   Eina_List *l, *markers;
    Eina_Matrixsparse_Cell *cell;
    Marker_Group *group;
    int xx, yy, ww, hh;
@@ -260,7 +261,7 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
      {
 	EINA_LIST_FREE(wd->cells_displayed, cell)
 	  {
-	     EINA_LIST_FOREACH_SAFE(eina_matrixsparse_cell_data_get(cell), l, l_next, group)
+	     EINA_LIST_FOREACH(eina_matrixsparse_cell_data_get(cell), l, group)
 	       {
 		  if(group->obj)
 		       _group_object_free(group);
@@ -288,7 +289,7 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
 	eina_matrixsparse_cell_position_get(cell, (unsigned long *)&y, (unsigned long *)&x);
 	if(y < g_yy || y > g_yy + g_hh || x < g_xx || x > g_xx + g_ww)
 	  {
-	     EINA_LIST_FOREACH_SAFE(eina_matrixsparse_cell_data_get(cell), l, l_next, group)
+	     EINA_LIST_FOREACH(eina_matrixsparse_cell_data_get(cell), l, group)
 	       {
 		  if(group->obj)
 		       _group_object_free(group);
@@ -308,7 +309,7 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
 	       continue ;
 	     wd->cells_displayed = eina_list_append(wd->cells_displayed, cell);
 
-	     markers = eina_matrixsparse_data_idx_get(wd->markers[wd->zoom], y, x);
+	     markers = eina_matrixsparse_cell_data_get(cell);
 
 	     int i = 0;
 	     EINA_LIST_FOREACH(markers, l, group)
@@ -342,13 +343,17 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
 		       if(!group->obj)
 			 _group_object_create(group);
 
-		       if(eina_list_count(group->markers) > 1)
+		       if(group->update_nbelems)
 			 {
-			    snprintf(buf, PATH_MAX, "%d", eina_list_count(group->markers));
-			    edje_object_part_text_set(group->obj, "elm.text", buf);
+			    group->update_nbelems = EINA_FALSE;
+			    if(eina_list_count(group->markers) > 1)
+			      {
+				 snprintf(buf, PATH_MAX, "%d", eina_list_count(group->markers));
+				 edje_object_part_text_set(group->obj, "elm.text", buf);
+			      }
+			    else
+			      edje_object_part_text_set(group->obj, "elm.text", "");
 			 }
-		       else
-			    edje_object_part_text_set(group->obj, "elm.text", "");
 
 		       evas_object_move(group->obj,
 			     xx - px + ax + ox - ww/2,
@@ -1223,6 +1228,8 @@ _group_object_create(Marker_Group *group)
    edje_object_signal_callback_add(group->obj, "open", "elm", _group_open_cb, group);
    edje_object_signal_callback_add(group->obj, "bringin", "elm", _group_bringin_cb, group);
 
+   group->update_nbelems = EINA_TRUE;
+
    if(group->open)
      _group_bubble_create(group);
 }
@@ -2062,6 +2069,7 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 			   group->x-group->w/4, group->y-group->h/4, group->w, group->h))
 		    {
 		       group->markers = eina_list_append(group->markers, marker);
+		       group->update_nbelems = EINA_TRUE;
 
 		       group->sum_x += marker->x[i];
 		       group->sum_y += marker->y[i];
@@ -2092,6 +2100,7 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 	     group->h = sizeh;
 
 	     group->markers = eina_list_append(group->markers, marker);
+	     group->update_nbelems = EINA_TRUE;
 
 	     Eina_List *l = eina_matrixsparse_data_idx_get(wd->markers[i], mpj, mpi);
 	     l = eina_list_append(l, group);
