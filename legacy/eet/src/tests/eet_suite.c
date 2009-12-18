@@ -73,7 +73,7 @@ struct _Eet_Test_Image
    unsigned int w;
    unsigned int h;
    int alpha;
-   unsigned int color[];
+   unsigned int color[64];
 };
 
 static const Eet_Test_Image test_noalpha = {
