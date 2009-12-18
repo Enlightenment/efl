@@ -392,32 +392,22 @@ AC_ARG_WITH([iconv-link],
    [
     iconv_libs=$withval
     have_iconv="yes"
-   ]
-)
+   ])
 
-if test "x${have_iconv}" = "xno" ; then
-   AC_CHECK_LIB(c, iconv,
-      [have_iconv="yes"]   )
-
-   if ! test "x${have_iconv}" = "xyes" ; then
-      AC_CHECK_LIB(iconv, iconv,
-         [
-          iconv_libs="-liconv"
-          have_iconv="yes"
-         ])
-   fi
-
-   if test "x$have_iconv" != "xyes"; then
-      AC_CHECK_LIB(iconv_plug, iconv,
-         [
-          iconv_libs="-liconv -liconv_plug"
-          have_iconv="yes"
-         ])
-   fi
-
-fi
 AC_MSG_CHECKING(for explicit iconv link options)
-AC_MSG_RESULT($iconv_libs)
+if test "x${iconv_libs}" = "x" ; then
+   AC_MSG_RESULT([no explicit iconv link option])
+else
+   AC_MSG_RESULT([$iconv_libs])
+fi
+
+AM_ICONV
+
+if test "x${have_iconv}" = "xno" && test "x${am_cv_func_iconv}" = "xyes" ; then
+   iconv_cflags=${LIBICONV}
+   iconv_libs=${LTLIBICONV}
+   have_iconv="yes"
+fi
 
 AC_SUBST(iconv_cflags)
 AC_SUBST(iconv_libs)
@@ -1310,7 +1300,7 @@ fi
 echo
 echo " Documentation.................: ${build_doc}"
 echo
-echo " Compilation...................: make (gmake on some systems)"
+echo " Compilation...................: make (or gmake)"
 if test "x${build_doc}" = "xyes" ; then
    echo " Build of the documentation....: make doc"
 fi
@@ -1318,4 +1308,15 @@ echo
 echo " Installation..................: make install"
 echo
 echo "    prefix.....................: $prefix"
+echo
+
+echo
+echo "Compilation............: make (or gmake)"
+echo "  CPPFLAGS.............: $CPPFLAGS"
+echo "  CFLAGS...............: $CFLAGS"
+echo "  CXXFLAGS.............: $CXXFLAGS"
+echo "  LDFLAGS..............: $LDFLAGS"
+echo
+echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
+echo "  prefix...............: $prefix"
 echo
