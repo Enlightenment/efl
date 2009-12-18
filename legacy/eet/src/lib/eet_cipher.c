@@ -558,11 +558,13 @@ eet_identity_check(const void *data_base, unsigned int data_length,
 
 # ifdef HAVE_GNUTLS
    gnutls_x509_crt_t cert;
-   gcry_md_hd_t md;
    gnutls_datum_t datum;
    gnutls_datum_t signature;
+#  if EET_USE_NEW_GNUTLS_API
    unsigned char *hash;
+   gcry_md_hd_t md;
    int err;
+#  endif
 
    /* Create an understanding certificate structure for gnutls */
    datum.data = (void *)cert_der;

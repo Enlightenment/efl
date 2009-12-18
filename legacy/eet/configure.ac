@@ -95,11 +95,11 @@ AC_MSG_RESULT([${want_gnutls}])
 
 # Specific GNUTLS improvement
 
-new_gnutls_api="no"
+new_gnutls_api="yes"
 AC_ARG_ENABLE(new-gnutls-api,
    [AC_HELP_STRING(
-      [--enable-new-gnutls-api],
-      [enable use of gnutls_x509_crt_verify_hash. [[default=disable]]]
+      [--disable-new-gnutls-api],
+      [enable use of gnutls_x509_crt_verify_hash. [[default=enable]]]
     )],
    [new_gnutls_api=$enableval]
 )
@@ -107,9 +107,14 @@ AC_MSG_CHECKING([whether to use gnutls_x509_crt_verify_hash])
 AC_MSG_RESULT([${new_gnutls_api}])
 
 if test "x${new_gnutls_api}" = "xyes" ; then
-   AC_DEFINE(EET_USE_NEW_GNUTLS_API, 1, [use gnutls_x509_crt_verify_hash])
-else
-   AC_DEFINE(EET_USE_NEW_GNUTLS_API, 0, [don't use gnutls_x509_crt_verify_hash])
+   AC_CHECK_LIB(gnutls, gnutls_x509_crt_verify_hash,
+                [ new_gnutls_api="yes" ],
+		[ new_gnutls_api="no" ]
+		)
+
+   if test "x${new_gnutls_api}" = "xyes"; then
+      AC_DEFINE(EET_USE_NEW_GNUTLS_API, 1, [use gnutls_x509_crt_verify_hash])
+   fi
 fi
 
 # Openssl support
