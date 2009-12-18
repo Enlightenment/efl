@@ -168,6 +168,8 @@ struct _Widget_Data
    Evas_Coord marker_max_w, marker_max_h;
    int marker_zoom;
    Eina_List *opened_bubbles; //opened bubbles, list of Map_Group *
+   Eina_List *group_objs_used;
+   Eina_List *group_objs_notused;
 };
 
 struct _Pan
@@ -353,6 +355,9 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
 			    snprintf(buf, PATH_MAX, "%d", eina_list_count(group->markers));
 			    edje_object_part_text_set(group->obj, "elm.text", buf);
 			 }
+		       else
+			    edje_object_part_text_set(group->obj, "elm.text", "");
+
 		       evas_object_move(group->obj,
 			     xx - px + ax + ox - ww/2,
 			     yy - py + ay + oy - hh/2);
@@ -1204,15 +1209,28 @@ _group_object_create(Marker_Group *group)
 {
    if(group->obj) return ;
 
-   group->obj = edje_object_add(evas_object_evas_get(group->wd->obj));
-   _elm_theme_set(group->obj, "map", "marker", elm_widget_style_get(group->wd->obj));
+   if(!group->wd->group_objs_notused)
+     {
+	group->obj = edje_object_add(evas_object_evas_get(group->wd->obj));
+	_elm_theme_set(group->obj, "map", "marker", elm_widget_style_get(group->wd->obj));
 
-   evas_object_smart_member_add(group->obj,
-	 group->wd->pan_smart);
-   elm_widget_sub_object_add(group->wd->obj, group->obj);
+	evas_object_smart_member_add(group->obj,
+	      group->wd->pan_smart);
+	elm_widget_sub_object_add(group->wd->obj, group->obj);
+
+	group->wd->group_objs_used = eina_list_append(group->wd->group_objs_used, group->obj);
+     }
+   else
+     {
+	group->obj = eina_list_data_get(group->wd->group_objs_notused);
+	group->wd->group_objs_used = eina_list_append(group->wd->group_objs_used, group->obj);
+	group->wd->group_objs_notused = eina_list_remove(group->wd->group_objs_notused, group->obj);
+	evas_object_show(group->obj);
+     }
 
    edje_object_signal_callback_add(group->obj, "open", "elm", _group_open_cb, group);
    edje_object_signal_callback_add(group->obj, "bringin", "elm", _group_bringin_cb, group);
+
    if(group->open)
      _group_bubble_create(group);
    
@@ -1222,7 +1240,15 @@ _group_object_create(Marker_Group *group)
 static void 
 _group_object_free(Marker_Group *group)
 {
-   evas_object_del(group->obj);
+   if(!group->obj) return ;
+
+   group->wd->group_objs_notused = eina_list_append(group->wd->group_objs_notused, group->obj);
+   group->wd->group_objs_used = eina_list_remove(group->wd->group_objs_used, group->obj);
+   evas_object_hide(group->obj);
+
+   edje_object_signal_callback_del(group->obj, "open", "elm", _group_open_cb);
+   edje_object_signal_callback_del(group->obj, "bringin", "elm", _group_bringin_cb);
+
    group->obj = NULL;
    _group_bubble_free(group);
 
@@ -2009,12 +2035,12 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
    marker->latitude = lat;
    marker->data = data;
 
-   tabi[0] = tabi[3] = tabi[6] = -1;
-   tabi[1] = tabi[4] = tabi[7] = 0;
-   tabi[2] = tabi[5] = tabi[8] = 1;
+   tabi[1] = tabi[4] = tabi[6] = -1;
+   tabi[2] = tabi[0] = tabi[7] = 0;
+   tabi[3] = tabi[5] = tabi[8] = 1;
    
-   tabj[0] = tabj[1] = tabj[2] = -1;
-   tabj[3] = tabj[4] = tabj[5] = 0;
+   tabj[1] = tabj[2] = tabj[3] = -1;
+   tabj[4] = tabj[0] = tabj[5] = 0;
    tabj[6] = tabj[7] = tabj[8] = 1;
 
    for (i=0; i<=18; i++)

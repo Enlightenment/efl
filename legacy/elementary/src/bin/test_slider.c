@@ -1,9 +1,18 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
+
+
+void
+_change_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    double val = elm_slider_value_get(obj);
+    elm_slider_value_set(data, val);
+}
+
 void
 test_slider(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *bx, *sl, *ic;
+   Evas_Object *win, *bg, *bx, *sl, *ic, *sl1;
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "slider", ELM_WIN_BASIC);
@@ -26,6 +35,7 @@ test_slider(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
    sl = elm_slider_add(win);
+   sl1 = sl;
    elm_slider_label_set(sl, "Label");
    elm_slider_icon_set(sl, ic);
    elm_slider_unit_format_set(sl, "%1.1f units");
@@ -74,6 +84,7 @@ test_slider(void *data, Evas_Object *obj, void *event_info)
    sl = elm_slider_add(win);
    elm_slider_icon_set(sl, ic);
    elm_slider_label_set(sl, "Label 4");
+   elm_slider_inverted_set(sl, 1);
    elm_slider_unit_format_set(sl, "units");
    elm_slider_span_size_set(sl, 60);
    evas_object_size_hint_align_set(sl, 0.5, EVAS_HINT_FILL);
@@ -85,6 +96,9 @@ test_slider(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, sl);
    evas_object_show(ic);
    evas_object_show(sl);
+
+
+   evas_object_smart_callback_add(sl1, "changed", _change_cb, sl);
 
    evas_object_show(win);
 }
