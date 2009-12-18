@@ -345,11 +345,22 @@ elm_radio_group_add(Evas_Object *obj, Evas_Object *group)
    Widget_Data *wd = elm_widget_data_get(obj);
    Widget_Data *wd2 = elm_widget_data_get(group);
    Eina_Bool state = EINA_FALSE;
-   if (wd->group == wd2->group) return;
-   wd->group->radios = eina_list_remove(wd->group->radios, obj);
-   if (!wd->group->radios) free(wd->group);
-   wd->group = wd2->group;
-   wd->group->radios = eina_list_append(wd->group->radios, obj);
+   if (!wd2)
+     {
+	if (eina_list_count(wd->group->radios) == 1)
+	  return;
+	wd->group->radios = eina_list_remove(wd->group->radios, obj);
+	wd->group = calloc(1, sizeof(Group));
+	wd->group->radios = eina_list_append(wd->group->radios, obj);
+     }
+   else if (wd->group == wd2->group) return;
+   else
+     {
+	wd->group->radios = eina_list_remove(wd->group->radios, obj);
+	if (!wd->group->radios) free(wd->group);
+	wd->group = wd2->group;
+	wd->group->radios = eina_list_append(wd->group->radios, obj);
+     }
    if (wd->value == wd->group->value) _state_set(obj, 1);
    else _state_set(obj, 0);
 }
