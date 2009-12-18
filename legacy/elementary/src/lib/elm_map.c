@@ -300,13 +300,13 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
      {
 	for (x = g_xx; x <= g_xx + g_ww; x++)
 	  {
+	     if(!wd->markers[wd->zoom])
+	       continue ;
+
 	     eina_matrixsparse_cell_idx_get(wd->markers[wd->zoom], y, x, &cell);
 	     if(!cell)
 	       continue ;
 	     wd->cells_displayed = eina_list_append(wd->cells_displayed, cell);
-
-	     if(!wd->markers[wd->zoom])
-	       continue ;
 
 	     markers = eina_matrixsparse_data_idx_get(wd->markers[wd->zoom], y, x);
 
