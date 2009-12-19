@@ -460,14 +460,14 @@ test_genlist2(void *data, Evas_Object *obj, void *event_info)
 static Elm_Genlist_Item_Class itc2;
 char *gl2_label_get(const void *data, Evas_Object *obj, const char *part)
 {
-   Testitem *tit = data;
+   const Testitem *tit = data;
    char buf[256];
    snprintf(buf, sizeof(buf), "Item mode %i", tit->mode);
    return strdup(buf);
 }
 Evas_Object *gl2_icon_get(const void *data, Evas_Object *obj, const char *part)
 {
-   Testitem *tit = data;
+   const Testitem *tit = data;
    char buf[PATH_MAX];
    Evas_Object *ic = elm_icon_add(obj);
    if (!strcmp(part, "elm.swallow.icon"))
@@ -611,14 +611,14 @@ my_gl_item_check_changed(void *data, Evas_Object *obj, void *event_info)
 static Elm_Genlist_Item_Class itc3;
 char *gl3_label_get(const void *data, Evas_Object *obj, const char *part)
 {
-   Testitem *tit = data;
+   const Testitem *tit = data;
    char buf[256];
    snprintf(buf, sizeof(buf), "Item mode %i", tit->mode);
    return strdup(buf);
 }
 Evas_Object *gl3_icon_get(const void *data, Evas_Object *obj, const char *part)
 {
-   Testitem *tit = data;
+   const Testitem *tit = data;
    char buf[PATH_MAX];
    if (!strcmp(part, "elm.swallow.icon"))
      {
@@ -758,7 +758,7 @@ my_gl_item_check_changed2(void *data, Evas_Object *obj, void *event_info)
 static Elm_Genlist_Item_Class itc5;
 char *gl5_label_get(const void *data, Evas_Object *obj, const char *part)
 {
-   Testitem *tit = data;
+   const Testitem *tit = data;
    char buf[256];
    if (!strcmp(part, "elm.text"))
      {
@@ -772,7 +772,7 @@ char *gl5_label_get(const void *data, Evas_Object *obj, const char *part)
 }
 Evas_Object *gl5_icon_get(const void *data, Evas_Object *obj, const char *part)
 {
-   Testitem *tit = data;
+   const Testitem *tit = data;
    char buf[PATH_MAX];
    if (!strcmp(part, "elm.swallow.icon"))
      {
