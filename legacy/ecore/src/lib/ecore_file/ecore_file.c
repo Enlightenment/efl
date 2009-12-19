@@ -296,6 +296,18 @@ ecore_file_unlink(const char *file)
 }
 
 /**
+ * Remove the given file or directory
+ * @param  file The name of the file or directory to delete
+ * @return 1 on success, 0 on failure
+ */
+EAPI int
+ecore_file_remove(const char *file)
+{
+   if (remove(file) < 0) return 0;
+   return 1;
+}
+
+/**
  * Delete a directory and all its contents
  * @param  dir The name of the directory to delete
  * @return 1 on success, 0 on failure
