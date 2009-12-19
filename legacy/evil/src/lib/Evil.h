@@ -87,30 +87,6 @@ extern "C" {
 # define W_OK 2  /* Check for write permission */
 # define R_OK 4  /* Check for read permission */
 
-# ifdef S_ISDIR
-#  undef S_ISDIR
-# endif
-# ifdef S_ISREG
-#  undef S_ISREG
-# endif
-# define S_ISDIR(m) (((m) & _S_IFMT) == _S_IFDIR)
-# define S_ISREG(m) (((m) & _S_IFMT) == _S_IFREG)
-
-# define S_IRUSR _S_IRUSR
-# define S_IWUSR _S_IWUSR
-# define S_IXUSR _S_IXUSR
-# define S_IRGRP S_IRUSR
-# define S_IROTH S_IRUSR
-# define S_IWGRP S_IWUSR
-# define S_IWOTH S_IWUSR
-# define S_IXGRP S_IXUSR
-# define S_IXOTH S_IXUSR
-
-#define _S_IRWXU (_S_IREAD | _S_IWRITE | _S_IEXEC)
-#define _S_IXUSR _S_IEXEC
-#define _S_IWUSR _S_IWRITE
-#define _S_IRUSR _S_IREAD
-
 typedef int            pid_t;
 typedef SSIZE_T        ssize_t;
 typedef unsigned short mode_t;
@@ -148,17 +124,39 @@ typedef unsigned long  gid_t;
 #include "evil_util.h"
 
 
-#if defined(__MSDOS__) || defined(__EMX__) || \
-   (defined(_WIN32) && !defined(_UWIN) && !defined(__CYGWIN__) && !defined(__CEGCC__))
+#if (defined(_WIN32) && !defined(_UWIN) && !defined(__CYGWIN__) && !defined(__CEGCC__))
 # if defined(_MSC_VER) || defined(__MINGW32__)
-//
-//
+
+# ifdef S_ISDIR
+#  undef S_ISDIR
+# endif
+# ifdef S_ISREG
+#  undef S_ISREG
+# endif
+# define S_ISDIR(m) (((m) & _S_IFMT) == _S_IFDIR)
+# define S_ISREG(m) (((m) & _S_IFMT) == _S_IFREG)
+
+# define S_IRUSR _S_IRUSR
+# define S_IWUSR _S_IWUSR
+# define S_IXUSR _S_IXUSR
+# define S_IRGRP S_IRUSR
+# define S_IROTH S_IRUSR
+# define S_IWGRP S_IWUSR
+# define S_IWOTH S_IWUSR
+# define S_IXGRP S_IXUSR
+# define S_IXOTH S_IXUSR
+
+# define _S_IRWXU (_S_IREAD | _S_IWRITE | _S_IEXEC)
+# define _S_IXUSR _S_IEXEC
+# define _S_IWUSR _S_IWRITE
+# define _S_IRUSR _S_IREAD
+
 #  define open(path, flag, ...) _open((path), _O_BINARY | (flag), __VA_ARGS__)
 //#  define close(fd) _close(fd)
 //#  define read(fd,buffer,count) _read((fd),(buffer),(count))
 //#  define write(fd,buffer,count) _write((fd),(buffer),(count))
 //#  define unlink(filename) _unlink((filename))
-//#  define mkdir(p,m) _mkdir(p)
+#  define mkdir(p,m) _mkdir(p)
 //#  define access(p,m) _access((p),(m))
 //#  define lstat(f,s) _stat((f),(s))
 //#  define tzset _tzset
