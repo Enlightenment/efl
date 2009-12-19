@@ -467,7 +467,7 @@ grid_clear(Evas_Object *obj, Grid *g)
 	  {
 	     DBG("DOWNLOAD abort %s", gi->file);
 	     ecore_file_download_abort(gi->job);
-	     remove(gi->file);
+	     ecore_file_remove(gi->file);
 	     gi->job = NULL;
 	  }
 	if(gi->file)
@@ -489,7 +489,7 @@ _tile_update(Grid_Item *gi)
    gi->download = EINA_FALSE;
    evas_object_image_file_set(gi->img, gi->file, NULL);
    if( evas_object_image_load_error_get(gi->img) != EVAS_LOAD_ERROR_NONE )
-     remove(gi->file);
+     ecore_file_remove(gi->file);
 
    evas_object_show(gi->img);
 
@@ -522,7 +522,7 @@ _tile_downloaded(void *data, const char *file, int status)
    if(status)
      {
 	DBG("Download failed %s (%d) ", gi->file, status);
-	remove(gi->file);
+	ecore_file_remove(gi->file);
      }
 }
 
@@ -622,7 +622,7 @@ grid_load(Evas_Object *obj, Grid *g)
 		    {
 		       DBG("DOWNLOAD abort %s", gi->file);
 		       ecore_file_download_abort(gi->job);
-		       remove(gi->file);
+		       ecore_file_remove(gi->file);
 		       gi->job = NULL;
 		    }
 		  gi->download = EINA_FALSE;
