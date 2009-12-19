@@ -35,6 +35,10 @@ EAPI void evil_rewind(FILE *stream);
 
 # define rewind(f) evil_rewind(f)
 
+EAPI int evil_remove(const char *path);
+
+# define remove(p) evil_remove(p)
+
 #endif /* _WIN32_WCE && ! __CEGCC__ */
 
 

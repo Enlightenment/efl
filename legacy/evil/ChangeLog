@@ -1,3 +1,13 @@
+2009-12-19  Vincent Torri  <doursse at users dot sf dot net>
+
+	* Makefile.am:
+	remove m4 libtool installed files during the
+	maintainer-clean rule
+
+	* src/lib/evil_stdio.c:
+	* src/lib/evil_stdio.h:
+	add the remove() function
+
 2009-12-11  Vincent Torri  <doursse at users dot sf dot net>
 
 	* configure.ac:

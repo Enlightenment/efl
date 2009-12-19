@@ -77,6 +77,27 @@ void evil_rewind(FILE *stream)
    fseek(stream, 0, SEEK_SET);
 }
 
+int evil_remove(const char *path)
+{
+   struct stat st;
+
+   if (stat(path, &st) < 0) return -1;
+
+   if (S_ISDIR(st.st_mode))
+     {
+        if (rmdir(path) < 0) return -1;
+        return 0;
+     }
+
+   if (S_ISREG(st.st_mode))
+     {
+        if (unlink(path) < 0) return -1;
+        return 0;
+     }
+
+   return -1;
+}
+
 
 #endif /* _WIN32_WCE && ! __CEGCC__ */
 
