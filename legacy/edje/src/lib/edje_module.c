@@ -33,12 +33,6 @@ void *alloca (size_t);
 
 #include "Edje.h"
 
-#if defined(_WIN32) || defined(__CYGWIN__)
-# define MODULE_EXTENSION ".dll"
-#else
-# define MODULE_EXTENSION ".so"
-#endif /* !defined(_WIN32) && !defined(__CYGWIN__) */
-
 #define LOG_COLOR "\033[36m"
 
 Eina_Hash *_registered_modules = NULL;
@@ -54,7 +48,7 @@ _edje_module_name_get(Eina_Module *m)
 
    name = ecore_file_file_get(eina_module_file_get(m));
    len = strlen(name);
-   len -= sizeof(MODULE_EXTENSION) - 1;
+   len -= sizeof(SHARED_LIB_SUFFIX) - 1;
    if (len <= 0) return NULL;
    return eina_stringshare_add_length(name, len);
 }

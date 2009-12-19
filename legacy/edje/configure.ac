@@ -35,6 +35,8 @@ case "$host_os" in
 esac
 AC_SUBST(release_info)
 
+AC_DEFINE_UNQUOTED(SHARED_LIB_SUFFIX, "$shrext_cmds", [Suffix for shared objects])
+
 
 ### Default options with respect to host
 
