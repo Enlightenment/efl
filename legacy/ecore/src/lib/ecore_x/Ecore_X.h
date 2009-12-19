@@ -257,19 +257,20 @@ typedef enum _Ecore_X_Event_Mask
    ECORE_X_EVENT_MASK_WINDOW_FOCUS_OUT       = (1L << 31)
 } Ecore_X_Event_Mask;
 
-typedef enum _Ecore_X_Gravity {
-     ECORE_X_GRAVITY_FORGET = 0,
-     ECORE_X_GRAVITY_UNMAP = 0,
-     ECORE_X_GRAVITY_NW = 1,
-     ECORE_X_GRAVITY_N = 2,
-     ECORE_X_GRAVITY_NE = 3,
-     ECORE_X_GRAVITY_W = 4,
-     ECORE_X_GRAVITY_CENTER = 5,
-     ECORE_X_GRAVITY_E = 6,
-     ECORE_X_GRAVITY_SW = 7,
-     ECORE_X_GRAVITY_S = 8,
-     ECORE_X_GRAVITY_SE = 9,
-     ECORE_X_GRAVITY_STATIC = 10
+typedef enum _Ecore_X_Gravity
+{
+   ECORE_X_GRAVITY_FORGET = 0,
+   ECORE_X_GRAVITY_UNMAP = 0,
+   ECORE_X_GRAVITY_NW = 1,
+   ECORE_X_GRAVITY_N = 2,
+   ECORE_X_GRAVITY_NE = 3,
+   ECORE_X_GRAVITY_W = 4,
+   ECORE_X_GRAVITY_CENTER = 5,
+   ECORE_X_GRAVITY_E = 6,
+   ECORE_X_GRAVITY_SW = 7,
+   ECORE_X_GRAVITY_S = 8,
+   ECORE_X_GRAVITY_SE = 9,
+   ECORE_X_GRAVITY_STATIC = 10
 } Ecore_X_Gravity;
 
 /* Needed for ecore_x_region_window_shape_set */
