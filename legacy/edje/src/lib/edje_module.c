@@ -23,8 +23,14 @@ void *alloca (size_t);
 #include <stdlib.h>
 #include <string.h>
 #include <libgen.h>
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include <Eina.h>
 #include <Ecore_File.h>
+
 #include "Edje.h"
 
 #if defined(_WIN32) || defined(__CYGWIN__)
