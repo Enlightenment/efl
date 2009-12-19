@@ -167,10 +167,10 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
    if (cache->func.debug)
      cache->func.debug("deleting", ie);
 
+#ifdef BUILD_ASYNC_PRELOAD
    if (ie->flags.delete_me == 1)
      return ;
 
-#ifdef BUILD_ASYNC_PRELOAD
    if (ie->preload)
      {
 	ie->flags.delete_me = 1;
