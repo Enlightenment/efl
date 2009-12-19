@@ -23,6 +23,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_magic.h"
