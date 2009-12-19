@@ -268,10 +268,10 @@ ecore_thread_run(void (*func_heavy)(void *data),
      If no thread and as we don't want to break app that rely on this
      facility, we will lock the interface until we are done.
     */
-   func_heavy(data);
-   func_end(data);
+   func_heavy((void *)data);
+   func_end((void *)data);
 
-   return EINA_TRUE;
+   return NULL;
 #endif
 }
 
