@@ -820,13 +820,14 @@ if test "x${have_ecore_con}" = "xyes" ; then
 
    ECORE_CHECK_CARES([${want_cares}],
       [
-	have_cares="yes"
-	requirements_ecore_con="libcares ${requirements_ecore_con}"
-      ], [
-      	have_cares="no"
-      ])
+       have_cares="yes"
+       requirements_ecore_con="libcares ${requirements_ecore_con}"
+      ],
+      [have_cares="no"])
 
 fi
+
+AM_CONDITIONAL([HAVE_CARES], [test "x${have_cares}" = "xyes"])
 
 # ecore_ipc
 ECORE_CHECK_MODULE([Ipc], [${want_ecore_ipc}], [${have_ecore_con}],

@@ -276,11 +276,8 @@ fi
 dnl use: ECORE_CHECK_CARES(default-enabled[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 AC_DEFUN([ECORE_CHECK_CARES],
 [
-_cares_requirement=""
 _ecore_want_cares=$1
 _ecore_have_cares="no"
-CARES_LIBS=""
-CARES_CFLAGS=""
 
 AC_ARG_ENABLE(cares,
   [AC_HELP_STRING([--disable-cares], [disable cares support])],
@@ -294,19 +291,13 @@ AC_ARG_ENABLE(cares,
 
 if test "x${_ecore_want_cares}" = "xyes" -o "x${_ecore_want_cares}" = "xauto" ; then
    PKG_CHECK_MODULES([CARES], [libcares >= 1.6.1],
-     [
-      AC_DEFINE(HAVE_CARES, 1, [Build Ecore_Con_Info with c-ares support])
-      _ecore_have_cares="yes"
-      _cares_requirement="libcares"
-     ], [
-      _ecore_have_cares="no"
-     ])
+     [_ecore_have_cares="yes"],
+     [_ecore_have_cares="no"])
 fi
 
-AM_CONDITIONAL(HAVE_CARES, test "x$_ecore_have_cares" = "xyes")
-
-AC_SUBST(CARES_LIBS)
-AC_SUBST(CARES_CFLAGS)
+if test "x${_ecore_have_cares}" = "xyes" ; then
+   AC_DEFINE([HAVE_CARES], [1], [Build Ecore_Con_Info with c-ares support])
+fi
 
 if test "x$_ecore_have_cares" = "xyes" ; then
    m4_default([$2], [:])
