@@ -88,7 +88,6 @@ extern "C" {
 # define R_OK 4  /* Check for read permission */
 
 typedef int            pid_t;
-typedef SSIZE_T        ssize_t;
 typedef unsigned short mode_t;
 
 typedef unsigned short uint16_t;
@@ -161,6 +160,8 @@ typedef unsigned long  gid_t;
 //#  define lstat(f,s) _stat((f),(s))
 //#  define tzset _tzset
 //#  define hypot(x,y) _hypot((x),(y))
+
+typedef SSIZE_T ssize_t;
 
 # endif
 #endif
