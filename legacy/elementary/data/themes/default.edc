@@ -21630,10 +21630,10 @@ collections {
    }
    group { name: "elm/map/marker/radio/default";
         data {
-            item: size_w 30;
-            item: size_h 30;
-            item: size_max_w 70;
-            item: size_max_h 70;
+            item: size_w 32;
+            item: size_h 32;
+            item: size_max_w 64;
+            item: size_max_h 64;
         }
         parts {
             part { name: "whole";
@@ -21690,10 +21690,10 @@ collections {
    }
    group { name: "elm/map/marker/radio2/default";
         data {
-            item: size_w 20;
-            item: size_h 20;
-            item: size_max_w 50;
-            item: size_max_h 50;
+            item: size_w 32;
+            item: size_h 32;
+            item: size_max_w 64;
+            item: size_max_h 64;
         }
         parts {
             part { name: "base";
@@ -21737,10 +21737,10 @@ collections {
    }
    group { name: "elm/map/marker/empty/default";
         data {
-            item: size_w 20;
-            item: size_h 20;
-            item: size_max_w 50;
-            item: size_max_h 50;
+            item: size_w 22;
+            item: size_h 22;
+            item: size_max_w 64;
+            item: size_max_h 64;
         }
         parts {
             part { name: "whole";

@@ -97,7 +97,8 @@ struct _Elm_Map_Group_Class
 {
    const char *style;
    void *data;
-   int zoom_displayed;
+   int zoom_displayed; // display the group if the zoom is >= to zoom_display
+   int zoom_grouped; // group the markers only if the zoom is <= to zoom_groups
 
    struct
      {
@@ -2244,41 +2245,45 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 	     wd->markers[i] = eina_matrixsparse_new(size, size, NULL, NULL);
 	  }
 
-	for(j=0, group=NULL; j<9 && !group; j++)
+	group = NULL;
+	if(i <= clas_group->zoom_grouped)
 	  {
-	     EINA_LIST_FOREACH(eina_matrixsparse_data_idx_get(wd->markers[i], mpj + tabj[j], mpi + tabi[j]),
-		   l, group)
+	     for(j=0, group=NULL; j<9 && !group; j++)
 	       {
-		  if(group->clas == marker->clas_group
-			&& ELM_RECTS_INTERSECT( marker->x[i]-clas->priv.edje_w/4, 
-			   marker->y[i]-clas->priv.edje_h/4, clas->priv.edje_w, clas->priv.edje_h,
-			   group->x-group->w/4, group->y-group->h/4, group->w, group->h))
+		  EINA_LIST_FOREACH(eina_matrixsparse_data_idx_get(wd->markers[i], mpj + tabj[j], mpi + tabi[j]),
+			l, group)
 		    {
-		       group->markers = eina_list_append(group->markers, marker);
-		       group->update_nbelems = EINA_TRUE;
-		       group->update_resize = EINA_TRUE;
-
-		       group->sum_x += marker->x[i];
-		       group->sum_y += marker->y[i];
-		       group->x = group->sum_x / eina_list_count(group->markers);
-		       group->y = group->sum_y / eina_list_count(group->markers);
-
-		       group->w = group->clas->priv.edje_w + group->clas->priv.edje_w/8. 
-			  * eina_list_count(group->markers);
-		       group->h = group->clas->priv.edje_h + group->clas->priv.edje_h/8. 
-			  * eina_list_count(group->markers);
-		       if(group->w > group->clas->priv.edje_max_w) group->w = group->clas->priv.edje_max_w;
-		       if(group->h > group->clas->priv.edje_max_h) group->h = group->clas->priv.edje_max_h;
-
-		       if(group->obj && eina_list_count(group->markers) == 2)
+		       if(group->clas == marker->clas_group
+			     && ELM_RECTS_INTERSECT( marker->x[i]-clas->priv.edje_w/4, 
+				marker->y[i]-clas->priv.edje_h/4, clas->priv.edje_w, clas->priv.edje_h,
+				group->x-group->w/4, group->y-group->h/4, group->w, group->h))
 			 {
-			    _group_object_free(group);
-			    _group_object_create(group);
-			 }
-		       if(group->bubble)
-			 _group_bubble_content_update(group);
+			    group->markers = eina_list_append(group->markers, marker);
+			    group->update_nbelems = EINA_TRUE;
+			    group->update_resize = EINA_TRUE;
 
-		       break;
+			    group->sum_x += marker->x[i];
+			    group->sum_y += marker->y[i];
+			    group->x = group->sum_x / eina_list_count(group->markers);
+			    group->y = group->sum_y / eina_list_count(group->markers);
+
+			    group->w = group->clas->priv.edje_w + group->clas->priv.edje_w/8. 
+			       * eina_list_count(group->markers);
+			    group->h = group->clas->priv.edje_h + group->clas->priv.edje_h/8. 
+			       * eina_list_count(group->markers);
+			    if(group->w > group->clas->priv.edje_max_w) group->w = group->clas->priv.edje_max_w;
+			    if(group->h > group->clas->priv.edje_max_h) group->h = group->clas->priv.edje_max_h;
+
+			    if(group->obj && eina_list_count(group->markers) == 2)
+			      {
+				 _group_object_free(group);
+				 _group_object_create(group);
+			      }
+			    if(group->bubble)
+			      _group_bubble_content_update(group);
+
+			    break;
+			 }
 		    }
 	       }
 	  }
@@ -2553,6 +2558,8 @@ elm_map_group_class_new(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Map_Group_Class *clas = calloc(1, sizeof(Elm_Map_Group_Class));
 
+   clas->zoom_grouped = 18;
+
    wd->groups_clas = eina_list_append(wd->groups_clas, clas);
    return clas;
 }
@@ -2584,6 +2591,14 @@ elm_map_group_class_zoom_displayed_set(Elm_Map_Group_Class *clas, int zoom)
 {
      clas->zoom_displayed = zoom;
 }
+
+EAPI void
+elm_map_group_class_zoom_grouped_set(Elm_Map_Group_Class *clas, int zoom)
+{
+     clas->zoom_grouped = zoom;
+}
+
+
 
 EAPI Elm_Map_Marker_Class *
 elm_map_marker_class_new(Evas_Object *obj)
@@ -2622,3 +2637,4 @@ elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerDelFunc 
 {
      clas->func.del = del;
 }
+
