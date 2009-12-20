@@ -42,8 +42,13 @@ external_common_icon_param_parse(Evas_Object **icon, Evas_Object *obj, const Ein
 	edje_object_file_get(parent, &file, NULL);
 	*icon = elm_icon_add(parent);
 
-	if (!elm_icon_file_set(*icon, file, p->s))
-	  elm_icon_standard_set(*icon, p->s);
+	if (elm_icon_file_set(*icon, file, p->s))
+	  return;
+	if (elm_icon_standard_set(*icon, p->s))
+	  return;
+
+	evas_object_del(*icon);
+	*icon = NULL;
      }
 }
 
