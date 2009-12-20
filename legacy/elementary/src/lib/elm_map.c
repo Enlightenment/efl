@@ -57,10 +57,31 @@ typedef struct _Marker_Group Marker_Group;
 #define DEST_DIR_PATH DEST_DIR_ZOOM_PATH"%d/"
 #define DEST_FILE_PATH "%s%d.png"
 
+
+struct _Elm_Map_Marker_Class
+{
+   const char *style;
+   int zoom_displayed;
+
+   struct _Elm_Map_Marker_Class_Func
+     {
+	ElmMapMarkerGetFunc get;
+	ElmMapMarkerDelFunc del; //if NULL the object will be destroyed with evas_object_del()
+	ElmMapMarkerIconGetFunc icon_get;
+     } func;
+
+   struct //this part is private, do not modify these values
+     {
+	Eina_Bool set : 1;
+	Evas_Coord edje_w, edje_h;
+     } priv;
+};
+
 struct _Elm_Map_Marker
 {
    Widget_Data *wd;
    Elm_Map_Marker_Class *clas;
+   Elm_Map_Group_Class *clas_group;
    double longitude, latitude;
 
    Evas_Coord map_size;
@@ -72,19 +93,46 @@ struct _Elm_Map_Marker
    Evas_Object *content;
 };
 
+struct _Elm_Map_Group_Class
+{
+   const char *style;
+   void *data;
+   int zoom_displayed;
+
+   struct
+     {
+	ElmMapGroupIconGetFunc icon_get;
+     } func;
+
+   struct //this part is private, do not modify these values
+     {
+	Eina_Bool set : 1;
+	Evas_Coord edje_w, edje_h;
+	Evas_Coord edje_max_w, edje_max_h;
+
+	Eina_List *objs_used;
+	Eina_List *objs_notused;
+     } priv;
+};
+
 struct _Marker_Group
 {
    Widget_Data *wd;
    Eina_Matrixsparse_Cell *cell;
+   Elm_Map_Group_Class *clas;
 
    Eina_List *markers;
    long long sum_x, sum_y;
    Evas_Coord x, y;
    Evas_Coord w, h;
+
    Evas_Object *obj, *bubble, *sc, *bx, *rect;
    Eina_Bool open : 1;
    Eina_Bool bringin : 1;
    Eina_Bool update_nbelems : 1;
+   Eina_Bool update_resize : 1;
+   Eina_Bool update_raise : 1;
+   Eina_Bool delete_object : 1;
 };
 
 struct _Grid_Item
@@ -166,12 +214,12 @@ struct _Widget_Data
    Eina_Matrixsparse *markers[19];
    Eina_List *cells_displayed; // list of Eina_Matrixsparse_Cell
    Evas_Coord markers_max_num;
-   Evas_Coord marker_w, marker_h;
-   Evas_Coord marker_max_w, marker_max_h;
+   int marker_max_w, marker_max_h;
    int marker_zoom;
    Eina_List *opened_bubbles; //opened bubbles, list of Map_Group *
-   Eina_List *group_objs_used;
-   Eina_List *group_objs_notused;
+
+   Eina_List *groups_clas; // list of Elm_Map_Group_Class*
+   Eina_List *markers_clas; // list of Elm_Map_Markers_Class*
 };
 
 struct _Pan
@@ -320,10 +368,19 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
 	       {
 		  if(!group->markers) continue ;
 
+		  if(group->clas->zoom_displayed > wd->zoom) continue ;
+
 		  xx = group->x;
 		  yy = group->y;
 		  ww = group->w;
 		  hh = group->h;
+
+		  if(eina_list_count(group->markers) == 1)
+		    {
+		       Elm_Map_Marker *m = eina_list_data_get(group->markers);
+		       ww = m->clas->priv.edje_w;
+		       hh = m->clas->priv.edje_h;
+		    }
 
 		  if(ww<=0) ww = 1;
 		  if(hh<=0) hh = 1;
@@ -353,18 +410,28 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
 			    if(eina_list_count(group->markers) > 1)
 			      {
 				 snprintf(buf, PATH_MAX, "%d", eina_list_count(group->markers));
-				 edje_object_part_text_set(group->obj, "elm.text", buf);
+				 edje_object_part_text_set(elm_layout_edje_get(group->obj), "elm.text", buf);
 			      }
 			    else
-			      edje_object_part_text_set(group->obj, "elm.text", "");
+			      edje_object_part_text_set(elm_layout_edje_get(group->obj), "elm.text", "");
 			 }
 
 		       evas_object_move(group->obj,
 			     xx - px + ax + ox - ww/2,
 			     yy - py + ay + oy - hh/2);
-		       evas_object_resize(group->obj, ww, hh);
-		       evas_object_raise(group->obj);
-		       evas_object_show(group->obj);
+
+		       if(!wd->paused_markers || group->update_resize)
+			 {
+			    group->update_resize = EINA_FALSE;
+			    evas_object_resize(group->obj, ww, hh);
+			 }
+
+		       if(group->update_raise)
+			 {
+			    group->update_raise = EINA_FALSE;
+			    evas_object_raise(group->obj);
+			    evas_object_show(group->obj);
+			 }
 
 		       if(group->bubble)
 			 _group_bubble_place(group);
@@ -942,7 +1009,24 @@ static Evas_Smart_Class _pan_sc = EVAS_SMART_CLASS_INIT_NULL;
 static void
 _del_hook(Evas_Object *obj)
 {
+   Elm_Map_Group_Class *group_clas;
+   Elm_Map_Marker_Class *marker_clas;
+
    Widget_Data *wd = elm_widget_data_get(obj);
+
+   EINA_LIST_FREE(wd->groups_clas, group_clas)
+     {
+	if(group_clas->style)
+	  eina_stringshare_del(group_clas->style);  
+	free(group_clas);
+     }
+
+   EINA_LIST_FREE(wd->markers_clas, marker_clas)
+     {
+	if(marker_clas->style)
+	  eina_stringshare_del(marker_clas->style);  
+	free(marker_clas);
+     }
 
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    if (wd->scr_timer) ecore_timer_del(wd->scr_timer);
@@ -1208,31 +1292,65 @@ _scr_scroll(void *data, Evas_Object *obj, void *event_info)
 static void
 _group_object_create(Marker_Group *group)
 {
+   const char *style = "radio";
+   Evas_Object *icon = NULL;
+
    if(group->obj) return ;
 
-   if(!group->wd->group_objs_notused)
+   if(!group->clas->priv.objs_notused || eina_list_count(group->markers) == 1)
      {
-	group->obj = edje_object_add(evas_object_evas_get(group->wd->obj));
-	_elm_theme_set(group->obj, "map", "marker", elm_widget_style_get(group->wd->obj));
+	//set icon and style
+	if(eina_list_count(group->markers) == 1)
+	  {
+	     Elm_Map_Marker *m = eina_list_data_get(group->markers);
+	     if(m->clas->style)
+	       style = m->clas->style;
+
+	     if(m->clas->func.icon_get)
+	       icon = m->clas->func.icon_get(group->wd->obj, m, m->data);
+
+	     group->delete_object = EINA_TRUE;
+	  }
+	else
+	  {
+	     if(group->clas->style)
+	       style = group->clas->style;
+
+	     if(group->clas->func.icon_get)
+	       icon = group->clas->func.icon_get(group->wd->obj, group->clas->data);
+
+	     group->delete_object = EINA_FALSE;
+	  }
+
+	group->obj = elm_layout_add(group->wd->obj);
+	elm_layout_theme_set(group->obj, "map/marker", style, elm_widget_style_get(group->wd->obj));
+
+	if(icon)
+	  elm_layout_content_set(group->obj, "elm.icon", icon);
 
 	evas_object_smart_member_add(group->obj,
 	      group->wd->pan_smart);
 	elm_widget_sub_object_add(group->wd->obj, group->obj);
 
-	group->wd->group_objs_used = eina_list_append(group->wd->group_objs_used, group->obj);
+	if(!group->delete_object)
+	  group->clas->priv.objs_used = eina_list_append(group->clas->priv.objs_used, group->obj);
      }
    else
      {
-	group->obj = eina_list_data_get(group->wd->group_objs_notused);
-	group->wd->group_objs_used = eina_list_append(group->wd->group_objs_used, group->obj);
-	group->wd->group_objs_notused = eina_list_remove(group->wd->group_objs_notused, group->obj);
+	group->delete_object = EINA_FALSE;
+
+	group->obj = eina_list_data_get(group->clas->priv.objs_notused);
+	group->clas->priv.objs_used = eina_list_append(group->clas->priv.objs_used, group->obj);
+	group->clas->priv.objs_notused = eina_list_remove(group->clas->priv.objs_notused, group->obj);
 	evas_object_show(group->obj);
      }
 
-   edje_object_signal_callback_add(group->obj, "open", "elm", _group_open_cb, group);
-   edje_object_signal_callback_add(group->obj, "bringin", "elm", _group_bringin_cb, group);
+   edje_object_signal_callback_add(elm_layout_edje_get(group->obj), "open", "elm", _group_open_cb, group);
+   edje_object_signal_callback_add(elm_layout_edje_get(group->obj), "bringin", "elm", _group_bringin_cb, group);
 
    group->update_nbelems = EINA_TRUE;
+   group->update_resize = EINA_TRUE;
+   group->update_raise = EINA_TRUE;
 
    if(group->open)
      _group_bubble_create(group);
@@ -1243,12 +1361,17 @@ _group_object_free(Marker_Group *group)
 {
    if(!group->obj) return ;
 
-   group->wd->group_objs_notused = eina_list_append(group->wd->group_objs_notused, group->obj);
-   group->wd->group_objs_used = eina_list_remove(group->wd->group_objs_used, group->obj);
-   evas_object_hide(group->obj);
+   if(!group->delete_object)
+     {
+	group->clas->priv.objs_notused = eina_list_append(group->clas->priv.objs_notused, group->obj);
+	group->clas->priv.objs_used = eina_list_remove(group->clas->priv.objs_used, group->obj);
+	evas_object_hide(group->obj);
 
-   edje_object_signal_callback_del(group->obj, "open", "elm", _group_open_cb);
-   edje_object_signal_callback_del(group->obj, "bringin", "elm", _group_bringin_cb);
+	edje_object_signal_callback_del(elm_layout_edje_get(group->obj), "open", "elm", _group_open_cb);
+	edje_object_signal_callback_del(elm_layout_edje_get(group->obj), "bringin", "elm", _group_bringin_cb);
+     }
+   else
+     evas_object_del(group->obj);
 
    group->obj = NULL;
    _group_bubble_free(group);
@@ -1491,19 +1614,6 @@ elm_map_add(Evas_Object *parent)
    elm_smart_scroller_bounce_allow_set(wd->scr, 1, 1);
 
    wd->obj = obj;
-
-   //load the minimum size of the marker group
-   o = edje_object_add(e);
-   _elm_theme_set(o, "map", "marker", elm_widget_style_get(obj));
-   s = edje_object_data_get(o, "size_w");
-   wd->marker_w = atoi(s);
-   s = edje_object_data_get(o, "size_h");
-   wd->marker_h = atoi(s);
-   s = edje_object_data_get(o, "size_max_w");
-   wd->marker_max_w = atoi(s);
-   s = edje_object_data_get(o, "size_max_h");
-   wd->marker_max_h = atoi(s);
-   evas_object_del(o);
 
    wd->markers_max_num = 30;
 
@@ -2048,7 +2158,7 @@ elm_map_utils_convert_geo_into_coord(double lon, double lat, int size, int *x, i
  * @param data the data passed to the callbacks
  */
 EAPI Elm_Map_Marker *
-elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *clas, void *data)
+elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *clas, Elm_Map_Group_Class *clas_group, void *data)
 {
    int i, j;
    Eina_List *l;
@@ -2057,11 +2167,18 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
    int mpi, mpj;
    int tabi[9];
    int tabj[9];
+   const char *s;
+   const char *style;
+   Evas_Object *o;
+
+   if(!clas_group || !clas)
+     return NULL;
 
    Elm_Map_Marker *marker = ELM_NEW(Elm_Map_Marker);
 
    marker->wd = wd;
    marker->clas = clas;
+   marker->clas_group = clas_group;
    marker->longitude = lon;
    marker->latitude = lat;
    marker->data = data;
@@ -2074,15 +2191,46 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
    tabj[4] = tabj[0] = tabj[5] = 0;
    tabj[6] = tabj[7] = tabj[8] = 1;
 
-   for (i=0; i<=18; i++)
+   if(!clas_group->priv.set)
      {
-	int sizew = wd->marker_w;
-	int sizeh = wd->marker_h;
-	if(sizew<=0) sizew = 2;
-	if(sizeh<=0) sizeh = 2;
-	if(sizew > wd->marker_max_w) sizew = wd->marker_max_w;
-	if(sizeh > wd->marker_max_h) sizeh = wd->marker_max_h;
+	style = "radio";
+	if(marker->clas_group && marker->clas_group->style)
+	  style = marker->clas_group->style;
 
+	o = edje_object_add(evas_object_evas_get(obj));
+	_elm_theme_set(o, "map/marker", style, elm_widget_style_get(obj));
+	s = edje_object_data_get(o, "size_w");
+	clas_group->priv.edje_w = atoi(s);
+	s = edje_object_data_get(o, "size_h");
+	clas_group->priv.edje_h = atoi(s);
+	s = edje_object_data_get(o, "size_max_w");
+	clas_group->priv.edje_max_w = atoi(s);
+	s = edje_object_data_get(o, "size_max_h");
+	clas_group->priv.edje_max_h = atoi(s);
+	evas_object_del(o);
+
+	clas_group->priv.set = EINA_TRUE;
+     }
+
+   if(!clas->priv.set)
+     {
+	style = "radio";
+	if(marker->clas && marker->clas->style)
+	  style = marker->clas->style;
+
+	o = edje_object_add(evas_object_evas_get(obj));
+	_elm_theme_set(o, "map/marker", style, elm_widget_style_get(obj));
+	s = edje_object_data_get(o, "size_w");
+	clas->priv.edje_w = atoi(s);
+	s = edje_object_data_get(o, "size_h");
+	clas->priv.edje_h = atoi(s);
+	evas_object_del(o);
+
+	clas->priv.set = EINA_TRUE;
+     }
+
+   for (i=clas_group->zoom_displayed; i<=18; i++)
+     {
 	elm_map_utils_convert_geo_into_coord(lon, lat, pow(2.0, i)*wd->tsize,
 	      &(marker->x[i]), &(marker->y[i]));
 
@@ -2101,22 +2249,32 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 	     EINA_LIST_FOREACH(eina_matrixsparse_data_idx_get(wd->markers[i], mpj + tabj[j], mpi + tabi[j]),
 		   l, group)
 	       {
-		  if(ELM_RECTS_INTERSECT( marker->x[i]-sizew/4, marker->y[i]-sizeh/4, sizew, sizeh,
+		  if(group->clas == marker->clas_group
+			&& ELM_RECTS_INTERSECT( marker->x[i]-clas->priv.edje_w/4, 
+			   marker->y[i]-clas->priv.edje_h/4, clas->priv.edje_w, clas->priv.edje_h,
 			   group->x-group->w/4, group->y-group->h/4, group->w, group->h))
 		    {
 		       group->markers = eina_list_append(group->markers, marker);
 		       group->update_nbelems = EINA_TRUE;
+		       group->update_resize = EINA_TRUE;
 
 		       group->sum_x += marker->x[i];
 		       group->sum_y += marker->y[i];
 		       group->x = group->sum_x / eina_list_count(group->markers);
 		       group->y = group->sum_y / eina_list_count(group->markers);
 
-		       group->w = sizew + sizew/8. * eina_list_count(group->markers);
-		       group->h = sizeh + sizew/8. * eina_list_count(group->markers);
-		       if(group->w > wd->marker_max_w) group->w = wd->marker_max_w;
-		       if(group->h > wd->marker_max_h) group->h = wd->marker_max_h;
+		       group->w = group->clas->priv.edje_w + group->clas->priv.edje_w/8. 
+			  * eina_list_count(group->markers);
+		       group->h = group->clas->priv.edje_h + group->clas->priv.edje_h/8. 
+			  * eina_list_count(group->markers);
+		       if(group->w > group->clas->priv.edje_max_w) group->w = group->clas->priv.edje_max_w;
+		       if(group->h > group->clas->priv.edje_max_h) group->h = group->clas->priv.edje_max_h;
 
+		       if(group->obj && eina_list_count(group->markers) == 2)
+			 {
+			    _group_object_free(group);
+			    _group_object_create(group);
+			 }
 		       if(group->bubble)
 			 _group_bubble_content_update(group);
 
@@ -2132,11 +2290,13 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 	     group->sum_y = marker->y[i];
 	     group->x = marker->x[i];
 	     group->y = marker->y[i];
-	     group->w = sizew;
-	     group->h = sizeh;
+	     group->w = clas_group->priv.edje_w;
+	     group->h = clas_group->priv.edje_h;
+	     group->clas = clas_group;
 
 	     group->markers = eina_list_append(group->markers, marker);
 	     group->update_nbelems = EINA_TRUE;
+	     group->update_resize = EINA_TRUE;
 
 	     eina_matrixsparse_cell_idx_get(wd->markers[i], mpj, mpi, &(group->cell));
 
@@ -2195,23 +2355,25 @@ elm_map_marker_remove(Elm_Map_Marker *marker)
 	  }
 	else
 	  {
-	     int sizew = wd->marker_w;
-	     int sizeh = wd->marker_h;
-	     if(sizew<=0) sizew = 2;
-	     if(sizeh<=0) sizeh = 2;
-	     if(sizew > wd->marker_max_w) sizew = wd->marker_max_w;
-	     if(sizeh > wd->marker_max_h) sizeh = wd->marker_max_h;
-
 	     marker->groups[i]->sum_x -= marker->x[i];
 	     marker->groups[i]->sum_y -= marker->y[i];
 
 	     marker->groups[i]->x = marker->groups[i]->sum_x / eina_list_count(marker->groups[i]->markers);
 	     marker->groups[i]->y = marker->groups[i]->sum_y / eina_list_count(marker->groups[i]->markers);
 
-	     marker->groups[i]->w = sizew + sizew/8. * eina_list_count(marker->groups[i]->markers);
-	     marker->groups[i]->h = sizeh + sizew/8. * eina_list_count(marker->groups[i]->markers);
-	     if(marker->groups[i]->w > wd->marker_max_w) marker->groups[i]->w = wd->marker_max_w;
-	     if(marker->groups[i]->h > wd->marker_max_h) marker->groups[i]->h = wd->marker_max_h;
+	     marker->groups[i]->w = marker->groups[i]->clas->priv.edje_w 
+		+ marker->groups[i]->clas->priv.edje_w/8. * eina_list_count(marker->groups[i]->markers);
+	     marker->groups[i]->h = marker->groups[i]->clas->priv.edje_h 
+		+ marker->groups[i]->clas->priv.edje_h/8. * eina_list_count(marker->groups[i]->markers);
+	     if(marker->groups[i]->w > marker->groups[i]->clas->priv.edje_max_w) 
+	       marker->groups[i]->w = marker->groups[i]->clas->priv.edje_max_w;
+	     if(marker->groups[i]->h > marker->groups[i]->clas->priv.edje_max_h) 
+	       marker->groups[i]->h = marker->groups[i]->clas->priv.edje_max_h;
+	  }
+	if(marker->groups[i]->obj && eina_list_count(marker->groups[i]->markers) == 1)
+	  {
+	     _group_object_free(marker->groups[i]);
+	     _group_object_create(marker->groups[i]);
 	  }
      }
 
@@ -2383,3 +2545,80 @@ elm_map_bubbles_close(Evas_Object *obj)
      }
 }
 
+
+
+EAPI Elm_Map_Group_Class *
+elm_map_group_class_new(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Elm_Map_Group_Class *clas = calloc(1, sizeof(Elm_Map_Group_Class));
+
+   wd->groups_clas = eina_list_append(wd->groups_clas, clas);
+   return clas;
+}
+
+EAPI void
+elm_map_group_class_style_set(Elm_Map_Group_Class *clas, const char *style)
+{
+   if(clas->style) eina_stringshare_del(clas->style);
+   clas->style = NULL;
+
+   if(style)
+     clas->style = eina_stringshare_add(style);
+}
+
+EAPI void
+elm_map_group_class_icon_cb_set(Elm_Map_Group_Class *clas, ElmMapGroupIconGetFunc icon_get)
+{
+     clas->func.icon_get = icon_get;
+}
+
+EAPI void
+elm_map_group_class_data_set(Elm_Map_Group_Class *clas, void *data)
+{
+     clas->data = data;
+}
+
+EAPI void
+elm_map_group_class_zoom_displayed_set(Elm_Map_Group_Class *clas, int zoom)
+{
+     clas->zoom_displayed = zoom;
+}
+
+EAPI Elm_Map_Marker_Class *
+elm_map_marker_class_new(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Elm_Map_Marker_Class *clas = calloc(1, sizeof(Elm_Map_Marker_Class));
+
+   wd->markers_clas = eina_list_append(wd->markers_clas, clas);
+   return clas;
+}
+
+EAPI void
+elm_map_marker_class_style_set(Elm_Map_Marker_Class *clas, const char *style)
+{
+   if(clas->style) eina_stringshare_del(clas->style);
+   clas->style = NULL;
+
+   if(style)
+     clas->style = eina_stringshare_add(style);
+}
+
+EAPI void
+elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerIconGetFunc icon_get)
+{
+     clas->func.icon_get = icon_get;
+}
+
+EAPI void
+elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerGetFunc get)
+{
+     clas->func.get = get;
+}
+
+EAPI void
+elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerDelFunc del)
+{
+     clas->func.del = del;
+}

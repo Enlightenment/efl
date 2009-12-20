@@ -7,7 +7,8 @@ typedef struct Marker_Data
 } Marker_Data;
 
 
-static Elm_Map_Marker_Class itc;
+static Elm_Map_Marker_Class *itc1, *itc2, *itc_parking;
+static Elm_Map_Group_Class *itc_group1, *itc_group2, *itc_group_parking;
 
 static Evas_Object *rect;
 static int nb_elts;
@@ -23,6 +24,8 @@ Marker_Data data8 = {PACKAGE_DATA_DIR"/images/sky_02.jpg"};
 Marker_Data data9 = {PACKAGE_DATA_DIR"/images/sky_03.jpg"};
 Marker_Data data10 = {PACKAGE_DATA_DIR"/images/sky_03.jpg"};
 Marker_Data data11= {PACKAGE_DATA_DIR"/images/wood_01.jpg"};
+
+Marker_Data data_parking= {PACKAGE_DATA_DIR"/images/parking.png"};
 
 static void
 my_map_clicked(void *data, Evas_Object *obj, void *event_info)
@@ -205,9 +208,14 @@ static void
 my_bt_add(void *data, Evas_Object *obj, void *event_info)
 {
     int i;
+    Elm_Map_Group_Class *g_clas;
+    Elm_Map_Marker_Class *m_clas;
+    Marker_Data *d = &data7;
 
-    for(i =0; i<100; i++)
+    for(i =0; i<1000; i++)
     {
+        d = &data7;
+
         int r1 = rand() % (180*2*100);
         if(r1<=180) r1 = -r1;
         else r1 = r1 - 180*100;
@@ -216,7 +224,28 @@ my_bt_add(void *data, Evas_Object *obj, void *event_info)
         if(r2<=85) r2 = -r2;
         else r2 = r2 - 85*100;
 
-       elm_map_marker_add(data, r1/100., r2/100., &itc, &data7); 
+        int style = rand() % 3;
+        if(!style)
+            m_clas = itc1;
+        else if(style == 1)
+            m_clas = itc2;
+        else
+        {
+            m_clas = itc_parking;
+            g_clas = itc_group_parking;
+            d = &data_parking;
+        }
+
+        if(!style || style == 1)
+        {
+            style = rand() % 2;
+            if(!style)
+                g_clas = itc_group1;
+            else if(style == 1)
+                g_clas = itc_group2;
+        }
+
+       elm_map_marker_add(data, r1/100., r2/100., m_clas, g_clas, d); 
     }
     nb_elts+=1000;
     printf("nb elements: %d\n", nb_elts);
@@ -257,6 +286,30 @@ _marker_get(Evas_Object *obj, Elm_Map_Marker *marker, void *data)
     }
 
     return bx;
+}
+
+static Evas_Object *
+_icon_get(Evas_Object *obj, Elm_Map_Marker *marker, void *data)
+{
+    Marker_Data *d = data;
+
+    Evas_Object *icon = elm_icon_add(obj);
+    elm_icon_file_set(icon, d->file, NULL);
+    evas_object_show(icon);
+
+    return icon;
+}
+
+static Evas_Object *
+_group_icon_get(Evas_Object *obj, void *data)
+{
+    char *file = data;
+
+    Evas_Object *icon = elm_icon_add(obj);
+    elm_icon_file_set(icon, file, NULL);
+    evas_object_show(icon);
+
+    return icon;
 }
 
 static void
@@ -312,8 +365,38 @@ test_map(void *data, Evas_Object *obj, void *event_info)
         elm_win_resize_object_add(win, map);
         evas_object_data_set(map, "window", win);
 
-        itc.func.get = _marker_get;
-        itc.func.del = NULL;
+        //
+        itc1 = elm_map_marker_class_new(map);
+        elm_map_marker_class_get_cb_set(itc1, _marker_get);
+        elm_map_marker_class_del_cb_set(itc1, NULL);
+ 
+        itc2 = elm_map_marker_class_new(map);
+        elm_map_marker_class_get_cb_set(itc2, _marker_get);
+        elm_map_marker_class_del_cb_set(itc2, NULL);
+        elm_map_marker_class_style_set(itc2, "radio2");
+
+        itc_parking = elm_map_marker_class_new(map);
+        elm_map_marker_class_get_cb_set(itc_parking, _marker_get);
+        elm_map_marker_class_del_cb_set(itc_parking, NULL);
+        elm_map_marker_class_icon_cb_set(itc_parking, _icon_get);
+        elm_map_marker_class_style_set(itc_parking, "empty");
+        //
+
+        //
+        itc_group1 = elm_map_group_class_new(map);
+        elm_map_group_class_data_set(itc_group1, PACKAGE_DATA_DIR"/images/plant_01.jpg");
+
+        itc_group2 = elm_map_group_class_new(map);
+        elm_map_group_class_style_set(itc_group2, "radio2");
+        elm_map_group_class_zoom_displayed_set(itc_group1, 3);
+
+        itc_group_parking = elm_map_group_class_new(map);
+        elm_map_group_class_icon_cb_set(itc_group_parking, _group_icon_get);
+        elm_map_group_class_data_set(itc_group_parking,  PACKAGE_DATA_DIR"/images/parking.png");
+        elm_map_group_class_style_set(itc_group_parking, "empty");
+        elm_map_group_class_zoom_displayed_set(itc_group_parking, 5);
+        //
+
 
         rect = evas_object_rectangle_add(evas_object_evas_get(win));
         evas_object_color_set(rect, 0, 0, 0, 0);
@@ -329,20 +412,20 @@ test_map(void *data, Evas_Object *obj, void *event_info)
                                        _map_move_resize_cb, map);
 
         Elm_Map_Marker *marker = 
-          elm_map_marker_add(map, 2.352, 48.857, &itc, &data1);
-        marker = elm_map_marker_add(map, 2.355, 48.857, &itc, &data3);
-        marker = elm_map_marker_add(map, 3, 48.857, &itc, &data2);
-        marker = elm_map_marker_add(map, 2.352, 49, &itc, &data1);
+          elm_map_marker_add(map, 2.352, 48.857, itc1, itc_group1, &data1);
+        marker = elm_map_marker_add(map, 2.355, 48.857, itc1, itc_group1, &data3);
+        marker = elm_map_marker_add(map, 3, 48.857, itc2, itc_group1, &data2);
+        marker = elm_map_marker_add(map, 2.352, 49, itc2, itc_group1, &data1);
 
-        marker = elm_map_marker_add(map, 7.31451, 48.857127, &itc, &data10);
-        marker = elm_map_marker_add(map, 7.314704, 48.857119, &itc, &data4);
-        marker = elm_map_marker_add(map, 7.314704, 48.857119, &itc, &data5);
-        marker = elm_map_marker_add(map, 7.31432, 48.856785, &itc, &data6);
-        marker = elm_map_marker_add(map, 7.3148, 48.85725, &itc, &data7);
-        marker = elm_map_marker_add(map, 7.316445, 48.8572210000694, &itc, &data8);
-        marker = elm_map_marker_add(map, 7.316527000125, 48.85609, &itc, &data9);
-        marker = elm_map_marker_add(map, 7.3165409990833, 48.856078, &itc, &data11);
-        marker = elm_map_marker_add(map, 7.319812, 48.856561, &itc, &data10);
+        marker = elm_map_marker_add(map, 7.31451, 48.857127, itc1, itc_group1, &data10);
+        marker = elm_map_marker_add(map, 7.314704, 48.857119, itc1, itc_group1, &data4);
+        marker = elm_map_marker_add(map, 7.314704, 48.857119, itc2, itc_group1, &data5);
+        marker = elm_map_marker_add(map, 7.31432, 48.856785, itc2, itc_group1, &data6);
+        marker = elm_map_marker_add(map, 7.3148, 48.85725, itc1, itc_group2, &data7);
+        marker = elm_map_marker_add(map, 7.316445, 48.8572210000694, itc1, itc_group1, &data8);
+        marker = elm_map_marker_add(map, 7.316527000125, 48.85609, itc2, itc_group2, &data9);
+        marker = elm_map_marker_add(map, 7.3165409990833, 48.856078, itc2, itc_group1, &data11);
+        marker = elm_map_marker_add(map, 7.319812, 48.856561, itc2, itc_group2, &data10);
 
         nb_elts = 13;
 

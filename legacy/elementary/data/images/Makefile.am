@@ -13,6 +13,7 @@ sky_03.jpg \
 sky_04.jpg \
 wood_01.jpg \
 logo.png \
-logo_small.png
+logo_small.png \
+parking.png
 
 EXTRA_DIST = $(files_DATA)

@@ -181,6 +181,28 @@ elm_layout_file_set(Evas_Object *obj, const char *file, const char *group)
 }
 
 /**
+ * Set the edje group from the elementary theme that will be used as layout
+ *
+ * @param obj The layout object
+ * @param clas the clas of the group
+ * @param group the group
+ * @param style the style to used
+ *
+ * @return (1 = sucess, 0 = error)
+ *
+ * @ingroup Layout
+ */
+EAPI Eina_Bool
+elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, const char *style)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_Bool ret = _elm_theme_set(wd->lay, clas, group, style);
+
+   if (ret) _request_sizing_eval(obj);
+   return ret;
+}
+
+/**
  * Set the layout content
  *
  * @param obj The layout object

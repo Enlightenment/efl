@@ -466,6 +466,7 @@ extern "C" {
 
    EAPI Evas_Object *elm_layout_add(Evas_Object *parent);
    EAPI Eina_Bool    elm_layout_file_set(Evas_Object *obj, const char *file, const char *group);
+   EAPI Eina_Bool    elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, const char *style);
    EAPI void         elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
    EAPI Evas_Object *elm_layout_edje_get(const Evas_Object *obj);
    EAPI void          elm_layout_sizing_eval(Evas_Object *obj);
@@ -1073,16 +1074,12 @@ extern "C" {
      } Elm_Map_Zoom_Mode;
    typedef struct _Elm_Map_Marker Elm_Map_Marker;
    typedef struct _Elm_Map_Marker_Class Elm_Map_Marker_Class;
+   typedef struct _Elm_Map_Group_Class Elm_Map_Group_Class;
    typedef Evas_Object *(*ElmMapMarkerGetFunc)      (Evas_Object *obj, Elm_Map_Marker *marker, void *data);
    typedef void         (*ElmMapMarkerDelFunc)      (Evas_Object *obj, Elm_Map_Marker *marker, void *data, Evas_Object *o);
-   struct _Elm_Map_Marker_Class
-     {
-	struct _Elm_Map_Marker_Class_Func
-	  {
-	     ElmMapMarkerGetFunc get;
-	     ElmMapMarkerDelFunc del; //if NULL the object will be destroyed with evas_object_del()
-	  } func;
-     };
+   typedef Evas_Object *(*ElmMapMarkerIconGetFunc)  (Evas_Object *obj, Elm_Map_Marker *marker, void *data);
+   typedef Evas_Object *(*ElmMapGroupIconGetFunc)  (Evas_Object *obj, void *data);
+
    EAPI Evas_Object *elm_map_add(Evas_Object *parent);
    EAPI void         elm_map_zoom_set(Evas_Object *obj, int zoom);
    EAPI double       elm_map_zoom_get(Evas_Object *obj);
@@ -1097,7 +1094,7 @@ extern "C" {
    EAPI Eina_Bool    elm_map_paused_markers_get(Evas_Object *obj);
    EAPI void	     elm_map_utils_convert_coord_into_geo(int x, int y, int size, double *lon, double *lat);
    EAPI void         elm_map_utils_convert_geo_into_coord(double lon, double lat, int size, int *x, int *y);
-   EAPI Elm_Map_Marker *elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *clas, void *data);
+   EAPI Elm_Map_Marker *elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *clas, Elm_Map_Group_Class *clas_group, void *data);
    EAPI void	     elm_map_max_marker_per_group_set(Evas_Object *obj, int max);
    EAPI void	     elm_map_marker_remove(Elm_Map_Marker *marker);
    EAPI void	     elm_map_marker_bring_in(Elm_Map_Marker *marker);
@@ -1106,6 +1103,18 @@ extern "C" {
    EAPI Evas_Object *elm_map_marker_object_get(Elm_Map_Marker *marker);
    EAPI void	     elm_map_marker_update(Elm_Map_Marker *marker);
    EAPI void	     elm_map_bubbles_close(Evas_Object *obj);
+
+   EAPI Elm_Map_Group_Class * elm_map_group_class_new(Evas_Object *obj);
+   EAPI void         elm_map_group_class_style_set(Elm_Map_Group_Class *clas, const char *style);
+   EAPI void         elm_map_group_class_icon_cb_set(Elm_Map_Group_Class *clas, ElmMapGroupIconGetFunc icon_get);
+   EAPI void	     elm_map_group_class_data_set(Elm_Map_Group_Class *clas, void *data);
+   EAPI void         elm_map_group_class_zoom_displayed_set(Elm_Map_Group_Class *clas, int zoom);
+
+   EAPI Elm_Map_Marker_Class * elm_map_marker_class_new(Evas_Object *obj);
+   EAPI void         elm_map_marker_class_style_set(Elm_Map_Marker_Class *clas, const char *style);
+   EAPI void         elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerIconGetFunc icon_get);
+   EAPI void         elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerGetFunc get);
+   EAPI void         elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerDelFunc del);
    /* smart callbacks called:
     * "clicked" - when image clicked
     * "press" - when mouse/finger held down initially on image

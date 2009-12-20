@@ -21628,7 +21628,7 @@ collections {
          }
       }
    }
-   group { name: "elm/map/marker/default";
+   group { name: "elm/map/marker/radio/default";
         data {
             item: size_w 30;
             item: size_h 30;
@@ -21636,10 +21636,127 @@ collections {
             item: size_max_h 70;
         }
         parts {
+            part { name: "whole";
+                description { state: "default" 0.0;
+                }
+            }
             part { name: "base";
                 ignore_flags: ON_HOLD;
                 description { state: "default" 0.0;
                     image.normal: "radio.png";
+                }
+            }
+            part { name: "elm.icon";
+                type: SWALLOW;
+                clip_to: "whole";
+                mouse_events:  0;
+                description { state: "default" 0.0;
+                    rel1.relative: 0.27 0.27;
+                    rel2.relative: 0.73 0.73;
+                }
+            }
+            part { name: "elm.text";
+                type:          TEXT;
+                effect:        SOFT_SHADOW;
+                mouse_events:  0;
+                scale: 1;
+                description { state: "default" 0.0;
+                    align:    0.5 0.5;
+                    color: 224 224 224 255;
+                    color3: 0 0 0 64;
+                    rel1.relative: 0.28 0.25;
+                    rel2.relative: 0.75 0.75;
+                    text {
+                        font:     "Sans,Edje-Vera";
+                        size:     10;
+                        min:      0 0;
+                        align:    0.5 0.5;
+                    }
+                }
+            }
+       }
+       programs {
+            program { name: "open";
+                signal: "mouse,clicked,1";
+                source: "base";
+                action: SIGNAL_EMIT "open" "elm"; 
+            }
+            program { name: "bringin";
+                signal: "mouse,down,1,double";
+                source: "base";
+                action: SIGNAL_EMIT "bringin" "elm"; 
+            }
+       }
+   }
+   group { name: "elm/map/marker/radio2/default";
+        data {
+            item: size_w 20;
+            item: size_h 20;
+            item: size_max_w 50;
+            item: size_max_h 50;
+        }
+        parts {
+            part { name: "base";
+                ignore_flags: ON_HOLD;
+                description { state: "default" 0.0;
+                    image.normal: "radio2.png";
+                }
+            }
+            part { name: "elm.text";
+                type:          TEXT;
+                effect:        SOFT_SHADOW;
+                mouse_events:  0;
+                scale: 1;
+                description { state: "default" 0.0;
+                    align:    0.5 0.5;
+                    color: 224 224 224 255;
+                    color3: 0 0 0 64;
+                    rel1.relative: 0.28 0.25;
+                    rel2.relative: 0.75 0.75;
+                    text {
+                        font:     "Sans,Edje-Vera";
+                        size:     10;
+                        min:      0 0;
+                        align:    0.5 0.5;
+                    }
+                }
+            }
+       }
+       programs {
+            program { name: "open";
+                signal: "mouse,clicked,1";
+                source: "base";
+                action: SIGNAL_EMIT "open" "elm"; 
+            }
+            program { name: "bringin";
+                signal: "mouse,down,1,double";
+                source: "base";
+                action: SIGNAL_EMIT "bringin" "elm"; 
+            }
+       }
+   }
+   group { name: "elm/map/marker/empty/default";
+        data {
+            item: size_w 20;
+            item: size_h 20;
+            item: size_max_w 50;
+            item: size_max_h 50;
+        }
+        parts {
+            part { name: "whole";
+                description { state: "default" 0.0;
+                }
+            }
+            part { name: "base";
+                ignore_flags: ON_HOLD;
+                description { state: "default" 0.0;
+                }
+            }
+            part { name: "elm.icon";
+                type: SWALLOW;
+                clip_to: "whole";
+                mouse_events:  0;
+                description { state: "default" 0.0;
                 }
             }
             part { name: "elm.text";
