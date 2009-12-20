@@ -685,7 +685,7 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
         im = im_new;
      }
    else
-     evas_gl_common_image_dirty(im);
+     evas_gl_common_image_dirty(im, 0, 0, 0, 0);
    im->im->cache_entry.flags.alpha = has_alpha ? 1 : 0;
    return image;
 }
@@ -876,14 +876,14 @@ eng_image_size_set(void *data, void *image, int w, int h)
 }
 
 static void *
-eng_image_dirty_region(void *data, void *image, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
+eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
    if (!image) return NULL;
    eng_window_use(re->win);
-   evas_gl_common_image_dirty(image);
+   evas_gl_common_image_dirty(image, x, y, w, h);
    return image;
 }
 
@@ -923,7 +923,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
    		  im = im_new;
 	       }
    	     else
-   	       evas_gl_common_image_dirty(im);
+   	       evas_gl_common_image_dirty(im, 0, 0, 0, 0);
 	  }
 	*image_data = im->im->image.data;
 	break;
@@ -981,7 +981,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 	break;
      }
    /* hmmm - but if we wrote... why bother? */
-   evas_gl_common_image_dirty(im);
+   evas_gl_common_image_dirty(im, 0, 0, 0, 0);
    return im;
 }
 

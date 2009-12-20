@@ -419,15 +419,16 @@ _evas_cache_image_entry_preload_add(Image_Entry *ie,
 
    ie->targets = (Evas_Cache_Target*) eina_inlist_append(EINA_INLIST_GET(ie->targets), EINA_INLIST_GET(tg));
 
-   if (!ie->preload) {
-      ie->cache->preload = eina_list_append(ie->cache->preload, ie);
-      ie->flags.pending = 0;
-
-      ie->preload = evas_preload_thread_run(_evas_cache_image_async_heavy,
-					    _evas_cache_image_async_end,
-					    _evas_cache_image_async_cancel,
-					    ie);
-   }
+   if (!ie->preload)
+     {
+        ie->cache->preload = eina_list_append(ie->cache->preload, ie);
+        ie->flags.pending = 0;
+        
+        ie->preload = evas_preload_thread_run(_evas_cache_image_async_heavy,
+                                              _evas_cache_image_async_end,
+                                              _evas_cache_image_async_cancel,
+                                              ie);
+     }
 
    return 1;
 }
@@ -1164,18 +1165,17 @@ evas_cache_image_preload_data(Image_Entry *im, const void *target)
 
    if (im->flags.loaded)
      {
-	evas_object_inform_call_image_preloaded((Evas_Object*) target);
-	return ;
+	evas_object_inform_call_image_preloaded((Evas_Object *)target);
+	return;
      }
 
    cache = im->cache;
 
    if (!_evas_cache_image_entry_preload_add(im, target))
-     evas_object_inform_call_image_preloaded((Evas_Object*) target);
+     evas_object_inform_call_image_preloaded((Evas_Object *)target);
 #else
    evas_cache_image_load_data(im);
-
-   evas_object_inform_call_image_preloaded((Evas_Object*) target);
+   evas_object_inform_call_image_preloaded((Evas_Object *)target);
 #endif
 }
 
@@ -1183,7 +1183,7 @@ EAPI void
 evas_cache_image_preload_cancel(Image_Entry *im, const void *target)
 {
 #ifdef BUILD_ASYNC_PRELOAD
-   Evas_Cache_Image    *cache;
+   Evas_Cache_Image *cache;
 
    assert(im);
    assert(im->cache);
@@ -1193,7 +1193,7 @@ evas_cache_image_preload_cancel(Image_Entry *im, const void *target)
 
    _evas_cache_image_entry_preload_remove(im, target);
 #else
-   (void) im;
+   (void)im;
 #endif
 }
 
@@ -1202,20 +1202,19 @@ evas_cache_image_flush(Evas_Cache_Image *cache)
 {
    assert(cache);
 
-   if (cache->limit == -1)
-     return -1;
+   if (cache->limit == -1) return -1;
 
    while ((cache->lru) && (cache->limit < cache->usage))
      {
-        Image_Entry     *im;
+        Image_Entry *im;
 
-        im = (Image_Entry *) cache->lru->last;
+        im = (Image_Entry *)cache->lru->last;
         _evas_cache_image_entry_delete(cache, im);
      }
 
    while ((cache->lru_nodata) && (cache->limit < cache->usage))
      {
-        Image_Entry     *im;
+        Image_Entry *im;
 
         im = (Image_Entry *) cache->lru_nodata->last;
         _evas_cache_image_remove_lru_nodata(cache, im);
@@ -1231,14 +1230,13 @@ evas_cache_image_flush(Evas_Cache_Image *cache)
 EAPI Image_Entry *
 evas_cache_image_empty(Evas_Cache_Image *cache)
 {
-   Image_Entry  *new;
+   Image_Entry *im;
 
-   new = _evas_cache_image_entry_new(cache, NULL, 0, NULL, NULL, NULL, NULL);
-   if (!new) return NULL;
+   im = _evas_cache_image_entry_new(cache, NULL, 0, NULL, NULL, NULL, NULL);
+   if (!im) return NULL;
 
-   new->references = 1;
-
-   return new;
+   im->references = 1;
+   return im;
 }
 
 EAPI void
@@ -1251,7 +1249,7 @@ evas_cache_image_colorspace(Image_Entry *im, int cspace)
 
    cache = im->cache;
 
-   if (im->space == cspace) return ;
+   if (im->space == cspace) return;
 
    im->space = cspace;
    cache->func.color_space(im, cspace);

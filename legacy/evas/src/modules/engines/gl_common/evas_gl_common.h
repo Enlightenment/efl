@@ -289,7 +289,7 @@ Evas_GL_Image    *evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc,
 Evas_GL_Image    *evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h, int alpha, int cspace);
 void              evas_gl_common_image_free(Evas_GL_Image *im);
 Evas_GL_Image    *evas_gl_common_image_surface_new(Evas_GL_Context *gc, int w, int h, int alpha);
-void              evas_gl_common_image_dirty(Evas_GL_Image *im);
+void              evas_gl_common_image_dirty(Evas_GL_Image *im, int x, int y, int w, int h);
 void              evas_gl_common_image_map4_draw(Evas_GL_Context *gc, Evas_GL_Image *im, RGBA_Map_Point *p, int smooth, int level);
 void              evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth);
 

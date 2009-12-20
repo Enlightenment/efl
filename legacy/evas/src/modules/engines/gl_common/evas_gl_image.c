@@ -208,11 +208,16 @@ evas_gl_common_image_surface_new(Evas_GL_Context *gc, int w, int h, int alpha)
 }
 
 void
-evas_gl_common_image_dirty(Evas_GL_Image *im)
+evas_gl_common_image_dirty(Evas_GL_Image *im, int x, int y, int w, int h)
 {
+   if ((w == 0) && (h == 0) && (x == 0) && (y == 0))
+     {
+        w = im->w;
+        h = im->h;
+     }
    if (im->im)
      {
-        im->im = (RGBA_Image *) evas_cache_image_dirty(&im->im->cache_entry, 0, 0, im->im->cache_entry.w, im->im->cache_entry.h);
+        im->im = (RGBA_Image *)evas_cache_image_dirty(&im->im->cache_entry, x, y, w, h);
      }
    im->dirty = 1;
 }
@@ -249,10 +254,10 @@ _evas_gl_common_image_update(Evas_GL_Context *gc, Evas_GL_Image *im)
 	if ((im->tex) && (im->dirty))
 	  {
 	     evas_gl_common_texture_update(im->tex, im->im);
-	     im->dirty = 0;
 	  }
 	if (!im->tex)
 	  im->tex = evas_gl_common_texture_new(gc, im->im);
+        im->dirty = 0;
         if (!im->tex) return;
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
