@@ -167,18 +167,22 @@ elm_icon_file_set(Evas_Object *obj, const char *file, const char *group)
  * @param obj The icon object
  * @param name The theme name
  *
+ * @return (1 = sucess, 0 = error)
+ *
  * @ingroup Icon
  */
-EAPI void
+EAPI Eina_Bool
 elm_icon_standard_set(Evas_Object *obj, const char *name)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_Bool ret;
 
    if ((!wd) || (!name)) return;
    if (wd->stdicon) eina_stringshare_del(wd->stdicon);
    wd->stdicon = eina_stringshare_add(name);
-   _elm_theme_icon_set(wd->img, name, "default");
+   ret = _elm_theme_icon_set(wd->img, name, "default");
    _sizing_eval(obj);
+   return ret;
 }
 
 /**
