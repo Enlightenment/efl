@@ -100,6 +100,8 @@ typedef unsigned __int64 uint64_t;
 # define unlink(filename) _unlink(filename)
 # define fileno(f) _fileno(f)
 # define fdopen(fd,m) _fdopen((fd),(m))
+# define access(p,m) _access((p),(m))
+# define tzset() _tzset()
 
 #endif /* _MSC_VER */
 
@@ -156,9 +158,7 @@ typedef unsigned long  gid_t;
 //#  define write(fd,buffer,count) _write((fd),(buffer),(count))
 //#  define unlink(filename) _unlink((filename))
 #  define mkdir(p,m) _mkdir(p)
-//#  define access(p,m) _access((p),(m))
 //#  define lstat(f,s) _stat((f),(s))
-//#  define tzset _tzset
 //#  define hypot(x,y) _hypot((x),(y))
 
 typedef SSIZE_T ssize_t;
