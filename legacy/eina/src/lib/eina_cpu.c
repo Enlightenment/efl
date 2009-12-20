@@ -30,7 +30,7 @@
 #  include <unistd.h>
 #  include <sys/param.h>
 #  include <sys/sysctl.h>
-# elif defined (__linux__)
+# elif defined (__linux__) || defined(__GLIBC__)
 #  define _GNU_SOURCE
 #  include <sched.h>
 # endif
@@ -164,7 +164,7 @@ EAPI int eina_cpu_count(void)
 
    return cpus;
 
-# elif defined (__linux__)
+# elif defined (__linux__) || defined(__GLIBC__)
    cpu_set_t cpu;
    int i;
    static int cpus = 0;
