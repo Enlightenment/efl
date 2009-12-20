@@ -1110,6 +1110,7 @@ extern "C" {
    EAPI void	     elm_map_group_class_data_set(Elm_Map_Group_Class *clas, void *data);
    EAPI void         elm_map_group_class_zoom_displayed_set(Elm_Map_Group_Class *clas, int zoom);
    EAPI void	     elm_map_group_class_zoom_grouped_set(Elm_Map_Group_Class *clas, int zoom);
+   EAPI void         elm_map_group_class_hide_set(Evas_Object *obj, Elm_Map_Group_Class *clas, Eina_Bool hide);
 
    EAPI Elm_Map_Marker_Class * elm_map_marker_class_new(Evas_Object *obj);
    EAPI void         elm_map_marker_class_style_set(Elm_Map_Marker_Class *clas, const char *style);

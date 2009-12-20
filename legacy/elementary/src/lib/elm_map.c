@@ -99,6 +99,7 @@ struct _Elm_Map_Group_Class
    void *data;
    int zoom_displayed; // display the group if the zoom is >= to zoom_display
    int zoom_grouped; // group the markers only if the zoom is <= to zoom_groups
+   Eina_Bool hide : 1;
 
    struct
      {
@@ -399,7 +400,8 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
 		       hh = (((long long)gh * (ty + hh)) / g->h) - yy;
 		    }
 
-		  if(xx-px+ax+ox >= ox && xx-px+ax+ox<= ox+ow
+		  if(!group->clas->hide
+			&& xx-px+ax+ox >= ox && xx-px+ax+ox<= ox+ow
 			&& yy-py+ay+oy >= oy && yy-py+ay+oy<= oy+oh)
 		    {
 		       if(!group->obj)
@@ -2596,6 +2598,22 @@ EAPI void
 elm_map_group_class_zoom_grouped_set(Elm_Map_Group_Class *clas, int zoom)
 {
      clas->zoom_grouped = zoom;
+}
+
+EAPI void
+elm_map_group_class_hide_set(Evas_Object *obj, Elm_Map_Group_Class *clas, Eina_Bool hide)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if(clas->hide == hide) return ;
+   clas->hide = hide;
+
+   if(wd->grids)
+     {
+	Evas_Coord ox, oy, ow, oh;
+	evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
+	marker_place(obj, eina_list_data_get(wd->grids), wd->pan_x, wd->pan_y, ox, oy, ow, oh);
+     }
 }
 
 
