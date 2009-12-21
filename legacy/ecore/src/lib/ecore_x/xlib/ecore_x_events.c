@@ -1421,7 +1421,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	target->version = (int) (xevent->xclient.data.l[1] >> 24);
 	if (target->version > ECORE_X_DND_VERSION)
 	  {
-	     printf("DND: Requested version %d, we only support up to %d\n", 
+	     WRN("DND: Requested version %d, we only support up to %d", 
                     target->version, ECORE_X_DND_VERSION);
 	     return;
 	  }
@@ -1438,7 +1438,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 						    XA_ATOM,
 						    32, &data, &num_ret)))
 	       {
-		  printf("DND: Could not fetch data type list from source window, aborting.\n");
+		  WRN("DND: Could not fetch data type list from source window, aborting.");
 		  return;
 	       }
 	     types = (Ecore_X_Atom *)data;
@@ -1654,7 +1654,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	     char *name;
 
 	     name = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[1]);
-	     if (name) printf("Unknown state: %s\n", name);
+	     if (name) ERR("Unknown state: %s", name);
 	     XFree(name);
 	  }
 	e->state[1] = _ecore_x_netwm_state_get(xevent->xclient.data.l[2]);
@@ -1663,7 +1663,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	     char *name;
 
 	     name = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[2]);
-	     if (name) printf("Unknown state: %s\n", name);
+	     if (name) ERR("Unknown state: %s", name);
 	     XFree(name);
 	  }
 	e->source = xevent->xclient.data.l[3];
@@ -1844,7 +1844,7 @@ _ecore_x_event_handle_randr_change(XEvent *xevent)
    _ecore_x_last_event_mouse_move = 0;
    randr_event = (XRRScreenChangeNotifyEvent *)xevent;
    if (!XRRUpdateConfiguration(xevent))
-     printf("ERROR: Can't update RR config!\n");
+     ERR("Can't update RR config!");
 
    e = calloc(1, sizeof(Ecore_X_Event_Screen_Change));
    if (!e) return;
@@ -1937,8 +1937,8 @@ _ecore_x_event_handle_randr_notify(XEvent *xevent)
 	 _ecore_x_event_handle_randr_notify_output_property(randr_event);
 	 break;
       default:
-	 fprintf(stderr, "ERROR: unknown XRandR RRNotify subtype: %d.\n",
-		 randr_event->subtype);
+	 ERR("Unknown XRandR RRNotify subtype: %d.",
+	     randr_event->subtype);
 	 break;
      }
 }

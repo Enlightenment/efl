@@ -53,13 +53,12 @@ EAPI const unsigned int ecore_prime_table[] =
 EAPI void
 ecore_print_warning(const char *function, const char *sparam)
 {
-   fprintf(stderr, "***** Developer Warning ***** :\n"
-	   "\tThis program is calling:\n\n"
-	   "\t%s();\n\n"
-	   "\tWith the parameter:\n\n"
-	   "\t%s\n\n"
-	   "\tbeing NULL. Please fix your program.\n", function, sparam);
-   fflush(stderr);
+   WRN("***** Developer Warning ***** :\n"
+       "\tThis program is calling:\n\n"
+       "\t%s();\n\n"
+       "\tWith the parameter:\n\n"
+       "\t%s\n\n"
+       "\tbeing NULL. Please fix your program.", function, sparam);
    if (getenv("ECORE_ERROR_ABORT")) abort();
 }
 

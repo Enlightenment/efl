@@ -1035,7 +1035,7 @@ _ecore_con_url_read_cb(void *ptr, size_t size, size_t nitems, void *stream)
         fclose((FILE*)stream);
         return 0;
      }
-   fprintf(stderr, "*** We read %zu bytes from file\n", retcode);
+   INF("*** We read %zu bytes from file", retcode);
    return retcode;
 }
 

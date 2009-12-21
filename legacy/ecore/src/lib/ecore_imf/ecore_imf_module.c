@@ -199,26 +199,26 @@ _ecore_imf_module_load_all(void)
 	plugin = ecore_plugin_load(ecore_imf_modules_path, filename, NULL);
 	if (!plugin)
 	  {
-	     fprintf(stderr, "** ecore_imf: Error loading input method plugin %s!\n",
-		     filename);
+    	     ERR("** Error loading input method plugin %s!",
+		 filename);
 	     continue;
 	  }
 
 	imf_module_init = ecore_plugin_symbol_get(plugin, "imf_module_init");
 	if (!imf_module_init || !imf_module_init(&info) || !info)
 	  {
-	     fprintf(stderr, "** ecore_imf: Error initializing input method plugin %s! "
-			     "'imf_module_init' is missing or failed to run!",
-		     filename);
+	     ERR("** Error initializing input method plugin %s! "
+		 "'imf_module_init' is missing or failed to run!",
+		 filename);
 	     ecore_plugin_unload(plugin);
 	     continue;
 	  }
 
 	if (_ecore_imf_modules_exists(info->id))
 	  {
-	     fprintf(stderr, "** ecore_imf: Error loading input method plugin %s! "
-			     "Plugin with id='%s' already exists!",
-		     filename, info->id);
+	     ERR("** ecore_imf: Error loading input method plugin %s! "
+		 "Plugin with id='%s' already exists!",
+		 filename, info->id);
 	     ecore_plugin_unload(plugin);
 	     continue;
 	  }
@@ -226,9 +226,9 @@ _ecore_imf_module_load_all(void)
 	imf_module_create = ecore_plugin_symbol_get(plugin, "imf_module_create");
 	if (!imf_module_create)
 	  {
-	     fprintf(stderr, "** ecore_imf: Error setting up input method plugin %s! "
-			     "'imf_module_create' is missing!",
-		     filename);
+	     ERR("** ecore_imf: Error setting up input method plugin %s! "
+		 "'imf_module_create' is missing!",
+		 filename);
 	     ecore_plugin_unload(plugin);
 	     continue;
 	  }

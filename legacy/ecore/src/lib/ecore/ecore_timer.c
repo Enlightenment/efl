@@ -68,7 +68,7 @@ ecore_timer_precision_set(double value)
 {
    if (value < 0.0)
      {
-	fprintf(stderr, "ERROR: precision %f less than zero, ignored\n", value);
+	ERR("Precision %f less than zero, ignored", value);
 	return;
      }
    precision = value;

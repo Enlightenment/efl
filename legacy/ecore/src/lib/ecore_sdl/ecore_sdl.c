@@ -17,6 +17,33 @@
 
 #include <eina_rbtree.h>
 
+static int _ecore_sdl_log_dom = -1;
+
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_ecore_sdl_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+# undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_ecore_sdl_log_dom, __VA_ARGS__)
+
+#ifdef INF
+# undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(_ecore_sdl_log_dom, __VA_ARGS__)
+
+#ifdef WRN
+# undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_ecore_sdl_log_dom, __VA_ARGS__)
+
+#ifdef CRIT
+# undef CRIT
+#endif
+#define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_sdl_log_dom, __VA_ARGS__)
+
 typedef struct _Ecore_SDL_Pressed Ecore_SDL_Pressed;
 struct _Ecore_SDL_Pressed
 {
@@ -68,7 +95,12 @@ ecore_sdl_init(const char *name __UNUSED__)
 {
    if(++_ecore_sdl_init_count != 1)
      return _ecore_sdl_init_count;
-
+   _ecore_sdl_log_dom = eina_log_domain_register("EcoreSdl", ECORE_DEFAULT_LOG_COLOR);
+   if(_ecore_sdl_log_dom < 0)
+     {
+       EINA_LOG_ERR("Impossible to create a log domain for the Ecore SDL module.");
+       return --_ecore_sdl_init_count;
+     }
    if (!ecore_event_init())
      return --_ecore_sdl_init_count;
 
@@ -95,7 +127,8 @@ ecore_sdl_shutdown(void)
    return _ecore_sdl_init_count;
 
    ecore_event_shutdown();
-
+   eina_log_domain_unregister(_ecore_sdl_log_dom);
+   _ecore_sdl_log_dom = -1;
    return _ecore_sdl_init_count;
 }
 

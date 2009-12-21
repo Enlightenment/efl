@@ -18,6 +18,7 @@ EAPI int ECORE_IMF_EVENT_PREEDIT_CHANGED = 0;
 EAPI int ECORE_IMF_EVENT_COMMIT = 0;
 EAPI int ECORE_IMF_EVENT_DELETE_SURROUNDING = 0;
 
+int _ecore_imf_log_dom = -1;
 static int _ecore_imf_init_count = 0;
 
 /**
@@ -41,7 +42,13 @@ ecore_imf_init(void)
 
    if (!ecore_init())
      return --_ecore_imf_init_count;
-
+   _ecore_imf_log_dom = eina_log_domain_register("EcoreIMF", ECORE_DEFAULT_LOG_COLOR);
+   if(_ecore_imf_log_dom < 0) 
+     {
+       EINA_LOG_ERR("Impossible to create a log domain for the Ecore IMF module.");
+       ecore_shutdown();
+       return --_ecore_imf_init_count;
+     }
    ecore_imf_module_init();
 
    ECORE_IMF_EVENT_PREEDIT_START = ecore_event_type_new();
@@ -67,6 +74,7 @@ ecore_imf_shutdown(void)
 
    ecore_shutdown();
    ecore_imf_module_shutdown();
-
+   eina_log_domain_unregister(_ecore_imf_log_dom);
+   _ecore_imf_log_dom = -1;
    return _ecore_imf_init_count;
 }

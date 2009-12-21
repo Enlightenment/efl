@@ -132,8 +132,8 @@ _ecore_config_ipc_prop_set(Ecore_Config_Server * srv, const long serial,
 
    theme = ecore_config_bundle_by_serial_get(srv, serial);
    ret = ecore_config_set(key, (char *)val);
-   E(1, "ipc.prop.set(%s->%s,\"%s\") => %d\n", theme ? theme->identifier : "",
-     key, val, ret);
+   ERR("ipc.prop.set(%s->%s,\"%s\") => %d\n", theme ? theme->identifier : "",
+       key, val, ret);
    return ret;
 #else
    return ECORE_CONFIG_ERR_NOTSUPP;
@@ -259,11 +259,11 @@ _ecore_config_ipc_init(const char *pipe_name)
    memset(list, 0, sizeof(Ecore_Config_Server));
    if ((ret = _ecore_config_ipc_ecore_init(pipe_name, &list->server)) != ECORE_CONFIG_ERR_SUCC)
      {
-	E(2, "_ecore_config_ipc_init: failed to register %s, code %d\n",
+	ERR("_ecore_config_ipc_init: failed to register %s, code %d",
 	  pipe_name, ret);
      }
 
-   E(2, "_ecore_config_ipc_init: registered \"%s\"...\n", pipe_name);
+   ERR("_ecore_config_ipc_init: registered \"%s\"...", pipe_name);
 
    list->name = strdup(pipe_name);
    list->next = __ecore_config_servers;

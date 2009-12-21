@@ -167,6 +167,7 @@ ecore_wince_shutdown()
 
    ecore_event_shutdown();
    eina_log_domain_unregister(_ecore_wince_log_dom_global);
+   _ecore_wince_log_dom_global = -1;
    eina_shutdown();
 
    return _ecore_wince_init_count;

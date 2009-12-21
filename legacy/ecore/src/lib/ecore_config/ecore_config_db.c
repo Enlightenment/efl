@@ -182,10 +182,10 @@ _ecore_config_db_read(Ecore_Config_DB_File *db, const char *key)
 	       ecore_config_typed_set(key, (void *)value, type);
 	       break;
 	     case ECORE_CONFIG_SCT:
-	       printf("loading struct %s\n", key);
+	       INF("loading struct %s", key);
 	       break;
 	     default:
-	       E(0, "Type %d not handled\n", type);
+	       WRN("Type %d not handled", type);
 	  }
 	free(data);
 	return 1;
@@ -263,7 +263,7 @@ _ecore_config_db_write(Ecore_Config_DB_File *db, Ecore_Config_Prop *e)
 	   val = _ecore_config_argbstr_get(e);
 	   break;
 	default:
-	   E(0, "Type %d not handled\n", e->type);
+	   WRN("Type %d not handled", e->type);
      }
 
    if (prev_locale)

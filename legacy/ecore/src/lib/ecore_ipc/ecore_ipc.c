@@ -37,6 +37,8 @@
 #define DLT_R1     14
 #define DLT_R2     15
 
+int _ecore_ipc_log_dom = -1;
+
 /* byte swappers - for dealing with big vs little endian machines */
 EAPI unsigned short
 _ecore_ipc_swap_16(unsigned short v)
@@ -263,7 +265,12 @@ ecore_ipc_init(void)
 
    if (++_ecore_ipc_init_count != 1)
      return _ecore_ipc_init_count;
-
+   _ecore_ipc_log_dom = eina_log_domain_register("EcoreIpc", ECORE_DEFAULT_LOG_COLOR);
+   if(_ecore_ipc_log_dom < 0)
+     {
+       EINA_LOG_ERR("Impossible to create a log domain for the Ecore IPC module.");
+       return --_ecore_ipc_init_count;
+     }
    if (!ecore_con_init())
      return --_ecore_ipc_init_count;
 
@@ -309,7 +316,8 @@ ecore_ipc_shutdown(void)
      ecore_event_handler_del(handler[i]);
 
    ecore_con_shutdown();
-
+   eina_log_domain_unregister(_ecore_ipc_log_dom);
+   _ecore_ipc_log_dom = -1;
    return _ecore_ipc_init_count;
 }
 

@@ -1592,7 +1592,7 @@ _ecore_x_event_handle_client_message(xcb_generic_event_t *event)
 	target->version = ev->data.data32[1] >> 24;
 	if (target->version > ECORE_X_DND_VERSION)
 	  {
-             printf("DND: Requested version %d, we only support up to %d\n", target->version,
+             WRN("DND: Requested version %d, we only support up to %d", target->version,
                     ECORE_X_DND_VERSION);
 	     return;
 	  }
@@ -1619,7 +1619,7 @@ _ecore_x_event_handle_client_message(xcb_generic_event_t *event)
                                                        &num_ret);
              if (!format)
 	       {
-		  printf("DND: Could not fetch data type list from source window, aborting.\n");
+		  ERR("DND: Could not fetch data type list from source window, aborting.");
 		  return;
 	       }
 	     types = (Ecore_X_Atom *)data;
@@ -1882,7 +1882,7 @@ _ecore_x_event_handle_client_message(xcb_generic_event_t *event)
                         xcb_get_atom_name_name(reply),
                         reply->name_len);
                  name[reply->name_len] = '\0';
-                 printf("Unknown state: %s\n", name);
+                 ERR("Unknown state: %s", name);
                  free(name);
                  free(reply);
                }
@@ -1903,7 +1903,7 @@ _ecore_x_event_handle_client_message(xcb_generic_event_t *event)
                         xcb_get_atom_name_name(reply),
                         reply->name_len);
                  name[reply->name_len] = '\0';
-                 printf("Unknown state: %s\n", name);
+                 WRN("Unknown state: %s", name);
                  free(name);
                }
 	  }
@@ -2107,7 +2107,7 @@ _ecore_x_event_handle_randr_change(xcb_generic_event_t *event)
 
      if ((!rep) ||
          (((ev->response_type & ~0x80) - rep->first_event) != XCB_RANDR_SCREEN_CHANGE_NOTIFY))
-       printf("ERROR: Can't update RandR config!\n");
+       WRN("ERROR: Can't update RandR config!");
      if (rep)
        free(rep);
      }

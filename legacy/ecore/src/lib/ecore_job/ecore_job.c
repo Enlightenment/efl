@@ -13,6 +13,7 @@
 #include "ecore_job_private.h"
 #include "Ecore_Job.h"
 
+int _ecore_job_log_dom = -1;
 static int _ecore_job_event_handler(void *data, int type, void *ev);
 static void _ecore_job_event_free(void *data, void *ev);
     
@@ -25,7 +26,12 @@ ecore_job_init(void)
 {
    if (++_ecore_job_init_count != 1)
      return _ecore_job_init_count;
-
+   _ecore_job_log_dom = eina_log_domain_register("EcoreJob", ECORE_DEFAULT_LOG_COLOR);
+   if(_ecore_job_log_dom < 0)
+     {
+       EINA_LOG_ERR("Impossible to create a log domain for the Ecore Job module.");
+       return _ecore_job_init_count--;
+     }
    if (!ecore_init())
      return --_ecore_job_init_count;
 
@@ -43,8 +49,10 @@ ecore_job_shutdown(void)
 
    ecore_event_handler_del(_ecore_job_handler);
    _ecore_job_handler = NULL;
+   eina_log_domain_unregister(_ecore_job_log_dom);
+   _ecore_job_log_dom = -1;
    ecore_shutdown();
-
+   
    return _ecore_job_init_count;
 }
 

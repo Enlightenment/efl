@@ -23,7 +23,7 @@
  * - handle all event types
  * - 
  * */
-
+int _ecore_directfb_log_dom = -1;
 static int _ecore_directfb_init_count = 0;
 
 static int _window_event_fd = 0;
@@ -159,7 +159,7 @@ _ecore_directfb_event_handle_key_down(DFBEvent *evt)
 
 			if(!k) 
 			{
-				printf("error en el numero, %0X\n", evt->input.key_symbol);
+				ERR("error en el numero, %0X", evt->input.key_symbol);
 				return;
 			}
 			e->name = strdup(k->name);
@@ -175,7 +175,7 @@ _ecore_directfb_event_handle_key_down(DFBEvent *evt)
 
 			if(!k) 
 			{
-				printf("error en el numero, %0X\n", evt->window.key_symbol);
+				ERR("error en el numero, %0X", evt->window.key_symbol);
 				return;
 			}
 			e->name = strdup(k->name);
@@ -208,7 +208,7 @@ _ecore_directfb_event_handle_key_up(DFBEvent *evt)
 			
 			if(!k) 
 			{
-				printf("error en el numero, %0X\n", evt->input.key_symbol);
+				ERR("error en el numero, %0X", evt->input.key_symbol);
 				return;
 			}
 			e->name = strdup(k->name);
@@ -224,7 +224,7 @@ _ecore_directfb_event_handle_key_up(DFBEvent *evt)
 
 			if(!k) 
 			{
-				printf("error en el numero, %0X\n", evt->window.key_symbol);
+				ERR("error en el numero, %0X", evt->window.key_symbol);
 				return;
 			}
 			e->name = strdup(k->name);
@@ -428,13 +428,13 @@ _ecore_directfb_window_event_fd_handler(void *data __UNUSED__,Ecore_Fd_Handler *
 	if (v < 1) return 1;
 			
 	if(evt.window.type & DWET_POSITION)
-		printf("position\n");
+		INF("position");
 	if(evt.window.type & DWET_SIZE)
-		printf("size\n");
+		INF("size");
 	if(evt.window.type & DWET_CLOSE)
-		printf("close\n");
+		INF("close");
 	if(evt.window.type & DWET_DESTROYED)
-		printf("destroyed\n");
+		INF("destroyed");
 	if(evt.window.type & DWET_GOTFOCUS)
 		_ecore_directfb_event_handle_got_focus(&evt.window);
 	if(evt.window.type & DWET_LOSTFOCUS)
@@ -659,7 +659,12 @@ ecore_directfb_init(const char *name __UNUSED__)
 	int i = 0;
 	
 	if (++_ecore_directfb_init_count != 1) return _ecore_directfb_init_count;
-	
+	_ecore_directfb_log_dom = eina_log_domain_register("EcoreDirectFB", ECORE_DEFAULT_LOG_COLOR);
+	if(_ecore_directfb_log_dom < 0) 
+	  {
+	    EINA_LOG_ERR("Impossible to create a log domain for the Ecore directFB module.");
+	    return _ecore_directfb_init_count--;
+	  }
 	DFBCHECK(DirectFBInit(NULL,NULL));
 	DFBCHECK(DirectFBCreate(&_dfb));
 	
@@ -718,6 +723,7 @@ ecore_directfb_shutdown(void)
 	DFBCHECK(_window_event->Release(_window_event));	
 	DFBCHECK(_layer->Release(_layer));
 	DFBCHECK(_dfb->Release(_dfb));
-	
+	eina_log_domain_unregister(_ecore_directfb_log_dom);
+	_ecore_directfb_log_dom = -1;
 	return _ecore_directfb_init_count;
 }

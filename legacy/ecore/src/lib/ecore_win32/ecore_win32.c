@@ -183,6 +183,7 @@ ecore_win32_shutdown()
 
    ecore_event_shutdown();
    eina_log_domain_unregister(_ecore_win32_log_dom_global);
+   _ecore_win32_log_dom_global = -1;
    eina_shutdown();
 
    return _ecore_win32_init_count;

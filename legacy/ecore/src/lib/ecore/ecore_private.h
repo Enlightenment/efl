@@ -23,6 +23,41 @@
 # undef EAPI
 #endif
 
+extern int _ecore_log_dom ;
+#ifdef  _ECORE_DEFAULT_LOG_DOM
+# undef _ECORE_DEFAULT_LOG_DOM
+#endif
+#define _ECORE_DEFAULT_LOG_DOM _ecore_log_dom
+
+#ifdef ECORE_DEFAULT_LOG_COLOR
+# undef ECORE_DEFAULT_LOG_COLOR
+#endif
+#define ECORE_DEFAULT_LOG_COLOR EINA_COLOR_BLUE
+
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_ECORE_DEFAULT_LOG_DOM, __VA_ARGS__)
+
+#ifdef DBG
+# undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_ECORE_DEFAULT_LOG_DOM, __VA_ARGS__)
+
+#ifdef INF
+# undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(_ECORE_DEFAULT_LOG_DOM, __VA_ARGS__)
+
+#ifdef WRN
+# undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_ECORE_DEFAULT_LOG_DOM, __VA_ARGS__)
+
+#ifdef CRIT
+# undef CRIT
+#endif
+#define CRIT(...) EINA_LOG_DOM_CRIT(_ECORE_DEFAULT_LOG_DOM, __VA_ARGS__)
 #ifdef _WIN32
 # ifdef EFL_ECORE_BUILD
 #  ifdef DLL_EXPORT

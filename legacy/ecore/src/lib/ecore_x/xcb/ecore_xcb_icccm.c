@@ -1450,7 +1450,7 @@ ecore_x_icccm_icon_name_get(Ecore_X_Window window __UNUSED__)
    reply = _ecore_xcb_reply_get();
    if (!reply) return NULL;
 
-   printf ("[XCB] reply->bytes_afer (should be 0): %d\n", ((xcb_get_property_reply_t *)reply)->bytes_after);
+   ERR("reply->bytes_afer (should be 0): %d", ((xcb_get_property_reply_t *)reply)->bytes_after);
 
    if (reply->type == ECORE_X_ATOM_UTF8_STRING)
      {

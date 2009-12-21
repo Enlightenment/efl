@@ -366,10 +366,10 @@ ecore_hash_dump_graph(Ecore_Hash *hash)
 	  Ecore_Hash_Node *node;
 	  for (node = hash->buckets[i]; node; node = node->next)
 	    n++;
-	  printf("%d\t%u\n", i, n);
+	  INF("%d\t%u", i, n);
        }
    else
-     printf("%d\t0\n", i);
+     INF("%d\t0", i);
 }
 
 /**
@@ -395,7 +395,7 @@ ecore_hash_dump_stats(Ecore_Hash *hash)
 	  }
      }
    variance = (sum_n_2 - ((sum_n * sum_n) / (double)i)) / (double)i;
-   printf("Average length: %f\n\tvariance^2: %f\n", (sum_n / (double)i),
+   INF("Average length: %f\n\tvariance^2: %f", (sum_n / (double)i),
 		   variance);
 }
 

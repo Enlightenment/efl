@@ -199,8 +199,8 @@ _ecore_signal_call(void)
 #endif
    sigprocmask(SIG_BLOCK, &newset, &oldset);
    if (sigchld_count > MAXSIGQ)
-     printf("ECORE WARNING. %i SIGCHLD in queue. max queue size %i. losing "
-	    "siginfo for extra signals.\n", sigchld_count, MAXSIGQ);
+     WRN("%i SIGCHLD in queue. max queue size %i. losing "
+	  "siginfo for extra signals.", sigchld_count, MAXSIGQ);
    for (n = 0; n < sigchld_count; n++)
      {
 	pid_t pid;
@@ -271,8 +271,8 @@ _ecore_signal_call(void)
    sigchld_count = 0;
 
    if (sigusr1_count > MAXSIGQ)
-     printf("ECORE WARNING. %i SIGUSR1 in queue. max queue size %i. losing "
-	    "siginfo for extra signals.\n", sigusr1_count, MAXSIGQ);
+     WRN("%i SIGUSR1 in queue. max queue size %i. losing "
+	 "siginfo for extra signals.", sigusr1_count, MAXSIGQ);
    for (n = 0; n < sigusr1_count; n++)
      {
 	Ecore_Event_Signal_User *e;
@@ -292,8 +292,8 @@ _ecore_signal_call(void)
    sigusr1_count = 0;
 
    if (sigusr2_count > MAXSIGQ)
-     printf("ECORE WARNING. %i SIGUSR2 in queue. max queue size %i. losing "
-	    "siginfo for extra signals.\n", sigusr2_count, MAXSIGQ);
+     WRN("%i SIGUSR2 in queue. max queue size %i. losing "
+	 "siginfo for extra signals.", sigusr2_count, MAXSIGQ);
    for (n = 0; n < sigusr2_count; n++)
      {
 	Ecore_Event_Signal_User *e;
@@ -313,8 +313,8 @@ _ecore_signal_call(void)
    sigusr2_count = 0;
 
    if (sighup_count > MAXSIGQ)
-     printf("ECORE WARNING. %i SIGHUP in queue. max queue size %i. losing "
-	    "siginfo for extra signals.\n", sighup_count, MAXSIGQ);
+     WRN("%i SIGHUP in queue. max queue size %i. losing "
+	 "siginfo for extra signals.", sighup_count, MAXSIGQ);
    for (n = 0; n < sighup_count; n++)
      {
 	Ecore_Event_Signal_Hup *e;
@@ -332,8 +332,8 @@ _ecore_signal_call(void)
    sighup_count = 0;
 
    if (sigquit_count > MAXSIGQ)
-     printf("ECORE WARNING. %i SIGQUIT in queue. max queue size %i. losing "
-	    "siginfo for extra signals.\n", sigquit_count, MAXSIGQ);
+     WRN("%i SIGQUIT in queue. max queue size %i. losing "
+	 "siginfo for extra signals.", sigquit_count, MAXSIGQ);
    for (n = 0; n < sigquit_count; n++)
      {
 	Ecore_Event_Signal_Exit *e;
@@ -353,8 +353,8 @@ _ecore_signal_call(void)
    sigquit_count = 0;
 
    if (sigint_count > MAXSIGQ)
-     printf("ECORE WARNING. %i SIGINT in queue. max queue size %i. losing "
-	    "siginfo for extra signals.\n", sigint_count, MAXSIGQ);
+     WRN("%i SIGINT in queue. max queue size %i. losing "
+	 "siginfo for extra signals.", sigint_count, MAXSIGQ);
    for (n = 0; n < sigint_count; n++)
      {
 	Ecore_Event_Signal_Exit *e;
@@ -374,8 +374,8 @@ _ecore_signal_call(void)
    sigint_count = 0;
 
    if (sigterm_count > MAXSIGQ)
-     printf("ECORE WARNING. %i SIGTERM in queue. max queue size %i. losing "
-	    "siginfo for extra signals.\n", sigterm_count, MAXSIGQ);
+     WRN("%i SIGTERM in queue. max queue size %i. losing "
+	 "siginfo for extra signals.", sigterm_count, MAXSIGQ);
    for (n = 0; n < sigterm_count; n++)
      {
 	Ecore_Event_Signal_Exit *e;
@@ -396,8 +396,8 @@ _ecore_signal_call(void)
 
 #ifdef SIGPWR
    if (sigpwr_count > MAXSIGQ)
-     printf("ECORE WARNING. %i SIGPWR in queue. max queue size %i. losing "
-	    "siginfo for extra signals.\n", sigpwr_count, MAXSIGQ);
+     WRN("%i SIGPWR in queue. max queue size %i. losing "
+	 "siginfo for extra signals.", sigpwr_count, MAXSIGQ);
    for (n = 0; n < sigpwr_count; n++)
      {
 	Ecore_Event_Signal_Power *e;
@@ -419,8 +419,8 @@ _ecore_signal_call(void)
    for (i = 0; i < num; i++)
      {
 	if (sigrt_count[i] > MAXSIGQ)
-	  printf("ECORE WARNING. %i SIGRT%i in queue. max queue size %i. losing "
-		 "siginfo for extra signals.\n", i + 1, sigrt_count[i], MAXSIGQ);
+	  WRN("%i SIGRT%i in queue. max queue size %i. losing "
+	      "siginfo for extra signals.", i + 1, sigrt_count[i], MAXSIGQ);
 	for (n = 0; n < sigrt_count[i]; n++)
 	  {
 	     Ecore_Event_Signal_Realtime *e;

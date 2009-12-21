@@ -160,7 +160,7 @@ _ecore_exe_check_errno(int result, const char *file, int line)
 	  case EAGAIN:
 	  case EINTR:
 	     {			/* Not now, try later. */
-		fprintf(stderr, "*** Must try again in %s @%u.\n", file, line);
+		ERR("*** Must try again in %s @%u.", file, line);
 		result = -1;
 		break;
 	     }
@@ -169,15 +169,15 @@ _ecore_exe_check_errno(int result, const char *file, int line)
 	  case ENFILE:
 	  case ENOLCK:
 	     {			/* Low on resources. */
-		fprintf(stderr, "*** Low on resources in %s @%u.\n", file,
-			line);
+		ERR("*** Low on resources in %s @%u.", file,
+		    line);
 		result = 0;
 		break;
 	     }
 
 	  case EIO:
 	     {			/* I/O error. */
-		fprintf(stderr, "*** I/O error in %s @%u.\n", file, line);
+		ERR("*** I/O error in %s @%u.", file, line);
 		result = 0;
 		break;
 	     }
@@ -191,24 +191,22 @@ _ecore_exe_check_errno(int result, const char *file, int line)
 	  case EPERM:
 	  case EBUSY:
 	     {			/* Programmer fucked up. */
-		fprintf(stderr,
-			"*** NAUGHTY PROGRAMMER!!!\n"
-			"*** SPANK SPANK SPANK!!!\n"
-			"*** Now go fix your code in %s @%u. Tut tut tut!\n"
-			"\n", file, line);
+	       ERR("*** NAUGHTY PROGRAMMER!!!\n"
+		   "*** SPANK SPANK SPANK!!!\n"
+		   "*** Now go fix your code in %s @%u. Tut tut tut!",
+		   file, line);
 		result = 0;
 		break;
 	     }
 
 	  default:
 	     {			/* Unsupported errno code, please add this one. */
-		fprintf(stderr,
-			"*** NAUGHTY PROGRAMMER!!!\n"
-			"*** SPANK SPANK SPANK!!!\n"
-			"*** Unsupported errno code %d, please add this one.\n"
-			"*** Now go fix your code in %s @%u, from %s @%u. Tut tut tut!\n"
-			"\n", saved_errno, __FILE__, __LINE__, file, line);
-		result = 0;
+	       ERR("*** NAUGHTY PROGRAMMER!!!\n"
+		   "*** SPANK SPANK SPANK!!!\n"
+		   "*** Unsupported errno code %d, please add this one.\n"
+		   "*** Now go fix your code in %s @%u, from %s @%u. Tut tut tut!",
+		   saved_errno, __FILE__, __LINE__, file, line);
+	       result = 0;
 		break;
 	     }
 	  }
@@ -400,7 +398,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 
 	if (pid == -1)
 	  {
-	     fprintf(stderr, "Failed to fork process\n");
+	     ERR("Failed to fork process");
 	     pid = 0;
 	  }
 	else if (pid == 0)	/* child */
@@ -489,8 +487,8 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 		       if (vfork_exec_errno != 0)
 			 {
 			    n = vfork_exec_errno;
-			    fprintf(stderr, "Could not start \"%s\"\n",
-				    exe_cmd);
+			    ERR("Could not start \"%s\"",
+				exe_cmd);
 			    pid = 0;
 			 }
 		       break;
@@ -604,7 +602,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 	if (e) /* Send the event. */
 	  ecore_event_add(ECORE_EXE_EVENT_ADD, e,
 			  _ecore_exe_event_add_free, NULL);
-	/* printf("Running as %d for %s.\n", exe->pid, exe->cmd); */
+	/* INF("Running as %d for %s.\n", exe->pid, exe->cmd); */
      }
 
    errno = n;
@@ -1115,7 +1113,7 @@ ecore_exe_terminate(Ecore_Exe *exe)
 	return;
      }
    _ecore_exe_dead_attach(exe);
-   printf("Sending TERM signal to %s (%d).\n", exe->cmd, exe->pid);
+   INF("Sending TERM signal to %s (%d).", exe->cmd, exe->pid);
    kill(exe->pid, SIGTERM);
 }
 
@@ -1145,7 +1143,7 @@ ecore_exe_kill(Ecore_Exe *exe)
 	   ecore_timer_add(10.0, _ecore_exe_make_sure_its_really_dead, dead);
      }
 
-   printf("Sending KILL signal to %s (%d).\n", exe->cmd, exe->pid);
+   INF("Sending KILL signal to %s (%d).", exe->cmd, exe->pid);
    kill(exe->pid, SIGKILL);
 }
 
@@ -1236,11 +1234,11 @@ _ecore_exe_make_sure_its_dead(void *data)
 	if ((exe = _ecore_exe_is_it_alive(dead->pid)) != NULL)
 	  {
 	     if (dead->cmd)
-		printf("Sending KILL signal to alledgedly dead %s (%d).\n",
+		INF("Sending KILL signal to alledgedly dead %s (%d).",
 		       dead->cmd, dead->pid);
 	     else
-		printf("Sending KILL signal to alledgedly dead PID %d.\n",
-		       dead->pid);
+		INF("Sending KILL signal to alledgedly dead PID %d.",
+		    dead->pid);
 	     exe->doomsday_clock =
 		ecore_timer_add(10.0, _ecore_exe_make_sure_its_really_dead,
 				dead);
@@ -1267,12 +1265,11 @@ _ecore_exe_make_sure_its_really_dead(void *data)
 
 	if ((exe = _ecore_exe_is_it_alive(dead->pid)) != NULL)
 	  {
-	     printf
-		("RUN!  The zombie wants to eat your brains!  And your CPU!\n");
+	     ERR("RUN!  The zombie wants to eat your brains!  And your CPU!");
 	     if (dead->cmd)
-		printf("%s (%d) is not really dead.\n", dead->cmd, dead->pid);
+		INF("%s (%d) is not really dead.", dead->cmd, dead->pid);
 	     else
-		printf("PID %d is not really dead.\n", dead->pid);
+		INF("PID %d is not really dead.", dead->pid);
 	     exe->doomsday_clock = NULL;
 	  }
 	IF_FREE(dead->cmd);
@@ -1508,15 +1505,13 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler,
 		       if (flags & ECORE_EXE_PIPE_READ)
 			 {
 			    if (exe->read_data_size)
-			       printf
-				  ("There are %d bytes left unsent from the dead exe %s.\n",
+			       INF("There are %d bytes left unsent from the dead exe %s.",
 				   exe->read_data_size, exe->cmd);
 			 }
 		       else
 			 {
 			    if (exe->error_data_size)
-			       printf
-				  ("There are %d bytes left unsent from the dead exe %s.\n",
+			       INF("There are %d bytes left unsent from the dead exe %s.",
 				   exe->error_data_size, exe->cmd);
 			 }
 		       /* Thought about this a bit.  If the exe has actually
@@ -1569,7 +1564,7 @@ _ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED_
 	int ok = 0;
 	int result;
 
-	printf("Closing stdin for %s\n", exe->cmd);
+	INF("Closing stdin for %s", exe->cmd);
 	/* if (exe->child_fd_write != -1)  E_NO_ERRNO(result, fsync(exe->child_fd_write), ok);   This a) doesn't work, and b) isn't needed. */
 	IF_FN_DEL(ecore_main_fd_handler_del, exe->write_fd_handler);
 	if (exe->child_fd_write != -1)

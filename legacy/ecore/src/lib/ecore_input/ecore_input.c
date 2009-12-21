@@ -15,6 +15,33 @@
 #include "Evas.h"
 
 
+static int _ecore_input_log_dom = -1;
+
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_ecore_input_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+# undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_ecore_input_log_dom, __VA_ARGS__)
+
+#ifdef INF
+# undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(_ecore_input_log_dom, __VA_ARGS__)
+
+#ifdef WRN
+# undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_ecore_input_log_dom, __VA_ARGS__)
+
+#ifdef CRIT
+# undef CRIT
+#endif
+#define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_input_log_dom, __VA_ARGS__)
+
 typedef struct _Ecore_Input_Window Ecore_Input_Window;
 struct _Ecore_Input_Window
 {
@@ -44,7 +71,12 @@ ecore_event_init(void)
 {
    if (++_ecore_event_init_count != 1)
      return _ecore_event_init_count;
-
+   _ecore_input_log_dom = eina_log_domain_register("EcoreInput", ECORE_DEFAULT_LOG_COLOR);
+   if(_ecore_input_log_dom < 0)
+     {
+       EINA_LOG_ERR("Impossible to create a log domain for the ecore input module.");
+       return --_ecore_event_init_count;
+     }
    ECORE_EVENT_KEY_DOWN = ecore_event_type_new();
    ECORE_EVENT_KEY_UP = ecore_event_type_new();
    ECORE_EVENT_MOUSE_BUTTON_DOWN = ecore_event_type_new();
@@ -71,7 +103,8 @@ ecore_event_shutdown(void)
    ECORE_EVENT_MOUSE_WHEEL = 0;
    ECORE_EVENT_MOUSE_IN = 0;
    ECORE_EVENT_MOUSE_OUT = 0;
-
+   eina_log_domain_unregister(_ecore_input_log_dom);
+   _ecore_input_log_dom = -1;
    return ++_ecore_event_init_count;
 }
 

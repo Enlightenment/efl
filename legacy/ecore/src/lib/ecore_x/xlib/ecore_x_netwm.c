@@ -1154,7 +1154,7 @@ _ecore_x_netwm_startup_info_begin(Ecore_X_Window win __UNUSED__, char *data __UN
    if (info)
      {
         exists = 1;
-	printf("Already got info for win: 0x%x\n", win);
+	WRN("Already got info for win: 0x%x", win);
 	_ecore_x_netwm_startup_info_free(info);
      }
    info = calloc(1, sizeof(Ecore_X_Startup_Info));
@@ -1478,7 +1478,7 @@ _ecore_x_netwm_startup_info_parse(Ecore_X_Startup_Info *info, char *data)
 	  }
 	else
 	  {
-	     printf("Ecore X Sequence, Unknown: %s=%s\n", key, value);
+	     ERR("Ecore X Sequence, Unknown: %s=%s", key, value);
 	  }
      }
    if (!info->id) return 0;

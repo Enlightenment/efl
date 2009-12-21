@@ -379,10 +379,9 @@ _ecore_main_shutdown(void)
 {
    if (in_main_loop)
      {
-	fprintf(stderr,
-		"\n"
-		"*** ECORE WARINING: Calling ecore_shutdown() while still in the main loop.\n"
-		"***                 Program may crash or behave strangely now.\n");
+       ERR("\n"
+	   "*** ECORE WARINING: Calling ecore_shutdown() while still in the main loop.\n"
+	   "***                 Program may crash or behave strangely now.");
 	return;
      }
    while (fd_handlers)
@@ -510,7 +509,7 @@ _ecore_main_select(double timeout)
 static void
 _ecore_main_fd_handlers_bads_rem(void)
 {
-   fprintf(stderr, "Removing bad fds\n");
+   ERR("Removing bad fds");
    Ecore_Fd_Handler *fdh;
    Eina_Inlist *l;
 
@@ -522,20 +521,20 @@ _ecore_main_fd_handlers_bads_rem(void)
 
 	if ((fcntl(fdh->fd, F_GETFD) < 0) && (errno == EBADF))
 	  {
-	     fprintf(stderr, "Found bad fd at index %d\n", fdh->fd);
+	     ERR("Found bad fd at index %d", fdh->fd);
 	     if (fdh->flags & ECORE_FD_ERROR)
 	       {
-		  fprintf(stderr, "Fd set for error! calling user\n");
+		  ERR("Fd set for error! calling user");
 	         if (!fdh->func(fdh->data, fdh))
 		   {
-		     fprintf(stderr, "Fd function err returned 0, remove it\n");
+		     ERR("Fd function err returned 0, remove it");
 		     fdh->delete_me = 1;
 		     fd_handlers_delete_me = 1;
 		   }
 	       }
 	     else
 	       {
-		  fprintf(stderr, "Problematic fd found at %d! setting it for delete\n", fdh->fd);
+		  ERR("Problematic fd found at %d! setting it for delete", fdh->fd);
 		  fdh->delete_me = 1;
 		  fd_handlers_delete_me = 1;
 	       }
@@ -560,7 +559,7 @@ _ecore_main_fd_handlers_cleanup(void)
 	l = l->next;
 	if (fdh->delete_me)
 	  {
-//	     fprintf(stderr, "Removing fd %d\n", fdh->fd);
+//	     ERR("Removing fd %d", fdh->fd);
 	     fd_handlers = (Ecore_Fd_Handler *) eina_inlist_remove(EINA_INLIST_GET(fd_handlers),
 								   EINA_INLIST_GET(fdh));
 	     ECORE_MAGIC_SET(fdh, ECORE_MAGIC_NONE);
@@ -878,13 +877,13 @@ _ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
         char *msg;
 
         msg = evil_last_error_get();
-        printf (" * %s\n", msg);
+        ERR(" * %s\n", msg);
         free(msg);
         res = -1;
      }
    else if (result == WAIT_TIMEOUT)
      {
-        printf ("time out\n");
+        ERR("time out\n");
         res = 0;
      }
    else if (result == (WAIT_OBJECT_0 + objects_nbr))
@@ -928,7 +927,7 @@ _ecore_main_win32_select(int nfds, fd_set *readfds, fd_set *writefds,
      }
    else
      {
-        fprintf(stderr, "unknown result...\n");
+        ERR(stderr, "unknown result...\n");
         res = -1;
      }
 

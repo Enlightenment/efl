@@ -34,7 +34,7 @@
 
 static const char *_ecore_magic_string_get(Ecore_Magic m);
 static int _ecore_init_count = 0;
-
+EAPI int _ecore_log_dom = -1;
 int _ecore_fps_debug = 0;
 
 /** OpenBSD does not define CODESET
@@ -79,7 +79,7 @@ ecore_init(void)
    /*
      if (strcmp(nl_langinfo(CODESET), "UTF-8"))
      {
-	printf("WARNING: not a utf8 locale!\n");
+	WRN("Not a utf8 locale!");
      }
    */
 #ifdef HAVE_EVIL
@@ -88,6 +88,11 @@ ecore_init(void)
 #endif
    if (!eina_init())
      goto shutdown_evil;
+   _ecore_log_dom = eina_log_domain_register("Ecore",ECORE_DEFAULT_LOG_COLOR);
+   if (_ecore_log_dom < 0) {
+     EINA_LOG_ERR("Ecore was unable to create a log domain.");
+     goto shutdown_log_dom;
+   }
    if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
    if (_ecore_fps_debug) _ecore_fps_debug_init();
    _ecore_signal_init();
@@ -98,6 +103,8 @@ ecore_init(void)
 
    return _ecore_init_count;
 
+ shutdown_log_dom: 
+   eina_shutdown();
  shutdown_evil:
 #ifdef HAVE_EVIL
    evil_shutdown();
@@ -134,6 +141,8 @@ ecore_shutdown(void)
    _ecore_event_shutdown();
    _ecore_main_shutdown();
    _ecore_signal_shutdown();
+   eina_log_domain_unregister(_ecore_log_dom);
+   _ecore_log_dom = -1;
    eina_shutdown();
 #ifdef HAVE_EVIL
    evil_shutdown();
@@ -145,25 +154,22 @@ ecore_shutdown(void)
 EAPI void
 _ecore_magic_fail(const void *d, Ecore_Magic m, Ecore_Magic req_m, const char *fname)
 {
-   fprintf(stderr,
-	   "\n"
-	   "*** ECORE ERROR: Ecore Magic Check Failed!!!\n"
-	   "*** IN FUNCTION: %s()\n", fname);
+   ERR("\n"
+       "*** ECORE ERROR: Ecore Magic Check Failed!!!\n"
+       "*** IN FUNCTION: %s()", fname);
    if (!d)
-     fprintf(stderr, "  Input handle pointer is NULL!\n");
+     ERR("  Input handle pointer is NULL!");
    else if (m == ECORE_MAGIC_NONE)
-     fprintf(stderr, "  Input handle has already been freed!\n");
+     ERR("  Input handle has already been freed!");
    else if (m != req_m)
-     fprintf(stderr, "  Input handle is wrong type\n"
-	             "    Expected: %08x - %s\n"
-	             "    Supplied: %08x - %s\n",
-	     (unsigned int)req_m, _ecore_magic_string_get(req_m),
-	     (unsigned int)m, _ecore_magic_string_get(m));
-   fprintf(stderr,
-	   "*** NAUGHTY PROGRAMMER!!!\n"
-	   "*** SPANK SPANK SPANK!!!\n"
-	   "*** Now go fix your code. Tut tut tut!\n"
-	   "\n");
+     ERR("  Input handle is wrong type\n"
+	 "    Expected: %08x - %s\n"
+	 "    Supplied: %08x - %s",
+	 (unsigned int)req_m, _ecore_magic_string_get(req_m),
+	 (unsigned int)m, _ecore_magic_string_get(m));
+     ERR("*** NAUGHTY PROGRAMMER!!!\n"
+	 "*** SPANK SPANK SPANK!!!\n"
+	 "*** Now go fix your code. Tut tut tut!");
    if (getenv("ECORE_ERROR_ABORT")) abort();
 }
 

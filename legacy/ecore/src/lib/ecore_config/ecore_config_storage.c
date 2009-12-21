@@ -84,7 +84,7 @@ ecore_config_file_load(const char *file)
    db = _ecore_config_db_open_read(file);
    if (!db)
      {
-	E(0, "Cannot open database from file %s!\n", file);
+	ERR("Cannot open database from file %s!", file);
 	return ECORE_CONFIG_ERR_NODATA;
      }
    key_count = 0;   
@@ -154,7 +154,7 @@ ecore_config_file_save(const char *file)
    db = _ecore_config_db_open_write(file);
    if (!db)
      {
-	E(0, "Cannot open database from file %s!\n", file);
+	ERR("Cannot open database from file %s!", file);
 	return ECORE_CONFIG_ERR_FAIL;
      }
 

@@ -62,7 +62,7 @@ get(const char *key)
 
    if (!(e = ecore_config_get(key)))
      {
-	fprintf(stderr, "No such property\n");
+	EINA_LOG_ERR("No such property");
 	return -1;
      }
      
@@ -92,7 +92,7 @@ get(const char *key)
 	   temp = ecore_config_theme_get(key);
 	   break;
 	default:
-	   fprintf(stderr, "Property has unrecognized type");
+	   EINA_LOG_ERR("Property has unrecognized type");
 	   return -1;
      }
    if(temp)
@@ -175,7 +175,7 @@ main(int argc, char * const argv[])
    float f;
    
    file = key = prog = NULL;
-
+   eina_init();
    prog = strdup(argv[0]);
 
    if(argc < 4)
@@ -275,7 +275,7 @@ main(int argc, char * const argv[])
    
    if(ecore_config_init("econfig") != ECORE_CONFIG_ERR_SUCC)
      {
-	fprintf(stderr, "Couldn't init ecore_config!");
+       EINA_LOG_ERR("Couldn't init ecore_config!");
 	return 1;
      }
 
@@ -313,7 +313,7 @@ main(int argc, char * const argv[])
 	   if (list(file)) ret = 1;
 	   break;
 	default:
-	   printf("Unhandled command '%c'\n", cmd);
+	   EINA_LOG_ERR("Unhandled command '%c'", cmd);
      }
 
    ecore_config_shutdown();
@@ -323,7 +323,7 @@ main(int argc, char * const argv[])
 
    if(file)
      free(file);
-
+   eina_shutdown();
    return ret;
 }
 #else

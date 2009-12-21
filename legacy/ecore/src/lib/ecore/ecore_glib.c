@@ -12,6 +12,7 @@
 
 #ifdef HAVE_GLIB
 #include <glib.h>
+#include "ecore_private.h"
 
 static Eina_Bool _ecore_glib_active = EINA_FALSE;
 static int (*_ecore_glib_select_original)(int, fd_set*, fd_set*, fd_set*, struct timeval *);
@@ -28,8 +29,8 @@ _ecore_glib_fds_resize(size_t size)
    void *tmp = realloc(_ecore_glib_fds, sizeof(GPollFD) * size);
    if (!tmp)
      {
-	fprintf(stderr, "ERROR: Could not realloc from %zu to %zu buckets.\n",
-		_ecore_glib_fds_size, size);
+	ERR("Could not realloc from %zu to %zu buckets.",
+	    _ecore_glib_fds_size, size);
 	return EINA_FALSE;
      }
 

@@ -31,6 +31,7 @@ static const int AnyXEvent = 0; /* 0 can be used as there are no event types
 static int _ecore_x_event_shape_id = 0;
 static int _ecore_x_event_screensaver_id = 0;
 static int _ecore_x_event_sync_id = 0;
+int _ecore_xlib_log_dom = -1;
 
 #ifdef ECORE_XRANDR
 static int _ecore_x_event_randr_id = 0;
@@ -168,10 +169,18 @@ ecore_x_init(const char *name)
    
    if (++_ecore_x_init_count != 1) 
      return _ecore_x_init_count;
-
+   _ecore_xlib_log_dom = eina_log_domain_register("EcoreX11", ECORE_DEFAULT_LOG_COLOR);
+   if(_ecore_xlib_log_dom < 0)
+     {
+       EINA_LOG_ERR("Impossible to create a log domain for the Ecore Xlib module.");
+       return --_ecore_x_init_count;
+     }
    if (!ecore_event_init())
-     return --_ecore_x_init_count;
-
+     {
+       eina_log_domain_unregister(_ecore_xlib_log_dom);
+	_ecore_xlib_log_dom = -1;
+       return --_ecore_x_init_count;
+     }
    _ecore_x_disp = XOpenDisplay((char *)name);
    if (!_ecore_x_disp)
      goto shutdown_ecore_event;
@@ -508,7 +517,8 @@ _ecore_x_shutdown(int close_display)
    _ecore_x_dnd_shutdown();
    ecore_x_netwm_shutdown();
    ecore_event_shutdown();
-
+   eina_log_domain_unregister(_ecore_xlib_log_dom);
+   _ecore_xlib_log_dom = -1;
    return _ecore_x_init_count;
 }
 

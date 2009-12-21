@@ -49,7 +49,7 @@ _ecore_config_ipc_ecore_string_get(char **m, char **r)
    *r = q;
    q += l;
    *m = q;
-   E(1, "IPC/eCore: got string-%d \"%s\"\n", l, *r);
+   WRN("IPC/eCore: got string-%d \"%s\"", l, *r);
    return ECORE_CONFIG_ERR_SUCC;
 }
 
@@ -139,7 +139,7 @@ _ecore_config_ipc_ecore_send(Ecore_Ipc_Event_Client_Data * e, int code,
    int                 len = reply ? strlen(reply) + 1 : 0;
 
    our_ref++;
-   E(1, "IPC/eCore: replying [0,0] %d IRT %d => %d {\"%s\":%d}\n", our_ref,
+   WRN("IPC/eCore: replying [0,0] %d IRT %d => %d {\"%s\":%d}", our_ref,
      e->ref, code, reply ? reply : "", len);
    return ecore_ipc_client_send(e->client, 0, 0, our_ref, e->ref, code, reply,
 				len);
@@ -160,7 +160,7 @@ _ecore_config_ipc_ecore_handle_request(Ecore_Ipc_Server * server,
    serial = e->minor;
    r = NULL;
    m = (char *)e->data;
-   E(1, "IPC/eCore: client sent: [%d,%d] #%d (%d) @ %p\n", e->major, e->minor,
+   INF("IPC/eCore: client sent: [%d,%d] #%d (%d) @ %p", e->major, e->minor,
      e->ref, e->size, server);
 
    switch (e->major)
@@ -247,7 +247,7 @@ _ecore_config_ipc_client_add(void *data, int type __UNUSED__, void *event)
    if (*server != ecore_ipc_client_server_get(e->client))
       return 1;
 
-   E(1, "IPC/eCore: Client connected. @ %p\n", server);
+   INF("IPC/eCore: Client connected. @ %p", server);
    return 1;
 }
 
@@ -263,7 +263,7 @@ _ecore_config_ipc_client_del(void *data, int type __UNUSED__, void *event)
    if (*server != ecore_ipc_client_server_get(e->client))
       return 1;
 
-   E(1, "IPC/eCore: Client disconnected. @ %p\n", server);
+   INF("IPC/eCore: Client disconnected. @ %p", server);
    return 1;
 }
 
@@ -317,7 +317,7 @@ _ecore_config_ipc_ecore_init(const char *pipe_name, void **data)
 
 	     if (!stat(socket, &st))
 	       {
-		  E(0, "IPC/eCore: pipe \"%s\" already exists!?\n", socket);
+		  INF("IPC/eCore: pipe \"%s\" already exists!?", socket);
 /*      if(unlink(buf))
   	E(0,"IPC/eCore: could not remove pipe \"%s\": %d\n",buf,errno); }}*/
 		  port++;
@@ -338,7 +338,7 @@ _ecore_config_ipc_ecore_init(const char *pipe_name, void **data)
 
    if (server)
      {
-	E(1, "IPC/eCore: Server is listening on %s.\n", pipe_name);
+	INF("IPC/eCore: Server is listening on %s.", pipe_name);
      }
 
    return ECORE_CONFIG_ERR_SUCC;

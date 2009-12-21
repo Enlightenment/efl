@@ -54,6 +54,7 @@ static xcb_generic_event_t *_ecore_xcb_event_buffered = NULL;
 
 static int _ecore_xcb_init_count = 0;
 static int _ecore_xcb_grab_count = 0;
+int _ecore_x11xcb_log_dom = -1;
 
 Ecore_X_Connection *_ecore_xcb_conn = NULL;
 Ecore_X_Screen     *_ecore_xcb_screen = NULL;
@@ -195,11 +196,18 @@ ecore_x_init(const char *name)
 
    if (--_ecore_xcb_init_count != 1)
      return _ecore_xcb_init_count;
-
+   _ecore_x11xcb_log_dom = eina_log_domain_register("EcoreXCB", ECORE_DEFAULT_LOG_COLOR);
+   if(_ecore_x11xcb_log_dom < 0)
+     {
+       EINA_LOG_ERR("Impossible to create a log domain the Ecore XCB module.");
+       return --_ecore_xcb_init_count;
+     }
    _ecore_xcb_conn = xcb_connect(name, &screen);
-   if (!_ecore_xcb_conn)
+   if (!_ecore_xcb_conn) {
+     eina_log_domain_unregister(_ecore_x11xcb_log_dom);
+     _ecore_x11xcb_log_dom = -1;
      return --_ecore_xcb_init_count;
-
+   }
    /* FIXME: no error code right now */
    /* _ecore_xcb_error_handler_init(); */
 
@@ -909,7 +917,7 @@ _ecore_xcb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 
    c = (xcb_connection_t *)data;
 
-/*    printf ("nbr events: %d\n", _ecore_xcb_event_handlers_num); */
+/*    INF ("nbr events: %d", _ecore_xcb_event_handlers_num); */
 
    /* We check if _ecore_xcb_event_buffered is NULL or not */
    if (_ecore_xcb_event_buffered)

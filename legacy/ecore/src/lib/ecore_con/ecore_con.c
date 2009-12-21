@@ -65,7 +65,7 @@ EAPI int ECORE_CON_EVENT_SERVER_DATA = 0;
 
 static Eina_List *servers = NULL;
 static int _ecore_con_init_count = 0;
-
+int _ecore_con_log_dom = -1;
 #define LENGTH_OF_SOCKADDR_UN(s) (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
 #define LENGTH_OF_ABSTRACT_SOCKADDR_UN(s, path) (strlen(path) + 1 + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
 
@@ -91,6 +91,13 @@ ecore_con_init(void)
    if (!ecore_init())
      return --_ecore_con_init_count;
 
+   _ecore_con_log_dom = eina_log_domain_register("EcoreCon", ECORE_DEFAULT_LOG_COLOR);
+   if(_ecore_con_log_dom < 0)
+     {
+       EINA_LOG_ERR("Impossible to create a log domain foe Ecore Con.");
+       ecore_shutdown();
+       return --_ecore_con_init_count;
+     }
    ECORE_CON_EVENT_CLIENT_ADD = ecore_event_type_new();
    ECORE_CON_EVENT_CLIENT_DEL = ecore_event_type_new();
    ECORE_CON_EVENT_SERVER_ADD = ecore_event_type_new();
@@ -117,14 +124,15 @@ ecore_con_shutdown(void)
 {
    if (--_ecore_con_init_count != 0)
      return _ecore_con_init_count;
-
+   
    while (servers)
      _ecore_con_server_free(eina_list_data_get(servers));
 
    ecore_con_info_shutdown();
    ecore_con_dns_shutdown();
    ecore_con_ssl_shutdown();
-
+   eina_log_domain_unregister(_ecore_con_log_dom);
+   _ecore_con_log_dom = -1;
    ecore_shutdown();
 
    return _ecore_con_init_count;
@@ -252,7 +260,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 	     socket_unix.sun_path[0] = '\0';
 	     socket_unix_len = LENGTH_OF_ABSTRACT_SOCKADDR_UN(&socket_unix, name);
 #else
-	     fprintf(stderr, "Your system does not support abstract sockets!\n");
+	     ERR("Your system does not support abstract sockets!");
 	     goto error_umask;
 #endif
 	  }
@@ -418,7 +426,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
 	     socket_unix.sun_path[0] = '\0';
 	     socket_unix_len = LENGTH_OF_ABSTRACT_SOCKADDR_UN(&socket_unix, name);
 #else
-	     fprintf(stderr, "Your system does not support abstract sockets!\n");
+	     WRN("Your system does not support abstract sockets!");
 	     goto error;
 #endif
 	  }
@@ -887,10 +895,10 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
 	t = ecore_time_get();
 	if ((t - t_start) > 0.5)
 	  {
-	     printf("ECORE_CON: EEK - stuck in _ecore_con_server_free() trying\n"
-		    "  to flush data out from the server, and have been for\n"
-		    "  %1.1f seconds. This is taking too long. Aborting flush.\n",
-		    (t - t_start));
+	    WRN("ECORE_CON: EEK - stuck in _ecore_con_server_free() trying\n"
+		 "  to flush data out from the server, and have been for\n"
+		 "  %1.1f seconds. This is taking too long. Aborting flush.",
+		 (t - t_start));
 	     break;
 	  }
      }
@@ -922,10 +930,10 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
 	t = ecore_time_get();
 	if ((t - t_start) > 0.5)
 	  {
-	     printf("ECORE_CON: EEK - stuck in _ecore_con_client_free() trying\n"
-		    "  to flush data out from the client, and have been for\n"
-		    "  %1.1f seconds. This is taking too long. Aborting flush.\n",
-		    (t - t_start));
+	     WRN("EEK - stuck in _ecore_con_client_free() trying\n"
+		 "  to flush data out from the client, and have been for\n"
+		 "  %1.1f seconds. This is taking too long. Aborting flush.",
+		 (t - t_start));
 	     break;
 	  }
      }
