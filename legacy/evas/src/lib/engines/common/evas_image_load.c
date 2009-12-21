@@ -37,9 +37,11 @@ static const char *loaders_name[] = {
 };
 
 static Eina_Bool
-_evas_image_foreach_loader(const Eina_Hash *hash __UNUSED__, const char *key __UNUSED__, Evas_Module *em, Image_Entry *ie)
+_evas_image_foreach_loader(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata)
 {
    Evas_Image_Load_Func *evas_image_load_func = NULL;
+   Evas_Module *em = data;
+   Image_Entry *ie = fdata;
 
    if (!evas_module_load(em)) return EINA_TRUE;
    evas_image_load_func = em->functions;
@@ -151,7 +153,7 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
              mem = ie->data2;
              if (mem)
                {
-                  im->image.data = mem->data + mem->offset;
+		 im->image.data = (void*) (mem->data + mem->offset);
                   im->image.no_free = 1;
                   return 0;
                }

@@ -10,7 +10,7 @@
 
    DATA32      *psrc, *pdst, *pdst_end;
    DATA32      *buf, *pbuf, *pbuf_end;
-   RGBA_Gfx_Func  func;
+   RGBA_Gfx_Func  func = NULL;
 
    /* a scanline buffer */
    pdst = dst_ptr;  // it's been set at (dst_clip_x, dst_clip_y)

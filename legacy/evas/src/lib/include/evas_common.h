@@ -857,7 +857,7 @@ struct _RGBA_Font_Int
 {
    RGBA_Font_Source *src;
 
-   int               size;
+   unsigned int      size;
    int               real_size;
    int               max_h;
 

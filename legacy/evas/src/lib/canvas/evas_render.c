@@ -368,7 +368,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
            obj->cur.visible, obj->cur.cache.clip.visible, obj->smart.smart, obj->cur.cache.clip.a,
            evas_object_was_visible(obj));
 	if ((!obj->clip.clipees) && (obj->delete_me == 0) &&
-	    ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
+	    (_evas_render_can_render(obj) ||
 	     (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
 	  {
 	     if (obj->smart.smart)
@@ -511,14 +511,14 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *e)
 		    }
 		  else
 		    if ((is_active) && (obj->restack) && (!obj->clip.clipees) &&
-			((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
+			(_evas_render_can_render(obj) ||
 			 (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
 		      {
 			 if (!(obj->render_pre || obj->rect_del)) ok = 1;
 		      }
                   else
                     if (is_active && (!obj->clip.clipees) &&
-                        ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
+                        (_evas_render_can_render(obj) ||
                          (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
                       {
                          if (obj->render_pre || obj->rect_del) ok = 1;
@@ -590,7 +590,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
           }
      }
    else if (!(((evas_object_is_active(obj) && (!obj->clip.clipees) &&
-                ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)))))
+                (_evas_render_can_render(obj))))
               )) 
      {
         RDI(level); 

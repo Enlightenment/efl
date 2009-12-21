@@ -1266,7 +1266,7 @@ EAPI int
 evas_string_char_len_get(const char *str)
 {
 	if (!str) return 0;
-	return evas_common_font_utf8_get_len(str);
+	return evas_common_font_utf8_get_len((const unsigned char *) str);
 }
 
 /**

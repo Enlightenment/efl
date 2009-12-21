@@ -24,9 +24,11 @@
 static void _evas_yuv_init         (void);
 static void _evas_yv12torgb_sse    (unsigned char **yuv, unsigned char *rgb, int w, int h);
 static void _evas_yv12torgb_mmx    (unsigned char **yuv, unsigned char *rgb, int w, int h);
+#ifdef BUILD_ALTIVEC
 static void _evas_yv12torgb_altivec(unsigned char **yuv, unsigned char *rgb, int w, int h);
-static void _evas_yv12torgb_raster (unsigned char **yuv, unsigned char *rgb, int w, int h);
 static void _evas_yv12torgb_diz    (unsigned char **yuv, unsigned char *rgb, int w, int h);
+#endif
+static void _evas_yv12torgb_raster (unsigned char **yuv, unsigned char *rgb, int w, int h);
 
 #define CRV    104595
 #define CBU    132251
@@ -502,10 +504,10 @@ _evas_yv12torgb_mmx(unsigned char **yuv, unsigned char *rgb, int w, int h)
 #endif
 }
 
+#ifdef BUILD_ALTIVEC
 static void
 _evas_yv12torgb_altivec(unsigned char **yuv, unsigned char *rgb, int w, int h)
 {
-#ifdef BUILD_ALTIVEC
 #ifdef __VEC__
    int xx, yy;
    int w2, h2;
@@ -714,11 +716,11 @@ _evas_yv12torgb_altivec(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	dp1 += (w * 4);
 	dp2 += (w * 4);
      }
-#endif
 #else
    _evas_yv12torgb_diz(yuv, rgb, w, h);
 #endif
 }
+#endif
 
 static void
 _evas_yuv_init(void)
@@ -744,6 +746,7 @@ _evas_yuv_init(void)
 #endif
 }
 
+#ifdef BUILD_ALTIVEC
 static void
 _evas_yv12torgb_diz(unsigned char **yuv, unsigned char *rgb, int w, int h)
 {
@@ -820,6 +823,7 @@ _evas_yv12torgb_diz(unsigned char **yuv, unsigned char *rgb, int w, int h)
      }
 #endif
 }
+#endif
 
 static void
 _evas_yv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)

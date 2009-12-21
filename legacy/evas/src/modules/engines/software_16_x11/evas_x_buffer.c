@@ -164,7 +164,7 @@ DATA8 *
 evas_software_x11_x_output_buffer_data(X_Output_Buffer *xob, int *bytes_per_line_ret)
 {
    if (bytes_per_line_ret) *bytes_per_line_ret = xob->xim->bytes_per_line;
-   return xob->xim->data;
+   return (DATA8*) xob->xim->data;
 }
 
 int

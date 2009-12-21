@@ -293,9 +293,9 @@ void              evas_gl_common_image_dirty(Evas_GL_Image *im, int x, int y, in
 void              evas_gl_common_image_map4_draw(Evas_GL_Context *gc, Evas_GL_Image *im, RGBA_Map_Point *p, int smooth, int level);
 void              evas_gl_common_image_draw(Evas_GL_Context *gc, Evas_GL_Image *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth);
 
-Evas_GL_Texture  *evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg);
-void              evas_gl_font_texture_free(Evas_GL_Texture *ft);
-void              evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y);
+void             *evas_gl_font_texture_new(void *gc, RGBA_Font_Glyph *fg);
+void              evas_gl_font_texture_free(void *);
+void              evas_gl_font_texture_draw(void *gc, void *surface, void *dc, RGBA_Font_Glyph *fg, int x, int y);
 
 
 void (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b);

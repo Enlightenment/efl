@@ -980,7 +980,7 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
              
              DBG("OP_LOAD %i", c->pid);
              rep = (Op_Load *)data;
-             file = data + sizeof(Op_Load);
+             file = (char*) (data + sizeof(Op_Load));
              key = file + strlen(file) + 1;
              if (key[0] == 0) key = NULL;
              lopt.scale_down_by = rep->lopt.scale_down_by;
@@ -1320,14 +1320,14 @@ message(void *fdata, Server *s, Client *c, int opcode, int size, unsigned char *
                        it.file_key_size = 0;
                        if (img->file.file)
                          {
-                            strcpy(p + sizeof(Op_Getinfo_Item) + it.file_key_size, img->file.file);
+			    strcpy((char*) p + sizeof(Op_Getinfo_Item) + it.file_key_size, img->file.file);
                             it.file_key_size += strlen(img->file.file);
                          }
                        p[sizeof(Op_Getinfo_Item) + it.file_key_size] = 0;
                        it.file_key_size += 1;
                        if (img->file.key)
                          {
-                            strcpy(p + sizeof(Op_Getinfo_Item) + it.file_key_size, img->file.key);
+			    strcpy((char*) p + sizeof(Op_Getinfo_Item) + it.file_key_size, img->file.key);
                             it.file_key_size += strlen(img->file.key);
                          }
                        p[sizeof(Op_Getinfo_Item) + it.file_key_size] = 0;

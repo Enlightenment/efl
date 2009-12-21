@@ -50,7 +50,7 @@ void evas_common_convert_rgba_to_8bpp_gry_16_dith      (DATA32 *src, DATA8 *dst,
    int x, y;
    DATA8 r, g, b;
    DATA32 gry8;
-   DATA8 dith, dith2;
+   DATA8 dith;
 
    dst_ptr = (DATA8 *)dst;
 

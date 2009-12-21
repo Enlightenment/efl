@@ -114,7 +114,7 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
    char               *line, s[256], tok[128], col[256], *tl;
    int                 lsz = 256;
    struct _cmap {
-      unsigned char    str[6];
+      char             str[6];
       unsigned char    transp;
       short            r, g, b;
    }                  *cmap;

@@ -139,8 +139,6 @@ _xre_xlib_font_pool_cb(const Eina_Hash *hash, const void *key, void *data, void 
    pool = data;
    snprintf(buf, sizeof(buf), "@%p@/@%lx@", fs->xinf->x11.connection, (unsigned long int)fs->xinf->x11.root);
    eina_hash_del(pool, buf, fs);
-   if (!hash) hash = eina_hash_string_superfast_new(NULL);
-   eina_hash_modify(hash, key, pool);
    return 1;
 }
 

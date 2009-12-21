@@ -427,7 +427,7 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 			  int x, int y, int w, int h, RGBA_Gradient *gr)
 {
    Gfx_Func_Gradient_Fill   gfunc;
-   RGBA_Gfx_Func            bfunc;
+   RGBA_Gfx_Func            bfunc = NULL;
    int             len;
    int             xin, yin, xoff, yoff;
    int             clx, cly, clw, clh;

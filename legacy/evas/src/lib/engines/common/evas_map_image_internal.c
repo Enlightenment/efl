@@ -12,8 +12,8 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
    int c, cx, cy, cw, ch;
    int ytop, ybottom, ystart, yend, y, sw, sh, shp, swp, direct;
    Line *spans;
-   DATA32 *buf, *sp;
-   RGBA_Gfx_Func func;
+   DATA32 *buf = NULL, *sp;
+   RGBA_Gfx_Func func = NULL;
    int havea = 0;
    int havecol = 4;
 

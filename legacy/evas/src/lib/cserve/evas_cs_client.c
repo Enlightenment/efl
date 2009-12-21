@@ -315,8 +315,8 @@ evas_cserve_image_load(Image_Entry *ie, const char *file, const char *key, RGBA_
    klen = strlen(key) + 1;
    buf = malloc(sizeof(msg) + flen + klen);
    memcpy(buf, &msg, sizeof(msg));
-   strcpy(buf + sizeof(msg), file);
-   strcpy(buf + sizeof(msg) + flen, key);
+   memcpy(buf + sizeof(msg), file, flen);
+   memcpy(buf + sizeof(msg) + flen, key, klen);
    if (!buf) return 0;
    if (!server_send(cserve, ie->channel, OP_LOAD, 
                     sizeof(msg) + flen + klen,

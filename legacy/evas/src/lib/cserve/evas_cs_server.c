@@ -339,7 +339,7 @@ evas_cserve_server_wait(Server *s, int timeout)
         if (c->dead) continue;
         if (FD_ISSET(c->fd, &rset))
           {
-             char buf[16384];
+	     unsigned char buf[16384];
              int num;
              
              errno = 0;

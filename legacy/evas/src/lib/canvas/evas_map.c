@@ -116,7 +116,8 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
 {
    int order[4], i, j, edges, edge[4][2], douv;
    Evas_Coord xe[2];
-   double u[2], v[2];
+   double u[2] = { 0.0, 0.0 };
+   double v[2] = { 0.0, 0.0 };
 
    if (m->count != 4) return 0;
    // FIXME need to handle grab mode and extrapolte coords outside

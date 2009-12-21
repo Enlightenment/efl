@@ -14,6 +14,7 @@
 #include "evas_private.h"
 #include "evas_image_private.h"
 #include "evas_convert_yuv.h"
+#include "evas_cs.h"
 
 #ifdef HAVE_VALGRIND
 # include <memcheck.h>
@@ -50,11 +51,13 @@ static int               _evas_common_rgba_image_ram_usage(Image_Entry *ie);
 /* The destination surface does have a surface, but no allocated pixel data. */
 static int               _evas_common_rgba_image_dirty(Image_Entry* dst, const Image_Entry* src);
 
+#if 0
 static void
 _evas_common_rgba_image_debug(const char* context, Image_Entry *eim)
 {
   DBG("%p = [%s] {%s,%s} %i [%i|%i]", eim, context, eim->file, eim->key, eim->references, eim->w, eim->h);
 }
+#endif
 
 static const Evas_Cache_Image_Func      _evas_common_image_func =
 {
@@ -294,20 +297,20 @@ _evas_common_rgba_image_dirty(Image_Entry *ie_dst, const Image_Entry *ie_src)
    RGBA_Image   *dst = (RGBA_Image *) ie_dst;
    RGBA_Image   *src = (RGBA_Image *) ie_src;
 
-   evas_common_rgba_image_scalecache_dirty(ie_src);
+   evas_common_rgba_image_scalecache_dirty((Image_Entry*) ie_src);
    evas_common_rgba_image_scalecache_dirty(ie_dst);
    evas_cache_image_load_data(&src->cache_entry);
    if (_evas_common_rgba_image_surface_alloc(&dst->cache_entry,
                                              src->cache_entry.w, src->cache_entry.h))
      {
 #ifdef EVAS_CSERVE
-        if (ie_src->data1) evas_cserve_image_free(ie_src);
+        if (ie_src->data1) evas_cserve_image_free((Image_Entry*) ie_src);
 #endif        
         return 1;
      }
 
 #ifdef EVAS_CSERVE
-   if (ie_src->data1) evas_cserve_image_free(ie_src);
+   if (ie_src->data1) evas_cserve_image_free((Image_Entry*) ie_src);
 #endif   
    evas_common_image_colorspace_normalize(src);
    evas_common_image_colorspace_normalize(dst);
@@ -479,7 +482,7 @@ evas_common_image_colorspace_normalize(RGBA_Image *im)
 	if (im->image.data != im->cs.data)
 	  {
 #ifdef EVAS_CSERVE
-             if (((Image_Entry *)im)->data1) evas_cserve_image_free(im);
+             if (((Image_Entry *)im)->data1) evas_cserve_image_free(&im->cache_entry);
 #endif             
 	     if (!im->image.no_free) free(im->image.data);
 	     im->image.data = im->cs.data;

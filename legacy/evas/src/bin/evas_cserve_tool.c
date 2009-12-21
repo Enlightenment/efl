@@ -111,7 +111,7 @@ main(int argc, char **argv)
                   
                   itt = (Op_Getinfo_Item *)p;
                   memcpy(&it, itt, sizeof(Op_Getinfo_Item));
-                  file = p + sizeof(Op_Getinfo_Item);
+                  file = (char*) (p + sizeof(Op_Getinfo_Item));
                   key = file + strlen(file) + 1;
                   printf("-IMAGE- [#%i]\n", i);
                   printf("  file       : %s\n", file);

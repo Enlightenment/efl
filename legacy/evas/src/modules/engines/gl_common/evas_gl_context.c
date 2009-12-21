@@ -183,13 +183,13 @@ evas_gl_common_context_new(void)
         if (ext)
           {
              fprintf(stderr, "EXT:\n%s\n", ext);
-             if ((strstr(ext, "GL_ARB_texture_non_power_of_two")) ||
-                 (strstr(ext, "OES_texture_npot")) ||
-                 (strstr(ext, "GL_IMG_texture_npot")))
+             if ((strstr((char*) ext, "GL_ARB_texture_non_power_of_two")) ||
+                 (strstr((char*) ext, "OES_texture_npot")) ||
+                 (strstr((char*) ext, "GL_IMG_texture_npot")))
                shared->info.tex_npo2 = 1;
-             if ((strstr(ext, "GL_NV_texture_rectangle")) ||
-                 (strstr(ext, "GL_EXT_texture_rectangle")) ||
-                 (strstr(ext, "GL_ARB_texture_rectangle"))
+             if ((strstr((char*) ext, "GL_NV_texture_rectangle")) ||
+                 (strstr((char*) ext, "GL_EXT_texture_rectangle")) ||
+                 (strstr((char*) ext, "GL_ARB_texture_rectangle"))
                  )
                shared->info.tex_rect = 1;
           }

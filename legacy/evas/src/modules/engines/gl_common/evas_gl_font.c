@@ -1,8 +1,9 @@
 #include "evas_gl_private.h"
 
-Evas_GL_Texture *
-evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
+void *
+evas_gl_font_texture_new(void *context, RGBA_Font_Glyph *fg)
 {
+   Evas_GL_Context *gc = context;
    Evas_GL_Texture *tex;
    DATA8 *data;
    int w, h, j, nw;
@@ -89,15 +90,17 @@ evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
 }
 
 void
-evas_gl_font_texture_free(Evas_GL_Texture *tex)
+evas_gl_font_texture_free(void *tex)
 {
    if (!tex) return;
    evas_gl_common_texture_free(tex);
 }
 
 void
-evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface __UNUSED__, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y)
+evas_gl_font_texture_draw(void *context, void *surface __UNUSED__, void *draw_context, RGBA_Font_Glyph *fg, int x, int y)
 {
+   Evas_GL_Context *gc = context;
+   RGBA_Draw_Context *dc = draw_context;
    Evas_GL_Texture *tex;
    Cutout_Rects *rects;
    Cutout_Rect  *rct;
