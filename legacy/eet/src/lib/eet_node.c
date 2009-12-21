@@ -361,6 +361,31 @@ eet_node_dump_simple_type(Eet_Node *n, int level,
    dumpfunc(dumpdata, ";\n");
 }
 
+static void
+eet_node_dump_group_start(int level, void (*dumpfunc) (void *data, const char *str), void *dumpdata,
+			  int group_type, const char *name)
+{
+   int chnk_type;
+
+   chnk_type = (group_type >= EET_G_UNKNOWN && group_type <= EET_G_HASH) ?
+     group_type : EET_G_LAST;
+
+   eet_node_dump_level(level, dumpfunc, dumpdata);
+   dumpfunc(dumpdata, "group \"");
+   eet_node_dump_string_escape(dumpdata, dumpfunc, name);
+   dumpfunc(dumpdata, "\" ");
+
+   dumpfunc(dumpdata, eet_node_dump_g_name[chnk_type - EET_G_UNKNOWN]);
+   dumpfunc(dumpdata, " {\n");
+}
+
+static void
+eet_node_dump_group_end(int level, void (*dumpfunc) (void *data, const char *str), void *dumpdata)
+{
+   eet_node_dump_level(level, dumpfunc, dumpdata);
+   dumpfunc(dumpdata, "  }\n");
+}
+
 void
 eet_node_dump(Eet_Node *n, int dumplevel, void (*dumpfunc) (void *data, const char *str), void *dumpdata)
 {
@@ -371,6 +396,9 @@ eet_node_dump(Eet_Node *n, int dumplevel, void (*dumpfunc) (void *data, const ch
       case EET_G_VAR_ARRAY:
       case EET_G_ARRAY:
       case EET_G_LIST:
+	 eet_node_dump_group_start(dumplevel, dumpfunc, dumpdata, n->type, n->name);
+	 /* FIXME: Handle content of group. */
+	 eet_node_dump_group_end(dumplevel, dumpfunc, dumpdata);
 	 break;
       case EET_T_STRING:
       case EET_T_INLINED_STRING:
