@@ -72,7 +72,7 @@ evas_cserve_image_cache_contents_get(Evas_Cserve_Image_Cache *cache)
 
         itt = (Op_Getinfo_Item *)p;
         memcpy(&it, itt, sizeof(Op_Getinfo_Item));
-        file = (char*) p + sizeof(Op_Getinfo_Item);
+        file = (char*) (p + sizeof(Op_Getinfo_Item));
         key = file + strlen(file) + 1;
         im = calloc(1, sizeof(Evas_Cserve_Image));
         if (!im) continue;
