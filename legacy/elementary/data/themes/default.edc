@@ -1,3 +1,11 @@
+// LICENSE NOTE:
+// This file (and only this one) is licenses under public-domain. The reason
+// is that this is meant to serve as a template for making your own themes and
+// Elementary's LGPL license is not intended to follow. The images used do come
+// under LGPL, but this file specifically for the structure of your theme is
+// public-domain. This means you can take, use, re-license and otherwise
+// have zero restrictions on using this file as a base for your theme.
+
 collections {
 
 ///////////////////////////////////////////////////////////////////////////////
