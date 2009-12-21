@@ -283,3 +283,9 @@
 2009-12-11  Cedric BAIL
 
 	* Make eet_data_descriptor_free safe to call on NULL pointer.
+
+2009-12-21  Cedric BAIL
+
+	* More work on eet_node dump code.
+
+
