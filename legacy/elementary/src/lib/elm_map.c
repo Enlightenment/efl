@@ -53,7 +53,7 @@ typedef struct _Marker_Group Marker_Group;
 
 
 #define SOURCE_PATH "http://tile.openstreetmap.org/%d/%d/%d.png"
-#define DEST_DIR_ZOOM_PATH "/tmp/elm_map/%d/"
+#define DEST_DIR_ZOOM_PATH "/tmp/elm_map/%d/%d/"
 #define DEST_DIR_PATH DEST_DIR_ZOOM_PATH"%d/"
 #define DEST_FILE_PATH "%s%d.png"
 
@@ -251,7 +251,7 @@ static void _group_bubble_create(Marker_Group *group);
 static void _group_bubble_free(Marker_Group *group);
 static void _group_bubble_place(Marker_Group *group);
 
-static void _group_bubble_content_update(Marker_Group *group);
+static int _group_bubble_content_update(Marker_Group *group);
 static void _group_bubble_content_free(Marker_Group *group);
 static void marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh);
 static void _bubble_sc_hits_changed_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -512,7 +512,7 @@ grid_clear(Evas_Object *obj, Grid *g)
    Eina_Iterator *it = eina_matrixsparse_iterator_new(g->grid);
    Eina_Matrixsparse_Cell *cell;
 
-   snprintf(buf, PATH_MAX, DEST_DIR_ZOOM_PATH, g->zoom);
+   snprintf(buf, PATH_MAX, DEST_DIR_ZOOM_PATH, obj, g->zoom);
    ecore_file_recursive_rm(buf);
 
    EINA_ITERATOR_FOREACH(it, cell)
@@ -773,7 +773,7 @@ grid_load(Evas_Object *obj, Grid *g)
 
 		  gi->want = EINA_TRUE;
 
-		  snprintf(buf, PATH_MAX, DEST_DIR_PATH, g->zoom, x);
+		  snprintf(buf, PATH_MAX, DEST_DIR_PATH, obj, g->zoom, x);
 		  if(!ecore_file_exists(buf))
 		    ecore_file_mkpath(buf);
 
@@ -1407,7 +1407,12 @@ _group_bubble_create(Marker_Group *group)
    elm_widget_sub_object_add(group->wd->obj, group->bubble);
 
    _group_bubble_content_free(group);
-   _group_bubble_content_update(group);
+   if(!_group_bubble_content_update(group))
+     {
+	//no content, we can delete the bubble
+	_group_bubble_free(group);
+	return ;
+     }
 
    group->rect = evas_object_rectangle_add(evas_object_evas_get(group->obj));
    evas_object_color_set(group->rect, 0, 0, 0, 0);
@@ -1426,14 +1431,14 @@ static void _bubble_sc_hits_changed_cb(void *data, Evas *e, Evas_Object *obj, vo
    _group_bubble_place(data);
 }
 
-static void
+static int
 _group_bubble_content_update(Marker_Group *group)
 {
    Eina_List *l;
    Elm_Map_Marker *marker;
    int i = 0;
 
-   if(!group->bubble) return ;
+   if(!group->bubble) return 1;
 
    if(!group->sc)
      {
@@ -1470,9 +1475,13 @@ _group_bubble_content_update(Marker_Group *group)
 	  elm_box_unpack(group->bx, marker->content);
 
 	if(marker->content)
-	  elm_box_pack_end(group->bx, marker->content);
-	i++;
+	  {
+	     elm_box_pack_end(group->bx, marker->content);
+	     i++;
+	  }
      }
+
+   return i;
 }
 
 static void
@@ -2467,20 +2476,17 @@ elm_map_markers_list_show(Eina_List *markers)
    lat = (m_max_lat->latitude - m_min_lat->latitude) / 2. + m_min_lat->latitude;
 
    elm_smart_scroller_child_viewport_size_get(wd->scr, &rw, &rh);
-   for (zoom = 18; zoom>=0; zoom--)
+   for (zoom = 18; zoom>0; zoom--)
      {
 	Evas_Coord size = pow(2.0, zoom)*wd->tsize;
 	elm_map_utils_convert_geo_into_coord(lon, lat, size, &xc, &yc);
 
-	if(m_min_lon->x[zoom] - wd->marker_max_w > xc-rw/2
-	      && m_min_lat->y[zoom] - wd->marker_max_h > yc-rh/2
-	      && m_max_lon->x[zoom] + wd->marker_max_w < xc+rw/2
-	      && m_max_lat->y[zoom] + wd->marker_max_h < yc+rh/2)
+	if(m_min_lon->x[zoom] - wd->marker_max_w >= xc-rw/2
+	      && m_min_lat->y[zoom] - wd->marker_max_h >= yc-rh/2
+	      && m_max_lon->x[zoom] + wd->marker_max_w <= xc+rw/2
+	      && m_max_lat->y[zoom] + wd->marker_max_h <= yc+rh/2)
 	  break;
      }
-
-   if(zoom<0)
-     zoom = 0;
 
    elm_map_geo_region_show(wd->obj, lon, lat);
    elm_map_zoom_set(wd->obj, zoom);
