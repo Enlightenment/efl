@@ -30,6 +30,8 @@ ecore_x_gc_new(Ecore_X_Drawable draw, Ecore_X_GC_Value_Mask value_mask, const un
 
    if (!draw) draw = DefaultRootWindow(_ecore_x_disp);
 
+   memset(&gcv, 0, sizeof (gcv));
+
    for (i = 0, index = 0, mask = 1; i <= 22; i++, mask <<= 1)
      {
         switch (mask & value_mask)

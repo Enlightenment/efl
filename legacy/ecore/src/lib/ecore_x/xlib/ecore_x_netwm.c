@@ -276,7 +276,6 @@ ecore_x_netwm_client_active_request(Ecore_X_Window root, Ecore_X_Window win, int
    xev.xclient.data.l[2] = current_win;
    xev.xclient.data.l[3] = 0;
    xev.xclient.data.l[4] = 0;
-   xev.xclient.data.l[5] = 0;
 
    XSendEvent(_ecore_x_disp, root, False, 
 	      SubstructureRedirectMask | SubstructureNotifyMask, &xev);
@@ -1066,7 +1065,6 @@ ecore_x_netwm_ping_send(Ecore_X_Window win)
    xev.xclient.data.l[2] = win;
    xev.xclient.data.l[3] = 0;
    xev.xclient.data.l[4] = 0;
-   xev.xclient.data.l[5] = 0;
 
    XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
 }

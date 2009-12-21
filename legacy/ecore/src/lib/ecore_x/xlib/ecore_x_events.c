@@ -233,7 +233,7 @@ _ecore_key_press(int event,
 		 XKeyEvent *xevent)
 {
    Ecore_Event_Key *e;
-   const char *compose = NULL;
+   char *compose = NULL;
    char *tmp = NULL;
    char *keyname;
    char *key;

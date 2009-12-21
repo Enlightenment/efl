@@ -228,7 +228,7 @@ ecore_thread_run(void (*func_heavy)(void *data),
    work = malloc(sizeof (Ecore_Pthread_Worker));
    if (!work)
      {
-	func_cancel(data);
+        func_cancel((void*) data);
 	return NULL;
      }
 

@@ -535,13 +535,10 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                        p->fd_handler = NULL;
                        return ECORE_CALLBACK_CANCEL;
                     }
-                  else
-                    goto _win32_done;
 	       }
 #endif
 	  }
 
-     _win32_done:
 	if (!p->passed_data)
 	  p->passed_data = malloc(p->len);
 
