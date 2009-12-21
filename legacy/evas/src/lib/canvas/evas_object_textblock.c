@@ -163,8 +163,6 @@ static void evas_object_textblock_coords_recalc(Evas_Object *obj);
 
 static void evas_object_textblock_scale_update(Evas_Object *obj);
 
-static void evas_object_textblock_text_markup_rebuild(Evas_Object_Textblock *o);
-
 static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
@@ -226,161 +224,6 @@ static const Evas_Object_Func object_func =
  * @{
  * @ingroup Evas_Object_Specific
  */
-
-/* table of html escapes (that i can find) this should be ordered with the
- * most common first as it's a linear search to match - no hash for this.
- *
- * these are stored as one large string and one additional array that
- * contains the offsets to the tokens for space efficiency.
- */
-static const char escape_strings[] =
-	/* most common escaped stuff */
-	" \0"          "\x20\0" /* NOTE: this here to avoid escaping to &nbsp */
-	"&nbsp;\0"     "\x20\0" /* NOTE: we allow nsbp's to break as we map early - maybe map to ascii 0x01 and then make the rendering code think 0x01 -> 0x20 */
-	"&quot;\0"     "\x22\0"
-	"&amp;\0"      "\x26\0"
-	"&lt;\0"       "\x3c\0"
-	"&gt;\0"       "\x3e\0"
-	/* all the rest */
-	"&iexcl;\0"    "\xc2\xa1\0"
-	"&cent;\0"     "\xc2\xa2\0"
-	"&pound;\0"    "\xc2\xa3\0"
-	"&curren;\0"   "\xc2\xa4\0"
-	"&yen;\0"      "\xc2\xa5\0"
-	"&brvbar;\0"   "\xc2\xa6\0"
-	"&sect;\0"     "\xc2\xa7\0"
-	"&uml;\0"      "\xc2\xa8\0"
-	"&copy;\0"     "\xc2\xa9\0"
-	"&ordf;\0"     "\xc2\xaa\0"
-	"&laquo;\0"    "\xc2\xab\0"
-	"&not;\0"      "\xc2\xac\0"
-	"&reg;\0"      "\xc2\xae\0"
-	"&macr;\0"     "\xc2\xaf\0"
-	"&deg;\0"      "\xc2\xb0\0"
-	"&plusmn;\0"   "\xc2\xb1\0"
-	"&sup2;\0"     "\xc2\xb2\0"
-	"&sup3;\0"     "\xc2\xb3\0"
-	"&acute;\0"    "\xc2\xb4\0"
-	"&micro;\0"    "\xc2\xb5\0"
-	"&para;\0"     "\xc2\xb6\0"
-	"&middot;\0"   "\xc2\xb7\0"
-	"&cedil;\0"    "\xc2\xb8\0"
-	"&sup1;\0"     "\xc2\xb9\0"
-	"&ordm;\0"     "\xc2\xba\0"
-	"&raquo;\0"    "\xc2\xbb\0"
-	"&frac14;\0"   "\xc2\xbc\0"
-	"&frac12;\0"   "\xc2\xbd\0"
-	"&frac34;\0"   "\xc2\xbe\0"
-	"&iquest;\0"   "\xc2\xbf\0"
-	"&Agrave;\0"   "\xc3\x80\0"
-	"&Aacute;\0"   "\xc3\x81\0"
-	"&Acirc;\0"    "\xc3\x82\0"
-	"&Atilde;\0"   "\xc3\x83\0"
-	"&Auml;\0"     "\xc3\x84\0"
-	"&Aring;\0"    "\xc3\x85\0"
-	"&Aelig;\0"    "\xc3\x86\0"
-	"&Ccedil;\0"   "\xc3\x87\0"
-	"&Egrave;\0"   "\xc3\x88\0"
-	"&Eacute;\0"   "\xc3\x89\0"
-	"&Ecirc;\0"    "\xc3\x8a\0"
-	"&Euml;\0"     "\xc3\x8b\0"
-	"&Egrave;\0"   "\xc3\x8c\0"
-	"&Eacute;\0"   "\xc3\x8d\0"
-	"&Icirc;\0"    "\xc3\x8e\0"
-	"&Iuml;\0"     "\xc3\x8f\0"
-	"&Eth;\0"      "\xc3\x90\0"
-	"&Ntilde;\0"   "\xc3\x91\0"
-	"&Ograve;\0"   "\xc3\x92\0"
-	"&Oacute;\0"   "\xc3\x93\0"
-	"&Ocirc;\0"    "\xc3\x94\0"
-	"&Otilde;\0"   "\xc3\x95\0"
-	"&Ouml;\0"     "\xc3\x96\0"
-	"&times;\0"    "\xc3\x97\0"
-	"&Oslash;\0"   "\xc3\x98\0"
-	"&Ugrave;\0"   "\xc3\x99\0"
-	"&Uacute;\0"   "\xc3\x9a\0"
-	"&Ucirc;\0"    "\xc3\x9b\0"
-	"&Yacute;\0"   "\xc3\x9d\0"
-	"&Thorn;\0"    "\xc3\x9e\0"
-	"&szlig;\0"    "\xc3\x9f\0"
-	"&agrave;\0"   "\xc3\xa0\0"
-	"&aacute;\0"   "\xc3\xa1\0"
-	"&acirc;\0"    "\xc3\xa2\0"
-	"&atilde;\0"   "\xc3\xa3\0"
-	"&auml;\0"     "\xc3\xa4\0"
-	"&aring;\0"    "\xc3\xa5\0"
-	"&aelig;\0"    "\xc3\xa6\0"
-	"&ccedil;\0"   "\xc3\xa7\0"
-	"&egrave;\0"   "\xc3\xa8\0"
-	"&eacute;\0"   "\xc3\xa9\0"
-	"&ecirc;\0"    "\xc3\xaa\0"
-	"&euml;\0"     "\xc3\xab\0"
-	"&igrave;\0"   "\xc3\xac\0"
-	"&iacute;\0"   "\xc3\xad\0"
-	"&icirc;\0"    "\xc3\xae\0"
-	"&iuml;\0"     "\xc3\xaf\0"
-	"&eth;\0"      "\xc3\xb0\0"
-	"&ntilde;\0"   "\xc3\xb1\0"
-	"&ograve;\0"   "\xc3\xb2\0"
-	"&oacute;\0"   "\xc3\xb3\0"
-	"&ocirc;\0"    "\xc3\xb4\0"
-	"&otilde;\0"   "\xc3\xb5\0"
-	"&ouml;\0"     "\xc3\xb6\0"
-	"&divide;\0"   "\xc3\xb7\0"
-	"&oslash;\0"   "\xc3\xb8\0"
-	"&ugrave;\0"   "\xc3\xb9\0"
-	"&uacute;\0"   "\xc3\xba\0"
-	"&ucirc;\0"    "\xc3\xbb\0"
-	"&uuml;\0"     "\xc3\xbc\0"
-	"&yacute;\0"   "\xc3\xbd\0"
-	"&thorn;\0"    "\xc3\xbe\0"
-	"&yuml;\0"     "\xc3\xbf\0"
-	"&alpha;\0"    "\xce\x91\0"
-	"&beta;\0"     "\xce\x92\0"
-	"&gamma;\0"    "\xce\x93\0"
-	"&delta;\0"    "\xce\x94\0"
-	"&epsilon;\0"  "\xce\x95\0"
-	"&zeta;\0"     "\xce\x96\0"
-	"&eta;\0"      "\xce\x97\0"
-	"&theta;\0"    "\xce\x98\0"
-	"&iota;\0"     "\xce\x99\0"
-	"&kappa;\0"    "\xce\x9a\0"
-	"&lambda;\0"   "\xce\x9b\0"
-	"&mu;\0"       "\xce\x9c\0"
-	"&nu;\0"       "\xce\x9d\0"
-	"&xi;\0"       "\xce\x9e\0"
-	"&omicron;\0"  "\xce\x9f\0"
-	"&pi;\0"       "\xce\xa0\0"
-	"&rho;\0"      "\xce\xa1\0"
-	"&sigma;\0"    "\xce\xa3\0"
-	"&tau;\0"      "\xce\xa4\0"
-	"&upsilon;\0"  "\xce\xa5\0"
-	"&phi;\0"      "\xce\xa6\0"
-	"&chi;\0"      "\xce\xa7\0"
-	"&psi;\0"      "\xce\xa8\0"
-	"&omega;\0"    "\xce\xa9\0"
-	"&hellip;\0"   "\xe2\x80\xa6\0"
-	"&euro;\0"     "\xe2\x82\xac\0"
-	"&larr;\0"     "\xe2\x86\x90\0"
-	"&uarr;\0"     "\xe2\x86\x91\0"
-	"&rarr;\0"     "\xe2\x86\x92\0"
-	"&darr;\0"     "\xe2\x86\x93\0"
-	"&harr;\0"     "\xe2\x86\x94\0"
-	"&larr;\0"     "\xe2\x87\x90\0"
-	"&rarr;\0"     "\xe2\x87\x92\0"
-	"&forall;\0"   "\xe2\x88\x80\0"
-	"&exist;\0"    "\xe2\x88\x83\0"
-	"&nabla;\0"    "\xe2\x88\x87\0"
-	"&prod;\0"     "\xe2\x88\x8f\0"
-	"&sum;\0"      "\xe2\x88\x91\0"
-	"&and;\0"      "\xe2\x88\xa7\0"
-	"&or;\0"       "\xe2\x88\xa8\0"
-	"&int;\0"      "\xe2\x88\xab\0"
-	"&ne;\0"       "\xe2\x89\xa0\0"
-	"&equiv;\0"    "\xe2\x89\xa1\0"
-	"&oplus;\0"    "\xe2\x8a\x95\0"
-	"&perp;\0"     "\xe2\x8a\xa5\0"
-;
 
 /* styles */
 static void
@@ -637,87 +480,6 @@ _lines_clear(const Evas_Object *obj, Evas_Object_Textblock_Line *lines)
      }
 }
 
-static inline void
-_advance_after_end_of_string(const char **p_buf)
-{
-   while (**p_buf != 0) (*p_buf)++;
-   (*p_buf)++;
-}
-
-static inline int
-_is_eq_and_advance(const char *s, const char *s_end,
-		   const char **p_m, const char *m_end)
-{
-   for (;((s < s_end) && (*p_m < m_end)); s++, (*p_m)++)
-     {
-	if (*s != **p_m)
-	  {
-	     _advance_after_end_of_string(p_m);
-	     return 0;
-	  }
-     }
-
-   if (*p_m < m_end)
-     _advance_after_end_of_string(p_m);
-
-   return s == s_end;
-}
-
-static inline const char *
-_escaped_char_match(const char *s, int *adv)
-{
-   const char *map_itr, *map_end, *mc, *sc;
-
-   map_itr = escape_strings;
-   map_end = map_itr + sizeof(escape_strings);
-
-   while (map_itr < map_end)
-     {
-	const char *escape;
-	int match;
-
-	escape = map_itr;
-	_advance_after_end_of_string(&map_itr);
-	if (map_itr >= map_end) break;
-
-	mc = map_itr;
-	sc = s;
-	match = 1;
-	while ((*mc) && (*sc))
-	  {
-	     if ((unsigned char)*sc < (unsigned char)*mc) return NULL;
-	     if (*sc != *mc) match = 0;
-	     mc++;
-	     sc++;
-	  }
-	if (match)
-	  {
-	     *adv = mc - map_itr;
-	     return escape;
-	  }
-	_advance_after_end_of_string(&map_itr);
-     }
-   return NULL;
-}
-
-static inline const char *
-_escaped_char_get(const char *s, const char *s_end)
-{
-   const char *map_itr, *map_end;
-
-   map_itr = escape_strings;
-   map_end = map_itr + sizeof(escape_strings);
-
-   while (map_itr < map_end)
-     {
-	if (_is_eq_and_advance(s, s_end, &map_itr, map_end))
-	  return map_itr;
-	if (map_itr < map_end)
-	  _advance_after_end_of_string(&map_itr);
-     }
-   return NULL;
-}
-
 static void
 _nodes_adjacent_merge(const Evas_Object *obj, Evas_Object_Textblock_Node *n1)
 {
@@ -783,6 +545,162 @@ _nodes_adjacent_merge(const Evas_Object *obj, Evas_Object_Textblock_Node *n1)
 	n1 = n0;
      }
 }
+
+/* table of html escapes (that i can find) this should be ordered with the
+ * most common first as it's a linear search to match - no hash for this.
+ *
+ * these are stored as one large string and one additional array that
+ * contains the offsets to the tokens for space efficiency.
+ */
+static const char escape_strings[] =
+	/* most common escaped stuff */
+	" \0"          "\x20\0" /* NOTE: this here to avoid escaping to &nbsp */
+	"&nbsp;\0"     "\x20\0" /* NOTE: we allow nsbp's to break as we map early - maybe map to ascii 0x01 and then make the rendering code think 0x01 -> 0x20 */
+	"&quot;\0"     "\x22\0"
+	"&amp;\0"      "\x26\0"
+	"&lt;\0"       "\x3c\0"
+	"&gt;\0"       "\x3e\0"
+	/* all the rest */
+	"&iexcl;\0"    "\xc2\xa1\0"
+	"&cent;\0"     "\xc2\xa2\0"
+	"&pound;\0"    "\xc2\xa3\0"
+	"&curren;\0"   "\xc2\xa4\0"
+	"&yen;\0"      "\xc2\xa5\0"
+	"&brvbar;\0"   "\xc2\xa6\0"
+	"&sect;\0"     "\xc2\xa7\0"
+	"&uml;\0"      "\xc2\xa8\0"
+	"&copy;\0"     "\xc2\xa9\0"
+	"&ordf;\0"     "\xc2\xaa\0"
+	"&laquo;\0"    "\xc2\xab\0"
+	"&not;\0"      "\xc2\xac\0"
+	"&reg;\0"      "\xc2\xae\0"
+	"&macr;\0"     "\xc2\xaf\0"
+	"&deg;\0"      "\xc2\xb0\0"
+	"&plusmn;\0"   "\xc2\xb1\0"
+	"&sup2;\0"     "\xc2\xb2\0"
+	"&sup3;\0"     "\xc2\xb3\0"
+	"&acute;\0"    "\xc2\xb4\0"
+	"&micro;\0"    "\xc2\xb5\0"
+	"&para;\0"     "\xc2\xb6\0"
+	"&middot;\0"   "\xc2\xb7\0"
+	"&cedil;\0"    "\xc2\xb8\0"
+	"&sup1;\0"     "\xc2\xb9\0"
+	"&ordm;\0"     "\xc2\xba\0"
+	"&raquo;\0"    "\xc2\xbb\0"
+	"&frac14;\0"   "\xc2\xbc\0"
+	"&frac12;\0"   "\xc2\xbd\0"
+	"&frac34;\0"   "\xc2\xbe\0"
+	"&iquest;\0"   "\xc2\xbf\0"
+	"&Agrave;\0"   "\xc3\x80\0"
+	"&Aacute;\0"   "\xc3\x81\0"
+	"&Acirc;\0"    "\xc3\x82\0"
+	"&Atilde;\0"   "\xc3\x83\0"
+	"&Auml;\0"     "\xc3\x84\0"
+	"&Aring;\0"    "\xc3\x85\0"
+	"&Aelig;\0"    "\xc3\x86\0"
+	"&Ccedil;\0"   "\xc3\x87\0"
+	"&Egrave;\0"   "\xc3\x88\0"
+	"&Eacute;\0"   "\xc3\x89\0"
+	"&Ecirc;\0"    "\xc3\x8a\0"
+	"&Euml;\0"     "\xc3\x8b\0"
+	"&Egrave;\0"   "\xc3\x8c\0"
+	"&Eacute;\0"   "\xc3\x8d\0"
+	"&Icirc;\0"    "\xc3\x8e\0"
+	"&Iuml;\0"     "\xc3\x8f\0"
+	"&Eth;\0"      "\xc3\x90\0"
+	"&Ntilde;\0"   "\xc3\x91\0"
+	"&Ograve;\0"   "\xc3\x92\0"
+	"&Oacute;\0"   "\xc3\x93\0"
+	"&Ocirc;\0"    "\xc3\x94\0"
+	"&Otilde;\0"   "\xc3\x95\0"
+	"&Ouml;\0"     "\xc3\x96\0"
+	"&times;\0"    "\xc3\x97\0"
+	"&Oslash;\0"   "\xc3\x98\0"
+	"&Ugrave;\0"   "\xc3\x99\0"
+	"&Uacute;\0"   "\xc3\x9a\0"
+	"&Ucirc;\0"    "\xc3\x9b\0"
+	"&Yacute;\0"   "\xc3\x9d\0"
+	"&Thorn;\0"    "\xc3\x9e\0"
+	"&szlig;\0"    "\xc3\x9f\0"
+	"&agrave;\0"   "\xc3\xa0\0"
+	"&aacute;\0"   "\xc3\xa1\0"
+	"&acirc;\0"    "\xc3\xa2\0"
+	"&atilde;\0"   "\xc3\xa3\0"
+	"&auml;\0"     "\xc3\xa4\0"
+	"&aring;\0"    "\xc3\xa5\0"
+	"&aelig;\0"    "\xc3\xa6\0"
+	"&ccedil;\0"   "\xc3\xa7\0"
+	"&egrave;\0"   "\xc3\xa8\0"
+	"&eacute;\0"   "\xc3\xa9\0"
+	"&ecirc;\0"    "\xc3\xaa\0"
+	"&euml;\0"     "\xc3\xab\0"
+	"&igrave;\0"   "\xc3\xac\0"
+	"&iacute;\0"   "\xc3\xad\0"
+	"&icirc;\0"    "\xc3\xae\0"
+	"&iuml;\0"     "\xc3\xaf\0"
+	"&eth;\0"      "\xc3\xb0\0"
+	"&ntilde;\0"   "\xc3\xb1\0"
+	"&ograve;\0"   "\xc3\xb2\0"
+	"&oacute;\0"   "\xc3\xb3\0"
+	"&ocirc;\0"    "\xc3\xb4\0"
+	"&otilde;\0"   "\xc3\xb5\0"
+	"&ouml;\0"     "\xc3\xb6\0"
+	"&divide;\0"   "\xc3\xb7\0"
+	"&oslash;\0"   "\xc3\xb8\0"
+	"&ugrave;\0"   "\xc3\xb9\0"
+	"&uacute;\0"   "\xc3\xba\0"
+	"&ucirc;\0"    "\xc3\xbb\0"
+	"&uuml;\0"     "\xc3\xbc\0"
+	"&yacute;\0"   "\xc3\xbd\0"
+	"&thorn;\0"    "\xc3\xbe\0"
+	"&yuml;\0"     "\xc3\xbf\0"
+	"&alpha;\0"    "\xce\x91\0"
+	"&beta;\0"     "\xce\x92\0"
+	"&gamma;\0"    "\xce\x93\0"
+	"&delta;\0"    "\xce\x94\0"
+	"&epsilon;\0"  "\xce\x95\0"
+	"&zeta;\0"     "\xce\x96\0"
+	"&eta;\0"      "\xce\x97\0"
+	"&theta;\0"    "\xce\x98\0"
+	"&iota;\0"     "\xce\x99\0"
+	"&kappa;\0"    "\xce\x9a\0"
+	"&lambda;\0"   "\xce\x9b\0"
+	"&mu;\0"       "\xce\x9c\0"
+	"&nu;\0"       "\xce\x9d\0"
+	"&xi;\0"       "\xce\x9e\0"
+	"&omicron;\0"  "\xce\x9f\0"
+	"&pi;\0"       "\xce\xa0\0"
+	"&rho;\0"      "\xce\xa1\0"
+	"&sigma;\0"    "\xce\xa3\0"
+	"&tau;\0"      "\xce\xa4\0"
+	"&upsilon;\0"  "\xce\xa5\0"
+	"&phi;\0"      "\xce\xa6\0"
+	"&chi;\0"      "\xce\xa7\0"
+	"&psi;\0"      "\xce\xa8\0"
+	"&omega;\0"    "\xce\xa9\0"
+	"&hellip;\0"   "\xe2\x80\xa6\0"
+	"&euro;\0"     "\xe2\x82\xac\0"
+	"&larr;\0"     "\xe2\x86\x90\0"
+	"&uarr;\0"     "\xe2\x86\x91\0"
+	"&rarr;\0"     "\xe2\x86\x92\0"
+	"&darr;\0"     "\xe2\x86\x93\0"
+	"&harr;\0"     "\xe2\x86\x94\0"
+	"&larr;\0"     "\xe2\x87\x90\0"
+	"&rarr;\0"     "\xe2\x87\x92\0"
+	"&forall;\0"   "\xe2\x88\x80\0"
+	"&exist;\0"    "\xe2\x88\x83\0"
+	"&nabla;\0"    "\xe2\x88\x87\0"
+	"&prod;\0"     "\xe2\x88\x8f\0"
+	"&sum;\0"      "\xe2\x88\x91\0"
+	"&and;\0"      "\xe2\x88\xa7\0"
+	"&or;\0"       "\xe2\x88\xa8\0"
+	"&int;\0"      "\xe2\x88\xab\0"
+	"&ne;\0"       "\xe2\x89\xa0\0"
+	"&equiv;\0"    "\xe2\x89\xa1\0"
+	"&oplus;\0"    "\xe2\x8a\x95\0"
+	"&perp;\0"     "\xe2\x8a\xa5\0"
+;
+
 
 static int
 _is_white(int c)
@@ -1932,7 +1850,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	int i, len, chlen;
 	char *ptr;
 
-	len = evas_common_font_utf8_get_len((unsigned char *) n->text);
+	len = evas_common_font_utf8_get_len(n->text);
 	chlen = strlen(repch);
 	str = alloca((len * chlen) + 1);
 	tbase = str;
@@ -2392,7 +2310,7 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, in
      {
         int pos2 = pos;
 
-        evas_common_font_utf8_get_prev((unsigned char *) n->text, &pos2);
+        evas_common_font_utf8_get_prev(n->text, &pos2);
         if (pos2 < pos) pos = pos2;
      }
    EINA_INLIST_FOREACH(o->lines, ln)
@@ -2472,71 +2390,6 @@ _find_layout_line_num(const Evas_Object *obj, int line)
    return NULL;
 }
 
-static void
-evas_object_textblock_text_markup_rebuild(Evas_Object_Textblock *o)
-{
-   Evas_Object_Textblock_Node *n;
-   char *txt = NULL;
-   int txt_len = 0, txt_alloc = 0;
-
-   EINA_INLIST_FOREACH(o->nodes, n)
-     {
-        if ((n->type == NODE_FORMAT) && (n->text))
-	  {
-	     char *tag = _style_match_replace(o->style, n->text);
-	     txt = _strbuf_append(txt, "<", &txt_len, &txt_alloc);
-	     if (tag)
-	       {
-		  // FIXME: need to escape
-		  txt = _strbuf_append(txt, tag, &txt_len, &txt_alloc);
-	       }
-	     else
-	       {
-		  char *s;
-		  int push = 0;
-		  int pop = 0;
-
-		  // FIXME: need to escape
-		  s = n->text;
-		  if (*s == '+') push = 1;
-		  if (*s == '-') pop = 1;
-		  while ((*s == ' ') || (*s == '+') || (*s == '-')) s++;
-		  if (pop) txt = _strbuf_append(txt, "/", &txt_len, &txt_alloc);
-		  if (push) txt = _strbuf_append(txt, "+ ", &txt_len, &txt_alloc);
-		  txt = _strbuf_append(txt, s, &txt_len, &txt_alloc);
-	       }
-	     txt = _strbuf_append(txt, ">", &txt_len, &txt_alloc);
-	  }
-	else if ((n->type == NODE_TEXT) && (n->text))
-	  {
-	     const char *p = n->text;
-
-	     while (*p)
-	       {
-		  const char *escape;
-		  int adv;
-
-		  escape = _escaped_char_match(p, &adv);
-		  if (escape)
-		    {
-		       p += adv;
-		       txt = _strbuf_append(txt, escape, &txt_len, &txt_alloc);
-		    }
-		  else
-		    {
-		       char str[2];
-
-		       str[0] = *p;
-		       str[1] = 0;
-		       txt = _strbuf_append(txt, str, &txt_len, &txt_alloc);
-		       p++;
-		    }
-	       }
-	  }
-     }
-   o->markup_text = txt;
-}
-
 /**
  * Adds a textblock to the given evas.
  * @param   e The given evas.
@@ -2609,7 +2462,7 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
 	  {
 	     free(o->markup_text);
 	     o->markup_text = NULL;
-	     evas_object_textblock_text_markup_rebuild(o);
+	     evas_object_textblock_text_markup_get(obj);
 	  }
      }
 
@@ -2750,7 +2603,7 @@ evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
           {
              free(o->markup_text);
              o->markup_text = NULL;
-	     evas_object_textblock_text_markup_rebuild(o);
+             evas_object_textblock_text_markup_get(obj);
           }
      }
    if (o->style)
@@ -2821,6 +2674,88 @@ evas_object_textblock_replace_char_get(Evas_Object *obj)
 {
    TB_HEAD_RETURN(NULL);
    return o->repch;
+}
+
+
+static inline void
+_advance_after_end_of_string(const char **p_buf)
+{
+   while (**p_buf != 0) (*p_buf)++;
+   (*p_buf)++;
+}
+
+static inline int
+_is_eq_and_advance(const char *s, const char *s_end,
+		   const char **p_m, const char *m_end)
+{
+   for (;((s < s_end) && (*p_m < m_end)); s++, (*p_m)++)
+     {
+	if (*s != **p_m)
+	  {
+	     _advance_after_end_of_string(p_m);
+	     return 0;
+	  }
+     }
+
+   if (*p_m < m_end)
+     _advance_after_end_of_string(p_m);
+
+   return s == s_end;
+}
+
+static inline const char *
+_escaped_char_match(const char *s, int *adv)
+{
+   const char *map_itr, *map_end, *mc, *sc;
+
+   map_itr = escape_strings;
+   map_end = map_itr + sizeof(escape_strings);
+
+   while (map_itr < map_end)
+     {
+	const char *escape;
+	int match;
+
+	escape = map_itr;
+	_advance_after_end_of_string(&map_itr);
+	if (map_itr >= map_end) break;
+
+	mc = map_itr;
+	sc = s;
+	match = 1;
+	while ((*mc) && (*sc))
+	  {
+	     if ((unsigned char)*sc < (unsigned char)*mc) return NULL;
+	     if (*sc != *mc) match = 0;
+	     mc++;
+	     sc++;
+	  }
+	if (match)
+	  {
+	     *adv = mc - map_itr;
+	     return escape;
+	  }
+	_advance_after_end_of_string(&map_itr);
+     }
+   return NULL;
+}
+
+static inline const char *
+_escaped_char_get(const char *s, const char *s_end)
+{
+   const char *map_itr, *map_end;
+
+   map_itr = escape_strings;
+   map_end = map_itr + sizeof(escape_strings);
+
+   while (map_itr < map_end)
+     {
+	if (_is_eq_and_advance(s, s_end, &map_itr, map_end))
+	  return map_itr;
+	if (map_itr < map_end)
+	  _advance_after_end_of_string(&map_itr);
+     }
+   return NULL;
 }
 
 /**
@@ -3161,9 +3096,68 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
 EAPI const char *
 evas_object_textblock_text_markup_get(const Evas_Object *obj)
 {
+   Evas_Object_Textblock_Node *n;
+   char *txt = NULL;
+   int txt_len = 0, txt_alloc = 0;
+
    TB_HEAD_RETURN(NULL);
    if (o->markup_text) return(o->markup_text);
-   evas_object_textblock_text_markup_rebuild(o);
+   EINA_INLIST_FOREACH(o->nodes, n)
+     {
+        if ((n->type == NODE_FORMAT) && (n->text))
+	  {
+	     char *tag = _style_match_replace(o->style, n->text);
+	     txt = _strbuf_append(txt, "<", &txt_len, &txt_alloc);
+	     if (tag)
+	       {
+		  // FIXME: need to escape
+		  txt = _strbuf_append(txt, tag, &txt_len, &txt_alloc);
+	       }
+	     else
+	       {
+		  char *s;
+		  int push = 0;
+		  int pop = 0;
+
+		  // FIXME: need to escape
+		  s = n->text;
+		  if (*s == '+') push = 1;
+		  if (*s == '-') pop = 1;
+		  while ((*s == ' ') || (*s == '+') || (*s == '-')) s++;
+		  if (pop) txt = _strbuf_append(txt, "/", &txt_len, &txt_alloc);
+		  if (push) txt = _strbuf_append(txt, "+ ", &txt_len, &txt_alloc);
+		  txt = _strbuf_append(txt, s, &txt_len, &txt_alloc);
+	       }
+	     txt = _strbuf_append(txt, ">", &txt_len, &txt_alloc);
+	  }
+	else if ((n->type == NODE_TEXT) && (n->text))
+	  {
+	     const char *p = n->text;
+
+	     while (*p)
+	       {
+		  const char *escape;
+		  int adv;
+
+		  escape = _escaped_char_match(p, &adv);
+		  if (escape)
+		    {
+		       p += adv;
+		       txt = _strbuf_append(txt, escape, &txt_len, &txt_alloc);
+		    }
+		  else
+		    {
+		       char str[2];
+
+		       str[0] = *p;
+		       str[1] = 0;
+		       txt = _strbuf_append(txt, str, &txt_len, &txt_alloc);
+		       p++;
+		    }
+	       }
+	  }
+     }
+   o->markup_text = txt;
    return o->markup_text;
 }
 
@@ -3371,7 +3365,7 @@ evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *cur)
                {
                   int plast;
 
-                  plast = evas_common_font_utf8_get_last((unsigned char *) it->text, strlen(it->text));
+                  plast = evas_common_font_utf8_get_last(it->text, strlen(it->text));
                   if ((index - it->source_pos) == plast) at_end_of_line = 1;
                }
           }
