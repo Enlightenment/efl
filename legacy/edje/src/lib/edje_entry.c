@@ -1971,7 +1971,7 @@ _edje_entry_cursor_down(Edje_Real_Part *rp, Edje_Cursor cur)
 {
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
    Evas_Coord lx, ly, lw, lh, cx, cy, cw, ch;
-   int ln, ll;
+   int ln;
    if (!c) return 0;
    ln = evas_textblock_cursor_line_geometry_get(c, NULL, NULL, NULL, NULL);
    ln++;

@@ -4049,7 +4049,7 @@ _edje_lua_part_fn_box_insert_before(lua_State *L)
    Edje_Lua_Evas_Object *tar = _edje_lua_checkudata(L, 2, &mObject);
    Edje_Lua_Evas_Object *ref = _edje_lua_checkudata(L, 3, &mObject);
    lua_pushboolean(L,
-	 edje_object_part_box_insert_before(obj->ed->obj, obj->key, tar->eo, tar->eo));
+	 edje_object_part_box_insert_before(obj->ed->obj, obj->key, tar->eo, ref->eo));
    return 1;
 }
 
