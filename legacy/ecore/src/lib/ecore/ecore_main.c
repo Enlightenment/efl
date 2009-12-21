@@ -454,23 +454,24 @@ _ecore_main_select(double timeout)
      if (!fdh->delete_me && fdh->prep_func)
        fdh->prep_func (fdh->prep_data, fdh);
    EINA_INLIST_FOREACH(fd_handlers, fdh)
-     {
-	if (fdh->flags & ECORE_FD_READ)
-	  {
-	     FD_SET(fdh->fd, &rfds);
-	     if (fdh->fd > max_fd) max_fd = fdh->fd;
-	  }
-	if (fdh->flags & ECORE_FD_WRITE)
-	  {
-	     FD_SET(fdh->fd, &wfds);
-	     if (fdh->fd > max_fd) max_fd = fdh->fd;
-	  }
-	if (fdh->flags & ECORE_FD_ERROR)
-	  {
-	     FD_SET(fdh->fd, &exfds);
-	     if (fdh->fd > max_fd) max_fd = fdh->fd;
-	  }
-     }
+     if (!fdh->delete_me)
+       {
+	  if (fdh->flags & ECORE_FD_READ)
+	    {
+	       FD_SET(fdh->fd, &rfds);
+	       if (fdh->fd > max_fd) max_fd = fdh->fd;
+	    }
+	  if (fdh->flags & ECORE_FD_WRITE)
+	    {
+	       FD_SET(fdh->fd, &wfds);
+	       if (fdh->fd > max_fd) max_fd = fdh->fd;
+	    }
+	  if (fdh->flags & ECORE_FD_ERROR)
+	    {
+	       FD_SET(fdh->fd, &exfds);
+	       if (fdh->fd > max_fd) max_fd = fdh->fd;
+	    }
+       }
    if (_ecore_signal_count_get()) return -1;
 
    ret = main_loop_select(max_fd + 1, &rfds, &wfds, &exfds, t);
