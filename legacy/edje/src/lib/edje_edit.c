@@ -2467,6 +2467,7 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name)
 	     switch(p->type)
 	       {
 		case EDJE_EXTERNAL_PARAM_TYPE_INT:
+		case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
 		   p->i = pi->info.i.def;
 		   break;
 		case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
@@ -2476,6 +2477,9 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name)
 		   if (pi->info.s.def)
 		     p->s = eina_stringshare_add(pi->info.s.def);
 		   break;
+		default:
+		   printf("ERROR: unknown external parameter type '%d'\n",
+			  p->type);
 	       }
 	     pd->external_params = eina_list_append(pd->external_params, p);
 	     pi++;
@@ -3424,6 +3428,7 @@ edje_edit_state_external_param_get(Evas_Object *obj, const char *part, const cha
 	      switch (p->type)
 		{
 		 case EDJE_EXTERNAL_PARAM_TYPE_INT:
+		 case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
 		    *value = &p->i;
 		    break;
 		 case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
@@ -3432,6 +3437,9 @@ edje_edit_state_external_param_get(Evas_Object *obj, const char *part, const cha
 		 case EDJE_EXTERNAL_PARAM_TYPE_STRING:
 		    *value = (void *)p->s;
 		    break;
+		 default:
+		    printf("ERROR: unknown external parameter type '%d'\n",
+			   p->type);
 		}
 	   return EINA_TRUE;
 	}
@@ -3499,6 +3507,13 @@ edje_edit_state_external_param_string_get(Evas_Object *obj, const char *part, co
    return EINA_FALSE;
 }
 
+/**
+ * Arguments should have proper sized values matching their types:
+ *   - EDJE_EXTERNAL_PARAM_TYPE_INT: int
+ *   - EDJE_EXTERNAL_PARAM_TYPE_BOOL: int
+ *   - EDJE_EXTERNAL_PARAM_TYPE_DOUBLE: double
+ *   - EDJE_EXTERNAL_PARAM_TYPE_STRING: char*
+ */
 EAPI Eina_Bool
 edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const char *state, const char *param, Edje_External_Param_Type type, ...)
 {
@@ -3541,6 +3556,7 @@ edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const cha
    switch (type)
      {
       case EDJE_EXTERNAL_PARAM_TYPE_INT:
+      case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
 	 p->i = (int)va_arg(ap, int);
 	 break;
       case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
@@ -3549,6 +3565,8 @@ edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const cha
       case EDJE_EXTERNAL_PARAM_TYPE_STRING:
 	 p->s = eina_stringshare_add((const char *)va_arg(ap, char *));
 	 break;
+      default:
+	 printf("ERROR: unknown external parameter type '%d'\n", type);
      }
 
    va_end(ap);

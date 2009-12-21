@@ -222,7 +222,7 @@ edje_external_param_string_get(const Eina_List *params, const char *key, const c
 }
 
 EAPI Eina_Bool
-edje_external_param_bool_get(const Eina_List *params, const char *key, const char **ret)
+edje_external_param_bool_get(const Eina_List *params, const char *key, Eina_Bool *ret)
 {
    Edje_External_Param *param;
 

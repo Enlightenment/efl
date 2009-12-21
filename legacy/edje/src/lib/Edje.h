@@ -527,7 +527,7 @@ extern "C" {
   EAPI Eina_Bool edje_external_param_int_get(const Eina_List *params, const char *key, int *ret);
   EAPI Eina_Bool edje_external_param_double_get(const Eina_List *params, const char *key, double *ret);
   EAPI Eina_Bool edje_external_param_string_get(const Eina_List *params, const char *key, const char **ret);
-  EAPI Eina_Bool edje_external_param_bool_get(const Eina_List *params, const char *key, const char **ret);
+  EAPI Eina_Bool edje_external_param_bool_get(const Eina_List *params, const char *key, Eina_Bool *ret);
   EAPI const Edje_External_Param_Info *edje_external_param_info_get(const char *type_name);
 
   /* edje_module.c */
