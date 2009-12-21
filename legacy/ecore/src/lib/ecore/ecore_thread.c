@@ -226,7 +226,11 @@ ecore_thread_run(void (*func_heavy)(void *data),
    Ecore_Pthread_Data *pth;
 
    work = malloc(sizeof (Ecore_Pthread_Worker));
-   if (!work) return NULL;
+   if (!work)
+     {
+	func_cancel(data);
+	return NULL;
+     }
 
    work->func_heavy = func_heavy;
    work->func_end = func_end;

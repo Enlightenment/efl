@@ -181,7 +181,11 @@ evas_preload_thread_run(void (*func_heavy)(void *data),
    Evas_Preload_Pthread_Data *pth;
 
    work = malloc(sizeof (Evas_Preload_Pthread_Worker));
-   if (!work) return NULL;
+   if (!work)
+     {
+	func_cancel(data);
+	return NULL;
+     }
 
    work->func_heavy = func_heavy;
    work->func_end = func_end;
