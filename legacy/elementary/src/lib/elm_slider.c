@@ -16,6 +16,10 @@
  * period or when they release their finger/mouse, so it avoids possibly
  * expensive reactions to the value change.
  *
+ * slider,drag,start - dragging the slider indicator around has started
+ *
+ * slider,drag,stop - dragging the slider indicator around has stopped
+ *
  * A slider can be horizontal or vertical. It can contain an Icon and has a
  * primary label as well as a units label (that is formatted with floating
  * point values and thus accepts a printf-style format string, like
@@ -45,6 +49,7 @@ struct _Widget_Data
    const char *label;
    const char *units;
    const char *indicator;
+   const char *(*indicator_format_func)(double val);
    Eina_Bool horizontal : 1;
    Eina_Bool inverted : 1;
    double val, val_min, val_max;
@@ -206,7 +211,14 @@ static void
 _indicator_set(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (wd->indicator)
+   if (wd->indicator_format_func)
+     {
+	const char *buf;
+
+	buf = wd->indicator_format_func(wd->val);
+	edje_object_part_text_set(wd->slider, "elm.indicator", buf);
+     }
+   else if (wd->indicator)
      {
 	char buf[1024];
 
@@ -229,6 +241,7 @@ static void
 _drag_start(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    _val_fetch(data);
+   evas_object_smart_callback_call(data, "slider,drag,start", NULL);
    _units_set(data);
    _indicator_set(data);
 }
@@ -237,6 +250,7 @@ static void
 _drag_stop(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
    _val_fetch(data);
+   evas_object_smart_callback_call(data, "slider,drag,stop", NULL);
    _units_set(data);
    _indicator_set(data);
 }
@@ -579,3 +593,24 @@ elm_slider_inverted_set(Evas_Object *obj, Eina_Bool inverted)
    _units_set(obj);
    _indicator_set(obj);
 }
+
+/**
+ * Set the format function pointer for the inducator area
+ *
+ * Set the callback function to format the indicator string.
+ * See elm_slider_indicator_format_set() for more info on how this works.
+ *
+ * @param obj The slider object
+ * @param indicator The format string for the indicator display
+ * @param func The indicator format function
+ *
+ * @ingroup Slider
+ */
+EAPI void
+elm_slider_indicator_format_function_set(Evas_Object *obj, const char *(*func)(double val))
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   wd->indicator_format_func = func;
+   _indicator_set(obj);
+}
+
