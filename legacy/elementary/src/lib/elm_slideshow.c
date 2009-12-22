@@ -140,6 +140,7 @@ _item_realize(Elm_Slideshow_Item *item)
    Elm_Slideshow_Item *_item;
    Evas_Object *obj = item->obj;
    Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Coord w, h;
 
    if(!item->o && item->itc->func.get)
      {
@@ -152,6 +153,8 @@ _item_realize(Elm_Slideshow_Item *item)
      wd->items_built = eina_list_demote_list(wd->items_built, item->l_built);
 
    //we pre built the next and the previous item
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+
    _item = eina_list_data_get(eina_list_prev(item->l));
    if(!_item && wd->loop)
      _item = eina_list_data_get(eina_list_last(item->l));
@@ -159,6 +162,7 @@ _item_realize(Elm_Slideshow_Item *item)
      {
 	_item->o = _item->itc->func.get((void*)_item->data, obj);
 	evas_object_hide(_item->o);
+	evas_object_resize(_item->o, w, h);
 	evas_object_smart_member_add(_item->o, obj);
 	_item->l_built = eina_list_append(NULL, _item);
         wd->items_built = eina_list_merge(wd->items_built, _item->l_built);
@@ -174,9 +178,10 @@ _item_realize(Elm_Slideshow_Item *item)
      {
 	 _item->o = _item->itc->func.get((void*)_item->data, obj);
 	 evas_object_hide(_item->o);
+	 evas_object_resize(_item->o, w, h);
 	 evas_object_smart_member_add(_item->o, obj);
 	 _item->l_built = eina_list_append(NULL, _item);
-        wd->items_built = eina_list_merge(wd->items_built, _item->l_built);
+         wd->items_built = eina_list_merge(wd->items_built, _item->l_built);
      }
    else if(_item && _item->l_built)
      wd->items_built = eina_list_demote_list(wd->items_built, _item->l_built);
@@ -507,7 +512,7 @@ elm_slideshow_item_del(Elm_Slideshow_Item *item)
      }
 
    wd->items = eina_list_remove_list(wd->items, item->l);
-   wd->items_built = eina_list_remove(wd->items_built, item);
+   wd->items_built = eina_list_remove_list(wd->items_built, item->l_built);
 
    if(item->o && item->itc->func.del)
      item->itc->func.del((void*)item->data, wd->previous->o);
