@@ -119,6 +119,10 @@ extern EAPI int _evas_log_dom_global;
 # undef BUILD_PIPE_RENDER
 #endif
 
+#ifdef BUILD_ASYNC_PRELOAD
+# define BUILD_PTHREAD
+#endif
+
 #ifdef BUILD_PTHREAD
 
 #ifndef __USE_GNU
