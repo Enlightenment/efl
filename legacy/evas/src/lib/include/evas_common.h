@@ -119,7 +119,7 @@ extern EAPI int _evas_log_dom_global;
 # undef BUILD_PIPE_RENDER
 #endif
 
-#ifdef BUILD_ASYNC_PRELOAD
+#if defined(BUILD_ASYNC_PRELOAD) && !defined(BUILD_PTHREAD)
 # define BUILD_PTHREAD
 #endif
 

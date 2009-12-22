@@ -1,13 +1,13 @@
 #include "evas_gl_private.h"
 
 Evas_GL_Image *
-evas_gl_common_image_load(Evas_GL_Context *gc, const char *file, const char *key, Evas_Image_Load_Opts *lo)
+evas_gl_common_image_load(Evas_GL_Context *gc, const char *file, const char *key, Evas_Image_Load_Opts *lo, int *error)
 {
    Evas_GL_Image        *im;
    RGBA_Image           *im_im;
    Eina_List            *l;
 
-   im_im = evas_common_load_image_from_file(file, key, lo);
+   im_im = evas_common_load_image_from_file(file, key, lo, error);
    if (!im_im) return NULL;
 
    EINA_LIST_FOREACH(gc->shared->images, l, im)
@@ -18,12 +18,17 @@ evas_gl_common_image_load(Evas_GL_Context *gc, const char *file, const char *key
 	     gc->shared->images = eina_list_remove_list(gc->shared->images, l);
 	     gc->shared->images = eina_list_prepend(gc->shared->images, im);
 	     im->references++;
+	     *error = EVAS_LOAD_ERROR_NONE;
 	     return im;
 	  }
      }
 
    im = calloc(1, sizeof(Evas_GL_Image));
-   if (!im) return NULL;
+   if (!im)
+     {
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	return NULL;
+     }
    im->references = 1;
    im->im = im_im;
    im->gc = gc;

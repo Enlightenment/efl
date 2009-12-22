@@ -19,7 +19,7 @@ struct _Evas_Cache_Image_Func
    DATA32      *(*surface_pixels)(Image_Entry *im);
 
    /* The cache is doing the allocation and deallocation, you must just do the rest. */
-   int          (*constructor)(Image_Entry *im);
+   int          (*constructor)(Image_Entry *im); /**< return is EVAS_LOAD_ERROR_* or EVAS_LOAD_ERROR_NONE! */
    void         (*destructor)(Image_Entry *im);
 
    void         (*dirty_region)(Image_Entry *im, int x, int y, int w, int h);
@@ -37,7 +37,7 @@ struct _Evas_Cache_Image_Func
    int          (*color_space)(Image_Entry *dst, int cspace);
 
    /* This function need to update im->w and im->h. */
-   int          (*load)(Image_Entry *im);
+   int          (*load)(Image_Entry *im);; /**< return is EVAS_LOAD_ERROR_* or EVAS_LOAD_ERROR_NONE! */
    int          (*mem_size_get)(Image_Entry *im);
    void         (*debug)(const char *context, Image_Entry *im);
 };

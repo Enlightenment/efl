@@ -4,8 +4,9 @@
 #include <librsvg/rsvg.h>
 #include <librsvg/rsvg-cairo.h>
 
-static int evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key);
-static int evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key);
+static inline Eina_Bool evas_image_load_file_is_svg(const char *file) EINA_ARG_NONNULL(1) EINA_PURE;
+static Eina_Bool evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
+static Eina_Bool evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
 
 Evas_Image_Load_Func evas_image_load_svg_func =
 {
@@ -15,51 +16,63 @@ Evas_Image_Load_Func evas_image_load_svg_func =
 
 static int  rsvg_initialized = 0;
 
-static int
-evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key __UNUSED__)
+
+static inline Eina_Bool evas_image_load_file_is_svg(const char *file)
 {
-   char               cwd[PATH_MAX], pcwd[PATH_MAX], *p;
-   
+   int i, len = strlen(file);
+   Eina_Bool is_gz = EINA_FALSE;
+
+   for (i = len - 1; i > 0; i--)
+     {
+	if (file[i] == '.')
+	  {
+	     if (is_gz)
+	       break;
+	     else if (strcasecmp(file + i + 1, "gz") == 0)
+	       is_gz = EINA_TRUE;
+	     else
+	       break;
+	  }
+     }
+
+   if (i < 1) return EINA_FALSE;
+   i++;
+   if (i >= len) return EINA_FALSE;
+   if (strncasecmp(file + i, "svg", 3) != 0) return EINA_FALSE;
+   i += 3;
+   if (is_gz)
+     {
+	if (file[i] == '.') return EINA_TRUE;
+	else return EINA_FALSE;
+     }
+   else
+     {
+	if (file[i] == '\0') return EINA_TRUE;
+	else if (((file[i] == 'z') || (file[i] == 'Z')) && (!file[i + 1])) return EINA_TRUE;
+	else return EINA_FALSE;
+     }
+}
+
+static Eina_Bool
+evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key __UNUSED__, int *error)
+{
    RsvgHandle         *rsvg;
    RsvgDimensionData   dim;
    int                 w, h;
-   char               *ext;
-   
-   if (!file) return 0;
 
    /* ignore all files not called .svg or .svg.gz - because rsvg has a leak
     * where closing the handle doesn't free mem */
-   ext = strrchr(file, '.');
-   if (!ext) return 0;
-   if (!strcasecmp(ext, ".gz"))
+   if (!evas_image_load_file_is_svg(file))
      {
-	if (p > file)
-	  {
-	     ext = p - 1;
-	     while ((*p != '.') && (p > file))
-	       {
-		  p--;
-	       }
-	     if (p <= file) return 0;
-	     if (strcasecmp(p, ".svg.gz")) return 0;
-	  }
-	else
-	  return 0;
+	*error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+	return EINA_FALSE;
      }
-   else if (strcasecmp(ext, ".svg")) return 0;
 
-   getcwd(pcwd, sizeof(pcwd));
-   strncpy(cwd, file, sizeof(cwd) - 1);
-   cwd[sizeof(cwd) - 1] = 0;
-   p = strrchr(cwd, '/');
-   if (p) *p = 0;
-   chdir(cwd);
-   
    rsvg = rsvg_handle_new_from_file(file, NULL);
    if (!rsvg)
      {
-	chdir(pcwd);
-	return 0;
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	return EINA_FALSE;
      }
 
    rsvg_handle_set_dpi(rsvg, 75.0);
@@ -69,11 +82,13 @@ evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key
    if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
        IMG_TOO_BIG(w, h))
      {
-//	rsvg_handle_close(rsvg, NULL);
+	rsvg_handle_close(rsvg, NULL);
 	g_object_unref(rsvg);
-//	rsvg_handle_free(rsvg);
-	chdir(pcwd);
-	return 0;
+	if (IMG_TOO_BIG(w, h))
+	  *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	else
+	  *error = EVAS_LOAD_ERROR_GENERIC;
+	return EINA_FALSE;
      }
    if (ie->load_opts.scale_down_by > 1)
      {
@@ -105,61 +120,37 @@ evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key
    ie->w = w;
    ie->h = h;
    ie->flags.alpha = 1;
-//   rsvg_handle_close(rsvg, NULL);
+   rsvg_handle_close(rsvg, NULL);
    g_object_unref(rsvg);
-//   rsvg_handle_free(rsvg);
-   chdir(pcwd);
-   return 1;
+
+   *error = EVAS_LOAD_ERROR_NONE;
+   return EINA_TRUE;
 }
 
 /** FIXME: All evas loaders need to be tightened up **/
-static int
-evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key __UNUSED__)
+static Eina_Bool
+evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key __UNUSED__, int *error)
 {
    DATA32             *pixels;
-   char               cwd[PATH_MAX], pcwd[PATH_MAX], *p;
    RsvgHandle         *rsvg;
    RsvgDimensionData   dim;
    int                 w, h;
    cairo_surface_t    *surface;
    cairo_t            *cr;
-   char               *ext;
-
-   if (!file) return 0;
 
    /* ignore all files not called .svg or .svg.gz - because rsvg has a leak
     * where closing the handle doesn't free mem */
-   ext = strrchr(file, '.');
-   if (!ext) return 0;
-   if (!strcasecmp(ext, ".gz"))
+   if (!evas_image_load_file_is_svg(file))
      {
-	if (p > file)
-	  {
-	     ext = p - 1;
-	     while ((*p != '.') && (p > file))
-	       {
-		  p--;
-	       }
-	     if (p <= file) return 0;
-	     if (strcasecmp(p, ".svg.gz")) return 0;
-	  }
-	else
-	  return 0;
+	*error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+	return EINA_FALSE;
      }
-   else if (strcasecmp(ext, ".svg")) return 0;
 
-   getcwd(pcwd, sizeof(pcwd));
-   strncpy(cwd, file, sizeof(cwd) - 1);
-   cwd[sizeof(cwd) - 1] = 0;
-   p = strrchr(cwd, '/');
-   if (p) *p = 0;
-   chdir(cwd);
-   
    rsvg = rsvg_handle_new_from_file(file, NULL);
    if (!rsvg)
      {
-	chdir(pcwd);
-	return 0;
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	return EINA_FALSE;
      }
 
    rsvg_handle_set_dpi(rsvg, 75.0);
@@ -168,11 +159,13 @@ evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key
    h = dim.height;
    if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE))
      {
-//	rsvg_handle_close(rsvg, NULL);
+	rsvg_handle_close(rsvg, NULL);
 	g_object_unref(rsvg);
-//	rsvg_handle_free(rsvg);
-	chdir(pcwd);
-	return 0;
+	if (IMG_TOO_BIG(w, h))
+	  *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	else
+	  *error = EVAS_LOAD_ERROR_GENERIC;
+	return EINA_FALSE;
      }
    if (ie->load_opts.scale_down_by > 1)
      {
@@ -206,49 +199,42 @@ evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key
    pixels = evas_cache_image_pixels(ie);
    if (!pixels)
      {
-//	rsvg_handle_close(rsvg, NULL);
-	g_object_unref(rsvg);
-//	rsvg_handle_free(rsvg);
-	chdir(pcwd);
-	return 0;
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	goto error;
      }
 
    memset(pixels, 0, w * h * sizeof(DATA32));
-   
    surface = cairo_image_surface_create_for_data((unsigned char *)pixels, CAIRO_FORMAT_ARGB32,
 						 w, h, w * sizeof(DATA32));
    if (!surface)
      {
-//	rsvg_handle_close(rsvg, NULL);
-	g_object_unref(rsvg);
-//	rsvg_handle_free(rsvg);
-	chdir(pcwd);
-	return 0;
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	goto error;
      }
    cr = cairo_create(surface);
    if (!cr)
      {
 	cairo_surface_destroy(surface);
-//	rsvg_handle_close(rsvg, NULL);
-	g_object_unref(rsvg);
-//	rsvg_handle_free(rsvg);
-	chdir(pcwd);
-	return 0;
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	goto error;
      }
-   
-   cairo_scale(cr, 
-	       (double)ie->w / dim.em, 
+
+   cairo_scale(cr,
+	       (double)ie->w / dim.em,
 	       (double)ie->h / dim.ex);
    rsvg_handle_render_cairo(rsvg, cr);
    cairo_surface_destroy(surface);
    /* need to check if this is required... */
    cairo_destroy(cr);
-//   rsvg_handle_close(rsvg, NULL);
+   rsvg_handle_close(rsvg, NULL);
    g_object_unref(rsvg);
-//   rsvg_handle_free(rsvg);
-   chdir(pcwd);
    evas_common_image_set_alpha_sparse(ie);
-   return 1;
+   return EINA_TRUE;
+
+ error:
+   rsvg_handle_close(rsvg, NULL);
+   g_object_unref(rsvg);
+   return EINA_FALSE;
 }
 
 static int

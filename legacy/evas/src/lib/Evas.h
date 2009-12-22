@@ -1087,6 +1087,11 @@ extern "C" {
    typedef struct _Evas_Imaging_Image Evas_Imaging_Image;
    typedef struct _Evas_Imaging_Font Evas_Imaging_Font;
 
+   /**
+    * Error identifier or EVAS_LOAD_ERROR_NONE. see evas_load_error_str().
+    */
+   EAPI extern int          evas_imaging_image_load_error;
+
    EAPI Evas_Imaging_Image *evas_imaging_image_load      (const char *file, const char *key) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_MALLOC;
    EAPI void                evas_imaging_image_free      (Evas_Imaging_Image *im) EINA_ARG_NONNULL(1);
    EAPI void                evas_imaging_image_size_get  (const Evas_Imaging_Image *im, int *w, int *h) EINA_ARG_NONNULL(1);

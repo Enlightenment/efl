@@ -732,10 +732,14 @@ eng_image_load(void *data, const char *file, const char *key, int *error, Evas_I
    // I can't figure out what to set it to, even trying to follow through the core code.
    // Also, none of the other engines set it.
 
-   if (error) *error = 0;
-   if (!im) return NULL;
+   if (!im)
+     {
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	return NULL;
+     }
 
-   im->im = (RGBA_Image *)evas_common_load_image_from_file(file, key, lo);
+   *error = EVAS_LOAD_ERROR_NONE;
+   im->im = (RGBA_Image *)evas_common_load_image_from_file(file, key, lo, error);
    if (!im->im)
    {
       free(im);

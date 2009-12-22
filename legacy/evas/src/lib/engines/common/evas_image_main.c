@@ -523,12 +523,14 @@ evas_common_image_get_cache(void)
 }
 
 EAPI RGBA_Image *
-evas_common_load_image_from_file(const char *file, const char *key, RGBA_Image_Loadopts *lo)
+evas_common_load_image_from_file(const char *file, const char *key, RGBA_Image_Loadopts *lo, int *error)
 {
-   int           error;
-
-   if (file == NULL) return NULL;
-   return (RGBA_Image *) evas_cache_image_request(eci, file, key, lo, &error);
+   if (file == NULL)
+     {
+	*error = EVAS_LOAD_ERROR_GENERIC;
+	return NULL;
+     }
+   return (RGBA_Image *) evas_cache_image_request(eci, file, key, lo, error);
 }
 
 EAPI void

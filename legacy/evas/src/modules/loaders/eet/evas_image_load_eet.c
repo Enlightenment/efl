@@ -8,8 +8,8 @@
 #include "evas_private.h"
 
 
-int evas_image_load_file_head_eet(Image_Entry *ie, const char *file, const char *key);
-int evas_image_load_file_data_eet(Image_Entry *ie, const char *file, const char *key);
+static Eina_Bool evas_image_load_file_head_eet(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
+static Eina_Bool evas_image_load_file_data_eet(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
 
 Evas_Image_Load_Func evas_image_load_eet_func =
 {
@@ -18,55 +18,97 @@ Evas_Image_Load_Func evas_image_load_eet_func =
 };
 
 
-int
-evas_image_load_file_head_eet(Image_Entry *ie, const char *file, const char *key)
+static Eina_Bool
+evas_image_load_file_head_eet(Image_Entry *ie, const char *file, const char *key, int *error)
 {
    int                  alpha, compression, quality, lossy;
    unsigned int         w, h;
    Eet_File            *ef;
    int                  ok;
-   int			res = 0;
+   Eina_Bool		res = EINA_FALSE;
 
-   if ((!file) || (!key)) return 0;
+   if (!key)
+     {
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	return EINA_FALSE;
+     }
+
    ef = eet_open((char *)file, EET_FILE_MODE_READ);
-   if (!ef) return 0;
+   if (!ef)
+     {
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	return EINA_FALSE;
+     }
    ok = eet_data_image_header_read(ef, key,
 				   &w, &h, &alpha, &compression, &quality, &lossy);
-   if (IMG_TOO_BIG(w, h)) goto on_error;
-   if (!ok) goto on_error;
+   if (IMG_TOO_BIG(w, h))
+     {
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	goto on_error;
+     }
+   if (!ok)
+     {
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	goto on_error;
+     }
    if (alpha) ie->flags.alpha = 1;
    ie->w = w;
    ie->h = h;
-   res = 1;
+   res = EINA_TRUE;
+   *error = EVAS_LOAD_ERROR_NONE;
 
  on_error:
    eet_close(ef);
    return res;
 }
 
-int
-evas_image_load_file_data_eet(Image_Entry *ie, const char *file, const char *key)
+Eina_Bool
+evas_image_load_file_data_eet(Image_Entry *ie, const char *file, const char *key, int *error)
 {
    unsigned int         w, h;
    int                  alpha, compression, quality, lossy, ok;
    Eet_File            *ef;
    DATA32              *body, *p, *end;
    DATA32               nas = 0;
-   int			res = 0;
+   Eina_Bool		res = EINA_FALSE;
 
-   if ((!file) || (!key)) return 0;
-   if (ie->flags.loaded) return 1;
+   if (!key)
+     {
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	return EINA_FALSE;
+     }
+   if (ie->flags.loaded)
+     {
+	*error = EVAS_LOAD_ERROR_NONE;
+	return EINA_TRUE;
+     }
    ef = eet_open(file, EET_FILE_MODE_READ);
-   if (!ef) return 0;
+   if (!ef)
+     {
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	return EINA_FALSE;
+     }
    ok = eet_data_image_header_read(ef, key,
 				   &w, &h, &alpha, &compression, &quality, &lossy);
-   if (IMG_TOO_BIG(w, h)) goto on_error;
-   if (!ok) goto on_error;
+   if (IMG_TOO_BIG(w, h))
+     {
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	goto on_error;
+     }
+   if (!ok)
+     {
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	goto on_error;
+     }
    evas_cache_image_surface_alloc(ie, w, h);
    ok = eet_data_image_read_to_surface(ef, key, 0, 0,
 				       evas_cache_image_pixels(ie), w, h, w * 4,
 				       &alpha, &compression, &quality, &lossy);
-   if (!ok) goto on_error;
+   if (!ok)
+     {
+	*error = EVAS_LOAD_ERROR_GENERIC;
+	goto on_error;
+     }
    if (alpha)
      {
 	ie->flags.alpha = 1;
@@ -93,7 +135,8 @@ evas_image_load_file_data_eet(Image_Entry *ie, const char *file, const char *key
      }
 // result is already premultiplied now if u compile with edje
 //   evas_common_image_premul(im);
-   res = 1;
+   *error = EVAS_LOAD_ERROR_NONE;
+   res = EINA_TRUE;
 
  on_error:
    eet_close(ef);

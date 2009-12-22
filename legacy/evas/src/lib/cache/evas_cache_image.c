@@ -10,6 +10,7 @@
 #include <assert.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <errno.h>
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
@@ -218,7 +219,10 @@ _evas_cache_image_entry_new(Evas_Cache_Image *cache,
 
    ie = cache->func.alloc();
    if (!ie)
-     return NULL;
+     {
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	return NULL;
+     }
 
    cache_key = hkey ? eina_stringshare_add(hkey) : NULL;
 
@@ -265,7 +269,7 @@ _evas_cache_image_entry_new(Evas_Cache_Image *cache,
    if (file)
      {
         *error = cache->func.constructor(ie);
-        if (*error != 0)
+        if (*error != EVAS_LOAD_ERROR_NONE)
           {
              _evas_cache_image_entry_delete(cache, ie);
              return NULL;
@@ -340,7 +344,7 @@ _evas_cache_image_async_heavy(void *data)
 	error = cache->func.load(current);
 	if (cache->func.debug)
 	  cache->func.debug("load", current);
-	if (error)
+	if (error != EVAS_LOAD_ERROR_NONE)
 	  {
 	     current->flags.loaded = 0;
 	     _evas_cache_image_entry_surface_alloc(cache, current,
@@ -626,8 +630,11 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
 
    assert(cache != NULL);
 
-   if (!file && !key) return NULL;
-   if (!file) return NULL;
+   if ((!file) || ((!file) && (!key)))
+     {
+	*error = EVAS_LOAD_ERROR_GENERIC;
+	return NULL;
+     }
 
    file_length = strlen(file);
    key_length = key ? strlen(key) : 6;
@@ -715,7 +722,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
         if ((t - im->laststat) > STAT_GAP)
           {
              stat_done = 1;
-             if (stat(file, &st) < 0) goto on_error;
+             if (stat(file, &st) < 0) goto on_stat_error;
 
              im->laststat = t;
              if (st.st_mtime != im->timestamp) ok = 0;
@@ -740,7 +747,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
              if ((t - im->laststat) > STAT_GAP)
                {
                   stat_done = 1;
-                  if (stat(file, &st) < 0) goto on_error;
+                  if (stat(file, &st) < 0) goto on_stat_error;
 
                   im->laststat = t;
                   if (st.st_mtime != im->timestamp) ok = 0;
@@ -761,7 +768,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
 
    if (!stat_done)
      {
-        if (stat(file, &st) < 0) return NULL;
+        if (stat(file, &st) < 0) goto on_stat_error;
      }
 
    im = _evas_cache_image_entry_new(cache, hkey, st.st_mtime, file, key, lo, error);
@@ -771,15 +778,25 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
      cache->func.debug("request", im);
 
  on_ok:
-   *error = 0;
+   *error = EVAS_LOAD_ERROR_NONE;
    im->references++;
    if (im->references > 1 && im->flags.lru_nodata)
      _evas_cache_image_remove_lru_nodata(cache, im);
 
    return im;
 
- on_error:
-   _evas_cache_image_entry_delete(cache, im);
+ on_stat_error:
+   if ((errno == ENOENT) || (errno == ENOTDIR) ||
+       (errno == ENAMETOOLONG) || (errno == ELOOP))
+     *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+   else if ((errno == ENOMEM) || (errno == EOVERFLOW))
+     *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+   else if (errno == EACCES)
+     *error = EVAS_LOAD_ERROR_PERMISSION_DENIED;
+   else
+     *error = EVAS_LOAD_ERROR_GENERIC;
+
+   if (im) _evas_cache_image_entry_delete(cache, im);
    return NULL;
 }
 
@@ -1142,7 +1159,7 @@ evas_cache_image_load_data(Image_Entry *im)
    if (cache->func.debug)
      cache->func.debug("load", im);
 
-   if (error)
+   if (error != EVAS_LOAD_ERROR_NONE)
      {
         _evas_cache_image_entry_surface_alloc(cache, im, im->w, im->h);
         im->flags.loaded = 0;

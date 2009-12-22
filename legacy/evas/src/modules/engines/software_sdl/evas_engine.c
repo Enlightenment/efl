@@ -1045,7 +1045,7 @@ _sdl_image_constructor(Engine_Image_Entry *ie, void *data __UNUSED__)
           }
      }
 
-   return 0;
+   return EVAS_LOAD_ERROR_NONE;
 }
 
 static void

@@ -186,6 +186,7 @@ struct _XR_Image
    const char      *comment;
    Tilebuf         *updates;
    RGBA_Image_Loadopts load_opts;
+   int              *load_error; /* points to Evas_Object's load_error field */
    struct {
       int           space;
       void         *data;
@@ -196,7 +197,7 @@ struct _XR_Image
    unsigned char    free_data : 1;
 };
 
-XR_Image *_xre_xlib_image_load(Ximage_Info *xinf, const char *file, const char *key, Evas_Image_Load_Opts *lo);
+XR_Image *_xre_xlib_image_load(Ximage_Info *xinf, const char *file, const char *key, Evas_Image_Load_Opts *lo, int *error);
 XR_Image *_xre_xlib_image_new_from_data(Ximage_Info *xinf, int w, int h, void *data, int alpha, int cspace);
 XR_Image *_xre_xlib_image_new_from_copied_data(Ximage_Info *xinf, int w, int h, void *data, int alpha, int cspace);
 XR_Image *_xre_xlib_image_new(Ximage_Info *xinf, int w, int h);

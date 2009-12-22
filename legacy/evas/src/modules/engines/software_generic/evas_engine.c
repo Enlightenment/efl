@@ -589,8 +589,8 @@ eng_image_native_get(void *data __UNUSED__, void *image __UNUSED__)
 static void *
 eng_image_load(void *data __UNUSED__, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
 {
-   *error = 0;
-   return evas_common_load_image_from_file(file, key, lo);
+   *error = EVAS_LOAD_ERROR_NONE;
+   return evas_common_load_image_from_file(file, key, lo, error);
 }
 
 static void *

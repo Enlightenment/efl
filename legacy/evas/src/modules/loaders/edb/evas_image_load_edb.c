@@ -1,4 +1,4 @@
-#include "evas_common.h"
+s#include "evas_common.h"
 #include "evas_private.h"
 
 #include <Edb.h>
@@ -8,8 +8,8 @@
 #define SWAP32(x) (x) = ((((x) & 0x000000ff ) << 24) | (((x) & 0x0000ff00 ) << 8) | (((x) & 0x00ff0000 ) >> 8) | (((x) & 0xff000000 ) >> 24))
 
 
-static int evas_image_load_file_head_edb(Image_Entry *ie, const char *file, const char *key);
-static int evas_image_load_file_data_edb(Image_Entry *ie, const char *file, const char *key);
+static Eina_Bool evas_image_load_file_head_edb(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
+static Eina_Bool evas_image_load_file_data_edb(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
 
 static Evas_Image_Load_Func evas_image_load_edb_func =
 {
@@ -17,28 +17,38 @@ static Evas_Image_Load_Func evas_image_load_edb_func =
   evas_image_load_file_data_edb
 };
 
-static int
-evas_image_load_file_head_edb(Image_Entry *ie, const char *file, const char *key)
+static Eina_Bool
+evas_image_load_file_head_edb(Image_Entry *ie, const char *file, const char *key, int *error)
 {
    int                  w, h, alpha, compression, size;
    E_DB_File           *db;
    DATA32              *ret;
    DATA32               header[8];
 
-   if ((!file) || (!key)) return 0;
+   if (!key)
+     {
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	return EINA_FALSE;
+     }
    db = e_db_open_read((char *)file);
-   if (!db) return 0;
+   if (!db)
+     {
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	return EINA_FALSE;
+     }
    ret = e_db_data_get(db, (char *)key, &size);
    if (!ret)
      {
 	e_db_close(db);
-	return 0;
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	return EINA_FALSE;
      }
    if (size < 32)
      {
 	free(ret);
 	e_db_close(db);
-	return 0;
+	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+	return EINA_FALSE;
      }
    memcpy(header, ret, 32);
 #ifdef WORDS_BIGENDIAN
@@ -52,7 +62,8 @@ evas_image_load_file_head_edb(Image_Entry *ie, const char *file, const char *key
      {
 	free(ret);
 	e_db_close(db);
-	return 0;
+	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+	return EINA_FALSE;
      }
    w = header[1];
    h = header[2];
@@ -61,7 +72,11 @@ evas_image_load_file_head_edb(Image_Entry *ie, const char *file, const char *key
      {
 	free(ret);
 	e_db_close(db);
-	return 0;
+	if (IMG_TOO_BIG(w, h))
+	  *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	else
+	  *error = EVAS_LOAD_ERROR_GENERIC;
+	return EINA_FALSE;
      }
    alpha = header[3];
    compression = header[4];
@@ -70,18 +85,20 @@ evas_image_load_file_head_edb(Image_Entry *ie, const char *file, const char *key
      {
 	free(ret);
 	e_db_close(db);
-	return 0;
+	*error = EVAS_LOAD_ERROR_GENERIC;
+	return EINA_FALSE;
      }
    if (alpha) ie->flags.alpha = 1;
    ie->w = w;
    ie->h = h;
    free(ret);
    e_db_close(db);
-   return 1;
+   *error = EVAS_LOAD_ERROR_NONE;
+   return EINA_TRUE;
 }
 
-static int
-evas_image_load_file_data_edb(Image_Entry *ie, const char *file, const char *key)
+static Eina_Bool
+evas_image_load_file_data_edb(Image_Entry *ie, const char *file, const char *key, int *error)
 {
    int                  w, h, alpha, compression, size;
    E_DB_File           *db;
@@ -90,20 +107,30 @@ evas_image_load_file_data_edb(Image_Entry *ie, const char *file, const char *key
    DATA32              *surface;
    DATA32               header[8];
 
-   if ((!file) || (!key)) return 0;
+   if (!key)
+     {
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	return EINA_FALSE;
+     }
    db = e_db_open_read((char *)file);
-   if (!db) return 0;
+   if (!db)
+     {
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	return EINA_FALSE;
+     }
    ret = e_db_data_get(db, (char *)key, &size);
    if (!ret)
      {
 	e_db_close(db);
-	return 0;
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	return EINA_FALSE;
      }
    if (size < 32)
      {
 	free(ret);
 	e_db_close(db);
-	return 0;
+	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+	return EINA_FALSE;
      }
    memcpy(header, ret, 32);
 #ifdef WORDS_BIGENDIAN
@@ -117,7 +144,8 @@ evas_image_load_file_data_edb(Image_Entry *ie, const char *file, const char *key
      {
 	free(ret);
 	e_db_close(db);
-	return 0;
+	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+	return EINA_FALSE;
      }
    w = header[1];
    h = header[2];
@@ -126,7 +154,11 @@ evas_image_load_file_data_edb(Image_Entry *ie, const char *file, const char *key
      {
 	free(ret);
 	e_db_close(db);
-	return 0;
+	if (IMG_TOO_BIG(w, h))
+	  *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	else
+	  *error = EVAS_LOAD_ERROR_GENERIC;
+	return EINA_FALSE;
      }
    
    alpha = header[3];
@@ -136,7 +168,8 @@ evas_image_load_file_data_edb(Image_Entry *ie, const char *file, const char *key
      {
 	free(ret);
 	e_db_close(db);
-	return 0;
+	*error = EVAS_LOAD_ERROR_GENERIC;
+	return EINA_FALSE;
      }
    if (alpha) ie->flags.alpha = 1;
    body = &(ret[8]);
@@ -146,7 +179,8 @@ evas_image_load_file_data_edb(Image_Entry *ie, const char *file, const char *key
      {
 	free(ret);
 	e_db_close(db);
-	return 0;
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	return EINA_FALSE;
      }
    if (!compression)
      {
@@ -179,7 +213,8 @@ evas_image_load_file_data_edb(Image_Entry *ie, const char *file, const char *key
    evas_common_image_premul(ie);
    free(ret);
    e_db_close(db);
-   return 1;
+   *error = EVAS_LOAD_ERROR_NONE;
+   return EINA_TRUE;
 }
 
 static int

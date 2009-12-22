@@ -309,7 +309,7 @@ evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache,
 
    assert(cache != NULL);
 
-   *error = -1;
+   *error = EVAS_LOAD_ERROR_NONE;
 
    ekey = NULL;
    eim = NULL;
@@ -323,7 +323,10 @@ evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache,
    else
      ekey = eina_stringshare_add(im->cache_key);
    if (!ekey)
-     goto on_error;
+     {
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	goto on_error;
+     }
 
    eim = eina_hash_find(cache->activ, ekey);
    if (eim)
@@ -342,10 +345,14 @@ evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache,
      }
 
    eim = _evas_cache_engine_image_alloc(cache, im, ekey);
-   if (!eim) return NULL;
+   if (!eim)
+     {
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	return NULL;
+     }
 
    *error = cache->func.constructor(eim, data);
-   if (*error != 0) goto on_error;
+   if (*error != EVAS_LOAD_ERROR_NONE) goto on_error;
    if (cache->func.debug)
      cache->func.debug("constructor-engine", eim);
 
@@ -497,7 +504,8 @@ evas_cache_engine_image_alone(Engine_Image_Entry *eim, void *data)
 
         eim->references = 1;
 
-        if (cache->func.constructor(eim, data)) goto on_error;
+        if (cache->func.constructor(eim, data) != EVAS_LOAD_ERROR_NONE)
+	  goto on_error;
      }
    /* FIXME */
    return eim;

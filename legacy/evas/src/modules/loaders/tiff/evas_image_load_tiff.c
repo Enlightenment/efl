@@ -13,8 +13,8 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-static int evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *key);
-static int evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *key);
+static Eina_Bool evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
+static Eina_Bool evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
 
 static Evas_Image_Load_Func evas_image_load_tiff_func =
 {
@@ -117,8 +117,8 @@ raster(TIFFRGBAImage_Extra * img, uint32 * rast,
      }
 }
 
-static int
-evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *key __UNUSED__)
+static Eina_Bool
+evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *key __UNUSED__, int *error)
 {
    char                txt[1024];
    TIFFRGBAImage       tiff_image;
@@ -127,17 +127,18 @@ evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *ke
    int                 fd;
    uint16              magic_number;
 
-   if (!file)
-      return 0;
-
    ffile = fopen(file, "rb");
    if (!ffile)
-      return 0;
+     {
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	return EINA_FALSE;
+     }
 
    if (fread(&magic_number, sizeof(uint16), 1, ffile) != 1)
      {
         fclose(ffile);
-        return 0;
+	*error = EVAS_LOAD_ERROR_GENERIC;
+	return EINA_FALSE;
      }
    /* Apparently rewind(f) isn't sufficient */
    fseek(ffile, (long)0, SEEK_SET);
@@ -146,7 +147,8 @@ evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *ke
        && (magic_number != TIFF_LITTLEENDIAN))
      {
         fclose(ffile);
-        return 0;
+	*error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+	return EINA_FALSE;
      }
 
    fd = fileno(ffile);
@@ -156,19 +158,24 @@ evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *ke
 
    tif = TIFFFdOpen(fd, file, "r");
    if (!tif)
-      return 0;
+     {
+	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+	return EINA_FALSE;
+     }
 
    strcpy(txt, "Evas Tiff loader: cannot be processed by libtiff");
    if (!TIFFRGBAImageOK(tif, txt))
      {
         TIFFClose(tif);
-        return 0;
+	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+	return EINA_FALSE;
      }
    strcpy(txt, "Evas Tiff loader: cannot begin reading tiff");
    if (!TIFFRGBAImageBegin(& tiff_image, tif, 1, txt))
      {
         TIFFClose(tif);
-        return 0;
+	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+	return EINA_FALSE;
      }
 
    if (tiff_image.alpha != EXTRASAMPLE_UNSPECIFIED)
@@ -178,18 +185,23 @@ evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *ke
        IMG_TOO_BIG(tiff_image.width, tiff_image.height))
      {
 	TIFFClose(tif);
-	return 0;
+	if (IMG_TOO_BIG(tiff_image.width, tiff_image.height))
+	  *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	else
+	  *error = EVAS_LOAD_ERROR_GENERIC;
+	return EINA_FALSE;
      }
    ie->w = tiff_image.width;
    ie->h = tiff_image.height;
 
    TIFFRGBAImageEnd(&tiff_image);
    TIFFClose(tif);
-   return 1;
+   *error = EVAS_LOAD_ERROR_NONE;
+   return EINA_TRUE;
 }
 
-static int
-evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *key __UNUSED__)
+static Eina_Bool
+evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *key __UNUSED__, int *error)
 {
    char                txt[1024];
    TIFFRGBAImage_Extra rgba_image;
@@ -200,12 +212,12 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
    int                 fd;
    uint16              magic_number;
 
-   if (!file)
-      return 0;
-
    ffile = fopen(file, "rb");
    if (!ffile)
-      return 0;
+     {
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	return EINA_FALSE;
+     }
 
    fread(&magic_number, sizeof(uint16), 1, ffile);
    /* Apparently rewind(f) isn't sufficient */
@@ -215,7 +227,8 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
        && (magic_number != TIFF_LITTLEENDIAN))
      {
         fclose(ffile);
-        return 0;
+	*error = EVAS_LOAD_ERROR_GENERIC;
+	return EINA_FALSE;
      }
 
    fd = fileno(ffile);
@@ -225,19 +238,24 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
 
    tif = TIFFFdOpen(fd, file, "r");
    if (!tif)
-      return 0;
+     {
+	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+	return EINA_FALSE;
+     }
 
    strcpy(txt, "Evas Tiff loader: cannot be processed by libtiff");
    if (!TIFFRGBAImageOK(tif, txt))
      {
         TIFFClose(tif);
-        return 0;
+	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+	return EINA_FALSE;
      }
    strcpy(txt, "Evas Tiff loader: cannot begin reading tiff");
    if (!TIFFRGBAImageBegin((TIFFRGBAImage *) & rgba_image, tif, 0, txt))
      {
         TIFFClose(tif);
-        return 0;
+	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+	return EINA_FALSE;
      }
    rgba_image.image = ie;
 
@@ -247,7 +265,8 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
        (rgba_image.rgba.height != ie->h))
      {
         TIFFClose(tif);
-	return 0;
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	return EINA_FALSE;
      }
 
    evas_cache_image_surface_alloc(ie, rgba_image.rgba.width, rgba_image.rgba.height);
@@ -255,8 +274,8 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
      {
         TIFFRGBAImageEnd((TIFFRGBAImage *) & rgba_image);
         TIFFClose(tif);
-
-	return 0;
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	return EINA_FALSE;
      }
 
    rgba_image.num_pixels = num_pixels = ie->w * ie->h;
@@ -267,11 +286,11 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
    if (!rast)
      {
        ERR("Evas Tiff loader: out of memory");
-       
+
        TIFFRGBAImageEnd((TIFFRGBAImage *) & rgba_image);
        TIFFClose(tif);
-       
-        return 0;
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	return EINA_FALSE;
      }
 
    if (rgba_image.rgba.put.any == NULL)
@@ -282,7 +301,8 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
         TIFFRGBAImageEnd((TIFFRGBAImage *) & rgba_image);
         TIFFClose(tif);
 
-        return 0;
+	*error = EVAS_LOAD_ERROR_GENERIC;
+	return EINA_FALSE;
      }
    else
      {
@@ -307,7 +327,8 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
              _TIFFfree(rast);
              TIFFRGBAImageEnd((TIFFRGBAImage *) & rgba_image);
              TIFFClose(tif);
-             return 0;
+	     *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+	     return EINA_FALSE;
           }
      }
    else
@@ -322,7 +343,8 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
    TIFFClose(tif);
 
    evas_common_image_set_alpha_sparse(ie);
-   return 1;
+   *error = EVAS_LOAD_ERROR_NONE;
+   return EINA_TRUE;
 }
 
 static int

@@ -476,20 +476,20 @@ evas_cache_image_dfb_constructor(Engine_Image_Entry *eie, void *data)
 
    im = (RGBA_Image *)eie->src;
    if (!im)
-     return 0;
+     return EVAS_LOAD_ERROR_NONE; // XXX TODO: confirm?
 
    evas_cache_image_load_data(&im->cache_entry);
    if (!im->image.data)
-     return 0;
+     return EVAS_LOAD_ERROR_NONE; // XXX TODO: confirm?
 
    s = _dfb_surface_from_data(re->spec->dfb, eie->w, eie->h, im->image.data);
    if (!s)
-     return -1;
+     return EVAS_LOAD_ERROR_GENERIC;
 
    deie->surface = s;
    deie->flags.engine_surface = 0;
 
-   return 0;
+   return EVAS_LOAD_ERROR_NONE;
 }
 
 static void

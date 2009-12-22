@@ -915,14 +915,17 @@ eng_image_load(void *data, char *file, char *key, int *error, Evas_Image_Load_Op
 {
    Render_Engine *re;
    Evas_Cairo_Image *im;
-   
+
    re = (Render_Engine *)data;
-   if (error) *error = 0;
-
    im = calloc(1, sizeof(Evas_Cairo_Image));
-   if (!im) return NULL;
+   if (!im)
+     {
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	return NULL;
+     }
 
-   im->im = evas_common_load_image_from_file(file, key, lo);
+   *error = EVAS_LOAD_ERROR_NONE;
+   im->im = evas_common_load_image_from_file(file, key, lo, error);
    if (!im->im)
      {
 	free(im);

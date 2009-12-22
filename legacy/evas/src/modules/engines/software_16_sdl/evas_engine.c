@@ -1156,7 +1156,7 @@ _sdl16_image_constructor(Engine_Image_Entry *ie, void* data __UNUSED__)
         eim->flags.engine_surface = 0;
      }
 
-   return 0;
+   return EVAS_LOAD_ERROR_NONE;
 }
 
 static void

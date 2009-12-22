@@ -708,9 +708,9 @@ eng_image_load(void *data, const char *file, const char *key, int *error, Evas_I
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   *error = 0;
+   *error = EVAS_LOAD_ERROR_NONE;
    eng_window_use(re->window);
-   return evas_gl_common_image_load(re->window->gl_context, file, key, lo);
+   return evas_gl_common_image_load(re->window->gl_context, file, key, lo, error);
 }
 
 static void *

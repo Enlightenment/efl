@@ -342,7 +342,8 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
      }
    else
      {
-	o->load_error = EVAS_LOAD_ERROR_GENERIC;
+	if (o->load_error == EVAS_LOAD_ERROR_NONE)
+	  o->load_error = EVAS_LOAD_ERROR_GENERIC;
 	o->cur.has_alpha = 1;
 	o->cur.cspace = EVAS_COLORSPACE_ARGB8888;
 	o->cur.image.w = 0;

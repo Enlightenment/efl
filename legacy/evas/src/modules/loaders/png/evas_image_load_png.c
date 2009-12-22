@@ -32,8 +32,8 @@
 #define PNG_BYTES_TO_CHECK 4
 
 
-static int evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key);
-static int evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key);
+static Eina_Bool evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
+static Eina_Bool evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
 
 static Evas_Image_Load_Func evas_image_load_png_func =
 {
@@ -41,8 +41,8 @@ static Evas_Image_Load_Func evas_image_load_png_func =
   evas_image_load_file_data_png
 };
 
-static int
-evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key)
+static Eina_Bool
+evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key __UNUSED__, int *error)
 {
    png_uint_32 w32, h32;
    FILE *f;
@@ -52,31 +52,45 @@ evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key
    unsigned char buf[PNG_BYTES_TO_CHECK];
    char hasa;
 
-   if ((!file)) return 0;
    hasa = 0;
    f = E_FOPEN(file, "rb");
-   if (!f) return 0;
+   if (!f)
+     {
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	return EINA_FALSE;
+     }
 
    /* if we havent read the header before, set the header data */
    if (E_FREAD(buf, PNG_BYTES_TO_CHECK, 1, f) != 1)
-     goto close_file;
+     {
+	*error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+	goto close_file;
+     }
 
    if (!png_check_sig(buf, PNG_BYTES_TO_CHECK))
-     goto close_file;
+     {
+	*error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+	goto close_file;
+     }
 
    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
    if (!png_ptr)
-     goto close_file;
+     {
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	goto close_file;
+     }
 
    info_ptr = png_create_info_struct(png_ptr);
    if (!info_ptr)
      {
 	png_destroy_read_struct(&png_ptr, NULL, NULL);
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 	goto close_file;
      }
    if (setjmp(png_jmpbuf(png_ptr)))
      {
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 	goto close_file;
      }
    png_init_io(png_ptr, f);
@@ -89,6 +103,10 @@ evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key
        IMG_TOO_BIG(w32, h32))
      {
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+	if (IMG_TOO_BIG(w32, h32))
+	  *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	else
+	  *error = EVAS_LOAD_ERROR_GENERIC;
 	goto close_file;
      }
    ie->w = (int) w32;
@@ -99,17 +117,17 @@ evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key
    if (hasa) ie->flags.alpha = 1;
    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
    E_FCLOSE(f);
-   return 1;
+
+   *error = EVAS_LOAD_ERROR_NONE;
+   return EINA_TRUE;
 
  close_file:
    E_FCLOSE(f);
-   return 0;
-
-   key = 0;
+   return EINA_FALSE;
 }
 
-static int
-evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key)
+static Eina_Bool
+evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key __UNUSED__, int *error)
 {
    unsigned char *surface;
    png_uint_32 w32, h32;
@@ -123,28 +141,39 @@ evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key
    char hasa;
    int i;
 
-   if ((!file)) return 0;
    hasa = 0;
    f = E_FOPEN(file, "rb");
-   if (!f) return 0;
+   if (!f)
+     {
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	return EINA_FALSE;
+     }
 
    /* if we havent read the header before, set the header data */
    E_FREAD(buf, 1, PNG_BYTES_TO_CHECK, f);
    if (!png_check_sig(buf, PNG_BYTES_TO_CHECK))
-     goto close_file;
+     {
+	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+	goto close_file;
+     }
    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
    if (!png_ptr)
-     goto close_file;
+     {
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	goto close_file;
+     }
 
    info_ptr = png_create_info_struct(png_ptr);
    if (!info_ptr)
      {
 	png_destroy_read_struct(&png_ptr, NULL, NULL);
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 	goto close_file;
      }
    if (setjmp(png_jmpbuf(png_ptr)))
      {
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 	goto close_file;
      }
    png_init_io(png_ptr, f);
@@ -158,11 +187,13 @@ evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key
    if (!surface)
      {
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 	goto close_file;
      }
    if ((w32 != ie->w) || (h32 != ie->h))
      {
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+	*error = EVAS_LOAD_ERROR_GENERIC;
 	goto close_file;
      }
    if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) hasa = 1;
@@ -208,13 +239,12 @@ evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key
    E_FCLOSE(f);
    evas_common_image_premul(ie);
 
-   return 1;
+   *error = EVAS_LOAD_ERROR_NONE;
+   return EINA_TRUE;
 
  close_file:
    E_FCLOSE(f);
-   return 0;
-
-   key = 0;
+   return EINA_FALSE;
 }
 
 static int

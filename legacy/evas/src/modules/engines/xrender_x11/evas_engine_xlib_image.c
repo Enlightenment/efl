@@ -68,12 +68,16 @@ __xre_xlib_image_find(char *fkey)
 }
 
 XR_Image *
-_xre_xlib_image_load(Ximage_Info *xinf, const char *file, const char *key, Evas_Image_Load_Opts *lo)
+_xre_xlib_image_load(Ximage_Info *xinf, const char *file, const char *key, Evas_Image_Load_Opts *lo, int *error)
 {
    XR_Image *im;
    char buf[4096];
 
-   if (!file) return NULL;
+   if (!file)
+     {
+	*error = EVAS_LOAD_ERROR_GENERIC;
+	return NULL;
+     }
    if (!lo)
      {
 	if (key)
@@ -91,12 +95,17 @@ _xre_xlib_image_load(Ximage_Info *xinf, const char *file, const char *key, Evas_
    im = __xre_xlib_image_find(buf);
    if (im)
      {
+	*error = EVAS_LOAD_ERROR_NONE;
 	return im;
      }
 
    im = calloc(1, sizeof(XR_Image));
-   if (!im) return NULL;
-   im->im = evas_common_load_image_from_file(file, key, lo);
+   if (!im)
+     {
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	return NULL;
+     }
+   im->im = evas_common_load_image_from_file(file, key, lo, error);
    if (!im->im)
      {
 	free(im);
@@ -112,6 +121,7 @@ _xre_xlib_image_load(Ximage_Info *xinf, const char *file, const char *key, Evas_
    im->h = im->im->cache_entry.h;
    im->references = 1;
    if (lo) im->load_opts = *lo;
+   im->load_error = error; /* points to object's load_error */
    if (im->im->info.comment) im->comment = eina_stringshare_add(im->im->info.comment);
 //   if (im->im->info.format == 1) im->format = eina_stringshare_add("png");
    if (im->im->cache_entry.flags.alpha) im->alpha = 1;
@@ -301,7 +311,7 @@ _xre_xlib_image_copy(XR_Image *im)
    else
      {
 	if (!im->im)
-	  im->im = evas_common_load_image_from_file(im->file, im->key, &(im->load_opts));
+	  im->im = evas_common_load_image_from_file(im->file, im->key, &(im->load_opts), im->load_error);
 	if (im->im)
 	  {
 	     evas_cache_image_load_data(&im->im->cache_entry);
@@ -391,7 +401,8 @@ _xre_xlib_image_data_get(XR_Image *im)
    else if (im->cs.data) data = im->cs.data;
    else
      {
-	if (!im->im) im->im = evas_common_load_image_from_file(im->file, im->key, &(im->load_opts));
+	if (!im->im)
+	  im->im = evas_common_load_image_from_file(im->file, im->key, &(im->load_opts), im->load_error);
 	if (im->im)
 	  {
 	     evas_cache_image_load_data(&im->im->cache_entry);
@@ -559,7 +570,8 @@ _xre_xlib_image_surface_gen(XR_Image *im)
    if (im->data) data = im->data;
    else
      {
-	if (!im->im) im->im = evas_common_load_image_from_file(im->file, im->key, &(im->load_opts));
+	if (!im->im)
+	  im->im = evas_common_load_image_from_file(im->file, im->key, &(im->load_opts), im->load_error);
 	if (im->im)
 	  {
              evas_cache_image_load_data(&im->im->cache_entry);
