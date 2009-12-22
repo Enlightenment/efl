@@ -1461,7 +1461,7 @@ _edje_box_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep, Edje_Calc_Params
      }
 
    evas_object_box_layout_set(ep->object, layout, data, free_data);
-   evas_object_box_align_set(ep->object, chosen_desc->box.align.x, chosen_desc->box.align.y);
+   evas_object_box_align_set(ep->object, TO_DOUBLE(chosen_desc->box.align.x), TO_DOUBLE(chosen_desc->box.align.y));
    evas_object_box_padding_set(ep->object, chosen_desc->box.padding.x, chosen_desc->box.padding.y);
 
    if (evas_object_smart_need_recalculate_get(ep->object))
