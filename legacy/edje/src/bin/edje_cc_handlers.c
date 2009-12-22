@@ -928,23 +928,23 @@ st_data_file(void)
    fd = open(filename, O_RDONLY | O_BINARY, S_IRUSR | S_IWUSR);
    if (fd < 0)
      {
-        fprintf(stderr, "%s: Error. %s:%i when opening file \"%s\": \"%s\"\n",
-                progname, file_in, line, filename, strerror(errno));
+        ERR("%s: Error. %s:%i when opening file \"%s\": \"%s\"",
+	    progname, file_in, line, filename, strerror(errno));
         exit(-1);
      }
 
    if (fstat(fd, &buf))
      {
-        fprintf(stderr, "%s: Error. %s:%i when stating file \"%s\": \"%s\"\n",
-                progname, file_in, line, filename, strerror(errno));
+        ERR("%s: Error. %s:%i when stating file \"%s\": \"%s\"",
+	    progname, file_in, line, filename, strerror(errno));
         exit(-1);
      }
 
    data = mmap(NULL, buf.st_size, PROT_READ, MAP_SHARED, fd, 0);
    if (data == MAP_FAILED)
      {
-        fprintf(stderr, "%s: Error. %s:%i when mapping file \"%s\": \"%s\"\n",
-                progname, file_in, line, filename, strerror(errno));
+        ERR("%s: Error. %s:%i when mapping file \"%s\": \"%s\"",
+	    progname, file_in, line, filename, strerror(errno));
         exit(-1);
      }
 
@@ -952,7 +952,7 @@ st_data_file(void)
    for (i = 0; i < buf.st_size; ++i, ++over)
      if (*over == '\0')
        {
-          fprintf(stderr, "%s: Error. %s:%i file \"%s\" is a binary file.\n",
+          ERR("%s: Error. %s:%i file \"%s\" is a binary file.",
                   progname, file_in, line, filename);
           exit(-1);
        }
@@ -1251,8 +1251,8 @@ st_styles_style_name(void)
      {
 	if ((stl != tstl) && (!strcmp(stl->name, tstl->name)))
 	  {
-	     fprintf(stderr, "%s: Error. parse error %s:%i. There is already a style named \"%s\"\n",
-		     progname, file_in, line - 1, stl->name);
+	     ERR("%s: Error. parse error %s:%i. There is already a style named \"%s\"",
+		 progname, file_in, line - 1, stl->name);
 	     exit(-1);
 	  }
      }
@@ -1278,8 +1278,8 @@ st_styles_style_base(void)
    stl = eina_list_data_get(eina_list_last(edje_file->styles));
    if (stl->tags)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. There is already a basic format for the style\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. There is already a basic format for the style",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
    tag = mem_alloc(SZ(Edje_Style_Tag));
@@ -1596,8 +1596,8 @@ ob_collections_group_script(void)
 	     cd->l2 = get_verbatim_line2();
 	     if (cd->shared)
 	       {
-		  fprintf(stderr, "%s: Error. parse error %s:%i. There is already an existing script section for the group\n",
-			  progname, file_in, line - 1);
+		  ERR("%s: Error. parse error %s:%i. There is already an existing script section for the group",
+		      progname, file_in, line - 1);
 		  exit(-1);
 	       }
 	     cd->shared = s;
@@ -1628,8 +1628,8 @@ ob_collections_group_lua_script(void)
 	     cd->l2 = get_verbatim_line2();
 	     if (cd->shared)
 	       {
-		  fprintf(stderr, "%s: Error. parse error %s:%i. There is already an existing script section for the group\n",
-			  progname, file_in, line - 1);
+		  ERR("%s: Error. parse error %s:%i. There is already an existing script section for the group",
+		      progname, file_in, line - 1);
 		  exit(-1);
 	       }
 	     cd->shared = s;
@@ -1742,8 +1742,8 @@ st_collections_group_parts_part_name(void)
 	  {
 	     if ((lep != ep) && (lep->name) && (!strcmp(lep->name, ep->name)))
 	       {
-		  fprintf(stderr, "%s: Error. parse error %s:%i. There is already a part of the name %s\n",
-			  progname, file_in, line - 1, ep->name);
+		  ERR("%s: Error. parse error %s:%i. There is already a part of the name %s",
+		      progname, file_in, line - 1, ep->name);
 		  exit(-1);
 	       }
 	  }
@@ -2505,9 +2505,9 @@ static void ob_collections_group_parts_part_box_items_item(void)
 
    if ((ep->type != EDJE_PART_TYPE_BOX) && (ep->type != EDJE_PART_TYPE_TABLE))
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"box attributes in non-BOX or TABLE part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "box attributes in non-BOX or TABLE part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -2569,9 +2569,9 @@ static void st_collections_group_parts_part_box_items_item_type(void)
 	s = parse_str(0);
 	if (strcmp(s, "GROUP"))
 	  {
-	     fprintf(stderr, "%s: Error. parse error %s:%i. "
-		     "token %s not one of: GROUP.\n",
-		     progname, file_in, line - 1, s);
+	     ERR("%s: Error. parse error %s:%i. "
+		 "token %s not one of: GROUP.",
+		 progname, file_in, line - 1, s);
 	     exit(-1);
 	  }
 	/* FIXME: handle the enum, once everything else is supported */
@@ -2892,12 +2892,12 @@ static void st_collections_group_parts_part_table_items_item_position(void)
 
    if (ep->type != EDJE_PART_TYPE_TABLE)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"table attributes in non-TABLE part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "table attributes in non-TABLE part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
-
+   
    item = eina_list_data_get(eina_list_last(ep->items));
    item->col = parse_int_range(0, 0, 0xffff);
    item->row = parse_int_range(1, 0, 0xffff);
@@ -2927,9 +2927,9 @@ static void st_collections_group_parts_part_table_items_item_span(void)
 
    if (ep->type != EDJE_PART_TYPE_TABLE)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"table attributes in non-TABLE part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "table attributes in non-TABLE part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -3088,9 +3088,9 @@ st_collections_group_parts_part_description_inherit(void)
    /* inherit may not be used in the default description */
    if (!ep->other_desc)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"inherit may not be used in the default description\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "inherit may not be used in the default description",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -3098,9 +3098,9 @@ st_collections_group_parts_part_description_inherit(void)
 
    if (!ed->state.name)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"inherit may only be used after state\n",
-		progname, file_in, line - 1);
+        ERR("%s: Error. parse error %s:%i. "
+	    "inherit may only be used after state",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -3139,9 +3139,9 @@ st_collections_group_parts_part_description_inherit(void)
 
    if (!parent)
      {
-	fprintf (stderr, "%s: Error. parse error %s:%i. "
-	      "cannot find referenced part state %s %lf\n",
-	      ep->name, file_in, line - 1, parent_name, parent_val);
+	ERR("%s: Error. parse error %s:%i. "
+	    "cannot find referenced part state %s %lf",
+	    ep->name, file_in, line - 1, parent_name, parent_val);
 	exit(-1);
      }
 
@@ -3235,9 +3235,9 @@ st_collections_group_parts_part_description_state(void)
    s = parse_str(0);
    if (!strcmp (s, "custom"))
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"invalid state name: '%s'.\n",
-		progname, file_in, line - 1, s);
+	ERR("%s: Error. parse error %s:%i. "
+	    "invalid state name: '%s'.",
+	    progname, file_in, line - 1, s);
 	exit(-1);
      }
 
@@ -3914,9 +3914,9 @@ st_collections_group_parts_part_description_image_normal(void)
 
    if (ep->type != EDJE_PART_TYPE_IMAGE)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"image attributes in non-IMAGE part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "image attributes in non-IMAGE part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -3957,9 +3957,9 @@ st_collections_group_parts_part_description_image_tween(void)
 
    if (ep->type != EDJE_PART_TYPE_IMAGE)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"image attributes in non-IMAGE part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "image attributes in non-IMAGE part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4003,9 +4003,9 @@ st_collections_group_parts_part_description_image_border(void)
 
    if (ep->type != EDJE_PART_TYPE_IMAGE)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"image attributes in non-IMAGE part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "image attributes in non-IMAGE part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4043,9 +4043,9 @@ st_collections_group_parts_part_description_image_middle(void)
 
    if (ep->type != EDJE_PART_TYPE_IMAGE)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"image attributes in non-IMAGE part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "image attributes in non-IMAGE part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4085,9 +4085,9 @@ st_collections_group_parts_part_description_image_scale_hint(void)
 
    if (ep->type != EDJE_PART_TYPE_IMAGE)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"image attributes in non-IMAGE part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "image attributes in non-IMAGE part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4149,9 +4149,9 @@ st_collections_group_parts_part_description_fill_smooth(void)
 
    if (ep->type != EDJE_PART_TYPE_IMAGE)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"fill.type attribute in non-IMAGE part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "fill.type attribute in non-IMAGE part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4224,9 +4224,9 @@ st_collections_group_parts_part_description_fill_angle(void)
    /* XXX this will need to include IMAGES when angle support is added to evas images */
    if (ep->type != EDJE_PART_TYPE_GRADIENT)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"gradient attributes in non-GRADIENT part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "gradient attributes in non-GRADIENT part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4262,9 +4262,9 @@ st_collections_group_parts_part_description_fill_type(void)
 
    if (ep->type != EDJE_PART_TYPE_IMAGE)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"fill attributes in non-IMAGE part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "fill attributes in non-IMAGE part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4319,9 +4319,9 @@ st_collections_group_parts_part_description_fill_origin_relative(void)
 
    if (ep->type != EDJE_PART_TYPE_IMAGE && ep->type != EDJE_PART_TYPE_GRADIENT)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"fill attributes in non-IMAGE part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "fill attributes in non-IMAGE part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4355,9 +4355,9 @@ st_collections_group_parts_part_description_fill_origin_offset(void)
 
    if (ep->type != EDJE_PART_TYPE_IMAGE && ep->type != EDJE_PART_TYPE_GRADIENT)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"fill attributes in non-IMAGE part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "fill attributes in non-IMAGE part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4416,9 +4416,9 @@ st_collections_group_parts_part_description_fill_size_relative(void)
 
    if (ep->type != EDJE_PART_TYPE_IMAGE && ep->type != EDJE_PART_TYPE_GRADIENT)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"fill attributes in non-IMAGE part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "fill attributes in non-IMAGE part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4452,9 +4452,9 @@ st_collections_group_parts_part_description_fill_size_offset(void)
 
    if (ep->type != EDJE_PART_TYPE_IMAGE && ep->type != EDJE_PART_TYPE_GRADIENT)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"fill attributes in non-IMAGE part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "fill attributes in non-IMAGE part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4515,9 +4515,9 @@ st_collections_group_parts_part_description_text_text(void)
    if ((ep->type != EDJE_PART_TYPE_TEXT) &&
        (ep->type != EDJE_PART_TYPE_TEXTBLOCK))
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"text attributes in non-TEXT part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "text attributes in non-TEXT part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4567,9 +4567,9 @@ st_collections_group_parts_part_description_text_text_class(void)
    if ((ep->type != EDJE_PART_TYPE_TEXT) &&
        (ep->type != EDJE_PART_TYPE_TEXTBLOCK))
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"text attributes in non-TEXT part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "text attributes in non-TEXT part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4604,9 +4604,9 @@ st_collections_group_parts_part_description_text_font(void)
 
    if (ep->type != EDJE_PART_TYPE_TEXT)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"text attributes in non-TEXT part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "text attributes in non-TEXT part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4641,9 +4641,9 @@ st_collections_group_parts_part_description_text_style(void)
 
    if (ep->type != EDJE_PART_TYPE_TEXTBLOCK)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"text attributes in non-TEXTBLOCK part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "text attributes in non-TEXTBLOCK part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4679,9 +4679,9 @@ st_collections_group_parts_part_description_text_repch(void)
 
    if (ep->type != EDJE_PART_TYPE_TEXTBLOCK)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"text attributes in non-TEXTBLOCK part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "text attributes in non-TEXTBLOCK part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4716,9 +4716,9 @@ st_collections_group_parts_part_description_text_size(void)
 
    if (ep->type != EDJE_PART_TYPE_TEXT)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"text attributes in non-TEXT part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "text attributes in non-TEXT part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4753,9 +4753,9 @@ st_collections_group_parts_part_description_text_fit(void)
 
    if (ep->type != EDJE_PART_TYPE_TEXT)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"text attributes in non-TEXT part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "text attributes in non-TEXT part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4793,9 +4793,9 @@ st_collections_group_parts_part_description_text_min(void)
    if ((ep->type != EDJE_PART_TYPE_TEXT) &&
        (ep->type != EDJE_PART_TYPE_TEXTBLOCK))
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"text attributes in non-TEXT part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "text attributes in non-TEXT part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4833,9 +4833,9 @@ st_collections_group_parts_part_description_text_max(void)
    if ((ep->type != EDJE_PART_TYPE_TEXT) &&
        (ep->type != EDJE_PART_TYPE_TEXTBLOCK))
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"text attributes in non-TEXT part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "text attributes in non-TEXT part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4871,9 +4871,9 @@ st_collections_group_parts_part_description_text_align(void)
 
    if (ep->type != EDJE_PART_TYPE_TEXT)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"text attributes in non-TEXT part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "text attributes in non-TEXT part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4910,9 +4910,9 @@ st_collections_group_parts_part_description_text_source(void)
    if ((ep->type != EDJE_PART_TYPE_TEXT) &&
        (ep->type != EDJE_PART_TYPE_TEXTBLOCK))
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"text attributes in non-TEXT part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "text attributes in non-TEXT part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4954,9 +4954,9 @@ st_collections_group_parts_part_description_text_text_source(void)
    if ((ep->type != EDJE_PART_TYPE_TEXT) &&
        (ep->type != EDJE_PART_TYPE_TEXTBLOCK))
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"text attributes in non-TEXT part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "text attributes in non-TEXT part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -4998,9 +4998,9 @@ st_collections_group_parts_part_description_text_elipsis(void)
 
    if (ep->type != EDJE_PART_TYPE_TEXT)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"text attributes in non-TEXT part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "text attributes in non-TEXT part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -5068,9 +5068,9 @@ st_collections_group_parts_part_description_gradient_type(void)
 
    if (ep->type != EDJE_PART_TYPE_GRADIENT)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"gradient attributes in non-GRADIENT part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "gradient attributes in non-GRADIENT part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -5105,9 +5105,9 @@ st_collections_group_parts_part_description_gradient_spectrum(void)
 
    if (ep->type != EDJE_PART_TYPE_GRADIENT)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"gradient attributes in non-GRADIENT part.\n",
-		progname, file_in, line - 1);
+        ERR("%s: Error. parse error %s:%i. "
+	    "gradient attributes in non-GRADIENT part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -5150,9 +5150,9 @@ st_collections_group_parts_part_description_gradient_rel1_relative(void)
 
    if (ep->type != EDJE_PART_TYPE_GRADIENT)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"gradient attributes in non-GRADIENT part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "gradient attributes in non-GRADIENT part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -5193,9 +5193,9 @@ st_collections_group_parts_part_description_gradient_rel1_offset(void)
 
    if (ep->type != EDJE_PART_TYPE_GRADIENT)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"gradient attributes in non-GRADIENT part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "gradient attributes in non-GRADIENT part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -5223,12 +5223,12 @@ st_collections_group_parts_part_description_gradient_rel2_relative(void)
 
    if (ep->type != EDJE_PART_TYPE_GRADIENT)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"gradient attributes in non-GRADIENT part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "gradient attributes in non-GRADIENT part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
-
+   
    ed = ep->default_desc;
    if (ep->other_desc) ed = eina_list_data_get(eina_list_last(ep->other_desc));
 
@@ -5253,9 +5253,9 @@ st_collections_group_parts_part_description_gradient_rel2_offset(void)
 
    if (ep->type != EDJE_PART_TYPE_GRADIENT)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"gradient attributes in non-GRADIENT part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "gradient attributes in non-GRADIENT part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -5354,9 +5354,9 @@ static void st_collections_group_parts_part_description_box_layout(void)
 
    if (ep->type != EDJE_PART_TYPE_BOX)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"box attributes in non-BOX part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "box attributes in non-BOX part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -5380,9 +5380,9 @@ static void st_collections_group_parts_part_description_box_align(void)
 
    if (ep->type != EDJE_PART_TYPE_BOX)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"box attributes in non-BOX part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "box attributes in non-BOX part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -5405,9 +5405,9 @@ static void st_collections_group_parts_part_description_box_padding(void)
 
    if (ep->type != EDJE_PART_TYPE_BOX)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"box attributes in non-BOX part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "box attributes in non-BOX part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -5431,9 +5431,9 @@ st_collections_group_parts_part_description_box_min(void)
 
    if (ep->type != EDJE_PART_TYPE_BOX)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"box attributes in non-BOX part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "box attributes in non-BOX part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -5507,9 +5507,9 @@ static void st_collections_group_parts_part_description_table_homogeneous(void)
 
    if (ep->type != EDJE_PART_TYPE_TABLE)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"table attributes in non-TABLE part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "table attributes in non-TABLE part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -5535,9 +5535,9 @@ static void st_collections_group_parts_part_description_table_align(void)
 
    if (ep->type != EDJE_PART_TYPE_TABLE)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"table attributes in non-TABLE part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "table attributes in non-TABLE part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -5560,9 +5560,9 @@ static void st_collections_group_parts_part_description_table_padding(void)
 
    if (ep->type != EDJE_PART_TYPE_TABLE)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"table attributes in non-TABLE part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "table attributes in non-TABLE part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -5590,9 +5590,9 @@ _st_collections_group_parts_part_description_params(Edje_External_Param_Type typ
 
    if (ep->type != EDJE_PART_TYPE_EXTERNAL)
      {
-	fprintf(stderr, "%s: Error. parse error %s:%i. "
-		"params in non-EXTERNAL part.\n",
-		progname, file_in, line - 1);
+	ERR("%s: Error. parse error %s:%i. "
+	    "params in non-EXTERNAL part.",
+	    progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -5759,8 +5759,8 @@ st_collections_group_programs_program_name(void)
 	  {
 	     if ((lep != ep) && (lep->name) && (!strcmp(lep->name, ep->name)))
 	       {
-		  fprintf(stderr, "%s: Error. parse error %s:%i. There is already a program of the name %s\n",
-			  progname, file_in, line - 1, ep->name);
+		  ERR("%s: Error. parse error %s:%i. There is already a program of the name %s\n",
+		      progname, file_in, line - 1, ep->name);
 		  exit(-1);
 	       }
 	  }
@@ -6002,9 +6002,9 @@ st_collections_group_programs_program_target(void)
 	  data_queue_part_lookup(pc, name, &(et->id));
 	else
 	  {
-	     fprintf(stderr, "%s: Error. parse error %s:%i. "
-		   "target may only be used after action\n",
-		   progname, file_in, line - 1);
+	     ERR("%s: Error. parse error %s:%i. "
+		 "target may only be used after action",
+		 progname, file_in, line - 1);
 	     exit(-1);
 	  }
 	free(name);
@@ -6076,8 +6076,8 @@ ob_collections_group_programs_program_script(void)
 	     cp->script = s;
 	     if (cd->shared && cd->is_lua)
 	       {
-		  fprintf(stderr, "%s: Error. parse error %s:%i. You're trying to mix Embryo and Lua scripting in the same group\n",
-			progname, file_in, line - 1);
+		  ERR("%s: Error. parse error %s:%i. You're trying to mix Embryo and Lua scripting in the same group",
+		      progname, file_in, line - 1);
 		  exit(-1);
 	       }
 	     cd->is_lua = 0;
@@ -6116,8 +6116,8 @@ ob_collections_group_programs_program_lua_script(void)
 	     cp->script = s;
 	     if (cd->shared && !cd->is_lua)
 	       {
-		  fprintf(stderr, "%s: Error. parse error %s:%i. You're trying to mix Embryo and Lua scripting in the same group\n",
-			progname, file_in, line - 1);
+		  ERR("%s: Error. parse error %s:%i. You're trying to mix Embryo and Lua scripting in the same group",
+		      progname, file_in, line - 1);
 		  exit(-1);
 	       }
 	     cd->is_lua = 1;

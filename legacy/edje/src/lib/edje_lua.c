@@ -163,7 +163,7 @@ _edje_lua_error(lua_State *L, int err_code)
 	err_type = "unknown";
 	break;
      }
-   fprintf(stderr, "Lua %s error: %s\n", err_type, lua_tostring(L, -1));
+   ERR("Lua %s error: %s", err_type, lua_tostring(L, -1));
    // don't exit. this is BAD. lua script bugs will cause thngs like e to
    // exit mysteriously endig your x session. bad!
    // exit(-1);
@@ -5029,9 +5029,8 @@ _edje_lua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
    ela->cur += nsize - osize;
    if (ela->cur > ela->max)
      {
-	fprintf(stderr, 
-                "Edje Lua memory limit of %i bytes reached (%i allocated)\n",
-                ela->max, ela->cur);
+        ERR("Edje Lua memory limit of %i bytes reached (%i allocated)",
+	    ela->max, ela->cur);
 	return NULL;
      }
    if (nsize == 0)
@@ -5055,7 +5054,7 @@ _edje_lua_init()
    Ledje = lua_newstate(_edje_lua_alloc, &ela);
    if (!Ledje)
      {
-	fprintf(stderr, "Lua error: Lua state could not be initialized\n");
+	ERR("Lua error: Lua state could not be initialized");
 	exit(-1);
      }
 

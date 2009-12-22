@@ -615,8 +615,8 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, const char *ssig, const
      }
    if ((recursions >= 64) || (recursion_limit))
      {
-	printf("EDJE ERROR: programs recursing up to recursion limit of %i. Disabled.\n",
-	       64);
+	ERR("Programs recursing up to recursion limit of %i. Disabled.",
+	    64);
 	recursion_limit = 1;
 	return;
      }

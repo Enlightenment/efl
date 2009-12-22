@@ -72,8 +72,8 @@ _alloc(size_t size)
 
    mem = calloc(1, size);
    if (mem) return mem;
-   fprintf(stderr, "Edje_Edit: Error. memory allocation of %i bytes failed. %s\n",
-           (int)size, strerror(errno));
+   ERR("Edje_Edit: Error. memory allocation of %i bytes failed. %s",
+       (int)size, strerror(errno));
    return NULL;
 }
 
@@ -228,10 +228,10 @@ _edje_import_image_file(Edje *ed, const char *path, int id)
    evas_object_image_file_set(im, path, NULL);
    if (evas_object_image_load_error_get(im) != EVAS_LOAD_ERROR_NONE)
      {
-	fprintf(stderr, "Edje_Edit: Error. unable to load image \"%s\"."
-		"Missing PNG or JPEG loader modules for Evas or "
-		"file does not exist, or is not readable.\n", path);
-	evas_object_del(im);
+        ERR("Edje_Edit: unable to load image \"%s\"."
+	    "Missing PNG or JPEG loader modules for Evas or "
+	    "file does not exist, or is not readable.", path);
+        evas_object_del(im);
 	im = NULL;
 	return 0;
      }
@@ -253,8 +253,7 @@ _edje_import_image_file(Edje *ed, const char *path, int id)
    eetf = eet_open(ed->path, EET_FILE_MODE_READ_WRITE);
    if (!eetf)
      {
-	fprintf(stderr,
-		"Edje_Edit: Error. unable to open \"%s\" for writing output\n",
+	ERR("Edje_Edit: Error. unable to open \"%s\" for writing output",
 		ed->path);
 	evas_object_del(im);
 	return 0;
@@ -270,8 +269,8 @@ _edje_import_image_file(Edje *ed, const char *path, int id)
 				0, 100, 1);
    if (bytes <= 0)
      {
-	fprintf(stderr, "Edje_Edit: Error. unable to write image part \"%s\" "
-	"part entry to %s\n", buf, ed->path);
+	ERR("Edje_Edit: Error. unable to write image part \"%s\" "
+	    "part entry to %s", buf, ed->path);
 	evas_object_del(im);
 	return 0;
      }
@@ -283,8 +282,8 @@ _edje_import_image_file(Edje *ed, const char *path, int id)
    bytes = eet_data_write(eetf, _edje_edd_edje_file, "edje_file", ed->file, 1);
    if (bytes <= 0)
      {
-	fprintf(stderr, "Edje_Edit: Error. unable to write \"edje_file\" "
-	        "entry to \"%s\" \n", ed->path);
+	ERR("Edje_Edit: Error. unable to write \"edje_file\" "
+	    "entry to \"%s\"", ed->path);
 	eet_close(eetf);
 	return 0;
      }
@@ -780,8 +779,8 @@ edje_edit_group_del(Evas_Object *obj)
    eetf = eet_open(ed->file->path, EET_FILE_MODE_READ_WRITE);
    if (!eetf)
      {
-	fprintf(stderr, "Edje_Edit: Error. unable to open \"%s\" "
-	        "for writing output\n", ed->file->path);
+	ERR("Edje_Edit: Error. unable to open \"%s\" "
+	    "for writing output", ed->file->path);
 	return 0;
      }
    snprintf(buf, sizeof(buf), "collections/%d", g->id);
@@ -3822,8 +3821,8 @@ edje_edit_font_add(Evas_Object *obj, const char* path)
 	  {
 	     if (fread(fdata, pos, 1, f) != 1)
 	       {
-		  fprintf(stderr, "Edje_Edit: Error. unable to read all of font file \"%s\"\n",
-			  path);
+		  ERR("Edje_Edit: Error. unable to read all of font file \"%s\"",
+		      path);
 		  return 0;
 	       }
 	     fsize = pos;
@@ -3839,16 +3838,15 @@ edje_edit_font_add(Evas_Object *obj, const char* path)
 	eetf = eet_open(ed->path, EET_FILE_MODE_READ_WRITE);
 	if (!eetf)
 	  {
-	     fprintf(stderr,
-		     "Edje_Edit: Error. unable to open \"%s\" for writing output\n",
-		     ed->path);
+	    ERR("Edje_Edit: Error. unable to open \"%s\" for writing output",
+		ed->path);
 	     return 0;
 	  }
 
 	if (eet_write(eetf, buf, fdata, fsize, 1) <= 0)
 	  {
-	     fprintf(stderr, "Edje_Edit: Error. unable to write font part \"%s\" as \"%s\" part entry\n",
-		     path, buf);
+	     ERR("Edje_Edit: Error. unable to write font part \"%s\" as \"%s\" part entry",
+		 path, buf);
 	     eet_close(eetf);
 	     free(fdata);
 	     return 0;
@@ -5941,7 +5939,7 @@ _edje_generate_source(Evas_Object *obj)
    strcpy(tmpn, "/tmp/edje_edit.edc-tmp-XXXXXX");
 #endif
    if (!(fd = mkstemp(tmpn))) return NULL;
-   printf("*** tmp file: %s\n", tmpn);
+   INF("*** tmp file: %s", tmpn);
    if (!(f = fdopen(fd, "wb"))) return NULL;
 
    /* Write edc into file */
@@ -6109,8 +6107,8 @@ edje_edit_save(Evas_Object *obj)
    ef = ed->file;
    if (!ef) return 0;
 
-   printf("***********  Saving file ******************\n");
-   printf("** path: %s\n", ef->path);
+   INF("***********  Saving file ******************");
+   INF("** path: %s", ef->path);
    
    /* Set compiler name */
    if (strcmp(ef->compiler, "edje_edit"))
@@ -6123,18 +6121,18 @@ edje_edit_save(Evas_Object *obj)
    eetf = eet_open(ef->path, EET_FILE_MODE_READ_WRITE);
    if (!eetf)
      {
-	fprintf(stderr, "Error. unable to open \"%s\" for writing output\n",
-	        ef->path);
+	ERR("Error. unable to open \"%s\" for writing output",
+	    ef->path);
 	return 0;
      }
 
    /* Write Edje_File structure */
-   printf("** Writing Edje_File* ed->file\n");
+   INF("** Writing Edje_File* ed->file");
    bytes = eet_data_write(eetf, _edje_edd_edje_file, "edje_file", ef, 1);
    if (bytes <= 0)
      {
-	fprintf(stderr, "Error. unable to write \"edje_file\" "
-	        "entry to \"%s\" \n", ef->path);
+	ERR("Error. unable to write \"edje_file\" "
+	    "entry to \"%s\"", ef->path);
 	eet_close(eetf);
 	return 0;
      }
@@ -6142,8 +6140,8 @@ edje_edit_save(Evas_Object *obj)
    /* Write all the collections */
    if (ed->collection)
      {
-	printf("** Writing Edje_Part_Collection* ed->collection "
-	       "[id: %d]\n", ed->collection->id);
+	INF("** Writing Edje_Part_Collection* ed->collection "
+	    "[id: %d]", ed->collection->id);
 
 	snprintf(buf, sizeof(buf), "collections/%i", ed->collection->id);
 
@@ -6151,8 +6149,8 @@ edje_edit_save(Evas_Object *obj)
 	                       buf, ed->collection, 1);
 	if (bytes <= 0)
 	  {
-		fprintf(stderr, "Error. unable to write \"%s\" part entry to %s \n",
-		        buf, ef->path);
+		ERR("Error. unable to write \"%s\" part entry to %s",
+		    buf, ef->path);
 		eet_close(eetf);
 		return 0;
 	  }
@@ -6168,11 +6166,11 @@ edje_edit_save(Evas_Object *obj)
    source_file = _edje_generate_source(obj);
    if (!source_file)
      {
-	fprintf(stderr, "Error: can't create edc source\n");
+	ERR("Error: can't create edc source");
 	eet_close(eetf);
 	return 0;
      }
-   printf("** Writing EDC Source [from: %s]\n", source_file);
+   INF("** Writing EDC Source [from: %s]", source_file);
 
    //open the temp file and put the contents in SrcFile
    sf = _alloc(sizeof(SrcFile));
@@ -6182,8 +6180,8 @@ edje_edit_save(Evas_Object *obj)
    f = fopen(source_file, "rb");
    if (!f)
      {
-	fprintf(stderr, "Error. unable to read the created edc source [%s]\n",
-	        source_file);
+	ERR("Error. unable to read the created edc source [%s]",
+	    source_file);
 	eet_close(eetf);
 	return 0;
      }
@@ -6211,7 +6209,7 @@ edje_edit_save(Evas_Object *obj)
    bytes = eet_data_write(eetf, _srcfile_list_edd, "edje_sources", sfl, 1);
    if (bytes <= 0)
     {
-	fprintf(stderr, "Error. unable to write edc source\n");
+	ERR("Error. unable to write edc source");
 	eet_close(eetf);
 	return 0;
     }
@@ -6220,7 +6218,7 @@ edje_edit_save(Evas_Object *obj)
    unlink(source_file);
    eina_stringshare_del(source_file);
    eet_close(eetf);
-   printf("***********  Saving DONE ******************\n");
+   INF("***********  Saving DONE ******************");
    return 1;
 }
 
@@ -6236,15 +6234,15 @@ edje_edit_print_internal_status(Evas_Object *obj)
    _edje_generate_source(obj);
    return;
    
-   printf("\n****** CHECKIN' INTERNAL STRUCTS STATUS *********\n");
+   INF("\n****** CHECKIN' INTERNAL STRUCTS STATUS *********");
 
-   printf("*** Edje\n");
-   printf("    path: '%s'\n", ed->path);
-   printf("    group: '%s'\n", ed->group);
-   printf("    parent: '%s'\n", ed->parent);
+   INF("*** Edje\n");
+   INF("    path: '%s'", ed->path);
+   INF("    group: '%s'", ed->group);
+   INF("    parent: '%s'", ed->parent);
 
-   printf("\n*** Parts [table:%d list:%d]\n", ed->table_parts_size,
-          eina_list_count(ed->collection->parts));
+   INF("*** Parts [table:%d list:%d]", ed->table_parts_size,
+       eina_list_count(ed->collection->parts));
    EINA_LIST_FOREACH(ed->collection->parts, l, p)
      {
 	Edje_Real_Part *rp;
@@ -6254,10 +6252,10 @@ edje_edit_print_internal_status(Evas_Object *obj)
 	if (p == rp->part)
 	  printf(" OK!\n");
 	else
-	  printf(" WRONG (table[%id]->name = '%s')\n", p->id, rp->part->name);
+	  WRN(" WRONG (table[%id]->name = '%s')", p->id, rp->part->name);
      }
 
-   printf("\n*** Programs [table:%d list:%d]\n", ed->table_programs_size,
+   INF("*** Programs [table:%d list:%d]", ed->table_programs_size,
           eina_list_count(ed->collection->programs));
    EINA_LIST_FOREACH(ed->collection->programs, l, epr)
      {
@@ -6268,10 +6266,10 @@ edje_edit_print_internal_status(Evas_Object *obj)
 	if (epr == epr2)
 	  printf(" OK!\n");
 	else
-	  printf(" WRONG (table[%id]->name = '%s')\n", epr->id, epr2->name);
+	  WRN(" WRONG (table[%id]->name = '%s')", epr->id, epr2->name);
      }
 
    printf("\n");
 
-   printf("******************  END  ************************\n\n");
+   INF("******************  END  ************************\n");
 }

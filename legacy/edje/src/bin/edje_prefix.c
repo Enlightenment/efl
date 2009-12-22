@@ -26,7 +26,7 @@
 #endif
 
 #include "edje_prefix.h"
-
+#include "edje_cc.h"
 #ifdef _WIN32
 # define EDJE_DIR_SEPARATOR '\\'
 # define EDJE_DIR_SEPARATOR_S "\\"
@@ -301,7 +301,7 @@ _e_prefix_fallbacks(void)
    _prefix_path_bin    = strdup(PACKAGE_BIN_DIR);
    _prefix_path_data   = strdup(PACKAGE_DATA_DIR);
    _prefix_path_lib    = strdup(PACKAGE_LIB_DIR);
-   printf("WARNING: Edje could not determine its installed prefix\n"
+   WRN("WARNING: Edje could not determine its installed prefix\n"
 	  "         and is falling back on the compiled in default:\n"
 	  "           %s\n"
 	  "         You might like to try setting the following environment variables:\n"
@@ -311,9 +311,8 @@ _e_prefix_fallbacks(void)
 	  "           EDJE_LIB_DIR - optional in addition to E_PREFIX to provide\n"
 	  "                          a more specific library dir\n"
 	  "           EDJE_DATA_DIR- optional in addition to E_PREFIX to provide\n"
-	  "                          a more specific location for shared data\n"
-	  ,
-	  _prefix_path);
+	  "                          a more specific location for shared data",
+       _prefix_path);
    return 1;
 }
 

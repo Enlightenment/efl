@@ -38,7 +38,7 @@ edje_external_type_register(const char *type_name, const Edje_External_Type *typ
 
    if (eina_hash_find(type_registry, type_name))
      {
-	printf("EDJE ERROR: external type '%s' already registered\n", type_name);
+	ERR("External type '%s' already registered", type_name);
 	return EINA_FALSE;
      }
    return eina_hash_add(type_registry, type_name, type_info);
@@ -284,13 +284,13 @@ _edje_external_type_add(const char *type_name, Evas *evas, Evas_Object *parent, 
    obj = type->add(type->data, evas, parent, params);
    if (!obj)
      {
-	printf("EDJE ERROR: external type '%s' returned NULL from constructor\n", type_name);
+	ERR("External type '%s' returned NULL from constructor", type_name);
 	return NULL;
      }
 
    evas_object_data_set(obj, "Edje_External_Type", type);
 
-   printf("evas object: %p, external type: %p, data_get: %p\n", obj, type, evas_object_data_get(obj, "Edje_External_Type"));
+   ERR("Evas object: %p, external type: %p, data_get: %p", obj, type, evas_object_data_get(obj, "Edje_External_Type"));
    return obj;
 }
 
@@ -302,7 +302,7 @@ _edje_external_signal_emit(Evas_Object *obj, const char *emission, const char *s
    type = evas_object_data_get(obj, "Edje_External_Type");
    if (!type)
      {
-	printf("EDJE ERROR: external type data not found.\n");
+	ERR("External type data not found.");
 	return;
      }
 

@@ -133,7 +133,7 @@ error_and_abort(Eet_File *ef, const char *fmt, ...)
 {
    va_list ap;
 
-   fprintf(stderr, "%s: Error. ", progname);
+   ERR("%s: Error. ", progname);
 
    va_start(ap, fmt);
    vfprintf(stderr, fmt, ap);
@@ -979,8 +979,8 @@ data_write(void)
    ef = eet_open(file_out, EET_FILE_MODE_WRITE);
    if (!ef)
      {
-	fprintf(stderr, "%s: Error. Unable to open \"%s\" for writing output\n",
-		progname, file_out);
+	ERR("%s: Error. Unable to open \"%s\" for writing output",
+	    progname, file_out);
 	exit(-1);
      }
 
@@ -1169,8 +1169,8 @@ data_process_lookups(void)
 	  }
 	if (!l)
 	  {
-	     fprintf(stderr, "%s: Error. Unable to find part name \"%s\".\n",
-		     progname, pl->name);
+	     ERR("%s: Error. Unable to find part name \"%s\".",
+		 progname, pl->name);
 	     exit(-1);
 	  }
 	part_lookups = eina_list_remove(part_lookups, pl);
@@ -1195,8 +1195,8 @@ data_process_lookups(void)
 	  }
 	if (!l)
 	  {
-	     fprintf(stderr, "%s: Error. Unable to find program name \"%s\".\n",
-		     progname, pl->name);
+	     ERR("%s: Error. Unable to find program name \"%s\".",
+		 progname, pl->name);
 	     exit(-1);
 	  }
 	program_lookups = eina_list_remove(program_lookups, pl);
@@ -1220,8 +1220,8 @@ data_process_lookups(void)
           }
         if (!l)
           {
-             fprintf(stderr, "%s: Error. Unable to find group name \"%s\".\n",
-                     progname, gl->name);
+             ERR("%s: Error. Unable to find group name \"%s\".",
+		 progname, gl->name);
              exit(-1);
           }
         group_lookups = eina_list_remove(group_lookups, gl);
@@ -1256,8 +1256,8 @@ data_process_lookups(void)
 
 	if (!l)
 	  {
-	     fprintf(stderr, "%s: Error. Unable to find image name \"%s\".\n",
-		     progname, il->name);
+	     ERR("%s: Error. Unable to find image name \"%s\".",
+		 progname, il->name);
 	     exit(-1);
 	  }
 	image_lookups = eina_list_remove(image_lookups, il);
@@ -1290,8 +1290,8 @@ data_process_lookups(void)
 
 	if (!l)
 	  {
-	     fprintf(stderr, "%s: Error. unable to find spectrum name %s\n",
-		     progname, il->name);
+	     ERR("%s: Error. unable to find spectrum name %s",
+		 progname, il->name);
 	     exit(-1);
 	  }
 	spectrum_lookups = eina_list_remove(spectrum_lookups, il);
@@ -1525,8 +1525,8 @@ data_process_script_lookups(void)
 	n = eina_convert_itoa(cl->val, buf);
 	if (n > cl->len)
 	  {
-	     fprintf(stderr, "%s: Error. The unexpected happened. A numeric replacement string was larger than the original!\n",
-		     progname);
+	     ERR("%s: Error. The unexpected happened. A numeric replacement string was larger than the original!",
+		 progname);
 	     exit(-1);
 	  }
 	memset(cl->ptr, ' ', cl->len);

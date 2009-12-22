@@ -1452,8 +1452,8 @@ _edje_box_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep, Edje_Calc_Params
 	if ((!chosen_desc->box.alt_layout) ||
 	    (!_edje_box_layout_find(chosen_desc->box.alt_layout, &layout, &data, &free_data)))
 	  {
-	     fprintf(stderr, "ERROR: box layout '%s' (fallback '%s') not available, using horizontal.\n",
-		     chosen_desc->box.layout, chosen_desc->box.alt_layout);
+	     ERR("ERROR: box layout '%s' (fallback '%s') not available, using horizontal.",
+		 chosen_desc->box.layout, chosen_desc->box.alt_layout);
 	     layout = evas_object_box_layout_horizontal;
 	     free_data = NULL;
 	     data = NULL;
@@ -1547,11 +1547,11 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 	    }
 	if (image_id < 0)
 	  {
-	     printf("EDJE ERROR: part \"%s\" has description, "
-		    "\"%s\" %3.3f with a missing image id!!!\n",
-		    ep->part->name,
-		    ep->param1.description->state.name,
-		    ep->param1.description->state.value);
+	     ERR("¨Part \"%s\" has description, "
+		 "\"%s\" %3.3f with a missing image id!!!",
+		 ep->part->name,
+		 ep->param1.description->state.name,
+		 ep->param1.description->state.value);
 	  }
 	else
 	  {
@@ -1565,28 +1565,28 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 	     evas_object_image_file_set(ep->object, ed->file->path, buf);
 	     if (evas_object_image_load_error_get(ep->object) != EVAS_LOAD_ERROR_NONE)
 	       {
-		  printf("EDJE: Error loading image collection \"%s\" from "
-			 "file \"%s\". Missing EET Evas loader module?\n",
-			 buf, ed->file->path);
+		  ERR("Error loading image collection \"%s\" from "
+		      "file \"%s\". Missing EET Evas loader module?",
+		      buf, ed->file->path);
 		  switch (evas_object_image_load_error_get(ep->object))
 		    {
 		     case EVAS_LOAD_ERROR_GENERIC:
-			printf("Error type: EVAS_LOAD_ERROR_GENERIC\n");
+			ERR("Error type: EVAS_LOAD_ERROR_GENERIC");
 			break;
 		     case EVAS_LOAD_ERROR_DOES_NOT_EXIST:
-			printf("Error type: EVAS_LOAD_ERROR_DOES_NOT_EXIST\n");
+			ERR("Error type: EVAS_LOAD_ERROR_DOES_NOT_EXIST");
 			break;
 		     case EVAS_LOAD_ERROR_PERMISSION_DENIED:
-			printf("Error type: EVAS_LOAD_ERROR_PERMISSION_DENIED\n");
+			ERR("Error type: EVAS_LOAD_ERROR_PERMISSION_DENIED");
 			break;
 		     case EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED:
-			printf("Error type: EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED\n");
+			ERR("Error type: EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED");
 			break;
 		     case EVAS_LOAD_ERROR_CORRUPT_FILE:
-			printf("Error type: EVAS_LOAD_ERROR_CORRUPT_FILE\n");
+			ERR("Error type: EVAS_LOAD_ERROR_CORRUPT_FILE");
 			break;
 		     case EVAS_LOAD_ERROR_UNKNOWN_FORMAT:
-			printf("Error type: EVAS_LOAD_ERROR_UNKNOWN_FORMAT\n");
+			ERR("Error type: EVAS_LOAD_ERROR_UNKNOWN_FORMAT");
 			break;
 		    }
 	       }
@@ -1635,12 +1635,12 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	  faxes = "X";
 	else if ((flags & FLAG_Y))
 	  faxes = "Y";
-	printf("EDJE ERROR: Circular dependency when calculating part \"%s\"\n"
-	       "            Already calculating %s [%02x] axes\n"
-	       "            Need to calculate %s [%02x] axes\n",
-	       ep->part->name,
-	       axes, ep->calculating,
-	       faxes, flags);
+	ERR("Circular dependency when calculating part \"%s\"\n"
+	    "Already calculating %s [%02x] axes\n"
+	    "Need to calculate %s [%02x] axes",
+	    ep->part->name,
+	    axes, ep->calculating,
+	    faxes, flags);
 #endif
 	return;
      }

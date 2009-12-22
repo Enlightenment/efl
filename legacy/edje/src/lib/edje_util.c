@@ -61,7 +61,7 @@ edje_freeze(void)
 {
 #ifdef FASTFREEZE
    _edje_freeze_val++;
-   printf("fr ++ ->%i\n", _edje_freeze_val);
+   INF("fr ++ ->%i", _edje_freeze_val);
 #else
 // FIXME: could just have a global freeze instead of per object
 // above i tried.. but this broke some things. notable e17's menus. why?
@@ -111,7 +111,7 @@ edje_thaw(void)
 
 #ifdef FASTFREEZE
    _edje_freeze_val--;
-   printf("fr -- ->%i\n", _edje_freeze_val);
+   INF("fr -- ->%i", _edje_freeze_val);
    if ((_edje_freeze_val <= 0) && (_edje_freeze_calc_count > 0))
      {
 	Eina_List *l;
@@ -2348,9 +2348,8 @@ edje_box_layout_register(const char *name, Evas_Object_Box_Layout func, void *(*
 
    if (_edje_box_layout_builtin_find(name))
      {
-	fprintf(stderr,
-		"ERROR: cannot register layout '%s': would override builtin!\n",
-		name);
+	ERR("Cannot register layout '%s': would override builtin!",
+	    name);
 
 	if (data && free_data) free_data(data);
 	return;
@@ -2703,11 +2702,11 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
 	  }
 	if ((ed->w > 4000) || (ed->h > 4000))
 	  {
-	     printf("EDJE ERROR: file %s, group %s has a non-fixed part. add fixed: 1 1; ???\n",
+	     ERR("file %s, group %s has a non-fixed part. add fixed: 1 1; ???",
 		    ed->path, ed->group);
 	     if (pep)
-	       printf("  Problem part is: %s\n", pep->part->name);
-	     printf("  Will recalc min size not allowing broken parts to affect the result.\n");
+	       ERR("  Problem part is: %s", pep->part->name);
+	     ERR("  Will recalc min size not allowing broken parts to affect the result.");
 	     if (reset_maxwh)
 	       {
 		  reset_maxwh = 0;
@@ -2763,7 +2762,7 @@ edje_object_part_state_get(const Evas_Object *obj, const char *part, double *val
    if (!rp)
      {
 	if (val_ret) *val_ret = 0;
-	printf("part not found\n");
+	INF("part not found");
 	return "";
      }
    if (rp->chosen_description)

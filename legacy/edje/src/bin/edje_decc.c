@@ -21,6 +21,7 @@
 
 #include "edje_decc.h"
 
+int _edje_cc_log_dom = -1;
 char *progname = NULL;
 char *file_in = NULL;
 char *file_out = NULL;
@@ -57,7 +58,15 @@ main(int argc, char **argv)
    int i;
 
    setlocale(LC_NUMERIC, "C");
-
+   eina_init();
+   _edje_cc_log_dom = eina_log_domain_register("edje_decc", EDJE_CC_DEFAULT_LOG_COLOR);
+   if(_edje_cc_log_dom < 0)
+     {
+       EINA_LOG_ERR("Edje_decc: Impossible to create a log domain for edje_decc");
+       eina_shutdown();
+       exit(-1);
+     }
+   eina_log_level_set(EINA_LOG_LEVEL_INFO);
    progname = argv[0];
    for (i = 1; i < argc; i++)
      {
@@ -75,7 +84,7 @@ main(int argc, char **argv)
      }
    if (!file_in)
      {
-	fprintf(stderr, "%s: Error: no input file specified.\n", progname);
+	ERR("%s: Error: no input file specified.", progname);
 	main_help();
 	exit(-1);
      }
@@ -89,6 +98,9 @@ main(int argc, char **argv)
 
    eet_close(ef);
    eet_shutdown();
+   eina_log_domain_unregister(_edje_cc_log_dom);
+   _edje_cc_log_dom = -1;
+   eina_shutdown();
    return 0;
 }
 
@@ -98,27 +110,27 @@ decomp(void)
    ef = eet_open(file_in, EET_FILE_MODE_READ);
    if (!ef)
      {
-	printf("ERROR: cannot open %s\n", file_in);
+	ERR("ERROR: cannot open %s", file_in);
 	return 0;
      }
 
    srcfiles = source_load(ef);
    if (!srcfiles || !srcfiles->list)
      {
-	printf("ERROR: %s has no decompile information\n", file_in);
+	ERR("ERROR: %s has no decompile information", file_in);
 	eet_close(ef);
 	return 0;
      }
    if (!eina_list_data_get(srcfiles->list) || !root_filename_is_sane())
      {
-        printf("ERROR: Invalid root filename: '%s'\n", (char *) eina_list_data_get(srcfiles->list));
+        ERR("ERROR: Invalid root filename: '%s'", (char *) eina_list_data_get(srcfiles->list));
 	eet_close(ef);
 	return 0;
      }
    edje_file = eet_data_read(ef, _edje_edd_edje_file, "edje_file");
    if (!edje_file)
      {
-	printf("ERROR: %s does not appear to be an edje file\n", file_in);
+        ERR("ERROR: %s does not appear to be an edje file", file_in);
 	eet_close(ef);
 	return 0;
      }
@@ -128,7 +140,7 @@ decomp(void)
      }
    else if (!compiler_cmd_is_sane())
      {
-	printf("ERROR: invalid compiler executable: '%s'\n", edje_file->compiler);
+	ERR("ERROR: invalid compiler executable: '%s'", edje_file->compiler);
 	eet_close(ef);
 	return 0;
      }
@@ -184,14 +196,14 @@ output(void)
 		  ee = ecore_evas_buffer_new(1, 1);
 		  if (!ee)
 		    {
-		       fprintf(stderr, "Error. cannot create buffer engine canvas for image save.\n");
+		       ERR("Cannot create buffer engine canvas for image save.");
 		       exit(-1);
 		    }
 		  evas = ecore_evas_get(ee);
 		  im = evas_object_image_add(evas);
 		  if (!im)
 		    {
-		       fprintf(stderr, "Error. cannot create image object for save.\n");
+		       ERR("Cannot create image object for save.");
 		       exit(-1);
 		    }
 		  snprintf(buf, sizeof(buf), "images/%i", ei->id);
@@ -203,14 +215,14 @@ output(void)
 		  *p = 0;
 		  if (strstr(pp, "../"))
 		    {
-		       printf("ERROR: potential security violation. attempt to write in parent dir.\n");
+		       ERR("Potential security violation. attempt to write in parent dir.");
 		       exit(-1);
 		    }
 		  ecore_file_mkpath(pp);
 		  free(pp);
 		  if (!evas_object_image_save(im, out, NULL, "quality=100 compress=9"))
 		    {
-		       printf("ERROR: cannot write file %s. Perhaps missing JPEG or PNG saver modules for Evas.\n", out);
+		       ERR("Cannot write file %s. Perhaps missing JPEG or PNG saver modules for Evas.", out);
 		       exit(-1);
 		    }
 		  evas_object_del(im);
@@ -228,26 +240,26 @@ output(void)
 	char *pp;
 
 	snprintf(out, sizeof(out), "%s/%s", outdir, sf->name);
-	printf("Output Source File: %s\n", out);
+	INF("Output Source File: %s\n", out);
 	pp = strdup(out);
 	p = strrchr(pp, '/');
 	*p = 0;
 	if (strstr(pp, "../"))
 	  {
-	     printf("ERROR: potential security violation. attempt to write in parent dir.\n");
+	     ERR("Potential security violation. attempt to write in parent dir.");
 	     exit (-1);
 	  }
 	ecore_file_mkpath(pp);
 	free(pp);
 	if (strstr(out, "../"))
 	  {
-	     printf("ERROR: potential security violation. attempt to write in parent dir.\n");
+	     ERR("Potential security violation. attempt to write in parent dir.");
 	     exit (-1);
 	  }
 	f = fopen(out, "wb");
 	if (!f)
 	  {
-	     printf("ERROR: unable to write file (%s).\n", out);
+	     ERR("Unable to write file (%s).", out);
 	     exit (-1);
 	  }
 
@@ -275,20 +287,20 @@ output(void)
 		  char *pp;
 
 		  snprintf(out, sizeof(out), "%s/%s", outdir, fn->file);
-		  printf("Output Font: %s\n", out);
+		  INF("Output Font: %s", out);
 		  pp = strdup(out);
 		  p = strrchr(pp, '/');
 		  *p = 0;
 		  if (strstr(pp, "../"))
 		    {
-		       printf("ERROR: potential security violation. attempt to write in parent dir.\n");
+		       ERR("Potential security violation. attempt to write in parent dir.");
 		       exit (-1);
 		    }
 		  ecore_file_mkpath(pp);
 		  free(pp);
 		  if (strstr(out, "../"))
 		    {
-		       printf("ERROR: potential security violation. attempt to write in parent dir.\n");
+		       ERR("Potential security violation. attempt to write in parent dir.");
 		       exit (-1);
 		    }
 		  f = fopen(out, "wb");
@@ -310,7 +322,7 @@ output(void)
 	     printf("Output Build Script: %s\n", out);
 	     if (strstr(out, "../"))
 	       {
-		  printf("ERROR: potential security violation. attempt to write in parent dir.\n");
+		  ERR("potential security violation. attempt to write in parent dir.\n");
 		  exit (-1);
 	       }
 	     f = fopen(out, "wb");
@@ -318,9 +330,9 @@ output(void)
 	     fprintf(f, "%s $@ -id . -fd . %s -o %s.edj\n", edje_file->compiler, sf->name, outdir);
 	     fclose(f);
 
-	     printf("\n*** CAUTION ***\n"
-		    "Please check the build script for anything malicious "
-		    "before running it!\n\n");
+	     WRN("\n*** CAUTION ***\n"
+		 "Please check the build script for anything malicious "
+		 "before running it!\n\n");
 	  }
 
 	if (file_out)
@@ -328,7 +340,7 @@ output(void)
 	     snprintf(out, sizeof(out), "%s/%s", outdir, file_out);
 	     if (symlink(sf->name, out) != 0)
                {
-                  printf("ERROR: symlink %s -> %s failed\n", sf->name, out);
+                  ERR("symlink %s -> %s failed\n", sf->name, out);
                }
 	  }
 

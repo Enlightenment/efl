@@ -13,7 +13,7 @@
 
 #include "edje_cc.h"
 #include "edje_prefix.h"
-
+int _edje_cc_log_dom = -1;
 static void main_help(void);
 
 Eina_List *img_dirs = NULL;
@@ -63,10 +63,15 @@ main(int argc, char **argv)
    setlocale(LC_NUMERIC, "C");
 
    eina_init();
-
+   _edje_cc_log_dom = eina_log_domain_register("EDJE_CC", EDJE_DEFAULT_LOG_COLOR);
+   if(_edje_cc_log_dom<0)
+     {
+       EINA_LOG_ERR("Enable to create a log domain.");
+       exit(1);
+     }
    tmp_dir = getenv("TMPDIR");
 
-
+   
    progname = argv[0];
    for (i = 1; i < argc; i++)
      {
@@ -210,7 +215,7 @@ main(int argc, char **argv)
    data_write();
 
    edje_shutdown();
-
+   eina_log_domain_unregister(_edje_cc_log_dom);
    eina_shutdown();
 
    return 0;

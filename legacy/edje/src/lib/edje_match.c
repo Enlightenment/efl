@@ -288,7 +288,7 @@ _edje_match_patterns_exec_init_states(Edje_States       *states,
           r->patterns[i] = str;                                 \
                                                                 \
           if (Show)                                             \
-            fprintf(stderr, "%i [%s]\n", i, str);               \
+            INF("%i [%s]", i, str);                             \
                                                                 \
           r->finals[i] = 0;                                     \
           for (j = 0; str[j]; ++j)                              \

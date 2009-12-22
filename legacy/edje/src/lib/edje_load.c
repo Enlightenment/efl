@@ -393,7 +393,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		  rp->param1.description = ep->default_desc;
 		  rp->chosen_description = rp->param1.description;
 		  if (!rp->param1.description)
-		    printf("EDJE ERROR: no default part description!\n");
+		    ERR("no default part description!");
 
 		  switch (ep->type)
 		    {
@@ -1058,16 +1058,16 @@ _edje_file_free(Edje_File *edf)
    /* FIXME: free collection_hash and collection_cache */
    if (edf->collection_hash)
      {
-	printf("EDJE ERROR:\n"
-	       "\n"
-	       "Naughty Programmer - spank spank!\n"
-	       "\n"
-	       "This program as probably called edje_shutdown() with active Edje objects\n"
-	       "still around.\n This can cause problems as both Evas and Edje retain\n"
-	       "references to the objects. you should shut down all canvases and objects\n"
-	       "before calling edje_shutdown().\n"
-	       "The following errors are the edje object files and parts that are still\n"
-	       "hanging around, with their reference counts\n");
+	ERR("EDJE ERROR:\n"
+	    "\n"
+	    "Naughty Programmer - spank spank!\n"
+	    "\n"
+	    "This program as probably called edje_shutdown() with active Edje objects\n"
+	    "still around.\n This can cause problems as both Evas and Edje retain\n"
+	    "references to the objects. you should shut down all canvases and objects\n"
+	    "before calling edje_shutdown().\n"
+	    "The following errors are the edje object files and parts that are still\n"
+	    "hanging around, with their reference counts");
 	eina_hash_foreach(edf->collection_hash,
                           _edje_file_collection_hash_foreach, edf);
 	eina_hash_free(edf->collection_hash);
@@ -1184,9 +1184,9 @@ _edje_file_collection_hash_foreach(const Eina_Hash *hash __UNUSED__, const void 
 
    edf = fdata;
    coll = data;
-   printf("EEK: EDJE FILE: \"%s\" ref(%i) PART: \"%s\" ref(%i) \n",
-	  edf->path, edf->references,
-	  coll->part, coll->references);
+   ERR("EEK: EDJE FILE: \"%s\" ref(%i) PART: \"%s\" ref(%i) ",
+       edf->path, edf->references,
+       coll->part, coll->references);
    _edje_collection_free(edf, coll);
 
    return 1;

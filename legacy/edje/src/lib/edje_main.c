@@ -7,18 +7,10 @@
 #include "edje_private.h"
 
 static int _edje_init_count = 0;
-static int _edje_log_dom_global = -1;
+int _edje_default_log_dom = -1;
 Eina_Mempool *_edje_real_part_mp = NULL;
 Eina_Mempool *_edje_real_part_state_mp = NULL;
 
-#ifdef EDJE_DEFAULT_LOG_COLOR
-# undef EDJE_DEFAULT_LOG_COLOR
-#endif
-#define EDJE_DEFAULT_LOG_COLOR EINA_COLOR_CYAN
-#ifdef ERR
-# undef ERR
-#endif
-#define ERR(...) EINA_LOG_DOM_ERR(_edje_log_dom_global, __VA_ARGS__)
 
 
 /*============================================================================*
@@ -68,8 +60,8 @@ edje_init(void)
 	return --_edje_init_count;
      }
 
-   _edje_log_dom_global = eina_log_domain_register("Edje", EDJE_DEFAULT_LOG_COLOR);
-   if (_edje_log_dom_global < 0)
+   _edje_default_log_dom = eina_log_domain_register("Edje", EDJE_DEFAULT_LOG_COLOR);
+   if (_edje_default_log_dom < 0)
      {
 	EINA_LOG_ERR("Edje Can not create a general log domain.");
 	goto shutdown_eina;
@@ -142,8 +134,8 @@ edje_init(void)
  shutdown_ecore_job:
    ecore_job_shutdown();
  unregister_log_domain:
-   eina_log_domain_unregister(_edje_log_dom_global);
-   _edje_log_dom_global = -1;
+   eina_log_domain_unregister(_edje_default_log_dom);
+   _edje_default_log_dom = -1;
  shutdown_eina:
    eina_shutdown();
    return --_edje_init_count;
@@ -199,8 +191,8 @@ edje_shutdown(void)
    eet_shutdown();
    embryo_shutdown();
    ecore_job_shutdown();
-   eina_log_domain_unregister(_edje_log_dom_global);
-   _edje_log_dom_global = -1;
+   eina_log_domain_unregister(_edje_default_log_dom);
+   _edje_default_log_dom = -1;
    eina_shutdown();
 
    return _edje_init_count;

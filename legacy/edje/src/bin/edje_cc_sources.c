@@ -70,8 +70,8 @@ source_fetch_file(const char *fil, const char *filname)
    f = fopen(fil, "rb");
    if (!f)
      {
-	fprintf(stderr, "%s: Warning. Cannot open file '%s'\n",
-	      progname, fil);
+	ERR("%s: Warning. Cannot open file '%s'",
+	    progname, fil);
 	exit(-1);
      }
 
@@ -86,7 +86,7 @@ source_fetch_file(const char *fil, const char *filname)
 	tmp = fread(sf->file, sz, 1, f);
 	if (tmp != 1)
 	  {
-	     fprintf(stderr, "%s: Warning file length for (%s) doesn't match !\n",
+	     ERR("%s: Warning file length for (%s) doesn't match !",
 		     progname, filname);
 	     exit(-1);
 	  }

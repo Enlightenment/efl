@@ -12,6 +12,23 @@
 # define O_BINARY 0
 #endif
 
+/* logging variables */
+extern int _edje_cc_log_dom ;
+#define EDJE_CC_DEFAULT_LOG_COLOR EINA_COLOR_CYAN
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_edje_cc_log_dom, __VA_ARGS__)
+#ifdef INF
+# undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(_edje_cc_log_dom, __VA_ARGS__)
+#ifdef WRN
+# undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_edje_cc_log_dom, __VA_ARGS__)
+
+
 /* types */
 typedef struct _New_Object_Handler    New_Object_Handler;
 typedef struct _New_Statement_Handler New_Statement_Handler;

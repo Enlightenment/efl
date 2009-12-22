@@ -105,12 +105,12 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
 	if ((err_code = luaL_loadbuffer(edc->L, data, size, "edje_lua_script")))
 	  {
 	     if (err_code == LUA_ERRSYNTAX)
-	       printf("lua load syntax error: %s\n", lua_tostring(edc->L, -1));
+	       ERR("lua load syntax error: %s", lua_tostring(edc->L, -1));
 	     else if (err_code == LUA_ERRMEM)
-	       printf("lua load memory allocation error: %s\n", lua_tostring(edc->L, -1));
+	       ERR("lua load memory allocation error: %s", lua_tostring(edc->L, -1));
 	  }
 	if (lua_pcall(edc->L, 0, 0, 0))
-	  printf("lua call error: %s\n", lua_tostring(edc->L, -1));
+	  ERR("lua call error: %s", lua_tostring(edc->L, -1));
 	free(data);
      }
    
@@ -315,7 +315,7 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 		       ep2 = eina_list_nth(edc->parts, ep2->dragable.confine_id);
 		       if (eina_list_data_find(hist, ep2))
 			 {
-			    printf("EDJE ERROR: confine_to loops. invalidating loop.\n");
+			    ERR("confine_to loops. invalidating loop.");
 			    ep2->dragable.confine_id = -1;
 			    break;
 			 }
@@ -340,7 +340,7 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 
 		       if (eina_list_data_find(hist, ep2))
 			 {
-			    printf("EDJE ERROR: events_to loops. invalidating loop.\n");
+			    ERR("events_to loops. invalidating loop.");
 			    ep2->dragable.events_id = -1;
 			    break;
 			 }
@@ -355,7 +355,7 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 		       ep2 = eina_list_nth(edc->parts, ep2->clip_to_id);
 		       if (eina_list_data_find(hist, ep2))
 			 {
-			    printf("EDJE ERROR: clip_to loops. invalidating loop.\n");
+			    ERR("clip_to loops. invalidating loop.");
 			    ep2->clip_to_id = -1;
 			    break;
 			 }

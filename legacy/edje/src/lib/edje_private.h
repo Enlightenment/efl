@@ -25,7 +25,28 @@
 
 #include <lua.h>
 #include <lauxlib.h>
+EAPI extern int _edje_default_log_dom ; 
 
+#ifdef EDJE_DEFAULT_LOG_COLOR
+# undef EDJE_DEFAULT_LOG_COLOR
+#endif
+#define EDJE_DEFAULT_LOG_COLOR EINA_COLOR_CYAN
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_edje_default_log_dom, __VA_ARGS__)
+#ifdef INF
+# undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(_edje_default_log_dom, __VA_ARGS__)
+#ifdef WRN
+# undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_edje_default_log_dom, __VA_ARGS__)
+#ifdef CRIT
+# undef CRIT
+#endif
+#define CRIT(...) EINA_LOG_DOM_CRIT(_edje_default_log_dom, __VA_ARGS__)
 #ifdef __GNUC__
 # if __GNUC__ >= 4
 // BROKEN in gcc 4 on amd64

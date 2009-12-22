@@ -2363,19 +2363,19 @@ _edje_embryo_test_run(Edje *ed, const char *fname, const char *sig, const char *
 	ret = embryo_program_run(ed->collection->script, fn);
 	if (ret == EMBRYO_PROGRAM_FAIL)
 	  {
-	     printf("EDJE:        ERROR with embryo script.\n"
-		    "ENTRY POINT: %s\n"
-		    "ERROR:       %s\n",
-		    fname,
-		    embryo_error_string_get(embryo_program_error_get(ed->collection->script)));
+ 	     ERR("ERROR with embryo script.\n"
+	 	 "ENTRY POINT: %s\n"
+		 "ERROR:       %s",
+		 fname,
+		 embryo_error_string_get(embryo_program_error_get(ed->collection->script)));
 	  }
 	else if (ret == EMBRYO_PROGRAM_TOOLONG)
 	  {
-	     printf("EDJE:        ERROR with embryo script.\n"
-		    "ENTRY POINT: %s\n"
-		    "ERROR:       Script exceeded maximum allowed cycle count of %i\n",
-		    fname,
-		    embryo_program_max_cycle_run_get(ed->collection->script));
+	     ERR("ERROR with embryo script.\n"
+		 "ENTRY POINT: %s\n"
+		 "ERROR:       Script exceeded maximum allowed cycle count of %i",
+		 fname,
+		 embryo_program_max_cycle_run_get(ed->collection->script));
 	  }
 	embryo_program_data_set(ed->collection->script, pdata);
      }
