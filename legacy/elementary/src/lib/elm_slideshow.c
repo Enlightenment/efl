@@ -506,7 +506,8 @@ elm_slideshow_item_del(Elm_Slideshow_Item *item)
 	  elm_slideshow_show(eina_list_data_get(l2));
      }
 
-   wd->items = eina_list_remove(wd->items, item);
+   wd->items = eina_list_remove_list(wd->items, item->l);
+   wd->items_built = eina_list_remove(wd->items_built, item);
 
    if(item->o && item->itc->func.del)
      item->itc->func.del((void*)item->data, wd->previous->o);
