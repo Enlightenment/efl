@@ -8,8 +8,8 @@
 
 #include <stdlib.h>
 
-#include "ecore_private.h"
 #include "Ecore.h"
+#include "ecore_private.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
 

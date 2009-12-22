@@ -10,12 +10,12 @@
 #include <dirent.h>
 
 #include <Ecore.h>
+#include "ecore_private.h"
 #ifdef BUILD_ECORE_EVAS_FB
 #include <Ecore_Fb.h>
 #include <ecore_fb_private.h>
 #endif
 
-#include "ecore_private.h"
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 

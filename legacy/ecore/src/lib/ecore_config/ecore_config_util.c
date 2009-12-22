@@ -15,6 +15,7 @@
 
 #include <stdarg.h>		/* varargs in sprintf/appendf */
 
+#include "Ecore.h"
 #include "ecore_private.h"
 
 #include "Ecore_Config.h"

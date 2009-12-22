@@ -8,8 +8,8 @@
 
 #include <string.h>
 
-#include "ecore_private.h"
 #include "Ecore.h"
+#include "ecore_private.h"
 #include "Ecore_Data.h"
 
 /* A macro for determining the highest node at given branch */

@@ -7,8 +7,8 @@
 #endif
 
 #include "Ecore.h"
-#include "Ecore_Con.h"
 #include "ecore_private.h"
+#include "Ecore_Con.h"
 #include "ecore_ipc_private.h"
 #include "Ecore_Ipc.h"
 

@@ -33,8 +33,8 @@
 # include <Evil.h>
 #endif
 
-#include "ecore_private.h"
 #include "Ecore.h"
+#include "ecore_private.h"
 
 static int  _ecore_main_select(double timeout);
 static void _ecore_main_fd_handlers_cleanup(void);

@@ -23,8 +23,8 @@
 # include <sys/wait.h>
 #endif
 
-#include "ecore_private.h"
 #include "Ecore.h"
+#include "ecore_private.h"
 
 /* TODO: Something to let people build a command line and does auto escaping -
  *

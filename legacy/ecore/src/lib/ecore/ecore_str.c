@@ -30,6 +30,7 @@
 #include <limits.h>
 #include <sys/types.h>
 
+#include "Ecore.h"
 #include "ecore_private.h"
 #include "Ecore_Str.h"
 

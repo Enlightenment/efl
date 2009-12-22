@@ -54,6 +54,7 @@
 # include <xcb/xprint.h>
 #endif /* ECORE_XCB_XPRINT */
 
+#include "Ecore.h"
 #include "ecore_private.h"
 #include "Ecore_X.h"
 

@@ -18,9 +18,9 @@
 #include <ctype.h>
 
 #include <Ecore.h>
+#include "ecore_private.h"
 #include <Ecore_Ipc.h>
 
-#include "ecore_private.h"
 #include "ecore_config_ipc.h"
 #include "ecore_config_util.h"
 #include "ecore_config_private.h"

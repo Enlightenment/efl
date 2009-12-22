@@ -18,8 +18,8 @@
 # include <Evil.h>
 #endif
 
-#include "ecore_private.h"
 #include "Ecore.h"
+#include "ecore_private.h"
 
 #ifndef _WIN32_WCE
 

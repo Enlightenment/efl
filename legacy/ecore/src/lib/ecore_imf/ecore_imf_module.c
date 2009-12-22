@@ -11,6 +11,7 @@
 #include <string.h>
 #include <limits.h>
 
+#include <Ecore.h>
 #include <ecore_private.h>
 
 #include "Ecore_IMF.h"

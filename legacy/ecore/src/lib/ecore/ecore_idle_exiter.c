@@ -8,8 +8,8 @@
 
 #include <stdlib.h>
 
-#include "ecore_private.h"
 #include "Ecore.h"
+#include "ecore_private.h"
 
 static Ecore_Idle_Exiter *idle_exiters = NULL;
 static int                idle_exiters_delete_me = 0;

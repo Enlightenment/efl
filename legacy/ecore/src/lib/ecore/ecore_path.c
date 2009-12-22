@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <dirent.h>
 
+#include "Ecore.h"
 #include "ecore_private.h"
 #include "Ecore_Data.h"
 #include "Ecore_Str.h"

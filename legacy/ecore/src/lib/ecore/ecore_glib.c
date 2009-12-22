@@ -9,10 +9,10 @@
 #include <stdio.h>
 
 #include "Ecore.h"
+#include "ecore_private.h"
 
 #ifdef HAVE_GLIB
 #include <glib.h>
-#include "ecore_private.h"
 
 static Eina_Bool _ecore_glib_active = EINA_FALSE;
 static int (*_ecore_glib_select_original)(int, fd_set*, fd_set*, fd_set*, struct timeval *);

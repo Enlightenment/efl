@@ -9,8 +9,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ecore_private.h"
 #include "Ecore.h"
+#include "ecore_private.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"

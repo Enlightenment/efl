@@ -51,6 +51,7 @@
 #include <X11/XKBlib.h>
 #endif
 
+#include "Ecore.h"
 #include "ecore_private.h"
 #include "Ecore_X.h"
 

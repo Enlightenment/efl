@@ -43,8 +43,8 @@
 #include <arpa/nameser.h>
 #include <netdb.h>
 
-#include "ecore_private.h"
 #include "Ecore.h"
+#include "ecore_private.h"
 #include "ecore_con_private.h"
 
 typedef struct _CB_Data CB_Data;

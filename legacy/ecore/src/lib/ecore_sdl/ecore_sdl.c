@@ -10,9 +10,9 @@
 
 #include "Eina.h"
 #include "Ecore_Sdl.h"
-#include "ecore_private.h"
 #include "Ecore_Input.h"
 #include "Ecore.h"
+#include "ecore_private.h"
 #include "Ecore_Sdl_Keys.h"
 
 #include <eina_rbtree.h>

@@ -10,8 +10,8 @@
 # include <pthread.h>
 #endif
 
-#include "ecore_private.h"
 #include "Ecore.h"
+#include "ecore_private.h"
 
 #ifdef EFL_HAVE_PTHREAD
 typedef struct _Ecore_Pthread_Worker Ecore_Pthread_Worker;

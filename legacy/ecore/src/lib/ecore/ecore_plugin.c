@@ -23,9 +23,10 @@
 # include <Evil.h>
 #endif
 
+#include "Ecore.h"
+#include "ecore_private.h"
 #include "Ecore_Data.h"
 #include "Ecore_Str.h"
-#include "ecore_private.h"
 
 static Eina_Bool _hash_keys(const Eina_Hash	*hash,
 			    const char		*key,

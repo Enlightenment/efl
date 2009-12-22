@@ -162,25 +162,6 @@ EAPI void ecore_print_warning(const char *function, const char *sparam);
 
 typedef unsigned int              Ecore_Magic;
 
-#ifndef _ECORE_H
-enum _Ecore_Fd_Handler_Flags
-{
-   ECORE_FD_READ = 1,
-   ECORE_FD_WRITE = 2,
-   ECORE_FD_ERROR = 4
-};
-typedef enum _Ecore_Fd_Handler_Flags Ecore_Fd_Handler_Flags;
-enum _Ecore_Exe_Flags
-{
-   ECORE_EXE_PIPE_READ = 1,
-   ECORE_EXE_PIPE_WRITE = 2,
-   ECORE_EXE_PIPE_ERROR = 4,
-   ECORE_EXE_PIPE_READ_LINE_BUFFERED = 8,
-   ECORE_EXE_PIPE_ERROR_LINE_BUFFERED = 16,
-   ECORE_EXE_PIPE_AUTO = 32,
-   ECORE_EXE_RESPAWN = 64,
-   ECORE_EXE_USE_SH = 128,
-   ECORE_EXE_NOT_LEADER = 256
    /* FIXME: Getting respawn to work
     *
     * There is no way that we can do anything about the internal state info of
@@ -241,32 +222,6 @@ enum _Ecore_Exe_Flags
     * over may be, so a random element added to the timeout may help, and won't
     * hurt.  The user code may need to be informed that a timeout is in progress.
     */
-};
-typedef enum _Ecore_Exe_Flags Ecore_Exe_Flags;
-enum _Ecore_Poller_Type
-{
-   ECORE_POLLER_CORE = 0
-};
-typedef enum _Ecore_Poller_Type Ecore_Poller_Type;
-
-typedef struct _Ecore_Exe           Ecore_Exe;
-typedef struct _Ecore_Timer         Ecore_Timer;
-typedef struct _Ecore_Idler         Ecore_Idler;
-typedef struct _Ecore_Idle_Enterer  Ecore_Idle_Enterer;
-typedef struct _Ecore_Idle_Exiter   Ecore_Idle_Exiter;
-typedef struct _Ecore_Fd_Handler    Ecore_Fd_Handler;
-typedef struct _Ecore_Event_Handler Ecore_Event_Handler;
-typedef struct _Ecore_Event_Filter  Ecore_Event_Filter;
-typedef struct _Ecore_Event         Ecore_Event;
-typedef struct _Ecore_Animator      Ecore_Animator;
-typedef struct _Ecore_Pipe          Ecore_Pipe;
-typedef struct _Ecore_Poller        Ecore_Poller;
-#ifdef _WIN32
-typedef struct _Ecore_Win32_Handler Ecore_Win32_Handler;
-#else
-typedef void                        Ecore_Win32_Handler;
-#endif
-
 #ifndef _WIN32
 struct _Ecore_Exe
 {
@@ -428,8 +383,6 @@ struct _Ecore_Poller
    int           (*func) (void *data);
    void          *data;
 };
-
-#endif
 
 EAPI void          _ecore_magic_fail(const void *d, Ecore_Magic m, Ecore_Magic req_m, const char *fname);
 

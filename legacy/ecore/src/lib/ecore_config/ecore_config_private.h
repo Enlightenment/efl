@@ -61,6 +61,7 @@ int                   _ecore_config_ipc_ecore_init(const char *pipe_name, void *
 int                   _ecore_config_ipc_ecore_exit(void **data);
 int                   _ecore_config_ipc_ecore_poll(void **data);
 
+#include "Ecore.h"
 #include "ecore_private.h"
 
 #endif

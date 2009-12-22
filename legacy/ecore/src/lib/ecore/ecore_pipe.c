@@ -14,8 +14,8 @@
 # include <Evil.h>
 #endif
 
-#include "ecore_private.h"
 #include "Ecore.h"
+#include "ecore_private.h"
 
 /* How of then we should retry to write to the pipe */
 #define ECORE_PIPE_WRITE_RETRY 6

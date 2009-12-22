@@ -9,8 +9,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "ecore_private.h"
 #include "Ecore.h"
+#include "ecore_private.h"
 
 static void _ecore_timer_set(Ecore_Timer *timer, double at, double in, int (*func) (void *data), void *data);
 

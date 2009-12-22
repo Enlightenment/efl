@@ -92,7 +92,6 @@ extern "C" {
    EAPI extern int ECORE_EXE_EVENT_DATA; /**< Data from a child process. */
    EAPI extern int ECORE_EXE_EVENT_ERROR; /**< Errors from a child process. */
 
-#ifndef _ECORE_PRIVATE_H
    enum _Ecore_Fd_Handler_Flags
      {
 	ECORE_FD_READ = 1, /**< Fd Read mask */
@@ -121,20 +120,19 @@ extern "C" {
      };
    typedef enum _Ecore_Poller_Type Ecore_Poller_Type;
 
-   typedef void Ecore_Exe; /**< A handle for spawned processes */
-   typedef void Ecore_Timer; /**< A handle for timers */
-   typedef void Ecore_Idler; /**< A handle for idlers */
-   typedef void Ecore_Idle_Enterer; /**< A handle for idle enterers */
-   typedef void Ecore_Idle_Exiter; /**< A handle for idle exiters */
-   typedef void Ecore_Fd_Handler; /**< A handle for Fd handlers */
-   typedef void Ecore_Win32_Handler; /**< A handle for HANDLE handlers on Windows */
-   typedef void Ecore_Event_Handler; /**< A handle for an event handler */
-   typedef void Ecore_Event_Filter; /**< A handle for an event filter */
-   typedef void Ecore_Event; /**< A handle for an event */
-   typedef void Ecore_Animator; /**< A handle for animators */
-   typedef void Ecore_Pipe; /**< A handle for pipes */
-   typedef void Ecore_Poller; /**< A handle for pollers */
-#endif
+   typedef struct _Ecore_Exe                   Ecore_Exe; /**< A handle for spawned processes */
+   typedef struct _Ecore_Timer                 Ecore_Timer; /**< A handle for timers */
+   typedef struct _Ecore_Idler                 Ecore_Idler; /**< A handle for idlers */
+   typedef struct _Ecore_Idle_Enterer          Ecore_Idle_Enterer; /**< A handle for idle enterers */
+   typedef struct _Ecore_Idle_Exiter           Ecore_Idle_Exiter; /**< A handle for idle exiters */
+   typedef struct _Ecore_Fd_Handler            Ecore_Fd_Handler; /**< A handle for Fd handlers */
+   typedef struct _Ecore_Win32_Handler         Ecore_Win32_Handler; /**< A handle for HANDLE handlers on Windows */
+   typedef struct _Ecore_Event_Handler         Ecore_Event_Handler; /**< A handle for an event handler */
+   typedef struct _Ecore_Event_Filter          Ecore_Event_Filter; /**< A handle for an event filter */
+   typedef struct _Ecore_Event                 Ecore_Event; /**< A handle for an event */
+   typedef struct _Ecore_Animator              Ecore_Animator; /**< A handle for animators */
+   typedef struct _Ecore_Pipe                  Ecore_Pipe; /**< A handle for pipes */
+   typedef struct _Ecore_Poller                Ecore_Poller; /**< A handle for pollers */
    typedef struct _Ecore_Event_Signal_User     Ecore_Event_Signal_User; /**< User signal event */
    typedef struct _Ecore_Event_Signal_Hup      Ecore_Event_Signal_Hup; /**< Hup signal event */
    typedef struct _Ecore_Event_Signal_Exit     Ecore_Event_Signal_Exit; /**< Exit signal event */

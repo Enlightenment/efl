@@ -13,8 +13,8 @@
 # include <Evil.h>
 #endif
 
-#include "ecore_private.h"
 #include "Ecore.h"
+#include "ecore_private.h"
 
 static int app_argc = 0;
 static char **app_argv = NULL;

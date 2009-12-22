@@ -40,8 +40,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endif
 
 #include "Ecore.h"
-#include "Ecore_Data.h"
 #include "ecore_private.h"
+#include "Ecore_Data.h"
 
 EAPI const unsigned int ecore_prime_table[] =
 {

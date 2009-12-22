@@ -8,8 +8,8 @@
 
 #include <stdlib.h>
 
-#include "ecore_private.h"
 #include "Ecore.h"
+#include "ecore_private.h"
 
 static int                  events_num = 0;
 static Ecore_Event         *events = NULL;

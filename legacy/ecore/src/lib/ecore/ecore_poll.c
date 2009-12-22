@@ -8,8 +8,8 @@
 
 #include <stdlib.h>
 
-#include "ecore_private.h"
 #include "Ecore.h"
+#include "ecore_private.h"
 
 static Ecore_Timer    *timer = NULL;
 static int             min_interval = -1;

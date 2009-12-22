@@ -12,8 +12,8 @@
 # include <openssl/ssl.h>
 #endif
 
-#include "ecore_con_private.h"
 #include "Ecore.h"
+#include "ecore_con_private.h"
 
 static int _init_con_ssl_init_count = 0;
 

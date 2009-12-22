@@ -15,8 +15,8 @@
 #include <unistd.h>
 #include <assert.h>
 
-#include "ecore_private.h"
 #include "Ecore.h"
+#include "ecore_private.h"
 
 /* make mono happy - this is evil though... */
 #undef SIGPWR
