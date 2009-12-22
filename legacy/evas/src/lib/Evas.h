@@ -216,6 +216,7 @@ typedef struct _Evas_Event_Key_Down   Evas_Event_Key_Down; /**< Event structure 
 typedef struct _Evas_Event_Key_Up     Evas_Event_Key_Up; /**< Event structure for #EVAS_CALLBACK_KEY_UP event callbacks */
 typedef struct _Evas_Event_Hold       Evas_Event_Hold; /**< Event structure for #EVAS_CALLBACK_HOLD event callbacks */
 
+/* load error identifiers, see evas_load_error_str() */
 #define EVAS_LOAD_ERROR_NONE                       0 /**< No error on load */
 #define EVAS_LOAD_ERROR_GENERIC                    1 /**< A non-specific error occured */
 #define EVAS_LOAD_ERROR_DOES_NOT_EXIST             2 /**< File (or file path) does not exist */
@@ -1117,6 +1118,8 @@ extern "C" {
    /**
     * Utilities:
     */
+   EAPI const char *evas_load_error_str(int error);
+
 
    /**
     * Every subclass should provide this at the beginning of their own

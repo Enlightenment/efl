@@ -1065,3 +1065,27 @@ _evas_unwalk(Evas *e)
    e->walking_list--;
    if ((e->walking_list == 0) && (e->delete_me)) evas_free(e);
 }
+
+EAPI const char *
+evas_load_error_str(int error)
+{
+   switch (error)
+     {
+      case EVAS_LOAD_ERROR_NONE:
+	 return "No error on load";
+      case EVAS_LOAD_ERROR_GENERIC:
+	 return "A non-specific error occured";
+      case EVAS_LOAD_ERROR_DOES_NOT_EXIST:
+	 return "File (or file path) does not exist";
+      case EVAS_LOAD_ERROR_PERMISSION_DENIED:
+	 return "Permission deinied to an existing file (or path)";
+      case EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED:
+	 return "Allocation of resources failure prevented load";
+      case EVAS_LOAD_ERROR_CORRUPT_FILE:
+	 return "File corrupt (but was detected as a known format)";
+      case EVAS_LOAD_ERROR_UNKNOWN_FORMAT:
+	 return "File is not a known format";
+      default:
+	 return "Unknown error";
+     }
+}
