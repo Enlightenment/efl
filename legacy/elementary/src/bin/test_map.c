@@ -205,6 +205,30 @@ my_bt_zoom_fill(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+my_bt_source_mapnik(void *data, Evas_Object *obj, void *event_info)
+{
+   elm_map_source_set(data, ELM_MAP_SOURCE_MAPNIK);
+}
+
+static void
+my_bt_source_osmarender(void *data, Evas_Object *obj, void *event_info)
+{
+   elm_map_source_set(data, ELM_MAP_SOURCE_OSMARENDER);
+}
+
+static void
+my_bt_source_cyclemap(void *data, Evas_Object *obj, void *event_info)
+{
+   elm_map_source_set(data, ELM_MAP_SOURCE_CYCLEMAP);
+}
+
+static void
+my_bt_source_maplint(void *data, Evas_Object *obj, void *event_info)
+{
+   elm_map_source_set(data, ELM_MAP_SOURCE_MAPLINT);
+}
+
+static void
 my_bt_add(void *data, Evas_Object *obj, void *event_info)
 {
     int i;
@@ -516,21 +540,69 @@ test_map(void *data, Evas_Object *obj, void *event_info)
         elm_box_pack_end(bx, bt);
         //
 
+        //
+        bx = elm_box_add(win);
+        evas_object_show(bx);
+        evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(bx, 0.5, 0.9);
+        elm_table_pack(tb2, bx, 1, 2, 1, 1);
+
         bt = elm_button_add(win);
         elm_button_label_set(bt, "Fit");
         evas_object_smart_callback_add(bt, "clicked", my_bt_zoom_fit, map);
         evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(bt, 0.5, 0.9);
-        elm_table_pack(tb2, bt, 1, 2, 1, 1);
         evas_object_show(bt);
+        elm_box_pack_end(bx, bt);
 
         bt = elm_button_add(win);
         elm_button_label_set(bt, "Fill");
         evas_object_smart_callback_add(bt, "clicked", my_bt_zoom_fill, map);
         evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(bt, 0.9, 0.9);
-        elm_table_pack(tb2, bt, 2, 2, 1, 1);
+        evas_object_size_hint_align_set(bt, 0.5, 0.9);
         evas_object_show(bt);
+        elm_box_pack_end(bx, bt);
+        //
+
+        //
+        bx = elm_box_add(win);
+        evas_object_show(bx);
+        evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(bx, 1.0, 0.9);
+        elm_table_pack(tb2, bx, 2, 2, 1, 1);
+
+        bt = elm_button_add(win);
+        elm_button_label_set(bt, "Mapnik");
+        evas_object_smart_callback_add(bt, "clicked", my_bt_source_mapnik, map);
+        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(bt, 1.0, 0.9);
+        evas_object_show(bt);
+        elm_box_pack_end(bx, bt);
+
+        bt = elm_button_add(win);
+        elm_button_label_set(bt, "Osmarender");
+        evas_object_smart_callback_add(bt, "clicked", my_bt_source_osmarender, map);
+        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(bt, 1.0, 0.9);
+        evas_object_show(bt);
+        elm_box_pack_end(bx, bt);
+
+        bt = elm_button_add(win);
+        elm_button_label_set(bt, "Cycle Map");
+        evas_object_smart_callback_add(bt, "clicked", my_bt_source_cyclemap, map);
+        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(bt, 1.0, 0.9);
+        evas_object_show(bt);
+        elm_box_pack_end(bx, bt);
+
+        bt = elm_button_add(win);
+        elm_button_label_set(bt, "Maplint");
+        evas_object_smart_callback_add(bt, "clicked", my_bt_source_maplint, map);
+        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(bt, 1.0, 0.9);
+        evas_object_show(bt);
+        elm_box_pack_end(bx, bt);
+        //
 
         evas_object_show(tb2);
      }

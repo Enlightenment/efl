@@ -42,6 +42,7 @@
  *
  * scroll,drag,stop - dragging the contents around has stopped
  *
+ * TODO : doxygen
  */
 
 
@@ -52,11 +53,39 @@ typedef struct _Grid_Item Grid_Item;
 typedef struct _Marker_Group Marker_Group;
 
 
-#define SOURCE_PATH "http://tile.openstreetmap.org/%d/%d/%d.png"
 #define DEST_DIR_ZOOM_PATH "/tmp/elm_map/%d/%d/"
 #define DEST_DIR_PATH DEST_DIR_ZOOM_PATH"%d/"
 #define DEST_FILE_PATH "%s%d.png"
 
+
+
+// Map sources
+// Currently the size of a tile must be 256*256
+// and the size of the map must be pow(2.0, z)*tile_size
+typedef char *(*MapSourceURLFunc) (int x, int y, int zoom);
+typedef struct _Map_Sources_Tab
+{
+   Elm_Map_Sources source;
+   const char *name;
+   int zoom_min;
+   int zoom_max;
+   MapSourceURLFunc url_cb;
+} Map_Sources_Tab;
+
+#define ZOOM_MAX 18
+//Zemm min is supposed to be 0
+static char * _mapnik_url_cb(int x, int y, int zoom);
+static char * _osmarender_url_cb(int x, int y, int zoom);
+static char * _cyclemap_url_cb(int x, int y, int zoom);
+static char * _maplint_url_cb(int x, int y, int zoom);
+static Map_Sources_Tab map_sources_tab[] =
+{
+     {ELM_MAP_SOURCE_MAPNIK, "Mapnik", 0, 18, _mapnik_url_cb},
+     {ELM_MAP_SOURCE_OSMARENDER, "Osmarender", 0, 17, _osmarender_url_cb},
+     {ELM_MAP_SOURCE_CYCLEMAP, "Cycle Map", 0, 17, _cyclemap_url_cb},
+     {ELM_MAP_SOURCE_MAPLINT, "Maplint", 12, 16, _maplint_url_cb},
+};
+//
 
 struct _Elm_Map_Marker_Class
 {
@@ -85,10 +114,10 @@ struct _Elm_Map_Marker
    double longitude, latitude;
 
    Evas_Coord map_size;
-   Evas_Coord x[19], y[19];
+   Evas_Coord x[ZOOM_MAX+1], y[ZOOM_MAX+1];
    void *data;
 
-   Marker_Group *groups[19];
+   Marker_Group *groups[ZOOM_MAX+1];
 
    Evas_Object *content;
 };
@@ -213,7 +242,7 @@ struct _Widget_Data
      } center_on;
 
    Ecore_Job *markers_place_job;
-   Eina_Matrixsparse *markers[19];
+   Eina_Matrixsparse *markers[ZOOM_MAX+1];
    Eina_List *cells_displayed; // list of Eina_Matrixsparse_Cell
    Evas_Coord markers_max_num;
    int marker_max_w, marker_max_h;
@@ -222,6 +251,8 @@ struct _Widget_Data
 
    Eina_List *groups_clas; // list of Elm_Map_Group_Class*
    Eina_List *markers_clas; // list of Elm_Map_Markers_Class*
+
+   Elm_Map_Sources source;
 };
 
 struct _Pan
@@ -321,10 +352,10 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
      }
    wd->marker_zoom = wd->zoom;
 
-   if(wd->paused_markers 
+   if(wd->paused_markers
 	 && (wd->size.nw != wd->size.w || wd->size.nh != wd->size.h) )
      return ;
-   
+
    g_xx = wd->pan_x / wd->tsize;
    if(g_xx < 0) g_xx = 0;
 
@@ -608,7 +639,8 @@ grid_create(Evas_Object *obj)
    g->tsize = wd->tsize;
    g->wd = wd;
 
-   if (g->zoom > 18) return NULL;
+   if (g->zoom > map_sources_tab[wd->source].zoom_max) return NULL;
+   if (g->zoom < map_sources_tab[wd->source].zoom_min) return NULL;
 
    int size =  pow(2.0, wd->zoom);
    g->gw = size;
@@ -770,6 +802,7 @@ grid_load(Evas_Object *obj, Grid *g)
 	     if (!gi->have && !gi->download)
 	       {
 		  char buf[PATH_MAX], buf2[PATH_MAX];
+		  char *source;
 
 		  gi->want = EINA_TRUE;
 
@@ -779,8 +812,8 @@ grid_load(Evas_Object *obj, Grid *g)
 
 		  snprintf(buf2, PATH_MAX, DEST_FILE_PATH, buf, y);
 
-		  snprintf(buf, PATH_MAX, SOURCE_PATH,
-			g->zoom, x, y);
+		  source = map_sources_tab[wd->source].url_cb(x, y, g->zoom);
+		  
 
 		  if(gi->file)
 		    eina_stringshare_del(gi->file);
@@ -801,12 +834,13 @@ grid_load(Evas_Object *obj, Grid *g)
 			 _tile_update(gi);
 		       else
 			 {
-			    DBG("DOWNLOAD %s \t in %s", buf, buf2);
-			    ecore_file_download(buf, buf2, _tile_downloaded, NULL, gi, &(gi->job));
+			    DBG("DOWNLOAD %s \t in %s", source, buf2);
+			    ecore_file_download(source, buf2, _tile_downloaded, NULL, gi, &(gi->job));
 			    if(!gi->job)
 			      DBG("Can't start to download %s", buf);
 			 }
 		    }
+		  if(source) free(source);
 	       }
 	     else if(gi->have)
 	       evas_object_show(gi->img);
@@ -1020,14 +1054,14 @@ _del_hook(Evas_Object *obj)
    EINA_LIST_FREE(wd->groups_clas, group_clas)
      {
 	if(group_clas->style)
-	  eina_stringshare_del(group_clas->style);  
+	  eina_stringshare_del(group_clas->style);
 	free(group_clas);
      }
 
    EINA_LIST_FREE(wd->markers_clas, marker_clas)
      {
 	if(marker_clas->style)
-	  eina_stringshare_del(marker_clas->style);  
+	  eina_stringshare_del(marker_clas->style);
 	free(marker_clas);
      }
 
@@ -1052,7 +1086,7 @@ _del_pre_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    grid_clearall(obj);
 
-   for (i=0; i<19; i++)
+   for (i=0; i<ZOOM_MAX+1; i++)
      {
 	if(!wd->markers[i])
 	  continue;
@@ -1628,6 +1662,7 @@ elm_map_add(Evas_Object *parent)
    wd->obj = obj;
 
    wd->markers_max_num = 30;
+   wd->source = ELM_MAP_SOURCE_MAPNIK;
 
    evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
    evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
@@ -1711,7 +1746,10 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
    int zoom_changed = 0, started = 0;
 
    if (zoom < 0 ) zoom = 0;
-   if (zoom > 18) zoom = 18;
+   if (zoom > map_sources_tab[wd->source].zoom_max) 
+     zoom = map_sources_tab[wd->source].zoom_max;
+   if (zoom < map_sources_tab[wd->source].zoom_min) 
+     zoom = map_sources_tab[wd->source].zoom_min;
    if (zoom == wd->zoom) return;
 
    wd->zoom = zoom;
@@ -2241,7 +2279,7 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 	clas->priv.set = EINA_TRUE;
      }
 
-   for (i=clas_group->zoom_displayed; i<=18; i++)
+   for (i=clas_group->zoom_displayed; i<=ZOOM_MAX; i++)
      {
 	elm_map_utils_convert_geo_into_coord(lon, lat, pow(2.0, i)*wd->tsize,
 	      &(marker->x[i]), &(marker->y[i]));
@@ -2265,7 +2303,7 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 			l, group)
 		    {
 		       if(group->clas == marker->clas_group
-			     && ELM_RECTS_INTERSECT( marker->x[i]-clas->priv.edje_w/4, 
+			     && ELM_RECTS_INTERSECT( marker->x[i]-clas->priv.edje_w/4,
 				marker->y[i]-clas->priv.edje_h/4, clas->priv.edje_w, clas->priv.edje_h,
 				group->x-group->w/4, group->y-group->h/4, group->w, group->h))
 			 {
@@ -2278,9 +2316,9 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 			    group->x = group->sum_x / eina_list_count(group->markers);
 			    group->y = group->sum_y / eina_list_count(group->markers);
 
-			    group->w = group->clas->priv.edje_w + group->clas->priv.edje_w/8. 
+			    group->w = group->clas->priv.edje_w + group->clas->priv.edje_w/8.
 			       * eina_list_count(group->markers);
-			    group->h = group->clas->priv.edje_h + group->clas->priv.edje_h/8. 
+			    group->h = group->clas->priv.edje_h + group->clas->priv.edje_h/8.
 			       * eina_list_count(group->markers);
 			    if(group->w > group->clas->priv.edje_max_w) group->w = group->clas->priv.edje_max_w;
 			    if(group->h > group->clas->priv.edje_max_h) group->h = group->clas->priv.edje_max_h;
@@ -2356,7 +2394,7 @@ elm_map_marker_remove(Elm_Map_Marker *marker)
    Eina_List *groups;
    Widget_Data *wd = marker->wd;
 
-   for (i=0; i<=18; i++)
+   for (i=0; i<=ZOOM_MAX; i++)
      {
 	marker->groups[i]->markers = eina_list_remove(marker->groups[i]->markers, marker);
 	if(eina_list_count(marker->groups[i]->markers) == 0)
@@ -2377,13 +2415,13 @@ elm_map_marker_remove(Elm_Map_Marker *marker)
 	     marker->groups[i]->x = marker->groups[i]->sum_x / eina_list_count(marker->groups[i]->markers);
 	     marker->groups[i]->y = marker->groups[i]->sum_y / eina_list_count(marker->groups[i]->markers);
 
-	     marker->groups[i]->w = marker->groups[i]->clas->priv.edje_w 
+	     marker->groups[i]->w = marker->groups[i]->clas->priv.edje_w
 		+ marker->groups[i]->clas->priv.edje_w/8. * eina_list_count(marker->groups[i]->markers);
-	     marker->groups[i]->h = marker->groups[i]->clas->priv.edje_h 
+	     marker->groups[i]->h = marker->groups[i]->clas->priv.edje_h
 		+ marker->groups[i]->clas->priv.edje_h/8. * eina_list_count(marker->groups[i]->markers);
-	     if(marker->groups[i]->w > marker->groups[i]->clas->priv.edje_max_w) 
+	     if(marker->groups[i]->w > marker->groups[i]->clas->priv.edje_max_w)
 	       marker->groups[i]->w = marker->groups[i]->clas->priv.edje_max_w;
-	     if(marker->groups[i]->h > marker->groups[i]->clas->priv.edje_max_h) 
+	     if(marker->groups[i]->h > marker->groups[i]->clas->priv.edje_max_h)
 	       marker->groups[i]->h = marker->groups[i]->clas->priv.edje_max_h;
 	  }
 	if(marker->groups[i]->obj && eina_list_count(marker->groups[i]->markers) == 1)
@@ -2476,7 +2514,7 @@ elm_map_markers_list_show(Eina_List *markers)
    lat = (m_max_lat->latitude - m_min_lat->latitude) / 2. + m_min_lat->latitude;
 
    elm_smart_scroller_child_viewport_size_get(wd->scr, &rw, &rh);
-   for (zoom = 18; zoom>0; zoom--)
+   for (zoom = map_sources_tab[wd->source].zoom_max; zoom>map_sources_tab[wd->source].zoom_min; zoom--)
      {
 	Evas_Coord size = pow(2.0, zoom)*wd->tsize;
 	elm_map_utils_convert_geo_into_coord(lon, lat, size, &xc, &yc);
@@ -2543,7 +2581,7 @@ elm_map_marker_update(Elm_Map_Marker *marker)
  *
  * Close all opened bubbles
  *
- * @param The map object
+ * @param obj The map object
  */
 EAPI void
 elm_map_bubbles_close(Evas_Object *obj)
@@ -2559,19 +2597,35 @@ elm_map_bubbles_close(Evas_Object *obj)
 }
 
 
-
+/*
+ *
+ * Create a group class.
+ *
+ * Each marker must be associated to a group class. Marker with the same group are grouped if they are close.
+ * The group class defines the style of the marker when a marker is grouped to others markers.
+ *
+ * @param obj The map object
+ * @return Returns the new group class
+ */
 EAPI Elm_Map_Group_Class *
 elm_map_group_class_new(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Map_Group_Class *clas = calloc(1, sizeof(Elm_Map_Group_Class));
 
-   clas->zoom_grouped = 18;
+   clas->zoom_grouped = ZOOM_MAX;
 
    wd->groups_clas = eina_list_append(wd->groups_clas, clas);
    return clas;
 }
 
+/*
+ *
+ * Set the style of a group class (radio, radio2 or empty)
+ *
+ * @param clas the group class
+ * @param style the new style
+ */
 EAPI void
 elm_map_group_class_style_set(Elm_Map_Group_Class *clas, const char *style)
 {
@@ -2582,30 +2636,68 @@ elm_map_group_class_style_set(Elm_Map_Group_Class *clas, const char *style)
      clas->style = eina_stringshare_add(style);
 }
 
+/*
+ *
+ * Set the icon callback of a group class.
+ *
+ * A custom icon can be displayed in a marker. The function @ref icon_get must return this icon.
+ *
+ * @param clas the group class
+ * @param icon_get the callback to create the icon
+ */
 EAPI void
 elm_map_group_class_icon_cb_set(Elm_Map_Group_Class *clas, ElmMapGroupIconGetFunc icon_get)
 {
      clas->func.icon_get = icon_get;
 }
 
+/*
+ *
+ * Set the data associated to the group class (radio, radio2 or empty)
+ *
+ * @param clas the group class
+ * @param data the new user data
+ */
 EAPI void
 elm_map_group_class_data_set(Elm_Map_Group_Class *clas, void *data)
 {
      clas->data = data;
 }
 
+/*
+ *
+ * Set the zoom from where the markers are displayed.
+ *
+ * Markers will not be displayed for a zoom less than @ref zoom 
+ *
+ * @param clas the group class
+ * @param zoom the zoom
+ */
 EAPI void
 elm_map_group_class_zoom_displayed_set(Elm_Map_Group_Class *clas, int zoom)
 {
      clas->zoom_displayed = zoom;
 }
 
+/*
+ * Set the zoom from where the markers are no more grouped.
+ *
+ * @param clas the group class
+ * @param zoom the zoom
+ */
 EAPI void
 elm_map_group_class_zoom_grouped_set(Elm_Map_Group_Class *clas, int zoom)
 {
      clas->zoom_grouped = zoom;
 }
 
+/*
+ * Set if the markers associated to the group class @clas are hidden or not. 
+ * If @ref hide is true the markers will be hidden.
+ *
+ * @param clas the group class
+ * @param hide if true the markers will be hidden, else they will be displayed.
+ */
 EAPI void
 elm_map_group_class_hide_set(Evas_Object *obj, Elm_Map_Group_Class *clas, Eina_Bool hide)
 {
@@ -2623,7 +2715,16 @@ elm_map_group_class_hide_set(Evas_Object *obj, Elm_Map_Group_Class *clas, Eina_B
 }
 
 
-
+/*
+ *
+ * Create a marker class.
+ *
+ * Each marker must be associated to a class.
+ * The class defines the style of the marker when a marker is displayed alone (not grouped).
+ *
+ * @param obj The map object
+ * @return Returns the new class
+ */
 EAPI Elm_Map_Marker_Class *
 elm_map_marker_class_new(Evas_Object *obj)
 {
@@ -2634,6 +2735,13 @@ elm_map_marker_class_new(Evas_Object *obj)
    return clas;
 }
 
+/*
+ *
+ * Set the style of a class (radio, radio2 or empty)
+ *
+ * @param clas the group class
+ * @param style the new style
+ */
 EAPI void
 elm_map_marker_class_style_set(Elm_Map_Marker_Class *clas, const char *style)
 {
@@ -2644,21 +2752,171 @@ elm_map_marker_class_style_set(Elm_Map_Marker_Class *clas, const char *style)
      clas->style = eina_stringshare_add(style);
 }
 
+/*
+ *
+ * Set the icon callback of a class.
+ *
+ * A custom icon can be displayed in a marker. The function @ref icon_get must return this icon.
+ *
+ * @param clas the group class
+ * @param icon_get the callback to create the icon
+ */
 EAPI void
 elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerIconGetFunc icon_get)
 {
      clas->func.icon_get = icon_get;
 }
 
+/*
+ *
+ * Set the callback of the content of the bubble.
+ *
+ * When the user click on a marker, a bubble is displayed with a content.
+ * The callback @ref get musst return this content. It can be NULL.
+ *
+ * @param clas the group class
+ * @param get the callback to create the content
+ */
 EAPI void
 elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerGetFunc get)
 {
      clas->func.get = get;
 }
 
+/*
+ *
+ * Set the callback of the content of delete the object created by the callback "get".
+ *
+ * If this callback is defined the user will have to delete (or not) the object inside.
+ * If the callback is not defined the object will be destroyed with evas_object_del()
+ *
+ * @param clas the group class
+ * @param del the callback to delete the content
+ */
 EAPI void
 elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerDelFunc del)
 {
      clas->func.del = del;
+}
+
+/*
+ *
+ * Set the source of the map.
+ *
+ * Elm_Map retrieves the image which composed the map from a web service. This web service can
+ * be set with this method. A different service can return a different maps with different
+ * information and it can use different zoom value.
+ *
+ * @param clas the group class
+ * @param source the new source
+ */
+EAPI void
+elm_map_source_set(Evas_Object *obj, Elm_Map_Sources source)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Grid *grid;
+   int zoom;
+
+   if(wd->source == source ) return ;
+  
+   EINA_LIST_FREE(wd->grids, grid)
+      grid_clear(obj, grid);
+
+   wd->source = source;
+   zoom = wd->zoom;
+   wd->zoom = -1;
+
+   if(map_sources_tab[wd->source].zoom_max < zoom)
+     zoom = map_sources_tab[wd->source].zoom_max;
+   if(map_sources_tab[wd->source].zoom_min > zoom)
+     zoom = map_sources_tab[wd->source].zoom_min;
+
+   elm_map_zoom_set(obj, zoom);
+}
+
+/*
+ *
+ * Get the current source
+ *
+ * @param obj the map object
+ * @return Returns the maximum zoom of the source
+ */
+EAPI Elm_Map_Sources
+elm_map_source_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->source;
+}
+
+/*
+ *
+ * Get the maximum zoom of the source.
+ *
+ * @param source the source
+ * @return Returns the maximum zoom of the source
+ */
+EAPI int
+elm_map_source_zoom_max_get(Elm_Map_Sources source)
+{
+   return map_sources_tab[source].zoom_max;
+}
+
+/*
+ *
+ * Get the minimum zoom of the source.
+ *
+ * @param source the source
+ * @return Returns the minimum zoom of the source
+ */
+EAPI int
+elm_map_source_zoom_min_get(Elm_Map_Sources source)
+{
+   return map_sources_tab[source].zoom_min;
+}
+
+/*
+ *
+ * Get the name of a source.
+ *
+ * @param source the source
+ * @return Returns the name of the source
+ */
+EAPI const char *
+elm_map_source_name_get(Elm_Map_Sources source)
+{
+   return map_sources_tab[source].name;
+}
+
+
+static char * _mapnik_url_cb(int x, int y, int zoom)
+{
+   char buf[PATH_MAX];
+   snprintf(buf, PATH_MAX, "http://tile.openstreetmap.org/%d/%d/%d.png",
+	 zoom, x, y);
+   return strdup(buf);
+}
+
+static char * _osmarender_url_cb(int x, int y, int zoom)
+{
+   char buf[PATH_MAX];
+   snprintf(buf, PATH_MAX, "http://tah.openstreetmap.org/Tiles/tile/%d/%d/%d.png",
+	 zoom, x, y);
+   return strdup(buf);
+}
+
+static char * _cyclemap_url_cb(int x, int y, int zoom)
+{
+   char buf[PATH_MAX];
+   snprintf(buf, PATH_MAX, "http://andy.sandbox.cloudmade.com/tiles/cycle/%d/%d/%d.png",
+	 zoom, x, y);
+   return strdup(buf);
+}
+
+static char * _maplint_url_cb(int x, int y, int zoom)
+{
+   char buf[PATH_MAX];
+   snprintf(buf, PATH_MAX, "http://tah.openstreetmap.org/Tiles/maplint/%d/%d/%d.png",
+	 zoom, x, y);
+   return strdup(buf);
 }
 

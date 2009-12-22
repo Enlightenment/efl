@@ -1075,6 +1075,13 @@ extern "C" {
 	ELM_MAP_ZOOM_MODE_AUTO_FIT,
 	ELM_MAP_ZOOM_MODE_AUTO_FILL
      } Elm_Map_Zoom_Mode;
+   typedef enum _Elm_Map_Sources
+     {
+	ELM_MAP_SOURCE_MAPNIK,
+	ELM_MAP_SOURCE_OSMARENDER,
+	ELM_MAP_SOURCE_CYCLEMAP,
+	ELM_MAP_SOURCE_MAPLINT
+     } Elm_Map_Sources;
    typedef struct _Elm_Map_Marker Elm_Map_Marker;
    typedef struct _Elm_Map_Marker_Class Elm_Map_Marker_Class;
    typedef struct _Elm_Map_Group_Class Elm_Map_Group_Class;
@@ -1120,6 +1127,13 @@ extern "C" {
    EAPI void         elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerIconGetFunc icon_get);
    EAPI void         elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerGetFunc get);
    EAPI void         elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerDelFunc del);
+
+   EAPI void         elm_map_source_set(Evas_Object *obj, Elm_Map_Sources source);
+   EAPI Elm_Map_Sources elm_map_source_get(Evas_Object *obj);
+   EAPI int          elm_map_source_zoom_min_get(Elm_Map_Sources source);
+   EAPI int	     elm_map_source_zoom_max_get(Elm_Map_Sources source);
+   EAPI const char * elm_map_source_name_get(Elm_Map_Sources source);
+   EAPI void         elm_map_source_set(Evas_Object *obj, Elm_Map_Sources source);
    /* smart callbacks called:
     * "clicked" - when image clicked
     * "press" - when mouse/finger held down initially on image
