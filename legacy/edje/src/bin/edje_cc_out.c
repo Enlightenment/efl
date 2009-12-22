@@ -133,7 +133,7 @@ error_and_abort(Eet_File *ef, const char *fmt, ...)
 {
    va_list ap;
 
-   ERR("%s: Error. ", progname);
+   fprintf(stderr, "%s: Error. ", progname);
 
    va_start(ap, fmt);
    vfprintf(stderr, fmt, ap);
@@ -382,6 +382,88 @@ data_write_fonts(Eet_File *ef, int *font_num, int *input_bytes, int *input_raw_b
    return total_bytes;
 }
 
+static void
+error_and_abort_image_load_error(Eet_File *ef, const char *file, int error)
+{
+   const char *errmsg = evas_load_error_str(error);
+   char hint[1024] = "";
+
+   if (error == EVAS_LOAD_ERROR_DOES_NOT_EXIST)
+     {
+	snprintf
+	  (hint, sizeof(hint),
+	   " Check if path to file \"%s\" is correct "
+	   "(both directory and file name).",
+	   file);
+     }
+   else if (error == EVAS_LOAD_ERROR_CORRUPT_FILE)
+     {
+	snprintf
+	  (hint, sizeof(hint),
+	   " Check if file \"%s\" is consistent.",
+	   file);
+     }
+   else if (error == EVAS_LOAD_ERROR_UNKNOWN_FORMAT)
+     {
+	const char *ext = strrchr(file, '.');
+	const char **itr, *known_loaders[] = {
+	  /* list from evas_image_load.c */
+	  "png",
+	  "jpg",
+	  "jpeg",
+	  "jfif",
+	  "eet",
+	  "edj",
+	  "eap",
+	  "edb",
+	  "xpm",
+	  "tiff",
+	  "tif",
+	  "svg",
+	  "svgz",
+	  "gif",
+	  "pbm",
+	  "pgm",
+	  "ppm",
+	  "pnm",
+	  NULL
+	};
+
+	if (!ext)
+	  {
+	     snprintf
+	       (hint, sizeof(hint),
+		" File \"%s\" does not have an extension, "
+		"maybe it should?",
+		file);
+	     goto show_err;
+	  }
+
+	ext++;
+	for (itr = known_loaders; *itr; itr++)
+	  {
+	     if (strcasecmp(ext, *itr) == 0)
+	       {
+		  snprintf
+		    (hint, sizeof(hint),
+		     " Check if Evas was compiled with %s module enabled and "
+		     "all required dependencies exist.",
+		     ext);
+		  goto show_err;
+	       }
+	  }
+
+	snprintf(hint, sizeof(hint),
+		 " Check if Evas supports loading files of type \"%s\" (%s) "
+		 "and this module was compiled and all its dependencies exist.",
+		 ext, file);
+     }
+ show_err:
+   error_and_abort
+     (ef, "Unable to load image \"%s\" used by file \"%s\": %s.%s\n",
+      file, file_out, errmsg, hint);
+}
+
 static int
 data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw_bytes)
 {
@@ -414,6 +496,7 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 		  Evas_Object *im;
 		  Eina_List *ll;
 		  char *data;
+		  int load_err = EVAS_LOAD_ERROR_NONE;
 
 		  im = NULL;
 		  EINA_LIST_FOREACH(img_dirs, ll, data)
@@ -426,23 +509,23 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 		       if (im)
 			 {
 			    evas_object_image_file_set(im, buf, NULL);
-			    if (evas_object_image_load_error_get(im) ==
-				EVAS_LOAD_ERROR_NONE)
-			      {
-				 break;
-			      }
+			    load_err = evas_object_image_load_error_get(im);
+			    if (load_err == EVAS_LOAD_ERROR_NONE)
+			      break;
 			    evas_object_del(im);
 			    im = NULL;
+			    if (load_err != EVAS_LOAD_ERROR_DOES_NOT_EXIST)
+			      break;
 			 }
 		    }
-		  if (!im)
+		  if ((!im) && (load_err == EVAS_LOAD_ERROR_DOES_NOT_EXIST))
 		    {
 		       im = evas_object_image_add(evas);
 		       if (im)
 			 {
 			    evas_object_image_file_set(im, img->entry, NULL);
-			    if (evas_object_image_load_error_get(im) !=
-				EVAS_LOAD_ERROR_NONE)
+			    load_err = evas_object_image_load_error_get(im);
+			    if (load_err != EVAS_LOAD_ERROR_NONE)
 			      {
 				 evas_object_del(im);
 				 im = NULL;
@@ -521,10 +604,8 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 			 }
 		       else
 			 {
-			    error_and_abort(ef, "Unable to load image for "
-					    "image part \"%s\" as \"%s\" part "
-					    "entry to %s\n", img->entry, buf,
-					    file_out);
+			    error_and_abort_image_load_error
+			      (ef, img->entry, load_err);
 			 }
 
 		       if (verbose)
@@ -547,8 +628,8 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 		    }
 		  else
 		    {
-		       error_and_abort(ef, "Unable to load image for image \"%s\" part entry to %s. Missing PNG or JPEG loader modules for Evas or file does not exist, or is not readable.\n",
-				       img->entry, file_out);
+		       error_and_abort_image_load_error
+			 (ef, img->entry, load_err);
 		    }
 	       }
 	  }
