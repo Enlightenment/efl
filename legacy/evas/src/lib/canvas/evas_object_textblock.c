@@ -1850,7 +1850,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	int i, len, chlen;
 	char *ptr;
 
-	len = evas_common_font_utf8_get_len(n->text);
+	len = evas_common_font_utf8_get_len((unsigned char*) n->text);
 	chlen = strlen(repch);
 	str = alloca((len * chlen) + 1);
 	tbase = str;
@@ -2310,7 +2310,7 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, in
      {
         int pos2 = pos;
 
-        evas_common_font_utf8_get_prev(n->text, &pos2);
+        evas_common_font_utf8_get_prev((unsigned char *) n->text, &pos2);
         if (pos2 < pos) pos = pos2;
      }
    EINA_INLIST_FOREACH(o->lines, ln)
@@ -3365,7 +3365,7 @@ evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *cur)
                {
                   int plast;
 
-                  plast = evas_common_font_utf8_get_last(it->text, strlen(it->text));
+                  plast = evas_common_font_utf8_get_last((unsigned char *) it->text, strlen(it->text));
                   if ((index - it->source_pos) == plast) at_end_of_line = 1;
                }
           }
