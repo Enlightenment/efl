@@ -1018,13 +1018,6 @@ typedef enum _Ecore_X_Illume_Mode
      ECORE_X_ILLUME_MODE_DUAL
 } Ecore_X_Illume_Mode;
 
-typedef enum _Ecore_X_Illume_Winlist_State 
-{
-   ECORE_X_ILLUME_WINLIST_STATE_UNKNOWN = 0,
-     ECORE_X_ILLUME_WINLIST_STATE_ON, 
-     ECORE_X_ILLUME_WINLIST_STATE_OFF
-} Ecore_X_Illume_Winlist_State;
-
 /* Window layer constants */
 #define ECORE_X_WINDOW_LAYER_BELOW 2
 #define ECORE_X_WINDOW_LAYER_NORMAL 4
@@ -1558,8 +1551,6 @@ EAPI void                ecore_x_e_illume_drag_locked_set(Ecore_X_Window win, un
 EAPI int                 ecore_x_e_illume_drag_locked_get(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_drag_start_send(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_drag_end_send(Ecore_X_Window win);
-EAPI void                ecore_x_e_illume_winlist_state_set(Ecore_X_Window win, Ecore_X_Illume_Winlist_State state);
-EAPI Ecore_X_Illume_Winlist_State ecore_x_e_illume_winlist_state_get(Ecore_X_Window win);
 
 
 EAPI void                ecore_x_xinerama_query_screens_prefetch(void);
