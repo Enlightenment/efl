@@ -29,8 +29,8 @@ edje_external_type_register(const char *type_name, const Edje_External_Type *typ
 
    if (type_info->abi_version != EDJE_EXTERNAL_TYPE_ABI_VERSION)
      {
-	printf("EDJE ERROR: external type '%s' (%p) has incorrect abi version. "
-	       "got %#x where %#x was expected.\n",
+	ERR("external type '%s' (%p) has incorrect abi version. "
+	       "got %#x where %#x was expected.",
 	       type_name, type_info,
 	       type_info->abi_version, EDJE_EXTERNAL_TYPE_ABI_VERSION);
 	return EINA_FALSE;
@@ -97,8 +97,8 @@ edje_external_type_array_register(const Edje_External_Type_Info *array)
      {
 	if (itr->info->abi_version != EDJE_EXTERNAL_TYPE_ABI_VERSION)
 	  {
-	     printf("EDJE ERROR: external type '%s' (%p) has incorrect abi "
-		    "version. got %#x where %#x was expected.\n",
+	     ERR("external type '%s' (%p) has incorrect abi "
+		    "version. got %#x where %#x was expected.",
 		    itr->name, itr->info,
 		    itr->info->abi_version, EDJE_EXTERNAL_TYPE_ABI_VERSION);
 	     continue;
@@ -277,7 +277,7 @@ _edje_external_type_add(const char *type_name, Evas *evas, Evas_Object *parent, 
    type = eina_hash_find(type_registry, type_name);
    if (!type)
      {
-	printf("EDJE ERROR: external type '%s' not registered\n", type_name);
+	ERR("external type '%s' not registered", type_name);
 	return NULL;
      }
 
@@ -290,7 +290,6 @@ _edje_external_type_add(const char *type_name, Evas *evas, Evas_Object *parent, 
 
    evas_object_data_set(obj, "Edje_External_Type", type);
 
-   ERR("Evas object: %p, external type: %p, data_get: %p", obj, type, evas_object_data_get(obj, "Edje_External_Type"));
    return obj;
 }
 
