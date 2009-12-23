@@ -205,7 +205,7 @@ EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_PROP_PRIMARY         = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_PROP_SECONDARY       = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_PROP_CLIPBOARD       = 0;
 
-/* currenly E specific virtual keyboard extension, aim to submit to netwm spec
+/* currently E specific virtual keyboard extension, aim to submit to netwm spec
  * later */
 
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_VIRTUAL_KEYBOARD             = 0;
@@ -226,7 +226,7 @@ EAPI Ecore_X_Atom  ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_URL         = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_KEYPAD      = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_J2ME        = 0;
 
-/* atom to determine if an app is illume compliant */
+/* currently E specific illume extension */
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_CONFORMANT            = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_MODE                  = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_MODE_SINGLE           = 0;
@@ -237,3 +237,7 @@ EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_DRAG                  = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_DRAG_LOCKED           = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_DRAG_START            = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_DRAG_END              = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_WINLIST               = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_WINLIST_STATE         = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_WINLIST_ON            = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_WINLIST_OFF           = 0;
