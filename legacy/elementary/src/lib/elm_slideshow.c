@@ -565,3 +565,16 @@ elm_slideshow_item_object_get(Elm_Slideshow_Item * item)
    return item->o;
 }
 
+/**
+ * Returns the data associated to an item
+ *
+ * @param item The slideshow item
+ * @return Returns the data associated to this item
+ */
+EAPI void *
+elm_slideshow_item_data_get(Elm_Slideshow_Item * item)
+{
+   if (!item) return NULL;
+   return (void *)item->data;
+}
+
