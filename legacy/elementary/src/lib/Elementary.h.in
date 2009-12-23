@@ -1080,7 +1080,14 @@ extern "C" {
 	ELM_MAP_SOURCE_MAPNIK,
 	ELM_MAP_SOURCE_OSMARENDER,
 	ELM_MAP_SOURCE_CYCLEMAP,
-	ELM_MAP_SOURCE_MAPLINT
+	ELM_MAP_SOURCE_MAPLINT,
+	ELM_MAP_SOURCE_CUSTOM_1,
+	ELM_MAP_SOURCE_CUSTOM_2,
+	ELM_MAP_SOURCE_CUSTOM_3,
+	ELM_MAP_SOURCE_CUSTOM_4,
+	ELM_MAP_SOURCE_CUSTOM_5,
+	ELM_MAP_SOURCE_CUSTOM_6,
+	ELM_MAP_SOURCE_CUSTOM_7
      } Elm_Map_Sources;
    typedef struct _Elm_Map_Marker Elm_Map_Marker;
    typedef struct _Elm_Map_Marker_Class Elm_Map_Marker_Class;
@@ -1089,6 +1096,7 @@ extern "C" {
    typedef void         (*ElmMapMarkerDelFunc)      (Evas_Object *obj, Elm_Map_Marker *marker, void *data, Evas_Object *o);
    typedef Evas_Object *(*ElmMapMarkerIconGetFunc)  (Evas_Object *obj, Elm_Map_Marker *marker, void *data);
    typedef Evas_Object *(*ElmMapGroupIconGetFunc)  (Evas_Object *obj, void *data);
+   typedef char *(*ElmMapSourceURLFunc) (int x, int y, int zoom);
 
    EAPI Evas_Object *elm_map_add(Evas_Object *parent);
    EAPI void         elm_map_zoom_set(Evas_Object *obj, int zoom);
@@ -1130,10 +1138,11 @@ extern "C" {
 
    EAPI void         elm_map_source_set(Evas_Object *obj, Elm_Map_Sources source);
    EAPI Elm_Map_Sources elm_map_source_get(Evas_Object *obj);
+   EAPI void         elm_map_source_custom_api_set(Elm_Map_Sources source, const char *label, 
+				int zoom_min, int zoom_max, ElmMapSourceURLFunc url_cb);
    EAPI int          elm_map_source_zoom_min_get(Elm_Map_Sources source);
    EAPI int	     elm_map_source_zoom_max_get(Elm_Map_Sources source);
    EAPI const char * elm_map_source_name_get(Elm_Map_Sources source);
-   EAPI void         elm_map_source_set(Evas_Object *obj, Elm_Map_Sources source);
    /* smart callbacks called:
     * "clicked" - when image clicked
     * "press" - when mouse/finger held down initially on image

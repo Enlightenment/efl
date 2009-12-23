@@ -62,14 +62,13 @@ typedef struct _Marker_Group Marker_Group;
 // Map sources
 // Currently the size of a tile must be 256*256
 // and the size of the map must be pow(2.0, z)*tile_size
-typedef char *(*MapSourceURLFunc) (int x, int y, int zoom);
 typedef struct _Map_Sources_Tab
 {
    Elm_Map_Sources source;
    const char *name;
    int zoom_min;
    int zoom_max;
-   MapSourceURLFunc url_cb;
+   ElmMapSourceURLFunc url_cb;
 } Map_Sources_Tab;
 
 #define ZOOM_MAX 18
@@ -84,6 +83,13 @@ static Map_Sources_Tab map_sources_tab[] =
      {ELM_MAP_SOURCE_OSMARENDER, "Osmarender", 0, 17, _osmarender_url_cb},
      {ELM_MAP_SOURCE_CYCLEMAP, "Cycle Map", 0, 17, _cyclemap_url_cb},
      {ELM_MAP_SOURCE_MAPLINT, "Maplint", 12, 16, _maplint_url_cb},
+     {ELM_MAP_SOURCE_CUSTOM_1, "Custom 1", 0, 18, NULL},
+     {ELM_MAP_SOURCE_CUSTOM_2, "Custom 2", 0, 18, NULL},
+     {ELM_MAP_SOURCE_CUSTOM_3, "Custom 3", 0, 18, NULL},
+     {ELM_MAP_SOURCE_CUSTOM_4, "Custom 4", 0, 18, NULL},
+     {ELM_MAP_SOURCE_CUSTOM_5, "Custom 5", 0, 18, NULL},
+     {ELM_MAP_SOURCE_CUSTOM_6, "Custom 6", 0, 18, NULL},
+     {ELM_MAP_SOURCE_CUSTOM_7, "Custom 7", 0, 18, NULL}
 };
 //
 
@@ -813,7 +819,7 @@ grid_load(Evas_Object *obj, Grid *g)
 		  snprintf(buf2, PATH_MAX, DEST_FILE_PATH, buf, y);
 
 		  source = map_sources_tab[wd->source].url_cb(x, y, g->zoom);
-		  
+
 
 		  if(gi->file)
 		    eina_stringshare_del(gi->file);
@@ -1746,9 +1752,9 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
    int zoom_changed = 0, started = 0;
 
    if (zoom < 0 ) zoom = 0;
-   if (zoom > map_sources_tab[wd->source].zoom_max) 
+   if (zoom > map_sources_tab[wd->source].zoom_max)
      zoom = map_sources_tab[wd->source].zoom_max;
-   if (zoom < map_sources_tab[wd->source].zoom_min) 
+   if (zoom < map_sources_tab[wd->source].zoom_min)
      zoom = map_sources_tab[wd->source].zoom_min;
    if (zoom == wd->zoom) return;
 
@@ -2668,7 +2674,7 @@ elm_map_group_class_data_set(Elm_Map_Group_Class *clas, void *data)
  *
  * Set the zoom from where the markers are displayed.
  *
- * Markers will not be displayed for a zoom less than @ref zoom 
+ * Markers will not be displayed for a zoom less than @ref zoom
  *
  * @param clas the group class
  * @param zoom the zoom
@@ -2692,7 +2698,7 @@ elm_map_group_class_zoom_grouped_set(Elm_Map_Group_Class *clas, int zoom)
 }
 
 /*
- * Set if the markers associated to the group class @clas are hidden or not. 
+ * Set if the markers associated to the group class @clas are hidden or not.
  * If @ref hide is true the markers will be hidden.
  *
  * @param clas the group class
@@ -2818,7 +2824,8 @@ elm_map_source_set(Evas_Object *obj, Elm_Map_Sources source)
    int zoom;
 
    if(wd->source == source ) return ;
-  
+   if(!map_sources_tab[source].url_cb) return ;
+
    EINA_LIST_FREE(wd->grids, grid)
       grid_clear(obj, grid);
 
@@ -2846,6 +2853,29 @@ elm_map_source_get(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    return wd->source;
+}
+
+/*
+ *
+ * Set the API of a custom source.
+ *
+ * A custom web service can be associated to the source ELM_MAP_SOURCE_CUSTOM_(1..7).
+ *
+ * @param source the source ID (ELM_MAP_SOURCE_CUSTOM_(1..7))
+ * @param name the name of the source
+ * @param zoom_min the minimum zoom of the source, must be >= 0
+ * @param zoom_max the maximum zoom of the source, must be <= ZOOM_MAX
+ * @param url_cb the callback used to create the url from where a tile (png or jpeg file) is downloaded.
+ */
+EAPI void
+elm_map_source_custom_api_set(Elm_Map_Sources source, const char *name, int zoom_min, int zoom_max, ElmMapSourceURLFunc url_cb)
+{
+   if(!name || !url_cb) return ;
+
+   map_sources_tab[source].name = name;
+   map_sources_tab[source].zoom_min = zoom_min;
+   map_sources_tab[source].zoom_max = zoom_max;
+   map_sources_tab[source].url_cb = url_cb;
 }
 
 /*
