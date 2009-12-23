@@ -623,9 +623,9 @@ efreet_util_cache_fill(__UNUSED__ void *data)
             if (!file) break;
             if (!strcmp(file->d_name, ".") || !strcmp(file->d_name, "..")) continue;
 
-            snprintf(buf, PATH_MAX, "%s/%s", fill->current->path, file->d_name);
+            snprintf(buf, sizeof(buf), "%s/%s", fill->current->path, file->d_name);
             if (fill->current->file_id)
-                snprintf(file_id, PATH_MAX, "%s-%s", fill->current->file_id, file->d_name);
+                snprintf(file_id, sizeof(file_id), "%s-%s", fill->current->file_id, file->d_name);
             else
                 strcpy(file_id, file->d_name);
 
@@ -1160,7 +1160,7 @@ efreet_util_menus_find_helper(Eina_List *menus, const char *config_dir)
         if (!exten) continue;
         if (strcmp(".menu", exten)) continue;
 
-        snprintf(fbuf, PATH_MAX, "%s/%s", dbuf, file->d_name);
+        snprintf(fbuf, sizeof(fbuf), "%s/%s", dbuf, file->d_name);
         if (ecore_file_is_dir(fbuf)) continue;
 
         menus = eina_list_append(menus, strdup(fbuf));

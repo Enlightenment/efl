@@ -51,7 +51,7 @@ dump(Efreet_Menu *menu, const char *path)
         {
             char new_path[PATH_MAX];
 
-            snprintf(new_path, PATH_MAX, "%s%s/", path, entry->name);
+            snprintf(new_path, sizeof(new_path), "%s%s/", path, entry->name);
             dump(entry, new_path);
         }
     }

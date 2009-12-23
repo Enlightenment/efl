@@ -120,11 +120,11 @@ efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete)
     if (!uri || !uri->path || !ecore_file_can_write(uri->path)) return 0;
 
     fname = ecore_file_file_get(uri->path);
-    snprintf(dest, PATH_MAX, "%s/files/%s", efreet_trash_dir_get(), fname);
+    snprintf(dest, sizeof(dest), "%s/files/%s", efreet_trash_dir_get(), fname);
 
     /* search for a free filename */
     while (ecore_file_exists(dest))
-        snprintf(dest, PATH_MAX, "%s/files/%s$%d",
+        snprintf(dest, sizeof(dest), "%s/files/%s$%d",
                  efreet_trash_dir_get(), fname, i++);
     fname = ecore_file_file_get(dest);
 
@@ -148,7 +148,7 @@ efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete)
     }
 
     /* create info file */
-    snprintf(dest, PATH_MAX, "%s/info/%s.trashinfo",
+    snprintf(dest, sizeof(dest), "%s/info/%s.trashinfo",
              efreet_trash_dir_get(), fname);
 
     if ((f = fopen(dest, "w")))
@@ -184,8 +184,9 @@ EAPI int
 efreet_trash_is_empty(void)
 {
     char buf[PATH_MAX];
-    snprintf(buf, PATH_MAX, "%s/files", efreet_trash_dir_get());
-   
+
+    snprintf(buf, sizeof(buf), "%s/files", efreet_trash_dir_get());
+
     /* TODO Check also trash in other filesystems */
     return ecore_file_dir_is_empty(buf);
 }
@@ -199,11 +200,11 @@ efreet_trash_empty_trash(void)
 {
     char buf[PATH_MAX];
 
-    snprintf(buf, PATH_MAX, "%s/info", efreet_trash_dir_get());
+    snprintf(buf, sizeof(buf), "%s/info", efreet_trash_dir_get());
     if (!ecore_file_recursive_rm(buf)) return 0;
     ecore_file_mkdir(buf);
 
-    snprintf(buf, PATH_MAX, "%s/files", efreet_trash_dir_get());
+    snprintf(buf, sizeof(buf), "%s/files", efreet_trash_dir_get());
     if (!ecore_file_recursive_rm(buf)) return 0;
     ecore_file_mkdir(buf);
 
@@ -226,7 +227,7 @@ efreet_trash_ls(void)
     // NOTE THIS FUNCTION NOW IS NOT COMPLETE AS I DON'T NEED IT
     // TODO read the name from the infofile instead of the filename
 
-    snprintf(buf, PATH_MAX, "%s/files", efreet_trash_dir_get());
+    snprintf(buf, sizeof(buf), "%s/files", efreet_trash_dir_get());
     files = ecore_file_ls(buf);
 
     EINA_LIST_FOREACH(files, l, infofile)

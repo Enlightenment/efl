@@ -1666,7 +1666,7 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
         {
             char buf[PATH_MAX];
 
-            snprintf(buf, PATH_MAX, "/tmp/%d-%d-%s", getpid(),
+            snprintf(buf, sizeof(buf), "/tmp/%d-%d-%s", getpid(),
                             efreet_desktop_command_file_id++, base);
             f->fullpath = strdup(buf);
             f->pending = 1;

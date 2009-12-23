@@ -651,12 +651,12 @@ efreet_mime_init_files(void)
      * We watch the directories so we can watch for new files
      */
     datadir = datahome;
-    snprintf(buf, PATH_MAX, "%s/mime", datadir);
+    snprintf(buf, sizeof(buf), "%s/mime", datadir);
     efreet_mime_monitor_add(buf);
 
     EINA_LIST_FOREACH(datadirs, l, datadir)
     {
-        snprintf(buf, PATH_MAX, "%s/mime", datadir);
+        snprintf(buf, sizeof(buf), "%s/mime", datadir);
         efreet_mime_monitor_add(buf);
     }
     efreet_mime_monitor_add("/etc/mime.types");

@@ -547,7 +547,7 @@ efreet_menu_kde_legacy_init(void)
 
     /* XXX if the return from kde-config is a line longer than PATH_MAX,
      * this won't be correct (increase buffer and get the rest...) */
-    if (!fgets(buf, PATH_MAX, f))
+    if (!fgets(buf, sizeof(buf), f))
     {
         ERR("Error initializing KDE legacy information");
         return 0;
@@ -1671,20 +1671,25 @@ efreet_menu_merge(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char *pat
     }
 
     /* don't merge the same path twice */
-    if (eina_hash_find(efreet_merged_menus, realpath))
+    if (eina_hash_find(efreet_merged_menus, realpath)) 
+     {
+        FREE(realpath);
         return 1;
+     }
 
     eina_hash_add(efreet_merged_menus, realpath, (void *)1);
 
     merge_xml = efreet_xml_new(realpath);
-    FREE(realpath);
 
     if (!merge_xml)
     {
         INF("efreet_menu_merge() failed to read in the "
                 "merge file (%s)", realpath);
+        FREE(realpath);
         return 0;
     }
+
+    FREE(realpath);
 
     internal = efreet_menu_internal_new();
     efreet_menu_path_set(internal, path);
@@ -1760,7 +1765,7 @@ efreet_menu_merge_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char 
         if (!p) continue;
         if (strcmp(p, ".menu")) continue;
 
-        snprintf(dir_path, PATH_MAX, "%s/%s", path, file->d_name);
+        snprintf(dir_path, sizeof(dir_path), "%s/%s", path, file->d_name);
         if (!efreet_menu_merge(parent, xml, dir_path))
         {
             closedir(files);
@@ -1980,7 +1985,7 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
 
         if (prefix)
         {
-            snprintf(buf, PATH_MAX, "%s%s", prefix, file->d_name);
+            snprintf(buf, sizeof(buf), "%s%s", prefix, file->d_name);
             filter->op->filenames = eina_list_append(filter->op->filenames, strdup(buf));
         }
         else
@@ -3420,9 +3425,9 @@ efreet_menu_app_dir_scan(Efreet_Menu_Internal *internal, const char *path, const
     while ((file = readdir(files)))
     {
         if (!strcmp(file->d_name, ".") || !strcmp(file->d_name, "..")) continue;
-        snprintf(buf, PATH_MAX, "%s/%s", path, file->d_name);
+        snprintf(buf, sizeof(buf), "%s/%s", path, file->d_name);
         if (id)
-            snprintf(buf2, PATH_MAX, "%s-%s", id, file->d_name);
+            snprintf(buf2, sizeof(buf2), "%s-%s", id, file->d_name);
         else
             strcpy(buf2, file->d_name);
 
@@ -3525,9 +3530,9 @@ efreet_menu_directory_dir_scan(const char *path, const char *relative_path,
     while ((file = readdir(files)))
     {
         if (!strcmp(file->d_name, ".") || !strcmp(file->d_name, "..")) continue;
-        snprintf(buf, PATH_MAX, "%s/%s", path, file->d_name);
+        snprintf(buf, sizeof(buf), "%s/%s", path, file->d_name);
         if (relative_path)
-            snprintf(buf2, PATH_MAX, "%s/%s", relative_path, file->d_name);
+            snprintf(buf2, sizeof(buf2), "%s/%s", relative_path, file->d_name);
         else
             strcpy(buf2, file->d_name);
 
