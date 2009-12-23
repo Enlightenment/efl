@@ -140,6 +140,7 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
    ret = EVAS_LOAD_ERROR_NONE;
    evas_module_foreach_image_loader(_evas_image_foreach_loader, &fdata);
    em = fdata.em;
+   evas_image_load_func = em ? em->functions : NULL;
    if (em) goto end;
 
    /* This is our last chance, try all known image loader. */
