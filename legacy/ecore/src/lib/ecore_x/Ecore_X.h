@@ -1024,9 +1024,9 @@ typedef enum _Ecore_X_Illume_Mode
 #define ECORE_X_WINDOW_LAYER_ABOVE 6
 
 /* Property list operations */
-#define ECORE_X_PROP_LIST_REMOVE    0
-#define ECORE_X_PROP_LIST_ADD       1
-#define ECORE_X_PROP_LIST_TOGGLE    2
+#define ECORE_X_PROP_LIST_REMOVE 0
+#define ECORE_X_PROP_LIST_ADD 1
+#define ECORE_X_PROP_LIST_TOGGLE 2
 
 EAPI int              ecore_x_init(const char *name);
 EAPI int              ecore_x_shutdown(void);
@@ -1317,7 +1317,6 @@ EAPI void            ecore_x_get_atom_name_fetch(void);
 EAPI char           *ecore_x_atom_name_get(Ecore_X_Atom atom);
 
 
-
 EAPI void            ecore_x_icccm_init(void);
 EAPI void            ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state);
 EAPI Ecore_X_Window_State_Hint ecore_x_icccm_state_get(Ecore_X_Window win);
@@ -1551,7 +1550,8 @@ EAPI void                ecore_x_e_illume_drag_locked_set(Ecore_X_Window win, un
 EAPI int                 ecore_x_e_illume_drag_locked_get(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_drag_start_send(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_drag_end_send(Ecore_X_Window win);
-
+EAPI void                ecore_x_e_illume_quickpanel_set(Ecore_X_Window win, unsigned int is_quickpanel);
+EAPI int                 ecore_x_e_illume_quickpanel_get(Ecore_X_Window win);
 
 EAPI void                ecore_x_xinerama_query_screens_prefetch(void);
 EAPI void                ecore_x_xinerama_query_screens_fetch(void);

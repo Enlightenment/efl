@@ -192,7 +192,8 @@ ecore_x_e_illume_conformant_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
 
-   if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_CONFORMANT, &val, 1))
+   if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_CONFORMANT, 
+                                       &val, 1))
      return 0;
    return val;
 }
@@ -290,4 +291,22 @@ ecore_x_e_illume_drag_end_send(Ecore_X_Window win)
    ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_DRAG_END,
 				 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
 				 1, 0, 0, 0, 0);
+}
+
+EAPI void 
+ecore_x_e_illume_quickpanel_set(Ecore_X_Window win, unsigned int is_quickpanel) 
+{
+   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL,
+				  &is_quickpanel, 1);
+}
+
+EAPI int 
+ecore_x_e_illume_quickpanel_get(Ecore_X_Window win) 
+{
+   unsigned int val = 0;
+
+   if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL, 
+                                       &val, 1))
+     return 0;
+   return val;
 }

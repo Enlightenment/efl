@@ -237,4 +237,4 @@ EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_DRAG                  = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_DRAG_LOCKED           = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_DRAG_START            = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_DRAG_END              = 0;
-
+EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_QUICKPANEL            = 0;

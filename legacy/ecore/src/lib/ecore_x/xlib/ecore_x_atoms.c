@@ -226,7 +226,8 @@ _ecore_x_atoms_init(void)
         { "_E_ILLUME_DRAG", &ECORE_X_ATOM_E_ILLUME_DRAG }, 
         { "_E_ILLUME_DRAG_LOCKED", &ECORE_X_ATOM_E_ILLUME_DRAG_LOCKED }, 
         { "_E_ILLUME_DRAG_START", &ECORE_X_ATOM_E_ILLUME_DRAG_START }, 
-        { "_E_ILLUME_DRAG_END", &ECORE_X_ATOM_E_ILLUME_DRAG_END }
+        { "_E_ILLUME_DRAG_END", &ECORE_X_ATOM_E_ILLUME_DRAG_END }, 
+        { "_E_ILLUME_QUICKPANEL", &ECORE_X_ATOM_E_ILLUME_QUICKPANEL }
      };
    Atom *atoms;
    char **names;
