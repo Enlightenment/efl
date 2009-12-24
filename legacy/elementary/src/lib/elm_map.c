@@ -449,7 +449,7 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
 			    group->update_nbelems = EINA_FALSE;
 			    if(eina_list_count(group->markers) > 1)
 			      {
-				 snprintf(buf, PATH_MAX, "%d", eina_list_count(group->markers));
+				 snprintf(buf, sizeof(buf), "%d", eina_list_count(group->markers));
 				 edje_object_part_text_set(elm_layout_edje_get(group->obj), "elm.text", buf);
 			      }
 			    else
@@ -549,7 +549,7 @@ grid_clear(Evas_Object *obj, Grid *g)
    Eina_Iterator *it = eina_matrixsparse_iterator_new(g->grid);
    Eina_Matrixsparse_Cell *cell;
 
-   snprintf(buf, PATH_MAX, DEST_DIR_ZOOM_PATH, obj, g->zoom);
+   snprintf(buf, sizeof(buf), DEST_DIR_ZOOM_PATH, obj, g->zoom);
    ecore_file_recursive_rm(buf);
 
    EINA_ITERATOR_FOREACH(it, cell)
@@ -812,11 +812,11 @@ grid_load(Evas_Object *obj, Grid *g)
 
 		  gi->want = EINA_TRUE;
 
-		  snprintf(buf, PATH_MAX, DEST_DIR_PATH, obj, g->zoom, x);
+		  snprintf(buf, sizeof(buf), DEST_DIR_PATH, obj, g->zoom, x);
 		  if(!ecore_file_exists(buf))
 		    ecore_file_mkpath(buf);
 
-		  snprintf(buf2, PATH_MAX, DEST_FILE_PATH, buf, y);
+		  snprintf(buf2, sizeof(buf2), DEST_FILE_PATH, buf, y);
 
 		  source = map_sources_tab[wd->source].url_cb(x, y, g->zoom);
 
@@ -2921,7 +2921,7 @@ elm_map_source_name_get(Elm_Map_Sources source)
 static char * _mapnik_url_cb(int x, int y, int zoom)
 {
    char buf[PATH_MAX];
-   snprintf(buf, PATH_MAX, "http://tile.openstreetmap.org/%d/%d/%d.png",
+   snprintf(buf, sizeof(buf), "http://tile.openstreetmap.org/%d/%d/%d.png",
 	 zoom, x, y);
    return strdup(buf);
 }
@@ -2929,7 +2929,7 @@ static char * _mapnik_url_cb(int x, int y, int zoom)
 static char * _osmarender_url_cb(int x, int y, int zoom)
 {
    char buf[PATH_MAX];
-   snprintf(buf, PATH_MAX, "http://tah.openstreetmap.org/Tiles/tile/%d/%d/%d.png",
+   snprintf(buf, sizeof(buf), "http://tah.openstreetmap.org/Tiles/tile/%d/%d/%d.png",
 	 zoom, x, y);
    return strdup(buf);
 }
@@ -2937,7 +2937,7 @@ static char * _osmarender_url_cb(int x, int y, int zoom)
 static char * _cyclemap_url_cb(int x, int y, int zoom)
 {
    char buf[PATH_MAX];
-   snprintf(buf, PATH_MAX, "http://andy.sandbox.cloudmade.com/tiles/cycle/%d/%d/%d.png",
+   snprintf(buf, sizeof(buf), "http://andy.sandbox.cloudmade.com/tiles/cycle/%d/%d/%d.png",
 	 zoom, x, y);
    return strdup(buf);
 }
@@ -2945,7 +2945,7 @@ static char * _cyclemap_url_cb(int x, int y, int zoom)
 static char * _maplint_url_cb(int x, int y, int zoom)
 {
    char buf[PATH_MAX];
-   snprintf(buf, PATH_MAX, "http://tah.openstreetmap.org/Tiles/maplint/%d/%d/%d.png",
+   snprintf(buf, sizeof(buf), "http://tah.openstreetmap.org/Tiles/maplint/%d/%d/%d.png",
 	 zoom, x, y);
    return strdup(buf);
 }
