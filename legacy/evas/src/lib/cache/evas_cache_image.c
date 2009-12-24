@@ -339,7 +339,7 @@ _evas_cache_image_async_heavy(void *data)
    current->channel++;
    cache = current->cache;
 
-   if (!current->flags.loaded)
+   if (!current->flags.loaded && ((Evas_Image_Load_Func*) current->info.module)->threadable)
      {
 	error = cache->func.load(current);
 	if (cache->func.debug)
@@ -368,7 +368,7 @@ _evas_cache_image_async_end(void *data)
    ie->cache->pending = eina_list_remove(ie->cache->pending, ie);
 
    ie->preload = NULL;
-   ie->flags.preload_done = 1;
+   ie->flags.preload_done = ie->flags.loaded;
    while (ie->targets)
      {
 	tmp = ie->targets;
@@ -427,7 +427,7 @@ _evas_cache_image_entry_preload_add(Image_Entry *ie,
      {
         ie->cache->preload = eina_list_append(ie->cache->preload, ie);
         ie->flags.pending = 0;
-        
+
         ie->preload = evas_preload_thread_run(_evas_cache_image_async_heavy,
                                               _evas_cache_image_async_end,
                                               _evas_cache_image_async_cancel,

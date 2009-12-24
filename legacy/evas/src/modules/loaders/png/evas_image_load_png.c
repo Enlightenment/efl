@@ -37,6 +37,7 @@ static Eina_Bool evas_image_load_file_data_png(Image_Entry *ie, const char *file
 
 static Evas_Image_Load_Func evas_image_load_png_func =
 {
+  EINA_TRUE,
   evas_image_load_file_head_png,
   evas_image_load_file_data_png
 };

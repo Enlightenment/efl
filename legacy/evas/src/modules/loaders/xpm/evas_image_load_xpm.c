@@ -15,6 +15,7 @@ static Eina_Bool evas_image_load_file_data_xpm(Image_Entry *ie, const char *file
 
 static Evas_Image_Load_Func evas_image_load_xpm_func =
 {
+  EINA_FALSE,
   evas_image_load_file_head_xpm,
   evas_image_load_file_data_xpm
 };

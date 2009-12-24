@@ -707,6 +707,7 @@ struct _Evas_Func
 
 struct _Evas_Image_Load_Func
 {
+  Eina_Bool threadable;
   Eina_Bool (*file_head) (Image_Entry *ie, const char *file, const char *key, int *error);
   Eina_Bool (*file_data) (Image_Entry *ie, const char *file, const char *key, int *error);
 };

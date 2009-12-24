@@ -10,6 +10,7 @@ static Eina_Bool evas_image_load_file_data_svg(Image_Entry *ie, const char *file
 
 Evas_Image_Load_Func evas_image_load_svg_func =
 {
+  EINA_FALSE,
   evas_image_load_file_head_svg,
   evas_image_load_file_data_svg
 };

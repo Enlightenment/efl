@@ -21,6 +21,7 @@ static Eina_Bool evas_image_load_file_head_pmaps(Image_Entry *ie, const char *fi
 static Eina_Bool evas_image_load_file_data_pmaps(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
 
 Evas_Image_Load_Func evas_image_load_pmaps_func = {
+   EINA_TRUE,
    evas_image_load_file_head_pmaps,
    evas_image_load_file_data_pmaps
 };

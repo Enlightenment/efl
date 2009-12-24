@@ -12,6 +12,7 @@ static Eina_Bool evas_image_load_file_data_gif(Image_Entry *ie, const char *file
 
 static Evas_Image_Load_Func evas_image_load_gif_func =
 {
+  EINA_TRUE,
   evas_image_load_file_head_gif,
   evas_image_load_file_data_gif
 };
