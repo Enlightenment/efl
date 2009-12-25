@@ -27,11 +27,7 @@ AC_MSG_RESULT([${_efl_enable_benchmark}])
 
 AM_CONDITIONAL(EFL_ENABLE_BENCHMARK, test "x${_efl_enable_benchmark}" = "xyes")
 
-if test "x${_efl_enable_benchmark}" = "xyes" ; then
-   m4_default([$1], [:])
-else
-   m4_default([$2], [:])
-fi
+AS_IF([test "x$_efl_enable_benchmark" = "xyes"], [$1], [$2])
 ])
 
 dnl End of efl_benchmark.m4

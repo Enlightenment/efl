@@ -88,12 +88,7 @@ fi
 
 AM_CONDITIONAL(EFL_BUILD_DOC, test "x${efl_have_doxygen}" = "xyes")
 
-if test "x${efl_have_doxygen}" = "xyes" ; then
-  m4_default([$1], [:])
-else
-  m4_default([$2], [:])
-fi
-
+AS_IF([test "x$efl_have_doxygen" = "xyes"], [$1], [$2])
 ])
 
 dnl End of efl_doxygen.m4

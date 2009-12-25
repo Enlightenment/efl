@@ -3,7 +3,7 @@ dnl That code is public domain and can be freely used or copied.
 
 dnl Macro that check if several ASM instruction sets are available or not.
 
-dnl Usage: EFL_CHECK_EFL_CHECK_PTHREAD([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+dnl Usage: EFL_CHECK_EFL_CHECK_PTHREAD(want_pthread_spin[, ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 dnl Call AC_SUBST(EFL_PTHREAD_FLAGS)
 dnl Define EFL_HAVE_PTHREAD
 
@@ -31,9 +31,18 @@ dnl check if the compiler supports pthreads
 _efl_have_pthread="no"
 
 if test "x${_efl_enable_pthread}" = "xyes" ; then
-   AC_CHECK_HEADER(pthread.h,
+
+   AC_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([[
+#include <pthread.h>
+                       ]],
+                       [[
+pthread_t id;
+id = pthread_self();
+                       ]])],
       [_efl_have_pthread="yes"],
       [_efl_have_pthread="no"])
+
 fi
 
 AC_MSG_CHECKING([whether system support POSIX threads])
@@ -63,9 +72,34 @@ if test "x${_efl_have_pthread}" = "xyes" ; then
    AC_DEFINE(EFL_HAVE_PTHREAD, 1, [Define to mention that POSIX threads are supported])
 fi
 
-if test "x${_efl_have_pthread}" = "xyes" ; then
-   ifelse([$1], , :, [$1])
-else
-   ifelse([$2], , :, [$2])
+dnl check if the compiler supports pthreads spinlock
+
+_efl_have_pthread_spinlock="no"
+
+if test "x${_efl_have_pthread}" = "xyes" && test "x$1" = "xyes" ; then
+
+   AC_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([[
+#include <pthread.h>
+                       ]],
+                       [[
+pthread_spinlock_t lock;
+int res;
+res = pthread_spin_init(&lock, PTHREAD_PROCESS_PRIVATE);
+                       ]])],
+      [_efl_have_pthread_spinlock="yes"],
+      [_efl_have_pthread_spinlock="no"])
+
 fi
+
+AC_MSG_CHECKING([whether to build POSIX threads spinlock code])
+AC_MSG_RESULT([${_efl_have_pthread_spinlock}])
+
+if test "x${_efl_have_pthread_spinlock}" = "xyes" ; then
+   AC_DEFINE(EFL_HAVE_PTHREAD_SPINLOCK, 1, [Define to mention that POSIX threads spinlocks are supported])
+fi
+
+AS_IF([test "x$_efl_have_pthread" = "xyes"], [$2], [$3])
+AS_IF([test "x$_efl_have_pthread_spinlock" = "xyes"], [$4], [$5])
+
 ])

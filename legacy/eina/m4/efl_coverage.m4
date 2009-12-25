@@ -31,7 +31,7 @@ AC_MSG_RESULT([$_efl_enable_coverage])
 
 dnl lcov check
 
-if test ! "x$1" = "xyes" -a "x$_efl_enable_coverage" = "xyes" ; then
+if test "x$_efl_enable_coverage" = "xyes" && test ! "x$1" = "xyes" ; then
    AC_MSG_WARN([Coverage report requested but tests not being built, disable profiling instrumentation.])
    AC_MSG_WARN([Run configure with --enable-tests])
    _efl_enable_coverage="no"
@@ -56,11 +56,7 @@ AC_SUBST(EFL_COVERAGE_LIBS)
 
 AM_CONDITIONAL(EFL_ENABLE_COVERAGE, test "x${_efl_enable_coverage}" = "xyes")
 
-if test "x${_efl_enable_coverage}" = "xyes" ; then
-   m4_default([$2], [:])
-else
-   m4_default([$3], [:])
-fi
+AS_IF([test "x$_efl_enable_coverage" = "xyes"], [$2], [$3])
 ])
 
 dnl End of efl_coverage.m4
