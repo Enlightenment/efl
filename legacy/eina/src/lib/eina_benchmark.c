@@ -20,7 +20,130 @@
 /**
  * @page tutorial_benchmark_page Benchmark Tutorial
  *
- * to be written...
+ * The Benchmark module allows you to write easily benchmarks
+ * framework in a project for timing critical part and detect slow
+ * parts of code. In addition it automatically creates data files of
+ * these benchmark, as well as a gnuplot file which can display the
+ * comparison curves of the benchmarks.
+ *
+ * @section tutorial_benchmark_basic_usage Basic Usage
+ *
+ * To create a basic benchmark, you have to follow these steps:
+ *
+ * @li Create a new bechmark
+ * @li Write the functions that wraps the the functions you want to
+ * bechmark. 
+ * @li Register these wrappers functions.
+ * @li Run the benchmark.
+ * @li Free the memory.
+ *
+ * Here is a basic example which bechmark which creates two functions
+ * that will be run. These functions just print a message.
+ *
+ * @code
+ * #include <stdlib.h>
+ * #include <stdio.h>
+ *
+ * #include <Eina.h>
+ *
+ * static
+ * void work1(int request)
+ * {
+ *   printf ("work1 in progress... Request: %d\n", request);
+ * }
+ *
+ * static
+ * void work2(int request)
+ * {
+ *   printf ("work2 in progress... Request: %d\n", request);
+ * }
+ *
+ * int main()
+ * {
+ *   Eina_Benchmark *test;
+ *   Eina_Array     *ea;
+ *
+ *   if (!eina_init())
+ *     return EXIT_FAILURE;
+ *
+ *   test = eina_benchmark_new("test", "run");
+ *   if (!test)
+ *     goto shutdown_eina;
+ *
+ *   eina_benchmark_register(test, "work-1", EINA_BENCHMARK(work1), 200, 300, 10);
+ *   eina_benchmark_register(test, "work-2", EINA_BENCHMARK(work2), 100, 150, 5);
+ *
+ *   ea = eina_benchmark_run(test);
+ *
+ *   if(ea)
+ *     {
+ *       Eina_Array_Iterator it;
+ *       char *tmp;
+ *       unsigned int i;
+ *
+ *       EINA_ARRAY_ITER_NEXT(ea, i, tmp, it)
+ *         free(tmp);
+ *
+ *       eina_array_free(ea);
+ *     }
+ *
+ *   eina_benchmark_free(test);
+ *   eina_shutdown();
+ *
+ *   return EXIT_SUCCESS;
+ * 
+ *  shutdown_eina:
+ *   eina_shutdown();
+ *
+ *   return EXIT_FAILURE;
+ * }
+ * @endcode
+ *
+ * As "test", "run" are passed to eina_benchmark_new() and as the tests
+ * "work-1" and "work-2" are registered, the data files
+ * bench_test_run.work-1.data and bench_test_run.work-2.data will be
+ * created after the eina_benchmark_run() call. They contain four
+ * columns. The file bench_test_run.work-1.data contains for example:
+ *
+ * @code
+ * # specimen      experiment time starting time   ending time
+ * 200     23632   2852446 2876078
+ * 210     6924    2883046 2889970
+ * 220     6467    2895962 2902429
+ * 230     6508    2908271 2914779
+ * 240     6278    2920610 2926888
+ * 250     6342    2932830 2939172
+ * 260     6252    2944954 2951206
+ * 270     6463    2956978 2963441
+ * 280     6347    2969548 2975895
+ * 290     6457    2981702 2988159
+ * @endcode
+ *
+ * The first column (specimen) is the integer passed to the work1()
+ * function when the test is run. The second column (experiment time)
+ * is the time, in nanosecond, that work1() takes. The third and
+ * fourth columnd are self-explicit.
+ *
+ * You can see that the integer passed work1() starts from 200 and
+ * finishes at 290, with a step of 10. These values are computed withe
+ * last 3 values passed to eina_benchmark_register(). See the document
+ * of that function for the detailed behavior.
+ *
+ * The Gnuplot file will be named bench_test_run.gnuplot. Just run:
+ *
+ * @code
+ * gnuplot bench_test_run.gnuplot
+ * @endcode
+ *
+ * to create the graphic of the comparison curves. The image file is
+ * named output_test_run.png.
+ *
+ * @section tutorial_benchmark_advanced_usage More Advanced Usage
+ *
+ * In this section, several test will be created and run. The idea is
+ * exactly the same than in the previous section.
+ *
+ * to be done.
  *
  */
 
