@@ -18,7 +18,7 @@
 
 
 /**
- * @page tutorial_matrixsparse_page Matrix Sparse Tutorial
+ * @page tutorial_matrixsparse_page Sparse Matrix Tutorial
  *
  * to be written...
  *
@@ -51,6 +51,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+
 /**
  * @cond LOCAL
  */
@@ -770,7 +771,7 @@ _eina_matrixsparse_iterator_complete_free(Eina_Matrixsparse_Iterator_Complete *i
  *============================================================================*/
 
 /**
- * @addtogroup Eina_Matrixsparse_Group Matrix Sparse
+ * @addtogroup Eina_Matrixsparse_Group Sparse Matrix
  *
  * @brief These functions provide matrix sparse management.
  *
@@ -1553,3 +1554,7 @@ eina_matrixsparse_iterator_complete_new(const Eina_Matrixsparse *m)
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_matrixsparse_iterator_complete_free);
    return &it->iterator;
 }
+
+/**
+ * @}
+ */

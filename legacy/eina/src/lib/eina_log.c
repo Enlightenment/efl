@@ -166,7 +166,7 @@
  * The log module allows the user to change the way
  * eina_log_print() displays the messages. It suffices to pass to
  * eina_log_print_cb_set() the function used to display the
- * message. That  function must be of type #Eina_log_Print_Cb. As a
+ * message. That  function must be of type #Eina_Log_Print_Cb. As a
  * custom data can be passed to that callback, powerful display
  * messages can be displayed.
  *
@@ -871,7 +871,7 @@ eina_log_domain_parse_pending_globs(void)
  *============================================================================*/
 
 /**
- * @addtogroup Eina_Log_Group log
+ * @addtogroup Eina_Log_Group Log
  *
  * @brief These functions provide log management for projects.
  *
@@ -1506,3 +1506,6 @@ eina_log_vprint(int domain, Eina_Log_Level level, const char *file,
    LOG_UNLOCK();
 }
 
+/**
+ * @}
+ */

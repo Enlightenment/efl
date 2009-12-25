@@ -52,7 +52,7 @@ static int _eina_hamsters = -1;
  *============================================================================*/
 
 /**
- * @addtogroup Eina_Main_Group Hamster
+ * @addtogroup Eina_Hamster_Group Hamster
  *
  * @brief These functions provide hamster calls.
  *

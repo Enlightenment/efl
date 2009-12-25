@@ -183,3 +183,7 @@ EAPI extern Eina_Error EINA_ERROR_SAFETY_FAILED;
 /**
  * @}
  */
+
+/**
+ * @}
+ */

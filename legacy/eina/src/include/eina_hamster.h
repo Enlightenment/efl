@@ -26,7 +26,7 @@
  */
 
 /**
- * @defgroup Eina_Main_Group Hamster
+ * @defgroup Eina_Hamster_Group Hamster
  *
  * @{
  */
