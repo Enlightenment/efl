@@ -50,14 +50,11 @@ EFL_CHECK_CPU_SSE([have_sse="yes"], [have_sse="no"])
 EFL_CHECK_CPU_SSE2([have_sse2="yes"], [have_sse2="no"])
 EFL_CHECK_CPU_ALTIVEC([have_altivec="yes"], [have_altivec="no"])
 
-EFL_CHECK_PTHREAD([have_pthread="yes"], [have_pthread="no"])
-
-if test "x${have_pthread}" = "xyes"; then
-   AC_CHECK_LIB(pthread, pthread_spin_init,
-   		[
-		  AC_DEFINE(EINA_PTHREAD_SPIN, 1, [Build eina_log lock using pthread_spin])
-		])
-fi
+EFL_CHECK_PTHREAD(["yes"],
+   [have_pthread="yes"],
+   [have_pthread="no"],
+   [have_pthread_spinlock="yes"],
+   [have_pthread_spinlock="no"])
 
 ### Additional options to configure
 
@@ -479,7 +476,7 @@ echo "  Safety checks........: ${have_safety_checks}"
 echo "  Maximum log level....: ${with_max_log_level}"
 echo "  Report string usage..: ${have_stringshare_usage}"
 echo "  Default mempool......: ${have_default_mempool}"
-echo "  Thread Support.......: ${have_pthread}"
+echo "  Thread Support.......: ${have_pthread} (spinlock: ${have_pthread_spinlock})"
 echo "  Amalgamation.........: ${do_amalgamation}"
 echo
 echo "  Documentation........: ${build_doc}"

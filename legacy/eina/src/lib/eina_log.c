@@ -375,7 +375,7 @@ static pthread_t _main_thread;
      }									\
   } while (0)
 
-#ifdef EINA_PTHREAD_SPIN
+#ifdef EFL_HAVE_PTHREAD_SPINLOCK
 static pthread_spinlock_t _log_lock;
 #define LOG_LOCK()								\
   if(_threads_enabled) \
