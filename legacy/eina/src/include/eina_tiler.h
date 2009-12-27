@@ -23,16 +23,42 @@
 #include "eina_iterator.h"
 #include "eina_rectangle.h"
 
+/**
+ * @addtogroup Eina_Data_Types_Group Data Types
+ *
+ * @{
+ */
+
+/**
+ * @defgroup Eina_Tiler_Group Tiler
+ *
+ * @{
+ */
+
+/**
+ * @typedef Eina_Tiler
+ * Tiler type.
+ */
 typedef struct _Eina_Tiler Eina_Tiler;
 
+/**
+ * @typedef Eina_Tile_Grid_Info
+ * Grid type of a tiler.
+ */
+typedef struct Eina_Tile_Grid_Info Eina_Tile_Grid_Info;
+
+/**
+ * @struct Eina_Tile_Grid_Info
+ * Grid type of a tiler.
+ */
 struct Eina_Tile_Grid_Info
 {
-   unsigned long col, row;
-   Eina_Rectangle rect;
-   Eina_Bool full;
+   unsigned long  col;  /**< column of the tiler grid */
+   unsigned long  row;  /**< row of the tiler grid*/
+   Eina_Rectangle rect; /**< rectangle of the tiler grid*/
+   Eina_Bool      full; /**< whether the grid is full or not */
 };
 
-typedef struct Eina_Tile_Grid_Info Eina_Tile_Grid_Info;
 typedef struct _Eina_Tile_Grid_Slicer Eina_Tile_Grid_Slicer;
 
 EAPI Eina_Tiler *eina_tiler_new(int w, int h);
@@ -47,5 +73,14 @@ static inline Eina_Bool eina_tile_grid_slicer_next(Eina_Tile_Grid_Slicer *slc, c
 static inline Eina_Bool eina_tile_grid_slicer_setup(Eina_Tile_Grid_Slicer *slc, int x, int y, int w, int h, int tile_w, int tile_h);
 
 #include "eina_inline_tiler.x"
+
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
 #endif /* EINA_TILER_H_ */

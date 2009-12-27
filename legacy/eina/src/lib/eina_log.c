@@ -857,6 +857,78 @@ eina_log_domain_parse_pending_globs(void)
      }
 }
 
+static inline int
+eina_log_domain_register_unlocked(const char *name, const char *color)
+{
+   Eina_Log_Domain_Level_Pending *pending = NULL;
+   int i;
+
+   for (i = 0; i < _log_domains_count; i++)
+     {
+	if (_log_domains[i].deleted)
+	  {
+	     // Found a flagged slot, free domain_str and replace slot
+	     eina_log_domain_new(&_log_domains[i], name, color);
+	     goto finish_register;
+	  }
+     }
+
+   if (_log_domains_count >= _log_domains_allocated)
+     {
+	Eina_Log_Domain *tmp;
+	size_t size;
+
+	if (!_log_domains)
+	  // special case for init, eina itself will allocate a dozen of domains
+	  size = 24;
+	else
+	  // grow 8 buckets to minimize reallocs
+	  size = _log_domains_allocated + 8;
+
+	tmp = realloc(_log_domains, sizeof(Eina_Log_Domain) * size);
+
+	if (tmp)
+	  {
+	     // Success!
+	     _log_domains = tmp;
+	     _log_domains_allocated = size;
+	  }
+	else
+	   return -1;
+     }
+
+   // Use an allocated slot
+   eina_log_domain_new(&_log_domains[i], name, color);
+   _log_domains_count++;
+
+finish_register:
+   EINA_INLIST_FOREACH(_glob_list, pending) 
+     {
+        if (!fnmatch(pending->name, name, 0)) 
+          {
+             _log_domains[i].level = pending->level;
+             break;
+          }
+     }
+
+   EINA_INLIST_FOREACH(_pending_list, pending)
+     {
+	if (!strcmp(pending->name, name))
+	  {
+	     _log_domains[i].level = pending->level;
+	     _pending_list = eina_inlist_remove(_pending_list, EINA_INLIST_GET(pending));
+	     free(pending);
+	     break;
+	  }
+     }
+
+   // Check if level is still UNKNOWN, set it to global
+   if (_log_domains[i].level == EINA_LOG_LEVEL_UNKNOWN)
+      _log_domains[i].level = _log_level;
+
+   return i;
+}
+
 /**
  * @endcond
  */
@@ -865,85 +937,6 @@ eina_log_domain_parse_pending_globs(void)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-
-/**
- * @addtogroup Eina_Log_Group Log
- *
- * @brief These functions provide log management for projects.
- *
- * To use the log system Eina must be initialized with eina_init() and
- * later shut down with eina_shutdown(). The most generic way to print
- * logs is to use eina_log_print() but the helper macros
- * EINA_LOG_ERR(), EINA_LOG_INFO(), EINA_LOG_WARN() and EINA_LOG_DBG()
- * should be used instead.
- *
- * Here is a straightforward example:
- *
- * @code
- * #include <stdlib.h>
- * #include <stdio.h>
- *
- * #include <eina_log.h>
- *
- * void test_warn(void)
- * {
- *    EINA_LOG_WARN("Here is a warning message");
- * }
- *
- * int main(void)
- * {
- *    if (!eina_init())
- *    {
- *        printf("log during the initialization of Eina_Log module\n");
- *        return EXIT_FAILURE;
- *    }
- *
- *    test_warn();
- *
- *    eina_shutdown();
- *
- *    return EXIT_SUCCESS;
- * }
- * @endcode
- *
- * Compile this code with the following command:
- *
- * @code
- * gcc -Wall -o test_Eina_Log test_eina.c `pkg-config --cflags --libs eina`
- * @endcode
- *
- * If Eina is compiled without debug mode, then executing the
- * resulting program displays nothing because the default log level
- * is #EINA_LOG_LEVEL_ERR and we want to display a warning
- * message, which level is strictly greater than the log level (see
- * eina_log_print() for more informations). Now execute the program
- * with:
- *
- * @code
- * EINA_LOG_LEVEL=2 ./test_eina_log
- * @endcode
- *
- * You should see a message displayed in the terminal.
- *
- * For more information, you can look at the @ref tutorial_log_page.
- *
- * @{
- */
-
-
-/**
- * @cond LOCAL
- */
-
-EAPI int EINA_LOG_DOMAIN_GLOBAL = 0;
-
-/**
- * @endcond
- */
 
 /**
  * @internal
@@ -1058,7 +1051,6 @@ eina_log_shutdown(void)
    return EINA_TRUE;
 }
 
-
 #ifdef EFL_HAVE_PTHREAD
 
 /**
@@ -1096,6 +1088,85 @@ eina_log_threads_shutdown(void)
 }
 
 #endif
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+/**
+ * @addtogroup Eina_Log_Group Log
+ *
+ * @brief These functions provide log management for projects.
+ *
+ * To use the log system Eina must be initialized with eina_init() and
+ * later shut down with eina_shutdown(). The most generic way to print
+ * logs is to use eina_log_print() but the helper macros
+ * EINA_LOG_ERR(), EINA_LOG_INFO(), EINA_LOG_WARN() and EINA_LOG_DBG()
+ * should be used instead.
+ *
+ * Here is a straightforward example:
+ *
+ * @code
+ * #include <stdlib.h>
+ * #include <stdio.h>
+ *
+ * #include <eina_log.h>
+ *
+ * void test_warn(void)
+ * {
+ *    EINA_LOG_WARN("Here is a warning message");
+ * }
+ *
+ * int main(void)
+ * {
+ *    if (!eina_init())
+ *    {
+ *        printf("log during the initialization of Eina_Log module\n");
+ *        return EXIT_FAILURE;
+ *    }
+ *
+ *    test_warn();
+ *
+ *    eina_shutdown();
+ *
+ *    return EXIT_SUCCESS;
+ * }
+ * @endcode
+ *
+ * Compile this code with the following command:
+ *
+ * @code
+ * gcc -Wall -o test_Eina_Log test_eina.c `pkg-config --cflags --libs eina`
+ * @endcode
+ *
+ * If Eina is compiled without debug mode, then executing the
+ * resulting program displays nothing because the default log level
+ * is #EINA_LOG_LEVEL_ERR and we want to display a warning
+ * message, which level is strictly greater than the log level (see
+ * eina_log_print() for more informations). Now execute the program
+ * with:
+ *
+ * @code
+ * EINA_LOG_LEVEL=2 ./test_eina_log
+ * @endcode
+ *
+ * You should see a message displayed in the terminal.
+ *
+ * For more information, you can look at the @ref tutorial_log_page.
+ *
+ * @{
+ */
+
+
+/**
+ * @cond LOCAL
+ */
+
+EAPI int EINA_LOG_DOMAIN_GLOBAL = 0;
+
+/**
+ * @endcond
+ */
 
 
 /**
@@ -1157,78 +1228,6 @@ EAPI void
 eina_log_level_set(Eina_Log_Level level)
 {
    _log_level = level;
-}
-
-static inline int
-eina_log_domain_register_unlocked(const char *name, const char *color)
-{
-   Eina_Log_Domain_Level_Pending *pending = NULL;
-   int i;
-
-   for (i = 0; i < _log_domains_count; i++)
-     {
-	if (_log_domains[i].deleted)
-	  {
-	     // Found a flagged slot, free domain_str and replace slot
-	     eina_log_domain_new(&_log_domains[i], name, color);
-	     goto finish_register;
-	  }
-     }
-
-   if (_log_domains_count >= _log_domains_allocated)
-     {
-	Eina_Log_Domain *tmp;
-	size_t size;
-
-	if (!_log_domains)
-	  // special case for init, eina itself will allocate a dozen of domains
-	  size = 24;
-	else
-	  // grow 8 buckets to minimize reallocs
-	  size = _log_domains_allocated + 8;
-
-	tmp = realloc(_log_domains, sizeof(Eina_Log_Domain) * size);
-
-	if (tmp)
-	  {
-	     // Success!
-	     _log_domains = tmp;
-	     _log_domains_allocated = size;
-	  }
-	else
-	   return -1;
-     }
-
-   // Use an allocated slot
-   eina_log_domain_new(&_log_domains[i], name, color);
-   _log_domains_count++;
-
-finish_register:
-   EINA_INLIST_FOREACH(_glob_list, pending) 
-     {
-        if (!fnmatch(pending->name, name, 0)) 
-          {
-             _log_domains[i].level = pending->level;
-             break;
-          }
-     }
-
-   EINA_INLIST_FOREACH(_pending_list, pending)
-     {
-	if (!strcmp(pending->name, name))
-	  {
-	     _log_domains[i].level = pending->level;
-	     _pending_list = eina_inlist_remove(_pending_list, EINA_INLIST_GET(pending));
-	     free(pending);
-	     break;
-	  }
-     }
-
-   // Check if level is still UNKNOWN, set it to global
-   if (_log_domains[i].level == EINA_LOG_LEVEL_UNKNOWN)
-      _log_domains[i].level = _log_level;
-
-   return i;
 }
 
 /**

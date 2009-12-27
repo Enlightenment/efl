@@ -170,18 +170,6 @@ static void _dir_list_cb(const char *name, const char *path, void *data)
  *                                 Global                                     *
  *============================================================================*/
 
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-
-/**
- * @addtogroup Eina_Module_Group Module
- *
- * @brief These functions provide module management.
- *
- * @{
- */
-
 /**
  * @cond LOCAL
  */
@@ -252,6 +240,18 @@ eina_module_shutdown(void)
    EINA_MODULE_LOG_DOM = -1;
    return EINA_TRUE;
 }
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+/**
+ * @addtogroup Eina_Module_Group Module
+ *
+ * @brief These functions provide module management.
+ *
+ * @{
+ */
 
 /**
  * @brief Return a new module.

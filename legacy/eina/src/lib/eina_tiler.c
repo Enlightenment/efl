@@ -1094,13 +1094,11 @@ static void _iterator_free(Eina_Iterator_Tiler *it)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI Eina_Tiler *eina_tiler_new(int w, int h)
 {
 	Eina_Tiler *t;
@@ -1114,20 +1112,14 @@ EAPI Eina_Tiler *eina_tiler_new(int w, int h)
 	_splitter_new(t);
 	return t;
 }
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI void eina_tiler_free(Eina_Tiler *t)
 {
 	EINA_MAGIC_CHECK_TILER(t);
 	_splitter_del(t);
 	free(t);
 }
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI void eina_tiler_tile_size_set(Eina_Tiler *t, int w, int h)
 {
 	EINA_MAGIC_CHECK_TILER(t);
@@ -1137,10 +1129,7 @@ EAPI void eina_tiler_tile_size_set(Eina_Tiler *t, int w, int h)
 	t->tile.h = h;
 	_splitter_tile_size_set(t, w, h);
 }
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle *r)
 {
 	Eina_Rectangle tmp;
@@ -1155,10 +1144,7 @@ EAPI Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle *r)
 		return EINA_FALSE;
 	return _splitter_rect_add(t, &tmp);
 }
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI void eina_tiler_rect_del(Eina_Tiler *t, const Eina_Rectangle *r)
 {
 	Eina_Rectangle tmp;
@@ -1173,10 +1159,7 @@ EAPI void eina_tiler_rect_del(Eina_Tiler *t, const Eina_Rectangle *r)
 		return;
 	_splitter_rect_del(t, &tmp);
 }
-/**
- * To be documented
- * FIXME: To be fixed
- */
+
 EAPI void eina_tiler_clear(Eina_Tiler *t)
 {
 	EINA_MAGIC_CHECK_TILER(t);

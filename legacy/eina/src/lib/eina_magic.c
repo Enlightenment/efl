@@ -123,18 +123,6 @@ _eina_magic_strings_alloc(void)
  *                                 Global                                     *
  *============================================================================*/
 
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-
-/**
- * @addtogroup Eina_Magic_Group Magic
- *
- * @brief These functions provide magic checks management for projects.
- *
- * @{
- */
-
 /**
  * @internal
  * @brief Initialize the magic string module.
@@ -194,6 +182,18 @@ eina_magic_string_shutdown(void)
    return EINA_TRUE;
 }
 
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+/**
+ * @addtogroup Eina_Magic_Group Magic
+ *
+ * @brief These functions provide magic checks management for projects.
+ *
+ * @{
+ */
+
 /**
  * @brief Return the string associated to the given magic identifier.
  *
@@ -231,7 +231,8 @@ eina_magic_string_get(Eina_Magic magic)
  * @brief Set the string associated to the given magic identifier.
  *
  * @param magic The magic identifier.
- * @param The string associated to the identifier, must not be @c NULL.
+ * @param magic_name The string associated to the identifier, must not
+ *        be @c NULL.
  *
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
@@ -270,9 +271,9 @@ eina_magic_string_set(Eina_Magic magic, const char *magic_name)
  * @brief Set the string associated to the given magic identifier.
  *
  * @param magic The magic identifier.
- * @param The string associated to the identifier, must not be @c NULL,
- *        it will not be duplcated, just referenced thus it must be live
- *        during magic number usage.
+ * @param magic_name The string associated to the identifier, must not be
+ *        @c NULL, it will not be duplcated, just referenced thus it must
+ *        be live during magic number usage.
  *
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
@@ -312,7 +313,7 @@ eina_magic_string_static_set(Eina_Magic magic, const char *magic_name)
  * @param m The magic identifer to check.
  * @param req_m The requested magic identifier to check.
  * @param file The file in which the magic check failed.
- * @param fcn The function in which the magic check failed.
+ * @param fnc The function in which the magic check failed.
  * @param line The line at which the magic check failed.
  *
  * This function displays an error message if a magic check has

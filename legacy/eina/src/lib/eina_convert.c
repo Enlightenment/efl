@@ -84,10 +84,6 @@ static inline void reverse(char s[], int length)
  *                                 Global                                     *
  *============================================================================*/
 
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-
 /**
  * @cond LOCAL
  */
@@ -103,6 +99,64 @@ static const char EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH_STR[] = "Error outrun 
 /**
  * @endcond
  */
+
+/**
+ * @internal
+ * @brief Initialize the convert module.
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function sets up the convert module of Eina. It is called by
+ * eina_init().
+ *
+ * This function sets up the error module of Eina and registers the
+ * errors #EINA_ERROR_CONVERT_0X_NOT_FOUND,
+ * #EINA_ERROR_CONVERT_P_NOT_FOUND and
+ * #EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH.
+ *
+ * @see eina_init()
+ */
+Eina_Bool
+eina_convert_init(void)
+{
+   _eina_convert_log_dom = eina_log_domain_register("eina_convert", EINA_LOG_COLOR_DEFAULT);
+   if (_eina_convert_log_dom < 0)
+     {
+	EINA_LOG_ERR("Could not register log domain: eina_convert");
+	return EINA_FALSE;
+     }
+
+#define EEMR(n) n = eina_error_msg_static_register(n##_STR)
+   EEMR(EINA_ERROR_CONVERT_0X_NOT_FOUND);
+   EEMR(EINA_ERROR_CONVERT_P_NOT_FOUND);
+   EEMR(EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH);
+#undef EEMR
+
+   return EINA_TRUE;
+}
+
+/**
+ * @internal
+ * @brief Shut down the convert module.
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function shuts down the convert module set up by
+ * eina_convert_init(). It is called by eina_shutdown().
+ *
+ * @see eina_shutdown()
+ */
+Eina_Bool
+eina_convert_shutdown(void)
+{
+   eina_log_domain_unregister(_eina_convert_log_dom);
+   _eina_convert_log_dom = -1;
+   return EINA_TRUE;
+}
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
 
 /**
  * @addtogroup Eina_Convert_Group Convert
@@ -221,60 +275,6 @@ static const char EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH_STR[] = "Error outrun 
  *
  * @{
  */
-
-/**
- * @internal
- * @brief Initialize the convert module.
- *
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
- *
- * This function sets up the convert module of Eina. It is called by
- * eina_init().
- *
- * This function sets up the error module of Eina and registers the
- * errors #EINA_ERROR_CONVERT_0X_NOT_FOUND,
- * #EINA_ERROR_CONVERT_P_NOT_FOUND and
- * #EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH.
- *
- * @see eina_init()
- */
-Eina_Bool
-eina_convert_init(void)
-{
-   _eina_convert_log_dom = eina_log_domain_register("eina_convert", EINA_LOG_COLOR_DEFAULT);
-   if (_eina_convert_log_dom < 0)
-     {
-	EINA_LOG_ERR("Could not register log domain: eina_convert");
-	return EINA_FALSE;
-     }
-
-#define EEMR(n) n = eina_error_msg_static_register(n##_STR)
-   EEMR(EINA_ERROR_CONVERT_0X_NOT_FOUND);
-   EEMR(EINA_ERROR_CONVERT_P_NOT_FOUND);
-   EEMR(EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH);
-#undef EEMR
-
-   return EINA_TRUE;
-}
-
-/**
- * @internal
- * @brief Shut down the convert module.
- *
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
- *
- * This function shuts down the convert module set up by
- * eina_convert_init(). It is called by eina_shutdown().
- *
- * @see eina_shutdown()
- */
-Eina_Bool
-eina_convert_shutdown(void)
-{
-   eina_log_domain_unregister(_eina_convert_log_dom);
-   _eina_convert_log_dom = -1;
-   return EINA_TRUE;
-}
 
 /*
  * Come from the second edition of The C Programming Language ("K&R2") on page 64
@@ -581,7 +581,7 @@ eina_convert_dtoa(double d, char *des)
  * @param des The destination buffer to store the converted fixed point number.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
- * This function converts the 32.32 fixed point number @fp to a
+ * This function converts the 32.32 fixed point number @p fp to a
  * string. The string is stored in the buffer pointed by @p des and
  * must be sufficiently large to contain the converted fixed point
  * number. The returned string is terminated and has the following

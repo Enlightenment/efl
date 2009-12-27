@@ -766,20 +766,6 @@ _eina_matrixsparse_iterator_complete_free(Eina_Matrixsparse_Iterator_Complete *i
  *                                 Global                                     *
  *============================================================================*/
 
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-
-/**
- * @addtogroup Eina_Matrixsparse_Group Sparse Matrix
- *
- * @brief These functions provide matrix sparse management.
- *
- * For more information, you can look at the @ref tutorial_matrixsparse_page.
- *
- * @{
- */
-
 /**
  * @internal
  * @brief Initialize the matrixsparse module.
@@ -872,6 +858,20 @@ eina_matrixsparse_shutdown(void)
    _eina_matrixsparse_log_dom = -1;
    return EINA_TRUE;
 }
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+/**
+ * @addtogroup Eina_Matrixsparse_Group Sparse Matrix
+ *
+ * @brief These functions provide matrix sparse management.
+ *
+ * For more information, you can look at the @ref tutorial_matrixsparse_page.
+ *
+ * @{
+ */
 
 /**
  * @brief Create a new Sparse Matrix.
@@ -1228,7 +1228,7 @@ eina_matrixsparse_cell_data_set(Eina_Matrixsparse_Cell *cell, const void *data)
  * Change cell value without freeing the possibly existing old value, using
  * indexes.
  *
- * @param cell the cell reference, must @b not be @c NULL.
+ * @param m the sparse matrix, must @b not be @c NULL.
  * @param row the row number to set the value.
  * @param col the column number to set the value.
  * @param data new data to set.
@@ -1267,7 +1267,7 @@ eina_matrixsparse_data_idx_replace(Eina_Matrixsparse *m, unsigned long row, unsi
  * In contrast to eina_matrixsparse_data_idx_replace(), this function will
  * call @c free_func() on existing value.
  *
- * @param cell the cell reference, must @b not be @c NULL.
+ * @param m the sparse matrix, must @b not be @c NULL.
  * @param row the row number to set the value.
  * @param col the column number to set the value.
  * @param data new data to set.

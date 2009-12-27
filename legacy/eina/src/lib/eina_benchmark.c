@@ -37,7 +37,7 @@
  * @li Run the benchmark.
  * @li Free the memory.
  *
- * Here is a basic example which bechmark which creates two functions
+ * Here is a basic example of bechmark which creates two functions
  * that will be run. These functions just print a message.
  *
  * @code
@@ -129,7 +129,7 @@
  * last 3 values passed to eina_benchmark_register(). See the document
  * of that function for the detailed behavior.
  *
- * The Gnuplot file will be named bench_test_run.gnuplot. Just run:
+ * The gnuplot file will be named bench_test_run.gnuplot. Just run:
  *
  * @code
  * gnuplot bench_test_run.gnuplot
@@ -141,9 +141,173 @@
  * @section tutorial_benchmark_advanced_usage More Advanced Usage
  *
  * In this section, several test will be created and run. The idea is
- * exactly the same than in the previous section.
+ * exactly the same than in the previous section, but with some basic
+ * automatic way to run all the benchmarks. The following code
+ * benchmarks some Eina converts functions, and some Eina containers
+ * types:
  *
- * to be done.
+ * @code
+ * #include <stdlib.h>
+ * #include <stdio.h>
+ * #include <time.h>
+ *
+ * #include <Eina.h>
+ *
+ * static void bench_convert(Eina_Benchmark *bench);
+ * static void bench_container(Eina_Benchmark *bench);
+ *
+ * typedef struct _Benchmark_Case Benchmark_Case;
+ *
+ * struct _Benchmark_Case
+ * {
+ *    const char *bench_case;
+ *    void (*build)(Eina_Benchmark *bench);
+ * };
+ *
+ * static const Benchmark_Case benchmarks[] = {
+ *   { "Bench 1", bench_convert },
+ *   { "Bench 2", bench_container },
+ *   { NULL,      NULL }
+ * };
+ *
+ * static
+ * void convert1(int request)
+ * {
+ *   char tmp[128];
+ *   int i;
+ *
+ *   srand(time(NULL));
+ *
+ *   for (i = 0; i < request; ++i)
+ *     eina_convert_itoa(rand(), tmp);
+ * }
+ *
+ * static
+ * void convert2(int request)
+ * {
+ *   char tmp[128];
+ *   int i;
+ *
+ *   srand(time(NULL));
+ *
+ *   for (i = 0; i < request; ++i)
+ *     eina_convert_xtoa(rand(), tmp);
+ * }
+ *
+ * static void
+ * bench_convert(Eina_Benchmark *bench)
+ * {
+ *   eina_benchmark_register(bench, "convert-1", EINA_BENCHMARK(convert1), 200, 400, 10);
+ *   eina_benchmark_register(bench, "convert-2", EINA_BENCHMARK(convert2), 200, 400, 10);
+ * }
+ *
+ * static
+ * void array(int request)
+ * {
+ *   Eina_Array *array;
+ *   Eina_Array_Iterator it;
+ *   int *data;
+ *   int i;
+ *
+ *   srand(time(NULL));
+ *
+ *   array = eina_array_new(64);
+ *
+ *   for (i = 0; i < request; ++i)
+ *     {
+ *       data = (int *)malloc(sizeof(int));
+ *       if (!data) continue;
+ *       *data = rand();
+ *       eina_array_push(array, data);
+ *     }
+ *
+ *   EINA_ARRAY_ITER_NEXT(array, i, data, it)
+ *     free(data);
+ *
+ *   eina_array_free(array);
+ * }
+ *
+ * static
+ * void list(int request)
+ * {
+ *   Eina_List *l = NULL;
+ *   int *data;
+ *   int i;
+ *
+ *   srand(time(NULL));
+ *
+ *   for (i = 0; i < request; ++i)
+ *     {
+ *       data = (int *)malloc(sizeof(int));
+ *       if (!data) continue;
+ *       *data = rand();
+ *       l = eina_list_prepend(l, data);
+ *     }
+ *
+ *   while (l)
+ *     {
+ *       free(eina_list_data_get(l));
+ *       l = eina_list_remove_list(l, l);
+ *     }
+ * }
+ *
+ * static void
+ * bench_container(Eina_Benchmark *bench)
+ * {
+ *   eina_benchmark_register(bench, "array", EINA_BENCHMARK(array), 200, 300, 10);
+ *   eina_benchmark_register(bench, "list", EINA_BENCHMARK(list), 200, 300, 10);
+ * }
+ *
+ * int main()
+ * {
+ *   Eina_Benchmark *test;
+ *   Eina_Array     *ea;
+ *   unsigned int    i;
+ *
+ *   if (!eina_init())
+ *     return EXIT_FAILURE;
+ *
+ *   for (i = 0; benchmarks[i].bench_case != NULL; ++i)
+ *     {
+ *       test = eina_benchmark_new(benchmarks[i].bench_case, "Benchmark example");
+ *       if (!test)
+ *         continue;
+ * 
+ *       benchmarks[i].build(test);
+ *
+ *       ea = eina_benchmark_run(test);
+ *       if(ea)
+ *         {
+ *           Eina_Array_Iterator it;
+ *           char *tmp;
+ *           unsigned int i;
+ *
+ *           EINA_ARRAY_ITER_NEXT(ea, i, tmp, it)
+ *             free(tmp);
+ *
+ *           eina_array_free(ea);
+ *         }
+ *
+ *       if (test)
+ *         eina_benchmark_free(test);
+ *     }
+ *
+ *   eina_shutdown();
+ *
+ *   return EXIT_SUCCESS;
+ * }
+ * @endcode
+ *
+ * gnuplot can be used to see how are performed the convert functions
+ * together, as well as how are performed the containers. So it is now
+ * easy to see that the hexadecimal convert function is faster than
+ * the decimal one, and that arrays are faster than lists.
+ *
+ * You can improve all that by executing automatically gnuplot in your
+ * program, or integrate the Eina benchmark framework in an autotooled
+ * project. See that
+ * <a href="http://trac.enlightenment.org/e/wiki/AutotoolsIntegration#Benchmark">page</a>
+ * for more informations.
  *
  */
 
@@ -234,37 +398,6 @@ static int _eina_benchmark_log_dom = -1;
  *                                 Global                                     *
  *============================================================================*/
 
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-
-/**
- * @addtogroup Eina_Benchmark_Group Benchmark
- *
- * These functions allow you to add benchmark framework in a project
- * for timing critical part and detect slow parts of code. It is used
- * in Eina to compare the time used by eina, glib, evas and ecore data
- * types.
- *
- * To use the benchmark module, Eina must be initialized with
- * eina_init() and later shut down with eina_shutdown(). A benchmark
- * is created with eina_benchmark_new() and freed with
- * eina_benchmark_free().
- *
- * eina_benchmark_register() adds a test to a benchmark. That test can
- * be run a certain amount of times. Adding more than one test to be
- * executed allows the comparison between several parts of a program,
- * or different implementations.
- *
- * eina_benchmark_run() runs all the tests registered with
- * eina_benchmark_register(). The amount of time of each test is
- * written in a gnuplot file.
- *
- * For more information, you can look at the @ref tutorial_benchmark_page.
- *
- * @{
- */
-
 /**
  * @internal
  * @brief Initialize the benchmark module.
@@ -307,6 +440,37 @@ eina_benchmark_shutdown(void)
    _eina_benchmark_log_dom = -1;
    return EINA_TRUE;
 }
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+/**
+ * @addtogroup Eina_Benchmark_Group Benchmark
+ *
+ * These functions allow you to add benchmark framework in a project
+ * for timing critical part and detect slow parts of code. It is used
+ * in Eina to compare the time used by eina, glib, evas and ecore data
+ * types.
+ *
+ * To use the benchmark module, Eina must be initialized with
+ * eina_init() and later shut down with eina_shutdown(). A benchmark
+ * is created with eina_benchmark_new() and freed with
+ * eina_benchmark_free().
+ *
+ * eina_benchmark_register() adds a test to a benchmark. That test can
+ * be run a certain amount of times. Adding more than one test to be
+ * executed allows the comparison between several parts of a program,
+ * or different implementations.
+ *
+ * eina_benchmark_run() runs all the tests registered with
+ * eina_benchmark_register(). The amount of time of each test is
+ * written in a gnuplot file.
+ *
+ * For more information, you can look at the @ref tutorial_benchmark_page.
+ *
+ * @{
+ */
 
 /**
  * @brief Create a new array.

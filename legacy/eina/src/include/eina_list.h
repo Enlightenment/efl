@@ -63,7 +63,7 @@ struct _Eina_List /** A linked list node */
    void      *data; /**< Pointer to list element payload */
    Eina_List *next; /**< Next member in the list */
    Eina_List *prev; /**< Previous member in the list */
-   struct _Eina_List_Accounting *accounting; /**< Private list accounting info - don't touch */
+   Eina_List_Accounting *accounting; /**< Private list accounting info - don't touch */
 
    EINA_MAGIC
 };

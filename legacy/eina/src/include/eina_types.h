@@ -184,8 +184,23 @@
 # define EINA_LIKELY(exp) exp
 
 #else /* ! __GNUC__ && ! _WIN32 && ! __SUNPRO_C */
+
+/**
+ * @def EINA_WARN_UNUSED_RESULT
+ * Used to warn when the returned value of the function is not used.
+ */
 # define EINA_WARN_UNUSED_RESULT
+
+/**
+ * @def EINA_ARG_NONNULL
+ * Used to warn when the specified arguments of the function are @c NULL.
+ */
 # define EINA_ARG_NONNULL(idx, ...)
+
+/**
+ * @def EINA_DEPRECATED
+ * Used to warn when the function is considered as deprecated.
+ */
 # define EINA_DEPRECATED
 # define EINA_MALLOC
 # define EINA_PURE
@@ -201,14 +216,24 @@
 
 /* remove this TRUE/FALSE redifinitions */
 
+/**
+ * @deprecated Use #EINA_TRUE instead.
+ */
 #ifndef TRUE
 # define TRUE 1
 #endif
 
+/**
+ * @deprecated Use #EINA_FALSE instead.
+ */
 #ifndef FALSE
 # define FALSE 0
 #endif
 
+/**
+ * @typedef Eina_Bool
+ * Type to mimic a boolean.
+ */
 typedef unsigned char Eina_Bool;
 
 /**
@@ -228,15 +253,41 @@ EAPI extern const unsigned int eina_prime_table[];
 #define EINA_SORT_MIN 0
 #define EINA_SORT_MAX 1
 
+/**
+ * @typedef Eina_Compare_Cb
+ * Function used in functions using sorting. It compares @p data1 and
+ * @p data2. If @p data1 is 'less' than @p data2, -1 must be returned,
+ * if it is 'greater', 1 must be returned, and if they are equal, 0
+ * must be returned.
+ */
 typedef int (*Eina_Compare_Cb) (const void *data1, const void *data2);
+
+/**
+ * @def EINA_COMPARE_CB
+ * Macro to cast to Eina_Compare_Cb.
+ */
 #define EINA_COMPARE_CB(function) ((Eina_Compare_Cb)function)
 
 typedef Eina_Bool (*Eina_Each)(const void *container,
 			       void *data,
 			       void *fdata);
+
+/**
+ * @def EINA_EACH
+ * Macro to cast to Eina_Each.
+ */
 #define EINA_EACH(Function) ((Eina_Each)Function)
 
+/**
+ * @typedef Eina_Free_Cb
+ * A callback type used to free data when iterating over a container.
+ */
 typedef void (*Eina_Free_Cb)(void *data);
+
+/**
+ * @def EINA_FREE_CB
+ * Macro to cast to Eina_Free_Cb.
+ */
 #define EINA_FREE_CB(Function) ((Eina_Free_Cb)Function)
 
 /**

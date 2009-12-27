@@ -839,34 +839,6 @@ _eina_stringshare_node_alloc(int slen)
  *                                 Global                                     *
  *============================================================================*/
 
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-
-/**
- * @addtogroup Eina_Stringshare_Group Stringshare
- *
- * These functions allow you to store one copy of a string, and use it
- * throughout your program.
- *
- * This is a method to reduce the number of duplicated strings kept in
- * memory. It's pretty common for the same strings to be dynamically
- * allocated repeatedly between applications and libraries, especially in
- * circumstances where you could have multiple copies of a structure that
- * allocates the string. So rather than duplicating and freeing these
- * strings, you request a read-only pointer to an existing string and
- * only incur the overhead of a hash lookup.
- *
- * It sounds like micro-optimizing, but profiling has shown this can have
- * a significant impact as you scale the number of copies up. It improves
- * string creation/destruction speed, reduces memory use and decreases
- * memory fragmentation, so a win all-around.
- *
- * For more information, you can look at the @ref tutorial_stringshare_page.
- *
- * @{
- */
-
 /**
  * @internal
  * @brief Initialize the stringshare module.
@@ -983,6 +955,34 @@ eina_stringshare_threads_shutdown(void)
 
 #endif
 
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+/**
+ * @addtogroup Eina_Stringshare_Group Stringshare
+ *
+ * These functions allow you to store one copy of a string, and use it
+ * throughout your program.
+ *
+ * This is a method to reduce the number of duplicated strings kept in
+ * memory. It's pretty common for the same strings to be dynamically
+ * allocated repeatedly between applications and libraries, especially in
+ * circumstances where you could have multiple copies of a structure that
+ * allocates the string. So rather than duplicating and freeing these
+ * strings, you request a read-only pointer to an existing string and
+ * only incur the overhead of a hash lookup.
+ *
+ * It sounds like micro-optimizing, but profiling has shown this can have
+ * a significant impact as you scale the number of copies up. It improves
+ * string creation/destruction speed, reduces memory use and decreases
+ * memory fragmentation, so a win all-around.
+ *
+ * For more information, you can look at the @ref tutorial_stringshare_page.
+ *
+ * @{
+ */
+
 /**
  * @brief Retrieve an instance of a string for use in a program.
  *
@@ -1088,7 +1088,7 @@ eina_stringshare_add_length(const char *str, unsigned int slen)
  * it is added to the strings to be searched and a duplicated string
  * of @p str is returned.
  *
- * The string @a str must be NULL terminated ('\0') and its full
+ * The string @p str must be NULL terminated ('@\0') and its full
  * length will be used. To use part of the string or non-null
  * terminated, use eina_stringshare_add_length() instead.
  *
@@ -1126,6 +1126,10 @@ _eina_stringshare_node_from_str(const char *str)
 
 /**
  * Increment references of the given shared string.
+ *
+ * @param str The shared string.
+ * @return    A pointer to an instance of the string on success.
+ *            @c NULL on failure.
  *
  * This is similar to eina_stringshare_add(), but it's faster since it will
  * avoid lookups if possible, but on the down side it requires the parameter

@@ -216,27 +216,6 @@ _eina_error_msg_alloc(void)
  *                                 Global                                     *
  *============================================================================*/
 
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-
-/**
- * @addtogroup Eina_Error_Group Error
- *
- * @brief These functions provide error management for projects.
- *
- * To use the error system Eina must be initialized with eina_init()
- * and later shut down with eina_shutdown(). Error codes are
- * registered with eina_error_msg_register() and converted from
- * identifier to original message string with eina_error_msg_get().
- *
- * Logging functions are not in eina_error anymore, see
- * eina_log_print() instead.
- *
- * @{
- */
-
-
 /**
  * @cond LOCAL
  */
@@ -300,6 +279,26 @@ eina_error_shutdown(void)
 
    return EINA_TRUE;
 }
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+/**
+ * @addtogroup Eina_Error_Group Error
+ *
+ * @brief These functions provide error management for projects.
+ *
+ * To use the error system Eina must be initialized with eina_init()
+ * and later shut down with eina_shutdown(). Error codes are
+ * registered with eina_error_msg_register() and converted from
+ * identifier to original message string with eina_error_msg_get().
+ *
+ * Logging functions are not in eina_error anymore, see
+ * eina_log_print() instead.
+ *
+ * @{
+ */
 
 /**
  * @brief Register a new error type.

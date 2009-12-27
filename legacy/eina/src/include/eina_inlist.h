@@ -42,12 +42,21 @@
  * @{
  */
 
+/**
+ * @typedef Eina_Inlist
+ * Inlined list type.
+ */
 typedef struct _Eina_Inlist Eina_Inlist;
+
+/**
+ * @struct _Eina_Inlist
+ * Inlined list type.
+ */
 struct _Eina_Inlist
 {
-   Eina_Inlist *next;
-   Eina_Inlist *prev;
-   Eina_Inlist *last;
+   Eina_Inlist *next; /**< next node */
+   Eina_Inlist *prev; /**< previous node */
+   Eina_Inlist *last; /**< last node */
 };
 
 #define EINA_INLIST Eina_Inlist __in_list

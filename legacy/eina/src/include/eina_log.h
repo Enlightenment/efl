@@ -152,16 +152,24 @@ EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
 #define EINA_LOG_DBG(fmt, ...) \
 	EINA_LOG(EINA_LOG_DOMAIN_GLOBAL, EINA_LOG_LEVEL_DBG, fmt, ##__VA_ARGS__)
 
+/**
+ * @typedef Eina_Log_Domain
+ * The domain used for logging.
+ */
 typedef struct _Eina_Log_Domain Eina_Log_Domain;
 
+/**
+ * @struct _Eina_Log_Domain
+ * The domain used for logging.
+ */
 struct _Eina_Log_Domain
 {
-   int level;     /**< Max level to log */
+   int level;              /**< Max level to log */
    const char *domain_str; /**< Formatted string with color to print */
    const char *name;       /**< Domain name */
 
    /* Private */
-   Eina_Bool deleted:1; /**< Flags deletion of domain, a free slot */
+   Eina_Bool deleted:1;    /**< Flags deletion of domain, a free slot */
 };
 
 EAPI void eina_log_threads_enable(void);

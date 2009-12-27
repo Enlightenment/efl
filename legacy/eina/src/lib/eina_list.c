@@ -436,20 +436,6 @@ eina_list_sort_merge(Eina_List *a, Eina_List *b, Eina_Compare_Cb func)
  *                                 Global                                     *
  *============================================================================*/
 
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-
-/**
- * @addtogroup Eina_List_Group List
- *
- * @brief These functions provide double linked list management.
- *
- * For more information, you can look at the @ref tutorial_list_page.
- *
- * @{
- */
-
 /**
  * @internal
  * @brief Initialize the list module.
@@ -538,6 +524,20 @@ eina_list_shutdown(void)
    _eina_list_log_dom = -1;
    return EINA_TRUE;
 }
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+/**
+ * @addtogroup Eina_List_Group List
+ *
+ * @brief These functions provide double linked list management.
+ *
+ * For more information, you can look at the @ref tutorial_list_page.
+ *
+ * @{
+ */
 
 /**
  * @brief Append the given data to the given linked list.
@@ -848,6 +848,7 @@ eina_list_prepend_relative_list(Eina_List *list, const void *data, Eina_List *re
  * @brief Insert a new node into a sorted list.
  *
  * @param list The given linked list, @b must be sorted.
+ * @param func The function called for the sort.
  * @param data The data to insert sorted.
  * @return A list pointer.
  *
@@ -857,7 +858,7 @@ eina_list_prepend_relative_list(Eina_List *list, const void *data, Eina_List *re
  * used in place of the one given to this function is
  * returned. Otherwise, the old pointer is returned. See eina_error_get().
  *
- * @note O(log2(n)) comparisons (calls to func) average/worst case
+ * @note O(log2(n)) comparisons (calls to @p func) average/worst case
  * performance as it uses eina_list_search_sorted_near_list() and thus
  * is bounded to that. As said in eina_list_search_sorted_near_list(),
  * lists do not have O(1) access time, so walking to the correct node

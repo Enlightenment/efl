@@ -121,6 +121,18 @@ void fixed_bitmap_shutdown(void);
  *                                 Global                                     *
  *============================================================================*/
 
+/**
+ * @cond LOCAL
+ */
+
+EAPI Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE = 0;
+
+static const char EINA_ERROR_NOT_MEMPOOL_MODULE_STR[] = "Not a memory pool module.";
+
+/**
+ * @endcond
+ */
+
 EAPI Eina_Bool
 eina_mempool_register(Eina_Mempool_Backend *be)
 {
@@ -136,22 +148,6 @@ eina_mempool_unregister(Eina_Mempool_Backend *be)
    DBG("be=%p, name=%p", be, be->name);
    eina_hash_del(_backends, be->name, be);
 }
-
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-
-/**
- * @addtogroup Eina_Memory_Pool_Group Memory Pool
- *
- * @brief These functions provide memory pool management.
- *
- * @{
- */
-
-EAPI Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE = 0;
-
-static const char EINA_ERROR_NOT_MEMPOOL_MODULE_STR[] = "Not a memory pool module.";
 
 Eina_Bool
 eina_mempool_init(void)
@@ -248,6 +244,18 @@ eina_mempool_shutdown(void)
 
    return EINA_TRUE;
 }
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+/**
+ * @addtogroup Eina_Memory_Pool_Group Memory Pool
+ *
+ * @brief These functions provide memory pool management.
+ *
+ * @{
+ */
 
 EAPI Eina_Mempool *
 eina_mempool_add(const char *name, const char *context, const char *options, ...)

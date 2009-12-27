@@ -16,6 +16,43 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include "eina_error.h"
+#include "eina_private.h"
+#include "eina_safety_checks.h"
+
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+/**
+ * @internal
+ * @brief Shut down the safety checks module.
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function shuts down the error module set up by
+ * eina_safety_checks_init(). It is called by eina_shutdown().
+ *
+ * @see eina_shutdown()
+ */
+Eina_Bool
+eina_safety_checks_shutdown(void)
+{
+   return EINA_TRUE;
+}
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
 /**
  * @addtogroup Eina_Safety_Checks_Group Safety Checks
  *
@@ -39,14 +76,6 @@
  *
  * @{
  */
-
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
-#include "eina_error.h"
-#include "eina_private.h"
-#include "eina_safety_checks.h"
 
 /**
  * @cond LOCAL
@@ -75,23 +104,6 @@ Eina_Bool
 eina_safety_checks_init(void)
 {
    EINA_ERROR_SAFETY_FAILED = eina_error_msg_static_register(EINA_ERROR_SAFETY_FAILED_STR);
-   return EINA_TRUE;
-}
-
-/**
- * @internal
- * @brief Shut down the safety checks module.
- *
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
- *
- * This function shuts down the error module set up by
- * eina_safety_checks_init(). It is called by eina_shutdown().
- *
- * @see eina_shutdown()
- */
-Eina_Bool
-eina_safety_checks_shutdown(void)
-{
    return EINA_TRUE;
 }
 

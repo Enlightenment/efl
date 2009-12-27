@@ -74,7 +74,7 @@ EAPI void eina_iterator_foreach        (Eina_Iterator *iterator,
  * @def EINA_ITERATOR_FOREACH
  * @brief Macro to iterate over all elements easily.
  *
- * @param iterator The iterator to use.
+ * @param itr The iterator to use.
  * @param data Where to store * data, must be a pointer support getting
  *        its address since * eina_iterator_next() requires a pointer
  *        to pointer!
