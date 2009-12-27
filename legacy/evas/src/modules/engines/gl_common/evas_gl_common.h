@@ -55,12 +55,10 @@ typedef struct _Evas_GL_Texture_Pool                 Evas_GL_Texture_Pool;
 typedef struct _Evas_GL_Texture                      Evas_GL_Texture;
 typedef struct _Evas_GL_Image                        Evas_GL_Image;
 typedef struct _Evas_GL_Font_Texture                 Evas_GL_Font_Texture;
-/*
 typedef struct _Evas_GL_Polygon                      Evas_GL_Polygon;
 typedef struct _Evas_GL_Polygon_Point                Evas_GL_Polygon_Point;
+/*
 typedef struct _Evas_GL_Gradient                     Evas_GL_Gradient;
-typedef struct _Evas_GL_Font_Texture_Pool            Evas_GL_Font_Texture_Pool;
-typedef struct _Evas_GL_Font_Texture_Pool_Allocation Evas_GL_Font_Texture_Pool_Allocation;
 */
 
 struct _Evas_GL_Program
@@ -189,11 +187,10 @@ struct _Evas_GL_Font_Texture
 {
    Evas_GL_Texture *tex;
 };
-/*
+
 struct _Evas_GL_Polygon
 {
    Eina_List *points;
-   GLuint     dl;
    Eina_Bool  changed : 1;
 };
 
@@ -202,20 +199,13 @@ struct _Evas_GL_Polygon_Point
    int x, y;
 };
 
+/*
 struct _Evas_GL_Gradient
 {
    RGBA_Gradient   *grad;
    Evas_GL_Texture *tex;
    int              tw, th;
    unsigned char    changed : 1;
-};
-
-struct _Evas_GL_Font_Texture_Pool
-{
-   Evas_GL_Context *gc;
-   int              w, h;
-   GLuint           texture;
-   unsigned char    rectangle : 1;
 };
 */
 
@@ -297,6 +287,9 @@ void             *evas_gl_font_texture_new(void *gc, RGBA_Font_Glyph *fg);
 void              evas_gl_font_texture_free(void *);
 void              evas_gl_font_texture_draw(void *gc, void *surface, void *dc, RGBA_Font_Glyph *fg, int x, int y);
 
+Evas_GL_Polygon  *evas_gl_common_poly_point_add(Evas_GL_Polygon *poly, int x, int y);
+Evas_GL_Polygon  *evas_gl_common_poly_points_clear(Evas_GL_Polygon *poly);
+void              evas_gl_common_poly_draw(Evas_GL_Context *gc, Evas_GL_Polygon *poly);
 
 void (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b);
 void (*glsym_glBindFramebuffer)      (GLenum a, GLuint b);
@@ -322,8 +315,6 @@ void (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b);
 
 
 /*
-Evas_GL_Polygon  *evas_gl_common_poly_point_add(Evas_GL_Polygon *poly, int x, int y);
-Evas_GL_Polygon  *evas_gl_common_poly_points_clear(Evas_GL_Polygon *poly);
 
 Evas_GL_Gradient *evas_gl_common_gradient_new(void);
 void              evas_gl_common_gradient_free(Evas_GL_Gradient *gr);
@@ -349,7 +340,6 @@ void              evas_gl_common_gradient_draw(Evas_GL_Context *gc, Evas_GL_Grad
 void              evas_gl_common_swap_rect(Evas_GL_Context *gc, int x, int y, int w, int h);
 
 void              evas_gl_common_line_draw(Evas_GL_Context *gc, int x1, int y1, int x2, int y2);
-void              evas_gl_common_poly_draw(Evas_GL_Context *gc, Evas_GL_Polygon *poly);
 */
 
 #endif

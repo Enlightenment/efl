@@ -39,8 +39,8 @@ shader/tex_vert_bin_s3c6410.h \
 evas_gl_rectangle.c \
 evas_gl_texture.c \
 evas_gl_image.c \
-evas_gl_font.c 
-
+evas_gl_font.c \
+evas_gl_polygon.c
 
 #evas_gl_gradient.c \
 #evas_gl_line.c \

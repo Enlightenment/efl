@@ -363,8 +363,7 @@ eng_polygon_point_add(void *data, void *context __UNUSED__, void *polygon, int x
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-//--//      return evas_gl_common_poly_point_add(polygon, x, y);
-   return NULL;
+   return evas_gl_common_poly_point_add(polygon, x, y);
 }
 
 static void *
@@ -373,8 +372,7 @@ eng_polygon_points_clear(void *data, void *context __UNUSED__, void *polygon)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-//--//      return evas_gl_common_poly_points_clear(polygon);
-   return NULL;
+   return evas_gl_common_poly_points_clear(polygon);
 }
 
 static void
@@ -386,7 +384,7 @@ eng_polygon_draw(void *data, void *context, void *surface, void *polygon)
    eng_window_use(re->win);
    evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
    re->win->gl_context->dc = context;
-//--//      evas_gl_common_poly_draw(re->win->gl_context, polygon);
+   evas_gl_common_poly_draw(re->win->gl_context, polygon);
 }
 
 static void

@@ -1,12 +1,69 @@
 #include "evas_gl_private.h"
 
-#ifdef _WIN32
-# define EFL_STDCALL __stdcall
-#else
-# define EFL_STDCALL
-#endif
+// FIXME: this is a verbatim copy of the software poly renderer. it just
+// use gl to draw 1 pixel high spans like software does. this is to make
+// sure rendering correctness matches the software engine but also to save
+// time in coming up with a good triangulation algorithm. if you want to
+// feel free to turn this into a real triangulation system and use gl to its
+// fullest, but as such polygons are used so little, it's not worth it.
 
-#define GLU_TESS
+typedef struct _RGBA_Span RGBA_Span;
+typedef struct _RGBA_Edge RGBA_Edge;
+typedef struct _RGBA_Vertex RGBA_Vertex;
+
+struct _RGBA_Span
+{
+   EINA_INLIST;
+   int x, y, w;
+};
+
+struct _RGBA_Edge
+{
+   double x, dx;
+   int i;
+};
+
+struct _RGBA_Vertex
+{
+   double x, y;
+   int i;
+};
+
+#define POLY_EDGE_DEL(_i)                                               \
+   {                                                                       \
+      int _j;                                                              \
+      \
+      for (_j = 0; (_j < num_active_edges) && (edges[_j].i != _i); _j++);  \
+      if (_j < num_active_edges)                                           \
+        {                                                                  \
+           num_active_edges--;                                             \
+           memmove(&(edges[_j]), &(edges[_j + 1]),                         \
+                      (num_active_edges - _j) * sizeof(RGBA_Edge));           \
+        }                                                                  \
+   }
+
+#define POLY_EDGE_ADD(_i, _y)                                           \
+   {                                                                       \
+      int _j;                                                              \
+      float _dx;                                                           \
+      RGBA_Vertex *_p, *_q;                                                \
+      if (_i < (n - 1)) _j = _i + 1;                                       \
+      else _j = 0;                                                         \
+      if (point[_i].y < point[_j].y)                                       \
+        {                                                                  \
+           _p = &(point[_i]);                                              \
+           _q = &(point[_j]);                                              \
+        }                                                                  \
+      else                                                                 \
+        {                                                                  \
+           _p = &(point[_j]);                                              \
+           _q = &(point[_i]);                                              \
+        }                                                                  \
+      edges[num_active_edges].dx = _dx = (_q->x - _p->x) / (_q->y - _p->y); \
+      edges[num_active_edges].x = (_dx * ((float)_y + 0.5 - _p->y)) + _p->x; \
+      edges[num_active_edges].i = _i;                                      \
+      num_active_edges++;                                                  \
+   }
 
 Evas_GL_Polygon *
 evas_gl_common_poly_point_add(Evas_GL_Polygon *poly, int x, int y)
@@ -36,133 +93,215 @@ evas_gl_common_poly_points_clear(Evas_GL_Polygon *poly)
 	poly->points = eina_list_remove(poly->points, pt);
 	free(pt);
      }
-   if (poly->dl > 0) glDeleteLists(poly->dl, 1);
    free(poly);
    return NULL;
 }
 
-#ifdef GLU_TESS
-static void EFL_STDCALL _evas_gl_tess_begin_cb(GLenum which);
-static void EFL_STDCALL _evas_gl_tess_end_cb(void);
-static void EFL_STDCALL _evas_gl_tess_error_cb(GLenum errorcode);
-static void EFL_STDCALL _evas_gl_tess_vertex_cb(GLvoid *vertex);
-static void EFL_STDCALL _evas_gl_tess_combine_cb(GLdouble coords[3], GLdouble *vertex_data[4], GLfloat weight[4], GLdouble **data_out);
-
-static void EFL_STDCALL
-_evas_gl_tess_begin_cb(GLenum which)
+static int
+polygon_point_sorter(const void *a, const void *b)
 {
-   glBegin(which);
+   RGBA_Vertex *p, *q;
+   
+   p = (RGBA_Vertex *)a;
+   q = (RGBA_Vertex *)b;
+   if (p->y <= q->y) return -1;
+   return 1;
 }
 
-static void EFL_STDCALL
-_evas_gl_tess_end_cb(void)
+static int
+polygon_edge_sorter(const void *a, const void *b)
 {
-   glEnd();
+   RGBA_Edge *p, *q;
+   
+   p = (RGBA_Edge *)a;
+   q = (RGBA_Edge *)b;
+   if (p->x <= q->x) return -1;
+   return 1;
 }
-
-static void EFL_STDCALL
-_evas_gl_tess_error_cb(GLenum errorcode __UNUSED__)
-{
-}
-
-static void EFL_STDCALL
-_evas_gl_tess_vertex_cb(GLvoid *vertex)
-{
-   GLdouble *v;
-
-   v = vertex;
-   glVertex2d(v[0], v[1]);
-}
-
-static void EFL_STDCALL
-_evas_gl_tess_combine_cb(GLdouble coords[3], GLdouble *vertex_data[4] __UNUSED__, GLfloat weight[4] __UNUSED__, GLdouble **data_out)
-{
-   GLdouble *vertex;
-
-   vertex = (GLdouble *) malloc(6 * sizeof(GLdouble));
-   vertex[0] = coords[0];
-   vertex[1] = coords[1];
-   *data_out = vertex;
-}
-#endif
 
 void
 evas_gl_common_poly_draw(Evas_GL_Context *gc, Evas_GL_Polygon *poly)
 {
-   int r, g, b, a;
+   Cutout_Rects *rects;
+   Cutout_Rect  *r;
+   int c, cx, cy, cw, ch, cr, cg, cb, ca, i;
+   int x, y, w, h;
+
    Eina_List *l;
-   static void *tess = NULL;
-   GLdouble *glp = NULL;
-   int i, num;
-   RGBA_Draw_Context *dc = gc->dc;
-   Evas_GL_Polygon_Point *p;
+   int n, k, num_active_edges, y0, y1, *sorted_index, j;
+   RGBA_Edge *edges;
+   RGBA_Vertex *point;
+   Evas_GL_Polygon_Point *pt;
+   Eina_Inlist *spans;
+   
+   /* save out clip info */
+   c = gc->dc->clip.use; cx = gc->dc->clip.x; cy = gc->dc->clip.y; cw = gc->dc->clip.w; ch = gc->dc->clip.h;
 
-   a = (dc->col.col >> 24) & 0xff;
-   r = (dc->col.col >> 16) & 0xff;
-   g = (dc->col.col >> 8 ) & 0xff;
-   b = (dc->col.col      ) & 0xff;
-   evas_gl_common_context_color_set(gc, r, g, b, a);
-   if (a < 255) evas_gl_common_context_blend_set(gc, 1);
-   else evas_gl_common_context_blend_set(gc, 0);
-   if (dc->clip.use)
-     evas_gl_common_context_clip_set(gc, 1,
-				     dc->clip.x, dc->clip.y,
-				     dc->clip.w, dc->clip.h);
-   else
-     evas_gl_common_context_clip_set(gc, 0,
-				     0, 0, 0, 0);
-   evas_gl_common_context_texture_set(gc, NULL, 0, 0, 0);
-   evas_gl_common_context_read_buf_set(gc, GL_BACK);
-   evas_gl_common_context_write_buf_set(gc, GL_BACK);
-
-   if (poly->changed || poly->dl <= 0)
+   ca = (gc->dc->col.col >> 24) & 0xff;
+   if (ca <= 0) return;
+   cr = (gc->dc->col.col >> 16) & 0xff;
+   cg = (gc->dc->col.col >> 8 ) & 0xff;
+   cb = (gc->dc->col.col      ) & 0xff;
+   
+   n = eina_list_count(poly->points);
+   if (n < 3) return;
+   edges = malloc(sizeof(RGBA_Edge) * n);
+   if (!edges) return;
+   point = malloc(sizeof(RGBA_Vertex) * n);
+   if (!point)
      {
-	if (poly->dl > 0) glDeleteLists(poly->dl, 1);
-	poly->dl = glGenLists(1);
-
-	glNewList(poly->dl, GL_COMPILE_AND_EXECUTE);
-#ifdef GLU_TESS
-	if (!tess)
-	  {
-	     tess = gluNewTess();
-
-	     gluTessCallback(tess, GLU_TESS_BEGIN, _evas_gl_tess_begin_cb);
-	     gluTessCallback(tess, GLU_TESS_END, _evas_gl_tess_end_cb);
-	     gluTessCallback(tess, GLU_TESS_ERROR, _evas_gl_tess_error_cb);
-	     gluTessCallback(tess, GLU_TESS_VERTEX, _evas_gl_tess_vertex_cb);
-	     gluTessCallback(tess, GLU_TESS_COMBINE, _evas_gl_tess_combine_cb);
-	  }
-	num = 0;
-	num = eina_list_count(poly->points);
-	i = 0;
-	glp = malloc(num * 6 * sizeof(GLdouble));
-	gluTessNormal(tess, 0, 0, 1);
-	gluTessProperty(tess, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_ODD);
-	gluTessBeginPolygon(tess, NULL);
-	gluTessBeginContour(tess);
-	EINA_LIST_FOREACH(poly->points, l, p)
-	  {
-	     glp[i++] = p->x;
-	     glp[i++] = p->y;
-	     glp[i++] = 0;
-	     gluTessVertex(tess, &(glp[i - 3]), &(glp[i - 3]));
-	     i += 3;
-	  }
-	gluTessEndContour(tess);
-	gluTessEndPolygon(tess);
-	free(glp);
-#else
-	glBegin(GL_POLYGON);
-	EINA_LIST_FOREACH(poly->points, l, p)
-	  glVertex2i(p->x, p->y);
-	glEnd();
-#endif
-	glEndList();
-
-	poly->changed = 0;
-
-	return ;
+        free(edges);
+        return;
      }
+   sorted_index = malloc(sizeof(int) * n);
+   if (!sorted_index)
+     {
+        free(edges);
+        free(point);
+        return;
+     }
+   
+   k = 0;
+   EINA_LIST_FOREACH(poly->points, l, pt)
+     {
+        point[k].x = pt->x;
+        point[k].y = pt->y;
+        point[k].i = k;
+        k++;
+     }
+   qsort(point, n, sizeof(RGBA_Vertex), polygon_point_sorter);
+   for (k = 0; k < n; k++) sorted_index[k] = point[k].i;
+   k = 0;
 
-   glCallList(poly->dl);
+   EINA_LIST_FOREACH(poly->points, l, pt)
+     {
+        point[k].x = pt->x;
+        point[k].y = pt->y;
+        point[k].i = k;
+        k++;
+     }
+   
+   y0 = MAX(cy, ceil(point[sorted_index[0]].y - 0.5));
+   y1 = MIN(cy + ch - 1, floor(point[sorted_index[n - 1]].y - 0.5));
+   
+   k = 0;
+   num_active_edges = 0;
+   spans = NULL;
+   
+   for (y = y0; y <= y1; y++)
+     {
+        for (; (k < n) && (point[sorted_index[k]].y <= ((double)y + 0.5)); k++)
+          {
+             i = sorted_index[k];
+             
+             if (i > 0) j = i - 1;
+             else j = n - 1;
+             if (point[j].y <= ((double)y - 0.5))
+               {
+                  POLY_EDGE_DEL(j)
+               }
+             else if (point[j].y > ((double)y + 0.5))
+               {
+                  POLY_EDGE_ADD(j, y)
+               }
+             if (i < (n - 1)) j = i + 1;
+             else j = 0;
+             if (point[j].y <= ((double)y - 0.5))
+               {
+                  POLY_EDGE_DEL(i)
+               }
+             else if (point[j].y > ((double)y + 0.5))
+               {
+                  POLY_EDGE_ADD(i, y)
+               }
+          }
+        
+        qsort(edges, num_active_edges, sizeof(RGBA_Edge), polygon_edge_sorter);
+        
+        for (j = 0; j < num_active_edges; j += 2)
+          {
+             int x0, x1;
+             
+             x0 = ceil(edges[j].x - 0.5);
+             if (j < (num_active_edges - 1))
+               x1 = floor(edges[j + 1].x - 0.5);
+             else
+               x1 = x0;
+             if ((x1 >= cx) && (x0 < (cx + cw)) && (x0 <= x1))
+               {
+                  RGBA_Span *span;
+                  
+                  if (x0 < cx) x0 = cx;
+                  if (x1 >= (cx + cw)) x1 = cx + cw - 1;
+                  span = malloc(sizeof(RGBA_Span));
+                  spans = eina_inlist_append(spans, EINA_INLIST_GET(span));
+                  span->y = y;
+                  span->x = x0;
+                  span->w = (x1 - x0) + 1;
+               }
+             edges[j].x += edges[j].dx;
+             edges[j + 1].x += edges[j + 1].dx;
+          }
+     }
+   
+   free(edges);
+   free(point);
+   free(sorted_index);
+   
+   evas_common_draw_context_clip_clip(gc->dc, 0, 0, gc->w, gc->h);
+   
+   if (spans)
+     {
+        RGBA_Span *span;
+
+        /* no cutouts - cut right to the chase */
+        if (!gc->dc->cutout.rects)
+          {
+             EINA_INLIST_FOREACH(spans, span)
+               {
+                  x = span->x;
+                  y = span->y;
+                  w = span->w;
+                  h = 1;
+                  evas_gl_common_context_rectangle_push(gc, x, y, w, h, cr, cg, cb, ca);
+               }
+          }
+        else
+          {
+             evas_common_draw_context_clip_clip(gc->dc, x, y, w, h);
+             /* our clip is 0 size.. abort */
+             if ((gc->dc->clip.w > 0) && (gc->dc->clip.h > 0))
+               {
+                  rects = evas_common_draw_context_apply_cutouts(gc->dc);
+                  for (i = 0; i < rects->active; ++i)
+                    {
+                       r = rects->rects + i;
+                       if ((r->w > 0) && (r->h > 0))
+                         {
+                            EINA_INLIST_FOREACH(spans, span)
+                              {
+                                 x = span->x;
+                                 y = span->y;
+                                 w = span->w;
+                                 h = 1;
+                                 RECTS_CLIP_TO_RECT(x, y, w, h, r->x, r->y, r->w, r->h);
+                                 if ((w > 0) && (h > 0))
+                                   evas_gl_common_context_rectangle_push(gc, x, y, w, h, cr, cg, cb, ca);
+                              }
+                         }
+                    }
+                  evas_common_draw_context_apply_clear_cutouts(rects);
+               }
+          }
+        while (spans)
+          {
+             span = (RGBA_Span *)spans;
+             spans = eina_inlist_remove(spans, spans);
+             free(span);
+          }    
+     }       
+   
+   /* restore clip info */
+   gc->dc->clip.use = c; gc->dc->clip.x = cx; gc->dc->clip.y = cy; gc->dc->clip.w = cw; gc->dc->clip.h = ch;
+
 }
