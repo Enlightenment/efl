@@ -967,22 +967,24 @@ typedef enum _Ecore_X_Window_Type {
     ECORE_X_WINDOW_TYPE_UNKNOWN
 } Ecore_X_Window_Type;
 
-typedef enum _Ecore_X_Action {
-    ECORE_X_ACTION_MOVE,
-    ECORE_X_ACTION_RESIZE,
-    ECORE_X_ACTION_MINIMIZE,
-    ECORE_X_ACTION_SHADE,
-    ECORE_X_ACTION_STICK,
-    ECORE_X_ACTION_MAXIMIZE_HORZ,
-    ECORE_X_ACTION_MAXIMIZE_VERT,
-    ECORE_X_ACTION_FULLSCREEN,
-    ECORE_X_ACTION_CHANGE_DESKTOP,
-    ECORE_X_ACTION_CLOSE,
-    ECORE_X_ACTION_ABOVE,
-    ECORE_X_ACTION_BELOW
+typedef enum _Ecore_X_Action 
+{
+   ECORE_X_ACTION_MOVE,
+     ECORE_X_ACTION_RESIZE,
+     ECORE_X_ACTION_MINIMIZE,
+     ECORE_X_ACTION_SHADE,
+     ECORE_X_ACTION_STICK,
+     ECORE_X_ACTION_MAXIMIZE_HORZ,
+     ECORE_X_ACTION_MAXIMIZE_VERT,
+     ECORE_X_ACTION_FULLSCREEN,
+     ECORE_X_ACTION_CHANGE_DESKTOP,
+     ECORE_X_ACTION_CLOSE,
+     ECORE_X_ACTION_ABOVE,
+     ECORE_X_ACTION_BELOW
 } Ecore_X_Action;
 
-typedef enum _Ecore_X_Window_Configure_Mask {
+typedef enum _Ecore_X_Window_Configure_Mask 
+{
    ECORE_X_WINDOW_CONFIGURE_MASK_X              = (1 << 0),
    ECORE_X_WINDOW_CONFIGURE_MASK_Y              = (1 << 1),
    ECORE_X_WINDOW_CONFIGURE_MASK_W              = (1 << 2),
@@ -992,23 +994,24 @@ typedef enum _Ecore_X_Window_Configure_Mask {
    ECORE_X_WINDOW_CONFIGURE_MASK_STACK_MODE     = (1 << 6)
 } Ecore_X_Window_Configure_Mask;
 
-typedef enum _Ecore_X_Virtual_Keyboard_State {
-    ECORE_X_VIRTUAL_KEYBOARD_STATE_UNKNOWN = 0,
-    ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF,
-    ECORE_X_VIRTUAL_KEYBOARD_STATE_ON,
-    ECORE_X_VIRTUAL_KEYBOARD_STATE_ALPHA,
-    ECORE_X_VIRTUAL_KEYBOARD_STATE_NUMERIC,
-    ECORE_X_VIRTUAL_KEYBOARD_STATE_PIN,
-    ECORE_X_VIRTUAL_KEYBOARD_STATE_PHONE_NUMBER,
-    ECORE_X_VIRTUAL_KEYBOARD_STATE_HEX,
-    ECORE_X_VIRTUAL_KEYBOARD_STATE_TERMINAL,
-    ECORE_X_VIRTUAL_KEYBOARD_STATE_PASSWORD,
-    ECORE_X_VIRTUAL_KEYBOARD_STATE_IP,
-    ECORE_X_VIRTUAL_KEYBOARD_STATE_HOST,
-    ECORE_X_VIRTUAL_KEYBOARD_STATE_FILE,
-    ECORE_X_VIRTUAL_KEYBOARD_STATE_URL,
-    ECORE_X_VIRTUAL_KEYBOARD_STATE_KEYPAD,
-    ECORE_X_VIRTUAL_KEYBOARD_STATE_J2ME
+typedef enum _Ecore_X_Virtual_Keyboard_State 
+{
+   ECORE_X_VIRTUAL_KEYBOARD_STATE_UNKNOWN = 0,
+     ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF,
+     ECORE_X_VIRTUAL_KEYBOARD_STATE_ON,
+     ECORE_X_VIRTUAL_KEYBOARD_STATE_ALPHA,
+     ECORE_X_VIRTUAL_KEYBOARD_STATE_NUMERIC,
+     ECORE_X_VIRTUAL_KEYBOARD_STATE_PIN,
+     ECORE_X_VIRTUAL_KEYBOARD_STATE_PHONE_NUMBER,
+     ECORE_X_VIRTUAL_KEYBOARD_STATE_HEX,
+     ECORE_X_VIRTUAL_KEYBOARD_STATE_TERMINAL,
+     ECORE_X_VIRTUAL_KEYBOARD_STATE_PASSWORD,
+     ECORE_X_VIRTUAL_KEYBOARD_STATE_IP,
+     ECORE_X_VIRTUAL_KEYBOARD_STATE_HOST,
+     ECORE_X_VIRTUAL_KEYBOARD_STATE_FILE,
+     ECORE_X_VIRTUAL_KEYBOARD_STATE_URL,
+     ECORE_X_VIRTUAL_KEYBOARD_STATE_KEYPAD,
+     ECORE_X_VIRTUAL_KEYBOARD_STATE_J2ME
 } Ecore_X_Virtual_Keyboard_State;
 
 typedef enum _Ecore_X_Illume_Mode 
@@ -1017,6 +1020,13 @@ typedef enum _Ecore_X_Illume_Mode
      ECORE_X_ILLUME_MODE_SINGLE, 
      ECORE_X_ILLUME_MODE_DUAL
 } Ecore_X_Illume_Mode;
+
+typedef enum _Ecore_X_Illume_Quickpanel_State 
+{
+   ECORE_X_ILLUME_QUICKPANEL_STATE_UNKNOWN = 0, 
+     ECORE_X_ILLUME_QUICKPANEL_STATE_OFF, 
+     ECORE_X_ILLUME_QUICKPANEL_STATE_ON
+} Ecore_X_Illume_Quickpanel_State;
 
 /* Window layer constants */
 #define ECORE_X_WINDOW_LAYER_BELOW 2
@@ -1552,6 +1562,9 @@ EAPI void                ecore_x_e_illume_drag_start_send(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_drag_end_send(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_quickpanel_set(Ecore_X_Window win, unsigned int is_quickpanel);
 EAPI int                 ecore_x_e_illume_quickpanel_get(Ecore_X_Window win);
+EAPI void                ecore_x_e_illume_quickpanel_state_set(Ecore_X_Window win, Ecore_X_Illume_Quickpanel_State state);
+EAPI Ecore_X_Illume_Quickpanel_State ecore_x_e_illume_quickpanel_state_get(Ecore_X_Window win);
+EAPI void                ecore_x_e_illume_quickpanel_state_send(Ecore_X_Window win, Ecore_X_Illume_Quickpanel_State state);
 
 EAPI void                ecore_x_xinerama_query_screens_prefetch(void);
 EAPI void                ecore_x_xinerama_query_screens_fetch(void);

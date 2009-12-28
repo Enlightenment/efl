@@ -139,7 +139,7 @@ EAPI Ecore_X_Virtual_Keyboard_State
 ecore_x_e_virtual_keyboard_state_get(Ecore_X_Window win)
 {
    Ecore_X_Atom atom;
- 
+
    if (!ecore_x_window_prop_atom_get(win, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_STATE,
 				     &atom, 1))
      return ECORE_X_VIRTUAL_KEYBOARD_STATE_UNKNOWN;
@@ -293,6 +293,31 @@ ecore_x_e_illume_drag_end_send(Ecore_X_Window win)
 				 1, 0, 0, 0, 0);
 }
 
+static Ecore_X_Atom
+_ecore_x_e_quickpanel_atom_get(Ecore_X_Illume_Quickpanel_State state)
+{
+   switch (state) 
+     {
+      case ECORE_X_ILLUME_QUICKPANEL_STATE_ON:
+        return ECORE_X_ATOM_E_ILLUME_QUICKPANEL_ON;
+      case ECORE_X_ILLUME_QUICKPANEL_STATE_OFF:
+        return ECORE_X_ATOM_E_ILLUME_QUICKPANEL_OFF;
+      default:
+        return 0;
+     }
+   return 0;
+}
+
+static Ecore_X_Illume_Quickpanel_State
+_ecore_x_e_quickpanel_state_get(Ecore_X_Atom atom)
+{
+   if (atom == ECORE_X_ATOM_E_ILLUME_QUICKPANEL_ON) 
+     return ECORE_X_ILLUME_QUICKPANEL_STATE_ON;
+   if (atom == ECORE_X_ATOM_E_ILLUME_QUICKPANEL_OFF)
+     return ECORE_X_ILLUME_QUICKPANEL_STATE_OFF;
+   return ECORE_X_ILLUME_QUICKPANEL_STATE_UNKNOWN;
+}
+
 EAPI void 
 ecore_x_e_illume_quickpanel_set(Ecore_X_Window win, unsigned int is_quickpanel) 
 {
@@ -309,4 +334,34 @@ ecore_x_e_illume_quickpanel_get(Ecore_X_Window win)
                                        &val, 1))
      return 0;
    return val;
+}
+
+EAPI void 
+ecore_x_e_illume_quickpanel_state_set(Ecore_X_Window win, Ecore_X_Illume_Quickpanel_State state) 
+{
+   Ecore_X_Atom atom = 0;
+
+   atom = _ecore_x_e_quickpanel_atom_get(state);
+   ecore_x_window_prop_atom_set(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL_STATE,
+				&atom, 1);
+}
+
+EAPI Ecore_X_Illume_Quickpanel_State 
+ecore_x_e_illume_quickpanel_state_get(Ecore_X_Window win) 
+{
+   Ecore_X_Atom atom;
+
+   if (!ecore_x_window_prop_atom_get(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL_STATE,
+				     &atom, 1))
+     return ECORE_X_ILLUME_QUICKPANEL_STATE_UNKNOWN;
+   return _ecore_x_e_quickpanel_state_get(atom);
+}
+
+EAPI void 
+ecore_x_e_illume_quickpanel_state_send(Ecore_X_Window win, Ecore_X_Illume_Quickpanel_State state) 
+{
+   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL_STATE,
+				 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
+				 _ecore_x_e_quickpanel_atom_get(state),
+				 0, 0, 0, 0);
 }
