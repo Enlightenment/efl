@@ -288,4 +288,7 @@
 
 	* More work on eet_node dump code.
 
+2009-12-28  Cedric BAIL
+
+	* Add fully functionnal eet_node dump code.
 

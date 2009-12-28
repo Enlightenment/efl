@@ -389,15 +389,41 @@ eet_node_dump_group_end(int level, void (*dumpfunc) (void *data, const char *str
 void
 eet_node_dump(Eet_Node *n, int dumplevel, void (*dumpfunc) (void *data, const char *str), void *dumpdata)
 {
+   Eet_Node *it;
+
+   if (!n) return ;
+
    switch (n->type)
      {
-      case EET_G_HASH:
-      case EET_G_UNKNOWN:
       case EET_G_VAR_ARRAY:
       case EET_G_ARRAY:
+      case EET_G_UNKNOWN:
+      case EET_G_HASH:
       case EET_G_LIST:
-	 eet_node_dump_group_start(dumplevel, dumpfunc, dumpdata, n->type, n->name);
-	 /* FIXME: Handle content of group. */
+	 eet_node_dump_group_start(dumplevel + 1, dumpfunc, dumpdata, n->type, n->name);
+
+	 if (n->type == EET_G_VAR_ARRAY
+	     || n->type == EET_G_ARRAY)
+	   {
+	      char tbuf[256];
+
+	      eet_node_dump_level(dumplevel, dumpfunc, dumpdata);
+	      dumpfunc(dumpdata, "    count ");
+	      eina_convert_itoa(n->count, tbuf);
+	      dumpfunc(dumpdata, tbuf);
+	      dumpfunc(dumpdata, ";\n");
+	   }
+	 else if (n->type == EET_G_HASH)
+	   {
+	      eet_node_dump_level(dumplevel, dumpfunc, dumpdata);
+	      dumpfunc(dumpdata, "    key \"");
+	      eet_node_dump_string_escape(dumpdata, dumpfunc, n->key);
+	      dumpfunc(dumpdata, "\";\n");
+	   }
+
+	 for (it = n->values; it != NULL; it = it->next)
+	   eet_node_dump(it, dumplevel + 2, dumpfunc, dumpdata);
+
 	 eet_node_dump_group_end(dumplevel, dumpfunc, dumpdata);
 	 break;
       case EET_T_STRING:
