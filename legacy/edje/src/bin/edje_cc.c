@@ -71,7 +71,8 @@ main(int argc, char **argv)
      }
    tmp_dir = getenv("TMPDIR");
 
-   
+   img_dirs = eina_list_append(img_dirs, ".");
+
    progname = argv[0];
    for (i = 1; i < argc; i++)
      {
