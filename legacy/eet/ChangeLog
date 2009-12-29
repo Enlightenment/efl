@@ -292,3 +292,6 @@
 
 	* Add fully functionnal eet_node dump code.
 
+2009-12-29  Cedric BAIL
+
+	* Don't mess up when memory realloc failed during data descriptor creation.

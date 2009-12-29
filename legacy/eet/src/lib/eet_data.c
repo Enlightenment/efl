@@ -1331,17 +1331,18 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
 				int offset,
 				int count,
 /* 				int counter_offset, */
-				const char *counter_name /* Useless should go on a major release */,
+				const char *counter_name /* FIXME: Useless should go on a major release */,
 				Eet_Data_Descriptor *subtype)
 {
    Eet_Data_Element *ede;
+   Eet_Data_Element *tmp;
    /* int l1, l2, p1, p2, i;
    char *ps;*/
 
-   /* FIXME: Fail safely when realloc fail. */
    edd->elements.num++;
-   edd->elements.set = realloc(edd->elements.set, edd->elements.num * sizeof(Eet_Data_Element));
-   if (!edd->elements.set) return;
+   tmp = realloc(edd->elements.set, edd->elements.num * sizeof(Eet_Data_Element));
+   if (!tmp) return ;
+   edd->elements.set = tmp;
    ede = &(edd->elements.set[edd->elements.num - 1]);
    ede->name = name;
    ede->directory_name_ptr = NULL;
