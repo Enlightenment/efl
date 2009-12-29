@@ -162,8 +162,10 @@ _ecore_x_e_illume_atom_get(Ecore_X_Illume_Mode mode)
      {
       case ECORE_X_ILLUME_MODE_SINGLE:
         return ECORE_X_ATOM_E_ILLUME_MODE_SINGLE;
-      case ECORE_X_ILLUME_MODE_DUAL:
-        return ECORE_X_ATOM_E_ILLUME_MODE_DUAL;
+      case ECORE_X_ILLUME_MODE_DUAL_TOP:
+        return ECORE_X_ATOM_E_ILLUME_MODE_DUAL_TOP;
+      case ECORE_X_ILLUME_MODE_DUAL_LEFT:
+        return ECORE_X_ATOM_E_ILLUME_MODE_DUAL_LEFT;
       default:
         return 0;
      }
@@ -175,8 +177,10 @@ _ecore_x_e_illume_mode_get(Ecore_X_Atom atom)
 {
    if (atom == ECORE_X_ATOM_E_ILLUME_MODE_SINGLE)
      return ECORE_X_ILLUME_MODE_SINGLE;
-   if (atom == ECORE_X_ATOM_E_ILLUME_MODE_DUAL)
-     return ECORE_X_ILLUME_MODE_DUAL;
+   if (atom == ECORE_X_ATOM_E_ILLUME_MODE_DUAL_TOP)
+     return ECORE_X_ILLUME_MODE_DUAL_TOP;
+   if (atom == ECORE_X_ATOM_E_ILLUME_MODE_DUAL_LEFT)
+     return ECORE_X_ILLUME_MODE_DUAL_LEFT;
    return ECORE_X_ILLUME_MODE_UNKNOWN;
 }
 

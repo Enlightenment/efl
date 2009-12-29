@@ -896,52 +896,47 @@ EAPI extern int ECORE_X_LOCK_SCROLL;
 EAPI extern int ECORE_X_LOCK_NUM;
 EAPI extern int ECORE_X_LOCK_CAPS;
 
-typedef enum _Ecore_X_WM_Protocol {
-   /**
-    * If enabled the window manager will be asked to send a
-    * delete message instead of just closing (destroying) the window.
-    */
+typedef enum _Ecore_X_WM_Protocol 
+{
+   /* If enabled the window manager will be asked to send a
+    * delete message instead of just closing (destroying) the window. */
    ECORE_X_WM_PROTOCOL_DELETE_REQUEST,
 
-     /**
-      * If enabled the window manager will be told that the window
-      * explicitly sets input focus.
-      */
-     ECORE_X_WM_PROTOCOL_TAKE_FOCUS,
+   /* If enabled the window manager will be told that the window
+    * explicitly sets input focus. */
+   ECORE_X_WM_PROTOCOL_TAKE_FOCUS,
 
-     /**
-      * If enabled the window manager can ping the window to check
-      * if it is alive.
-      */
-     ECORE_X_NET_WM_PROTOCOL_PING,
+   /* If enabled the window manager can ping the window to check
+    * if it is alive. */
+   ECORE_X_NET_WM_PROTOCOL_PING,
 
-     /**
-      * If enabled the window manager can sync updating with the
-      * window (?)
-      */
-     ECORE_X_NET_WM_PROTOCOL_SYNC_REQUEST,
+   /* If enabled the window manager can sync updating with the
+    * window (?) */
+   ECORE_X_NET_WM_PROTOCOL_SYNC_REQUEST,
 
-     /* Number of defined items */
-     ECORE_X_WM_PROTOCOL_NUM
+   /* Number of defined items */
+   ECORE_X_WM_PROTOCOL_NUM
 } Ecore_X_WM_Protocol;
 
-typedef enum _Ecore_X_Window_Input_Mode {
-   /** The window can never be focused */
+typedef enum _Ecore_X_Window_Input_Mode 
+{
+   /* The window can never be focused */
    ECORE_X_WINDOW_INPUT_MODE_NONE,
 
-     /** The window can be focused by the WM but doesn't focus itself */
-     ECORE_X_WINDOW_INPUT_MODE_PASSIVE,
+   /* The window can be focused by the WM but doesn't focus itself */
+   ECORE_X_WINDOW_INPUT_MODE_PASSIVE,
 
-     /** The window sets the focus itself if one of its sub-windows
-      * already is focused */
-     ECORE_X_WINDOW_INPUT_MODE_ACTIVE_LOCAL,
+   /* The window sets the focus itself if one of its sub-windows
+    * already is focused */
+   ECORE_X_WINDOW_INPUT_MODE_ACTIVE_LOCAL,
 
-     /** The window sets the focus itself even if another window
-      * is currently focused */
-     ECORE_X_WINDOW_INPUT_MODE_ACTIVE_GLOBAL
+   /* The window sets the focus itself even if another window
+    * is currently focused */
+   ECORE_X_WINDOW_INPUT_MODE_ACTIVE_GLOBAL
 } Ecore_X_Window_Input_Mode;
 
-typedef enum _Ecore_X_Window_State_Hint {
+typedef enum _Ecore_X_Window_State_Hint 
+{
    /** Do not provide any state hint to the window manager */
    ECORE_X_WINDOW_STATE_HINT_NONE = -1,
 
@@ -955,7 +950,8 @@ typedef enum _Ecore_X_Window_State_Hint {
    ECORE_X_WINDOW_STATE_HINT_ICONIC
 } Ecore_X_Window_State_Hint;
 
-typedef enum _Ecore_X_Window_Type {
+typedef enum _Ecore_X_Window_Type 
+{
     ECORE_X_WINDOW_TYPE_DESKTOP,
     ECORE_X_WINDOW_TYPE_DOCK,
     ECORE_X_WINDOW_TYPE_TOOLBAR,
@@ -970,62 +966,63 @@ typedef enum _Ecore_X_Window_Type {
 typedef enum _Ecore_X_Action 
 {
    ECORE_X_ACTION_MOVE,
-     ECORE_X_ACTION_RESIZE,
-     ECORE_X_ACTION_MINIMIZE,
-     ECORE_X_ACTION_SHADE,
-     ECORE_X_ACTION_STICK,
-     ECORE_X_ACTION_MAXIMIZE_HORZ,
-     ECORE_X_ACTION_MAXIMIZE_VERT,
-     ECORE_X_ACTION_FULLSCREEN,
-     ECORE_X_ACTION_CHANGE_DESKTOP,
-     ECORE_X_ACTION_CLOSE,
-     ECORE_X_ACTION_ABOVE,
-     ECORE_X_ACTION_BELOW
+   ECORE_X_ACTION_RESIZE,
+   ECORE_X_ACTION_MINIMIZE,
+   ECORE_X_ACTION_SHADE,
+   ECORE_X_ACTION_STICK,
+   ECORE_X_ACTION_MAXIMIZE_HORZ,
+   ECORE_X_ACTION_MAXIMIZE_VERT,
+   ECORE_X_ACTION_FULLSCREEN,
+   ECORE_X_ACTION_CHANGE_DESKTOP,
+   ECORE_X_ACTION_CLOSE,
+   ECORE_X_ACTION_ABOVE,
+   ECORE_X_ACTION_BELOW
 } Ecore_X_Action;
 
 typedef enum _Ecore_X_Window_Configure_Mask 
 {
-   ECORE_X_WINDOW_CONFIGURE_MASK_X              = (1 << 0),
-   ECORE_X_WINDOW_CONFIGURE_MASK_Y              = (1 << 1),
-   ECORE_X_WINDOW_CONFIGURE_MASK_W              = (1 << 2),
-   ECORE_X_WINDOW_CONFIGURE_MASK_H              = (1 << 3),
-   ECORE_X_WINDOW_CONFIGURE_MASK_BORDER_WIDTH   = (1 << 4),
-   ECORE_X_WINDOW_CONFIGURE_MASK_SIBLING        = (1 << 5),
-   ECORE_X_WINDOW_CONFIGURE_MASK_STACK_MODE     = (1 << 6)
+   ECORE_X_WINDOW_CONFIGURE_MASK_X = (1 << 0),
+   ECORE_X_WINDOW_CONFIGURE_MASK_Y = (1 << 1),
+   ECORE_X_WINDOW_CONFIGURE_MASK_W = (1 << 2),
+   ECORE_X_WINDOW_CONFIGURE_MASK_H = (1 << 3),
+   ECORE_X_WINDOW_CONFIGURE_MASK_BORDER_WIDTH = (1 << 4),
+   ECORE_X_WINDOW_CONFIGURE_MASK_SIBLING = (1 << 5),
+   ECORE_X_WINDOW_CONFIGURE_MASK_STACK_MODE = (1 << 6)
 } Ecore_X_Window_Configure_Mask;
 
 typedef enum _Ecore_X_Virtual_Keyboard_State 
 {
    ECORE_X_VIRTUAL_KEYBOARD_STATE_UNKNOWN = 0,
-     ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF,
-     ECORE_X_VIRTUAL_KEYBOARD_STATE_ON,
-     ECORE_X_VIRTUAL_KEYBOARD_STATE_ALPHA,
-     ECORE_X_VIRTUAL_KEYBOARD_STATE_NUMERIC,
-     ECORE_X_VIRTUAL_KEYBOARD_STATE_PIN,
-     ECORE_X_VIRTUAL_KEYBOARD_STATE_PHONE_NUMBER,
-     ECORE_X_VIRTUAL_KEYBOARD_STATE_HEX,
-     ECORE_X_VIRTUAL_KEYBOARD_STATE_TERMINAL,
-     ECORE_X_VIRTUAL_KEYBOARD_STATE_PASSWORD,
-     ECORE_X_VIRTUAL_KEYBOARD_STATE_IP,
-     ECORE_X_VIRTUAL_KEYBOARD_STATE_HOST,
-     ECORE_X_VIRTUAL_KEYBOARD_STATE_FILE,
-     ECORE_X_VIRTUAL_KEYBOARD_STATE_URL,
-     ECORE_X_VIRTUAL_KEYBOARD_STATE_KEYPAD,
-     ECORE_X_VIRTUAL_KEYBOARD_STATE_J2ME
+   ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF,
+   ECORE_X_VIRTUAL_KEYBOARD_STATE_ON,
+   ECORE_X_VIRTUAL_KEYBOARD_STATE_ALPHA,
+   ECORE_X_VIRTUAL_KEYBOARD_STATE_NUMERIC,
+   ECORE_X_VIRTUAL_KEYBOARD_STATE_PIN,
+   ECORE_X_VIRTUAL_KEYBOARD_STATE_PHONE_NUMBER,
+   ECORE_X_VIRTUAL_KEYBOARD_STATE_HEX,
+   ECORE_X_VIRTUAL_KEYBOARD_STATE_TERMINAL,
+   ECORE_X_VIRTUAL_KEYBOARD_STATE_PASSWORD,
+   ECORE_X_VIRTUAL_KEYBOARD_STATE_IP,
+   ECORE_X_VIRTUAL_KEYBOARD_STATE_HOST,
+   ECORE_X_VIRTUAL_KEYBOARD_STATE_FILE,
+   ECORE_X_VIRTUAL_KEYBOARD_STATE_URL,
+   ECORE_X_VIRTUAL_KEYBOARD_STATE_KEYPAD,
+   ECORE_X_VIRTUAL_KEYBOARD_STATE_J2ME
 } Ecore_X_Virtual_Keyboard_State;
 
 typedef enum _Ecore_X_Illume_Mode 
 {
    ECORE_X_ILLUME_MODE_UNKNOWN = 0, 
-     ECORE_X_ILLUME_MODE_SINGLE, 
-     ECORE_X_ILLUME_MODE_DUAL
+   ECORE_X_ILLUME_MODE_SINGLE, 
+   ECORE_X_ILLUME_MODE_DUAL_TOP, 
+   ECORE_X_ILLUME_MODE_DUAL_LEFT
 } Ecore_X_Illume_Mode;
 
 typedef enum _Ecore_X_Illume_Quickpanel_State 
 {
    ECORE_X_ILLUME_QUICKPANEL_STATE_UNKNOWN = 0, 
-     ECORE_X_ILLUME_QUICKPANEL_STATE_OFF, 
-     ECORE_X_ILLUME_QUICKPANEL_STATE_ON
+   ECORE_X_ILLUME_QUICKPANEL_STATE_OFF, 
+   ECORE_X_ILLUME_QUICKPANEL_STATE_ON
 } Ecore_X_Illume_Quickpanel_State;
 
 /* Window layer constants */
