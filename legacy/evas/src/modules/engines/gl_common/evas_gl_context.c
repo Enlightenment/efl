@@ -398,6 +398,47 @@ _evas_gl_common_context_array_alloc(Evas_GL_Context *gc)
 }
 
 void
+evas_gl_common_context_line_push(Evas_GL_Context *gc, 
+                                 int x1, int y1, int x2, int y2,
+                                 int clip, int cx, int cy, int cw, int ch,
+                                 int r, int g, int b, int a)
+{
+   int pnum, nv, nc, nu, nt, i;
+   Eina_Bool blend = 0;
+   
+   shader_array_flush(gc);
+   
+   if (a < 255) blend = 1;
+   if (gc->dc->render_op == EVAS_RENDER_COPY) blend = 0;
+   gc->shader.cur_tex = 0;
+   gc->shader.cur_prog = gc->shared->shader.rect.prog;
+   gc->shader.blend = blend;
+   gc->shader.render_op = gc->dc->render_op;
+   gc->shader.clip = clip;
+   gc->shader.cx = cx;
+   gc->shader.cy = cy;
+   gc->shader.cw = cw;
+   gc->shader.ch = ch;
+   
+   gc->array.line = 1;
+   pnum = gc->array.num;
+   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nt = pnum * 4;
+   gc->array.num += 1;
+   _evas_gl_common_context_array_alloc(gc);
+  
+   PUSH_VERTEX(x1    , y1    , 0);
+   PUSH_VERTEX(x2    , y2    , 0);
+   
+   for (i = 0; i < 2; i++)
+     {
+        PUSH_COLOR(r, g, b, a);
+     }
+   
+   shader_array_flush(gc);
+   gc->array.line = 0;
+}
+
+void
 evas_gl_common_context_rectangle_push(Evas_GL_Context *gc, 
                                       int x, int y, int w, int h,
                                       int r, int g, int b, int a)
@@ -827,7 +868,10 @@ shader_array_flush(Evas_GL_Context *gc)
         if (gc->shader.clip)
           glEnable(GL_SCISSOR_TEST);
         else
-          glDisable(GL_SCISSOR_TEST);
+          {
+             glDisable(GL_SCISSOR_TEST);
+//             glScissor(0, 0, 0, 0);
+          }
      }
    if (gc->shader.clip)
      {
@@ -835,10 +879,12 @@ shader_array_flush(Evas_GL_Context *gc)
             (gc->shader.cx != gc->shader.current.cx) ||
             (gc->shader.cx != gc->shader.current.cx) ||
             (gc->shader.cx != gc->shader.current.cx))
-          glScissor(gc->shader.cx, 
-                    gc->h - gc->shader.cy - gc->shader.ch,
-                    gc->shader.cw,
-                    gc->shader.ch);
+          {
+             glScissor(gc->shader.cx, 
+                       gc->h - gc->shader.cy - gc->shader.ch,
+                       gc->shader.cw,
+                       gc->shader.ch);
+          }
 //                    gc->clip.x,
 //                    gc->h - gc->clip.y - gc->clip.h,
 //                    gc->clip.w,
@@ -849,25 +895,34 @@ shader_array_flush(Evas_GL_Context *gc)
    glVertexAttribPointer(SHAD_VERTEX, 3, GL_SHORT, GL_FALSE, 0, gc->array.vertex);
    glVertexAttribPointer(SHAD_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, gc->array.color);
    glVertexAttribPointer(SHAD_TEXUV, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv);
-   if ((gc->array.texuv2) && (gc->array.texuv3))
-     {
-        glEnableVertexAttribArray(SHAD_TEXUV2);
-        glEnableVertexAttribArray(SHAD_TEXUV3);
-        glVertexAttribPointer(SHAD_TEXUV2, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv2);
-        glVertexAttribPointer(SHAD_TEXUV3, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv3);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, gc->shader.cur_texu);
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, gc->shader.cur_texv);
-     }
-   else
+   
+   if (gc->array.line)
      {
         glDisableVertexAttribArray(SHAD_TEXUV2);
         glDisableVertexAttribArray(SHAD_TEXUV3);
+        glDrawArrays(GL_LINES, 0, gc->array.num);
      }
+   else
+     {
+        if ((gc->array.texuv2) && (gc->array.texuv3))
+          {
+             glEnableVertexAttribArray(SHAD_TEXUV2);
+             glEnableVertexAttribArray(SHAD_TEXUV3);
+             glVertexAttribPointer(SHAD_TEXUV2, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv2);
+             glVertexAttribPointer(SHAD_TEXUV3, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv3);
+             glActiveTexture(GL_TEXTURE1);
+             glBindTexture(GL_TEXTURE_2D, gc->shader.cur_texu);
+             glActiveTexture(GL_TEXTURE2);
+             glBindTexture(GL_TEXTURE_2D, gc->shader.cur_texv);
+          }
+        else
+          {
+             glDisableVertexAttribArray(SHAD_TEXUV2);
+             glDisableVertexAttribArray(SHAD_TEXUV3);
+          }
    
-   glDrawArrays(GL_TRIANGLES, 0, gc->array.num);
-
+        glDrawArrays(GL_TRIANGLES, 0, gc->array.num);
+     }
    gc->shader.current.cur_prog = gc->shader.cur_prog;
    gc->shader.current.cur_tex = gc->shader.cur_tex;
    gc->shader.current.blend = gc->shader.blend;

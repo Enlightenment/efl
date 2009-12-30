@@ -134,6 +134,7 @@ struct _Evas_GL_Context
       GLfloat *texuv;
       GLfloat *texuv2;
       GLfloat *texuv3;
+      Eina_Bool line : 1;
    } array;
    struct {
       Eina_Bool size : 1;
@@ -227,7 +228,11 @@ void              evas_gl_common_context_free(Evas_GL_Context *gc);
 void              evas_gl_common_context_use(Evas_GL_Context *gc);
 void              evas_gl_common_context_resize(Evas_GL_Context *gc, int w, int h);
 void              evas_gl_common_context_target_surface_set(Evas_GL_Context *gc, Evas_GL_Image *surface);
-    
+
+void              evas_gl_common_context_line_push(Evas_GL_Context *gc,
+                                                   int x1, int y1, int x2, int y2,
+                                                   int clip, int cx, int cy, int cw, int ch,
+                                                   int r, int g, int b, int a);
 void              evas_gl_common_context_rectangle_push(Evas_GL_Context *gc,
                                                         int x, int y, int w, int h,
                                                         int r, int g, int b, int a);
@@ -291,55 +296,11 @@ Evas_GL_Polygon  *evas_gl_common_poly_point_add(Evas_GL_Polygon *poly, int x, in
 Evas_GL_Polygon  *evas_gl_common_poly_points_clear(Evas_GL_Polygon *poly);
 void              evas_gl_common_poly_draw(Evas_GL_Context *gc, Evas_GL_Polygon *poly);
 
+void              evas_gl_common_line_draw(Evas_GL_Context *gc, int x1, int y1, int x2, int y2);
+
 void (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b);
 void (*glsym_glBindFramebuffer)      (GLenum a, GLuint b);
 void (*glsym_glFramebufferTexture2D) (GLenum a, GLenum b, GLenum c, GLuint d, GLint e);
 void (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-Evas_GL_Gradient *evas_gl_common_gradient_new(void);
-void              evas_gl_common_gradient_free(Evas_GL_Gradient *gr);
-void              evas_gl_common_gradient_color_stop_add(Evas_GL_Gradient *gr, int r, int g, int b, int a, int delta);
-void              evas_gl_common_gradient_alpha_stop_add(Evas_GL_Gradient *gr, int a, int delta);
-void              evas_gl_common_gradient_color_data_set(Evas_GL_Gradient *gr, void *data, int len, int has_alpha);
-void              evas_gl_common_gradient_alpha_data_set(Evas_GL_Gradient *gr, void *alpha_data, int len);
-void              evas_gl_common_gradient_clear(Evas_GL_Gradient *gr);
-void              evas_gl_common_gradient_fill_set(Evas_GL_Gradient *gr, int x, int y, int w, int h);
-void              evas_gl_common_gradient_fill_angle_set(Evas_GL_Gradient *gr, double angle);
-void              evas_gl_common_gradient_fill_spread_set(Evas_GL_Gradient *gr, int spread);
-void              evas_gl_common_gradient_map_angle_set(Evas_GL_Gradient *gr, double angle);
-void              evas_gl_common_gradient_map_offset_set(Evas_GL_Gradient *gr, float offset);
-void              evas_gl_common_gradient_map_direction_set(Evas_GL_Gradient *gr, int direction);
-void              evas_gl_common_gradient_type_set(Evas_GL_Gradient *gr, char *name, char *params);
-int               evas_gl_common_gradient_is_opaque(Evas_GL_Context *gc, Evas_GL_Gradient *gr, int x, int y, int w, int h);
-int               evas_gl_common_gradient_is_visible(Evas_GL_Context *gc, Evas_GL_Gradient *gr, int x, int y, int w, int h);
-void              evas_gl_common_gradient_render_pre(Evas_GL_Context *gc, Evas_GL_Gradient *gr);
-void              evas_gl_common_gradient_render_post(Evas_GL_Gradient *gr);
-void              evas_gl_common_gradient_draw(Evas_GL_Context *gc, Evas_GL_Gradient *gr,
-                                               int x, int y, int w, int h);
-
-void              evas_gl_common_swap_rect(Evas_GL_Context *gc, int x, int y, int w, int h);
-
-void              evas_gl_common_line_draw(Evas_GL_Context *gc, int x1, int y1, int x2, int y2);
-*/
 
 #endif

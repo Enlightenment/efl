@@ -956,6 +956,8 @@ evas_render_updates_internal(Evas *e,
 						 cx, cy, cw, ch);
 		  e->engine.func->context_cutout_clear(e->engine.data.output,
 						       e->engine.data.context);
+		  e->engine.func->context_clip_unset(e->engine.data.output,
+                                                     e->engine.data.context);
 	       }
 	     /* render all object that intersect with rect */
              for (i = 0; i < e->active_objects.count; ++i)
@@ -982,11 +984,18 @@ evas_render_updates_internal(Evas *e,
 			   (eina_array_data_get(&e->temporary_objects, offset) == obj))
 			 offset++;
 		       x = cx; y = cy; w = cw; h = ch;
-		       RECTS_CLIP_TO_RECT(x, y, w, h,
-					  obj->cur.cache.clip.x + off_x,
-					  obj->cur.cache.clip.y + off_y,
-					  obj->cur.cache.clip.w,
-					  obj->cur.cache.clip.h);
+                       if (obj->cur.clipper)
+                         {
+                            if (_evas_render_has_map(obj))
+                              {
+                                 evas_object_clip_recalc(obj);
+                              }
+                            RECTS_CLIP_TO_RECT(x, y, w, h,
+                                               obj->cur.cache.clip.x + off_x,
+                                               obj->cur.cache.clip.y + off_y,
+                                               obj->cur.cache.clip.w,
+                                               obj->cur.cache.clip.h);
+                         }
 		       if (((w > 0) && (h > 0)) || (obj->smart.smart))
 			 {
 			    e->engine.func->context_clip_set(e->engine.data.output,

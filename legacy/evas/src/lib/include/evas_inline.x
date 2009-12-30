@@ -174,7 +174,7 @@ evas_object_clip_recalc(Evas_Object *obj)
      return;
    if (obj->layer->evas->events_frozen > 0) return;
    evas_object_coords_recalc(obj);
-   if (obj->cur.map)
+   if ((obj->cur.map) && (obj->cur.usemap))
      {
         cx = obj->cur.map->normal_geometry.x;
         cy = obj->cur.map->normal_geometry.y;
