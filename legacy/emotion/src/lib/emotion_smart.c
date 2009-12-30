@@ -88,12 +88,16 @@ static Evas_Smart  *smart = NULL;
 static Eina_Hash *_backends = NULL;
 static Eina_Array *_modules = NULL;
 
+static const char *_backend_priority[] = {
+  "xine",
+  "gstreamer",
+  "vlc"
+};
+
 EAPI Eina_Bool
  _emotion_module_register(const char *name, Emotion_Module_Open open, Emotion_Module_Close close)
 {
    Eina_Emotion_Plugins *plugin;
-
-   fprintf(stderr, "registering: %s\n", name);
 
    plugin = malloc(sizeof (Eina_Emotion_Plugins));
    if (!plugin) return EINA_FALSE;
@@ -107,7 +111,6 @@ EAPI Eina_Bool
 EAPI Eina_Bool
 _emotion_module_unregister(const char *name)
 {
-   fprintf(stderr, "unregistering: %s\n", name);
    return eina_hash_del(_backends, name, NULL);
 }
 
@@ -116,6 +119,7 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
 {
    Eina_Emotion_Plugins *plugin;
    Smart_Data *sd;
+   int index = 0;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    if (!_backends)
@@ -125,9 +129,16 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
      }
 
    /* FIXME: Always look for a working backend. */
+ retry:
+   if (name == NULL || index > 0)
+     name = _backend_priority[index++];
+
    plugin = eina_hash_find(_backends, name);
    if (!plugin)
      {
+	if (index != 0 && index < (sizeof (_backend_priority) / sizeof (char*)))
+	  goto retry;
+
 	fprintf(stderr, "No backend loaded\n");
 	return EINA_FALSE;
      }
@@ -140,6 +151,9 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
 	     return EINA_TRUE;
 	  }
      }
+
+   if (index != 0 && index < (sizeof (_backend_priority) / sizeof (char*)))
+     goto retry;
 
    fprintf (stderr, "Unable to load module %s\n", name);
 

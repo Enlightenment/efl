@@ -866,6 +866,10 @@ main(int argc, char **argv)
 	else if (!strcmp(argv[i], "-xr"))
 	  {
 	  }
+	else if (!strcmp(argv[i], "-auto"))
+	  {
+	     module_filename = NULL;
+	  }
 	else if (!strcmp(argv[i], "-xine"))
 	  {
              module_filename = "xine";
