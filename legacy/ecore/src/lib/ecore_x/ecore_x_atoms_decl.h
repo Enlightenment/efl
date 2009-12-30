@@ -234,6 +234,7 @@ EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_MODE_DUAL_TOP         = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_MODE_DUAL_LEFT        = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_BACK                  = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_CLOSE                 = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_HOME                  = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_DRAG                  = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_DRAG_LOCKED           = 0;
 EAPI Ecore_X_Atom  ECORE_X_ATOM_E_ILLUME_DRAG_START            = 0;

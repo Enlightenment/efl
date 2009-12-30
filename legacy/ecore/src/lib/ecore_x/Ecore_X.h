@@ -1551,6 +1551,7 @@ EAPI Ecore_X_Illume_Mode ecore_x_e_illume_mode_get(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_mode_send(Ecore_X_Window win, Ecore_X_Illume_Mode mode);
 EAPI void                ecore_x_e_illume_back_send(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_close_send(Ecore_X_Window win);
+EAPI void                ecore_x_e_illume_home_send(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_drag_set(Ecore_X_Window win, unsigned int drag);
 EAPI int                 ecore_x_e_illume_drag_get(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_drag_locked_set(Ecore_X_Window win, unsigned int is_locked);
@@ -1566,6 +1567,7 @@ EAPI void                ecore_x_e_illume_quickpanel_priority_major_set(Ecore_X_
 EAPI int                 ecore_x_e_illume_quickpanel_priority_major_get(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_quickpanel_priority_minor_set(Ecore_X_Window win, unsigned int priority);
 EAPI int                 ecore_x_e_illume_quickpanel_priority_minor_get(Ecore_X_Window win);
+EAPI void                ecore_x_e_illume_home_send(Ecore_X_Window win);
 
 EAPI void                ecore_x_xinerama_query_screens_prefetch(void);
 EAPI void                ecore_x_xinerama_query_screens_fetch(void);

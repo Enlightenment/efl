@@ -248,6 +248,14 @@ ecore_x_e_illume_close_send(Ecore_X_Window win)
 }
 
 EAPI void 
+ecore_x_e_illume_home_send(Ecore_X_Window win) 
+{
+   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_HOME,
+				 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE, 
+				 1, 0, 0, 0, 0);
+}
+
+EAPI void 
 ecore_x_e_illume_drag_set(Ecore_X_Window win, unsigned int drag) 
 {
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_DRAG, &drag, 1);
