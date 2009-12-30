@@ -32,7 +32,7 @@ my_fl_4(void *data, Evas_Object *obj, void *event_info)
 void
 test_flip(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *bx, *bx2, *fl, *o, *bt;
+   Evas_Object *win, *bg, *bx, *bx2, *fl, *o, *bt, *ly;
    char buf[PATH_MAX];
    
    win = elm_win_add(NULL, "flip", ELM_WIN_BASIC);
@@ -57,18 +57,35 @@ test_flip(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, fl);
 
    o = elm_bg_add(win);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, "sky_01.jpg");
    elm_bg_file_set(o, buf, NULL);
    elm_flip_content_front_set(fl, o);
    evas_object_show(o);
    
-   o = elm_bg_add(win);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, "rock_01.jpg");
-   elm_bg_file_set(o, buf, NULL);
-   elm_flip_content_back_set(fl, o);
-   evas_object_show(o);
+   ly = elm_layout_add(win);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
+   elm_layout_file_set(ly, buf, "layout");
+   evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_flip_content_back_set(fl, ly);
+//   evas_object_show(ly);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Button 1");
+   elm_layout_content_set(ly, "element1", bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Button 2");
+   elm_layout_content_set(ly, "element2", bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Button 3");
+   elm_layout_content_set(ly, "element3", bt);
+   evas_object_show(bt);
 
    evas_object_show(fl);
 

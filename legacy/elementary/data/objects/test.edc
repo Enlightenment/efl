@@ -109,7 +109,7 @@ collections {
       }
       programs {
          program { name: "anim1";
-            signal: "show";
+            signal: "load";
             source: "";
             action: STATE_SET "drift" 0.0;
             transition: LINEAR 10.0;
