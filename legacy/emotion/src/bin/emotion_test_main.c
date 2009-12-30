@@ -53,10 +53,16 @@ main_start(int argc, char **argv)
 {
    int mode = 0;
 
+   eina_init();
+
    start_time = ecore_time_get();
    if (!ecore_init()) return -1;
    ecore_app_args_set(argc, (const char **)argv);
    ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, NULL);
+
+   edje_init();
+   edje_frametime_set(1.0 / 30.0);
+
    if (!ecore_evas_init()) return -1;
 #ifndef FB_ONLY
      {
@@ -93,6 +99,10 @@ main_start(int argc, char **argv)
                {
 		  mode = 3;
                }
+	     else if (!strcmp(argv[i], "-auto"))
+	       {
+		  mode = 4;
+	       }
 	     else if ((!strcmp(argv[i], "-vis")) && (i < (argc - 1)))
 	       {
 		  vis = atoi(argv[i + 1]);
@@ -100,6 +110,8 @@ main_start(int argc, char **argv)
 	       }
           }
      }
+   if (mode == 4)
+     ecore_evas = ecore_evas_new(NULL, 0, 0, startw, starth, NULL);
 #if HAVE_ECORE_EVAS_X
    if (mode == 0)
      ecore_evas = ecore_evas_software_x11_new(NULL, 0,  0, 0, startw, starth);
@@ -131,8 +143,6 @@ main_start(int argc, char **argv)
    evas_font_cache_set(evas, 1 * 1024 * 1024);
    evas_font_path_append(evas, PACKAGE_DATA_DIR"/data/fonts");
 
-   edje_init();
-   edje_frametime_set(1.0 / 30.0);
    return 1;
 }
 
@@ -140,9 +150,13 @@ static void
 main_stop(void)
 {
    main_signal_exit(NULL, 0, NULL);
-   edje_shutdown();
+
+   ecore_evas_free(ecore_evas);
+
    ecore_evas_shutdown();
+   edje_shutdown();
    ecore_shutdown();
+   eina_shutdown();
 }
 
 static void
