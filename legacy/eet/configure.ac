@@ -274,7 +274,7 @@ AC_MSG_RESULT(${have_signature})
 
 # pthread library
 
-EFL_CHECK_PTHREAD([have_pthread="yes"], [have_pthread="no"])
+EFL_CHECK_PTHREAD(["no"], [have_pthread="yes"], [have_pthread="no"])
 
 
 ### Checks for header files

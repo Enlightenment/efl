@@ -37,11 +37,7 @@ fi
 
 AM_CONDITIONAL(EFL_ENABLE_TESTS, test "x${_efl_enable_tests}" = "xyes")
 
-if test "x${_efl_enable_tests}" = "xyes" ; then
-   m4_default([$1], [:])
-else
-   m4_default([$2], [:])
-fi
+AS_IF([test "x$_efl_enable_tests" = "xyes"], [$1], [$2])
 ])
 
 dnl End of efl_tests.m4
