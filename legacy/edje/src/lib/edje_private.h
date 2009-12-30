@@ -1358,7 +1358,17 @@ void _edje_embryo_globals_init(Edje *ed);
    float *___cptr; \
    if ((___cptr = (float *)embryo_data_address_get(ep, (par)))) { \
       val = *___cptr; } }
-#define GETINT(val, par) { \
+
+#define GETFLOAT_T(val, par)						\
+  {									\
+     float *___cptr;							\
+     if ((___cptr = (float *)embryo_data_address_get(ep, (par))))	\
+       {								\
+	  val = FROM_DOUBLE(*___cptr);					\
+       }								\
+  }
+
+#define GETINT(val, par) {			\
    int *___cptr; \
    if ((___cptr = (int *)embryo_data_address_get(ep, (par)))) { \
       val = *___cptr; } }
@@ -1382,6 +1392,14 @@ void _edje_embryo_globals_init(Edje *ed);
    float *___cptr; \
    if ((___cptr = (float *)embryo_data_address_get(ep, (par)))) { \
       *___cptr = (float)val; } }
+#define SETFLOAT_T(val, par)						\
+  {									\
+     float *___cptr;							\
+     if ((___cptr = (float *)embryo_data_address_get(ep, (par))))	\
+       {								\
+	  *___cptr = (float) TO_DOUBLE(val);				\
+       }								\
+  }
 #define SETINT(val, par) { \
    int *___cptr; \
    if ((___cptr = (int *)embryo_data_address_get(ep, (par)))) { \

@@ -1480,7 +1480,7 @@ static void
 _edje_table_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep, Edje_Calc_Params *p3 __UNUSED__, Edje_Part_Description *chosen_desc)
 {
    evas_object_table_homogeneous_set(ep->object, chosen_desc->table.homogeneous);
-   evas_object_table_align_set(ep->object, chosen_desc->table.align.x, chosen_desc->table.align.y);
+   evas_object_table_align_set(ep->object, TO_DOUBLE(chosen_desc->table.align.x), TO_DOUBLE(chosen_desc->table.align.y));
    evas_object_table_padding_set(ep->object, chosen_desc->table.padding.x, chosen_desc->table.padding.y);
    if (evas_object_smart_need_recalculate_get(ep->object))
      {
