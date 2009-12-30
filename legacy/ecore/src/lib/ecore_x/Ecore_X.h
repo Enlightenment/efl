@@ -1562,6 +1562,10 @@ EAPI int                 ecore_x_e_illume_quickpanel_get(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_quickpanel_state_set(Ecore_X_Window win, Ecore_X_Illume_Quickpanel_State state);
 EAPI Ecore_X_Illume_Quickpanel_State ecore_x_e_illume_quickpanel_state_get(Ecore_X_Window win);
 EAPI void                ecore_x_e_illume_quickpanel_state_send(Ecore_X_Window win, Ecore_X_Illume_Quickpanel_State state);
+EAPI void                ecore_x_e_illume_quickpanel_priority_major_set(Ecore_X_Window win, unsigned int priority);
+EAPI int                 ecore_x_e_illume_quickpanel_priority_major_get(Ecore_X_Window win);
+EAPI void                ecore_x_e_illume_quickpanel_priority_minor_set(Ecore_X_Window win, unsigned int priority);
+EAPI int                 ecore_x_e_illume_quickpanel_priority_minor_get(Ecore_X_Window win);
 
 EAPI void                ecore_x_xinerama_query_screens_prefetch(void);
 EAPI void                ecore_x_xinerama_query_screens_fetch(void);
