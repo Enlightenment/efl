@@ -262,7 +262,7 @@ _edje_match_patterns_exec_init_states(Edje_States       *states,
                                                                 \
      r = malloc(sizeof (Edje_Patterns) +                        \
                 eina_list_count(lst)                            \
-                * sizeof (*r->finals)                           \
+                * sizeof(*r->finals)                            \
                 * sizeof(*r->patterns));                        \
      if (!r) return NULL;                                       \
                                                                 \
@@ -288,7 +288,7 @@ _edje_match_patterns_exec_init_states(Edje_States       *states,
           r->patterns[i] = str;                                 \
                                                                 \
           if (Show)                                             \
-            INF("%li [%s]", i, str);				\
+            INF("%lu [%s]", (unsigned long)i, str);	        \
                                                                 \
           r->finals[i] = 0;                                     \
           for (j = 0; str[j]; ++j)                              \
