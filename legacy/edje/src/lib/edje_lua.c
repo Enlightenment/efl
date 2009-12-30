@@ -2506,9 +2506,9 @@ _edje_lua_description_get_alignment(lua_State *L)
       _edje_lua_checkudata(L, 1, &mDescription);
    if (!obj->rp->custom) return 0;
    lua_createtable(L, 2, 0);
-   lua_pushnumber(L, obj->rp->custom->description->align.x);
+   lua_pushnumber(L, TO_DOUBLE(obj->rp->custom->description->align.x));
    lua_rawseti(L, -2, 1);
-   lua_pushnumber(L, obj->rp->custom->description->align.y);
+   lua_pushnumber(L, TO_DOUBLE(obj->rp->custom->description->align.y));
    lua_rawseti(L, -2, 1);
    return 1;
 }
@@ -2651,9 +2651,9 @@ _edje_lua_description_get_rel1(lua_State *L)
       _edje_lua_checkudata(L, 1, &mDescription);
    if (!obj->rp->custom) return 0;
    lua_createtable(L, 2, 0);
-   lua_pushnumber(L, obj->rp->custom->description->rel1.relative_x);
+   lua_pushnumber(L, TO_DOUBLE(obj->rp->custom->description->rel1.relative_x));
    lua_rawseti(L, -2, 1);
-   lua_pushnumber(L, obj->rp->custom->description->rel1.relative_y);
+   lua_pushnumber(L, TO_DOUBLE(obj->rp->custom->description->rel1.relative_y));
    lua_rawseti(L, -2, 2);
    return 1;
 }
@@ -2693,9 +2693,9 @@ _edje_lua_description_get_rel2(lua_State *L)
       _edje_lua_checkudata(L, 1, &mDescription);
    if (!obj->rp->custom) return 0;
    lua_createtable(L, 2, 0);
-   lua_pushnumber(L, obj->rp->custom->description->rel2.relative_x);
+   lua_pushnumber(L, TO_DOUBLE(obj->rp->custom->description->rel2.relative_x));
    lua_rawseti(L, -2, 1);
-   lua_pushnumber(L, obj->rp->custom->description->rel2.relative_y);
+   lua_pushnumber(L, TO_DOUBLE(obj->rp->custom->description->rel2.relative_y));
    lua_rawseti(L, -2, 2);
    return 1;
 }
@@ -2781,9 +2781,9 @@ _edje_lua_description_get_fill_pos(lua_State *L)
       return 0;
    if (!obj->rp->custom) return 0;
    lua_createtable(L, 4, 0);
-   lua_pushnumber(L, obj->rp->custom->description->fill.pos_rel_x);
+   lua_pushnumber(L, TO_DOUBLE(obj->rp->custom->description->fill.pos_rel_x));
    lua_rawseti(L, -2, 1);
-   lua_pushnumber(L, obj->rp->custom->description->fill.pos_rel_y);
+   lua_pushnumber(L, TO_DOUBLE(obj->rp->custom->description->fill.pos_rel_y));
    lua_rawseti(L, -2, 2);
    lua_pushnumber(L, obj->rp->custom->description->fill.pos_abs_x);
    lua_rawseti(L, -2, 3);
@@ -2801,9 +2801,9 @@ _edje_lua_description_get_fill_size(lua_State *L)
       return 0;
    if (!obj->rp->custom) return 0;
    lua_createtable(L, 4, 0);
-   lua_pushnumber(L, obj->rp->custom->description->fill.rel_x);
+   lua_pushnumber(L, TO_DOUBLE(obj->rp->custom->description->fill.rel_x));
    lua_rawseti(L, -2, 1);
-   lua_pushnumber(L, obj->rp->custom->description->fill.rel_y);
+   lua_pushnumber(L, TO_DOUBLE(obj->rp->custom->description->fill.rel_y));
    lua_rawseti(L, -2, 2);
    lua_pushnumber(L, obj->rp->custom->description->fill.abs_x);
    lua_rawseti(L, -2, 3);
@@ -2933,9 +2933,9 @@ _edje_lua_description_get_text_align(lua_State *L)
       return 0;
    if (!obj->rp->custom) return 0;
    lua_createtable(L, 2, 0);
-   lua_pushnumber(L, obj->rp->custom->description->text.align.x);
+   lua_pushnumber(L, TO_DOUBLE(obj->rp->custom->description->text.align.x));
    lua_rawseti(L, -2, 1);
-   lua_pushnumber(L, obj->rp->custom->description->text.align.y);
+   lua_pushnumber(L, TO_DOUBLE(obj->rp->custom->description->text.align.y));
    lua_rawseti(L, -2, 2);
    return 1;
 }
@@ -2994,8 +2994,8 @@ _edje_lua_description_set_alignment(lua_State *L)
    luaL_checktype(L, 2, LUA_TTABLE);
    lua_rawgeti(L, 2, 1);
    lua_rawgeti(L, 2, 2);
-   obj->rp->custom->description->align.x = luaL_checknumber(L, -2);
-   obj->rp->custom->description->align.y = luaL_checknumber(L, -1);
+   obj->rp->custom->description->align.x = FROM_DOUBLE(luaL_checknumber(L, -2));
+   obj->rp->custom->description->align.y = FROM_DOUBLE(luaL_checknumber(L, -1));
    return 0;
 }
 
@@ -3136,8 +3136,8 @@ _edje_lua_description_set_rel1(lua_State *L)
    luaL_checktype(L, 2, LUA_TTABLE);
    lua_rawgeti(L, 2, 1);
    lua_rawgeti(L, 2, 2);
-   obj->rp->custom->description->rel1.relative_x = luaL_checknumber(L, -2);
-   obj->rp->custom->description->rel1.relative_y = luaL_checknumber(L, -1);
+   obj->rp->custom->description->rel1.relative_x = FROM_DOUBLE(luaL_checknumber(L, -2));
+   obj->rp->custom->description->rel1.relative_y = FROM_DOUBLE(luaL_checknumber(L, -1));
    return 0;
 }
 
@@ -3182,8 +3182,8 @@ _edje_lua_description_set_rel2(lua_State *L)
    luaL_checktype(L, 2, LUA_TTABLE);
    lua_rawgeti(L, 2, 1);
    lua_rawgeti(L, 2, 2);
-   obj->rp->custom->description->rel2.relative_x = luaL_checknumber(L, -2);
-   obj->rp->custom->description->rel2.relative_y = luaL_checknumber(L, -1);
+   obj->rp->custom->description->rel2.relative_x = FROM_DOUBLE(luaL_checknumber(L, -2));
+   obj->rp->custom->description->rel2.relative_y = FROM_DOUBLE(luaL_checknumber(L, -1));
    return 0;
 }
 
@@ -3426,8 +3426,8 @@ _edje_lua_description_set_text_align(lua_State *L)
    luaL_checktype(L, 2, LUA_TTABLE);
    lua_rawgeti(L, 2, 1);
    lua_rawgeti(L, 2, 2);
-   obj->rp->custom->description->text.align.x = luaL_checknumber(L, -2);
-   obj->rp->custom->description->text.align.y = luaL_checknumber(L, -1);
+   obj->rp->custom->description->text.align.x = FROM_DOUBLE(luaL_checknumber(L, -2));
+   obj->rp->custom->description->text.align.y = FROM_DOUBLE(luaL_checknumber(L, -1));
    return 0;
 }
 
