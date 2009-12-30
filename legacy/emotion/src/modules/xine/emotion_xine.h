@@ -43,8 +43,8 @@ struct _Emotion_Xine_Video
    unsigned char             video_mute : 1;
    unsigned char             audio_mute : 1;
    unsigned char             spu_mute : 1;
-   unsigned char             opt_no_video : 1;
-   unsigned char             opt_no_audio : 1;
+   Eina_Bool                 opt_no_video : 1;
+   Eina_Bool                 opt_no_audio : 1;
    volatile unsigned char    delete_me : 1;
    volatile unsigned char    no_time : 1;
    volatile unsigned char    opening : 1;
@@ -84,8 +84,5 @@ struct _Emotion_Xine_Event
    void *xine_event;
    int   mtype;
 };
-
-EAPI unsigned char         module_open(Evas_Object *obj, const Emotion_Video_Module **module, void **video, Emotion_Module_Options *opt);
-EAPI void                  module_close(Emotion_Video_Module *module, void *video);
 
 #endif

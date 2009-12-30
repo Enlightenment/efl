@@ -95,12 +95,4 @@ struct _Emotion_Gstreamer_Video
    unsigned char     audio_mute : 1;
 };
 
-EAPI unsigned char module_open(Evas_Object *obj,
-                               Emotion_Video_Module **module,
-                               void **video, Emotion_Module_Options *opt);
-
-EAPI void          module_close(Emotion_Video_Module  *module,
-                                void                  *video);
-
-
 #endif /* __EMOTION_GSTREAMER_H__ */

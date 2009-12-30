@@ -1201,25 +1201,46 @@ static Emotion_Video_Module em_module =
 	NULL /* handle */
 };
 
-unsigned char module_open(Evas_Object *obj, const Emotion_Video_Module **module, void **video, Emotion_Module_Options *opt)
+static Eina_Bool module_open(Evas_Object *obj, const Emotion_Video_Module **module, void **video, Emotion_Module_Options *opt)
 {
 	if (!module)	{
-		return 0;
+		return EINA_FALSE;
 	}
 
 	if (!em_module.init(obj, video, opt))	{
-		return 0;
+		return EINA_FALSE;
 	}
 
 	*module = &em_module;
-	
-	return 1;
+
+	return EINA_TRUE;
 }
 
-void module_close(Emotion_Video_Module *module, void *video)
+static void module_close(Emotion_Video_Module *module, void *video)
 {
 	em_module.shutdown(video);
 }
+
+
+Eina_Bool
+vlc_module_init(void)
+{
+   return _emotion_module_register("vlc", module_open, module_close);
+}
+
+void
+vlc_module_shutdown(void)
+{
+   _emotion_module_unregister("vlc");
+}
+
+#ifndef EINA_STATIC_BUILD_VLC
+
+EINA_MODULE_INIT(vlc_module_init);
+EINA_MODULE_SHUTDOWN(vlc_module_shutdown);
+
+#endif
+
 
 #endif /* EMOTION_VLC_C */
 

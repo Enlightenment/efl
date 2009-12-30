@@ -85,77 +85,78 @@ static void _smart_clip_unset(Evas_Object * obj);
 /* Globals for the E Video Object */
 /**********************************/
 static Evas_Smart  *smart = NULL;
-static Ecore_Path_Group *path_group = NULL;
+static Eina_Hash *_backends = NULL;
+static Eina_Array *_modules = NULL;
 
-static unsigned char
+EAPI Eina_Bool
+ _emotion_module_register(const char *name, Emotion_Module_Open open, Emotion_Module_Close close)
+{
+   Eina_Emotion_Plugins *plugin;
+
+   fprintf(stderr, "registering: %s\n", name);
+
+   plugin = malloc(sizeof (Eina_Emotion_Plugins));
+   if (!plugin) return EINA_FALSE;
+
+   plugin->open = open;
+   plugin->close = close;
+
+   return eina_hash_add(_backends, name, plugin);
+}
+
+EAPI Eina_Bool
+_emotion_module_unregister(const char *name)
+{
+   fprintf(stderr, "unregistering: %s\n", name);
+   return eina_hash_del(_backends, name, NULL);
+}
+
+static Eina_Bool
 _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **mod, void **video)
 {
-   Ecore_Plugin *plugin;
-   char *tmp = NULL;
+   Eina_Emotion_Plugins *plugin;
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!path_group)
-     path_group = ecore_path_group_new();
-   tmp = getenv("EMOTION_MODULES_DIR");
-   if (tmp)
-     ecore_path_group_add(path_group, tmp);
-   ecore_path_group_add(path_group, PACKAGE_LIB_DIR"/emotion/");
-   plugin = ecore_plugin_load(path_group, name, NULL);
-   if (plugin)
+   if (!_backends)
      {
-	unsigned char (*func_module_open)(Evas_Object *, Emotion_Video_Module **, void **, Emotion_Module_Options *);
+	fprintf(stderr, "No backend loaded\n");
+	return EINA_FALSE;
+     }
 
-	func_module_open = ecore_plugin_symbol_get(plugin, "module_open");
-	if (func_module_open)
+   /* FIXME: Always look for a working backend. */
+   plugin = eina_hash_find(_backends, name);
+   if (!plugin)
+     {
+	fprintf(stderr, "No backend loaded\n");
+	return EINA_FALSE;
+     }
+
+   if (plugin->open(obj, (const Emotion_Video_Module **) mod, video, &(sd->module_options)))
+     {
+	if (*mod)
 	  {
-	     if (func_module_open(obj, mod, video, &(sd->module_options)))
-	       {
-		  if (*mod)
-		    {
-		       (*mod)->plugin = plugin;
-		       (*mod)->path_group = path_group;
-		       return 1;
-		    }
-	       }
+	     (*mod)->plugin = plugin;
+	     return EINA_TRUE;
 	  }
-	ecore_plugin_unload(plugin);
-     }
-   else
-     fprintf (stderr, "Unable to load module %s\n", name);
-
-   if (path_group)
-     {
-        ecore_path_group_del(path_group);
-        path_group = NULL;
      }
 
-   return 0;
+   fprintf (stderr, "Unable to load module %s\n", name);
+
+   return EINA_FALSE;
 }
 
 static void
 _emotion_module_close(Emotion_Video_Module *mod, void *video)
 {
-   Ecore_Plugin *plugin;
-   void (*module_close) (Emotion_Video_Module *module, void *);
 
-   plugin = mod->plugin;
-   fprintf(stderr, "%p\n", plugin);
-   module_close = ecore_plugin_symbol_get(mod->plugin, "module_close");
-   if ((module_close) && (video)) module_close(mod, video);
+   if (mod->plugin->close && video)
+     mod->plugin->close(mod, video);
    /* FIXME: we can't go dlclosing here as a thread still may be running from
     * the module - this in theory will leak- but it shouldnt be too bad and
     * mean that once a module is dlopened() it cant be closed - its refcount
     * will just keep going up
     */
-   /*
-   ecore_plugin_unload(plugin);
-   */
-   if (path_group)
-     {
-        ecore_path_group_del(path_group);
-        path_group = NULL;
-     }
 }
 
 /*******************************/
@@ -180,11 +181,11 @@ emotion_object_module_option_set(Evas_Object *obj, const char *opt, const char *
    if ((!opt) || (!val)) return;
    if (!strcmp(opt, "video"))
      {
-	if (!strcmp(val, "off")) sd->module_options.no_video = 1;
+	if (!strcmp(val, "off")) sd->module_options.no_video = EINA_TRUE;
      }
    else if (!strcmp(opt, "audio"))
      {
-	if (!strcmp(val, "off")) sd->module_options.no_audio = 1;
+	if (!strcmp(val, "off")) sd->module_options.no_audio = EINA_TRUE;
      }
 }
 
@@ -1181,11 +1182,60 @@ _pixels_get(void *data, Evas_Object *obj)
 /*******************************************/
 /* Internal smart object required routines */
 /*******************************************/
+#ifdef EINA_STATIC_BUILD_XINE
+Eina_Bool xine_module_init(void);
+#endif
+#ifdef EINA_STATIC_BUILD_VLC
+Eina_Bool vlc_module_init(void);
+#endif
+#ifdef EINA_STATIC_BUILD_GSTREAMER
+Eina_Bool gstreamer_module_init(void);
+#endif
+
 static void
 _smart_init(void)
 {
+   char *path;
+
    if (smart) return;
      {
+	eina_init();
+
+	_backends = eina_hash_string_small_new(free);
+
+	_modules = eina_module_list_get(NULL, PACKAGE_LIB_DIR "/eina/mp/", 0, NULL, NULL);
+
+	path = eina_module_environment_path_get("HOME", "/.emotion/");
+	_modules = eina_module_list_get(_modules, path, 0, NULL, NULL);
+	if (path) free(path);
+
+	path = eina_module_environment_path_get("EMOTION_MODULES_DIR", "/emotion/");
+	_modules = eina_module_list_get(_modules, path, 0, NULL, NULL);
+	if (path) free(path);
+
+	path = eina_module_symbol_path_get(emotion_object_add, "/emotion/");
+	_modules = eina_module_list_get(_modules, path, 0, NULL, NULL);
+	if (path) free(path);
+
+	if (!_modules)
+	  {
+	     fprintf(stderr, "No module found !\n");
+	     return ;
+	  }
+
+	eina_module_list_load(_modules);
+
+	/* Init static module */
+#ifdef EINA_STATIC_BUILD_XINE
+	xine_module_init();
+#endif
+#ifdef EINA_STATIC_BUILD_VLC
+	vlc_module_init();
+#endif
+#ifdef EINA_STATIC_BUILD_GSTREAMER
+	gstreamer_module_init();
+#endif
+
 	static const Evas_Smart_Class sc =
 	  {
 	     E_OBJ_NAME,

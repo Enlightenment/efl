@@ -1526,24 +1526,43 @@ static Emotion_Video_Module em_module =
      NULL /* handle */
 };
 
-EAPI unsigned char
+static Eina_Bool
 module_open(Evas_Object *obj, const Emotion_Video_Module **module, void **video, Emotion_Module_Options *opt)
 {
    if (!module)
-      return 0;
-   
+      return EINA_FALSE;
+
    if (!em_module.init(obj, video, opt))
-      return 0;
+      return EINA_FALSE;
 
    *module = &em_module;
-   return 1;
+   return EINA_TRUE;
 }
 
-EAPI void
+static void
 module_close(Emotion_Video_Module *module, void *video)
 {
    em_module.shutdown(video);
 }
+
+Eina_Bool
+xine_module_init(void)
+{
+   return _emotion_module_register("xine", module_open, module_close);
+}
+
+void
+xine_module_shutdown(void)
+{
+   _emotion_module_unregister("xine");
+}
+
+#ifndef EINA_STATIC_BUILD_XINE
+
+EINA_MODULE_INIT(xine_module_init);
+EINA_MODULE_SHUTDOWN(xine_module_shutdown);
+
+#endif
 
 #if 0
 void

@@ -26,6 +26,10 @@
 typedef enum _Emotion_Format Emotion_Format;
 typedef struct _Emotion_Video_Module Emotion_Video_Module;
 typedef struct _Emotion_Module_Options Emotion_Module_Options;
+typedef struct _Eina_Emotion_Plugins Eina_Emotion_Plugins;
+
+typedef Eina_Bool (*Emotion_Module_Open)(Evas_Object *, const Emotion_Video_Module **, void **, Emotion_Module_Options *);
+typedef void (*Emotion_Module_Close)(Emotion_Video_Module *module, void *);
 
 enum _Emotion_Format
 {
@@ -38,8 +42,14 @@ enum _Emotion_Format
 
 struct _Emotion_Module_Options
 {
-   unsigned char no_video : 1;
-   unsigned char no_audio : 1;
+   Eina_Bool no_video : 1;
+   Eina_Bool no_audio : 1;
+};
+
+struct _Eina_Emotion_Plugins
+{
+   Emotion_Module_Open open;
+   Emotion_Module_Close close;
 };
 
 struct _Emotion_Video_Module
@@ -101,8 +111,7 @@ struct _Emotion_Video_Module
    int            (*eject) (void *ef);
    const char *   (*meta_get) (void *ef, int meta);
 
-   Ecore_Plugin    *plugin;
-   Ecore_Path_Group *path_group;
+   Eina_Emotion_Plugins *plugin;
 };
 
 EAPI void *_emotion_video_get(Evas_Object *obj);
@@ -118,5 +127,8 @@ EAPI void  _emotion_progress_set(Evas_Object *obj, char *info, double stat);
 EAPI void  _emotion_file_ref_set(Evas_Object *obj, const char *file, int num);
 EAPI void  _emotion_spu_button_num_set(Evas_Object *obj, int num);
 EAPI void  _emotion_spu_button_set(Evas_Object *obj, int button);
+
+EAPI Eina_Bool _emotion_module_register(const char *name, Emotion_Module_Open open, Emotion_Module_Close close);
+EAPI Eina_Bool _emotion_module_unregister(const char *name);
 
 #endif

@@ -1257,28 +1257,47 @@ em_meta_get(void *video, int meta)
    return str;
 }
 
-EAPI unsigned char
+static Eina_Bool
 module_open(Evas_Object           *obj,
-	    Emotion_Video_Module **module,
+	    const Emotion_Video_Module **module,
 	    void                 **video,
 	    Emotion_Module_Options *opt)
 {
    if (!module)
-     return 0;
+     return EINA_FALSE;
 
    if (!em_module.init(obj, video, opt))
-     return 0;
+     return EINA_FALSE;
 
    *module = &em_module;
-   return 1;
+   return EINA_TRUE;
 }
 
-EAPI void
+static void
 module_close(Emotion_Video_Module *module,
 	     void                 *video)
 {
    em_module.shutdown(video);
 }
+
+Eina_Bool
+gstreamer_module_init(void)
+{
+   return _emotion_module_register("gstreamer", module_open, module_close);
+}
+
+void
+gstreamer_module_shutdown(void)
+{
+   _emotion_module_unregister("gstreamer");
+}
+
+#ifndef EINA_STATIC_BUILD_GSTREAMER
+
+EINA_MODULE_INIT(gstreamer_module_init);
+EINA_MODULE_SHUTDOWN(gstreamer_module_shutdown);
+
+#endif
 
 static void
 _for_each_tag(GstTagList const* list,

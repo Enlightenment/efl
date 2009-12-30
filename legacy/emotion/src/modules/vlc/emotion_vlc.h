@@ -99,10 +99,6 @@ static double         em_speed_get               (void *ef);
 static int            em_eject                   (void *ef);
 static const char    *em_meta_get                (void *ef, int meta);
 
-/* entry points for module */
-unsigned char         module_open(Evas_Object *obj, const Emotion_Video_Module **module, void **video, Emotion_Module_Options *opt);
-void                  module_close(Emotion_Video_Module *module, void *video);
-
 typedef struct _vlc_event_t {
 	libvlc_event_type_t type;
 	int data_length;
@@ -145,8 +141,8 @@ struct _Emotion_Vlc_Video
    unsigned char             video_mute : 1;
    unsigned char             audio_mute : 1;
    unsigned char             spu_mute : 1;
-   unsigned char             opt_no_video : 1;
-   unsigned char             opt_no_audio : 1;
+   Eina_Bool                 opt_no_video : 1;
+   Eina_Bool                 opt_no_audio : 1;
    volatile unsigned char    delete_me : 1;
    volatile unsigned char    opening : 1;
    volatile unsigned char    closing : 1;
