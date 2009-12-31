@@ -498,6 +498,8 @@ eina_benchmark_new(const char *name, const char *run)
 EAPI void
 eina_benchmark_free(Eina_Benchmark *bench)
 {
+   Eina_Array *names;
+
    if (!bench) return ;
 
    while (bench->runs)
@@ -508,23 +510,16 @@ eina_benchmark_free(Eina_Benchmark *bench)
 	free(run);
      }
 
-   while (bench->names)
+   EINA_LIST_FREE(bench->names, names)
      {
-	Eina_Array *names;
+	Eina_Array_Iterator it;
+	char *tmp;
+	unsigned int i;
 
-	names = eina_list_data_get(bench->names);
-	if (names)
-	  {
-	     Eina_Array_Iterator it;
-	     char *tmp;
-	     unsigned int i;
- 
-	     EINA_ARRAY_ITER_NEXT(names, i, tmp, it)
-	     free(tmp);
- 
-	     eina_array_free(names);
-	  }
-	bench->names = eina_list_remove_list(bench->names, bench->names);
+	EINA_ARRAY_ITER_NEXT(names, i, tmp, it)
+	  free(tmp);
+
+	eina_array_free(names);
      }
 
    free(bench);
