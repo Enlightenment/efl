@@ -75,18 +75,6 @@
  *
  *   ea = eina_benchmark_run(test);
  *
- *   if(ea)
- *     {
- *       Eina_Array_Iterator it;
- *       char *tmp;
- *       unsigned int i;
- *
- *       EINA_ARRAY_ITER_NEXT(ea, i, tmp, it)
- *         free(tmp);
- *
- *       eina_array_free(ea);
- *     }
- *
  *   eina_benchmark_free(test);
  *   eina_shutdown();
  *
@@ -276,20 +264,8 @@
  *       benchmarks[i].build(test);
  *
  *       ea = eina_benchmark_run(test);
- *       if(ea)
- *         {
- *           Eina_Array_Iterator it;
- *           char *tmp;
- *           unsigned int i;
  *
- *           EINA_ARRAY_ITER_NEXT(ea, i, tmp, it)
- *             free(tmp);
- *
- *           eina_array_free(ea);
- *         }
- *
- *       if (test)
- *         eina_benchmark_free(test);
+ *       eina_benchmark_free(test);
  *     }
  *
  *   eina_shutdown();
@@ -345,6 +321,7 @@ void *alloca (size_t);
 #include "eina_log.h"
 #include "eina_benchmark.h"
 #include "eina_inlist.h"
+#include "eina_list.h"
 #include "eina_counter.h"
 
 /*============================================================================*
@@ -376,6 +353,7 @@ struct _Eina_Benchmark
    const char *run;
 
    Eina_Inlist *runs;
+   Eina_List *names;
 };
 
 static int _eina_benchmark_log_dom = -1;
@@ -528,6 +506,25 @@ eina_benchmark_free(Eina_Benchmark *bench)
 
 	bench->runs = eina_inlist_remove(bench->runs, bench->runs);
 	free(run);
+     }
+
+   while (bench->names)
+     {
+	Eina_Array *names;
+
+	names = eina_list_data_get(bench->names);
+	if (names)
+	  {
+	     Eina_Array_Iterator it;
+	     char *tmp;
+	     unsigned int i;
+ 
+	     EINA_ARRAY_ITER_NEXT(names, i, tmp, it)
+	     free(tmp);
+ 
+	     eina_array_free(names);
+	  }
+	bench->names = eina_list_remove_list(bench->names, bench->names);
      }
 
    free(bench);
@@ -708,6 +705,8 @@ eina_benchmark_run(Eina_Benchmark *bench)
    fprintf(main_script, "\n");
 
    fclose(main_script);
+
+   bench->names = eina_list_append(bench->names, ea);
 
    return ea;
 }

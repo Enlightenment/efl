@@ -85,17 +85,6 @@ main(int argc, char **argv)
 	etc[i].build(test);
 
 	ea = eina_benchmark_run(test);
-	if (ea)
-	  {
-	     Eina_Array_Iterator it;
-	     char *tmp;
-	     unsigned int i;
-
-	     EINA_ARRAY_ITER_NEXT(ea, i, tmp, it)
-	       free(tmp);
-
-	     eina_array_free(ea);
-	  }
 
 	eina_benchmark_free(test);
      }
