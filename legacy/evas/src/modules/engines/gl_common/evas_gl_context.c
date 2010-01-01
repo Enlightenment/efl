@@ -863,6 +863,7 @@ shader_array_flush(Evas_GL_Context *gc)
              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
           }
      }
+/* hmmm this breaks things. must find out why!   
    if (gc->shader.clip != gc->shader.current.clip)
      {
         if (gc->shader.clip)
@@ -891,7 +892,7 @@ shader_array_flush(Evas_GL_Context *gc)
 //                    gc->clip.h);
         
      }
-
+ */
    glVertexAttribPointer(SHAD_VERTEX, 3, GL_SHORT, GL_FALSE, 0, gc->array.vertex);
    glVertexAttribPointer(SHAD_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, gc->array.color);
    glVertexAttribPointer(SHAD_TEXUV, 2, GL_FLOAT, GL_FALSE, 0, gc->array.texuv);

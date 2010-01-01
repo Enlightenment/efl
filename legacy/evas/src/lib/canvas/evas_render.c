@@ -990,6 +990,14 @@ evas_render_updates_internal(Evas *e,
                               {
                                  evas_object_clip_recalc(obj);
                               }
+/* hmmmm clip seems to kill eweather in elm-test                           
+                            printf("clip: %4i %4i %4ix%4i to %4i %4i %4ix%4i\n",
+                                   x, y, w, h,
+                                   obj->cur.cache.clip.x + off_x,
+                                   obj->cur.cache.clip.y + off_y,
+                                   obj->cur.cache.clip.w,
+                                   obj->cur.cache.clip.h);
+ */
                             RECTS_CLIP_TO_RECT(x, y, w, h,
                                                obj->cur.cache.clip.x + off_x,
                                                obj->cur.cache.clip.y + off_y,
