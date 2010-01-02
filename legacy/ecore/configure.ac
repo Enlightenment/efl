@@ -233,6 +233,22 @@ AC_ARG_ENABLE(simple-x11,
   AC_HELP_STRING([--enable-simple-x11], [enable simple x11 linking]),
   [want_evas_simple_x11=$enableval])
 
+# XIM
+AC_ARG_ENABLE([xim],
+   [AC_HELP_STRING([--enable-xim], [enable X Input Method.])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_xim="yes"
+    else
+       want_xim="no"
+    fi
+   ],
+   [want_xim="no"])
+
+if test "x${want_xim}" = "xyes" ; then
+   AC_DEFINE([ENABLE_XIM], [1], [Enable X Input Method])
+fi
+
 
 ### Checks for programs
 
@@ -1252,6 +1268,7 @@ if test "x$have_ecore_x" = "xyes" ; then
     echo "    Xdamage....................: $use_xdamage"
     echo "    Xdpms......................: $use_xdpms"
     echo "    Xtest......................: $use_xtest"
+    echo "    XIM........................: $want_xim"
   fi
 else
   echo "  Ecore_X......................: $have_ecore_x"
