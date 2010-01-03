@@ -178,7 +178,9 @@ EAPI int
 ecore_file_mkdirs(const char **dirs)
 {
    if (!dirs) return -1;
+
    int i = 0;
+
    for (; *dirs != NULL; dirs++)
      if (ecore_file_mkdir(*dirs))
        i++;
@@ -323,17 +325,14 @@ ecore_file_remove(const char *file)
 EAPI int
 ecore_file_recursive_rm(const char *dir)
 {
-   DIR                *dirp;
-   struct dirent      *dp;
-   char               path[PATH_MAX];
-   char               buf[PATH_MAX];
-   struct             stat st;
-   int                ret;
+   DIR *dirp;
+   struct dirent *dp;
+   char path[PATH_MAX], buf[PATH_MAX];
+   struct stat st;
+   int ret;
 
    if (readlink(dir, buf, sizeof(buf)) > 0)
-     {
-	return ecore_file_unlink(dir);
-     }
+     return ecore_file_unlink(dir);
 
    ret = stat(dir, &st);
    if ((ret == 0) && (S_ISDIR(st.st_mode)))
@@ -370,6 +369,7 @@ static inline int
 _ecore_file_mkpath_if_not_exists(const char *path)
 {
    struct stat st;
+
    if (stat(path, &st) < 0)
      return ecore_file_mkdir(path);
    else if (!S_ISDIR(st.st_mode))
@@ -419,8 +419,11 @@ ecore_file_mkpath(const char *path)
 EAPI int
 ecore_file_mkpaths(const char **paths)
 {
+
    if (!paths) return -1;
+
    int i = 0;
+
    for (; *paths != NULL; paths++)
      if (ecore_file_mkpath(*paths))
        i++;
@@ -436,12 +439,11 @@ ecore_file_mkpaths(const char **paths)
 EAPI int
 ecore_file_cp(const char *src, const char *dst)
 {
-   FILE               *f1, *f2;
-   char                buf[16384];
-   char                realpath1[PATH_MAX];
-   char                realpath2[PATH_MAX];
-   size_t              num;
-   int                 ret = 1;
+   FILE *f1, *f2;
+   char buf[16384];
+   char realpath1[PATH_MAX], realpath2[PATH_MAX];
+   size_t num;
+   int ret = 1;
 
    if (!realpath(src, realpath1)) return 0;
    if (realpath(dst, realpath2) && !strcmp(realpath1, realpath2)) return 0;
@@ -489,6 +491,7 @@ ecore_file_mv(const char *src, const char *dst)
 	     if (S_ISREG(st.st_mode))
 	       {
 		  char *dir;
+
 		  dir = ecore_file_dir_get(dst);
 		  // Since we can't directly rename, try to 
 		  // copy to temp file in the dst directory
@@ -559,7 +562,7 @@ ecore_file_symlink(const char *src, const char *dest)
 EAPI char *
 ecore_file_realpath(const char *file)
 {
-   char  buf[PATH_MAX];
+   char buf[PATH_MAX];
 
    /*
     * Some implementations of realpath do not conform to the SUS.
@@ -595,15 +598,12 @@ ecore_file_file_get(const char *path)
 EAPI char *
 ecore_file_dir_get(const char *file)
 {
-   char               *p;
-   char                buf[PATH_MAX];
+   char *p;
+   char buf[PATH_MAX];
 
    strncpy(buf, file, PATH_MAX);
    p = strrchr(buf, '/');
-   if (!p)
-     {
-	return strdup(file);
-     }
+   if (!p) return strdup(file);
 
    if (p == buf) return strdup("/");
 
@@ -658,8 +658,8 @@ ecore_file_can_exec(const char *file)
 EAPI char *
 ecore_file_readlink(const char *link)
 {
-   char                buf[PATH_MAX];
-   int                 count;
+   char buf[PATH_MAX];
+   int count;
 
    if ((count = readlink(link, buf, sizeof(buf))) < 0) return NULL;
    buf[count] = 0;
@@ -679,10 +679,10 @@ ecore_file_readlink(const char *link)
 EAPI Eina_List *
 ecore_file_ls(const char *dir)
 {
-   char               *f;
-   DIR                *dirp;
-   struct dirent      *dp;
-   Eina_List         *list = NULL;
+   char *f;
+   DIR *dirp;
+   struct dirent *dp;
+   Eina_List *list = NULL;
 
    dirp = opendir(dir);
    if (!dirp) return NULL;
@@ -902,9 +902,7 @@ ecore_file_strip_ext(const char *path)
 
    p = strrchr(path, '.');
    if (!p)
-     {
-	file = strdup(path);
-     }
+     file = strdup(path);
    else if (p != path)
      {
 	file = malloc(((p - path) + 1) * sizeof(char));
