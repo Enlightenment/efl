@@ -206,6 +206,7 @@ struct _Evas_Smart_Class /** a smart object class */
 
 typedef struct _Evas_Pixel_Import_Source Evas_Pixel_Import_Source; /**< A source description of pixels for importing pixels */
 typedef struct _Evas_Engine_Info      Evas_Engine_Info; /**< A generic Evas Engine information structure */
+typedef struct _Evas_Device           Evas_Device; /**< A source device handle - where the event came from */
 typedef struct _Evas_Event_Mouse_Down Evas_Event_Mouse_Down; /**< Event structure for #EVAS_CALLBACK_MOUSE_DOWN event callbacks */
 typedef struct _Evas_Event_Mouse_Up   Evas_Event_Mouse_Up; /**< Event structure for #EVAS_CALLBACK_MOUSE_UP event callbacks */
 typedef struct _Evas_Event_Mouse_In   Evas_Event_Mouse_In; /**< Event structure for #EVAS_CALLBACK_MOUSE_IN event callbacks */
@@ -322,6 +323,7 @@ struct _Evas_Event_Mouse_Down /** Mouse button press event */
    Evas_Button_Flags flags;
    unsigned int      timestamp;
    Evas_Event_Flags  event_flags;
+   Evas_Device      *dev;
 };
 
 struct _Evas_Event_Mouse_Up /** Mouse button release event */
@@ -340,6 +342,7 @@ struct _Evas_Event_Mouse_Up /** Mouse button release event */
    Evas_Button_Flags flags;
    unsigned int      timestamp;
    Evas_Event_Flags  event_flags;
+   Evas_Device      *dev;
 };
 
 struct _Evas_Event_Mouse_In /** Mouse enter event */
@@ -356,6 +359,7 @@ struct _Evas_Event_Mouse_In /** Mouse enter event */
    Evas_Lock     *locks;
    unsigned int   timestamp;
    Evas_Event_Flags  event_flags;
+   Evas_Device      *dev;
 };
 
 struct _Evas_Event_Mouse_Out /** Mouse leave event */
@@ -372,6 +376,7 @@ struct _Evas_Event_Mouse_Out /** Mouse leave event */
    Evas_Lock     *locks;
    unsigned int   timestamp;
    Evas_Event_Flags  event_flags;
+   Evas_Device      *dev;
 };
 
 struct _Evas_Event_Mouse_Move /** Mouse button down event */
@@ -390,6 +395,7 @@ struct _Evas_Event_Mouse_Move /** Mouse button down event */
    Evas_Lock     *locks;
    unsigned int   timestamp;
    Evas_Event_Flags  event_flags;
+   Evas_Device      *dev;
 };
 
 struct _Evas_Event_Mouse_Wheel /** Wheel event */
@@ -410,6 +416,7 @@ struct _Evas_Event_Mouse_Wheel /** Wheel event */
    Evas_Lock     *locks;
    unsigned int   timestamp;
    Evas_Event_Flags  event_flags;
+   Evas_Device      *dev;
 };
 
 struct _Evas_Event_Key_Down /** Key press event */
@@ -424,6 +431,7 @@ struct _Evas_Event_Key_Down /** Key press event */
    const char    *compose; /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
    unsigned int   timestamp;
    Evas_Event_Flags  event_flags;
+   Evas_Device      *dev;
 };
 
 struct _Evas_Event_Key_Up /** Key release event */
@@ -438,6 +446,7 @@ struct _Evas_Event_Key_Up /** Key release event */
    const char    *compose; /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
    unsigned int   timestamp;
    Evas_Event_Flags  event_flags;
+   Evas_Device      *dev;
 };
 
 struct _Evas_Event_Hold /** Hold change event */
@@ -447,6 +456,7 @@ struct _Evas_Event_Hold /** Hold change event */
 
    unsigned int   timestamp;
    Evas_Event_Flags  event_flags;
+   Evas_Device      *dev;
 };
 
 typedef enum _Evas_Object_Pointer_Mode
