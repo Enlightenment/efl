@@ -12,6 +12,24 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
+
+struct _Ecore_Timer
+{
+   EINA_INLIST;
+   ECORE_MAGIC;
+   double          in;
+   double          at;
+   double          pending;
+   int           (*func) (void *data);
+   void           *data;
+
+   unsigned char   delete_me : 1;
+   unsigned char   just_added : 1;
+   unsigned char   frozen : 1;
+   unsigned char   running : 1;
+};
+
+
 static void _ecore_timer_set(Ecore_Timer *timer, double at, double in, int (*func) (void *data), void *data);
 
 static int          timers_added = 0;

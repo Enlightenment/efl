@@ -11,6 +11,18 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
+
+struct _Ecore_Poller
+{
+   EINA_INLIST;
+   ECORE_MAGIC;
+   int           ibit;
+   unsigned char delete_me : 1;
+   int           (*func) (void *data);
+   void          *data;
+};
+
+
 static Ecore_Timer    *timer = NULL;
 static int             min_interval = -1;
 static int             interval_incr = 0;

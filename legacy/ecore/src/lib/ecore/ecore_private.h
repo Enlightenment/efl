@@ -1,28 +1,6 @@
 #ifndef _ECORE_PRIVATE_H
 #define _ECORE_PRIVATE_H
 
-#include <sys/types.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#ifdef HAVE_SIGNAL_H
-# include <signal.h>
-#endif
-
-#ifdef _WIN32
-# define WIN32_LEAN_AND_MEAN
-# include <windows.h>
-# undef WIN32_LEAN_AND_MEAN
-#endif
-
-#include <Eina.h>
-
-#ifdef EAPI
-# undef EAPI
-#endif
-
 extern int _ecore_log_dom ;
 #ifdef  _ECORE_DEFAULT_LOG_DOM
 # undef _ECORE_DEFAULT_LOG_DOM
@@ -58,34 +36,6 @@ extern int _ecore_log_dom ;
 # undef CRIT
 #endif
 #define CRIT(...) EINA_LOG_DOM_CRIT(_ECORE_DEFAULT_LOG_DOM, __VA_ARGS__)
-#ifdef _WIN32
-# ifdef EFL_ECORE_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif /* ! DLL_EXPORT */
-# else
-#  define EAPI __declspec(dllimport)
-# endif /* ! EFL_ECORE_BUILD */
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif /* ! _WIN32 */
-
-#ifdef __GNUC__
-# if __GNUC__ >= 4
-// BROKEN in gcc 4 on amd64
-//#  pragma GCC visibility push(hidden)
-# endif
-#endif
 
 #ifndef PATH_MAX
 # define PATH_MAX 4096
@@ -162,228 +112,6 @@ EAPI void ecore_print_warning(const char *function, const char *sparam);
 
 typedef unsigned int              Ecore_Magic;
 
-   /* FIXME: Getting respawn to work
-    *
-    * There is no way that we can do anything about the internal state info of
-    * an external exe.  The same can be said about the state of user code.  User
-    * code in this context means the code that is using ecore_exe to manage exe's
-    * for it.
-    *
-    * Document that the exe must be respawnable, in other words, there is no
-    * state that it cannot regenerate by just killing it and starting it again.
-    * This includes state that the user code knows about, as the respawn is
-    * transparent to that code.  On the other hand, maybe a respawn event might
-    * be useful, or maybe resend the currently non existant add event.  For
-    * consistancy with ecore_con, an add event is good anyway.
-    *
-    * The Ecore_exe structure is reused for respawning, so that the (opaque)
-    * pointer held by the user remains valid.  This means that the Ecore_Exe
-    * init and del functions may need to be split into two parts each to avoid
-    * duplicating code - common code part, and the rest.  This implies that
-    * the unchanging members mentioned next should NEVER change.
-    *
-    * These structure members don't need to change -
-    *   __list_data       - we stay on the list
-    *   ECORE_MAGIC       - this is a constant
-    *   data              - passed in originally
-    *   cmd               - passed in originally
-    *   flags             - passed in originally
-    *
-    * These structure members need to change -
-    *   tag               - state that must be regenerated, zap it
-    *   pid               - it will be different
-    *   child_fd_write    - it will be different
-    *   child_fd_read     - it will be different
-    *   child_fd_error    - it will be different
-    *   write_fd_handler  - we cannot change the fd used by a handler, this changes coz the fd changes.
-    *   read_fd_handler   - we cannot change the fd used by a handler, this changes coz the fd changes.
-    *   error_fd_handler  - we cannot change the fd used by a handler, this changes coz the fd changes.
-    *
-    * Hmm, the read, write, and error buffers could be tricky.
-    * They are not atomic, and could be in a semi complete state.
-    * They fall into the "state must be regenerated" mentioned above.
-    * A respawn/add event should take care of it.
-    *
-    * These structure members need to change -
-    *   write_data_buf    - state that must be regenerated, zap it
-    *   write_data_size   - state that must be regenerated, zap it
-    *   write_data_offset - state that must be regenerated, zap it
-    *   read_data_buf     - state that must be regenerated, zap it
-    *   read_data_size    - state that must be regenerated, zap it
-    *   error_data_buf    - state that must be regenerated, zap it
-    *   error_data_size   - state that must be regenerated, zap it
-    *   close_write       - state that must be regenerated, zap it
-    *
-    * There is the problem that an exe that fell over and needs respawning
-    * might keep falling over, keep needing to be respawned, and tie up system
-    * resources with the constant respawning.  An exponentially increasing
-    * timeout (with maximum timeout) between respawns should take care of that.
-    * Although this is not a "contention for a resource" problem, the exe falling
-    * over may be, so a random element added to the timeout may help, and won't
-    * hurt.  The user code may need to be informed that a timeout is in progress.
-    */
-#ifndef _WIN32
-struct _Ecore_Exe
-{
-   EINA_INLIST;
-   ECORE_MAGIC;
-   pid_t        pid;
-   void        *data;
-   char        *tag;
-   char        *cmd;
-   Ecore_Exe_Flags  flags;
-   Ecore_Fd_Handler *write_fd_handler; /* the fd_handler to handle write to child - if this was used, or NULL if not */
-   Ecore_Fd_Handler *read_fd_handler; /* the fd_handler to handle read from child - if this was used, or NULL if not */
-   Ecore_Fd_Handler *error_fd_handler; /* the fd_handler to handle errors from child - if this was used, or NULL if not */
-   void        *write_data_buf; /* a data buffer for data to write to the child -
-                                 * realloced as needed for more data and flushed when the fd handler says writes are possible
-				 */
-   int          write_data_size; /* the size in bytes of the data buffer */
-   int          write_data_offset; /* the offset in bytes in the data buffer */
-   void        *read_data_buf; /* data read from the child awating delivery to an event */
-   int          read_data_size; /* data read from child in bytes */
-   void        *error_data_buf; /* errors read from the child awating delivery to an event */
-   int          error_data_size; /* errors read from child in bytes */
-   int          child_fd_write;	/* fd to write TO to send data to the child */
-   int          child_fd_read;	/* fd to read FROM when child has sent us (the parent) data */
-   int          child_fd_error;	/* fd to read FROM when child has sent us (the parent) errors */
-   int          child_fd_write_x;	/* fd to write TO to send data to the child */
-   int          child_fd_read_x;	/* fd to read FROM when child has sent us (the parent) data */
-   int          child_fd_error_x;	/* fd to read FROM when child has sent us (the parent) errors */
-   int          close_stdin;
-
-   int start_bytes, end_bytes, start_lines, end_lines; /* Number of bytes/lines to auto pipe at start/end of stdout/stderr. */
-
-   Ecore_Timer *doomsday_clock; /* The Timer of Death.  Muahahahaha. */
-   void        *doomsday_clock_dead; /* data for the doomsday clock */
-};
-#endif
-
-struct _Ecore_Timer
-{
-   EINA_INLIST;
-   ECORE_MAGIC;
-   double          in;
-   double          at;
-   double          pending;
-   int           (*func) (void *data);
-   void           *data;
-
-   unsigned char   delete_me : 1;
-   unsigned char   just_added : 1;
-   unsigned char   frozen : 1;
-   unsigned char   running : 1;
-};
-
-struct _Ecore_Idler
-{
-   EINA_INLIST;
-   ECORE_MAGIC;
-   int          delete_me : 1;
-   int        (*func) (void *data);
-   void        *data;
-};
-
-struct _Ecore_Idle_Enterer
-{
-   EINA_INLIST;
-   ECORE_MAGIC;
-   int          delete_me : 1;
-   int        (*func) (void *data);
-   void        *data;
-};
-
-struct _Ecore_Idle_Exiter
-{
-   EINA_INLIST;
-   ECORE_MAGIC;
-   int          delete_me : 1;
-   int        (*func) (void *data);
-   void        *data;
-};
-
-struct _Ecore_Fd_Handler
-{
-   EINA_INLIST;
-   ECORE_MAGIC;
-   int                      fd;
-   Ecore_Fd_Handler_Flags   flags;
-   int                      read_active : 1;
-   int                      write_active : 1;
-   int                      error_active : 1;
-   int                      delete_me : 1;
-   int                    (*func) (void *data, Ecore_Fd_Handler *fd_handler);
-   void                    *data;
-   int                    (*buf_func) (void *data, Ecore_Fd_Handler *fd_handler);
-   void                    *buf_data;
-   void                   (*prep_func) (void *data, Ecore_Fd_Handler *fd_handler);
-   void                    *prep_data;
-};
-
-#ifdef _WIN32
-struct _Ecore_Win32_Handler
-{
-   EINA_INLIST;
-   ECORE_MAGIC;
-   HANDLE         h;
-   int          (*func) (void *data, Ecore_Win32_Handler *win32_handler);
-   void          *data;
-   int            delete_me : 1;
-};
-#endif
-
-struct _Ecore_Event_Handler
-{
-   EINA_INLIST;
-   ECORE_MAGIC;
-   int          type;
-   int          delete_me : 1;
-   int        (*func) (void *data, int type, void *event);
-   void        *data;
-};
-
-struct _Ecore_Event_Filter
-{
-   EINA_INLIST;
-   ECORE_MAGIC;
-   int          delete_me : 1;
-   void *     (*func_start) (void *data);
-   int        (*func_filter) (void *data, void *loop_data, int type, void *event);
-   void       (*func_end) (void *data, void *loop_data);
-   void        *loop_data;
-   void        *data;
-};
-
-struct _Ecore_Event
-{
-   EINA_INLIST;
-   ECORE_MAGIC;
-   int          type;
-   void        *event;
-   int          delete_me : 1;
-   void       (*func_free) (void *data, void *ev);
-   void        *data;
-};
-
-struct _Ecore_Animator
-{
-   EINA_INLIST;
-   ECORE_MAGIC;
-   unsigned char delete_me : 1;
-   int           (*func) (void *data);
-   void          *data;
-};
-
-struct _Ecore_Poller
-{
-   EINA_INLIST;
-   ECORE_MAGIC;
-   int           ibit;
-   unsigned char delete_me : 1;
-   int           (*func) (void *data);
-   void          *data;
-};
-
 EAPI void          _ecore_magic_fail(const void *d, Ecore_Magic m, Ecore_Magic req_m, const char *fname);
 
 void          _ecore_timer_shutdown(void);
@@ -410,7 +138,10 @@ Ecore_Event  *_ecore_event_add(int type, void *ev, void (*func_free) (void *data
 void         *_ecore_event_del(Ecore_Event *event);
 void          _ecore_event_call(void);
 
-EAPI void         *_ecore_event_signal_user_new(void);
+Ecore_Timer  *_ecore_exe_doomsday_clock_get(Ecore_Exe *exe);
+void          _ecore_exe_doomsday_clock_set(Ecore_Exe *exe, Ecore_Timer *dc);
+
+EAPI void    *_ecore_event_signal_user_new(void);
 void         *_ecore_event_signal_hup_new(void);
 void         *_ecore_event_signal_exit_new(void);
 void         *_ecore_event_signal_power_new(void);

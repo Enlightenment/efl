@@ -11,6 +11,17 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
+
+struct _Ecore_Idler
+{
+   EINA_INLIST;
+   ECORE_MAGIC;
+   int          delete_me : 1;
+   int        (*func) (void *data);
+   void        *data;
+};
+
+
 static Ecore_Idler *idlers = NULL;
 static int          idlers_delete_me = 0;
 

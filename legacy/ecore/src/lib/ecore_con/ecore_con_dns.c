@@ -33,6 +33,8 @@
 #endif
 
 #include <string.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include <ctype.h>
 #ifdef __OpenBSD__
 # include <sys/types.h>

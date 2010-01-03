@@ -260,6 +260,7 @@ extern "C" {
    EAPI char       *ecore_exe_tag_get(Ecore_Exe *exe);
    EAPI char       *ecore_exe_cmd_get(Ecore_Exe *exe);
    EAPI void       *ecore_exe_data_get(Ecore_Exe *exe);
+   EAPI Ecore_Exe_Flags ecore_exe_flags_get(Ecore_Exe *exe);
    EAPI void        ecore_exe_pause(Ecore_Exe *exe);
    EAPI void        ecore_exe_continue(Ecore_Exe *exe);
    EAPI void        ecore_exe_interrupt(Ecore_Exe *exe);

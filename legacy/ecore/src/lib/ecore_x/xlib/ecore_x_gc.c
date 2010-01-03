@@ -6,6 +6,8 @@
 # include <config.h>
 #endif
 
+#include <string.h>
+
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"

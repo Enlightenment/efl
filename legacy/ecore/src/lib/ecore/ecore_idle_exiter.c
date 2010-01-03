@@ -11,6 +11,17 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
+
+struct _Ecore_Idle_Exiter
+{
+   EINA_INLIST;
+   ECORE_MAGIC;
+   int          delete_me : 1;
+   int        (*func) (void *data);
+   void        *data;
+};
+
+
 static Ecore_Idle_Exiter *idle_exiters = NULL;
 static int                idle_exiters_delete_me = 0;
 

@@ -7,6 +7,8 @@
 #endif
 
 #include <string.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "Ecore.h"
 #include "ecore_private.h"

@@ -8,6 +8,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "Ecore.h"
 #include "ecore_private.h"

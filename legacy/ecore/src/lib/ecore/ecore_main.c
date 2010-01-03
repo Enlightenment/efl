@@ -36,6 +36,38 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
+
+struct _Ecore_Fd_Handler
+{
+   EINA_INLIST;
+   ECORE_MAGIC;
+   int                      fd;
+   Ecore_Fd_Handler_Flags   flags;
+   int                      read_active : 1;
+   int                      write_active : 1;
+   int                      error_active : 1;
+   int                      delete_me : 1;
+   int                    (*func) (void *data, Ecore_Fd_Handler *fd_handler);
+   void                    *data;
+   int                    (*buf_func) (void *data, Ecore_Fd_Handler *fd_handler);
+   void                    *buf_data;
+   void                   (*prep_func) (void *data, Ecore_Fd_Handler *fd_handler);
+   void                    *prep_data;
+};
+
+#ifdef _WIN32
+struct _Ecore_Win32_Handler
+{
+   EINA_INLIST;
+   ECORE_MAGIC;
+   HANDLE         h;
+   int          (*func) (void *data, Ecore_Win32_Handler *win32_handler);
+   void          *data;
+   int            delete_me : 1;
+};
+#endif
+
+
 static int  _ecore_main_select(double timeout);
 static void _ecore_main_fd_handlers_cleanup(void);
 #ifndef _WIN32

@@ -11,6 +11,17 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
+
+struct _Ecore_Animator
+{
+   EINA_INLIST;
+   ECORE_MAGIC;
+   unsigned char delete_me : 1;
+   int           (*func) (void *data);
+   void          *data;
+};
+
+
 static int _ecore_animator(void *data);
 
 static Ecore_Timer    *timer = NULL;

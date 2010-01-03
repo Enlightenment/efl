@@ -336,7 +336,7 @@ ecore_config_as_string_get(const char *key)
    val = NULL;
    r = NULL;
    if (!(e = ecore_config_get(key)))
-      ERR(0, "no such property, \"%s\"...", key);
+      ERR("no such property, \"%s\"...", key);
    else
      {
 	switch (e->type)

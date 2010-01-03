@@ -11,6 +11,41 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
+
+struct _Ecore_Event_Handler
+{
+   EINA_INLIST;
+   ECORE_MAGIC;
+   int          type;
+   int          delete_me : 1;
+   int        (*func) (void *data, int type, void *event);
+   void        *data;
+};
+
+struct _Ecore_Event_Filter
+{
+   EINA_INLIST;
+   ECORE_MAGIC;
+   int          delete_me : 1;
+   void *     (*func_start) (void *data);
+   int        (*func_filter) (void *data, void *loop_data, int type, void *event);
+   void       (*func_end) (void *data, void *loop_data);
+   void        *loop_data;
+   void        *data;
+};
+
+struct _Ecore_Event
+{
+   EINA_INLIST;
+   ECORE_MAGIC;
+   int          type;
+   void        *event;
+   int          delete_me : 1;
+   void       (*func_free) (void *data, void *ev);
+   void        *data;
+};
+
+
 static int                  events_num = 0;
 static Ecore_Event         *events = NULL;
 

@@ -232,7 +232,7 @@ _ecore_signal_call(void)
 		  if ((n < MAXSIGQ) && (sigchld_info[n].si_signo))
 		    e->data = sigchld_info[n]; /* No need to clone this. */
 
-                  if ((e->exe) && (e->exe->flags & (ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR)))
+                  if ((e->exe) && (ecore_exe_flags_get(e->exe) & (ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR)))
                      {
 		        /* We want to report the Last Words of the exe, so delay this event.
 			 * This is twice as relevant for stderr.
@@ -256,8 +256,11 @@ _ecore_signal_call(void)
 			 * check to see for Last Words, and only delay if there are any.
 			 * This has it's own set of problems.
 			 */
-                        IF_FN_DEL(ecore_timer_del, e->exe->doomsday_clock);
-                        e->exe->doomsday_clock = ecore_timer_add(0.1, _ecore_signal_exe_exit_delay, e);
+                        Ecore_Timer *doomsday_clock;
+
+                        doomsday_clock = _ecore_exe_doomsday_clock_get(e->exe);
+                        IF_FN_DEL(ecore_timer_del, doomsday_clock);
+                        _ecore_exe_doomsday_clock_set(e->exe, ecore_timer_add(0.1, _ecore_signal_exe_exit_delay, e));
                      }
 		  else
 		    {
@@ -615,7 +618,7 @@ _ecore_signal_exe_exit_delay(void *data)
    e = data;
    if (e)
      {
-	e->exe->doomsday_clock = NULL;
+	_ecore_exe_doomsday_clock_set(e->exe, NULL);
 	_ecore_event_add(ECORE_EXE_EVENT_DEL, e,
 			 _ecore_exe_event_del_free, NULL);
      }
