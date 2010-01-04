@@ -111,7 +111,7 @@ plugin_info_t emotion_xine_plugin_info[] =
 
 /***************************************************************************/
 static void *
-_emotion_class_init(xine_t *xine, void *visual)
+_emotion_class_init(xine_t *xine, void *visual __UNUSED__)
 {
    Emotion_Class *cl;
    
@@ -225,7 +225,7 @@ _emotion_capabilities_get(vo_driver_t *vo_driver)
 
 /***************************************************************************/
 static int
-_emotion_gui_data_exchange(vo_driver_t *vo_driver, int data_type, void *data)
+_emotion_gui_data_exchange(vo_driver_t *vo_driver, int data_type, void *data __UNUSED__)
 {
    Emotion_Driver *dv;
    
@@ -292,7 +292,7 @@ _emotion_property_get(vo_driver_t *vo_driver, int property)
 }
 
 static void
-_emotion_property_min_max_get(vo_driver_t *vo_driver, int property, int *min, int *max)
+_emotion_property_min_max_get(vo_driver_t *vo_driver, int property __UNUSED__, int *min, int *max)
 {
    Emotion_Driver *dv;
    
@@ -339,7 +339,7 @@ _emotion_frame_dispose(vo_frame_t *vo_frame)
 }
 
 static void
-_emotion_frame_format_update(vo_driver_t *vo_driver, vo_frame_t *vo_frame, uint32_t width, uint32_t height, double ratio, int format, int flags)
+_emotion_frame_format_update(vo_driver_t *vo_driver, vo_frame_t *vo_frame, uint32_t width, uint32_t height, double ratio, int format, int flags __UNUSED__)
 {
    Emotion_Driver *dv;
    Emotion_Frame *fr;
@@ -468,7 +468,7 @@ _emotion_frame_display(vo_driver_t *vo_driver, vo_frame_t *vo_frame)
 }
 
 static void
-_emotion_frame_field(vo_frame_t *vo_frame, int which_field)
+_emotion_frame_field(vo_frame_t *vo_frame, int which_field __UNUSED__)
 {
    Emotion_Frame *fr;
    
@@ -510,7 +510,7 @@ _emotion_frame_data_unlock(Emotion_Frame *fr)
 
 /***************************************************************************/
 static void
-_emotion_overlay_begin(vo_driver_t *vo_driver, vo_frame_t *vo_frame, int changed)
+_emotion_overlay_begin(vo_driver_t *vo_driver, vo_frame_t *vo_frame, int changed __UNUSED__)
 {
    Emotion_Driver *dv;
    Emotion_Frame *fr;

@@ -1,21 +1,17 @@
-dnl Process this file with autoconf to produce a configure script.
-
 # get rid of that stupid cache mechanism
 rm -f config.cache
 
-AC_INIT(emotion, 0.1.0.042, enlightenment-devel@lists.sourceforge.net)
-AC_PREREQ(2.52)
-AC_CONFIG_SRCDIR(configure.ac)
-
-AM_INIT_AUTOMAKE(1.6 dist-bzip2)
-AM_CONFIG_HEADER(config.h)
-
-AC_C_BIGENDIAN
+AC_INIT([emotion], [0.1.0.042], [enlightenment-devel@lists.sourceforge.net])
+AC_PREREQ([2.60])
+AC_CONFIG_SRCDIR([configure.ac])
+AC_CONFIG_MACRO_DIR([m4])
+AC_CANONICAL_BUILD
+AC_CANONICAL_HOST
 AC_ISC_POSIX
-AC_PROG_CC
-AM_PROG_CC_STDC
-AC_HEADER_STDC
-AC_C_CONST
+
+AM_INIT_AUTOMAKE([1.6 dist-bzip2])
+AM_CONFIG_HEADER([config.h])
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 AC_LIBTOOL_WIN32_DLL
 define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
@@ -29,13 +25,115 @@ SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
-EFL_EMOTION_BUILD=""
+
+### Needed information
+
 case "$host_os" in
    mingw* | cegcc*)
+      want_xine="no"
+      want_gstreamer="yes"
+      want_vlc="no"
+      ;;
+   *)
+      want_xine="yes"
+      want_gstreamer="yes"
+      want_vlc="yes"
+      ;;
+esac
+
+requirement_emotion=""
+
+### Additional options to configure
+
+# edje_cc
+
+AC_ARG_WITH([edje-cc],
+   [AC_HELP_STRING([--with-edje-cc=PATH], [specify a specific path to edje_cc])],
+   [
+    v=$withval;
+    edje_cc=$v
+    echo "  Enlightenment edje_cc explicitly set to "$edje_cc;
+   ],
+   [edje_cc=$(pkg-config --variable=prefix edje)/bin/edje_cc])
+AC_SUBST(edje_cc)
+
+
+### Checks for programs
+AC_PROG_CC
+
+# pkg-config
+PKG_PROG_PKG_CONFIG
+
+# Check whether pkg-config supports Requires.private
+if $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
+   pkgconfig_requires_private="Requires.private"
+else
+   pkgconfig_requires_private="Requires"
+fi
+AC_SUBST(pkgconfig_requires_private)
+
+# doxygen program for documentation building
+
+EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
+
+
+### Checks for libraries
+
+PKG_CHECK_MODULES(EMOTION, [eina-0 evas >= 0.9.9 ecore >= 0.9.9 ecore-job >= 0.9.9])
+requirement_emotion="ecore-job ecore evas eina-0"
+
+PKG_CHECK_MODULES(EMOTION_BIN, [evas >= 0.9.9 ecore >= 0.9.9 ecore-evas >= 0.9.9 edje >= 0.5.0])
+
+PKG_CHECK_MODULES(ECORE_X, [ecore-x >= 0.9.9], [have_ecore_x="yes"], [have_ecore_x="no"])
+
+PKG_CHECK_MODULES(ECORE_FB, [ecore-fb >= 0.9.9], [have_ecore_fb="yes"], [have_ecore_fb="no"])
+
+if test "x${have_ecore_x}" = "xyes" ; then
+   AC_DEFINE(EMOTION_HAVE_ECORE_X, 1, [Define to 1 if Ecore_X is enabled])  
+fi
+
+if test "x${have_ecore_fb}" = "xyes" ; then
+   AC_DEFINE(EMOTION_HAVE_ECORE_FB, 1, [Define to 1 if Ecore_Fb is enabled])  
+fi
+
+PKG_CHECK_EXISTS([evas-software-x11], [AC_DEFINE(HAVE_EVAS_SOFWARE_X11, 1, [Evas Software Xlib Engine Support])])
+
+PKG_CHECK_EXISTS([evas-xrender-x11], [AC_DEFINE(HAVE_EVAS_XRENDER_X11, 1, [Evas Software Xlib Engine Support])])
+
+PKG_CHECK_EXISTS([evas-opengl-x11], [AC_DEFINE(HAVE_EVAS_OPENGL_X11, 1, [Evas OpenGL Xlib Engine Support])])
+
+PKG_CHECK_EXISTS([evas-fb], [AC_DEFINE(HAVE_EVAS_FB, 1, [Evas Framebuffer Engine Support])])
+
+
+### Checks for header files
+AC_HEADER_STDC
+
+### Checks for types
+
+
+### Checks for structures
+
+
+### Checks for compiler characteristics
+AC_C_CONST
+AC_C_BIGENDIAN
+AM_PROG_CC_STDC
+AC_C___ATTRIBUTE__
+
+EFL_EMOTION_BUILD=""
+case "$host_os" in
+   mingw32ce* | cegcc*)
+      EMOTION_CPPFLAGS="-D_WIN32_WCE=0x0420"
       EFL_EMOTION_BUILD="-DEFL_EMOTION_BUILD"
-   ;;
+      ;;
+   mingw*)
+      EMOTION_CPPFLAGS="-D_WIN32_WINNT=0x0501"
+      EFL_EMOTION_BUILD="-DEFL_EMOTION_BUILD"
+      ;;
 esac
 AC_SUBST(EFL_EMOTION_BUILD)
+AC_SUBST(EMOTION_CPPFLAGS)
+
 
 ### Checks for linker characteristics
 
@@ -49,117 +147,18 @@ case "$host_os" in
 esac
 AC_SUBST(lt_enable_auto_import)
 
-PKG_CHECK_MODULES(EVAS, [evas >= 0.9.9])
-PKG_CHECK_MODULES(EDJE, [edje >= 0.5.0])
-PKG_CHECK_MODULES(ECORE, [ecore >= 0.9.9 ecore-evas >= 0.9.9 ecore-job >= 0.9.9])
 
-save_CPPFLAGS=$CPPFLAGS
-CPPFLAGS="$CPPFLAGS $ECORE_CFLAGS"
-AC_CHECK_HEADERS(Ecore_X.h Ecore_Fb.h)
-CPPFLAGS=$save_CPPFLAGS
+### Modules
 
-AC_ARG_ENABLE(vlc,
-	AC_HELP_STRING([--disable-vlc],[disable vlc support @<:@default=auto@:>@]),
-	[enable_vlc=$enableval],[enable_vlc=auto])
-HAVE_VLC="no"
-if test "$enable_vlc" != "no" ; then
-	PKG_CHECK_MODULES(VLC, [libvlc >= 0.9], [HAVE_VLC="yes"], [HAVE_VLC="no"])
-fi
-if test "$enable_vlc$HAVE_VLC" = "yesno" ; then
-	AC_MSG_RESULT(vlc not found)
+EMOTION_CHECK_MODULE([Xine], [${want_xine}])
+EMOTION_CHECK_MODULE([Gstreamer], [${want_gstreamer}])
+EMOTION_CHECK_MODULE([VLC], [${want_vlc}])
+
+if test "x${enable_xine}" = "xno" && test "x${enable_gstreamer}" = "xno" && test "x${enable_vlc}" = "xno" ; then
+   AC_MSG_ERROR([Xine, Gstreamer or VLC backends must be selected to build Emotion])
 fi
 
-AC_ARG_ENABLE(xine,
-	AC_HELP_STRING([--disable-xine],[disable xine support @<:@default=auto@:>@]),
-	[enable_xine=$enableval],[enable_xine=auto])
-HAVE_XINE="no"
-if test "$enable_xine" != "no" ; then
-	PKG_CHECK_MODULES(XINE, [libxine >= 1.1.1], [HAVE_XINE="yes"])
-fi
-if test "$enable_xine$HAVE_XINE" = "yesno" ; then
-	AC_MSG_RESULT(xine not found)
-fi
-
-AC_ARG_ENABLE(gstreamer,
-	AC_HELP_STRING([--disable-gstreamer],[disable gstreamer support @<:@default=auto@:>@]),
-	[enable_gstreamer=$enableval],[enable_gstreamer=auto])
-HAVE_GSTREAMER="no"
-HAVE_GSTPLUG="no"
-if test "$enable_gstreamer" != "no" ; then
-
-	dnl Gstreamer version requirement
-	GST_REQS=0.10.2
-	GSTPLUG_REQS=0.10.1
-	GST_MAJORMINOR=0.10
-
-	PKG_CHECK_MODULES(GST, \
-	   gstreamer-$GST_MAJORMINOR >= $GST_REQS,
-	   HAVE_GSTREAMER="yes",
-	   HAVE_GSTREAMER="no")
-
-	PKG_CHECK_MODULES(GSTPLUG, \
-	   gstreamer-plugins-base-$GST_MAJORMINOR >= $GSTPLUG_REQS,
-	   HAVE_GSTPLUG="yes",
-	   HAVE_GSTPLUG="no")
-
-	AM_GST_ELEMENT_CHECK(
-	   [ffmpeg],
-	   [HAVE_GSTFFMPEG="yes"],
-	   [HAVE_GSTFFMPEG="no"])
-
-	AM_GST_ELEMENT_CHECK(
-	   [cdiocddasrc],
-	   [HAVE_GSTCDIOCDDASRC="yes"],
-	   [HAVE_GSTCDIOCDDASRC="no"])
-fi
-if test "$enable_gstreamer$HAVE_GSTREAMER" = "yesno" ; then
-	AC_MSG_RESULT(gstreamer not found)
-fi
-if test "$HAVE_GSTPLUG" = "no"; then
-	if test "$HAVE_GSTREAMER" = "no" ; then
-		GSTPLUG_MSG="no"
-	else
-		AC_MSG_WARN([You should install gstreamer plugins and gst-ffmpeg to properly decode your video and audio files])
-		GSTPLUG_MSG="no (you should install gst-plugins-base and gst-ffmpeg)"
-	fi
-else
-	if test "$HAVE_GSTFFMPEG" = "no"; then
-		if test "$HAVE_GSTREAMER" = "no" ; then
-			GSTPLUG_MSG="no"
-		else
-			AC_MSG_WARN([You should install gstreamer plugins and gst-ffmpeg to properly decode your video and audio files])
-			GSTPLUG_MSG="no (you should install gst-plugins-base and gst-ffmpeg)"
-		fi
-		GSTPLUG_MSG="yes"
-	else
-		GSTPLUG_MSG="yes"
-	fi
-	if test "$HAVE_GSTCDIOCDDASRC" = "no"; then
-		AC_MSG_WARN([You should install gstreamer-plugins-good and make sure that the cdiocddasrc element is installed])
-		GSTCDDA_MSG="no (you should install gst-plugins-good and the cdiocddasrc element)"
-	else
-		GSTCDDA_MSG="yes"
-	fi
-fi
-
-if test "$HAVE_XINE$HAVE_GSTREAMER" = "nono" ; then
-	AC_MSG_ERROR([Xine or Gstreamer must be installed to build emotion])
-fi
-
-AM_CONDITIONAL([BUILD_VLC_MODULE], [test "$HAVE_VLC" = yes])
-AM_CONDITIONAL([BUILD_XINE_MODULE], [test "$HAVE_XINE" = yes])
-AM_CONDITIONAL([BUILD_GSTREAMER_MODULE], [test "$HAVE_GSTREAMER" = yes])
-
-AC_ARG_WITH(edje-cc,
-[  --with-edje-cc=PATH              specify a specific path to edje_cc],
-[
-  v=$withval;
-  edje_cc=$v
-  echo "  Enlightenment edje_cc explicitly set to "$edje_cc;
-],[
-  edje_cc=$(pkg-config --variable=prefix edje)/bin/edje_cc
-])
-AC_SUBST(edje_cc)
+AC_SUBST(requirement_emotion)
 
 AC_OUTPUT([
 Makefile
@@ -189,18 +188,26 @@ echo
 echo "Configuration Options Summary:"
 echo
 echo "  Modules:"
-echo "    Xine...............: $HAVE_XINE"
-echo "    Vlc................: $HAVE_VLC"
-echo "    Gstreamer..........: $HAVE_GSTREAMER"
-echo "    Gstreamer plugins..: $GSTPLUG_MSG"
-echo "    Gstreamer FFmpeg...: $HAVE_GSTFFMPEG"
-echo "    Gstreamer CDDA.....: $GSTCDDA_MSG"
+echo "    Xine...............: ${enable_xine}"
+echo "    Vlc................: ${enable_vlc}"
+echo "    Gstreamer..........: ${enable_gstreamer}"
+echo "    Gstreamer FFmpeg...: ${have_gst_ffmpeg}"
+echo "    Gstreamer CDDA.....: ${have_gst_cdiocddasrc}"
 echo
 echo "  edje_cc..............: ${edje_cc}"
 echo
-echo "  Compilation..........: make"
+echo "Compilation............: make (or gmake)"
+echo "  CPPFLAGS.............: $CPPFLAGS"
+echo "  CFLAGS...............: $CFLAGS"
+echo "  LDFLAGS..............: $LDFLAGS"
 echo
-echo "  Installation.........: make install"
+echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
+echo "  prefix...............: $prefix"
 echo
-echo "    prefix.........: $prefix"
+if test "x${have_static_module}" = "xyes" ; then
+echo -e "\0033\01331;31mWarning\0033\01331;0m: You are trying to link statically one or more modules to Emotion."
+echo "         You must know what you are doing, or else you will have a lot of problems."
+echo "         And asparagus will disappear from the earth."
+echo "         Think about that."
 echo
+fi

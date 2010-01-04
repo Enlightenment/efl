@@ -236,7 +236,7 @@ static Emotion_Video_Module em_module =
 static unsigned char
 em_init(Evas_Object  *obj,
 	void        **emotion_video,
-	Emotion_Module_Options *opt)
+	Emotion_Module_Options *opt __UNUSED__)
 {
    Emotion_Gstreamer_Video *ev;
    GError                  *error;
@@ -494,7 +494,7 @@ em_file_close(void *video)
 
 static void
 em_play(void   *video,
-	double  pos)
+	double  pos __UNUSED__)
 {
    Emotion_Gstreamer_Video *ev;
 
@@ -714,7 +714,7 @@ em_vis_get(void *video)
 }
 
 static Eina_Bool
-em_vis_supported(void *ef, Emotion_Vis vis)
+em_vis_supported(void *ef __UNUSED__, Emotion_Vis vis)
 {
    const char *name;
    GstElementFactory *factory;
@@ -899,7 +899,7 @@ em_bgra_data_get(void *video, unsigned char **bgra_data)
 }
 
 static void
-em_event_feed(void *video, int event)
+em_event_feed(void *video, int event __UNUSED__)
 {
    Emotion_Gstreamer_Video *ev;
 
@@ -907,7 +907,7 @@ em_event_feed(void *video, int event)
 }
 
 static void
-em_event_mouse_button_feed(void *video, int button, int x, int y)
+em_event_mouse_button_feed(void *video, int button __UNUSED__, int x __UNUSED__, int y __UNUSED__)
 {
    Emotion_Gstreamer_Video *ev;
 
@@ -915,7 +915,7 @@ em_event_mouse_button_feed(void *video, int button, int x, int y)
 }
 
 static void
-em_event_mouse_move_feed(void *video, int x, int y)
+em_event_mouse_move_feed(void *video, int x __UNUSED__, int y __UNUSED__)
 {
    Emotion_Gstreamer_Video *ev;
 
@@ -957,7 +957,7 @@ em_video_channel_get(void *video)
 
 static const char *
 em_video_channel_name_get(void *video,
-			  int   channel)
+			  int   channel __UNUSED__)
 {
    Emotion_Gstreamer_Video *ev;
 
@@ -1023,7 +1023,7 @@ em_audio_channel_get(void *video)
 
 static const char *
 em_audio_channel_name_get(void *video,
-			  int   channel)
+			  int   channel __UNUSED__)
 {
    Emotion_Gstreamer_Video *ev;
 
@@ -1109,7 +1109,7 @@ em_spu_channel_count(void *video)
 }
 
 static void
-em_spu_channel_set(void *video, int channel)
+em_spu_channel_set(void *video, int channel __UNUSED__)
 {
    Emotion_Gstreamer_Video *ev;
 
@@ -1127,7 +1127,7 @@ em_spu_channel_get(void *video)
 }
 
 static const char *
-em_spu_channel_name_get(void *video, int channel)
+em_spu_channel_name_get(void *video, int channel __UNUSED__)
 {
    Emotion_Gstreamer_Video *ev;
 
@@ -1136,7 +1136,7 @@ em_spu_channel_name_get(void *video, int channel)
 }
 
 static void
-em_spu_channel_mute_set(void *video, int mute)
+em_spu_channel_mute_set(void *video, int mute __UNUSED__)
 {
    Emotion_Gstreamer_Video *ev;
 
@@ -1163,7 +1163,7 @@ em_chapter_count(void *video)
 }
 
 static void
-em_chapter_set(void *video, int chapter)
+em_chapter_set(void *video, int chapter __UNUSED__)
 {
    Emotion_Gstreamer_Video *ev;
 
@@ -1181,7 +1181,7 @@ em_chapter_get(void *video)
 }
 
 static const char *
-em_chapter_name_get(void *video, int chapter)
+em_chapter_name_get(void *video, int chapter __UNUSED__)
 {
    Emotion_Gstreamer_Video *ev;
 
@@ -1191,7 +1191,7 @@ em_chapter_name_get(void *video, int chapter)
 }
 
 static void
-em_speed_set(void *video, double speed)
+em_speed_set(void *video, double speed __UNUSED__)
 {
    Emotion_Gstreamer_Video *ev;
 
@@ -1274,7 +1274,7 @@ module_open(Evas_Object           *obj,
 }
 
 static void
-module_close(Emotion_Video_Module *module,
+module_close(Emotion_Video_Module *module __UNUSED__,
 	     void                 *video)
 {
    em_module.shutdown(video);
@@ -1434,7 +1434,7 @@ _free_metadata(Emotion_Gstreamer_Metadata *m)
 }
 
 static void
-_em_buffer_read(void *data, void *buf, unsigned int nbyte)
+_em_buffer_read(void *data, void *buf, unsigned int nbyte __UNUSED__)
 {
    Emotion_Gstreamer_Video *ev;
    Emotion_Video_Sink      *vsink;
@@ -1444,7 +1444,11 @@ _em_buffer_read(void *data, void *buf, unsigned int nbyte)
    buffer = *((GstBuffer **)buf);
    _emotion_frame_new(ev->obj);
    vsink = (Emotion_Video_Sink *)eina_list_nth(ev->video_sinks, ev->video_sink_nbr);
-   if (vsink) _emotion_video_pos_update(ev->obj, ev->position, vsink->length_time);
+   if (vsink)
+     {
+       _emotion_video_pos_update(ev->obj, ev->position, vsink->length_time);
+       _emotion_frame_resize(ev->obj, vsink->width, vsink->height, ev->ratio);
+     }
 }
 
 static int

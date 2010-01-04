@@ -119,7 +119,7 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
 {
    Eina_Emotion_Plugins *plugin;
    Smart_Data *sd;
-   int index = 0;
+   unsigned int index = 0;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    if (!_backends)
@@ -1028,7 +1028,7 @@ _emotion_spu_button_set(Evas_Object *obj, int button)
 /****************************/
 
 static void
-_mouse_move(void *data, Evas *ev, Evas_Object *obj, void *event_info)
+_mouse_move(void *data, Evas *ev __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Move *e;
    Smart_Data *sd;
@@ -1048,7 +1048,7 @@ _mouse_move(void *data, Evas *ev, Evas_Object *obj, void *event_info)
 }
 
 static void
-_mouse_down(void *data, Evas *ev, Evas_Object *obj, void *event_info)
+_mouse_down(void *data, Evas *ev __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Down *e;
    Smart_Data *sd;

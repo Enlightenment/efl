@@ -33,7 +33,7 @@ emotion_pipeline_pause(GstElement *pipeline)
 
 /* Send the video frame to the evas object */
 void
-cb_handoff(GstElement *fakesrc,
+cb_handoff(GstElement *fakesrc __UNUSED__,
            GstBuffer  *buffer,
            GstPad     *pad,
            gpointer    user_data)
@@ -74,9 +74,9 @@ cb_handoff(GstElement *fakesrc,
 }
 
 void
-file_new_decoded_pad_cb(GstElement *decodebin,
+file_new_decoded_pad_cb(GstElement *decodebin __UNUSED__,
                         GstPad     *new_pad,
-                        gboolean    last,
+                        gboolean    last __UNUSED__,
                         gpointer    user_data)
 {
    Emotion_Gstreamer_Video *ev;

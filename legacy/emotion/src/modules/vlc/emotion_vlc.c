@@ -3,8 +3,8 @@
  * code@ife-sit.info
  */
 
-#ifndef EMOTION_VLC_C
-#define EMOTION_VLC_C
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "Emotion.h"
 #include "emotion_private.h"
@@ -1240,7 +1240,4 @@ EINA_MODULE_INIT(vlc_module_init);
 EINA_MODULE_SHUTDOWN(vlc_module_shutdown);
 
 #endif
-
-
-#endif /* EMOTION_VLC_C */
 

@@ -144,7 +144,7 @@ failure_dvdreadsrc:
 }
 
 static void
-dvd_pad_added_cb(GstElement *dvddemuxer,
+dvd_pad_added_cb(GstElement *dvddemuxer __UNUSED__,
                  GObject    *new_pad,
                  gpointer    user_data)
 {
@@ -239,8 +239,8 @@ dvd_pad_added_cb(GstElement *dvddemuxer,
 }
 
 static void
-dvd_no_more_pads_cb(GstElement *dvddemuxer,
-                    gpointer    user_data)
+dvd_no_more_pads_cb(GstElement *dvddemuxer __UNUSED__,
+                    gpointer    user_data __UNUSED__)
 {
   no_more_pads = 1;
 }

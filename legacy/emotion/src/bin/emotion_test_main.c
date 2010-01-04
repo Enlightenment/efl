@@ -3,14 +3,14 @@
 #include <stdio.h>
 #include <string.h>
 
-#if defined(HAVE_ECORE_X_H) || defined(HAVE_ECORE_FB_H)
+#if defined(EMOTION_HAVE_ECORE_X) || defined(EMOTION_HAVE_ECORE_FB)
 
 #include <Evas.h>
 #include <Ecore.h>
-#ifndef FB_ONLY
-#include <Ecore_X.h>
+#ifdef EMOTION_HAVE_ECORE_X
+# include <Ecore_X.h>
 #else
-#include <Ecore_Fb.h>
+# include <Ecore_Fb.h>
 #endif
 #include <Ecore_Evas.h>
 #include <Edje.h>
@@ -64,7 +64,7 @@ main_start(int argc, char **argv)
    edje_frametime_set(1.0 / 30.0);
 
    if (!ecore_evas_init()) return -1;
-#ifndef FB_ONLY
+#ifdef EMOTION_HAVE_ECORE_X
      {
         int i;
 
@@ -112,20 +112,22 @@ main_start(int argc, char **argv)
      }
    if (mode == 4)
      ecore_evas = ecore_evas_new(NULL, 0, 0, startw, starth, NULL);
-#if HAVE_ECORE_EVAS_X
+# if HAVE_EVAS_SOFWARE_X11
    if (mode == 0)
      ecore_evas = ecore_evas_software_x11_new(NULL, 0,  0, 0, startw, starth);
-#endif
-#if HAVE_ECORE_EVAS_X11_GL
+# endif
+# if HAVE_EVAS_OPENGL_X11
    if (mode == 1)
      ecore_evas = ecore_evas_gl_x11_new(NULL, 0, 0, 0, startw, starth);
-#endif
-#if HAVE_ECORE_EVAS_FB
+# endif
+# if HAVE_EVAS_FB
    if (mode == 2)
      ecore_evas = ecore_evas_fb_new(NULL, 0, startw, starth);
-#endif
+# endif
+# if HAVE_EVAS_XRENDER_X11
    if (mode == 3)
      ecore_evas = ecore_evas_xrender_x11_new(NULL, 0, 0, 0, startw, starth);
+# endif
 
 #else
    startw = 240;
@@ -902,6 +904,7 @@ main(int argc, char **argv)
 }
 
 #else
+# warning "EMOTION_HAVE_ECORE_X and EMOTION_HAVE_ECORE_FB not defined !"
 int main()
 {
 	puts("Could not find Ecore_X.h or Ecore_Fb.h so test is disabled");
