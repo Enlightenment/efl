@@ -25,6 +25,7 @@ SNAP=`echo $PACKAGE_VERSION | awk -F. '{printf("%s", $4);}'`
 version_info=`expr $VMAJ + $VMIN`":$VMIC:$VMIN"
 AC_SUBST(version_info)
 
+EFL_CHECK_PATH_MAX
 
 ### Needed information
 
