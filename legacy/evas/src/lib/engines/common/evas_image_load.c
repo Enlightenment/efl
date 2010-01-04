@@ -100,8 +100,8 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 	     if (!strcasecmp(dot, loaders[i].extention))
 	       {
 		  loader = loaders[i].loader;
-		  DBG("found loader '%s' matching extension in file '%s'",
-		      loader, ie->file);
+		  DBG("known loader '%s' handles extension '%s' of file '%s'",
+		      loader, dot, ie->file);
 		  break;
 	       }
 	  }
@@ -132,6 +132,8 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 	     else
 	       WRN("failed to load module '%s' (%p)", loader, em);
 	  }
+	else
+	  DBG("image loader '%s' is not enabled or missing!", loader);
      }
 
    fdata.ie = ie;
