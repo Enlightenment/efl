@@ -9,10 +9,6 @@
 #include <Ecore.h>
 #include <Ecore_File.h>
 
-#ifndef PATH_MAX
-#define PATH_MAX 4096
-#endif
-
 #define SIZE 128
 #define THEME "Tango"
 #define FREE(x) do { free(x); x = NULL; } while (0);

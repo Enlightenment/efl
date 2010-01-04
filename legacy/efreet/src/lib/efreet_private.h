@@ -63,14 +63,6 @@
     (x) = NULL; \
 } while (0)
 
-#ifndef PATH_MAX
-/**
- * @def PATH_MAX
- * Convenience define to set the maximim path length
- */
-#define PATH_MAX 4096
-#endif
-
 /**
  * @def _efree_log_domain_global
  * global log domain for efreet (see eina_log module)

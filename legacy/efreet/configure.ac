@@ -38,6 +38,8 @@ AC_SUBST(efreet_release_info)
 AC_SUBST(efreet_mime_release_info)
 AC_SUBST(efreet_trash_release_info)
 
+EFL_CHECK_PATH_MAX
+
 PKG_PROG_PKG_CONFIG
 
 # Check whether pkg-config supports Requires.private

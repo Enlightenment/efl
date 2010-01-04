@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include "ef_test.h"
 
-#define PATH_MAX 4096
-
 static void dump(Efreet_Menu *menu, const char *path);
 
 int
