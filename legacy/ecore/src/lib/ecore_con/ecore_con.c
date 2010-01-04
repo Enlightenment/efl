@@ -6,6 +6,7 @@
 # include <config.h>
 #endif
 
+#include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <arpa/inet.h>
@@ -15,10 +16,6 @@
 #include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
-
-#ifndef HAVE_ABSTRACT_SOCKETS
-#include <stdio.h>
-#endif
 
 #include "Ecore.h"
 #include "ecore_private.h"

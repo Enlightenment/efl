@@ -1,7 +1,7 @@
 #ifndef _ECORE_IPC_PRIVATE_H
 #define _ECORE_IPC_PRIVATE_H
 
-#include "Ecore_Data.h"
+
 extern int _ecore_ipc_log_dom;
 #ifdef ERR
 # undef ERR
