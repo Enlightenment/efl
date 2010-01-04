@@ -1292,7 +1292,7 @@ gstreamer_module_shutdown(void)
    _emotion_module_unregister("gstreamer");
 }
 
-#ifndef EINA_STATIC_BUILD_GSTREAMER
+#ifndef EMOTION_STATIC_BUILD_GSTREAMER
 
 EINA_MODULE_INIT(gstreamer_module_init);
 EINA_MODULE_SHUTDOWN(gstreamer_module_shutdown);

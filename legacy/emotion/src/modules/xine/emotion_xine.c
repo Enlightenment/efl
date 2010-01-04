@@ -1557,7 +1557,7 @@ xine_module_shutdown(void)
    _emotion_module_unregister("xine");
 }
 
-#ifndef EINA_STATIC_BUILD_XINE
+#ifndef EMOTION_STATIC_BUILD_XINE
 
 EINA_MODULE_INIT(xine_module_init);
 EINA_MODULE_SHUTDOWN(xine_module_shutdown);

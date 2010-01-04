@@ -1234,7 +1234,7 @@ vlc_module_shutdown(void)
    _emotion_module_unregister("vlc");
 }
 
-#ifndef EINA_STATIC_BUILD_VLC
+#ifndef EMOTION_STATIC_BUILD_VLC
 
 EINA_MODULE_INIT(vlc_module_init);
 EINA_MODULE_SHUTDOWN(vlc_module_shutdown);

@@ -112,22 +112,14 @@ main_start(int argc, char **argv)
      }
    if (mode == 4)
      ecore_evas = ecore_evas_new(NULL, 0, 0, startw, starth, NULL);
-# if HAVE_EVAS_SOFWARE_X11
    if (mode == 0)
      ecore_evas = ecore_evas_software_x11_new(NULL, 0,  0, 0, startw, starth);
-# endif
-# if HAVE_EVAS_OPENGL_X11
    if (mode == 1)
      ecore_evas = ecore_evas_gl_x11_new(NULL, 0, 0, 0, startw, starth);
-# endif
-# if HAVE_EVAS_FB
    if (mode == 2)
      ecore_evas = ecore_evas_fb_new(NULL, 0, startw, starth);
-# endif
-# if HAVE_EVAS_XRENDER_X11
    if (mode == 3)
      ecore_evas = ecore_evas_xrender_x11_new(NULL, 0, 0, 0, startw, starth);
-# endif
 
 #else
    startw = 240;
