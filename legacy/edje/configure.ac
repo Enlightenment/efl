@@ -237,7 +237,7 @@ PKG_CHECK_MODULES([LUA], [lua >= 5.1.0], requirement_lua="lua",
 PKG_CHECK_MODULES([EDJE],
    [
     eina-0
-    eet >= 1.0.1
+    eet >= 1.2.3
     evas >= 0.9.9
     ecore >= 0.9.9
     ecore-job >= 0.9.9
