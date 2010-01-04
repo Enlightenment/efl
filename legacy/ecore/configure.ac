@@ -30,6 +30,8 @@ AC_SUBST(version_info)
 AM_GNU_GETTEXT_VERSION([0.12.1])
 AM_GNU_GETTEXT([external])
 
+EFL_CHECK_PATH_MAX
+
 case "$host_os" in
    mingw32ce* | cegcc*)
       ;;
