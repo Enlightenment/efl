@@ -17,7 +17,8 @@ libecore_con_la_SOURCES = \
 ecore_con.c \
 ecore_con_dns.c \
 ecore_con_ssl.c \
-ecore_con_url.c
+ecore_con_url.c \
+ecore_con_local.c
 
 if HAVE_CARES
 libecore_con_la_SOURCES += ecore_con_ares.c

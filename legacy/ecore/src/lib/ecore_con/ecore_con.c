@@ -28,9 +28,6 @@
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
 #endif
-#ifdef HAVE_WINSOCK2_H
-# include <winsock2.h>
-#endif
 
 static void _ecore_con_cb_tcp_connect(void *data, Ecore_Con_Info *info);
 static void _ecore_con_cb_udp_connect(void *data, Ecore_Con_Info *info);
@@ -66,8 +63,6 @@ EAPI int ECORE_CON_EVENT_SERVER_DATA = 0;
 static Eina_List *servers = NULL;
 static int _ecore_con_init_count = 0;
 int _ecore_con_log_dom = -1;
-#define LENGTH_OF_SOCKADDR_UN(s) (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
-#define LENGTH_OF_ABSTRACT_SOCKADDR_UN(s, path) (strlen(path) + 1 + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
 
 /**
  * @defgroup Ecore_Con_Lib_Group Ecore Connection Library Functions
@@ -176,10 +171,6 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 {
    Ecore_Con_Server   *svr;
    Ecore_Con_Type      type;
-   struct sockaddr_un  socket_unix;
-   struct linger       lin;
-   char                buf[4096];
-   mode_t	       pmode;
 
    if (port < 0) return NULL;
    /* local  user   socket: FILE:   ~/.ecore/[name]/[port] */
@@ -205,87 +196,8 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
    if ((type == ECORE_CON_LOCAL_USER) || (type == ECORE_CON_LOCAL_SYSTEM) ||
        (type == ECORE_CON_LOCAL_ABSTRACT))
      {
-	const char *homedir;
-	struct stat st;
-	mode_t mask;
-	int socket_unix_len;
-
-	if (!name) goto error;
-	mask = S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH;
-
-	if (type == ECORE_CON_LOCAL_USER)
-	  {
-	     homedir = getenv("HOME");
-	     if (!homedir) homedir = getenv("TMP");
-	     if (!homedir) homedir = "/tmp";
-	     mask = S_IRUSR | S_IWUSR | S_IXUSR;
-	     snprintf(buf, sizeof(buf), "%s/.ecore", homedir);
-	     if (stat(buf, &st) < 0) mkdir(buf, mask);
-	     snprintf(buf, sizeof(buf), "%s/.ecore/%s", homedir, name);
-	     if (stat(buf, &st) < 0) mkdir(buf, mask);
-	     snprintf(buf, sizeof(buf), "%s/.ecore/%s/%i", homedir, name, port);
-	     mask = S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH;
-	  }
-	else if (type == ECORE_CON_LOCAL_SYSTEM)
-	  {
-	     mask = 0;
-	     if (name[0] == '/')
-	       {
-		  if (port >= 0)
-		    snprintf(buf, sizeof(buf), "%s|%i", name, port);
-		  else
-		    snprintf(buf, sizeof(buf), "%s", name);
-	       }
-	     else
-	       snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s|%i", name, port);
-	  }
-	else if (type == ECORE_CON_LOCAL_ABSTRACT)
-	  strncpy(buf, name, sizeof(buf));
-	pmode = umask(mask);
-	start:
-	svr->fd = socket(AF_UNIX, SOCK_STREAM, 0);
-	if (svr->fd < 0) goto error_umask;
-	if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error_umask;
-	if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error_umask;
-	lin.l_onoff = 1;
-	lin.l_linger = 0;
-	if (setsockopt(svr->fd, SOL_SOCKET, SO_LINGER, &lin, sizeof(struct linger)) < 0) goto error_umask;
-	socket_unix.sun_family = AF_UNIX;
-	if (type == ECORE_CON_LOCAL_ABSTRACT)
-	  {
-#ifdef HAVE_ABSTRACT_SOCKETS
-	     /* . is a placeholder */
-	     snprintf(socket_unix.sun_path, sizeof(socket_unix.sun_path), ".%s", name);
-	     /* first char null indicates abstract namespace */
-	     socket_unix.sun_path[0] = '\0';
-	     socket_unix_len = LENGTH_OF_ABSTRACT_SOCKADDR_UN(&socket_unix, name);
-#else
-	     ERR("Your system does not support abstract sockets!");
-	     goto error_umask;
-#endif
-	  }
-	else
-	  {
-	     strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
-	     socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
-	  }
-	if (bind(svr->fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
-	  {
-	    if (((type == ECORE_CON_LOCAL_USER) || (type == ECORE_CON_LOCAL_SYSTEM)) &&
-		(connect(svr->fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0) &&
-		(unlink(buf) >= 0))
-	      goto start;
-	    else
-	      goto error_umask;
-	  }
-	if (listen(svr->fd, 4096) < 0) goto error_umask;
-	svr->path = strdup(buf);
-	if (!svr->path) goto error_umask;
-	svr->fd_handler =
-	  ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
-				    _ecore_con_svr_handler, svr, NULL, NULL);
-	umask(pmode);
-	if (!svr->fd_handler) goto error;
+        /* Local */
+        if (!ecore_con_local_listen(svr, _ecore_con_svr_handler, svr)) goto error;
      }
 
    if (type == ECORE_CON_REMOTE_TCP || type == ECORE_CON_REMOTE_NODELAY)
@@ -304,8 +216,6 @@ ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
 
    return svr;
 
-   error_umask:
-   umask(pmode);
    error:
    if (svr->name) free(svr->name);
    if (svr->path) free(svr->path);
@@ -351,9 +261,6 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
 {
    Ecore_Con_Server   *svr;
    Ecore_Con_Type      type;
-   struct sockaddr_un  socket_unix;
-   int                 curstate = 0;
-   char                buf[4096];
 
    if (!name) return NULL;
    /* local  user   socket: FILE:   ~/.ecore/[name]/[port] */
@@ -381,90 +288,8 @@ ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
    if ((type == ECORE_CON_LOCAL_USER) || (type == ECORE_CON_LOCAL_SYSTEM) ||
        (type == ECORE_CON_LOCAL_ABSTRACT))
      {
-	const char *homedir;
-	int socket_unix_len;
-
-	if (type == ECORE_CON_LOCAL_USER)
-	  {
-	     homedir = getenv("HOME");
-	     if (!homedir) homedir = getenv("TMP");
-	     if (!homedir) homedir = "/tmp";
-	     snprintf(buf, sizeof(buf), "%s/.ecore/%s/%i", homedir, name, port);
-	  }
-	else if (type == ECORE_CON_LOCAL_SYSTEM)
-	  {
-	     if (port < 0)
-	       {
-		  if (name[0] == '/')
-		    strncpy(buf, name, sizeof(buf));
-		  else
-		    snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s", name);
-	       }
-	     else
-	       {
-		  if (name[0] == '/')
-		    snprintf(buf, sizeof(buf), "%s|%i", name, port);
-		  else
-		    snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s|%i", name, port);
-	       }
-	  }
-	else if (type == ECORE_CON_LOCAL_ABSTRACT)
-	  strncpy(buf, name, sizeof(buf));
-
-	svr->fd = socket(AF_UNIX, SOCK_STREAM, 0);
-	if (svr->fd < 0) goto error;
-	if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
-	if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
-	if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0) goto error;
-	socket_unix.sun_family = AF_UNIX;
-
-	if (type == ECORE_CON_LOCAL_ABSTRACT)
-	  {
-#ifdef HAVE_ABSTRACT_SOCKETS
-	     /* copy name insto sun_path, prefixed by null to indicate abstract namespace */
-	     snprintf(socket_unix.sun_path, sizeof(socket_unix.sun_path), ".%s", name);
-	     socket_unix.sun_path[0] = '\0';
-	     socket_unix_len = LENGTH_OF_ABSTRACT_SOCKADDR_UN(&socket_unix, name);
-#else
-	     WRN("Your system does not support abstract sockets!");
-	     goto error;
-#endif
-	  }
-	else
-	  {
-	     strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
-	     socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
-	  }
-
-	if (connect(svr->fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
-	  {
-	    goto error;
-	  }
-	svr->path = strdup(buf);
-	if (!svr->path) goto error;
-
-	if (svr->type & ECORE_CON_SSL)
-	  ecore_con_ssl_server_init(svr);
-
-	svr->fd_handler =
-	  ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
-				    _ecore_con_cl_handler, svr, NULL, NULL);
-	if (!svr->fd_handler) goto error;
-
-	if (!svr->delete_me)
-	  {
-	     /* we got our server! */
-	     Ecore_Con_Event_Server_Add *e;
-
-	     e = calloc(1, sizeof(Ecore_Con_Event_Server_Add));
-	     if (e)
-	       {
-		  svr->event_count++;
-		  e->server = svr;
-		  ecore_event_add(ECORE_CON_EVENT_SERVER_ADD, e,
-				  _ecore_con_event_server_add_free, NULL);
-	       }
-	  }
+        /* Local */
+       if (!ecore_con_local_connect(svr, _ecore_con_cl_handler, svr, _ecore_con_event_server_add_free)) goto error;
      }
 
    if (type == ECORE_CON_REMOTE_TCP || type == ECORE_CON_REMOTE_NODELAY)

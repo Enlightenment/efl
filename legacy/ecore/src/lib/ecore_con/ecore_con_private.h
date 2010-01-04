@@ -3,7 +3,6 @@
 
 #include "ecore_private.h"
 #include "Ecore_Con.h"
-#include "Ecore_Data.h"
 
 #define ECORE_MAGIC_CON_SERVER             0x77665544
 #define ECORE_MAGIC_CON_CLIENT             0x77556677
@@ -159,6 +158,11 @@ struct _Ecore_Con_Info
 /* from ecore_con_dns.c */
 int ecore_con_dns_init(void);
 int ecore_con_dns_shutdown(void);
+/* from ecore_local.c */
+int ecore_con_local_init(void);
+int ecore_con_local_shutdown(void);
+int ecore_con_local_connect(Ecore_Con_Server *svr, int (*cb_done)(void *data, Ecore_Fd_Handler *fd_handler), void *data, void (*cb_free)(void *data, void *ev));
+int ecore_con_local_listen(Ecore_Con_Server *svr, int (*cb_listen)(void *data, Ecore_Fd_Handler *fd_handler), void *data);
 /* from ecore_con_info.c */
 int ecore_con_info_init(void);
 int ecore_con_info_shutdown(void);

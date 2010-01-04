@@ -69,14 +69,14 @@ static int _ecore_con_info_exit_handler(void *data, int type __UNUSED__, void *e
 static int info_init = 0;
 static CB_Data *info_slaves = NULL;
 
-EAPI int
+int
 ecore_con_info_init(void)
 {
    info_init++;
    return info_init;
 }
 
-EAPI int
+int
 ecore_con_info_shutdown(void)
 {
    info_init--;

@@ -56,7 +56,7 @@ static int _ecore_con_info_cares_fd_cb(void *data, Ecore_Fd_Handler *fd_handler)
 static int _ecore_con_info_cares_timeout_cb(void *data);
 static void _ecore_con_info_cares_clean(void);
 
-EAPI int
+int
 ecore_con_info_init(void)
 {
    if (info_init == 0)
@@ -74,7 +74,7 @@ ecore_con_info_init(void)
    return info_init;
 }
 
-EAPI int
+int
 ecore_con_info_shutdown(void)
 {
    info_init--;
