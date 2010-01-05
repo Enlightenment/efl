@@ -201,6 +201,7 @@ static void st_collections_group_parts_part_description_box_min(void);
 static void st_collections_group_parts_part_description_table_homogeneous(void);
 static void st_collections_group_parts_part_description_table_align(void);
 static void st_collections_group_parts_part_description_table_padding(void);
+static void st_collections_group_parts_part_api(void);
 
 /* external part parameters */
 static void st_collections_group_parts_part_description_params_int(void);
@@ -216,6 +217,7 @@ static void st_collections_group_programs_program_action(void);
 static void st_collections_group_programs_program_transition(void);
 static void st_collections_group_programs_program_target(void);
 static void st_collections_group_programs_program_after(void);
+static void st_collections_group_programs_program_api(void);
 
 static void ob_collections_group_programs_program_script(void);
 static void ob_collections_group_programs_program_lua_script(void);
@@ -282,6 +284,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.color_classes.color_class.color2", st_color_class_color2}, /* dup */
      {"collections.group.parts.color_classes.color_class.color3", st_color_class_color3}, /* dup */
      {"collections.group.parts.part.name", st_collections_group_parts_part_name},
+     {"collections.group.parts.part.api", st_collections_group_parts_part_api},
      {"collections.group.parts.part.type", st_collections_group_parts_part_type},
      {"collections.group.parts.part.effect", st_collections_group_parts_part_effect},
      {"collections.group.parts.part.mouse_events", st_collections_group_parts_part_mouse_events},
@@ -434,6 +437,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.programs.program.transition", st_collections_group_programs_program_transition}, /* dup */
      {"collections.group.parts.part.description.programs.program.target", st_collections_group_programs_program_target}, /* dup */
      {"collections.group.parts.part.description.programs.program.after", st_collections_group_programs_program_after}, /* dup */
+     {"collections.group.parts.part.description.programs.program.api", st_collections_group_programs_program_api}, /* dup */
      {"collections.group.parts.part.description.program.name", st_collections_group_programs_program_name}, /* dup */
      {"collections.group.parts.part.description.program.signal", st_collections_group_programs_program_signal}, /* dup */
      {"collections.group.parts.part.description.program.source", st_collections_group_programs_program_source}, /* dup */
@@ -442,6 +446,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.program.transition", st_collections_group_programs_program_transition}, /* dup */
      {"collections.group.parts.part.description.program.target", st_collections_group_programs_program_target}, /* dup */
      {"collections.group.parts.part.description.program.after", st_collections_group_programs_program_after}, /* dup */
+     {"collections.group.parts.part.description.program.api", st_collections_group_programs_program_api}, /* dup */
      {"collections.group.parts.part.programs.image", st_images_image}, /* dup */
      {"collections.group.parts.part.programs.images.image", st_images_image}, /* dup */
      {"collections.group.parts.part.programs.font", st_fonts_font}, /* dup */
@@ -454,6 +459,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.programs.program.transition", st_collections_group_programs_program_transition}, /* dup */
      {"collections.group.parts.part.programs.program.target", st_collections_group_programs_program_target}, /* dup */
      {"collections.group.parts.part.programs.program.after", st_collections_group_programs_program_after}, /* dup */
+     {"collections.group.parts.part.programs.program.api", st_collections_group_programs_program_api}, /* dup */
      {"collections.group.parts.part.program.name", st_collections_group_programs_program_name}, /* dup */
      {"collections.group.parts.part.program.signal", st_collections_group_programs_program_signal}, /* dup */
      {"collections.group.parts.part.program.source", st_collections_group_programs_program_source}, /* dup */
@@ -462,6 +468,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.program.transition", st_collections_group_programs_program_transition}, /* dup */
      {"collections.group.parts.part.program.target", st_collections_group_programs_program_target}, /* dup */
      {"collections.group.parts.part.program.after", st_collections_group_programs_program_after}, /* dup */
+     {"collections.group.parts.part.program.api", st_collections_group_programs_program_api}, /* dup */
      {"collections.group.parts.programs.image", st_images_image}, /* dup */
      {"collections.group.parts.programs.images.image", st_images_image}, /* dup */
      {"collections.group.parts.programs.font", st_fonts_font}, /* dup */
@@ -474,6 +481,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.programs.program.transition", st_collections_group_programs_program_transition}, /* dup */
      {"collections.group.parts.programs.program.target", st_collections_group_programs_program_target}, /* dup */
      {"collections.group.parts.programs.program.after", st_collections_group_programs_program_after},
+     {"collections.group.parts.programs.program.api", st_collections_group_programs_program_api},
      {"collections.group.parts.program.name", st_collections_group_programs_program_name}, /* dup */
      {"collections.group.parts.program.signal", st_collections_group_programs_program_signal}, /* dup */
      {"collections.group.parts.program.source", st_collections_group_programs_program_source}, /* dup */
@@ -482,6 +490,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.program.transition", st_collections_group_programs_program_transition}, /* dup */
      {"collections.group.parts.program.target", st_collections_group_programs_program_target}, /* dup */
      {"collections.group.parts.program.after", st_collections_group_programs_program_after}, /* dup */
+     {"collections.group.parts.program.api", st_collections_group_programs_program_api}, /* dup */
      {"collections.group.program.name", st_collections_group_programs_program_name}, /* dup */
      {"collections.group.program.signal", st_collections_group_programs_program_signal}, /* dup */
      {"collections.group.program.source", st_collections_group_programs_program_source}, /* dup */
@@ -490,6 +499,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.program.transition", st_collections_group_programs_program_transition}, /* dup */
      {"collections.group.program.target", st_collections_group_programs_program_target}, /* dup */
      {"collections.group.program.after", st_collections_group_programs_program_after}, /* dup */
+     {"collections.group.program.api", st_collections_group_programs_program_api}, /* dup */
      {"collections.group.programs.program.name", st_collections_group_programs_program_name},
      {"collections.group.programs.program.signal", st_collections_group_programs_program_signal},
      {"collections.group.programs.program.source", st_collections_group_programs_program_source},
@@ -498,6 +508,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.programs.program.transition", st_collections_group_programs_program_transition},
      {"collections.group.programs.program.target", st_collections_group_programs_program_target},
      {"collections.group.programs.program.after", st_collections_group_programs_program_after},
+     {"collections.group.programs.program.api", st_collections_group_programs_program_api},
      {"collections.group.programs.image", st_images_image}, /* dup */
      {"collections.group.programs.images.image", st_images_image}, /* dup */
      {"collections.group.programs.font", st_fonts_font}, /* dup */
@@ -6045,6 +6056,69 @@ st_collections_group_programs_program_after(void)
 
 	data_queue_program_lookup(pc, name, &(pa->id));
 	free(name);
+     }
+}
+
+/**
+    @page edcref
+    @property
+        api
+    @parameters
+        [name] [description]
+    @effect
+        Specifies a hint to let applications (or IDE's) know how to bind
+	things. The parameter name should contain the name of the function that
+	the application should use, and description describes how it should
+	be used.
+    @endproperty
+*/
+static void
+st_collections_group_programs_program_api(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Program *ep;
+
+   check_min_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->programs));
+   ep->api.name = parse_str(0);
+
+   if (is_param(1))
+     {
+       check_arg_count(2);
+       ep->api.description = parse_str(1);
+     }
+}
+
+/**
+    @page edcref
+    @property
+        api
+    @parameters
+        [name] [description]
+    @effect
+        Specifies a hint to let applications (or IDE's) know how to bind
+	things. The parameter name should contain the name of the function that
+	the application should use, and description describes how it should
+	be used.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_api(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   check_min_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = eina_list_data_get(eina_list_last(pc->parts));
+   ep->api.name = parse_str(0);
+   if (is_param(1))
+     {
+       check_arg_count(2);
+       ep->api.description = parse_str(1);
      }
 }
 

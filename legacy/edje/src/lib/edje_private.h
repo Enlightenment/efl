@@ -416,6 +416,11 @@ struct _Edje_Program /* a conditional program to be run */
    Eina_List  *targets; /* list of target parts to apply the state to */
 
    Eina_List  *after; /* list of actions to run at the end of this, for looping */
+
+   struct {
+      const char *name;
+      const char *description;
+   } api;
 };
 
 struct _Edje_Program_Target /* the target of an action */
@@ -532,6 +537,10 @@ struct _Edje_Part
    unsigned char          entry_mode;
    unsigned char          select_mode;
    unsigned char          multiline;
+   struct {
+      const char         *name;
+      const char         *description;
+   } api;
 };
 
 struct _Edje_Part_Image_Id
