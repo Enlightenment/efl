@@ -810,6 +810,14 @@ elm_list_multi_select_set(Evas_Object *obj, Eina_Bool multi)
    wd->multi = multi;
 }
 
+EAPI Eina_Bool
+elm_list_multi_select_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   return wd->multi;
+}
+
 EAPI void
 elm_list_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
 {
@@ -821,6 +829,14 @@ elm_list_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
      elm_scroller_content_min_limit(wd->scr, 1, 0);
    else
      elm_scroller_content_min_limit(wd->scr, 0, 0);
+}
+
+EAPI Elm_List_Mode
+elm_list_horizontal_mode_get(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   return wd->mode;
 }
 
 EAPI void
