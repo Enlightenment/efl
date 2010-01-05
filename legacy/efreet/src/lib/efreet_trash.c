@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <time.h>
+#include <limits.h>
 
 #include <Ecore_File.h>
 

@@ -1,5 +1,6 @@
 #include <Efreet.h>
 #include <stdio.h>
+#include <limits.h>
 #include "ef_test.h"
 
 static void dump(Efreet_Menu *menu, const char *path);

@@ -32,6 +32,7 @@ void *alloca (size_t);
 #include <time.h>
 #include <fcntl.h>
 #include <fnmatch.h>
+#include <limits.h>
 
 #ifdef _WIN32
 # include <winsock2.h>

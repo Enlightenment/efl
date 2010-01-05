@@ -9,6 +9,7 @@
 #include <ctype.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <limits.h>
 
 #ifdef _WIN32
 # include <winsock2.h>
