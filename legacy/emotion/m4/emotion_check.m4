@@ -5,14 +5,14 @@ AC_DEFUN([EMOTION_CHECK_DEP_XINE],
 [
 
 requirement=""
-have_dep="no"
 
 PKG_CHECK_MODULES([XINE],
    [libxine >= 1.1.1 evas >= 0.9.9],
    [
     have_dep="yes"
     requirement="libxine"
-   ])
+   ],
+   [have_dep="no"])
 
 if test "x$1" = "xstatic" ; then
    requirement_emotion="${requirement} ${requirement_emotion}"
@@ -32,14 +32,14 @@ GSTPLUG_REQS=0.10.1
 GST_MAJORMINOR=0.10
 
 requirement=""
-have_dep="no"
 
 PKG_CHECK_MODULES([GSTREAMER],
    [gstreamer-$GST_MAJORMINOR >= $GST_REQS gstreamer-plugins-base-$GST_MAJORMINOR >= $GSTPLUG_REQS evas >= 0.9.9],
    [
     have_dep="yes"
     requirement="gstreamer-$GST_MAJORMINOR gstreamer-plugins-base-$GST_MAJORMINOR"
-   ])
+   ],
+   [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then
 
@@ -70,14 +70,14 @@ AC_DEFUN([EMOTION_CHECK_DEP_VLC],
 [
 
 requirement=""
-have_dep="no"
 
 PKG_CHECK_MODULES([VLC],
    [libvlc >= 0.9 evas >= 0.9.9],
    [
     have_dep="yes"
     requirement="libvlc"
-   ])
+   ],
+   [have_dep="no"])
 
 if test "x$1" = "xstatic" ; then
    requirement_emotion="${requirement} ${requirement_emotion}"
