@@ -218,6 +218,8 @@ static Eet_Error	eet_flush2(Eet_File *ef);
 static Eet_File_Node	*find_node_by_name(Eet_File *ef, const char *name);
 static int		read_data_from_disk(Eet_File *ef, Eet_File_Node *efn, void *buf, int len);
 
+static Eet_Error        eet_internal_close(Eet_File *ef, Eina_Bool locked);
+
 #ifdef EFL_HAVE_PTHREAD
 static pthread_mutex_t eet_cache_lock = PTHREAD_MUTEX_INITIALIZER;
 
@@ -278,7 +280,7 @@ eet_test_close(int test, Eet_File *ef)
    if (test)
      {
 	ef->delete_me_now = 1;
-	eet_close(ef);
+        eet_internal_close(ef, 0);
      }
    return test;
 }
@@ -331,7 +333,7 @@ eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
 	if (del_ef)
 	  {
 	     del_ef->delete_me_now = 1;
-	     eet_close(del_ef);
+             eet_internal_close(ef, 1);
 	  }
      }
 
@@ -1298,6 +1300,93 @@ eet_internal_read(Eet_File *ef)
    return NULL;
 }
 
+static Eet_Error
+eet_internal_close(Eet_File *ef, Eina_Bool locked)
+{
+   Eet_Error err;
+
+   /* check to see its' an eet file pointer */
+   if (eet_check_pointer(ef))
+     return EET_ERROR_BAD_OBJECT;
+   /* deref */
+   ef->references--;
+   /* if its still referenced - dont go any further */
+   if (ef->references > 0) return EET_ERROR_NONE;
+   /* flush any writes */
+   err = eet_flush2(ef);
+
+   eet_identity_unref(ef->key);
+   ef->key = NULL;
+
+   /* if not urgent to delete it - dont free it - leave it in cache */
+   if ((!ef->delete_me_now) && (ef->mode == EET_FILE_MODE_READ))
+     return EET_ERROR_NONE;
+
+   /* remove from cache */
+   if (!locked)
+     {
+        LOCK_CACHE;
+     }
+   if (ef->mode == EET_FILE_MODE_READ)
+     eet_cache_del(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
+   else if ((ef->mode == EET_FILE_MODE_WRITE) || (ef->mode == EET_FILE_MODE_READ_WRITE))
+     eet_cache_del(ef, &eet_writers, &eet_writers_num, &eet_writers_alloc);
+   if (!locked)
+     {
+        UNLOCK_CACHE;
+     }
+
+   DESTROY_FILE(ef);
+
+   /* free up data */
+   if (ef->header)
+     {
+	if (ef->header->directory)
+	  {
+	     if (ef->header->directory->nodes)
+	       {
+		  int i, num;
+
+		  num = (1 << ef->header->directory->size);
+		  for (i = 0; i < num; i++)
+		    {
+		       Eet_File_Node *efn;
+
+		       while ((efn = ef->header->directory->nodes[i]))
+			 {
+			    if (efn->data)
+			      free(efn->data);
+
+			    ef->header->directory->nodes[i] = efn->next;
+
+			    if (efn->free_name)
+			      free(efn->name);
+
+			    free(efn);
+			 }
+		    }
+		  free(ef->header->directory->nodes);
+	       }
+	     free(ef->header->directory);
+	  }
+	free(ef->header);
+     }
+
+   eet_dictionary_free(ef->ed);
+
+   if (ef->sha1) free(ef->sha1);
+   if (ef->data) munmap((void*)ef->data, ef->data_size);
+   if (ef->fp) fclose(ef->fp);
+   if (ef->readfp) fclose(ef->readfp);
+
+   /* zero out ram for struct - caution tactic against stale memory use */
+   memset(ef, 0, sizeof(Eet_File));
+
+   /* free it */
+   free(ef);
+   return err;
+}
+
 EAPI Eet_File *
 eet_memopen_read(const void *data, size_t size)
 {
@@ -1352,9 +1441,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	     eet_flush2(ef);
 	     ef->references++;
 	     ef->delete_me_now = 1;
-             UNLOCK_CACHE;
-	     eet_close(ef);
-             LOCK_CACHE;
+             eet_internal_close(ef, 1);
 	  }
 	ef = eet_cache_find((char *)file, eet_readers, eet_readers_num);
      }
@@ -1366,9 +1453,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	  {
 	     ef->delete_me_now = 1;
 	     ef->references++;
-             UNLOCK_CACHE;
-	     eet_close(ef);
-             LOCK_CACHE;
+             eet_internal_close(ef, 1);
 	  }
 	ef = eet_cache_find((char *)file, eet_writers, eet_writers_num);
      }
@@ -1417,7 +1502,7 @@ eet_open(const char *file, Eet_File_Mode mode)
      {
 	ef->delete_me_now = 1;
 	ef->references++;
-	eet_close(ef);
+        eet_internal_close(ef, 0);
 	ef = NULL;
      }
 
@@ -1560,82 +1645,7 @@ eet_identity_set(Eet_File *ef, Eet_Key *key)
 EAPI Eet_Error
 eet_close(Eet_File *ef)
 {
-   Eet_Error err;
-
-   /* check to see its' an eet file pointer */
-   if (eet_check_pointer(ef))
-     return EET_ERROR_BAD_OBJECT;
-   /* deref */
-   ef->references--;
-   /* if its still referenced - dont go any further */
-   if (ef->references > 0) return EET_ERROR_NONE;
-   /* flush any writes */
-   err = eet_flush2(ef);
-
-   eet_identity_unref(ef->key);
-   ef->key = NULL;
-
-   /* if not urgent to delete it - dont free it - leave it in cache */
-   if ((!ef->delete_me_now) && (ef->mode == EET_FILE_MODE_READ))
-     return EET_ERROR_NONE;
-
-   /* remove from cache */
-   LOCK_CACHE;
-   if (ef->mode == EET_FILE_MODE_READ)
-     eet_cache_del(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
-   else if ((ef->mode == EET_FILE_MODE_WRITE) || (ef->mode == EET_FILE_MODE_READ_WRITE))
-     eet_cache_del(ef, &eet_writers, &eet_writers_num, &eet_writers_alloc);
-   UNLOCK_CACHE;
-
-   DESTROY_FILE(ef);
-
-   /* free up data */
-   if (ef->header)
-     {
-	if (ef->header->directory)
-	  {
-	     if (ef->header->directory->nodes)
-	       {
-		  int i, num;
-
-		  num = (1 << ef->header->directory->size);
-		  for (i = 0; i < num; i++)
-		    {
-		       Eet_File_Node *efn;
-
-		       while ((efn = ef->header->directory->nodes[i]))
-			 {
-			    if (efn->data)
-			      free(efn->data);
-
-			    ef->header->directory->nodes[i] = efn->next;
-
-			    if (efn->free_name)
-			      free(efn->name);
-
-			    free(efn);
-			 }
-		    }
-		  free(ef->header->directory->nodes);
-	       }
-	     free(ef->header->directory);
-	  }
-	free(ef->header);
-     }
-
-   eet_dictionary_free(ef->ed);
-
-   if (ef->sha1) free(ef->sha1);
-   if (ef->data) munmap((void*)ef->data, ef->data_size);
-   if (ef->fp) fclose(ef->fp);
-   if (ef->readfp) fclose(ef->readfp);
-
-   /* zero out ram for struct - caution tactic against stale memory use */
-   memset(ef, 0, sizeof(Eet_File));
-
-   /* free it */
-   free(ef);
-   return err;
+   return eet_internal_close(ef, 0);
 }
 
 EAPI void *
