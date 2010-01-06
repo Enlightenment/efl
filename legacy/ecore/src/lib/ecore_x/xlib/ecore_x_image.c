@@ -78,6 +78,7 @@ _ecore_x_image_shm_check(void)
    XSetErrorHandler((XErrorHandler)ph);
    if (_ecore_x_image_err)
      {
+        XShmDetach(_ecore_x_disp, &shminfo);
         shmdt(shminfo.shmaddr); 
         shmctl(shminfo.shmid, IPC_RMID, 0);
         XDestroyImage(xim);
@@ -85,6 +86,7 @@ _ecore_x_image_shm_check(void)
         return;
      }
    
+   XShmDetach(_ecore_x_disp, &shminfo);
    shmdt(shminfo.shmaddr);
    shmctl(shminfo.shmid, IPC_RMID, 0);
    XDestroyImage(xim);
@@ -120,35 +122,13 @@ ecore_x_image_new(int w, int h, Ecore_X_Visual vis, int depth)
    return im;
 }
 
-/* 
-   if (_ecore_x_image_shm_can)
-     {
-     }
-   else
-     {
-        im->xim = XCreateImage(_ecore_x_disp, im->vis, im->depth,
-                               ZPixmap, 0, NULL, im->w, im->h, 32, 0);
-        if (!im->xim)
-          {
-             free(im);
-             return NULL;
-          }
-        im->xim->data = malloc(im->xim->bytes_per_line * im->xim->height);
-        if (im->xim->data == NULL)
-          {
-             XDestroyImage(im->xim);
-             free(im);
-             return NULL;
-          }
-     }
-   im->data = im->xim->data;
-*/
-
 EAPI void
 ecore_x_image_free(Ecore_X_Image *im)
 {
+   printf("%p: shm--\n", im);
    if (im->shm)
      {
+        XShmDetach(_ecore_x_disp, &(im->shminfo));
         shmdt(im->shminfo.shmaddr);
         shmctl(im->shminfo.shmid, IPC_RMID, 0);
      }
@@ -200,6 +180,7 @@ _ecore_x_image_shm_create(Ecore_X_Image *im)
    if (im->xim->bits_per_pixel <= 8) im->bpp = 1;
    else if (im->xim->bits_per_pixel <= 16) im->bpp = 2;
    else im->bpp = 4;
+   printf("%p: shm++\n", im);
 }
 
 EAPI void
