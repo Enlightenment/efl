@@ -1,6 +1,7 @@
 #ifndef _ECORE_H
 #define _ECORE_H
 
+#include <sys/types.h>
 #include <Eina.h>
 
 #ifdef EAPI
