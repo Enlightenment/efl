@@ -118,3 +118,29 @@ ecore_x_composite_name_window_pixmap_get(Ecore_X_Window win)
 
    return pixmap;
 }
+
+EAPI Ecore_X_Window
+ecore_x_composite_render_window_enable(Ecore_X_Window root)
+{
+   Ecore_X_Window win = 0;
+#ifdef ECORE_XCOMPOSITE
+   XRectangle rect;
+   
+   win = XCompositeGetOverlayWindow(_ecore_x_disp, root);
+   rect.x = -1;
+   rect.y = -1;
+   rect.width = 1;
+   rect.height = 1;
+   XShapeCombineRectangles(_ecore_x_disp, win, ShapeInput, 0, 0, &rect, 1, 
+                           ShapeSet, Unsorted);
+#endif
+   return win;
+}
+
+EAPI void
+ecore_x_composite_render_window_disable(Ecore_X_Window root)
+{
+#ifdef ECORE_XCOMPOSITE
+   XCompositeReleaseOverlayWindow(_ecore_x_disp, root);
+#endif   
+}

@@ -414,7 +414,10 @@ struct _Ecore_X_Event_Window_Visibility_Change
 struct _Ecore_X_Event_Window_Create
 {
    Ecore_X_Window  win;
+   Ecore_X_Window  parent;
    int             override;
+   int             x, y, w, h;
+   int             border;
    Ecore_X_Time    time;
 };
 
@@ -1605,9 +1608,9 @@ typedef struct _Ecore_X_Window_Attributes
    unsigned char      input_only : 1;
    unsigned char      save_under : 1;
    struct {
-	Ecore_X_Event_Mask mine;
-	Ecore_X_Event_Mask all;
-	Ecore_X_Event_Mask no_propagate;
+      Ecore_X_Event_Mask mine;
+      Ecore_X_Event_Mask all;
+      Ecore_X_Event_Mask no_propagate;
    } event_mask;
    Ecore_X_Gravity    window_gravity;
    Ecore_X_Gravity    pixel_gravity;
@@ -1618,7 +1621,7 @@ typedef struct _Ecore_X_Window_Attributes
     * Screen *screen;
     */
 } Ecore_X_Window_Attributes;
-
+   
 EAPI void ecore_x_get_window_attributes_prefetch(Ecore_X_Window window);
 EAPI void ecore_x_get_window_attributes_fetch(void);
 EAPI int  ecore_x_window_attributes_get(Ecore_X_Window win, Ecore_X_Window_Attributes *att_ret);
@@ -1747,7 +1750,9 @@ EAPI void              ecore_x_composite_redirect_subwindows(Ecore_X_Window win,
 EAPI void              ecore_x_composite_unredirect_window(Ecore_X_Window win, Ecore_X_Composite_Update_Type type);
 EAPI void              ecore_x_composite_unredirect_subwindows(Ecore_X_Window win, Ecore_X_Composite_Update_Type type);
 EAPI Ecore_X_Pixmap    ecore_x_composite_name_window_pixmap_get(Ecore_X_Window win);
-
+EAPI Ecore_X_Window    ecore_x_composite_render_window_enable(Ecore_X_Window root);
+EAPI void              ecore_x_composite_render_window_disable(Ecore_X_Window root);
+       
 /* XDamage Extension Support */
 typedef Ecore_X_ID  Ecore_X_Damage;
 
@@ -1800,7 +1805,15 @@ EAPI int ecore_x_test_fake_key_down(const char *key);
 EAPI int ecore_x_test_fake_key_up(const char *key);
 EAPI int ecore_x_test_fake_key_press(const char *key);
 EAPI const char *ecore_x_keysym_string_get(int keysym);
-   
+
+typedef struct _Ecore_X_Image Ecore_X_Image;
+
+EAPI Ecore_X_Image    *ecore_x_image_new(int w, int h, Ecore_X_Visual vis, int depth);
+EAPI void              ecore_x_image_free(Ecore_X_Image *im);
+EAPI void              ecore_x_image_get(Ecore_X_Image *im, Ecore_X_Drawable draw, int x, int y, int sx, int sy, int w, int h);
+EAPI void              ecore_x_image_put(Ecore_X_Image *im, Ecore_X_Drawable draw, int x, int y, int sx, int sy, int w, int h);
+EAPI void             *ecore_x_image_data_get(Ecore_X_Image *im, int *bpl, int *rows, int *bpp);
+       
 #ifdef __cplusplus
 }
 #endif

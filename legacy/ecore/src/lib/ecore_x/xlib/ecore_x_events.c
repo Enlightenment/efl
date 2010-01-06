@@ -898,10 +898,16 @@ _ecore_x_event_handle_create_notify(XEvent *xevent)
    e = calloc(1, sizeof(Ecore_X_Event_Window_Create));
    if (!e) return;
    e->win = xevent->xcreatewindow.window;
+   e->parent = xevent->xcreatewindow.parent;
    if (xevent->xcreatewindow.override_redirect)
-      e->override = 1;
+     e->override = 1;
    else
-      e->override = 0;
+     e->override = 0;
+   e->x = xevent->xcreatewindow.x;
+   e->y = xevent->xcreatewindow.y;
+   e->w = xevent->xcreatewindow.width;
+   e->h = xevent->xcreatewindow.height;
+   e->border = xevent->xcreatewindow.border_width;
    e->time = _ecore_x_event_last_time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_CREATE, e, NULL, NULL);
 }
