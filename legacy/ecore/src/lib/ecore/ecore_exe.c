@@ -121,6 +121,8 @@ struct _Ecore_Exe
 
    Ecore_Timer *doomsday_clock; /* The Timer of Death.  Muahahahaha. */
    void        *doomsday_clock_dead; /* data for the doomsday clock */
+
+   void (*pre_free_cb)(void *data, const Ecore_Exe *exe);
 };
 
 
@@ -708,6 +710,31 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 }
 
 /**
+ * Defines a function to be called before really freeing the handle data.
+ *
+ * This might be useful for language bindings such as Python and Perl
+ * that need to deallocate wrappers associated with this handle.
+ *
+ * This handle should never be modified by this call. It should be
+ * considered informative only. All getters are valid when the given
+ * function is called back.
+ *
+ * @param exe The child process to attach the pre_free function.
+ * @param func The function to call before @a exe is freed.
+ */
+EAPI void
+ecore_exe_callback_pre_free_set(Ecore_Exe *exe, void (*func)(void *data, const Ecore_Exe *exe))
+{
+   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
+     {
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
+			 "ecore_exe_callback_pre_free_set");
+	return;
+     }
+   exe->pre_free_cb = func;
+}
+
+/**
  * Sends data to the given child process which it recieves on stdin.
  *
  * This function writes to a child processes standard in, with unlimited
@@ -717,13 +744,34 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
  * @param exe  The child process to send to
  * @param data The data to send
  * @param size The size of the data to send, in bytes
- * @return 1 if successful, 0 on failure.
+ * @return EINA_TRUE if successful, EINA_FALSE on failure.
  * @ingroup Ecore_Exe_Basic_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_exe_send(Ecore_Exe * exe, const void *data, int size)
 {
    void *buf;
+
+   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
+     {
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_send");
+	return 0;
+     }
+
+   if (exe->close_stdin)
+     {
+	ERR("Ecore_Exe %p stdin is closed! Cannot send %d bytes from %p",
+	    exe, size, data);
+	return 0;
+     }
+
+   if (exe->child_fd_write == -1)
+     {
+	ERR("Ecore_Exe %p created without ECORE_EXE_PIPE_WRITE! "
+	    "Cannot send %d bytes from %p",
+	    exe, size, data);
+	return 0;
+     }
 
    buf = realloc(exe->write_data_buf, exe->write_data_size + size);
    if (buf == NULL) return 0;
@@ -970,6 +1018,8 @@ ecore_exe_tag_set(Ecore_Exe *exe, const char *tag)
    IF_FREE(exe->tag);
    if (tag)
       exe->tag = strdup(tag);
+   else
+      exe->tag = NULL;
 }
 
 /**
@@ -979,11 +1029,13 @@ ecore_exe_tag_set(Ecore_Exe *exe, const char *tag)
  * else on this @p exe.
  *
  * @param   exe The given process handle.
- * @return  The string attached to @p exe.
+ * @return The string attached to @p exe. It is a handle to existing
+ *         internal string and should not be modified, use
+ *         ecore_exe_tag_set() to change it. It might be @c NULL.
  * @ingroup Ecore_Exe_Basic_Group
  */
-EAPI char *
-ecore_exe_tag_get(Ecore_Exe *exe)
+EAPI const char *
+ecore_exe_tag_get(const Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -1018,6 +1070,9 @@ ecore_exe_free(Ecore_Exe *exe)
      }
 
    data = exe->data;
+
+   if (exe->pre_free_cb)
+     exe->pre_free_cb(data, exe);
 
    if (exe->doomsday_clock)
      {
@@ -1069,6 +1124,7 @@ ecore_exe_free(Ecore_Exe *exe)
 EAPI void
 ecore_exe_event_data_free(Ecore_Exe_Event_Data *e)
 {
+   if (!e) return;
    IF_FREE(e->lines);
    IF_FREE(e->data);
    free(e);
@@ -1081,7 +1137,7 @@ ecore_exe_event_data_free(Ecore_Exe_Event_Data *e)
  * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI pid_t
-ecore_exe_pid_get(Ecore_Exe *exe)
+ecore_exe_pid_get(const Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -1094,11 +1150,13 @@ ecore_exe_pid_get(Ecore_Exe *exe)
 /**
  * Retrieves the command of the given spawned process.
  * @param   exe Handle to the given spawned process.
- * @return  The command on success.  NULL otherwise.
+ * @return The command on success.  NULL otherwise. This string is the
+ *         pointer to the internal value and must not be modified in
+ *         any way.
  * @ingroup Ecore_Exe_Basic_Group
  */
-EAPI char *
-ecore_exe_cmd_get(Ecore_Exe *exe)
+EAPI const char *
+ecore_exe_cmd_get(const Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -1111,11 +1169,12 @@ ecore_exe_cmd_get(Ecore_Exe *exe)
 /**
  * Retrieves the data attached to the given process handle.
  * @param   exe The given process handle.
- * @return  The data pointer attached to @p exe.
+ * @return The data pointer attached to @p exe Given to
+ *         ecore_exe_run() or ecore_exe_pipe_run()
  * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI void *
-ecore_exe_data_get(Ecore_Exe *exe)
+ecore_exe_data_get(const Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -1132,7 +1191,7 @@ ecore_exe_data_get(Ecore_Exe *exe)
  * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI Ecore_Exe_Flags
-ecore_exe_flags_get(Ecore_Exe *exe)
+ecore_exe_flags_get(const Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
