@@ -2676,7 +2676,9 @@ evas_object_image_render_pre(Evas_Object *obj)
 	if ((o->cur.border.l == 0) &&
 	    (o->cur.border.r == 0) &&
 	    (o->cur.border.t == 0) &&
-	    (o->cur.border.b == 0))
+	    (o->cur.border.b == 0) &&
+            (o->cur.image.w > 0) &&
+            (o->cur.image.h > 0))
 	  {
 	     Eina_Rectangle *rr;
 
