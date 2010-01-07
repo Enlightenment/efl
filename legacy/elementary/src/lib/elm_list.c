@@ -900,6 +900,14 @@ elm_list_item_selected_set(Elm_List_Item *it, Eina_Bool selected)
    _elm_list_unwalk(wd);
 }
 
+EAPI Eina_Bool
+elm_list_item_selected_get(Elm_List_Item *it)
+{
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
+
+   return it->selected;
+}
+
 EAPI void
 elm_list_item_show(Elm_List_Item *it)
 {

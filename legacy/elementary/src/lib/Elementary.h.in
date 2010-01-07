@@ -750,6 +750,7 @@ extern "C" {
    EAPI Elm_List_Item   *elm_list_selected_item_get(const Evas_Object *obj);
    EAPI const Eina_List *elm_list_selected_items_get(const Evas_Object *obj);
    EAPI void             elm_list_item_selected_set(Elm_List_Item *item, Eina_Bool selected);
+   EAPI Eina_Bool        elm_list_item_selected_get(Elm_List_Item *item);
    EAPI void             elm_list_item_show(Elm_List_Item *item);
    EAPI void             elm_list_item_del(Elm_List_Item *item);
    EAPI void             elm_list_item_del_cb_set(Elm_List_Item *item, void (*func)(void *data, Evas_Object *obj, void *event_info));
