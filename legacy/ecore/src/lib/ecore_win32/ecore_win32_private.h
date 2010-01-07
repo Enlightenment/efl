@@ -14,8 +14,23 @@ extern "C" {
 /* logging messages macros */
 extern int _ecore_win32_log_dom_global;
 
+#ifdef ECORE_WIN32_DEFAULT_LOG_COLOR
+# undef ECORE_WIN32_DEFAULT_LOG_COLOR
+#endif
+#define ECORE_WIN32_DEFAULT_LOG_COLOR EINA_COLOR_LIGHTBLUE
+
+#ifdef ERR
+# undef ERR
+#endif
 #define ERR(...) EINA_LOG_DOM_ERR(_ecore_win32_log_dom_global , __VA_ARGS__)
+#ifdef DBG
+#undef DBG
+#endif
 #define DBG(...) EINA_LOG_DOM_DBG(_ecore_win32_log_dom_global , __VA_ARGS__)
+
+#ifdef INF
+#undef INF
+#endif
 #define INF(...) EINA_LOG_DOM_INFO(_ecore_win32_log_dom_global , __VA_ARGS__)
 
 #define ECORE_WIN32_WINDOW_CLASS "Ecore_Win32_Window_Class"

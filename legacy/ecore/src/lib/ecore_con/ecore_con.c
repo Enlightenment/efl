@@ -83,7 +83,7 @@ ecore_con_init(void)
    if (!ecore_init())
      return --_ecore_con_init_count;
 
-   _ecore_con_log_dom = eina_log_domain_register("EcoreCon", ECORE_DEFAULT_LOG_COLOR);
+   _ecore_con_log_dom = eina_log_domain_register("EcoreCon", ECORE_CON_DEFAULT_LOG_COLOR);
    if(_ecore_con_log_dom < 0)
      {
        EINA_LOG_ERR("Impossible to create a log domain foe Ecore Con.");

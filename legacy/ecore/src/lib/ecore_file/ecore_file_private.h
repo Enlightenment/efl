@@ -19,6 +19,12 @@
 #include "Ecore_File.h"
 
 extern int _ecore_file_log_dom;
+
+#ifdef ECORE_FILE_DEFAULT_LOG_COLOR
+#undef ECORE_FILE_DEFAULT_LOG_COLOR
+#endif
+#define ECORE_FILE_DEFAULT_LOG_COLOR EINA_COLOR_BLUE
+
 #ifdef ERR
 # undef ERR
 #endif

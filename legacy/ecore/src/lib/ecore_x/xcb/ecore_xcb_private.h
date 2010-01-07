@@ -61,7 +61,12 @@
 /* FIXME: this is for simulation only */
 #include "Ecore_Txt.h"
 
-static int _ecore_x11xcb_log_dom  -1;
+extern int _ecore_x11xcb_log_dom ;
+
+#ifdef ECORE_XLIB_XCB_DEFAULT_LOG_COLOR
+# undef ECORE_XLIB_XCB_DEFAULT_LOG_COLOR
+#endif
+#define ECORE_XLIB_XCB_DEFAULT_LOG_COLOR EINA_COLOR_BLUE
 
 #ifdef ERR
 # undef ERR

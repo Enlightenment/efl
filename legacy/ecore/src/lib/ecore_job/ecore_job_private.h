@@ -4,6 +4,11 @@
 #define ECORE_MAGIC_JOB             0x76543210
 
 extern int _ecore_job_log_dom;
+#ifdef ECORE_JOB_DEFAULT_LOG_COLOR
+# undef ECORE_JOB_DEFAULT_LOG_COLOR
+#endif
+#define ECORE_JOB_DEFAULT_LOG_COLOR EINA_COLOR_BLUE
+
 #ifdef ERR
 # undef ERR
 #endif

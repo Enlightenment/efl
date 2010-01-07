@@ -1,6 +1,9 @@
 #ifndef _ECORE_CONFIG_PRIVATE_H
 # define _ECORE_CONFIG_PRIVATE_H
-
+#ifdef ECORE_CONFIG_DEFAULT_LOG_COLOR
+# undef ECORE_CONFIG_DEFAULT_LOG_COLOR
+#endif
+#define ECORE_CONFIG_DEFAULT_LOG_COLOR EINA_COLOR_BLUE
  /* eina_log related things */
  
 extern int _ecore_config_log_dom;

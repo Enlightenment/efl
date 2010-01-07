@@ -26,7 +26,7 @@ ecore_job_init(void)
 {
    if (++_ecore_job_init_count != 1)
      return _ecore_job_init_count;
-   _ecore_job_log_dom = eina_log_domain_register("EcoreJob", ECORE_DEFAULT_LOG_COLOR);
+   _ecore_job_log_dom = eina_log_domain_register("EcoreJob", ECORE_JOB_DEFAULT_LOG_COLOR);
    if(_ecore_job_log_dom < 0)
      {
        EINA_LOG_ERR("Impossible to create a log domain for the Ecore Job module.");

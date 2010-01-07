@@ -170,7 +170,7 @@ ecore_x_init(const char *name)
    
    if (++_ecore_x_init_count != 1) 
      return _ecore_x_init_count;
-   _ecore_xlib_log_dom = eina_log_domain_register("EcoreX11", ECORE_DEFAULT_LOG_COLOR);
+   _ecore_xlib_log_dom = eina_log_domain_register("EcoreX11", ECORE_XLIB_DEFAULT_LOG_COLOR);
    if(_ecore_xlib_log_dom < 0)
      {
        EINA_LOG_ERR("Impossible to create a log domain for the Ecore Xlib module.");

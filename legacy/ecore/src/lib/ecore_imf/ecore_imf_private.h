@@ -3,6 +3,11 @@
 
 #define ECORE_MAGIC_CONTEXT 0x56c1b39a
 
+#ifdef ECORE_IMF_DEFAULT_LOG_COLOR
+#undef ECORE_IMF_DEFAULT_LOG_COLOR
+#endif
+#define ECORE_IMF_DEFAULT_LOG_COLOR EINA_COLOR_BLUE
+
 extern int _ecore_imf_log_dom;
 #ifdef ERR
 # undef ERR

@@ -1,7 +1,14 @@
-
+#ifndef _ECORE_DIRECTFB_PRIVATE_H
+#define _ECORE_DIRECTFB_PRIVATE_H
 /* eina_log related things */
 
 extern int _ecore_directfb_log_dom;
+
+#ifdef ECORE_DIRECTFB_DEFAULT_LOG_COLOR
+#undef ECORE_DIRECTFB_DEFAULT_LOG_COLOR
+#endif
+#define ECORE_DIRECTFB_DEFAULT_LOG_COLOR EINA_COLOR_BLUE
+
 #ifdef ERR
 # undef ERR
 #endif
@@ -42,3 +49,4 @@ struct keymap
 	char *name;
 	char *string;
 };
+#endif

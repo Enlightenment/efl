@@ -3,6 +3,11 @@
 
 extern int _ecore_txt_log_dom;
 
+#ifdef ECORE_TXT_DEFAULT_LOG_COLOR
+# undef ECORE_TXT_DEFAULT_LOG_COLOR
+#endif
+#define ECORE_TXT_DEFAULT_LOG_COLOR EINA_COLOR_BLUE
+
 #ifdef ERR
 # undef ERR
 #endif

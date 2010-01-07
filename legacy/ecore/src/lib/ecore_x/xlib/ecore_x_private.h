@@ -59,6 +59,10 @@
 #include "Ecore_Txt.h"
 
 extern int _ecore_xlib_log_dom;
+#ifdef ECORE_XLIB_DEFAULT_LOG_COLOR
+# undef ECORE_XLIB_DEFAULT_LOG_COLOR
+#endif
+#define ECORE_XLIB_DEFAULT_LOG_COLOR EINA_COLOR_BLUE
 
 #ifdef ERR
 # undef ERR

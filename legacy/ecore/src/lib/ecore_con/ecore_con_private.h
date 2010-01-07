@@ -23,6 +23,12 @@
 #define READBUFSIZ 65536
 
 extern int  _ecore_con_log_dom ;
+
+#ifdef ECORE_CON_DEFAULT_LOG_COLOR
+#undef ECORE_LOG_DEFAULT_LOG_COLOR
+#endif
+#define ECORE_CON_DEFAULT_LOG_COLOR EINA_COLOR_BLUE
+
 #ifdef ERR
 # undef ERR
 #endif

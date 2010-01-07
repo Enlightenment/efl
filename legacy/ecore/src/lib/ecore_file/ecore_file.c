@@ -41,7 +41,7 @@ ecore_file_init()
 {
    if (++_ecore_file_init_count != 1)
      return _ecore_file_init_count;
-   _ecore_file_log_dom = eina_log_domain_register("EcoreFile", ECORE_DEFAULT_LOG_COLOR);
+   _ecore_file_log_dom = eina_log_domain_register("EcoreFile", ECORE_FILE_DEFAULT_LOG_COLOR);
    if(_ecore_file_log_dom < 0) 
      {
        EINA_LOG_ERR("Impossible to create a log domain for the ecore file module.");
