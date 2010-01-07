@@ -1,37 +1,37 @@
-#ifndef_ECORE_INPUT_PRIVATE_H
-#define_ECORE_INPUT_PRIVATE_H
+#ifndef _ECORE_INPUT_PRIVATE_H
+#define _ECORE_INPUT_PRIVATE_H
 
-externint _ecore_input_evas_log_dom;
+extern int _ecore_input_evas_log_dom;
 
-#ifdefECORE_INPUT_EVAS_DEFAULT_LOG_COLOR
+#ifdef ECORE_INPUT_EVAS_DEFAULT_LOG_COLOR
 #undef ECORE_INPUT_EVAS_DEFAULT_LOG_COLOR 
 #endif
 
-#defineECORE_INPUT_EVAS_DEFAULT_LOG_COLOR EINA_COLOR_BLUE
+#define ECORE_INPUT_EVAS_DEFAULT_LOG_COLOR EINA_COLOR_BLUE
 
-#ifdefERR
+#ifdef ERR
 #undef ERR
 #endif
-#defineERR(...) EINA_LOG_DOM_ERR(_ecore_input_evas_log_dom, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_ecore_input_evas_log_dom, __VA_ARGS__)
 
-#ifdefDBG
+#ifdef DBG
 #undef DBG
 #endif
-#defineDBG(...) EINA_LOG_DOM_DBG(_ecore_input_evas_log_dom, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_ecore_input_evas_log_dom, __VA_ARGS__)
 
-#ifdefINF
+#ifdef INF
 #undef INF
 #endif
-#defineINF(...) EINA_LOG_DOM_INFO(_ecore_input_evas_log_dom, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_ecore_input_evas_log_dom, __VA_ARGS__)
 
-#ifdefWRN
+#ifdef WRN
 #undef WRN
 #endif
-#defineWRN(...) EINA_LOG_DOM_WARN(_ecore_input_evas_log_dom, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_ecore_input_evas_log_dom, __VA_ARGS__)
 
-#ifdefCRIT
+#ifdef CRIT
 #undef CRIT
 #endif
-#defineCRIT(...) EINA_LOG_DOM_CRIT(_ecore_input_evas_log_dom, __VA_ARGS__)
+#define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_input_evas_log_dom, __VA_ARGS__)
 
 #endif
